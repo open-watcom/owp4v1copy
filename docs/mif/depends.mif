@@ -1148,9 +1148,23 @@ $(docsrc_dir)$(SL)lg$(SL)wstintro.gml &
 $(docsrc_dir)$(SL)lg$(SL)wstmain.gml &
 $(docsrc_dir)$(SL)lg$(SL)wstrip.gml
 
-# lr$(SL)src sub-directory
-incs_lr1 = $(docsrc_dir)$(SL)lr$(SL)src
+# lr sub-directory
+incs_lr1 = $(docsrc_dir)$(SL)lr
 objs_lr1 = &
+$(docsrc_dir)$(SL)lr$(SL)authors.gml &
+$(docsrc_dir)$(SL)lr$(SL)clib_dos.gml &
+$(docsrc_dir)$(SL)lr$(SL)clib_nec.gml &
+$(docsrc_dir)$(SL)lr$(SL)clib_nt.gml &
+$(docsrc_dir)$(SL)lr$(SL)clib_qnx.gml &
+$(docsrc_dir)$(SL)lr$(SL)clib_tst.gml &
+$(docsrc_dir)$(SL)lr$(SL)clibref.gml &
+$(docsrc_dir)$(SL)lr$(SL)f77graph.gml &
+$(docsrc_dir)$(SL)lr$(SL)os2help.gml &
+$(docsrc_dir)$(SL)lr$(SL)symbols.gml
+
+# lr$(SL)src sub-directory
+incs_lr2 = $(docsrc_dir)$(SL)lr$(SL)src
+objs_lr2 = &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_atouni.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_bfreese.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_bgetcmd.gml &
@@ -1405,7 +1419,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)gfunrems.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)globdata.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gmtime.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gmtime_s.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)grmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)halloc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)hantozen.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)hcfunmac.gml &
@@ -1554,6 +1567,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)libmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)libpref.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)llabs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)lldiv.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)lltoa.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)localeco.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)localtim.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)lcltim_s.gml &
@@ -1869,6 +1883,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)towctrns.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tzref.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tzset.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)udirent.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)ulltoa.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ultoa.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)umask.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ungetc.gml &
@@ -1911,27 +1926,10 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)widefunc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)write.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)zentohan.gml
 
-# lr sub-directory
-incs_lr3 = $(docsrc_dir)$(SL)lr
-objs_lr3 = &
-$(docsrc_dir)$(SL)lr$(SL)authors.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_dos.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_nec.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_nt.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_qnx.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_tst.gml &
-$(docsrc_dir)$(SL)lr$(SL)clibban.gml &
-$(docsrc_dir)$(SL)lr$(SL)clibref.gml &
-$(docsrc_dir)$(SL)lr$(SL)f77graph.gml &
-$(docsrc_dir)$(SL)lr$(SL)os2help.gml &
-$(docsrc_dir)$(SL)lr$(SL)symbols.gml
-incs_lr3+=;$(incs_lr1)
-objs_lr3+= $(objs_lr1)
-
 # lr;lr$(SL)ge;lr$(SL)gp;lr$(SL)gr;lr$(SL)src sub-directory
-bmroot_lr2 = $(docsrc_dir)$(SL)lr$(SL)ge
-incs_lr2 = $(incs_lr3);$(docsrc_dir)$(SL)lr$(SL)ge;$(docsrc_dir)$(SL)lr$(SL)gp;$(docsrc_dir)$(SL)lr$(SL)gr
-objs_lr2 = $(objs_lr3) &
+bmroot_lr3 = $(docsrc_dir)$(SL)lr$(SL)ge
+incs_lr3 = $(docsrc_dir)$(SL)lr$(SL)ge;$(docsrc_dir)$(SL)lr$(SL)gp;$(docsrc_dir)$(SL)lr$(SL)gr
+objs_lr3 = &
 $(docsrc_dir)$(SL)lr$(SL)ge$(SL)eg_arc.bmp &
 $(docsrc_dir)$(SL)lr$(SL)ge$(SL)eg_arc.c &
 $(docsrc_dir)$(SL)lr$(SL)ge$(SL)eg_arc.for &

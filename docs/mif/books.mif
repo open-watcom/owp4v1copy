@@ -128,59 +128,59 @@ book_multi_chapter=1
 !else ifeq hbook clbtst
 # clbtst
 book_title=$(company) $(%BLD_VER_STR) C Library Reference
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=clib_tst
 book_multi_chapter=1
 
 !else ifeq hbook clib
 # clib
 book_title=$(company) $(%BLD_VER_STR) C Library Reference
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=clib_dos
 book_multi_chapter=1
 
 !else ifeq hbook clib_fox
 # clib_fox
 book_title=$(company) $(%BLD_VER_STR) C Library Reference for FoxPro
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=clib_fox
 
 !else ifeq hbook clib_nec
 # clib_nec
 book_title=$(company) $(%BLD_VER_STR) C Library Reference Kanji Functions subset
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=clib_nec
 
 !else ifeq hbook clib_pp
 # clib_pp
 book_title=$(company) $(%BLD_VER_STR) C Library Reference for PenPoint
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=clib_pp
 
 !else ifeq hbook clibnt
 # clibnt
 book_title=$(company) $(%BLD_VER_STR) C Library Reference for Win32
-book_objs=$(objs_lr3) $(objs_cmn)
-book_incs=$(incs_lr3);$(incs_cmn)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_cmn)
 book_src=clib_nt
 book_multi_chapter=1
 
 !else ifeq hbook clibqnx
 # clibqnx
 book_title=$(company) $(%BLD_VER_STR) C Library Reference for QNX
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr2) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr2);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=clib_qnx
 book_multi_chapter=1
 
@@ -282,9 +282,9 @@ book_multi_chapter=1
 !else ifeq hbook f77graph
 # f77graph
 book_title=$(company) $(%BLD_VER_STR) FORTRAN 77 Graphics Library Reference
-book_objs=$(objs_lr2) $(objs_cmn)
-book_incs=$(incs_lr2);$(incs_cmn)
-book_bmroot=$(bmroot_lr2)
+book_objs=$(objs_lr1) $(objs_lr3) $(objs_cmn)
+book_incs=$(incs_lr1);$(incs_lr3);$(incs_cmn)
+book_bmroot=$(bmroot_lr3)
 book_src=f77graph
 book_multi_chapter=1
 
@@ -314,8 +314,8 @@ book_src=fmix
 !else ifeq hbook fpguide
 # fpguide
 book_title=$(company) $(%BLD_VER_STR) FORTRAN 77 Programmer's Guide
-book_objs=$(objs_pg) $(objs_cmn) $(objs_fg) $(objs_rsi) $(objs_win386) $(objs_lr1)
-book_incs=$(incs_pg);$(incs_cmn);$(incs_fg);$(incs_rsi);$(incs_win386);$(incs_lr1)
+book_objs=$(objs_pg) $(objs_cmn) $(objs_fg) $(objs_rsi) $(objs_win386) $(objs_lr2)
+book_incs=$(incs_pg);$(incs_cmn);$(incs_fg);$(incs_rsi);$(incs_win386);$(incs_lr2);
 book_bmroot=$(bmroot_pg)
 book_src=fpguide
 book_multi_chapter=1
@@ -384,8 +384,8 @@ book_src=owstl
 !else ifeq hbook pguide
 # pguide
 book_title=$(company) $(%BLD_VER_STR) C/C++ Programmer's Guide
-book_objs=$(objs_pg) $(objs_cmn) $(objs_cg) $(objs_rsi) $(objs_win386) $(objs_lr1)
-book_incs=$(incs_pg);$(incs_cmn);$(incs_cg);$(incs_rsi);$(incs_win386);$(incs_lr1)
+book_objs=$(objs_pg) $(objs_cmn) $(objs_cg) $(objs_rsi) $(objs_win386) $(objs_lr2)
+book_incs=$(incs_pg);$(incs_cmn);$(incs_cg);$(incs_rsi);$(incs_win386);$(incs_lr2);
 book_bmroot=$(bmroot_pg)
 book_src=pguide
 book_multi_chapter=1
