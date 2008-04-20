@@ -45,9 +45,7 @@ must be typecast.
 .do end
 .return end
 .see begin
-.kw _Call16,
-.kw FreeIndirectFunctionHandle,
-.kw GetIndirectFunctionHandle
+.seelist &function. _Call16 FreeIndirectFunctionHandle GetIndirectFunctionHandle
 .see end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .exmp begin

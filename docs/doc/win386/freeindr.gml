@@ -35,9 +35,7 @@ The &func function returns nothing.
 .do end
 .return end
 .see begin
-.kw _Call16,
-.kw GetIndirectFunctionHandle,
-.kw InvokeIndirectFunction
+.seelist &function. _Call16 GetIndirectFunctionHandle InvokeIndirectFunction
 .see end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .keep 13

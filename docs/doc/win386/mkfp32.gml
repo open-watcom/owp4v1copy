@@ -12,8 +12,7 @@ access to the data is needed by the 32-bit program.
 The &func returns a 32-bit far pointer.
 .return end
 .see begin
-.kw MK_LOCAL32,
-.kw MK_FP16
+.seelist &function. MK_LOCAL32 MK_FP16
 .see end
 .exmp begin
 #include <windows.h>

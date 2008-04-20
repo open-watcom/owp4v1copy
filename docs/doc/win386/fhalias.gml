@@ -28,9 +28,7 @@ The &func function returns nothing.
 .do end
 .return end
 .see begin
-.kw AllocHugeAlias16,
-.kw AllocAlias16,
-.kw FreeAlias16
+.seelist &function. AllocHugeAlias16 AllocAlias16 FreeAlias16
 .see end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .exmp begin

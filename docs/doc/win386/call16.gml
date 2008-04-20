@@ -12,8 +12,9 @@ DWORD _Call16( FARPROC lpFunc, char *fmt, ... );
 .funcend
 .desc begin
 The &func function performs the same function as
-.kw GetIndirectFunctionHandle,
-.kw InvokeIndirectFunctionHandle,
+.kw GetIndirectFunctionHandle
+.ct,
+.kw InvokeIndirectFunctionHandle
 and
 .kw FreeIndirectFunctionHandle
 but is much easier to use.
@@ -84,9 +85,7 @@ which represents the return value from the 16-bit function that was
 called.
 .return end
 .see begin
-.kw GetIndirectFunctionHandle,
-.kw InvokeIndirectFunctionHandle,
-.kw FreeIndirectFunctionHandle
+.seelist &function. GetIndirectFunctionHandle InvokeIndirectFunctionHandle FreeIndirectFunctionHandle
 .see end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .exmp begin

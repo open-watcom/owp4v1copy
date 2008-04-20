@@ -19,8 +19,7 @@ parameter to a Windows function though an _16 function.
 The &func returns a 16-bit far pointer.
 .return end
 .see begin
-.kw MK_LOCAL32,
-.kw MK_FP32
+.seelist &function. MK_LOCAL32 MK_FP32
 .see end
 .exmp begin
 #include <windows.h>

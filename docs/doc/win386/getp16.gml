@@ -206,7 +206,7 @@ declared as
 .kw FAR.
 .return end
 .see begin
-.kw ReleaseProc16
+.seelist &function. ReleaseProc16
 .see end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .keep 20

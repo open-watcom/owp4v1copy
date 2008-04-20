@@ -39,9 +39,7 @@ usable by Windows,
 or returns 0 if the alias cannot be allocated.
 .return end
 .see begin
-.kw AllocAlias16,
-.kw FreeAlias16,
-.kw FreeHugeAlias16
+.seelist &function. AllocAlias16 FreeAlias16 FreeHugeAlias16
 .see end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .exmp begin
