@@ -78,7 +78,7 @@ public:
     ~HFCtxomap();
 
     // Specify a map record by the hash value of the context string.
-    addMapRec( uint_32 num, uint_32 h_val );
+    void addMapRec( uint_32 num, uint_32 h_val );
 
     uint_32     size();
     int         dump( OutFile * dest );

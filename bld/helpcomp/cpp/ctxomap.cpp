@@ -90,7 +90,7 @@ HFCtxomap::~HFCtxomap()
 
 //  HFCtxomap::addMapRec    --Add a context map record.
 
-HFCtxomap::addMapRec( uint_32 num, uint_32 h_val )
+void HFCtxomap::addMapRec( uint_32 num, uint_32 h_val )
 {
     CmapRec *newrec = new CmapRec( num, h_val );
     if( _firstRec == NULL ){

@@ -74,7 +74,7 @@ public:
     uint_32     size();
     int         dump( OutFile * dest );
 
-    addKW( char const keyword[], uint_32 offset );
+    void addKW( char const keyword[], uint_32 offset );
 };
 
 

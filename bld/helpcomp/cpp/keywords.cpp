@@ -97,7 +97,7 @@ public:
 
     KWoffset    *head() { return _head; };
     uint_16     count() { return _count; };
-    addOffset( uint_32 new_off );
+    void addOffset( uint_32 new_off );
 
     friend class HFKwbtree;     // for access to _dataOffset;
 };
@@ -234,7 +234,7 @@ int KWRec::dump( OutFile * dest )
 
 //  KWRec::addOffset    --Add a new topic offset to this keyword.
 
-KWRec::addOffset( uint_32 new_off )
+void KWRec::addOffset( uint_32 new_off )
 {
     KWoffset    *new_node = new KWoffset( new_off );
     KWoffset    *current = _head;
@@ -327,7 +327,7 @@ int HFKwbtree::dump( OutFile * dest )
 
 //  HFKwbtree::addKW    --Add a keyword to the keyword list.
 
-HFKwbtree::addKW( char const keyword[], uint_32 offset )
+void HFKwbtree::addKW( char const keyword[], uint_32 offset )
 {
     KWKey       temp_key( keyword );
     KWRec       *found_rec = (KWRec*) _words->findNode( temp_key );

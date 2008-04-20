@@ -580,7 +580,7 @@ void RTFparser::handleCommand()
 
 #define NOT_A_BITMAP ((FontFlags) 0)
 
-RTFparser::Go()
+void RTFparser::Go()
 {
     HCStartFile( _fname );
 

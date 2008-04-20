@@ -264,8 +264,8 @@ int userData::setSystem( int rcs_type )
     return( TRUE );
 }
 
-virtual int rcsSystem::checkout( userData *d, rcsstring name,
-                                rcsstring pj, rcsstring tgt )
+int rcsSystem::checkout( userData *d, rcsstring name,
+                         rcsstring pj, rcsstring tgt )
 {
     char Buffer[BUFLEN];
     if( d == NULL ) return( 0 );
@@ -278,8 +278,8 @@ virtual int rcsSystem::checkout( userData *d, rcsstring name,
     return( 1 );
 }
 
-virtual int rcsSystem::checkin( userData *d, rcsstring name,
-                                rcsstring pj, rcsstring tgt )
+int rcsSystem::checkin( userData *d, rcsstring name,
+                        rcsstring pj, rcsstring tgt )
 {
     char MsgBuf[BUFLEN];
     char Buffer[BUFLEN];

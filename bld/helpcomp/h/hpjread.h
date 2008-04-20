@@ -150,7 +150,7 @@ public:
     ~HPJReader();
 
     // The "Do it!" function.
-    parseFile();
+    void parseFile();
 };
 
 #endif

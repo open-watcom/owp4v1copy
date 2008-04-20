@@ -120,7 +120,7 @@ public:
     RTFparser( Pointers *p, InFile *src );
     ~RTFparser();
 
-    Go();   // This is the 'main loop' function.
+    void Go();   // This is the 'main loop' function.
 };
 
 #endif

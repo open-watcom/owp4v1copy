@@ -178,7 +178,7 @@ HFTtlbtree::~HFTtlbtree()
 
 //  HFTtlbtree::addTitle
 
-HFTtlbtree::addTitle( uint_32 offset, char const title[] )
+void HFTtlbtree::addTitle( uint_32 offset, char const title[] )
 {
     TTLRec  *newrec = new TTLRec( offset, title );
     _titles->insert( newrec );

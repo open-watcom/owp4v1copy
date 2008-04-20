@@ -322,8 +322,8 @@ extern "C" bool WinProc( gui_window *hwin, gui_event msg, void *parm ) {
 }
 
 
-virtual bool WWindow::mouseMove( int, int, WMouseKeyFlags ) {
-/***********************************************************/
+bool WWindow::mouseMove( int, int, WMouseKeyFlags ) {
+/***************************************************/
 
     GUISetMouseCursor( _currCursor );
     return( FALSE );
@@ -1188,8 +1188,8 @@ void WEXPORT WWindow::scrollWindow( WScrollBar sb, int scroll_size ) {
 }
 
 
-virtual bool WEXPORT WWindow::scrollPosChanged( WScrollBar ) {
-/************************************************************/
+bool WEXPORT WWindow::scrollPosChanged( WScrollBar ) {
+/****************************************************/
 
     return( FALSE );
 }

@@ -62,7 +62,7 @@ public:
     uint_32 size() { return _titles->size(); };
     int     dump( OutFile * dest ) { return _titles->dump( dest ); };
 
-    addTitle( uint_32 offset, char const title[] );
+    void addTitle( uint_32 offset, char const title[] );
 };
 
 #endif

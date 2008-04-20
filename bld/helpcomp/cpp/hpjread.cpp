@@ -339,7 +339,7 @@ static InFile *HPJReader::nextFile()
 //  HPJReader::parseFile --Parse an .HPJ file, and call .RTF parsers
 //                          as appropriate.
 
-HPJReader::parseFile()
+void HPJReader::parseFile()
 {
     HCStartFile( _scanner.name() );
 
