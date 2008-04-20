@@ -1,8 +1,9 @@
 .dm topsect begin
 .cp 10
+.ctxstr &'strip(&*1,'T',',')
 .sr *tag=&*
-.if '&*1' ne '&*tag.' .do begin
-.   .sr *tag=&'strip(&*1,'T',',')
+.if '&ctx_str.' ne '&*tag.' .do begin
+.   .sr *tag=&ctx_str.
 .do end
 :ZH2 ctx='&*tag.'.&*
 .pu 1 .ixsect &*
