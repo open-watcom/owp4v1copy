@@ -6,20 +6,22 @@ VpeMain
 WRect
 0
 0
-10220
+10216
 9800
 2
 MProject
 3
 MCommand
-683
+808
 ..\..\build\binnt\wsplice -kIS_RC -kENGLISH -knt -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../h/usage.sp usage.rc
 ..\..\build\binnt\wsplice -kIS_RC -kJAPANESE -knt -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../h/usage.sp usagej.rc
 vi -d -q -i -s ..\h\makemsg.vi -p"msg.gh MSG_SHARE_RC_BASE" ..\h\asmshare.msg
 vi -d -q -i -s ..\h\makemsg.vi -p"wasmmsg.gh MSG_WASM_RC_BASE" ..\h\wasm.msg
 vi -d -q -i -s ..\h\makemsg.vi -p"wmpmsg.gh MSG_WOMP_RC_BASE" ..\h\womp.msg
-wcl386 ..\mkopcode.c -i$(%watcom)\h -i"..\..\watcom\h" -zq
-mkopcode ..\fullops.tok ..\inlnops.tok fullops.gh
+wcl386 ..\mkopcod1.c -i$(%watcom)\h -i"..\..\watcom\h" -zq
+mkopcod1 ..\fullops.tok ..\inlnops.tok asmops.gh
+wcl386 ..\mkopcode.c -D_STANDALONE_ -i$(%watcom)\h -i"..\..\watcom\h" -zq
+mkopcode ..\fullops.tok ..\inlnops.tok asmopsd.gh
 wrc -q /i=..\..\watcom\h /i=..\h;..\..\womp /bt=windows /d_STANDALONE_ /r /zk0 /fo=wasm.res ..\h\wasm.rc
 
 4
@@ -41,7 +43,7 @@ VComponent
 WRect
 0
 0
-5700
+5696
 4280
 0
 0
@@ -49,6 +51,6 @@ WRect
 WFileName
 8
 wasm.tgt
-58
-71
+0
+0
 7
