@@ -3,7 +3,7 @@
 void _FAR _unregisterfonts( void );
 .do end
 .el .do begin
-subroutine _registerfonts()
+subroutine _unregisterfonts()
 .do end
 .gfuncend
 .desc begin
