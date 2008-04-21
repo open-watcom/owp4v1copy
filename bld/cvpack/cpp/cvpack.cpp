@@ -55,8 +55,8 @@ static const char* CVpackHeader =
 
 static const char* CVpackUsage = "usage : cvpack [/nologo] <exefile>\n";
 
-static const MAX_FILE_NAME = 256;
-static char  fName[MAX_FILE_NAME];
+static const int MAX_FILE_NAME = 256;
+static char      fName[MAX_FILE_NAME];
 
 // map table for type indices.
 TypeIndexMap    TypeMap;

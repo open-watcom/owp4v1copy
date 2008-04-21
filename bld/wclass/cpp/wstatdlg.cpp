@@ -65,8 +65,8 @@ WControl * WEXPORT WStatDialog::getControl( unsigned control_id ) {
 
 extern "C" bool DlgProc( gui_window *hwin, gui_event msg, void *parm );
 
-virtual void WStatDialog::doDialog( WWindow *parent ) {
-/*****************************************************/
+void WStatDialog::doDialog( WWindow *parent ) {
+/*********************************************/
 
     gui_create_info     create_info;
 

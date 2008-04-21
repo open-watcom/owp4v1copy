@@ -298,7 +298,7 @@ void MergeFile::writeDWord( uint_32 dw )
 void MergeFile::writeULEB128( uint_32 uleb )
 //------------------------------------------
 {
-    const       MaxULEBLen = 5;
+    const int   MaxULEBLen = 5;
     uint_8      buffer[ MaxULEBLen ];
     uint_8 *    buf = buffer;
     uint_8      b;
@@ -317,7 +317,7 @@ void MergeFile::writeULEB128( uint_32 uleb )
 void MergeFile::writeSLEB128( int_32 sleb )
 //------------------------------------------
 {
-    const       MaxULEBLen = 5;
+    const int   MaxULEBLen = 5;
     uint_8      buffer[ MaxULEBLen ];
     uint_8 *    buf = buffer;
     uint_8      b;

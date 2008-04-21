@@ -49,9 +49,9 @@ DerivationPtr::DerivationPtr( ClassLattice * cls, dr_access acc,
 }
 
 // make a new pointer of my type
-virtual DerivationPtr * ClassLattice::newPtr( ClassLattice * cls,
-                                        dr_access acc, dr_virtuality virt )
-//-------------------------------------------------------------------------
+DerivationPtr * ClassLattice::newPtr( ClassLattice * cls,
+                                      dr_access acc, dr_virtuality virt )
+//-----------------------------------------------------------------------
 {
     return new DerivationPtr( cls, acc, virt );
 }

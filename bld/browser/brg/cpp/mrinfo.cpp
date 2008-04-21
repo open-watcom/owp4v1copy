@@ -114,10 +114,10 @@ void MergeInfoSection::writePass( MergeFile * outFile,
                                   WCPtrOrderedVector<MergeFile> & inFiles )
 //-------------------------------------------------------------------------
 {
-    uint_32 len;
-    uint_32 size;
-    char *  block;
-    const   BufSize = 512;
+    uint_32     len;
+    uint_32     size;
+    char *      block;
+    const int   BufSize = 512;
 
     MergeStringHdl::ragnarok();
     _diesByName->freeDirectory();

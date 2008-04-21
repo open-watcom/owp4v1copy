@@ -53,15 +53,15 @@ static const leaf_index NO_LEAF = 0;
 //
 // To indicate the optional vtab_offset field in LF_METHODLIST does not exist.
 //
-static const NO_VTAB_OFFSET     = -1;
+static const int NO_VTAB_OFFSET     = -1;
 
 //
 // To indicate that no derivation information are available for a
 // class/sttructure type record.
 //
-static const NO_DER_INFO        = 0x0000;
+static const int NO_DER_INFO        = 0x0000;
 
-static const NO_TYPING_INFO     = 0;
+static const int NO_TYPING_INFO     = 0;
 
 class TypeArray;
 

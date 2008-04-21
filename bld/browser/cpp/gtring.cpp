@@ -39,7 +39,7 @@
 #define ChildOff 25
 #define ChildH   10
 #define ChildW   10
-const sibSep = 10;
+const int sibSep = 10;
 
 const int POOLSIZE = 64;
 

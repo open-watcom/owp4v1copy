@@ -45,15 +45,15 @@ class SymbolStruct;
 
 typedef unsigned_16 symbol_index;
 
-static const NO_SEGMENT = 0xffff;
-static const NO_OFFSET = 0xffff;
+static const int NO_SEGMENT = 0xffff;
+static const int NO_OFFSET = 0xffff;
 
 //
 // basic size of a symbol record.
 //
-static const BASICSIZE = WORD;
-static const REF_RECORD_LENGTH = 12;
-static const NO_CHKSUM = 0;
+static const int BASICSIZE = WORD;
+static const int REF_RECORD_LENGTH = 12;
+static const int NO_CHKSUM = 0;
 
 class SymbolStruct {
 

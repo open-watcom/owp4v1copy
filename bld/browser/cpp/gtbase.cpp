@@ -45,10 +45,10 @@
 #include "gtedges.h"
 #include "screendv.h"
 
-const NodeBuffer = 2;
-const sibSep = 10;
-const edgeStub = 5;
-const childSep = 50;
+const int NodeBuffer = 2;
+const int sibSep = 10;
+const int edgeStub = 5;
+const int childSep = 50;
 
 //////////////////////////// TreePtr ///////////////////////////////
 

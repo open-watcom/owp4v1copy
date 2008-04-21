@@ -144,8 +144,8 @@ PaintInfo * TreeClassNode::getPaintInfo( void )
     return new PaintInfo( clr, thk, stl );
 }
 
-virtual bool TreeClassNode::isRelated( TreeNode * node )
-//------------------------------------------------------
+bool TreeClassNode::isRelated( TreeNode * node )
+//----------------------------------------------
 {
     bool ret = (findClass( *_flatClasses,
                        (ClassLattice *)(TreeClassNode *) node ) >= 0);
@@ -163,9 +163,9 @@ ClassLattice *  TreeClassNode::newLattice(  dr_handle hdl, Module *mod,
                                                 v, lvl );
 }
 
-virtual  DerivationPtr * TreeClassNode::newPtr( ClassLattice * cls,
+DerivationPtr * TreeClassNode::newPtr( ClassLattice * cls,
                             dr_access acc, dr_virtuality virt )
-//-----------------------------------------------------------------
+//-------------------------------------------------------------
 {
     return new TreeClassPtr( (TreeClassWindow *)_parent, this,
                              (TreeClassNode *) cls, acc, virt );

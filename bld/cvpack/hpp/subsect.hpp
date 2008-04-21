@@ -53,10 +53,10 @@ class SymbolStruct;
 
 extern TypeIndexMap TypeMap;
 
-static const ALIGN_LENGTH = 0x1000;
+static const int ALIGN_LENGTH = 0x1000;
 
-static const DEFAULT_NAME_HASH = 10;
-static const DEFAULT_ADDR_HASH = 12;
+static const int DEFAULT_NAME_HASH = 10;
+static const int DEFAULT_ADDR_HASH = 12;
 
 
 /******* TYPE *********/

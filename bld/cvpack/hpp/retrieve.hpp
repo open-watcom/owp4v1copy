@@ -47,7 +47,7 @@
 //
 // Code to indicate subsections that are not associated with a module.
 //
-static const MODULE_INDEPENDENT = 0xffff;
+static const int MODULE_INDEPENDENT = 0xffff;
 
 #define NB05 "NB05"
 #define NB09 "NB09"
