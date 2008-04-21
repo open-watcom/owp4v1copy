@@ -70,16 +70,16 @@
 .do end
 .*
 .if '&machsys' eq 'DOS' .do begin
-:set symbol="target"    value="DOS16".
+:set symbol="target"    value="DOS".
 :set symbol="unifnc"    value="0".
 .do end
 .*
 .if '&machsys' eq 'NEC' .do begin
-:set symbol="target"    value="DOS16".
+:set symbol="target"    value="NEC".
 .do end
 .*
 .if '&machsys' eq 'TEST' .do begin
-:set symbol="target"    value="DOS16".
+:set symbol="target"    value="DOS".
 :set symbol="unifnc"    value="1".
 .do end
 .*

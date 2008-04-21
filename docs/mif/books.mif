@@ -314,8 +314,8 @@ book_src=fmix
 !else ifeq hbook fpguide
 # fpguide
 book_title=$(company) $(%BLD_VER_STR) FORTRAN 77 Programmer's Guide
-book_objs=$(objs_pg) $(objs_cmn) $(objs_fg) $(objs_rsi) $(objs_win386) $(objs_lr2)
-book_incs=$(incs_pg);$(incs_cmn);$(incs_fg);$(incs_rsi);$(incs_win386);$(incs_lr2);
+book_objs=$(objs_pg) $(objs_cmn) $(objs_fg) $(objs_rsi) $(objs_win386) $(objs_lr1)
+book_incs=$(incs_pg);$(incs_cmn);$(incs_fg);$(incs_rsi);$(incs_win386);$(incs_lr1);
 book_bmroot=$(bmroot_pg)
 book_src=fpguide
 book_multi_chapter=1
@@ -384,8 +384,8 @@ book_src=owstl
 !else ifeq hbook pguide
 # pguide
 book_title=$(company) $(%BLD_VER_STR) C/C++ Programmer's Guide
-book_objs=$(objs_pg) $(objs_cmn) $(objs_cg) $(objs_rsi) $(objs_win386) $(objs_lr2)
-book_incs=$(incs_pg);$(incs_cmn);$(incs_cg);$(incs_rsi);$(incs_win386);$(incs_lr2);
+book_objs=$(objs_pg) $(objs_cmn) $(objs_cg) $(objs_rsi) $(objs_win386) $(objs_lr1)
+book_incs=$(incs_pg);$(incs_cmn);$(incs_cg);$(incs_rsi);$(incs_win386);$(incs_lr1);
 book_bmroot=$(bmroot_pg)
 book_src=pguide
 book_multi_chapter=1

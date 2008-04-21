@@ -1152,14 +1152,22 @@ $(docsrc_dir)$(SL)lg$(SL)wstrip.gml
 incs_lr1 = $(docsrc_dir)$(SL)lr
 objs_lr1 = &
 $(docsrc_dir)$(SL)lr$(SL)authors.gml &
+$(docsrc_dir)$(SL)lr$(SL)cfunrems.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_dos.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_nec.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_nt.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_qnx.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_tst.gml &
 $(docsrc_dir)$(SL)lr$(SL)clibref.gml &
+$(docsrc_dir)$(SL)lr$(SL)cmanmac.gml &
 $(docsrc_dir)$(SL)lr$(SL)f77graph.gml &
+$(docsrc_dir)$(SL)lr$(SL)gfunmacs.gml &
+$(docsrc_dir)$(SL)lr$(SL)gfunrems.gml &
+$(docsrc_dir)$(SL)lr$(SL)libfuns.gml &
+$(docsrc_dir)$(SL)lr$(SL)liblist7.gml &
+$(docsrc_dir)$(SL)lr$(SL)libmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)os2help.gml &
+$(docsrc_dir)$(SL)lr$(SL)safecmac.gml &
 $(docsrc_dir)$(SL)lr$(SL)symbols.gml
 
 # lr$(SL)src sub-directory
@@ -1272,7 +1280,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)cabs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)calloc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ceil.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cfunmacs.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)cfunrems.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cgets.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)chainint.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)chdir.gml &
@@ -1291,7 +1298,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)clibover.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)clock.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)close.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)closedir.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)cmanmac.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)control8.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)controlf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cos.gml &
@@ -1414,8 +1420,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)gets.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gettime.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getvect.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getw.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)gfunmacs.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)gfunrems.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)globdata.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gmtime.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gmtime_s.gml &
@@ -1561,9 +1565,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)labs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ldexp.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ldiv.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)lfind.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)libfuns.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)liblist7.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)libmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)libpref.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)llabs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)lldiv.gml &
@@ -1739,7 +1740,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)rewind.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)rewinddi.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)rmdir.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sbrk.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)safecmac.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)scanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)scanfs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)seealloc.gml &
