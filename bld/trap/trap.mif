@@ -60,7 +60,7 @@ sys_x86_win  = sys windows_dll &
             op modname=$^& &
 #            option rwr &
             option description $(description)
-sys_x86_nt   = sys nt_dll initinstance &
+sys_x86_nt   = sys nt_dll initinstance opt dosseg &
             export TrapInit_.1 &
             export TrapFini_.2 &
             export TrapRequest_.3 &
@@ -83,7 +83,7 @@ sys_x86_qnx  = sys pharlap rex disable 1014, 1023
 # For now Linux is linked as a PE DLL file since we have code to load
 # this under Linux already. Eventually it should be an ELF shared library.
 
-sys_x86_linux = form windows nt dll op nodefaultlibs &
+sys_x86_linux = form windows nt dll opt dosseg, nodefaultlibs &
             export TrapLoad_.1 &
             option description $(description)
 
