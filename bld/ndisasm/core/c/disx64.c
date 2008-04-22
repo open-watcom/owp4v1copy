@@ -65,7 +65,7 @@ typedef union {
 
 //#define PREFIX_MASK ( DIF_X64_REPNE | DIF_X64_REPE | DIF_X64_OPND_SIZE | DIF_X64_REX_B | DIF_X64_REX_R | DIF_X64_REX_W | DIF_X64_REX_X )
 
-#define PREFIX_MASK ( DIF_X64_OPND_SIZE | DIF_X64_ADDR_SIZE | DIF_X64_REX_B | DIF_X64_REX_R | DIF_X64_REX_W | DIF_X64_REX_X | DIF_X64_PEX_PR )
+#define PREFIX_MASK ( DIF_X64_REPNE | DIF_X64_REPE | DIF_X64_OPND_SIZE | DIF_X64_ADDR_SIZE | DIF_X64_REX_B | DIF_X64_REX_R | DIF_X64_REX_W | DIF_X64_REX_X | DIF_X64_PEX_PR )
 
 //#define X64XMMResetPrefixes() ins->flags &= ~PREFIX_MASK
 
@@ -126,20 +126,16 @@ typedef enum {
     REG_GS  = 0x5,
 
     REG_CR0 = 0x0,
-    REG_CR2 = 0X2,
-    REG_CR3 = 0X3,
-    REG_CR4 = 0X4,
-    REG_DR0 = 0X0,
+    REG_CR2 = 0x2,
+    REG_CR3 = 0x3,
+    REG_CR4 = 0x4,
+    REG_CR8 = 0x8,
+    REG_DR0 = 0x0,
     REG_DR1 = 0x1,
     REG_DR2 = 0x2,
     REG_DR3 = 0x3,
     REG_DR6 = 0x6,
     REG_DR7 = 0x7,
-    REG_TR3 = 0x3,
-    REG_TR4 = 0x4,
-    REG_TR5 = 0x5,
-    REG_TR6 = 0x6,
-    REG_TR7 = 0x7,
 } RM;
 
 typedef enum {
@@ -398,38 +394,35 @@ dis_handler_return X64PrefixAddr( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_CONTINUE );
 }
 
-//dis_handler_return X64PrefixRepe( dis_handle *h, void *d, dis_dec_ins *ins )
+dis_handler_return X64PrefixRepe( dis_handle *h, void *d, dis_dec_ins *ins )
 /***************************************************************************
  * REP/REPE/REPZ Override
  */
-/*{
+{
     ins->size += 1;
     ins->flags |= DIF_X64_REPE;
     return( DHR_CONTINUE );
 }
-*/
 
-//dis_handler_return X64PrefixRepne( dis_handle *h, void *d, dis_dec_ins *ins )
+dis_handler_return X64PrefixRepne( dis_handle *h, void *d, dis_dec_ins *ins )
 /****************************************************************************
  * REPNE/REPNZ
  */
-/*{
+{
     ins->size += 1;
     ins->flags |= DIF_X64_REPNE;
     return( DHR_CONTINUE );
 }
-*/
 
-//dis_handler_return X64PrefixLock( dis_handle *h, void *d, dis_dec_ins *ins )
+dis_handler_return X64PrefixLock( dis_handle *h, void *d, dis_dec_ins *ins )
 /***************************************************************************
  * Lock Prefix
  */
-/*{
+{
     ins->size += 1;
     ins->flags |= DIF_X64_LOCK;
     return( DHR_CONTINUE );
-}*/
-
+}
 
 dis_handler_return X64PrefixSS( dis_handle *h, void *d, dis_dec_ins *ins )
 /*************************************************************************
@@ -634,25 +627,26 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
     }
 }*/
 
-//dis_register X64GetCRegister( WBIT w, RM reg, dis_dec_ins *ins )
+dis_register X64GetCRegister( WBIT w, RM reg, dis_dec_ins *ins )
 /***************************************************************
  *  Get Control Register
  */
-/*{
+{
     switch( reg ) {
     case REG_CR0: return( DR_X64_cr0 );
     case REG_CR2: return( DR_X64_cr2 );
     case REG_CR3: return( DR_X64_cr3 );
     case REG_CR4: return( DR_X64_cr4 );
+    case REG_CR8: return( DR_X64_cr8 );
     default     : return( DR_NONE );
     }
-}*/
+}
 
-//dis_register X64GetDRegister( WBIT w, RM reg, dis_dec_ins *ins )
+dis_register X64GetDRegister( WBIT w, RM reg, dis_dec_ins *ins )
 /***************************************************************
  *  Get Debug Register
  */
-/*{
+{
     switch( reg ) {
     case REG_DR0: return( DR_X64_dr0 );
     case REG_DR1: return( DR_X64_dr1 );
@@ -662,22 +656,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
     case REG_DR7: return( DR_X64_dr7 );
     default     : return( DR_NONE );
     }
-}*/
-
-//dis_register X64GetTRegister( WBIT w, RM reg, dis_dec_ins *ins )
-/***************************************************************
- *  Get Test Register 80486
- */
-/*{
-    switch( reg ) {
-    case REG_TR3: return( DR_X64_tr3 );
-    case REG_TR4: return( DR_X64_tr4 );
-    case REG_TR5: return( DR_X64_tr5 );
-    case REG_TR6: return( DR_X64_tr6 );
-    case REG_TR7: return( DR_X64_tr7 );
-    default     : return( DR_NONE );
-    }
-}*/
+}
 
 dis_register X64GetSRegister( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 /********************************************************************
@@ -704,6 +683,17 @@ dis_register X64GetRegister( REGWIDTH rw, RM reg, dis_dec_ins *ins )
  *                      =  3            use 8-Bit operand
  */
 {
+    switch( ins->type ) {
+    case DI_X64_lldt:
+    case DI_X64_sldt:
+    case DI_X64_ltr:
+    case DI_X64_lmsw:
+//    case DI_X64_str:
+    case DI_X64_verr:
+    case DI_X64_verw:
+        return( X64GetRegister_W( rw, reg, ins ) );
+    }
+
     switch( rw ) {
     case RW_64BIT:
         return( X64GetRegister_Q( rw, reg, ins ) );
@@ -1129,6 +1119,16 @@ dis_ref_type  X64GetRefType( REGWIDTH rw, dis_dec_ins *ins )
 {
     // Instructions that have default ref type
     switch( ins->type ) {
+    case DI_X64_lldt:
+    case DI_X64_sldt:
+    case DI_X64_ltr:
+    case DI_X64_lmsw:
+    case DI_X64_smsw:
+    case DI_X64_str:
+    case DI_X64_invlpg:
+    case DI_X64_verr:
+    case DI_X64_verw:
+        return( DRT_X64_WORD );
     case DI_X64_lfs:
     case DI_X64_lgs:
     case DI_X64_lss:
@@ -1138,6 +1138,13 @@ dis_ref_type  X64GetRefType( REGWIDTH rw, dis_dec_ins *ins )
             return( DRT_X64_FARPTR48 );
         else
             return( DRT_X64_FARPTR32 );
+    case DI_X64_lgdt:
+    case DI_X64_lidt:
+    case DI_X64_sgdt:
+    case DI_X64_sidt00:
+    case DI_X64_sidt01:
+    case DI_X64_sidt10:
+        return( DRT_X64_MEM1632 );
     }
 
     switch( rw ) {
@@ -1667,25 +1674,7 @@ dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )
     switch( ins->type ) {
     case DI_X64_int:
         if( code.type3.w ) {
-
             char intno = GetUByte( d, ins->size );
-
-            if( ( intno >= 0x34 ) && ( intno <= 0x3D ) ) {
-                ins->flags |= DIF_X64_EMU_INT;
-                ins->op[ MAX_NUM_OPERANDS - 1 ].value = intno;
-                ins->op[ MAX_NUM_OPERANDS - 1 ].type = DO_IMMED;
-                ins->op[ MAX_NUM_OPERANDS - 1 ].ref_type = DRT_X64_BYTE;
-/*
-                if( intno == 0x3C ) {
-                    ins->size += 1;
-                    ins->flags ^= DIF_X64_FWAIT;
-                } else if( intno == 0x3D ) {
-                } else {
-                    ins->flags ^= DIF_X64_FWAIT;
-                }
-*/
-                return( DHR_CONTINUE );
-            }
             ins->op[0].value = intno;
             ins->size += 1;
         } else {
@@ -1820,7 +1809,7 @@ dis_handler_return X64Reg_8( dis_handle *h, void *d , dis_dec_ins *ins )
 dis_handler_return X64AccAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
 /************************************************************************/
 // Accum to Accumulator EAX, AX, or AL to DX
-// Format:    0000 000 W
+// Format:    OOOO OOO W
 //              op1    w
 {
     code_8      code;
@@ -1970,13 +1959,13 @@ dis_handler_return X64Shift_16( dis_handle *h, void *d, dis_dec_ins *ins )
                  d, ins, X64GetRefType( rw_reg, ins ) );
 
     if( code.shift.cl ) {
-        ins->op[ins->num_ops].base = DR_X86_cl;
+        ins->op[ins->num_ops].base = DR_X64_cl;
         ins->op[ins->num_ops].type = DO_REG;
         ++ins->num_ops;
     } else {
         ins->op[ins->num_ops].value = 1;
         ins->op[ins->num_ops].type = DO_IMMED;
-        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
+        ins->op[ins->num_ops].ref_type = DRT_X64_BYTE;
         ++ins->num_ops;
     }
     return( DHR_DONE );
@@ -2360,6 +2349,16 @@ typedef union {
 } code_24;
 
 
+dis_handler_return X64NoOp_24( dis_handle *h, void *d , dis_dec_ins *ins )
+/*************************************************************************
+ *  OOOO OOOO : OOOO OOOO : OOOO OOOO
+ */
+{
+    ins->size   += 3;
+    ins->num_ops = 0;
+    return( DHR_DONE );
+}
+
 dis_handler_return X64SetCC( dis_handle *h, void *d, dis_dec_ins *ins )
 /**********************************************************************
  *  SetCC instruction
@@ -2395,6 +2394,66 @@ dis_handler_return X64MovCC_24( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return X64CRegReg_24( dis_handle *h, void *d, dis_dec_ins *ins )
+/***************************************************************************
+ *  Move to/from control register instruction
+ */
+{
+    code_24     code;
+
+    code.full    = ins->opcode;
+    ins->size   += 3;
+    ins->num_ops = 2;
+    if( code.type2.dir ) {
+        ins->op[1].type = DO_REG;
+        ins->op[1].base = X64GetRegister_D( W_DEFAULT, code.type2.rm, ins );
+        ins->op[0].type = DO_REG;
+        ins->op[0].base = X64GetCRegister( W_DEFAULT, code.type2.reg, ins );
+        if( ins->op[0].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    } else {
+        ins->op[0].type = DO_REG;
+        ins->op[0].base = X64GetRegister_D( W_DEFAULT, code.type2.rm, ins );
+        ins->op[1].type = DO_REG;
+        ins->op[1].base = X64GetCRegister( W_DEFAULT, code.type2.reg, ins );
+        if( ins->op[1].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    }
+    return( DHR_DONE );
+}
+
+dis_handler_return X64DRegReg_24( dis_handle *h, void *d, dis_dec_ins *ins )
+/***************************************************************************
+ *  Move to/from debug register instruction
+ */
+{
+    code_24     code;
+
+    code.full    = ins->opcode;
+    ins->size   += 3;
+    ins->num_ops = 2;
+    if( code.type2.dir ) {
+        ins->op[1].type = DO_REG;
+        ins->op[1].base = X64GetRegister_D( W_DEFAULT, code.type2.rm, ins );
+        ins->op[0].type = DO_REG;
+        ins->op[0].base = X64GetDRegister( W_DEFAULT, code.type2.reg, ins );
+        if( ins->op[0].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    } else {
+        ins->op[0].type = DO_REG;
+        ins->op[0].base = X64GetRegister_D( W_DEFAULT, code.type2.rm, ins );
+        ins->op[1].type = DO_REG;
+        ins->op[1].base = X64GetDRegister( W_DEFAULT, code.type2.reg, ins );
+        if( ins->op[1].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    }
+    return( DHR_DONE );
+}
+
 dis_handler_return X64ModRM_24( dis_handle *h, void *d, dis_dec_ins *ins )
 /************************************************************************/
 // Format:    OOOO OOOO OOOO OOOO    MM   OOO RRR
@@ -2408,14 +2467,20 @@ dis_handler_return X64ModRM_24( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 0;
     ins->size   += 3;
 
+    rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
+
+    // modrm is 32 bit if addr size prefix is present
+//    if( DIF_X64_ADDR_SIZE & ins->flags )
+//        rw_mod = RW_32BIT;
+
     if( code.type1.mod == MOD_3 ) {
         switch( ins->type ) {
-//        case DI_X64_lgdt:
-//        case DI_X64_lidt:
-//        case DI_X64_sgdt:
-//        case DI_X64_sidt00:
-//        case DI_X64_sidt01:
-//        case DI_X64_sidt10:
+        case DI_X64_lgdt:
+        case DI_X64_lidt:
+        case DI_X64_sgdt:
+        case DI_X64_sidt00:
+        case DI_X64_sidt01:
+        case DI_X64_sidt10:
         case DI_X64_cmpxchg8b:
             return( DHR_INVALID );
         default:
@@ -2645,9 +2710,8 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
     unsigned            i;
 
     switch( ins->type ) {
-/*
-    case DI_X64_arpl:
-    case DI_X64_bound:
+//    case DI_X64_arpl:
+//    case DI_X64_bound:
     case DI_X64_bswap:
     case DI_X64_call:
     case DI_X64_call2:
@@ -2664,7 +2728,7 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
     case DI_X64_lmsw:
     case DI_X64_ltr:
     case DI_X64_pushw:
-    case DI_X64_pushd:
+//    case DI_X64_pushd:
     case DI_X64_rdmsr:
     case DI_X64_rdpmc:
     case DI_X64_seto:
@@ -2694,7 +2758,6 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
     case DI_X64_wbinvd:
     case DI_X64_wrmsr:
         return( len );
-*/
     case DI_X64_movsx:
     case DI_X64_movzx:
         len = AddRefType( p, len, GetRefType( ins, 0 ) );
@@ -2746,7 +2809,7 @@ static unsigned X64InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
 
     if( name == NULL ) name = temp_buff;
     p = name;
-/*    if( ins->flags & DIF_X64_LOCK ) {
+    if( ins->flags & DIF_X64_LOCK ) {
         p += DisGetString( DisInstructionTable[DI_X64_lock_pr].name, p, 0 );
         if( flags & DFF_X86_UNIX ) *p++ = ';';
         *p++ = ' ';
@@ -2768,7 +2831,7 @@ static unsigned X64InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         }
         if( flags & DFF_X86_UNIX ) *p++ = ';';
         *p++ = ' ';
-    }*/
+    }
     len = DisGetString( DisInstructionTable[ins->type].name, p, 0 );
     if( flags & DFF_X86_UNIX ) {
         if( ins->num_ops >= 2 ) {
@@ -3084,7 +3147,7 @@ static dis_handler_return X64DecodeTableCheck( int page, dis_dec_ins *ins )
         } else {
             return ( DHR_INVALID );
         }
-/*    case 3:
+    case 3:
         if( ( ins->flags & PREFIX_MASK ) == DIF_X64_REPNE ) {
             return( DHR_DONE );
         } else {
@@ -3095,35 +3158,9 @@ static dis_handler_return X64DecodeTableCheck( int page, dis_dec_ins *ins )
             return( DHR_DONE );
         } else {
             return ( DHR_INVALID );
-        }*/
+        }
     default:
         return( DHR_DONE );
-    }
-}
-
-static void process87EMUIns( dis_dec_ins *ins )
-/*********************************************/
-{
-    if( ins->op[ MAX_NUM_OPERANDS - 1 ].value == 0x3C ) {
-        switch( ins->opcode & 0xC0 ) {
-        case 0xC0:
-            ins->flags |= DIF_X64_ES;
-            break;
-        case 0x80:
-            ins->flags |= DIF_X64_CS;
-            break;
-        case 0x40:
-            ins->flags |= DIF_X64_SS;
-            break;
-        case 0:
-            ins->flags |= DIF_X64_DS;
-            break;
-        }
-        ins->opcode |= 0xC0;  // restore FP opcode D8-DF
-    } else if( ins->op[ MAX_NUM_OPERANDS - 1 ].value == 0x3D ) {
-        ins->opcode = 0x90;   // NOP
-    } else {
-        ins->opcode += 0xA4;  // restore FP opcode D8-DF
     }
 }
 
@@ -3137,28 +3174,14 @@ static void X64PreprocHook( dis_handle *h, void *d, dis_dec_ins *ins )
 /********************************************************************/
 {
     ByteSwap( h, d, ins );
-
-    if( ins->flags & DIF_X64_EMU_INT ) {
-        process87EMUIns( ins );
-    }
 }
 
 static unsigned X64PostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
         dis_format_flags flags, unsigned op_num, char *op_buff )
 /**********************************************************************/
 {
-    unsigned len = 0;
-
-/*    if( ins->flags & DIF_X64_EMU_INT ) {
-        #define EMU_INT        "; int "
-        memcpy( op_buff, EMU_INT, sizeof( EMU_INT ) - 1 );
-        len += sizeof( EMU_INT ) - 1;
-        op_buff[ len ] = 0;
-        if( flags & DFF_INS_UP )
-            strupr( op_buff );
-        len += DisCliValueString( d, ins, MAX_NUM_OPERANDS - 1, op_buff + len );
-    }*/
-    return( len );
+    // No funky FPU emulation
+    return( 0 );
 }
 
 const dis_cpu_data X64Data = {

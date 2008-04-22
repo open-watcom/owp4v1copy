@@ -539,4 +539,87 @@ tgt3:
 	xor	r8w,123h
 	xor	dword ptr m32,2
 
+	cli
+
+	clts
+
+	hlt
+
+	invd
+
+	invlpg	byte ptr m8
+
+	iret
+	iretd
+	iretq
+
+	lar	dx,word ptr m16
+	lar	eax,esp
+	lar	r10,rax
+
+	lgdt	fword ptr m48
+
+	lidt	fword ptr m48
+
+	lldt	word ptr m16
+	lldt	bp
+
+	lmsw	r9w
+
+	lsl	ebx,r9d
+
+	ltr	dx
+
+	mov	cr0,r9
+	mov	cr8,rdx
+	mov	rcx,cr4
+	mov	r11,cr2
+
+	mov	dr0,r15
+	mov	rdx,dr7
+
+	rdmsr
+
+	rdpmc
+
+	rdtsc
+
+	rsm
+
+	sgdt	fword ptr m48
+
+	sidt	fword ptr m48
+
+	sldt	dx
+	sldt	ecx
+	sldt	r13
+	sldt	word ptr m16
+
+	smsw	dx
+	smsw	rcx
+	smsw	ebx
+	smsw	word ptr m16
+
+	sti
+
+	str	eax
+	str	r12
+
+	swapgs
+
+	syscall
+
+	sysret
+
+	ud2
+
+	verr	r9w
+	verr	word ptr m16
+
+	verw	bp
+
+	wbinvd
+
+	wrmsr
+
 	end
