@@ -314,30 +314,33 @@ extern void ParseMicrosoft( void )
     while( CmdFile->where != ENDOFCMD ) {
         switch( CmdFile->where ) {
         case MIDST:
-            EatWhite();
             hmm = *CmdFile->current;
             switch( hmm ) {
+            case ' ':
+            case '\t':
+                if( gottoken ) {
+                    sameprompt = TRUE;
+                    gottoken = FALSE;
+                }
+                CmdFile->current++;
+                break;
             case '\0':
                 if( CmdFile->how == BUFFERED ) {
                     CmdFile->where = ENDOFFILE;
-                    sameprompt = TRUE;
                     break;
                 } else if( CmdFile->how == NONBUFFERED ){
                     CmdFile->where = ENDOFLINE;
                     sameprompt = TRUE;
                     break;
-                }             // note the possible fall through.
+                }
+                // note the possible fall through.
             case '\n':
-                if( CmdFile->how == BUFFERED ) {
-                    CmdFile->current++;
-                } else {
-                    CmdFile->where = ENDOFLINE;
+                if( gottoken ) {
+                    sameprompt = FALSE;
                 }
-                if( !sameprompt ) {
-                    NextPrompt( &prompt );
-                }
-                sameprompt = FALSE;
-                gottoken = FALSE;
+                // fall through.
+            case '\r':
+                CmdFile->current++;
                 break;
             case '@':
                 CmdFile->current++;
@@ -359,9 +362,11 @@ extern void ParseMicrosoft( void )
                 CmdFile->current++;
                 if( prompt >= 5 ) {
                     Warning( "unexpected comma found ... ignoring", prompt );
-                } else {
+                }
+                if( !gottoken && !sameprompt ) {
                     NextPrompt( &prompt );
                 }
+                sameprompt = FALSE;
                 gottoken = FALSE;
                 break;
             case ';':
@@ -401,6 +406,9 @@ extern void ParseMicrosoft( void )
                 }
                 break;
             default:          // must be a file name
+                if( !sameprompt ) {
+                    NextPrompt( &prompt );
+                }
                 ProcessFileName( prompt );
                 gottoken = TRUE;
                 sameprompt = FALSE;
