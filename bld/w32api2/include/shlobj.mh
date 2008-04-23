@@ -2537,7 +2537,7 @@ DECLARE_INTERFACE_( IACList, IUnknown ) {
 /* IACList2 interface */
 #undef INTERFACE
 #define INTERFACE   IACList2
-DECLARE_INTERFACE_( IACList2, IAList ) {
+DECLARE_INTERFACE_( IACList2, IACList ) {
     /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
