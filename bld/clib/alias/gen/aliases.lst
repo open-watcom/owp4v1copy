@@ -25,6 +25,7 @@
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
 #######################################################################################################################
 access          access          _access         d16 d32 nt  nta ntp         o16 o32         w16 w32
+atoi64          atoll           _atoi64         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 close_          close           _close          d16 d32 nt  nta ntp         o16 o32         w16 w32
 chdir_          chdir           _chdir          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 chmod_          chmod           _chmod          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
@@ -38,6 +39,7 @@ fdopen          fdopen          _fdopen         d16 d32 nt  nta ntp nvc nvl o16 
 fgetch          fgetchar        _fgetchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fgetwc          fgetwchar       _fgetwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 flelen          filelength      _filelength     d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+fileno          fileno          _fileno         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 fputch          fputchar        _fputchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fputwc          fputwchar       _fputwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 fstat_          fstat           _fstat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
@@ -59,9 +61,13 @@ kbhit_          kbhit           _kbhit          d16 d32 nt  nta ntp         o16 
 lockin          locking         _locking        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 lseek_          lseek           _lseek          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 ltoa__          ltoa            _ltoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+i64toa          lltoa           _i64toa         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 lltoa_          lltoa           _lltoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 ultoa_          ultoa           _ultoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 ulltoa          ulltoa          _ulltoa         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+u64toa          ulltoa          _ui64toa        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+stti64          strtoll         _strtoi64       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+sttu64          strtoull        _strtoui64      d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 tccmp_          _mbccmp         _tccmp          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 tccpy_          _mbccpy         _tccpy          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 tclen_          _mbclen         _tclen          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32

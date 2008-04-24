@@ -356,6 +356,12 @@ _WCRTLINK extern char    *_ulltoa( unsigned long long int __value, char *__buf, 
 _WCRTLINK extern char    *utoa( unsigned int __value, char *__buf, int __radix );
 _WCRTLINK extern char    *_utoa( unsigned int __value, char *__buf, int __radix );
 
+_WCRTLINK extern char    *_i64toa( __int64 __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_ui64toa( unsigned __int64 __value, char *__buf, int __radix );
+_WCRTLINK extern __int64 _atoi64( const char *__nptr );
+_WCRTLINK extern __int64 _strtoi64( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern unsigned __int64 _strtoui64( const char *__nptr, char **__endptr, int __base );
+
 :segment !CNAME
 #if defined(__INLINE_FUNCTIONS__)
  #pragma intrinsic(_rotl,_rotr)
