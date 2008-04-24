@@ -551,6 +551,11 @@
 :target. any
 :usage. remove default library information
 
+:option. \Z\m
+:target. any
+:number. check_maxmem
+:usage. maximum memory allocation in % of default (ignored)
+
 :option. \Z\n
 :target. any
 :internal.

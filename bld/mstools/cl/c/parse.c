@@ -501,6 +501,19 @@ static void check_packing( unsigned *p )
 
 
 /*
+ * Ensure the parameter to /Zm is valid.
+ */
+static void check_maxmem( unsigned *p )
+/*************************************/
+{
+    if( *p > 2000 ) {
+        Warning( "Invalid value '%d' for /Zm -- assuming '100'", *p );
+        *p = 100;
+    }
+}
+
+
+/*
  * Ensure the parameter to /W is valid.
  */
 static void check_warn_level( unsigned *p )
