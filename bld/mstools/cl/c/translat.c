@@ -812,7 +812,7 @@ void HandleFileTranslate( const char *filename, CmdLine *compCmdLine,
     if( status.preprocessToFile ) {
         if( compCmdLine != NULL ) {
             _splitpath( filename, drive, dir, fname, NULL );
-            _makepath( fullPath, drive, dir, fname, ".i" );
+            _makepath( fullPath, NULL, NULL, fname, ".i" );
             newpath = PathConvert( fullPath, '"' );
             AppendFmtCmdLine( compCmdLine, CL_C_OPTS_SECTION, "-fo=%s",
                               newpath );

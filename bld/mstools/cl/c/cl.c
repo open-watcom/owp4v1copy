@@ -42,6 +42,7 @@
 #include "message.h"
 #include "optparse.h"
 #include "parse.h"
+#include "pathconv.h"
 #include "translat.h"
 #include "system.h"
 
@@ -182,9 +183,13 @@ static int compile( const OPT_STORAGE *cmdOpts, CmdLine *compCmdLine )
             }
         }
 
-        /*** Add the object file to the linker list ***/
-        _makepath( fullPath, drive, dir, fname, ".obj" );
-        AddFile( TYPE_OBJ_FILE, fullPath );
+        /*** Add the object file to the linker list, observe -Fo ***/
+        if( cmdOpts->Fo ) {
+            AddFile( TYPE_OBJ_FILE, PathConvert( cmdOpts->Fo_value->data, '"' ) );
+        } else {
+            _makepath( fullPath, NULL, NULL, fname, ".obj" );
+            AddFile( TYPE_OBJ_FILE, fullPath );
+        }
 
         /*** Prepare for the next iteration ***/
         DestroyCmdLine( cloneCmdLine );
