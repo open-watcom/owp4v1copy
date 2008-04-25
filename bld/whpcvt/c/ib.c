@@ -41,30 +41,30 @@ enum {
 static int              Line_postfix=LPOSTFIX_NONE;
 
 // We use the escape char a lot...
-#define STR_ESCAPE              ""
-#define CHR_ESCAPE              ''
+#define STR_ESCAPE              "\x1B"
+#define CHR_ESCAPE              '\x1B'
 
 // these are for the map_char_ib function
 #define MAP_REMOVE              -1
 #define MAP_NONE                -2
 
 // internal hyperlink symbol. Gets filtered out at output time
-#define CHR_TEMP_HLINK          ''
+#define CHR_TEMP_HLINK          '\x7F'
 
 // this symbol separates the hyper-link label and topic. Other hyper-link
 // related symbols are in whpcvt.h
-#define CHR_HLINK_BREAK         'è'
+#define CHR_HLINK_BREAK         '\xE8'
 
 // Some characters we use for graphics
-#define CHR_BULLET              ''
-#define BOX_VBAR                '³'
-#define BOX_HBAR                'Ä'
+#define CHR_BULLET              '\x07'
+#define BOX_VBAR                '\xB3'
+#define BOX_HBAR                '\xC4'
 
 // InfoBench style codes
-#define STR_BOLD_ON             "b"
-#define STR_UNDERLINE_ON        "u"
-#define STR_BOLD_OFF            "p"
-#define STR_UNDERLINE_OFF       "w"
+#define STR_BOLD_ON             STR_ESCAPE "b"
+#define STR_UNDERLINE_ON        STR_ESCAPE "u"
+#define STR_BOLD_OFF            STR_ESCAPE "p"
+#define STR_UNDERLINE_OFF       STR_ESCAPE "w"
 
 // labels for speacial header buttons
 #define HB_UP                   " Up "
@@ -834,13 +834,13 @@ int ib_trans_line(
                 // bold and italic map to bold
                 case 'b':
                 case 'i':
-                    trans_add_str( STR_ESCAPE "b", section, &alloc_size );
+                    trans_add_str( STR_BOLD_ON, section, &alloc_size );
                     break;
 
                 // underline and underscore map to underline
                 case 'u':
                 case 's':
-                    trans_add_str( STR_ESCAPE "u", section, &alloc_size );
+                    trans_add_str( STR_UNDERLINE_ON, section, &alloc_size );
                     break;
                 }
             }
