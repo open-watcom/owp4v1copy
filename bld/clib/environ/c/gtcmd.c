@@ -167,9 +167,13 @@ _WCRTLINK int _bgetcmd( char *buffer, int len )
     return( cmdlen );
 } /* _bgetcmd() */
 
+/* Netware LibC has a special startup file (libc prelude) so getcmd is pulled from the LIBC imports */
+#if !defined(_NETWARE_LIBC)
 
 _WCRTLINK char *getcmd( char *buffer )
 {
     _bgetcmd( buffer, INT_MAX );
     return( buffer );
 } /* getcmd() */
+
+#endif
