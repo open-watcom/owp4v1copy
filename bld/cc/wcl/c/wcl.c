@@ -493,11 +493,12 @@ static int Parse( char *Cmd )
                     break;
 
                 case 'f':               /* files option */
-                    end = ScanFName( end, len );
+                    p = ScanFName( end, len );
                     switch( tolower( Word[0] ) ) {
                     case 'd':           /* name of linker directive file */
                         Link_Name = "__WCL__.LNK";
                         if( Word[1] == '='  ||  Word[1] == '#' ) {
+                            end = p;
                             /* remove quotes from target linker control filename */
                             UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
 
@@ -510,6 +511,7 @@ static int Parse( char *Cmd )
                         break;
                     case 'e':           /* name of exe file */
                         if( Word[1] == '='  ||  Word[1] == '#' ) {
+                            end = p;
                             /* remove quotes from target executable filename */
                             UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
                             strcpy( Exe_Name, unquoted );
@@ -517,10 +519,12 @@ static int Parse( char *Cmd )
                         wcc_option = 0;
                         break;
                     case 'i':           /* name of forced include file */
+                        end = p;
                         break;
                     case 'm':           /* name of map file */
                         Flags.map_wanted = TRUE;
                         if( Word[1] == '='  ||  Word[1] == '#' ) {
+                            end = p;
                             /* remove quotes from target map filename */
                             UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
 
@@ -530,6 +534,7 @@ static int Parse( char *Cmd )
                         wcc_option = 0;
                         break;
                     case 'o':           /* name of object file */
+                        end = p;
                         /* parse off argument, so we get right filename
                             in linker command file */
                         p = &Word[1];
@@ -543,12 +548,14 @@ static int Parse( char *Cmd )
                         break;
 #if defined( WCLI86 ) || defined( WCL386 )
                     case 'p':           /* floating-point option */
+                        end = p;
                         if( tolower( Word[1] ) == 'c' ) {
                             Flags.math_8087 = 0;
                         }
                         break;
 #endif
                     default:
+                        end = p;
                         break;
                     }
                     break;
