@@ -11,6 +11,8 @@
 #define __RPC_H__
 
 :include readonly.sp
+#include <windows.h>
+
 :include cpluspro.sp
 
 /* RPC primitive data types */
