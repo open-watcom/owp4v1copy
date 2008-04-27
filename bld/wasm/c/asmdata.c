@@ -860,7 +860,9 @@ int data_init( int sym_loc, int initializer_loc )
         if( Parse_Pass == PASS_1 ) {
             if( sym->state == SYM_EXTERNAL && ((dir_node *)sym)->e.extinfo->global ) {
                 dir_to_sym( (dir_node *)sym );
-                AddPublicData( (dir_node *)sym );
+                if( !sym->public ) {
+                    AddPublicData( (dir_node *)sym );
+                }
                 if( sym->mem_type != mem_type ) {
                     AsmErr( SYMBOL_TYPE_DIFF, sym->name );
                 }

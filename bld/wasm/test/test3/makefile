@@ -19,6 +19,7 @@ dsxhdlr.dis &
 expr01.dis &
 extern1.dis &
 extern2.dis &
+extern3.dis &
 extprocf.dis &
 extprocn.dis &
 indirect.dis &
