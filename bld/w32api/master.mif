@@ -15,6 +15,7 @@ directx_distrib_lib = 1
 base_libs =        &
         aclui.lib &
         advapi32.lib &
+        bthprops.lib &
         cap.lib &
         comctl32.lib &
         comdlg32.lib &
@@ -225,7 +226,7 @@ uuid_objs = mshtml-uuid.obj msxml-uuid.obj unknwn-uuid.obj &
         objsafe-uuid.obj oaidl-uuid.obj docobj-uuid.obj comcat-uuid.obj &
         exdisp-uuid.obj mlang-uuid.obj objidl-uuid.obj cguid-uuid.obj &
         olectlid-uuid.obj ativscp-uuid.obj urlmon-uuid.obj hlink-uuid.obj &
-        hlguids-uuid.obj extras-uuid.obj devguid.obj
+        hlguids-uuid.obj extras-uuid.obj devguid.obj power-uuid.obj
 
 uuid.lib: $(uuid_objs)
         @%create tmp.lbc

@@ -104,7 +104,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
             {
               hPwdLib = LoadLibrary(TEXT("PASSWORD.CPL"));
               if (hPwdLib)
-                VerifyScreenSavePwd = (VERIFYPWDPROC)GetProcAddress(hPwdLib, szVerifyPassword);
+                VerifyScreenSavePwd = GetProcAddress(hPwdLib, szVerifyPassword);
             }
           RegCloseKey(hKey);
         }

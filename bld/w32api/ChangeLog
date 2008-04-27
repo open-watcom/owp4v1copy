@@ -1,9 +1,240 @@
+2008-04-26  Yuval  <uvman@users.sourceforge.net>
+
+	* include/ntsecpkg.h (SECPKG_STATE_ENCRYPTION_PERMITTED,
+	SECPKG_STATE_STRONG_ENCRYPTION_PERMITTED, SECPKG_STATE_DOMAIN_CONTROLLER,
+	SECPKG_STATE_WORKSTATION, SECPKG_STATE_STANDALONE,
+	LSA_TOKEN_INFORMATION_TYPE, SECPKG_EXTENDED_INFORMATION_CLASS,
+	SECPKG_NAME_TYPE, SECPKG_PRIMARY_CRED, SECPKG_SUPPLEMENTAL_CRED,
+	SECPKG_SUPPLEMENTAL_CRED_ARRAY, SECPKG_PARAMETERS,
+	SECPKG_EVENT_DOMAIN_CHANGE, SECPKG_CLIENT_INFO, SecurityUserData,
+	SECPKG_GSS_INFO, SECPKG_CONTEXT_THUNKS, SECPKG_MUTUAL_AUTH_LEVEL,
+	SECPKG_CALL_INFO, SECPKG_EXTENDED_INFORMATION, PLSA_CALLBACK_FUNCTION,
+	*PLSA_CLIENT_REQUEST, LSA_SEC_HANDLE, SEC_THREAD_START, SEC_ATTRS,
+	*PLSA_REGISTER_CALLBACK, *PLSA_CREATE_LOGON_SESSION,
+	*PLSA_DELETE_LOGON_SESSION, *PLSA_ADD_CREDENTIAL, *PLSA_GET_CREDENTIALS,
+	*PLSA_DELETE_CREDENTIAL, *PLSA_ALLOCATE_LSA_HEAP, *PLSA_FREE_LSA_HEAP,
+	*PLSA_ALLOCATE_CLIENT_BUFFER, *PLSA_FREE_CLIENT_BUFFER,
+	*PLSA_COPY_TO_CLIENT_BUFFER, *PLSA_COPY_FROM_CLIENT_BUFFER,
+	*PLSA_IMPERSONATE_CLIENT, *PLSA_UNLOAD_PACKAGE, *PLSA_DUPLICATE_HANDLE,
+	*PLSA_SAVE_SUPPLEMENTAL_CREDENTIALS, *PLSA_CREATE_THREAD,
+	*PLSA_GET_CLIENT_INFO, *PLSA_REGISTER_NOTIFICATION,
+	*PLSA_CANCEL_NOTIFICATION, *PLSA_MAP_BUFFER, *PLSA_CREATE_TOKEN,
+	*PLSA_AUDIT_LOGON, *PLSA_CALL_PACKAGE, *PLSA_FREE_LSA_HEAP,
+	*PLSA_GET_CALL_INFO, *PLSA_CALL_PACKAGEEX, *PLSA_CREATE_SHARED_MEMORY,
+	*PLSA_ALLOCATE_SHARED_MEMORY, *PLSA_FREE_SHARED_MEMORY,
+	*PLSA_DELETE_SHARED_MEMORY, *PLSA_OPEN_SAM_USER, *PLSA_GET_USER_CREDENTIALS,
+	*PLSA_GET_USER_AUTH_DATA, *PLSA_CLOSE_SAM_USER,
+	*PLSA_CONVERT_AUTH_DATA_TO_TOKEN, *PLSA_CLIENT_CALLBACK,
+	*PLSA_UPDATE_PRIMARY_CREDENTIALS, *PLSA_GET_AUTH_DATA_FOR_USER,
+	*PLSA_CRACK_SINGLE_NAME, *PLSA_AUDIT_ACCOUNT_LOGON,
+	*PLSA_CALL_PACKAGE_PASSTHROUGH, SECPKG_DLL_FUNCTIONS, LSA_DISPATCH_TABLE,
+	LSA_SECPKG_FUNCTION_TABLE, *PLSA_AP_INITIALIZE_PACKAGE, *PLSA_AP_LOGON_USER,
+	*PLSA_AP_CALL_PACKAGE, *PLSA_AP_LOGON_TERMINATED,
+	*PLSA_AP_CALL_PACKAGE_UNTRUSTED, *PLSA_AP_CALL_PACKAGE_PASSTHROUGH,
+	*PLSA_AP_LOGON_USER_EX, *PLSA_AP_LOGON_USER_EX2, SpInitializeFn,
+	SpShutDownFn, SpGetInfoFn, SpAcceptCredentialsFn,
+	SpAcquireCredentialsHandleFn, SpQueryCredentialsAttributesFn,
+	SpFreeCredentialsHandleFn, SpSaveCredentialsFn, SpGetCredentialsFn,
+	SpDeleteCredentialsFn, SpInitLsaModeContextFn, SpAcceptLsaModeContextFn,
+	SpDeleteContextFn, SpApplyControlTokenFn, SpGetUserInfoFn,
+	SpGetExtendedInformationFn, SpQueryContextAttributesFn, SpAddCredentialsFn,
+	SpSetExtendedInformationFn, SpInstanceInitFn, SpInitUserModeContextFn,
+	SpMakeSignatureFn, SpVerifySignatureFn, SpSealMessageFn, SpUnsealMessageFn,
+	SpGetContextTokenFn, SpCompleteAuthTokenFn, SpFormatCredentialsFn,
+	SpMarshallSupplementalCredsFn, SpExportSecurityContextFn,
+	SpImportSecurityContextFn, SECPKG_FUNCTION_TABLE,
+	SECPKG_USER_FUNCTION_TABLE, *SpLsaModeInitializeFn,
+	*SpUserModeInitializeFn): Define.
+	* include/sspi.h (SECURITY_STRING): Define.
+
+2008-04-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/specstrings.h: Add more dummy defines.
+
+2008-04-22  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/winnt.h (SECURITY_MANDATORY_LABEL_AUTHORITY): Define.
+	(SECURITY_MANDATORY_UNTRUSTED_RID): Define.
+	(SECURITY_MANDATORY_LOW_RID): Define.
+	(SECURITY_MANDATORY_MEDIUM_RID): Define.
+	(SECURITY_MANDATORY_HIGH_RID): Define.
+	(SECURITY_MANDATORY_SYSTEM_RID): Define.
+	(SECURITY_MANDATORY_PROTECTED_PROCESS_RID): Define.
+	(SECURITY_MANDATORY_MAXIMUM_USER_RID): Define.
+	(SE_GROUP_INTEGRITY): Define.
+	(SE_GROUP_INTEGRITY_ENABLED): Define.
+
+2008-04-11  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/sddl.h (ConvertStringSidToSidA): Declare.
+	(ConvertStringSidToSidW): Declare.
+	(ConvertStringSidToSid): Define.
+
+2008-03-19  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/mprapi.h: Add guard for MprAdminAcceptReauthentication function
+	and MPR_INTERFACE_3 structure since they are available only in Windows
+	Server 2008
+
+	Thanks to crackedmind  <crackedmind at sf dot net>.
+
+2008-02-24  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/winnt.h: Update guard around KEY_WOW64_64KEY and KEY_WOW64_32KEY
+	definitions.
+	* include/winreg.h (KEY_WOW64_64KEY, KEY_WOW64_32KEY): Remove.
+
+2008-02-23  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/winnt.h (KEY_WOW64_64KEY, KEY_WOW64_32KEY): Define.
+
+2008-02-02  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/specstrings.h (IN, OUT, OPTIONAL): Remove.
+	* include/windef.h (IN, OUT, OPTIONAL): Define.
+
+2008-02-02  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/specstrings.h: new file, move pseudo modifiers from windef.h.
+	* include/windef.h (__in, __inout, __in_opt, __in_bcound, __in_ecount,
+	__out, __out_ecount_part, __struct_bcount, __field_ecount_opt,
+	__out_bcount_opt): Move to specstrings.h.
+
+2008-01-30  Brandon Sneed  <nivenh@sourceware.org>
+
+	* lib/bthprops.def: new file, bluetooth imports.
+
+2008-01-30  Brandon Sneed  <nivenh@sourceware.org>
+
+	* include/windef.h (__in, __inout, __in_opt, __in_bcound, __in_ecount,
+	__out, __out_ecount_part, __struct_bcount, __field_ecount_opt,
+	__out_bcount_opt): Defined additional pseudo-modifiers.
+
+2008-01-29  Brandon Sneed  <nivenh@sourceware.org>
+	* include/ras.h (RAS_MaxDnsSuffix): corrected typo, was RAX_MaxDnsSuffix.
+	(RASENTRYA, RASENTRYW): Added members (dwfOptions2, dwfOptions3, szDnsSuffix,
+	dwTcpWindowSize, szPrerequisitePbk, szPrerequisiteEntry, dwRedialCount,
+	dwRedialPause.
+
+2008-01-29  Brandon Sneed  <nivenh@sourceware.org>
+
+	* include/winnt.h (SYSTEM_POWER_CONDITION): typedef.
+	* include/winuser.h (PBT_POWERSETTINGCHANGE, DEVICE_NOTIFY_WINDOW_HANDLE,
+	DEVICE_NOTIFY_SERVICE_HANDLE): define.
+	* include/winuser.h (LPCGUID, HPOWERNOTIFY, POWERBROADCAST_SETTING): typedefs.
+	* include/winuser.h (GUID_POWERSCHEME_PERSONALITY, GUID_MIN_POWER_SAVINGS,
+	GUID_MAX_POWER_SAVINGS, GUID_TYPICAL_POWER_SAVINGS, GUID_ACDC_POWER_SOURCE,
+	GUID_BATTERY_PERCENTAGE_REMAINING, GUID_IDLE_BACKGROUND_TASK,
+	GUID_SYSTEM_AWAYMODE, GUID_MONITOR_POWER_ON): added externs for GUIDs.
+	* include/winuser.h (RegisterPowerSettingNotification,
+	UnregisterPowerSettingNotification): Add prototypes.
+	* lib/user32.def: Added imports for the above prototypes.
+	* lib/Makefile.in: Added build support for power-uuid.c.
+	* lib/power-uuid.c: New file containing power GUID definitions.
+
+2008-01-29  Brandon Sneed  <nivenh@sourceware.org>
+
+	* include/ras.h (RAS_MaxDnsSuffix): define.
+
+2008-01-29  Brandon Sneed  <nivenh@sourceware.org>
+
+	* include/psapi.h (GetProcessImageFileNameA, GetProcessImageFileNameW):
+	Add prototypes.
+	* lib/psapi.def (GetProcessImageFileNameA@12, GetProcessImageFileNameW@12):
+	Add exports.
+
+2007-12-27  Chris Sutcliffe  <ir0nh34d@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.11.
+	* Makefile.in: Ditto.
+
+2007-12-11  Dave Korn  <dave.korn@artimi.com>
+
+	* include/wincrypt.h (PCRYPT_DECODE_PARA):  Add missing typedef.
+	(CERT_POLICY_MAPPINGS_INFO):  Move before CERT_POLICY_MAPPING.
+
+2007-12-03  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/wingdi.h: Change WINVER guard to _WIN32_WINNT.
+
+2007-12-03  techrazy  <techrazy@users.sourceforge.net>
+
+	* include/wingdi.h (NTM_NONNEGATIVE_AC, NTM_PS_OPENTYPE, NTM_TT_OPENTYPE,
+	NTM_MULTIPLEMASTER, NTM_TYPE1, NTM_DSIG): define.
+
+2007-11-21  Kevin Conaway  <kevin_conaway@users.sourceforge.net>
+
+	* include/wincrypt.h (CryptProtectData, CryptUnprotectData): define.
+
+2007-11-21  elsapo  <elsapo@users.sourceforge.net>
+
+	* include/wincrypt.h (CERT_NAME_STR_COMMA_FLAG,
+	CERT_NAME_STR_DISABLE_IE4_UTF8_FLAG, CERT_NAME_STR_ENABLE_UTF8_UNICODE_FLAG,
+	CMC_ADD_ATTRIBUTES, CMC_ADD_EXTENSIONS, X509_CERT_PAIR,
+	X509_CERTIFICATE_TEMPLATE, X509_CROSS_CERT_DIST_POINTS, CMC_DATA,
+	X509_NAME_CONSTRAINTS, X509_POLICY_CONSTRAINTS, X509_POLICY_MAPPINGS,
+	CMC_RESPONSE, CMC_STATUS, X509_ALGORITHM_IDENTIFIER, X509_ALTERNATE_NAME,
+	PKCS_ATTRIBUTE, X509_AUTHORITY_INFO_ACCESS, X509_AUTHORITY_KEY_ID,
+	X509_AUTHORITY_KEY_ID2, szOID_BASIC_CONSTRAINTS, X509_BASIC_CONSTRAINTS2,
+	X509_BIOMETRIC_EXT, X509_BITS, X509_CERT, X509_CERT_CRL_TO_BE_SIGNED,
+	X509_CERT_POLICIES, X509_CERT_REQUEST_TO_BE_SIGNED, X509_CERT_TO_BE_SIGNED,
+	X509_CHOICE_OF_TIME, PKCS_CONTENT_INFO, PKCS_CONTENT_INFO_SEQUENCE_OF_ANY,
+	X509_CRL_DIST_POINTS, RSA_CSP_PUBLICKEYBLOB, PKCS_CTL, X509_DSS_PARAMETERS,
+	X509_DSS_SIGNATURE, X509_ECC_SIGNATURE, X509_ENHANCED_KEY_USAGE,
+	X509_ENUMERATED, X509_EXTENSIONS, X509_INTEGER, X509_ISSUING_DIST_POINT,
+	X509_KEY_ATTRIBUTES, X509_KEY_USAGE, X509_KEY_USAGE_RESTRICTION,
+	X509_KEYGEN_REQUEST_TO_BE_SIGNED, X509_LOGOTYPE_EXT,
+	X509_MULTI_BYTE_INTEGER, X509_MULTI_BYTE_UINT, X509_NAME, X509_NAME_VALUE,
+	X509_OBJECT_IDENTIFIER, X509_OCTET_STRING, X509_PUBLIC_KEY_INFO,
+	PKCS_RC2_CBC_PARAMETERS, CNG_RSA_PUBLIC_KEY_BLOB,
+	PKCS_RSA_SSA_PSS_PARAMETERS, PKCS_RSAES_OAEP_PARAMETERS,
+	ECC_CMS_SHARED_INFO, X509_SEQUENCE_OF_ANY, PKCS7_SIGNER_INFO,
+	CMS_SIGNER_INFO, PKCS_SMIME_CAPABILITIES, PKCS_TIME_REQUEST,
+	X509_UNICODE_NAME, X509_UNICODE_NAME_VALUE, PKCS_UTC_TIME,
+	OCSP_SIGNED_REQUEST, OCSP_REQUEST, OCSP_RESPONSE,
+	OCSP_BASIC_SIGNED_RESPONSE, OCSP_BASIC_RESPONSE, CRL_REASON_UNSPECIFIED,
+	CRL_REASON_KEY_COMPROMISE, CRL_REASON_CA_COMPROMISE,
+	CRL_REASON_AFFILIATION_CHANGED, CRL_REASON_SUPERSEDED,
+	CRL_REASON_CESSATION_OF_OPERATION, CRL_REASON_CERTIFICATE_HOLD,
+	CRL_REASON_REMOVE_FROM_CRL, CRYPT_ENCODE_ALLOC_FLAG,
+	CRYPT_UNICODE_NAME_ENCODE_DISABLE_CHECK_TYPE_FLAG,
+	CRYPT_UNICODE_NAME_ENCODE_ENABLE_T61_UNICODE_FLAG,
+	CRYPT_UNICODE_NAME_ENCODE_ENABLE_UTF8_UNICODE_FLAG,
+	CRYPT_UNICODE_NAME_ENCODE_FORCE_UTF8_UNICODE_FLAG,
+	szOID_APPLICATION_CERT_POLICIES, szOID_APPLICATION_POLICY_CONSTRAINTS,
+	szOID_APPLICATION_POLICY_MAPPINGS, szOID_AUTHORITY_INFO_ACCESS,
+	szOID_AUTHORITY_KEY_IDENTIFIER, szOID_AUTHORITY_KEY_IDENTIFIER2,
+	X509_BASIC_CONSTRAINTS, szOID_BIOMETRIC_EXT, szOID_CERT_EXTENSIONS,
+	szOID_CERT_POLICIES, szOID_CERTIFICATE_TEMPLATE, szOID_CRL_NUMBER,
+	szOID_CROSS_CERT_DIST_POINTS, szOID_DELTA_CRL_INDICATOR,
+	szOID_ENROLLMENT_NAME_VALUE_PAIR, szOID_FRESHEST_CRL,
+	szOID_ISSUING_DIST_POINT, szOID_NAME_CONSTRAINTS, szOID_CRL_DIST_POINTS,
+	szOID_CRL_REASON_CODE, szOID_CRL_VIRTUAL_BASE, szOID_ECC_PUBLIC_KEY,
+	szOID_ECDSA_SPECIFIED, szOID_ENHANCED_KEY_USAGE, szOID_ISSUER_ALT_NAME,
+	szOID_ISSUER_ALT_NAME2, szOID_KEY_ATTRIBUTES, szOID_KEY_USAGE,
+	szOID_KEY_USAGE_RESTRICTION, szOID_LOGOTYPE_EXT, szOID_POLICY_CONSTRAINTS,
+	szOID_POLICY_MAPPINGS, szOID_RSA_SSA_PSS, szOID_RSAES_OAEP,
+	szOID_SUBJECT_ALT_NAME, szOID_SUBJECT_ALT_NAME2,
+	szOID_SUBJECT_KEY_IDENTIFIER, CMC_ADD_ATTRIBUTES_INFO,
+	PCMC_ADD_ATTRIBUTES_INFO, CMC_ADD_EXTENSIONS_INFO, PCMC_ADD_EXTENSIONS_INFO,
+	CERT_ALT_NAME_ENTRY, PCERT_ALT_NAME_ENTRY, CERT_ALT_NAME_INFO,
+	PCERT_ALT_NAME_INFO, CERT_NAME_VALUE, PCERT_NAME_VALUE,
+	CERT_POLICY_QUALIFIER_INFO, PCERT_POLICY_QUALIFIER_INFO,
+	CERT_POLICY_CONSTRAINTS_INFO, PCERT_POLICY_CONSTRAINTS_INFO,
+	CERT_POLICY_MAPPINGS_INFO, PCERT_POLICY_MAPPINGS_INFO, CERT_POLICY_MAPPING,
+	PCERT_POLICY_MAPPING, CryptDecodeObjectEx, CryptEncodeObject,
+	CryptEncodeObjectEx): define.
+
+2007-11-21  Brian Dessent <dessent@users.sourceforge.net>
+
+	* include/winbase.h (CheckTokenMembership): define.
+
 2007-10-03  Jiri Malak  <Jiri.Malak@iol.cz>
 
 	* include/rpcndr.h: Missing NdrClientCall2 entry.
 	* lib/rpcrt4.def: Ditto.
 
-2007-10-03  Frank Fesevur  <ffes@users.sourceforge.net> 
+2007-10-03  Frank Fesevur  <ffes@users.sourceforge.net>
 	* lib/scnsave.c: Multi-monitor support.
 
 2007-08-03  Chris Sutcliffe  <ir0nh34d@users.sf.net>
@@ -63,7 +294,7 @@
 	[mingw-Bugs-1751565]
 	* include/basetyps.h (IID); Guard with __IID_DEFINED__.
 
-	[mingw-Bugs-1751595] 
+	[mingw-Bugs-1751595]
 	* include/exdisp.h (DWebBrowserEvents2): Remove undocumented STDDISP
 	methods.
 
@@ -78,7 +309,7 @@
 2007-07-09  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	[mingw-Bugs-1749305]
-	* lib/kernel32.def (GetConsoleProcessList@8):  Add export. 
+	* lib/kernel32.def (GetConsoleProcessList@8):  Add export.
 
 2007-07-02  Przemek Czerkas  <pczerkas@gmail.com>
 
