@@ -227,7 +227,7 @@ bool InitCmd( void )
     // If the program name was quoted, strip off the quotes
     if( *ptr == '\"' ) {
         memmove( ptr, ptr + 1, end - ptr );
-        *( end - 2 ) = NULLCHAR;
+        memmove( end - 2, end, last - end + 1 );
     }
     return( TRUE );
 }
@@ -955,7 +955,7 @@ void LoadProg( void )
     unsigned            error;
     int                 ret;
     unsigned long       system_handle;
-    static char         NullProg[] = { NULLCHAR, ARG_TERMINATE };
+    static char         NullProg[] = { NULLCHAR, NULLCHAR, ARG_TERMINATE };
     bool                dummy;
 
     ClearMachState();

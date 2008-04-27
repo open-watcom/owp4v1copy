@@ -303,10 +303,7 @@ unsigned ReqProg_load( void )
         }
         strcpy( buff, endsrc );
     } else {
-        while( *src ) {
-            if( !isdigit( *src ) ) {
-                break;
-            }
+        while( isdigit( *src ) ) {
             src++;
         }
         if( *src == 0 && src != parm ) {
@@ -323,11 +320,7 @@ unsigned ReqProg_load( void )
     if( pid == 0 ) {
         if( FindFilePath( parm, exe_name, ExtensionList ) != 0 ) {
             ret->err = ERROR_FILE_NOT_FOUND;
-            if( buff ) {
-                free( buff );
-                buff = NULL;
-            }
-            return( sizeof( *ret ) );
+            goto error_exit;
         }
 
         /*
@@ -337,11 +330,7 @@ unsigned ReqProg_load( void )
                             NULL, OPEN_EXISTING, 0, 0 );
         if( handle == ( HANDLE ) - 1 ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
-                buff = NULL;
-            }
-            return( sizeof( *ret ) );
+            goto error_exit;
         }
         GetFullPathName( exe_name, MAX_PATH, CurrEXEName, NULL );
 
@@ -360,11 +349,10 @@ unsigned ReqProg_load( void )
         while( *src != 0 ) {
             ++src;
         }
-        len = &parm[GetTotalSize() -sizeof( *acc )] - src;
-        for( ;; ) {
-            if( len == 0 ) {
-                break;
-            }
+        // parm layout
+        // <--parameters-->0<--program_name-->0<--arguments-->0
+        //
+        for( len = GetTotalSize() - sizeof( *acc ) - (src - parm) - 1; len > 0; --len ) {
             ch = *src;
             if( ch == 0 ) {
                 ch = ' ';
@@ -372,7 +360,6 @@ unsigned ReqProg_load( void )
             *dst = ch;
             ++dst;
             ++src;
-            --len;
         }
         *dst = 0;
 
@@ -380,11 +367,7 @@ unsigned ReqProg_load( void )
 
         if( !GetEXEHeader( handle, &hi, &stack ) ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
-                buff = NULL;
-            }
-            return( sizeof( *ret ) );
+            goto error_exit;
         }
         if( hi.sig == EXE_PE ) {
             DebugeeSubsystem = hi.peh.subsystem;
@@ -419,11 +402,7 @@ unsigned ReqProg_load( void )
             }
             if( pid != 0 ) {
                 ret->err = GetLastError();
-                if( buff ) {
-                    free( buff );
-                    buff = NULL;
-                }
-                return( sizeof( *ret ) );
+                goto error_exit;
             }
         } else {
             IsDOS = TRUE;
@@ -457,11 +436,7 @@ unsigned ReqProg_load( void )
     }
     ret->err = StartControlThread( buff, &pid_started, cr_flags );
     if( ret->err != 0 ) {
-        if( buff ) {
-            free( buff );
-            buff = NULL;
-        }
-        return( sizeof( *ret ) );
+        goto error_exit;
     }
     /*
      * CREATE_PROCESS_DEBUG_EVENT will always be the first debug event.
@@ -471,11 +446,7 @@ unsigned ReqProg_load( void )
     if( !rc || ( DebugEvent.dwDebugEventCode != CREATE_PROCESS_DEBUG_EVENT ) ||
                  ( DebugEvent.dwProcessId != pid_started ) ) {
         ret->err = GetLastError();
-        if( buff ) {
-            free( buff );
-            buff = NULL;
-        }
-        return( sizeof( *ret ) );
+        goto error_exit;
     }
     ProcessInfo.pid = DebugEvent.dwProcessId;
     ProcessInfo.process_handle = DebugEvent.u.CreateProcessInfo.hProcess;
@@ -500,11 +471,7 @@ unsigned ReqProg_load( void )
         FlatCS = CS();
         if( !executeUntilVDMStart() ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
-                buff = NULL;
-            }
-            return( sizeof( *ret ) );
+            goto error_exit;
         }
         if( pid ) {
             addAllWOWModules();
@@ -537,11 +504,7 @@ unsigned ReqProg_load( void )
         FlatCS = CS();
         if( !executeUntilVDMStart() ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
-                buff = NULL;
-            }
-            return( sizeof( *ret ) );
+            goto error_exit;
         }
 #if 0
         if( pid ) {
@@ -605,6 +568,7 @@ unsigned ReqProg_load( void )
     }
     ret->mod_handle = 0;
 
+error_exit:
     if( buff ) {
         free( buff );
         buff = NULL;
