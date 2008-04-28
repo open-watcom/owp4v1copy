@@ -845,6 +845,7 @@ static  int     Div10L( double val ) {
 
     int         retn;
 
+       //  check for a NaN or Inf value
     unsigned short int * ui = (unsigned short int *) & val;
     if ( (ui [3] & 0x7FF0) == 0x7FF0 ) {    /* NaN or Inf */
         return( INT_MAX );
@@ -921,7 +922,10 @@ void    R_FOG( void ) {
             } else {
                 logval = Div10X( absvalue );
             }
-            if( ( absvalue < 0.1 ) || ( logval >= dec ) ) {
+               //  use E format if less than 0.1 unless value is zero
+               //  use E format if there are more digits than the width
+            if( (( absvalue < 0.1 ) || ( logval >= dec )) &&
+                 ( value != 0.0 ) ) {
                 ch = 'E';
                 if( exp == 0 ) { // if Gw.d
 #if defined( _M_IX86 ) || defined( __AXP__ ) || defined( __PPC__ )
