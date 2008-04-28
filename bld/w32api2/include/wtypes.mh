@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#include "rpc.h"
-#include "rpcndr.h"
+#include <rpc.h>
+#include <rpcndr.h>
 
 #ifndef __wtypes_h__
 #define __wtypes_h__

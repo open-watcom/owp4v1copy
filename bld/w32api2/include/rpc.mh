@@ -4,6 +4,8 @@
 :include crwatcnt.sp
  */
 
+#include <windows.h>
+
 #ifndef _RPC_H_INCLUDED
 #define _RPC_H_INCLUDED
 
@@ -11,7 +13,6 @@
 #define __RPC_H__
 
 :include readonly.sp
-#include <windows.h>
 
 :include cpluspro.sp
 
