@@ -4,8 +4,11 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WTYPES_H_INCLUDED
-#define _WTYPES_H_INCLUDED
+#include "rpc.h"
+#include "rpcndr.h"
+
+#ifndef __wtypes_h__
+#define __wtypes_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -355,5 +358,4 @@ typedef union {
 
 :include cplusepi.sp
 
-#endif /* _WTYPES_H_INCLUDED */
-
+#endif /* __wtypes_h__ */

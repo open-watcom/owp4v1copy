@@ -4,13 +4,11 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINSCARD_H_INCLUDED
-#define _WINSCARD_H_INCLUDED
-
 #ifndef _WINSCARD_H_
 #define _WINSCARD_H_
 
 :include readonly.sp
+#include <wtypes.h>
 #include <winioctl.h>
 #include <winsmcrd.h>
 
@@ -478,5 +476,3 @@ WINSCARDAPI LONG WINAPI     SCardUIDlgSelectCardW( LPOPENCARDNAMEW_EX );
 :include cplusepi.sp
 
 #endif /* _WINSCARD_H_ */
-#endif /* _WINSCARD_H_INCLUDED */
-
