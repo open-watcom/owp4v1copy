@@ -31,7 +31,7 @@ typedef I_RPC_HANDLE            RPC_EP_INQ_HANDLE;
 
 /* Universally unique identifier (UUID) data types */
 #ifndef GUID_DEFINED
-#Include <guiddef.g>
+#include <guiddef.h>
 #endif
 
 #ifndef UUID_DEFINED
