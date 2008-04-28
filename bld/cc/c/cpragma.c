@@ -475,6 +475,27 @@ int PragRecog( char *what )
 }
 
 
+static int PragRecogAhead( const char *what )
+/*******************************************/
+{
+    char        *p;
+
+    LookAhead();
+    if( !(LAToken == T_ID
+      || (LAToken >= FIRST_KEYWORD && LAToken < T_MACRO_PARM)) ) {
+        return( 0 );
+    }
+    p = Buffer;
+    if( *p == '_' ) ++p;
+    if( *p == '_' ) ++p;
+    if( stricmp( what, p ) == 0 ) {
+        NextToken();
+        return( 1 );
+    }
+    return( 0 );
+}
+
+
 void PragObjNameInfo( char **objname )
 /************************************/
 {
@@ -1075,7 +1096,14 @@ static void PragAlias( void )
 void CPragma( void )
 /******************/
 {
+    /* Note that the include_alias pragma must always be processed
+     * because it's intended for the preprocessor, not the compiler.
+     */
     if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
+        if( PragRecogAhead( "include_alias" ) ) {
+            PragIncludeAlias();
+            return;
+        }
         if( ! CppPrinting() ) return;               /* 12-dec-89 */
         CppPrtf( "#pragma" );
         CompFlags.pre_processing = 1;               /* 28-feb-89 */
