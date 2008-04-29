@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Parse a makefile - targets, dependents, commands.
 *
 ****************************************************************************/
 
@@ -408,7 +407,7 @@ STATIC void parseTargDep( TOKEN_T t, TLIST **btlist )
     DEPEND      *dep;       /* a DEPEND that describes dependents from file */
     BOOLEAN     nodep;      /* true if no dependents from file              */
 
-        /* get the target list, and the last token processed */
+    /* get the target list, and the last token processed */
     t = buildTargs( btlist, t );
     if( *btlist == NULL ) {         /* only in error conditions */
         return;
@@ -416,13 +415,13 @@ STATIC void parseTargDep( TOKEN_T t, TLIST **btlist )
 
     nodep = t == EOL || t == STRM_END;  /* check if there wasn't a colon */
 
-        /* set the scolon attribute for each of these targets */
+    /* set the scolon attribute for each of these targets */
     setSColon( *btlist, (int)(t == TOK_SCOLON || nodep) );
 
     if( !nodep ) {
         dep = buildDepend( &attr );
     } else {
-            /* we've reached EOL already, so we'll just assume this */
+        /* we've reached EOL already, so we'll just assume this */
         if( Glob.debug ) {
             parseTargWarning( *btlist );
         }
@@ -432,7 +431,7 @@ STATIC void parseTargDep( TOKEN_T t, TLIST **btlist )
         attr.symb = TRUE;
     }
 
-        /* now we attach this depend to each target */
+    /* now we attach this depend to each target */
     linkDepend( *btlist, dep, attr );
     setFirstTarget( *btlist );
 }
@@ -1049,7 +1048,7 @@ TLIST *Parse( void )
 
         if( t != TOK_CMD && t != EOL ) {
             if( btlist != NULL ) {
-                    /* link the commands to the targets */
+                /* link the commands to the targets */
                 linkCList( btlist, bclist, cur_target_path, cur_depend_path );
                 bclist = NULL;
                 btlist = NULL;

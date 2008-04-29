@@ -86,4 +86,15 @@ print_header
 $1 -h -f upd09
 do_check
     
+TEST=10
+print_header
+$1 -h -f upd10
+do_check
+    
+TEST=11
+print_header
+$1 -h -ms -f upd11 > tmp.out 2>&1
+diff upd11.out tmp.out
+do_check
+
 rm tmp.out

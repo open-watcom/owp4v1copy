@@ -9,7 +9,7 @@ echo # TEST 1
 echo # ---------------------------
 wcl386 create.c -ox-d1-zq
 create 30
-rm err1.out
+rm -f err1.out
 wtouch err1.out
 %1 -h -f MAKETST1 -l err1.out > tst1.out
 diff -b tst1.out tst1.chk

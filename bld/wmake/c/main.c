@@ -516,6 +516,13 @@ STATIC RET_T doMusts( void )
     }
 
     UpdateInit();
+    if( Glob.microsoft || Glob.unix ) {
+        /* For MS/UNIX mode, targets with no commands may be symbolic.
+         * We need to check this now, after input files have been processed
+         * but before any commands have been executed.
+         */
+        CheckNoCmds();
+    }
 
     if( mustTargs == NULL ) {
         ignoreNoCommands( firstTargFound );

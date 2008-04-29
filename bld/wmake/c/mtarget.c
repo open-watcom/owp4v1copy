@@ -754,6 +754,26 @@ void ResetExecuted( void )
 }
 
 
+STATIC BOOLEAN noCmds( void *trg, void *ptr )
+/*******************************************/
+{
+    TARGET  *targ = trg;
+
+    (void)ptr; // Unused
+    if( targ->depend && targ->depend->clist == NULL ) {
+        targ->allow_nocmd = TRUE;
+    }
+    return( FALSE );
+}
+
+
+void CheckNoCmds( void )
+/**********************/
+{
+    WalkHashTab( targTab, noCmds, NULL );
+}
+
+
 #if defined( USE_SCARCE ) || !defined( NDEBUG )
 STATIC RET_T cleanupLeftovers( void )
 /***********************************/

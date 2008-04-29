@@ -103,13 +103,13 @@ echo #   Test 8  --- ONLY FOR DOS
 echo # ---------------------------
 REM %1 -h -f upd08 >tmp.out
 REM if errorlevel 1 goto err
-REM diff upd08.out tmp.out
-REM if errorlevel 1 goto err8
-REM echo # UPD08 successful
-REM goto test9
+REM     diff upd08.out tmp.out
+REM     if errorlevel 1 goto err8
+REM     echo # UPD08 successful
+REM     goto test9
 REM :err8
-REM @echo ## UPDTEST ## >> %2
-REM @echo # Error: UPD08 unsuccessful!!! | tee -a %2
+REM     @echo ## UPDTEST ## >> %2
+REM     @echo # Error: UPD08 unsuccessful!!! | tee -a %2
 
 :test9
 echo # ---------------------------
@@ -124,6 +124,31 @@ if errorlevel 1 goto err9
     @echo # Error: UPD09 unsuccessful!!! | tee -a %2
 
 :test10
+echo # ---------------------------
+echo #   Test 10
+echo # ---------------------------
+%1 -h -f upd10
+if errorlevel 1 goto err10
+    echo # UPD10 successful
+    goto test11
+:err10
+    @echo ## UPDTEST ## >> %2
+    @echo # Error: UPD10 unsuccessful!!! | tee -a %2
+
+:test11
+echo # ---------------------------
+echo #   Test 11
+echo # ---------------------------
+%1 -h -ms -f upd11 > tmp.out 2>&1
+diff -b upd11.out tmp.out
+if errorlevel 1 goto err11
+    echo # UPD11 successful
+    goto test12
+:err11
+    @echo ## UPDTEST ## >> %2
+    @echo # Error: UPD11 unsuccessful!!! | tee -a %2
+
+:test12
 
 goto done
 :usage

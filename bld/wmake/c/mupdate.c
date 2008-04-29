@@ -895,6 +895,7 @@ RET_T Update( TARGET *targ )
     DEPEND      *curdep;
     UINT32      startcount;
     BOOLEAN     target_exists;
+    RET_T       ret;
 
     CheckForBreak();
     if( targ->error ) {
@@ -918,10 +919,16 @@ RET_T Update( TARGET *targ )
         (targ->depend->clist == NULL && targ->depend->targs == NULL) ) {
                     /* has no depend/explicit rules */
         PrtMsg( DBG | INF | M_EXPLICIT_RULE, M_NO );
-        if( tryImply( targ, FALSE ) == RET_ERROR ) {
+        ret = tryImply( targ, FALSE );
+        if( ret == RET_ERROR ) {
             targ->busy = FALSE;
             targ->error = TRUE;
             return( RET_ERROR );
+        } else if( ret == RET_WARN ) {
+            // If target with no commands is acceptable, consider it done
+            if( targ->allow_nocmd ) {
+                targ->cmds_done = TRUE;
+            }
         }
     } else if( targ->scolon == FALSE ) {    /* double colon */
         PrtMsg( DBG | INF | M_EXPLICIT_RULE, M_DCOLON );

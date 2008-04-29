@@ -212,6 +212,7 @@ extern void     PrintTargFlags( const TARGET *targ );
 extern void     PrintTargets( void );
 extern CLIST    *DotCList( enum DotNames dot );
 extern void     ResetExecuted( void );
+extern void     CheckNoCmds( void );
 extern RET_T    WildTList( TLIST **stack, const char *base, BOOLEAN mentioned,
                 BOOLEAN expandWildCardPath );
 extern void     TargInitAttr( TATTR *attr );
