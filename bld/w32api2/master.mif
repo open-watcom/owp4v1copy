@@ -138,6 +138,7 @@ base_headers =       &
         nddeapi.h    &
         nldef.h      &
         nspapi.h     &
+        ntddndis.h   &
         ntdsapi.h    &
         ntdsbcli.h   &
         ntdsbmsg.h   &
@@ -297,7 +298,6 @@ ddk_headers =        &
         mce.h        &
         netevent.h   &
         ntddk.h      &
-        ntddndis.h   &
         ntdef.h      &
         ntifs.h      &
         ntiologc.h   &
