@@ -55,6 +55,7 @@ if( $#ARGV == -1 ) {
 my $home           = $Common::config{"HOME"};
 my $OW             = $Common::config{"OW"};
 my $report_archive = $Common::config{"REPORTS"};
+my $GHOSTSCRIPT    = $Common::config{"GHOSTSCRIPT"};
 
 if( $^O eq "MSWin32" ) {
     $OStype = "WIN32";
@@ -94,12 +95,15 @@ sub make_build_batch
     open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
         s/\r?\n/\n/;
-        if    (/$setenv OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
-        elsif (/$setenv WATCOM/i)    { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
+        if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
         elsif (/$setenv DOC_BUILD/i) {
-            if ($pass1)              { print BATCH "$setenv DOC_BUILD=1\n"; }
-            else                     { print BATCH "$setenv DOC_BUILD=0\n"; }
-        } else                       { print BATCH; }
+            if ($pass1)           { print BATCH "$setenv DOC_BUILD=1\n"; }
+            else                  { print BATCH "$setenv DOC_BUILD=0\n"; }
+        } elsif (/$setenv GHOSTSCRIPT/i) {
+            if ($pass1)           { print BATCH "$setenv GHOSTSCRIPT=", $GHOSTSCRIPT, "\n"; }
+            else                  { print BATCH; }
+        } else                    { print BATCH; }
     }
     close(INPUT);
     # Add additional commands to do the build.

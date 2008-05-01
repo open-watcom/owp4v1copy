@@ -2,12 +2,12 @@
 
 rem Path configuration
 rem ==================
+set PATH=%PATH%;c:\Program Files\7-Zip
 set OWBUILDPATH=\OW\pass1
 set WWWPATH=\www
 
 rem Initialization
 rem ==============
-path=%path%;c:\Program Files\7-Zip
 cd %WWWPATH%
 
 if exist %OWBUILDPATH% goto prerequisite_ok
@@ -27,8 +27,8 @@ rem ==============
 if exist ss.zip del ss.zip
 if exist ss.7z del ss.7z
 cd snapshot
-zip -r ..\ss.zip *
-7z a -r ..\ss.7z *
+7z a -tzip -r ..\ss.zip *
+7z a -t7z -r ..\ss.7z *
 cd ..
 
 rem Move Archives

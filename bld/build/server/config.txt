@@ -14,6 +14,9 @@ OW=C:\OW
 # The location of your installed compiler (for doing the build).
 WATCOM=C:\WATCOM
 
+# The location of GhostScript for PDF creation
+GHOSTSCRIPT=c:\gs\gs7.04
+
 # File holding the baseline build results. Relative to HOME.
 BLDBASE=bldbase.txt
 BLDBASE2=bldbase2.txt
