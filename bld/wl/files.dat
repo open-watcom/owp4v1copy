@@ -17,7 +17,7 @@ dir="binp"		usr="wlink.exe"		cond="os2host"			where="c f77"
 dir="binp/dll"		usr="wlink.dll"		cond="os2host"			where="c f77"
 dir="binp"		usr="exe2bin.exe"	cond="os2host"			where="c f77"
 dir="binp"		usr="ms2wlink.exe"	cond="os2host"			where="c f77"
-dir="binp"		usr="fcenable"		cond="os2host"			where="c f77"
+dir="binp"		usr="fcenable.exe"	cond="os2host"			where="c f77"
 dir="binp"		usr="wlink.lnk"		cond="os2host"			where="c f77"
 
 dir="binnt"		usr="wlink.exe"		cond="wnthost"			where="c f77 ac"

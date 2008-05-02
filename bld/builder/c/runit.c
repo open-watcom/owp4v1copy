@@ -49,36 +49,84 @@
 
 #ifdef __UNIX__
 
-int __fnmatch( const char *pattern, const char *string )
+static int __fnmatch( char *pattern, char *string )
+/*************************************************/
 {
-    if( *string == 0 ) {
-        while( *pattern == '*' )
-            ++pattern;
-        return( ( *pattern == 0 ) ? 1 : 0 );
+    char    *p;
+    int     len;
+    int     star_char;
+    int     i;
+
+    /*
+     * check pattern section with wildcard characters
+     */
+    star_char = 0;
+    while( ( *pattern == '*' ) || ( *pattern == '?' ) ) {
+        if( *pattern == '?' ) {
+            if( *string == 0 ) {
+                return( 0 );
+            }
+            string++;
+        } else {
+            star_char = 1;
+        }
+        pattern++;
     }
-    switch( *pattern ) {
-    case '*':
-        if( *string == '.' ) {
-            return( __fnmatch( pattern + 1, string ) );
-        } else if( __fnmatch( pattern + 1, string ) ) {
+    if( *pattern == 0 ) {
+        if( ( *string == 0 ) || star_char ) {
             return( 1 );
         } else {
-            return( __fnmatch( pattern, string + 1 ) );
-        }
-    case '?':
-        if( ( *string == 0 ) || ( *string == '.' ) ) {
             return( 0 );
-        } else {
-            return( __fnmatch( pattern + 1, string + 1 ) );
         }
-    case 0:
-        return( *string == 0 );
-    default:
-        if( *pattern != *string ) {
-            return( 0 );
+    }
+    /*
+     * check pattern section with exact match
+     * ( all characters except wildcards )
+     */
+    p = pattern;
+    len = 0;
+    do {
+        if( star_char ) {
+            if( string[ len ] == 0 ) {
+                return( 0 );
+            }
+            len++;
         } else {
-            return( __fnmatch( pattern + 1, string + 1 ) );
+            if( *pattern != *string ) {
+                return( 0 );
+            }
+            string++;
         }
+        pattern++;
+    } while( *pattern && ( *pattern != '*' ) && ( *pattern != '?' ) );
+    if( star_char == 0 ) {
+        /*
+         * match is OK, try next pattern section
+         */
+        return( __fnmatch( pattern, string ) );
+    } else {
+        /*
+         * star pattern section, try locate exact match
+         */
+        while( *string ) {
+            if( *p == *string ) {
+                for( i = 1; i < len; i++ ) {
+                    if( *( p + i ) != *( string + i ) ) {
+                        break;
+                    }
+                }
+                if( i == len ) {
+                    /*
+                     * if rest doesn't match, find next occurence
+                     */
+                    if( __fnmatch( pattern, string + len ) ) {
+                        return( 1 );
+                    }
+                }
+            }
+            string++;
+        }
+        return( 0 );
     }
 }
 
