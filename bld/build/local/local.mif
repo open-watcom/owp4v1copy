@@ -13,7 +13,7 @@ bcl        += -zq
 bld_cc     += -zq
 bld_link   += op q
 bas        += -q
-blib       += -q -zld
+blib       += -q
 brc        += -q
 
 # redirect standard tools to pre-build versions

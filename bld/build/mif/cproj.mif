@@ -87,7 +87,7 @@ mode_aflags   = -DNDEBUG
 mode_lflags   = $(ldebug_fmt)
 mode_clflags  = $(cldebug_fmt)
 !ifdef $(proj_name)_distrib_lib
-mode_libflags = -s-t
+mode_libflags = -s-t-zld
 !endif
 !else
 mode_cflags   = -od -d2 $(cdebug_fmt)
