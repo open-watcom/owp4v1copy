@@ -20,7 +20,7 @@ libname =clib$(libname_$(processor)_$(model))
 
 lib_flags  = -b-c-n
 !ifeq release 1
-lib_flags += -s-t
+lib_flags += -s-t-zld
 !endif
 
 !ifeq processor axp

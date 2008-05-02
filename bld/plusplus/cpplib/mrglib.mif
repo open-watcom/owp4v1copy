@@ -17,7 +17,7 @@ source_libs_x = $(libx)
 
 lib_flags = -b-c-n
 !ifneq release 0
-lib_flags += -s-t
+lib_flags += -s-t-zld
 !endif
 
 !ifndef lib_page_size

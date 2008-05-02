@@ -283,7 +283,7 @@ libname =flib$(libname_$(processor)_$(model))
 
 lib_flags = -b-c-n-p=32
 !ifeq release 1
-lib_flags += -s-t
+lib_flags += -s-t-zld
 !endif
 
 !include ../../include.mif
