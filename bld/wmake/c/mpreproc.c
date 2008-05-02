@@ -1110,7 +1110,7 @@ STRM_T PreGetCH( void )
         if( t == TMP_EOL ) {
             t = GetCHR();
         }
-        if( t == COMMENT && lastChar != DOLLAR ) {
+        if( t == COMMENT && lastChar != DOLLAR && inlineLevel == 0 ) {
             t = GetCHR();
             while( t != EOL && t != STRM_END ) {
                 t = GetCHR();
