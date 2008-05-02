@@ -20,6 +20,10 @@ check_box=whelp_helpfiles,,\
         //1"&DOS Hosted Help Files"\
         //2"&DOS ホスト・ヘルプファイル"\
         //0
+check_box=pdf_helpfiles,,\
+        //1"&PDF Help Files"\
+        //2"&PDF Help Files"\
+        //0
 static_text=
 static_text=,SrcIsCD
 radio_button=helpfiles,,\

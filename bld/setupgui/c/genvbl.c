@@ -380,6 +380,12 @@ extern void SetDefaultGlobalVarList( void )
 #else
     SetVariableByName( "IsAlpha", "0" );
 #endif
+
+#if defined( __LINUX__ )
+    SetVariableByName( "IsLinux", "1" );
+#else
+    SetVariableByName( "IsLinux", "0" );
+#endif
 }
 
 

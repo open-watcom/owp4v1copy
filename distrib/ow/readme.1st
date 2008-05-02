@@ -1,12 +1,8 @@
 To try and create a full install from here, try:
 
-"C"
-builder rel2 cinst os_nt
+builder rel2 os_nt
   
-"F77"
-builder rel2 finst os_nt
-
-use os_os2 for the OS/2 installers
+use os_os2 for the OS/2 installers or os_dos or os_linux, what is appropriate
 
 General stuff.
 =================================
@@ -14,12 +10,12 @@ General stuff.
 Sample commands to create setup.inf script for C/C++:
 
 langdat c
-mksetup -i..\include c filelist %RELROOT%
+mksetup -i..\include -dDstDir=C:\WATCOM c filelist %RELROOT%
 
 or, on Linux
 
 langdat.exe c
-mksetup -i../include c filelist $RELROOT
+mksetup -i../include -dDstDir= c filelist $RELROOT
 
 To create F77 install script, simply replace 'c' with 'f77'. These
 details are likely to change.
@@ -76,3 +72,4 @@ win16_helpfiles     - Windows 3.x help files
 win32_helpfiles     - Win32 help files
 whelp_helpfiles     - WHELP format help files
 os2_helpfiles       - OS/2 help files
+pdf_helpfiles       - PDF help files

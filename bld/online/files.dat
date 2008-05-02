@@ -203,3 +203,27 @@ usr="clr.inf"           where="c jc"                    desc="C language referen
 usr="cw.inf"            where="c f77"                   desc="CauseWay documentation"
 usr="vi.inf"            where="c f77"
 
+#-----------------------------------------------------------------------------
+[ DEFAULT type="s" dir="docs" cond="pdf_helpfiles helpfiles"]
+#-----------------------------------------------------------------------------
+# PDF help files
+usr="c_readme.pdf"
+usr="cguide.pdf"
+usr="cguideq.pdf"
+usr="clib.pdf"
+usr="clibqnx.pdf"
+usr="clr.pdf"
+usr="cpplib.pdf"
+usr="cw.pdf"
+usr="f77graph.pdf"
+usr="f77lr.pdf"
+usr="f_readme.pdf"
+usr="fpguide.pdf"
+usr="ftools.pdf"
+usr="fuguide.pdf"
+usr="guitool.pdf"
+usr="lguide.pdf"
+usr="pguide.pdf"
+usr="tools.pdf"
+usr="vi.pdf"
+usr="wd.pdf"

@@ -24,8 +24,8 @@ autoset=os2host=IsOS2
 autoset=dostarg=IsDOS
 autoset=os2targ=IsOS2
 autoset=nlmtarg=false
-autoset=lnxhost=false
-autoset=lnxtarg=false
+autoset=lnxhost=IsLinux
+autoset=lnxtarg=IsLinux
 autoset=winhost=IsWin
 autoset=wnthost=IsWin32
 autoset=wintarg=IsWin
@@ -37,6 +37,7 @@ autoset=win16_helpfiles=helpfiles winhost
 autoset=win32_helpfiles=helpfiles wnthost
 autoset=whelp_helpfiles=helpfiles doshost
 autoset=os2_helpfiles=helpfiles os2host
+autoset=pdf_helpfiles=helpfiles lnxhost
 autoset=rtsource=false
 autoset=3r=true
 autoset=3s=true
