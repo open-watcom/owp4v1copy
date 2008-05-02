@@ -1,7 +1,6 @@
 dialog=templat1.inf
 supplimental=winsys
 supplimental=windir
-DstDir=C:\WATCOM
 winsys=%winsystemdir%
 CDDir=%SrcDir2%
 OWDir=%MinimalInstall?CDDir:DstDir%

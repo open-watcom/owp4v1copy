@@ -35,6 +35,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#if !defined( __UNIX__ )
+#include <direct.h>
+#endif
 #include "setupio.h"
 #include "zip.h"
 
@@ -43,20 +46,24 @@
 #define MAX_ZERR_LENGTH     1024
 
 
-int add_files( struct zip *archive, const char *list_fname )
+int add_files( struct zip *archive, const char *list_fname, char *dir )
 {
     struct zip_source   *zsrc;
     FILE                *f;
     char                srcname[FILENAME_MAX];
+    int                 retval;
 
     if( (f = fopen( list_fname, "r" )) == NULL ) {
         fprintf( stderr, "failed to open list '%s': %s\n",
                 list_fname, strerror( errno ) );
         return( -1 );
     }
-
+    if( dir != NULL ) {
+        chdir( dir );
+    }
     /* Loop over list, add individual files */
-    while( fgets( srcname, sizeof( srcname ), f ) != NULL ) {
+    retval = 0;
+    while( retval == 0 && fgets( srcname, sizeof( srcname ), f ) != NULL ) {
         int     len;
 
         /* Strip terminating newline */
@@ -70,13 +77,12 @@ int add_files( struct zip *archive, const char *list_fname )
             zip_source_free( zsrc );
             fprintf( stderr, "failed to add '%s' to archive: %s\n",
                     srcname, zip_strerror( archive ) );
-            fclose( f );
-            return( -1 );
+            retval = -1;
+            break;
         }
     }
-
     fclose( f );
-    return( 0 );
+    return( retval );
 }
 
 int main( int argc, char **argv )
@@ -86,7 +92,7 @@ int main( int argc, char **argv )
     char                zerrstr[MAX_ZERR_LENGTH], *zname;
 
     if( argc < 3 ) {
-        printf( "Usage: uzip <archive> <file_list>\n" );
+        printf( "Usage: uzip <archive> <file_list> [<files dir>]\n" );
         return( 2 );
     }
 
@@ -106,9 +112,12 @@ int main( int argc, char **argv )
                  zname, zerrstr );
         return( 1 );
     }
-
     /* Process list of source files */
-    add_files( z, argv[2] );
+    if( argc > 3 ) {
+        add_files( z, argv[2], argv[3] );
+    } else {
+        add_files( z, argv[2], NULL );
+    }
 
     if( zip_close( z ) ) {
         fprintf( stderr, "failed to write archive '%s': %s\n",

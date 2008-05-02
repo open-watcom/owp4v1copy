@@ -12,12 +12,6 @@ BITMAPX( "../res/wcc.bmp" )
 BITMAPX( "../res/f77.bmp" )
 #elif defined( JFSETUP )
 BITMAPX( "../res/f77.bmp" )
-#elif defined( DBSETUP )
-BITMAPX( "../res/wsql.bmp" )
-#elif defined( JDBSETUP )
-BITMAPX( "../res/wsql.bmp" )
-#elif defined( SDBSETUP )
-BITMAPX( "../res/sqlserv.bmp" )
 #else
 BITMAPX( "../res/generic.bmp" )
 #endif

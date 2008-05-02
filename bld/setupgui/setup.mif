@@ -29,7 +29,8 @@ objs = &
     dynarray.obj    &
     gendlg.obj      &
     hash.obj        &
-    nlmver.obj
+    nlmver.obj      &
+    utils.obj
 
 !ifdef patch
 objs +=             &
@@ -43,29 +44,24 @@ objs += &
 !else
     setupiod.obj    &
 !endif
-    utils.obj       &
     winutil.obj     &
     winddeml.obj
 !else ifeq host_os nt
 objs += &
     setupio.obj     &
-    utils.obj       &
     winutil.obj     &
     winddeml.obj
 !else ifeq host_os os2
 objs += &
     setupio.obj     &
-    utils.obj       &
     winutil.obj     &
     os2util.obj
 !else ifeq host_os linux
 objs += &
-    setupio.obj     &
-    unixutil.obj
+    setupio.obj
 !else
 objs += &
-    setupio.obj     &
-    utils.obj
+    setupio.obj
 !endif
 
 !ifeq sys_windowed 1
@@ -305,15 +301,6 @@ f77setup.res : setup.rc $(dep_res1) ../res/f77.bmp
 jfsetup.res : setup.rc $(dep_res1) ../res/f77.bmp
     $(rc) $(rc_flags) -DJFSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 
-dbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
-    $(rc) $(rc_flags) -DDBSETUP $(res_inc_dirs) $[@ -fo=$^@
-
-jdbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
-    $(rc) $(rc_flags) -DJDBSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
-
-sdbsetup.res : setup.rc $(dep_res1) ../res/sqlserv.bmp
-    $(rc) $(rc_flags) -DSDBSETUP $(res_inc_dirs) $[@ -fo=$^@
-
 setup.res : setup.rc $(dep_res1) ../res/generic.bmp
     $(rc) $(rc_flags) $(res_inc_dirs) $[@ -fo=$^@
 
@@ -347,5 +334,3 @@ f77setup.exe : virgin.exe
 jcsetup.exe  : virgin.exe
 
 jfsetup.exe  : virgin.exe
-
-dbsetup.exe  : virgin.exe
