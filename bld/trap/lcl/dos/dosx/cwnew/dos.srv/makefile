@@ -29,4 +29,4 @@ objs =  cwhelp.obj &
         x86cpu.obj
 
 $(target) : $(objs) $(__MAKEFILES__)
-    $(linker) system causeway name $^@ op map, statics, stub=cwdstub.exe f {$(objs)} l ../lib/system
+    $(linker) system causeway name $^@ op map, statics, stub=$(contrib_dir)/extender/causeway/bin/cwdstub.exe f {$(objs)} l ../lib/system

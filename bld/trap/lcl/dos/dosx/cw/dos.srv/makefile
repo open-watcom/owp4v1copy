@@ -22,4 +22,4 @@ inc_dirs = -I"../h"
 objs =  cwhelp.obj c2asm.obj
 
 $(target) : $(objs) $(__MAKEFILES__)
-    $(linker) system causeway name $^@ op map, stub=cwdstub.exe f {$(objs)} l ../lib/system
+    $(linker) system causeway name $^@ op map, stub=$(contrib_dir)/extender/causeway/bin/cwdstub.exe f {$(objs)} l ../lib/system
