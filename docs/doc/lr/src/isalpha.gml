@@ -42,7 +42,8 @@ The &wfunc function returns a non-zero value only for wide characters
 for which
 .kw iswupper
 or
-.kw iswlower is true, or any wide character that is one of an
+.kw iswlower
+is true, or any wide character that is one of an
 implementation-defined set for which none of
 .kw iswcntrl,
 .kw iswdigit,

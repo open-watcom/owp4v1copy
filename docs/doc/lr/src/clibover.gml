@@ -2112,7 +2112,7 @@ directly from a program.
 .section BIOS Functions
 .*
 .np
-.ix &BiosFunc
+.ix '&BiosFunc'
 This set of functions allows access to services provided by the BIOS.
 .fdbeg
 .fd *fun="_bios_disk" provide disk access functions
@@ -2130,7 +2130,7 @@ This set of functions allows access to services provided by the BIOS.
 .section DOS-Specific Functions
 .*
 .np
-.ix &DosFunc
+.ix '&DosFunc'
 These functions provide the capability to invoke DOS functions
 directly from a program.
 .fdbeg
