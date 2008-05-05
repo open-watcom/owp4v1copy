@@ -148,7 +148,7 @@
 .   .do end
 .   .sr *i=1
 .   .pe &__fnx.
-.   .   .ixm &$$fnc(&*i.);.sr *i=&*i.+1
+.   .   .if '&funcgrp.' ne '&$$fnc(&*i.)' .ixm &$$fnc(&*i.);.sr *i=&*i.+1
 .   .cp 5
 .   .newcode Synopsis:
 .do end

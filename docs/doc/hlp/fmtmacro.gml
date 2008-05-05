@@ -333,7 +333,13 @@
 .if ›&*iwrd.› ne ›.› .do begin
 .se *iwrd="&'strip('&*iwrd.','T','.')"
 .do end
-.sr *iwrd2="&'strip('&*iwrd.','L','_') "
+.se *iwrd2='&*iwrd.'
+.if '&'left(&*iwrd2.,1)' eq '_' .do begin
+.se *iwrd2=&'right(&*iwrd2.,&'length(&*iwrd2.)-1)_
+.do end
+.if '&'left(&*iwrd2.,1)' eq '_' .do begin
+.se *iwrd2=&'right(&*iwrd2.,&'length(&*iwrd2.)-1)_
+.do end
 .if &e'&dohelp eq 0 .do begin
 :IH1 print='&*iwrd.'.&*iwrd2.
 .   .if '&*2' eq '' .do begin
@@ -368,7 +374,13 @@
 .if ›&*iw.› ne ›.› .do begin
 .se *iw="&'strip('&*iw.','T','.')"
 .do end
-.sr *iw2="&'strip('&*iw.','L','_')"
+.se *iw2='&*iw.'
+.if '&'left(&*iw2.,1)' eq '_' .do begin
+.se *iw2=&'right(&*iw2.,&'length(&*iw2.)-1)_
+.do end
+.if '&'left(&*iw2.,1)' eq '_' .do begin
+.se *iw2=&'right(&*iw2.,&'length(&*iw2.)-1)_
+.do end
 :IH2 print='&*iw.'.&*iw2.:I2 &ixmajor..&*iw2.
 .dm ix2 end
 .*
