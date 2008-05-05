@@ -387,7 +387,9 @@ Moves the cursor to the last character on the current line.
 Moves the cursor to the first non-whitespace character on the current line.
 .endkey
 
-.begkey ';' ';' (semi-colon)
+.dc cw OFF
+.begkey ; ; (semi-colon)
+.dc cw ;
 Repeats the last
 .keyword f
 :cont.,

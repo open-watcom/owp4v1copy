@@ -8,7 +8,6 @@
 :INCLUDE file='xdefs'.
 :set symbol="lang"       value="C/C++".
 :INCLUDE file='defs'.
-.dc cw 
 :INCLUDE file='cppextra'.
 .*
 :GDOC.

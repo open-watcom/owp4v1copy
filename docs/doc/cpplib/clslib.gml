@@ -6,7 +6,6 @@
 :INCLUDE file='xdefs'.
 :set symbol="lang"       value="C/C++".
 :INCLUDE file='defs'.
-.dc cw 
 :INCLUDE file='cppextra'.
 .*
 .if &e'&dohelp eq 1 .do begin
@@ -20,12 +19,6 @@
 :TITLEP.
 :TITLE stitle="&cmppname Class Library Reference"
 :TITLE.&cmppname Class Library Reference
-.if &vol eq 1 .do begin
-:TITLE.Volume 1
-.do end
-.el .if &vol eq 2 .do begin
-:TITLE.Volume 2
-.do end
 :TITLE.3rd Edition
 :set symbol="isbn" value="1-55094-073-2"
 :AUTHOR.WATCOM International Corporation
@@ -56,7 +49,6 @@
 .if &e'&dohelp eq 0 .do begin
 :SEPSECT.&cmppname Class Library Reference
 .do end
-.if &vol eq 1 or &e'&vol eq 0 .do begin
 :CHAPTER.Header Files
 . :INCLUDE file='hdrs'.
 :CHAPTER.Common Types
@@ -73,8 +65,6 @@
 :CHAPTER.Complex Class
 .se headtext$=Complex Class
 . :INCLUDE file='complex_'.
-.do end
-.if &vol eq 2 or &e'&vol eq 0 .do begin
 :CHAPTER.Container Exception Classes
 . :INCLUDE file='wcexcep'
 . :INCLUDE file='wcitexc'
@@ -104,8 +94,6 @@
 . :INCLUDE file='stack'
 :CHAPTER.Vector Containers
 . :INCLUDE file='wcvector'.
-.do end
-.if &vol eq 1 or &e'&vol eq 0 .do begin
 :CHAPTER.Input/Output Classes
 .se headtext$=Input/Output Classes
 . :INCLUDE file='filebuf_'
@@ -128,7 +116,6 @@
 :CHAPTER.String Class
 .se headtext$=String Class
 . :INCLUDE file='string_'
-.do end
 .if &e'&dohelp eq 0 .do begin
 :BACKM.
 .cd set 2

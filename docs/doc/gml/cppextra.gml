@@ -95,7 +95,7 @@
 
 .gt period add @period cont
 .dm @period begin
-.ct .li .
+.ct .li .;
 .dm @period end
 
 .gt blankline add blankline
@@ -117,28 +117,28 @@
 :cmt.=======================================================================
 :cmt. keywords
 :cmt.=======================================================================
-.'se eof='.mno EOF.ct '
-.'se getarea='.i get area.ct '
-.'se getptr='.i get pointer.ct '
-.'se noteof='.mno __NOT_EOF.ct '
-.'se null='.mno NULL.ct '
-.'se putarea='.i put area.ct '
-.'se putptr='.i put pointer.ct '
-.'se rsvarea='.i reserve area.ct '
-.'se fmtwidth='.i format width.ct '
-.'se fmtprec='.i format precision.ct '
-.'se fillchar='.i fill character.ct '
-.'se fmtflags='.mno ios::fmtflags.ct '
-.'se iostate='.mno ios::iostate.ct '
-.'se errstate='. error state in the inherited .mno ios. object.ct '
-.'se goodbit='.mno ios::goodbit.ct '
-.'se badbit='.mno ios::badbit.ct '
-.'se failbit='.mno ios::failbit.ct '
-.'se eofbit='.mno ios::eofbit.ct '
-.'se cin='.mno cin.ct '
-.'se cout='.mno cout.ct '
-.'se cerr='.mno cerr.ct '
-.'se clog='.mno clog.ct '
+.'se eof=';.mno EOF;.ct '
+.'se getarea=';.i get area;.ct '
+.'se getptr=';.i get pointer;.ct '
+.'se noteof=';.mno __NOT_EOF;.ct '
+.'se null=';.mno NULL;.ct '
+.'se putarea=';.i put area;.ct '
+.'se putptr=';.i put pointer;.ct '
+.'se rsvarea=';.i reserve area;.ct '
+.'se fmtwidth=';.i format width;.ct '
+.'se fmtprec=';.i format precision;.ct '
+.'se fillchar=';.i fill character;.ct '
+.'se fmtflags=';.mno ios::fmtflags;.ct '
+.'se iostate=';.mno ios::iostate;.ct '
+.'se errstate=';. error state in the inherited ;.mno ios;. object;.ct '
+.'se goodbit=';.mno ios::goodbit;.ct '
+.'se badbit=';.mno ios::badbit;.ct '
+.'se failbit=';.mno ios::failbit;.ct '
+.'se eofbit=';.mno ios::eofbit;.ct '
+.'se cin=';.mno cin;.ct '
+.'se cout=';.mno cout;.ct '
+.'se cerr=';.mno cerr;.ct '
+.'se clog=';.mno clog;.ct '
 
 :cmt.=======================================================================
 :cmt. macros
@@ -248,12 +248,12 @@
 .'se cl_name='&*.'
 .'se cl2_name='&*cl2.'
 .'if '&*cl2.' ne '' .th .do begin
-.' .'se obj='. .mno &*.. and .mno &*cl2.. objects.ct '
-.' .'se cls='. .mno &*.. and .mno &*cl2.. classes.ct '
+.' .'se obj=';. ;.mno &*.;. and ;.mno &*cl2.;. objects;.ct '
+.' .'se cls=';. ;.mno &*.;. and ;.mno &*cl2.;. classes;.ct '
 .do end
 .el .do begin
-.' .'se obj='. .mno &*.. object.ct '
-.' .'se cls='. .mno &*.. class.ct '
+.' .'se obj=';. ;.mno &*.;. object;.ct '
+.' .'se cls=';. ;.mno &*.;. class;.ct '
 .do end
 .dm clfnm end
 
@@ -323,42 +323,42 @@
 .'se cl_long=&*cllong.
 .if '&*fmt' eq 'mfun' .do begin
 .'  .topsect &*.()
-.'  .'se fn='.mno &*.. &*prot. member function.ct '
+.'  .'se fn=';.mno &*.;. &*prot. member function;.ct '
 .do end
 .el .if '&*fmt' eq 'ctor' .do begin
 .'  .topsect &*.()
-.'  .'se fn='. &*prot .mno &cl_name.. constructor.ct '
+.'  .'se fn=';. &*prot ;.mno &cl_name.;. constructor;.ct '
 .do end
 .el .if '&*fmt' eq 'dtor' .do begin
 .'  .topsect &*.()
-.'  .'se fn='. &*prot .mno ~~&cl_name.. destructor.ct '
+.'  .'se fn=';. &*prot ;.mno ~~&cl_name.;. destructor;.ct '
 .do end
 .el .if '&*fmt' eq 'mdata' .do begin
 .'  .topsect &*.
-.'  .'se fn='.mno &*.. &*prot. member data.ct '
+.'  .'se fn=';.mno &*.;. &*prot. member data;.ct '
 .do end
 .el .if '&*fmt' eq 'mtyp' .do begin
 .'  .topsect &*.
-.'  .'se fn='.mno &cl_name.::&*.. member typedef.ct '
+.'  .'se fn=';.mno &cl_name.::&*.;. member typedef;.ct '
 .do end
 .el .if '&*fmt' eq 'fun' .do begin
 .'  .'se cl3_name='nope'
 .'  .topsect &cl_name. &*.()
-.'  .'se fn='.mno &*.. function.ct '
+.'  .'se fn=';.mno &*.;. function;.ct '
 .do end
 .el .if '&*fmt' eq 'mnp' .do begin
 .'  .'se cl3_name='nope'
 .'  .topsect &cl_name. &*.()
-.'  .'se fn='.mno &*.. manipulator.ct '
+.'  .'se fn=';.mno &*.;. manipulator;.ct '
 .do end
 .el .if '&*fmt' eq 'hdrmnp' .do begin
 .'  .'se cl3_name='nope'
 .'  .topsect &*.
-.'  .'se fn='.mno &*..ct '
+.'  .'se fn=';.mno &*.;.ct '
 .do end
 .el .if '&*fmt' eq 'hdr' .do begin
 .'  .libsect &*.
-.'  .'se fn='.mno &*..ct '
+.'  .'se fn=';.mno &*.;.ct '
 .do end
 .in 0
 :ZDL termhi=2 break.

@@ -42,13 +42,12 @@
 .* 12   sans-serif 32pt
 .****************************************************************************/
 
-.dc cw 
 :cmt. CTRL_A, 0x01
 
-:cmt. .'se cmdmode='.bd command mode.ct '
-:cmt. .'se tinsmode='.bd text insertion mode.ct '
-:cmt. .'se cmdline='.bd command line.ct '
-:cmt. .'se copybuffer='.bd copy buffer.ct '
+:cmt. .'se cmdmode=';.bd command mode;.ct '
+:cmt. .'se tinsmode=';.bd text insertion mode;.ct '
+:cmt. .'se cmdline=';.bd command line;.ct '
+:cmt. .'se copybuffer=';.bd copy buffer;.ct '
 
 .'se cmdmode='command mode'
 .'se tinsmode='text insertion mode'
@@ -169,13 +168,13 @@
 .   .   .do end
 .   :ZeDL
 .   .do end
-.'se range ='.param &*1..ct '
-.'se parm1 ='.param &*3..ct '
-.'se parm2 ='.param &*4..ct '
-.'se parm3 ='.param &*5..ct '
-.'se parm4 ='.param &*6..ct '
-.'se parm5 ='.param &*7..ct '
-.'se parm6 ='.param &*8..ct '
+.'se range =';.param &*1.;.ct '
+.'se parm1 =';.param &*3.;.ct '
+.'se parm2 =';.param &*4.;.ct '
+.'se parm3 =';.param &*5.;.ct '
+.'se parm4 =';.param &*6.;.ct '
+.'se parm5 =';.param &*7.;.ct '
+.'se parm6 =';.param &*8.;.ct '
 .dm syntx end
 
 .dm begdescr begin
@@ -404,7 +403,7 @@
 .   .se *e = &*1.
 .   .do end
 .millust begin
-.pe on.segrp.if &s gt &*e .pe delete
+.pe on;.segrp;.if &s gt &*e .pe delete
 .millust end
 .in +0.1i
 .sk

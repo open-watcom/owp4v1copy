@@ -138,8 +138,10 @@ in their definition.
 :DT.:
 :DD.Enter a command line command.
 
-:DT.';'
+.dc cw OFF
+:DT.;
 :DD.Perform the last f,t,F or T command.
+.dc cw ;
 
 :DT.<n><<oper>
 :DD.Shift lines to the left.

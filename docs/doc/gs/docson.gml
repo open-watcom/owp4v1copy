@@ -97,8 +97,8 @@ which are supported by &cmpcname..
 .do end
 .*
 .if '&lang' eq 'C/C++' .do begin
-.point &cmpcname Library Reference, Volumes 1 and 2
-These manuals describe the C and graphics libraries supported by
+.point &cmpcname Library Reference
+This manual describe the C and graphics libraries supported by
 &product..
 .do end
 .*
