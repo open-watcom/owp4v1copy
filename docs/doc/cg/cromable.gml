@@ -87,10 +87,10 @@ gmtime~b~b~b~b~b~b~b~b~b~b~b~b~b
 hypot~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 inp~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 inpw~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
-int86 (1)~b~b~b~b~b~b~b~b~b~b
-int86x (1)~b~b~b~b~b~b~b~b~b
-int386 (2)~b~b~b~b~b~b~b~b~b
-int386x (2)~b~b~b~b~b~b~b~b
+int86~b(1)~b~b~b~b~b~b~b~b~b~b
+int86x~b(1)~b~b~b~b~b~b~b~b~b
+int386~b(2)~b~b~b~b~b~b~b~b~b
+int386x~b(2)~b~b~b~b~b~b~b~b
 intr~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 isalnum~b~b~b~b~b~b~b~b~b~b~b~b
 isalpha~b~b~b~b~b~b~b~b~b~b~b~b
@@ -278,14 +278,14 @@ dup~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 dup2~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 _endthread~b~b~b~b~b~b~b~b~b
 eof~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
-execl (1)~b~b~b~b~b~b~b~b~b~b
-execle (1)~b~b~b~b~b~b~b~b~b
-execlp (1)~b~b~b~b~b~b~b~b~b
-execlpe (1)~b~b~b~b~b~b~b~b
-execv (1)~b~b~b~b~b~b~b~b~b~b
-execve (1)~b~b~b~b~b~b~b~b~b
-execvp (1)~b~b~b~b~b~b~b~b~b
-execvpe (1)~b~b~b~b~b~b~b~b
+execl~b(1)~b~b~b~b~b~b~b~b~b~b
+execle~b(1)~b~b~b~b~b~b~b~b~b
+execlp~b(1)~b~b~b~b~b~b~b~b~b
+execlpe~b(1)~b~b~b~b~b~b~b~b
+execv~b(1)~b~b~b~b~b~b~b~b~b~b
+execve~b(1)~b~b~b~b~b~b~b~b~b
+execvp~b(1)~b~b~b~b~b~b~b~b~b
+execvpe~b(1)~b~b~b~b~b~b~b~b
 exit~b~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 _exit~b~b~b~b~b~b~b~b~b~b~b~b~b~b
 fclose~b~b~b~b~b~b~b~b~b~b~b~b~b
@@ -296,7 +296,7 @@ ferror~b~b~b~b~b~b~b~b~b~b~b~b~b
 fflush~b~b~b~b~b~b~b~b~b~b~b~b~b
 _ffree~b~b~b~b~b~b~b~b~b~b~b~b~b
 _fheapchk~b~b~b~b~b~b~b~b~b~b
-_fheapgrow (1)~b~b~b~b~b
+_fheapgrow~b(1)~b~b~b~b~b
 _fheapmin~b~b~b~b~b~b~b~b~b~b
 _fheapset~b~b~b~b~b~b~b~b~b~b
 _fheapshrink~b~b~b~b~b~b~b

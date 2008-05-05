@@ -1416,10 +1416,12 @@ if using the OS/2 hosted compiler,
 .kwm __NT__
 if using the Windows NT or Windows 95 hosted compiler,
 .kwm __QNX__
+and
 .kwm __UNIX__
 if using the QNX hosted version.
 or
 .kwm __LINUX__
+and
 .kwm __UNIX__
 if using the Linux hosted version.
 Any string consisting of letters, digits, and the underscore character

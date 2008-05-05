@@ -1,41 +1,144 @@
+.*
 .chap Re-entrant Functions
 .*
 .np
 The following functions in the C library are re-entrant:
-.millust begin
- abs            atoi            atol            bsearch
- bsearch_s      div             fabs            _fmbsrtowcs_s
-_fmbstowcs_s    _fmemccpy       _fmemchr        _fmemcmp
-_fmemcpy        _fmemicmp       _fmemmove       _fmemset
-_fstrcat        _fstrchr        _fstrcmp        _fstrcpy
-_fstrcspn       _fstricmp       _fstrlen        _fstrlwr
-_fstrncat       _fstrncmp       _fstrncpy       _fstrnicmp
-_fstrnset       _fstrpbrk       _fstrrchr       _fstrrev
-_fstrset        _fstrspn        _fstrstr        _fstrupr
-_fwcrtombs_s    _fwcsrtombs_s   _fwcstombs_s    _fwctomb_s
- isalnum        isalpha         isascii         isblank
- iscntrl        isdigit         isgraph         islower
- isprint        ispunct         isspace         isupper
- isxdigit       itoa            labs            ldiv
- lfind          longjmp         _lrotl          _lrotr
- lsearch        ltoa            _makepath       mblen
- mbsrtowcs_s    mbstowcs        mbstowcs_s      mbtowc
- memccpy        memchr          memcmp          memcpy
- memcpy_s       memicmp         memmove         memmove_s
- memset         movedata        qsort           qsort_s
-_rotl           _rotr           segread         setjmp
-_splitpath      strcat          strcat_s        strchr
- strcmp         strcoll         strcpy          strcpy_s
- strcspn        strerror_s      strerrorlen_s   stricmp
- strlen         strlwr          strncat         strncat_s
- strncmp        strncpy         strncpy_s       strnicmp
- strnlen_s      strnset         strpbrk         strrchr
- strrev         strset          strspn          strstr
- strtok_s       strupr          swab            tolower
- toupper        ultoa           utoa            wcrtombs_s
- wcscat_s       wcscpy_s        wcserror_s      wcserrorlen_s
- wcsncat_s      wcsncat_s       wcsncpy_s       wcsnlen_s
- wcsrtombs_s    wcstok_s        wcstombs        wcstombs_s
- wctomb         wctomb_s        wmemcpy_s       wmemmove_s
-.millust end
-
+.np
+.monoon
+abs
+atoi
+atol
+bsearch
+bsearch_s
+div
+fabs
+_fmbsrtowcs_s~b
+_fmbstowcs_s~b~b
+_fmemccpy~b~b~b~b~b
+_fmemchr~b~b~b~b~b~b
+_fmemcmp~b~b~b~b~b~b
+_fmemcpy~b~b~b~b~b~b
+_fmemicmp~b~b~b~b~b
+_fmemmove~b~b~b~b~b
+_fmemset~b~b~b~b~b~b
+_fstrcat~b~b~b~b~b~b
+_fstrchr~b~b~b~b~b~b
+_fstrcmp~b~b~b~b~b~b
+_fstrcpy~b~b~b~b~b~b
+_fstrcspn~b~b~b~b~b
+_fstricmp~b~b~b~b~b
+_fstrlen~b~b~b~b~b~b
+_fstrlwr~b~b~b~b~b~b
+_fstrncat~b~b~b~b~b
+_fstrncmp~b~b~b~b~b
+_fstrncpy~b~b~b~b~b
+_fstrnicmp~b~b~b~b
+_fstrnset~b~b~b~b~b
+_fstrpbrk~b~b~b~b~b
+_fstrrchr~b~b~b~b~b
+_fstrrev~b~b~b~b~b~b
+_fstrset~b~b~b~b~b~b
+_fstrspn~b~b~b~b~b~b
+_fstrstr~b~b~b~b~b~b
+_fstrupr~b~b~b~b~b~b
+_fwcrtombs_s~b~b
+_fwcsrtombs_s~b
+_fwcstombs_s~b~b
+_fwctomb_s~b~b~b~b
+isalnum~b~b~b~b~b~b~b
+isalpha~b~b~b~b~b~b~b
+isascii~b~b~b~b~b~b~b
+isblank~b~b~b~b~b~b~b
+iscntrl~b~b~b~b~b~b~b
+isdigit~b~b~b~b~b~b~b
+isgraph~b~b~b~b~b~b~b
+islower~b~b~b~b~b~b~b
+isprint~b~b~b~b~b~b~b
+ispunct~b~b~b~b~b~b~b
+isspace~b~b~b~b~b~b~b
+isupper~b~b~b~b~b~b~b
+isxdigit~b~b~b~b~b~b
+itoa~b~b~b~b~b~b~b~b~b~b
+labs~b~b~b~b~b~b~b~b~b~b
+ldiv~b~b~b~b~b~b~b~b~b~b
+lfind~b~b~b~b~b~b~b~b~b
+longjmp~b~b~b~b~b~b~b
+_lrotl~b~b~b~b~b~b~b~b
+_lrotr~b~b~b~b~b~b~b~b
+lsearch~b~b~b~b~b~b~b
+ltoa~b~b~b~b~b~b~b~b~b~b
+_makepath~b~b~b~b~b
+mblen~b~b~b~b~b~b~b~b~b
+mbsrtowcs_s~b~b~b
+mbstowcs~b~b~b~b~b~b
+mbstowcs_s~b~b~b~b
+mbtowc~b~b~b~b~b~b~b~b
+memccpy~b~b~b~b~b~b~b
+memchr~b~b~b~b~b~b~b~b
+memcmp~b~b~b~b~b~b~b~b
+memcpy~b~b~b~b~b~b~b~b
+memcpy_s~b~b~b~b~b~b
+memicmp~b~b~b~b~b~b~b
+memmove~b~b~b~b~b~b~b
+memmove_s~b~b~b~b~b
+memset~b~b~b~b~b~b~b~b
+movedata~b~b~b~b~b~b
+qsort~b~b~b~b~b~b~b~b~b
+qsort_s~b~b~b~b~b~b~b
+_rotl~b~b~b~b~b~b~b~b~b
+_rotr~b~b~b~b~b~b~b~b~b
+segread~b~b~b~b~b~b~b
+setjmp~b~b~b~b~b~b~b~b
+_splitpath~b~b~b~b
+strcat~b~b~b~b~b~b~b~b
+strcat_s~b~b~b~b~b~b
+strchr~b~b~b~b~b~b~b~b
+strcmp~b~b~b~b~b~b~b~b
+strcoll~b~b~b~b~b~b~b
+strcpy~b~b~b~b~b~b~b~b
+strcpy_s~b~b~b~b~b~b
+strcspn~b~b~b~b~b~b~b
+strerror_s~b~b~b~b
+strerrorlen_s~b
+stricmp~b~b~b~b~b~b~b
+strlen~b~b~b~b~b~b~b~b
+strlwr~b~b~b~b~b~b~b~b
+strncat~b~b~b~b~b~b~b
+strncat_s~b~b~b~b~b
+strncmp~b~b~b~b~b~b~b
+strncpy~b~b~b~b~b~b~b
+strncpy_s~b~b~b~b~b
+strnicmp~b~b~b~b~b~b
+strnlen_s~b~b~b~b~b
+strnset~b~b~b~b~b~b~b
+strpbrk~b~b~b~b~b~b~b
+strrchr~b~b~b~b~b~b~b
+strrev~b~b~b~b~b~b~b~b
+strset~b~b~b~b~b~b~b~b
+strspn~b~b~b~b~b~b~b~b
+strstr~b~b~b~b~b~b~b~b
+strtok_s~b~b~b~b~b~b
+strupr~b~b~b~b~b~b~b~b
+swab~b~b~b~b~b~b~b~b~b~b
+tolower~b~b~b~b~b~b~b
+toupper~b~b~b~b~b~b~b
+ultoa~b~b~b~b~b~b~b~b~b
+utoa~b~b~b~b~b~b~b~b~b~b
+wcrtombs_s~b~b~b~b
+wcscat_s~b~b~b~b~b~b
+wcscpy_s~b~b~b~b~b~b
+wcserror_s~b~b~b~b
+wcserrorlen_s~b
+wcsncat_s~b~b~b~b~b
+wcsncat_s~b~b~b~b~b
+wcsncpy_s~b~b~b~b~b
+wcsnlen_s~b~b~b~b~b
+wcsrtombs_s~b~b~b
+wcstok_s~b~b~b~b~b~b
+wcstombs~b~b~b~b~b~b
+wcstombs_s~b~b~b~b
+wctomb~b~b~b~b~b~b~b~b
+wctomb_s~b~b~b~b~b~b
+wmemcpy_s~b~b~b~b~b
+wmemmove_s~b~b~b~b
+.monooff

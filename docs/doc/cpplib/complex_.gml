@@ -588,12 +588,9 @@ is not equal to
 :LIBF fmt='fun'.operator *
 :SNPL.
 :SNPFLF                 .#include <complex.h>
-:SNPR index='operator *'.Complex operator *( Complex const &amp.num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
-:SNPR index='operator *'.Complex operator *( Complex const &amp.num1,
-:SNPFLF                 .                    double         num2 );
-:SNPR index='operator *'.Complex operator *( double         num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
+:SNPR index='operator *'.Complex operator *( Complex const &amp.num1, Complex const &amp.num2 );
+:SNPR index='operator *'.Complex operator *( Complex const &amp.num1, double         num2 );
+:SNPR index='operator *'.Complex operator *( double         num1,     Complex const &amp.num2 );
 :eSNPL.
 :SMTICS.
 The &fn. is used to multiply
@@ -680,12 +677,9 @@ The unary &fn. returns a &obj. with the same value as the original
 :LIBF fmt='fun'.operator +
 :SNPL.
 :SNPFLF                 .#include <complex.h>
-:SNPR index='operator +'.Complex operator +( Complex const &amp.num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
-:SNPR index='operator +'.Complex operator +( Complex const &amp.num1,
-:SNPFLF                 .                    double         num2 );
-:SNPR index='operator +'.Complex operator +( double         num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
+:SNPR index='operator +'.Complex operator +( Complex const &amp.num1, Complex const &amp.num2 );
+:SNPR index='operator +'.Complex operator +( Complex const &amp.num1, double         num2 );
+:SNPR index='operator +'.Complex operator +( double         num1, Complex const &amp.num2 );
 :eSNPL.
 :SMTICS.
 The &fn. is used to add
@@ -768,12 +762,9 @@ as the original &obj. and with opposite sign.
 :LIBF fmt='fun'.operator -
 :SNPL.
 :SNPFLF                 .#include <complex.h>
-:SNPR index='operator -'.Complex operator -( Complex const &amp.num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
-:SNPR index='operator -'.Complex operator -( Complex const &amp.num1,
-:SNPFLF                 .                    double         num2 );
-:SNPR index='operator -'.Complex operator -( double         num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
+:SNPR index='operator -'.Complex operator -( Complex const &amp.num1, Complex const &amp.num2 );
+:SNPR index='operator -'.Complex operator -( Complex const &amp.num1, double         num2 );
+:SNPR index='operator -'.Complex operator -( double         num1, Complex const &amp.num2 );
 :eSNPL.
 :SMTICS.
 The &fn. is used to subtract
@@ -846,12 +837,9 @@ The &fn. returns a reference to the target of the assignment.
 :LIBF fmt='fun'.operator /
 :SNPL.
 :SNPFLF                 .#include <complex.h>
-:SNPR index='operator /'.Complex operator /( Complex const &amp.num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
-:SNPR index='operator /'.Complex operator /( Complex const &amp.num1,
-:SNPFLF                 .                    double         num2 );
-:SNPR index='operator /'.Complex operator /( double         num1,
-:SNPFLF                 .                    Complex const &amp.num2 );
+:SNPR index='operator /'.Complex operator /( Complex const &amp.num1, Complex const &amp.num2 );
+:SNPR index='operator /'.Complex operator /( Complex const &amp.num1, double         num2 );
+:SNPR index='operator /'.Complex operator /( double         num1, Complex const &amp.num2 );
 :eSNPL.
 :SMTICS.
 The &fn. is used to divide

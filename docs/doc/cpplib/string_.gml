@@ -275,16 +275,11 @@ otherwise zero is returned.
 :SNPL.
 :SNPFLF                  .#include <string.hpp>
 :SNPFLF                  .public:
-:SNPR index='operator !='.friend int operator !=( String const &amp.lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator !='.friend int operator !=( String const &amp.lft,
-:SNPFLF                  .                        char const   *rht );
-:SNPR index='operator !='.friend int operator !=( char const   *lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator !='.friend int operator !=( String const &amp.lft,
-:SNPFLF                  .                        char          rht );
-:SNPR index='operator !='.friend int operator !=( char          lft,
-:SNPFLF                  .                        String const &amp.rht );
+:SNPR index='operator !='.friend int operator !=( String const &amp.lft, String const &amp.rht );
+:SNPR index='operator !='.friend int operator !=( String const &amp.lft, char const   *rht );
+:SNPR index='operator !='.friend int operator !=( char const   *lft, String const &amp.rht );
+:SNPR index='operator !='.friend int operator !=( String const &amp.lft, char          rht );
+:SNPR index='operator !='.friend int operator !=( char          lft, String const &amp.rht );
 :eSNPL.
 :SMTICS.
 The &fn. compares two sequences of characters in terms of an
@@ -376,16 +371,11 @@ The &fn. returns a &obj.:PERIOD.
 :SNPL.
 :SNPFLF                 .#include <string.hpp>
 :SNPFLF                 .public:
-:SNPR index='operator +'.friend String operator +( String       &amp.lft,
-:SNPFLF                 .                          String const &amp.rht );
-:SNPR index='operator +'.friend String operator +( String       &amp.lft,
-:SNPFLF                 .                          char const   *rht );
-:SNPR index='operator +'.friend String operator +( char const   *lft,
-:SNPFLF                 .                          String const &amp.rht );
-:SNPR index='operator +'.friend String operator +( String       &amp.lft,
-:SNPFLF                 .                          char          rht );
-:SNPR index='operator +'.friend String operator +( char          lft,
-:SNPFLF                 .                          String const &amp.rht );
+:SNPR index='operator +'.friend String operator +( String       &amp.lft, String const &amp.rht );
+:SNPR index='operator +'.friend String operator +( String       &amp.lft, char const   *rht );
+:SNPR index='operator +'.friend String operator +( char const   *lft, String const &amp.rht );
+:SNPR index='operator +'.friend String operator +( String       &amp.lft, char          rht );
+:SNPR index='operator +'.friend String operator +( char          lft, String const &amp.rht );
 :eSNPL.
 :SMTICS.
 The &fn. concatenates two sequences of characters into a new &obj.:PERIOD.
@@ -480,8 +470,7 @@ sequence, otherwise zero is returned.
 :SNPL.
 :SNPFLF                  .#include <string.hpp>
 :SNPFLF                  .public:
-:SNPR index='operator <<'.friend ostream &amp.operator <<( ostream &amp.strm,
-:SNPFLF                  .                             String const &amp.str );
+:SNPR index='operator <<'.friend ostream &amp.operator <<( ostream &amp.strm, String const &amp.str );
 :eSNPL.
 :SMTICS.
 The &fn. is used to write the sequence of characters in the
@@ -516,16 +505,11 @@ parameter.
 :SNPL.
 :SNPFLF                  .#include <string.hpp>
 :SNPFLF                  .public:
-:SNPR index='operator <='.friend int operator <=( String const &amp.lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator <='.friend int operator <=( String const &amp.lft,
-:SNPFLF                  .                        char const   *rht );
-:SNPR index='operator <='.friend int operator <=( char const   *lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator <='.friend int operator <=( String const &amp.lft,
-:SNPFLF                  .                        char          rht );
-:SNPR index='operator <='.friend int operator <=( char          lft,
-:SNPFLF                  .                        String const &amp.rht );
+:SNPR index='operator <='.friend int operator <=( String const &amp.lft, String const &amp.rht );
+:SNPR index='operator <='.friend int operator <=( String const &amp.lft, char const   *rht );
+:SNPR index='operator <='.friend int operator <=( char const   *lft, String const &amp.rht );
+:SNPR index='operator <='.friend int operator <=( String const &amp.lft, char          rht );
+:SNPR index='operator <='.friend int operator <=( char          lft, String const &amp.rht );
 :eSNPL.
 :SMTICS.
 The &fn. compares two sequences of characters in terms of a
@@ -592,16 +576,11 @@ of the assignment.
 :SNPL.
 :SNPFLF                  .#include <string.hpp>
 :SNPFLF                  .public:
-:SNPR index='operator =='.friend int operator ==( String const &amp.lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator =='.friend int operator ==( String const &amp.lft,
-:SNPFLF                  .                        char const   *rht );
-:SNPR index='operator =='.friend int operator ==( char const   *lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator =='.friend int operator ==( String const &amp.lft,
-:SNPFLF                  .                        char          rht );
-:SNPR index='operator =='.friend int operator ==( char          lft,
-:SNPFLF                  .                        String const &amp.rht );
+:SNPR index='operator =='.friend int operator ==( String const &amp.lft, String const &amp.rht );
+:SNPR index='operator =='.friend int operator ==( String const &amp.lft, char const   *rht );
+:SNPR index='operator =='.friend int operator ==( char const   *lft, String const &amp.rht );
+:SNPR index='operator =='.friend int operator ==( String const &amp.lft, char          rht );
+:SNPR index='operator =='.friend int operator ==( char          lft, String const &amp.rht );
 :eSNPL.
 :SMTICS.
 The &fn. compares two sequences of characters in terms of an
@@ -675,16 +654,11 @@ sequence, otherwise zero is returned.
 :SNPL.
 :SNPFLF                  .#include <string.hpp>
 :SNPFLF                  .public:
-:SNPR index='operator >='.friend int operator >=( String const &amp.lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator >='.friend int operator >=( String const &amp.lft,
-:SNPFLF                  .                        char const   *rht );
-:SNPR index='operator >='.friend int operator >=( char const   *lft,
-:SNPFLF                  .                        String const &amp.rht );
-:SNPR index='operator >='.friend int operator >=( String const &amp.lft,
-:SNPFLF                  .                        char          rht );
-:SNPR index='operator >='.friend int operator >=( char          lft,
-:SNPFLF                  .                        String const &amp.rht );
+:SNPR index='operator >='.friend int operator >=( String const &amp.lft, String const &amp.rht );
+:SNPR index='operator >='.friend int operator >=( String const &amp.lft, char const   *rht );
+:SNPR index='operator >='.friend int operator >=( char const   *lft, String const &amp.rht );
+:SNPR index='operator >='.friend int operator >=( String const &amp.lft, char          rht );
+:SNPR index='operator >='.friend int operator >=( char          lft, String const &amp.rht );
 :eSNPL.
 :SMTICS.
 The &fn. compares two sequences of characters in terms of a
@@ -916,9 +890,7 @@ This form of the &fn. produces a &obj. of size
 :SNPL.
 :SNPFLF          .#include <string.hpp>
 :SNPFLF          .public:
-:SNPCD cd_idx='c'.String::String( String const &amp.str,
-:SNPFLF          .                size_t pos = 0,
-:SNPFLF          .                size_t num = NPOS );
+:SNPCD cd_idx='c'.String::String( String const &amp.str, size_t pos = 0, size_t num = NPOS );
 :eSNPL.
 :SMTICS.
 This form of the &fn. creates a &obj. which contains a sub-string of the

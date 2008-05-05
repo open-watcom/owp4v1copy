@@ -11,115 +11,115 @@
 :cmt. 'Z' override tags
 :cmt. *****************
 
-:cmt. **** $NOTE ****
+:cmt. **** :NOTE ****
 .dm znote begin
 :note &*
 .dm znote end
 .gt znote add znote cont
 
-:cmt. **** $FIGREF ****
+:cmt. **** :FIGREF ****
 .dm zfigref begin
 :figref &*
 .dm zfigref end
 .gt zfigref add zfigref cont
 
-:cmt. **** $FIGCAP ****
+:cmt. **** :FIGCAP ****
 .dm zfigcap begin
 :figcap &*
 .dm zfigcap end
 .gt zfigcap add zfigcap cont
 
-:cmt. **** $FIG ****
+:cmt. **** :FIG ****
 .dm zfig begin
 :fig &*
 .dm zfig end
 .gt zfig add zfig cont
 
-:cmt. **** $EFIG ****
+:cmt. **** :EFIG ****
 .dm zefig begin
 :efig &*
 .dm zefig end
 .gt zefig add zefig cont
 
-:cmt. **** $UL ****
+:cmt. **** :UL ****
 .dm zul begin
 :ul &*
 .dm zul end
 .gt zul add zul cont
 
-:cmt. **** $LI ****
+:cmt. **** :LI ****
 .dm zli begin
 :li &*
 .dm zli end
 .gt zli add zli cont
 
-:cmt. **** $EUL ****
+:cmt. **** :EUL ****
 .dm zeul begin
 :eul &*
 .dm zeul end
 .gt zeul add zeul cont
 
-:cmt. **** $OL ****
+:cmt. **** :OL ****
 .dm zol begin
 :ol &*
 .dm zol end
 .gt zol add zol cont
 
-:cmt. **** $EOL ****
+:cmt. **** :EOL ****
 .dm zeol begin
 :eol &*
 .dm zeol end
 .gt zeol add zeol cont
 
-:cmt. **** $SL ****
+:cmt. **** :SL ****
 .dm zsl begin
 :sl &*
 .dm zsl end
 .gt zsl add zsl cont
 
-:cmt. **** $ESL ****
+:cmt. **** :ESL ****
 .dm zesl begin
 :esl &*
 .dm zesl end
 .gt zesl add zesl cont
 
-:cmt. **** $DL ****
+:cmt. **** :DL ****
 .dm zdl begin
 :dl &*
 .dm zdl end
 .gt zdl add zdl cont
 
-:cmt. **** $EDL ****
+:cmt. **** :EDL ****
 .dm zedl begin
 :edl &*
 .dm zedl end
 .gt zedl add zedl cont
 
-:cmt. **** $DD ****
+:cmt. **** :DD ****
 .dm zdd begin
 :dd &*
 .dm zdd end
 .gt zdd add zdd cont
 
-:cmt. **** $DT ****
+:cmt. **** :DT ****
 .dm zdt begin
 :dt &*
 .dm zdt end
 .gt zdt add zdt cont
 
-:cmt. **** $DTHD ****
+:cmt. **** :DTHD ****
 .dm zdthd begin
 :dthd &*
 .dm zdthd end
 .gt zdthd add zdthd cont
 
-:cmt. **** $DDHD ****
+:cmt. **** :DDHD ****
 .dm zddhd begin
 :ddhd &*
 .dm zddhd end
 .gt zddhd add zddhd cont
 
-:cmt. **** $HDREF ****
+:cmt. **** :HDREF ****
 .dm zhdref begin
 :hdref &*
 .dm zhdref end
@@ -135,7 +135,7 @@
 .do end
 .dm fixhd end
 
-:cmt. **** $H0 ****
+:cmt. **** :H0 ****
 .dm ZH0 begin
 .fixhd &*
 :H0 &hdtxt.
@@ -145,14 +145,14 @@
 .ga * * VALUE '' DEFAULT
 .ga * * ANY
 
-:cmt. **** $H1 ****
+:cmt. **** :H1 ****
 .dm ZH1 begin
 .fixhd &*
 :H1 &hdtxt.
 .dm ZH1 end
 .gt ZH1 add ZH1
 
-:cmt. **** $H2 ****
+:cmt. **** :H2 ****
 .dm ZH2 begin
 .fixhd &*
 :H2 &hdtxt.
@@ -162,7 +162,7 @@
 .ga * * VALUE '' DEFAULT
 .ga * * ANY
 
-:cmt. **** $H3 ****
+:cmt. **** :H3 ****
 .dm ZH3 begin
 .fixhd &*
 :H3 &hdtxt.
@@ -172,7 +172,7 @@
 .ga * * VALUE '' DEFAULT
 .ga * * ANY
 
-:cmt. **** $H4 ****
+:cmt. **** :H4 ****
 .dm ZH4 begin
 .fixhd &*
 :H4 &hdtxt.
@@ -182,7 +182,7 @@
 .ga * * VALUE '' DEFAULT
 .ga * * ANY
 
-:cmt. **** $I1 ****
+:cmt. **** :I1 ****
 .dm ZI1 begin
 :I1 &*
 .dm ZI1 end
@@ -192,7 +192,7 @@
 :cmt. New Help Processing Tags
 :cmt. ************************
 
-:cmt. **** $HELPPFX ****
+:cmt. **** :HELPPFX ****
 .dm helppfx begin
 .dm helppfx end
 .gt helppfx add helppfx cont attr
@@ -200,20 +200,20 @@
 .ga * * value '' default
 .gt helppfx off
 
-:cmt. **** $HELPLVL ****
+:cmt. **** :HELPLVL ****
 .dm helplvl begin
 .dm helplvl end
 .gt helplvl add helplvl cont attr
 .ga * level RANGE 0 4 4 4
 .gt helplvl off
 
-:cmt. **** $EXHELP ****
+:cmt. **** :EXHELP ****
 .dm exhelp begin
 .dm exhelp end
 .gt exhelp add exhelp cont
 .gt exhelp off
 
-:cmt. **** $HLINK ****
+:cmt. **** :HLINK ****
 .dm hlink begin
 &*
 .dm hlink end
@@ -223,13 +223,13 @@
 .ga * hd ANY
 .ga * * VALUE '' DEFAULT
 
-:cmt. **** $EHLINK ****
+:cmt. **** :EHLINK ****
 .dm ehlink begin
 .dm ehlink end
 .gt ehlink add ehlink cont att
 .gt ehlink off
 
-:cmt. **** $FLINK ****
+:cmt. **** :FLINK ****
 .dm flink begin
 &*
 .dm flink end
@@ -239,13 +239,13 @@
 .ga * hd ANY
 .ga * * VALUE '' DEFAULT
 
-:cmt. **** $EFLINK ****
+:cmt. **** :EFLINK ****
 .dm eflink begin
 .dm eflink end
 .gt eflink add eflink cont att
 .gt eflink off
 
-:cmt. **** $HDFN ****
+:cmt. **** :HDFN ****
 .dm hdfn begin
 &*
 .dm hdfn end
@@ -255,25 +255,25 @@
 .ga * hd ANY
 .ga * * VALUE '' DEFAULT
 
-:cmt. **** $EHDFN ****
+:cmt. **** :EHDFN ****
 .dm ehdfn begin
 .dm ehdfn end
 .gt ehdfn add ehdfn cont
 .gt ehdfn off
 
-:cmt. **** $HBMP ****
+:cmt. **** :HBMP ****
 .dm hbmp begin
 .dm hbmp end
 .gt hbmp add hbmp cont
 .gt hbmp off
 
-:cmt. **** $CTXKW ****
+:cmt. **** :CTXKW ****
 .dm ctxkw begin
 .dm ctxkw end
 .gt ctxkw add ctxkw cont att
 .gt ctxkw off
 
-:cmt. **** $QREF ****
+:cmt. **** :QREF ****
 .dm qref begin
 &*str.&*.
 .dm qref end
@@ -282,7 +282,7 @@
 .ga * pfx ANY
 .ga * * value '' default
 
-:cmt. **** $POPREF ****
+:cmt. **** :POPREF ****
 .dm popref begin
 &*str.&*.
 .dm popref end
@@ -291,19 +291,19 @@
 .ga * pfx ANY
 .ga * * value '' default
 
-:cmt. **** $SEEALSO ****
+:cmt. **** :SEEALSO ****
 .dm seealso begin
 .dm seealso end
 .gt seealso add seealso cont
 .gt seealso off
 
-:cmt. **** $CONTPC ****
+:cmt. **** :CONTPC ****
 .dm conttpc begin
 .dm conttpc end
 .gt conttpc add conttpc cont
 .gt conttpc off
 
-:cmt. **** $POPHELP ****
+:cmt. **** :POPHELP ****
 .dm pophelp begin
 :CMT. :h4.&*
 .dm pophelp end
@@ -314,19 +314,19 @@
 :CMT. .ga * pfx ANY
 :CMT. .ga * * value '' default
 
-:cmt. **** $BOX ****
+:cmt. **** :BOX ****
 .dm box begin
 .dm box end
 .gt box add box cont
 .gt box off
 
-:cmt. **** $EBOX ****
+:cmt. **** :EBOX ****
 .dm ebox begin
 .dm ebox end
 .gt ebox add ebox cont
 .gt ebox off
 
-:cmt. **** $TABXMP ****
+:cmt. **** :TABXMP ****
 .dm tabxmp begin
 .tb set &*1
 .tb &'subword( &*, 2 )
@@ -338,7 +338,7 @@
 .gt tabxmp add xtabxmp cont
 
 
-:cmt. **** $ETABXMP ****
+:cmt. **** :ETABXMP ****
 .dm etabxmp begin
 .tb
 :p.
