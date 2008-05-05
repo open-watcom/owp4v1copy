@@ -5,6 +5,11 @@
 .  .boxcol 16
 .  .boxcol 16
 ..do end
+..el ..if '&format' eq '8.5x11' ..th ..do begin
+.  .boxcol 17
+.  .boxcol 19
+.  .boxcol 19
+..do end
 ..el ..do begin
 .  .boxcol 18
 .  .boxcol 20

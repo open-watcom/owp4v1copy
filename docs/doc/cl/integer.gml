@@ -314,6 +314,11 @@ storage size.
 .  .boxcol 17
 .  .boxcol 16
 ..do end
+..el ..if '&format' eq '8.5x11' ..th ..do begin
+.  .boxcol 16
+.  .boxcol 19
+.  .boxcol 19
+..do end
 ..el ..do begin
 .  .boxcol 18
 .  .boxcol 21
@@ -395,7 +400,7 @@ int (&c386.)                      -2147483648           2147483647
 unsigned int (&c286.)                       0                65535
 unsigned int (&c386.)                       0           4294967295
 
-long int               -2147483648                    2147483647
+long int                        -2147483648           2147483647
 
 unsigned long int                         0           4294967295
 

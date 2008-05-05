@@ -532,7 +532,7 @@
 :set symbol='rmargin' value='60'.
 .do end
 .el .if '&format' eq '8.5x11' .do begin
-:set symbol='rmargin' value='60'.
+:set symbol='rmargin' value='68'.
 .do end
 .el .if '&format' eq '8.5x11a' .do begin
 :set symbol='rmargin' value='78'.
