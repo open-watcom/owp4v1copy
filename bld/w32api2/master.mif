@@ -254,6 +254,7 @@ base_headers =       &
         wincrypt.h   &
         windef.h     &
         windns.h     &
+        windot11.h   &
         windows.h    &
         windowsx.h   &
         winefs.h     &
@@ -280,6 +281,7 @@ base_headers =       &
         winuser.h    &
         winuser.rh   &
         winver.h     &
+        wlantype.h   &
         wmistr.h     &
         ws2def.h     &
         ws2ipdef.h   &
