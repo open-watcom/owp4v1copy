@@ -38,7 +38,7 @@ sub read_config
     my($filename) = $_[0];
     my(@fields);
 
-    open(CONFIG_FILE, $filename) || die "Unable to open configuration file.";
+    open(CONFIG_FILE, $filename) || die "Unable to open configuration file: $filename.";
     while (<CONFIG_FILE>) {
         s/\r?\n/\n/;
         chomp;
@@ -129,13 +129,13 @@ sub process_compare
     $fh ||= \*STDOUT;
 
     # Read both the old and new summaries into memory.
-    open(OLDFILE, $filename1) || die "Unable to open input file: $ARGV[0]";
+    open(OLDFILE, $filename1) || die "Unable to open input file: $filename1";
     while (($record = read_record(\*OLDFILE)) ne "EOF") {
         push @old_records, $record;
     }
     close(OLDFILE);
 
-    open(NEWFILE, $filename2) || die "Unable to open output file: $ARGV[1]";
+    open(NEWFILE, $filename2) || die "Unable to open output file: $filename2";
     while (($record = read_record(\*NEWFILE)) ne "EOF") {
         push @new_records, $record;
     }
