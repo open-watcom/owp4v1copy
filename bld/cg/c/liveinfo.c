@@ -245,6 +245,7 @@ static  void    FlowConflicts( instruction *first,
     int                 i;
     opcode_defs         opcode;
     name_set            alive;
+    bool                result_forced_alive;
 
     alive.regs          = last->head.live.regs;
     alive.out_of_block  = last->head.live.out_of_block;
@@ -322,14 +323,31 @@ static  void    FlowConflicts( instruction *first,
                  * still need a register (and can steal assigned one). (bug #439)
                  * Note that we're attaching info to next instruction to show
                  * that result is live _after_ current one (see comment above).
+                 *
+                 * 2008-05-08 RomanT
+                 * Same for "add"/"adc" pairs where result of add is not used anymore
+                 * but "add" must present and something must be allocated for it's result.
+                 *
+                 * Note: checks are very similar to SideEffect() function and partially
+                 * copied from there, may be it's wiser to use this function as is.
+                 * But SideEffect() has too many checks - not sure we need'em all.
                  */
+                result_forced_alive = FALSE;
+
                 i = ins->num_operands;
                 while( --i >= 0 ) {
                     if( IsVolatile( ins->operands[ i ] ) ) {
-                        conf = FindConflictNode( ins->result, blk, ins );
-                        NowAlive( ins->result, conf, &ins->head.next->head.live, blk );
+                        result_forced_alive = TRUE;
                         break;
                     }
+                }
+                if( ( ins->ins_flags & INS_CC_USED ) && ins->head.opcode != OP_MOV ) {
+                    result_forced_alive = TRUE;
+                }
+
+                if( result_forced_alive ) {
+                    conf = FindConflictNode( ins->result, blk, ins );
+                    NowAlive( ins->result, conf, &ins->head.next->head.live, blk );
                 }
             }
         }
