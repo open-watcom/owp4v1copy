@@ -425,6 +425,7 @@ directx_libs =       &
         dxguid.lib
 
 ddk_libs =           &
+        ntoskrnl.lib &
         rtlver.lib
 
 vfw32_lbcs =         &

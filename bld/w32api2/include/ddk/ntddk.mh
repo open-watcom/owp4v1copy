@@ -3417,7 +3417,6 @@ typedef WHEA_PSHED_INIT_PACKET  *PWHEA_PSHED_INIT_PACKET;
 /* Global variables in NTOSKRNL.EXE */
 extern NTKERNELAPI PHAL_DISPATCH    HalDispatchTable;
 extern NTKERNELAPI POBJECT_TYPE     *PsProcessType;
-extern NTKERNELAPI POBJECT_TYPE     *TmEnlistmentObjectType;
 extern NTKERNELAPI POBJECT_TYPE     *TmResourceManagerObjectType;
 extern NTKERNELAPI POBJECT_TYPE     *TmTransactionManagerObjectType;
 extern NTKERNELAPI POBJECT_TYPE     *TmTransactionObjectType;
@@ -3469,9 +3468,7 @@ NTSYSCALLAPI NTSTATUS NTAPI NtQueryInformationProcess( HANDLE, PROCESSINFOCLASS,
 
 /* Functions in NTOSKRNL.EXE */
 NTKERNELAPI VOID FASTCALL               KeInvalidateRangeAllCaches( PVOID, ULONG );
-NTKERNELAPI NTSTATUS NTAPI              WheaAddErrorSource( PWHEA_ERROR_SOURCE_DESCRIPTOR, PHANDLE );
 NTKERNELAPI NTSTATUS NTAPI              WheaRegisterErrSrcInitializer( WHEA_ERROR_SOURCE_TYPE, WHEA_ERROR_SOURCE_INITIALIZER );
-NTKERNELAPI NTSTATUS NTAPI              WheaRemoveErrorSource( HANDLE );
 NTKERNELAPI NTSTATUS NTAPI              WheaReportHwError( PWHEA_ERROR_PACKET );
 #ifdef _X86_
 NTKERNELAPI INTERLOCKED_RESULT FASTCALL Exfi386InterlockedDecrementLong( LONG volatile * );
@@ -3563,7 +3560,7 @@ NTKERNELAPI NTSTATUS NTAPI              PsRemoveCreateThreadNotifyRoutine( PCREA
 NTKERNELAPI NTSTATUS NTAPI              PsRemoveLoadImageNotifyRoutine( PLOAD_IMAGE_NOTIFY_ROUTINE );
 #endif
 #if (NTDDI_VERSION >= 0x05020000)
-NTKERNELAPI IO_PAGING_PRIORITY NTAPI    IoGetPagingIoPriority( PIRP );
+NTKERNELAPI IO_PAGING_PRIORITY FASTCALL IoGetPagingIoPriority( PIRP );
 NTKERNELAPI BOOLEAN NTAPI               KeInvalidateAllCaches( VOID );
 NTKERNELAPI NTSTATUS NTAPI              MmCreateMirror( VOID );
 #endif
@@ -3572,7 +3569,6 @@ NTKERNELAPI BOOLEAN NTAPI               IoTranslateBusAddress( INTERFACE_TYPE, U
 NTKERNELAPI NTSTATUS NTAPI              KeExpandKernelStackAndCallout( PEXPAND_STACK_CALLOUT, PVOID, SIZE_T );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
-NTKERNELAPI NTSTATUS NTAPI              IoUpdateDiskGeometry( PDEVICE_OBJECT, struct _DISK_GEOMETRY_EX *, struct _DISK_GEOMETRY_EX * );
 NTKERNELAPI ULONG NTAPI                 KeQueryActiveProcessorCount( PKAFFINITY );
 NTKERNELAPI ULONG NTAPI                 KeQueryMaximumProcessorCount( VOID );
 NTKERNELAPI NTSTATUS NTAPI              MmRotatePhysicalView( PVOID, PSIZE_T, PMDLX, MM_ROTATE_DIRECTION, PMM_ROTATE_COPY_CALLBACK_FUNCTION, PVOID );

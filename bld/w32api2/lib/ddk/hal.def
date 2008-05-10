@@ -1,5 +1,8 @@
 LIBRARY HAL.DLL
 EXPORTS
+@ExAcquireFastMutex
+@ExReleaseFastMutex
+@ExTryToAcquireFastMutex
 @KeAcquireInStackQueuedSpinLock
 @KeAcquireQueuedSpinLock
 @KeAcquireSpinLockRaiseToSynch

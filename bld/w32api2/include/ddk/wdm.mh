@@ -6876,7 +6876,6 @@ NTKERNELAPI VOID NTAPI              WRITE_REGISTER_ULONG( PULONG, ULONG );
 NTKERNELAPI VOID NTAPI              WRITE_REGISTER_USHORT( PUSHORT, USHORT );
 #endif
 #if (NTDDI_VERSION >= 0x05000000)
-NTKERNELAPI VOID FASTCALL           ExAcquireFastMutex( PFAST_MUTEX );
 NTKERNELAPI VOID FASTCALL           ExAcquireFastMutexUnsafe( PFAST_MUTEX );
 NTKERNELAPI BOOLEAN NTAPI           ExAcquireResourceExclusiveLite( PERESOURCE, BOOLEAN );
 NTKERNELAPI BOOLEAN NTAPI           ExAcquireResourceSharedLite( PERESOURCE, BOOLEAN );
@@ -6901,12 +6900,6 @@ NTKERNELAPI VOID NTAPI              ExInitializeNPagedLookasideList( PNPAGED_LOO
 NTKERNELAPI VOID NTAPI              ExInitializePagedLookasideList( PPAGED_LOOKASIDE_LIST, PALLOCATE_FUNCTION, PFREE_FUNCTION, ULONG, SIZE_T, ULONG, USHORT );
 NTKERNELAPI NTSTATUS NTAPI          ExInitializeResourceLite( PERESOURCE );
 NTKERNELAPI LARGE_INTEGER NTAPI     ExInterlockedAddLargeInteger( PLARGE_INTEGER, LARGE_INTEGER, PKSPIN_LOCK );
-NTKERNELAPI ULONG FASTCALL          ExInterlockedAddUlong( PULONG, ULONG, PKSPIN_LOCK );
-NTKERNELAPI PLIST_ENTRY FASTCALL    ExInterlockedInsertHeadList( PLIST_ENTRY, PLIST_ENTRY, PKSPIN_LOCK );
-NTKERNELAPI PLIST_ENTRY FASTCALL    ExInterlockedInsertTailList( PLIST_ENTRY, PLIST_ENTRY, PKSPIN_LOCK );
-NTKERNELAPI PSINGLE_LIST_ENTRY FASTCALL ExInterlockedPopEntryList( PSINGLE_LIST_ENTRY, PKSPIN_LOCK );
-NTKERNELAPI PSINGLE_LIST_ENTRY FASTCALL ExInterlockedPushEntryList( PSINGLE_LIST_ENTRY, PSINGLE_LIST_ENTRY, PKSPIN_LOCK );
-NTKERNELAPI PLIST_ENTRY FASTCALL    ExInterlockedRemoveHeadList( PLIST_ENTRY, PKSPIN_LOCK );
 NTKERNELAPI BOOLEAN NTAPI           ExIsProcessorFeaturePresent( ULONG );
 NTKERNELAPI BOOLEAN NTAPI           ExIsResourceAcquiredExclusiveLite( PERESOURCE );
 NTKERNELAPI ULONG NTAPI             ExIsResourceAcquiredSharedLite( PERESOURCE );
@@ -6916,7 +6909,6 @@ NTKERNELAPI VOID NTAPI              ExQueueWorkItem( PWORK_QUEUE_ITEM, WORK_QUEU
 NTKERNELAPI DECLSPEC_NORETURN VOID NTAPI    ExRaiseStatus( NTSTATUS );
 NTKERNELAPI PVOID NTAPI             ExRegisterCallback( PCALLBACK_OBJECT, PCALLBACK_FUNCTION, PVOID );
 NTKERNELAPI NTSTATUS NTAPI          ExReinitializeResourceLite( PERESOURCE );
-NTKERNELAPI VOID FASTCALL           ExReleaseFastMutex( PFAST_MUTEX );
 NTKERNELAPI VOID FASTCALL           ExReleaseFastMutexUnsafe( PFAST_MUTEX );
 NTKERNELAPI VOID NTAPI              ExReleaseResourceForThreadLite( PERESOURCE, ERESOURCE_THREAD );
 NTKERNELAPI VOID FASTCALL           ExReleaseResourceLite( PERESOURCE );
@@ -6925,6 +6917,12 @@ NTKERNELAPI ULONG NTAPI             ExSetTimerResolution( ULONG, BOOLEAN );
 NTKERNELAPI VOID NTAPI              ExSystemTimeToLocalTime( PLARGE_INTEGER, PLARGE_INTEGER );
 NTKERNELAPI BOOLEAN FASTCALL        ExTryToAcquireFastMutex( PFAST_MUTEX );
 NTKERNELAPI VOID NTAPI              ExUnregisterCallback( PVOID );
+NTKERNELAPI ULONG FASTCALL          ExfInterlockedAddUlong( PULONG, ULONG, PKSPIN_LOCK );
+NTKERNELAPI PLIST_ENTRY FASTCALL    ExfInterlockedInsertHeadList( PLIST_ENTRY, PLIST_ENTRY, PKSPIN_LOCK );
+NTKERNELAPI PLIST_ENTRY FASTCALL    ExfInterlockedInsertTailList( PLIST_ENTRY, PLIST_ENTRY, PKSPIN_LOCK );
+NTKERNELAPI PSINGLE_LIST_ENTRY FASTCALL ExfInterlockedPopEntryList( PSINGLE_LIST_ENTRY, PKSPIN_LOCK );
+NTKERNELAPI PSINGLE_LIST_ENTRY FASTCALL ExfInterlockedPushEntryList( PSINGLE_LIST_ENTRY, PSINGLE_LIST_ENTRY, PKSPIN_LOCK );
+NTKERNELAPI PLIST_ENTRY FASTCALL    ExfInterlockedRemoveHeadList( PLIST_ENTRY, PKSPIN_LOCK );
 NTKERNELAPI VOID NTAPI              IoAcquireCancelSpinLock( KIRQL );
 NTKERNELAPI NTSTATUS NTAPI          IoAcquireRemoveLockEx( PIO_REMOVE_LOCK, PVOID, PCSTR, ULONG, ULONG );
 NTKERNELAPI NTSTATUS NTAPI          IoAllocateDriverObjectExtension( PDRIVER_OBJECT, PVOID, ULONG, PVOID * );
@@ -7092,7 +7090,6 @@ NTKERNELAPI NTSTATUS NTAPI          SeAssignSecurityEx( PSECURITY_DESCRIPTOR, PS
 NTKERNELAPI VOID NTAPI              SeCaptureSubjectContext( PSECURITY_SUBJECT_CONTEXT );
 NTKERNELAPI NTSTATUS NTAPI          SeDeassignSecurity( PSECURITY_DESCRIPTOR * );
 NTKERNELAPI VOID NTAPI              SeLockSubjectContext( PSECURITY_SUBJECT_CONTEXT );
-NTKERNELAPI ULONG NTAPI             SeObjectCreateSaclAccessBits( PSECURITY_DESCRIPTOR );
 NTKERNELAPI VOID NTAPI              SeReleaseSubjectContext( PSECURITY_SUBJECT_CONTEXT );
 NTKERNELAPI VOID NTAPI              SeUnlockSubjectContext( PSECURITY_SUBJECT_CONTEXT );
 NTKERNELAPI BOOLEAN NTAPI           SeValidSecurityDescriptor( ULONG, PSECURITY_DESCRIPTOR );
@@ -7176,7 +7173,7 @@ NTKERNELAPI PVOID NTAPI             KeRegisterNmiCallback( PNMI_CALLBACK, PVOID 
 NTKERNELAPI VOID FASTCALL           KeReleaseSpinLockForDpc( PKSPIN_LOCK, KIRQL );
 NTKERNELAPI LOGICAL NTAPI           MmIsIoSpaceActive( PHYSICAL_ADDRESS, SIZE_T );
 #ifdef _X86_
-NTKERNELAPI BOOLEAN NTAPI           KeTestSpinLock( PKSPIN_LOCK );
+NTKERNELAPI BOOLEAN FASTCALL        KeTestSpinLock( PKSPIN_LOCK );
 #endif
 #endif
 #if (NTDDI_VERSION >= 0x05020100)
@@ -7257,9 +7254,6 @@ NTKERNELAPI NTSTATUS NTAPI          PoRegisterPowerSettingCallback( PDEVICE_OBJE
 NTKERNELAPI VOID NTAPI              PoSetSystemWake( PIRP );
 NTKERNELAPI NTSTATUS NTAPI          PoUnregisterPowerSettingCallback( PVOID );
 NTKERNELAPI ULONG NTAPI             SeComputeAutoInheritByObjectType( PVOID, PSECURITY_DESCRIPTOR, PSECURITY_DESCRIPTOR );
-#ifdef SE_NTFS_WORLD_CACHE
-NTKERNELAPI VOID NTAPI              SeGetWorldRights( PSECURITY_DESCRIPTOR, PGENERIC_MAPPING, PACCESS_MASK );
-#endif
 #endif
 
 /* Functions in HAL.DLL */
@@ -7280,6 +7274,8 @@ NTHALAPI VOID NTAPI             WRITE_PORT_ULONG( PULONG, ULONG );
 NTHALAPI VOID NTAPI             WRITE_PORT_USHORT( PUSHORT, USHORT );
 #endif
 #if (NTDDI_VERSION >= 0x05000000)
+NTHALAPI VOID FASTCALL          ExAcquireFastMutex( PFAST_MUTEX );
+NTHALAPI VOID FASTCALL          ExReleaseFastMutex( PFAST_MUTEX );
 NTHALAPI LARGE_INTEGER NTAPI    KeQueryPerformanceCounter( PLARGE_INTEGER );
 NTHALAPI VOID NTAPI             KeStallExecutionProcessor( ULONG );
 #ifdef _X86_
@@ -7674,6 +7670,12 @@ CLFSUSER_API BOOLEAN NTAPI  ClfsValidTopLevelContext( PIRP );
 #define ExInitializeSListHead                   InitializeSListHead
 #define ExIsResourceAcquiredLite                ExIsResourceAcquiredSharedLite
 #define IoForwardAndCatchIrp                    IoForwardIrpSynchronously
+#define ExInterlockedAddUlong                   ExfInterlockedAddUlong
+#define ExInterlockedInsertHeadList             ExfInterlockedInsertHeadList
+#define ExInterlockedInsertTailList             ExfInterlockedInsertTailList
+#define ExInterlockedRemoveHeadList             ExfInterlockedRemoveHeadList
+#define ExInterlockedPopEntryList               ExfInterlockedPopEntryList
+#define ExInterlockedPushEntryList              ExfInterlockedPushEntryList
 
 /* Other macros */
 #define NLS_MB_CODE_PAGE_TAG        (*NlsMbCodePageTag)
