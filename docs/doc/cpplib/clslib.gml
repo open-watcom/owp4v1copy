@@ -36,6 +36,7 @@
 . :INCLUDE file='preface'.
 .pa odd
 :TOC.
+.pa odd
 .do end
 .*
 :BODY.

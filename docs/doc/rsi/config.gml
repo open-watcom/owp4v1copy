@@ -135,21 +135,21 @@ and settings that will automatically be set are marked
 .ix 'switch mode setting' 'IBM PS/55'
 .cp 18
 .in 0
-.if '&format' eq '8.5x11a' .do begin
-.se c0=1+1
-.se c1=&c0.+8
-.se c2=&c1.+16
-.se c3=&c2.+8
-.se c4=&c3.+11
-.se c5=&c4.+36
-.do end
-.el .do begin
+.if '&format' eq '7x9' .do begin
 .se c0=1+1
 .se c1=1+6
 .se c2=1+19
 .se c3=1+28
 .se c4=1+36
 .se c5=1+60
+.do end
+.el .do begin
+.se c0=1+1
+.se c1=&c0.+8
+.se c2=&c1.+16
+.se c3=&c2.+8
+.se c4=&c3.+11
+.se c5=&c4.+36
 .do end
 .tb set $
 .tb &c0 &c1 &c2 &c3 &c4 &c5
@@ -163,16 +163,16 @@ and settings that will automatically be set are marked
 $      $               $       $Alternate
 $Status$Machine        $Setting$Name      $Comment
 .bx
-$auto  $386/486 w/ DPMI$0      $None      $Set automatically if DPMI is active$
-$req'd $NEC 98-series  $1      $9801      $Must be set for NEC 98-series$
-$auto  $PS/2           $2      $None      $Set automatically for PS/2$
-$auto  $386/486        $3      $386, 80386$Set automatically for 386 or 486$
-$auto  $386            $INBOARD$None      $386 with Intel Inboard$
-$req'd $Fujitsu FMR-70 $5      $None      $Must be set for Fujitsu FMR-70$
-$auto  $386/486 w/ VCPI$11     $None      $Set automatically if VCPI detected$
-$req'd $Hitachi B32    $14     $None      $Must be set for Hitachi B32$
-$req'd $OKI if800      $15     $None      $Must be set for OKI if800$
-$option$IBM PS/55      $16     $None      $May be needed for some PS/55s$
+$auto  $386/486 w/ DPMI$0      $None      $Set automatically if DPMI is active
+$req'd $NEC 98-series  $1      $9801      $Must be set for NEC 98-series
+$auto  $PS/2           $2      $None      $Set automatically for PS/2
+$auto  $386/486        $3      $386, 80386$Set automatically for 386 or 486
+$auto  $386            $INBOARD$None      $386 with Intel Inboard
+$req'd $Fujitsu FMR-70 $5      $None      $Must be set for Fujitsu FMR-70
+$auto  $386/486 w/ VCPI$11     $None      $Set automatically if VCPI detected
+$req'd $Hitachi B32    $14     $None      $Must be set for Hitachi B32
+$req'd $OKI if800      $15     $None      $Must be set for OKI if800
+$option$IBM PS/55      $16     $None      $May be needed for some PS/55s
 .bx off
 .tb set
 .tb
@@ -190,16 +190,17 @@ For example, if your machine is a NEC 98-series, set
 See the section entitled :HDREF refid='rsicfgf'. in this chapter for
 more information about setting the memory range.
 .np
-.if '&format' eq '8.5x11a' .do begin
-.se c0=&INDlvl+2+8
-.se c1=&INDlvl+2+29
-.se c2=&INDlvl+2+39
-.do end
-.el .do begin
+.if '&format' eq '7x9' .do begin
 .se c0=&INDlvl+2+8
 .se c1=&INDlvl+2+23
 .se c2=&INDlvl+2+30
 .do end
+.el .do begin
+.se c0=&INDlvl+2+8
+.se c1=&INDlvl+2+29
+.se c2=&INDlvl+2+39
+.do end
+.cp 10
 .tb set $
 .tb &c0 &c1
 .se c0=&c0.-2

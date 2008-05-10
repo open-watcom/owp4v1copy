@@ -64,6 +64,7 @@ operands.
 .sr c0=&INDlvl+1
 .sr c1=&INDlvl+12
 .sr c2=&INDlvl+40
+.cp 12
 .mbox on &c0 &c1 &c2
 Operator    Arithmetic Operation
 .mbox

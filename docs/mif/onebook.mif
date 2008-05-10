@@ -228,9 +228,9 @@ $(hbook).html $(hbook).h : $(book_objs) $(proj_objs)
 .EXTENSIONS: .ps .bmp
 
 $(hbook).ps : $(book_objs) $(book_objs_ps) $(proj_objs)
-    @set GMLINC=$(book_incs);$(whelp_incs);$(gml_incs)
+    @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
 !ifeq docs_verbose 1
-    @echo GMLINC=$(book_incs);$(whelp_incs);$(gml_incs)
+    @echo GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
 !endif
     %make prepare_wgml_opts
     -$(wgml) "$(book_src) ( file $(optfile_wgml)"
@@ -349,21 +349,20 @@ prepare_wgml_opts : .PROCEDURE
 #
 # layout setting
 #
-!ifeq hbook c_readme
-    @%append $(optfile_wgml) ( file nn7x9ps
-!else ifeq hbook f77lr
+!ifeq hbook f77lr
     @%append $(optfile_wgml) ( file nbpsshad
 !else ifeq hbook clr
     @%append $(optfile_wgml) ( file nbpsshad
-!else ifeq hbook cgdoc
-    @%append $(optfile_wgml) ( file cgdps
-!else ifeq hbook wddoc
-    @%append $(optfile_wgml) ( file nb7x9psn
 !else ifeq hbook wgmlref
     @%append $(optfile_wgml) ( file wbrfman
 !else
     @%append $(optfile_wgml) ( file nb7x9ps
 !endif
+#
+# change output format to 8.5x11i
+# remove it if you want old 7x9i format
+#
+    @%append $(optfile_wgml) ( lay to85x11
 #
 # number of passes
 #
@@ -387,15 +386,7 @@ prepare_wgml_opts : .PROCEDURE
 #
 # output format
 #
-!ifeq hbook pguide
     @%append $(optfile_wgml) ( output (t:100)$(hbook)
-!else ifeq hbook fpguide
-    @%append $(optfile_wgml) ( output (t:100)$(hbook)
-!else ifeq hbook guitool
-    @%append $(optfile_wgml) ( output (t:100)$(hbook)
-!else
-    @%append $(optfile_wgml) ( output (t:80)$(hbook)
-!endif
 #
 # common setting
 #

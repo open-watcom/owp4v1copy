@@ -14,9 +14,9 @@
 .*
 :GDOC.
 .*
-:FRONTM.
-.*
 .if &e'&dohelp eq 0 .do begin
+.*
+:FRONTM.
 :TITLEP.
 :TITLE stitle="User's Guide".&company Graphical Tools
 :TITLE.User's Guide

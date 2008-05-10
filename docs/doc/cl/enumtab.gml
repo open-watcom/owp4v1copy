@@ -1,3 +1,4 @@
+.cp 13
 .if &e'&nobox eq 0 .do begin
 .boxdef
 ..if '&format' eq '7x9' ..th ..do begin

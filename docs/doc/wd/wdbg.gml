@@ -10,8 +10,8 @@
 .*
 :GDOC.
 .*
-:FRONTM.
 .if &e'&dohelp eq 0 .do begin
+:FRONTM.
 :TITLEP.
 :TITLE stitle="User's Guide".&dbgname.
 :TITLE.User's Guide
@@ -26,6 +26,7 @@
 :FIGLIST.
 .pa odd
 .do end
+.*
 :BODY.
 .if &e'&dohelp eq 1 .do begin
 :exhelp

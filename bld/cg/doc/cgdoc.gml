@@ -4,20 +4,66 @@
 :INCLUDE file='XDEFS'.
 :INCLUDE file='DEFS'.
 .*
+.if &e'&dohelp eq 0 .do begin
+.*
+.* Layout changes specific to this document
+.*
+.* Switch off numbering for heading
+.* Set two-level contents
+.* Set the same page footer text for all pages
+.*
+:LAYOUT.
+:H1
+        number_form = none
+:H2
+        number_form = none
+        font = 8
+:H3
+        number_form = none
+:TOC
+        toc_levels=2
+:BANNER
+        docsect=head1
+        place=botodd
+:BANREGION
+        refnum=1
+        contents="&amp.headtxt1$."
+:eBANREGION
+:eBANNER
+:BANNER
+        docsect=body
+        place=boteven
+:BANREGION
+        refnum=2
+        contents="&amp.headtxt1$."
+:eBANREGION
+:eBANNER
+:BANNER
+        docsect=body
+        place=botodd
+:BANREGION
+        refnum=1
+        contents="&amp.headtxt1$."
+:eBANREGION
+:eBANNER
+:eLAYOUT.
+:INCLUDE file='WNOHELP'.
+.do end
+.*
 :GDOC.
 .*
 .if &e'&dohelp eq 0 .do begin
 :FRONTM.
 :TITLEP.
 :TITLE.&company Code Generator Interface
-:cmt. :DATE.
+:CMT. :DATE.
 :eTITLEP.
 :TOC.
 .do end
 .*
 :BODY.
 .*
-:cmt. index is disabled
+:CMT. index is disabled
 .if &e'&dohelp eq 2 .do begin
 :exhelp
 :include file='&book..idx'
@@ -188,7 +234,7 @@ exception reporting.
 :DT.EXCEPT_FILTER_USED
 :DD.Set when SEH (Structured Exception Handling) is used.
 :eDL
-:cmt. S/370 not maintained
+:CMT. S/370 not maintained
 .if 0 eq 1 .do begin
 :DL tsize='2i'.
 :DTHD.370 Switch
@@ -302,12 +348,12 @@ This must be the second last routine called.
 :I1.BEFini
 :P.Finalize the code generator.
 This must be the last routine called.
-.section extern patch_handle BEPatch()
+.section patch_handle BEPatch()
 :P.Allocate a patch handle which can be used to create a patchable
 integer (an integer which will have a constant value provided sometime
 while the codegen is handling the CGDone call).
 See CGPatchNode.
-.section extern void BEPatchInteger( patch_handle hdl, signed_32 value )
+.section void BEPatchInteger( patch_handle hdl, signed_32 value )
 :P.Patch the integer corresponding to the given handle to have the
 given value.
 This may be called repeatedly with different values, providing
@@ -325,7 +371,7 @@ is undefined.
 This will be the new value of the node which has been associated with
 the patch handle.
 :eDL.
-.section extern cg_name BEFiniPatch( patch_handle hdl )
+.section cg_name BEFiniPatch( patch_handle hdl )
 :P.This must be called to free up resources used by the given handle.
 After this, the handle must not be used again.
 .chap Segments
@@ -2307,7 +2353,7 @@ If the pointer is NULL or the hw_reg_set is EMPTY, the code generator
 uses the cg_switches to determine if a segment register is pointing at
 the segment or if it will have to load one.
 :eDL.
-:cmt. S/370 support not maintained
+:CMT. S/370 support not maintained
 .if 0 eq 1 .do begin
 :DL tsize='2i' break.
 :DTHD.370 Parameters
@@ -2396,7 +2442,7 @@ figuring out whether a page reference is in the stack or not.
 This attribute forces the first reference to the stack (after a routine
 prologue has grown it) to be through the SS register.
 :eDL.
-:cmt. S/370 support not maintained
+:CMT. S/370 support not maintained
 .if 0 eq 1 .do begin
 :DL tsize='2i' break.
 :DTHD.370 Call Class
@@ -2413,7 +2459,7 @@ prologue has grown it) to be through the SS register.
 .do end
 .chap Debugging Information
 These routines generate information about types, symbols, etc.
-.section extern void DBLineNum( uint no )
+.section void DBLineNum( uint no )
 :I1.DBLineNum
 :P.Set the current source line number.
 :DL.
@@ -2422,7 +2468,7 @@ These routines generate information about types, symbols, etc.
 :DT.no
 :DD.Is the current source line number.
 :eDL.
-.section extern void DBModSym( cg_sym_handle sym, cg_type indirect )
+.section void DBModSym( cg_sym_handle sym, cg_type indirect )
 :I1.DBModSym
 :P.Define a symbol within the module (file scope).
 :DL.
@@ -2433,7 +2479,7 @@ These routines generate information about types, symbols, etc.
 :DT.indirect
 :DD.is the type of indirection needed to obtain the value
 :eDL.
-.section extern void DBObject( dbg_type tipe, dbg_loc loc )
+.section void DBObject( dbg_type tipe, dbg_loc loc )
 :I1.DBObject
 :P.Define a function as being a member function of a C++ class, and
 identify the type of the class and the location of the object being
@@ -2450,10 +2496,10 @@ object being manipulated by the function (the contents of the 'this'
 pointer in C++).
 This parameter is NULL if the routine is a static member function.
 :eDL.
-.section extern void DBLocalSym( cg_sym_handle sym, cg_type indirect )
+.section void DBLocalSym( cg_sym_handle sym, cg_type indirect )
 :I1.DBLocalSym
 :P.As DBModSym but for local (routine scope) symbols.
-.section extern void DBGenSym( cg_sym_handle sym, dbg_loc loc, int scoped )
+.section void DBGenSym( cg_sym_handle sym, dbg_loc loc, int scoped )
 :I1.DBGenSym
 :P.Define a symbol either with module scope ('scoped' == 0) or within
 the current block ('scoped' != 0).
@@ -2472,42 +2518,42 @@ locate the lvalue of the symbol.
 :DT.scoped
 :DD.whether the symbol is file scoped or not.
 :eDL.
-.section extern void DBBegBlock()
+.section void DBBegBlock()
 :I1.DBBegBlock
 :P.Open a new scope level.
-.section extern void DBEndBlock()
+.section void DBEndBlock()
 :I1.DBEndBlock
 :P.Close the current scope level.
-.section extern dbg_type DBScalar( char *name, cg_type tipe )
+.section dbg_type DBScalar( char *name, cg_type tipe )
 :I1.DBScalar
 :P.Defines the string :HP2.name:eHP2. to have type :HP2.tipe:eHP2..
-.section extern dbg_type DBScope( char *name )
+.section dbg_type DBScope( char *name )
 :I1.DBScope
 :P.define a symbol which "scopes" subsequent symbols.
 In C, the keywords :HP2.enum:eHP2., :HP2.union:eHP2., :HP2.struct:eHP2.
 may perform this function as in :HP2.struct foo:eHP2..
-.section extern dbg_name DBBegName( char *name, dbg_type scope )
+.section dbg_name DBBegName( char *name, dbg_type scope )
 :I1.DBBegName
 :P.start a type name whose type is yet undetermined
-.section extern dbg_type DBForward( dbg_name name )
+.section dbg_type DBForward( dbg_name name )
 :I1.DBForward
 :P.declare a type to be a forward reference
-.section extern dbg_type DBEndName( dbg_name name, dbg_type tipe )
+.section dbg_type DBEndName( dbg_name name, dbg_type tipe )
 :I1.DBEndName
 :P.complete the definition of a type name.
-.section extern dbg_type DBArray( dbg_type index, dbg_type base )
+.section dbg_type DBArray( dbg_type index, dbg_type base )
 :I1.DBArray
 :P.define a C array type
-.section extern dbg_type DBIntArray( unsigned_32 hi, dbg_type base )
+.section dbg_type DBIntArray( unsigned_32 hi, dbg_type base )
 :I1.DBIntArray
 :P.define a C array type
-.section extern dbg_type DBSubRange( signed_32 lo, signed_32 hi, dbg_type base )
+.section dbg_type DBSubRange( signed_32 lo, signed_32 hi, dbg_type base )
 :I1.DBSubRange
 :P.define an integer range type
-.section extern dbg_type DBPtr( cg_type ptr_type, dbg_type base )
+.section dbg_type DBPtr( cg_type ptr_type, dbg_type base )
 :I1.DBPtr
 :P.declare a pointer type
-.section extern dbg_type DBBasedPtr( cg_type ptr_type, dbg_type base, dbg_loc seg_loc )
+.section dbg_type DBBasedPtr( cg_type ptr_type, dbg_type base, dbg_loc seg_loc )
 :I1.DBBasedPtr
 :P.declare a based pointer type.
 The 'seg_loc' parameter is a location expression which evaluates to the
@@ -2515,16 +2561,16 @@ base address for the pointer after the indirection has been performed.
 Before the location expression is evalated, the current lvalue of the
 pointer symbol associated with this type is pushed onto the expression
 stack (needed for based on self pointers).
-.section extern dbg_struct DBBegStruct()
+.section dbg_struct DBBegStruct()
 :I1.DBBegStruct
 :P.start a structure type definition
-.section extern void DBAddField( dbg_struct st, unsigned_32 off, char *nm, dbg_type base )
+.section void DBAddField( dbg_struct st, unsigned_32 off, char *nm, dbg_type base )
 :I1.DBAddField
 :P.add a field to a structure
-.section extern void DBAddBitField( dbg_struct st, unsigned_32 off, byte strt, byte len, char *nm, dbg_type base )
+.section void DBAddBitField( dbg_struct st, unsigned_32 off, byte strt, byte len, char *nm, dbg_type base )
 :I1.DBAddBitField
 :P.add a bit field to a structure
-.section extern void DBAddLocField( dbg_struct st, dbg_loc loc, uint attr, byte strt, byte len, char *nm, dbg_type base )
+.section void DBAddLocField( dbg_struct st, dbg_loc loc, uint attr, byte strt, byte len, char *nm, dbg_type base )
 :I1.DBAddLocField
 :P.Add a field or bit field to a structure with a generalized location
 expression 'loc'.
@@ -2548,7 +2594,7 @@ normally visible to the user.
 :eDL.
 :PC.If the field being described is _not_ a bit field, the 'len'
 parameter should be set to zero.
-.section extern void DBAddInheritance( dbg_struct st, dbg_type inherit, dbg_loc adjust )
+.section void DBAddInheritance( dbg_struct st, dbg_type inherit, dbg_loc adjust )
 :I1.DBAddInheritance
 Add the fields of an inherited structure to the current structure being
 defined.
@@ -2568,49 +2614,49 @@ The base address of the symbol associated with the structure type is
 pushed onto the location expression stack before the expression is
 evaluated.
 :eDL.
-.section extern dbg_type DBEndStruct( dbg_struct st )
+.section dbg_type DBEndStruct( dbg_struct st )
 :I1.DBEndStruct
 :P.end a structure definition
-.section extern dbg_enum DBBegEnum( cg_type tipe )
+.section dbg_enum DBBegEnum( cg_type tipe )
 :I1.DBBegEnum
 :P.begin defining an enumerated type
-.section extern void DBAddConst( dbg_enum en, char *nm, signed_32 val )
+.section void DBAddConst( dbg_enum en, char *nm, signed_32 val )
 :I1.DBAddConst
 :P.add a symbolic constant to an enumerated type
-.section extern void DBAddConst64( dbg_enum en, char *nm, signed_64 val )
+.section void DBAddConst64( dbg_enum en, char *nm, signed_64 val )
 :I1.DBAddConst64
 :P.add a symbolic 64-bit integer constant to an enumerated type
-.section extern dbg_type DBEndEnum( dbg_enum en )
+.section dbg_type DBEndEnum( dbg_enum en )
 :I1.DBEndEnum
 :P.finish declaring an enumerated type
-.section extern dbg_proc DBBegProc( cg_type call_type, dbg_type ret )
+.section dbg_proc DBBegProc( cg_type call_type, dbg_type ret )
 :I1.DBBegProc
 :P.begin the a current procedure
-.section extern void DBAddParm( dbg_proc pr, dbg_type tipe )
+.section void DBAddParm( dbg_proc pr, dbg_type tipe )
 :I1.DBAddParm
 :P.declare a parameter to the procedure
-.section extern dbg_type DBEndProc( proc_list *pr )
+.section dbg_type DBEndProc( proc_list *pr )
 :I1.DBEndProc
 :P.end the current procedure
-.section extern dbg_type DBFtnType( char *name, dbg_ftn_type tipe )
+.section dbg_type DBFtnType( char *name, dbg_ftn_type tipe )
 :I1.DBFtnType
 :P.declare a fortran COMPLEX type
-.section extern dbg_type DBCharBlock( unsigned_32 len )
+.section dbg_type DBCharBlock( unsigned_32 len )
 :I1.DBCharBlock
 :P.declare a type to be a block of length :HP2.len:eHP2. characters
-.section extern dbg_type DBIndCharBlock( back_handle len, cg_type len_type, int off )
+.section dbg_type DBIndCharBlock( back_handle len, cg_type len_type, int off )
 :I1.DBIndCharBlock
 :P.declare a type to be a block of characters.
 The length is found at run-time at back_handle :HP2.len:eHP2. + offset
 :HP2.off:eHP2..
 The integral type of the back_handle location is :HP2.len_type:eHP2.
-.section extern dbg_type DBLocCharBlock( dbg_loc loc, cg_type len_type )
+.section dbg_type DBLocCharBlock( dbg_loc loc, cg_type len_type )
 :I1.DBLocCharBlock
 :P.declare a type to be a block of characters.
 The length is found at run-time at the address specified by the
 location expression :HP2.loc:eHP2..
 The integral type of the location is :HP2.len_type:eHP2.
-.section extern dbg_type DBFtnArray( back_handle dims, cg_type lo_bound_tipe, cg_type num_elts_tipe, int off, dbg_type base )
+.section dbg_type DBFtnArray( back_handle dims, cg_type lo_bound_tipe, cg_type num_elts_tipe, int off, dbg_type base )
 :I1.DBFtnArray
 :P.define a FORTRAN array dimension slice.
 :HP2.dims:eHP2. is a back handle + offset :HP2.off:eHP2. which will
@@ -2619,25 +2665,25 @@ The structure contains the array low bound (type
 :HP2.lo_bound_tipe:eHP2.) followed by the number of elements (type
 :HP2.num_elts_tipe:eHP2.).
 :HP2.base:eHP2. is the element type of the array.
-.section extern dbg_type DBDereference( cg_type ptr_type, dbg_type base )
+.section dbg_type DBDereference( cg_type ptr_type, dbg_type base )
 :I1.DBDereference
 :P.declare a type to need an implicit de-reference to retrieve the
 value (for FORTRAN parameters)
 :NOTE.
 This routine has been superceded by the use of location expressions.
-.section extern dbg_loc DBLocInit( void )
+.section dbg_loc DBLocInit( void )
 :I1.DBLocInit
 create an initial empty location expression
-.section extern dbg_loc DBLocSym( dbg_loc loc, cg_sym_handle sym )
+.section dbg_loc DBLocSym( dbg_loc loc, cg_sym_handle sym )
 :I1.DBLocSym
 push the address of 'sym' on to the expression stack
-.section extern dbg_loc DBLocTemp( dbg_loc loc, temp_handle tmp )
+.section dbg_loc DBLocTemp( dbg_loc loc, temp_handle tmp )
 :I1.DBLocTemp
 push the address of 'tmp' on to the expression stack
-.section extern dbg_loc DBLocConst( dbg_loc loc, unsigned_32 val )
+.section dbg_loc DBLocConst( dbg_loc loc, unsigned_32 val )
 :I1.DBLocConst
 push the constant 'val' on to the expression stack
-.section extern dbg_loc DBLocOp( dbg_loc loc, dbg_loc_op op, unsigned other )
+.section dbg_loc DBLocOp( dbg_loc loc, dbg_loc_op op, unsigned other )
 :I1.DBLocOp
 perform the following list of operations on the expression stack
 :DL.
@@ -2669,17 +2715,17 @@ value of an address.
 :DT.DB_OP_POP
 :DD.pop off (throw away) the top stack entry.
 :eDL.
-.section extern void DBLocFini( dbg_loc loc )
+.section void DBLocFini( dbg_loc loc )
 :I1.DBLocFini
 the given location expression will not be used anymore.
-.section extern unsigned DBSrcFile( char *fname )
+.section unsigned DBSrcFile( char *fname )
 :I1.DBSrcFile
 add the file name into the list of source files for positon info,
 return handle to this name
 :NOTE.
 Handle 0 is reserved for base source file name and is added by BE
 automaticaly during initialization.
-.section extern void DBSrcCue( unsigned fno, unsigned line, unsigned col )
+.section void DBSrcCue( unsigned fno, unsigned line, unsigned col )
 :I1.DBSrcCue
 add source position info for the appropriate source file
 .chap Registers
@@ -3158,7 +3204,7 @@ segment.
 :LI.HW_F0-HW_F31
 :LI.HW_FD0-HW_FD30
 :eSL.
-:cmt. S/370 support not maintained
+:CMT. S/370 support not maintained
 .if 0 eq 1 .do begin
 :P.The following registers are defined for the 370 target.
 :SL.

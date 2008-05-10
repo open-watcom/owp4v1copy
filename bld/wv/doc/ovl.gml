@@ -25,6 +25,7 @@ The initial CS value and the contents of the :F.handler_offset:eF. field gives
 the far address of the overlay manager routine responsible for handling
 debugger requests.
 .section The Hook Routine
+.np
 After the routine addresses have been exchanged, &company Debugger starts the program
 executing, to allow the overlay manager to initialize. After the manager has
 finished its initialization, it performs a far call to the debugger hook
@@ -48,6 +49,7 @@ the WLINK documentation in the Users' Guide for a description of what an
 ancestor is). To find out what sections are really in memory the debugger
 should invoke the handler routine with a GET_OVERLAY_STATE request.
 .section The Handler Routine
+.np
 The handler routine is responsible for processing requests from the debugger
 pertaining to overlays. It is invoked by the debugger by performing a far
 call with a request number in the AX register. The AX register is used
@@ -77,6 +79,7 @@ pointer followed by a 16-bit section number.
 The following requests are recognized by the debug handler routine.
 .beglevel
 .section GET_STATE_SIZE
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (0)	    AX = size of overlay state
@@ -84,6 +87,7 @@ The following requests are recognized by the debug handler routine.
 :P
 This request returns the number of bytes required for an overlay state.
 .section GET_OVERLAY_STATE
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (1)	    AX = 1
@@ -94,6 +98,7 @@ This request returns the number of bytes required for an overlay state.
 This request copies the overlay state into the memory pointed at by
 the CX:BX registers. A one is always returned in AX.
 .section SET_OVERLAY_STATE
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (2)	    AX = 1
@@ -113,6 +118,7 @@ turn on the appropriate section number in the bit vector, then make a
 SET_OVERLAY_STATE request. Remember that not only that section will be loaded,
 but all of its ancestor sections as well.
 .section TRANSLATE_VECTOR_ADDR
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (3)	    AX = 1 if addr was translated,
@@ -128,6 +134,7 @@ number the of routine. A one is returned in AX in this case. If the address
 is not an overlay vector, then the overlay address is untouched and an zero
 is returned in AX.
 .section TRANSLATE_RETURN_ADDR
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (4)	    AX = 1 if addr was translated,
@@ -153,6 +160,7 @@ address and section number then replaces the contents of the overlay address
 and a one is returned in AX. If the address is not the parallel return code,
 then the overlay address is left untouched and a zero is returned in AX.
 .section GET_OVL_TBL_ADDR
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (5)	    AX = 0
@@ -172,6 +180,7 @@ can then find the overlay table and from that, find the other sections. It
 should be noted that the format of the overlay table may change,
 so this call should be avoided if at all possible.
 .section GET_MOVED_SECTION
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (6)         AX = 1 if the section exists
@@ -206,6 +215,7 @@ void CheckMovedSections()
 }
 :eXMP.
 .section GET_SECTION_DATA
+.np
 :XMP.
     Inputs:			    Outputs:
     AX = request number (7)         AX = 1 if the section exists
@@ -224,6 +234,7 @@ go if it was loaded at that time. It also fills in the section number
 portion of the address with the size of the section in paragraphs.
 .endlevel
 .section Overlay Table Structure
+.np
 The pointer returned by the GET_OVL_TBL_ADDR request has the following format:
 :XMP
 typedef struct ovl_table {

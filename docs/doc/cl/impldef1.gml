@@ -525,6 +525,7 @@ huge       is pointer offset (low-order order 2 bytes, offset in
 .keep end
 .keep begin
 .pp
+.cp 13
 &wc286. conversion of integer to pointer:
 .if &e'&nobox eq 0 .do begin
 .boxdef

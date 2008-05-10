@@ -41,12 +41,13 @@
 :INCLUDE file='XDEFS'.
 :INCLUDE file='DEFS'.
 :INCLUDE file='EXTRA'.
-
+.*
 :set symbol="edname" value="Open Watcom Vi Editor".
 :set symbol="edvi" value="Vi".
 :set symbol="isbn" value="".
-
+.*
 :GDOC.
+.*
 .if &e'&dohelp eq 0 .do begin
 .   :FRONTM.
 .   :TITLEP.
@@ -63,7 +64,8 @@
 .   :TOC.
 .   :FIGLIST.
 .   .pa odd
-.   .do end
+.do end
+.*
 :BODY.
 .if &e'&dohelp ne 0 .do begin
 .   :exhelp.

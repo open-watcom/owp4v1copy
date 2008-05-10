@@ -3,6 +3,19 @@
 .*
 :INCLUDE file='LYTCHG'.
 .if &e'&dohelp eq 0 .do begin
+.*
+.* Layout changes specific to this document
+.*
+.* Switch off numbering for low-level heading
+.*
+:LAYOUT.
+  :H3
+    number_form=none
+  :H4
+    number_form=none
+  :H5
+    number_form=none
+:eLAYOUT.
 :INCLUDE file='WNOHELP'.
 .do end
 :INCLUDE file='FMTMACRO'.

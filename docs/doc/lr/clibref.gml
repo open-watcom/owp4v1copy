@@ -28,9 +28,9 @@
 .*
 :GDOC.
 .*
-:FRONTM.
-.*
 .if &e'&dohelp eq 0 .do begin
+.*
+:FRONTM.
 :TITLEP.
 :TITLE stitle="Library Reference".&company C Library Reference
 .if &e'&forw eq 1 .do begin

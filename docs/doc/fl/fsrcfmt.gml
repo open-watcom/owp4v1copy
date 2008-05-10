@@ -235,6 +235,7 @@ Under the control of a compiler option, &product permits the source
 statement to extend to column 132.
 .xt end
 .np
+.cp 5
 FORTRAN 77 allows up to 19 continuation lines to continue a statement.
 .xt begin
 &product extends this by allowing more than 19 continuation lines.

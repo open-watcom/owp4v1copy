@@ -1,4 +1,3 @@
-:PREFACE.
 .preface Preface
 .np
 .if '&lang' eq 'C' .do begin

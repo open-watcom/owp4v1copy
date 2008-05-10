@@ -62,9 +62,9 @@
         font=2
         page_reset=no
 :PREFACE
-        pre_top_skip=1
+        pre_top_skip=0
         font=11
-        header=yes
+        header=no
         preface_string=""
         page_eject=odd
         spacing=1
@@ -382,7 +382,7 @@
         refnum=1
         region_position=right
         pouring=last
-        contents=' '
+        contents=none
 :eBANREGION
 :eBANNER
 :BANNER
@@ -420,7 +420,7 @@
         width=extend
         depth=1
         pouring=last
-        contents=' '
+        contents=none
 :eBANREGION
 :eBANNER
 

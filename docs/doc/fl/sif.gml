@@ -126,6 +126,7 @@ and then tested for their truth value.
       IF( A.LT.B .OR. C.GE.D )PRINT *, 'A<B or C>=D'
 .exam end
 .np
+.cp 12
 .xt begin
 An example of an integer expression in an
 .kw IF

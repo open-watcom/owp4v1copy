@@ -27,7 +27,7 @@
 .*.pa odd
 :TOC.
 :FIGLIST.
-.*.pa odd
+.pa odd
 .do end
 .*
 :BODY.

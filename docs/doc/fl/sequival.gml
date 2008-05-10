@@ -70,6 +70,7 @@ and
 is assigned the same storage unit as
 .id A(4).
 .np
+.cp 20
 .xt begin
 The following example illustrates a &product extension.
 .exam begin

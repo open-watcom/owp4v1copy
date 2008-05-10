@@ -684,19 +684,20 @@ The protected-mode program must set up a data structure with the
 appropriate register values.
 This "real-mode call structure" is shown below.
 .np
-.se c0=&INDlvl-1+11
-.se c1=&INDlvl-1+19
-.se c2=&INDlvl-1+60
-.cp 28
+.if '&format' eq '7x9' .do begin
+.se *p0=&INDlvl-1+11
+.se *c1=8
+.se *c2=37
+.do end
+.el .do begin
+.se *p0=&INDlvl-1+11
+.se *c1=8
+.se *c2=41
+.do end
+.cp 40
 .tb set $
-.* .tb 9 16 50
-.tb &c0 &c1 &c2
-.* .bx on 1 8 43
-.* .bx on 1 10 50
-.se t0=&c0-5
-.se t1=&c1-3
-.se t2=58
-.bx on &t0 &t1 &t2
+.tb &*p0 +&*c1 +&*c2
+.bx on &*p0-3 +&*c1 +&*c2
 $Offset$Register
 .bx
 $00H$EDI
@@ -1165,19 +1166,20 @@ If the call succeeds, the carry flag is clear and ES:EDI contains the
 .mono selector:offset
 of a buffer with the structure shown in the figure below.
 .np
-.se c0=&INDlvl-1+11
-.se c1=&INDlvl-1+19
-.se c2=&INDlvl-1+60
+.if '&format' eq '7x9' .do begin
+.se *p0=&INDlvl-1+11+1
+.se *c1=8
+.se *c2=37
+.do end
+.el .do begin
+.se *p0=&INDlvl-1+11+3
+.se *c1=8
+.se *c2=40
+.do end
 .cp 28
 .tb set $
-.* .tb 9 16 50
-.tb &c0 &c1 &c2
-.* .bx on 1 8 43
-.* .bx on 1 10 50
-.se t0=&c0-5
-.se t1=&c1-3
-.se t2=58
-.bx on &t0 &t1 &t2
+.tb &*p0. +&*c1. +&*c2.
+.bx on &*p0.-3 +&*c1. +&*c2.
 $Offset$Description
 .bx
 $00H$Largest available block, in bytes

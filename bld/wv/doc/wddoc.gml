@@ -9,6 +9,19 @@
 :INCLUDE file='DEFS'.
 :INCLUDE file='extra'.
 .*
+.if &e'&dohelp eq 0 .do begin
+.*
+.* Layout changes specific to this document
+.*
+.* Reuse numbering from 1 to each separate section
+.*
+:LAYOUT.
+:H0
+    number_reset=yes
+:eLAYOUT.
+:INCLUDE file='WNOHELP'.
+.do end
+.*
 :GDOC.
 .*
 .if &e'&dohelp eq 0 .do begin
@@ -19,6 +32,7 @@
 :AUTHOR.Revised by Open Watcom contributors
 :eTITLEP.
 :TOC.
+.pa odd
 .do end
 .*
 :BODY.

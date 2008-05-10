@@ -384,6 +384,7 @@ Consider the following examples, with these macro definitions in place:
 .millust end
 ..sk 1 c
 .if &e'&nobox eq 0 .do begin
+.cp 18
 .boxdef
 ..if '&format' eq '7x9' ..th ..do begin
 .  .boxcol 19
@@ -412,6 +413,7 @@ Consider the following examples, with these macro definitions in place:
 .boxend
 .do end
 .el .do begin
+.cp 16
 .millust begin
 Invocation              After Substitution
 ---------------------   --------------------
@@ -489,6 +491,7 @@ is concatentated with
 Several example usages of the above macros follow:
 ..sk 1 c
 .if &e'&nobox eq 0 .do begin
+.cp 16
 .boxdef
 ..if '&format' eq '7x9' ..th ..do begin
 .  .boxcol 20
@@ -515,6 +518,7 @@ Several example usages of the above macros follow:
 .boxend
 .do end
 .el .do begin
+.cp 10
 .millust begin
 Invocation              After Substitution
 ---------------------   --------------------

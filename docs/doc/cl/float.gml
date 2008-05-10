@@ -56,8 +56,14 @@ using the
 The floating-point format is the
 .us IEEE Standard for Binary Floating-Point Arithmetic
 (ANSI/IEEE Std 754-1985).
+.shade end
+.cp 12
+.shade begin
 ..im float87
+.shade end
 .pp
+.cp 7
+.shade begin
 By default, the &wcboth. compilers
 .ix emulation floating-point
 .ix floating-point emulation

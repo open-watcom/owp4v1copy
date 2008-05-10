@@ -29,14 +29,13 @@
 :INCLUDE file='NEWSLETT'.
 :PREFACE.
 .preface Preface
-.*
 .np
 The
 .us &wasname User's Guide
 describes the AXP assembler.
-.pa odd
 :TOC.
 :FIGLIST.
+.pa odd
 .do end
 .*
 :BODY.

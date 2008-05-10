@@ -2226,8 +2226,7 @@ $(docsrc_dir)$(SL)lr$(SL)gr$(SL)gr_wrpon.gml &
 $(docsrc_dir)$(SL)lr$(SL)gr$(SL)graphov.gml &
 $(docsrc_dir)$(SL)lr$(SL)gr$(SL)grmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)gr$(SL)grpref.gml &
-$(docsrc_dir)$(SL)lr$(SL)gr$(SL)grsyms.gml &
-$(docsrc_dir)$(SL)lr$(SL)gr$(SL)grtitle.gml
+$(docsrc_dir)$(SL)lr$(SL)gr$(SL)grsyms.gml
 
 # owstl
 #bmroot_owstldev = $(docsrc_dir)$(SL)owstl
@@ -2553,6 +2552,7 @@ $(docsrc_dir)$(SL)gml$(SL)rule6x8.eps   &
 $(docsrc_dir)$(SL)gml$(SL)rule7x9.eps   &
 $(docsrc_dir)$(SL)gml$(SL)shrink.ps     &
 $(docsrc_dir)$(SL)gml$(SL)symbols.gml   &
+$(docsrc_dir)$(SL)gml$(SL)to85x11.gml   &
 $(docsrc_dir)$(SL)gml$(SL)ul.ps         &
 $(docsrc_dir)$(SL)gml$(SL)wbls.opt      &
 $(docsrc_dir)$(SL)gml$(SL)wblslay.gml   &
