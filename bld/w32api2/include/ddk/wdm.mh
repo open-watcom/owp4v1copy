@@ -1044,6 +1044,7 @@ typedef PVOID               *PCLFS_MGMT_CLIENT;
     PAGE_SHIFT))
 #define COMPUTE_PAGES_SPANNED( p1, p2 ) \
     ADDRESS_AND_SIZE_TO_SPAN_PAGES( p1, p2 )
+
 /* Memory management maximum disk I/O size */
 #define MM_MAXIMUM_DISK_IO_SIZE 0x00010000
 
@@ -7549,7 +7550,7 @@ CLFSUSER_API BOOLEAN NTAPI  ClfsValidTopLevelContext( PIRP );
 #define ExGetCurrentResourceThread()        ((ULONG_PTR)PsGetCurrentThread())
 #define MmGetMdlPfnArray( x )               ((PPFN_NUMBER)(x + 1))
 #define MmGetMdlVirtualAddress( x ) \
-    ((PVOID)((PCHAR)((x)->StartVa + (x)->ByteOffset))
+    ((PVOID)((PCHAR)((x)->StartVa) + (x)->ByteOffset))
 #define MmGetMdlByteCount( x )              ((x)->ByteCount)
 #define MmGetMdlByteOffset( x )             ((x)->ByteOffset)
 #define MmGetMdlBaseVa( x )                 ((x)->StartVa)
