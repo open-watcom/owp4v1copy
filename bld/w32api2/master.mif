@@ -425,6 +425,7 @@ directx_libs =       &
         dxguid.lib
 
 ddk_libs =           &
+        ntdll.lib    &
         ntoskrnl.lib &
         rtlver.lib
 
