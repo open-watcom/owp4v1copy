@@ -425,9 +425,14 @@ directx_libs =       &
         dxguid.lib
 
 ddk_libs =           &
+        clfs.lib     &
+        hal.lib      &
+        ks.lib       &
+        ksecdd.lib   &
         ntdll.lib    &
         ntoskrnl.lib &
-        rtlver.lib
+        rtlver.lib   &
+        win32k.lib
 
 vfw32_lbcs =         &
         avicap32.lbc &
@@ -497,7 +502,7 @@ dxguid.lib: dxguid.obj
 
 rtlver.lib: rtlver.obj
     %create $^&.lbc
-    @%append $^@.lbc +rtlver.obj
+    @%append $^&.lbc +rtlver.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
