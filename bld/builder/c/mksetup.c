@@ -120,6 +120,7 @@ static int                  Lang = 1;
 static int                  Upgrade = FALSE;
 static int                  Verbose = FALSE;
 static int                  IgnoreMissingFiles = FALSE;
+static int                  CreateMissingFiles = FALSE;
 static char                 *Include;
 static const char           MksetupInf[] = "mksetup.inf";
 
@@ -230,6 +231,8 @@ int CheckParms( int *pargc, char **pargv[] )
                 Verbose = TRUE;
             } else if( tolower( (*pargv)[1][1] ) == 'f' ) {
                 IgnoreMissingFiles = TRUE;
+            } else if( tolower( (*pargv)[1][1] ) == 'x' ) {
+                CreateMissingFiles = TRUE;
             } else {
                 printf( "Unrecognized option %s\n", (*pargv)[1] );
             }
@@ -247,6 +250,7 @@ int CheckParms( int *pargc, char **pargv[] )
         printf( "-u         create upgrade setup script\n" );
         printf( "-d<string> specify string to add to Application section\n" );
         printf( "-f         force script creation if files missing (testing only)\n" );
+        printf( "-x         force creation of missing files (testing only)\n" );
         return( FALSE );
     }
     Product = argv[ 1 ];
@@ -451,6 +455,17 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         if( IgnoreMissingFiles ) {
             act_size = 1024;
             time = 0;
+        } else if( CreateMissingFiles ) {
+            FILE    *fp;
+            fp = fopen( src, "w" );
+            if( fp == NULL ) {
+                printf( "Cannot create '%s'\n", src );
+                return( FALSE );
+            } else {
+                fclose( fp );
+                act_size = 0;
+                time = 0;
+            }
         } else {
             return( FALSE );
         }

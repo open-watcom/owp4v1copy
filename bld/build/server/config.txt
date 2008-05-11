@@ -17,6 +17,10 @@ WATCOM=C:\WATCOM
 # The location of GhostScript for PDF creation
 GHOSTSCRIPT=c:\gs\gs7.04
 
+# The location where WWW snapshot is placed, there will be created installers
+# If SNAPSHOTPATH is not defined then no installers will be created
+#SNAPSHOTPATH=\www\snapshot
+
 # File holding the baseline build results. Relative to HOME.
 BLDBASE=bldbase.txt
 BLDBASE2=bldbase2.txt

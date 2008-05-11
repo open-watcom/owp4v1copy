@@ -85,6 +85,12 @@ echo Installer Build: <1> <2> <3> <4> <5>
     uzip <RELROOT>/fsetup.zip instarch.lst <RELROOT>
     mkexezip <INSTALLER> <RELROOT>/fsetup.zip setup.exe
 
+[ BLOCK <1> missing ]
+    langdat c
+    mksetup -x -i../include c filelist <RELROOT>
+    langdat f77
+    mksetup -x -i../include f77 filelist <RELROOT>
+
 [ BLOCK . . ]
     # Get setup.inf out of the way
     rm -f <RELROOT>/setup.inf   

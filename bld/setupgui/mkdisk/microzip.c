@@ -63,7 +63,7 @@ int add_files( struct zip *archive, const char *list_fname, char *dir )
     }
     /* Loop over list, add individual files */
     retval = 0;
-    while( retval == 0 && fgets( srcname, sizeof( srcname ), f ) != NULL ) {
+    while( fgets( srcname, sizeof( srcname ), f ) != NULL ) {
         int     len;
 
         /* Strip terminating newline */
@@ -78,7 +78,6 @@ int add_files( struct zip *archive, const char *list_fname, char *dir )
             fprintf( stderr, "failed to add '%s' to archive: %s\n",
                     srcname, zip_strerror( archive ) );
             retval = -1;
-            break;
         }
     }
     fclose( f );
@@ -124,6 +123,5 @@ int main( int argc, char **argv )
                  zname, zip_strerror( z ) );
         return( 1 );
     }
-
     return( 0 );
 }

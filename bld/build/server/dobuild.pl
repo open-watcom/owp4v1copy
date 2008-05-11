@@ -56,6 +56,7 @@ my $home           = $Common::config{"HOME"};
 my $OW             = $Common::config{"OW"};
 my $report_archive = $Common::config{"REPORTS"};
 my $GHOSTSCRIPT    = $Common::config{"GHOSTSCRIPT"};
+my $SNAPSHOTPATH   = $Common::config{"SNAPSHOTPATH"};
 
 if( $^O eq "MSWin32" ) {
     $OStype = "WIN32";
@@ -73,10 +74,11 @@ if( $^O eq "MSWin32" ) {
     exit 1;
 }
 
-my $build_batch_name  = "$home\/buildtmp.$ext";
-my $test_batch_name   = "$home\/testtmp.$ext";
-my $rotate_batch_name = "$home\/rotate.$ext";
-my $setvars           = "$OW\/setvars.$ext";
+my $build_batch_name     = "$home\/buildtmp.$ext";
+my $build_installer_name = "$home\/blbinst.$ext";
+my $test_batch_name      = "$home\/testtmp.$ext";
+my $rotate_batch_name    = "$home\/rotate.$ext";
+my $setvars              = "$OW\/setvars.$ext";
 
 sub get_reldir
 {
@@ -179,6 +181,37 @@ sub make_test_batch
     close(BATCH);
     # On Windows it has no efect
     chmod 0777, $test_batch_name;
+}
+
+sub make_installer_batch
+{
+    open(BATCH, ">$build_installer_name") || die "Unable to open $build_installer_name file.";
+    open(INPUT, "$setvars") || die "Unable to open $setvars file.";
+    while (<INPUT>) {
+        s/\r?\n/\n/;
+        if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", $Common::config{"WATCOM"}, "\n"; }
+        else                      { print BATCH; }
+    }
+    close(INPUT);
+    # Add additional commands to do the build.
+    print BATCH "\n";
+    print BATCH "$setenv RELROOT=", $SNAPSHOTPATH, "\n";
+    if ($OStype eq "UNIX") {
+        print BATCH "ulimit -n 4096\n";
+    }
+    print BATCH "\n";
+    # Create fresh builder tools, to prevent lockup build server 
+    # if builder tools from previous build are somehow broken
+    print BATCH "cd $OW\ncd distrib\ncd ow\n";
+    print BATCH "builder missing\n";
+    print BATCH "builder rel2 os_dos\n";
+    print BATCH "builder rel2 os_nt\n";
+    print BATCH "builder rel2 os_os2\n";
+    print BATCH "builder rel2 os_linux\n";
+    close(BATCH);
+    # On Windows it has no efect
+    chmod 0777, $build_installer_name;
 }
 
 sub process_log
@@ -414,4 +447,8 @@ if (($pass1_result eq "success") &&
     ($pass2_result eq "success")) {
 
     system("$rotate_batch_name");
+    if (defined $SNAPSHOTPATH) {
+        make_installer_batch();
+        system("$build_installer_name");
+    }
 }
