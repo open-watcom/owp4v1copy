@@ -35,6 +35,11 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include "diskos.h"
+#ifdef __UNIX__
+    #include <unistd.h>
+#else
+    #include <direct.h>
+#endif
 
 #define RoundUp( size, limit )  ( ( ( size + limit - 1 ) / limit ) * limit )
 
@@ -397,6 +402,58 @@ int AddPathTree( char *path, int target )
     return( AddPath( path, target, parent ) );
 }
 
+static int mkdir_nested( char *path )
+{
+    struct stat sb;
+    char        pathname[ FILENAME_MAX ];
+    char        *p;
+    char        *end;
+
+    p = pathname;
+    strncpy( pathname, path, FILENAME_MAX );
+    end = pathname + strlen( pathname );
+
+#ifndef __UNIX__
+    /* special case for drive letters */
+    if( p[0] && p[1] == ':' ) {
+        p += 2;
+    }
+#endif
+    /* skip initial path separator if present */
+    if( (p[0] == '/') || (p[0] == '\\') )
+        ++p;
+
+    /* find the next path component */
+    while( p < end ) {
+        while( (p < end) && (*p != '/') && (*p != '\\') )
+            ++p;
+        *p = '\0';
+
+        /* check if pathname exists */
+        if( stat( pathname, &sb ) == -1 ) {
+            int rc;
+
+#ifdef __UNIX__
+            rc = mkdir( pathname, S_IRWXU | S_IRWXG | S_IRWXO );
+#else
+            rc = mkdir( pathname );
+#endif
+            if( rc != 0 ) {
+                printf( "Can not create directory '%s': %s\n", pathname, strerror( errno ) );
+                return( -1 );
+            }
+        } else {
+            /* make sure it really is a directory */
+            if( !S_ISDIR( sb.st_mode ) ) {
+                printf( "Can not create directory '%s': file with the same name already exists\n", pathname );
+                return( -1 );
+            }
+        }
+        /* put back the path separator - forward slash always works */
+        *p++ = '/';
+    }
+    return( 0 );
+}
 
 int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file, char *dst_var, char *cond )
 /***********************************************************************************************************/
@@ -457,15 +514,28 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
             time = 0;
         } else if( CreateMissingFiles ) {
             FILE    *fp;
+            char    c;
+
             fp = fopen( src, "w" );
             if( fp == NULL ) {
-                printf( "Cannot create '%s'\n", src );
-                return( FALSE );
-            } else {
-                fclose( fp );
-                act_size = 0;
-                time = 0;
+                for( p = src + strlen( src ); p > src; p-- ) {
+                    if( (*(p - 1) == '\\') || (*(p - 1) == '/') ) {
+                        c = *p;
+                        *p = '\0';
+                        mkdir_nested( src );
+                        *p = c;
+                        break;
+                    }
+                }
+                fp = fopen( src, "w" );
+                if( fp == NULL ) {
+                    printf( "Cannot create '%s'\n", src );
+                    return( FALSE );
+                }
             }
+            fclose( fp );
+            act_size = 0;
+            time = 0;
         } else {
             return( FALSE );
         }
