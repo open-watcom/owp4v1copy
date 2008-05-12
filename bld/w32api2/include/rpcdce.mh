@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RPCDCE_H_INCLUDED
-#define _RPCDCE_H_INCLUDED
-
 #ifndef __RPCDCE_H__
 #define __RPCDCE_H__
 
@@ -829,4 +826,4 @@ RPCRTAPI RPC_STATUS RPC_ENTRY   RpcServerInqBindingHandle( RPC_BINDING_HANDLE * 
 #include <rpcdcep.h>
 
 #endif /* __RPCDCE_H__ */
-#endif /* _RPCDCE_H_INCLUDED */
+

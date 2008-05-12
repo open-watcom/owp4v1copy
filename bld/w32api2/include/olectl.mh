@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OLECTL_H_INCLUDED
-#define _OLECTL_H_INCLUDED
-
 #ifndef _OLECTL_H_
 #define _OLECTL_H_
 
@@ -379,7 +376,7 @@ EXTERN_C const GUID     GUID_XPOS;
 EXTERN_C const GUID     GUID_YPOS;
 EXTERN_C const GUID     GUID_XSIZE;
 EXTERN_C const GUID     GUID_YSIZE;
-#ifndef _CGUID_H_INCLUDED
+#ifndef __CGUID_H__
 EXTERN_C const GUID     GUID_TRISTATE;
 #endif
 EXTERN_C const GUID     GUID_OPTIONVALUEEXCLUSIVE;
@@ -413,5 +410,4 @@ WINOLECTLAPI                OleTranslateColor( OLE_COLOR, HPALETTE, COLORREF * )
 :include cplusepi.sp
 
 #endif /* _OLECTL_H_ */
-#endif /* _OLECTL_H_INCLUDED */
 

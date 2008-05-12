@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _AUSTREAM_H_INCLUDED
-#define _AUSTREAM_H_INCLUDED
+#ifndef __austream_h__
+#define __austream_h__
 
 :include readonly.sp
 #include <mmstream.h>
@@ -175,5 +175,5 @@ DECLARE_INTERFACE_( IAudioData, IMemoryData ) {
 
 :include cplusepi.sp
 
-#endif /* _AUSTREAM_H_INCLUDED */
+#endif /* __austream_h__ */
 

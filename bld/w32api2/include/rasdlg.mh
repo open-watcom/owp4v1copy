@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RASDLG_H_INCLUDED
-#define _RASDLG_H_INCLUDED
-
 #ifndef _RASDLG_H_
 #define _RASDLG_H_
 
@@ -172,5 +169,4 @@ BOOL APIENTRY   RasPhonebookDlgW( LPWSTR, LPWSTR, LPRASPBDLGW );
 :include cplusepi.sp
 
 #endif /* _RASDLG_H_ */
-#endif /* _RASDLG_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OLE2_H_INCLUDED
-#define _OLE2_H_INCLUDED
-
 #ifndef _OLE2_H_
 #define _OLE2_H_
 
@@ -125,5 +122,4 @@ WINOLEAPI               WriteFmtUserTypeStg( LPSTORAGE, CLIPFORMAT, LPOLESTR );
 :include cplusepi.sp
 
 #endif /* _OLE2_H_ */
-#endif /* _OLE2_H_INCLUDED */
 

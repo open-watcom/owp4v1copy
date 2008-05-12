@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMERR_H_INCLUDED
-#define _LMERR_H_INCLUDED
-
 #ifndef NETERR_INCLUDED
 #define NETERR_INCLUDED
 
@@ -332,5 +329,4 @@
 :include cplusepi.sp
 
 #endif /* NETERR_INCLUDED */
-#endif /* LMERR_H_INCLUDED */
 

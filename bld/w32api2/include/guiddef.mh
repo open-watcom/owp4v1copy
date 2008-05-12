@@ -24,9 +24,6 @@
         EXTERN_C const GUID x
 #endif
 
-#ifndef _GUIDDEF_H_INCLUDED
-#define _GUIDDEF_H_INCLUDED
-
 #ifndef _GUIDDEF_H_
 #define _GUIDDEF_H_
 
@@ -92,5 +89,4 @@ typedef FMTID   *LPFMTID;
 :include cplusepi.sp
 
 #endif /* _GUIDDEF_H_ */
-#endif /* _GUIDDEF_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINDNS_H_INCLUDED
-#define _WINDNS_H_INCLUDED
-
 #ifndef _WINDNS_INCLUDED_
 #define _WINDNS_INCLUDED_
 
@@ -368,7 +365,7 @@ typedef union {
     DWORD       IP6Dword[4];
     WORD        IP6Word[8];
     BYTE        IP6Byte[16];
-#ifdef _IN6ADDR_H_INCLUDED
+#ifdef IN6_ADDR
     IN6_ADDR    In6;
 #endif
 } IP6_ADDRESS;
@@ -1143,5 +1140,4 @@ VOID WINAPI         DnsRecordListFree( PDNS_RECORD, DNS_FREE_TYPE );
 :include cplusepi.sp
 
 #endif /* _WINDNS_INCLUDED_ */
-#endif /* _WINDNS_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MSWSOCK_H_INCLUDED
-#define _MSWSOCK_H_INCLUDED
-
 #ifndef _MSWSOCK_
 #define _MSWSOCK_
 
@@ -267,5 +264,4 @@ int PASCAL  WSARecvEx( SOCKET, char *, int, int * );
 :include cplusepi.sp
 
 #endif /* _MSWSOCK_ */
-#endif /* _MSWSOCK_H_INCLUDED */
 

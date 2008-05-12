@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DLGS_H_INCLUDED
-#define _DLGS_H_INCLUDED
-
 #ifndef _DLGSH_INCLUDED_
 #define _DLGSH_INCLUDED_
 
@@ -237,5 +234,4 @@ typedef struct tagCRGB {
 #endif /* RC_INVOKED */
 
 #endif /* _DLGSH_INCLUDED_ */
-#endif /* _DLGS_H_INCLUDED */
 

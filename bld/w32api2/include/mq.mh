@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MQ_H_INCLUDED
-#define _MQ_H_INCLUDED
-
 #ifndef __MQ_H__
 #define __MQ_H__
 
@@ -735,5 +732,4 @@ HRESULT APIENTRY    MQReceiveMessageByLookupId( QUEUEHANDLE, ULONGLONG, DWORD, M
 :include cplusepi.sp
 
 #endif /* __MQ_H__ */
-#endif /* _MQ_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMCONS_H_INCLUDED
-#define _LMCONS_H_INCLUDED
-
 #ifndef NETCONS_INCLUDED
 #define NETCONS_INCLUDED
 
@@ -93,5 +90,4 @@ typedef NET_API_STATUS  API_RET_TYPE;
 :include cplusepi.sp
 
 #endif /* NETCONS_INCLUDED */
-#endif /* _LMCONS_H_INCLUDED */
 

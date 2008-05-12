@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _D3DRMDEF_H_INCLUDED
-#define _D3DRMDEF_H_INCLUDED
-
 #ifndef __D3DRMDEFS_H__
 #define __D3DRMDEFS_H__
 
@@ -537,5 +534,4 @@ extern LPD3DVECTOR D3DRMAPI D3DRMVectorSubtract( LPD3DVECTOR, LPD3DVECTOR, LPD3D
 :include cplusepi.sp
 
 #endif /* __D3DRMDEFS_H__ */
-#endif /* _D3DRMDEF_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ERRORS_H_INCLUDED
-#define _ERRORS_H_INCLUDED
-
 #ifndef __ERRORS__
 #define __ERRORS__
 
@@ -41,5 +38,4 @@ AMOVIEAPI DWORD WINAPI  AMGetErrorTextW( HRESULT, LPWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* __ERRORS__ */
-#endif /* _ERRORS_H_INCLUDED */
 

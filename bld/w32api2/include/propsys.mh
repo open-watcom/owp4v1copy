@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _PROPSYS_H_INCLUDED
-#define _PROPSYS_H_INCLUDED
+#ifndef __propsys_h__
+#define __propsys_h__
 
 :include readonly.sp
 #include <objidl.h>
@@ -1068,5 +1068,5 @@ PSSTDAPI    PSUnregisterPropertySchema( PCWSTR );
 
 :include cplusepi.sp
 
-#endif /* _PROPSYS_H_INCLUDED */
+#endif /* __propsys_h__ */
 

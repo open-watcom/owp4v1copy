@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTSTATUS_H_INCLUDED
-#define _NTSTATUS_H_INCLUDED
-
 #ifndef _NTSTATUS_
 #define _NTSTATUS_
 
@@ -1794,5 +1791,4 @@
 :include cplusepi.sp
 
 #endif /* _NTSTATUS_ */
-#endif /* _NTSTATUS_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _KTMTYPES_H_INCLUDED
-#define _KTMTYPES_H_INCLUDED
+#ifndef _KTMTYPES_
+#define _KTMTYPES_
 
 :include readonly.sp
 :include cpluspro.sp
@@ -179,5 +179,5 @@ typedef KCRM_PROTOCOL_BLOB  *PRKCRM_PROTOCOL_BLOB;
 
 :include cplusepi.sp
 
-#endif /* _KTMTYPES_H_INCLUDED */
+#endif /* _KTMTYPES_ */
 

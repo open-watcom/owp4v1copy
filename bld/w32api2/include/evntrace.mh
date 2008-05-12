@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _EVNTRACE_H_INCLUDED
-#define _EVNTRACE_H_INCLUDED
-
 #ifndef _EVNTRACE_
 #define _EVNTRACE_
 
@@ -251,7 +248,7 @@ typedef ULONG64 *PTRACEHANDLE;
 #define TRACE_PROVIDER_FLAG_PRE_ENABLE  0x00000002L
 
 /* Opaque data types */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDM_
 typedef struct _EVENT_FILTER_DESCRIPTOR EVENT_FILTER_DESCRIPTOR;
 typedef struct _EVENT_FILTER_DESCRIPTOR *PEVENT_FILTER_DESCRIPTOR;
 #endif
@@ -349,7 +346,7 @@ typedef MOF_FIELD   *PMOF_FIELD;
     (x)->DataType = (ULONG)(p3);
 
 /* Trace log file header */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 typedef struct _TRACE_LOGFILE_HEADER {
     ULONG           BufferSize;
     union {
@@ -397,7 +394,7 @@ typedef struct EVENT_INSTANCE_INFO {
 typedef EVENT_INSTANCE_INFO *PEVENT_INSTANCE_INFO;
 
 /* Event trace properties */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 typedef struct _EVENT_TRACE_PROPERTIES {
     WNODE_HEADER    Wnode;
     ULONG           BufferSize;
@@ -422,7 +419,7 @@ typedef EVENT_TRACE_PROPERTIES  *PEVENT_TRACE_PROPERTIES;
 #endif
 
 /* Trace GUID registration */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 typedef struct _TRACE_GUID_REGISTRATION {
     LPCGUID Guid;
     HANDLE  RegHandle;
@@ -494,7 +491,7 @@ typedef struct _EVENT_TRACE {
 typedef EVENT_TRACE *PEVENT_TRACE;
 
 /* Event tracing callbacks */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 typedef ULONG (WINAPI *PEVENT_TRACE_BUFFER_CALLBACKA)( struct _EVENT_TRACE_LOGFILEA * );
 typedef ULONG (WINAPI *PEVENT_TRACE_BUFFER_CALLBACKW)( struct _EVENT_TRACE_LOGFILEW * );
 typedef VOID (WINAPI *PEVENT_CALLBACK)( PEVENT_TRACE );
@@ -508,7 +505,7 @@ typedef PEVENT_TRACE_BUFFER_CALLBACKA   PEVENT_TRACE_BUFFER_CALLBACK;
 #endif
 
 /* Event trace log file */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 typedef struct _EVENT_TRACE_LOGFILEA {
     LPSTR                           LogFileName;
     LPSTR                           LoggerName;
@@ -565,7 +562,7 @@ typedef PEVENT_TRACE_LOGFILEA   PEVENT_TRACE_LOGFILE;
 #endif
 
 /* Trace query information classes */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 typedef enum _TRACE_QUERY_INFO_CLASS {
     TraceGuidQueryList      = 0,
     TraceGuidQueryInfo      = 1,
@@ -574,7 +571,7 @@ typedef enum _TRACE_QUERY_INFO_CLASS {
 #endif
 
 /* Functions in ADVAPI32.DLL */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
 EXTERN_C ULONG WMIAPI   CloseTrace( TRACEHANDLE );
 EXTERN_C ULONG WMIAPI   ControlTraceA( TRACEHANDLE, LPCSTR, PEVENT_TRACE_PROPERTIES, ULONG );
 EXTERN_C ULONG WMIAPI   ControlTraceW( TRACEHANDLE, LPCWSTR, PEVENT_TRACE_PROPERTIES, ULONG );
@@ -617,7 +614,7 @@ EXTERN_C ULONG WMIAPI   EnumerateTraceGuidsEx( TRACE_QUERY_INFO_CLASS, PVOID, UL
 #endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
-#ifndef _WDM_H_INCLUDED
+#ifndef _WDMDDK_
     #ifdef UNICODE
         #define ControlTrace        ControlTraceW
         #define OpenTrace           OpenTraceW
@@ -648,5 +645,4 @@ EXTERN_C ULONG WMIAPI   EnumerateTraceGuidsEx( TRACE_QUERY_INFO_CLASS, PVOID, UL
 :include cplusepi.sp
 
 #endif /* _EVNTRACE_ */
-#endif /* _EVNTRACE_H_INCLUDED */
 

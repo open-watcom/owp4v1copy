@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _EXDISPID_H_INCLUDED
-#define _EXDISPID_H_INCLUDED
-
 #ifndef EXDISPID_H_
 #define EXDISPID_H_
 
@@ -153,6 +150,5 @@
 
 :include cplusepi.sp
 
-#endif /* EXDISP_H_ */
-#endif /* _EXDISPID_H_INCLUDED */
+#endif /* EXDISPID_H_ */
 

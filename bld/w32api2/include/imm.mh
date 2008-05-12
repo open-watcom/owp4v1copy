@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IMM_H_INCLUDED
-#define _IMM_H_INCLUDED
-
 #ifndef _IMM_
 #define _IMM_
 
@@ -641,5 +638,4 @@ DWORD WINAPI    ImmGetImeMenuItemsW( HIMC, DWORD, DWORD, LPIMEMENUITEMINFOW, LPI
 :include cplusepi.sp
 
 #endif /* _IMM_ */
-#endif /* _IMM_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMREMUTL_H_INCLUDED
-#define _LMREMUTL_H_INCLUDED
-
 #ifndef _LMREMUTL_
 #define _LMREMUTL_
 
@@ -61,5 +58,4 @@ NET_API_STATUS __cdecl          RxRemoteApi( DWORD, LPCWSTR, LPDESC, LPDESC, LPD
 :include cplusepi.sp
 
 #endif /* _LMREMUTL_ */
-#endif /* _LMREMUTL_H_INCLUDED */
 

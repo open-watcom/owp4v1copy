@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTDDK_H_INCLUDED
-#define _NTDDK_H_INCLUDED
-
 #ifndef _NTDDK_
 #define _NTDDK_
 
@@ -3710,5 +3707,4 @@ __inline PWHEA_ERROR_PACKET WheaGetErrPacketFromErrRecord( UCHAR p1,
 :include cplusepi.sp
 
 #endif /* _NTDDK_ */
-#endif /* _NTDDK_H_INCLUDED */
 

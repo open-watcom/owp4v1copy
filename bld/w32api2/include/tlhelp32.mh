@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _TLHELP32_H_INCLUDED
-#define _TLHELP32_H_INCLUDED
-
 #ifndef _INC_TOOLHELP32
 #define _INC_TOOLHELP32
 
@@ -176,5 +173,4 @@ BOOL WINAPI     Toolhelp32ReadProcessMemory( DWORD, LPCVOID, LPVOID, SIZE_T, SIZ
 :include cplusepi.sp
 
 #endif /* _INC_TOOLHELP32 */
-#endif /* _TLHELP32_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MSXML_H_INCLUDED
-#define _MSXML_H_INCLUDED
+#ifndef __msxml_h__
+#define __msxml_h__
 
 :include readonly.sp
 #include <oaidl.h>
@@ -3276,5 +3276,5 @@ DECLARE_INTERFACE_( IXMLError, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _MSXML_H_INCLUDED */
+#endif /* __msxml_h__ */
 

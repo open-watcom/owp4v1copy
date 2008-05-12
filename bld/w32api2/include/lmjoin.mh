@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMJOIN_H_INCLUDED
-#define _LMJOIN_H_INCLUDED
-
 #ifndef __LMJOIN_H__
 #define __LMJOIN_H__
 
@@ -80,5 +77,4 @@ NET_API_STATUS NET_API_FUNCTION NetValidateName( LPCWSTR, LPCWSTR, LPCWSTR, LPCW
 :include cplusepi.sp
 
 #endif /* __LMJOIN_H__ */
-#endif /* _LMJOIN_H_INCLUDED */
 

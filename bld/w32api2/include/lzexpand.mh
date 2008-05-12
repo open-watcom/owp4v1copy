@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LZEXPAND_H_INCLUDED
-#define _LZEXPAND_H_INCLUDED
-
 #ifndef _LZEXPAND_
 #define _LZEXPAND_
 
@@ -49,5 +46,4 @@ INT APIENTRY    LZStart( VOID );
 :include cplusepi.sp
 
 #endif /* _LZEXPAND_ */
-#endif /* _LZEXPAND_H_INCLUDED */
 

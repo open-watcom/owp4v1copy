@@ -9,9 +9,6 @@
  * use this header.
  */
 
-#ifndef _WINABLE_H_INCLUDED
-#define _WINABLE_H_INCLUDED
-
 #ifndef _WINABLE_
 #define _WINABLE_
 
@@ -226,5 +223,4 @@ WINABLEAPI UINT WINAPI  SendInput( UINT, LPINPUT, int );
 :include cplusepi.sp
 
 #endif /* _WINABLE_ */
-#endif /* _WINABLE_H_INCLUDED */
 

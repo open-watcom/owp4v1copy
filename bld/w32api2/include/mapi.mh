@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MAPI_H_INCLUDED
-#define _MAPI_H_INCLUDED
-
 #ifndef MAPI_H
 #define MAPI_H
 
@@ -158,5 +155,4 @@ ULONG PASCAL    MAPISendMail( LHANDLE, ULONG_PTR, lpMapiMessage, FLAGS, ULONG );
 :include cplusepi.sp
 
 #endif /* MAPI_H */
-#endif /* _MAPI_H_INCLUDED */
 

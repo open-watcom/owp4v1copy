@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MMSTREAM_H_INCLUDED
-#define _MMSTREAM_H_INCLUDED
+#ifndef __mmstream_h__
+#define __mmstream_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -205,5 +205,5 @@ DECLARE_INTERFACE_( IStreamSample, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _MMSTREAM_H_INCLUDED */
+#endif /* __mmstream_h__ */
 

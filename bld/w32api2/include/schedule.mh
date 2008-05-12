@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SCHEDULE_H_INCLUDED
-#define _SCHEDULE_H_INCLUDED
-
 #ifndef _SCHEDULE_H_
 #define _SCHEDULE_H_
 
@@ -40,5 +37,4 @@ typedef SCHEDULE    *PSCHEDULE;
 :include cplusepi.sp
 
 #endif /* _SCHEDULE_H_ */
-#endif /* _SCHEDULE_H_INCLUDED */
 

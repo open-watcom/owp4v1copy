@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IPXSAP_H_INCLUDED
-#define _IPXSAP_H_INCLUDED
-
 #ifndef _IPXSAP_
 #define _IPXSAP_
 
@@ -106,5 +103,4 @@ typedef SAP_MIB_SET_INPUT_DATA  *PSAP_MIB_SET_INPUT_DATA;
 :include cplusepi.sp
 
 #endif /* _IPXSAP_ */
-#endif /* _IPXSAP_H_INCLUDED */
 

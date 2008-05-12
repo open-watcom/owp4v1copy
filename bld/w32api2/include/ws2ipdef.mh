@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WS2IPDEF_H_INCLUDED
-#define _WS2IPDEF_H_INCLUDED
-
 #ifndef _WS2IPDEF_
 #define _WS2IPDEF_
 
@@ -435,5 +432,4 @@ typedef IN6_PKTINFO *PIN6_PKTINFO;
 :include cplusepi.sp
 
 #endif /* _WS2IPDEF_ */
-#endif /* _WS2IPDEF_H_INCLUDED */
 

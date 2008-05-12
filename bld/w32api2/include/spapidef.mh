@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SPAPIDEF_H_INCLUDED
-#define _SPAPIDEF_H_INCLUDED
-
 #ifndef _INC_SPAPIDEF
 #define _INC_SPAPIDEF
 
@@ -67,5 +64,4 @@ typedef DWORDLONG   *PSP_LOG_TOKEN;
 :include cplusepi.sp
 
 #endif /* _INC_SPAPIDEF */
-#endif /* _SPAPIDEF_H_INCLUDED */
 

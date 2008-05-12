@@ -4,6 +4,7 @@
 :include crwatcnt.sp
  */
 
+:include readonly.sp
 #pragma include_alias( <d3d9types.h>,       <d3d9type.h> )
 #pragma include_alias( <devpropdef.h>,      <devprdef.h> )
 #pragma include_alias( <knownfolders.h>,    <knownfld.h> )

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _AMSTREAM_H_INCLUDED
-#define _AMSTREAM_H_INCLUDED
+#ifndef __amstream_h__
+#define __amstream_h__
 
 :include readonly.sp
 #include <strmif.h>
@@ -455,5 +455,5 @@ DECLARE_INTERFACE_( IAMMediaTypeSample, IStreamSample ) {
 
 :include cplusepi.sp
 
-#endif /* _AMSTREAM_H_INCLUDED */
+#endif /* __amstream_h__ */
 

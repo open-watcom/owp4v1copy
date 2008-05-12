@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _D3DRM_H_INCLUDED
-#define _D3DRM_H_INCLUDED
-
 #ifndef __D3DRM_H__
 #define __D3DRM_H__
 
@@ -198,5 +195,4 @@ STDAPI  Direct3DRMCreate( LPDIRECT3DRM * );
 :include cplusepi.sp
 
 #endif /* __D3DRM_H__ */
-#endif /* _D3DRM_H_INCLUDED */
 

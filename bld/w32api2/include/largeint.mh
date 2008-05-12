@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LARGEINT_H_INCLUDED
-#define _LARGEINT_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -63,6 +60,4 @@ LARGE_INTEGER WINAPI    LargeIntegerSubtract( LARGE_INTEGER, LARGE_INTEGER );
     ((x).LowPart | (x).HighPart)
 
 :include cplusepi.sp
-
-#endif /* _LARGEINT_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINGDI_H_INCLUDED
-#define _WINGDI_H_INCLUDED
-
 #ifndef _WINGDI_
 #define _WINGDI_
 
@@ -4810,5 +4807,4 @@ WINSPOOLAPI int WINAPI  DeviceCapabilitiesW( LPCWSTR, LPCWSTR, WORD, LPWSTR, CON
 :include cplusepi.sp
 
 #endif /* _WINGDI_ */
-#endif /* _WINGDI_H_INCLUDED */
 

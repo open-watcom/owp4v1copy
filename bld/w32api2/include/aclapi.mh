@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ACLAPI_H_INCLUDED
-#define _ACLAPI_H_INCLUDED
-
 #ifndef __ACCESS_CONTROL_API__
 #define __ACCESS_CONTROL_API__
 
@@ -127,5 +124,4 @@ WINADVAPI DWORD WINAPI          TreeSetNamedSecurityInfoW( LPWSTR, SE_OBJECT_TYP
 :include cplusepi.sp
 
 #endif /* __ACCESS_CONTROL_API__ */
-#endif /* _ACCCTRL_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ZMOUSE_H_INCLUDED
-#define _ZMOUSE_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -51,6 +48,4 @@
 #endif
 
 :include cplusepi.sp
-
-#endif /* _ZMOUSE_H_INCLUDED */
 

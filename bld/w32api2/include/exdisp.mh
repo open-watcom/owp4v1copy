@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _EXDISP_H_INCLUDED
-#define _EXDISP_H_INCLUDED
+#ifndef __exdisp_h__
+#define __exdisp_h__
 
 :include readonly.sp
 #include <ocidl.h>
@@ -1218,5 +1218,5 @@ DECLARE_INTERFACE_( _SearchAssistantEvents, IDispatch ) {
 
 :include cplusepi.sp
 
-#endif /* _EXDISP_H_INCLUDED */
+#endif /* __exdisp_h__ */
 

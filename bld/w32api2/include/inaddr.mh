@@ -4,8 +4,7 @@
 :include crwatcnt.sp
  */
 
-#ifndef _INADDR_H_INCLUDED
-#define _INADDR_H_INCLUDED
+#ifndef s_addr
 
 :include readonly.sp
 :include cpluspro.sp
@@ -37,5 +36,5 @@ typedef IN_ADDR *LPIN_ADDR;
 
 :include cplusepi.sp
 
-#endif /* _INADDR_H_INCLUDED */
+#endif /* s_addr */
 

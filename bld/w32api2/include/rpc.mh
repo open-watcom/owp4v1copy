@@ -6,9 +6,6 @@
 
 #include <windows.h>
 
-#ifndef _RPC_H_INCLUDED
-#define _RPC_H_INCLUDED
-
 #ifndef __RPC_H__
 #define __RPC_H__
 
@@ -41,5 +38,4 @@ typedef long    RPC_STATUS;
 #include <rpcasync.h>
 
 #endif /* __RPC_H__ */
-#endif /* _RPC_H_INCLUDED */
 

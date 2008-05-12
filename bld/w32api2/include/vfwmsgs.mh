@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _VFWMSGS_H_INCLUDED
-#define _VFWMSGS_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -164,6 +161,4 @@
 #define VFW_E_CODECAPI_NO_CURRENT_VALUE 0x80040314L
 
 :include cplusepi.sp
-
-#endif /* _VFWMSGS_H_INCLUDED */
 

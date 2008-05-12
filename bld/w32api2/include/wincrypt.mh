@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINCRYPT_H_INCLUDED
-#define _WINCRYPT_H_INCLUDED
-
 #ifndef __WINCRYPT_H__
 #define __WINCRYPT_H__
 
@@ -5710,5 +5707,4 @@ WINCRYPT32API BOOL WINAPI   CryptRetrieveObjectByUrlW( LPCWSTR, LPCWSTR, DWORD, 
 :include cplusepi.sp
 
 #endif /* __WINCRYPT_H__ */
-#endif /* _WINCRYPT_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OBJIDL_H_INCLUDED
-#define _OBJIDL_H_INCLUDED
+#ifndef __objidl_h__
+#define __objidl_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -2976,5 +2976,5 @@ typedef IInitializeSpy  *LPINITIALIZESPY;
 
 :include cplusepi.sp
 
-#endif /* _OBJIDL_H_INCLUDED */
+#endif /* __objidl_h__ */
 

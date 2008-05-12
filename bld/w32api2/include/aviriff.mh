@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _AVIRIFF_H_INCLUDED
-#define _AVIRIFF_H_INCLUDED
-
 #ifndef AVIRIFF_H
 #define AVIRIFF_H
 
@@ -325,5 +322,4 @@ typedef AVIFIELDINDEX   *PAVIFIELDINDEX;
 :include cplusepi.sp
 
 #endif /* AVIRIFF_H */
-#endif /* _AVIRIFF_H_INCLUDED */
 

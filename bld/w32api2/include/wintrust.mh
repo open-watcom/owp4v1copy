@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINTRUST_H_INCLUDED
-#define _WINTRUST_H_INCLUDED
-
 #ifndef WINTRUST_H
 #define WINTRUST_H
 
@@ -728,5 +725,4 @@ extern BOOL WINAPI                      WintrustSetRegPolicyFlags( DWORD );
 :include cplusepi.sp
 
 #endif /* WINTRUST_H */
-#endif /* _WINTRUST_H_INCLUDED */
 

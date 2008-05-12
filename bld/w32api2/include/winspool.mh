@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINSPOOL_H_INCLUDED
-#define _WINSPOOL_H_INCLUDED
-
 #ifndef _WINSPOOL_
 #define _WINSPOOL_
 
@@ -2280,5 +2277,4 @@ WINSPOOLAPI HRESULT WINAPI  UploadPrinterDriverPackageW( LPCWSTR, LPCWSTR, LPCWS
 :include cplusepi.sp
 
 #endif /* _WINSPOOL_ */
-#endif /* _WINSPOOL_H_INCLUDED */
 

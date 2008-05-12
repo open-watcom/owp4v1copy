@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RPCPROXY_H_INCLUDED
-#define _RPCPROXY_H_INCLUDED
-
 #ifndef __RPCPROXY_H__
 #define __RPCPROXY_H__
 
@@ -316,5 +313,4 @@ ULONG STDMETHODCALLTYPE     NdrCStdStubBuffer_Release( IRpcStubBuffer *, IPSFact
 :include cplusepi.sp
 
 #endif /* __RPCPROXY_H__ */
-#endif /* _RPCPROXY_H_INCLUDED */
 

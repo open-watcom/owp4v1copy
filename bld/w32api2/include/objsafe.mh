@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OBJSAFE_H_INCLUDED
-#define _OBJSAFE_H_INCLUDED
+#ifndef __objsafe_h__
+#define __objsafe_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -50,5 +50,5 @@ typedef IObjectSafety   *LPOBJECTSAFETY;
 
 :include cplusepi.sp
 
-#endif /* _OBJSAFE_H_INCLUDED */
+#endif /* __objsafe_h__ */
 

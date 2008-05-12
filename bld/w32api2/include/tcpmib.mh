@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _TCPMIB_H_INCLUDED
-#define _TCPMIB_H_INCLUDED
-
 #ifndef _TCPMIB_
 #define _TCPMIB_
 
@@ -142,7 +139,7 @@ typedef struct _MIB_TCPTABLE_OWNER_MODULE {
 typedef MIB_TCPTABLE_OWNER_MODULE   *PMIB_TCPTABLE_OWNER_MODULE;
 
 /* MIB TCPv6 row */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6ROW {
     MIB_TCP_STATE   State;
     IN6_ADDR        LocalAddr;
@@ -156,7 +153,7 @@ typedef MIB_TCP6ROW *PMIB_TCP6ROW;
 #endif
 
 /* MIB TCPv6 table */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6TABLE {
     DWORD       dwNumEntries;
     MIB_TCP6ROW table[ANY_SIZE];
@@ -165,7 +162,7 @@ typedef MIB_TCP6TABLE   *PMIB_TCP6TABLE;
 #endif
 
 /* MIB TCPv6 row (version 2) */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6ROW2 {
     IN6_ADDR                        LocalAddr;
     DWORD                           dwLocalScopeId;
@@ -181,7 +178,7 @@ typedef MIB_TCP6ROW2    *PMIB_TCP6ROW2;
 #endif
 
 /* MIB TCPv6 table (version 2) */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6TABLE2 {
     DWORD           dwNumEntries;
     MIB_TCP6ROW2    table[ANY_SIZE];
@@ -190,7 +187,7 @@ typedef MIB_TCP6TABLE2  *PMIB_TCP6TABLE2;
 #endif
 
 /* MIB TCPv6 row owner protocol identifier */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6ROW_OWNER_PID {
     UCHAR   ucLocalAddr[16];
     DWORD   dwLocalScopeId;
@@ -205,7 +202,7 @@ typedef MIB_TCP6ROW_OWNER_PID   *PMIB_TCP6ROW_OWNER_PID;
 #endif
 
 /* MIB TCPv6 table owner protocol identifier */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6TABLE_OWNER_PID {
     DWORD                   dwNumEntries;
     MIB_TCP6ROW_OWNER_PID   table[ANY_SIZE];
@@ -214,7 +211,7 @@ typedef MIB_TCP6TABLE_OWNER_PID *PMIB_TCP6TABLE_OWNER_PID;
 #endif
 
 /* MIB TCPv6 row owner module */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6ROW_OWNER_MODULE {
     UCHAR           ucLocalAddr[16];
     DWORD           dwLocalScopeId;
@@ -231,7 +228,7 @@ typedef MIB_TCP6ROW_OWNER_MODULE    *PMIB_TCP6ROW_OWNER_MODULE;
 #endif
 
 /* MIB TCPv6 table owner module */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_TCP6TABLE_OWNER_MODULE {
     DWORD                       dwNumEntries;
     MIB_TCP6ROW_OWNER_MODULE    table[ANY_SIZE];
@@ -299,5 +296,4 @@ typedef MIB_TCPSTATS_W2K    *PMIB_TCPSTATS;
 :include cplusepi.sp
 
 #endif /* _TCPMIB_ */
-#endif /* _TCPMIB_H_INCLUDED */
 

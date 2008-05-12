@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINDOWSX_H_INCLUDED
-#define _WINDOWSX_H_INCLUDED
-
 #ifndef _INC_WINDOWSX
 #define _INC_WINDOWSX
 
@@ -176,7 +173,7 @@
     (LRESULT)(DWORD)(UINT)(f)( x )
 #define FORWARD_WM_QUERYDRAGICON( x, f ) \
     (HICON)(UINT)(DWORD)(f)( x, WM_QUERYDRAGICON, 0, 0L )
-#ifdef _SHELLAPI_H_INCLUDED
+#ifdef _INC_SHELLAPI
     #define HANDLE_WM_DROPFILES( x, p1, p2, f ) \
         ((f)( x, (HDROP)(p1) ), 0L)
     #define FORWARD_WM_DROPFILES( x, p, f ) \
@@ -1020,5 +1017,4 @@
 :include cplusepi.sp
 
 #endif /* _INC_WINDOWSX */
-#endif /* _WINDOWSX_H_INCLUDED */
 

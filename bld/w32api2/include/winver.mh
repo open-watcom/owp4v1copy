@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
  
-#ifndef _WINVER_H_INCLUDED
-#define _WINVER_H_INCLUDED
-
 #ifndef VER_H
 #define VER_H
 
@@ -182,5 +179,4 @@ BOOL APIENTRY   VerQueryValueW( const LPVOID, LPWSTR, LPVOID *, PUINT );
 #endif /* RC_INVOKED */
 
 #endif /* VER_H */
-#endif /* _WINVER_H_INCLUDED */
 

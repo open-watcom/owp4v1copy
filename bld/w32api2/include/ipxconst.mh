@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IPXCONST_H_INCLUDED
-#define _IPXCONST_H_INCLUDED
-
 #ifndef _IPXCONST_
 #define _IPXCONST_
 
@@ -59,5 +56,4 @@
 :include cplusepi.sp
 
 #endif /* _IPXCONST_ */
-#endif /* _IPXCONST_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WBEMCLI_H_INCLUDED
-#define _WBEMCLI_H_INCLUDED
+#ifndef __wbemcli_h__
+#define __wbemcli_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -1271,5 +1271,5 @@ DECLARE_INTERFACE_( IWbemConfigureRefresher, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _WBEMCLI_H_INCLUDED */
+#endif /* __wbemcli_h__ */
 

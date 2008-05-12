@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTDDNDIS_H_INCLUDED
-#define _NTDDNDIS_H_INCLUDED
-
 #ifndef _NTDDNDIS_
 #define _NTDDNDIS_
 
@@ -27,14 +24,14 @@ typedef ULONGLONG                   NDIS_802_11_KEY_RSC;
 typedef ULONG                       NDIS_802_11_FRAGMENTATION_THRESHOLD;
 typedef ULONG                       NDIS_802_11_RTS_THRESHOLD;
 typedef ULONG                       NDIS_802_11_ANTENNA;
-#ifndef _IPEXPORT_H_INCLUDED
+#ifndef IP_EXPORT_INCLUDED
 typedef ULONG                       IPAddr;
 typedef ULONG                       IPMask;
 #endif
 typedef ULONG                       SPI_TYPE;
 typedef ULONG                       NDIS_VLAN_ID;
 typedef ULONG                       Priority_802_3;
-#ifndef _NDIS_H_INCLUDED
+#ifndef _NDIS_
 typedef int                         NDIS_STATUS;
 typedef int                         *PNDIS_STATUS;
 #endif
@@ -2412,5 +2409,4 @@ typedef NDIS_WMI_OUTPUT_INFO    *PNDIS_WMI_OUTPUT_INFO;
 :include cplusepi.sp
 
 #endif /* _NTDDNDIS_ */
-#endif /* _NTDDNDIS_H_INCLUDED */
 

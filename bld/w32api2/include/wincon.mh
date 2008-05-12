@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINCON_H_INCLUDED
-#define _WINCON_H_INCLUDED
-
 #ifndef _WINCON_
 #define _WINCON_
 
@@ -433,5 +430,4 @@ WINBASEAPI DWORD WINAPI     GetConsoleOriginalTitleW( LPWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _WINCON_ */
-#endif /* _WINCON_H_INCLUDED */
 

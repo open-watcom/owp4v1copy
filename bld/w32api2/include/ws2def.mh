@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WS2DEF_H_INCLUDED
-#define _WS2DEF_H_INCLUDED
-
 #ifndef _WS2DEF_
 #define _WS2DEF_
 
@@ -455,5 +452,4 @@ typedef WSACMSGHDR  *PCMSGHDR;
 :include cplusepi.sp
 
 #endif /* _WS2DEF_ */
-#endif /* _WS2DEF_H_INCLUDED */
 

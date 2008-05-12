@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINBER_H_INCLUDED
-#define _WINBER_H_INCLUDED
-
 #ifndef _WINBER_DEFINED_
 #define _WINBER_DEFINED_
 
@@ -48,5 +45,4 @@ WINBERAPI ULONG BERAPI          ber_skip_tag( BerElement *, ULONG * );
 :include cplusepi.sp
 
 #endif /* _WINBER_DEFINED_ */
-#endif /* _WINBER_H_INCLUDED */
 

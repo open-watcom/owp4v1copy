@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ACLUI_H_INCLUDED
-#define _ACLUI_H_INCLUDED
-
 #ifndef _ACLUI_H_
 #define _ACLUI_H_
 
@@ -209,5 +206,4 @@ HRESULT ACLUIAPI        EditSecurityAdvanced( HWND, LPSECURITYINFO, SI_PAGE_TYPE
 :include cplusepi.sp
 
 #endif /* _ACLUI_H_ */
-#endif /* _ACLUI_H_INCLUDED */
 

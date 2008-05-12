@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OLE2VER_H_INCLUDED
-#define _OLE2VER_H_INCLUDED
-
 #ifndef _OLE2VER_H_
 #define _OLE2VER_H_
 
@@ -20,5 +17,4 @@
 :include cplusepi.sp
 
 #endif /* _OLE2VER_H_ */
-#endif /* _OLE2VER_H_INCLUDED */
 

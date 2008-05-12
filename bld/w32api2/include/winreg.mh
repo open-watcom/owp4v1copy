@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINREG_H_INCLUDED
-#define _WINREG_H_INCLUDED
-
 #ifndef _WINREG_
 #define _WINREG_
 
@@ -356,5 +353,4 @@ WINADVAPI LSTATUS APIENTRY  RegSetKeyValueW( HKEY, LPCWSTR, LPCWSTR, DWORD, LPCV
 :include cplusepi.sp
 
 #endif /* _WINREG_ */
-#endif /* _WINREG_H_INCLUDED */
 

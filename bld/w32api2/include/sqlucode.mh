@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SQLUCODE_H_INCLUDED
-#define _SQLUCODE_H_INCLUDED
-
 #ifndef __SQLUCODE
 #define __SQLUCODE
 
@@ -150,5 +147,4 @@ SQLRETURN SQL_API   SQLSetDescFieldW( SQLHDESC, SQLSMALLINT, SQLSMALLINT, SQLPOI
 :include cplusepi.sp
 
 #endif /* __SQLUCODE */
-#endif /* _SQLUCODE_H_INCLUDED */
 

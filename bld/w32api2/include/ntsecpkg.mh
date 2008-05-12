@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTSECPKG_H_INCLUDED
-#define _NTSECPKG_H_INCLUDED
-
 #ifndef _NTSECPKG_
 #define _NTSECPKG_
 
@@ -17,7 +14,7 @@
 typedef PVOID   *PLSA_CLIENT_REQUEST;
 
 /* Aliases of Win32 types */
-#ifdef _NTDEF_H_INCLUDED
+#ifdef _NTDEF_
 typedef PVOID                   SEC_THREAD_START;
 typedef PVOID                   SEC_ATTRS;
 #else
@@ -125,7 +122,7 @@ typedef LSA_SEC_HANDLE  *PLSA_SEC_HANDLE;
 #define SECPKG_PACKAGE_CHANGE_SELECT    2L
 
 /* Credential flags */
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
     #define CREDP_FLAGS_IN_PROCESS              0x00000001L
     #define CREDP_FLAGS_USE_MIDL_HEAP           0x00000002L
     #define CREDP_FLAGS_DONT_CACHE_TI           0x00000004L
@@ -135,7 +132,7 @@ typedef LSA_SEC_HANDLE  *PLSA_SEC_HANDLE;
 #endif
 
 /* Credential marshaled TI size */
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
     #define CRED_MARSHALED_TI_SIZE_SIZE 12
 #endif
 
@@ -535,7 +532,7 @@ typedef struct _SECPKG_EVENT_NOTIFY {
 typedef SECPKG_EVENT_NOTIFY *PSECPKG_EVENT_NOTIFY;
 
 /* Encrypted credential */
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
 typedef struct _ENCRYPTED_CREDENTIALW {
     CREDENTIALW Cred;
     ULONG       ClearCredentialBlobSize;
@@ -544,7 +541,7 @@ typedef ENCRYPTED_CREDENTIALW   *PENCRYPTED_CREDENTIALW;
 #endif
 
 /* Credential parsed user name types */
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
 typedef enum _CredParsedUserNameType {
     parsedUsernameInvalid       = 0,
     parsedUsernameUpn           = 1,
@@ -555,7 +552,7 @@ typedef enum _CredParsedUserNameType {
 #endif
 
 /* Credential callbacks */
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
 typedef NTSTATUS (NTAPI CredReadFn)( PLUID, ULONG, LPWSTR, ULONG, ULONG, PENCRYPTED_CREDENTIALW * );
 typedef NTSTATUS (NTAPI CredReadDomainCredentialsFn)( PLUID, ULONG, PCREDENTIAL_TARGET_INFORMATIONW, ULONG, PULONG, PENCRYPTED_CREDENTIALW ** );
 typedef VOID (NTAPI CredFreeCredentialsFn)( ULONG, PENCRYPTED_CREDENTIALW * );
@@ -634,7 +631,7 @@ typedef struct _LSA_SECPKG_FUNCTION_TABLE {
     PLSA_CRACK_SINGLE_NAME              CrackSingleName;
     PLSA_AUDIT_ACCOUNT_LOGON            AuditAccountLogon;
     PLSA_CALL_PACKAGE_PASSTHROUGH       CallPackagePassthrough;
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
     CredReadFn                          *CrediRead;
     CredReadDomainCredentialsFn         *CrediReadDomainCredentials;
     CredFreeCredentialsFn               *CrediFreeCredentials;
@@ -650,7 +647,7 @@ typedef struct _LSA_SECPKG_FUNCTION_TABLE {
     PLSA_ALLOCATE_PRIVATE_HEAP          AllocatePrivateHeap;
     PLSA_FREE_PRIVATE_HEAP              FreePrivateHeap;
     PLSA_CREATE_TOKEN_EX                CreateTokenEx;
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
     CredWriteFn                         *CrediWrite;
     CrediUnmarshalandDecodeStringFn     *CrediUnmarshalandDecodeString;
 #else
@@ -843,7 +840,7 @@ typedef struct _SECPKG_KERNEL_FUNCTION_TABLE {
 typedef SECPKG_KERNEL_FUNCTION_TABLE    *PSECPKG_KERNEL_FUNCTION_TABLE;
 
 /* Functions in SECUR32.DLL */
-#ifdef _WINCRED_H_INCLUDED
+#ifdef _WINCRED_H_
 NTSTATUS NTAPI  CredMarshalTargetInfo( PCREDENTIAL_TARGET_INFORMATIONW, PUSHORT *, PULONG );
 NTSTATUS NTAPI  CredUnmarshalTargetInfo( PUSHORT, ULONG, PCREDENTIAL_TARGET_INFORMATIONW *, PULONG );
 #endif
@@ -870,5 +867,4 @@ SECURITY_STATUS SEC_ENTRY   KSecRegisterSecurityProvider( PSECURITY_STRING, PSEC
 :include cplusepi.sp
 
 #endif /* _NTSECPKG_ */
-#endif /* _NTSECPKG_H_INCLUDED */
 

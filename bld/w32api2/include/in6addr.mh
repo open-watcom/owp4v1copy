@@ -4,8 +4,7 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IN6ADDR_H_INCLUDED
-#define _IN6ADDR_H_INCLUDED
+#ifndef s6_addr
 
 :include readonly.sp
 :include cpluspro.sp
@@ -28,5 +27,5 @@ typedef IN6_ADDR    *LPIN6_ADDR;
 
 :include cplusepi.sp
 
-#endif /* _IN6ADDR_H_INCLUDED */
+#endif /* s6_addr */
 

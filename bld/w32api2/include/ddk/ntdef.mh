@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTDEF_H_INCLUDED
-#define _NTDEF_H_INCLUDED
-
 #ifndef _NTDEF_
 #define _NTDEF_
 
@@ -1017,5 +1014,4 @@ typedef enum _SUITE_TYPE {
 :include cplusepi.sp
 
 #endif /* _NTDEF_ */
-#endif /* _NTDEF_H_INCLUDED */
 

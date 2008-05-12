@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _D3D_H_INCLUDED
-#define _D3D_H_INCLUDED
-
 #ifndef _D3D_H_
 #define _D3D_H_
 
@@ -1950,5 +1947,4 @@ DECLARE_INTERFACE_( IDirect3DVertexBuffer7, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* _D3D_H_ */
-#endif /* _D3D_H_INCLUDED */
 

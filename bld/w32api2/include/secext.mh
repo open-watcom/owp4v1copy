@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SECEXT_H_INCLUDED
-#define _SECEXT_H_INCLUDED
-
 #ifndef __SECEXT_H__
 #define __SECEXT_H__
 
@@ -50,5 +47,4 @@ BOOLEAN SEC_ENTRY   TranslateNameW( LPCWSTR, EXTENDED_NAME_FORMAT, EXTENDED_NAME
 :include cplusepi.sp
 
 #endif /* __SECEXT_H__ */
-#endif /* _SECEXT_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DOCOBJ_H_INCLUDED
-#define _DOCOBJ_H_INCLUDED
+#ifndef __docobj_h__
+#define __docobj_h__
 
 :include readonly.sp
 #include "ocidl.h"
@@ -651,5 +651,5 @@ DECLARE_INTERFACE_( IProtectedModeMenuServices, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _DOCOBJ_H_INCLUDED */
+#endif /* __docobj_h__ */
 

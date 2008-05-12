@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SSPI_H_INCLUDED
-#define _SSPI_H_INCLUDED
-
 #ifndef __SSPI_H__
 #define __SSPI_H__
 
@@ -297,7 +294,7 @@ typedef SecHandle   CtxtHandle;
 typedef PSecHandle  PCtxtHandle;
 
 /* Security string */
-#ifdef _NTDEF_H_INCLUDED
+#ifdef _NTDEF_
 typedef UNICODE_STRING  SECURITY_STRING;
 #else
 typedef struct _SECURITY_STRING {
@@ -999,5 +996,4 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    QuerySecurityPackageInfoW( SEC_WCHAR
 :include cplusepi.sp
 
 #endif /* __SSPI_H__ */
-#endif /* _SSPI_H_INCLUDED */
 

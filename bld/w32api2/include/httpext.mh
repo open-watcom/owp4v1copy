@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _HTTPEXT_H_INCLUDED
-#define _HTTPEXT_H_INCLUDED
-
 #ifndef _HTTPEXT_H_
 #define _HTTPEXT_H_
 
@@ -313,5 +310,4 @@ BOOL WINAPI     TerminateExtension( DWORD );
 :include cplusepi.sp
 
 #endif /* _HTTPEXT_H_ */
-#endif /* _HTTPEXT_H_INCLUDED */
 

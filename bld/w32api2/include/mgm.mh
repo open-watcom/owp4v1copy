@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MGM_H_INCLUDED
-#define _MGM_H_INCLUDED
-
 #ifndef _MGM_H_
 #define _MGM_H_
 
@@ -92,5 +89,4 @@ DWORD WINAPI    MgmTakeInterfaceOwnership( HANDLE, DWORD, DWORD );
 :include cplusepi.sp
 
 #endif /* _MGM_H_ */
-#endif /* _MGM_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DVP_H_INCLUDED
-#define _DVP_H_INCLUDED
-
 #ifndef __DVP_INCLUDED__
 #define __DVP_INCLUDED__
 
@@ -424,5 +421,4 @@ DECLARE_INTERFACE_( IDirectDrawVideoPortNotify, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __DVP_INCLUDED__ */
-#endif /* _DVP_H_INCLUDED */
 

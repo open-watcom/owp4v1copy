@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RPCASYNC_H_INCLUDED
-#define _RPCASYNC_H_INCLUDED
-
 #ifndef __RPCASYNC_H__
 #define __RPCASYNC_H__
 
@@ -372,5 +369,4 @@ RPCRTAPI RPC_STATUS RPC_ENTRY   RpcServerUnsubscribeForNotification( RPC_BINDING
 :include cplusepi.sp
 
 #endif /* __RPCASYNC_H__ */
-#endif /* _RPCASYNC_H_INCLUDED */
 

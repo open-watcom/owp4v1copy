@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IMAGEHLP_H_INCLUDED
-#define _IMAGEHLP_H_INCLUDED
-
 #ifndef _IMAGEHLP_
 #define _IMAGEHLP_
 
@@ -2173,5 +2170,4 @@ BOOL WINAPI MiniDumpWriteDump( HANDLE, DWORD, HANDLE, MINIDUMP_TYPE, PMINIDUMP_E
 :include cplusepi.sp
 
 #endif /* _IMAGEHLP_ */
-#endif /* _IMAGEHLP_H_INCLUDED */
 

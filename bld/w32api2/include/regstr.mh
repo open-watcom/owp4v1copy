@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _REGSTR_H_INCLUDED
-#define _REGSTR_H_INCLUDED
-
 #ifndef _INC_REGSTR
 #define _INC_REGSTR
 
@@ -1175,5 +1172,4 @@ typedef DSKTLSYSTEMTIME *LPDSKTLSYSTEMTIME;
 :include cplusepi.sp
 
 #endif /* _INC_REGSTR */
-#endif /* _REGSTR_H_INCLUDED */
 

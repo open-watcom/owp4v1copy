@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SECURITY_H_INCLUDED
-#define _SECURITY_H_INCLUDED
-
 :include readonly.sp
 #include <sspi.h>
 #include <secext.h>
@@ -34,6 +31,4 @@
 #endif
 
 :include cplusepi.sp
-
-#endif /* _SECURITY_H_INCLUDED */
 

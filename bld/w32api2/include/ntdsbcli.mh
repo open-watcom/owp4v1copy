@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTDSBCLI_H_INCLUDED
-#define _NTDSBCLI_H_INCLUDED
-
 #ifndef _NTDSBCLI_H_
 #define _NTDSBCLI_H_
 
@@ -143,5 +140,4 @@ HRESULT NTDSBCLI_API    DsSetCurrentBackupLogW( LPCWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _NTDSBCLI_H_ */
-#endif /* _NTDSBCLI_H_INCLUDED */
 

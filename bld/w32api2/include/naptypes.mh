@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NAPTYPES_H_INCLUDED
-#define _NAPTYPES_H_INCLUDED
+#ifndef __naptypes_h__
+#define __naptypes_h__
 
 :include readonly.sp
 #include <oaidl.h>
@@ -199,5 +199,5 @@ typedef struct tagNapComponentRegistrationInfo {
 
 :include cplusepi.sp
 
-#endif /* _NAPTYPES_H_INCLUDED */
+#endif /* __naptypes_h__ */
 

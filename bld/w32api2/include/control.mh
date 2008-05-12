@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _CONTROL_H_INCLUDED
-#define _CONTROL_H_INCLUDED
+#ifndef __control_h__
+#define __control_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -1079,5 +1079,5 @@ DECLARE_INTERFACE_( IAMStats, IDispatch ) {
 
 :include cplusepi.sp
 
-#endif /* _CONTROL_H_INCLUDED */
+#endif /* __control_h__ */
 

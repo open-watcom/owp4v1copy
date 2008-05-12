@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _KSMEDIA_H_INCLUDED
-#define _KSMEDIA_H_INCLUDED
-
 #ifndef _KSMEDIA_
 #define _KSMEDIA_
 
@@ -21,7 +18,7 @@ typedef LONG        KS_AM_MaxFullDataRate;
 typedef DWORD       KS_AM_Step;
 
 /* Wave format special value */
-#if defined( _MMSYSTEM_H_INCLUDED ) && !defined( _MMREG_H_INCLUDED )
+#if defined( _INC_MMSYSTEM ) && !defined( _INC_MMREG )
     #define WAVE_FORMAT_EXTENSIBLE  0xFFFE
 #endif
 
@@ -436,7 +433,7 @@ typedef enum {
 } KSINTERFACE_MEDIA;
 
 /* Kernel streaming wave format data format */
-#if defined( _MMSYSTEM_H_INCLUDED ) || defined( _MMREG_H_INCLUDED )
+#if defined( _INC_MMSYSTEM ) || defined( _INC_MMREG )
 typedef struct {
     KSDATAFORMAT    DataFormat;
     WAVEFORMATEX    WaveFormatEx;
@@ -445,7 +442,7 @@ typedef KSDATAFORMAT_WAVEFORMATEX   *PKSDATAFORMAT_WAVEFORMATEX;
 #endif
 
 /* Extensible wave format */
-#if defined( _MMSYSTEM_H_INCLUDED ) && !defined( _MMREG_H_INCLUDED )
+#if defined( _INC_MMSYSTEM ) && !defined( _INC_MMREG )
 typedef struct {
     WAVEFORMATEX    Format;
     union {
@@ -460,7 +457,7 @@ typedef WAVEFORMATEXTENSIBLE    *PWAVEFORMATEXTENSIBLE;
 #endif
 
 /* Kernel streaming DirectSound buffer description */
-#if defined( _MMSYSTEM_H_INCLUDED ) || defined( _MMREG_H_INCLUDED )
+#if defined( _INC_MMSYSTEM ) || defined( _INC_MMREG )
 typedef struct {
     ULONG           Flags;
     ULONG           Control;
@@ -470,7 +467,7 @@ typedef KSDSOUND_BUFFERDESC *PKSDSOUND_BUFFERDESC;
 #endif
 
 /* Kernel streaming DirectSound data format */
-#if defined( _MMSYSTEM_H_INCLUDED ) || defined( _MMREG_H_INCLUDED )
+#if defined( _INC_MMSYSTEM ) || defined( _INC_MMREG )
 typedef struct {
     KSDATAFORMAT        DataFormat;
     KSDSOUND_BUFFERDESC BufferDesc;
@@ -480,7 +477,7 @@ typedef KSDATAFORMAT_DSOUND *PKSDATAFORMAT_DSOUND;
 
 /* Kernel streaming audio position */
 typedef struct {
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     ULONGLONG   PlayOffset;
     ULONGLONG   WriteOffset;
 #else
@@ -778,7 +775,7 @@ typedef enum {
 } KSPROPERTY_TOPOLOGYNODE;
 
 /* RT audio callback */
-#if (NTDDI_VERSION >= 0x05010000) && defined( _NTDDK_H_INCLUDED )
+#if (NTDDI_VERSION >= 0x05010000) && defined( _NTDDK_ )
 typedef NTSTATUS (CALLBACK *PRTAUDIOGETPOSITION)( PFILE_OBJECT, PUCHAR *, PLONG );
 #endif
 
@@ -1258,7 +1255,7 @@ typedef enum {
 /* Looped streaming position event data */
 typedef struct {
     KSEVENTDATA KsEventData;
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     ULONGLONG   Position;
 #else
     DWORDLONG   Position;
@@ -3375,7 +3372,7 @@ typedef enum {
 } KSPROPERTY_VPCONFIG;
 
 /* Kernel streaming ActiveMovie videoport size */
-#ifndef _VPTYPE_H_INCLUDED
+#ifndef __IVPType__
 typedef struct tagKS_AMVPSIZE {
     DWORD   dwWidth;
     DWORD   dwHeight;
@@ -3385,7 +3382,7 @@ typedef KS_AMVPSIZE *PKS_AMVPSIZE;
 
 /* Kernel streaming videoport maximum pixel rate */
 typedef struct {
-#ifdef _VPTYPE_H_INCLUDED
+#ifdef __IVPType__
     AMVPSIZE    Size;
 #else
     KS_AMVPSIZE Size;
@@ -3398,7 +3395,7 @@ typedef KSVPMAXPIXELRATE    *PKSVPMAXPIXELRATE;
 /* Kernel streaming videoport size property */
 typedef struct {
     KSPROPERTY  Property;
-#ifdef _VPTYPE_H_INCLUDED
+#ifdef __IVPType__
     AMVPSIZE    Size;
 #else
     KS_AMVPSIZE Size;
@@ -3554,5 +3551,4 @@ typedef KSJACK_DESCRIPTION  *PKSJACK_DESCRIPTION;
 :include cplusepi.sp
 
 #endif /* _KSMEDIA_ */
-#endif /* _KSMEDIA_H_INCLUDED */
 

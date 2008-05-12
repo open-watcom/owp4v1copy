@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _CUSTCNTL_H_INCLUDED
-#define _CUSTCNTL_H_INCLUDED
-
 #ifndef _INC_CUSTCNTL
 #define _INC_CUSTCNTL
 
@@ -137,5 +134,4 @@ typedef UINT    (CALLBACK *LPFNCCINFOW)( LPCCINFOW );
 :include cplusepi.sp
 
 #endif /* _INC_CUSTCNTL */
-#endif /* _CUSTCNTL_H_INCLUDED */
 

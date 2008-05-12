@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _EVCODE_H_INCLUDED
-#define _EVCODE_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -104,6 +101,4 @@ typedef struct {
 } AM_WMT_EVENT_DATA;
 
 :include cplusepi.sp
-
-#endif /* _EVCODE_H_INCLUDED */
 

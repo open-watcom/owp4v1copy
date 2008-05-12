@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINIOCTL_H_INCLUDED
-#define _WINIOCTL_H_INCLUDED
-
 #ifndef _WINIOCTL_
 #define _WINIOCTL_
 
@@ -943,6 +940,9 @@ typedef WORD    *PBAD_TRACK_NUMBER;
     #define IOCTL_VOLUME_IS_CLUSTERED \
         CTL_CODE( IOCTL_VOLUME_BASE, 12, METHOD_BUFFERED, FILE_ANY_ACCESS )
 #endif
+
+/* Symbolic link flags */
+#define SYMLINK_FLAG_RELATIVE   1L
 
 /* Storage hotplug information */
 typedef struct _STORAGE_HOTPLUG_INFO {
@@ -2979,5 +2979,4 @@ typedef VOLUME_DISK_EXTENTS *PVOLUME_DISK_EXTENTS;
 :include cplusepi.sp
 
 #endif /* _WINIOCTL_ */
-#endif /* _WINIOCTL_H_INCLUDED */
 

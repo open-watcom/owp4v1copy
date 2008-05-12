@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _STM_H_INCLUDED
-#define _STM_H_INCLUDED
-
 #ifndef __ROUTING_STM_H__
 #define __ROUTING_STM_H__
 
@@ -102,5 +99,4 @@ typedef MPR_SERVICE_CHARACTERISTICS     *PMPR_SERVICE_CHARACTERISTICS;
 :include cplusepi.sp
 
 #endif /* __ROUTING_STM_H__ */
-#endif /* _STM_H_INCLUDED */
 

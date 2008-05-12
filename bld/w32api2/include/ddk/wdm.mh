@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WDM_H_INCLUDED
-#define _WDM_H_INCLUDED
-
 #ifndef _WDMDDK_
 #define _WDMDDK_
 
@@ -7993,7 +7990,7 @@ __inline VOID IoSetCompletionRoutine( PIRP x, PIO_COMPLETION_ROUTINE p1, PVOID p
     }
 }
 
-#ifndef _NTDDK_H_INCLUDED
+#ifndef _NTDDK_
 
 __inline PVOID HalAllocateCommonBuffer( PDMA_ADAPTER p1, ULONG p2, PPHYSICAL_ADDRESS p3,
                                         BOOLEAN p4 )
@@ -8148,5 +8145,4 @@ inline BOOLEAN operator>=( const CLFS_LSN &p1, const CLFS_LSN &p2 )
 :include cplusepi.sp
 
 #endif /* _WDMDDK_ */
-#endif /* _WDM_H_INCLUDED */
 

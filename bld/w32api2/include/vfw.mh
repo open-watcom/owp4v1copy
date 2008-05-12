@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _VFW_H_INCLUDED
-#define _VFW_H_INCLUDED
-
 #ifndef _INC_VFW
 #define _INC_VFW
 
@@ -1404,7 +1401,7 @@ DWORD VFWAPI    VideoForWindowsVersion( void );
 #ifdef DRAWDIB_INCLUDE_STRETCHDIB
 void VFWAPI     StretchDIB( LPBITMAPINFOHEADER, LPVOID, int, int, int, int, LPBITMAPINFOHEADER, LPVOID, int, int, int, int );
 #endif
-#ifdef _COMMDLG_H_INCLUDED
+#ifdef _INC_COMMDLG
 BOOL VFWAPI     GetOpenFileNamePreviewA( LPOPENFILENAMEA );
 BOOL VFWAPI     GetOpenFileNamePreviewW( LPOPENFILENAMEW );
 BOOL VFWAPI     GetSaveFileNamePreviewA( LPOPENFILENAMEA );
@@ -1916,7 +1913,7 @@ static DWORD    dwICValue;
     #define MCIWndCreate                MCIWndCreateW
     #define capCreateCaptureWindow      capCreateCaptureWindowW
     #define capGetDriverDescription     capGetDriverDescriptionW
-    #ifdef _COMMDLG_H_INCLUDED
+    #ifdef _INC_COMMDLG
         #define GetOpenFileNamePreview  GetOpenFileNamePreviewW
         #define GetSaveFileNamePreview  GetSaveFileNamePreviewW
     #endif
@@ -1934,7 +1931,7 @@ static DWORD    dwICValue;
     #define MCIWndCreate                MCIWndCreateA
     #define capCreateCaptureWindow      capCreateCaptureWindowA
     #define capGetDriverDescription     capGetDriverDescriptionA
-    #ifdef _COMMDLG_H_INCLUDED
+    #ifdef _INC_COMMDLG
         #define GetOpenFileNamePreview  GetOpenFileNamePreviewA
         #define GetSaveFileNamePreview  GetSaveFileNamePreviewA
     #endif
@@ -1943,5 +1940,4 @@ static DWORD    dwICValue;
 :include cplusepi.sp
 
 #endif /* _INC_VFW */
-#endif /* _VFW_H_INCLUDED */
 

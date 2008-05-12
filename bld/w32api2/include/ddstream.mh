@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DDSTREAM_H_INCLUDED
-#define _DDSTREAM_H_INCLUDED
+#ifndef __ddstream_h__
+#define __ddstream_h__
 
 :include readonly.sp
 #include <mmstream.h>
@@ -128,5 +128,5 @@ DECLARE_INTERFACE_( IDirectDrawStreamSample, IStreamSample ) {
 
 :include cplusepi.sp
 
-#endif /* _DDSTREAM_H_INCLUDED */
+#endif /* __ddstream_h__ */
 

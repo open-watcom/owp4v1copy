@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINBASE_H_INCLUDED
-#define _WINBASE_H_INCLUDED
-
 #ifndef _WINBASE_
 #define _WINBASE_
 
@@ -3372,5 +3369,4 @@ WINBASEAPI LPCH WINAPI  GetEnvironmentStrings( VOID );
 :include cplusepi.sp
 
 #endif /* _WINBASE_ */
-#endif /* _WINBASE_H_INCLUDED */
 

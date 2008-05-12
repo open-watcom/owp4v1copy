@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NB30_H_INCLUDED
-#define _NB30_H_INCLUDED
-
 #ifndef NCB_INCLUDED
 #define NCB_INCLUDED
 
@@ -231,5 +228,4 @@ UCHAR APIENTRY  Netbios( PNCB );
 :include cplusepi.sp
 
 #endif /* NCB_INCLUDED */
-#endif /* _NB30_H_INCLUDED */
 

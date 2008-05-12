@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IPTYPES_H_INCLUDED
-#define _IPTYPES_H_INCLUDED
-
 #ifndef IP_TYPES_INCLUDED
 #define IP_TYPES_INCLUDED
 
@@ -34,13 +31,13 @@
 #define HYBRID_NODETYPE         8
 
 /* IP adapter address flags */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
     #define IP_ADAPTER_ADDRESS_DNS_ELIGIBLE 0x00000001L
     #define IP_ADAPTER_ADDRESS_TRANSIENT    0x00000002L
 #endif
 
 /* IP adapter flags */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
     #define IP_ADAPTER_DDNS_ENABLED                 0x00000001L
     #define IP_ADAPTER_REGISTER_ADAPTER_SUFFIX      0x00000002L
     #define IP_ADAPTER_DHCP_ENABLED                 0x00000004L
@@ -53,7 +50,7 @@
 #endif
 
 /* GetAdaptersAddresses() flags */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
     #define GAA_FLAG_SKIP_UNICAST                   0x00000001L
     #define GAA_FLAG_SKIP_ANYCAST                   0x00000002L
     #define GAA_FLAG_SKIP_MULTICAST                 0x00000004L
@@ -106,14 +103,14 @@ typedef struct _IP_ADAPTER_INFO {
 typedef IP_ADAPTER_INFO *PIP_ADAPTER_INFO;
 
 /* Aliases of types in nldef.h */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef NL_PREFIX_ORIGIN    IP_PREFIX_ORIGIN;
 typedef NL_SUFFIX_ORIGIN    IP_SUFFIX_ORIGIN;
 typedef NL_DAD_STATE        IP_DAD_STATE;
 #endif
 
 /* IP adapter unicast address */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_UNICAST_ADDRESS_LH {
     union {
         ULONGLONG   Alignment;
@@ -161,7 +158,7 @@ typedef IP_ADAPTER_UNICAST_ADDRESS_XP   *PIP_ADAPTER_UNICAST_ADDRESS;
 #endif
 
 /* IP adapter anycast address */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_ANYCAST_ADDRESS_XP {
     union {
         ULONGLONG   Alignment;
@@ -181,7 +178,7 @@ typedef IP_ADAPTER_ANYCAST_ADDRESS_XP   *PIP_ADAPTER_ANYCAST_ADDRESS;
 #endif
 
 /* IP adapter multicast address */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_MULTICAST_ADDRESS_XP {
     union {
         ULONGLONG   Alignment;
@@ -201,7 +198,7 @@ typedef IP_ADAPTER_MULTICAST_ADDRESS_XP *PIP_ADAPTER_MULTICAST_ADDRESS;
 #endif
 
 /* IP adapter DNS server address */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_DNS_SERVER_ADDRESS_XP {
     union {
         ULONGLONG   Alignment;
@@ -221,7 +218,7 @@ typedef IP_ADAPTER_DNS_SERVER_ADDRESS_XP    *PIP_ADAPTER_DNS_SERVER_ADDRESS;
 #endif
 
 /* IP adapter WINS server address */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_WINS_SERVER_ADDRESS_LH {
     union {
         ULONGLONG   Alignment;
@@ -241,7 +238,7 @@ typedef IP_ADAPTER_WINS_SERVER_ADDRESS_LH   *PIP_ADAPTER_WINS_SERVER_ADDRESS;
 #endif
 
 /* IP adapter gateway address */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_GATEWAY_ADDRESS_LH {
     union {
         ULONGLONG   Alignment;
@@ -261,7 +258,7 @@ typedef IP_ADAPTER_GATEWAY_ADDRESS_LH   *PIP_ADAPTER_GATEWAY_ADDRESS;
 #endif
 
 /* IP adapter prefix */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_PREFIX_XP {
     union {
         ULONGLONG   Alignment;
@@ -282,7 +279,7 @@ typedef IP_ADAPTER_PREFIX_XP    *PIP_ADAPTER_PREFIX;
 #endif
 
 /* IP adapter addresses */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _IP_ADAPTER_ADDRESSES_LH {
     union {
         ULONGLONG   Alignment;
@@ -427,5 +424,4 @@ typedef IP_INTERFACE_NAME_INFO_W2KSP1   *PIP_INTERFACE_NAME_INFO;
 :include cplusepi.sp
 
 #endif /* IP_TYPES_INCLUDED */
-#endif /* _IPTYPES_H_INCLUDED */
 

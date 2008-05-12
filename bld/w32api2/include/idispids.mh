@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IDISPIDS_H_INCLUDED
-#define _IDISPIDS_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -15,6 +12,4 @@
 #define DISPID_AMBIENT_SILENT                   (-5502)
 
 :include cplusepi.sp
-
-#endif /* _IDISPIDS_H_INCLUDED */
 

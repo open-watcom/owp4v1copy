@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _CPL_H_INCLUDED
-#define _CPL_H_INCLUDED
-
 #ifndef _INC_CPL
 #define _INC_CPL
 
@@ -98,5 +95,4 @@ typedef LPNEWCPLINFOA   LPNEWCPLINFO;
 :include cplusepi.sp
 
 #endif /* _INC_CPL */
-#endif /* _CPL_H_INCLUDED */
 

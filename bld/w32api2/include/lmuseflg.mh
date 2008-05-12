@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMUSEFLG_H_INCLUDED
-#define _LMUSEFLG_H_INCLUDED
-
 #ifndef _LMUSEFLG_
 #define _LMUSEFLG_
 
@@ -21,5 +18,4 @@
 :include cplusepi.sp
 
 #endif /* _LMUSEFLG_ */
-#endif /* _LMUSEFLG_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SHLDISP_H_INCLUDED
-#define _SHLDISP_H_INCLUDED
+#ifndef __shldisp_h__
+#define __shldisp_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -2255,5 +2255,5 @@ typedef IAsyncOperation *LPASYNCOPERATION;
 
 :include cplusepi.sp
 
-#endif /* _SHLDISP_H_INCLUDED */
+#endif /* __shldisp_h__ */
 

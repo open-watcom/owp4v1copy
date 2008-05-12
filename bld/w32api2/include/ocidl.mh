@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OCIDL_H_INCLUDED
-#define _OCIDL_H_INCLUDED
+#ifndef __ocidl_h__
+#define __ocidl_h__
 
 :include readonly.sp
 #include <oleidl.h>
@@ -1950,5 +1950,5 @@ typedef IQuickActivate  *LPQUICKACTIVATE;
 
 :include cplusepi.sp
 
-#endif /* _OCIDL_H_INCLUDED */
+#endif /* __ocidl_h__ */
 

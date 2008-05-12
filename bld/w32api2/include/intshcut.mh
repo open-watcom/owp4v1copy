@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _INTSHCUT_H_INCLUDED
-#define _INTSHCUT_H_INCLUDED
-
 #ifndef __INTSHCUT_H__
 #define __INTSHCUT_H__
 
@@ -147,5 +144,4 @@ INTSHCUTAPI HRESULT WINAPI  URLAssociationDialogW( HWND, DWORD, PCWSTR, PCWSTR, 
 :include cplusepi.sp
 
 #endif /* __INTSHCUT_H__ */
-#endif /* _INTSHCUT_H_INCLUDED */
 

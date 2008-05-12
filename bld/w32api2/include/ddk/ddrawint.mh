@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DDRAWINT_H_INCLUDED
-#define _DDRAWINT_H_INCLUDED
-
 #ifndef __DD_INCLUDED__
 #define __DD_INCLUDED__
 
@@ -1426,5 +1423,4 @@ typedef DD_DESTROYDDLOCALDATA   *PDD_DESTROYDDLOCALDATA;
 :include cplusepi.sp
 
 #endif /* __DD_INCLUDED__ */
-#endif /* _DDRAWINT_H_INCLUDED */
 

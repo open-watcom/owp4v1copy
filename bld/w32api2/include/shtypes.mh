@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SHTYPES_H_INCLUDED
-#define _SHTYPES_H_INCLUDED
+#ifndef __shtypes_h__
+#define __shtypes_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -196,5 +196,5 @@ typedef enum tagSHCOLSTATE {
 
 :include cplusepi.sp
 
-#endif /* _SHTYPES_H_INCLUDED */
+#endif /* __shtypes_h__ */
 

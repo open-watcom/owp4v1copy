@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OAIDL_H_INCLUDED
-#define _OAIDL_H_INCLUDED
+#ifndef __oaidl_h__
+#define __oaidl_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -1536,5 +1536,5 @@ typedef IPropertyBag    *LPPROPERTYBAG;
 
 :include cplusepi.sp
 
-#endif /* _OAIDL_H_INCLUDED */
+#endif /* __oaidl_h__ */
 

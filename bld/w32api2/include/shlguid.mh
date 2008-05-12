@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SHLGUID_H_INCLUDED
-#define _SHLGUID_H_INCLUDED
-
 :include readonly.sp
 #include <isguids.h>
 #include <exdisp.h>
@@ -402,6 +399,4 @@ EXTERN_C const GUID     EP_AdvQueryPane;
 #endif
 
 :include cplusepi.sp
-
-#endif /* _SHLGUID_H_INCLUDED */
 

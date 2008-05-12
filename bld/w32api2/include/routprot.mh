@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ROUTPROT_H_INCLUDED
-#define _ROUTPROT_H_INCLUDED
-
 #ifndef _ROUTPROT_H_
 #define _ROUTPROT_H_
 
@@ -313,5 +310,4 @@ typedef DWORD (WINAPI *PREGISTER_PROTOCOL)( PMPR_ROUTING_CHARACTERISTICS, PMPR_S
 :include cplusepi.sp
 
 #endif /* _ROUTPROT_H_ */
-#endif /* _ROUTPROT_H_INCLUDED */
 

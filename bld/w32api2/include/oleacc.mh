@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OLEACC_H_INCLUDED
-#define _OLEACC_H_INCLUDED
+#ifndef __oleacc_h__
+#define __oleacc_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -451,5 +451,5 @@ STDAPI              WindowFromAccessibleObject( IAccessible *, HWND * );
 
 :include cplusepi.sp
 
-#endif /* _OLEACC_H_INCLUDED */
+#endif /* __oleacc_h__ */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IPRTRMIB_H_INCLUDED
-#define _IPRTRMIB_H_INCLUDED
-
 #ifndef __ROUTING_IPRTRMIB_H__
 #define __ROUTING_IPRTRMIB_H__
 
@@ -238,5 +235,4 @@ typedef MIB_OPAQUE_INFO *PMIB_OPAQUE_INFO;
 :include cplusepi.sp
 
 #endif /* __ROUTING_IPRTRMIB_H__ */
-#endif /* _IPRTRMIB_H_INCLUDED */
 

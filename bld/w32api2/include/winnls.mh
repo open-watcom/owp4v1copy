@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINNLS_H_INCLUDED
-#define _WINNLS_H_INCLUDED
-
 #ifndef _WINNLS_
 #define _WINNLS_
 
@@ -1059,5 +1056,4 @@ WINNORMALIZEAPI int WINAPI  NormalizeString( NORM_FORM, LPCWSTR, int, LPWSTR, in
 :include cplusepi.sp
 
 #endif /* _WINNLS_ */
-#endif /* _WINNLS_H_INCLUDED */
 

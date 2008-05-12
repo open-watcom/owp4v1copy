@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NLDEF_H_INCLUDED
-#define _NLDEF_H_INCLUDED
-
 #ifndef _NLDEF_
 #define _NLDEF_
 
@@ -188,5 +185,4 @@ typedef NL_PATH_BANDWIDTH_ROD   *PNL_PATH_BANDWIDTH_ROD;
 :include cplusepi.sp
 
 #endif /* _NLDEF_ */
-#endif /* _NLDEF_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IFDEF_H_INCLUDED
-#define _IFDEF_H_INCLUDED
-
 #ifndef _IFDEF_
 #define _IFDEF_
 
@@ -301,5 +298,4 @@ typedef NDIS_INTERFACE_INFORMATION  *PNDIS_INTERFACE_INFORMATION;
 :include cplusepi.sp
 
 #endif /* _IFDEF_ */
-#endif /* _IFDEF_H_INCLUDED */
 

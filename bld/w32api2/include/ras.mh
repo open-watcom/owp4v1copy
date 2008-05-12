@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RAS_H_INCLUDED
-#define _RAS_H_INCLUDED
-
 #ifndef _RAS_H_
 #define _RAS_H_
 
@@ -1334,5 +1331,4 @@ DWORD APIENTRY  RasGetNapStatus( HRASCONN, LPRASNAPSTATE );
 :include cplusepi.sp
 
 #endif /* _RAS_H_ */
-#endif /* _RAS_H_INCLUDED */
 

@@ -71,9 +71,6 @@ DEFINE_GUID( Audit_AccountLogon, 0x69979850, 0x797A, 0x11D9, 0xBE, 0xD3, 0x50, 0
 #endif
 #endif
 
-#ifndef _NTSECAPI_H_INCLUDED
-#define _NTSECAPI_H_INCLUDED
-
 #ifndef _NTSECAPI_
 #define _NTSECAPI_
 
@@ -749,7 +746,7 @@ typedef enum _POLICY_AUDIT_EVENT_TYPE {
 typedef POLICY_AUDIT_EVENT_TYPE *PPOLICY_AUDIT_EVENT_TYPE;
 
 /* LSA Unicode string */
-#ifdef _NTDEF_H_INCLUDED
+#ifdef _NTDEF_
 typedef UNICODE_STRING      LSA_UNICODE_STRING;
 #else
 typedef struct _LSA_UNICODE_STRING {
@@ -759,13 +756,13 @@ typedef struct _LSA_UNICODE_STRING {
 } LSA_UNICODE_STRING;
 #endif
 typedef LSA_UNICODE_STRING  *PLSA_UNICODE_STRING;
-#ifndef _NTDEF_H_INCLUDED
+#ifndef _NTDEF_
 typedef LSA_UNICODE_STRING  UNICODE_STRING;
 typedef LSA_UNICODE_STRING  *PUNICODE_STRING;
 #endif
 
 /* LSA string */
-#ifdef _NTDEF_H_INCLUDED
+#ifdef _NTDEF_
 typedef STRING      LSA_STRING;
 #else
 typedef struct _LSA_STRING {
@@ -775,13 +772,13 @@ typedef struct _LSA_STRING {
 } LSA_STRING;
 #endif
 typedef LSA_STRING  *PLSA_STRING;
-#ifndef _NTDEF_H_INCLUDED
+#ifndef _NTDEF_
 typedef LSA_STRING  STRING;
 typedef LSA_STRING  *PSTRING;
 #endif
 
 /* LSA object attributes */
-#ifdef _NTDEF_H_INCLUDED
+#ifdef _NTDEF_
 typedef OBJECT_ATTRIBUTES       LSA_OBJECT_ATTRIBUTES;
 #else
 typedef struct _LSA_OBJECT_ATTRIBUTES {
@@ -2159,5 +2156,4 @@ BOOLEAN NTAPI   RtlGenRandom( PVOID, ULONG );
 :include cplusepi.sp
 
 #endif /* _NTSECAPI_ */
-#endif /* _NTSECAPI_H_INCLUDED */
 

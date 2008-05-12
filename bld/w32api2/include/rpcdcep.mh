@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RPCDCEP_H_INCLUDED
-#define _RPCDCEP_H_INCLUDED
-
 #ifndef __RPCDCEP_H__
 #define __RPCDCEP_H__
 
@@ -325,5 +322,4 @@ RPCRTAPI RPC_STATUS RPC_ENTRY   I_RpcProxyNewConnection( unsigned long, unsigned
 :include cplusepi.sp
 
 #endif /* __RPCDCEP_H__ */
-#endif /* _RPCDCEP_H_INCLUDED */
 

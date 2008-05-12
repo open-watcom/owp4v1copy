@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _GL_H_INCLUDED
-#define _GL_H_INCLUDED
-
 #ifndef __GL_H__
 #define __GL_H__
 
@@ -1091,6 +1088,6 @@ WINGDIAPI void APIENTRY         glVertexPointer( GLint, GLenum, GLsizei, const G
 WINGDIAPI void APIENTRY         glViewport( GLint, GLint, GLsizei, GLsizei );
 
 #endif /* __gl_h__ */
+
 #endif /* __GL_H__ */
-#endif /* _GL_H_INCLUDED */
 

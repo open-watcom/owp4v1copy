@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTIFS_H_INCLUDED
-#define _NTIFS_H_INCLUDED
-
 #ifndef _NTIFS_
 #define _NTIFS_
 
@@ -4720,5 +4717,4 @@ __inline VOID IoInitializePriorityInfo( PIO_PRIORITY_INFO x )
 :include cplusepi.sp
 
 #endif /* _NTIFS_ */
-#endif /* _NTIFS_H_INCLUDED */
 

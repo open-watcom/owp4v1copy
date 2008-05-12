@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _KNOWNFOLDERS_H_INCLUDED
-#define _KNOWNFOLDERS_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -104,6 +101,4 @@ EXTERN_C const GUID FOLDERID_SearchHome;
 EXTERN_C const GUID FOLDERID_OriginalImages;
 
 :include cplusepi.sp
-
-#endif /* _KNOWNFOLDERS_H_INCLUDED */
 

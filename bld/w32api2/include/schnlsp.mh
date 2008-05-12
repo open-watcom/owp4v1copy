@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SCHNLSP_H_INCLUDED
-#define _SCHNLSP_H_INCLUDED
-
 #ifndef __SCHNLSP_H__
 #define __SCHNLSP_H__
 
@@ -14,5 +11,4 @@
 #include <schannel.h>
 
 #endif /* __SCHNLSP_H__ */
-#endif /* _SCHNLSP_H_INCLUDED */
 

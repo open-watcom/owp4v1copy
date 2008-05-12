@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SERVPROV_H_INCLUDED
-#define _SERVPROV_H_INCLUDED
+#ifndef __servprov_h__
+#define __servprov_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -41,5 +41,5 @@ typedef IServiceProvider    *LPSERVICEPROVIDER;
 
 :include cplusepi.sp
 
-#endif /* _SERVPROV_H_INCLUDED */
+#endif /* __servprov_h__ */
 

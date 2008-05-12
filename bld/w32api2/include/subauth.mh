@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SUBAUTH_H_INCLUDED
-#define _SUBAUTH_H_INCLUDED
-
 #ifndef _NTSUBAUTH_
 #define _NTSUBAUTH_
 
@@ -20,7 +17,7 @@ typedef PVOID   SAM_HANDLE;
 typedef PVOID   *PSAM_HANDLE;
 
 /* Macro to test a status code for success */
-#ifndef _NTDEF_H_INCLUDED
+#ifndef _NTDEF_
     #define NT_SUCCESS( x ) ((NTSTATUS)(x) >= 0)
 #endif
 
@@ -109,7 +106,7 @@ typedef PVOID   *PSAM_HANDLE;
 #define STATUS_ACCOUNT_LOCKED_OUT       0xC0000234L
 
 /* Unicode string */
-#if !defined( _NTDEF_H_INCLUDED ) && !defined( _NTSECAPI_H_INCLUDED )
+#if !defined( _NTDEF_ ) && !defined( _NTSECAPI_ )
 typedef struct _UNICODE_STRING {
     USHORT  Length;
     USHORT  MaximumLength;
@@ -119,7 +116,7 @@ typedef UNICODE_STRING  *PUNICODE_STRING;
 #endif
 
 /* String */
-#if !defined( _NTDEF_H_INCLUDED ) && !defined( _NTSECAPI_H_INCLUDED )
+#if !defined( _NTDEF_ ) && !defined( _NTSECAPI_ )
 typedef struct _STRING {
     USHORT  Length;
     USHORT  MaximumLength;
@@ -129,7 +126,7 @@ typedef STRING   *PSTRING;
 #endif
 
 /* Old large integer */
-#ifndef _NTDEF_H_INCLUDED
+#ifndef _NTDEF_
 typedef struct _OLD_LARGE_INTEGER {
     ULONG   LowPart;
     LONG    HighPart;
@@ -299,5 +296,4 @@ NTSTATUS NTAPI  Msv1_0SubAuthenticationRoutineGeneric( PVOID, ULONG, PULONG, PVO
 :include cplusepi.sp
 
 #endif /* _NTSUBAUTH_ */
-#endif /* _SUBAUTH_H_INCLUDED */
 

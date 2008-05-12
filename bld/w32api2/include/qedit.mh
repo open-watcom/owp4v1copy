@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _QEDIT_H_INCLUDED
-#define _QEDIT_H_INCLUDED
+#ifndef __qedit_h__
+#define __qedit_h__
 
 :include readonly.sp
 #include <oaidl.h>
@@ -1808,5 +1808,5 @@ DECLARE_INTERFACE_( IResize, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _QEDIT_H_INCLUDED */
+#endif /* __qedit_h__ */
 

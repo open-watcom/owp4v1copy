@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ICM_H_INCLUDED
-#define _ICM_H_INCLUDED
-
 #ifndef _ICM_H_
 #define _ICM_H_
 
@@ -684,5 +681,4 @@ BOOL WINAPI         CMTranslateRGBsExt( HCMTRANSFORM, LPVOID, BMFORMAT, DWORD, D
 :include cplusepi.sp
 
 #endif /* _ICM_H_ */
-#endif /* _ICM_H_INCLUDED */
 

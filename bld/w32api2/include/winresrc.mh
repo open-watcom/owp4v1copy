@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINRESRC_H_INCLUDED
-#define _WINRESRC_H_INCLUDED
-
 #ifndef _WINRESRC_
 #define _WINRESRC_
 
@@ -18,5 +15,4 @@
 #include <winver.h>
 
 #endif /* _WINRESRC_ */
-#endif /* _WINRESRC_H_INCLUDED */
 

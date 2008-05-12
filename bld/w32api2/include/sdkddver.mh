@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SDKDDKVER_H_INCLUDED
-#define _SDKDDKVER_H_INCLUDED
-
 #ifndef _INC_SDKDDKVER
 #define _INC_SDKDDKVER
 
@@ -99,5 +96,4 @@
 :include cplusepi.sp
 
 #endif /* _INC_SDKDDKVER */
-#endif /* _SDKDDKVER_H_INCLUDED */
 

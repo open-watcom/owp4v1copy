@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DVDMEDIA_H_INCLUDED
-#define _DVDMEDIA_H_INCLUDED
-
 #ifndef __DVDMEDIA_H__
 #define __DVDMEDIA_H__
 
@@ -407,5 +404,4 @@ typedef enum {
 :include cplusepi.sp
 
 #endif /* __DVDMEDIA_H__ */
-#endif /* _DVDMEDIA_H_INCLUDED */
 

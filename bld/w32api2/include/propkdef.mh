@@ -18,24 +18,23 @@
         EXTERN_C const GUID x
 #endif
 
-#ifndef _PROPKEYDEF_H_INCLUDED
-#define _PROPKEYDEF_H_INCLUDED
-
 /* Reference data types */
-#ifdef __cplusplus
-    #define REFPROPERTYKEY  const PROPERTYKEY &
-#else
-    #define REFPROPERTYKEY  const PROPERTYKEY * const
+#ifndef REFPROPERTYKEY
+    #ifdef __cplusplus
+        #define REFPROPERTYKEY  const PROPERTYKEY &
+    #else
+        #define REFPROPERTYKEY  const PROPERTYKEY * const
+    #endif
 #endif
 
 /* Property key comparison macro */
-#define IsEqualPropertyKey( p1, p2 ) \
-    (IsEqualIID( p1, p2 ) && ((p1).fmtid == (p2).fmtid))
+#ifndef IsEqualPropertyKey
+    #define IsEqualPropertyKey( p1, p2 ) \
+        (IsEqualIID( p1, p2 ) && ((p1).fmtid == (p2).fmtid))
+#endif
 
 /* First usable property identifier */
 #ifndef PID_FIRST_USABLE
     #define PID_FIRST_USABLE    0x00000002L
 #endif
-
-#endif /* _PROPKEYDEF_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DXTRANS_H_INCLUDED
-#define _DXTRANS_H_INCLUDED
+#ifndef __dxtrans_h__
+#define __dxtrans_h__
 
 :include readonly.sp
 #include <oaidl.h>
@@ -1178,5 +1178,5 @@ DECLARE_INTERFACE_( ICSSFilterDispatch, IDispatch ) {
 
 :include cplusepi.sp
 
-#endif /* _DXTRANS_H_INCLUDED */
+#endif /* __dxtrans_h__ */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NETEVENT_H_INCLUDED
-#define _NETEVENT_H_INCLUDED
-
 #ifndef _NETEVENT_
 #define _NETEVENT_
 
@@ -602,5 +599,4 @@
 :include cplusepi.sp
 
 #endif /* _NETEVENT_ */
-#endif /* _NETEVENT_H_INCLUDED */
 

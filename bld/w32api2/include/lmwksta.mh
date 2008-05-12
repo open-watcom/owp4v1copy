@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMWKSTA_H_INCLUDED
-#define _LMWKSTA_H_INCLUDED
-
 #ifndef _LMWKSTA_
 #define _LMWKSTA_
 
@@ -479,5 +476,4 @@ NET_API_STATUS NET_API_FUNCTION NetWkstaUserSetInfo( LMSTR, DWORD, LPBYTE, LPDWO
 :include cplusepi.sp
 
 #endif /* _LMWKSTA_ */
-#endif /* _LMWKSTA_H_INCLUDED */
 

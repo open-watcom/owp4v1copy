@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINSVC_H_INCLUDED
-#define _WINSVC_H_INCLUDED
-
 #ifndef _WINSVC_
 #define _WINSVC_
 
@@ -629,5 +626,4 @@ WINADVAPI BOOL WINAPI       UnlockServiceDatabase( SC_LOCK );
 :include cplusepi.sp
 
 #endif /* _WINSVC_ */
-#endif /* _WINSVC_H_INCLUDED */
 

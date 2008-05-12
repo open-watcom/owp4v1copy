@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _POWRPROF_H_INCLUDED
-#define _POWRPROF_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -264,6 +261,4 @@ DWORD WINAPI    PowerWriteValueUnitsSpecifier( HKEY, CONST GUID *, CONST GUID *,
 #endif
 
 :include cplusepi.sp
-
-#endif /* _POWRPROF_H_INCLUDED */
 

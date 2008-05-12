@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MSHTML_H_INCLUDED
-#define _MSHTML_H_INCLUDED
+#ifndef __mshtml_h__
+#define __mshtml_h__
 
 :include readonly.sp
 #include <ocidl.h>
@@ -24070,5 +24070,5 @@ DECLARE_INTERFACE_( IHostBehaviorInit, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _MSHTML_H_INCLUDED */
+#endif /* __mshtml_h__ */
 

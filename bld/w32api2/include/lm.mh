@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LM_H_INCLUDED
-#define _LM_H_INCLUDED
-
 #ifndef _LM_
 #define _LM_
 
@@ -30,5 +27,4 @@
 #include <lmjoin.h>
 
 #endif /* _LM_ */
-#endif /* _LM_H_INCLUDED */
 

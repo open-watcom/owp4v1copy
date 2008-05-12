@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RASSAPI_H_INCLUDED
-#define _RASSAPI_H_INCLUDED
-
 #ifndef _RASSAPI_H_
 #define _RASSAPI_H_
 
@@ -232,5 +229,4 @@ VOID APIENTRY   RasAdminReleaseIpAddress( WCHAR *, WCHAR *, IPADDR * );
 :include cplusepi.sp
 
 #endif /* _RASSAPI_H_ */
-#endif /* _RASSAPI_H_INCLUDED */
 

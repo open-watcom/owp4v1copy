@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _BUGCODES_H_INCLUDED
-#define _BUGCODES_H_INCLUDED
-
 #ifndef _BUGCODES_
 #define _BUGCODES_
 
@@ -327,5 +324,4 @@
 :include cplusepi.sp
 
 #endif /* _BUGCODES_ */
-#endif /* _BUGCODES_H_INCLUDED */
 

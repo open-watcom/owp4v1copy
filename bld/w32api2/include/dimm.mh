@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DIMM_H_INCLUDED
-#define _DIMM_H_INCLUDED
+#ifndef __dimm_h__
+#define __dimm_h__
 
 :include readonly.sp
 #include <imm.h>
@@ -44,7 +44,7 @@ typedef struct {
 #endif
 
 /* Input context */
-#ifndef _DDKIMM_H_INCLUDED
+#ifndef _DDKIMM_H_
 typedef struct {
     HWND            hWnd;
     BOOL            fOpen;
@@ -70,7 +70,7 @@ typedef struct {
 #endif
 
 /* IME information */
-#ifndef _DDKIMM_H_INCLUDED
+#ifndef _DDKIMM_H_
 typedef struct {
     DWORD   dwPrivateDataSize;
     DWORD   fdwProperty;
@@ -898,5 +898,5 @@ DECLARE_INTERFACE_( IActiveIME2, IActiveIME ) {
 
 :include cplusepi.sp
 
-#endif /* _DIMM_H_INCLUDED */
+#endif /* __dimm_h__ */
 

@@ -10,26 +10,19 @@
  */
 
 :segment !WINSOCK2
-#ifndef _WINSOCK_H_INCLUDED
-#define _WINSOCK_H_INCLUDED
-
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_
 :endsegment
 :segment WINSOCK2
-#ifndef _WINSOCK2_H_INCLUDED
-#define _WINSOCK2_H_INCLUDED
-
 #ifndef _WINSOCK2API_
 #define _WINSOCK2API_
 :endsegment
 
 :include readonly.sp
 :segment WINSOCK2
-#define _WINSOCK_H_INCLUDED
 #define _WINSOCKAPI_
 :endsegment
-#ifndef _WINDOWS_H_INCLUDED
+#ifndef _WINDOWS_
     #include <windows.h>
 #endif
 #include <inaddr.h>
@@ -1378,10 +1371,8 @@ WINSOCK_API_LINKAGE int WSAAPI      WSAPoll( LPWSAPOLLFD, ULONG, INT );
 
 :segment !WINSOCK2
 #endif /* _WINSOCKAPI_ */
-#endif /* _WINSOCK_H_INCLUDED */
 :endsegment
 :segment WINSOCK2
 #endif /* _WINSOCK2API_ */
-#endif /* _WINSOCK2_H_INCLUDED */
 :endsegment
 

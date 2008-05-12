@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _UXTHEME_H_INCLUDED
-#define _UXTHEME_H_INCLUDED
-
 #ifndef _UXTHEME_H_
 #define _UXTHEME_H_
 
@@ -328,5 +325,4 @@ THEMEAPI            GetThemeStream( HTHEME, int, int, int, VOID **, DWORD *, HIN
 :include cplusepi.sp
 
 #endif /* _UXTHEME_H_ */
-#endif /* _UXTHEME_H_INCLUDED */
 

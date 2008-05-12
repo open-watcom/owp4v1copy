@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _CMNQUERY_H_INCLUDED
-#define _CMNQUERY_H_INCLUDED
-
 #ifndef __cmnquery_h
 #define __cmnquery_h
 
@@ -151,5 +148,4 @@ DECLARE_INTERFACE_( ICommonQuery, IUnknown ) {
 :include cplusepi.sp
 
 #endif /* __cmnquery_h */
-#endif /* _CMNQUERY_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MMSYSTEM_H_INCLUDED
-#define _MMSYSTEM_H_INCLUDED
-
 #ifndef _INC_MMSYSTEM
 #define _INC_MMSYSTEM
 
@@ -3193,5 +3190,4 @@ WINMMAPI MMRESULT WINAPI    waveOutSetVolume( HWAVEOUT, DWORD );
 #include <poppack.h>
 
 #endif /* _INC_MMSYSTEM */
-#endif /* _MMSYSTEM_H_INCLUDED */
 

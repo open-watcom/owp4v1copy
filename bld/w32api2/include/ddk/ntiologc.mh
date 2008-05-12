@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTIOLOGC_H_INCLUDED
-#define _NTIOLOGC_H_INCLUDED
-
 #ifndef _NTIOLOGC_
 #define _NTIOLOGC_
 
@@ -169,5 +166,4 @@
 :include cplusepi.sp
 
 #endif /* _NTIOLOGC_ */
-#endif /* _NTIOLOGC_H_INCLUDED */
 

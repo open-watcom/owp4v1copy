@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ISGUIDS_H_INCLUDED
-#define _ISGUIDS_H_INCLUDED
-
 #ifndef _ISGUIDS_H_
 #define _ISGUIDS_H_
 
@@ -26,5 +23,4 @@ EXTERN_C const IID      IID_IUniformResourceLocatorW;
 :include cplusepi.sp
 
 #endif /* _ISGUIDS_H_ */
-#endif /* _ISGUIDS_H_INCLUDED */
 

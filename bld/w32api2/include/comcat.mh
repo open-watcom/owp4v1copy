@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _COMCAT_H_INCLUDED
-#define _COMCAT_H_INCLUDED
+#ifndef __comcat_h__
+#define __comcat_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -181,5 +181,5 @@ typedef ICatInformation *LPCATINFORMATION;
 
 :include cplusepi.sp
 
-#endif /* _COMCAT_H_INCLUDED */
+#endif /* __comcat_h__ */
 

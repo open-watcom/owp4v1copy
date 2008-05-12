@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMMSG_H_INCLUDED
-#define _LMMSG_H_INCLUDED
-
 #ifndef _LMMSG_
 #define _LMMSG_
 
@@ -44,5 +41,4 @@ NET_API_STATUS NET_API_FUNCTION NetMessageNameGetInfo( LPCWSTR, LPCWSTR, DWORD, 
 :include cplusepi.sp
 
 #endif /* _LMMSG_ */
-#endif /* _LMMSG_H_INCLUDED */
 

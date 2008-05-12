@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _IPXTFFLT_H_INCLUDED
-#define _IPXTFFLT_H_INCLUDED
-
 #ifndef __ipxfltdf_h
 #define __ipxfltdf_h
 
@@ -75,5 +72,4 @@ typedef FLT_PACKET_LOG  *PFLT_PACKET_LOG;
 :include cplusepi.sp
 
 #endif /* __ipxfltdf_h */
-#endif /* _IPXTFFLT_H_INCLUDED */
 

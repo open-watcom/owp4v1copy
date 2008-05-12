@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MMREG_H_INCLUDED
-#define _MMREG_H_INCLUDED
-
 #ifndef _INC_MMREG
 #define _INC_MMREG
 
@@ -2763,5 +2760,4 @@ typedef struct tagJPEGINFOHEADER {
 :include cplusepi.sp
 
 #endif /* _INC_MMREG */
-#endif /* _MMREG_H_INCLUDED */
 

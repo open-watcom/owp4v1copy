@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ERRORREP_H_INCLUDED
-#define _ERRORREP_H_INCLUDED
-
 #ifndef __ERRORREP_H__
 #define __ERRORREP_H__
 
@@ -41,5 +38,4 @@ EFaultRepRetVal APIENTRY    ReportFault( LPEXCEPTION_POINTERS, DWORD );
 :include cplusepi.sp
 
 #endif /* __ERRORREP_H__ */
-#endif /* _ERRORREP_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _PROPIDL_H_INCLUDED
-#define _PROPIDL_H_INCLUDED
+#ifndef __propidl_h__
+#define __propidl_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -469,5 +469,5 @@ EXTERN_C BOOLEAN __stdcall                      StgConvertPropertyToVariant( con
 
 :include cplusepi.sp
 
-#endif /* _PROPIDL_H_INCLUDED */
+#endif /* __propidl_h__ */
 

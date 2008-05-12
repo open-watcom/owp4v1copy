@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SHLWAPI_H_INCLUDED
-#define _SHLWAPI_H_INCLUDED
-
 #ifndef _INC_SHLWAPI
 #define _INC_SHLWAPI
 
@@ -1283,5 +1280,4 @@ LWSTDAPI                PathMatchSpecExW( LPCWSTR, LPCWSTR, DWORD );
 :include cplusepi.sp
 
 #endif /* _INC_SHLWAPI */
-#endif /* _SHLWAPI_H_INCLUDED */
 

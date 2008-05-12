@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _USP10_H_INCLUDED
-#define _USP10_H_INCLUDED
-
 #ifndef __usp10__
 #define __usp10__
 
@@ -292,5 +289,4 @@ HRESULT WINAPI      ScriptSubstituteSingleGlyph( HDC, SCRIPT_CACHE *, SCRIPT_ANA
 :include cplusepi.sp
 
 #endif /* __usp10__ */
-#endif /* _USP10_H_INCLUDED */
 

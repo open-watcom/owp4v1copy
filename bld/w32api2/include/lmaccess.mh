@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMACCESS_H_INCLUDED
-#define _LMACCESS_H_INCLUDED
-
 #ifndef _LMUSER_
 #define _LMUSER_
 
@@ -1134,5 +1131,4 @@ NET_API_STATUS NET_API_FUNCTION RxNetAccessSetInfo( LPCWSTR, LPCWSTR, DWORD, LPB
 :include cplusepi.sp
 
 #endif /* _LMUSER_ */
-#endif /* _LMACCESS_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _VSSYM32_H_INCLUDED
-#define _VSSYM32_H_INCLUDED
-
 #ifndef __VSSYM32_H__
 #define __VSSYM32_H__
 
@@ -626,5 +623,4 @@ enum MENUBANDSTATES {
 :include cplusepi.sp
 
 #endif /* __VSSYM32_H__ */
-#endif /* _VSSYM32_H_INCLUDED */
 

@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _VMR9_H_INCLUDED
-#define _VMR9_H_INCLUDED
+#ifndef __vmr9_h__
+#define __vmr9_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -777,5 +777,5 @@ DECLARE_INTERFACE_( IVMRImageCompositor9, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _VMR9_H_INCLUDED */
+#endif /* __vmr9_h__ */
 

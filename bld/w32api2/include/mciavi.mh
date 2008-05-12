@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MCIAVI_H_INCLUDED
-#define _MCIAVI_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -37,6 +34,4 @@
 #define MCIERR_AVI_BADPALETTE           (MCIERR_CUSTOM_DRIVER_BASE + 108)
 
 :include cplusepi.sp
-
-#endif /* _MCIAVI_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ODBCINST_H_INCLUDED
-#define _ODBCINST_H_INCLUDED
-
 #ifndef __ODBCINST_H
 #define __ODBCINST_H
 
@@ -176,5 +173,4 @@ BOOL INSTAPI    ConfigDriverW( HWND, WORD, LPCWSTR, LPCWSTR, LPWSTR, WORD, WORD 
 :include cplusepi.sp
 
 #endif /* __ODBCINST_H */
-#endif /* _ODBCINST_H_INCLUDED */
 

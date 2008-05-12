@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _VSSTYLE_H_INCLUDED
-#define _VSSTYLE_H_INCLUDED
-
 #ifndef __VSSTYLE_H__
 #define __VSSTYLE_H__
 
@@ -1573,5 +1570,4 @@ enum CLOSEBUTTONSTATES {
 :include cplusepi.sp
 
 #endif /* __VSSTYLE_H__ */
-#endif /* _VSSTYLE_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SQLTYPES_H_INCLUDED
-#define _SQLTYPES_H_INCLUDED
-
 #ifndef __SQLTYPES
 #define __SQLTYPES
 
@@ -214,5 +211,4 @@ typedef struct tagSQL_NUMERIC_STRUCT {
 :include cplusepi.sp
 
 #endif /* __SQLTYPES */
-#endif /* _SQLTYPES_H_INCLUDED */
 

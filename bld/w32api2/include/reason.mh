@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _REASON_H_INCLUDED
-#define _REASON_H_INCLUDED
-
 #ifndef SENTINEL_Reason
 #define SENTINEL_Reason
 
@@ -100,5 +97,4 @@
 :include cplusepi.sp
 
 #endif /* SENTINEL_Reason */
-#endif /* _REASON_H_INCLUDED */
 

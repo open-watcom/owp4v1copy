@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _KS_H_INCLUDED
-#define _KS_H_INCLUDED
-
 #ifndef _KS_
 #define _KS_
 
@@ -18,7 +15,7 @@
 
 /* Kernel streaming primitive data types */
 typedef PVOID   PKSWORKER;
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef PVOID   PKSDEFAULTCLOCK;
 typedef PVOID   KSDEVICE_HEADER;
 typedef PVOID   KSOBJECT_HEADER;
@@ -26,7 +23,7 @@ typedef PVOID   KSOBJECT_BAG;
 #endif
 
 /* Forward declarations */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef struct _KSDEVICE_DESCRIPTOR     KSDEVICE_DESCRIPTOR;
 typedef struct _KSDEVICE_DESCRIPTOR     *PKSDEVICE_DESCRIPTOR;
@@ -82,7 +79,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
     CTL_CODE( FILE_DEVICE_KS, 0x0005, METHOD_NEITHER, FILE_READ_ACCESS )
 #define IOCTL_KS_RESET_STATE \
     CTL_CODE( FILE_DEVICE_KS, 0x0006, METHOD_NEITHER, FILE_ANY_ACCESS )
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define IOCTL_KS_HANDSHAKE \
             CTL_CODE( FILE_DEVICE_KS, 0x0007, METHOD_NEITHER, FILE_ANY_ACCESS )
@@ -135,7 +132,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 /* Kernel streaming event flags */
 #define KSEVENTF_EVENT_HANDLE           0x00000001L
 #define KSEVENTF_SEMAPHORE_HANDLE       0x00000002L
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define KSEVENTF_EVENT_OBJECT       0x00000004L
     #define KSEVENTF_SEMAPHORE_OBJECT   0x00000008L
     #define KSEVENTF_DPC                0x00000010L
@@ -232,7 +229,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #define KSRATE_NOPRESENTATIONDURATION   0x00000002L
 
 /* Kernel streaming probe flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define KSPROBE_STREAMREAD           0x00000000L
     #define KSPROBE_STREAMWRITE          0x00000001L
     #define KSPROBE_ALLOCATEMDL          0x00000010L
@@ -244,7 +241,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Kernel streaming stream flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define KSSTREAM_READ               KSPROBE_STREAMREAD
     #define KSSTREAM_WRITE              KSPROBE_STREAMWRITE
     #define KSSTREAM_PAGED_DATA         0x00000000L
@@ -254,19 +251,19 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Kernel streaming event entry flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define KSEVENT_ENTRY_DELETED   0x00000001L
     #define KSEVENT_ENTRY_ONESHOT   0x00000002L
     #define KSEVENT_ENTRY_BUFFERED  0x00000004L
 #endif
 
 /* Kernel streaming dispatch flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define KSDISPATCH_FASTIO   0x80000000L
 #endif
 
 /* Kernel streaming object create item flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define KSCREATE_ITEM_SECURITYCHANGED   0x00000001L
     #define KSCREATE_ITEM_WILDCARD          0x00000002L
     #define KSCREATE_ITEM_NOPARAMETERS      0x00000004L
@@ -274,12 +271,12 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Bus interface reference version number */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define BUS_INTERFACE_REFERENCE_VERSION 0x0100
 #endif
 
 /* Kernel streaming device descriptor version numbers */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define KSDEVICE_DESCRIPTOR_VERSION     0x00000100L
     #endif
@@ -289,7 +286,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Kernel streaming device flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x06000000)
         #define KSDEVICE_FLAG_ENABLE_REMOTE_WAKEUP  0x00000001L
         #define KSDEVICE_FLAG_LOWPOWER_PASSTHROUGH  0x00000002L
@@ -297,14 +294,14 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Kernel streaming filter descriptor version number */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define KSFILTER_DESCRIPTOR_VERSION 0xFFFFFFFFL
     #endif
 #endif
 
 /* Kernel streaming filter flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define KSFILTER_FLAG_DISPATCH_LEVEL_PROCESSING     0x00000001L
         #define KSFILTER_FLAG_CRITICAL_PROCESSING           0x00000002L
@@ -317,7 +314,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Kernel streaming pin flags */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define KSPIN_FLAG_DISPATCH_LEVEL_PROCESSING \
             KSFILTER_FLAG_DISPATCH_LEVEL_PROCESSING
@@ -350,7 +347,7 @@ typedef struct _KSPROCESSPIN_INDEXENTRY *PKSPROCESSPIN_INDEXENTRY;
 #endif
 
 /* Definitions from winuser.h for device drivers */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #define MAKEINTRESOURCE( x )    ((ULONG_PTR)(USHORT)x)
     #define RT_STRING               MAKEINTRESOURCE( 6 )
     #define RT_RCDATA               MAKEINTRESOURCE( 10 )
@@ -428,7 +425,7 @@ typedef struct {
 typedef KSE_NODE    *PKSE_NODE;
 
 /* Variant types */
-#ifndef _WTYPES_H_INCLUDED
+#ifndef __wtypes_h__
 :include varenum.sp
 #endif
 
@@ -478,7 +475,7 @@ typedef union {
         LONGLONG    SignedMaximum;
     };
     struct {
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
         ULONGLONG   UnsignedMinimum;
         ULONGLONG   UnsignedMaximum;
 #else
@@ -499,7 +496,7 @@ typedef KSPROPERTY_STEPPING_LONG    *PKSPROPERTY_STEPPING_LONG;
 
 /* Kernel streaming property stepping (64-bit version) */
 typedef struct {
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     ULONGLONG                   SteppingDelta;
 #else
     DWORDLONG                   SteppingDelta;
@@ -521,7 +518,7 @@ typedef struct {
             ULONG       Reserved;
             LONG        Adjustment;
         } SemaphoreHandle;
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
         struct {
             PVOID       Event;
             KPRIORITY   Increment;
@@ -690,12 +687,12 @@ typedef enum {
 } KSPROPERTY_TOPOLOGY;
 
 /* Kernel streaming graph manager notification callback */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef VOID (NTAPI *PFNKSGRAPHMANAGER_NOTIFY)( PFILE_OBJECT, ULONG, PVOID, PVOID, PVOID, ULONG );
 #endif
 
 /* Kernel streaming graph manager function table */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct KSGRAPHMANAGER_FUNCTIONTABLE {
     PFNKSGRAPHMANAGER_NOTIFY    NotifyEvent;
 } KSGRAPHMANAGER_FUNCTIONTABLE;
@@ -703,7 +700,7 @@ typedef KSGRAPHMANAGER_FUNCTIONTABLE    *PKSGRAPHMANAGER_FUNCTIONTABLE;
 #endif
 
 /* Kernel streaming graph manager interface property */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct _KSPROPERTY_GRAPHMANAGER_INTERFACE {
     PFILE_OBJECT                    GraphManager;
     PKSGRAPHMANAGER_FUNCTIONTABLE   FunctionTable;
@@ -712,7 +709,7 @@ typedef KSPROPERTY_GRAPHMANAGER_INTERFACE   *PKSPROPERTY_GRAPHMANAGER_INTERFACE;
 #endif
 
 /* Kernel streaming graph manager commands */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KSPROPERTY_GM_GRAPHMANAGER      = 0,
     KSPROPERTY_GM_TIMESTAMP_CLOCK   = 1,
@@ -829,7 +826,7 @@ typedef struct {
 typedef KSATTRIBUTE *PKSATTRIBUTE;
 
 /* Kernel streaming attribute list */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG           Count;
     PKSATTRIBUTE    *Attributes;
@@ -866,13 +863,13 @@ typedef struct {
 typedef KSPIN_PHYSICALCONNECTION    *PKSPIN_PHYSICALCONNECTION;
 
 /* Kernel streaming intersect handler callback */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef NTSTATUS (NTAPI *PFNKSINTERSECTHANDLER)( PIRP, PKSP_PIN, PKSDATARANGE, PVOID );
 typedef NTSTATUS (NTAPI *PFNKSINTERSECTHANDLEREX)( PVOID, PIRP, PKSP_PIN, PKSDATARANGE, PKSDATARANGE, ULONG, PVOID, PULONG );
 #endif
 
 /* Kernel streaming pin descriptor */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG                   InterfacesCount;
     const KSPIN_INTERFACE   *Interfaces;
@@ -925,7 +922,7 @@ typedef struct {
         ULONG   OptionsFlags;
         ULONG   RequirementsFlags;
     };
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     POOL_TYPE   PoolType;
 #else
     ULONG       PoolType;
@@ -938,7 +935,7 @@ typedef struct {
 typedef KSALLOCATOR_FRAMING *PKSALLOCATOR_FRAMING;
 
 /* Kernel streaming allocator callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef PVOID (NTAPI *PFNKSDEFAULTALLOCATE)( PVOID );
 typedef VOID (NTAPI *PFNKSDEFAULTFREE)( PVOID, PVOID );
 typedef NTSTATUS (NTAPI *PFNKSINITIALIZEALLOCATOR)( PVOID, PKSALLOCATOR_FRAMING, PVOID * );
@@ -1007,7 +1004,7 @@ typedef enum {
 } KSMETHOD_STREAMALLOCATOR;
 
 /* Kernel streaming stream allocator properties */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KSPROPERTY_STREAMALLOCATOR_FUNCTIONTABLE    = 0,
     KSPROPERTY_STREAMALLOCATOR_STATUS           = 1
@@ -1015,13 +1012,13 @@ typedef enum {
 #endif
 
 /* Kernel streaming stream allocator callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef NTSTATUS (NTAPI *PFNALLOCATOR_ALLOCATEFRAME)( PFILE_OBJECT, PVOID * );
 typedef VOID (NTAPI *PFNALLOCATOR_FREEFRAME)( PFILE_OBJECT, PVOID );
 #endif
 
 /* Kernel streaming stream allocator function table */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     PFNALLOCATOR_ALLOCATEFRAME  AllocateFrame;
     PFNALLOCATOR_FREEFRAME      FreeFrame;
@@ -1145,7 +1142,7 @@ typedef enum {
     KSPROPERTY_CLOCK_CORRELATEDTIME         = 2,
     KSPROPERTY_CLOCK_CORRELATEDPHYSICALTIME = 3,
     KSPROPERTY_CLOCK_RESOLUTION             = 4,
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     KSPROPERTY_CLOCK_STATE                  = 5,
     KSPROPERTY_CLOCK_FUNCTIONTABLE          = 6
 #else
@@ -1154,13 +1151,13 @@ typedef enum {
 } KSPROPERTY_CLOCK;
 
 /* Kernel streaming clock callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef LONGLONG (FASTCALL *PFNKSCLOCK_GETTIME)( PFILE_OBJECT );
 typedef LONGLONG (FASTCALL *PFNKSCLOCK_CORRELATEDTIME)( PFILE_OBJECT, PLONGLONG );
 #endif
 
 /* Kernel streaming clock function table */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     PFNKSCLOCK_GETTIME          GetTime;
     PFNKSCLOCK_GETTIME          GetPhysicalTime;
@@ -1171,7 +1168,7 @@ typedef KSCLOCK_FUNCTIONTABLE   *PKSCLOCK_FUNCTIONTABLE;
 #endif
 
 /* Kernel streaming timer callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef BOOLEAN (NTAPI *PFNKSSETTIMER)( PVOID, PKTIMER, LARGE_INTEGER, PKDPC );
 typedef BOOLEAN (NTAPI *PFNKSCANCELTIMER)( PVOID, PKTIMER );
@@ -1218,7 +1215,7 @@ typedef enum {
 } KSDEGRADE_STANDARD;
 
 /* Kernel streaming callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef NTSTATUS (NTAPI *PFNKSCONTEXT_DISPATCH)( PVOID, PIRP );
 typedef NTSTATUS (NTAPI *PFNKSHANDLER)( PIRP, PKSIDENTIFIER, PVOID );
 typedef BOOLEAN (NTAPI *PFNKSFASTHANDLER)( PFILE_OBJECT, PKSIDENTIFIER, ULONG, PVOID, ULONG, PIO_STATUS_BLOCK );
@@ -1226,7 +1223,7 @@ typedef NTSTATUS (NTAPI *PFNKSALLOCATOR)( PIRP, ULONG, BOOLEAN );
 #endif
 
 /* Kernel streaming property members list */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     KSPROPERTY_MEMBERSHEADER    MembersHeader;
     const VOID                  *Members;
@@ -1235,7 +1232,7 @@ typedef KSPROPERTY_MEMBERSLIST  *PKSPROPERTY_MEMBERSLIST;
 #endif
 
 /* Kernel streaming property values */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     KSIDENTIFIER                    PropTypeSet;
     ULONG                           MembersListCount;
@@ -1245,7 +1242,7 @@ typedef KSPROPERTY_VALUES   *PKSPROPERTY_VALUES;
 #endif
 
 /* Kernel streaming property item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG                   PropertyId;
     union {
@@ -1268,7 +1265,7 @@ typedef KSPROPERTY_ITEM *PKSPROPERTY_ITEM;
 #endif
 
 /* Kernel streaming fast property item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG   PropertyId;
     union {
@@ -1285,7 +1282,7 @@ typedef KSFASTPROPERTY_ITEM *PKSFASTPROPERTY_ITEM;
 #endif
 
 /* Kernel streaming property set */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     const GUID                  *Set;
     ULONG                       PropertiesCount;
@@ -1297,7 +1294,7 @@ typedef KSPROPERTY_SET  *PKSPROPERTY_SET;
 #endif
 
 /* Kernel streaming method item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG           MethodId;
     union {
@@ -1313,7 +1310,7 @@ typedef KSMETHOD_ITEM   *PKSMETHOD_ITEM;
 #endif
 
 /* Kernel streaming fast method item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG   MethodId;
     union {
@@ -1325,7 +1322,7 @@ typedef KSFASTMETHOD_ITEM   *PKSFASTMETHOD_ITEM;
 #endif
 
 /* Kernel streaming method set */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     const GUID              *Set;
     ULONG                   MethodsCount;
@@ -1337,13 +1334,13 @@ typedef KSMETHOD_SET    *PKSMETHOD_SET;
 #endif
 
 /* Kernel streaming event callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef NTSTATUS (NTAPI *PFNKSADDEVENT)( PIRP, PKSEVENTDATA, struct _KSEVENT_ENTRY * );
 typedef VOID (NTAPI *PFNKSREMOVEEVENT)( PFILE_OBJECT, struct _KSEVENT_ENTRY * );
 #endif
 
 /* Kernel streaming event item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG               EventId;
     ULONG               DataInput;
@@ -1356,7 +1353,7 @@ typedef KSEVENT_ITEM    *PKSEVENT_ITEM;
 #endif
 
 /* Kernel streaming event set */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     const GUID          *Set;
     ULONG               EventsCount;
@@ -1366,7 +1363,7 @@ typedef KSEVENT_SET *PKSEVENT_SET;
 #endif
 
 /* Kernel streaming DPC item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     KDPC        Dpc;
     ULONG       ReferenceCount;
@@ -1376,7 +1373,7 @@ typedef KSDPC_ITEM  *PKSDPC_ITEM;
 #endif
 
 /* Kernel streaming buffer item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     KSDPC_ITEM  DpcItem;
     LIST_ENTRY  BufferList;
@@ -1385,7 +1382,7 @@ typedef KSBUFFER_ITEM   *PKSBUFFER_ITEM;
 #endif
 
 /* Kernel streaming event entry */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct _KSEVENT_ENTRY {
     LIST_ENTRY          ListEntry;
     PVOID               Object;
@@ -1406,7 +1403,7 @@ typedef KSEVENT_ENTRY   *PKSEVENT_ENTRY;
 #endif
 
 /* Kernel streaming events lock types */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KSEVENTS_NONE           = 0,
     KSEVENTS_SPINLOCK       = 1,
@@ -1419,7 +1416,7 @@ typedef enum {
 #endif
 
 /* Kernel streaming object create item */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     PDRIVER_DISPATCH        Create;
     PVOID                   Context;
@@ -1431,12 +1428,12 @@ typedef KSOBJECT_CREATE_ITEM    *PKSOBJECT_CREATE_ITEM;
 #endif
 
 /* Kernel streaming item free callback */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef VOID (NTAPI *PFNKSITEMFREECALLBACK)( PKSOBJECT_CREATE_ITEM );
 #endif
 
 /* Kernel streaming object create information */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     ULONG                   CreateItemsCount;
     PKSOBJECT_CREATE_ITEM   CreateItemsList;
@@ -1445,7 +1442,7 @@ typedef KSOBJECT_CREATE *PKSOBJECT_CREATE;
 #endif
 
 /* Kernel streaming dispatch table */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     PDRIVER_DISPATCH        DeviceIoControl;
     PDRIVER_DISPATCH        Read;
@@ -1462,7 +1459,7 @@ typedef KSDISPATCH_TABLE    *PKSDISPATCH_TABLE;
 #endif
 
 /* Kernel streaming completion invocations */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KsInvokeOnSuccess   = 1,
     KsInvokeOnError     = 2,
@@ -1471,7 +1468,7 @@ typedef enum {
 #endif
 
 /* Kernel streaming list entry locations */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KsListEntryTail = 1,
     KsListEntryHead = 2
@@ -1479,7 +1476,7 @@ typedef enum {
 #endif
 
 /* Kernel streaming IRP removal operation */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KsAcquireOnly                       = 0,
     KsAcquireAndRemove                  = 1,
@@ -1489,7 +1486,7 @@ typedef enum {
 #endif
 
 /* Kernel streaming stack uses */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KsStackCopyToNewLocation    = 0,
     KsStackReuseCurrentLocation = 1,
@@ -1498,7 +1495,7 @@ typedef enum {
 #endif
 
 /* Kernel streaming target states */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef enum {
     KSTARGET_STATE_DISABLED = 0,
     KSTARGET_STATE_ENABLED  = 1
@@ -1506,7 +1503,7 @@ typedef enum {
 #endif
 
 /* Reference callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef NTSTATUS (NTAPI *PFNKSIRPLISTCALLBACK)( PIRP, PVOID );
 typedef VOID (NTAPI *PFNREFERENCEDEVICEOBJECT)( PVOID );
 typedef VOID (NTAPI *PFNDEREFERENCEDEVICEOBJECT)( PVOID );
@@ -1514,7 +1511,7 @@ typedef NTSTATUS (NTAPI *PFNQUERYREFERENCESTRING)( PVOID, PWCHAR * );
 #endif
 
 /* Bus interface reference */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     INTERFACE                   Interface;
     PFNREFERENCEDEVICEOBJECT    ReferenceDeviceObject;
@@ -1525,12 +1522,12 @@ typedef BUS_INTERFACE_REFERENCE *PBUS_INTERFACE_REFERENCE;
 #endif
 
 /* Query mediums list callback */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef NTSTATUS (NTAPI *PFNQUERYMEDIUMSLIST)( PVOID, ULONG *, KSPIN_MEDIUM * );
 #endif
 
 /* Bus interface mediums */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 typedef struct {
     INTERFACE           Interface;
     PFNQUERYMEDIUMSLIST QueryMediumsList;
@@ -1556,7 +1553,7 @@ typedef struct {
 typedef KSPROPERTY_SERIAL   *PKSPROPERTY_SERIAL;
 
 /* Kernel streaming handshake */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef struct {
     GUID    ProtocolId;
@@ -1568,7 +1565,7 @@ typedef KSHANDSHAKE *PKSHANDSHAKE;
 #endif
 
 /* Kernel streaming gate */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef struct _KSGATE {
     LONG            Count;
@@ -1579,7 +1576,7 @@ typedef KSGATE  *PKSGATE;
 #endif
 
 /* Kernel streaming dispatch callbacks */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef BOOLEAN (NTAPI *PFNKSGENERATEEVENTCALLBACK)( PVOID, PKSEVENT_ENTRY );
 typedef NTSTATUS (NTAPI *PFNKSDEVICECREATE)( PKSDEVICE );
@@ -1613,7 +1610,7 @@ typedef void (NTAPI *PFNKSSTREAMPOINTER)( PKSSTREAM_POINTER );
 #endif
 
 /* Kernel streaming automation table */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef struct KSAUTOMATION_TABLE_ {
     ULONG                   PropertySetsCount;
@@ -1632,7 +1629,7 @@ typedef KSAUTOMATION_TABLE  *PKSAUTOMATION_TABLE;
 #endif
 
 /* Kernel streaming device dispatch */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSDEVICE_DISPATCH {
     PFNKSDEVICECREATE               Add;
@@ -1654,7 +1651,7 @@ struct _KSDEVICE_DISPATCH {
 #endif
 
 /* Kernel streaming filter dispatch */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSFILTER_DISPATCH {
     PFNKSFILTERIRP      Create;
@@ -1666,7 +1663,7 @@ struct _KSFILTER_DISPATCH {
 #endif
 
 /* Kernel streaming pin dispatch */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSPIN_DISPATCH {
     PFNKSPINIRP                 Create;
@@ -1684,7 +1681,7 @@ struct _KSPIN_DISPATCH {
 #endif
 
 /* Kernel streaming clock dispatch */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSCLOCK_DISPATCH {
     PFNKSPINSETTIMER        SetTimer;
@@ -1696,7 +1693,7 @@ struct _KSCLOCK_DISPATCH {
 #endif
 
 /* Kernel streaming allocator dispatch */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSALLOCATOR_DISPATCH {
     PFNKSPININITIALIZEALLOCATOR InitializeAllocator;
@@ -1708,7 +1705,7 @@ struct _KSALLOCATOR_DISPATCH {
 #endif
 
 /* Kernel streaming device descriptor */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSDEVICE_DESCRIPTOR {
     const KSDEVICE_DISPATCH     *Dispatch;
@@ -1724,7 +1721,7 @@ struct _KSDEVICE_DESCRIPTOR {
 #endif
 
 /* Kernel streaming filter descriptor */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSFILTER_DESCRIPTOR {
     const KSFILTER_DISPATCH     *Dispatch;
@@ -1748,7 +1745,7 @@ struct _KSFILTER_DESCRIPTOR {
 #endif
 
 /* Kernel streaming pin descriptor (extended version) */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSPIN_DESCRIPTOR_EX {
     const KSPIN_DISPATCH            *Dispatch;
@@ -1764,7 +1761,7 @@ struct _KSPIN_DESCRIPTOR_EX {
 #endif
 
 /* Kernel streaming node descriptor */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSNODE_DESCRIPTOR {
     const KSAUTOMATION_TABLE    *AutomationTable;
@@ -1776,7 +1773,7 @@ struct _KSNODE_DESCRIPTOR {
 #endif
 
 /* Kernel streaming device */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSDEVICE {
     const KSDEVICE_DESCRIPTOR   *Descriptor;
@@ -1793,7 +1790,7 @@ struct _KSDEVICE {
 #endif
 
 /* Kernel streaming filter factory */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSFILTERFACTORY {
     const KSFILTER_DESCRIPTOR   *FilterDescriptor;
@@ -1804,7 +1801,7 @@ struct _KSFILTERFACTORY {
 #endif
 
 /* Kernel streaming filter */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSFILTER {
     const KSFILTER_DESCRIPTOR   *Descriptor;
@@ -1815,7 +1812,7 @@ struct _KSFILTER {
 #endif
 
 /* Kernel streaming pin */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSPIN {
     const KSPIN_DESCRIPTOR_EX   *Descriptor;
@@ -1839,7 +1836,7 @@ struct _KSPIN {
 #endif
 
 /* Kernel streaming mapping */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSMAPPING {
     PHYSICAL_ADDRESS    PhysicalAddress;
@@ -1850,7 +1847,7 @@ struct _KSMAPPING {
 #endif
 
 /* Kernel streaming stream pointer offset */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSSTREAM_POINTER_OFFSET {
     union {
@@ -1865,7 +1862,7 @@ struct _KSSTREAM_POINTER_OFFSET {
 #endif
 
 /* Kernel streaming stream pointer */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSSTREAM_POINTER {
     PVOID                       Context;
@@ -1879,7 +1876,7 @@ struct _KSSTREAM_POINTER {
 #endif
 
 /* Kernel streaming process pin */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSPROCESSPIN {
     PKSPIN              Pin;
@@ -1897,7 +1894,7 @@ struct _KSPROCESSPIN {
 #endif
 
 /* Kernel streaming process pin index entry */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 struct _KSPROCESSPIN_INDEXENTRY {
     PKSPROCESSPIN   *Pins;
@@ -1907,7 +1904,7 @@ struct _KSPROCESSPIN_INDEXENTRY {
 #endif
 
 /* Kernel streaming object types */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef enum {
     KsObjectTypeDevice          = 0,
@@ -1919,7 +1916,7 @@ typedef enum {
 #endif
 
 /* More kernel streaming callbacks */
-#ifdef _NTDDK_H_INCLUED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef void (NTAPI *PFNKSFREE)( PVOID );
 typedef void (NTAPI *PFNKSPINFRAMERETURN)( PKSPIN, PVOID, ULONG, PMDL, PVOID, NTSTATUS );
@@ -1928,7 +1925,7 @@ typedef void (NTAPI *PFNKSPINIRPCOMPLETION)( PKSPIN, PIRP );
 #endif
 
 /* Kernel streaming stream pointer states */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 #if (NTDDI_VERSION >= 0x05010000)
 typedef enum {
     KSSTREAM_POINTER_STATE_UNLOCKED = 0,
@@ -1938,8 +1935,8 @@ typedef enum {
 #endif
 
 /* Macro to define IUnknown methods */
-#ifdef _NTDDK_H_INCLUDED
-    #ifdef _UNKNOWN_H_INCLUDED
+#ifdef _NTDDK_
+    #ifdef _UNKNOWN_H_
         #if (NTDDI_VERSION >= 0x05010000)
             #define DEFINE_ABSTRACT_UNKNOWN() \
                 STDMETHOD_( NTSTATUS, QueryInterface )( THIS_ REFIID, PVOID * ) PURE; \
@@ -1950,8 +1947,8 @@ typedef enum {
 #endif
 
 /* IKsControl interface */
-#ifdef _NTDDK_H_INCLUDED
-#ifdef _UNKNOWN_H_INCLUDED
+#ifdef _NTDDK_
+#ifdef _UNKNOWN_H_
 #if (NTDDI_VERSION >= 0x05010000)
 #undef INTERFACE
 #define INTERFACE   IKsControl
@@ -1970,8 +1967,8 @@ typedef IKsControl  *PIKSCONTROL;
 #endif
 
 /* IKsReferenceClock interface */
-#ifdef _NTDDK_H_INCLUDED
-#ifdef _UNKNOWN_H_INCLUDED
+#ifdef _NTDDK_
+#ifdef _UNKNOWN_H_
 #if (NTDDI_VERSION >= 0x05010000)
 #undef INTERFACE
 #define INTERFACE   IKsReferenceClock
@@ -1993,8 +1990,8 @@ typedef IKsReferenceClock   *PIKSREFERENCECLOCK;
 #endif
 
 /* IKsDeviceFunctions interface */
-#ifdef _NTDDK_H_INCLUDED
-#ifdef _UNKNOWN_H_INCLUDED
+#ifdef _NTDDK_
+#ifdef _UNKNOWN_H_
 #if (NTDDI_VERSION >= 0x05020100)
 #undef INTERFACE
 #define INTERFACE   IKsDeviceFunctions
@@ -2012,8 +2009,8 @@ DECLARE_INTERFACE_( IKsDeviceFunctions, IUnknown ) {
 /* The name INTERFACE is used for a structure in ntddk.h, so if it was defined in order
  * to declare a COM interface, undefine it so that the structure is accessible.
  */
-#ifdef _NTDDK_H_INCLUDED
-    #ifdef _UNKNOWN_H_INCLUDED
+#ifdef _NTDDK_
+    #ifdef _UNKNOWN_H_
         #if (NTDDI_VERSION >= 0x05010000)
             #undef INTERFACE
         #endif
@@ -2021,12 +2018,12 @@ DECLARE_INTERFACE_( IKsDeviceFunctions, IUnknown ) {
 #endif
 
 /* Variables in KS.SYS */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 KSDDKAPI DRIVER_CANCEL  KsCancelRoutine;
 #endif
 
 /* Functions in KS.SYS */
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
 KSDDKAPI VOID NTAPI     KsAcquireDeviceSecurityLock( KSDEVICE_HEADER, BOOLEAN );
 KSDDKAPI NTSTATUS NTAPI KsAcquireResetValue( PIRP, KSRESET * );
 KSDDKAPI VOID NTAPI     KsAddIrpToCancelableQueue( PLIST_ENTRY, PKSPIN_LOCK, PIRP, KSLIST_ENTRY_LOCATION, PDRIVER_CANCEL );
@@ -2217,7 +2214,7 @@ KSDDKAPI NTSTATUS NTAPI KsStreamPointerSetStatusCode( PKSSTREAM_POINTER, NTSTATU
 KSDDKAPI void NTAPI     KsStreamPointerUnlock( PKSSTREAM_POINTER, BOOLEAN );
 KSDDKAPI void NTAPI     KsTerminateDevice( PDEVICE_OBJECT );
 KSDDKAPI NTSTATUS NTAPI _KsEdit( KSOBJECT_BAG, PVOID *, ULONG, ULONG, ULONG );
-#ifdef _UNKNOWN_H_INCLUDED
+#ifdef _UNKNOWN_H_
 KSDDKAPI PUNKNOWN NTAPI KsGetOuterUnknown( PVOID );
 KSDDKAPI NTSTATUS NTAPI KsGetReferenceClockInterface( PKSPIN, PIKSREFERENCECLOCK * );
 KSDDKAPI PUNKNOWN NTAPI KsRegisterAggregatedClientUnknown( PVOID, PUNKNOWN );
@@ -2226,7 +2223,7 @@ KSDDKAPI PUNKNOWN NTAPI KsRegisterAggregatedClientUnknown( PVOID, PUNKNOWN );
 #endif
 
 /* Functions in KSUSER.DLL */
-#ifndef _NTDDK_H_INCLUDED
+#ifndef _NTDDK_
 KSDDKAPI DWORD WINAPI   KsCreateAllocator( HANDLE, PKSALLOCATOR_FRAMING, PHANDLE );
 KSDDKAPI DWORD WINAPI   KsCreateClock( HANDLE, PKSCLOCK_CREATE, PHANDLE );
 KSDDKAPI DWORD WINAPI   KsCreatePin( HANDLE, PKSPIN_CONNECT, ACCESS_MASK, PHANDLE );
@@ -2259,7 +2256,7 @@ KSDDKAPI DWORD WINAPI   KsCreateTopologyNode( HANDLE, PKSNODE_CREATE, ACCESS_MAS
         (x)->InPlaceWeight = 0; \
         (x)->NotInPlaceWeight = 0; \
     }
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define KsDeleteFilterFactory( x ) \
             KsFreeObjectCreateItemsByContext( *(KSDEVICE_HEADER *) \
@@ -2301,7 +2298,7 @@ KSDDKAPI DWORD WINAPI   KsCreateTopologyNode( HANDLE, PKSNODE_CREATE, ACCESS_MAS
             _KsEdit( (p1)->Bag, (PVOID *)(p2), sizeof( **(p2) ), sizeof( **(p2) ), p3 )
         #define KsEditSized( p1, p2, p3, p4, p5 ) \
             _KsEdit( (p1)->Bag, (PVOID *)(p2), p3, p4, p5 )
-        #ifdef _UNKNOWN_H_INCLUDED
+        #ifdef _UNKNOWN_H_
             #define KsDeviceRegisterAggregatedClientUnknown( p1, p2 ) \
                 KsRegisterAggregatedClientUnknown( (PVOID)(p1), p2 )
             #define KsDeviceGetOuterUnknown( x ) \
@@ -2324,7 +2321,7 @@ KSDDKAPI DWORD WINAPI   KsCreateTopologyNode( HANDLE, PKSNODE_CREATE, ACCESS_MAS
 
 /* Aliases */
 #define KsDispatchFastWriteFailure      KsDispatchFastReadFailure
-#ifdef _NTDDK_H_INCLUDED
+#ifdef _NTDDK_
     #if (NTDDI_VERSION >= 0x05010000)
         #define KsFilterAddEvent        KsAddEvent
         #define KsFilterGenerateEvents  KsGenerateEvents
@@ -2336,5 +2333,4 @@ KSDDKAPI DWORD WINAPI   KsCreateTopologyNode( HANDLE, PKSNODE_CREATE, ACCESS_MAS
 :include cplusepi.sp
 
 #endif /* _KS_ */
-#endif /* _KS_H_INCLUDED */
 

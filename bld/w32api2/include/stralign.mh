@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _STRALIGN_H_INCLUDED
-#define _STRALIGN_H_INCLUDED
-
 #ifndef __STRALIGN_H_
 #define __STRALIGN_H_
 
@@ -61,5 +58,4 @@
 :include cplusepi.sp
 
 #endif /* __STRALIGN_H_ */
-#endif /* _STRALIGN_H_INCLUDED */
 

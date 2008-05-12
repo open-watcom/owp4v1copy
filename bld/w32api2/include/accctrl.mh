@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _ACCCTRL_H_INCLUDED
-#define _ACCCTRL_H_INCLUDED
-
 #ifndef __ACCESS_CONTROL__
 #define __ACCESS_CONTROL__
 
@@ -545,5 +542,4 @@ typedef PINHERITED_FROMA    PINHERITED_FROM;
 :include cplusepi.sp
 
 #endif /* __ACCESS_CONTROL__ */
-#endif /* _ACCCTRL_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SDDL_H_INCLUDED
-#define _SDDL_H_INCLUDED
-
 #ifndef __SDDL_H__
 #define __SDDL_H__
 
@@ -183,5 +180,4 @@ WINADVAPI BOOL WINAPI   ConvertStringSidToSidW( LPCWSTR, PSID * );
 :include cplusepi.sp
 
 #endif /* __SDDL_H__ */
-#endif /* _SDDL_H_INCLUDED */
 

@@ -10,19 +10,9 @@
  */
 
 :segment !RESOURCE
-#ifndef _WINUSER_H_INCLUDED
-#define _WINUSER_H_INCLUDED
-
 #ifndef _WINUSER_
 #define _WINUSER_
-:endsegment
-:segment RESOURCE
-#ifndef _WINUSER_RH_INCLUDED
-#define _WINUSER_RH_INCLUDED
-#endif
-:endsegment
 
-:segment !RESOURCE
 :include readonly.sp
 #include <tvout.h>
 
@@ -6444,9 +6434,5 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
 :include cplusepi.sp
 
 #endif /* _WINUSER_ */
-#endif /* _WINUSER_H_INCLUDED */
-:endsegment
-:segment RESOURCE
-#endif /* _WINUSER_RH_INCLUDED */
 :endsegment
 

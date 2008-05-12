@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINLDAP_H_INCLUDED
-#define _WINLDAP_H_INCLUDED
-
 #ifndef LDAP_CLIENT_DEFINED
 #define LDAP_CLIENT_DEFINED
 
@@ -846,5 +843,4 @@ WINLDAPAPI ULONG LDAPAPI    ldap_value_free_len( struct berval ** );
 :include cplusepi.sp
 
 #endif /* LDAP_CLIENT_DEFINED */
-#endif /* _WINLDAP_H_INCLUDED */
 

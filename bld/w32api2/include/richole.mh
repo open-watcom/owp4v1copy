@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RICHOLE_H_INCLUDED
-#define _RICHOLE_H_INCLUDED
-
 #ifndef _RICHOLE_
 #define _RICHOLE_
 
@@ -123,5 +120,4 @@ typedef IRichEditOleCallback    *LPRICHEDITOLECALLBACK;
 :include cplusepi.sp
 
 #endif /* _RICHOLE_ */
-#endif /* _RICHOLE_H_INCLUDED */
 

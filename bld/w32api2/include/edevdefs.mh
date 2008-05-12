@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _EDEVDEFS_H_INCLUDED
-#define _EDEVDEFS_H_INCLUDED
-
 #ifndef __EDEVDEFS__
 #define __EDEVDEFS__
 
@@ -393,5 +390,4 @@
 :include cplusepi.sp
 
 #endif /* __EDEVDEFS__ */
-#endif /* _EDEVDEFS_H_INCLUDED */
 

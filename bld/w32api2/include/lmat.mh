@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMAT_H_INCLUDED
-#define _LMAT_H_INCLUDED
-
 #ifndef _LMAT_
 #define _LMAT_
 
@@ -56,5 +53,4 @@ NET_API_STATUS NET_API_FUNCTION NetScheduleJobGetInfo( LPCWSTR, DWORD, LPBYTE * 
 :include cplusepi.sp
 
 #endif /* _LMAT_ */
-#endif /* _LMAT_H_INCLUDED */
 

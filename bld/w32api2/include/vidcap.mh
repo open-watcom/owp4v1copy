@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _VIDCAP_H_INCLUDED
-#define _VIDCAP_H_INCLUDED
+#ifndef __vidcap_h__
+#define __vidcap_h__
 
 :include readonly.sp
 #include <unknwn.h>
@@ -419,5 +419,5 @@ DECLARE_INTERFACE_( IKsNodeControl, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _VIDCAP_H_INCLUDED */
+#endif /* __vidcap_h__ */
 

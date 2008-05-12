@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _RPCNSI_H_INCLUDED
-#define _RPCNSI_H_INCLUDED
-
 #ifndef __RPCNSI_H__
 #define __RPCNSI_H__
 
@@ -141,5 +138,4 @@ RPCNSAPI RPC_STATUS RPC_ENTRY   RpcNsProfileEltRemoveW( unsigned long, RPC_WSTR,
 :include cplusepi.sp
 
 #endif /* __RPCNSI_H__ */
-#endif /* _RPCNSI_H_INCLUDED */
 

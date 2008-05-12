@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NDDEAPI_H_INCLUDED
-#define _NDDEAPI_H_INCLUDED
-
 #ifndef _INC_NDDEAPI
 #define _INC_NDDEAPI
 
@@ -152,5 +149,4 @@ UINT WINAPI NDdeTrustedShareEnumW( LPWSTR, UINT, LPBYTE, DWORD, LPDWORD, LPDWORD
 :include cplusepi.sp
 
 #endif /* _INC_NDDEAPI */
-#endif /* _NDDEAPI_H_INCLUDED */
 

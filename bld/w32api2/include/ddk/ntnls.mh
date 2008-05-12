@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NTNLS_H_INCLUDED
-#define _NTNLS_H_INCLUDED
-
 #ifndef _NTNLS_
 #define _NTNLS_
 
@@ -45,5 +42,4 @@ typedef NLSTABLEINFO    *PNLSTABLEINFO;
 :include cplusepi.sp
 
 #endif /* _NTNLS_ */
-#endif /* _NTNLS_H_INCLUDED */
 

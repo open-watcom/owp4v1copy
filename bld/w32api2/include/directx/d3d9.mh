@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _D3D9_H_INCLUDED
-#define _D3D9_H_INCLUDED
-
 #ifndef _D3D9_H_
 #define _D3D9_H_
 
@@ -2882,5 +2879,4 @@ HRESULT WINAPI      Direct3DCreate9Ex( UINT, IDirect3D9Ex ** );
 :include cpluspro.sp
 
 #endif /* _D3D9_H_ */
-#endif /* _D3D9_H_INCLUDED */
 

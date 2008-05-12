@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OLEAUTO_H_INCLUDED
-#define _OLEAUTO_H_INCLUDED
-
 #ifndef _OLEAUTO_H_
 #define _OLEAUTO_H_
 
@@ -672,5 +669,4 @@ WINOLEAUTAPI                    VectorFromBstr( BSTR, SAFEARRAY ** );
 :include cplusepi.sp
 
 #endif /* _OLEAUTO_H_ */
-#endif /* _OLEAUTO_H_INCLUDED */
 

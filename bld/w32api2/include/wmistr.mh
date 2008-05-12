@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WMISTR_H_INCLUDED
-#define _WMISTR_H_INCLUDED
-
 #ifndef _WMISTR_
 #define _WMISTR_
 
@@ -236,5 +233,4 @@ typedef enum {
 :include cplusepi.sp
 
 #endif /* _WMISTR_ */
-#endif /* _WMISTR_H_INCLUDED */
 

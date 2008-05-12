@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SNMP_H_INCLUDED
-#define _SNMP_H_INCLUDED
-
 #ifndef _INC_SNMP
 #define _INC_SNMP
 
@@ -35,7 +32,7 @@ typedef AsnUnsigned32   AsnTimeticks;
 #define SNMPAPI INT
 
 /* ASN base types */
-#ifndef _WINSNMP_H_INCLUDED
+#ifndef _INC_WINSNMP
     #define ASN_UNIVERSAL       0x00
     #define ASN_APPLICATION     0x40
     #define ASN_CONTEXT         0x80
@@ -49,7 +46,7 @@ typedef AsnUnsigned32   AsnTimeticks;
 #endif
 
 /* SNMP PDU types */
-#ifndef _WINSNMP_H_INCLUDED
+#ifndef _INC_WINSNMP
     #define SNMP_PDU_GET                (ASN_CONTEXT | ASN_CONSTRUCTOR | 0x00)
     #define SNMP_PDU_GETNEXT            (ASN_CONTEXT | ASN_CONSTRUCTOR | 0x01)
     #define SNMP_PDU_RESPONSE           (ASN_CONTEXT | ASN_CONSTRUCTOR | 0x02)
@@ -332,5 +329,4 @@ VOID SNMP_FUNC_TYPE     SnmpUtilVarBindListFree( SnmpVarBindList * );
 :include cplusepi.sp
 
 #endif /* _INC_SNMP */
-#endif /* _SNMP_H_INCLUDED */
 

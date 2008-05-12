@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _DEVGUID_H_INCLUDED
-#define _DEVGUID_H_INCLUDED
-
 :include readonly.sp
 :include cpluspro.sp
 
@@ -91,6 +88,4 @@ EXTERN_C const GUID GUID_DEVCLASS_FSFILTER_SYSTEM;
 EXTERN_C const GUID GUID_DEVCLASS_FSFILTER_INFRASTRUCTURE;
 
 :include cplusepi.sp
-
-#endif /* _DEVGUID_H_INCLUDED */
 

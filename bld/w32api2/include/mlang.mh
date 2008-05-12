@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MLANG_H_INCLUDED
-#define _MLANG_H_INCLUDED
+#ifndef __mlang_h__
+#define __mlang_h__
 
 :include readonly.sp
 #include <unknwn.h>
@@ -1002,5 +1002,5 @@ typedef IMultiLanguage3 *LPMULTILANGUAGE3;
 
 :include cplusepi.sp
 
-#endif /* _MLANG_H_INCLUDED */
+#endif /* __mlang_h__ */
 

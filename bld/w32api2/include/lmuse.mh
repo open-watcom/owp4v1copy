@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMUSE_H_INCLUDED
-#define _LMUSE_H_INCLUDED
-
 #ifndef _LMUSE_
 #define _LMUSE_
 
@@ -99,5 +96,4 @@ NET_API_STATUS NET_API_FUNCTION NetUseGetInfo( LMSTR, LMSTR, DWORD, LPBYTE * );
 :include cplusepi.sp
 
 #endif /* _LMUSE_ */
-#endif /* _LMUSE_H_INCLUDED */
 

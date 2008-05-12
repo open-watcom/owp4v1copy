@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINNETWK_H_INCLUDED
-#define _WINNETWK_H_INCLUDED
-
 #ifndef _WINNETWK_
 #define _WINNETWK_
 
@@ -492,5 +489,4 @@ DWORD APIENTRY  WNetRestoreConnectionW( HWND, LPCWSTR );
 :include cplusepi.sp
 
 #endif /* _WINNETWK_ */
-#endif /* _WINNETWK_H_INCLUDED */
 

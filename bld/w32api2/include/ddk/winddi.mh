@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINDDI_H_INCLUDED
-#define _WINDDI_H_INCLUDED
-
 #ifndef _WINDDI_
 #define _WINDDI_
 
@@ -1839,5 +1836,4 @@ ULONG APIENTRY          DrvLoadFontFile( ULONG, ULONG_PTR *, PVOID *, ULONG *, U
 :include cplusepi.sp
 
 #endif /* _WINDDI_ */
-#endif /* _WINDDI_H_INCLUDED */
 

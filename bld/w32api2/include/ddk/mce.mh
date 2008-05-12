@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _MCE_H_INCLUDED
-#define _MCE_H_INCLUDED
-
 #ifndef _MCE_
 #define _MCE_
 
@@ -95,5 +92,4 @@ typedef MCA_EXCEPTION   *PCPE_EXCEPTION;
 :include cplusepi.sp
 
 #endif /* _MCE_ */
-#endif /* _MCE_H_INCLUDED */
 

@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SETUPAPI_H_INCLUDED
-#define _SETUPAPI_H_INCLUDED
-
 #ifndef _INC_SETUPAPI
 #define _INC_SETUPAPI
 
@@ -2501,5 +2498,4 @@ WINSETUPAPI VOID WINAPI     SetupWriteTextLogInfLine( SP_LOG_TOKEN, DWORD, HINF,
 :include cplusepi.sp
 
 #endif /* _INC_SETUPAPI */
-#endif /* _SETUPAPI_H_INCLUDED */
 

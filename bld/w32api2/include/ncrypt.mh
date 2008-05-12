@@ -4,16 +4,13 @@
 :include crwatcnt.sp
  */
 
-#ifndef _NCRYPT_H_INCLUDED
-#define _NCRYPT_H_INCLUDED
-
 #ifndef __NCRYPT_H__
 #define __NCRYPT_H__
 
 :include readonly.sp
 :include cpluspro.sp
 
-#ifndef _BCRYPT_H_INCLUDED
+#ifndef __BCRYPT_H__
     #include <bcrypt.h>
 #endif
 
@@ -292,5 +289,4 @@ SECURITY_STATUS WINAPI  NCryptVerifySignature( NCRYPT_KEY_HANDLE, VOID *, PBYTE,
 :include cplusepi.sp
 
 #endif /* __NCRYPT_H__ */
-#endif /* _NCRYPT_H_INCLUDED */
 

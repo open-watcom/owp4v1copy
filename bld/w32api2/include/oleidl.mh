@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _OLEIDL_H_INCLUDED
-#define _OLEIDL_H_INCLUDED
+#ifndef __oleidl_h__
+#define __oleidl_h__
 
 :include readonly.sp
 :include cpluspro.sp
@@ -1102,5 +1102,5 @@ typedef IEnumOLEVERB    *LPENUMOLEVERB;
 
 :include cplusepi.sp
 
-#endif /* _OLEIDL_H_INCLUDED */
+#endif /* __oleidl_h__ */
 

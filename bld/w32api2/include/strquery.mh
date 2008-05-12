@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _STRUCTUREDQUERY_H_INCLUDED
-#define _STRUCTUREDQUERY_H_INCLUDED
+#ifndef __structuredquery_h__
+#define __structuredquery_h__
 
 :include readonly.sp
 #include <oaidl.h>
@@ -646,5 +646,5 @@ DECLARE_INTERFACE_( IQueryParserManager, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _STRUCTUREDQUERY_H_INCLUDED */
+#endif /* __structuredquery_h__ */
 

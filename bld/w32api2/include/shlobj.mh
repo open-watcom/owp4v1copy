@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SHLOBJ_H_INCLUDED
-#define _SHLOBJ_H_INCLUDED
-
 #ifndef _SHLOBJ_H_
 #define _SHLOBJ_H_
 
@@ -184,7 +181,7 @@ DECLARE_HANDLE( HPSXA );
 #define CSIDL_ALTSTARTUP                0x001D
 #define CSIDL_COMMON_ALTSTARTUP         0x001E
 #define CSIDL_COMMON_FAVORITES          0x001F
-#ifndef _SHFOLDER_H_INCLUDED
+#ifndef _SHFOLDER_H_
     #define CSIDL_INTERNET_CACHE        0x0020
     #define CSIDL_COOKIES               0x0021
     #define CSIDL_HISTORY               0x0022
@@ -197,12 +194,12 @@ DECLARE_HANDLE( HPSXA );
 #define CSIDL_PROFILE                   0x0028
 #define CSIDL_SYSTEMX86                 0x0029
 #define CSIDL_PROGRAMFILESX86           0x002A
-#ifndef _SHFOLDER_H_INCLUDED
+#ifndef _SHFOLDER_H_
     #define CSIDL_PROGRAM_FILES_COMMON  0x002B
 #endif
 #define CSIDL_PROGRAM_FILES_COMMONX86   0x002C
 #define CSIDL_COMMON_TEMPLATES          0x002D
-#ifndef _SHFOLDER_H_INCLUDED
+#ifndef _SHFOLDER_H_
     #define CSIDL_COMMON_DOCUMENTS      0x002E
     #define CSIDL_COMMON_ADMINTOOLS     0x002F
     #define CSIDL_ADMINTOOLS            0x0030
@@ -212,7 +209,7 @@ DECLARE_HANDLE( HPSXA );
 #define CSIDL_COMMON_PICTURES           0x0036
 #define CSIDL_COMMON_VIDEO              0x0037
 #define CSIDL_RESOURCES                 0x0038
-#ifndef _SHFOLDER_H_INCLUDED
+#ifndef _SHFOLDER_H_
     #define CSIDL_RESOURCES_LOCALIZED   0x0039
 #endif
 #define CSIDL_COMMON_OEM_LINKS          0x003A
@@ -224,7 +221,7 @@ DECLARE_HANDLE( HPSXA );
 #endif
 #define CSIDL_FLAG_DONT_UNEXPAND        0x2000
 #define CSIDL_FLAG_DONT_VERIFY          0x4000
-#ifndef _SHFOLDER_H_INCLUDED
+#ifndef _SHFOLDER_H_
     #define CSIDL_FLAG_CREATE           0x8000
 #endif
 #define CSIDL_FLAG_MASK                 0xFF00
@@ -392,14 +389,14 @@ DECLARE_HANDLE( HPSXA );
 
 /* Component position special value */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define COMPONENT_TOP   0x3FFFFFFF
     #endif
 #endif
 
 /* Component types */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define COMP_TYPE_HTMLDOC   0
         #define COMP_TYPE_PICTURE   1
         #define COMP_TYPE_WEBSITE   2
@@ -411,7 +408,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* Component item states */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define IS_NORMAL               0x00000001L
         #define IS_FULLSCREEN           0x00000002L
         #define IS_SPLIT                0x00000004L
@@ -424,7 +421,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* IActiveDesktop::ApplyChanges() flags */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define AD_APPLY_SAVE               0x00000001L
         #define AD_APPLY_HTMLGEN            0x00000002L
         #define AD_APPLY_REFRESH            0x00000004L
@@ -438,7 +435,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* IActiveDesktop::GetWallpaper() flags */
 #if (NTDDI_VERSION >= 0x06000000) && (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define AD_GETWP_BMP            0x00000000L
         #define AD_GETWP_IMAGE          0x00000001L
         #define AD_GETWP_LAST_APPLIED   0x00000002L
@@ -447,7 +444,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* Wallpaper styles */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define WPSTYLE_CENTER  0
         #define WPSTYLE_TILE    1
         #define WPSTYLE_STRETCH 2
@@ -457,7 +454,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* IActiveDesktop::ModifyComponent() flags */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define COMP_ELEM_TYPE          0x00000001L
         #define COMP_ELEM_CHECKED       0x00000002L
         #define COMP_ELEM_DIRTY         0x00000004L
@@ -484,14 +481,14 @@ DECLARE_HANDLE( HPSXA );
 
 /* IActiveDesktop::AddUrl() flags */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define ADDURL_SILENT   0x00000001L
     #endif
 #endif
 
 /* Component default positions */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define COMPONENT_DEFAULT_LEFT  0xFFFF
         #define COMPONENT_DEFAULT_TOP   0xFFFF
     #endif
@@ -499,7 +496,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* IActiveDesktopP::SetSafeMode() flags */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define SSM_CLEAR   0x00000000L
         #define SSM_SET     0x00000001L
         #define SSM_REFRESH 0x00000002L
@@ -509,7 +506,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* IActiveDesktopP::SetScheme() flags */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define SCHEME_DISPLAY  0x00000001L
         #define SCHEME_EDIT     0x00000002L
         #define SCHEME_LOCAL    0x00000004L
@@ -522,7 +519,7 @@ DECLARE_HANDLE( HPSXA );
 
 /* IADesktopP2::GetADObjectFlags() flags */
 #if (_WIN32_IE >= 0x0400)
-    #ifdef _WININET_H_INCLUDED
+    #ifdef _WININET_
         #define GADOF_DIRTY 0x00000001L
     #endif
 #endif
@@ -1288,7 +1285,7 @@ enum {
 
 /* Wallpaper option */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 typedef struct _tagWALLPAPEROPT {
     DWORD   dwSize;
     DWORD   dwStyle;
@@ -1300,7 +1297,7 @@ typedef const WALLPAPEROPT  *LPCWALLPAPEROPT;
 
 /* Components options */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 typedef struct _tagCOMPONENTSOPT {
     DWORD   dwSize;
     BOOL    fEnableComponents;
@@ -1313,7 +1310,7 @@ typedef const COMPONENTSOPT *LPCCOMPONENTSOPT;
 
 /* Component position */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 typedef struct _tagCOMPPOS {
     DWORD   dwSize;
     int     iLeft;
@@ -1334,7 +1331,7 @@ typedef const COMPPOS   *LPCCOMPPOS;
 
 /* Component state information */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 typedef struct _tagCOMPSTATEINFO {
     DWORD   dwSize;
     int     iLeft;
@@ -1350,7 +1347,7 @@ typedef const COMPSTATEINFO *LPCCOMPSTATEINFO;
 
 /* Component (Internet Explorer 4.0 version) */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 typedef struct _tagIE4COMPONENT {
     DWORD   dwSize;
     DWORD   dwID;
@@ -1370,7 +1367,7 @@ typedef const IE4COMPONENT  *LPCIE4COMPONENT;
 
 /* Component */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 typedef struct _tagCOMPONENT {
     DWORD           dwSize;
     DWORD           dwID;
@@ -1393,7 +1390,7 @@ typedef const COMPONENT *LPCCOMPONENT;
 
 /* IActiveDesktop::AddDesktopWithUI() flags */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 enum _tagDTI_ADTIWUI {
     DTI_ADDUI_DEFAULT       = 0x00000000,
     DTI_ADDUI_DISPSUBWIZARD = 0x00000001,
@@ -2271,7 +2268,7 @@ DECLARE_INTERFACE_( IShellIconOverlay, IUnknown ) {
 };
 
 /* IShellExecuteHook interface */
-#ifdef _SHELLAPI_H_INCLUDED
+#ifdef _INC_SHELLAPI
 #undef INTERFACE
 #define INTERFACE   IShellExecuteHookA
 DECLARE_INTERFACE_( IShellExecuteHookA, IUnknown ) {
@@ -2715,7 +2712,7 @@ DECLARE_INTERFACE_( IDeskBarClient, IOleWindow ) {
 
 /* IActiveDesktop interface */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 #undef INTERFACE
 #define INTERFACE   IActiveDesktop
 DECLARE_INTERFACE_( IActiveDesktop, IUnknown ) {
@@ -2751,7 +2748,7 @@ typedef IActiveDesktop  *LPACTIVEDESKTOP;
 
 /* IActiveDesktopP interface */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 #undef INTERFACE
 #define INTERFACE   IActiveDesktopP
 DECLARE_INTERFACE_( IActiveDesktopP, IUnknown ) {
@@ -2772,7 +2769,7 @@ typedef IActiveDesktopP *LPACTIVEDESKTOPP;
 
 /* IADesktopP2 interface */
 #if (_WIN32_IE >= 0x0400)
-#ifdef _WININET_H_INCLUDED
+#ifdef _WININET_
 #undef INTERFACE
 #define INTERFACE   IADesktopP2
 DECLARE_INTERFACE_( IADesktopP2, IUnknown ) {
@@ -3206,5 +3203,4 @@ SHFOLDERAPI SHGetFolderPathW( HWND, int, HANDLE, DWORD, LPWSTR );
 :include cplusepi.sp
 
 #endif /* _SHLOBJ_H_ */
-#endif /* _SHLOBJ_H_INCLUDED */
 

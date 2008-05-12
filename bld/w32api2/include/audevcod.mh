@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _AUDEVCOD_H_INCLUDED
-#define _AUDEVCOD_H_INCLUDED
-
 #ifndef __AUDEVCOD__
 #define __AUDEVCOD__
 
@@ -39,5 +36,4 @@ typedef enum _tagSND_DEVICE_ERROR {
 :include cplusepi.sp
 
 #endif /* __AUDEVCOD__ */
-#endif /* _AUDEVCOD_H_INCLUDED */
 

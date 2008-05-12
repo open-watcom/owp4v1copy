@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _D3DTYPES_H_INCLUDED
-#define _D3DTYPES_H_INCLUDED
-
 #ifndef _D3DTYPES_H_
 #define _D3DTYPES_H_
 
@@ -1712,5 +1709,4 @@ typedef enum _D3DTEXTURETRANSFORMFLAGS {
 :include cplusepi.sp
 
 #endif /* _D3DTYPES_H_ */
-#endif /* _D3DTYPES_H_INCLUDED */
 

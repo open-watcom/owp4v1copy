@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _STRMIF_H_INCLUDED
-#define _STRMIF_H_INCLUDED
+#ifndef __strmif_h__
+#define __strmif_h__
 
 :include readonly.sp
 #include <ddraw.h>
@@ -6783,5 +6783,5 @@ DECLARE_INTERFACE_( IVPManager, IUnknown ) {
 
 :include cplusepi.sp
 
-#endif /* _STRMIF_H_INCLUDED */
+#endif /* __strmif_h__ */
 

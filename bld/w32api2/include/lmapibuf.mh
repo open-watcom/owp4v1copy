@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _LMAPIBUF_H_INCLUDED
-#define _LMAPIBUF_H_INCLUDED
-
 #ifndef _LMAPIBUF_
 #define _LMAPIBUF_
 
@@ -23,5 +20,4 @@ NET_API_STATUS NET_API_FUNCTION NetapipBufferAllocate( DWORD, LPVOID * );
 :include cplusepi.sp
 
 #endif /* _LMAPIBUF_ */
-#endif /* _LMAPIBUF_H_INCLUDED */
 

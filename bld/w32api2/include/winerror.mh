@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _WINERROR_H_INCLUDED
-#define _WINERROR_H_INCLUDED
-
 #ifndef _WINERROR_
 #define _WINERROR_
 
@@ -4622,5 +4619,4 @@
 :include cplusepi.sp
 
 #endif /* _WINERROR_ */
-#endif /* _WINERROR_H_INCLUDED */
 

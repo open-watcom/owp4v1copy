@@ -4,9 +4,6 @@
 :include crwatcnt.sp
  */
 
-#ifndef _UDPMIB_H_INCLUDED
-#define _UDPMIB_H_INCLUDED
-
 #ifndef _UDPMIB_
 #define _UDPMIB_
 
@@ -70,7 +67,7 @@ typedef struct _MIB_UDPTABLE_OWNER_MODULE {
 typedef MIB_UDPTABLE_OWNER_MODULE   *PMIB_UDPTABLE_OWNER_MODULE;
 
 /* MIB UDPv6 row */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_UDP6ROW {
     IN6_ADDR    dwLocalAddr;
     DWORD       dwLocalScopeId;
@@ -80,7 +77,7 @@ typedef MIB_UDP6ROW *PMIB_UDP6ROW;
 #endif
 
 /* MIB UDPv6 table */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_UDP6TABLE {
     DWORD       dwNumEntries;
     MIB_UDP6ROW table[ANY_SIZE];
@@ -89,7 +86,7 @@ typedef MIB_UDP6TABLE   *PMIB_UDP6TABLE;
 #endif
 
 /* MIB UDPv6 row owner protocol identifier */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_UDP6ROW_OWNER_PID {
     UCHAR   ucLocalAddr[16];
     DWORD   dwLocalScopeId;
@@ -100,7 +97,7 @@ typedef MIB_UDP6ROW_OWNER_PID   *PMIB_UDP6ROW_OWNER_PID;
 #endif
 
 /* MIB UDPv6 table owner protocol identifier */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_UDP6TABLE_OWNER_PID {
     DWORD                   dwNumEntries;
     MIB_UDP6ROW_OWNER_PID   table[ANY_SIZE];
@@ -109,7 +106,7 @@ typedef MIB_UDP6TABLE_OWNER_PID *PMIB_UDP6TABLE_OWNER_PID;
 #endif
 
 /* MIB UDPv6 row owner module */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_UDP6ROW_OWNER_MODULE {
     UCHAR           ucLocalAddr[16];
     DWORD           dwLocalScopeId;
@@ -128,7 +125,7 @@ typedef MIB_UDP6ROW_OWNER_MODULE    *PMIB_UDP6ROW_OWNER_MODULE;
 #endif
 
 /* MIB UDPv6 table owner module */
-#ifdef _WINSOCK2_H_INCLUDED
+#ifdef _WINSOCK2API_
 typedef struct _MIB_UDP6TABLE_OWNER_MODULE {
     DWORD                       dwNumEntries;
     MIB_UDP6ROW_OWNER_MODULE    table[ANY_SIZE];
@@ -149,5 +146,4 @@ typedef MIB_UDPSTATS    *PMIB_UDPSTATS;
 :include cplusepi.sp
 
 #endif /* _UDPMIB_ */
-#endif /* _UDPMIB_H_INCLUDED */
 

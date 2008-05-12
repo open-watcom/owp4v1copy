@@ -4,8 +4,8 @@
 :include crwatcnt.sp
  */
 
-#ifndef _SHOBJIDL_H_INCLUDED
-#define _SHOBJIDL_H_INCLUDED
+#ifndef __shobjidl_h__
+#define __shobjidl_h__
 
 :include readonly.sp
 #include <objidl.h>
@@ -8642,5 +8642,5 @@ SHSTDAPI    SHSetTemporaryPropertyForItem( IShellItem *, REFPROPERTYKEY, REFPROP
 
 :include cplusepi.sp
 
-#endif /* _SHOBJIDL_H_INCLUDED */
+#endif /* __shobjidl_h__ */
 

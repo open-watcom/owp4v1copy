@@ -10,18 +10,9 @@
  */
 
 :segment !RESOURCE
-#ifndef _COMMCTRL_H_INCLUDED
-#define _COMMCTRL_H_INCLUDED
-
 #ifndef _INC_COMMCTRL
 #define _INC_COMMCTRL
-:endsegment
-:segment RESOURCE
-#ifndef _COMMCTRL_RH_INCLUDED
-#define _COMMCTRL_RH_INCLUDED
-:endsegment
 
-:segment !RESOURCE
 :include readonly.sp
 #include <prsht.h>
 
@@ -352,7 +343,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #endif
 
 /* ImageList_ReadEx()/ImageList_WriteEx() flags */
-#if (_WIN32_WINNT >= 0x0501) && defined( _OBJIDL_H_INCLUDED )
+#if (_WIN32_WINNT >= 0x0501) && defined( __objidl_h__ )
     #define ILP_NORMAL      0L
     #define ILP_DOWNLEVEL   1L
 #endif
@@ -6205,7 +6196,7 @@ WINCOMMCTRLAPI int WINAPI           LBItemFromPt( HWND, POINT, BOOL );
 WINCOMMCTRLAPI BOOL WINAPI          MakeDragList( HWND );
 WINCOMMCTRLAPI void WINAPI          MenuHelp( UINT, WPARAM, LPARAM, HMENU, HINSTANCE, HWND, UINT * );
 WINCOMMCTRLAPI BOOL WINAPI          ShowHideMenuCtl( HWND, UINT_PTR, LPINT );
-#ifdef _OBJIDL_H_INCLUDED
+#ifdef __objidl_h__
 WINCOMMCTRLAPI HIMAGELIST WINAPI    ImageList_Read( LPSTREAM );
 WINCOMMCTRLAPI BOOL WINAPI          ImageList_Write( HIMAGELIST, LPSTREAM );
 #endif
@@ -6271,7 +6262,7 @@ WINCOMMCTRLAPI BOOL WINAPI          GetWindowSubclass( HWND, SUBCLASSPROC, UINT_
 WINCOMMCTRLAPI HRESULT WINAPI       HIMAGELIST_QueryInterface( HIMAGELIST, REFIID, void ** );
 WINCOMMCTRLAPI BOOL WINAPI          RemoveWindowSubclass( HWND, SUBCLASSPROC, UINT_PTR );
 WINCOMMCTRLAPI BOOL WINAPI          SetWindowSubclass( HWND, SUBCLASSPROC, UINT_PTR, DWORD_PTR );
-#ifdef _OBJIDL_H_INCLUDED
+#ifdef __objidl_h__
 WINCOMMCTRLAPI HRESULT WINAPI       ImageList_ReadEx( DWORD, LPSTREAM, REFIID, PVOID * );
 WINCOMMCTRLAPI HRESULT WINAPI       ImageList_WriteEx( HIMAGELIST, DWORD, LPSTREAM );
 #endif
@@ -7150,9 +7141,5 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
 :include cplusepi.sp
 
 #endif /* _INC_COMMCTRL */
-#endif /* _COMMCTRL_H_INCLUDED */
-:endsegment
-:segment RESOURCE
-#endif /* _COMMCTRL_RH_INCLUDED */
 :endsegment
 
