@@ -86,6 +86,12 @@ echo Installer Build: <1> <2> <3> <4> <5>
     mkexezip <INSTALLER> <RELROOT>/fsetup.zip setup.exe
 
 [ BLOCK <1> missing ]
+    #########################################################
+    # this is hack used by build server to create installers
+    # mksetup -x create all missing files with zero length
+    # it is dedicated for missing help files which are not 
+    # buildable on each host platform
+    #########################################################
     langdat c
     mksetup -x -i../include c filelist <RELROOT>
     langdat f77
