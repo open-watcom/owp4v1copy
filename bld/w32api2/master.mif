@@ -429,6 +429,7 @@ ddk_libs =           &
         hal.lib      &
         ks.lib       &
         ksecdd.lib   &
+        ndis.lib     &
         ntdll.lib    &
         ntoskrnl.lib &
         rtlver.lib   &
