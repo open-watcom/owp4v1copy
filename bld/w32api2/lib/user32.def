@@ -25,6 +25,7 @@ CallMsgFilterW@8
 CallNextHookEx@16
 CallWindowProcA@20
 CallWindowProcW@20
+CascadeChildWindows@8
 CascadeWindows@20
 ChangeClipboardChain@8
 ChangeDisplaySettingsA@8
@@ -597,6 +598,7 @@ SystemParametersInfoA@16
 SystemParametersInfoW@16
 TabbedTextOutA@32
 TabbedTextOutW@32
+TileChildWindows@8
 TileWindows@20
 ToAscii@20
 ToAsciiEx@24
