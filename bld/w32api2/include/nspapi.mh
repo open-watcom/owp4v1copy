@@ -219,6 +219,7 @@ typedef struct _SERVICE_ADDRESS {
     DWORD   dwAddressLength;
     DWORD   dwPrincipalLength;
     BYTE    *lpAddress;
+    BYTE    *lpPrincipal;
 } SERVICE_ADDRESS;
 typedef SERVICE_ADDRESS *PSERVICE_ADDRESS;
 typedef SERVICE_ADDRESS *LPSERVICE_ADDRESS;
@@ -292,6 +293,24 @@ typedef NS_SERVICE_INFOA    NS_SERVICE_INFO;
 typedef PNS_SERVICE_INFOA   PNS_SERVICE_INFO;
 typedef LPNS_SERVICE_INFOA  LPNS_SERVICE_INFO;
 #endif
+
+/* Socket address */
+typedef struct _SOCKET_ADDRESS {
+    LPSOCKADDR  lpSockaddr;
+    INT         iSockaddrLength;
+} SOCKET_ADDRESS;
+typedef SOCKET_ADDRESS  *PSOCKET_ADDRESS;
+typedef SOCKET_ADDRESS  *LPSOCKET_ADDRESS;
+
+/* CSAddr information */
+typedef struct _CSADDR_INFO {
+    SOCKET_ADDRESS  LocalAddr;
+    SOCKET_ADDRESS  RemoteAddr;
+    INT             iSocketType;
+    INT             iProtocol;
+} CSADDR_INFO;
+typedef CSADDR_INFO *PCSADDR_INFO;
+typedef CSADDR_INFO *LPCSADDR_INFO;
 
 /* Protocol information */
 typedef struct _PROTOCOL_INFOA {
@@ -382,7 +401,7 @@ typedef struct _SERVICE_ASYNC_INFO {
 typedef SERVICE_ASYNC_INFO  *PSERVICE_ASYNC_INFO;
 typedef SERVICE_ASYNC_INFO  *LPSERVICE_ASYNC_INFO;
 
-/* Functions in MSWSOCK.DLL */
+/* Functions in WSOC32.DLL and MSWSOCK.DLL */
 INT APIENTRY    EnumProtocolsA( LPINT, LPVOID, LPDWORD );
 INT APIENTRY    EnumProtocolsW( LPINT, LPVOID, LPDWORD );
 INT APIENTRY    GetAddressByNameA( DWORD, LPGUID, LPSTR, LPINT, DWORD, LPSERVICE_ASYNC_INFO, LPVOID, LPDWORD, LPSTR, LPDWORD );
