@@ -1121,7 +1121,7 @@ typedef FVSHOWINFO  *LPFVSHOWINFO;
 #endif
 
 /* SHGetPathFromIDListEx() flags */
-typedef enum tagGPFIDL_FLAGS {
+enum tagGPFIDL_FLAGS {
     GPFIDL_DEFAULT      = 0x0000,
     GPFIDL_ALTNAME      = 0x0001,
     GPFIDL_UNCPRINTER   = 0x0002
