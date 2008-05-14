@@ -928,6 +928,7 @@ typedef HRESULT (STDMETHODCALLTYPE *PFNSHOWSHAREFOLDERUIW)( HWND, LPCWSTR );
         #define DoEnvironmentSubst                  DoEnvironmentSubstW
         #define ExtractIconEx                       ExtractIconExW
         #define SHFileOperation                     SHFileOperationW
+        #define SHGetFileInfo                       SHGetFileInfoW
         #define ShellExecuteEx                      ShellExecuteExW
         #define ShellMessageBox                     ShellMessageBoxW
         #define Shell_NotifyIcon                    Shell_NotifyIconW
@@ -959,6 +960,7 @@ typedef HRESULT (STDMETHODCALLTYPE *PFNSHOWSHAREFOLDERUIW)( HWND, LPCWSTR );
         #define DoEnvironmentSubst                  DoEnvironmentSubstA
         #define ExtractIconEx                       ExtractIconExA
         #define SHFileOperation                     SHFileOperationA
+        #define SHGetFileInfo                       SHGetFileInfoA
         #define ShellExecuteEx                      ShellExecuteExA
         #define ShellMessageBox                     ShellMessageBoxA
         #define Shell_NotifyIcon                    Shell_NotifyIconA
