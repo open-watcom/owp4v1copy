@@ -246,6 +246,7 @@ base_headers =       &
         vptype.h     &
         vsstyle.h    &
         vssym32.h    &
+        w32api.h     &
         wbemcli.h    &
         winable.h    &
         winbase.h    &
