@@ -10,6 +10,9 @@
 :include readonly.sp
 :include cpluspro.sp
 
+/* DDEML callback calling convention */
+#define EXPENTRY    CALLBACK
+
 /* Handles for DDEML */
 DECLARE_HANDLE( HCONV );
 DECLARE_HANDLE( HCONVLIST );
