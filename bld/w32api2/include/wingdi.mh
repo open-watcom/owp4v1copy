@@ -103,7 +103,7 @@ typedef USHORT  COLOR16;
 
 /* GDI error return values */
 #define GDI_ERROR   0xFFFFFFFFL
-#define HGDI_ERROR  0xFFFFFFFFL
+#define HGDI_ERROR  ((HANDLE)0xFFFFFFFFL)
 
 /* Return values for region functions */
 #define ERROR           0
