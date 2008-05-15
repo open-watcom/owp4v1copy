@@ -33,6 +33,9 @@
 #include <urlmon.h>
 #include <propidl.h>
 
+/* Huge specifier */
+#define HUGEP
+
 /* Storage format data type */
 typedef DWORD   STGFMT;
 
