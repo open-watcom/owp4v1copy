@@ -3,7 +3,7 @@
  *
 :include crwatcnt.sp
  */
- 
+
 :include readonly.sp
 /* Macro used to specify extern "C" */
 #ifdef __cplusplus
@@ -30,6 +30,11 @@
 #include <string.h>
 
 :include cpluspro.sp
+
+/* Null values */
+#define IID_NULL    GUID_NULL
+#define CLSID_NULL  GUID_NULL
+#define FMTID_NULL  GUID_NULL
 
 /* Globally unique identifier */
 #ifndef GUID_DEFINED

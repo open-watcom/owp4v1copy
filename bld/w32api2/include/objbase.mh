@@ -29,6 +29,7 @@
 #include <wtypes.h>
 #include <unknwn.h>
 #include <objidl.h>
+#include <cguid.h>
 #include <urlmon.h>
 #include <propidl.h>
 
