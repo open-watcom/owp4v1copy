@@ -100,7 +100,7 @@ typedef struct tagSAFEARRAY {
     ULONG           cbElements;
     ULONG           cLocks;
     PVOID           pvData;
-    SAFEARRAYBOUND  rgsaBound[1];
+    SAFEARRAYBOUND  rgsabound[1];
 } SAFEARRAY;
 typedef SAFEARRAY   *LPSAFEARRAY;
 
