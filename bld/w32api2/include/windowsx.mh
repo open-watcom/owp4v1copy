@@ -597,8 +597,12 @@
 /* Message parameter packing macros */
 #define GET_WPARAM( p1, p2 )                    (p1)
 #define GET_LPARAM( p1, p2 )                    (p2)
-#define GET_X_LPARAM( p )                       (int)(short)LOWORD( p )
-#define GET_Y_LPARAM( p )                       (int)(short)HIWORD( p )
+#ifndef GET_X_LPARAM
+    #define GET_X_LPARAM( p )                   ((int)(short)LOWORD( p ))
+#endif
+#ifndef GET_Y_LPARAM
+    #define GET_Y_LPARAM( p )                   ((int)(short)HIWORD( p ))
+#endif
 #define GET_WM_ACTIVATE_STATE( p1, p2 )         LOWORD( p1 )
 #define GET_WM_ACTIVATE_FMINIMIZED( p1, p2 )    (BOOL)HIWORD( p1 )
 #define GET_WM_ACTIVATE_HWND( p1, p2 )          (HWND)(p2)
@@ -879,7 +883,7 @@
 #define ListBox_ResetContent( x ) \
     (BOOL)(DWORD)SNDMSG( x, LB_RESETCONTENT, 0, 0L )
 #define ListBox_AddString( x, p ) \
-    (int)(DWORD)SNDMSG( x, LB_ADDSTRING, 0, (LPARSM)(LPCTSTR)(p) )
+    (int)(DWORD)SNDMSG( x, LB_ADDSTRING, 0, (LPARAM)(LPCTSTR)(p) )
 #define ListBox_InsertString( x, p1, p2 ) \
     (int)(DWORD)SNDMSG( x, LB_INSERTSTRING, (WPARAM)(int)(p1), (LPARAM)(LPCTSTR)(p2) )
 #define ListBox_AddItemData( x, p ) \
