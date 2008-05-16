@@ -387,7 +387,9 @@
 #define CFM_WEIGHT          0x00400000L
 #define CFM_UNDERLINETYPE   0x00800000L
 #define CFM_LCID            0x02000000L
-#define CFM_BACKCOLOR       0x04000000L
+#ifndef CFM_BACKCOLOR
+    #define CFM_BACKCOLOR   0x04000000L
+#endif
 #define CFM_CHARSET         0x08000000L
 #define CFM_OFFSET          0x10000000L
 #define CFM_FACE            0x20000000L

@@ -1133,7 +1133,7 @@ typedef struct {
 typedef SYMSRV_INDEX_INFOW  *PSYMSRV_INDEX_INFOW;
 
 /* SymGetSymbolFile() types */
-typedef enum {
+enum {
     sfImage = 0,
     sfDbg   = 1,
     sfPdb   = 2,
