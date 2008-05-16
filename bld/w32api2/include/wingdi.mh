@@ -1145,7 +1145,7 @@ typedef USHORT  COLOR16;
 #define DMPAPER_ENV_10                              20
 #define DMPAPER_ENV_11                              21
 #define DMPAPER_ENV_12                              22
-#define DMPAPER_ENV_13                              23
+#define DMPAPER_ENV_14                              23
 #define DMPAPER_CSHEET                              24
 #define DMPAPER_DSHEET                              25
 #define DMPAPER_ESHEET                              26
@@ -1177,7 +1177,7 @@ typedef USHORT  COLOR16;
     #define DMPAPER_A4_EXTRA                        53
     #define DMPAPER_LETTER_TRANSVERSE               54
     #define DMPAPER_A4_TRANSVERSE                   55
-    #define DMPAPER_LETTER_EXTRA_TRANVERSE          56
+    #define DMPAPER_LETTER_EXTRA_TRANSVERSE         56
     #define DMPAPER_A_PLUS                          57
     #define DMPAPER_B_PLUS                          58
     #define DMPAPER_LETTER_PLUS                     59
