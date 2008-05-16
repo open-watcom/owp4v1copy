@@ -62,7 +62,7 @@ typedef const SHCOLUMNID    *LPCSHCOLUMNID;
 /* Shell item identifier */
 #include <pshpack1.h>
 typedef struct _SHITEMID {
-    USHORT  ch;
+    USHORT  cb;
     BYTE    abID[1];
 } SHITEMID;
 typedef SHITEMID        *LPSHITEMID;
