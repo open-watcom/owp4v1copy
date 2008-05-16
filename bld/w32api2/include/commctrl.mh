@@ -2998,6 +2998,10 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #define TCM_SETITEMA                (TCM_FIRST + 6)
 #define TCM_INSERTITEMA             (TCM_FIRST + 7)
 #define TCM_DELETEITEM              (TCM_FIRST + 8)
+#define TCM_DELETEALLITEMS          (TCM_FIRST + 9)
+#define TCM_GETITEMRECT             (TCM_FIRST + 10)
+#define TCM_GETCURSEL               (TCM_FIRST + 11)
+#define TCM_SETCURSEL               (TCM_FIRST + 12)
 #define TCM_HITTEST                 (TCM_FIRST + 13)
 #define TCM_SETITEMEXTRA            (TCM_FIRST + 14)
 #define TCM_ADJUSTRECT              (TCM_FIRST + 40)
@@ -3028,9 +3032,11 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #ifdef UNICODE
     #define TCM_GETITEM             TCM_GETITEMW
     #define TCM_SETITEM             TCM_SETITEMW
+    #define TCM_INSERTITEM          TCM_INSERTITEMW
 #else
     #define TCM_GETITEM             TCM_GETITEMA
     #define TCM_SETITEM             TCM_SETITEMA
+    #define TCM_INSERTITEM          TCM_INSERTITEMA
 #endif
 
 /* Tab control item masks */
