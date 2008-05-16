@@ -2054,6 +2054,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
     #define LVM_FINDITEM                    LVM_FINDITEMA
     #define LVM_EDITLABEL                   LVM_EDITLABELA
     #define LVM_GETCOLUMN                   LVM_GETCOLUMNA
+    #define LVM_SETCOLUMN                   LVM_SETCOLUMNA
     #define LVM_INSERTCOLUMN                LVM_INSERTCOLUMNA
     #define LVM_GETITEMTEXT                 LVM_GETITEMTEXTA
     #define LVM_SETITEMTEXT                 LVM_SETITEMTEXTA
@@ -2124,7 +2125,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #ifdef UNICODE
     #define LPSTR_TEXTCALLBACK  LPSTR_TEXTCALLBACKW
 #else
-    #define LPWSTR_TEXTCALLBACK LPSTR_TEXTCALLBACKA
+    #define LPSTR_TEXTCALLBACK  LPSTR_TEXTCALLBACKA
 #endif
 
 /* LVM_GETNEXTITEM flags */
@@ -2164,7 +2165,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #define LVHT_ONITEMLABEL            0x00000004
 #define LVHT_ONITEMSTATEICON        0x00000008
 #define LVHT_ONITEM \
-    (LVHT_ONITEMICON | LVHT_ONITEMLABEL | LVHR_ONITEMSTATEICON)
+    (LVHT_ONITEMICON | LVHT_ONITEMLABEL | LVHT_ONITEMSTATEICON)
 #define LVHT_ABOVE                  0x00000008
 #define LVHT_BELOW                  0x00000010
 #define LVHT_TORIGHT                0x00000020
@@ -4641,6 +4642,8 @@ typedef LVITEMA     LVITEM;
 typedef LPLVITEMA   LPLVITEM;
 #endif
 typedef LVITEM      LV_ITEM;
+typedef LVITEMA     LV_ITEMA;
+typedef LVITEMW     LV_ITEMW;
 
 /* LVM_FINDITEM parameters */
 typedef struct tagLVFINDINFOA {
@@ -4683,6 +4686,7 @@ typedef struct tagLVHITTESTINFO {
 #endif
 } LVHITTESTINFO;
 typedef LVHITTESTINFO   *LPLVHITTESTINFO;
+typedef LVHITTESTINFO   LV_HITTESTINFO;
 
 /* List view column */
 typedef struct tagLVCOLUMNA {
@@ -4976,9 +4980,9 @@ typedef struct tagNMLVCACHEHINT {
     int     iTo;
 } NMLVCACHEHINT;
 typedef NMLVCACHEHINT   *LPNMLVCACHEHINT;
-typedef NMLVCACHEHINT   NM_LVCACHEHINT;
-typedef LPNMLVCACHEHINT PNM_LVCACHEHINT;
-typedef LPNMLVCACHEHINT LPNM_LVCACHEHINT;
+typedef NMLVCACHEHINT   NM_CACHEHINT;
+typedef LPNMLVCACHEHINT PNM_CACHEHINT;
+typedef LPNMLVCACHEHINT LPNM_CACHEHINT;
 #endif
 
 /* LVN_ODFINDITEM parameters */
@@ -5048,6 +5052,7 @@ typedef LPNMLVDISPINFOA LPNMLVDISPINFO;
 #endif
 typedef NMLVDISPINFOA   LV_DISPINFOA;
 typedef NMLVDISPINFOW   LV_DISPINFOW;
+typedef NMLVDISPINFO    LV_DISPINFO;
 
 /* LVN_KEYDOWN parameters */
 #include <pshpack1.h>
@@ -6498,8 +6503,9 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
     #define ListView_GetExtendedListViewStyle( x ) \
         (DWORD)SNDMSG( x, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0L )
     #define ListView_GetSubItemRect( x, p1, p2, p3, p4 ) \
-        (BOOL)SNDMSG( x, LVM_GETSUBITEMRECT, (WPARAM)(p1), (LPARAM)((p4) ? \
-        ((((LPRECT)(p4))->top = p2), (((LPRECT)(p4)->left = p3), (p4)) : NULL )
+        (BOOL)SNDMSG( x, LVM_GETSUBITEMRECT, (WPARAM)(int)(p1), ((p4) ? \
+        ((((LPRECT)(p4))->top = (p2)), (((LPRECT)(p4))->left = (p3)), (LPARAM)(p4)) : \
+        (LPARAM)(LPRECT)NULL) )
     #define ListView_SubItemHitTest( x, p ) \
         (int)SNDMSG( x, LVM_SUBITEMHITTEST, 0, (LPARAM)(LPLVHITTESTINFO)(p) )
     #define ListView_SubItemHitTestEx( x, p ) \
