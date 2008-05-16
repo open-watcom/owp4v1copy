@@ -58,7 +58,7 @@ typedef LPCDLGTEMPLATE  PROPSHEETPAGE_RESOURCE;
 #define PSH_DEFAULT                 0x00000000L
 #define PSH_PROPTITLE               0x00000001L
 #define PSH_USEHICON                0x00000002L
-#define PSH_ICONID                  0x00000004L
+#define PSH_USEICONID                  0x00000004L
 #define PSH_PROPSHEETPAGE           0x00000008L
 #define PSH_WIZARDHASFINISH         0x00000010L
 #define PSH_WIZARD                  0x00000020L
