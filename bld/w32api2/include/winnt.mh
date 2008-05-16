@@ -687,6 +687,11 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define LANG_CHINESE_TRADITIONAL    0x7C04
 #define LANG_SERBIAN_NEUTRAL        0x7C1A
 
+/* Unreferenced parameter macros */
+#define UNREFERENCED_PARAMETER( x )             (x)
+#define DBG_UNREFERENCED_PARAMETER( x )         (x)
+#define DBG_UNREFERENCED_LOCAL_VARIABLE( x )    (x)
+
 /* Status codes */
 #define STATUS_WAIT_0                   0x00000000L
 #define STATUS_ABANDONED_WAIT_0         0x00000080L
@@ -3976,7 +3981,7 @@ typedef struct _PO_WAKE_SOURCE_HISTORY {
 typedef PO_WAKE_SOURCE_HISTORY  *PPO_WAKE_SOURCE_HISTORY;
 
 /* Battery reporting scale */
-#if (NTDDI_VERSION >= 0x05010000)
+#if (NTDDI_VERSION >= 0x05010000) || !defined( _BATCLASS_ )
 typedef struct {
     DWORD   Granularity;
     DWORD   Capacity;

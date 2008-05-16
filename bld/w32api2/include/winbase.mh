@@ -945,7 +945,9 @@ typedef SYSTEMTIME  *PSYSTEMTIME;
 typedef SYSTEMTIME  *LPSYSTEMTIME;
 
 /* Run once callback */
+#if (_WIN32_WINNT >= 0x0600)
 typedef BOOL (WINAPI *PINIT_ONCE_FN)( PINIT_ONCE, PVOID, PVOID * );
+#endif
 
 /* Thread procedure */
 typedef DWORD (WINAPI *PTHREAD_START_ROUTINE)( LPVOID );
