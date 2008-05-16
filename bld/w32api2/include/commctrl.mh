@@ -2611,10 +2611,10 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #endif
 
 /* Tree view item handle special values */
-#define TVI_ROOT    0x00010000
-#define TVI_FIRST   0x0000FFFF
-#define TVI_LAST    0x0000FFFE
-#define TVI_SORT    0x0000FFFD
+#define TVI_ROOT    ((HTREEITEM)(ULONG_PTR)0x00010000)
+#define TVI_FIRST   ((HTREEITEM)(ULONG_PTR)0x0000FFFF)
+#define TVI_LAST    ((HTREEITEM)(ULONG_PTR)0x0000FFFE)
+#define TVI_SORT    ((HTREEITEM)(ULONG_PTR)0x0000FFFD)
 
 /* Tree view messages */
 #define TVM_INSERTITEMA             (TV_FIRST + 0)
@@ -6767,7 +6767,7 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
     (BOOL)SNDMSG( x, TVM_ENSUREVISIBLE, 0, (LPARAM)(HTREEITEM)(p) )
 #define TreeView_SortChildrenCB( x, p1, p2 ) \
     (BOOL)SNDMSG( x, TVM_SORTCHILDRENCB, (WPARAM)(p2), (LPARAM)(LPTV_SORTCB)(p2) )
-#define TreeView_EndLabelEditNow( x, p ) \
+#define TreeView_EndEditLabelNow( x, p ) \
     (BOOL)SNDMSG( x, TVM_ENDLABELEDITNOW, (WPARAM)(p), 0L )
 #define TreeView_GetISearchString( x, p ) \
     (BOOL)SNDMSG( x, TVM_GETISEARCHSTRING, 0, (LPARAM)(LPTSTR)(p) )
