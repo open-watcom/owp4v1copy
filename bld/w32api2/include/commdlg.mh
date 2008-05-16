@@ -658,14 +658,17 @@ typedef LPPRINTDLGA LPPRINTDLG;
 #endif
 
 /* Print page range */
+#if (WINVER >= 0x0500) && defined( STDMETHOD )
 typedef struct tagPRINTPAGERANGE {
     DWORD   nFromPage;
     DWORD   nToPage;
 } PRINTPAGERANGE;
 typedef PRINTPAGERANGE          *LPPRINTPAGERANGE;
 typedef const PRINTPAGERANGE    *PCPRINTPAGERANGE;
+#endif
 
 /* PrintDlgEx() parameters */
+#if (WINVER >= 0x0500) && defined( STDMETHOD )
 typedef struct tagPDEXA {
     DWORD               lStructSize;
     HWND                hwndOwner;
@@ -720,6 +723,7 @@ typedef LPPRINTDLGEXW   LPPRINTDLGEX;
 #else
 typedef PRINTDLGEXA     PRINTDLGEX;
 typedef LPPRINTDLGEXA   LPPRINTDLGEX;
+#endif
 #endif
 
 /* Device names */
@@ -799,6 +803,7 @@ EXTERN_C const IID  IID_IPrintDialogCallback;
 EXTERN_C const IID  IID_IPrintDialogServices;
 
 /* IPrintDialogCallback interface */
+#if (WINVER >= 0x0500) && defined( STDMETHOD )
 #undef INTERFACE
 #define INTERFACE   IPrintDialogCallback
 DECLARE_INTERFACE_( IPrintDialogCallback, IUnknown ) {
@@ -812,8 +817,10 @@ DECLARE_INTERFACE_( IPrintDialogCallback, IUnknown ) {
     STDMETHOD( SelectionChange )( THIS ) PURE;
     STDMETHOD( HandleMessage )( THIS_ HWND, UINT, WPARAM, LPARAM, LRESULT * ) PURE;
 };
+#endif
 
 /* IPrintDialogServices interface */
+#if (WINVER >= 0x0500) && defined( STDMETHOD )
 #undef INTERFACE
 #define INTERFACE   IPrintDialogServices
 DECLARE_INTERFACE_( IPrintDialogServices, IUnknown ) {
@@ -827,7 +834,8 @@ DECLARE_INTERFACE_( IPrintDialogServices, IUnknown ) {
     STDMETHOD( GetCurrentPrinterName )( THIS_ LPWSTR, UINT * ) PURE;
     STDMETHOD( GetCurrentPortName )( THIS_ LPWSTR, UINT * ) PURE;
 };
-    
+#endif
+
 /* Functions in COMDLG32.DLL */
 WINCOMMDLGAPI BOOL APIENTRY     ChooseColorA( LPCHOOSECOLORA );
 WINCOMMDLGAPI BOOL APIENTRY     ChooseColorW( LPCHOOSECOLORW );
@@ -843,14 +851,16 @@ WINCOMMDLGAPI BOOL APIENTRY     GetOpenFileNameW( LPOPENFILENAMEW );
 WINCOMMDLGAPI BOOL APIENTRY     GetSaveFileNameA( LPOPENFILENAMEA );
 WINCOMMDLGAPI BOOL APIENTRY     GetSaveFileNameW( LPOPENFILENAMEW );
 WINCOMMDLGAPI BOOL APIENTRY     PrintDlgA( LPPRINTDLGA );
-WINCOMMDLGAPI HRESULT APIENTRY  PrintDlgExA( LPPRINTDLGEXA );
-WINCOMMDLGAPI HRESULT APIENTRY  PrintDlgExW( LPPRINTDLGEXW );
 WINCOMMDLGAPI BOOL APIENTRY     PrintDlgW( LPPRINTDLGW );
 WINCOMMDLGAPI HWND APIENTRY     ReplaceTextA( LPFINDREPLACEA );
 WINCOMMDLGAPI HWND APIENTRY     ReplaceTextW( LPFINDREPLACEW );
 #if (WINVER >= 0x0400)
 WINCOMMDLGAPI BOOL APIENTRY     PageSetupDlgA( LPPAGESETUPDLGA );
 WINCOMMDLGAPI BOOL APIENTRY     PageSetupDlgW( LPPAGESETUPDLGW );
+#endif
+#if (WINVER >= 0x0500) && defined( STDMETHOD )
+WINCOMMDLGAPI HRESULT APIENTRY  PrintDlgExA( LPPRINTDLGEXA );
+WINCOMMDLGAPI HRESULT APIENTRY  PrintDlgExW( LPPRINTDLGEXW );
 #endif
 
 /* Functions implemented as macros */
@@ -887,8 +897,10 @@ WINCOMMDLGAPI BOOL APIENTRY     PageSetupDlgW( LPPAGESETUPDLGW );
     #define GetOpenFileName                 GetOpenFileNameW
     #define GetSaveFileName                 GetSaveFileNameW
     #define PrintDlg                        PrintDlgW
-    #define PrintDlgEx                      PrintDlgExW
     #define ReplaceText                     ReplaceTextW
+    #if (WINVER >= 0x0500) && defined( STDMETHOD )
+        #define PrintDlgEx                  PrintDlgExW
+    #endif
 #else
     #define ChooseColor                     ChooseColorA
     #define ChooseFont                      ChooseFontA
@@ -900,8 +912,10 @@ WINCOMMDLGAPI BOOL APIENTRY     PageSetupDlgW( LPPAGESETUPDLGW );
     #define GetOpenFileName                 GetOpenFileNameA
     #define GetSaveFileName                 GetSaveFileNameA
     #define PrintDlg                        PrintDlgA
-    #define PrintDlgEx                      PrintDlgExA
     #define ReplaceText                     ReplaceTextA
+    #if (WINVER >= 0x0500) && defined( STDMETHOD )
+        #define PrintDlgEx                  PrintDlgExA
+    #endif
 #endif
 
 :include cplusepi.sp
