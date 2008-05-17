@@ -319,6 +319,9 @@ typedef UINT_PTR (CALLBACK *LPPAGEPAINTHOOK)( HWND, UINT, WPARAM, LPARAM );
 typedef UINT_PTR (CALLBACK *LPPAGESETUPHOOK)( HWND, UINT, WPARAM, LPARAM );
 #endif
 
+/* All structures in this file get one-byte packing. */
+#include <pshpack1.h>
+
 /* GetOpenFileName() parameters as of Windows NT 4.0 */
 typedef struct tagOFN_NT4 {
     DWORD           lStructSize;
@@ -797,6 +800,9 @@ typedef LPPAGESETUPDLGA LPPAGESETUPDLG;
         #define OPENFILENAME_SIZE_VERSION_400   OPENFILENAME_SIZE_VERSION_400A
     #endif
 #endif
+
+/* Revert to default packing. */
+#include <poppack.h>
 
 /* GUIDs */
 EXTERN_C const IID  IID_IPrintDialogCallback;
