@@ -125,6 +125,9 @@ DECLARE_HANDLE( HSZ );
 #define SZDDESYS_ITEM_HELP      TEXT("Help")
 #define SZDDE_ITEM_ITEMLIST     TEXT("TopicItemList")
 
+/* DDE data handle special value */
+#define CBR_BLOCK   ((HDDEDATA)-1)
+
 /* Callback filter flags */
 #define CBF_FAIL_SELFCONNECTIONS    0x00001000L
 #define CBF_FAIL_CONNECTIONS        0x00002000L
