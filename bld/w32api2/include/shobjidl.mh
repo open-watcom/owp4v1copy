@@ -37,6 +37,10 @@ typedef interface IFileDialog           IFileDialog;
 typedef interface IShellItemFilter      IShellItemFilter;
 #endif
 typedef interface IEnumExplorerCommand  IEnumExplorerCommand;
+typedef interface ITransferAdviseSink   ITransferAdviseSink;
+typedef interface IEnumShellItems       IEnumShellItems;
+typedef interface IShellItemFilter      IShellItemFilter;
+typedef interface IContextMenuCB        IContextMenuCB;
 
 /* Shell primitive data types */
 typedef ULONG                   SFGAOF;
