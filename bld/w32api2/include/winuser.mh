@@ -2937,7 +2937,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define CB_ERRSPACE (-2)
 
 /* Combo box control notification codes */
-#define CBN_ERRPSACE        (-1)
+#define CBN_ERRSPACE        (-1)
 #define CBN_SELCHANGE       1
 #define CBN_DBLCLK          2
 #define CBN_SETFOCUS        3
