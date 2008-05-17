@@ -6082,10 +6082,10 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     CreateDialogIndirectParamW( p1, p2, p3, p4, 0L )
 #define CreateDialogW( p1, p2, p3, p4 ) \
     CreateDialogParamW( p1, p2, p3, p4, 0L )
-#define CreateWindowA( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 ) \
-    CreateWindowExA( 0L, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 )
-#define CreateWindowW( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 ) \
-    CreateWindowExW( 0L, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 )
+#define CreateWindowA( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 ) \
+    CreateWindowExA( 0L, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
+#define CreateWindowW( p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 ) \
+    CreateWindowExW( 0L, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 )
 #define DefHookProc( p1, p2, p3, p4 )       CallNextHookEx( *p4, p1, p2, p3 )
 #define DialogBoxA( p1, p2, p3, p4 )        DialogBoxParamA( p1, p2, p3, p4, 0L )
 #define DialogBoxIndirectA( p1, p2, p3, p4 ) \
