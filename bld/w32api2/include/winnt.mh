@@ -3225,6 +3225,9 @@ typedef struct _SECURITY_DESCRIPTOR {
 } SECURITY_DESCRIPTOR;
 typedef SECURITY_DESCRIPTOR *PISECURITY_DESCRIPTOR;
 
+/* Security descriptor minimum length */
+#define SECURITY_DESCRIPTOR_MIN_LENGTH  sizeof( SECURITY_DESCRIPTOR )
+
 /* Object type list */
 typedef struct _OBJECT_TYPE_LIST {
     WORD    Level;
