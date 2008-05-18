@@ -348,9 +348,6 @@ static void DoCCompile( char **cmdline )
             return;
         }
         DelErrFile();               /* delete old error file */
-        // BP 18.05.2008 - do not open err file until it is needed
-        // error emit func takes care of that
-        // OpenErrFile();              /* open error file just in case */
         OpenDepFile();
         MergeInclude();             /* merge INCLUDE= with HFileList */
         CPragmaInit();              /* memory model is known now */

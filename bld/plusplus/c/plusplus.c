@@ -298,9 +298,6 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                 CompFlags.cmdline_error = TRUE;
             }
             PTypeCheckInit();       /* must come after command line parsing */
-            // BP 18.05.2008 - do not open err file until it is needed
-            // error emit func takes care of that
-            // ErrFileOpen();         /* open error file just in case */
             if( CompFlags.cpp_output ) {
                 PpOpen();           /* must be before OpenPgmFile() */
             } else {
