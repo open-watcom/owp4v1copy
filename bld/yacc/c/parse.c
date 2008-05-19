@@ -40,24 +40,6 @@
 #include "clibext.h"
 #endif
 
-static void copycurl( void );
-static void copyUniqueActions( void );
-static void copyact( int pnum, a_sym *lhs, a_sym **rhs, unsigned base, unsigned n );
-static void lineinfo( void );
-static int scan( unsigned used );
-static void need( char *pat );
-static int eatcrud( void );
-static int nextc( void );
-static int lastc( void );
-static void addbuf( int ch );
-static char *dupbuf( void );
-
-int lineno = { 1 };
-
-#define BUF_INCR 500
-static unsigned bufused, bufmax;
-static char *buf = { NULL };
-
 typedef enum {
     IDENTIFIER = 256,   /* includes identifiers and literals */
     C_IDENTIFIER,       /* identifier (but not literal) followed by colon */
@@ -77,27 +59,47 @@ typedef enum {
     UNION,
 } a_token;
 
-static int ch = { ' ' };
-static int token;
-static int value;
+static void                 copycurl( void );
+static void                 copyUniqueActions( void );
+static void                 copyact( int, a_sym *, a_sym **, unsigned, unsigned );
+static void                 lineinfo( void );
+static int                  scan( unsigned used );
+static void                 need( char *pat );
+static int                  eatcrud( void );
+static int                  nextc( void );
+static int                  lastc( void );
+static void                 addbuf( int ch );
+static char                 *dupbuf( void );
 
-typedef struct uniq_case uniq_case;
-typedef struct rule_case rule_case;
+int lineno = { 1 };
+
+#define BUF_INCR            500
+
+static unsigned             bufused;
+static unsigned             bufmax;
+static char                 *buf = { NULL };
+
+static int                  ch = { ' ' };
+static int                  token;
+static int                  value;
+
+typedef struct uniq_case    uniq_case;
+typedef struct rule_case    rule_case;
 struct rule_case {
-    rule_case           *next;
-    int                 pnum;
-    a_sym               *lhs;
+    rule_case   *next;
+    int         pnum;
+    a_sym       *lhs;
 };
 struct uniq_case {
-    uniq_case           *next;
-    char                *action;
-    rule_case           *rules;
+    uniq_case   *next;
+    char        *action;
+    rule_case   *rules;
 };
 
-static unsigned long actionsCombined;
-static uniq_case *caseActions;
+static unsigned long        actionsCombined;
+static uniq_case            *caseActions;
 
-a_SR_conflict *ambiguousstates;
+a_SR_conflict               *ambiguousstates;
 
 static a_sym *make_sym( char *name, token_t value )
 {
@@ -110,7 +112,7 @@ static a_sym *make_sym( char *name, token_t value )
 
 static a_SR_conflict *make_unique_ambiguity( a_sym *sym, unsigned index )
 {
-    a_SR_conflict *am;
+    a_SR_conflict   *am;
 
     for( am = ambiguousstates; am != NULL; am = am->next ) {
         if( am->id == index ) {
@@ -122,7 +124,7 @@ static a_SR_conflict *make_unique_ambiguity( a_sym *sym, unsigned index )
             return( am );
         }
     }
-    am = MALLOC(1,a_SR_conflict);
+    am = MALLOC( 1, a_SR_conflict );
     am->next = ambiguousstates;
     am->sym = sym;
     am->id = index;
@@ -136,11 +138,12 @@ static a_SR_conflict *make_unique_ambiguity( a_sym *sym, unsigned index )
 
 void defs( void )
 {
-    token_t gentoken;
-    a_sym *sym;
-    int ctype;
-    char *dupbuf(), *type;
-    a_prec prec;
+    token_t     gentoken;
+    a_sym       *sym;
+    int         ctype;
+    char        *dupbuf();
+    char        *type;
+    a_prec      prec;
 
     eofsym = make_sym( "$eof", TOKEN_EOF );
     nosym = make_sym( "$impossible", TOKEN_IMPOSSIBLE );
@@ -153,7 +156,7 @@ void defs( void )
     scan( 0 );
     prec.prec = 0;
     prec.assoc = NON_ASSOC;
-    for(;;) {
+    for( ;; ) {
         switch( token ) {
         case MARK:
             scan( 0 );
@@ -284,14 +287,14 @@ void defs( void )
 
 static int scanambig( unsigned used, a_SR_conflict_list **list )
 {
-    int absorbed_something;
-    unsigned index;
-    a_sym *sym;
-    a_SR_conflict *am;
-    a_SR_conflict_list *en;
+    int                     absorbed_something;
+    unsigned                index;
+    a_sym                   *sym;
+    a_SR_conflict           *am;
+    a_SR_conflict_list      *en;
 
     absorbed_something = 0;
-    for(;;) {
+    for( ;; ) {
         /* syntax is "%ambig <number> <token>" */
         /* token has already been scanned by scanprec() */
         if( token != AMBIG ) {
@@ -318,7 +321,7 @@ static int scanambig( unsigned used, a_SR_conflict_list **list )
         scan( used );
         absorbed_something = 1;
         am = make_unique_ambiguity( sym, index );
-        en = MALLOC(1,a_SR_conflict_list);
+        en = MALLOC( 1, a_SR_conflict_list );
         en->next = *list;
         en->thread = am->thread;
         en->pro = NULL;
@@ -331,7 +334,8 @@ static int scanambig( unsigned used, a_SR_conflict_list **list )
 
 static int scanprec( unsigned used, a_sym **precsym )
 {
-    if( token != PREC ) return( 0 );
+    if( token != PREC )
+        return( 0 );
     if( scan( used ) != IDENTIFIER || !(*precsym = findsym( buf )) || !(*precsym)->token ) {
         msg( "Expecting a token after %prec.\n" );
     }
@@ -342,8 +346,10 @@ static int scanprec( unsigned used, a_sym **precsym )
 static void scanextra( unsigned used, a_sym **psym, a_SR_conflict_list **pSR )
 {
     scan( used );
-    for(;;) {
-        if( ! scanprec( used, psym ) && ! scanambig( used, pSR ) ) break;
+    for( ;; ) {
+        if( ! scanprec( used, psym ) && ! scanambig( used, pSR ) ) {
+            break;
+        }
     }
 }
 
@@ -357,8 +363,10 @@ static char *type_name( char *type )
 
 void rules( void )
 {
-    a_sym               *lhs, **rhs, *sym, *precsym;
-    unsigned            nrhs, maxrhs = { 16 };
+    a_sym               *lhs, *sym, *precsym;
+    a_sym               **rhs;
+    unsigned            nrhs;
+    unsigned            maxrhs = { 16 };
     a_pro               *pro;
     char                buffer[20];
     unsigned            i;
@@ -385,7 +393,8 @@ void rules( void )
             nrhs = 0;
             scanextra( 0, &precsym, &list_of_ambiguities );
             for(;;) {
-                if( token != '{' && token != IDENTIFIER ) break;
+                if( token != '{' && token != IDENTIFIER )
+                    break;
                 if( nrhs + 2 > maxrhs )
                     rhs = REALLOC( rhs, maxrhs *= 2, a_sym * );
                 if( token == '{' ) {
@@ -490,10 +499,11 @@ static void copyfile( void )
 
 void tail( void )
 {
-    if( token == MARK )
+    if( token == MARK ) {
         copyfile();
-    else if( token != EOF )
+    } else if( token != EOF ) {
         msg( "Expected end of file.\n" );
+    }
 }
 
 static void copycurl( void )
@@ -510,10 +520,10 @@ static void copycurl( void )
 static char *checkAttrib( char *s, char **ptype, char *buff, int *errs,
                           a_sym *lhs, a_sym **rhs, unsigned base, unsigned n )
 {
-    char save;
-    char *type;
-    int err_count;
-    int i;
+    char        save;
+    char        *type;
+    int         err_count;
+    int         i;
 
     err_count = 0;
     ++s;
@@ -561,7 +571,7 @@ static char *checkAttrib( char *s, char **ptype, char *buff, int *errs,
 
 static a_pro *findPro( a_sym *lhs, unsigned pnum )
 {
-    a_pro *pro;
+    a_pro       *pro;
 
     for( pro = lhs->pro; pro != NULL; pro = pro->next ) {
         if( pro->pidx == pnum ) {
@@ -573,14 +583,14 @@ static a_pro *findPro( a_sym *lhs, unsigned pnum )
 
 static void copyUniqueActions( void )
 {
-    a_pro *pro;
-    char *s;
-    uniq_case *c;
-    uniq_case *nc;
-    rule_case *r;
-    rule_case *nr;
-    an_item *first_item;
-    an_item *item;
+    a_pro       *pro;
+    char        *s;
+    uniq_case   *c;
+    uniq_case   *nc;
+    rule_case   *r;
+    rule_case   *nr;
+    an_item     *first_item;
+    an_item     *item;
 
     for( c = caseActions; c != NULL; c = nc ) {
         nc = c->next;
@@ -607,7 +617,7 @@ static void copyUniqueActions( void )
 
 static void addRuleToUniqueCase( uniq_case *p, int pnum, a_sym *lhs )
 {
-    rule_case *r;
+    rule_case   *r;
 
     r = MALLOC(1,rule_case);
     r->lhs = lhs;
@@ -618,9 +628,9 @@ static void addRuleToUniqueCase( uniq_case *p, int pnum, a_sym *lhs )
 
 static void insertUniqueAction( int pnum, char *buf, a_sym *lhs )
 {
-    uniq_case **p;
-    uniq_case *c;
-    uniq_case *n;
+    uniq_case   **p;
+    uniq_case   *c;
+    uniq_case   *n;
 
     p = &caseActions;
     for( c = *p; c != NULL; c = c->next ) {
@@ -654,15 +664,15 @@ static char *strpcpy( char *d, char *s )
 
 static void copyact( int pnum, a_sym *lhs, a_sym **rhs, unsigned base, unsigned n )
 {
-    char *b;
-    char *p;
-    char *s;
-    char *type;
-    unsigned i;
-    int errs;
-    int total_errs;
-    size_t total_len;
-    char buff[80];
+    char        *b;
+    char        *p;
+    char        *s;
+    char        *type;
+    unsigned    i;
+    int         errs;
+    int         total_errs;
+    size_t      total_len;
+    char        buff[80];
 
     if( ! lineflag ) {
         /* we don't need line numbers to correspond to the grammar */
@@ -682,7 +692,7 @@ static void copyact( int pnum, a_sym *lhs, a_sym **rhs, unsigned base, unsigned 
             }
         }
         if( total_errs == 0 ) {
-            b = MALLOC(total_len,char);
+            b = MALLOC( total_len, char );
             p = b;
             for( s = buf; *s != '\0'; ) {
                 if( *s == '$' ) {
@@ -726,7 +736,7 @@ static void copyact( int pnum, a_sym *lhs, a_sym **rhs, unsigned base, unsigned 
 
 static void copybal( void )
 {
-    int depth;
+    int         depth;
 
     depth = 1;
     do {
@@ -735,10 +745,11 @@ static void copybal( void )
         if( lastc() == '/' ) {
             if( ch == '*' ) {
                 /* copy a C style comment */
-                for(;;) {
+                for( ;; ) {
                     addbuf( ch );
                     nextc();
-                    if( ch == EOF ) break;
+                    if( ch == EOF )
+                        break;
                     if( ch == '/' && lastc() == '*' ) {
                         addbuf( ch );
                         nextc();
@@ -747,10 +758,11 @@ static void copybal( void )
                 }
             } else if( ch == '/' ) {
                 /* copy a C++ style comment */
-                for(;;) {
+                for( ;; ) {
                     addbuf( ch );
                     nextc();
-                    if( ch == EOF ) break;
+                    if( ch == EOF )
+                        break;
                     if( ch == '\n' ) {
                         addbuf( ch );
                         nextc();
@@ -762,9 +774,10 @@ static void copybal( void )
         if( ch == '"' ) {
             /* copy a string */
             addbuf( ch );
-            for(;;) {
+            for( ;; ) {
                 nextc();
-                if( ch == EOF ) break;
+                if( ch == EOF )
+                    break;
                 if( ch == '\n' ) {
                     msg( "string literal was not terminated by \" before end of line\n" );
                     break;
@@ -774,7 +787,8 @@ static void copybal( void )
                     nextc();
                     addbuf( ch );
                 } else {
-                    if( ch == '"' ) break;
+                    if( ch == '"' )
+                        break;
                     addbuf( ch );
                 }
             }
@@ -782,9 +796,10 @@ static void copybal( void )
         if( ch == '\'' ) {
             /* copy a character constant */
             addbuf( ch );
-            for(;;) {
+            for( ;; ) {
                 nextc();
-                if( ch == EOF ) break;
+                if( ch == EOF )
+                    break;
                 if( ch == '\n' ) {
                     msg( "character literal was not terminated by \" before end of line\n" );
                     break;
@@ -794,7 +809,8 @@ static void copybal( void )
                     nextc();
                     addbuf( ch );
                 } else {
-                    if( ch == '\'' ) break;
+                    if( ch == '\'' )
+                        break;
                     addbuf( ch );
                 }
             }
@@ -812,11 +828,13 @@ static void copybal( void )
 
 static void lineinfo( void )
 {
-    if( lineflag )
+    if( lineflag ) {
         fprintf( actout, "\n#line %d \"%s\"\n", lineno, srcname );
+    }
 }
 
-static void addstr( char *p ) {
+static void addstr( char *p )
+{
     while( *p ) {
         addbuf( *p );
         ++p;
@@ -827,6 +845,7 @@ typedef struct xlat_entry {
     int         c;
     char        *x;
 } xlat_entry;
+
 static xlat_entry xlat[] = {
     { '~',      "TILDE" },
     { '`',      "BACKQUOTE" },
@@ -862,9 +881,10 @@ static xlat_entry xlat[] = {
     { '\0',     NULL }
 };
 
-static int xlat_char( int special, int c ) {
-    xlat_entry *t;
-    auto char buff[16];
+static int xlat_char( int special, int c )
+{
+    xlat_entry  *t;
+    char        buff[16];
 
     if( isalpha( c ) || isdigit( c ) || c == '_' ) {
         if( special ) {
@@ -894,13 +914,14 @@ static void xlat_token( void )
 
     addbuf( 'Y' );
     special = TRUE;
-    for(;;) {
+    for( ;; ) {
         nextc();
         if( ch == EOF || ch == '\n' ) {
             msg( "invalid 'x' token" );
             break;
         }
-        if( ch == '\'' ) break;
+        if( ch == '\'' )
+            break;
         if( ch == '\\' ) {
             special = xlat_char( special, ch );
             nextc();
@@ -917,14 +938,19 @@ static int scan( unsigned used )
     bufused = used;
     eatcrud();
     if( isalpha( ch ) ) {
-        for(;;) {
+        for( ;; ) {
             addbuf( ch );
             nextc();
-            if( isalpha( ch ) ) continue;
-            if( isdigit( ch ) ) continue;
-            if( ch == '_' ) continue;
-            if( ch == '.' ) continue;
-            if( ch == '-' ) continue;
+            if( isalpha( ch ) )
+                continue;
+            if( isdigit( ch ) )
+                continue;
+            if( ch == '_' )
+                continue;
+            if( ch == '.' )
+                continue;
+            if( ch == '-' )
+                continue;
             break;
         }
         addbuf( '\0' );
@@ -1065,7 +1091,7 @@ static int eatcrud( void )
 {
     int prev;
 
-    for(;;) {
+    for( ;; ) {
         switch( ch ) {
         case ' ':
         case '\t':
@@ -1084,7 +1110,7 @@ static int eatcrud( void )
                 return( ch );
             }
             prev = '\0';
-            for(;;) {
+            for( ;; ) {
                 if( nextc() == '/' && prev == '*' ) {
                     break;
                 }
@@ -1124,10 +1150,11 @@ static void addbuf( int ch )
 {
     if( bufused == bufmax ) {
         bufmax += BUF_INCR;
-        if( buf )
+        if( buf ) {
             buf = REALLOC( buf, bufmax, char );
-        else
+        } else {
             buf = MALLOC( bufmax, char );
+        }
     }
     buf[bufused++] = ch;
 }
