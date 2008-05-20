@@ -349,6 +349,7 @@ static void DoCCompile( char **cmdline )
         }
         DelErrFile();               /* delete old error file */
         OpenDepFile();
+        OpenErrFile();              /* open error file just in case */
         MergeInclude();             /* merge INCLUDE= with HFileList */
         CPragmaInit();              /* memory model is known now */
 #if _CPU == 370
