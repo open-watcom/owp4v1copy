@@ -58,7 +58,7 @@ typedef USHORT  COLOR16;
 #define GetGValue( x )              LOBYTE( ((WORD)(x)) >> 8 )
 #define GetBValue( x )              LOBYTE( (x) >> 16 )
 #define RGB( p1, p2, p3 ) \
-    ((COLORREF)(((BYTE)(p1) | ((WORD)((BYTE)(p2)) << 8)) || \
+    ((COLORREF)(((BYTE)(p1) | ((WORD)((BYTE)(p2)) << 8)) | \
     (((DWORD)(BYTE)(p3)) << 16)))
 #define PALETTERGB( p1, p2, p3 )    (0x02000000L | RGB( p1, p2, p3 ))
 #define PALETTEINDEX( x )           ((COLORREF)(0x01000000L | (DWORD)(WORD)(x)))
