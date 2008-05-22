@@ -17,7 +17,7 @@
 
 /* Message cracker macros */
 #define HANDLE_MSG( x, p1, f ) \
-    case (x): \
+    case (p1): \
         return HANDLE_##p1( x, wParam, lParam, f )
 #define HANDLE_WM_COMPACTING( x, p1, p2, f ) \
     ((f)( x, (UINT)(p1) ), 0L)
