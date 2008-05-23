@@ -20,8 +20,8 @@ cdsay .
 #========================
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <PROJDIR>/dosi86/wsample.exe      <RELROOT>/binw/wsample.exe
-    <CPCMD> <PROJDIR>/rsii86/wsamprsi.exe     <RELROOT>/binw/wsamprsi.exe
-    <CPCMD> <PROJDIR>/pls386/wsamppls.exp     <RELROOT>/binw/wsamppls.exp
+    <CCCMD> <PROJDIR>/rsii86/wsamprsi.exe     <RELROOT>/binw/wsamprsi.exe
+    <CCCMD> <PROJDIR>/pls386/wsamppls.exp     <RELROOT>/binw/wsamppls.exp
     <CPCMD> <PROJDIR>/wini86/wsamplew.exe     <RELROOT>/binw/wsamplew.exe
 
   [ IFDEF (os_os2 "") <2*> ]
