@@ -246,6 +246,9 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define MAXWORD     0xFFFF
 #define MAXDWORD    0xFFFFFFFF
 
+/* Macro to calculate the size of an array */
+#define ARRAYSIZE( x )  (sizeof( x ) / sizeof( (x)[0] ))
+
 /* Suite types */
 #define VER_SUITE_SMALLBUSINESS             0x00000001
 #define VER_SUITE_ENTERPRISE                0x00000002
