@@ -178,7 +178,7 @@ EXTERN_C const FMTID    FMTID_Volume;
 EXTERN_C const FMTID    FMTID_Query;
 EXTERN_C const IID      IID_IEnumExtraSearch;
 EXTERN_C const CLSID    CLSID_HWShellExecute;
-EXTERN_C const CLSID    CLSID_DragDropHandler;
+EXTERN_C const CLSID    CLSID_DragDropHelper;
 EXTERN_C const CLSID    CLSID_CAnchorBrowsePropertyPage;
 EXTERN_C const CLSID    CLSID_CImageBrowsePropertyPage;
 EXTERN_C const CLSID    CLSID_CDocBrowsePropertyPage;
