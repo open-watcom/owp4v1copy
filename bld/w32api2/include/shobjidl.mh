@@ -2828,7 +2828,7 @@ DECLARE_INTERFACE_( IInputObject, IUnknown ) {
     /* IInputObject methods */
     STDMETHOD( UIActivateIO )( THIS_ BOOL, MSG * ) PURE;
     STDMETHOD( HasFocusIO )( THIS ) PURE;
-    STDMETHOD( TranslateAccelerator )( THIS_ MSG * ) PURE;
+    STDMETHOD( TranslateAcceleratorIO )( THIS_ MSG * ) PURE;
 };
 
 /* IInputObject2 interface */
