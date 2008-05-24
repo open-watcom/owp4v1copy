@@ -3,7 +3,10 @@
  *
 :include crwatcnt.sp
  */
- 
+
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef __unknwn_h__
 #define __unknwn_h__
 
