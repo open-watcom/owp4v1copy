@@ -26,10 +26,11 @@ typedef struct tagCATEGORYINFO {
 typedef CATEGORYINFO    *LPCATEGORYINFO;
 
 /* GUIDs */
-EXTERN_C const IID  IID_IEnumGUID;
-EXTERN_C const IID  IID_IEnumCATEGORYINFO;
-EXTERN_C const IID  IID_ICatRegister;
-EXTERN_C const IID  IID_ICatInformation;
+EXTERN_C const IID      IID_IEnumGUID;
+EXTERN_C const IID      IID_IEnumCATEGORYINFO;
+EXTERN_C const IID      IID_ICatRegister;
+EXTERN_C const IID      IID_ICatInformation;
+EXTERN_C const CLSID    CLSID_StdComponentCategoriesMgr;
 #define IID_IEnumCLSID  IID_IEnumGUID
 #define IID_IEnumCATID  IID_IEnumGUID
 
