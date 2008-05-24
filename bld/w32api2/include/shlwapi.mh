@@ -298,7 +298,7 @@ typedef HUSKEY  *PHUSKEY;
     { (IID *)&IID_##p2, OFFSETOFCLASS( p3, p1 ) }
 #define QITABENTMULTI2( p1, p2, p3 ) \
     { (IID *)&p2, OFFSETOFCLASS( p3, p1 ) }
-#define QITABENT( p1, p2 )      QITABENTMULTI( p1, p2, p3 )
+#define QITABENT( p1, p2 )      QITABENTMULTI( p1, p2, p2 )
 
 /* URL schemes */
 typedef enum {
