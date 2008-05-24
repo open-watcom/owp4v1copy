@@ -4,6 +4,9 @@
 :include crwatcnt.sp
  */
 
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef __strmif_h__
 #define __strmif_h__
 

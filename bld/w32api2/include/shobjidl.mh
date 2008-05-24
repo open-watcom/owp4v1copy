@@ -4,6 +4,9 @@
 :include crwatcnt.sp
  */
 
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef __shobjidl_h__
 #define __shobjidl_h__
 

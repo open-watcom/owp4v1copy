@@ -4,6 +4,9 @@
 :include crwatcnt.sp
  */
 
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef __msxml_h__
 #define __msxml_h__
 

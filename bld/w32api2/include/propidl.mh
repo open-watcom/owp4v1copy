@@ -4,6 +4,9 @@
 :include crwatcnt.sp
  */
 
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef __propidl_h__
 #define __propidl_h__
 
