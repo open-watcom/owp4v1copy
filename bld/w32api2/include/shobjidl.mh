@@ -4836,7 +4836,7 @@ DECLARE_INTERFACE_( IKnownFolder, IUnknown ) {
     STDMETHOD( GetIDList )( THIS_ DWORD, PIDLIST_ABSOLUTE * ) PURE;
     STDMETHOD( GetFolderType )( THIS_ FOLDERTYPEID * ) PURE;
     STDMETHOD( GetRedirectionCapabilities )( THIS_ KF_REDIRECTION_CAPABILITIES * ) PURE;
-    STDMETHOD( GetFolderCapabilities )( THIS_ KNOWNFOLDER_DEFINITION * ) PURE;
+    STDMETHOD( GetFolderDefinition )( THIS_ KNOWNFOLDER_DEFINITION * ) PURE;
 };
 #endif
 
@@ -8643,6 +8643,23 @@ SHSTDAPI    SHGetPropertyStoreFromParsingName( PCWSTR, IBindCtx *, GETPROPERTYST
 SHSTDAPI    SHGetTemporaryPropertyForItem( IShellItem *, REFPROPERTYKEY, PROPVARIANT * );
 SHSTDAPI    SHSetTemporaryPropertyForItem( IShellItem *, REFPROPERTYKEY, REFPROPVARIANT );
 #endif
+
+#if (NTDDI_VERSION >= 0x06000000)
+
+__inline void FreeKnownFolderDefinitionFields( KNOWNFOLDER_DEFINITION *x )
+/************************************************************************/
+{
+    CoTaskMemFree( x->pszName );
+    CoTaskMemFree( x->pszDescription );
+    CoTaskMemFree( x->pszRelativePath );
+    CoTaskMemFree( x->pszParsingName );
+    CoTaskMemFree( x->pszTooltip );
+    CoTaskMemFree( x->pszLocalizedName );
+    CoTaskMemFree( x->pszIcon );
+    CoTaskMemFree( x->pszSecurity );
+}
+
+#endif /* (NTDDI_VERSION >= 0x06000000) */
 
 :include cplusepi.sp
 
