@@ -1005,7 +1005,7 @@ LWSTDAPI                PathMatchSpecExW( LPCWSTR, LPCWSTR, DWORD );
     #define SHDeleteKey             SHDeleteKeyW
     #define SHDeleteValue           SHDeleteValueW
     #define SHEnumKeyEx             SHEnumKeyExW
-    #defien SHEnumValue             SHEnumValueW
+    #define SHEnumValue             SHEnumValueW
     #define SHFormatDateTime        SHFormatDateTimeW
     #define SHGetValue              SHGetValueW
     #define SHOpenRegStream         SHOpenRegStreamW
