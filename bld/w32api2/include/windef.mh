@@ -16,6 +16,9 @@
 #define pascal  __stdcall
 
 /* Calling conventions */
+#ifndef CDECL
+    #define CDECL   __cdecl
+#endif
 #define CALLBACK    __stdcall
 #define WINAPI      __stdcall
 #define WINAPIV     __cdecl
