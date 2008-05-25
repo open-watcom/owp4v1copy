@@ -830,6 +830,10 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 /* Current SID revision */
 #define SID_REVISION    1
 
+/* Maximum and recommended numbers of subauthorities */
+#define SID_MAX_SUB_AUTHORITIES         15
+#define SID_RECOMMENDED_SUB_AUTHORITIES 1
+
 /* SID hash size */
 #define SID_HASH_SIZE   32
 
@@ -2895,6 +2899,10 @@ typedef struct _SID {
     DWORD                       SubAuthority[ANYSIZE_ARRAY];
 } SID;
 typedef SID *PISID;
+
+/* Maximum SID size */
+#define SECURITY_MAX_SID_SIZE \
+    (sizeof( SID ) + ((SID_MAX_SUB_AUTHORITIES - 1) * sizeof( DWORD )))
 
 /* SID types */
 typedef enum _SID_NAME_USE {
