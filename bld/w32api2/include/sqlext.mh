@@ -505,7 +505,7 @@ typedef SQLTCHAR    SQLSTATE[SQL_SQLSTATE_SIZE + 1];
 #define SQL_COLUMN_LENGTH           3L
 #define SQL_COLUMN_PRECISION        4L
 #define SQL_COLUMN_SCALE            5L
-#define SQL_COLUMN_DISPLAY_SCALE    6L
+#define SQL_COLUMN_DISPLAY_SIZE     6L
 #define SQL_COLUMN_NULLABLE         7L
 #define SQL_COLUMN_UNSIGNED         8L
 #define SQL_COLUMN_MONEY            9L
