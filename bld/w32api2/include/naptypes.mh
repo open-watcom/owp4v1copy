@@ -4,6 +4,9 @@
 :include crwatcnt.sp
  */
 
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef __naptypes_h__
 #define __naptypes_h__
 
