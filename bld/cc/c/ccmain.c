@@ -62,6 +62,7 @@ extern  char    CharSet[];
 
 static  char    IsStdIn;
 static  int     IncFileDepth;
+static  char    *FNameBuf = NULL;
 
 int PrintWhiteSpace;     // also refered from cmac2.c
 
@@ -118,6 +119,7 @@ void ClearGlobals( void )
     BufSize = BUF_SIZE;
     Buffer = CMemAlloc( BufSize );
     TokenBuf = CMemAlloc( BufSize );
+    FNameBuf = CMemAlloc( _MAX_PATH );
 }
 
 
@@ -235,33 +237,37 @@ void DumpDepFile( void )
 {
     FNAMEPTR    curr;
 
-    if( CompFlags.generate_auto_depend && FNames ) {
-        curr = FNames;
-        if( !DepFile ) {
-            return;
+    OpenDepFile();
+    if( DepFile != NULL ) {
+        if( FNames ) {
+            fprintf( DepFile, "%s :"
+                   , ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE )
+                              , DependForceSlash ) );
+            curr = FNames;
+            if( curr )
+                if( curr->rwflag && !SrcFileInRDir( curr ) )
+                    fprintf( DepFile, " %s"
+                            , ForceSlash( GetSourceDepName()
+                                        , DependForceSlash ) );
+            curr = curr->next;
+            for( ; curr; curr = curr->next ) {
+                if( curr->rwflag && !SrcFileInRDir( curr ) )
+                    fprintf( DepFile, " %s", ForceSlash( curr->name, DependForceSlash ) );
+            }
+            fprintf( DepFile, "\n" );
+            /*
+            for( curr = FNames; curr; curr = curr->next )
+            {
+                if( curr->rwflag && !SrcFileInRDir( curr ) )
+                    continue;
+                //fprintf( DepFile, "#Skipped file...%s\n", curr->name );
+            }
+            */
         }
-        fprintf( DepFile, "%s :"
-               , ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE )
-                          , DependForceSlash ) );
-        if( curr )
-            if( curr->rwflag && !SrcFileInRDir( curr ) )
-                fprintf( DepFile, " %s"
-                        , ForceSlash( GetSourceDepName()
-                                    , DependForceSlash ) );
-        curr = curr->next;
-        for( ; curr; curr = curr->next ) {
-            if( curr->rwflag && !SrcFileInRDir( curr ) )
-                fprintf( DepFile, " %s", ForceSlash( curr->name, DependForceSlash ) );
-        }
-        fprintf( DepFile, "\n" );
-        /*
-        for( curr = FNames; curr; curr = curr->next )
-        {
-            if( curr->rwflag && !SrcFileInRDir( curr ) )
-                continue;
-            //fprintf( DepFile, "#Skipped file...%s\n", curr->name );
-        }
-        */
+        fclose( DepFile );
+        DepFile = NULL;
+    } else {
+        DelDepFile();
     }
 }
 
@@ -348,8 +354,6 @@ static void DoCCompile( char **cmdline )
             return;
         }
         DelErrFile();               /* delete old error file */
-        OpenDepFile();
-        OpenErrFile();              /* open error file just in case */
         MergeInclude();             /* merge INCLUDE= with HFileList */
         CPragmaInit();              /* memory model is known now */
 #if _CPU == 370
@@ -376,17 +380,11 @@ static void DoCCompile( char **cmdline )
                 FreeMacroSegments();
             }
         }
-        if( ErrCount == 0 && DepFile ) {
+        if( ErrCount == 0 ) {
             DumpDepFile();
-            fclose( DepFile );
-        }
-        else {
-            if( DepFile ) {
-                fclose( DepFile );
-            }
+        } else {
             DelDepFile();
         }
-        DepFile = NULL;
 
         SymFini();
         PragmaFini();
@@ -445,8 +443,8 @@ static void MakePgmName( void )
 
 local void CantOpenFile( char *name )
 {
-    char msgtxt[80];
-    char  msgbuf[MAX_MSG_LEN];
+    char    msgtxt[80];
+    char    msgbuf[MAX_MSG_LEN];
 
     CGetMsg( msgtxt, ERR_CANT_OPEN_FILE );
     sprintf( msgbuf, msgtxt, name );
@@ -497,31 +495,27 @@ char *CreateFileName( char *template, char *extension, bool forceext )
         drive = "";
         dir = "";
     }
-    _makepath( Buffer, drive, dir, fname, ext );
+    _makepath( FNameBuf, drive, dir, fname, ext );
 #else
     char    *p;
 
     if( template == NULL )
         template = WholeFName;
-    strcpy( Buffer, template  );
-    p = Buffer;
+    strcpy( FNameBuf, template  );
+    p = FNameBuf;
     while( *p != '\0' && *p != ' ' )
         ++p;
     strcpy( p, extension );
 #endif
-    return( Buffer );
+    return( FNameBuf );
 }
 
 char *GetSourceDepName( void )
 {
     char buff[ _MAX_PATH2 ];
-    char *drive;
-    char *dir;
-    char *fname;
     char *ext;
 
-    _splitpath2( WholeFName, buff, &drive, &dir, &fname, &ext );
-
+    _splitpath2( WholeFName, buff, NULL, NULL, NULL, &ext );
     return( CreateFileName( SrcDepName, ext, FALSE ) );
 }
 
@@ -680,12 +674,12 @@ void OpenDefFile( void )
 FILE *OpenBrowseFile( void )
 {
     char        buff[_MAX_PATH2];
-    char        name[_MAX_PATH];
+    char        name[_MAX_PATH ];
     char        *fname;
     FILE        *mbr_file;
 
     if( CompFlags.cpp_output_to_file ) {                /* 29-sep-90 */
-        strcpy(   name,  CreateFileName( ObjectFileName, MBR_EXT, TRUE ) );
+        strcpy( name, CreateFileName( ObjectFileName, MBR_EXT, TRUE ) );
     } else {
         _splitpath2( SrcFName, buff, NULL, NULL, &fname, NULL );
         _makepath( name, NULL, NULL, fname, MBR_EXT );
@@ -722,8 +716,6 @@ int OpenSrcFile( char *filename, int delimiter )
     char        try[_MAX_PATH];
     char        *drive;
     char        *dir;
-    char        *name;
-    char        *ext;
     int         save;
     FCB         *curr;
 
@@ -731,7 +723,7 @@ int OpenSrcFile( char *filename, int delimiter )
     filename = (char *)IncludeAlias( filename, delimiter );
 
     // include path here...
-    _splitpath2( filename, buff, &drive, &dir, &name, &ext );
+    _splitpath2( filename, buff, &drive, &dir, NULL, NULL );
     if( drive[0] != '\0' || IS_PATH_SEP(dir[0]) ) {
         // 14-sep-94 if drive letter given or path from root given
         if( TryOpen( "", "", filename, "" ) != 0 ) return( 1 );
@@ -743,7 +735,7 @@ int OpenSrcFile( char *filename, int delimiter )
         }
         if( drive[0] == '\0' && !IS_PATH_SEP( dir[0] ) ) {
             for( curr = SrcFile; curr!= NULL; curr = curr->prev_file ) {
-                _splitpath2( curr->src_name, buff, &drive, &dir, &name, &ext );
+                _splitpath2( curr->src_name, buff, &drive, &dir, NULL, NULL );
                 _makepath( try, drive, dir, filename, NULL );
                 if( TryOpen( "", "", try, "" ) != 0 ) return( 1 );
             }

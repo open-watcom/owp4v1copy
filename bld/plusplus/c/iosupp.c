@@ -193,7 +193,7 @@ static char* extsOut[] =        // extensions for output files
 
 #endif
 
-
+static char *FNameBuf = NULL;   // file name buffer for output files
 
 char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
     enum out_file_type typ )    // - extension
@@ -276,18 +276,18 @@ char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
         drive = "";
         dir = "";
     }
-    _makepath( Buffer, drive, dir, fname, ext );
+    _makepath( FNameBuf, drive, dir, fname, ext );
     mask = 1 << typ;
     if(( outFileChecked & mask ) == 0 ) {
         outFileChecked |= mask;
-        try_create = fopen( Buffer, "w" );
+        try_create = fopen( FNameBuf, "w" );
         if( try_create != NULL ) {
             fclose( try_create );
         } else {
-            CErr2p( ERR_CANNOT_CREATE_OUTPUT_FILE, Buffer );
+            CErr2p( ERR_CANNOT_CREATE_OUTPUT_FILE, FNameBuf );
         }
     }
-    return( Buffer );
+    return( FNameBuf );
 }
 
 
@@ -949,6 +949,7 @@ static void ioSuppInit(         // INITIALIZE IO SUPPORT
     tempname = NULL;
     temphandle = -1;
     workFile[5] = '0';
+    FNameBuf = CMemAlloc( _MAX_PATH );
     carve_buf = CarveCreate( sizeof( BUF_ALLOC ), 8 );
     setPaths( pathSrc );
     setPaths( pathHdr );
@@ -970,6 +971,7 @@ static void ioSuppFini(         // FINALIZE IO SUPPORT
         freeBuffer( buffers );
     }
     CarveDestroy( carve_buf );
+    CMemFree( FNameBuf );
 }
 
 
