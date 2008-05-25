@@ -6,6 +6,10 @@
 
 #include <rpc.h>
 #include <rpcndr.h>
+#ifndef COM_NO_WINDOWS_H
+    #include <windows.h>
+    #include <ole2.h>
+#endif
 
 #ifndef __comcat_h__
 #define __comcat_h__

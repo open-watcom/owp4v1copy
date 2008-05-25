@@ -6,16 +6,20 @@
 
 #include <rpc.h>
 #include <rpcndr.h>
+#ifndef COM_NO_WINDOWS_H
+    #include <windows.h>
+    #include <ole2.h>
+#endif
 
 #ifndef __docobj_h__
 #define __docobj_h__
 
 :include readonly.sp
-#include "ocidl.h"
-#include "objidl.h"
-#include "oleidl.h"
-#include "oaidl.h"
-#include "servprov.h"
+#include <ocidl.h>
+#include <objidl.h>
+#include <oleidl.h>
+#include <oaidl.h>
+#include <servprov.h>
 
 :include cpluspro.sp
 
