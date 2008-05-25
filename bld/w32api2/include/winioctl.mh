@@ -2941,7 +2941,7 @@ typedef VOLUME_DISK_EXTENTS *PVOLUME_DISK_EXTENTS;
 #endif
 
 /* Functions implemented as macros */
-#define __NewIsRecognizedParition( x ) \
+#define __NewIsRecognizedPartition( x ) \
     (((x) == PARTITION_FAT_12) || ((x) == PARTITION_FAT_16) || \
     ((x) == PARTITION_HUGE) || ((x) == PARTITION_IFS) || ((x) == PARTITION_FAT32) || \
     ((x) == PARTITION_FAT32_XINT13) || ((x) == PARTITION_XINT13))
