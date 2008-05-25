@@ -170,10 +170,13 @@ typedef CONST WCHAR UNALIGNED   *PCUWSTR;
 
 /* Neutral string data types */
 #ifdef UNICODE
+#ifndef _TCHAR_DEFINED
+#define _TCHAR_DEFINED
 typedef WCHAR           TCHAR;
 typedef WCHAR           *PTCHAR;
 typedef WCHAR           TBYTE;
 typedef WCHAR           *PTBYTE;
+#endif
 typedef LPWCH           LPTCH;
 typedef LPWCH           PTCH;
 typedef LPWSTR          LPTSTR;
@@ -185,10 +188,13 @@ typedef LPUWSTR         PUTSTR;
 typedef LPCUWSTR        LPCUTSTR;
 typedef LPCUWSTR        PCUTSTR;
 #else
+#ifndef _TCHAR_DEFINED
+#define _TCHAR_DEFINED
 typedef char            TCHAR;
 typedef char            *PTCHAR;
 typedef unsigned char   TBYTE;
 typedef unsigned char   *PTBYTE;
+#endif
 typedef LPCH            LPTCH;
 typedef LPCH            PTCH;
 typedef LPSTR           LPTSTR;
