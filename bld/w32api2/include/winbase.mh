@@ -67,6 +67,9 @@
 #define EXCEPTION_GUARD_PAGE                STATUS_GUARD_PAGE_VIOLATION
 #define EXCEPTION_INVALID_HANDLE            STATUS_INVALID_HANDLE
 
+/* CTRL+C exit value */
+#define CONTROL_C_EXIT                      STATUS_CONTROL_C_EXIT
+
 /* File flags */
 #define FILE_FLAG_WRITE_THROUGH         0x80000000L
 #define FILE_FLAG_OVERLAPPED            0x40000000L
