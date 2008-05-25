@@ -860,7 +860,7 @@ typedef struct tagRASENTRYA {
 #endif
 #if (WINVER >= 0x0500)
     DWORD       dwType;
-    DWORD       dwEncryptiontype;
+    DWORD       dwEncryptionType;
     DWORD       dwCustomAuthKey;
     GUID        guidId;
     CHAR        szCustomDialDll[MAX_PATH];
