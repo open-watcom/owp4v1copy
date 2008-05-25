@@ -1127,9 +1127,9 @@ typedef struct tagRASCUSTOMSCRIPTEXTENSIONS {
 #if (WINVER >= 0x0500)
 typedef struct _RAS_STATS {
     DWORD   dwSize;
-    DWORD   dwBytesXmitted;
+    DWORD   dwBytesXmited;
     DWORD   dwBytesRcved;
-    DWORD   dwFramesXmitted;
+    DWORD   dwFramesXmited;
     DWORD   dwFramesRcved;
     DWORD   dwCrcErr;
     DWORD   dwTimeoutErr;
