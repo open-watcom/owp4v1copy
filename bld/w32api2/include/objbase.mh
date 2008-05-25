@@ -11,6 +11,7 @@
 #define _OBJBASE_H_
 
 :include readonly.sp
+#include <stdlib.h>
 
 /* Macros to specify OLE functions */
 #define WINOLEAPI       EXTERN_C DECLSPEC_IMPORT HRESULT STDAPICALLTYPE
