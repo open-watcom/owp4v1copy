@@ -10,10 +10,7 @@
 :include readonly.sp
 :include cpluspro.sp
 
-/* Log flags */
-#define LOGFLAGS_FORWARD    0x00000000L
-#define LOGFLAGS_BACKWARD   0x00000001L
-#define LOGFLAGS_SEEK       0x00000002L
+:include hlog.sp
 
 /* Error log error codes */
 #define ERRLOG_BASE                                 3100L
@@ -253,16 +250,6 @@ typedef struct _ERROR_LOG {
 } ERROR_LOG;
 typedef ERROR_LOG   *PERROR_LOG;
 typedef ERROR_LOG   *LPERROR_LOG;
-
-/* Error log handle */
-typedef struct _HLOG {
-    DWORD   time;
-    DWORD   last_flags;
-    DWORD   offset;
-    DWORD   rec_offset;
-} HLOG;
-typedef HLOG    *PHLOG;
-typedef HLOG    *LPHLOG;
 
 /* Functions in NETAPI32.DLL */
 NET_API_STATUS NET_API_FUNCTION NetErrorLogClear( LPCWSTR, LPCWSTR, LPBYTE );
