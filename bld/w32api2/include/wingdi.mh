@@ -930,8 +930,8 @@ typedef USHORT  COLOR16;
 #define PHYSICALHEIGHT      111
 #define PHYSICALOFFSETX     112
 #define PHYSICALOFFSETY     113
-#define SCALINGOFFSETX      114
-#define SCALINGOFFSETY      115
+#define SCALINGFACTORX      114
+#define SCALINGFACTORY      115
 #define VREFRESH            116
 #define DESKTOPVERTRES      117
 #define DESKTOPHORZRES      118
