@@ -540,9 +540,11 @@ typedef ULONG   *PLSA_ENUMERATION_HANDLE;
 #endif
 
 /* Microsoft Kerberos name */
-#define MICROSOFT_KERBEROS_NAMEA    "Kerberos"
-#define MICROSOFT_KERBEROS_NAMEW    L"Kerberos"
-#define MICROSOFT_KERBEROS_NAME     MICROSOFT_KERBEROS_NAMEW
+#ifndef MICROSOFT_KERBEROS_NAMEA
+    #define MICROSOFT_KERBEROS_NAMEA    "Kerberos"
+    #define MICROSOFT_KERBEROS_NAMEW    L"Kerberos"
+    #define MICROSOFT_KERBEROS_NAME     MICROSOFT_KERBEROS_NAMEW
+#endif
 
 /* EncryptMessage() flags */
 #define KERB_WRAP_NO_ENCRYPT    0x80000001L
