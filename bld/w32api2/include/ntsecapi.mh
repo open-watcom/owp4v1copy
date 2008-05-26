@@ -540,9 +540,9 @@ typedef ULONG   *PLSA_ENUMERATION_HANDLE;
 #endif
 
 /* Microsoft Kerberos name */
-#ifndef MICROSOFT_KERBEROS_NAMEA
-    #define MICROSOFT_KERBEROS_NAMEA    "Kerberos"
-    #define MICROSOFT_KERBEROS_NAMEW    L"Kerberos"
+#ifndef MICROSOFT_KERBEROS_NAME_A
+    #define MICROSOFT_KERBEROS_NAME_A   "Kerberos"
+    #define MICROSOFT_KERBEROS_NAME_W   L"Kerberos"
     #define MICROSOFT_KERBEROS_NAME     MICROSOFT_KERBEROS_NAMEW
 #endif
 
