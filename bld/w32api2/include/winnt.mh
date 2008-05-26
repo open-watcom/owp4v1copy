@@ -3049,7 +3049,7 @@ typedef struct _ACCESS_ALLOWED_ACE {
     ACCESS_MASK Mask;
     DWORD       SidStart;
 } ACCESS_ALLOWED_ACE;
-typedef ACCESS_ALLOWED_ACE  *PACCESS_ALLLOWED_ACE;
+typedef ACCESS_ALLOWED_ACE  *PACCESS_ALLOWED_ACE;
 
 /* Access denied ACE */
 typedef struct _ACCESS_DENIED_ACE {
