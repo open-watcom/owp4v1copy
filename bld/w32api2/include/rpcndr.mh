@@ -4,6 +4,11 @@
 :include crwatcnt.sp
  */
 
+/* Version of this header */
+#ifndef __RPCNDR_H_VERSION__
+    #define __RPCNDR_H_VERSION__    500
+#endif
+
 #ifndef __RPCNDR_H__
 #define __RPCNDR_H__
 
