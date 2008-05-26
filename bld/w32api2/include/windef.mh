@@ -10,6 +10,11 @@
 :include readonly.sp
 :include cpluspro.sp
 
+/* Define default Windows version number. */
+#ifndef WINVER
+    #define WINVER  0x0500
+#endif
+
 /* Override default compiler behavior for these keywords. */
 #define far
 #define near
