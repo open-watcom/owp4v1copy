@@ -678,8 +678,8 @@ typedef SECURITY_STATUS (SEC_ENTRY *COMPLETE_AUTH_TOKEN_FN)( PCtxtHandle, PSecBu
 typedef SECURITY_STATUS (SEC_ENTRY *DECRYPT_MESSAGE_FN)( PCtxtHandle, PSecBufferDesc, unsigned long, unsigned long * );
 typedef SECURITY_STATUS (SEC_ENTRY *DELETE_SECURITY_CONTEXT_FN)( PCtxtHandle );
 typedef SECURITY_STATUS (SEC_ENTRY *ENCRYPT_MESSAGE_FN)( PCtxtHandle, unsigned long, PSecBufferDesc, unsigned long );
-typedef SECURITY_STATUS (SEC_ENTRY *ENUMERATE_SECURITY_PACKAGES_FN_A)( unsigned long *, PSecPkgInfoA );
-typedef SECURITY_STATUS (SEC_ENTRY *ENUMERATE_SECURITY_PACKAGES_FN_W)( unsigned long *, PSecPkgInfoW );
+typedef SECURITY_STATUS (SEC_ENTRY *ENUMERATE_SECURITY_PACKAGES_FN_A)( unsigned long *, PSecPkgInfoA * );
+typedef SECURITY_STATUS (SEC_ENTRY *ENUMERATE_SECURITY_PACKAGES_FN_W)( unsigned long *, PSecPkgInfoW * );
 typedef SECURITY_STATUS (SEC_ENTRY *EXPORT_SECURITY_CONTEXT_FN)( PCtxtHandle, ULONG, PSecBuffer, void ** );
 typedef SECURITY_STATUS (SEC_ENTRY *FREE_CONTEXT_BUFFER_FN)( PVOID );
 typedef SECURITY_STATUS (SEC_ENTRY *FREE_CREDENTIALS_HANDLE_FN)( PCredHandle );
@@ -887,8 +887,8 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    DeleteSecurityContext( PCtxtHandle )
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    DeleteSecurityPackageA( LPSTR );
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    DeleteSecurityPackageW( LPWSTR );
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    EncryptMessage( PCtxtHandle, unsigned long, PSecBufferDesc, unsigned long );
-KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    EnumerateSecurityPackagesA( unsigned long *, PSecPkgInfoA );
-KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    EnumerateSecurityPackagesW( unsigned long *, PSecPkgInfoW );
+KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    EnumerateSecurityPackagesA( unsigned long *, PSecPkgInfoA * );
+KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    EnumerateSecurityPackagesW( unsigned long *, PSecPkgInfoW * );
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    ExportSecurityContext( PCtxtHandle, ULONG, PSecBuffer, void ** );
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    FreeContextBuffer( PVOID );
 KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    FreeCredentialsHandle( PCredHandle );
