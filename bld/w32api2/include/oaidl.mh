@@ -484,8 +484,8 @@ typedef struct tagTLIBATTR {
     GUID    guid;
     LCID    lcid;
     SYSKIND syskind;
-    WORD    wMajorVernum;
-    WORD    wMinorVernum;
+    WORD    wMajorVerNum;
+    WORD    wMinorVerNum;
     WORD    wLibFlags;
 } TLIBATTR;
 typedef TLIBATTR    *LPTLIBATTR;
