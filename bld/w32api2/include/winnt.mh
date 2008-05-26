@@ -241,6 +241,10 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ERROR_SEVERITY_WARNING          0x80000000
 #define ERROR_SEVERITY_ERROR            0xC0000000
 
+/* Null values */
+#define ANSI_NULL       ((CHAR)0)
+#define UNICODE_NULL    ((WCHAR)0)
+
 /* Limits of primitive data types */
 #define MINCHAR     0x80
 #define MAXCHAR     0x7F
