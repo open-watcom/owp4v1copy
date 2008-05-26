@@ -28,7 +28,7 @@ typedef interface IPropertyPageSite         IPropertyPageSite;
 typedef interface IPropertyBag              IPropertyBag;
 typedef interface IOleUndoManager           IOleUndoManager;
 typedef interface IAdviseSinkEx             IAdviseSinkEx;
-typedef interface IPropertySinkNotify       IPropertySinkNotify;
+typedef interface IPropertyNotifySink       IPropertyNotifySink;
 typedef interface IFont                     IFont;
 typedef interface IOleControlSite           IOleControlSite;
 
@@ -273,7 +273,7 @@ typedef struct tagQACONTAINER {
     ULONG               cbSize;
     IOleClientSite      *pClientSite;
     IAdviseSinkEx       *pAdviseSink;
-    IPropertySinkNotify *pPropertySinkNotify;
+    IPropertyNotifySink *pPropertyNotifySink;
     IUnknown            *pUnkEventSink;
     DWORD               dwAmbientFlags;
     OLE_COLOR           colorFore;
