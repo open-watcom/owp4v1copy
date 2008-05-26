@@ -336,7 +336,7 @@ typedef FONTDESC    *LPFONTDESC;
 /* Picture descriptor */
 typedef struct tagPICTDESC {
     UINT    cbSizeofstruct;
-    UINT    pictype;
+    UINT    picType;
     union {
         struct {
             HBITMAP     hbitmap;
