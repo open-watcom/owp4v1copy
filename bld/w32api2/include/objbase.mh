@@ -329,5 +329,11 @@ WINOLEAPI               CoDisconnectContext( DWORD );
 /* Functions in DFLAYOUT.DLL */
 WINOLEAPI   StgOpenLayoutDocfile( OLECHAR const *, DWORD, DWORD, IStorage ** );
 
+/* Functions implemented as macros */
+#define LISet32( x, p ) \
+    ((x).HighPart = ((LONG)(p)) < 0 ? -1 : 0, (x).LowPart = (p))
+#define ULISet32( x, p ) \
+    ((x).HighPart = 0, (x).LowPart = (p))
+
 #endif /* _OBJBASE_H_ */
 
