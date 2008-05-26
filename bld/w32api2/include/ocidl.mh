@@ -1093,7 +1093,7 @@ DECLARE_INTERFACE_( IPerPropertyBrowsing, IUnknown ) {
     /* IPerPropertyBrowsing methods */
     STDMETHOD( GetDisplayString )( THIS_ DISPID, BSTR * ) PURE;
     STDMETHOD( MapPropertyToPage )( THIS_ DISPID, CLSID * ) PURE;
-    STDMETHOD( GetPredefinedString )( THIS_ DISPID, CALPOLESTR *, CADWORD * ) PURE;
+    STDMETHOD( GetPredefinedStrings )( THIS_ DISPID, CALPOLESTR *, CADWORD * ) PURE;
     STDMETHOD( GetPredefinedValue )( THIS_ DISPID, DWORD, VARIANT * ) PURE;
 };
 typedef IPerPropertyBrowsing    *LPPERPROPERTYBROWSING;
