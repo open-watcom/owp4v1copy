@@ -809,7 +809,7 @@ DECLARE_INTERFACE_( ITypeLib, IUnknown ) {
     STDMETHOD( GetTypeInfo )( THIS_ UINT, ITypeInfo ** ) PURE;
     STDMETHOD( GetTypeInfoType )( THIS_ UINT, TYPEKIND * ) PURE;
     STDMETHOD( GetTypeInfoOfGuid )( THIS_ REFGUID, ITypeInfo ** ) PURE;
-    STDMETHOD( GetLibAttr )( THIS_ TLIBATTR * ) PURE;
+    STDMETHOD( GetLibAttr )( THIS_ TLIBATTR ** ) PURE;
     STDMETHOD( GetTypeComp )( THIS_ ITypeComp ** ) PURE;
     STDMETHOD( GetDocumentation )( THIS_ INT, BSTR *, BSTR *, DWORD *, BSTR * ) PURE;
     STDMETHOD( IsName )( THIS_ LPOLESTR, ULONG, BOOL * ) PURE;
