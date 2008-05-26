@@ -2897,16 +2897,16 @@ typedef struct _SCHANNEL_ALG {
 } SCHANNEL_ALG;
 typedef SCHANNEL_ALG    *PSCHANNEL_ALG;
 
-/* Provider enumeration arguments */
-typedef struct _PROV_ENUMARGS {
+/* Provider algorithm enumeration arguments */
+typedef struct _PROV_ENUMALGS {
     ALG_ID  aiAlgid;
     DWORD   dwBitLen;
     DWORD   dwNameLen;
     CHAR    szName[20];
-} PROV_ENUMARGS;
+} PROV_ENUMALGS;
 
-/* Provider enumeration arguments (extended version) */
-typedef struct _PROV_ENUMARGS_EX {
+/* Provider algorithm enumeration arguments (extended version) */
+typedef struct _PROV_ENUMALGS_EX {
     ALG_ID  aiAlgid;
     DWORD   dwDefaultLen;
     DWORD   dwMinLen;
@@ -2916,7 +2916,7 @@ typedef struct _PROV_ENUMARGS_EX {
     CHAR    szName[20];
     DWORD   dwLongNameLen;
     CHAR    szLongName[20];
-} PROV_ENUMARGS_EX;
+} PROV_ENUMALGS_EX;
 
 /* Public key structure */
 typedef struct _PUBLICKEYSTRUC {
