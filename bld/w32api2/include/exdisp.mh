@@ -290,8 +290,8 @@ DECLARE_INTERFACE_( IWebBrowser2, IWebBrowserApp ) {
     STDMETHOD( put_RegisterAsDropTarget )( THIS_ VARIANT_BOOL ) PURE;
     STDMETHOD( get_TheaterMode )( THIS_ VARIANT_BOOL * ) PURE;
     STDMETHOD( put_TheaterMode )( THIS_ VARIANT_BOOL ) PURE;
-    STDMETHOD( get_AddressMode )( THIS_ VARIANT_BOOL * ) PURE;
-    STDMETHOD( put_AddressMode )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( get_AddressBar )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( put_AddressBar )( THIS_ VARIANT_BOOL ) PURE;
     STDMETHOD( get_Resizable )( THIS_ VARIANT_BOOL * ) PURE;
     STDMETHOD( put_Resizable )( THIS_ VARIANT_BOOL ) PURE;
 };
