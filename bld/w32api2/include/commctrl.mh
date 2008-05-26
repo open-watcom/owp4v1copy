@@ -2036,6 +2036,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
     #define LVM_SETITEM                     LVM_SETITEMW
     #define LVM_INSERTITEM                  LVM_INSERTITEMW
     #define LVM_FINDITEM                    LVM_FINDITEMW
+    #define LVM_GETSTRINGWIDTH              LVM_GETSTRINGWIDTHW
     #define LVM_EDITLABEL                   LVM_EDITLABELW
     #define LVM_GETCOLUMN                   LVM_GETCOLUMNW
     #define LVM_SETCOLUMN                   LVM_SETCOLUMNW
@@ -2052,6 +2053,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
     #define LVM_SETITEM                     LVM_SETITEMA
     #define LVM_INSERTITEM                  LVM_INSERTITEMA
     #define LVM_FINDITEM                    LVM_FINDITEMA
+    #define LVM_GETSTRINGWIDTH              LVM_GETSTRINGWIDTHA
     #define LVM_EDITLABEL                   LVM_EDITLABELA
     #define LVM_GETCOLUMN                   LVM_GETCOLUMNA
     #define LVM_SETCOLUMN                   LVM_SETCOLUMNA
