@@ -443,7 +443,7 @@ typedef struct tagOLEUIPASTEENTRYA {
     LPCSTR      lpstrFormatName;
     LPCSTR      lpstrResultText;
     DWORD       dwFlags;
-    DWORD       dwStratchSpace;
+    DWORD       dwScratchSpace;
 } OLEUIPASTEENTRYA;
 typedef OLEUIPASTEENTRYA    *POLEUIPASTEENTRYA;
 typedef OLEUIPASTEENTRYA    *LPOLEUIPASTEENTRYA;
@@ -452,7 +452,7 @@ typedef struct tagOLEUIPASTEENTRYW {
     LPCWSTR     lpstrFormatName;
     LPCWSTR     lpstrResultText;
     DWORD       dwFlags;
-    DWORD       dwStratchSpace;
+    DWORD       dwScratchSpace;
 } OLEUIPASTEENTRYW;
 typedef OLEUIPASTEENTRYW    *POLEUIPASTEENTRYW;
 typedef OLEUIPASTEENTRYW    *LPOLEUIPASTEENTRYW;
