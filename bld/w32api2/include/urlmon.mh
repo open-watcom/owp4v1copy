@@ -1038,6 +1038,18 @@ EXTERN_C const IID  IID_IDataFilter;
 EXTERN_C const IID  IID_IEncodingFilterFactory;
 EXTERN_C const IID  IID_IWrappedProtocol;
 
+/* Service identifiers */
+#define SID_IBindHost                       IID_IBindHost
+#define SID_SBindHost                       IID_IBindHost
+#define SID_SInternetSecurityManager        IID_IInternetSecurityManager
+#if (_WIN32_IE >= 0x0602)
+    #define SID_SInternetSecurityManagerEx  IID_IInternetSecurityManagerEx
+#endif
+#if (_WIN32_IE >= 0x0700)
+    #define SID_SInternetSecurityManagerEx2 IID_IInternetSecurityManagerEx2
+#endif
+#define SID_SInternetHostSecurityManager    IID_IInternetHostSecurityManager
+
 /* IPersistMoniker interface */
 #undef INTERFACE
 #define INTERFACE   IPersistMoniker
