@@ -934,7 +934,7 @@ DECLARE_INTERFACE_( IStorage, IUnknown ) {
     STDMETHOD( Commit )( THIS_ DWORD ) PURE;
     STDMETHOD( Revert )( THIS ) PURE;
     STDMETHOD( EnumElements )( THIS_ DWORD, void *, DWORD, IEnumSTATSTG ** ) PURE;
-    STDMETHOD( DestroyElements )( THIS_ const OLECHAR * ) PURE;
+    STDMETHOD( DestroyElement )( THIS_ const OLECHAR * ) PURE;
     STDMETHOD( RenameElement )( THIS_ const OLECHAR *, const OLECHAR * ) PURE;
     STDMETHOD( SetElementTimes )( THIS_ const OLECHAR *, FILETIME const *, FILETIME const *, FILETIME const * ) PURE;
     STDMETHOD( SetClass )( THIS_ REFCLSID ) PURE;
