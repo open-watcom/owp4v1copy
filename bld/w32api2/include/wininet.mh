@@ -186,6 +186,8 @@ typedef LONGLONG        GROUPID;
 /* Flags for InternetCrackUrl(), etc. */
 #define ICU_ESCAPE              0x80000000L
 #define ICU_USERNAME            0x40000000L
+#define ICU_NO_ENCODE           0x20000000L
+#define ICU_DECODE              0x10000000L
 #define ICU_NO_META             0x08000000L
 #define ICU_ENCODE_SPACES_ONLY  0x04000000L
 #define ICU_BROWSER_MODE        0x02000000L
@@ -464,6 +466,11 @@ typedef LONGLONG        GROUPID;
     (BOOL)(((x) & GOPHER_TYPE_GOPHER_PLUS) ? TRUE : FALSE)
 #define IS_GOPHER_TYPE_UNKNOWN( x ) \
     (BOOL)(((x) & GOPHER_TYPE_UNKNOWN) ? FALSE : TRUE)
+
+/* Minimum and maximum Gopher string lengths */
+#define MAX_GOPHER_CATEGORY_NAME    128
+#define MAX_GOPHER_ATTRIBUTE_NAME   128
+#define MIN_GOPHER_ATTRIBUTE_LENGTH 256
 
 /* Gopher categories */
 #define GOPHER_INFO_CATEGORY        TEXT( "+INFO" )
