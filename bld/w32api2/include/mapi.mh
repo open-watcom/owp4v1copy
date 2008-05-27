@@ -57,8 +57,8 @@ typedef ULONG_PTR   *LPLHANDLE;
 #define MAPI_AB_NOMODIFY    0x00000400L
 
 /* MAPI error codes */
-#ifndef STATUS_SUCCESS
-    #define STATUS_SUCCESS              0L
+#ifndef SUCCESS_SUCCESS
+    #define SUCCESS_SUCCESS             0L
 #endif
 #define MAPI_USER_ABORT                 1L
 #define MAPI_E_USER_ABORT               MAPI_USER_ABORT
