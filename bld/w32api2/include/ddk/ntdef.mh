@@ -306,6 +306,10 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define MAXUSHORT   0xFFFF
 #define MAXULONG    0xFFFFFFFF
 
+/* Macro to find the containing record */
+#define CONTAINING_RECORD( p1, p2, p3 ) \
+    ((p2 *)((PCHAR)(p1) - (ULONG_PTR)(&((p2 *)0)->p3)))
+
 /* Suite types */
 #define VER_SUITE_SMALLBUSINESS             0x00000001
 #define VER_SUITE_ENTERPRISE                0x00000002
@@ -757,6 +761,11 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define LANG_CHINESE_SIMPLIFIED     0x0004
 #define LANG_CHINESE_TRADITIONAL    0x7C04
 #define LANG_SERBIAN_NEUTRAL        0x7C1A
+
+/* Unreferenced parameter macros */
+#define UNREFERENCED_PARAMETER( x )             (x)
+#define DBG_UNREFERENCED_PARAMETER( x )         (x)
+#define DBG_UNREFERENCED_LOCAL_VARIABLE( x )    (x)
 
 /* Minimum and maximum macros */
 #ifndef min
