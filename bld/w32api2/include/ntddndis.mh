@@ -928,9 +928,9 @@ typedef ULONG                       *PNDIS_PORT_NUMBER;
     #define NDIS_PORT_STATE_REVISION_1  1
 #endif
 
-/* NDIS port authorization parameters revision number */
+/* NDIS port authentication parameters revision number */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
-    #define NDIS_PORT_AUTHORIZATION_PARAMETERS_REVISION_1   1
+    #define NDIS_PORT_AUTHENTICATION_PARAMETERS_REVISION_1  1
 #endif
 
 /* NDIS port characteristic flags */
@@ -2276,16 +2276,16 @@ typedef struct _NDIS_PORT_STATE {
 typedef NDIS_PORT_STATE *PNDIS_PORT_STATE;
 #endif
 
-/* NDIS port authorization parameters */
+/* NDIS port authentication parameters */
 #if (NTDDI_VERSION >= 0x06000000) || NDIS_SUPPORT_NDIS6
-typedef struct _NDIS_PORT_AUTHORIZATION_PARAMETERS {
+typedef struct _NDIS_PORT_AUTHENTICATION_PARAMETERS {
     NDIS_OBJECT_HEADER              Header;
     NDIS_PORT_CONTROLL_STATE        SendControlState;
     NDIS_PORT_CONTROLL_STATE        RcvControlState;
     NDIS_PORT_AUTHORIZATION_STATE   SendAuthorizationState;
     NDIS_PORT_AUTHORIZATION_STATE   RcvAuthorizationState;
-} NDIS_PORT_AUTHORIZATION_PARAMETERS;
-typedef NDIS_PORT_AUTHORIZATION_PARAMETERS  *PNDIS_PORT_AUTHORIZATION_PARAMETERS;
+} NDIS_PORT_AUTHENTICATION_PARAMETERS;
+typedef NDIS_PORT_AUTHENTICATION_PARAMETERS *PNDIS_PORT_AUTHENTICATION_PARAMETERS;
 #endif
 
 /* NDIS port characteristics */
