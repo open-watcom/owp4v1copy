@@ -4467,7 +4467,7 @@ EXPORT NDIS_STATUS NTAPI    NdisRegisterDeviceEx( NDIS_HANDLE, PNDIS_DEVICE_OBJE
 #define NdisQueryDepthSList                 ExQueryDepthSList
 #define NdisInitializeListHead              InitializeListHead
 #define NdisStallExecution                  KeStallExecutionProcessor
-#define NdisEqualString                     RtlEqualString
+#define NdisEqualString                     RtlEqualUnicodeString
 #define NdisEqualUnicodeString              RtlEqualUnicodeString
 #define NdisInitAnsiString                  RtlInitString
 #define NdisInitUnicodeString               RtlInitUnicodeString
