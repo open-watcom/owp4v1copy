@@ -120,6 +120,9 @@ typedef UCHAR                           NDIS_DMA_SIZE;
 typedef NDIS_HANDLE                     PNDIS_PACKET_POOL;
 typedef UINT                            IEEE8021PPRIORITY;
 #endif
+#if !NDIS_LEGACY_DRIVER
+typedef struct _NDIS_CALL_MANAGER_CHARACTERISTICS   *PNDIS_CALL_MANAGER_CHARACTERISTICS;
+#endif
 #if NDIS_SUPPORT_NDIS6
 typedef USHORT                          NET_FRAME_TYPE;
 typedef USHORT                          *PNET_FRAME_TYPE;
@@ -2317,7 +2320,7 @@ typedef VOID (NTAPI *CO_SEND_NET_BUFFER_LISTS_COMPLETE_HANDLER)( NDIS_HANDLE, PN
 typedef VOID (NTAPI *CO_STATUS_HANDLER_EX)( NDIS_HANDLE, NDIS_HANDLE, PNDIS_STATUS_INDICATION );
 typedef NDIS_STATUS (NTAPI *CL_NOTIFY_CLOSE_AF_HANDLER)( NDIS_HANDLE );
 typedef VOID (NTAPI *CL_OPEN_AF_COMPLETE_HANDLER_EX)( NDIS_HANDLE, NDIS_HANDLE, NDIS_STATUS );
-typedef VOID (NTAPI *CL_NOTIFY_CLOSE_AF_COMPLETE_HANDLER)( NDIS_HANDLE, NDIS_STATUS );
+typedef VOID (NTAPI *CM_NOTIFY_CLOSE_AF_COMPLETE_HANDLER)( NDIS_HANDLE, NDIS_STATUS );
 #endif
 
 /* TDI callbacks */
@@ -2986,7 +2989,7 @@ typedef BOOLEAN (NTAPI *MINIPORT_CHECK_FOR_HANG_HANDLER)( NDIS_HANDLE );
 typedef NDIS_STATUS (NTAPI *MINIPORT_RESET_HANDLER)( NDIS_HANDLE, PBOOLEAN );
 typedef VOID (NTAPI *MINIPORT_CANCEL_OID_REQUEST_HANDLER)( NDIS_HANDLE, PVOID );
 typedef VOID (NTAPI *MINIPORT_SEND_NET_BUFFER_LISTS_HANDLER)( NDIS_HANDLE, PNET_BUFFER_LIST, NDIS_PORT_NUMBER, ULONG );
-typedef VOID (NTAPI *MINIPORT_RETURN_NET_BUFFER_LIST_HANDLER)( NDIS_HANDLE, PNET_BUFFER_LIST, ULONG );
+typedef VOID (NTAPI *MINIPORT_RETURN_NET_BUFFER_LISTS_HANDLER)( NDIS_HANDLE, PNET_BUFFER_LIST, ULONG );
 #endif
 
 /* NDIS miniport driver characteristics */
@@ -3368,7 +3371,7 @@ typedef struct _NDIS_CO_CALL_MANAGER_OPTIONAL_HANDLERS {
     CM_CLOSE_CALL_HANDLER               CmCloseCallHandler;
     CM_INCOMING_CALL_COMPLETE_HANDLER   CmIncomingCallCompleteHandler;
     CM_ADD_PARTY_HANDLER                CmAddPartyHandler;
-    DM_DROP_PARTY_HANDLER               CmDropPartyHandler;
+    CM_DROP_PARTY_HANDLER               CmDropPartyHandler;
     CM_ACTIVATE_VC_COMPLETE_HANDLER     CmActivateVcCompleteHandler;
     CM_DEACTIVATE_VC_COMPLETE_HANDLER   CmDeactivateVcCompleteHandler;
     CM_MODIFY_CALL_QOS_HANDLER          CmModifyCallQoSHandler;
@@ -3543,7 +3546,7 @@ typedef struct _NET_IF_INFORMATION {
     USHORT                  FriendlyNameLength;
     USHORT                  FriendlyNameOffset;
     GUID                    InterfaceGuid;
-    NET_IF_NETWOR_GUID      NetworkGuid;
+    NET_IF_NETWORK_GUID     NetworkGuid;
     ULONG                   SupportedStatistics;
     NDIS_MEDIUM             MediaType;
     NDIS_PHYSICAL_MEDIUM    PhysicalMediumType;
@@ -4253,7 +4256,7 @@ EXPORT NDIS_STATUS NTAPI    NdisRegisterDeviceEx( NDIS_HANDLE, PNDIS_DEVICE_OBJE
         }
     #define NdisGetMdlPhysicalArraySize( x, p ) \
         (*(p) = NDIS_MDL_TO_SPAN_PAGES( x ))
-    #define NdisGetNextMdl( x, p )
+    #define NdisGetNextMdl( x, p ) \
         { *(p) = (x)->Next; }
     #define NdisTestNblFlag( x, p )             (((x)->NblFlags & (p)) != 0)
     #define NdisTestNblFlags( x, p )            (((x)->NblFlags & (p)) == (p))
@@ -4400,7 +4403,7 @@ EXPORT NDIS_STATUS NTAPI    NdisRegisterDeviceEx( NDIS_HANDLE, PNDIS_DEVICE_OBJE
         }
     #define NDIS_NBL_REMOVE_MEDIA_SPECIFIC_INFO( x, p ) \
         { \
-            PNDIS_NBL_MEDIA_SPECIFIC_INFORMATION    *_v;
+            PNDIS_NBL_MEDIA_SPECIFIC_INFORMATION    *_v; \
             _v = (PNDIS_NBL_MEDIA_SPECIFIC_INFORMATION *)&(NET_BUFFER_LIST_INFO( x, \
                 MediaSpecificInformation )); \
             for( ; *_v != NULL; _v = &(*_v)->NextEntry ) { \
