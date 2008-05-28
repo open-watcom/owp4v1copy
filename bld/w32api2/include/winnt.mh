@@ -18,6 +18,7 @@
 #include <string.h>
 #include <basetsd.h>
 #include <guiddef.h>
+#include <specstrings.h>
 
 :include cpluspro.sp
 

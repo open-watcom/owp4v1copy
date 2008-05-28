@@ -198,6 +198,7 @@ base_headers =       &
         rpcnterr.h   &
         rpcproxy.h   &
         rtutils.h    &
+        sal.h        &
         schannel.h   &
         schedule.h   &
         schemdef.h   &
@@ -218,6 +219,7 @@ base_headers =       &
         shtypes.h    &
         snmp.h       &
         spapidef.h   &
+        specstr.h    &
         sql.h        &
         sqlext.h     &
         sqltypes.h   &

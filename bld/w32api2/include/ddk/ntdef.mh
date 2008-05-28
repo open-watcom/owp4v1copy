@@ -13,6 +13,7 @@
 #include <basetsd.h>
 #include <guiddef.h>
 #include <sdkddkver.h>
+#include <specstrings.h>
 
 :include cpluspro.sp
 

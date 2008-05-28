@@ -8,6 +8,8 @@
 #define _WINDEF_
 
 :include readonly.sp
+#include <_w32ials.h>
+
 :include cpluspro.sp
 
 /* Define default Windows version number. */
