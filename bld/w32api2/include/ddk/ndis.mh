@@ -4293,10 +4293,10 @@ EXPORT NDIS_STATUS NTAPI    NdisRegisterDeviceEx( NDIS_HANDLE, PNDIS_DEVICE_OBJE
             } \
         }
     #define NDIS_SET_PACKET_HEADER_SIZE( x, p ) \
-        ((PNDIS_PACKET_OOB_SIZE)((PUCHAR)(x) + \
+        ((PNDIS_PACKET_OOB_DATA)((PUCHAR)(x) + \
         (x)->Private.NdisPacketOobOffset))->HeaderSize = (p)
     #define NDIS_SET_PACKET_STATUS( x, p ) \
-        ((PNDIS_PACKET_OOB_SIZE)((PUCHAR)(x) + \
+        ((PNDIS_PACKET_OOB_DATA)((PUCHAR)(x) + \
         (x)->Private.NdisPacketOobOffset))->Status = (p)
     #define NDIS_SET_PACKET_TIME_TO_SEND( x, p ) \
         ((PNDIS_PACKET_OOB_DATA)((PUCHAR)(x) + \
