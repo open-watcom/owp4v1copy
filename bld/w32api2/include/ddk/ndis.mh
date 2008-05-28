@@ -445,7 +445,7 @@ typedef KMUTEX                          *PNDIS_MUTEX;
     #define NDIS_INIT_MUTEX( x )                KeInitializeMutex( x, 0xFFFF )
     #define NDIS_RELEASE_MUTEX( x )             KeReleaseMutex( x, FALSE )
     #define NDIS_WAIT_FOR_MUTEX( x ) \
-        KeWaitForSingleObject( x, Exclusive, KernelMode, FALSE, NULL );
+        KeWaitForSingleObject( x, Executive, KernelMode, FALSE, NULL );
 #endif
 
 /* NDIS configuration object revision number */
