@@ -1611,7 +1611,7 @@ typedef NDIS_OID_REQUEST    *PNDIS_OID_REQUEST;
 typedef struct _NDIS_STATUS_INDICATION {
     NDIS_OBJECT_HEADER  Header;
     NDIS_HANDLE         SourceHandle;
-    NDIS_PORT_HANDLE    PortNumber;
+    NDIS_PORT_NUMBER    PortNumber;
     NDIS_STATUS         StatusCode;
     ULONG               Flags;
     NDIS_HANDLE         DestinationHandle;
