@@ -4227,7 +4227,7 @@ EXPORT NDIS_STATUS NTAPI    NdisRegisterDeviceEx( NDIS_HANDLE, PNDIS_DEVICE_OBJE
         #define NdisMEthIndicateReceiveComplete( x ) \
             { (*((PNDIS_MINIPORT_BLOCK)(x))->EthRxCompleteHandler)( \
             ((PNDIS_MINIPORT_BLOCK)(x))->EthDB ); }
-        #define NDisMTrIndicateReceiveComplete( x ) \
+        #define NdisMTrIndicateReceiveComplete( x ) \
             { (*((PNDIS_MINIPORT_BLOCK)(x))->TrRxCompleteHandler)( \
             ((PNDIS_MINIPORT_BLOCK)(x))->TrDB ); }
     #endif
