@@ -691,6 +691,11 @@ typedef KMUTEX                          *PNDIS_MUTEX;
     #define NDIS_OFFLOAD_ENCAPSULATION_REVISION_1   1
 #endif
 
+/* Protocol reserved size in packet */
+#if NDIS_LEGACY_DRIVER
+    #define PROTOCOL_RESERVED_SIZE_IN_PACKET    (4 * sizeof( PVOID ))
+#endif
+
 /* NDIS bind parameters revision number */
 #if NDIS_SUPORT_NDIS6 || NDIS60
     #define NDIS_BIND_PARAMETERS_REVISION_1 1
