@@ -11,6 +11,7 @@
 #include <ntddk.h>
 #include <ntstatus.h>
 #include <netevent.h>
+#include <xfilter.h>
 #include <qos.h>
 
 :include cpluspro.sp

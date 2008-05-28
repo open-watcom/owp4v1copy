@@ -310,7 +310,8 @@ ddk_headers =        &
         ntnls.h      &
         ntstatus.h   &
         wdm.h        &
-        winddi.h
+        winddi.h     &
+        xfilter.h
 
 directx_headers =    &
         d3d.h        &
