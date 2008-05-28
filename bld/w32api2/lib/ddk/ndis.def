@@ -154,13 +154,14 @@ NdisGetSystemUpTimeEx@4
 NdisGetVersion@0
 NdisIMAssociateMiniport@8
 NdisIMCancelInitializeDeviceInstance@8
+NdisIMCopySendCompletePerPacketInfo@8
 NdisIMCopySendPerPacketInfo@8
 NdisIMDeInitializeDeviceInstance@4
 NdisIMDeregisterLayeredMiniport@4
 NdisIMGetBindingContext@4
 NdisIMGetCurrentPacketStack@8
 NdisIMGetDeviceContext@4
-NdisIMInitializeDeviceInstance@8
+NdisIMInitializeDeviceInstanceEx@12
 NdisIMNotifyPnPEvent@8
 NdisIMRegisterLayeredMiniport@16
 NdisIfAddIfStackEntry@8

@@ -3603,7 +3603,7 @@ EXPORT VOID NTAPI           NdisIMAssociateMiniport( NDIS_HANDLE, NDIS_HANDLE );
 EXPORT NDIS_STATUS NTAPI    NdisIMCancelInitializeDeviceInstance( NDIS_HANDLE, PNDIS_STRING );
 EXPORT NDIS_STATUS NTAPI    NdisIMDeInitializeDeviceInstance( NDIS_HANDLE );
 EXPORT NDIS_HANDLE NTAPI    NdisIMGetBindingContext( NDIS_HANDLE );
-EXPORT NDIS_STATUS NTAPI    NdisIMInitializeDeviceInstance( NDIS_HANDLE, PNDIS_STRING, NDIS_HANDLE );
+EXPORT NDIS_STATUS NTAPI    NdisIMInitializeDeviceInstanceEx( NDIS_HANDLE, PNDIS_STRING, NDIS_HANDLE );
 EXPORT VOID NTAPI           NdisInitializeEvent( PNDIS_EVENT );
 EXPORT VOID NTAPI           NdisInitializeReadWriteLock( PNDIS_RW_LOCK );
 EXPORT VOID NTAPI           NdisInitializeString( PNDIS_STRING, PUCHAR );
@@ -3691,6 +3691,7 @@ EXPORT VOID NTAPI           NdisUnchainBufferAtBack( PNDIS_PACKET, PNDIS_BUFFER 
 EXPORT VOID NTAPI           NdisUnchainBufferAtFront( PNDIS_PACKET, PNDIS_BUFFER * );
 #endif
 #if NDIS_LEGACY_MINIPORT
+EXPORT VOID NTAPI           NdisIMCopySendCompletePerPacketInfo( PNDIS_PACKET, PNDIS_PACKET );
 EXPORT VOID NTAPI           NdisIMCopySendPerPacketInfo( PNDIS_PACKET, PNDIS_PACKET );
 EXPORT VOID NTAPI           NdisIMDeregisterLayeredMiniport( NDIS_HANDLE );
 EXPORT NDIS_HANDLE NTAPI    NdisIMGetDeviceContext( NDIS_HANDLE );
