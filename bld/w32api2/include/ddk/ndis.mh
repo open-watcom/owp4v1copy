@@ -1243,7 +1243,7 @@ typedef struct _NDIS_PACKET {
     UCHAR               ProtocolReserved[1];
 } NDIS_PACKET;
 typedef NDIS_PACKET *PNDIS_PACKET;
-typedef NDIS_PACKET *PPNDIS_PACKET;
+typedef NDIS_PACKET **PPNDIS_PACKET;
 #endif
 
 /* NDIS per packet information */
