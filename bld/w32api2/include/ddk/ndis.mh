@@ -1803,7 +1803,7 @@ typedef struct _NET_BUFFER {
     PVOID                   MiniportReserved[4];
     NDIS_PHYSICAL_ADDRESS   NdisReserved1;
 } NET_BUFFER;
-typedef NET_BUFFER  *PNDIS_BUFFER;
+typedef NET_BUFFER  *PNET_BUFFER;
 #endif
 
 /* Network buffer list context */
