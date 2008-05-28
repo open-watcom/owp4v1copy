@@ -3597,6 +3597,16 @@ NTHALAPI VOID NTAPI     IoFreeMapRegisters( PADAPTER_OBJECT, PVOID, ULONG );
 NTHALAPI PHYSICAL_ADDRESS NTAPI IoMapTransfer( PADAPTER_OBJECT, PMDL, PVOID, PVOID, PULONG, BOOLEAN );
 #endif
 
+/* Functions implemented with inline assembly code */
+PKPCR   KeGetCurrentKPCR( void );
+
+/* Inline assembly implementation of functions defined above */
+#ifdef _X86_
+    #pragma aux KeGetCurrentKPCR = \
+        "mov eax, fs:[0x18]" \
+        value [eax];
+#endif
+
 /* Functions implemented as macros */
 #define ExFreeToZone( x, p ) \
     (((PSINGLE_LIST_ENTRY)(p))->Next = (x)->FreeList.Next, \
@@ -3616,6 +3626,7 @@ NTHALAPI PHYSICAL_ADDRESS NTAPI IoMapTransfer( PADAPTER_OBJECT, PMDL, PVOID, PVO
 #define WheaIsPreviousError( x ) \
     ((x)->Header.Flags & WHEA_ERROR_RECORD_FLAGS_PREVIOUSERROR)
 #ifdef _X86_
+    #define KeGetCurrentProcessorNumber()   ((ULONG)KeGetCurrentKPCR()->Number)
     #define HalGetDmaAlignmentRequirement() 1L
 #endif
 
