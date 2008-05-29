@@ -255,7 +255,7 @@ typedef HWAVEOUT    *LPHWAVEOUT;
 #define WIM_DATA    MM_WIM_DATA
 
 /* Wave mapper device identifier */
-#define WAVEMAPPER  ((UINT)-1)
+#define WAVE_MAPPER  ((UINT)-1)
 
 /* waveOutOpen() and waveInOpen() flags */
 #define WAVE_FORMAT_QUERY               0x0001
