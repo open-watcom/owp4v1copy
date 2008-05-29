@@ -977,10 +977,10 @@ typedef HWAVEOUT    *LPHWAVEOUT;
     ((DWORD)((BYTE)(p1) | ((WORD)(p2) << 8) | ((DWORD)(BYTE)(p3) << 16)))
 
 /* MM_MCINOTIFY flags */
-#define MM_NOTIFY_SUCCESSFUL    0x0001
-#define MM_NOTIFY_SUPERSEDED    0x0002
-#define MM_NOTIFY_ABORTED       0x0004
-#define MM_NOTIFY_FAILURE       0x0008
+#define MCI_NOTIFY_SUCCESSFUL   0x0001
+#define MCI_NOTIFY_SUPERSEDED   0x0002
+#define MCI_NOTIFY_ABORTED      0x0004
+#define MCI_NOTIFY_FAILURE      0x0008
 
 /* MCI command message flags */
 #define MCI_NOTIFY      0x00000001L
