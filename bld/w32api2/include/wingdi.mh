@@ -2867,10 +2867,10 @@ typedef struct _OUTLINETEXTMETRICA {
     int         otmsStrikeoutPosition;
     int         otmsUnderscoreSize;
     int         otmsUnderscorePosition;
-    PSTR        omtpFamilyName;
-    PSTR        omtpFaceName;
-    PSTR        omtpStyleName;
-    PSTR        omtpFullName;
+    PSTR        otmpFamilyName;
+    PSTR        otmpFaceName;
+    PSTR        otmpStyleName;
+    PSTR        otmpFullName;
 } OUTLINETEXTMETRICA;
 typedef OUTLINETEXTMETRICA      *POUTLINETEXTMETRICA;
 typedef OUTLINETEXTMETRICA      *NPOUTLINETEXTMETRICA;
