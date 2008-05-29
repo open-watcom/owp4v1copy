@@ -1,0 +1,20 @@
+/*
+ *  drvspecs.h / driverspecs.h  Driver annotation macros
+ *
+:include crwatcnt.sp
+ */
+
+:include readonly.sp
+#include <specstrings.h>
+
+:include cpluspro.sp
+
+#define __drv_declspec( x )
+#define __internal_kernel_driver
+#define __kernel_code
+#define __kernel_driver
+#define __user_driver
+#define __user_code
+
+:include cplusepi.sp
+
