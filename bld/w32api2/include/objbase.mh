@@ -55,6 +55,9 @@ typedef DWORD   STGFMT;
         (CLSCTX_INPROC_SERVER | CLSCTX_LOCAL_SERVER)
 #endif
 
+/* Maximum storage name length */
+#define CWCSTORAGENAME  32
+
 /* Storage modes */
 #define STGM_DIRECT             0x00000000L
 #define STGM_TRANSACTED         0x00010000L
