@@ -2125,7 +2125,7 @@ typedef BITMAPINFO  *LPBITMAPINFO;
 /* Bitmap core information */
 typedef struct tagBITMAPCOREINFO {
     BITMAPCOREHEADER    bmciHeader;
-    RGBQUAD             bmciColors[1];
+    RGBTRIPLE           bmciColors[1];
 } BITMAPCOREINFO;
 typedef BITMAPCOREINFO  *PBITMAPCOREINFO;
 typedef BITMAPCOREINFO  *LPBITMAPCOREINFO;
