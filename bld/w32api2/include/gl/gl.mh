@@ -412,7 +412,7 @@ typedef void            GLvoid;
 #define GL_LIGHT7   0x4007
 
 /* OpenGL light parameters */
-#define GL_ABMIENT                  0x1200
+#define GL_AMBIENT                  0x1200
 #define GL_DIFFUSE                  0x1201
 #define GL_SPECULAR                 0x1202
 #define GL_POSITION                 0x1203
