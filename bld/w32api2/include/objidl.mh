@@ -465,6 +465,7 @@ EXTERN_C const IID  IID_IPersistFile;
 EXTERN_C const IID  IID_IPersistStorage;
 EXTERN_C const IID  IID_ILockBytes;
 EXTERN_C const IID  IID_IEnumFORMATETC;
+EXTERN_C const IID  IID_IEnumSTATDATA;
 EXTERN_C const IID  IID_IRootStorage;
 EXTERN_C const IID  IID_IAdviseSink;
 EXTERN_C const IID  IID_IAdviseSink2;
