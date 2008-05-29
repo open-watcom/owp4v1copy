@@ -14,6 +14,7 @@
 #include <ntstatus.h>
 #include <bugcodes.h>
 #include <ntiologc.h>
+#include <driverspecs.h>
 #include <string.h>
 #include <ktmtypes.h>
 #ifdef RUN_WPP

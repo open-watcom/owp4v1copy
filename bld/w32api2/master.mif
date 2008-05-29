@@ -302,6 +302,7 @@ base_headers =       &
 ddk_headers =        &
         bugcodes.h   &
         ddrawint.h   &
+        drvspecs.h   &
         mce.h        &
         ndis.h       &
         netevent.h   &
