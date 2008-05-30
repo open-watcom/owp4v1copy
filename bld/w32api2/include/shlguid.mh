@@ -55,7 +55,7 @@ EXTERN_C const IID      IID_IPersistFolder;
 EXTERN_C const IID      IID_IExtractIconA;
 EXTERN_C const IID      IID_IShellDetails;
 EXTERN_C const IID      IID_IShellLinkA;
-EXTERN_C const IID      IID_ICopyHook;
+EXTERN_C const IID      IID_ICopyHookA;
 EXTERN_C const IID      IID_IFileViewerA;
 EXTERN_C const IID      IID_ICommDlgBrowser;
 EXTERN_C const IID      IID_IEnumIDList;
