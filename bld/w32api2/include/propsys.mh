@@ -19,8 +19,10 @@
 #include <oleidl.h>
 #include <ocidl.h>
 #include <shtypes.h>
-#include <structuredquery.h>
-#include <propkeydef.h>
+#ifndef RC_INVOKED
+    #include <structuredquery.h>
+    #include <propkeydef.h>
+#endif
 
 :include cpluspro.sp
 

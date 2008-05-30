@@ -8,7 +8,9 @@
 #include <isguids.h>
 #include <exdisp.h>
 #include <shldisp.h>
-#include <knownfolders.h>
+#ifndef RC_INVOKED
+    #include <knownfolders.h>
+#endif
 
 :include cpluspro.sp
 
