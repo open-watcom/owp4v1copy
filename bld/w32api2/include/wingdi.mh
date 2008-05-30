@@ -573,7 +573,7 @@ typedef USHORT  COLOR16;
 #define CLIP_CHARACTER_PRECIS   0x01
 #define CLIP_STROKE_PRECIS      0x02
 #define CLIP_MASK               0x0F
-#define CLIP_LH_ANGLE           0x10
+#define CLIP_LH_ANGLES          0x10
 #define CLIP_TT_ALWAYS          0x20
 #if (_WIN32_WINNT >= 0x0600)
     #define CLIP_DFA_DISABLE    0x40
