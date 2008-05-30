@@ -260,6 +260,10 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 /* Macro to calculate the size of an array */
 #define ARRAYSIZE( x )  (sizeof( x ) / sizeof( (x)[0] ))
 
+/* Macro to find the containing record */
+#define CONTAINING_RECORD( p1, p2, p3 ) \
+    ((p2 *)((PCHAR)(p1) - (ULONG_PTR)(&((p2 *)0)->p3)))
+
 /* Suite types */
 #define VER_SUITE_SMALLBUSINESS             0x00000001
 #define VER_SUITE_ENTERPRISE                0x00000002
