@@ -359,6 +359,7 @@ base_libs =          &
         largeint.lib &
         lz32.lib     &
         mapi32.lib   &
+        mfuuid.lib   &
         mgmtapi.lib  &
         mpr.lib      &
         mprapi.lib   &
@@ -481,6 +482,11 @@ winsock2.h: winsock.mh
 largeint.lib: largeint.obj
     %create $^&.lbc
     @%append $^&.lbc +largeint.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+mfuuid.lib: mfuuid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +mfuuid.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 strmiids.lib: strmiids.obj
