@@ -157,7 +157,7 @@ typedef struct tagGOFFSET {
 
 /* Script logical attribute */
 typedef struct tag_SCRIPT_LOGATTR {
-    BYTE    fSortBreak  : 1;
+    BYTE    fSoftBreak  : 1;
     BYTE    fWhiteSpace : 1;
     BYTE    fCharStop   : 1;
     BYTE    fWordStop   : 1;
