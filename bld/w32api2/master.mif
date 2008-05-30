@@ -450,7 +450,7 @@ vfw32_lbcs =         &
 
 extra_lib_flags = -p=16
 
-extra_lib_flags_386 = -io -ii
+extra_lib_flags_386 = -ic -ii
 extra_lib_flags_axp = -ic -ia
 
 additional_cleanup = *.h *.rh
