@@ -1101,7 +1101,7 @@ typedef struct {
     DWORD   cbFormat;
     LPVOID  lpParms;
     DWORD   cbParms;
-    DWORD   dwInterleaveEntry;
+    DWORD   dwInterleaveEvery;
 } AVICOMPRESSOPTIONS;
 typedef AVICOMPRESSOPTIONS  *LPAVICOMPRESSOPTIONS;
 
