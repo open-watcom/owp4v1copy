@@ -1847,7 +1847,7 @@ static DWORD    dwICValue;
 #define capPreviewScale( x, p ) \
     (BOOL)AVICapSM( x, WM_CAP_SET_SCALE, (WPARAM)(BOOL)(p), 0 )
 #define capGetStatus( x, p1, p2 ) \
-    (BOOL)AVICapSM( x, WM_CAP_GET_STATUS, (WPARAM)(p2), (LPARAM)(LPVOID)(LPCAPSTATUS)(p) )
+    (BOOL)AVICapSM( x, WM_CAP_GET_STATUS, (WPARAM)(p2), (LPARAM)(LPVOID)(LPCAPSTATUS)(p1) )
 #define capSetScrollPos( x, p ) \
     (BOOL)AVICapSM( x, WM_CAP_SET_SCROLL, 0, (LPARAM)(LPPOINT)(p) )
 #define capGrabFrame( x ) \
