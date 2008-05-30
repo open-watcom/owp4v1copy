@@ -5,7 +5,7 @@
  */
 
 #ifndef _INC_MMREG
-#define _INC_MMREG
+#define _INC_MMREG 158
 
 :include readonly.sp
 :include cpluspro.sp
