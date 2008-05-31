@@ -314,6 +314,7 @@ ddk_headers =        &
         ntstatus.h   &
         wdm.h        &
         winddi.h     &
+        wmilib.h     &
         xfilter.h
 
 directx_headers =    &
@@ -441,7 +442,8 @@ ddk_libs =           &
         ntdll.lib    &
         ntoskrnl.lib &
         rtlver.lib   &
-        win32k.lib
+        win32k.lib   &
+        wmilib.lib
 
 vfw32_lbcs =         &
         avicap32.lbc &

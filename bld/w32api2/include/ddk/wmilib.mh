@@ -1,0 +1,77 @@
+/*
+ *  wmilib.h    Windows Management Instrumentation (WMI) library functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _WMILIB_
+#define _WMILIB_
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* WMI GUID registration information */
+#if (NTDDI_VERSION >= 0x05000000)
+typedef struct {
+    LPCGUID Guid;
+    ULONG   InstanceCount;
+    ULONG   Flags;
+} WMIGUIDREGINFO;
+typedef WMIGUIDREGINFO  *PWMIGUIDREGINFO;
+#endif
+
+/* WMI enable/disable control values */
+#if (NTDDI_VERSION >= 0x05000000)
+typedef enum {
+    WmiEventControl     = 0,
+    WmiDataBlockControl = 1
+} WMIENABLEDISABLECONTROL;
+#endif
+
+/* WMI query callbacks */
+#if (NTDDI_VERSION >= 0x05000000)
+typedef NTSTATUS (NTAPI *PWMI_QUERY_REGINFO)( PDEVICE_OBJECT, PULONG, PUNICODE_STRING, PUNICODE_STRING *, PUNICODE_STRING, PDEVICE_OBJECT * );
+typedef NTSTATUS (NTAPI *PWMI_QUERY_DATABLOCK)( PDEVICE_OBJECT, PIRP, ULONG, ULONG, ULONG, PULONG, ULONG, PUCHAR );
+typedef NTSTATUS (NTAPI *PWMI_SET_DATABLOCK)( PDEVICE_OBJECT, PIRP, ULONG, ULONG, ULONG, PUCHAR );
+typedef NTSTATUS (NTAPI *PWMI_SET_DATAITEM)( PDEVICE_OBJECT, PIRP, ULONG, ULONG, ULONG, ULONG, PUCHAR );
+typedef NTSTATUS (NTAPI *PWMI_EXECUTE_METHOD)( PDEVICE_OBJECT, PIRP, ULONG, ULONG, ULONG, ULONG, ULONG, PUCHAR );
+typedef NTSTATUS (NTAPI *PWMI_FUNCTION_CONTROL)( PDEVICE_OBJECT, PIRP, ULONG, WMIENABLEDISABLECONTROL, BOOLEAN );
+#endif
+
+/* WMI library context */
+#if (NTDDI_VERSION >= 0x05000000)
+typedef struct _WMILIB_CONTEXT {
+    ULONG                   GuidCount;
+    PWMIGUIDREGINFO         GuidList;
+    PWMI_QUERY_REGINFO      QueryWmiRegInfo;
+    PWMI_QUERY_DATABLOCK    QueryWmiDataBlock;
+    PWMI_SET_DATABLOCK      SetWmiDataBlock;
+    PWMI_SET_DATAITEM       SetWmiDataItem;
+    PWMI_EXECUTE_METHOD     ExecuteWmiMethod;
+    PWMI_FUNCTION_CONTROL   WmiFunctionControl;
+} WMILIB_CONTEXT;
+typedef WMILIB_CONTEXT  *PWMILIB_CONTEXT;
+#endif
+
+/* System control IRP dispositions */
+#if (NTDDI_VERSION >= 0x05000000)
+typedef enum {
+    IrpProcessed    = 0,
+    IrpNotCompleted = 1,
+    IrpNotWmi       = 2,
+    IrpForward      = 3
+} SYSCTL_IRP_DISPOSITION;
+typedef SYSCTL_IRP_DISPOSITION  *PSYSCTL_IRP_DISPOSITION;
+#endif
+
+/* Functions in WMILIB.SYS */
+#if (NTDDI_VERSION >= 0x05000000)
+NTSTATUS NTAPI  WmiCompleteRequest( PDEVICE_OBJECT, PIRP, NTSTATUS, ULONG, CCHAR );
+NTSTATUS NTAPI  WmiFireEvent( PDEVICE_OBJECT, LPGUID, ULONG, ULONG, PVOID );
+NTSTATUS NTAPI  WmiSystemControl( PWMILIB_CONTEXT, PDEVICE_OBJECT, PIRP, PSYSCTL_IRP_DISPOSITION );
+#endif
+
+:include cplusepi.sp
+
+#endif /* _WMILIB_ */
+
