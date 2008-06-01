@@ -313,6 +313,7 @@ ddk_headers =        &
         ntnls.h      &
         ntstatus.h   &
         wdm.h        &
+        wdmguid.h    &
         winddi.h     &
         wmilib.h     &
         xfilter.h
@@ -442,6 +443,7 @@ ddk_libs =           &
         ntdll.lib    &
         ntoskrnl.lib &
         rtlver.lib   &
+        wdmguid.lib  &
         win32k.lib   &
         wmilib.lib
 
@@ -519,6 +521,11 @@ dxguid.lib: dxguid.obj
 rtlver.lib: rtlver.obj
     %create $^&.lbc
     @%append $^&.lbc +rtlver.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+wdmguid.lib: wdmguid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +wdmguid.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
