@@ -63,40 +63,44 @@ static  int     Tab1Count;
 
 static int ReadBuffer( FCB *srcfcb )
 {
+    int         last_char;
+
     if( srcfcb->src_fp == NULL ) {          /* in-memory buffer */
         CloseSrcFile( srcfcb );
         return( 0 );
     }
-    do {
-        srcfcb->src_ptr = &srcfcb->src_buf[0];
-        srcfcb->src_cnt = read( fileno( srcfcb->src_fp ),
-                                srcfcb->src_ptr,
-                                srcfcb->src_bufsize );
-        if( srcfcb->src_cnt == 0 ) {
-            CloseSrcFile( srcfcb );
-            return( 1 );
-        } else if( srcfcb->src_cnt == -1 ) {
-            CErr( ERR_IO_ERR, srcfcb->src_name, strerror( errno ) );
-            CloseSrcFile( srcfcb );
-            return( 1 );
-        }
-    } while( srcfcb->src_cnt < 0 );
     /* ANSI/ISO C says a non-empty source file must be terminated
      * with a newline. If it's not, we insert one, otherwise
      * whatever comes next will be tacked onto that unterminated
      * line, possibly confusing the hell out of the user.
      */
-    // can't use feof() here cause we didn't fread()
-    if( srcfcb->src_cnt < srcfcb->src_bufsize ) {
-        if( srcfcb->src_ptr[ srcfcb->src_cnt-1 ] != '\n' ) {
-            srcfcb->no_eol = 1; // emit warning later so line # is right
-            srcfcb->src_ptr[ srcfcb->src_cnt ] = '\n';  // mark end of buffer
-            srcfcb->src_cnt++;
-        }
+    srcfcb->src_ptr = &srcfcb->src_buf[0];
+    if( srcfcb->src_cnt ) {
+        last_char = srcfcb->src_ptr[ srcfcb->src_cnt - 1 ];
+    } else {
+        last_char = '\n';
     }
-    srcfcb->src_ptr[ srcfcb->src_cnt ] = '\0';  // mark end of buffer
+    srcfcb->src_cnt = read( fileno( srcfcb->src_fp ),
+                            srcfcb->src_ptr,
+                            srcfcb->src_bufsize );
+    if( srcfcb->src_cnt == -1 ) {
+        CErr( ERR_IO_ERR, srcfcb->src_name, strerror( errno ) );
+        CloseSrcFile( srcfcb );
+        return( 1 );
+    } else if( ( srcfcb->src_cnt == 0 ) && ( last_char == '\n' ) ) {
+        CloseSrcFile( srcfcb );
+        return( 1 );
+    } else if( srcfcb->src_cnt != 0 ) {
+        last_char = srcfcb->src_ptr[ srcfcb->src_cnt - 1 ];
+    }
+    if( ( srcfcb->src_cnt < srcfcb->src_bufsize ) && ( last_char != '\n' ) ) {
+        srcfcb->no_eol = 1;         // emit warning later so line # is right
+        srcfcb->src_ptr[ srcfcb->src_cnt ] = '\n';      // mark end of buffer
+        srcfcb->src_cnt++;
+    }
+    srcfcb->src_ptr[ srcfcb->src_cnt ] = '\0';          // mark end of buffer
     ScanCharPtr = srcfcb->src_ptr;                      // point to buffer
-    return( 0 );        // indicate CurrChar does not contain a character
+    return( 0 );            // indicate CurrChar does not contain a character
 }
 
 
