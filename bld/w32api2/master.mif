@@ -306,6 +306,7 @@ ddk_headers =        &
         mce.h        &
         ndis.h       &
         netevent.h   &
+        ntddcdrm.h   &
         ntdddisk.h   &
         ntddk.h      &
         ntddscsi.h   &
