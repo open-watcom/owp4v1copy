@@ -46,7 +46,7 @@ extern  void            R_TrapInit(void);
 extern  void            R_TrapFini(void);
 extern  unsigned        RTSysInit(void);
 extern  void            __InitFThreadData(fthread_data *);
-extern  unsigned        __InitFThreadProcessing(void);
+extern  int             __InitFThreadProcessing(void);
 extern  void            __FiniFThreadProcessing(void);
 
 typedef struct {

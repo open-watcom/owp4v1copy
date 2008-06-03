@@ -63,8 +63,8 @@ HANDLE                  __fio_sem;
 
 #endif
 
-unsigned        __InitFThreadProcessing( void ) {
-//===============================================
+int     __InitFThreadProcessing( void ) {
+//=======================================
 
 // Setup for multiple threads.
 
