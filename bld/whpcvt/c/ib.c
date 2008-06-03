@@ -53,6 +53,7 @@ static int              Line_postfix=LPOSTFIX_NONE;
 
 // this symbol separates the hyper-link label and topic. Other hyper-link
 // related symbols are in whpcvt.h
+#define CHR_HLINK               '\xE0'
 #define CHR_HLINK_BREAK         '\xE8'
 
 // Some characters we use for graphics
@@ -192,11 +193,11 @@ static int map_char_ib(
 
     // The following characters are special to InfoBench, and there is no
     // way to represent them with the current grammar
-    case 'à':
-    case 'è':
-    case '':
+    case CHR_HLINK:
+    case CHR_HLINK_BREAK:
+    case CHR_ESCAPE:
         res = MAP_REMOVE;
-    break;
+        break;
 
     default:
         res = MAP_NONE;
