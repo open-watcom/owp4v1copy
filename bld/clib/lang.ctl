@@ -94,6 +94,7 @@ cdsay .
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> library/linux.386/mf_r/clib3r.lib               <RELROOT>/lib386/linux/clib3r.lib
     <CPCMD> library/linux.386/mf_s/clib3s.lib               <RELROOT>/lib386/linux/clib3s.lib
+    <CPCMD> library/linux.386/mf_rd/clib3r.lib              <RELROOT>/lib386/linux/clib3rd.lib
 
     <CPCMD> startup/library/linux.386/mf_r/commode.obj      <RELROOT>/lib386/linux/commode.obj
 
