@@ -372,7 +372,7 @@ void DumpStmt( TREEPTR tree )
     printf( "\n" );
 }
 
-void DumpProgram()
+void DumpProgram( void )
 {
     TREEPTR     tree;
 
