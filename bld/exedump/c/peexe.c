@@ -234,7 +234,7 @@ static void DumpSection( pe_object *hdr )
             Wdputslc( "Idx/RVA  Num   Idx/RVA  Num   Idx/RVA  Num   Idx/RVA  Num   Idx/RVA  Num\n" );
             for( i = 0; i < hdr->num_linnums; i++ ) {
                 Wread( &linnum, sizeof(coff_line_num) );
-                Puthex( linnum.RVA, 8 );
+                Puthex( linnum.ir.RVA, 8 );
                 Wdputc( ' ' );
                 Putdecbz( linnum.line_number, 5 );
                 if( i % 5 == 4 ) {

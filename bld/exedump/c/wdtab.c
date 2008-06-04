@@ -38,7 +38,7 @@
 #include "wdfunc.h"
 
 
-extern struct int_entry_pnt     *Entry_pnts = NULL;
+struct  int_entry_pnt     *Entry_pnts = NULL;
 
 /*
  * Read a resident/nonresident name and ordinal

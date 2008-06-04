@@ -53,7 +53,7 @@ int SrcGoTo( sfile **sf, char *data, labels *lab )
     }
     i = findLabel( lab, dest );
     if( i >= 0 ) {
-        if( (*sf)->branchcond == 2 || (*sf)->branchcond == (*sf)->prev->branchres ) {
+        if( (*sf)->branchcond == 2 || (*sf)->branchcond == (*sf)->prev->u.branchres ) {
             (*sf) = lab->pos[i];
         }
         return( ERR_NO_ERR );

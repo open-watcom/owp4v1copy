@@ -152,8 +152,8 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
                 sprintf( buff, "%s%s[%s]", frame, sep, temp);
                 break;
             case LTYP_UNNAMED:
-                sprintf( buff, "%s%s%c$%d%s", frame, sep, LabelChar,
-                         l_entry->label.number, post );
+                sprintf( buff, "%s%s%c$%ld%s", frame, sep, LabelChar,
+                         (long)l_entry->label.number, post );
                 break;
             default:
                 sprintf( buff, "%s%s%s%s", frame, sep, l_entry->label.name,
@@ -181,8 +181,8 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
                 break;
 
             default:
-                sprintf( buff, "%s%s%s%c$%d", int_pref, frame, sep,
-                         LabelChar, l_entry->label.number );
+                sprintf( buff, "%s%s%s%c$%ld", int_pref, frame, sep,
+                         LabelChar, (long)l_entry->label.number );
                 if( l_entry->offset > size ) {
                     return( ERROR );
                 }

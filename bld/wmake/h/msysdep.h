@@ -34,14 +34,23 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <unistd.h>
+#ifdef _MSC_VER
+  #include <io.h>        /* io.h was a really dumb idea */
+#else
+  #include <unistd.h>
+#endif
 
 #ifndef __WATCOMC__
     #include "clibext.h"
 #endif
 
+#ifdef unix
+    #undef unix /* Clean up old junk */
+#endif
+
 #include "mtypes.h"
 
+#ifndef BOOTSTRAP
 //
 // DLL's implemented only for:
 //      Intel 386 (OS/2,NT)
@@ -54,6 +63,7 @@
 #ifdef DLLS_IMPLEMENTED
     #include "idedrv.h"
     #include <malloc.h>
+#endif
 #endif
 
 // For debug versions, always use scarce memory manager - memory
@@ -149,9 +159,9 @@ enum {
 
 #if defined( __NT__ )
 #include <stdio.h>
-#define STDIN   (stdin->_handle)
-#define STDOUT  (stdout->_handle)
-#define STDERR  (stderr->_handle)
+#define STDIN   _fileno( stdin )
+#define STDOUT  _fileno( stdout )
+#define STDERR  _fileno( stderr )
 #else
 #define STDIN   STDIN_FILENO    /* the standard Posix i/o file handles      */
 #define STDOUT  STDOUT_FILENO

@@ -59,7 +59,7 @@ int SrcIf( sfile **sf, vlist *vl )
     } else {
         return( rc );
     }
-    (*sf)->branchres = (val != 0);
+    (*sf)->u.branchres = (val != 0);
     return( ERR_NO_ERR );
 
 } /* SrcIf */

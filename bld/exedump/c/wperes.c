@@ -205,6 +205,9 @@ static void dmp_res_name_id( unsigned_16 count, bool is_name )
         tmp_off = Res_off +( pe_res_dir.id_name & PE_RESOURCE_MASK );
         if( is_name ) {
             name = get_name( tmp_off );
+        } else {
+            name.len = 0;
+            name.rname = NULL;
         }
         tmp_off = Res_off +( pe_res_dir.entry_rva & PE_RESOURCE_MASK );
         Wlseek( tmp_off );

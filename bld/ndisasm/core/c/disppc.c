@@ -142,7 +142,7 @@ typedef union {
     struct {
         ppc_ins_hi  hi;
         ppc_ins_lo  lo;
-    };
+    } i;
     struct {
         unsigned_32 opcode              : 6;
         unsigned_32 LI                  : 24;
@@ -250,7 +250,7 @@ typedef union {
     struct {
         ppc_ins_lo  lo;
         ppc_ins_hi  hi;
-    };
+    } i;
     struct {
         unsigned_32 LK                  : 1;
         unsigned_32 AA                  : 1;
@@ -278,16 +278,16 @@ dis_handler_return PPCMath( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 3;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_REG;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
     ins->op[2].type = DO_REG;
-    ins->op[2].base = code.lo.math.rB + DR_PPC_r0;
+    ins->op[2].base = code.i.lo.math.rB + DR_PPC_r0;
 
-    if( code.lo.math.Rc ) {
+    if( code.i.lo.math.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
-    if( code.lo.math.OE ) {
+    if( code.i.lo.math.OE ) {
         ins->flags |= DIF_PPC_OE;
     }
     return( DHR_DONE );
@@ -369,9 +369,9 @@ dis_handler_return PPCImmediate( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 3;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_REG;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
     ins->op[2].type = DO_IMMED;
     ins->op[2].op_position = OP_POS( 0, 2 );
     switch( ins->type ) {
@@ -381,10 +381,10 @@ dis_handler_return PPCImmediate( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_PPC_oris:
     case DI_PPC_xori:
     case DI_PPC_xoris: // These take unsigned values.
-        ins->op[2].value = code.lo.immediate;
+        ins->op[2].value = code.i.lo.immediate;
         break;
     default:
-        ins->op[2].value = SEX(code.lo.immediate, 15 );
+        ins->op[2].value = SEX(code.i.lo.immediate, 15 );
         break;
     }
     return( DHR_DONE );
@@ -420,21 +420,21 @@ static void PPCDoFloat( dis_dec_ins *ins, const int *order )
         ins->op[operand].type = DO_REG;
         switch( order[operand] ) {
         case 1:
-            ins->op[operand].base = code.hi.general.second + DR_PPC_f0;
+            ins->op[operand].base = code.i.hi.general.second + DR_PPC_f0;
             break;
         case 2:
-            ins->op[operand].base = code.hi.general.first + DR_PPC_f0;
+            ins->op[operand].base = code.i.hi.general.first + DR_PPC_f0;
             break;
         case 3:
-            ins->op[operand].base = code.lo.general.third + DR_PPC_f0;
+            ins->op[operand].base = code.i.lo.general.third + DR_PPC_f0;
             break;
         case 4:
-            ins->op[operand].base = code.lo.general.second + DR_PPC_f0;
+            ins->op[operand].base = code.i.lo.general.second + DR_PPC_f0;
             break;
         }
     }
     ins->num_ops = operand;
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
 }
@@ -472,7 +472,7 @@ dis_handler_return PPCFloatCmpab( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = ins->opcode;
 
-    ins->op[0].base = code.hi.compare.crfD + DR_PPC_cr0;
+    ins->op[0].base = code.i.hi.compare.crfD + DR_PPC_cr0;
 
     return( DHR_DONE );
 }
@@ -500,7 +500,7 @@ dis_handler_return PPCFloato( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_PPC_mtfsf:
         ins->op[0].type = DO_IMMED;
         ins->op[0].base = DR_NONE;
-        ins->op[0].value = code.hi.math.FM;
+        ins->op[0].value = code.i.hi.math.FM;
         break;
     default:
         break;
@@ -515,19 +515,19 @@ dis_handler_return PPCMem1( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 2;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_MEMORY_ABS;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
-    ins->op[1].value = SEX( code.lo.immediate, 15 );
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
+    ins->op[1].value = SEX( code.i.lo.immediate, 15 );
 
-    if( code.hi.general.floating ) {
-        if( code.hi.general.type & 0x2 ) {
+    if( code.i.hi.general.floating ) {
+        if( code.i.hi.general.type & 0x2 ) {
             ins->op[1].ref_type = DRT_PPC_SFLOAT;
         } else {
             ins->op[1].ref_type = DRT_PPC_DFLOAT;
         }
     } else {
-        switch( code.hi.general.type ) {
+        switch( code.i.hi.general.type ) {
         case 0x1:
         case 0x3:
             ins->op[1].ref_type = DRT_PPC_BYTE;
@@ -556,10 +556,10 @@ dis_handler_return PPCMemD1( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 2;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_MEMORY_ABS;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
-    ins->op[1].value = SEX( code.lo.immediate & ~0x3, 15 );
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
+    ins->op[1].value = SEX( code.i.lo.immediate & ~0x3, 15 );
     ins->op[1].ref_type = DRT_PPC_DWORD;
     return( DHR_DONE );
 }
@@ -571,16 +571,16 @@ dis_handler_return PPCMem2( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 3;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_REG;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
     ins->op[2].type = DO_REG;
-    ins->op[2].base = code.lo.math.rB + DR_PPC_r0;
+    ins->op[2].base = code.i.lo.math.rB + DR_PPC_r0;
     ins->op[1].extra |= PE_XFORM;
 
-    switch( code.lo.math.OE ) {
+    switch( code.i.lo.math.OE ) {
     case 0:
-        switch( code.lo.math.type1 & 5 ) {
+        switch( code.i.lo.math.type1 & 5 ) {
         case 0:
             ins->op[1].ref_type = DRT_PPC_WORD;
             break;
@@ -588,7 +588,7 @@ dis_handler_return PPCMem2( dis_handle *h, void *d, dis_dec_ins *ins )
             ins->op[1].ref_type = DRT_PPC_BYTE;
             break;
         case 4:
-            if( code.lo.math.type2 == 1 ) {
+            if( code.i.lo.math.type2 == 1 ) {
                 ins->op[1].ref_type = DRT_PPC_SWORD;
                 break;
             } // fall through
@@ -598,19 +598,19 @@ dis_handler_return PPCMem2( dis_handle *h, void *d, dis_dec_ins *ins )
         }
         break;
     case 1:
-        switch( code.lo.math.type2 ) {
+        switch( code.i.lo.math.type2 ) {
         case 1:
             ins->op[1].ref_type = DRT_PPC_SWORD;
             break;
         case 2:
-            if( code.lo.math.type1 & (1<<2) ) {
+            if( code.i.lo.math.type1 & (1<<2) ) {
                 ins->op[1].ref_type = DRT_PPC_BRHWORD;
             } else {
                 ins->op[1].ref_type = DRT_PPC_BRWORD;
             }
             break;
         case 3:
-            if( code.lo.math.type1 & 1 ) {
+            if( code.i.lo.math.type1 & 1 ) {
                 ins->op[1].ref_type = DRT_PPC_DFLOAT;
             } else {
                 ins->op[1].ref_type = DRT_PPC_SFLOAT;
@@ -619,7 +619,7 @@ dis_handler_return PPCMem2( dis_handle *h, void *d, dis_dec_ins *ins )
         }
         break;
     }
-    if( code.lo.math.Rc ) {
+    if( code.i.lo.math.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
 
@@ -633,11 +633,11 @@ dis_handler_return PPCMemD2( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 3;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_REG;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
     ins->op[2].type = DO_REG;
-    ins->op[2].base = code.lo.math.rB + DR_PPC_r0;
+    ins->op[2].base = code.i.lo.math.rB + DR_PPC_r0;
     ins->op[1].extra |= PE_XFORM;
     ins->op[1].ref_type = DRT_PPC_DWORD;
     return( DHR_DONE );
@@ -650,11 +650,11 @@ dis_handler_return PPCMem3( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 3;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_r0;
     ins->op[1].type = DO_REG;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
     ins->op[2].type = DO_IMMED;
-    ins->op[2].value = code.lo.general.third;
+    ins->op[2].value = code.i.lo.general.third;
 
     ins->op[1].ref_type = DRT_PPC_SWORD;
 
@@ -681,7 +681,7 @@ dis_handler_return PPCBranch( dis_handle *h, void *d, dis_dec_ins *ins )
 
     code.full = ins->opcode;
 
-    if( code.lo.branch.LK ) {
+    if( code.i.lo.branch.LK ) {
         ins->flags |= DIF_PPC_LK;
     }
     magic = 2;
@@ -709,16 +709,16 @@ dis_handler_return PPCBranch( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[0].value = SEX( code.b.LI, 23 ) << 2;
         break;
     case DI_PPC_bc:
-        ins->op[2].value = SEX( code.lo.branch.BD, 13 ) << 2;
+        ins->op[2].value = SEX( code.i.lo.branch.BD, 13 ) << 2;
         ins->op[2].op_position = 0;
         // fall through
     case DI_PPC_bcctr:
     case DI_PPC_bclr:
         ins->op[0].type = DO_IMMED;
-        ins->op[0].value = code.hi.general.second;
+        ins->op[0].value = code.i.hi.general.second;
         ins->op[0].op_position = 3;
         ins->op[1].type = DO_IMMED;
-        ins->op[1].value = code.hi.general.first;
+        ins->op[1].value = code.i.hi.general.first;
         ins->op[1].op_position = 2;
         break;
     default:
@@ -734,25 +734,25 @@ dis_handler_return PPCCompare( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 4;
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.compare.crfD + DR_PPC_cr0;
+    ins->op[0].base = code.i.hi.compare.crfD + DR_PPC_cr0;
     ins->op[1].type = DO_IMMED;
-    ins->op[1].value = code.hi.compare.L;
+    ins->op[1].value = code.i.hi.compare.L;
     ins->op[2].type = DO_REG;
-    ins->op[2].base = code.hi.compare.rA + DR_PPC_r0;
+    ins->op[2].base = code.i.hi.compare.rA + DR_PPC_r0;
 
     switch( ins->type ) {
     case DI_PPC_cmp:
     case DI_PPC_cmpl:
         ins->op[3].type = DO_REG;
-        ins->op[3].base = code.lo.math.rB + DR_PPC_r0;
+        ins->op[3].base = code.i.lo.math.rB + DR_PPC_r0;
         break;
     case DI_PPC_cmpi:
         ins->op[3].type = DO_IMMED;
-        ins->op[3].value = SEX( code.lo.immediate, 15 );
+        ins->op[3].value = SEX( code.i.lo.immediate, 15 );
         break;
     case DI_PPC_cmpli:
         ins->op[3].type = DO_IMMED;
-        ins->op[3].value = code.lo.immediate;
+        ins->op[3].value = code.i.lo.immediate;
     default:
         break;
     }
@@ -765,7 +765,7 @@ dis_handler_return PPCCondition( dis_handle *h, void *d, dis_dec_ins *ins )
     code.full = ins->opcode;
 
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.general.second + DR_PPC_crb0;
+    ins->op[0].base = code.i.hi.general.second + DR_PPC_crb0;
 
     switch( ins->type ) {
     case DI_PPC_mtfsb0:
@@ -775,13 +775,13 @@ dis_handler_return PPCCondition( dis_handle *h, void *d, dis_dec_ins *ins )
     default:
         ins->num_ops = 3;
         ins->op[1].type = DO_REG;
-        ins->op[1].base = code.hi.general.first + DR_PPC_crb0;
+        ins->op[1].base = code.i.hi.general.first + DR_PPC_crb0;
         ins->op[2].type = DO_REG;
-        ins->op[2].base = code.lo.math.rB + DR_PPC_crb0;
+        ins->op[2].base = code.i.lo.math.rB + DR_PPC_crb0;
         break;
     }
 
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
     return( DHR_DONE );
@@ -793,14 +793,14 @@ dis_handler_return PPCConditionField( dis_handle *h, void *d, dis_dec_ins *ins )
     code.full = ins->opcode;
 
     ins->op[0].type = DO_REG;
-    ins->op[0].base = code.hi.condition.crfD + DR_PPC_cr0;
+    ins->op[0].base = code.i.hi.condition.crfD + DR_PPC_cr0;
 
     switch( ins->type ) {
     case DI_PPC_mcrf:
     case DI_PPC_mcrfs:
         ins->num_ops = 2;
         ins->op[1].type = DO_REG;
-        ins->op[1].base = code.hi.condition.crfS + DR_PPC_cr0;
+        ins->op[1].base = code.i.hi.condition.crfS + DR_PPC_cr0;
         break;
     case DI_PPC_mcrxr:
         ins->num_ops = 1;
@@ -808,7 +808,7 @@ dis_handler_return PPCConditionField( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_PPC_mtfsfi:
         ins->num_ops = 2;
         ins->op[1].type = DO_IMMED;
-        ins->op[1].value = code.lo.condition.IMM;
+        ins->op[1].value = code.i.lo.condition.IMM;
         break;
     default:
         break;
@@ -838,17 +838,17 @@ dis_handler_return PPCSpecial( dis_handle *h, void *d, dis_dec_ins *ins )
         break;
     }
     ins->op[magic].type = DO_REG;
-    ins->op[magic].base = code.hi.general.second + DR_PPC_r0;
+    ins->op[magic].base = code.i.hi.general.second + DR_PPC_r0;
     magic = 1-magic;
     ins->op[magic].type = DO_IMMED;
     switch( ins->type ) {
     case DI_PPC_mfspr:
     case DI_PPC_mtspr:
-        ins->op[magic].value = MK_SPR( code.lo.general.third, code.hi.general.first );
+        ins->op[magic].value = MK_SPR( code.i.lo.general.third, code.i.hi.general.first );
         break;
     case DI_PPC_mfsr:
     case DI_PPC_mtsr:
-        ins->op[magic].value = code.hi.general.first;
+        ins->op[magic].value = code.i.hi.general.first;
         break;
     case DI_PPC_mtcrf:
         ins->op[magic].value = code.CRM.CRM;
@@ -866,9 +866,9 @@ dis_handler_return PPCShiftImmed( dis_handle *h, void *d, dis_dec_ins *ins )
     PPCImmed2( h, d, ins );
     code.full = ins->opcode;
 
-    ins->op[2].value = code.lo.general.third;
+    ins->op[2].value = code.i.lo.general.third;
 
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
     return( DHR_DONE );
@@ -880,9 +880,9 @@ dis_handler_return PPCShiftImmedD( dis_handle *h, void *d, dis_dec_ins *ins )
     PPCImmed2( h, d, ins );
     code.full = ins->opcode;
 
-    ins->op[2].value = code.lo.xs_form.sh | (code.lo.xs_form.sh_5 << 5);
+    ins->op[2].value = code.i.lo.xs_form.sh | (code.i.lo.xs_form.sh_5 << 5);
 
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
     return( DHR_DONE );
@@ -901,18 +901,18 @@ dis_handler_return PPCRotate( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_PPC_rlwinm:
         ins->op[2].type = DO_IMMED;
         ins->op[2].base = DR_NONE;
-        ins->op[2].value = code.lo.general.third;
+        ins->op[2].value = code.i.lo.general.third;
         break;
     default:
         break;
     }
 
     ins->op[3].type = DO_IMMED;
-    ins->op[3].value = code.lo.general.second;
+    ins->op[3].value = code.i.lo.general.second;
     ins->op[4].type = DO_IMMED;
-    ins->op[4].value = code.lo.general.first;
+    ins->op[4].value = code.i.lo.general.first;
 
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
     return( DHR_DONE );
@@ -927,9 +927,9 @@ dis_handler_return PPCRotateD( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 4;
 
     ins->op[3].type = DO_IMMED;
-    ins->op[3].value = code.lo.mds_form.mb;
+    ins->op[3].value = code.i.lo.mds_form.mb;
 
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
     return( DHR_DONE );
@@ -945,12 +945,12 @@ dis_handler_return PPCRotateImmD( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->op[2].type = DO_IMMED;
     ins->op[2].base = DR_NONE;
-    ins->op[2].value = code.lo.md_form.sh | (code.lo.md_form.sh_5 << 5);
+    ins->op[2].value = code.i.lo.md_form.sh | (code.i.lo.md_form.sh_5 << 5);
 
     ins->op[3].type = DO_IMMED;
-    ins->op[3].value = code.lo.mds_form.mb;
+    ins->op[3].value = code.i.lo.mds_form.mb;
 
-    if( code.lo.general.Rc ) {
+    if( code.i.lo.general.Rc ) {
         ins->flags |= DIF_PPC_RC;
     }
     return( DHR_DONE );
@@ -963,21 +963,21 @@ dis_handler_return PPCTrap( dis_handle *h, void *d, dis_dec_ins *ins )
 
     ins->num_ops = 3;
     ins->op[0].type = DO_IMMED;
-    ins->op[0].value = code.hi.general.second;
+    ins->op[0].value = code.i.hi.general.second;
     ins->op[0].op_position = 3;
     ins->op[1].type = DO_REG;
-    ins->op[1].base = code.hi.general.first + DR_PPC_r0;
+    ins->op[1].base = code.i.hi.general.first + DR_PPC_r0;
 
     switch( ins->type ) {
     case DI_PPC_tw:
     case DI_PPC_td:
         ins->op[2].type = DO_REG;
-        ins->op[2].base = code.lo.math.rB + DR_PPC_r0;
+        ins->op[2].base = code.i.lo.math.rB + DR_PPC_r0;
         break;
     case DI_PPC_twi:
     case DI_PPC_tdi:
         ins->op[2].type = DO_IMMED;
-        ins->op[2].value = SEX( code.lo.immediate, 15 );
+        ins->op[2].value = SEX( code.i.lo.immediate, 15 );
         break;
     default:
         break;

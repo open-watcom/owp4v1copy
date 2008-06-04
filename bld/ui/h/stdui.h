@@ -435,7 +435,7 @@ typedef         unsigned char           ATTR;
     #undef HAVE_FAR
 #elif defined(__UNIX__)
     typedef struct pixel {
-            char            ch;
+            unsigned char   ch;
             ATTR            attr;
     } PIXEL;
     typedef PIXEL *LPPIXEL;

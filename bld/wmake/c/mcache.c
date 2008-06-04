@@ -36,7 +36,6 @@
     #include "autodept.h"
     #include "pathgrp.h"
 #endif
-#include <unistd.h>
 #if defined( __UNIX__ )
     #include <sys/stat.h>
 #endif

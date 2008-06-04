@@ -191,7 +191,7 @@ static void genExpr( void )
          * build the expr data structure
          */
         genItem( SRC_T_EXPR, NULL );
-        tmpTail->oper = oper;
+        tmpTail->u.oper = oper;
         AddString( &tmpTail->arg1, v1 );
         AddString( &tmpTail->arg2, v2 );
     }

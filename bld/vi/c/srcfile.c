@@ -98,16 +98,16 @@ int SrcOpen( sfile *curr, vlist *vl, files *fi, char *data )
             }
         }
         ft = SRCFILE_BUFF;
-        fi->buffer[i].cinfo = cinfo;
-        fi->buffer[i].line = 1L;
+        fi->u.buffer[i].cinfo = cinfo;
+        fi->u.buffer[i].line = 1L;
     } else {
         ft = SRCFILE_FILE;
-        fi->f[i] = fopen( name, type );
-        if( fi->f[i] == NULL ) {
+        fi->u.f[i] = fopen( name, type );
+        if( fi->u.f[i] == NULL ) {
             return( ERR_FILE_NOT_FOUND );
         }
         if( t == 'x' ) {
-            fclose( fi->f[i] );
+            fclose( fi->u.f[i] );
         }
     }
     if( t == 'x' ) {
@@ -152,12 +152,12 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
         return( ERR_SRC_FILE_NOT_OPEN );
     }
     if( fi->ft[i] == SRCFILE_FILE ) {
-        if( fgets( id,MAX_SRC_LINE,fi->f[i] ) != NULL ) {
+        if( fgets( id,MAX_SRC_LINE,fi->u.f[i] ) != NULL ) {
             for( j = strlen( id ); j && isEOL( id[ j - 1 ] ); --j )
                 id[ j - 1 ] = 0;
             VarAddStr( v1, id, vl );
         } else {
-            fclose( fi->f[i] );
+            fclose( fi->u.f[i] );
             fi->ft[i] = SRCFILE_NONE;
             return( END_OF_FILE );
         }
@@ -166,14 +166,14 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
         line    *cline;
         int     rc;
 
-        rc = GimmeLinePtr( fi->buffer[i].line,
-                                fi->buffer[i].cinfo->CurrentFile,
+        rc = GimmeLinePtr( fi->u.buffer[i].line,
+                                fi->u.buffer[i].cinfo->CurrentFile,
                                 &cfcb, &cline );
         if( rc ) {
             fi->ft[i] = SRCFILE_NONE;
             return( END_OF_FILE );
         }
-        fi->buffer[i].line++;
+        fi->u.buffer[i].line++;
         VarAddStr( v1, cline->data, vl );
     }
     return( ERR_NO_ERR );
@@ -211,7 +211,7 @@ int SrcWrite( sfile *curr, files *fi, char *data, vlist *vl )
     case SRCFILE_NONE:
         return( ERR_SRC_FILE_NOT_OPEN );
     case SRCFILE_FILE:
-        MyFprintf( fi->f[i], "%s\n", v1 );
+        MyFprintf( fi->u.f[i], "%s\n", v1 );
         break;
     }
     return( ERR_NO_ERR );
@@ -242,7 +242,7 @@ int SrcClose( sfile *curr, vlist *vl, files *fi, char *data )
     i = id[0] - '1';
 
     if( fi->ft[i] == SRCFILE_FILE ) {
-        fclose( fi->f[i] );
+        fclose( fi->u.f[i] );
     }
     fi->ft[i] = SRCFILE_NONE;
     return( ERR_NO_ERR );

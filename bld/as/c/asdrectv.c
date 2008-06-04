@@ -419,7 +419,7 @@ static bool dirFuncString( directive_t *dir, dir_table_enum parm )
     while( dirop ) {
         assert( dirop->type == DIROP_STRING );
         str = byte = MemAlloc( strlen( STRING_CONTENT( dirop ) ) + 1 );
-        for( ptr = STRING_CONTENT( dirop ); *ptr != NULL; ptr++ ) {
+        for( ptr = STRING_CONTENT( dirop ); *ptr != '\0'; ptr++ ) {
             if( *ptr == ESCAPE_CHAR ) {
                 ptr = getESCChar( byte, ptr );
             } else {

@@ -49,7 +49,6 @@
 #include <string.h>
 #include <assert.h>
 #ifdef _AIX
-    #define alloca __alloca
     #define _HAS_NO_CHAR_BIT_FIELDS
 #endif
 #include <ctype.h>
@@ -84,6 +83,7 @@
 #ifndef __WATCOMC__
 #include "clibext.h"
 #endif
+#include "walloca.h"
 
 #ifdef AIX
     struct _bool_struct       _aix_cur_bools;

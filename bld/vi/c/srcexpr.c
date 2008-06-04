@@ -65,11 +65,11 @@ int SrcExpr( sfile *sf, vlist *vl )
         return( rc );
     }
 
-    if( sf->oper != EXPR_EQ ) {
+    if( sf->u.oper != EXPR_EQ ) {
         v = VarFind( tmp, vl );
         if( v != NULL ) {
             oval = strtol( v->value, NULL, 0 );
-            switch( sf->oper ) {
+            switch( sf->u.oper ) {
             case EXPR_PLUSEQ:
                 oval += val;
                 break;

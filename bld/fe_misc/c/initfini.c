@@ -135,17 +135,17 @@ static void splitFini(              // COMPLETE SPLIT ENTRY
 
 #define EXIT_BEG( name )                \
     EXIT_POINT EXIT_POINT_NAME( name ) =\
-    {   NULL, 0
+    {   NULL, 0, {
 
 #define EXIT_REG( name )                \
-    ,   &INIT_FINI_NAME( name )
+        &INIT_FINI_NAME( name ),
 
 #define EXIT_END                        \
-    ,   NULL                            \
+        NULL }                          \
     };
 
 #define SPLIT_INIT( name, fini )        \
-    ,   (INITFINI*)&SPLIT_NAME( name, fini )
+        (INITFINI*)&SPLIT_NAME( name, fini ),
 
 #include "initspec.h"       // front-end dependent initialization
 

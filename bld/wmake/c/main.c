@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #if defined(__OS2__) || defined(__DOS__)

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Tab hell. The name says it all.
 *
 ****************************************************************************/
 
@@ -139,9 +138,10 @@ bool ExpandTabsInABufferUpToColumn( int endcol, char *in, int inlen, char *out, 
  */
 bool ExpandTabsInABuffer( char *in, int inlen, char *out, int outlen  )
 {
-    int         j,k,tb,l;
-    bool        tabme = FALSE;
-    char        ch;
+    int             j,k,tb,l;
+    bool            tabme = FALSE;
+    char            ch;
+    unsigned char   uch;
 
     /*
      * run through each character
@@ -152,7 +152,8 @@ bool ExpandTabsInABuffer( char *in, int inlen, char *out, int outlen  )
         /*
          * if we have a tab, insert some spaces
          */
-        if( in[j] < ' ' || in[j] > 127 ) {
+        uch = (unsigned char)in[j];
+        if( uch < ' ' || uch > 127 ) {
             if( in[j] == '\t' ) {
                 TabCnt++;
                 tb = Tab( k+1, HardTab );
@@ -167,7 +168,7 @@ bool ExpandTabsInABuffer( char *in, int inlen, char *out, int outlen  )
                 k = l;
                 tabme = TRUE;
             } else if( !EditFlags.EightBits ) {
-                if( in[j] > 127 ) {
+                if( uch > 127 ) {
                     ch = '?';
                 } else {
                     ch = in[j]+'A'-1;

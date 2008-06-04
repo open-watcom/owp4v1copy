@@ -272,7 +272,7 @@ size_t CmdScanId(               // SCAN AN IDENTIFIER
     p = CmdScanUngetChar();
     *option = p;
     str_beg = p;
-    while( __iscsym( *p ) ) {
+    while( isalnum( *p ) || *p == '_' ) {
         ++p;
     }
     cmd_scanner = p;

@@ -235,9 +235,9 @@ void AddSuffix( char *name )
     char    *d;
     char    *s;
 
-    assert( name != NULL && name[0] == DOT && !SufExists( name ) ||
-            name != NULL && name[0] == DOT && SufExists( name ) &&
-            Glob.microsoft);
+    assert( ( name != NULL && name[0] == DOT && !SufExists( name ) ) ||
+            ( name != NULL && name[0] == DOT && SufExists( name ) &&
+            Glob.microsoft ) );
 
     d = name;                   /* shift left by 1 place */
     s = name + 1;

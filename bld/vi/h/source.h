@@ -150,7 +150,7 @@ typedef struct files {
             info        *cinfo;
             linenum     line;
         } buffer[MAX_SRC_FILES];
-    };
+    } u;
 } files;
 
 typedef struct sfile {
@@ -161,7 +161,7 @@ typedef struct sfile {
     union {
         char            branchres;
         expr_oper       oper;
-    };
+    } u;
     char hasvar;
     int line;
     char *data;

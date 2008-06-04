@@ -83,15 +83,8 @@
     #define FILES_ALL   "*.*"
 #endif
 
-#ifdef __LINUX__
 #define INDENT_STR      "\xa0"
 #define INDENT_CHAR     '\xa0'
-/* what's written below looks like a y with two dots to me... *
- * what is probably meant is the "NO BREAK SPACE"             */
-#else
-#define INDENT_STR      "ÿ"
-#define INDENT_CHAR     'ÿ'
-#endif
 #define OPENED_DIR_CHAR '-'
 #define UNOPENED_DIR_CHAR '+'
 

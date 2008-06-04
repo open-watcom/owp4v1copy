@@ -111,8 +111,8 @@ pick( TMP_PATH_TOO_LONG,        "TMP Path/File Too Long",
                                 "TMP パス/ファイル名が長すぎます" )
 pick( UNEXPECTED_EOF,           "Unexpected End of File",
                                 "ファイルが途中で終わっています" )
-pick( NOKEEP_ONLY,              "Only NO\(KEEP\) allowed here",
-                                "ここでは NO\(KEEP\) だけができます")
+pick( NOKEEP_ONLY,              "Only NO(KEEP) allowed here",
+                                "ここでは NO(KEEP) だけができます")
 pick( NON_MATCHING_QUOTE,       "Non-matching \"",
                                 "一致しません \"")
 pick( INVALID_STRING_SUBSTITUTE,"Invalid String Macro Substitution",
@@ -121,7 +121,7 @@ pick( MAX_FILE_LENGTH_EXCEED,   "File Name Length Exceeded",
                                 "ファイル名の長さが制限を越えました")
 pick( DOT_DEFAULT_REDEFINITION, "Redefinition of .DEFAULT Command List",
                                 ".DEFAULT コマンド･･リストの再定義です")
-pick( NON_MATCHING_CURL_PAREN,  "Non-matching \{ In Implicit Rule",
+pick( NON_MATCHING_CURL_PAREN,  "Non-matching { In Implicit Rule",
                                 "暗黙のルールの中の \{ が一致しません")
 pick( INVALID_SUFSUF,           "Invalid Implicit Rule Definition",
                                 "不適切な暗黙のルール定義です")
@@ -321,7 +321,7 @@ pick( SYS_ERR_15,                "Resource deadlock would occur",
                                 "リソース・デッド・ロックが起こります" )
 
 /* common signals that cause abnormal termination (cf. sys_siglist) */
-#if defined( __LINUX__ )
+#if defined( __UNIX__ )
 pick( SIG_ERR_0,                 "Abnormal termination by signal %d", "" )
 pick( SIG_ERR_1,                 "Hangup detected", "" )
 pick( SIG_ERR_2,                 "Keyboard interrupt", "" )

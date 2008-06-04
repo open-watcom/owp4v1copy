@@ -39,7 +39,7 @@ extern void debugout( char *, ... );
 #define dbgout( a )
 #endif
 
-#pragma pack( push, 1 )
+#include "pushpck1.h"
 
 typedef struct {
     unsigned_32 off;
@@ -98,7 +98,7 @@ typedef struct {
     unsigned_16 seg;
 } set_base386;
 
-#pragma pack( pop )
+#include "poppck.h"
 
 /*
  * locals

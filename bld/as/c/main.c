@@ -51,8 +51,8 @@ jmp_buf         AsmParse;
 int             ExitStatus = EXIT_SUCCESS;
 
 
-void main( int argc, char **argv )
-//********************************
+int main( int argc, char **argv )
+//*******************************
 {
     static char *fname;
 
@@ -62,7 +62,7 @@ void main( int argc, char **argv )
 #endif
     MemInit();
     if( !AsMsgInit() ) {
-        exit( EXIT_FAILURE );
+        return( EXIT_FAILURE );
     }
     if( argc == 1 ) {
         Banner();
@@ -116,5 +116,5 @@ void main( int argc, char **argv )
     OptionsFini();
     AsMsgFini();
     MemFini();
-    exit( ExitStatus );
+    return( ExitStatus );
 }

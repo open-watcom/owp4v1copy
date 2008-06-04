@@ -412,7 +412,7 @@ void MemShrink( void )
     _nheapshrink();
     _fheapshrink();
     largeNearSeg = FALSE;
-#elif !defined( __LINUX__ )
+#elif !defined( __UNIX__ )
     _heapshrink();
 #endif
 }

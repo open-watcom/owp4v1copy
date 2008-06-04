@@ -298,24 +298,24 @@ typedef int (*old_rtn)( void );
 typedef int (*alias_rtn)( void *, void * );
 
 typedef union command_rtn {
+    void        *ptr;   /* Must go first to avoid type mismatches */
     insert_rtn  ins;
     move_rtn    move;
     op_rtn      op;
     misc_rtn    misc;
     old_rtn     old;
     alias_rtn   alias;
-    void        *ptr;
 } command_rtn;
 
 typedef struct {
-    char        type:3;                 // type of event (list in const.h)
-    char        keep_selection:1;       // keep selection after this event?
-    char        is_number:1;            // is event a digit? (repeat count)
-    char        fix_range:1;            // see comment in doMove (editmain.c)
-    char        is_op_alias:1;          // event is an aliased operator
-    char        keep_selection_maybe:1; // keep selection if already selecting
-    char        modifies:1;             // does this event modify the file?
-    char        spare:7;
+    unsigned    type:3;                 // type of event (list in const.h)
+    unsigned    keep_selection:1;       // keep selection after this event?
+    unsigned    is_number:1;            // is event a digit? (repeat count)
+    unsigned    fix_range:1;            // see comment in doMove (editmain.c)
+    unsigned    is_op_alias:1;          // event is an aliased operator
+    unsigned    keep_selection_maybe:1; // keep selection if already selecting
+    unsigned    modifies:1;             // does this event modify the file?
+    unsigned    spare:7;
 } event_bits;
 
 typedef struct {

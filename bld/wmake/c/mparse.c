@@ -790,8 +790,8 @@ STATIC char *getFileName( const char *intext, size_t *offset )
         return( ret );
     }
 
-    if( !doubleQuote && *offset > 0 ||
-         doubleQuote && *offset > 1 ) {
+    if( ( !doubleQuote && *offset > 0 ) ||
+        ( doubleQuote && *offset > 1 ) ) {
         tempStr = StartVec();
         if( doubleQuote ) {
             WriteNVec( tempStr, intext + 1, *offset - 2 );

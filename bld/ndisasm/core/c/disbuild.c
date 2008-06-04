@@ -470,7 +470,7 @@ struct string_list {
 
 #define MAX_ENTRIES     96*1024
 string_list     *Strings;
-char            StringTable[MAX_ENTRIES];
+unsigned char   StringTable[MAX_ENTRIES];
 unsigned        StringIndex;
 dis_selector    SelTable[MAX_ENTRIES];
 unsigned        SelIndex;

@@ -34,7 +34,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <unistd.h>
 #ifdef __WATCOMC__
     #include <process.h>
 #endif
