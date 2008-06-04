@@ -125,7 +125,7 @@ char *ReScanPos( void )
 
 int ReScanBuffer( void )
 {
-    CurrChar = *ScanCharPtr++;
+    CurrChar = *(unsigned char *)ScanCharPtr++;
     if( CurrChar == '\0' ) {
         CompFlags.rescan_buffer_done = 1;
     }

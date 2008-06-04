@@ -277,15 +277,15 @@ unsigned OWLENTRY OWLRelocBitMask( owl_file_handle file, owl_reloc_info *reloc )
     assert( reloc != NULL );
     switch( file->info->cpu ) {
     case OWL_CPU_PPC:
-        mask_array = &ppcMasks;
+        mask_array = ppcMasks;
         break;
     case OWL_CPU_ALPHA:
-        mask_array = &alphaMasks;
+        mask_array = alphaMasks;
         break;
     case OWL_CPU_INTEL:
         return 0xffffffff;
     case OWL_CPU_MIPS:
-        mask_array = &mipsMasks;
+        mask_array = mipsMasks;
         break;
     default:
         assert( 0 );

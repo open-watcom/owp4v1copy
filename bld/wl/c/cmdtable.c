@@ -368,7 +368,7 @@ extern bool     ProcTryLow( void );
 extern bool     ProcForceExtended( void );
 extern bool     ProcForceLow( void );
 
-extern parse_entry  Strategies[] = {
+parse_entry  Strategies[] = {
     "TRYExtended",  &ProcTryExtended,   MK_DOS16M, 0,
     "TRYLow",       &ProcTryLow,        MK_DOS16M, 0,
     "FORCEExtended",&ProcForceExtended, MK_DOS16M, 0,
@@ -379,7 +379,7 @@ extern parse_entry  Strategies[] = {
 extern bool     ProcTStack( void );
 extern bool     ProcTData( void );
 
-extern parse_entry  TransTypes[] = {
+parse_entry  TransTypes[] = {
     "STack",        &ProcTStack,        MK_DOS16M, 0,
     "DAta",         &ProcTData,         MK_DOS16M, 0,
     NULL

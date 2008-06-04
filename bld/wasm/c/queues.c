@@ -113,7 +113,7 @@ bool GetPublicData( void )
     dir_node            *curr_seg;
     dir_node            *dir;
     struct pubdef_data  *d;
-    char                cmd;
+    unsigned char       cmd;
     uint                i;
 
     if( PubQueue == NULL )

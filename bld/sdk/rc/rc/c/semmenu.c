@@ -313,6 +313,8 @@ void SemWriteMenu( WResID *name, ResMemFlags flags, FullMenu *menu,
             ResPadDWord( CurrResFile.handle );
             loc.start = SemStartResource();
             error = ResWriteMenuExHeader( &head, CurrResFile.handle, headerdata );
+        } else {
+            loc.start = 0;      // Is this valid?
         }
         if(error) {
             err_code = LastWresErr();

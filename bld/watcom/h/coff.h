@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  COFF definitions.
 *
 ****************************************************************************/
 
 
 #include <watcom.h>
-#pragma pack( 1 )
+#include "pushpck1.h"
 
 typedef struct {
     uint_16     cpu_type;
@@ -137,7 +136,7 @@ typedef struct {
     union {
         uint_32         symbol_table_index;
         uint_32         RVA;
-    };
+    } ir;
     uint_16             line_number;
 } coff_line_num;
 
@@ -563,7 +562,7 @@ typedef struct {
     union {
         uint_16 ordinal;                // if grf & IMPORT_OBJECT_ORDINAL
         uint_16 hint;
-    };
+    } oh;
 
     uint_16 object_type : 2;            // import_object_type
     uint_16 name_type : 3;              // import_name_type
@@ -588,18 +587,4 @@ typedef enum
                                         // and truncating at first @
 } coff_import_object_name_type;
 
-
-#if 0
-// old identifiers - I hate these
-typedef coff_file_head CoffFHdr;
-typedef coff_section_header CoffSHdr;
-typedef coff_reloc CoffReloc;
-typedef coff_symbol CoffSymEnt;
-typedef coff_sym_func CoffAuxSymFuncDef;
-typedef coff_sym_bfef CoffAuxSymBFEF;
-typedef coff_sym_weak CoffAuxSymWeakExtern;
-typedef coff_sym_file CoffAuxSymFile;
-typedef coff_sym_section CoffAuxSymSecDef;
-typedef coff_line_num CoffLineNum;
-#endif
-#pragma pack()
+#include "poppck.h"

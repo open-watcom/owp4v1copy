@@ -36,7 +36,7 @@
 #include "watcom.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct BitmapInfoHeader {
@@ -53,7 +53,7 @@ typedef struct BitmapInfoHeader {
 } BitmapInfoHeader;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 extern int ResWriteBitmapInfoHeader( BitmapInfoHeader *, WResFileID );

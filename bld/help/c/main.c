@@ -132,7 +132,7 @@ static void freeSrchList( void )
     }
 }
 
-void main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     char                *helpfiles[] = { NULL, NULL };
     char                *topic;
@@ -146,12 +146,12 @@ void main( int argc, char *argv[] )
     if( argc < 2 || !strcmp( argv[1], "?" ) || !strcmp( argv[1], "-?" )
         || !strcmp( argv[1], "/?" ) ) {
         showHelp( argv[0] );
-        return;
+        return( EXIT_SUCCESS );
     }
     if( argc > 3 ) {
         printf( "Too many arguments specified on the command line\n" );
         printf( "For help type %s -?\n", argv[0] );
-        return;
+        return( EXIT_FAILURE );
     }
     srchlist = checkFileName( argv[1], filename );
     strlwr( filename );
@@ -164,7 +164,7 @@ void main( int argc, char *argv[] )
     }
     if( !uistart() ) {
         printf( "ui failed\n" );
-        return;
+        return( EXIT_FAILURE );
     } else {
 #if defined __OS2__
         initmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
@@ -201,4 +201,5 @@ void main( int argc, char *argv[] )
         uifini();
     }
     memFini();
+    return( EXIT_SUCCESS );
 }

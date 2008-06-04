@@ -42,9 +42,7 @@ inc_dirs = -I. -I"../h"
 ################
 # c flags stuff
 
-force_include = -fi
 !ifeq bootstrap 1
-force_include = -include
 comp_objs_exe += clibext.obj
 !endif
 
@@ -77,7 +75,7 @@ extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
 extra_c_flags_dllentry   = -bd
 extra_c_flags_idedrv     = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
-extra_c_flags_rcstr      = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h"
+extra_c_flags_rcstr      = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
 extra_c_flags_exerespe   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
 extra_c_flags_sharedio   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
 extra_c_flags_stidedrv   = -DSTATIC_LINKAGE -I"$(watcom_dir)/c"

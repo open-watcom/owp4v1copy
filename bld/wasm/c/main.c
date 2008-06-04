@@ -530,7 +530,7 @@ static void usage_msg( void )
     exit(1);
 }
 
-static void Ignore( void ) {};
+static void Ignore( void ) {}
 
 static void Set_BT( void ) { SetTargName( OptParm,  OptScanPtr - OptParm ); }
 
@@ -1055,6 +1055,9 @@ static int set_build_target( void )
         strcpy( Options.build_target, "BSD" );
 #elif defined(__OSX__) || defined(__APPLE__)
         strcpy( Options.build_target, "OSX" );
+#elif defined(__SOLARIS__) || defined( __sun )
+        strcpy( Options.build_target, "SOLARIS" );
+#elif defined(__DOS__)
 #elif defined(__DOS__)
         strcpy( Options.build_target, "DOS" );
 #elif defined(__OS2__)

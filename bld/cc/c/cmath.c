@@ -534,9 +534,9 @@ static char const Meaningless[REL_SIZE][CASE_SIZE] = {
 #define MAXSIZE        (sizeof( long )*8)
 
 // return 0 not a num, else number of bits | 0x80 if signed
-static char NumSize( int op_type )
+static unsigned char NumSize( int op_type )
 {
-    char    size;
+    unsigned char       size;
 
     size = 0;
     switch( op_type ) {
@@ -586,8 +586,8 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
     enum case_range     range;
     cmp_result          ret;
     int                 result_size;
-    char                op1_size;
-    char                rev_ret;
+    unsigned char       op1_size;
+    unsigned char       rev_ret;
 
     op1_size = NumSize( op1_type );
     if( op1_size == 0 ) {

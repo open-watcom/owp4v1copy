@@ -2854,7 +2854,7 @@ parms:
         }
 
         paranode = AsmAlloc( sizeof( label_list ) );
-        paranode->is_vararg = type == TOK_PROC_VARARG ? TRUE : FALSE;
+        paranode->u.is_vararg = type == TOK_PROC_VARARG ? TRUE : FALSE;
         paranode->size = find_size( type );
         paranode->label = AsmAlloc( strlen( token ) + 1 );
         paranode->replace = NULL;
@@ -2865,7 +2865,7 @@ parms:
         } else {
             info->parasize += ROUND_UP( paranode->size, 2 );
         }
-        info->is_vararg |= paranode->is_vararg;
+        info->is_vararg |= paranode->u.is_vararg;
 
         switch( proc->sym.langtype ) {
         case LANG_BASIC:
@@ -3335,7 +3335,7 @@ int Comment( int what_to_do, int i )
             return( ERROR );
         }
         delim_char = *(AsmBuffer[i]->string_ptr+strspn(AsmBuffer[i]->string_ptr," \t") );
-        if( ( delim_char == NULL )
+        if( ( delim_char == '\0' )
             || ( strchr( AsmBuffer[i]->string_ptr, delim_char ) == NULL ) ) {
             AsmError( COMMENT_DELIMITER_EXPECTED );
             return( ERROR );

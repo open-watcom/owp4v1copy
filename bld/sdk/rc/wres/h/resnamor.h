@@ -36,7 +36,7 @@
 #include "watcom.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef union ResNameOrOrdinal {
@@ -48,7 +48,7 @@ typedef union ResNameOrOrdinal {
 } _WCUNALIGNED ResNameOrOrdinal;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 extern ResNameOrOrdinal * ResNumToNameOrOrd( uint_16 num );

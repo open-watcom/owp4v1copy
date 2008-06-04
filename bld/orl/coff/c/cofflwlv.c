@@ -417,14 +417,14 @@ orl_linnum * CoffConvertLines( coff_sec_handle hdl, orl_table_index numlines )
     linebase = 0;
     while( numlines > 0 ) {
         if( coffline->line_number == 0 ) {
-            sym = &fhdl->symbol_handles[coffline->symbol_table_index];
-            coffline->RVA = sym->symbol->value;
+            sym = &fhdl->symbol_handles[coffline->ir.symbol_table_index];
+            coffline->ir.RVA = sym->symbol->value;
             if( sym->has_bf ) {
                 csym = (coff_sym_bfef *)(sym->symbol + sym->symbol->num_aux +2);
                 linebase = csym->linenum;
             }
         }
-        offset = coffline->RVA;
+        offset = coffline->ir.RVA;
         currline->linnum = coffline->line_number + linebase;
         currline->off = offset;
         coffline++;

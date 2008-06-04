@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Carving memory manager for linker.
 *
 ****************************************************************************/
 
@@ -315,7 +314,7 @@ void *CarveGetIndex( carve_t cv, void *elm )
     }
     block_index = cv->blk_count;
     block = cv->blk_list;
-    while( elm < block ) {
+    while( elm < (void *)block ) {
         --block_index;
         block = block->next;
     }

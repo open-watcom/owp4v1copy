@@ -226,7 +226,7 @@ static void DwarfAddLines( lineinfo *info )
 {
     ln_off_pair UNALIGN *lineptr;
     unsigned_32         dwsize;
-    char                buff[ 3 + 2 * MAX_LEB128 ];
+    uint_8              buff[ 3 + 2 * MAX_LEB128 ];
     dw_linenum_delta    linedelta;
     dw_addr_delta       addrdelta;
     ln_off_386          prevline;
@@ -532,7 +532,7 @@ void DwarfGenLines( lineinfo *info )
     virt_mem            vmem_addr;
     ln_off_386          prevline;
     offset              off;
-    char                buff[ 3 + 2 * MAX_LEB128 ];
+    uint_8              buff[ 3 + 2 * MAX_LEB128 ];
     unsigned            size;
     segdata             *seg;
 

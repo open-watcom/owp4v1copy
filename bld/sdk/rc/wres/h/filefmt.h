@@ -35,7 +35,7 @@
 #include "watcom.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct WResHeader {
@@ -146,7 +146,7 @@ typedef struct WResLangInfo {
 } _WCUNALIGNED WResLangInfo;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 /* Wes uses this stuff in the resource editors - not really file formats, don't have to be packed */

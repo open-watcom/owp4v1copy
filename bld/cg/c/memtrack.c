@@ -111,15 +111,15 @@ static TRPTR    TrkBeg;
 
 #endif
 
-#if defined(__SMALL__) || defined(__MEDIUM__)
-
-#define _POINTER_ADD( p, i )    ((void *)((char *)(p) + i))
-#define _POINTER( p )           ((void *) p)
-
-#else
+#if defined(__MEDIUM__) || defined (__LARGE__) || defined(__HUGE__)
 
 #define _POINTER_ADD( p, i )    ((void *)((char huge *)(p) + i))
 #define _POINTER( p )           ((void huge *) p)
+
+#else
+
+#define _POINTER_ADD( p, i )    ((void *)((char *)(p) + i))
+#define _POINTER( p )           ((void *) p)
 
 
 #endif

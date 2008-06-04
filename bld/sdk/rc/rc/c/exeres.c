@@ -208,6 +208,7 @@ static RcStatus copyOneResource( ResTable *restab, FullTypeRecord *type,
 
     /* align the output file to a boundary for shift_count */
     error = RS_OK;
+    align_amount = 0;   // shut up gcc
     out_offset = RcTell( outhandle );
     if( out_offset == -1 ) {
         error = RS_WRITE_ERROR;
@@ -240,7 +241,7 @@ static RcStatus copyOneResource( ResTable *restab, FullTypeRecord *type,
         *err_code = errno;
     }
 
-    if( !error ) {
+    if( error == RS_OK ) {
         addExeResRecord( restab, type, &(res->ResName), lang->MemoryFlags,
                 out_offset >> shift_count,
                 (lang->Length + align_amount) >> shift_count );
@@ -273,6 +274,7 @@ extern int CopyResources( uint_16 sect2mask, uint_16 sect2bits, bool sect2 )
     tmphandle = Pass2Info.TmpFile.Handle;
     reshandle = Pass2Info.ResFiles->Handle;
     error = RS_OK;
+    err_code = 0;
 
     /* walk through the WRes directory */
     wind = WResFirstResource( dir );

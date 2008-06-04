@@ -1294,7 +1294,7 @@ static int idata_fixup( expr_list *opndx )
 static int memory_operand( expr_list *opndx, bool with_fixup )
 /************************************************************/
 {
-    char                ss = SCALE_FACTOR_1;
+    uint_8              ss = SCALE_FACTOR_1;
     int                 index = EMPTY;
     int                 base = EMPTY;
     struct asm_sym      *sym;

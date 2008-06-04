@@ -24,16 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Keep track of Table of Contents (TOC) for NT PPC or of the
+*               Global Offset Table (GOT) for OS/2 PPC.
 *
 ****************************************************************************/
 
-
-/*
- *  toc.c:  Keep track of table of contents for NT PPC or of
-            global offset table (GOT) for OS/2 PPC
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -65,8 +60,8 @@ typedef struct {
                        // else use off and sdata->addr get address
     union {
         offset off;  // relative to sdata->addr
-        symbol * sym;
-    };
+        symbol *sym;
+    } u;
 } TocEntryId;
 
 typedef struct {
@@ -159,7 +154,7 @@ void AddSymToToc( symbol *sym )
     TocEntryId e;
 
     e.sdata = NULL;
-    e.sym = sym;
+    e.u.sym = sym;
     AddToToc(&e);
 }
 
@@ -170,7 +165,7 @@ void AddSdataOffToToc( segdata *sdata, offset off )
 
     DbgAssert( sdata != NULL );
     e.sdata = sdata;
-    e.off = off;
+    e.u.off = off;
     AddToToc(&e);
 }
 
@@ -181,15 +176,15 @@ static void ConvertTocEntryId( TocEntryId *e )
     if( e->sdata != NULL ) {
         // do nothing: already in sdata/offset form
     } else {
-        symbol *sym = e->sym;
+        symbol *sym = e->u.sym;
         segdata *seg = sym->p.seg;
 
         if( IS_SYM_IMPORTED(sym) || seg == NULL ) {
             // do not convert; keep symbol around
         } else {
             e->sdata = seg;
-            e->off = sym->addr.off - seg->a.delta -
-                     seg->u.leader->seg_addr.off;
+            e->u.off = sym->addr.off - seg->a.delta -
+                       seg->u.leader->seg_addr.off;
         }
     }
     return;
@@ -281,7 +276,7 @@ signed_32 FindSdataOffPosInToc( segdata *sdata, offset off )
 
     DbgAssert( sdata != NULL );
     e.sdata = sdata;
-    e.off = off;
+    e.u.off = off;
     return FindEntryPosInToc(&e);
 }
 
@@ -291,7 +286,7 @@ signed_32 FindSymPosInToc( symbol * sym )
     TocEntryId e;
 
     e.sdata = NULL;
-    e.sym = sym;
+    e.u.sym = sym;
     ConvertTocEntryId(&e);
     return FindEntryPosInToc(&e);
 }
@@ -307,10 +302,10 @@ static void WriteOutTokElem( void *_elem, void *buf )
     if( elem->e.sdata ) {
         sdata = elem->e.sdata;
         leader = sdata->u.leader;
-        addr = elem->e.off + sdata->a.delta + leader->group->linear
+        addr = elem->e.u.off + sdata->a.delta + leader->group->linear
                         + leader->seg_addr.off +  FmtData.base;
     } else {
-        addr = SymbolAbsAddr(elem->e.sym);
+        addr = SymbolAbsAddr(elem->e.u.sym);
     }
     DbgAssert(elem->pos >= 0);
     PutInfo((*((virt_mem *)buf)) + elem->pos, &(addr), sizeof addr);

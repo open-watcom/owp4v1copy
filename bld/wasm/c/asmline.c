@@ -64,7 +64,7 @@ typedef struct file_list {
     union {
         FILE            *file;
         struct input_queue  *lines;
-    };
+    } u;
     const FNAME         *srcfile;   /* name of include file */
     unsigned long       line_num;   /* current line in parent file */
     char                is_a_file;
@@ -370,7 +370,7 @@ int InputQueueFile( char *path )
         return( ERROR );
     } else {
         new = push_flist( tmp, TRUE );
-        new->file = file;
+        new->u.file = file;
         return( NOT_ERROR );
     }
 }
@@ -401,22 +401,22 @@ static char *input_get( char *string )
     while( file_stack != NULL ) {
         inputfile = file_stack;
         if( inputfile->is_a_file ) {
-            if( get_asmline( string, MAX_LINE_LEN, inputfile->file ) ) {
+            if( get_asmline( string, MAX_LINE_LEN, inputfile->u.file ) ) {
                 LineNumber++;
                 return( string );
             }
             /* EOF is reached */
             file_stack = inputfile->next;
-            fclose( inputfile->file );
+            fclose( inputfile->u.file );
             LineNumber = inputfile->line_num;
             AsmFree( inputfile );
         } else {
             /* this "file" is just a line queue for a macro */
-            inputline = inputfile->lines->head;
+            inputline = inputfile->u.lines->head;
             LineNumber++;
             if( inputline != NULL ) {
                 strcpy( string, inputline->line );
-                inputfile->lines->head = inputline->next;
+                inputfile->u.lines->head = inputline->next;
                 AsmFree( inputline->line );
                 AsmFree( inputline );
                 return( string );
@@ -424,7 +424,7 @@ static char *input_get( char *string )
             MacroEnd( FALSE );
 
             file_stack = inputfile->next;
-            AsmFree( inputfile->lines );
+            AsmFree( inputfile->u.lines );
             LineNumber = inputfile->line_num;
             AsmFree( inputfile );
         }
@@ -564,7 +564,7 @@ void PushMacro( const char *name, bool hidden )
 
     DebugMsg(( "PUSH_MACRO\n" ));
     new = push_flist( name, FALSE );
-    new->lines = line_queue;
+    new->u.lines = line_queue;
     new->hidden = hidden;
     line_queue = line_queue->next;
 }

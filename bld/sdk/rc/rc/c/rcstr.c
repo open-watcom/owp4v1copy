@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  String resource management.
 *
 ****************************************************************************/
 
@@ -34,7 +33,9 @@
 #include <ctype.h>
 #include "wresall.h"
 #include "rcstr.h"
-#ifndef INSIDE_WLINK
+#ifdef INSIDE_WLINK
+#include "wlrcmem.h"
+#else
 #include "rcmem.h"
 #endif
 

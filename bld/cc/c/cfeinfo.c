@@ -1066,7 +1066,7 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
     case SOURCE_LANGUAGE:
         return( "C" );
     case STACK_SIZE_8087:
-        return( (VOIDPTR)Stack87 );
+        return( (VOIDPTR)(unsigned)Stack87 );
     case CODE_GROUP:
         return( (VOIDPTR)GenCodeGroup );
     case DATA_GROUP:

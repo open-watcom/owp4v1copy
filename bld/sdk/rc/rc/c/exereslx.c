@@ -212,6 +212,11 @@ extern int WriteLXResourceObjects( ExeFileInfo *exe, ResFileInfo *info )
     // resources should be (current end of executable)
     file_offset = exe->DebugOffset;
 
+    page_offset = 0;
+    padded_size = 0;
+    object      = NULL;
+    map         = NULL;
+
     for( i = 0; i < exe->u.LXInfo.OS2Head.num_rsrcs; ++i ) {
         entry = &dir->resources[i];
 
@@ -393,6 +398,7 @@ int RcWriteLXResourceObjects( void )
     exeinfo = &Pass2Info.TmpFile;
     if( CmdLineParms.NoResFile ) {
         // Nothing to do
+        error = RS_OK;
     } else {
         error = WriteLXResourceObjects( exeinfo, Pass2Info.ResFiles );
     }

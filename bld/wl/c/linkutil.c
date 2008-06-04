@@ -54,8 +54,8 @@
 #include "wressetr.h"   // from wres project
 
 
-static int ResWrite( int dummy, const void *buff, size_t size )
-/*************************************************************/
+static ssize_t ResWrite( int dummy, const void *buff, size_t size )
+/*****************************************************************/
 /* redirect wres write to writeload */
 {
     dummy = dummy;
@@ -65,8 +65,8 @@ static int ResWrite( int dummy, const void *buff, size_t size )
 }
 
 //extern int WLinkItself;
-static long ResSeek( int handle, off_t position, int where )
-/**********************************************************/
+static off_t ResSeek( int handle, off_t position, int where )
+/***********************************************************/
 /* Workaround wres bug */
 {
     if( ( where == SEEK_SET ) && ( handle == WLinkItself ) ) {
@@ -82,14 +82,14 @@ static int ResClose( int handle )
     return( close( handle ) );
 }
 
-static int ResRead( int handle, void *buffer, size_t len )
-/*********************************************************/
+static ssize_t ResRead( int handle, void *buffer, size_t len )
+/************************************************************/
 {
     return( QRead( handle, buffer, len, NULL ) );
 }
 
-static long ResPos( int handle )
-/******************************/
+static off_t ResPos( int handle )
+/*******************************/
 {
     return( QPos( handle ) );
 }

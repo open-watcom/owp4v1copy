@@ -911,8 +911,8 @@ static void MapEscapeChar( void )
     memmove( Token.next + 1, str, strlen( str ) + 1 );
 }
 
-static int MapDoubleByteChar( char c )
-/************************************/
+static int MapDoubleByteChar( unsigned char c )
+/*********************************************/
 /* if the double byte character support is on, check if the current character
  * is a double byte character skip it */
 {
@@ -959,7 +959,7 @@ static bool MakeToken( tokcontrol ctrl, sep_type separator )
         MapEscapeChar();        /* get escape chars starting in 1st pos. */
     }
     hmm = *Token.next;
-    len += MapDoubleByteChar( hmm );
+    len += MapDoubleByteChar( (unsigned char)hmm );
     hitmatch = FALSE;
     for(;;) {
         len++;
@@ -1019,7 +1019,7 @@ static bool MakeToken( tokcontrol ctrl, sep_type separator )
             quit = TRUE;
             break;
         default:
-            len += MapDoubleByteChar( hmm );
+            len += MapDoubleByteChar( (unsigned char)hmm );
         }
         if( quit ) {
             break;

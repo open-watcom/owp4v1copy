@@ -56,21 +56,21 @@ struct bursts {
     unsigned short burst;
 };
 
-static char *buff;
+static unsigned char *buff;
 
 static char usage[] = "Usage: inp.file out.file\n";
 
-#define Xptr(x) (char*)(buff + x)
+#define Xptr(x) (unsigned char *)(buff + x)
 
 int main(int argc, char *argv[])
 {
-    FILE        *fp;
-    int         fi;
-    int         i;
-    int         len;
-    char        *p;
-    struct bursts *cb;
-    struct stat bufstat;
+    FILE                *fp;
+    int                 fi;
+    int                 i;
+    int                 len;
+    unsigned char       *p;
+    struct bursts       *cb;
+    struct stat         bufstat;
 
 
     if( argc > 2 ) {

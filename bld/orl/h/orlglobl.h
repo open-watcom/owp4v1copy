@@ -67,12 +67,12 @@ typedef enum {
     ORL_UNRECOGNIZED_FORMAT
 } orl_file_format;
 
-#pragma pack(1)
+#include <pushpck1.h>
 typedef struct {
     unsigned_16 linnum;
     unsigned_32 off;
 } orl_linnum;
-#pragma pack()
+#include <poppck.h>
 
 typedef struct {
     void *      (*read)( void *, size_t );

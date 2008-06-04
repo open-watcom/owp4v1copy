@@ -236,8 +236,11 @@ extern ResLocation SemFlushDataElemList( DataElemList *head, char call_startend 
 
     curnode = head;
     nextnode = head;
+    resLoc.len = 0;
     if( call_startend ) {
         resLoc.start = SemStartResource();
+    } else {
+        resLoc.start = 0;
     }
     while( nextnode != NULL ) {
         nextnode = curnode->next;

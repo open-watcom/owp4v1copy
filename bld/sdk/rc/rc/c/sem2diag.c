@@ -64,6 +64,7 @@ struct DLGTITEM {
 
 #include <stddef.h>
 #include <string.h>
+#include <assert.h>
 #include "wresall.h"
 #include "rcmem.h"
 #include "global.h"
@@ -269,6 +270,9 @@ extern FullDialogBoxControlOS2 *SemOS2NewDiagCtrl( uint_8 token,
         ctlClass = OS2_WC_VALUESET;
         defstyle = DEF_VALUESET;
         break;
+    default:
+        assert( 0 );
+        ctlClass = defstyle = 0;
     }
 
     newctrl = SemOS2InitDiagCtrl();

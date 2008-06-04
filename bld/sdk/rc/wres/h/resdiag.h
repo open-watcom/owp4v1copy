@@ -113,7 +113,7 @@ typedef uint_32     DialogExstyle;
 #endif
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct DialogSizeInfo {
@@ -135,8 +135,8 @@ typedef struct DialogBoxHeader {
 } _WCUNALIGNED DialogBoxHeader;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
-#include "pshpk2.h"
+#include "poppck.h"
+#include "pushpck2.h"
 #endif
 
 typedef struct DialogBoxHeader32 {
@@ -162,8 +162,8 @@ typedef struct DialogExHeader32 {
 } DialogExHeader32;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
-#include "pshpk1.h"
+#include "poppck.h"
+#include "pushpck1.h"
 #endif
 
 typedef union ControlClass {
@@ -181,8 +181,8 @@ typedef struct DialogBoxControl {
 } _WCUNALIGNED DialogBoxControl;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
-#include "pshpk2.h"
+#include "poppck.h"
+#include "pushpck2.h"
 #endif
 
 typedef struct DialogBoxControl32 {
@@ -207,8 +207,8 @@ typedef struct DialogBoxExControl32 {
 } DialogBoxExControl32;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
-//#include "pshpk1.h"
+#include "poppck.h"
+//#include "pushpck1.h"
 #endif
 
 /* predefined classes for controls */

@@ -75,7 +75,7 @@
 
 #define STUB_ALIGN 8    /* for PE format */
 
-#pragma pack(1);
+#pragma pack(1)
 
 typedef struct {
     unsigned_8  op1;
@@ -100,7 +100,7 @@ typedef struct {
     unsigned_16 op3;
 } alpha_transfer;
 
-#pragma pack();
+#pragma pack()
 
 static alpha_transfer   AlphaJump = {   0, ALPHA_TRANSFER_OP1,
                                         0, ALPHA_TRANSFER_OP2,

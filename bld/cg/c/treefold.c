@@ -911,7 +911,7 @@ extern  tn      FoldDiv( tn left, tn rite, type_def *tipe )
             } else if( ( tipe->attr & TYPE_FLOAT ) &&
                 ( _IsModel( FP_UNSTABLE_OPTIMIZATION ) ||
                 ( CFIsU32( rv ) && GetLog2( CFConvertByType( rv, tipe ) ) != -1 ) ) ) {
-                if( CFTest( rv ) != NULL ) {
+                if( CFTest( rv ) != 0 ) {
                     tmp = CFInverse( rv );
                     if( tmp != NULL ) {
                         fold = TGBinary( OP_MUL, left, TGConst( tmp, tipe ), tipe );

@@ -54,7 +54,7 @@ typedef uint_16             MenuFlags;
 #define MENUEX_VERSION_SIG  0x0001
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct MenuHeader {
@@ -112,7 +112,7 @@ typedef struct MenuExItem {
 } MenuExItem;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 int ResWriteMenuItemNormal( const MenuItemNormal * curritem, uint_8 use_unicode,

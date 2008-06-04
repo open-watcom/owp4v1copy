@@ -944,6 +944,12 @@ static void helpSet( char *str, char *helpname, unsigned buflen )
             str = strtok( NULL, " " );
         }
     }
+    /* To remove help window height/width restrictions hardcoded in the
+     * help file, we could zero out or ignore the 'nums' entries.
+     */
+#if 0
+    nums[0] = nums[1] = 0;
+#endif
     helpScreen.area.height = (nums[0] == 0) ? UIData->height - 3 : nums[0] + 3;
     helpScreen.area.width = (nums[1] == 0) ? UIData->width - 2 : nums[1];
     helpLines = nums[4];
@@ -974,7 +980,7 @@ static void putline( char *buffer, int line )
         start = i;
         while( buffer[i] && buffer[i] != HELP_ESCAPE &&
                helpScreen.col+i-start<=helpScreen.area.width ) {
-            if( buffer[i] == 0xFF )
+            if( (unsigned char)buffer[i] == 0xFF )
                 buffer[i] = 0x20;
             ++i;
         }

@@ -36,7 +36,7 @@
 #include "watcom.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct IconCurDirHeader {
@@ -76,7 +76,7 @@ typedef struct CurHotspot {
 } CurHotspot;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 extern int ResWriteIconCurDirHeader( const IconCurDirHeader *, WResFileID );

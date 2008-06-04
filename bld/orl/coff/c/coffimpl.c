@@ -79,25 +79,23 @@ typedef struct {
     uint_32     time_date_stamp;
 } import_sym;
 
-#pragma pack ( push, 1 )
-
 //IMPORT_DESCRIPT optional header
 
-static char CoffImportAxpText[] = {
+static unsigned_8 CoffImportAxpText[] = {
  0x00,0x00,0x7F,0x27,0x00,0x00,0x7B,0xA3,0x00,0x00,0xFB,0x6B
 };
 
-static char CoffImportPpcText[] = {
+static unsigned_8 CoffImportPpcText[] = {
  0x00,0x00,0x62,0x81,0x00,0x00,0x8B,0x81,0x04,0x00,0x41,0x90,0xA6,0x03,0x89,0x7D,
  0x04,0x00,0x4B,0x80,0x20,0x04,0x80,0x4E
 };
 
-static char CoffImportPpcPdata[] = {
+static unsigned_8 CoffImportPpcPdata[] = {
  0x00,0x00,0x00,0x00,0x18,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x00,0x00,0x00,
  0x0D,0x00,0x00,0x00
 };
 
-static char CoffImportX86Text[] = {
+static unsigned_8 CoffImportX86Text[] = {
  0xFF,0x25,0x00,0x00,0x00,0x00
 };
 
@@ -565,10 +563,8 @@ int convert_import_library(coff_file_handle coff_file_hnd)
     sym.DLLName = sym.exportedName + strlen( sym.exportedName ) + 1;
     sym.time_date_stamp = i_hdr->time_date_stamp;
     sym.type = i_hdr->name_type;
-    sym.ordinal = i_hdr->ordinal;
+    sym.ordinal = i_hdr->oh.ordinal;
     return( CoffCreateImport( coff_file_hnd, &sym ) );
 }
-
-#pragma pack ( pop )
 
 orl_funcs ImportLibData = {ImportLibRead, ImportLibSeek, NULL, NULL};

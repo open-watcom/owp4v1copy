@@ -24,15 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker specific structures for Novell load files.
 *
 ****************************************************************************/
 
 
-// linker specific structures for novell load files
-
-#pragma pack(push,1)
+#include "pushpck1.h"
 
 #ifdef _EXENOV_H
 // this is the portion of the nlm_header which is of a fixed size.
@@ -117,5 +114,4 @@ extern void     AddNovImpReloc( symbol *, unsigned_32, bool, bool );
 extern void     FindExportedSyms( void );
 extern void     ResetLoadNov( void );
 
-#pragma pack(pop)
-
+#include "poppck.h"

@@ -278,6 +278,8 @@ local void SetTargSystem( void )                            /* 07-aug-90 */
                 _SetConstTarg( "qnx" );
             #elif defined( __LINUX__ )
                 _SetConstTarg( "linux" );
+            #elif defined( __SOLARIS__ ) || defined( __sun__ )
+                _SetConstTarg( "solaris" );
             #elif defined( __OSX__ ) || defined( __APPLE__ )
                 _SetConstTarg( "osx" );
             #elif defined( __OS2__ )

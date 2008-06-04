@@ -44,7 +44,7 @@ static void outLineNum( owl_func_handle func, owl_line_num line, owl_offset addr
     coff_line_num       rec;
 
     assert( func->section->linenum_buffer != NULL );
-    rec.RVA = addr;
+    rec.ir.RVA = addr;
     rec.line_number = ( ( line == 0 ) ? 0 : ( line - func->x.func->first_line ) );
     OWLBufferWrite( func->section->linenum_buffer, (const char *)&rec, sizeof( coff_line_num ) );
     func->section->num_linenums += 1;

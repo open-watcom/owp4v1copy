@@ -37,7 +37,7 @@
 #include "layer0.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct AccelTableEntry32 {
@@ -54,7 +54,7 @@ typedef struct AccelTableEntry {
 } _WCUNALIGNED AccelTableEntry;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 typedef uint_8  AccelFlags;

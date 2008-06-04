@@ -73,7 +73,7 @@ static  bool    NextCmp( instruction *ins ) {
 
     next = ins->head.next;
     if( !_OpIsCondition( next->head.opcode ) ) return( FALSE );
-    if( next->table == &DoNop ) return( TRUE );
+    if( next->table == DoNop ) return( TRUE );
     if( next->u.gen_table == NULL ) return( FALSE );
     if( next->u.gen_table->generate != G_NO ) return( FALSE );
     return( TRUE );

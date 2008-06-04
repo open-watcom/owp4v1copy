@@ -576,7 +576,7 @@ bool ProcPath( void )
     ret = GetToken( SEP_NO, TOK_INCLUDE_DOT | TOK_IS_FILENAME  );
     if( ret != FALSE ) {
         _ChkAlloc( new_path, sizeof( path_entry ) + Token.len );
-        ptr = &new_path->name;
+        ptr = new_path->name;
         memcpy( ptr, Token.this, Token.len );
         ptr[ Token.len ] = '\0';
         new_path->next = Path;

@@ -54,7 +54,7 @@ typedef struct cvmodinfo {
     unsigned_16 numsegs;
 } cvmodinfo;
 
-#pragma pack( 1 );
+#pragma pack( 1 )
 
 // Cheesy implementation of sstSrcModule structures.
 // Only allow one file and one segment.
@@ -87,7 +87,7 @@ typedef struct {
 //  unsigned_32         linenumber[];
 } cheesy_mapping_table;
 
-#pragma pack();
+#pragma pack()
 
 // global information needed to keep track of line number information
 

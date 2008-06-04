@@ -77,7 +77,7 @@ void PrintLine( int *bogus, const char *buff, unsigned len )
 #endif
 
 void LnkMemInit( void )
-/****************************/
+/*********************/
 {
 #if defined( __QNX__ )
     /* allocate some memory we can give back to the system if it runs low */
@@ -96,7 +96,7 @@ void LnkMemInit( void )
 
 
 void LnkMemFini( void )
-/****************************/
+/*********************/
 {
 #ifdef _INT_DEBUG
     if( Chunks != 0 ) {
@@ -110,9 +110,9 @@ void LnkMemFini( void )
 }
 
 #ifdef TRMEM
-void *DoLAlloc( unsigned size, void (*ra)( void ) )
+void *DoLAlloc( size_t size, void (*ra)( void ) )
 #else
-void *LAlloc( unsigned size )
+void *LAlloc( size_t size )
 #endif
 {
     void    *p;
@@ -136,8 +136,8 @@ void *LAlloc( unsigned size )
 }
 
 #ifdef TRMEM
- void *LAlloc( unsigned size )
-/**********************************/
+ void *LAlloc( size_t size )
+/**************************/
 {
 //    extern void *DoLAlloc( unsigned, void (*)() );
     void        (*ra)( void );
@@ -148,8 +148,8 @@ void *LAlloc( unsigned size )
 }
 #endif
 
-void *ChkLAlloc( unsigned size )
-/**************************************/
+void *ChkLAlloc( size_t size )
+/****************************/
 {
     void                *ptr;
 #ifdef TRMEM
@@ -182,8 +182,8 @@ void LFree( void *p )
 #endif
 }
 
-void *LnkExpand( void *src, unsigned size )
-/*************************************************/
+void *LnkExpand( void *src, size_t size )
+/***************************************/
 // try to expand a block of memory
 {
 #ifdef TRMEM
@@ -193,8 +193,8 @@ void *LnkExpand( void *src, unsigned size )
 #endif
 }
 
-void *LnkReAlloc( void *src, unsigned size )
-/**************************************************/
+void *LnkReAlloc( void *src, size_t size )
+/****************************************/
 // reallocate a block of memory.
 {
     void    *dest;
@@ -203,7 +203,7 @@ void *LnkReAlloc( void *src, unsigned size )
 
     ra = _trmem_guess_who(); /* must be first thing */
 #endif
-    for(;;) {
+    for( ;; ) {
 #ifdef TRMEM
         dest = _trmem_realloc( src, size, ra, TrHdl );
 #else
@@ -223,13 +223,13 @@ void *LnkReAlloc( void *src, unsigned size )
 
 #ifdef TRMEM
 int ValidateMem( void )
-/*****************************/
+/*********************/
 {
     return( _trmem_validate_all( TrHdl ) );
 }
 
 void PrintAllMem( void )
-/*****************************/
+/**********************/
 {
     if( _trmem_prt_list( TrHdl ) == 0 ) {
         _trmem_prt_usage( TrHdl );
@@ -238,14 +238,14 @@ void PrintAllMem( void )
 #endif
 
 #ifndef NDEBUG
-void DbgZapAlloc( void *tgt, unsigned size )
-/*************************************************/
+void DbgZapAlloc( void *tgt, size_t size )
+/****************************************/
 {
     memset( tgt, 0xA5, size );
 }
 
-void DbgZapFreed( void *tgt, unsigned size )
-/*************************************************/
+void DbgZapFreed( void *tgt, size_t size )
+/****************************************/
 {
     memset( tgt, 0xBD, size );
 }
@@ -264,7 +264,7 @@ static bool CacheRelease( void )
 }
 
 bool FreeUpMemory( void )
-/******************************/
+/***********************/
 // make sure LnkReAlloc is kept up to date with what is put in here.
 {
 #if defined( __QNX__ )
@@ -283,7 +283,7 @@ bool FreeUpMemory( void )
 }
 
 int __nmemneed( size_t amount )
-/************************************/
+/*****************************/
 {
     amount = amount;
     return( FreeUpMemory() );
@@ -291,7 +291,7 @@ int __nmemneed( size_t amount )
 
 #ifdef _M_I86
 int __fmemneed( size_t amount )
-/************************************/
+/*****************************/
 {
     amount = amount;
     return( FreeUpMemory() );

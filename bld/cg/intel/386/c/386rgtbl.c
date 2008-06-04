@@ -331,7 +331,7 @@ static  hw_reg_set      STParmReg[] = {
                 HW_D_1( HW_EMPTY ),
                 HW_D_1( HW_EMPTY ) };
 
-reg_list        *RegSets[] = {
+hw_reg_set      *RegSets[] = {
 /*****************************
     define the possible register lists
 */
@@ -373,44 +373,44 @@ static  reg_set_index   ClassSets[] = {
         RL_8,                   /* FL*/ // FIXME - long double
         RL_ };                  /* XX*/
 
-static  reg_list        *ParmSets[] = {
+static  hw_reg_set      *ParmSets[] = {
 /**************************************
     define the set of register that a parameter of a given class could use
 */
-        &ByteRegs,              /* U1*/
-        &ByteRegs,              /* I1*/
-        &WordRegs,              /* U2*/
-        &WordRegs,              /* I2*/
-        &DoubleParmRegs,        /* U4*/
-        &DoubleParmRegs,        /* I4*/
-        &QuadReg,               /* U8*/
-        &QuadReg,               /* I8*/
-        &FarPointerRegs,        /* CP*/
-        &FarPointerRegs,        /* PT*/
-        &DoubleParmRegs,        /* FS*/
-        &QuadReg,               /* FD*/
-        &Empty,                 /* FL*/
-        &Empty };               /* XX*/
+        ByteRegs,               /* U1*/
+        ByteRegs,               /* I1*/
+        WordRegs,               /* U2*/
+        WordRegs,               /* I2*/
+        DoubleParmRegs,         /* U4*/
+        DoubleParmRegs,         /* I4*/
+        QuadReg,                /* U8*/
+        QuadReg,                /* I8*/
+        FarPointerRegs,         /* CP*/
+        FarPointerRegs,         /* PT*/
+        DoubleParmRegs,         /* FS*/
+        QuadReg,                /* FD*/
+        Empty,                  /* FL*/
+        Empty };                /* XX*/
 
-static  reg_list        *ParmSets8087[] = {
-/**************************************
+static  hw_reg_set      *ParmSets8087[] = {
+/******************************************
     define the set of register that a parameter of a given class could use
     when generating 8087 code
 */
-        &ByteRegs,              /* U1*/
-        &ByteRegs,              /* I1*/
-        &WordRegs,              /* U2*/
-        &WordRegs,              /* I2*/
-        &DoubleParmRegs,        /* U4*/
-        &DoubleParmRegs,        /* I4*/
-        &QuadReg,               /* U8*/
-        &QuadReg,               /* I8*/
-        &FarPointerRegs,        /* CP*/
-        &FarPointerRegs,        /* PT*/
-        &STParmReg,             /* FS*/
-        &STParmReg,             /* FD*/
-        &STParmReg,             /* FL*/
-        &Empty };               /* XX*/
+        ByteRegs,               /* U1*/
+        ByteRegs,               /* I1*/
+        WordRegs,               /* U2*/
+        WordRegs,               /* I2*/
+        DoubleParmRegs,         /* U4*/
+        DoubleParmRegs,         /* I4*/
+        QuadReg,                /* U8*/
+        QuadReg,                /* I8*/
+        FarPointerRegs,         /* CP*/
+        FarPointerRegs,         /* PT*/
+        STParmReg,              /* FS*/
+        STParmReg,              /* FD*/
+        STParmReg,              /* FL*/
+        Empty };                /* XX*/
 
 static  reg_set_index   IsSets[] = {
 /***********************************
@@ -588,13 +588,13 @@ static  reg_set_index   OtherInter[] = {
         RL_ };
 
 static  reg_set_index   *InterTable[] = {
-        &OneByteInter,          /* ONE_BYTE*/
-        &TwoByteInter,          /* TWO_BYTE*/
-        &FourByteInter,         /* FOUR_BYTE*/
-        &SixByteInter,          /* SIX_BYTE*/
-        &EightByteInter,        /* EIGHT_BYTE*/
-        &FloatingInter,         /* FLOATING*/
-        &OtherInter };          /* others*/
+        OneByteInter,           /* ONE_BYTE*/
+        TwoByteInter,           /* TWO_BYTE*/
+        FourByteInter,          /* FOUR_BYTE*/
+        SixByteInter,           /* SIX_BYTE*/
+        EightByteInter,         /* EIGHT_BYTE*/
+        FloatingInter,          /* FLOATING*/
+        OtherInter };           /* others*/
 
 
 extern  void            InitRegTbl( void )

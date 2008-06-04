@@ -36,7 +36,7 @@
 #include "resfmt.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct MResResourceHeader {
@@ -56,7 +56,7 @@ typedef struct M32ResResourceHeader {
 } M32ResResourceHeader;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 #endif

@@ -99,7 +99,7 @@ static void DoCVPack( void );
 static void FlushImpBuffer( void );
 static void ExecWlib( void );
 static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
-                         void *(*rtn)(void *, const void *, unsigned) );
+                         void *(*rtn)(void *, const void *, size_t) );
 static void BufImpWrite( char *buffer, int len );
 static void FlushBuffFile( outfilelist *outfile );
 
@@ -1044,8 +1044,8 @@ void FreeOutFiles( void )
     }
 }
 
-static void *SetToZero( void *dest, const void *dummy, unsigned size )
-/*********************************************************************/
+static void *SetToZero( void *dest, const void *dummy, size_t size )
+/******************************************************************/
 {
     memset( dest, FmtData.FillChar, size );
     return( (void *)dummy );
@@ -1094,8 +1094,8 @@ void WriteLoad( void *buff, unsigned long size )
     }
 }
 
-static void *NullBuffFunc( void *dest, const void *dummy, unsigned size )
-/************************************************************************/
+static void *NullBuffFunc( void *dest, const void *dummy, size_t size )
+/*********************************************************************/
 {
     dummy = dummy;
     size = size;
@@ -1200,7 +1200,7 @@ void CloseBuffFile( outfilelist *outfile )
 }
 
 static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
-                         void *(*rtn)(void *, const void *, unsigned) )
+                         void *(*rtn)(void *, const void *, size_t) )
 /***************************************************************************/
 {
     unsigned modpos;

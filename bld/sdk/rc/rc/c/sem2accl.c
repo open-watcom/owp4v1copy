@@ -102,6 +102,7 @@ FullAccelEntryOS2 SemOS2MakeAccItem( AccelEvent event, unsigned long idval,
 {
     FullAccelEntryOS2      entry;
 
+    memset( &entry, 0, sizeof( entry ) );
 //    if( event.strevent || flags.typegiven ) {
         CheckAccelFlags( &flags.flags, idval );
         entry.entry.Ascii = event.event;

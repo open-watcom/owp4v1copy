@@ -688,7 +688,7 @@ extern void SemWriteDialogBox( WResID *name, ResMemFlags flags,
 /******************************************************************/
 {
     ResLocation              loc;
-    int                      err_code;
+    int                      err_code = 0;
     int                      error = 0;
     FullDialogBoxControl     *travptr;
 

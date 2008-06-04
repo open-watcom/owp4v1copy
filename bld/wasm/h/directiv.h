@@ -183,7 +183,7 @@ typedef struct label_list {
     union {
         unsigned        is_vararg   :1; // if it is a vararg
         int             count;          // number of element in this label
-    };
+    } u;
 } label_list;
 
 typedef struct {

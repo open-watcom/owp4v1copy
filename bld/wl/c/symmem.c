@@ -112,14 +112,14 @@ bool PermShrink( void )
     return( ret );
 }
 
-void * Pass1Alloc( unsigned size )
-/********************************/
+void *Pass1Alloc( size_t size )
+/*****************************/
 {
     return( AllocBlock( size, &Pass1Blocks ) );
 }
 
-void *PermAlloc( unsigned size )
-/******************************/
+void *PermAlloc( size_t size )
+/****************************/
 /* allocate a hunk of permanently allocated memory */
 {
     return( AllocBlock( size, &PermBlocks ) );

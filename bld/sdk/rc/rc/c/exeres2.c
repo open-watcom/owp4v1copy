@@ -272,9 +272,11 @@ extern int CopyOS2Resources( void )
                 - Pass2Info.OldFile.u.NEInfo.Seg.NumOS2ResSegs;
     entry     = restab->resources;
     error     = RS_OK;
+    err_code  = 0;
 
     tmpseg += currseg;
     shift_count = Pass2Info.TmpFile.u.NEInfo.WinHead.align;
+    seg_offset = 0;     // shut up gcc
 
     /* We may need to add padding before the first resource segment */
     align_amount = AlignAmount( RcTell( tmphandle ), shift_count );

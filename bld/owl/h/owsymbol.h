@@ -50,7 +50,7 @@ struct  owl_func_file {
     char            name[1];        // variable len path
 };
 
-typedef struct owl_func_info {
+struct owl_func_info {
     owl_offset          start;                  // start of the function
     owl_offset          end;                    // end of the function
     owl_line_num        first_line;             // first line of function source

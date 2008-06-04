@@ -37,31 +37,33 @@
 #include "helpchar.h"
 #include "helpmem.h"
 
-static  char    specialChars[] = { HELP_ESCAPE,
-                                   GOOFY_HYPERLINK,
-                                   FAKE_RIGHT_ARROW,
-                                   FAKE_LEFT_ARROW,
-                                   '<',
-                                   '>',
-                                   '{',
-                                   '}',
-                                   '\0'
-                                 };
+static  unsigned char   specialChars[] = {
+    HELP_ESCAPE,
+    GOOFY_HYPERLINK,
+    FAKE_RIGHT_ARROW,
+    FAKE_LEFT_ARROW,
+    '<',
+    '>',
+    '{',
+    '}',
+    '\0'
+};
 
-static  char    specialHyperChars[] = { HELP_ESCAPE,
-                                        GOOFY_HYPERLINK,
-                                        HYPER_TOPIC,
-                                        '<',
-                                        '>',
-                                        '{',
-                                        '}',
-                                        '\0'
-                                 };
+static  unsigned char   specialHyperChars[] = {
+    HELP_ESCAPE,
+    GOOFY_HYPERLINK,
+    HYPER_TOPIC,
+    '<',
+    '>',
+    '{',
+    '}',
+    '\0'
+};
 
 static unsigned scanHyperLink( char *line, TokenType *type,
                                HyperLinkInfo *info )
 {
-    char                endchar;
+    unsigned char       endchar;
     char                *cur;
     char                *topic;
     char                *hfname;
@@ -76,17 +78,17 @@ static unsigned scanHyperLink( char *line, TokenType *type,
     cnt = 0;
     chktopic = FALSE;
     chkhfname = FALSE;
-    if( *cur == GOOFY_HYPERLINK ) {
+    if( *(unsigned char *)cur == GOOFY_HYPERLINK ) {
         *type = TK_GOOFY_LINK;
         endchar = GOOFY_HYPERLINK;
     } else {
         *type = TK_PLAIN_LINK;
         endchar = '>';
     }
-    cur ++;
+    ++cur;
     topic = cur;
     for( ;; ) {
-        switch( *cur ) {
+        switch( *(unsigned char *)cur ) {
         case HELP_ESCAPE:
             if( cnt == TEXT_BLOCK_SIZE ) {
                 cnt = 0;
@@ -110,7 +112,7 @@ static unsigned scanHyperLink( char *line, TokenType *type,
             }
             /* fall through */
         case GOOFY_HYPERLINK:
-            if( *cur == endchar ) {
+            if( *(unsigned char *)cur == endchar ) {
                 info->topic = topic;
                 block->cnt = cnt;
                 if( chkhfname ) {
@@ -134,7 +136,8 @@ static unsigned scanHyperLink( char *line, TokenType *type,
                 hfname = cur;
                 chkhfname = TRUE;
             }
-            while( (*cur != endchar) && (*cur != HYPER_TOPIC) ) {
+            while( (*(unsigned char *)cur != endchar)
+	      && (*(unsigned char *)cur != HYPER_TOPIC) ) {
                 if( *cur == HELP_ESCAPE ) cur++;
                 cur++;
             }
@@ -148,7 +151,7 @@ static unsigned scanHyperLink( char *line, TokenType *type,
             }
             block->info[cnt].str = cur;
             block->info[cnt].type = TT_PLAIN;
-            block->info[cnt].len = strcspn( cur, specialHyperChars );
+            block->info[cnt].len = strcspn( cur, (char *)specialHyperChars );
             cur += block->info[cnt].len;
             cnt ++;
             break;
@@ -177,7 +180,7 @@ bool ScanLine( char *line, ScanCBfunc *cb, void *info )
     cur = line;
     newfile = FALSE;
     for( ;; ) {
-        switch( *cur ) {
+        switch( *(unsigned char *)cur ) {
         case HELP_ESCAPE:
             tinfo.u.text.str = cur;
             cur ++;
@@ -248,7 +251,7 @@ bool ScanLine( char *line, ScanCBfunc *cb, void *info )
         default:
             tinfo.u.text.str = cur;
             tinfo.u.text.type = TT_PLAIN;
-            tinfo.u.text.len = strcspn( cur, specialChars );
+            tinfo.u.text.len = strcspn( cur, (char *)specialChars );
             cur += tinfo.u.text.len;
             cb( TK_TEXT, &tinfo, info );
             break;

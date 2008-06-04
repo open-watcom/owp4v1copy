@@ -43,7 +43,7 @@ int     Spawn( void (*fn)( void ) )
     int         status;
 
     save_env = SpawnStack;
-    SpawnStack = env;
+    SpawnStack = &env;
     status = setjmp( env );
     if( status == 0 ) {
         (*fn)();
@@ -56,5 +56,5 @@ int     Spawn( void (*fn)( void ) )
 void    Suicide( void )
 //=====================
 {
-    longjmp( SpawnStack, 1 );
+    longjmp( *SpawnStack, 1 );
 }

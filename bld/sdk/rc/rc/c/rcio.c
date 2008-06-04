@@ -30,13 +30,14 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <errno.h>
+#include <assert.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <stdarg.h>
 #include <time.h>
 #ifndef __UNIX__
     #include <process.h>
@@ -138,8 +139,8 @@ static int Pass1InitRes( void )
         WResSetTargetOS( CurrResFile.dir, WRES_OS_OS2 );
     }
 
-    /* open the tempory file */
-    if (CmdLineParms.MSResFormat) {
+    /* open the temporary file */
+    if( CmdLineParms.MSResFormat ) {
         CurrResFile.IsWatcomRes = FALSE;
         CurrResFile.handle = MResOpenNewFile( CurrResFile.filename );
 
@@ -808,19 +809,20 @@ typedef struct FileStackEntry {
 } FileStackEntry;
 
 typedef struct FileStack {
-    char *              Buffer;
+    unsigned char       *Buffer;
     uint                BufferSize;
-    char *              NextChar;
-    char *              EofChar;        /* DON'T dereference, see below */
+    unsigned char       *NextChar;
+    unsigned char       *EofChar;       /* DON'T dereference, see below */
     /* + 1 for the before first entry */
     FileStackEntry      Stack[ MAX_INCLUDE_DEPTH + 1 ];
-    FileStackEntry *    Current;
+    FileStackEntry      *Current;
 } FileStack;
 /* EofChar points to the memory location after the last character currently */
 /* in the buffer. If the physical EOF has been reached it will point to */
 /* within Buffer, otherwise it will point AFTER Buffer. If NextChar == */
 /* EofChar then either EOF has been reached or it's time to read in more */
 /* of the file */
+/* NB: Characters in the buffer must be unsigned for proper MBCS support! */
 
 #define IsEmptyFileStack( stack ) ((stack).Current == (stack).Stack)
 
@@ -986,6 +988,7 @@ static int GetLogChar( FileStack * stack )
     int     newchar;
 
     newchar = *(stack->NextChar);
+    assert( newchar > 0 );
     if( newchar == '\n' ) {
         stack->Current->Logical.LineNum++;
     }

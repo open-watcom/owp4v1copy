@@ -36,7 +36,7 @@
 #include "watcom.h"
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct FontInfo {
@@ -78,7 +78,7 @@ typedef struct FontDirEntry {
 } FontDirEntry;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 /* NOTE: The StructSize field is not acutally part of the directory entry and */
