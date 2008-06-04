@@ -317,6 +317,7 @@ ddk_headers =        &
         ntiologc.h   &
         ntnls.h      &
         ntstatus.h   &
+        srb.h        &
         wdm.h        &
         wdmguid.h    &
         winddi.h     &
@@ -448,6 +449,7 @@ ddk_libs =           &
         ntdll.lib    &
         ntoskrnl.lib &
         rtlver.lib   &
+        scsiport.lib &
         wdmguid.lib  &
         win32k.lib   &
         wmilib.lib
