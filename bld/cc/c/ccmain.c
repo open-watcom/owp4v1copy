@@ -58,8 +58,6 @@
 
 #define MAX_INC_DEPTH   255
 
-extern  char    CharSet[];
-
 static  char    IsStdIn;
 static  int     IncFileDepth;
 static  char    *FNameBuf = NULL;

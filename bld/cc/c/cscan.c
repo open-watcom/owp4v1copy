@@ -256,7 +256,7 @@ int doScanName( void )
             if( (CharSet[c] & (C_AL | C_DI)) == 0 )
                 break;
             *p++ = c;
-            c = *scanptr++;
+            c = *(unsigned char *)scanptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char    *oldbuf = Buffer;
 
@@ -422,7 +422,7 @@ static void doScanAsmToken( void )
             if( (CharSet[c] & (C_AL | C_DI)) == 0 )
                 break;
             *p++ = c;
-            c = *scanptr++;
+            c = *(unsigned char *)scanptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char    *oldbuf = Buffer;
 
@@ -543,7 +543,6 @@ int ScanHex( int max, const char **pbuf )
 {
     int                 c;
     int                 count;
-    unsigned char       chrclass;
     char                too_big;
     unsigned long       value;
 
@@ -554,14 +553,13 @@ int ScanHex( int max, const char **pbuf )
         if( pbuf == NULL ) {
             c = SaveNextChar();
         } else {
-            c = *++*pbuf;
+            c = *++*(unsigned char **)pbuf;
         }
         if( max == 0 )
             break;
-        chrclass = CharSet[ c ];
-        if( ( chrclass & (C_HX|C_DI) ) == 0 )
+        if( ( CharSet[ c ] & (C_HX|C_DI) ) == 0 )
             break;
-        if( chrclass & C_HX )
+        if( CharSet[ c ] & C_HX )
             c = (( c | HEX_MASK ) - HEX_BASE ) + 10 + '0';
         if( value & 0xF0000000 )
             too_big = 1;
@@ -726,14 +724,11 @@ static int ScanNum( void )
     if( c == '0' ) {
         c = SaveNextChar();
         if( c == 'x' || c == 'X' ) {
-            unsigned char       chrclass;
-
             bad_token_type = ERR_INVALID_HEX_CONSTANT;
             con.form = CON_HEX;
             for( ;; ) {
                 c = SaveNextChar();
-                chrclass = CharSet[ c ];
-                if( ( chrclass & (C_HX|C_DI) ) == 0 ) {
+                if( ( CharSet[ c ] & (C_HX|C_DI) ) == 0 ) {
                     break;
                 }
             }
@@ -1205,7 +1200,7 @@ static void ScanComment( void )
             }
             do {
                 prev_char = c;
-                c = *scanptr++;
+                c = *(unsigned char *)scanptr++;
             } while( !(CharSet[c] & C_EX) );
             ScanCharPtr = scanptr;
             if( c != '/' ) {
@@ -1450,7 +1445,7 @@ int ESCChar( int c, const char **pbuf, char *error )
             if( pbuf == NULL ) {
                 c = SaveNextChar();
             } else {
-                c = *++*pbuf;
+                c = *++*(unsigned char **)pbuf;
             }
             --i;
             if( i == 0 ) {
@@ -1521,7 +1516,7 @@ int ScanWhiteSpace( void )
         for( ;; ) {
             scanptr = ScanCharPtr;
             do {
-                c = *scanptr++;
+                c = *(unsigned char *)scanptr++;
             } while( CharSet[c] & C_WS );
             ScanCharPtr = scanptr;
             if( (CharSet[c] & C_EX) == 0 )

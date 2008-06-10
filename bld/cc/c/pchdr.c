@@ -1740,7 +1740,7 @@ static int FixupDataStructures( char *p, struct pheader *pch )
     p = FixupSymHashTable( p, pch->symhash_count );
     p = FixupSymbols( p, pch->symbol_count );
     if( pch->msgflags_len != 0 ) {                      /* 06-jul-94 */
-        MsgFlags = p;
+        MsgFlags = (unsigned char *)p;
         p += pch->msgflags_len;
     }
     PCH_MaxSymHandle = pch->symbol_count;

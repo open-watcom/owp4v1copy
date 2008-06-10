@@ -38,7 +38,7 @@
 
 /* The following table is ASCII dependent. */
 
-char CharSet[]  = {                              /* ASCII */
+charset_flags CharSet[]  = {                              /* ASCII */
 
 /* 00 NUL 01 SOH 02 STX 03 ETX 04 EOT 05 ENQ 06 ACK 07 BEL */
     C_EX,  C_BC,  C_BC,  C_BC,  C_BC,  C_BC,  C_BC,  C_BC, /* NUL to BEL */
