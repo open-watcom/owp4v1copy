@@ -88,27 +88,12 @@ void cpp_sort(T *working, T *holding, int size, char *caption)
   clock_t interval = clock();
 
   for(int i = 0; i < TEST_COUNT; ++i) {
-    memcpy( working, holding, size * sizeof(int) );
+    copy( holding, holding + size, working);
     SORT( working, working + size );
   }
   interval = clock() - interval;
   std::cout << "std::sort => " << caption << ": "
             << interval/static_cast<double>( CLOCKS_PER_SEC ) << "\n";
-}
-
-// Use the C++ library std::sort (or something similar) to sort strings.
-void cpp_string_sort( int size, char *caption)
-{
-  std::string *working = new std::string[ size ];
-  make_random_strings( working, working + size );
-
-  clock_t interval = clock();
-  SORT( working, working + size );
-  interval = clock() - interval;
-  std::cout << "std::sort => " << caption << ": "
-            << TEST_COUNT * ( interval/static_cast<double>( CLOCKS_PER_SEC ) ) << "\n";
-  
-  delete [] working;
 }
 
 // Use C library qsort() to sort arrays of integers.
@@ -127,20 +112,26 @@ void c_sort(int *working, int *holding, int size, char *caption)
 
 int main( )
 {
-  int *holding = new int[N];
-  int *working = new int[N];
+  int *int_holding = new int[N];
+  int *int_working = new int[N];
+  std::string *string_holding = new std::string[N];
+  std::string *string_working = new std::string[N];
 
-  make_random( holding, holding + N );
-  cpp_sort( working, holding, N, "random" );
-  c_sort( working, holding, N, "random" );
+  make_random( int_holding, int_holding + N );
+  cpp_sort( int_working, int_holding, N, "random" );
+  c_sort( int_working, int_holding, N, "random" );
 
-  make_sorted( holding, holding + N );
-  cpp_sort( working, holding, N, "sorted" );
-  c_sort( working, holding, N, "sorted" );
+  make_sorted( int_holding, int_holding + N );
+  cpp_sort( int_working, int_holding, N, "sorted" );
+  c_sort( int_working, int_holding, N, "sorted" );
 
-  cpp_string_sort( N, "string" );
+  make_random_strings( string_holding, string_holding + N );
+  cpp_sort( string_working, string_holding, N, "string" );
 
-  delete [] working;
-  delete [] holding;
+  delete [] int_working;
+  delete [] int_holding;
+  delete [] string_working;
+  delete [] string_holding;
   return 0;
 }
+
