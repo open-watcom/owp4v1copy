@@ -1172,8 +1172,7 @@ static void ScanComment( void )
         c = '\0';
         for( ;; ) {
             if( c == '\n' ) {
-                SrcFileLoc = SrcFile->src_loc;
-                TokenLoc = SrcFileLoc;
+                TokenLoc = SrcFileLoc = SrcFile->src_loc;
             }
             do {
                 do {

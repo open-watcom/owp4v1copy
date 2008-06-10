@@ -109,7 +109,7 @@ int GetNextChar( void )
 {
     int c;
 
-    c = *SrcFile->src_ptr++;
+    c = *(unsigned char *)SrcFile->src_ptr++;
     if(( CharSet[c] & C_EX ) == 0 ) {
 //      SrcFile->column++;
         CurrChar = c;

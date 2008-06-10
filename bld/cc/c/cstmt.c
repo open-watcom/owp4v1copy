@@ -1215,7 +1215,7 @@ void Statement( void )
 
 #ifndef NDEBUG
     if( DebugFlag >= 1 ) {
-        printf( "***** line %d, func=%s\n", TokenLoc.line, CurFunc->name );
+        printf( "***** line %u, func=%s\n", TokenLoc.line, CurFunc->name );
         PrintStats();
     }
 #endif
