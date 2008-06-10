@@ -1826,8 +1826,7 @@ local void AddCallNode( TREEPTR tree )
         new = CMemAlloc( sizeof( call_list ) );
         new->next = NULL;
         new->callnode = tree;
-        new->source_fno = SrcFno;
-        new->srclinenum = SrcLineNum;
+        new->src_loc = SrcLoc;
         *LastCallLnk = new;
         LastCallLnk =  &new->next;
     }

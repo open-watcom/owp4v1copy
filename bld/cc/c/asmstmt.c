@@ -39,6 +39,8 @@
     #include "asinline.h"
 #endif
 
+#define MAX_ASM_LINE_LEN 511
+
 static int EndOfAsmStmt( void )
 /*****************************/
 {
@@ -67,29 +69,32 @@ static int EndOfAsmStmt( void )
 static void GetAsmLine( void )
 /****************************/
 {
-    int         AsmLineNo;
-    enum TOKEN  LastToken = T_DOT;
-    char        buf[256] = { '\0' };
+    unsigned    AsmErrLine;
+    TOKEN       LastToken;
+    char        buf[ MAX_ASM_LINE_LEN + 1 ];
 
     CompFlags.pre_processing = 1;
-    AsmLineNo = TokenLine;
+    AsmErrLine = TokenLoc.line;
+    *buf = '\0';
     if( strcmp( Buffer, "_emit" ) == 0 ) {
         strcpy( buf, AsmSysDefineByte() );
         NextToken();
     }
+    LastToken = T_DOT;
     for( ;; ) {
         if( EndOfAsmStmt() )
             break;
         if(( LastToken != T_DOT )
           && ( LastToken != T_BAD_CHAR )
           && ( CurToken != T_XOR ))
-            strncat( buf, " ", 255 );
-        strncat( buf, Buffer, 255 );
+            strncat( buf, " ", MAX_ASM_LINE_LEN );
+        strncat( buf, Buffer, MAX_ASM_LINE_LEN );
         LastToken = CurToken;
         NextToken();
     }
-    TokenLine = AsmLineNo;
+    buf[ MAX_ASM_LINE_LEN ] = '\0';
     if( *buf != '\0' ) {
+        TokenLoc.line = AsmErrLine;
         AsmLine( buf );
     }
     CompFlags.pre_processing = 0;
@@ -98,9 +103,9 @@ static void GetAsmLine( void )
 void AsmStmt( void )
 /******************/
 {
-    int                 too_many_bytes;
-    unsigned char       buff[ MAXIMUM_BYTESEQ + 32 ];
-    enum TOKEN          skip_token;
+    int             too_many_bytes;
+    unsigned char   buff[ MAXIMUM_BYTESEQ + 32 ];
+    TOKEN           skip_token;
 
     // indicate that we are inside an __asm statement so scanner will
     // allow tokens unique to the assembler. e.g. 21h

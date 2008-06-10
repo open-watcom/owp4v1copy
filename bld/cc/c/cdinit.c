@@ -1513,8 +1513,7 @@ void VarDeclEquals( SYMPTR sym, SYM_HANDLE sym_handle )
         CompFlags.initializing_data = 0;
     } else {
         SymReplace( sym, sym_handle );          /* 31-aug-88 */
-        SrcLineNum = TokenLine;                 /* 15-mar-88 */
-        SrcFno   = TokenFno;
+        SrcLoc = TokenLoc;
         typ = sym->sym_type;
         SKIP_TYPEDEFS( typ );
         /* 07-jun-89  check for { before checking for array,struct

@@ -43,14 +43,16 @@ void InitGlobalVars( void )
     IncFileList             = NULL; // list of primary include files for PCH
     PCH_SymArray            = NULL; // array of symbol table pointers from PCH
     PCH_MaxSymHandle        = 0;    // number of symbols in PCH_SymArray
-    ScanCharPtr             = NULL; // used by character scanning routines
     DebugFlag               = 0;
     CurToken                = 0;
     BadTokenInfo            = 0;
     TokenLen                = 0;
-    TokenLine               = 0;
-    SrcFileLineNum          = 0;    /* duplicate of SrcFile->src_line */
-    TokenFno                = 0;
+    TokenLoc.line           = 0;
+    TokenLoc.fno            = 0;
+    SrcFileLoc.line         = 0;
+    SrcFileLoc.fno          = 0;
+    CommentLoc.line         = 0;
+    CommentLoc.fno          = 0;
     CurrChar                = 0;
     ConstType               = 0;
     Constant                = 0;
@@ -63,15 +65,13 @@ void InitGlobalVars( void )
     ForceInclude            = NULL;
     AuxName                 = NULL;
     FNames                  = NULL; /* list of file names processed */
-    ErrFName                = NULL; /* file name to be used in error message */
-    ErrLine                 = 0;    /* line number to be used in error msg */
     ErrFile                 = NULL; /* error file */
     DefFile                 = NULL; /* output for func prototypes */
     CppFile                 = NULL; /* output for preprocessor */
     CppStack                = NULL; /* #if structure control stack */
     HFileList               = NULL; /* list of path names to try for H files */
-    SrcLineNum              = 0;
-    SrcFno                  = 0;
+    SrcLoc.line             = 0;
+    SrcLoc.fno              = 0;
     SrcLineCount            = 0;    /* # of lines in primary source file */
     IncLineCount            = 0;    /* # of lines in all included files  */
     ErrCount                = 0;    /* total # of errors encountered     */
@@ -87,13 +87,12 @@ void InitGlobalVars( void )
     MacHashValue            = 0;    /* hash value for macro name */
     SavedId                 = NULL; /* saved id when doing look ahead */
     SavedHash               = 0;    /* hash value for saved id */
-    SavedTokenLine          = 0;    /* value of TokenLine when id saved */
-    SavedTokenFno           = 0;    /* value of TokenFno when id saved */
+    SavedTokenLoc.line      = 0;    /* value of TokenLine when id saved */
+    SavedTokenLoc.fno       = 0;    /* value of TokenFno when id saved */
     LAToken                 = 0;    /* look ahead token */
     LabelHead               = NULL; /* list of all labels defined in function */
     TagHead                 = NULL; /* list of all struct, union, enum tags */
     DeadTags                = NULL; /* list of all tags that are out of scope */
-    SymLoc                  = NULL; /* file name with defn of symbol */
     CurFunc                 = NULL; /* current function being worked on */
     ParmList                = NULL; /* list of parms for function */
     GlobalSym               = 0;    /* global symbol table list head */
@@ -228,4 +227,5 @@ void InitGlobalVars( void )
 
     memset( &CompFlags, 0, sizeof( CompFlags ) );
     InitStmt();
+    InitErrLoc();
 }

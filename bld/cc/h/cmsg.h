@@ -39,8 +39,8 @@ typedef enum{
 
 typedef struct {
     int         msgnum;
-    int         line;
-    int         col;
+    unsigned    line;
+    unsigned    col;
     char const  *fname;
     cmsg_class  class;
     char        msgtxt[MAX_MSG_LEN];    //actual message text

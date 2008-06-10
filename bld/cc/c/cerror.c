@@ -36,6 +36,9 @@
 static void PrintPostNotes( void );
 local int   MsgDisabled( int msgnum );
 
+static unsigned error_line = 0;
+static char     *error_fname = NULL;
+
 #if 0
 static char const WngLvls[] = {
 #define warn(code,level) level,
@@ -64,16 +67,12 @@ static void CMsgInfo( cmsg_info *info, msg_codes msgnum, va_list args )
         fname = NULL;
         break;
     default:
-        if( SymLoc != NULL ) {
-            fname = SymLoc;
-            line = ErrLine;
+        if( error_fname != NULL ) {
+            fname = error_fname;
+            line = error_line;
         } else {
-            fname = ErrFName;
-            if( SrcFile == NULL ) {
-                line = SrcLineCount;
-            } else {
-                line = TokenLine;
-            }
+            fname = FileIndexToCorrectName( TokenLoc.fno );
+            line = TokenLoc.line;
         }
     }
     msgstr = CGetMsgStr( msgnum );
@@ -172,7 +171,7 @@ void CErr( int msgnum, ... )
     if( CompFlags.cpp_output )  return;             /* 29-sep-90 */
 #if 0   //shoudn't allow an error to be disabled
     if( MsgDisabled( msgnum ) ) {                   /* 18-jun-92 */
-        SymLoc = NULL;                              /* 27-sep-92 */
+        error_fname = NULL;                              /* 27-sep-92 */
         return;
     }
 #endif
@@ -190,7 +189,7 @@ void CErr( int msgnum, ... )
         va_end( args1 );
         CSuicide();
     }
-    SymLoc = NULL;
+    error_fname = NULL;
 }
 
 
@@ -224,7 +223,7 @@ void CWarn( int level, int msgnum, ... )
             PrintPostNotes();
         }
     }
-    SymLoc = NULL;
+    error_fname = NULL;
 }
 
 
@@ -235,7 +234,7 @@ void CInfoMsg( int msgnum, ... )
 
     if( CompFlags.cpp_output )  return;             /* 29-sep-90 */
     if( MsgDisabled( msgnum ) ) {                   /* 18-jun-92 */
-        SymLoc = NULL;                              /* 27-sep-92 */
+        error_fname = NULL;                              /* 27-sep-92 */
         return;
     }
     info.class = CMSG_INFO;
@@ -262,23 +261,17 @@ void PCHNote( int msgnum, ... )
 }
 
 
-void SetSymLoc( SYMPTR sym )
+void SetErrLoc( source_loc *src_loc )
 {
-    SymLoc  = FileIndexToCorrectName( sym->defn_file_index );
-    ErrLine = sym->d.defn_line;
+    error_fname  = FileIndexToCorrectName( src_loc->fno );
+    error_line = src_loc->line;
 }
 
 
-void SetErrLoc( char *fname, unsigned line_num )
+void InitErrLoc( void )
 {
-    SymLoc = fname;
-    ErrLine = line_num;
-}
-
-void SetErrLocFno( unsigned findex, unsigned line_num )
-{
-    SymLoc  = FileIndexToCorrectName( findex );
-    ErrLine = line_num;
+    error_fname = NULL;
+    error_line = 0;
 }
 
 
@@ -415,8 +408,8 @@ void SetDiagSymbol( SYMPTR sym, SYM_HANDLE handle )
     np->sym_name = SymName( sym, handle );
     if( np->sym_name == NULL )
         np->sym_name = "???";
-    np->sym_file = FileIndexToCorrectName( sym->defn_file_index );
-    np->sym_line = sym->d.defn_line;
+    np->sym_file = FileIndexToCorrectName( sym->src_loc.fno );
+    np->sym_line = sym->src_loc.line;
 }
 
 void SetDiagType1( TYPEPTR typ_source )

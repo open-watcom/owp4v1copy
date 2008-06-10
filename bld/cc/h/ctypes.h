@@ -302,10 +302,14 @@ typedef struct incfile {
     char            filename[1];
 } INCFILE;
 
+typedef struct source_loc {
+    unsigned        fno;
+    unsigned        line;
+} source_loc;
+
 typedef struct xref_entry {
     struct xref_entry       *next_xref;
-    unsigned                linenum;
-    unsigned                filenum;
+    source_loc              src_loc;
 } XREF_ENTRY, *XREFPTR;
 
 extern  XREFPTR NewXref( XREFPTR );
@@ -338,11 +342,7 @@ typedef struct symtab_entry {           /* SYMBOL TABLE structure */
         int             sym_type_index;     /* for pre-compiled header */
     };
     SYM_HANDLE          handle;
-    unsigned short      defn_file_index;    /* file this symbol is defined in */
-    union {
-        int             defn_line;          /* line number sym is defined on */
-        int             index;              /* symbol index in object file */
-    } d;
+    source_loc          src_loc;
     union {
         BACK_HANDLE     backinfo;
         int             hash_value;
@@ -722,6 +722,5 @@ enum {
 typedef struct call_list {
     struct call_list    *next;
     TREEPTR             callnode;
-    unsigned            source_fno;     // OPR_STMT
-    int                 srclinenum;     // OPR_STMT, and OPR_NOP for callnode
+    source_loc          src_loc;
 } call_list;

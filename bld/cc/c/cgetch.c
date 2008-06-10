@@ -99,7 +99,6 @@ static int ReadBuffer( FCB *srcfcb )
         srcfcb->src_cnt++;
     }
     srcfcb->src_ptr[ srcfcb->src_cnt ] = '\0';          // mark end of buffer
-    ScanCharPtr = srcfcb->src_ptr;                      // point to buffer
     return( 0 );            // indicate CurrChar does not contain a character
 }
 
@@ -110,8 +109,7 @@ int GetNextChar( void )
 {
     int c;
 
-//    c = *SrcFile->src_ptr++;
-    c = *(unsigned char *)ScanCharPtr++;
+    c = *SrcFile->src_ptr++;
     if(( CharSet[c] & C_EX ) == 0 ) {
 //      SrcFile->column++;
         CurrChar = c;
@@ -166,13 +164,15 @@ static int getTestCharFromFile( void )
     int c;
 
     for(;;) {
-        c = *(unsigned char *)ScanCharPtr++;
-        if( c != '\0' ) break;
+        c = *(unsigned char *)SrcFile->src_ptr++;
+        if( c != '\0' )
+            break;
         /* check to make sure the NUL character we just found is at the
            end of the buffer, and not an embedded NUL character in the
            source file.  26-may-94 */
-        if( ScanCharPtr != &SrcFile->src_buf[ SrcFile->src_cnt + 1 ] ) break;
-        if( ReadBuffer( SrcFile ) ) {                   // 10-jul-94
+        if( SrcFile->src_ptr != &SrcFile->src_buf[ SrcFile->src_cnt + 1 ] )
+            break;
+        if( ReadBuffer( SrcFile ) ) {
             return( CurrChar );
         }
     }
@@ -245,8 +245,9 @@ static int tryBackSlashNewLine( void )
                 PrtChar( '\n' );
             }
         }
-        SrcFile->src_line++;
-        SrcFileLineNum = SrcFile->src_line;
+        SrcFile->src_line_cnt++;
+        SrcFile->src_loc.line++;
+        SrcFileLoc = SrcFile->src_loc;
 //      SrcFile->column = 0;
         return( GetNextChar() );
     }
@@ -303,14 +304,15 @@ int GetCharCheck( int c )
                end of the buffer, and not an embedded NUL character in the
                source file.  26-may-94 */
             CurrChar = '\0';
-            if( ScanCharPtr == &SrcFile->src_buf[ SrcFile->src_cnt + 1 ] ) {
-                if( ! ReadBuffer( SrcFile ) ) {         // 10-jul-94
+            if( SrcFile->src_ptr == &SrcFile->src_buf[ SrcFile->src_cnt + 1 ] ) {
+                if( ! ReadBuffer( SrcFile ) ) {
                     return( GetNextChar() );
                 }
             }
             return( CurrChar );
         case '\n':
-            SrcFile->src_line++;
+            SrcFile->src_line_cnt++;
+            SrcFile->src_loc.line++;
 //          SrcFile->column = 0;
             break;
         case '\t':

@@ -35,10 +35,10 @@
 #define MACRO_CHAR              257
 
 typedef struct fcb_struct {     /* file control block structure */
-    char        *src_name;      /* pointer to file name */
-    int         src_fno;        /* file name id */
+    char        *src_name;      /* pointer to file name (alias) */
+    source_loc  src_loc;        /* source file current location (alias) */
     FNAMEPTR    src_flist;      /* pointer to flist_name struct */
-    int         src_line;       /* current line number in source file */
+    unsigned    src_line_cnt;   /* source file line counter */
     FILE        *src_fp;        /* pointer to FILE struct */
     struct fcb_struct *prev_file; /* pointer to previous fcb */
     int         prev_currchar;  /* value of CurrChar */

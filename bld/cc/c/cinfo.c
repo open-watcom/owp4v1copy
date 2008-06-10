@@ -124,7 +124,7 @@ void SetFarHuge( SYMPTR sym, int report )
     }
 #if _CPU == 8086
    if( report && size > 0x10000 && !(sym->attrib & FLAG_HUGE) ) {
-        SetSymLoc( sym );
+        SetErrLoc( &sym->src_loc );
         CErr( ERR_VAR_TOO_LARGE );
    }
 #endif
@@ -710,7 +710,7 @@ void FEMessage( int class, void *parm )
             SYM_ENTRY   *sym;
 
             sym = SymGetPtr( (SYM_HANDLE)parm );
-            SetSymLoc( sym );
+            SetErrLoc( &sym->src_loc );
             CWarn( WARN_SYMBOL_NAME_TOO_LONG, ERR_SYMBOL_NAME_TOO_LONG, sym->name );
         }
         break;

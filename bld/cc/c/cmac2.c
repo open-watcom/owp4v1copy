@@ -94,8 +94,8 @@ enum    pp_types {
 
 struct  cpp_info {              /* C Pre-processor information */
         struct cpp_info *prev_cpp;
-        char            *file_name;
-        unsigned        line_num;
+        source_loc      src_loc;
+        FNAMEPTR        flist;
         enum pp_types   cpp_type;
         int             processing;
 };
@@ -129,7 +129,7 @@ static void PreProcStmt( void )
 
 extern bool PrintWhiteSpace;  //ppc printing   (from ccmain.c)
 
-int ChkControl( void )
+TOKEN ChkControl( void )
 {
     int lines_skipped;
 
@@ -171,7 +171,7 @@ int ChkControl( void )
         if( CompFlags.cpp_output ) {
             if( lines_skipped ) {
                 if( SrcFile != NULL ) {                 /* 14-may-92 */
-                    EmitLine( SrcFile->src_line, SrcFile->src_name );
+                    EmitLine( SrcFile->src_loc.line, SrcFile->src_name );
                 }
             }
         }
@@ -616,8 +616,8 @@ local void IncLevel( int value )
 
     cpp = (struct cpp_info *)CMemAlloc( sizeof( struct cpp_info ) );
     cpp->prev_cpp = CppStack;
-    cpp->file_name = ErrFName;
-    cpp->line_num = TokenLine;
+    cpp->src_loc = TokenLoc;
+    cpp->flist = SrcFile->src_flist;
     cpp->cpp_type = PRE_IF;
     cpp->processing = 0;
     CppStack = cpp;
@@ -677,8 +677,9 @@ local void CEndif( void )
 
         --NestLevel;
         cpp = CppStack;
-        if( cpp->file_name != ErrFName ) {
-             CWarn( WARN_LEVEL_1, ERR_WEIRD_ENDIF_ENCOUNTER, cpp->file_name  );
+        if( cpp->flist != SrcFile->src_flist ) {
+             CWarn( WARN_LEVEL_1, ERR_WEIRD_ENDIF_ENCOUNTER,
+                                 FileIndexToCorrectName( cpp->src_loc.fno ) );
         }
         CppStack = cpp->prev_cpp;
         CMemFree( cpp );
@@ -770,7 +771,7 @@ local void CLine( void )
     }
     if( CompFlags.cpp_ignore_line == 0 ) {
         src_line = Constant; // stash in case of side effects
-        SrcFile->src_line = src_line - 1; /* don't count this line */
+        SrcFile->src_loc.line = src_line - 1; /* don't count this line */
     }
     PPNextToken();
     if( CurToken != T_NULL ) {
@@ -784,10 +785,7 @@ local void CLine( void )
             flist = AddFlist( Buffer );
             flist->rwflag = FALSE;  // not a real file so no autodep
             SrcFile->src_name = flist->name;
-            SrcFile->src_fno  = flist->index;
-            TokenFno = flist->index;
-            SrcFile->src_flist = flist;             /* 21-dec-93 */
-            ErrFName = SrcFile->src_name;
+            SrcFile->src_loc.fno  = flist->index;
             if( CompFlags.cpp_output ) {            /* 30-may-95 */
                 EmitLine( src_line, SrcFile->src_name );
             }
@@ -837,7 +835,7 @@ void CppStackFini( void )
     struct cpp_info *cpp;
 
     while( (cpp = CppStack) ) {
-        SetErrLoc( cpp->file_name, cpp->line_num );
+        SetErrLoc( &cpp->src_loc );
         CErr1( ERR_MISSING_CENDIF );
         CppStack = cpp->prev_cpp;
         CMemFree( cpp );

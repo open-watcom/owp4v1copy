@@ -188,7 +188,7 @@ TYPEPTR EnumDecl( int flags )
         bool            has_sign;
         ENUM_HANDLE     *prev_lnk;
         ENUM_HANDLE     esym;
-        int             error_line;
+        source_loc      error_loc;
         char            buff[50];
 
         if( CompFlags.make_enums_an_int ) {
@@ -212,11 +212,11 @@ TYPEPTR EnumDecl( int flags )
             esym = EnumLkAdd( tag );
             *prev_lnk = esym;
             prev_lnk = &esym->thread;
-            error_line = TokenLine;
+            error_loc = TokenLoc;
             NextToken();
             if( CurToken == T_EQUAL ) {
                 NextToken();
-                error_line = TokenLine;
+                error_loc = TokenLoc;
                 ConstExprAndType( &val );
                 switch( val.type ){
                 case TYPE_ULONG:
@@ -277,7 +277,7 @@ TYPEPTR EnumDecl( int flags )
                 }
             }
             if( error != ENUM_UNDEF ) {
-                TokenLine = error_line;
+                SetErrLoc( &error_loc );
                 get_msg_range( buff, error );
                 CErr( ERR_ENUM_CONSTANT_OUT_OF_RANGE, buff );
             }

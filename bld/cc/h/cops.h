@@ -250,7 +250,7 @@ typedef struct  opnode {
     union {
         cg_sym_handle   sym_handle;     // OPR_PUSHSYM, OPR_PUSHADDR, ...
                                         // OPR_CALL_INDIRECT
-        unsigned        source_fno;     // OPR_STMT
+        source_loc      src_loc;        // OPR_STMT
         long            long_value;     // OPR_PUSHINT
         unsigned long   ulong_value;    // OPR_PUSHINT
         int64           long64_value;   // OPR_PUSHINT
@@ -288,7 +288,6 @@ typedef struct expr_node {
     union {
         TYPEPTR         expr_type;      // used during pass 1
         TREEPTR         thread;         // used during pass 2 full codegen
-        int             srclinenum;     // OPR_STMT, and OPR_NOP for callnode
     };
     OPNODE          op;
     bool            visit;

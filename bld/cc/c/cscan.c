@@ -37,6 +37,9 @@
 #include "kwhash.h"
 
 
+extern  unsigned char   TokValue[];
+extern  unsigned short  UniCode[];
+
 enum scan_class {
     SCAN_NAME = 0,      // identifier
     SCAN_WIDE,          // L"abc" or L'a' or Lname
@@ -62,13 +65,9 @@ enum scan_class {
 
 static  char    *ReScanPtr;
 static  int     SavedCurrChar;          // used when get tokens from macro
-unsigned char   ClassTable[260];
+static  unsigned char   ClassTable[260];
 
-extern  unsigned char   TokValue[];
-extern  unsigned short  UniCode[];
-
-
-unsigned char InitClassTable[] = {
+static unsigned char InitClassTable[] = {
     '\r',       SCAN_CR,
     '\n',       SCAN_NEWLINE,
     ' ',        SCAN_WHITESPACE,
@@ -108,8 +107,8 @@ unsigned char InitClassTable[] = {
 };
 
 static  void    UnGetChar( int c );
-static  int     ScanString( void );
-static  int     CharConst( int char_type );
+static  TOKEN   ScanString( void );
+static  TOKEN   CharConst( int char_type );
 static  void    ScanComment( void );
 
 
@@ -125,7 +124,7 @@ char *ReScanPos( void )
 
 int ReScanBuffer( void )
 {
-    CurrChar = *(unsigned char *)ScanCharPtr++;
+    CurrChar = *(unsigned char *)SrcFile->src_ptr++;
     if( CurrChar == '\0' ) {
         CompFlags.rescan_buffer_done = 1;
     }
@@ -133,7 +132,7 @@ int ReScanBuffer( void )
 }
 
 
-int SaveNextChar( void )
+static int SaveNextChar( void )
 {
     int         c;
 
@@ -191,7 +190,7 @@ int CalcHash( const char *id, int len )
     return( HashValue );
 }
 
-int KwLookup( const char *buf, int len )
+TOKEN KwLookup( const char *buf, int len )
 {
     char        *keyword;
     TOKEN       hash;
@@ -226,7 +225,7 @@ int KwLookup( const char *buf, int len )
     return( T_ID );
 }
 
-int IdLookup( const char *buf, int len )
+TOKEN IdLookup( const char *buf, int len )
 {
     MEPTR       mentry;
 
@@ -238,11 +237,10 @@ int IdLookup( const char *buf, int len )
     return( KwLookup( buf, len ) );
 }
 
-int doScanName( void )
+static TOKEN doScanName( void )
 {
-    int         token;
+    TOKEN       token;
     int         c;
-    char        *scanptr;
     char        *p;
 
     c = CurrChar;
@@ -250,13 +248,10 @@ int doScanName( void )
 //      so it is safe to inline the function here.
 //      NextChar could also be pointing to ReScanBuffer().
     p = &Buffer[TokenLen - 1];
-    for( ;; ) {
-        scanptr = ScanCharPtr;
-        for( ;; ) {
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 )
-                break;
+    do {
+        for( ; (CharSet[c] & (C_AL | C_DI)); ) {
             *p++ = c;
-            c = *(unsigned char *)scanptr++;
+            c = *(unsigned char *)SrcFile->src_ptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char    *oldbuf = Buffer;
 
@@ -264,14 +259,10 @@ int doScanName( void )
                 p += Buffer - oldbuf;
             }
         }
-        ScanCharPtr = scanptr;
         if( (CharSet[c] & C_EX) == 0 )
             break;
         c = GetCharCheck( c );
-        if( (CharSet[c] & (C_AL | C_DI)) == 0 ) {
-            break;
-        }
-    }
+    } while( (CharSet[c] & (C_AL | C_DI)) );
     CurrChar = c;
     if( p >= &Buffer[BufSize - 18] ) {
         char *oldbuf = Buffer;
@@ -320,17 +311,17 @@ int doScanName( void )
     return( token );
 }
 
-int ScanName( void )
+static TOKEN ScanName( void )
 {
     Buffer[0] = CurrChar;
     TokenLen = 1;
     return( doScanName() );
 }
 
-int ScanWide( void )        // scan something that starts with L
+static TOKEN ScanWide( void )        // scan something that starts with L
 {
     int         c;
-    int         token;
+    TOKEN       token;
 
     Buffer[0] = 'L';
     c = NextChar();
@@ -347,7 +338,7 @@ int ScanWide( void )        // scan something that starts with L
     return( token );
 }
 
-int ScanDotSomething( int c )
+static TOKEN ScanDotSomething( int c )
 {
     if( c == '.' ) {
         c = SaveNextChar();
@@ -363,7 +354,7 @@ int ScanDotSomething( int c )
     return( T_DOT );
 }
 
-int doScanFloat( void )
+static TOKEN doScanFloat( void )
 {
     int         c;
 
@@ -410,19 +401,15 @@ int doScanFloat( void )
 
 static void doScanAsmToken( void )
 {
-    char        *scanptr;
     char        *p;
     int         c;
 
     p = &Buffer[TokenLen];
     c = NextChar();
-    for( ;; ) {
-        scanptr = ScanCharPtr;
-        for( ;; ) {
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 )
-                break;
+    do {
+        for( ; (CharSet[c] & (C_AL | C_DI)); ) {
             *p++ = c;
-            c = *(unsigned char *)scanptr++;
+            c = *(unsigned char *)SrcFile->src_ptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char    *oldbuf = Buffer;
 
@@ -430,14 +417,10 @@ static void doScanAsmToken( void )
                 p += Buffer - oldbuf;
             }
         }
-        ScanCharPtr = scanptr;
         if( (CharSet[c] & C_EX) == 0 )
             break;
         c = GetCharCheck( c );
-        if( (CharSet[c] & (C_AL | C_DI)) == 0 ) {
-            break;
-        }
-    }
+    } while( (CharSet[c] & (C_AL | C_DI)) );
     CurrChar = c;
     if( p >= &Buffer[BufSize - 18] ) {
         char    *oldbuf = Buffer;
@@ -449,7 +432,7 @@ static void doScanAsmToken( void )
     TokenLen = p - Buffer;
 }
 
-static int doScanAsm( void )
+static TOKEN doScanAsm( void )
 {
     BadTokenInfo = 0;
     TokenLen = 0;
@@ -461,7 +444,7 @@ static int doScanAsm( void )
     return( CurToken );
 }
 
-int ScanDot( void )
+static TOKEN ScanDot( void )
 {
     if( CompFlags.inside_asm_stmt == 1 )
         return( doScanAsm() );
@@ -471,7 +454,7 @@ int ScanDot( void )
     return( doScanFloat() );
 }
 
-static int ScanPPNumber( void )
+static TOKEN ScanPPNumber( void )
 {
     int         c;
     int         prevc;
@@ -518,14 +501,14 @@ static int ScanPPNumber( void )
     return( T_PPNUMBER );
 }
 
-int ScanPPDigit( void )
+static TOKEN ScanPPDigit( void )
 {
     Buffer[0] = CurrChar;
     TokenLen = 1;
     return( ScanPPNumber() );
 }
 
-int ScanPPDot( void )
+static TOKEN ScanPPDot( void )
 {
     int         c;
 
@@ -539,7 +522,7 @@ int ScanPPDot( void )
     }
 }
 
-int ScanHex( int max, const char **pbuf )
+static int ScanHex( int max, const char **pbuf )
 {
     int                 c;
     int                 count;
@@ -700,7 +683,7 @@ is64:
     return( ret );
 }
 
-static int ScanNum( void )
+static TOKEN ScanNum( void )
 {
     int         c;
     int         bad_token_type;
@@ -963,7 +946,7 @@ static int ScanNum( void )
     }
 }
 
-int ScanQuestionMark( void )
+static TOKEN ScanQuestionMark( void )
 {
     NextChar();
     Buffer[0] = '?';
@@ -971,10 +954,9 @@ int ScanQuestionMark( void )
     return( T_QUESTION );
 }
 
-int ScanSlash( void )
+static TOKEN ScanSlash( void )
 {
     int         c;
-    int         tok;
 
     c = NextChar();         // can't inline this copy of NextChar
     if( c == '=' ) {        /* if second char is an = */
@@ -982,7 +964,7 @@ int ScanSlash( void )
         Buffer[0] = '/';
         Buffer[1] = '=';
         Buffer[2] = '\0';
-        tok = T_DIVIDE_EQUAL;
+        return( T_DIVIDE_EQUAL );
     } else if( c == '/' && !CompFlags.strict_ANSI ) {   /* if C++ // style comment */
         CppComment( '/' );
         CompFlags.scanning_cpp_comment = 1;
@@ -1005,23 +987,22 @@ int ScanSlash( void )
         CompFlags.scanning_cpp_comment = 0;
         Buffer[0] = ' ';
         Buffer[1] = '\0';
-        tok = T_WHITE_SPACE;
+        return( T_WHITE_SPACE );
     } else if( c == '*' ) {
         ScanComment();
         Buffer[0] = ' ';
         Buffer[1] = '\0';
-        tok = T_WHITE_SPACE;
+        return( T_WHITE_SPACE );
     } else {
         Buffer[0] = '/';
         Buffer[1] = '\0';
-        tok = T_DIVIDE;
+        return( T_DIVIDE );
     }
-    return( tok );
 }
 
-int ScanDelim1( void )
+static TOKEN ScanDelim1( void )
 {
-    int         token;
+    TOKEN       token;
 
     Buffer[0] = CurrChar;
     Buffer[1] = '\0';
@@ -1030,34 +1011,32 @@ int ScanDelim1( void )
     return( token );
 }
 
-int ScanMinus( void )
+static TOKEN ScanMinus( void )
 {
     int         chr2;
-    int         tok;
 
     Buffer[0] = '-';
     chr2 = NextChar();          // can't inline this copy of NextChar
     Buffer[1] = chr2;
     if( chr2 == '>' ) {
-        tok = T_ARROW;
         Buffer[2] = '\0';
         NextChar();
+        return( T_ARROW );
     } else if( chr2 == '=' ) {
-        tok = T_MINUS_EQUAL;
         Buffer[2] = '\0';
         NextChar();
+        return( T_MINUS_EQUAL );
     } else if( chr2 == '-' ) {
-        tok = T_MINUS_MINUS;
         Buffer[2] = '\0';
         NextChar();
+        return( T_MINUS_MINUS );
     } else {
         Buffer[1] = '\0';
-        tok = T_MINUS;
+        return( T_MINUS );
     }
-    return( tok );
 }
 
-int ScanEqual( void )
+static TOKEN ScanEqual( void )
 {
     Buffer[0] = '=';
     if( NextChar() == '=' ) {
@@ -1071,7 +1050,7 @@ int ScanEqual( void )
     }
 }
 
-int ScanStar( void )
+static TOKEN ScanStar( void )
 {
     Buffer[0] = '*';
     if( NextChar() == '=' ) {
@@ -1085,7 +1064,7 @@ int ScanStar( void )
     }
 }
 
-int ScanColon( void )
+static TOKEN ScanColon( void )
 {
     int         chr2;
 
@@ -1109,11 +1088,11 @@ int ScanColon( void )
     }
 }
 
-int ScanDelim2( void )
+static TOKEN ScanDelim2( void )
 {
     int             c;
     int             chr2;
-    int             tok;
+    TOKEN           tok;
     unsigned char   chrclass;
 
     c = CurrChar;
@@ -1158,9 +1137,8 @@ static void ScanComment( void )
 {
     int         c;
     int         prev_char;
-    unsigned    start_line;
-    char        *scanptr;
 
+    CommentLoc = TokenLoc;
     CompFlags.scanning_comment = 1;
     if( CompFlags.cpp_output ) {        // 30-dec-93
         CppComment( '*' );
@@ -1188,27 +1166,25 @@ static void ScanComment( void )
         }
         CppComment( 0 );
     } else {
-        start_line = TokenLine;
         // make '/' a special character so that we only have to do one test
         // for each character inside the main loop
         CharSet['/'] |= C_EX;           // make '/' special character
         c = '\0';
         for( ;; ) {
-            scanptr = ScanCharPtr;
             if( c == '\n' ) {
-                TokenLine = SrcFileLineNum = SrcFile->src_line;
+                SrcFileLoc = SrcFile->src_loc;
+                TokenLoc = SrcFileLoc;
             }
             do {
+                do {
                 prev_char = c;
-                c = *(unsigned char *)scanptr++;
-            } while( !(CharSet[c] & C_EX) );
-            ScanCharPtr = scanptr;
-            if( c != '/' ) {
+                    c = *(unsigned char *)SrcFile->src_ptr++;
+                } while( (CharSet[c] & C_EX) == 0 );
                 c = GetCharCheck( c );
                 if( c == EOF_CHAR ) {
                     return;
                 }
-            }
+            } while( (CharSet[c] & C_EX) == 0 );
             if( c == '/' ) {
                 if( prev_char == '*' )
                     break;
@@ -1219,7 +1195,7 @@ static void ScanComment( void )
                     if( c == '/' )
                         break;
                     CWarn2( WARN_NESTED_COMMENT,
-                             ERR_NESTED_COMMENT, start_line );
+                             ERR_NESTED_COMMENT, CommentLoc.line );
                 }
             }
             // NextChar might not be pointing to GetNextChar at this point
@@ -1236,12 +1212,12 @@ static void ScanComment( void )
     NextChar();
 }
 
-static int CharConst( int char_type )
+static TOKEN CharConst( int char_type )
 {
     int         c;
     int         i;
     int         n;
-    int         token;
+    TOKEN       token;
     long        value;
     char        error;
 
@@ -1356,14 +1332,14 @@ static int CharConst( int char_type )
     return( token );
 }
 
-int ScanCharConst( void )
+static TOKEN ScanCharConst( void )
 {
     Buffer[0] = '\'';
     TokenLen = 1;
     return( CharConst( TYPE_CHAR ) );
 }
 
-static int ScanString( void )
+static TOKEN ScanString( void )
 {
     int         c;
     int         ok;
@@ -1502,9 +1478,8 @@ int ESCChar( int c, const char **pbuf, char *error )
     return( n );
 }
 
-int ScanWhiteSpace( void )
+static TOKEN ScanWhiteSpace( void )
 {
-    char        *scanptr;
     int         c;
 
     if( NextChar == getCharAfterBackSlash ) {
@@ -1512,20 +1487,14 @@ int ScanWhiteSpace( void )
             c = NextChar();
         } while( CharSet[c] & C_WS );
     } else {
-        c = 0;
-        for( ;; ) {
-            scanptr = ScanCharPtr;
+        do {
             do {
-                c = *(unsigned char *)scanptr++;
+                c = *(unsigned char *)SrcFile->src_ptr++;
             } while( CharSet[c] & C_WS );
-            ScanCharPtr = scanptr;
             if( (CharSet[c] & C_EX) == 0 )
                 break;
             c = GetCharCheck( c );
-            if( (CharSet[c] & C_WS) == 0 ) {
-                break;
-            }
-        }
+        } while( CharSet[c] & C_WS );
         CurrChar = c;
     }
     return( T_WHITE_SPACE );
@@ -1560,14 +1529,14 @@ void SkipAhead( void )
             if( CompFlags.cpp_output && !CompFlags.pre_processing ) {
                 PrtChar( '\n' );
             }
-            SrcFileLineNum = SrcFile->src_line;
+            SrcFileLoc = SrcFile->src_loc;
             NextChar();
         }
         if( CurrChar != '/' )
             break;
         NextChar();
         if( CurrChar == '*' ) {
-            TokenLine = SrcFileLineNum;
+            TokenLoc = SrcFileLoc;
             ScanComment();
         } else {
             UnGetChar( CurrChar );
@@ -1577,15 +1546,15 @@ void SkipAhead( void )
     }
 }
 
-int ScanNewline( void )
+static TOKEN ScanNewline( void )
 {
-    SrcFileLineNum = SrcFile->src_line;
+    SrcFileLoc = SrcFile->src_loc;
     if( CompFlags.pre_processing )
         return( T_NULL );
     return( ChkControl() );
 }
 
-int ScanCarriageReturn( void )
+static TOKEN ScanCarriageReturn( void )
 {
     if( NextChar() == '\n' ) {
         return( ScanNewline() );
@@ -1602,7 +1571,7 @@ int ScanCarriageReturn( void )
     #error System end of file character not configured.
 #endif
 
-int ScanInvalid( void )
+static TOKEN ScanInvalid( void )
 {
     Buffer[0] = CurrChar;
     Buffer[1] = '\0';
@@ -1616,7 +1585,7 @@ int ScanInvalid( void )
     return( T_BAD_CHAR );
 }
 
-int ScanMacroToken( void )
+static TOKEN ScanMacroToken( void )
 {
     GetMacroToken();
     if( CurToken == T_NULL ) {
@@ -1629,12 +1598,12 @@ int ScanMacroToken( void )
     return( CurToken );
 }
 
-int ScanEof( void )
+static TOKEN ScanEof( void )
 {
     return( T_EOF );
 }
 
-int (*ScanFunc[])( void ) = {
+static TOKEN (*ScanFunc[])( void ) = {
     ScanName,
     ScanWide,
     ScanNum,
@@ -1657,15 +1626,15 @@ int (*ScanFunc[])( void ) = {
     ScanEof
 };
 
-int ScanToken( void )
+TOKEN ScanToken( void )
 {
-    TokenLine = SrcFileLineNum;         /* remember line token starts on */
+    TokenLoc = SrcFileLoc;         /* remember line token starts on */
 //    TokenLen = 1;
 //    Buffer[0] = CurrChar;
     return( (*ScanFunc[ClassTable[CurrChar]])() );
 }
 
-int NextToken( void )
+TOKEN NextToken( void )
 {
     do {
         CurToken = T_NULL;
@@ -1673,11 +1642,7 @@ int NextToken( void )
             GetMacroToken();
         }
         if( CurToken == T_NULL ) {
-//          CurToken = ScanToken();
-            TokenLine = SrcFileLineNum;
-//          TokenLen = 1;
-//          Buffer[0] = CurrChar;
-            CurToken = (*ScanFunc[ClassTable[CurrChar]])();
+            CurToken = ScanToken();
         }
     } while( CurToken == T_WHITE_SPACE );
 #ifdef FDEBUG
@@ -1686,7 +1651,7 @@ int NextToken( void )
     return( CurToken );
 }
 
-int PPNextToken( void )                     // called from macro pre-processor
+TOKEN PPNextToken( void )                     // called from macro pre-processor
 {
     do {
         if( MacroPtr != NULL ) {
@@ -1712,8 +1677,8 @@ int ReScanToken( void )
 
     saved_currchar = CurrChar;
     saved_nextchar = NextChar;
-    saved_ScanCharPtr = ScanCharPtr;
-    ScanCharPtr = ReScanPtr;
+    saved_ScanCharPtr = SrcFile->src_ptr;
+    SrcFile->src_ptr = ReScanPtr;
     CompFlags.rescan_buffer_done = 0;
     NextChar = ReScanBuffer;
     CurrChar = ReScanBuffer();
@@ -1723,9 +1688,9 @@ int ReScanToken( void )
     if( CurToken == T_STRING && CompFlags.wide_char_string ) {
         CurToken = T_LSTRING;                   /* 12-nov-92 */
     }
-    --ScanCharPtr;
-    ReScanPtr = ScanCharPtr;
-    ScanCharPtr = saved_ScanCharPtr;
+    --SrcFile->src_ptr;
+    ReScanPtr = SrcFile->src_ptr;
+    SrcFile->src_ptr = saved_ScanCharPtr;
     CurrChar = saved_currchar;
     NextChar = saved_nextchar;
     if( CompFlags.rescan_buffer_done == 0 ) {
@@ -1737,7 +1702,7 @@ int ReScanToken( void )
 static void UnGetChar( int c )
 {
     if( NextChar == ReScanBuffer ) {            /* 29-feb-92 */
-        --ScanCharPtr;
+        --SrcFile->src_ptr;
         CompFlags.rescan_buffer_done = 0;
     } else {
         GetNextCharUndo( c );

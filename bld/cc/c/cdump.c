@@ -196,10 +196,10 @@ void DumpFuncDefn( void )
 
     typ = CurFunc->sym_type;
     DumpParmTags( typ->u.fn.parms, DefFile );
-    flist = FileIndexToFName( CurFunc->defn_file_index );
+    flist = FileIndexToFName( CurFunc->src_loc.fno );
     fprintf( DefFile, "//#line \"%s\" %u\n",            /* 07-jun-94 */
                 flist->name,
-                CurFunc->d.defn_line );
+                CurFunc->src_loc.line );
 
     ChunkInit( &chunk );
 

@@ -39,8 +39,7 @@
 
 static dw_client       Client;
 static dw_loc_handle   dummyLoc;
-static int             CurFile;
-static int             CurLine;
+static source_loc      CurLoc;
 
 extern  void    InitDebugTypes( void );         /* from pchdr.c */
 
@@ -76,13 +75,19 @@ static void dwarfFile( unsigned filenum )
     }
 }
 
-static void dwarfLocation( SYMPTR sym )
-/*************************************/
+static void dwarfLocation( source_loc *src_loc )
+/**********************************************/
 {
-    dwarfFile( sym->defn_file_index );
-    DWDeclPos( Client, sym->d.defn_line, 0 );
+    dwarfFile( src_loc->fno );
+    DWDeclPos( Client, src_loc->line, 0 );
 }
 
+static void dwarfReference( dw_handle dh, source_loc *src_loc )
+/*************************************************************/
+{
+    dwarfFile( src_loc->fno );
+    DWReference( Client, src_loc->line, 0, dh );
+}
 
 static void dwarfStructInfo( TAGPTR tag )
 /***************************************/
@@ -101,8 +106,7 @@ static void dwarfStructInfo( TAGPTR tag )
             fld_dh = dwarfType( GetType( typ->u.f.field_type ), DC_DEFAULT );
             if( xref != NULL ){  //stupid struct { int x; int y[] ) = init thing
             // Also watch for side effects with the DWDeclPos and a dwtype
-                 dwarfFile( xref->filenum );
-                  DWDeclPos( Client, xref->linenum, 0 );
+                 dwarfLocation( &xref->src_loc );
             }
             dh = DWAddBitField( Client,
                         fld_dh,
@@ -116,8 +120,7 @@ static void dwarfStructInfo( TAGPTR tag )
             fld_dh =  dwarfType( typ, DC_DEFAULT );
             xref = field->xref; // re-get in case the struct was freed during recursion
             if( xref != NULL ){  //stupid struct { int x; int y[] ) = init thing
-                  dwarfFile( xref->filenum );
-                  DWDeclPos( Client, xref->linenum, 0 );
+                 dwarfLocation( &xref->src_loc );
             }
             dh = DWAddField( Client,
                         fld_dh,
@@ -127,8 +130,7 @@ static void dwarfStructInfo( TAGPTR tag )
         }
         if( xref != NULL ){
             for( ; (xref = xref->next_xref); ) {
-                dwarfFile( xref->filenum );
-                DWReference( Client, xref->linenum, 0, dh );
+                dwarfReference( dh, &xref->src_loc );
             }
             FreeXrefs( field->xref );
             field->xref = NULL;
@@ -371,7 +373,7 @@ static dw_handle dwarfType( TYPEPTR typ, DC_CONTROL control )
     case TYPE_TYPEDEF:
         dh = dwarfType( typ->object, DC_DEFAULT );
         sym = SymGetPtr( typ->u.typedefn );
-        dwarfLocation( sym );
+        dwarfLocation( &sym->src_loc );
         dh = DWTypedef( Client,
                         dh,
                         sym->name,
@@ -438,7 +440,7 @@ static void dwarfFunctionDefine( SYM_HANDLE sym_handle, SYMPTR func_sym )
     if( func_dh != 0 ) {    // was forward ref'd
         DWHandleSet( Client, func_dh );
     }
-    dwarfLocation( func_sym );
+    dwarfLocation( &func_sym->src_loc );
     func_dh = DWBeginSubroutine( Client,
                    call_type,
                    return_dh,
@@ -489,7 +491,7 @@ static dw_handle dwarfFunctionDecl( SYMPTR func_sym )
         flags |= DW_SUB_STATIC;
     }
     return_dh = dwarfType( typ->object, DC_RETURN );
-    dwarfLocation( func_sym );
+    dwarfLocation( &func_sym->src_loc );
     func_dh = DWBeginSubroutine( Client,
                    call_type,
                    return_dh,
@@ -516,7 +518,7 @@ static dw_handle dwarfVariable( SYMPTR sym )
         flags = DW_FLAG_GLOBAL;
     }
     dh = dwarfType( sym->sym_type, DC_DEFAULT );
-    dwarfLocation( sym );
+    dwarfLocation( &sym->src_loc );
     dh = DWVariable( Client,
                 dh,
                 dummyLoc,
@@ -592,8 +594,7 @@ static void dwarfDumpNode( TREEPTR node )
                 dh = DWHandle( Client, DW_ST_NONE );
                 sym->dwarf_handle = dh;
             }
-            dwarfFile( CurFile );
-            DWReference( Client, CurLine, 0, dh );
+            dwarfReference( dh, &CurLoc );
         }
         break;
     default:
@@ -609,8 +610,7 @@ static void dwarfEmitFunctions( void )
 
     tree = FirstStmt;
     while( tree != NULL ) {
-        CurFile =  tree->op.source_fno;
-        CurLine = tree->srclinenum;
+        CurLoc = tree->op.src_loc;
         WalkExprTree( tree->right, dwarfDumpNode, NoOp, NoOp, dwarfDumpNode );
         tree = tree->left;
     }
@@ -661,8 +661,8 @@ extern void DwarfBrowseEmit( void )
 {
     Client = DwarfInit();
     dummyLoc = DWLocFini( Client, DWLocInit( Client ) );
-    CurFile = 0;
-    CurLine = 0;
+    CurLoc.fno = 0;
+    CurLoc.line = 0;
     dwarfEmit();
     DWLocTrash( Client, dummyLoc );
     DwarfFini( Client );

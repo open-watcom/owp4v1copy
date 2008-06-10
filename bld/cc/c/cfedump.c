@@ -367,7 +367,7 @@ void DumpExpr( TREEPTR tree )
 
 void DumpStmt( TREEPTR tree )
 {
-    printf( "line %3.3u: ", tree->srclinenum );
+    printf( "line %3.3u: ", tree->op.src_loc.line );
     WalkExprTree( tree->right, DumpOpnd, DumpPrefix, DumpInfix, DumpPostfix );
     printf( "\n" );
 }

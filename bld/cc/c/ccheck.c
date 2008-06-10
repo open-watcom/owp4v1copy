@@ -553,16 +553,12 @@ static bool IsNullConst( TREEPTR tree )
     return( rc );
 }
 
-static void CompareParms( TYPEPTR *master,
-                          TREEPTR *passed,
-                          int source_fno,
-                          int call_line )
+static void CompareParms( TYPEPTR *master, TREEPTR *passed, source_loc *src_loc )
 {
     TYPEPTR     typ;
     TYPEPTR     typ2;
     int         parm_num;
     TREEPTR     parm;
-    char        *filename;
 
     cmp_type    cmp;
 
@@ -572,11 +568,8 @@ static void CompareParms( TYPEPTR *master,
             typ = NULL;                     /* indicate no parms */
         }
     }
-    ErrLine = call_line;
-    filename = FileIndexToCorrectName( source_fno );
     parm_num = 1;
     while( typ != NULL  &&  *passed != 0 ) {
-        SymLoc = filename;
         SKIP_TYPEDEFS( typ );
         //TODO is crap needed or has it been done
         if( typ->decl_type == TYPE_FUNCTION ) {
@@ -590,6 +583,7 @@ static void CompareParms( TYPEPTR *master,
         // has already been generated
         if( typ2 != NULL ) {
             /* check compatibility of parms */
+            SetErrLoc( src_loc );
             SetDiagType2 ( typ2, typ );
             cmp = CompatibleType( typ, typ2, TRUE, IsNullConst( *passed ) );
             switch( cmp ) {
@@ -637,29 +631,29 @@ static void CompareParms( TYPEPTR *master,
             case OK:
                 break;
             }
-        SetDiagPop();
+            SetDiagPop();
+            InitErrLoc();
         }
         ++master;
         typ = *master;
         ++passed;
-        if( typ == NULL ) break;
-        if( typ->decl_type == TYPE_DOT_DOT_DOT ) return;
+        if( typ == NULL )
+            break;
+        if( typ->decl_type == TYPE_DOT_DOT_DOT )
+            return;
         ++parm_num;
     }
     if( typ != NULL || *passed != 0 ) {     /* should both be NULL now */
+        SetErrLoc( src_loc );
 #if _CPU == 386
         /* can allow wrong number of parms with -3s option; 06-dec-91 */
         if( !CompFlags.register_conventions ) {
-            SymLoc = filename;
             CWarn1( WARN_PARM_COUNT_MISMATCH, ERR_PARM_COUNT_WARNING );
-            SymLoc = NULL;
             return;
         }
 #endif
-        SymLoc = filename;
         CErr1( ERR_PARM_COUNT_MISMATCH );           /* 18-feb-90 */
     }
-    SymLoc = NULL;
 }
 
 extern  call_list *CallNodeList;
@@ -710,14 +704,12 @@ extern void ChkCallParms( void )
                         actualparmlist[j] = tmp;
                     }
                 }
-                CompareParms( typ->u.fn.parms, actualparmlist,
-                                    nextcall->source_fno,
-                                    nextcall->srclinenum );
+                CompareParms( typ->u.fn.parms, actualparmlist, &nextcall->src_loc );
             } else {
                 // Unprototyped function called. Note that for indirect calls, there
                 // is no symbol associated with the function and diagnostic information
                 // is hence limited.
-                SetErrLocFno( nextcall->source_fno, nextcall->srclinenum );
+                SetErrLoc( &nextcall->src_loc );
                 if( sym.flags & SYM_TEMP ) {
                     CWarn( WARN_NONPROTO_FUNC_CALLED_INDIRECT,
                             ERR_NONPROTO_FUNC_CALLED_INDIRECT );

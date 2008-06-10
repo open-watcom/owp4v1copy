@@ -59,8 +59,7 @@ void ParsePgm( void )
     do {
         if( DeclList( &dummysym ) ) {  /* if this is a function defn */
             FuncDefn( CurFunc );
-            SrcLineNum = CurFunc->d.defn_line;  /* 17-aug-88 */
-            SrcFno     = CurFunc->defn_file_index;
+            SrcLoc = CurFunc->src_loc;
             GenFunctionNode( CurFuncHandle );
 
             SymLevel = 1;

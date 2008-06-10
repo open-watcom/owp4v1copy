@@ -352,20 +352,12 @@ int SpecialMacro( MEPTR mentry )
     CompFlags.wide_char_string = 0;                     /* 16-dec-91 */
     switch( mentry->parm_count ) {
     case MACRO_LINE:
-        utoa( TokenLine, Buffer, 10 );
-        Constant = TokenLine;
+        utoa( TokenLoc.line, Buffer, 10 );
+        Constant = TokenLoc.line;
         ConstType = TYPE_INT;
         return( T_CONSTANT );
     case MACRO_FILE:
-        if( SrcFile == NULL ) {                 /* 26-sep-94 */
-            // SrcFile can be NULL if user is missing a closing ')' on
-            // a macro to contains a reference to __FILE__.
-            // We end up scanning all the way to the end of the file
-            // causing SrcFile to become NULL.
-            p = "";
-        } else {
-            p = SrcFile->src_name;
-        }
+        p = FileIndexToFName( TokenLoc.fno )->name;
         bufp = Buffer;
         for( ;; ) {
             *bufp++ = *p;
@@ -1221,7 +1213,7 @@ static MACRO_TOKEN *BuildMTokenList( char *ptr, MACRO_ARG *macro_parms )
     byte            *p;
     byte            *p2;
     byte            buf[2];
-    enum TOKEN      prev_token;
+    TOKEN           prev_token;
 
     p = (byte *)ptr;
     head = NULL;

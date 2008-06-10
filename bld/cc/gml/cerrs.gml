@@ -1072,8 +1072,8 @@ has not been given.
 .np
 One of the operands of "[]" must be an array.
 :MSGSYM. ERR_INCOMPLETE_COMMENT
-:MSGTXT. Incomplete comment
-:MSGJTXT. 不完全なコメントです
+:MSGTXT. Incomplete comment started on line %u
+:MSGJTXT. Incomplete comment started on line %u
 .np
 The compiler did not find
 .id */

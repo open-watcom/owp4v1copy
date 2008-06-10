@@ -59,8 +59,8 @@ void PrintStats( void )
 {
     FCB         *nest_fcb;
     char        *fname;
-    char  msgbuf[MAX_MSG_LEN];
-    int   len;
+    char        msgbuf[MAX_MSG_LEN];
+    int         len;
 
     if( ! CompFlags.stats_printed ) {
         len = 0;
@@ -71,10 +71,10 @@ void PrintStats( void )
             nest_fcb = SrcFile;
             if( nest_fcb != NULL ) {
                 while( nest_fcb->prev_file != NULL ) {
-                    IncLineCount += nest_fcb->src_line;
+                    IncLineCount += nest_fcb->src_line_cnt;
                     nest_fcb = nest_fcb->prev_file;
                 }
-                SrcLineCount = nest_fcb->src_line;
+                SrcLineCount = nest_fcb->src_line_cnt;
             }
         }
         len += sprintf( &msgbuf[len], "%u lines, ", SrcLineCount );
