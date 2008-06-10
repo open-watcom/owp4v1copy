@@ -318,6 +318,7 @@ ddk_headers =        &
         ntnls.h      &
         ntstatus.h   &
         srb.h        &
+        scsi.h       &
         wdm.h        &
         wdmguid.h    &
         winddi.h     &
