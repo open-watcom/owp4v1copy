@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Windows NT specific functions for builder
+* Description:  Windows NT specific functions for builder.
 *
 ****************************************************************************/
+
 
 #include <sys/types.h>
 #include <direct.h>
@@ -75,9 +76,7 @@ void SysSetTitle( char *title )
 }
 
 static  PROCESS_INFORMATION pinfo;
-static  STARTUPINFO         sinfo;
 
-// BartoszP - 18.08.2006
 // CreateProcessA does not return process id as result
 // but fills pinfo on success
 // return value
@@ -87,12 +86,13 @@ static  STARTUPINFO         sinfo;
 
 int RunChildProcessCmdl( const char *cmdl )
 {
+    STARTUPINFO     sinfo;
 
     memset( &sinfo, 0, sizeof( sinfo ) );
     sinfo.cb = sizeof( sinfo );
     memset( &pinfo, 0, sizeof( pinfo ) );
 
-    return CreateProcessA( NULL, ( LPSTR ) cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &sinfo, &pinfo );
+    return( CreateProcess( NULL, ( LPSTR ) cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &sinfo, &pinfo ) );
 }
 
 void SysInit( int argc, char *argv[] )
@@ -127,7 +127,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     rc = RunChildProcessCmdl( cmd );
     CloseHandle( pipe_output );
     *readpipe = _hdopen( ( int ) pipe_input_dup, O_RDONLY );
-    return rc;
+    return( rc );
 }
 
 unsigned SysChdir( char *dir )
@@ -143,16 +143,17 @@ unsigned SysChdir( char *dir )
 
 int wait( int *status )
 {
-    // BartoszP - 18.08.2006
-    // *status != 0 means that process was created successfully
+    DWORD       rc;
+
+    // *status != 0 means the process was created successfully
     if( *status ) {
-        // Wait until child process exits.
         WaitForSingleObject( pinfo.hProcess, INFINITE );
-        // Close process and thread handles. 
+        GetExitCodeProcess( pinfo.hProcess, &rc );	
         CloseHandle( pinfo.hProcess );
         CloseHandle( pinfo.hThread );
-        // set *status to 0 to make pmake happy
-        *status = 0;
-    } // else - there was no child process
-    return 0;
+        *status = rc;
+    } else {    // there was no child process, indicate failure
+        *status = -1;
+    }
+    return( 0 );
 }
