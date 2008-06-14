@@ -320,6 +320,7 @@ ddk_headers =        &
         ntstatus.h   &
         srb.h        &
         scsi.h       &
+        usb100.h     &
         wdm.h        &
         wdmguid.h    &
         winddi.h     &
