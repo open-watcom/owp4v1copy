@@ -739,7 +739,7 @@ int OpenSrcFile( char *filename, int delimiter )
         }
         if( drive[0] == '\0' && !IS_PATH_SEP( dir[0] ) ) {
             for( curr = SrcFile; curr!= NULL; curr = curr->prev_file ) {
-                _splitpath2( curr->src_name, buff, &drive, &dir, NULL, NULL );
+                _splitpath2( curr->src_flist->name, buff, &drive, &dir, NULL, NULL );
                 _makepath( try, drive, dir, filename, NULL );
                 if( TryOpen( "", "", try, "" ) != 0 ) return( 1 );
             }
@@ -1103,9 +1103,8 @@ void FreeRDir( void )
     }
 }
 
-static char *IncPathElement(    // GET ONE PATH ELEMENT FROM INCLUDE LIST
-    const char *path,           // - include list
-    char *prefix )              // - buffer to store element
+// GET ONE PATH ELEMENT FROM INCLUDE LIST
+static char *IncPathElement( const char *path, char *prefix )
 {
     unsigned    length;
 

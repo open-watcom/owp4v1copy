@@ -145,7 +145,7 @@ TOKEN ChkControl( void )
             CSuicide();
         }
         lines_skipped = 0;
-        for( ;; ) {
+        for( ; CurrChar != EOF_CHAR; ) {
             if( CompFlags.cpp_output ) {
                 PrtChar( '\n' );
             }
@@ -165,7 +165,6 @@ TOKEN ChkControl( void )
             if( CurrChar == '\n' ) {
                 lines_skipped = 1;
             }
-            if( CurrChar == EOF_CHAR ) break;   /* 16-may-89 */
         }
         CompFlags.pre_processing = 0;
         if( CompFlags.cpp_output ) {

@@ -418,7 +418,7 @@ int SpecialMacro( MEPTR mentry )
 }
 
 
-local int NextMToken( void )
+local TOKEN NextMToken( void )
 {
     CompFlags.doing_macro_expansion = 1;
     GetMacroToken();

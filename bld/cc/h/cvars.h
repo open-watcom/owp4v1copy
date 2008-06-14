@@ -90,7 +90,6 @@ global  char    *PCH_FileName;  // name to use for pre-compiled header
 global  INCFILE *IncFileList;   // list of primary include files for PCH
 global  SYMPTR  *PCH_SymArray;  // array of symbol table pointers from PCH
 global  int     PCH_MaxSymHandle;// number of symbols in PCH_SymArray
-global  char    *ScanCharPtr;   // used by character scanning routines
 global  int     DebugFlag;
 global  TOKEN   CurToken;
 global  int     BadTokenInfo;
@@ -142,7 +141,7 @@ global  int     MacHashValue;   /* hash value for macro name */
 global  char    *SavedId;       /* saved id when doing look ahead */
 global  int     SavedHash;      /* hash value for saved id */
 global  source_loc SavedTokenLoc; /* value of TokenLine when id saved */
-global  int     LAToken;        /* look ahead token */
+global  TOKEN   LAToken;        /* look ahead token */
 global  LABELPTR LabelHead;     /* list of all labels defined in function */
 global  TAGPTR  TagHead;        /* list of all struct, union, enum tags */
 global  TAGPTR  DeadTags;       /* list of all tags that are out of scope */

@@ -379,9 +379,9 @@ struct ErrPostList
 
     union {
         struct {            /* POSTLIST_SYMBOL */
-            char    *sym_name;
-            char    *sym_file;
-            int     sym_line;
+            char        *sym_name;
+            char        *sym_file;
+            unsigned    sym_line;
         };
         TYPEPTR types[2];   /* POSTLIST_TWOTYPES */
     };

@@ -35,7 +35,7 @@
 typedef struct block_entry {
     struct block_entry  *prev_block;
     struct block_entry  *prev_loop;
-    int         block_type;
+    TOKEN       block_type;
     int         top_label;
     int         break_label;
     int         continue_label;
