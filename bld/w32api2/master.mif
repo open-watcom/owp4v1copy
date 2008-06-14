@@ -321,6 +321,7 @@ ddk_headers =        &
         srb.h        &
         scsi.h       &
         usb100.h     &
+        usb200.h     &
         wdm.h        &
         wdmguid.h    &
         winddi.h     &
