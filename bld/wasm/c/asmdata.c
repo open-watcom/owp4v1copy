@@ -96,7 +96,7 @@ static void output_float( unsigned char index, unsigned no_of_bytes, char negati
 #if defined( _STANDALONE_ )
             AsmWarn( 4, FLOAT_OPERAND );
 #endif
-            char_ptr = (char *)&AsmBuffer[index]->value;
+            char_ptr = (char *)&AsmBuffer[index]->u.value;
             break;
         case BYTE_4:
             float_value = double_value;
@@ -201,7 +201,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
         case T_MINUS:
             switch( AsmBuffer[cur_pos+1]->token ) {
             case T_NUM:
-                AsmBuffer[cur_pos+1]->value = -AsmBuffer[cur_pos+1]->value;
+                AsmBuffer[cur_pos+1]->u.value = -AsmBuffer[cur_pos+1]->u.value;
                 AsmBuffer[cur_pos]->token = T_PLUS;
                 break;
             case T_FLOAT:
@@ -218,7 +218,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
         case T_NUM:
         case T_FLOAT:
             if( AsmBuffer[cur_pos+1]->token == T_RES_ID &&
-                AsmBuffer[cur_pos+1]->value == T_DUP ) {
+                AsmBuffer[cur_pos+1]->u.value == T_DUP ) {
                 cur_pos = dup_array( sym, struct_sym, cur_pos, no_of_bytes );
                 if( cur_pos == ERROR )
                     return( ERROR );
@@ -246,7 +246,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 break;
             }
             count = 0;
-            char_ptr = (char *)AsmBuffer[cur_pos]->bytes;
+            char_ptr = (char *)AsmBuffer[cur_pos]->u.bytes;
 #if defined( _STANDALONE_ )
             if( sym && Parse_Pass == PASS_1 ) {
                 update_sizes( sym, first, no_of_bytes );
@@ -297,7 +297,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             }
 #endif
             if( no_of_bytes != 1 ) {
-                if( AsmBuffer[cur_pos]->value > no_of_bytes ) {
+                if( AsmBuffer[cur_pos]->u.value > no_of_bytes ) {
                     AsmError( INITIALIZER_OUT_OF_RANGE );
                     return( ERROR );
                 }
@@ -310,14 +310,14 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             little_endian( char_ptr, no_of_bytes );
 #if defined( _STANDALONE_ )
             if( no_of_bytes == 1 && struct_field ) {
-                no_of_bytes = AsmBuffer[cur_pos]->value;
+                no_of_bytes = AsmBuffer[cur_pos]->u.value;
             }
             if( sym && Parse_Pass == PASS_1 ) {
                 update_sizes( sym, first, no_of_bytes );
             }
             if( !struct_field ) {
 #endif
-                while( count < AsmBuffer[cur_pos]->value ) {
+                while( count < AsmBuffer[cur_pos]->u.value ) {
                     AsmDataByte( *char_ptr );
                     char_ptr++;
                     count++;
@@ -369,7 +369,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             switch( init_sym->state ) {
             case SYM_STRUCT_FIELD:
                 AsmBuffer[cur_pos]->token = T_NUM;
-                AsmBuffer[cur_pos]->value = init_sym->offset;
+                AsmBuffer[cur_pos]->u.value = init_sym->offset;
                 continue;
             case SYM_GRP:
             case SYM_SEG:
@@ -432,10 +432,10 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                         AsmError( EXPECTING_NUMBER );
                         return( ERROR );
                     }
-                    AsmBuffer[cur_pos+1]->value = -AsmBuffer[cur_pos+1]->value;
+                    AsmBuffer[cur_pos+1]->u.value = -AsmBuffer[cur_pos+1]->u.value;
                     break;
                 case T_NUM:
-                    data += AsmBuffer[cur_pos]->value;
+                    data += AsmBuffer[cur_pos]->u.value;
                 }
             }
 
@@ -479,8 +479,8 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             long data = 0;
             struct asmfixup     *fixup;
 
-            if( AsmBuffer[cur_pos]->value == T_OFFSET ||
-                AsmBuffer[cur_pos]->value == T_SEG ) {
+            if( AsmBuffer[cur_pos]->u.value == T_OFFSET ||
+                AsmBuffer[cur_pos]->u.value == T_SEG ) {
                 // see asmins.h about T_SEG
                 if( no_of_bytes < 2 ) {
                     AsmError( OFFSET_TOO_SMALL );
@@ -493,7 +493,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             if( i + 2 < Token_Count ) {
                 if( ( AsmBuffer[i]->token == T_RES_ID )
                     && ( AsmBuffer[i + 1]->token == T_RES_ID )
-                    && ( AsmBuffer[i + 1]->value == T_PTR ) ) {
+                    && ( AsmBuffer[i + 1]->u.value == T_PTR ) ) {
                     i += 2;
                 }
             }
@@ -509,7 +509,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                     if( init_sym == NULL )
                         return( ERROR );
 
-                    if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
+                    if( AsmBuffer[seg_off_operator_loc]->u.value == T_OFFSET ) {
                         if( init_sym->state == SYM_STACK ) {
                             AsmError( CANNOT_OFFSET_AUTO );
                             return( ERROR );
@@ -538,14 +538,14 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                             AsmError( NOT_IMPLEMENTED );
                             return( ERROR );
                         }
-                    } else if( AsmBuffer[seg_off_operator_loc]->value == T_SEG ) {
+                    } else if( AsmBuffer[seg_off_operator_loc]->u.value == T_SEG ) {
                         if( init_sym->state == SYM_STACK ) {
                             AsmError( CANNOT_SEG_AUTO );
                         }
                         fixup_type = FIX_SEG;
                     }
 
-                    switch( AsmBuffer[seg_off_operator_loc]->value ) {
+                    switch( AsmBuffer[seg_off_operator_loc]->u.value ) {
                     case T_OFFSET:
 #if defined( _STANDALONE_ )
                         if( init_sym->state == SYM_STRUCT_FIELD ) {
@@ -559,7 +559,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
 #endif
                         fixup = AddFixup( init_sym, fixup_type, OPTJ_NONE );
                         InsFixups[OPND1] = fixup;
-                        if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
+                        if( AsmBuffer[seg_off_operator_loc]->u.value == T_OFFSET ) {
                             data += fixup->offset;
                         }
 #if defined( _STANDALONE_ )
@@ -605,10 +605,10 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                                 AsmError( EXPECTING_NUMBER );
                                 return( ERROR );
                             }
-                            AsmBuffer[cur_pos+1]->value = -AsmBuffer[cur_pos+1]->value;
+                            AsmBuffer[cur_pos+1]->u.value = -AsmBuffer[cur_pos+1]->u.value;
                             break;
                         case T_NUM:
-                            data += AsmBuffer[cur_pos]->value;
+                            data += AsmBuffer[cur_pos]->u.value;
                         }
                     }
 
@@ -668,12 +668,12 @@ static int dup_array( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned
     ExpandTheWorld( start_pos, FALSE, TRUE );
     while( cur_pos + 2 < Token_Count ) {
         if(( AsmBuffer[cur_pos + 1]->token == T_RES_ID )
-            && ( AsmBuffer[cur_pos + 1]->value == T_DUP )) {
+            && ( AsmBuffer[cur_pos + 1]->u.value == T_DUP )) {
             if( AsmBuffer[cur_pos]->token != T_NUM ) {
                 AsmError( SYNTAX_ERROR );
                 return( ERROR );
             }
-            count = AsmBuffer[cur_pos]->value;
+            count = AsmBuffer[cur_pos]->u.value;
             cur_pos += 2;
             if( AsmBuffer[cur_pos]->token != T_OP_BRACKET ) {
                 AsmError( SYNTAX_ERROR );
@@ -756,7 +756,7 @@ int data_init( int sym_loc, int initializer_loc )
         }
     }
 
-    switch( AsmBuffer[initializer_loc]->value ) {
+    switch( AsmBuffer[initializer_loc]->u.value ) {
 #if defined( _STANDALONE_ )
     case T_SBYTE:                       // 20-Aug-92
         mem_type = MT_SBYTE;
@@ -823,7 +823,7 @@ int data_init( int sym_loc, int initializer_loc )
     }
 
 #if defined( _STANDALONE_ )
-    if( sym_loc >= 0 && AsmBuffer[ sym_loc ]->value == T_LABEL ) {
+    if( sym_loc >= 0 && AsmBuffer[ sym_loc ]->u.value == T_LABEL ) {
         label_dir = TRUE;
         sym_loc--;
     }

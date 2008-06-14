@@ -103,11 +103,11 @@ int ExpandSymbol( int i, bool early_only )
         AddTokens( AsmBuffer, i, dir->e.constinfo->count - 1 );
         for( j = 0; j < dir->e.constinfo->count; j++ ) {
             AsmBuffer[i+j]->token = dir->e.constinfo->data[j].token;
-            AsmBuffer[i+j]->value = dir->e.constinfo->data[j].value;
+            AsmBuffer[i+j]->u.value = dir->e.constinfo->data[j].u.value;
             AsmBuffer[i+j]->string_ptr = dir->e.constinfo->data[j].string_ptr;
             #ifdef DEBUG_OUT
             if( AsmBuffer[i+j]->token == T_NUM ) {
-                DebugMsg(( " %d", AsmBuffer[i+j]->value ));
+                DebugMsg(( " %d", AsmBuffer[i+j]->u.value ));
             } else {
                 DebugMsg(( " %s", AsmBuffer[i+j]->string_ptr ));
             }
@@ -160,7 +160,7 @@ int ExpandProcString( int index )
                 return( ERROR );
             }
             if( index > 0 && AsmBuffer[index-1]->token == T_DIRECTIVE ) {
-                switch( AsmBuffer[index-1]->value ) {
+                switch( AsmBuffer[index-1]->u.value ) {
                 case T_IFDEF:
                 case T_IFNDEF:
                     /* do NOT expand strings in IFDEF and IFNDEF ins.
@@ -171,7 +171,7 @@ int ExpandProcString( int index )
             }
             if( AsmBuffer[index+1]->token == T_DIRECTIVE ) {
                 /* this will never happen with multiple words in a string */
-                switch( AsmBuffer[index+1]->value ) {
+                switch( AsmBuffer[index+1]->u.value ) {
                 case T_EQU:
                 case T_EQU2:
                 case T_TEXTEQU:
@@ -230,7 +230,7 @@ int ExpandProcString( int index )
     InputQueueLine( buffer );
     AsmBuffer[0]->token = 0;
     AsmBuffer[0]->string_ptr = NULL;
-    AsmBuffer[0]->value = 0;
+    AsmBuffer[0]->u.value = 0;
     return( STRING_EXPANDED );
 }
 
@@ -332,9 +332,9 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
     if( value ) {
         /* just define it to be 1 and get out */
         new = AsmAlloc( sizeof( asm_tok ) );
-        memset( new[0].bytes, 0, sizeof( new[0].bytes ) );
+        memset( new[0].u.bytes, 0, sizeof( new[0].u.bytes ) );
         new[0].token = T_NUM;
-        new[0].value = 1;
+        new[0].u.value = 1;
         new[0].string_ptr = NULL;
         FreeConstData( dir->e.constinfo );
         dir->e.constinfo->count = 1;
@@ -348,7 +348,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
 
     for( counta = 0, i = start; AsmBuffer[i]->token != T_FINAL; i++ ) {
         if( ( AsmBuffer[i]->token != T_STRING )
-            || ( AsmBuffer[i]->value != 0 ) ) {
+            || ( AsmBuffer[i]->u.value != 0 ) ) {
             counta++;
         }
     }
@@ -365,7 +365,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
     for( i=0; i < count; i++ ) {
         switch( AsmBuffer[start+i]->token ) {
         case T_STRING:
-            if( AsmBuffer[start+i]->value == 0 ) {
+            if( AsmBuffer[start+i]->u.value == 0 ) {
                 i--;
                 count--;
                 start++;
@@ -395,7 +395,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             break;
         }
         new[i].token = AsmBuffer[start + i]->token;
-        memcpy( new[i].bytes, AsmBuffer[start + i]->bytes, sizeof( new[i].bytes ) );
+        memcpy( new[i].u.bytes, AsmBuffer[start + i]->u.bytes, sizeof( new[i].u.bytes ) );
         if( AsmBuffer[start+i]->string_ptr == NULL ) {
             new[i].string_ptr = NULL;
         } else {
@@ -417,7 +417,7 @@ int ExpandAllConsts( int start_pos, bool early_only )
     int i;
 
     if( AsmBuffer[start_pos+1]->token == T_DIRECTIVE ) {
-        switch( AsmBuffer[start_pos+1]->value ) {
+        switch( AsmBuffer[start_pos+1]->u.value ) {
         case T_EQU:
         case T_EQU2:
         case T_TEXTEQU:

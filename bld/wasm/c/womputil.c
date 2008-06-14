@@ -92,7 +92,7 @@ void ObjWriteError( void )
 {
     MsgPrintf( OBJECT_WRITE_ERROR );
     exit( EXIT_FAILURE );
-};
+}
 
 void write_record( obj_rec *objr, char kill )
 /*******************************************/

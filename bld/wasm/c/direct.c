@@ -959,7 +959,7 @@ static int GetLangType( int *i )
 /******************************/
 {
     if( AsmBuffer[*i]->token == T_RES_ID) {
-        switch( AsmBuffer[(*i)++]->value ) {
+        switch( AsmBuffer[(*i)++]->u.value ) {
         case T_C:
             return( LANG_C );
         case T_BASIC:
@@ -1242,7 +1242,7 @@ int  SetCurrSeg( int i )
 
     name = AsmBuffer[i]->string_ptr;
 
-    switch( AsmBuffer[i+1]->value ) {
+    switch( AsmBuffer[i+1]->u.value ) {
     case T_SEGMENT:
         FlushCurrSeg();
         seg = (dir_node *)AsmGetSymbol( name );
@@ -1382,7 +1382,7 @@ int SegDef( int i )
 
     name = AsmBuffer[i]->string_ptr;
 
-    switch( AsmBuffer[i+1]->value ) {
+    switch( AsmBuffer[i+1]->u.value ) {
     case T_SEGMENT:
         /* Check to see if the segment is already defined */
         seg = (dir_node *)AsmGetSymbol( name );
@@ -1497,7 +1497,7 @@ int SegDef( int i )
                 ExpandTheWorld( i + 1, FALSE, TRUE);
                 if( AsmBuffer[i+1]->token == T_NUM ) {
                     i++;
-                    new->abs_frame = AsmBuffer[i]->value;
+                    new->abs_frame = AsmBuffer[i]->u.value;
                 } else {
                     AsmError( UNDEFINED_SEGMENT_OPTION );
                     goto error;
@@ -1693,7 +1693,7 @@ int Startup( int i )
     }
     ModuleInfo.cmdline = FALSE;
 
-    switch( AsmBuffer[i]->value ) {
+    switch( AsmBuffer[i]->u.value ) {
     case T_DOT_STARTUP:
         count = 0;
         strcpy( buffer, StartAddr );
@@ -1775,12 +1775,12 @@ int SimSeg( int i )
     }
     ModuleInfo.cmdline = FALSE;
 
-    if( AsmBuffer[i]->value != T_DOT_STACK ) {
+    if( AsmBuffer[i]->u.value != T_DOT_STACK ) {
         close_lastseg();
     }
     buffer[0] = '\0';
     bit = ( ModuleInfo.defUse32 ) ? BIT32 : BIT16;
-    type = AsmBuffer[i]->value;
+    type = AsmBuffer[i]->u.value;
     i++; /* get past the directive token */
     if( i < Token_Count ) {
         string = AsmBuffer[i]->string_ptr;
@@ -1813,7 +1813,7 @@ int SimSeg( int i )
                 AsmError( CONSTANT_EXPECTED );
                 return( ERROR );
             } else {
-                lastseg.stack_size = AsmBuffer[i]->value;
+                lastseg.stack_size = AsmBuffer[i]->u.value;
             }
         } else {
             lastseg.stack_size = DEFAULT_STACK_SIZE;
@@ -1925,10 +1925,10 @@ static void module_prologue( int type )
     case MOD_MEDIUM:
     case MOD_LARGE:
     case MOD_HUGE:
-        const_CodeSize.value = 1;
+        const_CodeSize.u.value = 1;
         break;
     default:
-        const_CodeSize.value = 0;
+        const_CodeSize.u.value = 0;
         break;
     }
     AddPredefinedConstant( "@CodeSize", &info_CodeSize );
@@ -1937,23 +1937,23 @@ static void module_prologue( int type )
     switch( type ) {
     case MOD_COMPACT:
     case MOD_LARGE:
-        const_DataSize.value = 1;
+        const_DataSize.u.value = 1;
         break;
     case MOD_HUGE:
-        const_DataSize.value = 2;
+        const_DataSize.u.value = 2;
         break;
     default:
-        const_DataSize.value = 0;
+        const_DataSize.u.value = 0;
         break;
     }
     AddPredefinedConstant( "@DataSize", &info_DataSize );
 
     /* Set @Model */
-    const_Model.value = ModuleInfo.model;
+    const_Model.u.value = ModuleInfo.model;
     AddPredefinedConstant( "@Model", &info_Model );
 
     /* Set @Interface */
-    const_Interface.value = ModuleInfo.langtype;
+    const_Interface.u.value = ModuleInfo.langtype;
     AddPredefinedConstant( "@Interface", &info_Interface );
 }
 
@@ -2076,7 +2076,7 @@ int Model( int i )
                 }
             }
         }
-        MakeConstantUnderscored( AsmBuffer[i]->value );
+        MakeConstantUnderscored( AsmBuffer[i]->u.value );
 
         if( initstate & TypeInfo[type].init ) {
             AsmError( MODEL_PARA_DEFINED ); // initialized already
@@ -2188,7 +2188,7 @@ int SetAssume( int i )
 
     for( i++; i < Token_Count; i++ ) {
         if( ( AsmBuffer[i]->token == T_RES_ID )
-            && ( AsmBuffer[i]->value == T_NOTHING ) ) {
+            && ( AsmBuffer[i]->u.value == T_NOTHING ) ) {
             AssumeInit();
             continue;
         }
@@ -2205,7 +2205,7 @@ int SetAssume( int i )
         i++;
 
         if( ( AsmBuffer[i]->token == T_UNARY_OPERATOR )
-            && ( AsmBuffer[i]->value == T_SEG ) ) {
+            && ( AsmBuffer[i]->u.value == T_SEG ) ) {
             i++;
         }
 
@@ -2637,7 +2637,7 @@ int LocalDef( int i )
                     AsmError( SYNTAX_ERROR );
                     return( ERROR );
                 }
-                local->factor = AsmBuffer[i++]->value;
+                local->factor = AsmBuffer[i++]->u.value;
                 if( ( AsmBuffer[i]->token != T_CL_SQ_BRACKET ) || ( i >= Token_Count ) ) {
                     AsmError( EXPECTED_CL_SQ_BRACKET );
                     return( ERROR );
@@ -2739,7 +2739,7 @@ static int proc_exam( dir_node *proc, int i )
         switch( type ) {
         case TOK_PROC_FAR:
         case TOK_PROC_NEAR:
-            info->mem_type = TypeInfo[type].value;;
+            info->mem_type = TypeInfo[type].value;
             minimum = TOK_PROC_BASIC;
             break;
         case TOK_PROC_BASIC:
@@ -3260,7 +3260,7 @@ int Ret( int i, int count, int flag_iret )
     info = CurrProc->e.procinfo;
 
     if( flag_iret ) {
-        if( AsmBuffer[i]->value == T_IRET ) {
+        if( AsmBuffer[i]->u.value == T_IRET ) {
             strcpy( buffer, "iretf" );
         } else {
             strcpy( buffer, "iretdf" );
@@ -3450,7 +3450,7 @@ int CommDef( int i )
                     AsmError( EXPECTING_NUMBER );
                     return( ERROR );
                 }
-                count = AsmBuffer[i]->value;
+                count = AsmBuffer[i]->u.value;
             }
         }
         mem_type = TypeInfo[type].value;

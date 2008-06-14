@@ -85,12 +85,12 @@ int OrgDirective( int i )
     int_32          value = 0;
 
     if( AsmBuffer[i+1]->token == T_NUM ) {
-        return( ChangeCurrentLocation( FALSE, AsmBuffer[i+1]->value, FALSE ) );
+        return( ChangeCurrentLocation( FALSE, AsmBuffer[i+1]->u.value, FALSE ) );
     } else if( AsmBuffer[i+1]->token == T_ID ) {
         sym = AsmLookup( AsmBuffer[i+1]->string_ptr );
         if( AsmBuffer[i+2]->token == T_OP_SQ_BRACKET &&
             AsmBuffer[i+3]->token == T_NUM ) {
-            value = AsmBuffer[i+3]->value;
+            value = AsmBuffer[i+3]->u.value;
         }
         return( ChangeCurrentLocation( FALSE, sym->offset + value, FALSE ) );
     }
@@ -144,7 +144,7 @@ int AlignDirective( uint_16 directive, int i )
         if( AsmBuffer[i+1]->token == T_NUM ) {
             int power;
 
-            align_val = AsmBuffer[i+1]->value;
+            align_val = AsmBuffer[i+1]->u.value;
             /* check that the parm is a power of 2 */
             for( power = 1; power < align_val; power <<= 1 );
             if( power != align_val ) {

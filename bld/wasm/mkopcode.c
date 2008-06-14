@@ -189,7 +189,7 @@ int main( int argc, char *argv[] )
         printf( "Unable to open '%s'\n", out_name );
         exit( 1 );
     }
-    fprintf( out, "extern const char AsmChars[] = {\n" );
+    fprintf( out, "const char AsmChars[] = {\n" );
     for( i = 0; i < index; i++ ) {
         if( i % 10 == 0 )
             fprintf( out, "/*%4d*/ ", i );
@@ -203,7 +203,7 @@ int main( int argc, char *argv[] )
     for( i = 0; i < HASH_TABLE_SIZE; i++ )
         fprintf( out, "\t%d,\n", inst_table[ i ] );
     fprintf( out, "};\n\n" );
-    fprintf( out, "extern const struct AsmCodeName AsmOpcode[] = {\n" );
+    fprintf( out, "const struct AsmCodeName AsmOpcode[] = {\n" );
     for( i = 0; i < count; i++ ) {
         word = Words[ i ].word;
         fprintf( out, "\t{\t%d,\t%d,\t%d,\t%d\t},\t/* %s */\n", pos_table[ i ],

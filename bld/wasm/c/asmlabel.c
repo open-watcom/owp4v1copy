@@ -181,7 +181,7 @@ int LabelDirective( int i )
         AsmError( INVALID_LABEL_DEFINITION );
         return( ERROR );
     }
-    switch( AsmBuffer[i+1]->value ) {
+    switch( AsmBuffer[i+1]->u.value ) {
     case T_NEAR:
         return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_NEAR ));
     case T_FAR:

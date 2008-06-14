@@ -177,7 +177,7 @@ bool GetPublicData( void )
                     AsmWarn( 2, PUBLIC_CONSTANT_NOT_NUMERIC );
                     d->offset = 0;
                 } else {
-                    d->offset = dir->e.constinfo->data[0].value;
+                    d->offset = dir->e.constinfo->data[0].u.value;
                 }
             }
             d->type.idx = 0;

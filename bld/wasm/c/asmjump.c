@@ -100,14 +100,14 @@ static void jumpExtend( int far_flag )
     /* there MUST be a conditional jump instruction in asmbuffer */
     for( i = 0; ; i++ ) {
         if( ( AsmBuffer[i]->token == T_INSTR )
-            && IS_JMP( AsmBuffer[i]->value ) ) {
+            && IS_JMP( AsmBuffer[i]->u.value ) ) {
             break;
         }
     }
 
     AsmWarn( 4, EXTENDING_JUMP );
 
-    negation = getJumpNegation( AsmBuffer[i]->value );
+    negation = getJumpNegation( AsmBuffer[i]->u.value );
     GetInsString( negation, buffer, MAX_LINE_LEN );
     if( far_flag ) {
         next_ins_size = Code->use32 ? 7 : 5;
@@ -129,7 +129,7 @@ static void jumpExtend( int far_flag )
         case T_HEX_NUM_0:
         case T_HEX_NUM:
         case T_BIN_NUM:
-            itoa( AsmBuffer[i]->value, buffer+strlen( buffer ), 10 );
+            itoa( AsmBuffer[i]->u.value, buffer + strlen( buffer ), 10 );
             break;
         case T_OP_SQ_BRACKET:
             strcat( buffer, "[" );
@@ -155,7 +155,7 @@ static void FarCallToNear( void )
     /* there MUST be a call instruction in asmbuffer */
     for( i = 0; ; i++ ) {
         if( ( AsmBuffer[i]->token == T_INSTR )
-            && ( AsmBuffer[i]->value == T_CALL ) ) {
+            && ( AsmBuffer[i]->u.value == T_CALL ) ) {
             break;
         }
     }
@@ -171,7 +171,7 @@ static void FarCallToNear( void )
         case T_HEX_NUM_0:
         case T_HEX_NUM:
         case T_BIN_NUM:
-            itoa( AsmBuffer[i]->value, buffer+strlen( buffer ), 10 );
+            itoa( AsmBuffer[i]->u.value, buffer+strlen( buffer ), 10 );
             break;
         case T_OP_SQ_BRACKET:
             strcat( buffer, "[" );

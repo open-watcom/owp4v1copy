@@ -61,7 +61,7 @@ int ForDirective( int i, enum irp_type type )
             return( ERROR );
         }
         arg_loc = i;
-        len = AsmBuffer[i]->value;
+        len = AsmBuffer[i]->u.value;
         i++;
         if( AsmBuffer[i]->token != T_FINAL ) {
             AsmError( OPERAND_EXPECTED );
@@ -98,7 +98,7 @@ int ForDirective( int i, enum irp_type type )
     AsmBuffer[i]->token = T_ID;
     i++;
     AsmBuffer[i]->token = T_DIRECTIVE;
-    AsmBuffer[i]->value = T_MACRO;
+    AsmBuffer[i]->u.value = T_MACRO;
 
     if( MacroDef( start, TRUE ) == ERROR ) return( ERROR );
 

@@ -211,7 +211,7 @@ static int macro_local( void )
     int i = 0;
     char buffer[MAX_LINE_LEN];
 
-    if( AsmBuffer[i]->value != T_LOCAL ) {
+    if( AsmBuffer[i]->u.value != T_LOCAL ) {
         AsmError( SYNTAX_ERROR );
         return( ERROR );
     }
@@ -471,7 +471,7 @@ int ExpandMacro( int tok_count)
     }
     macro_name_loc = count;
     if( AsmBuffer[count+1]->token == T_DIRECTIVE &&
-        AsmBuffer[count+1]->value == T_MACRO ) {
+        AsmBuffer[count+1]->u.value == T_MACRO ) {
         /* this is a macro DEFINITION! */
         return( tok_count );
     }
@@ -544,7 +544,7 @@ int ExpandMacro( int tok_count)
                             strcat( buffer, next_char );
                         } else if( AsmBuffer[count]->token == T_NUM ) {
                             if( *AsmBuffer[count]->string_ptr == 0 ) {
-                                itoa( AsmBuffer[count]->value, buffer+strlen( buffer ), 10 );
+                                itoa( AsmBuffer[count]->u.value, buffer+strlen( buffer ), 10 );
                             } else {
                                 strcpy( buffer+strlen( buffer ), AsmBuffer[count]->string_ptr );
                             }

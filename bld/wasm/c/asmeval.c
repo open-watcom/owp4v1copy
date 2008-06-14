@@ -145,7 +145,7 @@ static int get_precedence( int i )
 
     switch( AsmBuffer[i]->token ) {
     case T_UNARY_OPERATOR:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_LENGTH:
         case T_SIZE:
@@ -159,7 +159,7 @@ static int get_precedence( int i )
         }
         break;
     case T_INSTR:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
         case T_MOD:
         case T_SHL:
         case T_SHR:
@@ -183,7 +183,7 @@ static int get_precedence( int i )
         }
         break;
     case T_RES_ID:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
         case T_SHORT:
             return( 14 );
         case T_BYTE:
@@ -235,7 +235,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
     case T_NUM:
         new->empty = FALSE;
         new->type = EXPR_CONST;
-        new->value = AsmBuffer[i]->value;
+        new->value = AsmBuffer[i]->u.value;
         break;
     case T_STRING:
         new->empty = FALSE;
@@ -252,7 +252,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
         new->type = EXPR_REG;
         new->base_reg = i;
         if( op_sq_bracket_level > 0 ) {
-            switch( AsmBuffer[i]->value ) {
+            switch( AsmBuffer[i]->u.value ) {
             case T_EAX:
             case T_EBX:
             case T_ECX:
@@ -286,7 +286,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 new->type = EXPR_UNDEF;
                 return( ERROR );
             }
-        } else if( AsmBuffer[i]->value == T_ST ) {
+        } else if( AsmBuffer[i]->u.value == T_ST ) {
 
             expr_list   sti;
 
@@ -414,7 +414,7 @@ static bool is_unary( int i, char sign )
     case T_UNARY_OPERATOR:
         return( TRUE );
     case T_INSTR:
-        if( AsmBuffer[i]->value == T_NOT )
+        if( AsmBuffer[i]->u.value == T_NOT )
             return( TRUE );
         break;
     case T_POSITIVE:
@@ -433,7 +433,7 @@ static bool is_unary( int i, char sign )
         }
         break;
     case T_RES_ID:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
         case T_BYTE:
         case T_WORD:
         case T_DWORD:
@@ -1037,7 +1037,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         }
         break;
     case T_RES_ID:
-        switch( AsmBuffer[index]->value ) {
+        switch( AsmBuffer[index]->u.value ) {
         case T_BYTE:
         case T_WORD:
         case T_DWORD:
@@ -1053,7 +1053,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         case T_SDWORD:
 #endif
             if( ( AsmBuffer[index + 1]->token != T_RES_ID )
-                || ( AsmBuffer[index + 1]->value != T_PTR ) ) {
+                || ( AsmBuffer[index + 1]->u.value != T_PTR ) ) {
                 // Missing PTR operator
                 if( error_msg )
                     AsmError( MISSING_PTR_OPERATOR );
@@ -1062,7 +1062,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
             TokenAssign( token_1, token_2 );
             token_1->explicit = TRUE;
-            switch( AsmBuffer[index]->value ) {
+            switch( AsmBuffer[index]->u.value ) {
             case T_BYTE:
                 token_1->mem_type = MT_BYTE;
                 break;
@@ -1109,7 +1109,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
             break;
         case T_PTR:
-            value = AsmBuffer[index - 1]->value;
+            value = AsmBuffer[index - 1]->u.value;
             if( AsmBuffer[index - 1]->token != T_RES_ID )
                 value = T_NULL;
             switch( value ) {
@@ -1150,7 +1150,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
     case T_INSTR:
         MakeConst( token_1 );
         MakeConst( token_2 );
-        if( AsmBuffer[index]->value == T_NOT ) {
+        if( AsmBuffer[index]->u.value == T_NOT ) {
             if( token_2->type != EXPR_CONST ) {
                 if( error_msg )
                     AsmError( CONSTANT_EXPECTED );
@@ -1166,7 +1166,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 return( ERROR );
             }
         }
-        switch( AsmBuffer[index]->value ) {
+        switch( AsmBuffer[index]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_EQ:
             token_1->value = ( token_1->value == token_2->value ? -1:0 );
@@ -1211,7 +1211,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         }
         break;
     case T_UNARY_OPERATOR:
-        if( ( AsmBuffer[index]->value == T_OFFSET ) && ( token_2->type == EXPR_CONST ) ) {
+        if( ( AsmBuffer[index]->u.value == T_OFFSET ) && ( token_2->type == EXPR_CONST ) ) {
         } else if( token_2->type != EXPR_ADDR ) {
             if( error_msg )
                 AsmError( LABEL_IS_EXPECTED );
@@ -1223,7 +1223,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
-        switch( AsmBuffer[index]->value ) {
+        switch( AsmBuffer[index]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_LENGTH:
         case T_SIZE:
@@ -1238,7 +1238,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 }
                 return( ERROR );
             }
-            switch( AsmBuffer[index]->value ) {
+            switch( AsmBuffer[index]->u.value ) {
             case T_LENGTH:
                 if( sym->mem_type == MT_STRUCT ) {
                     token_1->value = sym->count;
@@ -1298,7 +1298,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
 #endif
         default:
             TokenAssign( token_1, token_2 );
-            token_1->instr = AsmBuffer[index]->value;
+            token_1->instr = AsmBuffer[index]->u.value;
             break;
         }
         break;
@@ -1554,7 +1554,7 @@ static bool is_expr1( int i )
 {
     switch( AsmBuffer[i]->token ) {
     case T_INSTR:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
@@ -1577,7 +1577,7 @@ static bool is_expr1( int i )
             } else if( AsmBuffer[i-1]->token == T_COLON ) {
                 /* It is an instruction instead */
                 break;
-            } else if( AsmBuffer[i-1]->value == T_LOCK ) {
+            } else if( AsmBuffer[i-1]->u.value == T_LOCK ) {
                 /* It is an instruction:
                          lock and dword ptr [ebx], 1
                 */
@@ -1597,7 +1597,7 @@ static bool is_expr1( int i )
         break;
 #if defined( _STANDALONE_ )
     case T_RES_ID:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
         case T_FLAT:
             DefFlatGroup();
             return( TRUE );
@@ -1623,7 +1623,7 @@ static bool is_expr1( int i )
     case T_COLON:
 #if defined( _STANDALONE_ )
         if( i == 1 || ( AsmBuffer[i+1]->token == T_DIRECTIVE &&
-                        AsmBuffer[i+1]->value == T_EQU2 ) ) {
+                        AsmBuffer[i+1]->u.value == T_EQU2 ) ) {
             /* It is the colon following the label or it is a := */
             break;
         } else {
@@ -1654,7 +1654,7 @@ static bool is_expr2( int i )
 {
     switch( AsmBuffer[i]->token ) {
     case T_INSTR:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
@@ -1677,7 +1677,7 @@ static bool is_expr2( int i )
             } else if( AsmBuffer[i-1]->token == T_COLON ) {
                 /* It is an instruction instead */
                 break;
-            } else if( AsmBuffer[i-1]->value == T_LOCK ) {
+            } else if( AsmBuffer[i-1]->u.value == T_LOCK ) {
                 /* It is an instruction:
                          lock and dword ptr [ebx], 1
                 */
@@ -1692,7 +1692,7 @@ static bool is_expr2( int i )
     case T_UNARY_OPERATOR:
         return( TRUE );
     case T_RES_ID:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_FLAT:
             DefFlatGroup();
@@ -1737,7 +1737,7 @@ static bool is_expr2( int i )
     case T_COLON:
 #if defined( _STANDALONE_ )
         if( ( AsmBuffer[i+1]->token == T_DIRECTIVE )
-            && ( AsmBuffer[i+1]->value == T_EQU2 ) )
+            && ( AsmBuffer[i+1]->u.value == T_EQU2 ) )
             /* It is a := */
             break;
 #endif
@@ -1769,7 +1769,7 @@ static int fix_parens( void )
     store = 0;
     for( i = 0; i < TokCnt; i++ ) {
 
-        if( AsmBuffer[i]->token == T_RES_ID && AsmBuffer[i]->value == T_DUP ) {
+        if( AsmBuffer[i]->token == T_RES_ID && AsmBuffer[i]->u.value == T_DUP ) {
             dup_count++;
             if( AsmBuffer[++i]->token != T_OP_BRACKET ) {
                 if( error_msg )
@@ -1819,7 +1819,7 @@ static int fix( expr_list *res, int start, int end )
         }
         if( res->string == NULL ) {
             AsmBuffer[ start ]->token = T_NUM;
-            AsmBuffer[ start ]->value = res->value;
+            AsmBuffer[ start ]->u.value = res->value;
             AsmBuffer[ start++ ]->string_ptr = "";
         } else {
             AsmBuffer[ start ]->token = T_STRING;
@@ -1835,12 +1835,12 @@ static int fix( expr_list *res, int start, int end )
         }
         AsmBuffer[ start ]->token = T_REG;
         AsmBuffer[ start ]->string_ptr = AsmBuffer[ res->base_reg ]->string_ptr;
-        AsmBuffer[ start++ ]->value = AsmBuffer[ res->base_reg ]->value;
-        if( AsmBuffer[ res->base_reg ]->value == T_ST && res->idx_reg > 0 ) {
+        AsmBuffer[ start++ ]->u.value = AsmBuffer[ res->base_reg ]->u.value;
+        if( AsmBuffer[ res->base_reg ]->u.value == T_ST && res->idx_reg > 0 ) {
 //            AsmBuffer[start]->string_ptr = "(";
 //            AsmBuffer[start++]->token = T_OP_BRACKET;
             AsmBuffer[start]->token = T_NUM;
-            AsmBuffer[start]->value = res->idx_reg;
+            AsmBuffer[start]->u.value = res->idx_reg;
             AsmBuffer[start++]->string_ptr = "";
 //            AsmBuffer[start]->string_ptr = ")";
 //            AsmBuffer[start++]->token = T_CL_BRACKET;
@@ -1914,49 +1914,49 @@ static int fix( expr_list *res, int start, int end )
 
         if( res->instr != EMPTY ) {
             AsmBuffer[start]->token = T_UNARY_OPERATOR;
-            AsmBuffer[start++]->value = res->instr;
+            AsmBuffer[start++]->u.value = res->instr;
         } else if( res->mbr != NULL && res->mbr->mem_type != MT_EMPTY ) {
             AsmBuffer[start]->token = T_RES_ID;
             switch( res->mbr->mem_type ) {
             case MT_BYTE:
-                AsmBuffer[start++]->value = T_BYTE;
+                AsmBuffer[start++]->u.value = T_BYTE;
                 break;
             case MT_WORD:
-                AsmBuffer[start++]->value = T_WORD;
+                AsmBuffer[start++]->u.value = T_WORD;
                 break;
             case MT_DWORD:
-                AsmBuffer[start++]->value = T_DWORD;
+                AsmBuffer[start++]->u.value = T_DWORD;
                 break;
             case MT_FWORD:
-                AsmBuffer[start++]->value = T_FWORD;
+                AsmBuffer[start++]->u.value = T_FWORD;
                 break;
             case MT_QWORD:
-                AsmBuffer[start++]->value = T_QWORD;
+                AsmBuffer[start++]->u.value = T_QWORD;
                 break;
             case MT_TBYTE:
-                AsmBuffer[start++]->value = T_TBYTE;
+                AsmBuffer[start++]->u.value = T_TBYTE;
                 break;
             case MT_OWORD:
-                AsmBuffer[start++]->value = T_OWORD;
+                AsmBuffer[start++]->u.value = T_OWORD;
                 break;
             case MT_SHORT:
-                AsmBuffer[start++]->value = T_SHORT;
+                AsmBuffer[start++]->u.value = T_SHORT;
                 break;
             case MT_NEAR:
-                AsmBuffer[start++]->value = T_NEAR;
+                AsmBuffer[start++]->u.value = T_NEAR;
                 break;
             case MT_FAR:
-                AsmBuffer[start++]->value = T_FAR;
+                AsmBuffer[start++]->u.value = T_FAR;
                 break;
 #if defined( _STANDALONE_ )
             case MT_SBYTE:
-                AsmBuffer[start++]->value = T_SBYTE;
+                AsmBuffer[start++]->u.value = T_SBYTE;
                 break;
             case MT_SWORD:
-                AsmBuffer[start++]->value = T_SWORD;
+                AsmBuffer[start++]->u.value = T_SWORD;
                 break;
             case MT_SDWORD:
-                AsmBuffer[start++]->value = T_SDWORD;
+                AsmBuffer[start++]->u.value = T_SDWORD;
                 break;
 #endif
             default:
@@ -1964,7 +1964,7 @@ static int fix( expr_list *res, int start, int end )
             }
 //            AsmBuffer[start++]->value = res->mbr->mem_type;
             AsmBuffer[start]->token = T_RES_ID;
-            AsmBuffer[start++]->value = T_PTR;
+            AsmBuffer[start++]->u.value = T_PTR;
         }
 
         if( res->override != EMPTY ) {
@@ -1980,19 +1980,19 @@ static int fix( expr_list *res, int start, int end )
             AsmBuffer[start++]->token = T_OP_SQ_BRACKET;
             AsmBuffer[start]->token = T_REG;
             AsmBuffer[start]->string_ptr = Store[res->base_reg-old_start].string_ptr;
-            AsmBuffer[start++]->value = Store[res->base_reg-old_start].value;
+            AsmBuffer[start++]->u.value = Store[res->base_reg-old_start].u.value;
             AsmBuffer[start++]->token = T_CL_SQ_BRACKET;
         }
         if( res->idx_reg != EMPTY ) {
             AsmBuffer[start++]->token = T_OP_SQ_BRACKET;
             AsmBuffer[start]->token = T_REG;
             AsmBuffer[start]->string_ptr = Store[res->idx_reg-old_start].string_ptr;
-            AsmBuffer[start++]->value = Store[res->idx_reg-old_start].value;
+            AsmBuffer[start++]->u.value = Store[res->idx_reg-old_start].u.value;
             if( res->scale != 1 ) {
                 AsmBuffer[start]->string_ptr = "*";
                 AsmBuffer[start++]->token = T_TIMES;
                 AsmBuffer[start]->token = T_NUM;
-                AsmBuffer[start]->value = res->scale;
+                AsmBuffer[start]->u.value = res->scale;
                 AsmBuffer[start++]->string_ptr = "";
                 res->scale = 1;
             }
@@ -2002,7 +2002,7 @@ static int fix( expr_list *res, int start, int end )
         if( need_number ) {
             AsmBuffer[start++]->token = T_OP_SQ_BRACKET;
             AsmBuffer[start]->token = T_NUM;
-            AsmBuffer[start]->value = res->value;
+            AsmBuffer[start]->u.value = res->value;
             AsmBuffer[start++]->string_ptr = "";
             AsmBuffer[start++]->token = T_CL_SQ_BRACKET;
         }

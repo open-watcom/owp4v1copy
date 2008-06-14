@@ -330,7 +330,7 @@ int check_override( int *i )
             switch( AsmBuffer[index]->token ) {
             case T_REG:
                 Code->prefix.seg =
-                    AsmOpTable[AsmOpcode[AsmBuffer[index]->value].position].opcode;
+                    AsmOpTable[AsmOpcode[AsmBuffer[index]->u.value].position].opcode;
                 (*i) += 2;
                 if( *i >= Token_Count ) {
                     AsmError( LABEL_EXPECTED_AFTER_COLON );
@@ -875,7 +875,7 @@ static int segm_override_jumps( expr_list *opndx )
 {
     if( opndx->override != EMPTY ) {
         if( AsmBuffer[opndx->override]->token == T_REG ) {
-            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->value].position].opcode;
+            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.value].position].opcode;
         } else {
 #if defined( _STANDALONE_ )
             if( FixOverride( opndx->override ) != NOT_ERROR ) {
@@ -893,7 +893,7 @@ static int segm_override_idata( expr_list *opndx )
 {
     if( opndx->override != EMPTY ) {
         if( AsmBuffer[opndx->override]->token == T_REG ) {
-            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->value].position].opcode;
+            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.value].position].opcode;
         } else {
 #if defined( _STANDALONE_ )
             if( FixOverride( opndx->override ) != NOT_ERROR ) {
@@ -911,7 +911,7 @@ static int segm_override_memory( expr_list *opndx )
 {
     if( opndx->override != EMPTY ) {
         if( AsmBuffer[opndx->override]->token == T_REG ) {
-            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->value].position].opcode;
+            Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[opndx->override]->u.value].position].opcode;
         } else {
 #if defined( _STANDALONE_ )
             if( FixOverride( opndx->override ) != NOT_ERROR ) {
@@ -1326,7 +1326,7 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
         }
     }
     if( opndx->base_reg != EMPTY ) {
-        base = AsmBuffer[opndx->base_reg]->value;
+        base = AsmBuffer[opndx->base_reg]->u.value;
         switch( base ) {     // check for base registers
         case T_EAX:
         case T_EBX:
@@ -1355,7 +1355,7 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
         }
     }
     if( opndx->idx_reg != EMPTY ) {
-        index = AsmBuffer[opndx->idx_reg]->value;
+        index = AsmBuffer[opndx->idx_reg]->u.value;
         switch( index ) {     // check for index registers
         case T_EAX:
         case T_EBX:
@@ -1382,10 +1382,10 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
             AsmError( INVALID_MEMORY_POINTER );
             return( ERROR );
         }
-        if( AsmBuffer[opndx->idx_reg]->value == T_ESP ) {
+        if( AsmBuffer[opndx->idx_reg]->u.value == T_ESP ) {
             if( opndx->scale == 1 ) {
                 index = base;
-                base = AsmBuffer[opndx->idx_reg]->value;
+                base = AsmBuffer[opndx->idx_reg]->u.value;
             } else {
                 AsmError( ESP_CANNOT_BE_USED_AS_INDEX );
                 return( ERROR );
@@ -1680,7 +1680,7 @@ static int process_reg( expr_list *opndx )
 
     if( opndx->indirect )  // simple register indirect operand ... [EBX]
         return( process_address( opndx ) );
-    temp = AsmOpcode[AsmBuffer[opndx->base_reg]->value].position;
+    temp = AsmOpcode[AsmBuffer[opndx->base_reg]->u.value].position;
     reg = AsmOpTable[temp].opcode;
     Code->info.opnd_type[Opnd_Count] = AsmOpTable[temp].opnd_type[OPND2];
     switch( AsmOpTable[temp].opnd_type[OPND2] ) {
@@ -1715,7 +1715,7 @@ static int process_reg( expr_list *opndx )
         }
     case OP_SR:                                 // any seg reg
     case OP_SR2:                                // 8086 segment register
-        if( AsmBuffer[opndx->base_reg]->value == T_CS ) {
+        if( AsmBuffer[opndx->base_reg]->u.value == T_CS ) {
             // POP CS is not allowed
             if( Code->info.token == T_POP ) {
                 AsmError( POP_CS_IS_NOT_ALLOWED );
@@ -1736,7 +1736,7 @@ static int process_reg( expr_list *opndx )
             Code->prefix.opsiz = TRUE;
         break;
     case OP_TR:                 // Test registers
-        switch( AsmBuffer[opndx->base_reg]->value ) {
+        switch( AsmBuffer[opndx->base_reg]->u.value ) {
         case T_TR3:
         case T_TR4:
         case T_TR5:
@@ -1867,7 +1867,7 @@ int AsmParse( void )
                 continue;
             }
 #endif
-            switch( AsmBuffer[i]->value ) {
+            switch( AsmBuffer[i]->u.value ) {
             // prefix
             case T_LOCK:
             case T_REP:
@@ -1875,7 +1875,7 @@ int AsmParse( void )
             case T_REPNE:
             case T_REPNZ:
             case T_REPZ:
-                rCode->prefix.ins = AsmBuffer[i]->value;
+                rCode->prefix.ins = AsmBuffer[i]->u.value;
                 // prefix has to be followed by an instruction
                 if( AsmBuffer[i+1]->token != T_INSTR ) {
                     AsmError( PREFIX_MUST_BE_FOLLOWED_BY_AN_INSTRUCTION );
@@ -1891,7 +1891,7 @@ int AsmParse( void )
             case T_RETN:
             case T_RETF:
                 in_epilogue = 0;
-                rCode->info.token = AsmBuffer[i]->value;
+                rCode->info.token = AsmBuffer[i]->u.value;
                 break;
             case T_IRET:
             case T_IRETD:
@@ -1902,11 +1902,11 @@ int AsmParse( void )
             case T_IRETF:
             case T_IRETDF:
                 in_epilogue = 0;
-                rCode->info.token = AsmBuffer[i]->value;
+                rCode->info.token = AsmBuffer[i]->u.value;
                 break;
 #endif
             default:
-                rCode->info.token = AsmBuffer[i]->value;
+                rCode->info.token = AsmBuffer[i]->u.value;
                 break;
             }
             i++;
@@ -1944,7 +1944,7 @@ int AsmParse( void )
             AsmError( SYNTAX_ERROR );
             return( ERROR );
         case T_DIRECTIVE:
-            return( directive( i, AsmBuffer[i]->value ) );
+            return( directive( i, AsmBuffer[i]->u.value ) );
             break;
 #if defined( _STANDALONE_ )
         case T_DIRECT_EXPR:
@@ -1959,15 +1959,15 @@ int AsmParse( void )
                     process_address( &opndx );
                 }
             }
-            return( directive( i, AsmBuffer[i]->value ) );
+            return( directive( i, AsmBuffer[i]->u.value ) );
             break;
 #endif
         case T_ID:
 #if defined( _STANDALONE_ )
             if( !( ( AsmBuffer[i+1]->token == T_DIRECTIVE )
-                && ( ( AsmBuffer[i+1]->value == T_EQU )
-                || ( AsmBuffer[i+1]->value == T_EQU2 )
-                || ( AsmBuffer[i+1]->value == T_TEXTEQU ) ) ) ) {
+                && ( ( AsmBuffer[i+1]->u.value == T_EQU )
+                || ( AsmBuffer[i+1]->u.value == T_EQU2 )
+                || ( AsmBuffer[i+1]->u.value == T_TEXTEQU ) ) ) ) {
                 switch( ExpandSymbol( i, FALSE ) ) {
                 case ERROR:
                     return( ERROR );
@@ -1992,7 +1992,7 @@ int AsmParse( void )
                 if( IsLabelStruct( AsmBuffer[i]->string_ptr )
                     && ( AsmBuffer[i+1]->token != T_DIRECTIVE ) ) {
                     AsmBuffer[i]->token = T_DIRECTIVE;
-                    AsmBuffer[i]->value = T_STRUCT;
+                    AsmBuffer[i]->u.value = T_STRUCT;
                     return( data_init( -1, 0 ) );
                 }
 #endif
@@ -2008,7 +2008,7 @@ int AsmParse( void )
                     /* structure declaration */
                     if( IsLabelStruct( AsmBuffer[i+1]->string_ptr ) ) {
                         AsmBuffer[i+1]->token = T_DIRECTIVE;
-                        AsmBuffer[i+1]->value = T_STRUCT;
+                        AsmBuffer[i+1]->u.value = T_STRUCT;
                     } else {
                         AsmError( SYNTAX_ERROR );
                         return( ERROR );
@@ -2021,7 +2021,7 @@ int AsmParse( void )
                     break;
 #if defined( _STANDALONE_ )
                 case T_DIRECTIVE:
-                    return( directive( i+1, AsmBuffer[i+1]->value ) );
+                    return( directive( i+1, AsmBuffer[i+1]->u.value ) );
                     break;
 #endif
                 default:
@@ -2042,7 +2042,7 @@ int AsmParse( void )
                         break;
                     case T_REG:
                         i++;
-                        if( AsmBuffer[i]->value == T_CL ) {
+                        if( AsmBuffer[i]->u.value == T_CL ) {
                             break;
                         }
                     default:
@@ -2107,7 +2107,7 @@ int AsmParse( void )
             }
             break;
         case T_FLOAT:
-            if( idata_float( AsmBuffer[i]->value ) == ERROR ) {
+            if( idata_float( AsmBuffer[i]->u.value ) == ERROR ) {
                 return( ERROR );
             }
             if( AsmBuffer[i-1]->token == T_MINUS ) {

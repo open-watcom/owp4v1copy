@@ -129,7 +129,7 @@ typedef struct asm_tok {
         union {
             long          value;
             unsigned char bytes[10];
-        };
+        } u;
 } asm_tok;
 
 #endif
