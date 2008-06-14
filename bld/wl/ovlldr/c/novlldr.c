@@ -214,16 +214,14 @@ static void near DeMungeVectors( unsigned tab_off, unsigned sec_num,
     lvector_ptr vect;
     unsigned    loader;
 
-    vect = &__OVLSTARTVEC__;
-    loader = FP_OFF(__NOVLLDR__) - FP_OFF(&vect->u.v.ldr_addr) - 2;
-    while( vect < &__OVLENDVEC__ ) {
+    loader = FP_OFF( __NOVLLDR__ ) - FP_OFF( &__OVLSTARTVEC__->u.v.ldr_addr ) - sizeof( __OVLSTARTVEC__->u.v.ldr_addr );
+    WALK_ALL_VECT( vect ) {
         if(( vect->u.i.cs_over == OVV_CS_OVERRIDE ) && ( vect->u.i.tab_addr == tab_off )) {
             vect->u.v.call_op = CALL_INSTRUCTION;
             vect->u.v.ldr_addr = loader;
             vect->u.v.sec_num = sec_num;
             vect->target.seg -= seg;
         }
-        ++vect;
         loader -= sizeof( lvector );
     }
 }
@@ -274,18 +272,14 @@ static unsigned near UnloadNonChained( unsigned amount, unsigned start_ovl )
  * any area.  Otherwise it returns the area seg.
  */
 {
-    unsigned            curr_ovl;
+    unsigned            i;
     ovltab_entry_ptr    ovl;
     area_list_ptr       area;
 
-    curr_ovl = start_ovl;
-    area = MK_FP( __OVLAREALIST__, 0 );
-    ovl = &__OVLTAB__.entries[ curr_ovl - 1 ];
-    for(;;) {
+    ovl = __OVLTAB__.entries + start_ovl - 1;
+    for( i = 0; i < __OVLTABEND__ - __OVLTAB__.entries; ++i ) {
         ++ovl;
-        ++curr_ovl;
-        if( FP_OFF( ovl ) == FP_OFF( &__OVLTABEND__ ) ) {
-            curr_ovl = 1;
+        if( !OVLTAB_OK( ovl ) ) {
             ovl = __OVLTAB__.entries;
         }
         if( ( ovl->flags_anc & FLAG_INMEM ) && ( ovl->start_para == 0 ) ) {
@@ -296,18 +290,15 @@ static unsigned near UnloadNonChained( unsigned amount, unsigned start_ovl )
                 OVL_ACCESSES( ovl ) = 0;
 #endif
             } else {
-                area = MK_FP( UnloadSection( ovl, curr_ovl ), 0 );
+                area = MK_FP( UnloadSection( ovl, OVLNUM( ovl ) ), 0 );
                 if( area->free_paras >= amount ) {
-                    __OVLROVER__ = curr_ovl;
+                    __OVLROVER__ = OVLNUM( ovl );
                     return( FP_SEG( area ) );
                 }
             }
         }
-        if( curr_ovl == start_ovl ) {
-            break;
-        }
     }
-    __OVLROVER__ = curr_ovl;
+    __OVLROVER__ = start_ovl;
     return( NULL_SEG );
 }
 
@@ -322,10 +313,9 @@ static int near UnloadChained( unsigned amount, unsigned_16 far *call_chain )
     unsigned            ovl_num;
     area_list_ptr       area;
 
-    area = MK_FP( __OVLAREALIST__, 0 );
     while( *call_chain != 0xFFFF ) {
         ovl_num = *call_chain >> 4;
-        ovl = &__OVLTAB__.entries[ ovl_num - 1 ];
+        ovl = __OVLTAB__.entries + ovl_num - 1;
         if( OVL_ACCESSES( ovl ) != 0 ) {
 #ifdef OVL_MULTITHREAD
             OVL_ACCESSES( ovl ) -= 1;
@@ -401,13 +391,10 @@ static void near MoveSection( unsigned destseg, ovltab_entry_ptr ovl )
         redoRelocs( ovl, startseg );
     }
     /* modify the vectors */
-    vect = &__OVLSTARTVEC__;
-    while( vect < &__OVLENDVEC__ ) {
-        if( vect->u.i.cs_over == OVV_CS_OVERRIDE &&
-                                vect->u.i.tab_addr == FP_OFF( ovl ) ) {
+    WALK_ALL_VECT( vect ) {
+        if( vect->u.i.cs_over == OVV_CS_OVERRIDE && vect->u.i.tab_addr == FP_OFF( ovl ) ) {
             vect->target.seg = destseg;
         }
-        ++vect;
     }
 }
 
@@ -415,7 +402,7 @@ static void near MoveSection( unsigned destseg, ovltab_entry_ptr ovl )
 static void near MoveRetTrap( unsigned to_seg, ovltab_entry_ptr ovl )
 /*******************************************************************/
 {
-    unsigned_16 far *           stkptr;
+    unsigned_16                 far *stkptr;
     ret_trap_ptr                rt;
     ret_trap_ptr                rt_new;
 #ifdef OVL_MULTITHREAD
@@ -500,7 +487,7 @@ static unsigned near DefragmentMem( unsigned amount, unsigned area_seg )
         __OvlNum__( *descptr );
         __OvlMsg__( OVL_MOVED );
 #endif
-        ovl = &__OVLTAB__.entries[ *descptr - 1 ];
+        ovl = __OVLTAB__.entries + *descptr - 1;
         if( ovl->flags_anc & FLAG_RET_TRAP ) {
             MoveRetTrap( to_seg, ovl );
 #ifdef OVL_MULTITHREAD
@@ -532,7 +519,8 @@ static unsigned near ForceAllocate( unsigned amount )
     ovltab_entry_ptr    ovl;
 
     seg = Allocate( amount );
-    if( seg != NULL_SEG ) return( seg );
+    if( seg != NULL_SEG )
+        return( seg );
     /*
         Since the linker ensures that our dynamic area has as least as
         many paragraphs as (sizeof largest section) + (number of sections) + 1.
@@ -558,10 +546,7 @@ static unsigned near ForceAllocate( unsigned amount )
     }
     /* we are responsible for zeroing the start_paras */
     while( call_chain != 0xFFFF ) {
-        /*ovl = &__OVLTAB__.entries[ ( call_chain >> 4 ) - 1 ];*/
-        /* a kludge 'cause codegen doesn't catch it if we do it properly */
-        ovl = (ovltab_entry_ptr)
-                        ((char far *)&__OVLTAB__.entries[ -1 ] + call_chain );
+        ovl = __OVLTAB__.entries + ( call_chain >> 4 ) - 1;
         call_chain = ovl->start_para;
         ovl->start_para = 0;
     }
@@ -614,7 +599,7 @@ unsigned near __LoadNewOverlay__( unsigned ovl_num )
     ret_trap_ptr        rt;
 #endif
 
-    ovl = &__OVLTAB__.entries[ ovl_num - 1 ];
+    ovl = __OVLTAB__.entries + ovl_num - 1;
     if( !(ovl->flags_anc & FLAG_INMEM) ) {
         if( ovl->flags_anc & FLAG_RET_TRAP ) {
 #ifdef OVL_MULTITHREAD
@@ -685,7 +670,7 @@ unsigned near __WOVLLDR__( lvector_ptr vect )
     ovl_num = vect->u.v.sec_num;            // get the overlay number
     retval = __LoadNewOverlay__( ovl_num );     // load the overlay
     vect->target.seg += retval;                 // now munge the vector.
-    vect->u.i.tab_addr = FP_OFF( &__OVLTAB__.entries[ ovl_num - 1] );
+    vect->u.i.tab_addr = FP_OFF( __OVLTAB__.entries + ovl_num - 1 );
     vect->u.i.cs_over = OVV_CS_OVERRIDE;
     vect->u.i.inc_op = OVV_INC_OPCODE;
     __NDBG_HOOK__( ovl_num, 0, __OVLCAUSE__ );
@@ -725,29 +710,25 @@ dos_addr near __NOVLTINIT__( void )
 // Overlay initialization.
 {
     ovltab_entry_ptr    ovl;
-#ifdef OVL_DEBUG
-    unsigned int        ovl_num = 1;
-#endif
 
     if( __OVLTAB__.prolog.major != OVL_MAJOR_VERSION
         || __OVLTAB__.prolog.minor > OVL_MINOR_VERSION ) {
         __OvlExit__( OVL_BAD_VERSION );
     }
     __OVLFILEPREV__ = 0xFFFF;
-    ovl = __OVLTAB__.entries;
     /* We assume that the first overlay table entry is NOT a PRELOAD-type
      * overlay... thus its start_para is the start_para of all the dynamic
      * sections. */
-    __OVLSTARTPARA__ = ovl->start_para; /* save for later */
-    __OVLAREALIST__ = __OVLTAB__.prolog.delta + ovl->start_para;
+    __OVLSTARTPARA__ = __OVLTAB__.entries[0].start_para; /* save for later */
+    __OVLAREALIST__ = __OVLSTARTPARA__ + __OVLTAB__.prolog.delta;
     __OVLROVER__ = 1;
 
-    while( FP_OFF( ovl ) < FP_OFF( &__OVLTABEND__ ) ) {
+    WALK_ALL_OVL( ovl ) {
         if( ovl->flags_anc & OVE_FLAG_PRELOAD ) {
             ovl->code_handle = ovl->start_para + __OVLTAB__.prolog.delta;
 #ifdef OVL_DEBUG
             __OvlMsg__( OVL_SECTION );
-            __OvlNum__( ovl_num );
+            __OvlNum__( OVLNUM( ovl ) );
             __OvlMsg__( OVL_LOADED );
 #endif
             __LoadSectionCode__( ovl );
@@ -759,10 +740,6 @@ dos_addr near __NOVLTINIT__( void )
         ovl->flags_anc = 0;
         ovl->start_para = 0;    /* required by ForceAllocate code */
         ovl->code_handle = 0;   /* required by debugging support */
-#ifdef OVL_DEBUG
-        ovl_num++;
-#endif
-        ovl++;
     }
     return( __OVLTAB__.prolog.start );
 }
@@ -806,8 +783,7 @@ extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
 #endif
 
     /* check return traps */
-    for( ovl = &__OVLTAB__.entries[ 0 ];
-            FP_OFF( ovl ) < FP_OFF( &__OVLTABEND__ ); ++ovl ) {
+    WALK_ALL_OVL( ovl ) {
         if( (ovl->flags_anc & FLAG_RET_TRAP) == 0 )
             continue;
 #ifdef OVL_MULTITHREAD
@@ -858,7 +834,6 @@ extern void far __NOVLDUMP__( void )
 /**********************************/
 {
     ovltab_entry_ptr    ovl;
-    unsigned            ovl_num;
     unsigned_16         fn_off;
 
     cprintf( "ovltab_prolog" CRLF );
@@ -868,10 +843,8 @@ extern void far __NOVLDUMP__( void )
     cprintf( "  delta=%04xh, ovl_size=%04xh" CRLF CRLF, __OVLTAB__.prolog.delta,
         __OVLTAB__.prolog.ovl_size );
 
-    ovl = &__OVLTAB__.entries[ 0 ];
-    ovl_num = 1;
-    while( FP_OFF( ovl ) < FP_OFF( &__OVLTABEND__ ) ) {
-        cprintf( "overlay %u:" CRLF "  flags_anc=%04xh", ovl_num,
+    WALK_ALL_OVL( ovl ) {
+        cprintf( "overlay %u:" CRLF "  flags_anc=%04xh", OVLNUM( ovl ),
             ovl->flags_anc );
         if( ovl->flags_anc & FLAG_CHANGED ) {
             cprintf( " FLAG_CHANGED" );
@@ -928,8 +901,6 @@ extern void far __NOVLDUMP__( void )
             cprintf( CRLF );
         }
         cprintf( CRLF );
-        ++ovl;
-        ++ovl_num;
     }
 }
 #endif

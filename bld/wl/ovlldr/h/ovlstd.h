@@ -33,6 +33,7 @@
 #include "watcom.h"
 #include "tinyio.h"
 #include "ovltab.h"
+#include "ovldbg.h"
 
 // definitions used in the overlay loader.
 
@@ -41,6 +42,14 @@
 /* this definition used in the old overlay loader only */
 
 #define SUB_ADDR(l,r) (((long)(int)(FP_SEG(l)-FP_SEG(r))<<FmtData.SegShift)+(FP_OFF(l)-FP_OFF(r)))
+
+#define OVLNUM(x) ((x-__OVLTAB__.entries)+1)
+
+#define OVLTAB_OK(x) (FP_OFF(x)<FP_OFF(__OVLTABEND__))
+#define OVLVEC_OK(x) (FP_OFF(x)<FP_OFF(__OVLENDVEC__))
+
+#define WALK_ALL_OVL(x) for(x=__OVLTAB__.entries;OVLTAB_OK(x);++x)
+#define WALK_ALL_VECT(x) for(x=__OVLSTARTVEC__;OVLVEC_OK(x);++x)
 
 /* these are used in the whoosh overlay loader */
 enum {
@@ -67,9 +76,6 @@ enum {
   OVL_RET_TRAPPED
 #endif
 };
-
-/* flags in __OVLFLAGS__ */
-extern unsigned_16 far __OVLFLAGS__;
 
 enum {
     OVL_386FLAG         = 0x0001, /* whoosh only: 386 present */
@@ -102,14 +108,14 @@ enum {
     Common overlay routines
 */
 #pragma aux __OvlExit__ aborts;
-extern  void        near __OvlExit__( unsigned int );
+extern  void        near __OvlExit__( unsigned );
 extern  tiny_ret_t  near __OvlSeek__( tiny_handle_t, unsigned long );
 extern  tiny_ret_t  near __OvlRead__( tiny_handle_t, void far *, unsigned );
 extern  void        near __OvlCodeLoad__( ovltab_entry_ptr, tiny_handle_t );
 extern  int         near __OvlRelocLoad__( ovltab_entry_ptr, tiny_handle_t );
-extern  void        near __OvlNum__( unsigned int );
-extern  void        near __OvlMsg__( unsigned int );
-extern  tiny_ret_t  near __OpenOvl__( unsigned int );
+extern  void        near __OvlNum__( unsigned );
+extern  void        near __OvlMsg__( unsigned );
+extern  tiny_ret_t  near __OpenOvl__( unsigned );
 extern  tiny_ret_t  near __OvlOpen__( char far *fname );
 extern  void        far  __CloseOvl__( void );
 extern  void        near __OvlClose__( tiny_handle_t hdl );
@@ -117,23 +123,25 @@ extern  void        near __OvlClose__( tiny_handle_t hdl );
 /*
     Common overlay data
 */
-extern  unsigned int    far __OVLFILEPREV__;
-extern  signed long     far __OVLHDLPREV__;
-extern  ovl_table       far __OVLTAB__;
-extern  unsigned_16     far __OVLTABEND__;
-extern  unsigned int    far __OVLPSP__;
-extern  char far *      far __OVLMSGS__[];
-extern  void far *      far __OVLCAUSE__;
-extern  char            far __OVLISRET__;
-extern  char            far __OVLDOPAR__;
-extern  vector          far __OVLSTARTVEC__;
-extern  vector          far __OVLENDVEC__;
-extern  unsigned        far __OVLSHARE__;
-extern  char            far __OVLNULLSTR__[];
+extern  unsigned        _CODE_BASED __OVLFILEPREV__;
+extern  tiny_ret_t      _CODE_BASED __OVLHDLPREV__;
+extern  ovl_table       _CODE_BASED __OVLTAB__;
+extern  ovltab_entry    _CODE_BASED __OVLTABEND__[];
+extern  unsigned        _CODE_BASED __OVLPSP__;
+extern  char far        *_CODE_BASED __OVLMSGS__[];
+extern  void far        *_CODE_BASED __OVLCAUSE__;
+extern  char            _CODE_BASED __OVLISRET__;
+extern  char            _CODE_BASED __OVLDOPAR__;
+extern  vector          _CODE_BASED __OVLSTARTVEC__[];
+extern  vector          _CODE_BASED __OVLENDVEC__[];
+extern  unsigned        _CODE_BASED __OVLSHARE__;
+extern  char            _CODE_BASED __OVLNULLSTR__[];
+extern  unsigned_16     _CODE_BASED __OVLFLAGS__;
 
-extern void (far * far GNAME( DBG_HOOK ))( int, char, void far * );
+
+extern ovl_dbg_hook_func *_CODE_BASED GNAME( DBG_HOOK );
+extern ovl_dbg_req_func GNAME( DBG_HANDLER );
 extern int  near GNAME( CheckRetAddr )( void far * );
-extern int  far GNAME( DBG_HANDLER )( int service, void far *data );
 
 /*
     Global symbols used by linker

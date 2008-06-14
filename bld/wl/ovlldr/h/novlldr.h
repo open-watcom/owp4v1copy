@@ -62,9 +62,9 @@ extern  void     near __OVLINITAREA__( unsigned seg, unsigned size );
 /*
     NOVLLDR data
 */
-extern  int             far __OVLROVER__;
-extern  unsigned        far __OVLAREALIST__;
-extern  unsigned_16     far __OVLSTARTPARA__;
+extern  unsigned        _CODE_BASED __OVLROVER__;
+extern  unsigned        _CODE_BASED __OVLAREALIST__;
+extern  unsigned_16     _CODE_BASED __OVLSTARTPARA__;
 
 
 /*
@@ -101,7 +101,7 @@ extern  unsigned_16     far __OVLSTARTPARA__;
     14-jun-91 DJG
 */
 
-#define OVL_ACCESSES( __o )     (*(unsigned_8 far *)&__o->flags_anc)
+#define OVL_ACCESSES( __o )     (*(unsigned_8 _CODE_BASED *)&__o->flags_anc)
 
 /********************* memory management info *****************************/
 
@@ -128,7 +128,7 @@ extern  unsigned_16     far __OVLSTARTPARA__;
     These structures are also defined in novlldr.inc.
 */
 typedef unsigned_16     desc;
-typedef desc far *      desc_ptr;
+typedef desc far        *desc_ptr;
 #define BLOCK_IS_FREE 0xFFFF
 #define NULL_SEG 0
 
@@ -238,7 +238,7 @@ typedef struct {
     unsigned_16 next;
 } task_list;
 
-extern task_list *      Context_list;
+extern task_list        *Context_list;
 
 #define MAX_THREAD      5
 

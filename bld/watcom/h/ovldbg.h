@@ -24,12 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  Overlay manager debug services constants declaration
+* Description:  Overlay manager debug service prototype and constant
+*                   declarations
 *
 ****************************************************************************/
 
 #ifndef _OVLDBG_H_
 #define _OVLDBG_H_
+
+#define OVL_SIGNATURE   0x2112
 
 enum ovldbg_service {
     OVLDBG_GET_STATE_SIZE,
@@ -42,11 +45,18 @@ enum ovldbg_service {
     OVLDBG_GET_SECTION_DATA
 };
 
-_Packed struct ovl_header {
-    unsigned char   short_jmp[2];
-    unsigned_16     signature;
-    void            (far *hook)();
-    unsigned_16     handler_offset;
+typedef void    far ovl_dbg_hook_func( unsigned, char, void far * );
+typedef int     far ovl_dbg_req_func( int, void far * );
+
+#include "pushpck1.h"               /* make sure no structures are padded. */
+
+struct ovl_header {
+    unsigned char       short_jmp[2];
+    unsigned_16         signature;
+    ovl_dbg_hook_func   *hook;
+    unsigned_16         handler_offset;
 };
+
+#include "poppck.h"
 
 #endif

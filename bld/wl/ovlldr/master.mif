@@ -29,10 +29,10 @@ extra_c_flags_dnovlldr = -DOVL_WHOOSH -DOVL_DEBUG
 extra_c_flags_movlldr  = -DOVL_WHOOSH -DOVL_MULTITHREAD
 extra_c_flags_dmovlldr = -DOVL_WHOOSH -DOVL_MULTITHREAD -DOVL_DEBUG
 
-extra_c_flags_sovldbg  = -mc -DOVL_SMALL
-extra_c_flags_lovldbg  =
-extra_c_flags_novldbg  = -DOVL_WHOOSH
-extra_c_flags_movldbg  = -DOVL_WHOOSH -DOVL_MULTITHREAD
+extra_c_flags_sovldbg  = -I"$(dig_dir)/h" -mc -DOVL_SMALL
+extra_c_flags_lovldbg  = -I"$(dig_dir)/h"
+extra_c_flags_novldbg  = -I"$(dig_dir)/h" -DOVL_WHOOSH
+extra_c_flags_movldbg  = -I"$(dig_dir)/h" -DOVL_WHOOSH -DOVL_MULTITHREAD
 
 extra_c_flags_dovlboth = -DOVL_DEBUG
 

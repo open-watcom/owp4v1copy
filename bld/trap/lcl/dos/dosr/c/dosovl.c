@@ -32,18 +32,18 @@
 #include <string.h>
 #include <i86.h>
 #include "trpimp.h"
-#include "ovltab.h"
 #include "ovldbg.h"
 
 extern unsigned_8       RunProg( trap_cpu_regs *, trap_cpu_regs * );
 extern void             SetDbgTask( void );
 extern void             SetUsrTask( void );
-extern void             far OvlTrap( int );
+extern ovl_dbg_hook_func    OvlTrap;
 
 extern trap_cpu_regs    TaskRegs;
 
 static unsigned         OvlStateSize;
-static int              (far *OvlRequest)( int, void far * );
+static ovl_dbg_req_func *OvlRequest;
+static ovl_dbg_req_func NoOvlsHdlr;
 
 static int far NoOvlsHdlr( int req, void far *data )
 /**************************************************/

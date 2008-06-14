@@ -44,7 +44,6 @@
 #include "smpstuff.h"
 #include "wmsg.h"
 
-#include "ovltab.h"
 #include "ovldbg.h"
 
 char FAR_PTR    *CommonAddr = NULL;
@@ -74,9 +73,9 @@ extern unsigned char far SysCaught;
 extern unsigned char far SysNoDOS;
 extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
-unsigned OvlSize;
-void FAR_PTR *OvlStruct;
-int     (far *OvlHandler)( unsigned req, void far *data );
+unsigned            OvlSize;
+void FAR_PTR        *OvlStruct;
+ovl_dbg_req_func    *OvlHandler;
 
 
 
@@ -101,7 +100,7 @@ extern void RecordCGraph( void );
 extern seg      GetPSP( void );
 extern void     DOSLoadProg( char *, pblock near *, void REPORT_TYPE (*)( void ) );
 extern void     DOSRunProg( seg_offset * );
-extern void     far ovl_handler( short );
+extern ovl_dbg_hook_func    ovl_handler;
 
 void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
 {

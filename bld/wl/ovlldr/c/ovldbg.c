@@ -39,37 +39,32 @@
 #include "ovlstd.h"
 #endif
 
-#include "ovldbg.h"
+#include "trpovl.h"
 
 #ifndef FALSE
 #define FALSE       0
 #define TRUE        (!FALSE)
 #endif
 
-typedef struct {
-    void    far *addr;
-    short   sect;
-} ovl_addr;
-
 typedef unsigned char byte;
 
 #if defined( OVL_WHOOSH )
-extern int  near __LoadNewOverlay__( int );
+extern int  near __LoadNewOverlay__( unsigned );
 extern int  near __LoadSectionCode__( ovltab_entry_ptr );
 #else
-extern int  near NAME( LoadOverlay )( int );
+extern int  near NAME( LoadOverlay )( unsigned );
 #endif
 
-#ifndef OVL_WHOOSH
-extern unsigned  far    __BankStack__;
-#else
+#ifdef OVL_WHOOSH
 typedef struct {
     unsigned    location;
     unsigned    section;
     unsigned    bitsize;
 } ovl_dbg_info;
 
-extern ovl_dbg_info far __OVLDBGINFO__;
+extern ovl_dbg_info _CODE_BASED __OVLDBGINFO__;
+#else
+extern unsigned     _CODE_BASED __BankStack__;
 #endif
 
 
@@ -79,49 +74,47 @@ static int GetSizeOverlays( void )
 {
     unsigned    number;
 
-    number = (ovltab_entry_ptr)&__OVLTABEND__ - __OVLTAB__.entries;
+    number = __OVLTABEND__ - __OVLTAB__.entries;
 #ifdef OVL_WHOOSH
     __OVLDBGINFO__.bitsize = ( number + 7 ) / 8;
 #endif
     return( ( ( number + 7 ) / 8 ) + sizeof( unsigned ) + 1 );
 }
 
-static int GetSectionData( ovl_addr far * data )
-/**********************************************/
+static int GetSectionData( ovl_address far *data )
+/************************************************/
 {
     unsigned            number;
-    unsigned            seg;
     ovltab_entry_ptr    ovl;
 
-    number = (ovltab_entry_ptr)&__OVLTABEND__ - __OVLTAB__.entries;
-    if( ( data->sect > number ) || ( data->sect <= 0 ) )
-        return( 0 );
-    ovl = &__OVLTAB__.entries[data->sect - 1];
-    data->sect = ovl->num_paras;
+    number = __OVLTABEND__ - __OVLTAB__.entries;
+    if( ( data->sect_id > number ) || ( data->sect_id == 0 ) )
+        return( FALSE );
+    ovl = __OVLTAB__.entries + data->sect_id - 1;
+    data->sect_id = ovl->num_paras;
 #ifdef OVL_WHOOSH
-    seg = __OVLTAB__.prolog.delta + __OVLSTARTPARA__;
+    data->mach.segment = __OVLTAB__.prolog.delta + __OVLSTARTPARA__;
 #else
-    seg = ovl->code_handle;
+    data->mach.segment = ovl->code_handle;
 #endif
-    data->addr = MK_FP( seg, 0 );
-    return( 1 );
+    data->mach.offset = 0;
+    return( TRUE );
 }
 
-static int SaveOvlState( char far * data )
-/****************************************/
+static int SaveOvlState( char far *data )
+/***************************************/
 // this fills a bit array with the status of the overlays
 // 1 means overlay in memory, 0 means overlay on disk
 {
     ovltab_entry_ptr    ovl;
     unsigned char       mask;
     unsigned char       loaded;
-    char far *          savedata;
+    char far            *savedata;
 
     savedata = data;
     mask = 1;
     loaded = 0;
-    ovl = &__OVLTAB__.entries;
-    while( FP_OFF( ovl ) != FP_OFF( &__OVLTABEND__ ) ) {
+    WALK_ALL_OVL( ovl ) {
         if( ovl->flags_anc & FLAG_INMEM ) {
             loaded |= mask;
         }
@@ -133,7 +126,6 @@ static int SaveOvlState( char far * data )
         } else {
             mask <<= 1;
         }
-        ovl++;
     }
     if( mask != 1 )
         ++data;
@@ -149,14 +141,14 @@ static int SaveOvlState( char far * data )
     return( TRUE );
 }
 
-static int RestoreOvlState( char far * data )
-/*******************************************/
+static int RestoreOvlState( char far *data )
+/******************************************/
 // set the overlay state to match the given vector.
 {
     ovltab_entry_ptr    ovl;
     unsigned char       mask;
-    int                 ovlnum;
 #ifdef OVL_WHOOSH
+    unsigned            ovlnum;
     unsigned            flags_save;
     unsigned            code_save;
     unsigned_16         start_save;
@@ -175,7 +167,7 @@ static int RestoreOvlState( char far * data )
             mask >>= 1;
             ovlnum++;
         }
-        ovl = &__OVLTAB__.entries[ ovlnum - 1 ];
+        ovl = __OVLTAB__.entries + ovlnum - 1;
         if( !( ovl->flags_anc & FLAG_INMEM ) ) {
             if( ( __OVLFLAGS__ & DBGAREA_VALID )
                 && ( __OVLDBGINFO__.section != ovlnum ) ) {
@@ -197,13 +189,11 @@ static int RestoreOvlState( char far * data )
         return( TRUE );
     }
 #endif
-    ovlnum = 1;
     mask = 1;
-    ovl = &__OVLTAB__.entries;
-    while( FP_OFF( ovl ) != FP_OFF( &__OVLTABEND__ ) ) {
+    WALK_ALL_OVL( ovl ) {
 #ifndef OVL_WHOOSH
         if( !( ovl->flags_anc & FLAG_INMEM ) && ( *data & mask ) ) {
-            NAME( LoadOverlay )( ovlnum );
+            NAME( LoadOverlay )( OVLNUM( ovl ) );
         }
 #else
         if( ( ( ovl->flags_anc & FLAG_INMEM ) == 0 ) !=
@@ -219,8 +209,6 @@ static int RestoreOvlState( char far * data )
         } else {
             mask <<= 1;
         }
-        ++ovlnum;
-        ++ovl;
     }
 #ifndef OVL_WHOOSH
     if( mask != 1 )
@@ -233,67 +221,62 @@ static int RestoreOvlState( char far * data )
     return( TRUE );
 }
 
-static int CheckVecAddr( ovl_addr far * data )
+static int CheckVecAddr( ovl_address far *data )
 /**********************************************/
 // check if the address stored in data is a vector, returning TRUE if it is.
 {
-    char far            *address;
     vector_ptr          vect;
-    unsigned            addr;
 #ifdef OVL_WHOOSH
     ovltab_entry_ptr    ovl;
 #endif
 
-    address = data->addr;
-    if( FP_SEG( address ) != FP_SEG( &__OVLSTARTVEC__ ) )
+    if( data->mach.segment != FP_SEG( __OVLSTARTVEC__ ) )
         return( FALSE );
-    addr = FP_OFF( address );
-    if( addr < FP_OFF( &__OVLSTARTVEC__ ) )
+    vect = (vector_ptr)MK_FP( data->mach.segment, data->mach.offset );
+    if( FP_OFF( vect ) < FP_OFF( __OVLSTARTVEC__ ) )
         return( FALSE );
-    if( addr >= FP_OFF( &__OVLENDVEC__ ) )
+    if( !OVLVEC_OK( vect ) )
         return( FALSE );
-    addr -= FP_OFF( &__OVLSTARTVEC__ );
-    if( addr % sizeof( vector ) != 0 )
+    if( ( FP_OFF( vect ) - FP_OFF( __OVLSTARTVEC__ ) ) % sizeof( vector ) != 0 )
         return( FALSE );
-    vect = (vector_ptr)address;
 #ifdef OVL_SMALL
-    data->addr = MK_FP( FP_SEG( address ), vect->target + (unsigned)&vect->target + 2 );
-    data->sect = vect->sec_num;
+    data->mach.segment = FP_SEG( vect );
+    data->mach.offset = vect->target + FP_OFF( &vect->target ) + sizeof( vect->target );
+    data->sect_id = vect->sec_num;
 #elif defined( OVL_WHOOSH )
     if( vect->u.i.cs_over == OVV_CS_OVERRIDE ) {
-        data->sect = ( vect->u.i.tab_addr - FP_OFF( __OVLTAB__.entries ) )
-                                                    / sizeof( ovltab_entry ) + 1;
-        data->addr = MK_FP( vect->target.seg, vect->target.off );
+        data->sect_id = ((ovltab_entry_ptr)vect->u.i.tab_addr - __OVLTAB__.entries) + 1;
+        data->mach.segment = vect->target.seg;
     } else {
-        data->sect = vect->u.v.sec_num;
-        ovl = &__OVLTAB__.entries[ vect->u.v.sec_num - 1 ];
-        if( ( __OVLFLAGS__ & DBGAREA_VALID )
-                         && ( data->sect == __OVLDBGINFO__.section ) ) {
-            addr = __OVLDBGINFO__.location;
+        data->sect_id = vect->u.v.sec_num;
+        ovl = __OVLTAB__.entries + vect->u.v.sec_num - 1;
+        if( ( __OVLFLAGS__ & DBGAREA_VALID ) && ( data->sect_id == __OVLDBGINFO__.section ) ) {
+            data->mach.segment = __OVLDBGINFO__.location;
         } else if( ovl->flags_anc & FLAG_DBG_SECT_LOAD ) {
-            addr = __OVLDBGINFO__.location;
+            data->mach.segment = __OVLDBGINFO__.location;
         } else if( ovl->flags_anc & FLAG_RET_TRAP ) {
             ret_trap_ptr        rt;
 
             rt = MK_FP( ovl->code_handle, 0 );
-            addr = rt->old_code_handle;
+            data->mach.segment = rt->old_code_handle;
         } else if( ovl->code_handle != 0 ) {
-            addr = ovl->code_handle;
+            data->mach.segment = ovl->code_handle;
         } else {
-            addr = __OVLSTARTPARA__ + __OVLTAB__.prolog.delta;
+            data->mach.segment = __OVLSTARTPARA__ + __OVLTAB__.prolog.delta;
         }
-        data->addr = MK_FP( addr, vect->target.off );
     }
+    data->mach.offset = vect->target.off;
 #else
-    data->addr = MK_FP( vect->target.seg, vect->target.off );
-    data->sect = vect->u.v.sec_num;
+    data->mach.segment = vect->target.seg;
+    data->mach.offset = vect->target.off;
+    data->sect_id = vect->u.v.sec_num;
 #endif
     return( TRUE );
 }
 
 #ifdef OVL_WHOOSH
 
-static int GetChangedSections( ovl_addr far *data )
+static int GetChangedSections( ovl_address far *data )
 /*************************************************/
 /* return TRUE if a section changed. return the section number and the new
  * segment in that memory pointed to by data */
@@ -301,38 +284,35 @@ static int GetChangedSections( ovl_addr far *data )
     ovltab_entry_ptr    ovl;
     unsigned            ovl_num;
 
-     if( ( __OVLFLAGS__ & DBGAREA_LOADED )
-         && ( __OVLFLAGS__ & DBGAREA_VALID ) ) {
+     if( ( __OVLFLAGS__ & DBGAREA_LOADED ) && ( __OVLFLAGS__ & DBGAREA_VALID ) ) {
         ovl_num = __OVLDBGINFO__.section;
-        if( ovl_num == data->sect ) {
+        if( ovl_num == data->sect_id ) {
             __OVLFLAGS__ &= ~DBGAREA_LOADED;
-            data->sect = 0;
+            data->sect_id = 0;
         } else {
-            data->sect = ovl_num;
-            data->addr = MK_FP( __OVLDBGINFO__.location, 0 );
+            data->sect_id = ovl_num;
+            data->mach.offset = 0;
+            data->mach.segment = __OVLDBGINFO__.location;
             __OVLTAB__.entries[ovl_num - 1].flags_anc &= ~FLAG_CHANGED;
             __OVLTAB__.entries[ovl_num - 1].flags_anc |= FLAG_DBG_SECT_LOAD;
             return( TRUE );
         }
     }
-    ovl_num = data->sect + 1;
-    ovl = &__OVLTAB__.entries[ ovl_num - 1 ];
-    while( FP_OFF( ovl ) != FP_OFF( &__OVLTABEND__ ) ) {
+    for( ovl = __OVLTAB__.entries + data->sect_id; OVLTAB_OK( ovl ); ++ovl ) {
         if( ovl->flags_anc & FLAG_CHANGED ) {
             ovl->flags_anc &= ~( FLAG_CHANGED | FLAG_DBG_SECT_LOAD );
-            data->sect = ovl_num;
+            data->sect_id = OVLNUM( ovl );
+            data->mach.offset = 0;
             if( ovl->flags_anc & FLAG_RET_TRAP ) {
                 ret_trap_ptr    rt;
 
                 rt = MK_FP( ovl->code_handle, 0 );
-                data->addr = MK_FP( rt->old_code_handle, 0 );
+                data->mach.segment = rt->old_code_handle;
                 return( TRUE );
             }
-            data->addr = MK_FP( ovl->code_handle, 0 );
+            data->mach.segment = ovl->code_handle;
             return( TRUE );
         }
-        ++ovl;
-        ++ovl_num;
     }
     return( FALSE );
 }
@@ -345,12 +325,10 @@ unsigned near __OVLMAXSECT__( void )
     unsigned            max;
 
     max = 0;
-    ovl = &__OVLTAB__.entries;
-    while( FP_OFF( ovl ) != FP_OFF( &__OVLTABEND__ ) ) {
+    WALK_ALL_OVL( ovl ) {
         if( ovl->num_paras > max ) {
             max = ovl->num_paras;
         }
-        ++ovl;
     }
     return( max );
 }
