@@ -259,7 +259,7 @@ void defs( void )
                     }
                     if( scan( 0 ) == NUMBER ) {
                         if( sym->token ) {
-                            if( sym->name[0] != '\'' ) {
+                            if( sym->name[ 0 ] != '\'' ) {
                                 fprintf( tokout, "#undef\t%-20s\n", sym->name );
                             }
                         }
@@ -269,7 +269,7 @@ void defs( void )
                     if( !sym->token ) {
                         sym->token = gentoken++;
                     }
-                    if( sym->name[0] != '\'' ) {
+                    if( sym->name[ 0 ] != '\'' ) {
                         fprintf( tokout, "#define\t%-20s\t0x%02x\n",
                             sym->name, sym->token );
                     }
@@ -368,7 +368,7 @@ void rules( void )
     unsigned            nrhs;
     unsigned            maxrhs = { 16 };
     a_pro               *pro;
-    char                buffer[20];
+    char                buffer[ 20 ];
     unsigned            i;
     int                 numacts;
     bool                action_defined;
@@ -411,7 +411,7 @@ void rules( void )
                         action_defined = TRUE;
                         break;
                     }
-                    memcpy( buf, &buf[i], bufused -= i );
+                    memcpy( buf, &buf[ i ], bufused -= i );
                 } else {
                     sym = addsym( buf );
                     if( value )
@@ -420,7 +420,7 @@ void rules( void )
                         precsym = sym;
                     scanextra( 0, &precsym, &list_of_ambiguities );
                 }
-                rhs[nrhs++] = sym;
+                rhs[ nrhs++ ] = sym;
             }
             unit_production = FALSE;
             if( ! action_defined ) {
@@ -428,10 +428,10 @@ void rules( void )
                     /* { $$ = $1; } is default action */
                     if( defaultwarnflag ) {
                         char *type_lhs = type_name( lhs->type );
-                        char *type_rhs = type_name( rhs[0]->type );
+                        char *type_rhs = type_name( rhs[ 0 ]->type );
                         if( strcmp( type_rhs, type_lhs ) != 0 ) {
                             warn("default action would copy '%s <%s>' to '%s <%s>'\n",
-                                rhs[0]->name, type_rhs, lhs->name, type_lhs );
+                                rhs[ 0 ]->name, type_rhs, lhs->name, type_lhs );
                         }
                     }
                     if( nrhs == 1 ) {
@@ -439,8 +439,7 @@ void rules( void )
                     }
                 } else {
                     if( sym_lineno == lineno && token == '|' ) {
-                        warn( "unexpected epsilon reduction for '%s'?\n",
-                            lhs->name );
+                        warn( "unexpected epsilon reduction for '%s'?\n", lhs->name );
                     }
                 }
             }
@@ -473,11 +472,16 @@ void rules( void )
     not_token = FALSE;
     for( sym = symlist; sym; sym = sym->next ) {
         /* check for special symbols */
-        if( sym == eofsym ) continue;
+        if( sym == eofsym )
+            continue;
         if( denseflag ) {
-            if( sym->token != 0 && sym->token < TOKEN_DENSE_BASE ) continue;
+            if( sym->token != 0 && sym->token < TOKEN_DENSE_BASE ) {
+                continue;
+            }
         } else {
-            if( sym->token != 0 && sym->token < TOKEN_SPARSE_BASE ) continue;
+            if( sym->token != 0 && sym->token < TOKEN_SPARSE_BASE ) {
+                continue;
+            }
         }
         if( !sym->pro && !sym->token ) {
             not_token = TRUE;
@@ -560,8 +564,8 @@ static char *checkAttrib( char *s, char **ptype, char *buff, int *errs,
         }
         i -= base + 1;
         sprintf( buff, "yyvp[%d]", i );
-        if( type == NULL && i >= 0 && rhs[i]->type != NULL ) {
-            type = strdup( rhs[i]->type );
+        if( type == NULL && i >= 0 && rhs[ i ]->type != NULL ) {
+            type = strdup( rhs[ i ]->type );
         }
     }
     *ptype = type;
@@ -672,7 +676,7 @@ static void copyact( int pnum, a_sym *lhs, a_sym **rhs, unsigned base, unsigned 
     int         errs;
     int         total_errs;
     size_t      total_len;
-    char        buff[80];
+    char        buff[ 80 ];
 
     if( ! lineflag ) {
         /* we don't need line numbers to correspond to the grammar */
@@ -715,7 +719,7 @@ static void copyact( int pnum, a_sym *lhs, a_sym **rhs, unsigned base, unsigned 
     fprintf( actout, "case %d:\n", pnum );
     fprintf( actout, "/* %s <-", lhs->name );
     for( i = 0; i < n; ++i ) {
-        fprintf( actout, " %s", rhs[i]->name );
+        fprintf( actout, " %s", rhs[ i ]->name );
     }
     fprintf( actout, " */\n" );
     lineinfo();
@@ -884,7 +888,7 @@ static xlat_entry xlat[] = {
 static int xlat_char( int special, int c )
 {
     xlat_entry  *t;
-    char        buff[16];
+    char        buff[ 16 ];
 
     if( isalpha( c ) || isdigit( c ) || c == '_' ) {
         if( special ) {
@@ -1082,7 +1086,7 @@ static void need( char *pat )
 {
     while( *pat ) {
         if( nextc() != *pat++ ) {
-            msg( "Expected '%c'\n", pat[-1] );
+            msg( "Expected '%c'\n", pat[ -1 ] );
         }
     }
 }
@@ -1141,7 +1145,7 @@ static int nextc( void )
 static int lastc( void )
 {
     if( bufused > 1 ) {
-        return( buf[bufused-1] );
+        return( buf[ bufused - 1 ] );
     }
     return( '\0' );
 }
@@ -1156,7 +1160,7 @@ static void addbuf( int ch )
             buf = MALLOC( bufmax, char );
         }
     }
-    buf[bufused++] = ch;
+    buf[ bufused++ ] = ch;
 }
 
 static char *dupbuf( void )
