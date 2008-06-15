@@ -374,7 +374,7 @@ static int addtotable(  short *token,
         for( r = token; r < s; ++r ) {
             t = &table[start + *r];
             if( ! bigflag ) {
-                if( *r >= CHAR_MAX ) {
+                if( *r >= UCHAR_MAX ) {
                     msg( "too many tokens!\n" );
                 }
             }

@@ -57,13 +57,14 @@ typedef enum {
     TYPE,
     START,
     UNION,
+    TYPENAME,
 } a_token;
 
 static void                 copycurl( void );
 static void                 copyUniqueActions( void );
 static void                 copyact( int, a_sym *, a_sym **, unsigned, unsigned );
 static void                 lineinfo( void );
-static int                  scan( unsigned used );
+static a_token              scan( unsigned used );
 static void                 need( char *pat );
 static int                  eatcrud( void );
 static int                  nextc( void );
@@ -80,7 +81,7 @@ static unsigned             bufmax;
 static char                 *buf = { NULL };
 
 static int                  ch = { ' ' };
-static int                  token;
+static a_token              token;
 static int                  value;
 
 typedef struct uniq_case    uniq_case;
@@ -100,6 +101,37 @@ static unsigned long        actionsCombined;
 static uniq_case            *caseActions;
 
 a_SR_conflict               *ambiguousstates;
+
+#define TYPENAME_FIRST_CHAR(x) (isalpha(x)||x=='_')
+#define TYPENAME_NEXT_CHAR(x) (isalpha(x)||isdigit(x)||x=='_'||x=='.')
+
+static a_token scan_typename( unsigned used )
+{
+    bufused = used;
+    if( TYPENAME_FIRST_CHAR( ch ) ) {
+        do {
+            addbuf( ch );
+            nextc();
+        } while( TYPENAME_NEXT_CHAR( ch ) );
+        token = TYPENAME;
+    }
+    addbuf( '\0' );
+    value = 0;
+    return( token );
+}
+
+static char *get_typename( char *src )
+{
+    int             c;
+
+    c = *(unsigned char *)src;
+    if( TYPENAME_FIRST_CHAR( c ) ) {
+        do {
+            c = *(unsigned char *)(++src);
+        } while( TYPENAME_NEXT_CHAR( c ) );
+    }
+    return( src );
+}
 
 static a_sym *make_sym( char *name, token_t value )
 {
@@ -224,12 +256,13 @@ void defs( void )
         case NONASSOC:
             ++prec.prec;
             prec.assoc = value;
+            // pass through
         case TOKEN:
         case TYPE:
             ctype = token;
             if( scan( 0 ) == '<' ) {
-                if( scan( 0 ) != IDENTIFIER ) {
-                    msg( "Expecting identifier.\n" );
+                if( scan_typename( 0 ) != TYPENAME ) {
+                    msg( "Expecting type specifier.\n" );
                 }
                 type = dupbuf();
                 if( scan( 0 ) != '>' ) {
@@ -293,7 +326,7 @@ static int scanambig( unsigned used, a_SR_conflict_list **list )
     a_SR_conflict           *am;
     a_SR_conflict_list      *en;
 
-    absorbed_something = 0;
+    absorbed_something = FALSE;
     for( ;; ) {
         /* syntax is "%ambig <number> <token>" */
         /* token has already been scanned by scanprec() */
@@ -319,7 +352,7 @@ static int scanambig( unsigned used, a_SR_conflict_list **list )
             break;
         }
         scan( used );
-        absorbed_something = 1;
+        absorbed_something = TRUE;
         am = make_unique_ambiguity( sym, index );
         en = MALLOC( 1, a_SR_conflict_list );
         en->next = *list;
@@ -335,12 +368,12 @@ static int scanambig( unsigned used, a_SR_conflict_list **list )
 static int scanprec( unsigned used, a_sym **precsym )
 {
     if( token != PREC )
-        return( 0 );
+        return( FALSE );
     if( scan( used ) != IDENTIFIER || !(*precsym = findsym( buf )) || !(*precsym)->token ) {
         msg( "Expecting a token after %prec.\n" );
     }
     scan( used );
-    return( 1 );
+    return( TRUE );
 }
 
 static void scanextra( unsigned used, a_sym **psym, a_SR_conflict_list **pSR )
@@ -457,7 +490,9 @@ void rules( void )
                 pro->SR_conflicts = list_of_ambiguities;
             }
             if( token == ';' ) {
-                scan( 0 );
+                do {
+                    scan( 0 );
+                } while( token == ';' );
             } else if( token != '|' ) {
                 if( token == C_IDENTIFIER ) {
                     msg( "Missing ';'\n" );
@@ -533,11 +568,11 @@ static char *checkAttrib( char *s, char **ptype, char *buff, int *errs,
     ++s;
     if( *s == '<' ) {
         ++s;
-        for( type = s; *s != '>'; ++s ) {
-            if( *s == '\0' ) {
-                ++err_count;
-                msg( "Bad type specifier.\n" );
-            }
+        type = s;
+        s = get_typename( type );
+        if( type == s || *s != '>' )  {
+            ++err_count;
+            msg( "Bad type specifier.\n" );
         }
         save = *s;
         *s = '\0';
@@ -840,7 +875,7 @@ static void lineinfo( void )
 static void addstr( char *p )
 {
     while( *p ) {
-        addbuf( *p );
+        addbuf( *(unsigned char *)p );
         ++p;
     }
 }
@@ -937,7 +972,7 @@ static void xlat_token( void )
     token = IDENTIFIER;
 }
 
-static int scan( unsigned used )
+static a_token scan( unsigned used )
 {
     bufused = used;
     eatcrud();
@@ -1085,7 +1120,7 @@ static int scan( unsigned used )
 static void need( char *pat )
 {
     while( *pat ) {
-        if( nextc() != *pat++ ) {
+        if( nextc() != *(unsigned char *)pat++ ) {
             msg( "Expected '%c'\n", pat[ -1 ] );
         }
     }
@@ -1145,7 +1180,7 @@ static int nextc( void )
 static int lastc( void )
 {
     if( bufused > 1 ) {
-        return( buf[ bufused - 1 ] );
+        return( (unsigned char)buf[ bufused - 1 ] );
     }
     return( '\0' );
 }

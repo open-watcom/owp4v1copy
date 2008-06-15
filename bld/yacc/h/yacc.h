@@ -87,7 +87,7 @@ enum assoc_t {
 
 typedef struct a_prec {
     enum assoc_t        assoc;
-    char                prec;
+    unsigned char       prec;
 } a_prec;
 
 #if defined( SUN ) || defined( SGI )
