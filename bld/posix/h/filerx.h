@@ -50,7 +50,7 @@ int     FileMatchNoRx( char *name, char *wild );
 #define isFILESEP(c)    ( c == '/' )
 #else
 #define FILESEPSTR      "\\"
-#define isFILESEP(c)    ( c == '\\' )
+#define isFILESEP(c)    ( ( c == '/' ) || ( c == '\\' ) )
 #endif
 
 #endif
