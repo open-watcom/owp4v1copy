@@ -323,6 +323,7 @@ ddk_headers =        &
         usb.h        &
         usb100.h     &
         usb200.h     &
+        usbdi.h      &
         usbioctl.h   &
         usbiodef.h   &
         wdm.h        &
