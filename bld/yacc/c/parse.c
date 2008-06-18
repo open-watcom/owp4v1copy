@@ -173,7 +173,7 @@ void defs( void )
     token_t     gentoken;
     a_sym       *sym;
     int         ctype;
-    char        *dupbuf();
+    char        *dupbuf( void );
     char        *type;
     a_prec      prec;
 

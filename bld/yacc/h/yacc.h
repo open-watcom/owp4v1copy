@@ -56,15 +56,16 @@ typedef unsigned char   byte;
 #define SetBit(x,i)     ((x)[(i)/WSIZE] |= ( 1UL << ((i) % WSIZE )))
 #define IsBitSet(x,i)   ((x)[(i)/WSIZE] &  ( 1UL << ((i) % WSIZE )))
 
-enum {
+typedef enum flags {
+    M_NULL              = 0x00,
     M_MARKED            = 0x01,
     M_STATE             = 0x02,
     M_DEAD              = 0x04,
     M_AMBIGUOUS         = 0x08,
     M_DONT_OPTIMIZE     = 0x10,
-    M_ONLY_REDUCE       = 0x20,
-    M_NULL              = 0x00
-};
+    M_ONLY_REDUCE       = 0x20
+} flags;
+
 #define IsState(c)              ((c).flag &   M_STATE)
 #define State(c)                ((c).flag |=  M_STATE)
 #define IsMarked(c)             ((c).flag &   M_MARKED)
@@ -106,16 +107,13 @@ typedef struct a_SR_conflict a_SR_conflict;
 typedef struct a_SR_conflict_list a_SR_conflict_list;
 typedef struct a_link a_link;
 
-union u_item {
-    a_sym       *sym;
-    a_pro       *pro;
-};
-
 typedef struct an_item {
-    char                flag;
-    union u_item        p;
+    flags               flag;
+    union {
+        a_sym           *sym;
+        a_pro           *pro;
+    }                   p;
 } an_item;
-
 
 struct a_SR_conflict {
     a_SR_conflict       *next;
@@ -142,7 +140,7 @@ struct a_pro {                          /* production: LHS -> RHS1 RHS2 ... */
     a_SR_conflict_list  *SR_conflicts;  /* list of S/R conflicts */
     unsigned            used : 1;       /* has rule been reduced */
     unsigned            unit : 1;       /* LHS -> RHS and no action specified */
-    an_item             item[2];        /* must be the last field */
+    an_item             item[ 2 ];      /* must be the last field */
 };
 
 struct a_sym {                          /* symbol: terminal or non-terminal */
@@ -185,9 +183,7 @@ struct a_link {
 typedef union a_name {
     an_item             **item;
     a_state             **state;
-    void                *name;
 } a_name;
-
 
 struct a_state {
     a_state             *next;
@@ -200,7 +196,7 @@ struct a_state {
     a_look              *look;
     a_state             *same_enter_sym;
     index_t             sidx;           /* index of state [0..nstates] */
-    char                flag;
+    flags               flag;
 };
 
 struct a_parent {

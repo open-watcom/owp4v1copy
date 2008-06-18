@@ -43,27 +43,27 @@ index_t nterm;
 index_t nvble;
 index_t nitem;
 
-a_sym **symtab, *symlist, *startsym, *eofsym, *goalsym, *nosym, *errsym;
-a_pro **protab, *startpro;
+a_sym   **symtab, *symlist, *startsym, *eofsym, *goalsym, *nosym, *errsym;
+a_pro   **protab, *startpro;
 
-a_sym *addsym();
-a_pro *addpro();
+a_sym   *addsym( char *s );
+a_pro   *addpro( a_sym *sym, a_sym **rhs, int n );
 
 void buildpro( void )
 {
-    a_sym *sym;
-    a_sym *rhs[2];
-    a_pro *pro;
-    an_item *item;
-    index_t i;
-    index_t j;
+    a_sym       *sym;
+    a_sym       *rhs[ 2 ];
+    a_pro       *pro;
+    an_item     *item;
+    index_t     i;
+    index_t     j;
 
     if( !startsym ) {
         msg( "No grammar specified.\n" );
     }
     /* construct: $start <- <start_symbol> $eof */
-    rhs[0] = startsym;
-    rhs[1] = eofsym;
+    rhs[ 0 ] = startsym;
+    rhs[ 1 ] = eofsym;
     goalsym = addsym( "$start" );
     addpro( goalsym, rhs, 2 );
     startsym = goalsym;
@@ -90,21 +90,23 @@ void buildpro( void )
         if( sym->pro ) {
             sym->idx = nterm + j++;
             for( pro = sym->pro; pro; pro = pro->next ) {
-                protab[pro->pidx] = pro;
+                protab[ pro->pidx ] = pro;
             }
         } else {
             sym->idx = i++;
         }
-        symtab[sym->idx] = sym;
+        symtab[ sym->idx ] = sym;
     }
 }
 
 static a_sym **findsymptr( char *s )
 {
-    a_sym **sym;
+    a_sym       **sym;
 
     for( sym = &symlist; *sym; sym = &(*sym)->next ) {
-        if( strcmp( s, (*sym)->name ) == 0 ) break;
+        if( strcmp( s, (*sym)->name ) == 0 ) {
+            break;
+        }
     }
     return( sym );
 }
@@ -116,8 +118,8 @@ a_sym *findsym( char *s )
 
 a_sym *addsym( char *s )
 {
-    a_sym **sym;
-    a_sym *p;
+    a_sym       **sym;
+    a_sym       *p;
 
     sym = findsymptr( s );
     if( *sym == NULL ) {
@@ -128,82 +130,82 @@ a_sym *addsym( char *s )
     return( *sym );
 }
 
-a_pro *addpro( sym, rhs, n )
-  a_sym *sym, **rhs;
-  int n;
+a_pro *addpro( a_sym *sym, a_sym **rhs, int n )
 {
-  a_pro *pro;
-  size_t amt;
-  int i;
+    a_pro       *pro;
+    size_t      amt;
+    int         i;
 
-  amt = sizeof(a_pro) + n*sizeof(an_item);
-  pro = (a_pro *)calloc( amt, sizeof(char) );
-  pro->pidx = npro++;
-  for( i = 0; i < n; ++i ) {
-       pro->item[i].p.sym = rhs[i];
-  }
-  pro->item[n+0].p.sym = NULL;
-  pro->item[n+1].p.pro = pro;
-  pro->sym = sym;
-  pro->next = sym->pro;
-  pro->SR_conflicts = NULL;
-  pro->used = FALSE;
-  pro->unit = FALSE;
-  sym->pro = pro;
-  return( pro );
+    amt = sizeof( a_pro ) + n * sizeof( an_item );
+    pro = (a_pro *)calloc( amt, sizeof( char ) );
+    pro->pidx = npro++;
+    for( i = 0; i < n; ++i ) {
+         pro->item[ i ].p.sym = rhs[ i ];
+    }
+    pro->item[ n + 0 ].p.sym = NULL;
+    pro->item[ n + 1 ].p.pro = pro;
+    pro->sym = sym;
+    pro->next = sym->pro;
+    pro->SR_conflicts = NULL;
+    pro->used = FALSE;
+    pro->unit = FALSE;
+    sym->pro = pro;
+    return( pro );
 }
 
 void showpro( void )
 {
-  index_t i;
+    index_t     i;
 
-  for( i = 0; i < npro; ++i )
-      showitem( protab[i]->item, "" );
+    for( i = 0; i < npro; ++i ) {
+        showitem( protab[ i ]->item, "" );
+    }
 }
 
-void showitem( p, dot )
-  an_item *p;
-  char *dot;
+void showitem( an_item *p, char *dot )
 {
-  an_item *q;
-  a_pro *pro;
+    an_item     *q;
+    a_pro       *pro;
 
-  for( q = p; q->p.sym; ++q );
-  pro = q[1].p.pro;
-  printf( "%3d (%03x): %s <-", pro->pidx, pro->pidx, pro->sym->name );
-  q = pro->item;
-  for(;;) {
-      if( q == p ) {
-          printf( "%s", dot );
-      }
-      if( q->p.sym == NULL ) break;
-      printf( " %s", q->p.sym->name );
-      ++q;
-  }
-  if( pro->unit ) {
-      printf( " (unit production)" );
-  }
-  printf( "\n" );
+    for( q = p; q->p.sym; ++q );
+    pro = q[ 1 ].p.pro;
+    printf( "%3d (%03x): %s <-", pro->pidx, pro->pidx, pro->sym->name );
+    q = pro->item;
+    for(;;) {
+        if( q == p ) {
+            printf( "%s", dot );
+        }
+        if( q->p.sym == NULL )
+            break;
+        printf( " %s", q->p.sym->name );
+        ++q;
+    }
+    if( pro->unit ) {
+        printf( " (unit production)" );
+    }
+    printf( "\n" );
 }
 
 void show_unused( void )
 {
-    unsigned count;
-    index_t i;
+    unsigned    count;
+    index_t     i;
 
     count = 0;
     for( i = 0; i < npro; ++i ) {
-        if( protab[i]->sym == goalsym ) continue;
-        if( protab[i]->used == FALSE ) {
+        if( protab[ i ]->sym == goalsym )
+            continue;
+        if( protab[ i ]->used == FALSE ) {
             ++count;
         }
     }
     dumpstatistic( "number of rules not reduced", count );
     if( count ) {
         for( i = 0; i < npro; ++i ) {
-            if( protab[i]->sym == goalsym ) continue;
-            if( protab[i]->used == FALSE ) {
-                showitem( protab[i]->item, "" );
+            if( protab[ i ]->sym == goalsym )
+                continue;
+            if( protab[ i ]->used == FALSE ) {
+                showitem( protab[ i ]->item, "" );
             }
         }
     }

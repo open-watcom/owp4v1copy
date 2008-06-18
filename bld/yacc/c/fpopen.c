@@ -34,30 +34,29 @@
 #include "walloca.h"
 
 
-FILE *fpopen( path, name )
+FILE *fpopen( char *path, char *name )
 /*
  *  Attempt to open 'name', first in the current directory, then along
  *  'path' (a list of ';' separated directory names.)
  */
-    char *path, *name;
 {
-    FILE *file;
-    char *qualname, *p;
-    int dirlen, namelen;
+    FILE        *file;
+    char        *qualname, *p;
+    int         dirlen, namelen;
 
-    if( !(file = fopen( name, "r" )) && path ){
+    if( !(file = fopen( name, "r" )) && path ) {
         namelen = strlen( name );
         qualname = alloca( strlen( path ) + namelen + 1 );
-        for(;;){
+        for( ;; ) {
             for( p = path; *p != '\0' && *p != ';'; ++p );
             memcpy( qualname, path, dirlen = p - path );
-            if( p > path && p[-1] != '\\' && p[-1] != '/' )
-                qualname[dirlen++] = '/';
-            memcpy( &qualname[dirlen], name, namelen );
-            qualname[dirlen+namelen] = '\0';
+            if( p > path && p[ -1 ] != '\\' && p[ -1 ] != '/' )
+                qualname[ dirlen++ ] = '/';
+            memcpy( &qualname[ dirlen ], name, namelen );
+            qualname[ dirlen + namelen ] = '\0';
             if( (file = fopen( qualname, "r" )) || !*p )
                 break;
-            path = &p[1];
+            path = &p[ 1 ];
         }
     }
     return( file );

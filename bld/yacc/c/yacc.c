@@ -165,9 +165,9 @@ void dumpstatistic( char *name, unsigned stat )
 
 int main( int argc, char **argv )
 {
-    unsigned i;
-    FILE *skeleton, *temp, *save;
-    int ch;
+    int     i;
+    FILE    *skeleton, *temp, *save;
+    int     ch;
 
     for( i = 1; i < argc; ++i ) {
         if( argv[i][0] != '-' ) break;

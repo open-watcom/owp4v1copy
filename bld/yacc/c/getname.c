@@ -32,18 +32,16 @@
 
 #include <string.h>
 
-char *getname( qualname )
+char *getname( char *qualname )
 /*
  *  Return the file name portion of a qualified name.
  */
-  char *qualname;
 {
-  char *name;
+    char *name;
 
-  if( (name = strrchr( qualname, '\\' ))
-  ||  (name = strrchr( qualname, '/' ))
-  ||  (name = strrchr( qualname, ':' )) )
-      return( name + 1 );
-  else
-      return( qualname );
+    if( (name = strrchr( qualname, '\\' )) || (name = strrchr( qualname, '/' )) || (name = strrchr( qualname, ':' )) ) {
+        return( name + 1 );
+    } else {
+        return( qualname );
+    }
 }
