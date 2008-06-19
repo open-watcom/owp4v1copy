@@ -311,6 +311,9 @@ libzip_dir      = $(contrib_dir)/libzip
 !ifndef zlib_dir
 zlib_dir        = $(contrib_dir)/zlib
 !endif
+!ifndef awk_dir
+awk_dir         = $(contrib_dir)/awk
+!endif
 
 !else
 
@@ -625,6 +628,9 @@ libzip_dir      = $(contrib_dir)\libzip
 !endif
 !ifndef zlib_dir
 zlib_dir        = $(contrib_dir)\zlib
+!endif
+!ifndef awk_dir
+awk_dir         = $(contrib_dir)\awk
 !endif
 
 !endif

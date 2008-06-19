@@ -1,12 +1,14 @@
 proj_name = builder
 
+additional_cleanup= proctab.c ytab.h awk.c
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
 all : cdsay.exe sweep.exe wsplice.exe comstrip.exe &
 !ifndef __UNIX__
-    diff.exe &
+    diff.exe awk.exe sed.exe &
 !endif
 !ifndef bootstrap
     langdat.exe mksetup.exe wgrep.exe builder.exe &
@@ -17,7 +19,7 @@ all : cdsay.exe sweep.exe wsplice.exe comstrip.exe &
 
 inc_dirs = -I"../../pmake" -I"../../posix/h"
 
-.c : ../c;../../pmake;../../posix/src/rm;../../posix/misc
+.c : ../c;../../pmake;../../posix/src/rm;../../posix/src/sed;../../posix/misc
 
 sys_dos   = sys.obj sysdos.obj sysdoscd.obj
 sys_os2   = sys.obj sysos2.obj sysdoscd.obj
@@ -33,6 +35,22 @@ builder.exe : clibext.obj
 sweep.exe : sweep.obj clibext.obj
 wsplice.exe : wsplice.obj clibext.obj
 diff.exe : diff.obj clibext.obj
+!else ifndef __UNIX__
+inc_dirs += -I$(awk_dir)
+.c : $(awk_dir)
+# -pil is temporary fix for OW C compiler
+extra_c_flags += -pil
+
+sed.exe : sed.obj sedcomp.obj
+
+awk.exe : awk.obj b.obj parse.obj proctab.obj tran.obj lib.obj run.obj lex.obj ytab.obj missing95.obj
+
+proctab.c : maketab.exe
+        copy $(awk_dir)\ytab.h ytab.h > nul
+        $[@ >proctab.c
+
+awk.c :
+        copy $(awk_dir)\main.c awk.c > nul
 !endif
 
 !ifdef __MSDOS__
