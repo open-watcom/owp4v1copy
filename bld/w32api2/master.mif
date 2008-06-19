@@ -313,6 +313,7 @@ ddk_headers =        &
         ntddscsi.h   &
         ntddstor.h   &
         ntddtape.h   &
+        ntddvdeo.h   &
         ntdef.h      &
         ntifs.h      &
         ntiologc.h   &
