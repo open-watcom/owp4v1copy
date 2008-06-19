@@ -70,7 +70,7 @@ struct cmd_t {                          /* compiled-command representation */
 #define CEOF    22      /* end-of-field mark */
 #define MTYPE   32      /* multiple counts |'d into RE      \{...\}    */
 
-extern void     execute( const char *file ); /* In sedexec.c */
+extern void     execute( const char *file ); /* In sed.c */
 
 /* The following are in sedcomp.c */
                                         /* main data areas */

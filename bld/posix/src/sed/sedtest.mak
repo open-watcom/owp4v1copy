@@ -42,7 +42,7 @@ aadiff =afore     2>> stray | diff afore -
     @diff stray $(blackhole) > $(blackhole)
     @rm -f stray
 
-all: .symbolic sedcomp sedexec susv3 bre dospencer
+all: .symbolic sedcomp sed susv3 bre dospencer
 
 dospencer: .symbolic spencer.cmd
     $(here)spencer.cmd 2>&1 | tee spencer.log
@@ -52,7 +52,7 @@ dospencer: .symbolic spencer.cmd
 sedcomp: .symbolic main
     @%null
 
-sedexec: .symbolic execute
+sed: .symbolic execute
     @%null
 
 clean: .symbolic
