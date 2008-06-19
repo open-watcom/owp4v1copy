@@ -1,5 +1,5 @@
 /*
-sedexec.c -- execute compiled form of stream editor commands
+sed.c -- execute compiled form of stream editor commands
 
    The single entry point of this module is the function execute(). It
 may take a string argument (the name of a file to be used as text)  or
@@ -907,4 +907,4 @@ static void readout( void )
     aptr = appends;                     /* reset the append ptr */
 }
 
-/* sedexec.c ends here */
+/* sed.c ends here */

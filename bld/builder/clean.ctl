@@ -30,6 +30,8 @@ cdsay .
     rm -f <OWBINDIR>/wtouch.exe
     rm -f <OWBINDIR>/wmake.exe
     rm -f <OWBINDIR>/rm.exe
+    rm -f <OWBINDIR>/awk.exe
+    rm -f <OWBINDIR>/sed.exe
 
 [ BLOCK . . ]
 #============
