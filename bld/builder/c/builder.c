@@ -56,7 +56,7 @@ static char        Line[MAX_LINE];
 static char        ProcLine[MAX_LINE];
 static unsigned    VerbLevel;
 static bool        UndefWarn;
-static bool        IgnoreErrors = TRUE;
+static bool        IgnoreErrors;
 static unsigned    ParmCount;
 static unsigned    LogBackup;
 
