@@ -56,7 +56,7 @@ static char        Line[MAX_LINE];
 static char        ProcLine[MAX_LINE];
 static unsigned    VerbLevel;
 static bool        UndefWarn;
-static bool        StopOnError;
+static bool        IgnoreErrors;
 static unsigned    ParmCount;
 static unsigned    LogBackup;
 
@@ -175,8 +175,8 @@ static void ProcessOptions( char *argv[] )
                     Fatal( "-b value is exceeds maximum of %d\n", MAX_BACKUP );
                 }
                 break;
-            case 's':
-                StopOnError = TRUE;
+            case 'i':
+                IgnoreErrors = TRUE;
                 break;
             case 'v':
                 ++VerbLevel;
@@ -540,7 +540,7 @@ static void ProcessCtlFile( const char *name )
                         Log( FALSE, "<%s> => ", Line );
                     }
                     Log( FALSE, "non-zero return: %d\n", res );
-                    if( StopOnError ) {
+                    if( !IgnoreErrors ) {
                         Fatal( "Build failed\n" );
                     }
                 }

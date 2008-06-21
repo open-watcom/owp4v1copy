@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 specific functions for builder
+* Description:  OS/2 specific functions for builder.
 *
 ****************************************************************************/
+
 
 #include <sys/types.h>
 #include <direct.h>
@@ -48,6 +49,7 @@ void SysInit( int argc, char *argv[] )
 {
     argc = argc;
     argv = argv;
+    setenv( "BLD_HOST", "OS2", 1 );
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )

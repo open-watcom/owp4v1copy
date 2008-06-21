@@ -102,6 +102,7 @@ void SysInit( int argc, char *argv[] )
     if( CmdProc == NULL ) {
         Fatal( "Can not find command processor" );
     }
+    setenv( "BLD_HOST", "NT", 1 );
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )

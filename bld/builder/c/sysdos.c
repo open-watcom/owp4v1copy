@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  DOS specific functions for builder
+* Description:  DOS specific functions for builder.
 *
 ****************************************************************************/
+
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,10 +36,12 @@
 #include <process.h>
 #include "builder.h"
 
+
 void SysInit( int argc, char *argv[] )
 {
     argc = argc;
     argv = argv;
+    setenv( "BLD_HOST", "DOS", 1 );
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
