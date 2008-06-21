@@ -1,6 +1,0 @@
-set magic
-set magicstring = ()
-atomic
-	%s/^([^'])/'\1/
-	%s/([^'])$/\1'/
-	xit
