@@ -125,7 +125,7 @@ sub make_build_batch
     print BATCH "wmake\n";
     # Clean previous build.
     print BATCH "cd $OW\ncd bld\n";
-    print BATCH "builder clean\n";
+    print BATCH "builder -i clean\n";
     # Create new builder tools, previous clean removed them.
     print BATCH "cd $OW\ncd bld\n";
     if( $^O eq "MSWin32" ) {
@@ -140,9 +140,9 @@ sub make_build_batch
     # Start build process.
     print BATCH "cd $OW\ncd bld\n";
     if ($pass1) {
-        print BATCH "builder pass1\n";
+        print BATCH "builder -i pass1\n";
     } else {
-        print BATCH "builder pass2\n";
+        print BATCH "builder -i pass2\n";
     }
     close(BATCH);
     # On Windows it has no efect
@@ -194,15 +194,14 @@ sub make_installer_batch
         else                      { print BATCH; }
     }
     close(INPUT);
-    # Add additional commands to do the build.
+    # Add additional commands to do installers.
     print BATCH "\n";
     print BATCH "$setenv RELROOT=", $SNAPSHOTPATH, "\n";
     if ($OStype eq "UNIX") {
+        # set up max open file handle to be enough for uzip
         print BATCH "ulimit -n 4096\n";
     }
     print BATCH "\n";
-    # Create fresh builder tools, to prevent lockup build server 
-    # if builder tools from previous build are somehow broken
     print BATCH "cd $OW\ncd distrib\ncd ow\n";
     print BATCH "builder missing\n";
     print BATCH "builder rel2 os_dos\n";

@@ -73,7 +73,7 @@ extern const char      *LogDirEquals( char *dir );
 extern void            Fatal( const char *, ... );
 extern void            *Alloc( unsigned );
 extern char            *SkipBlanks( const char * );
-extern unsigned        RunIt( char * );
+extern unsigned        RunIt( char *, bool );
 extern void            ResetArchives( copy_entry * );
 extern void            SysInit( int argc, char *argv[] );
 extern unsigned        SysRunCommand( const char * );

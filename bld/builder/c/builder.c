@@ -56,7 +56,7 @@ static char        Line[MAX_LINE];
 static char        ProcLine[MAX_LINE];
 static unsigned    VerbLevel;
 static bool        UndefWarn;
-static bool        IgnoreErrors;
+static bool        IgnoreErrors = TRUE;
 static unsigned    ParmCount;
 static unsigned    LogBackup;
 
@@ -534,7 +534,7 @@ static void ProcessCtlFile( const char *name )
                     Log( FALSE, "+++<%s>+++\n", p );
                 }
                 strcpy( Line, p );
-                res = RunIt( p );
+                res = RunIt( p, IgnoreErrors );
                 if( res != 0 ) {
                     if( !logit ) {
                         Log( FALSE, "<%s> => ", Line );

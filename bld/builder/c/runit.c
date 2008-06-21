@@ -528,7 +528,7 @@ void PMakeOutput( char *str )
     Log( FALSE, "%s\n", str );
 }
 
-static unsigned DoPMake( pmake_data *data )
+static unsigned DoPMake( pmake_data *data, bool ignore_errors )
 {
     pmake_list  *curr;
     unsigned    res;
@@ -536,20 +536,31 @@ static unsigned DoPMake( pmake_data *data )
 
     for( curr = data->dir_list; curr != NULL; curr = curr->next ) {
         res = SysChdir( curr->dir_name );
-        if( res != 0 )
-            return( res );
+        if( res != 0 ) {
+            if( ignore_errors ) {
+                Log( FALSE, "non-zero return: %d\n", res );
+                continue;
+            } else {
+                return( res );
+            }
+        }
         getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
         if( data->display )
             LogDir( IncludeStk->cwd );
         PMakeCommand( data, cmd );
         res = SysRunCommand( cmd );
-        if( res != 0 )
-            return( res );
+        if( res != 0 ) {
+            if( ignore_errors ) {
+                Log( FALSE, "non-zero return: %d\n", res );
+            } else {
+                return( res );
+            }
+        }
     }
     return( 0 );
 }
 
-static unsigned ProcPMake( char *cmd )
+static unsigned ProcPMake( char *cmd, bool ignore_errors )
 {
     pmake_data  *data;
     unsigned    res;
@@ -563,14 +574,14 @@ static unsigned ProcPMake( char *cmd )
         return( 2 );
     }
     strcpy( save, IncludeStk->cwd );
-    res = DoPMake( data );
+    res = DoPMake( data, ignore_errors );
     SysChdir( save );
     getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
     PMakeCleanup( data );
     return( res );
 }
 
-unsigned RunIt( char *cmd )
+unsigned RunIt( char *cmd, bool ignore_errors )
 {
     unsigned    res;
 
@@ -606,7 +617,7 @@ unsigned RunIt( char *cmd )
     } else if( BUILTIN( "MKDIR" ) ) {
         res = ProcMkdir( SkipBlanks( cmd + sizeof( "MKDIR" ) ) );
     } else if( BUILTIN( "PMAKE" ) ) {
-        res = ProcPMake( SkipBlanks( cmd + sizeof( "PMAKE" ) ) );
+        res = ProcPMake( SkipBlanks( cmd + sizeof( "PMAKE" ) ), ignore_errors );
     } else {
         res = SysRunCommand( cmd );
     }
