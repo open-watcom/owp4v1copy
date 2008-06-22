@@ -1114,7 +1114,7 @@ typedef struct _GDIINFO {
     ULONG       ulHTOutputFormat;
     ULONG       flHTFlags;
     ULONG       ulVRefresh;
-    ULONG       ulBitAlignment;
+    ULONG       ulBltAlignment;
     ULONG       ulPanningHorzRes;
     ULONG       ulPanningVertRes;
     ULONG       xPanningAlignment;
