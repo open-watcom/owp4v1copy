@@ -8,6 +8,9 @@
 #define __DDRAW_INCLUDED__
 
 :include readonly.sp
+#define COM_NO_WINDOWS_H
+#include <objbase.h>
+
 :include cpluspro.sp
 
 /* Monitor handle data type */
