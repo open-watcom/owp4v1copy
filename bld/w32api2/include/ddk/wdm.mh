@@ -7372,6 +7372,14 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
     #define RTL_VERIFYMSG               ASSERTMSG
     #define RTL_SORT_VERIFY             RTL_SOFT_ASSERT
     #define RTL_SORT_VERIFYMSG          RTL_SOFT_ASSERTMSG
+    #define PAGED_CODE() \
+        { \
+            if( KeGetCurrentIrql() > APC_LEVEL ) { \
+                KdPrint( "EX: Pageable code called at IRQL %d\n", KeGetCurrentIrql() ); \
+                ASSERT( FALSE ); \
+            } \
+        }
+    #define PAGED_CODE_LOCKED()         ((void)0)
 #else
     #define ASSERT( x )                 ((void)0)
     #define ASSERTMSG( x, p )           ((void)0)
@@ -7381,6 +7389,8 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
     #define RTL_VERIFYMSG( x, p )       ((x) ? TRUE : FALSE)
     #define RTL_SOFT_VERIFY( x )        ((x) ? TRUE : FALSE)
     #define RTL_SOFT_VERIFYMSG( x, p )  ((x) ? TRUE : FALSE)
+    #define PAGED_CODE()                ((void)0)
+    #define PAGED_CODE_LOCKED()         ((void)0)
 #endif
 
 /* Functions implemented as macros */
