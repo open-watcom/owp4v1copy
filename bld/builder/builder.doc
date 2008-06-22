@@ -104,6 +104,19 @@ nested), an ENDIF or a BLOCK. An IFDEF may occur inside or outside a BLOCK.
 This terminates a preceding IFDEF. It has no effect on the BLOCK.
 
 
+        Predefined Variables
+        --------------------
+
+Builder predefines special environment variables for use within builder
+control files or any child processes. These variables are useful for testing
+in BLOCK and IFDEF directives.
+
+
+ BLD_HOST       - describes the platform builder is executing on. Currently
+                  defined values are UNIX, NT, OS2, and DOS.
+
+
+
         Built-in Commands
         -----------------
 
@@ -161,6 +174,12 @@ does not exist.
 Write the text to the screen and any log file(s). The text may contains macros
 which are expanded first.
 
+        ERROR text
+
+Similar to the ECHO command, but returns a failure code. Useful for aborting
+when some precondition is not satisfied, eg. a required environment variable is
+not set.
+
         MKDIR new_dir
 
 Create a new directory called "new_dir". BUILDER will not attempt to create
@@ -200,9 +219,9 @@ The following command line options are recognized:
                 Determine the default number of backup copies of a log file
                 that are to be kept.
 
-        -s
-                Stop on errors. If any command delivers non-zero return code,
-                do not attempt to execute any further commands and abort.
+        -i
+                Ignore errors. If a command delivers non-zero return code,
+                continue executing the next command. Use with caution.
 
         -v
                 Verbose. Commands that are about to be executed are written
