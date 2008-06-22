@@ -3706,7 +3706,12 @@ typedef struct _FSRTL_PER_STREAM_CONTEXT {
     PFREE_FUNCTION  FreeCallback;
 } FSRTL_PER_STREAM_CONTEXT;
 typedef FSRTL_PER_STREAM_CONTEXT    *PFSRTL_PER_STREAM_CONTEXT;
- 
+
+/* Tear down per stream contexts callback */
+#if (NTDDI_VERSION >= 0x05000000)
+typedef VOID (NTAPI *PFN_FSRTLTEARDOWNPERSTREAMCONTEXTS)( PFSRTL_ADVANCED_FCB_HEADER );
+#endif
+
 /* Per file object context */
 typedef struct _FSRTL_PER_FILEOBJECT_CONTEXT {
     LIST_ENTRY  Links;
