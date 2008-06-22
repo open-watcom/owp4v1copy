@@ -1,5 +1,23 @@
 LIBRARY SETUPAPI.DLL
 EXPORTS
+CM_Delete_Device_Interface_KeyA@8
+CM_Delete_Device_Interface_KeyW@8
+CM_Delete_Device_Interface_Key_ExA@12
+CM_Delete_Device_Interface_Key_ExW@12
+CM_Get_DevNode_Custom_PropertyA@24
+CM_Get_DevNode_Custom_PropertyW@24
+CM_Get_DevNode_Custom_Property_ExA@28
+CM_Get_DevNode_Custom_Property_ExW@28
+CM_Is_Version_Available@4
+CM_Is_Version_Available_Ex@8
+CM_Open_Device_Interface_KeyA@20
+CM_Open_Device_Interface_KeyW@20
+CM_Open_Device_Interface_Key_ExA@24
+CM_Open_Device_Interface_Key_ExW@24
+CM_Request_Device_EjectA@20
+CM_Request_Device_EjectW@20
+CM_Request_Device_Eject_ExA@24
+CM_Request_Device_Eject_ExW@24
 InstallHinfSectionA@16
 InstallHinfSectionW@16
 SetupAddInstallSectionToDiskSpaceListA@24

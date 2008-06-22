@@ -302,6 +302,7 @@ base_headers =       &
 ddk_headers =        &
         bugcodes.h   &
         cfg.h        &
+        cfgmgr32.h   &
         classpnp.h   &
         ddrawint.h   &
         drvspecs.h   &
@@ -451,6 +452,7 @@ directx_libs =       &
         dxguid.lib
 
 ddk_libs =           &
+        cfgmgr32.lib &
         classpnp.lib &
         clfs.lib     &
         hal.lib      &
