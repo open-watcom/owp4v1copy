@@ -35,7 +35,7 @@
 
 
 #if !defined( NATURAL_PACK )
-#include "pshpk1.h"
+#include "pushpck1.h"
 #endif
 
 typedef struct dbgheader {
@@ -81,7 +81,7 @@ typedef struct {
 } zip_cdfh;
 
 #if !defined( NATURAL_PACK )
-#include "poppk.h"
+#include "poppck.h"
 #endif
 
 #define VALID_SIGNATURE 0x8386
