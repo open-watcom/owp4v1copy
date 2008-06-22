@@ -185,14 +185,11 @@ not set.
 Create a new directory called "new_dir". BUILDER will not attempt to create
 the directory if it already exists.
 
-PMAKE is not currently built into BUILDER whatever the following says!
-#if 0
         PMAKE pmake_command_line
 
 The PMAKE command has been built into the BUILDER program. You can specify
 all the same things as with PMAKE.EXE, except that the -b option is ignored.
 See the PMAKE.EXE usage message for more information.
-#endif
 
 
         Command Line Options
