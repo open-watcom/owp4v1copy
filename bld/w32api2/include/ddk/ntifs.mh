@@ -52,6 +52,20 @@ typedef ULONG               FSRTL_ECP_LOOKASIDE_FLAGS;
 #define EX_PUSH_LOCK    ULONG_PTR
 #define PEX_PUSH_LOCK   PULONG_PTR
 
+/* Flag manipulation macros */
+#ifndef FlagOn
+    #define FlagOn( x, p )          ((x) & (p))
+#endif
+#ifndef BooleanFlagOn
+    #define BooleanFlagOn( x, p )   ((BOOLEAN)(((x) & (p)) != 0))
+#endif
+#ifndef SetFlag
+    #define SetFlag( x, p )         ((x) |= (p))
+#endif
+#ifndef ClearFlag
+    #define ClearFlag( x, p )       ((x) &= ~(p))
+#endif
+
 /* Current SID revision */
 #define SID_REVISION    1
 
