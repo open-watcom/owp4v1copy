@@ -75,7 +75,7 @@ if( $^O eq "MSWin32" ) {
 }
 
 my $build_batch_name     = "$home\/buildtmp.$ext";
-my $build_installer_name = "$home\/blbinst.$ext";
+my $build_installer_name = "$home\/bldinst.$ext";
 my $test_batch_name      = "$home\/testtmp.$ext";
 my $rotate_batch_name    = "$home\/rotate.$ext";
 my $setvars              = "$OW\/setvars.$ext";
