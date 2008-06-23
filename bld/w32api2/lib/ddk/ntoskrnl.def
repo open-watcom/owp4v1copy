@@ -306,7 +306,7 @@ FsRtlNotifyCleanupAll@8
 FsRtlNotifyFilterChangeDirectory@44
 FsRtlNotifyFilterReportChange@40
 FsRtlNotifyFullChangeDirectory@40
-FsRtlNotifyFullReportDirectory@36
+FsRtlNotifyFullReportChange@36
 FsRtlNotifyInitializeSync@4
 FsRtlNotifyUninitializeSync@4
 FsRtlNotifyVolumeEvent@8
