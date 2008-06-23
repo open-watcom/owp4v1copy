@@ -257,6 +257,9 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define MAXWORD     0xFFFF
 #define MAXDWORD    0xFFFFFFFF
 
+/* Macro to find field offsets */
+#define FIELD_OFFSET( x, p )    ((LONG)(LONG_PTR)&(((x *)0)->p))
+
 /* Macro to calculate the size of an array */
 #define ARRAYSIZE( x )  (sizeof( x ) / sizeof( (x)[0] ))
 

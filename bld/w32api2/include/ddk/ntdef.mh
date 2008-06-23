@@ -307,6 +307,9 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define MAXUSHORT   0xFFFF
 #define MAXULONG    0xFFFFFFFF
 
+/* Macro to find field offsets */
+#define FIELD_OFFSET( x, p )    ((LONG)(LONG_PTR)&(((x *)0)->p))
+
 /* Macro to find the containing record */
 #define CONTAINING_RECORD( p1, p2, p3 ) \
     ((p2 *)((PCHAR)(p1) - (ULONG_PTR)(&((p2 *)0)->p3)))
