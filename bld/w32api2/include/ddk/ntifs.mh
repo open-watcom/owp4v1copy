@@ -4561,8 +4561,8 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
     { \
         PRTL_SPLAY_LINKS    v1; \
         PRTL_SPLAY_LINKS    v2; \
-        v1 = (PRTL_SPLAY_LINKS)(p1); \
-        v2 = (PRTL_SPLAY_LINKS)(p2); \
+        v1 = (PRTL_SPLAY_LINKS)(x); \
+        v2 = (PRTL_SPLAY_LINKS)(p); \
         v1->LeftChild = v2; \
         v2->Parent = v1; \
     }
@@ -4570,8 +4570,8 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
     { \
         PRTL_SPLAY_LINKS    v1; \
         PRTL_SPLAY_LINKS    v2; \
-        v1 = (PRTL_SPLAY_LINKS)(p1); \
-        v2 = (PRTL_SPLAY_LINKS)(p2); \
+        v1 = (PRTL_SPLAY_LINKS)(x); \
+        v2 = (PRTL_SPLAY_LINKS)(p); \
         v1->RightChild = v2; \
         v2->Parent = v1; \
     }
