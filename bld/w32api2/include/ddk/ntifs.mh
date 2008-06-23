@@ -4606,7 +4606,7 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
 #define FsRtlAreThereCurrentFileLocks( x ) \
     ((x)->FastIoIsQuestionable)
 #define FsRtlTestAnsiCharacter( x, p1, p2, p3 ) \
-    (((SCHAR)(x) < 0) ? DEFAULT_RET : ((*FsRtlLegalAnsiCharacterArray)[(x)] & \
+    (((SCHAR)(x) < 0) ? p1 : ((*FsRtlLegalAnsiCharacterArray)[(x)] & \
     (p3) | ((p2) ? FSRTL_WILD_CHARACTER : 0)))
 #define FsRtlIsAnsiCharacterWild( x ) \
     FsRtlTestAnsiCharacter( x, FALSE, FALSE, FSRTL_WILD_CHARACTER )
