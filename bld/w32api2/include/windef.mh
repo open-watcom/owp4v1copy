@@ -82,7 +82,9 @@ typedef int (WINAPI *FARPROC)();
 typedef int (WINAPI *NEARPROC)();
 typedef int (WINAPI *PROC)();
 
-#include <winnt.h>
+#ifndef NT_INCLUDED
+    #include <winnt.h>
+#endif
 
 /* Message parameters data types */
 typedef UINT_PTR    WPARAM;

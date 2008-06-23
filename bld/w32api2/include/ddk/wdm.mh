@@ -28,6 +28,9 @@
 
 :include cpluspro.sp
 
+/* Suppress inclusion of winnt.h. */
+#define NT_INCLUDED
+
 /* Macro to specify NT kernel and hardware abstraction layer functions */
 #define NTKERNELAPI             DECLSPEC_IMPORT
 #define NTHALAPI                DECLSPEC_IMPORT
