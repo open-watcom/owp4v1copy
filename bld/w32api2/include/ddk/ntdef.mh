@@ -307,6 +307,9 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define MAXUSHORT   0xFFFF
 #define MAXULONG    0xFFFFFFFF
 
+/* Macro to test if an argument is present */
+#define ARGUMENT_PRESENT( x )   ((CHAR *)(ULONG_PTR)(x) != (CHAR *)NULL)
+
 /* Macro to find field offsets */
 #define FIELD_OFFSET( x, p )    ((LONG)(LONG_PTR)&(((x *)0)->p))
 
