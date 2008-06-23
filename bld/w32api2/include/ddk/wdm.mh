@@ -7419,9 +7419,17 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
 #define RtlFillMemory( p1, p2, p3 )         memset( p1, p3, p2 )
 #define RtlZeroMemory( p1, p2 )             memset( p1, 0, p2 )
 #if DBG
+    #define KdPrint( x )                    DbgPrint x
+    #define KdPrintEx( x )                  DbgPrintEx x
+    #define vKdPrintEx( x )                 vDbgPrintEx x
+    #define vKdPrintExWithStatus( x )       vDbgPrintExWithStatus x
     #define KdBreakPoint()                  DbgBreakPoint()
     #define KdBreakPointWithStatus( x )     DbgBreakPointWithStatus( x )
 #else
+    #define KdPrint( x )
+    #define KdPrintEx( x )
+    #define vKdPrintEx( x )
+    #define vKdPrintExWithStatus( x )
     #define KdBreakPoint()
     #define KdBreakPointWithStatus( x )
 #endif
