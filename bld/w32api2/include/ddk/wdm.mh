@@ -7628,7 +7628,7 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
     #define IoAcquireRemoveLock( p1, p2 ) \
         IoAcquireRemoveLockEx( p1, p2, __FILE__, __LINE__, sizeof( IO_REMOVE_LOCK ) )
 #else
-    #define IoAcquireRemoveLockEx( p1, p2 ) \
+    #define IoAcquireRemoveLock( p1, p2 ) \
         IoAcquireRemoveLockEx( p1, p2, "", 1, sizeof( IO_REMOVE_LOCK ) )
 #endif
 #define IoReleaseRemoveLock( p1, p2 ) \
