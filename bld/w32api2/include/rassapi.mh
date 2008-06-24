@@ -27,7 +27,7 @@ typedef ULONG   IPADDR;
 #define RASPRIV_NoCallback          0x01
 #define RASPRIV_AdminSetCallback    0x02
 #define RASPRIV_CallerSetCallback   0x04
-#define RASPRIV_DailinPrivilege     0x08
+#define RASPRIV_DialinPrivilege     0x08
 #define RASPRIV_CallbackType \
     (RASPRIV_AdminSetCallback | RASPRIV_CallerSetCallback | RASPRIV_NoCallback)
 
