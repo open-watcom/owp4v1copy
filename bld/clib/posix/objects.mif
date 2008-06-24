@@ -14,6 +14,7 @@
 !inject closedir.obj                                                                    l32 lpc lmp
 !inject bind.obj                                                                        l32 lpc lmp
 !inject socket.obj                                                                      l32 lpc lmp
+!inject gtsckopt.obj                                                                    l32 lpc lmp
 !inject stsckopt.obj                                                                    l32 lpc lmp
 !inject recv.obj                                                                        l32 lpc lmp
 !inject send.obj                                                                        l32 lpc lmp
@@ -24,6 +25,7 @@
 !inject htons.obj                                                                       l32 lpc lmp
 !inject ntohs.obj                                                                       l32 lpc lmp
 !inject inetaddr.obj                                                                    l32 lpc lmp
+!inject inetntoa.obj                                                                    l32 lpc lmp
 !inject gthstnam.obj                                                                    l32 lpc lmp
 !inject gtpronam.obj                                                                    l32 lpc lmp
 !inject gtsrvnam.obj                                                                    l32 lpc lmp
