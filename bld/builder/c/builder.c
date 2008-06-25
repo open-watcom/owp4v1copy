@@ -141,7 +141,7 @@ static char **getvalue( char **argv, char *buff )
 
 static void Usage( void )
 {
-    printf( "Usage: builder [-c <ctl>] [-l <log>] [-b <bak>] [-s] [-v] [-u] [-q] [--] <parm>\n" );
+    printf( "Usage: builder [-c <ctl>] [-l <log>] [-b <bak>] [-i] [-v] [-u] [-q] [--] <parm>\n" );
     printf( "    See builder.doc for more information\n" );
     exit( 0 );
 }
@@ -485,7 +485,7 @@ static void ProcessCtlFile( const char *name )
             /* a directive */
             p = FirstWord( p + 1 );
             if( stricmp( p, "INCLUDE" ) == 0 ) {
-                if( IncludeStk->skipping == 0 ) {
+                if( !IncludeStk->skipping && !IncludeStk->ifdefskipping ) {
                     PushInclude( NextWord( p ) );
                 }
             }
