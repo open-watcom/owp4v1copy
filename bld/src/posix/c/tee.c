@@ -35,8 +35,6 @@
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <malloc.h>
 #include "util.h"
 
 
@@ -86,7 +84,7 @@ int main( int argc, char **argv )
     setmode( STDIN_FILENO, O_BINARY );
     setmode( STDOUT_FILENO, O_BINARY );
     if( argc > 0 ) {    /* It is allowed not to specify any output files */
-        out_fh = alloca( sizeof( int ) * argc );
+        out_fh = malloc( sizeof( int ) * argc );
         if( out_fh == NULL ) {
             util_die( "tee: not enough memory for file handles\n" );
         }
@@ -126,5 +124,6 @@ int main( int argc, char **argv )
     for( i = 0; i < argc; ++i ) {
         close( out_fh[ i ] );
     }
+    free( out_fh );
     return( EXIT_SUCCESS );
 }
