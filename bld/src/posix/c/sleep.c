@@ -65,7 +65,7 @@ int main( int argc, char **argv )
         secs  = 0;
 
         op = argv[1];
-        for( p = argv[1]; *p != NULL; p++ ) {
+        for( p = argv[1]; *p != '\0'; p++ ) {
             switch( *p ) {
                 case 'h':
                     *p = 0;

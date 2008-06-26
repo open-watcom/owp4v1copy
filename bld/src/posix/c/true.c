@@ -32,8 +32,8 @@
 #include <stdlib.h>
 
 
-void main( void )
-/***************/
+int main( void )
+/**************/
 {
-    exit( EXIT_SUCCESS );
+    return( EXIT_SUCCESS );
 }
