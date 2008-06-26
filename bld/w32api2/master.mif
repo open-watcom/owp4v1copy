@@ -310,6 +310,7 @@ ddk_headers =        &
         hidpi.h      &
         hidusage.h   &
         mce.h        &
+        mountmgr.h   &
         ndis.h       &
         netevent.h   &
         ntddcdrm.h   &
