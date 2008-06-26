@@ -307,6 +307,7 @@ ddk_headers =        &
         ddrawint.h   &
         drvspecs.h   &
         hidclass.h   &
+        hidpi.h      &
         hidusage.h   &
         mce.h        &
         ndis.h       &
