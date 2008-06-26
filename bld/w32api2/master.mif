@@ -460,6 +460,7 @@ ddk_libs =           &
         classpnp.lib &
         clfs.lib     &
         hal.lib      &
+        hidparse.lib &
         ks.lib       &
         ksecdd.lib   &
         ndis.lib     &
