@@ -316,6 +316,7 @@ ddk_headers =        &
         ntddcdrm.h   &
         ntdddisk.h   &
         ntddk.h      &
+        ntddkbd.h    &
         ntddscsi.h   &
         ntddser.h    &
         ntddstor.h   &
