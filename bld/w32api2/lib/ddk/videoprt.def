@@ -1,0 +1,3 @@
+LIBRARY VIDEOPRT.SYS
+EXPORTS
+VideoPortGetAgpServices@8
