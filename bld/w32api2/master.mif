@@ -309,6 +309,7 @@ ddk_headers =        &
         hidclass.h   &
         hidpi.h      &
         hidusage.h   &
+        kbdmou.h     &
         mce.h        &
         mountmgr.h   &
         ndis.h       &
