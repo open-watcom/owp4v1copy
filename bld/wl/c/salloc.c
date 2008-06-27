@@ -223,11 +223,9 @@ void NewSegment( seg_leader *seg )
                                         - CurrLoc.off;
             AddSize( FmtData.bsspad );
         }
-        if( seg->size == 0  && group->isautogrp ) {
-            seg->seg_addr.off = CurrLoc.off;
-        } else {
-            Align( seg->align );
-            seg->seg_addr.off = CurrLoc.off;
+        Align( seg->align );
+        seg->seg_addr.off = CurrLoc.off;
+        if( seg->size != 0 || !group->isautogrp ) {
             AddSize( seg->size );
             group->totalsize = CurrLoc.off;
         }
