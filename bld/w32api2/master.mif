@@ -330,6 +330,7 @@ ddk_headers =        &
         ntiologc.h   &
         ntnls.h      &
         ntstatus.h   &
+        poclass.h    &
         srb.h        &
         scsi.h       &
         usb.h        &
@@ -463,6 +464,7 @@ directx_libs =       &
         dxguid.lib
 
 ddk_libs =           &
+        battc.lib    &
         cfgmgr32.lib &
         classpnp.lib &
         clfs.lib     &
