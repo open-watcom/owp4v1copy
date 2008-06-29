@@ -920,7 +920,7 @@ void ConvertToFrame( targ_addr *addr, segment frame, bool check_16bit )
     if( FmtData.type & MK_REAL_MODE ) {
         off = MK_REAL_ADDR( (int)( addr->seg - frame ), addr->off );
         if( check_16bit && ( off >= 0x10000 )) {
-            LnkMsg( LOC+ERR+MSG_FRAME_INVALID, "ax", addr, frame );
+            LnkMsg( LOC+ERR+MSG_FRAME_INVALID, "Ax", addr, frame );
         }
         addr->off = off;
     }

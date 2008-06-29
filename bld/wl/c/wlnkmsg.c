@@ -175,6 +175,7 @@ static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args )
         case 'l':
             arginfo->int_32 = va_arg( *args, unsigned long );
             break;
+        case 'A':
         case 'a':
             arginfo->address = va_arg( *args, targ_addr * );
             break;
