@@ -338,6 +338,7 @@ ddk_headers =        &
         usbdi.h      &
         usbioctl.h   &
         usbiodef.h   &
+        video.h      &
         videoagp.h   &
         wdm.h        &
         wdmguid.h    &
