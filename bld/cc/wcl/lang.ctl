@@ -24,6 +24,7 @@ cdsay .
     <CPCMD> <PROJDIR>/specs.owc                 <RELROOT>/binw/specs.owc
     
   [ IFDEF (os_dos "") <2*> ]
+    <CPCMD> <PROJDIR>/dosi86/owcc.exe           <RELROOT>/binw/owcc.exe
     <CPCMD> <PROJDIR>/dosi86.i86/wcl.exe        <RELROOT>/binw/wcl.exe
     <CPCMD> <PROJDIR>/dosi86.386/wcl386.exe     <RELROOT>/binw/wcl386.exe
     <CPCMD> <PROJDIR>/dosi86.axp/wclaxp.exe     <RELROOT>/binw/wclaxp.exe
@@ -46,6 +47,7 @@ cdsay .
     <CPCMD> <PROJDIR>/os2386.mps/wclmps.exe     <RELROOT>/binp/wclmps.exe
 
   [ IFDEF (os_linux "") <2*> ]
+    <CPCMD> <PROJDIR>/specs.owc                 <RELROOT>/binl/specs.owc
     <CPCMD> <PROJDIR>/linux386/owcc.elf         <RELROOT>/binl/owcc
     <CPCMD> <PROJDIR>/linux386.i86/wcl.exe      <RELROOT>/binl/wcl
     <CPCMD> <PROJDIR>/linux386.i86/wcl.sym      <RELROOT>/binl/wcl.sym
