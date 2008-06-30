@@ -329,6 +329,7 @@ ddk_headers =        &
         ntifs.h      &
         ntiologc.h   &
         ntnls.h      &
+        ntpoapi.h    &
         ntstatus.h   &
         poclass.h    &
         srb.h        &

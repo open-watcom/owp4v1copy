@@ -19,6 +19,7 @@ NtAccessCheckByTypeResultListAndAuditAlarmByHandle@68
 NtAdjustGroupsToken@24
 NtAdjustPrivilegesToken@24
 NtAllocateVirtualMemory@24
+NtCancelDeviceWakeupRequest@4
 NtClearAllSavepointsTransaction@4
 NtClearSavepointTransaction@8
 NtClose@4
@@ -40,8 +41,11 @@ NtEnumerateTransactionObject@20
 NtFilterToken@24
 NtFreeVirtualMemory@16
 NtFsControlFile@40
+NtGetDevicePowerState@8
 NtGetNotificationResourceManager@28
 NtImpersonateAnonymousToken@4
+NtInitiatePowerAction@16
+NtIsSystemResumeAutomatic@0
 NtLockFile@40
 NtMarshallTransaction@24
 NtOpenEnlistment@20
@@ -55,6 +59,7 @@ NtOpenThreadToken@16
 NtOpenThreadTokenEx@20
 NtOpenTransaction@20
 NtOpenTransactionManager@24
+NtPowerInformation@20
 NtPrePrepareComplete@8
 NtPrePrepareEnlistment@8
 NtPrepareComplete@8
@@ -82,7 +87,9 @@ NtRecoverEnlistment@8
 NtRecoverResourceManager@4
 NtRecoverTransactionManager@4
 NtRegisterProtocolAddressInformation@20
+NtRequestDeviceWakeup@4
 NtRequestWaitReplyPort@8
+NtRequestWakeupLatency@4
 NtRollbackComplete@8
 NtRollbackEnlistment@8
 NtRollbackSavepointTransaction@8
@@ -100,6 +107,8 @@ NtSetInformationTransaction@16
 NtSetInformationTransactionManager@16
 NtSetQuotaInformationFile@16
 NtSetSecurityObject@12
+NtSetSystemPowerState@12
+NtSetThreadExecutionState@8
 NtSetVolumeInformationFile@20
 NtSinglePhaseReject@8
 NtUnlockFile@20
