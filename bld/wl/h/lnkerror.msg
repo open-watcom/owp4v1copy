@@ -161,7 +161,7 @@ pick(    MSG_TOO_MANY_SELECTORS,        "too many selectors needed" ,
 pick(    MSG_BAD_REC_TYPE,      "invalid record type 0x%x" ,
                     "レコードタイプ0x%x が無効です" )
 pick(    MSG_FRAME_INVALID,     "cannot reference address %A from frame %x" ,
-                    "%a アドレスへの %x フレームからの参照は出来ません" )
+                    "%A アドレスへの %x フレームからの参照は出来ません" )
 pick(    MSG_BAD_TARG_OFF,      "target offset exceeds 64K at %a" ,
                     "%a のターゲットオフセットが64Kを越えています" )
 #ifdef _UNIX
