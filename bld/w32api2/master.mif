@@ -27,6 +27,7 @@ base_headers =       &
         aviriff.h    &
         basetsd.h    &
         basetyps.h   &
+        batclass.h   &
         bcrypt.h     &
         bdatypes.h   &
         cderr.h      &
