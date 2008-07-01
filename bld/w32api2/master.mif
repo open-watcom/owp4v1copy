@@ -137,6 +137,7 @@ base_headers =       &
         nb30.h       &
         ncrypt.h     &
         nddeapi.h    &
+        newdev.h     &
         nldef.h      &
         nspapi.h     &
         ntddndis.h   &
@@ -404,6 +405,7 @@ base_libs =          &
         ncrypt.lib   &
         nddeapi.lib  &
         netapi32.lib &
+        newdev.lib   &
         normaliz.lib &
         ntdsapi.lib  &
         ntdsbcli.lib &
