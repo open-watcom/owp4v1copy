@@ -300,6 +300,7 @@ base_headers =       &
         zmouse.h
 
 ddk_headers =        &
+        atm.h        &
         bugcodes.h   &
         cfg.h        &
         cfgmgr32.h   &
