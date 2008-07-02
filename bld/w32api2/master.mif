@@ -341,6 +341,7 @@ ddk_headers =        &
         usb.h        &
         usb100.h     &
         usb200.h     &
+        usbcamdi.h   &
         usbdi.h      &
         usbioctl.h   &
         usbiodef.h   &
@@ -483,6 +484,7 @@ ddk_libs =           &
         ntoskrnl.lib &
         rtlver.lib   &
         scsiport.lib &
+        usbcamd.lib  &
         videoprt.lib &
         wdmguid.lib  &
         win32k.lib   &
