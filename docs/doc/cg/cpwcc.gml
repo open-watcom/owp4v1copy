@@ -686,6 +686,8 @@ when the host operating system is OS/2,
 when the host operating system is Windows NT/95, or
 .point QNX
 when the host operating system is QNX.
+.point LINUX
+when the host operating system is Linux.
 .endpoint
 .np
 For example, the environment variable
