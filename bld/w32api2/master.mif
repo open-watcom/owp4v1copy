@@ -346,6 +346,7 @@ ddk_headers =        &
         usbioctl.h   &
         usbiodef.h   &
         usbscan.h    &
+        usbuser.h    &
         video.h      &
         videoagp.h   &
         wdm.h        &
