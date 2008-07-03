@@ -311,6 +311,7 @@ ddk_headers =        &
         drvspecs.h   &
         hidclass.h   &
         hidpi.h      &
+        hidsdi.h     &
         hidusage.h   &
         kbdmou.h     &
         mce.h        &
@@ -478,6 +479,7 @@ ddk_libs =           &
         classpnp.lib &
         clfs.lib     &
         hal.lib      &
+        hid.lib      &
         hidparse.lib &
         ks.lib       &
         ksecdd.lib   &
