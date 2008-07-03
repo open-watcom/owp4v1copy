@@ -307,6 +307,7 @@ ddk_headers =        &
         cfg.h        &
         cfgmgr32.h   &
         classpnp.h   &
+        ddkmapi.h    &
         ddrawint.h   &
         drvspecs.h   &
         hidclass.h   &
@@ -478,6 +479,7 @@ ddk_libs =           &
         cfgmgr32.lib &
         classpnp.lib &
         clfs.lib     &
+        dxapi.lib    &
         hal.lib      &
         hid.lib      &
         hidparse.lib &
