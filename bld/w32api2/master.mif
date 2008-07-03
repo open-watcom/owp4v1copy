@@ -340,6 +340,7 @@ ddk_headers =        &
         poclass.h    &
         srb.h        &
         scsi.h       &
+        upssvc.h     &
         usb.h        &
         usb100.h     &
         usb200.h     &
