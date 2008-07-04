@@ -315,6 +315,7 @@ ddk_headers =        &
         hidsdi.h     &
         hidusage.h   &
         kbdmou.h     &
+        mcd.h        &
         mce.h        &
         miniport.h   &
         mountdev.h   &
@@ -357,6 +358,7 @@ ddk_headers =        &
         wdm.h        &
         wdmguid.h    &
         winddi.h     &
+        wmidata.h    &
         wmilib.h     &
         xfilter.h
 
@@ -488,6 +490,7 @@ ddk_libs =           &
         hidparse.lib &
         ks.lib       &
         ksecdd.lib   &
+        mcd.lib      &
         ndis.lib     &
         ntdll.lib    &
         ntoskrnl.lib &

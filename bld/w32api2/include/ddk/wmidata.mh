@@ -1,0 +1,26 @@
+/*
+ *  wmidata.h   Windows Management Instrumentation (WMI) data
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _wmidata_h_
+#define _wmidata_h_
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* This implementation of wmidata.h exists solely to get mcd.h to build.  It is highly
+ * incomplete.
+ */
+
+/* WMI changer problem device error */
+typedef struct _WMI_CHANGER_PROBLEM_DEVICE_ERROR {
+    ULONG   ChangerProblemType;
+} WMI_CHANGER_PROBLEM_DEVICE_ERROR;
+typedef WMI_CHANGER_PROBLEM_DEVICE_ERROR    *PWMI_CHANGER_PROBLEM_DEVICE_ERROR;
+    
+:include cplusepi.sp
+
+#endif /* _wmidata_h_ */
+
