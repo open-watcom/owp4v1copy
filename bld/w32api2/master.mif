@@ -317,6 +317,7 @@ ddk_headers =        &
         kbdmou.h     &
         mce.h        &
         miniport.h   &
+        mountdev.h   &
         mountmgr.h   &
         ndis.h       &
         netevent.h   &
