@@ -323,6 +323,7 @@ ddk_headers =        &
         netevent.h   &
         netpnp.h     &
         ntddcdrm.h   &
+        ntddchgr.h   &
         ntdddisk.h   &
         ntddk.h      &
         ntddkbd.h    &
