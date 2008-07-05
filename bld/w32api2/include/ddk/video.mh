@@ -13,7 +13,7 @@
 :include cpluspro.sp
 
 /* Macro to specify video port */
-#define VIDEOPORT_API   __declspec(dllimport)
+#define VIDEOPORT_API
 
 /* Primitive data types */
 typedef LONG        VP_STATUS;

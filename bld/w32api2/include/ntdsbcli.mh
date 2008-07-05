@@ -13,7 +13,7 @@
 :include cpluspro.sp
 
 /* Macro to specify backup client functions */
-#define NTDSBCLI_API    __declspec(dllimport) __stdcall
+#define NTDSBCLI_API    __stdcall
 
 /* Backup file type data type */
 #ifdef UNICODE
