@@ -1078,7 +1078,7 @@ static bool DefPubSym( void *_pub, void *_info )
         leader = seg->u.leader;
         /* address in symbol table is actually signed_32 offset
            from segdata zero */
-        if( seg->isabs || ( leader->dbgtype != NOT_DEBUGGING_INFO ) ) {
+        if( seg->isabs || IS_DBG_INFO( leader ) ) {
             XDefSymAddr( pub, pub->addr.off + seg->a.delta
                              + leader->seg_addr.off, leader->seg_addr.seg );
         } else {

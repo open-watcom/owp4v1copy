@@ -176,7 +176,7 @@ void NewSegment( seg_leader *seg )
     bool        auto_group;
 
     group = seg->group;
-    if( seg->dbgtype != NOT_DEBUGGING_INFO ) {
+    if( IS_DBG_INFO( seg ) ) {
         CurrentSeg = NULL;
         Align( seg->align );
         ChkLocated(&seg->seg_addr, seg->segflags & SEG_FIXED);

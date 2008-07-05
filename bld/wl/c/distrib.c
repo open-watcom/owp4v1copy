@@ -133,13 +133,13 @@ static void MarkDead( void *_seg )
         return;
 
     if( seg->iscode ) {
-        seg->isdead = 1;
+        seg->isdead = TRUE;
     } else {
         if( FmtData.type & MK_PE ) {
             char *segname = seg->u.leader->segname;
             if( ( strcmp( segname, CoffPDataSegName ) == 0 )
                 || ( strcmp(segname, CoffReldataSegName) == 0 ) ) {
-                seg->isdead = 1;
+                seg->isdead = TRUE;
             }
         }
     }

@@ -415,6 +415,7 @@ enum {
 };
 
 #define IS_DBG_DWARF( x ) ((x)->dbgtype >= DWARF_DEBUG_INFO)
+#define IS_DBG_INFO( x ) ((x)->dbgtype != NOT_DEBUGGING_INFO)
 
 /*
  * these are used to keep track of each individual contribution to a segment.

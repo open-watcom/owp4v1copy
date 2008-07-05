@@ -397,16 +397,14 @@ void CVGenModule( void )
     GenSrcModHeader();
 }
 
-void CVAddLocal( unsigned_16 info, offset length )
+void CVAddLocal( seg_leader *seg, offset length )
 /*******************************************************/
 // called during pass 1 final segment processing.
 {
-    if( length > 0xFFFF ) {
-        if( info != NOT_DEBUGGING_INFO ) {
+    if( IS_DBG_INFO( seg ) ) {
+        if( length > 0xFFFF ) {
             LnkMsg( WRN+LOC+MSG_DEBUG_TOO_LARGE, "s", "Codeview" );
-        }
-    } else {
-        if( info != NOT_DEBUGGING_INFO ) {
+        } else {
             AddSubSection( FALSE );
         }
     }
@@ -639,7 +637,7 @@ static void DefLocal( void *_sdata )
     sst         sect;
 
     leader = sdata->u.leader;
-    if( !sdata->isdead && ( leader->dbgtype != NOT_DEBUGGING_INFO ) ) {
+    if( !sdata->isdead && IS_DBG_INFO( leader ) ) {
         if( leader->dbgtype == MS_TYPE ) {
             sect = sstTypes;
         } else {

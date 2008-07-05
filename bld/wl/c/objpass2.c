@@ -100,7 +100,7 @@ bool LoadObj( segdata *seg )
     seg_leader *leader;
 
     leader = seg->u.leader;
-    if( ( leader == NULL ) || DBISkip( leader->dbgtype ) )
+    if( ( leader == NULL ) || DBISkip( leader ) )
         return( FALSE );
     CurrRec.seg = seg;
     if( leader->group == NULL ) {

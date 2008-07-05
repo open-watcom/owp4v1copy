@@ -1019,7 +1019,7 @@ void PermEndMod( mod_entry *mod )
 void *GetSegContents( segdata *sdata, virt_mem off )
 /**********************************************************/
 {
-    if( OldSymFile != NULL && sdata->u.leader->dbgtype != NOT_DEBUGGING_INFO ) {
+    if( OldSymFile != NULL && IS_DBG_INFO( sdata->u.leader ) ) {
         return( OldSymFile + off );
     }
     return( OldExe + off );

@@ -312,7 +312,7 @@ static void CheckRWData( frame_spec *targ, targ_addr *addr )
         && IsReadOnly( LastSegData ) ) {
         if( ( !IS_SYM_IMPORTED( targ->u.sym ) )
             && ( !IsReadOnly( GetFrameSegData( targ ) ) ) ) {
-            if( CurrRec.seg->u.leader->dbgtype == NOT_DEBUGGING_INFO ) {
+            if( !IS_DBG_INFO( CurrRec.seg->u.leader ) ) {
                 if( targ->type == TARGET_SEGWD ) {
                     sym.name = targ->u.sdata->u.leader->segname;
                     LnkMsg( LOC+WRN+MSG_RELOC_TO_RWDATA_SEG, "aS", addr, &sym );
@@ -955,7 +955,7 @@ static offset FindRealAddr( fix_data *fix )
     bool        dbiflat;
 
     off = fix->tgt_addr.off;
-    dbiflat = DBINoReloc( CurrRec.seg->u.leader->dbgtype );
+    dbiflat = DBINoReloc( CurrRec.seg->u.leader );
     if( ( fix->type & FIX_ABS )
         || dbiflat && !( CurrMod->modinfo & MOD_FLATTEN_DBI ) ) {
         return( off );
@@ -1019,7 +1019,7 @@ static void PatchData( fix_data *fix )
         fix->additive = TRUE;
     if( fix->type & FIX_REL )
         return;
-    isdbi = DBINoReloc( CurrRec.seg->u.leader->dbgtype );
+    isdbi = DBINoReloc( CurrRec.seg->u.leader );
     if( fix->imported ) {
         if( isdbi ) {
             fix->tgt_addr.off = 0;      // crazy person has imports in the dbi

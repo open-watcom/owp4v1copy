@@ -94,17 +94,17 @@ void DBIP1ModuleScanned( void )
 {
 }
 
-bool DBISkip( unsigned_16 info )
+bool DBISkip( seg_leader *seg )
 /*************************************/
 {
-    info = info;
+    seg = seg;
     return FALSE;
 }
 
-bool DBINoReloc( unsigned_16 info )
+bool DBINoReloc( seg_leader *seg )
 /****************************************/
 {
-    info = info;
+    seg = seg;
     return FALSE;
 }
 
@@ -138,10 +138,10 @@ void DBIDefClass( class_entry *cl, unsigned_32 size )
     size = size;
 }
 
-void DBIAddLocal( unsigned_16 info, offset length )
+void DBIAddLocal( seg_leader *seg, offset length )
 /**********************************************************/
 {
-    info = info;
+    seg = seg;
     length = length;
 }
 

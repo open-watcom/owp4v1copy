@@ -39,7 +39,7 @@ extern void     ODBIGenModule( void );
 extern void     ODBIAddFakeModule( unsigned );
 extern void     ODBIGenFakeModule( char * );
 extern void     ODBIDefClass( class_entry *, unsigned_32 );
-extern void     ODBIAddLocal( unsigned_16, offset );
+extern void     ODBIAddLocal( seg_leader *, offset );
 extern void     ODBIGenLocal( segdata * );
 extern void     ODBIAddGlobal( symbol * );
 extern void     ODBIGenGlobal( symbol *, section * );

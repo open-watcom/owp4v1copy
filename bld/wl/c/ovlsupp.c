@@ -690,7 +690,7 @@ void OvlPass1( void )
     OvlVecStart = DefISymbol( _OvlVecStartName );
     OvlVecEnd = DefISymbol( _OvlVecEndName );
 
-    OvlSeg = InitLeader( "", 0 );
+    OvlSeg = InitLeader( "" );
     OvlSeg->class = FindClass( Root, OvlMgrClass, 0, 1 );
     OvlSeg->combine = COMBINE_INVALID;
     OvlSegData = AllocSegData();

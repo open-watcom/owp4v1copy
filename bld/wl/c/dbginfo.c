@@ -203,7 +203,7 @@ static void DoAddLocal( dbi_section *dbi, offset length )
 #endif
 }
 
-void ODBIAddLocal( unsigned_16 info, offset length )
+void ODBIAddLocal( seg_leader *seg, offset length )
 /*********************************************************/
 {
     debug_info          *dinfo;
@@ -211,10 +211,10 @@ void ODBIAddLocal( unsigned_16 info, offset length )
     dinfo = CurrSect->dbg_info;
     if( dinfo == NULL )
         return;
-    if( info == MS_TYPE ) {
+    if( seg->dbgtype == MS_TYPE ) {
         DEBUG(( DBG_DBGINFO, "adding type info %h", length ));
         DoAddLocal( &dinfo->typelinks, length );
-    } else if( info == MS_LOCAL ) {
+    } else if( seg->dbgtype == MS_LOCAL ) {
         DEBUG(( DBG_DBGINFO, "adding local info %h", length ));
         DoAddLocal( &dinfo->locallinks, length );
     }

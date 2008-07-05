@@ -194,12 +194,12 @@ static bool MSSkip( void )
     }
 }
 
-bool DBISkip( unsigned_16 info )
+bool DBISkip( seg_leader *seg )
 /*************************************/
 // returns TRUE we should skip processing this segment because we are
 // ignoring debugging information
 {
-    switch( info ) {
+    switch( seg->dbgtype ) {
     case MS_TYPE:
         return( !( CurrMod->modinfo & DBI_TYPE ) || MSSkip() );
     case MS_LOCAL:
@@ -211,11 +211,11 @@ bool DBISkip( unsigned_16 info )
     }
 }
 
-bool DBINoReloc( unsigned_16 info )
+bool DBINoReloc( seg_leader *seg )
 /****************************************/
 // called to see if we should handle a relocation specially.
 {
-    return( info != NOT_DEBUGGING_INFO );
+    return( IS_DBG_INFO( seg ) );
 }
 
 static void AddNovGlobals( mod_entry *mod )
@@ -265,7 +265,7 @@ void DBIAddrInfoScan( seg_leader *seg,
     offset      size;
     bool        isnewmod;
 
-    if( seg->dbgtype != NOT_DEBUGGING_INFO )
+    if( IS_DBG_INFO( seg ) )
         return;
     if( ( seg->class->flags & ( CLASS_STACK | CLASS_IDATA ) )
         && ( FmtData.dll || ( FmtData.type & MK_PE ) ) )
@@ -369,14 +369,14 @@ void DBIDefClass( class_entry *cl, unsigned_32 size )
     }
 }
 
-void DBIAddLocal( unsigned_16 info, offset length )
+void DBIAddLocal( seg_leader *seg, offset length )
 /********************************************************/
 // called during pass 1 final segment processing.
 {
     if( LinkFlags & OLD_DBI_FLAG ) {
-        ODBIAddLocal( info, length );
+        ODBIAddLocal( seg, length );
     } else if( LinkFlags & CV_DBI_FLAG ) {
-        CVAddLocal( info, length );
+        CVAddLocal( seg, length );
     }
 }
 
@@ -388,7 +388,7 @@ void DBIModGlobal( void *_sym )
     if( !IS_SYM_ALIAS( sym ) && !( sym->info & SYM_DEAD ) ) {
         if( IS_SYM_IMPORTED( sym )
             || ( sym->p.seg != NULL )
-                && ( sym->p.seg->u.leader->dbgtype == NOT_DEBUGGING_INFO )
+                && !IS_DBG_INFO( sym->p.seg->u.leader )
                 && !sym->p.seg->isabs ) {
             DBIAddGlobal( sym );
         }

@@ -36,7 +36,7 @@ extern void     CVP1ModuleScanned( void );
 extern void     CVP1ModuleFinished( mod_entry * );
 extern void     CVAddModule( mod_entry *, section * );
 extern void     CVGenModule( void );
-extern void     CVAddLocal( unsigned_16, offset );
+extern void     CVAddLocal( seg_leader *, offset );
 extern void     CVAddGlobal( symbol * );
 extern void     CVGenGlobal( symbol *, section * );
 extern void     CVGenLines( lineinfo * );

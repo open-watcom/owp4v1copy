@@ -59,9 +59,9 @@
 
 static seg_leader       *LastCodeSeg;    // last code segment in current module
 
-static void MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info);
-static void FindALeader( segdata *sdata, class_entry *class, unsigned_16 info );
-static void DoAllocateSegment( segdata *sdata, char *clname );
+static seg_leader   *MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info );
+static seg_leader   *FindALeader( segdata *sdata, class_entry *class, unsigned_16 info );
+static void         DoAllocateSegment( segdata *sdata, char *clname );
 
 void ResetObjPass1( void )
 /************************/
@@ -460,22 +460,14 @@ void AddSegment( segdata *sd, class_entry *class )
 /* Add a segment to the segment list for an object file */
 {
     unsigned_16     info;
-    unsigned_16     dbiflags;
+    seg_leader      *leader;
 
     DEBUG((DBG_OLD,"- adding segment %s, class %s",sd->u.name, class->name ));
     DEBUG(( DBG_OLD, "- - size = %h, comb = %x, alignment = %x",
                       sd->length, sd->combine, sd->align ));
     info = 0;
-    dbiflags = DBIColSeg( class );
     if( sd->is32bit ) {
         info |= USE_32;
-        if( dbiflags == NOT_DEBUGGING_INFO ) {  //can use SEGD32 in 16-bit dbi
-            Set32BitMode();
-            CheckQNXSegMismatch( HAVE_16BIT_CODE );
-        }
-    } else if( dbiflags == NOT_DEBUGGING_INFO ) {
-        Set16BitMode();
-        CheckQNXSegMismatch( FMT_SEEN_32_BIT );
     }
     if( class->flags & CLASS_CODE ) {
         info |= SEG_CODE;
@@ -484,37 +476,44 @@ void AddSegment( segdata *sd, class_entry *class )
         info |= SEG_ABSOLUTE;
         sd->isdefd = TRUE;
     }
-    if( DBISkip( dbiflags ) ) {
-        sd->isdead = TRUE;
-    }
     if( sd->isabs || sd->combine == COMBINE_INVALID ) {
-        MakeNewLeader( sd, class, info );
+        leader = MakeNewLeader( sd, class, info );
     } else {
         char    *seg_name = sd->u.name;
 
-        FindALeader( sd, class, info );
-        if( ( (sd->u.leader->info & USE_32) != (info & USE_32) ) &&
+        leader = FindALeader( sd, class, info );
+        if( ( (leader->info & USE_32) != (info & USE_32) ) &&
             !( (FmtData.type & MK_OS2_FLAT) && FmtData.u.os2.mixed1632 ) ) {
             char    *segname_16;
             char    *segname_32;
 
             if( info & USE_32 ) {
-                segname_16 = sd->u.leader->segname;
+                segname_16 = leader->segname;
                 segname_32 = seg_name;
             } else {
                 segname_16 = seg_name;
-                segname_32 = sd->u.leader->segname;
+                segname_32 = leader->segname;
             }
             LnkMsg( ERR+MSG_CANT_COMBINE_32_AND_16, "12", segname_32, segname_16 );
         }
     }
-    Ring2Append( &CurrMod->segs, sd );
-    sd->u.leader->dbgtype = dbiflags;
+    if( !IS_DBG_INFO( leader ) ) {
+        if( sd->is32bit ) {
+            Set32BitMode();
+            CheckQNXSegMismatch( HAVE_16BIT_CODE );
+        } else {
+            Set16BitMode();
+            CheckQNXSegMismatch( FMT_SEEN_32_BIT );
+        }
+    }
+    if( DBISkip( leader ) ) {
+        sd->isdead = TRUE;
+    }
     if( sd->isabs ) {
-        sd->u.leader->seg_addr.off = 0;
-        sd->u.leader->seg_addr.seg = sd->frame;
+        leader->seg_addr.off = 0;
+        leader->seg_addr.seg = sd->frame;
     } else if( !sd->isdead ) {
-        DBIAddLocal( dbiflags, sd->length );
+        DBIAddLocal( leader, sd->length );
     }
 }
 
@@ -606,24 +605,26 @@ static void AddToLeader( seg_leader *seg, segdata *sdata )
     } else {    // it must be COMBINE_ADD
         RingAppend( &seg->pieces, sdata );
     }
+    Ring2Append( &CurrMod->segs, sdata );
 }
 
-static void FindALeader( segdata *sdata, class_entry *class, unsigned_16 info )
-/*****************************************************************************/
+static seg_leader *FindALeader( segdata *sdata, class_entry *class, unsigned_16 info )
+/************************************************************************************/
 {
-    seg_leader  *seg;
+    seg_leader  *leader;
 
-    seg = RingLookup( class->segs, CheckClassName, sdata );
-    if( seg == NULL ) {
-        MakeNewLeader( sdata, class, info );
+    leader = RingLookup( class->segs, CheckClassName, sdata );
+    if( leader == NULL ) {
+        leader = MakeNewLeader( sdata, class, info );
     } else {
-        sdata->u.leader = seg;
-        AddToLeader( seg, sdata );
+        sdata->u.leader = leader;
+        AddToLeader( leader, sdata );
     }
+    return( leader );
 }
 
-seg_leader *InitLeader( char *segname, unsigned_16 info )
-/**************************************************************/
+seg_leader *InitLeader( char *segname )
+/*************************************/
 {
     seg_leader  *seg;
 
@@ -637,7 +638,7 @@ seg_leader *InitLeader( char *segname, unsigned_16 info )
     seg->seg_addr.off = 0;
     seg->seg_addr.seg = UNDEFINED;
     seg->group = NULL;
-    seg->info = info;
+    seg->info = 0;
     seg->segname = StringStringTable( &PermStrings, segname );
     seg->dbgtype = NOT_DEBUGGING_INFO;
     seg->segflags = FmtData.def_seg_flags;
@@ -651,16 +652,22 @@ void FreeLeader( void *seg )
     CarveFree( CarveLeader, seg );
 }
 
-static void MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info)
-/******************************************************************************/
+static seg_leader *MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info )
+/**************************************************************************************/
 {
-    sdata->u.leader = InitLeader( sdata->u.name, info );
-    sdata->u.leader->align = sdata->align;
-    sdata->u.leader->combine = sdata->combine;
-    sdata->u.leader->class = class;
-    CheckForLast( sdata->u.leader, class );
-    RingAppend( &class->segs, sdata->u.leader );
-    RingAppend( &sdata->u.leader->pieces, sdata );
+    seg_leader *leader;
+
+    leader = InitLeader( sdata->u.name );
+    leader->align = sdata->align;
+    leader->combine = sdata->combine;
+    leader->class = class;
+    leader->info = info;
+    leader->dbgtype = DBIColSeg( class );
+    CheckForLast( leader, class );
+    RingAppend( &class->segs, leader );
+    RingAppend( &leader->pieces, sdata );
+    Ring2Append( &CurrMod->segs, sdata );
+    return( leader );
 }
 
 static bool CmpLeaderPtr( void *a, void *b )
@@ -781,6 +788,7 @@ static segdata *GetSegment( char *seg_name, char *class_name, char *group_name,
     group_entry         *group;
     unsigned_16         info;
     segdata             *sdata;
+    seg_leader          *leader;
 
     sect = GetOvlSect( class_name );
     class = FindClass( sect, class_name, !use_16, FALSE );
@@ -794,12 +802,11 @@ static segdata *GetSegment( char *seg_name, char *class_name, char *group_name,
         info |= USE_32;
         sdata->is32bit = TRUE;
     }
-    FindALeader( sdata, class, info );
-    Ring2Append( &CurrMod->segs, sdata );
+    leader = FindALeader( sdata, class, info );
     if( group_name != NULL ) {
         /* put in appropriate group */
         group = GetGroup( group_name );
-        AddToGroup( group, sdata->u.leader );
+        AddToGroup( group, leader );
     }
     return( sdata );
 }
