@@ -318,6 +318,7 @@ ddk_headers =        &
         mcd.h        &
         mce.h        &
         miniport.h   &
+        minitape.h   &
         mountdev.h   &
         mountmgr.h   &
         ndis.h       &
@@ -496,6 +497,7 @@ ddk_libs =           &
         ntoskrnl.lib &
         rtlver.lib   &
         scsiport.lib &
+        tape.lib     &
         usbcamd.lib  &
         videoprt.lib &
         wdmguid.lib  &

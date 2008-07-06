@@ -10,9 +10,74 @@
 :include readonly.sp
 :include cpluspro.sp
 
-/* This implementation of wmidata.h exists solely to get mcd.h to build.  It is highly
- * incomplete.
+/* This implementation of wmidata.h exists solely to get mcd.h and minitape.h to build.
+ * It is highly incomplete.
  */
+
+/* WMI tape drive parameters */
+typedef struct _WMI_TAPE_DRIVE_PARAMETERS {
+    ULONG   MaximumBlockSize;
+    ULONG   MinimumBlockSize;
+    ULONG   DefaultBlockSize;
+    ULONG   MaximumPartitionCount;
+    BOOLEAN CompressionCapable;
+    BOOLEAN CompressionEnabled;
+    BOOLEAN ReportSetmarks;
+    BOOLEAN HardwareErrorCorrection;
+} WMI_TAPE_DRIVE_PARAMETERS;
+typedef WMI_TAPE_DRIVE_PARAMETERS   *PWMI_TAPE_DRIVE_PARAMETERS;
+
+/* WMI tape media parameters */
+typedef struct _WMI_TAPE_MEDIA_PARAMETERS {
+    ULONGLONG   MaximumCapacity;
+    ULONGLONG   AvailableCapacity;
+    ULONG       BlockSize;
+    ULONG       PartitionCount;
+    BOOLEAN     MediaWriteProtected;
+} WMI_TAPE_MEDIA_PARAMETERS;
+typedef WMI_TAPE_MEDIA_PARAMETERS   *PWMI_TAPE_MEDIA_PARAMETERS;
+
+/* WMI tape problem warning */
+typedef struct _WMI_TAPE_PROBLEM_WARNING {
+    ULONG   DriveProblemType;
+    UCHAR   TapeData[512];
+} WMI_TAPE_PROBLEM_WARNING;
+typedef WMI_TAPE_PROBLEM_WARNING    *PWMI_TAPE_PROBLEM_WARNING;
+
+/* WMI tape problem I/O error */
+typedef struct _WMI_TAPE_PROBLEM_IO_ERROR {
+    ULONG   ReadCorrectedWithoutDelay;
+    ULONG   ReadCorrectedWithDelay;
+    ULONG   ReadTotalErrors;
+    ULONG   ReadTotalCorrectedErrors;
+    ULONG   ReadTotalUncorrectedErrors;
+    ULONG   ReadCorrectionAlgorithmProcessed;
+    ULONG   WriteCorrectedWithoutDelay;
+    ULONG   WriteCorrectedWithDelay;
+    ULONG   WriteTotalErrors;
+    ULONG   WriteTotalCorrectedErrors;
+    ULONG   WriteTotalUncorrectedErrors;
+    ULONG   WriteCorrectionAlgorithmProcessed;
+    ULONG   NonMediumErrors;
+} WMI_TAPE_PROBLEM_IO_ERROR;
+typedef WMI_TAPE_PROBLEM_IO_ERROR   *PWMI_TAPE_PROBLEM_IO_ERROR;
+
+/* WMI tape problem device error */
+typedef struct _WMI_TAPE_PROBLEM_DEVICE_ERROR {
+    BOOLEAN ReadWarning;
+    BOOLEAN WriteWarning;
+    BOOLEAN HardError;
+    BOOLEAN ReadFailure;
+    BOOLEAN WriteFailure;
+    BOOLEAN UnsupportedFormat;
+    BOOLEAN TapeSnapped;
+    BOOLEAN DriveRequiresCleaning;
+    BOOLEAN TimetoCleanDrive;
+    BOOLEAN DriveHardwareError;
+    BOOLEAN ScsiInterfaceError;
+    BOOLEAN MediaLife;
+} WMI_TAPE_PROBLEM_DEVICE_ERROR;
+typedef WMI_TAPE_PROBLEM_DEVICE_ERROR   *PWMI_TAPE_PROBLEM_DEVICE_ERROR;
 
 /* WMI changer problem device error */
 typedef struct _WMI_CHANGER_PROBLEM_DEVICE_ERROR {
