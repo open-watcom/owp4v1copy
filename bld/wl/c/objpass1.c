@@ -590,6 +590,7 @@ static void AddToLeader( seg_leader *seg, segdata *sdata )
     segdata     *first;
     offset      length;
 
+    sdata->u.leader = seg;
     if( sdata->combine == COMBINE_COMMON ) {
         first = RingFirst( seg->pieces );
         length = max( first->length, sdata->length );
@@ -617,7 +618,6 @@ static seg_leader *FindALeader( segdata *sdata, class_entry *class, unsigned_16 
     if( leader == NULL ) {
         leader = MakeNewLeader( sdata, class, info );
     } else {
-        sdata->u.leader = leader;
         AddToLeader( leader, sdata );
     }
     return( leader );
@@ -657,7 +657,7 @@ static seg_leader *MakeNewLeader( segdata *sdata, class_entry *class, unsigned_1
 {
     seg_leader *leader;
 
-    leader = InitLeader( sdata->u.name );
+    sdata->u.leader = leader = InitLeader( sdata->u.name );
     leader->align = sdata->align;
     leader->combine = sdata->combine;
     leader->class = class;
