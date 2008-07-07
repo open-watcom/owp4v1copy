@@ -702,7 +702,7 @@ void FreeInfo( dir_node *dir )
             for( i=0; i < dir->e.constinfo->count; i++ ) {
 #ifdef DEBUG_OUT
                 if( dir->e.constinfo->data[i].token == T_NUM ) {
-                    DebugMsg(( "%d ", dir->e.constinfo->data[i].value ));
+                    DebugMsg(( "%d ", dir->e.constinfo->data[i].u.value ));
                 } else {
                     DebugMsg(( "%s ", dir->e.constinfo->data[i].string_ptr ));
                 }

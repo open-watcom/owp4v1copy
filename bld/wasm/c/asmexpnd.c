@@ -283,7 +283,7 @@ static void FreeConstData( const_info *constinfo )
         for( i=0; i < constinfo->count; i++ ) {
 #ifdef DEBUG_OUT
             if( constinfo->data[i].token == T_NUM ) {
-                DebugMsg(( "%d ", constinfo->data[i].value ));
+                DebugMsg(( "%d ", constinfo->data[i].u.value ));
             } else {
                 DebugMsg(( "%s ", constinfo->data[i].string_ptr ));
             }

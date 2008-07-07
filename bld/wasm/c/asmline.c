@@ -583,7 +583,7 @@ static void dbg_output( void )
         for( i = 0; i < Token_Count; i++ ) {
             switch( AsmBuffer[i]->token ) {
             case T_NUM:
-                DebugMsg(( " %d ", AsmBuffer[i]->value ));
+                DebugMsg(( " %d ", AsmBuffer[i]->u.value ));
                 break;
             case T_STRING:
                 DebugMsg(( " '%s' ", AsmBuffer[i]->string_ptr));
@@ -598,7 +598,7 @@ static void dbg_output( void )
                 DebugMsg(( " %s ", ":" ));
                 break;
             case T_RES_ID:
-                switch( AsmBuffer[i]->value ) {
+                switch( AsmBuffer[i]->u.value ) {
                 case T_PTR:
                     DebugMsg(( " %s ", "Ptr" ));
                     break;
