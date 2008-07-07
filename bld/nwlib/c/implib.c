@@ -413,7 +413,7 @@ static void peAddImport( arch_header *arch, libfile io )
             DLLName, currname, NULL, processor );
         } else {
             type = Options.r_ordinal ? ORDINAL : NAMED;
-            OmfMKImport( arch, ord_table[ i ] + ordinal_base, DLLName, currname, NULL, type );
+            OmfMKImport( arch, ord_table[ i ] + ordinal_base, DLLName, currname, currname, type );
         }
         AddSym( currname, SYM_STRONG, 0 );
         strcpy( buffer, "__imp_" );
@@ -675,13 +675,13 @@ void ProcessImport( char *name )
             CoffMKImport( arch, ORDINAL, ordinal, DLLName, symName, // JBS 99/07/01
                 NULL, Options.processor );
         }
-        buffer = MemAlloc( strlen( exportedName ) + 7 );
+        buffer = MemAlloc( strlen( symName ) + 7 );
         strcpy( buffer, "__imp_" );
-        strcat( buffer, exportedName );
+        strcat( buffer, symName );
         AddSym( buffer, SYM_WEAK, 0 );
         if( Options.processor == WL_PROC_PPC ) {
             strcpy( buffer, ".." );
-            strcat( buffer, exportedName );
+            strcat( buffer, symName );
             AddSym( buffer, SYM_WEAK, 0 );
         }
         MemFree( buffer );
@@ -695,9 +695,9 @@ void ProcessImport( char *name )
         } else {
             OmfMKImport( arch, ordinal, DLLName, symName, NULL, ORDINAL );
         }
-        //buffer = MemAlloc( strlen( exportedName ) + 7 );
+        //buffer = MemAlloc( strlen( symName ) + 7 );
         //strcpy( buffer, "__imp_" );
-        //strcat( buffer, exportedName );
+        //strcat( buffer, symName );
         //AddSym( buffer, SYM_WEAK, 0 );
         //MemFree( buffer );
         break;
