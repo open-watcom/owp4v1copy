@@ -494,7 +494,8 @@ static void WriteArMlibFileTable( void )
     arch.name = "//";
     WriteFileHeader( &arch );
     for( file = FileTable.first; file != NULL; file = file->next ) {
-        if( file->name_offset == -1 ) continue;
+        if( file->name_offset == -1 )
+            continue;
         // Always write the "full" filename for AR
         if( Options.libtype == WL_TYPE_AR && file->arch.ffname ) {
             WriteNew( file->arch.ffname, file->ffname_length );
@@ -555,8 +556,8 @@ void WriteFileTable( void )
             Options.libtype = WL_TYPE_AR;
         } else {
             Options.libtype = WL_TYPE_OMF;
-            }
         }
+    }
     if( Options.coff_found && (Options.libtype == 0 || Options.libtype == WL_TYPE_OMF) ) {
         Options.libtype = WL_TYPE_AR;
     }
@@ -599,7 +600,8 @@ void AddSym( char *name, symbol_strength strength, unsigned char info )
 
     hash = Hash( name, &name_len );
     for( sym = HashTable[ hash ]; sym != NULL; sym = sym->hash ) {
-        if( sym->len != name_len ) continue;
+        if( sym->len != name_len )
+            continue;
         if( SymbolNameCmp( sym->name, name ) == 0 ) {
             if( strength > sym->strength ) {
                 owner = &sym->file->first;

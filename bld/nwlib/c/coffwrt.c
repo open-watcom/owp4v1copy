@@ -293,7 +293,8 @@ void CoffWriteImport( libfile io, sym_file *file )
         AddCoffSection( &c_file, ".idata$2", 0x14, 3, IMAGE_SCN_ALIGN_1BYTES
             | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE );
         assert( dll_name_len != 0 );
-        if( dll_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
+        if( dll_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
         buffer = alloca( dll_name_len + 64 );
         AddCoffSection( &c_file, ".idata$6", ( dll_name_len | 1 ) + 5, 0, IMAGE_SCN_ALIGN_2BYTES
             | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE );
@@ -349,7 +350,8 @@ void CoffWriteImport( libfile io, sym_file *file )
         AddCoffSection( &c_file, ".idata$4", 0x4, 0, IMAGE_SCN_ALIGN_4BYTES
             | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE );
         assert( dll_name_len != 0 );
-        if( dll_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
+        if( dll_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
         buffer = alloca( dll_name_len + 64 );
         buffer[0] = 0x7f;
         strcpy( buffer + 1, dllName );
@@ -364,9 +366,11 @@ void CoffWriteImport( libfile io, sym_file *file )
     case ORDINAL:
         SetCoffFile( &c_file, file->import->processor, file->arch.date, 0 );
         assert( dll_name_len != 0 );
-        if( dll_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
+        if( dll_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
         assert( sym_name_len != 0 );
-        if( sym_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO SYMBOL NAME" );
+        if( sym_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO SYMBOL NAME" );
         buffer = alloca( max( dll_name_len, sym_name_len ) + 64 );
         switch( file->import->processor ) {
         case WL_PROC_AXP:
@@ -468,9 +472,11 @@ void CoffWriteImport( libfile io, sym_file *file )
     case NAMED:
         SetCoffFile( &c_file, file->import->processor, file->arch.date, 0 );
         assert( dll_name_len != 0 );
-        if( dll_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
+        if( dll_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO DLL NAME" );
         assert( exported_name_len != 0 );
-        if( exported_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO EXPORTED NAME" );
+        if( exported_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO EXPORTED NAME" );
         buffer = alloca( max( dll_name_len, exported_name_len ) + 64 );
         switch( file->import->processor ) {
         case WL_PROC_AXP:
@@ -526,7 +532,8 @@ void CoffWriteImport( libfile io, sym_file *file )
             | IMAGE_SCN_MEM_READ |  IMAGE_SCN_MEM_WRITE );
         AddCoffSymSec( &c_file, IMAGE_COMDAT_SELECT_ASSOCIATIVE );
         assert( sym_name_len != 0 );
-        if( sym_name_len == 0 ) FatalError( ERR_CANT_DO_IMPORT, "AR", "NO SYMBOL NAME" );
+        if( sym_name_len == 0 )
+            FatalError( ERR_CANT_DO_IMPORT, "AR", "NO SYMBOL NAME" );
         AddCoffSection( &c_file, ".idata$6", ( sym_name_len | 1 ) + 3, 0, IMAGE_SCN_ALIGN_2BYTES
             | IMAGE_SCN_LNK_COMDAT | IMAGE_SCN_CNT_INITIALIZED_DATA
             | IMAGE_SCN_MEM_READ |  IMAGE_SCN_MEM_WRITE );

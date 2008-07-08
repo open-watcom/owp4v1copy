@@ -136,8 +136,8 @@ static bool elfAddImport( arch_header *arch, libfile io )
     }
     switch( ORLFileGetMachineType( file->orl ) ) {
     case ORL_MACHINE_TYPE_PPC601:
-       processor = WL_PROC_PPC;
-       break;
+        processor = WL_PROC_PPC;
+        break;
     default:
         FatalError( ERR_CANT_READ, io->name, "Not a PPC DLL" );
     }
@@ -497,10 +497,11 @@ void ProcessImport( char *name )
     if( *name ) {
         ordString = GetImportString( &name, namecopy );
         if( *ordString ) {
-            if( isdigit( *ordString ) )
+            if( isdigit( *ordString ) ) {
                 ordinal = strtoul( ordString, NULL, 0 );
-            else
+            } else {
                 symName = ordString;
+            }
         }
 
         /*
@@ -559,35 +560,32 @@ void ProcessImport( char *name )
     }
 
     if( Options.processor == 0 ) {
-    switch( Options.filetype ) {
-    case WL_TYPE_OMF:
-        Options.processor = WL_PROC_X86;
-        break;
-    case WL_TYPE_ELF:
-        Options.processor = WL_PROC_PPC;
-        break;
-    default:
-        switch( Options.libtype ) {
+        switch( Options.filetype ) {
         case WL_TYPE_OMF:
-        Options.processor = WL_PROC_X86;
-        break;
-        case WL_TYPE_MLIB:
-        Options.processor = WL_PROC_PPC;
-        break;
+            Options.processor = WL_PROC_X86;
+            break;
+        case WL_TYPE_ELF:
+            Options.processor = WL_PROC_PPC;
+            break;
         default:
-# ifdef __PPC__
-        Options.processor = WL_PROC_PPC;
+            switch( Options.libtype ) {
+            case WL_TYPE_OMF:
+                Options.processor = WL_PROC_X86;
+                break;
+            case WL_TYPE_MLIB:
+                Options.processor = WL_PROC_PPC;
+                break;
+            default:
+#if defined( __PPC__ )
+                Options.processor = WL_PROC_PPC;
+#elif defined( __AXP__ )
+                Options.processor = WL_PROC_AXP;
 #else
-#ifdef __AXP__
-        Options.processor = WL_PROC_AXP;
-#else
-        Options.processor = WL_PROC_X86;
+                Options.processor = WL_PROC_X86;
 #endif
-#endif
+            }
         }
-        }
-    Warning( ERR_NO_PROCESSOR, procname[Options.processor] );
-
+        Warning( ERR_NO_PROCESSOR, procname[Options.processor] );
     }
     if( Options.filetype == 0 ) {
         switch( Options.libtype ) {
@@ -629,12 +627,12 @@ void ProcessImport( char *name )
     }
     if( !Options.libtype ) {
         switch( Options.filetype ) {
-            case WL_TYPE_ELF:
-                Options.libtype = WL_TYPE_MLIB;
-                break;
-            case WL_TYPE_COFF:
-                Options.libtype = WL_TYPE_AR;
-                break;
+        case WL_TYPE_ELF:
+            Options.libtype = WL_TYPE_MLIB;
+            break;
+        case WL_TYPE_COFF:
+            Options.libtype = WL_TYPE_AR;
+            break;
         }
     }
 
@@ -775,29 +773,29 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
     switch( type ) {
     case IMPORT_DESCRIPTOR:
         return( COFF_FILE_HEADER_SIZE + 0xe0            // header
-        + 2 * COFF_SECTION_HEADER_SIZE +                // section table (headers)
-        + 0x14 + 3 * COFF_RELOC_SIZE + (len | 1) + 5    // section data
-        + 7 * COFF_SYM_SIZE                             // symbol table
-        + 4 + len + 21 + 25 + len + 18 );               // string table
+            + 2 * COFF_SECTION_HEADER_SIZE +                // section table (headers)
+            + 0x14 + 3 * COFF_RELOC_SIZE + (len | 1) + 5    // section data
+            + 7 * COFF_SYM_SIZE                             // symbol table
+            + 4 + len + 21 + 25 + len + 18 );               // string table
     case NULL_IMPORT_DESCRIPTOR:
         return( COFF_FILE_HEADER_SIZE
-        + COFF_SECTION_HEADER_SIZE
-        + 0x14
-        + COFF_SYM_SIZE
-        + 4 + 25 ) ;
+            + COFF_SECTION_HEADER_SIZE
+            + 0x14
+            + COFF_SYM_SIZE
+            + 4 + 25 ) ;
     case NULL_THUNK_DATA:
         return( COFF_FILE_HEADER_SIZE
-        + 2 * COFF_SECTION_HEADER_SIZE
-        + 0x4 + 0x4
-        + COFF_SYM_SIZE
-        + 4 + len + 18 ) ;
+            + 2 * COFF_SECTION_HEADER_SIZE
+            + 0x4 + 0x4
+            + COFF_SYM_SIZE
+            + 4 + len + 18 ) ;
     case ORDINAL:
         sym_len = strlen( impName );
         ret = COFF_FILE_HEADER_SIZE
-        + 3 * COFF_SECTION_HEADER_SIZE
-        + 4 + 4
-        + COFF_SYM_SIZE * 9
-        + 4 + len + 21;
+            + 3 * COFF_SECTION_HEADER_SIZE
+            + 4 + 4
+            + COFF_SYM_SIZE * 9
+            + 4 + len + 21;
         switch( processor ) {
         case WL_PROC_AXP:
             if( sym_len > 8 ) {
@@ -835,12 +833,12 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
         sym_len = strlen( impName );
         exp_len = strlen( exportedName );
         ret = COFF_FILE_HEADER_SIZE
-        + 4 * COFF_SECTION_HEADER_SIZE
-        + 4 + COFF_RELOC_SIZE       // idata$5
-        + 4 + COFF_RELOC_SIZE       // idata$4
-        + ( sym_len | 1 ) + 3       // idata$6
-        + COFF_SYM_SIZE * 0xb
-        + 4 + len + 21;             // 21 = strlen("__IMPORT_DESCRIPTOR_") + 1
+            + 4 * COFF_SECTION_HEADER_SIZE
+            + 4 + COFF_RELOC_SIZE       // idata$5
+            + 4 + COFF_RELOC_SIZE       // idata$4
+            + ( sym_len | 1 ) + 3       // idata$6
+            + COFF_SYM_SIZE * 0xb
+            + 4 + len + 21;             // 21 = strlen("__IMPORT_DESCRIPTOR_") + 1
         switch( processor ) {
         case WL_PROC_AXP:
             if( exp_len > 8 ) {
@@ -861,11 +859,11 @@ int CoffImportSize( importType type, char *DLLName, char *impName,
             } else if( exp_len > 2 ) {
                 ret += exp_len + 7;
             }
-            ret  += COFF_SYM_SIZE * 6
-            + 2 * COFF_SECTION_HEADER_SIZE
-            + 0x18 + COFF_RELOC_SIZE
-            + 0X14 + COFF_RELOC_SIZE * 4    // .pdata
-            + 0x8 + COFF_RELOC_SIZE * 2;    // .reldata
+            ret += COFF_SYM_SIZE * 6
+                + 2 * COFF_SECTION_HEADER_SIZE
+                + 0x18 + COFF_RELOC_SIZE
+                + 0X14 + COFF_RELOC_SIZE * 4    // .pdata
+                + 0x8 + COFF_RELOC_SIZE * 2;    // .reldata
             break;
         case WL_PROC_X86:
             // See comment for AXP above
@@ -986,7 +984,6 @@ bool AddImport( arch_header *arch, libfile io )
     unsigned_16     dos_sig;
     unsigned_32     offset;
     unsigned_16     signature;
-
 
     LibSeek( io, 0x00, SEEK_SET );
     if( LibRead( io, &dos_sig, sizeof( dos_sig ) ) == sizeof( dos_sig ) ) {
