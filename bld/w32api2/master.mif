@@ -333,6 +333,7 @@ ddk_headers =        &
         ntddk.h      &
         ntddkbd.h    &
         ntddmou.h    &
+        ntddpar.h    &
         ntddscsi.h   &
         ntddser.h    &
         ntddstor.h   &
