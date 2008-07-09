@@ -322,6 +322,7 @@ ddk_headers =        &
         mountdev.h   &
         mountmgr.h   &
         ndis.h       &
+        ndisguid.h   &
         ndistapi.h   &
         ndiswan.h    &
         netevent.h   &
