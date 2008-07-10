@@ -786,6 +786,8 @@ void OmfMKImport( arch_header *arch, long ordinal, char *dll_name,
     NewSymFile( arch );
     CurrFile->import = MemAllocGlobal( sizeof( import_sym ) );
     CurrFile->import->DLLName = DupStrGlobal( dll_name );
+    CurrFile->import->ModName = DupStrGlobal( dll_name );
+    _splitpath( dll_name, NULL, NULL, CurrFile->import->ModName, NULL );
     CurrFile->import->ordinal = ordinal;
     if( sym_name != NULL ) {
         CurrFile->import->symName = DupStrGlobal( sym_name );
@@ -816,6 +818,8 @@ void CoffMKImport( arch_header *arch, importType type,
     CurrFile->import->type = type;
     CurrFile->import->ordinal = ordinal;
     CurrFile->import->DLLName = DupStrGlobal( DLLname );
+    CurrFile->import->ModName = DupStrGlobal( DLLname );
+    _splitpath( DLLname, NULL, NULL, CurrFile->import->ModName, NULL );
     if( symName != NULL ) {
         CurrFile->import->symName = DupStrGlobal( symName );
     } else {
@@ -827,7 +831,7 @@ void CoffMKImport( arch_header *arch, importType type,
         CurrFile->import->exportedName = NULL;
     }
     CurrFile->import->processor = processor;
-    CurrFile->arch.size = CoffImportSize( type, DLLname, symName, exportedName, processor );
+    CurrFile->arch.size = CoffImportSize( CurrFile->import );
 }
 
 void ElfMKImport( arch_header *arch, importType type, long export_size,
@@ -849,6 +853,8 @@ void ElfMKImport( arch_header *arch, importType type, long export_size,
     CurrFile->import = MemAllocGlobal( sizeof( import_sym ) );
     CurrFile->import->type = type;
     CurrFile->import->DLLName = DupStrGlobal( DLLname );
+    CurrFile->import->ModName = DupStrGlobal( DLLname );
+    _splitpath( DLLname, NULL, NULL, CurrFile->import->ModName, NULL );
     CurrFile->import->numsyms = 0;
     temp = &(CurrFile->import->symlist);
 

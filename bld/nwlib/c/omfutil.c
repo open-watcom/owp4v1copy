@@ -65,7 +65,7 @@ static void CheckForOverflow(file_offset current)
 {
     char buffer[10];
 
-    if ((current / Options.page_size) > (unsigned long)(USHRT_MAX)) {
+    if( current / Options.page_size > (unsigned long)USHRT_MAX ) {
         sprintf(buffer, "%u", Options.page_size);
         FatalError(ERR_LIB_TOO_LARGE, buffer);
     }
@@ -94,7 +94,7 @@ static bool ReadOmfRecord( libfile io )
         return( FALSE );
     }
 
-    if ( omfRec->basic.len + 3 > omfRecLen ) {
+    if( omfRec->basic.len + 3 > omfRecLen ) {
         OmfRecord *new;
         omfRecLen = omfRec->basic.len + 3;
         new = MemAlloc( omfRecLen );
@@ -201,7 +201,7 @@ static unsigned NextPrime( unsigned maj )
             maj += 2;
         } while( test == 0 );
         maj -= 2;
-        if ( test == -1 ) {
+        if( test == -1 ) {
             return( 0 );
         }
     }

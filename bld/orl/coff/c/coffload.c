@@ -338,7 +338,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
             }
             coff_reloc_sec_hnd->file_format = ORL_COFF;
             coff_reloc_sec_hnd->coff_file_hnd = coff_file_hnd;
-            coff_reloc_sec_hnd->name = SectionNames[0];
+            coff_reloc_sec_hnd->name = SectionNames[0];     // ".rel"
             coff_reloc_sec_hnd->name_alloced = COFF_FALSE;
             coff_reloc_sec_hnd->relocs_done = COFF_FALSE;
             coff_reloc_sec_hnd->size = reloc_sec_size[loop];
@@ -363,7 +363,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
     }
     coff_file_hnd->symbol_table->file_format = ORL_COFF;
     coff_file_hnd->symbol_table->coff_file_hnd = coff_file_hnd;
-    coff_file_hnd->symbol_table->name = SectionNames[1];
+    coff_file_hnd->symbol_table->name = SectionNames[1];    // ".symtab"
     coff_file_hnd->symbol_table->name_alloced = COFF_FALSE;
     coff_file_hnd->symbol_table->relocs_done = COFF_FALSE;
     coff_file_hnd->symbol_table->size = f_hdr->num_symbols * sizeof( coff_symbol );
@@ -385,7 +385,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
     }
     coff_file_hnd->string_table->file_format = ORL_COFF;
     coff_file_hnd->string_table->coff_file_hnd = coff_file_hnd;
-    coff_file_hnd->string_table->name = SectionNames[2];
+    coff_file_hnd->string_table->name = SectionNames[2];    // ".strtab"
     coff_file_hnd->string_table->name_alloced = COFF_FALSE;
     coff_file_hnd->string_table->relocs_done = COFF_FALSE;
     coff_file_hnd->string_table->size = 4; // accurately determined later

@@ -65,6 +65,7 @@ struct import_sym_struct{
     importType  type;
     short       processor;
     char        *DLLName;
+    char        *ModName;
     union {
         struct {
             long        ordinal;

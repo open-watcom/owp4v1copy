@@ -35,7 +35,7 @@ extern void CoffAddImportSymbols( arch_header *, short, long, short *, long, lon
 extern void CoffMKImport( arch_header *, importType, long, char * , char *, char *, long);
 extern void OmfMKImport( arch_header *arch, long ordinal, char *dll_name, char *sym_name, char * exp, importType type );
 extern void ElfMKImport( arch_header *, importType, long, char *, char *, Elf32_Export *, Elf32_Sym *, long );
-extern int CoffImportSize( importType, char *, char *, char *, long);
+extern int CoffImportSize( import_sym * );
 extern int ElfImportSize( import_sym * );
 extern void CoffWriteImport( libfile, sym_file * );
 extern void ElfWriteImport( libfile, sym_file * );
