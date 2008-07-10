@@ -367,6 +367,7 @@ ddk_headers =        &
         winddi.h     &
         wmidata.h    &
         wmilib.h     &
+        ws2san.h     &
         xfilter.h
 
 directx_headers =    &
