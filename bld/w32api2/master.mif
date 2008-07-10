@@ -345,6 +345,7 @@ ddk_headers =        &
         ntnls.h      &
         ntpoapi.h    &
         ntstatus.h   &
+        parallel.h   &
         poclass.h    &
         srb.h        &
         scsi.h       &
