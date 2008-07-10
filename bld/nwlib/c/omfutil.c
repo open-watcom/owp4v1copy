@@ -30,13 +30,14 @@
 
 
 #include "wlib.h"
-static OmfRecord    *omfRec;
-static unsigned     omfRecLen;
-static unsigned long charCount;
-static unsigned long symCount;
+
+static OmfRecord        *omfRec;
+static unsigned         omfRecLen;
+static unsigned long    charCount;
+static unsigned long    symCount;
 
 
-static unsigned                         PrimeNos[] = {
+static unsigned         PrimeNos[] = {
   2,      3,      5,      7,     11,     13,     17,     19,     23,     29,
  31,     37,     41,     43,     47,     53,     59,     61,     67,     71,
  73,     79,     83,     89,     97,    101,    103,    107,    109,    113,
@@ -45,7 +46,7 @@ static unsigned                         PrimeNos[] = {
 233,    239,    241,    251,      0 /* terminator */
 };
 
-void InitOmfUtil()
+void InitOmfUtil( void )
 {
     omfRec = MemAlloc( INIT_OMF_REC_SIZE );
     omfRecLen = INIT_OMF_REC_SIZE;
@@ -53,7 +54,7 @@ void InitOmfUtil()
     symCount = 0;
 }
 
-void FiniOmfUtil()
+void FiniOmfUtil( void )
 {
     MemFree( omfRec );
     omfRecLen = 0;
@@ -84,7 +85,7 @@ void PadOmf( bool force )
         memset( tmpbuf, 0, padding );
         WriteNew( tmpbuf, padding );
         MemFree( tmpbuf);
-        }
+    }
 }
 
 static bool ReadOmfRecord( libfile io )
@@ -93,7 +94,7 @@ static bool ReadOmfRecord( libfile io )
         return( FALSE );
     }
 
-    if ( omfRec->basic.len + 3 > omfRecLen ){
+    if ( omfRec->basic.len + 3 > omfRecLen ) {
         OmfRecord *new;
         omfRecLen = omfRec->basic.len + 3;
         new = MemAlloc( omfRecLen );
@@ -139,7 +140,7 @@ void WriteOmfLibTrailer( void )
     unsigned    size;
 
     size = DIC_REC_SIZE - LibTell( NewLibrary ) % DIC_REC_SIZE;
-    if( omfRecLen < size ){
+    if( omfRecLen < size ) {
         omfRecLen = size;
         MemFree( omfRec );
         omfRec = MemAlloc( size );
@@ -158,7 +159,7 @@ void WriteOmfLibHeader( unsigned_32 dict_offset, unsigned_16 dict_size )
     rec.lib_header.page_size = Options.page_size - 3;
     rec.lib_header.dict_offset = dict_offset;
     rec.lib_header.dict_size = dict_size;
-    if( Options.respect_case ){
+    if( Options.respect_case ) {
         rec.lib_header.flags = 1;
     } else {
         rec.lib_header.flags = 0;
@@ -172,12 +173,13 @@ static int isPrime( unsigned num )
     unsigned p;
 
     for( test_p = PrimeNos;; ++test_p ) {
-        if( *test_p == 0 ){
-            return ( -1 );
+        if( *test_p == 0 ) {
+            return( -1 );
         }
         p = *test_p;
-        if(( p * p ) > num ) break;
-        if(( num % p ) == 0 ) {
+        if( ( p * p ) > num )
+            break;
+        if( ( num % p ) == 0 ) {
             return( FALSE );
         }
     }
@@ -192,14 +194,14 @@ static unsigned NextPrime( unsigned maj )
 {
     int test;
 
-    if( maj > 2 )  {
+    if( maj > 2 ) {
         maj |= 1;               /* make it odd */
-        do{
+        do {
             test = isPrime( maj );
             maj += 2;
         } while( test == 0 );
         maj -= 2;
-        if ( test == -1 ){
+        if ( test == -1 ) {
             return( 0 );
         }
     }
@@ -256,15 +258,15 @@ static bool InsertOmfDict( OmfLibBlock *lib_block, unsigned num_blocks,
     if( dblock == 0 ) {
         dblock = 1;
     }
-    entry_len = (len | 1) + 3  ;
+    entry_len = (len | 1) + 3;
     for( i = 0; i < num_blocks; i++ ) {
         loc = lib_block[block].fflag * 2;
-        for( j = 0; j < NUM_BUCKETS; j++ ){
+        for( j = 0; j < NUM_BUCKETS; j++ ) {
             if( lib_block[block].htab[bucket] == 0 ) {
-                if( ( DIC_REC_SIZE - loc - 2 ) < entry_len ){
+                if( ( DIC_REC_SIZE - loc - 2 ) < entry_len ) {
                     lib_block[block].fflag = LIB_FULL_PAGE;
                     break;
-                    }
+                }
                 lib_block[block].htab[bucket] = lib_block[block].fflag;
                 lib_block[block].fflag += entry_len / 2;
                 loc -= NUM_BUCKETS + 1;
@@ -281,7 +283,7 @@ static bool InsertOmfDict( OmfLibBlock *lib_block, unsigned num_blocks,
             }
         }
         block += dblock;
-        if( block >= num_blocks ){
+        if( block >= num_blocks ) {
             block -= num_blocks;
         }
    }
@@ -296,7 +298,7 @@ static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_fil
     unsigned    str_len;
     char        *fname;
 
-    for( ; file != NULL; file = file->next ){
+    for( ; file != NULL; file = file->next ) {
         if( file->import ) {
             fname = file->import->symName;
         } else {
@@ -307,13 +309,13 @@ static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_fil
         ret = InsertOmfDict( lib_block, num_blocks, fname,
             str_len + 1, file->new_offset );
         fname[ str_len ] = 0;
-        if( ret == FALSE ){
+        if( ret == FALSE ) {
             return( ret );
         }
-        for( sym = file->first; sym != NULL; sym = sym->next ){
+        for( sym = file->first; sym != NULL; sym = sym->next ) {
             ret = InsertOmfDict( lib_block, num_blocks, sym->name,
                 sym->len, file->new_offset );
-            if( ret == FALSE ){
+            if( ret == FALSE ) {
                 return( ret );
             }
         }
@@ -335,17 +337,17 @@ unsigned WriteOmfDict( sym_file *first )
                     ( charCount + 3 + BLOCK_NAME_LEN - 1 ) / BLOCK_NAME_LEN ) -1;
 
     lib_block = NULL;
-    do{
+    do {
         num_blocks ++;
         num_blocks = NextPrime( num_blocks );
-        if( num_blocks == 0 ){
+        if( num_blocks == 0 ) {
             return( 0 );
         }
         dict_size = num_blocks * sizeof( OmfLibBlock );
         lib_block = MemRealloc( lib_block, dict_size );
         memset( lib_block, 0, dict_size );
-        for( i = 0; i < num_blocks; i ++ ) {
-            lib_block[i].fflag = (NUM_BUCKETS + 1 ) / 2;
+        for( i = 0; i < num_blocks; i++ ) {
+            lib_block[i].fflag = ( NUM_BUCKETS + 1 ) / 2;
         }
         done = HashOmfSymbols( lib_block, num_blocks, first );
     } while( done == FALSE );
@@ -392,7 +394,7 @@ void WriteOmfFile( sym_file *file )
     //be word aligned
     current = LibTell(NewLibrary);
     CheckForOverflow(current);
-    file->new_offset = current / Options.page_size ;
+    file->new_offset = current / Options.page_size;
     if( file->import == NULL ) {
         charCount += ( strlen( MakeFName( file->arch.name ) ) + 1 ) | 1;
         // Options.page_size is always a power of 2 so someone should optimize
@@ -406,7 +408,7 @@ void WriteOmfFile( sym_file *file )
         }
         do {
             ReadOmfRecord( io );
-            switch( omfRec->basic.type ){
+            switch( omfRec->basic.type ) {
             case CMD_THEADR:
                 trimOmfHeader();
                 break;
@@ -414,14 +416,14 @@ void WriteOmfFile( sym_file *file )
             case CMD_LINS32:
             case CMD_LINNUM:
             case CMD_LINN32:
-                if( Options.strip_line ){
+                if( Options.strip_line ) {
                     continue;
                 }
                 break;
             case CMD_COMENT:
                 switch( omfRec->basic.contents[1] ) {
                 case CMT_LINKER_DIRECTIVE:
-                    if( omfRec->time.subclass == LDIR_OBJ_TIMESTAMP ){
+                    if( omfRec->time.subclass == LDIR_OBJ_TIMESTAMP ) {
                         time_stamp = TRUE;
                     }
                     break;
@@ -444,13 +446,13 @@ void WriteOmfFile( sym_file *file )
                 break;
             case CMD_MODEND:
             case CMD_MODE32:
-                if( !time_stamp ){
+                if( !time_stamp ) {
                     WriteTimeStamp( file );
                 }
                 break;
             }
             WriteOmfRecord();
-            } while( omfRec->basic.type != CMD_MODEND && omfRec->basic.type != CMD_MODE32 );
+        } while( omfRec->basic.type != CMD_MODEND && omfRec->basic.type != CMD_MODE32 );
         if( file->inlib_offset == 0 ) {
             LibClose( io );
         }
@@ -492,8 +494,8 @@ void WriteOmfFile( sym_file *file )
         } else {
             if( file->import->exportedName ) {
                 i = strlen( file->import->exportedName );
-                omfRec->basic.contents[ 6 + sym_len + file_len ] = i ;
-                memcpy( omfRec->basic.contents + 7 + sym_len + file_len, file->import->exportedName, i + 1 ) ;
+                omfRec->basic.contents[ 6 + sym_len + file_len ] = i;
+                memcpy( omfRec->basic.contents + 7 + sym_len + file_len, file->import->exportedName, i + 1 );
                 sym_len += i + 1;
                 omfRec->basic.len += i + 1;
             } else {
