@@ -135,6 +135,7 @@
         #undef  WANT_OVL
         #define WANT_THREAD
         #undef  WANT_RFX
+        #define WANT_CAPABILITIES
         #define TRAPENTRY TRAPFAR
     #endif
 #elif defined(__WINDOWS__)
@@ -318,6 +319,16 @@ extern unsigned ReqRfx_nametocannonical(void);
 extern unsigned ReqRfx_findfirst(void);
 extern unsigned ReqRfx_findnext(void);
 extern unsigned ReqRfx_findclose(void);
+
+#endif
+
+#ifdef WANT_CAPABILITIES
+#include "trpcapb.h"
+
+extern unsigned ReqCapabilities_get_8b_bp(void);
+extern unsigned ReqCapabilities_set_8b_bp(void);
+extern unsigned ReqCapabilities_get_exact_bp(void);
+extern unsigned ReqCapabilities_set_exact_bp(void);
 
 #endif
 

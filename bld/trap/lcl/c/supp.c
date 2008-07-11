@@ -106,6 +106,15 @@ static unsigned (* const RFXRequests[])(void) = {
 };
 #endif
 
+#if defined(WANT_CAPABILITIES)
+static unsigned (* const CapabilitiesRequests[])(void) = {
+        ReqCapabilities_get_8b_bp,
+        ReqCapabilities_set_8b_bp,
+        ReqCapabilities_get_exact_bp,
+        ReqCapabilities_set_exact_bp,
+};
+#endif
+
 typedef struct {
     const char *name;
     const void *vectors;
@@ -129,6 +138,9 @@ static const service_entry Services[] = {
 #endif
 #if defined(WANT_RFX)
     { RFX_SUPP_NAME,    RFXRequests },
+#endif
+#if defined(WANT_CAPABILITIES)
+    { CAPABILITIES_SUPP_NAME,    CapabilitiesRequests },
 #endif
     { NULL,             NULL }
 };
