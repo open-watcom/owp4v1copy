@@ -162,7 +162,7 @@ static void ControlReq( ctl_request req )
     } else {
         while( !Shared.req_done ) { 
             if ( !GetMessage( &msg, NULL, 0, 0 ) )
-            	  break;    // break on WM_QUIT, when Windows requests this. (If ever)
+                break;    // break on WM_QUIT, when Windows requests this. (If ever)
             hwnd = msg.hwnd;
             is_dbg_wnd = FALSE;
             while( hwnd ) {
@@ -184,8 +184,12 @@ static void ControlReq( ctl_request req )
                     }
                     break;
                 case WM_SYSKEYDOWN: // Do not activate menu on F10 single step in GUI debugger
-                	  if( msg.wParam == VK_F10 && !strcmp( buff, "GUIClass" ) ) {
-                	  	  break;
+                      if( msg.wParam == VK_F10 && !strcmp( buff, "GUIClass" ) ) {
+                        break;
+                      }
+                      /* Allow someone to press ALT+TAB to get focus! */
+                      if( msg.wParam == VK_MENU ){
+                        break;
                       }
                       // fall through!
                 case WM_COMMAND:

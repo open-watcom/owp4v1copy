@@ -42,6 +42,7 @@
 typedef struct {
     addr48_ptr      loc;
     DWORD           value;
+    DWORD           value_high; /* Extended for 8 byte breakpoints */
     DWORD           linear;
     unsigned short  len;
     unsigned short  dregs;
@@ -223,13 +224,37 @@ BOOL SetDebugRegs( void )
         return( FALSE );
     }
 
+    /*
+     *  Carl. I really don't like this code, but the DR count check is done above
+     *  so there's not much harm that can happen. We can't get here needing more than 4
+     *  debug registers. Just ugly!
+     *
+     *  the linear address is adjusted by size so a short across a dword boundary will screw
+     *  up I think!
+     */
+
     dr  = 0;
     dr7 = 0;
     for( i = 0, wp = wpList; i < WPCount; i++, wp++ ) {
         dr7 |= setDRn( dr, wp->linear, DRLen( wp->len ) | DR7_BWR );
         dr++;
-        if( wp->dregs == 2 ) {
-            dr7 |= setDRn( dr, wp->linear + wp->len,
+        /* This watchpoint must cross dword boundaries or be larger than 4 bytes    */
+        /* as 2 byte breakpoints must be on a word boundary and 4 byte ones on a    */
+        /* dword boundary. The trap will adjust 4 byte accesses across a boundary   */
+        /* by allocating 2 debug registers. It is now possible, then, for an 8 byte */
+        /* breakpoint to require 3 hardware registers (2, 4, 2)                     */
+        /* The macro DRLen supports 1, 2, 4 bytes ( >4 == 4 ) for BPlen             */
+        if( wp->dregs > 1 ) {  
+            /* Must be 2, 4 or 8 to cross a boundary */
+            DWORD   additive = wp->len == 8 ? 4 : wp->len;
+            dr7 |= setDRn( dr, wp->linear + additive,
+                DRLen( wp->len ) | DR7_BWR );
+            dr++;
+        }
+        /* This watchpoint must cross dword boundaries AND be larger than 4B (8!)  */
+        if( wp->dregs > 2 ) {
+            DWORD   additive = wp->len;
+            dr7 |= setDRn( dr, wp->linear + additive,
                 DRLen( wp->len ) | DR7_BWR );
             dr++;
         }
@@ -252,10 +277,15 @@ BOOL CheckWatchPoints( void )
     int     i;
 
     for( i = 0; i < WPCount; i++ ) {
-        ReadMem( wpList[i].loc.segment, wpList[i].loc.offset, &value,
-                        sizeof( value ) );
+        ReadMem( wpList[i].loc.segment, wpList[i].loc.offset, &value, sizeof( value ) );
         if( value != wpList[i].value ) {
             return( TRUE );
+        }
+        if( wpList[i].len == 8 ){
+            ReadMem( wpList[i].loc.segment, wpList[i].loc.offset+sizeof(value), &value, sizeof( value ) );
+            if( value != wpList[i].value_high ) {
+                return( TRUE );
+            }
         }
     }
     return( FALSE );
@@ -286,31 +316,65 @@ unsigned ReqSet_watch( void )
 {
     set_watch_req   *acc;
     set_watch_ret   *ret;
-    DWORD           value;
+    DWORD           value, value_high;
     watch_point     *curr;
 #if defined( MD_x86 )
     DWORD           linear;
+    DWORD           lencalc;
 #endif
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     ret->multiplier = 100000;
     ret->err = 1;
-    if( WPCount < MAX_WP ) {
+    if( WPCount < MAX_WP && acc->size <= 8 ) {
         ret->err = 0;
         curr = wpList + WPCount;
         curr->loc.segment = acc->watch_addr.segment;
         curr->loc.offset = acc->watch_addr.offset;
-        ReadMem( acc->watch_addr.segment, acc->watch_addr.offset, &value,
-            sizeof( dword ) );
+        
+        /*
+         *  This always reads 4 bytes. I think it should read min(4, acc->size) and ensure
+         *  the rest is NULed out for comparison purposes. Could read past a segment end 
+         *  otherwise
+         */
+        ReadMem( acc->watch_addr.segment, acc->watch_addr.offset, &value, sizeof( dword ) );
         curr->value = value;
         curr->len = acc->size;
+
+        /* 
+         *  Carl: The debugger main has been extended to request 8 byte breakpoints. This code was originally
+         *  only storing the bytes from above - which is probably wrong as well! 
+         *  Nevertheless, I store the next 4 bytes if the watchpoint is larger than 4 bytes
+         */
+        if(curr->len > 4){
+            ReadMem( acc->watch_addr.segment, acc->watch_addr.offset+sizeof(dword), &value_high, sizeof( dword ) );
+            curr->value_high = value_high;
+        }
+
         WPCount++;
 #if defined( MD_x86 )
         linear = CalcLinear( acc->watch_addr.segment, acc->watch_addr.offset );
+        lencalc = min(curr->len, 4);
+
+        /* Calculate where the breakpoint should be */
+        /* 1 byte breakpoint starts at where it says on the tin -   OK */
+        /* 2 byte breakpoint starts at previous word offset -       OK */        
+        /* 4 byte breakpoint starts at previous dword offset -      not sure */        
+        /* 8 byte breakpoint starts at previous dword offset -      not sure */        
         curr->linear = linear;
-        curr->linear &= ~( curr->len - 1 );
-        curr->dregs = ( linear & ( curr->len - 1 ) ) ? 2 : 1;
+        curr->linear &= ~( lencalc - 1 );
+        
+        /*
+         *  curr->linear now 
+         */
+        
+        /* This is checking if we are crossing a DWORD boundary to use 2 registers. We need to do the same if we are a QWord */
+        curr->dregs = ( linear & ( lencalc - 1 ) ) ? 2 : 1;
+        /* QWord always needs 1 more register */
+        if(curr->len == 8)
+            curr->dregs++;
+        if(1) /* New scope */
         {
             unsigned    i;
             unsigned    needed;
@@ -343,6 +407,7 @@ unsigned ReqClear_watch( void )
             dst->loc.offset = src->loc.offset;
             dst->loc.segment = src->loc.segment;
             dst->value = src->value;
+            dst->value_high = src->value_high;
             dst++;
         }
         src++;

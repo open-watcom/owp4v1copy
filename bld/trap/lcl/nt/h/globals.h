@@ -59,6 +59,8 @@ TRPGLOBAL DWORD                 LastDebugEventTid;
 TRPGLOBAL BOOL                  BreakOnKernelMessage;
 TRPGLOBAL BOOL                  PendingProgramInterrupt;
 TRPGLOBAL char                  *MsgPrefix TRPGLOBINIT( NULL );
+TRPGLOBAL BOOL                  Supporting8ByteBreakpoints TRPGLOBINIT( 0 );    /* Start disabled */
+TRPGLOBAL BOOL                  SupportingExactBreakpoints TRPGLOBINIT( 0 );    /* Start disabled */
 
 #ifdef WOW
 TRPGLOBAL wow_info              WOWAppInfo;
