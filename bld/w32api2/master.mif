@@ -351,6 +351,7 @@ ddk_headers =        &
         poclass.h    &
         srb.h        &
         scsi.h       &
+        tdi.h        &
         upssvc.h     &
         usb.h        &
         usb100.h     &
@@ -506,6 +507,7 @@ ddk_libs =           &
         rtlver.lib   &
         scsiport.lib &
         tape.lib     &
+        tdi.lib      &
         usbcamd.lib  &
         videoprt.lib &
         wdmguid.lib  &
