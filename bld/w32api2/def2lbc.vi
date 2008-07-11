@@ -32,33 +32,33 @@ assign %(ModuleName) = /\U\1/r
 # process fastcall symbols "@symbol@size"
 #
 if %3 == 386
-%s/^@\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp_@\1\2'.'%(ModuleName)'.'@\1\2'.'\1'/g
+%s/^@\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'@\1\2'.'%(ModuleName)'..'\1'/g
 else
-%s/^@\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+%s/^@\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'\1'.'%(ModuleName)'/g
 endif
 #
 # process stdcall symbols "symbol@size"
 #
 if %3 == 386
-%s/^\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp__\1\2'.'%(ModuleName)'.'_\1\2'.'\1'/g
+%s/^\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'_\1\2'.'%(ModuleName)'..'\1'/g
 else
-%s/^\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+%s/^\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'\1'.'%(ModuleName)'/g
 endif
 #
 # process DATA symbols "symbol DATA"
 #
 if %3 == 386
-%s/^\([A-Za-z0-9_]+\) DATA.*$/++'__imp__\1'.'%(ModuleName)'.'_\1'.'\1'/g
+%s/^\([A-Za-z0-9_]+\) DATA.*$/++'_\1'.'%(ModuleName)'..'\1'/g
 else
-%s/^\([A-Za-z0-9_]+\) DATA.*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+%s/^\([A-Za-z0-9_]+\) DATA.*$/++'\1'.'%(ModuleName)'/g
 endif
 #
 # process cdecl symbols "symbol"
 #
 if %3 == 386
-%s/^\([A-Za-z0-9_]+\).*$/++'__imp__\1'.'%(ModuleName)'.'_\1'.'\1'/g
+%s/^\([A-Za-z0-9_]+\).*$/++'_\1'.'%(ModuleName)'..'\1'/g
 else
-%s/^\([A-Za-z0-9_]+\).*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+%s/^\([A-Za-z0-9_]+\).*$/++'\1'.'%(ModuleName)'/g
 endif
 #
 w! %2.lbc
