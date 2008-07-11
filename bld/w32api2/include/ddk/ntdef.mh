@@ -51,7 +51,7 @@
 #define C_ASSERT( x )   typedef char __C_ASSERT__[(x) ? 1 : -1]
 
 /* Declaration specifiers */
-#define DECLSPEC_IMPORT
+#define DECLSPEC_IMPORT             __declspec(dllimport)
 #define DECLSPEC_NORETURN
 #define DECLSPEC_NOTHROW
 #define DECLSPEC_ALIGN( x )

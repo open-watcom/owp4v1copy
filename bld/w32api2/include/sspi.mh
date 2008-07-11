@@ -14,7 +14,7 @@
 #define SEC_ENTRY   __stdcall
 
 /* Macro to specify kernel security functions */
-#define KSECDDDECLSPEC
+#define KSECDDDECLSPEC  __declspec(dllimport)
 
 /* Security primitive data types */
 typedef WCHAR   SEC_WCHAR;
