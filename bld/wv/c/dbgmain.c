@@ -29,17 +29,15 @@
 ****************************************************************************/
 
 
-#include "dbgdefn.h"
-#include "dbgtoken.h"
+#include "dbgdata.h"
 #include "dbgerr.h"
-#include "dbgtoggl.h"
-#include "dbginp.h"
 #include "dbginfo.h"
-#include "dbgreg.h"
 #include "dbglit.h"
 #include "spawn.h"
 #include "dui.h"
 #include <string.h>
+#include "trpcore.h"
+#include "trpcapb.h"
 
 
 // This list of extern functions is in alphabetic order.:
@@ -77,6 +75,7 @@ extern char             *Format( char *,char *,... );
 extern void             FreeCmdList( cmd_list * );
 extern void             FreezeInpStack( void );
 extern char             *GetCmdEntry( char *tab, int index, char *buff );
+extern trap_shandle     GetSuppId( char * );
 extern void             GrabHandlers( void );
 extern void             InitAboutMessage( void );
 extern void             InitBPs( void );
@@ -187,7 +186,10 @@ extern char             *InvokeFile;
 OVL_EXTERN void         ProcNil( void );
 
 
-
+/* Internal - to be moved */
+int CapabilitiesGet8ByteBreakpointSupport();
+int CapabilitiesGetExactBreakpointSupport();
+int CapabilitiesSet8ByteBreakpointSupport(bool status);
 
 #define pick( a, b, c ) extern void b( void );
 #include "dbgcmd.h"
@@ -467,4 +469,112 @@ void DebugFini( void )
     _Free( TrpFile );
     FiniLiterals();
     FiniLocalInfo();
+}
+
+/*
+ *  Find if the current trap file supports the capabilities service
+ */
+trap_shandle    SuppCapabilitiesId = 0;
+
+bool InitCapabilities( void )
+{
+    /* Always reset in case of trap switch */
+    Supports8ByteBreakpoints = 0;
+    SupportsExactBreakpoints = 0;
+
+    SuppCapabilitiesId = GetSuppId( CAPABILITIES_SUPP_NAME );
+    if( SuppCapabilitiesId == 0 ) 
+        return( FALSE );
+        
+    CapabilitiesGet8ByteBreakpointSupport();
+    CapabilitiesGetExactBreakpointSupport();
+    
+    if(Supports8ByteBreakpoints)
+        CapabilitiesSet8ByteBreakpointSupport(TRUE);
+        
+    return( TRUE );
+}
+
+#define SUPP_CAPABILITIES_SERVICE( in, request )   \
+        in.supp.core_req        = REQ_PERFORM_SUPPLEMENTARY_SERVICE;    \
+        in.supp.id              = SuppCapabilitiesId;       \
+        in.req                  = request;
+
+int CapabilitiesGet8ByteBreakpointSupport()
+{
+    mx_entry                    in[1];
+    mx_entry                    out[1];
+    capabilities_get_8b_bp_req  acc;
+    capabilities_get_8b_bp_ret  ret;
+
+    if( SuppCapabilitiesId == 0 ) 
+        return( -1 );
+    
+    SUPP_CAPABILITIES_SERVICE( acc, REQ_CAPABILITIES_GET_8B_BP );
+    in[0].ptr = &acc;
+    in[0].len = sizeof( acc );
+    out[0].ptr = &ret;
+    out[0].len = sizeof( ret );
+
+    TrapAccess( 2, &in, 1, &out );
+    if( ret.err != 0 ) {
+        return( FALSE );
+    } else {
+        Supports8ByteBreakpoints = 1;   /* The trap supports 8 byte breakpoints */
+        return( TRUE );
+    }
+}
+
+int CapabilitiesSet8ByteBreakpointSupport(bool status)
+{
+    mx_entry                    in[1];
+    mx_entry                    out[1];
+    capabilities_set_8b_bp_req  acc;
+    capabilities_set_8b_bp_ret  ret;
+    
+    if( SuppCapabilitiesId == 0 ) 
+        return( -1 );
+    
+    SUPP_CAPABILITIES_SERVICE( acc, REQ_CAPABILITIES_SET_8B_BP );
+    acc.status = status ? TRUE : FALSE;
+    
+    in[0].ptr = &acc;
+    in[0].len = sizeof( acc );
+    out[0].ptr = &ret;
+    out[0].len = sizeof( ret );
+
+    TrapAccess( 2, &in, 1, &out );
+    if( ret.err != 0 ) {
+        return( FALSE );
+    } else {
+        Supports8ByteBreakpoints = ret.status ? TRUE : FALSE;
+        return( TRUE );
+    }
+}
+
+int CapabilitiesGetExactBreakpointSupport()
+{
+    mx_entry                    in[1];
+    mx_entry                    out[1];
+    capabilities_get_8b_bp_req  acc;
+    capabilities_get_8b_bp_ret  ret;
+
+
+    if( SuppCapabilitiesId == 0 ) 
+        return( -1 );
+    
+    SUPP_CAPABILITIES_SERVICE( acc, REQ_CAPABILITIES_GET_8B_BP );
+    in[0].ptr = &acc;
+    in[0].len = sizeof( acc );
+    out[0].ptr = &ret;
+    out[0].len = sizeof( ret );
+
+    TrapAccess( 2, &in, 1, &out );
+    if( ret.err != 0 ) {
+        /* The trap may support it, but it is not possible currently */
+        SupportsExactBreakpoints = ret.status ? TRUE : FALSE;        
+        return( FALSE );
+    } else {
+        return( TRUE );
+    }
 }

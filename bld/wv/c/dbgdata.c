@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Defines debugger global variables. Currently mainly referenced
+*               as externs by other compilation units :-(
 *
 ****************************************************************************/
-
 
 #include "dbgdefn.h"
 #include "dbgtoken.h"
@@ -39,11 +38,17 @@
 #include "dbginp.h"
 #include "trpcore.h"
 
-
 #pragma off(unreferenced);
 
 char                    *InitCmdList;
 char                    *TrpFile;
+
+/*
+ *  Queried from trap file supplemental services
+ */
+int                     Supports8ByteBreakpoints = 0;
+int                     SupportsExactBreakpoints = 0;
+
 char                    *InvokeFile;
 char                    *DipFiles[10];
 

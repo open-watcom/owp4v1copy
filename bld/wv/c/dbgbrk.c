@@ -30,20 +30,15 @@
 
 
 #include <string.h>
-#include "dbgdefn.h"
-#include "dbgtoken.h"
+#include "dbgdata.h"
 #include "dbgerr.h"
 #include "dbginfo.h"
-#include "dbgbreak.h"
 #include "dbgitem.h"
 #include "dbglit.h"
 #include "dbgmem.h"
-#include "dbgtoggl.h"
-#include "dbginp.h"
 #include "namelist.h"
 #include "dbgstk.h"
 #include "dbgrep.h"
-#include "dbgreg.h"
 #include "dbgio.h"
 #include "trpcore.h"
 #include "mad.h"
@@ -1440,6 +1435,9 @@ done:;
         case 2:
         case 4:
             break;
+        case 8:
+            if(Supports8ByteBreakpoints)
+                break;
         default:
             Error( ERR_NONE, LIT( ERR_NOT_WATCH_SIZE ) );
             break;
@@ -1475,21 +1473,26 @@ bool BreakWrite( address addr, mad_type_handle th, char *comment )
 {
     brkp                *bp;
     mad_type_info       mti;
-
+    bool                ok_to_try = TRUE;
     if( th == MAD_NIL_TYPE_HANDLE ) return( FALSE );
     MADTypeInfo( th, &mti );
     switch( mti.b.bits / BITS_PER_BYTE ) {
+    case 8:
+        if(!Supports8ByteBreakpoints)
+            ok_to_try = FALSE;
     case 1:
     case 2:
     case 4:
-        if(  FindBreak( addr ) != NULL ) {
-            Error( ERR_NONE, LIT( ERR_POINT_EXISTS ) );
+        if(ok_to_try){
+            if(  FindBreak( addr ) != NULL ) {
+                Error( ERR_NONE, LIT( ERR_POINT_EXISTS ) );
+            }
+            bp = AddPoint( addr, th, FALSE );
+            if( bp == NULL ) return( TRUE );
+            bp->source_line = DupStr( comment );
+            RecordBreakEvent( bp, B_SET );
+            return( TRUE );
         }
-        bp = AddPoint( addr, th, FALSE );
-        if( bp == NULL ) return( TRUE );
-        bp->source_line = DupStr( comment );
-        RecordBreakEvent( bp, B_SET );
-        return( TRUE );
     default:
         return( FALSE );
     }
@@ -1633,6 +1636,15 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
             if( SectIsLoaded( bp->loc.addr.sect_id, OVL_MAP_EXE ) ) {
                 MADTypeInfo( bp->th, &mti );
                 if( ItemGetMAD( &bp->loc.addr, &item, IT_NIL, bp->th ) ) {
+                    
+                    /*
+                     * If the breakpoint fires here because of a write, but the value hasn't changed then
+                     * the breakpoint does not fire off!!!!
+                     *
+                     * I think this is done because the trap file rounds down to capture writes across
+                     * word/dword boundaries.
+                     */
+                    
                     if( (memcmp( &bp->item, &item, mti.b.bits / BITS_PER_BYTE ) != 0) || !bp->status.b.has_value ) {
                         hit = TRUE;
                     }

@@ -623,8 +623,8 @@ wdpick( ERR_NOT_PRINTABLE,
        "jNo printable string found at location %a" )
 
 wdpick( ERR_NOT_WATCH_SIZE,
-       "Break points may only be set on items which are 1,2 or 4 bytes long",
-       "jBreak points may only be set on items which are 1,2 or 4 bytes long" )
+       "Break points may only be set on items which are 1,2 or 4 bytes long (and 8 bytes for trap files that support it)",
+       "jBreak points may only be set on items which are 1,2 or 4 bytes long (and 8 bytes for trap files that support it)" )
 
 wdpick( ERR_BAD_HOOK,
        "Missing or invalid hook name",

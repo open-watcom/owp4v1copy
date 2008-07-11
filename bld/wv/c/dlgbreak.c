@@ -31,11 +31,8 @@
 
 
 #include <string.h>
-#include "dbgdefn.h"
-#include "dbginfo.h"
+#include "dbgdata.h"
 #include "dbgwind.h"
-#include "dbgbreak.h"// brk changed
-#include "dbgtoggl.h"
 #include "dbgerr.h"
 #include "guidlg.h"
 #include "dlgbrk.h"
@@ -67,6 +64,8 @@ extern mad_type_handle  FindMADTypeHandle( mad_type_kind tk, unsigned size );
 
 extern char             *TxtBuff;
 extern address          NilAddr;
+
+//extern int              Supports8ByteBreakpoints;
 
 static  bool    GetAddr( dlg_brk *dlg, gui_window *gui )
 {
@@ -116,6 +115,8 @@ static  bool    GetDlgStatus( dlg_brk *dlg, gui_window *gui )
         tmp_bp->th = FindMADTypeHandle( MAS_MEMORY | MTK_INTEGER, 2 );
     } else if( GUIIsChecked( gui, CTL_BRK_DWORD ) ) {
         tmp_bp->th = FindMADTypeHandle( MAS_MEMORY | MTK_INTEGER, 4 );
+    } else if( GUIIsChecked( gui, CTL_BRK_QWORD ) ) {
+        tmp_bp->th = FindMADTypeHandle( MAS_MEMORY | MTK_INTEGER, 8 );
     }
     if( !GetAddr( dlg, gui ) ) {
         PrevError( TxtBuff );
@@ -186,6 +187,9 @@ static  void    SetDlgStatus( dlg_brk *dlg, gui_window *gui )
     GUISetChecked( gui, CTL_BRK_BYTE,    mti.b.bits == 1*BITS_PER_BYTE );
     GUISetChecked( gui, CTL_BRK_WORD,    mti.b.bits == 2*BITS_PER_BYTE );
     GUISetChecked( gui, CTL_BRK_DWORD,   mti.b.bits == 4*BITS_PER_BYTE );
+    
+    GUIEnableControl(gui, CTL_BRK_QWORD, Supports8ByteBreakpoints != 0);
+    GUISetChecked( gui, CTL_BRK_QWORD,   mti.b.bits == 8*BITS_PER_BYTE );
 
     if( dlg->cmd_error ) {
         id = CTL_BRK_CMD_LIST;
@@ -243,6 +247,7 @@ OVL_EXTERN bool BrkEvent( gui_window * gui, gui_event gui_ev, void * param )
         case CTL_BRK_BYTE:
         case CTL_BRK_WORD:
         case CTL_BRK_DWORD:
+        case CTL_BRK_QWORD:
             return( TRUE );
 #if 0
         case CTL_BRK_GET_TOTAL:
