@@ -387,7 +387,7 @@ choose Execute, be sure that the address field contains a code address
 (function name or code line number) and not a variable address.
 Variable are never executed. If the address field names a variable,
 the breakpoint will never trigger.
-.note Break on 1 Byte/2 Bytes/4 Bytes...
+.note Break on 1 Byte/2 Bytes/4 Bytes/8 Bytes...
 .ix 'breakpoint' 'on write'
 Check one of these fields to create break-on-write breakpoints. If you
 choose one of these options, be sure that the Address field contains a
@@ -404,9 +404,17 @@ at the memory address are written to.
 .note 4 Bytes
 The breakpoint will trigger if any of the first four bytes
 of the memory address are written to.
-.note etc.
-The breakpoint will trigger if any of the first "n" bytes
-of the memory address are written to.
+.note 8 Bytes
+The breakpoint will trigger if any of the first eight bytes
+of the memory address are written to. This option is only supported
+by certain trap files and will be grayed out if the selected trap file
+does not support it.
+.endnote
+.begnote
+.note Note:
+In current versions of the debugger and traps, the break on write feature
+is really a break on change. The debugger will only stop execution if the
+breakpoint is hit and the value of the watched data has been changed.
 .endnote
 .note Countdown
 .ix 'breakpoint' 'countdown'
