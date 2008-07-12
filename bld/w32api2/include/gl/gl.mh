@@ -163,7 +163,7 @@ typedef void            GLvoid;
 #define GL_BITMAP_TOKEN         0x0704
 #define GL_DRAW_PIXEL_TOKEN     0x0705
 #define GL_COPY_PIXEL_TOKEN     0x0706
-#define GL_LINE_PIXEL_TOKEN     0x0707
+#define GL_LINE_RESET_TOKEN     0x0707
 
 /* OpenGL fog modes */
 #define GL_EXP  0x0800
@@ -419,9 +419,9 @@ typedef void            GLvoid;
 #define GL_SPOT_DIRECTION           0x1204
 #define GL_SPOT_EXPONENT            0x1205
 #define GL_SPOT_CUTOFF              0x1206
-#define GL_CONSTANT_ATTENTUATION    0x1207
+#define GL_CONSTANT_ATTENUATION     0x1207
 #define GL_LINEAR_ATTENUATION       0x1208
-#define GL_QUADRATIC_ATTENTUATION   0x1209
+#define GL_QUADRATIC_ATTENUATION    0x1209
 
 /* OpenGL list modes */
 #define GL_COMPILE              0x1300
