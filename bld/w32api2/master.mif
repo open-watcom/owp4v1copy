@@ -352,6 +352,7 @@ ddk_headers =        &
         srb.h        &
         scsi.h       &
         tdi.h        &
+        tdiinfo.h    &
         tdikrnl.h    &
         upssvc.h     &
         usb.h        &
