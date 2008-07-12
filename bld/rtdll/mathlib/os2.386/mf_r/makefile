@@ -8,5 +8,3 @@ system     = os2
 convention = register
 
 !include $(rtdll_dir)/master.mif
-!include ../objs.mif
-!include $(rtdll_dir)/mkdll.mif

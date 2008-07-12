@@ -10,5 +10,3 @@ convention = register
 rtdll_release = 0
 
 !include $(rtdll_dir)/master.mif
-!include ../objs.mif
-!include $(rtdll_dir)/mkdll.mif

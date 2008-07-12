@@ -8,10 +8,6 @@ sw_a_common = -we
 sw_c_common += -fo=.obj
 sw_a_common += -fo=.obj
 !endif
-sw_l_common = option quiet,impfile reference __DLLstart_ disable 121
-!ifeq release 0
-sw_l_common += option map,mangle,artificial,verbose
-!endif
 
 !ifeq default_windowing 1
 def_windowing = -DDEFWIN
@@ -162,34 +158,6 @@ sw_a_linux_386    =
 sw_a_linux_ppc    =
 sw_a_linux_mps    =
 
-# sw_l_(system)_(processor)
-sw_l_generic_086  =
-sw_l_generic_286  =
-sw_l_generic_386  =
-sw_l_msdos_086    =
-sw_l_msdos_286    =
-sw_l_msdos_386    =
-sw_l_nw_clib_386  =
-sw_l_nw_clibl_386 =
-sw_l_nw_libc_386  =
-sw_l_nw_libcl_386 =
-sw_l_os2_286      =
-sw_l_os2_386      = sys os2v2 dll initinstance terminstance op manyautodata
-sw_l_os2_387      = sys os2v2 dll initinstance terminstance op manyautodata
-sw_l_os2_ppc      = sys os2ppc dll initinstance terminstance op manyautodata
-sw_l_osi_386      =
-sw_l_qnx_286      =
-sw_l_qnx_386      =
-sw_l_windows_086  =
-sw_l_windows_386  =
-sw_l_winnt_386    = sys nt_dll initinstance terminstance
-sw_l_winnt_387    = sys nt_dll initinstance terminstance
-sw_l_winnt_axp    = sys ntaxp_dll initinstance terminstance
-sw_l_winnt_ppc    = sys ntppc_dll initinstance terminstance
-sw_l_linux_386    =
-sw_l_linux_ppc    =
-sw_l_linux_mps    =
-
 #make bug
 !ifndef extra_c_flags
 extra_c_flags =
@@ -204,7 +172,6 @@ c_flags += $(extra_c_flags)
 a_flags =$(sw_a_common) $(sw_a_$(linkage)) $(sw_a_$(processor)_$(model))
 a_flags += $(sw_a_$(processor)) $(sw_a_$(system)_$(processor))
 a_flags += $(extra_a_flags)
-l_flags =$(sw_l_common) $(sw_l_$(system)_$(processor))
 
 # special case switches
 !ifdef overlay

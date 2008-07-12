@@ -1,29 +1,99 @@
 proj_name=rtdll
 
-clib_host_cpu_086=i86
-clib_host_cpu_286=i86
-clib_host_cpu_287=i86
-clib_host_cpu_386=386
-clib_host_cpu_387=386
-clib_host_cpu_axp=axp
-clib_host_cpu_ppc=ppc
-host_CPU = $(clib_host_cpu_$(processor))
+rtdll_host_cpu_086=i86
+rtdll_host_cpu_286=i86
+rtdll_host_cpu_287=i86
+rtdll_host_cpu_386=386
+rtdll_host_cpu_387=386
+rtdll_host_cpu_axp=axp
+rtdll_host_cpu_ppc=ppc
+host_CPU = $(rtdll_host_cpu_$(processor))
 
-clib_host_os_generic =dos
-clib_host_os_msdos   =dos
-clib_host_os_necdos  =dos
-clib_host_os_necwin  =dos
-clib_host_os_netware =nov
-clib_host_os_os2     =os2
-clib_host_os_osi     =osi
-clib_host_os_penpoint=pen
-clib_host_os_qnx     =qnx
-clib_host_os_windows =win
-clib_host_os_winnt   =nt
-host_OS=$(clib_host_os_$(system))
+rtdll_host_os_generic =dos
+rtdll_host_os_msdos   =dos
+rtdll_host_os_netware =nov
+rtdll_host_os_os2     =os2
+rtdll_host_os_osi     =osi
+rtdll_host_os_qnx     =qnx
+rtdll_host_os_windows =win
+rtdll_host_os_winnt   =nt
+rtdll_host_os_linux   =linux
+host_OS=$(rtdll_host_os_$(system))
 
 !include cproj.mif
 
-!include $(clib_dir)/flags.mif
 !include $(rtdll_dir)/dllname.mif
 !include $(rtdll_dir)/dllbase.mif
+!include ../objs.mif
+
+!ifdef profile
+rtdll_nosymfile = 1
+!else ifeq release 0
+rtdll_nosymfile = 1
+!endif
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+extra_l_flags_dll = option impfile reference __DLLstart_ disable 121
+!ifeq release 0
+extra_l_flags_dll += option map,mangle,artificial,verbose
+!endif
+
+extra_l_flags_dll_os2 = initinstance terminstance op manyautodata
+extra_l_flags_dll_nt = initinstance terminstance
+
+libflags_nt_386 = -io -ii
+libflags_nt_axp = -ic -ia
+libflags_nt_ppc = -ic -ip
+
+$(libdllname).lib : $(dllname).imp $(static_objs)
+    $(librarian) $(lib_flags) $(lib_flags_new) -p=16 -irn $^@ @$(dllname).imp $(static_objs)
+
+$(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
+    cp $(dllname).lbc $(dllname).imp
+!ifeq system os2
+    $(vi) -s $(rtdll_dir)/trimlbc.vi $(dllname).imp
+!endif
+!ifeq component clib
+    $(vi) -s $(rtdll_dir)/add_br.vi $(dllname).imp
+!endif
+
+!ifeq system winnt
+res_objs = $(dllname).rc
+extra_libs = kernel32.lib user32.lib advapi32.lib
+!endif
+!ifeq component wrtlib
+!ifeq convention stack
+lnk_alias = alias _HugeValue_br=_HugeValue, _IsTable_br=_IsTable
+!else
+lnk_alias = alias __HugeValue_br=__HugeValue, __IsTable_br=__IsTable
+!endif
+!endif
+
+$(dllname).dll $(dllname).lbc : $(res_objs) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
+    $(linker) name $(dllname).dll @$(dllname).lnk
+!ifeq system winnt
+    $(rc) $(rc_flags) -i"$(%watcom)/h/nt" $(dllname).rc $(dllname).dll
+!endif
+    sort < $(dllname).lbc > $(dllname).tmp
+    uniq $(dllname).tmp > $(dllname).lbc
+    @rm -f $(dllname).tmp
+
+$(dllname).lnk : $(dll_def) $(__MAKEFILES__)
+    %create $@
+    @%append $@ $(lflags_dll)
+    @%append $@ op map $(dllbase) 
+    @for %i in ($(dll_objs)) do @%append $@ file %i
+    @for %i in ($(dll_def)) do @%append $@ export { @%i }
+    @for %i in ($(dll_libs) $(extra_libs)) do @%append $@ lib %i
+    @%append $@ $(lnk_alias)
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+    $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $[@
+
+$(dllname).rc : ./genverrc.exe
+    $[@ ../verinfo.rc $^@ $$ $(dllname).dll $(patch_level)
+
+!include $(rtdll_dir)/clean.mif

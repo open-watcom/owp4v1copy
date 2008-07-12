@@ -43,4 +43,3 @@ $(libname).lib : $(objs)
 !endif
 
 !include $(clib_dir)/clean.mif
-!include $(clib_dir)/project.mif

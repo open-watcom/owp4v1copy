@@ -52,5 +52,3 @@ $(libname).lib : $(libs)
     @rm -f timstamp.obj
 
 !include $(clib_dir)/clean.mif
-!include $(clib_dir)/updlib.mif
-!include $(clib_dir)/project.mif
