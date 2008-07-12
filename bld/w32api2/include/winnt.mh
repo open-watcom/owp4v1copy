@@ -759,6 +759,10 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define STATUS_SXS_EARLY_DEACTIVATION   0xC015000FL
 #define STATUS_SXS_INVALID_DEACTIVATION 0xC0150010L
 
+/* Maximum values */
+#define MAXIMUM_WAIT_OBJECTS    64
+#define MAXIMUM_SUSPEND_COUNT   MAXCHAR
+
 /* Size of the 80387 registers in the x86 context record */
 #ifdef _X86_
     #define SIZE_OF_80387_REGISTERS 80
