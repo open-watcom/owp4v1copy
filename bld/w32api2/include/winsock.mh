@@ -1303,7 +1303,7 @@ WINSOCK_API_LINKAGE int WSAAPI      WSAPoll( LPWSAPOLLFD, ULONG, INT );
     #define WSAEnumNameSpaceProviders       WSAEnumNameSpaceProvidersW
     #define WSAEnumProtocols                WSAEnumProtocolsW
     #define WSAGetServiceClassInfo          WSAGetServiceClassInfoW
-    #definw WSAGetServiceClassNameByClassId WSAGetServiceClassNameByClassIdW
+    #define WSAGetServiceClassNameByClassId WSAGetServiceClassNameByClassIdW
     #define WSAInstallServiceClass          WSAInstallServiceClassW
     #define WSALookupServiceBegin           WSALookupServiceBeginW
     #define WSALookupServiceNext            WSALookupServiceNextW
