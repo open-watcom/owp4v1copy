@@ -1087,6 +1087,8 @@ WINGDIAPI void APIENTRY         glVertex4sv( const GLshort * );
 WINGDIAPI void APIENTRY         glVertexPointer( GLint, GLenum, GLsizei, const GLvoid * );
 WINGDIAPI void APIENTRY         glViewport( GLint, GLint, GLsizei, GLsizei );
 
+:include cplusepi.sp
+
 #endif /* __gl_h__ */
 
 #endif /* __GL_H__ */
