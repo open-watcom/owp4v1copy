@@ -354,6 +354,7 @@ ddk_headers =        &
         tdi.h        &
         tdiinfo.h    &
         tdikrnl.h    &
+        tdistat.h    &
         upssvc.h     &
         usb.h        &
         usb100.h     &
