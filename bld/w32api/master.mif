@@ -171,7 +171,7 @@ extra_lib_flags_386 = -io -ii
 .c: ../../lib;../../lib/directx;../../lib/ddk;
 
 .def.lbc:
-        $(vi) -s ../../def2lbc.vi -p"$[@ $* $(host_cpu)"
+        $(awk) -v cpu=$(host_cpu) -f ../../def2lbc.awk $[@ > $@
 
 .lbc.lib:
         $(librarian) $(libflags) $@ @$<

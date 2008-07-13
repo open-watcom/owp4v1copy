@@ -1,5 +1,13 @@
 .EXTENSIONS : .rh .mh .lbc .def
 
+base_autodepends    = .autodepend
+ddk_autodepends     = .autodepend
+directx_autodepends = .autodepend
+
+base_distrib_lib = 1
+ddk_distrib_lib = 1
+directx_distrib_lib = 1
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -526,6 +534,7 @@ extra_lib_flags = -p=16
 
 extra_lib_flags_386 = -io -ii
 extra_lib_flags_axp = -ic -ia
+extra_lib_flags_ppc = -ic -ip
 
 additional_cleanup = *.h *.rh
 
@@ -545,7 +554,7 @@ all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
     $(rsplice)
 
 .def.lbc:
-    $(vi) -s $(root_dir)/def2lbc.vi -p"$[@ $* $(host_cpu)"
+    $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
 
 .lbc.lib:
     $(librarian) $(libflags) $@ @$<
