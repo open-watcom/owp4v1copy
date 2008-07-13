@@ -79,6 +79,19 @@ static void fini                // MODULE COMPLETION
 
 INITDEFN( pragma_extref, init, fini );
 
+static void PreProcPrintToken()
+{
+    if(CompFlags.cpp_output){
+        PrtToken();   
+    }
+}
+
+static void NextTokenWithPrint()
+{
+    NextToken();
+    PreProcPrintToken();
+}
+
 static boolean grabNum( unsigned *val )
 {
     if( CurToken == T_CONSTANT ) {
@@ -885,19 +898,20 @@ static void pragReadOnlyDir
 //
 static void pragIncludeAlias( void )
 {
+    PreProcPrintToken();     /* PragRecog sneaked a token */
     if( CurToken == T_LEFT_PAREN ) {
         PPState = PPS_EOL;
-        NextToken();
+        NextTokenWithPrint();
         if( CurToken == T_STRING ) {
             char    *alias_name;
 
             alias_name = CMemAlloc( strlen( Buffer ) + 1 );
             strcpy( alias_name, Buffer );
-            NextToken();
+            NextTokenWithPrint();
             MustRecog( T_COMMA );
             if( CurToken == T_STRING ) {
                 IAliasAdd( alias_name, Buffer, 0 );
-                NextToken();
+                NextTokenWithPrint();
             }
             CMemFree( alias_name );
         }
@@ -907,9 +921,9 @@ static void pragIncludeAlias( void )
 
             a_buf[0] = '\0';
             for( ;; ) {
-                NextToken();
+                NextTokenWithPrint();
                 if( CurToken == T_GT ) {
-                    NextToken();
+                    NextTokenWithPrint();
                     break;
                 }
                 strncat( a_buf, Buffer, 80 );
@@ -918,9 +932,9 @@ static void pragIncludeAlias( void )
             if( CurToken == T_LT ) {
                 r_buf[0] = '\0';
                 for( ;; ) {
-                    NextToken();
+                    NextTokenWithPrint();
                     if( CurToken == T_GT ) {
-                        NextToken();
+                        NextTokenWithPrint();
                         break;
                     }
                     strncat( r_buf, Buffer, 80 );
@@ -1017,8 +1031,19 @@ void CPragma()                  // PROCESS A PRAGMA
 
     SrcFileGuardStateSig();
     if( CompFlags.cpp_output ) {
-        if( ! CppPrinting() ) return;
+        PPState = PPS_EOL;
+        GetNextToken();
         fprintf( CppFile, "#pragma" );
+        fprintf( CppFile, " " );
+        PrtToken();
+        if( PragRecog( "include_alias" ) ) {
+            CompFlags.in_pragma = 1;
+            pragIncludeAlias();
+            endOfPragma();
+            CompFlags.in_pragma = 0;
+            return;
+        }
+        if( ! CppPrinting() ) return;
         PPState = PPS_EOL;
         CompFlags.in_pragma = 1;
         for(;;) {

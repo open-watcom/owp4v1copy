@@ -54,6 +54,26 @@ static struct toggle ToggleNames[] = {
         { NULL, 0 }
     };
 
+static void PreProcPrintToken()
+{
+    TOKEN lastToken;
+    if(CompFlags.cpp_output){
+        if( ! CppPrinting() ) 
+            return;
+        lastToken = CurToken;
+        CurToken = T_ID;
+        PrtToken();   
+        CurToken = lastToken;
+    }
+}
+
+static void NextTokenWithPrint()
+{
+    NextToken();
+    PreProcPrintToken();
+}
+
+
 void CPragmaInit( void ) {
 //********************************//
 // Init any general pragma things //
@@ -489,7 +509,8 @@ static int PragRecogAhead( const char *what )
     if( *p == '_' ) ++p;
     if( *p == '_' ) ++p;
     if( stricmp( what, p ) == 0 ) {
-        NextToken();
+        PreProcPrintToken();    /* PragRecogAhead sneaked the ( token */
+        NextTokenWithPrint();   /* PragRecogAhead sneaked the 'what' token */
         return( 1 );
     }
     return( 0 );
@@ -922,16 +943,16 @@ static void PragIncludeAlias( void )
 {
     if( CurToken == T_LEFT_PAREN ) {
         CompFlags.pre_processing = 1;           /* enable macros */
-        NextToken();
+        NextTokenWithPrint();
         if( CurToken == T_STRING ) {
             char    *alias_name;
 
             alias_name = CStrSave( Buffer );
-            NextToken();
+            NextTokenWithPrint();
             MustRecog( T_COMMA );
             if( CurToken == T_STRING ) {
                 SrcFileIncludeAlias( alias_name, Buffer, 0 );
-                NextToken();
+                NextTokenWithPrint();
             }
             CMemFree( alias_name );
         } else if( CurToken == T_LT ) {
@@ -940,9 +961,9 @@ static void PragIncludeAlias( void )
 
             a_buf[0] = '\0';
             for( ;; ) {
-                NextToken();
+                NextTokenWithPrint();
                 if( CurToken == T_GT ) {
-                    NextToken();
+                    NextTokenWithPrint();
                     break;
                 }
                 strncat( a_buf, Buffer, 80 );
@@ -951,9 +972,9 @@ static void PragIncludeAlias( void )
             if( CurToken == T_LT ) {
                 r_buf[0] = '\0';
                 for( ;; ) {
-                    NextToken();
+                    NextTokenWithPrint();
                     if( CurToken == T_GT ) {
-                        NextToken();
+                        NextTokenWithPrint();
                         break;
                     }
                     strncat( r_buf, Buffer, 80 );
@@ -1100,12 +1121,20 @@ void CPragma( void )
      * because it's intended for the preprocessor, not the compiler.
      */
     if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
+        if( CppPrinting() ) {
+            CppPrtf( "#pragma" );
+            CppPrtf( " " );
+        }
         if( PragRecogAhead( "include_alias" ) ) {
+            CompFlags.pre_processing = 1;
+            CompFlags.in_pragma = 1;
             PragIncludeAlias();
+            CompFlags.in_pragma = 0;
+            EndOfPragma();
             return;
         }
         if( ! CppPrinting() ) return;               /* 12-dec-89 */
-        CppPrtf( "#pragma" );
+        PreProcPrintToken();    /* PragRecogAhead sneaked a token */
         CompFlags.pre_processing = 1;               /* 28-feb-89 */
         CompFlags.in_pragma = 1;
         for(;;) {
