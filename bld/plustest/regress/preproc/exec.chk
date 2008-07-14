@@ -45,7 +45,7 @@ int i =  > >1;
 @@@ pp07.plc @@@
 #line 1 "pp07.c"
 
-#pragma on(blah);
+ #pragma on(blah);
 char a[] = { '\'', '\\', '\0', 'a', 'cd' };'a
 @@@ pp08.plc @@@
 #line 1 "pp08.c"
@@ -79,7 +79,7 @@ int line7_pp08h;
 // line 3 pp08.c
 @@@ pp09.plc @@@
 #line 1 "pp09.c"
-#pragma on\
+ #pragma on\
 (check_stack);
 @@@ pp10.plc @@@
 #line 1 "pp10.c"
