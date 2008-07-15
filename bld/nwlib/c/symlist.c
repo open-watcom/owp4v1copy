@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 static void (*Rtn)(char*,symbol_strength,unsigned char);
 
@@ -68,7 +68,8 @@ bool ObjWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,sym
     Rtn = rtn;
     if( ofile->orl ) {
         sym_sec_hnd = ORLFileGetSymbolTable( ofile->orl );
-        if( sym_sec_hnd == NULL ) return( FALSE );
+        if( sym_sec_hnd == NULL )
+            return( FALSE );
         if( ORLSymbolSecScan( sym_sec_hnd, &CheckSymbol ) != ORL_OKAY ) {
             return( FALSE );
         }

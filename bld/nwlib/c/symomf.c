@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 #include "symomf.h"
 
 static unsigned short   CurrSegRef = 0;
@@ -39,7 +39,7 @@ struct lname {
     struct lname        *next;
     char                local;
     char                len;
-    char                name[1];
+    char                name[ 1 ];
 };
 
 typedef struct COMMON_BLK {
@@ -64,14 +64,16 @@ static char             *RecPtr;
 static common_blk       *CurrCommonBlk;
 static unsigned short   SegDefCount;
 static bool             EasyOMF;
-static char             NameBuff[257];
+static char             NameBuff[ 257 ];
 
 static bool GetLen( libfile io )
 {
     char        ch1, ch2;
 
-    if( LibRead( io, &ch1, sizeof( ch1 ) ) != sizeof( ch1 ) ) return( FALSE );
-    if( LibRead( io, &ch2, sizeof( ch2 ) ) != sizeof( ch1 ) ) return( FALSE );
+    if( LibRead( io, &ch1, sizeof( ch1 ) ) != sizeof( ch1 ) )
+        return( FALSE );
+    if( LibRead( io, &ch2, sizeof( ch2 ) ) != sizeof( ch1 ) )
+        return( FALSE );
     Len = ( ( unsigned ) ch2 << 8 ) + ch1;
     return( TRUE );
 }
@@ -79,14 +81,17 @@ static bool GetLen( libfile io )
 bool GetRec( libfile io )
 /***********************/
 {
-    if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) ) return( FALSE );
-    if( !GetLen( io ) ) return( FALSE );
+    if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) )
+        return( FALSE );
+    if( !GetLen( io ) )
+        return( FALSE );
     if( Len > MaxLen ) {
         MemFree( CurrRec );
         CurrRec = MemAlloc( Len );
         MaxLen = Len;
     }
-    if( LibRead( io, CurrRec, Len ) != Len ) return( FALSE );
+    if( LibRead( io, CurrRec, Len ) != Len )
+        return( FALSE );
     RecPtr = CurrRec;
     /* check to see if this is an Easy OMF-386 object file */
     /* Only need to check the first comment record */
@@ -175,7 +180,8 @@ static void procsegdef( void )      /* dedicated routine for FORTRAN 77 common b
 
         for( ;; ) {
             cmn = *owner;
-            if( cmn == NULL ) break;
+            if( cmn == NULL )
+                break;
             owner = &cmn->next;
         }
         cmn = MemAlloc( sizeof( common_blk ) );
@@ -291,7 +297,8 @@ static void getcomdat( void )
     unsigned            idx;
     struct lname        *ln;
 
-    if( *RecPtr & (COMDAT_CONTINUE|COMDAT_LOCAL) ) return;
+    if( *RecPtr & (COMDAT_CONTINUE|COMDAT_LOCAL) )
+        return;
     RecPtr++;
     alloc = *RecPtr++ & COMDAT_ALLOC_MASK;
     RecPtr++;
@@ -304,7 +311,8 @@ static void getcomdat( void )
     for( ln = LName_Head; idx != 0; --idx, ln = ln->next ) {
         /* nothing to do */
     }
-    if( ln->local ) return;
+    if( ln->local )
+        return;
     memcpy( NameBuff, ln->name, ln->len );
     NameBuff[ (int)ln->len ] = '\0';
     AddOMFSymbol( S_COMDAT );
@@ -435,11 +443,13 @@ void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile
 {
     long                pagelen, offset, end_offset;
     arch_header         arch;
-    char                buff[MAX_IMPORT_STRING];
+    char                buff[ MAX_IMPORT_STRING ];
     int                 len;
 
-    if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) ) return; // nyi - FALSE?
-    if( !GetLen( io ) ) return;
+    if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) )
+        return; // nyi - FALSE?
+    if( !GetLen( io ) )
+        return;
     pagelen = Len + sizeof( Typ ) + sizeof( Len );
     if( Options.page_size == 0 ) {
         Options.page_size = pagelen;
@@ -449,11 +459,13 @@ void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile
     CurrRec = NULL;
     for( ;; ) {
         offset = LibTell( io );
-        if( !GetRec( io ) ) break;
-        if( Typ != CMD_THEADR ) break;
+        if( !GetRec( io ) )
+            break;
+        if( Typ != CMD_THEADR )
+            break;
         len = *RecPtr++;
         memcpy( buff, RecPtr, len );
-        buff[len] = '\0';
+        buff[ len ] = '\0';
         arch.name = buff;
         LibSeek( io, offset, SEEK_SET );
         rtn( &arch, io );
@@ -470,10 +482,13 @@ void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile
             } while( Typ != CMD_MODEND && Typ != CMD_MODE32 );
         }
         offset = pagelen - end_offset % pagelen;
-        if( offset == pagelen ) offset = 0;
+        if( offset == pagelen )
+            offset = 0;
         LibSeek( io, offset, SEEK_CUR );
-        if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) ) break;
-        if( Typ == LIB_TRAILER_REC ) break;
+        if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) )
+            break;
+        if( Typ == LIB_TRAILER_REC )
+            break;
         LibSeek( io, -1, SEEK_CUR );
     }
     MemFree( CurrRec );

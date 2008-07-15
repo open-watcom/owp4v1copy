@@ -43,7 +43,7 @@ struct io_struct {
     unsigned_16     access;
     unsigned_16     buf_size;
     unsigned_16     buf_pos;
-    char            buffer[1];
+    char            buffer[ 1 ];
 };
 
 #define LIBOPEN_BINARY_READ     ( O_BINARY | O_RDONLY )

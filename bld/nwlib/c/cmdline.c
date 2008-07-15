@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 #define AR_MODE_ENV "WLIB$AR"
 
@@ -46,23 +46,23 @@ void GetString( char **pc, char *buff, int singlequote, int ignoreSpaceInQuotes 
 
     eatwhite(c);
 
-    if ((*c == '\"') || (singlequote && (*c == '\''))) {
+    if( (*c == '\"') || ( singlequote && (*c == '\'') ) ) {
         quote = *c;
         c++;
-        while ((*c != '\0') && (*c != quote)) {
+        while( (*c != '\0') && (*c != quote) ) {
             *buff++ = *c++;
         }
-        if (*c == quote) {
+        if( *c == quote ) {
             c++;
         }
     } else {
         int inquote = FALSE;
 
         while( inquote || notwhite( *c ) ) {
-            if (ignoreSpaceInQuotes) {
-                if (*c == 0x00) {
+            if( ignoreSpaceInQuotes ) {
+                if( *c == 0x00 ) {
                     break;
-                } else if ((*c == '\"') || (*c == '\'')) {
+                } else if( (*c == '\"') || (*c == '\'') ) {
                     inquote = !inquote;
                 }
             }
@@ -85,7 +85,8 @@ char *GetEqual( char **pc, char *buff, char *ext )
     } else {
         c = *pc;
     }
-    if( *c == ' ' || *c == '\0' ) return( NULL );
+    if( *c == ' ' || *c == '\0' )
+        return( NULL );
     GetString( &c, buff, FALSE, FALSE );
     if( ext != NULL ) {
         DefaultExtension( buff, ext );
@@ -99,12 +100,12 @@ static void SetPageSize( unsigned short new_size )
 {
     unsigned int i;
     Options.page_size = MIN_PAGE_SIZE;
-    for( i = 4; i < 16; i++ ){
-        if( new_size & 1<<i ){
+    for( i = 4; i < 16; i++ ) {
+        if( new_size & 1<<i ) {
             Options.page_size = 1<<i;
         }
     }
-    if( Options.page_size < new_size ){
+    if( Options.page_size < new_size ) {
         Options.page_size <<= 1;
     }
 }
@@ -211,7 +212,7 @@ static bool ParseOption( char **pc, char *buff )
                     Options.filetype = WL_TYPE_OMF;
                     break;
                 default:
-                    return ( FALSE );
+                    return( FALSE );
             }
             break;
         case 'h':
@@ -261,7 +262,7 @@ static bool ParseOption( char **pc, char *buff )
             Options.export_list_file = GetEqual( &c, buff, NULL );
             break;
         case 't':
-            if (*c == 'l') {
+            if( *c == 'l' ) {
                 ++c;
                 Options.list_contents = 1;
                 Options.terse_listing = 1; // (internal terse listing option)
@@ -293,7 +294,7 @@ static bool ParseOption( char **pc, char *buff )
                     Options.omf_found = 1;
                     break;
                 default:
-                    return ( FALSE );
+                    return( FALSE );
             }
             break;
     // following only used by OMF libary format
@@ -304,9 +305,9 @@ static bool ParseOption( char **pc, char *buff )
             page = GetEqual( &c, buff, NULL );
             errno = 0;
             page_size = strtoul( page, &endptr, 0 );
-            if( *endptr != '\0' ){
+            if( *endptr != '\0' ) {
                 FatalError( ERR_BAD_CMDLINE, start );
-            } else if ( errno == ERANGE || page_size > MAX_PAGE_SIZE ) {
+            } else if( errno == ERANGE || page_size > MAX_PAGE_SIZE ) {
                 FatalError( ERR_PAGE_RANGE );
             }
             MemFree( page );
@@ -368,7 +369,7 @@ static void ParseCommand( char **pc )
     char        *start;
     operation   ops = 0;
     //char        buff[_MAX_PATH];
-    char        buff[MAX_IMPORT_STRING];
+    char        buff[ MAX_IMPORT_STRING ];
 
     start = c;
     eatwhite( c );
@@ -444,7 +445,7 @@ static void ParseOneLine( char *c )
 #if !defined(__UNIX__)
         case '/':
             if( !ParseOption( &c, buff ) ) {
-                FatalError( ERR_BAD_OPTION, c[1] );
+                FatalError( ERR_BAD_OPTION, c[ 1 ] );
             }
             break;
 #endif
@@ -467,7 +468,7 @@ static void ParseOneLine( char *c )
             GetString( &c, buff, TRUE, FALSE );
             {
                 char *env = getenv(buff);
-                if (env) {
+                if( env ) {
                     ParseOneLine(env);
                 } else {
                     FILE    *io;
@@ -524,7 +525,7 @@ static void ParseArOption( char **init_c, operation *mode )
             break;
         case 'd':
             if( *mode != OP_NONE ) {
-                FatalError( ERR_BAD_OPTION, c[0] );
+                FatalError( ERR_BAD_OPTION, c[ 0 ] );
             }
             *mode = OP_DELETE;
             break;
@@ -533,13 +534,13 @@ static void ParseArOption( char **init_c, operation *mode )
             break;
         case 'r':
             if( *mode != OP_NONE ) {
-                FatalError( ERR_BAD_OPTION, c[0] );
+                FatalError( ERR_BAD_OPTION, c[ 0 ] );
             }
             *mode = OP_ADD | OP_DELETE;
             break;
         case 't':
             if( *mode != OP_NONE ) {
-                FatalError( ERR_BAD_OPTION, c[0] );
+                FatalError( ERR_BAD_OPTION, c[ 0 ] );
             }
             *mode = OP_TABLE;
             Options.list_contents = 1;
@@ -558,14 +559,14 @@ static void ParseArOption( char **init_c, operation *mode )
             break;
         case 'x':
             if( *mode != OP_NONE ) {
-                FatalError( ERR_BAD_OPTION, c[0] );
+                FatalError( ERR_BAD_OPTION, c[ 0 ] );
             }
             *mode = OP_EXTRACT;
             break;
         case '-':
             break;
         default:
-            FatalError( ERR_BAD_OPTION, c[0] );
+            FatalError( ERR_BAD_OPTION, c[ 0 ] );
         }
         c++;
     }
@@ -625,7 +626,8 @@ void ProcessCmdLine( char *argv[] )
     char        *env;
     lib_cmd     *cmd;
 
-    if( FNCMP( MakeFName( ImageName ), "ar" ) == 0 || WlibGetEnv( AR_MODE_ENV ) != NULL ) {
+    if( FNCMP( MakeFName( ImageName ), "ar" ) == 0
+      || WlibGetEnv( AR_MODE_ENV ) != NULL ) {
         Options.ar = TRUE;
     }
     if( Options.ar ) {
@@ -633,7 +635,7 @@ void ProcessCmdLine( char *argv[] )
     } else {
         env = WlibGetEnv( "WLIB" );
     }
-    if( env == NULL && argv[1] == NULL || argv[1][0] == '\0' ) {
+    if( env == NULL && argv[ 1 ] == NULL || argv[ 1 ][ 0 ] == '\0' ) {
         Banner();
         Usage();
     }

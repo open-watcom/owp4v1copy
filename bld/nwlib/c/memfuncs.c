@@ -29,7 +29,7 @@
 *
 ****************************************************************************/
 
-#include <wlib.h>
+#include "wlib.h"
 
 #include "trmemcvr.h"
 
@@ -48,7 +48,8 @@ void *MemAlloc( size_t size )
         return( NULL );
     }
     ptr = TRMemAlloc( sizeof( MemPtr ) + size );
-    if( ptr == NULL ) FatalError( ERR_NO_MEMORY );
+    if( ptr == NULL )
+        FatalError( ERR_NO_MEMORY );
     ptr->next = memPtr;
     ptr->prev = NULL;
     if( memPtr ) {
@@ -76,7 +77,8 @@ void *MemRealloc( void *ptr, size_t size )
         ptr = mptr;
     }
     mptr = TRMemRealloc( ptr, size + sizeof( MemPtr ) );
-    if( mptr == NULL ) FatalError( ERR_NO_MEMORY );
+    if( mptr == NULL )
+        FatalError( ERR_NO_MEMORY );
     mptr->next = memPtr;
     mptr->prev = NULL;
     if( memPtr ) {
@@ -90,7 +92,8 @@ void *MemRealloc( void *ptr, size_t size )
 void MemFree( void *ptr )
 {
     MemPtr  *mptr;
-    if( ptr == NULL ) return;
+    if( ptr == NULL )
+        return;
     mptr = ptr;
     mptr--;
     if( mptr == memPtr ) {
@@ -109,20 +112,23 @@ void *MemAllocGlobal( size_t size )
 {
     void *ptr;
     ptr = TRMemAlloc( size );
-    if( ptr == NULL && size != 0 ) FatalError( ERR_NO_MEMORY );
+    if( ptr == NULL && size != 0 )
+        FatalError( ERR_NO_MEMORY );
     return( ptr );
 }
 
 void *MemReallocGlobal( void *ptr, size_t size )
 {
     ptr = TRMemRealloc( ptr, size );
-    if( ptr == NULL && size != 0 ) FatalError( ERR_NO_MEMORY );
+    if( ptr == NULL && size != 0 )
+        FatalError( ERR_NO_MEMORY );
     return( ptr );
 }
 
 void MemFreeGlobal( void *ptr )
 {
-    if( ptr == NULL ) return;
+    if( ptr == NULL )
+        return;
     TRMemFree( ptr );
 }
 void ResetMem( void )

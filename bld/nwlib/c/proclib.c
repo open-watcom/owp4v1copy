@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 #include "symomf.h"
 
 static void ExtractObj( libfile io, char *name, file_offset size,
@@ -42,15 +42,15 @@ static void ExtractObj( libfile io, char *name, file_offset size,
     /*
      * If this is an OMF library then we don't have the right object size.
      */
-    if (Options.libtype == WL_TYPE_OMF) {
-        pos = LibTell(io);
-        OMFSkipThisObject(arch, io);
-        size = LibTell(io) - pos;
-        LibSeek(io, pos, SEEK_SET);
+    if( Options.libtype == WL_TYPE_OMF ) {
+        pos = LibTell( io );
+        OMFSkipThisObject( arch, io );
+        size = LibTell( io ) - pos;
+        LibSeek( io, pos, SEEK_SET );
     }
 
     obj_name = MakeObjOutputName( name, newname );
-    unlink(obj_name);
+    unlink( obj_name );
     out = LibOpen( obj_name, LIBOPEN_BINARY_WRITE );
     pos = LibTell( io );
     Copy( io, out, size );
@@ -70,19 +70,16 @@ static void ProcessOneObject( arch_header *arch, libfile io )
         ExtractObj( io, arch->name, arch->size, arch, Options.explode_ext );
     }
     deleted = FALSE;
-    for (cmd = CmdList; cmd != NULL; cmd = cmd->next)
-    {
-        if (SameName( arch->name, cmd->name))
-        {
+    for( cmd = CmdList; cmd != NULL; cmd = cmd->next ) {
+        if( SameName( arch->name, cmd->name ) ) {
 
-            if (!Options.explode)
-            {
-                if ((cmd->ops & OP_EXTRACT) && !(cmd->ops & OP_EXTRACTED))
-                {
-                    if( cmd->fname != NULL )
+            if( !Options.explode ) {
+                if( ( cmd->ops & OP_EXTRACT ) && !( cmd->ops & OP_EXTRACTED ) ) {
+                    if( cmd->fname != NULL ) {
                         ExtractObj( io, cmd->name, arch->size, arch, cmd->fname );
-                    else
+                    } else {
                         ExtractObj( io, cmd->name, arch->size, arch, EXT_OBJ );
+                    }
                     cmd->ops |= OP_EXTRACTED;
                 }
             }
@@ -95,9 +92,9 @@ static void ProcessOneObject( arch_header *arch, libfile io )
         }
     }
 
-    if (deleted) {
-        if (Options.libtype == WL_TYPE_OMF) {
-            OMFSkipThisObject(arch, io);
+    if( deleted ) {
+        if( Options.libtype == WL_TYPE_OMF ) {
+            OMFSkipThisObject( arch, io );
         }
 
         Options.modified = TRUE;
@@ -125,7 +122,7 @@ typedef enum {
 static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_header *arch, libfile io ) )
 {
     libfile     io;
-    char        buff[AR_IDENT_LEN];
+    char        buff[ AR_IDENT_LEN ];
     arch_header arch;
 
     NewArchHeader( &arch, name );
@@ -155,7 +152,7 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
         }
     } else if( AddImport( &arch, io ) ) {
         LibClose( io );
-    } else if( buff[0] == LIB_HEADER_REC && buff[ 1 ] != 0x01 ) {
+    } else if( buff[ 0 ] == LIB_HEADER_REC && buff[ 1 ] != 0x01 ) {
         /*
           The buff[ 1 ] != 1 bit above is a bad hack to get around
           the fact that the coff cpu_type for PPC object files is
@@ -168,7 +165,7 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
         // OMF format
         AddInputLib( io, name );
         LibSeek( io, 0, SEEK_SET );
-        if (Options.libtype == 0) {
+        if( Options.libtype == 0 ) {
             Options.libtype = WL_TYPE_OMF;
         }
         OMFLibWalk( io, name, process );
@@ -192,10 +189,11 @@ static void WalkInputLib( void )
 static void AddModules( void )
 {
     lib_cmd     *cmd;
-    char        buff[MAX_IMPORT_STRING];
+    char        buff[ MAX_IMPORT_STRING ];
 
     for( cmd = CmdList; cmd != NULL; cmd = cmd->next ) {
-        if( !( cmd->ops & OP_ADD ) ) continue;
+        if( !( cmd->ops & OP_ADD ) )
+            continue;
         strcpy( buff, cmd->name );
         if( cmd->ops & OP_IMPORT ) {
             ProcessImport( buff );
@@ -218,19 +216,20 @@ static void AddModules( void )
 static void DelModules( void )
 {
     lib_cmd     *cmd;
-    char        buff[MAX_IMPORT_STRING];
+    char        buff[ MAX_IMPORT_STRING ];
 
     for( cmd = CmdList; cmd != NULL; cmd = cmd->next ) {
-        if( !( cmd->ops & OP_DELETE ) ) continue;
+        if( !( cmd->ops & OP_DELETE ) )
+            continue;
         strcpy( buff, cmd->name );
         DefaultExtension( buff, EXT_OBJ );
-        if( IsExt( buff, EXT_LIB ) ){
+        if( IsExt( buff, EXT_LIB ) ) {
             ProcessLibOrObj( buff, OBJ_SKIP, DelOneObject );
             cmd->ops |= OP_DELETED;
         }
-        if( !( cmd->ops & OP_DELETED ) && !(cmd->ops & OP_ADD ) ) {
+        if( !( cmd->ops & OP_DELETED ) && !( cmd->ops & OP_ADD ) ) {
                 Warning( ERR_CANT_DELETE, cmd->name );
-        } else if ( ( cmd->ops & OP_DELETED ) && !( cmd->ops & OP_ADD ) && Options.ar && Options.verbose ) {
+        } else if( ( cmd->ops & OP_DELETED ) && !( cmd->ops & OP_ADD ) && Options.ar && Options.verbose ) {
             Message( "-d %s", cmd->name );
         }
     }

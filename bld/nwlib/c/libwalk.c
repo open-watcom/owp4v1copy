@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 void BadLibrary( char *name )
 /***************************/
@@ -70,7 +70,8 @@ void LibWalk( libfile io, char *name, void (*rtn)( arch_header *, libfile io ) )
     arch.ffnametab = NULL;
     for( ;; ) {
         bytes_read = LibRead( io, &ar, AR_HEADER_SIZE );
-        if( bytes_read == 0 ) break;
+        if( bytes_read == 0 )
+            break;
         if( bytes_read != AR_HEADER_SIZE ) {
             BadLibrary( name );
         }
@@ -79,7 +80,7 @@ void LibWalk( libfile io, char *name, void (*rtn)( arch_header *, libfile io ) )
         }
         GetARHeaderValues( &ar, &arch );
         pos = LibTell( io );
-        if( ar.name[0] == '/' && ar.name[1] == ' ' && ar.name[2] == ' ' ) {
+        if( ar.name[ 0 ] == '/' && ar.name[ 1 ] == ' ' && ar.name[ 2 ] == ' ' ) {
             // Ignore symbol table.
 /*
             dict_count++;
@@ -90,9 +91,9 @@ void LibWalk( libfile io, char *name, void (*rtn)( arch_header *, libfile io ) )
                 updateNewArchive( &arch );
             }
 */
-        } else if( ar.name[0] == '/' && ar.name[1] == '/' && ar.name[2] == ' ' ) {
+        } else if( ar.name[ 0 ] == '/' && ar.name[ 1 ] == '/' && ar.name[ 2 ] == ' ' ) {
             AllocFNameTab( name, io, &arch );
-        } else if( ar.name[0] == '/' && ar.name[1] == '/' && ar.name[2] == '/' ) {
+        } else if( ar.name[ 0 ] == '/' && ar.name[ 1 ] == '/' && ar.name[ 2 ] == '/' ) {
             AllocFFNameTab( name, io, &arch );
         } else {
             arch.name = GetARName( &ar, &arch );
@@ -101,7 +102,8 @@ void LibWalk( libfile io, char *name, void (*rtn)( arch_header *, libfile io ) )
             MemFree( arch.name );
             MemFree( arch.ffname );
         }
-        if( arch.size & 1 ) ++arch.size;
+        if( arch.size & 1 )
+            ++arch.size;
         LibSeek( io, pos + arch.size, SEEK_SET );
     }
     MemFree( arch.fnametab );

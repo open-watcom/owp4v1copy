@@ -32,7 +32,7 @@
 typedef struct input_lib {
     struct      input_lib *next;
     libfile     io;
-    char        name[1];
+    char        name[ 1 ];
 } input_lib;
 
 extern void AddInputLib( libfile io, char *name );

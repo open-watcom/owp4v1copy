@@ -62,11 +62,11 @@ int main                        // MAIN-LINE FOR DLL DRIVER
 
 #ifdef IDE_PGM
 #ifdef __UNIX__
-    static char buffer[PATH_MAX];
+    static char buffer[ PATH_MAX ];
     _cmdname( buffer );
     ImageName = buffer;
 #else
-    ImageName = args[0];
+    ImageName = args[ 0 ];
 #endif
 #endif
 #ifndef __WATCOMC__
@@ -79,7 +79,7 @@ int main                        // MAIN-LINE FOR DLL DRIVER
     cmd_line = malloc( len );
     _bgetcmd( cmd_line, len );
     /* Turn on 'ar' mode by setting WLIB$AR env var */
-    if( stricmp( strrchr( args[0], '\\' ) + 1, "ar.exe" ) == 0 ) {
+    if( stricmp( strrchr( args[ 0 ], '\\' ) + 1, "ar.exe" ) == 0 ) {
         putenv( AR_MODE_ENV "=ON" );
     }
     retcode = IdeDrvExecDLL( &info, cmd_line );
@@ -90,5 +90,5 @@ int main                        // MAIN-LINE FOR DLL DRIVER
     if( retcode != IDEDRV_ERR_INIT_EXEC ) {
         IdeDrvUnloadDLL( &info );               // UNLOAD THE DLL
     }
-    return retcode;
+    return( retcode );
 }

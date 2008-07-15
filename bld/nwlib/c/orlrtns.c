@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 static orl_handle       ORLHnd;
 static orl_funcs        OrlFuncs;
@@ -40,7 +40,7 @@ static void * ObjRead( void *fil, size_t len )
     buf_list *  buf;
     obj_file *  file = fil;
 
-    buf = MemAlloc( len + sizeof(buf_list) - 1 );
+    buf = MemAlloc( len + sizeof( buf_list ) - 1 );
     if( LibRead( file->hdl, buf->buf, len ) != len ) {
         MemFree( buf );
         return( NULL );
@@ -69,7 +69,8 @@ static long ObjSeek( void *fil, long pos, int where )
 static void *ObjAlloc( size_t size )
 /**********************************/
 {
-    if( size == 0 ) size = 1;
+    if( size == 0 )
+        size = 1;
     return( MemAllocGlobal( size ) );
 }
 
@@ -94,7 +95,7 @@ void InitObj( void )
     OrlFuncs.free = &ObjFree;
     ORLHnd = ORLInit( &OrlFuncs );
     if( ORLHnd == NULL ) {
-        longjmp( Env , 1);
+        longjmp( Env , 1 );
     }
 }
 

@@ -108,7 +108,7 @@ struct sym_entry_struct {
     short               len;
     unsigned char       info;
     symbol_strength     strength;
-    char                name[1];
+    char                name[ 1 ];
 };
 
 extern void InitFileTab( void );

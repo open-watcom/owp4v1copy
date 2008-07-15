@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
-#include <banner.h>
+#include "wlib.h"
+#include "banner.h"
 
 #if defined(__DEBUG__) && defined(_BANEXTRA)
 #undef  _BANEXTRA
@@ -44,11 +44,11 @@ int main( int argc, char *argv[] )
     char    *cmd_line;
     int     cmd_len;
 
-    InitSubSystems( argv[0] );
+    InitSubSystems( argv[ 0 ] );
     cmd_len = _bgetcmd( NULL, 0 ) + 1;
     cmd_line = MemAllocGlobal( cmd_len );
     _bgetcmd( cmd_line, cmd_len );
-    retcode = WlibMainLine( argv[0], cmd_line );
+    retcode = WlibMainLine( argv[ 0 ], cmd_line );
     MemFreeGlobal( cmd_line );
     FiniSubSystems();
     return( retcode );
@@ -63,7 +63,7 @@ void FatalResError()
 void FatalError( int str, ... )
 {
     va_list             arglist;
-    char                buff[MAX_ERROR_SIZE];
+    char                buff[ MAX_ERROR_SIZE ];
 
     va_start( arglist, str );
     MsgGet( str, buff );
@@ -76,9 +76,10 @@ void FatalError( int str, ... )
 void Warning( int str, ... )
 {
     va_list             arglist;
-    char                buff[MAX_ERROR_SIZE];
+    char                buff[ MAX_ERROR_SIZE ];
 
-    if( Options.quiet ) return;
+    if( Options.quiet )
+        return;
     MsgGet( str, buff );
     va_start( arglist, str );
     vfprintf( stderr, buff, arglist );
@@ -88,13 +89,13 @@ void Warning( int str, ... )
 
 void Usage( void )
 {
-    char                buff[MAX_ERROR_SIZE];
+    char                buff[ MAX_ERROR_SIZE ];
     int                 str;
     int                 count=3;
 
     for( str = USAGE_FIRST; str <= USAGE_LAST; ++str ) {
         MsgGet( str, buff );
-        if( (count>20 && (!buff || buff[0]=='\0')) || count==24 ) {
+        if( (count>20 && (!buff || buff[ 0 ]=='\0')) || count==24 ) {
             fprintf( stderr, "    (Press Return to continue)" );
             fflush( stderr );
             getch();
@@ -129,7 +130,8 @@ banner3a,
     static int alreadyDone=0;
     char **text;
 
-    if( Options.quiet || alreadyDone || Options.terse_listing ) return;
+    if( Options.quiet || alreadyDone || Options.terse_listing )
+        return;
 
     alreadyDone = 1;
     text = bannerText;

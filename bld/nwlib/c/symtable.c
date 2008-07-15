@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 static sym_table        FileTable;
 sym_file                *CurrFile;
@@ -46,8 +46,8 @@ void InitFileTab( void )
     FileTable.first = NULL;
     FileTable.add_to = &FileTable.first;
     SortedSymbols = NULL;
-    HashTable = MemAllocGlobal( HASH_SIZE * sizeof( HashTable[0] ) );
-    memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[0] ) );
+    HashTable = MemAllocGlobal( HASH_SIZE * sizeof( HashTable[ 0 ] ) );
+    memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[ 0 ] ) );
 }
 
 void FiniSymFile( sym_file *file )
@@ -129,7 +129,7 @@ void ResetFileTab( void )
 {
     sym_file            *file, *next_file;
 
-    memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[0] ) );
+    memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[ 0 ] ) );
     for( file = FileTable.first; file != NULL; file = next_file ) {
         next_file = file->next;
         FiniSymFile( file );
@@ -156,10 +156,10 @@ void RemoveFromHashTable( sym_entry *sym )
     unsigned        len;
 
     hval = Hash( sym->name, &len );
-    hash = HashTable[hval];
+    hash = HashTable[ hval ];
 
     if( hash == sym ) {
-        HashTable[hval] = sym->hash;
+        HashTable[ hval ] = sym->hash;
     } else if( hash ) {
         prev = hash;
 
@@ -295,7 +295,7 @@ static void SortSymbols( void )
         SortedSymbols = NULL;
         Warning( ERR_NO_SYMBOLS );
     } else {
-        SortedSymbols = MemAllocGlobal( NumSymbols * sizeof( SortedSymbols[0] ) );
+        SortedSymbols = MemAllocGlobal( NumSymbols * sizeof( SortedSymbols[ 0 ] ) );
     }
 
     sym_curr = SortedSymbols;
@@ -315,7 +315,7 @@ static void SortSymbols( void )
     }
 
     for( i = NumSymbols - 1; i >= 0; --i ) {
-        sym = SortedSymbols[i];
+        sym = SortedSymbols[ i ];
         sym->next = sym->file->first;
         sym->file->first = sym;
     }
@@ -358,7 +358,7 @@ static void WriteArMlibFileTable( void )
     file_offset     obj_offset;
     int             index;
     libfile         io;
-    char            buff[20];
+    char            buff[ 20 ];
     char            *stringpad = NULL;
     int             stringpadlen = 0;
 
@@ -464,20 +464,20 @@ static void WriteArMlibFileTable( void )
     switch( Options.libtype ) {
     case WL_TYPE_AR:
         for( i = 0; i < NumSymbols; ++i ) {
-            WriteLittleEndian16( SortedSymbols[i]->file->index );
+            WriteLittleEndian16( SortedSymbols[ i ]->file->index );
         }
         break;
     case WL_TYPE_MLIB:
         for( i = 0; i < NumSymbols; ++i ) {
-            WriteLittleEndian32( SortedSymbols[i]->file->index );
+            WriteLittleEndian32( SortedSymbols[ i ]->file->index );
         }
         for( i = 0; i < NumSymbols; ++i ) {
-            WriteNew( &(SortedSymbols[i]->info), 1 );
+            WriteNew( &(SortedSymbols[ i ]->info), 1 );
         }
         break;
     }
     for( i = 0; i < NumSymbols; ++i ) {
-        WriteNew( SortedSymbols[i]->name, SortedSymbols[i]->len + 1 );
+        WriteNew( SortedSymbols[ i ]->name, SortedSymbols[ i ]->len + 1 );
     }
     switch( Options.libtype ) {
     case WL_TYPE_AR:
@@ -520,11 +520,11 @@ static void WriteArMlibFileTable( void )
 
     for( file = FileTable.first; file != NULL; file = file->next ) {
         arch = file->arch;
-        buff[0] = '/';
+        buff[ 0 ] = '/';
         itoa( file->name_offset, buff+1, 10 );
         arch.name = buff;
         WriteFileHeader( &arch );
-        if( file->import == NULL ){
+        if( file->import == NULL ) {
             if( file->inlib_offset != 0 ) {
                 LibSeek( InLibHandle( file->inlib ), file->inlib_offset, SEEK_SET );
                 Copy( InLibHandle( file->inlib ), NewLibrary, arch.size );
@@ -660,7 +660,7 @@ void DumpFileTable( void )
 
             hval = Hash( entry->name, &len );
             printf( "\t\"%s\" (%d, %u, \"%s\")", entry->name, hval, len,
-                    (HashTable[hval] ? HashTable[hval]->name : "(NULL)") );
+                    (HashTable[ hval ] ? HashTable[ hval ]->name : "(NULL)") );
 
             for( hash = entry->hash; hash; hash = hash->hash ) {
                 printf( " -> \"%s\"", hash->name );
@@ -689,8 +689,8 @@ void DumpHashTable( void )
     for( i = 0; i < HASH_SIZE; ++i ) {
         length = 0;
 
-        if( HashTable[i] ) {
-            for( hash = HashTable[i]; hash; hash = hash->next ) {
+        if( HashTable[ i ] ) {
+            for( hash = HashTable[ i ]; hash; hash = hash->next ) {
                 ++length;
             }
         }
@@ -859,12 +859,12 @@ void ElfMKImport( arch_header *arch, importType type, long export_size,
     temp = &(CurrFile->import->symlist);
 
     for( i=0; i<export_size; i++ ) {
-        if( export_table[i].exp_symbol ) {
+        if( export_table[ i ].exp_symbol ) {
             *temp = MemAllocGlobal( sizeof( elf_import_sym ) );
-            (*temp)->name = DupStrGlobal(&(strings[sym_table[export_table[i].
-                exp_symbol].st_name]));
+            (*temp)->name = DupStrGlobal(&(strings[ sym_table[ export_table[ i ].
+                exp_symbol ].st_name ]));
             (*temp)->len = strlen( (*temp)->name );
-            (*temp)->ordinal = export_table[i].exp_ordinal;
+            (*temp)->ordinal = export_table[ i ].exp_ordinal;
             if( type == ELF ) {
                 AddSym( (*temp)->name, SYM_STRONG, ELF_IMPORT_SYM_INFO );
             }
@@ -880,7 +880,7 @@ void ElfMKImport( arch_header *arch, importType type, long export_size,
 }
 
 #define MAX_MESSAGE_LEN 511
-static char             listMsg[MAX_MESSAGE_LEN + 1];
+static char             listMsg[ MAX_MESSAGE_LEN + 1 ];
 static unsigned         msgLength = 0;
 
 static void listPrint( FILE *fp, char *str, ... )
@@ -900,8 +900,8 @@ static void listNewLine( FILE *fp )
         Message( listMsg );
     }
     msgLength = 0;
-    listMsg[0] = ' ';
-    listMsg[1] = '\0';
+    listMsg[ 0 ] = ' ';
+    listMsg[ 1 ] = '\0';
 }
 
 #define LINE_WIDTH 79
@@ -920,64 +920,64 @@ static void fpadch( FILE *fp, char ch, int len )
 
 static void printVerboseTableEntry( arch_header *arch )
 {
-    char        member_mode[11];
-    char        date[128];
+    char        member_mode[ 11 ];
+    char        date[ 128 ];
     time_t      t;
 
-    member_mode[10] = '\0';
-    member_mode[9] = ' ';
+    member_mode[ 10 ] = '\0';
+    member_mode[ 9 ] = ' ';
     if( arch->mode & S_IRUSR ) {
-        member_mode[0] = 'r';
+        member_mode[ 0 ] = 'r';
     } else {
-        member_mode[0] = '-';
+        member_mode[ 0 ] = '-';
     }
     if( arch->mode & S_IWUSR ) {
-        member_mode[1] = 'w';
+        member_mode[ 1 ] = 'w';
     } else {
-        member_mode[1] = '-';
+        member_mode[ 1 ] = '-';
     }
     if( !( arch->mode & S_IXUSR ) && (arch->mode & S_ISUID ) ) {
-        member_mode[2] = 'S';
+        member_mode[ 2 ] = 'S';
     } else if( ( arch->mode & S_IXUSR ) && ( arch->mode & S_ISUID ) ) {
-        member_mode[2] = 's';
+        member_mode[ 2 ] = 's';
     } else if( arch->mode & S_IXUSR ) {
-        member_mode[2] = 'x';
+        member_mode[ 2 ] = 'x';
     } else {
-        member_mode[2] = '-';
+        member_mode[ 2 ] = '-';
     }
     if( arch->mode & S_IRGRP ) {
-        member_mode[3] = 'r';
+        member_mode[ 3 ] = 'r';
     } else {
-        member_mode[3] = '-';
+        member_mode[ 3 ] = '-';
     }
     if( arch->mode & S_IWGRP ) {
-        member_mode[4] = 'w';
+        member_mode[ 4 ] = 'w';
     } else {
-        member_mode[4] = '-';
+        member_mode[ 4 ] = '-';
     }
     if( !( arch->mode & S_IXGRP ) && (arch->mode & S_ISGID ) ) {
-        member_mode[5] = 'S';
+        member_mode[ 5 ] = 'S';
     } else if( ( arch->mode & S_IXGRP ) && ( arch->mode & S_ISGID ) ) {
-        member_mode[5] = 's';
+        member_mode[ 5 ] = 's';
     } else if( arch->mode & S_IXGRP ) {
-        member_mode[5] = 'x';
+        member_mode[ 5 ] = 'x';
     } else {
-        member_mode[5] = '-';
+        member_mode[ 5 ] = '-';
     }
     if( arch->mode & S_IROTH ) {
-        member_mode[6] = 'r';
+        member_mode[ 6 ] = 'r';
     } else {
-        member_mode[6] = '-';
+        member_mode[ 6 ] = '-';
     }
     if( arch->mode & S_IWOTH ) {
-        member_mode[7] = 'w';
+        member_mode[ 7 ] = 'w';
     } else {
-        member_mode[7] = '-';
+        member_mode[ 7 ] = '-';
     }
     if( arch->mode & S_IXOTH ) {
-        member_mode[8] = 'x';
+        member_mode[ 8 ] = 'x';
     } else {
-        member_mode[8] = '-';
+        member_mode[ 8 ] = '-';
     }
     t = (time_t) arch->date;
     strftime( date, 127, "%b %d %H:%M %Y", localtime( &t ) );
@@ -1033,7 +1033,7 @@ void ListContents( void )
         if( Options.terse_listing ) {
             SortSymbols();
             for( i = 0; i < NumSymbols; ++i ) {
-                sym = SortedSymbols[i];
+                sym = SortedSymbols[ i ];
                 name = FormSym( sym->name );
                 name_len = strlen( name );
                 Message(name);
@@ -1044,7 +1044,7 @@ void ListContents( void )
         if( Options.list_file == NULL ) {
             Options.list_file = DupStr( MakeListName() );
         }
-        if( Options.list_file[0] != 0 ) {
+        if( Options.list_file[ 0 ] != 0 ) {
             fp = fopen( Options.list_file, "w" );
             if( fp == NULL ) {
                 FatalError( ERR_CANT_OPEN, Options.list_file, strerror( errno ) );
@@ -1055,7 +1055,7 @@ void ListContents( void )
         SortSymbols();
 
         for( i = 0; i < NumSymbols; ++i ) {
-            sym = SortedSymbols[i];
+            sym = SortedSymbols[ i ];
             name = FormSym( sym->name );
             name_len = strlen( name );
             listPrint( fp, "%s..", name );

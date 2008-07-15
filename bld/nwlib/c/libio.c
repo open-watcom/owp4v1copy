@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 static libfile fileList;
 
@@ -43,11 +43,11 @@ void ResetLibIo( void )
 {
     libfile lio;
 
-    while (fileList) {
+    while( fileList ) {
         lio = fileList->next;
-        close(fileList->io);
-        MemFreeGlobal(fileList->name);
-        MemFreeGlobal(fileList);
+        close( fileList->io );
+        MemFreeGlobal( fileList->name );
+        MemFreeGlobal( fileList );
         fileList = lio;
     }
 }
@@ -56,7 +56,7 @@ libfile LibOpen( char *name, int access )
 {
     int io;
     libfile lio;
-    if( access & O_CREAT ){
+    if( access & O_CREAT ) {
         io = open( name, access, S_IRUSR | S_IRGRP | S_IROTH |
                                  S_IWUSR | S_IWGRP | S_IWOTH );
     } else {
@@ -66,7 +66,7 @@ libfile LibOpen( char *name, int access )
 
     if( io == -1 && errno == EMFILE ) {
         CloseOneInputLib();
-        if( access & O_CREAT ){
+        if( access & O_CREAT ) {
             io = open( name, access, S_IRUSR | S_IRGRP | S_IROTH | 
                                      S_IWUSR | S_IWGRP | S_IWOTH );
         } else {
@@ -139,7 +139,7 @@ file_offset LibRead( libfile lio, void *buff, file_offset len )
         memcpy( buff, lio->buffer + lio->buf_pos, b_read );
         lio->buf_pos += b_read;
     }
-    if( (lio->buf_pos == lio->buf_size) ) {
+    if( lio->buf_pos == lio->buf_size ) {
         ret = read( lio->io, lio->buffer, READ_FILE_BUFFER_SIZE );
         if( ret < 0 ) {
             LibReadError( lio );
@@ -151,7 +151,7 @@ file_offset LibRead( libfile lio, void *buff, file_offset len )
         }
         if( b_read < len ) {
             ret = min( ret, len - b_read );
-            memcpy( ( (char  *)buff ) + b_read, lio->buffer, ret );
+            memcpy( (char *)buff + b_read, lio->buffer, ret );
             b_read += ret;
             lio->buf_pos += ret;
         }
@@ -214,7 +214,7 @@ void LibSeek( libfile lio, long where, int whence )
             where -= LibTell( lio );
             whence = SEEK_CUR;
         }
-        if( ( lio->buf_pos >= -where ) && ( (lio->buf_pos + where) < lio->buf_size ) ) {
+        if( ( lio->buf_pos >= -where ) && ( lio->buf_pos + where < lio->buf_size ) ) {
             lio->buf_pos += where;
             return;
         }

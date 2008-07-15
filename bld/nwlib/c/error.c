@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 #if defined( INCL_MSGTEXT )
 
@@ -102,8 +102,8 @@ void InitMsg( void )
 void MsgGet( int resourceid, char *buffer )
 {
     if( LoadString( &hInstance, resourceid + MsgShift,
-                (LPSTR) buffer, 128 ) != 0 ) {
-        buffer[0] = '\0';
+                (LPSTR)buffer, 128 ) != 0 ) {
+        buffer[ 0 ] = '\0';
     }
 }
 

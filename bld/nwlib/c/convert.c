@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <wlib.h>
+#include "wlib.h"
 
 static void GetARValue( char *element, ar_len len, char delimiter, char *buffer );
 
@@ -45,7 +45,7 @@ static unsigned long GetARNumeric( char *str, int max, int base )
     *(str + max) = '\0';
     value = strtoul( str, NULL, base );
     *(str + max) = save;
-    return value;
+    return( value );
 }
 
 static unsigned long ARstrlen( char * str )
@@ -55,7 +55,7 @@ static unsigned long ARstrlen( char * str )
     char *c;
 
     for( c=str; *c!='\0'; c++ ) {
-        if( (c[0]=='/') && (c[1]=='\n') ) {
+        if( (c[ 0 ]=='/') && (c[ 1 ]=='\n') ) {
             break;
         }
     }
@@ -65,13 +65,13 @@ static unsigned long ARstrlen( char * str )
 char *GetARName( ar_header *header, arch_header *arch )
 /************************************************************/
 {
-    char        buffer[AR_NAME_LEN + 1];
+    char        buffer[ AR_NAME_LEN + 1 ];
     char *      buf;
     char *      name;
     file_offset len;
 
-    if( header->name[0] == '/' ) {
-        len = GetARNumeric( &header->name[1], AR_NAME_LEN - 1, AR_ELEMENT_BASE );
+    if( header->name[ 0 ] == '/' ) {
+        len = GetARNumeric( &header->name[ 1 ], AR_NAME_LEN - 1, AR_ELEMENT_BASE );
         buf = arch->fnametab + len;
     } else {
         GetARValue( header->name, AR_NAME_LEN, AR_NAME_END_CHAR, buffer );
@@ -94,7 +94,7 @@ char *GetFFName( arch_header *arch )
         name = (char *) MemAlloc( len + 1 );
         memcpy( name, arch->nextffname, len + 1 );
         arch->nextffname += len + 1;
-        if( arch->nextffname >= arch->lastffname || (arch->nextffname[0]=='\n'
+        if( arch->nextffname >= arch->lastffname || (arch->nextffname[ 0 ]=='\n'
                 && arch->nextffname+1 >= arch->lastffname) ) {
             arch->nextffname = NULL;
         }
@@ -109,13 +109,13 @@ static void GetARValue( char *element, ar_len len, char delimiter, char *buffer 
 {
     ar_len      loop = 0;
 
-    while( loop < len && element[loop] != delimiter ) {
+    while( loop < len && element[ loop ] != delimiter ) {
         loop++;
     }
     if( loop > 0 ) {
         strncpy( buffer, element, loop );
     }
-    buffer[loop] = '\0';
+    buffer[ loop ] = '\0';
 }
 
 void GetARHeaderValues( ar_header *header, arch_header * arch )
@@ -132,7 +132,7 @@ static void PutARPadding( char * element, ar_len current_len, ar_len desired_len
     ar_len      loop;
 
     for( loop = current_len; loop < desired_len; loop++ ) {
-        element[loop] = AR_VALUE_END_CHAR;
+        element[ loop ] = AR_VALUE_END_CHAR;
     }
 }
 

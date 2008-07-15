@@ -66,12 +66,12 @@ IDEBool IDEDLL_EXPORT IDEPassInitInfo( IDEDllHdl hdl, IDEInitInfo *info )
 
 IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char *opts, IDEBool *fatalerr )
 {
-    char        *argv[3];
+    char        *argv[ 3 ];
 
     *fatalerr = FALSE;
-    argv[0] = "";
-    argv[1] = (char *)opts;
-    argv[2] = NULL;
+    argv[ 0 ] = "";
+    argv[ 1 ] = (char *)opts;
+    argv[ 2 ] = NULL;
     return( WlibMainLine( argv ) );
 }
 
@@ -135,8 +135,8 @@ void FatalResError()
 void FatalError( int str, ... )
 {
     va_list             arglist;
-    char                buff[MAX_ERROR_SIZE];
-    char                msg[512];
+    char                buff[ MAX_ERROR_SIZE ];
+    char                msg[ 512 ];
     IDEMsgInfo          msg_info;
 
     va_start( arglist, str );
@@ -153,11 +153,12 @@ void FatalError( int str, ... )
 void Warning( int str, ... )
 {
     va_list             arglist;
-    char                buff[MAX_ERROR_SIZE];
-    char                msg[512];
+    char                buff[ MAX_ERROR_SIZE ];
+    char                msg[ 512 ];
     IDEMsgInfo          msg_info;
 
-    if( Options.quiet ) return;
+    if( Options.quiet )
+        return;
     MsgGet( str, buff );
     va_start( arglist, str );
     _vbprintf( msg, 512, buff, arglist );
@@ -171,10 +172,11 @@ void Warning( int str, ... )
 void Message( char *buff, ... )
 {
     va_list             arglist;
-    char                msg[512];
+    char                msg[ 512 ];
     IDEMsgInfo          msg_info;
 
-    if( Options.quiet ) return;
+    if( Options.quiet )
+        return;
     va_start( arglist, buff );
     _vbprintf( msg, 512, buff, arglist );
     if( ideCb ) {
@@ -186,7 +188,7 @@ void Message( char *buff, ... )
 
 void Usage( void )
 {
-    char                buff[MAX_ERROR_SIZE];
+    char                buff[ MAX_ERROR_SIZE ];
     int                 str;
     int                 str_first;
     int                 str_last;
@@ -209,7 +211,7 @@ void Usage( void )
         for( str = str_first; str <= str_last; ++str ) {
             MsgGet( str, buff );
             if( ideInfo && ideInfo->ver > 2 && ideInfo->console_output &&
-                ( count > 20 && buff[0] == '\0' || count == 24 ) ) {
+                ( count > 20 && buff[ 0 ] == '\0' || count == 24 ) ) {
                 msg_info.msg = "    (Press Return to continue)" ;
                 ideCb->PrintWithInfo( ideHdl, &msg_info );
                 getch();
@@ -217,7 +219,7 @@ void Usage( void )
                 msg_info.msg = buff;
             }
             ++count;
-            if( buff[0] == '\0' ) {
+            if( buff[ 0 ] == '\0' ) {
                 continue;
             }
             ideCb->PrintWithInfo( ideHdl, &msg_info );
@@ -243,7 +245,8 @@ banner3a,
     static int alreadyDone=0;
     char **text;
 
-    if( Options.quiet || alreadyDone || Options.terse_listing ) return;
+    if( Options.quiet || alreadyDone || Options.terse_listing )
+        return;
 
     alreadyDone = 1;
     if( ideCb ) {

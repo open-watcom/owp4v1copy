@@ -36,7 +36,7 @@
 typedef struct {
     unsigned_8  type;
     unsigned_16 len;
-    unsigned_8  contents[1];
+    unsigned_8  contents[ 1 ];
 } OmfBasic;
 
 typedef struct {
@@ -61,7 +61,7 @@ typedef union {
     OmfBasic        basic;
     OmfTimeStamp    time;
     OmfLibHeader    lib_header;
-    unsigned_8      chkcalc[1];
+    unsigned_8      chkcalc[ 1 ];
 } OmfRecord;
 
 #define INIT_OMF_REC_SIZE 1024
@@ -69,7 +69,7 @@ typedef union {
 #define BLOCK_NAME_LEN ( DIC_REC_SIZE - NUM_BUCKETS - 1 )
 
 typedef struct{
-    unsigned_8  htab[NUM_BUCKETS];
+    unsigned_8  htab[ NUM_BUCKETS ];
     unsigned_8  fflag;
     unsigned_8  name[ BLOCK_NAME_LEN ];
 } OmfLibBlock;
