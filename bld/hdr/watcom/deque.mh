@@ -39,6 +39,10 @@
   #include <stdexcep>
 #endif
 
+#ifndef _TYPE_TRAITS_INCLUDED
+    #include <type_tra>
+#endif
+
 namespace std {
 
   template< class Type, class Allocator = allocator< Type >,
@@ -198,6 +202,11 @@ namespace std {
     void     pop_back( );
     iterator insert( iterator position, const Type &x );
     void     insert( iterator position, size_type n, const Type &x );
+    template< class InputIt >
+    void insert( iterator pos, InputIt first, InputIt last )
+    {
+        helper_insert( pos, first, last, tr1::is_integral<InputIt>::type() );
+    }
     iterator erase( iterator position );
     iterator erase( iterator first, iterator last );
     void     swap( deque &x );
@@ -229,8 +238,8 @@ namespace std {
     size_type head;                     // cbuf and page index of first element
     size_type tail;                     // cbuf and page index of last element
 
-    inline bool is_back_full();
-    inline bool is_front_full();
+    bool is_back_full( size_type n = 1 );
+    bool is_front_full( size_type n = 1 );
     void grow_cbuf( size_type );
     void new_page( size_type ci );      // create/move page at ci
     size_type dist_from_first( size_type i ) const; // i is compressed cbuf and page index
@@ -241,8 +250,73 @@ namespace std {
     inline static size_type get_pi( size_type i ) { return( i % PageSize ); }
     // pagesize and cbuf_length must be power of 2 for this to work
     size_type wrap( size_type i ) const { return( i & ( cbuf_length * PageSize - 1 ) ); }
+    
+    // used by various insert functions
+    // push [first, last) starting after tail
+    // recommend allocate sufficient space first
+    // exception saftey weak, used to build the strong functions
+    template< class it >
+    void push_back_many( it first, it last )
+    {
+        while( first != last ){
+            push_back( *f );
+            ++first;
+        }
+    }
+    
+    // member templates - to be moved outside class when compiler supports this
+  public:
+    // overloaded helpers get called by insert(many) depending on iterator type
+    // int type
+    template< class InputIt1, class InputIt2 >
+    void insert_helper( iterator pos, InputIt1 first, InputIt2 last, tr1::true_type )
+    {
+        insert( pos, static_cast<size_type>(first), static_cast<value_type>(last) );
+    }
+    // non int type
+    // to do: specialise for iterator of type input it (make temp copy of elements
+    // in order to count them)
+    template< class It1, class It2 >
+    void insert_helper( iterator pos, It1 first, It2 last, tr1::false_type )
+    {/*
+        // if at begin
+        
+        // if at end
+        
+        // if nearer end
+        // to do - test
+        
+        // count elements
+        size_type d = last-first;//= distance( first, last );
+        // resize cbuf
+        if( is_back_full(d) ){
+            size_type n = cbuf_length;
+            size_type t = cbuf_length + ( d / PageSize ) + 1;
+            while( n < t ) n *= 2;
+            grow_cbuf( n );
+        }
+        // create temp
+        // (exception will automatically clean up temp giving strong safety)
+        deque temp;
+        // calculate temp starting pos
+        size_type tmp_fst = 0;
+        if( distance_to_first( pos.i ) < PageSize ) {
+        
+        // copy from start of page to pos
+        // copy from first to last
+        // copy pos to end
+        // delete old pages
+        // move new pages
+        // update indexes
+        // temp will clean up automatically
+        
+        
+        
+        // if nearer begin
+        */
+    }
   };
-//#line 248 "deque.mh"
+//#line 319 "deque.mh"
 
   // ===================================
   // Member functions of deque::iterator
@@ -445,31 +519,29 @@ namespace std {
     return( wrap(i - tail) );
   }
   
-  // if_front_full( )
+  // is_front_full( )
   // *************************
   // check push front wont overflow
   template< class Type, class Allocator, int PageSize >
-  inline bool deque< Type, Allocator, PageSize >::is_front_full( )
+  bool deque< Type, Allocator, PageSize >::is_front_full( size_type n )
   {
-    return( deq_used == (cbuf_length * PageSize - 1 ) || //only one element left
+    return( deq_used +n >= cbuf_length * PageSize || // only n elements left
             (// or must not overflow chead into same page as ctail
-            deq_used &&
-            get_pi(head) == 0 &&
-            ( ( get_ci(head) - 1 ) & ( cbuf_length - 1 ) ) == get_ci(tail)
+            get_ci(tail) != get_ci(head) &&
+            get_ci( wrap(head - n) ) == get_ci(tail)
             ) );
   }
   
-  // if_back_full( )
+  // is_back_full( )
   // *************************
   // check push back wont overflow
   template< class Type, class Allocator, int PageSize >
-  inline bool deque< Type, Allocator, PageSize >::is_back_full( )
+  bool deque< Type, Allocator, PageSize >::is_back_full( size_type n )
   {
-    return( deq_used == (cbuf_length * PageSize - 1 ) || //only one element left
+    return( deq_used + n >= cbuf_length * PageSize || //only n elements left
             (// or must not overflow ctail into same page as chead
-            deq_used &&
-            get_pi(tail) == PageSize - 1 &&
-            ( ( get_ci(tail) + 1 ) & ( cbuf_length - 1 ) ) == get_ci(head)
+            get_ci(tail) != get_ci(head) &&
+            get_ci( wrap( tail + n ) ) == get_ci(head)
             ) );
   }
   
@@ -646,6 +718,25 @@ namespace std {
     cmem.deallocate( cbuf, cbuf_length );
   }
 
+  // clear( )
+  // ********
+  template< class Type, class Allocator, int PageSize >
+  void deque< Type, Allocator, PageSize >::clear( )
+  {
+    size_type i;
+    // Destroy objects actually in use
+    for( i = 0; i < deq_used; i++ ){
+        pmem.destroy( &cbuf[get_ci(head)][get_pi(head)] );
+        head = wrap( head + 1 );
+    }
+    // head now == tail+1
+    deq_used = 0;
+    
+    // but don't delete any pages or buffers ? 
+    // is this good behaviour or should we dealloc too?
+  }
+  
+  
   // begin( )
   // ********
   template< class Type, class Allocator, int PageSize >
@@ -933,6 +1024,103 @@ namespace std {
     --deq_used;
   }
 
+  // insert( iterator, type )
+  // ************************
+  template< class Type, class Allocator, int PageSize >
+  typename deque< Type, Allocator, PageSize >::iterator
+  deque< Type, Allocator, PageSize >::insert( iterator it, const Type &x )
+  {
+    // check if at first or last element
+    if( it == begin() ){
+        push_front( x );
+        return( begin() );
+    }else if( it == end() ){
+        push_back( x );
+        return( iterator( this, tail ) );
+    }
+    
+    // to do - move from end if quicker
+    size_type i, ins, dist, num_pages;
+    // copy from begining
+    dist = dist_from_first( it.i );         // dist of new element after it has been inserted
+    if( is_front_full() ) grow_cbuf( cbuf_length * 2 );
+    ins = wrap( head + dist - 1 );          // index to insert new element
+    // calc num of pages needed to copy
+    num_pages = dist / PageSize + 1;
+    if( dist % PageSize > get_pi( ins ) ) num_pages += 1;
+    // temp array of pages
+    cbuf_t temp_pages = cmem.allocate( num_pages );
+    try{
+        for( i = 0; i < num_pages; i++ ){
+            temp_pages[i] = pmem.allocate( PageSize );
+        }
+    }catch( ... ){
+        while( i ){
+            i--;
+            pmem.deallocate( temp_pages[i], PageSize );
+        }
+        cmem.deallocate( temp_pages, num_pages );
+        throw;
+    }
+    // is last page a full page or is end reached during it?
+    size_type end;
+    if( get_ci(tail) == get_ci(ins) ) end = get_pi(tail);
+    else end = PageSize - 1;
+    try{
+        // copy from end to insert point
+        for( i = end; i > get_pi(ins); i-- ){
+            pmem.construct( &temp_pages[num_pages-1][i], cbuf[get_ci(ins)][i] );
+        }
+        // copy new element
+        pmem.construct( &temp_pages[num_pages-1][i], x );
+    }catch( ... ){
+        while( i < end ){
+            i++;
+            pmem.destroy( &temp_pages[num_pages-1][i] );
+        }
+        for( i = 0; i< num_pages; i++ ) pmem.deallocate( temp_pages[i], PageSize );
+        cmem.deallocate( temp_pages, num_pages );
+        throw;
+    }
+    // copy from begining to insert point
+    size_type s,d;
+    try{
+        d = wrap(head-1) % PageSize; // new page 0 start point
+        s = head;
+        while( s != wrap(ins+1) ){
+            pmem.construct( &temp_pages[get_ci(d)][get_pi(d)], cbuf[get_ci(s)][get_pi(s)] );
+            s = wrap( s + 1 );
+            ++d;
+        }
+    }catch( ... ){
+        while( s != head ){
+            s = wrap( s -1 );
+            pmem.destroy( &temp_pages[get_ci(s)][get_pi(s)] );
+        }
+        for( i = 0; i < num_pages; i++ )pmem.deallocate( temp_pages[i], PageSize );
+        cmem.deallocate( temp_pages, num_pages );
+        throw;
+    }
+    // destroy orig objects
+    for( i = head; i != wrap( 1 + end + get_ci(ins)*PageSize ); i = wrap( i + 1 ) ){
+        pmem.destroy( &cbuf[get_ci(i)][get_pi(i)] );
+    }
+    // copy new pages, destroy old from inserted page to new head
+    s = get_ci( ins );
+    for( i = 1; i <= num_pages; i++ ){
+        if( cbuf[s] ) pmem.deallocate( cbuf[s], PageSize );
+        cbuf[s] = temp_pages[ num_pages - i ];
+        s = ( s - 1 ) & ( cbuf_length - 1 );
+    }
+    cmem.deallocate( temp_pages, num_pages );
+    //update pointers
+    head = wrap( head - 1 );
+    ++deq_used;
+    
+    return( iterator( this, ins ) );
+  }
+  
+  
   // erase( iterator )
   // *****************
   template< class Type, class Allocator, int PageSize >

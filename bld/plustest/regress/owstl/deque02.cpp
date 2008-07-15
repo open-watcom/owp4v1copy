@@ -50,7 +50,7 @@ bool construction_test( )
     if( INSANE( d1 ) || d1.size() != 100 ) FAIL
     
     for( i = 0; i < 100; i++ ){
-        if( d1[i] != i ) {std::cout<<d1[i]<<", "<<i;}//FAIL}
+        if( d1[i] != i ) FAIL
     }
     
     
@@ -59,8 +59,8 @@ bool construction_test( )
     if( INSANE(d1) || INSANE(d2) || d1.size() != 100 || d2.size() != 100  ) FAIL
 
     for( i = 0; i < 100; i++ ){
-        if( d1[i] != i ) {std::cout<<d1[i]<<", "<<i;}//FAIL}
-        if( d2.front() != i ) {std::cout<<" "<<d2.front()<<"\n";}//FAIL
+        if( d1[i] != i ) FAIL
+        if( d2.front() != i ) FAIL
         d2.pop_front();
     }
     if( INSANE(d2) || INSANE(d1) || !d2.empty() || d1.size() != 100 ) FAIL
@@ -76,14 +76,16 @@ bool push_test()
     
     for( i = 0; i < size; i++ ){
         //std::cout<<i<<", ";
-        d1.push_front( i );
+        d1.push_front( i*2 );
     }
 
+    if( INSANE(d1) || d1.size() != 330 ) FAIL
     for( i = 0; i < size; i++ ){
-     //   std::cout<<d1[i]<<", ";
+        if( d1[i] != (size-i-1)*2 ) FAIL
     }
-    //std::cout<<"\n";
-    //std::cout<<d1.front()<<", "<<d1.back()<<"\n";
+    if( INSANE(d1) || d1.size() != 330 ) FAIL
+    d1.clear();
+    if( INSANE(d1) || d1.size() != 0 ) FAIL
     
     return( true );
 }
@@ -100,14 +102,20 @@ bool torture_test( int size )
             switch( rand() %3 ){
                 case 0 : d1.push_front( rand() ); break;
                 case 1 : d1.push_back( rand() ); break;
-                case 2 : /*todo insert middle*/ break;
+                default : 
+                    int n = d1.empty() ? 0 : rand() % d1.size();
+                    d1.insert( d1.begin() + n, rand() ); 
+                    break;
             }
         }else{
             //strink
             switch( rand() %3 ){
                 case 0 : d1.pop_front( ); break;
                 case 1 : d1.pop_back( ); break;
-                case 2 : /*todo del middle*/ break;
+                default : 
+                    int n = rand() % d1.size();
+                    d1.erase( d1.begin() + n ); 
+                    break;
             }
         }
         if( INSANE( d1 ) ) FAIL
@@ -119,18 +127,25 @@ bool torture_test( int size )
             switch( rand() %3 ){
                 case 0 : d1.push_front( rand() ); break;
                 case 1 : d1.push_back( rand() ); break;
-                case 2 : /*todo insert middle*/ break;
+                default : 
+                    int n = d1.empty() ? 0 : rand() % d1.size();
+                    d1.insert( d1.begin() + n, rand() ); 
+                    break;
             }
         }else{
             //strink
             switch( rand() %3 ){
                 case 0 : d1.pop_front( ); break;
                 case 1 : d1.pop_back( ); break;
-                case 2 : /*todo del middle*/ break;
+                default : 
+                    int n = rand() % d1.size();
+                    d1.erase( d1.begin() + n ); 
+                    break;
             }
         }
         if( INSANE( d1 ) ) FAIL
     };
+    
     
     return( true );
 }
@@ -219,9 +234,6 @@ bool erase_test()
     
     for( i = 0; i < s; i++ ) d.push_back(i);
     
-    //d.erase( d.begin() );
-    //if( INSANE(d) || d.size() != s-1 || d[0] != 1 ) FAIL
-    
     for( i = 0; i < s-1; i++ ){
         d.erase( ++d.begin() );
         for( j = 1; j < s-i-1; j++ ){
@@ -235,6 +247,65 @@ bool erase_test()
     return( true );
 }
 
+bool insert_single_test()
+{
+    using namespace std;
+    deque<int> d;
+    deque<int>::iterator it;
+    
+    int i;
+    
+    d.insert( d.begin(),        2 );    // front
+    d.insert( d.begin(),        0 );    // front
+    d.insert( d.end(),          5 );    // end
+    d.insert( ++d.begin(),      1 );    // middle
+    it = d.insert( --d.end(),   4 );    // middle
+    d.insert( it,               3 );    // middle
+    
+    
+    if( INSANE( d ) || d.size() != 6 ) FAIL
+    
+    for( i = 0; i < 6; i++ ){
+        //cout<< d[i]<<"\n";
+        if( d[i] != i ) FAIL
+    }
+        
+    return( true );
+}
+
+bool insert_multiple_test( )
+{
+    return( true );
+}
+
+bool clear_test()
+{
+    using namespace std;
+    deque<int> d;
+    int i;
+    
+    if( INSANE( d ) || d.size() != 0 ) FAIL
+    for( i = 0; i < 128; i++ ){
+        d.clear();
+        if( INSANE( d ) || d.size() != 0 ) FAIL
+        d.push_back( 1 );
+        if( INSANE( d ) || d.size() != 1 ) FAIL
+        d.clear();
+        if( INSANE( d ) || d.size() != 0 ) FAIL
+        d.clear();
+        if( INSANE( d ) || d.size() != 0 ) FAIL
+        d.push_back( 1 );
+        if( INSANE( d ) || d.size() != 1 ) FAIL
+        d.push_back( 1 );
+        if( INSANE( d ) || d.size() != 2 ) FAIL
+        d.clear();
+        if( INSANE( d ) || d.size() != 0 ) FAIL
+        d.push_back(1);
+        if( INSANE( d ) || d.size() != 1 ) FAIL
+    }
+    
+    return( true );
+}
 
 int main( )
 {
@@ -244,10 +315,10 @@ int main( )
     try {
         if( !construction_test()    || !heap_ok( "t01" ) ) rc = 1;
         if( !push_test()            || !heap_ok( "t02" ) ) rc = 1;
-        if( !torture_test(123456)   || !heap_ok( "t02" ) ) rc = 1;
-        if( !torture_test(16*512)   || !heap_ok( "t02" ) ) rc = 1;
-        if( !torture_test(16*256-1) || !heap_ok( "t02" ) ) rc = 1;
-        if( !torture_test(16*128+1) || !heap_ok( "t02" ) ) rc = 1;
+        if( !torture_test(12345)    || !heap_ok( "t03" ) ) rc = 1;
+        if( !torture_test(16*512)   || !heap_ok( "t04" ) ) rc = 1;
+        if( !torture_test(16*256-1) || !heap_ok( "t05" ) ) rc = 1;
+        if( !torture_test(16*128+1) || !heap_ok( "t06" ) ) rc = 1;
         
         //if( !access_test( )          || !heap_ok( "t02" ) ) rc = 1;
         // if( !assign_test( )          || !heap_ok( "t03" ) ) rc = 1;
@@ -258,12 +329,12 @@ int main( )
         if( !iterator_test( )        || !heap_ok( "t08" ) ) rc = 1;
         if( !reserve_test( )         || !heap_ok( "t08" ) ) rc = 1;
         if( !erase_test( )           || !heap_ok( "t08" ) ) rc = 1;
-        // if( !insert_single_test( )   || !heap_ok( "t09" ) ) rc = 1;
+        if( !insert_single_test( )   || !heap_ok( "t09" ) ) rc = 1;
         // if( !insert_multiple_test( ) || !heap_ok( "t10" ) ) rc = 1;
         // if( !erase_test( )           || !heap_ok( "t11" ) ) rc = 1;
         // if( !relational_test( )      || !heap_ok( "t12" ) ) rc = 1;
         // if( !swap_test( )            || !heap_ok( "t13" ) ) rc = 1;
-        // if( !clear_test( )           || !heap_ok( "t14" ) ) rc = 1;
+        if( !clear_test( )           || !heap_ok( "t14" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
