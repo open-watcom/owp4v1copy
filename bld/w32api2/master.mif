@@ -359,6 +359,7 @@ ddk_headers =        &
         poclass.h    &
         srb.h        &
         scsi.h       &
+        smbus.h      &
         storport.h   &
         tdi.h        &
         tdiinfo.h    &
