@@ -360,6 +360,7 @@ ddk_headers =        &
         srb.h        &
         scsi.h       &
         scsiscan.h   &
+        scsiwmi.h    &
         smbus.h      &
         storport.h   &
         tdi.h        &
