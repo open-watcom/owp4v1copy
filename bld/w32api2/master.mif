@@ -359,6 +359,7 @@ ddk_headers =        &
         poclass.h    &
         srb.h        &
         scsi.h       &
+        storport.h   &
         tdi.h        &
         tdiinfo.h    &
         tdikrnl.h    &
@@ -517,6 +518,7 @@ ddk_libs =           &
         ntoskrnl.lib &
         rtlver.lib   &
         scsiport.lib &
+        storport.lib &
         tape.lib     &
         tdi.lib      &
         usbcamd.lib  &
