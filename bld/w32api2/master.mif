@@ -315,6 +315,8 @@ ddk_headers =        &
         cfg.h        &
         cfgmgr32.h   &
         classpnp.h   &
+        d4drvif.h    &
+        d4iface.h    &
         ddkmapi.h    &
         ddrawint.h   &
         drvspecs.h   &
