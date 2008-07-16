@@ -44,6 +44,7 @@
 !inject resstr                 nt                win
 !inject spy                    nt                win
 !inject tools       dos  html  nt  os2  pdf  ps  win
+!inject trap                            pdf  ps
 !inject vi          dos  html  nt  os2  pdf  ps  win
 !inject wasaxp
 !inject wbrw                   nt  os2           win
@@ -496,6 +497,17 @@ book_objs_ps=$(objs_wd_ps)
 book_incs=$(incs_wd)
 book_bmroot=$(bmroot_wd)
 book_src=wdbg
+book_multi_chapter=1
+!define book_os2_help
+
+!else ifeq hbook trap
+# wd
+book_title=$(company) $(%BLD_VER_STR) Trap Developers Guide
+book_objs=$(objs_trap)
+book_objs_ps=$(objs_trap_ps)
+book_incs=$(incs_trap)
+book_bmroot=$(bmroot_trap)
+book_src=wtrap
 book_multi_chapter=1
 !define book_os2_help
 

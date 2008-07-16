@@ -2416,6 +2416,16 @@ dlgopt.ps &
 dlgsrch.ps &
 dlgwopt.ps &
 
+# trap sub-directory
+bmroot_trap = $(docsrc_dir)$(SL)trap
+incs_trap = $(docsrc_dir)$(SL)trap
+objs_trap = &
+$(docsrc_dir)$(SL)trap$(SL)wtrap.gml &
+$(docsrc_dir)$(SL)trap$(SL)trap.gml &
+#$(docsrc_dir)$(SL)trap$(SL)ovl.gml &
+#$(docsrc_dir)$(SL)trap$(SL)extra.gml &
+#$(docsrc_dir)$(SL)trap$(SL)dbg.gml &
+
 # wfg sub-directory
 incs_wfg = $(docsrc_dir)$(SL)wfg
 objs_wfg = &
