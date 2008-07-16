@@ -277,6 +277,7 @@ unsigned ReqProg_load( void )
     DidWaitForDebugEvent = FALSE;
     DebugeePid = 0;
     DebugeeTid = 0;
+    SupportingExactBreakpoints = 0;
 
     /*
      * check if pid is specified
