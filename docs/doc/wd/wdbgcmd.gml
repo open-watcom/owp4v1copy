@@ -1104,7 +1104,8 @@ Set FUnctions [Typed|All]
 Set GLobals [Typed|All]
 Set REGister [Hexadecimal|Decimal] [Extended|Normal]
 Set Fpu [Hexadecimal|Decimal]
-Set Bell [ON|OFf]
+Set BEll [ON|OFf]
+Set BReakonwrite [ON|OFf]
 Set Call [/Far|/Interrupt|/Near] [ ( [<location> [,<location> [...]]] ) ]
 Set Dclick <expr>
 Set Implicit [ON|OFf]
@@ -1143,7 +1144,8 @@ SHow Set FUnctions
 SHow Set GLobals
 SHow Set REGister
 SHow Set Fpu
-SHow Set Bell
+SHow Set BEll
+SHow Set BReakonwrite
 SHow Set Call
 SHow Set Dclick
 SHow Set Implicit

@@ -412,9 +412,12 @@ does not support it.
 .endnote
 .begnote
 .note Note:
-In current versions of the debugger and traps, the break on write feature
-is really a break on change. The debugger will only stop execution if the
+In older versions of the debugger and traps, the break on write feature
+is really a break on change: the debugger will only stop execution if the
 breakpoint is hit and the value of the watched data has been changed.
+For the current version of the debugger this is the still the default
+behaviour but can be modified. Refer to :HDREF refid='dlgopt'. to change 
+the breakpoint behaviour to true break-on-write.
 .endnote
 .note Countdown
 .ix 'breakpoint' 'countdown'

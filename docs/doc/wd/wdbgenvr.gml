@@ -595,6 +595,12 @@ Use this option to control the way tracing over recursive function
 calls is handled. When this option is on, and you trace over a
 function call, the debugger will not stop if the function executes
 recursively.
+.ix 'Break on write'
+.ix 'option' 'Break on write'
+.note Break on write (not change)
+Use this option (if available with the selected trap) to enable true
+break-on-write breakpoints. This will break on any write access; not just
+when a watch point has changed.
 .note Screen flip on execution
 Use this option to control whether the debugger automatically flips the
 display to the application's screen upon execution.
