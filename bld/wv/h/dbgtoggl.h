@@ -102,6 +102,7 @@ typedef struct {
     unsigned SW_CHECK_SOURCE_EXISTS     : 1;
     unsigned SW_CONTINUE_UNEXPECTED_BREAK:1;
     unsigned SW_KEEP_HEAP_ENABLED       : 1;
+    unsigned SW_BREAK_ON_WRITE          : 1;
 } dbg_switches;
 
 extern dbg_switches DbgSwitches;

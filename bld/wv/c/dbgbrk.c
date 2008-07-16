@@ -1639,17 +1639,38 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
                     
                     /*
                      * If the breakpoint fires here because of a write, but the value hasn't changed then
-                     * the breakpoint does not fire off!!!!
+                     * the breakpoint does not fire off!!!! The SupportsExactBreakpoints actually enables
+                     * break on write, not break on change and allocates the exact data space - not plus
+                     * or minus a few bytes...
                      *
-                     * I think this is done because the trap file rounds down to capture writes across
-                     * word/dword boundaries.
                      */
                     
-                    if( (memcmp( &bp->item, &item, mti.b.bits / BITS_PER_BYTE ) != 0) || !bp->status.b.has_value ) {
-                        hit = TRUE;
+                    if( _IsOn( SW_BREAK_ON_WRITE ) && SupportsExactBreakpoints){
+
+                        bool    drop_hit = FALSE;
+                        
+                        if( (UserTmpBrk.status.b.active) || (DbgTmpBrk.status.b.active) ){
+                        
+                            if( HaveHitBP( &UserTmpBrk ) ) {
+                                drop_hit = TRUE;
+                            }
+                            if( HaveHitBP( &DbgTmpBrk ) ) {
+                                drop_hit = TRUE;
+                            }
+                            if( ! ( conditions & ( COND_BREAK | COND_WATCH | COND_TRACE | COND_USER | COND_EXCEPTION | COND_STOP ) ) )
+                                drop_hit = TRUE;
+                        }
+                        
+                        if(!drop_hit)                        
+                            hit = TRUE;
+                    } else {
+                        if( (memcmp( &bp->item, &item, mti.b.bits / BITS_PER_BYTE ) != 0) || !bp->status.b.has_value ) {
+                            hit = TRUE;
+                        }
                     }
                 } else if( bp->status.b.has_value ) {
-                    hit = TRUE;
+                    if( conditions & ( COND_BREAK | COND_WATCH | COND_TRACE | COND_USER | COND_EXCEPTION | COND_STOP ) )
+                        hit = TRUE;
                 }
             }
         } else {

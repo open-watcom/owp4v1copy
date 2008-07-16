@@ -190,6 +190,7 @@ OVL_EXTERN void         ProcNil( void );
 int CapabilitiesGet8ByteBreakpointSupport();
 int CapabilitiesGetExactBreakpointSupport();
 int CapabilitiesSet8ByteBreakpointSupport(bool status);
+int CapabilitiesSetExactBreakpointSupport(bool status);
 
 #define pick( a, b, c ) extern void b( void );
 #include "dbgcmd.h"
@@ -492,6 +493,9 @@ bool InitCapabilities( void )
     if(Supports8ByteBreakpoints)
         CapabilitiesSet8ByteBreakpointSupport(TRUE);
         
+    if(SupportsExactBreakpoints && _IsOn( SW_BREAK_ON_WRITE ) )
+        CapabilitiesSetExactBreakpointSupport(TRUE);
+        
     return( TRUE );
 }
 
@@ -563,7 +567,7 @@ int CapabilitiesGetExactBreakpointSupport()
     if( SuppCapabilitiesId == 0 ) 
         return( -1 );
     
-    SUPP_CAPABILITIES_SERVICE( acc, REQ_CAPABILITIES_GET_8B_BP );
+    SUPP_CAPABILITIES_SERVICE( acc, REQ_CAPABILITIES_GET_EXACT_BP );
     in[0].ptr = &acc;
     in[0].len = sizeof( acc );
     out[0].ptr = &ret;
@@ -571,10 +575,37 @@ int CapabilitiesGetExactBreakpointSupport()
 
     TrapAccess( 2, &in, 1, &out );
     if( ret.err != 0 ) {
-        /* The trap may support it, but it is not possible currently */
-        SupportsExactBreakpoints = ret.status ? TRUE : FALSE;        
         return( FALSE );
     } else {
+        /* The trap may support it, but it is not possible currently */
+        SupportsExactBreakpoints = ret.status ? TRUE : FALSE;        
+        return( TRUE );
+    }
+}
+
+int CapabilitiesSetExactBreakpointSupport(bool status)
+{
+    mx_entry                    in[1];
+    mx_entry                    out[1];
+    capabilities_set_8b_bp_req  acc;
+    capabilities_set_8b_bp_ret  ret;
+    
+    if( SuppCapabilitiesId == 0 ) 
+        return( -1 );
+    
+    SUPP_CAPABILITIES_SERVICE( acc, REQ_CAPABILITIES_SET_EXACT_BP );
+    acc.status = status ? TRUE : FALSE;
+    
+    in[0].ptr = &acc;
+    in[0].len = sizeof( acc );
+    out[0].ptr = &ret;
+    out[0].len = sizeof( ret );
+
+    TrapAccess( 2, &in, 1, &out );
+    if( ret.err != 0 ) {
+        return( FALSE );
+    } else {
+        _SwitchSet( SW_BREAK_ON_WRITE, ret.status ? TRUE : FALSE ); 
         return( TRUE );
     }
 }
