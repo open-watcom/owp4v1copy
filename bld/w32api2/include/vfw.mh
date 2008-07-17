@@ -380,7 +380,7 @@ typedef WORD    TWOCC;
 #ifdef __cplusplus
     #define MCIWndSM    ::SendMessage
     #define AVICapSM( x, p1, p2, p3 ) \
-        ((::IsWindow( x ) ? ::SendMessage( x, p1, p2, p3 ) : 0)
+        (::IsWindow( x ) ? ::SendMessage( x, p1, p2, p3 ) : 0)
 #else
     #define MCIWndSM    SendMessage
     #define AVICapSM( x, p1, p2, p3 ) \
