@@ -337,6 +337,7 @@ ddk_headers =        &
         ndiswan.h    &
         netevent.h   &
         netpnp.h     &
+        ntdd8042.h   &
         ntddbeep.h   &
         ntddcdrm.h   &
         ntddcdvd.h   &
