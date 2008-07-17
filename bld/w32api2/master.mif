@@ -351,6 +351,7 @@ ddk_headers =        &
         ntddtape.h   &
         ntddtdi.h    &
         ntddvdeo.h   &
+        ntddvol.h    &
         ntdef.h      &
         ntifs.h      &
         ntiologc.h   &
