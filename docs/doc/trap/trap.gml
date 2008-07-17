@@ -1289,6 +1289,12 @@ trap_error      err
 :PC.
 When an error has occurred, the :F.err:eF. field contains an error code
 indicating the type of error that has been detected.
+.np
+:NOTE. 2008/07/17: Standard I/O redirection is not currently supported on all trap files
+and almost all of them also do not return an accurate error code for failures. This is work
+in progress. The debugger may report an error to open the specified file rather than report
+that the requested operation is not supported.
+.np
 .section REQ_SPLIT_CMD (35)
 .np
 Request to split the command line into the command name and

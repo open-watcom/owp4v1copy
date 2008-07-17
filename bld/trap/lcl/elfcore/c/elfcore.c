@@ -647,7 +647,7 @@ unsigned ReqRedirect_stdin( void )
     redirect_stdin_ret      *ret;
 
     ret = GetOutPtr( 0 );
-    ret->err = 0;
+    ret->err = 1;
     return( sizeof( *ret ) );
 }
 
