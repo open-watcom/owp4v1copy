@@ -42,7 +42,7 @@ static void ExtractObj( libfile io, char *name, file_offset size,
     /*
      * If this is an OMF library then we don't have the right object size.
      */
-    if( Options.libtype == WL_TYPE_OMF ) {
+    if( Options.libtype == WL_LTYPE_OMF ) {
         pos = LibTell( io );
         OMFSkipThisObject( arch, io );
         size = LibTell( io ) - pos;
@@ -93,7 +93,7 @@ static void ProcessOneObject( arch_header *arch, libfile io )
     }
 
     if( deleted ) {
-        if( Options.libtype == WL_TYPE_OMF ) {
+        if( Options.libtype == WL_LTYPE_OMF ) {
             OMFSkipThisObject( arch, io );
         }
 
@@ -134,8 +134,8 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
         // AR format
         AddInputLib( io, name );
         LibWalk( io, name, process );
-        if( Options.libtype == 0 ) {
-            Options.libtype = WL_TYPE_AR;
+        if( Options.libtype == WL_LTYPE_NONE ) {
+            Options.libtype = WL_LTYPE_AR;
         }
     } else if( strncmp( buff, LIBMAG, LIBMAG_LEN ) == 0 ) {
         // MLIB format
@@ -147,8 +147,8 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
         }
         AddInputLib( io, name );
         LibWalk( io, name, process );
-        if( Options.libtype == 0 ) {
-            Options.libtype = WL_TYPE_MLIB;
+        if( Options.libtype == WL_LTYPE_NONE ) {
+            Options.libtype = WL_LTYPE_MLIB;
         }
     } else if( AddImport( &arch, io ) ) {
         LibClose( io );
@@ -165,8 +165,8 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
         // OMF format
         AddInputLib( io, name );
         LibSeek( io, 0, SEEK_SET );
-        if( Options.libtype == 0 ) {
-            Options.libtype = WL_TYPE_OMF;
+        if( Options.libtype == WL_LTYPE_NONE ) {
+            Options.libtype = WL_LTYPE_OMF;
         }
         OMFLibWalk( io, name, process );
     } else if( obj == OBJ_PROCESS ) {

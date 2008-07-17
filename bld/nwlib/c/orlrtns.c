@@ -114,7 +114,7 @@ static obj_file *DoOpenObjFile( char *name, libfile hdl, long offset )
     switch( format ) {
         case ORL_COFF: case ORL_ELF:
             file->orl = ORLFileInit( ORLHnd, file, format );
-            if( Options.libtype == WL_TYPE_MLIB ) {
+            if( Options.libtype == WL_LTYPE_MLIB ) {
                 if( (ORLFileGetFlags( file->orl ) & VALID_ORL_FLAGS) != VALID_ORL_FLAGS ) {
                     FatalError( ERR_NOT_LIB, "64-bit or big-endian", LibFormat() );
                 }

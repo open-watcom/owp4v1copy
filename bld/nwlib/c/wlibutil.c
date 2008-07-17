@@ -225,9 +225,13 @@ char    *FormSym( char *name )
 char *LibFormat( void )
 {
     switch( Options.libtype ) {
-    case WL_TYPE_AR:    return( "AR" );
-    case WL_TYPE_MLIB:  return( "MLIB" );
-    case WL_TYPE_OMF:   return( "LIB" );
-    default:            return( "unknown format" );
+    case WL_LTYPE_AR:
+        return( "AR" );
+    case WL_LTYPE_MLIB:
+        return( "MLIB" );
+    case WL_LTYPE_OMF:
+        return( "LIB" );
+    default:
+        return( "unknown format" );
     }
 }

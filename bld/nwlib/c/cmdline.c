@@ -176,40 +176,40 @@ static bool ParseOption( char **pc, char *buff )
                     }
                     break;
                 case 'a':
-                    if( Options.processor ) {
+                    if( Options.processor != WL_PROC_NONE ) {
                         DuplicateOption( start );
                     }
                     Options.processor = WL_PROC_AXP;
                     break;
                 case 'p':
-                    if( Options.processor ) {
+                    if( Options.processor != WL_PROC_NONE ) {
                         DuplicateOption( start );
                     }
                     Options.processor = WL_PROC_PPC;
                     break;
                 case 'i':
-                    if( Options.processor ) {
+                    if( Options.processor != WL_PROC_NONE ) {
                         DuplicateOption( start );
                     }
                     Options.processor = WL_PROC_X86;
                     break;
                 case 'e':
-                    if( Options.filetype ) {
+                    if( Options.filetype != WL_FTYPE_NONE ) {
                         DuplicateOption( start );
                     }
-                    Options.filetype = WL_TYPE_ELF;
+                    Options.filetype = WL_FTYPE_ELF;
                     break;
                 case 'c':
-                    if( Options.filetype ) {
+                    if( Options.filetype != WL_FTYPE_NONE ) {
                         DuplicateOption( start );
                     }
-                    Options.filetype = WL_TYPE_COFF;
+                    Options.filetype = WL_FTYPE_COFF;
                     break;
                 case 'o':
-                    if( Options.filetype ) {
+                    if( Options.filetype != WL_FTYPE_NONE ) {
                         DuplicateOption( start );
                     }
-                    Options.filetype = WL_TYPE_OMF;
+                    Options.filetype = WL_FTYPE_OMF;
                     break;
                 default:
                     return( FALSE );
@@ -273,24 +273,24 @@ static bool ParseOption( char **pc, char *buff )
         case 'f':
             switch( tolower(*c++) ) {
                 case 'm':
-                    if( Options.libtype ) {
+                    if( Options.libtype != WL_LTYPE_NONE ) {
                         DuplicateOption( start );
                     }
-                    Options.libtype = WL_TYPE_MLIB;
+                    Options.libtype = WL_LTYPE_MLIB;
                     Options.elf_found = 1;
                     break;
                 case 'a':
-                    if( Options.libtype ) {
+                    if( Options.libtype != WL_LTYPE_NONE ) {
                         DuplicateOption( start );
                     }
-                    Options.libtype = WL_TYPE_AR;
+                    Options.libtype = WL_LTYPE_AR;
                     Options.coff_found = 1;
                     break;
                 case 'o':
-                    if( Options.libtype ) {
+                    if( Options.libtype != WL_LTYPE_NONE ) {
                         DuplicateOption( start );
                     }
-                    Options.libtype = WL_TYPE_OMF;
+                    Options.libtype = WL_LTYPE_OMF;
                     Options.omf_found = 1;
                     break;
                 default:

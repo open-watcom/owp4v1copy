@@ -249,10 +249,10 @@ static void SortSymbols( void )
     TotalFFNameLength = 0;
     TotalSymbolLength = 0;
     switch( Options.libtype ) {
-    case WL_TYPE_AR:
+    case WL_LTYPE_AR:
         name_extra = 1;
         break;
-    case WL_TYPE_MLIB:
+    case WL_LTYPE_MLIB:
         name_extra = 2;
         break;
     }
@@ -260,7 +260,7 @@ static void SortSymbols( void )
         ++NumFiles;
         file->name_offset = TotalNameLength;
         switch( Options.libtype ) {
-        case WL_TYPE_AR:
+        case WL_LTYPE_AR:
             // Always using "full" filename for AR
             if( file->arch.ffname ) {
                 name_length = file->ffname_length;
@@ -269,7 +269,7 @@ static void SortSymbols( void )
                 name_length = file->name_length;
             }
             break;
-        case WL_TYPE_MLIB:
+        case WL_LTYPE_MLIB:
             // If no full filename, assume name is full, and trim
             // it to get non-full filename.
             if( file->arch.ffname == NULL ) {
@@ -368,7 +368,7 @@ static void WriteArMlibFileTable( void )
     // figure out this dictionary sizes
 
     switch( Options.libtype ) {
-    case WL_TYPE_AR:
+    case WL_LTYPE_AR:
         dict1_size = sizeof( unsigned_32 )
                    + NumSymbols * sizeof(unsigned_32)
                    + RoundWord( TotalSymbolLength );
@@ -387,7 +387,7 @@ static void WriteArMlibFileTable( void )
         stringpad   = "\0";
         stringpadlen= 1;
         break;
-    case WL_TYPE_MLIB:
+    case WL_LTYPE_MLIB:
         dict2_size = sizeof( unsigned_32 )
                     + NumSymbols * (1 + sizeof( unsigned_32 ) )
                     + TotalSymbolLength;
@@ -413,10 +413,10 @@ static void WriteArMlibFileTable( void )
     }
 
     switch( Options.libtype ) {
-    case WL_TYPE_AR:
+    case WL_LTYPE_AR:
         WriteNew( AR_IDENT, AR_IDENT_LEN );
         break;
-    case WL_TYPE_MLIB:
+    case WL_LTYPE_MLIB:
         WriteNew( LIBMAG, LIBMAG_LEN );
         WriteNew( LIB_CLASS_DATA_SHOULDBE, LIB_CLASS_LEN + LIB_DATA_LEN );
         break;
@@ -428,7 +428,7 @@ static void WriteArMlibFileTable( void )
     arch.uid = 0;
     arch.gid = 0;
     arch.mode = 0;
-    if( Options.libtype == WL_TYPE_AR ) {
+    if( Options.libtype == WL_LTYPE_AR ) {
         arch.size = dict1_size;
         arch.name = "/";
         WriteFileHeader( &arch );
@@ -453,7 +453,7 @@ static void WriteArMlibFileTable( void )
     arch.name = "/";
     WriteFileHeader( &arch );
 
-    if( Options.libtype == WL_TYPE_AR ) {
+    if( Options.libtype == WL_LTYPE_AR ) {
         WriteLittleEndian32( NumFiles );
         for( file = FileTable.first; file != NULL; file = file->next ) {
             WriteLittleEndian32( file->new_offset );
@@ -462,12 +462,12 @@ static void WriteArMlibFileTable( void )
 
     WriteLittleEndian32( NumSymbols );
     switch( Options.libtype ) {
-    case WL_TYPE_AR:
+    case WL_LTYPE_AR:
         for( i = 0; i < NumSymbols; ++i ) {
             WriteLittleEndian16( SortedSymbols[ i ]->file->index );
         }
         break;
-    case WL_TYPE_MLIB:
+    case WL_LTYPE_MLIB:
         for( i = 0; i < NumSymbols; ++i ) {
             WriteLittleEndian32( SortedSymbols[ i ]->file->index );
         }
@@ -480,10 +480,10 @@ static void WriteArMlibFileTable( void )
         WriteNew( SortedSymbols[ i ]->name, SortedSymbols[ i ]->len + 1 );
     }
     switch( Options.libtype ) {
-    case WL_TYPE_AR:
+    case WL_LTYPE_AR:
         WritePad( TotalSymbolLength );
         break;
-    case WL_TYPE_MLIB:
+    case WL_LTYPE_MLIB:
         WritePad( dict2_size );
         break;
     }
@@ -497,7 +497,7 @@ static void WriteArMlibFileTable( void )
         if( file->name_offset == -1 )
             continue;
         // Always write the "full" filename for AR
-        if( Options.libtype == WL_TYPE_AR && file->arch.ffname ) {
+        if( Options.libtype == WL_LTYPE_AR && file->arch.ffname ) {
             WriteNew( file->arch.ffname, file->ffname_length );
         } else {
             WriteNew( file->arch.name, file->name_length );
@@ -508,7 +508,7 @@ static void WriteArMlibFileTable( void )
 
     // write the full filename table
 
-    if( Options.libtype == WL_TYPE_MLIB ) {
+    if( Options.libtype == WL_LTYPE_MLIB ) {
         arch.size = TotalFFNameLength;
         arch.name = "///";
         WriteFileHeader( &arch );
@@ -551,20 +551,20 @@ static void WriteArMlibFileTable( void )
 void WriteFileTable( void )
 /*************************/
 {
-    if( Options.libtype == 0 && Options.omf_found ) {
+    if( Options.libtype == WL_LTYPE_NONE && Options.omf_found ) {
         if( Options.coff_found ) {
-            Options.libtype = WL_TYPE_AR;
+            Options.libtype = WL_LTYPE_AR;
         } else {
-            Options.libtype = WL_TYPE_OMF;
+            Options.libtype = WL_LTYPE_OMF;
         }
     }
-    if( Options.coff_found && (Options.libtype == 0 || Options.libtype == WL_TYPE_OMF) ) {
-        Options.libtype = WL_TYPE_AR;
+    if( Options.coff_found && (Options.libtype == WL_LTYPE_NONE || Options.libtype == WL_LTYPE_OMF) ) {
+        Options.libtype = WL_LTYPE_AR;
     }
-    if( Options.elf_found && (Options.libtype == 0 || Options.libtype == WL_TYPE_OMF) ) {
-        Options.libtype = WL_TYPE_AR;
+    if( Options.elf_found && (Options.libtype == WL_LTYPE_NONE || Options.libtype == WL_LTYPE_OMF) ) {
+        Options.libtype = WL_LTYPE_AR;
     }
-    if( Options.libtype == WL_TYPE_AR || Options.libtype == WL_TYPE_MLIB ) {
+    if( Options.libtype == WL_LTYPE_AR || Options.libtype == WL_LTYPE_MLIB ) {
         WriteArMlibFileTable();
     } else {
         WriteOmfFileTable();
@@ -750,7 +750,7 @@ void AddObjectSymbols( arch_header *arch, libfile io, long offset )
         orl_file_handle orl;
         orl = file->orl;
         if( ORLFileGetFormat( file->orl ) == ORL_COFF ) {
-            if( Options.libtype == WL_TYPE_MLIB ) {
+            if( Options.libtype == WL_LTYPE_MLIB ) {
                 FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
             }
             Options.coff_found = 1;
@@ -761,7 +761,7 @@ void AddObjectSymbols( arch_header *arch, libfile io, long offset )
             }
         }
     } else {
-        if( Options.libtype == WL_TYPE_MLIB ) {
+        if( Options.libtype == WL_LTYPE_MLIB ) {
             FatalError( ERR_NOT_LIB, "OMF", LibFormat() );
         }
         if( Options.elf_found == 1 ) {
@@ -805,7 +805,7 @@ void OmfMKImport( arch_header *arch, long ordinal, char *dll_name,
 
 void CoffMKImport( arch_header *arch, importType type,
                    long ordinal, char *DLLname, char *symName, 
-                   char *exportedName, long processor )
+                   char *exportedName, processor_type processor )
 {
 
     NewSymFile( arch );
@@ -836,7 +836,7 @@ void CoffMKImport( arch_header *arch, importType type,
 
 void ElfMKImport( arch_header *arch, importType type, long export_size,
                   char *DLLname, char *strings, Elf32_Export *export_table,
-                  Elf32_Sym *sym_table, long processor )
+                  Elf32_Sym *sym_table, processor_type processor )
 {
     int                 i;
     elf_import_sym      **temp;

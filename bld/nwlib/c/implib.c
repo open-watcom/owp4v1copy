@@ -34,7 +34,7 @@
 // must correspond to defines in implib.h
 static char *procname[ 5 ] = { "", "AXP", "PPC", "X86","" };
 
-static void coffAddImportOverhead( arch_header *arch, char *DLLName, short processor );
+static void coffAddImportOverhead( arch_header *arch, char *DLLName, processor_type processor );
 
 static void fillInShort( unsigned_16 value, char *out )
 {
@@ -110,7 +110,7 @@ static bool elfAddImport( arch_header *arch, libfile io )
     Elf32_Sym       *sym_table;
     orl_sec_size    export_size, sym_size;
     char            *strings;
-    long            processor = 0;
+    processor_type  processor = WL_PROC_NONE;
     char            *oldname;
     char            *DLLname;
     Elf32_Word      ElfMagic;
@@ -159,7 +159,7 @@ static bool elfAddImport( arch_header *arch, libfile io )
     ORLSecGetContents( string_sec, (unsigned_8 **)&strings );
 
     ElfMKImport( arch, ELF, export_size, DLLname, strings,
-    export_table, sym_table, processor );
+                                         export_table, sym_table, processor );
 
     MemFree( arch->name );
     MemFree( DLLname );
@@ -254,7 +254,7 @@ static void os2FlatAddImport( arch_header *arch, libfile io )
     importType      type;
     unsigned        bytes_read;
 
-    if( Options.coff_found || (Options.libtype == WL_TYPE_AR && !Options.omf_found) ) {
+    if( Options.coff_found || (Options.libtype == WL_LTYPE_AR && !Options.omf_found) ) {
         coff_obj = TRUE;
     } else {
         coff_obj = FALSE;
@@ -335,16 +335,16 @@ static void peAddImport( arch_header *arch, libfile io )
     Coff32_EOrd     *ord_table;
     int             i;
     long            ordinal_base;
-    short           processor = 0;
+    processor_type  processor = WL_PROC_NONE;
     importType      type;
     bool            coff_obj;
     long            adjust;
 
     LibSeek( io, 0x00, SEEK_SET );
-    if( Options.libtype == WL_TYPE_MLIB ) {
+    if( Options.libtype == WL_LTYPE_MLIB ) {
         FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
     }
-    if( Options.coff_found || (Options.libtype == WL_TYPE_AR && !Options.omf_found) ) {
+    if( Options.coff_found || (Options.libtype == WL_LTYPE_AR && !Options.omf_found) ) {
         coff_obj = TRUE;
     } else {
         coff_obj = FALSE;
@@ -551,30 +551,30 @@ void ProcessImport( char *name )
     arch->fnametab = NULL;
     arch->ffnametab = NULL;
 
-    if( Options.filetype == 0 ) {
+    if( Options.filetype == WL_FTYPE_NONE ) {
         if( Options.omf_found ) {
-            Options.filetype = WL_TYPE_OMF;
+            Options.filetype = WL_FTYPE_OMF;
         } else if( Options.coff_found ) {
-            Options.filetype = WL_TYPE_COFF;
+            Options.filetype = WL_FTYPE_COFF;
         } else if( Options.elf_found ) {
-            Options.filetype = WL_TYPE_ELF;
+            Options.filetype = WL_FTYPE_ELF;
         }
     }
 
-    if( Options.processor == 0 ) {
+    if( Options.processor == WL_PROC_NONE ) {
         switch( Options.filetype ) {
-        case WL_TYPE_OMF:
+        case WL_FTYPE_OMF:
             Options.processor = WL_PROC_X86;
             break;
-        case WL_TYPE_ELF:
+        case WL_FTYPE_ELF:
             Options.processor = WL_PROC_PPC;
             break;
         default:
             switch( Options.libtype ) {
-            case WL_TYPE_OMF:
+            case WL_LTYPE_OMF:
                 Options.processor = WL_PROC_X86;
                 break;
-            case WL_TYPE_MLIB:
+            case WL_LTYPE_MLIB:
                 Options.processor = WL_PROC_PPC;
                 break;
             default:
@@ -589,57 +589,57 @@ void ProcessImport( char *name )
         }
         Warning( ERR_NO_PROCESSOR, procname[ Options.processor ] );
     }
-    if( Options.filetype == 0 ) {
+    if( Options.filetype == WL_FTYPE_NONE ) {
         switch( Options.libtype ) {
-        case WL_TYPE_MLIB:
-            Options.filetype = WL_TYPE_ELF;
+        case WL_LTYPE_MLIB:
+            Options.filetype = WL_FTYPE_ELF;
             Warning( ERR_NO_TYPE, "ELF" );
             break;
-        case WL_TYPE_AR:
-            Options.filetype = WL_TYPE_COFF;
+        case WL_LTYPE_AR:
+            Options.filetype = WL_FTYPE_COFF;
             Warning( ERR_NO_TYPE, "COFF" );
             break;
-        case WL_TYPE_OMF:
-            Options.filetype = WL_TYPE_OMF;
+        case WL_LTYPE_OMF:
+            Options.filetype = WL_FTYPE_OMF;
             Warning( ERR_NO_TYPE, "OMF" );
             break;
         default:
             switch( Options.processor ) {
             case WL_PROC_X86:
-                Options.filetype = WL_TYPE_OMF;
+                Options.filetype = WL_FTYPE_OMF;
                 Warning( ERR_NO_TYPE, "OMF" );
                 break;
             case WL_PROC_AXP:
-                Options.libtype = WL_TYPE_AR;
-                Options.filetype = WL_TYPE_COFF;
+                Options.libtype = WL_LTYPE_AR;
+                Options.filetype = WL_FTYPE_COFF;
                 Warning( ERR_NO_TYPE, "COFF" );
                 break;
             case WL_PROC_PPC:
 #ifdef __NT__
-                Options.libtype = WL_TYPE_AR;
-                Options.filetype = WL_TYPE_COFF;
+                Options.libtype = WL_LTYPE_AR;
+                Options.filetype = WL_FTYPE_COFF;
                 Warning( ERR_NO_TYPE, "COFF" );
 #else
-                Options.libtype = WL_TYPE_MLIB;
-                Options.filetype = WL_TYPE_ELF;
+                Options.libtype = WL_LTYPE_MLIB;
+                Options.filetype = WL_FTYPE_ELF;
                 Warning( ERR_NO_TYPE, "ELF" );
 #endif
             }
         }
     }
-    if( !Options.libtype ) {
+    if( Options.libtype == WL_LTYPE_NONE ) {
         switch( Options.filetype ) {
-        case WL_TYPE_ELF:
-            Options.libtype = WL_TYPE_MLIB;
+        case WL_FTYPE_ELF:
+            Options.libtype = WL_LTYPE_MLIB;
             break;
-        case WL_TYPE_COFF:
-            Options.libtype = WL_TYPE_AR;
+        case WL_FTYPE_COFF:
+            Options.libtype = WL_LTYPE_AR;
             break;
         }
     }
 
     switch( Options.filetype ) {
-    case WL_TYPE_ELF:
+    case WL_FTYPE_ELF:
         if( ordinal == 0 ) {
             export_table[ 0 ].exp_ordinal = -1;
             export_table[ 1 ].exp_ordinal = -1;
@@ -658,12 +658,12 @@ void ProcessImport( char *name )
         strcpy( strings + strlen(symName) + 1, exportedName );
 
         ElfMKImport( arch, ELFRENAMED, 2, DLLName, strings,
-        export_table, sym_table, Options.processor );
+                           export_table, sym_table, Options.processor );
 
         MemFree( strings );
         break;
-    case WL_TYPE_COFF:
-        if( Options.libtype != WL_TYPE_AR ) {
+    case WL_FTYPE_COFF:
+        if( Options.libtype != WL_LTYPE_AR ) {
             FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
         }
         coffAddImportOverhead( arch, DLLName, Options.processor );
@@ -686,8 +686,8 @@ void ProcessImport( char *name )
         }
         MemFree( buffer );
         break;
-    case WL_TYPE_OMF:
-        if( Options.libtype == WL_TYPE_MLIB ) {
+    case WL_FTYPE_OMF:
+        if( Options.libtype == WL_LTYPE_MLIB ) {
             FatalError( ERR_NOT_LIB, "OMF", LibFormat() );
         }
         if( ordinal == 0 ) {
@@ -711,7 +711,7 @@ void ProcessImport( char *name )
     MemFree( arch );
 }
 
-static void coffAddImportOverhead( arch_header *arch, char *DLLName, short processor )
+static void coffAddImportOverhead( arch_header *arch, char *DLLName, processor_type processor )
 {
     char *buffer;
 

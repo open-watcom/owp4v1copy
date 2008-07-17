@@ -77,7 +77,7 @@ static void InitCoffFile( coff_lib_file *c_file )
     c_file->max_string_table_size = INIT_MAX_SIZE_COFF_STRING_TABLE;
 
 }
-static void SetCoffFile( coff_lib_file *c_file, short processor,
+static void SetCoffFile( coff_lib_file *c_file, processor_type processor,
      unsigned_32 time_stamp, unsigned_16 opt_hdr_size)
 {
     switch( processor ) {

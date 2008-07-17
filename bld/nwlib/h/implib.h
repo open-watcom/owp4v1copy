@@ -32,9 +32,9 @@
 
 extern bool AddImport( arch_header *arch, libfile io );
 extern void CoffAddImportSymbols( arch_header *, short, long, short *, long, long *, long, char * );
-extern void CoffMKImport( arch_header *, importType, long, char * , char *, char *, long);
+extern void CoffMKImport( arch_header *, importType, long, char * , char *, char *, processor_type);
 extern void OmfMKImport( arch_header *arch, long ordinal, char *dll_name, char *sym_name, char * exp, importType type );
-extern void ElfMKImport( arch_header *, importType, long, char *, char *, Elf32_Export *, Elf32_Sym *, long );
+extern void ElfMKImport( arch_header *, importType, long, char *, char *, Elf32_Export *, Elf32_Sym *, processor_type );
 extern int CoffImportSize( import_sym * );
 extern int ElfImportSize( import_sym * );
 extern void CoffWriteImport( libfile, sym_file * );

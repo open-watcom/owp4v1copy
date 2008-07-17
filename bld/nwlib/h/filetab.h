@@ -55,17 +55,17 @@ typedef enum {
 }importType;
 
 struct elf_import_sym_struct {
-    char                        *name;
-    long                        ordinal;
-    long                        len; // To save some calculations
-    elf_import_sym              *next;
+    char            *name;
+    long            ordinal;
+    long            len; // To save some calculations
+    elf_import_sym  *next;
 };
 
 struct import_sym_struct{
-    importType  type;
-    short       processor;
-    char        *DLLName;
-    char        *ModName;
+    importType      type;
+    processor_type  processor;
+    char            *DLLName;
+    char            *ModName;
     union {
         struct {
             long        ordinal;
