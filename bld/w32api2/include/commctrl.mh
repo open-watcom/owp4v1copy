@@ -2640,7 +2640,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #define TVM_SORTCHILDREN            (TV_FIRST + 19)
 #define TVM_ENSUREVISIBLE           (TV_FIRST + 20)
 #define TVM_SORTCHILDRENCB          (TV_FIRST + 21)
-#define TVM_ENDLABELEDITNOW         (TV_FIRST + 22)
+#define TVM_ENDEDITLABELNOW         (TV_FIRST + 22)
 #define TVM_GETISEARCHSTRINGA       (TV_FIRST + 23)
 #if (_WIN32_IE >= 0x0300)
     #define TVM_SETTOOLTIPS         (TV_FIRST + 24)
@@ -2678,11 +2678,16 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #define TVM_SETITEMW                (TV_FIRST + 63)
 #define TVM_GETISEARCHSTRINGW       (TV_FIRST + 64)
 #define TVM_EDITLABELW              (TV_FIRST + 65)
+#if (_WIN32_WINNT >= 0x0600)
+    #define TVM_GETSELECTEDCOUNT    (TV_FIRST + 70)
+    #define TVM_SHOWINFOTIP         (TV_FIRST + 71)
+    #define TVM_GETITEMPARTRECT     (TV_FIRST + 72)
+#endif
 #if (_WIN32_IE >= 0x0400)
     #define TVM_SETUNICODEFORMAT    CCM_SETUNICODEFORMAT
     #define TVM_GETUNICODEFORMAT    CCM_GETUNICODEFORMAT
 #endif
-#ifdef UNICOE
+#ifdef UNICODE
     #define TVM_INSERTITEM          TVM_INSERTITEMW
     #define TVM_GETITEM             TVM_GETITEMW
     #define TVM_SETITEM             TVM_SETITEMW
