@@ -12,6 +12,13 @@
 
 :include cpluspro.sp
 
+/* Define the STRICT macro for strict type checking. */
+#ifndef NO_STRICT
+    #ifndef STRICT
+        #define STRICT  1
+    #endif
+#endif
+
 /* Define default Windows version number. */
 #ifndef WINVER
     #define WINVER  0x0500
