@@ -89,7 +89,12 @@ struct ResourceTagStructure             *DebugTag;
 struct ResourceTagStructure             *BreakTag;
 int                                     DebugMode = 0;
 
-static char                             *Command;
+/*
+ *  This HAS to be in the _DATA segment and not _BSS as the LibC prelude
+ *  code will reset it to NULL and we need it set when we get into 
+ *  __init_environment
+ */
+static char                             *Command = NULL;
 #ifdef DEBUG_ME
     debug_classes                       DebugClasses = 0;
 #endif
@@ -261,7 +266,9 @@ int toupper( int c )
         return( c );
     }
 
+#ifdef DEBUG_ME
 static char *args[] = { "", 0 };
+#endif
 
 static void CloseAllScreens()
 {
@@ -335,7 +342,12 @@ LONG _PreludeHook(
     //  We have hooked prelude primarily so we can store a copy of the command
     //  line after LibC has memset our globals!
     */
-    LONG status = _LibCPrelude(
+    LONG status;
+    
+    MyNLMHandle = NLMHandle;
+    Command = cmdLineP;
+    
+    status = _LibCPrelude(
         NLMHandle,
         initializationErrorScreenID,
         cmdLineP,
@@ -354,8 +366,8 @@ LONG _PreludeHook(
 
 int      __init_environment(void *  reserved){
 
-    char*   cmdLineP = Command;
 #ifdef DEBUG_ME
+    char*   cmdLineP = Command;
     if( cmdLineP[0] == '?' || ( cmdLineP[0] == '-' && cmdLineP[1] == 'h' ) ) {
         OutputToScreen( systemConsoleScreen, "Use -d[options]\r\n" );
         OutputToScreen( systemConsoleScreen, "  options are:\r\n" );
