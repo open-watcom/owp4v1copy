@@ -15,6 +15,9 @@
 #define __objidl_h__
 
 :include readonly.sp
+#include <unknwn.h>
+#include <wtypes.h>
+
 :include cpluspro.sp
 
 /* Forward declarations */

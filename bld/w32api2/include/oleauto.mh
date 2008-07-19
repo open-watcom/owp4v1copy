@@ -8,6 +8,8 @@
 #define _OLEAUTO_H_
 
 :include readonly.sp
+#include <oaidl.h>
+
 :include cpluspro.sp
 
 /* Macros to specify OLE automation functions */
