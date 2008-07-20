@@ -122,7 +122,10 @@ typedef struct {
 } get_supplementary_service_ret;
 
 /* perform_supplementary_service structures defined by service providers */
-
+typedef struct {
+    access_req          req;
+    trap_shandle        id;
+} perform_supplementary_service_req;
 
 /*================ REQ_GET_SYS_CONFIG =================*/
 
