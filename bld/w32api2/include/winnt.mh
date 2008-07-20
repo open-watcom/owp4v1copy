@@ -19,6 +19,7 @@
 #include <basetsd.h>
 #include <guiddef.h>
 #include <specstrings.h>
+#include <sdkddkver.h>
 
 :include cpluspro.sp
 
