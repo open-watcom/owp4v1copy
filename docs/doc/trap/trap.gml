@@ -310,7 +310,7 @@ Note that structures suitable for individual requests are declared in
 .np
 Request to connect to the remote machine. This must be the first request made.
 :P.
-:F.Request essage::eF.
+:F.Request message::eF.
 .np
 :XMP.
 access_req      req

@@ -520,7 +520,7 @@ int CapabilitiesGet8ByteBreakpointSupport()
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
 
-    TrapAccess( 2, &in, 1, &out );
+    TrapAccess( 1, &in, 1, &out );
     if( ret.err != 0 ) {
         return( FALSE );
     } else {
@@ -547,7 +547,7 @@ int CapabilitiesSet8ByteBreakpointSupport(bool status)
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
 
-    TrapAccess( 2, &in, 1, &out );
+    TrapAccess( 1, &in, 1, &out );
     if( ret.err != 0 ) {
         return( FALSE );
     } else {
@@ -573,7 +573,7 @@ int CapabilitiesGetExactBreakpointSupport()
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
 
-    TrapAccess( 2, &in, 1, &out );
+    TrapAccess( 1, &in, 1, &out );
     if( ret.err != 0 ) {
         return( FALSE );
     } else {
@@ -601,7 +601,7 @@ int CapabilitiesSetExactBreakpointSupport(bool status)
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
 
-    TrapAccess( 2, &in, 1, &out );
+    TrapAccess( 1, &in, 1, &out );
     if( ret.err != 0 ) {
         return( FALSE );
     } else {
