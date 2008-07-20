@@ -3401,18 +3401,24 @@ DECLARE_HANDLE( HRAWINPUT );
 #endif
 
 /* EnumDisplaySettings() modes */
-#define ENUM_CURRENT_SETTINGS   0xFFFFFFFFL
-#define ENUM_REGISTRY_SETTINGS  0xFFFFFFFEL
+#ifdef _WINGDI_
+    #define ENUM_CURRENT_SETTINGS   0xFFFFFFFFL
+    #define ENUM_REGISTRY_SETTINGS  0xFFFFFFFEL
+#endif
 
 /* EnumDisplaySettingsEx() flags */
 #if (WINVER >= 0x0500)
-    #define EDS_RAWMODE     0x00000002L
-    #define EDS_ROTATEDMODE 0x00000004L
+    #ifdef _WINGDI_
+        #define EDS_RAWMODE     0x00000002L
+        #define EDS_ROTATEDMODE 0x00000004L
+    #endif
 #endif
 
 /* EnumDisplayDevices() flags */
 #if (WINVER >= 0x0500)
-    #define EDD_GET_DEVICE_INTERFACE_NAME   0x00000001L
+    #ifdef _WINGDI_
+        #define EDD_GET_DEVICE_INTERFACE_NAME   0x00000001L
+    #endif
 #endif
 
 /* FilterKeys flags */
@@ -3519,6 +3525,13 @@ DECLARE_HANDLE( HRAWINPUT );
 /* Monitor information flags */
 #if (WINVER >= 0x0500)
     #define MONITORINFOF_PRIMARY    0x00000001L
+#endif
+
+/* Maximum length of a device name */
+#if (WINVER >= 0x0500)
+    #ifndef CCHDEVICENAME
+        #define CCHDEVICENAME   32
+    #endif
 #endif
 
 /* SetWinEventHook() flags */
@@ -4366,6 +4379,7 @@ typedef BSMINFO *PBSMINFO;
 
 /* UpdateLayeredWindowIndirect() parameters */
 #if (_WIN32_WINNT >= 0x0500)
+#ifdef _WINGDI_
 typedef struct tagUPDATELAYEREDWINDOWINFO {
     DWORD               cbSize;
     HDC                 hdcDst;
@@ -4379,6 +4393,7 @@ typedef struct tagUPDATELAYEREDWINDOWINFO {
     RECT CONST          *prcDirty;
 } UPDATELAYEREDWINDOWINFO;
 typedef UPDATELAYEREDWINDOWINFO *PUPDATELAYEREDWINDOWINFO;
+#endif
 #endif
 
 /* FlashWindowEx() parameters */
@@ -4860,6 +4875,7 @@ typedef LPHELPWININFOA  LPHELPWININFO;
 #endif
 
 /* Nonclient metrics */
+#ifdef _WINGDI_
 typedef struct tagNONCLIENTMETRICSA {
     UINT        cbSize;
     int         iBorderWidth;
@@ -4913,6 +4929,7 @@ typedef NONCLIENTMETRICSA   NONCLIENTMETRICS;
 typedef PNONCLIENTMETRICSA  PNONCLIENTMETRICS;
 typedef LPNONCLIENTMETRICSA LPNONCLIENTMETRICS;
 #endif
+#endif
 
 /* Minimized metrics */
 typedef struct tagMINIMIZEDMETRICS {
@@ -4926,6 +4943,7 @@ typedef MINIMIZEDMETRICS    *PMINIMIZEDMETRICS;
 typedef MINIMIZEDMETRICS    *LPMINIMIZEDMETRICS;
 
 /* Icon metrics */
+#ifdef _WINGDI_
 typedef struct tagICONMETRICSA {
     UINT        cbSize;
     int         iHorzSpacing;
@@ -4952,6 +4970,7 @@ typedef LPICONMETRICSW  LPICONMETRICS;
 typedef ICONMETRICSA    ICONMETRICS;
 typedef PICONMETRICSA   PICONMETRICS;
 typedef LPICONMETRICSA  LPICONMETRICS;
+#endif
 #endif
 
 /* Animation information */
@@ -5449,10 +5468,6 @@ WINUSERAPI LRESULT WINAPI       CallWindowProcA( WNDPROC, HWND, UINT, WPARAM, LP
 WINUSERAPI LRESULT WINAPI       CallWindowProcW( WNDPROC, HWND, UINT, WPARAM, LPARAM );
 WINUSERAPI BOOL WINAPI          CancelShutdown( VOID );
 WINUSERAPI BOOL WINAPI          ChangeClipboardChain( HWND, HWND );
-WINUSERAPI LONG WINAPI          ChangeDisplaySettingsA( LPDEVMODEA, DWORD );
-WINUSERAPI LONG WINAPI          ChangeDisplaySettingsExA( LPCSTR, LPDEVMODEA, HWND, DWORD, LPVOID );
-WINUSERAPI LONG WINAPI          ChangeDisplaySettingsExW( LPCWSTR, LPDEVMODEW, HWND, DWORD, LPVOID );
-WINUSERAPI LONG WINAPI          ChangeDisplaySettingsW( LPDEVMODEW, DWORD );
 WINUSERAPI BOOL WINAPI          ChangeMenuA( HMENU, UINT, LPCSTR, UINT, UINT );
 WINUSERAPI BOOL WINAPI          ChangeMenuW( HMENU, UINT, LPCWSTR, UINT, UINT );
 WINUSERAPI LPSTR WINAPI         CharLowerA( LPSTR );
@@ -5490,10 +5505,6 @@ WINUSERAPI HACCEL WINAPI        CreateAcceleratorTableA( LPACCEL, int );
 WINUSERAPI HACCEL WINAPI        CreateAcceleratorTableW( LPACCEL, int );
 WINUSERAPI BOOL WINAPI          CreateCaret( HWND, HBITMAP, int, int );
 WINUSERAPI HCURSOR WINAPI       CreateCursor( HINSTANCE, int, int, int, int, CONST VOID *, CONST VOID * );
-WINUSERAPI HDESK WINAPI         CreateDesktopA( LPCSTR, LPCSTR, LPDEVMODEA, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES );
-WINUSERAPI HDESK WINAPI         CreateDesktopExA( LPCSTR, LPCSTR, LPDEVMODEA, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES, ULONG, PVOID );
-WINUSERAPI HDESK WINAPI         CreateDesktopExW( LPCWSTR, LPCWSTR, LPDEVMODEW, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES, ULONG, PVOID );
-WINUSERAPI HDESK WINAPI         CreateDesktopW( LPCWSTR, LPCWSTR, LPDEVMODEW, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES );
 WINUSERAPI HWND WINAPI          CreateDialogIndirectParamA( HINSTANCE, LPCDLGTEMPLATEA, HWND, DLGPROC, LPARAM );
 WINUSERAPI HWND WINAPI          CreateDialogIndirectParamW( HINSTANCE, LPCDLGTEMPLATEW, HWND, DLGPROC, LPARAM );
 WINUSERAPI HWND WINAPI          CreateDialogParamA( HINSTANCE, LPCSTR, HWND, DLGPROC, LPARAM );
@@ -5558,8 +5569,6 @@ WINUSERAPI UINT WINAPI          EnumClipboardFormats( UINT );
 WINUSERAPI BOOL WINAPI          EnumDesktopWindows( HDESK, WNDENUMPROC, LPARAM );
 WINUSERAPI BOOL WINAPI          EnumDesktopsA( HWINSTA, DESKTOPENUMPROCA, LPARAM );
 WINUSERAPI BOOL WINAPI          EnumDesktopsW( HWINSTA, DESKTOPENUMPROCW, LPARAM );
-WINUSERAPI BOOL WINAPI          EnumDisplaySettingsA( LPCSTR, DWORD, LPDEVMODEA );
-WINUSERAPI BOOL WINAPI          EnumDisplaySettingsW( LPCWSTR, DWORD, LPDEVMODEW );
 WINUSERAPI int WINAPI           EnumPropsA( HWND, PROPENUMPROCA );
 WINUSERAPI int WINAPI           EnumPropsExA( HWND, PROPENUMPROCEXA, LPARAM );
 WINUSERAPI int WINAPI           EnumPropsExW( HWND, PROPENUMPROCEXW, LPARAM );
@@ -5889,6 +5898,18 @@ WINUSERAPI int WINAPIV          wsprintfA( LPSTR, LPCSTR, ... );
 WINUSERAPI int WINAPIV          wsprintfW( LPWSTR, LPCWSTR, ... );
 WINUSERAPI int WINAPI           wvsprintfA( LPSTR, LPCSTR, va_list );
 WINUSERAPI int WINAPI           wvsprintfW( LPWSTR, LPCWSTR, va_list );
+#ifdef _WINGDI_
+WINUSERAPI LONG WINAPI          ChangeDisplaySettingsA( LPDEVMODEA, DWORD );
+WINUSERAPI LONG WINAPI          ChangeDisplaySettingsExA( LPCSTR, LPDEVMODEA, HWND, DWORD, LPVOID );
+WINUSERAPI LONG WINAPI          ChangeDisplaySettingsExW( LPCWSTR, LPDEVMODEW, HWND, DWORD, LPVOID );
+WINUSERAPI LONG WINAPI          ChangeDisplaySettingsW( LPDEVMODEW, DWORD );
+WINUSERAPI HDESK WINAPI         CreateDesktopA( LPCSTR, LPCSTR, LPDEVMODEA, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES );
+WINUSERAPI HDESK WINAPI         CreateDesktopExA( LPCSTR, LPCSTR, LPDEVMODEA, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES, ULONG, PVOID );
+WINUSERAPI HDESK WINAPI         CreateDesktopExW( LPCWSTR, LPCWSTR, LPDEVMODEW, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES, ULONG, PVOID );
+WINUSERAPI HDESK WINAPI         CreateDesktopW( LPCWSTR, LPCWSTR, LPDEVMODEW, DWORD, ACCESS_MASK, LPSECURITY_ATTRIBUTES );
+WINUSERAPI BOOL WINAPI          EnumDisplaySettingsA( LPCSTR, DWORD, LPDEVMODEA );
+WINUSERAPI BOOL WINAPI          EnumDisplaySettingsW( LPCWSTR, DWORD, LPDEVMODEW );
+#endif
 #if (WINVER >= 0x0400)
 WINUSERAPI WORD WINAPI          CascadeWindows( HWND, UINT, CONST RECT *, UINT, const HWND * );
 WINUSERAPI LPSTR WINAPI         CharNextExA( WORD, LPCSTR, DWORD );
@@ -5955,11 +5976,7 @@ WINUSERAPI SHORT WINAPI         VkKeyScanExW( WCHAR, HKL );
 #if (WINVER >= 0x0500)
 WINUSERAPI BOOL WINAPI          AnimateWindow( HWND, DWORD, DWORD );
 WINUSERAPI BOOL WINAPI          EndMenu( VOID );
-WINUSERAPI BOOL WINAPI          EnumDisplayDevicesA( LPCSTR, DWORD, PDISPLAY_DEVICEA, DWORD );
-WINUSERAPI BOOL WINAPI          EnumDisplayDevicesW( LPCWSTR, DWORD, PDISPLAY_DEVICEW, DWORD );
 WINUSERAPI BOOL WINAPI          EnumDisplayMonitors( HDC, LPCRECT, MONITORENUMPROC, LPARAM );
-WINUSERAPI BOOL WINAPI          EnumDisplaySettingsExA( LPCSTR, DWORD, LPDEVMODEA, DWORD );
-WINUSERAPI BOOL WINAPI          EnumDisplaySettingsExW( LPCWSTR, DWORD, LPDEVMODEW, DWORD );
 WINUSERAPI BOOL WINAPI          FlashWindowEx( PFLASHWINFO );
 WINUSERAPI BOOL WINAPI          GetAltTabInfoA( HWND, int, PALTTABINFO, LPSTR, UINT );
 WINUSERAPI BOOL WINAPI          GetAltTabInfoW( HWND, int, PALTTABINFO, LPWSTR, UINT );
@@ -5996,6 +6013,12 @@ WINUSERAPI BOOL WINAPI          SetProcessDefaultLayout( DWORD );
 WINUSERAPI HWINEVENTHOOK WINAPI SetWinEventHook( DWORD, DWORD, HMODULE, WINEVENTPROC, DWORD, DWORD, DWORD );
 WINUSERAPI BOOL WINAPI          UnhookWinEvent( HWINEVENTHOOK );
 WINUSERAPI BOOL WINAPI          UnregisterDeviceNotification( HDEVNOTIFY );
+#ifdef _WINGDI_
+WINUSERAPI BOOL WINAPI          EnumDisplayDevicesA( LPCSTR, DWORD, PDISPLAY_DEVICEA, DWORD );
+WINUSERAPI BOOL WINAPI          EnumDisplayDevicesW( LPCWSTR, DWORD, PDISPLAY_DEVICEW, DWORD );
+WINUSERAPI BOOL WINAPI          EnumDisplaySettingsExA( LPCSTR, DWORD, LPDEVMODEA, DWORD );
+WINUSERAPI BOOL WINAPI          EnumDisplaySettingsExW( LPCWSTR, DWORD, LPDEVMODEW, DWORD );
+#endif
 #endif
 #if (WINVER >= 0x0500) && (_WIN32_WINNT >= 0x0501)
 WINUSERAPI BOOL WINAPI          IsWinEventHookInstalled( DWORD );
@@ -6024,8 +6047,10 @@ WINUSERAPI BOOL WINAPI          GetLastInputInfo( PLASTINPUTINFO );
 WINUSERAPI BOOL WINAPI          LockSetForegroundWindow( UINT );
 WINUSERAPI BOOL WINAPI          LockWorkStation( VOID );
 WINUSERAPI BOOL WINAPI          SetLayeredWindowAttributes( HWND, COLORREF, BYTE, DWORD );
-WINUSERAPI BOOL WINAPI          UpdateLayeredWindow( HWND, HDC, POINT *, SIZE *, HDC, POINT *, COLORREF, BLENDFUNCTION *, DWORD );
 WINUSERAPI BOOL WINAPI          UserHandleGrantAccess( HANDLE, HANDLE, BOOL );
+#ifdef _WINGDI_
+WINUSERAPI BOOL WINAPI          UpdateLayeredWindow( HWND, HDC, POINT *, SIZE *, HDC, POINT *, COLORREF, BLENDFUNCTION *, DWORD );
+#endif
 #endif
 #if (_WIN32_WINNT >= 0x0501)
 WINUSERAPI long WINAPI          BroadcastSystemMessageExA( DWORD, LPDWORD, UINT, WPARAM, LPARAM, PBSMINFO );
@@ -6047,7 +6072,9 @@ WINUSERAPI BOOL WINAPI          RegisterRawInputDevices( PCRAWINPUTDEVICE, UINT,
 #if (_WIN32_WINNT >= 0x0502)
 WINUSERAPI HPOWERNOTIFY WINAPI  RegisterPowerSettingNotification( HANDLE, LPCGUID, DWORD );
 WINUSERAPI BOOL WINAPI          UnregisterPowerSettingNotification( HPOWERNOTIFY );
+#ifdef _WINGDI_
 WINUSERAPI BOOL WINAPI          UpdateLayeredWindowIndirect( HWND, CONST UPDATELAYEREDWINDOWINFO * );
+#endif
 #endif
 #if (_WIN32_WINNT >= 0x0600)
 WINUSERAPI BOOL WINAPI          GetIconInfoExA( HICON, PICONINFOEXA );
@@ -6129,8 +6156,6 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define AppendMenu                      AppendMenuW
     #define CallMsgFilter                   CallMsgFilterW
     #define CallWindowProc                  CallWindowProcW
-    #define ChangeDisplaySettings           ChangeDisplaySettingsW
-    #define ChangeDisplaySettingsEx         ChangeDisplaySettingsExW
     #define ChangeMenu                      ChangeMenuW
     #define CharLower                       CharLowerW
     #define CharLowerBuff                   CharLowerBuffW
@@ -6142,7 +6167,6 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define CharUpperBuff                   CharUpperBuffW
     #define CopyAcceleratorTable            CopyAcceleratorTableW
     #define CreateAcceleratorTable          CreateAcceleratorTableW
-    #define CreateDesktop                   CreateDesktopW
     #define CreateDialog                    CreateDialogW
     #define CreateDialogIndirect            CreateDialogIndirectW
     #define CreateDialogIndirectParam       CreateDialogIndirectParamW
@@ -6166,7 +6190,6 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define DlgDirSelectEx                  DlgDirSelectExW
     #define DrawText                        DrawTextW
     #define EnumDesktops                    EnumDesktopsW
-    #define EnumDisplaySettings             EnumDisplaySettingsW
     #define EnumProps                       EnumPropsW
     #define EnumPropsEx                     EnumPropsExW
     #define EnumWindowStations              EnumWindowStationsW
@@ -6244,6 +6267,13 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define WinHelp                         WinHelpW
     #define wsprintf                        wsprintfW
     #define wvsprintf                       wvsprintfW
+    #ifdef _WINGDI_
+        #define ChangeDisplaySettings       ChangeDisplaySettingsW
+        #define ChangeDisplaySettingsEx     ChangeDisplaySettingsExW
+        #define CreateDesktop               CreateDesktopW
+        #define CreateDesktopEx             CreateDesktopExW
+        #define EnumDisplaySettings         EnumDisplaySettingsW
+    #endif
     #if (WINVER >= 0x0400)
         #define DrawState                   DrawStateW
         #define DrawTextEx                  DrawTextExW
@@ -6262,13 +6292,15 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
         #define BroadcastSystemMessage      BroadcastSystemMessageW
     #endif
     #if (WINVER >= 0x0500)
-        #define EnumDisplayDevices          EnumDisplayDevicesW
-        #define EnumDisplaySettingsEx       EnumDisplaySettingsExW
         #define GetAltTabInfo               GetAltTabInfoW
         #define GetMonitorInfo              GetMonitorInfoW
         #define GetWindowModuleFileName     GetWindowModuleFileNameW
         #define RealGetWindowClass          RealGetWindowClassW
         #define RegisterDeviceNotification  RegisterDeviceNotificationW
+        #ifdef _WINGDI_
+            #define EnumDisplayDevices      EnumDisplayDevicesW
+            #define EnumDisplaySettingsEx   EnumDisplaySettingsExW
+        #endif
     #endif
     #if (_WIN32_WINNT >= 0x0501)
         #define BroadcastSystemMessageEx    BroadcastSystemMessageExW
@@ -6281,8 +6313,6 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define AppendMenu                      AppendMenuA
     #define CallMsgFilter                   CallMsgFilterA
     #define CallWindowProc                  CallWindowProcA
-    #define ChangeDisplaySettings           ChangeDisplaySettingsA
-    #define ChangeDisplaySettingsEx         ChangeDisplaySettingsExA
     #define ChangeMenu                      ChangeMenuA
     #define CharLower                       CharLowerA
     #define CharLowerBuff                   CharLowerBuffA
@@ -6294,7 +6324,6 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define CharUpperBuff                   CharUpperBuffA
     #define CopyAcceleratorTable            CopyAcceleratorTableA
     #define CreateAcceleratorTable          CreateAcceleratorTableA
-    #define CreateDesktop                   CreateDesktopA
     #define CreateDialog                    CreateDialogA
     #define CreateDialogIndirect            CreateDialogIndirectA
     #define CreateDialogIndirectParam       CreateDialogIndirectParamA
@@ -6318,7 +6347,6 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define DispatchMessage                 DispatchMessageA
     #define DrawText                        DrawTextA
     #define EnumDesktops                    EnumDesktopsA
-    #define EnumDisplaySettings             EnumDisplaySettingsA
     #define EnumProps                       EnumPropsA
     #define EnumPropsEx                     EnumPropsExA
     #define EnumWindowStations              EnumWindowStationsA
@@ -6397,6 +6425,13 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
     #define WinHelp                         WinHelpA
     #define wsprintf                        wsprintfA
     #define wvsprintf                       wvsprintfA
+    #ifdef _WINGDI_
+        #define ChangeDisplaySettings       ChangeDisplaySettingsA
+        #define ChangeDisplaySettingsEx     ChangeDisplaySettingsExA
+        #define CreateDesktop               CreateDesktopA
+        #define CreateDesktopEx             CreateDesktopExA
+        #define EnumDisplaySettings         EnumDisplaySettingsA
+    #endif
     #if (WINVER >= 0x0400)
         #define DrawState                   DrawStateA
         #define DrawTextEx                  DrawTextExA
@@ -6414,13 +6449,15 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
         #define BroadcastSystemMessage      BroadcastSystemMessageA
     #endif
     #if (WINVER >= 0x0500)
-        #define EnumDisplayDevices          EnumDisplayDevicesA
-        #define EnumDisplaySettingsEx       EnumDisplaySettingsExA
         #define GetAltTabInfo               GetAltTabInfoA
         #define GetMonitorInfo              GetMonitorInfoA
         #define GetWindowModuleFileName     GetWindowModuleFileNameA
         #define RealGetWindowClass          RealGetWindowClassA
         #define RegisterDeviceNotification  RegisterDeviceNotificationA
+        #ifdef _WINGDI_
+            #define EnumDisplayDevices      EnumDisplayDevicesA
+            #define EnumDisplaySettingsEx   EnumDisplaySettingsExA
+        #endif
     #endif
     #if (_WIN32_WINNT >= 0x0501)
         #define BroadcastSystemMessageEx    BroadcastSystemMessageExA
