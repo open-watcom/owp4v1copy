@@ -317,6 +317,7 @@ bool Dmp_nlm_head( void )
     nlm_header_3    nlm_head3;
     nlm_header_4    nlm_head4;
     bool            extend;
+    char            nlm_name[256];
 
     Wlseek( 0 );
     Wread( &Nlm_head, sizeof( Nlm_head.signature ) );
@@ -330,7 +331,9 @@ bool Dmp_nlm_head( void )
     Puthex( Nlm_head.version, 8 );
     Wdputslc( "H\n" );
     Wdputs( "module name                               = " );
-    Wdputs( &Nlm_head.moduleName[1] );
+    memcpy( nlm_name, &Nlm_head.moduleName[1], Nlm_head.moduleName[0] );
+    nlm_name[ (int)Nlm_head.moduleName[0] ] = '\0';
+    Wdputs( nlm_name );
     Wdputslc( "\n" );
     Dump_header( (char *)&Nlm_head.codeImageOffset, nlm_exe_msg );
     offset = dmp_nlm_head2();
