@@ -42,6 +42,9 @@
 
 char                    *InitCmdList;
 char                    *TrpFile;
+#ifdef __NT__
+char                    *TrpDebugFile;
+#endif
 
 /*
  *  Queried from trap file supplemental services

@@ -42,7 +42,6 @@
 #include <ctype.h>
 #include <stdio.h>
 
-
 extern unsigned         ConfigScreen( void );
 extern unsigned         Lookup( char *, char *, unsigned );
 extern int              DUIEnvLkup( char *, char *, int );
@@ -63,6 +62,9 @@ extern void             StartupErr( char *err );
 
 
 extern char             *TrpFile;
+#ifdef __NT__
+extern char             *TrpDebugFile;
+#endif
 extern char             *InitCmdList;
 extern char             *InvokeFile;
 extern char             *DipFiles[];
@@ -106,6 +108,9 @@ static char OptNameTab[] = {
     "NOSOurcecheck\0"
     "CONtinueunexpectedbreak\0"
     "Help\0"
+#ifdef __NT__
+    "TDebug\0"
+#endif
 };
 
 enum { OPT_INVOKE=1,
@@ -134,6 +139,9 @@ enum { OPT_INVOKE=1,
        OPT_NOSOURCECHECK,
        OPT_CONTINUE_UNEXPECTED_BREAK,
        OPT_HELP,
+#ifdef __NT__
+       OPT_TRAP_DEBUG,
+#endif
 };
 
 
@@ -452,6 +460,12 @@ static void ProcOptList( int pass )
                 GetTrapParm( pass );
             }
             break;
+#ifdef __NT__
+        case OPT_TRAP_DEBUG:
+            if( pass == 2 ) _Free( TrpDebugFile );
+            TrpDebugFile = GetFileName( pass );
+            break;
+#endif
         case OPT_REMOTE_FILES:
             _SwitchOn( SW_REMOTE_FILES );
             break;
