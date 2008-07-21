@@ -91,7 +91,7 @@ extern bool             CheckBPIns( void );
 extern char             *GetCmdEntry( char *, int, char * );
 extern char             *Format( char *buff, char *fmt, ... );
 extern void             InvokeAFile( char * );
-extern void             CreateInvokeFile( char *name, void (*rtn)( void ) );
+extern void             CreateInvokeFile( char *name, void ( *rtn ) ( void ) );
 extern void             UnAsm( address addr, unsigned, char *buff );
 extern char             *AddHexSpec( char * );
 extern char             *GetCmdName( int );
@@ -126,7 +126,7 @@ extern void             DbgUpdate( update_list );
 extern bool             DUIGetSourceLine( cue_handle *ch, char *buff, unsigned len );
 extern void             DUIRemoveBreak( brkp *bp );
 extern void             CheckForNewThreads( bool );
-extern void             LValue(stack_entry *);
+extern void             LValue( stack_entry * );
 
 
 extern char_ring        *DLLList;
@@ -176,7 +176,7 @@ typedef enum {
 } brk_event;
 
 typedef struct {
-    brkp *(* rtn)(memory_expr);
+    brkp *(* rtn)( memory_expr );
     memory_expr type;
 } bpjmptab_type;
 
@@ -197,7 +197,7 @@ static bpjmptab_type BPJmpTab[] = {
 
 static char *BrkFmt( void )
 {
-    return( (DbgLevel != ASM) ? "%l" : "%a" );
+    return( ( DbgLevel != ASM ) ? "%l" : "%a" );
 }
 
 
@@ -251,10 +251,10 @@ bool InsertBPs( bool force )
         if( bp->th != MAD_NIL_TYPE_HANDLE ) continue;
         bp->status.b.in_place = FALSE;
         bp->status.b.hit = FALSE;
-        if( (UserTmpBrk.status.b.active)
-         && (AddrComp( UserTmpBrk.loc.addr, bp->loc.addr ) == 0) ) continue;
-        if( (DbgTmpBrk.status.b.active)
-         && (AddrComp( DbgTmpBrk.loc.addr, bp->loc.addr ) == 0) ) continue;
+        if( ( UserTmpBrk.status.b.active )
+         && ( AddrComp( UserTmpBrk.loc.addr, bp->loc.addr ) == 0 ) ) continue;
+        if( ( DbgTmpBrk.status.b.active )
+         && ( AddrComp( DbgTmpBrk.loc.addr, bp->loc.addr ) == 0 ) ) continue;
         at_ip |= InsertOneBP( bp, force );
     }
     UserTmpBrk.status.b.hit = FALSE;
@@ -280,7 +280,7 @@ bool InsertBPs( bool force )
 
 static void RemoveOneBP( brkp *bp )
 {
-    if( (bp->status.b.in_place) && SectIsLoaded( bp->loc.addr.sect_id, OVL_MAP_EXE ) ) {
+    if( ( bp->status.b.in_place ) && SectIsLoaded( bp->loc.addr.sect_id, OVL_MAP_EXE ) ) {
         RemoteRestoreBreak( bp->loc.addr, bp->item.ud );
     }
 }
@@ -289,7 +289,7 @@ static void RemoveOneWP( brkp *bp )
 {
     mad_type_info       mti;
 
-    if( (bp->status.b.in_place) && SectIsLoaded(bp->loc.addr.sect_id,OVL_MAP_EXE) ) {
+    if( ( bp->status.b.in_place ) && SectIsLoaded( bp->loc.addr.sect_id,OVL_MAP_EXE ) ) {
         bp->status.b.in_place = FALSE;
         MADTypeInfo( bp->th, &mti );
         RemoteRestoreWatch( bp->loc.addr, mti.b.bits / BITS_PER_BYTE );
@@ -469,7 +469,7 @@ bool DispBPMsg( bool stack_cmds )
             FreeCmdList( cmds );
             ret = TRUE;
         }
-        if( stack_cmds && (bp->cmds != NULL) && bp->status.b.use_cmds ) {
+        if( stack_cmds && ( bp->cmds != NULL ) && bp->status.b.use_cmds ) {
             bp->status.b.cmds_pushed = TRUE;
             PushCmdList( bp->cmds );
             TypeInpStack( INP_BREAK_POINT );
@@ -641,7 +641,7 @@ void RemovePoint( brkp *bp )
     brkp        **owner;
 
     for( owner = &BrkList; ; owner = &(*owner)->next ) {
-        if( (*owner) == bp ) {
+        if( ( *owner ) == bp ) {
             RecordBreakEvent( bp, B_CLEAR );
             FreeCmdList( bp->cmds );
             _Free( bp->condition );
@@ -919,7 +919,7 @@ static void ResPoint( brkp *bp, bool res )
  */
 
 static brkp *Ac_DeacPoint( memory_expr def_seg,
-                          bool act, void (*rtn)( brkp *, bool ) )
+                          bool act, void ( *rtn ) ( brkp *, bool ) )
 {
     brkp        *bp;
     address     addr;
@@ -1436,7 +1436,7 @@ done:;
         case 4:
             break;
         case 8:
-            if(Supports8ByteBreakpoints)
+            if( Supports8ByteBreakpoints )
                 break;
         default:
             Error( ERR_NONE, LIT( ERR_NOT_WATCH_SIZE ) );
@@ -1478,12 +1478,12 @@ bool BreakWrite( address addr, mad_type_handle th, char *comment )
     MADTypeInfo( th, &mti );
     switch( mti.b.bits / BITS_PER_BYTE ) {
     case 8:
-        if(!Supports8ByteBreakpoints)
+        if( !Supports8ByteBreakpoints )
             ok_to_try = FALSE;
     case 1:
     case 2:
     case 4:
-        if(ok_to_try){
+        if( ok_to_try ) {
             if(  FindBreak( addr ) != NULL ) {
                 Error( ERR_NONE, LIT( ERR_POINT_EXISTS ) );
             }
@@ -1512,7 +1512,7 @@ static void BreakOnAddress( void *_s )
 
     if( IS_NIL_ADDR( s->addr )
      || !BreakWrite( s->addr,
-                    FindMADTypeHandle(MAS_MEMORY|MTK_INTEGER,s->size),
+                    FindMADTypeHandle( MAS_MEMORY|MTK_INTEGER, s->size ),
                      s->comment ) ) {
         Error( ERR_NONE, LIT( ERR_NOT_WATCH_SIZE ) );
     }
@@ -1645,11 +1645,11 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
                      *
                      */
                     
-                    if( _IsOn( SW_BREAK_ON_WRITE ) && SupportsExactBreakpoints){
+                    if( _IsOn( SW_BREAK_ON_WRITE ) && SupportsExactBreakpoints ) {
 
                         bool    drop_hit = FALSE;
                         
-                        if( (UserTmpBrk.status.b.active) || (DbgTmpBrk.status.b.active) ){
+                        if( ( UserTmpBrk.status.b.active ) || ( DbgTmpBrk.status.b.active ) ) {
                         
                             if( HaveHitBP( &UserTmpBrk ) ) {
                                 drop_hit = TRUE;
@@ -1661,10 +1661,10 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
                                 drop_hit = TRUE;
                         }
                         
-                        if(!drop_hit)                        
+                        if( !drop_hit ) 
                             hit = TRUE;
                     } else {
-                        if( (memcmp( &bp->item, &item, mti.b.bits / BITS_PER_BYTE ) != 0) || !bp->status.b.has_value ) {
+                        if( ( memcmp( &bp->item, &item, mti.b.bits / BITS_PER_BYTE ) != 0 ) || !bp->status.b.has_value ) {
                             hit = TRUE;
                         }
                     }
@@ -1728,8 +1728,8 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
         bphit = TRUE;
         DbgTmpBrk.status.b.hit = TRUE;
     }
-    if( bphit ) return( COND_BREAK | (conditions & ~COND_STOPPERS) );
-    if( wphit ) return( COND_WATCH | (conditions & ~COND_STOPPERS) );
+    if( bphit ) return( COND_BREAK | ( conditions & ~COND_STOPPERS ) );
+    if( wphit ) return( COND_WATCH | ( conditions & ~COND_STOPPERS ) );
     if( conditions & COND_BREAK ) {
         unsigned        max = TXT_LEN;
 
@@ -1744,7 +1744,7 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
                 return( conditions );
             } else if( SetMsgText( TxtBuff, &conditions ) ) {
                 DUIMsgBox( TxtBuff );
-                return( COND_TRACE | COND_MESSAGE | (conditions & ~COND_STOPPERS) );
+                return( COND_TRACE | COND_MESSAGE | ( conditions & ~COND_STOPPERS ) );
             } else {
                 return( conditions & ~COND_STOPPERS );
             }
@@ -1785,7 +1785,7 @@ void InsertWPs( void )
 
     for( wp = BrkList; wp != NULL; wp = wp->next ) {
         if( wp->th == MAD_NIL_TYPE_HANDLE ) continue;
-        if( wp->status.b.active && SectIsLoaded(wp->loc.addr.sect_id,OVL_MAP_EXE) ) {
+        if( wp->status.b.active && SectIsLoaded( wp->loc.addr.sect_id, OVL_MAP_EXE ) ) {
             wp->status.b.in_place = TRUE;
             MADTypeInfo( wp->th, &mti );
             RemoteSetWatch( wp->loc.addr, mti.b.bits / BITS_PER_BYTE, &mult );
@@ -1878,7 +1878,7 @@ void ClearAllModBreaks( mod_handle handle )
     }
 }
 
-address GetRowAddrDirectly(mod_handle mod, cue_file_id file_id, int row, bool exact )
+address GetRowAddrDirectly( mod_handle mod, cue_file_id file_id, int row, bool exact )
 {
     DIPHDL( cue, ch );
 

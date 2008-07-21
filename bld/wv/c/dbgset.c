@@ -100,8 +100,8 @@ extern unsigned         QualifiedSymName( sym_handle *sh, char *name, unsigned m
 extern void             AddrFloat( address * );
 unsigned                GetMADNormalizedString( mad_string, unsigned, char * );
 
-extern int              CapabilitiesGetExactBreakpointSupport();
-extern int              CapabilitiesSetExactBreakpointSupport(bool status);
+extern int              CapabilitiesGetExactBreakpointSupport( void );
+extern int              CapabilitiesSetExactBreakpointSupport( bool status );
 extern int              SupportsExactBreakpoints;
 
 extern char             OnOffNameTab[];
@@ -362,16 +362,14 @@ static void BreakOnWriteSet( void )
 {
     _SwitchSet( SW_BREAK_ON_WRITE, SwitchOnOff() );
 
-    if(SupportsExactBreakpoints && _IsOn( SW_BREAK_ON_WRITE ) )
-        CapabilitiesSetExactBreakpointSupport(TRUE);
+    if( SupportsExactBreakpoints && _IsOn( SW_BREAK_ON_WRITE ) )
+        CapabilitiesSetExactBreakpointSupport( TRUE );
 }
 
 static void BreakOnWriteConf( void )
 {
     ShowSwitch( _IsOn( SW_BREAK_ON_WRITE ) );
 }
-
-
 
 /*
  * RecursionSet - set recursion checking on/off processing
@@ -420,7 +418,7 @@ void NewLang( char *lang )
     if( lang == NULL ) return;
     strlwr( lang );
     len = strlen( lang );
-    if( (len != strlen( Language )) || memcmp( lang, Language, len ) != 0 ) {
+    if( ( len != strlen( Language ) ) || memcmp( lang, Language, len ) != 0 ) {
         new = DbgMustAlloc( len + 1 );
         memcpy( new, lang, len );
         new[ len ] = NULLCHAR;
@@ -704,7 +702,7 @@ static void ToggleWindowSwitches( window_toggle *toggle, int len,
 static char *DumpAToggle( char *p, mad_handle mh, char *toggle )
 {
     if( toggle[0] != NULLCHAR ) {
-        MADNameDescription( mh, TXT_LEN - (p-TxtBuff), p );
+        MADNameDescription( mh, TXT_LEN - ( p - TxtBuff ), p );
         for( ;; ) {
             if( *p == '\0' ) break;
             if( *p == ' ' ) break;

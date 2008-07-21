@@ -225,7 +225,7 @@ BOOL SetDebugRegs( void )
      *  the linear address is adjusted by size so a short across a dword boundary will screw
      *  up I think!
      */
-    if(SupportingExactBreakpoints){
+    if( SupportingExactBreakpoints ) {
         /*
          *  With SupportingExactBreakpoints enabled, the linear address will not have been
          *  adjusted, so we may be on an odd boundary. A 4 byte watch of offset 0 will entail
@@ -246,7 +246,7 @@ BOOL SetDebugRegs( void )
             
             DWORD   boundary_check = wp->linear & 0x3;
             
-            switch(wp->dregs){
+            switch( wp->dregs ) {
             case 1: /* If we only need one register, then we are 1 byte anywhere, 2 bytes on word boundary, or 4 bytes on dword boundary */
                 {
                     dr7 |= setDRn( dr+0, wp->linear, DRLen( wp->len ) | DR7_BWR );
@@ -255,36 +255,36 @@ BOOL SetDebugRegs( void )
                 break;
             case 2: /* If we need 2 registers, then ... */
                 {
-                    if(wp->len == 2){           /* For a 2 byte write, this is two 1's at any address */
+                    if( wp->len == 2 ) {        /* For a 2 byte write, this is two 1's at any address */
                         dr7 |= setDRn( dr+0, wp->linear+0, DRLen( 1 ) | DR7_BWR );
                         dr7 |= setDRn( dr+1, wp->linear+1, DRLen( 1 ) | DR7_BWR );
-                    } else if(wp->len == 4){    /* For a 4 byte write, this must be two 2's at a word boundary */
+                    } else if( wp->len == 4 ) { /* For a 4 byte write, this must be two 2's at a word boundary */
                         dr7 |= setDRn( dr+0, wp->linear+0, DRLen( 2 ) | DR7_BWR );
                         dr7 |= setDRn( dr+1, wp->linear+2, DRLen( 2 ) | DR7_BWR );
-                    } else if(wp->len == 8){    /* For an 8 byte write, this must be two 4's at a dword boundary */
+                    } else if( wp->len == 8 ) { /* For an 8 byte write, this must be two 4's at a dword boundary */
                         dr7 |= setDRn( dr+0, wp->linear+0, DRLen( 4 ) | DR7_BWR );
                         dr7 |= setDRn( dr+1, wp->linear+4, DRLen( 4 ) | DR7_BWR );
                     }
-                    dr+=2;
+                    dr += 2;
                 }
                 break;
             case 3: /* If we need 3 registers, then must be 4 bytes or larger, and ... */
                 {
-                    if(wp->len == 4){           /* For a 4 byte write, this must be 1,2,1 at a odd boundary */
+                    if( wp->len == 4 ) {        /* For a 4 byte write, this must be 1,2,1 at a odd boundary */
                         dr7 |= setDRn( dr+0, wp->linear+0, DRLen( 1 ) | DR7_BWR );
                         dr7 |= setDRn( dr+1, wp->linear+1, DRLen( 2 ) | DR7_BWR );
                         dr7 |= setDRn( dr+2, wp->linear+3, DRLen( 1 ) | DR7_BWR );
-                    } else if(wp->len == 8){    /* For an 8 byte write, this must be 2,4,2 at a word boundary */
+                    } else if( wp->len == 8 ) { /* For an 8 byte write, this must be 2,4,2 at a word boundary */
                         dr7 |= setDRn( dr+0, wp->linear+0, DRLen( 2 ) | DR7_BWR );
                         dr7 |= setDRn( dr+1, wp->linear+2, DRLen( 4 ) | DR7_BWR );
                         dr7 |= setDRn( dr+2, wp->linear+6, DRLen( 2 ) | DR7_BWR );
                     }
-                    dr+=3;
+                    dr += 3;
                 }
                 break;
             case 4: /* If we need 4 registers, then must be 8 bytes and ... */
                 {
-                    if(boundary_check == 1){    /* Need 1, 2, 4, 1 */
+                    if( boundary_check == 1 ) { /* Need 1, 2, 4, 1 */
                         dr7 |= setDRn( dr+0, wp->linear+0, DRLen( 1 ) | DR7_BWR );
                         dr7 |= setDRn( dr+1, wp->linear+1, DRLen( 2 ) | DR7_BWR );
                         dr7 |= setDRn( dr+2, wp->linear+3, DRLen( 4 ) | DR7_BWR );
@@ -295,7 +295,7 @@ BOOL SetDebugRegs( void )
                         dr7 |= setDRn( dr+2, wp->linear+5, DRLen( 2 ) | DR7_BWR );
                         dr7 |= setDRn( dr+3, wp->linear+7, DRLen( 1 ) | DR7_BWR );
                     }
-                    dr+=4;
+                    dr += 4;
                 }
                 break;
             default:
@@ -362,8 +362,8 @@ BOOL CheckWatchPoints( void )
         if( value != wpList[i].value ) {
             return( TRUE );
         }
-        if( wpList[i].len == 8 ){
-            ReadMem( wpList[i].loc.segment, wpList[i].loc.offset+sizeof(value), &value, sizeof( value ) );
+        if( wpList[i].len == 8 ) {
+            ReadMem( wpList[i].loc.segment, wpList[i].loc.offset + sizeof( value ), &value, sizeof( value ) );
             if( value != wpList[i].value_high ) {
                 return( TRUE );
             }
@@ -428,7 +428,7 @@ unsigned ReqSet_watch( void )
          *  only storing the bytes from above - which is probably wrong as well! 
          *  Nevertheless, I store the next 4 bytes if the watchpoint is larger than 4 bytes
          */
-        if(curr->len > 4){
+        if( curr->len > 4 ) {
             ReadMem( acc->watch_addr.segment, acc->watch_addr.offset+sizeof(dword), &value_high, sizeof( dword ) );
             curr->value_high = value_high;
         }
@@ -446,7 +446,7 @@ unsigned ReqSet_watch( void )
         curr->linear = linear;
         
         /* If we are supporting exact break on write, then don't adjust the linear address */
-        if(!SupportingExactBreakpoints){
+        if( !SupportingExactBreakpoints ) {
             curr->linear &= ~( lencalc - 1 );
             /* This is checking if we are crossing a DWORD boundary to use 2 registers. We need to do the same if we are a QWord */
             curr->dregs = ( linear & ( lencalc - 1 ) ) ? 2 : 1;
@@ -456,14 +456,14 @@ unsigned ReqSet_watch( void )
         } else {
             DWORD   boundary_check = linear & 0x3;
             
-            if( 1 == curr->len ){
+            if( 1 == curr->len ) {
                 curr->dregs = 1;
             } else if ( 2 == curr->len ) {
                 curr->dregs = 1;
                 if(boundary_check & 1)
                     curr->dregs++;      /* Need two 1 byte watches */
             } else if ( 4 == curr->len ) {
-                switch(boundary_check){
+                switch( boundary_check ) {
                     case 0:
                         curr->dregs = 1;    /* 0x00-0x03:   4B@0x00 */
                         break;
@@ -478,7 +478,7 @@ unsigned ReqSet_watch( void )
                         break;
                 }
             } else if ( 8 == curr->len ) {
-                switch(boundary_check){
+                switch( boundary_check ) {
                     case 0:
                         curr->dregs = 2;    /* 0x00-0x07:   4B@0x00, 4B@0x04 */
                         break;

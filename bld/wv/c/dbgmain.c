@@ -187,10 +187,10 @@ OVL_EXTERN void         ProcNil( void );
 
 
 /* Internal - to be moved */
-int CapabilitiesGet8ByteBreakpointSupport();
-int CapabilitiesGetExactBreakpointSupport();
-int CapabilitiesSet8ByteBreakpointSupport(bool status);
-int CapabilitiesSetExactBreakpointSupport(bool status);
+int CapabilitiesGet8ByteBreakpointSupport( void );
+int CapabilitiesGetExactBreakpointSupport( void );
+int CapabilitiesSet8ByteBreakpointSupport( bool status );
+int CapabilitiesSetExactBreakpointSupport( bool status );
 
 #define pick( a, b, c ) extern void b( void );
 #include "dbgcmd.h"
@@ -202,7 +202,7 @@ static char CmdNameTab[] = {
 
 
 
-static void (* const CmdJmpTab[])( void ) = {
+static void ( * const CmdJmpTab[] )( void ) = {
     &ProcNil,
     #define pick( a, b, c ) &b,
     #include "dbgcmd.h"
@@ -439,7 +439,7 @@ void DebugExit( void )
 void DebugFini( void )
 {
     PointFini();
-#if !(defined(__GUI__) && defined(__OS2__))
+#if !( defined( __GUI__ ) && defined( __OS2__ ) )
     ReleaseProgOvlay( TRUE ); // see dlgfile.c
 #endif
     VarDisplayFini();
@@ -490,11 +490,11 @@ bool InitCapabilities( void )
     CapabilitiesGet8ByteBreakpointSupport();
     CapabilitiesGetExactBreakpointSupport();
     
-    if(Supports8ByteBreakpoints)
-        CapabilitiesSet8ByteBreakpointSupport(TRUE);
+    if( Supports8ByteBreakpoints )
+        CapabilitiesSet8ByteBreakpointSupport( TRUE );
         
-    if(SupportsExactBreakpoints && _IsOn( SW_BREAK_ON_WRITE ) )
-        CapabilitiesSetExactBreakpointSupport(TRUE);
+    if( SupportsExactBreakpoints && _IsOn( SW_BREAK_ON_WRITE ) )
+        CapabilitiesSetExactBreakpointSupport( TRUE );
         
     return( TRUE );
 }
@@ -529,7 +529,7 @@ int CapabilitiesGet8ByteBreakpointSupport()
     }
 }
 
-int CapabilitiesSet8ByteBreakpointSupport(bool status)
+int CapabilitiesSet8ByteBreakpointSupport( bool status )
 {
     mx_entry                    in[1];
     mx_entry                    out[1];
@@ -556,7 +556,7 @@ int CapabilitiesSet8ByteBreakpointSupport(bool status)
     }
 }
 
-int CapabilitiesGetExactBreakpointSupport()
+int CapabilitiesGetExactBreakpointSupport( void )
 {
     mx_entry                    in[1];
     mx_entry                    out[1];
@@ -583,7 +583,7 @@ int CapabilitiesGetExactBreakpointSupport()
     }
 }
 
-int CapabilitiesSetExactBreakpointSupport(bool status)
+int CapabilitiesSetExactBreakpointSupport( bool status )
 {
     mx_entry                    in[1];
     mx_entry                    out[1];
