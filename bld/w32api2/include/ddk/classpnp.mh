@@ -637,6 +637,12 @@ SCSIPORT_API NTSTATUS NTAPI ClassWmiFireEvent( PDEVICE_OBJECT, LPGUID, ULONG, UL
     #define ClasspFreeSrb( p1, p2 ) \
         ExFreeToNPagedLookasideList( &((p1)->CommonExtension.SrbLookasideList), p2 )
 #endif
+#undef DebugPrint
+#if DBG
+    #define DebugPrint( x ) ClassDebugPrint x
+#else
+    #define DebugPrint( x )
+#endif
 
 /* Other macros */
 #define ASSERT_FDO( x ) \

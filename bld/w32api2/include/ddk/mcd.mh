@@ -214,5 +214,15 @@ NTSTATUS NTAPI  ChangerSetPosition( PDEVICE_OBJECT, PIRP );
 NTSTATUS NTAPI  ChangerPerformDiagnostics( PDEVICE_OBJECT, PWMI_CHANGER_PROBLEM_DEVICE_ERROR );
 #endif
 
+/* Functions implemented as macros */
+#if (NTDDI_VERSION >= 0x05010000)
+    #undef DebugPrint
+    #if DBG
+        #define DebugPrint( x ) ChangerClassDebugPrint x
+    #else
+        #define DebugPrint( x )
+    #endif
+#endif
+
 :include cplusepi.sp
 

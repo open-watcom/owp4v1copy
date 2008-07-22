@@ -2896,7 +2896,7 @@ typedef TWO_BYTE    *PTWO_BYTE;
     { \
         UCHAR   v; \
         for( v = 0; v < 32; v++ ) { \
-            if( ((p1) >> x) == 1) { \
+            if( ((p1) >> v) == 1) { \
                 break; \
             } \
         } \

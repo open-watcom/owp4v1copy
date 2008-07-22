@@ -396,6 +396,12 @@ STORPORT_API VOID NTAPI     StorPortWriteRegisterUshort( PVOID, PUSHORT, USHORT 
 #if (NTDDI_VERSION >= 0x05020100)
     #define StorPortCopyMemory( p1, p2, p3 )            memcpy( p1, p2, p3 )
 #endif
+#undef DebugPrint
+#if DBG
+    #define DebugPrint( x )                             StorPortDebugPrint x
+#else
+    #define DebugPrint( x )
+#endif
 
 /* Aliases */
 #ifdef STOR_USE_SCSI_ALIASES

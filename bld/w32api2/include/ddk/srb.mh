@@ -551,6 +551,11 @@ SCSIPORT_API VOID NTAPI     ScsiPortWriteRegisterUshort( PUSHORT, USHORT );
 /* Functions implemented as macros */
 #define ScsiPortConvertPhysicalAddressToUlong( x )      ((x).LowPart)
 #define ScsiPortConvertPhysicalAddressToULongPtr( x )   ((ULONG_PTR)((x).QuadPart))
+#if DBG
+    #define DebugPrint( x )                             ScsiDebugPrint x
+#else
+    #define DebugPrint( x )
+#endif
 
 :include cplusepi.sp
 
