@@ -21,6 +21,32 @@
 typedef PHYSICAL_ADDRESS    STOR_PHYSICAL_ADDRESS;
 typedef PHYSICAL_ADDRESS    *PSTOR_PHYSICAL_ADDRESS;
 
+/* Storage synchronization models */
+typedef enum _STOR_SYNCHRONIZATION_MODEL {
+    StorSynchronizeHalfDuplex   = 0,
+    StorSynchronizeFullDuplex   = 1
+} STOR_SYNCHRONIZATION_MODEL;
+
+/* Hardware message signaled interrupt routine */
+typedef BOOLEAN (NTAPI *PHW_MESSAGE_SIGNALED_INTERRUPT_ROUTINE)( PVOID, ULONG );
+
+/* Interrupt synchronization modes */
+typedef enum _INTERRUPT_SYNCHRONIZATION_MODE {
+    InterruptSupportNone            = 0,
+    InterruptSynchronizeAll         = 1,
+    InterruptSynchronizePerMessage  = 2
+} INTERRUPT_SYNCHRONIZATION_MODE;
+
+typedef struct _MEMORY_REGION {
+    PUCHAR              VirtualBase;
+    PHYSICAL_ADDRESS    PhysicalBase;
+    ULONG               Length;
+} MEMORY_REGION;
+typedef MEMORY_REGION   *PMEMORY_REGION;
+
+/* Hardware build I/O callback */
+typedef BOOLEAN (NTAPI *PHW_BUILDIO)( PVOID, struct SCSI_REQUEST_BLOCK * );
+
 /* The Microsoft version of storport.h is mostly a lot of the same stuff that's in
  * other headers.  To save space, include those headers and just define those constants
  * and structures that are unique to this header.
@@ -71,30 +97,6 @@ typedef PHYSICAL_ADDRESS    *PSTOR_PHYSICAL_ADDRESS;
 #define MINIPORT_REG_SZ     1
 #define MINIPORT_REG_BINARY 3
 #define MINIPORT_REG_DWORD  4
-
-/* Memory region */
-typedef struct _MEMORY_REGION {
-    PUCHAR              VirtualBase;
-    PHYSICAL_ADDRESS    PhysicalBase;
-    ULONG               Length;
-} MEMORY_REGION;
-typedef MEMORY_REGION   *PMEMORY_REGION;
-
-/* Storage synchronization models */
-typedef enum _STOR_SYNCHRONIZATION_MODEL {
-    StorSynchronizeHalfDuplex   = 0,
-    StorSynchronizeFullDuplex   = 1
-} STOR_SYNCHRONIZATION_MODEL;
-
-/* Interrupt synchronization modes */
-typedef enum _INTERRUPT_SYNCHRONIZATION_MODE {
-    InterruptSupportNone            = 0,
-    InterruptSynchronizeAll         = 1,
-    InterruptSynchronizePerMessage  = 2
-} INTERRUPT_SYNCHRONIZATION_MODE;
-
-/* Hardware message signaled interrupt routine */
-typedef BOOLEAN (NTAPI *PHW_MESSAGE_SIGNALED_INTERRUPT_ROUTINE)( PVOID, ULONG );
 
 /* Message interrupt information */
 typedef struct _MESSAGE_INTERRUPT_INFORMATION {
@@ -194,7 +196,6 @@ typedef struct _STARTIO_PERFORMANCE_PARAMETERS {
 typedef STARTIO_PERFORMANCE_PARAMETERS  *PSTARTIO_PERFORMANCE_PARAMETERS;
 
 /* Hardware callbacks */
-typedef BOOLEAN (NTAPI *PHW_BUILDIO)( PVOID, PSCSI_REQUEST_BLOCK );
 typedef BOOLEAN (NTAPI *PHW_PASSIVE_INITIALIZE_ROUTINE)( PVOID );
 typedef VOID (NTAPI *PHW_DPC_ROUTINE)( PSTOR_DPC, PVOID, PVOID, PVOID );
 typedef VOID (NTAPI *PHW_FREE_ADAPTER_RESOURCES)( PVOID );

@@ -232,6 +232,16 @@ typedef struct _PORT_CONFIGURATION_INFORMATION {
     BOOLEAN         ResetTargetSupported;
     UCHAR           MaximumNumberOfLogicalUnits;
     BOOLEAN         WmiDataProvider;
+#ifdef _NTSTORPORT_
+    STOR_SYNCHRONIZATION_MODEL  SynchronizationModel;
+    PHW_MESSAGE_SIGNALED_INTERRUPT_ROUTINE  HwMSInterruptRoutine;
+    INTERRUPT_SYNCHRONIZATION_MODE  InterruptSynchronizationMode;
+    MEMORY_REGION   DumpRegion;
+    ULONG           RequestedDumpBufferSize;
+    BOOLEAN         VirtualDevice;
+    ULONG           ExtendedFlags1;
+    ULONG           MaxNumberOfIO;
+#endif
 } PORT_CONFIGURATION_INFORMATION;
 typedef PORT_CONFIGURATION_INFORMATION  *PPORT_CONFIGURATION_INFORMATION;
 
@@ -472,7 +482,7 @@ typedef struct _HW_INITIALIZATION_DATA {
     BOOLEAN             MapBuffers;
     BOOLEAN             NeedPhysicalAddresses;
     BOOLEAN             TaggedQueuing;
-    BOOLEAN             AutoRequestState;
+    BOOLEAN             AutoRequestSense;
     BOOLEAN             MultipleRequestPerLu;
     BOOLEAN             ReceiveEvent;
     USHORT              VendorIdLength;
@@ -484,6 +494,9 @@ typedef struct _HW_INITIALIZATION_DATA {
     USHORT              DeviceIdLength;
     PVOID               DeviceId;
     PHW_ADAPTER_CONTROL HwAdapterControl;
+#ifdef _NTSTORPORT_
+    PHW_BUILDIO         HwBuildIo;
+#endif
 } HW_INITIALIZATION_DATA;
 typedef HW_INITIALIZATION_DATA  *PHW_INITIALIZATION_DATA;
 
