@@ -7522,6 +7522,17 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
         KeAcquireSpinLockAtDpcLevel( x )
     #define ExReleaseSpinLockFromDpcLevel( x ) \
         ExReleaseSpinLockFromDpcLevel( x )
+    #define KeQueryTickCount( x ) \
+        { \
+            KSYSTEM_TIME volatile *v = *((PKSYSTEM_TIME *)&KeTickCount); \
+            for( ;; ) { \
+                (x)->HighPart = v->High1Time; \
+                (x)->LowPart = v->LowPart; \
+                if( (x)->HighPart = v->High2Time ) { \
+                    break; \
+                } \
+            } \
+        }
     #define MmGetProcedureAddress( x )      (x)
     #define MmLockPagableCodeSection( x )   MmLockPagableDataSection( x )
     #define ExInterlockedIncrementLong( x, p ) \
