@@ -5802,6 +5802,10 @@ typedef struct _PCI_COMMON_CONFIG {
 } PCI_COMMON_CONFIG;
 typedef PCI_COMMON_CONFIG   *PPCI_COMMON_CONFIG;
 
+/* PCI configuration structure lengths */
+#define PCI_COMMON_HDR_LENGTH       FIELD_OFFSET( PCI_COMMON_CONFIG, DeviceSpecific )
+#define PCI_EXTENDED_CONFIG_LENGTH  0x00001000
+
 /* Macros to test for PCI common configuration types */
 #define PCI_CONFIGURATION_TYPE( x ) \
     (((PPCI_COMMON_CONFIG)(x))->HeaderType & ~PCI_MULTIFUNCTION)
