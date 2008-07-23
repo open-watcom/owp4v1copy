@@ -251,7 +251,8 @@ typedef enum _STORAGE_MEDIA_TYPE {
     ADR_1               = 0x5A,
     ADR_2               = 0x5B,
     STK_9940            = 0x5C,
-    SAIT                = 0x5D
+    SAIT                = 0x5D,
+    VXATape             = 0x5E
 } STORAGE_MEDIA_TYPE;
 typedef STORAGE_MEDIA_TYPE  *PSTORAGE_MEDIA_TYPE;
 
