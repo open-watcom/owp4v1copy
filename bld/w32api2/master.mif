@@ -319,6 +319,7 @@ ddk_headers =        &
         d4iface.h    &
         ddkmapi.h    &
         ddrawint.h   &
+        devioctl.h   &
         drvspecs.h   &
         hidclass.h   &
         hidpi.h      &
