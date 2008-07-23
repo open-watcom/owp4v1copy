@@ -145,7 +145,7 @@ typedef struct _MODE_MEDIUM_PARTITION_PAGE {
     UCHAR   IDPBit      : 1;
     UCHAR   SDPBit      : 1;
     UCHAR   FDPBit      : 1;
-    UCHAR   MediumFormatRecognization;
+    UCHAR   MediumFormatRecognition;
     UCHAR   Reserved3[2];
     UCHAR   Partition0Size[2];
     UCHAR   Partition1Size[2];
