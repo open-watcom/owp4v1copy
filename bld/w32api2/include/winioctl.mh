@@ -10,12 +10,16 @@
 :include readonly.sp
 :include cpluspro.sp
 
+/* This header contains a substantial number of constants and structures that overlap
+ * with various headers in the DDK.  Include guards are used through this header to
+ * prevent conflicts.
+ */
+
+#ifndef _DEVIOCTL_
+#define _DEVIOCTL_
+
 /* Device type data type */
 #define DEVICE_TYPE DWORD
-
-/* Bad track number data type */
-typedef WORD    BAD_TRACK_NUMBER;
-typedef WORD    *PBAD_TRACK_NUMBER;
 
 /* Macros to manipulate I/O control codes */
 #define CTL_CODE( p1, p2, p3, p4 ) \
@@ -24,6 +28,11 @@ typedef WORD    *PBAD_TRACK_NUMBER;
 #define METHOD_FROM_CTL_CODE( x )       ((DWORD)(x & 0x00000003L))
 
 :include cmnioctl.sp
+
+#endif /* _DEVIOCTL_ */
+
+#ifndef _NTDDSTOR_H_
+#define _NTDDSTOR_H_
 
 /* Storage device I/O control codes */
 #define IOCTL_STORAGE_BASE  FILE_DEVICE_MASS_STORAGE
@@ -122,6 +131,509 @@ typedef WORD    *PBAD_TRACK_NUMBER;
 
 /* Storage priority hint support flags */
 #define STORAGE_PRIORITY_HINT_SUPPORTED 0x00000001L
+
+/* Storage hotplug information */
+typedef struct _STORAGE_HOTPLUG_INFO {
+    DWORD   Size;
+    BOOLEAN MediaRemovable;
+    BOOLEAN MediaHotplug;
+    BOOLEAN DeviceHotplug;
+    BOOLEAN WriteCacheEnableOverride;
+} STORAGE_HOTPLUG_INFO;
+typedef STORAGE_HOTPLUG_INFO    *PSTORAGE_HOTPLUG_INFO;
+
+/* Storage device number */
+typedef struct _STORAGE_DEVICE_NUMBER {
+    DEVICE_TYPE DeviceType;
+    DWORD       DeviceNumber;
+    DWORD       PartitionNumber;
+} STORAGE_DEVICE_NUMBER;
+typedef STORAGE_DEVICE_NUMBER   *PSTORAGE_DEVICE_NUMBER;
+
+/* Storage bus reset request */
+typedef struct _STORAGE_BUS_RESET_REQUEST {
+    BYTE    PathId;
+} STORAGE_BUS_RESET_REQUEST;
+typedef STORAGE_BUS_RESET_REQUEST   *PSTORAGE_BUS_RESET_REQUEST;
+
+/* Storage break reservation request */
+typedef struct STORAGE_BREAK_RESERVATION_REQUEST {
+    DWORD   Length;
+    BYTE    _unused;
+    BYTE    PathId;
+    BYTE    TargetId;
+    BYTE    Lun;
+} STORAGE_BREAK_RESERVATION_REQUEST;
+typedef STORAGE_BREAK_RESERVATION_REQUEST   *PSTORAGE_BREAK_RESERVATION_REQUEST;
+
+/* IOCTL_STORAGE_MEDIA_REMOVAL parameters */
+typedef struct _PREVENT_MEDIA_REMOVAL {
+    BOOLEAN PreventMediaRemoval;
+} PREVENT_MEDIA_REMOVAL;
+typedef PREVENT_MEDIA_REMOVAL   *PPREVENT_MEDIA_REMOVAL;
+
+/* Class media change context */
+typedef struct _CLASS_MEDIA_CHANGE_CONTEXT {
+    DWORD   MediaChangeContext;
+    DWORD   NewState;
+} CLASS_MEDIA_CHANGE_CONTEXT;
+typedef CLASS_MEDIA_CHANGE_CONTEXT  *PCLASS_MEDIA_CHANGE_CONTEXT;
+
+/* Tape statistics */
+typedef struct _TAPE_STATISTICS {
+    DWORD           Version;
+    DWORD           Flags;
+    LARGE_INTEGER   RecoveredWrites;
+    LARGE_INTEGER   UnrecoveredWrites;
+    LARGE_INTEGER   RecoveredReads;
+    LARGE_INTEGER   UnrecoveredReads;
+    BYTE            CompressionRatioReads;
+    BYTE            CompressionRatioWrites;
+} TAPE_STATISTICS;
+typedef TAPE_STATISTICS *PTAPE_STATISTICS;
+
+/* IOCTL_TAPE_GET_STATISTICS parameters */
+typedef struct _TAPE_GET_STATISTICS {
+    DWORD   Operation;
+} TAPE_GET_STATISTICS;
+typedef TAPE_GET_STATISTICS *PTAPE_GET_STATISTICS;
+
+/* Storage media types */
+typedef enum _STORAGE_MEDIA_TYPE {
+    DDS_4mm             = 0x20,
+    MiniQic             = 0x21,
+    Travan              = 0x22,
+    QIC                 = 0x23,
+    MP_8mm              = 0x24,
+    AME_8mm             = 0x25,
+    AIT1_8mm            = 0x26,
+    DLT                 = 0x27,
+    NCTP                = 0x28,
+    IBM_3480            = 0x29,
+    IBM_3480E           = 0x2A,
+    IBM_Magstar_3590    = 0x2B,
+    IBM_Magstar_MP      = 0x2C,
+    STK_DATA_D3         = 0x2D,
+    SONY_DTF            = 0x2E,
+    DV_6mm              = 0x2F,
+    DMI                 = 0x30,
+    SONY_D2             = 0x31,
+    CLEANER_CARTRIDGE   = 0x32,
+    CD_ROM              = 0x33,
+    CD_R                = 0x34,
+    CD_RW               = 0x35,
+    DVD_ROM             = 0x36,
+    DVD_R               = 0x37,
+    DVD_RW              = 0x38,
+    MO_3_RW             = 0x39,
+    MO_5_WO             = 0x3A,
+    MO_5_RW             = 0x3B,
+    MO_5_LIMDOW         = 0x3C,
+    PC_5_WO             = 0x3D,
+    PC_5_RW             = 0x3E,
+    PD_5_RW             = 0x3F,
+    ABL_5_WO            = 0x40,
+    PINNACLE_APEX_5_RW  = 0x41,
+    SONY_12_WO          = 0x42,
+    PHILIPS_12_WO       = 0x43,
+    HITACHI_12_WO       = 0x44,
+    CYGNET_12_WO        = 0x45,
+    KODAK_14_WO         = 0x46,
+    MO_NFR_525          = 0x47,
+    NIKON_12_RW         = 0x48,
+    IOMEGA_ZIP          = 0x49,
+    IOMEGA_JAZ          = 0x4A,
+    SYQUEST_EZ135       = 0x4B,
+    SYQUEST_EZFLYER     = 0x4C,
+    SYQUEST_SYJET       = 0x4D,
+    AVATAR_F2           = 0x4E,
+    MP2_8mm             = 0x4F,
+    DST_S               = 0x50,
+    DST_M               = 0x51,
+    DST_L               = 0x52,
+    VXATape_1           = 0x53,
+    VXATape_2           = 0x54,
+#if (NTDDI_VERSION < 0x05010000)
+    STK_EAGLE           = 0x55,
+#else
+    STK_9840            = 0x55,
+#endif
+    LTO_Ultrium         = 0x56,
+    LTO_Accelis         = 0x57,
+    DVD_RAM             = 0x58,
+    ATI_8mm             = 0x59,
+    ADR_1               = 0x5A,
+    ADR_2               = 0x5B,
+    STK_9940            = 0x5C,
+    SAIT                = 0x5D
+} STORAGE_MEDIA_TYPE;
+typedef STORAGE_MEDIA_TYPE  *PSTORAGE_MEDIA_TYPE;
+
+/* Storage bus types */
+typedef enum _STORAGE_BUS_TYPE {
+    BusTypeUnknown      = 0x00,
+    BusTypeScsi         = 0x01,
+    BusTypeAtapi        = 0x02,
+    BusTypeAta          = 0x03,
+    BusType1394         = 0x04,
+    BusTypeSsa          = 0x05,
+    BusTypeFibre        = 0x06,
+    BusTypeUsb          = 0x07,
+    BusTypeRAID         = 0x08,
+    BusTypeiScsi        = 0x09,
+    BusTypeSas          = 0x0A,
+    BusTypeSata         = 0x0B,
+    BusTypeSd           = 0x0C,
+    BusTypeMmc          = 0x0D,
+    BusTypeMax          = 0x0E,
+    BusTypeMaxReserved  = 0x7F
+} STORAGE_BUS_TYPE;
+typedef STORAGE_BUS_TYPE    *PSTORAGE_BUS_TYPE;
+
+/* Device media information */
+typedef struct _DEVICE_MEDIA_INFO {
+    union {
+        struct {
+            LARGE_INTEGER       Cylinders;
+            STORAGE_MEDIA_TYPE  MediaType;
+            DWORD               TracksPerCylinder;
+            DWORD               SectorsPerTrack;
+            DWORD               BytesPerSector;
+            DWORD               NumberMediaSides;
+            DWORD               MediaCharacteristics;
+        } DiskInfo;
+        struct {
+            LARGE_INTEGER       Cylinders;
+            STORAGE_MEDIA_TYPE  MediaType;
+            DWORD               TracksPerCylinder;
+            DWORD               SectorsPerTrack;
+            DWORD               BytesPerSector;
+            DWORD               NumberMediaSides;
+            DWORD               MediaCharacteristics;
+        } RemovableDiskInfo;
+        struct {
+            STORAGE_MEDIA_TYPE  MediaType;
+            DWORD               MediaCharacteristics;
+            DWORD               CurrentBlockSize;
+            STORAGE_BUS_TYPE    BusType;
+            union {
+                struct {
+                    BYTE    MediumType;
+                    BYTE    DensityCode;
+                } ScsiInformation;
+            } BusSpecificData;
+        } TapeInfo;
+    } DeviceSpecific;
+} DEVICE_MEDIA_INFO;
+typedef DEVICE_MEDIA_INFO   *PDEVICE_MEDIA_INFO;
+
+/* Media type information */
+typedef struct _GET_MEDIA_TYPES {
+    DWORD               DeviceType;
+    DWORD               MediaInfoCount;
+    DEVICE_MEDIA_INFO   MediaInfo[1];
+} GET_MEDIA_TYPES;
+typedef GET_MEDIA_TYPES *PGET_MEDIA_TYPES;
+
+/* IOCTL_STORAGE_PREDICT_FAILURE returned data */
+typedef struct _STORAGE_PREDICT_FAILURE {
+    DWORD   PredictFailure;
+    BYTE    VendorSpecific[512];
+} STORAGE_PREDICT_FAILURE;
+typedef STORAGE_PREDICT_FAILURE *PSTORAGE_PREDICT_FAILURE;
+
+/* Storage query types */
+typedef enum _STORAGE_QUERY_TYPE {
+    PropertyStandardQuery   = 0,
+    PropertyExistsQuery     = 1,
+    PropertyMaskQuery       = 2,
+    PropertyQueryMaxDefined = 3
+} STORAGE_QUERY_TYPE;
+typedef STORAGE_QUERY_TYPE  *PSTORAGE_QUERY_TYPE;
+
+/* Storage property identifiers */
+typedef enum _STORAGE_PROPERTY_ID {
+    StorageDeviceProperty           = 0,
+    StorageAdapterProperty          = 1,
+    StorageDeviceIdProperty         = 2,
+    StorageDeviceUniqueIdProperty   = 3,
+    StorageDeviceWriteCacheProperty = 4,
+    StorageMiniportProperty         = 5,
+    StorageAccessAlignmentProperty  = 6
+} STORAGE_PROPERTY_ID;
+typedef STORAGE_PROPERTY_ID *PSTORAGE_PROPERTY_ID;
+
+/* Storage property query */
+typedef struct _STORAGE_PROPERTY_QUERY {
+    STORAGE_PROPERTY_ID PropertyId;
+    STORAGE_QUERY_TYPE  QueryType;
+    BYTE                AdditionalParameters[1];
+} STORAGE_PROPERTY_QUERY;
+typedef STORAGE_PROPERTY_QUERY  *PSTORAGE_PROPERTY_QUERY;
+
+/* Storage description header */
+typedef struct _STORAGE_DESCRIPTOR_HEADER {
+    DWORD   Version;
+    DWORD   Size;
+} STORAGE_DESCRIPTION_HEADER;
+typedef STORAGE_DESCRIPTION_HEADER  *PSTORAGE_DESCRIPTION_HEADER;
+
+/* Storage device descriptor */
+typedef struct _STORAGE_DEVICE_DESCRIPTOR {
+    DWORD               Version;
+    DWORD               Size;
+    BYTE                DeviceType;
+    BYTE                DeviceTypeModifier;
+    BOOLEAN             RemovableMedia;
+    BOOLEAN             CommandQueueing;
+    DWORD               VendorIdOffset;
+    DWORD               ProductIdOffset;
+    DWORD               ProductRevisionOffset;
+    DWORD               SerialNumberOffset;
+    STORAGE_BUS_TYPE    BusType;
+    DWORD               RawPropertiesLength;
+    BYTE                RawDeviceProperties[1];
+} STORAGE_DEVICE_DESCRIPTOR;
+typedef STORAGE_DEVICE_DESCRIPTOR   *PSTORAGE_DEVICE_DESCRIPTOR;
+
+/* Storage adapter descriptor */
+typedef struct _STORAGE_ADAPTER_DESCRIPTOR {
+    DWORD   Version;
+    DWORD   Size;
+    DWORD   MaximumTransferLength;
+    DWORD   MaximumPhysicalPages;
+    DWORD   AlignmentMask;
+    BOOLEAN AdapterUsesPio;
+    BOOLEAN AdapterScansDown;
+    BOOLEAN CommandQueueing;
+    BOOLEAN AcceleratedTransfer;
+#if (NTDDI_VERSION < 0x05010000)
+    BOOLEAN BusType;
+#else
+    BYTE    BusType;
+#endif
+    WORD    BusMajorVersion;
+    WORD    BusMinorVersion;
+} STORAGE_ADAPTER_DESCRIPTOR;
+typedef STORAGE_ADAPTER_DESCRIPTOR  *PSTORAGE_ADAPTER_DESCRIPTOR;
+
+/* Storage access alignment descriptor */
+typedef struct _STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR {
+    DWORD   Version;
+    DWORD   Size;
+    DWORD   BytesPerCacheLine;
+    DWORD   BytesOffsetForCacheAlignment;
+    DWORD   BytesPerLogicalSector;
+    DWORD   BytesPerPhysicalSector;
+    DWORD   BytesOffsetForSectorAlignment;
+} STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR;
+typedef STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR *PSTORAGE_ACCESS_ALIGNMENT_DESCRIPTOR;
+
+/* Storage port code sets */
+typedef enum _STORAGE_PORT_CODE_SET {
+    StoragePortCodeSetReserved  = 0,
+    StoragePortCodeSetStorport  = 1,
+    StoragePortCodeSetSCSIport  = 2
+} STORAGE_PORT_CODE_SET;
+typedef STORAGE_PORT_CODE_SET   *PSTORAGE_PORT_CODE_SET;
+
+/* Storage miniport descriptor */
+typedef struct _STORAGE_MINIPORT_DESCRIPTOR {
+    DWORD                   Version;
+    DWORD                   Size;
+    STORAGE_PORT_CODE_SET   Portdriver;
+    BOOLEAN                 LUNResetSupported;
+    BOOLEAN                 TargetResetSupported;
+} STORAGE_MINIPORT_DESCRIPTOR;
+typedef STORAGE_MINIPORT_DESCRIPTOR *PSTORAGE_MINIPORT_DESCRIPTOR;
+
+/* Storage identifier code sets */
+typedef enum _STORAGE_IDENTIFIER_CODE_SET {
+    StorageIdCodeSetReserved    = 0,
+    StorageIdCodeSetBinary      = 1,
+    StorageIdCodeSetAscii       = 2,
+    StorageIdCodeSetUtf8        = 3
+} STORAGE_IDENTIFIER_CODE_SET;
+typedef STORAGE_IDENTIFIER_CODE_SET *PSTORAGE_IDENTIFIER_CODE_SET;
+
+/* Storage identifier types */
+typedef enum _STORAGE_IDENTIFIER_TYPE {
+    StorageIdTypeVendorSpecific             = 0,
+    StorageIdTypeVendorId                   = 1,
+    StorageIdTypeEUI64                      = 2,
+    StorageIdTypeFCPHName                   = 3,
+    StorageIdTypePortRelative               = 4,
+    StorageIdTypeTargetPortGroup            = 5,
+    StorageIdTypeLogicalUnitGroup           = 6,
+    StorageIdTypeMD5LogicalUnitIdentifier   = 7,
+    StorageIdTypeScsiNameString             = 8
+} STORAGE_IDENTIFIER_TYPE;
+typedef STORAGE_IDENTIFIER_TYPE *PSTORAGE_IDENTIFIER_TYPE;
+#define StorageIdTypeNAA    StorageIdTypeFCPHName
+
+/* Storage identifier NAA formats */
+typedef enum _STORAGE_ID_NAA_FORMAT {
+    StorageIdNAAFormatIEEEExtended              = 2,
+    StorageIdNAAFormatIEEERegistered            = 3,
+    StorageIdNAAFormatIEEEERegisteredExtended   = 5
+} STORAGE_ID_NAA_FORMAT;
+typedef STORAGE_ID_NAA_FORMAT   *PSTORAGE_ID_NAA_FORMAT;
+
+/* Storage association types */
+typedef enum _STORAGE_ASSOCIATION_TYPE {
+    StorageIdAssocDevice    = 0,
+    StorageIdAssocPort      = 1,
+    StorageIdAssocTarget    = 2
+} STORAGE_ASSOCIATION_TYPE;
+typedef STORAGE_ASSOCIATION_TYPE    *PSTORAGE_ASSOCIATION_TYPE;
+
+/* Storage identifier */
+typedef struct _STORAGE_IDENTIFIER {
+    STORAGE_IDENTIFIER_CODE_SET CodeSet;
+    STORAGE_IDENTIFIER_TYPE     Type;
+    WORD                        IdentifierSize;
+    WORD                        NextOffset;
+    STORAGE_ASSOCIATION_TYPE    Association;
+    BYTE                        Identifier[1];
+} STORAGE_IDENTIFIER;
+typedef STORAGE_IDENTIFIER  *PSTORAGE_IDENTIFIER;
+
+/* Storage device identifier descriptor */
+typedef struct _STORAGE_DEVICE_ID_DESCRIPTOR {
+    DWORD   Version;
+    DWORD   Size;
+    DWORD   NumberOfIdentifiers;
+    BYTE    Identifiers[1];
+} STORAGE_DEVICE_ID_DESCRIPTOR;
+typedef STORAGE_DEVICE_ID_DESCRIPTOR    *PSTORAGE_DEVICE_ID_DESCRIPTOR;
+
+/* IOCTL_STORAGE_GET_BC_PROPERTIES returned data */
+typedef struct _STORAGE_GET_BC_PROPERTIES_OUTPUT {
+    DWORD       MaximumRequestsPerPeriod;
+    DWORD       MinimumPeriod;
+    DWORDLONG   MaximumRequestSize;
+    DWORD       EstimatedTimePerRequest;
+    DWORD       NumOutStandingRequests;
+    DWORDLONG   RequestSize;
+} STORAGE_GET_BC_PROPERTIES_OUTPUT;
+typedef STORAGE_GET_BC_PROPERTIES_OUTPUT    *PSTORAGE_GET_BC_PROPERTIES_OUTPUT;
+
+/* IOCTL_STORAGE_ALLOCATE_BC_STREAM parameters */
+typedef struct _STORAGE_ALLOCATE_BC_STREAM_INPUT {
+    DWORD   Version;
+    DWORD   RequestsPerPeriod;
+    DWORD   Period;
+    BOOLEAN RetryFailures;
+    BOOLEAN Discardable;
+    BOOLEAN Reserved1[2];
+    DWORD   AccessType;
+    DWORD   AccessMode;
+} STORAGE_ALLOCATE_BC_STREAM_INPUT;
+typedef STORAGE_ALLOCATE_BC_STREAM_INPUT    *PSTORAGE_ALLOCATE_BC_STREAM_INPUT;
+
+/* IOCTL_STORAGE_ALLOCATE_BC_STREAM returned data */
+typedef struct _STORAGE_ALLOCATE_BC_STREAM_OUTPUT {
+    DWORDLONG   RequestSize;
+    DWORD       NumOutStandingRequests;
+} STORAGE_ALLOCATE_BC_STREAM_OUTPUT;
+typedef STORAGE_ALLOCATE_BC_STREAM_OUTPUT   *PSTORAGE_ALLOCATE_BC_STREAM_OUTPUT;
+
+/* Storage priority hint support information */
+typedef struct _STORAGE_PRIORITY_HINT_SUPPORT {
+    DWORD   SupportFlags;
+} STORAGE_PRIORITY_HINT_SUPPORT;
+typedef STORAGE_PRIORITY_HINT_SUPPORT   *PSTORAGE_PRIORITY_HINT_SUPPORT;
+
+/* Storage media serial number data */
+typedef struct _STORAGE_MEDIA_SERIAL_NUMBER_DATA {
+    WORD    Reserved;
+    WORD    SerialNumberLength;
+    BYTE    SerialNumber[1];
+} STORAGE_MEDIA_SERIAL_NUMBER_DATA;
+typedef STORAGE_MEDIA_SERIAL_NUMBER_DATA    *PSTORAGE_MEDIA_SERIAL_NUMBER_DATA;
+
+/* Storage read capacity */
+typedef struct _STORAGE_READ_CAPACITY {
+    DWORD           Version;
+    DWORD           Size;
+    DWORD           BlockLength;
+    LARGE_INTEGER   NumberOfBlocks;
+    LARGE_INTEGER   DiskLength;
+} STORAGE_READ_CAPACITY;
+typedef STORAGE_READ_CAPACITY   *PSTORAGE_READ_CAPACITY;
+
+/* Write cache types */
+typedef enum _WRITE_CACHE_TYPE {
+    WriteCacheTypeUnknown       = 0,
+    WriteCacheTypeNone          = 1,
+    WriteCacheTypeWriteBack     = 2,
+    WriteCacheTypeWriteThrough  = 3
+} WRITE_CACHE_TYPE;
+
+/* Write cache enable values */
+typedef enum _WRITE_CACHE_ENABLE {
+    WriteCacheEnableUnknown = 0,
+    WriteCacheDisabled      = 1,
+    WriteCacheEnabled       = 2
+} WRITE_CACHE_ENABLE;
+
+/* Write cache change values */
+typedef enum _WRITE_CACHE_CHANGE {
+    WriteCacheChangeUnknown = 0,
+    WriteCacheNotChangeable = 1,
+    WriteCacheChangeable    = 2
+} WRITE_CACHE_CHANGE;
+
+/* Write through values */
+typedef enum _WRITE_THROUGH {
+    WriteThroughUnknown         = 0,
+    WriteThroughNotSupported    = 1,
+    WriteThroughSupported       = 2
+} WRITE_THROUGH;
+
+/* Storage write cache property */
+typedef struct _STORAGE_WRITE_CACHE_PROPERTY {
+    DWORD               Version;
+    DWORD               Size;
+    WRITE_CACHE_TYPE    WriteCacheType;
+    WRITE_CACHE_ENABLE  WriteCacheEnabled;
+    WRITE_CACHE_CHANGE  WriteCacheChangeable;
+    WRITE_THROUGH       WriteThroughSupported;
+    BOOLEAN             FlushCacheSupported;
+    BOOLEAN             UserDefinedPowerProtection;
+    BOOLEAN             NVCacheEnabled;
+} STORAGE_WRITE_CACHE_PROPERTY;
+typedef STORAGE_WRITE_CACHE_PROPERTY    *PSTORAGE_WRITE_CACHE_PROPERTY;
+
+/* Persistent reserve command */
+typedef struct _PERSISTENT_RESERVE_COMMAND {
+    DWORD   Version;
+    DWORD   Size;
+    union {
+        struct {
+            BYTE    ServiceAction   : 5;
+            BYTE    Reserved1       : 3;
+            WORD    AllocationLength;
+        } PR_IN;
+        struct {
+            BYTE    ServiceAction   : 5;
+            BYTE    Reserved1       : 3;
+            BYTE    Type            : 4;
+            BYTE    Scope           : 4;
+            BYTE    ParameterList[1];
+        } PR_OUT;
+    };
+} PERSISTENT_RESERVE_COMMAND;
+typedef PERSISTENT_RESERVE_COMMAND  *PPERSISTENT_RESERVE_COMMAND;
+
+#endif /* _NTDDSTOR_H_ */
+
+#ifndef _NTDDDISK_H_
+#define _NTDDDISK_H_
+
+/* Bad track number data type */
+typedef WORD    BAD_TRACK_NUMBER;
+typedef WORD    *PBAD_TRACK_NUMBER;
 
 /* Disk device I/O control codes */
 #define IOCTL_DISK_BASE FILE_DEVICE_DISK
@@ -354,6 +866,609 @@ typedef WORD    *PBAD_TRACK_NUMBER;
     #define RETURN_SMART_STATUS         0xDA
     #define ENABLE_DISABLE_AUTO_OFFLINE 0xDB
 #endif
+
+/* Media types */
+typedef enum _MEDIA_TYPE {
+    Unknown         = 0,
+    F5_1Pt2_512     = 1,
+    F3_1Pt44_512    = 2,
+    F3_2Pt88_512    = 3,
+    F3_20Pt8_512    = 4,
+    F3_720_512      = 5,
+    F5_360_512      = 6,
+    F5_320_512      = 7,
+    F5_320_1024     = 8,
+    F5_180_512      = 9,
+    F5_160_512      = 10,
+    RemovableMedia  = 11,
+    FixedMedia      = 12,
+    F3_120M_512     = 13,
+    F3_640_512      = 14,
+    F5_640_512      = 15,
+    F5_720_512      = 16,
+    F3_1Pt2_512     = 17,
+    F3_1Pt23_1024   = 18,
+    F5_1Pt23_1024   = 19,
+    F3_128Mb_512    = 20,
+    F3_230Mb_512    = 21,
+    F8_256_128      = 22,
+    F3_200Mb_512    = 23,
+    F3_240M_512     = 24,
+    F3_32M_512      = 25
+} MEDIA_TYPE;
+typedef MEDIA_TYPE  *PMEDIA_TYPE;
+
+/* Format parameters */
+typedef struct _FORMAT_PARAMETERS {
+    MEDIA_TYPE  MediaType;
+    DWORD       StartCylinderNumber;
+    DWORD       EndCylinderNumber;
+    DWORD       StartHeadNumber;
+    DWORD       EndHeadNumber;
+} FORMAT_PARAMETERS;
+typedef FORMAT_PARAMETERS   *PFORMAT_PARAMETERS;
+
+/* Format parameters (extended version) */
+typedef struct _FORMAT_EX_PARAMETERS {
+    MEDIA_TYPE  MediaType;
+    DWORD       StartCylinderNumber;
+    DWORD       EndCylinderNumber;
+    DWORD       StartHeadNumber;
+    DWORD       EndHeadNumber;
+    WORD        FormatGapLength;
+    WORD        SectorsPerTrack;
+    WORD        SectorNumber[1];
+} FORMAT_EX_PARAMETERS;
+typedef FORMAT_EX_PARAMETERS    *PFORMAT_EX_PARAMETERS;
+
+/* Disk geometry */
+typedef struct _DISK_GEOMETRY {
+    LARGE_INTEGER   Cylinders;
+    MEDIA_TYPE      MediaType;
+    DWORD           TracksPerCylinder;
+    DWORD           SectorsPerTrack;
+    DWORD           BytesPerSector;
+} DISK_GEOMETRY;
+typedef DISK_GEOMETRY   *PDISK_GEOMETRY;
+
+/* Partition information */
+typedef struct _PARTITION_INFORMATION {
+    LARGE_INTEGER   StartingOffset;
+    LARGE_INTEGER   PartitionLength;
+    DWORD           HiddenSectors;
+    DWORD           PartitionNumber;
+    BYTE            PartitionType;
+    BOOLEAN         BootIndicator;
+    BOOLEAN         RecognizedPartition;
+    BOOLEAN         RewritePartition;
+} PARTITION_INFORMATION;
+typedef PARTITION_INFORMATION   *PPARTITION_INFORMATION;
+
+/* IOCTL_DISK_SET_PARTITION_INFO parameters */
+typedef struct _SET_PARTITION_INFORMATION {
+    BYTE    PartitionType;
+} SET_PARTITION_INFORMATION;
+typedef SET_PARTITION_INFORMATION   *PSET_PARTITION_INFORMATION;
+
+/* Drive layout information */
+typedef struct _DRIVE_LAYOUT_INFORMATION {
+    DWORD                   PartitionCount;
+    DWORD                   Signature;
+    PARTITION_INFORMATION   PartitionEntry[1];
+} DRIVE_LAYOUT_INFORMATION;
+typedef DRIVE_LAYOUT_INFORMATION    *PDRIVE_LAYOUT_INFORMATION;
+
+/* Verify information */
+typedef struct _VERIFY_INFORMATION {
+    LARGE_INTEGER   StartingOffset;
+    DWORD           Length;
+} VERIFY_INFORMATION;
+typedef VERIFY_INFORMATION  *PVERIFY_INFORMATION;
+
+/* IOCTL_DISK_REASSIGN_BLOCKS parameters */
+typedef struct _REASSIGN_BLOCKS {
+    WORD    Reserved;
+    WORD    Count;
+    DWORD   BlockNumber[1];
+} REASSIGN_BLOCKS;
+typedef REASSIGN_BLOCKS *PREASSIGN_BLOCKS;
+
+/* IOCTL_DISK_REASSIGN_BLOCKS_EX parameters */
+#include <pshpack1.h>
+typedef struct _REASSIGN_BLOCKS_EX {
+    WORD            Reserved;
+    WORD            Count;
+    LARGE_INTEGER   BlockNumber[1];
+} REASSIGN_BLOCKS_EX;
+typedef REASSIGN_BLOCKS_EX  *PREASSIGN_BLOCKS_EX;
+#include <poppack.h>
+
+/* Partition styles */
+#if (_WIN32_WINNT >= 0x0500)
+typedef enum _PARTITION_STYLE {
+    PARTITION_STYLE_MBR = 0,
+    PARTITION_STYLE_GPT = 1,
+    PARTITION_STYLE_RAW = 2
+} PARTITION_STYLE;
+#endif
+
+/* GUID partition table (GPT) partition information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _PARTITION_INFORMATION_GPT {
+    GUID    PartitionType;
+    GUID    PartitionId;
+    DWORD64 Attributes;
+    WCHAR   Name[36];
+} PARTITION_INFORMATION_GPT;
+typedef PARTITION_INFORMATION_GPT   *PPARTITION_INFORMATION_GPT;
+#endif
+
+/* MBR partition information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _PARTITION_INFORMATION_MBR {
+    BYTE    PartitionType;
+    BOOLEAN BootIndicator;
+    BOOLEAN RecognizedPartition;
+    DWORD   HiddenSectors;
+} PARTITION_INFORMATION_MBR;
+typedef PARTITION_INFORMATION_MBR   *PPARTITION_INFORMATION_MBR;
+#endif
+
+/* Alternate names of structures defined above */
+#if (_WIN32_WINNT >= 0x0500)
+typedef SET_PARTITION_INFORMATION   SET_PARTITION_INFORMATION_MBR;
+typedef PARTITION_INFORMATION_GPT   SET_PARTITION_INFORMATION_GPT;
+#endif
+
+/* IOCTL_DISK_SET_PARTITION_INFO_EX parameters */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _SET_PARTITION_INFORMATION_EX {
+    PARTITION_STYLE PartitionStyle;
+    union {
+        SET_PARTITION_INFORMATION_MBR   Mbr;
+        SET_PARTITION_INFORMATION_GPT   Gpt;
+    };
+} SET_PARTITION_INFORMATION_EX;
+typedef SET_PARTITION_INFORMATION_EX    *PSET_PARTITION_INFORMATION_EX;
+#endif
+
+/* IOCTL_DISK_CREATE_DISK parameters for GPT partitions */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _CREATE_DISK_GPT {
+    GUID    DiskId;
+    DWORD   MaxPartitionCount;
+} CREATE_DISK_GPT;
+typedef CREATE_DISK_GPT *PCREATE_DISK_GPT;
+#endif
+
+/* IOCTL_DISK_CREATE_DISK parameters for MBR partitions */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _CREATE_DISK_MBR {
+    DWORD   Signature;
+} CREATE_DISK_MBR;
+typedef CREATE_DISK_MBR *PCREATE_DISK_MBR;
+#endif
+
+/* IOCTL_DISK_CREATE_DISK parameters */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _CREATE_DISK {
+    PARTITION_STYLE PartitionStyle;
+    union {
+        CREATE_DISK_MBR Mbr;
+        CREATE_DISK_GPT Gpt;
+    };
+} CREATE_DISK;
+typedef CREATE_DISK *PCREATE_DISK;
+#endif
+
+/* IOCTL_DISK_GET_LENGTH_INFO parameters */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _GET_LENGTH_INFORMATION {
+    LARGE_INTEGER   Length;
+} GET_LENGTH_INFORMATION;
+typedef GET_LENGTH_INFORMATION  *PGET_LENGTH_INFORMATION;
+#endif
+
+/* Partition information (extended version) */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _PARTITION_INFORMATION_EX {
+    PARTITION_STYLE PartitionStyle;
+    LARGE_INTEGER   StartingOffset;
+    LARGE_INTEGER   PartitionLength;
+    DWORD           PartitionNumber;
+    BOOLEAN         RewritePartition;
+    union {
+        PARTITION_INFORMATION_MBR   Mbr;
+        PARTITION_INFORMATION_GPT   Gpt;
+    };
+} PARTITION_INFORMATION_EX;
+typedef PARTITION_INFORMATION_EX    *PPARTITION_INFORMATION_EX;
+#endif
+
+/* Drive layout information for GPT partitions */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DRIVE_LAYOUT_INFORMATION_GPT {
+    GUID            DiskId;
+    LARGE_INTEGER   StartingUsableOffset;
+    LARGE_INTEGER   UsableLength;
+    DWORD           MaxPartitionCount;
+} DRIVE_LAYOUT_INFORMATION_GPT;
+typedef DRIVE_LAYOUT_INFORMATION_GPT    *PDRIVE_LAYOUT_INFORMATION_GPT;
+#endif
+
+/* Drive layout information for MBR partitions */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DRIVE_LAYOUT_INFORMATION_MBR {
+    DWORD   Signature;
+} DRIVE_LAYOUT_INFORMATION_MBR;
+typedef DRIVE_LAYOUT_INFORMATION_MBR    *PDRIVE_LAYOUT_INFORMATION_MBR;
+#endif
+
+/* Drive layout information (extended version) */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DRIVE_LAYOUT_INFORMATION_EX {
+    DWORD                       PartitionStyle;
+    DWORD                       PartitionCount;
+    union {
+        DRIVE_LAYOUT_INFORMATION_MBR    Mbr;
+        DRIVE_LAYOUT_INFORMATION_GPT    Gpt;
+    };
+    PARTITION_INFORMATION_EX    PartitionEntry[1];
+} DRIVE_LAYOUT_INFORMATION_EX;
+typedef DRIVE_LAYOUT_INFORMATION_EX *PDRIVE_LAYOUT_INFORMATION_EX;
+#endif
+
+/* Detection types */
+#if (_WIN32_WINNT >= 0x0500)
+typedef enum _DETECTION_TYPE {
+    DetectNone      = 0,
+    DetectInt13     = 1,
+    DetectExtInt13  = 2
+} DETECTION_TYPE;
+#endif
+
+/* Interrupt 13 disk information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_INT13_INFO {
+    WORD    DriveSelect;
+    DWORD   MaxCylinders;
+    WORD    SectorsPerTrack;
+    WORD    MaxHeads;
+    WORD    NumberDrives;
+} DISK_INT13_INFO;
+typedef DISK_INT13_INFO *PDISK_INT13_INFO;
+#endif
+
+/* Extended interrupt 13 disk information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_EX_INT13_INFO {
+    WORD    ExBufferSize;
+    WORD    ExFlags;
+    DWORD   ExCylinders;
+    DWORD   ExHeads;
+    DWORD   ExSectorsPerTrack;
+    DWORD64 ExSectorsPerDrive;
+    WORD    ExSectorSize;
+    WORD    ExReserved;
+} DISK_EX_INT13_INFO;
+typedef DISK_EX_INT13_INFO  *PDISK_EX_INT13_INFO;
+#endif
+
+/* Disk detection information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_DETECTION_INFO {
+    DWORD           SizeOfDetectInfo;
+    DETECTION_TYPE  DetectionType;
+    union {
+        struct {
+            DISK_INT13_INFO     Int13;
+            DISK_EX_INT13_INFO  ExInt13;
+        };
+    };
+} DISK_DETECTION_INFO;
+typedef DISK_DETECTION_INFO *PDISK_DETECTION_INFO;
+#endif
+
+/* Disk partition information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_PARTITION_INFO {
+    DWORD           SizeOfPartitionInfo;
+    PARTITION_STYLE PartitionStyle;
+    union {
+        struct {
+            DWORD   Signature;
+            DWORD   CheckSum;
+        } Mbr;
+        struct {
+            GUID    DiskId;
+        } Gpt;
+    };
+} DISK_PARTITION_INFO;
+typedef DISK_PARTITION_INFO *PDISK_PARTITION_INFO;
+#endif
+
+/* Disk geometry (extended version) */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_GEOMETRY_EX {
+    DISK_GEOMETRY   Geometry;
+    LARGE_INTEGER   DiskSize;
+    BYTE            Data[1];
+} DISK_GEOMETRY_EX;
+typedef DISK_GEOMETRY_EX    *PDISK_GEOMETRY_EX;
+#endif
+
+/* Disk controller number */
+#if (_WIN32_WINNT >= 0x0400)
+typedef struct _DISK_CONTROLLER_NUMBER {
+    DWORD   ControllerNumber;
+    DWORD   DiskNumber;
+} DISK_CONTROLLER_NUMBER;
+typedef DISK_CONTROLLER_NUMBER  *PDISK_CONTROLLER_NUMBER;
+#endif
+
+/* Disk cache retention priority */
+#if (_WIN32_WINNT >= 0x0500)
+typedef enum {
+    EqualPriority       = 0,
+    KeepPrefetchedData  = 1,
+    KeepReadData        = 2
+} DISK_CACHE_RETENTION_PRIORITY;
+#endif
+
+/* Disk write cache state */
+#if (_WIN32_WINNT >= 0x0500) && (NTDDI_VERSION >= 0x05010000) && \
+    (NTDDI_VERSION < 0x05020000)
+typedef enum _DISK_WRITE_CACHE_STATE {
+    DiskWriteCacheNormal                = 0,
+    DiskWriteCacheForceDisable          = 1,
+    DiskWriteCacheDisableNotSupported   = 2
+} DISK_WRITE_CACHE_STATE;
+typedef DISK_WRITE_CACHE_STATE  *PDISK_WRITE_CACHE_STATE;
+#endif
+
+/* Disk cache information */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_CACHE_INFORMATION {
+    BOOLEAN                         ParametersSavable;
+    BOOLEAN                         ReadCacheEnabled;
+    BOOLEAN                         WriteCacheEnabled;
+    DISK_CACHE_RETENTION_PRIORITY   ReadRetentionPriority;
+    DISK_CACHE_RETENTION_PRIORITY   WriteRetentionPriority;
+    WORD                            DisablePrefetchTransferLength;
+    BOOLEAN                         PrefetchScalar;
+    union {
+        struct {
+            WORD    Minimum;
+            WORD    Maximum;
+            WORD    MaximumBlocks;
+        } ScalarPrefetch;
+        struct {
+            WORD    Minimum;
+            WORD    Maximum;
+        } BlockPrefetch;
+    };
+} DISK_CACHE_INFORMATION;
+typedef DISK_CACHE_INFORMATION  *PDISK_CACHE_INFORMATION;
+#endif
+
+/* IOCTL_DISK_GROW_PARTITION parameters */
+#if (_WIN32_WINNT >= 0x0500)
+typedef struct _DISK_GROW_PARTITION {
+    DWORD           PartitionNumber;
+    LARGE_INTEGER   BytesToGrow;
+} DISK_GROW_PARTITION;
+typedef DISK_GROW_PARTITION *PDISK_GROW_PARTITION;
+#endif
+
+/* Histogram bucket */
+typedef struct _HISTOGRAM_BUCKET {
+    DWORD   Reads;
+    DWORD   Writes;
+} HISTOGRAM_BUCKET;
+typedef HISTOGRAM_BUCKET    *PHISTOGRAM_BUCKET;
+
+/* Disk histogram */
+typedef struct _DISK_HISTOGRAM {
+    LARGE_INTEGER       DiskSize;
+    LARGE_INTEGER       Start;
+    LARGE_INTEGER       End;
+    LARGE_INTEGER       Average;
+    LARGE_INTEGER       AverageRead;
+    LARGE_INTEGER       AverageWrite;
+    DWORD               Granularity;
+    DWORD               Size;
+    DWORD               ReadCount;
+    DWORD               WriteCount;
+    PHISTOGRAM_BUCKET   Histogram;
+} DISK_HISTOGRAM;
+typedef DISK_HISTOGRAM  *PDISK_HISTOGRAM;
+
+/* Disk performance */
+typedef struct _DISK_PERFORMANCE {
+    LARGE_INTEGER   BytesRead;
+    LARGE_INTEGER   BytesWritten;
+    LARGE_INTEGER   ReadTime;
+    LARGE_INTEGER   WriteTime;
+    LARGE_INTEGER   IdleTime;
+    DWORD           ReadCount;
+    DWORD           WriteCount;
+    DWORD           QueueDepth;
+    DWORD           SplitCount;
+    LARGE_INTEGER   QueryTime;
+    DWORD           StorageDeviceNumber;
+    WCHAR           StorageManagerName[8];
+} DISK_PERFORMANCE;
+typedef DISK_PERFORMANCE    *PDISK_PERFORMANCE;
+
+/* Disk record */
+typedef struct _DISK_RECORD {
+    LARGE_INTEGER   ByteOffset;
+    LARGE_INTEGER   StartTime;
+    LARGE_INTEGER   EndTime;
+    PVOID           VirtualAddress;
+    DWORD           NumberOfBytes;
+    BYTE            DeviceNumber;
+    BOOLEAN         ReadRequest;
+} DISK_RECORD;
+typedef DISK_RECORD *PDISK_RECORD;
+
+/* Disk logging information */
+typedef struct _DISK_LOGGING {
+    BYTE    Function;
+    PVOID   BufferAddress;
+    DWORD   BufferSize;
+} DISK_LOGGING;
+typedef DISK_LOGGING    *PDISK_LOGGING;
+
+/* Bin types */
+typedef enum _BIN_TYPES {
+    RequestSize     = 0,
+    RequestLocation = 1
+} BIN_TYPES;
+
+/* Bin range */
+typedef struct _BIN_RANGE {
+    LARGE_INTEGER   StartValue;
+    LARGE_INTEGER   Length;
+} BIN_RANGE;
+typedef BIN_RANGE   *PBIN_RANGE;
+
+/* Performance bin */
+typedef struct _PERF_BIN {
+    DWORD       NumberOfBins;
+    DWORD       TypeOfBin;
+    BIN_RANGE   BinsRanges[1];
+} PERF_BIN;
+typedef PERF_BIN    *PPERF_BIN;
+
+/* Bin count */
+typedef struct _BIN_COUNT {
+    BIN_RANGE   BinRange;
+    DWORD       BinCount;
+} BIN_COUNT;
+typedef BIN_COUNT   *PBIN_COUNT;
+
+/* Bin results */
+typedef struct _BIN_RESULTS {
+    DWORD       NumberOfBins;
+    BIN_COUNT   BinCounts[1];
+} BIN_RESULTS;
+typedef BIN_RESULTS *PBIN_RESULTS;
+
+/* Driver version input parameters */
+#if (_WIN32_WINNT >= 0x0400)
+#include <pshpack1.h>
+typedef struct _GETVERSIONINPARAMS {
+    BYTE    bVersion;
+    BYTE    bRevision;
+    BYTE    bReserved;
+    BYTE    bIDEDeviceMap;
+    DWORD   fCapabilities;
+    DWORD   dwReserved[4];
+} GETVERSIONINPARAMS;
+typedef GETVERSIONINPARAMS  *PGETVERSIONINPARAMS;
+typedef GETVERSIONINPARAMS  *LPGETVERSIONINPARAMS;
+#include <poppack.h>
+#endif
+
+/* IDE registers */
+#if (_WIN32_WINNT >= 0x0400)
+#include <pshpack1.h>
+typedef struct _IDEREGS {
+    BYTE    bFeaturesReg;
+    BYTE    bSectorCountReg;
+    BYTE    bSectorNumberReg;
+    BYTE    bCylLowReg;
+    BYTE    bCylHighReg;
+    BYTE    bDriveHeadReg;
+    BYTE    bCommandReg;
+    BYTE    bReserved;
+} IDEREGS;
+typedef IDEREGS *PIDEREGS;
+typedef IDEREGS *LPIDEREGS;
+#include <poppack.h>
+#endif
+
+/* Send command input parameters */
+#if (_WIN32_WINNT >= 0x0400)
+#include <pshpack1.h>
+typedef struct _SENDCMDINPARAMS {
+    DWORD   cBufferSize;
+    IDEREGS irDriveRegs;
+    BYTE    bDriveNumber;
+    BYTE    bReserved[3];
+    DWORD   dwReserved[4];
+    BYTE    bBuffer[1];
+} SENDCMDINPARAMS;
+typedef SENDCMDINPARAMS *PSENDCMDINPARAMS;
+typedef SENDCMDINPARAMS *LPSENDCMDINPARAMS;
+#include <poppack.h>
+#endif
+
+/* Driver status */
+#if (_WIN32_WINNT >= 0x0400)
+#include <pshpack1.h>
+typedef struct _DRIVERSTATUS {
+    BYTE    bDriverError;
+    BYTE    bIDEError;
+    BYTE    bReserved[2];
+    DWORD   dwReserved[2];
+} DRIVERSTATUS;
+typedef DRIVERSTATUS    *PDRIVERSTATUS;
+typedef DRIVERSTATUS    *LPDRIVERSTATUS;
+#include <poppack.h>
+#endif
+
+/* Send command output parameters */
+#if (_WIN32_WINNT >= 0x0400)
+#include <pshpack1.h>
+typedef struct _SENDCMDOUTPARAMS {
+    DWORD           cBufferSize;
+    DRIVERSTATUS    DriverStatus;
+    BYTE            bBuffer[1];
+} SENDCMDOUTPARAMS;
+typedef SENDCMDOUTPARAMS    *PSENDCMDOUTPARAMS;
+typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
+#include <poppack.h>
+#endif
+
+/* Functions implemented as macros */
+#define __NewIsRecognizedPartition( x ) \
+    (((x) == PARTITION_FAT_12) || ((x) == PARTITION_FAT_16) || \
+    ((x) == PARTITION_HUGE) || ((x) == PARTITION_IFS) || ((x) == PARTITION_FAT32) || \
+    ((x) == PARTITION_FAT32_XINT13) || ((x) == PARTITION_XINT13))
+#if (NTDDK_VERSION < 0x06000000)
+    #define IsRecognizedPartition( x ) \
+        ((((x) & PARTITION_NTFT) && ((((x) & ~0x000000C0L) == PARTITION_HUGE) || \
+        (((x) & 0x000000C0L) == PARTITION_IFS) || \
+        (((x) & 0x000000C0L) == PARTITION_FAT32) || \
+        (((x) & 0x000000C0L) == PARTITION_FAT32_XINT13))) || \
+        __NewIsRecognizedPartition( x ))
+#else
+    #define IsRecognizedPartition( x )  __NewIsRecognizedPartition( x )
+#endif
+#define IsContainerPartition( x ) \
+    (((x) == PARTITION_EXTENDED) || ((x) == PARTITION_XINT13_EXTENDED))
+#define IsFTPartition( x ) \
+    (((x) & PARTITION_NTFT) && ((((x) & ~0x000000C0L) == PARTITION_HUGE) || \
+    (((x) & ~0x000000C0L) == PARTITION_IFS) || \
+    (((x) & ~0x000000C0L) == PARTITION_FAT32) || \
+    (((x) & ~0x000000C0L) == PARTITION_FAT32_XINT13)))
+#if (_WIN32_WINNT >= 0x0500)
+    #if (NTDDI_VERSION < 0x05020000)
+        #define DiskGeometryGetPartition( x )   ((PDISK_PARTITION_INFO)((x) + 1))
+        #define DiskGeometryGetDetect( x ) \
+            ((PDISK_DETECTION_INFO)(((PBYTE)DiskGeoemtryGetPartition( x ) + \
+            DiskGeometryGetPartition( x )->SizeOfPartitionInfo)))
+    #else
+        #define DiskGeometryGetPartition( x )   ((PDISK_PARTITION_INFO)((x)->Data))
+        #define DiskGeometryGetDetect( x ) \
+            ((PDISK_DETECTION_INFO)(((DWORD_PTR)DiskGeometryGetPartition( x ) + \
+            DiskGeometryGetPartition( x )->SizeOfPartitionInfo)))
+    #endif
+#endif
+
+#endif /* _NTDDDISK_H_ */
 
 /* Changer device I/O control codes */
 #define IOCTL_CHANGER_BASE  FILE_DEVICE_CHANGER
@@ -943,1065 +2058,6 @@ typedef WORD    *PBAD_TRACK_NUMBER;
 
 /* Symbolic link flags */
 #define SYMLINK_FLAG_RELATIVE   1L
-
-/* Storage hotplug information */
-typedef struct _STORAGE_HOTPLUG_INFO {
-    DWORD   Size;
-    BOOLEAN MediaRemovable;
-    BOOLEAN MediaHotplug;
-    BOOLEAN DeviceHotplug;
-    BOOLEAN WriteCacheEnableOverride;
-} STORAGE_HOTPLUG_INFO;
-typedef STORAGE_HOTPLUG_INFO    *PSTORAGE_HOTPLUG_INFO;
-
-/* Storage device number */
-typedef struct _STORAGE_DEVICE_NUMBER {
-    DEVICE_TYPE DeviceType;
-    DWORD       DeviceNumber;
-    DWORD       PartitionNumber;
-} STORAGE_DEVICE_NUMBER;
-typedef STORAGE_DEVICE_NUMBER   *PSTORAGE_DEVICE_NUMBER;
-
-/* Storage bus reset request */
-typedef struct _STORAGE_BUS_RESET_REQUEST {
-    BYTE    PathId;
-} STORAGE_BUS_RESET_REQUEST;
-typedef STORAGE_BUS_RESET_REQUEST   *PSTORAGE_BUS_RESET_REQUEST;
-
-/* Storage break reservation request */
-typedef struct STORAGE_BREAK_RESERVATION_REQUEST {
-    DWORD   Length;
-    BYTE    _unused;
-    BYTE    PathId;
-    BYTE    TargetId;
-    BYTE    Lun;
-} STORAGE_BREAK_RESERVATION_REQUEST;
-typedef STORAGE_BREAK_RESERVATION_REQUEST   *PSTORAGE_BREAK_RESERVATION_REQUEST;
-
-/* IOCTL_STORAGE_MEDIA_REMOVAL parameters */
-typedef struct _PREVENT_MEDIA_REMOVAL {
-    BOOLEAN PreventMediaRemoval;
-} PREVENT_MEDIA_REMOVAL;
-typedef PREVENT_MEDIA_REMOVAL   *PPREVENT_MEDIA_REMOVAL;
-
-/* Class media change context */
-typedef struct _CLASS_MEDIA_CHANGE_CONTEXT {
-    DWORD   MediaChangeContext;
-    DWORD   NewState;
-} CLASS_MEDIA_CHANGE_CONTEXT;
-typedef CLASS_MEDIA_CHANGE_CONTEXT  *PCLASS_MEDIA_CHANGE_CONTEXT;
-
-/* Tape statistics */
-typedef struct _TAPE_STATISTICS {
-    DWORD           Version;
-    DWORD           Flags;
-    LARGE_INTEGER   RecoveredWrites;
-    LARGE_INTEGER   UnrecoveredWrites;
-    LARGE_INTEGER   RecoveredReads;
-    LARGE_INTEGER   UnrecoveredReads;
-    BYTE            CompressionRatioReads;
-    BYTE            CompressionRatioWrites;
-} TAPE_STATISTICS;
-typedef TAPE_STATISTICS *PTAPE_STATISTICS;
-
-/* IOCTL_TAPE_GET_STATISTICS parameters */
-typedef struct _TAPE_GET_STATISTICS {
-    DWORD   Operation;
-} TAPE_GET_STATISTICS;
-typedef TAPE_GET_STATISTICS *PTAPE_GET_STATISTICS;
-
-/* Storage media types */
-typedef enum _STORAGE_MEDIA_TYPE {
-    DDS_4mm             = 0x20,
-    MiniQic             = 0x21,
-    Travan              = 0x22,
-    QIC                 = 0x23,
-    MP_8mm              = 0x24,
-    AME_8mm             = 0x25,
-    AIT1_8mm            = 0x26,
-    DLT                 = 0x27,
-    NCTP                = 0x28,
-    IBM_3480            = 0x29,
-    IBM_3480E           = 0x2A,
-    IBM_Magstar_3590    = 0x2B,
-    IBM_Magstar_MP      = 0x2C,
-    STK_DATA_D3         = 0x2D,
-    SONY_DTF            = 0x2E,
-    DV_6mm              = 0x2F,
-    DMI                 = 0x30,
-    SONY_D2             = 0x31,
-    CLEANER_CARTRIDGE   = 0x32,
-    CD_ROM              = 0x33,
-    CD_R                = 0x34,
-    CD_RW               = 0x35,
-    DVD_ROM             = 0x36,
-    DVD_R               = 0x37,
-    DVD_RW              = 0x38,
-    MO_3_RW             = 0x39,
-    MO_5_WO             = 0x3A,
-    MO_5_RW             = 0x3B,
-    MO_5_LIMDOW         = 0x3C,
-    PC_5_WO             = 0x3D,
-    PC_5_RW             = 0x3E,
-    PD_5_RW             = 0x3F,
-    ABL_5_WO            = 0x40,
-    PINNACLE_APEX_5_RW  = 0x41,
-    SONY_12_WO          = 0x42,
-    PHILIPS_12_WO       = 0x43,
-    HITACHI_12_WO       = 0x44,
-    CYGNET_12_WO        = 0x45,
-    KODAK_14_WO         = 0x46,
-    MO_NFR_525          = 0x47,
-    NIKON_12_RW         = 0x48,
-    IOMEGA_ZIP          = 0x49,
-    IOMEGA_JAZ          = 0x4A,
-    SYQUEST_EZ135       = 0x4B,
-    SYQUEST_EZFLYER     = 0x4C,
-    SYQUEST_SYJET       = 0x4D,
-    AVATAR_F2           = 0x4E,
-    MP2_8mm             = 0x4F,
-    DST_S               = 0x50,
-    DST_M               = 0x51,
-    DST_L               = 0x52,
-    VXATape_1           = 0x53,
-    VXATape_2           = 0x54,
-#if (NTDDI_VERSION < 0x05010000)
-    STK_EAGLE           = 0x55,
-#else
-    STK_9840            = 0x55,
-#endif
-    LTO_Ultrium         = 0x56,
-    LTO_Accelis         = 0x57,
-    DVD_RAM             = 0x58,
-    ATI_8mm             = 0x59,
-    ADR_1               = 0x5A,
-    ADR_2               = 0x5B,
-    STK_9940            = 0x5C,
-    SAIT                = 0x5D
-} STORAGE_MEDIA_TYPE;
-typedef STORAGE_MEDIA_TYPE  *PSTORAGE_MEDIA_TYPE;
-
-/* Storage bus types */
-typedef enum _STORAGE_BUS_TYPE {
-    BusTypeUnknown      = 0x00,
-    BusTypeScsi         = 0x01,
-    BusTypeAtapi        = 0x02,
-    BusTypeAta          = 0x03,
-    BusType1394         = 0x04,
-    BusTypeSsa          = 0x05,
-    BusTypeFibre        = 0x06,
-    BusTypeUsb          = 0x07,
-    BusTypeRAID         = 0x08,
-    BusTypeiScsi        = 0x09,
-    BusTypeSas          = 0x0A,
-    BusTypeSata         = 0x0B,
-    BusTypeSd           = 0x0C,
-    BusTypeMmc          = 0x0D,
-    BusTypeMax          = 0x0E,
-    BusTypeMaxReserved  = 0x7F
-} STORAGE_BUS_TYPE;
-typedef STORAGE_BUS_TYPE    *PSTORAGE_BUS_TYPE;
-
-/* Device media information */
-typedef struct _DEVICE_MEDIA_INFO {
-    union {
-        struct {
-            LARGE_INTEGER       Cylinders;
-            STORAGE_MEDIA_TYPE  MediaType;
-            DWORD               TracksPerCylinder;
-            DWORD               SectorsPerTrack;
-            DWORD               BytesPerSector;
-            DWORD               NumberMediaSides;
-            DWORD               MediaCharacteristics;
-        } DiskInfo;
-        struct {
-            LARGE_INTEGER       Cylinders;
-            STORAGE_MEDIA_TYPE  MediaType;
-            DWORD               TracksPerCylinder;
-            DWORD               SectorsPerTrack;
-            DWORD               BytesPerSector;
-            DWORD               NumberMediaSides;
-            DWORD               MediaCharacteristics;
-        } RemovableDiskInfo;
-        struct {
-            STORAGE_MEDIA_TYPE  MediaType;
-            DWORD               MediaCharacteristics;
-            DWORD               CurrentBlockSize;
-            STORAGE_BUS_TYPE    BusType;
-            union {
-                struct {
-                    BYTE    MediumType;
-                    BYTE    DensityCode;
-                } ScsiInformation;
-            } BusSpecificData;
-        } TapeInfo;
-    } DeviceSpecific;
-} DEVICE_MEDIA_INFO;
-typedef DEVICE_MEDIA_INFO   *PDEVICE_MEDIA_INFO;
-
-/* Media type information */
-typedef struct _GET_MEDIA_TYPES {
-    DWORD               DeviceType;
-    DWORD               MediaInfoCount;
-    DEVICE_MEDIA_INFO   MediaInfo[1];
-} GET_MEDIA_TYPES;
-typedef GET_MEDIA_TYPES *PGET_MEDIA_TYPES;
-
-/* IOCTL_STORAGE_PREDICT_FAILURE returned data */
-typedef struct _STORAGE_PREDICT_FAILURE {
-    DWORD   PredictFailure;
-    BYTE    VendorSpecific[512];
-} STORAGE_PREDICT_FAILURE;
-typedef STORAGE_PREDICT_FAILURE *PSTORAGE_PREDICT_FAILURE;
-
-/* Storage query types */
-typedef enum _STORAGE_QUERY_TYPE {
-    PropertyStandardQuery   = 0,
-    PropertyExistsQuery     = 1,
-    PropertyMaskQuery       = 2,
-    PropertyQueryMaxDefined = 3
-} STORAGE_QUERY_TYPE;
-typedef STORAGE_QUERY_TYPE  *PSTORAGE_QUERY_TYPE;
-
-/* Storage property identifiers */
-typedef enum _STORAGE_PROPERTY_ID {
-    StorageDeviceProperty           = 0,
-    StorageAdapterProperty          = 1,
-    StorageDeviceIdProperty         = 2,
-    StorageDeviceUniqueIdProperty   = 3,
-    StorageDeviceWriteCacheProperty = 4,
-    StorageMiniportProperty         = 5,
-    StorageAccessAlignmentProperty  = 6
-} STORAGE_PROPERTY_ID;
-typedef STORAGE_PROPERTY_ID *PSTORAGE_PROPERTY_ID;
-
-/* Storage property query */
-typedef struct _STORAGE_PROPERTY_QUERY {
-    STORAGE_PROPERTY_ID PropertyId;
-    STORAGE_QUERY_TYPE  QueryType;
-    BYTE                AdditionalParameters[1];
-} STORAGE_PROPERTY_QUERY;
-typedef STORAGE_PROPERTY_QUERY  *PSTORAGE_PROPERTY_QUERY;
-
-/* Storage description header */
-typedef struct _STORAGE_DESCRIPTOR_HEADER {
-    DWORD   Version;
-    DWORD   Size;
-} STORAGE_DESCRIPTION_HEADER;
-typedef STORAGE_DESCRIPTION_HEADER  *PSTORAGE_DESCRIPTION_HEADER;
-
-/* Storage device descriptor */
-typedef struct _STORAGE_DEVICE_DESCRIPTOR {
-    DWORD               Version;
-    DWORD               Size;
-    BYTE                DeviceType;
-    BYTE                DeviceTypeModifier;
-    BOOLEAN             RemovableMedia;
-    BOOLEAN             CommandQueueing;
-    DWORD               VendorIdOffset;
-    DWORD               ProductIdOffset;
-    DWORD               ProductRevisionOffset;
-    DWORD               SerialNumberOffset;
-    STORAGE_BUS_TYPE    BusType;
-    DWORD               RawPropertiesLength;
-    BYTE                RawDeviceProperties[1];
-} STORAGE_DEVICE_DESCRIPTOR;
-typedef STORAGE_DEVICE_DESCRIPTOR   *PSTORAGE_DEVICE_DESCRIPTOR;
-
-/* Storage adapter descriptor */
-typedef struct _STORAGE_ADAPTER_DESCRIPTOR {
-    DWORD   Version;
-    DWORD   Size;
-    DWORD   MaximumTransferLength;
-    DWORD   MaximumPhysicalPages;
-    DWORD   AlignmentMask;
-    BOOLEAN AdapterUsesPio;
-    BOOLEAN AdapterScansDown;
-    BOOLEAN CommandQueueing;
-    BOOLEAN AcceleratedTransfer;
-#if (NTDDI_VERSION < 0x05010000)
-    BOOLEAN BusType;
-#else
-    BYTE    BusType;
-#endif
-    WORD    BusMajorVersion;
-    WORD    BusMinorVersion;
-} STORAGE_ADAPTER_DESCRIPTOR;
-typedef STORAGE_ADAPTER_DESCRIPTOR  *PSTORAGE_ADAPTER_DESCRIPTOR;
-
-/* Storage access alignment descriptor */
-typedef struct _STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR {
-    DWORD   Version;
-    DWORD   Size;
-    DWORD   BytesPerCacheLine;
-    DWORD   BytesOffsetForCacheAlignment;
-    DWORD   BytesPerLogicalSector;
-    DWORD   BytesPerPhysicalSector;
-    DWORD   BytesOffsetForSectorAlignment;
-} STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR;
-typedef STORAGE_ACCESS_ALIGNMENT_DESCRIPTOR *PSTORAGE_ACCESS_ALIGNMENT_DESCRIPTOR;
-
-/* Storage port code sets */
-typedef enum _STORAGE_PORT_CODE_SET {
-    StoragePortCodeSetReserved  = 0,
-    StoragePortCodeSetStorport  = 1,
-    StoragePortCodeSetSCSIport  = 2
-} STORAGE_PORT_CODE_SET;
-typedef STORAGE_PORT_CODE_SET   *PSTORAGE_PORT_CODE_SET;
-
-/* Storage miniport descriptor */
-typedef struct _STORAGE_MINIPORT_DESCRIPTOR {
-    DWORD                   Version;
-    DWORD                   Size;
-    STORAGE_PORT_CODE_SET   Portdriver;
-    BOOLEAN                 LUNResetSupported;
-    BOOLEAN                 TargetResetSupported;
-} STORAGE_MINIPORT_DESCRIPTOR;
-typedef STORAGE_MINIPORT_DESCRIPTOR *PSTORAGE_MINIPORT_DESCRIPTOR;
-
-/* Storage identifier code sets */
-typedef enum _STORAGE_IDENTIFIER_CODE_SET {
-    StorageIdCodeSetReserved    = 0,
-    StorageIdCodeSetBinary      = 1,
-    StorageIdCodeSetAscii       = 2,
-    StorageIdCodeSetUtf8        = 3
-} STORAGE_IDENTIFIER_CODE_SET;
-typedef STORAGE_IDENTIFIER_CODE_SET *PSTORAGE_IDENTIFIER_CODE_SET;
-
-/* Storage identifier types */
-typedef enum _STORAGE_IDENTIFIER_TYPE {
-    StorageIdTypeVendorSpecific             = 0,
-    StorageIdTypeVendorId                   = 1,
-    StorageIdTypeEUI64                      = 2,
-    StorageIdTypeFCPHName                   = 3,
-    StorageIdTypePortRelative               = 4,
-    StorageIdTypeTargetPortGroup            = 5,
-    StorageIdTypeLogicalUnitGroup           = 6,
-    StorageIdTypeMD5LogicalUnitIdentifier   = 7,
-    StorageIdTypeScsiNameString             = 8
-} STORAGE_IDENTIFIER_TYPE;
-typedef STORAGE_IDENTIFIER_TYPE *PSTORAGE_IDENTIFIER_TYPE;
-#define StorageIdTypeNAA    StorageIdTypeFCPHName
-
-/* Storage identifier NAA formats */
-typedef enum _STORAGE_ID_NAA_FORMAT {
-    StorageIdNAAFormatIEEEExtended              = 2,
-    StorageIdNAAFormatIEEERegistered            = 3,
-    StorageIdNAAFormatIEEEERegisteredExtended   = 5
-} STORAGE_ID_NAA_FORMAT;
-typedef STORAGE_ID_NAA_FORMAT   *PSTORAGE_ID_NAA_FORMAT;
-
-/* Storage association types */
-typedef enum _STORAGE_ASSOCIATION_TYPE {
-    StorageIdAssocDevice    = 0,
-    StorageIdAssocPort      = 1,
-    StorageIdAssocTarget    = 2
-} STORAGE_ASSOCIATION_TYPE;
-typedef STORAGE_ASSOCIATION_TYPE    *PSTORAGE_ASSOCIATION_TYPE;
-
-/* Storage identifier */
-typedef struct _STORAGE_IDENTIFIER {
-    STORAGE_IDENTIFIER_CODE_SET CodeSet;
-    STORAGE_IDENTIFIER_TYPE     Type;
-    WORD                        IdentifierSize;
-    WORD                        NextOffset;
-    STORAGE_ASSOCIATION_TYPE    Association;
-    BYTE                        Identifier[1];
-} STORAGE_IDENTIFIER;
-typedef STORAGE_IDENTIFIER  *PSTORAGE_IDENTIFIER;
-
-/* Storage device identifier descriptor */
-typedef struct _STORAGE_DEVICE_ID_DESCRIPTOR {
-    DWORD   Version;
-    DWORD   Size;
-    DWORD   NumberOfIdentifiers;
-    BYTE    Identifiers[1];
-} STORAGE_DEVICE_ID_DESCRIPTOR;
-typedef STORAGE_DEVICE_ID_DESCRIPTOR    *PSTORAGE_DEVICE_ID_DESCRIPTOR;
-
-/* IOCTL_STORAGE_GET_BC_PROPERTIES returned data */
-typedef struct _STORAGE_GET_BC_PROPERTIES_OUTPUT {
-    DWORD       MaximumRequestsPerPeriod;
-    DWORD       MinimumPeriod;
-    DWORDLONG   MaximumRequestSize;
-    DWORD       EstimatedTimePerRequest;
-    DWORD       NumOutStandingRequests;
-    DWORDLONG   RequestSize;
-} STORAGE_GET_BC_PROPERTIES_OUTPUT;
-typedef STORAGE_GET_BC_PROPERTIES_OUTPUT    *PSTORAGE_GET_BC_PROPERTIES_OUTPUT;
-
-/* IOCTL_STORAGE_ALLOCATE_BC_STREAM parameters */
-typedef struct _STORAGE_ALLOCATE_BC_STREAM_INPUT {
-    DWORD   Version;
-    DWORD   RequestsPerPeriod;
-    DWORD   Period;
-    BOOLEAN RetryFailures;
-    BOOLEAN Discardable;
-    BOOLEAN Reserved1[2];
-    DWORD   AccessType;
-    DWORD   AccessMode;
-} STORAGE_ALLOCATE_BC_STREAM_INPUT;
-typedef STORAGE_ALLOCATE_BC_STREAM_INPUT    *PSTORAGE_ALLOCATE_BC_STREAM_INPUT;
-
-/* IOCTL_STORAGE_ALLOCATE_BC_STREAM returned data */
-typedef struct _STORAGE_ALLOCATE_BC_STREAM_OUTPUT {
-    DWORDLONG   RequestSize;
-    DWORD       NumOutStandingRequests;
-} STORAGE_ALLOCATE_BC_STREAM_OUTPUT;
-typedef STORAGE_ALLOCATE_BC_STREAM_OUTPUT   *PSTORAGE_ALLOCATE_BC_STREAM_OUTPUT;
-
-/* Storage priority hint support information */
-typedef struct _STORAGE_PRIORITY_HINT_SUPPORT {
-    DWORD   SupportFlags;
-} STORAGE_PRIORITY_HINT_SUPPORT;
-typedef STORAGE_PRIORITY_HINT_SUPPORT   *PSTORAGE_PRIORITY_HINT_SUPPORT;
-
-/* Storage media serial number data */
-typedef struct _STORAGE_MEDIA_SERIAL_NUMBER_DATA {
-    WORD    Reserved;
-    WORD    SerialNumberLength;
-    BYTE    SerialNumber[1];
-} STORAGE_MEDIA_SERIAL_NUMBER_DATA;
-typedef STORAGE_MEDIA_SERIAL_NUMBER_DATA    *PSTORAGE_MEDIA_SERIAL_NUMBER_DATA;
-
-/* Storage read capacity */
-typedef struct _STORAGE_READ_CAPACITY {
-    DWORD           Version;
-    DWORD           Size;
-    DWORD           BlockLength;
-    LARGE_INTEGER   NumberOfBlocks;
-    LARGE_INTEGER   DiskLength;
-} STORAGE_READ_CAPACITY;
-typedef STORAGE_READ_CAPACITY   *PSTORAGE_READ_CAPACITY;
-
-/* Write cache types */
-typedef enum _WRITE_CACHE_TYPE {
-    WriteCacheTypeUnknown       = 0,
-    WriteCacheTypeNone          = 1,
-    WriteCacheTypeWriteBack     = 2,
-    WriteCacheTypeWriteThrough  = 3
-} WRITE_CACHE_TYPE;
-
-/* Write cache enable values */
-typedef enum _WRITE_CACHE_ENABLE {
-    WriteCacheEnableUnknown = 0,
-    WriteCacheDisabled      = 1,
-    WriteCacheEnabled       = 2
-} WRITE_CACHE_ENABLE;
-
-/* Write cache change values */
-typedef enum _WRITE_CACHE_CHANGE {
-    WriteCacheChangeUnknown = 0,
-    WriteCacheNotChangeable = 1,
-    WriteCacheChangeable    = 2
-} WRITE_CACHE_CHANGE;
-
-/* Write through values */
-typedef enum _WRITE_THROUGH {
-    WriteThroughUnknown         = 0,
-    WriteThroughNotSupported    = 1,
-    WriteThroughSupported       = 2
-} WRITE_THROUGH;
-
-/* Storage write cache property */
-typedef struct _STORAGE_WRITE_CACHE_PROPERTY {
-    DWORD               Version;
-    DWORD               Size;
-    WRITE_CACHE_TYPE    WriteCacheType;
-    WRITE_CACHE_ENABLE  WriteCacheEnabled;
-    WRITE_CACHE_CHANGE  WriteCacheChangeable;
-    WRITE_THROUGH       WriteThroughSupported;
-    BOOLEAN             FlushCacheSupported;
-    BOOLEAN             UserDefinedPowerProtection;
-    BOOLEAN             NVCacheEnabled;
-} STORAGE_WRITE_CACHE_PROPERTY;
-typedef STORAGE_WRITE_CACHE_PROPERTY    *PSTORAGE_WRITE_CACHE_PROPERTY;
-
-/* Persistent reserve command */
-typedef struct _PERSISTENT_RESERVE_COMMAND {
-    DWORD   Version;
-    DWORD   Size;
-    union {
-        struct {
-            BYTE    ServiceAction   : 5;
-            BYTE    Reserved1       : 3;
-            WORD    AllocationLength;
-        } PR_IN;
-        struct {
-            BYTE    ServiceAction   : 5;
-            BYTE    Reserved1       : 3;
-            BYTE    Type            : 4;
-            BYTE    Scope           : 4;
-            BYTE    ParameterList[1];
-        } PR_OUT;
-    };
-} PERSISTENT_RESERVE_COMMAND;
-typedef PERSISTENT_RESERVE_COMMAND  *PPERSISTENT_RESERVE_COMMAND;
-
-/* Media types */
-typedef enum _MEDIA_TYPE {
-    Unknown         = 0,
-    F5_1Pt2_512     = 1,
-    F3_1Pt44_512    = 2,
-    F3_2Pt88_512    = 3,
-    F3_20Pt8_512    = 4,
-    F3_720_512      = 5,
-    F5_360_512      = 6,
-    F5_320_512      = 7,
-    F5_320_1024     = 8,
-    F5_180_512      = 9,
-    F5_160_512      = 10,
-    RemovableMedia  = 11,
-    FixedMedia      = 12,
-    F3_120M_512     = 13,
-    F3_640_512      = 14,
-    F5_640_512      = 15,
-    F5_720_512      = 16,
-    F3_1Pt2_512     = 17,
-    F3_1Pt23_1024   = 18,
-    F5_1Pt23_1024   = 19,
-    F3_128Mb_512    = 20,
-    F3_230Mb_512    = 21,
-    F8_256_128      = 22,
-    F3_200Mb_512    = 23,
-    F3_240M_512     = 24,
-    F3_32M_512      = 25
-} MEDIA_TYPE;
-typedef MEDIA_TYPE  *PMEDIA_TYPE;
-
-/* Format parameters */
-typedef struct _FORMAT_PARAMETERS {
-    MEDIA_TYPE  MediaType;
-    DWORD       StartCylinderNumber;
-    DWORD       EndCylinderNumber;
-    DWORD       StartHeadNumber;
-    DWORD       EndHeadNumber;
-} FORMAT_PARAMETERS;
-typedef FORMAT_PARAMETERS   *PFORMAT_PARAMETERS;
-
-/* Format parameters (extended version) */
-typedef struct _FORMAT_EX_PARAMETERS {
-    MEDIA_TYPE  MediaType;
-    DWORD       StartCylinderNumber;
-    DWORD       EndCylinderNumber;
-    DWORD       StartHeadNumber;
-    DWORD       EndHeadNumber;
-    WORD        FormatGapLength;
-    WORD        SectorsPerTrack;
-    WORD        SectorNumber[1];
-} FORMAT_EX_PARAMETERS;
-typedef FORMAT_EX_PARAMETERS    *PFORMAT_EX_PARAMETERS;
-
-/* Disk geometry */
-typedef struct _DISK_GEOMETRY {
-    LARGE_INTEGER   Cylinders;
-    MEDIA_TYPE      MediaType;
-    DWORD           TracksPerCylinder;
-    DWORD           SectorsPerTrack;
-    DWORD           BytesPerSector;
-} DISK_GEOMETRY;
-typedef DISK_GEOMETRY   *PDISK_GEOMETRY;
-
-/* Partition information */
-typedef struct _PARTITION_INFORMATION {
-    LARGE_INTEGER   StartingOffset;
-    LARGE_INTEGER   PartitionLength;
-    DWORD           HiddenSectors;
-    DWORD           PartitionNumber;
-    BYTE            PartitionType;
-    BOOLEAN         BootIndicator;
-    BOOLEAN         RecognizedPartition;
-    BOOLEAN         RewritePartition;
-} PARTITION_INFORMATION;
-typedef PARTITION_INFORMATION   *PPARTITION_INFORMATION;
-
-/* IOCTL_DISK_SET_PARTITION_INFO parameters */
-typedef struct _SET_PARTITION_INFORMATION {
-    BYTE    PartitionType;
-} SET_PARTITION_INFORMATION;
-typedef SET_PARTITION_INFORMATION   *PSET_PARTITION_INFORMATION;
-
-/* Drive layout information */
-typedef struct _DRIVE_LAYOUT_INFORMATION {
-    DWORD                   PartitionCount;
-    DWORD                   Signature;
-    PARTITION_INFORMATION   PartitionEntry[1];
-} DRIVE_LAYOUT_INFORMATION;
-typedef DRIVE_LAYOUT_INFORMATION    *PDRIVE_LAYOUT_INFORMATION;
-
-/* Verify information */
-typedef struct _VERIFY_INFORMATION {
-    LARGE_INTEGER   StartingOffset;
-    DWORD           Length;
-} VERIFY_INFORMATION;
-typedef VERIFY_INFORMATION  *PVERIFY_INFORMATION;
-
-/* IOCTL_DISK_REASSIGN_BLOCKS parameters */
-typedef struct _REASSIGN_BLOCKS {
-    WORD    Reserved;
-    WORD    Count;
-    DWORD   BlockNumber[1];
-} REASSIGN_BLOCKS;
-typedef REASSIGN_BLOCKS *PREASSIGN_BLOCKS;
-
-/* IOCTL_DISK_REASSIGN_BLOCKS_EX parameters */
-#include <pshpack1.h>
-typedef struct _REASSIGN_BLOCKS_EX {
-    WORD            Reserved;
-    WORD            Count;
-    LARGE_INTEGER   BlockNumber[1];
-} REASSIGN_BLOCKS_EX;
-typedef REASSIGN_BLOCKS_EX  *PREASSIGN_BLOCKS_EX;
-#include <poppack.h>
-
-/* Partition styles */
-#if (_WIN32_WINNT >= 0x0500)
-typedef enum _PARTITION_STYLE {
-    PARTITION_STYLE_MBR = 0,
-    PARTITION_STYLE_GPT = 1,
-    PARTITION_STYLE_RAW = 2
-} PARTITION_STYLE;
-#endif
-
-/* GUID partition table (GPT) partition information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _PARTITION_INFORMATION_GPT {
-    GUID    PartitionType;
-    GUID    PartitionId;
-    DWORD64 Attributes;
-    WCHAR   Name[36];
-} PARTITION_INFORMATION_GPT;
-typedef PARTITION_INFORMATION_GPT   *PPARTITION_INFORMATION_GPT;
-#endif
-
-/* MBR partition information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _PARTITION_INFORMATION_MBR {
-    BYTE    PartitionType;
-    BOOLEAN BootIndicator;
-    BOOLEAN RecognizedPartition;
-    DWORD   HiddenSectors;
-} PARTITION_INFORMATION_MBR;
-typedef PARTITION_INFORMATION_MBR   *PPARTITION_INFORMATION_MBR;
-#endif
-
-/* Alternate names of structures defined above */
-#if (_WIN32_WINNT >= 0x0500)
-typedef SET_PARTITION_INFORMATION   SET_PARTITION_INFORMATION_MBR;
-typedef PARTITION_INFORMATION_GPT   SET_PARTITION_INFORMATION_GPT;
-#endif
-
-/* IOCTL_DISK_SET_PARTITION_INFO_EX parameters */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _SET_PARTITION_INFORMATION_EX {
-    PARTITION_STYLE PartitionStyle;
-    union {
-        SET_PARTITION_INFORMATION_MBR   Mbr;
-        SET_PARTITION_INFORMATION_GPT   Gpt;
-    };
-} SET_PARTITION_INFORMATION_EX;
-typedef SET_PARTITION_INFORMATION_EX    *PSET_PARTITION_INFORMATION_EX;
-#endif
-
-/* IOCTL_DISK_CREATE_DISK parameters for GPT partitions */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _CREATE_DISK_GPT {
-    GUID    DiskId;
-    DWORD   MaxPartitionCount;
-} CREATE_DISK_GPT;
-typedef CREATE_DISK_GPT *PCREATE_DISK_GPT;
-#endif
-
-/* IOCTL_DISK_CREATE_DISK parameters for MBR partitions */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _CREATE_DISK_MBR {
-    DWORD   Signature;
-} CREATE_DISK_MBR;
-typedef CREATE_DISK_MBR *PCREATE_DISK_MBR;
-#endif
-
-/* IOCTL_DISK_CREATE_DISK parameters */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _CREATE_DISK {
-    PARTITION_STYLE PartitionStyle;
-    union {
-        CREATE_DISK_MBR Mbr;
-        CREATE_DISK_GPT Gpt;
-    };
-} CREATE_DISK;
-typedef CREATE_DISK *PCREATE_DISK;
-#endif
-
-/* IOCTL_DISK_GET_LENGTH_INFO parameters */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _GET_LENGTH_INFORMATION {
-    LARGE_INTEGER   Length;
-} GET_LENGTH_INFORMATION;
-typedef GET_LENGTH_INFORMATION  *PGET_LENGTH_INFORMATION;
-#endif
-
-/* Partition information (extended version) */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _PARTITION_INFORMATION_EX {
-    PARTITION_STYLE PartitionStyle;
-    LARGE_INTEGER   StartingOffset;
-    LARGE_INTEGER   PartitionLength;
-    DWORD           PartitionNumber;
-    BOOLEAN         RewritePartition;
-    union {
-        PARTITION_INFORMATION_MBR   Mbr;
-        PARTITION_INFORMATION_GPT   Gpt;
-    };
-} PARTITION_INFORMATION_EX;
-typedef PARTITION_INFORMATION_EX    *PPARTITION_INFORMATION_EX;
-#endif
-
-/* Drive layout information for GPT partitions */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DRIVE_LAYOUT_INFORMATION_GPT {
-    GUID            DiskId;
-    LARGE_INTEGER   StartingUsableOffset;
-    LARGE_INTEGER   UsableLength;
-    DWORD           MaxPartitionCount;
-} DRIVE_LAYOUT_INFORMATION_GPT;
-typedef DRIVE_LAYOUT_INFORMATION_GPT    *PDRIVE_LAYOUT_INFORMATION_GPT;
-#endif
-
-/* Drive layout information for MBR partitions */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DRIVE_LAYOUT_INFORMATION_MBR {
-    DWORD   Signature;
-} DRIVE_LAYOUT_INFORMATION_MBR;
-typedef DRIVE_LAYOUT_INFORMATION_MBR    *PDRIVE_LAYOUT_INFORMATION_MBR;
-#endif
-
-/* Drive layout information (extended version) */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DRIVE_LAYOUT_INFORMATION_EX {
-    DWORD                       PartitionStyle;
-    DWORD                       PartitionCount;
-    union {
-        DRIVE_LAYOUT_INFORMATION_MBR    Mbr;
-        DRIVE_LAYOUT_INFORMATION_GPT    Gpt;
-    };
-    PARTITION_INFORMATION_EX    PartitionEntry[1];
-} DRIVE_LAYOUT_INFORMATION_EX;
-typedef DRIVE_LAYOUT_INFORMATION_EX *PDRIVE_LAYOUT_INFORMATION_EX;
-#endif
-
-/* Detection types */
-#if (_WIN32_WINNT >= 0x0500)
-typedef enum _DETECTION_TYPE {
-    DetectNone      = 0,
-    DetectInt13     = 1,
-    DetectExtInt13  = 2
-} DETECTION_TYPE;
-#endif
-
-/* Interrupt 13 disk information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_INT13_INFO {
-    WORD    DriveSelect;
-    DWORD   MaxCylinders;
-    WORD    SectorsPerTrack;
-    WORD    MaxHeads;
-    WORD    NumberDrives;
-} DISK_INT13_INFO;
-typedef DISK_INT13_INFO *PDISK_INT13_INFO;
-#endif
-
-/* Extended interrupt 13 disk information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_EX_INT13_INFO {
-    WORD    ExBufferSize;
-    WORD    ExFlags;
-    DWORD   ExCylinders;
-    DWORD   ExHeads;
-    DWORD   ExSectorsPerTrack;
-    DWORD64 ExSectorsPerDrive;
-    WORD    ExSectorSize;
-    WORD    ExReserved;
-} DISK_EX_INT13_INFO;
-typedef DISK_EX_INT13_INFO  *PDISK_EX_INT13_INFO;
-#endif
-
-/* Disk detection information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_DETECTION_INFO {
-    DWORD           SizeOfDetectInfo;
-    DETECTION_TYPE  DetectionType;
-    union {
-        struct {
-            DISK_INT13_INFO     Int13;
-            DISK_EX_INT13_INFO  ExInt13;
-        };
-    };
-} DISK_DETECTION_INFO;
-typedef DISK_DETECTION_INFO *PDISK_DETECTION_INFO;
-#endif
-
-/* Disk partition information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_PARTITION_INFO {
-    DWORD           SizeOfPartitionInfo;
-    PARTITION_STYLE PartitionStyle;
-    union {
-        struct {
-            DWORD   Signature;
-            DWORD   CheckSum;
-        } Mbr;
-        struct {
-            GUID    DiskId;
-        } Gpt;
-    };
-} DISK_PARTITION_INFO;
-typedef DISK_PARTITION_INFO *PDISK_PARTITION_INFO;
-#endif
-
-/* Disk geometry (extended version) */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_GEOMETRY_EX {
-    DISK_GEOMETRY   Geometry;
-    LARGE_INTEGER   DiskSize;
-    BYTE            Data[1];
-} DISK_GEOMETRY_EX;
-typedef DISK_GEOMETRY_EX    *PDISK_GEOMETRY_EX;
-#endif
-
-/* Disk controller number */
-#if (_WIN32_WINNT >= 0x0400)
-typedef struct _DISK_CONTROLLER_NUMBER {
-    DWORD   ControllerNumber;
-    DWORD   DiskNumber;
-} DISK_CONTROLLER_NUMBER;
-typedef DISK_CONTROLLER_NUMBER  *PDISK_CONTROLLER_NUMBER;
-#endif
-
-/* Disk cache retention priority */
-#if (_WIN32_WINNT >= 0x0500)
-typedef enum {
-    EqualPriority       = 0,
-    KeepPrefetchedData  = 1,
-    KeepReadData        = 2
-} DISK_CACHE_RETENTION_PRIORITY;
-#endif
-
-/* Disk write cache state */
-#if (_WIN32_WINNT >= 0x0500) && (NTDDI_VERSION >= 0x05010000) && \
-    (NTDDI_VERSION < 0x05020000)
-typedef enum _DISK_WRITE_CACHE_STATE {
-    DiskWriteCacheNormal                = 0,
-    DiskWriteCacheForceDisable          = 1,
-    DiskWriteCacheDisableNotSupported   = 2
-} DISK_WRITE_CACHE_STATE;
-typedef DISK_WRITE_CACHE_STATE  *PDISK_WRITE_CACHE_STATE;
-#endif
-
-/* Disk cache information */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_CACHE_INFORMATION {
-    BOOLEAN                         ParametersSavable;
-    BOOLEAN                         ReadCacheEnabled;
-    BOOLEAN                         WriteCacheEnabled;
-    DISK_CACHE_RETENTION_PRIORITY   ReadRetentionPriority;
-    DISK_CACHE_RETENTION_PRIORITY   WriteRetentionPriority;
-    WORD                            DisablePrefetchTransferLength;
-    BOOLEAN                         PrefetchScalar;
-    union {
-        struct {
-            WORD    Minimum;
-            WORD    Maximum;
-            WORD    MaximumBlocks;
-        } ScalarPrefetch;
-        struct {
-            WORD    Minimum;
-            WORD    Maximum;
-        } BlockPrefetch;
-    };
-} DISK_CACHE_INFORMATION;
-typedef DISK_CACHE_INFORMATION  *PDISK_CACHE_INFORMATION;
-#endif
-
-/* IOCTL_DISK_GROW_PARTITION parameters */
-#if (_WIN32_WINNT >= 0x0500)
-typedef struct _DISK_GROW_PARTITION {
-    DWORD           PartitionNumber;
-    LARGE_INTEGER   BytesToGrow;
-} DISK_GROW_PARTITION;
-typedef DISK_GROW_PARTITION *PDISK_GROW_PARTITION;
-#endif
-
-/* Histogram bucket */
-typedef struct _HISTOGRAM_BUCKET {
-    DWORD   Reads;
-    DWORD   Writes;
-} HISTOGRAM_BUCKET;
-typedef HISTOGRAM_BUCKET    *PHISTOGRAM_BUCKET;
-
-/* Disk histogram */
-typedef struct _DISK_HISTOGRAM {
-    LARGE_INTEGER       DiskSize;
-    LARGE_INTEGER       Start;
-    LARGE_INTEGER       End;
-    LARGE_INTEGER       Average;
-    LARGE_INTEGER       AverageRead;
-    LARGE_INTEGER       AverageWrite;
-    DWORD               Granularity;
-    DWORD               Size;
-    DWORD               ReadCount;
-    DWORD               WriteCount;
-    PHISTOGRAM_BUCKET   Histogram;
-} DISK_HISTOGRAM;
-typedef DISK_HISTOGRAM  *PDISK_HISTOGRAM;
-
-/* Disk performance */
-typedef struct _DISK_PERFORMANCE {
-    LARGE_INTEGER   BytesRead;
-    LARGE_INTEGER   BytesWritten;
-    LARGE_INTEGER   ReadTime;
-    LARGE_INTEGER   WriteTime;
-    LARGE_INTEGER   IdleTime;
-    DWORD           ReadCount;
-    DWORD           WriteCount;
-    DWORD           QueueDepth;
-    DWORD           SplitCount;
-    LARGE_INTEGER   QueryTime;
-    DWORD           StorageDeviceNumber;
-    WCHAR           StorageManagerName[8];
-} DISK_PERFORMANCE;
-typedef DISK_PERFORMANCE    *PDISK_PERFORMANCE;
-
-/* Disk record */
-typedef struct _DISK_RECORD {
-    LARGE_INTEGER   ByteOffset;
-    LARGE_INTEGER   StartTime;
-    LARGE_INTEGER   EndTime;
-    PVOID           VirtualAddress;
-    DWORD           NumberOfBytes;
-    BYTE            DeviceNumber;
-    BOOLEAN         ReadRequest;
-} DISK_RECORD;
-typedef DISK_RECORD *PDISK_RECORD;
-
-/* Disk logging information */
-typedef struct _DISK_LOGGING {
-    BYTE    Function;
-    PVOID   BufferAddress;
-    DWORD   BufferSize;
-} DISK_LOGGING;
-typedef DISK_LOGGING    *PDISK_LOGGING;
-
-/* Bin types */
-typedef enum _BIN_TYPES {
-    RequestSize     = 0,
-    RequestLocation = 1
-} BIN_TYPES;
-
-/* Bin range */
-typedef struct _BIN_RANGE {
-    LARGE_INTEGER   StartValue;
-    LARGE_INTEGER   Length;
-} BIN_RANGE;
-typedef BIN_RANGE   *PBIN_RANGE;
-
-/* Performance bin */
-typedef struct _PERF_BIN {
-    DWORD       NumberOfBins;
-    DWORD       TypeOfBin;
-    BIN_RANGE   BinsRanges[1];
-} PERF_BIN;
-typedef PERF_BIN    *PPERF_BIN;
-
-/* Bin count */
-typedef struct _BIN_COUNT {
-    BIN_RANGE   BinRange;
-    DWORD       BinCount;
-} BIN_COUNT;
-typedef BIN_COUNT   *PBIN_COUNT;
-
-/* Bin results */
-typedef struct _BIN_RESULTS {
-    DWORD       NumberOfBins;
-    BIN_COUNT   BinCounts[1];
-} BIN_RESULTS;
-typedef BIN_RESULTS *PBIN_RESULTS;
-
-/* Driver version input parameters */
-#if (_WIN32_WINNT >= 0x0400)
-#include <pshpack1.h>
-typedef struct _GETVERSIONINPARAMS {
-    BYTE    bVersion;
-    BYTE    bRevision;
-    BYTE    bReserved;
-    BYTE    bIDEDeviceMap;
-    DWORD   fCapabilities;
-    DWORD   dwReserved[4];
-} GETVERSIONINPARAMS;
-typedef GETVERSIONINPARAMS  *PGETVERSIONINPARAMS;
-typedef GETVERSIONINPARAMS  *LPGETVERSIONINPARAMS;
-#include <poppack.h>
-#endif
-
-/* IDE registers */
-#if (_WIN32_WINNT >= 0x0400)
-#include <pshpack1.h>
-typedef struct _IDEREGS {
-    BYTE    bFeaturesReg;
-    BYTE    bSectorCountReg;
-    BYTE    bSectorNumberReg;
-    BYTE    bCylLowReg;
-    BYTE    bCylHighReg;
-    BYTE    bDriveHeadReg;
-    BYTE    bCommandReg;
-    BYTE    bReserved;
-} IDEREGS;
-typedef IDEREGS *PIDEREGS;
-typedef IDEREGS *LPIDEREGS;
-#include <poppack.h>
-#endif
-
-/* Send command input parameters */
-#if (_WIN32_WINNT >= 0x0400)
-#include <pshpack1.h>
-typedef struct _SENDCMDINPARAMS {
-    DWORD   cBufferSize;
-    IDEREGS irDriveRegs;
-    BYTE    bDriveNumber;
-    BYTE    bReserved[3];
-    DWORD   dwReserved[4];
-    BYTE    bBuffer[1];
-} SENDCMDINPARAMS;
-typedef SENDCMDINPARAMS *PSENDCMDINPARAMS;
-typedef SENDCMDINPARAMS *LPSENDCMDINPARAMS;
-#include <poppack.h>
-#endif
-
-/* Driver status */
-#if (_WIN32_WINNT >= 0x0400)
-#include <pshpack1.h>
-typedef struct _DRIVERSTATUS {
-    BYTE    bDriverError;
-    BYTE    bIDEError;
-    BYTE    bReserved[2];
-    DWORD   dwReserved[2];
-} DRIVERSTATUS;
-typedef DRIVERSTATUS    *PDRIVERSTATUS;
-typedef DRIVERSTATUS    *LPDRIVERSTATUS;
-#include <poppack.h>
-#endif
-
-/* Send command output parameters */
-#if (_WIN32_WINNT >= 0x0400)
-#include <pshpack1.h>
-typedef struct _SENDCMDOUTPARAMS {
-    DWORD           cBufferSize;
-    DRIVERSTATUS    DriverStatus;
-    BYTE            bBuffer[1];
-} SENDCMDOUTPARAMS;
-typedef SENDCMDOUTPARAMS    *PSENDCMDOUTPARAMS;
-typedef SENDCMDOUTPARAMS    *LPSENDCMDOUTPARAMS;
-#include <poppack.h>
-#endif
 
 /* Element types */
 typedef enum _ELEMENT_TYPE {
@@ -2938,42 +2994,6 @@ typedef struct _VOLUME_DISK_EXTENTS {
     DISK_EXTENT Extents[1];
 } VOLUME_DISK_EXTENTS;
 typedef VOLUME_DISK_EXTENTS *PVOLUME_DISK_EXTENTS;
-#endif
-
-/* Functions implemented as macros */
-#define __NewIsRecognizedPartition( x ) \
-    (((x) == PARTITION_FAT_12) || ((x) == PARTITION_FAT_16) || \
-    ((x) == PARTITION_HUGE) || ((x) == PARTITION_IFS) || ((x) == PARTITION_FAT32) || \
-    ((x) == PARTITION_FAT32_XINT13) || ((x) == PARTITION_XINT13))
-#if (NTDDK_VERSION < 0x06000000)
-    #define IsRecognizedPartition( x ) \
-        ((((x) & PARTITION_NTFT) && ((((x) & ~0x000000C0L) == PARTITION_HUGE) || \
-        (((x) & 0x000000C0L) == PARTITION_IFS) || \
-        (((x) & 0x000000C0L) == PARTITION_FAT32) || \
-        (((x) & 0x000000C0L) == PARTITION_FAT32_XINT13))) || \
-        __NewIsRecognizedPartition( x ))
-#else
-    #define IsRecognizedPartition( x )  __NewIsRecognizedPartition( x )
-#endif
-#define IsContainerPartition( x ) \
-    (((x) == PARTITION_EXTENDED) || ((x) == PARTITION_XINT13_EXTENDED))
-#define IsFTPartition( x ) \
-    (((x) & PARTITION_NTFT) && ((((x) & ~0x000000C0L) == PARTITION_HUGE) || \
-    (((x) & ~0x000000C0L) == PARTITION_IFS) || \
-    (((x) & ~0x000000C0L) == PARTITION_FAT32) || \
-    (((x) & ~0x000000C0L) == PARTITION_FAT32_XINT13)))
-#if (_WIN32_WINNT >= 0x0500)
-    #if (NTDDI_VERSION < 0x05020000)
-        #define DiskGeometryGetPartition( x )   ((PDISK_PARTITION_INFO)((x) + 1))
-        #define DiskGeometryGetDetect( x ) \
-            ((PDISK_DETECTION_INFO)(((PBYTE)DiskGeoemtryGetPartition( x ) + \
-            DiskGeometryGetPartition( x )->SizeOfPartitionInfo)))
-    #else
-        #define DiskGeometryGetPartition( x )   ((PDISK_PARTITION_INFO)((x)->Data))
-        #define DiskGeometryGetDetect( x ) \
-            ((PDISK_DETECTION_INFO)(((DWORD_PTR)DiskGeometryGetPartition( x ) + \
-            DiskGeometryGetPartition( x )->SizeOfPartitionInfo)))
-    #endif
 #endif
 
 :include cplusepi.sp
