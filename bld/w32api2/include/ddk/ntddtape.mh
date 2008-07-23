@@ -153,6 +153,7 @@
 #define TAPE_DRIVE_WRITE_MARK_IMMED 0x90000000L
 #define TAPE_DRIVE_FORMAT           0xA0000000L
 #define TAPE_DRIVE_FORMAT_IMMEDIATE 0xB0000000L
+#define TAPE_DRIVE_HIGH_FEATURES    0x80000000L
 
 /* Tape partition types */
 #define TAPE_FIXED_PARTITIONS       0L
@@ -199,7 +200,7 @@ typedef TAPE_GET_POSITION   *PTAPE_GET_POSITION;
 /* Structure used with IOCTL_TAPE_SET_POSITION */
 typedef struct _TAPE_SET_POSITION {
     ULONG           Method;
-    ULONG           Parition;
+    ULONG           Partition;
     LARGE_INTEGER   Offset;
     BOOLEAN         Immediate;
 } TAPE_SET_POSITION;
