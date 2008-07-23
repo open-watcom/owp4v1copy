@@ -158,7 +158,7 @@ typedef struct _MODE_DATA_COMPRESSION_PAGE {
     UCHAR   Reserved1   : 2;
     UCHAR   PageLength;
     UCHAR   Reserved2   : 6;
-    UCHAR   DDC         : 1;
+    UCHAR   DCC         : 1;
     UCHAR   DCE         : 1;
     UCHAR   Reserved3   : 5;
     UCHAR   RED         : 2;
