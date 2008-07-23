@@ -4,6 +4,18 @@
 :include crwatcnt.sp
  */
 
+#ifdef DEFINE_GUID
+
+/* GUIDs */
+:include storguid.sp
+:include serguid.sp
+
+/* Old names for compatibility */
+:include storgold.sp
+:include sergold.sp
+
+#endif /* DEFINE_GUID */
+
 #ifndef _WINIOCTL_
 #define _WINIOCTL_
 

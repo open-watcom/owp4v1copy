@@ -4,6 +4,16 @@
 :include crwatcnt.sp
  */
 
+#ifdef DEFINE_GUID
+
+/* GUIDs */
+:include storguid.sp
+
+/* Old names for compatibility */
+:include storgold.sp
+
+#endif /* DEFINE_GUID */
+
 #ifndef _NTDDSTOR_H_
 #define _NTDDSTOR_H_
 
