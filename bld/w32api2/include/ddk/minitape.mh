@@ -271,7 +271,7 @@ typedef enum _TAPE_STATUS {
     TAPE_STATUS_SEND_SRB_AND_CALLBACK       = 0,
     TAPE_STATUS_CALLBACK                    = 1,
     TAPE_STATUS_CHECK_TEST_UNIT_READY       = 2,
-    TAPE_STATUS_STATUS                      = 3,
+    TAPE_STATUS_SUCCESS                     = 3,
     TAPE_STATUS_INSUFFICIENT_RESOURCES      = 4,
     TAPE_STATUS_NOT_IMPLEMENTED             = 5,
     TAPE_STATUS_INVALID_DEVICE_REQUEST      = 6,
