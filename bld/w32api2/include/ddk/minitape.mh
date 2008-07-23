@@ -89,7 +89,7 @@
 #define WRITE_PROTECT           9
 #define NO_REMOVAL              10
 #define CLEANING_MEDIA          11
-#define UNSUPPORTED_MEDIA       12
+#define UNSUPPORTED_FORMAT      12
 #define SNAPPED_TAPE            13
 #define CLEAN_NOW               20
 #define CLEAN_PERIODIC          21
