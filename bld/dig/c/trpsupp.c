@@ -39,7 +39,7 @@
 
 #include "trpimp.h"
 
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -242,7 +242,7 @@ unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx
     
     if( ReqFunc == NULL ) return( REQUEST_FAILED );
 
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
     if( TrapTraceFileHandle ) {
         unsigned        ix;
         unsigned short  rectype = 1;   /* Request */
@@ -261,7 +261,7 @@ unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx
 
     result = ReqFunc( num_in_mx, mx_in, num_out_mx, mx_out );
       
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
     if( TrapTraceFileHandle ) {
         /* result is the length of data returned or REQUEST_FAILED */
         /* Only worth tracing if there is data though */

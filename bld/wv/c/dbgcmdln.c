@@ -62,7 +62,7 @@ extern void             StartupErr( char *err );
 
 
 extern char             *TrpFile;
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
 extern char             *TrpDebugFile;
 #endif
 extern char             *InitCmdList;
@@ -108,7 +108,7 @@ static char OptNameTab[] = {
     "NOSOurcecheck\0"
     "CONtinueunexpectedbreak\0"
     "Help\0"
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
     "TDebug\0"
 #endif
 };
@@ -139,7 +139,7 @@ enum { OPT_INVOKE=1,
        OPT_NOSOURCECHECK,
        OPT_CONTINUE_UNEXPECTED_BREAK,
        OPT_HELP,
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
        OPT_TRAP_DEBUG,
 #endif
 };
@@ -460,7 +460,7 @@ static void ProcOptList( int pass )
                 GetTrapParm( pass );
             }
             break;
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
         case OPT_TRAP_DEBUG:
             if( pass == 2 ) _Free( TrpDebugFile );
             TrpDebugFile = GetFileName( pass );

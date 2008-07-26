@@ -273,6 +273,8 @@ extra_c_flags_dynmem = $(trmem_cover_cflags)
 
 extra_c_flags_regexp = -fi=wndregx.h
 
+extra_c_flags_nt += -DENABLE_TRAP_LOGGING
+
 # inc_dirs
 ###########
 inc_dirs = -I. -I"$(wv_dir)/h" -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"

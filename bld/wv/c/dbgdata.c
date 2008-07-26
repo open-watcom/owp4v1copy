@@ -42,7 +42,7 @@
 
 char                    *InitCmdList;
 char                    *TrpFile;
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
 char                    *TrpDebugFile;
 #endif
 

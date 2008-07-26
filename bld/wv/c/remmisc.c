@@ -53,7 +53,7 @@ extern bool             InitCapabilities( void );
 extern void             StartupErr( char *err );
 extern char             *DupStr( char * );
 
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
 extern int              OpenTrapTraceFile( const char * path );
 extern int              CloseTrapTraceFile( void );
 extern char             *TrpDebugFile;
@@ -106,7 +106,7 @@ void InitTrap( char *trap_file )
     trap_version        ver;
     char                buff[ TXT_LEN ];
 
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
     if( TrpDebugFile )
         OpenTrapTraceFile( TrpDebugFile );
 #endif
@@ -222,7 +222,7 @@ void FiniTrap( void )
 #if !defined( BUILD_RFX )
     FiniSuppServices();
 #endif
-#ifdef __NT__
+#ifdef ENABLE_TRAP_LOGGING
     CloseTrapTraceFile();
 #endif
 }
