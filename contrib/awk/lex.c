@@ -519,8 +519,16 @@ int regexpr(void)
 			unput('\n');
 			break;
 		} else if (c == '\\') {
-			*bp++ = '\\'; 
-			*bp++ = input();
+			c = peek();
+			if( c == '\r' ) {
+				input();
+				input();
+			} else if( c == '\n' ) {
+				input();
+			} else {
+				*bp++ = '\\';
+				*bp++ = input();
+			}
 		} else {
 			*bp++ = c;
 		}
