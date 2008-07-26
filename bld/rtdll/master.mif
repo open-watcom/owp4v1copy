@@ -32,6 +32,12 @@ rtdll_nosymfile = 1
 rtdll_nosymfile = 1
 !endif
 
+!ifeq component clib
+br_sufix=1
+!else
+br_sufix=0
+!endif
+
 !ifndef patch_level
 patch_level=0
 !endif
@@ -48,17 +54,16 @@ libflags_nt_386 = -io -ii
 libflags_nt_axp = -ic -ia
 libflags_nt_ppc = -ic -ip
 
-$(libdllname).lib : $(dllname).imp $(static_objs)
-    $(librarian) $(lib_flags) $(lib_flags_new) -p=16 -irn $^@ @$(dllname).imp $(static_objs)
+extra_lib_flags = -p=16 -irn
+!ifeq release 1
+extra_lib_flags += -s-t-zld
+!endif
 
-$(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
-    cp $(dllname).lbc $(dllname).imp
-!ifeq system os2
-    $(vi) -s $(rtdll_dir)/trimlbc.vi $(dllname).imp
-!endif
-!ifeq component clib
-    $(vi) -s $(rtdll_dir)/add_br.vi $(dllname).imp
-!endif
+$(libdllname).lib : $(dllname).imp $(static_objs)
+    $(librarian) $(libflags) $^@ @$(dllname).imp $(static_objs)
+
+$(dllname).imp : $(dllname).lbc $(rtdll_dir)/proclbc.awk
+    $(awk) -f $(rtdll_dir)/proclbc.awk -v os=$(host_os) -v br=$(br_sufix) $(dllname).lbc > $(dllname).imp
 
 !ifeq system winnt
 res_objs = $(dllname).rc
