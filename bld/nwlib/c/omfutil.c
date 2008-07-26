@@ -109,16 +109,28 @@ static bool ReadOmfRecord( libfile io )
     return( TRUE );
 }
 
-static void WriteOmfRecord( void )
+static void CalcOmfRecordCheckSum( OmfRecord *rec )
 {
+    unsigned_8  sum;
+    unsigned    i;
+
+    sum = 0;
+    for( i = 0; i < rec->basic.len + 2; ++i ) {
+        sum += rec->chkcalc[ i ];
+    }
+    rec->basic.contents[ rec->basic.len - 1 ] = -sum;
+}
+
+static void WriteOmfRecord( bool checksum )
+{
+    if( checksum )
+        CalcOmfRecordCheckSum( omfRec );
     WriteNew( omfRec, omfRec->basic.len + 3 );
 }
 
 static void WriteTimeStamp( sym_file *file )
 {
     OmfRecord   rec;
-    unsigned_8  sum;
-    unsigned    i;
 
     rec.time.type = CMD_COMENT;
     rec.time.len = sizeof( rec.time ) - 3;
@@ -127,12 +139,8 @@ static void WriteTimeStamp( sym_file *file )
     rec.time.subclass = LDIR_OBJ_TIMESTAMP;
     rec.time.stamp = file->arch.date;
     rec.time.chksum = 0;
-    sum = 0;
-    for( i = 0; i < sizeof( rec.time ); ++i ) {
-        sum += rec.chkcalc[ i ];
-    }
-    rec.time.chksum = -sum;
-    WriteNew( &rec, sizeof( rec.time ) );
+    CalcOmfRecordCheckSum( &rec );
+    WriteNew( &rec, rec.basic.len + 3 );
 }
 
 void WriteOmfLibTrailer( void )
@@ -148,12 +156,13 @@ void WriteOmfLibTrailer( void )
     memset( omfRec, 0, size );
     omfRec->basic.type = LIB_TRAILER_REC;
     omfRec->basic.len = size - 3;
-    WriteOmfRecord();
+    WriteOmfRecord( FALSE );
 }
 
 void WriteOmfLibHeader( unsigned_32 dict_offset, unsigned_16 dict_size )
 {
     OmfRecord  rec;     // i didn't use omfRec because page size can be quite big
+
     LibSeek( NewLibrary, 0, SEEK_SET );
     rec.lib_header.type = LIB_HEADER_REC;
     rec.lib_header.page_size = Options.page_size - 3;
@@ -276,7 +285,7 @@ static bool InsertOmfDict( OmfLibBlock *lib_block, unsigned num_blocks,
                 loc += len;
                 *( (unsigned_16 *)&(lib_block[ block ].name[ loc ]) ) = offset;
                 return( TRUE );
-                }
+            }
             bucket += dbucket;
             if( bucket >= NUM_BUCKETS ) {
                 bucket -= NUM_BUCKETS;
@@ -365,20 +374,16 @@ unsigned WriteOmfDict( sym_file *first )
 
 static void trimOmfHeader( void )
 {
-    char *new_name;
-    unsigned_8  sum;
-    unsigned    i;
+    char        *new_name;
+    unsigned_8  len;
 
     omfRec->basic.contents[ omfRec->basic.len - 1 ] = '\0';
     new_name = TrimPath( (char *)omfRec->basic.contents + 1 );
-    omfRec->basic.contents[ 0 ] = strlen( new_name );
-    omfRec->basic.len = omfRec->basic.contents[ 0 ] + 2;
-    strcpy( (char *)omfRec->basic.contents + 1, new_name );
-    sum = 0;
-    for( i = 0; i < omfRec->basic.len + 2; ++i ) {
-        sum += omfRec->chkcalc[ i ];
-    }
-    omfRec->basic.contents[ omfRec->basic.len - 1 ] = -sum;
+    len = strlen( new_name );
+    omfRec->basic.len = len + 2;
+    omfRec->basic.contents[ 0 ] = len;
+    memcpy( omfRec->basic.contents + 1, new_name, len );
+    CalcOmfRecordCheckSum( omfRec );
 }
 
 void WriteOmfFile( sym_file *file )
@@ -451,13 +456,12 @@ void WriteOmfFile( sym_file *file )
                 }
                 break;
             }
-            WriteOmfRecord();
+            WriteOmfRecord( FALSE );
         } while( omfRec->basic.type != CMD_MODEND && omfRec->basic.type != CMD_MODE32 );
         if( file->inlib_offset == 0 ) {
             LibClose( io );
         }
     } else {
-        unsigned_8  sum;
         unsigned    sym_len;
         unsigned    file_len;
         unsigned    i;
@@ -467,16 +471,11 @@ void WriteOmfFile( sym_file *file )
         omfRec->basic.len = sym_len + 2;
         omfRec->basic.contents[ 0 ] = sym_len;
         charCount += ( sym_len + 1 ) | 1;
-        strcpy( (char *)omfRec->basic.contents + 1, file->import->symName );
-        sum = 0;
-        for( i = 0; i < sym_len + 4; ++i ) {
-            sum += omfRec->chkcalc[ i ];
-        }
-        omfRec->basic.contents[ sym_len + 1 ] = -sum;
-        WriteOmfRecord();
+        memcpy( omfRec->basic.contents + 1, file->import->symName, sym_len );
+        WriteOmfRecord( TRUE );
         file_len = strlen( file->import->DLLName );
         omfRec->basic.type = CMD_COMENT;
-        omfRec->basic.len = 9 + file_len + sym_len;
+        omfRec->basic.len = 2 + 2 + ( 1 + file_len ) + ( 1 + sym_len ) + 1;
         omfRec->basic.contents[ 0 ] = CMT_TNP;
         omfRec->basic.contents[ 1 ] = CMT_DLL_ENTRY;
         omfRec->basic.contents[ 2 ] = MOMF_IMPDEF;
@@ -486,40 +485,28 @@ void WriteOmfFile( sym_file *file )
             omfRec->basic.contents[ 3 ] = 0;
         }
         omfRec->basic.contents[ 4 ] = sym_len;
-        strcpy( (char *)omfRec->basic.contents + 5, file->import->symName );
+        memcpy( omfRec->basic.contents + 5, file->import->symName, sym_len );
         omfRec->basic.contents[ 5 + sym_len ] = file_len;
-        strcpy( (char *)omfRec->basic.contents + 6 + sym_len, file->import->DLLName );
+        memcpy( omfRec->basic.contents + 6 + sym_len, file->import->DLLName, file_len );
         if( file->import->type == ORDINAL ) {
-           *( (unsigned_16 *)&( omfRec->basic.contents[ 6 + sym_len + file_len ] ) ) = (unsigned_16)file->import->ordinal;
+            *( (unsigned_16 *)&( omfRec->basic.contents[ 6 + sym_len + file_len ] ) ) = (unsigned_16)file->import->ordinal;
+            omfRec->basic.len += 2;
+        } else if( file->import->exportedName == NULL ) {
+            omfRec->basic.contents[ 6 + sym_len + file_len ] = 0;
+            omfRec->basic.len += 1;
         } else {
-            if( file->import->exportedName ) {
-                i = strlen( file->import->exportedName );
-                omfRec->basic.contents[ 6 + sym_len + file_len ] = i;
-                memcpy( omfRec->basic.contents + 7 + sym_len + file_len, file->import->exportedName, i + 1 );
-                sym_len += i + 1;
-                omfRec->basic.len += i + 1;
-            } else {
-                omfRec->basic.contents[ 6 + sym_len + file_len ] = 0;
-                omfRec->basic.contents[ 7 + sym_len + file_len ] = 0;
-                }
+            i = strlen( file->import->exportedName );
+            omfRec->basic.contents[ 6 + sym_len + file_len ] = i;
+            memcpy( omfRec->basic.contents + 7 + sym_len + file_len, file->import->exportedName, i );
+            omfRec->basic.len += i + 1;
         }
-        sum = 0;
-        for( i = 0; i < sym_len + file_len + 11; ++i ) {
-            sum += omfRec->chkcalc[ i ];
-        }
-        omfRec->basic.contents[ sym_len + file_len +  8 ] = -sum;
-        WriteOmfRecord();
+        WriteOmfRecord( TRUE );
         WriteTimeStamp( file );
         omfRec->basic.type = CMD_MODEND;
         omfRec->basic.len = 2;
         omfRec->basic.contents[ 0 ] = 0;
         omfRec->basic.contents[ 1 ] = 0;
-        sum = 0;
-        for( i = 0; i < 4; ++i ) {
-            sum += omfRec->chkcalc[ i ];
-        }
-        omfRec->basic.contents[ 1 ] = -sum;
-        WriteOmfRecord();
+        WriteOmfRecord( TRUE );
     }
     PadOmf( FALSE );
     for( sym = file->first; sym != NULL; sym = sym->next ) {

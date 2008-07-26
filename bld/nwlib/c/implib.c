@@ -415,7 +415,7 @@ static void peAddImport( arch_header *arch, libfile io )
         } else {
             type = Options.r_ordinal ? ORDINAL : NAMED;
             OmfMKImport( arch, ord_table[ i ] + ordinal_base, DLLName,
-                                               currname, currname, type );
+                                               currname, NULL, type );
             AddSym( currname, SYM_STRONG, 0 );
 //            strcpy( buffer, "__imp_" );
 //            strcat( buffer, currname );

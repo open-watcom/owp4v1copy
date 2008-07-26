@@ -135,22 +135,22 @@ extra_c_flags_libdlldr += -DIDE_PGM
 extra_c_flags_idedll   += -DIDE_PGM
 !endif
 
-#############
-# lflags .EXE
+###################
+# linker flags .EXE
 
 extra_l_flags = op map, symfile
 
 extra_l_flags_qnx = op offset=64k, stack=60k
 
-#############
-# lflags .DLL
+###################
+# linker flags .DLL
 
 extra_l_flags_dll = op map, symfile
 
 extra_l_flags_dll_nt = initinstance terminstance op offset=0x6A000000
 extra_l_flags_dll_os2 = INITINSTANCE TERMINSTANCE reference __DLLstart_
 
-###########
+###################
 # rc flags
 
 extra_rc_flags_qnx = -D__UNIX__
@@ -163,6 +163,11 @@ build_rc_nt_386 = nt
 !ifdef build_rc_$(host_os)_$(host_cpu)
 res_objs = version.res
 !endif
+
+###################
+# librarian flags
+
+extra_lib_flags = -p=16
 
 !ifeq bootstrap 1
 
