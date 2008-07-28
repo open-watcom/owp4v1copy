@@ -62,6 +62,7 @@ base_headers =       &
         dimm.h       &
         dlgs.h       &
         docobj.h     &
+        dsadmin.h    &
         dvdevcod.h   &
         dvdmedia.h   &
         edevdefs.h   &
