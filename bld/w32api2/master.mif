@@ -28,6 +28,7 @@ base_headers =       &
         accctrl.h    &
         aclapi.h     &
         aclui.h      &
+        adsprop.h    &
         amstream.h   &
         amvideo.h    &
         audevcod.h   &
@@ -427,6 +428,7 @@ base_libs =          &
         dflayout.lib &
         dhcpcsvc.lib &
         dnsapi.lib   &
+        dsprop.lib   &
         faultrep.lib &
         gdi32.lib    &
         glu32.lib    &
