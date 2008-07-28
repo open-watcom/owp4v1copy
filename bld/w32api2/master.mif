@@ -74,6 +74,7 @@ base_headers =       &
         fltdefs.h    &
         guiddef.h    &
         httpext.h    &
+        iads.h       &
         icm.h        &
         idispids.h   &
         ifdef.h      &
@@ -414,6 +415,7 @@ gl_headers =         &
 
 base_libs =          &
         aclui.lib    &
+        adsiid.lib   &
         advapi32.lib &
         bcrypt.lib   &
         comctl32.lib &
@@ -574,6 +576,11 @@ all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
 
 winsock2.h: winsock.mh
     $(ws2splice)
+
+adsiid.lib: adsiid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +adsiid.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
 
 largeint.lib: largeint.obj
     %create $^&.lbc
