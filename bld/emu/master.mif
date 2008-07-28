@@ -1,13 +1,13 @@
 proj_name = emu
 
-!include cproj.mif
-!include deftarg.mif
-!include defrule.mif
-
 emu_autodepends = .AUTODEPEND
 emu_distrib_lib = 1
 
 .ERASE
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
 INCS = &
  flda386.asm fldc386.asm fldm386.asm fldd386.asm ldi4386.asm &
