@@ -65,6 +65,7 @@ base_headers =       &
         dsadmin.h    &
         dsclient.h   &
         dsgetdc.h    &
+        dsquery.h    &
         dvdevcod.h   &
         dvdmedia.h   &
         edevdefs.h   &
