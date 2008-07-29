@@ -21,6 +21,8 @@ DsGetForestTrustInformationW@16
 DsGetSiteNameA@8
 DsGetSiteNameW@8
 DsMergeForestTrustInformationW@16
+DsRoleFreeMemory@4
+DsRoleGetPrimaryDomainInformation@12
 DsValidateSubnetNameA@4
 DsValidateSubnetNameW@4
 I_NetLogonControl@16
