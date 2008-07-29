@@ -17,12 +17,10 @@
     #define DIRECT3D_VERSION    0x0700
 #endif
 
+:include dxshared.sp
+
 /* Direct3D primitive data types */
-typedef float   D3DVALUE;
-typedef float   *LPD3DVALUE;
 typedef LONG    D3DFIXED;
-typedef DWORD   D3DCOLOR;
-typedef DWORD   *LPD3DCOLOR;
 typedef DWORD   D3DMATERIALHANDLE;
 typedef DWORD   *LPD3DMATERIALHANDLE;
 typedef DWORD   D3DTEXTUREHANDLE;
@@ -426,23 +424,6 @@ typedef struct _D3DRECT {
     };
 } D3DRECT;
 typedef D3DRECT *LPD3DRECT;
-
-/* Direct3D vectors */
-typedef struct _D3DVECTOR {
-    union {
-        D3DVALUE    x;
-        D3DVALUE    dvX;
-    };
-    union {
-        D3DVALUE    y;
-        D3DVALUE    dvY;
-    };
-    union {
-        D3DVALUE    z;
-        D3DVALUE    dvZ;
-    };
-} D3DVECTOR;
-typedef D3DVECTOR   *LPD3DVECTOR;
 
 /* Direct3D homogeneous vertex */
 typedef struct _D3DHVERTEX {
