@@ -5,16 +5,6 @@
  */
 
 :include readonly.sp
-/* GUIDs */
-DEFINE_GUID( CLSID_MicrosoftDS, 0xFE1290F0, 0xCFBD, 0x11CF, 0xA3, 0x30, 0x00, 0xAA, 0x00, 0xC1, 0x6E, 0x65 );
-DEFINE_GUID( CLSID_DsPropertyPages, 0x0D45D530, 0x764B, 0x11D0, 0xA1, 0xCA, 0x00, 0xAA, 0x00, 0xC1, 0x6E, 0x65 );
-DEFINE_GUID( CLSID_DsDomainTreeBrowser, 0x1698790A, 0xE2B4, 0x11D0, 0xB0, 0xB1, 0x00, 0xC0, 0x4F, 0xD8, 0xDC, 0xA6 );
-DEFINE_GUID( IID_IDsBrowseDomainTree, 0x7CABCF1E, 0x78F5, 0x11D2, 0x96, 0x0C, 0x00, 0xC0, 0x4F, 0xA3, 0x1A, 0x86 );
-DEFINE_GUID( CLSID_DsDisplaySpecifier, 0x1AB4A8C0, 0x6A0B, 0x11D2, 0xAD, 0x49, 0x00, 0xC0, 0x4F, 0xA3, 0x1A, 0x86 );
-DEFINE_GUID( CLSID_DsFolderProperties, 0x9E51E0D0, 0x6E0F, 0x11D2, 0x96, 0x01, 0x00, 0xC0, 0x4F, 0xA3, 0x1A, 0x86 );
-#define IID_IDsDisplaySpecifier CLSID_DsDisplaySpecifier
-#define IID_IDsFolderProperties CLSID_DsFolderProperties
-
 /* Directory Service object flags */
 #define DSOBJECT_ISCONTAINER    0x00000001L
 #define DSOBJECT_READONLYPAGES  0x80000000L
@@ -268,6 +258,16 @@ typedef PDSBITEMW   PDSBITEM;
 typedef DSBITEMA    DSBITEM;
 typedef PDSBITEMA   PDSBITEM;
 #endif
+
+/* GUIDs */
+EXTERN_C const CLSID    CLSID_MicrosoftDS;
+EXTERN_C const CLSID    CLSID_DsPropertyPages;
+EXTERN_C const CLSID    CLSID_DsDomainTreeBrowser;
+EXTERN_C const IID      IID_IDsBrowseDomainTree;
+EXTERN_C const CLSID    CLSID_DsDisplaySpecifier;
+EXTERN_C const CLSID    CLSID_DsFolderProperties;
+#define IID_IDsDisplaySpecifier CLSID_DsDisplaySpecifier
+#define IID_IDsFolderProperties CLSID_DsFolderProperties
 
 /* IDsBrowseDomainTree interface */
 #undef INTERFACE
