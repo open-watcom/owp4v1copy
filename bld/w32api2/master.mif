@@ -63,6 +63,7 @@ base_headers =       &
         dlgs.h       &
         docobj.h     &
         dsadmin.h    &
+        dsclient.h   &
         dvdevcod.h   &
         dvdmedia.h   &
         edevdefs.h   &
@@ -430,6 +431,7 @@ base_libs =          &
         dhcpcsvc.lib &
         dnsapi.lib   &
         dsprop.lib   &
+        dsuiext.lib  &
         faultrep.lib &
         gdi32.lib    &
         glu32.lib    &
