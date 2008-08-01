@@ -350,7 +350,7 @@ static char *getAT( uint_32 value ) {
 }
 
 
-static void dumpHex( const char *input, uint length ) {
+static void dumpHex( const char *input, uint length, int offsets ) {
 
     char        *p;
     int         i;
@@ -359,6 +359,11 @@ static void dumpHex( const char *input, uint length ) {
     char        hex[ 80 ];
     char        printable[ 17 ];
     int         ch;
+
+    if( offsets ) {
+        printf( "          00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f\n" );
+        printf( "          ------------------------------------------------\n" );
+    }
 
     offset = 0;
     for(;;) {
@@ -530,27 +535,27 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                 case DW_FORM_block:
                     p = DecodeULEB128( p, &len );
                     printf( "\n" );
-                    dumpHex( p, len );
+                    dumpHex( p, len, 0 );
                     p += len;
                     break;
                 case DW_FORM_block1:
                     len = *p++;
                     printf( "\n" );
-                    dumpHex( p, len );
+                    dumpHex( p, len, 0 );
                     p += len;
                     break;
                 case DW_FORM_block2:
                     len = getU16( (uint_16 *)p );
                     p += sizeof( uint_16 );
                     printf( "\n" );
-                    dumpHex( p, len );
+                    dumpHex( p, len, 0 );
                     p += len;
                     break;
                 case DW_FORM_block4:
                     len = getU32( (uint_32 *)p );
                     p += sizeof( uint_32 );
                     printf( "\n" );
-                    dumpHex( p, len );
+                    dumpHex( p, len, 0 );
                     p += len;
                     break;
                 case DW_FORM_data1:
@@ -723,6 +728,10 @@ static void dumpLines(
         unit_base = p;
 
         printf( "total_length: 0x%08lx (%u)\n", unit_length, unit_length );
+        
+        printf( "=== unit dump start ===\n" );
+        dumpHex( unit_base - sizeof( uint_32 ), unit_length + sizeof (uint_32 ), 1 );
+        printf( "=== unit dump end ===\n" );
 
         printf( "version: 0x%04x\n", getU16( (uint_16 *)p ) );
         p += sizeof( uint_16 );
@@ -840,7 +849,13 @@ static void dumpLines(
                         file_index, name, directory, mod_time, file_length );
                     break;
                 default:
-                    printf( "** unknown extended opcode: %02x\n", op_code );
+                    printf( "** unknown extended opcode: %02x - %u bytes\n", op_code, op_len );
+                    printf( "** losing %u bytes\n", unit_length - ( p - unit_base ));
+                    
+                    dumpHex( p-3, (unit_length - ( p - unit_base )) + 3, 1 );
+                    
+                    p = unit_base + unit_length;
+                    goto hacky;                    
                     return;
                 }
             } else if( op_code < opcode_base ) {
@@ -908,6 +923,7 @@ static void dumpLines(
                 state.basic_block = 0;
             }
         }
+hacky:
         printf( "-- current_offset = %08lx\n", p - input );
     }
 }
@@ -1164,7 +1180,7 @@ void DumpSections( void ) {
             // Strings are displayed when dumping other sections
             break;
         default:
-            dumpHex( Sections[ sect ].data, Sections[ sect ].max_offset );
+            dumpHex( Sections[ sect ].data, Sections[ sect ].max_offset, 0 );
             break;
         }
         ++sect;
