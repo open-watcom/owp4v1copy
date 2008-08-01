@@ -1615,7 +1615,7 @@ EXTERN_C const IID  IID_IFilterChain;
 EXTERN_C const IID  IID_IVMRImagePresenter;
 EXTERN_C const IID  IID_IVMRSurfaceAllocator;
 EXTERN_C const IID  IID_IVMRSurfaceAllocatorNotify;
-EXTERN_C const IID  IID_IVMRWindowslessControl;
+EXTERN_C const IID  IID_IVMRWindowlessControl;
 EXTERN_C const IID  IID_IVMRMixerControl;
 EXTERN_C const IID  IID_IVMRMonitorConfig;
 EXTERN_C const IID  IID_IVMRFilterConfig;
