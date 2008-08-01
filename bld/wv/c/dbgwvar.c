@@ -347,6 +347,8 @@ static void VarInitPopup( a_window *wnd, var_window *var, var_node *v )
             if( !VarExpandable( class ) ) {
                 WndMenuEnable( wnd, MENU_VAR_MODIFY, TRUE );
                 WndMenuEnable( wnd, MENU_VAR_BREAK, TRUE );
+                WndMenuEnable( wnd, MENU_VAR_ALLHEX, VarParentIsArray( v ) );
+                WndMenuEnable( wnd, MENU_VAR_ALLDECIMAL, VarParentIsArray( v ) );
                 WndMenuEnable( wnd, MENU_VAR_HEX, !pointer );
                 WndMenuEnable( wnd, MENU_VAR_DECIMAL, !pointer );
                 WndMenuEnable( wnd, MENU_VAR_CHAR, !pointer );
@@ -436,8 +438,16 @@ static void     VarMenuItem( a_window *wnd, unsigned id, int row, int piece )
         VarDisplaySetHex( v );
         VarRepaint( wnd );
         break;
+    case MENU_VAR_ALLHEX:
+        VarDisplaySetArrayHex( v->parent );
+        VarRepaint( wnd );
+        break;
     case MENU_VAR_DECIMAL:
         VarDisplaySetDecimal( v );
+        VarRepaint( wnd );
+        break;
+    case MENU_VAR_ALLDECIMAL:
+        VarDisplaySetArrayDec( v->parent );
         VarRepaint( wnd );
         break;
     case MENU_VAR_CHAR:

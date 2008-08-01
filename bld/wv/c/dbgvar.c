@@ -1849,6 +1849,21 @@ void VarDisplaySetHex( var_node *v )
     VarSetType( v, CurrRadix != 16, 0, 0, 0, 0 );
 }
 
+void VarDisplaySetArrayHex( var_node *v )
+{
+    var_node *  next_v;
+    
+    if( NULL == v )
+        return;
+        
+    next_v = v->expand;
+            
+    while( next_v ) {
+        VarSetType( next_v, CurrRadix != 16, 0, 0, 0, 0 );
+        next_v = next_v->next;
+    }
+}
+
 bool VarDisplayIsDecimal( var_node *v )
 {
     return( ( v->display & VARDISP_DECIMAL ) != 0 );
@@ -1857,6 +1872,21 @@ bool VarDisplayIsDecimal( var_node *v )
 void VarDisplaySetDecimal( var_node *v )
 {
     VarSetType( v, 0, CurrRadix != 10, 0, 0, 0 );
+}
+
+void VarDisplaySetArrayDec( var_node *v )
+{
+    var_node *  next_v;
+    
+    if( NULL == v )
+        return;
+        
+    next_v = v->expand;
+            
+    while( next_v ) {
+        VarSetType( next_v, CurrRadix != 10, 0, 0, 0, 0 );
+        next_v = next_v->next;
+    }
 }
 
 bool VarDisplayIsChar( var_node *v )
@@ -2646,3 +2676,25 @@ extern var_node *VarGetDisplayPiece( var_info *i, int row, int piece, int *pdept
     VarGetDepths( i, v, pdepth, pinherit );
     return( v );
 }
+
+bool VarParentIsArray( var_node * v )
+{
+    var_node            *vparent = v;
+    type_info           tinfo;
+    
+    while( vparent->parent != NULL ) {
+        if( vparent->parent->node_type != NODE_INHERIT ) {
+            vparent = vparent->parent;
+            break;
+        }
+        vparent = vparent->parent;
+    }
+    
+    if( ( vparent == v ) || ( NULL == vparent ) )
+        return FALSE;
+    
+    TypeInfo( vparent->th, NULL, &tinfo );
+
+    return ( tinfo.kind == TK_ARRAY || vparent->fake_array );
+}
+

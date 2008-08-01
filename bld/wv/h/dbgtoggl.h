@@ -103,6 +103,7 @@ typedef struct {
     unsigned SW_CONTINUE_UNEXPECTED_BREAK:1;
     unsigned SW_KEEP_HEAP_ENABLED       : 1;
     unsigned SW_BREAK_ON_WRITE          : 1;
+    unsigned SW_DONT_EXPAND_HEX         : 1;    /* If set, display hex in shortest form - 0xf rather than 0x000f, etc */
 } dbg_switches;
 
 extern dbg_switches DbgSwitches;

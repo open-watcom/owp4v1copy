@@ -195,6 +195,7 @@ extern  var_node        *VarAdd1(var_info *i,void *name,unsigned int len,bool ex
 extern  unsigned int    VarNewCurrRadix(var_node *v);
 extern  int             VarFindRootRow(var_info *i,var_node *v,int row);
 extern  bool            VarExpandable(type_kind node_class);
+extern  bool            VarParentIsArray( var_node *v );
 extern  var_node        *VarFindRow(var_info *i,int row);
 extern  void            VarAddNodeToScope(var_info *i,var_node *v,char *buff);
 extern  void            VarExpandRow(var_info *i,var_node *v,int row);
@@ -227,7 +228,9 @@ extern void             VarSaveWndToScope( void *wnd );
 extern void             VarRestoreWndFromScope( void *wnd );
 
 extern void             VarDisplaySetHex(var_node*v);
+extern void             VarDisplaySetArrayHex(var_node*v);
 extern void             VarDisplaySetDecimal(var_node*v);
+extern void             VarDisplaySetArrayDec(var_node*v);
 extern void             VarDisplaySetString( var_node *v );
 extern void             VarDisplaySetPointer( var_node *v );
 extern void             VarDisplaySetChar( var_node *v );

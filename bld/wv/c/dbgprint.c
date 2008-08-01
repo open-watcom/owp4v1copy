@@ -282,9 +282,15 @@ static void PrintRadix( unsigned radix, char base_letter, sign_class sign_type,
         } else {
             ExprSP->info.modifier = TM_UNSIGNED;
         }
-        ConvertTo( ExprSP, TK_INTEGER, TM_UNSIGNED, sizeof( ExprSP->v.uint ) );
-        ptr = FmtNum( ExprSP->v.uint, radix, base_letter, sign_type,
-                        ptr, 1, prefix, pref_len );
+        if( 1 ) {
+            unsigned len = 1;
+            /* If we are printing hex, expand to both nibbles */            
+            if( ( ExprSP->info.modifier == TM_UNSIGNED ) && ( 16 == radix ) && !_IsOn( SW_DONT_EXPAND_HEX ) )
+                len = ExprSP->info.size * 2;
+            ConvertTo( ExprSP, TK_INTEGER, TM_UNSIGNED, sizeof( ExprSP->v.uint ) );
+            ptr = FmtNum( ExprSP->v.uint, radix, base_letter, sign_type,
+                        ptr, len, prefix, pref_len );
+        }
         break;
     case TK_ARRAY:
     case TK_FUNCTION:

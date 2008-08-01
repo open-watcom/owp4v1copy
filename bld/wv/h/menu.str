@@ -634,6 +634,16 @@ MENU_STR( XRoot,
 	"jMove the selected item to the root of this structure/array" )
 
 // - variable/type popup
+MENU_STR( XAllHex,
+	"A&ll Hex",
+	"jA&ll Hex",
+	"Display all sibling array entries in hexadecimal",
+	"jDisplay all sibling array entries in hexadecimal" )
+MENU_STR( XAllDecimal,
+	"All Deci&mal",
+	"jAll Deci&mal",
+	"Display all sibling array entries in decimal",
+	"jDisplay all sibling array entries in decimal" )
 MENU_STR( XHex,
 	"&Hex",
 	"j&Hex",

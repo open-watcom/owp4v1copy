@@ -162,10 +162,12 @@ static char SetNameTab[] = {
     "MAcro\0"
     "SUpportroutine\0"
     "BReakonwrite\0"
+    "DOntexpandhex\0"    
 };
 
 static void     AutoConf( void );
 static void     BreakOnWriteConf( void );
+static void     DontExpandHexStringConf( void );
 static void     AsmConf( void );
 static void     VarConf( void );
 static void     FuncConf( void );
@@ -189,6 +191,7 @@ static void     SupportConf( void );
 static void     BadSet( void );
 static void     AutoSet( void );
 static void     BreakOnWriteSet( void );
+static void     DontExpandHexStringSet( void );
 static void     AsmSet( void );
 static void     VarSet( void );
 static void     FuncSet( void );
@@ -238,6 +241,7 @@ static void (* const SetJmpTab[])( void ) = {
     &MacroSet,
     &SupportSet,
     &BreakOnWriteSet,
+    &DontExpandHexStringSet,
 };
 
 static void (* SetConfJmpTab[])( void ) = {
@@ -268,6 +272,7 @@ static void (* SetConfJmpTab[])( void ) = {
     &MacroConf,
     &SupportConf,
     &BreakOnWriteConf,
+    &DontExpandHexStringConf,
     NULL,
 };
 
@@ -355,7 +360,7 @@ static void AutoConf( void )
 }
 
 /*
- *  - set autoconfig on/off processing
+ *  - set break on write option
  */
 
 static void BreakOnWriteSet( void )
@@ -369,6 +374,19 @@ static void BreakOnWriteSet( void )
 static void BreakOnWriteConf( void )
 {
     ShowSwitch( _IsOn( SW_BREAK_ON_WRITE ) );
+}
+/*
+ *  - set hex expansion
+ */
+
+static void DontExpandHexStringSet( void )
+{
+    _SwitchSet( SW_DONT_EXPAND_HEX, SwitchOnOff() );
+}
+
+static void DontExpandHexStringConf( void )
+{
+    ShowSwitch( _IsOn( SW_DONT_EXPAND_HEX ) );
 }
 
 /*

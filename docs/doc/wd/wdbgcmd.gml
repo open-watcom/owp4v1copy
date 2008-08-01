@@ -1120,6 +1120,7 @@ Set Level [Assembly|Mixed|Source]
 Set LAnguage [CPP|C|FORTRAN]
 Set SUpportroutine <string>
 Set MAcro <wndname> <key> <command>
+Set DOntexpandhex [ON|OFf]
 .code end
 .begnote
 .note <location>
@@ -1162,6 +1163,7 @@ SHow Set MAcro
 SHow Set SUpportroutine
 SHow Flip
 SHow Hook
+SHOW DOntexpandhex
 .code end
 
 .cmddef SKip
