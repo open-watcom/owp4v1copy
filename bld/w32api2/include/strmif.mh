@@ -5853,7 +5853,7 @@ DECLARE_INTERFACE_( IVPManager, IUnknown ) {
     #define IDVEnc_Release( x ) \
         (x)->lpVtbl->Release( x )
     #define IDVEnc_get_IFormatResolution( x, p1, p2, p3, p4, p5 ) \
-        (x)->lpVtbl->get_IFormatResolution( x, p1, p2, p3, p4, p5 ) \
+        (x)->lpVtbl->get_IFormatResolution( x, p1, p2, p3, p4, p5 )
     #define IDVEnc_put_IFormatResolution( x, p1, p2, p3, p4, p5 ) \
         (x)->lpVtbl->put_IFormatResolution( x, p1, p2, p3, p4, p5 )
     #define IIPDVDec_QueryInterface( x, p1, p2 ) \
