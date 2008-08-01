@@ -390,9 +390,9 @@ void DwarfAddModule( mod_entry *mod, section *sect )
             mod->d.d->dasi.addr += 1;
             buff = alloca( namelen + 3 );
             memcpy( &buff[0], mod->name, namelen );
-            buff[namelen + 1] = 0;          // no directory index
-            buff[namelen + 2] = 0;          // no time
-            buff[namelen + 3] = 0;          // no length
+            buff[namelen + 0] = 0;          // no directory index
+            buff[namelen + 1] = 0;          // no time
+            buff[namelen + 2] = 0;          // no length
             PutInfo( mod->d.d->dasi.addr, buff, namelen + 3 );
             mod->d.d->dasi.addr += namelen + 3;
             zero = 0;                       // no more file names
