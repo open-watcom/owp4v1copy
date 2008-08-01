@@ -413,6 +413,7 @@ directx_headers =    &
         d3drmdef.h   &
         d3drmobj.h   &
         d3dtypes.h   &
+        dsound.h     &
         dvp.h        &
         dxtrans.h
 
@@ -521,6 +522,7 @@ base_libs =          &
 directx_libs =       &
         d3d9.lib     &
         d3drm.lib    &
+        dsound.lib   &
         dxguid.lib
 
 ddk_libs =           &
