@@ -93,9 +93,9 @@ extra_l_flags_qnx = op res=wlink.u, st=24k, off=32k
 # linker .DLL options
 
 !ifeq release 0
-extra_l_flags_dll = OPTION map=$^&.map, noredefs
-!else
 extra_l_flags_dll = OPTION map=$^&.map, noredefs, symfile
+!else
+extra_l_flags_dll = OPTION map=$^&.map, noredefs
 !endif
 extra_l_flags_dll_nt = initinstance terminstance op modname='wlink.dll'
 extra_l_flags_dll_nt += reference __DLLstart_ op offset=0x69c00000
