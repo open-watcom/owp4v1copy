@@ -14,20 +14,20 @@ dir="binw"		usr="wlink.lnk"		cond="doshost winhost |"	where="c f77"		old="bin"
 dir="binw"		usr="wlsystem.lnk"					where="c f77 ac"	old="binb"
 
 dir="binp"		usr="wlink.exe"		cond="os2host"			where="c f77"
-dir="binp/dll"		usr="wlink.dll"		cond="os2host"			where="c f77"
+dir="binp/dll"		usr="wlinkd.dll"	cond="os2host"			where="c f77"
 dir="binp"		usr="exe2bin.exe"	cond="os2host"			where="c f77"
 dir="binp"		usr="ms2wlink.exe"	cond="os2host"			where="c f77"
 dir="binp"		usr="fcenable.exe"	cond="os2host"			where="c f77"
 dir="binp"		usr="wlink.lnk"		cond="os2host"			where="c f77"
 
 dir="binnt"		usr="wlink.exe"		cond="wnthost"			where="c f77 ac"
-dir="binnt"		usr="wlink.dll"		cond="wnthost"			where="c f77 ac"
+dir="binnt"		usr="wlinkd.dll"	cond="wnthost"			where="c f77 ac"
 dir="binnt"		usr="exe2bin.exe"	cond="wnthost"			where="c f77 ac"
 dir="binnt"		usr="ms2wlink.exe"	cond="wnthost"			where="c f77 ac"
 dir="binnt"		usr="wlink.lnk"		cond="wnthost"			where="c f77 ac"
 
 dir="axpnt"		usr="wlink.exe"		cond="alphahost"		where="ac"
-dir="axpnt"		usr="wlink.dll"		cond="alphahost"		where="ac"
+dir="axpnt"		usr="wlinkd.dll"	cond="alphahost"		where="ac"
 dir="axpnt"		usr="exe2bin.exe"	cond="alphahost"		where="ac"
 dir="axpnt"		usr="wlink.lnk"		cond="alphahost"		where="ac"
 

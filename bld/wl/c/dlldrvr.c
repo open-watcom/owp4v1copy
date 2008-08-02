@@ -42,7 +42,7 @@ int main( void )
     IDEDRV_STATUS   status;
 
     status = IDEDRV_ERR_LOAD;
-    IdeDrvInit( &inf, "wlink.dll", NULL );
+    IdeDrvInit( &inf, "wlinkd.dll", NULL );
 
     cmdline = NULL;
     cmdlen = _bgetcmd( NULL, 0 );

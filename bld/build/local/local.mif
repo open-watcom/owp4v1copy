@@ -55,7 +55,8 @@ cpp_386         += $(bld_incs)
 !loaddll wcc386 $(nlang_dll)\wccd386.dll
 !loaddll wccaxp $(nlang_dll)\wccdaxp.dll
 !loaddll wlib   $(nlang_dll)\wlibd.dll
-!loaddll wlink  $(nlang_dll)\wlink.dll
+# should be uncommented after 1.8 will be released
+#!loaddll wlink  $(nlang_dll)\wlinkd.dll
 !loaddll wpp    $(nlang_dll)\wppdi86.dll
 !loaddll wpp386 $(nlang_dll)\wppd386.dll
 !loaddll wppaxp $(nlang_dll)\wppdaxp.dll

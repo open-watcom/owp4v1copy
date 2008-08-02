@@ -32,8 +32,9 @@ cdsay .
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386.dll/wl.exe                 <RELROOT>/binp/wlink.exe
-    <CPCMD> <PROJDIR>/os2386.dll/wl.dll                 <RELROOT>/binp/dll/wlink.dll
-    <CPCMD> <PROJDIR>/os2386.dll/wl.sym                 <RELROOT>/binp/dll/wlink.sym
+    <CPCMD> <PROJDIR>/os2386.dll/wl.sym                 <RELROOT>/binp/wlink.sym
+    <CPCMD> <PROJDIR>/os2386.dll/wld.dll                <RELROOT>/binp/dll/wlinkd.dll
+    <CPCMD> <PROJDIR>/os2386.dll/wld.sym                <RELROOT>/binp/dll/wlinkd.sym
     <CPCMD> <PROJDIR>/ms2wlink/os2i86/ms2wlink.exe      <RELROOT>/binp/ms2wlink.exe
     <CPCMD> <PROJDIR>/fcenable/os2i86/fcenable.exe      <RELROOT>/binp/fcenable.exe
     <CPCMD> <PROJDIR>/exe2bin/os2386/exe2bin.exe        <RELROOT>/binp/exe2bin.exe
@@ -42,10 +43,11 @@ cdsay .
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386.dll/wl.exe                  <RELROOT>/binnt/wlink.exe
-    <CPCMD> <PROJDIR>/nt386.dll/wl.dll                  <RELROOT>/binnt/wlink.dll
     <CPCMD> <PROJDIR>/nt386.dll/wl.sym                  <RELROOT>/binnt/wlink.sym
+    <CPCMD> <PROJDIR>/nt386.dll/wld.dll                 <RELROOT>/binnt/wlinkd.dll
+    <CPCMD> <PROJDIR>/nt386.dll/wld.sym                 <RELROOT>/binnt/wlinkd.sym
     <CPCMD> <PROJDIR>/nt386.rtd/wl.exe                  <RELROOT>/binnt/rtdll/wlink.exe
-    <CPCMD> <PROJDIR>/nt386.rtd/wl.dll                  <RELROOT>/binnt/rtdll/wlink.dll
+    <CPCMD> <PROJDIR>/nt386.rtd/wld.dll                 <RELROOT>/binnt/rtdll/wlinkd.dll
     <CPCMD> <PROJDIR>/ms2wlink/nt386/ms2wlink.exe       <RELROOT>/binnt/ms2wlink.exe
     <CPCMD> <PROJDIR>/fcenable/nt386/fcenable.exe       <RELROOT>/binnt/fcenable.exe
     <CPCMD> <PROJDIR>/exe2bin/nt386/exe2bin.exe         <RELROOT>/binnt/exe2bin.exe
@@ -63,7 +65,7 @@ cdsay .
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/ntaxp.dll/wl.exe                  <RELROOT>/axpnt/wlink.exe
-    <CPCMD> <PROJDIR>/ntaxp.dll/wl.dll                  <RELROOT>/axpnt/wlink.dll
+    <CPCMD> <PROJDIR>/ntaxp.dll/wld.dll                 <RELROOT>/axpnt/wlinkd.dll
     <CPCMD> <PROJDIR>/exe2bin/ntaxp/exe2bin.exe         <RELROOT>/axpnt/exe2bin.exe
     <CPCMD> <PROJDIR>/wlsystem.lnk                      <RELROOT>/binw/wlsystem.lnk
     <CPCMD> <PROJDIR>/wlaxpnt.lnk                       <RELROOT>/axpnt/wlink.lnk

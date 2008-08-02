@@ -12,8 +12,6 @@ wlink_autodepends = .AUTODEPEND
 # get rid of the -zc
 suppress_zc = 1
 
-wlink_nosymfile = 1
-
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -85,21 +83,16 @@ extra_c_flags_mem        = $(trmem_cover_cflags)
 #####################
 # linker .EXE options
 
-extra_l_flags     = op map, noredefs, symfile
-
+extra_l_flags     = op map, noredefs
 extra_l_flags_qnx = op res=wlink.u, st=24k, off=32k
 
 #####################
 # linker .DLL options
 
-!ifeq release 0
-extra_l_flags_dll = OPTION map=$^&.map, noredefs, symfile
-!else
-extra_l_flags_dll = OPTION map=$^&.map, noredefs
-!endif
-extra_l_flags_dll_nt = initinstance terminstance op modname='wlink.dll'
-extra_l_flags_dll_nt += reference __DLLstart_ op offset=0x69c00000
-extra_l_flags_dll_os2 = initinstance terminstance op modname='wlink'
+extra_l_flags_dll     = op map, noredefs
+extra_l_flags_dll_nt  = initinstance terminstance op modname='wlinkd.dll'
+extra_l_flags_dll_nt  += reference __DLLstart_ op offset=0x69c00000
+extra_l_flags_dll_os2 = initinstance terminstance op modname='wlinkd'
 
 xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
 
@@ -124,7 +117,7 @@ rc_objs = version.rc
 
 !ifdef wlink_dll
 
-wl.exe : $(drv_objs) wlink.lib drv.lnk
+wl.exe : $(drv_objs) wlinkd.lib drv.lnk
     $(linker) name $@ @drv.lnk
 
 !else
@@ -136,23 +129,22 @@ wl.exe : wlink.res $(comp_objs_exe) $(xlibs) exe.lnk
     $(linker) name $@ @exe.lnk
 !endif
     wstrip -q -a -r $@ . wlink.res
-
 !endif
 
-wl.dll : wlink.res $(comp_objs_dll) $(xlibs) $(rc_objs) dll.lnk
+wld.dll : wlink.res $(comp_objs_dll) $(xlibs) $(rc_objs) dll.lnk
     $(linker) name $@ @dll.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
     $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_path) version.rc $@
 !endif
     wstrip -q -a -r $@ . wlink.res
 
-wlink.lib : wl.dll
+wlinkd.lib : wld.dll
     $(librarian) $(libflags) $@ +$<
 
 drv.lnk: $(__MAKEFILES__)
     @%write $@ $(lflags)
     @for %i in ($(drv_objs)) do @%append $@ file %i
-    @%append $@ lib wlink.lib
+    @%append $@ lib wlinkd.lib
 
 exe.lnk: $(__MAKEFILES__)
     @%write $@ $(lflags)
