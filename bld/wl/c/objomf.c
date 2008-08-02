@@ -1109,13 +1109,11 @@ static void GetObject( segdata *seg, unsigned_32 obj_offset, bool lidata )
     unsigned    size;
     virt_mem    start;
 
-    if( seg->isdead ) {                 /* ignore dead segments */
+    if( seg->isdead || seg->isabs ) {   /* ignore dead or abs segments */
         ObjFormat |= FMT_IGNORE_FIXUPP; /* and any corresponding fixupps */
         return;
     }
     ObjFormat &= ~(FMT_IGNORE_FIXUPP|FMT_IS_LIDATA);
-    if( seg->isabs )
-        return;
     if( lidata ) {
         ObjFormat |= FMT_IS_LIDATA;
     }
