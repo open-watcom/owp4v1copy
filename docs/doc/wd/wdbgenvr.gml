@@ -611,6 +611,10 @@ display to the application's screen upon execution.
 .ix 'case insensitive searching'
 This option controls whether or not case is ignored or respected when
 the debugger is searching for a string.
+.note Do not expand hex numbers
+This option controls whether or not hexadecimal values are displayed in
+their natural size (zero preceded) or displayed in their most compact form.
+The default is to display the value in its full natural size.
 .ix 'Radix' 'default'
 .ix 'Radix' 'setting'
 .note Default Radix
