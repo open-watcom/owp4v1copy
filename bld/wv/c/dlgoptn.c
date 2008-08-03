@@ -56,6 +56,7 @@ static void GetDlgStatus( gui_window *gui )
     _SwitchSet( SW_IMPLICIT, GUIIsChecked( gui, CTL_OPT_IMPLICIT ) );
     _SwitchSet( SW_RECURSE_CHECK, GUIIsChecked( gui, CTL_OPT_RECURSE ) );
     _SwitchSet( SW_FLIP, GUIIsChecked( gui, CTL_OPT_FLIP ) );
+    _SwitchSet( SW_DONT_EXPAND_HEX, GUIIsChecked( gui, CTL_OPT_NOHEX ) );
     LookCaseSet( !GUIIsChecked( gui, CTL_OPT_CASE ) );
     if( DlgGetLong( gui, CTL_OPT_RADIX, &tmp ) ) {
         DefaultRadixSet( tmp );
@@ -89,6 +90,7 @@ static void SetDlgStatus( gui_window *gui )
     DlgSetLong( gui, CTL_OPT_DCLICK, WndGetDClick() );
     NewCurrRadix( old );
     GUIEnableControl( gui, CTL_OPT_BR_ON_WRITE, SupportsExactBreakpoints != 0 );
+    GUISetChecked( gui, CTL_OPT_NOHEX, _IsOn( SW_DONT_EXPAND_HEX ) );
     if( SupportsExactBreakpoints )
         GUISetChecked( gui, CTL_OPT_BR_ON_WRITE, _IsOn ( SW_BREAK_ON_WRITE ) );
     else
