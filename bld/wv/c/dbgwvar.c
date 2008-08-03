@@ -259,6 +259,33 @@ static  void    VarModify( a_window *wnd, int row, int piece )
     VarOldErrState();
 }
 
+static  void    ExpandRowIfPossible( a_window *wnd, int row, int piece )
+{
+    var_node            *v;
+    type_kind           class;
+    var_window          *var = WndVar( wnd );
+    bool                followable;
+
+    VarErrState();
+    VarKillExprSPCache( &var->i );
+    v = VarFindRow( &var->i, row );
+
+    followable = VarGetStackClass( &class );
+    switch( piece ) {
+    case VAR_PIECE_GADGET:
+    case VAR_PIECE_NAME:
+        if( VarExpandable( class ) || followable || v->expand != NULL ) {
+            VarExpandRowNoCollapse( &var->i, v, row );
+            /* We do NOT want to set current or induce a repaint yet */
+            /* WndNewCurrent( wnd, row, VAR_PIECE_NAME ); */
+            /* VarRepaint( wnd ); */
+        }
+        break;
+    }
+    VarDoneRow( &var->i );
+    VarOldErrState();
+}
+
 
 static bool VarEdit( a_window *wnd, var_node *v )
 {
@@ -352,7 +379,11 @@ static void VarInitPopup( a_window *wnd, var_window *var, var_node *v )
                 WndMenuEnable( wnd, MENU_VAR_HEX, !pointer );
                 WndMenuEnable( wnd, MENU_VAR_DECIMAL, !pointer );
                 WndMenuEnable( wnd, MENU_VAR_CHAR, !pointer );
-            }
+            } 
+        }
+        /* Enable even if already expanded */
+        if( VarExpandable( class ) ) {
+            WndMenuEnable( wnd, MENU_VAR_EXPAND_ALL, TRUE );
         }
         if( VarDisplayIsStruct( v ) ) {
             WndMenuEnable( wnd, MENU_VAR_SHOW_CODE, TRUE );
@@ -546,6 +577,57 @@ static void     VarMenuItem( a_window *wnd, unsigned id, int row, int piece )
         VarRepaint( wnd );
         VarDeExpand( v );
         VarDelete( &var->i, v );
+        break;
+    case MENU_VAR_EXPAND_ALL:
+        {
+            int expand_row = row;
+            int num_rows = VarNumRows( wnd );
+            var_node * v_sibling = NULL;
+            
+            /*
+             *  If we are a root node, then we have no sibling. If we have a parent, then we may have a sibling but we may
+             *  also by the last leaf node of our parent so we need to check out to see who our parents next sibling is and
+             *  stop there.
+             */
+            if( v->parent ) {
+                var_node * v_iter = v->parent->expand;
+                
+                while( v_iter ) {
+                    
+                    if( v_iter == v ){
+                        v_sibling = v_iter->next;
+                        break;   
+                    }
+                    v_iter = v_iter->next;   
+                }
+                
+                if( NULL == v_sibling ) {   /* last element, but may be more following. track grandparent */
+                    if( v->parent->parent ) {
+                        var_node * v_iter = v->parent->parent->expand;
+                
+                        while( v_iter ) {
+                            if( v_iter == v->parent ) {
+                                v_sibling = v_iter->next;
+                                break;   
+                            }
+                            v_iter = v_iter->next;   
+                        }
+                    }
+                }    
+            }
+            
+            for( ; expand_row < num_rows; expand_row++ ) {
+                
+                var_node * v_next = VarFindRowNode( &var->i, expand_row );
+                if( v_next == v_sibling )
+                    break;
+                    
+                ExpandRowIfPossible( wnd, expand_row, VAR_PIECE_GADGET );
+                num_rows = VarNumRows( wnd );
+            }
+        }
+        VarRepaint( wnd );
+        break;
     }
     if( need_reset ) VarOldErrState();
     VarDoneRow( &var->i );

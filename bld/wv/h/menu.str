@@ -738,6 +738,11 @@ MENU_STR( XMembers,
 	"j&Expand 'this'",
 	"Automatically expand the 'this' pointer",
 	"jAutomatically expand the 'this' pointer" )
+MENU_STR( XExpandAll,
+	"&Expand this node and all child nodes",
+	"j&Expand this node and all child nodes",
+	"",
+	"" )
 MENU_STR( XPrivate,
 	"Show &Private",
 	"jShow &Private",

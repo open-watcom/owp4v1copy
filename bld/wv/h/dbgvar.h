@@ -199,6 +199,7 @@ extern  bool            VarParentIsArray( var_node *v );
 extern  var_node        *VarFindRow(var_info *i,int row);
 extern  void            VarAddNodeToScope(var_info *i,var_node *v,char *buff);
 extern  void            VarExpandRow(var_info *i,var_node *v,int row);
+extern  void            VarExpandRowNoCollapse(var_info *i,var_node *v,int row);
 extern  bool            VarPrintText(var_info *i,char *buff,void (*rtn)(void ),int len);
 extern  void            VarBuildName(var_info *i,var_node *v,bool just_end_bit);
 extern  bool            VarGetStackClass(type_kind *node_class);

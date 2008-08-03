@@ -1710,6 +1710,24 @@ void VarExpandRow( var_info *i, var_node *v, int row )
     }
 }
 
+void VarExpandRowNoCollapse( var_info *i, var_node *v, int row )
+{
+    if( v->node_type == NODE_INHERIT ) {
+        v->display ^= VARDISP_INHERIT_CLOSED;
+        VarNodeDisplayUpdate( v );
+    } else if( v->expand == NULL ) {
+        if( v->old_expand != NULL ) {
+            v->expand = v->old_expand;
+            v->old_expand = NULL;
+        } else {
+            VarExpand( i, v, 0, -1 );
+            if( v->expand != NULL && VarFirstExpandNode( i, v ) == NULL ) {
+                Warn( LIT( No_Visible_Members ) );
+            }
+        }
+    } 
+}
+
 
 static bool     Followable( type_kind class )
 {
