@@ -1018,7 +1018,8 @@ char *FileIndexToCorrectName( unsigned file_index )
     FNAMEPTR    flist;
     char        *name;
 
-    flist = FileIndexToFName( file_index );
+    if(NULL == ( flist = FileIndexToFName( file_index ) ) )
+        return NULL;
     if( CompFlags.ef_switch_used ) {
         name = FNameFullPath( flist );
     } else {
