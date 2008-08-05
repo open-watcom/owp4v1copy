@@ -42,6 +42,7 @@ extern  bool            DoSubstring(intstar4,intstar4,int);
 extern  bool            DoSubscript(act_dim_list *,intstar4 *,intstar4 *);
 extern  void            StructResolve(void);
 extern  void            BIFiniStartOfSubroutine( void );
+extern  bool            ForceStatic( unsigned_16 );
 
 /* Forward declarations */
 static  void    SetHigh( sym_id sym );
@@ -220,6 +221,15 @@ static  void    GenEquivSet( act_eq_entry *a, act_eq_entry *b,
     bool        q_in_common;
     byte        p_type;
     byte        q_type;
+
+    /* if an entry is marked static, then b must be too */    
+    if( ForceStatic( a->name_equived->ns.flags ) ) {
+        unsigned_16     sym_flags = a->name_equived->ns.flags & ( SY_DATA_INIT | SY_SAVED );
+        b->name_equived->ns.flags |= sym_flags;
+    } else if( ForceStatic( b->name_equived->ns.flags ) ) {
+        unsigned_16     sym_flags = b->name_equived->ns.flags & ( SY_DATA_INIT | SY_SAVED );
+        a->name_equived->ns.flags |= sym_flags;
+    }
 
     a_name = a->name_equived;
     b_name = b->name_equived;

@@ -392,7 +392,7 @@ static  unsigned_32     DumpVariable( sym_id sym, unsigned_32 g_offset ) {
                                      offset );
             }
         } else if( (SubProgId->ns.flags & SY_SUBPROG_TYPE) != SY_BLOCK_DATA ) {
-            if( !ForceStatic( 0 ) && (Options & OPT_AUTOMATIC) &&
+            if( !ForceStatic( leader->ns.flags ) && (Options & OPT_AUTOMATIC) &&
                 !(ce_ext->ec_flags & MEMBER_INITIALIZED) ) {
                 sym_id  eqv_set;
                 eqv_set = FindEqSetShadow( leader );
