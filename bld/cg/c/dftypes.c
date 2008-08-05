@@ -160,6 +160,15 @@ extern  dbg_type        DFCharBlock( unsigned_32 len ) {
     return( ret );
 }
 
+extern  dbg_type        DFCharBlockNamed( char * name, unsigned_32 len ) {
+/******************************************************/
+
+    dbg_type    ret;
+
+    ret = DWString( Client, NULL, len, name, 0, 0 );
+    return( ret );
+}
+
 extern  dbg_type        DFIndCharBlock( back_handle len, cg_type len_type,
                                         int off ) {
 /************************************************************************/

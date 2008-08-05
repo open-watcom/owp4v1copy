@@ -86,6 +86,7 @@ extern  dbg_type        DFScope( char *name );
 extern  void            DFDumpName( name_entry *name, dbg_type tipe );
 extern  void            DFBackRefType( name_entry *name, dbg_type tipe );
 extern  dbg_type        DFCharBlock( unsigned_32 len );
+extern  dbg_type        DFCharBlockNamed( char * name, unsigned_32 len );
 extern  dbg_type        DFIndCharBlock( back_handle len, cg_type len_type,
                                         int off );
 extern  dbg_type        DFLocCharBlock( dbg_loc loc, cg_type len_type );
@@ -310,6 +311,28 @@ extern  dbg_type _CGAPI DBCharBlock( unsigned_32 len ) {
 #endif
     if( _IsModel( DBG_DF ) ) {
         ret = DFCharBlock( len );
+    }else if( _IsModel( DBG_CV ) ) {
+        ret = CVCharBlock( len );
+    }else{
+#if _TARGET &( _TARG_IAPX86 | _TARG_80386 )
+        ret = WVCharBlock( len );
+#else
+        ret = 0;
+#endif
+    }
+    return( ret );
+}
+
+extern  dbg_type _CGAPI DBCharBlockNamed( char * name, unsigned_32 len ) {
+/******************************************************/
+
+    dbg_type ret;
+
+#ifndef NDEBUG
+    EchoAPI( "DBCharBlock( %i )", len );
+#endif
+    if( _IsModel( DBG_DF ) ) {
+        ret = DFCharBlockNamed( name, len );
     }else if( _IsModel( DBG_CV ) ) {
         ret = CVCharBlock( len );
     }else{
