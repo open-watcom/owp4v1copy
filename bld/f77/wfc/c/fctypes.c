@@ -76,7 +76,7 @@ static  byte            MapCGTypes[] = {
 #ifdef pick
 #undef pick
 #endif
-#define pick(id,type,dbgtype,cgtype) cgtype,
+#define pick(id,type,dbgtype,cgtype,typnam) cgtype,
 
 static  cg_type         CGTypesMap[] = {
 #include "ptypdefn.h"
