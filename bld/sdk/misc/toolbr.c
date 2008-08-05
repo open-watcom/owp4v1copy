@@ -32,6 +32,9 @@
 #include <windows.h>
 #include <string.h>
 #include <assert.h>
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 #include "mem.h"
 #include "toolbr.h"
 #include "win1632.h"
@@ -63,6 +66,10 @@ typedef struct toolbar {
     tool        *tool_list;
     char        is_fixed:1;
     char        spare:7;
+#ifdef __NT__
+    HWND        container;
+    WNDPROC     old_wndproc;
+#endif
 } toolbar;
 
 #define HNULL                   0
@@ -91,15 +98,21 @@ typedef struct toolbar {
 #define SET_INFO( w,i ) (SetWindowLong( w, 0, (LONG)(LPSTR)i))
 
 static char     *className = "WTool";
+#ifdef __NT__
+static char     *containerClassName = "WToolContainer";
+#endif
 
-static char     gdiObjectsCreated;
-static HPEN     blackPen;
-static HPEN     btnShadowPen;
-static HPEN     btnHighlightPen;
-static HPEN     btnFacePen;
-static HBRUSH   blackBrush;
-static HBRUSH   btnFaceBrush;
-static COLORREF crButtonFace;
+static char         gdiObjectsCreated;
+static HPEN         blackPen;
+static HPEN         btnShadowPen;
+static HPEN         btnHighlightPen;
+static HPEN         btnFacePen;
+static HBRUSH       blackBrush;
+static HBRUSH       btnFaceBrush;
+static COLORREF     crButtonFace;
+#ifdef __NT__
+static HINSTANCE    hInstCommCtrl;
+#endif
 
 static tool             *currTool;
 static char             currIsDown;
@@ -109,10 +122,21 @@ static BOOL             ignore_mousemove = FALSE; // release_capture generates
                                                   // a WM_MOUSEMOVE msg
 
 #if defined(__NT__) || defined(__WINDOWS__)
-void TB_TransparentBlt( HDC, UINT, UINT, UINT, UINT, HDC, COLORREF );
+void    TB_TransparentBlt( HDC, UINT, UINT, UINT, UINT, HDC, COLORREF );
+HBITMAP TB_CreateTransparentBitmap( HBITMAP, int, int );
 #endif
 
-LONG WINEXP ToolBarWndProc( HWND, unsigned, UINT, LONG );
+LONG WINEXP     ToolBarWndProc( HWND, unsigned, UINT, LONG );
+#ifdef __NT__
+LRESULT WINAPI  WinToolWndProc( HWND, UINT, WPARAM, LPARAM );
+LRESULT WINAPI  ToolContainerWndProc( HWND, UINT, WPARAM, LPARAM );
+#endif
+
+#ifdef __NT__
+typedef VOID        (WINAPI *PFNICC)( VOID );
+
+static PFNICC   pfnInitCommonControls;
+#endif
 
 /*
  * findTool - find tool item based on id
@@ -241,41 +265,63 @@ toolbar *ToolBarInit( HWND parent )
     WNDCLASS    wc;
     toolbar     *bar;
     HANDLE      instance;
-
+    
     instance = GET_HINSTANCE( parent );
 
-    if( !GetClassInfo( instance, className, &wc ) ) {
-        wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-        wc.lpfnWndProc = (WNDPROC)ToolBarWndProc;
-        wc.lpszMenuName = NULL;
-        wc.cbClsExtra = 0;
-        wc.cbWndExtra = sizeof( LPVOID );
-        wc.hInstance = instance;
-        wc.hIcon = HNULL;
-        wc.hCursor = LoadCursor( (HANDLE) HNULL, IDC_ARROW );
-        wc.hbrBackground = (HBRUSH) 0;
-        wc.lpszMenuName = NULL;
-        wc.lpszClassName = className;
-        RegisterClass( &wc );
+#ifdef __NT__
+    if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
+        pfnInitCommonControls = (PFNICC)GetProcAddress( hInstCommCtrl,
+            "InitCommonControls" );
+        pfnInitCommonControls();
+        if( !GetClassInfo( instance, containerClassName, &wc ) ) {
+            wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+            wc.lpfnWndProc = (WNDPROC)ToolContainerWndProc;
+            wc.cbClsExtra = 0;
+            wc.cbWndExtra = 0;
+            wc.hInstance = instance;
+            wc.hIcon = NULL;
+            wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+            wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
+            wc.lpszMenuName = NULL;
+            wc.lpszClassName = containerClassName;
+            RegisterClass( &wc );
+        }
+    } else {
+#endif
+        if( !GetClassInfo( instance, className, &wc ) ) {
+            wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+            wc.lpfnWndProc = (WNDPROC)ToolBarWndProc;
+            wc.lpszMenuName = NULL;
+            wc.cbClsExtra = 0;
+            wc.cbWndExtra = sizeof( LPVOID );
+            wc.hInstance = instance;
+            wc.hIcon = HNULL;
+            wc.hCursor = LoadCursor( (HANDLE) HNULL, IDC_ARROW );
+            wc.hbrBackground = (HBRUSH) 0;
+            wc.lpszMenuName = NULL;
+            wc.lpszClassName = className;
+            RegisterClass( &wc );
+        }
+        if( !gdiObjectsCreated ) {
+            blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                                  GetSysColor( COLOR_BTNTEXT ) );
+            btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                                    GetSysColor( COLOR_BTNSHADOW ) );
+            btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                                    GetSysColor( COLOR_BTNHIGHLIGHT ) );
+            btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                                    GetSysColor( COLOR_BTNFACE ) );
+            blackBrush = GetStockObject( BLACK_BRUSH );
+            btnFaceBrush = CreateSolidBrush( GetSysColor( COLOR_BTNFACE ) );
+            gdiObjectsCreated = TRUE;
+        }
+#ifdef __NT__
     }
+#endif
     bar = (toolbar *)MemAlloc( sizeof( toolbar ) );
     if ( bar ) {
         bar->border_width = 1;
         bar->owner = parent;
-    }
-
-    if( !gdiObjectsCreated ) {
-        blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                              GetSysColor( COLOR_BTNTEXT ) );
-        btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                GetSysColor( COLOR_BTNSHADOW ) );
-        btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                GetSysColor( COLOR_BTNHIGHLIGHT ) );
-        btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                                GetSysColor( COLOR_BTNFACE ) );
-        blackBrush = GetStockObject( BLACK_BRUSH );
-        btnFaceBrush = CreateSolidBrush( GetSysColor( COLOR_BTNFACE ) );
-        gdiObjectsCreated = TRUE;
     }
 
     return( bar );
@@ -290,25 +336,31 @@ toolbar *ToolBarInit( HWND parent )
 void ToolBarChangeSysColors( COLORREF tbFace,
                              COLORREF tbHighlight, COLORREF tbShadow )
 {
-    if( gdiObjectsCreated ) {
-        DeleteObject( blackPen );
-        DeleteObject( btnShadowPen );
-        DeleteObject( btnHighlightPen );
-        DeleteObject( btnFacePen );
-        DeleteObject( btnFaceBrush );
-    }
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+#endif
+        if( gdiObjectsCreated ) {
+            DeleteObject( blackPen );
+            DeleteObject( btnShadowPen );
+            DeleteObject( btnHighlightPen );
+            DeleteObject( btnFacePen );
+            DeleteObject( btnFaceBrush );
+        }
 
-    blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                          GetSysColor( COLOR_BTNTEXT ) );
-    btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                          GetSysColor( COLOR_BTNSHADOW ) );
-    btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                          GetSysColor( COLOR_BTNHIGHLIGHT ) );
-    btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
-                          GetSysColor( COLOR_BTNFACE ) );
-    crButtonFace = GetSysColor( COLOR_BTNFACE );
-    btnFaceBrush = CreateSolidBrush( crButtonFace );
-    gdiObjectsCreated = TRUE;
+        blackPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                              GetSysColor( COLOR_BTNTEXT ) );
+        btnShadowPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                              GetSysColor( COLOR_BTNSHADOW ) );
+        btnHighlightPen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                              GetSysColor( COLOR_BTNHIGHLIGHT ) );
+        btnFacePen = CreatePen( PS_SOLID, BORDER_WIDTH( bar ),
+                              GetSysColor( COLOR_BTNFACE ) );
+        crButtonFace = GetSysColor( COLOR_BTNFACE );
+        btnFaceBrush = CreateSolidBrush( crButtonFace );
+        gdiObjectsCreated = TRUE;
+#ifdef __NT__
+    }
+#endif
 }
 
 /*
@@ -361,41 +413,93 @@ void ToolBarFini( toolbar *bar )
 void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
 {
     tool        *t;
-
-    t = (tool *)MemAlloc( sizeof( tool ) );
-    if( info->flags & ITEM_BLANK ) {
-        t->blank_space = info->blank_space;
+#ifdef __NT__
+    TBBUTTON    tbb;
+    TBADDBITMAP tbab;
+    BITMAP      bm;
+    
+    if( hInstCommCtrl == NULL ) {
+#endif
+        t = (tool *)MemAlloc( sizeof( tool ) );
+        if( info->flags & ITEM_BLANK ) {
+            t->blank_space = info->blank_space;
+        } else {
+            t->bitmap = info->bmp;
+        }
+        t->id = info->id;
+        t->next = NULL;
+        t->flags = info->flags;
+        t->depressed = info->depressed;
+        t->state = BUTTON_UP;
+        addTool( &bar->tool_list, t );
+        if( !(info->flags & ITEM_BLANK) && info->bmp != HNULL ) {
+            createButtonList( bar->hwnd, bar, t );
+        }
+#ifdef __NT__
     } else {
-        t->bitmap = info->bmp;
+        if( !(info->flags & ITEM_BLANK) ) {
+            GetObject( info->bmp, sizeof( BITMAP ), &bm );
+            if( SendMessage( bar->hwnd, TB_BUTTONCOUNT, 0, 0L ) == 0 ) {
+                SendMessage( bar->hwnd, TB_SETBITMAPSIZE, 0,
+                    MAKELONG( bm.bmWidth, bm.bmHeight ) );
+            }
+            tbab.hInst = NULL;
+            tbab.nID = (UINT_PTR)TB_CreateTransparentBitmap( info->bmp, bm.bmWidth, bm.bmHeight );
+            tbb.iBitmap = (int)SendMessage( bar->hwnd, TB_ADDBITMAP, 1, (LPARAM)&tbab );
+            tbb.idCommand = info->id;
+            tbb.fsState = TBSTATE_ENABLED;
+            tbb.fsStyle = TBSTYLE_BUTTON;
+            if( info->flags & ITEM_STICKY ) {
+                tbb.fsStyle |= TBSTYLE_CHECK;
+            }
+        } else {
+            tbb.iBitmap = -1;
+            tbb.idCommand = -1;
+            tbb.fsState = 0;
+            tbb.fsStyle = TBSTYLE_SEP;
+        }
+        tbb.iString = 0;
+        SendMessage( bar->hwnd, TB_ADDBUTTONS, 1, (LPARAM)&tbb );
     }
-    t->id = info->id;
-    t->next = NULL;
-    t->flags = info->flags;
-    t->depressed = info->depressed;
-    t->state = BUTTON_UP;
-    addTool( &bar->tool_list, t );
-    if( !(info->flags & ITEM_BLANK) && info->bmp != HNULL ) {
-        createButtonList( bar->hwnd, bar, t );
-    }
-
+#endif
 } /* ToolBarAddItem */
 
 void ToolBarSetState( toolbar *bar, WORD id, WORD state )
 {
     tool        *t;
-
-    t = findTool( bar->tool_list, id );
-    t->state = state;
-    // force the button to be redrawn
-    InvalidateRect( bar->hwnd, &t->area, FALSE );
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+#endif
+        t = findTool( bar->tool_list, id );
+        t->state = state;
+        // force the button to be redrawn
+        InvalidateRect( bar->hwnd, &t->area, FALSE );
+#ifdef __NT__
+    } else {
+        SendMessage( bar->hwnd, TB_CHECKBUTTON, (WPARAM)id,
+            MAKELONG( state & BUTTON_DOWN, 0 ) );
+    }
+#endif
 }
 
 WORD ToolBarGetState( toolbar *bar, WORD id )
 {
     tool        *t;
+#ifdef __NT__
+    int         n;
+    TBBUTTON    tbb;
 
-    t = findTool( bar->tool_list, id );
-    return( t->state );
+    if( hInstCommCtrl == NULL ) {
+#endif
+        t = findTool( bar->tool_list, id );
+        return( t->state );
+#ifdef __NT__
+    } else {
+        n = (int)SendMessage( bar->hwnd, TB_COMMANDTOINDEX, (WPARAM)id, 0L );
+        SendMessage( bar->hwnd, TB_GETBUTTON, n, (LPARAM)&tbb );
+        return( (tbb.fsState & TBSTATE_CHECKED) ? BUTTON_DOWN : BUTTON_UP );
+    }
+#endif
 }
 
 /*
@@ -404,16 +508,28 @@ WORD ToolBarGetState( toolbar *bar, WORD id )
 BOOL ToolBarDeleteItem( toolbar *bar, WORD id )
 {
     tool        *t, *next;
+#ifdef __NT__
+    int         n;
 
-    t = findTool( bar->tool_list, id );
-    if( t != NULL ) {
-        // need to destroy the window on the tool bar and recreate
-        // all the other tools after this one
-        next = t->next;
-        deleteTool( &bar->tool_list, t );
-        createButtonList( bar->hwnd, bar, next );
+    if( hInstCommCtrl == NULL ) {
+#endif
+        t = findTool( bar->tool_list, id );
+        if( t != NULL ) {
+            // need to destroy the window on the tool bar and recreate
+            // all the other tools after this one
+            next = t->next;
+            deleteTool( &bar->tool_list, t );
+            createButtonList( bar->hwnd, bar, next );
+            return( TRUE );
+        }
+#ifdef __NT__
+    } else {
+        n = (int)SendMessage( bar->hwnd, TB_COMMANDTOINDEX, (WPARAM)id, 0L );
+        SendMessage( bar->hwnd, TB_DELETEBUTTON, (WPARAM)n, 0L );
         return( TRUE );
     }
+#endif
+
     return( FALSE );
 
 } /* ToolBarDeleteItem */
@@ -451,7 +567,23 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     width = disp->area.right - disp->area.left;
     height = disp->area.bottom - disp->area.top;
 #if defined(__NT__)
-    if ( LOBYTE(LOWORD(GetVersion())) >= 4 &&
+    if( hInstCommCtrl != NULL ) {
+        if( (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
+            bar->container = CreateWindowEx( WS_EX_TOOLWINDOW, containerClassName, NULL,
+                WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME, disp->area.left,
+                disp->area.top, width, height, bar->owner, NULL,
+                GET_HINSTANCE( bar->owner ), NULL );
+            bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL, WS_CHILD | WS_VISIBLE | TBSTYLE_WRAPABLE,
+                0, 0, 0, 0, bar->container, NULL, GET_HINSTANCE( bar->owner ), NULL );
+        } else {
+            bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL, WS_CHILD | WS_VISIBLE,
+                0, 0, 0, 0, bar->owner, NULL, GET_HINSTANCE( bar->owner ), NULL );
+        }
+        bar->old_wndproc = (WNDPROC)GetWindowLong( bar->hwnd, GWL_WNDPROC );
+        SetProp( bar->hwnd, "bar", (LPVOID)bar );
+        SetWindowLong( bar->hwnd, GWL_WNDPROC, (DWORD)WinToolWndProc );
+        SendMessage( bar->hwnd, TB_BUTTONSTRUCTSIZE, sizeof( TBBUTTON ), 0L );
+    } else if( LOBYTE(LOWORD(GetVersion())) >= 4 &&
          (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
         CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
             disp->area.left, disp->area.top, width, height,
@@ -477,8 +609,14 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
      * Windows ignores the GETMINMAXINFO before the WM_CREATE or
      * something so we kluge it.
      */
-    MoveWindow( bar->hwnd, disp->area.left, disp->area.top,
-                                                width, height, TRUE );
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+#endif
+        MoveWindow( bar->hwnd, disp->area.left, disp->area.top,
+                                                    width, height, TRUE );
+#ifdef __NT__
+    }
+#endif
 } /* ToolBarDisplay */
 
 /*
@@ -844,8 +982,19 @@ static tool *findToolAtPoint( toolbar *bar, LPARAM lparam )
  */
 BOOL HasToolAtPoint( struct toolbar *bar, LPARAM lparam )
 {
-    return( findToolAtPoint( bar, lparam ) != NULL );
-
+#ifdef __NT__
+    POINT   pt;
+    
+    if( hInstCommCtrl == NULL ) {
+#endif
+        return( findToolAtPoint( bar, lparam ) != NULL );
+#ifdef __NT__
+    } else {
+        pt.x = LOWORD( lparam );
+        pt.y = HIWORD( lparam );
+        return( SendMessage( bar->hwnd, TB_HITTEST, 0, (LPARAM)&pt ) >= 0 );
+    }
+#endif
 } /* HasToolAtPoint */
 
 /*
@@ -854,15 +1003,35 @@ BOOL HasToolAtPoint( struct toolbar *bar, LPARAM lparam )
  */
 BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id )
 {
-    tool *ctool;
-
-    ctool = findToolAtPoint( bar, lparam );
-    if( ctool != NULL ) {
-        *id = ctool->id;
-        return TRUE;
+    tool        *ctool;
+#ifdef __NT__
+    POINT       pt;
+    int         ret;
+    TBBUTTON    tbb;
+    
+    if( hInstCommCtrl == NULL ) {
+#endif
+        ctool = findToolAtPoint( bar, lparam );
+        if( ctool != NULL ) {
+            *id = ctool->id;
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+#ifdef __NT__
     } else {
-        return FALSE;
+        pt.x = LOWORD( lparam );
+        pt.y = HIWORD( lparam );
+        ret = SendMessage( bar->hwnd, TB_HITTEST, 0, (LPARAM)&pt );
+        if( ret >= 0 ) {
+            SendMessage( bar->hwnd, TB_GETBUTTON, (WPARAM)ret, (LPARAM)&tbb );
+            *id = tbb.idCommand;
+            return( TRUE );
+        } else {
+            return( FALSE );
+        }
     }
+#endif
 }
 
 /*
@@ -1019,19 +1188,117 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
 
 } /* ToolBarWndPproc */
 
+#ifdef __NT__
+
+LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
+{
+    struct toolbar  *bar;
+    UINT            id;
+    int             n;
+    TBBUTTON        tbb;
+    DWORD           pos;
+    POINT           pt;
+    RECT            rc;
+    
+    bar = (struct toolbar *)GetProp( hwnd, "bar" );
+    switch( msg ) {
+    case WM_MOUSEMOVE:
+        if( FindToolIDAtPoint( bar, lparam, &id ) ) {
+            n = SendMessage( hwnd, TB_COMMANDTOINDEX, id, 0L );
+            SendMessage( hwnd, TB_GETBUTTON, n, (LPARAM)&tbb );
+            if( (tbb.fsState & TBSTATE_PRESSED) || !(wparam & MK_LBUTTON) ) {
+                bar->helphook( hwnd, id, TRUE );
+                lastID = id;
+                SetTimer( hwnd, 1, 50, NULL );
+            } else if( lastID != (WORD)-1 ) {
+                bar->helphook( hwnd, lastID, FALSE );
+                lastID = -1;
+                KillTimer( hwnd, 1 );
+            }
+        } else if( lastID != (WORD)-1 ) {
+            bar->helphook( hwnd, lastID, FALSE );
+            lastID = -1;
+            KillTimer( hwnd, 1 );
+        }
+        break;
+    case WM_TIMER:
+        if( lastID != (WORD)-1 ) {
+            pos = GetMessagePos();
+            pt.x = LOWORD( pos );
+            pt.y = HIWORD( pos );
+            ScreenToClient( hwnd, &pt );
+            GetClientRect( hwnd, &rc );
+            if( !PtInRect( &rc, pt ) ) {
+                bar->helphook( hwnd, lastID, FALSE );
+                lastID = -1;
+                KillTimer( hwnd, 1 );
+            }
+        };
+        break;
+    case WM_LBUTTONUP:
+        if( lastID != (WORD)-1 ) {
+            bar->helphook( hwnd, lastID, FALSE );
+            lastID = -1;
+            KillTimer( hwnd, 1 );
+        }
+        break;
+    }
+    
+    return( CallWindowProc( bar->old_wndproc, hwnd, msg, wparam, lparam ) );
+} /* WinToolWndProc */
+
+LRESULT WINAPI ToolContainerWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
+{
+    HWND    otherwnd;
+    
+    switch( msg ) {
+    case WM_SIZE:
+        otherwnd = GetWindow( hwnd, GW_CHILD );
+        SendMessage( otherwnd, WM_SIZE, 0, 0L );
+        break;
+    case WM_COMMAND:
+        otherwnd = GetWindow( hwnd, GW_OWNER );
+        SendMessage( otherwnd, WM_COMMAND, wparam, lparam );
+    }
+    return( DefWindowProc( hwnd, msg, wparam, lparam ) );
+} /* ToolContainerWndProc */
+
+#endif
+
 /*
  * ChangeToolButtonBitmap - change a bitmap for a toolbar item
  */
 void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
 {
     tool        *t;
-    t = findTool( bar->tool_list, id );
-    if( t != NULL ) {
-        t->bitmap = newbmp;
-        InvalidateRect( bar->hwnd, &t->area, TRUE );
-        UpdateWindow( bar->hwnd );
+#ifdef __NT__
+    int         n;
+    TBBUTTON    tbb;
+    TBADDBITMAP tbab;
+    
+    if( hInstCommCtrl == NULL ) {
+#endif
+        t = findTool( bar->tool_list, id );
+        if( t != NULL ) {
+            t->bitmap = newbmp;
+            InvalidateRect( bar->hwnd, &t->area, TRUE );
+            UpdateWindow( bar->hwnd );
+        }
+#ifdef __NT__
+    } else {
+        n = SendMessage( bar->hwnd, TB_COMMANDTOINDEX, (WPARAM)id, 0L );
+        if( n >= 0 ) {
+            SendMessage( bar->hwnd, TB_GETBUTTON, (WPARAM)id, (LPARAM)&tbb );
+            tbab.hInst = NULL;
+            tbab.nID = (UINT_PTR)TB_CreateTransparentBitmap( newbmp,
+                bar->button_size.x - bar->border.x,
+                bar->button_size.y - bar->border.y - 2 );
+            tbb.iBitmap = (int)SendMessage( bar->hwnd, TB_ADDBITMAP, 1, (LPARAM)&tbab );
+            SendMessage( bar->hwnd, TB_DELETEBUTTON, n, 0L );
+            SendMessage( bar->hwnd, TB_INSERTBUTTON, n, (LPARAM)&tbab );
+        }
     }
-
+#endif
 } /* ChangeToolButtonBitmap */
 
 
@@ -1120,5 +1387,40 @@ void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height,
    DeleteObject( hBmpMono );
 
 }  /* TansparentBlt () */
+
+/*
+ * TB_CreateTransparentBitmap()
+ *
+ * Purpose: Creates a transparent bitmap for use with Win32 native toolbars.
+ *
+ * Parameters: hBitmap  HBITMAP original bitmap
+ *             width    int     width of the original bitmap
+ *             height   int     height of the original bitmap
+ *
+ * Return Value: Handle to the new transparent bitmap.
+ */
+
+HBITMAP TB_CreateTransparentBitmap( HBITMAP hBitmap, int width, int height )
+{
+    HDC     hDC1;
+    HDC     hDC2;
+    HBITMAP hOldBitmap1;
+    HBITMAP hOldBitmap2;
+    HBITMAP hNewBitmap;
+    
+    hDC1 = CreateCompatibleDC( NULL );
+    hOldBitmap1 = SelectObject( hDC1, hBitmap );
+    hDC2 = CreateCompatibleDC( hDC1 );
+    hNewBitmap = CreateCompatibleBitmap( hDC1, width, height );
+    hOldBitmap2 = SelectObject( hDC2, hNewBitmap );
+    SetBkColor( hDC2, GetSysColor( COLOR_3DFACE ) );
+    TB_TransparentBlt( hDC2, 0, 0, width, height, hDC1, GetPixel( hDC1, 0, 0 ) );
+    SelectObject( hDC1, hOldBitmap1 );
+    SelectObject( hDC2, hOldBitmap2 );
+    DeleteDC( hDC1 );
+    DeleteDC( hDC2 );
+
+    return( hNewBitmap );
+}
 
 #endif
