@@ -44,6 +44,7 @@
 #include "ferror.h"
 #include "insert.h"
 #include "utility.h"
+#include "convert.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -84,19 +85,43 @@ static  void    LogC( void ) {
 static  void    IntC( void ) {
 //======================
 
-    if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
-        // don't issue an overflow for -2147483648
-        // but we need to be careful since we do want an
-        // overflow for I - 2147483648
-        if( !(((BkLink == NULL) || (BkLink->opn.ds == DSOPN_PHI)) &&
-              (CITNode->opr == OPR_MIN) &&
-              (CITNode->value.intstar4 == LONG_MIN)) ) {
+    /* If OPT_SHORT is enabled, then default ints are 2 bytes, not 4 */
+    if( Options & OPT_SHORT ) {
+        if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
+            // don't issue an overflow for -2147483648
+            // but we need to be careful since we do want an
+            // overflow for I - 2147483648
+            if( !(((BkLink == NULL) || (BkLink->opn.ds == DSOPN_PHI)) &&
+                  (CITNode->opr == OPR_MIN) &&
+                  (CITNode->value.intstar4 == LONG_MIN)) ) {
+                Warning( KO_IOVERFLOW );
+            }
+        }
+        
+        CITNode->typ = TY_INTEGER;
+        CITNode->size = TypeSize( TY_INTEGER );
+        CITNode->opn.us = USOPN_CON;
+
+        if( CITNode->value.intstar4 < SHRT_MIN || CITNode->value.intstar4 > SHRT_MAX ) {
             Warning( KO_IOVERFLOW );
         }
+        CnvTo( CITNode, TY_INTEGER_2, TypeSize( TY_INTEGER_2 ) );
+
+    } else {
+        if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
+            // don't issue an overflow for -2147483648
+            // but we need to be careful since we do want an
+            // overflow for I - 2147483648
+            if( !(((BkLink == NULL) || (BkLink->opn.ds == DSOPN_PHI)) &&
+                  (CITNode->opr == OPR_MIN) &&
+                  (CITNode->value.intstar4 == LONG_MIN)) ) {
+                Warning( KO_IOVERFLOW );
+            }
+        }
+        CITNode->typ = TY_INTEGER;
+        CITNode->size = TypeSize( TY_INTEGER );
+        CITNode->opn.us = USOPN_CON;
     }
-    CITNode->typ = TY_INTEGER;
-    CITNode->size = TypeSize( TY_INTEGER );
-    CITNode->opn.us = USOPN_CON;
 }
 
 
