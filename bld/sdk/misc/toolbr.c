@@ -978,6 +978,28 @@ static tool *findToolAtPoint( toolbar *bar, LPARAM lparam )
 } /* findToolAtPoint */
 
 /*
+ * customHitTest - find a tool at a given point for a native toolbar
+ */
+static int customHitTest( toolbar *bar, POINT *pt )
+{
+    int         i;
+    int         count;
+    TBBUTTON    tbb;
+    RECT        rc;
+
+    count = (int)SendMessage( bar->hwnd, TB_BUTTONCOUNT, 0, 0L );
+    for( i = 0; i < count; i++ ) {
+        SendMessage( bar->hwnd, TB_GETITEMRECT, i, (LPARAM)&rc );
+        if( PtInRect( &rc, *pt ) ) {
+            SendMessage( bar->hwnd, TB_GETBUTTON, i, (LPARAM)&tbb );
+            return( tbb.idCommand );
+        }
+    }
+
+    return( -1 );
+}
+
+/*
  * HasToolAtPoint - return TRUE if tool exists at a given point
  */
 BOOL HasToolAtPoint( struct toolbar *bar, LPARAM lparam )
@@ -992,7 +1014,7 @@ BOOL HasToolAtPoint( struct toolbar *bar, LPARAM lparam )
     } else {
         pt.x = LOWORD( lparam );
         pt.y = HIWORD( lparam );
-        return( SendMessage( bar->hwnd, TB_HITTEST, 0, (LPARAM)&pt ) >= 0 );
+        return( customHitTest( bar, &pt ) >= 0 );
     }
 #endif
 } /* HasToolAtPoint */
@@ -1007,7 +1029,6 @@ BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id )
 #ifdef __NT__
     POINT       pt;
     int         ret;
-    TBBUTTON    tbb;
     
     if( hInstCommCtrl == NULL ) {
 #endif
@@ -1022,10 +1043,9 @@ BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id )
     } else {
         pt.x = LOWORD( lparam );
         pt.y = HIWORD( lparam );
-        ret = SendMessage( bar->hwnd, TB_HITTEST, 0, (LPARAM)&pt );
+        ret = customHitTest( bar, &pt );
         if( ret >= 0 ) {
-            SendMessage( bar->hwnd, TB_GETBUTTON, (WPARAM)ret, (LPARAM)&tbb );
-            *id = tbb.idCommand;
+            *id = ret;
             return( TRUE );
         } else {
             return( FALSE );
@@ -1288,7 +1308,7 @@ void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
     } else {
         n = SendMessage( bar->hwnd, TB_COMMANDTOINDEX, (WPARAM)id, 0L );
         if( n >= 0 ) {
-            SendMessage( bar->hwnd, TB_GETBUTTON, (WPARAM)id, (LPARAM)&tbb );
+            SendMessage( bar->hwnd, TB_GETBUTTON, (WPARAM)n, (LPARAM)&tbb );
             tbab.hInst = NULL;
             tbab.nID = (UINT_PTR)TB_CreateTransparentBitmap( newbmp,
                 bar->button_size.x - bar->border.x,
