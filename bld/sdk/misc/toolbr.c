@@ -441,10 +441,8 @@ void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
     } else {
         if( !(info->flags & ITEM_BLANK) ) {
             GetObject( info->bmp, sizeof( BITMAP ), &bm );
-            if( SendMessage( bar->hwnd, TB_BUTTONCOUNT, 0, 0L ) == 0 ) {
-                SendMessage( bar->hwnd, TB_SETBITMAPSIZE, 0,
-                    MAKELONG( bm.bmWidth, bm.bmHeight ) );
-            }
+            SendMessage( bar->hwnd, TB_SETBITMAPSIZE, 0,
+                MAKELONG( bm.bmWidth, bm.bmHeight ) );
             tbab.hInst = NULL;
             tbab.nID = (UINT_PTR)TB_CreateTransparentBitmap( info->bmp, bm.bmWidth, bm.bmHeight );
             tbb.iBitmap = (int)SendMessage( bar->hwnd, TB_ADDBITMAP, 1, (LPARAM)&tbab );
