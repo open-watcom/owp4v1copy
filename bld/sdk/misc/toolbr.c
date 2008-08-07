@@ -123,6 +123,8 @@ static BOOL             ignore_mousemove = FALSE; // release_capture generates
 
 #if defined(__NT__) || defined(__WINDOWS__)
 void    TB_TransparentBlt( HDC, UINT, UINT, UINT, UINT, HDC, COLORREF );
+#endif
+#ifdef __NT__
 HBITMAP TB_CreateTransparentBitmap( HBITMAP, int, int );
 #endif
 
@@ -980,6 +982,7 @@ static tool *findToolAtPoint( toolbar *bar, LPARAM lparam )
 /*
  * customHitTest - find a tool at a given point for a native toolbar
  */
+#ifdef __NT__
 static int customHitTest( toolbar *bar, POINT *pt )
 {
     int         i;
@@ -998,6 +1001,7 @@ static int customHitTest( toolbar *bar, POINT *pt )
 
     return( -1 );
 }
+#endif
 
 /*
  * HasToolAtPoint - return TRUE if tool exists at a given point
@@ -1408,6 +1412,10 @@ void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height,
 
 }  /* TansparentBlt () */
 
+#endif
+
+#ifdef __NT__
+
 /*
  * TB_CreateTransparentBitmap()
  *
@@ -1444,3 +1452,4 @@ HBITMAP TB_CreateTransparentBitmap( HBITMAP hBitmap, int width, int height )
 }
 
 #endif
+
