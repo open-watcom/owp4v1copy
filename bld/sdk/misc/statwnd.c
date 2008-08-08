@@ -329,7 +329,7 @@ static void updateParts() {
     int     width;
     int     *parts;
 
-    parts = (int *)malloc( sizeof( int ) * numSections );
+    parts = (int *)MemAlloc( sizeof( int ) * (numSections + 1) );
     GetClientRect( stat, &rc );
     width = rc.right - rc.left;
     for( i = 0; i < numSections; i++ ) {
@@ -348,7 +348,7 @@ static void updateParts() {
     } else {
         SendMessage( stat, SB_SETPARTS, numSections, (LPARAM)parts );
     }
-    free( parts );
+    MemFree( parts );
 
 } /* updateParts */
 #endif

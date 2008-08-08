@@ -28,6 +28,10 @@
 *
 ****************************************************************************/
 
+#ifdef __NT__
+    #define _WIN32_IE   0x0300
+#endif
+
 #ifdef __OS2_PM__
 
 #define INCL_PM
@@ -40,6 +44,9 @@
 #else
 
 #include <windows.h>
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 
 #endif
 
@@ -56,7 +63,7 @@
 #endif
 
 static char                     *className = "StatusWnd";
-static int                      numSections;
+static int                      numSections = 0;
 static status_block_desc        sectionDesc[MAX_SECTIONS];
 static char                     *sectionData[MAX_SECTIONS+1];
 static UINT                     sectionDataFlags[MAX_SECTIONS+1];
@@ -71,6 +78,14 @@ static BOOL                     hasGDIObjects;
 static BOOL                     classRegistered;
 static WPI_INST                 classHandle;
 static int                      wndHeight;
+static HWND                     stat = NULL;
+#ifdef __NT__
+static HINSTANCE                hInstCommCtrl;
+
+typedef VOID    (WINAPI *PFNICC)( VOID );
+
+static PFNICC   pfnInitCommonControls;
+#endif
 
 #if defined( __UNIX__ )
 #define CB      LONG
@@ -325,33 +340,44 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra )
     WNDCLASS    wc;
     int         rc;
 
-    colorButtonFace = GetSysColor( COLOR_BTNFACE );
-    if( !hasGDIObjects ) {
-        brushButtonFace = CreateSolidBrush( colorButtonFace );
-        penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
-        penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
-        hasGDIObjects = TRUE;
-    }
+#ifdef __NT__
+    if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
+        pfnInitCommonControls = (PFNICC)GetProcAddress( hInstCommCtrl,
+                                                        "InitCommonControls" );
+        pfnInitCommonControls();
+        return( 1 );
+    } else {
+#endif
+        colorButtonFace = GetSysColor( COLOR_BTNFACE );
+        if( !hasGDIObjects ) {
+            brushButtonFace = CreateSolidBrush( colorButtonFace );
+            penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
+            penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
+            hasGDIObjects = TRUE;
+        }
 
-    statusWndHookFunc = hook;
+        statusWndHookFunc = hook;
 
-    rc = TRUE;
-    if( !classRegistered ) {
-        classHandle = hinstance;
-        wc.style = CS_HREDRAW | CS_VREDRAW;
-        wc.lpfnWndProc = (LPVOID) StatusWndCallback;
-        wc.cbClsExtra = 0;
-        wc.cbWndExtra = extra;
-        wc.hInstance = hinstance;
-        wc.hIcon = LoadIcon( (HINSTANCE)NULL, IDI_APPLICATION );
-        wc.hCursor = LoadCursor( (HINSTANCE)NULL, IDC_ARROW );
-        wc.hbrBackground = (HBRUSH) 0;
-        wc.lpszMenuName = NULL;
-        wc.lpszClassName = className;
-        rc = RegisterClass( &wc );
-        classRegistered = TRUE;
+        rc = TRUE;
+        if( !classRegistered ) {
+            classHandle = hinstance;
+            wc.style = CS_HREDRAW | CS_VREDRAW;
+            wc.lpfnWndProc = (LPVOID) StatusWndCallback;
+            wc.cbClsExtra = 0;
+            wc.cbWndExtra = extra;
+            wc.hInstance = hinstance;
+            wc.hIcon = LoadIcon( (HINSTANCE)NULL, IDI_APPLICATION );
+            wc.hCursor = LoadCursor( (HINSTANCE)NULL, IDC_ARROW );
+            wc.hbrBackground = (HBRUSH) 0;
+            wc.lpszMenuName = NULL;
+            wc.lpszClassName = className;
+            rc = RegisterClass( &wc );
+            classRegistered = TRUE;
+        }
+        return( rc );
+#ifdef __NT__
     }
-    return( rc );
+#endif
 #else
         /*
          ******************
@@ -384,13 +410,45 @@ int StatusWndInit( WPI_INST hinstance, statushook hook, int extra )
 } /* StatusWndInit */
 
 /*
+ * updateParts - update the parts of a native status bar
+ */
+#ifdef __NT__
+static void updateParts() {
+    int     i;
+    RECT    rc;
+    int     width;
+    int     *parts;
+
+    parts = (int *)MemAlloc( sizeof( int ) * (numSections + 1) );
+    GetClientRect( stat, &rc );
+    width = rc.right - rc.left;
+    for( i = 0; i < numSections; i++ ) {
+        if( sectionDesc[i].width_is_percent ) {
+            parts[i] = sectionDesc[i].width * width / 100;
+        } else {
+            parts[i] = sectionDesc[i].width;
+        }
+        if( i > 0 && parts[i] != -1 ) {
+            parts[i] += sectionDesc[i - 1].separator_width;
+        }
+    }
+    if( numSections == 0 || parts[numSections - 1] != -1 ) {
+        parts[numSections] = -1;
+        SendMessage( stat, SB_SETPARTS, numSections + 1, (LPARAM)parts );
+    } else {
+        SendMessage( stat, SB_SETPARTS, numSections, (LPARAM)parts );
+    }
+    MemFree( parts );
+
+} /* updateParts */
+#endif
+
+/*
  * StatusWndCreate - create the status window
  */
 HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance,
                                                         LPVOID lpvParam )
 {
-    HWND        stat;
-
 #ifndef __OS2_PM__
     /*
      ****************
@@ -398,7 +456,14 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance,
      ****************
      */
 #if defined (__NT__)
-    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+    if( hInstCommCtrl != NULL ) {
+        stat = CreateWindow( STATUSCLASSNAME, NULL,
+                             WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, 0, 0, 0,
+                             parent, NULL, hinstance, NULL );
+        if( numSections > 0 ) {
+            updateParts();
+        }
+    } else if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
         stat = CreateWindow( className, NULL,
                              WS_CHILD,
                              size->left, size->top,
@@ -568,51 +633,84 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, char *str, UINT flags )
 
     curr_block = 0;
     sectionDataFont = hfont;
-    if( !initPRES( pres ) ) {
-        return;
-    }
-    getRect( &rect, curr_block );
-    makeInsideRect( &rect );
-    bptr = str;
-    if( flags == (UINT) -1  ) {
-        flags = DT_VCENTER | DT_LEFT;
-        bptr = buff;
-        while( *str ) {
-            if( *str == STATUS_ESC_CHAR ) {
-                str++;
-                switch( *str ) {
-                case STATUS_NEXT_BLOCK:
-                    *bptr = 0;
-                    outputText( pres, buff, &rect, flags, curr_block );
-                    curr_block++;
-                    getRect( &rect, curr_block );
-                    makeInsideRect( &rect );
-                    flags = DT_VCENTER | DT_LEFT;
-                    bptr = buff;
-                    break;
-                case STATUS_FORMAT_CENTER:
-                    flags &= ~(DT_RIGHT|DT_LEFT);
-                    flags |= DT_CENTER;
-                    break;
-                case STATUS_FORMAT_RIGHT:
-                    flags &= ~(DT_CENTER|DT_LEFT);
-                    flags |= DT_RIGHT;
-                    break;
-                case STATUS_FORMAT_LEFT:
-                    flags &= ~(DT_CENTER|DT_RIGHT);
-                    flags |= DT_LEFT;
-                    break;
-                }
-            } else {
-                *bptr++ = *str;
-            }
-            str++;
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+#endif
+        if( !initPRES( pres ) ) {
+            return;
         }
-        *bptr = 0;
-        bptr = buff;
+        getRect( &rect, curr_block );
+        makeInsideRect( &rect );
+        bptr = str;
+        if( flags == (UINT) -1  ) {
+            flags = DT_VCENTER | DT_LEFT;
+            bptr = buff;
+            while( *str ) {
+                if( *str == STATUS_ESC_CHAR ) {
+                    str++;
+                    switch( *str ) {
+                    case STATUS_NEXT_BLOCK:
+                        *bptr = 0;
+                        outputText( pres, buff, &rect, flags, curr_block );
+                        curr_block++;
+                        getRect( &rect, curr_block );
+                        makeInsideRect( &rect );
+                        flags = DT_VCENTER | DT_LEFT;
+                        bptr = buff;
+                        break;
+                    case STATUS_FORMAT_CENTER:
+                        flags &= ~(DT_RIGHT|DT_LEFT);
+                        flags |= DT_CENTER;
+                        break;
+                    case STATUS_FORMAT_RIGHT:
+                        flags &= ~(DT_CENTER|DT_LEFT);
+                        flags |= DT_RIGHT;
+                        break;
+                    case STATUS_FORMAT_LEFT:
+                        flags &= ~(DT_CENTER|DT_RIGHT);
+                        flags |= DT_LEFT;
+                        break;
+                    }
+                } else {
+                    *bptr++ = *str;
+                }
+                str++;
+            }
+            *bptr = 0;
+            bptr = buff;
+        }
+        outputText( pres, bptr, &rect, flags, curr_block );
+        finiPRES( pres );
+#ifdef __NT__
+    } else {
+        bptr = str;
+        if( flags == (UINT)-1 ) {
+            bptr = buff;
+            while( *str ) {
+                if( *str == STATUS_ESC_CHAR ) {
+                    str++;
+                    if( *str == STATUS_NEXT_BLOCK ) {
+                        *bptr = 0;
+                        if( strlen( buff ) > 0 ) {
+                            SendMessage( stat, SB_SETTEXT, curr_block, (LPARAM)buff );
+                        }
+                        curr_block++;
+                        bptr = buff;
+                    }
+                } else {
+                    *bptr++ = *str;
+                }
+                str++;
+            }
+            *bptr = 0;
+            bptr = buff;
+        }
+        if( strlen( bptr ) > 0 ) {
+            SendMessage( stat, SB_SETTEXT, curr_block, (LPARAM)bptr );
+        }
     }
-    outputText( pres, bptr, &rect, flags, curr_block );
-    finiPRES( pres );
+#endif
+
 } /* StatusWndDrawLine */
 
 /*
@@ -629,6 +727,12 @@ void StatusWndSetSeparators( int num_items, status_block_desc *list )
         sectionDesc[i] = list[i];
     }
     numSections = num_items;
+
+#ifdef __NT__
+    if( hInstCommCtrl != NULL && stat != NULL ) {
+        updateParts();
+    }
+#endif
 
 } /* StatusWndSetSeparators */
 
