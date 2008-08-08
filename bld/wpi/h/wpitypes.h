@@ -186,13 +186,23 @@
         HWND            hwndSubMenu;
         unsigned long   hItem;
     } WPI_MENUITEM;
-    #define WC_BUTTON                   "button"
-    #define WC_COMBOBOX                 "combobox"
+    #ifndef WC_BUTTON
+        #define WC_BUTTON               "button"
+    #endif
+    #ifndef WC_COMBOBOX
+        #define WC_COMBOBOX             "combobox"
+    #endif
     #define WC_MLE                      "edit"
     #define WC_ENTRYFIELD               "edit"
-    #define WC_LISTBOX                  "listbox"
-    #define WC_SCROLLBAR                "scrollbar"
-    #define WC_STATIC                   "static"
+    #ifndef WC_LISTBOX
+        #define WC_LISTBOX              "listbox"
+    #endif
+    #ifndef WC_SCROLLBAR
+        #define WC_SCROLLBAR            "scrollbar"
+    #endif
+    #ifndef WC_STATIC
+        #define WC_STATIC               "static"
+    #endif
     #define WC_GROUPBOX                 "button"
 #endif
 
