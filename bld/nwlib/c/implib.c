@@ -75,25 +75,25 @@ static orl_return FindExportTableHelper( orl_sec_handle sec )
     return( ORL_OKAY );
 } /* FindExportTableHelper() */
 
-static orl_sec_handle FindSec( obj_file *file, char *name )
+static orl_sec_handle FindSec( obj_file *ofile, char *name )
 {
     export_table_rva = 0;
     found_sec_handle = 0;
 
-    ORLFileScan( file->orl, name, FindHelper );
+    ORLFileScan( ofile->orl, name, FindHelper );
     if( found_sec_handle == 0 ) {
         if( !stricmp( ".edata", name ) ) {
-            export_table_rva = ORLExportTableRVA( file->orl );
+            export_table_rva = ORLExportTableRVA( ofile->orl );
 
             if( export_table_rva == 0L ) {
-                FatalError( ERR_NO_EXPORTS, file->hdl->name );
+                FatalError( ERR_NO_EXPORTS, ofile->hdl->name );
             }
 
-            ORLFileScan( file->orl, NULL, FindExportTableHelper );
+            ORLFileScan( ofile->orl, NULL, FindExportTableHelper );
         }
 
         if( found_sec_handle == 0 ) {
-            FatalError( ERR_NO_EXPORTS, file->hdl->name );
+            FatalError( ERR_NO_EXPORTS, ofile->hdl->name );
         }
     }
 
@@ -102,7 +102,7 @@ static orl_sec_handle FindSec( obj_file *file, char *name )
 
 static bool elfAddImport( arch_header *arch, libfile io )
 {
-    obj_file        *file;
+    obj_file        *ofile;
     orl_sec_handle  sym_sec;
     orl_sec_handle  export_sec;
     orl_sec_handle  string_sec;
@@ -130,11 +130,11 @@ static bool elfAddImport( arch_header *arch, libfile io )
         return( FALSE );
     }
     LibSeek( io, 0x00, SEEK_SET );
-    file = OpenObjFile( io->name );
-    if( !file->orl ) {
+    ofile = OpenObjFile( io->name );
+    if( ofile->orl == NULL ) {
         FatalError( ERR_CANT_READ, io->name, "Unknown error" );
     }
-    switch( ORLFileGetMachineType( file->orl ) ) {
+    switch( ORLFileGetMachineType( ofile->orl ) ) {
     case ORL_MACHINE_TYPE_PPC601:
         processor = WL_PROC_PPC;
         break;
@@ -149,7 +149,7 @@ static bool elfAddImport( arch_header *arch, libfile io )
     DLLname = DupStr( arch->name );
     _splitpath( oldname, NULL, NULL, NULL, arch->name + strlen( arch->name ) );
 
-    export_sec = FindSec( file, ".exports" );
+    export_sec = FindSec( ofile, ".exports" );
     ORLSecGetContents( export_sec, (unsigned_8 **)&export_table );
     export_size = (Elf32_Word) ORLSecGetSize( export_sec ) / sizeof( Elf32_Export );
     sym_sec = ORLSecGetSymbolTable( export_sec );
@@ -164,7 +164,7 @@ static bool elfAddImport( arch_header *arch, libfile io )
     MemFree( arch->name );
     MemFree( DLLname );
     arch->name = oldname;
-    CloseObjFile( file );
+    CloseObjFile( ofile );
     return( TRUE );
 }
 
@@ -322,7 +322,7 @@ static bool nlmAddImport( arch_header *arch, libfile io )
 
 static void peAddImport( arch_header *arch, libfile io )
 {
-    obj_file        *file;
+    obj_file        *ofile;
     orl_sec_handle  export_sec;
     orl_sec_offset  export_base;
     char            *edata;
@@ -350,12 +350,12 @@ static void peAddImport( arch_header *arch, libfile io )
         coff_obj = FALSE;
     }
 
-    file = OpenObjFile( io->name );
-    if( !file->orl ) {
+    ofile = OpenObjFile( io->name );
+    if( ofile->orl == NULL ) {
         FatalError( ERR_CANT_READ, io->name, "Unknown error" );
     }
 
-    switch( ORLFileGetMachineType( file->orl ) ) {
+    switch( ORLFileGetMachineType( ofile->orl ) ) {
     case ORL_MACHINE_TYPE_ALPHA:
         processor = WL_PROC_AXP;
         coff_obj = TRUE;
@@ -374,7 +374,7 @@ static void peAddImport( arch_header *arch, libfile io )
     default:
         FatalError( ERR_CANT_READ, io->name, "Not an AXP or PPC DLL" );
     }
-    export_sec = FindSec( file, ".edata" );
+    export_sec = FindSec( ofile, ".edata" );
     ORLSecGetContents( export_sec, (unsigned_8 **)&edata );
     export_base = ORLSecGetBase( export_sec );
 
@@ -431,7 +431,7 @@ static void peAddImport( arch_header *arch, libfile io )
     MemFree( DLLName );
 
     arch->name = oldname;
-    CloseObjFile( file );
+    CloseObjFile( ofile );
 }
 
 
@@ -857,7 +857,7 @@ int CoffImportSize( import_sym *import )
 
 static short    ElfProcessors[ 4 ] = { 0, EM_ALPHA, EM_PPC, 0 };
 
-void ElfWriteImport( libfile io, sym_file *file )
+void ElfWriteImport( libfile io, sym_file *sfile )
 {
     elf_import_sym  *temp;
     import_sym      *import;
@@ -867,7 +867,7 @@ void ElfWriteImport( libfile io, sym_file *file )
     long            offset;
     long            more;
 
-    import = file->import;
+    import = sfile->import;
     strtabsize = ELFBASESTRTABSIZE + strlen( import->DLLName ) + 1;
     for( temp=import->symlist; temp != NULL; temp = temp->next ) {
         strtabsize += temp->len + 1;

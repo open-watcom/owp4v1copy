@@ -128,7 +128,7 @@ static void WriteOmfRecord( bool checksum )
     WriteNew( omfRec, omfRec->basic.len + 3 );
 }
 
-static void WriteTimeStamp( sym_file *file )
+static void WriteTimeStamp( sym_file *sfile )
 {
     OmfRecord   rec;
 
@@ -137,7 +137,7 @@ static void WriteTimeStamp( sym_file *file )
     rec.time.attribute = CMT_TNP | CMT_TNL;
     rec.time.class = CMT_LINKER_DIRECTIVE;
     rec.time.subclass = LDIR_OBJ_TIMESTAMP;
-    rec.time.stamp = file->arch.date;
+    rec.time.stamp = sfile->arch.date;
     rec.time.chksum = 0;
     CalcOmfRecordCheckSum( &rec );
     WriteNew( &rec, rec.basic.len + 3 );
@@ -300,30 +300,30 @@ static bool InsertOmfDict( OmfLibBlock *lib_block, unsigned num_blocks,
 }
 
 
-static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_file *file )
+static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_file *sfile )
 {
     bool        ret = TRUE;
     sym_entry   *sym;
     unsigned    str_len;
     char        *fname;
 
-    for( ; file != NULL; file = file->next ) {
-        if( file->import ) {
-            fname = file->import->symName;
+    for( ; sfile != NULL; sfile = sfile->next ) {
+        if( sfile->import ) {
+            fname = sfile->import->symName;
         } else {
-            fname = MakeFName( file->full_name);
+            fname = MakeFName( sfile->full_name);
         }
         str_len = strlen( fname );
         fname[ str_len ] ='!';
         ret = InsertOmfDict( lib_block, num_blocks, fname,
-            str_len + 1, file->new_offset );
+            str_len + 1, sfile->new_offset );
         fname[ str_len ] = 0;
         if( ret == FALSE ) {
             return( ret );
         }
-        for( sym = file->first; sym != NULL; sym = sym->next ) {
+        for( sym = sfile->first; sym != NULL; sym = sym->next ) {
             ret = InsertOmfDict( lib_block, num_blocks, sym->name,
-                sym->len, file->new_offset );
+                sym->len, sfile->new_offset );
             if( ret == FALSE ) {
                 return( ret );
             }
@@ -333,7 +333,7 @@ static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_fil
 }
 
 //return size of dict
-unsigned WriteOmfDict( sym_file *first )
+unsigned WriteOmfDict( sym_file *first_sfile )
 {
     bool        done;
     unsigned    num_blocks;
@@ -358,7 +358,7 @@ unsigned WriteOmfDict( sym_file *first )
         for( i = 0; i < num_blocks; i++ ) {
             lib_block[ i ].fflag = ( NUM_BUCKETS + 1 ) / 2;
         }
-        done = HashOmfSymbols( lib_block, num_blocks, first );
+        done = HashOmfSymbols( lib_block, num_blocks, first_sfile );
     } while( done == FALSE );
     for( i = 0; i < num_blocks; i++ ) {
         for( j = 0; j < NUM_BUCKETS; j++ ) {
@@ -386,7 +386,7 @@ static void trimOmfHeader( void )
     CalcOmfRecordCheckSum( omfRec );
 }
 
-void WriteOmfFile( sym_file *file )
+void WriteOmfFile( sym_file *sfile )
 {
     libfile     io;
     sym_entry   *sym;
@@ -399,17 +399,17 @@ void WriteOmfFile( sym_file *file )
     //be word aligned
     current = LibTell(NewLibrary);
     CheckForOverflow(current);
-    file->new_offset = current / Options.page_size;
-    if( file->import == NULL ) {
-        charCount += ( strlen( MakeFName( file->arch.name ) ) + 1 ) | 1;
+    sfile->new_offset = current / Options.page_size;
+    if( sfile->import == NULL ) {
+        charCount += ( strlen( MakeFName( sfile->arch.name ) ) + 1 ) | 1;
         // Options.page_size is always a power of 2 so someone should optimize
         //this sometime. maybe store page_size as a log
         time_stamp = FALSE;
-        if( file->inlib_offset != 0 ) {
-            io = InLibHandle( file->inlib );
-            LibSeek( io, file->inlib_offset, SEEK_SET );
+        if( sfile->inlib_offset != 0 ) {
+            io = InLibHandle( sfile->inlib );
+            LibSeek( io, sfile->inlib_offset, SEEK_SET );
         } else {
-            io = LibOpen( file->full_name, LIBOPEN_BINARY_READ );
+            io = LibOpen( sfile->full_name, LIBOPEN_BINARY_READ );
         }
         do {
             ReadOmfRecord( io );
@@ -452,13 +452,13 @@ void WriteOmfFile( sym_file *file )
             case CMD_MODEND:
             case CMD_MODE32:
                 if( !time_stamp ) {
-                    WriteTimeStamp( file );
+                    WriteTimeStamp( sfile );
                 }
                 break;
             }
             WriteOmfRecord( FALSE );
         } while( omfRec->basic.type != CMD_MODEND && omfRec->basic.type != CMD_MODE32 );
-        if( file->inlib_offset == 0 ) {
+        if( sfile->inlib_offset == 0 ) {
             LibClose( io );
         }
     } else {
@@ -467,41 +467,41 @@ void WriteOmfFile( sym_file *file )
         unsigned    i;
 
         omfRec->basic.type = CMD_THEADR;
-        sym_len = strlen( file->import->symName );
+        sym_len = strlen( sfile->import->symName );
         omfRec->basic.len = sym_len + 2;
         omfRec->basic.contents[ 0 ] = sym_len;
         charCount += ( sym_len + 1 ) | 1;
-        memcpy( omfRec->basic.contents + 1, file->import->symName, sym_len );
+        memcpy( omfRec->basic.contents + 1, sfile->import->symName, sym_len );
         WriteOmfRecord( TRUE );
-        file_len = strlen( file->import->DLLName );
+        file_len = strlen( sfile->import->DLLName );
         omfRec->basic.type = CMD_COMENT;
         omfRec->basic.len = 2 + 2 + ( 1 + file_len ) + ( 1 + sym_len ) + 1;
         omfRec->basic.contents[ 0 ] = CMT_TNP;
         omfRec->basic.contents[ 1 ] = CMT_DLL_ENTRY;
         omfRec->basic.contents[ 2 ] = MOMF_IMPDEF;
-        if( file->import->type == ORDINAL ) {
+        if( sfile->import->type == ORDINAL ) {
             omfRec->basic.contents[ 3 ] = 1;
         } else {
             omfRec->basic.contents[ 3 ] = 0;
         }
         omfRec->basic.contents[ 4 ] = sym_len;
-        memcpy( omfRec->basic.contents + 5, file->import->symName, sym_len );
+        memcpy( omfRec->basic.contents + 5, sfile->import->symName, sym_len );
         omfRec->basic.contents[ 5 + sym_len ] = file_len;
-        memcpy( omfRec->basic.contents + 6 + sym_len, file->import->DLLName, file_len );
-        if( file->import->type == ORDINAL ) {
-            *( (unsigned_16 *)&( omfRec->basic.contents[ 6 + sym_len + file_len ] ) ) = (unsigned_16)file->import->ordinal;
+        memcpy( omfRec->basic.contents + 6 + sym_len, sfile->import->DLLName, file_len );
+        if( sfile->import->type == ORDINAL ) {
+            *( (unsigned_16 *)&( omfRec->basic.contents[ 6 + sym_len + file_len ] ) ) = (unsigned_16)sfile->import->ordinal;
             omfRec->basic.len += 2;
-        } else if( file->import->exportedName == NULL ) {
+        } else if( sfile->import->exportedName == NULL ) {
             omfRec->basic.contents[ 6 + sym_len + file_len ] = 0;
             omfRec->basic.len += 1;
         } else {
-            i = strlen( file->import->exportedName );
+            i = strlen( sfile->import->exportedName );
             omfRec->basic.contents[ 6 + sym_len + file_len ] = i;
-            memcpy( omfRec->basic.contents + 7 + sym_len + file_len, file->import->exportedName, i );
+            memcpy( omfRec->basic.contents + 7 + sym_len + file_len, sfile->import->exportedName, i );
             omfRec->basic.len += i + 1;
         }
         WriteOmfRecord( TRUE );
-        WriteTimeStamp( file );
+        WriteTimeStamp( sfile );
         omfRec->basic.type = CMD_MODEND;
         omfRec->basic.len = 2;
         omfRec->basic.contents[ 0 ] = 0;
@@ -509,7 +509,7 @@ void WriteOmfFile( sym_file *file )
         WriteOmfRecord( TRUE );
     }
     PadOmf( FALSE );
-    for( sym = file->first; sym != NULL; sym = sym->next ) {
+    for( sym = sfile->first; sym != NULL; sym = sym->next ) {
         ++symCount;
         charCount += sym->len | 1;
     }

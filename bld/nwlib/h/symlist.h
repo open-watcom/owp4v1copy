@@ -30,5 +30,5 @@
 ****************************************************************************/
 
 
-extern bool ObjWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,symbol_strength strength,unsigned char info) );
-extern void OMFWalkSymList( obj_file *file, sym_file *sfile, void (*rtn)(char*name,symbol_strength strength,unsigned char info) );
+extern bool ObjWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)( char *, symbol_strength, unsigned char ) );
+extern void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)( char *, symbol_strength, unsigned char ) );

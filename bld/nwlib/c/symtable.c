@@ -50,40 +50,40 @@ void InitFileTab( void )
     memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[ 0 ] ) );
 }
 
-void FiniSymFile( sym_file *file )
+void FiniSymFile( sym_file *sfile )
 /********************************/
 {
     sym_entry           *sym, *next_sym;
     elf_import_sym      *temp;
 
-    for( sym = file->first; sym != NULL; sym = next_sym ) {
+    for( sym = sfile->first; sym != NULL; sym = next_sym ) {
         next_sym = sym->next;
         MemFreeGlobal( sym );
     }
-    MemFreeGlobal( file->full_name );
-    MemFreeGlobal( file->arch.name );
-    MemFreeGlobal( file->arch.ffname );
-    if( file->import != NULL ) {
-        switch( file->import->type ) {
+    MemFreeGlobal( sfile->full_name );
+    MemFreeGlobal( sfile->arch.name );
+    MemFreeGlobal( sfile->arch.ffname );
+    if( sfile->import != NULL ) {
+        switch( sfile->import->type ) {
         case ELF:
         case ELFRENAMED:
-            for( temp = file->import->symlist; temp != NULL;
-                         temp=file->import->symlist ) {
-                file->import->symlist = temp->next;
+            for( temp = sfile->import->symlist; temp != NULL;
+                         temp = sfile->import->symlist ) {
+                sfile->import->symlist = temp->next;
                 MemFreeGlobal( temp->name );
                 MemFreeGlobal( temp );
             }
-            MemFreeGlobal( file->import->DLLName );
+            MemFreeGlobal( sfile->import->DLLName );
             break;
         default:
-            MemFreeGlobal( file->import->DLLName );
-            MemFreeGlobal( file->import->symName );
-            MemFreeGlobal( file->import->exportedName );
+            MemFreeGlobal( sfile->import->DLLName );
+            MemFreeGlobal( sfile->import->symName );
+            MemFreeGlobal( sfile->import->exportedName );
             break;
         }
-        MemFreeGlobal( file->import );
+        MemFreeGlobal( sfile->import );
     }
-    MemFreeGlobal( file );
+    MemFreeGlobal( sfile );
 }
 
 
@@ -127,12 +127,13 @@ void CleanFileTab( void )
 void ResetFileTab( void )
 /***********************/
 {
-    sym_file            *file, *next_file;
+    sym_file    *sfile;
+    sym_file    *next_sfile;
 
     memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[ 0 ] ) );
-    for( file = FileTable.first; file != NULL; file = next_file ) {
-        next_file = file->next;
-        FiniSymFile( file );
+    for( sfile = FileTable.first; sfile != NULL; sfile = next_sfile ) {
+        next_sfile = sfile->next;
+        FiniSymFile( sfile );
     }
     FileTable.first = NULL;
     FileTable.add_to = &FileTable.first;
@@ -178,26 +179,26 @@ void RemoveFromHashTable( sym_entry *sym )
 static void NewSymFile( arch_header *arch )
 /*****************************************/
 {
-    sym_file    *file;
+    sym_file    *sfile;
 
-    file = MemAllocGlobal( sizeof( sym_file ) );
-    file->first = NULL;
-    file->next = NULL;
-    file->arch = *arch;
-    file->import = NULL;
-    file->inlib_offset = 0;
-    file->full_name = DupStrGlobal( file->arch.name );
-    file->arch.name = DupStrGlobal( TrimPath( file->arch.name ) ); // make own copy
-    file->name_length = strlen( file->arch.name );
-    if( file->arch.ffname ) {
-        file->arch.ffname = DupStrGlobal( file->arch.ffname );
-        file->ffname_length = strlen( file->arch.ffname );
+    sfile = MemAllocGlobal( sizeof( sym_file ) );
+    sfile->first = NULL;
+    sfile->next = NULL;
+    sfile->arch = *arch;
+    sfile->import = NULL;
+    sfile->inlib_offset = 0;
+    sfile->full_name = DupStrGlobal( sfile->arch.name );
+    sfile->arch.name = DupStrGlobal( TrimPath( sfile->arch.name ) ); // make own copy
+    sfile->name_length = strlen( sfile->arch.name );
+    if( sfile->arch.ffname ) {
+        sfile->arch.ffname = DupStrGlobal( sfile->arch.ffname );
+        sfile->ffname_length = strlen( sfile->arch.ffname );
     } else {
-        file->ffname_length = 0;
+        sfile->ffname_length = 0;
     }
-    *(FileTable.add_to) = file;
-    FileTable.add_to = &file->next;
-    CurrFile = file;
+    *(FileTable.add_to) = sfile;
+    FileTable.add_to = &sfile->next;
+    CurrFile = sfile;
 }
 
 
@@ -236,7 +237,7 @@ static file_offset      TotalSymbolLength;
 static void SortSymbols( void )
 /*****************************/
 {
-    sym_file    *file;
+    sym_file    *sfile;
     sym_entry   *sym;
     sym_entry   **sym_curr;
     int         i;
@@ -256,36 +257,36 @@ static void SortSymbols( void )
         name_extra = 2;
         break;
     }
-    for( file = FileTable.first; file != NULL; file = file->next ) {
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
         ++NumFiles;
-        file->name_offset = TotalNameLength;
+        sfile->name_offset = TotalNameLength;
         switch( Options.libtype ) {
         case WL_LTYPE_AR:
             // Always using "full" filename for AR
-            if( file->arch.ffname ) {
-                name_length = file->ffname_length;
+            if( sfile->arch.ffname ) {
+                name_length = sfile->ffname_length;
             } else {
-                file->ffname_length = 0;
-                name_length = file->name_length;
+                sfile->ffname_length = 0;
+                name_length = sfile->name_length;
             }
             break;
         case WL_LTYPE_MLIB:
             // If no full filename, assume name is full, and trim
             // it to get non-full filename.
-            if( file->arch.ffname == NULL ) {
-                file->arch.ffname = file->arch.name;
-                file->ffname_length = strlen( file->arch.ffname );
-                file->arch.name = MemAllocGlobal( _MAX_FNAME + _MAX_EXT + 1 );
-                _splitpath( file->arch.ffname, NULL, NULL, file->arch.name, NULL );
-                _splitpath( file->arch.ffname, NULL, NULL, NULL, file->arch.name + strlen( file->arch.name ) );
-                file->name_length = strlen( file->arch.name );
+            if( sfile->arch.ffname == NULL ) {
+                sfile->arch.ffname = sfile->arch.name;
+                sfile->ffname_length = strlen( sfile->arch.ffname );
+                sfile->arch.name = MemAllocGlobal( _MAX_FNAME + _MAX_EXT + 1 );
+                _splitpath( sfile->arch.ffname, NULL, NULL, sfile->arch.name, NULL );
+                _splitpath( sfile->arch.ffname, NULL, NULL, NULL, sfile->arch.name + strlen( sfile->arch.name ) );
+                sfile->name_length = strlen( sfile->arch.name );
             }
-            name_length = file->name_length;
+            name_length = sfile->name_length;
             break;
         }
         TotalNameLength += name_length + name_extra;
-        TotalFFNameLength += file->ffname_length + 1;
-        for( sym = file->first; sym != NULL; sym = sym->next ) {
+        TotalFFNameLength += sfile->ffname_length + 1;
+        for( sym = sfile->first; sym != NULL; sym = sym->next ) {
             ++NumSymbols;
             TotalSymbolLength += sym->len + 1;
         }
@@ -299,8 +300,8 @@ static void SortSymbols( void )
     }
 
     sym_curr = SortedSymbols;
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        for( sym = file->first; sym != NULL; sym = sym->next ) {
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        for( sym = sfile->first; sym != NULL; sym = sym->next ) {
             *sym_curr = sym;
             ++sym_curr;
         }
@@ -310,8 +311,8 @@ static void SortSymbols( void )
 
     // re-hook symbols onto files in sorted order
 
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        file->first = NULL;
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        sfile->first = NULL;
     }
 
     for( i = NumSymbols - 1; i >= 0; --i ) {
@@ -324,7 +325,7 @@ static void SortSymbols( void )
 static void WriteOmfFileTable( void )
 /***********************************/
 {
-    sym_file    *file;
+    sym_file    *sfile;
     unsigned    num_blocks;
     unsigned    dict_offset;
 
@@ -334,8 +335,8 @@ static void WriteOmfFileTable( void )
     InitOmfUtil();
     PadOmf( TRUE );
 
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        WriteOmfFile( file );
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        WriteOmfFile( sfile );
     }
     WriteOmfLibTrailer();
     dict_offset = LibTell( NewLibrary );
@@ -348,7 +349,7 @@ static void WriteArMlibFileTable( void )
 /**************************************/
 {
     arch_header     arch;
-    sym_file        *file;
+    sym_file        *sfile;
     sym_entry       *sym;
     file_offset     dict1_size = 0;
     file_offset     dict2_size = 0;
@@ -406,10 +407,10 @@ static void WriteArMlibFileTable( void )
 
     index = 0;
     obj_offset = 0;
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        file->new_offset = obj_offset + header_size;
-        file->index = ++index;
-        obj_offset += RoundWord( file->arch.size ) + AR_HEADER_SIZE;
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        sfile->new_offset = obj_offset + header_size;
+        sfile->index = ++index;
+        obj_offset += RoundWord( sfile->arch.size ) + AR_HEADER_SIZE;
     }
 
     switch( Options.libtype ) {
@@ -434,13 +435,13 @@ static void WriteArMlibFileTable( void )
         WriteFileHeader( &arch );
 
         WriteBigEndian32( NumSymbols );
-        for( file = FileTable.first; file != NULL; file = file->next ) {
-            for( sym = file->first; sym != NULL; sym = sym->next ) {
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            for( sym = sfile->first; sym != NULL; sym = sym->next ) {
                 WriteBigEndian32( sym->file->new_offset );
             }
         }
-        for( file = FileTable.first; file != NULL; file = file->next ) {
-            for( sym = file->first; sym != NULL; sym = sym->next ) {
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            for( sym = sfile->first; sym != NULL; sym = sym->next ) {
                 WriteNew( sym->name, sym->len+1 );
             }
         }
@@ -455,8 +456,8 @@ static void WriteArMlibFileTable( void )
 
     if( Options.libtype == WL_LTYPE_AR ) {
         WriteLittleEndian32( NumFiles );
-        for( file = FileTable.first; file != NULL; file = file->next ) {
-            WriteLittleEndian32( file->new_offset );
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            WriteLittleEndian32( sfile->new_offset );
         }
     }
 
@@ -493,14 +494,14 @@ static void WriteArMlibFileTable( void )
     arch.size = TotalNameLength;
     arch.name = "//";
     WriteFileHeader( &arch );
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        if( file->name_offset == -1 )
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        if( sfile->name_offset == -1 )
             continue;
         // Always write the "full" filename for AR
-        if( Options.libtype == WL_LTYPE_AR && file->arch.ffname ) {
-            WriteNew( file->arch.ffname, file->ffname_length );
+        if( Options.libtype == WL_LTYPE_AR && sfile->arch.ffname ) {
+            WriteNew( sfile->arch.ffname, sfile->ffname_length );
         } else {
-            WriteNew( file->arch.name, file->name_length );
+            WriteNew( sfile->arch.name, sfile->name_length );
         }
         WriteNew( stringpad, stringpadlen );
     }
@@ -512,39 +513,39 @@ static void WriteArMlibFileTable( void )
         arch.size = TotalFFNameLength;
         arch.name = "///";
         WriteFileHeader( &arch );
-        for( file = FileTable.first; file != NULL; file = file->next ) {
-            WriteNew( file->arch.ffname, file->ffname_length + 1 );
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            WriteNew( sfile->arch.ffname, sfile->ffname_length + 1 );
         }
         WritePad( TotalFFNameLength );
     }
 
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        arch = file->arch;
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        arch = sfile->arch;
         buff[ 0 ] = '/';
-        itoa( file->name_offset, buff+1, 10 );
+        itoa( sfile->name_offset, buff+1, 10 );
         arch.name = buff;
         WriteFileHeader( &arch );
-        if( file->import == NULL ) {
-            if( file->inlib_offset != 0 ) {
-                LibSeek( InLibHandle( file->inlib ), file->inlib_offset, SEEK_SET );
-                Copy( InLibHandle( file->inlib ), NewLibrary, arch.size );
+        if( sfile->import == NULL ) {
+            if( sfile->inlib_offset != 0 ) {
+                LibSeek( InLibHandle( sfile->inlib ), sfile->inlib_offset, SEEK_SET );
+                Copy( InLibHandle( sfile->inlib ), NewLibrary, arch.size );
             } else {
-                io = LibOpen( file->full_name, LIBOPEN_BINARY_READ );
+                io = LibOpen( sfile->full_name, LIBOPEN_BINARY_READ );
                 Copy( io, NewLibrary, arch.size );
                 LibClose( io );
             }
         } else {
-            switch( file->import->type ) {
+            switch( sfile->import->type ) {
             case ELF:
             case ELFRENAMED:
-                ElfWriteImport( NewLibrary, file );
+                ElfWriteImport( NewLibrary, sfile );
                 break;
             default:
-                CoffWriteImport( NewLibrary, file );
+                CoffWriteImport( NewLibrary, sfile );
                 break;
             }
         }
-        WritePad( file->arch.size );
+        WritePad( sfile->arch.size );
     }
 }
 
@@ -640,7 +641,7 @@ void AddSym( char *name, symbol_strength strength, unsigned char info )
 #ifdef __DEBUG__
 void DumpFileTable( void )
 {
-    sym_file    *file;
+    sym_file    *sfile;
     sym_entry   *entry;
     sym_entry   *hash;
     unsigned    len;
@@ -652,10 +653,10 @@ void DumpFileTable( void )
     printf("File Table Dump\n");
     printf("----------------------------------------------------------\n");
 
-    for( file = FileTable.first; file; file = file->next ) {
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
         ++files;
-        printf( "File: \"%s\"\n", file->full_name );
-        for( entry = file->first; entry; entry = entry->next ) {
+        printf( "File: \"%s\"\n", sfile->full_name );
+        for( entry = sfile->first; entry; entry = entry->next ) {
             ++symbols;
 
             hval = Hash( entry->name, &len );
@@ -705,37 +706,37 @@ void DumpHashTable( void )
 bool RemoveObjectSymbols( char *name )
 /************************************/
 {
-    sym_file    *file;
-    sym_file    *prev;
+    sym_file    *sfile;
+    sym_file    *prev_sfile;
     sym_entry   *sym;
 
-    prev = NULL;
-    for( file = FileTable.first; file != NULL; file = file->next ) {
-        if( SymbolNameCmp( file->full_name, name ) == 0 ) {
-            if( prev ) {    /* Not deleting from head of list */
-                prev->next = file->next;
+    prev_sfile = NULL;
+    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        if( SymbolNameCmp( sfile->full_name, name ) == 0 ) {
+            if( prev_sfile != NULL ) {    /* Not deleting from head of list */
+                prev_sfile->next = sfile->next;
 
-                if( FileTable.add_to == &file->next ) { /* Last node in list */
-                    FileTable.add_to = &prev->next;
+                if( FileTable.add_to == &sfile->next ) { /* Last node in list */
+                    FileTable.add_to = &prev_sfile->next;
                 }
             } else {
-                if( FileTable.add_to == &file->next ) { /* Only node in list */
+                if( FileTable.add_to == &sfile->next ) { /* Only node in list */
                     FileTable.add_to = &FileTable.first;
                     FileTable.first = NULL;
                 } else {  /* First node in the list */
-                    FileTable.first = file->next;
+                    FileTable.first = sfile->next;
                 }
             }
 
-            for( sym = file->first; sym != NULL; sym = sym->next ) {
+            for( sym = sfile->first; sym != NULL; sym = sym->next ) {
                 RemoveFromHashTable( sym );
             }
 
-            FiniSymFile( file );
+            FiniSymFile( sfile );
             Options.modified = TRUE;
             return( TRUE );
         }
-        prev = file;
+        prev_sfile = sfile;
     }
     return( FALSE );
 }
@@ -743,13 +744,13 @@ bool RemoveObjectSymbols( char *name )
 void AddObjectSymbols( arch_header *arch, libfile io, long offset )
 /*****************************************************************/
 {
-    obj_file            *file;
+    obj_file    *ofile;
 
-    file = OpenLibFile( arch->name, io );
-    if( file->orl ) {
+    ofile = OpenLibFile( arch->name, io );
+    if( ofile->orl ) {
         orl_file_handle orl;
-        orl = file->orl;
-        if( ORLFileGetFormat( file->orl ) == ORL_COFF ) {
+        orl = ofile->orl;
+        if( ORLFileGetFormat( ofile->orl ) == ORL_COFF ) {
             if( Options.libtype == WL_LTYPE_MLIB ) {
                 FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
             }
@@ -772,8 +773,8 @@ void AddObjectSymbols( arch_header *arch, libfile io, long offset )
     NewSymFile( arch );
     CurrFile->inlib_offset = offset;
     CurrFile->inlib = FindInLib( io );
-    ObjWalkSymList( file, CurrFile, AddSym );
-    CloseLibFile( file );
+    ObjWalkSymList( ofile, CurrFile, AddSym );
+    CloseLibFile( ofile );
 }
 
 void OmfMKImport( arch_header *arch, long ordinal, char *dll_name,
@@ -989,7 +990,7 @@ static void printVerboseTableEntry( arch_header *arch )
 void ListContents( void )
 /******************************/
 {
-    sym_file    *file;
+    sym_file    *sfile;
     lib_cmd     *cmd;
 
     if( Options.ar ) {
@@ -997,12 +998,12 @@ void ListContents( void )
             for( cmd = CmdList; cmd != NULL; cmd = cmd->next ) {
                 if( cmd->ops & OP_FOUND ) {
                     if( Options.verbose ) {
-                        for( file = FileTable.first; file != NULL; file = file->next ) {
-                            if( SameName( file->arch.name, cmd->name ) ) {
+                        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+                            if( SameName( sfile->arch.name, cmd->name ) ) {
                                 if( Options.terse_listing ) {
-                                    Message( file->arch.name );
+                                    Message( sfile->arch.name );
                                 } else {
-                                    printVerboseTableEntry( &( file->arch ) );
+                                    printVerboseTableEntry( &( sfile->arch ) );
                                 }
                                 break;
                             }
@@ -1014,12 +1015,12 @@ void ListContents( void )
             }
         } else {
             if( Options.verbose ) {
-                for( file = FileTable.first; file != NULL; file = file->next ) {
-                    printVerboseTableEntry( & ( file->arch ) );
+                for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+                    printVerboseTableEntry( & ( sfile->arch ) );
                 }
             } else {
-                for( file = FileTable.first; file != NULL; file = file->next ) {
-                    Message( "%s", MakeFName( file->arch.name ) );
+                for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+                    Message( "%s", MakeFName( sfile->arch.name ) );
                 }
             }
         }
@@ -1066,16 +1067,16 @@ void ListContents( void )
 
         listNewLine( fp );
 
-        for( file = FileTable.first; file != NULL; file = file->next ) {
-            if( file->arch.ffname ) {
-                listPrint( fp, "%s ", file->arch.ffname );
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            if( sfile->arch.ffname ) {
+                listPrint( fp, "%s ", sfile->arch.ffname );
             } else {
-                listPrint( fp, "%s ", file->arch.name );
+                listPrint( fp, "%s ", sfile->arch.name );
             }
-            fpadch( fp, ' ', OFF_COLUMN - 1 - file->name_length - 16 );
-            listPrint( fp, "Offset=%8.8xH", file->inlib_offset );
+            fpadch( fp, ' ', OFF_COLUMN - 1 - sfile->name_length - 16 );
+            listPrint( fp, "Offset=%8.8xH", sfile->inlib_offset );
             listNewLine( fp );
-            for( sym = file->first; sym != NULL; sym = sym->next ) {
+            for( sym = sfile->first; sym != NULL; sym = sym->next ) {
                 listPrint( fp, "    %s", FormSym( sym->name ) );
                 listNewLine( fp );
             }

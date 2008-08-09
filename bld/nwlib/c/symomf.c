@@ -368,12 +368,12 @@ static void FreeLNames( void )
  */
 void OMFSkipThisObject( arch_header *arch, libfile io )
 {
-    obj_file            *file;
+    obj_file    *ofile;
 
-    file = OpenLibFile( arch->name, io );
-    OMFWalkSymList( file, NULL, NULL );
-    CloseLibFile( file );
-} /* OMFSkipThisObject() */
+    ofile = OpenLibFile( arch->name, io );
+    OMFWalkSymList( ofile, NULL, NULL );
+    CloseLibFile( ofile );
+}
 
 
 void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char *name, symbol_strength, unsigned char) )
