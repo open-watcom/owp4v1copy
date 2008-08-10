@@ -39,6 +39,7 @@
 #include "keys.h"
 #include "color.h"
 #include "bitmap.h"
+#include "rcstr.gh"
 
 typedef struct tool_item {
     ss                  tool_head;
@@ -51,6 +52,28 @@ typedef struct tool_item {
     char                *help;
     char                cmd[1];
 } tool_item;
+
+typedef struct tool_tip {
+    char    *name;
+    int     tip_id;
+} tool_tip;
+
+static const tool_tip tips[] = {
+    { "new", TIP_NEW },
+    { "open", TIP_OPEN },
+    { "save", TIP_SAVE },
+    { "cut", TIP_CUT },
+    { "copy", TIP_COPY },
+    { "paste", TIP_PASTE },
+    { "undo", TIP_UNDO },
+    { "redo", TIP_REDO },
+    { "find", TIP_FIND },
+    { "refind", TIP_REFIND },
+    { "bmatch", TIP_BMATCH },
+    { "files", TIP_FILES },
+    { "prevfile", TIP_PREVFILE },
+    { "nextfile", TIP_NEXTFILE }
+};
 
 static void             *toolBar = NULL;
 static ss               *toolBarHead = NULL;
@@ -243,6 +266,7 @@ static void createToolBar( RECT *rect )
     dinfo.hook = MyToolBarProc;
     dinfo.helphook = ToolBarHelp;
     dinfo.background = LoadBitmap( InstanceHandle, "BUTTONPATTERN" );
+    dinfo.use_tips = 1;
     buttonPattern = dinfo.background;
     toolBar = ToolBarInit( Root );
 #if defined (__NT__)
@@ -264,12 +288,31 @@ static void createToolBar( RECT *rect )
 } /* createToolBar */
 
 /*
+ * getTip - get the string identifier of the tooltip for a given item
+ */
+static int getTip( char *name )
+{
+    int count = sizeof( tips ) / sizeof( tips[0] );
+    int i;
+    if( name != NULL ) {
+        for( i = 0; i < count; i++ ) {
+            if( strcmp( name, tips[i].name ) == 0 ) {
+                return( tips[i].tip_id );
+            }
+        }
+    }
+    return( -1 );
+
+} /* getTip */
+ 
+/*
  * addToolBarItem - add an item to the tool bar
  */
 static void addToolBarItem( tool_item *item )
 {
     TOOLITEMINFO        info;
-
+    int                 id;
+    
     if( item->is_blank ) {
         info.blank_space = 8;
         info.flags = ITEM_BLANK;
@@ -277,6 +320,12 @@ static void addToolBarItem( tool_item *item )
         info.id = item->id;
         info.bmp = item->bmp;
         info.flags = 0;
+    }
+    id = getTip( item->name );
+    if( id >= 0 ) {
+        LoadString( InstanceHandle, id, info.tip, MAX_TIP );
+    } else {
+        info.tip[0] = '\0';
     }
     info.depressed = FALSE;
     ToolBarAddItem( toolBar, &info );
