@@ -713,3 +713,39 @@ pick(   WDE_UNICUSTNOTSUPPORTED,
 pick(   WDE_BADCTL3D,
         "You are using an older version of CTL3D.DLL.\nUse the version provided in %WATCOM%\\BINW.",
         "You are using an older version of CTL3D.DLL.\nUse the version provided in %WATCOM%\\BINW." )
+
+// WDERIBBN.C
+pick(   WDE_TIP_NEW,
+        "New",
+        "New" )
+pick(   WDE_TIP_OPEN,
+        "Open",
+        "Open" )
+pick(   WDE_TIP_SAVE,
+        "Save",
+        "Save" )
+pick(   WDE_TIP_CUT,
+        "Cut",
+        "Cut" )
+pick(   WDE_TIP_COPY,
+        "Copy",
+        "Copy" )
+pick(   WDE_TIP_PASTE,
+        "Paste",
+        "Paste" )
+pick(   WDE_TIP_SIZETOTEXT,
+        "Size to Text",
+        "Size to Text" )
+pick(   WDE_TIP_TEST_MODE,
+        "Test Mode",
+        "Test Mode" )
+pick(   WDE_TIP_SET_ORDER,
+        "Set Order",
+        "Set Order" )
+pick(   WDE_TIP_SET_TABS,
+        "Set Tabs",
+        "Set Tabs" )
+pick(   WDE_TIP_SET_GROUPS,
+        "Set Groups",
+        "Set Groups" )
+

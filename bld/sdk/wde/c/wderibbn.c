@@ -67,8 +67,9 @@ extern void WdeRibbonHelpHook   ( HWND hwnd, WPARAM wParam, BOOL pressed );
 typedef struct {
     char    *up;
     char    *down;
-    UINT     menu_id;
-    WORD     flags;
+    UINT    menu_id;
+    WORD    flags;
+    int     tip_id;
 } WdeRibbonName;
 
 /****************************************************************************/
@@ -81,40 +82,40 @@ static Bool WdeDoInitRibbon( HINSTANCE, WdeRibbonName *, int );
 /****************************************************************************/
 WdeRibbonName WdeRibbonNames[] =
 {
-    { "New"     , NULL , IDM_NEW_RES     , 0            }
-,   { "Open"    , NULL , IDM_OPEN_RES    , 0            }
-,   { "Save"    , NULL , IDM_SAVE_RES    , 0            }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "Cut"     , NULL , IDM_CUTOBJECT   , 0            }
-,   { "Copy"    , NULL , IDM_COPYOBJECT  , 0            }
-,   { "Paste"   , NULL , IDM_PASTEOBJECT , 0            }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , 0            }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "Test"    , NULL , IDM_TEST_MODE   , ITEM_STICKY  }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "Order"   , NULL , IDM_SET_ORDER   , ITEM_STICKY  }
-,   { "Tabs"    , NULL , IDM_SET_TABS    , ITEM_STICKY  }
-,   { "Groups"  , NULL , IDM_SET_GROUPS  , ITEM_STICKY  }
+    { "New"     , NULL , IDM_NEW_RES     , 0            , WDE_TIP_NEW        }
+,   { "Open"    , NULL , IDM_OPEN_RES    , 0            , WDE_TIP_OPEN       }
+,   { "Save"    , NULL , IDM_SAVE_RES    , 0            , WDE_TIP_SAVE       }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1                 }
+,   { "Cut"     , NULL , IDM_CUTOBJECT   , 0            , WDE_TIP_CUT        }
+,   { "Copy"    , NULL , IDM_COPYOBJECT  , 0            , WDE_TIP_COPY       }
+,   { "Paste"   , NULL , IDM_PASTEOBJECT , 0            , WDE_TIP_PASTE      }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1                 }
+,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , 0            , WDE_TIP_SIZETOTEXT }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1                 }
+,   { "Test"    , NULL , IDM_TEST_MODE   , ITEM_STICKY  , WDE_TIP_TEST_MODE  }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1                 }
+,   { "Order"   , NULL , IDM_SET_ORDER   , ITEM_STICKY  , WDE_TIP_SET_ORDER  }
+,   { "Tabs"    , NULL , IDM_SET_TABS    , ITEM_STICKY  , WDE_TIP_SET_TABS   }
+,   { "Groups"  , NULL , IDM_SET_GROUPS  , ITEM_STICKY  , WDE_TIP_SET_GROUPS }
 };
 #define NUM_TOOLS (sizeof(WdeRibbonNames)/sizeof(WdeRibbonName))
 
 WdeRibbonName WdeDDERibbonNames[] =
 {
-    { "Clear"   , NULL , IDM_DDE_CLEAR   , 0            }
-,   { "Save"    , NULL , IDM_DDE_UPDATE_PRJ , 0         }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "Cut"     , NULL , IDM_CUTOBJECT   , 0            }
-,   { "Copy"    , NULL , IDM_COPYOBJECT  , 0            }
-,   { "Paste"   , NULL , IDM_PASTEOBJECT , 0            }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , 0            }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "Test"    , NULL , IDM_TEST_MODE   , ITEM_STICKY  }
-,   { NULL      , NULL , BLANK_PAD       , 0            }
-,   { "Order"   , NULL , IDM_SET_ORDER   , ITEM_STICKY  }
-,   { "Tabs"    , NULL , IDM_SET_TABS    , ITEM_STICKY  }
-,   { "Groups"  , NULL , IDM_SET_GROUPS  , ITEM_STICKY  }
+    { "Clear"   , NULL , IDM_DDE_CLEAR   , 0            , -1 }
+,   { "Save"    , NULL , IDM_DDE_UPDATE_PRJ , 0         , -1 }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1 }
+,   { "Cut"     , NULL , IDM_CUTOBJECT   , 0            , -1 }
+,   { "Copy"    , NULL , IDM_COPYOBJECT  , 0            , -1 }
+,   { "Paste"   , NULL , IDM_PASTEOBJECT , 0            , -1 }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1 }
+,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , 0            , -1 }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1 }
+,   { "Test"    , NULL , IDM_TEST_MODE   , ITEM_STICKY  , -1 }
+,   { NULL      , NULL , BLANK_PAD       , 0            , -1 }
+,   { "Order"   , NULL , IDM_SET_ORDER   , ITEM_STICKY  , -1 }
+,   { "Tabs"    , NULL , IDM_SET_TABS    , ITEM_STICKY  , -1 }
+,   { "Groups"  , NULL , IDM_SET_GROUPS  , ITEM_STICKY  , -1 }
 };
 #define NUM_DDE_TOOLS (sizeof(WdeDDERibbonNames)/sizeof(WdeRibbonName))
 
@@ -167,6 +168,12 @@ Bool WdeDoInitRibbon( HINSTANCE inst, WdeRibbonName *tools, int num_tools )
                 WdeRibbonInfo->items[i].depressed =
                     WdeRibbonInfo->items[i].bmp;
             }
+            if( tools[i].tip_id >= 0 ) {
+                LoadString( inst, tools[i].tip_id, WdeRibbonInfo->items[i].tip,
+                            MAX_TIP );
+            } else {
+                WdeRibbonInfo->items[i].tip[0] = '\0';
+            }
         } else {
             WdeRibbonInfo->items[i].flags = ITEM_BLANK;
             WdeRibbonInfo->items[i].blank_space = tools[i].menu_id;
@@ -183,6 +190,7 @@ Bool WdeDoInitRibbon( HINSTANCE inst, WdeRibbonName *tools, int num_tools )
     WdeRibbonInfo->dinfo.foreground    = NULL;
     WdeRibbonInfo->dinfo.background    = NULL;
     WdeRibbonInfo->dinfo.is_fixed      = TRUE;
+    WdeRibbonInfo->dinfo.use_tips      = TRUE;
 
     return ( TRUE );
 }
