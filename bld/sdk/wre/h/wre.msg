@@ -448,3 +448,24 @@ pick(   WRE_ERRORCLOSINGSYMFILE,
 pick(   WRE_NOOPENSYMFILE,
         "Could not open symbol file.",
         "Could not open symbol file." )
+
+// WRERIBBN.C
+pick(   WRE_TIP_NEW,
+        "New",
+        "New" )
+pick(   WRE_TIP_OPEN,
+        "Open",
+        "Open" )
+pick(   WRE_TIP_SAVE,
+        "Save",
+        "Save" )
+pick(   WRE_TIP_CUT,
+        "Cut",
+        "Cut" )
+pick(   WRE_TIP_COPY,
+        "Copy",
+        "Copy" )
+pick(   WRE_TIP_PASTE,
+        "Paste",
+        "Paste" )
+

@@ -63,7 +63,8 @@ extern void WRERibbonHelpHook   ( HWND hwnd, WPARAM wParam, BOOL pressed );
 typedef struct {
     char    *up;
     char    *down;
-    UINT     menu_id;
+    UINT    menu_id;
+    int     tip_id;
 } WRERibbonName;
 
 /****************************************************************************/
@@ -75,14 +76,14 @@ typedef struct {
 /****************************************************************************/
 WRERibbonName WRERibbonNames[] =
 {
-    { "New"     , NULL , IDM_NEW   }
-,   { "Open"    , NULL , IDM_OPEN  }
-,   { "Save"    , NULL , IDM_SAVE  }
-,   { NULL      , NULL , BLANK_PAD }
-,   { "Cut"     , NULL , IDM_CUT   }
-,   { "Copy"    , NULL , IDM_COPY  }
-,   { "Paste"   , NULL , IDM_PASTE }
-,   { NULL      , NULL , BLANK_PAD }
+    { "New"     , NULL , IDM_NEW,   WRE_TIP_NEW   }
+,   { "Open"    , NULL , IDM_OPEN,  WRE_TIP_OPEN  }
+,   { "Save"    , NULL , IDM_SAVE,  WRE_TIP_SAVE  }
+,   { NULL      , NULL , BLANK_PAD, -1            }
+,   { "Cut"     , NULL , IDM_CUT,   WRE_TIP_CUT   }
+,   { "Copy"    , NULL , IDM_COPY,  WRE_TIP_COPY  }
+,   { "Paste"   , NULL , IDM_PASTE, WRE_TIP_PASTE }
+,   { NULL      , NULL , BLANK_PAD, -1            }
 };
 #define NUM_TOOLS (sizeof(WRERibbonNames)/sizeof(WRERibbonName))
 
@@ -118,6 +119,12 @@ Bool WREInitRibbon ( HINSTANCE inst )
                 WRERibbonInfo->items[i].depressed =
                     WRERibbonInfo->items[i].bmp;
             }
+            if( WRERibbonNames[i].tip_id >= 0 ) {
+                LoadString( inst, WRERibbonNames[i].tip_id, WRERibbonInfo->items[i].tip,
+                            MAX_TIP );
+            } else {
+                WRERibbonInfo->items[i].tip[0] = '\0';
+            }
         } else {
             WRERibbonInfo->items[i].flags = ITEM_BLANK;
             WRERibbonInfo->items[i].blank_space = WRERibbonNames[i].menu_id;
@@ -134,6 +141,7 @@ Bool WREInitRibbon ( HINSTANCE inst )
     WRERibbonInfo->dinfo.foreground    = NULL;
     WRERibbonInfo->dinfo.background    = NULL;
     WRERibbonInfo->dinfo.is_fixed      = TRUE;
+    WRERibbonInfo->dinfo.use_tips      = TRUE;
 
     return ( TRUE );
 }
