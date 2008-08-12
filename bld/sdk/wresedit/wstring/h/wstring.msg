@@ -97,6 +97,36 @@ pick(   W_HIDETOOLBAR,
 pick(   W_TOOLBARSHOWN,
         "Toolbar Shown",
         "Toolbar Shown" )
+pick(   W_TIP_NEW,
+        "New",
+        "New" )
+pick(   W_TIP_OPEN,
+        "Open",
+        "Open" )
+pick(   W_TIP_SAVE,
+        "Save",
+        "Save" )
+pick(   W_TIP_CLEAR,
+        "Clear",
+        "Clear" )
+pick(   W_TIP_UPDATE,
+        "Update",
+        "Update" )
+pick(   W_TIP_CUT,
+        "Cut",
+        "Cut" )
+pick(   W_TIP_COPY,
+        "Copy",
+        "Copy" )
+pick(   W_TIP_PASTE,
+        "Paste",
+        "Paste" )
+pick(   W_TIP_NEWITEM,
+        "Insert New Item",
+        "Insert New Item" )
+pick(   W_TIP_DELETE,
+        "Delete",
+        "Delete" )
 
 // WTOOLBAR.C
 pick(   W_SYSMENUMOVE,

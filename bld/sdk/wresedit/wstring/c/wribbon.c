@@ -64,7 +64,8 @@ extern void WRibbonHelpHook     ( HWND hwnd, WPARAM wParam, BOOL pressed );
 typedef struct {
     char    *up;
     char    *down;
-    UINT     menu_id;
+    UINT    menu_id;
+    int     tip_id;
 } WRibbonName;
 
 /****************************************************************************/
@@ -76,30 +77,30 @@ typedef struct {
 /****************************************************************************/
 WRibbonName WRibbonNames[] =
 {
-    { "Clear"     , NULL , IDM_STR_CLEAR    }
-,   { "Save"      , NULL , IDM_STR_UPDATE   }
-,   { NULL        , NULL , BLANK_PAD        }
-,   { "Cut"       , NULL , IDM_STR_CUT      }
-,   { "Copy"      , NULL , IDM_STR_COPY     }
-,   { "Paste"     , NULL , IDM_STR_PASTE    }
-,   { NULL        , NULL , BLANK_PAD*3      }
-,   { "InsertKey" , NULL , IDM_STR_NEWITEM  }
-,   { "DeleteKey" , NULL , IDM_STR_DELETE   }
+    { "Clear"     , NULL , IDM_STR_CLEAR   , W_TIP_CLEAR   }
+,   { "Save"      , NULL , IDM_STR_UPDATE  , W_TIP_UPDATE  }
+,   { NULL        , NULL , BLANK_PAD       , -1            }
+,   { "Cut"       , NULL , IDM_STR_CUT     , W_TIP_CUT     }
+,   { "Copy"      , NULL , IDM_STR_COPY    , W_TIP_COPY    }
+,   { "Paste"     , NULL , IDM_STR_PASTE   , W_TIP_PASTE   }
+,   { NULL        , NULL , BLANK_PAD*3     , -1            }
+,   { "InsertKey" , NULL , IDM_STR_NEWITEM , W_TIP_NEWITEM }
+,   { "DeleteKey" , NULL , IDM_STR_DELETE  , W_TIP_DELETE  }
 };
 #define NUM_TOOLS (sizeof(WRibbonNames)/sizeof(WRibbonName))
 
 WRibbonName WSORibbonNames[] =
 {
-    { "New"       , NULL , IDM_STR_CLEAR    }
-,   { "Open"      , NULL , IDM_STR_OPEN     }
-,   { "Save"      , NULL , IDM_STR_SAVE     }
-,   { NULL        , NULL , BLANK_PAD        }
-,   { "Cut"       , NULL , IDM_STR_CUT      }
-,   { "Copy"      , NULL , IDM_STR_COPY     }
-,   { "Paste"     , NULL , IDM_STR_PASTE    }
-,   { NULL        , NULL , BLANK_PAD*3      }
-,   { "InsertKey" , NULL , IDM_STR_NEWITEM  }
-,   { "DeleteKey" , NULL , IDM_STR_DELETE   }
+    { "New"       , NULL , IDM_STR_CLEAR   , W_TIP_NEW     }
+,   { "Open"      , NULL , IDM_STR_OPEN    , W_TIP_OPEN    }
+,   { "Save"      , NULL , IDM_STR_SAVE    , W_TIP_SAVE    }
+,   { NULL        , NULL , BLANK_PAD       , -1            }
+,   { "Cut"       , NULL , IDM_STR_CUT     , W_TIP_CUT     }
+,   { "Copy"      , NULL , IDM_STR_COPY    , W_TIP_COPY    }
+,   { "Paste"     , NULL , IDM_STR_PASTE   , W_TIP_PASTE   }
+,   { NULL        , NULL , BLANK_PAD*3     , -1            }
+,   { "InsertKey" , NULL , IDM_STR_NEWITEM , W_TIP_NEWITEM }
+,   { "DeleteKey" , NULL , IDM_STR_DELETE  , W_TIP_DELETE  }
 };
 #define NUM_SOTOOLS (sizeof(WSORibbonNames)/sizeof(WRibbonName))
 
@@ -137,6 +138,12 @@ Bool WInitRibbons ( HINSTANCE inst )
                 WRibbonInfo->items[i].depressed =
                     WRibbonInfo->items[i].bmp;
             }
+            if( WRibbonNames[i].tip_id >= 0 ) {
+                LoadString( inst, WRibbonNames[i].tip_id, WRibbonInfo->items[i].tip,
+                            MAX_TIP );
+            } else {
+                WRibbonInfo->items[i].tip[0] = '\0';
+            }
         } else {
             WRibbonInfo->items[i].flags       = ITEM_BLANK;
             WRibbonInfo->items[i].blank_space = WRibbonNames[i].menu_id;
@@ -156,6 +163,12 @@ Bool WInitRibbons ( HINSTANCE inst )
                 WSORibbonInfo->items[i].depressed =
                     WSORibbonInfo->items[i].bmp;
             }
+            if( WSORibbonNames[i].tip_id >= 0 ) {
+                LoadString( inst, WSORibbonNames[i].tip_id, WSORibbonInfo->items[i].tip,
+                            MAX_TIP );
+            } else {
+                WSORibbonInfo->items[i].tip[0] = '\0';
+            }
         } else {
             WSORibbonInfo->items[i].flags       = ITEM_BLANK;
             WSORibbonInfo->items[i].blank_space = WSORibbonNames[i].menu_id;
@@ -172,6 +185,7 @@ Bool WInitRibbons ( HINSTANCE inst )
     WRibbonInfo->dinfo.foreground    = NULL;
     WRibbonInfo->dinfo.background    = NULL;
     WRibbonInfo->dinfo.is_fixed      = TRUE;
+    WRibbonInfo->dinfo.use_tips      = TRUE;
 
     WSORibbonInfo->dinfo.button_size.x = BUTTONX + BUTTON_PAD;
     WSORibbonInfo->dinfo.button_size.y = BUTTONY + BUTTON_PAD;
@@ -183,6 +197,7 @@ Bool WInitRibbons ( HINSTANCE inst )
     WSORibbonInfo->dinfo.foreground    = NULL;
     WSORibbonInfo->dinfo.background    = NULL;
     WSORibbonInfo->dinfo.is_fixed      = TRUE;
+    WSORibbonInfo->dinfo.use_tips      = TRUE;
 
     WRibbonHeight = 2 * WRibbonInfo->dinfo.border_size.y +
                     WRibbonInfo->dinfo.button_size.y +
