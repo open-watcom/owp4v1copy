@@ -65,7 +65,8 @@ extern void WRibbonHelpHook     ( HWND hwnd, WPARAM wParam, BOOL pressed );
 typedef struct {
     char    *up;
     char    *down;
-    UINT     menu_id;
+    UINT    menu_id;
+    int     tip_id;
 } WRibbonName;
 
 /****************************************************************************/
@@ -77,43 +78,43 @@ typedef struct {
 /****************************************************************************/
 WRibbonName WRibbonNames[] =
 {
-    { "Clear"       , NULL , IDM_MENU_CLEAR          }
-,   { "Save"        , NULL , IDM_MENU_UPDATE         }
-,   { NULL          , NULL , BLANK_PAD               }
-,   { "Cut"         , NULL , IDM_MENU_CUT            }
-,   { "Copy"        , NULL , IDM_MENU_COPY           }
-,   { "Paste"       , NULL , IDM_MENU_PASTE          }
-,   { NULL          , NULL , BLANK_PAD*2             }
-,   { "DeleteItem"  , NULL , IDM_MENU_DELETE         }
-,   { NULL          , NULL , BLANK_PAD*2             }
-,   { "InsertAfter" , NULL , IDM_MENU_INSERTTOGGLE   }
-,   { NULL          , NULL , BLANK_PAD               }
+    { "Clear"       , NULL , IDM_MENU_CLEAR          , W_TIP_CLEAR        }
+,   { "Save"        , NULL , IDM_MENU_UPDATE         , W_TIP_UPDATE       }
+,   { NULL          , NULL , BLANK_PAD               , -1                 }
+,   { "Cut"         , NULL , IDM_MENU_CUT            , W_TIP_CUT          }
+,   { "Copy"        , NULL , IDM_MENU_COPY           , W_TIP_COPY         }
+,   { "Paste"       , NULL , IDM_MENU_PASTE          , W_TIP_PASTE        }
+,   { NULL          , NULL , BLANK_PAD*2             , -1                 }
+,   { "DeleteItem"  , NULL , IDM_MENU_DELETE         , W_TIP_DELETE       }
+,   { NULL          , NULL , BLANK_PAD*2             , -1                 }
+,   { "InsertAfter" , NULL , IDM_MENU_INSERTTOGGLE   , W_TIP_INSERTTOGGLE }
+,   { NULL          , NULL , BLANK_PAD               , -1                 }
 //,   { "InsertNoSub" , NULL , IDM_MENU_INSERTSUBITEMS }
 //,   { NULL          , NULL , BLANK_PAD*2             }
 //,   { "InsertPopup" , NULL , IDM_MENU_NEWPOPUP       }
-,   { "InsertItem"  , NULL , IDM_MENU_NEWITEM        }
+,   { "InsertItem"  , NULL , IDM_MENU_NEWITEM        , W_TIP_NEWITEM      }
 //,   { "InsertSep"   , NULL , IDM_MENU_NEWSEPARATOR   }
 };
 #define NUM_TOOLS (sizeof(WRibbonNames)/sizeof(WRibbonName))
 
 WRibbonName WSORibbonNames[] =
 {
-    { "New"         , NULL , IDM_MENU_CLEAR          }
-,   { "Open"        , NULL , IDM_MENU_OPEN           }
-,   { "Save"        , NULL , IDM_MENU_SAVE           }
-,   { NULL          , NULL , BLANK_PAD               }
-,   { "Cut"         , NULL , IDM_MENU_CUT            }
-,   { "Copy"        , NULL , IDM_MENU_COPY           }
-,   { "Paste"       , NULL , IDM_MENU_PASTE          }
-,   { NULL          , NULL , BLANK_PAD*2             }
-,   { "DeleteItem"  , NULL , IDM_MENU_DELETE         }
-,   { NULL          , NULL , BLANK_PAD*2             }
-,   { "InsertAfter" , NULL , IDM_MENU_INSERTTOGGLE   }
-,   { NULL          , NULL , BLANK_PAD               }
+    { "New"         , NULL , IDM_MENU_CLEAR          , W_TIP_NEW          }
+,   { "Open"        , NULL , IDM_MENU_OPEN           , W_TIP_OPEN         }
+,   { "Save"        , NULL , IDM_MENU_SAVE           , W_TIP_SAVE         }
+,   { NULL          , NULL , BLANK_PAD               , -1                 }
+,   { "Cut"         , NULL , IDM_MENU_CUT            , W_TIP_CUT          }
+,   { "Copy"        , NULL , IDM_MENU_COPY           , W_TIP_COPY         }
+,   { "Paste"       , NULL , IDM_MENU_PASTE          , W_TIP_PASTE        }
+,   { NULL          , NULL , BLANK_PAD*2             , -1                 }
+,   { "DeleteItem"  , NULL , IDM_MENU_DELETE         , W_TIP_DELETE       }
+,   { NULL          , NULL , BLANK_PAD*2             , -1                 }
+,   { "InsertAfter" , NULL , IDM_MENU_INSERTTOGGLE   , W_TIP_INSERTTOGGLE }
+,   { NULL          , NULL , BLANK_PAD               , -1                 }
 //,   { "InsertNoSub" , NULL , IDM_MENU_INSERTSUBITEMS }
 //,   { NULL          , NULL , BLANK_PAD*2             }
 //,   { "InsertPopup" , NULL , IDM_MENU_NEWPOPUP       }
-,   { "InsertItem"  , NULL , IDM_MENU_NEWITEM        }
+,   { "InsertItem"  , NULL , IDM_MENU_NEWITEM        , W_TIP_NEWITEM      }
 //,   { "InsertSep"   , NULL , IDM_MENU_NEWSEPARATOR   }
 };
 #define NUM_SOTOOLS (sizeof(WSORibbonNames)/sizeof(WRibbonName))
@@ -152,6 +153,12 @@ Bool WInitRibbons ( HINSTANCE inst )
                 WRibbonInfo->items[i].depressed =
                     WRibbonInfo->items[i].bmp;
             }
+            if( WRibbonNames[i].tip_id >= 0 ) {
+                LoadString( inst, WRibbonNames[i].tip_id, WRibbonInfo->items[i].tip,
+                            MAX_TIP );
+            } else {
+                WRibbonInfo->items[i].tip[0] = '\0';
+            }
         } else {
             WRibbonInfo->items[i].flags       = ITEM_BLANK;
             WRibbonInfo->items[i].blank_space = WRibbonNames[i].menu_id;
@@ -171,6 +178,12 @@ Bool WInitRibbons ( HINSTANCE inst )
                 WSORibbonInfo->items[i].depressed =
                     WSORibbonInfo->items[i].bmp;
             }
+            if( WSORibbonNames[i].tip_id >= 0 ) {
+                LoadString( inst, WSORibbonNames[i].tip_id, WSORibbonInfo->items[i].tip,
+                            MAX_TIP );
+            } else {
+                WSORibbonInfo->items[i].tip[0] = '\0';
+            }
         } else {
             WSORibbonInfo->items[i].flags       = ITEM_BLANK;
             WSORibbonInfo->items[i].blank_space = WSORibbonNames[i].menu_id;
@@ -187,6 +200,7 @@ Bool WInitRibbons ( HINSTANCE inst )
     WRibbonInfo->dinfo.foreground    = NULL;
     WRibbonInfo->dinfo.background    = NULL;
     WRibbonInfo->dinfo.is_fixed      = TRUE;
+    WRibbonInfo->dinfo.use_tips      = TRUE;
 
     WSORibbonInfo->dinfo.button_size.x = BUTTONX + BUTTON_PAD;
     WSORibbonInfo->dinfo.button_size.y = BUTTONY + BUTTON_PAD;
@@ -198,6 +212,7 @@ Bool WInitRibbons ( HINSTANCE inst )
     WSORibbonInfo->dinfo.foreground    = NULL;
     WSORibbonInfo->dinfo.background    = NULL;
     WSORibbonInfo->dinfo.is_fixed      = TRUE;
+    WSORibbonInfo->dinfo.use_tips      = TRUE;
 
     WRibbonHeight = 2 * WRibbonInfo->dinfo.border_size.y +
                     WRibbonInfo->dinfo.button_size.y +

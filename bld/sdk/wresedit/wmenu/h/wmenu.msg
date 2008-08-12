@@ -193,3 +193,39 @@ pick(   W_MENUITEM,
 pick(   W_NOMENUEX,
         "Cannot edit MENUEX resources.",
         "Cannot edit MENUEX resources." )
+
+// WRIBBON.C
+pick(   W_TIP_NEW,
+        "New",
+        "New" )
+pick(   W_TIP_OPEN,
+        "Open",
+        "Open" )
+pick(   W_TIP_SAVE,
+        "Save",
+        "Save" )
+pick(   W_TIP_CLEAR,
+        "Clear",
+        "Clear" )
+pick(   W_TIP_UPDATE,
+        "Update",
+        "Update" )
+pick(   W_TIP_CUT,
+        "Cut",
+        "Cut" )
+pick(   W_TIP_COPY,
+        "Copy",
+        "Copy" )
+pick(   W_TIP_PASTE,
+        "Paste",
+        "Paste" )
+pick(   W_TIP_DELETE,
+        "Delete",
+        "Delete" )
+pick(   W_TIP_INSERTTOGGLE,
+        "Insert After",
+        "Insert After" )
+pick(   W_TIP_NEWITEM,
+        "Insert New Item",
+        "Insert New Item" )
+
