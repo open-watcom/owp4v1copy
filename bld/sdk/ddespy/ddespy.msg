@@ -370,3 +370,35 @@ pick(   STR_HINT_HELP_SRCH,
 pick(   STR_HINT_HELP_ON_HELP,
         "Show information on using help",
         "ヘルプの使用方法に関する情報の表示" )
+
+pick(   STR_TIP_TRK_STR,
+        "Track Strings",
+        "Track Strings" )
+pick(   STR_TIP_TRK_CONV,
+        "Track Conversations",
+        "Track Conversations" )
+pick(   STR_TIP_TRK_LINK,
+        "Track Links",
+        "Track Links" )
+pick(   STR_TIP_TRK_SERVER,
+        "Track Servers",
+        "Track Servers" )
+pick(   STR_TIP_LOG_FILE,
+        "Log To File",
+        "Log To File" )
+pick(   STR_TIP_MARK,
+        "Mark",
+        "Mark" )
+pick(   STR_TIP_CLEAR,
+        "Clear",
+        "Clear" )
+pick(   STR_TIP_HWND_ALIAS,
+        "Add hwnd alias",
+        "Add hwnd alias" )
+pick(   STR_TIP_TASK_ALIAS,
+        "Add task alias",
+        "Add task alias" )
+pick(   STR_TIP_CONV_ALIAS,
+        "Add conversation alias",
+        "Add conversation alias" )
+

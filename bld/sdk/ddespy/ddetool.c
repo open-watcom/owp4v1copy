@@ -44,23 +44,24 @@ typedef struct {
     char        *name;
     WORD        id;
     WORD        flags;
+    int         tip_id;
 }DDEButtonInfo;
 
 #define BUTTON_CNT              12
 
 static DDEButtonInfo ButInfo[ BUTTON_CNT ] = {
-            "STRING",   DDEMENU_TRK_STR,        ITEM_STICKY,
-            "CONV",     DDEMENU_TRK_CONV,       ITEM_STICKY,
-            "LINK",     DDEMENU_TRK_LINK,       ITEM_STICKY,
-            "SERVER",   DDEMENU_TRK_SERVER,     ITEM_STICKY,
-            NULL,       0,                      ITEM_BLANK,
-            "LOG",      DDEMENU_LOG_FILE,       0,
-            "MARK",     DDEMENU_MARK,           0,
-            "ERASE",    DDEMENU_CLEAR,          0,
-            NULL,       0,                      ITEM_BLANK,
-            "HWNDAKA",  DDEMENU_HWND_ALIAS,     0,
-            "TASKAKA",  DDEMENU_TASK_ALIAS,     0,
-            "CONVAKA",  DDEMENU_CONV_ALIAS,     0
+    "STRING",   DDEMENU_TRK_STR,        ITEM_STICKY,    STR_TIP_TRK_STR,
+    "CONV",     DDEMENU_TRK_CONV,       ITEM_STICKY,    STR_TIP_TRK_CONV,
+    "LINK",     DDEMENU_TRK_LINK,       ITEM_STICKY,    STR_TIP_TRK_LINK,
+    "SERVER",   DDEMENU_TRK_SERVER,     ITEM_STICKY,    STR_TIP_TRK_SERVER,
+    NULL,       0,                      ITEM_BLANK,     -1,
+    "LOG",      DDEMENU_LOG_FILE,       0,              STR_TIP_LOG_FILE,
+    "MARK",     DDEMENU_MARK,           0,              STR_TIP_MARK,
+    "ERASE",    DDEMENU_CLEAR,          0,              STR_TIP_CLEAR,
+    NULL,       0,                      ITEM_BLANK,     -1,
+    "HWNDAKA",  DDEMENU_HWND_ALIAS,     0,              STR_TIP_HWND_ALIAS,
+    "TASKAKA",  DDEMENU_TASK_ALIAS,     0,              STR_TIP_TASK_ALIAS,
+    "CONVAKA",  DDEMENU_CONV_ALIAS,     0,              STR_TIP_CONV_ALIAS
 };
 
 static DDEToolBarInfo   ToolBar;
@@ -214,6 +215,7 @@ void MakeDDEToolBar( HWND hwnd ) {
     ToolBar.info.helphook = showTBHint;
     ToolBar.info.background = 0;
     ToolBar.info.foreground = 0;
+    ToolBar.info.use_tips = TRUE;
     ResizeForTB( &ToolBar.info.area, hwnd );
     ToolBar.fixed = TRUE;
     ToolBar.floatrect = ToolBar.info.area;
@@ -235,6 +237,11 @@ void MakeDDEToolBar( HWND hwnd ) {
             item.bmp = ToolBar.bitmaps[i];
             item.id = ButInfo[i].id;
             item.depressed = ToolBar.bitmaps[i];
+        }
+        if( ButInfo[i].tip_id >= 0 ) {
+            LoadString( Instance, ButInfo[i].tip_id, item.tip, MAX_TIP );
+        } else {
+            item.tip[0] = '\0';
         }
         item.flags = ButInfo[i].flags;
         ToolBarAddItem( ToolBar.hdl, &item );
