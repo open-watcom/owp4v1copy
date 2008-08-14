@@ -220,3 +220,31 @@ pick(   STR_HINT_HELP_SRCH,
 pick(   STR_HINT_HELP_ON_HELP,
         "Show information on using help",
         "Show information on using help" )
+
+pick(   STR_TIP_ANOTHER_WINDOW,
+        "Add Window",
+        "Add Window" )
+pick(   STR_TIP_STOP,
+        "Done Spying",
+        "Done Spying" )
+pick(   STR_TIP_PEEK_WINDOW,
+        "Peek At Window",
+        "Peek At Window" )
+pick(   STR_TIP_MARK,
+        "Mark",
+        "Mark" )
+pick(   STR_TIP_CLEAR_MESSAGES,
+        "Clear Message List",
+        "Clear Message List" )
+pick(   STR_TIP_SHOW_SELECTED_WINDOWS,
+        "Show Selected Windows",
+        "Show Selected Windows" )
+pick(   STR_TIP_MESSAGES_WATCH,
+        "Messages to Watch",
+        "Messages to Watch" )
+pick(   STR_TIP_MESSAGES_STOP,
+        "Messages to Stop On",
+        "Messages to Stop On" )
+pick(   STR_TIP_OFFON,
+        "Stop Spying Temporarily",
+        "Stop Spying Temporarily" )

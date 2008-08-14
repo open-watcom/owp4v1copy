@@ -43,18 +43,19 @@ typedef struct {
     char        *name;
     int         id;
     HBITMAP     hbmp;
+    int         tip_id;
 } button;
 
 static button toolList[] = {
-    { "MAGNIFY", SPY_ANOTHER_WINDOW, 0 },
-    { "MAGNO", SPY_STOP, 0 },
-    { "PEEK", SPY_PEEK_WINDOW, 0 },
-    { "MARK", SPY_MARK, 0 },
-    { "ERASE", SPY_CLEAR_MESSAGES, 0 },
-    { "SHOWWIN", SPY_SHOW_SELECTED_WINDOWS, 0 },
-    { "WATCHMSG", SPY_MESSAGES_WATCH, 0 },
-    { "STOPMSG", SPY_MESSAGES_STOP, 0 },
-    { "NOTONOFF", SPY_OFFON, 0 }
+    { "MAGNIFY", SPY_ANOTHER_WINDOW, 0, STR_TIP_ANOTHER_WINDOW },
+    { "MAGNO", SPY_STOP, 0, STR_TIP_STOP },
+    { "PEEK", SPY_PEEK_WINDOW, 0, STR_TIP_PEEK_WINDOW },
+    { "MARK", SPY_MARK, 0, STR_TIP_MARK },
+    { "ERASE", SPY_CLEAR_MESSAGES, 0, STR_TIP_CLEAR_MESSAGES },
+    { "SHOWWIN", SPY_SHOW_SELECTED_WINDOWS, 0, STR_TIP_SHOW_SELECTED_WINDOWS },
+    { "WATCHMSG", SPY_MESSAGES_WATCH, 0, STR_TIP_MESSAGES_WATCH },
+    { "STOPMSG", SPY_MESSAGES_STOP, 0, STR_TIP_MESSAGES_STOP },
+    { "NOTONOFF", SPY_OFFON, 0, STR_TIP_OFFON }
 };
 
 static void     *toolBar = NULL;
@@ -71,6 +72,11 @@ static void addToolButton( button *tb )
     info.id = tb->id;
     info.flags = 0;
     info.depressed = 0;
+    if( tb->tip_id >= 0 ) {
+        LoadString( Instance, tb->tip_id, info.tip, MAX_TIP );
+    } else {
+        info.tip[0] = '\0';
+    }
     ToolBarAddItem( toolBar, &info );
 
 } /* addToolButton */
@@ -121,6 +127,7 @@ void CreateSpyTool( HWND parent )
     dinfo.hook = MyToolBarProc;
     dinfo.helphook = spyToolBarHint;
     dinfo.background = NULL;
+    dinfo.use_tips = TRUE;
     toolBar = ToolBarInit( parent );
 
     ToolBarDisplay( toolBar, &dinfo );
