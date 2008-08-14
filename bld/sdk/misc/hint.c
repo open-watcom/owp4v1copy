@@ -44,8 +44,6 @@ typedef struct {
     MenuItemHint        *hints;
 }HintWndInfo;
 
-static WORD     winExtra;
-
 static WORD getItemMsg( statwnd *wnd, WORD menuid )
 {
     WORD                i;
@@ -54,7 +52,7 @@ static WORD getItemMsg( statwnd *wnd, WORD menuid )
     MenuItemHint        *hinttable;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetWindowLong( hint, winExtra );
+    info = (HintWndInfo *)GetProp( hint, "info" );
     hinttable = info->hints;
     if( hinttable != NULL ) {
         for( i=0; i < info->hintlen; i++ ) {
@@ -80,7 +78,7 @@ static void updateHintText( statwnd *wnd, WORD msgid )
                         DT_LEFT | DT_SINGLELINE | DT_VCENTER  );
     ReleaseDC( hint, dc );
     FreeRCString( str );
-    info = (HintWndInfo *)GetWindowLong( hint, winExtra );
+    info = (HintWndInfo *)GetProp( hint, "info" );
     info->curmsg = msgid;
 }
 
@@ -107,7 +105,7 @@ WORD SizeHintBar( statwnd *wnd )
     HWND        hint;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetWindowLong( hint, winExtra );
+    info = (HintWndInfo *)GetProp( hint, "info" );
     dc = GetDC( hint );
     font = GetMonoFont();
     oldfont = SelectObject( dc, font );
@@ -152,7 +150,7 @@ MenuItemHint *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt )
     HWND                hint;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetWindowLong( hint, winExtra );
+    info = (HintWndInfo *)GetProp( hint, "info" );
     ret = info->hints;
     info->hints = hints;
     info->hintlen = cnt;
@@ -171,7 +169,7 @@ statwnd *HintWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, LPVOID lpv
     info->hints = NULL;
     info->hintlen = 0;
     info->parent = parent;
-    SetWindowLong( GetHintHwnd( wnd ), winExtra, (DWORD)info );
+    SetProp( GetHintHwnd( wnd ), "info", (HANDLE)info );
     return( wnd );
 }
 
@@ -181,15 +179,14 @@ void HintWndDestroy( statwnd *wnd )
     HWND                hint;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetWindowLong( hint, winExtra );
+    info = (HintWndInfo *)GetProp( hint, "info" );
     MemFree( info );
     StatusWndDestroy( wnd );
 }
 
 int HintWndInit( HINSTANCE hinstance, statushook hook, int extra )
 {
-    winExtra = extra;
-    return( StatusWndInit( hinstance, hook, extra + sizeof( void * ) ) );
+    return( StatusWndInit( hinstance, hook, extra ) );
 }
 
 void HintFini( void )
