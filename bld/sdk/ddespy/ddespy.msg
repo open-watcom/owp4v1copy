@@ -393,12 +393,12 @@ pick(   STR_TIP_CLEAR,
         "Clear",
         "Clear" )
 pick(   STR_TIP_HWND_ALIAS,
-        "Add hwnd alias",
-        "Add hwnd alias" )
+        "Add HWND Alias",
+        "Add HWND Alias" )
 pick(   STR_TIP_TASK_ALIAS,
-        "Add task alias",
-        "Add task alias" )
+        "Add Task Alias",
+        "Add Task Alias" )
 pick(   STR_TIP_CONV_ALIAS,
-        "Add conversation alias",
-        "Add conversation alias" )
+        "Add Conversation Alias",
+        "Add Conversation Alias" )
 
