@@ -53,7 +53,8 @@ typedef struct TOOLDISPLAYINFO {
     // ---- not implemented yet
     HBRUSH      foreground;     // colour of mono-bitmap when depressed (0 == default)
     char        is_fixed:1;     // is toolbar fixed or floating?
-    char        spare:7;        // spare bits
+    char        use_tips:1;     // use tool tips?
+    char        spare:6;        // spare bits
 } TOOLDISPLAYINFO;
 
 /* Button states for use with ITEM_STICKY flag below */
@@ -65,6 +66,9 @@ typedef struct TOOLDISPLAYINFO {
 #define ITEM_DOWNBMP    0x02
 #define ITEM_BLANK      0x04
 
+/* Maximum tool tip length */
+#define MAX_TIP         128
+
 typedef struct TOOLITEMINFO {
     union {
         HBITMAP bmp;            // handle to bitmap to display
@@ -75,6 +79,7 @@ typedef struct TOOLITEMINFO {
     WORD        id;             // should be unique for each item
     WORD        flags;          // see list of flags above
     HBITMAP     depressed;      // bitmap to show when button is depressed
+    char        tip[MAX_TIP];   // tool tip string
 } TOOLITEMINFO;
 
 struct toolbar *ToolBarInit( HWND );

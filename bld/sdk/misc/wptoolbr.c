@@ -84,6 +84,7 @@ typedef struct toolbar {
 #ifdef __NT__
     HWND        container;
     WNDPROC     old_wndproc;
+    HWND        tooltips;
 #endif
 } toolbar;
 
@@ -474,6 +475,8 @@ void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
     TBBUTTON    tbb;
     TBADDBITMAP tbab;
     BITMAP      bm;
+    int         n;
+    TOOLINFO    ti;
 
     if( hInstCommCtrl == NULL ) {
 #endif
@@ -516,6 +519,17 @@ void ToolBarAddItem( toolbar *bar, TOOLITEMINFO *info )
         }
         tbb.iString = 0;
         SendMessage( bar->hwnd, TB_ADDBUTTONS, 1, (LPARAM)&tbb );
+        if( bar->tooltips != NULL && !(info->flags & ITEM_BLANK) ) {
+            n = SendMessage( bar->hwnd, TB_BUTTONCOUNT, 0, 0L );
+            SendMessage( bar->hwnd, TB_GETITEMRECT, n - 1, (LPARAM)&ti.rect );
+            ti.cbSize = sizeof( TOOLINFO );
+            ti.uFlags = 0;
+            ti.hwnd = bar->hwnd;
+            ti.uId = info->id;
+            ti.hinst = GET_HINSTANCE( bar->owner );
+            ti.lpszText = info->tip;
+            SendMessage( bar->tooltips, TTM_ADDTOOL, 0, (LPARAM)&ti );
+        }
     }
 #endif
 
@@ -695,6 +709,17 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
         SetProp( bar->hwnd, "bar", (LPVOID)bar );
         SetWindowLong( bar->hwnd, GWL_WNDPROC, (DWORD)WinToolWndProc );
         SendMessage( bar->hwnd, TB_BUTTONSTRUCTSIZE, sizeof( TBBUTTON ), 0L );
+        if( disp->use_tips ) {
+            bar->tooltips = CreateWindow( TOOLTIPS_CLASS, NULL,
+                                          WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+                                          0, 0, 0, 0, bar->hwnd, NULL,
+                                          GET_HINSTANCE( bar->owner ), NULL );
+            SetWindowPos( bar->tooltips, HWND_TOPMOST, 0, 0, 0, 0,
+                          SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+            SendMessage( bar->hwnd, TB_SETTOOLTIPS, (WPARAM)bar->tooltips, 0L );
+        } else {
+            bar->tooltips = NULL;
+        }
     } else if ( LOBYTE(LOWORD(GetVersion())) >= 4 && (bar->is_fixed) ) {
         CreateWindow( className, NULL, WS_CHILD, //( disp->style ),
                       disp->area.left, disp->area.top, width, height,

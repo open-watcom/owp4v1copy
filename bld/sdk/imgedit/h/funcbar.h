@@ -38,6 +38,7 @@ typedef struct {
     char        *downname;
     HBITMAP     hbmp;
     HBITMAP     downbmp;
+    int         tip_id;
 } button;
 
 #define NONE                    ""
@@ -60,6 +61,7 @@ typedef struct {
     int         downname;
     HBITMAP     hbmp;
     HBITMAP     downbmp;
+    int         tip_id;
 } button;
 
 #define NONE                    0

@@ -785,3 +785,65 @@ pick(   WIE_FILEHASBEENCLOSED,
     "%s has been closed",
     "%s has been closed" )
 
+// FUNCBAR.C
+pick(   WIE_TIP_NEW,
+        "New",
+        "New" )
+pick(   WIE_TIP_OPEN,
+        "Open",
+        "Open" )
+pick(   WIE_TIP_SAVE,
+        "Save",
+        "Save" )
+pick(   WIE_TIP_GRID,
+        "Grid",
+        "Grid" )
+pick(   WIE_TIP_MAXIMIZE,
+        "Maximize Current Image",
+        "Maximize Current Image" )
+pick(   WIE_TIP_CUT,
+        "Cut",
+        "Cut" )
+pick(   WIE_TIP_COPY,
+        "Copy",
+        "Copy" )
+pick(   WIE_TIP_PASTE,
+        "Paste",
+        "Paste" )
+pick(   WIE_TIP_UNDO,
+        "Undo",
+        "Undo" )
+pick(   WIE_TIP_REDO,
+        "Redo",
+        "Redo" )
+pick(   WIE_TIP_CLEAR,
+        "Clear",
+        "Clear" )
+pick(   WIE_TIP_SNAP,
+        "Snap Bitmap",
+        "Snap Bitmap" )
+pick(   WIE_TIP_RIGHT,
+        "Shift Right",
+        "Shift Right" )
+pick(   WIE_TIP_LEFT,
+        "Shift Left",
+        "Shift Left" )
+pick(   WIE_TIP_UP,
+        "Shift Up",
+        "Shift Up" )
+pick(   WIE_TIP_DOWN,
+        "Shift Down",
+        "Shift Down" )
+pick(   WIE_TIP_FLIPHORZ,
+        "Flip Over Horizontal Axis",
+        "Flip Over Horizontal Axis" )
+pick(   WIE_TIP_FLIPVERT,
+        "Flip Over Vertical Axis",
+        "Flip Over Vertical Axis" )
+pick(   WIE_TIP_ROTATECL,
+        "Rotate Clockwise",
+        "Rotate Clockwise" )
+pick(   WIE_TIP_ROTATECC,
+        "Rotate Counterclockwise",
+        "Rotate Counterclockwise" )
+

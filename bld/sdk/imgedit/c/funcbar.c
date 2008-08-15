@@ -36,27 +36,27 @@
 static void             *functionBar;
 static HWND             hFunctionBar = NULL;
 static button           toolList[] = {
-    { NEWBMP, IMGED_NEW, FALSE, NONE, 0, 0},
-    { OPENBMP, IMGED_OPEN, FALSE, NONE, 0, 0 },
-    { SAVEBMP, IMGED_SAVE, FALSE, NONE, 0, 0 },
-    { GRIDBMP, IMGED_GRID, TRUE, GRIDDBMP, 0, 0 },
-    { MAXIMIZEBMP, IMGED_MAXIMIZE, TRUE, MAXIMIZEDBMP, 0, 0 },
-    { CUTBMP, IMGED_CUT, FALSE, NONE, 0, 0 },
-    { COPYBMP, IMGED_COPY, FALSE, NONE, 0, 0 },
-    { PASTEBMP, IMGED_PASTE, FALSE, NONE, 0, 0 },
-    { UNDOBMP, IMGED_UNDO, FALSE, NONE, 0, 0 },
-    { REDOBMP, IMGED_REDO, FALSE, NONE, 0, 0 },
-    { CLEARBMP, IMGED_CLEAR, FALSE, NONE, 0, 0 },
-    { SNAPBMP, IMGED_SNAP, FALSE, NONE, 0, 0 },
-    { RIGHTBMP, IMGED_RIGHT, FALSE, NONE, 0, 0 },
-    { LEFTBMP, IMGED_LEFT, FALSE, NONE, 0, 0 },
-    { UPBMP, IMGED_UP, FALSE, NONE, 0, 0 },
-    { DOWNBMP, IMGED_DOWN, FALSE, NONE, 0, 0 },
-    { HFLIPBMP, IMGED_FLIPHORZ, TRUE, HFLIPDBMP, 0, 0 },
-    { VFLIPBMP, IMGED_FLIPVERT, TRUE, VFLIPDBMP, 0, 0 },
-    { CLROTBMP, IMGED_ROTATECL, TRUE, CLROTDBMP, 0, 0 },
-    { CCROTBMP, IMGED_ROTATECC, TRUE, CCROTDBMP, 0, 0 },
-    { SAVEBMP, IMGED_DDE_UPDATE_PRJ, FALSE, NONE, 0, 0}
+    { NEWBMP, IMGED_NEW, FALSE, NONE, 0, 0, WIE_TIP_NEW },
+    { OPENBMP, IMGED_OPEN, FALSE, NONE, 0, 0, WIE_TIP_OPEN },
+    { SAVEBMP, IMGED_SAVE, FALSE, NONE, 0, 0, WIE_TIP_SAVE },
+    { GRIDBMP, IMGED_GRID, TRUE, GRIDDBMP, 0, 0, WIE_TIP_GRID },
+    { MAXIMIZEBMP, IMGED_MAXIMIZE, TRUE, MAXIMIZEDBMP, 0, 0, WIE_TIP_MAXIMIZE },
+    { CUTBMP, IMGED_CUT, FALSE, NONE, 0, 0, WIE_TIP_CUT },
+    { COPYBMP, IMGED_COPY, FALSE, NONE, 0, 0, WIE_TIP_COPY },
+    { PASTEBMP, IMGED_PASTE, FALSE, NONE, 0, 0, WIE_TIP_PASTE },
+    { UNDOBMP, IMGED_UNDO, FALSE, NONE, 0, 0, WIE_TIP_UNDO },
+    { REDOBMP, IMGED_REDO, FALSE, NONE, 0, 0, WIE_TIP_REDO },
+    { CLEARBMP, IMGED_CLEAR, FALSE, NONE, 0, 0, WIE_TIP_CLEAR },
+    { SNAPBMP, IMGED_SNAP, FALSE, NONE, 0, 0, WIE_TIP_SNAP },
+    { RIGHTBMP, IMGED_RIGHT, FALSE, NONE, 0, 0, WIE_TIP_RIGHT },
+    { LEFTBMP, IMGED_LEFT, FALSE, NONE, 0, 0, WIE_TIP_LEFT },
+    { UPBMP, IMGED_UP, FALSE, NONE, 0, 0, WIE_TIP_UP },
+    { DOWNBMP, IMGED_DOWN, FALSE, NONE, 0, 0, WIE_TIP_DOWN },
+    { HFLIPBMP, IMGED_FLIPHORZ, TRUE, HFLIPDBMP, 0, 0, WIE_TIP_FLIPHORZ },
+    { VFLIPBMP, IMGED_FLIPVERT, TRUE, VFLIPDBMP, 0, 0, WIE_TIP_FLIPVERT },
+    { CLROTBMP, IMGED_ROTATECL, TRUE, CLROTDBMP, 0, 0, WIE_TIP_ROTATECL },
+    { CCROTBMP, IMGED_ROTATECC, TRUE, CCROTDBMP, 0, 0, WIE_TIP_ROTATECC },
+    { SAVEBMP, IMGED_DDE_UPDATE_PRJ, FALSE, NONE, 0, 0, -1 }
 };
 
 /*
@@ -78,6 +78,11 @@ static void addFunctionButton( button *tb, BOOL is_sticky )
         tb->downbmp = _wpi_loadbitmap( Instance, tb->downname );
     } else {
         tb->downbmp = tb->hbmp;
+    }
+    if( tb->tip_id >= 0 ) {
+        _wpi_loadstring( Instance, tb->tip_id, info.tip, MAX_TIP );
+    } else {
+        info.tip[0] = '\0';
     }
 
     info.depressed = tb->downbmp;
@@ -242,6 +247,7 @@ void InitFunctionBar( HWND hparent )
     tdi.background = (HBITMAP)0;
     tdi.foreground = (HBITMAP)0;
     tdi.is_fixed = 1;
+    tdi.use_tips = 1;
 
     ToolBarDisplay(functionBar, &tdi);
 
