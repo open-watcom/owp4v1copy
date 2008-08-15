@@ -195,6 +195,7 @@ typedef struct gui_toolbar_struct {
     gui_bitmap          bitmap;
     int                 id;
     char                *hinttext;
+    char                *tip;
 } gui_toolbar_struct;
 
 typedef struct gui_menu_struct {
@@ -794,6 +795,10 @@ extern bool GUICreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
                               int num_items, gui_toolbar_struct *toolbar,
                               bool excl, gui_colour_set *plain,
                               gui_colour_set *standout );
+extern bool GUICreateToolBarWithTips( gui_window *wnd, bool fixed, gui_ord height,
+                                      int num_items, gui_toolbar_struct *toolbar,
+                                      bool excl, gui_colour_set *plain,
+                                      gui_colour_set *standout );
 extern bool GUICloseToolBar( gui_window *wnd );
 extern bool GUIHasToolBar( gui_window *wnd );
 extern bool GUIChangeToolBar( gui_window *wnd );

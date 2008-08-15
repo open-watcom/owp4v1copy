@@ -85,6 +85,10 @@ extern bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
                        int num_toolbar_items, gui_toolbar_struct *toolinfo,
                        bool excl, gui_colour_set *plain, gui_colour_set *standout,
                        gui_rect *rect );
+extern bool GUIXCreateToolBarWithTips( gui_window *wnd, bool fixed, gui_ord height,
+                       int num_toolbar_items, gui_toolbar_struct *toolinfo,
+                       bool excl, gui_colour_set *plain, gui_colour_set *standout,
+                       gui_rect *rect, bool use_tips );
 
 extern bool GUIXCloseToolBar( gui_window *wnd );
 

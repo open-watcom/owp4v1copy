@@ -220,13 +220,14 @@ BOOL GUIToolBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpara
 }
 
 /*
- *  GUIXCreateToolBar -- create a tool bar, fixed or not
+ *  GUIXCreateToolBarWithTips -- create a tool bar, possibly with tooltips
  */
 
-bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
-                       int num_toolbar_items, gui_toolbar_struct *toolinfo,
-                       bool excl, gui_colour_set *plain,
-                       gui_colour_set *standout, gui_rect *float_pos  )
+bool GUIXCreateToolBarWithTips( gui_window *wnd, bool fixed, gui_ord height,
+                                int num_toolbar_items, gui_toolbar_struct *toolinfo,
+                                bool excl, gui_colour_set *plain,
+                                gui_colour_set *standout, gui_rect *float_pos,
+                                bool use_tips )
 {
     gui_coord           size;
     gui_coord           pos;
@@ -349,6 +350,7 @@ bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
     toolbar->info.foreground = 0;
     toolbar->num = num_toolbar_items;
     toolbar->info.is_fixed = fixed;
+    toolbar->info.use_tips = use_tips;
 
     toolbar->hdl = ToolBarInit( parent );
 
@@ -360,12 +362,30 @@ bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
         info.u.bmp = toolbar->bitmaps[i];
         info.id = toolinfo[i].id;
         info.flags = 0;
+        if( use_tips && toolinfo[i].tip != NULL ) {
+            strncpy( info.tip, toolinfo[i].tip, MAX_TIP );
+        } else {
+            info.tip[0] = '\0';
+        }
         ToolBarAddItem( toolbar->hdl, &info );
     }
     toolhwnd = ToolBarWindow( toolbar->hdl );
     _wpi_showwindow( toolhwnd, SW_SHOWNORMAL );
     _wpi_updatewindow( toolhwnd );
     return( TRUE );
+}
+
+/*
+ *  GUIXCreateToolBar -- create a tool bar, fixed or not
+ */
+
+bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
+                        int num_toolbar_items, gui_toolbar_struct *toolinfo,
+                        bool excl, gui_colour_set *plain,
+                        gui_colour_set *standout, gui_rect *float_pos )
+{
+    return( GUIXCreateToolBarWithTips( wnd, fixed, height, num_toolbar_items, toolinfo,
+                                       excl, plain, standout, float_pos, FALSE ) );
 }
 
 /*

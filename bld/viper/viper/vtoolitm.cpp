@@ -32,8 +32,9 @@
 
 #include "vtoolitm.hpp"
 
-WEXPORT VToolItem::VToolItem( ToolType typ, int toolId, WObject *client, cbtbi pick, const char *htext )
-    : WToolBarItem( "", toolId, client, pick, htext )
+WEXPORT VToolItem::VToolItem( ToolType typ, int toolId, WObject *client, cbtbi pick,
+                              const char *htext, const char *tip )
+    : WToolBarItem( "", toolId, client, pick, htext, tip )
     , _toolId( toolId )
     , _toolType( typ )
 {
