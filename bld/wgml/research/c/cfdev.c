@@ -380,7 +380,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 32-bit Page Width */
 
-        fread( &out_device->page_width, sizeof( out_device->page_width ), 1, in_file );
+        fread( &out_device->page_width, sizeof( out_device->page_width ), 1, \
+                                                                        in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -389,7 +390,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 32-bit Page Depth */
 
-        fread( &out_device->page_depth, sizeof( out_device->page_depth ), 1, in_file );
+        fread( &out_device->page_depth, sizeof( out_device->page_depth ), 1, \
+                                                                        in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -398,7 +400,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 32-bit Horizontal Base Units */
 
-        fread( &out_device->horizontal_base_units, sizeof( out_device->horizontal_base_units ), 1, in_file );
+        fread( &out_device->horizontal_base_units, \
+               sizeof( out_device->horizontal_base_units ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -407,7 +410,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 32-bit Vertical Base Units */
 
-        fread( &out_device->vertical_base_units, sizeof( out_device->vertical_base_units ), 1, in_file );
+        fread( &out_device->vertical_base_units, \
+               sizeof( out_device->vertical_base_units ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -443,7 +447,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 32-bit Page Offset X Value */
 
-        fread( &out_device->x_offset, sizeof( out_device->x_offset ), 1, in_file );
+        fread( &out_device->x_offset, sizeof( out_device->x_offset ), 1, \
+                                                                        in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -452,7 +457,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 32-bit Page Offset Y Value */
 
-        fread( &out_device->y_offset, sizeof( out_device->y_offset ), 1, in_file );
+        fread( &out_device->y_offset, sizeof( out_device->y_offset ), 1, \
+                                                                        in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -490,7 +496,8 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        fread( &out_device->box.font_number, sizeof( out_device->box.font_number ), 1, in_file );
+        fread( &out_device->box.font_number, \
+               sizeof( out_device->box.font_number ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -511,7 +518,8 @@ cop_device * parse_device( FILE * in_file )
         }
 
         if( length > 0 ) {
-            if( out_device->allocated_size < (out_device->next_offset + length) ) {
+            if( out_device->allocated_size < (out_device->next_offset + length) ) \
+            {
                 out_device = resize_cop_device( out_device, length );
                 if( out_device == NULL ) return( out_device );
             }
@@ -560,7 +568,8 @@ cop_device * parse_device( FILE * in_file )
     
     /* There are 0x0F bytes in the file but only 11 values */
 
-    fread( &out_device->box.horizontal_line, sizeof( out_device->box.horizontal_line ), 11, in_file );
+    fread( &out_device->box.horizontal_line, \
+           sizeof( out_device->box.horizontal_line ), 11, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         free( out_device );
         out_device = NULL;
@@ -599,7 +608,8 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        fread( &out_device->underscore.font_number, sizeof( out_device->underscore.font_number ), 1, in_file );
+        fread( &out_device->underscore.font_number, \
+               sizeof( out_device->underscore.font_number ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -669,7 +679,8 @@ cop_device * parse_device( FILE * in_file )
     
     /* There are 0x05 bytes in the file but only one value */
 
-    fread( &out_device->underscore.underscore_char, sizeof( out_device->underscore.underscore_char ), 1, in_file );
+    fread( &out_device->underscore.underscore_char, \
+           sizeof( out_device->underscore.underscore_char ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         free( out_device );
         out_device = NULL;
@@ -766,8 +777,10 @@ cop_device * parse_device( FILE * in_file )
     
         /* Get the data into the array */
 
-        if( out_device->allocated_size < (out_device->next_offset + sizeof( out_device->intrans->table )) ) {
-            out_device = resize_cop_device( out_device, sizeof( out_device->intrans->table ) );
+        if( out_device->allocated_size < (out_device->next_offset + \
+                                    sizeof( out_device->intrans->table )) ) {
+            out_device = resize_cop_device( out_device, \
+                                    sizeof( out_device->intrans->table ) );
             if( out_device == NULL ) return( out_device );
         }
 
@@ -833,8 +846,10 @@ cop_device * parse_device( FILE * in_file )
             
             /* Reserve space for the outtrans_block */
 
-            if( out_device->allocated_size < (out_device->next_offset + sizeof( out_device->outtrans->table )) ) {
-                out_device = resize_cop_device( out_device, sizeof( out_device->outtrans->table ) );
+            if( out_device->allocated_size < (out_device->next_offset + \
+                                    sizeof( out_device->outtrans->table )) ) {
+                out_device = resize_cop_device( out_device, \
+                                    sizeof( out_device->outtrans->table ) );
                 if( out_device == NULL ) {
                     free( outtrans_data );
                     outtrans_data = NULL;
@@ -845,13 +860,15 @@ cop_device * parse_device( FILE * in_file )
             out_device->outtrans = (outtrans_block *) out_device->next_offset;
             out_device->next_offset += sizeof( out_device->outtrans->table );
 
-            outtrans_ptr = (outtrans_block *) ((char *) out_device + (size_t) out_device->outtrans);
+            outtrans_ptr = (outtrans_block *) ((char *) out_device + \
+                                                (size_t) out_device->outtrans);
 
             /* Build the actual table, which requires actual pointers in
              * place of the offsets recorded in *out_device:
              *   outtrans_ptr is the pointer version of out_device->outtrans
              *   for each iteration,
-             *     translation_ptr is the pointer version of outtrans->ptr->table[i]
+             *     translation_ptr is the pointer version of
+             *                                             outtrans->ptr->table[i]
              *     byte_ptr is the pointer version of translation->ptr.data
              */
 
@@ -865,42 +882,52 @@ cop_device * parse_device( FILE * in_file )
 
                     /* Reserve space for the translation */
 
-                    if( out_device->allocated_size < (out_device->next_offset + sizeof( translation )) ) {
-                        out_device = resize_cop_device( out_device, sizeof( translation ) );
+                    if( out_device->allocated_size < (out_device->next_offset + \
+                                                        sizeof( translation )) ) {
+                        out_device = resize_cop_device( out_device, \
+                                                        sizeof( translation ) );
                         if( out_device == NULL ) {
                             free( outtrans_data );
                             outtrans_data = NULL;
                             return( out_device );
                         }
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device \
+                                                    + (size_t) out_device->outtrans);
                     }
 
-                    outtrans_ptr->table[i] = (translation *) out_device->next_offset;
+                    outtrans_ptr->table[i] = (translation *) \
+                                                        out_device->next_offset;
                     out_device->next_offset += sizeof( translation );
 
                     /* Get the translation for the current character */
 
-                    translation_ptr = (translation *) ((char *) out_device + (size_t) outtrans_ptr->table[i] );
+                    translation_ptr = (translation *) ((char *) out_device + \
+                                                (size_t) outtrans_ptr->table[i] );
 
                     /* The translation always contains exactly one character */
                     
                     translation_ptr->count = 1;
 
-                    if( out_device->allocated_size < (out_device->next_offset + translation_ptr->count ) ) {
-                        out_device = resize_cop_device( out_device, translation_ptr->count  );
+                    if( out_device->allocated_size < (out_device->next_offset + \
+                                                    translation_ptr->count ) ) {
+                        out_device = resize_cop_device( out_device, \
+                                                    translation_ptr->count  );
                         if( out_device == NULL ) {
                             free( outtrans_data );
                             outtrans_data = NULL;
                             return( out_device );
                         }
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
-                        translation_ptr = (translation *) ((uint8_t *) out_device + (size_t) outtrans_ptr->table[i] );
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device \
+                                            + (size_t) out_device->outtrans);
+                        translation_ptr = (translation *) ((uint8_t *) out_device \
+                                            + (size_t) outtrans_ptr->table[i] );
                     }
 
                     translation_ptr->data = (uint8_t *) out_device->next_offset;
                     out_device->next_offset += translation_ptr->count;
 
-                    byte_ptr = (uint8_t *) out_device + (size_t) translation_ptr->data;
+                    byte_ptr = (uint8_t *) out_device + (size_t) \
+                                                            translation_ptr->data;
 
                     /* The translation character is the value in the input array */
                     
@@ -913,7 +940,8 @@ cop_device * parse_device( FILE * in_file )
             /* The count byte should be equal to data_count */
         
             if( count8 != data_count ) {
-                printf_s( "Incorrect OuttransBlock data_count: %i instead of %i\n", data_count, count8 );
+                printf_s( "Incorrect OuttransBlock data_count: %i instead of "\
+                          "%i\n", data_count, count8 );
                 free( out_device );
                 out_device = NULL;
                 return( out_device );
@@ -943,8 +971,10 @@ cop_device * parse_device( FILE * in_file )
 
             /* Initialize outtrans_ptr and the outtrans pointer in out_device */
 
-            if( out_device->allocated_size < (out_device->next_offset + sizeof( out_device->outtrans->table )) ) {
-                out_device = resize_cop_device( out_device, sizeof( out_device->outtrans->table ) );
+            if( out_device->allocated_size < (out_device->next_offset + \
+                                        sizeof( out_device->outtrans->table )) ) {
+                out_device = resize_cop_device( out_device, \
+                                        sizeof( out_device->outtrans->table ) );
                 if( out_device == NULL ) {
                     free( outtrans_data );
                     outtrans_data = NULL;
@@ -955,13 +985,15 @@ cop_device * parse_device( FILE * in_file )
             out_device->outtrans = (outtrans_block *) out_device->next_offset;
             out_device->next_offset += sizeof( out_device->outtrans->table );
 
-            outtrans_ptr = (outtrans_block *) ((char *) out_device + (size_t) out_device->outtrans);
+            outtrans_ptr = (outtrans_block *) ((char *) out_device + \
+                                                (size_t) out_device->outtrans);
 
             /* Convert the data in uint16_array to our format, which requires
              * actual pointers in place of the offsets recorded in *out_device:
              *   outtrans_ptr is the pointer version of out_device->outtrans
              *   for each iteration,
-             *     translation_ptr is the pointer version of outtrans->ptr->table[i]
+             *     translation_ptr is the pointer version of
+             *                                             outtrans->ptr->table[i]
              *     byte_ptr is the pointer version of translation->ptr.data
              */
 
@@ -975,43 +1007,54 @@ cop_device * parse_device( FILE * in_file )
 
                     /* Reserve space for the translation */
 
-                    if( out_device->allocated_size < (out_device->next_offset + sizeof( translation )) ) {
-                        out_device = resize_cop_device( out_device, sizeof( translation ) );
+                    if( out_device->allocated_size < (out_device->next_offset + \
+                                                    sizeof( translation )) ) {
+                        out_device = resize_cop_device( out_device, \
+                                                    sizeof( translation ) );
                         if( out_device == NULL ) {
                             free( outtrans_data );
                             outtrans_data = NULL;
                             return( out_device );
                         }
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device \
+                                                + (size_t) out_device->outtrans);
                     }
 
-                    outtrans_ptr->table[i] = (translation *) out_device->next_offset;
+                    outtrans_ptr->table[i] = (translation *) \
+                                                        out_device->next_offset;
                     out_device->next_offset += sizeof( translation );
 
                     /* Get the translation for the current character */
 
-                    translation_ptr = (translation *) ((char *) out_device + (size_t) outtrans_ptr->table[i] );
+                    translation_ptr = (translation *) ((char *) out_device + \
+                                            (size_t) outtrans_ptr->table[i] );
 
                     translation_start = outtrans_data + (uint16_array[i] & 0x00ff);        
                     translation_ptr->count = *translation_start;
                     ++translation_start;
 
-                    if( out_device->allocated_size < (out_device->next_offset + translation_ptr->count ) ) {
-                        out_device = resize_cop_device( out_device, translation_ptr->count  );
+                    if( out_device->allocated_size < (out_device->next_offset + \
+                                                    translation_ptr->count ) ) {
+                        out_device = resize_cop_device( out_device, \
+                                                    translation_ptr->count );
                         if( out_device == NULL ) {
                             free( outtrans_data );
                             outtrans_data = NULL;
                             return( out_device );
                         }
-                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
-                        translation_ptr = (translation *) ((uint8_t *) out_device + (size_t) outtrans_ptr->table[i] );
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device \
+                                            + (size_t) out_device->outtrans);
+                        translation_ptr = (translation *) ((uint8_t *) out_device \
+                                            + (size_t) outtrans_ptr->table[i] );
                     }
 
                     translation_ptr->data = (uint8_t *) out_device->next_offset;
                     out_device->next_offset += translation_ptr->count;
 
-                    byte_ptr = (uint8_t *) out_device + (size_t) translation_ptr->data;
-                    memcpy_s(byte_ptr, translation_ptr->count, translation_start, translation_ptr->count );
+                    byte_ptr = (uint8_t *) out_device + (size_t) \
+                                                        translation_ptr->data;
+                    memcpy_s(byte_ptr, translation_ptr->count, translation_start, \
+                                                        translation_ptr->count );
                 }
             }
             break;
@@ -1045,7 +1088,8 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the number of DefaultFonts */
     
-    fread( &out_device->defaultfonts.count, sizeof( out_device->defaultfonts.count ), 1, in_file );
+    fread( &out_device->defaultfonts.count, \
+                        sizeof( out_device->defaultfonts.count ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         free( out_device );
         out_device = NULL;
@@ -1054,19 +1098,25 @@ cop_device * parse_device( FILE * in_file )
 
     /* Set defaultfont_ptr and defaultfonts.font and adjust next_offset */
     
-    if( out_device->allocated_size < (out_device->next_offset + sizeof( *out_device->defaultfonts.font) * out_device->defaultfonts.count) ) {
-        out_device = resize_cop_device( out_device, sizeof( *out_device->defaultfonts.font) * out_device->defaultfonts.count );
+    if( out_device->allocated_size < (out_device->next_offset + \
+                                     sizeof( *out_device->defaultfonts.font) * \
+                                     out_device->defaultfonts.count) ) {
+        out_device = resize_cop_device( out_device,
+                                     sizeof( *out_device->defaultfonts.font) * \
+                                     out_device->defaultfonts.count );
         if( out_device == NULL ) return( out_device );
    }
 
     out_device->defaultfonts.font = (default_font *) out_device->next_offset;
-    out_device->next_offset += sizeof( *out_device->defaultfonts.font) * out_device->defaultfonts.count;
+    out_device->next_offset += sizeof( *out_device->defaultfonts.font) * \
+                                                out_device->defaultfonts.count;
 
-    defaultfont_ptr = (default_font *) ((uint8_t *) out_device + (size_t) out_device->defaultfonts.font);
+    defaultfont_ptr = (default_font *) ((uint8_t *) out_device + \
+                                        (size_t) out_device->defaultfonts.font);
 
     /* Get the DefaultFonts */
 
-    for( i = 0; i < out_device->defaultfonts.count; i++ ){
+    for( i = 0; i < out_device->defaultfonts.count; i++ ) {
 
         /* Get the Font Style */
 
@@ -1080,7 +1130,8 @@ cop_device * parse_device( FILE * in_file )
         if( out_device->allocated_size < (out_device->next_offset + length) ) {
             out_device = resize_cop_device( out_device, length );
             if( out_device == NULL ) return( out_device );
-            defaultfont_ptr = (default_font *) ((uint8_t *) out_device + (size_t) out_device->defaultfonts.font);
+            defaultfont_ptr = (default_font *) ((uint8_t *) out_device + \
+                                        (size_t) out_device->defaultfonts.font);
         }
 
         if( length > 0 ) {
@@ -1118,7 +1169,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the Font Height */
 
-        fread( &defaultfont_ptr[i].font_height, sizeof( defaultfont_ptr[i].font_height ), 1, in_file );
+        fread( &defaultfont_ptr[i].font_height, \
+                        sizeof( defaultfont_ptr[i].font_height ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -1127,7 +1179,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the Font Space */
 
-        fread( &defaultfont_ptr[i].font_space, sizeof( defaultfont_ptr[i].font_space ), 1, in_file );
+        fread( &defaultfont_ptr[i].font_space, \
+                            sizeof( defaultfont_ptr[i].font_space ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -1146,7 +1199,8 @@ cop_device * parse_device( FILE * in_file )
         if( out_device->allocated_size < (out_device->next_offset + length) ) {
             out_device = resize_cop_device( out_device, length );
             if( out_device == NULL ) return( out_device );
-            defaultfont_ptr = (default_font *) ((uint8_t *) out_device + (size_t) out_device->defaultfonts.font);
+            defaultfont_ptr = (default_font *) ((uint8_t *) out_device + \
+                                        (size_t) out_device->defaultfonts.font);
         }
 
         if( length > 0 ) {
@@ -1187,7 +1241,8 @@ cop_device * parse_device( FILE * in_file )
     }
 
     current = raw_functions->buffer;
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, raw_functions->buffer, \
+                                                                        "DEVICE" );
 
     if( cop_functions == NULL) {
         free( raw_functions );
@@ -1252,7 +1307,8 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.startpause_count = 0;
         out_device->pauses.startpause = NULL;
     } else {
-        return_value = find_cumulative_index( cop_functions, cumulative_index, &j );
+        return_value = find_cumulative_index( cop_functions, \
+                                                        cumulative_index, &j );
         if( return_value == FAILURE ) {
             puts( "START Pause CodeBlock not found!" );
             free( raw_functions );
@@ -1268,8 +1324,10 @@ cop_device * parse_device( FILE * in_file )
 
         out_device->pauses.startpause_count = cop_functions->code_blocks[j].count;
 
-        if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.startpause_count) ) {
-            out_device = resize_cop_device( out_device, out_device->pauses.startpause_count );
+        if( out_device->allocated_size < (out_device->next_offset + \
+                                        out_device->pauses.startpause_count) ) {
+            out_device = resize_cop_device( out_device, \
+                                        out_device->pauses.startpause_count );
             if( out_device == NULL ) {
                 free( raw_functions );
                 raw_functions = NULL;
@@ -1284,8 +1342,11 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.startpause = (uint8_t *) out_device->next_offset;
         out_device->next_offset += out_device->pauses.startpause_count;
 
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.startpause;
-        memcpy_s(byte_ptr, out_device->pauses.startpause_count, cop_functions->code_blocks[j].function, out_device->pauses.startpause_count );
+        byte_ptr = (uint8_t *) out_device + (size_t) \
+                                                    out_device->pauses.startpause;
+        memcpy_s(byte_ptr, out_device->pauses.startpause_count, \
+                 cop_functions->code_blocks[j].function, \
+                 out_device->pauses.startpause_count );
     }
     
     /* Get the DOCUMENT Pause */
@@ -1339,7 +1400,8 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.documentpause_count = 0;
         out_device->pauses.documentpause = NULL;
     } else {
-        return_value = find_cumulative_index( cop_functions, cumulative_index, &j );
+        return_value = find_cumulative_index( cop_functions, cumulative_index, \
+                                                                            &j );
         if( return_value == FAILURE ) {
             puts( "DOCUMENT Pause CodeBlock not found!" );
             free( raw_functions );
@@ -1353,10 +1415,13 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.documentpause_count = cop_functions->code_blocks[j].count;
+        out_device->pauses.documentpause_count = \
+                                            cop_functions->code_blocks[j].count;
 
-        if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.documentpause_count) ) {
-            out_device = resize_cop_device( out_device, out_device->pauses.documentpause_count );
+        if( out_device->allocated_size < (out_device->next_offset + \
+                                    out_device->pauses.documentpause_count) ) {
+            out_device = resize_cop_device( out_device, \
+                                    out_device->pauses.documentpause_count );
             if( out_device == NULL ) {
                 free( raw_functions );
                 raw_functions = NULL;
@@ -1371,8 +1436,11 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.documentpause = (uint8_t *) out_device->next_offset;
         out_device->next_offset += out_device->pauses.documentpause_count;
 
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.documentpause;
-        memcpy_s(byte_ptr, out_device->pauses.documentpause_count, cop_functions->code_blocks[j].function, out_device->pauses.documentpause_count );
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->pauses.documentpause;
+        memcpy_s(byte_ptr, out_device->pauses.documentpause_count, \
+                 cop_functions->code_blocks[j].function, \
+                 out_device->pauses.documentpause_count );
     }
     
     /* Get the DOCUMENT_PAGE Pause */
@@ -1440,10 +1508,13 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.docpagepause_count = cop_functions->code_blocks[j].count;
+        out_device->pauses.docpagepause_count = \
+                                            cop_functions->code_blocks[j].count;
 
-        if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.docpagepause_count) ) {
-            out_device = resize_cop_device( out_device, out_device->pauses.docpagepause_count );
+        if( out_device->allocated_size < (out_device->next_offset + \
+                                        out_device->pauses.docpagepause_count) ) {
+            out_device = resize_cop_device( out_device, \
+                                        out_device->pauses.docpagepause_count );
             if( out_device == NULL ) {
                 free( raw_functions );
                 raw_functions = NULL;
@@ -1458,8 +1529,11 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.docpagepause = (uint8_t *) out_device->next_offset;
         out_device->next_offset += out_device->pauses.docpagepause_count;
 
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.docpagepause;
-        memcpy_s(byte_ptr, out_device->pauses.docpagepause_count, cop_functions->code_blocks[j].function, out_device->pauses.docpagepause_count );
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->pauses.docpagepause;
+        memcpy_s(byte_ptr, out_device->pauses.docpagepause_count, \
+                 cop_functions->code_blocks[j].function, \
+                 out_device->pauses.docpagepause_count );
     }
     
     /* Get the DEVICE_PAGE Pause */
@@ -1513,7 +1587,8 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.devpagepause_count = 0;
         out_device->pauses.devpagepause = NULL;
     } else {
-        return_value = find_cumulative_index( cop_functions, cumulative_index, &j );
+        return_value = find_cumulative_index( cop_functions, cumulative_index, \
+                                                                            &j );
         if( return_value == FAILURE ) {
             puts( "DEVICE_PAGE Pause CodeBlock not found!" );
             free( raw_functions );
@@ -1527,10 +1602,13 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.devpagepause_count = cop_functions->code_blocks[j].count;
+        out_device->pauses.devpagepause_count = \
+                                            cop_functions->code_blocks[j].count;
 
-        if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.devpagepause_count) ) {
-            out_device = resize_cop_device( out_device, out_device->pauses.devpagepause_count );
+        if( out_device->allocated_size < (out_device->next_offset + \
+                                        out_device->pauses.devpagepause_count) ) {
+            out_device = resize_cop_device( out_device, \
+                                        out_device->pauses.devpagepause_count );
             if( out_device == NULL ) {
                 free( raw_functions );
                 raw_functions = NULL;
@@ -1545,8 +1623,11 @@ cop_device * parse_device( FILE * in_file )
         out_device->pauses.devpagepause = (uint8_t *) out_device->next_offset;
         out_device->next_offset += out_device->pauses.devpagepause_count;
 
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.devpagepause;
-        memcpy_s(byte_ptr, out_device->pauses.devpagepause_count, cop_functions->code_blocks[j].function, out_device->pauses.devpagepause_count );
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->pauses.devpagepause;
+        memcpy_s(byte_ptr, out_device->pauses.devpagepause_count, \
+                 cop_functions->code_blocks[j].function, \
+                 out_device->pauses.devpagepause_count );
     }
 
     /* Get the DevicefontsBlock */
@@ -1581,7 +1662,8 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the number of Devicefonts */
 
-    fread( &out_device->devicefonts.count, sizeof( out_device->devicefonts.count ), 1, in_file );
+    fread( &out_device->devicefonts.count, \
+           sizeof( out_device->devicefonts.count ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         free( raw_functions );
         raw_functions = NULL;
@@ -1596,8 +1678,11 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the Devicefonts */
 
-    if( out_device->allocated_size < (out_device->next_offset + out_device->devicefonts.count * sizeof( *out_device->devicefonts.font ) ) ) {
-        out_device = resize_cop_device( out_device, out_device->devicefonts.count * sizeof( *out_device->devicefonts.font ) );
+    if( out_device->allocated_size < (out_device->next_offset + \
+                                      out_device->devicefonts.count * \
+                                      sizeof( *out_device->devicefonts.font ) ) ) {
+        out_device = resize_cop_device( out_device, out_device->devicefonts.count \
+                                    * sizeof( *out_device->devicefonts.font ) );
         if( out_device == NULL ) {
             free( raw_functions );
             raw_functions = NULL;
@@ -1610,9 +1695,11 @@ cop_device * parse_device( FILE * in_file )
     }
 
     out_device->devicefonts.font = (device_font *) out_device->next_offset;
-    out_device->next_offset += out_device->devicefonts.count * sizeof( *out_device->devicefonts.font );
+    out_device->next_offset += out_device->devicefonts.count * \
+                                        sizeof( *out_device->devicefonts.font );
     
-    devicefont_ptr = (device_font *) ((uint8_t *) out_device + (size_t) out_device->devicefonts.font);
+    devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
+                                        (size_t) out_device->devicefonts.font);
 
     for( i = 0; i < out_device->devicefonts.count; i++ ) {
 
@@ -1644,7 +1731,8 @@ cop_device * parse_device( FILE * in_file )
                     cop_functions = NULL;
                     return( out_device );
                 }
-                devicefont_ptr = (device_font *) ((uint8_t *) out_device + (size_t) out_device->devicefonts.font);
+                devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
+                                            (size_t) out_device->devicefonts.font);
             }
 
             string_ptr = (char *) out_device + out_device->next_offset;
@@ -1697,7 +1785,8 @@ cop_device * parse_device( FILE * in_file )
                     cop_functions = NULL;
                     return( out_device );
                 }
-                devicefont_ptr = (device_font *) ((uint8_t *) out_device + (size_t) out_device->devicefonts.font);
+                devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
+                                            (size_t) out_device->devicefonts.font);
             }
 
             string_ptr = (char *) out_device + out_device->next_offset;
@@ -1780,7 +1869,8 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the resident font indicator */
 
-        fread( &devicefont_ptr[i].resident, sizeof( devicefont_ptr[i].resident ), 1, in_file );
+        fread( &devicefont_ptr[i].resident, sizeof( devicefont_ptr[i].resident ),\
+               1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( raw_functions );
             raw_functions = NULL;
@@ -1815,7 +1905,8 @@ cop_device * parse_device( FILE * in_file )
             devicefont_ptr[i].fontpause_count = 0;
             devicefont_ptr[i].fontpause = NULL;
         } else {
-            return_value = find_cumulative_index( cop_functions, cumulative_index, &j );
+            return_value = find_cumulative_index( cop_functions, cumulative_index,\
+                                                  &j );
             if( return_value == FAILURE ) {
                 puts( "Device Font %i Font Pause CodeBlock not found!" );
                 free( raw_functions );
@@ -1829,10 +1920,13 @@ cop_device * parse_device( FILE * in_file )
                 return( out_device );
             }
 
-            devicefont_ptr[i].fontpause_count = cop_functions->code_blocks[j].count;
+            devicefont_ptr[i].fontpause_count = \
+                                            cop_functions->code_blocks[j].count;
 
-            if( out_device->allocated_size < (out_device->next_offset + devicefont_ptr[i].fontpause_count) ) {
-                out_device = resize_cop_device( out_device, devicefont_ptr[i].fontpause_count );
+            if( out_device->allocated_size < (out_device->next_offset + \
+                                            devicefont_ptr[i].fontpause_count) ) {
+                out_device = resize_cop_device( out_device, \
+                                            devicefont_ptr[i].fontpause_count );
                 if( out_device == NULL ) {
                     free( raw_functions );
                     raw_functions = NULL;
@@ -1842,14 +1936,18 @@ cop_device * parse_device( FILE * in_file )
                     cop_functions = NULL;
                     return( out_device );
                 }
-                devicefont_ptr = (device_font *) ((uint8_t *) out_device + (size_t) out_device->devicefonts.font);
+                devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
+                                        (size_t) out_device->devicefonts.font);
             }
 
             devicefont_ptr[i].fontpause = (uint8_t *) out_device->next_offset;
             out_device->next_offset += devicefont_ptr[i].fontpause_count;
 
-            byte_ptr = (uint8_t *) out_device + (size_t) devicefont_ptr[i].fontpause;
-            memcpy_s(byte_ptr, devicefont_ptr[i].fontpause_count, cop_functions->code_blocks[j].function, devicefont_ptr[i].fontpause_count );
+            byte_ptr = (uint8_t *) out_device + \
+                                            (size_t) devicefont_ptr[i].fontpause;
+            memcpy_s(byte_ptr, devicefont_ptr[i].fontpause_count, \
+                     cop_functions->code_blocks[j].function, \
+                     devicefont_ptr[i].fontpause_count );
         }
     }
 
@@ -1885,7 +1983,8 @@ cop_device * parse_device( FILE * in_file )
     }
     
     if( out_device->underscore.font_name != NULL ) {
-        string_ptr = (char *) out_device + (size_t) out_device->underscore.font_name;
+        string_ptr = (char *) out_device + \
+                                        (size_t) out_device->underscore.font_name;
         out_device->underscore.font_name = string_ptr;
     }
     
@@ -1898,12 +1997,15 @@ cop_device * parse_device( FILE * in_file )
         byte_ptr = (uint8_t *) out_device + (size_t) out_device->outtrans;
         out_device->outtrans = (outtrans_block *) byte_ptr;
     
-        for( i = 0; i < sizeof( outtrans_block ) / sizeof( translation * ); i++ ) {
+        for( i = 0; i < sizeof( outtrans_block ) / sizeof( translation * ); \
+                                                                        i++ ) {
             if( out_device->outtrans->table[i] != NULL ) {
-                byte_ptr = (uint8_t *) out_device + (size_t) out_device->outtrans->table[i];
+                byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->outtrans->table[i];
                 out_device->outtrans->table[i] = (translation *) byte_ptr;
                 if( out_device->outtrans->table[i]->data != NULL ) {
-                    byte_ptr = (uint8_t *) out_device + (size_t) out_device->outtrans->table[i]->data;
+                    byte_ptr = (uint8_t *) out_device + \
+                                    (size_t) out_device->outtrans->table[i]->data;
                     out_device->outtrans->table[i]->data = byte_ptr;
                 }
             }
@@ -1915,11 +2017,13 @@ cop_device * parse_device( FILE * in_file )
        out_device->defaultfonts.font = (default_font *) byte_ptr;
         for( i = 0; i < out_device->defaultfonts.count; i++ ) {
             if( out_device->defaultfonts.font[i].font_name != NULL ) {
-                string_ptr = (char *) out_device + (size_t) out_device->defaultfonts.font[i].font_name;
+                string_ptr = (char *) out_device + \
+                            (size_t) out_device->defaultfonts.font[i].font_name;
                 out_device->defaultfonts.font[i].font_name = string_ptr;
             }
             if( out_device->defaultfonts.font[i].font_style != NULL ) {
-                string_ptr = (char *) out_device + (size_t) out_device->defaultfonts.font[i].font_style;
+                string_ptr = (char *) out_device + \
+                            (size_t) out_device->defaultfonts.font[i].font_style;
                 out_device->defaultfonts.font[i].font_style = string_ptr;
             }
         }
@@ -1931,17 +2035,20 @@ cop_device * parse_device( FILE * in_file )
     }
     
     if( out_device->pauses.documentpause != NULL ) {
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.documentpause;
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->pauses.documentpause;
         out_device->pauses.documentpause = byte_ptr;
     }
     
     if( out_device->pauses.docpagepause != NULL ) {
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.docpagepause;
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->pauses.docpagepause;
         out_device->pauses.docpagepause = byte_ptr;
     }
     
     if( out_device->pauses.devpagepause != NULL ) {
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->pauses.devpagepause;
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->pauses.devpagepause;
         out_device->pauses.devpagepause = byte_ptr;
     }
     
@@ -1950,15 +2057,18 @@ cop_device * parse_device( FILE * in_file )
        out_device->devicefonts.font = (device_font *) byte_ptr;
         for( i = 0; i < out_device->devicefonts.count; i++ ) {
             if( out_device->devicefonts.font[i].font_name != NULL ) {
-                string_ptr = (char *) out_device + (size_t) out_device->devicefonts.font[i].font_name;
+                string_ptr = (char *) out_device + \
+                                (size_t) out_device->devicefonts.font[i].font_name;
                 out_device->devicefonts.font[i].font_name = string_ptr;
             }
             if( out_device->devicefonts.font[i].font_switch != NULL ) {
-                string_ptr = (char *) out_device + (size_t) out_device->devicefonts.font[i].font_switch;
+                string_ptr = (char *) out_device + \
+                            (size_t) out_device->devicefonts.font[i].font_switch;
                 out_device->devicefonts.font[i].font_switch= string_ptr;
             }
             if( out_device->devicefonts.font[i].fontpause != NULL ) {
-                byte_ptr = (uint8_t *) out_device + (size_t) out_device->devicefonts.font[i].fontpause;
+                byte_ptr = (uint8_t *) out_device + \
+                                (size_t) out_device->devicefonts.font[i].fontpause;
                 out_device->devicefonts.font[i].fontpause = byte_ptr;
             }
         }
@@ -1982,7 +2092,8 @@ cop_device * parse_device( FILE * in_file )
  *      FAILURE otherwise
  */
 
-int find_cumulative_index( functions_block * in_block, uint16_t in_max, uint8_t * out_index )
+int find_cumulative_index( functions_block * in_block, uint16_t in_max, \
+                           uint8_t * out_index )
 {
     uint8_t i;
 
@@ -2056,11 +2167,12 @@ void set_cumulative_index( functions_block * in_block )
 
     if( in_block->count > 1 ) {
         for( i = 1; i < in_block->count; i++ ) {
-            in_block->code_blocks[i].cumulative_index = in_block->code_blocks[i-1].cumulative_index + in_block->code_blocks[i-1].count;
+            in_block->code_blocks[i].cumulative_index = \
+                                    in_block->code_blocks[i-1].cumulative_index \
+                                  + in_block->code_blocks[i-1].count;
         }
     }
 
     return;
 }
-
 

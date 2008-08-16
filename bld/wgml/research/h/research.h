@@ -27,6 +27,7 @@
 * Description:  Declares items specific to the research programs:
 *                   display_char()
 *                   display_hex_block()
+*                   display_hex_char()
 *                   display_hex_line()
 *                   res_initialize_globals()
 *
@@ -65,6 +66,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 
 void    display_char( char *, char );
 void    display_hex_block( uint8_t *, uint16_t );
+void    display_hex_char(char *, char );
 void    display_hex_line( char *, char * );
 void    res_initialize_globals( void );
 

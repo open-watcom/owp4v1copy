@@ -36,6 +36,7 @@
 #include <string.h>
 #include "cffunc.h"
 #include "common.h"
+#include "research.h"
 
 /*  Function definitions. */
 
@@ -45,7 +46,9 @@
  *
  *  Parameters:
  *      current points to the first byte of the data to be processed 
- *      count contains the number of CodeBlocks expected
+ *      cb_count contains the number of CodeBlocks expected
+ *      base points to the first byte of the underlying P-buffer
+ *      block points to a character string naming the block being parsed
  *
  *  Parameter is changed:
  *      current points to the byte after the last byte processed
@@ -56,21 +59,41 @@
  *      NULL on failure
  */
 
-code_block * get_code_blocks(uint8_t * * current, uint16_t count )
+code_block * get_code_blocks(uint8_t * * current, uint16_t cb_count, \
+                             uint8_t * base, char * block )
 {
-    uint8_t             i;
-    code_block *        out_block   = NULL;
+    code_block *    out_block   = NULL;
+    size_t          difference;
+    size_t          position;
+    uint8_t         junk_byte[3];
+    uint8_t         first_byte[3];
+    uint8_t         second_byte[3];
+    uint8_t         i;
 
     /* Allocate out_block */ 
              
-    out_block = (code_block * ) malloc( sizeof( code_block ) * count ); 
+    out_block = (code_block * ) malloc( sizeof( code_block ) * cb_count ); 
 
     /* Initialize each code_block */
 
-    for( i = 0; i < count; i++ ) {
+    for( i = 0; i < cb_count; i++ ) {
 
-        /* Get the designator */
+        /* Get the position of the designator in the P-buffer */
+
+        difference = *current - base;
+        position = difference % 80;
+
+        /* Get the designator, shifting it if necessary */
             
+        if( position == 79 ) {
+            printf_s( "Parsing %s block: CodeBlock %i has a shifted designator\n",\
+                                                                        block, i);
+            display_hex_char( junk_byte, **current );
+            display_hex_char( first_byte, *(*current + 1) );
+            printf_s( "Values: %s %s\n", junk_byte, first_byte );
+            *current += 1;
+        }
+
         memcpy_s( &out_block[i].designator, 1, *current, 1 );
         *current += 1;
 
@@ -79,18 +102,38 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count )
         memcpy_s( &out_block[i].cb05_flag, 1, *current, 1 );
         *current += 1;
 
-        /* Get the unknown flag */
+        /* Get the lp_flag */
             
-        memcpy_s( &out_block[i].unknown, 1, *current, 1 );
+        memcpy_s( &out_block[i].lp_flag, 1, *current, 1 );
         *current += 1;
 
-        /* Get the pass number */
+        /* Get the pass number, shifting it if necessary */
             
+        if( position == 76 ) {
+            printf_s( "Parsing %s block: CodeBlock %i has a shifted pass number."\
+                      "\n", block, i);
+            display_hex_char( junk_byte, **current );
+            display_hex_char( first_byte, *(*current + 1) );
+            display_hex_char( second_byte, *(*current + 2) );
+            printf_s( "Values: %s %s %s\n", junk_byte, first_byte, second_byte );
+            *current += 1;
+        }
+
         memcpy_s( &out_block[i].pass, 2, *current, 2 );
         *current += 2;
 
-        /* Get the count */
+        /* Get the count, shifting it if necessary */
             
+        if( position == 74 ) {
+            printf_s( "Parsing %s block: CodeBlock %i has a shifted count\n", \
+                                                                        block, i);
+            display_hex_char( junk_byte, **current );
+            display_hex_char( first_byte, *(*current + 1) );
+            display_hex_char( second_byte, *(*current + 2) );
+            printf_s( "Values: %s %s %s\n", junk_byte, first_byte, second_byte );
+            *current += 1;
+        }
+
         memcpy_s( &out_block[i].count, 2, *current, 2 );
         *current += 2;
 
@@ -197,6 +240,8 @@ p_buffer * get_p_buffer( FILE * in_file )
  *
  *  Parameter:
  *      current contains the first byte of the data to be processed 
+ *      base points to the first byte of the underlying P-buffer
+ *      block points to a character string naming the block being parsed
  *
  *  Parameter is changed:
  *      current will point to the first byte after the last byte parsed
@@ -211,7 +256,8 @@ p_buffer * get_p_buffer( FILE * in_file )
  *      NULL on failure
  */
 
-functions_block * parse_functions_block( uint8_t * * current )
+functions_block * parse_functions_block( uint8_t * * current, uint8_t * base, \
+                                                                    char * block )
 {
     uint16_t            code_count;
     functions_block *   out_block   = NULL;
@@ -233,7 +279,8 @@ functions_block * parse_functions_block( uint8_t * * current )
     if( out_block->count == 0 ) {
         out_block->code_blocks = NULL;
     } else {
-        out_block->code_blocks = get_code_blocks( current, out_block->count );
+        out_block->code_blocks = get_code_blocks( current, out_block->count, \
+                                                                    base, block );
     }
 
     return( out_block );

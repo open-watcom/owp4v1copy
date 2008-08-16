@@ -27,6 +27,7 @@
 * Description:  Implements the functions common to the research programs:
 *                   display_char()
 *                   display_hex_block()
+*                   display_hex_char()
 *                   display_hex_line()
 *                   parse_cmdline()
 *                   res_initialize_globals()
@@ -55,6 +56,33 @@ static char     hexchar[] = "0123456789ABCDEF";
 
 /*  Function definitions */
 
+/*  Function display_char().
+ *  If isgraph() indicates that in_char is displayable, returns a space in
+ *  out_chars[0] and in_char in out_chars[1]. Otherwise returns values in
+ *  out_chars which, when output together, provide a hexadecimal representation
+ *  of in_char. Since isgraph() is used, the space character will appear in
+ *  hexadecimal.
+ *
+ *  Parameters:
+ *      out_chars points to a two-char array 
+ *      in_char contains the value to be output
+ *
+ *  Value Returned:
+ *      The values indicated above are returned in the out_chars.
+ */
+void display_char( char * out_chars, char in_char)
+{
+    if ( isgraph( in_char ) ) {
+        out_chars[0] = ' ';
+        out_chars[1] = in_char;
+    } else {
+        out_chars[0] = hexchar[ ( in_char >> 4 ) & 0x0f ];
+        out_chars[1] = hexchar[ in_char & 0x0f ];
+    }
+    
+    return;    
+}
+
 /*  Function display_hex_block().
  *  Given a pointer to a block of bytes and the number of bytes it contains,
  *  display the data in a format similar to that of wdump -b to stdout.
@@ -82,6 +110,26 @@ void display_hex_block( uint8_t * in_data, uint16_t in_count )
     }
 
     return;
+}
+
+/*  Function display_hex_char().
+ *  Returns values in out_chars which, when output as a null-terminated string,
+ *  provide a hexadecimal representation of in_char. 
+ *
+ *  Parameters:
+ *      out_chars points to a three-char array 
+ *      in_char contains the value to be output
+ *
+ *  Value Returned:
+ *      out_chars contains a string representing the char in hex.
+ */
+void display_hex_char( char * out_chars, char in_char)
+{
+    out_chars[0] = hexchar[ ( in_char >> 4 ) & 0x0f ];
+    out_chars[1] = hexchar[ in_char & 0x0f ];
+    out_chars[2] = 0x00;
+    
+    return;    
 }
 
 /*  Function display_hex_line().
@@ -146,33 +194,6 @@ void display_hex_line( char * out_chars, char * in_chars )
     out_chars[68] = '\0';    
 
     return;
-}
-
-/*  Function display_char().
- *  If isgraph() indicates that in_char is displayable, returns a space in
- *  out_chars[0] and in_char in out_chars[1]. Otherwise returns values in
- *  out_chars which, when output together, provide a hexadecimal representation
- *  of in_char. Since isgraph() is used, the space character will appear in
- *  hexadecimal.
- *
- *  Parameters:
- *      out_chars points to a two-char array 
- *      in_char contains the value to be output
- *
- *  Value Returned:
- *      The values indicated above are returned in the out_chars.
- */
-void display_char( char * out_chars, char in_char)
-{
-    if ( isgraph( in_char ) ) {
-        out_chars[0] = ' ';
-        out_chars[1] = in_char;
-    } else {
-        out_chars[0] = hexchar[ ( in_char >> 4 ) & 0x0f ];
-        out_chars[1] = hexchar[ in_char & 0x0f ];
-    }
-    
-    return;    
 }
 
 /*  Function parse_cmdline().
