@@ -411,6 +411,7 @@ static void ProcessDirectoryQueue( void )
     DIR                 *dirh;
     struct dirent       *dp;
     dirqueue            *head;
+    dirqueue            *last_ok;
     char                *makefile;
 #ifdef __UNIX__
     struct stat          buf;
@@ -446,8 +447,22 @@ static void ProcessDirectoryQueue( void )
             }
             closedir( dirh );
         }
-        if( head->next != NULL ) {
-            chdir( RelativePath( head->name, head->next->name ) );
+        last_ok = NULL;
+        while( head->next != NULL ) {
+            if( last_ok == NULL ) {
+                if( chdir( RelativePath( head->name, head->next->name ) ) == 0 )
+                    break;
+                last_ok = head;
+                QueueHead = head->next;
+            } else if( chdir( RelativePath( last_ok->name, head->next->name ) ) == 0 ) {
+                free( last_ok );
+                break;
+            } else {
+                DeQueue();
+            }
+            sprintf( Buff, "PMAKE warning: can not change directory to %s", head->next->name );
+            PMakeOutput( Buff );
+            head = QueueHead;
         }
         DeQueue();
         head = QueueHead;
