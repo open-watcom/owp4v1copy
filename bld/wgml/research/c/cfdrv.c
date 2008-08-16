@@ -500,6 +500,14 @@ cop_driver * parse_driver( FILE * in_file )
         }
     }    
         
+    /* Reset to the start of the next P-buffer's data */
+
+    if( (current - p_buffer_set->buffer) % 80 != 0 ) { 
+        factor = (current - p_buffer_set->buffer) / 80;
+        factor++;
+        current = p_buffer_set->buffer + factor * 80;
+    }
+
     /* Skip the unknown (empty) P-buffer */
 
     /* Get the count and verify that it is 0 */

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implements the functions declared in cffunc.h:
+* Description:  Implements the functions declared in copfunc.h:
 *                   get_code_blocks()
 *                   get_p_buffer()
 *                   parse_functions_block()
@@ -47,6 +47,7 @@
  * Parameters:
  *      current points to the first byte of the data to be processed. 
  *      count contains the number of CodeBlocks expected.
+ *      base points to the first byte of the underlying P-buffer.
  *
  * Modified parameter:
  *      current points to the byte after the last byte processed.
@@ -59,10 +60,12 @@
  *      mem_alloc() will call exit() if the allocation fails.
  */
 
-code_block * get_code_blocks(uint8_t * * current, uint16_t count )
+code_block * get_code_blocks(uint8_t * * current, uint16_t count, uint8_t * base )
 {
-    uint8_t             i;
-    code_block *        out_block   = NULL;
+    code_block *    out_block   = NULL;
+    size_t          difference;
+    size_t          position;
+    uint8_t         i;
 
     /* Allocate out_block. */ 
              
@@ -72,7 +75,16 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count )
 
     for( i = 0; i < count; i++ ) {
 
-        /* Get the designator. */
+        /* Get the position of the designator in the P-buffer */
+
+        difference = *current - base;
+        position = difference % 80;
+
+        /* Get the designator, shifting it if necessary */
+            
+        if( position == 79 ) {
+            *current += 1;
+        }
             
         memcpy_s( &out_block[i].designator, 1, *current, 1 );
         *current += 1;
@@ -81,12 +93,20 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count )
 
         *current += 2;
 
-        /* Get the pass number. */
+        /* Get the pass number, shifting it if necessary */
+            
+        if( position == 76 ) {
+            *current += 1;
+        }
             
         memcpy_s( &out_block[i].pass, 2, *current, 2 );
         *current += 2;
 
-        /* Get the count. */
+        /* Get the count, shifting it if necessary */
+            
+        if( position == 74 ) {
+            *current += 1;
+        }
             
         memcpy_s( &out_block[i].count, 2, *current, 2 );
         *current += 2;
@@ -193,8 +213,9 @@ p_buffer * get_p_buffer( FILE * in_file )
 /* Function parse_functions_block().
  * Construct a functions_block containing the data in the P-buffer.
  *
- * Parameter:
+ * Parameters:
  *      current contains the first byte of the data to be processed.
+ *      base points to the first byte of the underlying P-buffer.
  *
  * Modified parameter:
  *      current will point to the first byte after the last byte parsed.
@@ -215,7 +236,7 @@ p_buffer * get_p_buffer( FILE * in_file )
  *          but its code_blocks field will be NULL.
  */
 
-functions_block * parse_functions_block( uint8_t * * current )
+functions_block * parse_functions_block( uint8_t * * current, uint8_t * base )
 {
     uint16_t            code_count;
     functions_block *   out_block   = NULL;
@@ -235,7 +256,8 @@ functions_block * parse_functions_block( uint8_t * * current )
     if( out_block->count == 0 ) {
         out_block->code_blocks = NULL;
     } else {
-        out_block->code_blocks = get_code_blocks( current, out_block->count );
+        out_block->code_blocks = get_code_blocks( current, out_block->count, \
+            base );
     }
 
     return( out_block );

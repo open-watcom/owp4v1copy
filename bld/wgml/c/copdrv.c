@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implements the functions declared in cfdrv.h:
+* Description:  Implements the functions declared in copdrv.h:
 *                   is_drv_file()
 *                   parse_driver()
 *               and contains these local functions:
@@ -108,6 +108,7 @@ static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
  * Parameters:
  *      in_driver contains the cop_driver being initialized.
  *      *current contains the current position in a p_buffer::buffer.
+ *      base points to the first byte of the underlying P-buffer
  *
  *  Parameter modified:
  *      if the function succeeds, then *current will point to the first junk
@@ -127,7 +128,7 @@ static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
  */
 
 static cop_driver * parse_finish_block( cop_driver * in_driver, \
-    uint8_t * * current ) {
+    uint8_t * * current, uint8_t * base ) {
 
     code_block *    cop_codeblocks  = NULL;
     code_text *     code_text_ptr   = NULL;
@@ -163,7 +164,7 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         /* Get the CodeBlocks. */
         
-        cop_codeblocks = get_code_blocks( current, count );
+        cop_codeblocks = get_code_blocks( current, count, base );
         if( cop_codeblocks == NULL ) break;
 
         /* Initialize the code_text struct. */
@@ -215,7 +216,7 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         /* Get the CodeBlocks. */
         
-        cop_codeblocks = get_code_blocks( current, count );
+        cop_codeblocks = get_code_blocks( current, count, base );
         if( cop_codeblocks == NULL ) break;
         
         /* Initialize the code_text struct. */
@@ -448,7 +449,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
     /* Get the CodeBlocks. */
 
-    cop_codeblocks = get_code_blocks( current, count16 );
+    cop_codeblocks = get_code_blocks( current, count16, (*p_buffer_set)->buffer );
 
     /* Process the CodeBlocks into the font_style instance. */
 
@@ -870,6 +871,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
  * Parameters:
  *      in_driver contains the cop_driver being initialized.
  *      *current contains the current position in a p_buffer::buffer.
+ *      base points to the first byte of the underlying P-buffer
  *
  * Parameter modified:
  *      if the function succeeds, then *current will point to the first junk
@@ -887,7 +889,8 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
  *      get_code_blocks() calls mem_alloc(), which will call exit() if
  *          the allocation fails.
  */
-static cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * current ) {
+static cop_driver * parse_init_block( cop_driver * in_driver, \
+    uint8_t * * current, uint8_t * base ) {
 
     code_block *    cop_codeblocks  = NULL;
     init_block *    init_block_ptr  = NULL;
@@ -929,7 +932,7 @@ static cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * curren
 
         /* Get the CodeBlocks. */
         
-        cop_codeblocks = get_code_blocks( current, count );
+        cop_codeblocks = get_code_blocks( current, count, base );
         
         /* Add the init_text blocks. */
         
@@ -1015,7 +1018,7 @@ static cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * curren
 
         /* Get the CodeBlocks. */
         
-        cop_codeblocks = get_code_blocks( current, count );
+        cop_codeblocks = get_code_blocks( current, count, base );
         
         /* Add the init_text blocks. */
         
@@ -1305,7 +1308,8 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0000 :
         break;
     case 0x0001 :
-        out_driver = parse_init_block( out_driver, &current );
+        out_driver = parse_init_block( out_driver, &current, \
+            p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1313,7 +1317,8 @@ cop_driver * parse_driver( FILE * in_file )
         }
         break;
     case 0x0002 :
-        out_driver = parse_init_block( out_driver, &current );
+        out_driver = parse_init_block( out_driver, &current, \
+            p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1328,7 +1333,8 @@ cop_driver * parse_driver( FILE * in_file )
             current = p_buffer_set->buffer + factor * 80;
         }
 
-        out_driver = parse_init_block( out_driver, &current );
+        out_driver = parse_init_block( out_driver, &current, \
+            p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1365,7 +1371,8 @@ cop_driver * parse_driver( FILE * in_file )
     case 0x0000 :
         break;
     case 0x0001 :
-        out_driver = parse_finish_block( out_driver, &current );
+        out_driver = parse_finish_block( out_driver, &current, \
+            p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1373,7 +1380,8 @@ cop_driver * parse_driver( FILE * in_file )
         }
         break;
     case 0x0002 :
-        out_driver = parse_finish_block( out_driver, &current );
+        out_driver = parse_finish_block( out_driver, &current, \
+            p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1388,7 +1396,8 @@ cop_driver * parse_driver( FILE * in_file )
             current = p_buffer_set->buffer + factor * 80;
         }
 
-        out_driver = parse_finish_block( out_driver, &current );
+        out_driver = parse_finish_block( out_driver, &current, \
+            p_buffer_set->buffer );
         if( out_driver == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1461,7 +1470,8 @@ cop_driver * parse_driver( FILE * in_file )
 
         /* Get the CodeBlock. */
         
-        cop_codeblocks = get_code_blocks( &current, count16 );
+        cop_codeblocks = get_code_blocks( &current, count16, \
+            p_buffer_set->buffer );
         if( cop_codeblocks == NULL ) {
             mem_free( p_buffer_set );
             p_buffer_set = NULL;
@@ -1509,6 +1519,14 @@ cop_driver * parse_driver( FILE * in_file )
         }
     }    
         
+    /* Reset to the start of the next P-buffer's data. */
+
+    if( (current - p_buffer_set->buffer) % 80 != 0 ) { 
+        factor = (current - p_buffer_set->buffer) / 80;
+        factor++;
+        current = p_buffer_set->buffer + factor * 80;
+    }
+
     /* Skip the unknown (empty) P-buffer. */
 
     /* Get the count and verify that it is 0. */
@@ -1534,7 +1552,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Parse the Newpage Block, a Variant A FunctionsBlock. */
 
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, p_buffer_set->buffer );
 
     /* Verify that the number of CodeBlocks is 1. */
 
@@ -1575,7 +1593,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Parse the Htab Block, a Variant A FunctionsBlock. */
 
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, p_buffer_set->buffer );
 
     /* This block is optional: a count of 0 is allowed. */
 
@@ -1707,7 +1725,8 @@ cop_driver * parse_driver( FILE * in_file )
             
                 /* Get the CodeBlock(s). */
         
-                cop_codeblocks = get_code_blocks( &current, count16 );
+                cop_codeblocks = get_code_blocks( &current, count16, \
+                    p_buffer_set->buffer );
                 if( cop_codeblocks == NULL ) {
                     mem_free( p_buffer_set );
                     p_buffer_set = NULL;
@@ -1992,7 +2011,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Parse the Absoluteaddress Block, a Variant A FunctionsBlock. */
 
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, p_buffer_set->buffer );
 
     /* The number of CodeBlocks may be 0 or 1. */
 
@@ -2043,7 +2062,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* First parse the Variant A FunctionsBlock. */
 
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, p_buffer_set->buffer );
 
     /* The number of CodeBlocks may be 0 or 1 */
 
@@ -2150,7 +2169,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Now parse the Variant A FunctionsBlock. */
 
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, p_buffer_set->buffer );
 
     /* The number of CodeBlocks may be 0 or 1 */
 
@@ -2260,7 +2279,7 @@ cop_driver * parse_driver( FILE * in_file )
     
     /* Now parse the Variant A FunctionsBlock */
 
-    cop_functions = parse_functions_block( &current );
+    cop_functions = parse_functions_block( &current, p_buffer_set->buffer );
 
     /* The number of CodeBlocks may be 0 or 1 */
 
