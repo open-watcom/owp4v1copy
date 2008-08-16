@@ -30,7 +30,6 @@
 
 
 #include "wlib.h"
-#include "symomf.h"
 
 static unsigned short   CurrSegRef = 0;
 static char             Rec32Bit;
@@ -436,62 +435,4 @@ void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char *name, s
         Len = MaxLen = 0;
         sfile->arch.size = LibTell( ofile->hdl ) - sfile->inlib_offset;
     }
-}
-
-
-void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile io ) )
-{
-    long                pagelen, offset, end_offset;
-    arch_header         arch;
-    char                buff[ MAX_IMPORT_STRING ];
-    int                 len;
-
-    if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) )
-        return; // nyi - FALSE?
-    if( !GetLen( io ) )
-        return;
-    pagelen = Len + sizeof( Typ ) + sizeof( Len );
-    if( Options.page_size == 0 ) {
-        Options.page_size = pagelen;
-    }
-    LibSeek( io, Len, SEEK_CUR );
-    NewArchHeader( &arch, name );
-    CurrRec = NULL;
-    for( ;; ) {
-        offset = LibTell( io );
-        if( !GetRec( io ) )
-            break;
-        if( Typ != CMD_THEADR )
-            break;
-        len = *RecPtr++;
-        memcpy( buff, RecPtr, len );
-        buff[ len ] = '\0';
-        arch.name = buff;
-        LibSeek( io, offset, SEEK_SET );
-        rtn( &arch, io );
-        end_offset = LibTell( io );
-        if( end_offset == offset ) {
-            do {
-                if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) ) {
-                    FatalError( ERR_BAD_OBJECT, io->name );
-                }
-                if( LibRead( io, &Len, sizeof( Len ) ) != sizeof( Len ) ) {
-                    FatalError( ERR_BAD_OBJECT, io->name );
-                }
-                LibSeek( io, Len, SEEK_CUR );
-            } while( Typ != CMD_MODEND && Typ != CMD_MODE32 );
-        }
-        offset = pagelen - end_offset % pagelen;
-        if( offset == pagelen )
-            offset = 0;
-        LibSeek( io, offset, SEEK_CUR );
-        if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) )
-            break;
-        if( Typ == LIB_TRAILER_REC )
-            break;
-        LibSeek( io, -1, SEEK_CUR );
-    }
-    MemFree( CurrRec );
-    Len = MaxLen = 0;
-    CurrRec = NULL;
 }

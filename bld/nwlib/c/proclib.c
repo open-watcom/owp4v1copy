@@ -30,7 +30,13 @@
 
 
 #include "wlib.h"
-#include "symomf.h"
+
+static void SkipObject( arch_header *arch, libfile io )
+{
+    if( Options.libtype == WL_LTYPE_OMF ) {
+        OMFSkipThisObject( arch, io );
+    }
+}
 
 static void ExtractObj( libfile io, char *name, file_offset size,
                         arch_header *arch, char *newname )
@@ -93,10 +99,7 @@ static void ProcessOneObject( arch_header *arch, libfile io )
     }
 
     if( deleted ) {
-        if( Options.libtype == WL_LTYPE_OMF ) {
-            OMFSkipThisObject( arch, io );
-        }
-
+        SkipObject( arch, io );
         Options.modified = TRUE;
     } else {
         AddObjectSymbols( arch, io, LibTell( io ) );
@@ -111,6 +114,7 @@ static void AddOneObject( arch_header *arch, libfile io )
 static void DelOneObject( arch_header *arch, libfile io )
 {
     RemoveObjectSymbols( arch->name );
+    SkipObject( arch, io );
 }
 
 typedef enum {

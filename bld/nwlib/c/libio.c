@@ -105,6 +105,12 @@ void LibWriteError( libfile lio )
     FatalError( ERR_CANT_WRITE, lio->name, strerror( errno ) );
 }
 
+void BadLibrary( char *name )
+/***************************/
+{
+    FatalError( ERR_BAD_LIBRARY, name );
+}
+
 static void LibFlush( libfile lio )
 {
     if( lio->buf_size ) {
