@@ -513,7 +513,7 @@ static int isValidChunk( entry_ptr tr, const char *rtn,
     }
 #endif
 #endif
-    if( *(char *)_PtrAdd( mem, size ) != ALLOC_BYTE ) {
+    if( *(unsigned char *)_PtrAdd( mem, size ) != ALLOC_BYTE ) {
         trPrt( hdl, MSG_OVERRUN_ALLOCATION, rtn, who, mem, tr->who, size );
         return( 0 );
     }
@@ -639,7 +639,7 @@ static void * ChangeAlloc( void *old, size_t size, _trmem_who who,
     if( size > old_size ) {
         MEMSET(_PtrAdd( new_block, old_size ), ALLOC_BYTE, size + 1 - old_size);
     } else {
-        *(char *)_PtrAdd( new_block, size ) = ALLOC_BYTE;
+        *(unsigned char *)_PtrAdd( new_block, size ) = ALLOC_BYTE;
     }
     hdl->mem_used -= old_size;
     hdl->mem_used += size;
