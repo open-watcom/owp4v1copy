@@ -47,6 +47,19 @@ void    WndCreateToolBar( gui_ord height, bool fixed,
     WndSetToolBar( fixed ? GUI_TOOLBAR_FIXED : GUI_TOOLBAR_FLOATING );
 }
 
+void WndCreateToolBarWithTips( gui_ord height, bool fixed, int items,
+                               gui_toolbar_struct *tools )
+{
+    if( GUIHasToolBar( WndMain->gui ) ) {
+        GUICloseToolBar( WndMain->gui );
+    }
+    GUICreateToolBarWithTips( WndMain->gui, fixed, height, items, tools, TRUE,
+                              &WndColours[GUI_MENU_PLAIN],
+                              &WndColours[GUI_MENU_STANDOUT] );
+    ToolHeight = height;
+    WndSetToolBar( fixed ? GUI_TOOLBAR_FIXED : GUI_TOOLBAR_FLOATING );
+}
+
 bool WndHaveToolBar( void )
 {
     return( GUIHasToolBar( WndMain->gui ) );
