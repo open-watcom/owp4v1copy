@@ -49,8 +49,6 @@ extra_a_flags_movlmain = -DOVL_WHOOSH -DOVL_MULTITHREAD
 extra_a_flags_sovlret  = -DOVL_SMALL
 extra_a_flags_lovlret  =
 
-extra_lib_flags = -p=16
-
 wovl : .symbolic wovl.lib wmovl.lib
     @%null
 

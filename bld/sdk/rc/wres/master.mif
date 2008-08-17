@@ -41,8 +41,6 @@ extra_c_flags_i86 = -zdp
 extra_c_flags_i86 = -zw-zu
 !endif
 
-extra_lib_flags = -p=16
-
 # where to look for various files
 
 .c : $(wres_dir)/c

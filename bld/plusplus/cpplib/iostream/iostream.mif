@@ -263,8 +263,6 @@ pch_flags = -fh=pch01.pch
 pch_flags_x = -fh=pch02.pch
 extra_cpp_flags_iofdefg = -fh=pch03.pch
 
-debug_lib_page_size = -p=64
-
 !include $(cpplib_dir)/plibname.mif
 
 prefix = $(iost_n)

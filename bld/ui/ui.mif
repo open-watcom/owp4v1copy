@@ -89,8 +89,6 @@ extra_c_flags += -os-s
 !endif
 !endif
 
-extra_lib_flags = -p=16
-
 !include trmem.mif
 
 $(name).lib: $(objfiles)

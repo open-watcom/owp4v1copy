@@ -43,8 +43,6 @@ extra_objs_win = new_win.obj
 extra_objs_os2 = new_os2.obj
 !endif
 
-extra_lib_flags = -p=16
-
 objs = $(objs_$(host_OS)) $(extra_objs_$(host_OS))
 
 wpi.lib: $(objs)

@@ -281,7 +281,7 @@ libname_387_mf  =7$(libname_$(convention))
 libname_        =
 libname =flib$(libname_$(processor)_$(model))
 
-lib_flags = -b-c-n-p=32
+lib_flags = -b-c-n-pa
 !ifeq release 1
 lib_flags += -s-t-zld
 !endif

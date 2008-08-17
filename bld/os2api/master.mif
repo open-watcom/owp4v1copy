@@ -220,7 +220,7 @@ incldir = incl32
 libdir = lib386
 !endif
 
-extra_lib_flags = -io -ii -p=32
+extra_lib_flags = -io -ii
 
 all : $(dirs) $(headers) $(libs) .SYMBOLIC
 

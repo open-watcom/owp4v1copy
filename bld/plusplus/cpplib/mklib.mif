@@ -44,26 +44,10 @@ target_objs = $(objs)
 target_xbjs = $(xbjs)
 !endif
 
-lib_flags = -b-c-n
+lib_flags = -b-c-n-pa
 !ifneq release 0
 lib_flags += -s-t-zld
 !endif
-
-!ifndef lib_page_size
-!ifeq release 0
-!ifdef debug_lib_page_size
-lib_page_size = $(debug_lib_page_size)
-!endif
-!else
-!ifdef release_lib_page_size
-lib_page_size = $(release_lib_page_size)
-!endif
-!endif
-!endif
-!ifndef lib_page_size
-lib_page_size = -p=16
-!endif
-lib_flags += $(lib_page_size)
 
 !ifdef target_lib_x
 libs : .symbolic $(target_lib) $(target_lib_x) $(files)

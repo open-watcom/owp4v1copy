@@ -34,8 +34,6 @@ extra_c_flags = -s -fpc
 extra_c_flags_dos = -zl -zls
 extra_c_flags_qnx = -oais-w3 -I"$(new_qnx_h)" -DQNX32
 
-extra_lib_flags = -p=16
-
 !ifeq host_OS dos
 
 emu387.lib: emu387.obj 386inite.obj

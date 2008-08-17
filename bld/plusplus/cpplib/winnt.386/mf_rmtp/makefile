@@ -7,7 +7,6 @@ linkage    = static
 mthreaded  = 1
 profile    = 1
 subdir     = mf_rmtp
-release_lib_page_size = -p=32
-debug_lib_page_size = -p=128
+
 define_library_include = $(cpplib_dir)/plib.mif
 !include $(cpplib_dir)/mrglib.mif

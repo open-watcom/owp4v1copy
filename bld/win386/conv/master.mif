@@ -33,8 +33,6 @@ win31_16.def &
 
 extra_a_flags_fldenv = -i"$(watcomdir)h"
 
-extra_lib_flags = -p=16
-
 all : ./conv.exe win386.lib
 
 ./conv.exe : conv.c makefile

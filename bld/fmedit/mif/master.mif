@@ -58,8 +58,6 @@ rc_flags_win += -30
 
 extra_l_flags_win = op rwr
 
-extra_lib_flags = -p=16
-
 #
 # Dependencies
 #

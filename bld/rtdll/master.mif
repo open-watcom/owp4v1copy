@@ -42,7 +42,7 @@ br_sufix=0
 patch_level=0
 !endif
 
-extra_l_flags_dll = option impfile reference __DLLstart_ disable 121
+extra_l_flags_dll = option impfile=$(dllname).imp reference __DLLstart_ disable 121
 !ifeq release 0
 extra_l_flags_dll += option map,mangle,artificial,verbose
 !endif
@@ -54,16 +54,17 @@ libflags_nt_386 = -io -ii
 libflags_nt_axp = -ic -ia
 libflags_nt_ppc = -ic -ip
 
-extra_lib_flags = -p=16 -irn
+extra_lib_flags = -irn
 !ifeq release 1
 extra_lib_flags += -s-t-zld
 !endif
 
-$(libdllname).lib : $(dllname).imp $(static_objs)
-    $(librarian) $(libflags) $^@ @$(dllname).imp $(static_objs)
+$(libdllname).lib : $(dllname).lbc
+    $(librarian) $(libflags) $@ @$(dllname).lbc
 
-$(dllname).imp : $(dllname).lbc $(rtdll_dir)/proclbc.awk
-    $(awk) -f $(rtdll_dir)/proclbc.awk -v os=$(host_os) -v br=$(br_sufix) $(dllname).lbc > $(dllname).imp
+$(dllname).lbc : $(dllname).imp $(rtdll_dir)/proclbc.awk $(static_objs)
+    $(awk) -f $(rtdll_dir)/proclbc.awk -v os=$(host_os) -v br=$(br_sufix) $(dllname).imp > $@
+    @for %i in ($(static_objs)) do @%append $@ +%i
 
 !ifeq system winnt
 res_objs = $(dllname).rc
@@ -77,13 +78,13 @@ lnk_alias = alias __HugeValue_br=__HugeValue, __IsTable_br=__IsTable
 !endif
 !endif
 
-$(dllname).dll $(dllname).lbc : $(res_objs) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
+$(dllname).dll $(dllname).imp : $(res_objs) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
     $(linker) name $(dllname).dll @$(dllname).lnk
 !ifeq system winnt
     $(rc) $(rc_flags) -i"$(%watcom)/h/nt" $(dllname).rc $(dllname).dll
 !endif
-    sort < $(dllname).lbc > $(dllname).tmp
-    uniq $(dllname).tmp > $(dllname).lbc
+    sort < $(dllname).imp > $(dllname).tmp
+    uniq $(dllname).tmp > $(dllname).imp
     @rm -f $(dllname).tmp
 
 $(dllname).lnk : $(dll_def) $(__MAKEFILES__)

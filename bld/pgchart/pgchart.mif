@@ -64,8 +64,6 @@ extra_c_flags_i86 = -nt=GRAPH_TEXT -d_CGRAPH=_loadds
 
 extra_c_flags_win = -zW
 
-extra_lib_flags = -p=16
-
 $(libname).lib : pgchart.lbc
         $(librarian) $(libflags) $@ @$<
 

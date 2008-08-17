@@ -18,7 +18,7 @@ libname_387_mf =$(libname_$(convention))
 libname_   =clib
 libname =clib$(libname_$(processor)_$(model))
 
-lib_flags  = -b-c-n
+lib_flags  = -b-c-n-pa
 !ifeq release 1
 lib_flags += -s-t-zld
 !endif

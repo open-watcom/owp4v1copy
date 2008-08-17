@@ -164,11 +164,6 @@ build_rc_nt_386 = nt
 res_objs = version.res
 !endif
 
-###################
-# librarian flags
-
-extra_lib_flags = -p=16
-
 !ifeq bootstrap 1
 
 inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I..

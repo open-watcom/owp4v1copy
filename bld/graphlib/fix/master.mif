@@ -8,8 +8,6 @@ clibdir = $(build_root)/clib/library/msdos.086/ms/clibs.lib
 clibdir = $(build_root)/clib/library/msdos.386/ms_r/clib3r.lib
 !endif
 
-extra_lib_flags = -p=16
-
 !ifeq host_os dos
 
 all: graph.lib

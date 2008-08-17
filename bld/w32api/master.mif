@@ -160,11 +160,9 @@ ddk_libs = &
 
 libs = $($(proj_name)_libs)
 
-extra_lib_flags = -p=16
-
+extra_lib_flags_386 = -io -ii
 extra_lib_flags_axp = -ic -ia
 extra_lib_flags_ppc = -ic -ip
-extra_lib_flags_386 = -io -ii
 
 .def: ../../lib;../../lib/directx;../../lib/ddk;
 

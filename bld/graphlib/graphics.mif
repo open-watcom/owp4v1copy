@@ -194,8 +194,6 @@ extra_a_flags_386 = $(extra_a_flags_386_$(convention))
 
 extra_a_flags_qnx = -D_QNX
 
-extra_lib_flags = -p=16
-
 $(libname).lib : $(special_objs) $(objs)
         %create $^&.lbc
         @for %i in ($(objs)) do @%append $^&.lbc +%i

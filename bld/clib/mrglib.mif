@@ -18,20 +18,6 @@ make_flags += convention=$(convention)
 make_flags += linkage=$(linkage)
 !endif
 
-!ifeq release 0
-!ifdef profile
-lib_flags    +=-p=128
-!else
-lib_flags    +=-p=64
-!endif
-!else
-!ifdef profile
-lib_flags    +=-p=32
-!else
-lib_flags    +=-p=16
-!endif
-!endif
-
 all : $(libname).lib .symbolic
     @%null
 

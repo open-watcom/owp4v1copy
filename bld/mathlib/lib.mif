@@ -24,7 +24,7 @@ libname = $(libname_pfx)$(processor_)$(libname_$(convention))
 libname = $(libname_pfx)$(processor_)$(libname_$(model))
 !endif
 
-lib_flags = -b-c-n-p=16
+lib_flags = -b-c-n-pa
 !ifeq release 1
 lib_flags += -s-t-zld
 !endif

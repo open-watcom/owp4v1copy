@@ -107,6 +107,4 @@ extra_c_flags_mem    = $(trmem_cover_cflags) -fh=$^&.pch
 extra_c_flags_os2mem = $(trmem_cover_cflags) -fh=$^&.pch
 extra_c_flags_wpimem = $(trmem_cover_cflags) -fh=$^&.pch
 
-extra_lib_flags = -p=64
-
 !include ../../master.mif

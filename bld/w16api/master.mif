@@ -50,7 +50,7 @@ winlibs =            &
         user.lbc     &
         win87em.lbc
 
-extra_lib_flags = -io -ii -p=16
+extra_lib_flags = -io -ii
 
 all : $(headers) $(libs) .SYMBOLIC
 
