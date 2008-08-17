@@ -4091,7 +4091,7 @@ LINK    = wlink  $(LFLAGS)
 !  loaddll wpp      wppdi86
 !  loaddll wppaxp   wppdaxp
 !  loaddll wpp386   wppd386
-!  loaddll wlink    wlink
+!  loaddll wlink    wlinkd
 !  loaddll wlib     wlibd
 !endif
 
