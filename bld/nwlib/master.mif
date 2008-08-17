@@ -42,7 +42,7 @@ common_objs = &
     wlib.obj &
     libio.obj &
     symtable.obj &
-    symomf.obj &
+    omfproc.obj &
     writelib.obj &
     convert.obj &
     wlibutil.obj &
