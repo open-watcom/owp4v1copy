@@ -35,7 +35,7 @@ static orl_handle       ORLHnd;
 static orl_funcs        OrlFuncs;
 
 static void * ObjRead( void *fil, size_t len )
-/*****************************************/
+/********************************************/
 {
     buf_list    *buf;
     obj_file    *ofile = fil;
@@ -75,6 +75,7 @@ static void *ObjAlloc( size_t size )
 }
 
 static void ObjFree( void *ptr )
+/******************************/
 {
     MemFreeGlobal( ptr );
 }
@@ -101,7 +102,7 @@ void InitObj( void )
 
 
 static obj_file *DoOpenObjFile( char *name, libfile hdl, long offset )
-/************************************************************************/
+/********************************************************************/
 {
     obj_file            *ofile;
     orl_file_format     format;
@@ -112,7 +113,8 @@ static obj_file *DoOpenObjFile( char *name, libfile hdl, long offset )
     ofile->offset = offset;
     format = ORLFileIdentify( ORLHnd, ofile );
     switch( format ) {
-        case ORL_COFF: case ORL_ELF:
+        case ORL_COFF:
+        case ORL_ELF:
             ofile->orl = ORLFileInit( ORLHnd, ofile, format );
             if( Options.libtype == WL_LTYPE_MLIB ) {
                 if( (ORLFileGetFlags( ofile->orl ) & VALID_ORL_FLAGS) != VALID_ORL_FLAGS ) {
@@ -132,6 +134,7 @@ static obj_file *DoOpenObjFile( char *name, libfile hdl, long offset )
 }
 
 obj_file *OpenObjFile( char *name )
+/*********************************/
 {
     libfile     hdl;
 
@@ -140,11 +143,13 @@ obj_file *OpenObjFile( char *name )
 }
 
 obj_file *OpenLibFile( char *name, libfile hdl )
+/**********************************************/
 {
     return( DoOpenObjFile( name, hdl, LibTell( hdl ) ) );
 }
 
 static void DoCloseObjFile( obj_file *ofile )
+/*******************************************/
 {
     buf_list    *list,*next;
 
@@ -159,6 +164,7 @@ static void DoCloseObjFile( obj_file *ofile )
 }
 
 void CloseObjFile( obj_file *ofile )
+/**********************************/
 {
     libfile     hdl;
 
@@ -168,6 +174,7 @@ void CloseObjFile( obj_file *ofile )
 }
 
 void CloseLibFile( obj_file *ofile )
+/**********************************/
 {
     DoCloseObjFile( ofile );
 }

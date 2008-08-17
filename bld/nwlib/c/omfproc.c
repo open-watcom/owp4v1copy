@@ -31,9 +31,6 @@
 
 #include "wlib.h"
 
-static unsigned short   CurrSegRef = 0;
-static char             Rec32Bit;
-
 struct lname {
     struct lname        *next;
     char                local;
@@ -54,51 +51,38 @@ typedef enum {
     S_ALIAS
 } sym_type;
 
+typedef enum omf_oper {
+    OMF_ISIZE,
+    OMF_OSIZE,
+    OMF_COPY,
+    OMF_SYMS
+} omf_oper;
+
+static unsigned short   CurrSegRef = 0;
+static char             Rec32Bit;
 static struct lname     *LName_Head;
 static struct lname     **LName_Owner;
-static char             Typ;
-static unsigned short   Len, MaxLen;
-static char             *CurrRec;
-static char             *RecPtr;
+static unsigned_8       *RecPtr;
+static unsigned_8       *RecEnd;
 static common_blk       *CurrCommonBlk;
 static unsigned short   SegDefCount;
-static bool             EasyOMF;
 static char             NameBuff[ 257 ];
 
-static bool GetLen( libfile io )
-{
-    char        ch1, ch2;
+static OmfRecord        *omfRec;
+static unsigned         omfRecLen;
 
-    if( LibRead( io, &ch1, sizeof( ch1 ) ) != sizeof( ch1 ) )
-        return( FALSE );
-    if( LibRead( io, &ch2, sizeof( ch2 ) ) != sizeof( ch1 ) )
-        return( FALSE );
-    Len = ( ( unsigned ) ch2 << 8 ) + ch1;
-    return( TRUE );
+void InitOmfRec( void )
+/*********************/
+{
+    omfRec = MemAlloc( INIT_OMF_REC_SIZE );
+    omfRecLen = INIT_OMF_REC_SIZE;
 }
 
-bool GetRec( libfile io )
-/***********************/
+void FiniOmfRec( void )
+/*********************/
 {
-    if( LibRead( io, &Typ, sizeof( Typ ) ) != sizeof( Typ ) )
-        return( FALSE );
-    if( !GetLen( io ) )
-        return( FALSE );
-    if( Len > MaxLen ) {
-        MemFree( CurrRec );
-        CurrRec = MemAlloc( Len );
-        MaxLen = Len;
-    }
-    if( LibRead( io, CurrRec, Len ) != Len )
-        return( FALSE );
-    RecPtr = CurrRec;
-    /* check to see if this is an Easy OMF-386 object file */
-    /* Only need to check the first comment record */
-    if( ( Typ & ~1 ) == CMD_COMENT  &&  Len == 8  &&
-        memcmp( CurrRec, "\x80\xAA" "80386", 7 ) == 0 ) {
-        EasyOMF = TRUE;
-    }
-    return( TRUE );
+    MemFree( omfRec );
+    omfRecLen = 0;
 }
 
 static unsigned short GetIndex( void )
@@ -203,7 +187,8 @@ static void AddOMFSymbol( sym_type type )
 /*
  * from infl, get a intel name: length and name
  */
-void GetName( void )
+static void GetName( void )
+/*************************/
 {
     int        num_char;
 
@@ -217,9 +202,10 @@ void GetName( void )
  * loop over the publics in the record
  */
 static void getpubdef( void )
+/***************************/
 {
     GetIdx();
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+    while( RecPtr < RecEnd ) {
         GetName();
         GetOffset();
         GetIndex();
@@ -227,30 +213,8 @@ static void getpubdef( void )
     }
 }
 
-/*
- * get the public definition out of the coment record
- */
-
-static void GetComent( sym_file *sfile )
-{
-    RecPtr++;   // skip attribute byte of comment rec
-    switch( *RecPtr++ ) {
-    case CMT_DLL_ENTRY:
-        if( *RecPtr++ == DLL_IMPDEF ) {
-            RecPtr++;       // skip the ordinal flag
-            GetName();
-            AddOMFSymbol( S_PUBDEF );
-        }
-        break;
-    case CMT_LINKER_DIRECTIVE:
-        if( *RecPtr++ == LDIR_OBJ_TIMESTAMP ) {
-            sfile->arch.date = *(unsigned_32 *)RecPtr;
-        }
-        break;
-    }
-}
-
 static void GetComLen( void )
+/***************************/
 {
     switch( *RecPtr++ ) {
     case COMDEF_LEAF_4:
@@ -271,8 +235,9 @@ static void GetComLen( void )
  * process a COMDEF record
  */
 static void getcomdef( void )
+/***************************/
 {
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+    while( RecPtr < RecEnd ) {
         GetName();
         AddOMFSymbol( S_COMDEF );
         GetIndex();
@@ -291,6 +256,7 @@ static void getcomdef( void )
  * process a COMDAT record
  */
 static void getcomdat( void )
+/***************************/
 {
     unsigned            alloc;
     unsigned            idx;
@@ -321,11 +287,12 @@ static void getcomdat( void )
  * process a LNAMES record
  */
 static void getlname( int local )
+/*******************************/
 {
     unsigned            len;
     struct lname        *ln;
 
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+    while( RecPtr < RecEnd ) {
         len = *RecPtr++;
         ln = MemAlloc( (sizeof( struct lname ) - 1) + len );
         ln->local = local;
@@ -342,14 +309,17 @@ static void getlname( int local )
  * process an ALIAS record
  */
 static void getalias( void )
+/**************************/
 {
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+    while( RecPtr < RecEnd ) {
         GetName();  // alias symbol
         AddOMFSymbol( S_ALIAS );
         GetName();  // substitute symbol
     }
 }
+
 static void FreeLNames( void )
+/****************************/
 {
     struct lname        *next;
 
@@ -360,79 +330,344 @@ static void FreeLNames( void )
     }
 }
 
-
-/*
- * Skip to the end of the current object -- used in the code to delete
- * omf objects.
- */
-void OMFSkipThisObject( arch_header *arch, libfile io )
+static void CalcOmfRecordCheckSum( OmfRecord *rec )
+/*************************************************/
 {
-    obj_file    *ofile;
+    unsigned_8      sum;
+    unsigned_16     i;
 
-    ofile = OpenLibFile( arch->name, io );
-    OMFWalkSymList( ofile, NULL, NULL );
-    CloseLibFile( ofile );
+    sum = 0;
+    for( i = 0; i < GET_LE_16( rec->basic.len ) + 2; ++i ) {
+        sum += rec->chkcalc[ i ];
+    }
+    rec->chkcalc[ i ] = -sum;
 }
 
-
-void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char *name, symbol_strength, unsigned char) )
+static void SetOmfBuffer( int len )
+/*********************************/
 {
+    if( len + 3 > omfRecLen ) {
+        OmfRecord *new;
+        omfRecLen = len + 3;
+        new = MemAlloc( omfRecLen );
+        new->basic.len = omfRec->basic.len;
+        new->basic.type = omfRec->basic.type;
+        MemFree( omfRec );
+        omfRec = new;
+    }
+}
+
+static unsigned_8 *SetOmfRecBuffer( unsigned_8 type, int len )
+/************************************************************/
+{
+    omfRec->basic.type = type;
+    omfRec->basic.len = GET_LE_16( len );
+    SetOmfBuffer( len );
+    return( omfRec->basic.contents );
+}
+
+static bool ReadOmfRecord( libfile io )
+/*******************************************/
+{
+    int     len;
+
+    if( LibRead( io, omfRec, 3 ) != 3 )
+        return( FALSE );
+    len = GET_LE_16( omfRec->basic.len );
+    SetOmfBuffer( len );
+    if( LibRead( io, omfRec->basic.contents, len ) != len ) {
+        return( FALSE );
+    }
+    RecPtr = omfRec->basic.contents;
+    RecEnd = RecPtr + len - 1;
+    return( TRUE );
+}
+
+static void trimOmfHeader( void )
+/*******************************/
+{
+    int     len;
+
+    len = GET_LE_16( omfRec->basic.len );
+    omfRec->basic.contents[ len - 1 ] = '\0';
+    len = strlen( TrimPath( (char *)omfRec->basic.contents + 1 ) );
+    omfRec->basic.contents[ 0 ] = len;
+    omfRec->basic.len = GET_LE_16( len + 2 );
+    CalcOmfRecordCheckSum( omfRec );
+}
+
+static void WriteOmfRecord( OmfRecord *rec )
+/******************************************/
+{
+    CalcOmfRecordCheckSum( rec );
+    WriteNew( rec, GET_LE_16( rec->basic.len ) + 3 );
+}
+
+static void WriteTimeStamp( sym_file *sfile )
+/*******************************************/
+{
+    OmfRecord   rec;
+
+    rec.time.type = CMD_COMENT;
+    rec.time.len = GET_LE_16( sizeof( rec.time ) - 3 );
+    rec.time.attribute = CMT_TNP | CMT_TNL;
+    rec.time.class = CMT_LINKER_DIRECTIVE;
+    rec.time.subclass = LDIR_OBJ_TIMESTAMP;
+    rec.time.stamp = GET_LE_32( sfile->arch.date );
+    WriteOmfRecord( &rec );
+}
+
+static file_offset OmfProc( libfile io, sym_file *sfile, omf_oper oper )
+/**********************************************************************/
+{
+    bool        time_stamp;
+    char        new_line[] = { '\n' };
+    bool        first;
+    file_offset size;
+    bool        EasyOMF;
+
     EasyOMF = FALSE;
+    time_stamp = FALSE;
+    size = 0;
+    first = TRUE;
+    do {
+        if( !ReadOmfRecord( io ) ) {
+            FatalError( ERR_BAD_OBJECT, io->name );
+        }
+        if( oper == OMF_ISIZE ) {
+            size += GET_LE_16( omfRec->basic.len ) + 3;
+        } else {
+            if( oper == OMF_SYMS ) {
+                /* check to see if this is an Easy OMF-386 object file */
+                /* Only need to check the first comment record */
+                if( ( omfRec->basic.type & ~1 ) == CMD_COMENT ) {
+                    if( GET_LE_16( omfRec->basic.len ) == 8 && memcmp( omfRec->basic.contents, "\x80\xAA" "80386", 7 ) == 0 ) {
+                        EasyOMF = TRUE;
+                    }
+                }
+                if( omfRec->basic.type & 1 ) {
+                    Rec32Bit = TRUE;
+                } else {
+                    Rec32Bit = EasyOMF;
+                }
+                switch( omfRec->basic.type ) {
+                case CMD_SEGDEF:
+                case CMD_SEGD32:
+                    procsegdef();
+                    break;
+                case CMD_PUBDEF:
+                case CMD_PUBD32:
+                    getpubdef();
+                    break;
+                case CMD_COMDEF:
+                    getcomdef();
+                    break;
+                case CMD_COMDAT:
+                case CMD_COMD32:
+                    getcomdat();
+                    break;
+                case CMD_LNAMES:
+                    getlname( FALSE );
+                    break;
+                case CMD_LLNAME:
+                    getlname( TRUE );
+                    break;
+                case CMD_ALIAS:
+                    getalias();
+                    break;
+                }
+            }
+            switch( omfRec->basic.type ) {
+            case CMD_THEADR:
+                if( Options.strip_line && !first )
+                    continue;
+                if( Options.trim_path )
+                    trimOmfHeader();
+                first = FALSE;
+                break;
+            case CMD_LINSYM:
+            case CMD_LINS32:
+            case CMD_LINNUM:
+            case CMD_LINN32:
+                if( Options.strip_line ) {
+                    continue;
+                }
+                break;
+            case CMD_COMENT:
+                switch( omfRec->basic.contents[ 1 ] ) {
+                case CMT_LINKER_DIRECTIVE:
+                    if( omfRec->time.subclass == LDIR_OBJ_TIMESTAMP ) {
+                        time_stamp = TRUE;
+                        if( oper == OMF_SYMS ) {
+                            sfile->arch.date = GET_LE_32( omfRec->time.stamp );
+                        }
+                    }
+                    break;
+                case CMT_DLL_ENTRY:
+                    if( omfRec->basic.contents[ 2 ] == DLL_EXPDEF ) {
+                        if( oper == OMF_COPY ) {
+                            if( ExportListFile != NULL ) {
+                                LibWrite( ExportListFile, omfRec->basic.contents + 5, omfRec->basic.contents[ 4 ] );
+                                LibWrite( ExportListFile, new_line, sizeof( new_line ) );
+                            }
+                        }
+                        if( Options.strip_expdef ) {
+                            continue;
+                        }
+                    } else if( omfRec->basic.contents[ 2 ] == DLL_IMPDEF ) {
+                        if( oper == OMF_SYMS ) {
+                            omfRec->basic.contents[ 5 + omfRec->basic.contents[ 4 ] ] = '\0';
+                            AddSym( (char *)( omfRec->basic.contents + 5 ), SYM_STRONG, 0 );
+                        }
+                    }
+                    break;
+                case CMT_DEPENDENCY:
+                    if( Options.strip_dependency )
+                        continue;
+                    break;
+                }
+                break;
+            case CMD_MODEND:
+            case CMD_MODE32:
+                first = TRUE;
+                if( !time_stamp ) {
+                    size += sizeof( OmfTimeStamp );
+                    if( oper == OMF_COPY ) {
+                        WriteTimeStamp( sfile );
+                    }
+                }
+                break;
+            }
+            size += GET_LE_16( omfRec->basic.len ) + 3;
+            if( oper == OMF_COPY ) {
+                WriteNew( omfRec, GET_LE_16( omfRec->basic.len ) + 3 );
+            }
+        }
+    } while( omfRec->basic.type != CMD_MODEND && omfRec->basic.type != CMD_MODE32 );
+    return( size );
+}
+
+file_offset OmfCopy( libfile io, sym_file *sfile )
+/************************************************/
+{
+    return( OmfProc( io, sfile, OMF_COPY ) );
+}
+
+file_offset OmfSkipObject( libfile io )
+/*************************************/
+{
+    return( OmfProc( io, NULL, OMF_ISIZE ) );
+}
+
+void OmfExtract( libfile io, libfile out )
+/****************************************/
+{
+    do {
+        ReadOmfRecord( io );
+        LibWrite( out, omfRec, GET_LE_16( omfRec->basic.len ) + 3 );
+    } while( omfRec->basic.type != CMD_MODEND && omfRec->basic.type != CMD_MODE32 );
+}
+
+int OmfImportSize( import_sym *import )
+/*************************************/
+{
+    int             len;
+    int             dll_len;
+    int             sym_len;
+
+    dll_len = strlen( import->DLLName ) + 1;
+    sym_len = strlen( import->symName ) + 1;
+    // THEADR
+#ifdef IMP_MODULENAME_DLL
+    len = 3 + dll_len + 1;
+#else
+    len = 3 + sym_len + 1;
+#endif
+    // Comment DLL Entry
+    len += 3 + 2 + 2 + dll_len + sym_len + 1;
+    if( import->type == ORDINAL ) {
+        len += 2;
+    } else if( import->exportedName == NULL ) {
+        len += 1;
+    } else {
+        len += strlen( import->exportedName ) + 1;
+    }
+    // Comment timestamp
+    len += 3 + 8;
+    // MODEND
+    len += 3 + 2;
+    return( len );
+}
+
+void OmfWriteImport( sym_file *sfile )
+/************************************/
+{
+    int         sym_len;
+    int         file_len;
+    int         exp_len;
+    int         len;
+    unsigned_8  *contents;
+
+    file_len = strlen( sfile->import->DLLName );
+    sym_len = strlen( sfile->import->symName );
+#ifdef IMP_MODULENAME_DLL
+    contents = SetOmfRecBuffer( CMD_THEADR, file_len + 2 );
+    contents[ 0 ] = file_len;
+    memcpy( contents + 1, sfile->import->DLLName, file_len );
+#else
+    contents = SetOmfRecBuffer( CMD_THEADR, sym_len + 2 );
+    contents[ 0 ] = sym_len;
+    memcpy( contents + 1, sfile->import->symName, sym_len );
+#endif
+    WriteOmfRecord( omfRec );
+    len = 2 + 2 + ( 1 + file_len ) + ( 1 + sym_len ) + 1;
+    if( sfile->import->type == ORDINAL ) {
+        len += 2;
+    } else if( sfile->import->exportedName == NULL ) {
+        len += 1;
+    } else {
+        exp_len = strlen( sfile->import->exportedName );
+        len += exp_len + 1;
+    }
+    contents = SetOmfRecBuffer( CMD_COMENT, len );
+    contents[ 0 ] = CMT_TNP;
+    contents[ 1 ] = CMT_DLL_ENTRY;
+    contents[ 2 ] = MOMF_IMPDEF;
+    if( sfile->import->type == ORDINAL ) {
+        contents[ 3 ] = 1;
+    } else {
+        contents[ 3 ] = 0;
+    }
+    contents[ 4 ] = sym_len;
+    memcpy( contents + 5, sfile->import->symName, sym_len );
+    contents[ 5 + sym_len ] = file_len;
+    memcpy( contents + 6 + sym_len, sfile->import->DLLName, file_len );
+    file_len += sym_len + 6;
+    if( sfile->import->type == ORDINAL ) {
+        *(unsigned_16 *)( contents + file_len ) = (unsigned_16)sfile->import->ordinal;
+    } else if( sfile->import->exportedName == NULL ) {
+        contents[ file_len ] = 0;
+    } else {
+        contents[ file_len ] = exp_len;
+        memcpy( contents + file_len + 1, sfile->import->exportedName, exp_len );
+    }
+    WriteOmfRecord( omfRec );
+    WriteTimeStamp( sfile );
+    contents = SetOmfRecBuffer( CMD_MODEND, 2 );
+    contents[ 0 ] = 0;
+    WriteOmfRecord( omfRec );
+}
+
+void OMFWalkSymList( obj_file *ofile, sym_file *sfile )
+/************************************************/
+{
     SegDefCount = 0;    // just for FORTRAN 77 common block
     CurrSegRef = 0;
     LName_Head = NULL;
     LName_Owner = &LName_Head;
 
-    do {
-        if( !GetRec( ofile->hdl ) ) {
-            FatalError( ERR_BAD_OBJECT, ofile->hdl->name );
-        }
+    sfile->arch.size = OmfProc( ofile->hdl, sfile, OMF_SYMS );
 
-        if( Typ & 1 ) {
-            Rec32Bit = TRUE;
-        } else {
-            Rec32Bit = EasyOMF;
-        }
-
-        if( sfile ) {
-            switch( Typ ) {
-            case CMD_SEGDEF:
-            case CMD_SEGD32:
-                procsegdef();
-                break;
-            case CMD_PUBDEF:
-            case CMD_PUBD32:
-                getpubdef();
-                break;
-            case CMD_COMENT:
-                GetComent( sfile );
-                break;
-            case CMD_COMDEF:
-                getcomdef();
-                break;
-            case CMD_COMDAT:
-            case CMD_COMD32:
-                getcomdat();
-                break;
-            case CMD_LNAMES:
-                getlname( FALSE );
-                break;
-            case CMD_LLNAME:
-                getlname( TRUE );
-                break;
-            case CMD_ALIAS:
-                getalias();
-                break;
-            } /* switch */
-        } /* if */
-    } while( Typ != CMD_MODEND && Typ != CMD_MODE32 );
-
-    if( sfile ) {
-        FreeCommonBlk();
-        FreeLNames();
-        MemFree( CurrRec );
-        CurrRec = NULL;
-        Len = MaxLen = 0;
-        sfile->arch.size = LibTell( ofile->hdl ) - sfile->inlib_offset;
-    }
+    FreeCommonBlk();
+    FreeLNames();
 }

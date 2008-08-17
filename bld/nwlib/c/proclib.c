@@ -31,35 +31,33 @@
 
 #include "wlib.h"
 
-static void SkipObject( arch_header *arch, libfile io )
+static void SkipObject( libfile io )
 {
     if( Options.libtype == WL_LTYPE_OMF ) {
-        OMFSkipThisObject( arch, io );
+        OmfSkipObject( io );
     }
 }
 
-static void ExtractObj( libfile io, char *name, file_offset size,
-                        arch_header *arch, char *newname )
+static void CopyObj( libfile io, libfile out, arch_header *arch )
+{
+    if( Options.libtype == WL_LTYPE_OMF ) {
+        OmfExtract( io, out );
+    } else {
+        Copy( io, out, arch->size );
+    }
+}
+
+static void ExtractObj( libfile io, char *name, arch_header *arch, char *newname )
 {
     file_offset  pos;
     libfile      out;
     char        *obj_name;
 
-    /*
-     * If this is an OMF library then we don't have the right object size.
-     */
-    if( Options.libtype == WL_LTYPE_OMF ) {
-        pos = LibTell( io );
-        OMFSkipThisObject( arch, io );
-        size = LibTell( io ) - pos;
-        LibSeek( io, pos, SEEK_SET );
-    }
-
     obj_name = MakeObjOutputName( name, newname );
     unlink( obj_name );
     out = LibOpen( obj_name, LIBOPEN_BINARY_WRITE );
     pos = LibTell( io );
-    Copy( io, out, size );
+    CopyObj( io, out, arch );
     LibSeek( io, pos, SEEK_SET );
     LibClose( out );
     if( Options.ar && Options.verbose ) {
@@ -73,7 +71,7 @@ static void ProcessOneObject( arch_header *arch, libfile io )
     bool      deleted;
 
     if( Options.explode ) {
-        ExtractObj( io, arch->name, arch->size, arch, Options.explode_ext );
+        ExtractObj( io, arch->name, arch, Options.explode_ext );
     }
     deleted = FALSE;
     for( cmd = CmdList; cmd != NULL; cmd = cmd->next ) {
@@ -82,9 +80,9 @@ static void ProcessOneObject( arch_header *arch, libfile io )
             if( !Options.explode ) {
                 if( ( cmd->ops & OP_EXTRACT ) && !( cmd->ops & OP_EXTRACTED ) ) {
                     if( cmd->fname != NULL ) {
-                        ExtractObj( io, cmd->name, arch->size, arch, cmd->fname );
+                        ExtractObj( io, cmd->name, arch, cmd->fname );
                     } else {
-                        ExtractObj( io, cmd->name, arch->size, arch, EXT_OBJ );
+                        ExtractObj( io, cmd->name, arch, EXT_OBJ );
                     }
                     cmd->ops |= OP_EXTRACTED;
                 }
@@ -99,7 +97,7 @@ static void ProcessOneObject( arch_header *arch, libfile io )
     }
 
     if( deleted ) {
-        SkipObject( arch, io );
+        SkipObject( io );
         Options.modified = TRUE;
     } else {
         AddObjectSymbols( arch, io, LibTell( io ) );
@@ -114,7 +112,7 @@ static void AddOneObject( arch_header *arch, libfile io )
 static void DelOneObject( arch_header *arch, libfile io )
 {
     RemoveObjectSymbols( arch->name );
-    SkipObject( arch, io );
+    SkipObject( io );
 }
 
 typedef enum {
@@ -126,7 +124,7 @@ typedef enum {
 static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_header *arch, libfile io ) )
 {
     libfile     io;
-    char        buff[ AR_IDENT_LEN ];
+    unsigned char   buff[ AR_IDENT_LEN ];
     arch_header arch;
 
     NewArchHeader( &arch, name );
@@ -134,19 +132,19 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
     if( LibRead( io, buff, sizeof( buff ) ) != sizeof( buff ) ) {
         FatalError( ERR_CANT_READ, name, strerror( errno ) );
     }
-    if( strncmp( buff, AR_IDENT, sizeof( buff ) ) == 0 ) {
+    if( memcmp( buff, AR_IDENT, sizeof( buff ) ) == 0 ) {
         // AR format
         AddInputLib( io, name );
         LibWalk( io, name, process );
         if( Options.libtype == WL_LTYPE_NONE ) {
             Options.libtype = WL_LTYPE_AR;
         }
-    } else if( strncmp( buff, LIBMAG, LIBMAG_LEN ) == 0 ) {
+    } else if( memcmp( buff, LIBMAG, LIBMAG_LEN ) == 0 ) {
         // MLIB format
         if( LibRead( io, buff, sizeof( buff ) ) != sizeof( buff ) ) {
             FatalError( ERR_CANT_READ, name, strerror( errno ) );
         }
-        if( strncmp( buff, LIB_CLASS_DATA_SHOULDBE, LIB_CLASS_LEN + LIB_DATA_LEN ) ) {
+        if( memcmp( buff, LIB_CLASS_DATA_SHOULDBE, LIB_CLASS_LEN + LIB_DATA_LEN ) ) {
             BadLibrary( name );
         }
         AddInputLib( io, name );
@@ -239,7 +237,7 @@ static void DelModules( void )
     }
 }
 
-void EmitWarnings( void )
+static void EmitWarnings( void )
 {
     lib_cmd     *cmd;
 
@@ -259,6 +257,7 @@ void EmitWarnings( void )
 
 void ProcessCommands( void )
 {
+    InitOmfUtil();
     if( !Options.new_library ) {
         WalkInputLib();
     }
@@ -272,4 +271,5 @@ void ProcessCommands( void )
         ListContents();
     }
     EmitWarnings();
+    FiniOmfUtil();
 }

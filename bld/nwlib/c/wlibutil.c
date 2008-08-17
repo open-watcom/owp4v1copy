@@ -43,10 +43,11 @@ int SymbolNameCmp( const char *s1, const char *s2)
 
 void GetFileContents( char *name, libfile io, arch_header *arch, char **contents )
 {
-    file_offset size = arch->size;
-    file_offset         bytes_read;
+    file_offset     size;
+    file_offset     bytes_read;
 
-    if( !arch->size ) {
+    size = arch->size;
+    if( size == 0 ) {
         *contents = NULL;
         return;
     }
@@ -199,14 +200,13 @@ char *MakeTmpName( char *buffer )
     }
 
     return( buffer );
-} /* MakeTmpName() */
+}
 
 char *TrimPath( char *name )
 {
-    if( !Options.trim_path )
-        return( name );
     _splitpath( name, NULL, NULL, fname, fext );
-    return( fname );
+    _makepath( name, NULL, NULL, fname, fext );
+    return( name );
 }
 
 

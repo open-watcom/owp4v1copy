@@ -32,15 +32,15 @@
 
 #include "wlib.h"
 
-void AllocFNameTab( char *name, libfile io, arch_header *arch )
-/*************************************************************/
+static void AllocFNameTab( char *name, libfile io, arch_header *arch )
+/********************************************************************/
 {
     MemFree( arch->fnametab );
     GetFileContents( name, io, arch, &arch->fnametab );
 }
 
-void AllocFFNameTab( char *name, libfile io, arch_header *arch )
-/**************************************************************/
+static void AllocFFNameTab( char *name, libfile io, arch_header *arch )
+/*********************************************************************/
 {
     MemFree( arch->ffnametab );
     GetFileContents( name, io, arch, &arch->ffnametab );

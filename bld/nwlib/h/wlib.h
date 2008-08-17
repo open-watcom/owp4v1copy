@@ -84,6 +84,7 @@
 #include "coffwrt.h"
 #include "pcobj.h"
 #include "omfutil.h"
+#include "omfproc.h"
 #include "exedos.h"
 #include "exeos2.h"
 #include "exeflat.h"

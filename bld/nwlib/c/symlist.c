@@ -31,10 +31,8 @@
 
 #include "wlib.h"
 
-static void (*Rtn)(char*,symbol_strength,unsigned char);
-
-orl_return CheckSymbol( orl_symbol_handle orl_sym_hnd )
-/***************************************************/
+static orl_return CheckSymbol( orl_symbol_handle orl_sym_hnd )
+/************************************************************/
 {
     orl_symbol_binding  binding;
     char                *name;
@@ -48,25 +46,25 @@ orl_return CheckSymbol( orl_symbol_handle orl_sym_hnd )
         info = ORLSymbolGetRawInfo( orl_sym_hnd );
         if( !( type & ORL_SYM_TYPE_UNDEFINED ) ) {
             if( type & ORL_SYM_CDAT_MASK || binding == ORL_SYM_BINDING_WEAK ) {
-                Rtn( name, SYM_WEAK, info );
+                AddSym( name, SYM_WEAK, info );
             } else {
-                Rtn( name,  SYM_STRONG, info );
+                AddSym( name,  SYM_STRONG, info );
             }
         } else if( ORLSymbolGetValue( orl_sym_hnd ) != 0 ) {
-            Rtn( name,  SYM_WEAK, info );
+            AddSym( name,  SYM_WEAK, info );
         }
     } else if( binding == ORL_SYM_BINDING_ALIAS ) {
-        Rtn( name, SYM_WEAK, 0 );
+        AddSym( name, SYM_WEAK, 0 );
     }
     return( ORL_OKAY );
 }
 
-bool ObjWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,symbol_strength,unsigned char) )
+bool ObjWalkSymList( obj_file *ofile, sym_file *sfile )
+/*****************************************************/
 {
     orl_sec_handle      sym_sec_hnd;
 
-    Rtn = rtn;
-    if( ofile->orl ) {
+    if( ofile->orl != NULL ) {
         sym_sec_hnd = ORLFileGetSymbolTable( ofile->orl );
         if( sym_sec_hnd == NULL )
             return( FALSE );
@@ -74,7 +72,7 @@ bool ObjWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,sym
             return( FALSE );
         }
     } else {
-        OMFWalkSymList( ofile, sfile, rtn );
+        OMFWalkSymList( ofile, sfile );
     }
     return( TRUE );
 }

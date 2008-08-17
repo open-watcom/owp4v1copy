@@ -109,6 +109,9 @@ set output file name for library
 .note p=<record_size>
 set library page size
 (supported for "OMF" library format only)
+.note pa
+set optimal library page size automaticaly
+(supported for "OMF" library format only)
 .note q
 suppress identification banner
 .note s
@@ -674,7 +677,7 @@ is created.
 Also, if the "l" option is used to specify a listing file, the listing
 file will assume the file name of the output library.
 .*
-.section Specifying a Library Record Size - "p" Option
+.section Specifying a Library Record Size - "p" and "pa" Options
 .*
 .np
 .ix '&libcmdup options ' 'p'
@@ -701,6 +704,18 @@ In the above example, the &libname is instructed to create/update
 the library file "lib1.lib" by adding the modules from the library
 file "lib2.lib".
 The record size of the resulting library file is 512 bytes.
+.np
+.ix '&libcmdup options ' 'pa'
+The "pa" option specifies the record size is determined automaticaly to be minimal in size.
+.np
+.exam begin
+&libcmd -pa lib1 +lib2.lib
+.exam end
+.pc
+In the above example, the &libname is instructed to create/update
+the library file "lib1.lib" by adding the modules from the library
+file "lib2.lib".
+The record size of the resulting library file is optimal (minimal) regardles of what each library page size is.
 .*
 .section Operate Quietly - "q" Option
 .*

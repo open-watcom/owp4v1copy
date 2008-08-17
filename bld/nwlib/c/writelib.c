@@ -92,26 +92,19 @@ void WriteNewLib( void )
 
 void WriteBigEndian32( unsigned_32 num )
 {
-    char        be[ 4 ];
-
-    be[ 3 ] = num & 0xff;
-    num >>= 8;
-    be[ 2 ] = num & 0xff;
-    num >>= 8;
-    be[ 1 ] = num & 0xff;
-    num >>= 8;
-    be[ 0 ] = num & 0xff;
-    WriteNew( be, sizeof( be ) );
+    CONV_BE_32( num );
+    WriteNew( &num, sizeof( num ) );
 }
 
 void WriteLittleEndian32( unsigned_32 num )
 {
+    CONV_LE_32( num );
     WriteNew( &num, sizeof( num ) );
 }
 
 
 void WriteLittleEndian16( unsigned_16 num )
 {
+    CONV_LE_16( num );
     WriteNew( &num, sizeof( num ) );
 }
-

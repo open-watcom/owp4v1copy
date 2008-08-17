@@ -32,7 +32,6 @@
 extern void InitCmdLine( void );
 extern void ProcessCmdLine( char *argv[] );
 extern void ResetCmdLine( void );
-extern void AddCommand( operation ops, char *name );
 
 extern lib_cmd      *CmdList;
 extern options_def  Options;

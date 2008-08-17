@@ -32,7 +32,7 @@
 #include "wlib.h"
 
 static sym_table        FileTable;
-sym_file                *CurrFile;
+static sym_file         *CurrFile;
 static sym_entry        **HashTable;
 static sym_entry        **SortedSymbols;
 
@@ -50,8 +50,8 @@ void InitFileTab( void )
     memset( HashTable, 0, HASH_SIZE * sizeof( HashTable[ 0 ] ) );
 }
 
-void FiniSymFile( sym_file *sfile )
-/********************************/
+static void FiniSymFile( sym_file *sfile )
+/****************************************/
 {
     sym_entry           *sym, *next_sym;
     elf_import_sym      *temp;
@@ -120,8 +120,8 @@ void CleanFileTab( void )
         } else {
             last = curr;
         }
-    } /* for */
-} /* CleanFileTab() */
+    }
+}
 
 
 void ResetFileTab( void )
@@ -148,8 +148,8 @@ void FiniFileTab( void )
 }
 
 
-void RemoveFromHashTable( sym_entry *sym )
-/****************************************/
+static void RemoveFromHashTable( sym_entry *sym )
+/***********************************************/
 {
     sym_entry       *hash;
     sym_entry       *prev;
@@ -173,7 +173,7 @@ void RemoveFromHashTable( sym_entry *sym )
             }
         }
     }
-} /* RemoveFromHashTable() */
+}
 
 
 static void NewSymFile( arch_header *arch )
@@ -188,7 +188,9 @@ static void NewSymFile( arch_header *arch )
     sfile->import = NULL;
     sfile->inlib_offset = 0;
     sfile->full_name = DupStrGlobal( sfile->arch.name );
-    sfile->arch.name = DupStrGlobal( TrimPath( sfile->arch.name ) ); // make own copy
+    sfile->arch.name = DupStrGlobal( sfile->arch.name );
+    if( Options.trim_path )
+        TrimPath( sfile->arch.name );
     sfile->name_length = strlen( sfile->arch.name );
     if( sfile->arch.ffname ) {
         sfile->arch.ffname = DupStrGlobal( sfile->arch.ffname );
@@ -322,6 +324,95 @@ static void SortSymbols( void )
     }
 }
 
+void WriteFile( sym_file *sfile )
+/*******************************/
+{
+    libfile     io;
+
+    if( sfile->import == NULL ) {
+        if( sfile->inlib_offset == 0 ) {
+            io = LibOpen( sfile->full_name, LIBOPEN_BINARY_READ );
+        } else {
+            io = InLibHandle( sfile->inlib );
+            LibSeek( io, sfile->inlib_offset, SEEK_SET );
+        }
+        if( sfile->obj_type == WL_FTYPE_OMF ) {
+            OmfCopy( io, sfile );
+        } else {
+            Copy( io, NewLibrary, sfile->arch.size );
+        }
+        if( sfile->inlib_offset == 0 ) {
+            LibClose( io );
+        }
+    } else {
+        switch( sfile->obj_type ) {
+        case WL_FTYPE_ELF:
+            ElfWriteImport( NewLibrary, sfile );
+            break;
+        case WL_FTYPE_COFF:
+            CoffWriteImport( NewLibrary, sfile );
+            break;
+        case WL_FTYPE_OMF:
+            OmfWriteImport( sfile );
+            break;
+        }
+    }
+}
+
+static void WriteOmfLibTrailer( void )
+{
+    OmfRecord   *rec;
+    unsigned    size;
+
+    size = DIC_REC_SIZE - LibTell( NewLibrary ) % DIC_REC_SIZE;
+    rec = MemAlloc( size );
+    rec->basic.type = LIB_TRAILER_REC;
+    rec->basic.len = GET_LE_16( size - 3 );
+    memset( rec->basic.contents, 0, size - 3 );
+    WriteNew( rec, size );
+    MemFree( rec );
+}
+
+static void WriteOmfLibHeader( unsigned_32 dict_offset, unsigned_16 dict_size )
+{
+    OmfLibHeader    lib_header; // i didn't use omfRec because page size can be quite big
+
+    LibSeek( NewLibrary, 0, SEEK_SET );
+    lib_header.type = LIB_HEADER_REC;
+    lib_header.page_size = GET_LE_16( Options.page_size - 3 );
+    lib_header.dict_offset = GET_LE_32( dict_offset );
+    lib_header.dict_size = GET_LE_16( dict_size );
+    if( Options.respect_case ) {
+        lib_header.flags = 1;
+    } else {
+        lib_header.flags = 0;
+    }
+    WriteNew( &lib_header, sizeof( lib_header ) );
+}
+
+static unsigned OptimalPageSize( void )
+/*************************************/
+{
+    unsigned    i;
+    sym_file    *sfile;
+    file_offset offset;
+    unsigned    page_size;
+
+    for( i = 4; i < 16; i++ ) {
+        page_size = 1 << i;
+        offset = page_size;
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            if( offset / page_size > (unsigned long)USHRT_MAX )
+                break;
+            offset += ( sfile->arch.size + page_size - 1 ) & ~( page_size - 1 );
+        }
+        if( sfile == NULL ) {
+            break;
+        }
+    }
+    return( page_size );
+}
+
 static void WriteOmfFileTable( void )
 /***********************************/
 {
@@ -331,8 +422,9 @@ static void WriteOmfFileTable( void )
 
     if( Options.page_size == 0 ) {
         Options.page_size = DEFAULT_PAGE_SIZE;
+    } else if( Options.page_size == (unsigned short)-1 ) {
+        Options.page_size = OptimalPageSize();
     }
-    InitOmfUtil();
     PadOmf( TRUE );
 
     for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
@@ -342,7 +434,6 @@ static void WriteOmfFileTable( void )
     dict_offset = LibTell( NewLibrary );
     num_blocks = WriteOmfDict( FileTable.first );
     WriteOmfLibHeader( dict_offset, num_blocks );
-    FiniOmfUtil();
 }
 
 static void WriteArMlibFileTable( void )
@@ -358,7 +449,6 @@ static void WriteArMlibFileTable( void )
     time_t          currenttime = time( NULL );
     file_offset     obj_offset;
     int             index;
-    libfile         io;
     char            buff[ 20 ];
     char            *stringpad = NULL;
     int             stringpadlen = 0;
@@ -525,27 +615,8 @@ static void WriteArMlibFileTable( void )
         itoa( sfile->name_offset, buff+1, 10 );
         arch.name = buff;
         WriteFileHeader( &arch );
-        if( sfile->import == NULL ) {
-            if( sfile->inlib_offset != 0 ) {
-                LibSeek( InLibHandle( sfile->inlib ), sfile->inlib_offset, SEEK_SET );
-                Copy( InLibHandle( sfile->inlib ), NewLibrary, arch.size );
-            } else {
-                io = LibOpen( sfile->full_name, LIBOPEN_BINARY_READ );
-                Copy( io, NewLibrary, arch.size );
-                LibClose( io );
-            }
-        } else {
-            switch( sfile->import->type ) {
-            case ELF:
-            case ELFRENAMED:
-                ElfWriteImport( NewLibrary, sfile );
-                break;
-            default:
-                CoffWriteImport( NewLibrary, sfile );
-                break;
-            }
-        }
-        WritePad( sfile->arch.size );
+        WriteFile( sfile );
+        WritePad( arch.size );
     }
 }
 
@@ -674,7 +745,7 @@ void DumpFileTable( void )
     printf( "Files         : %ld\n", files );
     printf( "Symbols       : %ld\n", symbols );
     printf( "----------------------------------------------------------\n" );
-} /* DumpFileTable() */
+}
 
 
 void DumpHashTable( void )
@@ -699,7 +770,7 @@ void DumpHashTable( void )
         printf( "Offset %6d: %d\n", i, length );
     }
     printf( "----------------------------------------------------------\n" );
-} /* DumpHashTable() */
+}
 #endif // __DEBUG__
 
 
@@ -745,53 +816,56 @@ void AddObjectSymbols( arch_header *arch, libfile io, long offset )
 /*****************************************************************/
 {
     obj_file    *ofile;
+    file_type   obj_type;
 
     ofile = OpenLibFile( arch->name, io );
-    if( ofile->orl ) {
-        orl_file_handle orl;
-        orl = ofile->orl;
+    if( ofile->orl != NULL ) {
         if( ORLFileGetFormat( ofile->orl ) == ORL_COFF ) {
             if( Options.libtype == WL_LTYPE_MLIB ) {
                 FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
             }
-            Options.coff_found = 1;
+            Options.coff_found = TRUE;
+            obj_type = WL_FTYPE_COFF;
         } else {
-            Options.elf_found = 1;
-            if( Options.omf_found == 1 ) {
+            if( Options.omf_found ) {
                 FatalError( ERR_MIXED_OBJ, "ELF", "OMF" );
             }
+            Options.elf_found = TRUE;
+            obj_type = WL_FTYPE_ELF;
         }
     } else {
         if( Options.libtype == WL_LTYPE_MLIB ) {
             FatalError( ERR_NOT_LIB, "OMF", LibFormat() );
         }
-        if( Options.elf_found == 1 ) {
+        if( Options.elf_found ) {
             FatalError( ERR_MIXED_OBJ, "ELF", "OMF" );
         }
-        Options.omf_found = 1;
+        Options.omf_found = TRUE;
+        obj_type = WL_FTYPE_OMF;
     }
     NewSymFile( arch );
+    CurrFile->obj_type = obj_type;
     CurrFile->inlib_offset = offset;
     CurrFile->inlib = FindInLib( io );
-    ObjWalkSymList( ofile, CurrFile, AddSym );
+    ObjWalkSymList( ofile, CurrFile );
     CloseLibFile( ofile );
 }
 
-void OmfMKImport( arch_header *arch, long ordinal, char *dll_name,
-                  char *sym_name, char *exportedName, importType type )
+void OmfMKImport( arch_header *arch, importType type,
+                  long ordinal, char *DLLname, char *symName,
+                  char *exportedName, processor_type processor )
 {
-    Options.omf_found = 1;
-    if( Options.elf_found == 1 ) {
+    if( Options.elf_found ) {
         FatalError( ERR_MIXED_OBJ, "ELF", "OMF" );
     }
+    Options.omf_found = TRUE;
     NewSymFile( arch );
+    CurrFile->obj_type = WL_FTYPE_OMF;
     CurrFile->import = MemAllocGlobal( sizeof( import_sym ) );
-    CurrFile->import->DLLName = DupStrGlobal( dll_name );
-    CurrFile->import->ModName = DupStrGlobal( dll_name );
-    _splitpath( dll_name, NULL, NULL, CurrFile->import->ModName, NULL );
+    CurrFile->import->DLLName = DupStrGlobal( DLLname );
     CurrFile->import->ordinal = ordinal;
-    if( sym_name != NULL ) {
-        CurrFile->import->symName = DupStrGlobal( sym_name );
+    if( symName != NULL ) {
+        CurrFile->import->symName = DupStrGlobal( symName );
     } else {
         CurrFile->import->symName = NULL;
     }
@@ -801,26 +875,25 @@ void OmfMKImport( arch_header *arch, long ordinal, char *dll_name,
         CurrFile->import->exportedName = NULL;
     }
     CurrFile->import->type = type;
-    CurrFile->import->processor = WL_PROC_X86;  // set default JBS 99/12/21
+    CurrFile->import->processor = processor;
+    CurrFile->arch.size = OmfImportSize( CurrFile->import );
+    AddSym( symName, SYM_STRONG, 0 );
 }
 
 void CoffMKImport( arch_header *arch, importType type,
                    long ordinal, char *DLLname, char *symName, 
                    char *exportedName, processor_type processor )
 {
-
-    NewSymFile( arch );
-    Options.coff_found = TRUE;
-    if( Options.elf_found == 1 ) {
+    if( Options.elf_found ) {
         FatalError( ERR_MIXED_OBJ, "ELF", "COFF" );
     }
-
+    Options.coff_found = TRUE;
+    NewSymFile( arch );
+    CurrFile->obj_type = WL_FTYPE_COFF;
     CurrFile->import = MemAllocGlobal( sizeof( import_sym ) );
     CurrFile->import->type = type;
     CurrFile->import->ordinal = ordinal;
     CurrFile->import->DLLName = DupStrGlobal( DLLname );
-    CurrFile->import->ModName = DupStrGlobal( DLLname );
-    _splitpath( DLLname, NULL, NULL, CurrFile->import->ModName, NULL );
     if( symName != NULL ) {
         CurrFile->import->symName = DupStrGlobal( symName );
     } else {
@@ -833,6 +906,16 @@ void CoffMKImport( arch_header *arch, importType type,
     }
     CurrFile->import->processor = processor;
     CurrFile->arch.size = CoffImportSize( CurrFile->import );
+    switch( type ) {
+    case IMPORT_DESCRIPTOR:
+    case NULL_IMPORT_DESCRIPTOR:
+    case NULL_THUNK_DATA:
+        AddSym( symName, SYM_WEAK, 0 );
+        break;
+    default:
+        AddSym( symName, SYM_STRONG, 0 );
+        break;
+    }
 }
 
 void ElfMKImport( arch_header *arch, importType type, long export_size,
@@ -841,38 +924,37 @@ void ElfMKImport( arch_header *arch, importType type, long export_size,
 {
     int                 i;
     elf_import_sym      **temp;
+    elf_import_sym      *imp_sym;
 
-    NewSymFile( arch );
-    Options.elf_found = 1;
-    if( Options.coff_found == 1 ) {
+    if( Options.coff_found ) {
         FatalError( ERR_MIXED_OBJ, "ELF", "COFF" );
     }
-    if( Options.omf_found == 1 ) {
+    if( Options.omf_found ) {
         FatalError( ERR_MIXED_OBJ, "ELF", "OMF" );
     }
-
+    Options.elf_found = TRUE;
+    NewSymFile( arch );
+    CurrFile->obj_type = WL_FTYPE_ELF;
     CurrFile->import = MemAllocGlobal( sizeof( import_sym ) );
     CurrFile->import->type = type;
     CurrFile->import->DLLName = DupStrGlobal( DLLname );
-    CurrFile->import->ModName = DupStrGlobal( DLLname );
-    _splitpath( DLLname, NULL, NULL, CurrFile->import->ModName, NULL );
     CurrFile->import->numsyms = 0;
     temp = &(CurrFile->import->symlist);
 
-    for( i=0; i<export_size; i++ ) {
+    for( i = 0; i < export_size; i++ ) {
         if( export_table[ i ].exp_symbol ) {
-            *temp = MemAllocGlobal( sizeof( elf_import_sym ) );
-            (*temp)->name = DupStrGlobal(&(strings[ sym_table[ export_table[ i ].
-                exp_symbol ].st_name ]));
-            (*temp)->len = strlen( (*temp)->name );
-            (*temp)->ordinal = export_table[ i ].exp_ordinal;
+            imp_sym = MemAllocGlobal( sizeof( elf_import_sym ) );
+            imp_sym->name = DupStrGlobal( &(strings[ sym_table[ export_table[ i ].exp_symbol ].st_name ]) );
+            imp_sym->len = strlen( imp_sym->name );
+            imp_sym->ordinal = export_table[ i ].exp_ordinal;
             if( type == ELF ) {
-                AddSym( (*temp)->name, SYM_STRONG, ELF_IMPORT_SYM_INFO );
+                AddSym( imp_sym->name, SYM_STRONG, ELF_IMPORT_SYM_INFO );
             }
 
-            CurrFile->import->numsyms ++;
+            CurrFile->import->numsyms++;
 
-            temp = &((*temp)->next);
+            *temp = imp_sym;
+            temp = &(imp_sym->next);
         }
     }
     *temp = NULL;

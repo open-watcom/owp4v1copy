@@ -33,19 +33,19 @@
 
 #define AR_MODE_ENV "WLIB$AR"
 
-#define eatwhite( c ) while( *(c) && isspace( *(c) ) ) ++(c);
-#define notwhite( c ) ( (c) != '\0' && !isspace( c ) )
+#define eatwhite( c ) while( *(c) && isspace( *(unsigned char *)(c) ) ) ++(c);
+#define notwhite( c ) ( (c) != '\0' && !isspace( (unsigned char)(c) ) )
 
 options_def     Options;
 lib_cmd         *CmdList;
 
-void GetString( char **pc, char *buff, int singlequote, int ignoreSpaceInQuotes )
+static void GetString( char **pc, char *buff, int singlequote, int ignoreSpaceInQuotes )
 {
-    char *c = *pc;
-    char  quote;
+    char    *c;
+    char    quote;
 
+    c = *pc;
     eatwhite(c);
-
     if( (*c == '\"') || ( singlequote && (*c == '\'') ) ) {
         quote = *c;
         c++;
@@ -73,11 +73,12 @@ void GetString( char **pc, char *buff, int singlequote, int ignoreSpaceInQuotes 
     *pc = c;
 }
 
-char *GetEqual( char **pc, char *buff, char *ext )
+static char *GetEqual( char **pc, char *buff, char *ext )
 {
-    char *c = *pc;
-    char *ret;
+    char    *c;
+    char    *ret;
 
+    c = *pc;
     eatwhite( c );
     if( *c == '=' ) {
         ++c;
@@ -101,8 +102,8 @@ static void SetPageSize( unsigned short new_size )
     unsigned int i;
     Options.page_size = MIN_PAGE_SIZE;
     for( i = 4; i < 16; i++ ) {
-        if( new_size & 1<<i ) {
-            Options.page_size = 1<<i;
+        if( new_size & (1 << i) ) {
+            Options.page_size = 1 << i;
         }
     }
     if( Options.page_size < new_size ) {
@@ -119,17 +120,19 @@ static bool ParseOption( char **pc, char *buff )
 {
     bool        rc;
     long        page_size;
-    char        *c = *pc;
-    char        *start = c;
+    char        *c;
+    char        *start;
     char        *page;
     char        *endptr;
 
+    c = *pc;
+    start = c;
     rc = TRUE;
     switch( *c++ ) {
     case '-':
     case '/':
         eatwhite( c );
-        switch( tolower( *c++ ) ) {
+        switch( tolower( *(unsigned char *)c++ ) ) {
         case '?': //                       (don't create .bak file)
             Banner();
             Usage();
@@ -150,9 +153,9 @@ static bool ParseOption( char **pc, char *buff )
             }
             break;
         case 'i':
-            switch( tolower(*c++) ) {
+            switch( tolower( *(unsigned char *)c++ ) ) {
                 case 'n':
-                    switch( tolower(*c++) ) {
+                    switch( tolower( *(unsigned char *)c++ ) ) {
                         case 'n':
                             Options.nr_ordinal = FALSE;
                             break;
@@ -164,7 +167,7 @@ static bool ParseOption( char **pc, char *buff )
                     }
                     break;
                 case 'r':
-                    switch( tolower(*c++) ) {
+                    switch( tolower( *(unsigned char *)c++ ) ) {
                         case 'n':
                             Options.r_ordinal = FALSE;
                             break;
@@ -248,7 +251,7 @@ static bool ParseOption( char **pc, char *buff )
                 Options.explode_ext = EXT_OBJ;
             break;
         case 'z':
-            if( (*c == 'l') && (*(c + 1) == 'd') ) {
+            if( (tolower( *(unsigned char *)c ) == 'l') && (tolower( *(unsigned char *)(c + 1) ) == 'd') ) {
                 c += 2;
                 if( Options.strip_dependency ) {
                     DuplicateOption( start );
@@ -262,7 +265,7 @@ static bool ParseOption( char **pc, char *buff )
             Options.export_list_file = GetEqual( &c, buff, NULL );
             break;
         case 't':
-            if( *c == 'l' ) {
+            if( tolower( *(unsigned char *)c ) == 'l' ) {
                 ++c;
                 Options.list_contents = 1;
                 Options.terse_listing = 1; // (internal terse listing option)
@@ -271,7 +274,7 @@ static bool ParseOption( char **pc, char *buff )
             }
             break;
         case 'f':
-            switch( tolower(*c++) ) {
+            switch( tolower( *(unsigned char *)c++ ) ) {
                 case 'm':
                     if( Options.libtype != WL_LTYPE_NONE ) {
                         DuplicateOption( start );
@@ -299,19 +302,27 @@ static bool ParseOption( char **pc, char *buff )
             break;
     // following only used by OMF libary format
         case 'p':
-            if( Options.page_size ) {
-                DuplicateOption( start );
+            if( tolower( *(unsigned char *)c ) == 'a' ) {
+                c++;
+                if( Options.page_size ) {
+                    DuplicateOption( start );
+                }
+                Options.page_size = (unsigned short)-1;
+            } else {
+                if( Options.page_size ) {
+                    DuplicateOption( start );
+                }
+                page = GetEqual( &c, buff, NULL );
+                errno = 0;
+                page_size = strtoul( page, &endptr, 0 );
+                if( *endptr != '\0' ) {
+                    FatalError( ERR_BAD_CMDLINE, start );
+                } else if( errno == ERANGE || page_size > MAX_PAGE_SIZE ) {
+                    FatalError( ERR_PAGE_RANGE );
+                }
+                MemFree( page );
+                SetPageSize( page_size );
             }
-            page = GetEqual( &c, buff, NULL );
-            errno = 0;
-            page_size = strtoul( page, &endptr, 0 );
-            if( *endptr != '\0' ) {
-                FatalError( ERR_BAD_CMDLINE, start );
-            } else if( errno == ERANGE || page_size > MAX_PAGE_SIZE ) {
-                FatalError( ERR_PAGE_RANGE );
-            }
-            MemFree( page );
-            SetPageSize( page_size );
             break;
         case 'n': //                       (always create a new library)
             Options.new_library = 1;
@@ -330,7 +341,7 @@ static bool ParseOption( char **pc, char *buff )
     return( TRUE );
 }
 
-void AddCommand( operation ops, char *name )
+static void AddCommand( operation ops, char *name )
 {
     lib_cmd         *new;
 
@@ -363,14 +374,15 @@ static void FreeCommands( void )
 
 static void ParseCommand( char **pc )
 {
-    int          doquotes = TRUE;
-    int          ignoreSpacesInQuotes = FALSE;
-    char        *c = *pc;
+    int         doquotes = TRUE;
+    int         ignoreSpacesInQuotes = FALSE;
+    char        *c;
     char        *start;
     operation   ops = 0;
     //char        buff[_MAX_PATH];
     char        buff[ MAX_IMPORT_STRING ];
 
+    c = *pc;
     start = c;
     eatwhite( c );
     switch( *c++ ) {
@@ -508,11 +520,11 @@ static void ParseOneLine( char *c )
 
 static void ParseArOption( char **init_c, operation *mode )
 {
-    char        *c;
+    char    *c;
 
     c = *init_c;
-    while( *c != '\0' && !isspace( *c ) ) {
-        switch( tolower( *c ) ) {
+    while( *c != '\0' && !isspace( *(unsigned char *)c ) ) {
+        switch( tolower( *(unsigned char *)c ) ) {
         case '?':
             Banner();
             Usage();
