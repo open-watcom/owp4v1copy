@@ -5615,7 +5615,7 @@ WINUSERAPI HWND WINAPI          GetDlgItem( HWND, int );
 WINUSERAPI UINT WINAPI          GetDlgItemInt( HWND, int, BOOL *, BOOL );
 WINUSERAPI UINT WINAPI          GetDlgItemTextA( HWND, int, LPSTR, int );
 WINUSERAPI UINT WINAPI          GetDlgItemTextW( HWND, int, LPWSTR, int );
-WINUSERAPI UINT WINAPI          GetDoubleClickTime( UINT );
+WINUSERAPI UINT WINAPI          GetDoubleClickTime( VOID );
 WINUSERAPI HWND WINAPI          GetFocus( VOID );
 WINUSERAPI HWND WINAPI          GetForegroundWindow( VOID );
 WINUSERAPI BOOL WINAPI          GetIconInfo( HICON, PICONINFO );
