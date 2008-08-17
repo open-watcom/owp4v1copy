@@ -43,7 +43,7 @@ extra_c_flags += -pil
 
 sed.exe : sed.obj sedcomp.obj
 
-awk.exe : awk.obj b.obj parse.obj proctab.obj tran.obj lib.obj run.obj lex.obj ytab.obj missing95.obj
+awk.exe : awk.obj b.obj parse.obj proctab.obj tran.obj lib.obj run.obj lex.obj ytab.obj pfileio.obj
 
 proctab.c : maketab.exe
         copy $(awk_dir)\ytab.h ytab.h > nul
