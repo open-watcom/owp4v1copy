@@ -701,8 +701,8 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
                                       GET_HINSTANCE( bar->owner ), NULL );
         } else {
             bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL,
-                                      WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
-                                      0, 0, 0, 0, bar->owner, NULL,
+                                      WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
+                                      CCS_NORESIZE, 0, 0, 0, 0, bar->owner, NULL,
                                       GET_HINSTANCE( bar->owner ), NULL );
         }
         bar->old_wndproc = (WNDPROC)GetWindowLong( bar->hwnd, GWL_WNDPROC );
