@@ -43,6 +43,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
+#include <winbase.h>    /* For GetSystemTime */
 
 static FILE * TrapTraceFileHandle = NULL;
 
@@ -245,13 +247,21 @@ unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx
 #ifdef ENABLE_TRAP_LOGGING
     if( TrapTraceFileHandle ) {
         unsigned        ix;
-        unsigned short  rectype = 1;   /* Request */
+        unsigned short  rectype = 4;   /* Request */
         unsigned short  length = 0;
+        SYSTEMTIME      st;
+        
+        GetSystemTime(&st);
         
         for( ix = 0 ; ix < num_in_mx ; ix++ ) {
             length += mx_in[ix].len;
         }
         fwrite( &rectype, sizeof( rectype ), 1, TrapTraceFileHandle );
+	    fwrite( &st.wHour, sizeof(WORD), 1, TrapTraceFileHandle );
+	    fwrite( &st.wMinute, sizeof(WORD), 1, TrapTraceFileHandle );
+	    fwrite( &st.wSecond, sizeof(WORD), 1, TrapTraceFileHandle );
+	    fwrite( &st.wMilliseconds, sizeof(WORD), 1, TrapTraceFileHandle );
+        
         fwrite( &length, sizeof( length ), 1, TrapTraceFileHandle );
         for( ix = 0 ; ix < num_in_mx ; ix++ ) {
             fwrite( mx_in[ix].ptr, mx_in[ix].len, 1, TrapTraceFileHandle );
@@ -267,10 +277,17 @@ unsigned ReqFuncProxy( unsigned num_in_mx, mx_entry * mx_in, unsigned num_out_mx
         /* Only worth tracing if there is data though */
         if( result > 0 ) {
             unsigned        ix;
-            unsigned short  rectype = 3;   /* reply*/
+            unsigned short  rectype = 5;   /* reply*/
             unsigned short  length = result;
+            SYSTEMTIME      st;
+        
+            GetSystemTime(&st);
             
             fwrite( &rectype, sizeof( rectype ), 1, TrapTraceFileHandle );
+    	    fwrite( &st.wHour, sizeof(WORD), 1, TrapTraceFileHandle );
+    	    fwrite( &st.wMinute, sizeof(WORD), 1, TrapTraceFileHandle );
+    	    fwrite( &st.wSecond, sizeof(WORD), 1, TrapTraceFileHandle );
+    	    fwrite( &st.wMilliseconds, sizeof(WORD), 1, TrapTraceFileHandle );
             fwrite( &length, sizeof( length ), 1, TrapTraceFileHandle );
 
             for( ix = 0 ; ix < num_out_mx ; ix++ ) {

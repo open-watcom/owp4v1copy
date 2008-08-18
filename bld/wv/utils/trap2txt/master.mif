@@ -10,7 +10,14 @@ extra_c_flags = -DMD_x86 -Zp1
 
 .cpp: ../c
 
-objs =                  &
-    trap2txt.obj
+objs =                          &
+    trap2txt.obj                &
+    trap_supp_capabilities.obj  &
+    trap_supp_environment.obj   &
+    trap_supp_fileinfo.obj      &
+    trap_supp_files.obj         &
+    trap_supp_overlays.obj      &
+    trap_supp_threads.obj       &
+    trap_mad_x86.obj
 
 !include exetarg.mif

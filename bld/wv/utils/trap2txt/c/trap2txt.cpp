@@ -4,6 +4,10 @@
 
 #include <trpcore.h>
 #include <madregs.h>
+#include <trpfile.h>
+
+#include <windows.h>
+#include <winbase.h>    /* For GetSystemTime */
 
 mad_handle  read_mad_handle = MAD_NIL;
 
@@ -177,6 +181,45 @@ RQ_HANDLER MyReplyHandlers[] = {
     NULL
 };
 
+typedef int ( SVC_DECODE )( int request, unsigned char * pkt, unsigned short len );
+
+typedef struct tagServiceNameAndId{
+    struct tagServiceNameAndId *    next;
+    char *                          service_name;
+    unsigned int                    service_id;
+    SVC_DECODE *                    service_decode;
+}ServiceNameAndId;
+
+char    last_service_name[1024] = { 0 };
+
+ServiceNameAndId *  services = NULL;
+ServiceNameAndId *  last_service = NULL;
+
+extern int SSD_Files( int, unsigned char *, unsigned short );
+extern int SSD_FileInfo( int, unsigned char * , unsigned short );
+extern int SSD_Environment( int, unsigned char * , unsigned short );
+extern int SSD_Threads( int , unsigned char * , unsigned short );
+extern int SSD_Overlays( int, unsigned char * , unsigned short );
+extern int SSD_Capabilities( int, unsigned char * , unsigned short );
+
+SVC_DECODE * get_supp_service_decoder( const char * service_name )
+{
+    if( 0 == stricmp( service_name, "Files" ) )
+        return &SSD_Files;
+    else if( 0 == stricmp( service_name, "FileInfo" ) )
+        return &SSD_FileInfo;
+    else if( 0 == stricmp( service_name, "Environment" ) )
+        return &SSD_Environment;
+    else if( 0 == stricmp( service_name, "Threads" ) )
+        return &SSD_Threads;
+    else if( 0 == stricmp( service_name, "Overlays" ) )
+        return &SSD_Overlays;
+    else if( 0 == stricmp( service_name, "Capabilities" ) )
+        return &SSD_Capabilities;
+    
+    return NULL;   
+}
+
 int main( int argc, char ** argv )
 {
     if( argc < 2 )
@@ -193,6 +236,8 @@ int main( int argc, char ** argv )
     unsigned short  len = 0;
     unsigned char   buffer[2048];
     unsigned char   last_id = 255;
+    SYSTEMTIME      st = {0};
+    int             time_valid = 0;
     
     while( 1 ) {
     
@@ -201,7 +246,37 @@ int main( int argc, char ** argv )
                 fprintf( stderr, "Failed to read type ( uint16 ) at offset 0x%.08x\n", offset );
             break;
         }
-        offset += sizeof( len );
+        offset += sizeof( type );
+        
+        if( type > 3 ) {
+            time_valid = 1;
+    	    if( sizeof( WORD ) != fread( &st.wHour, 1, sizeof(WORD), fil ) ) {
+                fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
+                break;
+            }
+            offset += sizeof( WORD );
+    	    if( sizeof( WORD ) != fread( &st.wMinute, 1, sizeof(WORD), fil ) ) {
+                fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
+                break;
+            }
+            offset += sizeof( WORD );
+    	    if( sizeof( WORD ) != fread( &st.wSecond, 1, sizeof(WORD), fil ) ) {
+                fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
+                break;
+            }
+            offset += sizeof( WORD );
+    	    if( sizeof( WORD ) != fread( &st.wMilliseconds, 1, sizeof(WORD), fil ) ) {
+                fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
+                break;
+            }
+            offset += sizeof( WORD );
+        }
+        
+        if( type == 4 )
+            type = 1;
+        if( type == 5 )
+            type = 3;
+        
         if( sizeof( type ) != fread( &len, 1, sizeof( len ), fil ) ) {
             fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
             break;
@@ -219,7 +294,9 @@ int main( int argc, char ** argv )
             fprintf( stderr, "Failed to read byte ( uint16 ) at offset 0x%.08x\n", offset );
             break;
         }
-       
+     
+        if( time_valid )
+            printf( "%.02u:%.02u:%.02u.%3.3u ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds );
         int rc = 0;         
         
         if( ( type == 1 ) || ( type == 2 ) ) {
@@ -237,6 +314,8 @@ int main( int argc, char ** argv )
         }
 
         if( rc == 0 ) {
+            
+           
             if( type == 1 )
                 printf( "Debugger request(1). Length %u\n", len );
             else if( type == 2 )
@@ -390,6 +469,8 @@ int handle_REQ_GET_SUPPLEMENTARY_SERVICE( unsigned char * pkt, unsigned short )
 
     printf( "Debugger request: REQ_GET_SUPPLEMENTARY_SERVICE\n" );
     printf( "    Service :   %s\n", service_name );
+    
+    strcpy( last_service_name , service_name );
 
     return 1;
 }
@@ -402,6 +483,14 @@ int handle_REQ_GET_SUPPLEMENTARY_SERVICE_REPLY( unsigned char * pkt, unsigned sh
     printf( "    Error : %u\n", pr->err );
     printf( "    ID:     0x%.08x\n", pr->id );
     
+    ServiceNameAndId * new_entry = ( ServiceNameAndId * ) calloc( 1, sizeof( ServiceNameAndId ) );
+    new_entry->service_name = strdup( last_service_name );
+    new_entry->service_id = pr->id;
+    new_entry->service_decode = get_supp_service_decoder( last_service_name );
+    
+    new_entry->next = services;
+    services = new_entry;
+    
     return 1;
 }
 
@@ -412,19 +501,49 @@ int handle_REQ_PERFORM_SUPPLEMENTARY_SERVICE( unsigned char * pkt, unsigned shor
     unsigned short ssd_len = ( len - ( unsigned short ) sizeof( perform_supplementary_service_req ) );
     
     printf( "Debugger request: REQ_PERFORM_SUPPLEMENTARY_SERVICE\n" );
-    printf( "    ID: 0x%.08x\n", prq->id );
+    printf( "    ID: 0x%.08x", prq->id );
+    
+    ServiceNameAndId * lookup = services;
+    while( lookup ) {
+        if( prq->id == lookup->service_id ) {
+            printf( " [ %s ]", lookup->service_name );
+            break;            
+        }
+        lookup = lookup->next;
+    }
+    
+    last_service = lookup;
+
+    printf( "\n" );
     
     if( ssd_len ) {
-        printf( "    supplementary service data:\n" );
-        DumpPacket( ssd, ssd_len, 1 );
+        int rc = 0;
+        if( lookup && lookup->service_decode )
+            rc = lookup->service_decode( 1, ssd, ssd_len );
+        
+        if( 0 != rc ) {
+            printf( "    supplementary service data:\n" );
+            DumpPacket( ssd, ssd_len, 1 );
+        }
     }
-
+    
     return 1;
 }
 
-int handle_REQ_PERFORM_SUPPLEMENTARY_SERVICE_REPLY( unsigned char * , unsigned short )
+int handle_REQ_PERFORM_SUPPLEMENTARY_SERVICE_REPLY( unsigned char * pkt, unsigned short len)
 {
-    return 0;
+    int rc = -1;
+    if( last_service ) {
+        if( last_service && last_service->service_decode )
+            rc = last_service->service_decode( 0, pkt, len );
+    }
+            
+    if( 0 != rc ) {
+        printf( "    supplementary service response:\n" );
+        DumpPacket( pkt, len, 1 );
+    }
+    
+    return 1;
 }
 
 int handle_REQ_GET_SYS_CONFIG( unsigned char * , unsigned short )
