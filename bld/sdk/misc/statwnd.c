@@ -362,7 +362,7 @@ HWND StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance,
 #if defined (__NT__)
     if( hInstCommCtrl != NULL ) {
         stat = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
-                             WS_CLIPSIBLINGS | CCS_NOMOVEY | SBARS_SIZEGRIP,
+                             WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
                              0, 0, 0, 0, parent, NULL, hinstance, NULL );
         if( numSections > 0 ) {
             updateParts();
