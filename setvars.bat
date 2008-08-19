@@ -17,8 +17,8 @@ set OWROOT=d:\ow
 REM Change this to point to your existing Open Watcom installation
 set WATCOM=c:\c\ow10
 
-REM Change this to the install location of GhostScript for PDF creation (optional)
-set GHOSTSCRIPT=c:\gs\gs7.04
+REM Change this to the PATH required by GhostScript for PDF creation on used host OS (optional)
+set GHOSTSCRIPT=c:\gs\gs7.04\bin;c:\gs\gs7.04\lib
 
 REM Set this variable to 1 to get debug build
 set DEBUG_BUILD=0

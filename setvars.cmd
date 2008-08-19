@@ -20,7 +20,7 @@ set WATCOM=c:\c\ow10
 REM Change this to point to your OS/2 Toolkit directory
 set OS2TKROOT=c:\Toolkit
 
-REM Change this to the install location of GhostScript for PDF creation (optional)
+REM Change this to the PATH required by GhostScript for PDF creation on used host OS (optional)
 set GHOSTSCRIPT=c:\gs\gs7.04
 
 REM Set this variable to 1 to get debug build

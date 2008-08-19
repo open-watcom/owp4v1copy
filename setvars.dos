@@ -20,7 +20,7 @@ set WATCOM=c:\c\ow10
 REM placeholder
 REM placeholder
 
-REM Change this to the install location of GhostScript for PDF creation (optional)
+REM Change this to the PATH required by GhostScript for PDF creation on used host OS (optional)
 set GHOSTSCRIPT=c:\gs\gs7.04
 
 REM Modifications beyond this point should not be necessary

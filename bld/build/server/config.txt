@@ -14,8 +14,8 @@ OW=C:\OW
 # The location of your installed compiler (for doing the build).
 WATCOM=C:\WATCOM
 
-# The location of GhostScript for PDF creation
-GHOSTSCRIPT=c:\gs\gs7.04
+# PATH required by GhostScript for PDF creation on used host OS
+GHOSTSCRIPT=c:\gs\gs7.04\bin;c:\gs\gs7.04\lib
 
 # The location where WWW snapshot is placed, there will be created installers
 # If SNAPSHOTPATH is not defined then no installers will be created

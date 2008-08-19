@@ -258,7 +258,10 @@ $(hbook).ps : $(book_objs) $(proj_objs)
     cd ../pdf
 
 $(hbook).pdf : $(hbook).ps
+    @set OWDOCS_OLD_PATH=$(%PATH)
+    @set PATH=$(%GHOSTSCRIPT)
     -$(hc_pdf) -r600 $[@ $(hbook).pdf
+    @set PATH=$(%OWDOCS_OLD_PATH)
 
 ####################################################
 #

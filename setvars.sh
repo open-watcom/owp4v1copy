@@ -17,8 +17,8 @@ export OWROOT=`cd \`dirname -- $0\` && pwd`
 # Change this to point to an existing Watcom compiler (if applicable)
 export WATCOM=$OWROOT/rel2
 
-# Change this to the install location of GhostScript for PDF creation (optional)
-export GHOSTSCRIPT=/usr/bin/gs
+# Change this to the PATH required by GhostScript for PDF creation on used host OS (optional)
+export GHOSTSCRIPT=/usr/bin
 
 # Set this variable to 1 to get debug build
 export DEBUG_BUILD=0
