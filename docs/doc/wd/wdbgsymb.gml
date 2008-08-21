@@ -354,6 +354,10 @@ Intel 80386 or compatible processor
 Intel 80486 or compatible processor
 .note 5
 Intel Pentium processor
+.note 6
+Intel Pentium Pro/II/III processor
+.note 15
+Intel Pentium 4 processor
 .endnote
 .ix 'predefined symbol' 'dbg$ctid'
 .mnote dbg$ctid
@@ -393,8 +397,11 @@ An Intel 80387 is installed
 An Intel 80486 processor, supporting coprocessor instructions, is
 installed
 .note 5
-An Intel Pentium processor, supporting coprocessor instructions, is
-installed
+An Intel Pentium processor integrated FPU is installed
+.note 6
+An Intel Pentium Pro/II/III processor integrated FPU is installed
+.note 15
+An Intel Pentium 4 processor integrated FPU is installed
 .endnote
 .ix 'predefined symbol' 'dbg$ip'
 .mnote dbg$ip
@@ -446,6 +453,8 @@ while curr_tid != 0 {
 This debugger symbol represents the operating system that is currently
 running the application.
 .begnote $compact
+.note 0
+Unknown Operating System
 .note 1
 DOS
 .note 2
@@ -480,10 +489,14 @@ Windows 3.x from Microsoft Corporation
 .ix 'Windows 95'
 .ix 'Microsoft Corp.'
 Windows NT/2000/XP or Windows 9x from Microsoft Corporation
+.note 12
+QNX 6.x 'Neutrino'
 .note 13
 .ix 'Linux'
 .ix 'GNU/Linux'
 GNU/Linux
+.note 14
+FreeBSD
 .endnote
 .ix 'predefined symbol' 'dbg$pid'
 .mnote dbg$pid
