@@ -14,12 +14,12 @@ BEGIN
         BLOCK "040904b0"        /* US English, Unicode */
         BEGIN
             VALUE "CompanyName", "openwatcom.org\0"
-            VALUE "FileDescription", "Open Watcom Strings Editor (DLL)\0"
+            VALUE "FileDescription", "Open Watcom String Editor (DLL)\0"
             VALUE "FileVersion", "$j.$n$1\0"
-            VALUE "InternalName", "Strings Editor\0"
-            VALUE "LegalCopyright", "Portions Copyright \251 Sybase, Inc. 2002\0"
+            VALUE "InternalName", "wstring\0"
+            VALUE "LegalCopyright", "Portions Copyright 2002 \251 Sybase, Inc.\0"
             VALUE "OriginalFilename", "$0\0"
-            VALUE "ProductName", "Open Watcom C/C++\0"
+            VALUE "ProductName", "Open Watcom\0"
             VALUE "ProductVersion", "$j.$n$1\0"
         END
     END
