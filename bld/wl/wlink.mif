@@ -173,7 +173,7 @@ patch_level=0
 !endif
 
 version.rc : ./genverrc.exe ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/wlver.rc version.rc $$ wlink.dll $(patch_level)
+        $[@ ../h/wlver.rc version.rc $$ wlink $(patch_level)
 
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
         $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@

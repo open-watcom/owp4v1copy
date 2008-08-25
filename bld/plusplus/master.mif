@@ -390,7 +390,7 @@ patch_level=0
 !endif
  
 plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-    $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
+    $[@ $]@ $@ $$ $(dll_name) $(patch_level)
  
 !ifeq target_cpu axp
  

@@ -284,7 +284,7 @@ patch_level=0
 !endif
 
 cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-        $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
+        $[@ $]@ $@ $$ $(dll_name) $(patch_level)
 
 ./mkopcod1.exe: $(wasm_dir)/mkopcod1.c $(wasm_dir)/mkopcode.h $(cl_objs)
         $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
