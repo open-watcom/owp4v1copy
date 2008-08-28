@@ -258,7 +258,7 @@
 #define SQL_SCOPE_TRANSACTION   1
 #define SQL_SCOPE_SESSION       2
 
-/* ODBC pseudocolumns
+/* ODBC pseudocolumns */
 #define SQL_PC_UNKNOWN          0
 #if (ODBCVER >= 0x0300)
     #define SQL_PC_NON_PSEUDO   1
