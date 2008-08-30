@@ -6,11 +6,11 @@ causeway_autodepends = .AUTODEPEND
 !include defrule.mif
 !include deftarg.mif
 
-extra_a_flags = -DENGLISH=1 -I"../inc"
+extra_a_flags = -DENGLISH=1 -I"../../inc"
 
 extra_l_flags = op map, verbose, statics
 
-.asm : ../asm;../asm/loadle
+.asm : ../../asm;../../asm/loadle
 
 cw32.exe : cw32.obj $(__MAKEFILES__)
     $(linker) $(lflags) name $@ file $[@
