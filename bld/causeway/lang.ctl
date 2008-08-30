@@ -10,6 +10,7 @@ cdsay .
 
 [ BLOCK <1> build rel2 ]
 #=======================
+    [ INCLUDE prereq.ctl ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 ]
@@ -23,6 +24,9 @@ cdsay .
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    rm -r -f <PROJDIR>/cwc/<PREOBJDIR>
+    rm -r -f <OWBINDIR>/bcwc.exe
+    rm -r -f <OWBINDIR>/bcwc
 
 [ BLOCK . . ]
 #============

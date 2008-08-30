@@ -14,4 +14,4 @@ extra_l_flags = op map, verbose, statics
 
 cw32.exe : cw32.obj $(__MAKEFILES__)
     $(linker) $(lflags) name $@ file $[@
-#    cwc /m2 /l85 cw32.exe
+    bcwc cw32.exe
