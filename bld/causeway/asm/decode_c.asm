@@ -38,7 +38,7 @@ _DCD_ReadBit    macro
         mov     ebp,[esi]
         lea     esi,4[esi]
         mov     dl,dh
-__0:    ;
+__0:
         endm
 
 
@@ -113,9 +113,11 @@ TempAddress     =       TempAddress+decode_c_head
         clc
         jmp     dec1_exit
         ;
-dec1_error:     stc
+dec1_error:
+        stc
         ;
-dec1_exit:      pushf
+dec1_exit:
+        pushf
         push    eax
         push    ecx
         mov     ax,4200h
@@ -289,7 +291,8 @@ dec2_1: _DCD_ReadBit
         ;Do a run with 2 bit length.
         ;
         align 4
-dec2_1_0:       mov     al,[esi]
+dec2_1_0:
+        mov     al,[esi]
         inc     esi
         inc     cl
         sub     ebx,ecx
@@ -329,7 +332,8 @@ dec2_2: _DCD_ReadBit
         ;Do a run with 4 bit length.
         ;
         align 4
-dec2_2_0:       mov     al,[esi]
+dec2_2_0:
+        mov     al,[esi]
         inc     esi
         inc     cl
         sub     ebx,ecx
@@ -344,9 +348,11 @@ dec2_3: mov     eax,[esi]
         add     esi,3
         and     eax,0FFFFFFh
         mov     ecx,eax
-dec2_Masker:    and     ecx,4095
+dec2_Masker:
+        and     ecx,4095
         add     ecx,2
-dec2_Shifter:   shr     eax,12
+dec2_Shifter:
+        shr     eax,12
         dec     eax
         js      dec2_3_0
         add     eax,ecx
@@ -366,7 +372,8 @@ dec2_Shifter:   shr     eax,12
         ;Check for special codes of 0-15 (Would use 2 or 4 bit if really needed)
         ;
         align 4
-dec2_3_0:       cmp     ecx,RepMinSize+15+1
+dec2_3_0:
+        cmp     ecx,RepMinSize+15+1
         jnc     dec2_3_1
         cmp     cl,RepMinSize+2 ;Rationalise destination?
         jz      dec2_0          ;ignore destination stuff.
@@ -381,7 +388,8 @@ dec2_3_0:       cmp     ecx,RepMinSize+15+1
         ;Do a run with 12-bit length.
         ;
         align 4
-dec2_3_1:       mov     al,[esi]
+dec2_3_1:
+        mov     al,[esi]
         inc     esi
         inc     ecx
         sub     ebx,ecx
@@ -392,13 +400,15 @@ dec2_3_1:       mov     al,[esi]
         ;Buffer needs to be re-filled.
         ;
         align 4
-dec2_3_2:       call    dec2_FillBuffer
+dec2_3_2:
+        call    dec2_FillBuffer
         jmp     dec2_0
         ;
         ;Get literal string of bytes.
         ;
         align 4
-dec2_3_3:       xor     ecx,ecx
+dec2_3_3:
+        xor     ecx,ecx
         mov     cl,[esi]                ;get the length.
         inc     esi
         sub     ebx,ecx
@@ -423,15 +433,18 @@ TempAddress     =       TempAddress+decode_c_head
         clc
         jmp     dec2_exit
         ;
-dec2_read_error:        mov     eax,1
+dec2_read_error:
+        mov     eax,1
         stc
         jmp     dec2_exit
         ;
-dec2_form_error:        mov     eax,2
+dec2_form_error:
+        mov     eax,2
         stc
         jmp     dec2_exit
         ;
-dec2_cwc_error: assume ds:nothing
+dec2_cwc_error:
+        assume ds:nothing
         mov     ds,cs:apiDDSeg
         assume ds:_apiCode
         mov     bx,decode_c_handle
@@ -443,7 +456,8 @@ dec2_cwc_error: assume ds:nothing
         stc
         assume ds:nothing
         ;
-dec2_exit:      mov     esp,cs:CWCStack
+dec2_exit:
+        mov     esp,cs:CWCStack
         pop     gs
         pop     fs
         pop     es
@@ -457,7 +471,8 @@ dec2_exit:      mov     esp,cs:CWCStack
 ;
 ;Re-fill the disk buffer.
 ;
-dec2_FillBuffer:        pushad
+dec2_FillBuffer:
+        pushad
         push    ds
         push    es
         mov     ds,cs:apiDDSeg
@@ -485,7 +500,8 @@ dec2_FillBuffer:        pushad
         pop     ecx
         xchg    esi,ecx
         ;
-dec2_fb0:       mov     edi,offset decode_c_buffer
+dec2_fb0:
+        mov     edi,offset decode_c_buffer
         mov     eax,decode_c_count      ;get current count.
         add     eax,ecx
 ;       cmp     eax,d[decode_c_head+DecC_Size]  ;check against total size.
@@ -500,7 +516,8 @@ TempAddress     =       TempAddress+decode_c_head
         sub     eax,d[TempAddress]
 
         sub     ecx,eax         ;reduce ECX as needed.
-dec2_FB_2:      add     decode_c_count,ecx      ;update total count.
+dec2_FB_2:
+        add     decode_c_count,ecx      ;update total count.
         ;
         mov     RealRegsStruc.Real_ECX[edi],ecx
         mov     ax,cDiskBufferReal

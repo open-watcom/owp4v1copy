@@ -83,7 +83,7 @@ DOS4GExtend     macro p1
         cmp     cs:Int21hDOS4GFlag,0
         jz      __0
         mov     p1,0
-__0:    ;
+__0:
         endm
 
 
@@ -121,13 +121,15 @@ Int21h  proc    near
         jz      int211_32bit0           ;/
         movzx   ebp,bp          ;/
         mov     esi,Int_Flags16
-int211_32Bit0:  add     esi,ebp
+int211_32Bit0:
+        add     esi,ebp
         and     BYTE PTR ss:[esi],not 1
         cld                     ;Default direction.
         test    WORD PTR ss:[esi],1 shl 9       ;Were interrupts enabled?
         jz      int211_NoInts
         sti                     ;Turn interrupts back on.
-int211_NoInts:  mov     fs,cs:Int21hDSeg
+int211_NoInts:
+        mov     fs,cs:Int21hDSeg
         assume fs:_cwMain
         mov     fs,fs:PSPSegment        ;Point to PSP.
         assume fs:nothing
@@ -141,7 +143,8 @@ int211_NoInts:  mov     fs,cs:Int21hDSeg
         test    BYTE PTR cs:Int21hSystemFlags,1
         jz      int211_32Bit1
         iret
-int211_32Bit1:  iretd                   ;Return to caller.
+int211_32Bit1:
+        iretd                   ;Return to caller.
 Int21h  endp
 
 
@@ -182,12 +185,14 @@ Int21hPrintString proc near
 ;Now copy EPSP_Struc.EPSP_TransSize-1 sized chunks into the transfer buffer
 ;and pass to the real mode handler.
 ;
-int214_0:       mov     ecx,edx         ;Get current count.
+int214_0:
+        mov     ecx,edx         ;Get current count.
         cmp     ecx,fs:[EPSP_Struc.EPSP_TransSize]
         jc      int214_1
         mov     ecx,fs:[EPSP_Struc.EPSP_TransSize]      ;Use transfer buffer size -1.
         dec     ecx
-int214_1:       mov     es,fs:[EPSP_Struc.EPSP_TransProt]       ;Point to transfer buffer.
+int214_1:
+        mov     es,fs:[EPSP_Struc.EPSP_TransProt]       ;Point to transfer buffer.
         xor     edi,edi
         sub     edx,ecx         ;Update total counter.
         Int21h_repmovs          ;Copy this data.
@@ -318,8 +323,10 @@ Int21hGetSetCountry proc near
         jz      int2110_32Bit0
         cmp     dx,-1           ;Setting code?
         jmp     int2110_ExitCheck               ;pass to old handler?
-int2110_32Bit0: cmp     edx,-1
-int2110_ExitCheck:      jz      Int21hNotOurs   ;Go through normal stuff for SET.
+int2110_32Bit0:
+        cmp     edx,-1
+int2110_ExitCheck:
+        jz      Int21hNotOurs   ;Go through normal stuff for SET.
         ;
         ;Call the real mode handler to take care of things.
         ;
@@ -372,7 +379,8 @@ int2110_ExitCheck:      jz      Int21hNotOurs   ;Go through normal stuff for SET
         mov     w[esi+12h],ax
         mov     w[esi+14h],cs
         ;
-int2110_9:      ret
+int2110_9:
+        ret
 ;
 ;The remap handler.
 ;
@@ -531,12 +539,15 @@ Int21hReadFile  proc    near
         cmp     cs:Int21hDOS4GFlag,0
         jz      int2114_4
         mov     edx,[ebp+Int_ECX]       ;Get length.
-int2114_4:      xor     ebx,ebx         ;Reset length read.
-int2114_0:      mov     ecx,edx
+int2114_4:
+        xor     ebx,ebx         ;Reset length read.
+int2114_0:
+        mov     ecx,edx
         cmp     ecx,fs:[EPSP_Struc.EPSP_TransSize]
         jc      int2114_1
         mov     ecx,fs:[EPSP_Struc.EPSP_TransSize]
-int2114_1:      mov     es:RealRegsStruc.Real_ECX[edi],ecx      ;Store length.
+int2114_1:
+        mov     es:RealRegsStruc.Real_ECX[edi],ecx      ;Store length.
         mov     es:RealRegsStruc.Real_EDX[edi],0
         mov     ax,fs:[EPSP_Struc.EPSP_TransReal]
         mov     es:RealRegsStruc.Real_DS[edi],ax
@@ -555,7 +566,8 @@ int2114_1:      mov     es:RealRegsStruc.Real_ECX[edi],ecx      ;Store length.
         jz      int2114_2
         mov     ebx,es:RealRegsStruc.Real_EAX[edi]      ;get return code.
         jmp     int2114_3
-int2114_2:      mov     eax,es:RealRegsStruc.Real_EAX[edi]      ;get bytes read.
+int2114_2:
+        mov     eax,es:RealRegsStruc.Real_EAX[edi]      ;get bytes read.
         movzx   eax,ax
         sub     edx,eax         ;Update count remaining.
         add     ebx,eax         ;Update count so far.
@@ -581,11 +593,13 @@ int2114_2:      mov     eax,es:RealRegsStruc.Real_EAX[edi]      ;get bytes read.
         jnz     int2114_3
         or      edx,edx
         jnz     int2114_0
-int2114_3:      mov     [ebp+Int_AX],bx ;store length or return code.
+int2114_3:
+        mov     [ebp+Int_AX],bx ;store length or return code.
         cmp     cs:Int21hDOS4GFlag,0
         jz      int2114_5
         mov     [ebp+Int_EAX],ebx
-int2114_5:      ret
+int2114_5:
+        ret
 Int21hReadFile  endp
 
 
@@ -603,12 +617,15 @@ Int21hWriteFile proc near
         cmp     cs:Int21hDOS4GFlag,0
         jz      int2115_4
         mov     edx,[ebp+Int_ECX]       ;Get length.
-int2115_4:      xor     ebx,ebx         ;Reset length read.
-int2115_0:      mov     ecx,edx
+int2115_4:
+        xor     ebx,ebx         ;Reset length read.
+int2115_0:
+        mov     ecx,edx
         cmp     ecx,fs:[EPSP_Struc.EPSP_TransSize]
         jc      int2115_1
         mov     ecx,fs:[EPSP_Struc.EPSP_TransSize]
-int2115_1:      mov     es:RealRegsStruc.Real_ECX[edi],ecx      ;Store length.
+int2115_1:
+        mov     es:RealRegsStruc.Real_ECX[edi],ecx      ;Store length.
         mov     es:RealRegsStruc.Real_EDX[edi],0
         mov     ax,fs:[EPSP_Struc.EPSP_TransReal]
         mov     es:RealRegsStruc.Real_DS[edi],ax
@@ -636,7 +653,8 @@ int2115_1:      mov     es:RealRegsStruc.Real_ECX[edi],ecx      ;Store length.
         jz      int2115_2
         mov     ebx,es:RealRegsStruc.Real_EAX[edi]      ;get return code.
         jmp     int2115_3
-int2115_2:      mov     eax,es:RealRegsStruc.Real_EAX[edi]      ;get bytes read.
+int2115_2:
+        mov     eax,es:RealRegsStruc.Real_EAX[edi]      ;get bytes read.
         movzx   eax,ax
         sub     edx,eax         ;Update count remaining.
         add     ebx,eax         ;Update count so far.
@@ -644,11 +662,13 @@ int2115_2:      mov     eax,es:RealRegsStruc.Real_EAX[edi]      ;get bytes read.
         jnz     int2115_3
         or      edx,edx
         jnz     int2115_0
-int2115_3:      mov     [ebp+Int_AX],bx ;store length or return code.
+int2115_3:
+        mov     [ebp+Int_AX],bx ;store length or return code.
         cmp     cs:Int21hDOS4GFlag,0
         jz      int2115_5
         mov     [ebp+Int_EAX],ebx
-int2115_5:      ret
+int2115_5:
+        ret
 Int21hWriteFile endp
 
 
@@ -709,7 +729,8 @@ Int21hGetCurDir proc near
         mov     edi,[ebp+Int_ESI]
         call    Int21hExtend_ES_EDI     ;Extend [E]SI.
         rep     movsb
-int2117_9:      ret
+int2117_9:
+        ret
 Int21hGetCurDir endp
 
 
@@ -731,7 +752,8 @@ Int21hAllocMem  proc    near
         DOS4GExtend w[ebp+Int_EAX+2]
         ret
         ;
-int2118_AllocMuch:      mov     cx,-1
+int2118_AllocMuch:
+        mov     cx,-1
         mov     dx,-1
         sys     GetMem          ;get free memory size.
         mov     bx,cx
@@ -740,7 +762,8 @@ int2118_AllocMuch:      mov     cx,-1
         cmp     ebx,0fffeh*16   ;can't report too much.
         jc      int2118_AllocOK
         mov     ebx,0fffeh*16
-int2118_AllocOK:        shr     ebx,4           ;convert to paragraphs free.
+int2118_AllocOK:
+        shr     ebx,4           ;convert to paragraphs free.
         mov     [ebp+Int_BX],ax
         DOS4GExtend w[ebp+Int_EBX+2]
         mov     w[ebp+Int_AX],1
@@ -796,10 +819,12 @@ Int21hResMem    endp
 Int21hExecFile  proc    near
         cmp     b[ebp+Int_AL],0 ;We only support sub-function 0.
         jz      int2121_OK
-int2121_Done:   call    Int21hAL2Carry  ;Set carry.
+int2121_Done:
+        call    Int21hAL2Carry  ;Set carry.
         ret
         ;
-int2121_OK:     ;Copy the file name into transfer buffer.
+int2121_OK:
+        ;Copy the file name into transfer buffer.
         ;
         mov     ds,[ebp+Int_DS]
         mov     esi,[ebp+Int_EDX]
@@ -819,15 +844,18 @@ int2121_OK:     ;Copy the file name into transfer buffer.
         jz      int2121_0
         lds     esi,f[ebx+4+2]
         jmp     int2121_Ef4
-int2121_0:      test    BYTE PTR cs:Int21hSystemFlags,1
+int2121_0:
+        test    BYTE PTR cs:Int21hSystemFlags,1
         jz      int2121_Ef3
         movzx   ebx,bx
         movzx   esi,w[ebx+2]            ;Get command line offset.
         mov     ds,[ebx+2+2]            ;& segment.
         jmp     int2121_Ef4
-int2121_Ef3:    mov     esi,[ebx+2]
+int2121_Ef3:
+        mov     esi,[ebx+2]
         mov     ds,[ebx+2+4]
-int2121_Ef4:    mov     es,fs:[EPSP_Struc.EPSP_TransProt]
+int2121_Ef4:
+        mov     es,fs:[EPSP_Struc.EPSP_TransProt]
         mov     edi,256
         movzx   ecx,b[esi]              ;get command line length.
         inc     ecx             ;include length byte.
@@ -856,9 +884,11 @@ int2121_Ef4:    mov     es,fs:[EPSP_Struc.EPSP_TransProt]
         movzx   edi,WORD PTR es:[ebx+(2)+(2+2)] ;Get FCB 1 offset.
         mov     es,es:[ebx+(2)+(2+2)+2] ;& segment.
         jmp     int2121_Ef7
-int2121_Ef6:    mov     edi,es:[ebx+(2)+(4+2)]
+int2121_Ef6:
+        mov     edi,es:[ebx+(2)+(4+2)]
         mov     es,es:[ebx+(2)+(4+2)+4]
-int2121_Ef7:    mov     ds,cs:Int21hDSeg
+int2121_Ef7:
+        mov     ds,cs:Int21hDSeg
         assume ds:_cwMain
         lds     esi,TransferBuffer
         assume ds:nothing
@@ -896,9 +926,11 @@ int2121_Ef7:    mov     ds,cs:Int21hDSeg
         movzx   edi,WORD PTR es:[ebx+(2)+(2+2)+(2+2)] ;Get FCB 2 offset.
         mov     es,es:[ebx+(2)+(2+2)+(2+2)+2] ;& segment.
         jmp     int2121_Ef9
-int2121_Ef8:    mov     edi,es:[ebx+(2)+(4+2)+(4+2)]
+int2121_Ef8:
+        mov     edi,es:[ebx+(2)+(4+2)+(4+2)]
         mov     es,es:[ebx+(2)+(4+2)+(4+2)+4]
-int2121_Ef9:    mov     ds,cs:Int21hDSeg
+int2121_Ef9:
+        mov     ds,cs:Int21hDSeg
         assume ds:_cwMain
         lds     esi,TransferBuffer
         assume ds:nothing
@@ -935,13 +967,18 @@ int2121_Ef9:    mov     ds,cs:Int21hDSeg
         jz      int2121_2
         lds     esi,FWORD PTR es:[ebx]
         jmp     int2121_ef12
-int2121_1:      cmp     WORD PTR es:[ebx],0             ;got an environment?
+int2121_1:
+        cmp     WORD PTR es:[ebx],0             ;got an environment?
         jnz     int2121_Ef10
-int2121_2:      mov     ds,WORD PTR fs:[PSP_Struc.PSP_Environment]      ;Get current environment.
+int2121_2:
+        mov     ds,WORD PTR fs:[PSP_Struc.PSP_Environment]      ;Get current environment.
         jmp     int2121_Ef12
-int2121_Ef10:   mov     ds,es:[ebx]             ;get environment segment.
-int2121_Ef12:   push    esi
-int2121_3:      lodsb
+int2121_Ef10:
+        mov     ds,es:[ebx]             ;get environment segment.
+int2121_Ef12:
+        push    esi
+int2121_3:
+        lodsb
         or      al,al
         jnz     int2121_3
         cmp     b[esi],0                ;double zero?
@@ -1061,7 +1098,8 @@ medex2:
         mov     bl,21h
         sys     IntXX
         ;
-int2121_Ef15:   ;Put the DTA back where it's supposed to be.
+int2121_Ef15:
+        ;Put the DTA back where it's supposed to be.
         ;
         mov     es:RealRegsStruc.Real_EDX[edi],offset DTABuffer
         mov     es:RealRegsStruc.Real_DS[edi],_cwMain
@@ -1124,7 +1162,8 @@ Int21hFindFirstFile proc near
         les     edi,FWORD PTR fs:[EPSP_Struc.EPSP_DTA]  ;point to user buffer.
         mov     ecx,DTASize             ;length to copy.
         rep     movsb           ;copy data returned.
-int2122_9:      ret
+int2122_9:
+        ret
 Int21hFindFirstFile endp
 
 
@@ -1157,7 +1196,8 @@ Int21hFindNextFile proc near
         les     edi,FWORD PTR fs:[EPSP_Struc.EPSP_DTA]  ;point to user buffer.
         mov     ecx,DTASize             ;length to copy.
         rep     movsb           ;copy data returned.
-int2123_9:      ret
+int2123_9:
+        ret
 Int21hFindNextFile endp
 
 
@@ -1280,7 +1320,8 @@ Int21hCreateTemp proc near
         mov     edi,[ebp+Int_EDX]
         call    Int21hExtend_ES_EDI     ;Extend [E]SI.
         rep     movsb
-int2127_9:      ret
+int2127_9:
+        ret
 Int21hCreateTemp endp
 
 
@@ -1319,7 +1360,8 @@ Int21hMSNet     proc    near
         call    Int21hExtend_ES_EDI     ;Extend [E]SI.
         mov     ecx,16/4
         rep     movsd           ;copy the results.
-int2128_9:      ret
+int2128_9:
+        ret
 Int21hMSNet     endp
 
 
@@ -1349,7 +1391,8 @@ Int21hSetHandles proc near
 ;
 ;Change succeded so modify handle table selector base.
 ;
-int2129_0:      mov     ds,cs:Int21hDSeg
+int2129_0:
+        mov     ds,cs:Int21hDSeg
         assume ds:_cwMain
         movzx   eax,RealPSPSegment
         shl     eax,4
@@ -1371,7 +1414,8 @@ int2129_0:      mov     ds,cs:Int21hDSeg
         mov     ds,RealSegment
         assume ds:nothing
         mov     bx,[ebp+Int_BX]
-int2129_1:      mov     PSP_Struc.PSP_Handles[esi],bx
+int2129_1:
+        mov     PSP_Struc.PSP_Handles[esi],bx
         mov     esi,EPSP_Struc.EPSP_NextPSP[esi]
         or      esi,esi
         jnz     int2129_1
@@ -1412,7 +1456,8 @@ int2129_1:      mov     PSP_Struc.PSP_Handles[esi],bx
         rep     movsb           ;copy 1st 20 entries.
         jmp     int2129_shs1
         ;
-int2129_shs0:   ;Still more than 20 handles so just re-size the memory.
+int2129_shs0:
+        ;Still more than 20 handles so just re-size the memory.
         ;
         push    bx
         movzx   ecx,bx          ;1 byte per entry.
@@ -1421,7 +1466,8 @@ int2129_shs0:   ;Still more than 20 handles so just re-size the memory.
         pop     bx
         jc      int2129_sh0             ;not sure if this can happen.
         ;
-int2129_shs1:   ;Now update the the DOS side of things and the PSP.
+int2129_shs1:
+        ;Now update the the DOS side of things and the PSP.
         ;
         mov     ax,bx
         sub     ax,WORD PTR fs:[PSP_Struc.PSP_Handles]  ;find out how many less than before.
@@ -1441,7 +1487,8 @@ int2129_shs1:   ;Now update the the DOS side of things and the PSP.
         sys     IntXX           ;set new value with DOS.
         jmp     int2129_sh0
         ;
-int2129_shb0:   ;Want more handles.
+int2129_shb0:
+        ;Want more handles.
         ;
         mov     ax,bx
         sub     ax,WORD PTR fs:[PSP_Struc.PSP_Handles]  ;find out how many more.
@@ -1506,7 +1553,8 @@ int2129_shb0:   ;Want more handles.
         clc
         jmp     int2129_sh0
         ;
-int2129_shb1:   ;Current table is NOT in the PSP so just do a re-size on the
+int2129_shb1:
+        ;Current table is NOT in the PSP so just do a re-size on the
         ;memory.
         ;
         movzx   ecx,bx          ;1 byte per handle.
@@ -1534,7 +1582,8 @@ int2129_shb1:   ;Current table is NOT in the PSP so just do a re-size on the
         clc
         jmp     int2129_sh0
         ;
-int2129_shb2:   ;Couldn't get the memory at the protected mode end of things
+int2129_shb2:
+        ;Couldn't get the memory at the protected mode end of things
         ;so we need to put the DOS version back to its origional size.
         ;
         mov     ds,cs:Int21hDSeg
@@ -1551,7 +1600,8 @@ int2129_shb2:   ;Couldn't get the memory at the protected mode end of things
         sys     IntXX
         stc
         ;
-int2129_sh0:    ;Finaly we pass our results back to the caller.
+int2129_sh0:
+        ;Finaly we pass our results back to the caller.
         ;
         mov     [ebp+Int_AX],ax
         DOS4GExtend w[ebp+Int_EAX+2]
@@ -1745,7 +1795,8 @@ Int21hGetErrorInfo proc near
         mov     ecx,11
         rep     movsb
 ;
-int2132_done:   ret
+int2132_done:
+        ret
 Int21hGetErrorInfo endp
 
 
@@ -1771,7 +1822,8 @@ Int21hExtend_DS_ESI proc near
         cmp     eax,10000h
         jnc     int2133_32Bit
         movzx   esi,si
-int2133_32Bit:  pop     eax
+int2133_32Bit:
+        pop     eax
         ret
 Int21hExtend_DS_ESI endp
 
@@ -1798,7 +1850,8 @@ Int21hExtend_ES_EDI proc near
         cmp     eax,10000h
         jnc     int2134_32Bit
         movzx   edi,di
-int2134_32Bit:  pop     eax
+int2134_32Bit:
+        pop     eax
         ret
 Int21hExtend_ES_EDI endp
 
@@ -1841,7 +1894,8 @@ Int21hAL2Carry  proc    near
         jz      int2136_32Bit
         or      b[ebp+Int_Flags16],al
         ret
-int2136_32Bit:  or      b[ebp+Int_Flags32],al
+int2136_32Bit:
+        or      b[ebp+Int_Flags32],al
         ret
 Int21hAL2Carry  endp
 
@@ -2028,9 +2082,11 @@ Int21hOpen      proc    near
         test    BYTE PTR es:SystemFlags,1
         jz      int2137_Use32
         movzx   edx,dx
-int2137_Use32:  mov     d[OldInt21h],edx
+int2137_Use32:
+        mov     d[OldInt21h],edx
         mov     w[OldInt21h+4],cx
-int2137_Use0:   mov     edx,offset Int21h
+int2137_Use0:
+        mov     edx,offset Int21h
         mov     cx,cs
         mov     bl,21h
         sys     SetVect
@@ -2041,7 +2097,7 @@ int2137_Use0:   mov     edx,offset Int21h
         assume es:nothing
         assume ds:nothing
         clc
-int2137_9:      ;
+int2137_9:
         db 66h
         retf
 Int21hOpen      endp
@@ -2062,7 +2118,8 @@ Int21hClose     proc    near
         mov     bl,21h
         sys     SetVect
         assume ds:nothing
-int2138_9:      pop     ds
+int2138_9:
+        pop     ds
         ;
         db 66h
         retf

@@ -51,7 +51,7 @@ _cwMain segment para public 'Main thread' use16
 Copyright       label byte
         db 'CauseWay DOS Extender v'
 VersionMajor    db '4.'
-VersionMinor    db '02'
+VersionMinor    db '03'
         db " No copyright. Public domain software.",13,10,"No rights retained. ",13,10,0
 
 ;-------------------------------------------------------------------------------
@@ -273,7 +273,8 @@ cwOpen  proc    near
         cmp     ProtectedType,2
         jnz     cw1_KeepRaw
         mov     bx,_cwRaw
-cw1_KeepRaw:    sub     bx,ax           ;Size program.
+cw1_KeepRaw:
+        sub     bx,ax           ;Size program.
         inc     bx
         mov     TSRSize,bx
         mov     es:RealRegsStruc.Real_EBX[edi],ebx
@@ -435,8 +436,8 @@ ENDIF
         mov     eax,offset DebugDisplay
         push    ax
         retf
-cw2_dd0:        ;
-
+        ;
+cw2_dd0:
         cmp     ErrorNumber,0
         jz      cw2_NoError
 
@@ -508,7 +509,8 @@ cw2_p2: sub     di,2
         mov     eax,offset UnPatchExc
         push    ax
         retf
-cw2_pe0:        ;
+        ;
+cw2_pe0:
 ;
 ;Remove the API patch.
 ;
@@ -519,9 +521,11 @@ cw2_pe0:        ;
         mov     dx,WORD PTR es:[OldIntSys]
         mov     cx,WORD PTR es:[OldIntSys+2]
         jmp     cw2_Use0
-cw2_Use32:      mov     edx,DWORD PTR es:[OldIntSys]
+cw2_Use32:
+        mov     edx,DWORD PTR es:[OldIntSys]
         mov     cx,WORD PTR es:[OldIntSys+4]
-cw2_Use0:       mov     bl,31h
+cw2_Use0:
+        mov     bl,31h
         mov     ax,205h
         int     31h
         mov     DWORD PTR es:[cwIdentity],0
@@ -576,7 +580,8 @@ cw2_d0: movzx   edx,dx
 ;
 ;Make sure our data is addressable.
 ;
-cw2_RealMode:   mov     ax,_cwMain
+cw2_RealMode:
+        mov     ax,_cwMain
         mov     ds,ax
         assume ds:_cwMain
 ;
@@ -1093,7 +1098,8 @@ xms2:
         cmp     bl,32
         jnc     cw5_NoHandles
         mov     BYTE PTR cs:[cw5_NumXMSHandles],bl
-cw5_NoHandles:  pop     dx
+cw5_NoHandles:
+        pop     dx
         mov     ah,0ah
         call    d[XMSControl]   ;now free it.
         mov     ax,WORD PTR cs:[cw5_XMSSize]
@@ -1106,16 +1112,19 @@ cw5_NoHandles:  pop     dx
         cmp     ax,4
         jnc     cw5_SizeOK
         mov     ax,bx
-cw5_SizeOK:     mov     XMSBlockSize,ax
+cw5_SizeOK:
+        mov     XMSBlockSize,ax
         jmp     cw5_YesXMS
 ;
 ;Install raw A20 handler.
 ;
-cw5_NoXMS:      call    InstallA20
+cw5_NoXMS:
+        call    InstallA20
 ;
 ;Get A20 state.
 ;
-cw5_YesXMS:     push    ds
+cw5_YesXMS:
+        push    ds
         les     di,HighMemory   ;   with the four at FFFF:0090
         lds     si,LowMemory            ; Compare the four words at 0000:0080
         mov     cx,4
@@ -1125,7 +1134,8 @@ cw5_YesXMS:     push    ds
         xor     ax,ax
         jcxz    cw5_A20OFF               ; Are the two areas the same?
         inc     ax                  ; No, return A20 Enabled
-cw5_A20OFF:     mov     A20Flag,al
+cw5_A20OFF:
+        mov     A20Flag,al
 ;
 ;Change DOS allocation stratergy to highest so we'll get UMB's if available.
 ;
@@ -1172,7 +1182,8 @@ cw5_A20OFF:     mov     A20Flag,al
         mov     ah,49h
         int     21h             ;release this block.
         ;
-cw5_OldWay:     mov     cs:IErrorNumber,5
+cw5_OldWay:
+        mov     cs:IErrorNumber,5
         mov     bx,(4096*4)/16  ;need space for 3 page tables on
         mov     ah,48h          ;4k boundary.
         int     21h
@@ -1189,7 +1200,8 @@ cw5_OldWay:     mov     cs:IErrorNumber,5
         shr     eax,4           ;Get segment value again.
         jmp     cw5_GotSeg
         ;
-cw5_NewWay:     mov     ax,es
+cw5_NewWay:
+        mov     ax,es
         mov     dx,ax
         add     ax,cx           ;move to real start.
         ;
@@ -1237,12 +1249,14 @@ cw5_GotSeg:
 ;
 ;Allocate memory for Kernal TSS.
 ;
-cw5_TSSOld:     mov     cs:IErrorNumber,5
+cw5_TSSOld:
+        mov     cs:IErrorNumber,5
         mov     bx,(((size TSSFields)+2+16)/16) ;(4096/2)+2+16)/16
         mov     ah,48h
         int     21h
         jc      InitError
-cw5_TSSGot:     mov     KernalTSSReal,ax
+cw5_TSSGot:
+        mov     KernalTSSReal,ax
 ;
 ;See if enough wasted space to squeeze GDT into.
 ;
@@ -1255,12 +1269,14 @@ cw5_TSSGot:     mov     KernalTSSReal,ax
 ;
 ;Allocate some memory for the GDT.
 ;
-cw5_GDTOld:     mov     cs:IErrorNumber,5
+cw5_GDTOld:
+        mov     cs:IErrorNumber,5
         mov     bx,((8*GDT_Entries)/16)+1
         mov     ah,48h
         int     21h
         jc      InitError
-cw5_GDTGot:     mov     GDTReal,ax
+cw5_GDTGot:
+        mov     GDTReal,ax
         mov     es,ax
         movzx   eax,ax
         shl     eax,4
@@ -1752,7 +1768,8 @@ cw5_RAW:
 
         db 0eah         ;Absolute 16-bit jump, to clear
         dw cw5_RAW0,InitCS0             ;instruction pre-fetch & load CS.
-cw5_RAW0:       mov     ax,KernalLDT            ;Point to empty LDT descriptor.
+cw5_RAW0:
+        mov     ax,KernalLDT            ;Point to empty LDT descriptor.
         lldt    ax              ;and set LDT.
         mov     cx,KernalTS             ;Get value for task register.
         ltr     cx              ;and set it.
@@ -1763,7 +1780,8 @@ cw5_RAW0:       mov     ax,KernalLDT            ;Point to empty LDT descriptor.
 ;
 ;Use VCPI method to switch to protected mode.
 ;
-cw5_VCPI:       mov     cs:IErrorNumber,6
+cw5_VCPI:
+        mov     cs:IErrorNumber,6
         cli
         push    ds
         xor     di,di           ;Page table offset.
@@ -1929,7 +1947,8 @@ nosse:
         db 66h
         iretd
         ;
-cw5_pl3:        push    es
+cw5_pl3:
+        push    es
         mov     ax,KernalZero
         mov     es,ax
         mov     esi,GDTLinear
@@ -2508,7 +2527,8 @@ cw5_5:  add     edi,8           ;next descriptor.
         call    MakeDesc
         pop     es
         ;
-cw5_LDT:        ;Setup new LDT.
+cw5_LDT:
+        ;Setup new LDT.
         ;
         mov     esi,MDTLinear
         mov     LDTLinear,esi
@@ -2789,7 +2809,7 @@ medpre2:
         assume ds:_cwRaw
         pop     ds
         or      RawSystemFlags,1 shl 1  ;flag VMM's presence.
-cw5_v9: ;
+cw5_v9:
         push    ds
         pop     fs
 
@@ -2800,7 +2820,8 @@ cw5_v9: ;
 ;
 ;Do initialisations needed for DPMI
 ;
-cw5_InitDPMI:   mov     ax,_cwMain
+cw5_InitDPMI:
+        mov     ax,_cwMain
         mov     ds,ax
         assume ds:_cwMain
 ;
@@ -2838,10 +2859,12 @@ cw5_InitDPMI:   mov     ax,_cwMain
         test    BYTE PTR SystemFlags,1
         jz      cw5_Use32Bit23
         jmp     cw5_Use16Bit23
-cw5_Use32Bit23: mov     cs:IErrorNumber,9
+cw5_Use32Bit23:
+        mov     cs:IErrorNumber,9
         test    bx,1            ;Must offer 32 bit support.
         jz      InitError
-cw5_Use16Bit23: mov     bx,si           ;Get DPMI save buffer size.
+cw5_Use16Bit23:
+        mov     bx,si           ;Get DPMI save buffer size.
         mov     ax,si
         or      bx,bx
         jz      cw5_d0          ;No guarante that it'll need it.
@@ -2876,8 +2899,10 @@ cw5_d0:
         jz      cw5_Use32Bit24
         xor     ax,ax           ;16 bit segments for this code.
         jmp     cw5_Use16Bit24
-cw5_Use32Bit24: mov     ax,1            ;32 bit segments for this code.
-cw5_Use16Bit24: push    ax
+cw5_Use32Bit24:
+        mov     ax,1            ;32 bit segments for this code.
+cw5_Use16Bit24:
+        push    ax
         mov     ax,_cwInit
         mov     ds,ax
         pop     ax
@@ -3039,7 +3064,8 @@ cw5_DpmiInProtected:
 ;
 ;Now get on with installing the higher level stuff.
 ;
-cw5_InProtected:        mov     ax,mDataSegment
+cw5_InProtected:
+        mov     ax,mDataSegment
         mov     ds,ax
         assume ds:_cwMain
         ;
@@ -3156,9 +3182,11 @@ cw5_InProtected:        mov     ax,mDataSegment
         mov     WORD PTR es:[OldIntSys],dx
         mov     WORD PTR es:[OldIntSys+2],cx
         jmp     cw5_Use0
-cw5_Use32:      mov     DWORD PTR es:[OldIntSys],edx
+cw5_Use32:
+        mov     DWORD PTR es:[OldIntSys],edx
         mov     WORD PTR es:[OldIntSys+4],cx
-cw5_Use0:       mov     bl,31h
+cw5_Use0:
+        mov     bl,31h
         mov     edx,offset cwAPIpatch
         push    ax
         push    ds
@@ -3222,10 +3250,12 @@ cw5_Use0:       mov     bl,31h
         mov     w[DPMIStateAddr+2],si
         mov     w[DPMIStateAddr],di
         jmp     cw5_NoState
-cw5_DS_Use32:   mov     w[DPMIStateAddr+4],si
+cw5_DS_Use32:
+        mov     w[DPMIStateAddr+4],si
         mov     d[DPMIStateAddr],edi
         ;
-cw5_NoState:    pop     ds
+cw5_NoState:
+        pop     ds
         assume ds:_cwInit
 ;
 ;Patch exception vectors to put API handlers in place.
@@ -3239,7 +3269,8 @@ cw5_NoState:    pop     ds
         mov     eax,offset PatchExc
         push    ax
         retf
-cw5_pe0:        ;
+        ;
+cw5_pe0:
 ;
 ;Get memory for new PSP.
 ;
@@ -3313,7 +3344,8 @@ cw5_pe0:        ;
         add     edx,eax
         sys     SetSelDet32
         mov     dx,bx
-cw5_normal:     mov     WORD PTR es:[PSP_Struc.PSP_HandlePtr+2],dx
+cw5_normal:
+        mov     WORD PTR es:[PSP_Struc.PSP_HandlePtr+2],dx
         mov     WORD PTR es:[PSP_Struc.PSP_HandlePtr],0
         pop     es
         assume ds:_cwInit
@@ -3360,7 +3392,8 @@ cw5_normal:     mov     WORD PTR es:[PSP_Struc.PSP_HandlePtr+2],dx
         add     edi,4
         add     DWORD PTR es:[edi],edx
         add     edi,4
-cw5_exp0:       add     DWORD PTR es:[edi],edx
+cw5_exp0:
+        add     DWORD PTR es:[edi],edx
         mov     esi,es:[edi]
         mov     bx,CodeSegment
         cmp     WORD PTR es:[esi+4],0
@@ -3375,7 +3408,8 @@ cw5_exp0:       add     DWORD PTR es:[edi],edx
         cmp     WORD PTR es:[esi+4],3
         jz      cw5_exp1
         or      bx,-1
-cw5_exp1:       mov     es:[esi+4],bx
+cw5_exp1:
+        mov     es:[esi+4],bx
         add     edi,4
         dec     ebp
         jnz     cw5_exp0
@@ -3587,14 +3621,14 @@ END COMMENT !
 
         .286
 
-cw5_OldStrat:   ;
+cw5_OldStrat:
         dw ?,?
 
 cw5_NumXMSHandles:
         db ?
 
 ; MED, 09/10/99, increase max XMS size to dword
-cw5_XMSSize:    ;
+cw5_XMSSize:
 ;       dw ?
         dd      0
 
@@ -3664,7 +3698,8 @@ cw6_p2: sub     di,2
         mov     eax,offset UnPatchExc
         push    ax
         retf
-cw6_pe0:        ;
+        ;
+cw6_pe0:
 ;
 ;Remove the API patch.
 ;
@@ -3677,16 +3712,19 @@ cw6_pe0:        ;
         mov     dx,WORD PTR es:[OldIntSys]
         mov     cx,WORD PTR es:[OldIntSys+2]
         jmp     cw6_Use0
-cw6_Use32:      mov     edx,DWORD PTR es:[OldIntSys]
+cw6_Use32:
+        mov     edx,DWORD PTR es:[OldIntSys]
         mov     cx,WORD PTR es:[OldIntSys+4]
-cw6_Use0:       mov     bl,31h
+cw6_Use0:
+        mov     bl,31h
         mov     ax,205h
         int     31h
         mov     DWORD PTR es:[cwIdentity],0
         mov     DWORD PTR es:[cwIdentity+4],0
         assume es:nothing
         ;
-cw6_noAPI:      assume ds:nothing
+cw6_noAPI:
+        assume ds:nothing
         cmp     cs:IProtectedType,2     ;DPMI?
         assume ds:_cwInit
         jz      cw6_DPMI
@@ -3781,13 +3819,15 @@ cw6_d0:
 ;
 ;Make sure our data is addressable.
 ;
-cw6_RealMode:   mov     ax,_cwInit
+cw6_RealMode:
+        mov     ax,_cwInit
         mov     ds,ax
         assume ds:_cwInit
 ;
 ;Display the "CauseWay error: ??" bit.
 ;
-cw6_InRealMode: cmp     IErrorNumber,0
+cw6_InRealMode:
+        cmp     IErrorNumber,0
         jz      cw6_NoError
         mov     ax,IErrorNumber ;Get the error number.
         xor     dx,dx
@@ -3811,7 +3851,8 @@ cw6_InRealMode: cmp     IErrorNumber,0
 ;
 ;Now exit with the error number as the DOS "errorlevel".
 ;
-cw6_NoError:    mov     ax,IErrorNumber
+cw6_NoError:
+        mov     ax,IErrorNumber
         mov     ah,4ch
         int     21h
         assume ds:_cwMain
@@ -3939,17 +3980,20 @@ cw10_1: inc     si
         jnz     cw10_0
         jmp     cw10_9
         ;
-cw10_2: ;Found "CAUSEWAY" so have a look at the settings.
+cw10_2:
+        ;Found "CAUSEWAY" so have a look at the settings.
         ;
         add     si,8            ;skip to "="
         push    si
-cw10_2_0:       mov     al,es:[si]
+cw10_2_0:
+        mov     al,es:[si]
         cmp     al,61h          ; 'a'
         jb      cw10_2_1
         cmp     al,7Ah          ; 'z'
         ja      cw10_2_1
         and     al,5Fh          ;convert to upper case.
-cw10_2_1:       mov     es:[si],al
+cw10_2_1:
+        mov     es:[si],al
         inc     si
         or      al,al
         jnz     cw10_2_0
@@ -3993,7 +4037,8 @@ cw10_4: cmp     BYTE PTR es:[si],0              ;end?
         inc     si
         jmp     cw10_3
         ;
-cw10_nopass:    ; shut off passing of real mode interrupts to protected mode
+cw10_nopass:
+        ; shut off passing of real mode interrupts to protected mode
         add     si,4
         mov     ax,es:[si]
         cmp     ax,"SS"
@@ -4008,7 +4053,8 @@ cw10_nopass:    ; shut off passing of real mode interrupts to protected mode
         pop     ds
         jmp     cw10_3
 
-cw10_big1:      ; specify alternate extended memory size computation
+cw10_big1:
+        ; specify alternate extended memory size computation
         add     si,4
         push    ds
         mov     bx,_cwRaw
@@ -4019,7 +4065,8 @@ cw10_big1:      ; specify alternate extended memory size computation
         pop     ds
         jmp     cw10_3
 
-cw10_himem:     ;Set amount of physical memory to use.
+cw10_himem:
+        ;Set amount of physical memory to use.
         ;
         add     si,4
         mov     al,es:[si]
@@ -4030,7 +4077,8 @@ cw10_himem:     ;Set amount of physical memory to use.
         jnz     cw10_3
         inc     si
         xor     edx,edx
-cw10_hm0:       mov     al,es:[si]
+cw10_hm0:
+        mov     al,es:[si]
         or      al,al
         jz      cw10_hm1
         cmp     al," "
@@ -4064,7 +4112,8 @@ cw10_hm1:
         pop     ds
         jmp     cw10_3
         ;
-cw10_extall:    ;Set flag to use all extended memory.
+cw10_extall:
+        ;Set flag to use all extended memory.
         ;
         add     si,4
         mov     ax,es:[si]
@@ -4080,7 +4129,8 @@ cw10_extall:    ;Set flag to use all extended memory.
         pop     ds
         jmp     cw10_3
         ;
-cw10_novm:      ;They want to disable VM.
+cw10_novm:
+        ;They want to disable VM.
         ;
         add     si,4
         push    ds
@@ -4092,7 +4142,8 @@ cw10_novm:      ;They want to disable VM.
         pop     ds
         jmp     cw10_3
         ;
-cw10_maxmem:    ;Want to set maximum linear address space size.
+cw10_maxmem:
+        ;Want to set maximum linear address space size.
         ;
         add     si,4
         mov     ax,es:[si]
@@ -4103,7 +4154,8 @@ cw10_maxmem:    ;Want to set maximum linear address space size.
         jnz     cw10_3
         inc     si
         xor     edx,edx
-cw10_mm0:       mov     al,es:[si]
+cw10_mm0:
+        mov     al,es:[si]
         or      al,al
         jz      cw10_mm1
         cmp     al," "
@@ -4136,11 +4188,13 @@ cw10_mm1:
         pop     ds
         jmp     cw10_3
 
-cw10_pre:       ;Want to set preallocate amount
+cw10_pre:
+        ;Want to set preallocate amount
         ;
         add     si,4
         xor     edx,edx
-cw10_pr0:       mov     al,es:[si]
+cw10_pr0:
+        mov     al,es:[si]
         or      al,al
         jz      cw10_pr1
         cmp     al," "
@@ -4183,13 +4237,15 @@ cw10_noex:
         add     si,4
         jmp     cw10_3
 
-cw10_dpmi:      ;They want to force DPMI use if possible.
+cw10_dpmi:
+        ;They want to force DPMI use if possible.
         ;
         mov     ProtectedForce,1
         add     si,4
         jmp     cw10_3
         ;
-cw10_swap:      ;They want to specify the swap drive.
+cw10_swap:
+        ;They want to specify the swap drive.
         ;
         add     si,4
         cmp     BYTE PTR es:[si],":"
@@ -4200,7 +4256,8 @@ cw10_swap:      ;They want to specify the swap drive.
         mov     bx,_cwInit
         mov     ds,bx
         assume ds:_cwInit
-cw10_s0:        mov     al,es:[si]
+cw10_s0:
+        mov     al,es:[si]
         mov     [di],al
         inc     si
         inc     di
@@ -4212,13 +4269,15 @@ cw10_s0:        mov     al,es:[si]
 
         cmp     al," "
         jnz     cw10_s0
-cw10_s1:        mov     b[di-1],0
+cw10_s1:
+        mov     b[di-1],0
         assume ds:_cwMain
         pop     ds
         dec     si
         jmp     cw10_3
         ;
-cw10_name:      ; Specify the swap name.
+cw10_name:
+        ; Specify the swap name.
         ;
         add     si,4
         cmp     BYTE PTR es:[si],":"
@@ -4230,7 +4289,8 @@ cw10_name:      ; Specify the swap name.
         mov     ds,bx
         assume ds:_cwRaw
         xor     dx,dx
-cw10_n0:        mov     al,es:[si]
+cw10_n0:
+        mov     al,es:[si]
         mov     [di],al
         inc     si
         inc     di
@@ -4245,13 +4305,15 @@ cw10_n0:        mov     al,es:[si]
 
         cmp     al," "
         jnz     cw10_n0
-cw10_n1:        mov     b[di-1],0
+cw10_n1:
+        mov     b[di-1],0
         assume ds:_cwMain
         pop     ds
         dec     si
         jmp     cw10_3
         ;
-cw10_lowmem:    ;They want to specify low memory retention.
+cw10_lowmem:
+        ;They want to specify low memory retention.
         ;
         add     si,4
         mov     ax,es:[si]
@@ -4262,7 +4324,8 @@ cw10_lowmem:    ;They want to specify low memory retention.
         jnz     cw10_3
         inc     si
         xor     edx,edx
-cw10_lm0:       mov     al,es:[si]
+cw10_lm0:
+        mov     al,es:[si]
         or      al,al
         jz      cw10_lm1
         cmp     al," "
@@ -4282,7 +4345,8 @@ cw10_lm0:       mov     al,es:[si]
         inc     si
         jmp     cw10_lm0
         ;
-cw10_lm1:       shl     edx,10-4                ;turn K into para's
+cw10_lm1:
+        shl     edx,10-4                ;turn K into para's
         push    ds
         mov     bx,_cwRaw
         mov     ds,bx
@@ -4292,26 +4356,31 @@ cw10_lm1:       shl     edx,10-4                ;turn K into para's
         cmp     edx,65535
         jc      cw10_lm2
         mov     edx,65535
-cw10_lm2:       mov     w[CONVSaveSize],dx      ;set new size.
+cw10_lm2:
+        mov     w[CONVSaveSize],dx      ;set new size.
         assume ds:_cwMain
         pop     ds
         ;
         jmp     cw10_3
         ;
-cw10_9: ;Now look for TEMP.
+cw10_9:
+        ;Now look for TEMP.
         ;
         xor     si,si           ;start at the beginning.
-cw10_temp2:     mov     eax,es:[si]
+cw10_temp2:
+        mov     eax,es:[si]
         cmp     eax,"PMET"
         jz      cw10_temp0
-cw10_temp1:     inc     si
+cw10_temp1:
+        inc     si
         cmp     BYTE PTR es:[si-1],0
         jnz     cw10_temp1
         cmp     BYTE PTR es:[si],0
         jz      cw10_temp9
         jmp     cw10_temp2
         ;
-cw10_temp0:     add     si,4
+cw10_temp0:
+        add     si,4
         cmp     BYTE PTR es:[si],"="
         jnz     cw10_temp9
         inc     si
@@ -4319,7 +4388,8 @@ cw10_temp0:     add     si,4
         mov     bx,_cwInit
         mov     ds,bx
         mov     di,offset VMMDrivPath2
-cw10_temp3:     mov     al,es:[si]
+cw10_temp3:
+        mov     al,es:[si]
         mov     [di],al
         inc     si
         inc     di
@@ -4327,28 +4397,34 @@ cw10_temp3:     mov     al,es:[si]
         jz      cw10_temp4
         cmp     al," "
         jnz     cw10_temp3
-cw10_temp4:     mov     b[di-1],0
+cw10_temp4:
+        mov     b[di-1],0
         pop     ds
-cw10_temp9:     ;
+cw10_temp9:
+        ;
         ;Look for TMP
         ;
         xor     si,si           ;start at the beginning.
-cw10_tmp2:      mov     eax,es:[si]
+cw10_tmp2:
+        mov     eax,es:[si]
         cmp     eax,"=PMT"
         jz      cw10_tmp0
-cw10_tmp1:      inc     si
+cw10_tmp1:
+        inc     si
         cmp     BYTE PTR es:[si-1],0
         jnz     cw10_tmp1
         cmp     BYTE PTR es:[si],0
         jz      cw10_tmp9
         jmp     cw10_tmp2
         ;
-cw10_tmp0:      add     si,4
+cw10_tmp0:
+        add     si,4
         push    ds
         mov     bx,_cwInit
         mov     ds,bx
         mov     di,offset VMMDrivPath3
-cw10_tmp3:      mov     al,es:[si]
+cw10_tmp3:
+        mov     al,es:[si]
         mov     [di],al
         inc     si
         inc     di
@@ -4356,9 +4432,10 @@ cw10_tmp3:      mov     al,es:[si]
         jz      cw10_tmp4
         cmp     al," "
         jnz     cw10_tmp3
-cw10_tmp4:      mov     b[di-1],0
+cw10_tmp4:
+        mov     b[di-1],0
         pop     ds
-cw10_tmp9:      ;
+cw10_tmp9:
         ret
         .286
 GetENVStuff     endp
@@ -4396,7 +4473,8 @@ cw11_2: movsb
         jnz     cw11_2_0
         mov     dx,bx
         dec     dx
-cw11_2_0:       cmp     b[si-1],0               ;got to the end yet?
+cw11_2_0:
+        cmp     b[si-1],0               ;got to the end yet?
         jz      cw11_3
         dec     cx
         jnz     cw11_2
@@ -4509,7 +4587,8 @@ cw12_4: mov     ax,3e00h
 ;command line argument and shuffle everything else down. Allows CW32 to be used
 ;to run 32-bit programs not attatched to it from the command line.
 ;
-cw12_SetRUN:    mov     ax,3e00h                ;close file, we don't need it.
+cw12_SetRUN:
+        mov     ax,3e00h                ;close file, we don't need it.
         int     21h
         mov     ax,_cwMain
         mov     ds,ax
@@ -4526,7 +4605,8 @@ cw12_SetRUN:    mov     ax,3e00h                ;close file, we don't need it.
         ;
         ;Skip white space.
         ;
-cw12_sr0:       mov     al,es:[si]
+cw12_sr0:
+        mov     al,es:[si]
         cmp     al," "
         jnz     cw12_sr1
         inc     si
@@ -4536,7 +4616,8 @@ cw12_sr0:       mov     al,es:[si]
         ;
         ;Get program name.
         ;
-cw12_sr1:       mov     al,es:[si]
+cw12_sr1:
+        mov     al,es:[si]
         cmp     al," "
         jz      cw12_sr2
         mov     BYTE PTR es:[si],' '
@@ -4545,8 +4626,10 @@ cw12_sr1:       mov     al,es:[si]
         inc     di
         dec     cx
         jnz     cw12_sr1
-cw12_sr2:       mov     b[di],0
-cw12_sr3:       pop     es
+cw12_sr2:
+        mov     b[di],0
+cw12_sr3:
+        pop     es
 ;
 ;Clean up the command line, ie, remove any spaces created by removeing name.
 ;
@@ -4559,12 +4642,14 @@ cw12_sr3:       pop     es
         jz      cw12_cl3
         inc     si
         mov     di,si
-cw12_cl0:       cmp     BYTE PTR es:[si],' '
+cw12_cl0:
+        cmp     BYTE PTR es:[si],' '
         jnz     cw12_cl1
         inc     si
         dec     cx
         jnz     cw12_cl0
-cw12_cl1:       jcxz    cw12_cl2
+cw12_cl1:
+        jcxz    cw12_cl2
         push    cx
         push    ds
         push    es
@@ -4572,12 +4657,15 @@ cw12_cl1:       jcxz    cw12_cl2
         rep     movsb           ;Copy it down.
         pop     ds
         pop     cx
-cw12_cl2:       mov     BYTE PTR es:[80h],cl            ;Store new length.
-cw12_cl3:       xor     ch,ch
+cw12_cl2:
+        mov     BYTE PTR es:[80h],cl            ;Store new length.
+cw12_cl3:
+        xor     ch,ch
         add     cx,81h
         mov     si,cx
         mov     BYTE PTR es:[si],13             ;Terminate it correctly.
-cw12_sr5:       pop     es
+cw12_sr5:
+        pop     es
         ;
         assume ds:_cwMain
 cw12_5: pop     ds
@@ -4610,7 +4698,8 @@ SetProtectedType proc near
         test    BYTE PTR ProtectedFlags,1
         jnz     cw14_2
         ;
-cw14_NoDPMIForce:       test    BYTE PTR ProtectedFlags,4
+cw14_NoDPMIForce:
+        test    BYTE PTR ProtectedFlags,4
         jz      cw14_1
         mov     ProtectedType,0 ;Use real mode.
         jmp     cw14_3
@@ -4643,9 +4732,11 @@ ChkDPMI proc    near
         test    w[SystemFlags],1
         jz      cw15_Use32Bit21
         jmp     cw15_Use16Bit21
-cw15_Use32Bit21:        test    bx,1            ;Must offer 32 bit support.
+cw15_Use32Bit21:
+        test    bx,1            ;Must offer 32 bit support.
         jz      cw15_9
-cw15_Use16Bit21:        clc
+cw15_Use16Bit21:
+        clc
         ret
         ;
 cw15_9: stc
@@ -4696,15 +4787,18 @@ cw16_IsHandler:
         call    cw16_ChkEMS             ;Make sure EMS is in first
         jc      cw16_HopeThere          ;EMS not in.
         call    cw16_GrabPage           ;Make sure EMS initiated
-cw16_HopeThere: clc                     ;Set for no error
+cw16_HopeThere:
+        clc                     ;Set for no error
         jmp     cw16_Done
-cw16_NotThere:  stc
+cw16_NotThere:
+        stc
 cw16_Done:
         pop     es
         pop     bx
         pop     ax
         ret
-cw16_DummyIRET: iret
+cw16_DummyIRET:
+        iret
 ;
 ; The following routine checks to see if an EMM is installed.
 ; If one is not, the carry flag is set on return
@@ -4735,9 +4829,11 @@ cw16_ChkEMS:
         int     21h
         clc                     ;Set for no error
         jmp     cw16_Done1
-cw16_NotThere1: mov     ah,3Eh          ;Close file
+cw16_NotThere1:
+        mov     ah,3Eh          ;Close file
         int     21h
-cw16_NotThere2: stc
+cw16_NotThere2:
+        stc
 cw16_Done1:
         pop     es
         pop     dx
@@ -4750,7 +4846,8 @@ cw16_Done1:
 ; On return, the carry is set if there was any problem using the EMS
 ; functions.  Carry is clear otherwise.
 ;
-cw16_GrabPage:  mov     ah,43h          ;Allocate pages
+cw16_GrabPage:
+        mov     ah,43h          ;Allocate pages
         mov     bx,1            ;Get 1 page (16K)
         int     67h
         cmp     ah,0            ;Was there an error?
@@ -4761,8 +4858,10 @@ cw16_GrabPage:  mov     ah,43h          ;Allocate pages
         jne     cw16_GPErr              ;Yes, so exit
         clc                     ;Mark for no error
         jmp     cw16_GPEnd
-cw16_GPErr:     stc
-cw16_GPEnd:     ret
+cw16_GPErr:
+        stc
+cw16_GPEnd:
+        ret
 ;
 cw16_EMSName    DB 'EMMXXXX0',0
 ChkVCPI endp

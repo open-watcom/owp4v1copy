@@ -319,13 +319,13 @@ Special14:
         mov     edx,d[OldExcep14]
         mov     cx,w[OldExcep14+4]
         jmp     inter8_GotVect
-inter8_Normal:  ;
-
+        ;
+inter8_Normal:
         clc             ; MED 01/17/96, flag no error
 
         mov     edx,[ebx]               ;get offset.
         mov     cx,[ebx+4]              ;get segment selector.
-inter8_GotVect: ;
+inter8_GotVect:
 ;       popm    eax,ebx,esi,edi,ebp,ds,es,fs,gs
         pop     eax
         pop     ebp
@@ -373,7 +373,8 @@ RawSetVector    proc    near
         jz      inter9_use32_add
         movzx   edx,dx
         ;
-inter9_use32_add:       ;Check if its a hardware interrupt.
+inter9_use32_add:
+        ;Check if its a hardware interrupt.
         ;
         mov     ax,KernalDS
         mov     ds,ax
@@ -396,7 +397,7 @@ inter9_use32_add:       ;Check if its a hardware interrupt.
 med2a:
         cmp     cx,DpmiEmuCS            ;restoreing previous vector?
         jnz     inter9_Setting
-inter9_Restoreing:      ;
+inter9_Restoreing:
         pushad
         movzx   cx,bl
         sub     bl,al
@@ -423,7 +424,7 @@ inter9_Restoreing:      ;
         pop     es
         popf
         jmp     inter9_DoneHardware
-inter9_Setting: ;
+inter9_Setting:
         pushad
         movzx   cx,bl
         sub     bl,al
@@ -458,8 +459,10 @@ inter9_Setting: ;
         mov     w[CallBackStruc.CallBackReal+bx],dx
         pop     es
         popf
-inter9_DoneHardware: popad
-inter9_NotHardware:     mov     ax,DpmiEmuDS
+inter9_DoneHardware:
+        popad
+inter9_NotHardware:
+        mov     ax,DpmiEmuDS
         mov     ds,ax
         assume ds:_cwDPMIEMU
         movzx   eax,bl
@@ -600,14 +603,13 @@ Special14x:
         mov     d[OldExcep14],edx
         mov     w[OldExcep14+4],cx
         jmp     inter11_GotVect
-inter11_Normal: ;
-
+        ;
+inter11_Normal:
         clc             ; MED 01/17/96, flag no error
 
         mov     [ebx],edx               ;set offset.
         mov     [ebx+4],cx              ;set segment selector.
-inter11_GotVect:        ;
-
+inter11_GotVect:
 ;       popm    eax,ebx,ecx,edx,esi,edi,ebp,ds,es,fs,gs
         pop     eax
         pop     ebp
@@ -664,7 +666,8 @@ RAWGetCallBack  proc near
 ;       mov     ecx,MaxCallBacks-(16+4)
 ;       mov     edx,16+4
 
-inter12_0:      test    CallBackStruc.CallBackFlags[ebx],1              ;this one in use?
+inter12_0:
+        test    CallBackStruc.CallBackFlags[ebx],1              ;this one in use?
         jz      inter12_1
         add     ebx,size CallBackStruc
         inc     edx
@@ -672,7 +675,8 @@ inter12_0:      test    CallBackStruc.CallBackFlags[ebx],1              ;this on
         jnz     inter12_0
         jmp     inter12_9
         ;
-inter12_1:      pushad
+inter12_1:
+        pushad
         xor     eax,eax
         mov     cx,1
         int     31h
@@ -704,7 +708,8 @@ inter12_1:      pushad
         clc
         jmp     inter12_10
         ;
-inter12_9:      stc
+inter12_9:
+        stc
 inter12_10:
         pop     es
         pop     ds
@@ -741,7 +746,8 @@ RAWRelCallBack proc near
         ;
         mov     esi,offset CallBackTable
         mov     ebx,MaxCallBacks
-inter13_0:      test    CallBackStruc.CallBackFlags[esi],1
+inter13_0:
+        test    CallBackStruc.CallBackFlags[esi],1
         jz      inter13_1
         cmp     dx,CallBackStruc.CallBackOff[esi]
         jnz     inter13_1
@@ -752,7 +758,8 @@ inter13_0:      test    CallBackStruc.CallBackFlags[esi],1
         clc
         jmp     inter13_2
         ;
-inter13_1:      add     esi,size CallBackStruc
+inter13_1:
+        add     esi,size CallBackStruc
         dec     ebx
         jnz     inter13_0
         stc
@@ -947,7 +954,8 @@ mednoem:
         pop     ds
         add     esp,4           ;skip error code.
         jmp     inter14_SortedCode2
-inter14_NoCode: and     w[esp+(4+4)+(4)+(4+4)],0011111111010101b
+inter14_NoCode:
+        and     w[esp+(4+4)+(4)+(4+4)],0011111111010101b
         mov     eax,[esp+(4+4)+(4)+(4+4)]       ;Get flags.
         and     eax,not 65536
         mov     ExceptionFlags,eax
@@ -962,7 +970,8 @@ inter14_ForceException:
 inter14_SortedCode:
         pop     eax
         pop     ds
-inter14_SortedCode2:    add     esp,4           ;skip return address.
+inter14_SortedCode2:
+        add     esp,4           ;skip return address.
         ;
         ;Check which stack we should switch back to.
         ;
@@ -1033,7 +1042,8 @@ IntStack        proc    near
         mov     [ebx],ax                ;EIP
         jmp     inter15_iUse0
         ;
-inter15_iUse32: mov     eax,[esp+(4+4+4)+(4+4+4+4)]
+inter15_iUse32:
+        mov     eax,[esp+(4+4+4)+(4+4+4+4)]
         sub     ebx,4
         mov     [ebx],eax               ;SS
         mov     eax,[esp+(4+4+4)+(4+4+4)]
@@ -1049,7 +1059,8 @@ inter15_iUse32: mov     eax,[esp+(4+4+4)+(4+4+4+4)]
         sub     ebx,4
         mov     [ebx],eax               ;EIP
         ;
-inter15_iUse0:  ;Put new details into current stack.
+inter15_iUse0:
+        ;Put new details into current stack.
         ;
         mov     eax,offset inter15_Int
         mov     [esp+(4+4+4)+(0)],eax   ;EIP
@@ -1069,7 +1080,8 @@ inter15_iUse0:  ;Put new details into current stack.
         assume ds:_cwDPMIEMU
         iretd
         ;
-inter15_Int:    ;Now switch back to origional stack.
+inter15_Int:
+        ;Now switch back to origional stack.
         ;
         assume ds:nothing
         push    cs:ExceptionIndex       ;need to know the INT number.
@@ -1096,7 +1108,8 @@ inter15_Int:    ;Now switch back to origional stack.
         push    eax             ;int handler flags.
         jmp     inter15_i2Use0
         ;
-inter15_i2Use32:        mov     ax,ss
+inter15_i2Use32:
+        mov     ax,ss
         mov     ds,ax
         mov     ebx,esp
         lss     esp,[ebx+(4+4+4+4+4)+(4+4+4)] ;get origional stack again.
@@ -1110,7 +1123,8 @@ inter15_i2Use32:        mov     ax,ss
         and     ax,1111110011111111b    ;lose IF & TF
         push    eax             ;int handler flags.
         ;
-inter15_i2Use0: mov     eax,[ebx+(4+4+4+4)]     ;get INT index.
+inter15_i2Use0:
+        mov     eax,[ebx+(4+4+4+4)]     ;get INT index.
         shl     eax,1
         mov     esi,eax
         shl     eax,1
@@ -1166,7 +1180,8 @@ KernalStack     proc    near
         mov     ds,ax
         assume ds:nothing
         ;
-inter16_Update: ;Put old details onto new stack.
+inter16_Update:
+        ;Put old details onto new stack.
         ;
         test    BYTE PTR cs:DpmiEmuSystemFlags,1
         jz      inter16_Use32
@@ -1187,7 +1202,8 @@ inter16_Update: ;Put old details onto new stack.
         mov     [ebx],ax                ;EIP
         jmp     inter16_Use0
         ;
-inter16_Use32:  mov     eax,[esp+(4+4+4)+(4+4+4+4)]
+inter16_Use32:
+        mov     eax,[esp+(4+4+4)+(4+4+4+4)]
         sub     ebx,4
         mov     [ebx],eax               ;SS
         mov     eax,[esp+(4+4+4)+(4+4+4)]
@@ -1203,7 +1219,8 @@ inter16_Use32:  mov     eax,[esp+(4+4+4)+(4+4+4+4)]
         sub     ebx,4
         mov     [ebx],eax               ;EIP
         ;
-inter16_Use0:   ;Put new details into current stack.
+inter16_Use0:
+        ;Put new details into current stack.
         ;
         mov     eax,offset IntDispatch
         mov     [esp+(4+4+4)+(0)],eax   ;EIP
@@ -1271,7 +1288,8 @@ IntDispatch     proc    near
         jmp     FWORD PTR cs:[inter17_Call2]
         assume ds:_cwDPMIEMU
         ;
-inter17_Use32Bit14:     mov     eax,[esi]
+inter17_Use32Bit14:
+        mov     eax,[esi]
         mov     d[inter17_Call2],eax
         mov     ax,[esi+4]
         mov     w[inter17_Call2+4],ax
@@ -1292,7 +1310,8 @@ inter17_Use32Bit14:     mov     eax,[esi]
 ;; MED 08/13/96
 ;       nop             ; make debugger EIP adjustment from debug int benign?
 
-inter17_Resume: ;Return from normal int.
+inter17_Resume:
+        ;Return from normal int.
         ;
         pushfd
         cli                     ;stop interupts interfering.
@@ -1335,7 +1354,8 @@ inter17_Resume: ;Return from normal int.
         db 66h
         iret
         ;
-inter17_Use32:  lss     esp,f[ebx+(4+4+4+4)+(4+4+4)] ;get old stack address.
+inter17_Use32:
+        lss     esp,f[ebx+(4+4+4+4)+(4+4+4)] ;get old stack address.
         and     w[ebx+(4+4+4+4)+(4+4)],0000011100000000b ;retain IF & TF.
         and     w[ebx+(4+4+4)],1111100011111111b        ;lose IF & TF.
         mov     eax,[ebx+(4+4+4)]
@@ -1362,7 +1382,8 @@ inter17_Use32:  lss     esp,f[ebx+(4+4+4+4)+(4+4+4)] ;get old stack address.
         iretd
 
         ;
-inter17_Excep:  ;Dispatch exception.
+inter17_Excep:
+        ;Dispatch exception.
         ;
         add     esi,offset ExceptionTable
         test    BYTE PTR DpmiEmuSystemFlags,1
@@ -1385,7 +1406,8 @@ inter17_Excep:  ;Dispatch exception.
         jmp     FWORD PTR cs:[inter17_Call2]
         assume ds:_cwDPMIEMU
         ;
-inter17_eUse32Bit14:    mov     eax,[esi]
+inter17_eUse32Bit14:
+        mov     eax,[esi]
         mov     d[inter17_Call2],eax
         mov     ax,[esi+4]
         mov     w[inter17_Call2+4],ax
@@ -1402,7 +1424,8 @@ inter17_eUse32Bit14:    mov     eax,[esi]
         jmp     FWORD PTR cs:[inter17_Call2]
         assume ds:_cwDPMIEMU
         ;
-inter17_ResumeExp:      ;Return from exception.
+inter17_ResumeExp:
+        ;Return from exception.
         ;
         cli
         assume ds:nothing
@@ -1443,7 +1466,8 @@ inter17_ResumeExp:      ;Return from exception.
         db 66h
         iret
         ;
-inter17_ExpUse32:       add     esp,4
+inter17_ExpUse32:
+        add     esp,4
         pushfd
         push    eax
         push    ebx
@@ -1501,8 +1525,10 @@ IntNN386        proc    far
         movzx   ebp,bp
         movzx   eax,w[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4+4)+(2+2)]
         jmp     inter18_Use16Bit19
-inter18_Use32Bit19:     mov     eax,[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4+4)+(4+4)]
-inter18_Use16Bit19:     mov     [ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)],eax
+inter18_Use32Bit19:
+        mov     eax,[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4+4)+(4+4)]
+inter18_Use16Bit19:
+        mov     [ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)],eax
         mov     edx,[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4)]
         sub     edx,offset IntNN386Catch
         shr     edx,3
@@ -1536,7 +1562,8 @@ inter18_Use16Bit19:     mov     [ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)],eax
         or      CallBackStruc.CallBackFlags[ebx],128    ;mark it as busy.
         mov     d[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4)],ebx
         assume ds:_cwDPMIEMU
-inter18_c2:     pop     ds
+inter18_c2:
+        pop     ds
         ;
         ;Now pass control to the INT simulator.
         ;
@@ -1559,7 +1586,8 @@ inter18_c2:     pop     ds
         and     CallBackStruc.CallBackFlags[esi],255-128
         assume ds:_cwDPMIEMU
         pop     ds
-inter18_NoCall: ;
+inter18_NoCall:
+        ;
         ;Update the flags.
         ;
         mov     ax,es:RealRegsStruc.Real_Flags[edi]
@@ -1581,7 +1609,8 @@ inter18_NoCall: ;
         db 66h
         iret                    ;Switch back to calling program.
         ;
-inter18_Use32Bit:       mov     bx,[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4+4)+(4+4)]
+inter18_Use32Bit:
+        mov     bx,[ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4+4)+(4+4)]
         and     bx,0111011100000000b            ;retain IF.
         or      ax,bx
         mov     [ebp+(4+4+4+4+4+4+4+4)+(10*2)+(4+4+4+4)+(4+4+4)+(4+4)],ax
@@ -1631,10 +1660,12 @@ ExcepNN386      proc    far
         movzx   eax,w[esp+(4+4+4+4)+(4+4+4+4+4+4+4)+(2+2)]
         mov     ExceptionEFL,eax
         jmp     inter19_Use16Bit16
-inter19_Use32Bit16:     mov     eax,[esp+(4+4+4+4)+(4+4+4+4+4+4+4)+(4+4)]
+inter19_Use32Bit16:
+        mov     eax,[esp+(4+4+4+4)+(4+4+4+4+4+4+4)+(4+4)]
         mov     ExceptionEFL,eax
         ;
-inter19_Use16Bit16:     ;Retrieve register values and get outa here.
+inter19_Use16Bit16:
+        ;Retrieve register values and get outa here.
         ;
         mov     ax,DpmiEmuDS            ;make sure our data is addresable.
         mov     es,ax           ;/
@@ -1658,11 +1689,12 @@ inter19_Use16Bit16:     ;Retrieve register values and get outa here.
         movs    w[edi],[esi]
         add     edi,2
         jmp     inter19_Use16Bit17
-inter19_Use32Bit17:     add     esi,4+4+4               ;skip return address/flags.
+inter19_Use32Bit17:
+        add     esi,4+4+4               ;skip return address/flags.
         mov     ecx,4+4+4
         cld
         rep     movs b[edi],[esi]       ;get real return address.
-inter19_Use16Bit17:     ;
+inter19_Use16Bit17:
         test    BYTE PTR cs:DpmiEmuSystemFlags,1
         jz      inter19_Use32Bit678
         movzx   eax,w[esi]
@@ -1671,11 +1703,12 @@ inter19_Use16Bit17:     ;
         mov     es:ExceptionSS,ax
         jmp     inter19_Use16Bit678
         ;
-inter19_Use32Bit678:    mov     eax,[esi]
+inter19_Use32Bit678:
+        mov     eax,[esi]
         mov     es:ExceptionESP,eax
         mov     ax,[esi+4]
         mov     es:ExceptionSS,ax
-inter19_Use16Bit678:    ;
+inter19_Use16Bit678:
         push    es
         pop     ds
         assume es:nothing

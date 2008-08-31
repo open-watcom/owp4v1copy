@@ -271,9 +271,11 @@ exc1_0:
         mov     w[OldInt00],dx
         mov     w[OldInt00+2],cx
         jmp     exc1_i00Done3216
-exc1_i00Use32:  mov     d[OldInt00],edx
+exc1_i00Use32:
+        mov     d[OldInt00],edx
         mov     w[OldInt00+4],cx
-exc1_i00Done3216:       mov     edx,offset Int00Handler
+exc1_i00Done3216:
+        mov     edx,offset Int00Handler
         mov     cx,cs
         mov     bl,00
         sys     SetVect
@@ -296,9 +298,11 @@ exc1_1:
         mov     w[edi+2],cx
         mov     w[edi+4],cx
         jmp     exc1_Use0
-exc1_Use32:     mov     d[edi],edx
+exc1_Use32:
+        mov     d[edi],edx
         mov     w[edi+4],cx
-exc1_Use0:      mov     edx,esi
+exc1_Use0:
+        mov     edx,esi
         mov     cx,cs
         mov     ax,0203h
         int     31h
@@ -368,12 +372,15 @@ exc2_0:
         mov     dx,w[OldInt00]
         mov     cx,w[OldInt00+2]
         jmp     exc2_i00Done3216
-exc2_i00Use32:  mov     edx,d[OldInt00]
+exc2_i00Use32:
+        mov     edx,d[OldInt00]
         mov     cx,w[OldInt00+4]
-exc2_i00Done3216:       mov     bl,00h
+exc2_i00Done3216:
+        mov     bl,00h
         sys     SetVect
         ;
-exc2_i2:        pop     ds
+exc2_i2:
+        pop     ds
         clc
         retf
         ;
@@ -382,9 +389,11 @@ exc2_1: test    BYTE PTR ExcepSystemFlags,1
         movzx   edx,w[edi]
         mov     cx,w[edi+2]
         jmp     exc2_Use0
-exc2_Use32:     mov     edx,d[edi]
+exc2_Use32:
+        mov     edx,d[edi]
         mov     cx,w[edi+4]
-exc2_Use0:      mov     ax,0203h
+exc2_Use0:
+        mov     ax,0203h
         int     31h
         ret
         ;
@@ -442,7 +451,8 @@ Int00Handler    proc    near
         mov     DebugEIP,eax
         jmp     exc3_Use0_0
         ;
-exc3_Use32_0:   add     DebugESP,4+4+4
+exc3_Use32_0:
+        add     DebugESP,4+4+4
         mov     eax,[esp+4+4]
         mov     DebugEFL,eax
         mov     eax,[esp+4]
@@ -450,7 +460,8 @@ exc3_Use32_0:   add     DebugESP,4+4+4
         mov     eax,[esp]
         mov     DebugEIP,eax
         ;
-exc3_Use0_0:    mov     DebugExceptionIndex,0
+exc3_Use0_0:
+        mov     DebugExceptionIndex,0
         mov     DebugExceptionCode,0
         ;
         mov     ds,ExcepDSeg
@@ -725,11 +736,12 @@ DPMIExcPatch    proc    far
         mov     esi,0
         jz      exc20_S14_32
         retf
-exc20_S14_32:   ;
+exc20_S14_32:
         db 66h
         retf
         ;
-exc20_Not14Special: ;Retrieve register values and get outa here.
+exc20_Not14Special:
+        ;Retrieve register values and get outa here.
         ;
         cmp     InExcep,0
         jz      exc20_ok
@@ -758,7 +770,8 @@ exc20_Not14Special: ;Retrieve register values and get outa here.
         jmp     FWORD PTR cs:[InExcepJMP]
         assume ds:_Excep
         ;
-exc20_ok:       or      InExcep,-1
+exc20_ok:
+        or      InExcep,-1
         push    ds
         pop     es
         assume es:_Excep
@@ -769,7 +782,8 @@ exc20_ok:       or      InExcep,-1
         test    BYTE PTR es:ExcepSystemFlags,1
         jz      exc20_SP320
         movzx   esi,si
-exc20_SP320:    mov     edi,offset DebugBuffer
+exc20_SP320:
+        mov     edi,offset DebugBuffer
         mov     ecx,(4+4+4+4+4+4+4)+(2+2+2+2)
         cld
         rep     movs b[edi],[esi]    ;copy registers off the stack.
@@ -788,13 +802,14 @@ exc20_SP320:    mov     edi,offset DebugBuffer
         add     edi,2
         jmp     exc20_Use16Bit17
         ;
-exc20_Use32Bit17:       mov     eax,[esp+(4+4+4+4+4+4+4)+(2+2+2+2)+(4+4)]
+exc20_Use32Bit17:
+        mov     eax,[esp+(4+4+4+4+4+4+4)+(2+2+2+2)+(4+4)]
         mov     es:DebugExceptionCode,eax
         add     esi,4+4+4               ;skip return address/flags.
         mov     ecx,4+4+4
         cld
         rep     movs b[edi],[esi]       ;get real return address.
-exc20_Use16Bit17:       ;
+exc20_Use16Bit17:
         test    BYTE PTR es:ExcepSystemFlags,1
         jz      exc20_Use32Bit678
         movzx   eax,w[esi]
@@ -803,11 +818,12 @@ exc20_Use16Bit17:       ;
         mov     es:DebugSS,ax
         jmp     exc20_Use16Bit678
         ;
-exc20_Use32Bit678:      mov     eax,[esi]
+exc20_Use32Bit678:
+        mov     eax,[esi]
         mov     es:DebugESP,eax
         mov     ax,[esi+4]
         mov     es:DebugSS,ax
-exc20_Use16Bit678:      ;
+exc20_Use16Bit678:
         push    es
         pop     ds
         assume es:nothing
@@ -876,7 +892,8 @@ exc20_Use16Bit678:      ;
         pop     eax
         retf
         ;
-exc20_Use32_2:  mov     eax,offset exc20_Use0_2
+exc20_Use32_2:
+        mov     eax,offset exc20_Use0_2
         mov     d[ebp+(4+4+2)+(4+4+4)+(0)],eax
         mov     w[ebp+(4+4+2)+(4+4+4)+(4)],cs
         pop     ds
@@ -885,7 +902,8 @@ exc20_Use32_2:  mov     eax,offset exc20_Use0_2
         db 66h
         retf
         ;
-exc20_Use0_2:   assume ds:nothing
+exc20_Use0_2:
+        assume ds:nothing
         mov     ds,cs:ExcepDSeg
         assume ds:_cwMain
         mov     ss,StackSegment
@@ -947,7 +965,8 @@ DebugSegmentDPMI proc near
         pop     cx
         sub     eax,DWORD PTR fs:[EPSP_Struc.EPSP_MemBase]      ;get offset within application.
         mov     ebx,eax
-exc21_9:        pop     fs
+exc21_9:
+        pop     fs
         pop     ds
         mov     [edi],ebx               ;store generated value.
         assume ds:_Excep
@@ -1083,7 +1102,7 @@ dd2:
         jz      exc22_ModeOk
         mov     ax,3
         int     10h
-exc22_ModeOk:   ;
+exc22_ModeOk:
         mov     d[exc22_Handle],0
         xor     cx,cx
         mov     ah,3ch
@@ -1111,21 +1130,24 @@ oldcwerr:
 debhand:
         mov     d[exc22_Handle],eax
 
-exc22_NoFile:   ;Display debug info.
+exc22_NoFile:
+        ;Display debug info.
         ;
         push    ds
         mov     ds,ExcepDseg
         assume ds:_cwMain
         mov     esi,offset Copyright
         xor     ecx,ecx
-exc22_LookCEnd: cmp     b[esi],0
+exc22_LookCEnd:
+        cmp     b[esi],0
         jz      exc22_AtCEnd
         cmp     b[si],"$"
         jz      exc22_AtCEnd
         inc     ecx
         inc     esi
         jmp     exc22_LookCEnd
-exc22_AtCEnd:   mov     edx,offset Copyright
+exc22_AtCEnd:
+        mov     edx,offset Copyright
         mov     ebx,d[exc22_Handle]
         mov     ah,40h
         int     21h
@@ -1212,8 +1234,10 @@ exc22_AtCEnd:   mov     edx,offset Copyright
         mov     d[edi+4],'xxxx'
         add     edi,8
         jmp     exc22_1
-exc22_0:        call    Bin2Hex
-exc22_1:        mov     ax,DebugDS
+exc22_0:
+        call    Bin2Hex
+exc22_1:
+        mov     ax,DebugDS
         mov     cx,4
         mov     edi,offset DebugDSt
         call    Bin2Hex
@@ -1226,8 +1250,10 @@ exc22_1:        mov     ax,DebugDS
         mov     d[edi+4],'xxxx'
         add     edi,8
         jmp     exc22_3
-exc22_2:        call    Bin2Hex
-exc22_3:        mov     ax,DebugES
+exc22_2:
+        call    Bin2Hex
+exc22_3:
+        mov     ax,DebugES
         mov     cx,4
         mov     edi,offset DebugESt
         call    Bin2Hex
@@ -1240,8 +1266,10 @@ exc22_3:        mov     ax,DebugES
         mov     d[edi+4],'xxxx'
         add     edi,8
         jmp     exc22_5
-exc22_4:        call    Bin2Hex
-exc22_5:        mov     ax,DebugFS
+exc22_4:
+        call    Bin2Hex
+exc22_5:
+        mov     ax,DebugFS
         mov     cx,4
         mov     edi,offset DebugFSt
         call    Bin2Hex
@@ -1254,8 +1282,10 @@ exc22_5:        mov     ax,DebugFS
         mov     d[edi+4],'xxxx'
         add     edi,8
         jmp     exc22_7
-exc22_6:        call    Bin2Hex
-exc22_7:        mov     ax,DebugGS
+exc22_6:
+        call    Bin2Hex
+exc22_7:
+        mov     ax,DebugGS
         mov     cx,4
         mov     edi,offset DebugGSt
         call    Bin2Hex
@@ -1268,8 +1298,10 @@ exc22_7:        mov     ax,DebugGS
         mov     d[edi+4],'xxxx'
         add     edi,8
         jmp     exc22_11
-exc22_10:       call    Bin2Hex
-exc22_11:       mov     ax,DebugSS
+exc22_10:
+        call    Bin2Hex
+exc22_11:
+        mov     ax,DebugSS
         mov     cx,4
         mov     edi,offset DebugSSt
         call    Bin2Hex
@@ -1282,8 +1314,9 @@ exc22_11:       mov     ax,DebugSS
         mov     d[edi+4],'xxxx'
         add     edi,8
         jmp     exc22_13
-exc22_12:       call    Bin2Hex
-exc22_13:       ;
+exc22_12:
+        call    Bin2Hex
+exc22_13:
         mov     edi,offset DebugSysFlags
         push    ds
         mov     ds,ExcepDSeg
@@ -1303,14 +1336,16 @@ exc22_13:       ;
         mov     ds,ExcepDseg
         assume ds:_cwMain
         mov     esi,offset Copyright
-exc22_cp0:      cmp     b[esi],0
+exc22_cp0:
+        cmp     b[esi],0
         jz      exc22_cp1
         mov     dl,[esi]
         mov     ah,2
         int     21h
         inc     esi
         jmp     exc22_cp0
-exc22_cp1:      assume ds:_Excep
+exc22_cp1:
+        assume ds:_Excep
         pop     ds
 
 
@@ -1818,21 +1853,25 @@ exc22_ssebp3:
         mov     es,es:RealSegment
         assume es:nothing
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
-exc22_LookLoop: push    esi
+exc22_LookLoop:
+        push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
         add     esi,ResHead+ResNum
         add     edi,ResHead
-exc22_r0:       cmp     BYTE PTR es:[edi],Res_PSP
+exc22_r0:
+        cmp     BYTE PTR es:[edi],Res_PSP
         jz      exc22_r1_0
         cmp     BYTE PTR es:[edi],Res_SEL
         jnz     exc22_r1
-exc22_r1_0:     mov     ax,WORD PTR fs:[EPSP_Struc.EPSP_DPMIMem]
+exc22_r1_0:
+        mov     ax,WORD PTR fs:[EPSP_Struc.EPSP_DPMIMem]
         cmp     WORD PTR es:[esi],ax
         jz      exc22_r1
 
         ;
-exc22_SEL:      pushad
+exc22_SEL:
+        pushad
         mov     edi,offset DebugHeader
         mov     eax,es:[esi]
         mov     cx,4
@@ -1858,7 +1897,8 @@ exc22_SEL:      pushad
         mov     ebx,'EDOC'
         jnz     exc22_dc0
         mov     ebx,'ATAD'
-exc22_dc0:      mov     [edi],ebx
+exc22_dc0:
+        mov     [edi],ebx
         add     edi,4
         mov     b[edi],' '
         inc     edi
@@ -1868,7 +1908,8 @@ exc22_dc0:      mov     [edi],ebx
         test    eax,00400000h
         jz      exc22_Use32It
         mov     bx,"23"
-exc22_Use32It:  mov     [edi],bx
+exc22_Use32It:
+        mov     [edi],bx
         add     edi,2
         mov     b[edi],' '
         inc     edi
@@ -1885,12 +1926,14 @@ exc22_Use32It:  mov     [edi],bx
         pushad
 
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
-exc22_s2:       push    esi
+exc22_s2:
+        push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
         add     esi,ResHead+ResNum
         add     edi,ResHead
-exc22_s0:       cmp     BYTE PTR es:[edi],Res_MEM       ;Anything here?
+exc22_s0:
+        cmp     BYTE PTR es:[edi],Res_MEM       ;Anything here?
         jnz     exc22_s1
 
         mov     eax,DWORD PTR fs:[EPSP_Struc.EPSP_INTMem]
@@ -1905,14 +1948,15 @@ exc22_s0:       cmp     BYTE PTR es:[edi],Res_MEM       ;Anything here?
         popad
         jz      exc22_s1
 
-exc22_nodpmi:   ;
+exc22_nodpmi:
         cmp     ebx,es:[esi]            ;Fits this block?
         jnz     exc22_s1
         pop     esi
         clc
         jmp     exc22_s3
         ;
-exc22_s1:       add     esi,4
+exc22_s1:
+        add     esi,4
         inc     edi
         dec     ebp
         jnz     exc22_s0
@@ -1928,40 +1972,45 @@ exc22_s1:       add     esi,4
         cmp     DWORD PTR fs:[EPSP_Struc.EPSP_mcbHead],0
         jz      exc22_nomcbsel
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_mcbHead]
-exc22_mcbs0:    mov     edi,esi
+exc22_mcbs0:
+        mov     edi,esi
         add     esi,mcbChunkLen
-exc22_mcbs1:    mov     eax,esi
+exc22_mcbs1:
+        mov     eax,esi
         add     eax,mcbLen
         cmp     ebx,eax
         jnz     exc22_mcbs2
         clc
         jmp     exc22_s3
-exc22_mcbs2:    cmp     BYTE PTR es:[esi+mcbNext],"M"
+exc22_mcbs2:
+        cmp     BYTE PTR es:[esi+mcbNext],"M"
         jz      exc22_mcbs3
         mov     esi,es:[edi+mcbChunkNext]
         or      esi,esi
         jz      exc22_nomcbsel
         jmp     exc22_mcbs0
-exc22_mcbs3:    movzx   eax,WORD PTR es:[esi+mcbNextSize]
+exc22_mcbs3:
+        movzx   eax,WORD PTR es:[esi+mcbNextSize]
         add     eax,mcbLen
         add     esi,eax
         jmp     exc22_mcbs1
 
+exc22_nomcbsel:
+        stc
 
-exc22_nomcbsel: stc
-
-
-exc22_s3:       popad
-
+exc22_s3:
+        popad
 
         jc      exc22_r4
         ;
         mov     b[edi],'Y'
         jmp     exc22_r5
         ;
-exc22_r4:       mov     d[edi],'N'
+exc22_r4:
+        mov     d[edi],'N'
         ;
-exc22_r5:       inc     edi
+exc22_r5:
+        inc     edi
         mov     b[edi],' '
         inc     edi
         ;
@@ -1982,10 +2031,12 @@ exc22_r5:       inc     edi
         call    Bin2Hex
         jmp     exc22_r20
         ;
-exc22_r2:       mov     d[edi],'xxxx'
+exc22_r2:
+        mov     d[edi],'xxxx'
         add     edi,4
         ;
-exc22_r20:      mov     b[edi],13
+exc22_r20:
+        mov     b[edi],13
         mov     b[edi+1],10
         mov     b[edi+2],'$'
         add     edi,2
@@ -1998,7 +2049,8 @@ exc22_r20:      mov     b[edi],13
         int     21h
         popad
         ;
-exc22_r1:       add     esi,4
+exc22_r1:
+        add     esi,4
         inc     edi
         dec     ebp
         jnz     exc22_r0
@@ -2037,12 +2089,14 @@ exc22_r1:       add     esi,4
         assume es:_cwMain
         mov     es,es:RealSegment
         assume es:nothing
-exc22_mLookLoop:        push    esi
+exc22_mLookLoop:
+        push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
         add     esi,ResHead+ResNum
         add     edi,ResHead
-exc22_m0:       cmp     BYTE PTR es:[edi],Res_MEM
+exc22_m0:
+        cmp     BYTE PTR es:[edi],Res_MEM
         jnz     exc22_m1
 
         mov     eax,DWORD PTR fs:[EPSP_Struc.EPSP_INTMem]
@@ -2058,14 +2112,16 @@ exc22_m0:       cmp     BYTE PTR es:[edi],Res_MEM
         jz      exc22_m1
 
         ;
-exc22_nodpmimem:        ;Check if this is an MCB block.
+exc22_nodpmimem:
+        ;Check if this is an MCB block.
         ;
         push    edi
         cmp     DWORD PTR fs:[EPSP_Struc.EPSP_mcbHead],0
         jz      exc22_MEM
         mov     ebx,es:[esi]
         mov     edi,DWORD PTR fs:[EPSP_Struc.EPSP_mcbHead]
-exc22_mcbmc0:   cmp     ebx,edi
+exc22_mcbmc0:
+        cmp     ebx,edi
         jz      exc22_mcbmc1
         mov     edi,es:[edi+mcbChunkNext]
         or      edi,edi
@@ -2073,7 +2129,8 @@ exc22_mcbmc0:   cmp     ebx,edi
         jmp     exc22_mcbmc0
 
         ;
-exc22_mcbmc1:   ;Update Total memory value and skip this block.
+exc22_mcbmc1:
+        ;Update Total memory value and skip this block.
         ;
         mov     eax,es:[esi+8]
         add     eax,4095
@@ -2082,7 +2139,8 @@ exc22_mcbmc1:   ;Update Total memory value and skip this block.
         pop     edi
         jmp     exc22_m1
 
-exc22_MEM:      pop     edi
+exc22_MEM:
+        pop     edi
         pushad
         mov     edi,offset DebugHeader
         mov     eax,es:[esi+4]
@@ -2124,7 +2182,8 @@ exc22_MEM:      pop     edi
         popad
 
         ;
-exc22_m1:       add     esi,4
+exc22_m1:
+        add     esi,4
         inc     edi
         dec     ebp
         jnz     exc22_m0
@@ -2142,9 +2201,11 @@ exc22_m1:       add     esi,4
         cmp     DWORD PTR fs:[EPSP_Struc.EPSP_mcbHead],0
         jz      exc22_nomcbdis
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_mcbHead]
-exc22_mcb0:     mov     edi,esi
+exc22_mcb0:
+        mov     edi,esi
         add     esi,mcbChunkLen
-exc22_mcb1:     cmp     BYTE PTR es:[esi+mcbFreeUsed],"J"       ;Free block?
+exc22_mcb1:
+        cmp     BYTE PTR es:[esi+mcbFreeUsed],"J"       ;Free block?
         jz      exc22_mcb2
 
         mov     eax,DWORD PTR fs:[EPSP_Struc.EPSP_INTMem]
@@ -2202,14 +2263,16 @@ exc22_nodpmimemhere:
 
         popad
 
-exc22_mcb2:     cmp     BYTE PTR es:[esi+mcbNext],"M"   ;end of the chain?
+exc22_mcb2:
+        cmp     BYTE PTR es:[esi+mcbNext],"M"   ;end of the chain?
         jz      exc22_mcb3
         mov     esi,es:[edi+mcbChunkNext]
         or      esi,esi
         jnz     exc22_mcb0
         jmp     exc22_nomcbdis
         ;
-exc22_mcb3:     movzx   eax,WORD PTR es:[esi+mcbNextSize]
+exc22_mcb3:
+        movzx   eax,WORD PTR es:[esi+mcbNextSize]
         add     eax,mcbLen
         add     esi,eax
         jmp     exc22_mcb1
@@ -2217,7 +2280,8 @@ exc22_mcb3:     movzx   eax,WORD PTR es:[esi+mcbNextSize]
 
 
         ;
-exc22_nomcbdis: ;Display totals.
+exc22_nomcbdis:
+        ;Display totals.
         ;
         mov     edi,offset TotalMemNum1
         mov     eax,TotalLinearMem
@@ -2252,15 +2316,18 @@ exc22_nomcbdis: ;Display totals.
         int     21h
         ;
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
-exc22_lLookLoop:        push    esi
+exc22_lLookLoop:
+        push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
         add     esi,ResHead+ResNum
         add     edi,ResHead
-exc22_l0:       cmp     BYTE PTR es:[edi],Res_LOCK
+exc22_l0:
+        cmp     BYTE PTR es:[edi],Res_LOCK
         jnz     exc22_l1
         ;
-exc22_LOCK:     pushad
+exc22_LOCK:
+        pushad
         mov     edi,offset DebugHeader
         mov     eax,es:[esi]
         mov     cx,8
@@ -2286,7 +2353,8 @@ exc22_LOCK:     pushad
         int     21h
         popad
         ;
-exc22_l1:       add     esi,4
+exc22_l1:
+        add     esi,4
         inc     edi
         dec     ebp
         jnz     exc22_l0
@@ -2306,12 +2374,14 @@ exc22_l1:       add     esi,4
         int     21h
         ;
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
-exc22_dmLookLoop:       push    esi
+exc22_dmLookLoop:
+        push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
         add     esi,ResHead+ResNum
         add     edi,ResHead
-exc22_dm0:      cmp     BYTE PTR es:[edi],Res_DOSMEM
+exc22_dm0:
+        cmp     BYTE PTR es:[edi],Res_DOSMEM
         jnz     exc22_dm1
         ;
         pushad
@@ -2353,7 +2423,8 @@ exc22_dm0:      cmp     BYTE PTR es:[edi],Res_DOSMEM
         int     21h
         popad
         ;
-exc22_dm1:      add     esi,4
+exc22_dm1:
+        add     esi,4
         inc     edi
         dec     ebp
         jnz     exc22_dm0
@@ -2554,12 +2625,14 @@ exc22_ri1:
         int     21h
         ;
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
-exc22_cbLookLoop:       push    esi
+exc22_cbLookLoop:
+        push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
         add     esi,ResHead+ResNum
         add     edi,ResHead
-exc22_cb0:      cmp     BYTE PTR es:[edi],Res_CALLBACK
+exc22_cb0:
+        cmp     BYTE PTR es:[edi],Res_CALLBACK
         jnz     exc22_cb1
         ;
         pushad
@@ -2597,7 +2670,8 @@ exc22_cb0:      cmp     BYTE PTR es:[edi],Res_CALLBACK
         int     21h
         popad
         ;
-exc22_cb1:      add     esi,4
+exc22_cb1:
+        add     esi,4
         inc     edi
         dec     ebp
         jnz     exc22_cb0
@@ -2653,7 +2727,8 @@ exc22_cb1:      add     esi,4
         mov     ebx,d[exc22_Handle]
         int     21h
 
-exc22_r8:       popad
+exc22_r8:
+        popad
         pop     es
         pop     fs
 
@@ -2663,9 +2738,11 @@ exc22_r8:       popad
         int     21h
         ;
 
-exc22_9:        pop     ds
+exc22_9:
+        pop     ds
         retf
-exc22_Handle:   ;
+        ;
+exc22_Handle:
         dd ?
 DebugDisplay    endp
 
@@ -2691,7 +2768,8 @@ Bin2Hex proc    near
         add     edi,ecx
         dec     edi
         mov     edx,eax
-exc23_0:        mov     al,dl
+exc23_0:
+        mov     al,dl
         shr     edx,4
         and     al,15
         xlat    cs:[ebx]

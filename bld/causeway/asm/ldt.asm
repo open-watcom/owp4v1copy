@@ -222,7 +222,8 @@ ldt3_0: cmp     w[esi],0                ;end of the list?
 ;
 ;Have to allocate a new descriptor.
 ;
-ldt3_New:       push    ecx
+ldt3_New:
+        push    ecx
         mov     cx,1
         call    RawGetDescriptors       ;get a descriptor.
         pop     ecx
@@ -255,11 +256,13 @@ ldt3_New:       push    ecx
 ;
 ;Found a previous selector with right base so use that.
 ;
-ldt3_GotOne:    mov     ax,[esi]
+ldt3_GotOne:
+        mov     ax,[esi]
 ;
 ;Now exit with succesful value.
 ;
-ldt3_Done:      clc
+ldt3_Done:
+        clc
 ldt3_9:
         pop     ds
         pop     edi
@@ -460,7 +463,8 @@ RawBPutDescriptor proc near
         test    BYTE PTR RawSystemFlags,1
         jz      ldt8_Use32
         movzx   edi,di
-ldt8_Use32:     mov     ax,KernalZero   ;make LDT addresable.
+ldt8_Use32:
+        mov     ax,KernalZero   ;make LDT addresable.
         mov     ds,ax
         push    esi
         push    ds
@@ -511,7 +515,8 @@ RawBGetDescriptor proc near
         test    BYTE PTR RawSystemFlags,1
         jz      ldt9_Use32
         movzx   edi,di
-ldt9_Use32:     mov     ax,KernalZero   ;make LDT addresable.
+ldt9_Use32:
+        mov     ax,KernalZero   ;make LDT addresable.
         mov     ds,ax
         cld
         movsd

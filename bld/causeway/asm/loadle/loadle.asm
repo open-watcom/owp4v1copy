@@ -245,7 +245,8 @@ ENDIF
         ;
         xor     ebp,ebp         ;reset entry count.
         mov     edi,4           ;reset bytes required.
-load1_ge0:      mov     edx,offset LETemp
+load1_ge0:
+        mov     edx,offset LETemp
         mov     ecx,1
         mov     ah,3fh
         int     21h
@@ -273,7 +274,8 @@ load1_ge0:      mov     edx,offset LETemp
         ;
         ;Allocate EXPORT table memory.
         ;
-load1_ge1:      mov     ecx,edi
+load1_ge1:
+        mov     ecx,edi
         sys     GetMemLinear32
         jc      load1_mem_error
         mov     DWORD PTR es:[esi],0            ;reset count.
@@ -303,7 +305,8 @@ load1_ge1:      mov     ecx,edi
         ;
         ;Read all the names again.
         ;
-load1_ge2:      or      ebp,ebp         ;done all names?
+load1_ge2:
+        or      ebp,ebp         ;done all names?
         jz      load1_ge3
         push    edx
         mov     ecx,1
@@ -344,11 +347,13 @@ load1_ge2:      or      ebp,ebp         ;done all names?
         pop     esi
         dec     ebp
         jmp     load1_ge2
-load1_ge3:      dec     DWORD PTR es:[esi]              ;lose module name from the count.
+load1_ge3:
+        dec     DWORD PTR es:[esi]              ;lose module name from the count.
 ;
 ;Get object definition memory.
 ;
-load1_NoExports:        mov     eax,size LE_OBJ ;length of an object entry.
+load1_NoExports:
+        mov     eax,size LE_OBJ ;length of an object entry.
 
 ;       mul     d[LE_Header.LE_ObjNum+LEHeader] ;number of objects.
 TempAddress     =       LE_Header.LE_ObjNum
@@ -393,7 +398,8 @@ TempAddress     =       TempAddress+LEHeader
         mov     ecx,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
         mov     esi,d[load1_ObjMem]
         xor     ebp,ebp         ;clear memory requirement.
-load1_objup0:   mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
+load1_objup0:
+        mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
         add     eax,4095
         and     eax,not 4095            ;page align objects
         mov     es:LE_OBJ.LE_OBJ_Size[esi],eax
@@ -415,7 +421,8 @@ load1_objup0:   mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
         mov     edx,d[load1_ProgMem]    ;reset load offset.
         mov     ecx,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
         mov     esi,d[load1_ObjMem]
-load1_objup1:   mov     es:LE_OBJ.LE_OBJ_Base[esi],edx  ;set load address.
+load1_objup1:
+        mov     es:LE_OBJ.LE_OBJ_Base[esi],edx  ;set load address.
         add     edx,es:LE_OBJ.LE_OBJ_Size[esi]  ;update with object length.
         add     esi,size LE_OBJ
         dec     ecx
@@ -481,8 +488,10 @@ TempAddress     =       TempAddress+LEHeader
         jz      load1_ge4
         sub     ecx,d[LE_Header.LE_Directives+LEHeader]
         jmp     load1_ge5
-load1_ge4:      sub     ecx,d[LE_Header.LE_Fixups+LEHeader]
-load1_ge5:      neg     ecx
+load1_ge4:
+        sub     ecx,d[LE_Header.LE_Fixups+LEHeader]
+load1_ge5:
+        neg     ecx
         sys     GetMemLinear32  ;get entry table memory.
         jc      load1_mem_error
         mov     edx,esi
@@ -512,7 +521,8 @@ load1_exp0:
         xor     ebp,ebp
         xchg    bp,WORD PTR es:[esi+4]  ;get & clear ordinal.
         dec     ebp
-load1_exp1:     mov     bh,es:[edx]             ;get bundle count.
+load1_exp1:
+        mov     bh,es:[edx]             ;get bundle count.
         or      bh,bh
         jz      load1_bad_entry
         mov     bl,es:[edx+1]   ;get bundle type.
@@ -536,8 +546,9 @@ load1_exp1:     mov     bh,es:[edx]             ;get bundle count.
         cmp     bl,4
         jz      load1_exp2
         jmp     load1_bad_entry
-load1_exp2:     ;
-load1_exp3:     or      bh,bh
+load1_exp2:
+load1_exp3:
+        or      bh,bh
         jz      load1_exp1              ;end of this bundle.
         or      ebp,ebp         ;our ordinal?
         jz      load1_exp4
@@ -546,7 +557,8 @@ load1_exp3:     or      bh,bh
         dec     bh
         jmp     load1_exp3
         ;
-load1_exp4:     or      bl,bl
+load1_exp4:
+        or      bl,bl
         jz      load1_bad_entry
         dec     bl
         jz      load1_exp_16bit
@@ -616,7 +628,8 @@ ENDIF
 
         jmp     load1_bad_fixup
         ;
-load1_exp_16bit:        movzx   eax,WORD PTR es:[edi]   ;get the object number.
+load1_exp_16bit:
+        movzx   eax,WORD PTR es:[edi]   ;get the object number.
         dec     eax
         shl     ax,3
         add     ax,w[load1_Segs]
@@ -625,7 +638,8 @@ load1_exp_16bit:        movzx   eax,WORD PTR es:[edi]   ;get the object number.
         mov     es:[esi],eax
         jmp     load1_exp8
         ;
-load1_exp_32bit:        movzx   eax,WORD PTR es:[edi]
+load1_exp_32bit:
+        movzx   eax,WORD PTR es:[edi]
         dec     eax
         push    eax
         shl     eax,2
@@ -678,8 +692,9 @@ load1_load0:
         pop     ecx
         shr     ecx,2
         rep     stosd
+load1_load1:
         ;
-load1_load1:    ;Set file offset for data.
+        ;Set file offset for data.
         ;
         mov     eax,es:LE_OBJ.LE_OBJ_PageIndex[esi] ;get first page index.
         dec     eax
@@ -725,8 +740,9 @@ load1_load2:
         cmp     ecx,eax
         jc      load1_load3
         mov     ecx,eax
+load1_load3:
         ;
-load1_load3:    ;Load the data.
+        ;Load the data.
         ;
         mov     bx,w[load1_Handle]
         push    ds
@@ -763,11 +779,11 @@ load1_load6:
         and     ecx,3
         rep     stosb
         pop     edi
+load1_load4:
         ;
-load1_load4:    ;Next object.
-
+        ;Next object.
+        ;
 load1_loadz:
-        ;
         add     esi,size LE_OBJ
         dec     ebp
         jnz     load1_load0
@@ -900,7 +916,7 @@ load1_GotImpMods:
         mov     eax,d[load1_ObjMem]
         mov     d[load1_ObjBase],eax
         mov     d[load1_EntryEIP],0
-load1_fix0:     ;
+load1_fix0:
         mov     esi,d[load1_ObjBase]
         mov     ecx,es:LE_OBJ.LE_OBJ_PageNum[esi]
         or      ecx,ecx
@@ -910,7 +926,7 @@ load1_fix0:     ;
         mov     edx,es:LE_OBJ.LE_OBJ_PageIndex[esi]
         dec     edx
         mov     ebp,edx         ;Set base page map entry.
-load1_fix1:     ;
+load1_fix1:
         mov     edx,ebp
         mov     esi,d[load1_FixupMem]
         mov     ecx,es:[esi+4+edx*4]    ;Get next offset.
@@ -1042,7 +1058,8 @@ ENDIF
         ;
         ;Importing by ordinal so go strieght to the export.
         ;
-load1_fiximp0:  push    edi
+load1_fiximp0:
+        push    edi
         movzx   edi,BYTE PTR es:[esi]
         shl     edi,2
         add     edi,d[load1_ModLink]
@@ -1058,7 +1075,8 @@ load1_fiximp0:  push    edi
         movzx   eax,BYTE PTR es:[esi+1]
         add     esi,1
         sub     ecx,1
-load1_fiximp1:  mov     eax,es:[edi+4+eax*4]    ;point to export.
+load1_fiximp1:
+        mov     eax,es:[edi+4+eax*4]    ;point to export.
         pop     edi
         add     esi,1
         sub     ecx,1
@@ -1082,7 +1100,8 @@ ENDIF
 
         jmp     load1_bad_fixup
         ;
-load1_iSeg16:   ;Deal with a 16-bit segment.
+load1_iSeg16:
+        ;Deal with a 16-bit segment.
         ;
         test    dh,4
 
@@ -1107,9 +1126,11 @@ ENDIF
         test    dh,1    ; see if additive value
         jne     load1_bad_fixup ; yes, don't allow additives on segment fixups
 
-load1_iNeg0:    jmp     load1_fix3
+load1_iNeg0:
+        jmp     load1_fix3
         ;
-load1_i32BitOff:        ;Deal with a 32-bit offset.
+load1_i32BitOff:
+        ;Deal with a 32-bit offset.
         ;
         or      edi,edi
         js      load1_iNeg1
@@ -1142,7 +1163,8 @@ load1_iNeg1a:
         jmp     load1_fix3
 
 
-load1_iSelf32Off:       ;Deal with a 32-bit self relative offset.
+load1_iSelf32Off:
+        ;Deal with a 32-bit self relative offset.
 
         or      edi,edi
         js      load1_isfNeg1
@@ -1166,9 +1188,11 @@ load1_iSelf32Off:       ;Deal with a 32-bit self relative offset.
         sub     ecx,2
         add     es:[edi],eax    ;Store target.
 
-load1_isfNeg1:  jmp     load1_fix3
+load1_isfNeg1:
+        jmp     load1_fix3
 
-load1_iSeg1632BitOff: ;Deal with an FWORD fixup by splitting into a seg16 and 32-bit
+load1_iSeg1632BitOff:
+        ;Deal with an FWORD fixup by splitting into a seg16 and 32-bit
         ;offset relocation entry.
         ;
         or      edi,edi
@@ -1194,7 +1218,8 @@ load1_iSeg1632BitOff: ;Deal with an FWORD fixup by splitting into a seg16 and 32
         sub     ecx,2
         add     es:[edi],eax    ;Store target.
 
-load1_iNeg2:    jmp     load1_fix3
+load1_iNeg2:
+        jmp     load1_fix3
 
 ;Deal with a 16-bit segment.
 load1_Seg16:
@@ -1226,11 +1251,13 @@ ENDIF
         add     ax,w[load1_Segs]
         mov     es:[edi],ax             ;Store target.
         ;
-load1_Neg0:     add     esi,2+1
+load1_Neg0:
+        add     esi,2+1
         sub     ecx,2+1
         jmp     load1_fix3
         ;
-load1_16BitOff: ;Deal with a 16-bit offset.
+load1_16BitOff:
+        ;Deal with a 16-bit offset.
         ;
         ;EBP    - Page offset within segment.
         ;w[esi] - offset within page.
@@ -1261,7 +1288,8 @@ load1_Neg3:
 
         jmp     load1_fix3
         ;
-load1_32BitOff: ;Deal with a 32-bit offset.
+load1_32BitOff:
+        ;Deal with a 32-bit offset.
         ;
         ;EBP    - Page offset within segment.
         ;w[esi] - offset within page.
@@ -1291,7 +1319,8 @@ COMMENT !
         test    dh,4
         jz      load1_Big0
         mov     ebx,es:[esi+3]  ;Get target offset.
-load1_Big0:     add     eax,ebx
+load1_Big0:
+        add     eax,ebx
         mov     es:[edi],eax
 END COMMENT !
 ; MED 06/12/96, allow for additive bit
@@ -1334,7 +1363,8 @@ load1_Neg1a:
         sub     ecx,2
         jmp     load1_fix3
 
-load1_Self32Off:        ;Deal with a 32-bit self relative offset.
+load1_Self32Off:
+        ;Deal with a 32-bit self relative offset.
         ;
         ;EBP    - Page offset within segment.
         ;w[esi] - offset within page.
@@ -1365,13 +1395,15 @@ load1_Self32Off:        ;Deal with a 32-bit self relative offset.
         test    dh,4
         jz      load1_sfBig0
         mov     ebx,es:[esi+3]  ;Get target offset.
-load1_sfBig0:   add     eax,ebx
+load1_sfBig0:
+        add     eax,ebx
         pop     ebx
         add     ebx,4
         sub     eax,ebx
         mov     es:[edi],eax
         ;
-load1_sfNeg1:   add     esi,2+1+2
+load1_sfNeg1:
+        add     esi,2+1+2
         sub     ecx,2+1+2
         test    dh,4
         jz      load1_fix3
@@ -1379,7 +1411,8 @@ load1_sfNeg1:   add     esi,2+1+2
         sub     ecx,2
         jmp     load1_fix3
         ;
-load1_Seg1632BitOff: ;Deal with an FWORD fixup by splitting into a seg16 and 32-bit
+load1_Seg1632BitOff:
+        ;Deal with an FWORD fixup by splitting into a seg16 and 32-bit
         ;offset relocation entry.
         ;
         ;EBP    - Page offset within segment.
@@ -1424,12 +1457,15 @@ load1_Seg1632BitOff: ;Deal with an FWORD fixup by splitting into a seg16 and 32-
         test    dh,4
         jz      load1_Big1
         mov     ebx,es:[esi+3]  ;Get target offset.
-load1_Big1:     popf
+load1_Big1:
+        popf
         jz      load1_NotFlat1
         add     ebx,eax
-load1_NotFlat1: mov     es:[edi],ebx
+load1_NotFlat1:
+        mov     es:[edi],ebx
         ;
-load1_Neg2:     add     esi,2+1+2
+load1_Neg2:
+        add     esi,2+1+2
         sub     ecx,2+1+2
         test    dh,4
         jz      load1_fix3
@@ -1437,16 +1473,19 @@ load1_Neg2:     add     esi,2+1+2
         sub     ecx,2
 ;       jmp     load1_fix3      ; superfluous
         ;
-load1_fix3:     inc     d[load1_EntryEIP]
+load1_fix3:
+        inc     d[load1_EntryEIP]
         or      ecx,ecx
         jnz     load1_fix2
         ;
-load1_fix4:     inc     ebp
+load1_fix4:
+        inc     ebp
         inc     d[load1_PageCount+4]
         dec     d[load1_PageCount]
         jnz     load1_fix1
         ;
-load1_fix400:   add     d[load1_ObjBase],size LE_OBJ
+load1_fix400:
+        add     d[load1_ObjBase],size LE_OBJ
         dec     d[load1_ObjCount]
         jnz     load1_fix0
 
@@ -1471,9 +1510,11 @@ load1_fix400:   add     d[load1_ObjBase],size LE_OBJ
         test    es:LE_OBJ.LE_OBJ_Flags[edi],LE_OBJ_Flags_Big    ;FLAT segment?
         jnz     load1_FlatEIP
         sub     esi,d[load1_ProgMem]
-load1_FlatEIP:  add     bx,w[load1_Segs]
+load1_FlatEIP:
+        add     bx,w[load1_Segs]
         mov     d[load1_EntryEIP],esi
-load1_NoEntryCS:        mov     w[load1_EntryCS],bx
+load1_NoEntryCS:
+        mov     w[load1_EntryCS],bx
 ;
 ;Setup entry SS:ESP
 ;
@@ -1491,9 +1532,11 @@ load1_NoEntryCS:        mov     w[load1_EntryCS],bx
         test    es:LE_OBJ.LE_OBJ_Flags[edi],LE_OBJ_Flags_Big    ;FLAT segment?
         jnz     load1_FlatESP
         sub     esi,d[load1_ProgMem]
-load1_FlatESP:  add     bx,w[load1_Segs]
+load1_FlatESP:
+        add     bx,w[load1_Segs]
         mov     d[load1_EntryESP],esi
-load1_NoEntrySS:        mov     w[load1_EntrySS],bx
+load1_NoEntrySS:
+        mov     w[load1_EntrySS],bx
 ;
 ;Setup entry ES & DS.
 ;
@@ -1510,10 +1553,12 @@ load1_NoEntrySS:        mov     w[load1_EntrySS],bx
 ;
 ;Convert object definitions into 3P segment definitions for CWD.
 ;
-load1_NoAutoDS: mov     ebp,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
+load1_NoAutoDS:
+        mov     ebp,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
         mov     esi,d[load1_ObjMem]
         mov     edi,esi
-load1_makesegs0:        mov     eax,es:LE_OBJ.LE_OBJ_Flags[esi] ;Get objects flags.
+load1_makesegs0:
+        mov     eax,es:LE_OBJ.LE_OBJ_Flags[esi] ;Get objects flags.
         xor     ebx,ebx
         test    eax,LE_OBJ_Flags_Exec   ;Executable?
         jnz     load1_makesegs1
@@ -1521,19 +1566,23 @@ load1_makesegs0:        mov     eax,es:LE_OBJ.LE_OBJ_Flags[esi] ;Get objects fla
         test    eax,LE_OBJ_Flags_Write  ;Writeable?
         jz      load1_makesegs1
 ;       add     ebx,2           ;Read only data.
-load1_makesegs1:        shl     ebx,24
+load1_makesegs1:
+        shl     ebx,24
         test    eax,LE_OBJ_Flags_Big    ;Big bit set?
         jz      load1_makesegs2
         or      ebx,1 shl 26            ;Force 32-bit.
         or      ebx,1 shl 27            ;assume 32-bit is FLAT.
         jmp     load1_makesegs3
-load1_makesegs2:        or      ebx,1 shl 25            ;Force 16-bit.
-load1_makesegs3:        mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
+load1_makesegs2:
+        or      ebx,1 shl 25            ;Force 16-bit.
+load1_makesegs3:
+        mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
         cmp     eax,100000h             ;>1M?
         jc      load1_makesegs4
         shr     eax,12
         or      eax,1 shl 20
-load1_makesegs4:        or      ebx,eax         ;Include length.
+load1_makesegs4:
+        or      ebx,eax         ;Include length.
         mov     eax,es:LE_OBJ.LE_OBJ_Base[esi]
         sub     eax,d[load1_ProgMem]    ;lose load address.
         mov     DWORD PTR es:[edi+0],eax
@@ -1575,12 +1624,14 @@ load1_SegLoop:
         jz      load1_NoGBit
         shl     ecx,12
         or      ecx,4095
-load1_NoGBit:   or      ecx,ecx
+load1_NoGBit:
+        or      ecx,ecx
         jz      load1_NoDecLim
         cmp     ecx,-1
         jz      load1_NoDecLim
         dec     ecx
-load1_NoDecLim: mov     edx,es:[esi]            ;get base.
+load1_NoDecLim:
+        mov     edx,es:[esi]            ;get base.
         ;
         test    eax,1 shl 27            ;FLAT segment?
         jz      load1_NotFLATSeg
@@ -1595,9 +1646,11 @@ load1_NoDecLim: mov     edx,es:[esi]            ;get base.
         xor     edx,edx
         jmp     load1_DoSegSet
         ;
-load1_NotFLATSeg:       add     edx,d[load1_ProgMem]    ;offset within real memory.
+load1_NotFLATSeg:
+        add     edx,d[load1_ProgMem]    ;offset within real memory.
         ;
-load1_DoSegSet: sys     SetSelDet32
+load1_DoSegSet:
+        sys     SetSelDet32
         ;
         mov     eax,es:[esi+4]  ;Get class.
         shr     eax,21          ;move type into useful place.
@@ -1612,10 +1665,12 @@ load1_DoSegSet: sys     SetSelDet32
         test    eax,1 shl 26            ;32 bit seg?
         jnz     load1_gotBBit
         mov     cx,0            ;Set 16 bit seg.
-load1_GotBBit:  call    _DSizeSelector
+load1_GotBBit:
+        call    _DSizeSelector
         jmp     load1_SegDone
         ;
-load1_CodeSeg:  mov     eax,es:[esi+4]  ;Get type bits.
+load1_CodeSeg:
+        mov     eax,es:[esi+4]  ;Get type bits.
         mov     cx,0            ;Set 16 bit seg.
         test    eax,1 shl 25
         jnz     load1_Default
@@ -1623,7 +1678,8 @@ load1_CodeSeg:  mov     eax,es:[esi+4]  ;Get type bits.
         test    eax,1 shl 26            ;32 bit seg?
         jnz     load1_Default
         mov     cx,0            ;Set 16 bit seg.
-load1_Default:  sys     CodeSel
+load1_Default:
+        sys     CodeSel
         ;
 load1_SegDone:
         pop     esi
@@ -1661,7 +1717,8 @@ load1_SegDone:
 ;
 ;Return program details to caller.
 ;
-load1_NoPSwitch2:       mov     edx,d[load1_EntryEIP]
+load1_NoPSwitch2:
+        mov     edx,d[load1_EntryEIP]
         mov     cx,w[load1_EntryCS]
         mov     eax,d[load1_EntryESP]
         mov     bx,w[load1_EntrySS]
@@ -1702,7 +1759,8 @@ load1_error:
 ;
 ;Make sure all work spaces are released.
 ;
-load1_NoClose:  xor     esi,esi
+load1_NoClose:
+        xor     esi,esi
         xchg    esi,d[load1_ObjMem]
         or      esi,esi
         jz      load1_NoObjRel
@@ -1710,14 +1768,16 @@ load1_NoClose:  xor     esi,esi
 ;
 ;Restore previous state.
 ;
-load1_NoObjRel: popf
+load1_NoObjRel:
+        popf
         jnc     load1_RelPSP
         cmp     w[load1_PSP],0
         jz      load1_NoRelRes
 ;
 ;Restore vectors & DPMI state.
 ;
-load1_RelPSP:   mov     eax,d[load1_Flags]
+load1_RelPSP:
+        mov     eax,d[load1_Flags]
         mov     bx,w[load1_PSP]
         push    ds
         push    ds
@@ -1729,7 +1789,8 @@ load1_RelPSP:   mov     eax,d[load1_Flags]
 ;
 ;Return to caller.
 ;
-load1_NoRelRes: pop     ax
+load1_NoRelRes:
+        pop     ax
         popf
         ;
 load1_exit:
@@ -1964,47 +2025,47 @@ load1_file_error2:
         stc
         jmp     load1_error
 ;
-load1_Name:     ;
+load1_Name:
         df 0
-load1_Flags:    ;
+load1_Flags:
         dd 0
-load1_Command:  ;
+load1_Command:
         df 0
-load1_Environment:      ;
+load1_Environment:
         dw 0
-load1_Handle:   ;
+load1_Handle:
         dw 0
-load1_PSP:      ;
+load1_PSP:
         dw 0
-load1_LEOffset: ;
+load1_LEOffset:
         dd 0
-load1_ProgMem:  ;
+load1_ProgMem:
         dd 0,0
-load1_Segs:     ;
+load1_Segs:
         dw 0,0
-load1_ObjMem:   ;
+load1_ObjMem:
         dd 0
-load1_FixupMem: ;
+load1_FixupMem:
         dd 0
-load1_ObjCount: ;
+load1_ObjCount:
         dd 0
-load1_ObjBase:  ;
+load1_ObjBase:
         dd 0
-load1_PageCount:        ;
+load1_PageCount:
         dd 0,0
-load1_EntryEIP: ;
+load1_EntryEIP:
         dd 0
-load1_EntryCS:  ;
+load1_EntryCS:
         dw 0
-load1_EntryESP: ;
+load1_EntryESP:
         dd 0
-load1_EntrySS:  ;
+load1_EntrySS:
         dw 0
-load1_EntryES:  ;
+load1_EntryES:
         dw 0
-load1_EntryDS:  ;
+load1_EntryDS:
         dw 0
-load1_ModLink:  ;
+load1_ModLink:
         dd 0,0
 LoadLE  endp
 

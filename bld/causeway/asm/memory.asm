@@ -57,7 +57,8 @@ RAWGetMemory    proc    near
         shr     ebx,12
         or      ebx,ebx
         jz      mem1_error
-mem1_start:     mov     edi,LinearBase  ;Get starting point.
+mem1_start:
+        mov     edi,LinearBase  ;Get starting point.
         mov     ecx,LinearLimit
         sub     ecx,edi         ;Get memory present.
         shr     ecx,12          ;Get pages.
@@ -78,7 +79,8 @@ mem1_start:     mov     edi,LinearBase  ;Get starting point.
         ;EBX    - number of entries we want.
         ;
 
-mem1_l0:        repne   scasd
+mem1_l0:
+        repne   scasd
 
         ;
         ;Nothing found means extend end of memory map.
@@ -138,7 +140,8 @@ mem1_l1:
         ;One way or another we didn't find the number of entries we were
         ;after so restart the search.
         ;
-mem1_l3:        add     edi,4
+mem1_l3:
+        add     edi,4
         dec     ecx
         jmp     mem1_l0
 
@@ -146,7 +149,8 @@ mem1_l3:        add     edi,4
         ;We've found what we wanted without any extra messing around so
         ;hand this over to the marker.
         ;
-mem1_l2:        sub     esi,1024*4096*1022      ;point to page details.
+mem1_l2:
+        sub     esi,1024*4096*1022      ;point to page details.
         shr     esi,2
         jmp     mem1_MarkMemRet
 
@@ -154,20 +158,23 @@ mem1_l2:        sub     esi,1024*4096*1022      ;point to page details.
         ;
         ;Last block is free so use it as the basis for extension.
         ;
-mem1_ExtendEnd: mov     edi,ecx         ;remaining entries.
+mem1_ExtendEnd:
+        mov     edi,ecx         ;remaining entries.
         sub     esi,(1024*4096*1022)
         shr     esi,2           ;Get start page number.
         mov     ecx,ebx         ;Total pages needed.
         sub     ecx,edi         ;Pages found so far.
         jmp     mem1_Extend
         ;
-mem1_ExtendNew: ;Last block not free so new block will start at LinearLimit.
+mem1_ExtendNew:
+        ;Last block not free so new block will start at LinearLimit.
         ;
         mov     ecx,ebx         ;Set pages needed.
         mov     esi,LinearLimit ;New start address.
         shr     esi,12
         ;
-mem1_Extend:    ;Memory map needs extending so get on with it.
+mem1_Extend:
+        ;Memory map needs extending so get on with it.
         ;
         call    ExtendLinearMemory      ;Try and extend memory map.
         jnc     mem1_MarkMemRet         ;Mark the block as used.
@@ -177,7 +184,8 @@ mem1_Extend:    ;Memory map needs extending so get on with it.
         stc
         jmp     mem1_exit
         ;
-mem1_MarkMemRet:        ;Got the memory so mark it in use.
+mem1_MarkMemRet:
+        ;Got the memory so mark it in use.
         ;
         sub     FreePages,ebx   ;reduce free page count.
         add     medAllocPages,ebx
@@ -201,7 +209,8 @@ mem1_MarkMemRet:        ;Got the memory so mark it in use.
         clc
         jmp     mem1_exit
         ;
-mem1_error:     stc
+mem1_error:
+        stc
         ;
 mem1_exit:
 
@@ -306,7 +315,8 @@ RAWResMemory    proc    near
         shr     ecx,12
         sub     ecx,edx
         jz      mem2_l1
-mem2_l0:        mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4]
+mem2_l0:
+        mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4]
         and     eax,MEM_MASK
         cmp     eax,MEM_END
         jnz     mem2_l1
@@ -315,14 +325,16 @@ mem2_l0:        mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4]
         dec     ecx
         jnz     mem2_l0
         ;
-mem2_l1:        ;Shrinking or expanding?
+mem2_l1:
+        ;Shrinking or expanding?
         ;
         pop     ecx
         cmp     ecx,ebp
         jz      mem2_RetNewAddr
         jnc     mem2_Bigger
         ;
-mem2_Smaller:   ;Shrinking the block so get on with it.
+mem2_Smaller:
+        ;Shrinking the block so get on with it.
         ;
         ;ECX - New size in pages.
         ;EBP - Current size in pages.
@@ -336,7 +348,8 @@ mem2_Smaller:   ;Shrinking the block so get on with it.
         add     FreePages,ebp   ;update number of free pages.
         sub     medAllocPages,ebp
         ;
-mem2_s0:        and     DWORD PTR es:[(1024*4096*1022)+edx*4],not MEM_MASK
+mem2_s0:
+        and     DWORD PTR es:[(1024*4096*1022)+edx*4],not MEM_MASK
         or      DWORD PTR es:[(1024*4096*1022)+edx*4],MEM_FREE
         and     DWORD PTR es:[(1024*4096*1023)+edx*4],not (1 shl 6)
         inc     edx
@@ -345,13 +358,15 @@ mem2_s0:        and     DWORD PTR es:[(1024*4096*1022)+edx*4],not MEM_MASK
         call    EMUCR3Flush
         jmp     mem2_RetNewAddr
         ;
-mem2_Bigger:    ;Want to expand the block so get on with it.
+mem2_Bigger:
+        ;Want to expand the block so get on with it.
         ;
         ;ECX - New size in pages.
         ;EBP - Current size in pages.
         ;ESI - Current start page.
         ;
-mem2_b0:        mov     edx,esi
+mem2_b0:
+        mov     edx,esi
         add     edx,ebp         ;move to end of this block.
         mov     ebx,LinearLimit
         shr     ebx,12
@@ -369,7 +384,8 @@ mem2_b0:        mov     edx,esi
         ;Check how big this next block is.
         ;
         mov     edi,ebp         ;use current size as basis.
-mem2_b1:        mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4]
+mem2_b1:
+        mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4]
         and     eax,MEM_MASK
         cmp     eax,MEM_FREE
         jnz     mem2_NewBlock           ;No hope so get a new block.
@@ -389,7 +405,8 @@ mem2_b1:        mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4]
         jc      mem2_error
         jmp     mem2_MarkAndRet
         ;
-mem2_Extend:    ;Need to extend the memory map to provide a block of free memory
+mem2_Extend:
+        ;Need to extend the memory map to provide a block of free memory
         ;after the current block.
         ;
         pushad
@@ -398,7 +415,8 @@ mem2_Extend:    ;Need to extend the memory map to provide a block of free memory
         popad
         jc      mem2_error
         ;
-mem2_MarkAndRet:        ;Mark the new memory as in use and exit.
+mem2_MarkAndRet:
+        ;Mark the new memory as in use and exit.
         ;
         ;ECX - New size in pages.
         ;EBP - Current size in pages.
@@ -411,14 +429,16 @@ mem2_MarkAndRet:        ;Mark the new memory as in use and exit.
         sub     FreePages,ecx   ;update number of free pages.
         add     medAllocPages,ecx
         ;
-mem2_mr0:       and     DWORD PTR es:[(1024*4096*1022)+edx*4],not MEM_MASK
+mem2_mr0:
+        and     DWORD PTR es:[(1024*4096*1022)+edx*4],not MEM_MASK
         or      DWORD PTR es:[(1024*4096*1022)+edx*4],MEM_END
         inc     edx
         dec     ecx
         jnz     mem2_mr0
         jmp     mem2_RetNewAddr
         ;
-mem2_NewBlock:  ;Nothing for it but to try and allocate a new block of memory.
+mem2_NewBlock:
+        ;Nothing for it but to try and allocate a new block of memory.
         ;
         push    ecx
         push    ebp
@@ -465,7 +485,8 @@ mem2_NewBlock:  ;Nothing for it but to try and allocate a new block of memory.
         mov     esi,ebx
         shr     esi,12
         ;
-mem2_RetNewAddr:        ;Return possibly new address/handle to caller.
+mem2_RetNewAddr:
+        ;Return possibly new address/handle to caller.
         ;
         shl     esi,12          ;Get a real address again and
         mov     di,si           ;use it as both the memory
@@ -475,7 +496,8 @@ mem2_RetNewAddr:        ;Return possibly new address/handle to caller.
         clc
         jmp     mem2_exit
         ;
-mem2_error:     stc
+mem2_error:
+        stc
 mem2_exit:
 
         lss     esp,f[esp]
@@ -586,7 +608,8 @@ mem3_1: call    EMUCR3Flush
         clc
         jmp     mem3_exit
         ;
-mem3_error:     stc
+mem3_error:
+        stc
 mem3_exit:
 
         lss     esp,f[esp]
@@ -847,7 +870,8 @@ mem5_8: xor     ecx,ecx
         clc
         jmp     mem5_11
 ;
-mem5_10:        pop     edi
+mem5_10:
+        pop     edi
 mem5_9: stc
 mem5_11:
         pop     ebp
@@ -940,7 +964,8 @@ RAWLockMemory   proc    near
         mov     eax,NoneLockedPages
         mov     d[_LM_Got],eax
         mov     eax,d[_LM_BlockBase]
-mem7_04:        cmp     eax,LinearBase  ;must be in our memory pool.
+mem7_04:
+        cmp     eax,LinearBase  ;must be in our memory pool.
         jc      mem7_05
         cmp     eax,LinearLimit
         jnc     mem7_05
@@ -954,8 +979,10 @@ mem7_04:        cmp     eax,LinearBase  ;must be in our memory pool.
         jnz     mem7_05
         dec     d[_LM_Got]              ;reduce available pages.
         jmp     mem7_05
-mem7_005:       inc     d[_LM_Needed]
-mem7_05:        add     eax,4096
+mem7_005:
+        inc     d[_LM_Needed]
+mem7_05:
+        add     eax,4096
         cmp     eax,d[_LM_BlockEnd]     ;done them all yet?
         jc      mem7_04
 ;
@@ -977,7 +1004,8 @@ mem7_05:        add     eax,4096
 ;VMM is active and pages are required so we need to make sure enough pages are
 ;left for swapping.
 ;
-mem7_VMM:       mov     eax,d[_LM_Needed]
+mem7_VMM:
+        mov     eax,d[_LM_Needed]
         add     eax,16          ;arbitrary safety buffer.
         cmp     eax,d[_LM_Got]
         jc      mem7_OK
@@ -986,7 +1014,8 @@ mem7_VMM:       mov     eax,d[_LM_Needed]
 ;
 ;Enough free pages so lock the region.
 ;
-mem7_OK:        mov     eax,d[_LM_BlockBase]
+mem7_OK:
+        mov     eax,d[_LM_BlockBase]
 mem7_4: cmp     eax,LinearBase  ;must be in our memory pool.
         jc      mem7_5
         cmp     eax,LinearLimit
@@ -998,7 +1027,8 @@ mem7_4: cmp     eax,LinearBase  ;must be in our memory pool.
         test    edx,1           ;is it present?
         jnz     mem7_6
         ;
-mem7_11:        ;Need to allocate a physical page first.
+mem7_11:
+        ;Need to allocate a physical page first.
         ;
         push    eax
         call    UnMapPhysical
@@ -1018,10 +1048,12 @@ mem7_5: add     eax,4096
         cmp     eax,d[_LM_BlockEnd]     ;done them all yet?
         jc      mem7_4
         ;
-mem7_10:        clc
+mem7_10:
+        clc
         jmp     mem7_1
         ;
-mem7_15:        stc
+mem7_15:
+        stc
         ;
 mem7_1:
         lss     esp,f[esp]
@@ -1198,7 +1230,8 @@ RAWGetMemoryMax proc near
         xor     edi,edi         ;Clear flag.
         xor     ebp,ebp         ;Clear biggest so far.
         ;
-mem9_l0:        ;Look for a bigest block of free memory.
+mem9_l0:
+        ;Look for a bigest block of free memory.
         ;
         mov     eax,DWORD PTR es:[(1024*4096*1022)+edx*4] ;Get page details.
         and     eax,MEM_MASK
@@ -1207,14 +1240,17 @@ mem9_l0:        ;Look for a bigest block of free memory.
         or      edi,edi         ;Got any yet?
         jnz     mem9_l1
         mov     esi,edx         ;Get base page number.
-mem9_l1:        inc     edi
+mem9_l1:
+        inc     edi
         cmp     edi,ebp         ;Biggest yet?
         jc      mem9_l3
         mov     ebx,esi         ;Get base.
         mov     ebp,edi         ;Get size.
         jmp     mem9_l3
-mem9_l2:        xor     edi,edi
-mem9_l3:        inc     edx             ;Next page.
+mem9_l2:
+        xor     edi,edi
+mem9_l3:
+        inc     edx             ;Next page.
         dec     ecx
         jnz     mem9_l0
         ;
@@ -1229,7 +1265,8 @@ mem9_l3:        inc     edx             ;Next page.
         mov     ebp,0           ;reset normal block size.
         jmp     mem9_l5
         ;
-mem9_l4:        ;Get size of the last block in the memory map.
+mem9_l4:
+        ;Get size of the last block in the memory map.
         ;
         mov     eax,LinearBase
         mov     esi,LinearLimit
@@ -1238,7 +1275,8 @@ mem9_l4:        ;Get size of the last block in the memory map.
         shr     eax,12
         mov     ecx,esi
         sub     ecx,eax
-mem9_l6:        jecxz   mem9_l5
+mem9_l6:
+        jecxz   mem9_l5
         mov     eax,DWORD PTR es:[(1024*4096*1022)+esi*4] ;Get page details.
         and     eax,MEM_MASK
         cmp     eax,MEM_FREE            ;Free block?
@@ -1248,7 +1286,8 @@ mem9_l6:        jecxz   mem9_l5
         dec     ecx
         jmp     mem9_l6
         ;
-mem9_l5:        ;See what extra memory we can get hold of.
+mem9_l5:
+        ;See what extra memory we can get hold of.
         ;
         mov     ebx,edx
         call    PhysicalGetPages        ;Get extra memory available.
@@ -1291,7 +1330,8 @@ mem9_l5:        ;See what extra memory we can get hold of.
         mul     bx              ;Get bytes available.
         shl     edx,16
         mov     dx,ax
-mem9_l7:        ;
+mem9_l7:
+        ;
         ;Get current swap file size.
         ;
         push    edx
@@ -1318,7 +1358,8 @@ mem9_l7:        ;
         add     ebx,edx
 
         ;
-mem9_l8:        ;Check which block is bigger and exit.
+mem9_l8:
+        ;Check which block is bigger and exit.
         ;
         push    ecx
         mov     eax,ebx
@@ -1332,12 +1373,14 @@ mem9_l8:        ;Check which block is bigger and exit.
         mov     ebx,MaxMemLin
         sub     ebx,ecx
         shr     ebx,12
-mem9_l89:       pop     ecx
+mem9_l89:
+        pop     ecx
 
         cmp     ebx,ebp
         jnc     mem9_l9
         mov     ebx,ebp
-mem9_l9:        shl     ebx,12
+mem9_l9:
+        shl     ebx,12
         clc
 
         lss     esp,f[esp]
@@ -1394,7 +1437,8 @@ ExtendLinearMemory proc near
         ;
         ;Try extending useing physical memory first.
         ;
-mem10_f0:       mov     eax,LinearLimit ;get new entry number.
+mem10_f0:
+        mov     eax,LinearLimit ;get new entry number.
         shr     eax,12          ;page number.
         mov     LinearEntry,eax
         shr     eax,10          ;/1024 for page dir entry.
@@ -1411,7 +1455,8 @@ mem10_f0:       mov     eax,LinearLimit ;get new entry number.
 ;
 ;both pages available so go to it.
 ;
-mem10_f2:       call    PhysicalGetPage ;get a page.
+mem10_f2:
+        call    PhysicalGetPage ;get a page.
         jc      mem10_error             ;it lied.
         mov     eax,LinearLimit ;get new entry number.
         shr     eax,12          ;page number.
@@ -1423,7 +1468,8 @@ mem10_f2:       call    PhysicalGetPage ;get a page.
         jc      mem10_error             ;it lied.
         call    MapPhysical             ;use this page for page table.
         ;
-mem10_f1:       call    PhysicalGetPage ;get a page.
+mem10_f1:
+        call    PhysicalGetPage ;get a page.
         jc      mem10_Virtual           ;use virtual memory.
         mov     eax,LinearLimit ;get new entry number.
         shr     eax,12          ;page number.
@@ -1444,7 +1490,8 @@ mem10_f1:       call    PhysicalGetPage ;get a page.
         clc
         jmp     mem10_exit              ;All physical so exit.
         ;
-mem10_Virtual:  ;Virtual memory will be needed so see if we can provide any.
+mem10_Virtual:
+        ;Virtual memory will be needed so see if we can provide any.
         ;
         cmp     VMMHandle,0             ;Virtual memory active?
         jz      mem10_error
@@ -1501,12 +1548,14 @@ mem10_Virtual:  ;Virtual memory will be needed so see if we can provide any.
         jz      mem10_OK
         jmp     mem10_error
         ;
-mem10_OK:       ;Allocate new page tables.
+mem10_OK:
+        ;Allocate new page tables.
         ;
         mov     esi,PageDirLinear       ;get page directory address.
         mov     edx,LinearLimit
         shr     edx,12
-mem10_v2:       mov     eax,edx         ;get new entry number.
+mem10_v2:
+        mov     eax,edx         ;get new entry number.
         shr     eax,10          ;/1024 for page dir entry.
         test    DWORD PTR es:[esi+eax*4],1      ;this page present?
         jnz     mem10_v3
@@ -1548,15 +1597,18 @@ mem10_v2:       mov     eax,edx         ;get new entry number.
         call    MapPhysical             ;use this to add a new page table.
         pop     edx
         pop     ecx
-mem10_v3:       inc     edx
+mem10_v3:
+        inc     edx
         dec     ecx
         jnz     mem10_v2
         ;
-mem10_DoneTables:       ;Now mark all the new pages as un-locked/free
+mem10_DoneTables:
+        ;Now mark all the new pages as un-locked/free
         ;
         mov     eax,LinearLimit
         mov     ecx,ebp
-mem10_v4:       call    RawClearPageLock        ;clear page locking for this entry.
+mem10_v4:
+        call    RawClearPageLock        ;clear page locking for this entry.
         push    eax
         shr     eax,12
         mov     DWORD PTR es:[1024*4096*1022+eax*4],0
@@ -1641,7 +1693,8 @@ mem10_v4:       call    RawClearPageLock        ;clear page locking for this ent
         cmp     edx,SwapFileLength
         jnz     mem10_disk_error
         ;
-mem10_Extended: ;Update the end of the memory map.
+mem10_Extended:
+        ;Update the end of the memory map.
         ;
         add     FreePages,ebp
 ;       sub     medAllocPages,ebp
@@ -1650,14 +1703,16 @@ mem10_Extended: ;Update the end of the memory map.
         clc
         jmp     mem10_Exit
         ;
-mem10_error:    stc
-mem10_Exit:     ;
+mem10_error:
+        stc
+mem10_Exit:
         pop     es
         pop     ds
         popad
         ret
         ;
-mem10_Disk_Error:       jmp     mem10_error
+mem10_Disk_Error:
+        jmp     mem10_error
         assume ds:_cwDPMIEMU
 ExtendLinearMemory endp
 
@@ -1698,7 +1753,8 @@ MapPhysical     proc    near
         test    DWORD PTR es:[esi+eax*4],1      ;DET page present?
         jnz     mem11_AddTable
         ;
-mem11_AddDET:   ;Need a new DET page.
+mem11_AddDET:
+        ;Need a new DET page.
         ;
         or      edx,111b                ;present+user+write.
         or      edx,ecx         ;set use flags.
@@ -1717,7 +1773,8 @@ mem11_AddDET:   ;Need a new DET page.
         ;
         jmp     mem11_Finished
         ;
-mem11_AddTable: ;Need a new page table.
+mem11_AddTable:
+        ;Need a new page table.
         ;
         mov     eax,LinearEntry ;get new entry number.
         shr     eax,10          ;/1024 for page dir entry.
@@ -1741,7 +1798,8 @@ mem11_AddTable: ;Need a new page table.
         ;
         jmp     mem11_Finished
         ;
-mem11_AddPage:  ;Update recent page usage stack.
+mem11_AddPage:
+        ;Update recent page usage stack.
         ;
         push    ecx
         push    es
@@ -1780,7 +1838,8 @@ mem11_AddPage:  ;Update recent page usage stack.
         ;
         inc     NoneLockedPages
         ;
-mem11_NoLocking:        ;Check if this page needs fetching from swap space.
+mem11_NoLocking:
+        ;Check if this page needs fetching from swap space.
         ;
         cmp     VMMHandle,0
         jz      mem11_NoRead
@@ -1832,7 +1891,8 @@ mem11_NoLocking:        ;Check if this page needs fetching from swap space.
         mov     es:[esi],al
         jmp     mem11_Finished2
         ;
-mem11_ok:       mov     esi,BreakAddress
+mem11_ok:
+        mov     esi,BreakAddress
         pop     eax
         mov     es:[esi],al
         ;
@@ -1852,9 +1912,11 @@ mem11_ok:       mov     esi,BreakAddress
         and     DWORD PTR es:[esi+eax*4],0FFFFFFFFh-(3 shl 5)   ;clear accesed & dirty bits.
         call    EMUCR3Flush
         ;
-mem11_NoRead:   inc     LinearEntry             ;update counter.
+mem11_NoRead:
+        inc     LinearEntry             ;update counter.
         ;
-mem11_Finished: clc
+mem11_Finished:
+        clc
         ;
 mem11_Finished2:
         pop     es
@@ -1908,23 +1970,27 @@ UnMapPhysical   proc    near
         inc     ebx
         cld
         ;
-mem12_ScanLoop: dec     ebx
+mem12_ScanLoop:
+        dec     ebx
         jnz     mem12_80                ;shit, we've been all the way round.
         ;
         cmp     ProposedPresentFlag,0
         jnz     mem12_UseProposed
         jmp     mem12_8
         ;
-mem12_80:       cmp     ecx,LinearBase
+mem12_80:
+        cmp     ecx,LinearBase
         jnc     mem12_80_0
         mov     ecx,LinearBase
         sub     ecx,4096
-mem12_80_0:     add     ecx,4096
+mem12_80_0:
+        add     ecx,4096
         cmp     ecx,LinearLimit ;End of memory map yet?
         jc      mem12_NoWrap
         mov     ecx,LinearBase
         ;
-mem12_NoWrap:   mov     eax,ecx
+mem12_NoWrap:
+        mov     eax,ecx
         shr     eax,12          ;get page number.
         test    DWORD PTR fs:[edi+eax*4],1      ;this page present?
         jz      mem12_ScanLoop
@@ -1952,22 +2018,26 @@ mem12_NoWrap:   mov     eax,ecx
         jz      mem12_SetProposed
         cmp     ProposedRecentFlag,0
         jz      mem12_UseProposed?
-mem12_SetProposed:      mov     ProposedPresentFlag,-1
+mem12_SetProposed:
+        mov     ProposedPresentFlag,-1
         mov     ProposedPage,ecx
         mov     CompareCount,0
         mov     ProposedRecentFlag,0
         jmp     mem12_ScanLoop
         ;
-mem12_UseProposed?: mov eax,NoneLockedPages
+mem12_UseProposed?:
+        mov eax,NoneLockedPages
         shr     eax,2
         cmp     eax,4096
         jc      mem12_UP0
         mov     eax,4096
-mem12_UP0:      cmp     CompareCount,eax
+mem12_UP0:
+        cmp     CompareCount,eax
         jc      mem12_UseProposed
         jmp     mem12_ScanLoop
         ;
-mem12_IsRecent: cmp     ProposedPresentFlag,0
+mem12_IsRecent:
+        cmp     ProposedPresentFlag,0
         jnz     mem12_ProposedRecent?
         mov     ProposedPresentFlag,-1
         mov     ProposedPage,ecx
@@ -1983,7 +2053,8 @@ mem12_ProposedRecent?:
         cmp     eax,4096
         jc      mem12_PR0
         mov     eax,4096
-mem12_PR0:      cmp     CompareCount,eax
+mem12_PR0:
+        cmp     CompareCount,eax
         jnc     mem12_UseProposed
         jmp     mem12_ScanLoop
         ;
@@ -1993,9 +2064,11 @@ mem12_LookedEnough?:
         jnc     mem12_UseProposed
         jmp     mem12_ScanLoop
         ;
-mem12_UseProposed:      mov     ecx,ProposedPage
+mem12_UseProposed:
+        mov     ecx,ProposedPage
         ;
-mem12_GotPage:  mov     PageingPointer,ecx
+mem12_GotPage:
+        mov     PageingPointer,ecx
         ;
         mov     eax,ecx
         shr     eax,12          ;get page number again.
@@ -2079,8 +2152,9 @@ mem12_GotPage:  mov     PageingPointer,ecx
         mov     eax,RealRegsStruc.Real_EAX[edi]
         cmp     ax,4096
         jz      mem12_error_anyway
-mem12_force_error:      stc
-mem12_error_anyway: ;
+mem12_force_error:
+        stc
+mem12_error_anyway:
         mov     esi,BreakAddress
         pop     eax
         mov     fs:[esi],al
@@ -2089,7 +2163,8 @@ mem12_error_anyway: ;
         jc      mem12_8
         or      DWORD PTR fs:[edi],1 shl 11     ;signal it living on disk.
         ;
-mem12_5:        ;Now remove it from the page table and exit.
+mem12_5:
+        ;Now remove it from the page table and exit.
         ;
         and     DWORD PTR fs:[edi],0FFFFFFFFh-1 ;mark as not present.
         mov     edx,fs:[edi]            ;get page entry.
@@ -2106,7 +2181,8 @@ mem12_5:        ;Now remove it from the page table and exit.
         clc
         jmp     mem12_9
         ;
-mem12_8:        stc                     ;failed to find free page.
+mem12_8:
+        stc                     ;failed to find free page.
         ;
 mem12_9:
         pop     fs
@@ -2156,7 +2232,8 @@ RawLockPage     proc    near
         pop     ds
         pop     ax
         ;
-mem13_WasLocked:        cmp     ebx,MEM_LOCK_MASK
+mem13_WasLocked:
+        cmp     ebx,MEM_LOCK_MASK
         jz      mem13_0
         add     DWORD PTR es:[esi+eax*4],1 shl MEM_LOCK_SHIFT   ;lock it.
 mem13_0:
@@ -2231,7 +2308,8 @@ mem15_NotUnLocked:
         pop     esi
         pop     ebx
         pop     eax
-mem15_9:        ret
+mem15_9:
+        ret
 RawUnLockPage   endp
 
 
@@ -2307,7 +2385,8 @@ GetPageStatus   proc    near
         clc
         jmp     mem17_9
         ;
-mem17_8:        xor     edx,edx
+mem17_8:
+        xor     edx,edx
         stc
 mem17_9:
         pop     es
@@ -2363,10 +2442,11 @@ VirtualFault    proc    far
         jz      mem18_Use32Bit3
         db 66h
         retf                    ;16 bit exit.
-mem18_Use32Bit3:        ;
+mem18_Use32Bit3:
         retf
         ;
-mem18_disk_error:       jmp     mem18_OldExit
+mem18_disk_error:
+        jmp     mem18_OldExit
         ;
         assume ds:nothing
 mem18_OldExit:
@@ -2398,7 +2478,7 @@ RawGetDOSMemory proc near
         cmp     bx,-1           ;maximum?
         jz      mem19_0
         inc     ebx             ;para extra for us.
-mem19_0:        ;
+mem19_0:
         push    ebx
         mov     edi,offset MemIntBuffer
         push    ds
@@ -2419,7 +2499,8 @@ mem19_0:        ;
         dec     ebx             ;leave space for us!
         jmp     mem19_9
         ;
-mem19_1:        ;Now try and allocate enough selectors.
+mem19_1:
+        ;Now try and allocate enough selectors.
         ;
         push    eax
         push    ecx
@@ -2483,7 +2564,8 @@ mem19_2:
         clc
         jmp     mem19_10
         ;
-mem19_8:        ;Release memory we managed to allocate.
+mem19_8:
+        ;Release memory we managed to allocate.
         ;
         mov     edi,offset MemIntBuffer
         mov     ax,KernalDS
@@ -2495,7 +2577,8 @@ mem19_8:        ;Release memory we managed to allocate.
         mov     bl,21h
         call    EMURawSimulateINT       ;release it.
         ;
-mem19_9:        stc
+mem19_9:
+        stc
 mem19_10:
         pop     es
         pop     ds
@@ -2542,7 +2625,8 @@ RawResDOSMemory proc near
         jz      mem20_8
         jnc     mem20_Expand
         ;
-mem20_Shrink:   ;Attempt to shrink the memory block.
+mem20_Shrink:
+        ;Attempt to shrink the memory block.
         ;
         push    ebx
         push    edx
@@ -2659,14 +2743,17 @@ mem20_2:
         sub     ecx,1000h               ;reduce segment size.
         jns     mem20_2         ;keep going till all done.
         ;
-mem20_8:        clc
+mem20_8:
+        clc
         jmp     mem20_10
         ;
-mem20_Expand:   ;Attempt to expand the memory block.
+mem20_Expand:
+        ;Attempt to expand the memory block.
         ;
         mov     bx,WORD PTR es:[esi]            ;return current length as maximum.
         mov     ax,8
-mem20_9:        stc
+mem20_9:
+        stc
 mem20_10:
         pop     gs
         pop     fs
@@ -2700,17 +2787,20 @@ RawRelDOSMemory proc near
         cmp     eax,ebx
         jnz     mem21_z0
         mov     ds,cx
-mem21_z0:       mov     ax,es
+mem21_z0:
+        mov     ax,es
         and     eax,not 7
         cmp     eax,ebx
         jnz     mem21_z1
         mov     es,cx
-mem21_z1:       mov     ax,fs
+mem21_z1:
+        mov     ax,fs
         and     eax,not 7
         cmp     eax,ebx
         jnz     mem21_z2
         mov     fs,cx
-mem21_z2:       mov     ax,gs
+mem21_z2:
+        mov     ax,gs
         and     eax,not 7
         cmp     eax,ebx
         jnz     mem21_z3
@@ -2779,7 +2869,7 @@ mem21_0:
         clc
         jz      mem21_noc
         stc
-mem21_noc:      ;
+mem21_noc:
         pop     es
         pop     ds
         pop     ebp

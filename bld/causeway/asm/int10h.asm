@@ -32,16 +32,18 @@ Int10hOpen      proc    near
         mov     w[OldInt10h],dx
         mov     w[OldInt10h+2],cx
         jmp     int101_Use0
-int101_Use32:   mov     d[OldInt10h],edx
+int101_Use32:
+        mov     d[OldInt10h],edx
         mov     w[OldInt10h+4],cx
-int101_Use0:    mov     edx,offset Int10h
+int101_Use0:
+        mov     edx,offset Int10h
         mov     cx,cs
         mov     bl,10h
         sys     SetVect
         assume es:nothing
         assume ds:nothing
         clc
-int101_9:       ;
+int101_9:
         db 66h
         retf
 Int10hOpen      endp
@@ -67,12 +69,15 @@ Int10hClose     proc    near
         movzx   edx,w[OldInt10h]
         mov     cx,w[OldInt10h+2]
         jmp     int102_Use0
-int102_Use32:   mov     edx,d[OldInt10h]
+int102_Use32:
+        mov     edx,d[OldInt10h]
         mov     cx,w[OldInt10h+4]
-int102_Use0:    mov     bl,10h
+int102_Use0:
+        mov     bl,10h
         sys     SetVect
         assume ds:nothing
-int102_9:       pop     ds
+int102_9:
+        pop     ds
         ;
         db 66h
         retf
@@ -113,7 +118,8 @@ Int10h  proc    far
         jz      int103_UltraSetFont
         jmp     int103_NotOurs
         ;
-int103_GetFont: ;Get font details?
+int103_GetFont:
+        ;Get font details?
         ;
         push    eax
         push    ebx
@@ -147,7 +153,8 @@ int103_9:
         pop     eax
         jmp     int103_Done
         ;
-int103_UltraSetFont: ;UltraVision set font.
+int103_UltraSetFont:
+        ;UltraVision set font.
         ;
         push    ebx
         push    ecx
@@ -165,13 +172,15 @@ int103_UltraSetFont: ;UltraVision set font.
         cmp     eax,10000h
         jnc     int103_Use32Bit503
         movzx   ebp,bp
-int103_Use32Bit503:     xor     eax,eax
+int103_Use32Bit503:
+        xor     eax,eax
         mov     ax,ds
         lsl     eax,eax
         cmp     eax,10000h
         jnc     int103_Use32Bit504
         movzx   esi,si
-int103_Use32Bit504:     pop     eax
+int103_Use32Bit504:
+        pop     eax
         push    ax
         push    bx
         push    cx
@@ -240,7 +249,8 @@ int103_Use32Bit504:     pop     eax
         pop     ebx
         jmp     int103_Done
         ;
-int103_UltraGetPal:     ;UltraVision get palette.
+int103_UltraGetPal:
+        ;UltraVision get palette.
         ;
         push    eax
         push    ebx
@@ -279,7 +289,8 @@ int103_UltraGetPal:     ;UltraVision get palette.
         pop     eax
         jmp     int103_Done
         ;
-int103_UltraSetPal:     ;UltraVision set palette.
+int103_UltraSetPal:
+        ;UltraVision set palette.
         ;
         push    eax
         push    ebx
@@ -298,7 +309,8 @@ int103_UltraSetPal:     ;UltraVision set palette.
         cmp     eax,10000h
         jnc     int103_Use32Bit502
         movzx   edx,dx
-int103_Use32Bit502:     pop     eax
+int103_Use32Bit502:
+        pop     eax
         mov     esi,edx         ;source buffer.
         push    ds
         mov     ds,cs:Int10hDseg
@@ -335,7 +347,8 @@ int103_Use32Bit502:     pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_VideoState:      ;Some sort of video state table function.
+int103_VideoState:
+        ;Some sort of video state table function.
         ;
         or      bx,bx
         jnz     int103_NotOurs
@@ -355,7 +368,8 @@ int103_VideoState:      ;Some sort of video state table function.
         cmp     eax,10000h
         jnc     int103_Use32Bit501
         movzx   edi,di
-int103_Use32Bit501:     pop     eax
+int103_Use32Bit501:
+        pop     eax
         push    edi
         push    es
         ;
@@ -389,7 +403,8 @@ int103_Use32Bit501:     pop     eax
         pop     eax
         xor     eax,eax
         jmp     int103_Done
-int103_ok100:   push    eax
+int103_ok100:
+        push    eax
         push    edi
         mov     ds,cs:Int10hDseg
         assume ds:_cwMain
@@ -421,7 +436,8 @@ int103_ok100:   push    eax
         pop     ebx
         jmp     int103_Done
         ;
-int103_SetFont1:        ;Load user font into character generator ram.
+int103_SetFont1:
+        ;Load user font into character generator ram.
         ;
         push    eax
         push    ebx
@@ -440,7 +456,8 @@ int103_SetFont1:        ;Load user font into character generator ram.
         cmp     eax,10000h
         jnc     int103_Use32Bit500
         movzx   ebp,bp
-int103_Use32Bit500:     pop     eax
+int103_Use32Bit500:
+        pop     eax
         push    ax
         push    bx
         push    cx
@@ -488,7 +505,8 @@ int103_Use32Bit500:     pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_SetPens: ;ES:DX - List of 17 bytes to send to video.
+int103_SetPens:
+        ;ES:DX - List of 17 bytes to send to video.
         ;
         push    eax
         push    ebx
@@ -507,7 +525,8 @@ int103_SetPens: ;ES:DX - List of 17 bytes to send to video.
         cmp     eax,10000h
         jnc     int103_Use32Bit50
         movzx   edx,dx
-int103_Use32Bit50:      pop     eax
+int103_Use32Bit50:
+        pop     eax
         mov     esi,edx         ;source buffer.
         push    es
         mov     ds,cs:Int10hDseg
@@ -543,7 +562,8 @@ int103_Use32Bit50:      pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_GetPens: ;ES:DX - Space for list of 17 pen numbers.
+int103_GetPens:
+        ;ES:DX - Space for list of 17 pen numbers.
         ;
         push    eax
         push    ebx
@@ -562,7 +582,8 @@ int103_GetPens: ;ES:DX - Space for list of 17 pen numbers.
         cmp     eax,10000h
         jnc     int103_Use32Bit51
         movzx   edx,dx
-int103_Use32Bit51:      pop     eax
+int103_Use32Bit51:
+        pop     eax
         push    edx
         push    es
         ;
@@ -600,7 +621,8 @@ int103_Use32Bit51:      pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_SetColours:      ;ES:DX - list of RGB values.
+int103_SetColours:
+        ;ES:DX - list of RGB values.
         ;CX    - number of values.
         ;
         push    eax
@@ -620,7 +642,8 @@ int103_SetColours:      ;ES:DX - list of RGB values.
         cmp     eax,10000h
         jnc     int103_Use32Bit52
         movzx   edx,dx
-int103_Use32Bit52:      pop     eax
+int103_Use32Bit52:
+        pop     eax
         mov     esi,edx         ;source buffer.
         push    es
         mov     ds,cs:Int10hDseg
@@ -663,7 +686,8 @@ int103_Use32Bit52:      pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_GetColours:      ;ES:DX - Buffer for list of RGB values.
+int103_GetColours:
+        ;ES:DX - Buffer for list of RGB values.
         ;CX    - Number of values.
         ;
         push    eax
@@ -683,7 +707,8 @@ int103_GetColours:      ;ES:DX - Buffer for list of RGB values.
         cmp     eax,10000h
         jnc     int103_Use32Bit53
         movzx   edx,dx
-int103_Use32Bit53:      pop     eax
+int103_Use32Bit53:
+        pop     eax
         push    ecx
         push    edx
         push    es
@@ -728,7 +753,8 @@ int103_Use32Bit53:      pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_WriteString:     ;ES:BP - String to write.
+int103_WriteString:
+        ;ES:BP - String to write.
         ;CX    - Number of characters to write.
         ;
         push    eax
@@ -748,7 +774,8 @@ int103_WriteString:     ;ES:BP - String to write.
         cmp     eax,10000h
         jnc     int103_Use32Bit54
         movzx   ebp,bp
-int103_Use32Bit54:      pop     eax
+int103_Use32Bit54:
+        pop     eax
         mov     esi,ebp         ;source buffer.
         push    es
         mov     ds,cs:Int10hDseg
@@ -763,7 +790,8 @@ int103_Use32Bit54:      pop     eax
         cmp     al,2
         jc      int103_noatts
         add     cx,cx
-int103_noatts:  movzx   ecx,cx
+int103_noatts:
+        movzx   ecx,cx
         rep     movsb           ;copy into transfer buffer.
         pop     cx
         mov     edi,offset Int10Buffer
@@ -794,7 +822,8 @@ int103_noatts:  movzx   ecx,cx
         pop     eax
         jmp     int103_Done
         ;
-int103_StateSize:       ;Return state size.
+int103_StateSize:
+        ;Return state size.
         ;
         push    eax
         push    ecx
@@ -814,13 +843,16 @@ int103_StateSize:       ;Return state size.
         test    cl,1
         jz      int103_ss0
         add     bx,0c0h
-int103_ss0:     test    cl,2
+int103_ss0:
+        test    cl,2
         jz      int103_ss1
         add     bx,0c0h
-int103_ss1:     test    cl,4
+int103_ss1:
+        test    cl,4
         jz      int103_ss2
         add     bx,0380h
-int103_ss2:     add     bx,63
+int103_ss2:
+        add     bx,63
         shr     bx,6
 int103_ss3:
         pop     es
@@ -829,7 +861,8 @@ int103_ss3:
         pop     eax
         jmp     int103_Done
         ;
-int103_StateSave:       ;Save state function.
+int103_StateSave:
+        ;Save state function.
         ;
         push    eax
         push    ebx
@@ -848,7 +881,8 @@ int103_StateSave:       ;Save state function.
         cmp     eax,10000h
         jnc     int103_Use32Bit58
         movzx   ebx,bx
-int103_Use32Bit58:      pop     eax
+int103_Use32Bit58:
+        pop     eax
         push    eax
         push    ebx
         push    ecx
@@ -902,7 +936,8 @@ int103_Use32Bit58:      pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_StateRestore: ;Restore state function.
+int103_StateRestore:
+        ;Restore state function.
         ;
         push    eax
         push    ebx
@@ -921,7 +956,8 @@ int103_StateRestore: ;Restore state function.
         cmp     eax,10000h
         jnc     int103_Use32Bit59
         movzx   ebx,bx
-int103_Use32Bit59:      pop     eax
+int103_Use32Bit59:
+        pop     eax
         ;
         push    eax
         push    ebx
@@ -978,7 +1014,8 @@ int103_Use32Bit59:      pop     eax
         pop     eax
         jmp     int103_Done
         ;
-int103_Done:    ;Now update stacked flags.
+int103_Done:
+        ;Now update stacked flags.
         ;
         push    eax
         push    ebx
@@ -994,8 +1031,10 @@ int103_Done:    ;Now update stacked flags.
         mov     bx,sp
         mov     bx,ss:[bx+(4+4)+(2+2)]          ;get origional flags.
         jmp     int103_Use16Bit8
-int103_Use32Bit8:       mov     bx,ss:[esp+(4+4)+(4+4)]         ;get origional flags.
-int103_Use16Bit8:       and     bx,0000011000000000b            ;retain IF.
+int103_Use32Bit8:
+        mov     bx,ss:[esp+(4+4)+(4+4)]         ;get origional flags.
+int103_Use16Bit8:
+        and     bx,0000011000000000b            ;retain IF.
         and     ax,1111100111111111b            ;lose IF.
         or      ax,bx                   ;get old IF.
         push    ds
@@ -1008,7 +1047,8 @@ int103_Use16Bit8:       and     bx,0000011000000000b            ;retain IF.
         mov     bx,sp
         mov     ss:[bx+(4+4)+(2+2)],ax          ;modify stack flags.
         jmp     int103_Use16Bit9
-int103_Use32Bit9:       mov     ss:[esp+(4+4)+(4+4)],ax         ;modify stack flags.
+int103_Use32Bit9:
+        mov     ss:[esp+(4+4)+(4+4)],ax         ;modify stack flags.
 int103_Use16Bit9:
         pop     ebx
         pop     eax
@@ -1020,10 +1060,12 @@ int103_Use16Bit9:
         pop     ds
         jz      int103_Use32Bit10
         iret
-int103_Use32Bit10:      ;
+        ;
+int103_Use32Bit10:
         iretd
         ;
-int103_NotOurs: ;Not a function recognised by us so pass control to previous handler.
+int103_NotOurs:
+        ;Not a function recognised by us so pass control to previous handler.
         ;
         push    ds
         mov     ds,cs:Int10hDSeg
@@ -1034,7 +1076,8 @@ int103_NotOurs: ;Not a function recognised by us so pass control to previous han
         jz      int103_Use32Bit11
         db 66h
         jmp     FWORD PTR cs:[OldInt10h]                ;pass it onto previous handler.
-int103_Use32Bit11:      jmp     FWORD PTR cs:[OldInt10h]                ;pass it onto previous handler.
+int103_Use32Bit11:
+        jmp     FWORD PTR cs:[OldInt10h]                ;pass it onto previous handler.
 Int10h  endp
 ;
 
