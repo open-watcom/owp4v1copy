@@ -16,9 +16,9 @@ BEGIN
             VALUE "CompanyName", "openwatcom.org\0"
             VALUE "FileDescription", "Open Watcom Accelerators Editor (DLL)\0"
             VALUE "FileVersion", "$j.$n$1\0"
-            VALUE "InternalName", "wacc\0"
+            VALUE "InternalName", "$0\0"
             VALUE "LegalCopyright", "Portions Copyright \251 2002 Sybase, Inc.\0"
-            VALUE "OriginalFilename", "$0\0"
+            VALUE "OriginalFilename", "$0.dll\0"
             VALUE "ProductName", "Open Watcom\0"
             VALUE "ProductVersion", "$j.$n$1\0"
         END

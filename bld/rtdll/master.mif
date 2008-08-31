@@ -100,6 +100,6 @@ $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
     $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $[@
 
 $(dllname).rc : ./genverrc.exe
-    $[@ ../verinfo.rc $^@ $$ $(dllname).dll $(patch_level)
+    $[@ ../verinfo.rc $^@ $$ $(dllname) $(patch_level)
 
 !include $(rtdll_dir)/clean.mif
