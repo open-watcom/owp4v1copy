@@ -42,6 +42,8 @@
 
 // these must be the same as is defined in iostream.h
 
+#undef __in
+#undef __out
 #define __in          0x0001    // - open for input
 #define __out         0x0002    // - open for output
 #define __atend       0x0004    // - seek to end after opening
