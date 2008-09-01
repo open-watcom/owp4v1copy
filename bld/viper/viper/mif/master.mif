@@ -65,16 +65,27 @@ LIBS = &
     $(gui_dir)/win/$(host_os)$(host_cpu)/gui.lib &
     $(wres_lib)
 
+# systems where version resource must be added to .EXE
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
+
 all: $(prereq_ide_h) $(name).exe
 
-$(name).exe : $(OBJECTS) $(LIBS) viper.res
+$(name).exe : $(OBJECTS) $(LIBS) viper.res $(res_objs)
         %create $(name).lnk
         %append $(name).lnk $(lflags)
         %append $(name).lnk op map, de $(description)
         %append $(name).lnk f {$(OBJECTS)}
         %append $(name).lnk lib {$(LIBS)}	
         $(linker) name $(name) @$(name).lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k viper.res $^@ -fr=exever.res
+!else
         $(rc) -k viper.res $^@
+!endif
 
 viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
         $(rc) $(rc_flags) -r -I.. $(inc_path) $]@ -fo=$^@
@@ -84,6 +95,19 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+exever.rc: ./genverrc.exe ../nt/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../nt/exever.rc exever.rc $$ $(name) $(patch_level)
 
 !ifdef prereq_ide_h
 $(prereq_ide_h): .ALWAYS

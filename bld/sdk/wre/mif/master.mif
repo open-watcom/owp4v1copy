@@ -99,7 +99,6 @@ OBJS += trmem.tbj trmemcvr.tbj
 
 # where to look for various files
 .c         : ../c;$(misc_dir);$(cpp_dir);$(trmem_dir)
-.rc        : ../h
 
 inc_dirs  = -Ih -I"../h" -I"$(wstring_dir)/h" -I"$(wmenu_dir)/h" -I"$(wacc_dir)/h"
 inc_dirs += -I"$(wr_dir)/h" -I$(trmem_dir) -I"$(wres_dir)/h" -I$(cpp_dir) -I$(misc_dir)
@@ -114,15 +113,26 @@ extra_l_flags = op map, v
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
 extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 
+# systems where version resource must be added to .EXE
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
+
 # explicit rules
 #################
-$(name).exe: wremsgs.gh $(OBJS) $(name).res $(xlibs)
+$(name).exe: wremsgs.gh $(OBJS) $(name).res $(xlibs) $(res_objs)
         @%create tmp.lnk
         @%append tmp.lnk $(lflags)
         @for %i in ($(OBJS)) do @%append tmp.lnk file %i
         @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
         $(linker) name $^@ @tmp.lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k $(name).res $^@ -fr=exever.res
+!else
         $(rc) -k $(name).res $^@
+!endif
 
 wremsgs.gh: wretemp.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
@@ -130,7 +140,19 @@ wremsgs.gh: wretemp.gh
 wretemp.gh: ../h/wre.msg
         $(cc) $(cflags) $(inc_path) -p $[@ -fo=$^@
 
-# implicit rules
-#################
-.rc.res: .AUTODEPEND
+$(name).res: ../h/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+exever.rc : ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../h/exever.rc exever.rc $$ $(name) $(patch_level)
+

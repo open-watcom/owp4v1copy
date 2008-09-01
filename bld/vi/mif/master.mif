@@ -52,11 +52,20 @@ videps =
 bindextra = -d$(vi_dir)\dat\winbind.dat
 !endif
 
+# systems where version resources must be added to .EXE
+!ifdef sys_windowed
+build_rc_nt_386 = nt
+!endif
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
+
 !ifdef bootstrap
-$(name) : $(special) $(objs) $(cl_objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
+$(name) : $(special) $(objs) $(cl_objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj $(res_objs)
         $(cl) $(clflags) $< $(cl_libs)
 !else
-$(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
+$(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj $(res_objs)
         $(linker) $(lflags) name $(lname) file version.obj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifdef sys_windowed
 !ifeq host_os win
@@ -67,7 +76,11 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
         $(rc) -k -zk0 $(proj_name).res $^@
 !endif
 !else ifeq host_os nt
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k -zk0 $(proj_name).res $^@ -fr=exever.res
+!else
         $(rc) -k -zk0 $(proj_name).res $^@
+!endif
 !endif
         # don't bind - it screws up everything - BBB
 !else
@@ -90,6 +103,19 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
 !endif
 !endif
 !endif
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+exever.rc : ./genverrc.exe ../win/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../win/exever.rc exever.rc $$ $(proj_name) $(patch_level)
 
 !ifeq host_os win
 !ifeq host_cpu i86

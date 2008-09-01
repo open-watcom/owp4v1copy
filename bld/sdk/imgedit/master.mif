@@ -62,7 +62,6 @@ extras = wincreat.obj desknt.obj title.obj winutils.obj inipath.obj
 extras = wincreat.obj title.obj winutils.obj
 !endif
 .c : $(wimgedit_dir)/c;$(sdk_dir)/misc;$(misc_dir)
-.rc : $(wimgedit_dir)/res
 !endif
 
 extra_c_flags = -DWIN_GUI -s
@@ -148,6 +147,13 @@ extra_l_flags_os2 = option stack=12k option heapsize=2k &
 inc_dirs  = -Ih -I"$(wimgedit_dir)/h" -I"$(wres_dir)/h" -I"$(wr_dir)/h"
 inc_dirs += -I"$(wpi_dir)/h" -I"$(sdk_dir)/misc"
 
+# systems where version resource must be added to .EXE
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
+
 .before:
         @set include=
 
@@ -166,12 +172,16 @@ $(name).res : $(wimgedit_dir)/objos2/res/$(name).rc $(rcdeps)
 
 !else
 
-$(name).exe : $(name).res $(objs) $(libs)
+$(name).exe : $(name).res $(objs) $(libs) $(res_objs)
         %create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk file { $(objs) }
         $(linker)  name $^@ @$^&.lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k $^&.res $^@ -fr=exever.res
+!else
         $(rc) -k $^&.res $^@
+!endif
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
@@ -179,8 +189,21 @@ rcstr.gh : rcstrmsg.gh
 rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg $(msgfiles)
         $(cc) -zk0 -p $(inc_path) $[@ -fo=$^@
 
-$(name).res : $(name).rc rcstr.gh
-
-.rc.res: .AUTODEPEND
+$(name).res : ../res/$(name).rc rcstr.gh
         $(rc) $(rc_flags) -r -ad -zk0 -I"$(wimgedit_dir)/res" $(inc_path) $[@ -fo=$^@
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
 !endif
+
+exever.rc : ./genverrc.exe ../res/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../res/exever.rc exever.rc $$ $(name) $(patch_level)
+
+!endif
+
