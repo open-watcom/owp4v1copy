@@ -827,12 +827,13 @@ static void loadUnicodeTable( unsigned code_page )
 {
     size_t amt;
     int fh;
-    char filename[ _MAX_PATH ];
-    char cp[ 16 ];
+    char filename[ 20 ];
 
-    ultoa( code_page, cp, 10 );
-    strcpy( filename, "unicode." );
-    strcat( filename, cp );
+    sprintf( filename, "unicode.%3.3u", codePage );
+    if( filename[ 11 ] != '\0' ) {
+        filename[ 7 ] = filename[ 8 ];
+        filename[ 8 ] = '.';
+    }
     fh = openUnicodeFile( filename );
     if( fh != -1 ) {
         amt = 256 * sizeof( unsigned short );
