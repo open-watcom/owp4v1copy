@@ -1058,7 +1058,6 @@ static int set_build_target( void )
 #elif defined(__SOLARIS__) || defined( __sun )
         strcpy( Options.build_target, "SOLARIS" );
 #elif defined(__DOS__)
-#elif defined(__DOS__)
         strcpy( Options.build_target, "DOS" );
 #elif defined(__OS2__)
         strcpy( Options.build_target, "OS2" );
