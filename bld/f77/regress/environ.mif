@@ -203,7 +203,7 @@ br_opt = $(targ_br_$(targ_env_$(arch)))
 # targ_run      name of executable loader (e.g., run386)
 targ_run_pls386 = run386
 targ_run_d4g386 = dos4gw
-targ_run_cw386  = dos4gw
+targ_run_cw386  =
 targ_run_tnt386 = tntrun
 targ_run_os2386 =
 targ_run_wnt386 =
