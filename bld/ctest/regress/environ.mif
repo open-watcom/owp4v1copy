@@ -12,7 +12,7 @@
 #
 # configuration values:
 #
-# targ_env_386 = wnt386/d4g386/os2386/linux386 (depends on current OS)
+# targ_env_386 = wnt386/d4g386/cw386/os2386/linux386 (depends on current OS)
 # targ_env_i86 = os2i86/dosi86 (depends on current OS)
 # targ_env_axp = ntaxp (depends on current OS)
 # targ_env_ppc = linuxppc/ntppc (depends on current OS)
@@ -180,6 +180,7 @@
 #
 # pls386 -- PharLap .EXP
 # d4g386 -- DOS4G .EXE
+# cw386  -- CauseWay .EXE
 # tnt386 -- PharLap TNT .EXE
 # os2386 -- OS/2 2.x .EXE
 # lnx386 -- Linux x86 executable
@@ -213,6 +214,7 @@
 !ifndef targ_env_386
 !  ifdef __DOS__
 !    define targ_env_386 d4g386
+#!    define targ_env_386 cw386
 !  else ifdef __OS2__
 !    define targ_env_386 os2386
 !  else ifdef __LINUX__
@@ -248,10 +250,28 @@
 !  endif
 !endif
 
+# targ_br
+targ_br_pls386 =
+targ_br_d4g386 =
+targ_br_cw386  =
+targ_br_tnt386 =
+targ_br_os2386 = -br
+targ_br_wnt386 = -br
+targ_br_lnx386 =
+targ_br_wnti86 =
+targ_br_dosi86 =
+targ_br_os2i86 = -br
+targ_br_wntaxp = -br
+targ_br_lnxppc =
+targ_br_lnxmps =
+
+br_opt = $(targ_br_$(targ_env_$(arch)))
+
 #
 # targ_run      name of executable loader (e.g., run386)
 targ_run_pls386 = run386
 targ_run_d4g386 = dos4gw
+targ_run_cw386  =
 targ_run_tnt386 = tntrun
 targ_run_os2386 =
 targ_run_wnt386 =
@@ -275,6 +295,7 @@ run = $(run_$(arch))
 # targ_ext      extension (e.g., exp ) - must have one for default rules to work
 targ_ext_pls386 = exp
 targ_ext_d4g386 = exe
+targ_ext_cw386  = exe
 targ_ext_tnt386 = exe
 targ_ext_os2386 = exe
 targ_ext_wnt386 = exe
@@ -292,6 +313,7 @@ exe = $(ext_$(arch))
 # targ_lnk      linker directives (e.g., system pharlap option offset=64k)
 targ_lnk_pls386 = system pharlap option offset=64k
 targ_lnk_d4g386 = system dos4g
+targ_lnk_cw386  = system causeway
 targ_lnk_tnt386 = system nt option offset=64k
 targ_lnk_os2386 = system os2v2 option offset=64k
 targ_lnk_wnt386 = system nt option offset=64k
@@ -319,6 +341,7 @@ lnk_mps = $(targ_lnk_$(targ_env_mps)) $(lnk_any)
 # targ_ldb      linker debug directive (e.g., DEBUG all)
 targ_ldb_pls386 = debug all
 targ_ldb_d4g386 = debug all
+targ_ldb_cw386  = debug all
 targ_ldb_tnt386 = debug all
 targ_ldb_os2386 = debug all
 targ_ldb_wnt386 = debug all
@@ -340,6 +363,7 @@ ldebug_mps = $(targ_ldb_$(targ_env_mps))
 # targ_bld      build options (e.g., -bt=dos)
 targ_bld_pls386 = -bt=dos
 targ_bld_d4g386 = -bt=dos
+targ_bld_cw386  = -bt=dos
 targ_bld_tnt386 = -bt=nt
 targ_bld_os2386 = -bt=os2
 targ_bld_wnt386 = -bt=nt

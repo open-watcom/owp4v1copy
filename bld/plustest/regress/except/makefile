@@ -5,12 +5,6 @@ plustest_name = except
 
 !include ../environ.mif
 
-!ifndef __UNIX__
-!ifndef __DOS__
-br_opt = -br
-!endif
-!endif
-
 files = &
     excok.$(ext) &
     excfancy.$(ext) &

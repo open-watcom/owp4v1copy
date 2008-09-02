@@ -9,11 +9,7 @@ positive_dir = source
 test_cflags_386 = -d2-mf
 test_cflags_i86 = -d2-mc-2
 test_cflags_axp = -d2-si
-!ifndef __MSDOS__
-!ifndef __LINUX__
-add_br_ = -br
-!endif
-!endif
+add_br_ = $(br_opt)
 alt_error = 01
 !else ifdef test2
 test_cflags_386 = -d1-oxtan-mf
@@ -60,11 +56,7 @@ test_cflags_386 = -ox-d1-ms
 test_cflags_i86 = -ox-d1-ms
 test_cflags_axp = -ox-d1
 alt_error = 00
-!ifndef __MSDOS__
-!ifndef __LINUX__
-add_br_ = -br
-!endif
-!endif
+add_br_ = $(br_opt)
 !endif
 
 !ifdef __LINUX__

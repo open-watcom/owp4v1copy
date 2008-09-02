@@ -8,12 +8,6 @@ exes = &
     ovldall.$(exe) &
     switcher.$(exe) &
 
-!ifndef __UNIX__
-!ifndef __DOS__
-br_opt = -br
-!endif
-!endif
-
 !ifdef test1
 test_cflags += -d2-xds
 alt_error=01
