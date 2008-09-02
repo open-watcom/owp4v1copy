@@ -829,7 +829,7 @@ static void loadUnicodeTable( unsigned code_page )
     int fh;
     char filename[ 20 ];
 
-    sprintf( filename, "unicode.%3.3u", codePage );
+    sprintf( filename, "unicode.%3.3u", code_page );
     if( filename[ 11 ] != '\0' ) {
         filename[ 7 ] = filename[ 8 ];
         filename[ 8 ] = '.';
