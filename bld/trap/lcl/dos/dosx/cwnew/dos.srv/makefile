@@ -14,7 +14,7 @@ extra_c_flags = -DCAUSEWAY -DDOSXHELP -ms
 extra_a_flags = -dCAUSEWAY -ms
 extra_a_flags_cwhelp = -fpi87
 
-inc_dirs = -I"$(cw_dir)/h"
+inc_dirs = -I"$(cw_dir)/inc"
 
 !define substitute_linker
 
