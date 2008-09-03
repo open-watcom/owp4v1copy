@@ -369,11 +369,12 @@ dLockEnd        label byte
 
 cLockStart      label byte
 
+LINE_CHAR   equ     0C4h
 
 Copyright       db 13,10
-        db 79 dup ("Ä"),13,10
+        db 79 dup ( LINE_CHAR ),13,10
         db "CauseWay Trap helper v3.01.  Helper code is public domain.  No rights reserved.",13,10
-        db 79 dup ("Ä"),13,10
+        db 79 dup ( LINE_CHAR ),13,10
         db 13,10,"$"
 
 
