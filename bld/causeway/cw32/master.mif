@@ -12,6 +12,20 @@ extra_l_flags = op map, verbose, statics
 
 .asm : ../../asm;../../asm/loadle
 
-cw32.exe : cw32.obj $(__MAKEFILES__)
-    $(linker) $(lflags) name $@ file $[@
-    bcwc cw32.exe
+!ifeq host_cpu i86
+
+all : cwstub.exe cwdstub.exe .symbolic
+
+cwstub.exe : cw32.obj $(__MAKEFILES__)
+    $(linker) $(lflags) name cw32.exe disable 1080 file $[@
+    bcwc cw32.exe cwstub.exe
+
+cwdstub.exe : cwdstub.obj
+    $(linker) $(lflags) name $@ disable 1014 file $[@
+
+!else ifeq host_cpu 386
+
+cwdll.lib : dllfunc.obj ../../inc/cwapi.lbc
+    $(librarian) $(libflags) $@ +$[@ @$]@
+
+!endif
