@@ -110,9 +110,6 @@ sub make_build_batch
     close(INPUT);
     # Add additional commands to do the build.
     print BATCH "\n";
-    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
-    print BATCH "rm -rf ", get_reldir(), "\n";
-    print BATCH "\n";
     # Create fresh builder tools, to prevent lockup build server 
     # if builder tools from previous build are somehow broken
     print BATCH "cd $OW\ncd bld\n";
@@ -121,8 +118,12 @@ sub make_build_batch
     } elsif( $^O eq "linux" ) {
         print BATCH "cd builder\ncd linux386\n";
     }
-    print BATCH "wmake clean\n";
-    print BATCH "wmake\n";
+    print BATCH "wmake -h clean\n";
+    print BATCH "wmake -h\n";
+    # Remove release directory.
+    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
+    print BATCH "rm -rf ", get_reldir(), "\n";
+    print BATCH "\n";
     # Clean previous build.
     print BATCH "cd $OW\ncd bld\n";
     print BATCH "builder -i clean\n";
@@ -133,10 +134,10 @@ sub make_build_batch
     } elsif( $^O eq "linux" ) {
         print BATCH "cd builder\ncd linux386\n";
     }
-    print BATCH "wmake\n";
+    print BATCH "wmake -h\n";
     # Create Watcom DOS TCP/IP library.
     print BATCH "cd $OW\ncd contrib\ncd wattcp\ncd src\n";
-    print BATCH "wmake -ms\n";
+    print BATCH "wmake -h -ms\n";
     # Start build process.
     print BATCH "cd $OW\ncd bld\n";
     if ($pass1) {
@@ -168,16 +169,16 @@ sub make_test_batch
     }
     print BATCH "cd $OW\ncd bld\ncd ctest\n";
     print BATCH "rm *.log\n";
-    print BATCH "wmake\n";
+    print BATCH "wmake -h targ_env_386=cw386\n";
     print BATCH "cd $OW\ncd bld\ncd wasm\ncd test\n";
     print BATCH "rm *.log\n";
-    print BATCH "wmake\n";
+    print BATCH "wmake -h targ_env_386=cw386\n";
     print BATCH "cd $OW\ncd bld\ncd f77\ncd regress\n";
     print BATCH "rm *.log\n";
-    print BATCH "wmake\n";
+    print BATCH "wmake -h targ_env_386=cw386\n";
     print BATCH "cd $OW\ncd bld\ncd plustest\n";
     print BATCH "rm *.log\n";
-    print BATCH "wmake\n";
+    print BATCH "wmake -h targ_env_386=cw386\n";
     close(BATCH);
     # On Windows it has no efect
     chmod 0777, $test_batch_name;
