@@ -34,7 +34,14 @@ inc_dirs  = -I$(wddespy_dir) -I"$(sdk_dir)/misc"
 msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
             $(sdk_dir)/misc/savelbox.msg $(sdk_dir)/misc/alias.msg
 
-$(name).exe : rcstr.gh $(objs) $(name).res
+# systems where version resource must be added to .EXE
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
+
+$(name).exe : rcstr.gh $(objs) $(name).res $(res_objs)
         $(LINKER) $(lflags) name $^@ file { $(objs) }
 !ifeq host_CPU axp
 !ifeq release 0
@@ -42,7 +49,11 @@ $(name).exe : rcstr.gh $(objs) $(name).res
         wstrip $(name).exe $(name).exe $(name).sym
 !endif
 !endif
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k $(name).res $^@ -fr=exever.res
+!else
         $(rc) -k $(name).res $^@
+!endif
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
@@ -52,3 +63,17 @@ rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
 
 $(name).res : $(wddespy_dir)/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad -zk0 -I"$(wddespy_dir)/res" $(inc_path) $[@ -fo=$^@
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+exever.rc : ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../exever.rc exever.rc $$ $(name) $(patch_level)
+

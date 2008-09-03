@@ -366,17 +366,28 @@ resname=$+$(resname)$-dll
 !endif
 resfile = $(resname).res
 
+# systems where version resource must be added to .EXE
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
+
 !ifdef bootstrap
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs)
         $(cl) $(clflags) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs) $(cl_libs) -ldl
         wstrip -q -a -r $^@ . $(resfile)
 !else
-$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
+$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk) $(res_objs)
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
 !else
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k $(resfile) $^@ -fr=exever.res
+!else
         $(rc) -k $(resfile) $^@
+!endif
 !endif
 !if 0
 !ifdef ovl_dos
@@ -615,6 +626,19 @@ japstk.dlg : $(hdir)/japstk.dlg
 japhis.dlg : $(hdir)/japhis.dlg
         parsedlg $(pmfontj) $[@ japhis.dlg
 !endif
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+exever.rc : ./genverrc.exe $(hdir)/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ $(hdir)/exever.rc exever.rc $$ $(proj_name) $(patch_level)
 
 ####################
 

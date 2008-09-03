@@ -83,17 +83,26 @@ proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
 
 .asm : .;$(sdk_misc)
 .c : ..;$(common_dir);$(dig_srcs);$(mad_srcs);$(sdk_misc);$(dis_srcs)
-.rc: ..;$(common_dir);$(sdk_misc)
 
 inc_dirs = -I. -I.. -I"$(common_dir)" -I"$(dig_dir)/h" -I"$(sdk_misc)" $(dis_includes)
+
+# systems where version resource must be added to .EXE
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = exever.res
+!endif
 
 #explicit rules
 ################
 
-$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj) $(res_objs)
         $(linker) @$(link_name)
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) -k $(proj_name).res $^@ -fr=exever.res
+!else
         $(rc) -k $(proj_name).res $^@
-
+!endif
 
 $(link_name) : $(__MAKEFILES__)
         @%write $^@ $(lflags)
@@ -120,3 +129,17 @@ rcstrmsg.gh : ../drwatcom.msg $(msgfiles)
 !else
         $(cc) -zk0 -p $(inc_path) $[@ -fo=$^@
 !endif
+
+exever.res: exever.rc
+        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+exever.rc : ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../exever.rc exever.rc $$ $(proj_name) $(patch_level)
+
