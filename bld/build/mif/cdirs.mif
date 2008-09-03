@@ -266,6 +266,9 @@ help_dir        = $(dev_dir)/help
 !ifndef wv_dir
 wv_dir          = $(dev_dir)/wv
 !endif
+!ifndef cw_dir
+cw_dir          = $(dev_dir)/causeway
+!endif
 !ifndef pil_dir
 pil_dir         = $(dev_dir)/pil
 !endif
@@ -622,6 +625,9 @@ debugger_dir    = $(dev_dir)\debugger
 !endif
 !ifndef re2c_dir
 re2c_dir        = $(dev_dir)\re2c
+!endif
+!ifndef cw_dir
+cw_dir          = $(dev_dir)\causeway
 !endif
 !ifndef libzip_dir
 libzip_dir      = $(contrib_dir)\libzip

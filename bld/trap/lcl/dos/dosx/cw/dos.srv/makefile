@@ -12,7 +12,7 @@ which = SERVER
 extra_c_flags = -DCAUSEWAY -DDOSXHELP
 extra_a_flags_cwhelp = -fpi87
 
-inc_dirs = -I"../h"
+inc_dirs = -I"$(cw_dir)/inc"
 
 !define substitute_linker
 
