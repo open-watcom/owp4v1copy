@@ -83,7 +83,6 @@ WRERibbonName WRERibbonNames[] =
 ,   { "Cut"     , NULL , IDM_CUT,   WRE_TIP_CUT   }
 ,   { "Copy"    , NULL , IDM_COPY,  WRE_TIP_COPY  }
 ,   { "Paste"   , NULL , IDM_PASTE, WRE_TIP_PASTE }
-,   { NULL      , NULL , BLANK_PAD, -1            }
 };
 #define NUM_TOOLS (sizeof(WRERibbonNames)/sizeof(WRERibbonName))
 

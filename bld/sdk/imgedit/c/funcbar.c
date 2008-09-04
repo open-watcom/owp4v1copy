@@ -101,7 +101,6 @@ void addItems( void )
     tii.flags = ITEM_BLANK;
     tii.u.blank_space = 5;
 
-    ToolBarAddItem( functionBar, &tii );
     if( ImgedIsDDE ) {
         addFunctionButton( &(toolList[10]), FALSE );
         addFunctionButton( &(toolList[20]), FALSE );
@@ -109,9 +108,9 @@ void addItems( void )
         for (i=0; i < 3; ++i) {
             addFunctionButton( &(toolList[i]), FALSE );
         }
+        ToolBarAddItem( functionBar, &tii );
     }
 
-    ToolBarAddItem( functionBar, &tii );
     addFunctionButton( &(toolList[3]), TRUE );
     addFunctionButton( &(toolList[4]), FALSE );
     ToolBarAddItem( functionBar, &tii );
