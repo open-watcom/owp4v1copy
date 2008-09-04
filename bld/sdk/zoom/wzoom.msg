@@ -19,8 +19,8 @@ pick(   STR_INTERV_NOT_NUMERIC,
         "The Interval field must contain a numeric value",
         "間隔は数値で指定しなければなりません" )
 pick(   STR_ABOUT_NAME_NT,
-        "Open Watcom Zoom for Windows NT",
-        "Open Watcom ズームのWindows NT版" )
+        "Open Watcom Zoom for Windows",
+        "Open Watcom ズームのWindows版" )
 pick(   STR_ABOUT_NAME,
         "Open Watcom Zoom for Windows",
         "Open Watcom ズームのWindows版" )

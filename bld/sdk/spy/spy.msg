@@ -1,6 +1,6 @@
 pick(   STR_ONLY_1_SPY_ALLOWED,
-        "Only one NT spy allowed",
-        "Only one NT spy allowed" )
+        "Only one spy allowed",
+        "Only one spy allowed" )
 pick(   STR_NO_CUR_SELECTION,
         "No Current Selection!",
         "No Current Selection!" )
@@ -41,8 +41,8 @@ pick(   STR_1_NAMED_WIN_TITLE,
         "%s - hWnd %0*x (%s)",
         "%s - hWnd %0*x (%s)" )
 pick(   STR_ABOUT_NAME_NT,
-        "Open Watcom Spy for Windows NT",
-        "Open Watcom Spy for Windows NT" )
+        "Open Watcom Spy for Windows",
+        "Open Watcom Spy for Windows" )
 pick(   STR_ABOUT_NAME_WIN,
         "Open Watcom Spy for Windows",
         "Open Watcom Spy for Windows" )

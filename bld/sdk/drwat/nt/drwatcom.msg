@@ -4,8 +4,8 @@ pick( STR_APP_NAME,
     "Dr. Watcom for Windows 9x" )
 #else
 pick( STR_APP_NAME,
-    "Dr. Watcom NT",
-    "Dr. Watcom NT" )
+    "Dr. Watcom",
+    "Dr. Watcom" )
 #endif
 pick( STR_CANT_LOAD_DIP,
     "Unable to load debugging interface",
@@ -386,15 +386,9 @@ pick( STR_ABOUT_NAME,
     "Dr. Watcom for Windows 9x",
     "Dr. Watcom for Windows 9x" )
 #else
-#ifdef __AXP__
 pick( STR_ABOUT_NAME,
-    "Dr. Watcom for Windows NT AXP",
-    "Dr. Watcom for Windows NT AXP" )
-#else
-pick( STR_ABOUT_NAME,
-    "Dr. Watcom for Windows NT",
-    "Dr. Watcom for Windows NT" )
-#endif
+    "Dr. Watcom for Windows",
+    "Dr. Watcom for Windows" )
 #endif
 pick( STR_ABOUT_VERSION, // NOT USED
     "",
@@ -407,15 +401,9 @@ pick( STR_ABOUT_TITLE,
     "About Dr. Watcom for Windows 9x",
     "About Dr. Watcom for Windows 9x" )
 #else
-#ifdef __AXP__
 pick( STR_ABOUT_TITLE,
-    "About Dr. Watcom for Windows NT AXP",
-    "About Dr. Watcom for Windows NT AXP" )
-#else
-pick( STR_ABOUT_TITLE,
-    "About Dr. Watcom for Windows NT",
-    "About Dr. Watcom for Windows NT" )
-#endif
+    "About Dr. Watcom for Windows",
+    "About Dr. Watcom for Windows" )
 #endif
 pick( STR_FAULT_PASSED_ON,
     "Fault was passed to the next handler.",

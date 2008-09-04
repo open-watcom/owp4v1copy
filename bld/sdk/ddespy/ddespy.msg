@@ -215,15 +215,9 @@ pick(   STR_ADD_CONV_ALIAS,
 pick(   STR_APP_NAME,
         "Open Watcom DDE Spy",
         "Open Watcom DDE Spy" )
-#ifdef __NT__
-pick(   STR_ABOUT_NAME,
-        "Open Watcom DDE Spy for Windows NT",
-        "Open Watcom DDE Spy Windows NT”Å" )
-#else
 pick(   STR_ABOUT_NAME,
         "Open Watcom DDE Spy for Windows",
         "Open Watcom DDE Spy Windows”Å" )
-#endif
 
 #include "savelbox.msg"
 #include "log.msg"

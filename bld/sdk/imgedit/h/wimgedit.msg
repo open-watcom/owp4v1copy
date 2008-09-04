@@ -547,21 +547,15 @@ pick(   WIE_SYSMENUOPERATIONS,
 pick(   WIE_NEIMAGENOTCREATED,
         "New image not created",
         "New image not created" )
-#ifdef __NT__
-pick(   WIE_ABOUTTEXT,
-        "Open Watcom Image Editor for Windows NT",
-        "Open Watcom Image Editor for Windows NT" )
-#else
 pick(   WIE_ABOUTTEXT,
         "Open Watcom Image Editor for Windows",
         "Open Watcom Image Editor for Windows" )
-#endif
 pick(   WIE_ABOUTFIRSTYEAR,
         "2002",
         "2002" )
 pick(   WIE_ABOUTTITLE,
-        "About the Open Watcom Image Editor",
-        "About the Open Watcom Image Editor" )
+        "About Open Watcom Image Editor",
+        "About Open Watcom Image Editor" )
 
 // WINCREAT.C
 pick(   WIE_COLORPALETTETITLE,
