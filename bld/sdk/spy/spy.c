@@ -73,7 +73,7 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = LoadIcon( ResInstance, "APPLICON" );
         wc.hCursor = LoadCursor( (HANDLE) NULL, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+        wc.hbrBackground = NULL;
         wc.lpszMenuName = NULL;
         wc.lpszClassName = SPY_CLASS_NAME;
         if( !RegisterClass( &wc ) ) return( FALSE );

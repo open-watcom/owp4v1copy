@@ -296,7 +296,7 @@ Bool WdeInit( HINSTANCE app_inst )
     wc.hInstance     = app_inst;
     wc.hIcon         = LoadIcon ( app_inst, "WdeIcon" );
     wc.hCursor       = LoadCursor ( (HINSTANCE) NULL, IDC_ARROW );
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = NULL;
     wc.lpszMenuName  = "WdeMenu";
     wc.lpszClassName = WdeMainClass;
 

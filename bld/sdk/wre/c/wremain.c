@@ -314,7 +314,7 @@ Bool WREInit( HINSTANCE app_inst )
     wc.hInstance     = app_inst;
     wc.hIcon         = LoadIcon( app_inst, "WREIcon" );
     wc.hCursor       = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = NULL;
     wc.lpszMenuName  = "WREMenu";
     wc.lpszClassName = WREMainClass;
 

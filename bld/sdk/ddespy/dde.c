@@ -50,7 +50,7 @@ static BOOL FirstInstInit( void )
     wc.hInstance = Instance;
     wc.hIcon = LoadIcon( Instance, "APPLICON" );
     wc.hCursor = LoadCursor( NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+    wc.hbrBackground = NULL;
     wc.lpszMenuName = "DDEMENU";
     wc.lpszClassName = MAIN_CLASS;
     if( !RegisterClass( &wc ) ) return( FALSE );

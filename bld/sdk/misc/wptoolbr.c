@@ -40,6 +40,7 @@
 #else
     #include <windows.h>
     #ifdef __NT__
+        #define _WIN32_IE   0x0400
         #include <commctrl.h>
     #endif
 #endif
@@ -696,14 +697,15 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
                                              disp->area.top, width, height, bar->owner,
                                              NULL, GET_HINSTANCE( bar->owner ), NULL );
             bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL,
-                                      WS_CHILD | WS_VISIBLE | TBSTYLE_WRAPABLE,
-                                      0, 0, 0, 0, bar->container, NULL,
+                                      WS_CHILD | WS_VISIBLE | TBSTYLE_WRAPABLE |
+                                      TBSTYLE_FLAT, 0, 0, 0, 0, bar->container, NULL,
                                       GET_HINSTANCE( bar->owner ), NULL );
         } else {
             bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL,
                                       WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
-                                      CCS_NORESIZE, 0, 0, 0, 0, bar->owner, NULL,
-                                      GET_HINSTANCE( bar->owner ), NULL );
+                                      CCS_NORESIZE | TBSTYLE_FLAT, 0, 0, 0, 0,
+                                      bar->owner, NULL, GET_HINSTANCE( bar->owner ),
+                                      NULL );
         }
         bar->old_wndproc = (WNDPROC)GetWindowLong( bar->hwnd, GWL_WNDPROC );
         SetProp( bar->hwnd, "bar", (LPVOID)bar );

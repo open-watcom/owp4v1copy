@@ -62,7 +62,7 @@ BOOL RegisterMainWindow( HANDLE inst )
     wc.hInstance = inst;
     wc.hIcon = LoadIcon( inst, "APPLICON" );
     wc.hCursor = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
-    wc.hbrBackground = (HBRUSH) COLOR_APPWORKSPACE;
+    wc.hbrBackground = 0;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = EditorName;
     return( RegisterClass( &wc ) );

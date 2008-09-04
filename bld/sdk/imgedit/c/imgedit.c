@@ -112,7 +112,7 @@ static BOOL imgEditInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.hInstance = Instance;
         wc.hIcon = LoadIcon( Instance, "APPLICON" );
         wc.hCursor = LoadCursor( (HANDLE) NULL, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH) (COLOR_APPWORKSPACE+1);
+        wc.hbrBackground = NULL;
         wc.lpszMenuName = NULL;
         wc.lpszClassName = className;
         if( !RegisterClass( &wc ) ) return( FALSE );

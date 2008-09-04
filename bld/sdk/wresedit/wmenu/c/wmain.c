@@ -469,7 +469,7 @@ Bool WRegisterMainClass ( HINSTANCE inst )
     wc.hInstance     = inst;
     wc.hIcon         = LoadIcon ( inst, "WMainIcon" );
     wc.hCursor       = LoadCursor ( (HINSTANCE) NULL, IDC_ARROW );
-    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+    wc.hbrBackground = NULL;
     wc.lpszMenuName  = WMainMenuName;
     wc.lpszClassName = WMainClass;
 
