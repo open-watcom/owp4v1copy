@@ -15,9 +15,13 @@ start_test: .symbolic
 
 $(all_tests) : .symbolic
     cd $@
+!ifdef %TEST_ARCH
+    -wmake -h arch=$(%TEST_ARCH)
+!else
     -wmake -h
 !ifdef %EXTRA_ARCH
     -wmake -h arch=$(%EXTRA_ARCH)
+!endif
 !endif
     cd ..
 

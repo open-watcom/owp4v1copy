@@ -14,12 +14,13 @@ test_grp_list = positive diagnose callconv inline codegen
 !inject test7   all     gr2
 !inject test8   all     gr2
 !inject test9   all     gr2
-!inject test10  all
-!inject test11  all
+# next two should be used for testing of codegen with fpc option
+#!inject test10  all
+#!inject test11  all
 
 positive_tests = $(gr2)
-codegen_tests  = $(gr2)
-callconv_tests = $(all)
+codegen_tests  = $(all)
+callconv_tests = $(gr2)
 diagnose_tests = $(gr1)
 inline_tests   = $(gr3)
 
@@ -52,14 +53,19 @@ $(test_grp_list) : .symbolic
 
 $(all) : .procedure
     -@wmake -h global
+!ifdef %TEST_ARCH
+    -wmake -h arch=$(%TEST_ARCH) $@=
+    -@wmake -h arch=$(%TEST_ARCH) $@= save
+!else
     -wmake -h $@=
     -@wmake -h $@= save
-    -@wmake -h global
 !ifdef %EXTRA_ARCH
+    -@wmake -h global
     -wmake -h arch=$(%EXTRA_ARCH) $@=
     -@wmake -h arch=$(%EXTRA_ARCH) $@= save
-    -@wmake -h global
 !endif
+!endif
+    -@wmake -h global
 
 global : .procedure
     @if exist *.obj rm -f *.obj

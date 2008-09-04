@@ -28,14 +28,19 @@ finish_test : .symbolic cd_back ./chktest.exe
 
 $(all_tests) : .procedure
     -@wmake -h global
+!ifdef %TEST_ARCH
+    -wmake -h arch=$(%TEST_ARCH) $@=
+    -@wmake -h arch=$(%TEST_ARCH) $@= save
+!else
     -wmake -h $@=
     -@wmake -h $@= save
-    -@wmake -h global
 !ifdef %EXTRA_ARCH
+    -@wmake -h global
     -wmake -h arch=$(%EXTRA_ARCH) $@=
     -@wmake -h arch=$(%EXTRA_ARCH) $@= save
-    -@wmake -h global
 !endif
+!endif
+    -@wmake -h global
 
 global : .procedure
     @if exist *.obj rm *.obj

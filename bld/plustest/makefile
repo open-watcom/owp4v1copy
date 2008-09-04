@@ -183,12 +183,16 @@ $(test_grp_list) : .symbolic
     @set CMD_CD3=
     @set CMD2=@%null
     @set CMD3=@%null
+!ifdef %TEST_ARCH
+    @set CMD_MAKE_OPTS=arch=$(%TEST_ARCH)
+!else
     @set CMD_MAKE_OPTS=
-    @for %%a in ($($@_tests)) do -@%make %%a
 !ifdef %EXTRA_ARCH
-    @set CMD_MAKE_OPTS=arch=$(%EXTRA_ARCH)
     @for %%a in ($($@_tests)) do -@%make %%a
+    @set CMD_MAKE_OPTS=arch=$(%EXTRA_ARCH)
 !endif
+!endif
+    @for %%a in ($($@_tests)) do -@%make %%a
     @cd $(main_dir)
 
 cool : .symbolic
@@ -198,12 +202,16 @@ cool : .symbolic
     @set CMD_CD2=@cd examples
     @set CMD3=
     @set CMD_CD3=@cd tests
+!ifdef %TEST_ARCH
+    @set CMD_MAKE_OPTS=arch=$(%TEST_ARCH)
+!else
     @set CMD_MAKE_OPTS=
-    @for %%a in ($($@_tests)) do -@%make %%a
 !ifdef %EXTRA_ARCH
-    @set CMD_MAKE_OPTS=arch=$(%EXTRA_ARCH)
     @for %%a in ($($@_tests)) do -@%make %%a
+    @set CMD_MAKE_OPTS=arch=$(%EXTRA_ARCH)
 !endif
+!endif
+    @for %%a in ($($@_tests)) do -@%make %%a
     @cd $(main_dir)
 
 winnt : .symbolic
@@ -224,12 +232,16 @@ yacl : .symbolic
     @set CMD_CD2=@cd io
     @set CMD3=
     @set CMD_CD3=@cd test
+!ifdef %TEST_ARCH
+    @set CMD_MAKE_OPTS=arch=$(%TEST_ARCH)
+!else
     @set CMD_MAKE_OPTS=
-    @for %%a in ($($@_tests)) do -@%make %%a
 !ifdef %EXTRA_ARCH
-    @set CMD_MAKE_OPTS=arch=$(%EXTRA_ARCH)
     @for %%a in ($($@_tests)) do -@%make %%a
+    @set CMD_MAKE_OPTS=arch=$(%EXTRA_ARCH)
 !endif
+!endif
+    @for %%a in ($($@_tests)) do -@%make %%a
     @cd $(main_dir)
 
 global : .procedure
