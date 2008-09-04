@@ -8654,7 +8654,6 @@ SHSTDAPI    SHSetTemporaryPropertyForItem( IShellItem *, REFPROPERTYKEY, REFPROP
 #if (NTDDI_VERSION >= 0x06000000)
 
 __inline void FreeKnownFolderDefinitionFields( KNOWNFOLDER_DEFINITION *x )
-/************************************************************************/
 {
     CoTaskMemFree( x->pszName );
     CoTaskMemFree( x->pszDescription );

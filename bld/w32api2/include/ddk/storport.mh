@@ -473,7 +473,6 @@ STORPORT_API VOID NTAPI     StorPortWriteRegisterUshort( PVOID, PUSHORT, USHORT 
 
 __inline BOOLEAN StorPortEnablePassiveInitialization( PVOID p1,
                                                       PHW_PASSIVE_INITIALIZE_ROUTINE p2 )
-/***************************************************************************************/
 {
     LONG    v;
     v = FALSE;
@@ -482,13 +481,11 @@ __inline BOOLEAN StorPortEnablePassiveInitialization( PVOID p1,
 }
 
 __inline VOID StorPortInitializeDpc( PVOID p1, PSTOR_DPC p2, PHW_DPC_ROUTINE p3 )
-/*******************************************************************************/
 {
     StorPortNotification( InitializeDpc, p1, p2, p3 );
 }
 
 __inline BOOLEAN StorPortIssueDpc( PVOID p1, PSTOR_DPC p2, PVOID p3, PVOID p4 )
-/*****************************************************************************/
 {
     LONG    v;
     v = FALSE;
@@ -498,67 +495,56 @@ __inline BOOLEAN StorPortIssueDpc( PVOID p1, PSTOR_DPC p2, PVOID p3, PVOID p4 )
 
 __inline VOID StorPortAcquireSpinLock( PVOID p1, STOR_SPINLOCK p2, PVOID p3,
                                        PSTOR_LOCK_HANDLE p4 )
-/**************************************************************************/
 {
     StorPortNotification( AcquireSpinLock, p1, p2, p3, p4 );
 }
 
 __inline VOID StorPortReleaseSpinLock( PVOID p1, PSTOR_LOCK_HANDLE p2 )
-/*********************************************************************/
 {
     StorPortNotification( ReleaseSpinLock, p1, p2 );
 }
 
 __inline ULONG StorPortAllocatePool( PVOID p1, ULONG p2, ULONG p3, PVOID *p4 )
-/****************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionAllocatePool, p1, p2, p3, p4 ) );
 }
 
 __inline ULONG StorPortFreePool( PVOID p1, PVOID p2 )
-/***************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionFreePool, p1, p2 ) );
 }
 
 __inline ULONG StorPortAllocateMdl( PVOID p1, PVOID p2, ULONG p3, PVOID *p4 )
-/***************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionAllocateMdl, p1, p2, p3, p4 ) );
 }
 
 __inline ULONG StorPortFreeMdl( PVOID p1, PVOID p2 )
-/**************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionFreeMdl, p1, p2 ) );
 }
 
 __inline ULONG StorPortBuildMdlForNonPagedPool( PVOID p1, PVOID p2 )
-/******************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionBuildMdlForNonPagedPool, p1, p2 ) );
 }
 
 __inline ULONG StorPortGetSystemAddress( PVOID p1, PSCSI_REQUEST_BLOCK p2, PVOID *p3 )
-/************************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionGetSystemAddress, p1, p2, p3 ) );
 }
 
 __inline ULONG StorPortGetOriginalMdl( PVOID p1, PSCSI_REQUEST_BLOCK p2, PVOID *p3 )
-/**********************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionGetOriginalMdl, p1, p2, p3 ) );
 }
 
 __inline ULONG StorPortCompleteServiceIrp( PVOID p1, PVOID p2 )
-/*************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionCompleteServiceIrp, p1, p2 ) );
 }
 
 __inline ULONG StorPortGetDeviceObjects( PVOID p1, PVOID *p2, PVOID *p3, PVOID *p4 )
-/**********************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionGetDeviceObjects, p1, p2, p3, p4 ) );
 }
@@ -566,7 +552,6 @@ __inline ULONG StorPortGetDeviceObjects( PVOID p1, PVOID *p2, PVOID *p3, PVOID *
 __inline ULONG StorPortBuildScatterGatherList( PVOID p1, PVOID p2, PVOID p3, ULONG p4,
                                                PpostScaterGatherExecute p5, PVOID p6,
                                                BOOLEAN p7, PVOID p8, ULONG p9 )
-/************************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionBuildScatterGatherList, p1, p2, p3, p4,
                                       p5, p6, p7, p8, p9 ) );
@@ -574,26 +559,22 @@ __inline ULONG StorPortBuildScatterGatherList( PVOID p1, PVOID p2, PVOID p3, ULO
 
 __inline ULONG StorPortPutScatterGatherList( PVOID p1, PSTOR_SCATTER_GATHER_LIST p2,
                                              BOOLEAN p3 )
-/**********************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionPutScatterGatherList, p1, p2, p3 ) );
 }
 
 __inline ULONG StorPortAcquireMSISpinLock( PVOID p1, ULONG p2, PULONG p3 )
-/************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionAcquireMSISpinLock, p1, p2, p3 ) );
 }
 
 __inline ULONG StorPortReleaseMSISpinLock( PVOID p1, ULONG p2, ULONG p3 )
-/***********************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionReleaseMSISpinLock, p1, p2, p3 ) );
 }
 
 __inline ULONG StorPortGetMSIInfo( PVOID p1, ULONG p2,
                                    PMESSAGE_INTERRUPT_INFORMATION p3 )
-/********************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionGetMessageInterruptInformation, p1, p2,
                                       p3 ) );
@@ -601,7 +582,6 @@ __inline ULONG StorPortGetMSIInfo( PVOID p1, ULONG p2,
 
 __inline ULONG StorPortInitializePerfOpts( PVOID p1, BOOLEAN p2,
                                            PPERF_CONFIGURATION_DATA p3 )
-/**********************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionInitializePerformanceOptimizations, p1,
                                       p2, p3 ) );
@@ -609,7 +589,6 @@ __inline ULONG StorPortInitializePerfOpts( PVOID p1, BOOLEAN p2,
 
 __inline ULONG StorPortGetStartIoPerfParams( PVOID p1, PSCSI_REQUEST_BLOCK p2,
                                              PSTARTIO_PERFORMANCE_PARAMETERS p3 )
-/*******************************************************************************/
 {
     return( StorPortExtendedFunction( ExtFunctionGetStartIoPerformanceParameters, p1, p2,
                                       p3 ) );

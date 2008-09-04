@@ -4509,7 +4509,6 @@ EXPORT NDIS_STATUS NTAPI    NdisRegisterDeviceEx( NDIS_HANDLE, PNDIS_DEVICE_OBJE
 
 __inline VOID NdisQueryPacket( PNDIS_PACKET x, PUINT p1, PUINT p2, PNDIS_BUFFER *p3,
                                PUINT p4 )
-/**********************************************************************************/
 {
     if( p3 != NULL ) {
         PNDIS_BUFFER *v1 = p3;

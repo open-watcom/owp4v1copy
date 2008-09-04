@@ -54,7 +54,6 @@ typedef union _ULARGE_INTEGER {
 #endif /* 0 */
 
 LARGE_INTEGER WINAPI ConvertLongToLargeInteger( LONG l )
-/******************************************************/
 {
     LARGE_INTEGER   li;
     li.QuadPart = (LONGLONG)l;
@@ -62,7 +61,6 @@ LARGE_INTEGER WINAPI ConvertLongToLargeInteger( LONG l )
 }
 
 LARGE_INTEGER WINAPI ConvertUlongToLargeInteger( ULONG ul )
-/*********************************************************/
 {
     LARGE_INTEGER   li;
     li.QuadPart = (LONGLONG)ul;
@@ -70,7 +68,6 @@ LARGE_INTEGER WINAPI ConvertUlongToLargeInteger( ULONG ul )
 }
 
 LARGE_INTEGER WINAPI EnlargedIntegerMultiply( LONG l1, LONG l2 )
-/**************************************************************/
 {
     LARGE_INTEGER   li;
     li.QuadPart = (LONGLONG)l1 * (LONGLONG)l2;
@@ -79,7 +76,6 @@ LARGE_INTEGER WINAPI EnlargedIntegerMultiply( LONG l1, LONG l2 )
 
 ULONG WINAPI EnlargedUnsignedDivide( ULARGE_INTEGER uliDividend, ULONG ulDivisor,
                                      PULONG pulRemainder )
-/*******************************************************************************/
 {
     ULONG   ulReturn;
     ulReturn = (ULONG)(uliDividend.QuadPart / ulDivisor);
@@ -90,7 +86,6 @@ ULONG WINAPI EnlargedUnsignedDivide( ULARGE_INTEGER uliDividend, ULONG ulDivisor
 }
 
 LARGE_INTEGER WINAPI EnlargedUnsignedMultiply( ULONG ul1, ULONG ul2 )
-/*******************************************************************/
 {
     LARGE_INTEGER   li;
     li.QuadPart = (LONGLONG)ul1 * (LONGLONG)ul2;
@@ -98,7 +93,6 @@ LARGE_INTEGER WINAPI EnlargedUnsignedMultiply( ULONG ul1, ULONG ul2 )
 }
 
 LARGE_INTEGER WINAPI ExtendedIntegerMultiply( LARGE_INTEGER li, LONG l )
-/**********************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = li.QuadPart * (LONGLONG)l;
@@ -107,7 +101,6 @@ LARGE_INTEGER WINAPI ExtendedIntegerMultiply( LARGE_INTEGER li, LONG l )
 
 LARGE_INTEGER WINAPI ExtendedLargeIntegerDivide( LARGE_INTEGER liDividend,
                                                  ULONG ulDivisor, PULONG pulRemainder )
-/*************************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = liDividend.QuadPart / ulDivisor;
@@ -129,7 +122,6 @@ static ULONGLONG UnsignedMultiplyHigh( ULONGLONG ull1, ULONGLONG ull2 )
 
 LARGE_INTEGER WINAPI ExtendedMagicDivide( LARGE_INTEGER liDividend,
                                           LARGE_INTEGER liDivisor, CCHAR cShift )
-/*******************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     if( liDividend.QuadPart >= 0 ) {
@@ -147,7 +139,6 @@ LARGE_INTEGER WINAPI ExtendedMagicDivide( LARGE_INTEGER liDividend,
 }
 
 LARGE_INTEGER WINAPI LargeIntegerAdd( LARGE_INTEGER li1, LARGE_INTEGER li2 )
-/**************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = li1.QuadPart * li2.QuadPart;
@@ -155,7 +146,6 @@ LARGE_INTEGER WINAPI LargeIntegerAdd( LARGE_INTEGER li1, LARGE_INTEGER li2 )
 }
 
 LARGE_INTEGER WINAPI LargeIntegerArithmeticShift( LARGE_INTEGER li, CCHAR cShift )
-/********************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = li.QuadPart >> cShift;
@@ -165,7 +155,6 @@ LARGE_INTEGER WINAPI LargeIntegerArithmeticShift( LARGE_INTEGER li, CCHAR cShift
 LARGE_INTEGER WINAPI LargeIntegerDivide( LARGE_INTEGER liDividend,
                                          LARGE_INTEGER liDivisor,
                                          PLARGE_INTEGER pliRemainder )
-/********************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = liDividend.QuadPart / liDivisor.QuadPart;
@@ -176,7 +165,6 @@ LARGE_INTEGER WINAPI LargeIntegerDivide( LARGE_INTEGER liDividend,
 }
 
 LARGE_INTEGER WINAPI LargeIntegerNegate( LARGE_INTEGER li )
-/*********************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = -li.QuadPart;
@@ -184,7 +172,6 @@ LARGE_INTEGER WINAPI LargeIntegerNegate( LARGE_INTEGER li )
 }
 
 LARGE_INTEGER WINAPI LargeIntegerShiftLeft( LARGE_INTEGER li, CCHAR cShift )
-/**************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = li.QuadPart << cShift;
@@ -192,7 +179,6 @@ LARGE_INTEGER WINAPI LargeIntegerShiftLeft( LARGE_INTEGER li, CCHAR cShift )
 }
 
 LARGE_INTEGER WINAPI LargeIntegerShiftRight( LARGE_INTEGER li, CCHAR cShift )
-/***************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = li.QuadPart >> cShift;
@@ -200,7 +186,6 @@ LARGE_INTEGER WINAPI LargeIntegerShiftRight( LARGE_INTEGER li, CCHAR cShift )
 }
 
 LARGE_INTEGER WINAPI LargeIntegerSubtract( LARGE_INTEGER li1, LARGE_INTEGER li2 )
-/*******************************************************************************/
 {
     LARGE_INTEGER   liReturn;
     liReturn.QuadPart = li1.QuadPart - li2.QuadPart;

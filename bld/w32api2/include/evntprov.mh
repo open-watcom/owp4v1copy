@@ -82,7 +82,6 @@ ULONG EVNTAPI   EventWriteTransfer( REGHANDLE, PCEVENT_DESCRIPTOR, LPCGUID, LPCG
 
 __inline VOID EventDataDescCreate( PEVENT_DATA_DESCRIPTOR x, const VOID * p1,
                                    ULONG p2 )
-/***************************************************************************/
 {
     x->Ptr = (ULONGLONG)p1;
     x->Size = p2;
@@ -91,7 +90,6 @@ __inline VOID EventDataDescCreate( PEVENT_DATA_DESCRIPTOR x, const VOID * p1,
 
 __inline VOID EventDescCreate( PEVENT_DESCRIPTOR x, USHORT p1, UCHAR p2, UCHAR p3,
                                UCHAR p4, USHORT p5, UCHAR p6, ULONGLONG p7 )
-/********************************************************************************/
 {
     x->Id = p1;
     x->Version = p2;
@@ -103,104 +101,88 @@ __inline VOID EventDescCreate( PEVENT_DESCRIPTOR x, USHORT p1, UCHAR p2, UCHAR p
 }
 
 __inline VOID EventDescZero( PEVENT_DESCRIPTOR x )
-/************************************************/
 {
     memset( x, 0, sizeof( EVENT_DESCRIPTOR ) );
 }
 
 __inline USHORT EventDescGetId( PCEVENT_DESCRIPTOR x )
-/****************************************************/
 {
     return( x->Id );
 }
 
 __inline UCHAR EventDescGetVersion( PCEVENT_DESCRIPTOR x )
-/********************************************************/
 {
     return( x->Version );
 }
 
 __inline USHORT EventDescGetTask( PCEVENT_DESCRIPTOR x )
-/******************************************************/
 {
     return( x->Task );
 }
 
 __inline UCHAR EventDescGetOpcode( PCEVENT_DESCRIPTOR x )
-/*******************************************************/
 {
     return( x->Opcode );
 }
 
 __inline UCHAR EventDescGetChannel( PCEVENT_DESCRIPTOR x )
-/********************************************************/
 {
     return( x->Channel );
 }
 
 __inline UCHAR EventDescGetLevel( PCEVENT_DESCRIPTOR x )
-/******************************************************/
 {
     return( x->Level );
 }
 
 __inline ULONGLONG EventDescGetKeyword( PCEVENT_DESCRIPTOR x )
-/************************************************************/
 {
     return( x->Keyword );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetId( PEVENT_DESCRIPTOR x, USHORT p )
-/************************************************************************/
 {
     x->Id = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetVersion( PEVENT_DESCRIPTOR x, UCHAR p )
-/****************************************************************************/
 {
     x->Version = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetTask( PEVENT_DESCRIPTOR x, USHORT p )
-/**************************************************************************/
 {
     x->Task = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetOpcode( PEVENT_DESCRIPTOR x, UCHAR p )
-/***************************************************************************/
 {
     x->Opcode = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetLevel( PEVENT_DESCRIPTOR x, UCHAR p )
-/**************************************************************************/
 {
     x->Level = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetChannel( PEVENT_DESCRIPTOR x, UCHAR p )
-/****************************************************************************/
 {
     x->Channel = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescSetKeyword( PEVENT_DESCRIPTOR x, ULONGLONG p )
-/********************************************************************************/
 {
     x->Keyword = p;
     return( x );
 }
 
 __inline PEVENT_DESCRIPTOR EventDescOrKeyword( PEVENT_DESCRIPTOR x, ULONGLONG p )
-/*******************************************************************************/
 {
     x->Keyword |= p;
     return( x );

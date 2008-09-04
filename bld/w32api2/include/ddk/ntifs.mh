@@ -4714,7 +4714,6 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    MapSecurityError( SECURITY_STATUS );
 #define NLS_OEM_LEAD_BYTE_INFO      (*NlsOemLeadByteInfo)
 
 __inline VOID IoInitializeDriverCreateContext( PIO_DRIVER_CREATE_CONTEXT x )
-/**************************************************************************/
 {
     RtlZeroMemory( x, sizeof( IO_DRIVER_CREATE_CONTEXT ) );
     x->Size = sizeof( IO_DRIVER_CREATE_CONTEXT );
@@ -4723,7 +4722,6 @@ __inline VOID IoInitializeDriverCreateContext( PIO_DRIVER_CREATE_CONTEXT x )
 #if (NTDDI_VERSION >= 0x06000000)
 
 __inline VOID IoInitializePriorityInfo( PIO_PRIORITY_INFO x )
-/***********************************************************/
 {
     x->Size = sizeof( IO_PRIORITY_INFO );
     x->ThreadPriority = 0xFFFF;

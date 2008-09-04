@@ -7716,19 +7716,16 @@ CLFSUSER_API NTSTATUS NTAPI ClfsQueryLogFileInformation( PLOG_FILE_OBJECT, CLFS_
 #define KD_DEBUGGER_NOT_PRESENT     (*KdDebuggerNotPresent)
 
 __inline VOID InitializeListHead( PLIST_ENTRY x )
-/***********************************************/
 {
     x->Flink = x->Blink = x;
 }
 
 __inline BOOLEAN IsListEmpty( const LIST_ENTRY *x )
-/*************************************************/
 {
     return( (BOOLEAN)(x->Flink == x) );
 }
 
 __inline BOOLEAN RemoveEntryList( PLIST_ENTRY x )
-/***********************************************/
 {
     PLIST_ENTRY v1;
     PLIST_ENTRY v2;
@@ -7740,7 +7737,6 @@ __inline BOOLEAN RemoveEntryList( PLIST_ENTRY x )
 }
 
 __inline PLIST_ENTRY RemoveHeadList( PLIST_ENTRY x )
-/**************************************************/
 {
     PLIST_ENTRY v1;
     PLIST_ENTRY v2;
@@ -7752,7 +7748,6 @@ __inline PLIST_ENTRY RemoveHeadList( PLIST_ENTRY x )
 }
 
 __inline PLIST_ENTRY RemoveTailList( PLIST_ENTRY x )
-/**************************************************/
 {
     PLIST_ENTRY v1;
     PLIST_ENTRY v2;
@@ -7764,7 +7759,6 @@ __inline PLIST_ENTRY RemoveTailList( PLIST_ENTRY x )
 }
 
 __inline VOID InsertTailList( PLIST_ENTRY x, PLIST_ENTRY p )
-/**********************************************************/
 {
     PLIST_ENTRY v;
     v = x->Blink;
@@ -7775,7 +7769,6 @@ __inline VOID InsertTailList( PLIST_ENTRY x, PLIST_ENTRY p )
 }
 
 __inline VOID InsertHeadList( PLIST_ENTRY x, PLIST_ENTRY p )
-/**********************************************************/
 {
     PLIST_ENTRY v;
     v = x->Flink;
@@ -7786,7 +7779,6 @@ __inline VOID InsertHeadList( PLIST_ENTRY x, PLIST_ENTRY p )
 }
 
 __inline VOID AppendTailList( PLIST_ENTRY x, PLIST_ENTRY p )
-/**********************************************************/
 {
     PLIST_ENTRY v;
     v = x->Blink;
@@ -7797,7 +7789,6 @@ __inline VOID AppendTailList( PLIST_ENTRY x, PLIST_ENTRY p )
 }
 
 __inline PSINGLE_LIST_ENTRY PopEntryList( PSINGLE_LIST_ENTRY x )
-/**************************************************************/
 {
     PSINGLE_LIST_ENTRY  v;
     v = x->Next;
@@ -7808,14 +7799,12 @@ __inline PSINGLE_LIST_ENTRY PopEntryList( PSINGLE_LIST_ENTRY x )
 }
 
 __inline VOID PushEntryList( PSINGLE_LIST_ENTRY x, PSINGLE_LIST_ENTRY p )
-/***********************************************************************/
 {
     p->Next = x->Next;
     x->Next = p;
 }
 
 __inline VOID RtlInitEmptyUnicodeString( PUNICODE_STRING x, PWSTR p1, USHORT p2 )
-/*******************************************************************************/
 {
     x->Length = 0;
     x->MaximumLength = p2;
@@ -7823,7 +7812,6 @@ __inline VOID RtlInitEmptyUnicodeString( PUNICODE_STRING x, PWSTR p1, USHORT p2 
 }
 
 __inline VOID RtlInitEmptyAnsiString( PANSI_STRING x, PCHAR p1, USHORT p2 )
-/*************************************************************************/
 {
     x->Length = 0;
     x->MaximumLength = p2;
@@ -7831,7 +7819,6 @@ __inline VOID RtlInitEmptyAnsiString( PANSI_STRING x, PCHAR p1, USHORT p2 )
 }
 
 __inline LARGE_INTEGER RtlLargeIntegerAdd( LARGE_INTEGER p1, LARGE_INTEGER p2 )
-/*****************************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = p1.QuadPart + p2.QuadPart;
@@ -7839,7 +7826,6 @@ __inline LARGE_INTEGER RtlLargeIntegerAdd( LARGE_INTEGER p1, LARGE_INTEGER p2 )
 }
 
 __inline LARGE_INTEGER RtlEnlargedIntegerMultiply( LONG p1, LONG p2 )
-/*******************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = (LONGLONG)p1 * (LONGLONG)p2;
@@ -7847,7 +7833,6 @@ __inline LARGE_INTEGER RtlEnlargedIntegerMultiply( LONG p1, LONG p2 )
 }
 
 __inline LARGE_INTEGER RtlEnlargedUnsignedMultiply( ULONG p1, ULONG p2 )
-/**********************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = (ULONGLONG)p1 * (ULONGLONG)p2;
@@ -7855,7 +7840,6 @@ __inline LARGE_INTEGER RtlEnlargedUnsignedMultiply( ULONG p1, ULONG p2 )
 }
 
 __inline ULONG RtlEnlargedUnsignedDivide( ULARGE_INTEGER p1, ULONG p2, PULONG p3 )
-/********************************************************************************/
 {
     ULONG   v;
     v = (ULONG)(p1.QuadPart / p2);
@@ -7866,7 +7850,6 @@ __inline ULONG RtlEnlargedUnsignedDivide( ULARGE_INTEGER p1, ULONG p2, PULONG p3
 }
 
 __inline LARGE_INTEGER RtlLargeIntegerNegate( LARGE_INTEGER x )
-/*************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = -x.QuadPart;
@@ -7874,7 +7857,6 @@ __inline LARGE_INTEGER RtlLargeIntegerNegate( LARGE_INTEGER x )
 }
 
 __inline LARGE_INTEGER RtlLargeIntegerSubtract( LARGE_INTEGER p1, LARGE_INTEGER p2 )
-/**********************************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = p1.QuadPart - p2.QuadPart;
@@ -7882,7 +7864,6 @@ __inline LARGE_INTEGER RtlLargeIntegerSubtract( LARGE_INTEGER p1, LARGE_INTEGER 
 }
 
 __inline LARGE_INTEGER RtlConvertLongToLargeInteger( LONG x )
-/***********************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = x;
@@ -7890,7 +7871,6 @@ __inline LARGE_INTEGER RtlConvertLongToLargeInteger( LONG x )
 }
 
 __inline LARGE_INTEGER RtlConvertUlongToLargeInteger( ULONG x )
-/*************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = x;
@@ -7898,7 +7878,6 @@ __inline LARGE_INTEGER RtlConvertUlongToLargeInteger( ULONG x )
 }
 
 __inline LARGE_INTEGER RtlLargeIntegerShiftLeft( LARGE_INTEGER x, CCHAR p )
-/*************************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = x.QuadPart << p;
@@ -7906,7 +7885,6 @@ __inline LARGE_INTEGER RtlLargeIntegerShiftLeft( LARGE_INTEGER x, CCHAR p )
 }
 
 __inline LARGE_INTEGER RtlLargeIntegerShiftRight( LARGE_INTEGER x, CCHAR p )
-/**************************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = (ULONG64)x.QuadPart >> p;
@@ -7914,7 +7892,6 @@ __inline LARGE_INTEGER RtlLargeIntegerShiftRight( LARGE_INTEGER x, CCHAR p )
 }
 
 __inline LARGE_INTEGER RtlLargeIntegerArithmeticShift( LARGE_INTEGER x, CCHAR p )
-/*******************************************************************************/
 {
     LARGE_INTEGER   v;
     v.QuadPart = x.QuadPart >> p;
@@ -7922,7 +7899,6 @@ __inline LARGE_INTEGER RtlLargeIntegerArithmeticShift( LARGE_INTEGER x, CCHAR p 
 }
 
 __inline VOID ExInitializeFastMutex( PFAST_MUTEX x )
-/**************************************************/
 {
     x->Count = FM_LOCK_BIT;
     x->Owner = NULL;
@@ -7931,13 +7907,11 @@ __inline VOID ExInitializeFastMutex( PFAST_MUTEX x )
 }
 
 __inline VOID InitializeSListHead( PSLIST_HEADER x )
-/**************************************************/
 {
     RtlZeroMemory( x, sizeof( SLIST_HEADER ) );
 }
 
 __inline PVOID ExAllocateFromNPagedLookasideList( PNPAGED_LOOKASIDE_LIST x )
-/**************************************************************************/
 {
     PVOID   v;
     x->L.TotalAllocates++;
@@ -7954,7 +7928,6 @@ __inline PVOID ExAllocateFromNPagedLookasideList( PNPAGED_LOOKASIDE_LIST x )
 }
 
 __inline VOID ExFreeToNPagedLookasideList( PNPAGED_LOOKASIDE_LIST x, PVOID p )
-/****************************************************************************/
 {
     x->L.TotalFrees++;
     if( ExQueryDepthSList( &x->L.ListHead ) >= x->L.Depth ) {
@@ -7973,7 +7946,6 @@ __inline VOID ExFreeToNPagedLookasideList( PNPAGED_LOOKASIDE_LIST x, PVOID p )
 #if (NTDDI_VERSION >= 0x06000000)
 
 __inline PVOID ExAllocateFromLookasideListEx( PLOOKASIDE_LIST_EX x )
-/******************************************************************/
 {
     PVOID   v;
     x->L.TotalAllocates++;
@@ -7986,7 +7958,6 @@ __inline PVOID ExAllocateFromLookasideListEx( PLOOKASIDE_LIST_EX x )
 }
 
 __inline VOID ExFreeToLookasideListEx( PLOOKASIDE_LIST_EX x, PVOID p )
-/********************************************************************/
 {
     x->L.TotalFrees++;
     if( ExQueryDepthSList( &x->L.ListHead ) >= x->L.Depth ) {
@@ -7998,7 +7969,6 @@ __inline VOID ExFreeToLookasideListEx( PLOOKASIDE_LIST_EX x, PVOID p )
 }
 
 __inline ULONG_PTR IoGetRemainingStackSize( VOID )
-/************************************************/
 {
     ULONG_PTR   v1;
     ULONG_PTR   v2;
@@ -8008,7 +7978,6 @@ __inline ULONG_PTR IoGetRemainingStackSize( VOID )
 
 __inline VOID IoSetCompletionRoutine( PIRP x, PIO_COMPLETION_ROUTINE p1, PVOID p2, 
                                       BOOLEAN p3, BOOLEAN p4, BOOLEAN p5 )
-/********************************************************************************/
 {
     PIO_STACK_LOCATION  v;
     ASSERT( (p1 || p2 || p3) ? (p1 != NULL) : TRUE );
@@ -8031,7 +8000,6 @@ __inline VOID IoSetCompletionRoutine( PIRP x, PIO_COMPLETION_ROUTINE p1, PVOID p
 
 __inline PVOID HalAllocateCommonBuffer( PDMA_ADAPTER p1, ULONG p2, PPHYSICAL_ADDRESS p3,
                                         BOOLEAN p4 )
-/**************************************************************************************/
 {
     PALLOCATE_COMMON_BUFFER v1;
     PVOID                   v2;
@@ -8043,7 +8011,6 @@ __inline PVOID HalAllocateCommonBuffer( PDMA_ADAPTER p1, ULONG p2, PPHYSICAL_ADD
 
 __inline VOID HalFreeCommonBuffer( PDMA_ADAPTER p1, ULONG p2, PHYSICAL_ADDRESS p3,
                                    PVOID p4, BOOLEAN p5 )
-/********************************************************************************/
 {
     PFREE_COMMON_BUFFER v;
     v = *(p1)->DmaOperations->FreeCommonBuffer;
@@ -8053,7 +8020,6 @@ __inline VOID HalFreeCommonBuffer( PDMA_ADAPTER p1, ULONG p2, PHYSICAL_ADDRESS p
 
 __inline NTSTATUS IoAllocateAdapterChannel( PDMA_ADAPTER p1, PDEVICE_OBJECT p2, ULONG p3,
                                             PDRIVER_CONTROL p4, PVOID p5 )
-/***************************************************************************************/
 {
     PALLOCATE_ADAPTER_CHANNEL   v1;
     NTSTATUS                    v2;
@@ -8065,7 +8031,6 @@ __inline NTSTATUS IoAllocateAdapterChannel( PDMA_ADAPTER p1, PDEVICE_OBJECT p2, 
 
 __inline BOOLEAN IoFlushAdapterBuffers( PDMA_ADAPTER p1, PMDL p2, PVOID p3, PVOID p4,
                                         ULONG p5, BOOLEAN p6 )
-/***********************************************************************************/
 {
     PFLUSH_ADAPTER_BUFFERS  v1;
     BOOLEAN                 v2;
@@ -8076,7 +8041,6 @@ __inline BOOLEAN IoFlushAdapterBuffers( PDMA_ADAPTER p1, PMDL p2, PVOID p3, PVOI
 }
 
 __inline VOID IoFreeAdapterChannel( PDMA_ADAPTER x )
-/**************************************************/
 {
     PFREE_ADAPTER_CHANNEL   v;
     v = *(x)->DmaOperations->FreeAdapterChannel;
@@ -8085,7 +8049,6 @@ __inline VOID IoFreeAdapterChannel( PDMA_ADAPTER x )
 }
 
 __inline VOID IoFreeMapRegisters( PDMA_ADAPTER p1, PVOID p2, ULONG p3 )
-/*********************************************************************/
 {
     PFREE_MAP_REGISTERS v;
     v = *(p1)->DmaOperations->FreeMapRegisters;
@@ -8095,7 +8058,6 @@ __inline VOID IoFreeMapRegisters( PDMA_ADAPTER p1, PVOID p2, ULONG p3 )
 
 __inline PHYSICAL_ADDRESS IoMapTransfer( PDMA_ADAPTER p1, PMDL p2, PVOID p3, PVOID p4,
                                          PULONG p5, BOOLEAN p6 )
-/************************************************************************************/
 {
     PMAP_TRANSFER       v1;
     PHYSICAL_ADDRESS    v2;
@@ -8106,7 +8068,6 @@ __inline PHYSICAL_ADDRESS IoMapTransfer( PDMA_ADAPTER p1, PMDL p2, PVOID p3, PVO
 }
 
 __inline ULONG HalGetDmaAlignment( PDMA_ADAPTER x )
-/*************************************************/
 {
     PGET_DMA_ALIGNMENT  v1;
     ULONG               v2;
@@ -8117,7 +8078,6 @@ __inline ULONG HalGetDmaAlignment( PDMA_ADAPTER x )
 }
 
 __inline ULONG HalReadDmaCounter( PDMA_ADAPTER x )
-/************************************************/
 {
     PREAD_DMA_COUNTER   v1;
     ULONG               v2;
@@ -8134,44 +8094,37 @@ __inline ULONG HalReadDmaCounter( PDMA_ADAPTER x )
 #ifdef __cplusplus
 
 inline CLFS_LSN operator++( CLFS_LSN &x )
-/***************************************/
 {
     x = ClfsLsnIncrement( &x );
     return( x );
 }
 
 inline BOOLEAN operator<( const CLFS_LSN &p1, const CLFS_LSN &p2 )
-/****************************************************************/
 {
     return( ClfsLsnLess( (PCLFS_LSN)&p1, (PCLFS_LSN)&p2 ) );
 }
 
 inline BOOLEAN operator>( const CLFS_LSN &p1, const CLFS_LSN &p2 )
-/****************************************************************/
 {
     return( ClfsLsnGreater( (PCLFS_LSN)&p1, (PCLFS_LSN)&p2 ) );
 }
 
 inline BOOLEAN operator==( const CLFS_LSN &p1, const CLFS_LSN &p2 )
-/*****************************************************************/
 {
     return( ClfsLsnEqual( (PCLFS_LSN)&p1, (PCLFS_LSN)&p2 ) );
 }
 
 inline BOOLEAN operator!=( const CLFS_LSN &p1, const CLFS_LSN &p2 )
-/*****************************************************************/
 {
     return( !ClfsLsnEqual( (PCLFS_LSN)&p1, (PCLFS_LSN)&p2 ) );
 }
 
 inline BOOLEAN operator<=( const CLFS_LSN &p1, const CLFS_LSN &p2 )
-/*****************************************************************/
 {
     return( !ClfsLsnGreater( (PCLFS_LSN)&p1, (PCLFS_LSN)&p2 ) );
 }
 
 inline BOOLEAN operator>=( const CLFS_LSN &p1, const CLFS_LSN &p2 )
-/*****************************************************************/
 {
     return( !ClfsLsnLess( (PCLFS_LSN)&p1, (PCLFS_LSN)&p2 ) );
 }

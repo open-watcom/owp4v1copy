@@ -679,7 +679,6 @@ SCSIPORT_API NTSTATUS NTAPI ClassWmiFireEvent( PDEVICE_OBJECT, LPGUID, ULONG, UL
 
 __inline BOOLEAN PORT_ALLOCATED_SENSE( PFUNCTIONAL_DEVICE_EXTENSION p1,
                                        PSCSI_REQUEST_BLOCK p2 )
-/*********************************************************************/
 {
     return( (BOOLEAN)(TEST_FLAG( p2->SrbFlags, SRB_FLAGS_PORT_DRIVER_ALLOCSENSE) &&
         TEST_FLAG( p2->SrbFlags, SRB_FLAGS_FREE_SENSE_BUFFER ) &&
@@ -688,7 +687,6 @@ __inline BOOLEAN PORT_ALLOCATED_SENSE( PFUNCTIONAL_DEVICE_EXTENSION p1,
 
 __inline VOID FREE_PORT_ALLOCATED_SENSE_BUFFER( PFUNCTIONAL_DEVICE_EXTENSION p1,
                                                 PSCSI_REQUEST_BLOCK p2 )
-/******************************************************************************/
 {
     ASSERT( TEST_FLAG( p2->SrbFlags, SRB_FLAGS_PORT_DRIVER_ALLOCSENSE ) );
     ASSERT( TEST_FLAG( p2->SrbFlags, SRB_FLAGS_FREE_SENSE_BUFFER ) );

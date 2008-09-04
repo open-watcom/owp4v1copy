@@ -3669,7 +3669,6 @@ PKPCR   KeGetCurrentKPCR( void );
 #endif
 
 __inline LUID RtlConvertLongToLuid( LONG x )
-/******************************************/
 {
     LARGE_INTEGER   v1;
     LUID            v2;
@@ -3680,7 +3679,6 @@ __inline LUID RtlConvertLongToLuid( LONG x )
 }
 
 __inline LUID RtlConvertUlongToLuid( ULONG x )
-/********************************************/
 {
     LUID    v;
     v.LowPart = x;
@@ -3689,7 +3687,6 @@ __inline LUID RtlConvertUlongToLuid( ULONG x )
 }
 
 __inline PVOID ExAllocateFromZone( PZONE_HEADER x )
-/*************************************************/
 {
     PVOID   v;
     v = (PVOID)(x->FreeList.Next);
@@ -3701,7 +3698,6 @@ __inline PVOID ExAllocateFromZone( PZONE_HEADER x )
 
 __inline PWHEA_ERROR_PACKET WheaGetErrPacketFromErrRecord( UCHAR p1, 
                                                            PWHEA_ERROR_RECORD p2 )
-/********************************************************************************/
 {
     PWHEA_ERROR_PACKET                      v1;
     PUCHAR                                  v2;

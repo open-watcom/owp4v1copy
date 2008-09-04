@@ -623,7 +623,6 @@ VOID NTAPI      TdiCopyBufferToMdlWithReservedMappingAtDpcLevel( PVOID, PMDL, UL
 
 __inline VOID TdiCopyBufferToMdlWithReservedMapping( PVOID p1, PMDL p2, ULONG p3,
                                                      ULONG p4 )
-/*******************************************************************************/
 {
     KIRQL   v;
     KeRaiseIrql( DISPATCH_LEVEL, &v );

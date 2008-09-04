@@ -34,7 +34,6 @@ DECLARE_INTERFACE_( IAMDirectSound, IUnknown ) {
 };
 
 __inline HRESULT AMValidateAndFixWaveFormatEx( WAVEFORMATEX *p1, DWORD p2 )
-/*************************************************************************/
 {
     if( p2 < sizeof( PCMWAVEFORMAT ) ) {
         return( E_INVALIDARG );

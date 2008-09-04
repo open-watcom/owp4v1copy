@@ -98,19 +98,16 @@ typedef FMTID   *LPFMTID;
 #ifdef __cplusplus
 
 __inline int IsEqualGUID( REFGUID p1, REFGUID p2 )
-/************************************************/
 {
     return( !memcmp( &p1, &p2, sizeof( GUID ) ) );
 }
 
 __inline int operator==( REFGUID p1, REFGUID p2 )
-/***********************************************/
 {
     return( IsEqualGUID( p1, p2 ) );
 }
 
 __inline int operator!=( REFGUID p1, REFGUID p2 )
-/***********************************************/
 {
     return( !(p1 == p2) );
 }
