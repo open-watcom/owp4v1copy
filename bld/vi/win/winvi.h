@@ -40,25 +40,25 @@
 #include "winrtns.h"
 
 #if defined(__WINDOWS_386__)
-    #define WATCOM_ABOUT_EDITOR "Open Watcom Editor for Windows (32-bit)"
+    #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for Windows (32-bit)"
     #define WINEXP FAR PASCAL
     #define MAKEPTR( a ) ((void far *)MK_FP32( (void *) a ))
     #define __FAR__     __far
     #define MEMCPY _fmemcpy
 #elif defined(__WINDOWS__)
-    #define WATCOM_ABOUT_EDITOR "Open Watcom Editor for Windows"
+    #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for Windows"
     #define WINEXP __export FAR PASCAL
     #define MAKEPTR( a ) ((LPVOID) a)
     #define __FAR__
     #define MEMCPY memcpy
 #elif defined(__NT__)
-    #define WATCOM_ABOUT_EDITOR "Open Watcom Editor for Windows NT"
+    #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for Windows"
     #define WINEXP __export __stdcall
     #define MAKEPTR( a ) ((LPVOID) a)
     #define __FAR__
     #define MEMCPY memcpy
 #elif defined(__OS2__)
-    #define WATCOM_ABOUT_EDITOR "Open Watcom Editor for OS/2 PM"
+    #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for OS/2 PM"
     #define WINEXP __export _System
     #define MAKEPTR( a ) ((LPVOID) a)
     #define __FAR__
