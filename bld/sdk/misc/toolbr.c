@@ -33,7 +33,9 @@
 #include <string.h>
 #include <assert.h>
 #ifdef __NT__
-    #define _WIN32_IE   0x0400
+    #ifndef _WIN32_IE
+        #define _WIN32_IE   0x0400
+    #endif
     #include <commctrl.h>
 #endif
 #include "mem.h"
