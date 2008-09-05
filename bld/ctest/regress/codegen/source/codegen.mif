@@ -34,8 +34,8 @@ codegen_tests = &
     op_and.$(exe) &
     op_or.$(exe) &
     op_xor.$(exe) &
-    op_rshift.$(exe) &
-    op_lshift.$(exe) &
+    oprshift.$(exe) &
+    oplshift.$(exe) &
 !ifeq arch i86
     op_add2.$(exe) &
     op_sub2.$(exe) &

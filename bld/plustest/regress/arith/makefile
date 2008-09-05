@@ -1,12 +1,6 @@
 plustest_name = arith
 !include ../environ.mif
 
-!ifndef __UNIX__
-!ifndef __DOS__
-br_opt = -br
-!endif
-!endif
-
 !ifdef test1
 test_cflags_386 = -d2-fpd
 test_cflags_i86 = -d2-fpd

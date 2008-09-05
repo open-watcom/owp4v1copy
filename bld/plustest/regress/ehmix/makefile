@@ -1,12 +1,6 @@
 plustest_name = ehmix
 !include ../environ.mif
 
-!ifndef __UNIX__
-!ifndef __DOS__
-br_opt = -br
-!endif
-!endif
-
 !ifdef test1
 comp_flags = -d2-xs-hd $(br_opt)
 alt_error=01

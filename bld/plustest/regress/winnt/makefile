@@ -5,10 +5,10 @@ plustest_name = winnt
 test_cflags = -oxa-d1
 alt_error=01
 !else ifdef test2
-test_cflags = -oxa-d1 -br
+test_cflags = -oxa-d1 $(br_opt)
 alt_error=02
 !else ifdef test3
-test_cflags = -d2 -br
+test_cflags = -d2 $(br_opt)
 alt_error=03
 !else
 test_cflags = -d2
@@ -20,12 +20,23 @@ test_cflags += -w0-zq -I"$(%watcom)/h/nt"
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) -fo=.obj
 
-test : .symbolic start_test tomexe.exe tomdll.dll
+!ifndef __NT__
+test : .symbolic start_test
+!else ifeq arch i86
+test : .symbolic start_test
+!else ifeq targ_env_386 wnt386
+test : .symbolic start_test tomdll.dll tomexe.exe
     diff exec.out exec.chk
+!else ifdef __NT386__
+test : .symbolic start_test
+!else
+test : .symbolic start_test tomdll.dll tomexe.exe
+    diff exec.out exec.chk
+!endif
     @%make global
     %append $(log_file) PASS $(%__CWD__)
 
-tomexe.exe : tomexe.obj tomdll.dll tomexe.lnk
+tomexe.exe : tomexe.obj tomexe.lnk
     $(linker) @$]@ NAME $@
     $(run) $(exec_prefix)$@
 

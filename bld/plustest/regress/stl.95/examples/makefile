@@ -1,12 +1,6 @@
 plustest_name = stl95
 !include ../../environ.mif
 
-!ifndef __UNIX__
-!ifndef __DOS__
-br_opt = -br
-!endif
-!endif
-
 !ifdef test1
 alt_error = 01
 test_cflags = -oxa-d1
