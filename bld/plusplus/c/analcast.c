@@ -602,7 +602,7 @@ static boolean zeroSrc          // TEST IF SOURCE OPERAND IS CONST ZERO
     ( CONVCTL* ctl )            // - conversion control
 {
     PTREE expr = PTreeOpRight( ctl->expr );
-    return NodeIsZeroConstant( expr );
+    return NodeIsZeroIntConstant( expr );
 }
 
 
@@ -2694,6 +2694,7 @@ PTREE AddCastNode               // ADD A CAST NODE
                     | PTF_PTR_NONZERO  )
     PTF_FLAG flags;             // - flags for cast node
     flags = expr->flags & PTF_CONVERT;
+    type = BindTemplateClass( type, &expr->locn, TRUE );
     expr = NodeBinary( CO_CONVERT, PTreeType( type ), expr );
     expr = NodeSetType( expr, type, flags );
     expr = PTreeCopySrcLocation( expr, expr->u.subtree[1] );
@@ -2814,7 +2815,7 @@ static PTREE doCastImplicit     // DO AN IMPLICIT CAST
             result = implicitArithToPtr( & ctl );
             break;
           case  7 : // arith -> enum
-            if( ConvCtlWarning( &ctl, ANSI_BAD_ENUM_ASSIGNMENT ) ) {
+            if( ConvCtlWarning( &ctl, ERR_BAD_ENUM_ASSIGNMENT ) ) {
                 result = DIAG_ALREADY;
             } else {
                 result = CAST_DO_CGCONV;
@@ -2832,7 +2833,7 @@ static PTREE doCastImplicit     // DO AN IMPLICIT CAST
             break;
           case 12 : // enum -> enum
             if( EnumType( ctl.tgt.unmod ) != EnumType( ctl.src.unmod ) ) {
-                PTreeErrorExpr( expr, ANSI_BAD_ENUM_ASSIGNMENT );
+                PTreeErrorExpr( expr, ERR_BAD_ENUM_ASSIGNMENT );
                 if( ! okSoFar( &ctl ) ) {
                     result = DIAG_ALREADY;
                     break;

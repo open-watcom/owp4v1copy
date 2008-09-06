@@ -296,8 +296,10 @@ public:
   /*inline##*/ CoolEnvelope(CoolEnvelope<CoolLetter>&);         // Copy constructor
   /*inline##*/ ~CoolEnvelope();                 // Destructor
 
-  friend ostream& operator<< (ostream&, const CoolEnvelope&); 
-  friend ostream& operator<< (ostream&, const CoolEnvelope*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolEnvelope<U>&); 
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolEnvelope<U>*);
 
   // should be defined as member function of Letter class
   // friend CoolLetter& operator= (CoolLetter&, CoolEnvelope&);
@@ -404,7 +406,7 @@ inline CoolEnvelope<CoolLetter> CoolEnvOp(name) (const CoolLetter& arg1, const C
 }                                                                             \
                                                                               \
 template<class CoolLetter> \
-inline CoolEnvelope<CoolLetter>& operator op (const CoolLetter& arg1, const CoolEnvelope<CoolLetter>& arg2) {\
+inline CoolEnvelope<CoolLetter> operator op (const CoolLetter& arg1, const CoolEnvelope<CoolLetter>& arg2) {\
   CoolLetter temp(arg1);                        /*Deep copy of arg1*/         \
   temp op_equal *((CoolLetter*) &arg2);         /*Mutate with op arg2*/       \
   CoolEnvelope<CoolLetter>& result = *((CoolEnvelope<CoolLetter>*) &temp);/*Same physical object*/    \

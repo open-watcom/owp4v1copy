@@ -3,7 +3,7 @@
 
 #define DIM 3
 
-void main()
+int main()
 {
     int i,j;
     doubleMatrix identity(DIM,DIM,0.0);

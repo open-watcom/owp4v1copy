@@ -271,7 +271,7 @@ boolean IsCgTypeAggregate(      // CAN TYPE CAN BE INITIALIZED AS AGGREGATE?
         if( info->last_vfn != 0 ) break;
         if( info->last_vbase != 0 ) break;
         if( info->has_data == 0 ) break;
-        if( TypeNeedsCtor( type ) ) break;
+        if( info->has_ctor != 0 ) break;
         retn = TRUE;
         break;
     }

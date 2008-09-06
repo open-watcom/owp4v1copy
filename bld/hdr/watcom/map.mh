@@ -149,7 +149,6 @@ public:
  * ctors
  */
 template <class Key, class Type, class Compare, class Allocator, class Implementation>
-explicit
 map<Key,Type,Compare,Allocator,Implementation>::map(
     const Compare& c,
     const Allocator& a ) : Implementation( c, a )

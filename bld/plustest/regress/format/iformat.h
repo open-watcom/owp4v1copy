@@ -51,13 +51,13 @@
 // if it will work with larger longs (haven't tested it).
 
 #ifndef BIG_NUMBERS
-const IFormatMAXSI = 4;
-const IFormatMaxCommas = 3;
-const IFormatMaxLen = 16; // including -, comma, K and null
+int const IFormatMAXSI = 4;
+int const IFormatMaxCommas = 3;
+int const IFormatMaxLen = 16; // including -, comma, K and null
 #else
-const IFormatMAXSI = 5;
-const IFormatMaxCommas = 6;
-const IFormatMaxLen = 29;
+int const IFormatMAXSI = 5;
+int const IFormatMaxCommas = 6;
+int const IFormatMaxLen = 29;
 #endif
 
 class IFormat {

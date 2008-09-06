@@ -16,6 +16,6 @@ bool str_compare (const char* a_, const char* b_)
 
 int main ()
 {
-  cout << min ("shoe", "shine", str_compare) << endl;
+  cout << min ((char const*)"shoe", (char const*)"shine", str_compare) << endl;
   return 0;
 }

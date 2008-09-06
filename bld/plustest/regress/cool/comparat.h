@@ -18,6 +18,7 @@ template<class T> struct CoolComparator {
 };
 
 // define char* Comparator since so common
+template<>
 struct CoolComparator<char*> {
    static int lessthan(char* a, char* b) { return strcmp(a,b)<0; }
    static int equal(char* a, char* b) { return strcmp(a,b)==0; }

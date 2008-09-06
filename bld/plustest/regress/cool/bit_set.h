@@ -254,7 +254,7 @@ inline Boolean CoolBit_Set::is_empty () const {
 // Output:      Bit Set object containing complement of this set
 
 inline CoolBit_SetE CoolBit_Set::operator~ () {
-  return (this->operator- ());
+  return (CoolBit_SetE &) (this->operator- ());
 }
 
 

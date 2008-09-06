@@ -153,8 +153,10 @@ public:
   Boolean next_xor (CoolSet<Type>&);            // Return next exclusive-or
   Boolean next_intersection (CoolSet<Type>&);   // Return next intersection
   
-  friend ostream& operator<< (ostream&, const CoolSet<Type>&); // Overload output
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolSet<Type>*); 
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolSet<U>&); // Overload output
+  template< class U >
+  inline friend ostream& operator<< (ostream&, const CoolSet<U>*); 
 
   Boolean operator== (const CoolSet<Type>&) const; // Set equality test
   inline Boolean operator!= (const CoolSet<Type>&) const; // Set inequality test
@@ -172,8 +174,10 @@ private:
   Bucket* table;                                // Pointer to key buckets
   Hash h_function;              // Pointer to hash function
   Compare compare;              // Pointer operator== function
-  friend Boolean CoolSet_are_keys_equal (const Type&, const Type&);
-  friend long CoolSet_default_hash (const Type&);
+  template< class U >
+  friend Boolean CoolSet_are_keys_equal (const U&, const U&);
+  template< class U >
+  friend long CoolSet_default_hash (const U&);
   
   Boolean do_find (const Type&) const;          // CoolSet current position
 };
@@ -192,16 +196,16 @@ void hack(CoolSet<CoolGen_String>);
 // Use envelope to avoid deep copy on return by value, and mutate in place
 template<class Type>
 inline CoolEnvelope< CoolSet<Type> > operator| (const CoolSet<Type>&arg1,const CoolSet<Type>&arg2)
-   { return CoolEnvOp(vertical)(arg1, arg2); }
+   { return (CoolEnvelope< CoolSet<Type> > &) CoolEnvOp(vertical)(arg1, arg2); }
 template<class Type>
 inline CoolEnvelope< CoolSet<Type> > operator- (const CoolSet<Type>&arg1,const CoolSet<Type>&arg2)
-   { return CoolEnvOp(minus)(arg1, arg2); }
+   { return (CoolEnvelope< CoolSet<Type> > &) CoolEnvOp(minus)(arg1, arg2); }
 template<class Type>
 inline CoolEnvelope< CoolSet<Type> > operator^ (const CoolSet<Type>&arg1,const CoolSet<Type>&arg2)
-   { return CoolEnvOp(caret)(arg1, arg2); }
+   { return (CoolEnvelope< CoolSet<Type> > &) CoolEnvOp(caret)(arg1, arg2); }
 template<class Type>
 inline CoolEnvelope< CoolSet<Type> > operator& (const CoolSet<Type>&arg1,const CoolSet<Type>&arg2)
-   { return CoolEnvOp(ampersand)(arg1, arg2); }
+   { return (CoolEnvelope< CoolSet<Type> > &) CoolEnvOp(ampersand)(arg1, arg2); }
 
 // operator=  -- Assignment from an envelope back to real set
 // Input:     envelope reference

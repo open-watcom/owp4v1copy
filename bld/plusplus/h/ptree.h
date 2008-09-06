@@ -101,6 +101,8 @@ typedef enum                            // operator attributes
 , PtfFlag( TYPES_DIAGED    , 0x00400000 ) /* - PT_ERROR: types have been diag'ed    */ \
 , PtfFlag( DEFARG_COPY     , 0x00800000 ) /* - ptree is copy of a defarg ptree      */ \
 , PtfFlag( KEEP_MPTR_SIMPLE, 0x01000000 ) /* - if RHS ends up a member-ptr const, leave it alone! */ \
+, PtfFlag( ALREADY_ANALYSED, 0x02000000 ) /* - ptree already analysed               */ \
+, PtfFlag( TYPENAME,         0x04000000 ) /* - typename                             */ \
 , PtfFlag( TRAVERSE_LEFT   , 0x80000000 ) /* - traversing left tree                 */ \
 
 typedef enum                            // operand definitions

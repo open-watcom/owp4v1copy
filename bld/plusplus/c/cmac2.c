@@ -441,7 +441,7 @@ MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
     name_len = TokenLen;
     mlen = offsetof( MEDEFN, macro_name );
     parm_names = NULL;
-    MacroOffsetAddMem( &mlen, Buffer, TokenLen + 1 );
+    MacroOffsetAddMemNoCopy( &mlen, Buffer, TokenLen + 1 );
     if( CurrChar == '(' ) {         /* parms present */
         if( ! ( defn & MSCAN_MANY ) ) {
             BadCmdLine( ERR_INVALID_OPTION );

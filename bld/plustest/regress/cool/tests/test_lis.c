@@ -354,7 +354,7 @@ void list_int_set_test3() {
   CoolList<int> ltemp1;
   CoolList<int> l7(2,2,3);
   CoolList<int> l8(3,1,2,3);
-  CoolList<int> l9 = l7 + l8;
+  CoolList<int> l9 = (CoolList<int> &) (l7 + l8);
   CoolList<int> l10(3,4,5,6);
   CoolList<int> l11(12,1,55,3,88,77,44,33,22,11,66,2,3);
   CoolList<int> l12(5,11,66,111,33,55);
@@ -774,7 +774,7 @@ void list_double_set_test2() {
   CoolList<double> ltemp1;
   CoolList<double> l7(2,2.0,3.0);
   CoolList<double> l8(3,1.0,2.0,3.0);
-  CoolList<double> l9 = l7 + l8;
+  CoolList<double> l9 = (CoolList<double> &) (l7 + l8);
   CoolList<double> l10(3,4.0,5.0,6.0);
   CoolList<double> l11(12,1.0,55.0,3.0,88.0,77.0,44.0,33.0,22.0,11.0,66.0,2.0,3.0);
   CoolList<double> l12(5,11.0,66.0,111.0,33.0,55.0);

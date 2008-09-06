@@ -6,20 +6,20 @@ test_cflags_386 = -d2-fpd-xs-za
 test_cflags_i86 = -d2-fpd-xs-za
 test_cflags_axp = -d2-xs-za
 alt_error=01
-!else ifdef test2
-test_cflags_386 = -os-d1-3s-xss $(br_opt)
-test_cflags_i86 = -os-d1-xss
-test_cflags_axp = -os-d1-xss
+!else ifdef test2   # This test was using -xss, but that does not entirely work yet.
+test_cflags_386 = -os-d1-3s-xs $(br_opt)
+test_cflags_i86 = -os-d1-xs
+test_cflags_axp = -os-d1-xs
 alt_error=02
-!else ifdef test3
-test_cflags_386 = -os-d1-3s-xss-xr
-test_cflags_i86 = -os-d1-xss-xr
-test_cflags_axp = -os-d1-xss-xr
+!else ifdef test3   # This test was using -xss, but that does not entirely work yet.
+test_cflags_386 = -ot-d1-3s-xs-xr
+test_cflags_i86 = -ot-d1-xs-xr
+test_cflags_axp = -ot-d1-xs-xr
 alt_error=03
-!else ifdef test4
-test_cflags_386 = -ot-d1-3r-fpd-xs -oe500
-test_cflags_i86 = -ot-d1-fpd-xs -oe100
-test_cflags_axp = -ot-d1-xs -oe500
+!else ifdef test4   # This test was using -oe500 but that does not entirely work yet.
+test_cflags_386 = -ox-3r-fpd-xs
+test_cflags_i86 = -ox-fpd-xs
+test_cflags_axp = -ox-xs
 alt_error=04
 !else ifdef test5
 test_cflags_386 = -d2-xs $(br_opt)
@@ -44,8 +44,8 @@ stack_axp=opt stack=16k
 # to update add test names here:
 template = &
         aaa$(ext)       &
-	algn01$(ext)    &
-	algm01$(ext)    &
+        algn01$(ext)    &
+        algm01$(ext)    &
         algs01$(ext)    &
         bitset01$(ext)  &
         clib01$(ext)    &
@@ -67,13 +67,14 @@ template = &
         set01$(ext)     &
         set02$(ext)     &
         slist01$(ext)   &
+        smtptr01$(ext)  &
         string01$(ext)  &
         string02$(ext)  &
         typetr01$(ext)  &
         unoset01$(ext)  &
         util01$(ext)    &
         vector01$(ext)  &
-        smtptr01$(ext)
+
 
 # the list of .exe targets
 ext = .$(exe)

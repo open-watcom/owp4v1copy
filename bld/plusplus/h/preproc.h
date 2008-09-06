@@ -24,18 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definitions for preprocessing.
 *
 ****************************************************************************/
 
 
 #ifndef _PREPROC_H_
 #define _PREPROC_H_
-// PREPROC.H -- definitions for preprocessing
-//
-// 91/06/04 -- J.W.Welch        -- defined
-// 92/12/29 -- B.J. Stecher     -- QNX support
 
 #include <stdio.h>
 

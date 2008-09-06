@@ -233,31 +233,29 @@ bool adjacent_find_test( )
 }
 
 
-#ifdef NEVER
 bool count_test( )
 {
     char a[] = { 'a', 'b', 'b', 'd', 'e' };
     int n = -1;
 
-    n = std::count( InpIt<int>(a), InpIt<int>(a + 5), 'b' );
+    n = std::count( InpIt<char>(a), InpIt<char>(a + 5), 'b' );
     if( n != 2 ) FAIL;
 
-    n = std::count( InpIt<int>(a), InpIt<int>(a + 5), 'c' );
+    n = std::count( InpIt<char>(a), InpIt<char>(a + 5), 'c' );
     if( n != 0) FAIL;
 
-    n = std::count( InpIt<int>(a), InpIt<int>(a), 'a' );
+    n = std::count( InpIt<char>(a), InpIt<char>(a), 'a' );
     if( n != 0 ) FAIL;
 
-    n = std::count_if( InpIt<int>(a), InpIt<int>(a + 5), is_odd );
+    n = std::count_if( InpIt<char>(a), InpIt<char>(a + 5), is_odd );
     if( n != 2 ) FAIL;
 
-    n = std::count_if(InpIt<int>(a), InpIt<int>(a + 5),
-                      std::bind1st( std::less< int >( ), 'b' ) );
+    n = std::count_if(InpIt<char>(a), InpIt<char>(a + 5),
+                      std::bind1st( std::less< char >( ), 'b' ) );
     if( n != 2 ) FAIL;
 
     return( true );
 }
-#endif
 
 
 bool mismatch_test( )
@@ -335,7 +333,7 @@ int main( )
     if( !find_end_test( )       || !heap_ok( "t03" ) ) rc = 1;
     if( !find_first_of_test( )  || !heap_ok( "t04" ) ) rc = 1;
     if( !adjacent_find_test( )  || !heap_ok( "t05" ) ) rc = 1;
-    // if( !count_test( )       || !heap_ok( "t06" ) ) rc = 1;
+    if( !count_test( )       || !heap_ok( "t06" ) ) rc = 1;
     if( !mismatch_test( )       || !heap_ok( "t07" ) ) rc = 1;
     if( !equal_test( )          || !heap_ok( "t08" ) ) rc = 1;
   }

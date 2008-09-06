@@ -31,8 +31,10 @@
 
 #include "plusplus.h"
 
+#ifndef __UNIX__
 #include <mbstring.h>
 #include <mbctype.h>
+#endif
 
 #include "scan.h"
 
@@ -63,7 +65,7 @@ void SetDBChar( int character_set )
         setRange( 0x81, 0xfd );
         break;
     case -1:
-#ifndef __LINUX__
+#ifndef __UNIX__
         {
             unsigned i;
 

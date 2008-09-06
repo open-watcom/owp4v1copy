@@ -188,7 +188,8 @@ class reverse_bidirectional_iterator
     : public bidirectional_iterator<T, Distance> {
     typedef reverse_bidirectional_iterator<BidirectionalIterator, T, Reference,
                                            Distance> self;
-    friend bool operator==(const self& x, const self& y);
+    template< class B, class T, class R, class D >
+    friend bool operator==(const reverse_bidirectional_iterator<B,T,R,D>& x, const reverse_bidirectional_iterator<B,T,R,D>& y);
 protected:
     BidirectionalIterator current;
 public:
@@ -236,10 +237,14 @@ template <class RandomAccessIterator, class T, class Reference,
 class reverse_iterator : public random_access_iterator<T, Distance> {
     typedef reverse_iterator<RandomAccessIterator, T, Reference, Distance>
         self;
-    friend bool operator==(const self& x, const self& y);
-    friend bool operator<(const self& x, const self& y);
-    friend Distance operator-(const self& x, const self& y);
-    friend self operator+(Distance n, const self& x);
+    template<class I, class T, class R, class D>
+    friend bool operator==(const reverse_iterator<I,T,R,D>& x, const reverse_iterator<I,T,R,D>&y);
+    template<class I, class T, class R, class D>
+    friend bool operator<(const reverse_iterator<I,T,R,D>& x, const reverse_iterator<I,T,R,D>& y);
+    template<class I, class T, class R, class D>
+    friend D operator-(const reverse_iterator<I,T,R,D>& x, const reverse_iterator<I,T,R,D>& y);
+    template<class I, class T, class R, class D>
+    friend reverse_iterator<I,T,R,D> operator+(Distance n, const reverse_iterator<I,T,R,D>& x);
 protected:
     RandomAccessIterator current;
 public:
@@ -341,8 +346,9 @@ public:
 
 template <class T, class Distance> // Distance == ptrdiff_t
 class istream_iterator : public input_iterator<T, Distance> {
-friend bool operator==(const istream_iterator<T, Distance>& x,
-                       const istream_iterator<T, Distance>& y);
+    template< T, Distance >
+    friend bool operator==( const istream_iterator<T, Distance>& x,
+                            const istream_iterator<T, Distance>& y );
 protected:
     istream* stream;
     T value;

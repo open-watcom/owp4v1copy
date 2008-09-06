@@ -837,6 +837,7 @@ boolean MembPtrZeroConst(       // DETERMINE IF ZERO MEMBER-PTR CONSTANT
 {
     expr = expr->u.subtree[0];
     expr = expr->u.subtree[1];
+
     return NodeIsZeroConstant( expr );
 }
 

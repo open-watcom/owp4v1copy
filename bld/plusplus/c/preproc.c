@@ -32,8 +32,6 @@
 
 #include "plusplus.h"
 
-#include <process.h>
-
 #include "memmgr.h"
 #include "errdefns.h"
 #include "iosupp.h"

@@ -207,8 +207,6 @@ ForwardIterator adjacent_find( ForwardIterator first,
     return( last );
 }
 
-:: Commented out due to compiler bug.
-#ifdef _NEVER
 // count( InputIterator, InputIterator, const Type & )
 // ***************************************************
 template< class InputIterator, class Type >
@@ -240,7 +238,6 @@ typename iterator_traits< InputIterator >::difference_type
     }
     return( number );
 }
-#endif
 
 // mismatch( InputIterator1, InputIterator1, InputIterator2 )
 //***********************************************************

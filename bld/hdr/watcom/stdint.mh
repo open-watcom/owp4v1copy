@@ -6,9 +6,63 @@
  * Description: This header is part of the C standard library. It
  *              describes a number of useful integer types.
  ***************************************************************************/
+:segment CNAME
+#ifndef _CSTDINT_INCLUDED
+#define _CSTDINT_INCLUDED
+
+#ifndef __cplusplus
+#error The header cstdint requires C++
+#endif
+:elsesegment
 #ifndef _STDINT_H_INCLUDED
 #define _STDINT_H_INCLUDED
+:endsegment
+
 :include readonly.sp
+
+:: In C++ .h header version import names into standard namespace
+:segment !CNAME
+#ifdef __cpluplus
+#include <cstdint>
+
+using std::tr1::int8_t;
+using std::tr1::uint8_t;
+using std::tr1::int16_t;
+using std::tr1::uint16_t;
+using std::tr1::int32_t;
+using std::tr1::uint32_t
+using std::tr1::int64_t;
+using std::tr1::uint64_t;
+using std::tr1::int_least8_t;
+using std::tr1::uint_least8_t;
+using std::tr1::int_least16_t;
+using std::tr1::uint_least16_t;
+using std::tr1::int_least32_t;
+using std::tr1::uint_least32_t;
+using std::tr1::int_least64_t;
+using std::tr1::uint_least64_t;
+using std::tr1::int_fast8_t;
+using std::tr1::uint_fast8_t;
+using std::tr1::int_fast16_t;
+using std::tr1::uint_fast16_t;
+using std::tr1::int_fast32_t;
+using std::tr1::uint_fast32_t;
+using std::tr1::int_fast64_t;
+using std::tr1::uint_fast64_t;
+using std::tr1::intptr_t;
+using std::tr1::uintptr_t;
+using std::tr1::intmax_t;
+using std::tr1::uintmax_t;
+
+#else // end C++ stdint.h, start C stdint.h
+:: End .h version additions
+:endsegment
+
+:: In cname version place all these typedefs in std::tr1 namespace
+:segment CNAME
+namespace std{
+namespace tr1{
+:endsegment
 
 :: "The Alpha NT version (the only one we have) has 32-bit long ints and
 :: 64-bit long long ints. Essentially the system behaves just like a
@@ -83,6 +137,11 @@ typedef unsigned int uintptr_t;
 /* Greatest-width types. */
 typedef long long intmax_t;
 typedef unsigned long long uintmax_t;
+
+:segment CNAME
+}; // end namespace tr1
+}; // end namepace std
+:endsegment
 
 /* Limit macros. According to C99 these are only visible in C++ programs
    if __STDC_LIMIT_MACROS is defined. */
@@ -241,5 +300,9 @@ typedef unsigned long long uintmax_t;
 #endif
 
 :include saferepi.sp
+
+:segment !CNAME
+#endif // end if C++ else C
+:endsegment
 
 #endif

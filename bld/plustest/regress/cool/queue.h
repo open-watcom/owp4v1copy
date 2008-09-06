@@ -106,8 +106,10 @@ public:
   inline void set_alloc_size (int);             // Set alloc size
   void set_compare(Compare = NULL); // Set compare function
 
-  friend ostream& operator<< (ostream&, const CoolQueue<Type>&); 
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolQueue<Type>*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolQueue<U>&);
+  template < class U >
+  inline friend ostream& operator<< (ostream&, const CoolQueue<U>*);
 
 protected:
   Type* data;                                   // Pointer to allocated storage
@@ -116,7 +118,8 @@ protected:
   ostream& qprint(ostream& os) const;           // Print a queue
 
 private:
-  friend Boolean CoolQueue_is_data_equal (const Type&, const Type&);
+  template< class U >
+  friend Boolean CoolQueue_is_data_equal (const U&, const U&);
 };
 
 

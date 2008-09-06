@@ -115,7 +115,8 @@ public: //## when friend below works with BC++, delete this line
   void index_error (const char* fcn, int i);    // Raise exception
 
 //##  friend class CoolN_Tree<CoolD_Node<Type,nchild> >;        // Friend class to access data
-  friend int default_CoolD_Node_compare (const Type&, const Type&);
+  template< class U >
+  friend int default_CoolD_Node_compare (const U&, const U&);
 };
 
 

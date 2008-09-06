@@ -37,7 +37,9 @@
 #include <fcntl.h>
 #include <setjmp.h>
 #include <limits.h>
+#ifdef __WATCOMC__
 #include <share.h>
+#endif
 
 #include "errdefns.h"
 #include "memmgr.h"
@@ -106,7 +108,7 @@ static fpos_t bufferPosition;
 #define pch_buff_cur CompInfo.pch_buff_cursor
 #define pch_buff_eob CompInfo.pch_buff_end
 
-static jmp_buf *abortData;
+static jmp_buf  *abortData;
 
 #ifndef NDEBUG
 static clock_t start_parse;
@@ -139,7 +141,7 @@ char *PCHFileName( void )
 
 static void fail( void )
 {
-    longjmp( abortData, 1 );
+    longjmp( *abortData, 1 );
 }
 
 static void dumpHeader( void )
@@ -480,7 +482,11 @@ void PCHeaderCreate( char *include_file )
         return;
     }
     pch_fname = PCHFileName();
+#ifdef __WATCOMC__
     pchFile = sopen( pch_fname, O_RDWR|O_BINARY|O_CREAT|O_TRUNC, SH_DENYRW, S_IREAD|S_IWRITE );
+#else
+    pchFile = open( pch_fname, O_RDWR|O_BINARY|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE );
+#endif
     if( pchFile == -1 ) {
         CErr2p( ERR_PCH_CREATE_ERROR, pch_fname );
         return;
@@ -924,7 +930,7 @@ void* PCHReadLocate( void *p, size_t size )
     aligned_size = _pch_align_size( size );
     retn = pch_buff_cur;
     end = (char*)retn + aligned_size;
-    if( end <= pch_buff_eob ) {
+    if( end <= (void *)pch_buff_eob ) {
         pch_buff_cur = end;
         return retn;
     }
@@ -940,7 +946,7 @@ void* PCHReadLocateUnaligned( void *p, size_t size )
     PCHTrashAlreadyRead();
     retn = pch_buff_cur;
     end = (char*)retn + size;
-    if( end <= pch_buff_eob ) {
+    if( end <= (void *)pch_buff_eob ) {
         pch_buff_cur = end;
         return retn;
     }
@@ -965,7 +971,7 @@ unsigned PCHReadUInt( void )
     PCHTrashAlreadyRead();
     buff_ptr = pch_buff_cur;
     end = (char*)buff_ptr + sizeof( value );
-    if( end <= pch_buff_eob ) {
+    if( end <= (void *)pch_buff_eob ) {
         DbgAssert((((unsigned) buff_ptr ) % sizeof( unsigned ) ) == 0 );
         p_value = (unsigned*)buff_ptr;
         pch_buff_cur = end;
@@ -986,7 +992,7 @@ unsigned PCHReadUIntUnaligned( void )
     PCHTrashAlreadyRead();
     buff_ptr = pch_buff_cur;
     end = (char*)buff_ptr + sizeof( value );
-    if( end <= pch_buff_eob ) {
+    if( end <= (void *)pch_buff_eob ) {
         p_value = (unsigned*)buff_ptr;
         pch_buff_cur = end;
         value = *p_value;
@@ -1014,7 +1020,7 @@ void* PCHReadPtr( void )
     PCHTrashAlreadyRead();
     buff_ptr = pch_buff_cur;
     end = (char*)buff_ptr + sizeof( value );
-    if( end <= pch_buff_eob ) {
+    if( end <= (void *)pch_buff_eob ) {
         p_value = (void**)buff_ptr;
         pch_buff_cur = end;
         value = *p_value;

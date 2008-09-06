@@ -74,8 +74,10 @@ public:
   
   void set_compare(Boolean (*) (const CoolPair<T1,T2>&, const CoolPair<T1,T2>&) = NULL); // Set compare function
   
-  friend ostream& operator<< (ostream&, const CoolPair<T1,T2>&); // Output operator
-  /*##inline*/ friend ostream& operator<< (ostream&, const CoolPair<T1,T2>*);
+  template< class U1, class U2 >
+  friend ostream& operator<< (ostream&, const CoolPair<U1,U2>&); // Output operator
+  template< class U1, class U2 >
+  inline friend ostream& operator<< (ostream&, const CoolPair<U1,U2>*);
   
   void print(ostream&);                         // terse print
 
@@ -83,7 +85,8 @@ private:
   T1 firstd;                                    // First data slot
   T2 secondd;                                   // Second data slot
   static Boolean (*compare_s) (const CoolPair<T1,T2>&, const CoolPair<T1,T2>&); // Pointer operator== function
-  friend Boolean is_data_equal (const CoolPair<T1,T2>&, const CoolPair<T1,T2>&); 
+  template< class U1, class U2 >
+  friend Boolean is_data_equal (const CoolPair<U1,U2>&, const CoolPair<U1,U2>&); 
 };
 
 

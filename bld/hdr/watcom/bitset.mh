@@ -188,7 +188,7 @@ namespace std {
 #if _NEVER
     template< size_t N >
     template< class Ch, class Tr, class A >
-    explicit bitset< N >::bitset( const basic_string< Ch, Tr, A >& str,
+    bitset< N >::bitset( const basic_string< Ch, Tr, A >& str,
                                   typename basic_string< Ch, Tr, A >::size_type pos = 0,
                                   typename basic_string< Ch, Tr, A >::size_type n = basic_string< Ch, Tr, A >::npos )
     {

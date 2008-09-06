@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate table of tokens for yacc.
 *
 ****************************************************************************/
 
@@ -42,24 +41,24 @@ char *Tokens[] = {
 #include "ctokens.h"
 
 
-void main( int argc, char **argv )
+int main( int argc, char **argv )
 {
     FILE *ofp;
     int i;
 
     if( argc != 2 ) {
         puts( "usage: umktable <output-file>" );
-        exit(1);
+        return( 1 );
     }
     ofp = fopen( argv[1], "w" );
     if( !ofp ) {
         puts( "cannot open output file" );
-        exit(1);
+        return( 1 );
     }
     i = T_LAST_TOKEN;
     if( i > 255 ) {
         puts( "too many tokens!" );
-        exit(1);
+        return( 1 );
     }
     if( i > 200 ) {
         puts( "/* over 200 tokens! */" );
@@ -98,5 +97,5 @@ void main( int argc, char **argv )
     }
     fprintf( ofp, "  0 };\n" );
     fclose( ofp );
-    exit(0);
+    return( 0 );
 }

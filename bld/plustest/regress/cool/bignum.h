@@ -237,7 +237,7 @@ inline CoolBignum& CoolBignum::operator= (CoolBignumE& env){
 // Outputs:  the CoolBignum difference of the two input CoolBignums
 
 inline CoolBignumE operator- (const CoolBignum& b1, const CoolBignum& b2) {
-  return (b1 + (-b2));                          // negate b2 and add to b1
+  return (CoolBignumE &) (b1 + (-b2));                          // negate b2 and add to b1
 }
 
 

@@ -4,7 +4,7 @@
 #include        "perlclas.h"
 #include        "perlasso.h"
 
-void main()
+int main()
 {
 ifstream fin("t.in");
 ofstream fout("t2.out");

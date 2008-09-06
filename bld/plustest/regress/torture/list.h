@@ -50,11 +50,15 @@ public:
 
 // Inquiry member functions //
 
-   friend ostream& operator<<(ostream& os, const JAM_List<T>& list);
-   friend istream& operator>>(istream& is, JAM_List<T>& list);
+   template<class TT>
+   friend ostream& operator<<(ostream& os, const JAM_List<TT>& list);
+   template<class TT>
+   friend istream& operator>>(istream& is, JAM_List<TT>& list);
 
-   friend int operator==(const JAM_List<T>& list1, const JAM_List<T>& list2);
-   friend int operator!=(const JAM_List<T>& list1, const JAM_List<T>& list2);
+   template<class TT>
+   friend int operator==(const JAM_List<TT>& list1, const JAM_List<TT>& list2);
+   template<class TT>
+   friend int operator!=(const JAM_List<TT>& list1, const JAM_List<TT>& list2);
 
    int empty() const
       { return _data.length()==0; }
@@ -103,12 +107,14 @@ public:
    void remove_all(const T& item);
    //: removes all occurances of item
 
-   friend JAM_List<T> concat(const JAM_List<T>& list1,
-                             const JAM_List<T>& list2);
+   template<class TT>
+   friend JAM_List<TT> concat(const JAM_List<TT>& list1,
+                              const JAM_List<TT>& list2);
    //: returns new list made by concatenating list1 and list2
 
-   friend JAM_List<T> operator+(const JAM_List<T>& list1,
-                                const JAM_List<T>& list2);
+   template<class TT>
+   friend JAM_List<TT> operator+(const JAM_List<TT>& list1,
+                                 const JAM_List<TT>& list2);
    //: calls concat()
 
 

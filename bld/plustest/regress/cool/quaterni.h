@@ -27,6 +27,7 @@
 // 2. Horn, B.K.P. (1987) Robot Vision. MIT Press. pp. 437-551.
 
 #ifndef QUATERNIONH
+#define QUATERNIONH
 
 #ifndef MATRIXH
 #include <cool/Matrix.h>
@@ -69,7 +70,7 @@ class CoolQuaternion : public CoolM_Vector<float> {
   Boolean operator== (const CoolQuaternion& rhs) const; // cmp with fuzz = 1.0e-6
   inline Boolean operator!= (const CoolQuaternion& rhs) const; // instead of 1.0e-8
   
-  inline operator CoolM_Vector<float>& ();      // cast to 4-elmt vector
+  //inline operator CoolM_Vector<float>& ();      // cast to 4-elmt vector
   CoolEnvelope_Matrix/*##*/< CoolMatrix<float> > rotation_transform (int dim = 4) const; // to 2-4 rot matrix
   
   CoolEnvelope<CoolQuaternion> conjugate () const;              // same real, opposite img part
@@ -141,7 +142,7 @@ inline float CoolQuaternion::real () const {
 // imaginary -- Get imaginary part
 
 inline CoolEnvelope_M_Vector/*##*/< CoolM_Vector<float> > CoolQuaternion::imaginary () const {
-  return this->extract(3,0);
+  return (CoolEnvelope_M_Vector< CoolM_Vector<float> > &) this->extract(3,0);
 }
 
   // operator=  -- Assignment q1 = q2;
@@ -170,10 +171,10 @@ inline Boolean CoolQuaternion::operator!= (const CoolQuaternion& rhs) const {
 // operator M_Vector  --  Automatic conversion to a 4-elmt vector.
 // Input:    *this, a Quaternion.
 // Output:   a reference to the 4-elmt vector, through a type-cast.
-
-inline CoolQuaternion::operator CoolM_Vector<float>& () {
-  return *((CoolM_Vector<float>*) this);        // same physical space
-}
+//don't do this, vector is a base class
+//inline CoolQuaternion::operator CoolM_Vector<float>& () {
+//  return *((CoolM_Vector<float>*) this);        // same physical space
+//}
 
 // operator<<  -- Print the components of Quaternion.
 

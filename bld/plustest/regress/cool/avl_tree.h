@@ -68,8 +68,10 @@ public:
   void balance ();                              // Special balance for AVL
   inline CoolAVL_Tree<Type>& operator= (CoolAVL_Tree<Type>&);  // Assignment overloaded
   inline CoolAVL_Tree<Type>& operator= (CoolBinary_Tree<Type>&);//Assignment overloaded
-  friend ostream& operator<< (ostream&, const CoolAVL_Tree<Type>&);
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolAVL_Tree<Type>*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolAVL_Tree<U>&);
+  template< class U >
+  inline friend ostream& operator<< (ostream&, const CoolAVL_Tree<U>*);
 };
 
 

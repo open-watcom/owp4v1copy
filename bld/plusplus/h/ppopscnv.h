@@ -64,6 +64,12 @@
 // UNARY OPERATORS
 //
 {   OPBASIC( BOOL,       MAX,        OPM_B  | OPM_I  | OPM_A        )
+,   OPBASIC( CHAR,       MAX,        OPM_I  | OPM_A                 )
+,   OPBASIC( SCHAR,      MAX,        OPM_I  | OPM_A                 )
+,   OPBASIC( UCHAR,      MAX,        OPM_I  | OPM_A                 )
+,   OPBASIC( WCHAR,      MAX,        OPM_I  | OPM_A                 )
+,   OPBASIC( SSHORT,     MAX,        OPM_I  | OPM_A                 )
+,   OPBASIC( USHORT,     MAX,        OPM_I  | OPM_A                 )
 ,   OPBASIC( SINT,       MAX,        OPM_I  | OPM_A                 )
 ,   OPBASIC( UINT,       MAX,        OPM_I  | OPM_A                 )
 ,   OPBASIC( SLONG,      MAX,        OPM_I  | OPM_A                 )

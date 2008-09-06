@@ -99,7 +99,7 @@ public:
     void assign( size_type, value_type const & );
 
     allocator_type get_allocator() const 
-        { allocator_type a( mMem ); return( mMem ); }
+        { allocator_type a( mMem ); return( a ); }
 
     
     /* ------------------------------------------------------------------
@@ -437,7 +437,7 @@ private:
  */
 /*err, this only seems to work inlined, whats going on?
 template< class Type, class Allocator >
-explicit list< Type, Allocator >::list( Allocator const & a )
+list< Type, Allocator >::list( Allocator const & a )
     : mSize(0), mMem(a), dlMem(a)
 {
     sentinel = dlMem.allocate( 1 );
@@ -449,8 +449,8 @@ explicit list< Type, Allocator >::list( Allocator const & a )
  * construct with n copies of t
  */
 template< class Type, class Allocator > 
-explicit list< Type, Allocator >::list( size_type n, Type const & t,
-                                        Allocator const & a )
+list< Type, Allocator >::list( size_type n, Type const & t,
+                               Allocator const & a )
     : mSize(0), mMem(a), dlMem(a)
 {
     sentinel = dlMem.allocate( 1 );

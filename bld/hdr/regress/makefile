@@ -135,7 +135,7 @@ _UI8_MAX      = 255
 
 <<
 !endif
-     del exercise.*
+    rm -f exercise.*
 
 clean: .symbolic
     rm -f exercise.*

@@ -59,7 +59,7 @@ public:
         }
 
     template< class Type2 >
-    LowMemAllocator( Type2 const & x ) : mState(x.mState)
+    LowMemAllocator( LowMemAllocator<Type2> const & x ) : mState(x.mState)
         { ++mState->mRefCount; }
 
     //to do: check standard... do we really need to redefine this if 

@@ -101,7 +101,7 @@ void* JAM_NewLog::alloc(size_t size)
          JAM_crash("Heap corrupted before new.");
 #endif
    if (allocated==0) {
-      static already_in = 0;
+      static int already_in = 0;
       JAM_assert(!already_in);
       already_in = 1;
       allocated = new (allocated_buffer.buf) VoidPtrSet;

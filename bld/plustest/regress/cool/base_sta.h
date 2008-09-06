@@ -67,7 +67,7 @@ class CoolBase_Stack {
 protected:
   long size;                                    // Size of allocated storage
   long number_elements;                         // Number of elements in stack
-  static alloc_size_s;                          // Allocation size for growth
+  static int alloc_size_s;                          // Allocation size for growth
   float growth_ratio;                           // If non-zero, growth ratio
 
   void top_error (const char*);                 // Raise exception

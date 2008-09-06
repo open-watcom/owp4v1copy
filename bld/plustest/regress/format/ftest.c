@@ -3,7 +3,7 @@
 
 // Function prototypes
 
-const SAMPLEWIDTH = 25;
+int const SAMPLEWIDTH = 25;
 
 void test_switches();
 void show_width(int width);
@@ -16,14 +16,14 @@ int main()
 
 void test_switches()
 {
-    const width2 = 7;
-    const width3 = 7;
-    const sepw4 = 4;
-    const width5 = 5;
-    const width6 = 5;
-    const width7 = 15;
+    int const width2 = 7;
+    int const width3 = 7;
+    int const sepw4 = 4;
+    int const width5 = 5;
+    int const width6 = 5;
+    int const width7 = 15;
 
-    const max_sig = 7;
+    int const max_sig = 7;
     ld l;
     FFormat sample;
     sample.SetWidth(SAMPLEWIDTH);

@@ -49,7 +49,7 @@ ExtraRptCtr( ctr_cgfiles );     // number of CGFILE lookups
 
 
 typedef struct _ovfn OVFN;
-typedef struct _ovfn {          // ORIGINATING VIRTUAL FUNCTION
+struct _ovfn {                  // ORIGINATING VIRTUAL FUNCTION
     OVFN *next;                 // - next in ring
     SYMBOL vfun;                // - the virtual function
 };

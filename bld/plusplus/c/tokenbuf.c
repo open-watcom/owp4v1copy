@@ -32,8 +32,6 @@
 
 #include "plusplus.h"
 
-#include <malloc.h>
-
 #include "preproc.h"
 #include "tokenbuf.h"
 #include "memmgr.h"

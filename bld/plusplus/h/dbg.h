@@ -175,6 +175,12 @@ void PrintType(                 // PRINT TYPE ENTRY
 void PrintFullType(             // PRINT FULL TYPE INFORMATION
     TYPE tp )                   // - type pointer
 ;
+void DumpTemplateInfo(          // DUMP A TEMPLATE INFO
+    TEMPLATE_INFO *tinfo )      // - template info
+;
+void DumpTemplateSpecialization(// DUMP A TEMPLATE SPECIALIZATION
+    TEMPLATE_SPECIALIZATION *tspec )// - template specialization
+;
 
 #else
 //

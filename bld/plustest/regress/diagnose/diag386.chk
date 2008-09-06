@@ -7,7 +7,7 @@ File: source\diag0077.c
 (34,31): Warning! W211: #pragma attributes for '__brk1' may be inconsistent
   definition: 'void __pragma("__brk1") __brk1( void )'
 (36,35): Error! E609: pragma name 'not' is not defined
-(45,22): Warning! W139: enumeration variable is not assigned a constant from its enumeration
+(45,22): Error! E139: enumeration variable is not assigned a constant from its enumeration
   source conversion type is 'int'
   target conversion type is 'E'
 (56,10): Error! E042: symbol 'S::f' already defined
@@ -27,10 +27,7 @@ File: source\diag0077.c
   definition: '<error> z' in 'void foo( void )'
 (76,15): Error! E385: attempt to overload function 'pfn' with a different return type
   definition: 'void __pragma("pfn") pfn( ... )'
-(79,18): Error! E226: function 'sam' is not distinct
-  definition: 'void sam( int )'
 (82,32): Error! E273: the first argument of 'operator new' must be of type size_t
-(82,32): Error! E226: function 'operator new' is not distinct
 (85,27): Warning! W249: using default arguments would be overload ambiguous with 'd' using default arguments
   definition: 'void d( int [, int ])'
 (92,23): Error! E224: 'fn' is a variable of type void
@@ -116,11 +113,11 @@ File: source\diag0080.c
   source conversion type is 'VV *'
   target conversion type is 'CC *'
 (120,1): Error! E212: function arguments cannot be of type void
-(125,13): Error! E215: no declared 'operator new' has arguments that match
+(125,17): Error! E215: no declared 'operator new' has arguments that match
   rejected function: void * CC::operator new( unsigned, char ) defined at: (107,11)
   rejected function: void * CC::operator new( unsigned, signed char ) defined at: (108,11)
 (126,23): Error! E223: cannot initialize array with 'operator new'
-(127,13): Error! E228: declared 'operator new' is ambiguous for arguments used
+(127,17): Error! E228: declared 'operator new' is ambiguous for arguments used
   ambiguous function: void * CC::operator new( unsigned, char ) defined at: (107,11)
   ambiguous function: void * CC::operator new( unsigned, signed char ) defined at: (108,11)
 (136,6): Error! E230: expression on left is an array
@@ -135,8 +132,8 @@ File: source\diag0080.c
   right operand type is 'int'
 (140,12): Error! E240: enum 'a' has not been declared
 (141,8): Error! E241: class or namespace 'a' has not been declared
-(141,8): Error! E029: symbol 't' has not been declared
-(141,11): Error! E029: symbol 'q' has not been declared
+(141,8): Error! E926: syntax error: 'a::t' has not been declared as a member
+(142,9): Error! E029: symbol 'q' has not been declared
 (144,35): Error! E243: default arguments are not part of a function's type
 (151,8): Error! E569: left expression is not a pointer to a volatile object
   left operand type is 'void * (lvalue)'
@@ -157,7 +154,7 @@ File: source\diag0080.c
 (176,1): Warning! W726: no reference to formal parameter 'p'
   definition: 'S158 * p' in 'void x173( S158 *, CC * )'
 (179,11): Error! E304: class 'S173' has not been defined
-(185,8): Error! E356: type cannot be used in this context
+(185,8): Error! E928: syntax error: identifier 'T', but expected: 'id-expression'
 (195,14): Error! E400: cannot convert right expression for initialization
   source conversion type is 'D186 *'
   target conversion type is 'D186 * *'
@@ -330,7 +327,8 @@ File: source\diag0080.c
   'S341' defined at: (349,8)
 (399,14): Error! E540: destructor is not properly qualified
   'S384' defined at: (392,8)
-(400,7): Error! E029: symbol 'q' has not been declared
+(400,8): Error! E252: class declaration has not been seen for '~q'
+(400,6): Error! E538: destructor can be invoked only with '.' or '->'
 (405,23): Error! E541: pointers to class members reference different object types
   source conversion type is 'int S327::*'
   target conversion type is 'char S327::*'
@@ -524,7 +522,7 @@ File: source\diag0166.c
 (11,34): Error! E607: #pragma aux must reference a "C" linkage function 'two_cpps'
   definition: 'void two_cpps( char, char )'
 (24,34): Error! E607: #pragma aux must reference a "C" linkage function 'many_cpp'
-  template function 'void many_cpp( ?, ? )' defined at: (23,10)
+  template function 'void many_cpp( ?1, ?1 )' defined at: (23,10)
 (30,2): Error! E080: end 10.0 specific diagnostics
 (37,14): Error! E682: cannot inherit a class that contains a zero size array
 (45,13): Error! E683: zero size array 'D::a' cannot be used in a class with base classes

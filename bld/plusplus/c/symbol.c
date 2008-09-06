@@ -92,6 +92,14 @@ TYPE SymClass(                  // GET TYPE FOR CLASS CONTAINING A SYMBOL
     SYMBOL sym )                // - the symbol
 {
     SCOPE scope;                // - SCOPE for "sym"
+    SYMBOL templ_sym;
+
+    sym = SymDefaultBase( SymDeAlias( sym ) );
+
+    templ_sym = SymIsFunctionTemplateInst( sym );
+    if( templ_sym != NULL ) {
+        sym = templ_sym;
+    }
 
     symGetScope( sym, scope );
     if( scope == NULL ) {
@@ -105,12 +113,18 @@ static SCOPE symClassScope(     // GET SCOPE FOR CLASS CONTAINING SYMBOL
     SYMBOL sym )
 {
     SCOPE scope;                // - SCOPE for "sym"
+    SYMBOL templ_sym;
+
+    sym = SymDefaultBase( SymDeAlias( sym ) );
+
+    templ_sym = SymIsFunctionTemplateInst( sym );
+    if( templ_sym != NULL ) {
+        sym = templ_sym;
+    }
 
     symGetScope( sym, scope );
-    if( scope != NULL ) {
-        if( ScopeId( scope ) == SCOPE_CLASS ) {
-            return( scope );
-        }
+    if( scope && ScopeType( scope, SCOPE_CLASS ) ) {
+        return( scope );
     }
     return( NULL );
 }
@@ -778,12 +792,13 @@ boolean SymIsModuleDtorable(    // TEST IF SYMBOL IS MODULE-DTORABLE
     /*
         three cases:
 
-            (1) file scope variables
+            (1) file scope variables (but not temporaries)
             (2) class static members
             (3) function static variables
     */
     symGetScope( sym, scope );
-    if( ScopeId( scope ) == SCOPE_FILE ) {
+    if( ( sym->name->name[0] != NAME_DUMMY_PREFIX_0 )
+     && ( ScopeId( scope ) == SCOPE_FILE ) ) {
         retn = TRUE;
     } else {
         retn = ( sym->id == SC_STATIC );
@@ -927,7 +942,8 @@ SYMBOL SymIsFunctionTemplateInst(// TEST IF SYMBOL WAS GENERATED FROM A FUNCTION
 
     if( SymIsFnTemplateMatchable( sym ) ) {
         symGetScope( sym, scope );
-        if( ScopeId( scope ) == SCOPE_FILE ) {
+        if( ScopeType( scope, SCOPE_FILE )
+         || ScopeType( scope, SCOPE_TEMPLATE_INST ) ) {
             /* get function template sym */
             sym = sym->u.alias;
             if( sym != NULL ) {
@@ -1371,5 +1387,16 @@ SYMBOL SymConstantValue             // GET CONSTANT VALUE FOR SYMBOL
     } else {
         Int64From32( sym->sym_type, sym->u.sval, &pval->value );
     }
+    return sym;
+}
+
+SYMBOL SymDefArgBase(               // GET DEFARG BASE SYMBOL
+    SYMBOL sym )                    // - the symbol
+{
+    sym = sym;
+    while( SymIsDefArg( sym ) ) {
+        sym = sym->thread;
+    }
+
     return sym;
 }

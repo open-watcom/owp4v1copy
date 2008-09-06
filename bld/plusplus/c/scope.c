@@ -272,6 +272,7 @@ typedef struct {                                /* I - input, O - output */
     unsigned            file_ns_done : 1;       /* O: N::id search from file-scope done */
     unsigned            same_table : 1;         /* O: vfn name is in same table */
     unsigned            lookup_error : 1;       /* O: error to report from lookup */
+    unsigned            member_lookup : 1;
 } lookup_walk;
 
 typedef struct access_data {
@@ -288,6 +289,7 @@ struct qualify_stack {
     QUALIFICATION       *next;
     SCOPE               reset;
     SCOPE               access;
+    SCOPE               enclosing;
 };
 
 SCOPE g_CurrScope;
@@ -299,6 +301,7 @@ SYMBOL PCHDebugSym;
 
 static char bool_zapped_char;
 static char static_assert_zapped_char;
+static char decltype_zapped_char;
 
 extern SCOPE    GetCurrScope(void)
 {
@@ -754,7 +757,6 @@ static SCOPE makeFileScope( fs_control control, SYMBOL sym )
     ns = CarveAlloc( carveNAME_SPACE );
     ns->sym = sym;
     ns->scope = scope;
-    ns->last_sym = NULL;
     ns->all = allNameSpaces;
     ns->global_fs = FALSE;
     ns->free = FALSE;
@@ -796,6 +798,7 @@ static void scopeInit(          // SCOPES INITIALIZATION
     defn = defn;
     DbgStmt( bool_zapped_char = '\0' );
     DbgStmt( static_assert_zapped_char = '\0' );
+    DbgStmt( decltype_zapped_char = '\0' );
     PCHActivate();
     carveSYM_REGION = CarveCreate( sizeof( SYM_REGION ), BLOCK_SYM_REGION );
     carveUSING_NS = CarveCreate( sizeof( USING_NS ), BLOCK_USING_NS );
@@ -837,6 +840,7 @@ static void scopeInit(          // SCOPES INITIALIZATION
     injectBool();
     if( ! CompFlags.enable_std0x ) {
         static_assert_zapped_char = KwDisable( T_STATIC_ASSERT );
+        decltype_zapped_char = KwDisable( T_DECLTYPE );
     }
     ExtraRptRegisterCtr( &syms_defined, "symbols defined" );
     ExtraRptRegisterCtr( &scopes_alloced, "scopes allocated" );
@@ -912,7 +916,8 @@ static SCOPE findCommonEnclosing( SCOPE scope1, SCOPE scope2 )
     return( GetFileScope() );
 }
 
-static void addLexicalTrigger( SCOPE gets_trigger, SCOPE using_scope )
+static void addLexicalTrigger( SCOPE gets_trigger, SCOPE using_scope,
+                               boolean append )
 {
     USING_NS *lexical_entry;
 
@@ -920,7 +925,11 @@ static void addLexicalTrigger( SCOPE gets_trigger, SCOPE using_scope )
     lexical_entry = CarveAlloc( carveUSING_NS );
     lexical_entry->using_scope = using_scope;
     lexical_entry->trigger = NULL;
-    RingPush( &gets_trigger->using_list, lexical_entry );
+    if( append ) {
+        RingAppend( &gets_trigger->using_list, lexical_entry );
+    } else {
+        RingPush( &gets_trigger->using_list, lexical_entry );
+    }
 }
 
 static void addUsingDirective( SCOPE gets_using, SCOPE using_scope, SCOPE trigger )
@@ -953,9 +962,10 @@ static void addUsingDirective( SCOPE gets_using, SCOPE using_scope, SCOPE trigge
         using_entry->using_scope = using_scope;
         using_entry->trigger = trigger;
         RingAppend( &gets_using->using_list, using_entry );
-        addLexicalTrigger( trigger, using_scope );
-    } else {
+
+        addLexicalTrigger( trigger, using_scope, FALSE );
 #ifndef NDEBUG
+    } else {
         USING_NS *curr;
         RingIterBeg( trigger->using_list, curr ) {
             if( curr->using_scope != using_scope ) continue;
@@ -968,57 +978,17 @@ static void addUsingDirective( SCOPE gets_using, SCOPE using_scope, SCOPE trigge
     }
 }
 
-void ScopeRestoreUsing( SCOPE scope )
-/***********************************/
+void ScopeRestoreUsing( SCOPE scope, boolean append )
+/***************************************************/
 {
     USING_NS *curr;
 
     RingIterBeg( scope->using_list, curr ) {
         if( curr->trigger != NULL ) {
-            addLexicalTrigger( curr->trigger, curr->using_scope );
+            addLexicalTrigger( curr->trigger, curr->using_scope, append );
         }
     } RingIterEnd( curr )
 }
-
-#if USING_DIRECTIVE_PERFORMS_CLOSURE
-static void addTransitiveUsingDirective( SCOPE gets_using, SCOPE using_scope,
-                                         SCOPE trigger )
-{
-    SCOPE *top;
-    SCOPE ns;
-    USING_NS *using_entry;
-    auto PSTK_CTL stack;
-    auto PSTK_CTL cycle;
-
-    PstkOpen( &stack );
-    PstkOpen( &cycle );
-    PstkPush( &stack, using_scope );
-    PstkPush( &cycle, using_scope );
-    DbgStmt( { int i; for( i = 0; i < 3; ++i ) PstkPush( &cycle, NULL ); } );
-    addUsingDirective( gets_using, using_scope, trigger );
-    // perform transitive closure of using namespace directives
-    for(;;) {
-        top = PstkPop( &stack );
-        if( top == NULL ) break;
-        ns = *top;
-        RingIterBeg( ns->using_list, using_entry ) {
-            if( using_entry->trigger == NULL ) {
-                continue;
-            }
-            using_scope = using_entry->using_scope;
-            if( ! PstkContainsElement( &cycle, using_scope ) ) {
-                PstkPush( &cycle, using_scope );
-                DbgStmt( { int i; for( i = 0; i < 3; ++i ) PstkPush( &cycle, NULL ); } );
-                PstkPush( &stack, using_scope );
-                trigger = findCommonEnclosing( gets_using, using_scope );
-                addUsingDirective( gets_using, using_scope, trigger );
-            }
-        } RingIterEnd( using_entry )
-    }
-    PstkClose( &cycle );
-    PstkClose( &stack );
-}
-#endif
 
 void ScopeAddUsing( SCOPE using_scope, SCOPE trigger )
 /****************************************************/
@@ -1036,15 +1006,6 @@ void ScopeAddUsing( SCOPE using_scope, SCOPE trigger )
         return;
     }
     addUsingDirective( gets_using, using_scope, trigger );
-#if USING_DIRECTIVE_PERFORMS_CLOSURE
-    USING_NS *check_entry;
-    check_entry = RingLast( using_scope->using_list );
-    if( check_entry != NULL && check_entry->trigger != NULL ) {
-        addTransitiveUsingDirective( gets_using, using_scope, trigger );
-    } else {
-        addUsingDirective( gets_using, using_scope, trigger );
-    }
-#endif
 }
 
 SCOPE ScopeIsGlobalNameSpace( SCOPE scope )
@@ -1416,6 +1377,53 @@ SCOPE ScopeClose( void )
     return( dropping_scope );
 }
 
+static void pruneScopeUsing( SCOPE scope )
+{
+    SCOPE trigger;
+    USING_NS *use;
+    USING_NS *lex_use;
+
+    RingIterBegSafe( scope->using_list, use ) {
+        trigger = use->trigger;
+        if( trigger != NULL ) {
+            lex_use = pruneMatchingUsing( trigger, use->using_scope );
+            DbgAssert( lex_use != NULL || ErrCount != 0 );
+            CarveFree( carveUSING_NS, lex_use );
+        }
+    } RingIterEndSafe( use )
+}
+
+void ScopeAdjustUsing( SCOPE prev_scope, SCOPE new_scope )
+/********************************************************/
+{
+    SCOPE scope;
+
+    if( prev_scope == new_scope ) {
+        return;
+    }
+
+    /*
+     * when switching scopes we also need to update information about
+     * "using namespaces"
+     */
+
+    if( prev_scope != NULL ) {
+        scope = prev_scope;
+        while( scope->enclosing != NULL ) {
+            pruneScopeUsing( scope );
+            scope = scope->enclosing;
+        }
+    }
+
+    if( new_scope != NULL ) {
+        scope = new_scope;
+        while( scope->enclosing != NULL ) {
+            ScopeRestoreUsing( scope, FALSE );
+            scope = scope->enclosing;
+        }
+    }
+}
+
 void ScopeJumpForward( SCOPE scope )
 /**********************************/
 {
@@ -1771,6 +1779,25 @@ static boolean colonColonName( SYMBOL_NAME sym_name )
     return( TRUE );
 }
 
+static boolean colonColonTildeName( SYMBOL_NAME sym_name )
+{
+    SYMBOL sym;
+    TYPE type;
+
+    sym = sym_name->name_type;
+    if( sym == NULL ) {
+        return( FALSE );
+    }
+    if( SymIsNameSpace( sym ) ) {
+        return( TRUE );
+    }
+    type = TypedefedType( sym->sym_type );
+    if( type == NULL ) {
+        return( FALSE );
+    }
+    return( TRUE );
+}
+
 static boolean nameSpaceName( SYMBOL_NAME sym_name )
 {
     SYMBOL sym;
@@ -1862,20 +1889,11 @@ boolean ScopeType( SCOPE scope, scope_type_t scope_type )
 boolean ScopeEquivalent( SCOPE scope, scope_type_t scope_type )
 /*************************************************************/
 {
-    boolean status;
+    if( scope_type == SCOPE_FILE ) {
+        scope = ScopeNearestNonTemplate( scope );
+    }
 
-    status = ScopeType( scope, scope_type );
-    if( status ) {
-        return( status );
-    }
-    switch( scope_type ) {
-    case SCOPE_FILE:
-        if( scope->id == SCOPE_TEMPLATE_INST ) {
-            return( TRUE );
-        }
-        break;
-    }
-    return( FALSE );
+    return( ScopeType( scope, scope_type ) );
 }
 
 char *ScopeUnnamedNamespaceName( TOKEN_LOCN *locn )
@@ -2156,6 +2174,10 @@ boolean ScopeCarefulInsert( SCOPE scope, SYMBOL *psym, char *name )
 
     sym = *psym;
     sym_name = scopeInsertName( scope, sym, name );
+    if( sym_name->containing != scope ) {
+        /* adjust symbol name when we have found an injected class name */
+        sym_name->containing = scope;
+    }
     if( _IsFileScope( scope ) ) {
         LinkageSet( sym, NULL );
     }
@@ -2185,25 +2207,36 @@ SYMBOL ScopeInsert( SCOPE scope, SYMBOL sym, char *name )
     return( sym );
 }
 
-void ScopeRawAddFriend( CLASSINFO *info, SYMBOL sym )
-/***************************************************/
+void ScopeRawAddFriendSym( CLASSINFO *info, SYMBOL sym )
+/******************************************************/
 {
     FRIEND *new_friend;
 
     new_friend = CPermAlloc( sizeof( FRIEND ) );
     new_friend->next = NULL;
-    new_friend->sym = sym;
+    new_friend->u.sym = sym;
     RingAppend( &(info->friends), new_friend );
 }
 
-void ScopeAddFriend( SCOPE scope, SYMBOL sym )
-/********************************************/
+void ScopeRawAddFriendType( CLASSINFO *info, TYPE type )
+/*******************************************************/
+{
+    FRIEND *new_friend;
+
+    new_friend = CPermAlloc( sizeof( FRIEND ) );
+    new_friend->next = NULL;
+    new_friend->u.type = type;
+    new_friend->u.is_type = TRUE;
+    RingAppend( &(info->friends), new_friend );
+}
+
+void ScopeAddFriendSym( SCOPE scope, SYMBOL sym )
+/***********************************************/
 {
     SCOPE sym_scope;
     SYMBOL friendly_sym;
     TYPE scopes_class_type;
     TYPE class_type;
-    TYPE type;
     FRIEND *a_friend;
     boolean OK_for_friend;
 
@@ -2230,40 +2263,66 @@ void ScopeAddFriend( SCOPE scope, SYMBOL sym )
         }
     }
     RingIterBeg( ScopeFriends( scope ), a_friend ) {
-        friendly_sym = a_friend->sym;
-        switch( friendly_sym->id ) {
-        case SC_TYPEDEF:
-            /* friendly classes */
-            type = StructType( friendly_sym->sym_type );
-            if( type == class_type ) {
-                CErr2p( WARN_CLASS_FRIEND_REPEATED, type );
-                return;
-            }
-            break;
-        case SC_CLASS_TEMPLATE:
-            /* friendly class templates */
-            if( friendly_sym == sym ) {
-                CErr2p( WARN_CLASS_TEMPLATE_FRIEND_REPEATED, sym );
-                return;
-            }
-            break;
-        default:
-            /* friendly functions */
-            if( SymIsFunction( friendly_sym ) ) {
+        if( FriendIsSymbol( a_friend ) ) {
+            friendly_sym = FriendGetSymbol( a_friend );
+            if( friendly_sym->id == SC_CLASS_TEMPLATE ) {
+                /* friendly class templates */
                 if( friendly_sym == sym ) {
-                    CErr2p( WARN_FN_FRIEND_REPEATED, sym );
+                    CErr2p( WARN_CLASS_TEMPLATE_FRIEND_REPEATED, sym );
                     return;
+                }
+            } else {
+                /* friendly functions */
+                if( SymIsFunction( friendly_sym ) ) {
+                    if( friendly_sym == sym ) {
+                        CErr2p( WARN_FN_FRIEND_REPEATED, sym );
+                        return;
+                    }
                 }
             }
         }
     } RingIterEnd( a_friend )
     scopes_class_type = ScopeClass( scope );
-    if( scopes_class_type->flag & TF1_INSTANTIATION ) {
-        if( FunctionDeclarationType( sym->sym_type ) ) {
-            sym = TemplateSetFnMatchable( sym );
+    ScopeRawAddFriendSym( scopes_class_type->u.c.info, sym );
+}
+
+void ScopeAddFriendType( SCOPE scope, TYPE type, SYMBOL sym )
+/***********************************************************/
+{
+    SCOPE sym_scope;
+    TYPE friendly_type;
+    TYPE scopes_class_type;
+    TYPE class_type;
+    FRIEND *a_friend;
+    boolean OK_for_friend;
+
+    class_type = StructType( type );
+    if( ScopeLocalClass( scope ) ) {
+        /* local classes have restrictions on friends */
+        OK_for_friend = TRUE;
+        if( TypeDefined( class_type ) ) {
+            OK_for_friend = FALSE;
+        } else if( sym != NULL ) {
+            sym_scope = SymScope( sym );
+            if( findBlockScope( sym_scope ) != findBlockScope( scope ) ) {
+                OK_for_friend = FALSE;
+            }
+        }
+        if( ! OK_for_friend ) {
+            CErr2p( ERR_LOCAL_CLASS_FRIEND_CLASS, sym );
         }
     }
-    ScopeRawAddFriend( scopes_class_type->u.c.info, sym );
+    RingIterBeg( ScopeFriends( scope ), a_friend ) {
+        if( FriendIsType( a_friend ) ) {
+            friendly_type = FriendGetType( a_friend );
+            if( friendly_type == class_type ) {
+                CErr2p( WARN_CLASS_FRIEND_REPEATED, type );
+                return;
+            }
+        }
+    } RingIterEnd( a_friend )
+    scopes_class_type = ScopeClass( scope );
+    ScopeRawAddFriendType( scopes_class_type->u.c.info, type );
 }
 
 static BASE_PATH *newPath( PATH_CAP *cap )
@@ -2842,34 +2901,42 @@ static boolean isFriendly( SCOPE check, SCOPE friendly )
     TYPE type;
 
     RingIterBeg( ScopeFriends( friendly ), a_friend ) {
-        sym = a_friend->sym;
-        switch( sym->id ) {
-        case SC_TYPEDEF:
+        if( FriendIsType( a_friend ) ) {
             /* friendly classes */
-            type = StructType( sym->sym_type );
-            if( type != NULL ) {
-                if( type->u.c.scope == check ) {
-                    return( TRUE );
-                }
+            type = FriendGetType( a_friend );
+            if( ( type->id == TYP_CLASS )
+             && ( type->flag & TF1_UNBOUND )
+             && ( type->of != NULL ) ) {
+                type = type->of;
             }
-            break;
-        case SC_CLASS_TEMPLATE:
-            /* friendly class templates */
-            type = ScopeClass( check );
-            if( type != NULL ) {
-                if( type->flag & TF1_INSTANTIATION ) {
-                    if( type->u.c.info->name == sym->name->name ) {
-                        /* class scope must be instantiated from class template */
-                        return( TRUE );
+            if( type->u.c.scope == check ) {
+                return( TRUE );
+            }
+        } else {
+            sym = FriendGetSymbol( a_friend );
+            if( sym->id == SC_CLASS_TEMPLATE ) {
+                /* friendly class templates */
+                type = ScopeClass( check );
+                if( type != NULL ) {
+                    if( type->flag & TF1_INSTANTIATION ) {
+                        if( type->u.c.info->name == sym->name->name ) {
+                            /* class scope must be instantiated from class template */
+                            return( TRUE );
+                        }
                     }
                 }
-            }
-            break;
-        default:
-            /* friendly functions */
-            if( SymIsFunction( sym ) ) {
-                if( sym == ScopeFunctionInProgress() ) {
-                    return( TRUE );
+            } else {
+                /* friendly functions */
+                if( SymIsFunction( sym ) ) {
+                    SYMBOL curr_sym = ScopeFunctionInProgress();
+                    if( sym == curr_sym ) {
+                        return( TRUE );
+                    }
+                    if( ( curr_sym != NULL )
+                     && ( curr_sym->flag & SF_TEMPLATE_FN )
+                     && ( sym == curr_sym->u.alias ) ) {
+                        return( TRUE );
+                    }
                 }
             }
         }
@@ -2958,9 +3025,15 @@ static inherit_flag verifyAccess( access_data *data )
     }
     located = data->located;
     class_scope = data->member;
-    if( class_scope == located ) {
-        /* accessing your own members is always OK */
-        return( IN_PUBLIC );
+    while( class_scope != NULL ) {
+        /* see 11.8 Nested classes [class.access.nest]: A nested class
+         * is a member and as such has the same access rights as any
+         * other member. */
+        if( _IsClassScope( class_scope ) && ( class_scope == located ) ) {
+            /* accessing your own members is always OK */
+            return( IN_PUBLIC );
+        }
+        class_scope = class_scope->enclosing;
     }
     access = data->access;
     if( isScopeFriend( access, located ) ) {
@@ -3661,6 +3734,7 @@ static void newLookupData( lookup_walk *data, char *name )
     data->file_ns_done = FALSE;
     data->same_table = FALSE;
     data->lookup_error = FALSE;
+    data->member_lookup = FALSE;
 }
 
 static void removeDead( lookup_walk *data )
@@ -4568,7 +4642,8 @@ static boolean simpleNSLookup( lookup_walk *data, SCOPE scope )
     doRecordedLookup( data, scope );
     edge_scope = NULL;
     RingIterBeg( scope->using_list, curr ) {
-        if( curr->trigger == NULL ) {
+        if( data->member_lookup ?
+            ( curr->trigger != NULL ) : (curr->trigger == NULL ) ) {
             edge_scope = curr->using_scope;
             if( ! PstkContainsElement( &cycle, edge_scope ) ) {
                 PstkPush( &cycle, edge_scope );
@@ -4585,7 +4660,9 @@ static boolean simpleNSLookup( lookup_walk *data, SCOPE scope )
             top_scope = *top;
             RingIterBeg( top_scope->using_list, curr ) {
                 trigger_scope = curr->trigger;
-                if( trigger_scope == scope || trigger_scope == top_scope ) {
+                if( data->member_lookup ? 
+                    ( trigger_scope != NULL ) :
+                    ( trigger_scope == scope || trigger_scope == top_scope ) ) {
                     edge_scope = curr->using_scope;
                     if( ! PstkContainsElement( &cycle, edge_scope ) ) {
                         PstkPush( &cycle, edge_scope );
@@ -4605,7 +4682,6 @@ static boolean simpleNSLookup( lookup_walk *data, SCOPE scope )
 static boolean searchScope( lookup_walk *data, SCOPE scope )
 {
     SCOPE disambig;
-    SYMBOL_NAME sym_name;
 
     DbgAssert( data->is_special == NULL || data->check_special );
     ExtraRptIncrementCtr( scopes_searched );
@@ -4638,15 +4714,7 @@ static boolean searchScope( lookup_walk *data, SCOPE scope )
         return( disambigNSLookup( data, disambig ) );
     }
     DbgAssert( ! data->user_conversion );
-    if( _IsFileScope( scope ) ) {
-        return( simpleNSLookup( data, scope ) );
-    }
-    sym_name = doLookup( data, scope );
-    if( sym_name == NULL ) {
-        return( FALSE );
-    }
-    recordLocation( data, scope, sym_name );
-    return( TRUE );
+    return( simpleNSLookup( data, scope ) );
 }
 
 static void lexicalLookup( lookup_walk *data, SCOPE curr )
@@ -6285,15 +6353,10 @@ SYMBOL_NAME ScopeYYLexical( SCOPE scope, char *name )
             sym_name = NULL;
             break;
         }
-        if( _IsClassScope( scope ) || _IsFileScope( scope ) ) {
-            if( searchScope( &data, scope ) ) {
-                sym_name = data.paths->sym_name;
-                delLookupData( &data );
-                break;
-            }
-        } else {
-            sym_name = HashLookup( scope->names, name );
-            if( sym_name != NULL ) break;
+        if( searchScope( &data, scope ) ) {
+            sym_name = data.paths->sym_name;
+            delLookupData( &data );
+            break;
         }
         scope = scope->enclosing;
     }
@@ -6307,13 +6370,14 @@ SYMBOL_NAME ScopeYYMember( SCOPE scope, char *name )
     auto lookup_walk data;
 
     newLookupData( &data, name );
+    data.member_lookup = TRUE;
     data.ignore_access = TRUE;
-    sym_name = NULL;
     if( searchScope( &data, scope ) ) {
         sym_name = data.paths->sym_name;
         delLookupData( &data );
+        return( sym_name );
     }
-    return( sym_name );
+    return( NULL );
 }
 
 SYMBOL ScopeAlreadyExists( SCOPE scope, char *name )
@@ -6365,8 +6429,9 @@ SEARCH_RESULT *ScopeFindLexicalEnumType( SCOPE scope, char *name )
     return( result );
 }
 
-SEARCH_RESULT *ScopeFindLexicalColonColon( SCOPE scope, char *name )
-/******************************************************************/
+SEARCH_RESULT *ScopeFindLexicalColonColon( SCOPE scope, char *name,
+                                           boolean tilde )
+/*****************************************************************/
 {
     SEARCH_RESULT *result;
     auto lookup_walk data;
@@ -6374,7 +6439,7 @@ SEARCH_RESULT *ScopeFindLexicalColonColon( SCOPE scope, char *name )
     // 'name' occurs before a '::'
     newLookupData( &data, name );
     data.check_special = TRUE;
-    data.is_special = colonColonName;
+    data.is_special = tilde ? colonColonTildeName : colonColonName;
     lexicalLookup( &data, scope );
     result = makeResult( &data );
     return( result );
@@ -6716,9 +6781,17 @@ void ScopeQualifyPush( SCOPE scope, SCOPE access )
     QUALIFICATION *qual;
 
     qual = CarveAlloc( carveQUALIFICATION );
-    qual->reset = GetCurrScope();
     qual->access = access;
-    SetCurrScope(scope);
+    qual->reset = GetCurrScope();
+    if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL )
+     || ScopeType( GetCurrScope(), SCOPE_TEMPLATE_PARM ) ) {
+        // need to keep the template decl/parm scope at the top
+        qual->enclosing = GetCurrScope()->enclosing;
+        ScopeSetEnclosing( GetCurrScope(), scope );
+    } else {
+        qual->enclosing = NULL;
+        SetCurrScope(scope);
+    }
     ParsePushQualification( qual );
 }
 
@@ -6731,7 +6804,10 @@ SCOPE ScopeQualifyPop( void )
     scope_popped = GetCurrScope();
     qual = ParsePopQualification();
     if( qual != NULL ) {
-        SetCurrScope(qual->reset);
+        if( qual->enclosing != NULL ) {
+            ScopeSetEnclosing( qual->reset, qual->enclosing );
+        }
+        SetCurrScope( qual->reset );
         CarveFree( carveQUALIFICATION, qual );
     }
     return( scope_popped );
@@ -6743,6 +6819,22 @@ SCOPE ScopeEnclosingId( SCOPE scope, scope_type_t id )
     for(;;) {
         if( scope == NULL ) break;
         if( scope->id == id ) break;
+        scope = scope->enclosing;
+    }
+    return( scope );
+}
+
+SCOPE ScopeNearestNonTemplate( SCOPE scope )
+/******************************************/
+{
+    for(;;) {
+        if( scope == NULL ) break;
+        if( ( scope->id != SCOPE_TEMPLATE_DECL )
+         && ( scope->id != SCOPE_TEMPLATE_INST )
+         && ( scope->id != SCOPE_TEMPLATE_PARM )
+         && ( scope->id != SCOPE_TEMPLATE_SPEC_PARM ) ) {
+            break;
+        }
         scope = scope->enclosing;
     }
     return( scope );
@@ -7331,7 +7423,6 @@ static void saveNameSpace( void *e, carve_walk_base *d )
     ns->scope = ScopeGetIndex( save_scope );
     save_all = ns->all;
     ns->all = NameSpaceGetIndex( save_all );
-    DbgAssert( ns->last_sym == NULL );
     PCHWriteCVIndex( d->index );
     PCHWrite( ns, sizeof( *ns ) );
     ns->sym = save_sym;
@@ -7470,7 +7561,7 @@ static void saveSymbol( void *e, carve_walk_base *d )
     SYMBOL_NAME save_name;
     SYM_TOKEN_LOCN *save_hdl_location;
     TEMPLATE_INFO *save_u_tinfo;
-    FN_TEMPLATE_DEFN *save_u_defn;
+    FN_TEMPLATE *save_u_defn;
     SYMBOL save_u_sym;
     TYPE save_u_type;
     NAME_SPACE *save_u_ns;
@@ -7504,6 +7595,7 @@ static void saveSymbol( void *e, carve_walk_base *d )
         s->u.tinfo = TemplateClassInfoGetIndex( save_u_tinfo );
         break;
     case SC_FUNCTION_TEMPLATE:
+    case SC_EXTERN_FUNCTION_TEMPLATE:
     case SC_STATIC_FUNCTION_TEMPLATE:
         save_u_defn = s->u.defn;
         s->u.defn = TemplateFunctionInfoGetIndex( save_u_defn );
@@ -7545,6 +7637,7 @@ static void saveSymbol( void *e, carve_walk_base *d )
         s->u.tinfo = save_u_tinfo;
         break;
     case SC_FUNCTION_TEMPLATE:
+    case SC_EXTERN_FUNCTION_TEMPLATE:
     case SC_STATIC_FUNCTION_TEMPLATE:
         s->u.defn = save_u_defn;
         break;
@@ -7717,8 +7810,6 @@ static void readNameSpaces( void )
         ns->sym = SymbolMapIndex( pch->sym );
         ns->scope = ScopeMapIndex( pch->scope );
         ns->all = NameSpaceMapIndex( pch->all );
-        DbgAssert( pch->last_sym == NULL );
-        ns->last_sym = NULL;
         ns->flags = pch->flags;
     }
 }
@@ -7813,6 +7904,7 @@ static void readSymbols( void )
             sym->u.tinfo = TemplateClassInfoMapIndex( pch->u.tinfo );
             break;
         case SC_FUNCTION_TEMPLATE:
+        case SC_EXTERN_FUNCTION_TEMPLATE:
         case SC_STATIC_FUNCTION_TEMPLATE:
             sym->u.defn = TemplateFunctionInfoMapIndex( pch->u.defn );
             break;
@@ -7920,7 +8012,7 @@ void ScopeSetParmClass( SCOPE parm_scope, TEMPLATE_INFO * info )
 }
 
 
-void ScopeSetParmFn( SCOPE parm_scope, FN_TEMPLATE_DEFN *defn )
+void ScopeSetParmFn( SCOPE parm_scope, FN_TEMPLATE *defn )
 /*************************************************************/
 {
     DbgAssert( parm_scope->id == SCOPE_TEMPLATE_PARM );

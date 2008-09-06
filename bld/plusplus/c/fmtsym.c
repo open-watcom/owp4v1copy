@@ -276,19 +276,12 @@ static void makeUnknownTemplate( VBUF *parms )
     VStrConcStr( parms, templateParmStop );
 }
 
-void FormatUnboundTemplateParms( VBUF *parms, TYPE type )
-/*******************************************************/
-{
-    FormatTemplateParms( parms, type );
-}
-
-void FormatTemplateParms( VBUF *parms, TYPE class_type )
-/******************************************************/
+void FormatTemplateParmScope( VBUF *parms, SCOPE parm_scope )
+/***********************************************************/
 {
     SYMBOL stop;
     SYMBOL curr;
     SYMBOL sym;
-    SCOPE parm_scope;
     char *delim;
     TYPE type;
     auto VBUF sym_parm;
@@ -298,7 +291,6 @@ void FormatTemplateParms( VBUF *parms, TYPE class_type )
 
     VbufInit( parms );
     VStrNull( parms );
-    parm_scope = TemplateClassParmScope( class_type );
     if( parm_scope == NULL ) {
         makeUnknownTemplate( parms );
         return;
@@ -336,7 +328,25 @@ void FormatTemplateParms( VBUF *parms, TYPE class_type )
         }
         delim = templateParmNext;
     }
+    if( delim == templateParmStart ) {
+        VStrConcStr( parms, templateParmStart );
+    }
     VStrConcStr( parms, templateParmStop );
+}
+
+void FormatUnboundTemplateParms( VBUF *parms, TYPE type )
+/*******************************************************/
+{
+    FormatTemplateParms( parms, type );
+}
+
+void FormatTemplateParms( VBUF *parms, TYPE class_type )
+/******************************************************/
+{
+    SCOPE parm_scope;
+
+    parm_scope = TemplateClassParmScope( class_type );
+    FormatTemplateParmScope( parms, parm_scope );
 }
 
 static void fmtTemplateParms( VBUF *pvbuf, TYPE class_type )

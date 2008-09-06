@@ -444,6 +444,7 @@ static void appendTypeContinue( // APPEND A TYPE MANGLING (NO NEAR/FAR PREFIX)
 
     control |= TM_FIRST_DIM;
     while( type != NULL ) {
+        type = BoundTemplateClass( type );
         switch( type->id ) {
         case TYP_BOOL:
             appendChar( IN_BOOL );

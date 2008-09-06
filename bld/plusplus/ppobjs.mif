@@ -106,7 +106,6 @@ common_objs += cmac1.obj
 common_objs += cmac2.obj
 common_objs += cmacsupp.obj
 common_objs += cmacadd.obj
-common_objs += cmatherr.obj
 common_objs += cmdln.obj
 common_objs += cmdlnany.obj
 common_objs += cmdlnbat.obj
@@ -214,6 +213,11 @@ common_objs += vfun.obj
 common_objs += vstk.obj
 common_objs += watcom.obj
 common_objs += ytab.obj
+
+!ifndef bootstrap
+# assumes Watcom math library
+common_objs += cmatherr.obj
+!endif
 
 # watcom files
 common_objs += autodept.obj

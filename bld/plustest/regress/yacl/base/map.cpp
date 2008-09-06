@@ -48,7 +48,6 @@
 
 
 
-#if defined(__GNUC__) && __GNUC_MINOR__ >= 6
 template class CL_Map<long, CL_String>;
 template class CL_Map<long, long>;
 template class CL_Map<long, CL_ObjectPtr>;
@@ -86,8 +85,6 @@ template class CL_Basics<CL_MapAssoc<CL_String, long> >;
 template class CL_Basics<CL_MapAssoc<CL_String, CL_ObjectPtr> >;
 template class CL_Basics<CL_MapAssoc<CL_ObjectPtr, CL_ObjectPtr> >;
 template class CL_Basics<CL_MapAssoc<CL_ObjectPtr, long> >;
-
-#endif
 
 
 

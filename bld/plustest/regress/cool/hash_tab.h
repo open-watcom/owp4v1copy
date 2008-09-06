@@ -167,17 +167,22 @@ public:
   void set_key_compare (Key_Compare = NULL); 
   void set_value_compare (Value_Compare = NULL);
 
-  friend ostream& operator<< (ostream&, const CoolHash_Table<Tkey,Tval>&);
-  /*##inline*/ friend ostream& operator<< (ostream&, const CoolHash_Table<Tkey,Tval>*);
+  template< class K, class V >
+  friend ostream& operator<< (ostream&, const CoolHash_Table<K,V>&);
+  template< class K, class V >
+  inline friend ostream& operator<< (ostream&, const CoolHash_Table<K,V>*);
 
 protected:
   CoolHash_Table_Bucket<Tkey,Tval>* table;      // Pointer to key/value buckets
   Hash h_function;      // Pointer to hash function
   static Key_Compare compare_keys_s; // Key compare
   static Value_Compare compare_values_s; // Value compare
-  friend Boolean CoolHash_Table_keys_equal (const Tkey&, const Tkey&);
-  friend Boolean CoolHash_Table_values_equal (const Tval&, const Tval&);
-  friend unsigned long CoolHash_Table_default_hash (const Tkey& key);
+  template< class K >
+  friend Boolean CoolHash_Table_keys_equal (const K&, const K&);
+  template< class V >
+  friend Boolean CoolHash_Table_values_equal (const V&, const V&);
+  template< class K >
+  friend unsigned long CoolHash_Table_default_hash (const K& key);
 };
 
 // operator<< -- Overload the output operator to provide a crude print

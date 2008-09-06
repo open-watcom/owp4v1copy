@@ -13,6 +13,7 @@
 
 #include <cool/Quaternion.h>
 #include <cool/test.h>
+#include <cool/Quaternion.c>
 
 #define M_PI 3.1415926535
 

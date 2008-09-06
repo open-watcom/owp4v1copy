@@ -118,8 +118,10 @@ public:
   Boolean operator== (const CoolVector&) const; // Compare 2 CoolVectors 
   inline Boolean operator!= (const CoolVector&) const; // Compare 2 CoolVectors
   
-  friend ostream& operator<< (ostream&, const CoolVector&); // output
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolVector*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolVector<U>&); // output
+  template< class U >
+  inline friend ostream& operator<< (ostream&, const CoolVector<U>*);
   
   inline Type& value ();                        // Value at current position
   inline size_t position () const;              // Return current position 
@@ -177,7 +179,8 @@ protected:
   void grow (size_t min_size);                  // Make the CoolVector bigger
 
 private:
-  friend Boolean CoolVector_is_data_equal (const Type& t1, const Type& t2);
+  template< class U >
+  friend Boolean CoolVector_is_data_equal (const U& t1, const U& t2);
 };
 
 // Type& value () -- Return value at current position.

@@ -37,10 +37,8 @@
 
 #include "base/setimp.cpp"
 
-#if defined(__GNUC__)
 template class CL_Set<CL_String>;
 template class CL_SetIterator<CL_String>;
-#endif
 
 
 typedef CL_Sequence<CL_String> StringSequence;

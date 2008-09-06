@@ -32,6 +32,8 @@
 
 #ifndef _YYDRIVER_H
 
+typedef struct parse_stack PARSE_STACK;
+
 extern void ParseFlush( void );
 extern REWRITE *ParseGetRecordingInProgress( TOKEN_LOCN ** );
 extern PTREE ParseExpr( int end_token );
@@ -42,14 +44,15 @@ extern PTREE ParseDefArg( void );
 extern PTREE ParseTemplateIntDefArg( void );
 extern PTREE ParseTemplateTypeDefArg( void );
 extern DECL_INFO *ParseException( void );
-extern DECL_SPEC *ParseClassInstantiation( REWRITE *, boolean );
+extern DECL_SPEC *ParseClassInstantiation( REWRITE * );
+extern DECL_INFO *ReparseFunctionDeclaration( REWRITE * );
 extern void ParseClassMemberInstantiation( REWRITE * );
 extern void ParseFunctionInstantiation( REWRITE * );
 extern void ParsePushQualification( void * );
 extern void *ParsePopQualification( void );
 extern void *ParseCurrQualification( void );
 extern SYMBOL ParseCurrFunction( void );
-static void recordTemplateCtorInitializer( struct parse_stack *state );
+static void recordTemplateCtorInitializer( PARSE_STACK * );
 
 #define _YYDRIVER_H
 #endif

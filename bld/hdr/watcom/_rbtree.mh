@@ -158,7 +158,7 @@ public:
     };
     class iterator : public iterator_base{
     public:
-        iterator( iterator const & i ) : iterator_base( i ) {}
+        iterator( iterator_base const & i ) : iterator_base( i ) {}
         iterator() : iterator_base() {}
         iterator( rbt_type const * rb, Node* n ) : iterator_base( rb, n ) {}
         RedBlackTree::value_type& operator*() {return self->value;}
@@ -170,7 +170,7 @@ public:
     };
     class const_iterator : public iterator_base{
     public:
-        const_iterator( iterator const & i ) : iterator_base( i ) {}
+        const_iterator( iterator_base const & i ) : iterator_base( i ) {}
         const_iterator() : iterator_base(){}
         const_iterator( rbt_type const* rb, Node* n ) : iterator_base( rb, n ) {}
         RedBlackTree::value_type const& operator*() {return self->value;}

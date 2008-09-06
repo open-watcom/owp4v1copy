@@ -34,7 +34,7 @@ struct B{
 template< class S >
 struct A : S{
     template< class T >
-    A( T t ) : B( t ) {};
+    A( T t ) : S( t ) {}
     
     template< class T >
     T fa( T t ){ return fb( t ); }

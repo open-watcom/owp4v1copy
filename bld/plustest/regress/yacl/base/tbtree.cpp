@@ -34,10 +34,12 @@
 
 #include "base/tbtreimp.cpp"
 
-#if defined (__GNUC__) && __GNUC_MINOR__ >= 6
 template class CL_BTree<CL_String>;
 template class CL_BTree<CL_ObjectPtr>;
 template class CL_BTree<long>;
+template class CL_BTreeIterator<CL_String>;
+template class CL_BTreeIterator<CL_ObjectPtr>;
+template class CL_BTreeIterator<long>;
 
 template class CL_TemplateNodeSpace<CL_String>;
 template class CL_TemplateNodeSpace<CL_ObjectPtr>;
@@ -45,8 +47,3 @@ template class CL_TemplateNodeSpace<long>;
 
 template class CL_Comparator<CL_ObjectPtr>;
 template class CL_Comparator<long>;
-#endif
-
-typedef CL_BTree<CL_String> CL_StringBTree;
-typedef CL_BTree<long> CL_IntegerBTree;
-typedef CL_BTree<CL_ObjectPtr> CL_ObjectPtrBTree;

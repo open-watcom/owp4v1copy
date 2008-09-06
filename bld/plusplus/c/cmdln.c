@@ -274,6 +274,8 @@ void MiscMacroDefs(             // PREDEFINE MISCELLANEOUS MACROS
         defineStringMacro( "NO_EXT_KEYS" );
     }
     defineKeywordMacros();
+    defineStringMacro( "_WCHAR_T_DEFINED" );
+    defineStringMacro( "_STDWCHAR_T_DEFINED" );
     if( CompFlags.signed_char ) {
         defineStringMacro( "__CHAR_SIGNED__" );              /* 20-apr-90 */
     }

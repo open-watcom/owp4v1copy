@@ -741,6 +741,68 @@ REWRITE *RewritePackageTemplateDefArg( void )
     return( r );
 }
 
+REWRITE *RewritePackagePassThrough( REWRITE *r )
+/****************************************/
+{
+    REWRITE *dummy;
+    unsigned paren_depth;
+    unsigned brace_depth;
+    TOKEN_LOCN locn;
+    auto TOKEN_LOCN start_locn;
+
+    DbgAssert( CurToken == T_EQUAL );
+    NextToken();
+    SrcFileGetTokenLocn( &start_locn );
+    dummy = newREWRITE( T_DEFARG_END, &locn );
+    brace_depth = 0;
+    paren_depth = 0;
+    for(;;) {
+        if( CurToken == T_EOF ) {
+            defArgError( r, &start_locn );
+            break;
+        }
+        switch( CurToken ) {
+        case T_LEFT_PAREN:
+            ++paren_depth;
+            break;
+        case T_RIGHT_BRACE:
+        case T_ALT_RIGHT_BRACE:
+            if( brace_depth == 0 ) {
+                return( defArgError( r, &start_locn ) );
+            }
+            --brace_depth;
+            break;
+        case T_LEFT_BRACE:
+        case T_ALT_LEFT_BRACE:
+            if( paren_depth == 0 ) {
+                return( defArgError( r, &start_locn ) );
+            }
+            ++brace_depth;
+            break;
+        case T_RIGHT_PAREN :
+            if( paren_depth == 0 ) {
+                if( brace_depth != 0 ) {
+                    return( defArgError( r, &start_locn ) );
+                }
+                UndoNextToken();
+                return( dummy );
+            }
+            --paren_depth;
+            break;
+        case T_COMMA :
+        case T_DOT_DOT_DOT:
+            if( brace_depth == 0 && paren_depth == 0 ) {
+                UndoNextToken();
+                return( dummy );
+            }
+            break;
+        }
+        saveToken( r, &locn );
+        NextToken();
+    }
+    return( NULL );
+}
+
 static REWRITE *templateError( REWRITE *r, TOKEN_LOCN *locn )
 {
     CErr1( ERR_CLASS_TEMPLATE_REWRITE_ERROR );

@@ -54,6 +54,15 @@ int Bug(const Integer &x = 0)
     return x._value;
 }
 
+void f(char c = 0)
+{ }
+
+void f(short s = 1)
+{ }
+
+void f(int i = 2)
+{ }
+
 int main()
 {
     S s(1);

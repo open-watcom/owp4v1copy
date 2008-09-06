@@ -259,15 +259,13 @@ char *sticpy(                   // CONCATENATE INTEGER NUMBER
 }
 
 
-#if __WATCOMC__ >= 1100
 char *sti64cpy(                 // CONCATENATE I64 NUMBER
     char *tgt,                  // - target location
-    __int64 value )             // - value to be concatenated
+    long long value )           // - value to be concatenated
 {
-    sprintf( tgt, "%I64d", value );
+    sprintf( tgt, "%lld", value );
     return strend( tgt );
 }
-#endif
 
 int strpref(                    // IS STRING A PREFIX OF A STRING
     char const *prefix,         // - possible prefix

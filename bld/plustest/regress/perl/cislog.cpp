@@ -7,7 +7,7 @@
 #include        "perlclass.h"
 #include        "perlassoc.h"
 
-void main()
+int main()
 {
 //char buf[80];
 ifstream fin("cis.log");

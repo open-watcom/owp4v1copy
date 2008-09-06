@@ -133,15 +133,19 @@ public:
   Boolean operator==(const CoolAssociation<Ktype,Vtype>&) const;
   inline Boolean operator!=(const CoolAssociation<Ktype,Vtype>&) const;
 
-  friend ostream& operator<< (ostream&,const CoolAssociation<Ktype,Vtype>&);
-  /*inline##*/ friend ostream& operator<< (ostream&,const CoolAssociation<Ktype,Vtype>*);
+  template< class K, class V >
+  friend ostream& operator<< (ostream&,const CoolAssociation<K,V>&);
+  template< class K, class V >
+  inline friend ostream& operator<< (ostream&,const CoolAssociation<K,V>*);
 
 protected:
   static Key_Compare compare_keys_s;
   static Value_Compare compare_values_s;
 
-  friend Boolean CoolAssociation_keys_eql(const Ktype&, const Ktype&);
-  friend Boolean CoolAssociation_values_eql(const Vtype&,const Vtype&);
+  template< class K >
+  friend Boolean CoolAssociation_keys_eql(const K&, const K&);
+  template< class V >
+  friend Boolean CoolAssociation_values_eql(const V&,const V&);
 };
 
 // void reset () -- Set current position to INVALID.

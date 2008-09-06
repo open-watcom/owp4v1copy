@@ -38,13 +38,13 @@
 typedef struct aux_entry AUX_ENTRY;
 typedef struct aux_info AUX_INFO;
 
-#pragma pack( push, 1 )
+#include <pushpck1.h>
 struct aux_entry {
     AUX_ENTRY       *next;
     AUX_INFO        *info;
     char            name[1];
 };
-#pragma pack( pop )
+#include <poppck.h>
 
 typedef char aux_flags;
 #define AUX_FLAG_FAR16  0x01

@@ -249,7 +249,6 @@ CL_TreeNode<ItemType>* CL_PreOrderWalker<ItemType>::Next ()
 
 #include "base/treewdef.h"
 
-#if defined(__GNUC__) && __GNUC_MINOR__ >= 6
 template class  CL_PostOrderWalker<CL_ObjectPtr>;
 template class  CL_PreOrderWalker<CL_ObjectPtr> ;
 template class  StackEntry<CL_ObjectPtr>;
@@ -261,7 +260,6 @@ template class  StackEntry<CL_VoidPtr>;
 template class  CL_PreOrderWalker<long> ;
 template class  CL_PostOrderWalker<long>;
 template class  StackEntry<long>;
-#endif
 
 
 #endif /* _treewalk_cxx_ */

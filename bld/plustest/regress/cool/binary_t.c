@@ -247,14 +247,14 @@ ostream& operator<< (ostream& os, const CoolBinary_Tree<Type>& b) {
 
 template <class Type>
 void print_tree (const CoolBinary_Node<Type>* b, ostream& os) {
-  static indent = 0;                            // Temporary variables
+  static int indent = 0;                        // Temporary variables
   if (b != NULL) {                              // If not at bottom of tree
     indent += 1;                                // Indent node
-    print_tree (b->get_rtree(),os);     // Output the right subtree
+    print_tree (b->get_rtree(),os);             // Output the right subtree
     for (int i = 1; i < indent; i++)            // For each level of tree
       os << "     ";                            // Indent some number of spaces
       os << b->get() << "\n";                   // Output node data value
-    print_tree (b->get_ltree(),os);     // Output the left subtree
+    print_tree (b->get_ltree(),os);             // Output the left subtree
     indent -= 1;                                // Decrement indent level
   }
 }

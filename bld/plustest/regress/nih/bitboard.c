@@ -84,9 +84,9 @@ const Class* BitBoard::species() const { return &classDesc; }
 
 void BitBoard::printOn(ostream& strm) const
 {
-        for (register i=0; i<8; i++) {
+        for (register int i=0; i<8; i++) {
                 strm << '\n';
-                for (register j=7; j>=0; j--) {
+                for (register int j=7; j>=0; j--) {
                         if (includes(8*i+j)) strm << " *";
                         else strm << " .";
                 }

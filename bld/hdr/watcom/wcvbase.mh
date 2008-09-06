@@ -207,7 +207,7 @@ WCBareVectorBase<Type>::WCBareVectorBase( size_t length ){
 
 
 template<class Type>
-virtual WCBareVectorBase<Type>::~WCBareVectorBase() {
+WCBareVectorBase<Type>::~WCBareVectorBase() {
     if( vector ) {
         base_throw_not_empty();
         // call destructors for any initialized elements

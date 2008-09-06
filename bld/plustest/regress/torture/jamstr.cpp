@@ -58,7 +58,7 @@ istream& operator>>(istream& is, JAM_String& string)
    is >> ws;                     // eat white space
    if (!is.good()) return is;    // return if no hope of inputting from is
 
-   const BUFFER_SIZE = 81;
+   const int BUFFER_SIZE = 81;
 
    char* first_char = new char[BUFFER_SIZE];
    if (first_char==0) return is; // should set error state
@@ -112,7 +112,7 @@ istream& operator>>(istream& is, JAM_String& string)
 
 JAM_String JAM_String::getline(istream& is, int delim)
 {
-   const BUFFER_SIZE = 81;
+   const int BUFFER_SIZE = 81;
 
    char* first_char = new char[BUFFER_SIZE];
    if (first_char==0) return JAM_String(); // should set error state
@@ -168,7 +168,7 @@ JAM_String JAM_String::get_identifier(istream& is)
 {
    is >> ws;               // eat white space
 
-   const BUFFER_SIZE = 32;
+   const int BUFFER_SIZE = 32;
 
    char* first_char = new char[BUFFER_SIZE];
    if (first_char==0) return JAM_String(); // should set error state

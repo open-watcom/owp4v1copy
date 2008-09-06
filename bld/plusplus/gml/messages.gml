@@ -1806,14 +1806,12 @@ char *ptr;
 char __based( void ) __based( ptr ) *a;
 :eerrbad.
 
-:MSGSYM. ANSI_BAD_ENUM_ASSIGNMENT
+:MSGSYM. ERR_BAD_ENUM_ASSIGNMENT
 :MSGTXT. enumeration variable is not assigned a constant from its enumeration
 :MSGJTXT. 列挙変数にその列挙の定数が代入されていません
-:ANSI. 1
 In C++ (as opposed to C), enums represent values of distinct types.
 Thus, the compiler will not automatically convert an integer value
-to an enum type if you are compiling your source in strict ISO/ANSI C++ mode.
-If you have extensions enabled, this message is treated as a warning.
+to an enum type.
 :errbad.
 enum Days { sun, mod, tues, wed, thur, fri, sat };
 enum Days day = 2;
@@ -2307,8 +2305,8 @@ float f = 1.2e-78965;
 :eerrbad.
 
 :MSGSYM. ERR_CANT_OVERLOAD_CLASS_TEMPLATES
-:MSGTXT. class template '%S' cannot be overloaded
-:MSGJTXT. クラス・テンプレート'%S'はオーバーロードできません
+:MSGTXT. class template '%M' cannot be overloaded
+:MSGJTXT. クラス・テンプレート'%M'はオーバーロードできません
 A class template name must be unique across the entire C++ program.
 Furthermore, a class template cannot coexist with another
 class template of the same name.
@@ -2367,8 +2365,8 @@ A member function of a template class cannot be defined outside
 the class declaration unless all template arguments have been named.
 
 :MSGSYM. ERR_CANT_REDEFINE_CLASS_TEMPLATES
-:MSGTXT. class template '%S' is already defined
-:MSGJTXT. クラス・テンプレート'%S'は既に定義されています
+:MSGTXT. class template '%M' is already defined
+:MSGJTXT. クラス・テンプレート'%M'は既に定義されています
 A class template cannot have its definition repeated regardless of whether
 it is identical to the previous definition.
 
@@ -2855,14 +2853,14 @@ void fn2( void, void, void )    // Error!
 :eerrbad.
 
 :MSGSYM. ERR_TOO_FEW_TEMPLATE_PARAMETERS
-:MSGTXT. class template requires more parameters for instantiation
-:MSGJTXT. クラス・テンプレートのインスタンス化のためのパラメータが不足しています
+:MSGTXT. class template '%M' requires more parameters for instantiation
+:MSGJTXT.
 The class template instantiation has too few parameters supplied
 so the class cannot be instantiated properly.
 
 :MSGSYM. ERR_TOO_MANY_TEMPLATE_PARAMETERS
-:MSGTXT. class template requires fewer parameters for instantiation
-:MSGJTXT. クラス・テンプレートのインスタンス化のためのパラメータが多すぎます
+:MSGTXT. class template '%M' requires fewer parameters for instantiation
+:MSGJTXT.
 The class template instantiation has too many parameters supplied
 so the class cannot be instantiated properly.
 
@@ -11946,3 +11944,209 @@ template MyTemplate< int >;
 :errgood.
 template class MyTemplate< int >;
 :eerrgood.
+
+:MSGSYM. ERR_DTOR_TYPE_VOID
+:MSGTXT. destructor for type void cannot be called
+:MSGJTXT.
+Since the
+.kw void
+type has no size and there are no values of
+.kw void
+type, one cannot destruct an instance of
+.kw void.
+
+:MSGSYM. ERR_TYPENAME_OUTSIDE_TEMPLATE
+:MSGTXT. 'typename' keyword used outside template
+:MSGJTXT.
+The
+.kw typename
+keyword is only allowed inside templates.
+
+:MSGSYM. ERR_FUNCTION_BAD_RETURN
+:MSGTXT. '%N' does not have a return type specified
+:MSGJTXT.
+In C++, functions must have an explicit return type specified,
+default int type is no longer assumed.
+:errbad.
+f ();
+:eerrbad.
+
+:MSGSYM. ANSI_MAIN_MUST_RETURN_INT
+:MSGTXT. 'main' must return 'int'
+:MSGJTXT.
+:ANSI. 1
+The "main" function shall have a return type of type int.
+:errbad.
+void main()
+{ }
+:eerrbad.
+
+:MSGSYM. ERR_OUT_OF_CLASS_EXPLICIT
+:MSGTXT. explicit may only be used within class definition
+:MSGJTXT.
+The explicit specifier shall be used only in the declaration of a
+constructor within its class definition.
+:errbad.
+struct A {
+    explicit A();
+};
+
+explicit A::A()
+{ }
+:eerrbad.
+
+:MSGSYM. ERR_OUT_OF_CLASS_VIRTUAL
+:MSGTXT. virtual may only be used within class definition
+:MSGJTXT.
+The virtual specifier shall be used only in the initial declaration of a
+class member function.
+:errbad.
+struct A {
+    virtual void f();
+};
+
+virtual void A::f()
+{ }
+:eerrbad.
+
+:MSGSYM. ERR_DEFAULT_TEMPLATE_ARG_REDEFINED
+:MSGTXT. cannot redefine default template argument '%N'
+:MSGJTXT.
+A template-parameter shall not be given default arguments by two
+different declarations in the same scope.
+:errbad.
+template< class T = int >
+class X;
+
+template< class T = int >
+class X {
+};
+:eerrbad.
+
+:MSGSYM. ERR_DEFAULT_ARG_IN_PARTIAL_SPEC
+:MSGTXT. cannot have default template arguments in partial specializations
+:MSGJTXT.
+A partial specialization cannot have default template arguments.
+:errbad.
+template< class T >
+class X {
+};
+
+template< class T = int >
+class X< T * > {
+};
+:eerrbad.
+
+:MSGSYM. WARN_DLT_PTR_TO_VOID
+:MSGTXT. delete of a pointer to void
+:MSGJTXT.
+:WARNING. 1
+If the dynamic type of the object to be deleted differs from its
+static type, the behavior is undefined. This implies that an object
+cannot be deleted using a pointer of type void* because there are no
+objects of type void.
+:errbad.
+void fn( void *p, void *q ) {
+    delete p;
+    delete [] q;
+}
+:eerrbad.
+
+:MSGSYM. WARN_LONG_CHAR_DEPRECATED
+:MSGTXT. 'long char' is deprecated, use wchar_t instead
+:MSGJTXT.
+:WARNING. 1
+The standard C++ 'wchar_t' type specifier should be used instead of the Open
+Watcom specific 'long char' type specifier.
+:errbad.
+void fn( ) {
+    long char c;
+}
+:eerrbad.
+
+:MSGSYM. ERR_NAMESPACE_NOT_ALLOWED_IN_USING_DECL
+:MSGTXT. namespace '%I' not allowed in using-declaration
+:MSGJTXT.
+Specifying a namespace-name is not allowed in a using-declaration, a
+using-directive must be used instead.
+:errbad.
+namespace ns { }
+using ns;
+:eerrbad.
+
+:MSGSYM. INF_CANDIDATE_TEMPLATE_DEFINITION
+:MSGTXT. candidate %C defined %L
+:MSGJTXT.
+:INFO.
+
+:MSGSYM. ERR_QUALIFIED_NAME_NOT_CLASS
+:MSGTXT. qualified name '%I' does not name a class
+:MSGJTXT.
+:errbad.
+namespace ns {
+}
+struct ns::A {
+};
+:eerrbad.
+
+:MSGSYM. ERR_EXPECTED_CLASS_TYPE
+:MSGTXT. expected class type, but got '%T'
+:MSGJTXT.
+:errbad.
+template< class T >
+struct A : public T {
+};
+
+A< int > a;
+:eerrbad.
+
+:MSGSYM. ERR_SYNTAX_SCOPED_ID
+:MSGTXT. syntax error near '%s'; probable cause: incorrectly spelled type name
+:MSGJTXT.
+The identifier in the error message has not been declared as a type name
+in any scope at this point in the code.  This may be the cause of the
+syntax error.
+
+:MSGSYM. ERR_SYNTAX_UNDECLARED_SCOPED_ID
+:MSGTXT. syntax error: '%s' has not been declared as a member
+:MSGJTXT.
+The identifier in the error message has not been declared as member.  This
+may be the cause of the syntax error.
+:errbad.
+struct A { };
+
+void fn() {
+    A::undeclared = 0;
+}
+:eerrbad.
+
+:MSGSYM. ERR_SYNTAX_UNDECLARED_GLOBAL_ID
+:MSGTXT. syntax error: '%s' has not been declared
+:MSGJTXT.
+The identifier in the error message has not been declared.  This may be the
+cause of the syntax error.
+:errbad.
+void fn() {
+    ::undeclared = 0;
+}
+:eerrbad.
+
+:MSGSYM. ERR_SYNTAX_UNEXPECTED_ID
+:MSGTXT. syntax error: identifier '%s', but expected: '%s'
+:MSGJTXT.
+
+:MSGSYM. ERR_SYNTAX_UNEXPECTED_TOKEN
+:MSGTXT. syntax error: token '%s', but expected: '%s'
+:MSGJTXT.
+
+:MSGSYM. ERR_MEMBER_SAME_NAME_AS_CLASS
+:MSGTXT. member '%S' cannot be declared in this class
+:MSGJTXT.
+A member cannot be declared with the same name as its containing class if
+the class has a user-declared constructor.
+:errbad.
+struct S {
+    S() { }
+    int S;   // Error!
+};
+:eerrbad.

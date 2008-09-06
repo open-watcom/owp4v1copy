@@ -422,14 +422,16 @@ static boolean dwarfClassInfoFriend( TYPE type, boolean addfriend )
     check_friends = FALSE;
     if( !InDebug ){ /* TODO: if debug need handle */
         RingIterBeg( ScopeFriends( type->u.c.scope ), friend ) {
-            check_friends = TRUE;
-            if( addfriend ) {
-                dh = dwarfSymbol( friend->sym, DC_DEFAULT );
-                if( dh ) {
-                    DWAddFriend( Client, dh );
+            if( FriendIsSymbol( friend ) ) {
+                check_friends = TRUE;
+                if( addfriend ) {
+                    dh = dwarfSymbol( FriendGetSymbol( friend ), DC_DEFAULT );
+                    if( dh ) {
+                        DWAddFriend( Client, dh );
+                    }
+                } else {
+                    dh = dwarfSymbol( FriendGetSymbol( friend ), DC_DEFINE );
                 }
-            } else {
-                dh = dwarfSymbol( friend->sym, DC_DEFINE );
             }
         } RingIterEnd( friend )
     }

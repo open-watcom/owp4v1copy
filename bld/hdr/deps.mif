@@ -17,6 +17,7 @@ setjmp_deps = ../watcom/setjmp.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../popp
 signal_deps = ../watcom/signal.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
 stdarg_deps = ../watcom/stdarg.mh ../readonly.sp $(cplus) ../crwat.sp ../valist.sp
 stddef_deps = ../watcom/stddef.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp $(saferc)
+stdint_deps = ../watcom/stdint.mh ../readonly.sp $(cplus) ../crwat.sp $(saferc)
 stdio_deps  = ../watcom/stdio.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp $(saferc)
 stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp $(cplus) ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp $(saferc)
 string_deps = ../watcom/string.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp $(saferc)
@@ -36,6 +37,7 @@ csetjmp      : $(setjmp_deps)
 csignal      : $(signal_deps)
 cstdarg      : $(stdarg_deps)
 cstddef      : $(stddef_deps)
+cstdint      : $(stdint_deps)
 cstdio       : $(stdio_deps)
 cstdlib      : $(stdlib_deps)
 cstring      : $(string_deps)
@@ -69,29 +71,30 @@ strstrea     : $(strstrea_deps)
 
 # These dependency lists are for other C++ library headers.
 
-algorith_deps = ../watcom/algorith.mh ../readonly.sp ../crwatcnt.sp
-bitset_deps = ../watcom/bitset.mh ../readonly.sp ../crwatcnt.sp
-complex_deps = ../watcom/complex.mh ../readonly.sp ../crwatcnt.sp ../poppack.sp ../pshpackl.sp
-deque_deps = ../watcom/deque.mh ../readonly.sp ../crwatcnt.sp
+algorith_deps  = ../watcom/algorith.mh ../readonly.sp ../crwatcnt.sp
+bitset_deps    = ../watcom/bitset.mh ../readonly.sp ../crwatcnt.sp
+complex_deps   = ../watcom/complex.mh ../readonly.sp ../crwatcnt.sp ../poppack.sp ../pshpackl.sp
+deque_deps     = ../watcom/deque.mh ../readonly.sp ../crwatcnt.sp
 exception_deps = ../watcom/exceptio.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ../watexc.sp
-function_deps = ../watcom/function.mh ../readonly.sp ../crwatcnt.sp
-iterator_deps = ../watcom/iterator.mh ../readonly.sp ../crwatcnt.sp
-list_deps = ../watcom/list.mh ../readonly.sp ../crwatcnt.sp
-map_deps = ../watcom/map.mh ../readonly.sp ../crwatcnt.sp
-memory_deps = ../watcom/memory.mh ../readonly.sp ../crwatcnt.sp ../throws.sp
-new_deps = ../watcom/new.mh ../readonly.sp ../cpppfv.sp ../crwat.sp
-numeric_deps = ../watcom/numeric.mh ../readonly.sp ../crwatcnt.sp
-queue_deps = ../watcom/queue.mh ../readonly.sp ../crwatcnt.sp
-set_deps = ../watcom/set.mh ../readonly.sp ../crwatcnt.sp
-slist_deps = ../watcom/slist.mh ../readonly.sp ../crwatcnt.sp
-stack_deps = ../watcom/stack.mh ../readonly.sp ../crwatcnt.sp
+function_deps  = ../watcom/function.mh ../readonly.sp ../crwatcnt.sp
+iterator_deps  = ../watcom/iterator.mh ../readonly.sp ../crwatcnt.sp
+list_deps      = ../watcom/list.mh ../readonly.sp ../crwatcnt.sp
+map_deps       = ../watcom/map.mh ../readonly.sp ../crwatcnt.sp
+memory_deps    = ../watcom/memory.mh ../readonly.sp ../crwatcnt.sp ../throws.sp
+new_deps       = ../watcom/new.mh ../readonly.sp ../cpppfv.sp ../crwat.sp
+numeric_deps   = ../watcom/numeric.mh ../readonly.sp ../crwatcnt.sp
+queue_deps     = ../watcom/queue.mh ../readonly.sp ../crwatcnt.sp
+random_deps    = ../watcom/random.mh ../readonly.sp ../crwatcnt.sp
+set_deps       = ../watcom/set.mh ../readonly.sp ../crwatcnt.sp
+slist_deps     = ../watcom/slist.mh ../readonly.sp ../crwatcnt.sp
+stack_deps     = ../watcom/stack.mh ../readonly.sp ../crwatcnt.sp
 stdexcept_deps = ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp ../throws.sp
-typeinfo_deps = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
-type_tra_deps = ../watcom/type_tra.mh ../readonly.sp ../crwat.sp
-unordere_deps = ../watcom/unordere.mh ../readonly.sp ../crwatcnt.sp
-utility_deps = ../watcom/utility.mh ../readonly.sp ../crwatcnt.sp
-valarray_deps = ../watcom/valarray.mh ../readonly.sp ../crwatcnt.sp
-vector_deps = ../watcom/vector.mh ../readonly.sp ../crwatcnt.sp
+typeinfo_deps  = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
+type_tra_deps  = ../watcom/type_tra.mh ../readonly.sp ../crwat.sp
+unordere_deps  = ../watcom/unordere.mh ../readonly.sp ../crwatcnt.sp
+utility_deps   = ../watcom/utility.mh ../readonly.sp ../crwatcnt.sp
+valarray_deps  = ../watcom/valarray.mh ../readonly.sp ../crwatcnt.sp
+vector_deps    = ../watcom/vector.mh ../readonly.sp ../crwatcnt.sp
 
 algorith     : $(algorith_deps)
 bitset       : $(bitset_deps)
@@ -108,6 +111,7 @@ memory       : $(memory_deps)
 new          : $(new_deps)
 numeric      : $(numeric_deps)
 queue        : $(queue_deps)
+random       : $(random_deps)
 set          : $(set_deps)
 slist        : $(slist_deps)
 stack        : $(stack_deps)

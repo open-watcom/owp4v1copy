@@ -47,14 +47,11 @@
 //   "Exception" methods  for the set class
 
 
+template class CL_Set<CL_ObjectPtr>;
+template class CL_Set<long>;
 
-typedef CL_Set<CL_ObjectPtr> localObjectSet; // Only to force the compiler
-                                             // to generate code
-
-typedef CL_Set<long> localIntSet; // Only to force the compiler
-                                             // to generate code
-
-
+template class CL_SetIterator<CL_ObjectPtr>;
+template class CL_SetIterator<long>;
 
 
 #endif /* _set_cxx_ */

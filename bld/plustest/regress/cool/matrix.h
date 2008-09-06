@@ -113,8 +113,10 @@ public:
   inline Boolean operator!= (const CoolMatrix<Type>&) const; // inequality test
   void set_compare (Compare = NULL);         // Compare function
   
-  friend ostream& operator<< (ostream&, const CoolMatrix<Type>&);
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolMatrix<Type>*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolMatrix<U>&);
+  template< class U >
+  inline friend ostream& operator<< (ostream&, const CoolMatrix<U>*);
   
   CoolMatrix<Type>& operator+= (const Type&);   // binary operation and assignment
   CoolMatrix<Type>& operator*= (const Type&);   // Mutate matrix data
@@ -130,18 +132,22 @@ public:
   CoolEnvelope< CoolMatrix<Type> > operator* (const Type&) const; // return by values.
   CoolEnvelope< CoolMatrix<Type> > operator/ (const Type&) const;
   
-  inline CoolEnvelope< CoolMatrix<Type> > operator- (const Type&) const; 
-  /*inline##*/ friend CoolEnvelope< CoolMatrix<Type> > operator+ (const Type&, const CoolMatrix<Type>&);
-  /*inline##*/ friend CoolEnvelope< CoolMatrix<Type> > operator- (const Type&, const CoolMatrix<Type>&);
-  /*inline##*/ friend CoolEnvelope< CoolMatrix<Type> > operator* (const Type&, const CoolMatrix<Type>&);
+  inline CoolEnvelope< CoolMatrix<Type> > operator- (const Type&) const;
+  template< class U >
+  inline friend CoolEnvelope< CoolMatrix<U> > operator+ (const U&, const CoolMatrix<U>&);
+  template< class U >
+  inline friend CoolEnvelope< CoolMatrix<U> > operator- (const U&, const CoolMatrix<U>&);
+  template< class U >
+  inline friend CoolEnvelope< CoolMatrix<U> > operator* (const U&, const CoolMatrix<U>&);
   
 // Fewer unnecessary copying with CoolEnvelope
 //  friend CoolMatrix<Type> operator+ (const CoolMatrix<Type>&, 
 //                                    const CoolMatrix<Type>&);
 //  friend CoolMatrix<Type> operator- (const CoolMatrix<Type>&, 
 //                                    const CoolMatrix<Type>&);
-  friend CoolEnvelope< CoolMatrix<Type> > operator* (const CoolMatrix<Type>&, 
-                                      const CoolMatrix<Type>&);
+  template< class U >
+  friend CoolEnvelope< CoolMatrix<U> > operator* (const CoolMatrix<U>&,
+                                                  const CoolMatrix<U>&);
   
   ////--------------------------- Additions ------------------------------------
   
@@ -154,10 +160,12 @@ public:
   CoolMatrix<Type>& update (const CoolMatrix<Type>&, // update submatrix
                             unsigned int top=0, unsigned int left=0);        
   
-  friend CoolEnvelope< CoolMatrix<Type> > element_product (const CoolMatrix<Type>&, // a[ij]*b[ij]
-                                           const CoolMatrix<Type>&);
-  friend CoolEnvelope< CoolMatrix<Type> > element_quotient (const CoolMatrix<Type>&, // a[ij]/b[ij]
-                                            const CoolMatrix<Type>&);
+  template< class U >
+  friend CoolEnvelope< CoolMatrix<U> > element_product (const CoolMatrix<U>&, // a[ij]*b[ij]
+                                                        const CoolMatrix<U>&);
+  template< class U >
+  friend CoolEnvelope< CoolMatrix<U> > element_quotient (const CoolMatrix<U>&, // a[ij]/b[ij]
+                                                         const CoolMatrix<U>&);
   Type determinant() const;                     // determinant of square matrix
 
   
@@ -168,19 +176,23 @@ public:
   inline Type& z ();                            // is less efficient 
   inline Type& t ();                            // in time and space
   
-  friend Type dot_product (const CoolMatrix<Type>&, // dot-product of n-dim vectors
-                           const CoolMatrix<Type>&); 
-  friend Type cross_2d (const CoolMatrix<Type>&, // cross-product of 2d-vectors
-                        const CoolMatrix<Type>&);
-  friend CoolEnvelope< CoolMatrix<Type> > cross_3d (const CoolMatrix<Type>&, // cross-product 
-                                    const CoolMatrix<Type>&); // of 3d-vectors 
+  template< class U >
+  friend U dot_product (const CoolMatrix<U>&,   // dot-product of n-dim vectors
+                        const CoolMatrix<U>&);
+  template< class U >
+  friend U cross_2d (const CoolMatrix<U>&,      // cross-product of 2d-vectors
+                     const CoolMatrix<U>&);
+  template< class U >
+  friend CoolEnvelope< CoolMatrix<U> > cross_3d (const CoolMatrix<U>&,  // cross-product 
+                                                 const CoolMatrix<U>&); // of 3d-vectors 
 
   inline const Type* data_block ();             // block of data, row-major order.
 
 protected:
   Type** data;                                  // Pointer to the CoolMatrix 
   static Boolean (*compare_s)(const Type&, const Type&);        // Pointer operator== function
-  friend Boolean CoolMatrix_is_data_equal (const Type&, const Type&);
+  template< class U >
+  friend Boolean CoolMatrix_is_data_equal (const U&, const U&);
 };
 
 
@@ -194,10 +206,10 @@ void hack(CoolMatrix<double>);
 // Use envelope to avoid deep copy on return by value, and mutate in place
 template<class Type>
 inline CoolEnvelope< CoolMatrix<Type> > operator+ (const CoolMatrix<Type>&arg1,const CoolMatrix<Type>&arg2)
-   { return CoolEnvOp(add)(arg1, arg2); }
+   { return (CoolEnvelope< CoolMatrix<Type> > &) CoolEnvOp(add)(arg1, arg2); }
 template<class Type>
 inline CoolEnvelope< CoolMatrix<Type> > operator- (const CoolMatrix<Type>&arg1,const CoolMatrix<Type>&arg2)
-   { return CoolEnvOp(minus)(arg1, arg2); }
+   { return (CoolEnvelope< CoolMatrix<Type> > &) CoolEnvOp(minus)(arg1, arg2); }
 
 
 // get -- Get the element at specified index and return value
@@ -284,7 +296,7 @@ inline CoolMatrix<Type>& CoolMatrix<Type>::operator-= (const Type& value) {
 template<class Type>
 inline CoolEnvelope< CoolMatrix<Type> > operator+ (const Type& value,
                                     const CoolMatrix<Type>& m) {
-  return m + value;
+  return (CoolEnvelope< CoolMatrix<Type> > &) (m + value);
 }
 
 // operator- -- Non-destructive matrix substraction of a scalar.
@@ -293,20 +305,20 @@ inline CoolEnvelope< CoolMatrix<Type> > operator+ (const Type& value,
 
 template<class Type> 
 inline CoolEnvelope< CoolMatrix<Type> > CoolMatrix<Type>::operator-(const Type& value) const {
-  return (*this) + (- value);
+  return (CoolEnvelope< CoolMatrix<Type> > &) ((*this) + (- value));
 }
 
 template<class Type>
 inline CoolEnvelope< CoolMatrix<Type> > operator- (const Type& value,
                                     const CoolMatrix<Type>& m) {
-  return (- m) + value;
+  return (CoolEnvelope< CoolMatrix<Type> > &) ((- m) + value);
 }
 
 
 template<class Type>
 inline CoolEnvelope< CoolMatrix<Type> > operator* (const Type& value,
                                     const CoolMatrix<Type>& m) {
-  return m * value;
+  return (CoolEnvelope< CoolMatrix<Type> > &) (m * value);
 }
 
 template<class Type>

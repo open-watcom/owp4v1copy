@@ -188,7 +188,7 @@ int IFormat::Size(register unsigned long num, int neg)
     10000000,100000000,1000000000};
 #endif
 
-    register len = 0;
+    register int len = 0;
     while (len < 10 && num > arr[len]) {
         len++;
     }
@@ -388,7 +388,7 @@ char* conv16(register unsigned long i, register char* p, register int &len)
 {
     len = 0;
     do {
-        register dig = (int)(i%16);
+        register int dig = (int)(i%16);
 
         if (dig < 10)
             *p-- = (char)('0' + i%16);

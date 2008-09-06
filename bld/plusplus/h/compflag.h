@@ -314,7 +314,7 @@ typedef struct                          // DLL_DATA -- data for DLL
     char **argv;
 } DLL_DATA;
 
-#pragma pack( push, 4 )
+#include <pushpck4.h>
 struct comp_info {                      // Compiler information
     TYPE        ptr_diff_near;          // - type from near ptr subtraction
     TYPE        ptr_diff_far;           // - type from far ptr subtraction
@@ -335,5 +335,5 @@ struct comp_info {                      // Compiler information
     char*       pch_buff_cursor;        // - PCH read: buffer cursor
     char*       pch_buff_end;           // - PCH read: end of buffer
 };
-#pragma pack( pop )
+#include <poppck.h>
 #endif

@@ -32,8 +32,10 @@
 
 #include "plusplus.h"
 
-#include <process.h>
 #include <limits.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#endif
 
 #include "memmgr.h"
 #include "idedrv.h"

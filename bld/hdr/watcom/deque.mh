@@ -158,8 +158,8 @@ namespace std {
     friend class iterator;
     friend class const_iterator;
 
-    typedef reverse_iterator< iterator >        reverse_iterator;
-    typedef reverse_iterator< const_iterator >  const_reverse_iterator;
+    typedef std::reverse_iterator< iterator >           reverse_iterator;
+    typedef std::reverse_iterator< const_iterator >     const_reverse_iterator;
 
     explicit deque( const Allocator & = Allocator( ) );
     explicit deque( size_type n, const Type &value = Type( ), const Allocator & = Allocator( ) );

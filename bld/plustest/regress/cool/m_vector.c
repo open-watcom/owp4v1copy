@@ -99,7 +99,7 @@ CoolM_Vector<Type>::CoolM_Vector(const CoolM_Vector<Type>& v)
 
 template<class Type> 
 CoolM_Vector<Type>::~CoolM_Vector() {
-  delete this->data;                            // Free up the data space
+  delete[] this->data;                            // Free up the data space
 }
 
 // fill -- Set all elements of a vector to a specified fill value

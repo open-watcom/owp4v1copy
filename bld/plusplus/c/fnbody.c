@@ -271,7 +271,7 @@ static void warnBoolConst(      // WARN, WHEN SPECIFIC BOOLEAN CONSTANT
     boolean parsed_int_const )  // - user coded an int constant
 {
     if( NodeIsConstantInt( expr ) ) {
-        warnBoolConstVal( NodeIsZeroConstant( expr )
+        warnBoolConstVal( NodeIsZeroIntConstant( expr )
                         , parsed_int_const
                         , expr );
     } else if( expr->flags & PTF_PTR_NONZERO ) {
@@ -1294,8 +1294,9 @@ static SYMBOL makeCatchVar(     // CREATE A CATCH VARIABLE
     }
     catch_var = SymCreateCurrScope( info->type
                                   , SC_AUTO
-                                  , SF_REFERENCED | SF_ALIAS | SF_CATCH_ALIAS
+                                  , SF_REFERENCED
                                   , name );
+    catch_var->flag |= SF_ALIAS | SF_CATCH_ALIAS;
     catch_var->u.alias = try_var;
     return catch_var;
 }
@@ -1987,6 +1988,7 @@ static TYPE handleDefnChecks( SYMBOL func )
 
     DbgAssert( FunctionDeclarationType( func->sym_type ) != NULL );
     fn_type = TypeGetActualFlags( func->sym_type, &flags );
+    fn_type->of = BindTemplateClass( fn_type->of, &func->locn->tl, FALSE );
     if( ! TypeDefined( fn_type->of ) ) {
         SetErrLoc( &func->locn->tl );
         CErr2p( ERR_CLASS_NOT_DEFINED, TypeClassInfo( fn_type->of )->name );
@@ -2074,7 +2076,7 @@ void FunctionBody( DECL_INFO *dinfo )
         skipFunctionBody( 1 );
         return;
     }
-    func = TemplateFunctionTranslate( func, &parsing_scope );
+    func = TemplateFunctionTranslate( func, dinfo->friend_fn, &parsing_scope );
     dinfo->sym = func;
     CtxFunction( func );
     fn_control = TemplateFunctionControl();
@@ -2112,8 +2114,11 @@ void FunctionBody( DECL_INFO *dinfo )
     fn_type = handleDefnChecks( func );
     handleDefnChangesToSym( func );
     previous_func = CgFrontCurrentFunction();
+
     enclosing_scope = GetCurrScope();
-    SetCurrScope(parsing_scope);
+    SetCurrScope( parsing_scope );
+    ScopeAdjustUsing( enclosing_scope, parsing_scope );
+
     initFunctionBody( dinfo, &fn_data, fn_type );
     // after initFunctionBody so .DEF files can have names in their prototypes
     MainProcSetup( func );
@@ -2244,7 +2249,10 @@ void FunctionBody( DECL_INFO *dinfo )
         break;
     }
     finiFunctionBody( func );
-    SetCurrScope(enclosing_scope);
+
+    SetCurrScope( enclosing_scope );
+    ScopeAdjustUsing( parsing_scope, enclosing_scope );
+
     CgFrontResumeFunction( previous_func );
 }
 

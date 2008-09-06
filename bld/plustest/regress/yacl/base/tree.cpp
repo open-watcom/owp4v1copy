@@ -37,7 +37,6 @@
 #include "base/treedef.h"
 
 
-#if defined(__GNUC__) && __GNUC_MINOR__ >= 6
 template class CL_Tree<CL_ObjectPtr>;
 template class CL_TreeNode<CL_ObjectPtr>;
 
@@ -46,5 +45,4 @@ template class CL_TreeNode<CL_VoidPtr>;
 
 template class CL_Tree<long>;
 template class CL_TreeNode<long>;
-#endif
 

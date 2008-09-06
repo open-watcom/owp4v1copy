@@ -82,7 +82,6 @@ public:
  * ctors
  */
 template< class Key, class Compare, class Allocator, class Implementation >
-explicit
 set< Key, Compare, Allocator, Implementation >::set( 
     const Compare& c,
     const Allocator& a ) : Implementation( c, a )

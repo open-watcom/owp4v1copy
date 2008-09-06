@@ -126,28 +126,34 @@ public:
   CoolEnvelope< CoolM_Vector<Type> > operator/ (const Type&) const;
   
   inline CoolEnvelope< CoolM_Vector<Type> > operator- (const Type&) const; 
-  /*inline##*/ friend CoolEnvelope< CoolM_Vector<Type> > operator+(const Type&, const CoolM_Vector<Type>&);
-  /*inline##*/ friend CoolEnvelope< CoolM_Vector<Type> > operator-(const Type&, const CoolM_Vector<Type>&);
-  /*inline##*/ friend CoolEnvelope< CoolM_Vector<Type> > operator*(const Type&, const CoolM_Vector<Type>&);
+  template< class U >
+  inline friend CoolEnvelope< CoolM_Vector<U> > operator+(const U&, const CoolM_Vector<U>&);
+  template< class U >
+  inline friend CoolEnvelope< CoolM_Vector<U> > operator-(const U&, const CoolM_Vector<U>&);
+  template< class U >
+  inline friend CoolEnvelope< CoolM_Vector<U> > operator*(const U&, const CoolM_Vector<U>&);
 
 // Fewer unnecessary copying with CoolEnvelope
 //   friend CoolM_Vector<Type> operator+ (const CoolM_Vector<Type>&,
 //                                      const CoolM_Vector<Type>&);
 //   friend CoolM_Vector<Type> operator- (const CoolM_Vector<Type>&,
 //                                      const CoolM_Vector<Type>&);
-
-  friend CoolEnvelope< CoolM_Vector<Type> > operator* (const CoolM_Vector<Type>&, const CoolMatrix<Type>&);
-  friend CoolEnvelope< CoolM_Vector<Type> > operator* (const CoolMatrix<Type>&, const CoolM_Vector<Type>&);
+  template< class U >
+  friend CoolEnvelope< CoolM_Vector<U> > operator* (const CoolM_Vector<U>&, const CoolMatrix<U>&);
+  template< class U >
+  friend CoolEnvelope< CoolM_Vector<U> > operator* (const CoolMatrix<U>&, const CoolM_Vector<U>&);
 
   CoolEnvelope< CoolM_Vector<Type> > abs() const;                       // r[i] = abs(v[i])
   CoolEnvelope< CoolM_Vector<Type> > sign() const;                      // r[i] = sign(v[i])
   CoolEnvelope< CoolM_Vector<Type> > extract (unsigned int len, unsigned int start=0) const; // subvector
   CoolM_Vector<Type>& update (const CoolM_Vector<Type>&, unsigned int start=0);
   
-  friend CoolEnvelope< CoolM_Vector<Type> > element_product (const CoolM_Vector<Type>&, // v[i] = a[i]*b[i]
-                                        const CoolM_Vector<Type>&);
-  friend CoolEnvelope< CoolM_Vector<Type> > element_quotient (const CoolM_Vector<Type>&, // v[i] = a[i]/b[i]
-                                               const CoolM_Vector<Type>&);
+  template< class U >
+  friend CoolEnvelope< CoolM_Vector<U> > element_product (const CoolM_Vector<U>&, // v[i] = a[i]*b[i]
+                                        const CoolM_Vector<U>&);
+  template< class U >
+  friend CoolEnvelope< CoolM_Vector<U> > element_quotient (const CoolM_Vector<U>&, // v[i] = a[i]/b[i]
+                                               const CoolM_Vector<U>&);
 
   inline Type squared_magnitude() const;        // dot(v,v)
   inline Type magnitude() const;                // sqrt(dot(v,v))
@@ -158,17 +164,21 @@ public:
   inline Type& z() const;                       
   inline Type& t() const;                       
 
-  friend Type dot_product (const CoolM_Vector<Type>&, // dot-product of n-dim vectors
-                           const CoolM_Vector<Type>&); 
-  friend Type cross_2d (const CoolM_Vector<Type>&,      // cross-product of 2d-vectors
-                        const CoolM_Vector<Type>&);
-  friend CoolEnvelope< CoolM_Vector<Type> > cross_3d (const CoolM_Vector<Type>&, // cross-product 
-                                       const CoolM_Vector<Type>&); // of 3d-vectors 
+  template< class U >
+  friend U dot_product(const CoolM_Vector<U>&, // dot-product of n-dim vectors
+                       const CoolM_Vector<U>&); 
+  template< class U >
+  friend U cross_2d(const CoolM_Vector<U>&,      // cross-product of 2d-vectors
+                    const CoolM_Vector<U>&);
+  template< class U >
+  friend CoolEnvelope< CoolM_Vector<U> > cross_3d (const CoolM_Vector<U>&, // cross-product 
+                                       const CoolM_Vector<U>&); // of 3d-vectors 
 
 protected:
   Type* data;                                   // Pointer to the CoolM_Vector 
   static Boolean (*compare_s) (const Type&, const Type&);       // Pointer operator== function
-  friend Boolean CoolM_Vector_is_data_equal (const Type&, const Type&);
+  template< class U >
+  friend Boolean CoolM_Vector_is_data_equal (const U&, const U&);
 };
 
 //## BC++ 3.1 bug
@@ -181,10 +191,10 @@ void hack(CoolM_Vector<double>);
 // Use envelope to avoid deep copy on return by value, and mutate in place
 template<class Type>
 inline CoolEnvelope< CoolM_Vector<Type> > operator+ (const CoolM_Vector<Type>&arg1,const CoolM_Vector<Type>&arg2)
-   { return CoolEnvOp(add)(arg1, arg2); }
+   { return (CoolEnvelope< CoolM_Vector<Type> > &) CoolEnvOp(add)(arg1, arg2); }
 template<class Type>
 inline CoolEnvelope< CoolM_Vector<Type> > operator- (const CoolM_Vector<Type>&arg1,const CoolM_Vector<Type>&arg2)
-   { return CoolEnvOp(minus)(arg1, arg2); }
+   { return (CoolEnvelope< CoolM_Vector<Type> > &) CoolEnvOp(minus)(arg1, arg2); }
 
 
 // get -- Get the element at specified index and return value
@@ -275,7 +285,7 @@ inline Boolean CoolM_Vector<Type>::operator!= (const CoolM_Vector<Type>& v) cons
 template<class Type> 
 inline CoolEnvelope< CoolM_Vector<Type> > operator+ (const Type& value,
                                       const CoolM_Vector<Type>& v) {
-  return v + value;
+  return (CoolEnvelope< CoolM_Vector<Type> > &) (v + value);
 }
 
 // operator- -- Non-destructive vector substraction of a scalar.
@@ -284,20 +294,20 @@ inline CoolEnvelope< CoolM_Vector<Type> > operator+ (const Type& value,
 
 template<class Type> 
 inline CoolEnvelope< CoolM_Vector<Type> > CoolM_Vector<Type>::operator-(const Type& value) const {
-  return (*this) + (- value);
+  return (CoolEnvelope< CoolM_Vector<Type> > &) ((*this) + (- value));
 }
 
 template<class Type> 
 inline CoolEnvelope< CoolM_Vector<Type> > operator- (const Type& value,
                                       const CoolM_Vector<Type>& v) {
-  return (- v) + value;
+  return (CoolEnvelope< CoolM_Vector<Type> > &) ((- v) + value);
 }
 
 
 template<class Type> 
 inline CoolEnvelope< CoolM_Vector<Type> > operator* (const Type& value,
                                       const CoolM_Vector<Type>& v) {
-  return v * value;
+  return (CoolEnvelope< CoolM_Vector<Type> > &) (v * value);
 }
 
 

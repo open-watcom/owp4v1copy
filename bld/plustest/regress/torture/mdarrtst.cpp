@@ -52,8 +52,10 @@ template<class T> class MDSlice;
 template<class T>
 class MDArray {
 friend class MDSlice<T>;
-friend ostream& operator<<(ostream&, const MDArray<T>&);
-friend int operator==(const MDArray<T>& arr1, const MDArray<T>& arr2);
+template<class TT>
+friend ostream& operator<<(ostream&, const MDArray<TT>&);
+template<class TT>
+friend int operator==(const MDArray<TT>& arr1, const MDArray<TT>& arr2);
 public:
    MDArray();
    MDArray(int sz) : _dimensions(IntList::of(sz)) {}
@@ -384,7 +386,7 @@ main()
 
    IntList dims;
    dims.append(1); dims.append(2); dims.append(3); dims.append(4); dims.append(5);
-   const N1=5, N2=5, N3=5, N4=5;      // 7 is test, 5 shows bug
+   const int N1=5, N2=5, N3=5, N4=5;      // 7 is test, 5 shows bug
    IntList nn; nn.append(N1); nn.append(N2); nn.append(N3); nn.append(N4);
    MDArray<int> darr(nn);
 

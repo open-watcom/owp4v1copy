@@ -733,9 +733,5 @@ int main( )
         rc = 1;
     }
 
-    if( rc == 0 ) {
-        std::cout << "success\n";
-    }
-
     return( rc );
 }

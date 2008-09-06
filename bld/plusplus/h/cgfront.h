@@ -1124,7 +1124,10 @@ boolean NodeIsUnaryOp(          // TEST IF UNARY OPERATION OF GIVEN TYPE
     CGOP operation )            // - operation
 ;
 #endif
-boolean NodeIsZeroConstant(     // TEST IF A ZERO INTEGER CONSTANT
+boolean NodeIsZeroConstant(     // TEST IF A ZERO CONSTANT
+    PTREE node )                // - node
+;
+boolean NodeIsZeroIntConstant(  // TEST IF A ZERO INTEGER CONSTANT
     PTREE node )                // - node
 ;
 PTREE NodeLvExtract             // EXTRACT LVALUE, IF POSSIBLE

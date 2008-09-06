@@ -170,12 +170,10 @@ char *sticpy(                   // CONCATENATE INTEGER NUMBER
     char *tgt,                  // - target location
     int value )                 // - value to be concatenated
 ;
-#if __WATCOMC__ >= 1100
 char *sti64cpy(                 // CONCATENATE I64 NUMBER
     char *tgt,                  // - target location
-    __int64 value )             // - value to be concatenated
+    long long value )           // - value to be concatenated
 ;
-#endif
 char *stpcpy(                   // CONCATENATE STRING AS STRING
     char *string,               // - target location
     const char *src_string )    // - source string

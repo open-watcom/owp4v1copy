@@ -153,7 +153,7 @@ PTREE AnalyseTypeidExpr( PTREE typeid_expr )
     }
     result_expr = NodeTypeid( expr_type );
     result_expr = NodeSetType( result_expr, type_info, PTF_LVALUE );
-    PTreeFreeSubtrees( typeid_expr );
+    NodeFreeDupedExpr( typeid_expr );
     return( result_expr );
 }
 

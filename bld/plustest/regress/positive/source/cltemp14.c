@@ -38,6 +38,29 @@ struct A<T *> {
 };
 
 
+struct C1
+{ };
+
+struct C2
+{ };
+
+template< class T >
+struct C
+{ };
+
+template<>
+struct C< C1 >
+{
+    static const int val = 1;
+};
+
+template<>
+struct C< C2 >
+{
+    static const int val = 2;
+};
+
+
 int main()
 {
     A<int *> a;
@@ -45,6 +68,10 @@ int main()
 
     ptr = &a;
     if( ptr->f() != 0 ) fail( __LINE__ );
+
+    if( C< C1 >::val != 1 ) fail( __LINE__ );
+    if( C< C2 >::val != 2 ) fail( __LINE__ );
+
 
     _PASS;
 }

@@ -15,4 +15,3 @@ File: source\diag0001.c
 (52,15): Error! E140: bit-field declaration cannot have a storage class specifier
 (54,14): Error! E049: bit-field base type must be an integral type
 (55,15): Error! E047: width of a named bit-field must not be zero
-(56,1): Error! E370: constructor is required for a class with a const member

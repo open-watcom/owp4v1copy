@@ -273,7 +273,7 @@ namespace std {
 
   // The required specializations
 
-  // template< >
+  template< >
   class numeric_limits< bool > {
   public:
     static const bool is_specialized = true;
@@ -308,7 +308,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< char > {
   public:
     static const bool is_specialized = true;
@@ -349,7 +349,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< signed char > {
   public:
     static const bool is_specialized = true;
@@ -384,7 +384,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< unsigned char > {
   public:
     static const bool is_specialized = true;
@@ -419,7 +419,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< wchar_t > {
   public:
     static const bool is_specialized = true;
@@ -454,7 +454,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< short > {
   public:
     static const bool is_specialized = true;
@@ -489,7 +489,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< int > {
   public:
     static const bool is_specialized = true;
@@ -529,7 +529,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< long > {
   public:
     static const bool is_specialized = true;
@@ -565,7 +565,7 @@ namespace std {
   };
 
 #ifdef __WATCOM_INT64__
-  // template< >
+  template< >
   class numeric_limits< long long > {
   public:
     static const bool is_specialized = true;
@@ -601,7 +601,7 @@ namespace std {
   };
 #endif
 
-  // template< >
+  template< >
   class numeric_limits< unsigned short > {
   public:
     static const bool is_specialized = true;
@@ -636,7 +636,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< unsigned int > {
   public:
     static const bool is_specialized = true;
@@ -676,7 +676,7 @@ namespace std {
     static const float_round_style round_style = round_toward_zero;
   };
 
-  // template< >
+  template< >
   class numeric_limits< unsigned long > {
   public:
     static const bool is_specialized = true;
@@ -712,7 +712,7 @@ namespace std {
   };
 
 #ifdef __WATCOM_INT64__
-  // template< >
+  template< >
   class numeric_limits< unsigned long long > {
   public:
     static const bool is_specialized = true;
@@ -748,7 +748,7 @@ namespace std {
   };
 #endif
 
-  // template< >
+  template< >
   class numeric_limits< float > {
   public:
     static const bool is_specialized = true;
@@ -783,7 +783,7 @@ namespace std {
     static const float_round_style round_style = round_to_nearest;
   };
 
-  // template< >
+  template< >
   class numeric_limits< double > {
   public:
     static const bool is_specialized = true;
@@ -818,7 +818,7 @@ namespace std {
     static const float_round_style round_style = round_to_nearest;
   };
 
-  // template< >
+  template< >
   class numeric_limits< long double > {
   public:
     static const bool is_specialized = true;

@@ -50,6 +50,8 @@ struct class_data {
     BASE_CLASS      *last_empty;        /* last empty base class (for optimizing) */
 #endif
     DECL_INFO       *inlines;           /* ring of pending inline functions */
+    DECL_INFO       *nested_inlines;    /* pointer into ring of inline functions for nested classes */
+    DECL_INFO       *saved_inlines;     /* saved pointer to ring of inline functions */
     DECL_INFO       *defargs;           /* ring of pending default arg exprs */
     AUX_INFO        *fn_pragma;         /* function pragma for member functions */
     TYPE            class_mod_type;     /* type representing mod in class <mod> X */
@@ -77,7 +79,6 @@ struct class_data {
     unsigned        defined : 1;        /* class has been defined */
     unsigned        local_class : 1;    /* class is being def'd in a function */
     unsigned        nested_class : 1;   /* class is being def'd in a class */
-    unsigned        allow_typedef : 1;  /* allow typedef with same name as class */
     unsigned        is_union : 1;       /* current class is a union */
     unsigned        is_explicit : 1;    /* programmer can still define members */
     unsigned        own_vfptr : 1;      /* brand new vfptr */
@@ -129,7 +130,7 @@ extern void ClassFini( void );
 extern void ClassInitState( type_flag, CLASS_INIT, TYPE );
 extern void ClassPermission( symbol_flag );
 extern CLNAME_STATE ClassName( PTREE, CLASS_DECL );
-extern void ClassSpecificInstantiation( PTREE, CLASS_DECL );
+extern void ClassSpecificInstantiation( PTREE, CLASS_DECL, int );
 extern void ClassMember( SCOPE, SYMBOL );
 extern void ClassBitfield( DECL_SPEC *, PTREE, PTREE );
 extern void ClassStart( void );
@@ -156,6 +157,7 @@ extern boolean ClassNeedsAssign( TYPE, boolean );
 extern boolean ClassIsDefaultCtor( SYMBOL, TYPE );
 extern boolean ClassIsDefaultCopy( SYMBOL, TYPE );
 extern boolean ClassIsDefaultAssign( SYMBOL, TYPE );
+extern void ClassProcessFunction( DECL_INFO *, boolean );
 extern SYMBOL ClassAddDefaultCtor( SCOPE );
 extern SYMBOL ClassAddDefaultCopy( SCOPE );
 extern SYMBOL ClassAddDefaultDtor( SCOPE );
@@ -163,7 +165,7 @@ extern SYMBOL ClassAddDefaultAssign( SCOPE );
 extern boolean ClassCorrupted( TYPE );
 extern TYPE ClassUnboundTemplate( char * );
 extern void ClassChangingScope( SYMBOL, SCOPE );
-extern void ClassDefineRefdDefaults( void );
+extern boolean ClassDefineRefdDefaults( void );
 extern void ClassAddFunctionMods( TYPE );
 extern boolean ClassParmIsRef( TYPE );
 extern TYPE ClassPreDefined( char *, TOKEN_LOCN * );

@@ -41,6 +41,7 @@
 #include "fmtsym.h"
 #include "fmtmsg.h"
 #include "errdefns.h"
+#include "template.h"
 
 static void leading( VBUF *pbuf, char lead, int len )
 /***************************************************/
@@ -221,6 +222,40 @@ SYMBOL FormatMsg( VBUF *pbuf, char *fmt, va_list arg )
                 if( NULL != refed ) {
                     VStrConcStr( pbuf, " (lvalue)" );
                 }
+            }   break;
+            case 'P':   /* PTREE list */
+            {   const PTREE p = va_arg( arg, PTREE );
+
+                FormatPTreeList( p, &prefix );
+                VStrConcStr( pbuf, prefix.buf );
+                VbufFree( &prefix );
+            }   break;
+            case 'I':   /* PTREE id */
+            {   const PTREE p = va_arg( arg, PTREE );
+
+                FormatPTreeId( p, &prefix );
+                VStrConcStr( pbuf, prefix.buf );
+                VbufFree( &prefix );
+            }   break;
+            case 'M':   /* template info */
+            {   TEMPLATE_INFO * const tinfo = va_arg( arg, TEMPLATE_INFO * );
+                const SYMBOL sym = tinfo->sym;
+
+                FormatTemplateInfo( tinfo, &prefix );
+                VStrConcStr( pbuf, prefix.buf );
+                VbufFree( &prefix );
+                if( sym->flag2 & SF2_TOKEN_LOCN ) {
+                    DbgVerify( retn_symbol == NULL, "too many symbols" );
+                    retn_symbol = sym;
+                }
+            }   break;
+            case 'C':   /* template specialisation */
+            {   TEMPLATE_SPECIALIZATION * const tspec =
+                    va_arg( arg, TEMPLATE_SPECIALIZATION * );
+
+                FormatTemplateSpecialization( tspec, &prefix );
+                VStrConcStr( pbuf, prefix.buf );
+                VbufFree( &prefix );
             }   break;
             default:
                 VStrConcChr( pbuf, cfmt );

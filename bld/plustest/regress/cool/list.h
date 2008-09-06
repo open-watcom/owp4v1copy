@@ -144,7 +144,8 @@ public:
 
 private:
   static Boolean (*compare_s)(const Type&, const Type&);        // Function used by == test
-  friend Boolean CoolList_is_data_equal(const Type& a, const Type& b); // a==b
+  template< class U >
+  friend Boolean CoolList_is_data_equal(const U& a, const U& b); // a==b
   
   CoolList(CoolList_Node<Type>*);               // Internal-use constructor
   virtual CoolBase_List* new_list(CoolBase_List_Node*); // Creates a new list from node

@@ -28,14 +28,18 @@ YYDRIVER: driver code to make use of YACC generated parser tables and support
 #include "codegen.h"
 #include "namspace.h"
 #include "memmgr.h"
+#include "cgfront.h"
+#include "rtngen.h"
 #ifndef NDEBUG
 #include "pragdefn.h"
+#include "dbg.h"
 #endif
 
 ExtraRptCtr( lookup_lexical );
 ExtraRptCtr( lookup_other );
 ExtraRptCtr( found_type );
 ExtraRptCtr( found_template );
+ExtraRptCtr( found_template_id );
 ExtraRptCtr( found_namespace );
 ExtraRptCtr( found_id );
 
@@ -85,7 +89,6 @@ static carve_t carveSTATE_STACK;
 static carve_t carveLOCATION_STACK;
 
 typedef struct restart_parse RESTART_PARSE;
-typedef struct parse_stack PARSE_STACK;
 struct restart_parse {
     RESTART_PARSE       *next;
     PARSE_STACK         *state;
@@ -108,12 +111,14 @@ struct parse_stack {
     void                *qualifications;
     SCOPE               reset_scope;
     TYPE                class_colon;
+    SCOPE               scope_member;
     VSTK_CTL            look_ahead_storage;
     unsigned            look_ahead_count;
     unsigned            look_ahead_index;
     TOKEN_LOCN          template_record_locn;
     REWRITE             *template_record_tokens;
     VSTK_CTL            angle_stack;
+    char                *expect;
     unsigned            no_super_tokens : 1;
     unsigned            use_saved_tokens : 1;
     unsigned            favour_reduce : 1;
@@ -124,6 +129,9 @@ struct parse_stack {
     unsigned            template_class_inst_defer : 1;
     unsigned            special_colon_colon : 1;
     unsigned            special_gt_gt : 1;
+    unsigned            special_typename : 1;
+    unsigned            template_extern : 1;
+    unsigned            template_instantiate : 1;
 };
 
 typedef struct {
@@ -148,7 +156,6 @@ typedef enum {
     P_ACCEPT,           /* parse is completed */
     P_SPECIAL,          /* special actions follow ... */
     P_CLASS_TEMPLATE,   /* class template member found */
-    P_DEFER_DEFN,       /* don't want to fully define the class instantiation */
     P_ERROR,            /* parse errors follow ... */
     P_SYNTAX,           /* parse cannot continue due to syntax error */
     P_OVERFLOW,         /* parse cannot continue due to parser stack overflow */
@@ -166,6 +173,8 @@ typedef enum {          /* lookahead actions */
 
 #define LK_DEFS                                 /* lookup return value */ \
     LKDEF( LK_ID,       ID )                    /* identifier */ \
+    LKDEF( LK_UNKN_ID,  UNKNOWN_ID )            /* identifier */ \
+    LKDEF( LK_TEMPL_ID, TEMPLATE_ID )           /* template function */ \
     LKDEF( LK_TYPE,     TYPE_NAME )             /* type name */ \
     LKDEF( LK_TEMPLATE, TEMPLATE_NAME )         /* template name */ \
     LKDEF( LK_NAMESPACE,NAMESPACE_NAME )        /* namespace name */
@@ -284,6 +293,13 @@ static void dump_state_stack(const char * label, PARSE_STACK * stack)
 
 static void deleteStack( PARSE_STACK * );
 
+static PTREE setAnalysedFlag(
+    PTREE expr )
+{
+    expr->flags |= PTF_ALREADY_ANALYSED;
+    return expr;
+}
+
 static void parserSuicideHandler( void )
 {
     while( currParseStack != NULL ) {
@@ -310,6 +326,7 @@ static void parseInit(          // PARSER INITIALIZATION
     ExtraRptRegisterCtr( &lookup_other, "parser: other lookups" );
     ExtraRptRegisterCtr( &found_type, "parser lookup: found type" );
     ExtraRptRegisterCtr( &found_id, "parser lookup: found id" );
+    ExtraRptRegisterCtr( &found_template_id, "parser lookup: found template id" );
     ExtraRptRegisterCtr( &found_template, "parser lookup: found template" );
     ExtraRptRegisterCtr( &found_namespace, "parser lookup: found namespace" );
 }
@@ -350,8 +367,11 @@ static boolean doFnbodyRewrite( void )
 {
     switch( ScopeId( GetCurrScope() ) ) {
     case SCOPE_CLASS:
-    case SCOPE_TEMPLATE_DECL:
         return( TRUE );
+    case SCOPE_TEMPLATE_DECL:
+        return( GetCurrScope()->ordered != NULL );
+    case SCOPE_TEMPLATE_INST:
+        return( GetCurrScope()->owner.inst != NULL );
     }
     return( FALSE );
 }
@@ -418,7 +438,14 @@ static lk_result lexCategory( SCOPE scope, PTREE id, lk_control control,
         *psym_name = sym_name;
     }
     if( sym_name != NULL ) {
-        if( sym_name->name_syms == NULL ) {
+        if( sym_name->name_syms != NULL ) {
+            RingIterBeg( sym_name->name_syms, sym ) {
+                if( SymIsFunctionTemplateModel( sym ) ) {
+                    ExtraRptIncrementCtr( found_template_id );
+                    return( LK_TEMPL_ID );
+                }
+            } RingIterEnd( sym )
+        } else if( sym_name->name_type != NULL ) {
             sym = sym_name->name_type;
             switch( sym->id ) {
             case SC_CLASS_TEMPLATE:
@@ -441,16 +468,41 @@ static lk_result lexCategory( SCOPE scope, PTREE id, lk_control control,
                     }
                 }
             }
+            if( !( control & LK_LEXICAL )
+             && ScopeType( scope, SCOPE_CLASS ) ) {
+                if( ScopeClass( scope )->u.c.info->name == name ) {
+                    /* see 3.4.3.1 Class members [class.qual]:
+                     *
+                     * "In a lookup in which the constructor is an
+                     * acceptable lookup result, if the
+                     * nested-name-specifier nominates a class C, and
+                     * the name specified after the
+                     * nested-name-specifier, when looked up in C, is
+                     * the injected-class-name of C (clause 9), the
+                     * name is instead considered to name the
+                     * constructor of class C."
+                     */
+                    ExtraRptIncrementCtr( found_id );
+                    return( LK_ID );
+                }
+            }
             id->type = type;
             ExtraRptIncrementCtr( found_type );
             return( LK_TYPE );
+        } else {
+#if !defined( NDEBUG )
+            DumpSymbolName( sym_name );
+#endif
+            CFatal( "lexCategory: unable to process id with unknown type" );
         }
+    } else {
+        return( LK_UNKN_ID );
     }
     ExtraRptIncrementCtr( found_id );
     return( LK_ID );
 }
 
-static int doId( void )
+static int doId( SCOPE scope_member )
 {
     PTREE id;
     lk_control control;
@@ -458,12 +510,12 @@ static int doId( void )
 
     id = makeId();
     yylval.tree = id;
-    control = LK_LEXICAL;
+    control = scope_member ? 0 : LK_LEXICAL;
     if( LAToken == T_LT ) {
         control |= LK_LT_AHEAD;
     }
-    id_check = lexCategory( GetCurrScope(), id, control,
-                            &yylval.tree->sym_name );
+    id_check = lexCategory( scope_member ? scope_member : GetCurrScope(),
+                            id, control, &yylval.tree->sym_name );
     return( lookupToken[ id_check ] );
 }
 
@@ -528,7 +580,8 @@ static TYPE findGenericType( SCOPE scope, char *name )
     return( generic_type );
 }
 
-static SCOPE checkColonColon( SCOPE scope, PTREE id, SCOPE not_nested )
+static SCOPE checkColonColon( PTREE id, SCOPE scope, SCOPE not_nested,
+                              boolean special_typename )
 {
     char *name;
     TYPE test_type;
@@ -542,12 +595,28 @@ static SCOPE checkColonColon( SCOPE scope, PTREE id, SCOPE not_nested )
     scope_type = NULL;
     id_scope = NULL;
     name = id->u.id.name;
+    result = NULL;
     if( not_nested != NULL ) {
-        result = ScopeFindLexicalColonColon( scope, name );
-    } else {
-        result = ScopeFindMemberColonColon( scope, name );
+        /* need to bend over backwards to allow 12.4 Destructors
+         * [class.dtor] (14) "the notation for explicit call of a
+         * destructor can be used for any scalar type name
+         * (5.2.4)." */
+        result = ScopeFindLexicalColonColon( not_nested, name,
+                                             CurToken == T_TILDE );
     }
     if( result == NULL ) {
+        if( scope != NULL ) {
+            result = ScopeFindMemberColonColon( scope, name );
+        } else {
+            scope = not_nested;
+        }
+    } else {
+        scope = not_nested;
+    }
+    if( result == NULL ) {
+        if( special_typename ) {
+            return( NULL );
+        }
         if( not_nested != NULL ) {
             if( ScopeId( not_nested ) == SCOPE_TEMPLATE_DECL ) {
                 scope_type = findGenericType( not_nested, name );
@@ -564,7 +633,8 @@ static SCOPE checkColonColon( SCOPE scope, PTREE id, SCOPE not_nested )
             id_scope = scope;
         } else {
             test_type = TypedefRemove( sym->sym_type );
-            if( test_type->id != TYP_CLASS ) {
+            /* see note above regarding 12.4 (14) */
+            if( ( test_type->id != TYP_CLASS ) && ( CurToken != T_TILDE ) ) {
                 CErr2p( ERR_NAME_NOT_A_CLASS_OR_NAMESPACE, name );
             } else {
                 scope_type = test_type;
@@ -574,7 +644,7 @@ static SCOPE checkColonColon( SCOPE scope, PTREE id, SCOPE not_nested )
         ScopeFreeResult( result );
     }
     id_type = scope_type;
-    class_type = StructType( scope_type );
+    class_type = BindTemplateClass( StructType( scope_type ), NULL, FALSE );
     if( class_type != NULL ) {
         // member pointers do not need the class to be defined
         if( StructOpened( class_type ) == NULL && CurToken != T_TIMES ) {
@@ -590,15 +660,20 @@ static SCOPE checkColonColon( SCOPE scope, PTREE id, SCOPE not_nested )
     return( scope );
 }
 
-static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl )
+static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id,
+                        unsigned ctrl, boolean special_typename )
 {
     lk_result id_check;
     char *name;
     SCOPE scope;
     SCOPE lexical_lookup;
+    SCOPE member_lookup;
     PTREE curr;
     TYPE class_type;
+    boolean undefined_scope;
+    boolean special_template;
 
+    undefined_scope = FALSE;
     scope = GetCurrScope();
     if( start != NULL ) {
         scope = GetFileScope();
@@ -606,14 +681,26 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
             class_type = start->u.subtree[1]->type;
             if( class_type != NULL ) {
                 scope = class_type->u.c.scope;
+                member_lookup = scope;
                 lexical_lookup = NULL;
             } else {
+                member_lookup = NULL;
                 lexical_lookup = scope;
+                undefined_scope = TRUE;
+                if( special_typename ) {
+                    scope = NULL;
+                }
             }
         } else {
+            member_lookup = NULL;
             lexical_lookup = scope;
         }
+    } else if( state->scope_member != NULL ) {
+        scope = state->scope_member;
+        member_lookup = scope;
+        lexical_lookup = scope;
     } else {
+        member_lookup = NULL;
         lexical_lookup = scope;
     }
     id->u.id.scope = scope;
@@ -624,9 +711,22 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
         curr = currBinary( CO_COLON_COLON, curr, id );
         nextRecordedToken( state );
         nextRecordedToken( state );
-        scope = checkColonColon( scope, id, lexical_lookup );
+        if( CurToken == T_TEMPLATE ) {
+            special_template = TRUE;
+            nextRecordedToken( state );
+        } else {
+            special_template = FALSE;
+        }
+        if( ! undefined_scope ) {
+            scope = checkColonColon( id, member_lookup, lexical_lookup,
+                                     special_typename );
+            if( scope == NULL ) {
+                undefined_scope = TRUE;
+            }
+        }
         name = id->u.id.name;
         lexical_lookup = NULL;
+        member_lookup = scope;
         switch( CurToken ) {
         case T_ID:
             LookPastName();
@@ -637,16 +737,24 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
                 continue;
             }
             yylval.tree = makeBinary( CO_STORAGE, curr, id );
-            /* kludge for constructor name */
-            if( name == id->u.id.name && ScopeId( GetCurrScope() ) == SCOPE_FILE ) {
-                /* so S::S( T x ) {} works if T is a nested type */
-                return( Y_SCOPED_ID );
+            yylval.tree->flags |= special_typename ? PTF_TYPENAME : 0;
+            if( special_typename && undefined_scope ) {
+                if( special_template ) {
+                    return( Y_SCOPED_TEMPLATE_NAME );
+                } else {
+                    return( Y_SCOPED_TYPE_NAME );
+                }
             }
+
             id_check = lexCategory( scope, id, LK_NULL,
                                     &yylval.tree->sym_name );
             switch( id_check ) {
             case LK_ID:
                 return( Y_SCOPED_ID );
+            case LK_UNKN_ID:
+                return( Y_SCOPED_UNKNOWN_ID );
+            case LK_TEMPL_ID:
+                return( Y_SCOPED_TEMPLATE_ID );
             case LK_TYPE:
                 return( Y_SCOPED_TYPE_NAME );
             case LK_TEMPLATE:
@@ -659,6 +767,7 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
         case T_TILDE:
         case T_ALT_TILDE:
             yylval.tree = makeUnary( CO_TILDE, curr );
+            state->scope_member = curr->u.subtree[1]->u.id.scope;
             return( Y_SCOPED_TILDE );
         case T_OPERATOR:
             yylval.tree = makeUnary( CO_OPERATOR, curr );
@@ -675,7 +784,7 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
     }
 }
 
-static int templateScopedChain( PARSE_STACK *state )
+static int templateScopedChain( PARSE_STACK *state, boolean special_typename )
 {
     lk_result id_check;
     PTREE scope_tree;
@@ -686,42 +795,51 @@ static int templateScopedChain( PARSE_STACK *state )
     char *name;
     SCOPE scope;
     int adjusted_token;
+    boolean undefined_scope;
+    boolean special_template;
 
-    template_type = state->class_colon;
+    template_type = BindTemplateClass( state->class_colon, NULL, FALSE );
     name = SimpleTypeName( template_type );
     template_class_type = StructType( template_type );
     scope_tree = PTreeId( name );
     scope_tree->type = template_class_type;
     if( template_class_type != NULL ) {
         scope_tree->u.id.scope = template_class_type->u.c.scope;
+        undefined_scope = ( template_class_type->flag & TF1_UNBOUND );
+    } else {
+        undefined_scope = TRUE;
     }
     curr = makeBinary( CO_COLON_COLON, NULL, scope_tree );
     nextRecordedToken( state );
     for(;;) {
+        if( CurToken == T_TEMPLATE ) {
+            special_template = TRUE;
+            nextRecordedToken( state );
+        } else {
+            special_template = FALSE;
+        }
         switch( CurToken ) {
         case T_ID:
             LookPastName();
             /* fall through */
         case T_SAVED_ID:
-            if( ! state->template_decl ) {
+            if( ! undefined_scope ) {
                 id = makeId();
                 if( LAToken == T_COLON_COLON ) {
                     adjusted_token =
-                        scopedChain( state, curr, id, CH_ALREADY_STARTED );
+                        scopedChain( state, curr, id, CH_ALREADY_STARTED,
+                                     special_typename );
                     /* translate to the correct token value */
                     adjusted_token -= Y_SCOPED_ID;
                     adjusted_token += Y_TEMPLATE_SCOPED_ID;
                     return( adjusted_token );
                 }
                 yylval.tree = makeBinary( CO_STORAGE, curr, id );
-                /* kludge for constructor name */
-                if( name == id->u.id.name && ScopeEquivalent( GetCurrScope(), SCOPE_FILE ) ) {
-                    /* so S::S( T x ) {} works if T is a nested type */
-                    return( Y_TEMPLATE_SCOPED_ID );
-                }
+                yylval.tree->flags |= special_typename ? PTF_TYPENAME : 0;
                 /* template instantiation errors may have occured */
                 if( template_class_type != NULL ) {
                     scope = template_class_type->u.c.scope;
+
                     id_check = lexCategory( scope, id, LK_NULL,
                                             &yylval.tree->sym_name );
                     if( id_check == LK_TEMPLATE ) {
@@ -739,23 +857,21 @@ static int templateScopedChain( PARSE_STACK *state )
             }
             id = makeId();
             yylval.tree = makeBinary( CO_STORAGE, curr, id );
-            /* only certain tokens can follow a file-scope declarator-id */
-            /* int x(int); int (x)( int ); int x[2]; int x=2; int x; int x,y; */
-            /* this heuristic only has to work up to the declarator-id */
-            switch( LAToken ) {
-            case T_LEFT_PAREN:
-            case T_RIGHT_PAREN:
-            case T_LEFT_BRACKET:
-            case T_ALT_LEFT_BRACKET:
-            case T_EQUAL:
-            case T_SEMI_COLON:
-            case T_COMMA:
-                return( Y_TEMPLATE_SCOPED_ID );
+            yylval.tree->flags |= special_typename ? PTF_TYPENAME : 0;
+            if( special_typename ) {
+                if( special_template ) {
+                    return( Y_TEMPLATE_SCOPED_TEMPLATE_NAME );
+                } else {
+                    return( Y_TEMPLATE_SCOPED_TYPE_NAME );
+                }
             }
-            return( Y_TEMPLATE_SCOPED_TYPE_NAME );
+            return( Y_TEMPLATE_SCOPED_ID );
         case T_TILDE:
         case T_ALT_TILDE:
             yylval.tree = makeUnary( CO_TILDE, curr );
+            if( ! undefined_scope ) {
+                state->scope_member = curr->u.subtree[1]->u.id.scope;
+            }
             return( Y_TEMPLATE_SCOPED_TILDE );
         case T_OPERATOR:
             yylval.tree = makeUnary( CO_OPERATOR, curr );
@@ -772,7 +888,7 @@ static int templateScopedChain( PARSE_STACK *state )
     }
 }
 
-static int globalChain( PARSE_STACK *state )
+static int globalChain( PARSE_STACK *state, boolean special_typename )
 {
     PTREE tree;
     PTREE id;
@@ -787,9 +903,11 @@ static int globalChain( PARSE_STACK *state )
     case T_SAVED_ID:
         id = makeId();
         if( LAToken == T_COLON_COLON ) {
-            return( scopedChain( state, tree, id, CH_NULL ) );
+            return( scopedChain( state, tree, id, CH_NULL,
+                                 special_typename ) );
         }
         yylval.tree = makeBinary( CO_STORAGE, tree, id );
+        yylval.tree->flags |= special_typename ? PTF_TYPENAME : 0;
         id_check = lexCategory( GetFileScope(), id, LK_LEXICAL,
                                 &yylval.tree->sym_name );
         return( globalLookupToken[ id_check ] );
@@ -813,18 +931,60 @@ static int globalChain( PARSE_STACK *state )
     return( Y_IMPOSSIBLE );
 }
 
+static int specialAngleBracket( PARSE_STACK *state, int token )
+{
+    angle_bracket_stack *angle_state;
+
+    angle_state = VstkTop( &(state->angle_stack) );
+    if( angle_state != NULL ) {
+        if( token == Y_GT ) {
+            if( angle_state->paren_depth == 0 ) {
+                VstkPop( &(state->angle_stack) );
+                token = Y_GT_SPECIAL;
+            }
+        } else if( CompFlags.enable_std0x && ( token == Y_RSHIFT ) ) {
+            // see Right Angle Brackets (N1757/05-0017)
+            if( angle_state->paren_depth == 0 ) {
+                VstkPop( &(state->angle_stack) );
+                token = Y_GT_SPECIAL;
+                state->special_gt_gt = TRUE;
+            }
+        } else if( token == Y_LEFT_BRACE ) {
+            angle_state->paren_depth++;
+        } else if( token == Y_RIGHT_BRACE ) {
+            if( angle_state->paren_depth > 0) {
+                angle_state->paren_depth--;
+            }
+        } else if( token == Y_LEFT_BRACKET ) {
+            angle_state->paren_depth++;
+        } else if( token == Y_RIGHT_BRACKET ) {
+            if( angle_state->paren_depth > 0) {
+                angle_state->paren_depth--;
+            }
+        } else if( token == Y_LEFT_PAREN ) {
+            angle_state->paren_depth++;
+        } else if( token == Y_RIGHT_PAREN ) {
+            if( angle_state->paren_depth > 0) {
+                angle_state->paren_depth--;
+            }
+        }
+    }
+
+    return token;
+}
+
 static int yylex( PARSE_STACK *state )
-/*****************************/
+/************************************/
 {
     lk_result id_check;
     int token;
     STRING_CONSTANT literal;
     PTREE tree;
     look_ahead_storage *saved_token;
-    angle_bracket_stack *angle_state;
     struct {
         unsigned no_super_token : 1;
         unsigned special_colon_colon : 1;
+        unsigned special_typename : 1;
     } flags;
 
     state->favour_reduce = FALSE;
@@ -853,11 +1013,14 @@ static int yylex( PARSE_STACK *state )
             }
             break;
         }
+        token = specialAngleBracket( state, token );
         currToken = token;
         return( currToken );
     }
     flags.no_super_token = FALSE;
     flags.special_colon_colon = FALSE;
+    flags.special_typename = state->special_typename;
+    state->special_typename = FALSE;
     if( state->no_super_tokens ) {
         state->no_super_tokens = FALSE;
         flags.no_super_token = TRUE;
@@ -877,9 +1040,9 @@ static int yylex( PARSE_STACK *state )
             token = yytranslate[ CurToken ];
         } else {
             if( flags.special_colon_colon ) {
-                token = templateScopedChain( state );
+                token = templateScopedChain( state, flags.special_typename );
             } else {
-                token = globalChain( state );
+                token = globalChain( state, flags.special_typename );
             }
         }
         break;
@@ -888,9 +1051,11 @@ static int yylex( PARSE_STACK *state )
         /* fall through */
     case T_SAVED_ID:
         if( LAToken == T_COLON_COLON && ! flags.no_super_token ) {
-            token = scopedChain( state, NULL, makeId(), CH_NULL );
+            token = scopedChain( state, NULL, makeId(), CH_NULL,
+                                 flags.special_typename );
         } else {
-            token = doId();
+            token = doId( state->scope_member );
+            yylval.tree->flags |= flags.special_typename ? PTF_TYPENAME : 0;
         }
         break;
     case T_STRING:
@@ -944,41 +1109,12 @@ static int yylex( PARSE_STACK *state )
         token = yytranslate[ CurToken ];
     }
 
-    angle_state = VstkTop( &(state->angle_stack) );
-    if( angle_state != NULL ) {
-        if( token == Y_GT ) {
-            if( angle_state->paren_depth == 0 ) {
-                VstkPop( &(state->angle_stack) );
-                token = Y_GT_SPECIAL;
-            }
-        } else if( CompFlags.enable_std0x && ( token == Y_RSHIFT ) ) {
-            // see Right Angle Brackets (N1757/05-0017)
-            if( angle_state->paren_depth == 0 ) {
-                VstkPop( &(state->angle_stack) );
-                token = Y_GT_SPECIAL;
-                state->special_gt_gt = TRUE;
-            }
-        } else if( token == Y_LEFT_BRACE ) {
-            angle_state->paren_depth++;
-        } else if( token == Y_RIGHT_BRACE ) {
-            if( angle_state->paren_depth > 0) {
-                angle_state->paren_depth--;
-            }
-        } else if( token == Y_LEFT_BRACKET ) {
-            angle_state->paren_depth++;
-        } else if( token == Y_RIGHT_BRACKET ) {
-            if( angle_state->paren_depth > 0) {
-                angle_state->paren_depth--;
-            }
-        } else if( token == Y_LEFT_PAREN ) {
-            angle_state->paren_depth++;
-        } else if( token == Y_RIGHT_PAREN ) {
-            if( angle_state->paren_depth > 0) {
-                angle_state->paren_depth--;
-            }
-        }
+    if( ( token != Y_SCOPED_TILDE ) && ( token != Y_TEMPLATE_SCOPED_TILDE ) ) {
+        state->scope_member = NULL;
     }
-
+    if( ! state->look_ahead_active ) {
+        token = specialAngleBracket( state, token );
+    }
     currToken = token;
     return( token );
 }
@@ -1005,7 +1141,11 @@ static boolean tokenMakesPTREE( unsigned token )
     case Y_CONSTANT:
     case Y_STRING:
     case Y_ID:
+    case Y_UNKNOWN_ID:
+    case Y_TEMPLATE_ID:
     case Y_GLOBAL_ID:
+    case Y_GLOBAL_UNKNOWN_ID:
+    case Y_GLOBAL_TEMPLATE_ID:
     case Y_GLOBAL_TYPE_NAME:
     case Y_GLOBAL_TEMPLATE_NAME:
     case Y_GLOBAL_NAMESPACE_NAME:
@@ -1014,6 +1154,8 @@ static boolean tokenMakesPTREE( unsigned token )
     case Y_GLOBAL_NEW:
     case Y_GLOBAL_DELETE:
     case Y_SCOPED_ID:
+    case Y_SCOPED_UNKNOWN_ID:
+    case Y_SCOPED_TEMPLATE_ID:
     case Y_SCOPED_TYPE_NAME:
     case Y_SCOPED_TEMPLATE_NAME:
     case Y_SCOPED_NAMESPACE_NAME:
@@ -1021,6 +1163,8 @@ static boolean tokenMakesPTREE( unsigned token )
     case Y_SCOPED_TILDE:
     case Y_SCOPED_TIMES:
     case Y_TEMPLATE_SCOPED_ID:
+    case Y_TEMPLATE_SCOPED_UNKNOWN_ID:
+    case Y_TEMPLATE_SCOPED_TEMPLATE_ID:
     case Y_TEMPLATE_SCOPED_TYPE_NAME:
     case Y_TEMPLATE_SCOPED_TEMPLATE_NAME:
     case Y_TEMPLATE_SCOPED_NAMESPACE_NAME:
@@ -1040,12 +1184,16 @@ void ParseFlush( void )
         // NYI: we have a problem when this triggers!
         switch( currToken ) {
         case Y_GLOBAL_ID:
+        case Y_GLOBAL_UNKNOWN_ID:
+        case Y_GLOBAL_TEMPLATE_ID:
         case Y_GLOBAL_TEMPLATE_NAME:
         case Y_GLOBAL_OPERATOR:
         case Y_GLOBAL_TILDE:
         case Y_GLOBAL_NEW:
         case Y_GLOBAL_DELETE:
         case Y_SCOPED_ID:
+        case Y_SCOPED_UNKNOWN_ID:
+        case Y_SCOPED_TEMPLATE_ID:
         case Y_SCOPED_TYPE_NAME:
         case Y_SCOPED_TEMPLATE_NAME:
         case Y_SCOPED_NAMESPACE_NAME:
@@ -1053,6 +1201,8 @@ void ParseFlush( void )
         case Y_SCOPED_TILDE:
         case Y_SCOPED_TIMES:
         case Y_TEMPLATE_SCOPED_ID:
+        case Y_TEMPLATE_SCOPED_UNKNOWN_ID:
+        case Y_TEMPLATE_SCOPED_TEMPLATE_ID:
         case Y_TEMPLATE_SCOPED_TYPE_NAME:
         case Y_TEMPLATE_SCOPED_TEMPLATE_NAME:
         case Y_TEMPLATE_SCOPED_NAMESPACE_NAME:
@@ -1105,8 +1255,17 @@ static DECL_SPEC *sendType( PTREE tree )
         type = tree->type;
     }
     if( type == NULL ) {
-        type = TypeError;
-        // TODO: add typename support
+        VBUF vbuf;
+
+        type = MakeType( TYP_TYPENAME );
+        FormatPTreeId( tree, &vbuf );
+
+        type->u.n.name = CMemAlloc( vbuf.used );
+        memcpy( type->u.n.name, vbuf.buf, vbuf.used );
+
+        VbufFree( &vbuf );
+        PTreeFreeSubtrees( tree );
+        tree = NULL;
     }
     dspec = PTypeActualTypeName( type, tree );
     if( scope != NULL ) {
@@ -1121,6 +1280,7 @@ static DECL_SPEC *sendClass( PTREE tree )
 
     dspec = sendType( tree );
     if( StructType( dspec->partial ) == NULL ) {
+        CErr2p( ERR_EXPECTED_CLASS_TYPE, dspec->partial );
         PTypeRelease( dspec );
         dspec = NULL;
     }
@@ -1236,7 +1396,9 @@ static void commonInit( PARSE_STACK *stack )
     stack->look_ahead_index = 0;
     stack->template_record_tokens = NULL;
     stack->class_colon = NULL;
+    stack->scope_member = NULL;
     VstkOpen( &(stack->angle_stack), sizeof(angle_bracket_stack), 16 );
+    stack->expect = NULL;
     stack->no_super_tokens = FALSE;
     stack->use_saved_tokens = FALSE;
     stack->favour_reduce = FALSE;
@@ -1244,9 +1406,11 @@ static void commonInit( PARSE_STACK *stack )
     stack->look_ahead_stack = FALSE;
     stack->look_ahead_active = FALSE;
     stack->template_decl = FALSE;
-    stack->template_class_inst_defer = FALSE;
     stack->special_colon_colon = FALSE;
     stack->special_gt_gt = FALSE;
+    stack->special_typename = FALSE;
+    stack->template_extern = FALSE;
+    stack->template_instantiate = FALSE;
 }
 
 static void restartInit( PARSE_STACK *stack )
@@ -1257,6 +1421,7 @@ static void restartInit( PARSE_STACK *stack )
     DbgAssert( stack->look_ahead_index == 0 );
     DbgAssert( stack->template_record_tokens == NULL );
     DbgAssert( VstkTop( &(stack->angle_stack) ) == NULL );
+    DbgAssert( stack->expect == NULL );
     DbgAssert( stack->no_super_tokens == FALSE );
     DbgAssert( stack->use_saved_tokens == FALSE );
     DbgAssert( stack->favour_reduce == FALSE );
@@ -1264,9 +1429,11 @@ static void restartInit( PARSE_STACK *stack )
     DbgAssert( stack->look_ahead_stack == FALSE );
     DbgAssert( stack->look_ahead_active == FALSE );
     DbgAssert( stack->template_decl == FALSE );
-    DbgAssert( stack->template_class_inst_defer == FALSE );
     DbgAssert( stack->special_colon_colon == FALSE );
     DbgAssert( stack->special_gt_gt == FALSE );
+    DbgAssert( stack->special_typename == FALSE);
+    DbgAssert( stack->template_extern == FALSE);
+    DbgAssert( stack->template_instantiate == FALSE);
 }
 
 static void newLookAheadStack( PARSE_STACK *stack, PARSE_STACK *prev_stack )
@@ -1356,7 +1523,8 @@ static void deleteStack( PARSE_STACK *stack )
     if( stack->template_record_tokens != NULL ) {
         RewriteFree( stack->template_record_tokens );
     }
-    SetCurrScope(stack->reset_scope);
+    ScopeAdjustUsing( GetCurrScope(), stack->reset_scope );
+    SetCurrScope( stack->reset_scope );
     check_stack = StackPop( &currParseStack );
 #ifndef NDEBUG
     if( check_stack != stack ) {
@@ -1456,10 +1624,19 @@ static void setNoSuperTokens( PARSE_STACK *state )
     state->no_super_tokens = TRUE;
 }
 
-static void setWatchColonColon( PARSE_STACK *state, DECL_SPEC *dspec )
+static void setWatchColonColon( PARSE_STACK *state, PTREE tree, TYPE type )
 {
-    state->class_colon = dspec->partial;
+    state->class_colon = type;
     state->special_colon_colon = TRUE;
+    if( tree->flags & PTF_TYPENAME ) {
+        state->special_typename = TRUE;
+        tree->flags &= ~PTF_TYPENAME;
+    }
+}
+
+static void setTypeMember( PARSE_STACK *state, SCOPE scope_member )
+{
+    state->scope_member = scope_member;
 }
 
 SYMBOL ParseCurrFunction( void )
@@ -1870,6 +2047,8 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
         curr_##kind = state->kind; \
         ++curr_##kind; \
         state->kind = curr_##kind;
+
+    state->expect = NULL;
     for(;;) {
 #ifndef NDEBUG
         unsigned stackDepth;
@@ -1885,7 +2064,6 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
         if( PragDbgToggle.dump_parse ) 
             dump_state_stack("in start of doAction loop", state);
 #endif
-
 
         if( yyk == YYAMBIGS0 && t == YYAMBIGT0 ) {
             if( state->favour_shift ) {
@@ -1933,6 +2111,8 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
             if( PragDbgToggle.dump_parse ) {
                 switch( t ) {
                 case Y_ID:
+                case Y_UNKNOWN_ID:
+                case Y_TEMPLATE_ID:
                 case Y_TYPE_NAME:
                 case Y_TEMPLATE_NAME:
                     printf( "%s '%s'\n", yytoknames[ t ], yylval.tree->u.id.name );
@@ -2019,7 +2199,7 @@ static void makeStable( int end_token )
         alt_token = end_token;
     }
 
-    ParseFlush();
+    PTreeFreeSubtrees( getMultiToken() );
     token_absorbed = FALSE;     /* infinite loop protection */
     depth = 0;
     for(;;) {
@@ -2067,16 +2247,36 @@ static void makeStable( int end_token )
     }
 }
 
-static void genIdSyntaxError( int msg )
+static void genIdSyntaxError( int msg, char *expect )
 {
     PTREE id;
 
     id = yylval.tree;
     SetErrLoc( &(id->locn) );
-    CErr2p( msg, id->u.id.name );
+    if( expect != NULL ) {
+        CErr( ERR_SYNTAX_UNEXPECTED_ID, id->u.id.name, expect );
+    } else {
+        CErr2p( msg, id->u.id.name );
+    }
 }
 
-static void syntaxError( void )
+static void genScopedIdSyntaxError( int msg, char *expect )
+{
+    PTREE id;
+    VBUF vbuf;
+
+    id = yylval.tree;
+    SetErrLoc( &(id->locn) );
+    FormatPTreeId( id, &vbuf );
+    if( expect != NULL ) {
+        CErr( ERR_SYNTAX_UNEXPECTED_ID, vbuf.buf, expect );
+    } else {
+        CErr2p( msg, vbuf.buf );
+    }
+    VbufFree( &vbuf );
+}
+
+static void syntaxError( PARSE_STACK *state )
 {
     if( CurToken == T_EOF ) {
         CErr1( ERR_PREMATURE_ENDFILE );
@@ -2085,18 +2285,46 @@ static void syntaxError( void )
     } else {
         switch( currToken ) {
         case Y_ID:
-            genIdSyntaxError( ERR_SYNTAX_UNDECLARED_ID );
+        case Y_TEMPLATE_ID:
+        case Y_UNKNOWN_ID:
+            genIdSyntaxError( ERR_SYNTAX_UNDECLARED_ID, state->expect );
+            break;
+        case Y_GLOBAL_ID:
+        case Y_GLOBAL_TEMPLATE_ID:
+        case Y_SCOPED_ID:
+        case Y_SCOPED_TEMPLATE_ID:
+            genScopedIdSyntaxError( ERR_SYNTAX_SCOPED_ID, state->expect );
+            break;
+        case Y_GLOBAL_UNKNOWN_ID:
+            genScopedIdSyntaxError( ERR_SYNTAX_UNDECLARED_GLOBAL_ID, NULL );
+            break;
+        case Y_SCOPED_UNKNOWN_ID:
+            genScopedIdSyntaxError( ERR_SYNTAX_UNDECLARED_SCOPED_ID, NULL );
             break;
         case Y_TYPE_NAME:
-            genIdSyntaxError( ERR_SYNTAX_TYPE_NAME );
+            genIdSyntaxError( ERR_SYNTAX_TYPE_NAME, state->expect );
+            break;
+        case Y_GLOBAL_TYPE_NAME:
+        case Y_SCOPED_TYPE_NAME:
+            genScopedIdSyntaxError( ERR_SYNTAX_UNDECLARED_ID, state->expect );
             break;
         case Y_TEMPLATE_NAME:
-            genIdSyntaxError( ERR_SYNTAX_TEMPLATE_NAME );
+            genIdSyntaxError( ERR_SYNTAX_TEMPLATE_NAME, state->expect );
+            break;
+        case Y_GLOBAL_TEMPLATE_NAME:
+        case Y_SCOPED_TEMPLATE_NAME:
+            genScopedIdSyntaxError( ERR_SYNTAX_UNDECLARED_ID, state->expect );
             break;
         default:
-            CErr1( ERR_SYNTAX );
+            if( state->expect != NULL ) {
+                CErr( ERR_SYNTAX_UNEXPECTED_TOKEN, TokenString(),
+                      state->expect );
+            } else {
+                CErr1( ERR_SYNTAX );
+            }
         }
     }
+    state->expect = NULL;
 }
 
 static void recordTemplateCtorInitializer( PARSE_STACK *state )
@@ -2109,7 +2337,7 @@ static void recordTemplateCtorInitializer( PARSE_STACK *state )
 
     for(;;) {
         if( CurToken == T_EOF ) {
-            syntaxError();
+            syntaxError( state );
             break;
         }
 
@@ -2119,7 +2347,7 @@ static void recordTemplateCtorInitializer( PARSE_STACK *state )
             break;
         case T_RIGHT_PAREN:
             if( paren_depth == 0 ) {
-                syntaxError();
+                syntaxError( state );
                 break;
             }
             --paren_depth;
@@ -2127,7 +2355,7 @@ static void recordTemplateCtorInitializer( PARSE_STACK *state )
         case T_RIGHT_BRACE:
         case T_ALT_RIGHT_BRACE:
             if( brace_depth == 0 ) {
-                syntaxError();
+                syntaxError( state );
                 break;
             }
             --brace_depth;
@@ -2168,7 +2396,7 @@ static PTREE genericParseExpr( YYTOKENTYPE tok, int end_token,
         if( what > P_ERROR ) {
             switch( what ) {
             case P_SYNTAX:
-                syntaxError();
+                syntaxError( &expr_state );
                 break;
             case P_OVERFLOW:
                 CErr1( err_msg );
@@ -2251,7 +2479,7 @@ DECL_INFO *ParseException( void )
         if( what > P_ERROR ) {
             switch( what ) {
             case P_SYNTAX:
-                syntaxError();
+                syntaxError( &except_state );
                 break;
             case P_OVERFLOW:
                 CErr1( ERR_COMPLICATED_EXCEPTION );
@@ -2280,7 +2508,7 @@ DECL_INFO *ParseException( void )
 static void parseEpilogue( void )
 {
     /* current token state is end-of-file */
-    TemplateProcessInstantiations();
+    RtnGenerate();
     CompFlags.parsing_finished = 1;
 }
 
@@ -2321,7 +2549,7 @@ void ParseDecls( void )
                 if( what > P_ERROR ) {
                     switch( what ) {
                     case P_SYNTAX:
-                        syntaxError();
+                        syntaxError( &decl_state );
                         break;
                     case P_OVERFLOW:
                         CErr1( ERR_COMPLICATED_DECLARATION );
@@ -2349,8 +2577,8 @@ void ParseDecls( void )
     parseEpilogue();
 }
 
-DECL_SPEC *ParseClassInstantiation( REWRITE *defn, boolean defer_defn )
-/*********************************************************************/
+DECL_SPEC *ParseClassInstantiation( REWRITE *defn )
+/*************************************************/
 {
     int t;
     PARSE_STACK instantiate_state;
@@ -2360,6 +2588,7 @@ DECL_SPEC *ParseClassInstantiation( REWRITE *defn, boolean defer_defn )
     REWRITE *save_token;
     PTREE save_tree;
     int save_yytoken;
+    unsigned suppressState;
     void (*last_source)( void );
     auto error_state_t check;
     auto TOKEN_LOCN locn;
@@ -2368,6 +2597,7 @@ DECL_SPEC *ParseClassInstantiation( REWRITE *defn, boolean defer_defn )
         return( NULL );
     }
     CErrCheckpoint( &check );
+    suppressState = CErrUnsuppress();
 
     save_token = RewritePackageToken();
     save_yytoken = currToken;
@@ -2378,9 +2608,6 @@ DECL_SPEC *ParseClassInstantiation( REWRITE *defn, boolean defer_defn )
 
     LinkagePushCpp();
     newClassInstStack( &instantiate_state );
-    if( defer_defn ) {
-        instantiate_state.template_class_inst_defer = TRUE;
-    }
     syncLocation();
     pushDefaultDeclSpec( &instantiate_state );
     last_source = SetTokenSource( RewriteToken );
@@ -2401,24 +2628,12 @@ DECL_SPEC *ParseClassInstantiation( REWRITE *defn, boolean defer_defn )
         if( what > P_ERROR ) {
             switch( what ) {
             case P_SYNTAX:
-                syntaxError();
+                syntaxError( &instantiate_state );
                 break;
             case P_OVERFLOW:
                 CErr1( ERR_COMPLICATED_DECLARATION );
                 break;
             }
-        } else if( what == P_DEFER_DEFN ) {
-            ParseFlush();
-            t = Y_SEMI_COLON;
-            do {
-                what = doAction( t, &instantiate_state );
-            } while( what == P_RELEX );
-#ifndef NDEBUG
-            if( what != P_ACCEPT ) {
-                CFatal( "invalid return from doAction" );
-            }
-#endif
-            new_type = instantiate_state.vsp->dspec;
         }
 #ifndef NDEBUG
         else {
@@ -2436,9 +2651,11 @@ DECL_SPEC *ParseClassInstantiation( REWRITE *defn, boolean defer_defn )
     SrcFileResetTokenLocn( &locn );
     RewriteRestoreToken( save_token );
     ParseFlush();
+    syncLocation();
     currToken = save_yytoken;
     yylval.tree = save_tree;
 
+    CErrSuppressRestore( suppressState );
     if( new_type != NULL ) {
         if( CErrOccurred( &check ) ) {
             PTypeRelease( new_type );
@@ -2486,7 +2703,7 @@ void ParseClassMemberInstantiation( REWRITE *defn )
         if( what > P_ERROR ) {
             switch( what ) {
             case P_SYNTAX:
-                syntaxError();
+                syntaxError( &instantiate_state );
                 break;
             case P_OVERFLOW:
                 CErr1( ERR_COMPLICATED_DECLARATION );
@@ -2542,7 +2759,7 @@ void ParseFunctionInstantiation( REWRITE *defn )
         if( what > P_ERROR ) {
             switch( what ) {
             case P_SYNTAX:
-                syntaxError();
+                syntaxError( &instantiate_state );
                 break;
             case P_OVERFLOW:
                 CErr1( ERR_COMPLICATED_DECLARATION );
@@ -2560,6 +2777,117 @@ void ParseFunctionInstantiation( REWRITE *defn )
     SrcFileResetTokenLocn( &locn );
     CurToken = T_EOF;
     strcpy( Buffer, Tokens[ T_EOF ] );
+}
+
+static unsigned decl_paren_depth;
+static unsigned decl_bracket_depth;
+
+static void declOnlyReset( void )
+{
+    decl_paren_depth = 0;
+    decl_bracket_depth = 0;
+}
+
+/* only rewrite the declaration */
+static void declOnlyRewriteToken( void )
+{
+    RewriteToken();
+
+    if( CurToken == T_LEFT_PAREN ) {
+        decl_paren_depth++;
+    } else if( CurToken == T_RIGHT_PAREN ) {
+        decl_paren_depth--;
+    } else if( CurToken == T_LEFT_BRACKET ) {
+        decl_bracket_depth++;
+    } else if( CurToken == T_RIGHT_BRACKET ) {
+        decl_bracket_depth--;
+    }
+
+    if( ( CurToken == T_SEMI_COLON ) || (CurToken == T_LEFT_BRACE ) ) {
+        CurToken = T_EOF;
+    }
+
+    if( ( decl_paren_depth == 0 ) && ( decl_bracket_depth == 0 )
+     && ( CurToken == T_COLON ) ) {
+        CurToken = T_EOF;
+    }
+}
+
+DECL_INFO *ReparseFunctionDeclaration( REWRITE *defn )
+/****************************************************/
+{
+    int t;
+    PARSE_STACK decl_state;
+    p_action what;
+    DECL_INFO *dinfo;
+    REWRITE *last_rewrite;
+    REWRITE *save_token;
+    PTREE save_tree;
+    int save_yytoken;
+    void (*last_source)( void );
+    auto error_state_t check;
+    auto TOKEN_LOCN locn;
+
+    if( defn == NULL ) {
+        return( NULL );
+    }
+
+    /* Note that errors are suppressed during re-parsing. This is
+     * because an error should only result in the candidate function
+     * to be ignored.
+     */
+    CErrSuppress( &check );
+    declOnlyReset();
+
+    save_token = RewritePackageToken();
+    save_yytoken = currToken;
+    save_tree = yylval.tree;
+    yylval.tree = NULL;
+    SrcFileGetTokenLocn( &locn );
+    ParseFlush();
+
+    LinkagePushCpp();
+    last_source = SetTokenSource( declOnlyRewriteToken );
+    last_rewrite = RewriteRewind( defn );
+
+    newExprStack( &decl_state, Y_FUNCTION_DECL_SPECIAL );
+    syncLocation();
+    /* do parse */
+    for(;;) {
+        do {
+            t = yylex( &decl_state );
+            what = doAction( t, &decl_state );
+        } while( what == P_RELEX );
+        if( what != P_SHIFT ) break;
+        nextYYLexToken( &decl_state );
+    }
+
+    RewriteClose( last_rewrite );
+    ResetTokenSource( last_source );
+
+    dinfo = NULL;
+    if( what <= P_SPECIAL ) {
+        dinfo = decl_state.vsp->dinfo;
+    }
+    deleteStack( &decl_state );
+    LinkagePop();
+
+    SrcFileResetTokenLocn( &locn );
+    RewriteRestoreToken( save_token );
+    ParseFlush();
+    syncLocation();
+
+    currToken = save_yytoken;
+    yylval.tree = save_tree;
+
+    if( CErrSuppressedOccurred( &check ) ) {
+        if( dinfo != NULL ) {
+            FreeDeclInfo( dinfo );
+            dinfo = NULL;
+        }
+    }
+
+    return dinfo;
 }
 
 pch_status PCHWriteParserData( void )

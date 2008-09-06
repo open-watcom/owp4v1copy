@@ -16,6 +16,6 @@ bool str_compare (const char* a_, const char* b_)
 
 int main ()
 {
-  cout << max ("shoe", "shine", str_compare) << endl;
+  cout << max ((char const *)"shoe",(char const *)"shine", str_compare) << endl;
   return 0;
 }

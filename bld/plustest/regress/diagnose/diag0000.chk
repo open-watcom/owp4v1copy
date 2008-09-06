@@ -15,7 +15,6 @@ File: source\diag0001.c
 (52,15): Error! E140: bit-field declaration cannot have a storage class specifier
 (54,14): Error! E049: bit-field base type must be an integral type
 (55,15): Error! E047: width of a named bit-field must not be zero
-(56,1): Error! E370: constructor is required for a class with a const member
 File: source\diag0002.c
 (4,29): Error! E143: duplicate base qualifier
 (4,29): Warning! W188: base class is inherited with private access
@@ -48,6 +47,7 @@ File: source\diag0006.c
 (51,1): Error! E624: catch block does not immediately follow try block
 (60,22): Error! E184: statement is too complicated
 File: source\diag0007.c
+(2,1): Warning! W914: 'main' must return 'int'
 (5,9): Error! E172: floating-point constant too large to represent
 (6,10): Error! E172: floating-point constant too large to represent
 (7,9): Error! E173: floating-point constant too small to represent
@@ -116,8 +116,6 @@ File: source\diag0012.c
 (22,7): Error! E224: 'l' is a variable of type void
 (23,4): Error! E224: 'm' is a variable of type void
 File: source\diag0013.c
-(14,17): Error! E226: function 'fi' is not distinct
-  definition: 'void fi( int )'
 (21,7): Error! E227: overloaded function is ambiguous for arguments used in call
   ambiguous function: void ff( float ) defined at: (16,6)
   ambiguous function: void ff( double ) defined at: (17,6)
@@ -130,10 +128,17 @@ File: source\diag0013.c
   definition: 'A::operator int ()'
 (44,30): Error! E226: function 'A::operator int ' is not distinct
   definition: 'A::operator int ()'
-(51,23): Error! E226: function 'bar' is not distinct
-  definition: 'int bar( int, char )'
 (52,25): Error! E385: attempt to overload function 'bar' with a different return type
   definition: 'float bar( char *, float )'
+(55,16): Error! E226: function 'f1a' is not distinct
+  definition: 'void f1a( int const & )'
+(57,24): Error! E226: function 'f1b' is not distinct
+  definition: 'void f1b( int )'
+(76,14): Error! E226: function 'foo' is not distinct
+  definition: 'void foo( S const & )'
+(79,8): Error! E227: overloaded function is ambiguous for arguments used in call
+  ambiguous function: void foo( S const & ) defined at: (75,6)
+  ambiguous function: void foo( S ) defined at: (76,6)
 File: source\diag0014.c
 (2,25): Error! E232: user-defined conversion must be a function
 (6,28): Error! E233: user-defined conversion has an argument list
@@ -148,11 +153,11 @@ File: source\diag0014.c
 (36,27): Error! E237: 'operator +' must be a function
 File: source\diag0015.c
 (2,25): Error! E243: default arguments are not part of a function's type
-(5,39): Error! E244: missing default arguments
 (5,39): Error! E243: default arguments are not part of a function's type
-(6,33): Error! E244: missing default arguments
-(10,27): Warning! W744: 'operator +' does not have a return type specified (int assumed)
+(6,33): Error! E250: missing default argument for 'sam'
+  definition: 'int sam( int, int [, int ])'
 (10,27): Error! E245: overloaded operator cannot have default arguments
+(10,27): Error! E913: 'operator +' does not have a return type specified
 (15,38): Warning! W248: using default arguments would be overload ambiguous with 'fn2'
   definition: 'int fn2( int, int )'
 (18,38): Warning! W249: using default arguments would be overload ambiguous with 'fn3' using default arguments
@@ -185,58 +190,56 @@ File: source\diag0017.c
 (29,9): Error! E262: cannot reduce access to 'a'
 (30,10): Error! E042: symbol 'D::c' already defined
   definition: 'B D::c'
+(34,11): Error! E913: 'f' does not have a return type specified
 (40,9): Error! E260: overloaded functions ('f') do not have the same access
 File: source\diag0018.c
 (1,3): Error! E252: class declaration has not been seen for '~Q'
 (2,1): Error! E265: destructor must be a non-static member function
+(2,1): Error! E913: 'destructor' does not have a return type specified
 (6,1): Error! E264: user-defined conversion must be a non-static member function
-(11,1): Warning! W744: 'operator --' does not have a return type specified (int assumed)
 (11,1): Error! E269: 'operator --' must have either one argument or two arguments
   argument count is 0 for a non-member function
 (11,1): Error! E278: 'operator --' must take at least one argument of a class/enum or a reference to a class/enum
-(15,25): Warning! W744: 'operator --' does not have a return type specified (int assumed)
+(11,1): Error! E913: 'operator --' does not have a return type specified
+(15,25): Error! E913: 'operator --' does not have a return type specified
 (19,32): Error! E269: 'operator ++' must have either one argument or two arguments
   argument count is 3 since there is an implicit 'this' argument
-(23,1): Warning! W744: 'operator []' does not have a return type specified (int assumed)
 (23,1): Error! E266: 'operator []' must be a non-static member function
-(27,28): Warning! W744: 'operator []' does not have a return type specified (int assumed)
+(23,1): Error! E913: 'operator []' does not have a return type specified
 (27,28): Error! E268: 'operator []' must have two arguments
   argument count is 3 since there is an implicit 'this' argument
-(28,23): Warning! W744: 'operator []' does not have a return type specified (int assumed)
-(32,1): Warning! W744: 'operator ()' does not have a return type specified (int assumed)
+(27,28): Error! E913: 'operator []' does not have a return type specified
 (32,1): Error! E266: 'operator ()' must be a non-static member function
-(36,1): Warning! W744: 'operator =' does not have a return type specified (int assumed)
+(32,1): Error! E913: 'operator ()' does not have a return type specified
 (36,1): Error! E266: 'operator =' must be a non-static member function
-(40,28): Warning! W744: 'operator =' does not have a return type specified (int assumed)
+(36,1): Error! E913: 'operator =' does not have a return type specified
 (40,28): Error! E268: 'operator =' must have two arguments
   argument count is 3 since there is an implicit 'this' argument
-(41,23): Warning! W744: 'operator =' does not have a return type specified (int assumed)
-(45,1): Warning! W744: 'operator +' does not have a return type specified (int assumed)
+(40,28): Error! E913: 'operator =' does not have a return type specified
 (45,1): Error! E269: 'operator +' must have either one argument or two arguments
   argument count is 3 for a non-member function
 (45,1): Error! E278: 'operator +' must take at least one argument of a class/enum or a reference to a class/enum
-(49,28): Warning! W744: 'operator +' does not have a return type specified (int assumed)
+(45,1): Error! E913: 'operator +' does not have a return type specified
 (49,28): Error! E269: 'operator +' must have either one argument or two arguments
   argument count is 3 since there is an implicit 'this' argument
-(50,23): Warning! W744: 'operator +' does not have a return type specified (int assumed)
-(54,1): Warning! W744: 'operator ~' does not have a return type specified (int assumed)
+(49,28): Error! E913: 'operator +' does not have a return type specified
 (54,1): Error! E267: 'operator ~' must have one argument
   argument count is 3 for a non-member function
 (54,1): Error! E278: 'operator ~' must take at least one argument of a class/enum or a reference to a class/enum
-(58,1): Warning! W744: 'operator +=' does not have a return type specified (int assumed)
+(54,1): Error! E913: 'operator ~' does not have a return type specified
 (58,1): Error! E268: 'operator +=' must have two arguments
   argument count is 3 for a non-member function
 (58,1): Error! E278: 'operator +=' must take at least one argument of a class/enum or a reference to a class/enum
+(58,1): Error! E913: 'operator +=' does not have a return type specified
 File: source\diag0019.c
-(27,1): Warning! W744: 'operator ->' does not have a return type specified (int assumed)
 (27,1): Error! E266: 'operator ->' must be a non-static member function
+(27,1): Error! E913: 'operator ->' does not have a return type specified
 (32,30): Error! E267: 'operator ->' must have one argument
   argument count is 2 since there is an implicit 'this' argument
 (34,25): Error! E267: 'operator ->' must have one argument
   argument count is 2 since there is an implicit 'this' argument
 (35,29): Error! E267: 'operator ->' must have one argument
   argument count is 2 since there is an implicit 'this' argument
-(36,18): Warning! W744: 'operator ->' does not have a return type specified (int assumed)
 File: source\diag0020.c
 (3,25): Error! E272: 'operator new' must have a return type of pointer to void
 (3,25): Error! E273: the first argument of 'operator new' must be of type size_t
@@ -255,22 +258,29 @@ File: source\diag0021.c
 (3,22): Error! E286: static member 'S1' cannot be declared in this class
 (6,23): Error! E284: nested type 'S2' cannot be declared in this class
 (9,19): Error! E285: enumerator 'S3' cannot be declared in this class
-(13,6): Error! E282: anonymous struct/union member 'T' cannot be declared in this class
+(13,6): Error! E316: anonymous struct/union member 'T' is not distinct in enclosing scope
 File: source\diag0022.c
+(5,6): Error! E928: syntax error: identifier 'S1', but expected: 'type-name'
+(6,2): Error! E121: syntax error
 (19,13): Error! E287: constructor cannot have a return type
 (20,17): Error! E287: constructor cannot have a return type
+(22,1): Error! E930: member 'S3::S3' cannot be declared in this class
+  definition: 'int * S3::S3'
 (25,13): Error! E289: invalid copy constructor argument list (causes infinite recursion)
 (33,15): Error! E290: constructor cannot be declared const or volatile
 (35,23): Error! E290: constructor cannot be declared const or volatile
 (36,25): Error! E291: constructor cannot be virtual
+(37,1): Error! E930: member 'S5::S5' cannot be declared in this class
+  definition: 'int S5::S5'
 File: source\diag0023.c
-(11,19): Error! E292: types do not match in simple type destructor
-(12,19): Error! E292: types do not match in simple type destructor
-(13,24): Error! E292: types do not match in simple type destructor
-(14,27): Error! E292: types do not match in simple type destructor
-(15,20): Error! E292: types do not match in simple type destructor
-(16,20): Error! E292: types do not match in simple type destructor
-(17,22): Error! E292: types do not match in simple type destructor
+(14,9): Error! E929: syntax error: token 'int', but expected: 'id-expression'
+(15,9): Error! E929: syntax error: token 'char', but expected: 'id-expression'
+(16,9): Error! E929: syntax error: token 'unsigned', but expected: 'id-expression'
+(17,9): Error! E929: syntax error: token '__segment', but expected: 'id-expression'
+(18,9): Error! E929: syntax error: token 'long', but expected: 'id-expression'
+(19,9): Error! E929: syntax error: token 'float', but expected: 'id-expression'
+(20,9): Error! E929: syntax error: token 'double', but expected: 'id-expression'
+(22,14): Error! E292: types do not match in simple type destructor
 File: source\diag0024.c
 (6,10): Error! E042: symbol 'S::a' already defined
   definition: 'int S::a'
@@ -315,14 +325,14 @@ File: source\diag0026.c
 (4,28): Warning! W145: unexpected type qualifier found
 (5,31): Error! E298: class friend declarations cannot contain a class definition
 File: source\diag0027.c
-(27,6): Error! E148: access to private member 'C::a' is not allowed
+(27,8): Error! E148: access to private member 'C::a' is not allowed
   definition: 'int C::a'
 (33,21): Error! E125: invalid redefinition of the typedef name 'BAD'
   definition: 'BAD'
 (39,11): Error! E125: invalid redefinition of the typedef name 'BAD'
   definition: 'BAD'
 (45,11): Error! E241: class or namespace 'BAD' has not been declared
-(47,6): Error! E148: access to private member 'W::a' is not allowed
+(47,8): Error! E148: access to private member 'W::a' is not allowed
   definition: 'int W::a'
 File: source\diag0028.c
 (8,33): Error! E301: 'friend', 'virtual' or 'inline' modifiers are not part of a function's type
@@ -333,7 +343,7 @@ File: source\diag0028.c
 File: source\diag0029.c
 (11,37): Error! E254: 'C::not_found' has not been declared as a member
   definition: 'void C::not_found( void )'
-(23,6): Error! E148: access to private member 'Z::a' is not allowed
+(23,8): Error! E148: access to private member 'Z::a' is not allowed
   definition: 'int Z::a'
 File: source\diag0030.c
 (7,12): Warning! W188: base class is inherited with private access
@@ -343,24 +353,24 @@ File: source\diag0030.c
   definition: 'void A::ambig( void )'
 (18,37): Warning! W300: function 'double_OK' has already been declared as a friend
   definition: 'void double_OK( C::Z * )'
-(38,6): Error! E148: access to private member 'Z::a' is not allowed
+(38,8): Error! E148: access to private member 'Z::a' is not allowed
   definition: 'int C::Z::a'
-(43,6): Error! E148: access to private member 'Z::a' is not allowed
+(43,8): Error! E148: access to private member 'Z::a' is not allowed
   definition: 'int C::Z::a'
 File: source\diag0031.c
 (47,1): Error! E254: 'NEST::foo' has not been declared as a member
   definition: 'void NEST::foo( NEST::NESTED * )'
-(48,6): Error! E148: access to private member 'NESTED::q' is not allowed
+(48,8): Error! E148: access to private member 'NESTED::q' is not allowed
   definition: 'int NEST::NESTED::q'
 File: source\diag0032.c
-(18,6): Error! E148: access to private member 'C::a' is not allowed
+(18,8): Error! E148: access to private member 'C::a' is not allowed
   definition: 'int C::a'
 File: source\diag0033.c
-(18,6): Error! E148: access to private member 'C::a' is not allowed
+(18,8): Error! E148: access to private member 'C::a' is not allowed
   definition: 'int C::a'
 (24,1): Error! E003: missing return value
 File: source\diag0034.c
-(25,6): Error! E148: access to private member 'C::a' is not allowed
+(25,8): Error! E148: access to private member 'C::a' is not allowed
   definition: 'int C::a'
 (31,1): Error! E003: missing return value
 File: source\diag0035.c
@@ -371,7 +381,7 @@ File: source\diag0036.c
 (15,32): Error! E254: 'S::operator double ' has not been declared as a member
   definition: 'S::operator double ()'
 (23,1): Error! E003: missing return value
-(27,6): Error! E148: access to private member 'C::a' is not allowed
+(27,8): Error! E148: access to private member 'C::a' is not allowed
   definition: 'int C::a'
 (28,1): Error! E003: missing return value
 File: source\diag0037.c
@@ -418,11 +428,11 @@ Warning! W018: no reference to anonymous union member 'i2'
 Warning! W018: no reference to anonymous union member 'd2'
   definition: 'double d2'
 File: source\diag0039.c
-(32,6): Error! E148: access to private member 'C::u0' is not allowed
+(32,8): Error! E148: access to private member 'C::u0' is not allowed
   definition: 'int C::u0'
-(33,6): Error! E148: access to private member 'C::u1' is not allowed
+(33,8): Error! E148: access to private member 'C::u1' is not allowed
   definition: 'int C::u1'
-(34,6): Error! E148: access to private member 'C::u2' is not allowed
+(34,8): Error! E148: access to private member 'C::u2' is not allowed
   definition: 'int C::u2'
 File: source\diag0040.c
 (2,19): Error! E127: 'sizeof' is not allowed for an undefined type
@@ -448,7 +458,6 @@ File: source\diag0040.c
   definition: 'int Z::non_static_2'
 (42,13): Error! E326: defining 'Z::zs1' is not possible because its type has unknown size
   definition: 'int Z::zs1[]'
-(46,33): Error! E336: declaration specifiers are required to declare 'NOT_A_TYPE'
 (46,12): Error! E498: syntax error before 'i_think_this_is_an_id'; probable cause: incorrectly spelled type name
 File: source\diag0041.c
 (9,20): Error! E337: static function declared in block scope
@@ -753,9 +762,6 @@ File: source\diag0046.c
 (47,39): Error! E362: local class can only have its containing function as a friend
 (56,14): Warning! W361: member function was not defined in its class
 File: source\diag0047.c
-(6,1): Error! E263: nested class 'Q' has not been defined
-(11,1): Error! E370: constructor is required for a class with a const member
-(11,1): Error! E371: constructor is required for a class with a reference member
 (22,5): Error! E861: qualified symbol cannot be defined in this scope
 (22,5): Error! E372: inline member friend function 'X::f' is not allowed
   definition: 'void X::f( void )'
@@ -796,11 +802,12 @@ File: source\diag0049.c
   semicolon (';') may be missing after class/enum definition
 (42,11): Error! E898: in-class initialization is only allowed for const static integral members
 (43,18): Error! E417: only virtual functions may be declared pure
-(48,15): Error! E336: declaration specifiers are required to declare 'not_a_function'
 (48,15): Error! E121: syntax error
 (51,19): Error! E336: declaration specifiers are required to declare 'not_a_function'
 File: source\diag0050.c
 (15,35): Error! E420: memory initializer list may only appear in a constructor definition
+(19,16): Error! E336: declaration specifiers are required to declare 'c_bad'
+(20,15): Error! E336: declaration specifiers are required to declare 'c_OK'
 (13,12): Error! E426: 'd' cannot be initialized because it is a static member
 (13,12): Error! E423: 'S' is not a direct base class
 (13,12): Error! E425: 'f' cannot be initialized because it is a member function
@@ -967,6 +974,7 @@ File: source\diag0053.c
 (24,18): Warning! W446: user-defined conversion cannot convert to its own class or base class
 (28,20): Warning! W446: user-defined conversion cannot convert to its own class or base class
 File: source\diag0054.c
+(2,27): Error! E913: 'foo' does not have a return type specified
 (4,40): Warning! W146: unexpected storage class specifier found
 (8,33): Warning! W146: unexpected storage class specifier found
 (9,41): Error! E463: linkage must be first in a declaration; probable cause: missing ';'
@@ -978,6 +986,7 @@ File: source\diag0055.c
 (2,16): Error! E265: destructor must be a non-static member function
 (13,12): Error! E056: not expecting a return value
 (18,12): Error! E056: not expecting a return value
+(26,1): Error! E913: 'foo' does not have a return type specified
 (30,15): Error! E003: missing return value
 (32,1): Error! E003: missing return value
 (41,16): Error! E384: attempt to override virtual function 'B::foo' with a different return type
@@ -1073,11 +1082,9 @@ File: source\diag0058.c
 (27,18): Error! E152: left operand is neither a pointer nor an arithmetic type
   left operand type is 'void'
   right operand type is 'int'
-(31,12): Warning! W491: delete of a pointer to const data
-(33,12): Warning! W491: delete of a pointer to const data
-(42,9): Error! E545: cannot create an undefined type with 'operator new'
+(42,13): Error! E545: cannot create an undefined type with 'operator new'
 (43,12): Warning! W546: delete of a pointer to an undefined type
-(44,9): Error! E545: cannot create an undefined type with 'operator new'
+(44,13): Error! E545: cannot create an undefined type with 'operator new'
 (45,15): Warning! W546: delete of a pointer to an undefined type
 (64,20): Warning! W549: 'sizeof' operand contains compiler generated information
 (65,20): Warning! W549: 'sizeof' operand contains compiler generated information
@@ -1088,133 +1095,133 @@ File: source\diag0058.c
 (86,2): Error! E080: 
 (87,2): Error! E080: 
 File: source\diag0059.c
-(49,7): Error! E148: access to private member 'B::B_pri' is not allowed
+(49,9): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(50,7): Error! E149: access to protected member 'B::B_pro' is not allowed
+(50,9): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(52,10): Error! E148: access to private member 'DPUB::DPUB_pri' is not allowed
+(52,12): Error! E148: access to private member 'DPUB::DPUB_pri' is not allowed
   definition: 'int DPUB::DPUB_pri'
-(53,10): Error! E149: access to protected member 'DPUB::DPUB_pro' is not allowed
+(53,12): Error! E149: access to protected member 'DPUB::DPUB_pro' is not allowed
   definition: 'int DPUB::DPUB_pro'
-(55,10): Error! E148: access to private member 'DPRI::DPRI_pri' is not allowed
+(55,12): Error! E148: access to private member 'DPRI::DPRI_pri' is not allowed
   definition: 'int DPRI::DPRI_pri'
-(56,10): Error! E149: access to protected member 'DPRI::DPRI_pro' is not allowed
+(56,12): Error! E149: access to protected member 'DPRI::DPRI_pro' is not allowed
   definition: 'int DPRI::DPRI_pro'
-(58,10): Error! E148: access to private member 'DPRO::DPRO_pri' is not allowed
+(58,12): Error! E148: access to private member 'DPRO::DPRO_pri' is not allowed
   definition: 'int DPRO::DPRO_pri'
-(59,10): Error! E149: access to protected member 'DPRO::DPRO_pro' is not allowed
+(59,12): Error! E149: access to protected member 'DPRO::DPRO_pro' is not allowed
   definition: 'int DPRO::DPRO_pro'
-(61,10): Error! E148: access to private member 'B::B_pri' is not allowed
+(61,12): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(62,10): Error! E149: access to protected member 'B::B_pro' is not allowed
+(62,12): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(63,10): Error! E547: cannot access 'B::B_pub' through a private base class
+(63,12): Error! E547: cannot access 'B::B_pub' through a private base class
   definition: 'int B::B_pub'
-(64,10): Error! E547: cannot access 'B::B_pri' through a private base class
+(64,12): Error! E547: cannot access 'B::B_pri' through a private base class
   definition: 'int B::B_pri'
-(65,10): Error! E547: cannot access 'B::B_pro' through a private base class
+(65,12): Error! E547: cannot access 'B::B_pro' through a private base class
   definition: 'int B::B_pro'
-(66,10): Error! E548: cannot access 'B::B_pub' through a protected base class
+(66,12): Error! E548: cannot access 'B::B_pub' through a protected base class
   definition: 'int B::B_pub'
-(67,10): Error! E548: cannot access 'B::B_pri' through a protected base class
+(67,12): Error! E548: cannot access 'B::B_pri' through a protected base class
   definition: 'int B::B_pri'
-(68,10): Error! E548: cannot access 'B::B_pro' through a protected base class
+(68,12): Error! E548: cannot access 'B::B_pro' through a protected base class
   definition: 'int B::B_pro'
-(74,7): Error! E148: access to private member 'B::B_pri' is not allowed
+(74,9): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(75,7): Error! E149: access to protected member 'B::B_pro' is not allowed
+(75,9): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(77,10): Error! E148: access to private member 'DPUB::DPUB_pri' is not allowed
+(77,12): Error! E148: access to private member 'DPUB::DPUB_pri' is not allowed
   definition: 'int DPUB::DPUB_pri'
-(78,10): Error! E149: access to protected member 'DPUB::DPUB_pro' is not allowed
+(78,12): Error! E149: access to protected member 'DPUB::DPUB_pro' is not allowed
   definition: 'int DPUB::DPUB_pro'
-(83,10): Error! E148: access to private member 'DPRO::DPRO_pri' is not allowed
+(83,12): Error! E148: access to private member 'DPRO::DPRO_pri' is not allowed
   definition: 'int DPRO::DPRO_pri'
-(84,10): Error! E149: access to protected member 'DPRO::DPRO_pro' is not allowed
+(84,12): Error! E149: access to protected member 'DPRO::DPRO_pro' is not allowed
   definition: 'int DPRO::DPRO_pro'
-(86,10): Error! E148: access to private member 'B::B_pri' is not allowed
+(86,12): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(87,10): Error! E149: access to protected member 'B::B_pro' is not allowed
+(87,12): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(89,10): Error! E148: access to private member 'B::B_pri' is not allowed
+(89,12): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(91,10): Error! E548: cannot access 'B::B_pub' through a protected base class
+(91,12): Error! E548: cannot access 'B::B_pub' through a protected base class
   definition: 'int B::B_pub'
-(92,10): Error! E548: cannot access 'B::B_pri' through a protected base class
+(92,12): Error! E548: cannot access 'B::B_pri' through a protected base class
   definition: 'int B::B_pri'
-(93,10): Error! E548: cannot access 'B::B_pro' through a protected base class
+(93,12): Error! E548: cannot access 'B::B_pro' through a protected base class
   definition: 'int B::B_pro'
-(99,7): Error! E148: access to private member 'B::B_pri' is not allowed
+(99,9): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(100,7): Error! E149: access to protected member 'B::B_pro' is not allowed
+(100,9): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(102,10): Error! E148: access to private member 'DPUB::DPUB_pri' is not allowed
+(102,12): Error! E148: access to private member 'DPUB::DPUB_pri' is not allowed
   definition: 'int DPUB::DPUB_pri'
-(103,10): Error! E149: access to protected member 'DPUB::DPUB_pro' is not allowed
+(103,12): Error! E149: access to protected member 'DPUB::DPUB_pro' is not allowed
   definition: 'int DPUB::DPUB_pro'
-(105,10): Error! E148: access to private member 'DPRI::DPRI_pri' is not allowed
+(105,12): Error! E148: access to private member 'DPRI::DPRI_pri' is not allowed
   definition: 'int DPRI::DPRI_pri'
-(106,10): Error! E149: access to protected member 'DPRI::DPRI_pro' is not allowed
+(106,12): Error! E149: access to protected member 'DPRI::DPRI_pro' is not allowed
   definition: 'int DPRI::DPRI_pro'
-(111,10): Error! E148: access to private member 'B::B_pri' is not allowed
+(111,12): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(112,10): Error! E149: access to protected member 'B::B_pro' is not allowed
+(112,12): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(113,10): Error! E547: cannot access 'B::B_pub' through a private base class
+(113,12): Error! E547: cannot access 'B::B_pub' through a private base class
   definition: 'int B::B_pub'
-(114,10): Error! E547: cannot access 'B::B_pri' through a private base class
+(114,12): Error! E547: cannot access 'B::B_pri' through a private base class
   definition: 'int B::B_pri'
-(115,10): Error! E547: cannot access 'B::B_pro' through a private base class
+(115,12): Error! E547: cannot access 'B::B_pro' through a private base class
   definition: 'int B::B_pro'
-(117,10): Error! E148: access to private member 'B::B_pri' is not allowed
+(117,12): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(124,7): Error! E148: access to private member 'B::B_pri' is not allowed
+(124,9): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(125,7): Error! E149: access to protected member 'B::B_pro' is not allowed
+(125,9): Error! E149: access to protected member 'B::B_pro' is not allowed
   definition: 'int B::B_pro'
-(130,10): Error! E148: access to private member 'DPRI::DPRI_pri' is not allowed
+(130,12): Error! E148: access to private member 'DPRI::DPRI_pri' is not allowed
   definition: 'int DPRI::DPRI_pri'
-(131,10): Error! E149: access to protected member 'DPRI::DPRI_pro' is not allowed
+(131,12): Error! E149: access to protected member 'DPRI::DPRI_pro' is not allowed
   definition: 'int DPRI::DPRI_pro'
-(133,10): Error! E148: access to private member 'DPRO::DPRO_pri' is not allowed
+(133,12): Error! E148: access to private member 'DPRO::DPRO_pri' is not allowed
   definition: 'int DPRO::DPRO_pri'
-(134,10): Error! E149: access to protected member 'DPRO::DPRO_pro' is not allowed
+(134,12): Error! E149: access to protected member 'DPRO::DPRO_pro' is not allowed
   definition: 'int DPRO::DPRO_pro'
-(136,10): Error! E148: access to private member 'B::B_pri' is not allowed
+(136,12): Error! E148: access to private member 'B::B_pri' is not allowed
   definition: 'int B::B_pri'
-(138,10): Error! E547: cannot access 'B::B_pub' through a private base class
+(138,12): Error! E547: cannot access 'B::B_pub' through a private base class
   definition: 'int B::B_pub'
-(139,10): Error! E547: cannot access 'B::B_pri' through a private base class
+(139,12): Error! E547: cannot access 'B::B_pri' through a private base class
   definition: 'int B::B_pri'
-(140,10): Error! E547: cannot access 'B::B_pro' through a private base class
+(140,12): Error! E547: cannot access 'B::B_pro' through a private base class
   definition: 'int B::B_pro'
-(141,10): Error! E548: cannot access 'B::B_pub' through a protected base class
+(141,12): Error! E548: cannot access 'B::B_pub' through a protected base class
   definition: 'int B::B_pub'
-(142,10): Error! E548: cannot access 'B::B_pri' through a protected base class
+(142,12): Error! E548: cannot access 'B::B_pri' through a protected base class
   definition: 'int B::B_pri'
-(143,10): Error! E548: cannot access 'B::B_pro' through a protected base class
+(143,12): Error! E548: cannot access 'B::B_pro' through a protected base class
   definition: 'int B::B_pro'
 File: source\diag0060.c
-(22,7): Error! E548: cannot access 'B::x' through a protected base class
+(22,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
-(24,7): Error! E548: cannot access 'B::x' through a protected base class
+(24,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
-(34,7): Error! E548: cannot access 'B::x' through a protected base class
+(34,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
-(42,7): Error! E548: cannot access 'B::x' through a protected base class
+(42,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
 File: source\diag0061.c
-(21,7): Error! E548: cannot access 'B::x' through a protected base class
+(21,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
-(23,7): Error! E548: cannot access 'B::x' through a protected base class
+(23,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
-(24,7): Error! E548: cannot access 'D::y' through a protected base class
+(24,9): Error! E548: cannot access 'D::y' through a protected base class
   definition: 'int D::y'
-(33,7): Error! E548: cannot access 'B::x' through a protected base class
+(33,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
-(34,7): Error! E548: cannot access 'D::y' through a protected base class
+(34,9): Error! E548: cannot access 'D::y' through a protected base class
   definition: 'int D::y'
-(41,7): Error! E548: cannot access 'B::x' through a protected base class
+(41,9): Error! E548: cannot access 'B::x' through a protected base class
   definition: 'int B::x'
 Compiling generated function: ERR_EQ::ERR_EQ
   definition: 'ERR_EQ::ERR_EQ( void )'
@@ -1259,19 +1266,19 @@ Error! E610: 'OK_EQ::operator =' could not be generated by the compiler
 File: source\diag0063.c
 (30,5): Error! E148: access to private member 'S::S' is not allowed
   definition: 'S::S( void )'
-(30,5): Error! E148: access to private member 'S::operator delete' is not allowed
+(30,12): Error! E148: access to private member 'S::operator delete' is not allowed
   definition: 'void S::operator delete( void * )'
 (32,5): Error! E148: access to private member 'S::S' is not allowed
   definition: 'S::S( void )'
-(32,5): Error! E148: access to private member 'S::operator delete[]' is not allowed
+(32,15): Error! E148: access to private member 'S::operator delete[]' is not allowed
   definition: 'void S::operator delete[]( void * )'
 (34,5): Error! E148: access to private member 'T::T' is not allowed
   definition: 'S::T::T( void )'
-(34,5): Error! E148: access to private member 'T::operator delete' is not allowed
+(34,12): Error! E148: access to private member 'T::operator delete' is not allowed
   definition: 'void S::T::operator delete( void * )'
 (36,5): Error! E148: access to private member 'T::T' is not allowed
   definition: 'S::T::T( void )'
-(36,5): Error! E148: access to private member 'T::operator delete[]' is not allowed
+(36,15): Error! E148: access to private member 'T::operator delete[]' is not allowed
   definition: 'void S::T::operator delete[]( void * )'
 (38,5): Error! E148: access to private member 'N::N' is not allowed
   definition: 'S::N::N( void )'
@@ -1279,83 +1286,83 @@ File: source\diag0063.c
   definition: 'S::N::~N( void )'
 (40,5): Error! E148: access to private member 'N::N' is not allowed
   definition: 'S::N::N( void )'
-(40,5): Error! E148: access to private member 'N::~N' is not allowed
+(40,15): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
 File: source\diag0064.c
-(31,9): Error! E148: access to private member 'S::operator new' is not allowed
+(31,13): Error! E148: access to private member 'S::operator new' is not allowed
   definition: 'void * S::operator new( unsigned )'
-(32,5): Error! E148: access to private member 'S::operator delete' is not allowed
+(32,12): Error! E148: access to private member 'S::operator delete' is not allowed
   definition: 'void S::operator delete( void * )'
-(33,9): Error! E148: access to private member 'S::~S' is not allowed
+(33,13): Error! E148: access to private member 'S::~S' is not allowed
   definition: 'S::~S( void )'
-(34,5): Error! E148: access to private member 'S::operator delete[]' is not allowed
+(34,15): Error! E148: access to private member 'S::operator delete[]' is not allowed
   definition: 'void S::operator delete[]( void * )'
-(35,9): Error! E148: access to private member 'T::operator new' is not allowed
+(35,16): Error! E148: access to private member 'T::operator new' is not allowed
   definition: 'void * S::T::operator new( unsigned )'
-(36,5): Error! E148: access to private member 'T::operator delete' is not allowed
+(36,12): Error! E148: access to private member 'T::operator delete' is not allowed
   definition: 'void S::T::operator delete( void * )'
-(37,9): Error! E148: access to private member 'T::~T' is not allowed
+(37,16): Error! E148: access to private member 'T::~T' is not allowed
   definition: 'S::T::~T( void )'
-(38,5): Error! E148: access to private member 'T::operator delete[]' is not allowed
+(38,15): Error! E148: access to private member 'T::operator delete[]' is not allowed
   definition: 'void S::T::operator delete[]( void * )'
-(39,9): Error! E148: access to private member 'N::operator new' is not allowed
+(39,16): Error! E148: access to private member 'N::operator new' is not allowed
   definition: 'void * S::N::operator new( unsigned )'
 (40,12): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
-(41,9): Error! E148: access to private member 'N::~N' is not allowed
+(41,16): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
-(42,5): Error! E148: access to private member 'N::~N' is not allowed
+(42,15): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
 File: source\diag0065.c
-(29,5): Error! E148: access to private member 'S::operator delete' is not allowed
+(29,12): Error! E148: access to private member 'S::operator delete' is not allowed
   definition: 'void S::operator delete( void * )'
-(30,9): Error! E148: access to private member 'S::operator delete[]' is not allowed
+(30,13): Error! E148: access to private member 'S::operator delete[]' is not allowed
   definition: 'void S::operator delete[]( void * )'
-(31,5): Error! E148: access to private member 'S::operator delete[]' is not allowed
+(31,15): Error! E148: access to private member 'S::operator delete[]' is not allowed
   definition: 'void S::operator delete[]( void * )'
-(33,5): Error! E148: access to private member 'T::operator delete' is not allowed
+(33,12): Error! E148: access to private member 'T::operator delete' is not allowed
   definition: 'void S::T::operator delete( void * )'
-(34,9): Error! E148: access to private member 'T::operator delete[]' is not allowed
+(34,16): Error! E148: access to private member 'T::operator delete[]' is not allowed
   definition: 'void S::T::operator delete[]( void * )'
-(35,5): Error! E148: access to private member 'T::operator delete[]' is not allowed
+(35,15): Error! E148: access to private member 'T::operator delete[]' is not allowed
   definition: 'void S::T::operator delete[]( void * )'
 File: source\diag0066.c
-(32,5): Error! E148: access to private member 'S::operator delete' is not allowed
+(32,12): Error! E148: access to private member 'S::operator delete' is not allowed
   definition: 'void S::operator delete( void * )'
-(33,9): Error! E148: access to private member 'S::~S' is not allowed
+(33,13): Error! E148: access to private member 'S::~S' is not allowed
   definition: 'S::~S( void )'
-(34,5): Error! E148: access to private member 'S::operator delete[]' is not allowed
+(34,15): Error! E148: access to private member 'S::operator delete[]' is not allowed
   definition: 'void S::operator delete[]( void * )'
-(36,5): Error! E148: access to private member 'T::operator delete' is not allowed
+(36,12): Error! E148: access to private member 'T::operator delete' is not allowed
   definition: 'void S::T::operator delete( void * )'
-(37,9): Error! E148: access to private member 'T::~T' is not allowed
+(37,16): Error! E148: access to private member 'T::~T' is not allowed
   definition: 'S::T::~T( void )'
-(38,5): Error! E148: access to private member 'T::operator delete[]' is not allowed
+(38,15): Error! E148: access to private member 'T::operator delete[]' is not allowed
   definition: 'void S::T::operator delete[]( void * )'
 (40,12): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
-(41,9): Error! E148: access to private member 'N::~N' is not allowed
+(41,16): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
-(42,5): Error! E148: access to private member 'N::~N' is not allowed
+(42,15): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
 File: source\diag0067.c
 (30,12): Error! E148: access to private member 'S::~S' is not allowed
   definition: 'S::~S( void )'
-(31,9): Error! E148: access to private member 'S::~S' is not allowed
+(31,13): Error! E148: access to private member 'S::~S' is not allowed
   definition: 'S::~S( void )'
-(32,5): Error! E148: access to private member 'S::~S' is not allowed
+(32,15): Error! E148: access to private member 'S::~S' is not allowed
   definition: 'S::~S( void )'
 (34,12): Error! E148: access to private member 'T::~T' is not allowed
   definition: 'S::T::~T( void )'
-(35,9): Error! E148: access to private member 'T::~T' is not allowed
+(35,16): Error! E148: access to private member 'T::~T' is not allowed
   definition: 'S::T::~T( void )'
-(36,5): Error! E148: access to private member 'T::~T' is not allowed
+(36,15): Error! E148: access to private member 'T::~T' is not allowed
   definition: 'S::T::~T( void )'
 (38,12): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
-(39,9): Error! E148: access to private member 'N::~N' is not allowed
+(39,16): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
-(40,5): Error! E148: access to private member 'N::~N' is not allowed
+(40,15): Error! E148: access to private member 'N::~N' is not allowed
   definition: 'S::N::~N( void )'
 (48,15): Warning! W188: base class is inherited with private access
 (57,1): Warning! W656: define this function inside its class definition (may improve code quality)
@@ -1440,7 +1447,7 @@ File: source\diag0072.c
 (23,55): Error! E411: static member function cannot be declared const or volatile
 (23,55): Error! E376: virtual function must be a non-static member function
 File: source\diag0073.c
-(20,6): Error! E547: cannot access 'VV::v' through a private base class
+(20,12): Error! E547: cannot access 'VV::v' through a private base class
   definition: 'int VV::v'
 (79,30): Error! E547: cannot access 'UDC_B::operator double ' through a private base class
   definition: 'UDC_B::operator double ()'
@@ -1465,10 +1472,15 @@ File: source\diag0074.c
 (104,1): Warning! W656: define this function inside its class definition (may improve code quality)
 (112,1): Warning! W656: define this function inside its class definition (may improve code quality)
 (124,1): Warning! W656: define this function inside its class definition (may improve code quality)
+(127,1): Warning! W914: 'main' must return 'int'
 (141,1): Warning! W656: define this function inside its class definition (may improve code quality)
 (155,1): Warning! W726: no reference to formal parameter 'x'
   definition: 'int x' in 'OK_TO_NEST2::OK_TO_NEST_INSIDE::OK_TO_NEST_INSIDE( int )'
+(168,1): Error! E930: member 'OK2::OK2' cannot be declared in this class
+  definition: 'int OK2::OK2'
 (177,13): Error! E498: syntax error before 'T'; probable cause: incorrectly spelled type name
+(184,1): Error! E930: member 'BAD2::BAD2' cannot be declared in this class
+  definition: 'int BAD2::BAD2'
 (185,13): Error! E498: syntax error before 'T'; probable cause: incorrectly spelled type name
 File: source\diag0075.c
 (12,15): Error! E580: cannot find a constructor for given initializer argument list
@@ -1533,6 +1545,7 @@ File: source\diag0078.c
   definition: 'void c( [int, int ])'
 (11,14): Warning! W618: function will be overload ambiguous with 'd' using default arguments
   definition: 'void d( int [, int ])'
+(21,20): Error! E913: 'f' does not have a return type specified
 (22,25): Error! E617: cannot overload extern "C" functions (the other function is 'f')
   definition: 'int f( int )'
 (28,10): Error! E619: linkage specification is different than previous declaration 'g'
@@ -1669,7 +1682,7 @@ File: source\diag0079.c
 (23,18): Error! E898: in-class initialization is only allowed for const static integral members
 (24,26): Error! E137: pure member function constant must be '0'
 (33,23): Error! E093: must use 'va_start' macro inside function with variable arguments
-(54,5): Error! E580: cannot find a constructor for given initializer argument list
+(54,9): Error! E580: cannot find a constructor for given initializer argument list
 (65,19): Warning! W004: base class 'VB' does not have a virtual destructor
 (65,19): Warning! W004: base class 'VQ' does not have a virtual destructor
 (65,19): Warning! W621: pure virtual destructors must have a definition
@@ -1729,10 +1742,7 @@ File: source\diag0082.c
 File: source\diag0083.c
 (6,17): Warning! W066: 'delete' expression size is not allowed
 (10,24): Error! E016: template argument list cannot be empty
-(11,40): Error! E084: function templates can only have type arguments
 (16,9): Error! E012: template argument cannot be type 'double'
-(18,9): Error! E012: template argument cannot be type 'int X::*'
-(22,1): Error! E012: template argument cannot be type 'int <member pointer>::*'
 (24,27): Error! E176: 'S' cannot be in the same scope as a class template
   definition: 'S'
 (33,1): Warning! W011: all members are private
@@ -1749,13 +1759,13 @@ File: source\diag0084.c
   definition: 'int TC5'
 (13,29): Error! E176: 'TC6' cannot be in the same scope as a class template
   definition: 'int TC6( int )'
-(19,35): Error! E174: class template 'TC8' cannot be overloaded
+(19,35): Error! E174: class template 'TC8<?1 >' cannot be overloaded
   definition: '<class template> TC8'
-(21,35): Error! E174: class template 'TC9' cannot be overloaded
+(21,35): Error! E174: class template 'TC9<?1 , unsigned >' cannot be overloaded
   definition: '<class template> TC9'
-(31,2): Error! E181: class template 'TC11' is already defined
+(31,2): Error! E181: class template 'TC11<?1 >' is already defined
   definition: '<class template> TC11'
-(37,2): Error! E181: class template 'TC12' is already defined
+(37,2): Error! E181: class template 'TC12<?1 >' is already defined
   definition: '<class template> TC12'
 File: source\diag0085.c
 (43,10): Error! E473: function argument(s) do not match those in prototype
@@ -1814,8 +1824,10 @@ File: source\diag0086.c
   source conversion type is 'int const volatile (lvalue)'
   target conversion type is 'int (lvalue)'
 File: source\diag0087.c
-(6,6): Error! E213: class template requires more parameters for instantiation
-(7,14): Error! E214: class template requires fewer parameters for instantiation
+(6,6): Error! E213: class template 'X<?1 , int , int * , int (* )( void )>' requires more parameters for instantiation
+  definition: '<class template> X'
+(7,14): Error! E214: class template 'X<?1 , int , int * , int (* )( void )>' requires fewer parameters for instantiation
+  definition: '<class template> X'
 (8,3): Error! E350: non-type parameter supplied for a type argument
 (9,9): Error! E494: template argument is not an external linkage symbol
 (10,11): Error! E494: template argument is not an external linkage symbol
@@ -1823,7 +1835,6 @@ File: source\diag0087.c
 (12,16): Error! E351: type parameter supplied for a non-type argument
 (13,14): Error! E351: type parameter supplied for a non-type argument
 (14,13): Error! E198: expression cannot be used as a class template parameter
-(14,13): Error! E493: template argument is not a constant expression
 (15,13): Error! E198: expression cannot be used as a class template parameter
 (15,13): Error! E494: template argument is not an external linkage symbol
 (16,23): Error! E042: symbol 'ok1' already defined
@@ -1834,63 +1845,54 @@ File: source\diag0087.c
   definition: 'int b' in 'void foo( int, int, int, int )'
 File: source\diag0088.c
 (5,14): Error! E040: expression for '.' must be a class, struct or union
-  template class instantiation for 'Stack<double>' was at: (14,1)
+  template class member instantiation was at: (15,15)
   operand type is 'double (lvalue)'
 File: source\diag0089.c
 (6,19): Error! E320: specific versions of template classes can only be defined in file scope
 (13,22): Error! E320: specific versions of template classes can only be defined in file scope
 (16,1): Warning! W014: no reference to symbol 'S::x'
   definition: 'double S::x' in 'void foo( void )'
-(3,1): Warning! W011: all members are private
-  template class instantiation for 'S<unsigned char>' was at: (19,7)
 (19,30): Error! E296: friend declarations may only be declared in a class
 (19,30): Error! E118: nameless declaration is not allowed
 (3,1): Warning! W011: all members are private
-  template class instantiation for 'S<signed char>' was at: (20,7)
+  template class instantiation for 'S<unsigned char>' was at: (22,16)
+(3,1): Warning! W011: all members are private
+  template class instantiation for 'S<signed char>' was at: (23,16)
 File: source\diag0090.c
-(2,21): Error! E409: template argument 'T' is not used in the function argument list
-  definition: 'T'
-(4,19): Error! E409: template argument 'T' is not used in the function argument list
-  definition: 'T'
 (8,11): Error! E408: function templates can only name functions
 (10,11): Error! E407: class templates must be named
 (11,6): Error! E308: an anonymous class without a declarator is useless
-(23,27): Error! E409: template argument 'W' is not used in the function argument list
-  definition: 'W'
-(29,27): Error! E409: template argument 'W' is not used in the function argument list
-  definition: 'W'
-(38,25): Error! E409: template argument 'T' is not used in the function argument list
-  definition: 'T'
-(41,23): Error! E409: template argument 'W' is not used in the function argument list
-  definition: 'W'
 (60,1): Error! E454: function template 'f9' already has a definition
-  template function 'void f9( ? *, ? *, ? *, ? * )' defined at: (56,10)
+  template function 'void f9( ?1 *, ?2 *, ?3 *, ?3 * )' defined at: (56,10)
 File: source\diag0091.c
 (5,7): Error! E028: expecting ';' but found 'fn'
 (5,7): Error! E165: syntax error: class template cannot be processed
   class template definition started at: (3,13)
 File: source\diag0092.c
-(2,27): Error! E084: function templates can only have type arguments
-(5,5): Error! E084: function templates can only have type arguments
 (22,1): Error! E454: function template 'f2' already has a definition
-  template function 'void f2( ? *, ? *, ? *, ? * )' defined at: (17,10)
+  template function 'void f2( ?1 *, ?2 *, ?3 *, ?3 * )' defined at: (17,10)
 File: source\diag0093.c
-(4,5): Error! E455: function templates cannot have default arguments
-(11,5): Error! E455: function templates cannot have default arguments
-(16,7): Error! E651: cannot instantiate f2
-  template function 'void f2( void (* )( ?, ? ), ? )' defined at: (10,10)
+(11,5): Warning! W249: using default arguments would be overload ambiguous with 'f2' using default arguments
+  definition: 'void f2( [?1 * ])'
+(11,5): Error! E250: missing default argument for 'f2'
+  definition: 'void f2( void (* )( ?1, ?1 )[, ?1 ])'
+(16,7): Error! E189: overloaded function cannot be selected for arguments used in call
+  rejected function template: void f2( ?1 * ) defined at: (3,10)
+  rejected function template: void f2( void (* )( ?1, ?1 ), ?1 ) defined at: (10,10)
+(8,5): Warning! W726: no reference to formal parameter 'p'
+  definition: 'int * p' in 'void f2( int * )'
+  template function instantiation for 'f2' was at: (19,1)
+  definition: 'void f2( int * )'
 File: source\diag0094.c
 (4,12): Error! E186: attempt to modify a constant value
-  template function instantiation for 'zap' was at: (11,10)
+  template function instantiation for 'zap' was at: (12,1)
   definition: 'void zap( char const __based( __segment s ) volatile *, char const __based( __segment s ) volatile * )'
-  function template binding of 'zap' was at: (11,10)
-  template function 'void zap( ? volatile *, ? volatile * )' defined at: (2,10)
 File: source\diag0095.c
 (2,11): Error! E224: 'Stack' is a variable of type void
 (2,11): Error! E408: function templates can only name functions
 (2,11): Error! E006: syntax error; probable cause: missing ';'
-(33,6): Error! E336: declaration specifiers are required to declare 'Stack'
 (33,6): Error! E121: syntax error
+(36,1): Warning! W914: 'main' must return 'int'
 (37,6): Error! E029: symbol 's' has not been declared
 File: source\diag0096.c
 (1,18): Error! E415: type cannot be defined in return type
@@ -1948,10 +1950,10 @@ File: source\diag0097.c
   constant expression in comparison has value 0
 (26,16): Warning! W355: pointer expression is never < 0
 (32,5): Warning! W011: all members are private
-  template class instantiation for 'S<int,4294967295,int aa>' was at: (35,1)
+  template class instantiation for 'S<int,4294967295,int aa>' was at: (35,15)
 (36,16): Error! E042: symbol 'x' already defined
   definition: 'S<int,4294967295,int aa> x'
-(40,6): Error! E148: access to private member 'S::a' is not allowed
+(40,7): Error! E148: access to private member 'S::a' is not allowed
   definition: 'int S<int,4294967295,int aa>::a[1]'
 File: source\diag0098.c
 (16,12): Error! E473: function argument(s) do not match those in prototype

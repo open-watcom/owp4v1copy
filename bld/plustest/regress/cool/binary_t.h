@@ -104,8 +104,10 @@ public:
   Boolean operator== (CoolBinary_Tree<Type>&);          // Overload equality
   inline Boolean operator!= (CoolBinary_Tree<Type>&);   // Overload not equal
 
-  friend ostream& operator<< (ostream&, const CoolBinary_Tree<Type>&);
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolBinary_Tree<Type>*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolBinary_Tree<U>&);
+  template< class U >
+  inline friend ostream& operator<< (ostream&, const CoolBinary_Tree<U>*);
 
 protected:
   Boolean put_internal    (const Type&, Boolean avl=NULL);// adds a node
@@ -115,8 +117,10 @@ protected:
 private:
   Compare compare;                      // Compare function
   CoolBinary_Node<Type>* baltree (long);        // Build balanced subtree
-  friend void print_tree (const CoolBinary_Node<Type>*, ostream&);
-  friend int default_node_compare (const Type&, const Type&);
+  template< class U >
+  friend void print_tree (const CoolBinary_Node<U>*, ostream&);
+  template< class U >
+  friend int default_node_compare (const U&, const U&);
 };
 
 

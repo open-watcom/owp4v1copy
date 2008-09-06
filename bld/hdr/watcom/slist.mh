@@ -96,7 +96,7 @@ public:
             public std::iterator< std::forward_iterator_tag, value_type const, difference_type, const_pointer, const_reference >{
         const_iterator( n_ptr x ) : iterator_base( x ) {}
         const_iterator( ) : iterator_base () {}
-        const_iterator( iterator const & that ) : iterator_base( that ){}
+        const_iterator( slist::iterator const & that ) : iterator_base( that.self ){}
         const_iterator& operator++() { self = self->fwd; return *this; } //prefix
         const_iterator operator++( int ) { const_iterator old = *this; self = self->fwd; return old; } //postfix
         const_reference operator*(){ return( self->value ); }
@@ -185,12 +185,18 @@ public:
     void sort() { sort( std::less< T >() ); }
     void reverse();
     
-    friend bool operator==( slist const & a, slist const & b );
-    friend bool operator!=( slist const & a, slist const & b );
-    friend bool operator<=( slist const & a, slist const & b );
-    friend bool operator>=( slist const & a, slist const & b );
-    friend bool operator<( slist const & a, slist const & b );
-    friend bool operator>( slist const & a, slist const & b );
+    template< class U, class V >
+    friend bool operator==( slist<U,V> const & a, slist<U,V> const & b );
+    template< class U, class V >
+    friend bool operator!=( slist<U,V> const & a, slist<U,V> const & b );
+    template< class U, class V >
+    friend bool operator<=( slist<U,V> const & a, slist<U,V> const & b );
+    template< class U, class V >
+    friend bool operator>=( slist<U,V> const & a, slist<U,V> const & b );
+    template< class U, class V >
+    friend bool operator<( slist<U,V> const & a, slist<U,V> const & b );
+    template< class U, class V >
+    friend bool operator>( slist<U,V> const & a, slist<U,V> const & b );
     
     //OW special
     bool _Sane();

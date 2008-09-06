@@ -426,6 +426,8 @@ void ConvCtlInit                // INITIALIZE CONVCTL
     TYPE src;                   // - source type
 
     ctl = convCtlInitData( ctl, expr, request, diag );
+    expr->u.subtree[0]->type =
+        BindTemplateClass( expr->u.subtree[0]->type, NULL, TRUE );
     if( ConvCtlTypeInit( ctl, &ctl->tgt, expr->u.subtree[0]->type ) ) {
         ctl->src.orig = NULL;
         DbgVerify( 0 == ctl->tgt.bit_field, "unexpected bit field" );
@@ -465,6 +467,8 @@ void ConvCtlInit                // INITIALIZE CONVCTL
             } else if ( TYP_VOID == id ) {
                 TYPE pted_src;
                 NodeRvalueRight( expr );
+                expr->u.subtree[1]->type =
+                    BindTemplateClass( expr->u.subtree[1]->type, NULL, TRUE );
                 ConvCtlTypeInit( ctl, &ctl->src, expr->u.subtree[1]->type );
                 pted_src = TypedefModifierRemoveOnly( ctl->src.unmod->of );
                 if( pted_src != NULL && pted_src->id == TYP_FUNCTION ) {
@@ -589,6 +593,8 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
     TYPE_FLAGS tgt;             // - target typing info
     CTD mp_ctd;                 // - host derivation for member-ptr
 
+    info->src.unmod = BoundTemplateClass( info->src.unmod );
+    info->tgt.unmod = BoundTemplateClass( info->tgt.unmod );
     src.type = info->src.unmod;
     tgt.type = info->tgt.unmod;
     mp_ctd = CTD_LEFT;

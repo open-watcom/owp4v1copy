@@ -19,10 +19,10 @@ char* labels[] = { "Q","Q","W","W","E","E","R","T","T","Y","Y" };
 int main ()
 {
   const unsigned count = sizeof (labels) / sizeof (labels[0]);
-  ostream_iterator <char*> iter (cout);
+  ostream_iterator <char const*> iter (cout);
   copy (labels, labels + count, iter);
   cout << endl;
-  char* uCopy[count];
+  char const* uCopy[count];
   fill (uCopy, uCopy + count, "");
   unique_copy (labels, labels + count, uCopy, str_equal);
   copy (labels, labels + count, iter);

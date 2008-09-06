@@ -42,18 +42,11 @@ namespace _ow {
     inline Int heap_right( Int index )
         { return ( 2*index + 2 ); }
 
-:: The proper declaration doesn't work because of a compiler bug.
-#ifdef _NEVER
     template< class RandomAccess >
     void heapify( RandomAccess first,
                   RandomAccess last,
                   typename
                     iterator_traits< RandomAccess >::difference_type index)
-#endif
-    template< class RandomAccess, class DifferenceType >
-    void heapify( RandomAccess first,
-                  RandomAccess last,
-                  DifferenceType index)
     {
         using std::swap;
         typedef typename iterator_traits< RandomAccess >::difference_type Int;
@@ -176,19 +169,11 @@ namespace _ow {
         }
     }
 
-#ifdef _NEVER
     template< class RandomAccess, class Compare >
     RandomAccess
     med3( RandomAccess seq,
           typename std::iterator_traits< RandomAccess >::difference_type left,
           typename std::iterator_traits< RandomAccess >::difference_type right,
-          Compare comp)
-#endif
-    template< class RandomAccess, class Compare, class DifferenceType >
-    RandomAccess
-    med3( RandomAccess seq,
-          DifferenceType left,
-          DifferenceType right,
           Compare comp)
     {
         using std::swap;
@@ -203,33 +188,28 @@ namespace _ow {
         return seq + (right - 1);
     }
 
-#ifdef _NEVER
-    template< class RandomAccess, class Compare >
-    void quick_sort( RandomAccess seq,
-          typename std::iterator_traits< RandomAccess >::difference_type left,
-          typename std::iterator_traits< RandomAccess >::difference_type right,
-                     Compare comp)
-#endif
     // Based on the QuickSort algorithm in Mark Allen Weiss's "Data
     // Structures and Algorithm Analysis in C++" third edition; Addison
     // Wesley; ISBN=0-321-44146-X.
     //
-    template< class RandomAccess, class Compare, class DifferenceType >
+    template< class RandomAccess, class Compare >
     void quick_sort( RandomAccess seq,
-                     DifferenceType left,
-                     DifferenceType right,
-                     Compare comp)
+          typename std::iterator_traits< RandomAccess >::difference_type left,
+          typename std::iterator_traits< RandomAccess >::difference_type right,
+                   Compare comp)
     {
         using std::swap;
+        typedef typename std::iterator_traits< RandomAccess >::difference_type
+            difference_type; 
 
         if( right - left < 10 )
             insertion_sort( seq + left, seq + right + 1, comp );
         else {
             typename std::iterator_traits< RandomAccess >::value_type
-            pivot = *med3( seq, left, right, comp );
+                pivot = *med3( seq, left, right, comp );
 
-            DifferenceType i = left;
-            DifferenceType j = right - 1;
+            difference_type i = left;
+            difference_type j = right - 1;
             for( ; ; ) {
                 while( comp( seq[++i], pivot ) ) ;
                 while( comp( pivot, seq[--j] ) ) ;

@@ -408,7 +408,7 @@ void DumpCgFront(               // DUMP GENERATED CODE
     }
 }
 
-static void dumpTemplateInfo( TEMPLATE_INFO *tinfo )
+void DumpTemplateInfo( TEMPLATE_INFO *tinfo )
 {
     TEMPLATE_SPECIALIZATION *tprimary;
     VBUF prefix, suffix;
@@ -424,7 +424,7 @@ static void dumpTemplateInfo( TEMPLATE_INFO *tinfo )
           , tprimary->defn
           , tprimary->num_args
           );
-    printf( "  " );
+    printf( "      %s", tinfo->sym->name->name );
     delim = '<';
     for( i = 0; i < tprimary->num_args; ++i ) {
         FormatType( tprimary->type_list[i], &prefix, &suffix );
@@ -514,7 +514,7 @@ void DumpSymbol(                // DUMP SYMBOL ENTRY
         }
         switch( sym->id ) {
         case SC_CLASS_TEMPLATE:
-            dumpTemplateInfo( sym->u.tinfo );
+            DumpTemplateInfo( sym->u.tinfo );
             break;
         case SC_NAMESPACE:
             dumpNameSpaceInfo( sym->u.ns );
@@ -673,6 +673,7 @@ void DumpClassInfo(             // DUMP CLASSINFO
             " needs_assign" F_HEX_2
                             F_NL "  "
             " defined"      F_HEX_2
+            " opened"       F_HEX_2
             " unnamed"      F_HEX_2
             " anonymous"    F_HEX_2
             " corrupted"    F_HEX_2
@@ -733,6 +734,7 @@ void DumpClassInfo(             // DUMP CLASSINFO
           , ci->needs_vdtor
           , ci->needs_assign
           , ci->defined
+          , ci->opened
           , ci->unnamed
           , ci->anonymous
           , ci->corrupted
@@ -862,14 +864,25 @@ static void dumpFriendRef(      // DUMP REFERENCE TO FRIEND SCOPE
     void *_fr )                 // - the reference
 {
     FRIEND *fr = _fr;
-    printf( "   FRIEND"     F_BADDR
-            " next"         F_PTR
-            " sym"          F_PTR
-            F_EOL
-          , fr
-          , fr->next
-          , fr->sym
-          );
+    if( FriendIsType( fr ) ) {
+        printf( "   FRIEND"     F_BADDR
+                " next"         F_PTR
+                " type"         F_PTR
+                F_EOL
+              , fr
+              , fr->next
+              , FriendGetType( fr )
+              );
+    } else {
+        printf( "   FRIEND"     F_BADDR
+                " next"         F_PTR
+                " sym"          F_PTR
+                F_EOL
+              , fr
+              , fr->next
+              , FriendGetSymbol( fr )
+              );
+    }
 }
 
 
@@ -960,7 +973,7 @@ static void dumpFriend(         // DUMP A FRIEND SCOPE
     void *_fr )                 // - symbol for the friend scope
 {
     FRIEND *fr = _fr;
-    dump_sym_scope( fr->sym );
+    dump_sym_scope( fr->u.sym );
 }
 
 
@@ -1497,6 +1510,23 @@ void DbgGenned(                 // INDICATE SYMBOL GENERATED
         }
     }
 }
+
+
+void DumpTemplateSpecialization(// DUMP A TEMPLATE SPECIALIZATION
+    TEMPLATE_SPECIALIZATION *tspec )// - template specialization
+{
+    TEMPLATE_INFO *tinfo = tspec->tinfo;
+    VBUF vbuf;                  // - variable-sized buffer
+
+    FormatTemplateSpecialization( tspec, &vbuf );
+    printf( "    TEMPLATE_SPECIALIZATION" F_BADDR
+            " tinfo"        F_BADDR
+                            F_EOL
+            , tspec, tinfo );
+    printf( "      %s\n", vbuf.buf );
+    VbufFree( &vbuf );
+}
+
 
 static void init(               // INITIALIZATION
     INITFINI* defn )            // - definition

@@ -402,14 +402,16 @@ static void writeClassFriends   // WRITE BROWSE DEFN FOR FRIENDS
 
     inf = cltype->u.c.info;
     RingIterBeg( inf->friends, friend ) {
-        sym = friend->sym;
-        if( bri_handle != NULL ) {
-            BRIAddReference( bri_handle
-                           , BRI_NO_CHANGE
-                           , BRI_NO_CHANGE
-                           , BRI_NO_CHANGE
-                           , (BRI_SymbolID) SymbolGetIndex( sym )
-                           , BRI_RT_Friend );
+        if( FriendIsSymbol( friend ) ) {
+            sym = FriendGetSymbol( friend );
+            if( bri_handle != NULL ) {
+                BRIAddReference( bri_handle
+                                 , BRI_NO_CHANGE
+                                 , BRI_NO_CHANGE
+                                 , BRI_NO_CHANGE
+                                 , (BRI_SymbolID) SymbolGetIndex( sym )
+                                 , BRI_RT_Friend );
+            }
         }
     } RingIterEnd( friend );
 }

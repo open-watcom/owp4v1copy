@@ -60,7 +60,7 @@ CoolEnvelope_Matrix/*##*/< CoolMatrix<float> > extract_3d_rotation (const CoolMa
     abort();
   }
   if (transform.rows() >= 3)
-    return transform.extract(3, 3, 0, 0);       // rotation is top-left most block
+    return (CoolEnvelope_Matrix< CoolMatrix<float> > &) transform.extract(3, 3, 0, 0);       // rotation is top-left most block
   else {
     CoolMatrix<float> rot(3, 3, 0.0);
     CoolMatrix<float>& transform2 = (CoolMatrix<float>&) transform;

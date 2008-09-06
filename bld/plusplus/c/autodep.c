@@ -45,7 +45,7 @@
 static FILE *AutoDepFile;
 
 // macro copied from bld/cc/c/ccmain.c
-#if defined(__QNX__) || defined(__LINUX__)
+#ifdef __UNIX__
     #define IS_PATH_SEP( ch ) ((ch) == '/')
 #else
     #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')

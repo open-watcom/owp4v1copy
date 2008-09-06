@@ -160,21 +160,21 @@ void test_switches(int mode)
             a.SetUseSeparators(0);
             break;
         case 2: {
-            const width2 = 7;
+            int const width2 = 7;
             cout << "Set width to " << width2 <<
                 " and don't right adjust." << endl;
             a.SetWidth(width2);
             a.SetRightAdjust(0);
         }       break;
         case 3: {
-            const width3 = 7;
+            int const width3 = 7;
             cout << "Set width to " << width3 <<
                 " and don't use SI." << endl;
             a.SetWidth(width3);
             a.SetUseSI(0);
         }       break;
         case 4: {
-            const sepw4 = 4;
+            int const sepw4 = 4;
             cout << "Set separator width to " << sepw4 <<
                 " and Sep is a space." << endl;
 
@@ -182,12 +182,12 @@ void test_switches(int mode)
             a.SetSepWidth(sepw4);
         }       break;
         case 5: {
-            const width5 = 5;
+            int const width5 = 5;
             cout << "Normal SepWidth, but Width set to " << width5 << endl;
             a.SetWidth(width5);
         }       break;
         case 6: {
-            const width6 = 5;
+            int const width6 = 5;
             cout << "Width set to " << width6 << " and don't use seps." << endl;
             a.SetWidth(width6);
             a.SetUseSeparators(0);

@@ -354,9 +354,9 @@ namespace std {
         template< class T > class shared_holder_ptr;
         template< class T, class D > class shared_holder_deleter;
 
-        class static_pointer_cast_tag { };
-        class dynamic_pointer_cast_tag { };
-        class const_pointer_cast_tag { };
+        struct static_pointer_cast_tag { };
+        struct dynamic_pointer_cast_tag { };
+        struct const_pointer_cast_tag { };
     }
 
     template< class T > class shared_ptr {

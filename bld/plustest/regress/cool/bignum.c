@@ -986,9 +986,9 @@ CoolBignumE operator<< (const CoolBignum& b1, long l) {
     return result;                              // shallow swap on return
   }
   if (l < 0)                                    // if shift amt is negative
-    return right_shift(b1,-l);                  //   do an actual right shift
+    return (CoolBignumE &) right_shift(b1,-l);                  //   do an actual right shift
   else                                          // otherwise
-    return left_shift(b1,l);                    //   do a left shift
+    return (CoolBignumE &) left_shift(b1,l);                    //   do a left shift
 }
 
 
@@ -1003,9 +1003,9 @@ CoolBignumE operator>> (const CoolBignum& b1, long l) {
     return result;                              // shallow swap on return
   }
   if (l < 0)                                    // if shift amt is negative
-    return left_shift(b1,-l);                   //   do an actual left shift
+    return (CoolBignumE &) left_shift(b1,-l);                   //   do an actual left shift
   else                                          // else
-    return right_shift(b1,l);                   //   do a right shift
+    return (CoolBignumE &) right_shift(b1,l);                   //   do a right shift
 }
 
 

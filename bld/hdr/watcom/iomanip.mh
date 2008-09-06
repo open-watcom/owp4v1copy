@@ -230,7 +230,9 @@ template<class T>
     public:
         smanip( std::ios &(*__f)( std::ios &, T ), T __p ) :
             __fn( __f ), __parm( __p ) {};
+        template< class T >
         friend _WPRTLINK std::istream &operator>>( std::istream &, const smanip<T> & );
+        template< class T >
         friend _WPRTLINK std::ostream &operator<<( std::ostream &, const smanip<T> & );
     private:
         std::ios &(*__fn)( std::ios &, T );
@@ -263,6 +265,7 @@ template<class T>
     public:
         imanip( std::istream &(*__f)( std::istream &, T ), T __p ) :
             __fn( __f ), __parm( __p ) {};
+        template< class T >
         friend _WPRTLINK std::istream &operator>>( std::istream &, const imanip<T> & );
     private:
         std::istream &(*__fn)( std::istream &, T );
@@ -290,6 +293,7 @@ template<class T>
     public:
         omanip( std::ostream &(*__f)( std::ostream &, T ), T __p ) :
             __fn( __f ), __parm( __p ) {};
+        template< class T >
         friend _WPRTLINK std::ostream &operator<<( std::ostream &, const omanip<T> & );
     private:
         std::ostream &(*__fn)( std::ostream &, T );
@@ -317,6 +321,7 @@ template<class T>
     public:
         iomanip( std::iostream &(*__f)( std::iostream &, T ), T __p ) :
             __fn( __f ), __parm( __p ) {};
+        template< class T >
         friend _WPRTLINK std::iostream &operator>>( std::iostream &, const iomanip<T> & );
     private:
         std::iostream &(*__fn)( std::iostream &, T );

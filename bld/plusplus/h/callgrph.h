@@ -44,7 +44,10 @@ typedef struct callgraph CALLGRAPH;
 typedef struct calledge  CALLEDGE;
 typedef struct callnode  CALLNODE;
 typedef struct inlinee   INLINEE;
+#ifndef CGFILE_DEFINED
+#define CGFILE_DEFINED
 typedef struct cgfile    CGFILE;
+#endif
 
 typedef enum                    // SCOPE_STATE
 {   STS_CALL        = 0x01      // - "can-throw" call

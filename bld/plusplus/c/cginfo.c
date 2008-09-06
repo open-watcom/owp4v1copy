@@ -35,7 +35,6 @@
 #include "compcfg.h"
 #include "tgtenv.h"
 
-#include <process.h>
 #include <limits.h>
 
 #include "preproc.h"
@@ -542,16 +541,15 @@ static AUX_INFO *IntrinsicAuxLookup(
     struct inline_funcs *ifunc;
     AUX_INFO *inf;
 
-    inf = &DefaultInfo;
     ifunc = InlineLookup( sym->name->name );
-    if( ifunc == NULL )  return( inf );
+    if( ifunc == NULL )  return( NULL );
     if( HW_CEqual( ifunc->returns, HW_DX_AX ) ||
         HW_CEqual( ifunc->returns, HW_DS_SI ) ||
         HW_CEqual( ifunc->returns, HW_ES_DI ) ||
         HW_CEqual( ifunc->returns, HW_CX_DI ) ) {
         TYPE type;
         type = FunctionDeclarationType( sym->sym_type )->of;
-        if( CgTypeSize( type ) != 4 )  return( inf );
+        if( CgTypeSize( type ) != 4 )  return( NULL );
     }
     inf = &InlineInfo;
     inf->cclass = (DefaultInfo.cclass & FAR) | MODIFY_EXACT;
@@ -570,7 +568,7 @@ static AUX_INFO *IntrinsicAuxLookup(
     AUX_INFO *inf;
 
     sym = sym;
-    inf = &DefaultInfo;
+    inf = NULL;
 #endif
     return( inf );
 }
@@ -587,20 +585,17 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
     } else {
         unmod_type = TypeModFlags( sym->sym_type, &mod_flags );
         if( unmod_type->id == TYP_FUNCTION ) {
-            if( unmod_type->u.f.pragma != NULL ) {
-                inf = unmod_type->u.f.pragma;
-                if( unmod_type->flag & TF1_INTRINSIC &&
-                    sym->name != NULL ) {
-                        inf = IntrinsicAuxLookup( sym );
-                }
-            } else if( unmod_type->flag & TF1_INTRINSIC ) {
-                if( sym->name != NULL ) {
-                    inf = IntrinsicAuxLookup( sym );
+            inf = NULL;
+            if( ( unmod_type->flag & TF1_INTRINSIC )
+             && ( sym->name != NULL ) ) {
+                inf = IntrinsicAuxLookup( sym );
+            }
+            if( inf == NULL ) {
+                if( unmod_type->u.f.pragma != NULL ) {
+                    inf = unmod_type->u.f.pragma;
                 } else {
                     inf = &DefaultInfo;
                 }
-            } else {
-                inf = &DefaultInfo;
             }
             #if _CPU == 386
                 if(( mod_flags & TF1_FAR16 ) || ( inf->flags & AUX_FLAG_FAR16 )) {

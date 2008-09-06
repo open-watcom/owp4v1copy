@@ -71,7 +71,7 @@ struct cgfile_ins               // CGFILE_INS -- location of instruction
 #define CGINTER_BLOCKING        (sizeof(unsigned))
 
 // structure is written out to a file
-#pragma pack( push, 1 )
+#include <pushpck1.h>
 
 // having 'value' first means it will be aligned in cases
 // were it is a singleton
@@ -81,7 +81,7 @@ struct cginter {                // CGINTER -- intermediate-code instruction
     CGINTEROP   opcode;         // - opcode for text
 };
 
-#pragma pack( pop )
+#include <poppck.h>
 
 typedef void *CGIRELOCFN( void * );
 

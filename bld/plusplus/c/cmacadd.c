@@ -506,6 +506,7 @@ void MacroOverflow(             // OVERFLOW SEGMENT IF REQUIRED
     MACADDR_T old_offset;
 
     amount_needed = macroSizeAlign( amount_needed );
+    DbgAssert( MacroOffset + amount_used <= macroLimit );
     if( macroLimit < MacroOffset + amount_needed ) {
         old_offset = MacroOffset;
         macroAllocSegment( amount_needed );

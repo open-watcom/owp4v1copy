@@ -1168,7 +1168,7 @@ static MACRO_TOKEN **buildMTokenList( MACRO_TOKEN **ptail, void *ptr, MACRO_ARG 
         case T_BAD_TOKEN:
         case T_LSTRING:
         case T_STRING:
-            ptail = buildTokenOnEnd( ptail, curr_token, p + 1 );
+            ptail = buildTokenOnEnd( ptail, curr_token, (char *)p + 1 );
             ++p;
             while( *p++ ) {;}
             prev_token = curr_token;

@@ -240,7 +240,6 @@ PASS line 3
 SUCCESS
 PASS line 4
 PASS line 4
-PASS line 4
 SUCCESS
 PASS line 4
 SUCCESS
@@ -250,7 +249,6 @@ SUCCESS
 PASS line 16
 PASS line 18
 SUCCESS
-PASS line 11
 PASS line 11
 PASS line 11
 SUCCESS

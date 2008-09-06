@@ -123,18 +123,43 @@ bool advance_test( )
     return( true );
 }
 
-#ifdef NEVER
 bool distance_test( )
 {
-    // Also need to check each of the iterator catagories.
-    std::ptrdiff_t d =  std::distance( raw_array, raw_array + 2 );
+    std::ptrdiff_t d;
+    
+    d = std::distance( InpIt< char >( raw_array ), InpIt< char >( raw_array ));
+    if( d != 0 ) FAIL;
+    d = std::distance( InpIt< char >( raw_array ), InpIt< char >( raw_array + 1 ));
+    if( d != 1 ) FAIL;    
+    d = std::distance( InpIt< char >( raw_array ), InpIt< char >( raw_array + 2 ));
     if( d != 2 ) FAIL;
+    
+    d = std::distance( FwdIt< char >( raw_array ), FwdIt< char >( raw_array ));
+    if( d != 0 ) FAIL;
+    d = std::distance( FwdIt< char >( raw_array ), FwdIt< char >( raw_array + 1 ));
+    if( d != 1 ) FAIL;
+    d = std::distance( FwdIt< char >( raw_array ), FwdIt< char >( raw_array + 2 ));
+    if( d != 2 ) FAIL;
+
+    d = std::distance( BidIt< char >( raw_array ), BidIt< char >( raw_array ));
+    if( d != 0 ) FAIL;
+    d = std::distance( BidIt< char >( raw_array ), BidIt< char >( raw_array + 1 ));
+    if( d != 1 ) FAIL;
+    d = std::distance( BidIt< char >( raw_array ), BidIt< char >( raw_array + 2 ));
+    if( d != 2 ) FAIL;
+    
+    d = std::distance( raw_array, raw_array );
+    if( d != 0 ) FAIL;
+    d = std::distance( raw_array, raw_array + 1 );
+    if( d != 1 ) FAIL;
+    d =  std::distance( const_raw_array, const_raw_array + 2 );
+    if( d != 2 ) FAIL;
+
     return( true );
 }
-#endif
 
 
-bool reverse_test( )
+bool reverse_test1( )
 {
     int reverse_array[] = { 0, 1, 2, 3 };
     std::reverse_iterator< int * > p1( reverse_array + 4 );
@@ -172,7 +197,70 @@ bool reverse_test( )
     }
     if( value != -1 ) FAIL;
     if( !( q1 == q2 ) ) FAIL;
+    
+    // Now try using operator->()
+    struct wrapper {
+        int member;
+    };
+    wrapper initial[] = { { 0 }, { 1 } , { 2 } , { 3 } };
+    std::list< wrapper > my_other_list;
+    for( int i = 0; i < sizeof(initial)/sizeof(wrapper); ++i ) {
+        my_other_list.push_back( initial[i] );
+    }
+    
+    std::list< wrapper >::reverse_iterator r1;  // Check default construction.
+    std::list< wrapper >::reverse_iterator r2;
+    
+    r1 = my_other_list.rbegin( );
+    r2 = my_other_list.rend( );
+    
+    value = 3;
+    while( r1 != r2 ) {
+        if( r1 == r2 ) FAIL;
+        if( r1->member != value ) FAIL;
+        --value;
+        ++r1;
+    }
+    if( value != -1 ) FAIL;
+    if( !( r1 == r2 ) ) FAIL;
 
+    return( true );
+}
+
+bool reverse_test2( )
+{
+    int reverse_array[] = { 0, 1, 2, 3 };
+    
+    std::reverse_iterator< int * > p1( reverse_array + 4 );
+    if( p1[0] != 3 ) FAIL;
+    if( p1[1] != 2 ) FAIL;
+    if( p1[2] != 1 ) FAIL;
+    if( p1[3] != 0 ) FAIL;
+    
+    std::reverse_iterator< int * > p2( p1 + 2 );
+    if( p2 - p1 !=  2 ) FAIL;
+    if( p1 - p2 != -2 ) FAIL;
+    if( p1 >  p2 ) FAIL;
+    if( p1 >= p2 ) FAIL;
+    if( p2 <  p1 ) FAIL;
+    if( p2 <= p1 ) FAIL;
+    if( p2[ 0] != 1 ) FAIL;
+    if( p2[ 1] != 0 ) FAIL;
+    if( p2[-1] != 2 ) FAIL;
+    if( p2[-2] != 3 ) FAIL;
+    
+    p2 = p2 - 2;
+    if( p1 != p2 ) FAIL;
+    
+    p2 += 2;
+    if( p2[ 0] != 1 ) FAIL;
+    if( p2[ 1] != 0 ) FAIL;
+    if( p2[-1] != 2 ) FAIL;
+    if( p2[-2] != 3 ) FAIL;
+    
+    p2 -= 2;
+    if( p1 != p2 ) FAIL;
+    
     return( true );
 }
 
@@ -225,11 +313,12 @@ int main( )
     try {
         if( !traits_test( )         || !heap_ok( "t01" )  ) rc = 1;
         if( !advance_test( )        || !heap_ok( "t02" )  ) rc = 1;
-        // if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
-        if( !reverse_test( )        || !heap_ok( "t04" )  ) rc = 1;
-        if( !back_inserter_test( )  || !heap_ok( "t05" )  ) rc = 1;
-        if( !front_inserter_test( ) || !heap_ok( "t06" )  ) rc = 1;
-        if( !inserter_test( )       || !heap_ok( "t07" )  ) rc = 1;
+        if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
+        if( !reverse_test1( )       || !heap_ok( "t04" )  ) rc = 1;
+        if( !reverse_test2( )       || !heap_ok( "t05" )  ) rc = 1;
+        if( !back_inserter_test( )  || !heap_ok( "t06" )  ) rc = 1;
+        if( !front_inserter_test( ) || !heap_ok( "t07" )  ) rc = 1;
+        if( !inserter_test( )       || !heap_ok( "t08" )  ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

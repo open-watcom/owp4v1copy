@@ -70,14 +70,14 @@ ArrayOb::ArrayOb(unsigned size)
         sz = size;
         if (sz==0) allocSizeErr();
         v = NEW(Object*,sz);
-        register i = sz;
+        register int i = sz;
         register Object** vp = v;
         while (i--) *vp++ = nil;
 }
         
 ArrayOb::ArrayOb(const ArrayOb& a)
 {
-        register i = a.sz;
+        register int i = a.sz;
         sz = i;
         v = NEW(Object*,i);
         register Object** vp = v;
@@ -92,7 +92,7 @@ void ArrayOb::operator=(const ArrayOb& a)
         if (v != a.v) {
                 DELETE(v);
                 v = NEW(Object*,sz=a.sz);
-                register i = a.sz;
+                register int i = a.sz;
                 register Object** vp = v;
                 register Object** av = a.v;
                 while (i--) *vp++ = *av++;
@@ -160,7 +160,7 @@ Object* ArrayOb::doNext(Iterator& pos) const
 void ArrayOb::deepenShallowCopy()
 {
         BASE::deepenShallowCopy();
-        register i = sz;
+        register int i = sz;
         register Object** vp = v;
         while (i--) {
                 *vp = (*vp)->deepCopy();

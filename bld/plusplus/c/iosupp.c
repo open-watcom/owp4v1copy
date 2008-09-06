@@ -755,12 +755,15 @@ static void ioSuppTempOpen(             // OPEN TEMPORARY FILE
     auto char   fname[ _MAX_PATH ];
 
     mode = O_RDWR | O_CREAT | O_EXCL;
-    #if defined(__UNIX__)
-        // Unix files are always binary
-        mode |= O_TEMP;
-    #else
-        mode |= O_BINARY;
-    #endif
+#ifdef __UNIX__
+  #ifndef O_TEMP
+    #define O_TEMP 0    /* Not a standard flag */
+  #endif
+    // Unix files are always binary
+    mode |= O_TEMP;
+#else
+    mode |= O_BINARY;
+#endif
     for(;;) {
         tempFname( fname );
         #if defined(__DOS__)

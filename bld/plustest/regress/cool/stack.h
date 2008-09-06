@@ -102,8 +102,10 @@ public:
   void set_compare(Compare = NULL); // Set compare function
   inline void set_alloc_size (int);              // Set alloc size
 
-  friend ostream& operator<< (ostream&, const CoolStack<Type>&);
-  /*inline##*/ friend ostream& operator<< (ostream&, const CoolStack<Type>*);
+  template< class U >
+  friend ostream& operator<< (ostream&, const CoolStack<U>&);
+  template< class U >
+  inline friend ostream& operator<< (ostream&, const CoolStack<U>*);
 
 protected:
   Type* data;                                   // Pointer to allocated storage
@@ -111,7 +113,8 @@ protected:
   Boolean grow (long min_size);                 // Grow on push
 
 private:
-  friend Boolean CoolStack_is_data_equal (const Type&, const Type&);
+  template< class U >
+  friend Boolean CoolStack_is_data_equal (const U&, const U&);
 };
 
 // Type& top() -- Return the top item on this stack

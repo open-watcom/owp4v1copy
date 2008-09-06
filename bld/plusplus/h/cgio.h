@@ -48,7 +48,10 @@
 
 // STRUCTURES:
 
+#ifndef CGFILE_DEFINED
+#define CGFILE_DEFINED
 typedef struct cgfile           CGFILE;         // control for a virtual file
+#endif
 typedef struct cgfile_gen       CGFILE_GEN;     // data while generating file
 
 struct cgfile {                 // CGFILE -- control for a virtual file

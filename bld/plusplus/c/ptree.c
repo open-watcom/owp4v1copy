@@ -1329,16 +1329,27 @@ PTREE MakeScopedDestructorId( PTREE scoped_tilde, PTREE id )
     TYPE unbound_type;
     PTREE tree;
 
-    tree = useScopeIfPossible( scoped_tilde, NULL );
-    if( tree != NULL ) {
-        class_type = StructType( tree->u.subtree[0]->type );
-        unbound_type = NULL;
-        if( class_type->flag & TF1_UNBOUND ) {
-            unbound_type = class_type;
-        }
-        id = makeDestructorId( class_type->u.c.scope, id, unbound_type );
+    if( ( id->op == PT_ID ) && ( id->cgop == CO_NAME_NORMAL )
+     && ( id->type != NULL ) && ArithType( id->type ) ) {
+        id = makeDestructorId( NULL, id, id->type );
         id = PTreeCopySrcLocation( id, scoped_tilde );
-        id = PTreeReplaceRight( tree, id );
+        if( ! TypesIdentical( scoped_tilde->u.subtree[0]->u.subtree[1]->type,
+                              id->type ) ) {
+            CErr1( ERR_INVALID_SCALAR_DESTRUCTOR );
+            id = PTreeErrorNode( id );
+        }
+    } else {
+        tree = useScopeIfPossible( scoped_tilde, NULL );
+        if( tree != NULL ) {
+            class_type = StructType( tree->u.subtree[0]->type );
+            unbound_type = NULL;
+            if( class_type->flag & TF1_UNBOUND ) {
+                unbound_type = class_type;
+            }
+            id = makeDestructorId( class_type->u.c.scope, id, unbound_type );
+            id = PTreeCopySrcLocation( id, scoped_tilde );
+            id = PTreeReplaceRight( tree, id );
+        }
     }
     PTreeFreeSubtrees( scoped_tilde );
     return id;

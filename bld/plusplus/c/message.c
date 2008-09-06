@@ -62,6 +62,8 @@
 static unsigned reserveSize;
 static void *reserveMem;
 static unsigned reserveDepth;
+static unsigned internalErrCount;
+static unsigned suppressCount;
 
 static FILE *err_file;              // ERROR FILE
 static TOKEN_LOCN err_locn;         // error location
@@ -205,7 +207,11 @@ static SYMBOL msgBuild(         // BUILD ERROR MESSAGE
 }
 
 
+#ifdef IDECALL /* Temp fix to build across V1/V2 branches */
+static IDEBool IDECALL idePrt   // PRINT FOR IDE
+#else
 static IDEBool __stdcall idePrt // PRINT FOR IDE
+#endif
     ( IDECBHdl hdl              // - handle
     , IDEMsgInfo *info )        // - information
 {
@@ -642,7 +648,13 @@ static msg_status_t doError(    // ISSUE ERROR
     if( ! errLimitExceeded ) {
         flag.too_many = TRUE;
         flag.print_err = okToPrintMsg( msgnum, &level );
-        if( ErrLimit == -1 ) {
+        if( suppressCount > 0 ) {
+            /* suppressed message */
+            if( flag.print_err && ( level == 0 ) ) {
+                internalErrCount++;
+            }
+            return MS_NULL;
+        } else if( ErrLimit == -1 ) {
             /* unlimited messages */
             flag.too_many = FALSE;
         } else if( ErrCount < ErrLimit ) {
@@ -750,6 +762,38 @@ void InfMsgInt(                 // INFORMATION MESSAGE, INT ARG.
     CErr( msgnum, p1 );
 }
 
+
+void CErrSuppress(
+    error_state_t *save )
+{
+    suppressCount++;
+    *save = internalErrCount;
+}
+
+void CErrSuppressRestore(
+    unsigned count )
+{
+    suppressCount += count;
+}
+
+unsigned CErrUnsuppress(
+    void )
+{
+    unsigned val = suppressCount;
+    suppressCount = 0;
+    return val;
+}
+
+boolean CErrSuppressedOccurred(
+    error_state_t *previous_state )
+{
+    suppressCount--;
+    if( *previous_state != internalErrCount ) {
+        internalErrCount = *previous_state;
+        return( TRUE );
+    }
+    return( FALSE );
+}
 
 void CErrCheckpoint(
     error_state_t *save )
@@ -877,7 +921,7 @@ void InfSymbolDeclaration(      // GENERATE SYMBOL-DECLARATION NOTE
 void InfSymbolAmbiguous(        // GENERATE SYMBOL-AMBIGUITY NOTE
     SYMBOL sym )                // - a symbol
 {
-    CErr( SymIsFunctionTemplateModel( sym )
+    CErr( SymIsFnTemplateMatchable( sym )
             ? INF_TEMPLATE_FN_AMBIGUOUS : INF_FUNC_AMBIGUOUS
         , sym
         , &sym->locn->tl );

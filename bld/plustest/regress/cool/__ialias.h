@@ -31,6 +31,7 @@
 #pragma include_alias( <cool/N_Tree.C>,             <cool/n_tree.c>   )
 #pragma include_alias( <cool/N_Tree.h>,             <cool/n_tree.h>   )
 #pragma include_alias( <cool/Quaternion.h>,         <cool/quaterni.h>   )
+#pragma include_alias( <cool/Quaternion.c>,         <cool/quaterni.c>   )
 #pragma include_alias( <cool/Queue.C>,              <cool/queue.c>   )
 #pragma include_alias( <cool/Queue.h>,              <cool/queue.h>   )
 #pragma include_alias( <cool/Random.h>,             <cool/random.h>   )

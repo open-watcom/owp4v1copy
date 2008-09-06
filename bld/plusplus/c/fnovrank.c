@@ -198,6 +198,10 @@ static boolean trivialRankPtrToPtr( FNOV_CONV *conv )
         // need to look down all levels here
         src = conv->wsrc.original;
         tgt = conv->wtgt.original;
+        if( !( conv->rank->control & FNC_DISTINCT_CHECK ) ) {
+            src = BindTemplateClass( src, NULL, TRUE );
+            tgt = BindTemplateClass( tgt, NULL, TRUE );
+        }
         ConvCtlInitTypes( &info, src, tgt );
         ConvCtlTypeDecay( &info, &info.src );
         ConvCtlTypeDecay( &info, &info.tgt );
@@ -281,7 +285,7 @@ static boolean fromConstZero( FNOV_CONV *conv )
         return( FALSE );
     }
     node = *pnode;
-    if( node != NULL && NodeIsZeroConstant( node ) ) {
+    if( node != NULL && NodeIsZeroIntConstant( node ) ) {
         /* we don't want 0's that are cast to pointer types here */
         if( IntegralType( conv->wsrc.basic ) ) {
             conv->rank->rank = OV_RANK_STD_CONV;
@@ -368,6 +372,11 @@ static boolean rankTgtRefCvMem( FNOV_CONV *conv )
         first = conv->wsrc.refflag;
     } else {
         first = conv->wsrc.leadflag;
+        if( conv->wtgt.reference ) {
+            // add "const" flag to values so they can only be bound to
+            // const references
+            first |= TF1_CONST;
+        }
     }
     triv = FnovCvFlagsRank( first
                           , conv->wtgt.refflag
@@ -381,7 +390,7 @@ static boolean rankTgtRefCvMem( FNOV_CONV *conv )
                                 , conv->wtgt.refbase
                                 , conv->rank );
             } else {
-                FnovMemFlagsRank( conv->wsrc.leadflag
+                FnovMemFlagsRank( first
                                 , conv->wtgt.refflag
                                 , conv->wsrc.leadbase
                                 , conv->wtgt.refbase
@@ -768,7 +777,7 @@ FNOV_LIST **pmatch, FNOV_RANK *rank, FNOV_DIAG *fnov_diag )
                 completeFNOV_TYPE( &conv_class );
                 FnovFreeDiag( &my_fnov_diag );
                 FnovListFree( &match );
-                coarse = fnovUdcLocate( FNOV_UDC_DIRECT
+                coarse = fnovUdcLocate( FNOV_UDC_CTOR | ( control & FNOV_UDC_USE_EXPLICIT )
                                       , ictl | FNOV_INTRNL_8_5_3_ANSI
                                       , wsrc
                                       , &conv_class
@@ -938,12 +947,16 @@ static void clstoClsRank( FNOV_CONV *conv )
     TYPE                src_basic, tgt_basic;
     type_flag           srcflags, tgtflags;
     FNOV_INTRNL_CONTROL ictl;
+    FNOV_RANK* rank = conv->rank;
 
     src_basic = conv->wsrc.basic;
     tgt_basic = conv->wtgt.basic;
+    if( !( rank->control & FNC_DISTINCT_CHECK ) ) {
+        src_basic = BindTemplateClass( src_basic, NULL, FALSE );
+        tgt_basic = BindTemplateClass( tgt_basic, NULL, FALSE );
+    }
     if( !TypesIdentical( src_basic, tgt_basic ) ) {
-        FNOV_RANK* rank = conv->rank;
-        if( rank->control & FNC_DISTINCT_CHECK  ) {
+        if( rank->control & FNC_DISTINCT_CHECK ) {
             rank->rank = OV_RANK_NO_MATCH;
             return;
         }
@@ -1422,15 +1435,22 @@ void FNOV_ARG_RANK( TYPE src, TYPE tgt, PTREE *pt, FNOV_RANK *rank )
         return;
       case 3 :
         if( TypesSameFnov( conv.wsrc.basic, conv.wtgt.basic ) ) {
-            if( conv.wsrc.leadflag == conv.wtgt.leadflag ) {
+            // check for non-ranking reference or flag change (for distinctness)
+            if( ( conv.wsrc.reference == conv.wtgt.reference )
+              &&( conv.wsrc.leadflag  == conv.wtgt.leadflag )
+              &&( conv.wsrc.refflag   == conv.wtgt.refflag ) ) {
                 conv.rank->rank = OV_RANK_EXACT;
-                if( rank->control & FNC_DISTINCT_CHECK  ) {
-                    if( conv.wsrc.refflag != conv.wtgt.refflag ) {
-                        conv.rank->rank = OV_RANK_SAME;
+            } else {
+                // assume rank is same
+                conv.rank->rank = OV_RANK_SAME;
+                conv.rank->u.no_ud.not_exact = 1;
+
+                // check for trivial conversion
+                if( conv.wtgt.reference ) {
+                    if( ! rankTgtRefCvMem( &conv ) ) {
+                        rankRefMemFlags( &conv );
                     }
                 }
-            } else {
-                conv.rank->rank = OV_RANK_SAME;
             }
         } else {
             conv.rank->rank = OV_RANK_NO_MATCH;

@@ -240,6 +240,7 @@ void LinkageSet( SYMBOL sym, char *language )
     case SC_DEFAULT:
         return;
     case SC_FUNCTION_TEMPLATE:
+    case SC_EXTERN_FUNCTION_TEMPLATE:
     case SC_STATIC_FUNCTION_TEMPLATE:
         linkage = CppLinkage;
         break;

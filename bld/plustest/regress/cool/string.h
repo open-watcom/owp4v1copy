@@ -208,7 +208,7 @@ private:
 
 // Avoid deep copy and concatenate strings in place with envelope
 inline CoolEnvelope<CoolString> operator+ (const CoolString&arg1, const CoolString&arg2)
-   { return CoolEnvOp(add)(arg1, arg2); }
+{ return (CoolStringE &) CoolEnvOp(add)(arg1, arg2); }
 
 
 // operator[] -- Return a single character element from CoolString

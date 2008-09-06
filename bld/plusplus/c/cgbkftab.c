@@ -362,12 +362,10 @@ void FstabRegister(             // REGISTER FUNCTION
         if( 0 == CgBackInlinedDepth() ) {
             CgFunRegister( fctl, fstab.rw, fStabDefn.ro );
         }
-#if 0
-        if( fctl->is_dtor ) {
+        if( fctl->is_dtor && fctl->dtor_method == DTM_TABLE ) {
             SE* se = BlkPosnCurr();
             FstabAssignStateVar( se );
         }
-#endif
     }
 }
 

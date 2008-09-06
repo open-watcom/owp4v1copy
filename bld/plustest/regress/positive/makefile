@@ -211,6 +211,14 @@ cltemp21.$(exe) : cltemp21.obj cltmp21b.obj
     @%append exec.out PASS executing $^@
     $(run) $(exec_prefix)$@ >>exec.out
 
+friend4.$(exe) : friend4.obj friend4b.obj
+    @set error_msg=failure to link $^@
+    $(linker) @test.lnk NAME $^@ FILE $[@, $]@
+    @set error_msg=failure to execute $^@
+    @%append exec.out PASS executing $^@
+    $(run) $^@ >>exec.out
+
+
 start_test : .symbolic test.lnk
     %create exec.out
     @set error_file=exec.out

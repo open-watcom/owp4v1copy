@@ -169,6 +169,7 @@ Modified        By              Reason
 %token Y_VIRTUAL
 %token Y_VOID
 %token Y_VOLATILE
+%token Y_WCHAR_T
 
 /*** punctuation and operators ***/
 %token Y_COMMA
@@ -223,6 +224,8 @@ Modified        By              Reason
 
 /*** special lexical tokens ***/
 %token <tree> Y_ID
+%token <tree> Y_UNKNOWN_ID
+%token <tree> Y_TEMPLATE_ID
 %token <tree> Y_TYPE_NAME
 %token <tree> Y_TEMPLATE_NAME
 %token <tree> Y_NAMESPACE_NAME
@@ -232,6 +235,8 @@ Modified        By              Reason
 %token <tree> Y_STRING
 
 %token <tree> Y_GLOBAL_ID               /* ::<id> */
+%token <tree> Y_GLOBAL_UNKNOWN_ID       /* ::<id> */
+%token <tree> Y_GLOBAL_TEMPLATE_ID      /* ::<id> */
 %token <tree> Y_GLOBAL_TYPE_NAME        /* ::<type-name> */
 %token <tree> Y_GLOBAL_TEMPLATE_NAME    /* ::<template-name> */
 %token <tree> Y_GLOBAL_NAMESPACE_NAME   /* ::<namespace-name> */
@@ -242,6 +247,8 @@ Modified        By              Reason
 
 /* Y_SCOPED_* tokens must stay in line with Y_TEMPLATE_SCOPED_* tokens */
 %token <tree> Y_SCOPED_ID               /* C::<id> */
+%token <tree> Y_SCOPED_UNKNOWN_ID       /* C::<id> */
+%token <tree> Y_SCOPED_TEMPLATE_ID      /* C::<id> */
 %token <tree> Y_SCOPED_TYPE_NAME        /* C::<type-name> */
 %token <tree> Y_SCOPED_TEMPLATE_NAME    /* C::<template-name> */
 %token <tree> Y_SCOPED_NAMESPACE_NAME   /* C::<namespace-name> */
@@ -250,6 +257,8 @@ Modified        By              Reason
 %token <tree> Y_SCOPED_TIMES            /* C::* */
 
 %token <tree> Y_TEMPLATE_SCOPED_ID      /* T<>::<id> */
+%token <tree> Y_TEMPLATE_SCOPED_UNKNOWN_ID/* T<>::<id> */
+%token <tree> Y_TEMPLATE_SCOPED_TEMPLATE_ID/* T<>::<id> */
 %token <tree> Y_TEMPLATE_SCOPED_TYPE_NAME/* T<>::<type-name> */
 %token <tree> Y_TEMPLATE_SCOPED_TEMPLATE_NAME/* T<>::<template-name> */
 %token <tree> Y_TEMPLATE_SCOPED_NAMESPACE_NAME/* T<>::<namespace-name> */
@@ -260,6 +269,7 @@ Modified        By              Reason
 /*** leader token for "special" parsing ***/
 %token Y_EXPRESSION_SPECIAL
 %token Y_EXPR_DECL_SPECIAL
+%token Y_FUNCTION_DECL_SPECIAL
 %token Y_EXCEPTION_SPECIAL
 %token Y_MEM_INIT_SPECIAL
 %token Y_DEFARG_SPECIAL
@@ -279,6 +289,7 @@ Modified        By              Reason
 %token Y_PURE_FUNCTION_SPECIAL
 
 /*** special function names ***/
+%token Y_DECLTYPE
 %token Y___OFFSETOF
 %token Y___TYPEOF
 %token Y___BUILTIN_ISFLOAT
@@ -322,14 +333,14 @@ Modified        By              Reason
 
 %type <flags> modifier
 %type <flags> access-specifier
-%type <flags> cv-qualifiers-opt
+%type <flags> cv-qualifier-seq-opt
 %type <flags> base-qualifiers-opt
 %type <flags> segment-cast-opt
 %type <flags> packed-class-opt
 
 %type <token> class-key
 %type <token> template-typename-key
-%type <token> operator-function-type
+%type <token> operator
 
 %type <type> class-mod-opt
 %type <type> class-mod-seq
@@ -345,17 +356,17 @@ Modified        By              Reason
 %type <rewrite> ctor-initializer
 %type <rewrite> defarg-check
 
-%type <dspec> type-specifiers
+%type <dspec> type-specifier-seq
 %type <dspec> type-specifier
 %type <dspec> typeof-specifier
-%type <dspec> arg-decl-specifiers
-%type <dspec> decl-specifiers
-%type <dspec> non-type-decl-specifiers
+%type <dspec> arg-decl-specifier-seq
+%type <dspec> decl-specifier-seq
+%type <dspec> non-type-decl-specifier-seq
 %type <dspec> non-type-decl-specifier
 %type <dspec> no-declarator-declaration
 %type <dspec> basic-type-specifier
 %type <dspec> simple-type-specifier
-%type <dspec> maybe-type-decl-specifiers
+%type <dspec> maybe-type-decl-specifier-seq
 %type <dspec> storage-class-specifier
 %type <dspec> ms-specific-declspec
 %type <dspec> ms-declspec-seq
@@ -363,15 +374,13 @@ Modified        By              Reason
 %type <dspec> cv-qualifier
 %type <dspec> class-specifier
 %type <dspec> enum-specifier
-%type <dspec> typename-specifier
+%type <dspec> elaborated-type-specifier
 %type <dspec> class-substance
 %type <dspec> class-body
 %type <dspec> qualified-type-specifier
 %type <dspec> qualified-class-specifier
 %type <dspec> qualified-class-type
-%type <dspec> template-class-id
-%type <dspec> template-class-instantiation
-%type <dspec> template-member-class-id
+%type <dspec> typename-specifier
 
 %type <dinfo> function-declaration
 %type <dinfo> declarator
@@ -381,45 +390,55 @@ Modified        By              Reason
 %type <dinfo> ctor-declarator
 %type <dinfo> declaring-declarator
 %type <dinfo> comma-declaring-declarator
-%type <dinfo> actual-declarator
+%type <dinfo> direct-declarator
 %type <dinfo> ptr-mod-init-declarator
 %type <dinfo> ptr-mod-declarator
-%type <dinfo> conversion-function-ptr-declarator
+%type <dinfo> conversion-declarator
 %type <dinfo> special-new-abstract-ptr-mod-declarator
 %type <dinfo> abstract-ptr-mod-declarator
 %type <dinfo> special-new-abstract-declarator
 %type <dinfo> abstract-declarator
-%type <dinfo> special-new-actual-abstract-declarator
-%type <dinfo> actual-abstract-declarator
-%type <dinfo> abstract-args
-%type <dinfo> simple-arg-declaration
-%type <dinfo> arg-declaration
+%type <dinfo> special-new-direct-abstract-declarator
+%type <dinfo> direct-abstract-declarator
+%type <dinfo> parameter-declaration-clause
+%type <dinfo> simple-parameter-declaration
+%type <dinfo> parameter-declaration
 %type <dinfo> template-parameter
 %type <dinfo> type-parameter
 %type <dinfo> type-parameter-no-defarg
-%type <dinfo> arg-declaration-list
+%type <dinfo> parameter-declaration-list
 %type <dinfo> actual-exception-declaration
 %type <dinfo> exception-declaration
 %type <dinfo> member-declaring-declarator
 %type <dinfo> member-declarator
-%type <dinfo> actual-new-declarator
+%type <dinfo> direct-new-declarator
 %type <dinfo> partial-ptr-declarator
 %type <dinfo> new-declarator
+%type <dinfo> dynamic-type-id
 %type <dinfo> new-type-id
 %type <dinfo> special-new-type-id
-%type <dinfo> dynamic-type-id
 %type <dinfo> simple-arg-no-id
 
+%type <tree> identifier
+%type <tree> boolean-literal
+%type <tree> new-keyword
+%type <tree> delete-keyword
 %type <tree> declarator-id
-%type <tree> conversion-function-type
-%type <tree> operator-name
-%type <tree> destructor-name
-%type <tree> except-spec-opt
+%type <tree> conversion-type-id
+%type <tree> operator-function-id
+%type <tree> scoped-operator-function-id
+%type <tree> template-scoped-operator-function-id
+%type <tree> conversion-function-id
+%type <tree> scoped-conversion-function-id
+%type <tree> template-scoped-conversion-function-id
+%type <tree> pseudo-destructor-name
+%type <tree> exception-specification-opt
+%type <tree> exception-specification
 %type <tree> expression
 %type <tree> expression-before-semicolon
 %type <tree> expression-list
 %type <tree> expression-list-opt
-%type <tree> assignment-tree
+%type <tree> assignment-operator
 %type <tree> assignment-expression
 %type <tree> assignment-expression-opt
 %type <tree> conditional-expression
@@ -444,31 +463,42 @@ Modified        By              Reason
 %type <tree> postfix-expression
 %type <tree> primary-expression
 %type <tree> id-expression
+%type <tree> unqualified-id
+%type <tree> template-scoped-unqualified-id
+%type <tree> qualified-id
+%type <tree> nested-name-specifier
+%type <tree> scoped-nested-name-specifier
 %type <tree> segment-expression
-%type <tree> function-like-cast-expression
-%type <tree> qualified-id-expression
-%type <tree> member-selection-expression
-%type <tree> field-expression
-%type <tree> field-name
+%type <tree> postfix-expression-before-dot
+%type <tree> postfix-expression-before-arrow
 %type <tree> new-placement
-%type <tree> class-name-id
-%type <tree> enum-name
 %type <tree> make-id
+%type <tree> class-name-id
+%type <tree> invalid-class-name-id
+%type <tree> enumerator
+%type <tree> elaborated-type-name
 %type <tree> literal
-%type <tree> strings pragma-id
+%type <tree> string-literal pragma-id
 %type <tree> type-id-list
 %type <tree> type-id
+%type <tree> new-initializer
 %type <tree> new-initializer-opt
 %type <tree> constant-expression
+%type <tree> constant-initializer
 %type <tree> mem-initializer-list
-%type <tree> mem-initializer-item
+%type <tree> mem-initializer
+%type <tree> template-id
+%type <tree> scoped-template-id
+%type <tree> template-type
+%type <tree> template-type-instantiation
+%type <tree> scoped-template-type
+%type <tree> scoped-template-type-instantiation
+%type <tree> template-scoped-template-type
+%type <tree> template-scoped-template-type-instantiation
 %type <tree> template-argument
 %type <tree> template-argument-list-opt
 %type <tree> template-argument-list
-%type <tree> template-class-pre-instantiation
-%type <tree> template-class-pre-id
-%type <tree> template-directive-class
-%type <tree> raw-qualified-namespace-specifier
+%type <tree> qualified-namespace-specifier
 
 %type <tree> expr-decl-stmt
 %type <tree> goal-symbol
@@ -487,7 +517,7 @@ goal-symbol
         $$ = $2;
         t = YYEOFTOKEN;
     }
-    | Y_EXPRESSION_SPECIAL type-specifiers declaring-declarator initializer
+    | Y_EXPRESSION_SPECIAL type-specifier-seq declaring-declarator initializer
     {
         CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
         GStackPop( &(state->gstack) );
@@ -499,6 +529,23 @@ goal-symbol
     | Y_EXPR_DECL_SPECIAL expr-decl-stmt
     {
         $$ = $2;
+        t = YYEOFTOKEN;
+    }
+    | Y_FUNCTION_DECL_SPECIAL decl-specifier-seq declarator
+    {
+        GStackPop( &(state->gstack) );      /* decl-spec */
+        $$ = (PTREE) $3;
+        t = YYEOFTOKEN;
+    }
+    | Y_FUNCTION_DECL_SPECIAL                    declarator
+    {
+        $$ = (PTREE) $2;
+        t = YYEOFTOKEN;
+    }
+    | Y_FUNCTION_DECL_SPECIAL decl-specifier-seq ctor-declarator
+    {
+        GStackPop( &(state->gstack) );      /* decl-spec */
+        $$ = (PTREE) $3;
         t = YYEOFTOKEN;
     }
     | might-restart-declarations
@@ -526,9 +573,9 @@ goal-symbol
         $$ = $2;
         t = YYEOFTOKEN;
     }
-    | Y_TEMPLATE_TYPE_DEFARG_SPECIAL type-id Y_DEFARG_END
+    | Y_TEMPLATE_TYPE_DEFARG_SPECIAL expect-type-id type-id Y_DEFARG_END
     {
-        $$ = $2;
+        $$ = $3;
         t = YYEOFTOKEN;
     }
     | Y_CLASS_INST_SPECIAL class-specifier
@@ -536,15 +583,18 @@ goal-symbol
         $$ = (PTREE) $2;
         t = YYEOFTOKEN;
     }
-    /* I have included this as a stack reset leaves us open to abuse now we fixed bug 218       */
-    /* All linkage gets reset when we have a syntax error earlier in the file which screws up   */
-    /* closing of the parser. We only issue an error if we have not reported any earlier errors */
-    /* as this error comes out badly at the end of a file                                       */
+    /* I have included this as a stack reset leaves us open to abuse
+     * now we fixed bug 218. All linkage gets reset when we have a
+     * syntax error earlier in the file which screws up closing of the
+     * parser. We only issue an error if we have not reported any
+     * earlier errors as this error comes out badly at the end of a
+     * file
+     */
     | Y_RIGHT_BRACE
     {
         error_state_t save;
-        CErrCheckpoint(&save);
-        if(0 == save){
+        CErrCheckpoint( &save );
+        if( 0 == save ) {
             SetErrLoc( &yylp[1] );
             CErr1( ERR_MISPLACED_RIGHT_BRACE );
             what = P_DIAGNOSED;
@@ -552,12 +602,42 @@ goal-symbol
     }
     | /* nothing */
     {
+        if( CurToken != T_EOF ) {
+            CErr1( ERR_SYNTAX );
+        }
         what = P_DIAGNOSED;
     }
     ;
 
-lt-special
-    : lt-special-init Y_LT
+/* error reporting hints */
+expect-string-literal
+    : /* nothing */
+    { state->expect = "string-literal"; }
+    ;
+
+expect-identifier
+    : /* nothing */
+    { state->expect = "identifier"; }
+    ;
+
+expect-id-expression
+    : /* nothing */
+    { state->expect = "id-expression"; }
+    ;
+
+expect-type-name
+    : /* nothing */
+    { state->expect = "type-name"; }
+    ;
+
+expect-type-id
+    : /* nothing */
+    { state->expect = "type-id"; }
+    ;
+
+expect-qualified-namespace-specifier
+    : /* nothing */
+    { state->expect = "qualified-namespace-specifier"; }
     ;
 
 lt-special-init
@@ -568,6 +648,10 @@ lt-special-init
         angle_state = VstkPush( &(state->angle_stack) );
         angle_state->paren_depth = 0;
     }
+    ;
+
+lt-special
+    : lt-special-init Y_LT
     ;
 
 expr-decl-stmt
@@ -589,10 +673,244 @@ expression-before-semicolon
     }
     ;
 
-/*** expression syntax ***/
-constant-expression
-    : conditional-expression
-    { $$ = PTreeNonZeroConstantExpr( $1 ); }
+/* r/r conflict: 
+ *   id-expression <- qualified-id (unit production)
+ *   access-declaration <- qualified-id
+ */
+access-declaration
+    : qualified-id
+    { ClassAccessDeclaration( $1, &yylocation ); }
+    | qualified-type-specifier
+    { ClassAccessTypeDeclaration( $1, &yylocation ); }
+    | Y_SCOPED_UNKNOWN_ID
+    { ClassAccessDeclaration( MakeScopedId( $1 ), &yylocation ); }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_UNKNOWN_ID
+    {
+        PTreeFreeSubtrees( $1 );
+        ClassAccessDeclaration( MakeScopedId( $2 ), &yylocation );
+    }
+    ;
+
+
+
+/* A.2 Lexical conventions [gram.lex] */
+
+identifier
+    : Y_ID
+    | Y_UNKNOWN_ID
+    | Y_TEMPLATE_ID
+    ;
+
+literal
+    : Y_CONSTANT /* integer-literal character-literal floating-literal */
+    | string-literal
+    | boolean-literal
+    ;
+
+string-literal
+    : Y_STRING
+    | string-literal Y_STRING
+    { $$ = PTreeStringLiteralConcat( $1, $2 ); }
+    ;
+
+boolean-literal
+    : Y_TRUE
+    | Y_FALSE
+    ;
+
+
+/* A.4 Expressions [gram.expr] */
+
+primary-expression
+    : literal
+    | Y_THIS
+    { $$ = setLocation( PTreeThis(), &yylp[1] ); }
+    | Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = $2; }
+    | id-expression
+    ;
+
+id-expression
+    : unqualified-id
+    | qualified-id
+    ;
+
+unqualified-id
+    : identifier
+    | operator-function-id
+    | conversion-function-id
+    | Y_TILDE expect-type-name Y_TYPE_NAME /* ~ class-name */
+    { $$ = setLocation( MakeDestructorId( $3 ), &yylp[1] ); }
+    | Y_TILDE expect-type-name Y_UNKNOWN_ID /* ~ id (non-stanard, diagnostics only) */
+    { $$ = setLocation( MakeDestructorId( $3 ), &yylp[1] ); }
+    | Y_TILDE expect-type-name template-type /* ~ class-name */
+    { $$ = setLocation( MakeDestructorIdFromType( PTypeClassInstantiation( state->class_colon, $3 ) ), &yylp[1] ); }
+    | template-id
+    ;
+
+qualified-id
+    : nested-name-specifier template-scoped-unqualified-id
+    { PTreeFreeSubtrees( $1 ); $$ = $2; }
+    | Y_GLOBAL_ID /* :: identifier */
+    { $$ = MakeGlobalId( $1 ); }
+    | Y_GLOBAL_TEMPLATE_ID /* :: identifier */
+    { $$ = MakeGlobalId( $1 ); }
+    | Y_SCOPED_ID
+    { $$ = MakeScopedId( $1 ); }
+    | Y_SCOPED_TEMPLATE_ID
+    { $$ = MakeScopedId( $1 ); }
+    | scoped-operator-function-id
+    | scoped-conversion-function-id
+    | scoped-template-id
+    | pseudo-destructor-name
+    ;
+
+/* differs from standard */
+nested-name-specifier
+    : template-type
+    | scoped-template-type
+    | template-type scoped-nested-name-specifier
+    { PTreeFreeSubtrees( $1 ); $$ = $2; }
+    | scoped-template-type scoped-nested-name-specifier
+    { PTreeFreeSubtrees( $1 ); $$ = $2; }
+    ;
+
+/* non-standard */
+scoped-nested-name-specifier
+    : template-scoped-template-type
+    | template-scoped-template-type scoped-nested-name-specifier
+    {
+        PTreeFreeSubtrees( $1 );
+        $$ = $2;
+    }
+    ;
+
+/* non-standard */
+template-scoped-unqualified-id
+    : Y_TEMPLATE_SCOPED_ID
+    { $$ = MakeScopedId( $1 ); }
+    | Y_TEMPLATE_SCOPED_TEMPLATE_ID
+    { $$ = MakeScopedId( $1 ); }
+    | Y_TEMPLATE_SCOPED_TEMPLATE_ID lt-special template-argument-list-opt Y_GT_SPECIAL
+    | Y_TEMPLATE_SCOPED_TEMPLATE_NAME lt-special template-argument-list-opt Y_GT_SPECIAL
+    | template-scoped-operator-function-id
+    | template-scoped-conversion-function-id
+    ;
+
+postfix-expression
+    : primary-expression
+    | postfix-expression Y_LEFT_BRACKET expression Y_RIGHT_BRACKET
+    { $$ = setLocation( PTreeBinary( CO_INDEX, $1, $3 ), &yylp[2] ); }
+    | postfix-expression Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeBinary( CO_CALL, $1, $3 ), &yylp[2] ); }
+    | simple-type-specifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN %ambig 0 Y_LEFT_PAREN
+    { $$ = setLocation( MakeFunctionLikeCast( $1, $3 ), &yylp[2] ); }
+    | typename-specifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
+    {
+        $$ = setLocation( MakeFunctionLikeCast( $1, $3 ), &yylp[2] );
+    }
+    | postfix-expression-before-dot Y_DOT expect-id-expression id-expression
+    { $$ = PTreeReplaceRight( setLocation( $1, &yylp[3] ), $4 ); }
+    | postfix-expression-before-arrow Y_ARROW expect-id-expression id-expression
+    { $$ = PTreeReplaceRight( setLocation( $1, &yylp[3] ), $4 ); }
+/* id-expression includes pseudo-destructor-name
+    | postfix-expression-before-dot Y_DOT pseudo-destructor-name
+    | postfix-expression-before-arrow Y_ARROW pseudo-destructor-name
+*/
+    | postfix-expression Y_PLUS_PLUS
+    { $$ = setLocation( PTreeUnary( CO_POST_PLUS_PLUS, $1 ), &yylp[2] ); }
+    | postfix-expression Y_MINUS_MINUS
+    { $$ = setLocation( PTreeUnary( CO_POST_MINUS_MINUS, $1 ), &yylp[2] ); }
+    | Y_DYNAMIC_CAST lt-special expect-type-id type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeBinary( CO_DYNAMIC_CAST, $4, $7 ), &yylp[1] ); }
+    | Y_STATIC_CAST lt-special expect-type-id type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeBinary( CO_STATIC_CAST, $4, $7 ), &yylp[1] ); }
+    | Y_REINTERPRET_CAST lt-special expect-type-id type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeBinary( CO_REINTERPRET_CAST, $4, $7 ), &yylp[1] ); }
+    | Y_CONST_CAST lt-special expect-type-id type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeBinary( CO_CONST_CAST, $4, $7 ), &yylp[1] ); }
+    | Y_TYPEID Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeUnary( CO_TYPEID_EXPR, $3 ), &yylp[1] ); }
+    | Y_TYPEID Y_LEFT_PAREN type-id Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeUnary( CO_TYPEID_TYPE, $3 ), &yylp[1] ); }
+    /* extension */
+    | Y___SEGNAME Y_LEFT_PAREN expect-string-literal string-literal Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeUnary( CO_SEGNAME, $4 ), &yylp[1] ); }
+    ;
+
+/* non-standard */
+postfix-expression-before-dot
+    : postfix-expression
+    {
+        PTREE AnalyseNode( PTREE );
+        boolean AnalyseLvalue( PTREE * );
+
+        $1 = PTreeTraversePostfix( $1, &AnalyseNode );
+        if( ! ( $1->flags & PTF_LV_CHECKED ) ) {
+            AnalyseLvalue( &$1 );
+        }
+        $1 = PTreeTraversePostfix( $1, &setAnalysedFlag );
+        if( $1->type ) {
+            TYPE cls;
+
+            cls = TypedefModifierRemoveOnly( $1->type );
+            if( ( cls != NULL )
+             && ( cls->id == TYP_POINTER )
+             && ( cls->flag & TF1_REFERENCE ) ) {
+                cls = cls->of;
+            }
+
+            if( cls != NULL ) {
+                cls = BindTemplateClass( cls, &$1->locn, FALSE );
+                $1->type = BoundTemplateClass( $1->type );
+                cls = TypedefModifierRemoveOnly( cls );
+
+                if( cls->id == TYP_CLASS ) {
+                    setTypeMember( state, cls->u.c.scope );
+                }
+            }
+        }
+        $$ = PTreeBinary( CO_DOT, $1, NULL );
+    }
+    ;
+
+/* non-standard */
+postfix-expression-before-arrow
+    : postfix-expression
+    {
+        PTREE AnalyseNode( PTREE );
+        boolean AnalyseLvalue( PTREE * );
+        PTREE OverloadOperator( PTREE );
+
+        $1 = PTreeTraversePostfix( $1, &AnalyseNode );
+        if( ! ( $1->flags & PTF_LV_CHECKED ) ) {
+            AnalyseLvalue( &$1 );
+        }
+        $$ = PTreeBinary( CO_ARROW, $1, NULL );
+        $$ = OverloadOperator( $$ );
+        $$->u.subtree[0] = PTreeTraversePostfix( $$->u.subtree[0],
+                                                 &setAnalysedFlag );
+        if( $$->u.subtree[0] ) {
+            TYPE cls;
+
+            cls = TypedefModifierRemoveOnly( $$->u.subtree[0]->type );
+            if( ( cls != NULL )
+             && ( cls->id == TYP_POINTER )
+             && ( cls->flag & TF1_REFERENCE ) ) {
+                cls = TypedefModifierRemoveOnly( cls->of );
+            }
+
+            if( ( cls != NULL ) && cls->id == TYP_POINTER ) {
+                cls = BindTemplateClass( cls->of, &$1->locn, FALSE );
+                $1->type = BoundTemplateClass( $1->type );
+                cls = TypedefModifierRemoveOnly( cls );
+
+                if( cls->id == TYP_CLASS ) {
+                    setTypeMember( state, cls->u.c.scope );
+                }
+            }
+        }
+    }
     ;
 
 expression-list-opt
@@ -608,13 +926,293 @@ expression-list
     { $$ = setLocation( PTreeBinary( CO_LIST,   $1, $3 ), &yylp[2] ); }
     ;
 
-expression
-    : assignment-expression
-    | expression Y_COMMA assignment-expression
-    { $$ = setLocation( PTreeBinary( CO_COMMA, $1, $3 ), &yylp[2] ); }
+pseudo-destructor-name
+    : Y_SCOPED_TILDE expect-type-name identifier
+    { $$ = setLocation( MakeScopedDestructorId( $1, $3 ), &yylp[1] ); }
+    | Y_SCOPED_TILDE expect-type-name Y_TYPE_NAME
+    { $$ = setLocation( MakeScopedDestructorId( $1, $3 ), &yylp[1] ); }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TILDE expect-type-name Y_ID
+    {
+        PTreeFreeSubtrees( $1 );
+        $$ = setLocation( MakeScopedDestructorId( $2, $4 ), &yylp[2] );
+    }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TILDE expect-type-name Y_TEMPLATE_NAME
+    {
+        PTreeFreeSubtrees( $1 );
+        $$ = setLocation( MakeScopedDestructorId( $2, $4 ), &yylp[2] );
+    }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TILDE expect-type-name Y_TYPE_NAME
+    { $$ = setLocation( MakeScopedDestructorId( $2, $4 ), &yylp[1] ); }
     ;
 
-assignment-tree
+unary-expression
+    : postfix-expression
+    | Y_PLUS_PLUS cast-expression
+    { $$ = setLocation( PTreeUnary( CO_PRE_PLUS_PLUS, $2 ), &yylp[1] ); }
+    | Y_MINUS_MINUS cast-expression
+    { $$ = setLocation( PTreeUnary( CO_PRE_MINUS_MINUS, $2 ), &yylp[1] ); }
+    | unary-operator cast-expression
+    { $$ = PTreeReplaceLeft( $1, $2 ); }
+    | Y_SIZEOF unary-expression
+    { $$ = setLocation( PTreeUnary( CO_SIZEOF_EXPR, $2 ), &yylp[1] ); }
+    | Y_SIZEOF Y_LEFT_PAREN type-id Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeUnary( CO_SIZEOF_TYPE, $3 ), &yylp[1] ); }
+    | new-expression
+    | delete-expression
+    /* extension */
+    | Y_SIZEOF Y_TYPE_NAME
+    { $$ = setLocation( PTreeUnary( CO_SIZEOF_TYPE, PTreeMSSizeofKludge( $2 ) ), &yylp[1] ); }
+    | Y___BUILTIN_ISFLOAT Y_LEFT_PAREN expect-type-id type-id Y_RIGHT_PAREN
+    { $$ = setLocation( MakeBuiltinIsFloat( $4 ), &yylp[1] ); }
+    | Y___OFFSETOF Y_LEFT_PAREN expect-type-id type-id Y_COMMA offsetof-field Y_RIGHT_PAREN
+    { $$ = setLocation( PTreeOffsetof( $4, $6 ), &yylp[5] ); }
+    ;
+
+unary-operator
+    : Y_TIMES
+    { $$ = setLocation( PTreeUnary( CO_INDIRECT, NULL ), &yylp[1] ); }
+    | Y_AND
+    { $$ = setLocation( PTreeUnary( CO_ADDR_OF, NULL ), &yylp[1] ); }
+    | Y_PLUS
+    { $$ = setLocation( PTreeUnary( CO_UPLUS, NULL ), &yylp[1] ); }
+    | Y_MINUS
+    { $$ = setLocation( PTreeUnary( CO_UMINUS, NULL ), &yylp[1] ); }
+    | Y_EXCLAMATION
+    { $$ = setLocation( PTreeUnary( CO_EXCLAMATION, NULL ), &yylp[1] ); }
+    | Y_TILDE
+    { $$ = setLocation( PTreeUnary( CO_TILDE, NULL ), &yylp[1] ); }
+    ;
+
+new-expression
+    : new-keyword new-modifier-opt new-placement new-type-id new-initializer-opt
+    {
+        $$ = setLocation( MakeNewExpr( $1, $3, $4, $5 ), &$1->locn );
+        PTreeFreeSubtrees( $1 );
+    }
+    | new-keyword new-modifier-opt               new-type-id new-initializer-opt
+    {
+        $$ = setLocation( MakeNewExpr( $1, NULL, $3, $4 ), &$1->locn );
+        PTreeFreeSubtrees( $1 );
+    }
+    | new-keyword new-modifier-opt new-placement Y_LEFT_PAREN special-new-type-id Y_RIGHT_PAREN new-initializer-opt /* TODO */
+    {
+        $$ = setLocation( MakeNewExpr( $1, $3, $5, $7 ), &$1->locn );
+        PTreeFreeSubtrees( $1 );
+    }
+    | new-keyword new-modifier-opt               Y_LEFT_PAREN special-new-type-id Y_RIGHT_PAREN new-initializer-opt /* TODO */
+    {
+        $$ = setLocation( MakeNewExpr( $1, NULL, $4, $6 ), &$1->locn );
+        PTreeFreeSubtrees( $1 );
+    }
+    ;
+
+/* non-standard */
+new-keyword
+    : Y_NEW
+    { $$ = makeUnary( CO_NEW, NULL); }
+    | Y_GLOBAL_NEW
+    ;
+
+new-modifier-opt
+    : /* nothing */
+    | modifier
+    { CheckNewModifier( $1 ); }
+    ;
+
+new-placement
+    : Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
+    { $$ = $2; }
+    ;
+
+new-type-id
+    : dynamic-type-id
+    | Y_LEFT_PAREN special-new-type-id Y_RIGHT_PAREN
+    { $$ = $2; }
+    ;
+
+new-initializer-opt
+    : /* nothing */
+    { $$ = NULL; }
+    | new-initializer
+    ;
+
+new-initializer
+    : Y_LEFT_PAREN Y_RIGHT_PAREN
+    { $$ = NULL; } /* ARM p.61 '()' is syntactic convenience */
+    | Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
+    { $$ = $2; }
+    ;
+
+dynamic-type-id
+    : type-specifier-seq
+    {
+        $$ = MakeNewTypeId( DoDeclSpec( state->gstack->u.dspec ) );
+        GStackPop( &(state->gstack) );
+    }
+    | type-specifier-seq new-declarator
+    {
+        $$ = $2;
+        GStackPop( &(state->gstack) );
+    }
+    ;
+
+/* TODO */
+new-declarator
+    : partial-ptr-declarator direct-new-declarator
+    { $$ = MakeNewDeclarator( state->gstack->u.dspec, $1, $2 ); }
+    | partial-ptr-declarator
+    { $$ = MakeNewDeclarator( state->gstack->u.dspec, $1, NULL ); }
+    |                        direct-new-declarator
+    { $$ = MakeNewDeclarator( state->gstack->u.dspec, NULL, $1 ); }
+    ;
+
+delete-expression
+    : delete-keyword cast-expression
+    { $$ = setLocation( MakeDeleteExpr( $1, ( $1 == NULL ) ? CO_DELETE : CO_DELETE_G, $2 ), &yylp[1] ); }
+    | delete-keyword Y_LEFT_BRACKET delete-size-expression-opt Y_RIGHT_BRACKET cast-expression
+    { $$ = setLocation( MakeDeleteExpr( $1, ( $1 == NULL ) ? CO_DELETE_ARRAY : CO_DELETE_G_ARRAY, $5 ), &yylp[1] ); }
+    ;
+
+/* non-standard */
+delete-keyword
+    : Y_DELETE
+    { $$ = NULL; }
+    | Y_GLOBAL_DELETE
+    ;
+
+/* non-standard */
+delete-size-expression-opt
+    : /* nothing */
+    | expression
+    {
+        PTreeDeleteSizeExpr( $1 );
+    }
+    ;
+
+cast-expression
+    : unary-expression
+    | Y_LEFT_PAREN type-id Y_RIGHT_PAREN cast-expression
+    { $$ = setLocation( MakeNormalCast( $2, $4 ), &yylp[3] ); }
+    ;
+
+/* extension */
+segment-expression
+    : cast-expression
+    | segment-expression Y_SEG_OP cast-expression
+    { $$ = setLocation( PTreeBinary( CO_SEG_OP, $1, $3 ), &yylp[2] ); }
+    ;
+
+pm-expression
+    : segment-expression
+    | pm-expression Y_DOT_STAR segment-expression
+    { $$ = setLocation( PTreeBinary( CO_DOT_STAR, $1, $3 ), &yylp[2] ); }
+    | pm-expression Y_ARROW_STAR segment-expression
+    { $$ = setLocation( PTreeBinary( CO_ARROW_STAR, $1, $3 ), &yylp[2] ); }
+    ;
+
+multiplicative-expression
+    : pm-expression
+    | multiplicative-expression Y_TIMES pm-expression
+    { $$ = setLocation( PTreeBinary( CO_TIMES, $1, $3 ), &yylp[2] ); }
+    | multiplicative-expression Y_DIVIDE pm-expression
+    { $$ = setLocation( PTreeBinary( CO_DIVIDE, $1, $3 ), &yylp[2] ); }
+    | multiplicative-expression Y_PERCENT pm-expression
+    { $$ = setLocation( PTreeBinary( CO_PERCENT, $1, $3 ), &yylp[2] ); }
+    ;
+
+additive-expression
+    : multiplicative-expression
+    | additive-expression Y_PLUS multiplicative-expression
+    { $$ = setLocation( PTreeBinary( CO_PLUS, $1, $3 ), &yylp[2] ); }
+    | additive-expression Y_MINUS multiplicative-expression
+    { $$ = setLocation( PTreeBinary( CO_MINUS, $1, $3 ), &yylp[2] ); }
+    ;
+
+shift-expression
+    : additive-expression
+    | shift-expression Y_RSHIFT additive-expression
+    { $$ = setLocation( PTreeBinary( CO_RSHIFT, $1, $3 ), &yylp[2] ); }
+    | shift-expression Y_LSHIFT additive-expression
+    { $$ = setLocation( PTreeBinary( CO_LSHIFT, $1, $3 ), &yylp[2] ); }
+    ;
+
+relational-expression
+    : shift-expression
+    | relational-expression Y_LT shift-expression
+    { $$ = setLocation( PTreeBinary( CO_LT, $1, $3 ), &yylp[2] ); }
+    | relational-expression Y_LE shift-expression
+    { $$ = setLocation( PTreeBinary( CO_LE, $1, $3 ), &yylp[2] ); }
+    | relational-expression Y_GT shift-expression
+    { $$ = setLocation( PTreeBinary( CO_GT, $1, $3 ), &yylp[2] ); }
+    | relational-expression Y_GE shift-expression
+    { $$ = setLocation( PTreeBinary( CO_GE, $1, $3 ), &yylp[2] ); }
+    ;
+
+equality-expression
+    : relational-expression
+    | equality-expression Y_EQ relational-expression
+    { $$ = setLocation( PTreeBinary( CO_EQ, $1, $3 ), &yylp[2] ); }
+    | equality-expression Y_NE relational-expression
+    { $$ = setLocation( PTreeBinary( CO_NE, $1, $3 ), &yylp[2] ); }
+    ;
+
+and-expression
+    : equality-expression
+    | and-expression Y_AND equality-expression
+    { $$ = setLocation( PTreeBinary( CO_AND, $1, $3 ), &yylp[2] ); }
+    ;
+
+exclusive-or-expression
+    : and-expression
+    | exclusive-or-expression Y_XOR and-expression
+    { $$ = setLocation( PTreeBinary( CO_XOR, $1, $3 ), &yylp[2] ); }
+    ;
+
+inclusive-or-expression
+    : exclusive-or-expression
+    | inclusive-or-expression Y_OR exclusive-or-expression
+    { $$ = setLocation( PTreeBinary( CO_OR, $1, $3 ), &yylp[2] ); }
+    ;
+
+logical-and-expression
+    : inclusive-or-expression
+    | logical-and-expression Y_AND_AND inclusive-or-expression
+    { $$ = setLocation( PTreeBinary( CO_AND_AND, $1, $3 ), &yylp[2] ); }
+    ;
+
+logical-or-expression
+    : logical-and-expression
+    | logical-or-expression Y_OR_OR logical-and-expression
+    { $$ = setLocation( PTreeBinary( CO_OR_OR, $1, $3 ), &yylp[2] ); }
+    ;
+
+conditional-expression
+    : logical-or-expression
+    | logical-or-expression Y_QUESTION expression Y_COLON assignment-expression
+    {
+        $3 = setLocation( PTreeBinary( CO_COLON, $3, $5 ), &yylp[4] );
+        $$ = setLocation( PTreeBinary( CO_QUESTION, $1, $3 ), &yylp[2] );
+    }
+    ;
+
+assignment-expression
+    : conditional-expression
+    | logical-or-expression assignment-operator assignment-expression
+    {
+        $$ = PTreeReplaceLeft( $2, $1 );
+        $$ = PTreeReplaceRight( $$, $3 );
+    }
+    | Y_THROW assignment-expression-opt
+    { $$ = setLocation( PTreeUnary( CO_THROW, $2 ), &yylp[1] ); }
+    ;
+
+assignment-expression-opt
+    : /* nothing */
+    { $$ = NULL; }
+    | assignment-expression
+    ;
+
+assignment-operator
     : Y_EQUAL
     { $$ = setLocation( PTreeBinary( CO_EQUAL, NULL, NULL ), &yylp[1] ); }
     | Y_TIMES_EQUAL
@@ -639,165 +1237,17 @@ assignment-tree
     { $$ = setLocation( PTreeBinary( CO_XOR_EQUAL, NULL, NULL ), &yylp[1] ); }
     ;
 
-assignment-expression
+expression
+    : assignment-expression
+    | expression Y_COMMA assignment-expression
+    { $$ = setLocation( PTreeBinary( CO_COMMA, $1, $3 ), &yylp[2] ); }
+    ;
+
+constant-expression
     : conditional-expression
-    | logical-or-expression assignment-tree assignment-expression
-    {
-        $$ = PTreeReplaceLeft( $2, $1 );
-        $$ = PTreeReplaceRight( $$, $3 );
-    }
-    | Y_THROW assignment-expression-opt
-    { $$ = setLocation( PTreeUnary( CO_THROW, $2 ), &yylp[1] ); }
+    { $$ = PTreeNonZeroConstantExpr( $1 ); }
     ;
 
-assignment-expression-opt
-    : /* nothing */
-    { $$ = NULL; }
-    | assignment-expression
-    ;
-
-conditional-expression
-    : logical-or-expression
-    | logical-or-expression Y_QUESTION expression Y_COLON assignment-expression
-    {
-        $3 = setLocation( PTreeBinary( CO_COLON, $3, $5 ), &yylp[4] );
-        $$ = setLocation( PTreeBinary( CO_QUESTION, $1, $3 ), &yylp[2] );
-    }
-    ;
-
-logical-or-expression
-    : logical-and-expression
-    | logical-or-expression Y_OR_OR logical-and-expression
-    { $$ = setLocation( PTreeBinary( CO_OR_OR, $1, $3 ), &yylp[2] ); }
-    ;
-
-logical-and-expression
-    : inclusive-or-expression
-    | logical-and-expression Y_AND_AND inclusive-or-expression
-    { $$ = setLocation( PTreeBinary( CO_AND_AND, $1, $3 ), &yylp[2] ); }
-    ;
-
-inclusive-or-expression
-    : exclusive-or-expression
-    | inclusive-or-expression Y_OR exclusive-or-expression
-    { $$ = setLocation( PTreeBinary( CO_OR, $1, $3 ), &yylp[2] ); }
-    ;
-
-exclusive-or-expression
-    : and-expression
-    | exclusive-or-expression Y_XOR and-expression
-    { $$ = setLocation( PTreeBinary( CO_XOR, $1, $3 ), &yylp[2] ); }
-    ;
-
-and-expression
-    : equality-expression
-    | and-expression Y_AND equality-expression
-    { $$ = setLocation( PTreeBinary( CO_AND, $1, $3 ), &yylp[2] ); }
-    ;
-
-equality-expression
-    : relational-expression
-    | equality-expression Y_EQ relational-expression
-    { $$ = setLocation( PTreeBinary( CO_EQ, $1, $3 ), &yylp[2] ); }
-    | equality-expression Y_NE relational-expression
-    { $$ = setLocation( PTreeBinary( CO_NE, $1, $3 ), &yylp[2] ); }
-    ;
-
-relational-expression
-    : shift-expression
-    | relational-expression Y_LT shift-expression
-    { $$ = setLocation( PTreeBinary( CO_LT, $1, $3 ), &yylp[2] ); }
-    | relational-expression Y_LE shift-expression
-    { $$ = setLocation( PTreeBinary( CO_LE, $1, $3 ), &yylp[2] ); }
-    | relational-expression Y_GT shift-expression
-    { $$ = setLocation( PTreeBinary( CO_GT, $1, $3 ), &yylp[2] ); }
-    | relational-expression Y_GE shift-expression
-    { $$ = setLocation( PTreeBinary( CO_GE, $1, $3 ), &yylp[2] ); }
-    ;
-
-shift-expression
-    : additive-expression
-    | shift-expression Y_RSHIFT additive-expression
-    { $$ = setLocation( PTreeBinary( CO_RSHIFT, $1, $3 ), &yylp[2] ); }
-    | shift-expression Y_LSHIFT additive-expression
-    { $$ = setLocation( PTreeBinary( CO_LSHIFT, $1, $3 ), &yylp[2] ); }
-    ;
-
-additive-expression
-    : multiplicative-expression
-    | additive-expression Y_PLUS multiplicative-expression
-    { $$ = setLocation( PTreeBinary( CO_PLUS, $1, $3 ), &yylp[2] ); }
-    | additive-expression Y_MINUS multiplicative-expression
-    { $$ = setLocation( PTreeBinary( CO_MINUS, $1, $3 ), &yylp[2] ); }
-    ;
-
-multiplicative-expression
-    : pm-expression
-    | multiplicative-expression Y_TIMES pm-expression
-    { $$ = setLocation( PTreeBinary( CO_TIMES, $1, $3 ), &yylp[2] ); }
-    | multiplicative-expression Y_DIVIDE pm-expression
-    { $$ = setLocation( PTreeBinary( CO_DIVIDE, $1, $3 ), &yylp[2] ); }
-    | multiplicative-expression Y_PERCENT pm-expression
-    { $$ = setLocation( PTreeBinary( CO_PERCENT, $1, $3 ), &yylp[2] ); }
-    ;
-
-pm-expression
-    : segment-expression
-    | pm-expression Y_DOT_STAR segment-expression
-    { $$ = setLocation( PTreeBinary( CO_DOT_STAR, $1, $3 ), &yylp[2] ); }
-    | pm-expression Y_ARROW_STAR segment-expression
-    { $$ = setLocation( PTreeBinary( CO_ARROW_STAR, $1, $3 ), &yylp[2] ); }
-    ;
-
-segment-expression
-    : cast-expression
-    | segment-expression Y_SEG_OP cast-expression
-    { $$ = setLocation( PTreeBinary( CO_SEG_OP, $1, $3 ), &yylp[2] ); }
-    ;
-
-cast-expression
-    : unary-expression
-    | Y_LEFT_PAREN type-id Y_RIGHT_PAREN cast-expression
-    { $$ = setLocation( MakeNormalCast( $2, $4 ), &yylp[3] ); }
-    ;
-
-unary-operator
-    : Y_TIMES
-    { $$ = setLocation( PTreeUnary( CO_INDIRECT, NULL ), &yylp[1] ); }
-    | Y_AND
-    { $$ = setLocation( PTreeUnary( CO_ADDR_OF, NULL ), &yylp[1] ); }
-    | Y_PLUS
-    { $$ = setLocation( PTreeUnary( CO_UPLUS, NULL ), &yylp[1] ); }
-    | Y_MINUS
-    { $$ = setLocation( PTreeUnary( CO_UMINUS, NULL ), &yylp[1] ); }
-    | Y_EXCLAMATION
-    { $$ = setLocation( PTreeUnary( CO_EXCLAMATION, NULL ), &yylp[1] ); }
-    | Y_TILDE
-    { $$ = setLocation( PTreeUnary( CO_TILDE, NULL ), &yylp[1] ); }
-    ;
-
-unary-expression
-    : postfix-expression
-    | Y_PLUS_PLUS cast-expression
-    { $$ = setLocation( PTreeUnary( CO_PRE_PLUS_PLUS, $2 ), &yylp[1] ); }
-    | Y_MINUS_MINUS cast-expression
-    { $$ = setLocation( PTreeUnary( CO_PRE_MINUS_MINUS, $2 ), &yylp[1] ); }
-    | unary-operator cast-expression
-    { $$ = PTreeReplaceLeft( $1, $2 ); }
-    | Y_SIZEOF unary-expression
-    { $$ = setLocation( PTreeUnary( CO_SIZEOF_EXPR, $2 ), &yylp[1] ); }
-    | Y_SIZEOF Y_LEFT_PAREN type-id Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeUnary( CO_SIZEOF_TYPE, $3 ), &yylp[1] ); }
-    | Y_SIZEOF Y_TYPE_NAME
-    { $$ = setLocation( PTreeUnary( CO_SIZEOF_TYPE, PTreeMSSizeofKludge( $2 ) ), &yylp[1] ); }
-    | Y___BUILTIN_ISFLOAT Y_LEFT_PAREN type-id Y_RIGHT_PAREN
-    { $$ = setLocation( MakeBuiltinIsFloat( $3 ), &yylp[1] ); }
-    | Y___OFFSETOF Y_LEFT_PAREN type-id Y_COMMA offsetof-field Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeOffsetof( $3, $5 ), &yylp[4] ); }
-    | new-expression
-    | delete-expression
-    ;
-    
 offsetof-field
     : make-id
     {
@@ -828,309 +1278,1587 @@ offsetof-index
     { $$ = setLocation( PTreeBinary( CO_INDEX, $1, $3 ), &yylp[2] ); }
     ;
 
-new-expression
-    : Y_NEW new-modifier-opt new-placement new-type-id new-initializer-opt
-    { $$ = setLocation( MakeNewExpr( NULL, $3, $4, $5 ), &yylp[1] ); }
-    | Y_NEW new-modifier-opt               new-type-id new-initializer-opt
-    { $$ = setLocation( MakeNewExpr( NULL, NULL, $3, $4 ), &yylp[1] ); }
-    | Y_GLOBAL_NEW new-modifier-opt new-placement new-type-id new-initializer-opt
-    { $$ = setLocation( MakeNewExpr( $1, $3, $4, $5 ), &yylp[1] ); }
-    | Y_GLOBAL_NEW new-modifier-opt               new-type-id new-initializer-opt
-    { $$ = setLocation( MakeNewExpr( $1, NULL, $3, $4 ), &yylp[1] ); }
-    ;
-    
-new-modifier-opt
-    : /* nothing */
-    | modifier
-    { CheckNewModifier( $1 ); }
-    ;
-
-new-placement
-    : Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
-    { $$ = $2; }
-    ;
-
-new-type-id
-    : dynamic-type-id
-    | Y_LEFT_PAREN special-new-type-id Y_RIGHT_PAREN
-    { $$ = $2; }
-    ;
-
-new-initializer-opt
-    : /* nothing */
-    { $$ = NULL; }
-    | Y_LEFT_PAREN Y_RIGHT_PAREN
-    { $$ = NULL; } /* ARM p.61 '()' is syntactic convenience */
-    | Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
-    { $$ = $2; }
-    ;
-
-dynamic-type-id
-    : type-specifiers
-    {
-        $$ = MakeNewTypeId( DoDeclSpec( state->gstack->u.dspec ) );
-        GStackPop( &(state->gstack) );
-    }
-    | type-specifiers new-declarator
-    {
-        $$ = $2;
-        GStackPop( &(state->gstack) );
-    }
-    ;
-
-new-declarator
-    : partial-ptr-declarator actual-new-declarator
-    { $$ = MakeNewDeclarator( state->gstack->u.dspec, $1, $2 ); }
-    | partial-ptr-declarator
-    { $$ = MakeNewDeclarator( state->gstack->u.dspec, $1, NULL ); }
-    |                        actual-new-declarator
-    { $$ = MakeNewDeclarator( state->gstack->u.dspec, NULL, $1 ); }
-    ;
-
 partial-ptr-declarator
-    : Y_TIMES cv-qualifiers-opt partial-ptr-declarator
+    : Y_TIMES cv-qualifier-seq-opt partial-ptr-declarator
     { $$ = MakeNewPointer( $2, $3, NULL ); }
-    | Y_TIMES cv-qualifiers-opt
+    | Y_TIMES cv-qualifier-seq-opt
     { $$ = MakeNewPointer( $2, NULL, NULL ); }
-    | Y_SCOPED_TIMES cv-qualifiers-opt partial-ptr-declarator
+    | Y_SCOPED_TIMES cv-qualifier-seq-opt partial-ptr-declarator
     { $$ = MakeNewPointer( $2, $3, $1 ); }
-    | Y_SCOPED_TIMES cv-qualifiers-opt
+    | Y_SCOPED_TIMES cv-qualifier-seq-opt
     { $$ = MakeNewPointer( $2, NULL, $1 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_TIMES cv-qualifiers-opt partial-ptr-declarator
-    { $$ = MakeNewPointer( $3, $4, $2 ); PTypeRelease( $1 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_TIMES cv-qualifiers-opt
-    { $$ = MakeNewPointer( $3, NULL, $2 ); PTypeRelease( $1 ); }
-    | Y_TEMPLATE_SCOPED_TIMES cv-qualifiers-opt partial-ptr-declarator
-    { $$ = MakeNewPointer( $2, $3, $1 ); zapTemplateClassDeclSpec( state ); }
-    | Y_TEMPLATE_SCOPED_TIMES cv-qualifiers-opt
-    { $$ = MakeNewPointer( $2, NULL, $1 ); zapTemplateClassDeclSpec( state ); }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TIMES cv-qualifier-seq-opt partial-ptr-declarator
+    { $$ = MakeNewPointer( $3, $4, $2 ); PTreeFreeSubtrees( $1 ); }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TIMES cv-qualifier-seq-opt
+    { $$ = MakeNewPointer( $3, NULL, $2 ); PTreeFreeSubtrees( $1 ); }
     ;
 
-actual-new-declarator
+direct-new-declarator
     : Y_LEFT_BRACKET expression Y_RIGHT_BRACKET
     { $$ = MakeNewDynamicArray( $2 ); }
-    | actual-new-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
+    | direct-new-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
     { $$ = AddArrayDeclarator( $1, $3 ); }
-    ;
-
-delete-expression
-    : Y_DELETE cast-expression
-    { $$ = setLocation( MakeDeleteExpr( NULL, CO_DELETE, $2 ), &yylp[1] ); }
-    | Y_DELETE Y_LEFT_BRACKET delete-size-expression-opt Y_RIGHT_BRACKET cast-expression
-    { $$ = setLocation( MakeDeleteExpr( NULL, CO_DELETE_ARRAY, $5 ), &yylp[1] ); }
-    | Y_GLOBAL_DELETE cast-expression
-    { $$ = setLocation( MakeDeleteExpr( $1, CO_DELETE_G, $2 ), &yylp[1] ); }
-    | Y_GLOBAL_DELETE Y_LEFT_BRACKET delete-size-expression-opt Y_RIGHT_BRACKET cast-expression
-    { $$ = setLocation( MakeDeleteExpr( $1, CO_DELETE_G_ARRAY, $5 ), &yylp[1] ); }
-    ;
-
-delete-size-expression-opt
-    : /* nothing */
-    | expression
-    {
-        PTreeDeleteSizeExpr( $1 );
-    }
-    ;
-
-postfix-expression
-    : primary-expression
-    | function-like-cast-expression
-    | postfix-expression Y_LEFT_BRACKET expression Y_RIGHT_BRACKET
-    { $$ = setLocation( PTreeBinary( CO_INDEX, $1, $3 ), &yylp[2] ); }
-    | postfix-expression Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeBinary( CO_CALL, $1, $3 ), &yylp[2] ); }
-    | member-selection-expression field-expression
-    { $$ = PTreeReplaceRight( $1, $2 ); }
-    | postfix-expression Y_PLUS_PLUS
-    { $$ = setLocation( PTreeUnary( CO_POST_PLUS_PLUS, $1 ), &yylp[2] ); }
-    | postfix-expression Y_MINUS_MINUS
-    { $$ = setLocation( PTreeUnary( CO_POST_MINUS_MINUS, $1 ), &yylp[2] ); }
-    | Y___SEGNAME Y_LEFT_PAREN strings Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeUnary( CO_SEGNAME, $3 ), &yylp[1] ); }
-    | Y_DYNAMIC_CAST lt-special type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeBinary( CO_DYNAMIC_CAST, $3, $6 ), &yylp[1] ); }
-    | Y_STATIC_CAST lt-special type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeBinary( CO_STATIC_CAST, $3, $6 ), &yylp[1] ); }
-    | Y_REINTERPRET_CAST lt-special type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeBinary( CO_REINTERPRET_CAST, $3, $6 ), &yylp[1] ); }
-    | Y_CONST_CAST lt-special type-id Y_GT_SPECIAL Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeBinary( CO_CONST_CAST, $3, $6 ), &yylp[1] ); }
-    | Y_TYPEID Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeUnary( CO_TYPEID_EXPR, $3 ), &yylp[1] ); }
-    | Y_TYPEID Y_LEFT_PAREN type-id Y_RIGHT_PAREN
-    { $$ = setLocation( PTreeUnary( CO_TYPEID_TYPE, $3 ), &yylp[1] ); }
-    ;
-
-member-selection-expression
-    : postfix-expression Y_DOT
-    { $$ = setLocation( PTreeBinary( CO_DOT, $1, NULL ), &yylp[2] ); }
-    | postfix-expression Y_ARROW
-    { $$ = setLocation( PTreeBinary( CO_ARROW, $1, NULL ), &yylp[2] ); }
-    ;
-
-function-like-cast-expression
-    : simple-type-specifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN %ambig 0 Y_LEFT_PAREN
-    { $$ = setLocation( MakeFunctionLikeCast( $1, $3 ), &yylp[2] ); }
-    | Y_TYPENAME Y_SCOPED_TYPE_NAME Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
-    {
-        $$ = setLocation( MakeFunctionLikeCast( sendType( $2 ), $4 ),
-                          &yylp[2] );
-    }
-    | Y_TYPENAME template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
-    {
-        $$ = setLocation( MakeFunctionLikeCast( sendType( $3 ), $5 ),
-                          &yylp[2] );
-        PTypeRelease( $2 );
-    }
-    ;
-
-primary-expression
-    : literal
-    | Y_THIS
-    { $$ = setLocation( PTreeThis(), &yylp[1] ); }
-    | Y_GLOBAL_ID
-    { $$ = MakeGlobalId( $1 ); }
-    | Y_GLOBAL_OPERATOR operator-function-type
-    { $$ = MakeGlobalOperatorId( $1, $2 ); }
-    | Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = $2; }
-    | id-expression
-    ;
-
-id-expression
-    : Y_ID
-    | operator-name
-    | qualified-id-expression
     ;
 
 make-id
     : Y_ID
+    | Y_UNKNOWN_ID
+    | Y_TEMPLATE_ID
     | Y_TYPE_NAME
     | Y_TEMPLATE_NAME
     | Y_NAMESPACE_NAME
+    ;
+
+
+/* A.5 Statements [gram.stmt] */
+
+
+/* A.6 Declarations [gram.dcl] */
+
+/* should only be referenced by might-restart-declarations */
+declaration-seq
+    : declaration
+    | declaration-seq declaration
+    ;
+
+/* slightly differs from standard */
+declaration
+    : block-declaration-before-semicolon Y_SEMI_COLON
+    | function-definition
+    | template-declaration /* | explicit-specialization */
+    | explicit-instantiation
+    | linkage-specification
+    | namespace-definition
+    | Y_SEMI_COLON /* extension */
+    ;
+
+block-declaration-before-semicolon
+    : block-declaration
+    {
+        if( t != Y_SEMI_COLON ) {
+            SetErrLoc( &yylocation );
+            CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
+            what = P_DIAGNOSED;
+        }
+    }
+    ;
+
+block-declaration
+    : simple-declaration
+    | asm-definition
+    | namespace-alias-definition
+    | using-declaration
+    | using-directive
+    | static_assert-declaration
+    ;
+
+simple-declaration
+    : decl-specifier-seq init-declarator-list
+    {
+        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
+        GStackPop( &(state->gstack) );
+    }
+    | no-declarator-declaration
+    {
+        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
+        GStackPop( &(state->gstack) );
+    }
+    ;
+
+static_assert-declaration
+    : Y_STATIC_ASSERT Y_LEFT_PAREN constant-expression Y_COMMA expect-string-literal string-literal Y_RIGHT_PAREN
+    {
+        /* see N1720 -- Proposal to Add Static Assertions to the Core
+         * Language (Revision 3) */
+        DbgAssert( $3->op == PT_INT_CONSTANT );
+        DbgAssert( $6->op == PT_STRING_CONSTANT );
+
+        if( $3->u.int_constant == 0 ) {
+            CErr2p( ERR_STATIC_ASSERTION_FAILURE,
+                    StringBytes( $6->u.string ) );
+        }
+
+        PTreeFreeSubtrees( $3 );
+        PTreeFreeSubtrees( $6 );
+    }
+    ;
+
+/* TODO */
+decl-specifier-seq
+    : non-type-decl-specifier-seq type-specifier maybe-type-decl-specifier-seq
+    {
+        $1 = PTypeCombine( $1, $2 );
+        $$ = PTypeCombine( $1, $3 );
+        $$ = PTypeDone( $$, t == Y_SEMI_COLON );
+        pushUserDeclSpec( state, $$ );
+    }
+    | non-type-decl-specifier-seq type-specifier
+    {
+        $$ = PTypeCombine( $1, $2 );
+        $$ = PTypeDone( $$, t == Y_SEMI_COLON );
+        pushUserDeclSpec( state, $$ );
+    }
+    |                            type-specifier maybe-type-decl-specifier-seq
+    {
+        $$ = PTypeCombine( $1, $2 );
+        $$ = PTypeDone( $$, t == Y_SEMI_COLON );
+        pushUserDeclSpec( state, $$ );
+    }
+    |                            type-specifier
+    {
+        $$ = PTypeDone( $1, t == Y_SEMI_COLON );
+        pushUserDeclSpec( state, $$ );
+    }
+    | non-type-decl-specifier-seq
+    {
+        $$ = PTypeDone( $1, t == Y_SEMI_COLON );
+        pushUserDeclSpec( state, $$ );
+    }
+    ;
+
+/* non-standard */
+non-type-decl-specifier-seq
+    : non-type-decl-specifier
+    | non-type-decl-specifier-seq non-type-decl-specifier
+    { $$ = PTypeCombine( $1, $2 ); }
+    ;
+
+/* non-standard */
+maybe-type-decl-specifier-seq
+    : non-type-decl-specifier
+    | basic-type-specifier
+    | maybe-type-decl-specifier-seq non-type-decl-specifier
+    { $$ = PTypeCombine( $1, $2 ); }
+    | maybe-type-decl-specifier-seq basic-type-specifier
+    { $$ = PTypeCombine( $1, $2 ); }
+    ;
+
+/* non-standard */
+non-type-decl-specifier
+    : storage-class-specifier
+    | function-specifier
+    | cv-qualifier
+    | ms-specific-declspec
+    | Y_FRIEND
+    { $$ = PTypeSpecifier( STY_FRIEND ); }
+    ;
+
+/* non-standard */
+ms-specific-declspec
+    : Y___DECLSPEC Y_LEFT_PAREN                 Y_RIGHT_PAREN
+    { $$ = PTypeMSDeclSpec( NULL, NULL ); }
+    | Y___DECLSPEC Y_LEFT_PAREN ms-declspec-seq Y_RIGHT_PAREN
+    { $$ = $3; }
+    ;
+
+/* non-standard */
+ms-declspec-seq
+    : make-id
+    { $$ = PTypeMSDeclSpec( NULL, $1 ); }
+    | pragma-modifier
+    { $$ = PTypeMSDeclSpecModifier( NULL, $1 ); }
+    | ms-declspec-seq make-id
+    { $$ = PTypeMSDeclSpec( $1, $2 ); }
+    | ms-declspec-seq pragma-modifier
+    { $$ = PTypeMSDeclSpecModifier( $1, $2 ); }
+    ;
+
+storage-class-specifier
+    : Y_AUTO
+    { $$ = PTypeStgClass( STG_AUTO ); }
+    | Y_REGISTER
+    { $$ = PTypeStgClass( STG_REGISTER ); }
+    | Y_STATIC
+    { $$ = PTypeStgClass( STG_STATIC ); }
+    | Y_EXTERN
+    { $$ = PTypeStgClass( STG_EXTERN ); }
+    | Y_MUTABLE
+    { $$ = PTypeStgClass( STG_MUTABLE ); }
+    /* extension */
+    | Y_EXTERN linkage-id
+    { $$ = PTypeLinkage(); }
+    | Y_TYPEDEF
+    { $$ = PTypeStgClass( STG_TYPEDEF ); }
+    ;
+
+function-specifier
+    : Y_INLINE
+    { $$ = PTypeSpecifier( STY_INLINE ); }
+    | Y_VIRTUAL
+    { $$ = PTypeSpecifier( STY_VIRTUAL ); }
+    | Y_EXPLICIT
+    { $$ = PTypeSpecifier( STY_EXPLICIT ); }
+    /* extension */
+    | Y___INLINE
+    { $$ = PTypeSpecifier( STY_INLINE ); }
+    ;
+
+type-specifier
+    : simple-type-specifier %prec Y_FAVOUR_REDUCE_SPECIAL %ambig 0 Y_LEFT_PAREN
+    | class-specifier
+    | enum-specifier
+    | elaborated-type-specifier
+    | typename-specifier
+    /* cv-qualifier */
+    ;
+
+simple-type-specifier
+    : Y_TYPE_NAME
+    { $$ = sendType( $1 ); }
+    | qualified-type-specifier
+    | basic-type-specifier
+    /* see N1978 -- Decltype (Revision 5) */
+    | Y_DECLTYPE Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = PTypeExpr( $3 ); }
+    /* extension */
+    | typeof-specifier
+    ;
+
+/* non-standard */
+qualified-type-specifier
+    : Y_GLOBAL_TYPE_NAME
+    { $$ = sendType( $1 ); }
+    | Y_SCOPED_TYPE_NAME
+    { $$ = sendType( $1 ); }
+    | nested-name-specifier
+    {
+        $$ = PTypeClassInstantiation( state->class_colon, $1 );
+    }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TYPE_NAME
+    {
+        PTreeFreeSubtrees( $1 );
+        $$ = sendType( $2 );
+    }
+    ;
+
+enum-specifier
+    : enum-key enum-start enumerator-list Y_COMMA Y_RIGHT_BRACE
+    {
+        $$ = MakeEnumType( &(state->gstack->u.enumdata) );
+        GStackPop( &(state->gstack) );
+        // TODO: warning non-standard
+    }
+    | enum-key enum-start enumerator-list         Y_RIGHT_BRACE
+    {
+        $$ = MakeEnumType( &(state->gstack->u.enumdata) );
+        GStackPop( &(state->gstack) );
+    }
+    | enum-key enum-start                         Y_RIGHT_BRACE
+    {
+        $$ = MakeEnumType( &(state->gstack->u.enumdata) );
+        GStackPop( &(state->gstack) );
+    }
+    ;
+
+/* non-standard */
+enum-start
+    : Y_LEFT_BRACE
+    { EnumDefine( &(state->gstack->u.enumdata) ); }
+    ;
+
+/* non-standard */
+enum-key
+    : Y_ENUM make-id
+    {
+        GStackPush( &(state->gstack), GS_ENUM_DATA );
+        InitEnumState( &(state->gstack->u.enumdata), $2 );
+    }
+    | Y_ENUM
+    {
+        GStackPush( &(state->gstack), GS_ENUM_DATA );
+        InitEnumState( &(state->gstack->u.enumdata), NULL );
+    }
+    ;
+
+enumerator-list
+    : enumerator-definition
+    | enumerator-list Y_COMMA enumerator-definition
+    ;
+
+/* TODO */
+enumerator-definition
+    : enumerator
+    {
+        MakeEnumMember( &(state->gstack->u.enumdata), $1, NULL );
+    }
+    | enumerator Y_EQUAL constant-expression
+    {
+        MakeEnumMember( &(state->gstack->u.enumdata), $1, $3 );
+    }
+    ;
+
+enumerator
+    : make-id /* identifier */
+    ;
+
+elaborated-type-specifier
+    : Y_ENUM make-id
+    {
+        ENUM_DATA edata;
+        InitEnumState( &edata, $2 );
+        $$ = EnumReference( &edata );
+    }
+    | Y_ENUM elaborated-type-name
+    {
+        ENUM_DATA edata;
+        InitEnumState( &edata, $2 );
+        $$ = EnumReference( &edata );
+    }
+    ;
+
+namespace-definition
+    /* named-namespace-definition | unnamed-namespace-definition */
+    : namespace-key Y_LEFT_BRACE namespace-body Y_RIGHT_BRACE
+    ;
+
+/* non-standard */
+namespace-key
+    : Y_NAMESPACE
+    { NameSpaceUnnamed( &yylp[1] ); }
+    | Y_NAMESPACE expect-identifier make-id
+    { NameSpaceNamed( $3 ); }
+    ;
+
+namespace-body
+    : /* nothing */
+    { NameSpaceClose(); }
+    | might-restart-declarations
+    { NameSpaceClose(); }
+    ;
+
+namespace-alias-definition
+    : Y_NAMESPACE expect-identifier make-id Y_EQUAL expect-qualified-namespace-specifier qualified-namespace-specifier
+    { NameSpaceAlias( $3, $6 ); }
+    ;
+
+qualified-namespace-specifier
+    : Y_NAMESPACE_NAME
+    | Y_GLOBAL_NAMESPACE_NAME
+    | Y_SCOPED_NAMESPACE_NAME
+    ;
+
+using-declaration
+    : Y_USING qualified-id
+    { NameSpaceUsingDeclId( $2 ); }
+    | Y_USING qualified-type-specifier
+    { NameSpaceUsingDeclType( $2 ); }
+    | Y_USING Y_GLOBAL_TEMPLATE_NAME
+    { NameSpaceUsingDeclTemplateName( $2 ); }
+    | Y_USING Y_SCOPED_TEMPLATE_NAME
+    { NameSpaceUsingDeclTemplateName( $2 ); }
+    | Y_USING qualified-namespace-specifier
+    {
+        CErr2p( ERR_NAMESPACE_NOT_ALLOWED_IN_USING_DECL, $2 );
+        PTreeFreeSubtrees( $2 );
+    }
+    ;
+
+using-directive
+    : Y_USING Y_NAMESPACE expect-qualified-namespace-specifier qualified-namespace-specifier
+    { NameSpaceUsingDirective( $4 ); }
+    ;
+
+asm-definition
+    : Y_ASM Y_LEFT_PAREN expect-string-literal string-literal Y_RIGHT_PAREN
+    {
+        StringTrash( $4->u.string );
+        PTreeFree( $4 );
+        CErr1( WARN_ASM_IGNORED );
+    }
+    ;
+
+linkage-specification
+    : Y_EXTERN linkage-id start-linkage-block linkage-body Y_RIGHT_BRACE
+    { LinkagePop(); }
+    ;
+
+linkage-id
+    : string-literal
+    {
+        LinkagePush( $1->u.string->string );
+        StringTrash( $1->u.string );
+        PTreeFree( $1 );
+        if( ! ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
+            CErr1( ERR_ONLY_GLOBAL_LINKAGES );
+        }
+    }
+    ;
+
+start-linkage-block
+    : Y_LEFT_BRACE
+    { LinkageBlock(); }
+    ;
+
+linkage-body
+    : /* nothing */
+    | might-restart-declarations
+    ;
+
+
+/* A.7 Declarators [gram.decl] */
+
+init-declarator-list
+    : init-declarator
+    {
+        tryCtorStyleInit( state, $1 );
+    }
+    | init-declarator-list Y_COMMA comma-init-declarator
+    {
+        tryCtorStyleInit( state, $3 );
+    }
+    ;
+
+init-declarator
+    : declarator
+    {
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+        GStackPush( &(state->gstack), GS_INIT_DATA );
+        $$ = DataInitNoInit( &(state->gstack->u.initdata), $$ );
+        GStackPop( &(state->gstack) );
+    }
+    | declaring-declarator initializer
+    { $$ = $1; }
+    | ptr-mod-init-declarator
+    {
+        $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+    }
+    | direct-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
+    {
+        $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+        setInitWithLocn( $$, $3, &yylp[2] );
+    }
+    ;
+
+declarator
+    : ptr-mod-declarator
+    {
+        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
+    }
+    | direct-declarator
+    {
+        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
+    }
+    ;
+
+comma-init-declarator
+    : comma-declarator
+    {
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+        GStackPush( &(state->gstack), GS_INIT_DATA );
+        $$ = DataInitNoInit( &(state->gstack->u.initdata), $$ );
+        GStackPop( &(state->gstack) );
+    }
+    | comma-declaring-declarator initializer
+    { $$ = $1; }
+    | cv-qualifier-seq-opt ptr-mod-init-declarator
+    {
+        $2 = AddMSCVQualifierKludge( $1, $2 );
+        $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
+        $$ = InsertDeclInfo( GetCurrScope(), $2 );
+    }
+    | cv-qualifier-seq-opt direct-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
+    {
+        $2 = AddMSCVQualifierKludge( $1, $2 );
+        $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
+        $$ = InsertDeclInfo( GetCurrScope(), $2 );
+        setInitWithLocn( $$, $4, &yylp[3] );
+    }
+    ;
+
+declaring-declarator
+    : declarator
+    {
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    ;
+
+comma-declaring-declarator
+    : comma-declarator
+    {
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    ;
+
+comma-declarator
+    : cv-qualifier-seq-opt ptr-mod-declarator
+    {
+        $2 = AddMSCVQualifierKludge( $1, $2 );
+        $$ = FinishDeclarator( state->gstack->u.dspec, $2 );
+    }
+    | cv-qualifier-seq-opt direct-declarator
+    {
+        $2 = AddMSCVQualifierKludge( $1, $2 );
+        $$ = FinishDeclarator( state->gstack->u.dspec, $2 );
+    }
+    ;
+
+ptr-mod
+    : modifier
+    { $$ = MakeFlagModifier( $1 ); }
+    | Y___BASED Y_LEFT_PAREN based-expression Y_RIGHT_PAREN
+    { $$ = $3; }
+    | pragma-modifier
+    | ptr-operator
+    ;
+
+ptr-mod-init-declarator
+    : ptr-mod ptr-mod-init-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    | ptr-mod direct-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
+    {
+        $$ = AddDeclarator( $2, $1 );
+        setInitWithLocn( $$, $4, &yylp[3] );
+    }
+    ;
+
+ptr-mod-declarator
+    : ptr-mod ptr-mod-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    | ptr-mod direct-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    ;
+
+direct-declarator
+    : declarator-id
+    {
+        $$ = MakeDeclarator( state->gstack->u.dspec, $1 );
+        if( $$ == NULL ) {
+            what = P_SYNTAX;
+        } else {
+            if( $$->template_member ) {
+                what = P_CLASS_TEMPLATE;
+            }
+        }
+    }
+    | direct-declarator Y_LEFT_PAREN parameter-declaration-clause Y_RIGHT_PAREN cv-qualifier-seq-opt exception-specification-opt
+    {
+        $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
+        $$ = AddExplicitParms( $$, $3 );
+    }
+    | direct-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
+    { $$ = AddArrayDeclarator( $1, $3 ); }
+    | direct-declarator Y_LEFT_BRACKET                     Y_RIGHT_BRACKET
+    { $$ = AddArrayDeclarator( $1, NULL ); }
+    | Y_LEFT_PAREN ptr-mod-declarator Y_RIGHT_PAREN
+    { $$ = $2; }
+    | Y_LEFT_PAREN direct-declarator Y_RIGHT_PAREN
+    { $$ = $2; }
+    ;
+
+modifier
+    : Y___NEAR
+    { $$ = TF1_NEAR; }
+    | Y___FAR
+    { $$ = TF1_FAR; }
+    | Y__FAR16
+    { $$ = TF1_SET_FAR16;       /* equals TF1_FAR on the 8086 */ }
+    | Y___FAR16
+    { $$ = TF1_SET_FAR16;       /* equals TF1_FAR on the 8086 */ }
+    | Y___HUGE
+    { $$ = TF1_SET_HUGE;        /* equals TF1_FAR on the 386 */ }
+    | Y__EXPORT
+    { $$ = TF1_DLLEXPORT | TF1_HUG_FUNCTION; }
+    | Y___EXPORT
+    { $$ = TF1_DLLEXPORT | TF1_HUG_FUNCTION; }
+    | Y___LOADDS
+    { $$ = TF1_LOADDS | TF1_TYP_FUNCTION; }
+    | Y___SAVEREGS
+    { $$ = TF1_SAVEREGS | TF1_TYP_FUNCTION; }
+    | Y___INTERRUPT
+    { $$ = TF1_INTERRUPT | TF1_TYP_FUNCTION; }
+    ;
+
+based-expression
+    : segment-cast-opt Y___SEGNAME Y_LEFT_PAREN expect-string-literal string-literal Y_RIGHT_PAREN
+    { $$ = MakeBasedModifier( TF1_BASED_STRING, $1, $5 ); }
+    | segment-cast-opt identifier
+    { $$ = MakeBasedModifier( TF1_NULL, $1, $2 ); }
+    | segment-cast-opt Y_VOID
+    { $$ = MakeBasedModifier( TF1_BASED_VOID, $1, NULL ); }
+    | segment-cast-opt Y___SELF
+    { $$ = MakeBasedModifier( TF1_BASED_SELF, $1, NULL ); }
+    ;
+
+segment-cast-opt
+    : /* nothing */
+    { $$ = FALSE; }
+    | Y_LEFT_PAREN Y___SEGMENT Y_RIGHT_PAREN
+    { $$ = TRUE; }
+    ;
+
+pragma-modifier
+    : Y___PRAGMA Y_LEFT_PAREN pragma-id Y_RIGHT_PAREN
+    {
+        $$ = MakePragma( $3->u.string->string );
+        StringTrash( $3->u.string );
+        PTreeFree( $3 );
+    }
+    | Y__CDECL
+    { $$ = MakeIndexPragma( M_CDECL ); }
+    | Y___CDECL
+    { $$ = MakeIndexPragma( M_CDECL ); }
+    | Y__FASTCALL
+    { $$ = MakeIndexPragma( M_FASTCALL ); }
+    | Y___FASTCALL
+    { $$ = MakeIndexPragma( M_FASTCALL ); }
+    | Y___FORTRAN
+    { $$ = MakeIndexPragma( M_FORTRAN ); }
+    | Y__OPTLINK
+    { $$ = MakeIndexPragma( M_OPTLINK ); }
+    | Y__PASCAL
+    { $$ = MakeIndexPragma( M_PASCAL ); }
+    | Y___PASCAL
+    { $$ = MakeIndexPragma( M_PASCAL ); }
+    | Y___STDCALL
+    { $$ = MakeIndexPragma( M_STDCALL ); }
+    | Y__SYSCALL
+    { $$ = MakeIndexPragma( M_SYSCALL ); }
+    | Y___SYSCALL
+    { $$ = MakeIndexPragma( M_SYSCALL ); }
+    | Y__SYSTEM
+    { $$ = MakeIndexPragma( M_SYSTEM ); }
+    | Y___WATCALL
+    { $$ = MakeIndexPragma( M_WATCALL ); }
+    ;
+
+pragma-id
+    : string-literal
+    ;
+
+ptr-operator
+    : Y_TIMES cv-qualifier-seq-opt
+    { $$ = MakePointerType( TF1_NULL, $2 ); }
+    | Y_AND cv-qualifier-seq-opt
+    { $$ = MakePointerType( TF1_REFERENCE, $2 ); }
+    | Y_SCOPED_TIMES cv-qualifier-seq-opt
+    { $$ = MakeMemberPointer( $1, $2 ); }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TIMES cv-qualifier-seq-opt
+    { $$ = MakeMemberPointer( $2, $3 ); PTreeFreeSubtrees( $1 ); }
+    /* extension */
+    | Y_TIMES Y__SEG16 cv-qualifier-seq-opt
+    { $$ = MakeSeg16Pointer( $3 ); }
+    ;
+
+cv-qualifier-seq-opt
+    : /* nothing */
+    { $$ = STY_NULL; }
+    | Y_CONST
+    { $$ = STY_CONST; }
+    | Y_VOLATILE
+    { $$ = STY_VOLATILE; }
+    | Y___UNALIGNED
+    { $$ = STY_UNALIGNED; }
+    | Y_CONST Y_VOLATILE
+    { $$ = STY_CONST | STY_VOLATILE; }
+    | Y_VOLATILE Y_CONST
+    { $$ = STY_CONST | STY_VOLATILE; }
+    | Y_CONST Y___UNALIGNED
+    { $$ = STY_CONST | STY_UNALIGNED; }
+    | Y___UNALIGNED Y_CONST
+    { $$ = STY_CONST | STY_UNALIGNED; }
+    | Y_VOLATILE Y___UNALIGNED
+    { $$ = STY_VOLATILE | STY_UNALIGNED; }
+    | Y___UNALIGNED Y_VOLATILE
+    { $$ = STY_VOLATILE | STY_UNALIGNED; }
+    | Y___UNALIGNED Y_CONST Y_VOLATILE
+    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
+    | Y___UNALIGNED Y_VOLATILE Y_CONST
+    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
+    | Y_VOLATILE Y_CONST Y___UNALIGNED
+    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
+    | Y_VOLATILE Y___UNALIGNED Y_CONST
+    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
+    | Y_CONST Y_VOLATILE Y___UNALIGNED
+    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
+    | Y_CONST Y___UNALIGNED Y_VOLATILE
+    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
+    ;
+
+declarator-id
+    : id-expression
+    | Y_TEMPLATE_NAME /* non-standard */
+    | Y_NAMESPACE_NAME /* non-standard */
+    | Y_TYPE_NAME /* non-standard */
+    | Y_GLOBAL_UNKNOWN_ID /* :: identifier */
+    { $$ = MakeGlobalId( $1 ); }
+    | Y_SCOPED_UNKNOWN_ID
+    { $$ = MakeScopedId( $1 ); }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_UNKNOWN_ID
+    { PTreeFreeSubtrees( $1 ); $$ = MakeScopedId( $2 ); }
+    /*
+     * these Y_TEMPLATE_SCOPED_ cases are needed because of the odd way
+     * template class constructors are parsed. Essentially, a constructor
+     * of the form A<T>::A() gets parsed as a function with A<T> being the
+     * return type and ::A being the declarator-id. zapTemplateClassDeclSpec
+     * then cleans things up by converting it into a constructor.
+     */
+    | Y_TEMPLATE_SCOPED_ID
+    { $$ = MakeScopedId( $1 ); zapTemplateClassDeclSpec( state ); }
+    | Y_TEMPLATE_SCOPED_UNKNOWN_ID
+    { $$ = MakeScopedId( $1 ); zapTemplateClassDeclSpec( state ); }
+    | Y_TEMPLATE_SCOPED_TILDE make-id
+    { $$ = MakeScopedDestructorId( $1, $2 ); zapTemplateClassDeclSpec( state ); }
+    | template-scoped-conversion-function-id
+    {
+        zapTemplateClassDeclSpec( state );
+    }
+    | template-scoped-operator-function-id
+    {
+        zapTemplateClassDeclSpec( state );
+    }
+    ;
+
+type-id
+    : type-specifier-seq abstract-declarator
+    {
+        $$ = TypeDeclarator( $2 );
+        GStackPop( &(state->gstack) );
+    }
+    | type-specifier-seq
+    {
+        $$ = DoDeclSpec( state->gstack->u.dspec );
+        GStackPop( &(state->gstack) );
+    }
+    ;
+
+type-specifier-seq
+    : decl-specifier-seq
+    {
+        $$ = CheckTypeSpecifier( $1 );
+        if( $$ == NULL ) {
+            what = P_SYNTAX;
+        }
+    }
+    ;
+
+abstract-declarator
+    : abstract-ptr-mod-declarator
+    {
+        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
+    }
+    | direct-abstract-declarator
+    {
+        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
+    }
+    ;
+
+abstract-ptr-mod-declarator
+    : ptr-mod abstract-ptr-mod-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    | ptr-mod direct-abstract-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    | ptr-mod
+    { $$ = MakeAbstractDeclarator( $1 ); }
+    ;
+
+direct-abstract-declarator
+    : direct-abstract-declarator Y_LEFT_PAREN parameter-declaration-clause Y_RIGHT_PAREN cv-qualifier-seq-opt exception-specification-opt
+    {
+        $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
+        FreeArgs( $3 );
+    }
+    | Y_LEFT_PAREN parameter-declaration-clause Y_RIGHT_PAREN cv-qualifier-seq-opt exception-specification-opt
+    {
+        $$ = MakeAbstractDeclarator( MakeFnType( &($2), $4, $5 ) );
+        FreeArgs( $2 );
+    }
+    | direct-abstract-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
+    { $$ = AddArrayDeclarator( $1, $3 ); }
+    |                            Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
+    {
+        $$ = MakeAbstractDeclarator( NULL );
+        $$ = AddArrayDeclarator( $$, $2 );
+    }
+    | direct-abstract-declarator Y_LEFT_BRACKET Y_RIGHT_BRACKET
+    { $$ = AddArrayDeclarator( $1, NULL ); }
+    |                            Y_LEFT_BRACKET Y_RIGHT_BRACKET
+    {
+        $$ = MakeAbstractDeclarator( NULL );
+        $$ = AddArrayDeclarator( $$, NULL );
+    }
+    | Y_LEFT_PAREN direct-abstract-declarator Y_RIGHT_PAREN
+    { $$ = $2; }
+    | Y_LEFT_PAREN abstract-ptr-mod-declarator Y_RIGHT_PAREN
+    { $$ = $2; }
+    ;
+
+parameter-declaration-clause
+    : /* nothing */
+    { $$ = NULL; }
+    | parameter-declaration-list
+    | parameter-declaration-list Y_COMMA Y_DOT_DOT_DOT
+    { $$ = AddEllipseArg( $1 ); }
+    | parameter-declaration-list         Y_DOT_DOT_DOT
+    { $$ = AddEllipseArg( $1 ); }
+    | Y_DOT_DOT_DOT
+    { $$ = AddEllipseArg( NULL ); }
+    ;
+
+parameter-declaration-list
+    : parameter-declaration
+    { $$ = AddArgument( NULL, $1 ); }
+    | parameter-declaration-list Y_COMMA parameter-declaration
+    { $$ = AddArgument( $1, $3 ); }
+    ;
+
+arg-decl-specifier-seq
+    : decl-specifier-seq
+    {
+        $$ = CheckArgDSpec( $1 );
+        if( $$ == NULL ) {
+            what = P_SYNTAX;
+        }
+    }
+    ;
+
+parameter-declaration
+    : simple-parameter-declaration
+    { GStackPop( &(state->gstack) ); }
+    ;
+
+/* non standard */
+simple-parameter-declaration
+    : arg-decl-specifier-seq
+    { $$ = DeclSpecDeclarator( $1 ); }
+    | arg-decl-specifier-seq simple-arg-no-id defarg-parse-or-copy
+    { $$ = $2; }
+    | arg-decl-specifier-seq declarator
+    { $$ = $2; }
+    | arg-decl-specifier-seq declarator defarg-parse-or-copy
+    { $$ = $2; }
+    | arg-decl-specifier-seq abstract-declarator
+    { $$ = $2; }
+    | arg-decl-specifier-seq abstract-declarator defarg-parse-or-copy
+    { $$ = $2; }
+    ;
+
+simple-arg-no-id
+    : /* nothing */
+    { $$ = DeclSpecDeclarator( $<dspec>0 ); }
+    ;
+
+defarg-parse-or-copy
+    : defarg-check Y_EQUAL assignment-expression
+    {
+        DECL_INFO *dinfo;
+
+        DbgAssert( $1 == NULL );
+        dinfo = $<dinfo>0;
+        dinfo->defarg_expr = $3;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+    }
+    | defarg-check Y_DEFARG_GONE_SPECIAL
+    {
+        DECL_INFO *dinfo;
+
+        dinfo = $<dinfo>0;
+        dinfo->defarg_rewrite = $1;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+    }
+    ;
+
+type-defarg-parse-or-copy
+    : defarg-check Y_EQUAL type-id
+    {
+        DECL_INFO *dinfo;
+
+        DbgAssert( $1 == NULL );
+        dinfo = $<dinfo>0;
+        dinfo->defarg_expr = $3;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+    }
+    | defarg-check Y_DEFARG_GONE_SPECIAL
+    {
+        DECL_INFO *dinfo;
+
+        dinfo = $<dinfo>0;
+        dinfo->defarg_rewrite = $1;
+        dinfo->has_defarg = TRUE;
+        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+    }
+    ;
+
+defarg-check
+    : /* nothing */
+    {
+        if( t != Y_EQUAL ) {
+            what = P_SYNTAX;
+            $$ = NULL;
+        } else {
+            angle_bracket_stack *angle_state;
+
+            angle_state = VstkTop( &(state->angle_stack) );
+            if( state->template_decl && ( angle_state != NULL )
+             && ( angle_state->paren_depth == 0 ) ) {
+                $$ = RewritePackageTemplateDefArg();
+                t = Y_DEFARG_GONE_SPECIAL;
+            } else if( state->template_decl ) {
+                $$ = RewritePackagePassThrough( currParseStack->template_record_tokens );
+                t = Y_DEFARG_GONE_SPECIAL;
+            } else if( ClassOKToRewrite() ) {
+                $$ = RewritePackageDefArg( NULL );
+                t = Y_DEFARG_GONE_SPECIAL;
+            } else {
+                $$ = NULL;
+            }
+        }
+    }
+    ;
+
+ctor-declarator
+    : Y_LEFT_PAREN parameter-declaration-clause Y_RIGHT_PAREN cv-qualifier-seq-opt exception-specification-opt
+    {
+        DECL_SPEC *dspec;
+        PTREE id;
+
+        dspec = state->gstack->u.dspec;
+        id = MakeConstructorId( dspec );
+        if( id == NULL ) {
+            what = P_SYNTAX;
+        }
+        $$ = MakeDeclarator( dspec, id );
+        AddDeclarator( $$, MakeFnType( &($2), $4, $5 ) );
+        $$ = AddExplicitParms( $$, $2 );
+        if( $$->template_member ) {
+            what = P_CLASS_TEMPLATE;
+        } else {
+            $$ = FinishDeclarator( dspec, $$ );
+        }
+    }
+    ;
+
+function-declaration
+    : decl-specifier-seq declarator ctor-initializer
+    {
+        $2->mem_init = $3;
+        $$ = DeclFunction( state->gstack->u.dspec, $2 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    | decl-specifier-seq declarator
+    {
+        $$ = DeclFunction( state->gstack->u.dspec, $2 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    |                    declarator ctor-initializer
+    {
+        $1->mem_init = $2;
+        $$ = DeclFunction( NULL, $1 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    |                    declarator
+    {
+        $$ = DeclFunction( NULL, $1 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    | decl-specifier-seq ctor-declarator ctor-initializer
+    {
+        $2->mem_init = $3;
+        $$ = DeclFunction( state->gstack->u.dspec, $2 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    | decl-specifier-seq ctor-declarator
+    {
+        $$ = DeclFunction( state->gstack->u.dspec, $2 );
+        GStackPush( &(state->gstack), GS_DECL_INFO );
+        state->gstack->u.dinfo = $$;
+    }
+    ;
+
+function-definition
+    : function-declaration function-body
+    {
+        GStackPop( &(state->gstack) );  /* decl-info */
+        if( $1->has_dspec ) {
+            GStackPop( &(state->gstack) );      /* decl-spec */
+        }
+        if( $1->body != NULL ) {
+            if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL ) ) {
+                TemplateFunctionAttachDefn( $1 );
+            } else if( ( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_INST )
+                    && ! $1->friend_fn ) ) {
+                TemplateMemberAttachDefn( $1, FALSE );
+            } else if( ( ( ScopeType( GetCurrScope(), SCOPE_CLASS )
+                        && ScopeType( GetCurrScope()->enclosing,
+                                      SCOPE_TEMPLATE_INST ) )
+                    && ! $1->friend_fn ) ) {
+                if( GetCurrScope()->owner.type->flag & TF1_SPECIFIC ) {
+                    ClassStoreInlineFunc( $1 );
+                } else {
+                    TemplateMemberAttachDefn( $1, TRUE );
+                }
+            } else {
+                ClassStoreInlineFunc( $1 );
+            }
+        } else {
+            FreeDeclInfo( $1 );
+        }
+    }
+    ;
+
+function-body
+    : check-for-rewrite Y_LEFT_BRACE absorb-body Y_RIGHT_BRACE
+    ;
+
+check-for-rewrite
+    : /* nothing */
+    {
+        /* guards against errors from Q during rewriting:
+            void foo( void )
+            {
+                Q::blah
+            }
+        */
+        setNoSuperTokens( state );
+    }
+    ;
+
+absorb-body
+    : /* nothing */
+    {
+        /* token will be thrown away (see check-for-rewrite) */
+        ParseFlush();
+        if( doFnbodyRewrite() ) {
+            REWRITE *rewrite;
+            rewrite = RewritePackageFunction( getMultiToken() );
+            state->gstack->u.dinfo->body = rewrite;
+        } else {
+            FunctionBody( state->gstack->u.dinfo );
+        }
+        what = P_RELEX;
+    }
+    ;
+
+initializer
+    : init-start assignment-expression
+    {
+        DataInitSimple( $2 );
+        GStackPop( &(state->gstack) );
+    }
+    | init-start braced-initializer
+    {
+        GStackPop( &(state->gstack) );
+    }
+    ;
+
+init-start
+    : Y_EQUAL
+    {
+        DECL_INFO *dinfo;
+
+        dinfo = state->gstack->u.dinfo;
+        reuseGStack( state, GS_INIT_DATA );
+        DataInitStart( &(state->gstack->u.initdata), dinfo );
+        DataInitSimpleLocn( &yylp[1] );
+    }
+    ;
+
+initializer-list
+    : assignment-expression
+    { DataInitExpr( $1 ); }
+    | initializer-list Y_COMMA assignment-expression
+    { DataInitExpr( $3 ); }
+    | braced-initializer
+    | initializer-list Y_COMMA braced-initializer
+    ;
+
+
+/* A.8 Classes [gram.class] */
+
+/* r/r conflict:
+ *   class-specifier <- class-key class-name
+ *   start-class <-
+ */
+start-class
+    : /* nothing */
+    {
+        ClassStart();
+        pushDefaultDeclSpec( state );
+    }
+    ;
+
+invalid-class-name-id
+    : Y_GLOBAL_UNKNOWN_ID
+    | Y_SCOPED_UNKNOWN_ID
     ;
 
 class-name-id
     : Y_ID
+    | Y_UNKNOWN_ID
+    | Y_TEMPLATE_ID
     | Y_TYPE_NAME
     | Y_TEMPLATE_NAME
     | Y_NAMESPACE_NAME
+    | Y_GLOBAL_ID
     | Y_GLOBAL_TYPE_NAME
-    | Y_GLOBAL_TEMPLATE_NAME
+    | Y_SCOPED_ID
     | Y_SCOPED_TYPE_NAME
-    | Y_SCOPED_TEMPLATE_NAME
-    | Y_TEMPLATE_SCOPED_TYPE_NAME
-    | Y_TEMPLATE_SCOPED_TEMPLATE_NAME
-    ;
-
-enum-name
-    : Y_ID
-    | Y_TYPE_NAME
-    | Y_TEMPLATE_NAME
-    | Y_NAMESPACE_NAME
-    | Y_GLOBAL_TYPE_NAME
-    | Y_SCOPED_TYPE_NAME
-    | Y_TEMPLATE_SCOPED_TYPE_NAME
-    ;
-
-destructor-name
-    : Y_TILDE make-id
-    { $$ = setLocation( MakeDestructorId( $2 ), &yylp[1] ); }
-    | Y_TILDE template-class-id
-    { $$ = setLocation( MakeDestructorIdFromType( $2 ), &yylp[1] ); }
-    ;
-
-field-name
-    : make-id
-    | destructor-name
-    | operator-name
-    ;
-
-field-expression
-    : field-name
-    | qualified-id-expression
-    /* handles 'int::~int' cases (p. 280 ARM) */
-    | basic-type-specifier Y_GLOBAL_TILDE basic-type-specifier
-    { $$ = MakeScalarDestructor( $1, $2, $3 ); }
-    ;
-
-qualified-id-expression
-    : Y_SCOPED_ID
-    { $$ = MakeScopedId( $1 ); }
-    | Y_SCOPED_TILDE make-id
-    { $$ = MakeScopedDestructorId( $1, $2 ); }
-    | Y_SCOPED_OPERATOR conversion-function-type
+    | invalid-class-name-id
     {
-        $$ = MakeScopedUserConversionId( $1, $2 );
-        ScopeQualifyPop();
-    }
-    | Y_SCOPED_OPERATOR operator-function-type
-    {
-        $$ = MakeScopedOperatorId( $1, $2 );
-        ScopeQualifyPop();
-    }
-    | template-class-id Y_TEMPLATE_SCOPED_ID
-    { $$ = MakeScopedId( $2 ); PTypeRelease( $1 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_TILDE make-id
-    { $$ = MakeScopedDestructorId( $2, $3 ); PTypeRelease( $1 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_OPERATOR conversion-function-type
-    {
-        $$ = MakeScopedUserConversionId( $2, $3 );
-        ScopeQualifyPop();
-        PTypeRelease( $1 );
-    }
-    | template-class-id Y_TEMPLATE_SCOPED_OPERATOR operator-function-type
-    {
-        $$ = MakeScopedOperatorId( $2, $3 );
-        ScopeQualifyPop();
-        PTypeRelease( $1 );
-    }
-    | Y_TEMPLATE_SCOPED_ID
-    { $$ = MakeScopedId( $1 ); zapTemplateClassDeclSpec( state ); }
-    | Y_TEMPLATE_SCOPED_TILDE make-id
-    { $$ = MakeScopedDestructorId( $1, $2 ); zapTemplateClassDeclSpec( state ); }
-    | Y_TEMPLATE_SCOPED_OPERATOR conversion-function-type
-    {
-        $$ = MakeScopedUserConversionId( $1, $2 );
-        ScopeQualifyPop();
-        zapTemplateClassDeclSpec( state );
-    }
-    | Y_TEMPLATE_SCOPED_OPERATOR operator-function-type
-    {
-        $$ = MakeScopedOperatorId( $1, $2 );
-        ScopeQualifyPop();
-        zapTemplateClassDeclSpec( state );
+        CErr2p( ERR_QUALIFIED_NAME_NOT_CLASS, $1 );
+        $$ = PTreeErrorNode( $1 );
     }
     ;
 
-operator-name
-    : Y_OPERATOR conversion-function-type
+class-name
+    : class-name-id
+    {
+        CLASS_DECL decl_type;
+        CLNAME_STATE after_name;
+
+        decl_type = CLASS_REFERENCE;
+        switch( t ) {
+        case Y_LEFT_BRACE:
+        case Y_COLON:
+            decl_type = CLASS_DEFINITION;
+            break;
+        case Y_SEMI_COLON:
+            decl_type = CLASS_DECLARATION;
+            break;
+        }
+        after_name = ClassName( $1, decl_type );
+        switch( after_name ) {
+        case CLNAME_CONTINUE:
+            what = P_RELEX;
+            break;
+        case CLNAME_PROBLEM:
+            what = P_DIAGNOSED;
+            break;
+        }
+    }
+    | nested-name-specifier
+    {
+        CLASS_DECL decl_type;
+        tc_directive tcd_control;
+
+        tcd_control = TCD_NULL;
+        decl_type = CLASS_REFERENCE;
+
+        switch( t ) {
+        case Y_LEFT_BRACE:
+        case Y_COLON:
+            decl_type = CLASS_DEFINITION;
+            break;
+        case Y_SEMI_COLON:
+            if( state->template_extern ) {
+                tcd_control |= TCD_EXTERN;
+            } else if( state->template_instantiate ) {
+                tcd_control |= TCD_INSTANTIATE;
+            }
+            decl_type = CLASS_DECLARATION;
+            break;
+        }
+        ClassSpecificInstantiation( $1, decl_type, tcd_control );
+        what = P_RELEX;
+    }
+    ;
+
+class-specifier
+    : class-key class-name
+    {
+        $$ = ClassRefDef();
+        GStackPop( &(state->gstack) );
+    }
+    | class-key class-name base-clause class-body
+    { $$ = $4; }
+    | class-key class-name             class-body
+    { $$ = $3; }
+    | class-key no-class-name base-clause class-body
+    { $$ = $4; }
+    | class-key no-class-name             class-body
+    { $$ = $3; }
+    ;
+
+class-key
+    : packed-class-opt Y_CLASS class-mod-opt
+    {
+        pushClassData( state, TF1_NULL, $1, $3 );
+    }
+    | packed-class-opt Y_STRUCT class-mod-opt
+    {
+        pushClassData( state, TF1_STRUCT, $1, $3 );
+    }
+    | packed-class-opt Y_UNION class-mod-opt
+    {
+        pushClassData( state, TF1_UNION, $1, $3 );
+    }
+    ;
+
+class-body
+    : class-substance Y_RIGHT_BRACE
+    {
+        GStackPop( &(state->gstack) );
+        GStackPop( &(state->gstack) );
+        $$ = $1;
+    }
+    ;
+
+class-substance
+    : start-class Y_LEFT_BRACE member-specification-opt
+    { $$ = ClassEnd(); what = P_RELEX; }
+    ;
+
+no-class-name
+    : /* nothing */
+    { ClassName( NULL, CLASS_DEFINITION ); }
+    ;
+
+packed-class-opt
+    : /* nothing */
+    { $$ = CLINIT_NULL; }
+    | Y__PACKED
+    { $$ = CLINIT_PACKED; }
+    ;
+
+class-mod-opt
+    : /* nothing */
+    { $$ = NULL; }
+    | class-mod-seq
+    ;
+
+class-mod
+    : pragma-modifier
+    | modifier
+    { $$ = MakeFlagModifier( $1 ); }
+    | ms-specific-declspec
+    { $$ = MakeClassModDeclSpec( $1 ); }
+    ;
+
+class-mod-seq
+    : class-mod
+    | class-mod-seq class-mod
+    { $$ = TypeClassModCombine( $1, $2 ); }
+    ;
+
+member-specification-opt
+    : /* nothing */
+    | member-specification
+    ;
+
+member-specification
+    : member-specification-opt member-declaration
+    | member-specification-opt access-specifier Y_COLON
+    { ClassPermission( $2 ); }
+    ;
+
+member-declaration
+    : simple-member-declaration-before-semicolon Y_SEMI_COLON
+    | function-definition
+    | access-declaration Y_SEMI_COLON
+    | static_assert-declaration Y_SEMI_COLON
+    | template-declaration
+    | Y_SEMI_COLON
+    {
+        SetErrLoc( &yylp[1] );
+        CErr1( WARN_EMPTY_MEMBER_DECL );
+    }
+    ;
+
+simple-member-declaration-before-semicolon
+    : simple-member-declaration
+    {
+        if( t != Y_SEMI_COLON ) {
+            SetErrLoc( &yylocation );
+            CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
+            what = P_DIAGNOSED;
+        }
+    }
+    ;
+
+simple-member-declaration
+    : decl-specifier-seq member-declarator-list
+    {
+        GStackPop( &(state->gstack) );
+    }
+    |                 member-declarator-list
+    {
+    }
+    | decl-specifier-seq
+    {
+        $1 = CheckNoDeclarator( $1 );
+        if( $1 == NULL ) {
+            what = P_SYNTAX;
+        }
+        GStackPop( &(state->gstack) );
+    }
+    | decl-specifier-seq ctor-declarator
+    {
+        InsertDeclInfo( GetCurrScope(), $2 );
+        FreeDeclInfo( $2 );
+        GStackPop( &(state->gstack) );
+    }
+    | using-declaration
+    ;
+
+member-declarator-list
+    : member-declarator
+    {
+        VerifyMemberFunction( state->gstack->u.dspec, $1 );
+    }
+    | member-declarator-list Y_COMMA member-declarator
+    {
+        VerifyMemberFunction( state->gstack->u.dspec, $3 );
+    }
+    ;
+
+member-declarator
+    : member-declaring-declarator constant-initializer
+    {
+        $$ = $1;
+        $$->sym->flag |= SF_IN_CLASS_INIT;
+        DataInitSimple( $2 );
+        GStackPop( &(state->gstack) );
+    }
+    | member-declaring-declarator Y_PURE_FUNCTION_SPECIAL Y_CONSTANT
+    {
+        if( $3->op != PT_INT_CONSTANT || $3->u.int_constant != 0 ) {
+            CErr1( ERR_MUST_BE_ZERO );
+        }
+        PTreeFree( $3 );
+        $$ = $1;
+    }
+    | member-declaring-declarator
+    {
+        $$ = $1;
+        DeclNoInit( $$ );
+    }
+    |         Y_COLON constant-expression
+    {
+        ClassBitfield( state->gstack->u.dspec, NULL, $2 );
+        $$ = NULL;
+    }
+    | declarator-id Y_COLON constant-expression
+    {
+        ClassBitfield( state->gstack->u.dspec, $1, $3 );
+        $$ = NULL;
+    }
+    ;
+
+member-declaring-declarator
+    : declarator
+    {
+        if( t == Y_EQUAL ) {
+            if( VerifyPureFunction( $1 ) ) {
+                t = Y_PURE_FUNCTION_SPECIAL;
+            }
+        }
+
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
+
+        if( t == Y_EQUAL ) {
+            if( ! SymIsStaticMember( $$->sym ) || ! SymIsConstant( $$->sym ) ) {
+                CErr1( ERR_MUST_BE_CONST_STATIC_INTEGRAL );
+            }
+
+            GStackPush( &(state->gstack), GS_DECL_INFO );
+            state->gstack->u.dinfo = $$;
+
+            reuseGStack( state, GS_INIT_DATA );
+            DataInitStart( &(state->gstack->u.initdata), $$ );
+            DataInitSimpleLocn( &yylp[1] );
+        }
+    }
+    ;
+
+constant-initializer
+    : Y_EQUAL constant-expression
+    { $$ = $2; }
+    ;
+
+
+/* A.9 Derived classes [gram.derived] */
+
+base-clause
+    : Y_COLON base-specifier-list
+    { ClassBaseClause( $2 ); }
+    ;
+
+base-specifier-list
+    : base-specifier
+    { $$ = ClassBaseList( NULL, $1 ); }
+    | base-specifier-list Y_COMMA base-specifier
+    { $$ = ClassBaseList( $1, $3 ); }
+    ;
+
+base-specifier
+    : base-qualifiers-opt qualified-class-specifier
+    { $$ = ClassBaseSpecifier( $1, $2 ); }
+    ;
+
+base-qualifiers-opt
+    : /* nothing */
+    { $$ = IN_NULL; }
+    | base-qualifiers-opt Y_PRIVATE
+    { $$ = ClassBaseQualifiers( $1, IN_PRIVATE ); }
+    | base-qualifiers-opt Y_PUBLIC
+    { $$ = ClassBaseQualifiers( $1, IN_PUBLIC ); }
+    | base-qualifiers-opt Y_PROTECTED
+    { $$ = ClassBaseQualifiers( $1, IN_PROTECTED ); }
+    | base-qualifiers-opt Y_VIRTUAL
+    { $$ = ClassBaseQualifiers( $1, IN_VIRTUAL ); }
+    ;
+
+access-specifier
+    : Y_PRIVATE
+    { $$ = SF_PRIVATE; }
+    | Y_PROTECTED
+    { $$ = SF_PROTECTED; }
+    | Y_PUBLIC
+    { $$ = SF_NULL; }
+    ;
+
+
+/* A.10 Special member functions [gram.special] */
+
+conversion-function-id
+    : Y_OPERATOR conversion-type-id
     { $$ = setLocation( $2, &yylp[1] ); }
-    | Y_OPERATOR operator-function-type
-    { $$ = setLocation( MakeOperatorId( $2 ), &yylp[1] ); }
     ;
 
-conversion-function-type
-    : type-specifiers
+scoped-conversion-function-id
+    : Y_SCOPED_OPERATOR conversion-type-id
+    {
+        $$ = setLocation( MakeScopedUserConversionId( $1, $2 ), &yylp[1] );
+        ScopeQualifyPop();
+    }
+    | Y_GLOBAL_OPERATOR conversion-type-id
+    { $$ = setLocation( $2, &yylp[1] ); }
+    ;
+
+template-scoped-conversion-function-id
+    : Y_TEMPLATE_SCOPED_OPERATOR conversion-type-id
+    {
+        $$ = setLocation( MakeScopedUserConversionId( $1, $2 ), &yylp[1] );
+        ScopeQualifyPop();
+    }
+    ;
+
+conversion-type-id
+    : type-specifier-seq
     {
         $$ = MakeUserConversionId( $1, NULL );
         GStackPop( &(state->gstack) );
     }
-    | type-specifiers conversion-function-ptr-declarator
+    | type-specifier-seq conversion-declarator
     {
         $$ = MakeUserConversionId( $1, $2 );
         GStackPop( &(state->gstack) );
     }
     ;
-    
-conversion-function-ptr-declarator
+
+conversion-declarator
     : ptr-operator
     { $$ = MakeAbstractDeclarator( $1 ); }
-    | ptr-operator conversion-function-ptr-declarator
+    | ptr-operator conversion-declarator
     { $$ = AddDeclarator( $2, $1 ); }
     ;
 
-operator-function-type
+ctor-initializer
+    : Y_COLON
+    {
+        if( state->template_record_tokens != NULL ) {
+            PTreeFreeSubtrees( getMultiToken() );
+            recordTemplateCtorInitializer( state );
+            $$ = NULL;
+        } else {
+            $$ = RewritePackageMemInit( getMultiToken() );
+        }
+        what = P_RELEX;
+    }
+    ;
+
+mem-initializer-list
+    : mem-initializer
+    { $$ = PTreeBinary( CO_LIST, NULL, $1 ); }
+    | mem-initializer-list Y_COMMA mem-initializer
+    { $$ = PTreeBinary( CO_LIST,   $1, $3 ); }
+    ;
+
+mem-initializer
+    : qualified-class-specifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
+    { $$ = MakeMemInitItem( $1, NULL, $3, &yylp[2] ); }
+    | identifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
+    { $$ = MakeMemInitItem( NULL, $1, $3, &yylp[2] ); }
+    ;
+
+/* non-standard */
+qualified-class-specifier
+    : qualified-class-type
+    {
+        if( $$ == NULL ) {
+            what = P_DIAGNOSED;
+        }
+    }
+    ;
+
+/* non-standard */
+qualified-class-type
+    : Y_TYPE_NAME
+    { $$ = sendClass( $1 ); }
+    | Y_GLOBAL_TYPE_NAME
+    { $$ = sendClass( $1 ); }
+    | Y_SCOPED_TYPE_NAME
+    { $$ = sendClass( $1 ); }
+    | nested-name-specifier
+    {
+        $$ = PTypeClassInstantiation( state->class_colon, $1 );
+        if( StructType( $$->partial ) == NULL ) {
+            CErr2p( ERR_EXPECTED_CLASS_TYPE, $$->partial );
+            PTypeRelease( $$ );
+            $$ = NULL;
+        }
+    }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TYPE_NAME
+    {
+        PTreeFreeSubtrees( $1 );
+        $$ = sendClass( $2 );
+    }
+    ;
+
+
+/* A.11 Overloading [gram.over] */
+
+/* TODO */
+operator-function-id
+    : Y_OPERATOR operator
+    { $$ = setLocation( MakeOperatorId( $2 ), &yylp[1] ); }
+    ;
+
+scoped-operator-function-id
+    : Y_SCOPED_OPERATOR operator
+    {
+        $$ = setLocation( MakeScopedOperatorId( $1, $2 ), &yylp[1] );
+        ScopeQualifyPop();
+    }
+    | Y_GLOBAL_OPERATOR operator
+    {
+        $$ = setLocation( MakeGlobalOperatorId( $1, $2 ), &yylp[1] );
+        ScopeQualifyPop();
+    }
+    ;
+
+template-scoped-operator-function-id
+    : Y_TEMPLATE_SCOPED_OPERATOR operator
+    {
+        $$ = setLocation( MakeScopedOperatorId( $1, $2 ), &yylp[1] );
+        ScopeQualifyPop();
+    }
+    ;
+
+operator
     : Y_NEW
     { $$ = CO_NEW; }
     | Y_DELETE
@@ -1219,946 +2947,103 @@ operator-function-type
     { $$ = CO_SEG_OP; }
     ;
 
-literal
-    : Y_CONSTANT
-    | Y_TRUE
-    | Y_FALSE
-    | strings
+
+/* A.12 Templates [gram.temp] */
+
+/* differs from standard */
+template-declaration
+    : template-declaration-before-semicolon Y_SEMI_COLON
+    | template-function-declaration
     ;
 
-strings
-    : Y_STRING
-    | strings Y_STRING
-    { $$ = PTreeStringLiteralConcat( $1, $2 ); }
+/* differs from standard */
+template-declaration-start
+    : template-key template-declaration-init lt-special template-opt-parameter-list Y_GT_SPECIAL
     ;
 
-/*** declaration syntax ***/
-might-restart-declarations
-    : start-restart-declarations
-    { popRestartDecl( state ); }
-    | start-restart-declarations declarations
-    { popRestartDecl( state ); }
+/* differs from standard */
+simple-template-declaration-before-semicolon
+    : block-declaration-before-semicolon
+    | simple-member-declaration-before-semicolon
     ;
-    
-start-restart-declarations
+
+template-declaration-before-semicolon
+    : template-declaration-start simple-template-declaration-before-semicolon
+    {
+        RewriteFree( ParseGetRecordingInProgress( NULL ) );
+        state->template_decl = FALSE;
+        GStackPop( &(state->gstack) ); /* GS_DECL_SPEC */
+        GStackPop( &(state->gstack) ); /* GS_TEMPLATE_DATA */
+    }
+    | Y_EXPORT template-declaration-start simple-template-declaration-before-semicolon
+    {
+        CErr1( WARN_UNSUPPORTED_TEMPLATE_EXPORT );
+        RewriteFree( ParseGetRecordingInProgress( NULL ) );
+        state->template_decl = FALSE;
+        GStackPop( &(state->gstack) ); /* GS_DECL_SPEC */
+        GStackPop( &(state->gstack) ); /* GS_TEMPLATE_DATA */
+    }
+    ;
+
+template-function-declaration
+    : template-declaration-start function-definition
+    {
+        RewriteFree( ParseGetRecordingInProgress( NULL ) );
+        state->template_decl = FALSE;
+        GStackPop( &(state->gstack) ); /* GS_DECL_SPEC */
+        GStackPop( &(state->gstack) ); /* GS_TEMPLATE_DATA */
+    }
+    | Y_EXPORT template-declaration-start function-definition
+    {
+        CErr1( WARN_UNSUPPORTED_TEMPLATE_EXPORT );
+        RewriteFree( ParseGetRecordingInProgress( NULL ) );
+        state->template_decl = FALSE;
+        GStackPop( &(state->gstack) ); /* GS_DECL_SPEC */
+        GStackPop( &(state->gstack) ); /* GS_TEMPLATE_DATA */
+    }
+    ;
+
+
+/* non standard */
+template-declaration-init
     : /* nothing */
-    { pushRestartDecl( state ); }
-    ;
-    
-/* should only be referenced by might-restart-declarations */
-declarations
-    : declaration
-    | declarations declaration
+    {
+        GStackPush( &(state->gstack), GS_TEMPLATE_DATA );
+        TemplateDeclInit( &(state->gstack->u.templatedata) );
+    }
     ;
 
-declaration
-    : simple-declaration-before-semicolon Y_SEMI_COLON
-    | function-definition
-    | linkage-specification
-    | template-declaration
-    | explicit-specialization
-    | template-directive
-    | namespace-definition
-    | Y_SEMI_COLON
-    ;
-    
-namespace-alias-definition
-    : Y_NAMESPACE make-id Y_EQUAL raw-qualified-namespace-specifier
-    { NameSpaceAlias( $2, $4 ); }
-    ;
-    
-namespace-using-directive
-    : Y_USING Y_NAMESPACE raw-qualified-namespace-specifier
-    { NameSpaceUsingDirective( $3 ); }
-    ;
-    
-namespace-using-declaration
-    : Y_USING qualified-id-expression
-    { NameSpaceUsingDeclId( $2 ); }
-    | Y_USING Y_TYPE_NAME
-    { NameSpaceUsingDeclType( sendType( $2 ) ); }
-    | Y_USING Y_GLOBAL_TYPE_NAME
-    { NameSpaceUsingDeclType( sendType( $2 ) ); }
-    | Y_USING Y_SCOPED_TYPE_NAME
-    { NameSpaceUsingDeclType( sendType( $2 ) ); }
-    | Y_USING template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
-    { NameSpaceUsingDeclType( sendType( $3 ) ); PTypeRelease( $2 ); }
-    | Y_USING Y_GLOBAL_TEMPLATE_NAME
-    { NameSpaceUsingDeclTemplateName( $2 ); }
-    | Y_USING Y_SCOPED_TEMPLATE_NAME
-    { NameSpaceUsingDeclTemplateName( $2 ); }
-    | Y_USING Y_GLOBAL_ID
-    { NameSpaceUsingDeclId( MakeGlobalId( $2 ) ); }
-    | Y_USING Y_GLOBAL_OPERATOR operator-function-type
-    { NameSpaceUsingDeclId( MakeGlobalOperatorId( $2, $3 ) ); }
-    ;
-    
-raw-qualified-namespace-specifier
-    : Y_SCOPED_ID
-    | Y_SCOPED_TYPE_NAME
-    | Y_SCOPED_TEMPLATE_NAME
-    | Y_SCOPED_NAMESPACE_NAME
-    | Y_GLOBAL_ID
-    | Y_GLOBAL_TYPE_NAME
-    | Y_GLOBAL_TEMPLATE_NAME
-    | Y_GLOBAL_NAMESPACE_NAME
-    | Y_ID
-    | Y_TYPE_NAME
-    | Y_TEMPLATE_NAME
-    | Y_NAMESPACE_NAME
-    ;
-    
-namespace-definition
-    : namespace-key Y_LEFT_BRACE namespace-body Y_RIGHT_BRACE
-    ;
-    
-namespace-key
-    : Y_NAMESPACE
-    { NameSpaceUnnamed( &yylp[1] ); }
-    | Y_NAMESPACE make-id
-    { NameSpaceNamed( $2 ); }
-    ;
-    
-namespace-body
+/* non standard */
+template-opt-parameter-list
     : /* nothing */
-    { NameSpaceClose(); }
-    | might-restart-declarations
-    { NameSpaceClose(); }
-    ;
-
-local-declaration
-    : simple-declaration-before-semicolon Y_SEMI_COLON
-    ;
-
-access-declaration
-    : qualified-id-expression
-    { ClassAccessDeclaration( $1, &yylocation ); }
-    | qualified-type-specifier
-    { ClassAccessTypeDeclaration( $1, &yylocation ); }
-    ;
-
-static_assert-declaration
-    : Y_STATIC_ASSERT Y_LEFT_PAREN constant-expression Y_COMMA strings Y_RIGHT_PAREN
     {
-        /* see N1720 -- Proposal to Add Static Assertions to the Core
-         * Language (Revision 3) */
-        DbgAssert( $3->op == PT_INT_CONSTANT );
-        DbgAssert( $5->op == PT_STRING_CONSTANT );
-
-        if( $3->u.int_constant == 0 ) {
-            CErr2p( ERR_STATIC_ASSERTION_FAILURE,
-                    StringBytes( $5->u.string ) );
-        }
-
-        PTreeFreeSubtrees( $3 );
-        PTreeFreeSubtrees( $5 );
+        pushDefaultDeclSpec( state );
+        state->template_record_tokens =
+            RewriteRecordInit( &(state->template_record_locn) );
+    }
+    | template-parameter-list
+    {
+        pushDefaultDeclSpec( state );
+        state->template_record_tokens =
+            RewriteRecordInit( &(state->template_record_locn) );
     }
     ;
 
-simple-declaration-before-semicolon
-    : simple-declaration
+
+template-parameter-list
+    : template-parameter
     {
-        if( t != Y_SEMI_COLON ) {
-            SetErrLoc( &yylocation );
-            CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
-            what = P_DIAGNOSED;
-        }
+        TemplateDeclAddArgument( $1 );
+    }
+    | template-parameter-list Y_COMMA template-parameter
+    {
+        TemplateDeclAddArgument( $3 );
     }
     ;
 
-simple-declaration
-    : decl-specifiers declarator-list
-    {
-        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
-        GStackPop( &(state->gstack) );
-    }
-    | no-declarator-declaration
-    {
-        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
-        GStackPop( &(state->gstack) );
-    }
-    | asm-declaration
-    | namespace-alias-definition
-    | namespace-using-directive
-    | namespace-using-declaration
-    | static_assert-declaration
-    ;
-
-no-declarator-declaration
-    : decl-specifiers
-    {
-        $$ = CheckNoDeclarator( $1 );
-        if( $$ == NULL ) {
-            what = P_SYNTAX;
-        }
-    }
-    ;
-
-decl-specifiers
-    : non-type-decl-specifiers type-specifier maybe-type-decl-specifiers
-    {
-        $1 = PTypeCombine( $1, $2 );
-        $$ = PTypeCombine( $1, $3 );
-        $$ = PTypeDone( $$, t == Y_SEMI_COLON );
-        pushUserDeclSpec( state, $$ );
-    }
-    | non-type-decl-specifiers type-specifier
-    {
-        $$ = PTypeCombine( $1, $2 );
-        $$ = PTypeDone( $$, t == Y_SEMI_COLON );
-        pushUserDeclSpec( state, $$ );
-    }
-    |                          type-specifier maybe-type-decl-specifiers
-    {
-        $$ = PTypeCombine( $1, $2 );
-        $$ = PTypeDone( $$, t == Y_SEMI_COLON );
-        pushUserDeclSpec( state, $$ );
-    }
-    |                          type-specifier
-    {
-        $$ = PTypeDone( $1, t == Y_SEMI_COLON );
-        pushUserDeclSpec( state, $$ );
-    }
-    | non-type-decl-specifiers
-    {
-        $$ = PTypeDone( $1, t == Y_SEMI_COLON );
-        pushUserDeclSpec( state, $$ );
-    }
-    ;
-
-non-type-decl-specifiers
-    : non-type-decl-specifier
-    | non-type-decl-specifiers non-type-decl-specifier
-    { $$ = PTypeCombine( $1, $2 ); }
-    ;
-
-maybe-type-decl-specifiers
-    : non-type-decl-specifier
-    | basic-type-specifier
-    | maybe-type-decl-specifiers non-type-decl-specifier
-    { $$ = PTypeCombine( $1, $2 ); }
-    | maybe-type-decl-specifiers basic-type-specifier
-    { $$ = PTypeCombine( $1, $2 ); }
-    ;
-
-non-type-decl-specifier
-    : storage-class-specifier
-    | function-specifier
-    | cv-qualifier
-    | ms-specific-declspec
-    ;
-    
-ms-specific-declspec
-    : Y___DECLSPEC Y_LEFT_PAREN                 Y_RIGHT_PAREN
-    { $$ = PTypeMSDeclSpec( NULL, NULL ); }
-    | Y___DECLSPEC Y_LEFT_PAREN ms-declspec-seq Y_RIGHT_PAREN
-    { $$ = $3; }
-    ;
-    
-ms-declspec-seq
-    : make-id
-    { $$ = PTypeMSDeclSpec( NULL, $1 ); }
-    | pragma-modifier
-    { $$ = PTypeMSDeclSpecModifier( NULL, $1 ); }
-    | ms-declspec-seq make-id
-    { $$ = PTypeMSDeclSpec( $1, $2 ); }
-    | ms-declspec-seq pragma-modifier
-    { $$ = PTypeMSDeclSpecModifier( $1, $2 ); }
-    ;
-
-storage-class-specifier
-    : Y_AUTO
-    { $$ = PTypeStgClass( STG_AUTO ); }
-    | Y_REGISTER
-    { $$ = PTypeStgClass( STG_REGISTER ); }
-    | Y_EXTERN
-    { $$ = PTypeStgClass( STG_EXTERN ); }
-    | Y_STATIC
-    { $$ = PTypeStgClass( STG_STATIC ); }
-    | Y_TYPEDEF
-    { $$ = PTypeStgClass( STG_TYPEDEF ); }
-    | Y_MUTABLE
-    { $$ = PTypeStgClass( STG_MUTABLE ); }
-    | Y_EXTERN linkage-id
-    { $$ = PTypeLinkage(); }
-    ;
-
-function-specifier
-    : Y_INLINE
-    { $$ = PTypeSpecifier( STY_INLINE ); }
-    | Y___INLINE
-    { $$ = PTypeSpecifier( STY_INLINE ); }
-    | Y_VIRTUAL
-    { $$ = PTypeSpecifier( STY_VIRTUAL ); }
-    | Y_FRIEND
-    { $$ = PTypeSpecifier( STY_FRIEND ); }
-    | Y_EXPLICIT
-    { $$ = PTypeSpecifier( STY_EXPLICIT ); }
-    ;
-
-type-specifier
-    : simple-type-specifier %prec Y_FAVOUR_REDUCE_SPECIAL %ambig 0 Y_LEFT_PAREN
-    | class-specifier
-    | enum-specifier
-    | typeof-specifier
-    | typename-specifier
-    ;
-
-typeof-specifier
-    : Y___TYPEOF Y_LEFT_PAREN expression Y_RIGHT_PAREN
-    { $$ = PTypeExpr( $3 ); }
-    | Y___TYPEOF Y_LEFT_PAREN type-id Y_RIGHT_PAREN
-    { $$ = PTypeTypeid( $3 ); }
-    ;
-
-type-specifiers
-    : decl-specifiers
-    {
-        $$ = CheckTypeSpecifier( $1 );
-        if( $$ == NULL ) {
-            what = P_SYNTAX;
-        }
-    }
-    ;
-
-cv-qualifier
-    : Y_CONST
-    { $$ = PTypeSpecifier( STY_CONST ); }
-    | Y_VOLATILE
-    { $$ = PTypeSpecifier( STY_VOLATILE ); }
-    | Y___UNALIGNED
-    { $$ = PTypeSpecifier( STY_UNALIGNED ); }
-    ;
-
-simple-type-specifier
-    : qualified-type-specifier
-    | basic-type-specifier
-    ;
-
-basic-type-specifier
-    : Y_CHAR
-    { $$ = PTypeScalar( STM_CHAR ); }
-    | Y_BOOL
-    { $$ = PTypeScalar( STM_BOOL ); }
-    | Y_SHORT
-    { $$ = PTypeScalar( STM_SHORT ); }
-    | Y_INT
-    { $$ = PTypeScalar( STM_INT ); }
-    | Y_LONG
-    { $$ = PTypeScalar( STM_LONG ); }
-    | Y_SIGNED
-    { $$ = PTypeScalar( STM_SIGNED ); }
-    | Y_UNSIGNED
-    { $$ = PTypeScalar( STM_UNSIGNED ); }
-    | Y_FLOAT
-    { $$ = PTypeScalar( STM_FLOAT ); }
-    | Y_DOUBLE
-    { $$ = PTypeScalar( STM_DOUBLE ); }
-    | Y_VOID
-    { $$ = PTypeScalar( STM_VOID ); }
-    | Y___SEGMENT
-    { $$ = PTypeScalar( STM_SEGMENT ); }
-    | Y___INT64
-    { $$ = PTypeScalar( STM_INT64 ); }
-    ;
-
-qualified-type-specifier
-    : Y_TYPE_NAME
-    { $$ = sendType( $1 ); }
-    | Y_SCOPED_TYPE_NAME
-    { $$ = sendType( $1 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
-    { $$ = sendType( $2 ); PTypeRelease( $1 ); }
-    | Y_GLOBAL_TYPE_NAME
-    { $$ = sendType( $1 ); }
-    | template-class-id
-    ;
-
-qualified-class-specifier
-    : qualified-class-type
-    {
-        if( $$ == NULL ) {
-            what = P_SYNTAX;
-        }
-    }
-    ;
-
-qualified-class-type
-    : Y_TYPE_NAME
-    { $$ = sendClass( $1 ); }
-    | Y_GLOBAL_TYPE_NAME
-    { $$ = sendClass( $1 ); }
-    | Y_SCOPED_TYPE_NAME
-    { $$ = sendClass( $1 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
-    { $$ = sendClass( $2 ); PTypeRelease( $1 ); }
-    | template-class-id
-    ;
-
-typename-specifier
-    : Y_TYPENAME Y_SCOPED_TYPE_NAME
-    { $$ = sendType( $2 ); }
-    | Y_TYPENAME template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
-    { $$ = sendType( $3 ); PTypeRelease( $2 ); }
-    ;
-
-enum-specifier
-    : enum-key enum-start enumerator-list Y_COMMA Y_RIGHT_BRACE
-    {
-        $$ = MakeEnumType( &(state->gstack->u.enumdata) );
-        GStackPop( &(state->gstack) );
-    }
-    | enum-key enum-start enumerator-list         Y_RIGHT_BRACE
-    {
-        $$ = MakeEnumType( &(state->gstack->u.enumdata) );
-        GStackPop( &(state->gstack) );
-    }
-    | enum-key enum-start                         Y_RIGHT_BRACE
-    {
-        $$ = MakeEnumType( &(state->gstack->u.enumdata) );
-        GStackPop( &(state->gstack) );
-    }
-    | Y_ENUM enum-name
-    {
-        ENUM_DATA edata;
-        InitEnumState( &edata, $2 );
-        $$ = EnumReference( &edata );
-    }
-    ;
-
-enum-start
-    : Y_LEFT_BRACE
-    { EnumDefine( &(state->gstack->u.enumdata) ); }
-    ;
-
-enum-key
-    : Y_ENUM make-id
-    {
-        GStackPush( &(state->gstack), GS_ENUM_DATA );
-        InitEnumState( &(state->gstack->u.enumdata), $2 );
-    }
-    | Y_ENUM
-    {
-        GStackPush( &(state->gstack), GS_ENUM_DATA );
-        InitEnumState( &(state->gstack->u.enumdata), NULL );
-    }
-    ;
-
-enumerator-list
-    : enumerator
-    | enumerator-list Y_COMMA enumerator
-    ;
-
-enumerator
-    : make-id
-    {
-        MakeEnumMember( &(state->gstack->u.enumdata), $1, NULL );
-    }
-    | make-id Y_EQUAL constant-expression
-    {
-        MakeEnumMember( &(state->gstack->u.enumdata), $1, $3 );
-    }
-    ;
-
-asm-declaration
-    : Y_ASM Y_LEFT_PAREN asm-id Y_RIGHT_PAREN
-    ;
-
-asm-id
-    : strings
-    {
-        StringTrash( $1->u.string );
-        PTreeFree( $1 );
-        CErr1( WARN_ASM_IGNORED );
-    }
-    ;
-
-linkage-specification
-    : Y_EXTERN linkage-id start-linkage-block linkage-body Y_RIGHT_BRACE
-    { LinkagePop(); }
-    ;
-    
-linkage-body
-    : /* nothing */
-    | might-restart-declarations
-    ;
-
-start-linkage-block
-    : Y_LEFT_BRACE
-    { LinkageBlock(); }
-    ;
-
-linkage-id
-    : strings
-    {
-        LinkagePush( $1->u.string->string );
-        StringTrash( $1->u.string );
-        PTreeFree( $1 );
-        if( ! ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
-            CErr1( ERR_ONLY_GLOBAL_LINKAGES );
-        }
-    }
-    ;
-
-declarator-list
-    : init-declarator
-    {
-        tryCtorStyleInit( state, $1 );
-    }
-    | declarator-list Y_COMMA comma-init-declarator
-    {
-        tryCtorStyleInit( state, $3 );
-    }
-    ;
-
-init-declarator
-    : declarator
-    {
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-        GStackPush( &(state->gstack), GS_INIT_DATA );
-        $$ = DataInitNoInit( &(state->gstack->u.initdata), $$ );
-        GStackPop( &(state->gstack) );
-    }
-    | declaring-declarator initializer
-    { $$ = $1; }
-    | ptr-mod-init-declarator
-    {
-        $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-    }
-    | actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
-    {
-        $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-        setInitWithLocn( $$, $3, &yylp[2] );
-    }
-    ;
-
-comma-init-declarator
-    : comma-declarator
-    {
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-        GStackPush( &(state->gstack), GS_INIT_DATA );
-        $$ = DataInitNoInit( &(state->gstack->u.initdata), $$ );
-        GStackPop( &(state->gstack) );
-    }
-    | comma-declaring-declarator initializer
-    { $$ = $1; }
-    | cv-qualifiers-opt ptr-mod-init-declarator
-    {
-        $2 = AddMSCVQualifierKludge( $1, $2 );
-        $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
-        $$ = InsertDeclInfo( GetCurrScope(), $2 );
-    }
-    | cv-qualifiers-opt actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
-    {
-        $2 = AddMSCVQualifierKludge( $1, $2 );
-        $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
-        $$ = InsertDeclInfo( GetCurrScope(), $2 );
-        setInitWithLocn( $$, $4, &yylp[3] );
-    }
-    ;
-
-declaring-declarator
-    : declarator
-    {
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    ;
-
-comma-declaring-declarator
-    : comma-declarator
-    {
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    ;
-
-declarator
-    : ptr-mod-declarator
-    {
-        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
-    }
-    | actual-declarator
-    {
-        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
-    }
-    ;
-
-comma-declarator
-    : cv-qualifiers-opt ptr-mod-declarator
-    {
-        $2 = AddMSCVQualifierKludge( $1, $2 );
-        $$ = FinishDeclarator( state->gstack->u.dspec, $2 );
-    }
-    | cv-qualifiers-opt actual-declarator
-    {
-        $2 = AddMSCVQualifierKludge( $1, $2 );
-        $$ = FinishDeclarator( state->gstack->u.dspec, $2 );
-    }
-    ;
-
-ptr-mod
-    : modifier
-    { $$ = MakeFlagModifier( $1 ); }
-    | Y___BASED Y_LEFT_PAREN based-expression Y_RIGHT_PAREN
-    { $$ = $3; }
-    | pragma-modifier
-    | ptr-operator
-    ;
-
-ptr-mod-init-declarator
-    : ptr-mod ptr-mod-init-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    | ptr-mod actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
-    {
-        $$ = AddDeclarator( $2, $1 );
-        setInitWithLocn( $$, $4, &yylp[3] );
-    }
-    ;
-
-ptr-mod-declarator
-    : ptr-mod ptr-mod-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    | ptr-mod actual-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    ;
-
-actual-declarator
-    : declarator-id
-    {
-        $$ = MakeDeclarator( state->gstack->u.dspec, $1 );
-        if( $$ == NULL ) {
-            what = P_SYNTAX;
-        } else {
-            if( $$->template_member ) {
-                what = P_CLASS_TEMPLATE;
-            }
-        }
-    }
-    | actual-declarator Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
-    {
-        $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
-        $$ = AddExplicitParms( $$, $3 );
-    }
-    | actual-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
-    { $$ = AddArrayDeclarator( $1, $3 ); }
-    | actual-declarator Y_LEFT_BRACKET                     Y_RIGHT_BRACKET
-    { $$ = AddArrayDeclarator( $1, NULL ); }
-    | Y_LEFT_PAREN ptr-mod-declarator Y_RIGHT_PAREN
-    { $$ = $2; }
-    | Y_LEFT_PAREN actual-declarator Y_RIGHT_PAREN
-    { $$ = $2; }
-    ;
-
-modifier
-    : Y___NEAR
-    { $$ = TF1_NEAR; }
-    | Y___FAR
-    { $$ = TF1_FAR; }
-    | Y__FAR16
-    { $$ = TF1_SET_FAR16;       /* equals TF1_FAR on the 8086 */ }
-    | Y___FAR16
-    { $$ = TF1_SET_FAR16;       /* equals TF1_FAR on the 8086 */ }
-    | Y___HUGE
-    { $$ = TF1_SET_HUGE;        /* equals TF1_FAR on the 386 */ }
-    | Y__EXPORT
-    { $$ = TF1_DLLEXPORT | TF1_HUG_FUNCTION; }
-    | Y___EXPORT
-    { $$ = TF1_DLLEXPORT | TF1_HUG_FUNCTION; }
-    | Y___LOADDS
-    { $$ = TF1_LOADDS | TF1_TYP_FUNCTION; }
-    | Y___SAVEREGS
-    { $$ = TF1_SAVEREGS | TF1_TYP_FUNCTION; }
-    | Y___INTERRUPT
-    { $$ = TF1_INTERRUPT | TF1_TYP_FUNCTION; }
-    ;
-
-based-expression
-    : segment-cast-opt Y___SEGNAME Y_LEFT_PAREN strings Y_RIGHT_PAREN
-    { $$ = MakeBasedModifier( TF1_BASED_STRING, $1, $4 ); }
-    | segment-cast-opt Y_ID
-    { $$ = MakeBasedModifier( TF1_NULL, $1, $2 ); }
-    | segment-cast-opt Y_VOID
-    { $$ = MakeBasedModifier( TF1_BASED_VOID, $1, NULL ); }
-    | segment-cast-opt Y___SELF
-    { $$ = MakeBasedModifier( TF1_BASED_SELF, $1, NULL ); }
-    ;
-
-segment-cast-opt
-    : /* nothing */
-    { $$ = FALSE; }
-    | Y_LEFT_PAREN Y___SEGMENT Y_RIGHT_PAREN
-    { $$ = TRUE; }
-    ;
-
-pragma-modifier
-    : Y___PRAGMA Y_LEFT_PAREN pragma-id Y_RIGHT_PAREN
-    {
-        $$ = MakePragma( $3->u.string->string );
-        StringTrash( $3->u.string );
-        PTreeFree( $3 );
-    }
-    | Y__CDECL
-    { $$ = MakeIndexPragma( M_CDECL ); }
-    | Y___CDECL
-    { $$ = MakeIndexPragma( M_CDECL ); }
-    | Y__FASTCALL
-    { $$ = MakeIndexPragma( M_FASTCALL ); }
-    | Y___FASTCALL
-    { $$ = MakeIndexPragma( M_FASTCALL ); }
-    | Y___FORTRAN
-    { $$ = MakeIndexPragma( M_FORTRAN ); }
-    | Y__OPTLINK
-    { $$ = MakeIndexPragma( M_OPTLINK ); }
-    | Y__PASCAL
-    { $$ = MakeIndexPragma( M_PASCAL ); }
-    | Y___PASCAL
-    { $$ = MakeIndexPragma( M_PASCAL ); }
-    | Y___STDCALL
-    { $$ = MakeIndexPragma( M_STDCALL ); }
-    | Y__SYSCALL
-    { $$ = MakeIndexPragma( M_SYSCALL ); }
-    | Y___SYSCALL
-    { $$ = MakeIndexPragma( M_SYSCALL ); }
-    | Y__SYSTEM
-    { $$ = MakeIndexPragma( M_SYSTEM ); }
-    | Y___WATCALL
-    { $$ = MakeIndexPragma( M_WATCALL ); }
-    ;
-
-pragma-id
-    : strings
-    ;
-
-ptr-operator
-    : Y_TIMES cv-qualifiers-opt
-    { $$ = MakePointerType( TF1_NULL, $2 ); }
-    | Y_AND cv-qualifiers-opt
-    { $$ = MakePointerType( TF1_REFERENCE, $2 ); }
-    | Y_SCOPED_TIMES cv-qualifiers-opt
-    { $$ = MakeMemberPointer( $1, $2 ); }
-    | template-class-id Y_TEMPLATE_SCOPED_TIMES cv-qualifiers-opt
-    { $$ = MakeMemberPointer( $2, $3 ); PTypeRelease( $1 ); }
-    | Y_TEMPLATE_SCOPED_TIMES cv-qualifiers-opt
-    { $$ = MakeMemberPointer( $1, $2 ); zapTemplateClassDeclSpec( state ); }
-    | Y_TIMES Y__SEG16 cv-qualifiers-opt
-    { $$ = MakeSeg16Pointer( $3 ); }
-    ;
-
-cv-qualifiers-opt
-    : /* nothing */
-    { $$ = STY_NULL; }
-    | Y_CONST
-    { $$ = STY_CONST; }
-    | Y_VOLATILE
-    { $$ = STY_VOLATILE; }
-    | Y___UNALIGNED
-    { $$ = STY_UNALIGNED; }
-    | Y_CONST Y_VOLATILE
-    { $$ = STY_CONST | STY_VOLATILE; }
-    | Y_VOLATILE Y_CONST
-    { $$ = STY_CONST | STY_VOLATILE; }
-    | Y_CONST Y___UNALIGNED
-    { $$ = STY_CONST | STY_UNALIGNED; }
-    | Y___UNALIGNED Y_CONST
-    { $$ = STY_CONST | STY_UNALIGNED; }
-    | Y_VOLATILE Y___UNALIGNED
-    { $$ = STY_VOLATILE | STY_UNALIGNED; }
-    | Y___UNALIGNED Y_VOLATILE
-    { $$ = STY_VOLATILE | STY_UNALIGNED; }
-    | Y___UNALIGNED Y_CONST Y_VOLATILE
-    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
-    | Y___UNALIGNED Y_VOLATILE Y_CONST
-    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
-    | Y_VOLATILE Y_CONST Y___UNALIGNED
-    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
-    | Y_VOLATILE Y___UNALIGNED Y_CONST
-    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
-    | Y_CONST Y_VOLATILE Y___UNALIGNED
-    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
-    | Y_CONST Y___UNALIGNED Y_VOLATILE
-    { $$ = STY_CONST | STY_VOLATILE | STY_UNALIGNED; }
-    ;
-
-declarator-id
-    : Y_ID
-    | Y_GLOBAL_ID
-    | Y_TEMPLATE_NAME
-    | Y_NAMESPACE_NAME
-    | qualified-type-specifier
-    { $$ = MakeIdFromType( $1 ); }
-    | destructor-name
-    | operator-name
-    | qualified-id-expression
-    ;
-    
-special-new-type-id
-    : type-specifiers special-new-abstract-declarator
-    {
-        $$ = $2;
-        GStackPop( &(state->gstack) );
-    }
-    | type-specifiers
-    {
-        $$ = MakeNewTypeId( DoDeclSpec( state->gstack->u.dspec ) );
-        GStackPop( &(state->gstack) );
-    }
-    ;
-
-type-id
-    : type-specifiers abstract-declarator
-    {
-        $$ = TypeDeclarator( $2 );
-        GStackPop( &(state->gstack) );
-    }
-    | type-specifiers
-    {
-        $$ = DoDeclSpec( state->gstack->u.dspec );
-        GStackPop( &(state->gstack) );
-    }
-    ;
-
-type-id-list
-    : type-id
-    | type-id-list Y_COMMA type-id
-    { $$ = PTreeTListAppend( $1, $3 ); }
-    ;
-
-special-new-abstract-declarator
-    : special-new-abstract-ptr-mod-declarator
-    {
-        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
-    }
-    | special-new-actual-abstract-declarator
-    {
-        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
-    }
-    ;
-
-abstract-declarator
-    : abstract-ptr-mod-declarator
-    {
-        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
-    }
-    | actual-abstract-declarator
-    {
-        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
-    }
-    ;
-
-special-new-abstract-ptr-mod-declarator
-    : ptr-mod special-new-abstract-ptr-mod-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    | ptr-mod special-new-actual-abstract-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    | ptr-mod
-    { $$ = MakeAbstractDeclarator( $1 ); }
-    ;
-
-abstract-ptr-mod-declarator
-    : ptr-mod abstract-ptr-mod-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    | ptr-mod actual-abstract-declarator
-    { $$ = AddDeclarator( $2, $1 ); }
-    | ptr-mod
-    { $$ = MakeAbstractDeclarator( $1 ); }
-    ;
-
-special-new-actual-abstract-declarator
-    : special-new-actual-abstract-declarator Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
-    {
-        $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
-        FreeArgs( $3 );
-    }
-    | Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
-    {
-        $$ = MakeAbstractDeclarator( MakeFnType( &($2), $4, $5 ) );
-        FreeArgs( $2 );
-    }
-    | special-new-actual-abstract-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
-    { $$ = AddArrayDeclarator( $1, $3 ); }
-    |                            Y_LEFT_BRACKET expression Y_RIGHT_BRACKET
-    { $$ = MakeNewDynamicArray( $2 ); }
-    | special-new-actual-abstract-declarator Y_LEFT_BRACKET Y_RIGHT_BRACKET
-    { $$ = AddArrayDeclarator( $1, NULL ); }
-    |                            Y_LEFT_BRACKET Y_RIGHT_BRACKET
-    {
-        $$ = MakeAbstractDeclarator( NULL );
-        $$ = AddArrayDeclarator( $$, NULL );
-    }
-    | Y_LEFT_PAREN special-new-actual-abstract-declarator Y_RIGHT_PAREN
-    { $$ = $2; }
-    | Y_LEFT_PAREN special-new-abstract-ptr-mod-declarator Y_RIGHT_PAREN
-    { $$ = $2; }
-    ;
-
-actual-abstract-declarator
-    : actual-abstract-declarator Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
-    {
-        $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
-        FreeArgs( $3 );
-    }
-    | Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
-    {
-        $$ = MakeAbstractDeclarator( MakeFnType( &($2), $4, $5 ) );
-        FreeArgs( $2 );
-    }
-    | actual-abstract-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
-    { $$ = AddArrayDeclarator( $1, $3 ); }
-    |                            Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
-    {
-        $$ = MakeAbstractDeclarator( NULL );
-        $$ = AddArrayDeclarator( $$, $2 );
-    }
-    | actual-abstract-declarator Y_LEFT_BRACKET Y_RIGHT_BRACKET
-    { $$ = AddArrayDeclarator( $1, NULL ); }
-    |                            Y_LEFT_BRACKET Y_RIGHT_BRACKET
-    {
-        $$ = MakeAbstractDeclarator( NULL );
-        $$ = AddArrayDeclarator( $$, NULL );
-    }
-    | Y_LEFT_PAREN actual-abstract-declarator Y_RIGHT_PAREN
-    { $$ = $2; }
-    | Y_LEFT_PAREN abstract-ptr-mod-declarator Y_RIGHT_PAREN
-    { $$ = $2; }
-    ;
-
-abstract-args
-    : /* nothing */
-    { $$ = NULL; }
-    | arg-declaration-list
-    | arg-declaration-list Y_COMMA Y_DOT_DOT_DOT
-    { $$ = AddEllipseArg( $1 ); }
-    | arg-declaration-list         Y_DOT_DOT_DOT
-    { $$ = AddEllipseArg( $1 ); }
-    | Y_DOT_DOT_DOT
-    { $$ = AddEllipseArg( NULL ); }
-    ;
-
-arg-declaration-list
-    : arg-declaration
-    { $$ = AddArgument( NULL, $1 ); }
-    | arg-declaration-list Y_COMMA arg-declaration
-    { $$ = AddArgument( $1, $3 ); }
-    ;
-
-arg-decl-specifiers
-    : decl-specifiers
-    {
-        $$ = CheckArgDSpec( $1 );
-        if( $$ == NULL ) {
-            what = P_SYNTAX;
-        }
-    }
-    ;
-
-arg-declaration
-    : simple-arg-declaration
-    { GStackPop( &(state->gstack) ); }
+template-parameter
+    : type-parameter
+    | parameter-declaration
     ;
 
 type-parameter
@@ -2166,6 +3051,7 @@ type-parameter
     | type-parameter-no-defarg type-defarg-parse-or-copy
     ;
 
+/* non standard */
 type-parameter-no-defarg
     : template-typename-key
     {
@@ -2191,6 +3077,7 @@ type-parameter-no-defarg
     }
     ;
 
+/* non standard */
 template-typename-key
     : Y_TYPENAME
     { }
@@ -2198,650 +3085,96 @@ template-typename-key
     { }
     ;
 
-simple-arg-declaration
-    : arg-decl-specifiers
-    { $$ = DeclSpecDeclarator( $1 ); }
-    | arg-decl-specifiers simple-arg-no-id defarg-parse-or-copy
-    { $$ = $2; }
-    | arg-decl-specifiers declarator
-    { $$ = $2; }
-    | arg-decl-specifiers declarator defarg-parse-or-copy
-    { $$ = $2; }
-    | arg-decl-specifiers abstract-declarator
-    { $$ = $2; }
-    | arg-decl-specifiers abstract-declarator defarg-parse-or-copy
-    { $$ = $2; }
-    ;
-    
-simple-arg-no-id
-    : /* nothing */
-    { $$ = DeclSpecDeclarator( $<dspec>0 ); }
-    ;
-    
-defarg-parse-or-copy
-    : defarg-check Y_EQUAL assignment-expression
+template-id
+    : Y_TEMPLATE_ID lt-special template-argument-list-opt Y_GT_SPECIAL
     {
-        DECL_INFO *dinfo;
-
-        DbgAssert( $1 == NULL );
-        dinfo = $<dinfo>0;
-        dinfo->defarg_expr = $3;
-        dinfo->has_defarg = TRUE;
-        TokenLocnAssign( dinfo->init_locn, yylp[2] );
-    }
-    | defarg-check Y_DEFARG_GONE_SPECIAL
-    {
-        DECL_INFO *dinfo;
-
-        dinfo = $<dinfo>0;
-        dinfo->defarg_rewrite = $1;
-        dinfo->has_defarg = TRUE;
-        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+        $3 = NodeReverseArgs( NULL, $3 );
+        $3->flags |= PTF_ALREADY_ANALYSED;
+        $$ = PTreeBinary( CO_TEMPLATE, $1, $3 );
     }
     ;
 
-type-defarg-parse-or-copy
-    : defarg-check Y_EQUAL type-id
+scoped-template-id
+    : Y_SCOPED_TEMPLATE_ID lt-special template-argument-list-opt Y_GT_SPECIAL
     {
-        DECL_INFO *dinfo;
-
-        DbgAssert( $1 == NULL );
-        dinfo = $<dinfo>0;
-        dinfo->defarg_expr = $3;
-        dinfo->has_defarg = TRUE;
-        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+        $3 = NodeReverseArgs( NULL, $3 );
+        $3->flags |= PTF_ALREADY_ANALYSED;
+        $$ = PTreeBinary( CO_TEMPLATE, MakeScopedId( $1 ), $3 );
     }
-    | defarg-check Y_DEFARG_GONE_SPECIAL
+    | Y_GLOBAL_TEMPLATE_ID lt-special template-argument-list-opt Y_GT_SPECIAL
     {
-        DECL_INFO *dinfo;
-
-        dinfo = $<dinfo>0;
-        dinfo->defarg_rewrite = $1;
-        dinfo->has_defarg = TRUE;
-        TokenLocnAssign( dinfo->init_locn, yylp[2] );
+        $3 = NodeReverseArgs( NULL, $3 );
+        $3->flags |= PTF_ALREADY_ANALYSED;
+        $$ = PTreeBinary( CO_TEMPLATE, MakeScopedId( $1 ), $3 );
     }
     ;
 
-defarg-check
-    : /* nothing */
-    {
-        if( t != Y_EQUAL ) {
-            what = P_SYNTAX;
-            $$ = NULL;
-        } else {
-            angle_bracket_stack *angle_state;
-
-            angle_state = VstkTop( &(state->angle_stack) );
-            if( state->template_decl && ( angle_state != NULL )
-             && ( angle_state->paren_depth == 0 ) ) {
-                $$ = RewritePackageTemplateDefArg();
-                t = Y_DEFARG_GONE_SPECIAL;
-            } else if( ClassOKToRewrite() ) {
-                $$ = RewritePackageDefArg( NULL );
-                t = Y_DEFARG_GONE_SPECIAL;
-            } else {
-                $$ = NULL;
-            }
-        }
-    }
-    ;
-
-ctor-declarator
-    : Y_LEFT_PAREN abstract-args Y_RIGHT_PAREN cv-qualifiers-opt except-spec-opt
-    {
-        DECL_SPEC *dspec;
-        PTREE id;
-
-        dspec = state->gstack->u.dspec;
-        id = MakeConstructorId( dspec );
-        if( id == NULL ) {
-            what = P_SYNTAX;
-        }
-        $$ = MakeDeclarator( dspec, id );
-        if( $$->template_member ) {
-            what = P_CLASS_TEMPLATE;
-        } else {
-            AddDeclarator( $$, MakeFnType( &($2), $4, $5 ) );
-            $$ = AddExplicitParms( $$, $2 );
-            $$ = FinishDeclarator( dspec, $$ );
-        }
-    }
-    ;
-
-function-declaration
-    : decl-specifiers declarator ctor-initializer
-    {
-        $2->mem_init = $3;
-        $$ = DeclFunction( state->gstack->u.dspec, $2 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    | decl-specifiers declarator
-    {
-        $$ = DeclFunction( state->gstack->u.dspec, $2 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    |                 declarator ctor-initializer
-    {
-        $1->mem_init = $2;
-        $$ = DeclFunction( NULL, $1 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    |                 declarator
-    {
-        $$ = DeclFunction( NULL, $1 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    | decl-specifiers ctor-declarator ctor-initializer
-    {
-        $2->mem_init = $3;
-        $$ = DeclFunction( state->gstack->u.dspec, $2 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    | decl-specifiers ctor-declarator
-    {
-        $$ = DeclFunction( state->gstack->u.dspec, $2 );
-        GStackPush( &(state->gstack), GS_DECL_INFO );
-        state->gstack->u.dinfo = $$;
-    }
-    ;
-
-function-definition
-    : function-declaration function-body
-    {
-        GStackPop( &(state->gstack) );  /* decl-info */
-        if( $1->has_dspec ) {
-            GStackPop( &(state->gstack) );      /* decl-spec */
-        }
-        if( $1->body != NULL ) {
-            if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL ) ) {
-                TemplateFunctionAttachDefn( $1 );
-            } else {
-                ClassStoreInlineFunc( $1 );
-            }
-        } else {
-            FreeDeclInfo( $1 );
-        }
-    }
-    ;
-
-function-body
-    : check-for-rewrite Y_LEFT_BRACE absorb-body Y_RIGHT_BRACE
-    ;
-
-check-for-rewrite
-    : /* nothing */
-    {
-        /* guards against errors from Q during rewriting:
-            void foo( void )
-            {
-                Q::blah
-            }
-        */
-        setNoSuperTokens( state );
-    }
-    ;
-
-absorb-body
-    : /* nothing */
-    {
-        /* token will be thrown away (see check-for-rewrite) */
-        ParseFlush();
-        if( doFnbodyRewrite() ) {
-            REWRITE *rewrite;
-            rewrite = RewritePackageFunction( getMultiToken() );
-            state->gstack->u.dinfo->body = rewrite;
-        } else {
-            FunctionBody( state->gstack->u.dinfo );
-        }
-        what = P_RELEX;
-    }
-    ;
-
-initializer
-    : init-start assignment-expression
-    {
-        DataInitSimple( $2 );
-        GStackPop( &(state->gstack) );
-    }
-    | init-start braced-initializer
-    {
-        GStackPop( &(state->gstack) );
-    }
-    ;
-
-init-start
-    : Y_EQUAL
-    {
-        DECL_INFO *dinfo;
-
-        dinfo = state->gstack->u.dinfo;
-        reuseGStack( state, GS_INIT_DATA );
-        DataInitStart( &(state->gstack->u.initdata), dinfo );
-        DataInitSimpleLocn( &yylp[1] );
-    }
-    ;
-
-initializer-list
-    : assignment-expression
-    { DataInitExpr( $1 ); }
-    | initializer-list Y_COMMA assignment-expression
-    { DataInitExpr( $3 ); }
-    | braced-initializer
-    | initializer-list Y_COMMA braced-initializer
-    ;
-
-braced-initializer
-    : brace-start initializer-list Y_COMMA Y_RIGHT_BRACE
-    { DataInitPop(); }
-    | brace-start initializer-list         Y_RIGHT_BRACE
-    { DataInitPop(); }
-    ;
-
-brace-start
-    : Y_LEFT_BRACE
-    { DataInitPush(); }
-    ;
-
-/* must be before 'class-specifier' to resolve r/r conflict properly */
-start-class
-    : /* nothing */
-    {
-        ClassStart();
-        pushDefaultDeclSpec( state );
-    }
-    ;
-
-class-specifier
-    : class-key class-name
-    {
-        $$ = ClassRefDef();
-        GStackPop( &(state->gstack) );
-    }
-    | class-key class-name base-clause class-body
-    { $$ = $4; }
-    | class-key class-name             class-body
-    { $$ = $3; }
-    | class-key no-class-name base-clause class-body
-    { $$ = $4; }
-    | class-key no-class-name             class-body
-    { $$ = $3; }
-    ;
-
-no-class-name
-    : /* nothing */
-    { ClassName( NULL, CLASS_DEFINITION ); }
-    ;
-
-class-name
-    : class-name-id
-    {
-        CLASS_DECL decl_type;
-        CLNAME_STATE after_name;
-
-        decl_type = CLASS_REFERENCE;
-        switch( t ) {
-        case Y_LEFT_BRACE:
-        case Y_COLON:
-            if( state->template_class_inst_defer ) {
-                what = P_DEFER_DEFN;
-                decl_type = CLASS_DECLARATION;
-            } else {
-                decl_type = CLASS_DEFINITION;
-            }
-            break;
-        case Y_SEMI_COLON:
-            decl_type = CLASS_DECLARATION;
-            break;
-        }
-        after_name = ClassName( $1, decl_type );
-        switch( after_name ) {
-        case CLNAME_CONTINUE:
-            what = P_RELEX;
-            break;
-        case CLNAME_PROBLEM:
-            what = P_DIAGNOSED;
-            break;
-        }
-    }
-    | template-class-pre-id
-    {
-        CLASS_DECL decl_type;
-
-        decl_type = CLASS_REFERENCE;
-        switch( t ) {
-        case Y_LEFT_BRACE:
-        case Y_COLON:
-            decl_type = CLASS_DEFINITION;
-            break;
-        case Y_SEMI_COLON:
-            decl_type = CLASS_DECLARATION;
-            break;
-        }
-        ClassSpecificInstantiation( $1, decl_type );
-        what = P_RELEX;
-    }
-    ;
-
-class-body
-    : class-substance Y_RIGHT_BRACE
-    {
-        GStackPop( &(state->gstack) );
-        GStackPop( &(state->gstack) );
-        $$ = $1;
-    }
-    ;
-
-class-substance
-    : start-class Y_LEFT_BRACE member-specification-opt
-    { $$ = ClassEnd(); what = P_RELEX; }
-    ;
-
-class-key
-    : packed-class-opt Y_CLASS class-mod-opt
-    {
-        pushClassData( state, TF1_NULL, $1, $3 );
-    }
-    | packed-class-opt Y_STRUCT class-mod-opt
-    {
-        pushClassData( state, TF1_STRUCT, $1, $3 );
-    }
-    | packed-class-opt Y_UNION class-mod-opt
-    {
-        pushClassData( state, TF1_UNION, $1, $3 );
-    }
-    ;
-
-packed-class-opt
-    : /* nothing */
-    { $$ = CLINIT_NULL; }
-    | Y__PACKED
-    { $$ = CLINIT_PACKED; }
-    ;
-    
-class-mod-opt
-    : /* nothing */
-    { $$ = NULL; }
-    | class-mod-seq
-    ;
-    
-class-mod
-    : pragma-modifier
-    | modifier
-    { $$ = MakeFlagModifier( $1 ); }
-    | ms-specific-declspec
-    { $$ = MakeClassModDeclSpec( $1 ); }
-    ;
-    
-class-mod-seq
-    : class-mod
-    | class-mod-seq class-mod
-    { $$ = TypeClassModCombine( $1, $2 ); }
-    ;
-
-member-specification-opt
-    : /* nothing */
-    | member-specification
-    ;
-
-member-specification
-    : member-specification-opt member-declaration
-    | member-specification-opt access-specifier Y_COLON
-    { ClassPermission( $2 ); }
-    ;
-
-access-specifier
-    : Y_PRIVATE
-    { $$ = SF_PRIVATE; }
-    | Y_PROTECTED
-    { $$ = SF_PROTECTED; }
-    | Y_PUBLIC
-    { $$ = SF_NULL; }
-    ;
-
-member-declaration
-    : simple-member-declaration-before-semicolon Y_SEMI_COLON
-    | function-definition
-    | access-declaration Y_SEMI_COLON
-    | Y_SEMI_COLON
-    {
-        SetErrLoc( &yylp[1] );
-        CErr1( WARN_EMPTY_MEMBER_DECL );
-    }
-    | template-declaration
-    | static_assert-declaration Y_SEMI_COLON
-    ;
-
-simple-member-declaration-before-semicolon
-    : simple-member-declaration
-    {
-        if( t != Y_SEMI_COLON ) {
-            SetErrLoc( &yylocation );
-            CErr1( ERR_SYNTAX_MISSING_SEMICOLON );
-            what = P_DIAGNOSED;
-        }
-    }
-    ;
-
-simple-member-declaration
-    : decl-specifiers member-declarator-list
-    {
-        GStackPop( &(state->gstack) );
-    }
-    |                 member-declarator-list
-    {
-    }
-    | decl-specifiers
-    {
-        $1 = CheckNoDeclarator( $1 );
-        if( $1 == NULL ) {
-            what = P_SYNTAX;
-        }
-        GStackPop( &(state->gstack) );
-    }
-    | decl-specifiers ctor-declarator
-    {
-        InsertDeclInfo( GetCurrScope(), $2 );
-        FreeDeclInfo( $2 );
-        GStackPop( &(state->gstack) );
-    }
-    | namespace-using-declaration
-    ;
-
-member-declarator-list
-    : member-declarator
-    {
-        VerifyMemberFunction( state->gstack->u.dspec, $1 );
-    }
-    | member-declarator-list Y_COMMA member-declarator
-    {
-        VerifyMemberFunction( state->gstack->u.dspec, $3 );
-    }
-    ;
-
-member-declaring-declarator
-    : declarator
-    {
-        if( t == Y_EQUAL ) {
-            if( VerifyPureFunction( $1 ) ) {
-                t = Y_PURE_FUNCTION_SPECIAL;
-            }
-        }
-
-        $$ = InsertDeclInfo( GetCurrScope(), $1 );
-
-        if( t == Y_EQUAL ) {
-            if( ! SymIsStaticMember( $$->sym ) || ! SymIsConstant( $$->sym ) ) {
-                CErr1( ERR_MUST_BE_CONST_STATIC_INTEGRAL );
-            }
-
-            GStackPush( &(state->gstack), GS_DECL_INFO );
-            state->gstack->u.dinfo = $$;
-
-            reuseGStack( state, GS_INIT_DATA );
-            DataInitStart( &(state->gstack->u.initdata), $$ );
-            DataInitSimpleLocn( &yylp[1] );
-        }
-    }
-    ;
-
-member-declarator
-    : member-declaring-declarator Y_EQUAL constant-expression
-    {
-        $$ = $1;
-        $$->sym->flag |= SF_IN_CLASS_INIT;
-        DataInitSimple( $3 );
-        GStackPop( &(state->gstack) );
-    }
-    | member-declaring-declarator Y_PURE_FUNCTION_SPECIAL Y_CONSTANT
-    {
-        if( $3->op != PT_INT_CONSTANT || $3->u.int_constant != 0 ) {
-            CErr1( ERR_MUST_BE_ZERO );
-        }
-        PTreeFree( $3 );
-        $$ = $1;
-    }
-    | member-declaring-declarator
-    {
-        $$ = $1;
-        DeclNoInit( $$ );
-    }
-    |         Y_COLON constant-expression
-    {
-        ClassBitfield( state->gstack->u.dspec, NULL, $2 );
-        $$ = NULL;
-    }
-    | declarator-id Y_COLON constant-expression
-    {
-        ClassBitfield( state->gstack->u.dspec, $1, $3 );
-        $$ = NULL;
-    }
-    ;
-
-base-clause
-    : Y_COLON base-specifier-list
-    { ClassBaseClause( $2 ); }
-    ;
-
-base-specifier-list
-    : base-specifier
-    { $$ = ClassBaseList( NULL, $1 ); }
-    | base-specifier-list Y_COMMA base-specifier
-    { $$ = ClassBaseList( $1, $3 ); }
-    ;
-
-base-specifier
-    : base-qualifiers-opt qualified-class-specifier
-    { $$ = ClassBaseSpecifier( $1, $2 ); }
-    ;
-
-base-qualifiers-opt
-    : /* nothing */
-    { $$ = IN_NULL; }
-    | base-qualifiers-opt Y_PRIVATE
-    { $$ = ClassBaseQualifiers( $1, IN_PRIVATE ); }
-    | base-qualifiers-opt Y_PUBLIC
-    { $$ = ClassBaseQualifiers( $1, IN_PUBLIC ); }
-    | base-qualifiers-opt Y_PROTECTED
-    { $$ = ClassBaseQualifiers( $1, IN_PROTECTED ); }
-    | base-qualifiers-opt Y_VIRTUAL
-    { $$ = ClassBaseQualifiers( $1, IN_VIRTUAL ); }
-    ;
-
-ctor-initializer
-    : Y_COLON
-    {
-        if( state->template_record_tokens != NULL ) {
-            recordTemplateCtorInitializer( state );
-            $$ = NULL;
-        } else {
-            $$ = RewritePackageMemInit( getMultiToken() );
-        }
-        what = P_RELEX;
-    }
-    ;
-
-mem-initializer-list
-    : mem-initializer-item
+template-argument-list
+    : template-argument
     { $$ = PTreeBinary( CO_LIST, NULL, $1 ); }
-    | mem-initializer-list Y_COMMA mem-initializer-item
-    { $$ = PTreeBinary( CO_LIST,   $1, $3 ); }
+    | template-argument-list Y_COMMA template-argument
+    { $$ = setLocation( PTreeBinary( CO_LIST, $1, $3 ), &yylp[2] ); }
     ;
 
-mem-initializer-item
-    : qualified-class-specifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
-    { $$ = MakeMemInitItem( $1, NULL, $3, &yylp[2] ); }
-    | Y_ID Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
-    { $$ = MakeMemInitItem( NULL, $1, $3, &yylp[2] ); }
-    ;
-
-/*** template syntax ***/
-template-declaration
-    : template-key template-declaration-init lt-special template-nonempty-parameter-list Y_GT_SPECIAL template-def
+template-argument
+    : assignment-expression
     {
-        RewriteFree( ParseGetRecordingInProgress( NULL ) );
-        state->template_decl = FALSE;
+        $1 = AnalyseRawExpr( $1 );
+        if( $1->op == PT_SYMBOL ) {
+            SYMBOL sym = $1->u.symcg.symbol;
+            if( SymIsConstantInt( sym ) ) {
+                PTreeFreeSubtrees( $1 );
+                $1 = PTreeIntConstant( sym->u.sval, TYP_SINT );
+            }
+        }
+        $$ = $1;
     }
-    | Y_EXPORT template-key template-declaration-init lt-special template-nonempty-parameter-list Y_GT_SPECIAL template-def
-    {
-        CErr1( WARN_UNSUPPORTED_TEMPLATE_EXPORT );
-        RewriteFree( ParseGetRecordingInProgress( NULL ) );
-        state->template_decl = FALSE;
-    }
+    | type-id
     ;
 
-explicit-specialization
-    : template-key template-declaration-init lt-special template-empty-parameter-list Y_GT_SPECIAL template-def
+/* TODO */
+typename-specifier
+    : typename-special nested-name-specifier Y_TEMPLATE_SCOPED_TYPE_NAME
     {
-        RewriteFree( ParseGetRecordingInProgress( NULL ) );
-        state->template_decl = FALSE;
+        $$ = sendType( $3 );
+        PTreeFreeSubtrees( $2 );
     }
-    ;
-
-template-declaration-init
-    : /* nothing */
+    | typename-special nested-name-specifier
     {
-        GStackPush( &(state->gstack), GS_TEMPLATE_DATA );
-        TemplateDeclInit( &(state->gstack->u.templatedata) );
+        $$ = sendType( $2 );
+    }
+    | typename-special Y_SCOPED_TYPE_NAME
+    {
+        $$ = sendType( $2 );
     }
     ;
 
-template-empty-parameter-list
-    : /* nothing */
+/* non-standard */
+explicit-instantiation-special
+    : Y_TEMPLATE
     {
-        pushDefaultDeclSpec( state );
-        state->template_record_tokens =
-            RewriteRecordInit( &(state->template_record_locn) );
+        state->template_instantiate = TRUE;
+    }
+    | Y_EXTERN Y_TEMPLATE
+    {
+        state->template_extern = TRUE;
     }
     ;
 
-template-nonempty-parameter-list
-    : template-parameter-list
+explicit-instantiation
+    : Y_EXTERN Y_TEMPLATE template-class-directive-extern Y_SEMI_COLON
     {
-        pushDefaultDeclSpec( state );
-        state->template_record_tokens =
-            RewriteRecordInit( &(state->template_record_locn) );
+        CErr1( WARN_MISSING_KEYWORD_IN_EXPLICT_INSTANTIATION );
     }
-    ;
-
-template-parameter-list
-    : template-parameter
+    | Y_TEMPLATE template-class-directive-instantiate Y_SEMI_COLON
     {
-        TemplateDeclAddArgument( $1 );
+        CErr1( WARN_MISSING_KEYWORD_IN_EXPLICT_INSTANTIATION );
     }
-    | template-parameter-list Y_COMMA template-parameter
+    | explicit-instantiation-special block-declaration-before-semicolon Y_SEMI_COLON
     {
-        TemplateDeclAddArgument( $3 );
+        state->template_instantiate = FALSE;
+        state->template_extern = FALSE;
     }
-    ;
-
-template-parameter
-    : arg-declaration
-    | type-parameter
     ;
 
 template-key
@@ -2857,71 +3190,6 @@ template-key
     }
     ;
 
-template-def
-    : class-template Y_SEMI_COLON
-    | function-definition
-    {
-        GStackPop( &(state->gstack) );
-        GStackPop( &(state->gstack) );
-    }
-    ;
-
-class-template
-    : simple-declaration-before-semicolon
-    {
-        GStackPop( &(state->gstack) );
-        GStackPop( &(state->gstack) );
-    }
-    ;
-
-template-class-id
-    : template-class-instantiation Y_GT_SPECIAL
-    | template-class-id template-member-class-id Y_GT_SPECIAL
-    {
-        $$ = $2;
-        PTypeRelease( $1 );
-    }
-    ;
-
-template-member-class-id
-    : Y_TEMPLATE_SCOPED_TEMPLATE_NAME lt-special template-argument-list-opt
-    {
-        $$ = TemplateClassInstantiation( $1, $3, TCI_NULL );
-        setWatchColonColon( state, $$ );
-    }
-    ;
-
-template-class-instantiation
-    : Y_TEMPLATE_NAME lt-special template-argument-list-opt
-    {
-        $$ = TemplateClassInstantiation( $1, $3, TCI_NULL );
-        setWatchColonColon( state, $$ );
-    }
-    | Y_GLOBAL_TEMPLATE_NAME lt-special template-argument-list-opt
-    {
-        $$ = TemplateClassInstantiation( $1, $3, TCI_NULL );
-        setWatchColonColon( state, $$ );
-    }
-    | Y_SCOPED_TEMPLATE_NAME lt-special template-argument-list-opt
-    {
-        $$ = TemplateClassInstantiation( $1, $3, TCI_NULL );
-        setWatchColonColon( state, $$ );
-    }
-    ;
-
-template-class-pre-id
-    : template-class-pre-instantiation Y_GT_SPECIAL
-    ;
-
-template-class-pre-instantiation
-    : Y_TEMPLATE_NAME lt-special template-argument-list
-    { $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] ); }
-    | Y_GLOBAL_TEMPLATE_NAME lt-special template-argument-list
-    { $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] ); }
-    | Y_SCOPED_TEMPLATE_NAME lt-special template-argument-list
-    { $$ = setLocation( PTreeBinary( CO_STORAGE, $1, $3 ), &yylp[2] ); }
-    ;
-
 template-argument-list-opt
     : /* nothing */
     { $$ = PTreeBinary( CO_LIST, NULL, NULL ); }
@@ -2929,57 +3197,115 @@ template-argument-list-opt
     { $$ = $1; }
     ;
 
-template-argument-list
-    : template-argument
-    { $$ = PTreeBinary( CO_LIST, NULL, $1 ); }
-    | template-argument-list Y_COMMA template-argument
-    { $$ = setLocation( PTreeBinary( CO_LIST,   $1, $3 ), &yylp[2] ); }
-    ;
-
-template-argument
-    : assignment-expression
-    | type-id
-    ;
-    
-template-directive
-    : Y_EXTERN Y_TEMPLATE template-class-directive-extern Y_SEMI_COLON
-    | Y_TEMPLATE template-class-directive-instantiate Y_SEMI_COLON
-    ;
-    
 template-class-directive-extern
-    : template-directive-class
-    { 
-        CErr1( WARN_MISSING_KEYWORD_IN_EXPLICT_INSTANTIATION );
-        TemplateClassDirective( $1, TCD_EXTERN ); 
+    : nested-name-specifier
+    {
+        TYPE type = NodeIsBinaryOp( $1, CO_STORAGE ) ?
+            $1->u.subtree[1]->type : $1->type;
+
+        TemplateClassDirective( type, &($1->locn), TCD_EXTERN ); 
+        NodeFreeDupedExpr( $1 );
     }
-    | Y_CLASS template-directive-class
-    { TemplateClassDirective( $2, TCD_EXTERN ); }
-    | Y_STRUCT template-directive-class
-    { TemplateClassDirective( $2, TCD_EXTERN ); }
-    ;
-    
-template-class-directive-instantiate
-    : template-directive-class
-    { 
-        CErr1( WARN_MISSING_KEYWORD_IN_EXPLICT_INSTANTIATION );
-        TemplateClassDirective( $1, TCD_INSTANTIATE ); 
-    }
-    | Y_CLASS template-directive-class
-    { TemplateClassDirective( $2, TCD_INSTANTIATE ); }
-    | Y_STRUCT template-directive-class
-    { TemplateClassDirective( $2, TCD_INSTANTIATE ); }
-    ;
-    
-template-directive-class
-    : Y_TEMPLATE_NAME lt-special template-argument-list Y_GT_SPECIAL
-    { $$ = PTreeBinary( CO_LIST, $1, $3 ); }
-    | Y_GLOBAL_TEMPLATE_NAME lt-special template-argument-list Y_GT_SPECIAL
-    { $$ = PTreeBinary( CO_LIST, $1, $3 ); }
-    | Y_SCOPED_TEMPLATE_NAME lt-special template-argument-list Y_GT_SPECIAL
-    { $$ = PTreeBinary( CO_LIST, $1, $3 ); }
     ;
 
-/*** exception syntax ***/
+template-class-directive-instantiate
+    : nested-name-specifier
+    {
+        TYPE type = NodeIsBinaryOp( $1, CO_STORAGE ) ?
+            $1->u.subtree[1]->type : $1->type;
+
+        TemplateClassDirective( type, &($1->locn), TCD_INSTANTIATE ); 
+        NodeFreeDupedExpr( $1 );
+    }
+    ;
+
+template-type
+    : template-type-instantiation Y_GT_SPECIAL
+    ;
+
+template-type-instantiation
+    : Y_TEMPLATE_NAME lt-special template-argument-list-opt
+    {
+        TYPE inst_type;
+
+        inst_type = TemplateClassReference( $1, $3 );
+        setWatchColonColon( state, $1, inst_type );
+        $$ = $1;
+
+        if( inst_type != NULL ) {
+            $$->type = inst_type;
+        }
+    }
+    ;
+
+scoped-template-type
+    : scoped-template-type-instantiation Y_GT_SPECIAL
+    ;
+
+scoped-template-type-instantiation
+    : Y_SCOPED_TEMPLATE_NAME lt-special template-argument-list-opt
+    {
+        TYPE inst_type;
+
+        inst_type = TemplateClassReference( $1, $3 );
+        setWatchColonColon( state, $1, inst_type );
+        $$ = $1;
+
+        if( inst_type == NULL ) {
+            DbgAssert( ( $$->op == PT_BINARY )
+                    && ( $$->cgop == CO_STORAGE ) );
+            $$->u.subtree[1] =
+                PTreeBinary( CO_TEMPLATE, $$->u.subtree[1], $3 );
+        } else {
+            $$->u.subtree[1]->type = inst_type;
+        }
+    }
+    | Y_GLOBAL_TEMPLATE_NAME lt-special template-argument-list-opt
+    {
+        TYPE inst_type;
+
+        inst_type = TemplateClassReference( $1, $3 );
+        setWatchColonColon( state, $1, inst_type );
+        $$ = $1;
+
+        if( inst_type == NULL ) {
+            DbgAssert( ( $$->op == PT_BINARY )
+                    && ( $$->cgop == CO_STORAGE ) );
+            $$->u.subtree[1] =
+                PTreeBinary( CO_TEMPLATE, $$->u.subtree[1], $3 );
+        } else {
+            $$->u.subtree[1]->type = inst_type;
+        }
+    }
+    ;
+
+template-scoped-template-type
+    : template-scoped-template-type-instantiation Y_GT_SPECIAL
+    ;
+
+template-scoped-template-type-instantiation
+    : Y_TEMPLATE_SCOPED_TEMPLATE_NAME lt-special template-argument-list-opt
+    {
+        TYPE inst_type;
+
+        inst_type = TemplateClassReference( $1, $3 );
+        setWatchColonColon( state, $1, inst_type );
+        $$ = $1;
+
+        if( inst_type == NULL ) {
+            DbgAssert( ( $$->op == PT_BINARY )
+                    && ( $$->cgop == CO_STORAGE ) );
+            $$->u.subtree[1] =
+                PTreeBinary( CO_TEMPLATE, $$->u.subtree[1], $3 );
+        } else {
+            $$->u.subtree[1]->type = inst_type;
+        }
+    }
+    ;
+
+
+/* A.13 Exception handling [gram.except] */
+
 exception-declaration
     : actual-exception-declaration
     {
@@ -2989,21 +3315,214 @@ exception-declaration
     ;
 
 actual-exception-declaration
-    : type-specifiers
+    : type-specifier-seq declarator
+    { $$ = $2; }
+    | type-specifier-seq abstract-declarator
+    { $$ = $2; }
+    | type-specifier-seq
     { $$ = DeclSpecDeclarator( state->gstack->u.dspec ); }
-    | type-specifiers declarator
-    { $$ = $2; }
-    | type-specifiers abstract-declarator
-    { $$ = $2; }
     ;
 
-except-spec-opt
+exception-specification-opt
     : /* nothing */
     { $$ = ThrowsAnything(); }
-    | Y_THROW Y_LEFT_PAREN type-id-list Y_RIGHT_PAREN
+    | exception-specification
+    ;
+
+exception-specification
+    : Y_THROW Y_LEFT_PAREN type-id-list Y_RIGHT_PAREN
     { $$ = $3; }
     | Y_THROW Y_LEFT_PAREN              Y_RIGHT_PAREN
     { $$ = NULL; }
     ;
+
+type-id-list
+    : expect-type-id type-id
+    { $$ = $2; }
+    | type-id-list Y_COMMA expect-type-id type-id
+    { $$ = PTreeTListAppend( $1, $4 ); }
+    ;
+
+
+
+/*** declaration syntax ***/
+might-restart-declarations
+    : start-restart-declarations
+    { popRestartDecl( state ); }
+    | start-restart-declarations declaration-seq
+    { popRestartDecl( state ); }
+    ;
+
+start-restart-declarations
+    : /* nothing */
+    { pushRestartDecl( state ); }
+    ;
+
+local-declaration
+    : block-declaration-before-semicolon Y_SEMI_COLON
+    ;
+
+no-declarator-declaration
+    : decl-specifier-seq
+    {
+        $$ = CheckNoDeclarator( $1 );
+        if( $$ == NULL ) {
+            what = P_SYNTAX;
+        }
+    }
+    ;
+
+/* extension */
+typeof-specifier
+    : Y___TYPEOF Y_LEFT_PAREN expression Y_RIGHT_PAREN
+    { $$ = PTypeExpr( $3 ); }
+    | Y___TYPEOF Y_LEFT_PAREN type-id Y_RIGHT_PAREN
+    { $$ = PTypeTypeid( $3 ); }
+    ;
+
+cv-qualifier
+    : Y_CONST
+    { $$ = PTypeSpecifier( STY_CONST ); }
+    | Y_VOLATILE
+    { $$ = PTypeSpecifier( STY_VOLATILE ); }
+    | Y___UNALIGNED
+    { $$ = PTypeSpecifier( STY_UNALIGNED ); }
+    ;
+
+/* non-standard */
+basic-type-specifier
+    : Y_CHAR
+    { $$ = PTypeScalar( STM_CHAR ); }
+    | Y_WCHAR_T
+    { $$ = PTypeScalar( STM_WCHAR ); }
+    | Y_BOOL
+    { $$ = PTypeScalar( STM_BOOL ); }
+    | Y_SHORT
+    { $$ = PTypeScalar( STM_SHORT ); }
+    | Y_INT
+    { $$ = PTypeScalar( STM_INT ); }
+    | Y_LONG
+    { $$ = PTypeScalar( STM_LONG ); }
+    | Y_SIGNED
+    { $$ = PTypeScalar( STM_SIGNED ); }
+    | Y_UNSIGNED
+    { $$ = PTypeScalar( STM_UNSIGNED ); }
+    | Y_FLOAT
+    { $$ = PTypeScalar( STM_FLOAT ); }
+    | Y_DOUBLE
+    { $$ = PTypeScalar( STM_DOUBLE ); }
+    | Y_VOID
+    { $$ = PTypeScalar( STM_VOID ); }
+    /* extension */
+    | Y___SEGMENT
+    { $$ = PTypeScalar( STM_SEGMENT ); }
+    | Y___INT64
+    { $$ = PTypeScalar( STM_INT64 ); }
+    ;
+
+elaborated-type-name
+    : Y_GLOBAL_ID
+    | Y_GLOBAL_TEMPLATE_ID
+    | Y_GLOBAL_TYPE_NAME
+    | Y_SCOPED_ID
+    | Y_SCOPED_TEMPLATE_ID
+    | Y_SCOPED_TYPE_NAME
+    ;
+
+
+braced-initializer
+    : brace-start initializer-list Y_COMMA Y_RIGHT_BRACE
+    { DataInitPop(); }
+    | brace-start initializer-list         Y_RIGHT_BRACE
+    { DataInitPop(); }
+    ;
+
+brace-start
+    : Y_LEFT_BRACE
+    { DataInitPush(); }
+    ;
+
+
+
+
+typename-special
+    : typename-special-init Y_TYPENAME
+    {
+        if( ! ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL )
+         && ! IsTemplateInstantiationActive() ) {
+            SetErrLoc( &yylp[2] );
+            CErr1( ERR_TYPENAME_OUTSIDE_TEMPLATE );
+        }
+    }
+    ;
+
+typename-special-init
+    : /* nothing */
+    {
+        state->special_typename = TRUE;
+    }
+    ;
+
+special-new-type-id
+    : type-specifier-seq special-new-abstract-declarator
+    {
+        $$ = $2;
+        GStackPop( &(state->gstack) );
+    }
+    | type-specifier-seq
+    {
+        $$ = MakeNewTypeId( DoDeclSpec( state->gstack->u.dspec ) );
+        GStackPop( &(state->gstack) );
+    }
+    ;
+
+special-new-abstract-declarator
+    : special-new-abstract-ptr-mod-declarator
+    {
+        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
+    }
+    | special-new-direct-abstract-declarator
+    {
+        $$ = FinishDeclarator( state->gstack->u.dspec, $1 );
+    }
+    ;
+
+special-new-abstract-ptr-mod-declarator
+    : ptr-mod special-new-abstract-ptr-mod-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    | ptr-mod special-new-direct-abstract-declarator
+    { $$ = AddDeclarator( $2, $1 ); }
+    | ptr-mod
+    { $$ = MakeAbstractDeclarator( $1 ); }
+    ;
+
+special-new-direct-abstract-declarator
+    : special-new-direct-abstract-declarator Y_LEFT_PAREN parameter-declaration-clause Y_RIGHT_PAREN cv-qualifier-seq-opt exception-specification-opt
+    {
+        $$ = AddDeclarator( $1, MakeFnType( &($3), $5, $6 ) );
+        FreeArgs( $3 );
+    }
+    | Y_LEFT_PAREN parameter-declaration-clause Y_RIGHT_PAREN cv-qualifier-seq-opt exception-specification-opt
+    {
+        $$ = MakeAbstractDeclarator( MakeFnType( &($2), $4, $5 ) );
+        FreeArgs( $2 );
+    }
+    | special-new-direct-abstract-declarator Y_LEFT_BRACKET constant-expression Y_RIGHT_BRACKET
+    { $$ = AddArrayDeclarator( $1, $3 ); }
+    |                            Y_LEFT_BRACKET expression Y_RIGHT_BRACKET
+    { $$ = MakeNewDynamicArray( $2 ); }
+    | special-new-direct-abstract-declarator Y_LEFT_BRACKET Y_RIGHT_BRACKET
+    { $$ = AddArrayDeclarator( $1, NULL ); }
+    |                            Y_LEFT_BRACKET Y_RIGHT_BRACKET
+    {
+        $$ = MakeAbstractDeclarator( NULL );
+        $$ = AddArrayDeclarator( $$, NULL );
+    }
+    | Y_LEFT_PAREN special-new-direct-abstract-declarator Y_RIGHT_PAREN
+    { $$ = $2; }
+    | Y_LEFT_PAREN special-new-abstract-ptr-mod-declarator Y_RIGHT_PAREN
+    { $$ = $2; }
+    ;
+
 
 %%
