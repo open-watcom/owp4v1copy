@@ -150,6 +150,9 @@ void StatusWndSetSeparatorsWithArray( short *, int );
 // ideactiv.c
 void StartIDE( HANDLE instance, BOOL dospawn );
 
+// filetype.c
+void UpdateFileTypeIcon( HWND hwnd, const char *filename );
+
 #endif
 
 #endif

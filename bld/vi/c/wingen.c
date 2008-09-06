@@ -326,9 +326,10 @@ void SetFileWindowTitle( window_id cw, info *cinfo, bool hilite )
         n = CurrentFile->name;
     }
     WindowTitleAOI( cw, n, hilite );
-    #ifdef __WIN__
-        SetWindowText( cw, n );
-    #endif
+#ifdef __WIN__
+    SetWindowText( cw, n );
+    UpdateFileTypeIcon( cw, n );
+#endif
 
 } /* SetFileWindowTitle */
 

@@ -15,7 +15,7 @@ objwiny  =  main.obj mainwnd.obj editwnd.obj dosdir.obj time.obj &
                 clrbar.obj clrpick.obj ftpick.obj repdlg.obj &
                 setfs.obj setscr.obj setgen.obj util.obj hotkey.obj &
                 ssbar.obj subclass.obj snoop.obj wwinhelp.obj &
-                ideactiv.obj hackdctl.obj
+                ideactiv.obj hackdctl.obj filetype.obj
 
 extraobjs = $(objcb) $(objwiny)
 
