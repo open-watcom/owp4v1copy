@@ -19,9 +19,9 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
 
-    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/binw/
+    <CPCMD> <DEVDIR>/misc/unicode*     <RELROOT>/binw/
     <CPCMD> <DEVDIR>/misc/watcom.ico   <RELROOT>/
-    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/binl/
+    <CPCMD> <DEVDIR>/misc/unicode*     <RELROOT>/binl/
     <CPCMD> <OWROOT>/license.txt       <RELROOT>/license.txt
 
 # NT, OS2 32-bit version
