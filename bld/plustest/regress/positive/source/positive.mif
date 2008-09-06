@@ -314,12 +314,12 @@ positive_tests = &
     defarg05.$(ext) &
     defarg06.$(ext) &
     defarg07.$(ext) &
-    deftemp01.$(ext) &
-    deftemp02.$(ext) &
-    deftemp03.$(ext) &
-    deftemp04.$(ext) &
-    deftemp05.$(ext) &
-    deftemp06.$(ext) &
+    dftemp01.$(ext) &
+    dftemp02.$(ext) &
+    dftemp03.$(ext) &
+    dftemp04.$(ext) &
+    dftemp05.$(ext) &
+    dftemp06.$(ext) &
     digraph1.$(ext) &
     dtor01.$(ext) &
     dtor02.$(ext) &

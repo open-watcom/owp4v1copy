@@ -1,12 +1,6 @@
 plustest_name = wclass
 !include ../environ.mif
 
-!ifeq arch 386
-!define arch i86
-!endif
-
-!ifeq arch i86
-
 !ifdef test1
 comp_flags = -d2-ml
 alt_error=01
@@ -65,7 +59,17 @@ wmdichld.obj &
 wmsgdlg.obj &
 wwinmain.obj
 
+!ifeq arch i86
 test : .symbolic start_test test.exe
+!else ifeq arch 386
+!ifeq targ_env_386 wnt386
+test : .symbolic start_test test.exe
+!else
+test : .symbolic start_test
+!endif
+!else
+test : .symbolic start_test
+!endif
     @%make global
     %append $(log_file) PASS $(%__CWD__)
 
@@ -74,20 +78,16 @@ test.exe : $(objs) test.lnk
 
 test.lnk : makefile $(objs)
     %create $^@
+!ifeq arch i86
     @%append $^@ SYSTEM windows
     @%append $^@ OPTION rwreloccheck
-    @%append $^@ $(ldebug_$(arch))
-    @for %i in ( $(objs) ) do @%append $^@ FILE %i
     @%append $^@ LIBRARY $(%watcom)/lib286/win/ddeml.lib
     @%append $^@ LIBRARY $(%watcom)/lib286/win/commdlg.lib
-
 !else
-
-test : .symbolic start_test
-    @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-
+    @%append $^@ SYSTEM nt
 !endif
+    @%append $^@ $(ldebug_$(arch))
+    @for %i in ( $(objs) ) do @%append $^@ FILE %i
 
 start_test : .symbolic
     %create exec.out
