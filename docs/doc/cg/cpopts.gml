@@ -5538,8 +5538,7 @@ a "\" or quote (") character.
 Characters in wide characters (L'c') and wide strings (L"string") are
 translated to UNICODE.
 The UNICODE translate table for the specified code page is loaded
-from a file with the name "UNICODE.cpn" where "cpn" is the code page
-number (e.g., zku=850 selects file "UNICODE.850" or zku=1252 selects file "UNICODE1.252").
+from a file. Code pages supported by the compiler are bellow in the table.
 The compiler locates this file by searching the paths listed in the
 .if '&target' eq 'QNX' .do begin
 .ev ETC_PATH
@@ -5553,6 +5552,15 @@ If the file cannot be located then the
 .fi /usr/watcom
 directory is searched.
 .do end
+.millust begin
+ codepage | character set   | file name
+-------------------------------------------
+    437   | US-ASCII (DOS)  | unicode.437
+    850   | Latin-1 (DOS)   | unicode.850
+    852   | Latin-2 (DOS)   | unicode.852
+   1250   | Latin-2 (Win32) | unicode1.250
+   1252   | Latin-1 (Win32) | unicode1.252
+.millust end
 .do end
 .*
 :eOPTLIST.
