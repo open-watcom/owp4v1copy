@@ -153,8 +153,8 @@ static unsigned ProcSet( char *cmd )
 #ifdef __WATCOMC__
     /* We don't have unsetenv(), but our setenv() is extended vs. POSIX */
     if( rep == NULL ) {
-	setenv( var, NULL, 1 );
-	return( 0 );
+        setenv( var, NULL, 1 );
+        return( 0 );
     } else
         return( setenv( var, rep, 1 ) );
 #else

@@ -38,7 +38,7 @@ headers386 =                 &
         bseord.h             &
         bsesub.h             &
         bsexcpt.h            &
-	callconv.h           &
+        callconv.h           &
         codec.h              &
         dive.h               &
         driver.h             &
@@ -202,7 +202,7 @@ componentsrexx =     &
 
 componentsmmpm2 =    &
         dive.lbc     &
-	mciapi.lbc   &
+        mciapi.lbc   &
         mdm.lbc      &
         mmio.lbc     &
         sw.lbc
@@ -264,25 +264,29 @@ os2.lib: lib286.lbc msgseg.obj
         $(librarian) $(libflags) $@ @$[@ +$]@
 
 lib286.lbc: $(components286)
-        cat $< > $@
+        %create $@
+        @for %f in ($<) do cat %f >> $@
 
 os2386.lib: lib386.lbc msgseg32.obj
         $(librarian) $(libflags) $@ @$[@ +$]@
 
 lib386.lbc: $(components386)
-        cat $< > $@
+        %create $@
+        @for %f in ($<) do cat %f >> $@
 
 rexx.lib: rexxall.lbc
         $(librarian) $(libflags) $@ @$<
 
 rexxall.lbc: $(componentsrexx)
-        cat $< > $@
+        %create $@
+        @for %f in ($<) do cat %f >> $@
 
 mmpm2.lib: mmpm2all.lbc
         $(librarian) $(libflags) $@ @$<
 
 mmpm2all.lbc: $(componentsmmpm2)
-        cat $< > $@
+        %create $@
+        @for %f in ($<) do cat %f >> $@
 
 libuls.lib: libuni.lbc
         $(librarian) $(libflags) $@ @$<
@@ -297,7 +301,7 @@ $(dirs386):
 
 clean : .SYMBOLIC
         rm -f *.h
-	rm -f *.lbc
+        rm -f *.lbc
         rm -f *.lib
         rm -f *.obj
         rm -f arpa/*.h
