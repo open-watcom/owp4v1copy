@@ -110,14 +110,25 @@ static int writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
 static int readOnlyCheck( void )
 {
     int         i;
-    char        tmp[MAX_STR],st[MAX_STR];
+    char        tmp[MAX_STR];
+#ifndef __WIN__
+    char        st[MAX_STR];
+#endif
 
     MySprintf( tmp, "\"%s\" is read-only, overwrite?", CurrentFile->name );
+#ifdef __WIN__
+    i = MessageBox( Root, tmp, EditorName, MB_YESNO | MB_TASKMODAL );
+    if( i == IDYES ) {
+        return( ERR_NO_ERR );
+    }
+    return( ERR_READ_ONLY_FILE );
+#else
     i = GetResponse( tmp, st );
     if( i == GOT_RESPONSE && st[0] == 'y' ) {
         return( ERR_NO_ERR );
     }
     return( ERR_READ_ONLY_FILE );
+#endif
 
 } /* readOnlyCheck */
 
