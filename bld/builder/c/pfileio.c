@@ -31,7 +31,7 @@
 
 #include <stdio.h>
 
-FILE *popen( char *s, char *m )
+FILE *popen( const char *s, const char *m )
 {
 #ifdef __DOS__
     return( NULL );

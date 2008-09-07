@@ -39,6 +39,7 @@
     #include <unistd.h>
 #else
     #include <direct.h>
+    #include <dos.h>
 #endif
 
 #define RoundUp( size, limit )  ( ( ( size + limit - 1 ) / limit ) * limit )
@@ -403,8 +404,13 @@ int AddPathTree( char *path, int target )
 }
 
 static int mkdir_nested( char *path )
+/***********************************/
 {
+#ifdef __UNIX__
     struct stat sb;
+#else
+    unsigned    attr;
+#endif
     char        pathname[ FILENAME_MAX ];
     char        *p;
     char        *end;
@@ -430,7 +436,11 @@ static int mkdir_nested( char *path )
         *p = '\0';
 
         /* check if pathname exists */
+#ifdef __UNIX__
         if( stat( pathname, &sb ) == -1 ) {
+#else
+        if( _dos_getfileattr( pathname, &attr ) != 0 ) {
+#endif
             int rc;
 
 #ifdef __UNIX__
@@ -444,7 +454,11 @@ static int mkdir_nested( char *path )
             }
         } else {
             /* make sure it really is a directory */
+#ifdef __UNIX__
             if( !S_ISDIR( sb.st_mode ) ) {
+#else
+            if( (attr & _A_SUBDIR) == 0 ) {
+#endif
                 printf( "Can not create directory '%s': file with the same name already exists\n", pathname );
                 return( -1 );
             }
