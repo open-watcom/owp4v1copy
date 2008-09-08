@@ -143,8 +143,8 @@ WEXPORT WWindow::WWindow( WWindow* parent, char* className, const WRect& r, char
 	ifptr( _parent ) hparent = _parent->_handle;
 	_objMap.currThis( this );
 	_handle = CreateWindow( className, text, wstyle
-						, r.x(), r.y(), r.w(), r.h()
-						, hparent, _childId++, _appInst, NIL );
+				, r.x(), r.y(), r.w(), r.h()
+				, hparent, (HMENU)_childId++, _appInst, NIL );
 	if( _handle ) {
 		_objMap.setThis( this, (HANDLE)_handle );
 	}

@@ -42,15 +42,15 @@ stack_axp=opt stack=16k
 
 oop_v1p5.$(exe) : oop_v1p5.obj
     $(linker) @stepanov.lnk NAME $@ FILE $[@
-    $(run) $(exec_prefix)$@ Max=10000 18 Matrix=1000 15 Complex=12000 50 Iterator=50000 14 >>stepanov.out
+    $(run) $(exec_prefix)$@ Max=15000 18 Matrix=1000 15 Complex=30000 50 Iterator=80000 14 >>stepanov.out
 
 oop_v1p6.$(exe) : oop_v1p6.obj
     $(linker) @stepanov.lnk NAME $@ FILE $[@
-    $(run) $(exec_prefix)$@ Max=10000 49 Matrix=1000 13 Complex=12000 52 Iterator=50000 18 >>stepanov.out
+    $(run) $(exec_prefix)$@ Max=15000 49 Matrix=1000 13 Complex=30000 52 Iterator=80000 18 >>stepanov.out
 
 oop_v1p7.$(exe) : oop_v1p7.obj
     $(linker) @stepanov.lnk NAME $@ FILE $[@
-    $(run) $(exec_prefix)$@ Max=10000 14 Matrix=1000 14 Complex=12000 83 Iterator=50000 19 >>stepanov.out
+    $(run) $(exec_prefix)$@ Max=15000 14 Matrix=1000 14 Complex=30000 83 Iterator=80000 19 >>stepanov.out
 
 !ifeq arch i86
 test : .symbolic start_test
