@@ -216,7 +216,7 @@ friend4.$(exe) : friend4.obj friend4b.obj
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
-    $(run) $(exec_prefix)$^@ >>exec.out
+    $(run) $(exec_prefix)$@ >>exec.out
 
 
 start_test : .symbolic test.lnk
