@@ -5538,7 +5538,7 @@ a "\" or quote (") character.
 Characters in wide characters (L'c') and wide strings (L"string") are
 translated to UNICODE.
 The UNICODE translate table for the specified code page is loaded
-from a file. Code pages supported by the compiler are bellow in the table.
+from a file.
 The compiler locates this file by searching the paths listed in the
 .if '&target' eq 'QNX' .do begin
 .ev ETC_PATH
@@ -5552,6 +5552,7 @@ If the file cannot be located then the
 .fi /usr/watcom
 directory is searched.
 .do end
+The following table lists the supported code pages.
 .millust begin
  codepage | character set   | file name
 -------------------------------------------
