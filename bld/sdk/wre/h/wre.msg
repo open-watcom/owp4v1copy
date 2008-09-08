@@ -342,8 +342,8 @@ pick(   WRE_INVALIDINPUTFILE,
 
 // WRERES.C
 pick(   WRE_UNTITLED,
-        "_untitled",
-        "_untitled" )
+        "untitled",
+        "untitled" )
 pick(   WRE_OPENPROJECTTITLE,
         "Open File",
         "Open File" )

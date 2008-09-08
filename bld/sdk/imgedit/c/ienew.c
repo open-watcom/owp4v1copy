@@ -279,7 +279,7 @@ static void initializeImage( img_node *node, char *filename )
     if( filename != NULL ) {
         strcpy( node->fname, filename );
     } else {
-        sprintf( node->fname, "%s (%d)", IEImageUntitled, imageCount );
+        sprintf( node->fname, "%s.%d", IEImageUntitled, imageCount );
     }
 
     if (imgType == BITMAP_IMG) {

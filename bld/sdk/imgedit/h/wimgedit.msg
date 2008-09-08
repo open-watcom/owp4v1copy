@@ -477,8 +477,8 @@ pick(   WIE_PALETTEFILTER,
         "Palette (*.pal)\t*.pal\tAll Files (*.*)\t*.*\t",
         "Palette (*.pal)\t*.pal\tAll Files (*.*)\t*.*\t" )
 pick(   WIE_IMAGEUNTITLED,
-        "(Untitled)",
-        "(Untitled)" )
+        "untitled",
+        "untitled" )
 pick(   WIE_SAVEIMAGETITLE,
         "Save Image File",
         "Save Image File" )

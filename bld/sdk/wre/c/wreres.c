@@ -1113,7 +1113,7 @@ Bool WRECreateResourceWindow( WREResInfo *res_info )
         win_title_len += 15;
         win_title = (char *)WREMemAlloc( win_title_len );
         if( win_title != NULL ) {
-            sprintf( win_title,"%s (%d)", title,
+            sprintf( win_title, "%s.%d", title,
                      0xffff & res_info->window_num );
             mdics.szTitle = win_title;
         } else {

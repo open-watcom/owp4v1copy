@@ -801,7 +801,7 @@ Bool WdeCreateResourceWindow( WdeResInfo *res_info, int fn_offset,
     win_title_len += 15;
     win_title = (char *)WdeMemAlloc( win_title_len );
     if( win_title != NULL ) {
-        sprintf( win_title,"%s (%d)", title, 0xffff & WdeResCounter );
+        sprintf( win_title, "%s.%d", title, 0xffff & WdeResCounter );
         mdics.szTitle = win_title;
     } else {
         mdics.szTitle = title;

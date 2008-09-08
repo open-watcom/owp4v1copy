@@ -518,8 +518,8 @@ pick(   WDE_EDITREGISTERCLASSFAILED,
 
 // WDERES.C
 pick(   WDE_UNTITLEDPROJECT,
-        "_untitled",
-        "_untitled" )
+        "untitled",
+        "untitled" )
 pick(   WDE_OPENPROJECT,
         "Open File",
         "Open File" )
