@@ -276,6 +276,16 @@ WPI_DLGRESULT CALLBACK SelNonExistingProc( HWND hwnd, WPI_MSG msg,
             IEHelpRoutine();
             return( FALSE );
 
+        case TARGETLISTBOX:
+            if( HIWORD( wparam ) == LBN_DBLCLK ) {
+                mresult = _wpi_senddlgitemmessage( hwnd, TARGETLISTBOX, LB_GETCURSEL, 0,
+                                                   0L );
+                index = _imgwpi_mresulttoint( mresult );
+                iconType = lbindex[index];
+                _wpi_enddialog( hwnd, DLGID_OK );
+            }
+            break;
+
         default:
             return( FALSE );
         }
@@ -341,6 +351,16 @@ WPI_DLGRESULT CALLBACK SelExistingProc( HWND hwnd, WPI_MSG msg,
         case IDB_HELP:
             IEHelpRoutine();
             return( FALSE );
+
+        case TARGETLISTBOX:
+            if( HIWORD( wparam ) == LBN_DBLCLK ) {
+                mresult = _wpi_senddlgitemmessage( hwnd, TARGETLISTBOX, LB_GETCURSEL, 0,
+                                                   0L );
+                index = _imgwpi_mresulttoint( mresult );
+                iconType = lbindex[index];
+                _wpi_enddialog( hwnd, DLGID_OK );
+            }
+            break;
 
         default:
             return( FALSE );
