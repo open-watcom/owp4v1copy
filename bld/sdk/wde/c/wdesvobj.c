@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include "wdeglbl.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdemem.h"
 #include "wdei2mem.h"
 #include "wdewait.h"

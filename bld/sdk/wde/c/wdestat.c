@@ -39,7 +39,7 @@
 #include "statwnd.h"
 #include "wdemsgbx.h"
 #include "wdestat.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

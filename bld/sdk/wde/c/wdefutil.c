@@ -56,7 +56,7 @@
 #include "wdefordr.h"
 #include "wdecurr.h"
 #include "wdectl3d.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wde_wres.h"
 #include "wde_rc.h"
 #include "wdecctl.h"

@@ -34,7 +34,7 @@
 #include "wdeglbl.h"
 #include "wdectl3d.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wrctl3d.h"
 
 /****************************************************************************/

@@ -49,7 +49,7 @@
 #include "wde_wres.h"
 #include "wdefutil.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdewait.h"
 #include "wdegoto.h"
 #include "wdectl3d.h"

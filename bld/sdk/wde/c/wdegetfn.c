@@ -41,7 +41,7 @@
 #include "wdedebug.h"
 #include "wdemain.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdemem.h"
 #include "wdesdup.h"
 #include "wdectl3d.h"

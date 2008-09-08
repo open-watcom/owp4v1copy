@@ -1,3 +1,5 @@
+#include "about.msg"
+
 // the following is the font used in the status bar of the window
 pick(   WDE_STATUSFONT,
         "Helv.8",
@@ -436,6 +438,15 @@ pick(   WDE_SETFAILED,
 pick(   WDE_INPUTFILENOTFOUND,
         "Input file not found.",
         "Input file not found." )
+pick(   WDE_ABOUT_NAME,
+        "Open Watcom Dialog Editor",
+        "Open Watcom Dialog Editor" )
+pick(   WDE_ABOUT_COPYRIGHT_YEAR,
+        "1984",
+        "1984" )
+pick(   WDE_ABOUT_TITLE,
+        "About Open Watcom Dialog Editor",
+        "About Open Watcom Dialog Editor" )
 
 // WDEFUTIL.C
 pick(   WDE_DEFININGCONTROL,

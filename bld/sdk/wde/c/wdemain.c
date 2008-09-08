@@ -49,7 +49,7 @@
 #include "wdeinfo.h"
 #include "wdefutil.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdefont.h"
 #include "wdeopts.h"
 #include "wdefinit.h"
@@ -79,6 +79,8 @@
 #include "jdlg.h"
 
 #include "wwinhelp.h"
+#include "aboutdlg.h"
+#include "ldstr.h"
 
 /* set the WRES library to use compatible functions */
 WResSetRtns(open,close,read,write,lseek,tell,WdeMemAlloc,WdeMemFree);
@@ -294,7 +296,7 @@ Bool WdeInit( HINSTANCE app_inst )
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = 0;
     wc.hInstance     = app_inst;
-    wc.hIcon         = LoadIcon ( app_inst, "WdeIcon" );
+    wc.hIcon         = LoadIcon ( app_inst, "APPLICON" );
     wc.hCursor       = LoadCursor ( (HINSTANCE) NULL, IDC_ARROW );
     wc.hbrBackground = NULL;
     wc.lpszMenuName  = "WdeMenu";
@@ -629,6 +631,7 @@ LRESULT WINEXPORT WdeMainWndProc( HWND hWnd, UINT message,
     Bool        pass_to_def;
     WdeResInfo *res_info;
     WORD        wp;
+    about_info  ai;
 
     if ( WdeCleanupStarted ) {
         if ( message == WM_DESTROY ) {
@@ -946,14 +949,16 @@ LRESULT WINEXPORT WdeMainWndProc( HWND hWnd, UINT message,
                     break;
 
                 case IDM_ABOUT:
-                    {
-                        char *text;
-                        WdeSetControlFlagText( CLASS_STATIC, WS_VISIBLE | WS_CAPTION | WS_HSCROLL | SS_LEFT | SS_NOPREFIX, &text );
-                        if( text ) {
-                            WdeMemFree( text );
-                        }
-                    }
-                    WdeDisplayAboutBox ( hInstWde, hWinWdeMain, 0 );
+                    ai.owner = hWnd;
+                    ai.inst = hInstWde;
+                    ai.name = AllocRCString( WDE_ABOUT_NAME );
+                    ai.version = banner1p2( _RESEDIT_VERSION_ );
+                    ai.first_cr_year = AllocRCString( WDE_ABOUT_COPYRIGHT_YEAR );
+                    ai.title = AllocRCString( WDE_ABOUT_TITLE );
+                    DoAbout( &ai );
+                    FreeRCString( ai.name );
+                    FreeRCString( ai.first_cr_year );
+                    FreeRCString( ai.title );
                     pass_to_def = FALSE;
                     break;
             }

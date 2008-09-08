@@ -39,7 +39,7 @@
 #include "wdeglbl.h"
 #include "wdemem.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wderesin.h"
 #include "wdegeted.h"
 #include "wdeobjid.h"

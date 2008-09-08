@@ -51,7 +51,7 @@
 #include "wdestat.h"
 #include "wdesdup.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdefutil.h"
 #include "wdewait.h"
 #include "wdestken.h"

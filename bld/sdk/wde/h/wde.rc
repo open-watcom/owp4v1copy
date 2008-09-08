@@ -1,7 +1,8 @@
 #include <windows.h>
+#include "about.h"
 #include "banner.h"
 #include "wde_rc.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 
 #undef pick
 #undef sp
@@ -10,7 +11,7 @@
 
 STRINGTABLE
 BEGIN
-    #include "wde.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "wde.men"
@@ -38,7 +39,7 @@ BEGIN
 END
 
 /* icons */
-WdeIcon      ICON wde.ico
+APPLICON     ICON wde.ico
 ResIcon      ICON restext.ico
 DefaultIcon  ICON owde.ico
 
@@ -271,7 +272,7 @@ HdrToolD     BITMAP hdrtoold.bmp
 6904         BITMAP bor_904.bmp
 #endif
 
-#include "about.dlg"
+#include "splash.dlg"
 #include "generic.dlg"
 #include "info.dlg"
 #include "loadcust.dlg"
@@ -317,3 +318,6 @@ HdrToolD     BITMAP hdrtoold.bmp
 #include "deftbar.dlg"
 #include "deftview.dlg"
 #include "defupdn.dlg"
+
+#include "about.dlg"
+

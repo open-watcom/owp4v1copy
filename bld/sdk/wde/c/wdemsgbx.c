@@ -35,7 +35,7 @@
 #include "wdeglbl.h"
 #include "wdemain.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "ldstr.h"
 
 /****************************************************************************/

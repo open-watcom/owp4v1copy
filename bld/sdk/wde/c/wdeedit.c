@@ -43,7 +43,7 @@
 #include "wdefbase.h"
 #include "wdefont.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdeedit.h"
 #include "wdectl3d.h"
 

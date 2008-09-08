@@ -44,7 +44,7 @@
 #include "wde_wres.h"
 #include "wdemain.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdesdlg.h"
 #include "wdefdlg.h"
 #include "wdetest.h"
