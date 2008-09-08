@@ -1,25 +1,36 @@
 plustest_name = wclass
+
 !include ../environ.mif
 
 !ifdef test1
-comp_flags = -d2-ml
+comp_flags_i86 = -d2-ml
+comp_flags_386 = -d2-mf
+comp_flags_axp = -d2
 alt_error=01
 !else ifdef test2
-comp_flags = -ox-d1-xds-mc
+comp_flags_i86 = -ox-d1-xds-mc
+comp_flags_386 = -ox-d1-xds-mf
+comp_flags_axp = -ox-d1-xds
 alt_error=02
 !else
-comp_flags = -ox-d1-mc
+comp_flags_i86 = -ox-d1-mc
+comp_flags_386 = -ox-d1-mf
+comp_flags_axp = -ox-d1
 alt_error=00
 !endif
 
-comp_flags += -zq -zw -I"$(%watcom)/h;$(%watcom)/h/win" -bt=windows
+comp_flags = -zq -I"$(%watcom)/h"
+
+comp_flags_i86 += -zw -I"$(%watcom)/h/win" -bt=windows -DSTRICT
+comp_flags_386 += -I"$(%watcom)/h/nt"
+comp_flags_axp += -I"$(%watcom)/h/nt"
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_i86) $[* $(comp_flags) $(extra) -fo=.obj
+    $(wpp_$(arch)) $[* $(comp_flags) $(comp_flags_$(arch)) $(extra) -fo=.obj
 
 objs = &
 nullfunc.obj &
@@ -84,7 +95,7 @@ test.lnk : makefile $(objs)
     @%append $^@ LIBRARY $(%watcom)/lib286/win/ddeml.lib
     @%append $^@ LIBRARY $(%watcom)/lib286/win/commdlg.lib
 !else
-    @%append $^@ SYSTEM nt
+    @%append $^@ SYSTEM nt_win
 !endif
     @%append $^@ $(ldebug_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
