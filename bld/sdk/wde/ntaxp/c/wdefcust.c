@@ -37,7 +37,7 @@
 
 #include "wdeglbl.h"
 #include "wdemem.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wderesin.h"
 #include "wdeopts.h"
 #include "wdestat.h"

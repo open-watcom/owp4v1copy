@@ -45,7 +45,7 @@
 #include "wdegeted.h"
 #include "wdelist.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdestat.h"
 #include "wdedebug.h"
 #include "wde_rc.h"

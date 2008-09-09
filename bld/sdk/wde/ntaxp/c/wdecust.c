@@ -39,7 +39,7 @@
 #include <ctype.h>
 #include "wdemem.h"
 #include "wdemsgbx.h"
-#include "wdemsgs.gh"
+#include "rcstr.gh"
 #include "wdemain.h"
 #include "wdefont.h"
 #include "wdegetfn.h"
