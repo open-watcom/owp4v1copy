@@ -53,7 +53,7 @@
 #include "wrestrdp.h"
 #include "wrewait.h"
 #include "wrtmpfil.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "preproc.h"
 
 /****************************************************************************/

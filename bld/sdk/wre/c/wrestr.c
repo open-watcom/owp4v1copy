@@ -48,7 +48,7 @@
 #include "wredel.h"
 #include "wrestat.h"
 #include "wremsg.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "wreres.h"
 #include "wreftype.h"
 #include "wretoolb.h"

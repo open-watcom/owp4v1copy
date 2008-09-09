@@ -1,7 +1,8 @@
 #include <windows.h>
+#include "about.h"
 #include "banner.h"
 #include "wre_rc.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 
 #undef pick
 #undef sp
@@ -10,7 +11,7 @@
 
 STRINGTABLE
 BEGIN
-    #include "wre.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "wre.men"
@@ -29,7 +30,7 @@ BEGIN
 END
 
 /* icons */
-WREIcon      ICON wre.ico
+APPLICON     ICON wre.ico
 ResIcon      ICON restext.ico
 
 /* private clipboard format bitmap */
@@ -71,9 +72,10 @@ UserD        BITMAP userd.bmp
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 #endif
 
-#include "about.dlg"
+#include "splash.dlg"
 #include "del.dlg"
 #include "paste.dlg"
 #include "renam.dlg"
 #include "res.dlg"
 
+#include "about.dlg"

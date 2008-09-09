@@ -39,7 +39,7 @@
 #include "wregcres.h"
 #include "wre_wres.h"
 #include "wremsg.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "wremem.h"
 #include "wredel.h"
 #include "wrenames.h"

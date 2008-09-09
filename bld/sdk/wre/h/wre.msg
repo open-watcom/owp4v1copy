@@ -1,3 +1,5 @@
+#include "about.msg"
+
 // the following is the font used in the status bar of the window
 pick(   WRE_STATUSFONT,
         "Helv.8",
@@ -339,6 +341,15 @@ pick(   WRE_INPUTFILESNOTLOADED,
 pick(   WRE_INVALIDINPUTFILE,
         "Invalid input file.",
         "Invalid input file." )
+pick(   WRE_ABOUT_NAME,
+        "Open Watcom Resource Editor",
+        "Open Watcom Resource Editor" )
+pick(   WRE_ABOUT_COPYRIGHT_YEAR,
+        "1984",
+        "1984" )
+pick(   WRE_ABOUT_TITLE,
+        "About Open Watcom Resource Editor",
+        "About Open Watcom Resource Editor" )
 
 // WRERES.C
 pick(   WRE_UNTITLED,

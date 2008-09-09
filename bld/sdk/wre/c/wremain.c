@@ -45,7 +45,7 @@
 #include "wremem.h"
 #include "wrememf.h"
 #include "wremsg.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "wrenames.h"
 #include "wreopts.h"
 #include "wreres.h"
@@ -77,6 +77,8 @@
 
 #include "wwinhelp.h"
 #include "jdlg.h"
+#include "aboutdlg.h"
+#include "ldstr.h"
 
 /****************************************************************************/
 /* macro definitions                                                        */
@@ -312,7 +314,7 @@ Bool WREInit( HINSTANCE app_inst )
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = 0;
     wc.hInstance     = app_inst;
-    wc.hIcon         = LoadIcon( app_inst, "WREIcon" );
+    wc.hIcon         = LoadIcon( app_inst, "APPLICON" );
     wc.hCursor       = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
     wc.hbrBackground = NULL;
     wc.lpszMenuName  = "WREMenu";
@@ -548,6 +550,7 @@ LRESULT WINEXPORT WREMainWndProc( HWND hWnd, UINT message,
     Bool        pass_to_def;
     WREResInfo *res_info;
     WORD        wp;
+    about_info  ai;
 
     if( WRECleanupStarted && ( message != WM_CLOSE ) ) {
         if( message == WM_DESTROY ) {
@@ -802,7 +805,16 @@ LRESULT WINEXPORT WREMainWndProc( HWND hWnd, UINT message,
                     break;
 
                 case IDM_ABOUT:
-                    WREDisplayAboutBox( WREInst, WREMainWin, 0 );
+                    ai.owner = hWnd;
+                    ai.inst = WREInst;
+                    ai.name = AllocRCString( WRE_ABOUT_NAME );
+                    ai.version = banner1p2( _RESEDIT_VERSION_ );
+                    ai.first_cr_year = AllocRCString( WRE_ABOUT_COPYRIGHT_YEAR );
+                    ai.title = AllocRCString( WRE_ABOUT_TITLE );
+                    DoAbout( &ai );
+                    FreeRCString( ai.name );
+                    FreeRCString( ai.first_cr_year );
+                    FreeRCString( ai.title );
                     pass_to_def = FALSE;
                     break;
             }

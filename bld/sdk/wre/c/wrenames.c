@@ -41,7 +41,7 @@
 #include "wremain.h"
 #include "wremem.h"
 #include "wremsg.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "wrehints.h"
 #include "wreseted.h"
 #include "wrestat.h"

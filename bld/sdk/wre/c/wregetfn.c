@@ -39,7 +39,7 @@
 #include "wreglbl.h"
 #include "wremain.h"
 #include "wremsg.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "wrestrdp.h"
 #include "wrectl3d.h"
 #include "wremem.h"

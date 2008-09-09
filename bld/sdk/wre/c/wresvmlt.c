@@ -34,7 +34,7 @@
 #include <string.h>
 #include "wreglbl.h"
 #include "wremsg.h"
-#include "wremsgs.gh"
+#include "rcstr.gh"
 #include "wremem.h"
 #include "wrewait.h"
 #include "wrdll.h"
