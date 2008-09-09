@@ -104,7 +104,7 @@ void WdeInt3( void );
 /****************************************************************************/
 extern int PASCAL        WinMain        ( HINSTANCE, HINSTANCE, LPSTR, int);
 extern LRESULT WINEXPORT WdeMainWndProc ( HWND, UINT, WPARAM, LPARAM );
-extern Bool WINEXPORT    WdeAbout       ( HWND, WORD, WPARAM, LPARAM );
+extern Bool WINEXPORT    WdeSplash      ( HWND, WORD, WPARAM, LPARAM );
 
 /****************************************************************************/
 /* static function prototypes                                               */
@@ -124,7 +124,7 @@ static void        WdeSetMakeMeCurrent      ( WdeResInfo *, void * );
 static LRESULT     WdeHandleMDIArrangeEvents( WORD );
 static Bool        WdeSetDialogMode         ( WORD );
 static Bool        WdeProcessArgs           ( char **, int  );
-static void        WdeDisplayAboutBox       ( HINSTANCE, HWND, UINT );
+static void        WdeDisplaySplashScreen   ( HINSTANCE, HWND, UINT );
 static Bool        WdeIsDDEArgs             ( char **argv, int argc );
 
 /****************************************************************************/
@@ -445,7 +445,7 @@ Bool WdeInitInst( HINSTANCE app_inst )
     WdeSetFontList     ( hWinWdeMain );
 
     if( !IsDDE ) {
-        WdeDisplayAboutBox ( hInstWde, hWinWdeMain, 1125 );
+        WdeDisplaySplashScreen ( hInstWde, hWinWdeMain, 1125 );
     }
 
     if( IsDDE ) {
@@ -1308,17 +1308,17 @@ Bool WdeProcessArgs( char **argv, int argc )
     return( ok );
 }
 
-void WdeDisplayAboutBox ( HINSTANCE inst, HWND parent, UINT msecs )
+void WdeDisplaySplashScreen ( HINSTANCE inst, HWND parent, UINT msecs )
 {
     FARPROC     lpProcAbout;
 
-    lpProcAbout = MakeProcInstance ( (FARPROC) WdeAbout, hInstWde );
-    JDialogBoxParam ( inst, "WdeAboutBox", parent, (DLGPROC) lpProcAbout,
+    lpProcAbout = MakeProcInstance ( (FARPROC) WdeSplash, hInstWde );
+    JDialogBoxParam ( inst, "WdeSplashScreen", parent, (DLGPROC) lpProcAbout,
                      (LPARAM) &msecs  );
     FreeProcInstance ( lpProcAbout );
 }
 
-Bool WINEXPORT WdeAbout( HWND hDlg, WORD message,
+Bool WINEXPORT WdeSplash( HWND hDlg, WORD message,
                          WPARAM wParam, LPARAM lParam )
 {
     UINT        msecs, timer, start;
@@ -1327,8 +1327,6 @@ Bool WINEXPORT WdeAbout( HWND hDlg, WORD message,
     HWND        w666;
     RECT        rect, arect;
     PAINTSTRUCT ps;
-    WORD        w;
-    char        *title;
 
     static BITMAP    bm;
     static HBITMAP   logo;
@@ -1355,13 +1353,7 @@ Bool WINEXPORT WdeAbout( HWND hDlg, WORD message,
             if ( msecs ) {
                 timer = SetTimer ( hDlg, ABOUT_TIMER, msecs, NULL );
                 if ( timer ) {
-                    title = WdeAllocRCString( WDE_APPTITLE );
                     SetWindowLong ( hDlg, DWL_USER, (LONG) timer );
-                    ShowWindow ( GetDlgItem ( hDlg, IDOK ), SW_HIDE );
-                    SendMessage ( hDlg, WM_SETTEXT, 0, (LPARAM)title );
-                    if( title ) {
-                        WdeFreeRCString( title );
-                    }
                 }
             }
 
@@ -1433,18 +1425,6 @@ Bool WINEXPORT WdeAbout( HWND hDlg, WORD message,
             }
             EndDialog ( hDlg, TRUE );
             return ( TRUE );
-            break;
-
-        case WM_COMMAND:
-            w = LOWORD(wParam);
-            if ( ( w == IDOK ) || ( w == IDCANCEL ) ) {
-                timer = (UINT) GetWindowLong ( hDlg, DWL_USER );
-                if ( timer ) {
-                    KillTimer ( hDlg, timer );
-                }
-                EndDialog(hDlg, TRUE);
-                return ( TRUE );
-            }
             break;
 
     }
