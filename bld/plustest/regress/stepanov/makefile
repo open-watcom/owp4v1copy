@@ -42,11 +42,11 @@ stack_axp=opt stack=16k
 
 oop_v1p5.$(exe) : oop_v1p5.obj
     $(linker) @stepanov.lnk NAME $@ FILE $[@
-    $(run) $(exec_prefix)$@ Max=15000 18 Matrix=1000 15 Complex=30000 50 Iterator=80000 14 >>stepanov.out
+    $(run) $(exec_prefix)$@ Max=15000 18 Matrix=1000 15 Complex=30000 50 Iterator=80000 16 >>stepanov.out
 
 oop_v1p6.$(exe) : oop_v1p6.obj
     $(linker) @stepanov.lnk NAME $@ FILE $[@
-    $(run) $(exec_prefix)$@ Max=15000 49 Matrix=1000 13 Complex=30000 52 Iterator=80000 18 >>stepanov.out
+    $(run) $(exec_prefix)$@ Max=15000 49 Matrix=1000 13 Complex=30000 52 Iterator=80000 19 >>stepanov.out
 
 oop_v1p7.$(exe) : oop_v1p7.obj
     $(linker) @stepanov.lnk NAME $@ FILE $[@
