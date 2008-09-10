@@ -79,9 +79,9 @@ extern sedcmd           cmds[];         /* hold compiled commands */
 extern long             linenum[];      /* numeric-addresses table */
 
                                         /* miscellaneous shared variables */
-extern int              nflag;          /* -n option flag */
-extern int              eargc;          /* scratch copy of argument count */
-extern char const       bits[];         /* the bits table */
+extern int                  nflag;      /* -n option flag */
+extern int                  eargc;      /* scratch copy of argument count */
+extern unsigned char const  bits[];     /* the bits table */
 
 /* sed.h ends here */
 

@@ -33,7 +33,7 @@ long            linenum[MAXLINES];      /* numeric-addresses table */
                                         /* miscellaneous shared variables */
 int             nflag = 0;              /* -n option flag */
 int             eargc;                  /* scratch copy of argument count */
-char const      bits[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+unsigned char const      bits[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 
                                         /***** module common stuff *****/
 
@@ -257,7 +257,7 @@ static void compile( void )
     #define LOWCMD  56          /* = '8', lowest char indexed in cmdmask */
 
     /* indirect through this to get command internal code, if it exists */
-    static char const   cmdmask[] = {
+    static unsigned char const   cmdmask[] = {
         0,     0,      H,      0,      0,       H+EQCMD, 0,           0, /* 89:;<=>? */
         0,     0,      0,      0,      H+CDCMD, 0,       0,       CGCMD, /* @ABCDEFG */
         CHCMD, 0,      0,      0,      0,       0,       CNCMD,       0, /* HIJKLMNO */
@@ -648,10 +648,10 @@ static char *recomp(
                     if( *sp == '\\' && sp[1] == /* '{' vi brace balancing */ '}' )
                         sp += 2, *ep++ = 0;
                     else if( *sp == ',' && sp[1] == '\\' && sp[2] == /* '{' vi brace balancing */ '}' )
-                        sp += 3, *ep++ = (char)0xFF;
+                        sp += 3, *ep++ = '\xFF';
                     else if( *sp++ ==',') {
                       if ( !isdigit( *sp ) )
-                          *ep++ = 255;
+                          *ep++ = '\xFF';
                       else {
                         while (isdigit( *sp ) )
                             i2 = i2*10 + *sp++ - '0';

@@ -99,8 +99,8 @@ segment_t far *envp;
 
 void printCommand( unsigned seg )
 {
-    segment_t far *env_seg;
-    char far *p;
+    segment_t far       *env_seg;
+    unsigned char far   *p;
 
     if( _osmajor < 3 ) {
         putchar( '\n' );
