@@ -439,8 +439,8 @@ pick(   WDE_INPUTFILENOTFOUND,
         "Input file not found.",
         "Input file not found." )
 pick(   WDE_ABOUT_NAME,
-        "Open Watcom Dialog Editor",
-        "Open Watcom Dialog Editor" )
+        "Open Watcom Dialog Editor for Windows",
+        "Open Watcom Dialog Editor for Windows" )
 pick(   WDE_ABOUT_COPYRIGHT_YEAR,
         "1984",
         "1984" )

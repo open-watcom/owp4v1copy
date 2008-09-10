@@ -342,8 +342,8 @@ pick(   WRE_INVALIDINPUTFILE,
         "Invalid input file.",
         "Invalid input file." )
 pick(   WRE_ABOUT_NAME,
-        "Open Watcom Resource Editor",
-        "Open Watcom Resource Editor" )
+        "Open Watcom Resource Editor for Windows",
+        "Open Watcom Resource Editor for Windows" )
 pick(   WRE_ABOUT_COPYRIGHT_YEAR,
         "1984",
         "1984" )
