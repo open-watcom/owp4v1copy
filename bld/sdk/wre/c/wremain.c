@@ -113,6 +113,10 @@ static void     WREHideSessions           ( Bool show );
 /* type definitions                                                         */
 /****************************************************************************/
 
+#ifdef __NT__
+typedef HANDLE (WINAPI *PFNLI)( HINSTANCE, LPCSTR, UINT, int, int, UINT );
+#endif
+
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
@@ -1059,6 +1063,10 @@ Bool WINEXPORT WRESplash( HWND hDlg, WORD message,
     HWND        w666;
     RECT        rect, arect;
     PAINTSTRUCT ps;
+#ifdef __NT__
+    HINSTANCE   hInstUser;
+    PFNLI       pfnLoadImage;
+#endif
 
     static BITMAP    bm;
     static HBITMAP   logo;
@@ -1089,7 +1097,18 @@ Bool WINEXPORT WRESplash( HWND hDlg, WORD message,
                 }
             }
 
-            logo = LoadBitmap( WREInst, "AboutLogo" );
+#ifdef __NT__
+            hInstUser = GetModuleHandle( "USER32.DLL" );
+            pfnLoadImage = (PFNLI)GetProcAddress( hInstUser, "LoadImageA" );
+            if( pfnLoadImage != NULL ) {
+                logo = LoadImage( WREInst, "AboutLogo", IMAGE_BITMAP, 0, 0,
+                                  LR_LOADMAP3DCOLORS );
+            } else {
+#endif
+                logo = LoadBitmap( WREInst, "AboutLogo" );
+#ifdef __NT__
+            }
+#endif
 
             /*
             color = RGB(128,128,128);

@@ -131,6 +131,10 @@ static Bool        WdeIsDDEArgs             ( char **argv, int argc );
 /* type definitions                                                         */
 /****************************************************************************/
 
+#ifdef __NT__
+typedef HANDLE (WINAPI *PFNLI)( HINSTANCE, LPCSTR, UINT, int, int, UINT );
+#endif
+
 /****************************************************************************/
 /* static variables                                                         */
 /****************************************************************************/
@@ -1327,6 +1331,10 @@ Bool WINEXPORT WdeSplash( HWND hDlg, WORD message,
     HWND        w666;
     RECT        rect, arect;
     PAINTSTRUCT ps;
+#ifdef __NT__
+    HINSTANCE   hInstUser;
+    PFNLI       pfnLoadImage;
+#endif
 
     static BITMAP    bm;
     static HBITMAP   logo;
@@ -1357,7 +1365,18 @@ Bool WINEXPORT WdeSplash( HWND hDlg, WORD message,
                 }
             }
 
-            logo = LoadBitmap ( hInstWde, "AboutLogo" );
+#ifdef __NT__
+            hInstUser = GetModuleHandle( "USER32.DLL" );
+            pfnLoadImage = (PFNLI)GetProcAddress( hInstUser, "LoadImageA" );
+            if( pfnLoadImage != NULL ) {
+                logo = LoadImage( hInstWde, "AboutLogo", IMAGE_BITMAP, 0, 0,
+                                  LR_LOADMAP3DCOLORS );
+            } else {
+#endif
+                logo = LoadBitmap ( hInstWde, "AboutLogo" );
+#ifdef __NT__
+            }
+#endif
 
             /*
             color = GetSysColor ( COLOR_BTNFACE );
