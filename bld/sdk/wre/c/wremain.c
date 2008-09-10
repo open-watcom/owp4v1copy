@@ -93,7 +93,7 @@
 /****************************************************************************/
 extern int PASCAL        WinMain        ( HINSTANCE, HINSTANCE, LPSTR, int);
 extern LRESULT WINEXPORT WREMainWndProc ( HWND, UINT, WPARAM, LPARAM );
-extern Bool WINEXPORT    WREAbout       ( HWND, WORD, WPARAM, LPARAM );
+extern Bool WINEXPORT    WRESplash      ( HWND, WORD, WPARAM, LPARAM );
 
 /****************************************************************************/
 /* static function prototypes                                               */
@@ -106,7 +106,7 @@ static LRESULT  WREHandleMDIArrangeEvents ( WORD );
 static void     WREUpdateScreenPosOpt     ( void );
 static Bool     WRECleanup                ( Bool );
 static Bool     WREProcessArgs            ( char **, int );
-static void     WREDisplayAboutBox        ( HINSTANCE, HWND, UINT );
+static void     WREDisplaySplashScreen    ( HINSTANCE, HWND, UINT );
 static void     WREHideSessions           ( Bool show );
 
 /****************************************************************************/
@@ -435,7 +435,7 @@ Bool WREInitInst( HINSTANCE app_inst )
         }
         UpdateWindow( WREMainWin );
 
-        WREDisplayAboutBox( WREInst, WREMainWin, 1250 );
+        WREDisplaySplashScreen( WREInst, WREMainWin, 1250 );
     }
 
     return( TRUE );
@@ -1040,17 +1040,17 @@ Bool WREProcessArgs( char **argv, int argc )
 extern  WResID *        WR_EXPORT WRMem2WResID ( void *data, int is32bit );
 extern  int             WR_EXPORT WRWResID2Mem ( WResID *name, void **data,
                                                   uint_32 *size, int is32bit );
-void WREDisplayAboutBox( HINSTANCE inst, HWND parent, UINT msecs )
+void WREDisplaySplashScreen( HINSTANCE inst, HWND parent, UINT msecs )
 {
     FARPROC     lpProcAbout;
 
-    lpProcAbout = MakeProcInstance( (FARPROC) WREAbout, WREInst );
-    JDialogBoxParam( inst, "WREAboutBox", parent, (DLGPROC) lpProcAbout,
+    lpProcAbout = MakeProcInstance( (FARPROC) WRESplash, WREInst );
+    JDialogBoxParam( inst, "WRESplashScreen", parent, (DLGPROC) lpProcAbout,
                      (LPARAM) &msecs  );
     FreeProcInstance( lpProcAbout );
 }
 
-Bool WINEXPORT WREAbout( HWND hDlg, WORD message,
+Bool WINEXPORT WRESplash( HWND hDlg, WORD message,
                          WPARAM wParam, LPARAM lParam )
 {
     UINT        msecs, timer, start;
@@ -1059,8 +1059,6 @@ Bool WINEXPORT WREAbout( HWND hDlg, WORD message,
     HWND        w666;
     RECT        rect, arect;
     PAINTSTRUCT ps;
-    WORD        w;
-    char        *title;
 
     static BITMAP    bm;
     static HBITMAP   logo;
@@ -1088,12 +1086,6 @@ Bool WINEXPORT WREAbout( HWND hDlg, WORD message,
                 timer = SetTimer( hDlg, ABOUT_TIMER, msecs, NULL );
                 if( timer ) {
                     SetWindowLong( hDlg, DWL_USER, (LONG) timer );
-                    ShowWindow( GetDlgItem( hDlg, IDOK ), SW_HIDE );
-                    title = WREAllocRCString( WRE_APPNAME );
-                    SendMessage( hDlg, WM_SETTEXT, 0, (LPARAM) title );
-                    if( title ) {
-                        WREFreeRCString( title );
-                    }
                 }
             }
 
@@ -1164,18 +1156,6 @@ Bool WINEXPORT WREAbout( HWND hDlg, WORD message,
             }
             EndDialog( hDlg, TRUE );
             return( TRUE );
-            break;
-
-        case WM_COMMAND:
-            w = LOWORD(wParam);
-            if( ( w == IDOK ) || ( w == IDCANCEL ) ) {
-                timer = (UINT) GetWindowLong( hDlg, DWL_USER );
-                if( timer ) {
-                    KillTimer( hDlg, timer );
-                }
-                EndDialog(hDlg, TRUE);
-                return( TRUE );
-            }
             break;
 
     }
