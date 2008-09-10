@@ -26,13 +26,14 @@ object +=   wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
             widn2str.obj wclip.obj wisedit.obj weditsym.obj &
             preproc.obj ppexpr.obj ppmacro.obj &
             toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj &
-			inipath.obj
+            inipath.obj about.obj
 
-msgfiles = ../../h/w.msg ../h/$(name).msg
+msgfiles = ../../h/w.msg ../h/$(name).msg $(sdk_dir)/misc/about.msg
 
 extra_c_flags     = -DWIN_GUI -s
 
 extra_c_flags_win = -zu-zw-zc
+extra_c_flags_nt  = -DNOUSE3D
 
 # main dll object
 extra_c_flags_wmem= -fh
@@ -88,7 +89,7 @@ xlibs = $(wres_lib) $(wr_lib)
 $(name).lib: $(name).dll
         $(librarian) $(libflags) $@ +$[@
 
-$(name).dll: wmsgfile.gh $(object) $(name).res $(xlibs) $(res_objs)
+$(name).dll: rcstr.gh $(object) $(name).res $(xlibs) $(res_objs)
         @%create tmp.lnk
         @%append tmp.lnk $(lflags)
         @for %i in ($(object)) do @%append tmp.lnk file %i
@@ -101,16 +102,16 @@ $(name).dll: wmsgfile.gh $(object) $(name).res $(xlibs) $(res_objs)
 !endif
 
 $(name).res: ../h/$(name).rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 version.res: version.rc
         $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
 
-wmsgfile.gh: msgtemp.gh
-        $(vi) -s $(misc_dir)/msgtoh.vi -p"$^@" $[@
+rcstr.gh: rcstrmsg.gh
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
-msgtemp.gh: ../h/master.msg $(msgfiles)
-        $(cc) $(cflags) $(inc_path) -p $[@ -fo=$^@
+rcstrmsg.gh: ../h/master.msg $(msgfiles)
+        $(cc) -zk0 -p -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)

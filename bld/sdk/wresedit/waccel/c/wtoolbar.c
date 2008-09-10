@@ -41,7 +41,7 @@
 #include "whints.h"
 #include "wlist.h"
 #include "wtoolbar.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

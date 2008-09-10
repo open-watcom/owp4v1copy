@@ -178,6 +178,15 @@ pick(   W_STRINGNAMES,
 pick(   W_UPDATEMODIFIEDSYM,
         "The symbols have been modified.\nSave?",
         "The symbols have been modified.\nSave?" )
+pick(   W_ABOUT_NAME,
+        "Open Watcom String Editor for Windows",
+        "Open Watcom String Editor for Windows" )
+pick(   W_ABOUT_COPYRIGHT_YEAR,
+        "2002",
+        "2002" )
+pick(   W_ABOUT_TITLE,
+        "About Open Watcom String Editor",
+        "About Open Watcom String Editor" )
 
 // WNEWITEM.C
 pick(   W_QUERYREPLACESTRING,

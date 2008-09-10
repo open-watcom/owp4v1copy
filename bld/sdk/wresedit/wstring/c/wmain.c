@@ -59,7 +59,7 @@
 #include "wsvobj.h"
 #include "wsetedit.h"
 #include "wmain.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
 #include "wstr2rc.h"
 #include "weditsym.h"
 #include "wstrdup.h"
@@ -70,6 +70,8 @@
 #include "jdlg.h"
 #include "watini.h"
 #include "inipath.h"
+#include "aboutdlg.h"
+#include "ldstr.h"
 
 /****************************************************************************/
 /* macro definitions                                                        */
@@ -84,7 +86,6 @@
 /* external function prototypes                                             */
 /****************************************************************************/
 extern LRESULT WINEXPORT WMainWndProc ( HWND, UINT, WPARAM, LPARAM );
-extern Bool WINEXPORT    WAbout       ( HWND, WORD, WPARAM, LPARAM );
 
 /****************************************************************************/
 /* static function prototypes                                               */
@@ -96,7 +97,6 @@ static Bool         WRegisterMainClass  ( HINSTANCE );
 static Bool         WCreateEditWindow   ( HINSTANCE, WStringEditInfo * );
 static void         WHandleMemFlags     ( WStringEditInfo *einfo );
 static void         WUpdateScreenPosOpt ( HWND );
-static void         WDisplayAboutBox    ( HINSTANCE, HWND, UINT );
 static Bool         WCleanup            ( WStringEditInfo * );
 static Bool         WQuerySave          ( WStringEditInfo *, Bool );
 static Bool         WQuerySaveRes       ( WStringEditInfo *, Bool );
@@ -422,7 +422,7 @@ Bool WRegisterMainClass ( HINSTANCE inst )
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = sizeof(WStringEditInfo *);
     wc.hInstance     = inst;
-    wc.hIcon         = LoadIcon ( inst, "WMainIcon" );
+    wc.hIcon         = LoadIcon ( inst, "APPLICON" );
     wc.hCursor       = LoadCursor ( (HINSTANCE) NULL, IDC_ARROW );
     wc.hbrBackground = NULL;
     wc.lpszMenuName  = WMainMenuName;
@@ -675,6 +675,7 @@ LRESULT WINEXPORT WMainWndProc ( HWND hWnd, UINT message,
     WStringEditInfo *einfo;
     WORD            wp;
     MINMAXINFO     *minmax;
+    about_info      ai;
 
     pass_to_def = TRUE;
     ret         = FALSE;
@@ -858,7 +859,16 @@ LRESULT WINEXPORT WMainWndProc ( HWND hWnd, UINT message,
                     break;
 
                 case IDM_STR_ABOUT:
-                    WDisplayAboutBox ( WGetEditInstance(), einfo->win, 0 );
+                    ai.owner = hWnd;
+                    ai.inst = WGetEditInstance();
+                    ai.name = AllocRCString( W_ABOUT_NAME );
+                    ai.version = banner1p2( _RESEDIT_VERSION_ );
+                    ai.first_cr_year = AllocRCString( W_ABOUT_COPYRIGHT_YEAR );
+                    ai.title = AllocRCString( W_ABOUT_TITLE );
+                    DoAbout( &ai );
+                    FreeRCString( ai.name );
+                    FreeRCString( ai.first_cr_year );
+                    FreeRCString( ai.title );
                     pass_to_def = FALSE;
                     break;
             }
@@ -1110,146 +1120,6 @@ void WResizeWindows ( WStringEditInfo *einfo )
         WResizeStatusWindows ( einfo->wsb, &rect );
         WResizeRibbon ( einfo, &rect );
     }
-}
-
-void WDisplayAboutBox ( HINSTANCE inst, HWND parent, UINT msecs )
-{
-    FARPROC     lpProcAbout;
-
-    lpProcAbout = MakeProcInstance ( (FARPROC) WAbout, inst );
-    JDialogBoxParam( inst, "WAboutBox", parent, (DLGPROC) lpProcAbout,
-                     (LPARAM) &msecs  );
-    FreeProcInstance ( lpProcAbout );
-}
-
-Bool WINEXPORT WAbout( HWND hDlg, WORD message, WPARAM wParam, LPARAM lParam )
-{
-    UINT        msecs, timer, start;
-    HDC         dc, tdc;
-    HBITMAP     old;
-    HWND        w666;
-    RECT        rect, arect;
-    PAINTSTRUCT ps;
-    WORD        w;
-    char        *title;
-
-    static BITMAP    bm;
-    static HBITMAP   logo;
-    static HBRUSH    brush;
-    static COLORREF  color;
-
-    switch( message ) {
-
-        case WM_SYSCOLORCHANGE:
-            WCtl3dColorChange ();
-            break;
-
-        case WM_DESTROY:
-            if( logo ) {
-                DeleteObject( logo );
-            }
-            if( brush ) {
-                DeleteObject( brush );
-            }
-            break;
-
-        case WM_INITDIALOG:
-            msecs = *((UINT *)lParam);
-            if( msecs ) {
-                timer = SetTimer( hDlg, ABOUT_TIMER, msecs, NULL );
-                if( timer ) {
-                    SetWindowLong( hDlg, DWL_USER, (LONG)timer );
-                    ShowWindow( GetDlgItem( hDlg, IDOK ), SW_HIDE );
-                    title = WAllocRCString( W_STRINGAPPTITLE );
-                    SendMessage( hDlg, WM_SETTEXT, 0, (LPARAM)title );
-                    if( title ) {
-                        WFreeRCString( title );
-                    }
-                }
-            }
-
-            logo = LoadBitmap ( WGetEditInstance(), "AboutLogo" );
-
-            //color = RGB(128,128,128);
-            color = GetSysColor ( COLOR_BTNFACE );
-            brush = CreateSolidBrush ( color );
-
-            GetObject ( logo, sizeof(BITMAP), &bm );
-            return ( TRUE );
-
-#if 0
-#ifdef __NT__
-        case WM_CTLCOLORSTATIC:
-            if ( brush ) {
-                dc = (HDC) wParam;
-                SetBkColor ( dc, color );
-                return ( (LRESULT) brush );
-            }
-            break;
-#else
-        case WM_CTLCOLOR:
-            if ( brush ) {
-                dc = (HDC) wParam;
-                if ( HIWORD(lParam) == CTLCOLOR_STATIC ) {
-                    SetBkColor ( dc, color );
-                }
-                return ( (LRESULT) brush );
-            }
-            break;
-#endif
-
-        case WM_ERASEBKGND:
-            if ( brush ) {
-                GetClientRect( hDlg, &rect );
-                UnrealizeObject( brush );
-                FillRect( (HDC)wParam, &rect, brush );
-                return ( TRUE );
-            }
-            break;
-#endif
-
-        case WM_PAINT:
-            dc = BeginPaint ( hDlg, &ps );
-            if ( dc ) {
-                w666 = GetDlgItem ( hDlg, 666 );
-                GetClientRect ( w666, &rect );
-                GetClientRect ( hDlg, &arect );
-                start = ( arect.right - arect.left - bm.bmWidth ) / 2;
-                MapWindowPoints ( w666, hDlg, (POINT *) &rect, 2 );
-                tdc = CreateCompatibleDC ( dc );
-                old = SelectObject ( tdc, logo );
-                BitBlt ( dc, start, rect.top + 20, bm.bmWidth, bm.bmHeight,
-                         tdc, 0, 0, SRCCOPY );
-                SelectObject ( tdc, old );
-                DeleteDC ( tdc );
-                EndPaint ( hDlg, &ps );
-            }
-            break;
-
-        case WM_TIMER:
-            timer = (UINT) GetWindowLong ( hDlg, DWL_USER );
-            if ( timer ) {
-                KillTimer ( hDlg, timer );
-            }
-            EndDialog ( hDlg, TRUE );
-            return ( TRUE );
-            break;
-
-        case WM_COMMAND:
-            w = LOWORD(wParam);
-            if ( ( w == IDOK ) || ( w == IDCANCEL ) ) {
-                timer = (UINT) GetWindowLong ( hDlg, DWL_USER );
-                if ( timer ) {
-                    KillTimer ( hDlg, timer );
-                }
-                EndDialog(hDlg, TRUE);
-                return ( TRUE );
-            }
-            break;
-
-    }
-
-    return ( FALSE );
 }
 
 Bool WCleanup ( WStringEditInfo *einfo )

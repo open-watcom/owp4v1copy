@@ -36,7 +36,7 @@
 #include "wglbl.h"
 #include "wmem.h"
 #include "wmsg.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
 #include "wsetedit.h"
 #include "wedit.h"
 #include "wstrdup.h"

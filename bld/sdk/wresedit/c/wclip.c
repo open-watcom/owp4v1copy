@@ -40,7 +40,7 @@
 #include "wmsg.h"
 #include "winst.h"
 #include "wclip.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */

@@ -38,7 +38,7 @@
 #include "wmain.h"
 #include "wmem.h"
 #include "wmsg.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
 #include "whints.h"
 #include "wlist.h"
 #include "wtoolbar.h"

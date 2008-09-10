@@ -14,7 +14,8 @@
 
 #include <windows.h>
 #include "sys_rc.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
+#include "about.h"
 #include "banner.h"
 #include "w.rc"
 
@@ -28,7 +29,7 @@ BEGIN
 END
 
 /* icons */
-WMainIcon      ICON wstring.ico
+APPLICON       ICON wstring.ico
 
 /* aboutbox bitmap */
 AboutLogo    BITMAP MOVEABLE DISCARDABLE logo.bmp
@@ -53,11 +54,10 @@ DeleteKey    BITMAP delkey.bmp
 
 STRINGTABLE
 BEGIN
-    #include "master.msg"
+    #include "rcstrmsg.gh"
 END
 
 #include "wstring.men"
 
-#include "strabout.dlg"
 #include "stredit.dlg"
-
+#include "about.dlg"

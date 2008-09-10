@@ -39,7 +39,7 @@
 #include "wmsg.h"
 #include "wmain.h"
 #include "wstat.h"
-#include "wmsgfile.gh"
+#include "rcstr.gh"
 
 /****************************************************************************/
 /* macro definitions                                                        */
