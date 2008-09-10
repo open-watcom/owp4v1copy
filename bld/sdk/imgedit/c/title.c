@@ -66,12 +66,11 @@ BOOL CALLBACK wTitle( HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam )
                 timer = SetTimer( hwnd, TITLE_TIMER, msecs, NULL );
                 if ( timer ) {
                     SetWindowLong( hwnd, DWL_USER, (LONG)timer );
-                    SendMessage( hwnd, WM_SETTEXT, 0, (LPARAM)IEAppTitle );
                 }
             }
 
             logo = LoadBitmap ( wMainInst, "APPLBITMAP" );
-            color = RGB( 192, 192, 192);
+            color = GetSysColor( COLOR_BTNFACE );
             brush = CreateSolidBrush ( color );
 
             GetObject ( logo, sizeof(BITMAP), &bm );
