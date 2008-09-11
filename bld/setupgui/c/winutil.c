@@ -458,10 +458,10 @@ extern void WriteProfileStrings( bool uninstall )
     }
 }
 
-#if ( defined( __NT__ )  ||  defined( __WINDOWS__ ) ) && !defined( _UI )
+#if (defined( __NT__ ) || defined( __WINDOWS__ )) && !defined( _UI )
 static bool IsWin40()
 {
-#if defined(WINNT)
+#if defined( __NT__ )
     OSVERSIONINFO       ver;
 
     ver.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
