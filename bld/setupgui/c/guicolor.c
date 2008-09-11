@@ -127,7 +127,11 @@ gui_colour_set StatusColours[] = {
     { GUI_GREY,         GUI_BLACK },            /* GUI_MENU_GRAYED */
     { GUI_BRIGHT_YELLOW,GUI_BLACK },            /* GUI_MENU_ACTIVE */
     { GUI_BRIGHT_YELLOW,GUI_BRIGHT_WHITE },     /* GUI_MENU_ACTIVE_STANDOUT */
+#ifdef __NT__
+    { GUI_BLACK,        GUIEX_DLG_BKGRND },     /* GUI_BACKGROUND */
+#else
     { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* GUI_BACKGROUND */
+#endif
     { GUI_BRIGHT_WHITE, GUI_BLUE },             /* GUI_MENU_FRAME    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_TITLE_INACTIVE    */
 
@@ -141,9 +145,15 @@ gui_colour_set StatusColours[] = {
     { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* WND_SELECTED */
     { GUI_BLACK,        GUI_RED },              /* WND_HOTSPOT */
     { GUI_GREY,         GUI_BLACK },            /* WND_CENSORED */
+#ifdef __NT__
+    { GUIEX_DLG_BKGRND, GUI_BLACK        },
+    { GUI_BLACK,        GUIEX_DLG_BKGRND },     /* WND_STATUS_TEXT */
+    { GUI_BLACK,        GUIEX_DLG_BKGRND }      /* WND_STATUS_FRAME */
+#else
     { GUI_BRIGHT_WHITE, GUI_BLACK },            /* WND_STATUS_BAR */
     { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* WND_STATUS_TEXT */
-    { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* WND_STATUS_FRAME */
+    { GUI_BLACK,        GUI_BRIGHT_WHITE }      /* WND_STATUS_FRAME */
+#endif
 };
 
 #endif
