@@ -46,7 +46,7 @@ getprotobynumber@4
 getservbyname@8
 getservbyport@8
 getsockname@12
-getsockopt@0
+getsockopt@20
 htonl@4
 htons@4
 inet_addr@4
