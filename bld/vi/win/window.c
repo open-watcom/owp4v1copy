@@ -33,6 +33,7 @@
 #include "winvi.h"
 #include "winaux.h"
 #include "font.h"
+#include "wstatus.h"
 
 window *Windows[] = {
     &StatusBar,
@@ -79,7 +80,10 @@ void DefaultWindows( RECT *world, RECT *workspace )
          * like adding yet another define.
          * This whole function reeks a little anyway :)
          */
-        r->top = r->bottom - FontHeight( WIN_FONT( w ) ) - 2 * border - 7;
+        if( StatusWidth < 0 ) {
+            StatusWidth = FontHeight( WIN_FONT( w ) ) + 2 * border + 7;
+        }
+        r->top = r->bottom - StatusWidth;
         last = r;
     } else {
         tmp = *world;

@@ -129,7 +129,7 @@ void createClientWindow( HWND hwnd )
     short               height;
 
     GetClientRect( hwnd, &clientrect );
-    height = clientrect.bottom - FUNCTIONBAR_WIDTH - STATUS_WIDTH;
+    height = clientrect.bottom - FUNCTIONBAR_WIDTH - StatusWidth;
 
     ccs.hWindowMenu = GetSubMenu( GetMenu(hwnd), 5 );
     ccs.idFirstChild = IDM_FIRSTCHILD;
@@ -159,7 +159,7 @@ static void setClientSize( HWND hwnd )
 
     GetClientRect( hwnd, &rcclient );
     height = rcclient.bottom - FUNCTIONBAR_WIDTH
-                                        - STATUS_WIDTH;
+                                        - StatusWidth;
 
     MoveWindow(ClientWindow, 0, FUNCTIONBAR_WIDTH+1,
                                 rcclient.right, height, TRUE);

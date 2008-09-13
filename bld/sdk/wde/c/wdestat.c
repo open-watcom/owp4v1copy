@@ -164,6 +164,9 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
     /* set the text in the status window */
     WdeSetStatusReadyText( );
 
+    GetWindowRect( WdeStatusWindow, &rect );
+    WdeStatusDepth = rect.bottom - rect.top;
+
     return( TRUE );
 }
 

@@ -162,6 +162,9 @@ Bool WRECreateStatusLine( HWND main, HINSTANCE inst )
     /* set the text in the status window */
     WRESetStatusReadyText( );
 
+    GetWindowRect( WREStatusWindow, &rect );
+    WREStatusDepth = rect.bottom - rect.top;
+
     return( TRUE );
 }
 

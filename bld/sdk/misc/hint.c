@@ -117,6 +117,7 @@ WORD SizeHintBar( statwnd *wnd )
     MoveWindow( hint, area.left, area.top, area.right - area.left,
                 area.bottom - area.top, TRUE );
     updateHintText( wnd, info->curmsg );
+    GetWindowRect( hint, &area );
     return( area.bottom - area.top );
 }
 

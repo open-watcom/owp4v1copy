@@ -348,7 +348,7 @@ int StatusWndCreate( statwnd *sw, HWND parent, RECT *size,
 #if defined (__NT__)
     if( hInstCommCtrl != NULL ) {
         sw->win = CreateWindow( STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE |
-                                WS_CLIPSIBLINGS | CCS_NOMOVEY | SBARS_SIZEGRIP,
+                                WS_CLIPSIBLINGS | SBARS_SIZEGRIP,
                                 0, 0, 0, 0, parent, NULL, hinstance, NULL );
         if( sw->numSections > 0 ) {
             updateParts( sw );

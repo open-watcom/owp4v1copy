@@ -183,6 +183,9 @@ wstatbar *WCreateStatusLine ( HWND parent, HINSTANCE inst )
 
     WSetStatusReadyText( wsb );
 
+    GetWindowRect( wsb->stat->win, &rect );
+    WStatusDepth = rect.bottom - rect.top;
+
     return( wsb );
 }
 

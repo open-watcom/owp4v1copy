@@ -46,6 +46,8 @@ static BOOL Fini( window *, void * );
 static BOOL     capIndex = -1;
 static short    *sections;
 
+int StatusWidth = -1;
+
 window StatusBar = {
     &statusw_info,
     { 0, 0, 0, 0 },
@@ -72,7 +74,7 @@ void StatusWndSetSeparatorsWithArray( short *source, int num )
 BOOL StatusWindowProc( HWND, unsigned, UINT, LONG );
 static BOOL Init( window *w, void *parm )
 {
-    BOOL                rc;
+    BOOL    rc;
 
     parm = parm;
     w = w;
@@ -242,6 +244,8 @@ window_id NewStatWindow( void )
     size.right += 1;
     size.bottom += 1;
     stat = StatusWndCreate( Root, &size, InstanceHandle, NULL );
+    GetWindowRect( stat, &size );
+    StatusWidth = size.bottom - size.top;
     return( stat );
 
 } /* NewStatWindow */

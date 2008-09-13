@@ -55,6 +55,8 @@ static char             *SetCursorText = NULL;
 static char             *SetIconText = NULL;
 static char             *ImageText = NULL;
 
+int StatusWidth = INIT_STATUS_WIDTH;
+
 /*
  * InitStatusLine - initializes the status line ...
  */
@@ -126,12 +128,12 @@ BOOL InitStatusLine( HWND parent )
     rcsize.xLeft = -1;
     rcsize.xRight = client.xRight + 1;
     rcsize.yBottom = -1;
-    rcsize.yTop = STATUS_WIDTH - 1;
+    rcsize.yTop = INIT_STATUS_WIDTH - 1;
 #else
     rcsize.left = -1;
     rcsize.right = client.right+1;
     rcsize.bottom = client.bottom+1;
-    rcsize.top = client.bottom - STATUS_WIDTH + 1;
+    rcsize.top = client.bottom - INIT_STATUS_WIDTH + 1;
 #endif
 
     sbd[0].separator_width = 5;
@@ -183,6 +185,9 @@ BOOL InitStatusLine( HWND parent )
         _wpi_releasepres( statusBarWnd, pres );
         MemFree( text );
     }
+
+    GetWindowRect( statusBarWnd, &rcsize );
+    StatusWidth = rcsize.bottom - rcsize.top;
 
     return( TRUE );
 } /* InitStatusLine */
@@ -271,9 +276,9 @@ void ResizeStatusBar( WPI_PARAM2 lparam )
 #else
     width = (int_16)LOWORD( lparam ) + 2;
     height = (int_16)HIWORD( lparam );
-    y = max( height - STATUS_WIDTH + 1, FUNCTIONBAR_WIDTH );
+    y = max( height - StatusWidth + 1, FUNCTIONBAR_WIDTH );
 #endif
-    _wpi_setwindowpos( statusBarWnd, HWND_TOP, -1, y, width, STATUS_WIDTH,
+    _wpi_setwindowpos( statusBarWnd, HWND_TOP, -1, y, width, StatusWidth,
                         SWP_SHOWWINDOW | SWP_MOVE | SWP_SIZE );
 } /* ResizeStatusBar */
 

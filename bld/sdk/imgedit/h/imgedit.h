@@ -80,7 +80,7 @@ typedef enum {
 #define SB_SAVE         0
 #define LMOUSEBUTTON    0
 #define RMOUSEBUTTON    1
-#define STATUS_WIDTH    24
+#define INIT_STATUS_WIDTH       24
 #define FUNCTIONBAR_WIDTH       26
 
 #define BORDER_WIDTH    12      /* size of the border around the view area */
@@ -206,6 +206,7 @@ extern char             *IESaveImageTitle;
 extern char             *IEOpenImageTitle;
 extern char             *IESavePaletteTitle;
 extern char             *IEOpenPaletteTitle;
+extern int              StatusWidth;
 
 /*
  * function prototypes

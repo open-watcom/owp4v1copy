@@ -152,6 +152,7 @@ int PASCAL WinMain( HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show )
     }
 
     SetWindowCursorForReal();
+    ResizeRoot();
     EditMain();
 
     #ifdef TRMEM

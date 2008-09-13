@@ -83,7 +83,7 @@ static void setDefaultValues( settings_info *info )
 #else
     ImgedConfigInfo.pal_ypos = ImgedConfigInfo.y_pos +
                                         ImgedConfigInfo.height -
-                                        STATUS_WIDTH - CP_HEIGHT - 2;
+                                        StatusWidth - CP_HEIGHT - 2;
 #endif
 
     ImgedConfigInfo.view_xpos = VIEWIN_XPOS;
