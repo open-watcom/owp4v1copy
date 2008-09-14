@@ -93,7 +93,7 @@ extern regexp   *RegComp( char * );
 extern int      RegExec( regexp *, char *, char );
 extern void     RegAnchor( regexp * );
 
-#define         MAGIC   0234
+#define         MAGIC   '\x9C'
 #ifdef __cplusplus
 };
 #endif
