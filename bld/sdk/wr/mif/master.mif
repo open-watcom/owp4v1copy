@@ -98,7 +98,7 @@ inc_dirs = -I. -I"../h" -I"$(misc_dir)" -I$(cpp_dir) -I"$(wres_dir)/h" -I"$(wrc_
 
 #------------- LIB
 $(name).lib: $(name).dll $(__MAKEFILES__)
-        $(librarian) $(libflags) $@ +$[@
+        $(librarian) $(libflags) +$[@
 
 #------------- LINK
 extra_l_flags = libpath $(misc_dir) op map,v,static

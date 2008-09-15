@@ -25,7 +25,7 @@ wedit.dll : weditviw.obj dll.lnk
         $(linker) name $^@ @dll.lnk file $[@
 
 wedit.lib : wedit.dll
-        $(librarian) $(libflags) $^@ +$[@
+        $(librarian) $(libflags) +$[@
 
 weditviw.dll : weditviw.obj dll.lnk
         $(linker) name $^@ @dll.lnk file $[@

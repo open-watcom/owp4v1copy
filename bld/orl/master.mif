@@ -18,5 +18,5 @@ orl.lib : $(orl_objs)
 !else
         @%create $^&.lbc
         @for %i in ($(orl_objs)) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) $^@ @$^&.lbc
+        $(librarian) $(libflags) @$^&.lbc
 !endif

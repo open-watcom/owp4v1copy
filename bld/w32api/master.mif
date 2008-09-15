@@ -172,19 +172,19 @@ extra_lib_flags_ppc = -ic -ip
         $(awk) -v cpu=$(host_cpu) -f ../../def2lbc.awk $[@ > $@
 
 .lbc.lib:
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 .obj.lib:
-        $(librarian) $(libflags) $@ $<
+        $(librarian) $(libflags) $<
 
 all: $(libs) .symbolic
 
 !ifeq host_cpu axp
 kernel32.lib: kernel32.lbc kernel32.axp
-        $(librarian) $(libflags) $@ @$[@ @$]@
+        $(librarian) $(libflags) @$[@ @$]@
 !else
 kernel32.lib: kernel32.lbc
-        $(librarian) $(libflags) $@ @$[@
+        $(librarian) $(libflags) @$[@
 !endif
 
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
@@ -193,27 +193,27 @@ dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
 dinput8.lib: dinput8.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc +%i
-        $(librarian) $(libflags) $@ @$[@ @tmp.lbc
+        $(librarian) $(libflags) @$[@ @tmp.lbc
 
 dinput.lib: dinput.lbc $(dinput_objs)
         @%create tmp.lbc
         @for %i in ($(dinput_objs)) do @%append tmp.lbc +%i
-        $(librarian) $(libflags) $@ @$[@ @tmp.lbc
+        $(librarian) $(libflags) @$[@ @tmp.lbc
 
 dxerr8.lib: dxerr8.obj dxerr8w.obj
-        $(librarian) $(libflags) $@ +$[@ +$]@
+        $(librarian) $(libflags) $<
 
 dxerr9.lib: dxerr9.obj dxerr9w.obj
-        $(librarian) $(libflags) $@ +$[@ +$]@
+        $(librarian) $(libflags) $<
 	
 ksuser.lib: ksuser.lbc ksuser.obj
-        $(librarian) $(libflags) $@ @$[@ +$]@
+        $(librarian) $(libflags) @$[@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
-        $(librarian) $(libflags) $@ @$[@ +$]@
+        $(librarian) $(libflags) @$[@ +$]@
 
 ws2_32.lib: ws2_32.lbc ws2_32.obj
-        $(librarian) $(libflags) $@ @$[@ +$]@
+        $(librarian) $(libflags) @$[@ +$]@
 
 vfw32.lbc: $(vfw32_libs)
         @%create $@
@@ -229,7 +229,7 @@ uuid_objs = mshtml-uuid.obj msxml-uuid.obj unknwn-uuid.obj &
 uuid.lib: $(uuid_objs)
         @%create tmp.lbc
         @for %i in ($(uuid_objs)) do @%append tmp.lbc +%i
-        $(librarian) $(libflags) $@ @tmp.lbc
+        $(librarian) $(libflags) @tmp.lbc
 
 .c.obj: .autodepend
         $(cc) $(cflags) $(inc_path) $<

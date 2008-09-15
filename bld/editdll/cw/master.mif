@@ -32,7 +32,7 @@ wedit.dll : weditcw.obj dll.lnk
     $(linker) name $^@ @dll.lnk file $[@
 
 wedit.lib : wedit.dll
-    $(librarian) $(libflags) $@ +$[@
+    $(librarian) $(libflags) +$[@
     
 dll.lnk : $(__MAKEFILES__)
     @%write  $@ $(lflags)

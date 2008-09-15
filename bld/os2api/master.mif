@@ -231,10 +231,10 @@ all : $(dirs) $(headers) $(libs) .SYMBOLIC
         sed -f ../def2lbc.sed ../$(libdir)/$[. > $@
 
 .lbc.lib:
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 .obj.lib:
-        $(librarian) $(libflags) $@ $<
+        $(librarian) $(libflags) $<
 
 .mh.h:
         $(splice)
@@ -261,38 +261,38 @@ all : $(dirs) $(headers) $(libs) .SYMBOLIC
         $(splice)
 
 os2.lib: lib286.lbc msgseg.obj
-        $(librarian) $(libflags) $@ @$[@ +$]@
+        $(librarian) $(libflags) @$[@ +$]@
 
 lib286.lbc: $(components286)
         %create $@
         @for %f in ($<) do cat %f >> $@
 
 os2386.lib: lib386.lbc msgseg32.obj
-        $(librarian) $(libflags) $@ @$[@ +$]@
+        $(librarian) $(libflags) @$[@ +$]@
 
 lib386.lbc: $(components386)
         %create $@
         @for %f in ($<) do cat %f >> $@
 
 rexx.lib: rexxall.lbc
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 rexxall.lbc: $(componentsrexx)
         %create $@
         @for %f in ($<) do cat %f >> $@
 
 mmpm2.lib: mmpm2all.lbc
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 mmpm2all.lbc: $(componentsmmpm2)
         %create $@
         @for %f in ($<) do cat %f >> $@
 
 libuls.lib: libuni.lbc
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 libconv.lib: uconv.lbc
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 !ifeq host_cpu 386
 $(dirs386):

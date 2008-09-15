@@ -87,7 +87,7 @@ res_objs = version.res
 xlibs = $(wres_lib) $(wr_lib)
 
 $(name).lib: $(name).dll
-        $(librarian) $(libflags) $@ +$[@
+        $(librarian) $(libflags) +$[@
 
 $(name).dll: rcstr.gh $(object) $(name).res $(xlibs) $(res_objs)
         @%create tmp.lnk

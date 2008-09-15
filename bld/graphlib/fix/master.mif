@@ -20,7 +20,7 @@ tmp.lib : ../../dosi86/graphs.lib ../../../pgchart/dosi86/charts.lib &
     @%append tmp.lbc  +../../dosi86/dummy.obj
     @%append tmp.lbc  +../../dosi86/fsmath.obj
     @%append tmp.lbc  +../../../pgchart/dosi86/charts.lib
-    $(librarian) $(libflags) $@ @tmp.lbc
+    $(librarian) $(libflags) @tmp.lbc
 
 !else
 
@@ -44,7 +44,7 @@ tmp.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
     @%append tmp.lbc  +../../dos386r/fsmath.obj
     @%append tmp.lbc  +../../../pgchart/dos386r/chart3r.lib
     @%append tmp.lbc  +../../../pgchart/dos386s/chart3s.lib
-    $(librarian) $(libflags) $@ @tmp.lbc
+    $(librarian) $(libflags) @tmp.lbc
 
 !endif
 
@@ -60,17 +60,17 @@ tmp.lib : ../../qnxi86/graphs.lib ../../../pgchart/dosi86/charts.lib &
     @%append tmp.lbc  +../../qnxi86/dummy.obj
     @%append tmp.lbc  +../../qnxi86/fsmath.obj
     @%append tmp.lbc  +../../../pgchart/dosi86/charts.lib
-    $(librarian) $(libflags) $@ @tmp.lbc
+    $(librarian) $(libflags) @tmp.lbc
 
 !else
 
 all: graph3r.lib graph3s.lib
 
 graph3r.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386r/chart3r.lib
-    $(librarian) $(libflags) graph3r.lib +../../qnx386r/graph3r.lib +../../../pgchart/dos386r/chart3r.lib
+    $(librarian) $(libflags) +../../qnx386r/graph3r.lib +../../../pgchart/dos386r/chart3r.lib
 
 graph3s.lib : ../../qnx386r/graph3r.lib ../../../pgchart/dos386s/chart3s.lib
-    $(librarian) $(libflags) graph3s.lib +../../qnx386s/graph3s.lib +../../../pgchart/dos386s/chart3s.lib
+    $(librarian) $(libflags) +../../qnx386s/graph3s.lib +../../../pgchart/dos386s/chart3s.lib
 
 !endif
 
@@ -135,7 +135,7 @@ graph.lib : $(clibdir) tmp.lib
   # put all modules together into new library
     @%create $^&.lbc
     @for %i in (*.obj) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) $@ @$^&.lbc
+    $(librarian) $(libflags) @$^&.lbc
     @rm -f *.obj
 
 graphics_prefix = ../

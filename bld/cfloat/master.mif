@@ -32,6 +32,6 @@ cf.lib : $(cf_objs)
 cf.lib : $(cf_objs)
         rm -f $^&.lbc
         @for %i in ($<) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) $@ @$^&.lbc
+        $(librarian) $(libflags) @$^&.lbc
 
 !endif

@@ -99,7 +99,7 @@ objs =  guimain.obj &
         wndimain.obj
 
 aui.lib : $(objs) $(__makefiles__) $(aui_dir)/h/aui.rc
-        $(librarian) $(libflags) $@ $(objs)
+        $(librarian) $(libflags) $(objs)
 
 .rc: ../h
 !ifdef pm

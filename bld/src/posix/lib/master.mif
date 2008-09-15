@@ -13,7 +13,7 @@ objs =  die.obj &
         quit.obj
 
 util.lib : $(objs)
-        $(librarian) $(libflags) $^@ $(objs)
+        $(librarian) $(libflags) $(objs)
 #        @%create $^&.lbc
 #        @for %i in ($(orl_objs)) do @%append $^&.lbc +%i
-#        $(librarian) $(libflags) $^@ @$^&.lbc
+#        $(librarian) $(libflags) @$^&.lbc

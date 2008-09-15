@@ -55,5 +55,5 @@ wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
 !else
     %create $^&.lbc
     @for %i in ($(objs)) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) $@ @$^&.lbc
+    $(librarian) $(libflags) @$^&.lbc
 !endif

@@ -26,7 +26,7 @@ wedit.dll: epmlink.obj dll.lnk
     $(linker) name $@ @$]@ file $[@
     
 wedit.lib: wedit.dll
-    $(librarian) $(libflags) $@ +$[@
+    $(librarian) $(libflags) +$[@
 
 epmtest.exe : epmtest.obj wedit.lib
     $(linker) d a op st=32k, case sys os2v2_pm file epmtest.obj lib wedit.lib

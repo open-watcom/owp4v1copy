@@ -137,7 +137,7 @@ $(name)e.exe : $(res_depends) $(objs) clibext.obj $(wres_lib)
 !else ifeq sys_dll 1
 
 $(name).lib: $(name)e.dll $(__MAKEFILES__)
-        $(librarian) $(libflags) $@ +$[@
+        $(librarian) $(libflags) +$[@
 
 !else
 

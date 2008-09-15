@@ -582,60 +582,13 @@ all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
     $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
 
 .lbc.lib:
-    $(librarian) $(libflags) $@ @$<
+    $(librarian) $(libflags) @$<
+
+.obj.lib:
+    $(librarian) $(libflags) $<
 
 winsock2.h: winsock.mh
     $(ws2splice)
-
-adsiid.lib: adsiid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +adsiid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-largeint.lib: largeint.obj
-    %create $^&.lbc
-    @%append $^&.lbc +largeint.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-mfuuid.lib: mfuuid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +mfuuid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-strmiids.lib: strmiids.obj
-    %create $^&.lbc
-    @%append $^&.lbc +strmiids.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-strquery.lib: strquery.obj
-    %create $^&.lbc
-    @%append $^&.lbc +strquery.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-uuid.lib: uuid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +uuid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-wbemuuid.lib: wbemuuid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +wbemuuid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-dxguid.lib: dxguid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +dxguid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-rtlver.lib: rtlver.obj
-    %create $^&.lbc
-    @%append $^&.lbc +rtlver.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
-wdmguid.lib: wdmguid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +wdmguid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
 
 vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
     @%create $@

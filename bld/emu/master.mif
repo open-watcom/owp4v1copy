@@ -37,7 +37,7 @@ extra_c_flags_qnx = -oais-w3 -I"$(new_qnx_h)" -DQNX32
 !ifeq host_OS dos
 
 emu387.lib: emu387.obj 386inite.obj
-    $(librarian) $(libflags) $@ +emu387.obj +386inite.obj
+    $(librarian) $(libflags) $<
 
 !else ifeq host_OS qnx
 
@@ -51,7 +51,7 @@ INCS += win30vxd.inc
 !else
 
 emu387.lib: 386stub.obj
-    $(librarian) $(libflags) $@ +386stub.obj
+    $(librarian) $(libflags) $<
 
 !endif
 

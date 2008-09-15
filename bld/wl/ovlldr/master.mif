@@ -126,4 +126,4 @@ makedbglib: .procedure
 makelib: .procedure
     %create $^&.lbc
     @for %i in ($<) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) $@ @$^&.lbc
+    $(librarian) $(libflags) @$^&.lbc

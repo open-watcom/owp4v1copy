@@ -50,4 +50,4 @@ inc_dirs = $(wclass_inc_dirs)
 $(name).lib : $(objects)
         @%create $^&.lbc
         @for %f in ($(objects)) do @%append $^&.lbc +%f
-        $(librarian) $(libflags) $^@ @$^&.lbc
+        $(librarian) $(libflags) @$^&.lbc

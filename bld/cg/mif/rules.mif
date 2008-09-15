@@ -42,7 +42,7 @@ libfile: .PROCEDURE
         ar crs $^. $<
 !else
         @for %i in ($<) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) $^. @$^&.lbc
+        $(librarian) $(libflags) @$^&.lbc
 !endif
 
 !ifdef bootstrap

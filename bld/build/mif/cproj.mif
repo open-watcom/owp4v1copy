@@ -326,7 +326,7 @@ lflags          = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) $(extra_l_flag
 lflags_dll      = $(mode_lflags) $(lflags_dll_$(host_os)_$(host_cpu)) $(extra_l_flags_dll_$(host_os)) $(extra_l_flags_dll)
 
 libflags_all    = -b-n-pa $(mode_libflags)
-libflags        =  $(libflags_all) $(libflags_$(host_os)_$(host_cpu)) $(extra_lib_flags) $(extra_lib_flags_$(host_cpu))
+libflags        =  $(libflags_all) $(libflags_$(host_os)_$(host_cpu)) $(extra_lib_flags) $(extra_lib_flags_$(host_cpu)) $^@
 
 rc_flags_nt     = -bt=nt
 rc_flags_win    = -bt=windows

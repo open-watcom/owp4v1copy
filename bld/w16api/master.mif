@@ -62,7 +62,7 @@ all : $(headers) $(libs) .SYMBOLIC
         $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.
 
 .lbc.lib:
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 .mh.h:
 	$(splice)
@@ -74,7 +74,7 @@ windows.lbc : $(winlibs)
         @for %i in ($(winlibs)) do @%append $^@ @ %i
 
 windows.lib: windows.lbc profc.obj
-        $(librarian) $(libflags) $@ @$<
+        $(librarian) $(libflags) @$<
 
 clean : .SYMBOLIC
 	rm -f *.h

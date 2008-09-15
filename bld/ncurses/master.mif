@@ -32,5 +32,5 @@ ncurses.lib : $(ncurses_objs)
 !else
     rm -f $^&.lbc
     @for %i in ($<) do @%append $^&.lbc +%i
-    $(librarian) $(libflags) $^. @$^&.lbc
+    $(librarian) $(libflags) @$^&.lbc
 !endif

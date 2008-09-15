@@ -180,7 +180,7 @@ $(dll_name).dll : $(depends_dll) $(rc_objs) dll.lnk
 
 
 $(dll_name).lib : $(dll_name).dll
-        $(librarian) $(libflags) $@ +$[@
+        $(librarian) $(libflags) +$[@
 
 drv.lnk : $(__MAKEFILES__)
         @%write $@ $(lflags)

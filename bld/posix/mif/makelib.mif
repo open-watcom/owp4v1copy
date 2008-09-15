@@ -19,6 +19,6 @@ make_lib = 1
 posix.lib : $(libobjs) $(__MAKEFILES__)
         @%create posix.lbc
         @for %i in ($(libobjs)) do @%append posix.lbc %i
-        $(librarian) $(libflags) posix.lib @posix.lbc
+        $(librarian) $(libflags) @posix.lbc
 
 !include $(posix_dir)/mif/clean.mif

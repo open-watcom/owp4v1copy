@@ -197,4 +197,4 @@ extra_a_flags_qnx = -D_QNX
 $(libname).lib : $(special_objs) $(objs)
         %create $^&.lbc
         @for %i in ($(objs)) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) $@ @$^&.lbc
+        $(librarian) $(libflags) @$^&.lbc

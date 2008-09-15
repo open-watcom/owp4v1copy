@@ -257,7 +257,7 @@ $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__
 !endif
 
 dbgstr.lib : dbgstr.obj
-        $(librarian) $(libflags) $^@ +$[@
+        $(librarian) $(libflags) +$[@
 
 inc_dirs += -I. -I"../h" -I"$(dig_dir)/h" -I"$(trap_dir)/common/$(os)" 
 inc_dirs += -I"$(trap_dir)/common" -I"$(trap_dir)/h"

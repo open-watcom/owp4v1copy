@@ -60,7 +60,7 @@ extra_lib_flags += -s-t-zld
 !endif
 
 $(libdllname).lib : $(dllname).lbc
-    $(librarian) $(libflags) $@ @$(dllname).lbc
+    $(librarian) $(libflags) @$(dllname).lbc
 
 $(dllname).lbc : $(dllname).imp $(rtdll_dir)/proclbc.awk $(static_objs)
     $(awk) -f $(rtdll_dir)/proclbc.awk -v os=$(host_os) -v br=$(br_sufix) $(dllname).imp > $@
