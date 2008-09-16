@@ -90,7 +90,6 @@ rc_file_nt  = ../res/wbrw.rc
 rc_file_win = ../res/wbrw.rc
 rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
-additional_cleanup += ../res/*.res
 
 #linker
 LIBS_win    = $(gui_dir)/win/wini86/gui.lib
@@ -138,17 +137,20 @@ res_objs = exever.res
 
 all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
 
-$(name).exe : $(OBJECTS) $(LIBS) $(res_objs)
+$(name).exe : $(OBJECTS) $(LIBS) $(name).res $(res_objs)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) $(rc_flags) $(rc_file) $^@ -fr=exever.res
+    $(rc) -k $(name).res $^@ -fr=exever.res
 !else
-    $(rc) $(rc_flags) $(rc_file) $^@
+    $(rc) -k $(name).res $^@ $^@
 !endif
 !ifdef gen_browse_file
     @%create browser.wbr
     @for %i in ($(mbr_files)) do @%append browser.wbr file %i
 !endif
+
+$(name).res : $(rc_file) .AUTODEPEND
+    $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
 
 .gpp.obj: .AUTODEPEND
     $(cpp) $(cflags) $(extra_cpp_flags) $(extra_c_flags_$[&) $(inc_path) $[@
