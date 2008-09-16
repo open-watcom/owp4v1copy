@@ -266,6 +266,9 @@ File: source\diag0213.c
 (31,9): Error! E194: expression pointer type cannot be incremented or decremented
   operand type is 'int (* )[] (lvalue)'
 (42,12): Warning! W007: '&array' may not produce intended result
+(42,10): Error! E166: cannot convert right pointer to type of left operand
+  source conversion type is 'int (* )[10]'
+  target conversion type is 'int (* )[]'
 (44,9): Error! E194: expression pointer type cannot be incremented or decremented
   operand type is 'int (* )[] (lvalue)'
 (57,9): Warning! W002: constant out of range; truncated

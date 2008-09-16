@@ -186,6 +186,9 @@ File: source\diag0119.c
 (17,25): Error! E648: cannot #define 'defined'
 File: source\diag0120.c
 (19,32): Error! E058: expression must be a constant
+(19,16): Error! E400: cannot convert right expression for initialization
+  source conversion type is 'int (* * )[1]'
+  target conversion type is 'int (* * )[10]'
 (21,33): Error! E058: expression must be a constant
 (21,50): Error! E058: expression must be a constant
 (22,15): Error! E545: cannot create an undefined type with 'operator new'
@@ -1497,11 +1500,6 @@ File: source\diag0187.c
   definition: 'int S::memberfn( void )'
 (17,13): Error! E186: attempt to modify a constant value
 (18,16): Error! E186: attempt to modify a constant value
-(37,8): Error! E473: function argument(s) do not match those in prototype
-  definition: 'void foo( double const (* )[4])'
-  cannot convert argument 1 defined at: (37,9)
-  source conversion type is 'double [4][4] (lvalue)'
-  target conversion type is 'double const (* )[4]'
 (44,1): Error! E678: invalid octal constant
 (44,1): Error! E121: syntax error
 File: source\diag0188.c
