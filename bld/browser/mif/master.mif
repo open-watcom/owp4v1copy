@@ -10,7 +10,7 @@ additional_cleanup = &
     $(docs_root)/win/wbrw.h &
     $(docs_root)/nt/wbrw.h
 
-.extensions: .gpp
+.extensions: .gpp .res .rc
 
 sys_windowed = 1
 
@@ -24,6 +24,7 @@ sys_windowed = 1
 .c: ../cpp;../merge/c;$(posix_dir)/misc;$(lib_misc_dir)/c
 .cpp: ../cpp;../brg/cpp
 .gpp: ../gen
+.rc: ../res
 
 !include ../mif/template.mif
 
@@ -86,9 +87,9 @@ extra_rc_flags_win = -k
 extra_rc_flags_nt  = -k
 extra_rc_flags_os2 = -p
 
-rc_file_nt  = ../res/wbrw.rc
-rc_file_win = ../res/wbrw.rc
-rc_file_os2 = ../res/wbrwpm.rc
+rc_file_nt  = wbrw.res
+rc_file_win = wbrw.res
+rc_file_os2 = wbrwpm.res
 rc_file     = $(rc_file_$(host_OS))
 
 #linker
@@ -123,7 +124,7 @@ exe_ext = $(exe_ext_$(host_os))
 exe_ext = exe
 !endif
 
-prereq_nt = $(docs_root)/nt/wbrw.h
+prereq_nt  = $(docs_root)/nt/wbrw.h
 prereq_win = $(docs_root)/win/wbrw.h
 prereq_os2 = $(docs_root)/os2/wbrw.h
 prereq_dos = $(docs_root)/os2/wbrw.h
@@ -132,25 +133,22 @@ prereq_dos = $(docs_root)/os2/wbrw.h
 build_rc_nt_386 = nt
 
 !ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = exever.res
+res_objs = version.res
 !endif
 
 all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
 
-$(name).exe : $(OBJECTS) $(LIBS) $(name).res $(res_objs)
+$(name).exe : $(OBJECTS) $(LIBS) $(rc_file) $(res_objs)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) -k $(name).res $^@ -fr=exever.res
+    $(rc) $(rc_flags) $(rc_file) $^@ -fr=$(res_objs)
 !else
-    $(rc) -k $(name).res $^@ $^@
+    $(rc) $(rc_flags) $(rc_file) $^@
 !endif
 !ifdef gen_browse_file
     @%create browser.wbr
     @for %i in ($(mbr_files)) do @%append browser.wbr file %i
 !endif
-
-$(name).res : $(rc_file) .AUTODEPEND
-    $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
 
 .gpp.obj: .AUTODEPEND
     $(cpp) $(cflags) $(extra_cpp_flags) $(extra_c_flags_$[&) $(inc_path) $[@
@@ -165,8 +163,8 @@ curr_dir=$+$(%cwd)$-
         @cd $(curr_dir)
 !endif
 
-exever.res: exever.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+.rc.res:
+    $(rc) -r $(rc_flags) $(inc_dirs_sys) $< -fo=$@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
@@ -175,6 +173,5 @@ exever.res: exever.rc
 patch_level=0
 !endif
 
-exever.rc : ./genverrc.exe ../res/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../res/exever.rc exever.rc $$ $(name) $(patch_level)
-
+version.rc : ./genverrc.exe ../res/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../res/exever.rc version.rc $$ $(name) $(patch_level)
