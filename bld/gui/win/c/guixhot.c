@@ -38,7 +38,12 @@
 // For TransparentBlt function
 // #include "wptoolbr.h"
 // #include <windows.h>
-static HBITMAP     bitmap2 = NULL;
+static HBITMAP      bitmap2 = NULL;
+static HINSTANCE    hInstUser = NULL;
+
+typedef HANDLE (WINAPI *PFNLI)( HINSTANCE, LPCSTR, UINT, int, int, UINT );
+
+static PFNLI    pfnLoadImage;
 #endif
 
 extern  WPI_INST        GUIMainHInst;
@@ -52,8 +57,23 @@ bool GUIXInitHotSpots( int num_hot_spots, gui_resource *hot )
     int         i;
 
     for( i = 0; i < num_hot_spots; i++ ) {
-        GUIHotSpots[i].bitmap = _wpi_loadbitmap( GUIResHInst,
+#ifdef __NT__
+        if( hInstUser == NULL ) {
+            hInstUser = GetModuleHandle( "USER32.DLL" );
+            pfnLoadImage = (PFNLI)GetProcAddress( hInstUser, "LoadImageA" );
+        }
+        if( pfnLoadImage != NULL ) {
+            GUIHotSpots[i].bitmap = pfnLoadImage( GUIResHInst,
+                                                  MAKEINTRESOURCE( hot[i].res ),
+                                                  IMAGE_BITMAP, 0, 0,
+                                                  LR_LOADMAP3DCOLORS );
+        } else {
+#endif
+            GUIHotSpots[i].bitmap = _wpi_loadbitmap( GUIResHInst,
                                         _wpi_makeintresource( hot[i].res ) );
+#ifdef __NT__
+        }
+#endif
         _wpi_getbitmapdim( GUIHotSpots[i].bitmap, &GUIHotSpots[i].size.x,
                            &GUIHotSpots[i].size.y );
     }
