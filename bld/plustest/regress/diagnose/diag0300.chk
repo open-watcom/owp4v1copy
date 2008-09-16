@@ -108,3 +108,54 @@ File: source\diag0309.c
 File: source\diag0310.c
 (11,21): Error! E229: function 'foo' has already been defined
   definition: 'int foo( int )'
+File: source\diag0311.c
+(4,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int (* ai)[2]' in 'void f1( int (* )[2])'
+(7,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int const (* ai)[2]' in 'void f2( int const (* )[2])'
+(10,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int (* ai)[2]' in 'void f3( int (* )[2])'
+(13,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int (const * ai)[2]' in 'void f4( int (const * )[2])'
+(17,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int (* ai)[2]' in 'void g( int (* )[2])'
+(20,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int const (* ai)[2]' in 'void g( int const (* )[2])'
+(23,3): Error! E229: function 'g' has already been defined
+  definition: 'void g( int (* )[2])'
+(26,1): Error! E226: function 'g' is not distinct
+  definition: 'void g( int const (* )[2])'
+(26,3): Warning! W726: no reference to formal parameter 'ai'
+  definition: 'int (const * ai)[2]' in 'void g( int (const * )[2])'
+(36,9): Error! E246: left expression is not a pointer to a constant object
+  left operand type is 'int (* )[2] (lvalue)'
+  right operand type is 'int const (* )[2]'
+(37,7): Error! E473: function argument(s) do not match those in prototype
+  definition: 'void f1( int (* )[2])'
+  cannot convert argument 1 defined at: (37,9)
+  source conversion type is 'int const (* )[2] (lvalue)'
+  target conversion type is 'int (* )[2]'
+(38,9): Error! E246: left expression is not a pointer to a constant object
+  left operand type is 'int (* )[2] (lvalue)'
+  right operand type is 'int (const * )[2]'
+(39,7): Error! E473: function argument(s) do not match those in prototype
+  definition: 'void f1( int (* )[2])'
+  cannot convert argument 1 defined at: (39,9)
+  source conversion type is 'int (const * )[2] (lvalue)'
+  target conversion type is 'int (* )[2]'
+(41,9): Error! E246: left expression is not a pointer to a constant object
+  left operand type is 'int (* )[2] (lvalue)'
+  right operand type is 'int const (* )[2]'
+(42,7): Error! E473: function argument(s) do not match those in prototype
+  definition: 'void f3( int (* )[2])'
+  cannot convert argument 1 defined at: (42,9)
+  source conversion type is 'int const (* )[2] (lvalue)'
+  target conversion type is 'int (* )[2]'
+(43,9): Error! E246: left expression is not a pointer to a constant object
+  left operand type is 'int (* )[2] (lvalue)'
+  right operand type is 'int (const * )[2]'
+(44,7): Error! E473: function argument(s) do not match those in prototype
+  definition: 'void f3( int (* )[2])'
+  cannot convert argument 1 defined at: (44,9)
+  source conversion type is 'int (const * )[2] (lvalue)'
+  target conversion type is 'int (* )[2]'

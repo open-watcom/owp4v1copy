@@ -5020,6 +5020,7 @@ TYPE TypeGetActualFlags( TYPE type, type_flag *flags )
 /****************************************************/
 {
     type_flag flag;             // - accumulated flags
+    TYPE elem_type;
 
     flag = TF1_NULL;
     for( ; type != NULL; type = type->of ) {
@@ -5033,6 +5034,16 @@ TYPE TypeGetActualFlags( TYPE type, type_flag *flags )
             break;
         }
         break;
+    }
+    // Note: Any cv-qualifiers applied to an array type affect the
+    // array element type, not the array type (3.9.3 (2))
+    for( elem_type = type; elem_type != NULL; elem_type = elem_type->of ) {
+        if( elem_type->id == TYP_MODIFIER ) {
+            flag |= elem_type->flag;
+        } else if( ( elem_type->id != TYP_TYPEDEF )
+                && ( elem_type->id != TYP_ARRAY ) ) {
+            break;
+        }
     }
     *flags = flag;
     return( type );
@@ -7713,7 +7724,10 @@ static unsigned typesBind( type_bind_info *data, boolean is_function )
              * cv-qualifier information down the stack. We do this by
              * using the "filler" field in the PTREE struct.
              */
-            u_cv_mask = ( *u_top )->filler & ( TF1_CONST | TF1_VOLATILE );
+            u_cv_mask = ( *u_top )->filler & TF1_CONST;
+            if( u_cv_mask & TF1_CONST ) {
+                u_cv_mask |= TF1_VOLATILE;
+            }
             u_allow_base = ( ( *u_top )->filler & 0x80 ) != 0;
         }
 
@@ -7909,7 +7923,7 @@ static unsigned typesBind( type_bind_info *data, boolean is_function )
             }
             PstkPush( &(data->without_generic), PTreeType( b_unmod_type->of ) );
             u_tree = PTreeType( u_unmod_type->of );
-            u_tree->filler = u_cv_mask;
+            u_tree->filler = u_cv_mask & TF1_CONST;
             if( ! flags.arg_1st_level ) {
                 u_tree->filler &= u_flags;
             } else {

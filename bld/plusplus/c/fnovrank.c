@@ -154,6 +154,8 @@ static RKD initFNOV_TYPE( FNOV_TYPE *ft, TYPE basic, PTREE* pt )
 static void completeFNOV_TYPE( FNOV_TYPE* ft )
 /********************************************/
 {
+    type_flag finalflag;
+
 #if 0
     TYPE basic = ft->basic;
 
@@ -170,11 +172,21 @@ static void completeFNOV_TYPE( FNOV_TYPE* ft )
                               , &ft->finalbase
                               , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
     if( ft->final != NULL ) {
-        while( ft->final->id == TYP_POINTER ) {
+        finalflag = TF1_NULL;
+
+        while( ( ft->final->id == TYP_POINTER )
+            || ( ft->final->id == TYP_ARRAY ) ) {
+
+            if( ft->final->id != TYP_ARRAY ) {
+                finalflag = TF1_NULL;
+            }
+
             ft->final = TypeModExtract( ft->final->of
                                       , &ft->finalflag
                                       , &ft->finalbase
                                       , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
+
+            ft->finalflag |= finalflag;
         }
     }
 #endif

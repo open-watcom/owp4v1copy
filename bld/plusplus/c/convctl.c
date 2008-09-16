@@ -576,8 +576,14 @@ static void moveAhead           // MOVES TYPE_FLAGS AHEAD ONE LEVEL
                              , &tf->object
                              , &tf->baser
                              , TC1_NOT_MEM_MODEL | TC1_NOT_ENUM_CHAR );
+
+    // Note: Any cv-qualifiers applied to an array type affect the
+    // array element type, not the array type (3.9.3 (2))
+    if( tf->id != TYP_ARRAY ) {
+        tf->cv = TF1_NULL;
+    }
+    tf->cv |= TF1_EXT_CV   & tf->object;
     tf->id  = tf->type->id;
-    tf->cv  = TF1_EXT_CV   & tf->object;
     tf->ext = TF1_EXT_ATTR & tf->object;
 }
 
@@ -596,7 +602,11 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
     info->src.unmod = BoundTemplateClass( info->src.unmod );
     info->tgt.unmod = BoundTemplateClass( info->tgt.unmod );
     src.type = info->src.unmod;
+    src.id = src.type->id;
+    src.cv = TF1_NULL;
     tgt.type = info->tgt.unmod;
+    tgt.id = tgt.type->id;
+    tgt.cv = TF1_NULL;
     mp_ctd = CTD_LEFT;
     if( TYP_MEMBER_POINTER == src.type->id ) {
         if( src.type->u.mp.host != tgt.type->u.mp.host ) {
@@ -688,6 +698,14 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
                 }
                 first_level = FALSE;
             }
+            if( ( src.id == TYP_ARRAY ) && ( tgt.id == TYP_ARRAY ) ) {
+                if( src.type->u.a.array_size == tgt.type->u.a.array_size ) {
+                    continue;
+                } else {
+                    retn = FALSE;
+                    break;
+                }
+            }
             if( cv_ok ) {
                 type_flag both;
                 if( info->to_void ) {
@@ -733,6 +751,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
              && TYP_FUNCTION != tgt.id ) {
                 info->reint_cast_ok = cv_ok;
             }
+
             retn = FALSE;
             break;
         } else if( src.ext != tgt.ext ) {
@@ -764,6 +783,13 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
                 retn = FALSE;
             }
             break;
+        } else if( TYP_ARRAY == src.id ) {
+            if( src.type->u.a.array_size == tgt.type->u.a.array_size ) {
+                continue;
+            } else {
+                retn = FALSE;
+                break;
+            }
         } else if( TYP_POINTER != src.id ) {
             retn = TRUE;
             break;

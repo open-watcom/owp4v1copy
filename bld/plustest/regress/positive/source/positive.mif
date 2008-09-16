@@ -187,6 +187,7 @@ positive_tests = &
     addr01.$(ext) &
     ambig01.$(ext) &
     ambig02.$(ext) &
+    array1.$(ext) &
     asm01.$(ext) &
     asm02.$(ext) &
     asm03.$(ext) &
