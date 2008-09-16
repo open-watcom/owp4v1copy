@@ -88,7 +88,7 @@ bld_cl = gcc $(bld_incs)
 bld_cc = gcc $(bld_incs)
 bld_link = gcc
 librarian = ar
-libflags = crs
+libflags = crs $^@
 
 cppflags_386  = -D_M_IX86 -D__386__
 cppflags_ppc  = -D__PPC__
