@@ -308,6 +308,9 @@ public:
     void WEXPORT invalidateRow( int row ) {
         GUIWndDirtyRow( _handle, row );
     }
+    void WEXPORT setSystemFont( bool fixed ) {
+        GUISetSystemFont( _handle, fixed );
+    }
     void WEXPORT invalidateRect( const WRect & );
     void WEXPORT getPaintRect( WRect & );
     Color WEXPORT backgroundColour( void );

@@ -242,12 +242,22 @@ bool GUIFontsSupported( void )
 bool GUISetSystemFont( gui_window *wnd, bool fixed )
 {
 #ifndef __OS2_PM__
-    HFONT       font;
+    HFONT               font;
+#ifdef __NT__
+    NONCLIENTMETRICS    ncm;
+#endif
 
     if( fixed ) {
         font = GetStockObject( SYSTEM_FIXED_FONT );
     } else {
+#ifdef __NT__
+        ncm.cbSize = sizeof( NONCLIENTMETRICS );
+        SystemParametersInfo( SPI_GETNONCLIENTMETRICS, sizeof( NONCLIENTMETRICS ),
+                              &ncm, 0 );
+        font = CreateFontIndirect( &ncm.lfMessageFont );
+#else
         font = GetStockObject( SYSTEM_FONT );
+#endif
     }
     if( wnd->font != NULL ) {
         DeleteObject( wnd->font );
