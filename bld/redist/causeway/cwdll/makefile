@@ -14,7 +14,7 @@ cwdll_distrib_lib = 1
 extra_a_flags = -ms
 
 cwdll.lib: dllfunc.obj cwapi.obj
-    $(librarian) $(libflags) $@ +dllfunc.obj +cwapi.obj
+    $(librarian) $(libflags) $<
 
 clean: .SYMBOLIC
     rm -f *.lib
