@@ -16,19 +16,34 @@ void f4( const Array *ai )
 { }
 
 
-int g( char *a[][1] )
+int h0( int, ... )
 {
     return 0;
 }
 
-int g( char * const a[][1] )
+int h0( int, char * a[][1] )
 {
     return 1;
 }
 
-int g( const char * const a[][1] )
+int h1( int, ... )
 {
-    return 2;
+    return 0;
+}
+
+int h1( int, char * const a[][1] )
+{
+    return 1;
+}
+
+int h2( int, ... )
+{
+    return 0;
+}
+
+int h2( int, const char * const a[][1] )
+{
+    return 1;
 }
 
 
@@ -75,9 +90,17 @@ int main() {
     char * const ( *ac1 )[1] = 0;
     const char * const ( *ac2 )[1] = 0;
 
-    if( g( ac0 ) != 0 ) fail( __LINE__ );
-    if( g( ac1 ) != 1 ) fail( __LINE__ );
-    if( g( ac2 ) != 2 ) fail( __LINE__ );
+    if( h0( 1, ac0 ) != 1 ) fail( __LINE__ );
+    if( h0( 1, ac1 ) != 0 ) fail( __LINE__ );
+    if( h0( 1, ac2 ) != 0 ) fail( __LINE__ );
+
+    if( h1( 1, ac0 ) != 1 ) fail( __LINE__ );
+    if( h1( 1, ac1 ) != 1 ) fail( __LINE__ );
+    if( h1( 1, ac2 ) != 0 ) fail( __LINE__ );
+
+    if( h2( 1, ac0 ) != 0 ) fail( __LINE__ );
+    if( h2( 1, ac1 ) != 0 ) fail( __LINE__ );
+    if( h2( 1, ac2 ) != 1 ) fail( __LINE__ );
 
 
     _PASS;
