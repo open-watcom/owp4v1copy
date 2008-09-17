@@ -225,12 +225,16 @@ typedef enum {
         GUI_BRIGHT_MAGENTA,
         GUI_BRIGHT_YELLOW,
         GUI_BRIGHT_WHITE,
-        GUI_NUM_COLOURS,
-        GUI_FIRST_COLOUR = GUI_BLACK,
-        GUI_LAST_COLOUR = GUI_BRIGHT_WHITE,
 /* CEY - ChangeList 31754: Changed to define dialog background 'special' colour. See guiwnclr.c */
 #ifdef __NT__
         GUIEX_DLG_BKGRND = GUI_BRIGHT_WHITE + 1,
+#endif
+        GUI_NUM_COLOURS,
+        GUI_FIRST_COLOUR = GUI_BLACK,
+#ifdef __NT__
+        GUI_LAST_COLOUR = GUIEX_DLG_BKGRND
+#else
+        GUI_LAST_COLOUR = GUI_BRIGHT_WHITE
 #endif
 } gui_colour;
 
