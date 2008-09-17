@@ -595,6 +595,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
     boolean first_level;        // - TRUE ==> at first level
     boolean const_always;       // - TRUE ==> const on all preceding levels
     boolean cv_ok;              // - TRUE ==> no CV mismatch
+    boolean got_array;          // - TRUE ==> found array
     TYPE_FLAGS src;             // - source typing info
     TYPE_FLAGS tgt;             // - target typing info
     CTD mp_ctd;                 // - host derivation for member-ptr
@@ -621,6 +622,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
     first_level = TRUE;
     const_always = TRUE;
     cv_ok = TRUE;
+    got_array = FALSE;
     for( ; ; ) {
         moveAhead( &src );
         moveAhead( &tgt );
@@ -700,6 +702,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
             }
             if( ( src.id == TYP_ARRAY ) && ( tgt.id == TYP_ARRAY ) ) {
                 if( src.type->u.a.array_size == tgt.type->u.a.array_size ) {
+                    got_array = TRUE;
                     continue;
                 } else {
                     retn = FALSE;
@@ -785,6 +788,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
             break;
         } else if( TYP_ARRAY == src.id ) {
             if( src.type->u.a.array_size == tgt.type->u.a.array_size ) {
+                got_array = TRUE;
                 continue;
             } else {
                 retn = FALSE;
@@ -793,6 +797,11 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
         } else if( TYP_POINTER != src.id ) {
             retn = TRUE;
             break;
+        }
+        if( got_array ) {
+            // that's it, no more adding consts allowed - this is all
+            // to do with special rules for arrays, see 3.9.3 (2)
+            const_always = FALSE;
         }
     }
     if( retn ) {
