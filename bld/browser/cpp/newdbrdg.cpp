@@ -68,6 +68,7 @@ bool NewDBRFile::contextHelp( bool is_active_win )
 void NewDBRFile::initialize()
 //--------------------------
 {
+    setSystemFont( FALSE );
     rescale();
     move( frame().r );
     centre();

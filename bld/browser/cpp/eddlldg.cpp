@@ -74,6 +74,7 @@ NewEditDLL::~NewEditDLL()
 void NewEditDLL::initialize()
 //--------------------------
 {
+    setSystemFont( FALSE );
     rescale();
     move( frame().r );
     centre();

@@ -69,6 +69,7 @@ bool MemberFilterDlg::contextHelp( bool is_active_win )
 void MemberFilterDlg::initialize()
 //--------------------------------
 {
+    setSystemFont( FALSE );
     rescale();
     move( frame().r );
     centre();

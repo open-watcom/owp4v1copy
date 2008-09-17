@@ -65,6 +65,7 @@ RegExpCfg::~RegExpCfg()
 void RegExpCfg::initialize()
 //--------------------------
 {
+    setSystemFont( FALSE );
     rescale();
     move( frame().r );
     centre();
