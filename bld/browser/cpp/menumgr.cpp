@@ -175,7 +175,7 @@ static SubMenuInfo OptionsMenuInfo[ OMNumOptionsMenus ] = {
 #define _HelpMenuIndex                  "&Search for Help On..."
 #define _HelpMenuIndexHint              "Search for topic"
 #define _HelpMenuUsing                  "&How to Use Help"
-#define _HelpMenuInformation            "&About Source Browser..."
+#define _HelpMenuInformation            "&About..."
 #endif
 
 static SubMenuInfo HelpMenuInfo[ HMNumHelpMenus ] = {

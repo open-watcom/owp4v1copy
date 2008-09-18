@@ -441,9 +441,9 @@ void VpeMain::buildMenuBar()
         pop7->insertItem( mi );
     }
     pop7->insertSeparator();
-    mi = new WMenuItem( "&About the Open Watcom IDE...", this,
+    mi = new WMenuItem( "&About...", this,
                         (cbm)&VpeMain::about, (cbh)&VpeMain::mHint,
-                        "About the Open Watcom IDE" );
+                        "About" );
     pop7->insertItem( mi );
 
     setMenu( menuBar );
