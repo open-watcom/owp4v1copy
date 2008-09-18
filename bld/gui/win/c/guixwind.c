@@ -817,6 +817,16 @@ static void NextWndToFront( HWND hwnd )
     }
 }
 
+static bool IsToolBarCommand( gui_window *wnd, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
+{
+#ifdef __NT__
+    return( wnd != NULL && wnd->toolbar != NULL && wnd->toolbar->hdl != NULL &&
+            GET_WM_COMMAND_HWND( wparam, lparam ) == ToolBarWindow( wnd->toolbar->hdl ) );
+#else
+    return( FALSE );
+#endif
+}
+
 static WPI_POINT prevpoint = { -1, -1 };
 
 /*  Procedure to control windows */
@@ -1283,13 +1293,8 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     }
 #endif
     case WM_COMMAND:
-#ifdef __NT__
         if( _wpi_ismenucommand( wparam, lparam ) ||
-            GET_WM_COMMAND_HWND( wparam, lparam ) ==
-            ToolBarWindow( wnd->toolbar->hdl ) ) {
-#else
-        if( _wpi_ismenucommand( wparam, lparam ) ) {  /* from menu */
-#endif
+            IsToolBarCommand( wnd, wparam, lparam ) ) { /* from menu or toolbar */
             ProcessMenu( wnd, _wpi_getid( wparam ) );
             //SetFocusToParent();
         } else {
