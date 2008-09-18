@@ -68,6 +68,7 @@ void MSwitch::displayText( WString& s )
 {
     s.puts( text() );
     if( on().size() > 0 ) {
+        s.concat( ' ' );
         s.concat( '[' );
         const char* c = on();
         int i;
