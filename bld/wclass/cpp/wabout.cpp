@@ -33,10 +33,6 @@
 #include "wabout.hpp"
 #include "wmetrics.hpp"
 #include "wpshbttn.hpp"
-#ifdef __NT__
-    #define WIN32_LEAN_AND_MEAN
-    #include <windows.h>
-#endif
 
 
 WAbout::WAbout( WWindow* parent, WHotSpots* hs, int idx )
@@ -81,7 +77,11 @@ WAbout::WAbout( WWindow* parent, WHotSpots* hs, int idx, const char* title, cons
 void WAbout::initialize() {
 /*************************/
 
+    WPoint average;
+    WPoint max;
+
     setSystemFont( FALSE );
+    textMetrics( average, max );
     if( _textArray ) {
         for( int i=0; _textArray[i]; i++ ) {
             int w = getTextExtentX( _textArray[i] );
@@ -97,17 +97,8 @@ void WAbout::initialize() {
     _height += hotSize.y();
 
     static const char ok[] = { "OK" };
-#ifdef __NT__
-    // Win32 and the GUI library use different coordinate systems, so we need to convert
-    // between them here.
-    int convx = WSystemMetrics::frameWidth() / GetSystemMetrics( SM_CXFRAME );
-    int convy = WSystemMetrics::frameHeight() / GetSystemMetrics( SM_CYFRAME );
-    int w = LOWORD( GetDialogBaseUnits() ) * convx * 6;
-    int h = HIWORD( GetDialogBaseUnits() ) * convy * 3 / 2;
-#else
-    int w = getTextExtentX( ok ) * 3;
-    int h = getTextExtentY( ok ) * 3/2;
-#endif
+    int w = 50 * average.x() / 4;
+    int h = 14 * average.y() / 8;
     int xoff = (_width - w) / 2;
     int yoff = _height + h / 2;
     WDefPushButton* bOk = new WDefPushButton( this, WRect( xoff, yoff, w, h ), ok );

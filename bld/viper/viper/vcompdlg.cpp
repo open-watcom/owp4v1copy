@@ -72,6 +72,7 @@ void VCompDialog::initialize()
     const int   button_width = 50;
     const int   button_hite = 14;
 
+    setSystemFont( FALSE );
     this->textMetrics( average, max );
     sx = average.x() / 4;
     sy = average.y() / 8;

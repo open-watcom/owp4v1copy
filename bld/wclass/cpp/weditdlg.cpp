@@ -70,6 +70,7 @@ void WEditDialog::initialize() {
 
     WPoint avg;
     WPoint max;
+    setSystemFont( FALSE );
     textMetrics( avg, max );
 
     int x = WSystemMetrics::dialogFrameWidth();
@@ -82,12 +83,8 @@ void WEditDialog::initialize() {
     _edit->show();
     y += h + avg.y() / 2;
 
-    w = 0;
-    h = 0;
-    updateExtents( CancelText, &w, &h );
-    updateExtents( OKText, &w, &h );
-    w += avg.x() * 2;
-    h += avg.y() / 2;
+    w = 50 * avg.x() / 4;
+    h = 14 * avg.y() / 8;
 
     WDefPushButton *bOk = new WDefPushButton( this, WRect( x, y, w, h ), OKText );
     bOk->onClick( this, (cbw)&WEditDialog::okButton );
