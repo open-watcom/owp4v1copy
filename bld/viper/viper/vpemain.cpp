@@ -111,12 +111,14 @@ struct mData {
 };
 
 char _viperTitle[] = { "Open Watcom IDE" };
+char _viperAboutTitle[] = { "About Open Watcom IDE" };
 char _viperError[] = { "IDE Error" };
 char _viperRequest[] = { "IDE Request" };
 char _viperInfo[] = { "IDE Information" };
 
 #pragma warning 438 9
 const char* _viperDesc[] = {
+    "",
     banner1w( "Integrated Development Environment", _VIPER_VERSION_ ),
     banner2( "1993" ),
     banner3,
@@ -1853,7 +1855,7 @@ void VpeMain::helpUsage( WMenuItem* )
 
 void VpeMain::about( WMenuItem* )
 {
-    WAbout about( this, &_hotSpotList, 4, _viperTitle, _viperDesc );
+    WAbout about( this, &_hotSpotList, 4, _viperAboutTitle, _viperDesc );
     about.process();
 }
 

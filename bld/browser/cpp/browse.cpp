@@ -82,15 +82,14 @@ static MIMenuID BrowseMenus[] = {
 #define NumBrowseMenus ( sizeof( BrowseMenus ) / sizeof( MIMenuID ) )
 
 #pragma warning 438 9
-static const char *BrowseTitle = { "Open Watcom Source Browser" };
+static const char *BrowseTitle = { "About Open Watcom Source Browser" };
 static const char *SplashInfo[] = {
-                " ",
-                "Version " _WBRW_VERSION_,
-                banner2( "1994" ),
-                banner3,
-                banner3a,
-                " ",
-                NULL };
+    "",
+    banner1w( "Source Browser", _WBRW_VERSION_ ),
+    banner2( "1994" ),
+    banner3,
+    banner3a,
+    NULL };
 #pragma warning 438 1
 
 
