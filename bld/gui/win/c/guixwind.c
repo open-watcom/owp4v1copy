@@ -1283,7 +1283,13 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     }
 #endif
     case WM_COMMAND:
+#ifdef __NT__
+        if( _wpi_ismenucommand( wparam, lparam ) ||
+            GET_WM_COMMAND_HWND( wparam, lparam ) ==
+            ToolBarWindow( wnd->toolbar->hdl ) ) {
+#else
         if( _wpi_ismenucommand( wparam, lparam ) ) {  /* from menu */
+#endif
             ProcessMenu( wnd, _wpi_getid( wparam ) );
             //SetFocusToParent();
         } else {
