@@ -41,6 +41,10 @@
 #include "dbgio.h"
 #include <stdio.h>
 #include <ctype.h>
+#if defined( __NT__ ) && defined( __GUI__ )
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#endif
 
 extern screen_state     ScrnState;
 extern tokens           CurrToken;
@@ -687,6 +691,28 @@ void RestoreMainScreen( char *name )
 
 void WndSetWndMainSize( wnd_create_struct *info )
 {
+#ifdef __NT__
+    RECT        workarea;
+    gui_rect    screen;
+    int         sx;
+    int         sy;
+    int         w;
+    int         h;
+    SystemParametersInfo( SPI_GETWORKAREA, 0, &workarea, 0 );
+    GUIGetScale( &screen );
+    sx = screen.width / GetSystemMetrics( SM_CXSCREEN );
+    sy = screen.height / GetSystemMetrics( SM_CYSCREEN );
+    w = sx * (workarea.right - workarea.left);
+    h = sy * (workarea.bottom - workarea.top);
+#endif
     info->rect = WndMainRect;
+#ifdef __NT__
+    if( info->rect.width == 0 || info->rect.width > w ) {
+        info->rect.width = w;
+    }
+    if( info->rect.height == 0 || info->rect.height > h ) {
+        info->rect.height = h;
+    }
+#endif
 }
 #endif
