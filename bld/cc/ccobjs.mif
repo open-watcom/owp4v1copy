@@ -80,7 +80,8 @@ common_objs = &
     cgen.obj &
     cgendata.obj &
     exprtree.obj &
-    treewalk.obj
+    treewalk.obj &
+    mngless.obj
 
 !ifeq release 0
 common_objs += cfedump.obj

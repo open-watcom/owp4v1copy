@@ -38,6 +38,7 @@ extern "C" {
 
 #define SIGN_BIT        (0x80)
 #define NumSign( a )    ((a) & SIGN_BIT)
+#define NumBits( a )    ((a) & (SIGN_BIT-1))
 
 #ifdef fe_cfg
 #    include "fe_cfg.h"
@@ -49,10 +50,11 @@ extern "C" {
 #define LARGEST_TYPE    long
 #endif
 
-typedef enum {
-    CMP_VOID    = 0,
-    CMP_FALSE   = 1,
-    CMP_TRUE    = 2,
+typedef enum{
+    CMP_VOID    = 0,    // comparison fine
+    CMP_FALSE   = 1,    // always false
+    CMP_TRUE    = 2,    // always true
+    CMP_COMPLEX = 3,    // could be simplified
 } cmp_result;
 
 typedef enum {

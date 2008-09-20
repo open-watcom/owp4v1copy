@@ -48,8 +48,6 @@ static char const Meaningless[REL_SIZE][CASE_SIZE] = {
     { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
 };
 
-#define NumBits( a )   ((a) & 0x7f)
-
 #ifdef FE_I64_MEANINGLESS
     #define LOW_VAL         (0x8000000000000000LL)
     #define HIGH_VAL        (0xffffffffffffffffull)

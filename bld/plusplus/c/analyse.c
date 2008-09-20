@@ -1321,24 +1321,24 @@ static void warnPointerZero(    // WARN IF POINTER COMPARISON TO 0 IS CONST
     }
 }
 
-static char numSize( type_id id ) {     // NUMSIZE - number of bits
-// return 0 not a num, else number of bits | 0x80 if signed
+static int numSize( type_id id ) {     // NUMSIZE - number of bits
+// return 0 not a num, else number of bits | SIGN_BIT if signed
     char size;
 
     size = 0;
     switch( id ) {
     case TYP_SCHAR:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYP_UCHAR:
         size |= 8;
         break;
     case TYP_SSHORT:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYP_USHORT:
         size |= 16;
         break;
     case TYP_SLONG:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYP_ULONG:
     case TYP_POINTER:
     case TYP_FUNCTION:
@@ -1347,7 +1347,7 @@ static char numSize( type_id id ) {     // NUMSIZE - number of bits
         break;
     case TYP_SINT:
     case TYP_BITFIELD: // doesn't check ranges depending on number of bits
-        size = 0x80;
+        size = SIGN_BIT;
     case TYP_UINT:
 #if TARGET_INT == 2
         size |= 16;

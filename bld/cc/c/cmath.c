@@ -33,6 +33,7 @@
 #include "cvars.h"
 #include "cgswitch.h"
 
+#include "mngless.h"
 
 #define CHR     TYPE_CHAR
 #define UCH     TYPE_UCHAR
@@ -499,59 +500,25 @@ pointer_class ExprTypeClass( TYPEPTR typ )
 
 #define Convert( opnd, opnd_type, result_type )     opnd
 
-//  a <= x <=  b   i.e range of x is between a and b
-enum   rel_op {
-    REL_EQ,    // x == c
-    REL_LT,    // x < c
-    REL_LE,    // x <= c
-    REL_SIZE
-};
-
-enum  case_range {
-    CASE_LOW,         // c < a
-    CASE_LOW_EQ,      // c == a
-    CASE_HIGH,        // c > b
-    CASE_HIGH_EQ,     // c == b
-    CASE_SIZE
-};
-
-typedef enum{
-    CMP_VOID    = 0,    // comparison fine
-    CMP_FALSE   = 1,    // always false
-    CMP_TRUE    = 2,    // always true
-    CMP_COMPLEX = 3,    // could be simplified
-} cmp_result;
-
-static char const Meaningless[REL_SIZE][CASE_SIZE] = {
-//    c < a      c == a     c > b      c == b
-    { CMP_FALSE, CMP_VOID , CMP_FALSE, CMP_VOID },  // x == c
-    { CMP_FALSE, CMP_FALSE, CMP_TRUE , CMP_VOID },  // x < c
-    { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
-};
-
-#define NumSign( a )   ((a)&0x80)
-#define NumBits( a )   ((a)&0x7f)
-#define MAXSIZE        (sizeof( long )*8)
-
-// return 0 not a num, else number of bits | 0x80 if signed
-static unsigned char NumSize( int op_type )
+// return 0 not a num, else number of bits | SIGN_BIT if signed
+static int NumSize( int op_type )
 {
     unsigned char       size;
 
     size = 0;
     switch( op_type ) {
     case TYPE_CHAR:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYPE_UCHAR:
         size |= 8;
         break;
     case TYPE_SHORT:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYPE_USHORT:
         size |= 16;
         break;
     case TYPE_LONG:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYPE_ULONG:
     case TYPE_POINTER:
         size |= 32;
@@ -559,13 +526,13 @@ static unsigned char NumSize( int op_type )
 // FIXME: this ought to be enabled, but the callers of NumSize() need fixing!
 #if 0
     case TYPE_LONG64:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYPE_ULONG64:
         size |= 64;
         break;
 #endif
     case TYPE_INT:
-        size = 0x80;
+        size = SIGN_BIT;
     case TYPE_UINT:
 #if TARGET_INT == 2
         size |= 16;
@@ -582,8 +549,7 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
 {
     long                high;
     long                low;
-    enum rel_op         rel;
-    enum case_range     range;
+    rel_op              rel;
     cmp_result          ret;
     int                 result_size;
     unsigned char       op1_size;
@@ -619,55 +585,21 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
         rel = REL_EQ;
         break;
     }
-    if( NumSign( op1_size ) && NumSign( op1_size ) != NumSign( result_size ) ) {
-        if( NumBits( op1_size ) < NumBits( result_size ) ) {
-            // signed promoted to bigger unsigned num gets signed extended
-            // could have two ranges unsigned
-            return( CMP_VOID ); //TODO: could check == & !=
-        } else if( NumBits( op1_size) == NumBits( result_size ) ) {
-            // signed promoted to unsigned use unsigned range
-            op1_size &= 0x7f;
-        }
-    }
-    if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ) {
-        val &= 0xffff; // num is truncated when compared
-    }
-    if( NumSign( op1_size ) ) {
-        low = (long)(0x80000000) >> MAXSIZE-NumBits( op1_size );
-        high = ~low;
-    } else {
-        low = 0;
-        high = 0xfffffffful >> MAXSIZE-NumBits( op1_size );
-    }
-    if( val == low ) {
-        range = CASE_LOW_EQ;
-    } else if( val == high ) {
-        range = CASE_HIGH_EQ;
-    } else if( NumBits( op1_size ) < MAXSIZE ) {// can't be outside range and
-        if( val < low ) {                       // don't have to do unsigned compare
-            range = CASE_LOW;
-        } else if( val > high ) {
-            range = CASE_HIGH;
-        } else {
-            range = CASE_SIZE;
-        }
-    } else {
-        range = CASE_SIZE;
-    }
-    if( range != CASE_SIZE ) {
-        ret = Meaningless[rel][range];
-        if( ret != CMP_VOID && rev_ret ) {
+    ret = CheckMeaninglessCompare( rel, op1_size, result_size, val, &low, &high );
+
+    if( ret != CMP_VOID ) {
+        if( rev_ret ) {
             if( ret == CMP_FALSE ) {
                 ret = CMP_TRUE;
             } else {
                 ret = CMP_FALSE;
             }
-        } else if( rel == REL_LE && !rev_ret && !NumSign( op1_size ) && val == 0 ) {
+        }
+    } else {
+        if( rel == REL_LE && !rev_ret && !NumSign( op1_size ) && val == 0 ) {
             // special case for unsigned <= 0
             ret = CMP_COMPLEX;
         }
-    } else {
-        ret = CMP_VOID;
     }
     return( ret );
 }
