@@ -83,7 +83,8 @@ typedef struct arguments {
 
 
 // skip over istream's header and copy the binary-data (i.e. everything but
-// the header) to ostream. while doing so, apply any relocations
+// the header) to ostream. while doing so, apply any relocations, relying on
+// the fact that the relocation items are sorted in ascending order.
 
 int copy_bindata( FILE *istream, FILE *ostream, unsigned_32 bin_size,
                   unsigned_32 num_skip, reloc_table *reltab )
@@ -284,6 +285,23 @@ reloc_table *get_reltab( FILE *stream, dos_exe_header *header )
 }
 
 
+// sort the relocation items for display as well as application.
+
+int compare_u32( const void *arg1, const void *arg2 )
+{
+    unsigned_32 val1 = *((unsigned_32 *)arg1);
+    unsigned_32 val2 = *((unsigned_32 *)arg2);
+
+    return( val1 < val2 ? -1 : (val1 > val2) ? 1 : 0 );
+}
+
+void sort_reltab( reloc_table *reltab )
+{
+    qsort( reltab->reloc, reltab->num, sizeof( unsigned_32 ), compare_u32 );
+    return;
+}
+
+
 // parse the command-line and initialize/populate the argument-structure arg.
 
 int parse_cmdline( arguments *arg, int argc, char *argv[] )
@@ -397,6 +415,7 @@ int main( int argc, char *argv[] )
         return( EXIT_FAILURE );
     }
     reltab->lseg = arg.opt.lseg;
+    sort_reltab( reltab );
 
     if( arg.opt.disp_h ) {
         printf( "Header of %s (all numbers in hex)\n", arg.iname );
