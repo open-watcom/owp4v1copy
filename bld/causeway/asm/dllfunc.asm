@@ -42,7 +42,7 @@ _LoadLibrary    proc    near
 ;
 @@4:    push    es
         mov     es,si
-        mov     edi,offset EPSP_EntryCSEIP
+        mov     edi,offset EPSP_Struc.EPSP_EntryCSEIP
         mov     es:dword ptr [edi],edx
         mov     es:word ptr [edi+4],cx
         pop     es
@@ -114,7 +114,7 @@ _FreeLibrary        proc        near
 ;
         mov        edx,[esp+(4*8)+4]
         xor        ebx,ebx
-        mov        bx,EPSP_PSPSel[edx]
+        mov        bx,EPSP_Struc.EPSP_PSPSel[edx]
         push        ds
         push        es
         push        fs
@@ -125,14 +125,14 @@ _FreeLibrary        proc        near
         mov        ds,bx
         mov        es,bx
         xor        eax,eax
-        mov        edi,offset EPSP_EntryCSEIP
+        mov        edi,offset EPSP_Struc.EPSP_EntryCSEIP
         mov        ax,es:word ptr[edi+4]
         lar        eax,eax
         test        eax,00400000h
         mov        eax,1
         jnz        @@7
         db 66h
-@@7:        call        fs:fword ptr[edi]
+@@7:    call        fs:fword ptr[edi]
         popad
         pop        gs
         pop        fs
@@ -141,7 +141,7 @@ _FreeLibrary        proc        near
 ;
 ;Release the module.
 ;
-        mov        bx,EPSP_PSPSel[edx]
+        mov        bx,EPSP_Struc.EPSP_PSPSel[edx]
         sys        RelSel
 ;
         popad
@@ -192,7 +192,7 @@ _LoadModule        proc        near
 ;
 ;Return handle (or error) to caller.
 ;
-@@0:        mov        [esp+(4*8)+4],edi        ;Use calling parameter space.
+@@0:    mov        [esp+(4*8)+4],edi        ;Use calling parameter space.
         popad
         mov        eax,[esp+4]                ;Get return value.
         ret
@@ -246,7 +246,7 @@ _GetProcAddress proc near
 ;
         mov        esi,[esp+(4*8)+4+4]
         mov        edi,esi
-        or        ecx,-1
+        or         ecx,-1
         xor        al,al
         cld
         repnz        scasb                ;get the strings length.
@@ -261,7 +261,7 @@ _GetProcAddress proc near
 ;
         mov        ebp,offset NameSpace
         mov        edi,[esp+(4*8)+4]
-        mov        edi,EPSP_Exports[edi]
+        mov        edi,EPSP_Struc.EPSP_Exports[edi]
         call        __CWAPI_FindFunction
         jnc        @@2
         xor        ecx,ecx                ;Zero the address
@@ -270,13 +270,13 @@ _GetProcAddress proc near
 ;
 ;Fetch function address.
 ;
-@@2:        mov        edx,[edi]
+@@2:    mov        edx,[edi]
         xor        ecx,ecx
         mov        cx,[edi+4]
 ;
 ;Return function (or error) to caller.
 ;
-@@3:        mov        [esp+(4*8)+4],edx        ;Use calling parameter space.
+@@3:    mov        [esp+(4*8)+4],edx        ;Use calling parameter space.
         mov        [esp+(4*8)+4+4],ecx
         popad
         mov        eax,[esp+4]                ;Get return value.
