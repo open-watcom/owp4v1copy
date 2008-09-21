@@ -558,6 +558,9 @@ LONG GUISetControlStyle( gui_control_info *info )
         if( info->style & GUI_CONTROL_READONLY ) {
             ret_style |= ES_READONLY;
         }
+        if( info->style & GUI_CONTROL_BORDER ) {
+            ret_style |= WS_BORDER;
+        }
         break;
 #endif
     }

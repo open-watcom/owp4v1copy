@@ -150,7 +150,7 @@ extern void set_dlg_edit( gui_control_info *gui_controls,
     }
     control->parent = NULL;
     control->scroll = GUI_NOSCROLL;
-    control->style  = GUI_TAB_GROUP;
+    control->style  = GUI_TAB_GROUP | GUI_CONTROL_BORDER;
     control->id     = id;
 }
 
