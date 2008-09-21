@@ -81,6 +81,7 @@ base_headers =       &
         exdispid.h   &
         fltdefs.h    &
         guiddef.h    &
+        htmlhelp.h   &
         httpext.h    &
         iads.h       &
         icm.h        &
@@ -441,6 +442,7 @@ base_libs =          &
         faultrep.lib &
         gdi32.lib    &
         glu32.lib    &
+        htmlhelp.lib &
         icm32.lib    &
         icmui.lib    &
         imagehlp.lib &
