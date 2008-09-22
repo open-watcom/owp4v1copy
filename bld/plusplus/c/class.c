@@ -259,6 +259,7 @@ void ClassInitState( type_flag class_variant, CLASS_INIT extra, TYPE class_mod_l
     data->sym = NULL;
     data->type = NULL;
     data->scope = NULL;
+    data->enclosing = NULL;
     data->info = NULL;
     data->bases = NULL;
     data->base_vbptr = NULL;
@@ -755,8 +756,7 @@ static void injectClassName( char *name, TYPE type, TOKEN_LOCN *locn )
 {
     SCOPE scope = type->u.c.scope;
     SYMBOL sym = AllocSymbol();
-    SYMBOL_NAME sym_name =
-        AllocSymbolName( name, scope->enclosing );
+    SYMBOL_NAME sym_name = AllocSymbolName( name, scope->enclosing );
 
     sym->id = SC_TYPEDEF;
     sym->sym_type = type;
@@ -985,7 +985,6 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
                             if( enclosing_data != NULL ) {
                                 if( !scoped_id
                                  && ( name == enclosing_data->name ) ) {
-                                    // TODO
                                     newClassType( data, declaration );
                                     newClassSym( data, declaration, id );
                                     PTreeFreeSubtrees( id );
@@ -1105,19 +1104,17 @@ void ClassStart( void )
     CLASS_DATA *data;
     CLASSINFO *info;
     TYPE type;
+    SCOPE scope;
 
     data = classDataStack;
     data->start = data->offset;
     type = data->type;
     info = type->u.c.info;
     info->index = nextClassIndex();
-#if 0
-    /* TODO */
-    if( data->scope->enclosing != GetCurrScope() ) {
-        CFatal( "class open is out of synch" );
-    }
-#endif
-    ScopeOpen( data->scope );
+    scope = data->scope;
+    data->enclosing = GetCurrScope();
+    SetCurrScope( scope );
+    BrinfOpenScope( GetCurrScope() );
 }
 
 static void changeToInlineFunction( DECL_INFO *dinfo )
@@ -1743,6 +1740,7 @@ DECL_SPEC *ClassEnd( void )
     checkClassStatus( data );
     warnAboutHiding( data );
     ScopeEnd( SCOPE_CLASS );
+    SetCurrScope( data->enclosing );
     if( data->specific_defn ) {
         TemplateSpecificDefnEnd();
     }

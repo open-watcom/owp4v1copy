@@ -42,6 +42,7 @@ struct class_data {
     SYMBOL          sym;                /* symbol of current class typedef */
     TYPE            type;               /* type of current class */
     SCOPE           scope;              /* scope of current class */
+    SCOPE           enclosing;          /* enclosing scope of current class */
     CLASSINFO       *info;              /* info part of class type */
     BASE_CLASS      *bases;             /* base classes of current class */
     BASE_CLASS      *base_vbptr;        /* base who's vbptr we are using */
