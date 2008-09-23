@@ -61,7 +61,7 @@ system begin x32r
     option osname='FlashTek (register calling convention)'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile cstrtx3r
+    libfile cstrtx3r.obj
     option stack=4k,align=4k,internalrelocs
     library x32b.lib
     format os2 lx ^
@@ -74,7 +74,7 @@ system begin x32rv
     option osname='FlashTek Virtual Memory (register calling convention)'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile cstrtx3r
+    libfile cstrtx3r.obj
     option stack=4k,align=4k,internalrelocs
     library x32vb.lib
     format os2 lx ^
@@ -87,7 +87,7 @@ system begin x32s
     option osname='FlashTek (stack calling convention)'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile cstrtx3s
+    libfile cstrtx3s.obj
     option stack=4k,align=4k,internalrelocs
     library x32b.lib
     format os2 lx ^
@@ -100,7 +100,7 @@ system begin x32sv
     option osname='FlashTek Virtual Memory (stack calling convention)'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile cstrtx3s
+    libfile cstrtx3s.obj
     option stack=4k,align=4k,internalrelocs
     library x32vb.lib
     format os2 lx ^
@@ -314,7 +314,7 @@ system begin ads
     option osname='AutoCAD Development System'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile adsstart
+    libfile adsstart.obj
     format phar ext ^
 :endsegment
 end
@@ -325,7 +325,7 @@ system begin eadi
     option osname='emulation AutoCAD Device Interface'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile adiestrt
+    libfile adiestrt.obj
     format phar ext ^
 :endsegment
 end
@@ -336,7 +336,7 @@ system begin fadi
     option osname='floating point AutoCAD Device Interface'
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/dos
-    libfile adifstrt
+    libfile adifstrt.obj
     format phar ext ^
 :endsegment
 end
@@ -538,7 +538,7 @@ system begin cwdlls
     libpath %WATCOM%/lib386/dos
     op stub=cwdstub.exe
     format os2 le dll ^
-    libfile dllstrts
+    libfile dllstrts.obj
 :endsegment
 end
 system begin cwdllr
@@ -551,7 +551,7 @@ system begin cwdllr
     libpath %WATCOM%/lib386/dos
     op stub=cwdstub.exe
     format os2 le dll ^
-    libfile dllstrtr
+    libfile dllstrtr.obj
 :endsegment
 end
 system begin dos32a
