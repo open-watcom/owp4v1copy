@@ -262,6 +262,7 @@ base_headers =       &
         urlmon.h     &
         userenv.h    &
         usp10.h      &
+        uuids.h      &
         uxtheme.h    &
         vfw.h        &
         vfwmsgs.h    &
