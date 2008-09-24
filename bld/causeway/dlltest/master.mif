@@ -35,16 +35,16 @@ dlltestr.exe : dlltestr.obj dllr.dll ../../cw32/dosi86/cw32.exe
     $(linker) op map,quiet @tmpr.lnk
 
 dlls.dll : dlls.obj
-    $(linker) system cwdlls opt quiet,map name $@ opt modname=DLLS file dlls.obj
+    $(linker) system causeway dll opt quiet,map,stub=../../cw32/dosi86/cwdstub.exe name $@ opt modname=DLLS file dlls.obj libfile dllstrts.obj
 
 dllr.dll : dllr.obj
-    $(linker) system cwdllr opt quiet,map name $@ opt modname=DLLR file dllr.obj
+    $(linker) system causeway dll opt quiet,map,stub=../../cw32/dosi86/cwdstub.exe name $@ opt modname=DLLR file dllr.obj libfile dllstrtr.obj
 
 dlltests.obj : dlltest.c $(dlltest_autodepends)
-    $(cc) -s -4s -wx -d2 $< -fo=$@
+    $(cc) -s -4s -wx -d2 -I"../../inc" $< -fo=$@
 
 dlltestr.obj : dlltest.c $(dlltest_autodepends)
-    $(cc) -s -4r -wx -d2 $< -fo=$@
+    $(cc) -s -4r -wx -d2 -I"../../inc" $< -fo=$@
 
 dlls.obj : dll.c $(dlltest_autodepends)
     $(cc) -s -4s -wx -bd $< -fo=$@

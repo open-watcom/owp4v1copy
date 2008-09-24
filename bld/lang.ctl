@@ -60,6 +60,8 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/fmedit/lang.ctl ]
 #        WPI needs to be done before SDK
 [ INCLUDE <DEVDIR>/wpi/lang.ctl ]
+#
+[ INCLUDE <DEVDIR>/causeway/lang.ctl ]
 #        SDK must be done after DISASM?
 [ INCLUDE <DEVDIR>/sdk/lang.ctl ]
 #        Librariess for different program are next

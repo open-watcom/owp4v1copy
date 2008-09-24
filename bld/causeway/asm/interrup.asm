@@ -824,114 +824,91 @@ IntHandler      proc    near
 ;   mov eax,cr2 [0f 20 d0]
         push    ds
         cmp     eax,0dh
-        jne     mednoem                 ; not a GPF
+        jne     mednoem                         ; not a GPF
 
         mov     ax,ss:[esp+(4+4)+(4)+(4+4)+4]   ; ax==original CS
-;       verr    ax                      ; check for looping lockup invalid value
+;       verr    ax                              ; check for looping lockup invalid value
 ;       jnz     mednoem
         mov     ds,ax
         mov     eax,ss:[esp+(4+4)+(4)+(4)+4]    ; eax==original EIP
 
-        cmp     BYTE PTR ds:[eax],0fh   ; first opcode byte
-        jne     mednoem                 ; no match
-        cmp     WORD PTR ds:[eax+1],0c020h      ; mov eax,cr0
+        cmp     BYTE PTR ds:[eax],0fh           ; first opcode byte
+        jne     mednoem                         ; no match
+        cmp     BYTE PTR ds:[eax+1],20h         ; mov reg,crx
+        jne     med6b
+        cmp     BYTE PTR ds:[eax+2],0c0h        ; mov eax,cr0
         jne     med2b
+.586
         mov     eax,cr0
-        mov     ss:[esp+4],eax          ; update original eax with cr0 value
-        jmp     medemu
-
+        jmp     medemu3eax                      ; update original eax with cr0 value
 med2b:
-        cmp     WORD PTR ds:[eax+1],0c022h      ; move cr0,eax
-        jne     med3b                   ; no match
-        mov     eax,ss:[esp+4]  ; get original eax value
-        mov     cr0,eax                 ; update cr0 value with original eax
-        jmp     medemu
-
+        cmp     BYTE PTR ds:[eax+2],0d0h        ; mov eax,cr2
+        jne     med3b
+        mov     eax,cr2
+        jmp     medemu3eax                      ; update original eax with cr2 value
 med3b:
-        cmp     WORD PTR ds:[eax+1],0d820h      ; mov eax,cr3
+        cmp     BYTE PTR ds:[eax+2],0d8h        ; mov eax,cr3
         jne     med4b
         mov     eax,cr3
-        mov     ss:[esp+4],eax          ; update original eax with cr3 value
-        jmp     medemu
-
+        jmp     medemu3eax                      ; update original eax with cr3 value
 med4b:
-        cmp     WORD PTR ds:[eax+1],0d822h      ; move cr3,eax
-        jne     med5b                   ; no match
-        mov     eax,ss:[esp+4]  ; get original eax value
-        mov     cr3,eax                 ; update cr3 value with original eax
-        jmp     medemu
-
+        cmp     BYTE PTR ds:[eax+2],0e0h        ; mov eax,cr4
+        jne     med5b
+        mov     eax,cr4
+medemu3eax:
+        mov     ss:[esp+4],eax                  ; update original eax with cr4 value
+        jmp     medemu3
 med5b:
-        cmp     WORD PTR ds:[eax+1],0e022h      ; move cr4,eax
-        jne     med6b                   ; no match
-        mov     eax,ss:[esp+4]  ; get original eax value
-
-.586
-        mov     cr4,eax                 ; update cr4 value with original eax
-        jmp     medemu
+        cmp     BYTE PTR ds:[eax+2],0e3h        ; mov ebx,cr4
+        jne     mednoem
+        mov     ebx,cr4
+        jmp     medemu3
 
 med6b:
-        cmp     WORD PTR ds:[eax+1],0e020h      ; mov eax,cr4
-        jne     med7b
-
-.586
-        mov     eax,cr4
-        mov     ss:[esp+4],eax          ; update original eax with cr4 value
-        jmp     medemu
-
+        cmp     BYTE PTR ds:[eax+1],22h         ; mov crx,reg
+        jne     med9b                           ; no match
+        cmp     BYTE PTR ds:[eax+2],0c0h        ; move cr0,eax
+        jne     med7b                           ; no match
+        mov     eax,ss:[esp+4]                  ; get original eax value
+        mov     cr0,eax                         ; update cr0 value with original eax
+        jmp     medemu3
 med7b:
-        cmp     BYTE PTR ds:[eax+1],9   ; WBINVD
-        jne     med8b
-
-.586
-        wbinvd
-        mov     eax,2
-        jmp     medemu2
-
+        cmp     BYTE PTR ds:[eax+2],0d8h        ; move cr3,eax
+        jne     med8b                           ; no match
+        mov     eax,ss:[esp+4]                  ; get original eax value
+        mov     cr3,eax                         ; update cr3 value with original eax
+        jmp     medemu3
 med8b:
-        cmp     BYTE PTR ds:[eax+1],30h ; WRMSR
-        jne     med9b
-
-.586
-        mov     eax,ss:[esp+4]  ; get original eax value
-        wrmsr
-        mov     eax,2
-        jmp     medemu2
+        cmp     BYTE PTR ds:[eax+2],0e0h        ; move cr4,eax
+        jne     mednoem                         ; no match
+        mov     eax,ss:[esp+4]                  ; get original eax value
+        mov     cr4,eax                         ; update cr4 value with original eax
+medemu3:
+        mov     eax,3
+        jmp     medemu
 
 med9b:
-        cmp     BYTE PTR ds:[eax+1],32h ; RDMSR
+        cmp     BYTE PTR ds:[eax+1],9           ; WBINVD
         jne     med10b
-
-;       push    eax
-.586
-        rdmsr
-;       DB      0fh                             ; RDMSR instruction
-;       DB      32h
-;       mov     ss:[esp+8],eax  ; update original eax value
-;       pop     eax
-        mov     ss:[esp+4],eax  ; update original eax value
-        mov     eax,2
+        wbinvd
         jmp     medemu2
-
 med10b:
-        cmp     WORD PTR ds:[eax+1],0e320h      ; mov ebx,cr4
-        jne     med11b                  ; no match
-
-.586
-        mov     ebx,cr4
-        jmp     medemu
-
+        cmp     BYTE PTR ds:[eax+1],30h         ; WRMSR
+        jne     med11b
+        mov     eax,ss:[esp+4]                  ; get original eax value
+        wrmsr
+        jmp     medemu2
 med11b:
-        cmp     WORD PTR ds:[eax+1],0d020h      ; mov eax,cr2
+        cmp     BYTE PTR ds:[eax+1],32h         ; RDMSR
         jne     mednoem
-        mov     eax,cr2
-        mov     ss:[esp+4],eax          ; update original eax with cr2 value
-;       jmp     medemu
+        rdmsr
+        mov     ss:[esp+4],eax                  ; update original eax value
 
-medemu:
-        mov     eax,3
+.386p
 
 medemu2:
+        mov     eax,2
+medemu:
         add     ss:[esp+(4+4)+(4)+(4)+4],eax    ; adjust EIP past emulated instruction
         pop     ds
         pop     eax
@@ -943,16 +920,16 @@ medemu2:
 mednoem:
         pop     ds
 
-        mov     eax,[esp+(4+4)+(4)]     ;get error code.
-        mov     ExceptionCode,eax       ;/
-        mov     eax,[esp+(4+4)+(4)+(4)+(4+4)] ;Get flags.
+        mov     eax,[esp+(4+4)+(4)]             ;get error code.
+        mov     ExceptionCode,eax               ;/
+        mov     eax,[esp+(4+4)+(4)+(4)+(4+4)]   ;Get flags.
         or      eax,65536
-        mov     ExceptionFlags,eax      ;Let dispatch know its an exception.
-        mov     eax,cr2         ;Grab this now to save more PL
-        mov     ExceptionCR2,eax        ;switches for page faults.
+        mov     ExceptionFlags,eax              ;Let dispatch know its an exception.
+        mov     eax,cr2                         ;Grab this now to save more PL
+        mov     ExceptionCR2,eax                ;switches for page faults.
         pop     eax
         pop     ds
-        add     esp,4           ;skip error code.
+        add     esp,4                           ;skip error code.
         jmp     inter14_SortedCode2
 inter14_NoCode:
         and     w[esp+(4+4)+(4)+(4+4)],0011111111010101b

@@ -18,9 +18,6 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DEVDIR>/redist/causeway/*              <RELROOT>/binw/
-    <CPCMD> <DEVDIR>/redist/causeway/cwdll/*.lib    <RELROOT>/lib386/dos/
-    <CPCMD> <DEVDIR>/redist/causeway/cwdll/*.h      <RELROOT>/h/
     <CPCMD> <DEVDIR>/redist/dos4gw/*                <RELROOT>/binw/
     <CPCMD> <DEVDIR>/redist/dos32a/*                <RELROOT>/binw/
     <CPCMD> <DEVDIR>/redist/pmodew/*                <RELROOT>/binw/
