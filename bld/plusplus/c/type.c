@@ -251,6 +251,15 @@ static CLASSINFO *newINFO( void )
     info->refno = NULL_CGREFNO;
     info->dbg_no_vbases = 0;
     info->class_mod = NULL;
+    /*
+     *  Carl 12-Aug-2008.
+     *  Added a copy of the class modifiers to the CLASS_INFO structure so that
+     *  type modifiers can be added and retained from a class declaration.
+     */
+    info->fn_pragma = NULL;
+    info->fn_flags = NULL;
+    info->mod_flags = TF1_NULL;
+
     info->last_vfn = 0;
     info->last_vbase = 0;
     info->vf_offset = 0;

@@ -2644,8 +2644,49 @@ struct list foo( int x, char *y, double z )
 }
 .exam end
 .np
+It is also possible to modify the calling convention of all methods of a class
+or just an individual method.
+.exam begin
+#pragma aux my_thiscall "_*" \
+        parm routine [ecx] \
+        value struct struct caller [] \
+        modify [eax ecx edx];
+
+#define THISCALL __declspec( __pragma("my_thiscall") )
+
+class THISCALL IWatcom: public IUnknown{
+    virtual int method_a( void ) = 0;
+    virtual int method_b( void ) = 0;
+    virtual int __cdecl method_c( void ) = 0;
+};
+.exam end
+.np
+In this example, any calls generated to the virtual methods 'method_a' or 'method_b'
+will use the THISCALL ( my_thiscall ) calling convention. Calls generated to 'method_c'
+will use the prefefined
+.kw __cdecl
+calling convention. 
+.np
+It is also possible to forward define the class with modifiers for occasions where
+you do not want to change original source code.
+.exam begin
+#pragma aux my_thiscall "_*" \
+        parm routine [ecx] \
+        value struct struct caller [] \
+        modify [eax ecx edx];
+
+#define THISCALL __declspec( __pragma("my_thiscall") )
+class THISCALL IWatcom;
+
+class IWatcom: public IUnknown{
+    virtual int method_a( void ) = 0;
+    virtual int method_b( void ) = 0;
+    virtual int __cdecl method_c( void ) = 0;
+};
+.exam end
+.np
 The
-.kwm __pragma
+.kw __pragma
 modifier is supported by &cmppname only.
 .note __declspec( __cdecl )
 .*

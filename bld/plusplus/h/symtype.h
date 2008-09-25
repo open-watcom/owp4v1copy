@@ -531,6 +531,15 @@ typedef PCH_struct {
     char            *name;          // name of class
     CDOPT_CACHE     *cdopt_cache;   // CDOPT info cache
     TYPE            class_mod;      // type representing class <mods> X mods
+    /*
+     *  Carl 12-Aug-2008.
+     *  Added a copy of the class modifiers to the CLASS_INFO structure so that
+     *  type modifiers can be added and retained from a class declaration.
+     */
+    AUX_INFO        *fn_pragma;         /* function pragma for member functions */
+    type_flag       fn_flags;           /* function flags for member functions */
+    type_flag       mod_flags;          /* modifier flags for members */
+
     CGREFNO         refno;          // code-generator ref #
     dbg_handle      dbg_no_vbases;  // for Watcom -d2 info
     target_offset_t size;           // size of class (including vbases)
