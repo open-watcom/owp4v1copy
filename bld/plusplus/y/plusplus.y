@@ -936,6 +936,11 @@ pseudo-destructor-name
         PTreeFreeSubtrees( $1 );
         $$ = setLocation( MakeScopedDestructorId( $2, $4 ), &yylp[2] );
     }
+    | nested-name-specifier Y_TEMPLATE_SCOPED_TILDE expect-type-name Y_UNKNOWN_ID
+    {
+        PTreeFreeSubtrees( $1 );
+        $$ = setLocation( MakeScopedDestructorId( $2, $4 ), &yylp[2] );
+    }
     | nested-name-specifier Y_TEMPLATE_SCOPED_TILDE expect-type-name Y_TEMPLATE_NAME
     {
         PTreeFreeSubtrees( $1 );

@@ -15,6 +15,14 @@ struct A
     operator bool ();
 
     void f( const AA &a );
+
+    struct B {
+        B();
+
+        ~B();
+
+        void g();
+    };
 };
 
 
@@ -47,6 +55,19 @@ inline void A< T >::f( const AA & )
 { }
 
 
+template< typename T >
+A< T >::B::B( )
+{ }
+
+template< typename T >
+A< T >::B::~B( )
+{ }
+
+template< typename T >
+void A< T >::B::g( )
+{ }
+
+
 int main()
 {
     A< int > a1;
@@ -61,6 +82,10 @@ int main()
 
     if( !( !a2 ) ) fail( __LINE__ );
     if( !static_cast< bool >( a2 ) ) fail( __LINE__ );
+
+
+    A< int >::B b;
+    b.g();
 
 
     _PASS;
