@@ -284,6 +284,7 @@ static int doCCompile(          // COMPILE C++ PROGRAM
             CompFlags.cmdline_error = TRUE;
             exit_status |= WPP_ERRORS;
         } else {
+            ErrFileErase();
             if( ! CompFlags.quiet_mode ) {
                 if( CompFlags.batch_file_processing
                  || CompInfo.compfile_max != 1 ) {

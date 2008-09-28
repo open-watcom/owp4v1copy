@@ -226,7 +226,9 @@ char *IoSuppOutFileName(        // BUILD AN OUTPUT NAME FROM SOURCE NAME
         }
         break;
       case OFT_ERR:
-        if( ErrorFileName == NULL ) return( NULL );
+        if( ErrorFileName == NULL )
+            return( NULL );
+        outFileChecked |= 1 << typ; // don't create a file. it's just a name.
         path = ErrorFileName;
         break;
       case OFT_SRCDEP:

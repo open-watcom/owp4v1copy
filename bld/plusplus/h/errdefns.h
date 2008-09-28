@@ -119,6 +119,9 @@ void CSuicide(                  // COMMIT SUICIDE
 void ErrFileOpen(               // OPEN ERROR FILE
     void )
 ;
+void ErrFileErase(              // ERASE ERROR FILE
+    void )
+;
 unsigned ErrPCHVersion(         // PROVIDE A VERSION NUMBER FOR THE ERROR MESSAGES
     void )
 ;
