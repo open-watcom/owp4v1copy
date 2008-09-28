@@ -171,10 +171,6 @@ void CloseFiles( void )
         fclose( DefFile );
         DefFile = NULL;
     }
-    if( ErrFile != NULL ) {
-        fclose( ErrFile );
-        ErrFile = NULL;
-    }
 }
 
 static bool ParseCmdLine( char **cmdline )
