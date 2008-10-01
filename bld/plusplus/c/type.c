@@ -8912,6 +8912,7 @@ static void saveClassInfo( void *e, carve_walk_base *d )
     BASE_CLASS *save_bases;
     char *save_name;
     TYPE save_class_mod;
+    AUX_INFO *save_pragma;
     FRIEND *friend;
     signed char friend_is_type;
     SYMBOL friend_sym;
@@ -8929,6 +8930,8 @@ static void saveClassInfo( void *e, carve_walk_base *d )
     s->cdopt_cache = NULL;
     save_class_mod = s->class_mod;
     s->class_mod = TypeGetIndex( save_class_mod );
+    save_pragma = s->fn_pragma;
+    s->fn_pragma_idx = PragmaGetIndex( save_pragma );
     PCHWriteCVIndex( d->index );
     PCHWrite( s, sizeof( *s ) );
     RingIterBeg( s->friends, friend ) {
@@ -8944,6 +8947,7 @@ static void saveClassInfo( void *e, carve_walk_base *d )
     } RingIterEnd( friend )
     friend_is_type = -1;
     PCHWrite( &friend_is_type, sizeof( friend_is_type ) );
+    s->fn_pragma = save_pragma;
     s->class_mod = save_class_mod;
     s->cdopt_cache = save_cdopt_cache;
     s->name = save_name;
@@ -9122,6 +9126,7 @@ static void readClassInfos( void )
         ci->name = NameMapIndex( ci->name );
         ci->cdopt_cache = NULL;
         ci->class_mod = TypeMapIndex( ci->class_mod );
+        ci->fn_pragma = PragmaMapIndex( ci->fn_pragma_idx );
         ci->friends = NULL;
         for(;;) {
             PCHRead( &friend_is_type, sizeof( friend_is_type ) );

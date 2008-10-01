@@ -308,6 +308,7 @@ positive_tests = &
     cv02.$(ext) &
     decl01.$(ext) &
     decl02.$(ext) &
+    decl03.$(ext) &
     defarg01.$(ext) &
     defarg02.$(ext) &
     defarg03.$(ext) &

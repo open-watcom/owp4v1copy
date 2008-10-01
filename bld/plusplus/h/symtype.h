@@ -536,9 +536,12 @@ typedef PCH_struct {
      *  Added a copy of the class modifiers to the CLASS_INFO structure so that
      *  type modifiers can be added and retained from a class declaration.
      */
-    AUX_INFO        *fn_pragma;         /* function pragma for member functions */
-    type_flag       fn_flags;           /* function flags for member functions */
-    type_flag       mod_flags;          /* modifier flags for members */
+    union {
+        AUX_INFO    *fn_pragma;     // function pragma for member functions
+        unsigned    fn_pragma_idx;
+    };
+    type_flag       fn_flags;       // function flags for member functions
+    type_flag       mod_flags;      // modifier flags for members
 
     CGREFNO         refno;          // code-generator ref #
     dbg_handle      dbg_no_vbases;  // for Watcom -d2 info

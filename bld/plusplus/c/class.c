@@ -705,8 +705,9 @@ static void newClassType( CLASS_DATA *data, CLASS_DECL declaration )
         data->scope = class_type->u.c.scope;
         
         /*
-         *  A declspec modifier has been applied to the class definition/declaration
-         *  Store the information into the CLASS_INFO for subsequent use and checking
+         * A declspec modifier has been applied to the class
+         * definition/declaration. Store the information into the
+         * CLASS_INFO for subsequent use and checking
          */
         info->class_mod = data->class_mod_type;
         info->fn_pragma = data->fn_pragma;
@@ -740,36 +741,32 @@ static void setClassType( CLASS_DATA *data, TYPE type, CLASS_DECL declaration )
     data->scope = class_type->u.c.scope;
     
     /*
-     *  A declspec modifier has been applied to the class definition/declaration
-     *  If the definition is not consistent with any previous declarations, then
-     *  generate an error
+     * A declspec modifier has been applied to the class
+     * definition/declaration. If the definition is not consistent
+     * with any previous declarations, then generate an error
      */
-    if( data->class_mod_type ) {
-        bool ok = TRUE;
-        
-        if( info->class_mod ) {
-            if( data->class_mod_type != info->class_mod )
-                ok = FALSE;
-            if( data->fn_pragma != info->fn_pragma )
-                ok = FALSE;
-            if( data->fn_flags != info->fn_flags )
-                ok = FALSE;
-            if( data->mod_flags != info->mod_flags )
-                ok = FALSE;
-        }        
-        if( !ok )
-            CErr1( ERR_MULTIPLE_PRAGMA_MODS );
-    }
-    if( info->class_mod ) {
-        data->class_mod_type = info->class_mod;
-        data->fn_pragma = info->fn_pragma;
-        data->fn_flags = info->fn_flags;
-        data->mod_flags = info->mod_flags;
-    }
-    
-    if( data->class_mod_type )
+    if( info->class_mod != NULL ) {
+        if( data->class_mod_type != NULL ) {
+            if( ! IdenticalClassModifiers( info->class_mod,
+                                           data->class_mod_type ) ) {
+                CErr1( ERR_MULTIPLE_PRAGMA_MODS );
+            } else {
+                data->class_mod_type =
+                    AbsorbBaseClassModifiers( info->class_mod,
+                                              &(data->mod_flags),
+                                              &(data->fn_flags),
+                                              &(data->fn_pragma) );
+            }
+        } else {
+            data->class_mod_type = info->class_mod;
+            data->fn_pragma = info->fn_pragma;
+            data->fn_flags = info->fn_flags;
+            data->mod_flags = info->mod_flags;
+        }
+
         data->member_mod_adjust = TRUE;
-    
+    }
+
     if( declaration == CLASS_DEFINITION ) {
         classOpen( data, info );
     }
