@@ -257,7 +257,7 @@ static CLASSINFO *newINFO( void )
      *  type modifiers can be added and retained from a class declaration.
      */
     info->fn_pragma = NULL;
-    info->fn_flags = NULL;
+    info->fn_flags = TF1_NULL;
     info->mod_flags = TF1_NULL;
 
     info->last_vfn = 0;

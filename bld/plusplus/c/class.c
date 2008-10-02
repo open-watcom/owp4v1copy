@@ -750,12 +750,6 @@ static void setClassType( CLASS_DATA *data, TYPE type, CLASS_DECL declaration )
             if( ! IdenticalClassModifiers( info->class_mod,
                                            data->class_mod_type ) ) {
                 CErr1( ERR_MULTIPLE_PRAGMA_MODS );
-            } else {
-                data->class_mod_type =
-                    AbsorbBaseClassModifiers( info->class_mod,
-                                              &(data->mod_flags),
-                                              &(data->fn_flags),
-                                              &(data->fn_pragma) );
             }
         } else {
             data->class_mod_type = info->class_mod;
