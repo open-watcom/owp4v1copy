@@ -1247,11 +1247,9 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     case OPT_intel_call_conv_ecf:
         DftCallConv = &FastcallInfo;
         break;
-#ifndef NDEBUG
     case OPT_intel_call_conv_eco:
         DftCallConv = &OptlinkInfo;
         break;
-#endif
     case OPT_intel_call_conv_ecp:
         DftCallConv = &PascalInfo;
         break;

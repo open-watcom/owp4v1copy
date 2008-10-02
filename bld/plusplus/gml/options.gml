@@ -300,9 +300,9 @@
 :jusage.
 
 :option. eco
-:target. dbg
-:ntarget. axp qnx ppc linux sparc
+:target. i86 386
 :enumerate. intel_call_conv
+:internal.
 :usage. set default calling convention to _Optlink
 :jusage.
 
