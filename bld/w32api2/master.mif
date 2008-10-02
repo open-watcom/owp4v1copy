@@ -17,7 +17,7 @@ directx_distrib_lib = 1
 !endif
 
 # This should be including w32api2's own DDK headers
-inc_dirs = -I"$(lang_root)/h/nt/ddk"
+inc_dirs = -I"$(lang_root)/h/nt/ddk" -I"$(lang_root)/h/nt/directx"
 
 splice = wsplice -i$(hdr_dir) -i$(root_dir)/include $[@ $^@
 rsplice = wsplice -i$(hdr_dir) -i$(root_dir)/include -kRESOURCE $[@ $^@
@@ -416,6 +416,7 @@ directx_headers =    &
         d3drmdef.h   &
         d3drmobj.h   &
         d3dtypes.h   &
+        dinput.h     &
         dsound.h     &
         dvp.h        &
         dxtrans.h
@@ -526,6 +527,8 @@ base_libs =          &
 directx_libs =       &
         d3d9.lib     &
         d3drm.lib    &
+        dinput.lib   &
+        dinput8.lib  &
         dsound.lib   &
         dxguid.lib
 
@@ -597,3 +600,11 @@ vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
     @%create $@
     @for %i in ($(vfw32_lbcs)) do @%append $@ @ %i
     @%append $@ +vfwuuid.obj
+
+dinput.lbc: dinput.def dinpstat.obj
+    $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
+    @%append $@ +dinpstat.obj
+
+dinput8.lbc: dinput8.def dinpstat.obj
+    $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
+    @%append $@ +dinpstat.obj

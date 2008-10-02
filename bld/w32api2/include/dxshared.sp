@@ -1,10 +1,15 @@
 #ifndef DX_SHARED_DEFINES
 #define DX_SHARED_DEFINES
 
+/* Direct3D color data type */
+#ifndef D3DCOLOR_DEFINED
+#define D3DCOLOR_DEFINED
+typedef DWORD   D3DCOLOR;
+#endif
+
 /* DirectX shared primitive data types */
 typedef float   D3DVALUE;
 typedef float   *LPD3DVALUE;
-typedef DWORD   D3DCOLOR;
 typedef DWORD   *LPD3DCOLOR;
 
 /* Direct3D vectors */
