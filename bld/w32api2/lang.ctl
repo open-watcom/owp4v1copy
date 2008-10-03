@@ -18,6 +18,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
+    <CPCMD> readme.txt                    <RELROOT>/readme.w32
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt/*.h                        <RELROOT>/h/nt/
     <CPCMD> nt/gl/*.h                     <RELROOT>/h/nt/gl/
