@@ -699,7 +699,9 @@ void BuildImpLib( void )
     _LnkFree( ImpLib.dllname );
 }
 
-#if defined( _DLLHOST )
+#if defined( __UNIX__ ) && !defined(__WATCOMC__)
+static void ExecWlib( void ) {}
+#elif defined( _DLLHOST )
 
 static void ExecWlib( void )
 /**************************/
@@ -735,13 +737,18 @@ static void ExecWlib( void )
     *temp++ = '"';
     *temp = '\0';
     if( ExecWlibDLL( cmdline ) ) {
-        PrintIOError( ERR+MSG_CANT_EXECUTE, "12", "wlib.exe" );
+        PrintIOError( ERR+MSG_CANT_EXECUTE, "12", "wlibd.dll" );
     }
     _LnkFree( cmdline );
 }
-#elif defined( __UNIX__ )
-static void ExecWlib( void ) {}
 #else
+
+#if defined( __UNIX__ )
+#define WLIB_EXE "wlib"
+#else
+#define WLIB_EXE "wlib.exe"
+#endif
+
 static void ExecWlib( void )
 /**************************/
 {
@@ -761,10 +768,10 @@ static void ExecWlib( void )
     } else {
         libtype = "-ii";
     }
-    retval = spawnlp( P_WAIT, "wlib.exe", "wlib.exe", "-c", "-b", "-n", "-q",
+    retval = spawnlp( P_WAIT, WLIB_EXE, WLIB_EXE, "-c", "-b", "-n", "-q",
                   libtype, FmtData.implibname, atfname, NULL );
     if( retval == -1 ) {
-        PrintIOError( ERR+MSG_CANT_EXECUTE, "12", "wlib.exe" );
+        PrintIOError( ERR+MSG_CANT_EXECUTE, "12", WLIB_EXE );
     }
     _LnkFree( atfname );
 }
