@@ -21,6 +21,7 @@ cdsay .
     <CPCMD> readme.txt                    <RELROOT>/readme.w32
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt/*.h                        <RELROOT>/h/nt/
+    <CPCMD> nt/*.rh                       <RELROOT>/h/nt/
     <CPCMD> nt/gl/*.h                     <RELROOT>/h/nt/gl/
     <CPCMD> nt/ddk/*.h                    <RELROOT>/h/nt/ddk/
     <CPCMD> nt/directx/*.h                <RELROOT>/h/nt/directx/
