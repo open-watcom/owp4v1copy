@@ -226,12 +226,15 @@ static fe_attr basic_attributes(// GET BASIC ATTRIBUTES
 
     switch( sym->id ) {
     case SC_EXTERN:
+    case SC_EXTERN_FUNCTION_TEMPLATE:
         attr = FE_STATIC | FE_GLOBAL | FE_IMPORT ;
         break;
     case SC_PUBLIC:
+    case SC_FUNCTION_TEMPLATE:
         attr = FE_STATIC | FE_GLOBAL;
         break;
     case SC_STATIC:
+    case SC_STATIC_FUNCTION_TEMPLATE:
         attr = FE_STATIC | FE_VISIBLE;
         break;
     default :
