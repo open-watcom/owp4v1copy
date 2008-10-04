@@ -174,7 +174,7 @@ struct decl_spec {
 };
 
 typedef struct decl_info DECL_INFO;
-struct decl_info {
+PCH_struct decl_info {
     DECL_INFO           *next;
     DECL_INFO           *parms;         // function parms (NULLable)
     PTREE               id;             // declarator id (NULLable)
@@ -198,6 +198,7 @@ struct decl_info {
     unsigned            has_dspec : 1;  // has decl-specifiers (set by DeclFunction)
     unsigned            has_defarg : 1; // has default argument
     unsigned            explicit_parms : 1;// explicit parms in declarator
+    unsigned            free : 1;       // used for precompiled headers
 };
 
 // types dealing with representing types
@@ -1789,10 +1790,10 @@ extern TYPE BindTemplateClass( TYPE , TOKEN_LOCN *, boolean );
 // pre-compiled header support
 TYPE TypeGetIndex( TYPE );
 TYPE TypeMapIndex( TYPE );
-void PCHWriteDeclInfo( DECL_INFO * );
-DECL_INFO *PCHReadDeclInfo();
 CLASSINFO *ClassInfoGetIndex( CLASSINFO * );
 CLASSINFO *ClassInfoMapIndex( CLASSINFO * );
+DECL_INFO *DeclInfoGetIndex( DECL_INFO * );
+DECL_INFO *DeclInfoMapIndex( DECL_INFO * );
 SYMBOL_NAME SymbolNameGetIndex( SYMBOL_NAME );
 SYMBOL_NAME SymbolNameMapIndex( SYMBOL_NAME );
 SYMBOL SymbolGetIndex( SYMBOL );

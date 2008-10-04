@@ -3625,7 +3625,7 @@ static void saveMemberInst( MEMBER_INST *s, MEMBER_INST *stop )
     save_next = s->next;
     s->next = (MEMBER_INST *) ( s != stop );
     save_dinfo = s->dinfo;
-    s->dinfo = (void *) ( s->dinfo != NULL );
+    s->dinfo = DeclInfoGetIndex( save_dinfo );
     save_scope = s->scope;
     s->scope = ScopeGetIndex( save_scope );
     save_class_parm_scope = s->class_parm_scope;
@@ -3640,10 +3640,6 @@ static void saveMemberInst( MEMBER_INST *s, MEMBER_INST *stop )
     s->scope = save_scope;
     s->class_parm_scope = save_class_parm_scope;
     s->class_parm_enclosing = save_class_parm_enclosing;
-
-    if( s->dinfo != NULL ) {
-        PCHWriteDeclInfo( s->dinfo );
-    }
 }
 
 static void saveClassInst( void *p, carve_walk_base *d )
@@ -3811,13 +3807,10 @@ pch_status PCHReadTemplates( void )
             cont = mi->next != NULL;
 
             mi->next = NULL;
+            mi->dinfo = DeclInfoMapIndex( mi->dinfo );
             mi->scope = ScopeMapIndex( mi->scope );
             mi->class_parm_scope = ScopeMapIndex( mi->class_parm_scope );
             mi->class_parm_enclosing = ScopeMapIndex( mi->class_parm_enclosing );
-
-            if( mi->dinfo != NULL ) {
-                mi->dinfo = PCHReadDeclInfo();
-            }
             RingAppend( &ci->members, mi );
         }
     }
