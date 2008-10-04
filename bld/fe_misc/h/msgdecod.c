@@ -62,11 +62,11 @@ static char *decodePhrase(      // DECODE PHRASE
     unsigned word_stop;
 
     while( msg_start < msg_stop ) {
-        msg_leader = (uint_8) msg_text[ msg_start++ ];
+        msg_leader = msg_text[ msg_start++ ];
         if( msg_leader & ENC_BIT ) {
             if( msg_leader & LARGE_BIT ) {
                 word_index = ( msg_leader & ~(ENC_BIT|LARGE_BIT) ) << 8;
-                word_index |= (uint_8) msg_text[ msg_start++ ];
+                word_index |= msg_text[ msg_start++ ];
             } else {
                 word_index = msg_leader & ~ENC_BIT;
             }
@@ -74,7 +74,7 @@ static char *decodePhrase(      // DECODE PHRASE
             word_start = word_base[ word_index ];
             word_stop = word_base[ word_index + 1 ];
         } else {
-            word_table = msg_text;
+            word_table = (char *)msg_text;
             word_start = msg_start;
             word_stop = msg_start + msg_leader;
             msg_start = word_stop;
