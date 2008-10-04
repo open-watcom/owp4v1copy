@@ -709,10 +709,12 @@ static void newClassType( CLASS_DATA *data, CLASS_DECL declaration )
          * definition/declaration. Store the information into the
          * CLASS_INFO for subsequent use and checking
          */
-        info->class_mod = data->class_mod_type;
-        info->fn_pragma = data->fn_pragma;
-        info->fn_flags = data->fn_flags;    
-        info->mod_flags = data->mod_flags;
+        if( data->member_mod_adjust ) {
+            info->class_mod = data->class_mod_type;
+            info->fn_pragma = data->fn_pragma;
+            info->fn_flags = data->fn_flags;    
+            info->mod_flags = data->mod_flags;
+        }
         
         if( declaration == CLASS_DEFINITION ) {
             if( ScopeType( data->scope->enclosing, SCOPE_TEMPLATE_INST ) ) {
@@ -746,7 +748,7 @@ static void setClassType( CLASS_DATA *data, TYPE type, CLASS_DECL declaration )
      * with any previous declarations, then generate an error
      */
     if( info->class_mod != NULL ) {
-        if( data->class_mod_type != NULL ) {
+        if( data->member_mod_adjust ) {
             if( ! IdenticalClassModifiers( info->class_mod,
                                            data->class_mod_type ) ) {
                 CErr1( ERR_MULTIPLE_PRAGMA_MODS );
