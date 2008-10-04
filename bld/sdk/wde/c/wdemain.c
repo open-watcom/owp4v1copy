@@ -1369,8 +1369,8 @@ Bool WINEXPORT WdeSplash( HWND hDlg, WORD message,
             hInstUser = GetModuleHandle( "USER32.DLL" );
             pfnLoadImage = (PFNLI)GetProcAddress( hInstUser, "LoadImageA" );
             if( pfnLoadImage != NULL ) {
-                logo = LoadImage( hInstWde, "AboutLogo", IMAGE_BITMAP, 0, 0,
-                                  LR_LOADMAP3DCOLORS );
+                logo = pfnLoadImage( hInstWde, "AboutLogo", IMAGE_BITMAP, 0, 0,
+                                     LR_LOADMAP3DCOLORS );
             } else {
 #endif
                 logo = LoadBitmap ( hInstWde, "AboutLogo" );
