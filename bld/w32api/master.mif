@@ -16,8 +16,12 @@ directx_distrib_lib = 1
 !error root_dir is not set!
 !endif
 
-# This should be including w32api2's own DDK headers
+# This should be including the newly built headers when bootstrapping.
+!ifdef bootstrapmode
+inc_dirs = -I"$(dev_dir)/w32api/nt/ddk" -I"$(dev_dir)/w32api/nt/directx"
+!else
 inc_dirs = -I"$(lang_root)/h/nt/ddk" -I"$(lang_root)/h/nt/directx"
+!endif
 
 splice = wsplice -i$(hdr_dir) -i$(root_dir)/include $[@ $^@
 rsplice = wsplice -i$(hdr_dir) -i$(root_dir)/include -kRESOURCE $[@ $^@

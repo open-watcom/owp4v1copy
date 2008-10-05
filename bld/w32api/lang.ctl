@@ -10,6 +10,10 @@ cdsay .
 
 [ BLOCK <1> build rel2 ]
 #=======================
+    # Headers need to be built first in order for this build in bootstrap mode.
+    cdsay <PROJDIR>/nt
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cdsay <PROJDIR>/nt386
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 ]
