@@ -36,8 +36,7 @@
 #include "wdecctl.h"
 
 #ifdef __NT__
-    #pragma library (comctl32)
-    VOID WINAPI InitCommonControls(VOID);
+typedef VOID (WINAPI *PFNICC)( VOID );
 #endif
 
 static Bool usingCommonControls = FALSE;
@@ -49,12 +48,14 @@ Bool WdeUsingCommonControls( void )
 
 void WdeInitCommonControls( void )
 {
-    #ifdef __NT__
-
-    //wdeInitCommonControls();
-    InitCommonControls();
-    usingCommonControls = TRUE;
-
-    #endif
+#ifdef __NT__
+    HINSTANCE   hInstCommCtrl;
+    PFNICC      pfnICC;
+    if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
+        pfnICC = (PFNICC)GetProcAddress( hInstCommCtrl, "InitCommonControls" );
+        pfnICC();
+        usingCommonControls = TRUE;
+    }
+#endif
 }
 
