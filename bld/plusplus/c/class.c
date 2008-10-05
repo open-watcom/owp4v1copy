@@ -3103,10 +3103,9 @@ void ClassMakeUniqueName( TYPE class_type, char *signature )
         VBUF big_buff;
 
         VbufInit( &big_buff );
-        VStrNull( &big_buff );
-        VStrConcStr( &big_buff, buff );
-        VStrConcStr( &big_buff, signature );
-        info->name = NameCreateLen( big_buff.buf, VStrLen( &big_buff ) );
+        VbufConcStr( &big_buff, buff );
+        VbufConcStr( &big_buff, signature );
+        info->name = NameCreateLen( VbufString( &big_buff ), VbufLen( &big_buff ) );
         VbufFree( &big_buff );
     } else {
         info->name = NameCreateNoLen( buff );

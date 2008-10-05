@@ -172,14 +172,14 @@ static boolean nameHasPrefix(   // TEST IF NAME HAS A PREFIX
 static void appendChar(         // APPEND A CHARACTER
     char chr )                  // - the character
 {
-    VStrConcChr( &mangled_name, chr );
+    VbufConcChr( &mangled_name, chr );
 }
 
 
 static void prependChar(         // PREPEND A CHARACTER
     char chr )                  // - the character
 {
-    VStrPrepChr( &mangled_name, chr );
+    VbufPrepChr( &mangled_name, chr );
 }
 
 
@@ -187,7 +187,7 @@ static void appendStr(          // APPEND A STRING
     char *str )                 // - the string
 {
     if( str != NULL ) {
-        VStrConcStr( &mangled_name, str );
+        VbufConcStr( &mangled_name, str );
     }
 }
 
@@ -225,7 +225,7 @@ static void prependStr(         // PREPEND A STRING
     char *str )                 // - the string
 {
     if( str != NULL ) {
-        VStrPrepStr( &mangled_name, str );
+        VbufPrepStr( &mangled_name, str );
     }
 }
 
@@ -235,8 +235,7 @@ static void prependLen(         // PREPEND A THE CURRENT STRING LEN
     int len;
     char sbuf[16];              // - buffer
 
-    len = VStrLen( &mangled_name );
-    DbgAssert( len == strlen( mangled_name.buf ) );
+    len = VbufLen( &mangled_name );
     ultoa( len, sbuf, 36 );
     switch( strlen( sbuf ) ){
     case 1:
@@ -255,10 +254,7 @@ static void prependLen(         // PREPEND A THE CURRENT STRING LEN
 static void appendInt(          // APPEND AN INTEGER
     int val )                   // - value
 {
-    char sbuf[16];              // - buffer
-
-    ultoa( val, sbuf, 10 );
-    appendStr( sbuf );
+    VbufConcDecimal( &mangled_name, val );
 }
 
 static void appendBase36Int(    // APPEND A BASE 36 INTEGER
@@ -730,11 +726,11 @@ static char *formatGlobalName(       // GET C++ GLOBAL NAME
     SYMBOL sym )                // - symbol
 {
     replicateInit();
-    VStrNull( &mangled_name );
+    VbufRewind( &mangled_name );
     appendStr( IN_MANGLE1 );
     appendStr( IN_MANGLE2 );
     appendFullSymName( sym );
-    return( mangled_name.buf );
+    return( VbufString( &mangled_name ) );
 }
 
 
@@ -839,7 +835,7 @@ static void setPrefix(          // SET A PREFIX FOR NAME
     char* last )                // - last segment of prefix
 {
     replicateInit();
-    VStrNull( &mangled_name );
+    VbufRewind( &mangled_name );
     appendStr( IN_NAME_PREFIX );
     appendStr( IN_SYM_WATCOM );
     appendStr( last );
@@ -851,8 +847,8 @@ static char* setMangling(       // SET FOR MANGLING
     char *save;                 // - saved name
 
     setPrefix( last );
-    save = strsave( mangled_name.buf );
-    VStrNull( &mangled_name );
+    save = strsave( VbufString( &mangled_name ) );
+    VbufRewind( &mangled_name );
     return save;
 }
 
@@ -862,7 +858,7 @@ static char* retMangling(       // RETURN MANGLED NAME
     prependLen();
     prependStr( save );
     CMemFree( save );
-    return( NameCreateLen( mangled_name.buf, VStrLen( &mangled_name ) ) );
+    return( NameCreateLen( VbufString( &mangled_name ), VbufLen( &mangled_name ) ) );
 }
 
 static char* mangledNameType(   // MAKE MANGLED NAME, TYPE
@@ -894,8 +890,7 @@ char *CppTypeidName(            // CREATE NAME FOR TYPEID
 
     save = setMangling( IN_TYPEID_NAME );
     appendType( type, NULL, TM_NO_INITIAL_MOD );
-    *len = VStrLen( &mangled_name );
-    DbgAssert( *len == strlen( mangled_name.buf ) );
+    *len = VbufLen( &mangled_name );
     return retMangling( save );
 }
 
@@ -903,10 +898,10 @@ char *CppGetTypeidContents(     // CREATE CONTENTS FOR TYPEID STRUCTURE
     TYPE type,                  // - typeid type
     unsigned *len )             // - addr( strlen of contents )
 {
-    VStrNull( &mangled_name );
+    VbufRewind( &mangled_name );
     appendType( type, NULL, TM_NO_INITIAL_MOD );
-    *len = VStrLen( &mangled_name );
-    return( mangled_name.buf );
+    *len = VbufLen( &mangled_name );
+    return( VbufString( &mangled_name ) );
 }
 
 char *CppVATableName(           // CREATE NAME OF VIRTUAL FN ADJUSTOR TABLE
@@ -1014,7 +1009,7 @@ char *CppStaticOnceOnlyName(    // CREATE NAME FOR ONCE ONLY CHECK OF STATICS
     void )
 {
     setPrefix( IN_NAME_STATIC_ONCE );
-    return( NameCreateLen( mangled_name.buf, VStrLen( &mangled_name ) ) );
+    return( NameCreateLen( VbufString( &mangled_name ), VbufLen( &mangled_name ) ) );
 }
 
 
@@ -1136,7 +1131,7 @@ char *CppNameDebug(             // TRANSLATE INTERNAL NAME TO DEBUGGER NAME
 
     ExtraRptIncrementCtr( ctr_debug_names );
     replicateInit();
-    VStrNull( &mangled_name );
+    VbufRewind( &mangled_name );
     if( CppLookupName( sym->name->name, &oper ) ) {
         switch( oper ) {
         case CO_CONVERT:
@@ -1145,8 +1140,8 @@ char *CppNameDebug(             // TRANSLATE INTERNAL NAME TO DEBUGGER NAME
             appendStr( "operator " );
             FormatFunctionType( SymFuncReturnType( sym ), &prefix, &suffix,
                                 0, FormatTypeDefault|FF_TYPEDEF_STOP );
-            appendStr( prefix.buf );
-            appendStr( suffix.buf );
+            appendStr( VbufString( &prefix ) );
+            appendStr( VbufString( &suffix ) );
             VbufFree( &prefix );
             VbufFree( &suffix );
         }   break;
@@ -1201,7 +1196,7 @@ char *CppNameDebug(             // TRANSLATE INTERNAL NAME TO DEBUGGER NAME
             appendStr( name );
         }
     }
-    return( mangled_name.buf );
+    return( VbufString( &mangled_name ) );
 }
 
 char *CppClassPathDebug(  //TRANSLATE INTERNAL NAME TO CLASS PREFIXED DEBUGGER NAME
@@ -1228,7 +1223,7 @@ char *CppClassPathDebug(  //TRANSLATE INTERNAL NAME TO CLASS PREFIXED DEBUGGER N
             prependStr( scope_name );
         }
     }
-    return( mangled_name.buf );
+    return( VbufString( &mangled_name ) );
 }
 
 char *GetMangledName(           // MANGLE SYMBOL NAME

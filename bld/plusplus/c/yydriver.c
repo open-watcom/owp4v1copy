@@ -1259,10 +1259,8 @@ static DECL_SPEC *sendType( PTREE tree )
 
         type = MakeType( TYP_TYPENAME );
         FormatPTreeId( tree, &vbuf );
-
-        type->u.n.name = CMemAlloc( vbuf.used );
-        memcpy( type->u.n.name, vbuf.buf, vbuf.used );
-
+        type->u.n.name = CMemAlloc( VbufLen( &vbuf ) + 1 );
+        memcpy( type->u.n.name, VbufString( &vbuf ), VbufLen( &vbuf ) + 1 );
         VbufFree( &vbuf );
         PTreeFreeSubtrees( tree );
         tree = NULL;
@@ -2269,9 +2267,9 @@ static void genScopedIdSyntaxError( int msg, char *expect )
     SetErrLoc( &(id->locn) );
     FormatPTreeId( id, &vbuf );
     if( expect != NULL ) {
-        CErr( ERR_SYNTAX_UNEXPECTED_ID, vbuf.buf, expect );
+        CErr( ERR_SYNTAX_UNEXPECTED_ID, VbufString( &vbuf ), expect );
     } else {
-        CErr2p( msg, vbuf.buf );
+        CErr2p( msg, VbufString( &vbuf ) );
     }
     VbufFree( &vbuf );
 }

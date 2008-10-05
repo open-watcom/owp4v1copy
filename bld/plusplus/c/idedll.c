@@ -624,7 +624,7 @@ void CppStartFuncMessage( SYMBOL sym )
     if( sym != NULL ) {
         FormatSymWithTypedefs( sym, &buff );
         cbs = CompInfo.dll_callbacks;
-        (*cbs->ProgressMessage)( CompInfo.dll_handle, buff.buf );
+        (*cbs->ProgressMessage)( CompInfo.dll_handle, VbufString( &buff ) );
         VbufFree( &buff );
     }
 #else

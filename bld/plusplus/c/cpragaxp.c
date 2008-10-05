@@ -151,17 +151,19 @@ boolean PragmasTypeEquivalent(  // TEST IF TWO PRAGMAS ARE TYPE-EQUIVALENT
 boolean AsmSysInsertFixups( VBUF *code )
 /**************************************/
 {
-    SYMBOL sym;
-    boolean uses_auto;
-    asmreloc *curr;
-    asmreloc *next;
-    byte_seq_reloc *cg_relocs;
-    byte_seq_reloc *new_reloc;
-    risc_byte_seq *seq;
+    SYMBOL          sym;
+    boolean         uses_auto;
+    asmreloc        *curr;
+    asmreloc        *next;
+    byte_seq_reloc  *cg_relocs;
+    byte_seq_reloc  *new_reloc;
+    risc_byte_seq   *seq;
+    unsigned        len;
 
-    seq = CMemAlloc( offsetof( risc_byte_seq, data ) + code->used );
-    seq->length = code->used;
-    memcpy( seq->data, code->buf, code->used );
+    len = VbufLen( code );
+    seq = CMemAlloc( offsetof( risc_byte_seq, data ) + len );
+    seq->length = len;
+    memcpy( seq->data, VbufBuffer( code ), len );
     cg_relocs = NULL;
     uses_auto = FALSE;
     for( curr = AsmRelocs; curr != NULL; curr = next ) {

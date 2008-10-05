@@ -2117,7 +2117,7 @@ boolean IsOverloadedFunc( SYMBOL sym )
         VBUF name;
         FormatSym( sym, &name );
         printf( "Function '%s' is%soverloaded\n",
-            name.buf,
+            VbufString( &name ),
             retn ? " " : " not " );
         VbufFree( &name );
     }
@@ -2208,7 +2208,7 @@ SYMBOL sym, SEARCH_RESULT *result ) // - function to be tested
         VBUF name;
         FormatSym( sym, &name );
         printf( "Function '%s' is%soverloaded (ignoring default arguments)\n",
-            name.buf,
+            VbufString( &name ),
             retn ? " " : " not " );
         VbufFree( &name );
     }

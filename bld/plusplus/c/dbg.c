@@ -85,7 +85,7 @@ char *DbgSymNameFull(           // GET FULL SYMBOL NAME
         name_ptr = "**NULL**";
     } else {
         FormatSym( sym, &vbuf );
-        stpcpy( name, vbuf.buf );
+        stpcpy( name, VbufString( &vbuf ) );
         VbufFree( &vbuf );
         name_ptr = name;
     }
@@ -331,8 +331,8 @@ void DumpCgFront(               // DUMP GENERATED CODE
               , disk_blk, offset
               , opcode
               , uvalue
-              , fmt_prefix.buf
-              , fmt_suffix.buf );
+              , VbufString( &fmt_prefix )
+              , VbufString( &fmt_suffix ) );
         VbufFree( &fmt_prefix );
         VbufFree( &fmt_suffix );
       } break;
@@ -428,7 +428,7 @@ void DumpTemplateInfo( TEMPLATE_INFO *tinfo )
     delim = '<';
     for( i = 0; i < tprimary->num_args; ++i ) {
         FormatType( tprimary->type_list[i], &prefix, &suffix );
-        printf( "%c %s<id> %s", delim, prefix.buf, suffix.buf );
+        printf( "%c %s<id> %s", delim, VbufString( &prefix ), VbufString( &suffix ) );
         VbufFree( &prefix );
         VbufFree( &suffix );
         delim = ',';
@@ -503,7 +503,7 @@ void DumpSymbol(                // DUMP SYMBOL ENTRY
               , sym->flag
               , sym->flag2
               , sym->segid
-              , vbuf.buf
+              , VbufString( &vbuf )
               );
         if( sym->sym_type != NULL ) {
             DumpFullType( sym->sym_type );
@@ -780,7 +780,7 @@ void PrintFullType(             // PRINT FULL TYPE INFORMATION
     VBUF prefix, suffix;
 
     FormatType( tp, &prefix, &suffix );
-    printf( "     Type[%x]: %s<id> %s" F_EOL, tp, prefix.buf, suffix.buf );
+    printf( "     Type[%x]: %s<id> %s" F_EOL, tp, VbufString( &prefix ), VbufString( &suffix ) );
     VbufFree( &prefix );
     VbufFree( &suffix );
 }
@@ -1523,7 +1523,7 @@ void DumpTemplateSpecialization(// DUMP A TEMPLATE SPECIALIZATION
             " tinfo"        F_BADDR
                             F_EOL
             , tspec, tinfo );
-    printf( "      %s\n", vbuf.buf );
+    printf( "      %s\n", VbufString( &vbuf ) );
     VbufFree( &vbuf );
 }
 

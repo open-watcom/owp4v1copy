@@ -309,9 +309,9 @@ static void textType(           // GET TEXT FOR A TYPE
 
     FormatType( type, &prefix, &suffix );
     *text++ = ' ';
-    text = stpcpy( text, prefix.buf );
+    text = stpcpy( text, VbufString( &prefix ) );
     text = stpcpy( text, id );
-    text = stpcpy( text, suffix.buf );
+    text = stpcpy( text, VbufString( &suffix ) );
     VbufFree( &prefix );
     VbufFree( &suffix );
 }

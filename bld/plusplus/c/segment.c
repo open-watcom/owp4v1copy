@@ -372,23 +372,22 @@ static PC_SEGMENT *addDefSeg(   // ADD A DEFAULT PC SEGMENT
     unsigned sa_control;        // - segmentAlloc control mask
 
     VbufInit( &seg_name );
-    VStrNull( &seg_name );
     ++def_seg->ctr;
     sa_control = SA_NULL;
     if( ads_control & ADS_MODULE_PREFIX ) {
         if(( ads_control & ADS_CODE_SEGMENT ) == 0 && DataSegName[0] != '\0' ) {
-            VStrConcStr( &seg_name, DataSegName );
+            VbufConcStr( &seg_name, DataSegName );
         } else {
-            VStrConcStr( &seg_name, ModuleName );
+            VbufConcStr( &seg_name, ModuleName );
         }
         sa_control |= SA_MODULE_PREFIX;
     }
     if( ads_control & ADS_STRING_SEGMENT ) {
         sa_control |= SA_DEFINE_ANYTIME;
     }
-    VStrConcStr( &seg_name, def_seg->pcseg->name );
+    VbufConcStr( &seg_name, def_seg->pcseg->name );
     if( ads_control & ADS_ZM_SEGMENT ) {
-        VStrConcDecimal( &seg_name, def_seg->ctr );
+        VbufConcDecimal( &seg_name, def_seg->ctr );
     }
     if( def_seg == &code_def_seg ) {
         attrs = SGAT_CODE_GEN;
@@ -398,9 +397,9 @@ static PC_SEGMENT *addDefSeg(   // ADD A DEFAULT PC SEGMENT
         } else {
             attrs = SGAT_DATA_PRIVATE_RW;
         }
-        VStrConcDecimal( &seg_name, def_seg->ctr );
+        VbufConcDecimal( &seg_name, def_seg->ctr );
     }
-    curr = segmentAlloc( seg_name.buf, NULL, SEG_NULL, attrs, sa_control );
+    curr = segmentAlloc( VbufString( &seg_name ), NULL, SEG_NULL, attrs, sa_control );
     if( 0 == ( attrs & EXEC ) ) {
         _markUsed( curr, TRUE );
     }

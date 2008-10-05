@@ -361,11 +361,11 @@ static int genFUNCTION(
     sym = ParseCurrFunction();
     if( sym != NULL ) {
         FormatSymWithTypedefs( sym, &buff );
-        len = VStrLen( &buff );
+        len = VbufLen( &buff );
         if( len >= BUF_SIZE ) {
             len = BUF_SIZE;
         }
-        memcpy( Buffer, buff.buf, len );
+        memcpy( Buffer, VbufString( &buff ), len );
         VbufFree( &buff );
     } else {
         Buffer[0] = '?';

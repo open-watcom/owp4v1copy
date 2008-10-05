@@ -177,9 +177,8 @@ static void pragComment(        // #PRAGMA COMMENT
 static void collectStrings( VBUF *vinfo )
 {
     VbufInit( vinfo );
-    VStrNull( vinfo );
     while( CurToken == T_STRING ) {
-        VStrConcStr( vinfo, Buffer );
+        VbufConcStr( vinfo, Buffer );
         NextToken();
     }
 }
@@ -196,7 +195,7 @@ static void pragMessage(        // #PRAGMA MESSAGE
         NextToken();
         if( CurToken == T_STRING ) {
             collectStrings( &str );
-            CErr2p( WARN_USER_WARNING_MSG, str.buf );
+            CErr2p( WARN_USER_WARNING_MSG, VbufString( &str ) );
             VbufFree( &str );
         }
         PPState = PPS_EOL | PPS_NO_EXPAND;
@@ -214,7 +213,7 @@ static void pragError(          // #PRAGMA ERROR
     if( CurToken == T_STRING ) {
         PPState = PPS_EOL;
         collectStrings( &str );
-        CErr2p( ERR_USER_ERROR_MSG, str.buf );
+        CErr2p( ERR_USER_ERROR_MSG, VbufString( &str ) );
         VbufFree( &str );
         PPState = PPS_EOL | PPS_NO_EXPAND;
     }

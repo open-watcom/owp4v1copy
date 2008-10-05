@@ -654,7 +654,7 @@ static void handleOptionFC( OPT_STORAGE *data, int value )
                 VBUF buf;
                 if( CmdLnBatchRead( &buf ) ) {
                     CmdLnCtxPush( CTX_CLTYPE_FC );
-                    procOptions( data, buf.buf );
+                    procOptions( data, VbufString( &buf ) );
                     CmdLnCtxPop();
                 }
                 CmdLnBatchFreeRecord( &buf );
@@ -781,22 +781,19 @@ static void processCmdFile(     // PROCESS A COMMAND FILE
     int c;                      // - next character
 
     VbufInit( &rec );
-    VStrNull( &rec );
     for(;;) {
         for(;;) {
             c = NextChar();
             if( c == LCHR_EOF ) break;
             if( c == '\n' ) break;
             if( c == '\r' ) break;
-            VStrConcChr( &rec, c );
+            VbufConcChr( &rec, c );
         }
-        if( rec.used > 1 ) {
-            procOptions( data, rec.buf );
-        }
+        procOptions( data, VbufString( &rec ) );
         for( ; ( c == '\n' ) || ( c == '\r' ); c = NextChar() );
         if( c == LCHR_EOF ) break;
-        VStrNull( &rec );
-        VStrConcChr( &rec, c );
+        VbufRewind( &rec );
+        VbufConcChr( &rec, c );
     }
     VbufFree( &rec );
 }

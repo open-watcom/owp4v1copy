@@ -241,21 +241,21 @@ char classify_escape_char(      // CLASSIFY TYPE OF ESCAPE
 
 char *stdcpy(                   // CONCATENATE DECIMAL NUMBER
     char *tgt,                  // - target location
-    unsigned value )            // - value to be concatenated
+    unsigned long value )       // - value to be concatenated
 {
     char buffer[16];
 
-    return stpcpy( tgt, utoa( value, buffer, 10 ) );
+    return stpcpy( tgt, ultoa( value, buffer, 10 ) );
 }
 
 
 char *sticpy(                   // CONCATENATE INTEGER NUMBER
     char *tgt,                  // - target location
-    int value )                 // - value to be concatenated
+    long value )                // - value to be concatenated
 {
     char buffer[16];
 
-    return stpcpy( tgt, itoa( value, buffer, 10 ) );
+    return stpcpy( tgt, ltoa( value, buffer, 10 ) );
 }
 
 

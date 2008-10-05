@@ -1065,7 +1065,7 @@ void PtdPrint(                  // DEBUG: print decoration for a node
           case PTD_FMT_TYPE :
           { VBUF fmt_prefix, fmt_suffix;
             FormatType( curr->type.type, &fmt_prefix, &fmt_suffix );
-            printf( " %s<id>%s\n", fmt_prefix.buf, fmt_suffix.buf );
+            printf( " %s<id>%s\n", VbufString( &fmt_prefix ), VbufString( &fmt_suffix ) );
             VbufFree( &fmt_prefix );
             VbufFree( &fmt_suffix );
           } break;

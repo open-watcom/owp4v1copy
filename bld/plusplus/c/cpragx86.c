@@ -55,6 +55,10 @@ static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 
 #define WCPP_ASM     // enable assembler
 
+#define ASM_BLOCK       (64)
+
+#define ROUND_ASM_BLOCK(x)   ((x+ASM_BLOCK-1) & ~(ASM_BLOCK-1))
+
 static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     INITFINI* defn )            // - definition
 {
@@ -617,8 +621,6 @@ static enum sym_type AsmDataType[] = {
 
 #ifdef WCPP_ASM
 
-#define ASM_BLOCK       (64)
-
 static enum sym_type AsmType(
     TYPE type )
 {
@@ -673,7 +675,7 @@ enum sym_type AsmQueryType( char *name )
 }
 
 
-static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
+static int insertFixups( VBUF *src_code )
 {
     struct asmfixup     *fix;
     struct asmfixup     *head;
@@ -681,24 +683,30 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
     struct asmfixup     *next;
     struct asmfixup     **owner;
     unsigned char       *src;
-    unsigned char       *end;
+    unsigned char       *src_start;
+    unsigned char       *src_end;
     unsigned char       cg_fix;
     unsigned long       perform_fixups;
     byte_seq            *seq;
     SYMBOL              sym;
     char                *name;
-    unsigned            dst;
+    unsigned char       *dst;
+    unsigned            len;
     unsigned            skip;
     int                 mutate_to_segment;
     boolean             uses_auto;
 #if _CPU == 8086
     int                 fixup_padding;
 #endif
+    VBUF                out_code;
 
     uses_auto = FALSE;
     perform_fixups = 0;
     head = FixupHead;
-    if( head != NULL ) {
+    if( head == NULL ) {
+        out_code = *src_code;
+    } else {
+        VbufInit( &out_code );
         FixupHead = NULL;
         /* sort the fixup list in increasing fixup_loc's */
         for( fix = head; fix != NULL; fix = next ) {
@@ -713,16 +721,17 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
             fix->next = *owner;
             *owner = fix;
         }
-        dst = 0;
-        src = buff;
-        end = src + i;
+        len = 0;
+        src_start = VbufBuffer( src_code );
+        src_end = src_start + VbufLen( src_code );
         fix = FixupHead;
         owner = &FixupHead;
         /* insert fixup escape sequences */
-        while( src < end ) {
+        for( src = src_start; src < src_end; ) {
             /* reserve at least ASM_BLOCK bytes in the buffer */
-            VbufReqd( code_buffer, ( (dst+ASM_BLOCK) + (ASM_BLOCK-1) ) & ~(ASM_BLOCK-1) );
-            if( fix != NULL && fix->fixup_loc == (src - buff) ) {
+            VbufReqd( &out_code, ROUND_ASM_BLOCK( len + ASM_BLOCK ) );
+            dst = VbufBuffer( &out_code );
+            if( fix != NULL && fix->fixup_loc == (src - src_start) ) {
                 name = fix->name;
                 if( name != NULL ) {
                     sym = ScopeASMUseSymbol( name, &uses_auto );
@@ -732,7 +741,7 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                 }
                 /* insert fixup information */
                 skip = 0;
-                code_buffer->buf[ dst++ ] = FLOATING_FIXUP_BYTE;
+                dst[ len++ ] = FLOATING_FIXUP_BYTE;
                 mutate_to_segment = 0;
 #if _CPU == 8086
                 fixup_padding = 0;
@@ -747,7 +756,7 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                            // inline assembler FWAIT instruction 0x90, 0x9b
                         } else if( ( src[0] & 0xd8 ) == 0xd8 ) {
                            // FPU instruction, add FWAIT before it
-                            code_buffer->buf[ dst++ ] = 0x9b;
+                            dst[ len++ ] = 0x9b;
                         } else {
                             // FIXME - probably wrong use of float !!!!
                         }
@@ -789,19 +798,19 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                     break;
                 }
                 if( skip != 0 ) {
-                    code_buffer->buf[ dst++ ] = cg_fix;
-                    *((unsigned long *)&code_buffer->buf[dst]) = (unsigned long)sym;
-                    dst += sizeof( long );
-                    *((unsigned long *)&code_buffer->buf[dst]) = fix->offset;
-                    dst += sizeof( long );
+                    dst[ len++ ] = cg_fix;
+                    *((unsigned long *)&dst[ len ]) = (unsigned long)sym;
+                    len += sizeof( long );
+                    *((unsigned long *)&dst[ len ]) = fix->offset;
+                    len += sizeof( long );
                     src += skip;
                 }
 #if _CPU == 8086
                 if( fixup_padding ) {
                     // add offset fixup padding to 32-bit
                     // cg create only 16-bit offset fixup
-                    code_buffer->buf[ dst++ ] = 0;
-                    code_buffer->buf[ dst++ ] = 0;
+                    dst[ len++ ] = 0;
+                    dst[ len++ ] = 0;
                     //
                 }
 #endif
@@ -829,20 +838,21 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                 }
             } else {
                 if( *src == FLOATING_FIXUP_BYTE ) {
-                    code_buffer->buf[ dst++ ] = FLOATING_FIXUP_BYTE;
+                    dst[ len++ ] = FLOATING_FIXUP_BYTE;
                 }
-                code_buffer->buf[ dst++ ] = *src++;
+                dst[ len++ ] = *src++;
             }
-            VbufUsed( code_buffer, dst );
+            VbufSetLen( &out_code, len );
         }
-        buff = (byte *)code_buffer->buf;
-        i = dst;
         perform_fixups = DO_FLOATING_FIXUPS;
     }
-    seq = CMemAlloc( offsetof( byte_seq, data ) + i );
-    seq->length = i | perform_fixups;
-    memcpy( seq->data, buff, i );
+    len = VbufLen( &out_code );
+    seq = CMemAlloc( offsetof( byte_seq, data ) + len );
+    seq->length = len | perform_fixups;
+    memcpy( seq->data, VbufBuffer( &out_code ), len );
     CurrInfo->code = seq;
+    if( VbufBuffer( &out_code ) != VbufBuffer( src_code ) )
+        VbufFree( &out_code );
     return( uses_auto );
 }
 
@@ -896,12 +906,8 @@ boolean AsmSysInsertFixups( VBUF *code )
 /**************************************/
 {
     boolean uses_auto;
-    auto VBUF temp_buffer;
 
-    VbufInit( &temp_buffer );
-    VbufReqd( &temp_buffer, code->used );
-    uses_auto = insertFixups( &temp_buffer, (byte *)code->buf, code->used );
-    VbufFree( &temp_buffer );
+    uses_auto = insertFixups( code );
     AsmSymFini();
     return( uses_auto );
 }
@@ -1092,29 +1098,29 @@ void AsmSysPCHReadCode( AUX_INFO *info )
 
 static int GetByteSeq( void )
 {
-    int i;
-    char *name;
-    unsigned long offset;
-    unsigned fixword;
-    int uses_auto;
-    auto VBUF code_buffer;
+    int             len;
+    char            *name;
+    unsigned long   offset;
+    unsigned        fixword;
+    int             uses_auto;
+    VBUF            code_buffer;
 
     VbufInit( &code_buffer );
     AsmSysInit();
     NextToken();
-    i = 0;
-    for(;;) {
+    len = 0;
+    for( ;; ) {
         /* reserve at least ASM_BLOCK bytes in the buffer */
-        VbufReqd( &code_buffer, ( (i+ASM_BLOCK) + (ASM_BLOCK-1) ) & ~(ASM_BLOCK-1) );
+        VbufReqd( &code_buffer, ROUND_ASM_BLOCK( len + ASM_BLOCK ) );
         if( CurToken == T_STRING ) {
-            AsmCodeAddress = i;
-            AsmCodeBuffer = (byte *)code_buffer.buf;
+            AsmCodeAddress = len;
+            AsmCodeBuffer = VbufBuffer( &code_buffer );
             AsmLine( Buffer );
-            i = AsmCodeAddress;
+            len = AsmCodeAddress;
             NextToken();
             if( CurToken == T_COMMA )  NextToken();
         } else if( CurToken == T_CONSTANT ) {
-            code_buffer.buf[ i++ ] = U32Fetch( Constant64 );
+            VbufBuffer( &code_buffer )[ len++ ] = U32Fetch( Constant64 );
             NextToken();
         } else {
             fixword = FixupKeyword();
@@ -1122,7 +1128,7 @@ static int GetByteSeq( void )
             if( fixword == FIXWORD_FLOAT ) {
 #if _CPU == 8086
                 if( GET_FPU_EMU( CpuSwitches ) ) {
-                    AddAFix( i, NULL, FIX_SEG, 0 );
+                    AddAFix( len, NULL, FIX_SEG, 0 );
                 }
 #endif
             } else { /* seg or offset */
@@ -1149,30 +1155,30 @@ static int GetByteSeq( void )
                 switch( fixword ) {
                 case FIXWORD_RELOFF:
 #if _CPU == 8086
-                    AddAFix( i, name, FIX_RELOFF16, offset );
-                    i += 2;
+                    AddAFix( len, name, FIX_RELOFF16, offset );
+                    len += 2;
 #else
-                    AddAFix( i, name, FIX_RELOFF32, offset );
-                    i += 4;
+                    AddAFix( len, name, FIX_RELOFF32, offset );
+                    len += 4;
 #endif
                     break;
                 case FIXWORD_OFFSET:
 #if _CPU == 8086
-                    AddAFix( i, name, FIX_OFF16, offset );
-                    i += 2;
+                    AddAFix( len, name, FIX_OFF16, offset );
+                    len += 2;
 #else
-                    AddAFix( i, name, FIX_OFF32, offset );
-                    i += 4;
+                    AddAFix( len, name, FIX_OFF32, offset );
+                    len += 4;
 #endif
                     break;
                 case FIXWORD_SEGMENT:
-                    AddAFix( i, name, FIX_SEG, 0 );
-                    i += 2;
+                    AddAFix( len, name, FIX_SEG, 0 );
+                    len += 2;
                     break;
                 }
             }
         }
-        VbufUsed( &code_buffer, i );
+        VbufSetLen( &code_buffer, len );
     }
     uses_auto = AsmSysInsertFixups( &code_buffer );
     AsmSysFini();

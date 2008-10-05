@@ -156,16 +156,15 @@ boolean CmdLnBatchRead(         // READ NEXT LINE IN COMMAND BUFFER
     VBUF *buf )                 // - virtual buffer
 {
     VbufInit( buf );
-    VStrNull( buf );
     for(;;) {
         int c = nextChar();
         if( CompFlags.batch_file_eof ) break;
         if( c == '\n' ) break;
-        VStrConcChr( buf, c );
+        VbufConcChr( buf, c );
     }
-    DbgVerify( buf->used > 0, "CmdLnReadBatch -- nothing" );
+    DbgVerify( VbufLen( buf ) > 0, "CmdLnReadBatch -- nothing" );
     ++ CompInfo.fc_file_line;
-    return buf->used;
+    return( VbufLen( buf ) );
 }
 
 
