@@ -268,7 +268,7 @@ void Alert( void )
 {
     if( !alertedState ) {
         alertedState = TRUE;
-        newIcon( MainHwnd, LoadIcon( Instance, "ALERTICON" ) );
+        newIcon( MainHwnd, LoadIcon( Instance, "ERRICON" ) );
     }
 }
 
