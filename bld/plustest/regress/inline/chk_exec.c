@@ -9,9 +9,7 @@ char buff[2048];
 int main( int argc, char **argv ) {
     FILE *fp;
     char *chk;
-    size_t len;
     unsigned line;
-    unsigned flip;
 
     if( argc != 2 ) {
 	puts( "usage: chk_exec <file>" );
