@@ -122,8 +122,8 @@ typedef PPVALUEA    PPVALUE;
 
 /* Query handler callback function */
 #if (WINVER >= 0x0400)
-typedef DWORD (_cdecl QUERYHANDLER)( LPVOID, PVALCONTEXT, DWORD, LPVOID, DWORD *,
-                                     DWORD );
+typedef DWORD (__cdecl QUERYHANDLER)( LPVOID, PVALCONTEXT, DWORD, LPVOID, DWORD *,
+                                      DWORD );
 typedef QUERYHANDLER    *PQUERYHANDLER;
 #endif
 
