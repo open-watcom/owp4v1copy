@@ -412,6 +412,8 @@ static void WriteVerbMod( mod_entry *mod )
 {
     if( mod->modinfo & MOD_NEED_PASS_2 && mod->segs != NULL ) {
         WriteFormat( 0, mod->name );
+        if( strlen( mod->name ) > 15 )
+            WriteMapNL( 1 );
         Ring2Walk( mod->segs, WriteVerbSeg );
     }
 }
