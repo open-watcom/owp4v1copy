@@ -16,6 +16,7 @@ opt_diag0012  =
 opt_diag0013  =
 opt_diag0014  =
 opt_diag0015  =
+opt_diag0016  =
 
 diags_0099_defn = &
     diag0001$(err_sin) &
@@ -33,6 +34,7 @@ diags_0099_defn = &
     diag0013$(err_sin) &
     diag0014$(err_sin) &
     diag0015$(err_sin) &
+    diag0016$(err_sin) &
 
     
 err_sin = .err

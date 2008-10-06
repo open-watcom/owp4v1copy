@@ -145,3 +145,35 @@ source\inc2.h(1): Warning! W138: No newline at end of file
 inc3.h(35): Warning! W300: Nested comment found in comment started on line 8
 inc3.h(60): Error! E1046: Incomplete comment started on line 8
 source\diag0015.c(66): Warning! W138: No newline at end of file
+source\diag0016.c(13): Error! E1129: Type does not agree with previous definition of 'x1'
+source\diag0016.c(13): Note! I2002: 'x1' defined in: source\diag0016.c(3)
+source\diag0016.c(14): Error! E1129: Type does not agree with previous definition of 'x2'
+source\diag0016.c(14): Note! I2002: 'x2' defined in: source\diag0016.c(4)
+source\diag0016.c(15): Error! E1129: Type does not agree with previous definition of 'x3'
+source\diag0016.c(15): Note! I2002: 'x3' defined in: source\diag0016.c(5)
+source\diag0016.c(16): Error! E1129: Type does not agree with previous definition of 'x4'
+source\diag0016.c(16): Note! I2002: 'x4' defined in: source\diag0016.c(6)
+source\diag0016.c(18): Error! E1129: Type does not agree with previous definition of 'ux1'
+source\diag0016.c(18): Note! I2002: 'ux1' defined in: source\diag0016.c(8)
+source\diag0016.c(19): Error! E1129: Type does not agree with previous definition of 'ux2'
+source\diag0016.c(19): Note! I2002: 'ux2' defined in: source\diag0016.c(9)
+source\diag0016.c(20): Error! E1129: Type does not agree with previous definition of 'ux3'
+source\diag0016.c(20): Note! I2002: 'ux3' defined in: source\diag0016.c(10)
+source\diag0016.c(21): Error! E1129: Type does not agree with previous definition of 'ux4'
+source\diag0016.c(21): Note! I2002: 'ux4' defined in: source\diag0016.c(11)
+source\diag0016.c(33): Error! E1129: Type does not agree with previous definition of 'x5'
+source\diag0016.c(33): Note! I2002: 'x5' defined in: source\diag0016.c(23)
+source\diag0016.c(34): Error! E1129: Type does not agree with previous definition of 'x6'
+source\diag0016.c(34): Note! I2002: 'x6' defined in: source\diag0016.c(24)
+source\diag0016.c(35): Error! E1129: Type does not agree with previous definition of 'x7'
+source\diag0016.c(35): Note! I2002: 'x7' defined in: source\diag0016.c(25)
+source\diag0016.c(36): Error! E1129: Type does not agree with previous definition of 'x8'
+source\diag0016.c(36): Note! I2002: 'x8' defined in: source\diag0016.c(26)
+source\diag0016.c(38): Error! E1129: Type does not agree with previous definition of 'ux5'
+source\diag0016.c(38): Note! I2002: 'ux5' defined in: source\diag0016.c(28)
+source\diag0016.c(39): Error! E1129: Type does not agree with previous definition of 'ux6'
+source\diag0016.c(39): Note! I2002: 'ux6' defined in: source\diag0016.c(29)
+source\diag0016.c(40): Error! E1129: Type does not agree with previous definition of 'ux7'
+source\diag0016.c(40): Note! I2002: 'ux7' defined in: source\diag0016.c(30)
+source\diag0016.c(41): Error! E1129: Type does not agree with previous definition of 'ux8'
+source\diag0016.c(41): Note! I2002: 'ux8' defined in: source\diag0016.c(31)

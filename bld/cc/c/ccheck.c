@@ -987,12 +987,12 @@ int VerifyType( TYPEPTR new, TYPEPTR old, SYMPTR sym )
             if( TypeSize( new ) != 0 ) {
                 if( TypeSize( old ) == 0 ) {
                     /* let it go but indicate that the new type holds */
+                    break;
                 }
             } else {
                 if( TypeSize( old ) != 0 ) {
                     /* let it go */
                     return( 1 );
-                    break;
                 }
             }
         }
@@ -1003,7 +1003,6 @@ int VerifyType( TYPEPTR new, TYPEPTR old, SYMPTR sym )
         break;
     case TC_TYPE2_HAS_MORE_INFO:    /* OK, new= void *, old= something *;*/
         return( 1 );                /* indicate want old definition */
-        break;
     default:        /* parm type mismatch */
         CErr2( ERR_PARM_TYPE_MISMATCH, rc - TC_PARM_TYPE_MISMATCH );
         break;
@@ -1052,7 +1051,7 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
             }
         }
         if( TypeSize(typ1) != TypeSize(typ2) ) {
-            if( typ1->decl_type == TYPE_ARRAY ) {       /* 09-mar-94 */
+            if( typ1->decl_type != TYPE_ARRAY ) {
                 if( TypeSize(typ1) == 0 ) {
                     return( TC_TYPE2_HAS_MORE_INFO );
                 }
