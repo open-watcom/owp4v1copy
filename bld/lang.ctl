@@ -71,7 +71,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/gui/lang.ctl ]
 #        AUI needs to be built after UI/ncurses and GUI
 [ INCLUDE <DEVDIR>/aui/lang.ctl ]
-[ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 #        OWL/ORL must be done early so that clients are up-to-date
 [ INCLUDE <DEVDIR>/owl/lang.ctl ]
 #        AS must be done after OWL but before CFE
@@ -128,6 +127,7 @@ echo Bootstrapping compiler using GNU tools...
 #        as well as after the C++ compilers
 #
 [ INCLUDE <DEVDIR>/plusplus/cpplib/lang.ctl ]
+[ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 #        rtdll must be made after all other libraries
 [ INCLUDE <DEVDIR>/rtdll/lang.ctl ]
 #
