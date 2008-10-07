@@ -30,6 +30,7 @@
 
 
 #include "winvi.h"
+#include "iconids.h"
 
 typedef struct filetype {
     const char  *extension;
@@ -39,13 +40,13 @@ typedef struct filetype {
 #define NUM_FILE_TYPES  7
 #ifdef __NT__
 static const filetype fileTypes[NUM_FILE_TYPES] = {
-    { ".c",     "CFILE" },
-    { ".cpp",   "CPPFILE" },
-    { ".h",     "HFILE" },
-    { ".hpp",   "HPPFILE" },
-    { ".for",   "FORFILE" },
-    { ".f",     "FORFILE" },
-    { ".fi",    "FIFILE" }
+    { ".c",     MAKEINTRESOURCE( IDI_CFILE ) },
+    { ".cpp",   MAKEINTRESOURCE( IDI_CPPFILE ) },
+    { ".h",     MAKEINTRESOURCE( IDI_HFILE ) },
+    { ".hpp",   MAKEINTRESOURCE( IDI_HPPFILE ) },
+    { ".for",   MAKEINTRESOURCE( IDI_FORFILE ) },
+    { ".f",     MAKEINTRESOURCE( IDI_FORFILE ) },
+    { ".fi",    MAKEINTRESOURCE( IDI_FIFILE ) }
 };
 #endif
 
