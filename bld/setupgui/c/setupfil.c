@@ -1362,6 +1362,12 @@ extern bool ModifyRegAssoc( bool uninstall )
     int     i;
 
     if( !uninstall ) {
+        if( DoDialog( "ModifyAssociations" ) == DLG_CAN ) {
+            return( FALSE );
+        }
+        if( GetVariableIntVal( "NoModEnv" ) == 1 ) {
+            return( TRUE );
+        }
         num = SimNumAssociations();
         for( i = 0; i < num; i++ ) {
             SimGetAssociationExt( i, ext );
