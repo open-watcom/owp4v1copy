@@ -1263,7 +1263,7 @@ static MACRO_TOKEN *substituteParms( MACRO_TOKEN *head, MACRO_ARG *macro_parms )
             }
             else
             {
-                char p[2] = { T_MACRO_EMPTY_VAR_PARM, 0 };
+                unsigned char p[2] = { T_MACRO_EMPTY_VAR_PARM, 0 };
                 buildMTokenList( &dummy_list, p, NULL );
             }
             list = dummy_list;

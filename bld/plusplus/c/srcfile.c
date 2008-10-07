@@ -139,9 +139,9 @@ struct open_file {
     LINE_NO             line;           // - current line
     COLUMN_NO           column;         // - current column
     int                 currc;          // - current character
-    char                *nextc;         // - addr[ next character ]
-    char                *lastc;         // - addr[ last character ]
-    char                *buff;          // - buffer
+    unsigned char       *nextc;         // - addr[ next character ]
+    unsigned char       *lastc;         // - addr[ last character ]
+    unsigned char       *buff;          // - buffer
     FILE                *fp;            // - file control block
     unsigned long       pos;            // - file offset to seek when reopened
 };
@@ -170,7 +170,7 @@ static SRCFILE primarySrcFile;              // primary source file
 static DIR_LIST* roDirs;                    // read-only directories
 static unsigned totalSrcFiles;              // running total of SRCFILE's
 
-static char notFilled[2] = { '\n', '\0' };  // default buffer to force readBuffer
+static unsigned char notFilled[2] = { '\n', '\0' };  // default buffer to force readBuffer
 
 static int lastChar;                    // unknown char to return in GetNextChar
 
@@ -184,8 +184,8 @@ int (*NextChar)( void ) = GetNextChar;
 // the following table is used to map three character sequences
 // beginning with ?? followed by 'tri' into the single character 'new'
 struct tri_graph {
-    char        tri;
-    char        new;
+    unsigned char   tri;
+    unsigned char   new;
 };
 
 static struct tri_graph triGraphs[] = {
@@ -921,7 +921,7 @@ static void outputTrigraphWarning( char c ) {
     CErr2( WARN_EXPANDED_TRIGRAPH, c );
 }
 
-static char translateTriGraph( char c )
+static int translateTriGraph( int c )
 {
     struct tri_graph *p;
 
@@ -1236,56 +1236,52 @@ int GetNextChar( void )
 
 void SrcFileScanName( int e )   // CALLED FROM CSCAN TO SCAN AN IDENTIFIER
 {
-    unsigned    len;
-    char        *p;
-    OPEN_FILE   *act;
+    unsigned        len;
+    unsigned char   *p;
+    OPEN_FILE       *act;
+    int             c;
 
     len = TokenLen - 1;
     if( CharSet[e] & (C_AL|C_DI) ) {
         ++len;
         if( NextChar == GetNextChar ) {
-            union {
-                int c;
-                char ch;
-            } u;
-
-            for(;;) {
+            for( ;; ) {
                 // codegen can't do this optimization so we have to
-                u.c = 0;
+                c = '\0';
                 act = activeSrc();
                 p = act->nextc;
                 for(;;) {
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
-                    u.ch = *p++;
-                    if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                    Buffer[len] = u.ch;
+                    c = *p++;
+                    if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                    Buffer[len] = c;
                     ++len;
                     if( len > BUF_SIZE ) {
                         len = BUF_SIZE;
@@ -1293,18 +1289,16 @@ void SrcFileScanName( int e )   // CALLED FROM CSCAN TO SCAN AN IDENTIFIER
                 }
                 act->column += p - act->nextc;
                 act->nextc = p;
-                if(( CharSet[u.c] & C_EX ) == 0 ) break;
+                if(( CharSet[c] & C_EX ) == 0 ) break;
                 // act->column is one too many at this point
                 --act->column;
-                u.c = getCharCheck( act, u.c );
-                if(( CharSet[u.c] & (C_AL|C_DI) ) == 0 ) break;
-                Buffer[len] = u.ch;
+                c = getCharCheck( act, c );
+                if(( CharSet[c] & (C_AL|C_DI) ) == 0 ) break;
+                Buffer[len] = c;
                 ++len;
             }
-            CurrChar = u.c;
+            CurrChar = c;
         } else {
-            int c;
-
             // it should be impossible to get here
             // but we'll just be safe rather than sorry...
             for(;;) {
@@ -1330,60 +1324,54 @@ void SrcFileScanName( int e )   // CALLED FROM CSCAN TO SCAN AN IDENTIFIER
 
 int SrcFileScanWhiteSpace( int expanding )
 {
-    char        *p;
-    OPEN_FILE   *act;
+    unsigned char   *p;
+    OPEN_FILE       *act;
+    int             c;
 
     expanding = expanding;
     if( NextChar == GetNextChar ) {
-        union {
-            int c;
-            char ch;
-        } u;
-
         for(;;) {
             // codegen can't do this optimization so we have to
-            u.c = 0;
+            c = '\0';
             act = activeSrc();
             p = act->nextc;
-            for(;;) {
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] != C_WS ) break;
+            for( ;; ) {
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
+                c = *p++;
+                if( CharSet[c] != C_WS ) break;
             }
             act->column += p - act->nextc;
             act->nextc = p;
-            if(( CharSet[u.c] & C_EX ) == 0 ) break;
-            if( u.c == '\n' ) {
+            if(( CharSet[c] & C_EX ) == 0 ) break;
+            if( c == '\n' ) {
                 act->line++;
                 act->column = 0;
                 break;
             }
             // act->column is one too many at this point
-            if( u.c == '\t' ) {
+            if( c == '\t' ) {
                 act->column = (( act->column - 1 ) + tabWidth ) & - tabWidth;
-            } else if( u.c != '\r' ) {
+            } else if( c != '\r' ) {
                 --act->column;
-                u.c = getCharCheck( act, u.c );
-                if(( CharSet[u.c] & C_WS ) == 0 ) break;
+                c = getCharCheck( act, c );
+                if(( CharSet[c] & C_WS ) == 0 ) break;
             }
         }
-        CurrChar = u.c;
+        CurrChar = c;
     } else {
-        int c;
-
         for(;;) {
             c = NextChar();
             if(( CharSet[c] & C_WS ) == 0 ) break;
@@ -1396,61 +1384,55 @@ int SrcFileScanWhiteSpace( int expanding )
 
 void SrcFileScanCppComment()
 {
-    char        *p;
-    OPEN_FILE   *act;
+    unsigned char   *p;
+    OPEN_FILE       *act;
+    int             c;
 
     if( NextChar == GetNextChar ) {
-        union {
-            int c;
-            char ch;
-        } u;
-
-        for(;;) {
+        for( ;; ) {
             // codegen can't do this optimization so we have to
-            u.c = 0;
+            c = '\0';
             act = activeSrc();
             p = act->nextc;
-            for(;;) {
-                u.ch = *p++;
-                if( CharSet[u.c] & C_EX ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] & C_EX ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] & C_EX ) break;
-                u.ch = *p++;
-                if( CharSet[u.c] & C_EX ) break;
+            for( ;; ) {
+                c = *p++;
+                if( CharSet[c] & C_EX ) break;
+                c = *p++;
+                if( CharSet[c] & C_EX ) break;
+                c = *p++;
+                if( CharSet[c] & C_EX ) break;
+                c = *p++;
+                if( CharSet[c] & C_EX ) break;
             }
             // we don't have to keep the column up to date, because once
             // we get to the end of the line, we will be starting the
             // next line at column 0.
             // act->column += p - act->nextc;
             act->nextc = p;
-            if( u.c == '\n' ) {
+            if( c == '\n' ) {
                 act->line++;
                 act->column = 0;
                 break;
             }
-            if( u.c != '\t' && u.c != '\r' ) {
-                u.c = getCharCheck( act, u.c );
-                if( u.c == '\n' || u.c == LCHR_EOF ) {
+            if( c != '\t' && c != '\r' ) {
+                c = getCharCheck( act, c );
+                if( c == '\n' || c == LCHR_EOF ) {
                     return;
                 }
                 // might be a '?' in which case, NextChar has been changed
                 // to a special routine. In that case, keep calling it
                 // until we get back to scanning normal characters
                 while( NextChar != GetNextChar ) {
-                    u.c = NextChar();
-                    if( u.c == '\n' || u.c == LCHR_EOF ) {
+                    c = NextChar();
+                    if( c == '\n' || c == LCHR_EOF ) {
                         return;
                     }
                 }
             }
         }
-        CurrChar = u.c;
+        CurrChar = c;
     } else {
-        int c;
-
-        for(;;) {
+        for( ;; ) {
             c = NextChar();
             if( c == LCHR_EOF ) break;
             if( c == '\n' ) break;

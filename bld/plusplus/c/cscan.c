@@ -159,7 +159,7 @@ void ReScanInit( char *ptr )
 
 static int rescanBuffer( void )
 {
-    CurrChar = *ReScanPtr++;
+    CurrChar = *(unsigned char *)ReScanPtr++;
     if( CurrChar == '\0' ) {
         CompFlags.rescan_buffer_done = 1;
     }
@@ -251,7 +251,6 @@ static int saveNextChar( void )
 static int scanHex( int expanding )
 {
     int c;
-    char char_class;
     struct {
         unsigned too_big : 1;
         unsigned at_least_one : 1;
@@ -261,9 +260,9 @@ static int scanHex( int expanding )
     flag.at_least_one = FALSE;
     for(;;) {
         c = saveNextChar();
-        char_class = CharSet[ c ];
-        if(( char_class & (C_HX|C_DI) ) == 0 ) break;
-        if( char_class & C_HX ) {
+        if(( CharSet[ c ] & (C_HX|C_DI) ) == 0 )
+            break;
+        if( CharSet[ c ] & C_HX ) {
             c = (( c | HEX_MASK ) - HEX_BASE ) + 10 + '0';
         }
         if( U64Cnv16( &Constant64, c - '0' ) ) {
@@ -409,9 +408,9 @@ static void scanCppComment( void )
 
 static int doESCChar( int c, int expanding, int char_type )
 {
-    unsigned n;
-    unsigned i;
-    int classification;
+    unsigned    n;
+    unsigned    i;
+    int         classification;
 
     classification = classify_escape_char( c );
     if( classification == ESCAPE_OCTAL ) {

@@ -154,16 +154,13 @@ double SafeAtof( char *p )
 }
 
 
-char hex_dig(                   // GET HEXADECIMAL DIGIT FOR CHAR (OR 16)
-    char c )                    // - character
+int hex_dig(                    // GET HEXADECIMAL DIGIT FOR CHAR (OR 16)
+    int c )                     // - character
 {
-    char char_class;            // - character class
-
-    char_class = CharSet[ (unsigned char)c ];
-    if(( char_class & (C_HX|C_DI) ) == 0 ) {
+    if(( CharSet[ c ] & (C_HX|C_DI) ) == 0 ) {
         return( 16 );
     }
-    if( char_class & C_HX ) {
+    if( CharSet[ c ] & C_HX ) {
         /* a-f or A-F */
         c = (( c | HEX_MASK ) - HEX_BASE ) + 10 + '0';
     }
@@ -171,10 +168,10 @@ char hex_dig(                   // GET HEXADECIMAL DIGIT FOR CHAR (OR 16)
 }
 
 
-char octal_dig(                 // GET OCTAL DIGIT FOR CHAR (OR 8)
-    char chr )                  // - character
+int octal_dig(                 // GET OCTAL DIGIT FOR CHAR (OR 8)
+    int chr )                  // - character
 {
-    char retn;                  // - digit returned
+    int     retn;              // - digit returned
 
     if( ( chr >= '0' ) && ( chr <= '7' ) ) {
         retn = chr - '0';
@@ -185,8 +182,8 @@ char octal_dig(                 // GET OCTAL DIGIT FOR CHAR (OR 8)
 }
 
 
-char escape_char(               // GET ESCAPE CHAR FOR A LETTER
-    char chr )                  // - character after "\"
+int escape_char(               // GET ESCAPE CHAR FOR A LETTER
+    int chr )                  // - character after "\"
 {
     switch( chr ) {
       case 'a' :
@@ -223,10 +220,10 @@ char escape_char(               // GET ESCAPE CHAR FOR A LETTER
 }
 
 
-char classify_escape_char(      // CLASSIFY TYPE OF ESCAPE
-    char chr )                  // - character after "\"
+int classify_escape_char(       // CLASSIFY TYPE OF ESCAPE
+    int chr )                   // - character after "\"
 {
-    char retn;                  // - classification returned
+    int     retn;               // - classification returned
 
     if( octal_dig( chr ) != 8 ) {
         retn = ESCAPE_OCTAL;

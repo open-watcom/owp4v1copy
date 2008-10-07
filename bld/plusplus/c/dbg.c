@@ -168,71 +168,73 @@ void DumpMacPush(               // DUMP PUSH OF MACRO
 
 
 void DumpMDefn(                 // DUMP MACRO DEFINITION
-    char *p )                   // - definition
-    {
-        int c;
+    char *pdef )                // - definition
+{
+    int             c;
+    unsigned char   *p = (unsigned char *)pdef;
 
-        for(; p;) {
-            if( *p == 0 ) break;
+    if( p == NULL )
+        return;
+    for( ; *p != '\0'; ) {
+        switch( *p ) {
+        case T_CONSTANT:
+            ++p;
             switch( *p ) {
-            case T_CONSTANT:
-                ++p;
-                switch( *p ) {
-                  case TYP_FLOAT :
-                  case TYP_DOUBLE :
-                  case TYP_LONG_DOUBLE :
-                    break;
-                  case TYP_CHAR:
-                  case TYP_SCHAR:
-                  case TYP_UCHAR:
-                  case TYP_WCHAR:
-                  case TYP_SSHORT:
-                  case TYP_USHORT:
-                  case TYP_SINT:
-                  case TYP_UINT:
-                    p += sizeof( target_int );
-                    break;
-                  default:
-                    p += sizeof( target_long );
-                }
-            case T_ID:
-                ++p;
-                for(;;) {
-                    c = *p++;
-                    if( c == '\0' ) break;
-                    putchar( c );
-                }
-                continue;
-            case T_STRING:
-                ++p;
-                putchar( '\"' );
-                for(;;) {
-                    c = *p++;
-                    if( c == '\0' ) break;
-                    putchar( c );
-                }
-                putchar( '\"' );
-                continue;
-            case T_WHITE_SPACE:
-                ++p;
-                putchar( ' ' );
-                continue;
-            case T_BAD_CHAR:
-                ++p;
-                putchar( *p++ );
-                continue;
-            case T_MACRO_PARM:
-                ++p;
-                printf( "parm#%c", '1' + *p++ );
-                continue;
+            case TYP_FLOAT :
+            case TYP_DOUBLE :
+            case TYP_LONG_DOUBLE :
+                break;
+            case TYP_CHAR:
+            case TYP_SCHAR:
+            case TYP_UCHAR:
+            case TYP_WCHAR:
+            case TYP_SSHORT:
+            case TYP_USHORT:
+            case TYP_SINT:
+            case TYP_UINT:
+                p += sizeof( target_int );
+                break;
             default:
-                printf( "%s", Tokens[ *(unsigned char *)p ] );
-                ++p;
-                continue;
+                p += sizeof( target_long );
             }
+        case T_ID:
+            ++p;
+            for( ;; ) {
+                c = *p++;
+                if( c == '\0' ) break;
+                putchar( c );
+            }
+            continue;
+        case T_STRING:
+            ++p;
+            putchar( '\"' );
+            for( ;; ) {
+                c = *p++;
+                if( c == '\0' ) break;
+                putchar( c );
+            }
+            putchar( '\"' );
+            continue;
+        case T_WHITE_SPACE:
+            ++p;
+            putchar( ' ' );
+            continue;
+        case T_BAD_CHAR:
+            ++p;
+            putchar( *p++ );
+            continue;
+        case T_MACRO_PARM:
+            ++p;
+            printf( "parm#%c", '1' + *p++ );
+            continue;
+        default:
+            printf( "%s", Tokens[ *p ] );
+            ++p;
+            continue;
         }
-        putchar( '\n' );
     }
+    putchar( '\n' );
+}
 
 
 char *DbgOperator(              // GET CGOP NAME

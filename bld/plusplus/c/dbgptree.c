@@ -93,17 +93,17 @@ typedef struct _decorated {     // DECORATED NODES
 
 #define PTREE_ERROR_NODE "**error**"
 
-#define LEFT_FROM   217
-#define LEFT_TO     218
-#define RIGHT_FROM  192
-#define RIGHT_TO    191
-#define VERT_LINE   179
-#define HORI_LINE   196
-#define BOTH_LSR    193
-#define BOTH_LB     180
-#define BOTH_BR     195
-#define BOTH_LRS    194
-#define BOTH_SLR    194
+#define LEFT_FROM   '\xD9'
+#define LEFT_TO     '\xDA'
+#define RIGHT_FROM  '\xC0'
+#define RIGHT_TO    '\xBF'
+#define VERT_LINE   '\xB3'
+#define HORI_LINE   '\xC4'
+#define BOTH_LSR    '\xC1'
+#define BOTH_LB     '\xB4'
+#define BOTH_BR     '\xC3'
+#define BOTH_LRS    '\xC2'
+#define BOTH_SLR    '\xC2'
 
 static SUBTREE *subtrees;       // subtrees to be printed
 static PRLINE node_line;        // buffering for node line
