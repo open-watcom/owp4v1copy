@@ -1349,4 +1349,42 @@ static bool ModEnv( int num_env )
     return( !err );
 }
 
+extern bool ModifyRegAssoc( bool uninstall )
+/******************************************/
+{
+    HKEY    hkey;
+    char    buf[256];
+    char    ext[16];
+    char    keyname[256];
+    char    program[256];
+    char    description[256];
+    int     num;
+    int     i;
+
+    if( !uninstall ) {
+        num = SimNumAssociations();
+        for( i = 0; i < num; i++ ) {
+            SimGetAssociationExt( i, ext );
+            SimGetAssociationKeyName( i, keyname );
+            SimGetAssociationProgram( i, program );
+            SimGetAssociationDescription( i, description );
+            sprintf( buf, ".%s", ext );
+            RegCreateKey( HKEY_CLASSES_ROOT, buf, &hkey );
+            RegSetValue( hkey, NULL, REG_SZ, keyname, strlen( keyname ) );
+            RegCloseKey( hkey );
+            RegCreateKey( HKEY_CLASSES_ROOT, keyname, &hkey );
+            RegSetValue( hkey, NULL, REG_SZ, description, strlen( description ) );
+            sprintf( buf, "%s %%1", program );
+            ReplaceVarsInplace( buf, FALSE );
+            RegSetValue( hkey, "shell\\open\\command", REG_SZ, buf, strlen( buf ) );
+            sprintf( buf, "%s,%d", program, SimGetAssociationIconIndex( i ) );
+            ReplaceVarsInplace( buf, FALSE );
+            RegSetValue( hkey, "DefaultIcon", REG_SZ, buf, strlen( buf ) );
+            RegCloseKey( hkey );
+        }
+    }
+
+    return( TRUE );
+}
+
 #endif

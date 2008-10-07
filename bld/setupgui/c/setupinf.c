@@ -104,6 +104,7 @@ static struct setup_info {
     array_info          dlls_to_count;
     array_info          force_DLL_install;
     array_info          all_pm_groups;
+    array_info          associations;
 } SetupInfo;
 
 #ifdef PATCH
@@ -166,6 +167,13 @@ static struct upgrade_info {
     char                *name;
 } *UpgradeInfo = NULL;
 
+static struct association_info {
+    char    *ext;
+    char    *keyname;
+    char    *program;
+    char    *description;
+    int     icon_index;
+} *AssociationInfo = NULL;
 
 typedef struct a_file_info {
     char                *name;
@@ -304,7 +312,8 @@ typedef enum {
     RS_SPAWN,
     RS_RESTRICTIONS,
     RS_DELETEFILES,
-    RS_FORCEDLLINSTALL
+    RS_FORCEDLLINSTALL,
+    RS_ASSOCIATIONS
 } read_state;
 
 static read_state       State;
@@ -1676,6 +1685,8 @@ static bool ProcLine( char *line, pass_type pass )
         } else if( stricmp( line, "[ForceDLLInstall]" ) == 0 ) {
             State = RS_FORCEDLLINSTALL;
             LineCountPointer = &SetupInfo.force_DLL_install.alloc;
+        } else if( stricmp( line, "[Associations]" ) == 0 ) {
+            State = RS_ASSOCIATIONS;
         } else {
             State = RS_UNDEFINED;   // Unrecognized section in SETUP.INF file.
         }
@@ -2117,6 +2128,22 @@ static bool ProcLine( char *line, pass_type pass )
         GUIStrDup( line, &ForceDLLInstall[ num ].name );
         break;
 
+    case RS_ASSOCIATIONS:
+        num = SetupInfo.associations.num;
+        if( !BumpArray( &SetupInfo.associations ) )
+            return (FALSE );
+        next = NextToken( line, '=' );
+        GUIStrDup( line, &AssociationInfo[num].ext );
+        line = next; next = NextToken( line, ',' );
+        GUIStrDup( line, &AssociationInfo[num].keyname );
+        line = next; next = NextToken( line, ',' );
+        GUIStrDup( line, &AssociationInfo[num].program );
+        line = next; next = NextToken( line, ',' );
+        GUIStrDup( line, &AssociationInfo[num].description );
+        line = next; next = NextToken( line, ',' );
+        AssociationInfo[num].icon_index = get36( line );
+        break;
+
         /* for now Setup Error Messages, Status line Messages and Misc Messages
             are treated as global symbolic variables just like
             regular Error Messages */
@@ -2490,6 +2517,7 @@ extern long SimInit( char *inf_name )
     InitArray( (void **)&DLLsToCheck, sizeof( struct dlls_to_check ), &SetupInfo.dlls_to_count );
     InitArray( (void **)&ForceDLLInstall, sizeof( struct force_DLL_install ), &SetupInfo.force_DLL_install );
     InitArray( (void **)&AllPMGroups, sizeof( struct all_pm_groups ), &SetupInfo.all_pm_groups );
+    InitArray( (void **)&AssociationInfo, sizeof( struct association_info ), &SetupInfo.associations );
 #ifndef _UI
     SetDialogFont();
 #endif
@@ -3115,6 +3143,48 @@ extern bool SimCheckEnvironmentCondition( int parm )
 /***************************************************/
 {
     return( EvalCondition( EnvironmentInfo[ parm ].condition ) );
+}
+
+/*
+ * =======================================================================
+ * API to AssociationInfo[]
+ * =======================================================================
+ */
+
+extern int SimNumAssociations()
+/*****************************/
+{
+    return( SetupInfo.associations.num );
+}
+
+extern void SimGetAssociationExt( int parm, char *buff )
+/******************************************************/
+{
+    strcpy( buff, AssociationInfo[parm].ext );
+}
+
+extern void SimGetAssociationKeyName( int parm, char *buff )
+/**********************************************************/
+{
+    strcpy( buff, AssociationInfo[parm].keyname );
+}
+
+extern void SimGetAssociationProgram( int parm, char *buff )
+/**********************************************************/
+{
+    strcpy( buff, AssociationInfo[parm].program );
+}
+
+extern void SimGetAssociationDescription( int parm, char *buff )
+/**************************************************************/
+{
+    strcpy( buff, AssociationInfo[parm].description );
+}
+
+extern int SimGetAssociationIconIndex( int parm )
+/***********************************************/
+{
+    return( AssociationInfo[parm].icon_index );
 }
 
 /*
@@ -4205,6 +4275,23 @@ static void FreeAllPMGroups( void )
     }
 }
 
+static void FreeAssociationInfo( void )
+/*************************************/
+{
+    int i;
+
+    if( AssociationInfo != NULL ) {
+        for( i = 0; i < SetupInfo.associations.num; i++ ) {
+            GUIMemFree( AssociationInfo[i].ext );
+            GUIMemFree( AssociationInfo[i].keyname );
+            GUIMemFree( AssociationInfo[i].program );
+            GUIMemFree( AssociationInfo[i].description );
+        }
+        GUIMemFree( AssociationInfo );
+        AssociationInfo = NULL;
+    }
+}
+
 extern void FreeAllStructs( void )
 /********************************/
 {
@@ -4229,6 +4316,7 @@ extern void FreeAllStructs( void )
     FreeUpgradeInfo();
     FreeLabelInfo();
     FreeAllPMGroups();
+    FreeAssociationInfo();
 }
 
 

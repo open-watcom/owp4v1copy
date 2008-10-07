@@ -165,6 +165,16 @@ extern bool ModifyStartup( bool uninstall )
     return( ret );
 }
 
+extern bool ModifyAssociations( bool uninstall )
+/**********************************************/
+{
+#ifdef __NT__
+    return( ModifyRegAssoc( uninstall ) );
+#else
+    return( TRUE );
+#endif
+}
+
 typedef struct {
     unsigned long long  free_space;
     unsigned long       cluster_size;

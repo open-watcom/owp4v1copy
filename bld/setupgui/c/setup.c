@@ -97,6 +97,14 @@ static bool SetupOperations()
             return( FALSE );
         }
     }
+
+    // Perform file associations
+    if( GetVariableIntVal( "DoFileAssociations" ) == 1 ) {
+        if( !ModifyAssociations( uninstall ) ) {
+            return( FALSE );
+        }
+    }
+
     // Create program group (folder)
     if( GetVariableIntVal( "DoCreateIcons" ) == 1 ||
         GetVariableIntVal( "DoCreateHelpIcons" ) == 1 ) {
@@ -104,6 +112,7 @@ static bool SetupOperations()
             return( FALSE );
         }
     }
+
     DoSpawn( WHEN_END );
 
     return( TRUE );
