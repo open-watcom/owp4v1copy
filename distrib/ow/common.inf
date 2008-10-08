@@ -9,6 +9,7 @@ DoCreateIcons=1
 DoCreateHelpIcons=1
 DoModifyAuto=1
 DoCopyFiles=1
+DoFileAssociations=1
 ToolHelp=%CDDir%\binw\toolhelp.dll
 spawnbefore=%CDDir%\binp\nmpbind.exe q, SrcIsCD IsOS2
 spawnbefore=%CDDir%\binp\batserv.exe q, SrcIsCD IsOS2DosBox
@@ -252,3 +253,10 @@ icon=view.exe, %HDir%\binp\help\fpguide.inf, F77 Programmer's Reference,,, IsOS2
 icon=view.exe, %HDir%\binp\help\ftools.inf, F77 Tools Guide,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\ftools.inf IsFortranInstall
 icon=view.exe, %HDir%\binp\help\f77graph.inf, F77 Graphics Library,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\f77graph.inf IsFortranInstall
 icon=view.exe, %HDir%\binp\help\f77lr.inf, F77 Language Reference,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\f77lr.inf IsFortranInstall
+assoc=c=cfile, %DstDir%\binnt\viw.exe, C Source File, 1
+assoc=cpp=cppfile, %DstDir%\binnt\viw.exe, C++ Source File, 2
+assoc=h=hfile, %DstDir%\binnt\viw.exe, C/C++ Header File, 3
+assoc=hpp=hppfile, %DstDir%\binnt\viw.exe, C++ Header File, 4
+assoc=for=forfile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 5
+assoc=f=ffile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 5
+assoc=fi=fifile, %DstDir%\binnt\viw.exe, FORTRAN Include File, 6

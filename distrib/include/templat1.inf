@@ -94,6 +94,34 @@ static_text=
 push_button=+"&OK"
 
 [Dialog]
+name=ModifyAssociations
+static_text=
+static_text=\
+        //1"@ can modify associations so that files will automatically"\
+        //2"@ can modify associations so that files will automatically"\
+        //0
+static_text=\
+        //1"open with the Open Watcom tools."\
+        //2"open with the Open Watcom tools."\
+        //0
+radio_button=ModEnv,1,="&Modify associations"
+radio_button=NoModEnv,0,="&Don't modify associations"
+static_text=
+push_button=+"&OK"
+push_button=?"&Help"
+push_button=^"&Cancel"
+
+[Dialog]
+name=Help_ModifyAssociations
+static_text=
+static_text="Modifying associations will cause C/C++ and FORTRAN source files"
+static_text="to automatically open with the Open Watcom tools. If you use other"
+static_text="tools to edit source code, then you may wish to keep your current"
+static_text="configuration as is."
+static_text=
+push_button=+"&OK"
+
+[Dialog]
 name=DLLInstall
 static_text=\
         //1"@ attempted to install the file:"\
