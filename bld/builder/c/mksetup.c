@@ -118,6 +118,7 @@ static LIST                 *BeforeList = NULL;
 static LIST                 *EndList = NULL;
 static LIST                 *DeleteList = NULL;
 static LIST                 *ForceDLLInstallList = NULL;
+static LIST                 *AssociationList = NULL;
 static LIST                 *ErrMsgList = NULL;
 static LIST                 *SetupErrMsgList = NULL;
 static unsigned             MaxDiskFiles;
@@ -820,6 +821,7 @@ int ReadList( FILE *fp )
 #define STRING_language         "language="
 #define STRING_upgrade          "upgrade="
 #define STRING_forcedll         "forcedll="
+#define STRING_assoc            "assoc="
 #define STRING_errmsg           "errmsg="
 #define STRING_setuperrmsg      "setuperrmsg="
 
@@ -985,6 +987,8 @@ void ReadSection( FILE *fp, char *section, LIST **list )
             free( new );
         } else if( STRING_IS( SectionBuf, new, STRING_forcedll ) ) {
             AddToList( new, &ForceDLLInstallList );
+        } else if( STRING_IS( SectionBuf, new, STRING_assoc ) ) {
+            AddToList( new, &AssociationList );
         } else if( STRING_IS( SectionBuf, new, STRING_errmsg ) ) {
             AddToList( new, &ErrMsgList );
         } else if( STRING_IS( SectionBuf, new, STRING_setuperrmsg ) ) {
@@ -1287,6 +1291,13 @@ int CreateScript( long init_size, unsigned padding )
     if( ForceDLLInstallList != NULL ) {
         fprintf( fp, "\n[ForceDLLInstall]\n" );
         for( list = ForceDLLInstallList; list != NULL; list = list->next ) {
+            fprintf( fp, "%s\n", list->item );
+        }
+    }
+
+    if( AssociationList != NULL ) {
+        fprintf( fp, "\n[Associations]\n" );
+        for( list = AssociationList; list != NULL; list = list->next ) {
             fprintf( fp, "%s\n", list->item );
         }
     }
