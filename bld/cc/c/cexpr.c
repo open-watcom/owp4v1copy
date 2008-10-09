@@ -348,20 +348,21 @@ TREEPTR SymLeaf( void )
     TREEPTR     tree;
     SYM_ENTRY   sym;
     struct enum_info ei;
+    int         enum_found;
 
     if( CurToken == T_SAVED_ID ) {
         CurToken = LAToken;
         hash = SavedHash;
-        EnumLookup( hash, SavedId, &ei );       /* 12-sep-88 */
+        enum_found = EnumLookup( hash, SavedId, &ei );       /* 12-sep-88 */
         sym_handle = SymLook( hash, SavedId );
         if( sym_handle == 0 ) {
-            if( ei.level >= 0 ) {               /* if enum was found */
+            if( enum_found ) {               /* if enum was found */
                 return( EnumLeaf( &ei ) );
             }
             SymCreate( &sym, SavedId );
         } else {
             SymGet( &sym, sym_handle );
-            if( ei.level > (int)sym.level )
+            if( enum_found && ei.level > sym.level )
                 return( EnumLeaf( &ei ) );
             /* 12-dec-88 */
             if( sym.stg_class == SC_EXTERN  &&  sym.level > 0 ) {
@@ -378,17 +379,17 @@ TREEPTR SymLeaf( void )
         }
     } else {
         hash = HashValue;
-        EnumLookup( hash, Buffer, &ei );        /* 12-sep-88 */
+        enum_found = EnumLookup( hash, Buffer, &ei );        /* 12-sep-88 */
         sym_handle = SymLook( hash, Buffer );
         if( sym_handle == 0 ) {
-            if( ei.level >= 0 ) {               /* if enum was found */
+            if( enum_found ) {               /* if enum was found */
                 NextToken();
                 return( EnumLeaf( &ei ) );
             }
             SymCreate( &sym, Buffer );
         } else {
             SymGet( &sym, sym_handle );
-            if( ei.level > (int)sym.level ) {
+            if( enum_found && ei.level > sym.level ) {
                 NextToken();
                 return( EnumLeaf( &ei ) );
             }

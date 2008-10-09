@@ -312,7 +312,6 @@ int EnumLookup( int hash_value, char *name, struct enum_info *eip )
         }
         esym = esym->next_enum;
     }
-    eip->level = -1;                /* indicate not found */
     return( 0 );                    /* indicate this was not an ENUM */
 }
 

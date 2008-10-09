@@ -407,7 +407,7 @@ SYM_HANDLE SymAdd( int h, SYMPTR sym )
     head = &HashTab[ h ];               /* add name to head of list */
     for( ;; ) {
         if( *head == NULL ) break;
-        if( ((*head)->level & 0x7F) <= SymLevel ) break;
+        if( (*head)->level <= SymLevel ) break;
         head = &(*head)->next_sym;
     }
     hsym->next_sym = *head;     /* add name to head of list */
@@ -753,7 +753,7 @@ local SYM_HASHPTR GetSymList( void )                    /* 25-jun-92 */
     sym_list = NULL;
     for( i=0; i < SYM_HASH_SIZE; i++ ) {
         for( hsym = HashTab[i]; hsym; hsym = next_hsymptr ) {
-            if( (hsym->level & 0x7F) != SymLevel ) break;
+            if( hsym->level != SymLevel ) break;
             next_hsymptr = hsym->next_sym;
             hsym->next_sym = sym_list;
             sym_list = hsym;

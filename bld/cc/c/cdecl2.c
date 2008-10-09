@@ -181,8 +181,7 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
     }
     old_sym_handle = SymLook( sym->info.hash_value, sym->name );
     if( old_sym_handle == 0 ) {
-        EnumLookup( sym->info.hash_value, sym->name, &ei ); /* 22-dec-88 */
-        if( ei.level >= 0 ) {       /* if enum was found */
+        if( EnumLookup( sym->info.hash_value, sym->name, &ei ) ) {       /* if enum was found */
             CErr2p( ERR_SYM_ALREADY_DEFINED, sym->name );
         }
         sym_handle = SymAddL0( sym->info.hash_value, sym );

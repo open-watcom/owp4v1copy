@@ -325,9 +325,9 @@ struct sym_hash_entry {   /* SYMBOL TABLE structure */
     };
     SYM_HANDLE      handle;
 #if defined(  __386__ )
-    char            level;
+    unsigned char   level;
 #else
-    unsigned        level;
+    int             level;
 #endif
     char            name[1];
 };
@@ -367,7 +367,11 @@ typedef struct symtab_entry {           /* SYMBOL TABLE structure */
                                              * perhaps stored in 'info' union. */
     type_modifiers  attrib;   /* LANG_CDECL, _PASCAL, _FORTRAN */
     sym_flags       flags;
+#if defined(  __386__ )
     unsigned char   level;
+#else
+    int             level;
+#endif
     struct {
         unsigned char stg_class  : 3;
         unsigned char declspec   : 2;
@@ -422,8 +426,12 @@ typedef struct enum_entry {
 
 typedef struct enum_info {          /* used to obtain info about an ENUM */
     struct tag_entry    *parent;
-    int                 level;
     uint64              value;
+#if defined(  __386__ )
+    unsigned char   level;
+#else
+    int             level;
+#endif
 } ENUM_INFO;
 
 typedef struct tag_entry {
@@ -444,11 +452,11 @@ typedef struct tag_entry {
     };
 #if defined( __386__ )
     unsigned short  hash;           /* hash value for tag */
-    char            level;
+    unsigned char   level;
     unsigned char   alignment;      /* alignment required */
 #else
     unsigned        hash;
-    unsigned        level;
+    int             level;
     unsigned        alignment;
 #endif
     union   {
