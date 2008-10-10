@@ -1994,13 +1994,13 @@ void DeleteObsoleteFiles( void )
 {
     int         i, max_deletes;
     int         group;
-    dlg_state   state;
+    dlg_state   state = DLG_NEXT;
     char        buff[_MAX_PATH];
     bool        *found;
     bool        found_any;
 
     max_deletes = SimNumDeletes();
-    group = 0;
+    group = 1;
     for( i = 0; i < max_deletes; ++i ) {
         if( SimDeleteIsDialog( i ) ) {
             ++group;
@@ -2009,7 +2009,7 @@ void DeleteObsoleteFiles( void )
     found = GUIMemAlloc( sizeof( bool ) * group );
     memset( found, FALSE, sizeof( bool ) * group );
     found_any = FALSE;
-    group = -1;
+    group = 0;
     for( i = 0; i < max_deletes; ++i ) {
         if( SimDeleteIsDialog( i ) ) {
             ++group;
@@ -2021,9 +2021,8 @@ void DeleteObsoleteFiles( void )
             }
         }
     }
-    group = -1;
+    group = 0;
     if( found_any ) {
-        StatusShow( TRUE );
         StatusLines( STAT_REMOVING, "" );
         StatusAmount( 0, 1 );
         for( i = 0; i < max_deletes; ++i ) {
@@ -2045,7 +2044,6 @@ void DeleteObsoleteFiles( void )
                 }
             }
         }
-        StatusShow( FALSE );
     }
 }
 

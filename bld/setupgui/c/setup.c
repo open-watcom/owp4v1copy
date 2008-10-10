@@ -83,6 +83,9 @@ static bool SetupOperations()
         }
     }
 #endif
+
+    DeleteObsoleteFiles();
+
     // Copy the files
     if( GetVariableIntVal( "DoCopyFiles" ) == 1 ) {
         if( !CopyAllFiles() ) {
