@@ -1314,34 +1314,25 @@ local void CheckBitfieldType( TYPEPTR typ )
 
 void VfyNewSym( int hash_value, char *name )
 {
-    int         enum_var;
     SYM_HANDLE  sym_handle;
-    auto SYM_ENTRY sym;
-    auto struct enum_info ei;
-    int         do_diag_pop = 0;
+    SYM_ENTRY   sym;
+    ENUMPTR     ep;
 
-    enum_var = EnumLookup( hash_value, name, &ei );
-    if( enum_var ) {
-        if( ei.level != SymLevel )
-            enum_var = 0;
-        // Unfortunately we don't seem to have any easy way
-        // to diagnose where an enum was defined
+    ep = EnumLookup( hash_value, name );
+    if( ep != NULL && ep->parent->level == SymLevel ) {
+        SetDiagEnum( ep );
+        CErr2p( ERR_SYM_ALREADY_DEFINED, name );
+        SetDiagPop();
     }
     sym_handle = SymLook( hash_value, name );
     if( sym_handle != 0 ) {
         SymGet( &sym, sym_handle );
-        if( sym.level != SymLevel )
-            sym_handle = 0;
-        else {
+        if( sym.level == SymLevel ) {
             SetDiagSymbol( &sym, sym_handle );
-            ++do_diag_pop;
+            CErr2p( ERR_SYM_ALREADY_DEFINED, name );
+            SetDiagPop();
         }
     }
-    if( sym_handle != 0  ||  enum_var != 0 ) {
-        CErr2p( ERR_SYM_ALREADY_DEFINED, name );
-    }
-    while( do_diag_pop-- )
-        SetDiagPop();
 }
 
 

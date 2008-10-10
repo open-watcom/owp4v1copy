@@ -157,12 +157,12 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
     SYM_HANDLE          sym_handle;
     SYM_HANDLE          old_sym_handle;
     SYM_ENTRY           old_sym;
-    struct enum_info    ei;
     SYM_ENTRY           sym_typedef;
     TYPEPTR             old_typ;
     SYM_NAMEPTR         sym_name;
     char                *name;
     int                 sym_len;
+    ENUMPTR             ep;
 
     PrevProtoType = NULL;                               /* 12-may-91 */
     // Warn if assuming 'int' return type - should be an error in strict C99 mode
@@ -181,8 +181,11 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
     }
     old_sym_handle = SymLook( sym->info.hash_value, sym->name );
     if( old_sym_handle == 0 ) {
-        if( EnumLookup( sym->info.hash_value, sym->name, &ei ) ) {       /* if enum was found */
+        ep = EnumLookup( sym->info.hash_value, sym->name );
+        if( ep != NULL ) {
+            SetDiagEnum( ep );
             CErr2p( ERR_SYM_ALREADY_DEFINED, sym->name );
+            SetDiagPop();
         }
         sym_handle = SymAddL0( sym->info.hash_value, sym );
     } else {

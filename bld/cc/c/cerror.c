@@ -412,6 +412,16 @@ void SetDiagSymbol( SYMPTR sym, SYM_HANDLE handle )
     np->sym_line = sym->src_loc.line;
 }
 
+void SetDiagEnum( ENUMPTR ep )
+{
+    struct ErrPostList  *np;
+
+    np = NewPostList( POSTLIST_SYMBOL );
+    np->sym_name = ep->name;
+    np->sym_file = FileIndexToCorrectName( ep->src_loc.fno );
+    np->sym_line = ep->src_loc.line;
+}
+
 void SetDiagType1( TYPEPTR typ_source )
 {
     SetDiagType2( typ_source, NULL );

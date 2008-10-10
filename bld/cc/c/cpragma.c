@@ -744,7 +744,7 @@ static void PushEnum( void ) {
 /***************************/
     struct enums_info *ei;
 
-    ei = CMemAlloc( sizeof( struct enum_info ) );
+    ei = CMemAlloc( sizeof( struct enums_info ) );
     ei->make_enums = CompFlags.make_enums_an_int;
     ei->next = EnumInfo;
     EnumInfo = ei;

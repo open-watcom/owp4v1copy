@@ -29,8 +29,6 @@
 ****************************************************************************/
 
 
-#define ENUM_HANDLE     ENUMPTR
-
 typedef char    *SYM_NAMEPTR;
 
 #include "cg.h"
@@ -412,27 +410,18 @@ typedef struct field_entry {
 #define FIELD_HASH_SIZE SYM_HASH_SIZE
 
 typedef struct enum_entry {
-    struct  enum_entry *next_enum;  /* used in hash table */
-    struct  enum_entry *thread;     /* list belonging to same enum */
+    struct enum_entry   *next_enum;     /* used in hash table */
+    struct enum_entry   *thread;        /* list belonging to same enum */
     XREFPTR xref;
     union {
-        struct tag_entry *parent;
-        int  enum_len;              /* for pre-compiled header */
+        struct tag_entry    *parent;
+        int                 enum_len;   /* for pre-compiled header */
     };
-    int     hash;
-    uint64  value;
-    char    name[1];
+    int         hash;
+    uint64      value;
+    source_loc  src_loc;
+    char        name[1];
 } ENUMDEFN, *ENUMPTR;
-
-typedef struct enum_info {          /* used to obtain info about an ENUM */
-    struct tag_entry    *parent;
-    uint64              value;
-#if defined(  __386__ )
-    unsigned char   level;
-#else
-    int             level;
-#endif
-} ENUM_INFO;
 
 typedef struct tag_entry {
     struct tag_entry *next_tag;
