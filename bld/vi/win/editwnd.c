@@ -140,6 +140,7 @@ window_id NewEditWindow( void )
         return( NO_WINDOW );
     }
     style = GetEditStyle( FALSE );
+    ResizeRoot();
     GetClientRect( EditContainer, &rect );
 
     mdinew.szClass = EditWindowClassName;
