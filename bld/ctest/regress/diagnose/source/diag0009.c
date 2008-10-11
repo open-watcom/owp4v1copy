@@ -27,9 +27,13 @@ int comp( void )
 {
     // TODO: this should check for exact bitfield size,
     // not just the size of underlying type
+    if( s1.f0 < 0x20 )
+        return( 0 );
     if( s1.f0 < 0x100 )
         return( 0 );
-    else if( s1.f2 < 0x100000000 )  // TODO: this should warn but doesn't
+    else if( s1.f2 < 0x100000 )
+        return( 0 );
+    else if( s1.f2 < 0x100000000 )
         return( 0 );
     return( 1 );
 }

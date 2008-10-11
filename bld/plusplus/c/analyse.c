@@ -1323,7 +1323,7 @@ static void warnPointerZero(    // WARN IF POINTER COMPARISON TO 0 IS CONST
 
 static int numSize( type_id id ) {     // NUMSIZE - number of bits
 // return 0 not a num, else number of bits | SIGN_BIT if signed
-    char size;
+    int     size;
 
     size = 0;
     switch( id ) {
@@ -1345,8 +1345,12 @@ static int numSize( type_id id ) {     // NUMSIZE - number of bits
     case TYP_MEMBER_POINTER:
         size |= 32;
         break;
+    case TYP_SLONG64:
+        size = SIGN_BIT;
+    case TYP_ULONG64:
+        size |= 64;
+        break;
     case TYP_SINT:
-    case TYP_BITFIELD: // doesn't check ranges depending on number of bits
         size = SIGN_BIT;
     case TYP_UINT:
 #if TARGET_INT == 2
@@ -1356,7 +1360,29 @@ static int numSize( type_id id ) {     // NUMSIZE - number of bits
 #endif
         break;
     }
-    return size;
+    return( size );
+}
+
+static int numSizeType( TYPE typ ) {     // NUMSIZE - number of bits
+// return 0 not a num, else number of bits | SIGN_BIT if signed
+    int     size;
+
+    size = numSize( typ->id );
+    if( typ->id == TYP_BITFIELD ) {
+        size = typ->u.b.field_width;
+        switch( typ->of->id ) {
+        case TYP_SCHAR:
+        case TYP_SSHORT:
+        case TYP_SINT:
+        case TYP_SLONG:
+        case TYP_SLONG64:
+            size |= SIGN_BIT;
+            break;
+        default:
+            break;
+        }
+    }
+    return( size );
 }
 
 static CGOP commRelOp( CGOP cgop ) {
@@ -1384,17 +1410,18 @@ static CGOP commRelOp( CGOP cgop ) {
 
 void warnIfUseless( PTREE op1, PTREE op2, CGOP cgop, PTREE expr )
 {
-    TYPE        op1_type, op2_type, result_type;
-    long        val, low, high;
-    int         op1_size, result_size;
-    cmp_result  ret;
-    boolean     rev_ret;
-    rel_op      rel;
+    TYPE            op1_type, op2_type, result_type;
+    signed_64       val, low, high;
+    int             op1_size, result_size;
+    cmp_result      ret;
+    boolean         rev_ret;
+    rel_op          rel;
+    char            num1[25], num2[25];
+    INT_CONSTANT    icon;
 
     op1_type = TypedefModifierRemove( op1->type );
     op2_type = TypedefModifierRemove( op2->type );
-    val = NodeConstantValue( op2 );
-    op1_size = numSize( op1_type->id );
+    op1_size = numSizeType( op1_type );
     if( op1_size != 0 ) {
         result_type = TypeBinArithResult( op1_type, op2_type );
         if( result_type->id == TYP_ERROR ) {
@@ -1425,9 +1452,16 @@ void warnIfUseless( PTREE op1, PTREE op2, CGOP cgop, PTREE expr )
             break;
         DbgDefault("Default in warnIfUseless in analyse.c.c\n");
         }
+        NodeIsIntConstant( op2, &icon );
+        if( icon.type->id == TYP_SLONG64 || icon.type->id == TYP_ULONG64 ) {
+            val = icon.value;
+        } else {
+            I32ToI64( icon.sval, &val );
+        }
         ret = CheckMeaninglessCompare( rel
                                    , op1_size
                                    , result_size
+                                   , ( op2_type->id == TYP_BITFIELD )
                                    , val
                                    , &low
                                    , &high );
@@ -1445,14 +1479,20 @@ void warnIfUseless( PTREE op1, PTREE op2, CGOP cgop, PTREE expr )
                                WARN_ALWAYS_FALSE ) & MS_PRINTED ) {
                 // msg was issued so give informational messages
                 if( NumSign(op1_size) ) { // signed
-                   CErr( INF_SIGNED_TYPE_RANGE, op1->type, low, high );
+                    sprintf( num1, "%lld", low );
+                    sprintf( num2, "%lld", high );
+                    CErr( INF_SIGNED_TYPE_RANGE, op1->type, num1, num2 );
                 } else {
-                   CErr( INF_UNSIGNED_TYPE_RANGE, op1->type, low, high );
+                    sprintf( num1, "%llu", low );
+                    sprintf( num2, "%llu", high );
+                    CErr( INF_UNSIGNED_TYPE_RANGE, op1->type, num1, num2 );
                 }
                 if( NumSign(result_size) ) {
-                    InfMsgInt( INF_SIGNED_CONST_EXPR_VALUE, val );
+                    sprintf( num1, "%lld", val );
+                    CErr( INF_SIGNED_CONST_EXPR_VALUE, num1 );
                 } else {
-                    InfMsgInt( INF_UNSIGNED_CONST_EXPR_VALUE, val );
+                    sprintf( num1, "%llu", val );
+                    CErr( INF_UNSIGNED_CONST_EXPR_VALUE, num1 );
                 }
             }
         }

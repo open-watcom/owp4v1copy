@@ -32,6 +32,7 @@
 
 #include "cvars.h"
 #include "cgswitch.h"
+#include "i64.h"
 
 #include "mngless.h"
 
@@ -503,7 +504,7 @@ pointer_class ExprTypeClass( TYPEPTR typ )
 // return 0 not a num, else number of bits | SIGN_BIT if signed
 static int NumSize( int op_type )
 {
-    unsigned char       size;
+    int     size;
 
     size = 0;
     switch( op_type ) {
@@ -523,14 +524,11 @@ static int NumSize( int op_type )
     case TYPE_POINTER:
         size |= 32;
         break;
-// FIXME: this ought to be enabled, but the callers of NumSize() need fixing!
-#if 0
     case TYPE_LONG64:
         size = SIGN_BIT;
     case TYPE_ULONG64:
         size |= 64;
         break;
-#endif
     case TYPE_INT:
         size = SIGN_BIT;
     case TYPE_UINT:
@@ -544,39 +542,53 @@ static int NumSize( int op_type )
     return( size );
 }
 
-
-static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, int opr )
+// return 0 not a num, else number of bits | SIGN_BIT if signed
+static int NumSizeType( TYPEPTR typ )
 {
-    long                high;
-    long                low;
-    rel_op              rel;
-    cmp_result          ret;
-    int                 result_size;
-    unsigned char       op1_size;
-    unsigned char       rev_ret;
+    int     size;
 
-    op1_size = NumSize( op1_type );
+    size = NumSize( typ->decl_type );
+    if( typ->decl_type == TYPE_FIELD ) {
+        size = SIGN_BIT | typ->u.f.field_width ;
+    } else if( typ->decl_type == TYPE_UFIELD ) {
+        size = typ->u.f.field_width;
+    }
+    return( size );
+}
+
+static cmp_result IsMeaninglessCompare( signed_64 val, TYPEPTR typ_op1, TYPEPTR typ_op2, int opr )
+{
+    signed_64   high;
+    signed_64   low;
+    rel_op      rel;
+    cmp_result  ret;
+    int         result_size;
+    int         op1_size;
+    bool        rev_ret;
+    bool        isBitField;
+
+    op1_size = NumSizeType( typ_op1 );
     if( op1_size == 0 ) {
         return( CMP_VOID );
     }
-    result_size = NumSize( BinResult[ op1_type ][ op2_type ] );
+    result_size = NumSize( BinResult[ DataTypeOf( typ_op1 ) ][ DataTypeOf( typ_op2 ) ] );
     if( result_size == 0 ) {
         return( CMP_VOID );
     }
-    rev_ret = 0;
+    rev_ret = FALSE;
     switch( opr ) { // mapped rel ops to equivalent cases
     case T_NE:
-        rev_ret = 1;
+        rev_ret = TRUE;
     case T_EQ:
         rel = REL_EQ;
         break;
     case T_GE:
-        rev_ret = 1;
+        rev_ret = TRUE;
     case T_LT:
         rel = REL_LT;
         break;
     case T_GT:
-        rev_ret = 1;
+        rev_ret = TRUE;
     case T_LE:
         rel = REL_LE;
         break;
@@ -585,7 +597,8 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
         rel = REL_EQ;
         break;
     }
-    ret = CheckMeaninglessCompare( rel, op1_size, result_size, val, &low, &high );
+    isBitField = ( typ_op1->decl_type == TYPE_FIELD || typ_op1->decl_type == TYPE_UFIELD );
+    ret = CheckMeaninglessCompare( rel, op1_size, result_size, isBitField, val, &low, &high );
 
     if( ret != CMP_VOID ) {
         if( rev_ret ) {
@@ -596,7 +609,7 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
             }
         }
     } else {
-        if( rel == REL_LE && !rev_ret && !NumSign( op1_size ) && val == 0 ) {
+        if( rel == REL_LE && !rev_ret && !NumSign( op1_size ) && U64Test( &val ) == 0 ) {
             // special case for unsigned <= 0
             ret = CMP_COMPLEX;
         }
@@ -762,9 +775,15 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
     if( !CompFlags.pre_processing ) {            /* 07-feb-89 */
         cmp_cc = CMP_VOID;
         if( op2->op.opr == OPR_PUSHINT ) {
-            cmp_cc = IsMeaninglessCompare( op2->op.long_value, op1_type, op2_type, opr );
+            if( op2_type != TYPE_LONG64 && op2_type != TYPE_ULONG64 ) {
+                I32ToI64( op2->op.long_value, &op2->op.long64_value );
+            }
+            cmp_cc = IsMeaninglessCompare( op2->op.long64_value, typ1, typ2, opr );
         } else if( op1->op.opr == OPR_PUSHINT ) {
-            cmp_cc = IsMeaninglessCompare( op1->op.long_value, op2_type, op1_type, CommRelOp( opr ) );
+            if( op1_type != TYPE_LONG64 && op1_type != TYPE_ULONG64 ) {
+                I32ToI64( op1->op.long_value, &op1->op.long64_value );
+            }
+            cmp_cc = IsMeaninglessCompare( op1->op.long64_value, typ2, typ1, CommRelOp( opr ) );
         }
         if( cmp_cc != CMP_VOID ) {
             if( cmp_cc == CMP_COMPLEX ) {
@@ -776,18 +795,18 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
             }
         }
     }
-    if( op1_type == TYPE_VOID  ||  op2_type == TYPE_VOID ) {
+    if( op1_type == TYPE_VOID || op2_type == TYPE_VOID ) {
         ;           /* do nothing, since error has already been given */
-    } else if( op1_type == TYPE_POINTER  &&  op2_type == TYPE_POINTER ) {
+    } else if( op1_type == TYPE_POINTER && op2_type == TYPE_POINTER ) {
          CompatiblePtrType( typ1, typ2 );
          if( TypeSize( typ2 ) > TypeSize( typ1 ) ) {
              /* Make sure near pointer is converted to far if necessary */
              cmp_type = typ2;
          }
-    } else if( (op1_type == TYPE_POINTER  && IsInt( op2_type )) ||
-               (op2_type == TYPE_POINTER  && IsInt( op1_type )) ) {
+    } else if( (op1_type == TYPE_POINTER && IsInt( op2_type )) ||
+               (op2_type == TYPE_POINTER && IsInt( op1_type )) ) {
         /* ok to compare pointer with constant 0 */
-        if( opr != T_EQ  &&  opr != T_NE ) {
+        if( opr != T_EQ && opr != T_NE ) {
             CWarn1( WARN_POINTER_TYPE_MISMATCH,
                     ERR_POINTER_TYPE_MISMATCH );
         } else if( !( IsZero( op1 ) || IsZero( op2 ) ) ) {

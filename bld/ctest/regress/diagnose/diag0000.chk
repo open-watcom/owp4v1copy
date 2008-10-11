@@ -25,18 +25,45 @@ source\diag0003.c(34): Warning! W139: Divisor for modulo or division operation i
 source\diag0003.c(35): Warning! W139: Divisor for modulo or division operation is zero
 source\diag0003.c(36): Warning! W139: Divisor for modulo or division operation is zero
 source\diag0003.c(37): Warning! W139: Divisor for modulo or division operation is zero
-source\diag0004.c(16): Warning! W124: Comparison result always 0
-source\diag0004.c(18): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(20): Warning! W124: Comparison result always 1
-source\diag0004.c(29): Warning! W124: Comparison result always 0
-source\diag0004.c(31): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(33): Warning! W124: Comparison result always 1
-source\diag0004.c(42): Warning! W124: Comparison result always 0
-source\diag0004.c(44): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(46): Warning! W124: Comparison result always 1
-source\diag0004.c(55): Warning! W124: Comparison result always 0
-source\diag0004.c(57): Warning! W136: Comparison equivalent to 'unsigned == 0'
-source\diag0004.c(59): Warning! W124: Comparison result always 1
+source\diag0004.c(24): Warning! W124: Comparison result always 0
+source\diag0004.c(26): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(28): Warning! W124: Comparison result always 1
+source\diag0004.c(37): Warning! W124: Comparison result always 0
+source\diag0004.c(39): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(41): Warning! W124: Comparison result always 1
+source\diag0004.c(50): Warning! W124: Comparison result always 0
+source\diag0004.c(52): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(54): Warning! W124: Comparison result always 1
+source\diag0004.c(63): Warning! W124: Comparison result always 0
+source\diag0004.c(65): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(67): Warning! W124: Comparison result always 1
+source\diag0004.c(76): Warning! W124: Comparison result always 0
+source\diag0004.c(78): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(80): Warning! W124: Comparison result always 1
+source\diag0004.c(91): Warning! W124: Comparison result always 0
+source\diag0004.c(93): Warning! W124: Comparison result always 0
+source\diag0004.c(95): Warning! W124: Comparison result always 1
+source\diag0004.c(97): Warning! W124: Comparison result always 1
+source\diag0004.c(100): Warning! W124: Comparison result always 0
+source\diag0004.c(102): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(104): Warning! W124: Comparison result always 1
+source\diag0004.c(106): Warning! W124: Comparison result always 0
+source\diag0004.c(115): Warning! W124: Comparison result always 0
+source\diag0004.c(117): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(119): Warning! W124: Comparison result always 1
+source\diag0004.c(121): Warning! W124: Comparison result always 0
+source\diag0004.c(130): Warning! W124: Comparison result always 0
+source\diag0004.c(132): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(134): Warning! W124: Comparison result always 1
+source\diag0004.c(136): Warning! W124: Comparison result always 0
+source\diag0004.c(145): Warning! W124: Comparison result always 0
+source\diag0004.c(147): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(149): Warning! W124: Comparison result always 1
+source\diag0004.c(151): Warning! W124: Comparison result always 0
+source\diag0004.c(160): Warning! W124: Comparison result always 0
+source\diag0004.c(162): Warning! W136: Comparison equivalent to 'unsigned == 0'
+source\diag0004.c(164): Warning! W124: Comparison result always 1
+source\diag0004.c(166): Warning! W124: Comparison result always 0
 source\diag0005.c(7): Warning! W137: Extern function 'fn2' redeclared as static
 source\diag0005.c(7): Note! I2002: 'fn2' defined in: source\diag0005.c(6)
 source\diag0005.c(10): Warning! W137: Extern function 'fn3' redeclared as static
@@ -122,6 +149,9 @@ source\diag0009.c(23): Warning! W106: Constant out of range - truncated
 source\diag0009.c(23): Note! I2003: source conversion type is 'long '
 source\diag0009.c(23): Note! I2004: target conversion type is 'field '
 source\diag0009.c(30): Warning! W124: Comparison result always 1
+source\diag0009.c(32): Warning! W124: Comparison result always 1
+source\diag0009.c(34): Warning! W124: Comparison result always 1
+source\diag0009.c(36): Warning! W124: Comparison result always 1
 source\diag0010.c(6): Warning! E1069: String literal not terminated before end of line
 source\diag0010.c(9): Error! E1069: String literal not terminated before end of line
 source\diag0010.c(11): Error! E1054: Expression must be constant
@@ -177,6 +207,18 @@ source\diag0016.c(40): Error! E1129: Type does not agree with previous definitio
 source\diag0016.c(40): Note! I2002: 'ux7' defined in: source\diag0016.c(30)
 source\diag0016.c(41): Error! E1129: Type does not agree with previous definition of 'ux8'
 source\diag0016.c(41): Note! I2002: 'ux8' defined in: source\diag0016.c(31)
+source\diag0016.c(46): Error! E1129: Type does not agree with previous definition of 'c1'
+source\diag0016.c(46): Note! I2002: 'c1' defined in: source\diag0016.c(43)
+source\diag0016.c(46): Error! E1129: Type does not agree with previous definition of 'c1'
+source\diag0016.c(46): Note! I2002: 'c1' defined in: source\diag0016.c(43)
+source\diag0016.c(51): Error! E1129: Type does not agree with previous definition of 'a1'
+source\diag0016.c(51): Note! I2002: 'a1' defined in: source\diag0016.c(48)
+source\diag0016.c(52): Error! E1129: Type does not agree with previous definition of 'a2'
+source\diag0016.c(52): Note! I2002: 'a2' defined in: source\diag0016.c(49)
+source\diag0016.c(57): Error! E1129: Type does not agree with previous definition of 'a3'
+source\diag0016.c(57): Note! I2002: 'a3' defined in: source\diag0016.c(54)
+source\diag0016.c(58): Error! E1129: Type does not agree with previous definition of 'a4'
+source\diag0016.c(58): Note! I2002: 'a4' defined in: source\diag0016.c(55)
 source\diag0017.c(10): Error! E1034: Symbol 'TREE' already defined
 source\diag0017.c(10): Note! I2002: 'TREE' defined in: source\diag0017.c(6)
 source\diag0017.c(12): Error! E1034: Symbol 'TWO' already defined

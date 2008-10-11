@@ -10582,8 +10582,8 @@ T const & tref = sv;
 Either the constructor or the conversion function could be used; consequently,
 the conversion is ambiguous.
 :MSGSYM. INF_UNSIGNED_TYPE_RANGE
-:MSGTXT. range of possible values for type '%T' is %u to %u
-:MSGJTXT. '%T'型に対して可能な値の範囲は%uから%uまでです
+:MSGTXT. range of possible values for type '%T' is %s to %s
+:MSGJTXT. '%T'型に対して可能な値の範囲は%sから%sまでです
 :INFO.
 This informational message indicates the range of values possible for the
 indicated unsigned type.
@@ -10596,8 +10596,8 @@ Following the warning, this informational message indicates the possible range
 of values for the unsigned type involved.
 
 :MSGSYM. INF_SIGNED_TYPE_RANGE
-:MSGTXT. range of possible values for type '%T' is %d to %d
-:MSGJTXT. '%T'型に対して可能な値の範囲は%dから%dまでです
+:MSGTXT. range of possible values for type '%T' is %s to %s
+:MSGJTXT. '%T'型に対して可能な値の範囲は%sから%sまでです
 :INFO.
 This informational message indicates the range of values possible for the
 indicated signed type.
@@ -10610,8 +10610,8 @@ Following the warning, this informational message indicates the possible range
 of values for the signed type involved.
 
 :MSGSYM. INF_SIGNED_CONST_EXPR_VALUE
-:MSGTXT. constant expression in comparison has value %d
-:MSGJTXT. 比較の中の定数式は，値%dを持ちます
+:MSGTXT. constant expression in comparison has value %s
+:MSGJTXT. 比較の中の定数式は，値%sを持ちます
 :INFO.
 This informational message indicates the value of the constant expression
 involved in a comparison which caused a warning to be issued.
@@ -10624,8 +10624,8 @@ Following the warning, this informational message indicates the constant
 value (0 in this case) involved in the comparison.
 
 :MSGSYM. INF_UNSIGNED_CONST_EXPR_VALUE
-:MSGTXT. constant expression in comparison has value %u
-:MSGJTXT. 比較の中の定数式は，値%uを持ちます
+:MSGTXT. constant expression in comparison has value %s
+:MSGJTXT. 比較の中の定数式は，値%sを持ちます
 :INFO.
 This informational message indicates the value of the constant expression
 involved in a comparison which caused a warning to be issued.

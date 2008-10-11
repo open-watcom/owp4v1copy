@@ -32,9 +32,15 @@
 #ifndef __ANALMEAN_H__
 #define __ANALMEAN_H__
 
+#include "watcom.h"
+#include "bool.h"
+#include "i64.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define CMPMAXBITSIZE   64
 
 #define SIGN_BIT        (0x80)
 #define NumSign( a )    ((a) & SIGN_BIT)
@@ -42,12 +48,6 @@ extern "C" {
 
 #ifdef fe_cfg
 #    include "fe_cfg.h"
-#endif
-
-#ifdef FE_I64_MEANINGLESS
-#define LARGEST_TYPE    long long
-#else
-#define LARGEST_TYPE    long
 #endif
 
 typedef enum{
@@ -68,9 +68,10 @@ cmp_result CheckMeaninglessCompare(
     rel_op rel,
     int op1_size,
     int result_size,
-    LARGEST_TYPE val,
-    LARGEST_TYPE *low,
-    LARGEST_TYPE *high
+    bool isBitField,
+    signed_64 val,
+    signed_64 *low,
+    signed_64 *high
 );
 
 #ifdef __cplusplus

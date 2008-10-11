@@ -2540,119 +2540,131 @@ File: source\diag0245.c
   target conversion type is 'int (x401::S::* )( int, int, ... )'
 File: source\diag0246.c
 (17,1): Warning! W914: 'main' must return 'int'
-(32,11): Warning! W355: pointer expression is never < 0
-(33,19): Warning! W355: pointer expression is never < 0
-(34,11): Warning! W354: pointer expression is always >= 0
-(35,11): Warning! W354: pointer expression is always >= 0
-(38,11): Warning! W689: conditional expression is always true (non-zero)
+(34,11): Warning! W355: pointer expression is never < 0
+(35,19): Warning! W355: pointer expression is never < 0
+(36,11): Warning! W354: pointer expression is always >= 0
+(37,11): Warning! W354: pointer expression is always >= 0
+(40,11): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'char' is 0 to 255
   constant expression in comparison has value -127
-(40,12): Warning! W689: conditional expression is always true (non-zero)
+(42,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'signed char' is -128 to 127
   constant expression in comparison has value 127
-(41,12): Warning! W689: conditional expression is always true (non-zero)
+(43,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'signed char' is -128 to 127
   constant expression in comparison has value -128
-(43,12): Warning! W689: conditional expression is always true (non-zero)
+(45,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 4095
-(44,12): Warning! W689: conditional expression is always true (non-zero)
-  range of possible values for type 'unsigned char' is 0 to 255
-  constant expression in comparison has value 0
-(45,14): Warning! W689: conditional expression is always true (non-zero)
-  range of possible values for type 'unsigned char' is 0 to 255
-  constant expression in comparison has value 255
 (46,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned char' is 0 to 255
+  constant expression in comparison has value 0
+(47,14): Warning! W689: conditional expression is always true (non-zero)
+  range of possible values for type 'unsigned char' is 0 to 255
+  constant expression in comparison has value 255
+(48,12): Warning! W689: conditional expression is always true (non-zero)
+  range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value -1
-(48,14): Warning! W689: conditional expression is always true (non-zero)
+(50,14): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 255
-(49,11): Warning! W689: conditional expression is always true (non-zero)
+(51,11): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 0
-(50,12): Warning! W689: conditional expression is always true (non-zero)
+(52,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 255
-(51,12): Warning! W689: conditional expression is always true (non-zero)
+(53,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 0
-(58,12): Warning! W690: conditional expression is always false (zero)
+(60,12): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 255
-(59,12): Warning! W690: conditional expression is always false (zero)
+(61,12): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 0
-(60,14): Warning! W690: conditional expression is always false (zero)
+(62,14): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 255
-(61,11): Warning! W690: conditional expression is always false (zero)
+(63,11): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 0
-(63,11): Warning! W689: conditional expression is always true (non-zero)
+(65,11): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned' is 0 to 4294967295
   constant expression in comparison has value 0
-(64,11): Warning! W690: conditional expression is always false (zero)
+(66,11): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned' is 0 to 4294967295
-  constant expression in comparison has value 0
-(65,12): Warning! W689: conditional expression is always true (non-zero)
-  range of possible values for type 'unsigned char' is 0 to 255
-  constant expression in comparison has value 0
-(66,12): Warning! W690: conditional expression is always false (zero)
-  range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 0
 (67,12): Warning! W689: conditional expression is always true (non-zero)
-  range of possible values for type 'unsigned short' is 0 to 65535
+  range of possible values for type 'unsigned char' is 0 to 255
   constant expression in comparison has value 0
 (68,12): Warning! W690: conditional expression is always false (zero)
+  range of possible values for type 'unsigned char' is 0 to 255
+  constant expression in comparison has value 0
+(69,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned short' is 0 to 65535
   constant expression in comparison has value 0
-(69,12): Warning! W690: conditional expression is always false (zero)
+(70,12): Warning! W690: conditional expression is always false (zero)
+  range of possible values for type 'unsigned short' is 0 to 65535
+  constant expression in comparison has value 0
+(71,12): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'short' is -32768 to 32767
   constant expression in comparison has value 32767
-(70,12): Warning! W690: conditional expression is always false (zero)
+(72,12): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'short' is -32768 to 32767
   constant expression in comparison has value -32768
-(71,12): Warning! W689: conditional expression is always true (non-zero)
+(73,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'unsigned long' is 0 to 4294967295
   constant expression in comparison has value 0
-(72,12): Warning! W690: conditional expression is always false (zero)
+(74,12): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned long' is 0 to 4294967295
   constant expression in comparison has value 0
-(74,12): Warning! W689: conditional expression is always true (non-zero)
+(76,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'long' is -2147483648 to 2147483647
   constant expression in comparison has value -2147483648
-(75,12): Warning! W689: conditional expression is always true (non-zero)
+(77,12): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'long' is -2147483648 to 2147483647
   constant expression in comparison has value 2147483647
-(77,11): Warning! W689: conditional expression is always true (non-zero)
+(79,11): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'long' is -2147483648 to 2147483647
   constant expression in comparison has value 2147483647
-(78,11): Warning! W690: conditional expression is always false (zero)
+(80,11): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'long' is -2147483648 to 2147483647
   constant expression in comparison has value -2147483648
-(80,11): Warning! W354: pointer expression is always >= 0
-(81,11): Warning! W354: pointer expression is always >= 0
-(82,11): Warning! W355: pointer expression is never < 0
-(83,11): Warning! W355: pointer expression is never < 0
-(85,11): Warning! W690: conditional expression is always false (zero)
+(82,13): Warning! W689: conditional expression is always true (non-zero)
+  range of possible values for type '__int64' is -9223372036854775808 to 9223372036854775807
+  constant expression in comparison has value -9223372036854775808
+(83,13): Warning! W689: conditional expression is always true (non-zero)
+  range of possible values for type '__int64' is -9223372036854775808 to 9223372036854775807
+  constant expression in comparison has value 9223372036854775807
+(85,12): Warning! W689: conditional expression is always true (non-zero)
+  range of possible values for type '__int64' is -9223372036854775808 to 9223372036854775807
+  constant expression in comparison has value 9223372036854775807
+(86,12): Warning! W690: conditional expression is always false (zero)
+  range of possible values for type '__int64' is -9223372036854775808 to 9223372036854775807
+  constant expression in comparison has value -9223372036854775808
+(88,11): Warning! W354: pointer expression is always >= 0
+(89,11): Warning! W354: pointer expression is always >= 0
+(90,11): Warning! W355: pointer expression is never < 0
+(91,11): Warning! W355: pointer expression is never < 0
+(93,11): Warning! W690: conditional expression is always false (zero)
   range of possible values for type '<enum>' is 0 to 4294967295
   constant expression in comparison has value 0
-(88,12): Warning! W354: pointer expression is always >= 0
-(89,11): Warning! W354: pointer expression is always >= 0
-(90,12): Warning! W355: pointer expression is never < 0
-(91,11): Warning! W355: pointer expression is never < 0
-(93,19): Warning! W354: pointer expression is always >= 0
-(94,11): Warning! W354: pointer expression is always >= 0
-(95,19): Warning! W355: pointer expression is never < 0
-(96,11): Warning! W355: pointer expression is never < 0
-(98,24): Warning! W690: conditional expression is always false (zero)
+(96,12): Warning! W354: pointer expression is always >= 0
+(97,11): Warning! W354: pointer expression is always >= 0
+(98,12): Warning! W355: pointer expression is never < 0
+(99,11): Warning! W355: pointer expression is never < 0
+(101,19): Warning! W354: pointer expression is always >= 0
+(102,11): Warning! W354: pointer expression is always >= 0
+(103,19): Warning! W355: pointer expression is never < 0
+(104,11): Warning! W355: pointer expression is never < 0
+(106,24): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned' is 0 to 4294967295
   constant expression in comparison has value 0
-(102,17): Warning! W689: conditional expression is always true (non-zero)
+(111,17): Warning! W689: conditional expression is always true (non-zero)
   range of possible values for type 'char' is 0 to 255
   constant expression in comparison has value -3
-(103,18): Warning! W354: pointer expression is always >= 0
+(112,18): Warning! W354: pointer expression is always >= 0
 File: source\diag0247.c
 (27,1): Error! E913: 'test_one' does not have a return type specified
 (31,7): Error! E227: overloaded function is ambiguous for arguments used in call

@@ -48,53 +48,50 @@ static char const Meaningless[REL_SIZE][CASE_SIZE] = {
     { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
 };
 
-#ifdef FE_I64_MEANINGLESS
-    #define LOW_VAL         (0x8000000000000000LL)
-    #define HIGH_VAL        (0xffffffffffffffffull)
-#else
-    #define LOW_VAL         (0x80000000)
-    #define HIGH_VAL        (0xfffffffful)
-#endif
-
-#define MAXSIZE             (sizeof( LARGEST_TYPE ) * 8)
-
 
 cmp_result CheckMeaninglessCompare( rel_op rel, int op1_size, int result_size,
-                       LARGEST_TYPE val, LARGEST_TYPE *low, LARGEST_TYPE *high )
+               bool isBitField, signed_64 val, signed_64 *low, signed_64 *high )
 /******************************************************************************/
 // we're checking 'op1 cgop val' where val is a constant expression
 {
     enum case_range     range;
     cmp_result          ret;
+    signed_64           LOW_VAL = I64Val( 0x80000000, 0 );
+    signed_64           HIGH_VAL = I64Val( 0xFFFFFFFF, 0xFFFFFFFF );
+    signed_64           tmp;
+    int                 shift;
 
     if( NumSign( op1_size ) && NumSign( op1_size ) != NumSign( result_size ) ) {
-        if( NumBits( op1_size ) < NumBits( result_size ) ) {
+        if( NumBits( op1_size) == NumBits( result_size ) ) {
+            // signed promoted to unsigned use unsigned range
+            op1_size = NumBits( op1_size );
+        } else if( !isBitField && NumBits( op1_size ) < NumBits( result_size ) ) {
             // signed promoted to bigger unsigned num gets signed extended
             // could have two ranges unsigned
             return( CMP_VOID ); // early return //TODO: could check == & !=
-        } else if( NumBits( op1_size) == NumBits( result_size ) ) {
-            // signed promoted to unsigned use unsigned range
-            op1_size = NumBits( op1_size );
         }
     }
-    if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ) {
-        val &= 0xffff; // num is truncated when compared
+    shift = CMPMAXBITSIZE - NumBits( result_size );
+    if( NumSign( result_size ) == 0 && shift > 0 ) {
+        U64ShiftR( &HIGH_VAL, shift, &tmp );
+        U64And( &val, &tmp, &val );
     }
+    shift = CMPMAXBITSIZE - NumBits( op1_size );
     if( NumSign( op1_size ) ) {
-        *low = (LARGEST_TYPE)(LOW_VAL) >> MAXSIZE-NumBits( op1_size );
-        *high = ~(*low);
+        I64ShiftR( &LOW_VAL, shift, low );
+        U64Not( low, high );
     } else {
-        *low = 0;
-        *high = HIGH_VAL >> MAXSIZE-NumBits( op1_size );
+        U64Set( low, 0, 0 );
+        U64ShiftR( &HIGH_VAL, shift, high );
     }
-    if( val == *low ) {
+    if( I64Cmp( &val, low ) == 0 ) {
         range = CASE_LOW_EQ;
-    } else if( val == *high ) {
+    } else if( I64Cmp( &val, high ) == 0 ) {
         range = CASE_HIGH_EQ;
-    } else if( NumBits( op1_size ) < MAXSIZE ) { // can't be outside range and
-        if( val < *low ) {                       // don't have to do unsigned compare
+    } else if( shift > 0 ) {                // can't be outside range and
+        if( I64Cmp( &val, low ) < 0 ) {     // don't have to do unsigned compare
             range = CASE_LOW;
-        } else if( val > *high ) {
+        } else if( I64Cmp( &val, high ) > 0 ) {
             range = CASE_HIGH;
         } else {
             range = CASE_SIZE;

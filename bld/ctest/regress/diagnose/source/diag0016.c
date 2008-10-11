@@ -40,6 +40,23 @@ extern unsigned char ux6[5];
 extern unsigned char ux7[];
 extern unsigned char ux8[5];
 
+extern char c1[];
+extern char c1[5];
+extern char c1[];
+extern char c1[6];
+
+extern int a1[5];
+extern int a2[6];
+
+int a1[6];
+int a2[5];
+
+int a3[6];
+int a4[5];
+
+extern int a3[5];
+extern int a4[6];
+
 void main( void )
 {
 }
