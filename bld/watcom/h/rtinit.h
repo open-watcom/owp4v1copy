@@ -34,7 +34,7 @@
 
 #include "langenvd.h"
 #if defined( __PPC__ )
-     #define   __TGT_SYS    __TGT_SYS_AXP_PPC
+    #define   __TGT_SYS    __TGT_SYS_AXP_PPC
     typedef unsigned        __type_rtp;
     typedef unsigned        __type_pad;
     typedef void(           *__type_rtn ) ( void );
@@ -49,14 +49,14 @@
     typedef unsigned        __type_pad;
     typedef void(           *__type_rtn ) ( void );
 #else
-    #define   __TGT_SYS   __TGT_SYS_X86
+    #define   __TGT_SYS     __TGT_SYS_X86
     typedef unsigned char   __type_rtp;
     typedef unsigned short  __type_pad;
   #if defined( __386__ )
     typedef void __near(    *__type_rtn ) ( void );
   #else
     typedef void(           *__type_rtn ) ( void );
-   #endif
+  #endif
 #endif
 #include "langenv.h"
 
@@ -66,7 +66,7 @@
 
 // initialization progresses from highest priority to lowest
 // finalization progresses from lowest to highest
-#pragma pack( 1 )
+#include "pushpck1.h"
 struct rt_init // structure placed in XI/YI segment
 {
     __type_rtp  rtn_type; // - near=0/far=1 routine indication
@@ -79,7 +79,7 @@ struct rt_init // structure placed in XI/YI segment
                           //   or when risc cpu
 #endif
 };
-#pragma pack()
+#include "poppck.h"
 
 #if defined( _M_I86 )
   #if defined( __LARGE_CODE__ ) /* segmented large code models */
@@ -111,23 +111,8 @@ struct rt_init // structure placed in XI/YI segment
 #define AXI( routine, priority ) static XI( ANON( __LINE__ ), routine, priority )
 #define AYI( routine, priority ) static YI( ANON( __LINE__ ), routine, priority )
 
-/*
-    ..._PRIORITY_... constant must correspond with definition in xinit.inc file
-*/
-enum {
-    INIT_PRIORITY_THREAD    =  1, // priority for thread data init
-    INIT_PRIORITY_FPU       =  2, // priority for FPU/EMU init
-    INIT_PRIORITY_RUNTIME   = 10, // priority for run/time initialization
-    INIT_PRIORITY_EXIT      = 16,
-    INIT_PRIORITY_IOSTREAM  = 20, // priority for IOSTREAM
-    INIT_PRIORITY_LIBRARY   = 32, // default library-initialization priority
-    INIT_PRIORITY_PROGRAM   = 64, // default program-initialization priority
-    FINI_PRIORITY_DTOR      = 40, // priority for module DTOR
-    DTOR_PRIORITY           = 40, // priority for module DTOR
-    FINI_PRIORITY_EXIT      = 16  // when exit() is called, functions between
-                                  // 255 and this are called, the rest of the
-                                  // fini routines are called from __exit().
-};
+/* ..._PRIORITY_... constants definition */
+#include "rtprior.h"
 
 /* have to turn off, or we get unref'd warnings for AXI & AYI stuff */
 #pragma off( unreferenced )

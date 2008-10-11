@@ -51,7 +51,7 @@
 #include "ialias.h"
 
 // from \watcom\h
-#include "rtinit.h"
+#include "rtprior.h"
 
 
 typedef struct {                // PRAG_EXT_REF -- extref's pragma'd
@@ -587,7 +587,6 @@ static int parseExtRef(     // PARSE SYMBOL NAME
     int err;                // TRUE ==> syntax error
 
     if( PragIdCurToken() ) {
-        char* name = NameCreateLen( Buffer, TokenLen );
         SEARCH_RESULT* result;
         result = ScopeFindNaked( GetCurrScope()
                                , NameCreateLen( Buffer, TokenLen ) );
