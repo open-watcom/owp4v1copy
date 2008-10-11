@@ -74,7 +74,7 @@ static void ensureBufferReflectsCurToken( void )
                 break;
             case TYP_ULONG64:
             case TYP_SLONG64:
-                sti64cpy( Buffer, Constant64.u._64[0] );
+                sti64cpy( Buffer, Constant64 );
                 break;
             }
         }

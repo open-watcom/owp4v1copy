@@ -88,7 +88,7 @@ void VbufConcInteger(           // CONCATENATE INTEGER # TO vbuf->buf
 ;
 void VbufConcI64(               // CONCATENATE I64 # TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
-    __int64 value )             // - value to be concatenated
+    signed_64 value )           // - value to be concatenated
 ;
 void VbufConcStr(               // CONCATENATE STRING TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure

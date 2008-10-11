@@ -172,7 +172,7 @@ char *sticpy(                   // CONCATENATE INTEGER NUMBER
 ;
 char *sti64cpy(                 // CONCATENATE I64 NUMBER
     char *tgt,                  // - target location
-    long long value )           // - value to be concatenated
+    signed_64 value )           // - value to be concatenated
 ;
 char *stpcpy(                   // CONCATENATE STRING AS STRING
     char *string,               // - target location

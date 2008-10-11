@@ -183,7 +183,7 @@ void VbufConcInteger(           // CONCATENATE INTEGER # TO vbuf->buf
 
 void VbufConcI64(               // CONCATENATE I64 # TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
-    long long value )           // - value to be concatenated
+    signed_64 value )           // - value to be concatenated
 {
     char    buffer[25];         // - temp buffer
 
