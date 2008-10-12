@@ -3,9 +3,9 @@ $(host_OS)_3d.dll: $(host_OS)_3d.mk1
 
 $(host_OS)_3d.mk1: $(host_OS)_3d.tgt
 !ifdef __UNIX__
-        bviper -r $< -c ../../../viper/viper/ideunix.cfg
+        ide2make -r $< -c ../../../viper/viper/ideunix.cfg
 !else
-        bviper -r $< -c ..\..\..\viper\viper\ide.cfg
+        ide2make -r $< -c ..\..\..\viper\viper\ide.cfg
 !endif
 
 clean: .SYMBOLIC

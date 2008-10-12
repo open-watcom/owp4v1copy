@@ -155,7 +155,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/browser/lang.ctl ]
 [ INCLUDE <DEVDIR>/idebatch/lang.ctl ]
 [ INCLUDE <DEVDIR>/viper/lang.ctl ]
-[ INCLUDE <DEVDIR>/viper/bviper/lang.ctl ]
 [ INCLUDE <DEVDIR>/mstools/lang.ctl ]
 [ INCLUDE <DEVDIR>/viprdemo/lang.ctl ]
 #[ INCLUDE <DEVDIR>/online/lang.ctl ]

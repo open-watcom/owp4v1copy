@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  ide2make utility to convert ide project to makefiles
 *
 ****************************************************************************/
 
@@ -67,9 +66,9 @@ WCLASS VpeMain : public WObject
 };
 
 static char* usage[] = {
-    "Usage: ideb [*options] [tgtfile]*",
+    "Usage: ide2make [*options] [tgtfile]*",
     "",
-    "  IDEB loads an IDE project file (-p switch) and, using the associated",
+    "  ide2make loads an IDE project file (-p switch) and, using the associated",
     "  .tgt files, generates make files that can be invoked with WMAKE.",
     "  If the .wpj file does not exists, a default project is used.  If any",
     "  tgtfile(s) are specified, they are used as the targets in creating the",

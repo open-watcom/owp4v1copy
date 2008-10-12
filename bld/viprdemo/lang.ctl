@@ -20,7 +20,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     cdsay <PROJDIR>
 
     cdsay src/os2
-    bviper -r drawos2.tgt -c <IDECFGFILE>
+    ide2make -r drawos2.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f drawos2.mk1  <DEVDIR>/viprdemo/src/os2/box.obj
     wmake -i -h -f drawos2.mk1  <DEVDIR>/viprdemo/src/os2/drawroom.obj
@@ -28,7 +28,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     # rm -f wpp386.exe
 
     cdsay ../win
-    bviper -r draw16.tgt -c <IDECFGFILE>
+    ide2make -r draw16.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rppi8610.exe wpp.exe
     wmake -i -h -f draw16.mk1   <DEVDIR>/viprdemo/src/win/box.obj
     wmake -i -h -f draw16.mk1   <DEVDIR>/viprdemo/src/win/drawroom.obj
@@ -36,7 +36,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     # rm -f wpp.exe
 
     cdsay ../win386
-    bviper -r draw.tgt -c <IDECFGFILE>
+    ide2make -r draw.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw.mk1     <DEVDIR>/viprdemo/src/win386/box.obj
     wmake -i -h -f draw.mk1     <DEVDIR>/viprdemo/src/win386/drawroom.obj
@@ -44,7 +44,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     # rm -f wpp386.exe
 
     cdsay ../win32
-    bviper -r draw32.tgt -c <IDECFGFILE>
+    ide2make -r draw32.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/box.obj
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/drawroom.obj

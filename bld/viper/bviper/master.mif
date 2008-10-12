@@ -1,7 +1,7 @@
-proj_name = bviper
+proj_name = ide2make
 
-!ifndef bviper_autodepends
-bviper_autodepends = .AUTODEPEND
+!ifndef ide2make_autodepends
+ide2make_autodepends = .AUTODEPEND
 !endif
 
 !include cproj.mif

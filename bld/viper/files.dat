@@ -5,6 +5,12 @@ usr="ide.exe"   dir="binp"      cond="os2host"          where="c f77 jc jf77"
 usr="ide.exe"   dir="binnt"     cond="wnthost"          where="c f77 jc jf77 ac"
 usr="ide.exe"   dir="axpnt"     cond="alphahost"        where="ac"
 
+usr="ide2make.exe"   dir="binw"      cond="doshost winhost"  where="c f77 jc jf77"
+usr="ide2make.exe"   dir="binp"      cond="os2host"          where="c f77 jc jf77"
+usr="ide2make.exe"   dir="binnt"     cond="wnthost"          where="c f77 jc jf77 ac"
+usr="ide2make.exe"   dir="axpnt"     cond="alphahost"        where="ac"
+usr="ide2make"       dir="binl"      cond="lnxhost"          where="c f77 jc jf77"
+
 usr="idex.cfg"  dir="binw"  type="s"    cond="winhost "     where="c f77 jc jf77"
 usr="idex.cfg"  dir="binp"  type="s"    cond="os2host"      where="c f77 jc jf77"
 usr="idex.cfg"  dir="binnt" type="s"    cond="wnthost"      where="c f77 jc jf77 ac"
