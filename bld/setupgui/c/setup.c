@@ -109,6 +109,15 @@ static bool SetupOperations()
         }
     }
 
+    // Generate batch file
+#if defined( __NT__ ) || defined( __WINDOWS__ )
+    if( GetVariableIntVal( "GenerateBatchFile" ) == 1 ) {
+        if( !GenerateBatchFile( uninstall ) ) {
+            return( FALSE );
+        }
+    }
+#endif
+
     // Create program group (folder)
     if( GetVariableIntVal( "DoCreateIcons" ) == 1 ||
         GetVariableIntVal( "DoCreateHelpIcons" ) == 1 ) {

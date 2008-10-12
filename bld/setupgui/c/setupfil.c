@@ -1403,3 +1403,45 @@ extern bool ModifyRegAssoc( bool uninstall )
 
 #endif
 
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+
+extern bool GenerateBatchFile( bool uninstall )
+/*********************************************/
+{
+    size_t  num_env;
+    char    batch_file[_MAX_PATH];
+    FILE    *fp;
+    int     i;
+    char    new_var[MAXENVVAR + 1];
+    char    new_val[MAXENVVAR + 1];
+    bool    append;
+
+    num_env = SimNumEnvironment();
+    strcpy( batch_file, GetVariableStrVal( "BatchFileName" ) );
+    ReplaceVarsInplace( batch_file, FALSE );
+    if( uninstall ) {
+        remove( batch_file );
+    } else {
+        fp = fopen( batch_file, "wt" );
+        if( fp != NULL ) {
+            fprintf( fp, "@echo off\n" );
+            fprintf( fp, "echo %s\n", GetVariableStrVal( "BatchFileCaption" ) );
+            for( i = 0; i < num_env; i++ ) {
+                if( !SimCheckEnvironmentCondition( i ) ) {
+                    continue;
+                }
+                append = SimGetEnvironmentStrings( i, new_var, new_val );
+                if( append ) {
+                    fprintf( fp, "set %s=%s;%%%s%%\n", new_var, new_val, new_var );
+                } else {
+                    fprintf( fp, "set %s=%s\n", new_var, new_val );
+                }
+            }
+            fclose( fp );
+        }
+    }
+    return( TRUE );
+}
+
+#endif
+
