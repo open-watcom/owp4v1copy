@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dynamic array functions.
 *
 ****************************************************************************/
 
@@ -39,8 +38,12 @@
 void InitArray( void **array, size_t esize, array_info *info )
 /*************************************************************/
 {
-    if( info->increment == 0 ) info->increment = INCREMENT;
-    if( info->alloc == 0 ) info->alloc = info->increment;
+    if( info->increment == 0 ) {
+        info->increment = INCREMENT;
+    }
+    if( info->alloc == 0 ) {
+        info->alloc = info->increment;
+    }
     *array = GUIMemAlloc( esize * info->alloc );
     info->esize = esize;
     info->array = array;
@@ -67,3 +70,4 @@ bool BumpDownArray( array_info *info )
     }
     return( TRUE );
 }
+

@@ -88,29 +88,29 @@ void CreateRegEntry( char *hive_key, char *app_name, char *key_name,
         if( key_name[0] != '\0' ) {
             if( value[0] == '#' ) {     // dword
                 dword_val = atoi( value + 1 );
-                rc = RegSetValueEx( hkey1, key_name, 0,
-                        REG_DWORD, (LPBYTE) &dword_val, sizeof( long ) );
+                rc = RegSetValueEx( hkey1, key_name, 0, REG_DWORD, (LPBYTE)&dword_val,
+                                    sizeof( long ) );
             } else if( value[0] == '%' ) {      // binary
                 ++value;
                 len = strlen( value );
                 bin_buf = malloc( len / 2 );
                 if( bin_buf != NULL ) {
                     for( i = 0; i < len / 2; ++i ) {
-                        if( tolower( value[ 0 ] ) >= 'a' ) {
-                            bin_buf[ i ] = value[ 0 ] - 'a' + 10;
+                        if( tolower( value[0] ) >= 'a' ) {
+                            bin_buf[i] = value[0] - 'a' + 10;
                         } else {
-                            bin_buf[ i ] = value[ 0 ] - '0';
+                            bin_buf[i] = value[0] - '0';
                         }
-                        bin_buf[ i ] = bin_buf[ i ] * 16;
-                        if( tolower( value[ 1 ] ) >= 'a' ) {
-                            bin_buf[ i ] += value[ 1 ] - 'a' + 10;
+                        bin_buf[i] = bin_buf[i] * 16;
+                        if( tolower( value[1] ) >= 'a' ) {
+                            bin_buf[i] += value[1] - 'a' + 10;
                         } else {
-                            bin_buf[ i ] += value[ 1 ] - '0';
+                            bin_buf[i] += value[1] - '0';
                         }
                         value += 2;
                     }
-                    rc = RegSetValueEx( hkey1, key_name, 0,
-                        REG_BINARY, (LPBYTE) bin_buf, len / 2 );
+                    rc = RegSetValueEx( hkey1, key_name, 0, REG_BINARY, (LPBYTE)bin_buf,
+                                        len / 2 );
                     free( bin_buf );
                 }
             } else {
@@ -121,8 +121,8 @@ void CreateRegEntry( char *hive_key, char *app_name, char *key_name,
                 } else {
                     type = REG_SZ;
                 }
-                rc = RegSetValueEx( hkey1, key_name, 0,
-                        type, value, strlen( value ) + 1 );
+                rc = RegSetValueEx( hkey1, key_name, 0, type, value,
+                                    strlen( value ) + 1 );
             }
         }
     } else {
@@ -133,7 +133,7 @@ void CreateRegEntry( char *hive_key, char *app_name, char *key_name,
 
 bool GetRegString( HKEY hive, char *section, char *value,
                    char *buffer, DWORD buff_size )
-/************************************************/
+/*******************************************************/
 {
     HKEY                hkey;
     LONG                rc;
@@ -146,7 +146,7 @@ bool GetRegString( HKEY hive, char *section, char *value,
         // get the value
         rc = RegQueryValueEx( hkey, value, NULL, &type, (LPBYTE)buffer, &buff_size );
         RegCloseKey( hkey );
-        ret = ( rc == ERROR_SUCCESS );
+        ret = (rc == ERROR_SUCCESS);
     }
     return( ret );
 }
@@ -158,32 +158,32 @@ DWORD ConvertDataToDWORD( BYTE *data, DWORD num_bytes, DWORD type )
     DWORD                       temp;
 
     if( type == REG_DWORD || type == REG_DWORD_LITTLE_ENDIAN || type  == REG_BINARY ) {
-        return (DWORD)(*data);
+        return( (DWORD)(*data) );
     } else if( type == REG_DWORD_BIG_ENDIAN ) {
         temp = 0;
         for( i = 0; i < num_bytes; i++ ) {
-            temp |= ( ( DWORD ) data[ num_bytes- 1 - i ] ) << ( i * 8 );
+            temp |= ((DWORD)data[num_bytes - 1 - i]) << (i * 8);
         }
-        return temp;
+        return( temp );
     }
-    return 0;
+    return( 0 );
 }
 
 BYTE *ConvertDWORDToData( DWORD number, DWORD type )
 /**************************************************/
 {
     int                         i;
-    static BYTE                 buff[ 5 ];
+    static BYTE                 buff[5];
 
     memset( buff, 0, sizeof( buff ) );
     if( type == REG_DWORD || type == REG_DWORD_LITTLE_ENDIAN || type  == REG_BINARY ) {
         memcpy( buff, &number, sizeof( number ) );
     } else if( type == REG_DWORD_BIG_ENDIAN ) {
         for( i = 0; i < sizeof( number ); i++ ) {
-            buff[ i ] = ( ( BYTE * )( &number ) )[ sizeof( number ) - 1 - i ];
+            buff[i] = ((BYTE *)(&number))[sizeof( number ) - 1 - i];
         }
     }
-    return buff;
+    return( buff );
 }
 
 signed int AddToUsageCount( char *path, signed int value )
@@ -193,18 +193,16 @@ signed int AddToUsageCount( char *path, signed int value )
     LONG                        result;
     DWORD                       value_type;
     DWORD                       orig_value;
-    BYTE                        buff[ 5 ];
-    DWORD                       buff_size =                     sizeof( buff );
+    BYTE                        buff[5];
+    DWORD                       buff_size = sizeof( buff );
     signed int                  return_value;
     LONG                        new_value;
 
     result = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\SharedDLLs",
-                           0,
-                           KEY_ALL_ACCESS,
-                           &key_handle );
+                           0, KEY_ALL_ACCESS, &key_handle );
     if( result != ERROR_SUCCESS ) {
-        return -1;
+        return( -1 );
     }
 
     result = RegQueryValueEx( key_handle, path, 0, &value_type, buff, &buff_size );
@@ -216,30 +214,35 @@ signed int AddToUsageCount( char *path, signed int value )
     }
 
     // Don't increment if reinstalling and file already has a nonzero count
-    if( GetVariableIntVal( "ReInstall" ) != 0
-        && orig_value != 0
-        && value > 0 ) {
+    if( GetVariableIntVal( "ReInstall" ) != 0 && orig_value != 0 && value > 0 ) {
         value = 0;
     }
 
-    new_value = (long) orig_value + value;
+    new_value = (long)orig_value + value;
 
     if( new_value > 0 ) {
         memcpy( buff, ConvertDWORDToData( new_value, value_type ), sizeof( new_value ) );
-        result = RegSetValueEx( key_handle, path, 0, value_type, (LPBYTE)&buff, sizeof( new_value ) );
+        result = RegSetValueEx( key_handle, path, 0, value_type, (LPBYTE)&buff,
+                                sizeof( new_value ) );
     } else if( new_value == 0 ) {
         result = RegDeleteValue( key_handle, path );
     }
 
     return_value = new_value;
 
-    if( new_value >= 0 && result != ERROR_SUCCESS ) return_value = -1;
+    if( new_value >= 0 && result != ERROR_SUCCESS ) {
+        return_value = -1;
+    }
 
-    if( RegFlushKey( key_handle ) != ERROR_SUCCESS ) return_value = -1;
+    if( RegFlushKey( key_handle ) != ERROR_SUCCESS ) {
+        return_value = -1;
+    }
 
-    if( RegCloseKey( key_handle ) != ERROR_SUCCESS ) return_value = -1;
+    if( RegCloseKey( key_handle ) != ERROR_SUCCESS ) {
+        return_value = -1;
+    }
 
-    return return_value;
+    return( return_value );
 }
 
 signed int IncrementDLLUsageCount( char *path )
@@ -256,9 +259,10 @@ signed int DecrementDLLUsageCount( char *path )
 
 #endif
 
-#if defined( __WINDOWS__ ) || defined(__NT__)
+#if defined( __WINDOWS__ ) || defined( __NT__ )
 
 bool ZapKey( char *app_name, char *old, char *new, char *file, char *hive, int pos )
+/**********************************************************************************/
 {
     FILE        *io;
     char        buff[MAXVALUE];
@@ -276,14 +280,14 @@ bool ZapKey( char *app_name, char *old, char *new, char *file, char *hive, int p
     while( fgets( buff, sizeof( buff ), io ) ) {
         if( buff[0] == '[' ) {
             if( in_sect ) break;
-            if( strncmp( app_name, buff+1, app_len ) == 0 && buff[app_len+1] == ']' ) {
+            if( strncmp( app_name, buff + 1, app_len ) == 0 && buff[app_len + 1] == ']' ) {
                 in_sect = TRUE;
             }
         } else if( in_sect ) {
             if( strncmp( old, buff, old_len ) == 0 && buff[old_len] == '=' ) {
                 if( num++ == pos ) {
                     memcpy( buff, new, old_len );
-                    fseek( io, -(int)(strlen( buff )+1), SEEK_CUR );
+                    fseek( io, -(int)(strlen( buff ) + 1), SEEK_CUR );
                     fputs( buff, io );
                     fclose( io );
                     return( TRUE );
@@ -299,13 +303,15 @@ bool ZapKey( char *app_name, char *old, char *new, char *file, char *hive, int p
 #define DEVICE_STRING "device"
 #define ALT_DEVICE    "ecived"
 
-void AddDevice( char *app_name, char *value, char *file, char *hive, char *buff, bool add )
+void AddDevice( char *app_name, char *value, char *file, char *hive, char *buff,
+                bool add )
+/******************************************************************************/
 {
     int         i;
-    char        old_name[ _MAX_FNAME ];
-    char        new_name[ _MAX_FNAME ];
-    char        old_ext[ _MAX_EXT ];
-    char        new_ext[ _MAX_EXT ];
+    char        old_name[_MAX_FNAME];
+    char        new_name[_MAX_FNAME];
+    char        old_ext[_MAX_EXT];
+    char        new_ext[_MAX_EXT];
     bool        done = FALSE;
 
     _splitpath( value, NULL, NULL, new_name, new_ext );
@@ -327,6 +333,7 @@ void AddDevice( char *app_name, char *value, char *file, char *hive, char *buff,
 
 void WindowsWriteProfile( char *app_name, char *key_name, char *buf,
                           char *file_name, bool add, char *value, char *tmp_buff )
+/********************************************************************************/
 {
     char                *key;
     char                *substr;
@@ -381,8 +388,8 @@ void OS2WriteProfile( char *app_name, char *key_name,
     HAB                 hab;
     HINI                hini;
     PRFPROFILE          profile;
-    char                userfname[ 1 ], drive[ _MAX_DRIVE ], dir[ _MAX_DIR ];
-    char                inifile[ _MAX_PATH ];
+    char                userfname[1], drive[_MAX_DRIVE], dir[_MAX_DIR];
+    char                inifile[_MAX_PATH];
 
     // get an anchor block
     hab = WinQueryAnchorBlock( HWND_DESKTOP );
@@ -412,13 +419,13 @@ extern void WriteProfileStrings( bool uninstall )
 /***********************************************/
 {
     int                 num, i, sign, end;
-    char                app_name[ MAXBUF ];
-    char                key_name[ MAXBUF ];
-    char                fname[ _MAX_PATH ];
-    char                file_name[ _MAX_PATH ];
-    char                hive_name[ _MAX_PATH ];
-    char                value[ MAXVALUE ];
-    char                buf[ MAXVALUE ];
+    char                app_name[MAXBUF];
+    char                key_name[MAXBUF];
+    char                fname[_MAX_PATH];
+    char                file_name[_MAX_PATH];
+    char                hive_name[_MAX_PATH];
+    char                value[MAXVALUE];
+    char                buf[MAXVALUE];
     bool                add;
 
 
@@ -444,17 +451,18 @@ extern void WriteProfileStrings( bool uninstall )
                 continue;
             }
         }
-        #if defined( __WINDOWS__ )
-            WindowsWriteProfile( app_name, key_name, buf, file_name, add, value, hive_name );
-        #elif defined( __NT__ )
-            if( hive_name[0] != '\0' ) {
-                CreateRegEntry( hive_name, app_name, key_name, buf, file_name, add );
-            } else {
-                WindowsWriteProfile( app_name, key_name, buf, file_name, add, value, hive_name );
-            }
-        #elif defined( __OS2__ )
-            OS2WriteProfile( app_name, key_name, buf, file_name, add );
-        #endif
+#if defined( __WINDOWS__ )
+        WindowsWriteProfile( app_name, key_name, buf, file_name, add, value, hive_name );
+#elif defined( __NT__ )
+        if( hive_name[0] != '\0' ) {
+            CreateRegEntry( hive_name, app_name, key_name, buf, file_name, add );
+        } else {
+            WindowsWriteProfile( app_name, key_name, buf, file_name, add, value,
+                                 hive_name );
+        }
+#elif defined( __OS2__ )
+        OS2WriteProfile( app_name, key_name, buf, file_name, add );
+#endif
     }
 }
 
@@ -467,14 +475,14 @@ static bool IsWin40()
     ver.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     if( GetVersionEx( (OSVERSIONINFO *) &ver ) ) {
         if( ver.dwMajorVersion >= 4 ) {
-            return TRUE;
+            return( TRUE );
         } else {
-            return FALSE;
+            return( FALSE );
         }
     }
-    return FALSE;
+    return( FALSE );
 #else
-    return FALSE;
+    return( FALSE );
 #endif
 }
 #endif
@@ -482,7 +490,7 @@ static bool IsWin40()
 
 void SetDialogFont()
 {
-#if ( defined( __NT__ )  ||  defined( __WINDOWS__ ) ) && !defined( _UI )
+#if (defined( __NT__ ) || defined( __WINDOWS__ )) && !defined( _UI )
 
     char            *fontstr;
     LOGFONT         lf;
@@ -506,3 +514,4 @@ void SetDialogFont()
     }
 #endif
 }
+

@@ -41,17 +41,18 @@
 
 
 static HOBJECT create_group( const char *group, const char *grp_filename )
+/************************************************************************/
 {
     HOBJECT     hobj;
-    char        cmd[ 2 * _MAX_PATH ];
-    char        icon_file[ MAXBUF ];
+    char        cmd[2 * _MAX_PATH];
+    char        icon_file[MAXBUF];
 
     sprintf( cmd, "OPEN=ICON;OBJECTID=%s;", grp_filename );   // add more parms here if necessary
 
     SimGetPMGroupIcon( icon_file );
     if( icon_file[0] != '\0' ) {
         strcat( cmd, "ICONFILE=" );
-        ReplaceVars( &cmd[ strlen( cmd ) ], icon_file );
+        ReplaceVars( &cmd[strlen( cmd )], icon_file );
         strcat( cmd, ";" );
     }
 
@@ -61,6 +62,7 @@ static HOBJECT create_group( const char *group, const char *grp_filename )
 
 
 static void remove_group( const char *group )
+/*******************************************/
 {
     HOBJECT     hobj;
 
@@ -72,12 +74,12 @@ static void remove_group( const char *group )
 extern bool CreatePMInfo( bool uninstall )
 /****************************************/
 {
-    char                PMProgName[ _MAX_PATH ], PMProgDesc[ MAXBUF ];
-    char                PMIconFileName[ _MAX_PATH ], WorkingDir[ _MAX_PATH ];
-    char                PMParams[ MAXBUF ];
-    char                Cmd[ 2 * _MAX_PATH ], t1[ MAXBUF ], t2[ MAXBUF ];
-    char                GroupFileName[ _MAX_PATH ];
-    char                Folder[ _MAX_PATH ];
+    char                PMProgName[_MAX_PATH], PMProgDesc[MAXBUF];
+    char                PMIconFileName[_MAX_PATH], WorkingDir[_MAX_PATH];
+    char                PMParams[MAXBUF];
+    char                Cmd[2 * _MAX_PATH], t1[MAXBUF], t2[MAXBUF];
+    char                GroupFileName[_MAX_PATH];
+    char                Folder[_MAX_PATH];
     int                 nDirIndex, icon_number;
     int                 nPMProg, nMaxPMProgs, len;
     unsigned long       dwTemp;
@@ -127,7 +129,7 @@ extern bool CreatePMInfo( bool uninstall )
         SimGetPMDesc( nPMProg, PMProgDesc );
         // Replace '\n' in Description with LineFeed character
         for( p = PMProgDesc; *p != '\0'; ++p ) {
-            if( *p == '\\' && *(p+1) == 'n' ) {
+            if( *p == '\\' && *(p + 1) == 'n' ) {
                 *p = '\n';
                 strcpy( p + 1, p + 2 );
                 ++p;
@@ -196,13 +198,13 @@ extern bool CreatePMInfo( bool uninstall )
             if( PMProgName[0] == '+' ) {
                 sprintf( Cmd, "SHADOWID=%s%s", WorkingDir, &PMProgName[1] );
                 obj = WinCreateObject( "WPShadow", PMProgDesc,
-                                   Cmd, Folder, CO_REPLACEIFEXISTS );
+                                       Cmd, Folder, CO_REPLACEIFEXISTS );
             } else {
                 // Add the new file to the already created PM Group.
                 sprintf( Cmd, "EXENAME=%s%s;PARAMETERS=%s;STARTUPDIR=%s",
-                     WorkingDir, PMProgName, PMParams, WorkingDir );
+                         WorkingDir, PMProgName, PMParams, WorkingDir );
                 obj = WinCreateObject( "WPProgram", PMProgDesc,
-                                   Cmd, Folder, CO_REPLACEIFEXISTS );
+                                       Cmd, Folder, CO_REPLACEIFEXISTS );
             }
         }
     }
@@ -233,11 +235,11 @@ static bool SetEAttr( char *filename, char const *name, char const *val )
     fet->list[0].cbName = nlen;
     fet->list[0].cbValue = plen + 4;
     strcpy( fet->list[0].szName, name );
-    value = &fet->list[0].szName[nlen+1];
+    value = &fet->list[0].szName[nlen + 1];
     *((USHORT *)value)= EAT_ASCII;
-    value +=2;
+    value += 2;
     *((USHORT *)value)= plen;
-    value +=2;
+    value += 2;
     memcpy( value, val, plen );
 
     len = sizeof( GEA2LIST ) + nlen ;
@@ -256,7 +258,7 @@ static bool SetEAttr( char *filename, char const *name, char const *val )
 }
 
 
-static char             dir_name[ _MAX_PATH ], label[ _MAX_PATH ], t1[ _MAX_PATH ];
+static char             dir_name[_MAX_PATH], label[_MAX_PATH], t1[_MAX_PATH];
 
 // Process [Label] section - use extended attributes to add
 //                           long label to directories
@@ -273,3 +275,4 @@ void LabelDirs( void )
         SetEAttr( dir_name, ".LONGNAME", label );
     }
 }
+

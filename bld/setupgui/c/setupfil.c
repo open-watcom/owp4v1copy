@@ -74,11 +74,11 @@ static char             envbuf[MAXENVVAR + 1];
 extern vhandle          UnInstall;
 
 #if defined( __NT__ )
-    struct reg_location {
-        HKEY    key;
-        bool    key_is_open;
-        bool    modify;
-    } RegLocation[NUM_REG_LOCATIONS];
+struct reg_location {
+    HKEY    key;
+    bool    key_is_open;
+    bool    modify;
+} RegLocation[NUM_REG_LOCATIONS];
 #endif
 
 bool GetOldConfigFileDir( char *newauto, char *drive_path )
@@ -97,7 +97,7 @@ bool GetOldConfigFileDir( char *newauto, char *drive_path )
         strcpy( newauto, GetVariableStrVal( "DstDir" ) );
     }
 
-    return TRUE;
+    return( TRUE );
 }
 
 extern void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
@@ -163,9 +163,9 @@ extern void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
 #ifdef __OS2__
 extern short GetBootDrive(void)
 {
-    UCHAR       DataBuf[10];
-    unsigned long       drive;
-    APIRET      rc;
+    UCHAR           DataBuf[10];
+    unsigned long   drive;
+    APIRET          rc;
 
     rc = DosQuerySysInfo( QSV_BOOT_DRIVE, QSV_BOOT_DRIVE, DataBuf, sizeof(DataBuf) );
     if( rc != 0 ) {
@@ -338,17 +338,17 @@ extern bool ModifyAutoExec( void )
 #ifndef __OS2__
         GetOldConfigFileDir( newauto, OrigAutoExec );
         strcat( newauto, &OrigAutoExec[2] );
-        #if defined(__NT__)
-            ReplaceExt( newauto, "W95" );
-        #else
-            ReplaceExt( newauto, "DOS" );
-        #endif
+#if defined(__NT__)
+        ReplaceExt( newauto, "W95" );
+#else
+        ReplaceExt( newauto, "DOS" );
+#endif
 #endif
         GetOldConfigFileDir( newcfg, OrigConfig );
         strcat( newcfg, &OrigConfig[2] );
-#if defined(__OS2__)
+#if defined( __OS2__ )
         ReplaceExt( newcfg, "OS2" );
-#elif defined(__NT__)
+#elif defined( __NT__ )
         ReplaceExt( newcfg, "W95" );
 #else
         ReplaceExt( newcfg, "DOS" );
@@ -399,7 +399,7 @@ static void ReplaceExt( char *filename, char *new_ext )
 
 
 static char *StrNDup( char *str, size_t len )
-/********************************************/
+/*******************************************/
 {
     char                *new;
 
@@ -419,7 +419,7 @@ static bool ModFile( char *orig, char *new,
                      void (*func)( char *, int ),
                      void (*finish)( FILE *, char *, int ),
                      size_t num )
-/*****************************************************************/
+/*********************************************************/
 {
     FILE                *fp1, *fp2;
     char                *line;
@@ -488,7 +488,7 @@ static void CheckConfigLine( char *buf, int num )
             q = buf + 4;
             while( isspace( *q ) ) ++q;
             len = p - q;
-            while( len > 0 && isspace( q[len-1] ) ) --len;
+            while( len > 0 && isspace( q[len - 1] ) ) --len;
             cfg_var = StrNDup( q, len );
             ++p;
             while( isspace( *p ) ) ++p;
@@ -535,7 +535,9 @@ static void CheckConfigLine( char *buf, int num )
                         sprintf( buf, "%s%s=%s%s\n", have_set ? "SET " : "", cfg_var, cfg_val, new_val );
                     }
                 } else {
-                    if( !add ) new_val[0] = '\0';
+                    if( !add ) {
+                        new_val[0] = '\0';
+                    }
                     if( VarGetIntVal( UnInstall ) ) {
                         buf[0] = '\x0';
                     } else {
@@ -576,14 +578,14 @@ void CheckAutoLine( char *buf, int num )
             q = buf + 4;
             while( isspace( *q ) ) ++q;
             len = p - q;
-            while( len > 0 && isspace( q[len-1] ) ) --len;
+            while( len > 0 && isspace( q[len - 1] ) ) --len;
             env_var = StrNDup( q, len );
             ++p;
             while( isspace( *p ) ) ++p;
             strcpy( env_val, p );
         } else if( memicmp( buf, "path ", 5 ) == 0 ) {
             GUIStrDup( "path", &env_var );
-            strcpy( env_val, buf+5 );
+            strcpy( env_val, buf + 5 );
         } else {
             p = strchr( buf, ' ' );
             if( p != NULL ) *p = '\0';
@@ -627,7 +629,9 @@ void CheckAutoLine( char *buf, int num )
                         sprintf( buf, "SET %s=%s%s\n", env_var, env_val, new_val );
                     }
                 } else {
-                    if( !add ) new_val[0] = '\0';
+                    if( !add ) {
+                        new_val[0] = '\0';
+                    }
                     if( VarGetIntVal( UnInstall ) ) {
                         buf[0] = '\x0';
                     } else {
@@ -643,7 +647,7 @@ void CheckAutoLine( char *buf, int num )
 }
 
 void FinishAutoLines( FILE *fp, char *buf, int num )
-/************************************************/
+/**************************************************/
 {
     int                 i;
 
@@ -697,7 +701,9 @@ void FinishConfigLines( FILE *fp, char *buf, int num )
         sprintf( buf, "%s=%s\n", new_var, new_val );
         Found[i] = TRUE;
         CheckConfigLine( buf, num );
-        if( buf[0] != '\x0' ) fputs( buf, fp );
+        if( buf[0] != '\x0' ) {
+            fputs( buf, fp );
+        }
     }
 }
 
@@ -719,8 +725,7 @@ static bool ModConfig( char *orig, char *new )
 // this is needed under win-os2
 
 static void FinishOS2ConfigLines( FILE *fp, char *buf, int num )
-//============================================================
-
+/**************************************************************/
 {
     int                 i;
 
@@ -741,10 +746,10 @@ static void FinishOS2ConfigLines( FILE *fp, char *buf, int num )
         if( buf[0] != '\x0' ) fputs( buf, fp );
     }
 }
+
 #ifdef __OS2__
 static bool ModOS2Config( char *orig, char *new )
-//===============================================
-
+/***********************************************/
 {
     int                 num_cfg;
 
@@ -759,11 +764,11 @@ static bool ModOS2Config( char *orig, char *new )
 #endif   // !__AXP__
 
 char *ReplaceVarsInplace( char *buff, bool dorealloc )
-/***************************************************/
+/****************************************************/
 //  Replace occurrences of %variable% in src with the destination directory,
 //  and place the result in dst.
 {
-    char                *p,*quest;
+    char                *p, *quest;
     char                *e;
     char                varname[128];
     char                *varval;
@@ -777,12 +782,12 @@ char *ReplaceVarsInplace( char *buff, bool dorealloc )
     while( *p != '\0' ) {
         if( *p++ != '%' ) continue;
         if( *p == '%' ) {
-            memmove( p-1, p, strlen( p ) + 1 );
+            memmove( p - 1, p, strlen( p ) + 1 );
             continue;
         }
         e = strchr( p, '%' );
         if( e == NULL ) break;
-        memcpy( varname, p, e-p );
+        memcpy( varname, p, e - p );
         varname[e - p] = '\0';
         for( ;; ) {     // loop for multiple '?' operators
             quest = strchr( varname, '?' );
@@ -814,17 +819,17 @@ char *ReplaceVarsInplace( char *buff, bool dorealloc )
         if( varval != NULL ) {
             varlen = strlen( varval );
             if( dorealloc ) {
-                if( varlen > e-p ) {
-                    newbuff = GUIMemRealloc( buff, bufflen + varlen - (e-p) + 1 );
-                    p = newbuff + (p-buff);
-                    e = newbuff + (e-buff);
+                if( varlen > e - p ) {
+                    newbuff = GUIMemRealloc( buff, bufflen + varlen - (e - p) + 1 );
+                    p = newbuff + (p - buff);
+                    e = newbuff + (e - buff);
                     buff = newbuff;
                 }
             }
-            memmove( p + varlen, e+1, strlen( e+1 ) + 1 );
+            memmove( p + varlen, e + 1, strlen( e + 1 ) + 1 );
             memcpy( p, varval, varlen );
         } else {
-            memmove( p, e+1, strlen( e+1 ) + 1 );
+            memmove( p, e + 1, strlen( e + 1 ) + 1 );
         }
     }
     return( buff );
@@ -877,12 +882,11 @@ static void secondarysearch( char *filename, char *buffer )
             break;
         }
     }
-
 }
 
 static void CheckVersion( char *path, char *drive, char *dir );
 extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
-/****************************************************************************/
+/*************************************************************************/
 {
     char                *dst;
     unsigned            dst_len;
@@ -891,12 +895,12 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
     char                fname[_MAX_FNAME];
     char                ext[_MAX_EXT];
     char                unpacked_as[_MAX_PATH];
-    char                dll_name[_MAX_FNAME+_MAX_EXT];
+    char                dll_name[_MAX_FNAME + _MAX_EXT];
     char                path1[_MAX_PATH + 100];
     char                path2[_MAX_PATH + 100];
 #if defined( __WINDOWS__ )
     OFSTRUCT            ofPrev;
-    #define             prev_path ofPrev.szPathName
+    #define prev_path   ofPrev.szPathName
 #else
     char                prev_path[_MAX_PATH];
 #endif
@@ -951,7 +955,7 @@ extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
     _splitpath( prev_path, drive, dir, NULL, NULL );
     _makepath( path2, drive, dir, NULL, NULL );
     strupr( path2 );
-    dst = GetVariableStrVal("DstDir");
+    dst = GetVariableStrVal( "DstDir" );
     dst_len = strlen( dst );
     if( memicmp( path1, dst, dst_len ) == 0 && memicmp( path2, dst, dst_len ) == 0 ) {
         /* both files are going into the main installation sub-tree */
@@ -1116,16 +1120,21 @@ static void CheckVersion( char *path, char *drive, char *dir )
     hours   = timeptr->tm_hour;
     if( hours <= 11 ) {
         am_pm = 'a';
-        if( hours == 0 ) hours += 12;
+        if( hours == 0 ) {
+            hours += 12;
+        }
     } else {
         am_pm = 'p';
-        if( hours != 12 ) hours -= 12;
+        if( hours != 12 ) {
+            hours -= 12;
+        }
     }
     _splitpath( path, drive, dir, NULL, NULL );
     _makepath( path, drive, dir, NULL, NULL );
     len = strlen( path );
     sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
-             timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours, timeptr->tm_min, am_pm );
+             timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours,
+             timeptr->tm_min, am_pm );
 
     // also concat version number if it exists
     VersionStr( fp, "VeRsIoN=", 8, buf );
@@ -1183,8 +1192,8 @@ extern bool ModifyConfiguration( void )
         RegLocation[LOCAL_MACHINE].key_is_open = FALSE;
     }
 
-    if( RegLocation[LOCAL_MACHINE].key_is_open
-        && GetVariableIntVal( "UnInstall" ) == 0 ) {
+    if( RegLocation[LOCAL_MACHINE].key_is_open &&
+        GetVariableIntVal( "UnInstall" ) == 0 ) {
         if( DoDialog( "ModifyEnvironment" ) == DLG_CAN ) {
             return( FALSE );
         }
@@ -1275,8 +1284,7 @@ static bool ModEnv( int num_env )
 
     for( i = 0; i < num_env; i ++ ) {
         for( j = CURRENT_USER; j < NUM_REG_LOCATIONS; j++ ) {
-            if( RegLocation[j].key_is_open == FALSE
-                || RegLocation[j].modify == FALSE ) {
+            if( RegLocation[j].key_is_open == FALSE || RegLocation[j].modify == FALSE ) {
                 continue;
             }
             append = SimGetEnvironmentStrings( i, new_var, new_val );
@@ -1394,3 +1402,4 @@ extern bool ModifyRegAssoc( bool uninstall )
 }
 
 #endif
+

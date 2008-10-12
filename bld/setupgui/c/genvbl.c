@@ -48,7 +48,7 @@
 #include "hash.h"
 
 #ifdef __NT__
-#include <windows.h>
+    #include <windows.h>
 #endif
 
 // If too slow make hash size bigger
@@ -56,12 +56,12 @@
 
 typedef struct  a_variable {
     char        *name;
-    unsigned    id : 14;
-    unsigned    has_value : 1;
+    unsigned    id          : 14;
+    unsigned    has_value   : 1;
     char        *strval;    /* value */
     char        *autoset;
     char        restriction;
-    void        (*hook)(vhandle);
+    void        (*hook)( vhandle );
 } a_variable;
 
 extern int __nonIBM();
@@ -95,53 +95,53 @@ extern void InitGlobalVarList( void )
 
 
 void VarSetAutoSetCond( vhandle var_handle, char *cond )
-/**************************************************/
+/******************************************************/
 {
-    GUIStrDup( cond, &GlobalVarList[ var_handle ].autoset );
+    GUIStrDup( cond, &GlobalVarList[var_handle].autoset );
 }
 
 
 void VarSetAutoSetRestriction( vhandle var_handle, char *cond )
 /*************************************************************/
 {
-    GlobalVarList[ var_handle ].restriction = cond[0]; // 't' or 'f'
+    GlobalVarList[var_handle].restriction = cond[0]; // 't' or 'f'
 }
 
 
 int VarIsRestrictedFalse( vhandle var_handle )
-/****************************************/
+/********************************************/
 {
-    return( GlobalVarList[ var_handle ].restriction == 'f' );
+    return( GlobalVarList[var_handle].restriction == 'f' );
 }
 
 
 int VarIsRestrictedTrue( vhandle var_handle )
-/****************************************/
+/*******************************************/
 {
-    return( GlobalVarList[ var_handle ].restriction == 't' );
+    return( GlobalVarList[var_handle].restriction == 't' );
 }
 
 
 char *VarGetAutoSetCond( vhandle var_handle )
-/******************************************/
+/*******************************************/
 {
-    if( GlobalVarList[ var_handle ].restriction == 't' )
+    if( GlobalVarList[var_handle].restriction == 't' )
         return( "true" );
-    if( GlobalVarList[ var_handle ].restriction == 'f' )
+    if( GlobalVarList[var_handle].restriction == 'f' )
         return( "false" );
-    return( GlobalVarList[ var_handle ].autoset );
+    return( GlobalVarList[var_handle].autoset );
 }
 
 extern vhandle GetVariableByName( const char *vbl_name )
-/**********************************************************/
+/******************************************************/
 {
     int        i;
 
     if( GlobalVarHash ) {
         return( HashFind( GlobalVarHash, vbl_name ) );
     } else {
-        for( i=0; i < GlobalVarArray.num; i++ ){
-            if( stricmp(GlobalVarList[i].name, vbl_name) == 0 ) {
+        for( i = 0; i < GlobalVarArray.num; i++ ) {
+            if( stricmp( GlobalVarList[i].name, vbl_name ) == 0 ) {
                 return( i );
             }
         }
@@ -149,9 +149,8 @@ extern vhandle GetVariableByName( const char *vbl_name )
     return( NO_VAR );
 }
 
-
 extern vhandle GetVariableById( int id )
-/******************************************/
+/**************************************/
 {
     // id is always the same as var_handle!
     if( id >= GlobalVarArray.num )
@@ -161,7 +160,7 @@ extern vhandle GetVariableById( int id )
 
 
 extern char *VarGetName( vhandle var_handle )
-/****************************************/
+/*******************************************/
 {
     if( var_handle == NO_VAR )
         return( "" );
@@ -170,7 +169,7 @@ extern char *VarGetName( vhandle var_handle )
 
 
 extern int VarGetId( vhandle var_handle )
-/****************************************/
+/***************************************/
 {
     if( var_handle == NO_VAR )
         return( 0 );
@@ -179,7 +178,7 @@ extern int VarGetId( vhandle var_handle )
 
 
 extern char *VarGetStrVal( vhandle var_handle )
-/****************************************/
+/*********************************************/
 {
     if( var_handle == NO_VAR )
         return( "" );
@@ -187,7 +186,6 @@ extern char *VarGetStrVal( vhandle var_handle )
         return( "" );
     return( GlobalVarList[var_handle].strval );
 }
-
 
 extern int VarGetIntVal( vhandle var_handle )
 /*******************************************/
@@ -208,7 +206,7 @@ extern void VarSetHook( vhandle var_handle, void (*hook)( vhandle ) )
 {
     if( var_handle == NO_VAR )
         return;
-    GlobalVarList[ var_handle ].hook = hook;
+    GlobalVarList[var_handle].hook = hook;
 }
 
 extern int GetVariableIntVal( const char *vbl_name )
@@ -217,23 +215,21 @@ extern int GetVariableIntVal( const char *vbl_name )
     return( VarGetIntVal( GetVariableByName( vbl_name ) ) );
 }
 
-
 extern char *GetVariableStrVal( const char *vbl_name )
 /****************************************************/
 {
     return( VarGetStrVal( GetVariableByName( vbl_name ) ) );
 }
 
-
 static vhandle NewVariable( char *vbl_name )
 /******************************************/
 {
     a_variable  *tmp_variable;
-    vhandle var_handle;
+    vhandle     var_handle;
 
     var_handle = GlobalVarArray.num;
     BumpArray( &GlobalVarArray );
-    tmp_variable = &GlobalVarList[ var_handle ];
+    tmp_variable = &GlobalVarList[var_handle];
     GUIStrDup( vbl_name, &tmp_variable->name );
     tmp_variable->id = var_handle;
     tmp_variable->has_value = FALSE;
@@ -248,7 +244,7 @@ static vhandle NewVariable( char *vbl_name )
 }
 
 extern vhandle AddVariable( char *vbl_name )
-/***************************************/
+/******************************************/
 {
     vhandle var_handle;
 
@@ -259,7 +255,7 @@ extern vhandle AddVariable( char *vbl_name )
 }
 
 static vhandle DoSetVariable( vhandle var_handle, char *strval, char *vbl_name )
-/********************************************************************************/
+/******************************************************************************/
 {
     a_variable  *tmp_variable;
 
@@ -267,7 +263,7 @@ static vhandle DoSetVariable( vhandle var_handle, char *strval, char *vbl_name )
         strval = "";
     }
     if( var_handle != NO_VAR ) {
-        tmp_variable = &GlobalVarList[ var_handle ];
+        tmp_variable = &GlobalVarList[var_handle];
         if( tmp_variable->has_value ) {
             if( strcmp( tmp_variable->strval, strval ) == 0 ) {
                 if( tmp_variable->hook ) {
@@ -280,7 +276,7 @@ static vhandle DoSetVariable( vhandle var_handle, char *strval, char *vbl_name )
     } else {
         var_handle = NewVariable( vbl_name );
     }
-    tmp_variable = &GlobalVarList[ var_handle ];
+    tmp_variable = &GlobalVarList[var_handle];
     GUIStrDup( strval, &tmp_variable->strval );
     tmp_variable->has_value = TRUE;
     if( tmp_variable->hook ) {
@@ -289,15 +285,14 @@ static vhandle DoSetVariable( vhandle var_handle, char *strval, char *vbl_name )
     return( var_handle );
 }
 
-
 extern vhandle SetVariableByName( char *vbl_name, char *strval )
-/**********************************************************/
+/**************************************************************/
 {
     return( DoSetVariable( GetVariableByName( vbl_name ), strval, vbl_name ) );
 }
 
 extern vhandle SetVariableByHandle( vhandle var_handle, char *strval )
-/****************************************************************/
+/********************************************************************/
 {
     if( var_handle == NO_VAR )
         return( NO_VAR );
@@ -398,7 +393,7 @@ extern void FreeGlobalVarList( bool including_real_globals )
         return;
 
     if( including_real_globals ) {
-        for( i=0; i < GlobalVarArray.num; i++ ) {
+        for( i = 0; i < GlobalVarArray.num; i++ ) {
             GUIMemFree( GlobalVarList[i].name );
             GUIMemFree( GlobalVarList[i].strval );
             GUIMemFree( GlobalVarList[i].autoset );
@@ -411,15 +406,15 @@ extern void FreeGlobalVarList( bool including_real_globals )
         }
     } else {
         for( i = 0; i < GlobalVarArray.num; ) {
-            if( GlobalVarList[i].name[ 0 ] != '$' ) {
+            if( GlobalVarList[i].name[0] != '$' ) {
                 GUIMemFree( GlobalVarList[i].name );
                 GUIMemFree( GlobalVarList[i].strval );
                 GUIMemFree( GlobalVarList[i].autoset );
 
                 for( j = i; j < GlobalVarArray.num - 1; j++ ) {
-                    memcpy( &GlobalVarList[ j ], &GlobalVarList[ j + 1 ],
+                    memcpy( &GlobalVarList[j], &GlobalVarList[j + 1],
                         sizeof( a_variable ) );
-                    GlobalVarList[ j ].id = j;
+                    GlobalVarList[j].id = j;
                     // This destroys the concept that a handle to a variable
                     // will always point to the same variable.  Between
                     // script launches, variable ids will change.
@@ -440,3 +435,4 @@ extern void FreeGlobalVarList( bool including_real_globals )
         }
     }
 }
+

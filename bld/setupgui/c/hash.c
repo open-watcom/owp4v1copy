@@ -40,26 +40,26 @@
 
 static unsigned int     hashKey( unsigned int size, hash_key k );
 
-hash_table     *HashInit( size_t size, hash_key_cmp func ) {
-/*******************************************************/
-
+hash_table     *HashInit( size_t size, hash_key_cmp func )
+/********************************************************/
+{
     hash_table  *ht;
 
     assert( size > 0 );
     assert( func );
 
-    ht = GUIMemAlloc( sizeof( hash_table ) + ( sizeof( hash_element * ) * size ) );
+    ht = GUIMemAlloc( sizeof( hash_table ) + (sizeof( hash_element * ) * size) );
     if( !ht )
         return( NULL );
-    memset( ht, 0, sizeof( hash_table ) + ( sizeof( hash_element * ) * size ) );
+    memset( ht, 0, sizeof( hash_table ) + (sizeof( hash_element * ) * size) );
     ht->size = size;
     ht->cmp_func = func;
     return( ht );
 }
 
-int HashInsert( hash_table *ht, hash_key k, hash_data d ) {
-/***********************************************************/
-
+int HashInsert( hash_table *ht, hash_key k, hash_data d )
+/*******************************************************/
+{
     unsigned int        i;
     hash_element        *he;
 
@@ -79,9 +79,9 @@ int HashInsert( hash_table *ht, hash_key k, hash_data d ) {
 }
 
 
-hash_data HashFind( hash_table *ht, hash_key_const k ) {
-/********************************************************/
-
+hash_data HashFind( hash_table *ht, hash_key_const k )
+/****************************************************/
+{
     unsigned int        i;
     hash_element        *he;
 
@@ -104,9 +104,9 @@ hash_data HashFind( hash_table *ht, hash_key_const k ) {
     }
 }
 
-void HashFini( hash_table *ht ) {
-/*****************************************/
-
+void HashFini( hash_table *ht )
+/*****************************/
+{
     unsigned int        i;
     hash_element        *he;
     hash_element        *tmp;
@@ -126,17 +126,17 @@ void HashFini( hash_table *ht ) {
 }
 
 
-static unsigned int hashKey( unsigned int size, hash_key k ) {
-/****************************************************************/
-
+static unsigned int hashKey( unsigned int size, hash_key k )
+/**********************************************************/
+{
     unsigned long       hash = 0;
 
     assert( k );
     assert( size > 0 );
 
     while( *k ) {
-        hash = ( hash << 4 ) + tolower( *k );
-        if ( hash & 0xffff0000 ) {
+        hash = (hash << 4) + tolower( *k );
+        if( hash & 0xffff0000 ) {
             hash += hash >> 24;
         }
         k++;
@@ -145,3 +145,4 @@ static unsigned int hashKey( unsigned int size, hash_key k ) {
     assert( hash < size );
     return( hash );
 }
+

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Setup memory management functions.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@
 
 void ut_fatal( char *s )
 {
-    GUIDisplayMessage( NULL, s, " Memory ERROR ", GUI_OK );// nyi - kanji
+    GUIDisplayMessage( NULL, s, " Memory ERROR ", GUI_OK ); // nyi - kanji
     exit( 1 );
 }
 
@@ -53,52 +52,52 @@ void ut_out_of_memory( char *s )
     s = s;
 }
 
-extern void *   GUIAlloc( unsigned size )
+extern void *GUIAlloc( unsigned size )
 {
     return( ut_alloc( size ) );
 }
 
-extern void     GUIFree( void *chunk )
+extern void GUIFree( void *chunk )
 {
     ut_free( chunk );
 }
 
-extern void *   GUIRealloc( void * chunk, unsigned size )
+extern void *GUIRealloc( void * chunk, unsigned size )
 {
     return( ut_realloc( chunk, size ) );
 }
 
-extern void *   bdiff_malloc( size_t size )
+extern void *bdiff_malloc( size_t size )
 {
     return( ut_alloc( size ) );
 }
 
-extern void     bdiff_free( void *chunk )
+extern void bdiff_free( void *chunk )
 {
     ut_free( chunk );
 }
 
-extern void *   bdiff_realloc( void * chunk, size_t size )
+extern void *bdiff_realloc( void * chunk, size_t size )
 {
     return( ut_realloc( chunk, size ) );
 }
 
-extern void     GUIMemOpen()
+extern void GUIMemOpen()
 {
-    #if DMEM_OVERRUNS
-        #ifdef __386__
-            MaxAllocSize = 0xfffffff8;
-        #else
-            MaxAllocSize = 0xfff8;
-        #endif
-    #endif
+#if DMEM_OVERRUNS
+#ifdef __386__
+    MaxAllocSize = 0xfffffff8;
+#else
+    MaxAllocSize = 0xfff8;
+#endif
+#endif
 }
 
-extern void     GUIMemClose( void )
+extern void GUIMemClose( void )
 {
 }
 
-extern void     GUIMemPrtUsage( void )
+extern void GUIMemPrtUsage( void )
 {
 }
 

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Installer color theme configuration
+* Description:  Installer color theme configuration.
 *
 ****************************************************************************/
 

@@ -76,9 +76,9 @@ static bool UseDDE( bool uninstall )
     int                 len;
     DWORD               temp;
     bool                ok;
-    char                prog_name[ _MAX_PATH ], prog_desc[ _MAX_PATH ];
-    char                icon_name[ _MAX_PATH ], working_dir[ _MAX_PATH ];
-    char                buff[ _MAX_PATH ], t1[ _MAX_PATH ], t2[ _MAX_PATH ];
+    char                prog_name[_MAX_PATH], prog_desc[_MAX_PATH];
+    char                icon_name[_MAX_PATH], working_dir[_MAX_PATH];
+    char                buff[_MAX_PATH], t1[_MAX_PATH], t2[_MAX_PATH];
     HWND                hwnd_pm;
     DWORD               ddeinst = 0; // Important that this is initially 0
     UINT                rc;
@@ -183,7 +183,7 @@ static bool UseDDE( bool uninstall )
         } else {
             /* adding item to group */
             if( dir_index == SIM_INIT_ERROR ) {
-                working_dir[ 0 ] = '\0';
+                working_dir[0] = '\0';
                 ReplaceVars( t2, prog_name );
                 strcpy( prog_name, t2 );
             } else {
@@ -192,27 +192,29 @@ static bool UseDDE( bool uninstall )
 
             // get parameters
             SimGetPMParms( i, t1 );
-            if( t1[ 0 ] != '\0' ) {
+            if( t1[0] != '\0' ) {
                 // add parameters to end of prog_name
                 len = strlen( prog_name );
-                prog_name[ len ] = ' ';
-                ReplaceVars( &prog_name[ len + 1 ], t1 );
+                prog_name[len] = ' ';
+                ReplaceVars( &prog_name[len + 1], t1 );
             }
 
             // Append the subdir where the icon file is and the icon file's name.
             temp = SimGetPMIconInfo( i, icon_name );
             dir_index = LOWORD( temp );
             icon_number = HIWORD( temp );
-            if( icon_number == SIM_INIT_ERROR ) icon_number = 0;
+            if( icon_number == SIM_INIT_ERROR ) {
+                icon_number = 0;
+            }
             if( dir_index != SIM_INIT_ERROR ) {
                 SimGetDir( dir_index, t1 );
                 strcat( t1, icon_name );
                 strcpy( icon_name, t1 );
             }
             // Add the new file to the already created PM Group.
-            version = (WORD) GetVersion();
-            if( ( LOBYTE( version ) > 3 ) ||    // Version 3.1 or higher
-                ( LOBYTE( version ) == 3 && HIBYTE( version ) > 0 ) ) {
+            version = (WORD)GetVersion();
+            if( (LOBYTE( version ) > 3) ||    // Version 3.1 or higher
+                (LOBYTE( version ) == 3 && HIBYTE( version ) > 0) ) {
                 sprintf( buff, "[ReplaceItem(%s)]", prog_desc );
                 SendCommand( ddeinst, hconv, buff );
                 sprintf( buff, "[AddItem(%s,%s,%s,%d,-1,-1,%s)]", prog_name,
@@ -284,23 +286,24 @@ static void get_group_name( char *buff, char *group )
 
 static BOOL create_group( char *group )
 {
-    char                buff[ _MAX_PATH ];
+    char                buff[_MAX_PATH];
     int                 rc;
 
     get_group_name( buff, group );
     rc = mkdir( buff );
 
-    if( rc == -1 && errno != EEXIST )
+    if( rc == -1 && errno != EEXIST ) {
         return( FALSE );
-    else
+    } else {
         return( TRUE );
+    }
 }
 
 static void delete_dir( char * dir )
 {
     DIR                 *dirp;
     struct dirent       *direntp;
-    char                file[ _MAX_PATH ];
+    char                file[_MAX_PATH];
 
     // Delete contents of directory
     strcpy( file, dir );
@@ -327,7 +330,7 @@ static void delete_dir( char * dir )
 
 static void remove_group( char *group )
 {
-    char                buff[ _MAX_PATH ];
+    char                buff[_MAX_PATH];
 
     get_group_name( buff, group );
     delete_dir( buff );
@@ -339,8 +342,8 @@ static BOOL create_icon( char *group, char *pgm, char *desc,
     HRESULT             hres;
     IShellLink          *m_link;
     IPersistFile        *p_file;
-    WORD                w_link[ _MAX_PATH ];
-    char                link[ _MAX_PATH ];
+    WORD                w_link[_MAX_PATH];
+    char                link[_MAX_PATH];
 
     // Determine names of link files
     get_group_name( link, group );
@@ -359,7 +362,8 @@ static BOOL create_icon( char *group, char *pgm, char *desc,
         // Query IShellLink for the IPersistFile interface for
         // saving the shortcut in persistent storage.
         p_file = NULL;
-        hres = m_link->lpVtbl->QueryInterface( m_link, &IID_IPersistFile, (void **)&p_file );
+        hres = m_link->lpVtbl->QueryInterface( m_link, &IID_IPersistFile,
+                                               (void **)&p_file );
         if( SUCCEEDED( hres ) ) {
             // Set the properties of the shortcut
             hres = m_link->lpVtbl->SetPath( m_link, pgm );
@@ -386,9 +390,9 @@ static bool UseIShellLink( bool uninstall )
     int                 i, num_icons, num_groups;
     int                 num_installed, num_total_install;
     DWORD               temp;
-    char                prog_name[ _MAX_PATH ], prog_desc[ _MAX_PATH ];
-    char                icon_name[ _MAX_PATH ], working_dir[ _MAX_PATH ];
-    char                group[ _MAX_PATH ], prog_arg[ _MAX_PATH ], tmp[ _MAX_PATH ];
+    char                prog_name[_MAX_PATH], prog_desc[_MAX_PATH];
+    char                icon_name[_MAX_PATH], working_dir[_MAX_PATH];
+    char                group[_MAX_PATH], prog_arg[_MAX_PATH], tmp[_MAX_PATH];
     BOOL                rc;
 
     if( uninstall ) {
@@ -404,7 +408,7 @@ static bool UseIShellLink( bool uninstall )
     }
 
     SimGetPMGroup( group );
-    if( group[ 0 ] == '\0' ) {
+    if( group[0] == '\0' ) {
         return( TRUE );
     }
 
@@ -465,7 +469,8 @@ static bool UseIShellLink( bool uninstall )
                 strcpy( icon_name, tmp );
             }
             // Add the new file to the already created PM Group.
-            rc = create_icon( group, prog_name, prog_desc, prog_arg, working_dir, icon_name, icon_number );
+            rc = create_icon( group, prog_name, prog_desc, prog_arg, working_dir,
+                              icon_name, icon_number );
             if( rc == FALSE ) {
                 CoUninitialize();
                 return( FALSE );
@@ -498,3 +503,4 @@ bool CreatePMInfo( bool uninstall )
     return( UseDDE( uninstall ) );
 #endif
 }
+

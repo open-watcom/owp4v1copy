@@ -35,7 +35,7 @@
 
 
 #if !defined( NATURAL_PACK )
-#include "pushpck1.h"
+    #include "pushpck1.h"
 #endif
 
 typedef struct dbgheader {
@@ -81,7 +81,7 @@ typedef struct {
 } zip_cdfh;
 
 #if !defined( NATURAL_PACK )
-#include "poppck.h"
+    #include "poppck.h"
 #endif
 
 #define VALID_SIGNATURE 0x8386
@@ -101,7 +101,7 @@ extern int FindResources( PHANDLE_INFO hInstance )
     zip_cdfh    cdfh;
     int         notfound;
 
-    #define     __handle        hInstance->handle
+#define __handle        hInstance->handle
     notfound = 1;
     FileShift = 0;
     offset = sizeof( dbgheader );
@@ -113,14 +113,15 @@ extern int FindResources( PHANDLE_INFO hInstance )
                 if( WRESSEEK( __handle, eocd.cd_offset, SEEK_SET ) != -1L ) {
                     if( WRESREAD( __handle, &cdfh, sizeof( cdfh ) ) == sizeof( cdfh ) ) {
                         if( memcmp( &cdfh.signature, "PK\001\002", 4 ) == 0 ) {
-                            offset += eocd.cd_offset + eocd.cd_size - cdfh.offset + sizeof( eocd );
+                            offset += eocd.cd_offset + eocd.cd_size - cdfh.offset +
+                                      sizeof( eocd );
                         }
                     }
                 }
             }
         }
     }
-    currpos = WRESSEEK( __handle, - offset, SEEK_END );
+    currpos = WRESSEEK( __handle, -offset, SEEK_END );
     for( ;; ) {
         WRESREAD( __handle, &header, sizeof( dbgheader ) );
         if( header.signature == WAT_RES_SIG ) {
@@ -137,5 +138,5 @@ extern int FindResources( PHANDLE_INFO hInstance )
         }
     }
     return( notfound );
-    #undef __handle
+#undef __handle
 }

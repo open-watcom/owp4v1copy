@@ -40,46 +40,44 @@
 #include "banner.h"
 #include <stdio.h>
 
-extern char *GetVariableStrVal( const char *vbl_name );
+extern char             *GetVariableStrVal( const char *vbl_name );
 extern gui_colour_set   MainColours[];
 extern  void            GUISetJapanese();
 extern int              Invisible;
-gui_window      *MainWnd = NULL;
-int             NominalButtonWidth = 11;
+gui_window              *MainWnd = NULL;
+int                     NominalButtonWidth = 11;
 
 char *Bolt[] = {
-"",
-"               ________                          ________              ",
-"              /:::::::/                         /:::::::/              ",
-"             /:::::::/__                       /:::::::/__             ",
-"            /::::::::::/                      /::::::::::/             ",
-"            -----/::::/__                     -----/::::/__            ",
-"                /......./                         /......./            ",
-"               -----/./                          -----/./              ",
-"                   /./                               /./               ",
-"                  //                                //                 ",
-"                 /                                 /                   ",
-"                                                                       ",
-"                ________                          ________             ",
-"               /:::::::/                         /:::::::/             ",
-"              /:::::::/__                       /:::::::/__            ",
-"             /::::::::::/                      /::::::::::/            ",
-"             -----/::::/__                     -----/::::/__           ",
-"                 /......./                         /......./           ",
-"                -----/./                          -----/./             ",
-"                   /./                               /./               ",
-"                  //                                //                 ",
-"                 /                                 /                   ",
-"                                                                       "
+    "",
+    "               ________                          ________              ",
+    "              /:::::::/                         /:::::::/              ",
+    "             /:::::::/__                       /:::::::/__             ",
+    "            /::::::::::/                      /::::::::::/             ",
+    "            -----/::::/__                     -----/::::/__            ",
+    "                /......./                         /......./            ",
+    "               -----/./                          -----/./              ",
+    "                   /./                               /./               ",
+    "                  //                                //                 ",
+    "                 /                                 /                   ",
+    "                                                                       ",
+    "                ________                          ________             ",
+    "               /:::::::/                         /:::::::/             ",
+    "              /:::::::/__                       /:::::::/__            ",
+    "             /::::::::::/                      /::::::::::/            ",
+    "             -----/::::/__                     -----/::::/__           ",
+    "                 /......./                         /......./           ",
+    "                -----/./                          -----/./             ",
+    "                   /./                               /./               ",
+    "                  //                                //                 ",
+    "                 /                                 /                   ",
+    "                                                                       "
 };
 
 #define WND_APPROX_SIZE 10000
 
-
 static char         cpy1[1024];
 static char         *cpy1_templ = banner4gui(); //"Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
 static char         *cpy2 = banner2agui();      //"Portions Copyright © 1982-2002 Sybase, Inc. All Rights Reserved."
-
 
 gui_resource WndGadgetArray[] = {
     BITMAP_SPLASH, "splash",
@@ -93,7 +91,7 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
 {
     int                 i;
 
-    parm=parm;
+    parm = parm;
     switch( event ) {
     case GUI_PAINT:
         if( GUIIsGUI() ) {
@@ -108,10 +106,10 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
             
             GUIGetClientRect( gui, &rect );
             GUIGetTextMetrics( gui, &metrics );
-            indent = ( rect.width - BitMapSize.x ) / 2;
+            indent = (rect.width - BitMapSize.x) / 2;
             if( BitMapSize.x > rect.width )
                 indent = 0;
-            topdent = metrics.avg.y; // ( rect.height - BitMapSize.y ) / 2;
+            topdent = metrics.avg.y; // (rect.height - BitMapSize.y) / 2;
             BitMapBottom = BitMapSize.y + metrics.avg.y;
             if( BitMapSize.y > rect.height )
                 topdent = 0;
@@ -119,29 +117,30 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
             GUIDrawHotSpot( gui, 1, row, indent, GUI_BACKGROUND );
             
             /*
-             *  Do copyright stuff. There is a chance that we could overwrite the bitmap's graphics section
-             *  if this stuff became too big, but that's a risk I'll have to take for now. I can't be bothered
-             *  to actually calculate the clean space within the bitmap
+             *  Do copyright stuff. There is a chance that we could overwrite the
+             *  bitmap's graphics section if this stuff became too big, but that's a
+             *  risk I'll have to take for now. I can't be bothered to actually calculate
+             *  the clean space within the bitmap.
              */
 
-            if(BitMapSize.y) {
+            if( BitMapSize.y ) {
                 row_count = BitMapSize.y / metrics.max.y;
             } else {
                 row_count = 3;  /* If there is no bitmap attached - such as virgin.exe - then just copyright to upper screen */
                 indent = 16;
             }
-                
+
             GUIGetRGB( GUI_BRIGHT_BLUE, &rgb ); /* background - no effect */
             GUIGetRGB( GUI_BLACK, &foreg );     /* foreground */
 
             /* Start at bottom left of hotspot and use neagtive offset */
-            GUIDrawTextRGB( gui, cpy1, strlen( cpy1 ), row_count-2, indent, foreg, rgb );
-            GUIDrawTextRGB( gui, cpy2, strlen( cpy2 ), row_count-1, indent, foreg, rgb );
+            GUIDrawTextRGB( gui, cpy1, strlen( cpy1 ), row_count - 2, indent, foreg, rgb );
+            GUIDrawTextRGB( gui, cpy2, strlen( cpy2 ), row_count - 1, indent, foreg, rgb );
 
-            
         } else {
             for( i = 0; i < sizeof( Bolt ) / sizeof( Bolt[0] ); ++i ) {
-                GUIDrawTextExtent( gui, Bolt[i], strlen( Bolt[i] ), i, 0, GUI_BACKGROUND, WND_APPROX_SIZE );
+                GUIDrawTextExtent( gui, Bolt[i], strlen( Bolt[i] ), i, 0, GUI_BACKGROUND,
+                                   WND_APPROX_SIZE );
             }
         }
         break;
@@ -185,7 +184,7 @@ extern bool SetupPreInit( void )
      *  see curr_date above
      */
     if( 1 ) {
-        char        tt[sizeof(__DATE__) == 12];
+        char        tt[sizeof( __DATE__ ) == 12];
         tt[0] = 0;
     }
 
@@ -251,7 +250,9 @@ extern void SetupTitle( void )
 extern void SetupFini( void )
 /***************************/
 {
-    if( MainWnd != NULL ) GUIDestroyWnd( MainWnd );
+    if( MainWnd != NULL ) {
+        GUIDestroyWnd( MainWnd );
+    }
 }
 
 
@@ -261,3 +262,4 @@ extern void SetupError( char *msg )
 //    MsgBox( NULL, "IDS_ERROR", GUI_OK, msg );
     MsgBox( NULL, msg, GUI_OK );
 }
+

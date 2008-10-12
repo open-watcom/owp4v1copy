@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic dialog functions.
 *
 ****************************************************************************/
 
@@ -81,13 +80,13 @@ static void FreeDialog( a_dialog_header *tmp_dialog)
     GUIMemFree( tmp_dialog->condition );
     GUIMemFree( tmp_dialog->title );
     if( !tmp_dialog->def_dlg ) {            /* free non-default controls */
-        for( i=0; i < tmp_dialog->num_controls; i++ ){
-            GUIMemFree(tmp_dialog->controls[i].text);
+        for( i = 0; i < tmp_dialog->num_controls; i++ ){
+            GUIMemFree( tmp_dialog->controls[i].text );
             if( tmp_dialog->pConditions[i] != NULL ) {
-                GUIMemFree(tmp_dialog->pConditions[i]);
+                GUIMemFree( tmp_dialog->pConditions[i] );
             }
             if( tmp_dialog->pVisibilityConds[i] != NULL ) {
-                GUIMemFree(tmp_dialog->pVisibilityConds[i]);
+                GUIMemFree( tmp_dialog->pVisibilityConds[i] );
             }
         }
         GUIMemFree( tmp_dialog->controls );
@@ -108,7 +107,7 @@ extern a_dialog_header *AddNewDialog( char *dlg_name )
 //    new_dialog->controls = GUIMemAlloc( sizeof(gui_control_info) );
     GUIStrDup( dlg_name, &new_dialog->name );
     new_dialog->adjusted = FALSE;
-    new_dialog->def_dlg     = FALSE;
+    new_dialog->def_dlg = FALSE;
     new_dialog->ret_val = DLG_NEXT;
     new_dialog->any_check = NO_VAR;
 
@@ -192,15 +191,17 @@ dlg_state DoDialogWithParent( void *parent, char *name )
         bool  done = FALSE;
 
         for( i = 0; i < dlg->num_controls; i++ ) {
-            if( dlg->controls[ i ].id == CTL_CANCEL ) {
+            if( dlg->controls[i].id == CTL_CANCEL ) {
                 can = TRUE;
                 break;
             }
-            if( dlg->controls[ i ].id == CTL_DONE ) {
+            if( dlg->controls[i].id == CTL_DONE ) {
                 done = TRUE;
             }
         }
-        if( can == FALSE && done == TRUE ) return_state = DLG_DONE;
+        if( can == FALSE && done == TRUE ) {
+            return_state = DLG_DONE;
+        }
     }
     return( return_state );
 }
@@ -224,10 +225,11 @@ extern void FreeDefaultDialogs( void )
     a_dialog_header *d;
     a_dialog_header *next;
 
-    for( d = FirstDialog; d != NULL; d=next ) {
+    for( d = FirstDialog; d != NULL; d = next ) {
         next = d->next;
         FreeDialog( d );
     }
     FirstDialog = NULL;
     LastDialog = NULL;
 }
+

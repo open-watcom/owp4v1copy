@@ -64,10 +64,10 @@
 #include "errno.h"
 
 #if defined( WINNT ) || defined( WIN )
-#define UNC_SUPPORT
+    #define UNC_SUPPORT
 #endif
 
-#define TEST_UNC(x) (x[0]=='\\'&&x[1]=='\\')
+#define TEST_UNC(x) (x[0] == '\\' && x[1] == '\\')
 
 typedef struct def_var {
     char                *variable;
@@ -97,9 +97,9 @@ static void SetPathEnd( char *dir )
     int     len;
 
     len = strlen( dir );
-    if( len > 0  && dir[ len - 1 ] != SYS_DIR_SEP_CHAR ) {
-        dir[ len ] = SYS_DIR_SEP_CHAR;
-        dir[ len + 1 ] = '\0';
+    if( len > 0  && dir[len - 1] != SYS_DIR_SEP_CHAR ) {
+        dir[len] = SYS_DIR_SEP_CHAR;
+        dir[len + 1] = '\0';
     }
 }
 
@@ -113,8 +113,8 @@ extern bool ModifyEnvironment( bool uninstall )
     uninstall = uninstall;
 #else
 
-    if(NoProgramGroups)
-        return TRUE;
+    if( NoProgramGroups )
+        return( TRUE );
 
     ret = CreatePMInfo( uninstall );
     if( !ret ) {                   // create folder and icons
@@ -138,7 +138,7 @@ extern bool ModifyStartup( bool uninstall )
 {
     bool    ret = TRUE;
 
-    if(NoStartupChange)
+    if( NoStartupChange )
         return( ret );
 
 #if !defined( _UI )
@@ -179,8 +179,8 @@ typedef struct {
     unsigned long long  free_space;
     unsigned long       cluster_size;
     unsigned            use_target_for_tmp_file : 1;
-    unsigned            fixed : 1;
-    unsigned            diskette : 1;
+    unsigned            fixed                   : 1;
+    unsigned            diskette                : 1;
 } drive_info;
 
 static drive_info       Drives[32];
@@ -227,18 +227,19 @@ bool NTSpawnWait( char *cmd, DWORD *exit_code, HANDLE in, HANDLE out, HANDLE err
     if( in || out || err ) {
         start.dwFlags = STARTF_USESTDHANDLES;
     }
-    if( cmd[ 0 ] == '-' ) {
+    if( cmd[0] == '-' ) {
         cmd++;
         start.wShowWindow = FALSE;
         start.dwFlags |= STARTF_USESHOWWINDOW;
     }
-    if( !CreateProcess( NULL, cmd, NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP+CREATE_NEW_CONSOLE,
-            NULL, NULL, &start, &info ) ) {
+    if( !CreateProcess( NULL, cmd, NULL, NULL, TRUE,
+                        CREATE_NEW_PROCESS_GROUP + CREATE_NEW_CONSOLE,
+                        NULL, NULL, &start, &info ) ) {
         return( FALSE );
     } else {
         WaitForSingleObject( info.hProcess, INFINITE );
         while( !GetExitCodeProcess( info.hProcess, exit_code ) ||
-            *exit_code == STILL_ACTIVE ) {
+               *exit_code == STILL_ACTIVE ) {
             if( StatusCancelled() ) {
                 return( FALSE );
             }
@@ -264,8 +265,8 @@ static bool WinSpawnWait( char *cmd )
     UINT        show[2];
     HINSTANCE   inst;
     HINSTANCE   toolhelp;
-    BOOL WINAPI (*taskfirst)(TASKENTRY FAR *);
-    BOOL WINAPI (*tasknext)(TASKENTRY FAR *);
+    BOOL WINAPI (*taskfirst)( TASKENTRY FAR * );
+    BOOL WINAPI (*tasknext)( TASKENTRY FAR * );
     TASKENTRY   task;
     BOOL        stillthere;
     BOOL        ok;
@@ -285,10 +286,11 @@ static bool WinSpawnWait( char *cmd )
     toolhelp = LoadModule( buff, &parm );
     if( toolhelp < HINSTANCE_ERROR )
         return( FALSE );
-    taskfirst = (BOOL WINAPI(*)(TASKENTRY FAR*))GetProcAddress( toolhelp, "TaskFirst" );
+    taskfirst = (BOOL WINAPI (*)( TASKENTRY FAR* ))GetProcAddress( toolhelp,
+                                                                   "TaskFirst" );
     if( taskfirst == NULL )
         return( FALSE );
-    tasknext = (BOOL WINAPI(*)(TASKENTRY FAR*))GetProcAddress( toolhelp, "TaskNext" );
+    tasknext = (BOOL WINAPI (*)( TASKENTRY FAR* ))GetProcAddress( toolhelp, "TaskNext" );
     if( tasknext == NULL )
         return( FALSE );
     task.dwSize = sizeof( task );
@@ -311,8 +313,8 @@ static bool OS2SpawnWait( char *cmd, int *rc )
 /********************************************/
 {
     RESULTCODES res;
-    PID     dummy;
-    char    *p;
+    PID         dummy;
+    char        *p;
 
     p = strchr( cmd, ' ' );
     if( p != NULL )
@@ -324,7 +326,7 @@ static bool OS2SpawnWait( char *cmd, int *rc )
         *p = ' ';
     for( ;; ) {
         *rc = DosWaitChild( DCWA_PROCESS, DCWW_NOWAIT, &res,
-                    &dummy, res.codeTerminate );
+                            &dummy, res.codeTerminate );
         if( *rc != ERROR_CHILD_NOT_COMPLETE ) {
             *rc = res.codeResult;
             break;
@@ -347,7 +349,7 @@ static bool DoSpawnCmd( char *cmd )
         DWORD exit_code;
 
         if( NTSpawnWait( cmd, &exit_code, 0, 0, 0 ) ) {
-            rc = ( exit_code == 0 );
+            rc = (exit_code == 0);
         } else {
             rc = FALSE;
         }
@@ -357,7 +359,7 @@ static bool DoSpawnCmd( char *cmd )
         int     code;
 
         OS2SpawnWait( cmd, &code );
-        rc = ( code == 0 );
+        rc = (code == 0);
     }
 #elif defined( __UNIX__ )
     system( cmd );
@@ -374,8 +376,8 @@ static bool DoSpawnCmd( char *cmd )
 void DoSpawn( when_time when )
 /****************************/
 {
-    char buff[2*_MAX_PATH];
-    int         i, num_spawns;
+    char    buff[2 * _MAX_PATH];
+    int     i, num_spawns;
 
     num_spawns = SimNumSpawns();
     for( i = 0; i < num_spawns; ++i ) {
@@ -404,7 +406,7 @@ static void GetTmpFileNameUNC( char *path, char *buff )
         strcat( buff, TMPFILENAME );
     } else {
         buff[0] = *path;
-        strcpy( buff+1, ":\\" TMPFILENAME );
+        strcpy( buff + 1, ":\\" TMPFILENAME );
     }
 }
 #endif
@@ -415,7 +417,7 @@ static void GetTmpFileName( char drive, char *buff )
 /**************************************************/
 {
     buff[0] = drive;
-    strcpy( buff+1, ":" SYS_DIR_SEP_STR TMPFILENAME );
+    strcpy( buff + 1, ":" SYS_DIR_SEP_STR TMPFILENAME );
 }
 
 static void GetTmpFileNameInTarget( unsigned drive, char *buff )
@@ -442,7 +444,7 @@ void ResetDriveInfo( void )
     int         i;
 
     for( i = 0; i < sizeof( Drives ) / sizeof( Drives[0] ); ++i ) {
-        Drives[ i ].cluster_size = 0;
+        Drives[i].cluster_size = 0;
     }
 }
 
@@ -468,186 +470,190 @@ static unsigned GetDriveInfo( int drive, bool removable )
     info = &Drives[drive];
     if( ( info->cluster_size == 0 || removable /* recheck - could have been replaced */ ) ) {
         memset( info, 0, sizeof( *info ) );
-    if( drive == 0 ) return( 0 );
+        if( drive == 0 ) return( 0 );
         NoHardErrors();
 #if defined( __OS2__ )
-    {
-        typedef struct {
-            BYTE    cmdinfo;
-            BYTE    drive;
-        } parm;
+        {
+            typedef struct {
+                BYTE    cmdinfo;
+                BYTE    drive;
+            } parm;
 
-        typedef struct {
-            BYTE    bpb[31];
-            short   cyl;
-            BYTE    type;
-            short   attrs;
-        } ret;
+            typedef struct {
+                BYTE    bpb[31];
+                short   cyl;
+                BYTE    type;
+                short   attrs;
+            } ret;
 
-        #define         BUF_SIZE 40
+            #define         BUF_SIZE 40
 
-        UCHAR           fsinfobuf[BUF_SIZE];
-        APIRET          rc;
+            UCHAR           fsinfobuf[BUF_SIZE];
+            APIRET          rc;
 
-        ULONG           sectors_per_cluster;    /* sectors per allocation unit */
-        ULONG           free_clusters;          /* available units */
-        ULONG           bytes_per_sector;       /* bytes per sector */
-        parm            p;
-        ret             r;
-        ULONG           parmLengthInOut;
-        ULONG           dataLengthInOut;
-        char            dev[3];
-        struct {
-            FSQBUFFER2  b;
-            char        stuff[100];
-        } dataBuffer;
-        ULONG           dataBufferLen;
+            ULONG           sectors_per_cluster;    /* sectors per allocation unit */
+            ULONG           free_clusters;          /* available units */
+            ULONG           bytes_per_sector;       /* bytes per sector */
+            parm            p;
+            ret             r;
+            ULONG           parmLengthInOut;
+            ULONG           dataLengthInOut;
+            char            dev[3];
+            struct {
+                FSQBUFFER2  b;
+                char        stuff[100];
+            } dataBuffer;
+            ULONG           dataBufferLen;
 
-        rc = DosQueryFSInfo( (ULONG)drive, FSIL_ALLOC, fsinfobuf, BUF_SIZE );
+            rc = DosQueryFSInfo( (ULONG)drive, FSIL_ALLOC, fsinfobuf, BUF_SIZE );
 
-        if( rc == 0 ) {
-            /* This is a bit strange: the respective values are not */
-            /* returned in a structure but in an array BLAH! from   */
-            /* which one must extract info as below. See OS/2 Manual*/
-            /* for clarification.                                   */
-            sectors_per_cluster =  *(ULONG *)(fsinfobuf + (1*sizeof(ULONG)));
-            free_clusters =  *(ULONG *)(fsinfobuf + (3*sizeof(ULONG)));
-            bytes_per_sector  =  *(USHORT *)(fsinfobuf + (4*sizeof(ULONG)));
-            info->cluster_size = sectors_per_cluster * bytes_per_sector;
-            info->free_space = (unsigned long long)free_clusters * (ULONG)info->cluster_size;
-        } else {
-            info->free_space = -1;
-        }
-        info->fixed = FALSE;
-        info->diskette = FALSE;
-        p.cmdinfo = 0;
-        p.drive = drive - 1;
-        parmLengthInOut = sizeof( p );
-        dataLengthInOut = sizeof( r );
-        if( DosDevIOCtl(-1, 8, 0x63, &p,
-            sizeof( p ), &parmLengthInOut, &r,
-            sizeof( r ), &dataLengthInOut) == 0 ) {
-            dev[0] = drive_char;
-            dev[1] = ':';
-            dev[2] = '\0';
-            dataBufferLen = sizeof( dataBuffer );
-            rc = DosQueryFSAttach( dev, 0, FSAIL_QUERYNAME, (PFSQBUFFER2)&dataBuffer, &dataBufferLen );
             if( rc == 0 ) {
-                if( dataBuffer.b.iType == FSAT_LOCALDRV ) {
-                    switch( r.type ) {
-                    case 5: // fixed disk
-                        info->fixed = TRUE;
-                        break;
-                    case 6: // tape
-                        break;
-                    default: // diskette
-                        info->diskette = TRUE;
-                        break;
+                /* This is a bit strange: the respective values are not */
+                /* returned in a structure but in an array BLAH! from   */
+                /* which one must extract info as below. See OS/2 Manual*/
+                /* for clarification.                                   */
+                sectors_per_cluster = *(ULONG *)(fsinfobuf + (1 * sizeof( ULONG )));
+                free_clusters = *(ULONG *)(fsinfobuf + (3 * sizeof( ULONG )));
+                bytes_per_sector = *(USHORT *)(fsinfobuf + (4 * sizeof( ULONG )));
+                info->cluster_size = sectors_per_cluster * bytes_per_sector;
+                info->free_space = (unsigned long long)free_clusters *
+                    (ULONG)info->cluster_size;
+            } else {
+                info->free_space = -1;
+            }
+            info->fixed = FALSE;
+            info->diskette = FALSE;
+            p.cmdinfo = 0;
+            p.drive = drive - 1;
+            parmLengthInOut = sizeof( p );
+            dataLengthInOut = sizeof( r );
+            if( DosDevIOCtl( -1, 8, 0x63, &p, sizeof( p ), &parmLengthInOut, &r,
+                             sizeof( r ), &dataLengthInOut ) == 0 ) {
+                dev[0] = drive_char;
+                dev[1] = ':';
+                dev[2] = '\0';
+                dataBufferLen = sizeof( dataBuffer );
+                rc = DosQueryFSAttach( dev, 0, FSAIL_QUERYNAME, (PFSQBUFFER2)&dataBuffer,
+                                       &dataBufferLen );
+                if( rc == 0 ) {
+                    if( dataBuffer.b.iType == FSAT_LOCALDRV ) {
+                        switch( r.type ) {
+                        case 5: // fixed disk
+                            info->fixed = TRUE;
+                            break;
+                        case 6: // tape
+                            break;
+                        default: // diskette
+                            info->diskette = TRUE;
+                            break;
+                        }
                     }
+                } else if( rc == ERROR_NOT_READY ) {
+                    info->diskette = TRUE; // diskette not in drive
                 }
-            } else if( rc == ERROR_NOT_READY ) {
-                info->diskette = TRUE; // diskette not in drive
             }
         }
-    }
 #elif defined(__NT__)
-    {
-        char        root[4];
-        DWORD       sectors_per_cluster;
-        DWORD       bytes_per_sector;
-        DWORD       free_clusters;
-        DWORD       total_clusters;
-        UINT        drive_type;
+        {
+            char        root[4];
+            DWORD       sectors_per_cluster;
+            DWORD       bytes_per_sector;
+            DWORD       free_clusters;
+            DWORD       total_clusters;
+            UINT        drive_type;
 
-        root[0] = drive_char;
-        strcpy( &root[1], ":\\" );
-        if( GetDiskFreeSpace( root, &sectors_per_cluster, &bytes_per_sector,
-                   &free_clusters, &total_clusters ) ) {
-            info->cluster_size = bytes_per_sector * sectors_per_cluster;
-            info->free_space = (unsigned long long)free_clusters * (DWORD)info->cluster_size;
-        } else {
-            info->free_space = -1;
-        }
-        drive_type = GetDriveType( root );
-        info->diskette = drive_type == DRIVE_REMOVABLE;
-        info->fixed = drive_type == DRIVE_FIXED;
-    }
-#else
-    {
-        struct diskfree_t   FreeSpace;
-        union REGS          r;
-
-        info->diskette = FALSE;
-        info->fixed = FALSE;
-        info->cluster_size = 0;
-        info->free_space = -1;
-        r.w.ax = 0x440E;    // get logical drive
-        r.w.bx = drive;
-        intdos( &r, &r );
-        if( r.w.cflag || (r.h.al && (r.h.al != drive)) ) {
-            return( drive );
-        }
-        info->fixed = TRUE;
-        r.w.ax = 0x4409;    // query device local/remote
-        r.w.bx = drive;
-        intdos( &r, &r );
-        if( !r.w.cflag && (r.w.dx & 0x1000) ) {
-            info->fixed = FALSE;
-        }
-        r.w.ax = 0x4408;    // query device removable
-        r.w.bx = drive;
-        intdos( &r, &r );
-        if( !r.w.cflag ) {
-            info->diskette = r.w.ax ? FALSE : TRUE;
-            if( info->diskette ) {
-                info->fixed = FALSE;
+            root[0] = drive_char;
+            strcpy( &root[1], ":\\" );
+            if( GetDiskFreeSpace( root, &sectors_per_cluster, &bytes_per_sector,
+                                  &free_clusters, &total_clusters ) ) {
+                info->cluster_size = bytes_per_sector * sectors_per_cluster;
+                info->free_space = (unsigned long long)free_clusters *
+                    (DWORD)info->cluster_size;
+            } else {
+                info->free_space = -1;
             }
-        } else {
-            info->fixed = FALSE;
+            drive_type = GetDriveType( root );
+            info->diskette = drive_type == DRIVE_REMOVABLE;
+            info->fixed = drive_type == DRIVE_FIXED;
         }
-        if( _dos_getdiskfree( drive, &FreeSpace ) == 0 ) {
-            info->cluster_size = (unsigned long)FreeSpace.sectors_per_cluster
-                        * FreeSpace.bytes_per_sector;
-            info->free_space = FreeSpace.avail_clusters * (unsigned long long)info->cluster_size;
-            /* If reported cluster size is ridiculously large, it's likely faked; assume the
-             * real cluster size is much smaller - 4096 should be a conservative estimate.
-             */
-            if( info->cluster_size > 64 * 1024UL )
-                info->cluster_size = 4096;
-        } else if( removable ) { // diskette not present
+#else
+        {
+            struct diskfree_t   FreeSpace;
+            union REGS          r;
+
+            info->diskette = FALSE;
+            info->fixed = FALSE;
             info->cluster_size = 0;
             info->free_space = -1;
-        } else {
-            /* doesn't work on network drive - assume 4K cluster, max free */
-            info->cluster_size = 4096;
-            info->free_space = LONG_MAX;
+            r.w.ax = 0x440E;    // get logical drive
+            r.w.bx = drive;
+            intdos( &r, &r );
+            if( r.w.cflag || (r.h.al && (r.h.al != drive)) ) {
+                return( drive );
+            }
+            info->fixed = TRUE;
+            r.w.ax = 0x4409;    // query device local/remote
+            r.w.bx = drive;
+            intdos( &r, &r );
+            if( !r.w.cflag && (r.w.dx & 0x1000) ) {
+                info->fixed = FALSE;
+            }
+            r.w.ax = 0x4408;    // query device removable
+            r.w.bx = drive;
+            intdos( &r, &r );
+            if( !r.w.cflag ) {
+                info->diskette = r.w.ax ? FALSE : TRUE;
+                if( info->diskette ) {
+                    info->fixed = FALSE;
+                }
+            } else {
+                info->fixed = FALSE;
+            }
+            if( _dos_getdiskfree( drive, &FreeSpace ) == 0 ) {
+                info->cluster_size = (unsigned long)FreeSpace.sectors_per_cluster *
+                                     FreeSpace.bytes_per_sector;
+                info->free_space = FreeSpace.avail_clusters *
+                                   (unsigned long long)info->cluster_size;
+                /* If reported cluster size is ridiculously large, it's likely faked; assume the
+                 * real cluster size is much smaller - 4096 should be a conservative estimate.
+                 */
+                if( info->cluster_size > 64 * 1024UL ) {
+                    info->cluster_size = 4096;
+                }
+            } else if( removable ) { // diskette not present
+                info->cluster_size = 0;
+                info->free_space = -1;
+            } else {
+                /* doesn't work on network drive - assume 4K cluster, max free */
+                info->cluster_size = 4096;
+                info->free_space = LONG_MAX;
+            }
         }
-    }
 #endif
-    if( !removable ) {
-        int         io;
-        char        path[_MAX_PATH];
+        if( !removable ) {
+            int         io;
+            char        path[_MAX_PATH];
 
-        GetTmpFileNameInTarget( drive_char, path );
-        io = open( path, O_RDWR+O_CREAT+O_TRUNC, S_IREAD+S_IWRITE );
-        if( io == -1 ) {
-            GetTmpFileName( drive_char, path );
-            io = open( path, O_RDWR+O_CREAT+O_TRUNC, S_IREAD+S_IWRITE );
-            info->use_target_for_tmp_file = FALSE;
-        } else {
-            info->use_target_for_tmp_file = TRUE;
-        }
-        if( io != -1 ) {
-            close( io );
-            remove( path );
+            GetTmpFileNameInTarget( drive_char, path );
+            io = open( path, O_RDWR + O_CREAT + O_TRUNC, S_IREAD + S_IWRITE );
+            if( io == -1 ) {
+                GetTmpFileName( drive_char, path );
+                io = open( path, O_RDWR + O_CREAT + O_TRUNC, S_IREAD + S_IWRITE );
+                info->use_target_for_tmp_file = FALSE;
+            } else {
+                info->use_target_for_tmp_file = TRUE;
+            }
+            if( io != -1 ) {
+                close( io );
+                remove( path );
 #if 0  // FIXME it doesn't work correctly if target directory doesn't exist
        // (new installation) and you have insufficient rights to drive root
-        } else {
-            info->cluster_size = 1;
-            info->free_space = -1;
+            } else {
+                info->cluster_size = 1;
+                info->free_space = -1;
 #endif
+            }
         }
-    }
     }
 #endif
     return( drive );
@@ -656,7 +662,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
 extern unsigned long long GetFreeDiskSpace( unsigned drive, bool removable )
 /**************************************************************************/
 {
-    return( Drives[ GetDriveInfo( drive, removable ) ].free_space );
+    return( Drives[GetDriveInfo( drive, removable )].free_space );
 }
 
 void ResetDiskInfo( void )
@@ -671,9 +677,9 @@ bool IsFixedDisk( unsigned drive )
     if( drive == 0 )
         return( FALSE );
     // don't bang diskette every time!
-    if( Drives[ GetDriveNum( drive ) ].diskette )
+    if( Drives[GetDriveNum( drive )].diskette )
         return( FALSE );
-    return( Drives[ GetDriveInfo( drive, FALSE ) ].fixed != 0 );
+    return( Drives[GetDriveInfo( drive, FALSE )].fixed != 0 );
 }
 
 unsigned GetClusterSize( unsigned drive )
@@ -684,7 +690,7 @@ unsigned GetClusterSize( unsigned drive )
 #else
     if( drive == 0 )
         return( 1 );
-    return( Drives[ GetDriveInfo( drive, FALSE ) ].cluster_size );
+    return( Drives[GetDriveInfo( drive, FALSE )].cluster_size );
 #endif
 }
 
@@ -705,7 +711,7 @@ extern bool GetRootFromPath( char * root, char * path )
 
     if( isalpha( path[0] ) != 0 && path[1] == ':' ) {
         // turn a path like "c:\dir" into "c:\"
-        root[0] = path [ 0 ];
+        root[0] = path [0];
         root[1] = ':';
         root[2] = SYS_DIR_SEP_CHR;
         root[3] = '\0';
@@ -746,12 +752,11 @@ extern long FreeSpace( char * path )
     DWORD       bytes_per_sector;
     DWORD       avail_clusters;
     DWORD       total_clusters;
-    char        root[ _MAX_PATH ];
+    char        root[_MAX_PATH];
 
     if( GetRootFromPath( root, path ) ) {
-        if( GetDiskFreeSpace( root, &sectors_per_cluster,
-                      &bytes_per_sector, &avail_clusters,
-                      &total_clusters ) ) {
+        if( GetDiskFreeSpace( root, &sectors_per_cluster, &bytes_per_sector,
+                              &avail_clusters, &total_clusters ) ) {
             return( sectors_per_cluster * bytes_per_sector * avail_clusters );
         }
     }
@@ -759,14 +764,14 @@ extern long FreeSpace( char * path )
     struct diskfree_t info;
     if( isalpha( *path ) != 0 ) {
         if( _getdiskfree( toupper( *path ) - 'A' + 1, &info ) == 0 ) {
-            return( (long) info.sectors_per_cluster * info.bytes_per_sector * info.avail_clusters );
+            return( (long)info.sectors_per_cluster * info.bytes_per_sector * info.avail_clusters );
         }
     }
 #endif
-    return 0;
+    return( 0 );
 }
 
-extern long ClusterSize( char * path )
+extern long ClusterSize( char *path )
 /************************************/
 {
 #ifdef WINNT
@@ -774,12 +779,11 @@ extern long ClusterSize( char * path )
     DWORD       bytes_per_sector;
     DWORD       avail_clusters;
     DWORD       total_of_clusters;
-    char        root[ _MAX_PATH ];
+    char        root[_MAX_PATH];
 
     if( GetRootFromPath( root, path ) ) {
-        if( GetDiskFreeSpace( root, &sectors_per_cluster,
-                      &bytes_per_sector, &avail_clusters,
-                      &total_of_clusters ) ) {
+        if( GetDiskFreeSpace( root, &sectors_per_cluster, &bytes_per_sector,
+                              &avail_clusters, &total_of_clusters ) ) {
             return( sectors_per_cluster * bytes_per_sector );
         }
     }
@@ -788,11 +792,11 @@ extern long ClusterSize( char * path )
     struct diskfree_t info;
     if( isalpha( *path ) != 0 ) {
         if( _getdiskfree( toupper( *path ) - 'A' + 1, &info ) == 0 ) {
-            return( (long) info.sectors_per_cluster * info.bytes_per_sector );
+            return( (long)info.sectors_per_cluster * info.bytes_per_sector );
         }
     }
 #endif
-    return 0;
+    return( 0 );
 }
 
 bool IsDriveWritable( char *path )
@@ -812,7 +816,7 @@ bool IsDriveWritable( char *path )
 
     GetTmpFileNameUNC( root, tempfile );
 
-    io = open( tempfile, O_RDWR+O_CREAT+O_TRUNC, S_IREAD+S_IWRITE );
+    io = open( tempfile, O_RDWR + O_CREAT + O_TRUNC, S_IREAD + S_IWRITE );
     if( io == -1 ) {
         return( FALSE );
     } else {
@@ -832,12 +836,11 @@ bool DriveInfoIsAvailable( char *path )
     DWORD       bytes_per_sector;
     DWORD       avail_clusters;
     DWORD       total_clusters;
-    char        root[ _MAX_PATH ];
+    char        root[_MAX_PATH];
 
     if( GetRootFromPath( root, path ) ) {
-        if( GetDiskFreeSpace( root, &sectors_per_cluster,
-                      &bytes_per_sector, &avail_clusters,
-                      &total_clusters ) ) {
+        if( GetDiskFreeSpace( root, &sectors_per_cluster, &bytes_per_sector,
+                              &avail_clusters, &total_clusters ) ) {
             return( TRUE );
         }
     }
@@ -958,9 +961,11 @@ static void catnum( char *buff, long long num )
         num /= KB;
         if( num > MB ) {
             num /= KB;
-            sprintf( num_buff, "%c%d,%3.3dMB", ch, (int)(num/1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%d,%3.3dMB", ch, (int)(num / 1000),
+                     (int)(num % 1000) );
         } else if( num > KB ) {
-            sprintf( num_buff, "%c%d,%3.3dKB", ch, (int)(num/1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%d,%3.3dKB", ch, (int)(num / 1000),
+                     (int)(num % 1000) );
         } else {
             sprintf( num_buff, "%c%dKB", ch, (int)num );
         }
@@ -982,9 +987,11 @@ static void ucatnum( char *buff, unsigned long long num )
         num /= KB;
         if( num > MB ) {
             num /= KB;
-            sprintf( num_buff, "%c%u,%3.3uMB", ch, (int)(num/1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%u,%3.3uMB", ch, (int)(num / 1000),
+                     (int)(num % 1000) );
         } else if( num > KB ) {
-            sprintf( num_buff, "%c%u,%3.3uKB", ch, (int)(num/1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%u,%3.3uKB", ch, (int)(num / 1000),
+                     (int)(num % 1000) );
         } else {
             sprintf( num_buff, "%c%uKB", ch, (int)num );
         }
@@ -1095,8 +1102,8 @@ extern bool CheckDrive( bool issue_message )
     unsigned long long  max_tmp_file;
     int                 max_targs;
     int                 i, j, targ_num;
-    char                *disks[ MAX_DRIVES ];
-    bool                disk_counted[ MAX_DRIVES ];
+    char                *disks[MAX_DRIVES];
+    bool                disk_counted[MAX_DRIVES];
 #if !defined( __UNIX__ )
     char                disk;
     gui_message_return  reply;
@@ -1109,16 +1116,16 @@ extern bool CheckDrive( bool issue_message )
         unsigned long long  max_tmp;
         unsigned long long  free;
         int                 num_files;
-    } space[ MAX_DRIVES ];
+    } space[MAX_DRIVES];
 #ifdef UNC_SUPPORT
-    char                root[ 2 ][ _MAX_PATH ];
-    char                UNC_root[ _MAX_PATH ];
+    char                root[2][_MAX_PATH];
+    char                UNC_root[_MAX_PATH];
 #endif
 
 
     for( i = 0; i < MAX_DRIVES; i++ ) {
         space[i].drive = GUIMemAlloc( _MAX_PATH );
-        if( space[ i ].drive == NULL ) {
+        if( space[i].drive == NULL ) {
             return( FALSE );
         }
         *space[i].drive = 0;
@@ -1129,43 +1136,43 @@ extern bool CheckDrive( bool issue_message )
     max_targs = SimNumTargets();
     for( i = 0; i < max_targs; i++ ) {
         // get drive letter for each target (actually the path including the drive letter)
-        disks[ i ] = SimGetDriveLetter( i );
-        SetPathEnd( disks[ i ] );
-        if( disks[ i ] == NULL ) {
+        disks[i] = SimGetDriveLetter( i );
+        SetPathEnd( disks[i] );
+        if( disks[i] == NULL ) {
             return( FALSE );
         } else {
-            disk_counted[ i ] = FALSE;
+            disk_counted[i] = FALSE;
         }
     }
     // check for enough disk space, combine drives that are the same
     for( i = 0; i < max_targs; i++ ) {
-        if( !disk_counted[ i ] ) {
+        if( !disk_counted[i] ) {
             targ_num = i;
             disk_space_needed = SimTargetSpaceNeeded( i );
             max_tmp_file = SimMaxTmpFile( i );
             for( j = i + 1; j < max_targs; ++j ) {
 #ifdef UNC_SUPPORT
-                GetRootFromPath( root[ 0 ], disks[ i ] );
-                GetRootFromPath( root[ 1 ], disks[ j ] );
+                GetRootFromPath( root[0], disks[i] );
+                GetRootFromPath( root[1], disks[j] );
                 // identical drives are combined, and so are UNC paths pointing to the same share
                 // BUT:  drives and UNC paths that happen to be the same are NOT combined. (I am lazy)
 
-                if( ( tolower( *disks[ j ] ) == tolower( *disks[ i ] )
-                    && isalpha( *disks[ i ] ) )
-                    || stricmp( root[ 0 ], root[ 1 ] ) == 0 ) {
+                if( ( tolower( *disks[j] ) == tolower( *disks[i] ) &&
+                    isalpha( *disks[i] ) ) || stricmp( root[0], root[1] ) == 0 ) {
 #else
-                if( tolower( *disks[ j ] ) == tolower( *disks[ i ] ) && isalpha( *disks[ i ] ) ) {
+                if( tolower( *disks[j] ) == tolower( *disks[i] ) &&
+                    isalpha( *disks[i] ) ) {
 #endif
                     targ_num = j;
                     disk_space_needed += SimTargetSpaceNeeded( j );
                     if( SimMaxTmpFile( j ) > max_tmp_file ) {
                         max_tmp_file = SimMaxTmpFile( j );
                     }
-                    disk_counted[ j ] = TRUE;
+                    disk_counted[j] = TRUE;
                 }
             }
 #ifdef UNC_SUPPORT
-            if( TEST_UNC( disks[ i ] ) ) {
+            if( TEST_UNC( disks[i] ) ) {
                 if( !IsDriveWritable( disks[i] ) ) {
                     if( issue_message ) {
                         GetRootFromPath( UNC_root, disks[i] );
@@ -1193,21 +1200,21 @@ extern bool CheckDrive( bool issue_message )
 #if !defined( __UNIX__ )
             if( disk_space_needed > 0 && free_disk_space < disk_space_needed + max_tmp_file ) {
                 for( disk = 'c'; disk <= 'z'; ++disk ) {
-                    if( disk == tolower( *disks[ i ] ) )
+                    if( disk == tolower( *disks[i] ) )
                         continue;
                     if( !IsFixedDisk( disk ) )
                         continue;
                     if( GetFreeDiskSpace( disk, FALSE ) > max_tmp_file ) {
                         SimSetTargTempDisk( i, disk );
                         for( j = i + 1; j < max_targs; ++j ) {
-                            if( tolower( *disks[ j ] ) == *disks[ i ] ) {
+                            if( tolower( *disks[j] ) == *disks[i] ) {
                                 SimSetTargTempDisk( j, disk );
                             }
                         }
                         break;
                     }
                     if( disk == 'z' && issue_message ) {
-                        MsgBox( NULL, "IDS_NOTEMPSPACE", GUI_OK, max_tmp_file/1000 );
+                        MsgBox( NULL, "IDS_NOTEMPSPACE", GUI_OK, max_tmp_file / 1000 );
                         return( FALSE );
                     }
                 }
@@ -1215,20 +1222,22 @@ extern bool CheckDrive( bool issue_message )
             if( issue_message ) {
                 if( disk_space_needed > 0 && free_disk_space < disk_space_needed ) {
 #ifdef UNC_SUPPORT
-                    if( TEST_UNC( disks[ i ] ) {
-                        if( DriveInfoIsAvailable( disks[ i ] ) ) {
+                    if( TEST_UNC( disks[i] ) {
+                        if( DriveInfoIsAvailable( disks[i] ) ) {
                             reply = MsgBox( NULL, "IDS_NODISKSPACE_UNC", GUI_YES_NO,
-                                disks[ i ], free_disk_space/1000, disk_space_needed/1000 );
+                                            disks[i], free_disk_space / 1000,
+                                            disk_space_needed / 1000 );
                         } else {
-                            GetRootFromPath( root, disks[ i ] );
-                            reply = MsgBox( NULL, "IDS_ASSUME_ENOUGHSPACE",
-                            GUI_YES_NO, root );
+                            GetRootFromPath( root, disks[i] );
+                            reply = MsgBox( NULL, "IDS_ASSUME_ENOUGHSPACE", GUI_YES_NO,
+                                            root );
                         }
                     } else
 #endif
                     {
-                        reply = MsgBox( NULL, "IDS_NODISKSPACE", GUI_YES_NO,
-                            *disks[ i ], free_disk_space/1000, disk_space_needed/1000 );
+                        reply = MsgBox( NULL, "IDS_NODISKSPACE", GUI_YES_NO, *disks[i],
+                                        free_disk_space / 1000,
+                                        disk_space_needed / 1000 );
                     }
                     if( reply == GUI_RET_NO ) {
                         return( FALSE );
@@ -1242,13 +1251,14 @@ extern bool CheckDrive( bool issue_message )
         strcpy( drive, "DriveFreeN" );
         if( *space[i].drive != 0 && SimTargetNeedsUpdate( i ) ) {
 #ifdef UNC_SUPPORT
-            if( TEST_UNC( space[ i ].drive ) ) {
-                GetRootFromPath( UNC_root, space[ i ].drive );
+            if( TEST_UNC( space[i].drive ) ) {
+                GetRootFromPath( UNC_root, space[i].drive );
                 sprintf( buff, GetVariableStrVal( "IDS_DRIVE_SPEC_UNC" ), UNC_root );
             } else
 #endif
             {
-                sprintf( buff, GetVariableStrVal( "IDS_DRIVE_SPEC" ), toupper( *(space[i].drive) ) );
+                sprintf( buff, GetVariableStrVal( "IDS_DRIVE_SPEC" ),
+                         toupper( *(space[i].drive) ) );
             }
             if( space[i].needed < 0 ) {
                 catnum( buff, -space[i].needed );
@@ -1262,10 +1272,10 @@ extern bool CheckDrive( bool issue_message )
         } else {
             buff[0] = '\0';
         }
-        drive[ strlen( drive ) - 1 ] = i + 1 + '0';
+        drive[strlen( drive ) - 1] = i + 1 + '0';
 #ifdef UNC_SUPPORT
-        if( TEST_UNC( space[ i ].drive ) && ( !DriveInfoIsAvailable( space[ i ].drive )
-            || !IsDriveWritable( space[ i ].drive ) ) ) {
+        if( TEST_UNC( space[i].drive ) && ( !DriveInfoIsAvailable( space[i].drive ) ||
+            !IsDriveWritable( space[ i ].drive ) ) ) {
             strcpy( buff, "" );
         }
 #endif
@@ -1330,9 +1340,9 @@ extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
         if( pbuff != NULL )
             break;
         buffer_size >>= 1;
-        if( buffer_size < sizeof(lastchance) ) {
+        if( buffer_size < sizeof( lastchance ) ) {
             pbuff = lastchance;
-            buffer_size = sizeof(lastchance);
+            buffer_size = sizeof( lastchance );
             break;
         }
     }
@@ -1406,7 +1416,7 @@ static bool CreateDirectoryTree( void )
     long                num_total_install;
     long                num_installed;
     int                 i;
-    char                dst_path[ _MAX_PATH ];
+    char                dst_path[_MAX_PATH];
     int                 max_dirs = SimNumDirs();
 
     num_total_install = 0;
@@ -1445,10 +1455,10 @@ static bool RelocateFiles( void )
     int                 subfilenum, max_subfiles;
     long                num_total_install;
     long                num_installed;
-    char                dst_path[ _MAX_PATH ];
-    char                src_path[ _MAX_PATH ];
-    char                dir[ _MAX_PATH ];
-    char                file_desc[ MAXBUF ];
+    char                dst_path[_MAX_PATH];
+    char                src_path[_MAX_PATH];
+    char                dir[_MAX_PATH];
+    char                file_desc[MAXBUF];
     int                 max_files = SimNumFiles();
 
     num_total_install = 0;
@@ -1543,7 +1553,7 @@ static void UpdateCheckList( char *name, vhandle var_handle )
 static void TransferCheckList( void )
 /***********************************/
 {
-    file_check  *check,*next;
+    file_check  *check, *next;
 
     for( check = FileCheckThisPack; check != NULL; check = next ) {
         next = check->next;
@@ -1578,12 +1588,12 @@ static void CopySetupInfFile( void )
 /**********************************/
 {
     char                *p;
-    char                dst_path[ _MAX_PATH ];
-    char                tmp_path[ _MAX_PATH ];
+    char                dst_path[_MAX_PATH];
+    char                tmp_path[_MAX_PATH];
 
     // if DoCopyInf variable is set, copy/delete setup.inf
     p = GetVariableStrVal( "DoCopyInf" );
-    if( ( p != NULL ) && ( strlen( p ) > 0 ) ) {
+    if( (p != NULL) && (strlen( p ) > 0) ) {
         ReplaceVars( tmp_path, p );
         _makepath( dst_path, NULL, tmp_path, "setup.inf", NULL );
         if( VarGetIntVal( UnInstall ) ) {
@@ -1599,7 +1609,7 @@ int UnPackHook( char *name )
 /**************************/
 {
     char        drive[_MAX_DRIVE];
-    char        dir[ _MAX_DIR ];
+    char        dir[_MAX_DIR];
     char        fname[_MAX_FNAME];
     char        ext[_MAX_EXT];
 
@@ -1626,12 +1636,12 @@ static bool DoCopyFiles( void )
     int                 filenum, disk_num;
     int                 subfilenum, max_subfiles;
     COPYFILE_ERROR      copy_error;
-    char                dst_path[ _MAX_PATH ];
-    char                tmp_path[ _MAX_PATH ];
-    char                src_path[ _MAX_PATH ];
-    char                file_name[ _MAX_FNAME + _MAX_EXT ];
-    char                file_desc[ MAXBUF ], dir[ _MAX_PATH ], disk_desc[ MAXBUF ];
-    char                old_dir[ _MAX_PATH ];
+    char                dst_path[_MAX_PATH];
+    char                tmp_path[_MAX_PATH];
+    char                src_path[_MAX_PATH];
+    char                file_name[_MAX_FNAME + _MAX_EXT];
+    char                file_desc[MAXBUF], dir[_MAX_PATH], disk_desc[MAXBUF];
+    char                old_dir[_MAX_PATH];
     long                num_total_install;
     long                num_installed;
     split_file          *split = NULL;
@@ -1658,11 +1668,10 @@ static bool DoCopyFiles( void )
                 if( SimSubFileReadOnly( filenum, subfilenum ) ) {
                     SimSubFileName( filenum, subfilenum, file_desc );
                     _makepath( tmp_path, NULL, dir, file_desc, NULL );
-                    if( !PromptUser( tmp_path,
-                             "ReadOnlyFile",
-                             "RO_Skip_Dialog",
-                             "RO_Replace_Old",
-                             &value ) ) return( FALSE );
+                    if( !PromptUser( tmp_path, "ReadOnlyFile", "RO_Skip_Dialog",
+                                     "RO_Replace_Old", &value ) ) {
+                        return( FALSE );
+                    }
                     if( value ) {
                         chmod( tmp_path, S_IWRITE );
                     }
@@ -1671,13 +1680,13 @@ static bool DoCopyFiles( void )
                     SimSubFileName( filenum, subfilenum, file_desc );
 //                  _splitpath( file_desc, NULL, NULL, NULL, file_ext );
                     _makepath( tmp_path, NULL, dir, file_desc, NULL );
-                    if( !PromptUser( tmp_path,
-                            "NewerFile",
-                            "Newer_Skip_Dialog",
-                            "Newer_Replace_Old",
-                            &value ) ) return( FALSE );
+                    if( !PromptUser( tmp_path, "NewerFile", "Newer_Skip_Dialog",
+                                     "Newer_Replace_Old", &value ) ) {
+                        return( FALSE );
+                    }
                     if( value ) {
-                        SetFileDate( tmp_path, SimSubFileDate( filenum, subfilenum )-1 );
+                        SetFileDate( tmp_path,
+                                     SimSubFileDate( filenum, subfilenum ) - 1 );
                     }
                 }
             }
@@ -1689,11 +1698,10 @@ static bool DoCopyFiles( void )
                 if( SimSubFileReadOnly( filenum, subfilenum ) ) {
                     SimSubFileName( filenum, subfilenum, file_desc );
                     _makepath( tmp_path, NULL, dir, file_desc, NULL );
-                    if( !PromptUser( tmp_path,
-                             "DeleteReadOnlyFile",
-                             "RO_Skip_Remove",
-                             "RO_Remove_Old",
-                             &value ) ) return( FALSE );
+                    if( !PromptUser( tmp_path, "DeleteReadOnlyFile", "RO_Skip_Remove",
+                                     "RO_Remove_Old", &value ) ) {
+                        return( FALSE );
+                    }
                     if( value ) {
                         chmod( tmp_path, S_IWRITE );
                         num_total_install += OVERHEAD_SIZE;
@@ -1862,7 +1870,7 @@ static void RemoveExtraFiles( void )
 {
 #if !defined( __UNIX__ )
     char                *p;
-    char                dst_path[ _MAX_PATH ];
+    char                dst_path[_MAX_PATH];
 
     if( VarGetIntVal( UnInstall ) ) {
         // delete saved autoexec's and config's
@@ -1898,7 +1906,7 @@ static void RemoveExtraFiles( void )
 extern  void DetermineSrcState( char *src_dir )
 /*********************************************/
 {
-    char        dir[ _MAX_PATH ];
+    char        dir[_MAX_PATH];
 
 //  if( SrcInstState != SRC_UNKNOWN ) return;
 
@@ -2098,7 +2106,7 @@ char *AddInstallName( char *text, bool dorealloc )
             text = GUIMemRealloc( text, len + inst_len );
             p = text + offset;
         }
-        memmove( p + inst_len, p+1, len - (p+1 - text) );
+        memmove( p + inst_len, p + 1, len - (p + 1 - text) );
         memcpy( p, inst_name, inst_len );
         p += inst_len;
         len += inst_len;
@@ -2106,12 +2114,13 @@ char *AddInstallName( char *text, bool dorealloc )
     return( text );
 }
 
-extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_type wType, ... )
-/***********************************************************************************************/
+extern gui_message_return MsgBox( gui_window *gui, char *messageid,
+                                  gui_message_type wType, ... )
+/*****************************************************************/
 {
     gui_message_return  result;
-    char                buff[ 1024 ];
-    char                msg[ 1024 ];
+    char                buff[1024];
+    char                msg[1024];
     char *              errormessage;
     va_list             arglist;
     int                 i;
@@ -2152,13 +2161,13 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
 
     msg_index = 0;
     for( i = 0; i < strlen( buff ); i++ ) {
-        if( buff[ i ] == '&' ) {
+        if( buff[i] == '&' ) {
             continue;              // skip the '& character.
         }
-        msg[ msg_index ] = buff [ i ];
+        msg[msg_index] = buff [i];
         msg_index++;
     }
-    msg[ msg_index ] = '\0';
+    msg[msg_index] = '\0';
 
     if( SkipDialogs ) {
         switch( wType ) {
@@ -2182,14 +2191,15 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
             result = GUI_RET_OK;
         }
     } else {
-        result = GUIDisplayMessage( gui == NULL ? MainWnd : gui, msg, GetInstallName(), wType );
+        result = GUIDisplayMessage( gui == NULL ? MainWnd : gui, msg, GetInstallName(),
+                                    wType );
     }
     return( result );
 }
 
 
 extern int PromptUser( char *name, char *dlg, char *skip,
-            char *replace, int *value )
+                       char *replace, int *value )
 /*******************************************************/
 {
     dlg_state                   return_state;
@@ -2209,7 +2219,7 @@ extern int PromptUser( char *name, char *dlg, char *skip,
         }
     }
 
-    *value = ( GetVariableIntVal( replace ) == 1 );
+    *value = (GetVariableIntVal( replace ) == 1);
     return( TRUE );
 }
 
@@ -2244,8 +2254,8 @@ static void DefineVars( void )
     }
 }
 
-char *GetSelfWithPath( char *buff, int len, char**argv )
-/******************************************************/
+char *GetSelfWithPath( char *buff, int len, char **argv )
+/*******************************************************/
 {
 #if defined( __UNIX__ )
     int result;
@@ -2259,7 +2269,7 @@ char *GetSelfWithPath( char *buff, int len, char**argv )
     }
     if( result != -1 && result != len ) {
         // readlink does not add a NUL so we need to do it ourselves
-        buff[ result ] = '\0';
+        buff[result] = '\0';
         return( buff );
     }
     // fall back to argv[0] if readlink doesn't work
@@ -2267,29 +2277,30 @@ char *GetSelfWithPath( char *buff, int len, char**argv )
     return( strcpy( buff, argv[0] ) );
 }
 
-extern bool GetDirParams( int argc, char **argv, char **inf_name, char **tmp_path, char **arc_name )
-/**************************************************************************************************/
+extern bool GetDirParams( int argc, char **argv, char **inf_name, char **tmp_path,
+                          char **arc_name )
+/********************************************************************************/
 {
-    char                dir[ _MAX_DIR ];
-    char                drive[ _MAX_DRIVE ];
+    char                dir[_MAX_DIR];
+    char                drive[_MAX_DRIVE];
     int                 i;
 
     *inf_name = GUIMemAlloc( _MAX_PATH );
     if( *inf_name == NULL ) {
-        return FALSE;
+        return( FALSE );
     }
 
     *tmp_path = GUIMemAlloc( _MAX_PATH );
     if( *tmp_path == NULL ) {
         GUIMemFree( *inf_name );
-        return FALSE;
+        return( FALSE );
     }
 
     *arc_name = GUIMemAlloc( _MAX_PATH );
     if( *tmp_path == NULL ) {
         GUIMemFree( *inf_name );
         GUIMemFree( *tmp_path );
-        return FALSE;
+        return( FALSE );
     }
 
     Invisible           = FALSE;
@@ -2323,13 +2334,13 @@ extern bool GetDirParams( int argc, char **argv, char **inf_name, char **tmp_pat
                 MsgBox( NULL, "IDS_USAGE", GUI_OK, msg );
                 
                 /* return FALSE to terminate installer */
-                return FALSE;
+                return( FALSE );
             }
             
             case 'f': // Process "script" file to override variables in setup.inf
             case 'F':
-                if( argv[i][2] == '=' && argv[i][3] != '\0'
-                    && access( &argv[i][3], R_OK ) == 0 ) {
+                if( argv[i][2] == '=' && argv[i][3] != '\0' &&
+                    access( &argv[i][3], R_OK ) == 0 ) {
                     VariablesFile = strdup( &argv[i][3] );
                 }
                 break;
@@ -2349,10 +2360,11 @@ extern bool GetDirParams( int argc, char **argv, char **inf_name, char **tmp_pat
                 
             case 'n':
             case 'N':
-                if(argv[i][2] == 's' || argv[i][2] == 'S')
+                if( argv[i][2] == 's' || argv[i][2] == 'S' ) {
                     NoStartupChange = TRUE;
-                else if(argv[i][2] == 'p' || argv[i][2] == 'P')
+                } else if( argv[i][2] == 'p' || argv[i][2] == 'P' ) {
                     NoProgramGroups = TRUE;
+                }
                 break; 
             }
 
@@ -2400,7 +2412,7 @@ extern bool GetDirParams( int argc, char **argv, char **inf_name, char **tmp_pat
         _makepath( *tmp_path, drive, dir, NULL, NULL );
     }
 
-    return TRUE;
+    return( TRUE );
 }
 
 
@@ -2416,14 +2428,14 @@ extern bool FreeDirParams( char **inf_name, char **tmp_path )
     *inf_name = NULL;
     *tmp_path = NULL;
 
-    return TRUE;
+    return( TRUE );
 }
 
 extern void ReadVariablesFile( char * name )
 /******************************************/
 {
     FILE   *fp;
-    char   buf[ 256 ];
+    char   buf[256];
     char   *line;
     char   *variable;
     char   *value;
@@ -2441,9 +2453,8 @@ extern void ReadVariablesFile( char * name )
         if( *line == '#' ) {
             continue;
         }
-        while( strlen( line ) > 0
-            && isspace( line[ strlen( line ) - 1 ] ) != 0 ) {
-            line[ strlen( line ) - 1 ] = '\0';
+        while( strlen( line ) > 0 && isspace( line[strlen( line ) - 1] ) != 0 ) {
+            line[strlen( line ) - 1] = '\0';
         }
         variable = strtok( line, " =\t" );
         value = strtok( NULL, "=\t\0" );
@@ -2452,15 +2463,13 @@ extern void ReadVariablesFile( char * name )
                 value++;
             }
 
-            while( strlen( value ) > 0
-                && isspace( value[ strlen( value ) - 1 ] ) != 0 ) {
-                value[ strlen( value ) - 1 ] = '\0';
+            while( strlen( value ) > 0 &&
+                   isspace( value[ strlen( value ) - 1 ] ) != 0 ) {
+                value[strlen( value ) - 1] = '\0';
             }
             if( variable != NULL ) {
-                if( name == NULL
-                    || ( name != NULL
-                         && stricmp( name, variable ) == 0 ) ) {
-
+                if( name == NULL || (name != NULL &&
+                                     stricmp( name, variable ) == 0) ) {
                     if( stricmp( value, "true" ) == 0 ) {
                         SetVariableByName( variable, "1" );
                     } else if( stricmp( value, "false" ) == 0 ) {
@@ -2479,8 +2488,8 @@ extern bool InitInfo( char * inf_name, char * tmp_path )
 /******************************************************/
 // initialize global vbls. and read setup.inf into memory.
 {
-    char                dir[ _MAX_DIR ];
-    char                drive[ _MAX_DRIVE ];
+    char                dir[_MAX_DIR];
+    char                drive[_MAX_DRIVE];
     int                 ret;
 
     SetVariableByName( "SrcDir", tmp_path );
@@ -2588,3 +2597,4 @@ char *stristr( char *str, char *substr )
     }
     return( NULL );
 }
+

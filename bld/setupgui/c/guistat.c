@@ -105,7 +105,6 @@ extern void StatusShow( bool show )
     }
 }
 
-
 extern void StatusFini( void )
 /***************************/
 {
@@ -117,12 +116,10 @@ extern void StatusFini( void )
     }
 }
 
-
 extern void StatusLines( int msg0, char *message1 )
 /*************************************************/
 {
     if( StatusWnd != NULL ) {
-
         if( message1 != NULL ) {
             if( strcmp( message1, StatusLine1 ) != 0 ) {
                 strcpy( StatusLine1, message1 );
@@ -138,9 +135,9 @@ extern void StatusLines( int msg0, char *message1 )
     }
 }
 
-
-extern void BumpStatus( long by ) {
-/*********************************/
+extern void BumpStatus( long by )
+/*******************************/
+{
     if( !IsPatch ) {
         // if a patch, don't change status because denominator of status
         // fraction is the number of operations, not a number of bytes
@@ -149,7 +146,7 @@ extern void BumpStatus( long by ) {
 }
 
 extern void StatusAmount( long parts_complete, long parts_injob )
-/*************************************************************/
+/***************************************************************/
 // Display slider bar indicating percentage complete
 {
     int                 old_percent;
@@ -168,11 +165,13 @@ extern void StatusAmount( long parts_complete, long parts_injob )
             Parts_Complete = Parts_Injob;
         }
         if( Parts_Injob > 100000 ) {
-            Percent = Parts_Complete / ( Parts_Injob / 100 );
+            Percent = Parts_Complete / (Parts_Injob / 100);
         } else {
-            Percent = ( 100 * Parts_Complete ) / Parts_Injob;
+            Percent = (100 * Parts_Complete) / Parts_Injob;
         }
-        if( Percent > 100 ) Percent = 100;
+        if( Percent > 100 ) {
+            Percent = 100;
+        }
     }
     if( old_percent == Percent ) return;
     if( Percent != 0 && Percent < old_percent ) {
@@ -180,9 +179,9 @@ extern void StatusAmount( long parts_complete, long parts_injob )
         return;
     }
     if( StatusWnd == NULL ) return;
-    #ifdef _UI
-        GUIWndDirty( StatusWnd );
-    #else
+#ifdef _UI
+    GUIWndDirty( StatusWnd );
+#else
     {
         gui_ord         bar_width, old_divider, divider;
         gui_rect        rect;
@@ -191,13 +190,13 @@ extern void StatusAmount( long parts_complete, long parts_injob )
 
         // calculate where divider splits rectangle
         bar_width = StatusBarRect.width;
-        divider = ( bar_width * (long)Percent ) / 100;
+        divider = (bar_width * (long)Percent) / 100;
         if( divider < 0 ) {
             divider = 0;
         } else if( divider > bar_width ) {
             divider = bar_width;
         }
-        old_divider = ( bar_width * (long)old_percent ) / 100;
+        old_divider = (bar_width * (long)old_percent) / 100;
         if( old_divider < 0 ) {
             old_divider = 0;
         } else if( old_divider > bar_width ) {
@@ -211,18 +210,17 @@ extern void StatusAmount( long parts_complete, long parts_injob )
             old_divider += StatusBarRect.x;
             rect = StatusBarRect;
             rect.width = GUIGetExtentX( StatusWnd, StatusBarBuf, strlen( StatusBarBuf ) );
-            rect.x = StatusBarRect.x + ( StatusBarRect.width - rect.width ) / 2;
+            rect.x = StatusBarRect.x + (StatusBarRect.width - rect.width) / 2;
             rect.x -= CharSize.x / 2;
             rect.width += CharSize.x;
             GUIWndDirtyRect( StatusWnd, &rect ); // dirty text
             rect.x = old_divider - CharSize.x;
-            rect.width = divider - old_divider + 2*CharSize.x;
+            rect.width = divider - old_divider + 2 * CharSize.x;
             GUIWndDirtyRect( StatusWnd, &rect ); // dirty new bit of bar
         }
     }
-    #endif
+#endif
 }
-
 
 extern bool StatusCancelled( void )
 /*********************************/
@@ -231,7 +229,6 @@ extern bool StatusCancelled( void )
     GUIDrainEvents();
     return( CancelSetup );
 }
-
 
 static GUICALLBACK StatusEventProc;
 static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
@@ -252,123 +249,127 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
         return( TRUE );
 
     case GUI_PAINT:
-    {
-        if( StatusBarLen == 0 ) break;
-        msg = GetVariableStrVal( Messages[MsgLine0] );
-        GUIDrawTextExtent( gui, msg, strlen( msg ), LINE0_ROW,
-                           LINE0_COL*CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
-        GUIDrawTextExtent( gui, StatusLine1, strlen( StatusLine1 ), LINE1_ROW,
-                           LINE1_COL*CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
+        {
+            if( StatusBarLen == 0 ) break;
+            msg = GetVariableStrVal( Messages[MsgLine0] );
+            GUIDrawTextExtent( gui, msg, strlen( msg ), LINE0_ROW,
+                               LINE0_COL * CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
+            GUIDrawTextExtent( gui, StatusLine1, strlen( StatusLine1 ), LINE1_ROW,
+                               LINE1_COL * CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
 #ifdef _UI
-        {
-            #include "uigchar.h"
-            int         len1, len2;
-            char        num[20];
+            {
+                #include "uigchar.h"
+                int         len1, len2;
+                char        num[20];
 
-            memset( StatusBarBuf, ' ', StatusBarLen );
-            StatusBarBuf[ StatusBarLen ] = '\0';
-            itoa( Percent, num, 10 );
-            strcat( num, "%" );
-            memcpy( StatusBarBuf+StatusBarLen/2-1, num, strlen( num ) );
-            // draw bar in two parts
-            len1 = ( StatusBarLen * (long)Percent ) / 100;
-            if( len1 < 0 ) {
-                len1 = 0;
-            } else if( len1 > StatusBarLen ) {
-                len1 = StatusBarLen;
-            }
-            len2 = StatusBarLen - len1;
-            if( len1 > 0 ) {
-                GUIDrawText( gui, StatusBarBuf, len1, STATUS_ROW,
-                             StatusBarRect.x, WND_STATUS_BAR );
-            }
-            if( len2 > 0 ) {
-                GUIDrawText( gui, StatusBarBuf + len1, len2, STATUS_ROW,
-                             StatusBarRect.x + len1 * CharSize.x, WND_STATUS_TEXT );
-            }
-            memset( StatusBarBuf, UiGChar[ UI_SBOX_TOP_LINE ], StatusBarLen );
-            GUIDrawText( gui, StatusBarBuf, StatusBarLen, STATUS_ROW-1,
-                         StatusBarRect.x, WND_STATUS_TEXT );
-            GUIDrawText( gui, StatusBarBuf, StatusBarLen, STATUS_ROW+1,
-                         StatusBarRect.x, WND_STATUS_TEXT );
-        }
-#else
-        {
-            gui_coord   coord;
-            int         str_len, width, height;
-            int         bar_width, len1, len2, divider;
-            gui_point   start,end;
-            gui_rect    rStatusBar;
-
-//          sprintf( StatusBarBuf, "%d%%", Percent );
-            // clear whole bar
-            GUIFillRect( gui, &StatusBarRect, WND_STATUS_BAR );
-            // calculate where divider splits rectangle
-            bar_width = StatusBarRect.width;
-            divider = ( bar_width * (long)Percent ) / 100;
-            if( divider < 0 ) {
-                divider = 0;
-            } else if( divider > bar_width ) {
-                divider = bar_width;
-            }
-            rStatusBar = StatusBarRect;
-            rStatusBar.width = divider;
-            // calculate position for text (centre it)
-            str_len = strlen( StatusBarBuf );
-            width = GUIGetExtentX( gui, StatusBarBuf, str_len );
-            height = GUIGetExtentY( gui, StatusBarBuf );
-            coord.y = StatusBarRect.y + ( StatusBarRect.height - height ) / 2;
-            coord.x = StatusBarRect.x + ( StatusBarRect.width - width ) / 2;
-            divider += StatusBarRect.x;
-            if( coord.x > divider ) {
-                // text is completely to right of divider
-                GUIFillRect( gui, &rStatusBar, WND_STATUS_TEXT );
-                GUIDrawTextPos( gui, StatusBarBuf, str_len, &coord, WND_STATUS_TEXT );
-            } else if( coord.x + width < divider ) {
-                // text is completely to left of divider
-                GUIFillRect( gui, &rStatusBar, WND_STATUS_TEXT );
-                GUIDrawTextPos( gui, StatusBarBuf, str_len, &coord, WND_STATUS_BAR );
-            } else {
-                // need to split text
-                len1 = ( (long)( divider - coord.x ) * str_len ) / width;
+                memset( StatusBarBuf, ' ', StatusBarLen );
+                StatusBarBuf[StatusBarLen] = '\0';
+                itoa( Percent, num, 10 );
+                strcat( num, "%" );
+                memcpy( StatusBarBuf + StatusBarLen / 2 - 1, num, strlen( num ) );
+                // draw bar in two parts
+                len1 = (StatusBarLen * (long)Percent) / 100;
                 if( len1 < 0 ) {
                     len1 = 0;
-                } else if( len1 > str_len ) {
-                    len1 = str_len;
+                } else if( len1 > StatusBarLen ) {
+                    len1 = StatusBarLen;
                 }
-                len2 = str_len - len1;
-                // recalc divider, so it falls on a character boundary
-                divider = coord.x + GUIGetExtentX( gui, StatusBarBuf, len1 );
-                rStatusBar.width = divider - StatusBarRect.x;
-                GUIFillRect( gui, &rStatusBar, WND_STATUS_TEXT );
+                len2 = StatusBarLen - len1;
                 if( len1 > 0 ) {
-                    GUIDrawTextPos( gui, StatusBarBuf, len1, &coord, WND_STATUS_BAR );
+                    GUIDrawText( gui, StatusBarBuf, len1, STATUS_ROW,
+                                 StatusBarRect.x, WND_STATUS_BAR );
                 }
                 if( len2 > 0 ) {
-                    coord.x = divider;
-                    GUIDrawTextPos( gui, StatusBarBuf + len1, len2, &coord, WND_STATUS_TEXT );
+                    GUIDrawText( gui, StatusBarBuf + len1, len2, STATUS_ROW,
+                                 StatusBarRect.x + len1 * CharSize.x, WND_STATUS_TEXT );
                 }
+                memset( StatusBarBuf, UiGChar[UI_SBOX_TOP_LINE], StatusBarLen );
+                GUIDrawText( gui, StatusBarBuf, StatusBarLen, STATUS_ROW - 1,
+                             StatusBarRect.x, WND_STATUS_TEXT );
+                GUIDrawText( gui, StatusBarBuf, StatusBarLen, STATUS_ROW + 1,
+                             StatusBarRect.x, WND_STATUS_TEXT );
             }
-            // draw frame
-            start.x = StatusBarRect.x;
-            start.y = StatusBarRect.y;
-            end.x = StatusBarRect.width + StatusBarRect.x;
-            end.y = start.y;                                // top line
-            GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
-            start.y = StatusBarRect.y + StatusBarRect.height; // bottom line
-            end.y = start.y;
-            GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
-            end.y = StatusBarRect.y;
-            start.x = StatusBarRect.x;
-            end.x = start.x;                            // left side
-            GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
-            start.x = StatusBarRect.x + StatusBarRect.width;
-            end.x = start.x;                           // right side
-            GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
-        }
+#else
+            {
+                gui_coord   coord;
+                int         str_len, width, height;
+                int         bar_width, len1, len2, divider;
+                gui_point   start, end;
+                gui_rect    rStatusBar;
+
+//              sprintf( StatusBarBuf, "%d%%", Percent );
+                // clear whole bar
+                GUIFillRect( gui, &StatusBarRect, WND_STATUS_BAR );
+                // calculate where divider splits rectangle
+                bar_width = StatusBarRect.width;
+                divider = (bar_width * (long)Percent) / 100;
+                if( divider < 0 ) {
+                    divider = 0;
+                } else if( divider > bar_width ) {
+                    divider = bar_width;
+                }
+                rStatusBar = StatusBarRect;
+                rStatusBar.width = divider;
+                // calculate position for text (centre it)
+                str_len = strlen( StatusBarBuf );
+                width = GUIGetExtentX( gui, StatusBarBuf, str_len );
+                height = GUIGetExtentY( gui, StatusBarBuf );
+                coord.y = StatusBarRect.y + (StatusBarRect.height - height) / 2;
+                coord.x = StatusBarRect.x + (StatusBarRect.width - width) / 2;
+                divider += StatusBarRect.x;
+                if( coord.x > divider ) {
+                    // text is completely to right of divider
+                    GUIFillRect( gui, &rStatusBar, WND_STATUS_TEXT );
+                    GUIDrawTextPos( gui, StatusBarBuf, str_len, &coord,
+                                    WND_STATUS_TEXT );
+                } else if( coord.x + width < divider ) {
+                    // text is completely to left of divider
+                    GUIFillRect( gui, &rStatusBar, WND_STATUS_TEXT );
+                    GUIDrawTextPos( gui, StatusBarBuf, str_len, &coord,
+                                    WND_STATUS_BAR );
+                } else {
+                    // need to split text
+                    len1 = ((long)(divider - coord.x) * str_len) / width;
+                    if( len1 < 0 ) {
+                        len1 = 0;
+                    } else if( len1 > str_len ) {
+                        len1 = str_len;
+                    }
+                    len2 = str_len - len1;
+                    // recalc divider, so it falls on a character boundary
+                    divider = coord.x + GUIGetExtentX( gui, StatusBarBuf, len1 );
+                    rStatusBar.width = divider - StatusBarRect.x;
+                    GUIFillRect( gui, &rStatusBar, WND_STATUS_TEXT );
+                    if( len1 > 0 ) {
+                        GUIDrawTextPos( gui, StatusBarBuf, len1, &coord,
+                                        WND_STATUS_BAR );
+                    }
+                    if( len2 > 0 ) {
+                        coord.x = divider;
+                        GUIDrawTextPos( gui, StatusBarBuf + len1, len2, &coord,
+                                        WND_STATUS_TEXT );
+                    }
+                }
+                // draw frame
+                start.x = StatusBarRect.x;
+                start.y = StatusBarRect.y;
+                end.x = StatusBarRect.width + StatusBarRect.x;
+                end.y = start.y;                                // top line
+                GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
+                start.y = StatusBarRect.y + StatusBarRect.height; // bottom line
+                end.y = start.y;
+                GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
+                end.y = StatusBarRect.y;
+                start.x = StatusBarRect.x;
+                end.x = start.x;                            // left side
+                GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
+                start.x = StatusBarRect.x + StatusBarRect.width;
+                end.x = start.x;                           // right side
+                GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
+            }
 #endif
-        return( FALSE );
-    }
+            return( FALSE );
+        }
 
     case GUI_DESTROY:
         StatusWnd = NULL;
@@ -416,7 +417,6 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
     return( FALSE );
 }
 
-
 static gui_create_info StatusInfo = {
     NULL,                               // Title
     { 1500, 2500, 6500, 6000 },         // Position
@@ -439,7 +439,6 @@ static gui_create_info StatusInfo = {
     NULL                                // Icon
 };
 
-
 static gui_control_info Cancel = {
       GUI_DEFPUSH_BUTTON, NULL, 0,0,0,0, NULL, // nyi - kanji
       GUI_NOSCROLL, GUI_TAB_GROUP | GUI_AUTOMATIC, CTL_CANCEL
@@ -447,13 +446,12 @@ static gui_control_info Cancel = {
 
 extern gui_ord BitMapBottom;
 
-
 extern bool OpenStatusWindow( char *title )
 /*****************************************/
 {
     gui_text_metrics    metrics;
-    extern gui_coord            GUIScale;
-//    int                       i;
+    extern gui_coord    GUIScale;
+//    int                 i;
     gui_rect            rect;
 
 //    for( i = STAT_BLANK; i < sizeof( Messages ) / sizeof( Messages[0] ); ++i ) {
@@ -461,23 +459,23 @@ extern bool OpenStatusWindow( char *title )
 //    }
     GUIGetDlgTextMetrics( &metrics );
     CharSize.x = metrics.avg.x;
-    CharSize.y = 5*metrics.avg.y/4;
+    CharSize.y = 5 * metrics.avg.y / 4;
     GUITruncToPixel( &CharSize );
 
     StatusInfo.parent = MainWnd;
     GUIStrDup( title, &StatusInfo.text );
-    StatusInfo.rect.width = STATUS_WIDTH*CharSize.x;
-    StatusInfo.rect.height = STATUS_HEIGHT*CharSize.y;
+    StatusInfo.rect.width = STATUS_WIDTH * CharSize.x;
+    StatusInfo.rect.height = STATUS_HEIGHT * CharSize.y;
     GUIGetClientRect( MainWnd, &rect );
     if( GUIIsGUI() ) {
         StatusInfo.rect.y = BitMapBottom;
     } else {
-        StatusInfo.rect.y = ( GUIScale.y - StatusInfo.rect.height ) / 2;
+        StatusInfo.rect.y = (GUIScale.y - StatusInfo.rect.height) / 2;
     }
     if( StatusInfo.rect.y > rect.height - StatusInfo.rect.height ) {
         StatusInfo.rect.y = rect.height - StatusInfo.rect.height;
     }
-    StatusInfo.rect.x = ( GUIScale.x - StatusInfo.rect.width ) / 2;
+    StatusInfo.rect.x = (GUIScale.x - StatusInfo.rect.width) / 2;
 
     StatusBarLen = 0;
 
@@ -488,18 +486,18 @@ extern bool OpenStatusWindow( char *title )
     Cancel.parent = StatusWnd;
     Cancel.text = LIT( Cancel );
     Cancel.rect.height = 7 * CharSize.y / 4;
-    Cancel.rect.width = ( strlen( Cancel.text ) + 4 )*CharSize.x;
-    Cancel.rect.x = ( StatusRect.width - Cancel.rect.width ) / 2;
-    Cancel.rect.y = CANNERY_ROW*CharSize.y;
+    Cancel.rect.width = (strlen( Cancel.text ) + 4) * CharSize.x;
+    Cancel.rect.x = (StatusRect.width - Cancel.rect.width) / 2;
+    Cancel.rect.y = CANNERY_ROW * CharSize.y;
 
-    StatusBarRect.x = BAR_INDENT*CharSize.x;
-    StatusBarRect.width = StatusRect.width - 2*BAR_INDENT*CharSize.x;
-    StatusBarRect.y = STATUS_ROW*CharSize.y;
+    StatusBarRect.x = BAR_INDENT * CharSize.x;
+    StatusBarRect.width = StatusRect.width - 2 * BAR_INDENT * CharSize.x;
+    StatusBarRect.y = STATUS_ROW * CharSize.y;
     StatusBarRect.height = CharSize.y;
-    #ifndef _UI
-        StatusBarRect.y -= CharSize.y / 2;
-        StatusBarRect.height += CharSize.y;
-    #endif
+#ifndef _UI
+    StatusBarRect.y -= CharSize.y / 2;
+    StatusBarRect.height += CharSize.y;
+#endif
 
     StatusBarLen = StatusBarRect.width / CharSize.x;
 
@@ -509,7 +507,6 @@ extern bool OpenStatusWindow( char *title )
     }
     return( TRUE );
 }
-
 
 extern bool StatusInit( void )
 /****************************/
