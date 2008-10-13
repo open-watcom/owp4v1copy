@@ -370,6 +370,17 @@ extern void SetDefaultGlobalVarList( void )
 #endif
     SetVariableByName( "WinDir", szBuf );
 
+#if defined( __NT__ )
+    if( !SearchPath( NULL, "CMD.EXE", NULL, sizeof( szBuf ), szBuf, NULL ) ) {
+        if( !SearchPath( NULL, "COMMAND.COM", NULL, sizeof( szBuf ), szBuf, NULL ) ) {
+#endif
+            strcpy( szBuf, "COMMAND.COM" );
+#if defined( __NT__ )
+        }
+    }
+#endif
+    SetVariableByName( "Command", szBuf );
+
 #if defined( __AXP__ )
     SetVariableByName( "IsAlpha", "1" );
 #else

@@ -185,6 +185,7 @@ icon=%OWDir%\binnt\wde.exe,, Dialog Editor,,, IsWin32 DoCreateIcons ?%OWDir%\bin
 icon=%OWDir%\binnt\wimgedit.exe,,Image Editor,,, IsWin32 DoCreateIcons ?%OWDir%\binnt\wimgedit.exe
 icon=%OWDir%\binnt\wzoom.exe,, Zoom,,, IsWin32 DoCreateIcons ?%OWDir%\binnt\wzoom.exe
 icon=%OWDir%\binnt\viw.exe,, Text Editor,,, IsWin32 DoCreateIcons ?%OWDir%\binnt\viw.exe
+icon=%Command%, /k %OWDir%\owsetenv.bat, Build Environment,,, IsWin32 DoCreateIcons
 icon=GROUP, wpp32hlp.grp, Open Watcom C/C++ Tools Help,,, DoCreateHelpIcons IsFortranInstall !
 icon=GROUP, wf77hlp.grp, Open Watcom FORTRAN Tools Help,,, DoCreateHelpIcons IsFortranInstall
 icon=%HDir%\binnt\cbooks.hlp,, C/C++ Master Help Index,,, DoCreateHelpIcons IsWin32 win32_helpfiles MinimalInstall | ?%HDir%\binnt\cbooks.hlp IsFortranInstall !
