@@ -260,11 +260,17 @@ cleanup:
 void munge_fname( char *buff )
 {
     char    *s;
+    char    buff2[_MAX_PATH];
 
     s = buff;
     while( *s ) {
-        if( *s == '/' )
-            *s = '_';   // replace slash by underscore
+        if( *s == '/' ) {
+//    MessageBox(0, buff, 0, 0);
+            strcpy( buff2, s + 1 );
+            strcpy( s, " - " );     // replace slash by underscore
+            strcpy( s + 3, buff2 );
+//    MessageBox(0, buff, 0, 0);
+        }
         ++s;
     }
 }
