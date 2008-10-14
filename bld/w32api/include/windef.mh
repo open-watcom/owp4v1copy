@@ -226,6 +226,15 @@ typedef struct tagPOINTS {
 typedef POINTS  *PPOINTS;
 typedef POINTS  *LPPOINTS;
 
+/* File time */
+#define _FILETIME_
+typedef struct _FILETIME {
+    DWORD   dwLowDateTime;
+    DWORD   dwHighDateTime;
+} FILETIME;
+typedef FILETIME    *PFILETIME;
+typedef FILETIME    *LPFILETIME;
+
 /* Minimum and maximum macros */
 #ifndef NOMINMAX
     #ifndef min

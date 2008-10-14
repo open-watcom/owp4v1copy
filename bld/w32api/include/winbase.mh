@@ -926,12 +926,15 @@ typedef PROCESS_INFORMATION *PPROCESS_INFORMATION;
 typedef PROCESS_INFORMATION *LPPROCESS_INFORMATION;
 
 /* File time */
+#ifndef _FILETIME_
+#define _FILETIME_
 typedef struct _FILETIME {
     DWORD   dwLowDateTime;
     DWORD   dwHighDateTime;
 } FILETIME;
 typedef FILETIME    *PFILETIME;
 typedef FILETIME    *LPFILETIME;
+#endif
 
 /* System time */
 typedef struct _SYSTEMTIME {
