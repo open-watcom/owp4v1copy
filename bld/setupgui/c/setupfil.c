@@ -1388,9 +1388,11 @@ extern bool ModifyRegAssoc( bool uninstall )
             RegCloseKey( hkey );
             RegCreateKey( HKEY_CLASSES_ROOT, keyname, &hkey );
             RegSetValue( hkey, NULL, REG_SZ, description, strlen( description ) );
-            sprintf( buf, "%s %%1", program );
-            ReplaceVarsInplace( buf, FALSE );
-            RegSetValue( hkey, "shell\\open\\command", REG_SZ, buf, strlen( buf ) );
+            if( SimGetAssociationNoOpen( i ) != 1 ) {
+                sprintf( buf, "%s %%1", program );
+                ReplaceVarsInplace( buf, FALSE );
+                RegSetValue( hkey, "shell\\open\\command", REG_SZ, buf, strlen( buf ) );
+            }
             sprintf( buf, "%s,%d", program, SimGetAssociationIconIndex( i ) );
             ReplaceVarsInplace( buf, FALSE );
             RegSetValue( hkey, "DefaultIcon", REG_SZ, buf, strlen( buf ) );

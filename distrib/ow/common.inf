@@ -257,13 +257,18 @@ icon=view.exe, %HDir%\binp\help\fpguide.inf, F77 Programmer's Reference,,, IsOS2
 icon=view.exe, %HDir%\binp\help\ftools.inf, F77 Tools Guide,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\ftools.inf IsFortranInstall
 icon=view.exe, %HDir%\binp\help\f77graph.inf, F77 Graphics Library,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\f77graph.inf IsFortranInstall
 icon=view.exe, %HDir%\binp\help\f77lr.inf, F77 Language Reference,,, IsOS2 DoCreateHelpIcons  os2_helpfiles ?%HDir%\binp\help\f77lr.inf IsFortranInstall
-assoc=c=cfile, %DstDir%\binnt\viw.exe, C Source File, 2
-assoc=cpp=cppfile, %DstDir%\binnt\viw.exe, C++ Source File, 3
-assoc=h=hfile, %DstDir%\binnt\viw.exe, C/C++ Header File, 4
-assoc=hpp=hppfile, %DstDir%\binnt\viw.exe, C++ Header File, 5
-assoc=for=forfile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 6
-assoc=f=ffile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 7
-assoc=fi=fifile, %DstDir%\binnt\viw.exe, FORTRAN Include File, 8
+assoc=c=cfile, %DstDir%\binnt\viw.exe, C Source File, 2, 0
+assoc=cpp=cppfile, %DstDir%\binnt\viw.exe, C++ Source File, 3, 0
+assoc=h=hfile, %DstDir%\binnt\viw.exe, C/C++ Header File, 4, 0
+assoc=hpp=hppfile, %DstDir%\binnt\viw.exe, C++ Header File, 5, 0
+assoc=for=forfile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 6, 0
+assoc=f=ffile, %DstDir%\binnt\viw.exe, FORTRAN Source File, 6, 0
+assoc=fi=fifile, %DstDir%\binnt\viw.exe, FORTRAN Include File, 7, 0
+assoc=mak=makfile, %DstDir%\binnt\viw.exe, Makefile, 8, 0
+assoc=mk=mkfile, %DstDir%\binnt\viw.exe, Makefile, 8, 0
+assoc=mif=miffile, %DstDir%\binnt\viw.exe, Make Include File, 8, 0
+assoc=obj=objfile, %DstDir%\binnt\viw.exe, Object File, 10, 1
+assoc=pch=pchfile, %DstDir%\binnt\viw.exe, Precompiled Header File, 10, 1
 deletefile=%DstDir%\h\nt\afxres.h
 deletefile=%DstDir%\h\nt\aygshell.h
 deletefile=%DstDir%\h\nt\lmbrowsr.h

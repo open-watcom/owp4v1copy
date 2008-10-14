@@ -35,4 +35,7 @@
 #define IDI_HPPFILE     103
 #define IDI_FORFILE     104
 #define IDI_FIFILE      105
+#define IDI_MAKFILE     106
+#define IDI_TXTFILE     107
+#define IDI_OBJFILE     108
 

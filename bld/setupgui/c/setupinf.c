@@ -173,6 +173,7 @@ static struct association_info {
     char    *program;
     char    *description;
     int     icon_index;
+    int     no_open;
 } *AssociationInfo = NULL;
 
 typedef struct a_file_info {
@@ -2169,7 +2170,9 @@ static bool ProcLine( char *line, pass_type pass )
         line = next; next = NextToken( line, ',' );
         GUIStrDup( line, &AssociationInfo[num].description );
         line = next; next = NextToken( line, ',' );
-        AssociationInfo[num].icon_index = get36( line );
+        AssociationInfo[num].icon_index = strtol( line, NULL, 10 );
+        line = next; next = NextToken( line, ',' );
+        AssociationInfo[num].no_open = strtol( line, NULL, 10 );
         break;
 
         /* for now Setup Error Messages, Status line Messages and Misc Messages
@@ -3213,6 +3216,12 @@ extern int SimGetAssociationIconIndex( int parm )
 /***********************************************/
 {
     return( AssociationInfo[parm].icon_index );
+}
+
+extern int SimGetAssociationNoOpen( int parm )
+/********************************************/
+{
+    return( AssociationInfo[parm].no_open );
 }
 
 /*

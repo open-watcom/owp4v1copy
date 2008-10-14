@@ -121,6 +121,7 @@ extern void SimGetAssociationKeyName( int parm, char *buff );
 extern void SimGetAssociationProgram( int parm, char *buff );
 extern void SimGetAssociationDescription( int parm, char *buff );
 extern int SimGetAssociationIconIndex( int parm );
+extern int SimGetAssociationNoOpen( int parm );
 extern int SimNumLabels(void);
 extern void SimGetLabelDir(int parm,char *buff);
 extern void SimGetLabelLabel(int parm,char *buff);
