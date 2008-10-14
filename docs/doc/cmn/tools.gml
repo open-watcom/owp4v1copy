@@ -66,6 +66,10 @@
 :INCLUDE file='WMAKE'.
 :INCLUDE file='WTOUCH'.
 .*
+.sepsect The IDE2MAKE Batch Utility
+.*
+:INCLUDE file='IDE2MAKE'.
+.*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.
 .cd set 2

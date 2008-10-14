@@ -168,7 +168,7 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 :set symbol="patchcmdup" value="BPATCH".
 .do end
 .*
-.* Open Watcom Make and Touch Specific
+.* Open Watcom Make and Touch Specific and IDE2MAKE
 .*
 :set symbol="makname"   value="&company Make".
 :set symbol="maksname"  value="Make".
@@ -177,6 +177,7 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 :set symbol="tchname"   value="&company Touch".
 :set symbol="tchcmd"    value="wtouch".
 :set symbol="tchcmdup"  value="WTOUCH".
+:set symbol="id2mkname" value="IDE2MAKE"
 .*
 .* Open Watcom Profiler Specific
 .*
