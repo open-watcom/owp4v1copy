@@ -2883,3 +2883,12 @@ Variable            Value
 DPMI_MEMORY_LIMIT   16
 DOS_BREAK           ON
 .millust end
+.*
+.section Using the Information of the &vip from outside
+.*
+.np
+.ix '&vip' 'make'
+.ix '&id2mkname' 'Utility'
+The batch utility &id2mkname generates .mk and .mk1 makefiles
+for use with &makname from the &vip .wpj and .tgt files.
+See &id2mkname in &company Tools User's Guide.

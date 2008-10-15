@@ -39,6 +39,8 @@ executable file strip utility
 make utility
 .bull
 touch utility
+.bull
+ide2make utility
 .endbull
 .*
 .sect Acknowledgements
