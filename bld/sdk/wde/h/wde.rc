@@ -40,7 +40,7 @@ END
 
 /* icons */
 APPLICON     ICON wde.ico
-ResIcon      ICON restext.ico
+ResIcon      ICON dlgfile.ico
 DefaultIcon  ICON owde.ico
 
 /* ribbon bitmaps */

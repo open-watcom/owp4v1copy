@@ -37,7 +37,7 @@ typedef struct filetype {
     const char  *iconname;
 } filetype;
 
-#define NUM_FILE_TYPES  10
+#define NUM_FILE_TYPES  12
 #ifdef __NT__
 static const filetype fileTypes[NUM_FILE_TYPES] = {
     { ".c",     MAKEINTRESOURCE( IDI_CFILE ) },
@@ -49,7 +49,9 @@ static const filetype fileTypes[NUM_FILE_TYPES] = {
     { ".fi",    MAKEINTRESOURCE( IDI_FIFILE ) },
     { ".mak",   MAKEINTRESOURCE( IDI_MAKFILE ) },
     { ".mk",    MAKEINTRESOURCE( IDI_MAKFILE ) },
-    { ".mif",   MAKEINTRESOURCE( IDI_MAKFILE ) }
+    { ".mif",   MAKEINTRESOURCE( IDI_MAKFILE ) },
+    { ".rc",    MAKEINTRESOURCE( IDI_RCFILE ) },
+    { ".rh",    MAKEINTRESOURCE( IDI_RHFILE ) }
 };
 #endif
 

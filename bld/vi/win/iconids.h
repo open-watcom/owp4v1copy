@@ -38,4 +38,6 @@
 #define IDI_MAKFILE     106
 #define IDI_TXTFILE     107
 #define IDI_OBJFILE     108
+#define IDI_RCFILE      109
+#define IDI_RHFILE      110
 
