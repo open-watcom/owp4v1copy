@@ -70,7 +70,7 @@ static char* usage[] = {
     "",
     "  ide2make loads an IDE project file (-p switch) and, using the associated",
     "  .tgt files, generates make files that can be invoked with WMAKE.",
-    "  If the .wpj file does not exists, a default project is used.  If any",
+    "  If the .wpj file does not exist, a default project is used.  If any",
     "  tgtfile(s) are specified, they are used as the targets in creating the",
     "  make files.",
     "",
