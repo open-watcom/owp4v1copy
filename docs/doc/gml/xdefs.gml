@@ -178,6 +178,7 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 :set symbol="tchcmd"    value="wtouch".
 :set symbol="tchcmdup"  value="WTOUCH".
 :set symbol="id2mkname" value="IDE2MAKE"
+:set symbol="id2mkcmd"  value="ide2make"
 .*
 .* Open Watcom Profiler Specific
 .*

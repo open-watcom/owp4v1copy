@@ -8,7 +8,6 @@
 .ix 'IDE' 'make'
 This chapter describes the &id2mkname utility.
 .ix 'generating' 'makefile'
-It was called bviper previously.
 &id2mkname loads an IDE project file and, using the associated .tgt
 files, generates make files that can be invoked with &makcmdup..
 If the .wpj file does not exist, a default project is used. If any
@@ -20,7 +19,7 @@ The &id2mkname command line syntax is:
 .ix 'command line format' '&id2mkname'
 .ix 'invoking &id2mkname'
 .mbigbox
-&id2mkname [options] [tgtfile]
+&id2mkcmd [options] [tgtfile]
 .embigbox
 .pc
 The square brackets [ ] denote items which are optional.
