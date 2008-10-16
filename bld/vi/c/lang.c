@@ -52,7 +52,8 @@ static lang_info    langInfo[ LANG_MAX ] = {
     { NULL,        0,          0,    NULL },  // GML          11
     { NULL,        0,          0,    NULL },  // DBTest       12
     { NULL,        0,          0,    NULL },  // Makefile     13
-    { NULL,        0,          0,    NULL }   // user-defined 14
+    { NULL,        0,          0,    NULL },  // Resource     14
+    { NULL,        0,          0,    NULL }   // user-defined 15
 };
 
 /*
@@ -176,7 +177,7 @@ void LangInit( int newLanguage )
     char        *buff;
     char        *fname[] = { NULL, "c.dat", "cpp.dat", "fortran.dat", "java.dat", "sql.dat",
                             "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
-                            "gml.dat", "dbtest.dat", "mif.dat", "user.dat" };
+                            "gml.dat", "dbtest.dat", "mif.dat", "rc.dat", "user.dat" };
 
     assert( CurrentInfo != NULL );
     CurrentInfo->Language = newLanguage;

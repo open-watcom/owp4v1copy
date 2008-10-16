@@ -47,6 +47,7 @@ enum {
     LANG_GML,
     LANG_DBTEST,
     LANG_MAKEFILE,
+    LANG_RC,
     LANG_USER,
     LANG_MAX,           // LANG_MAX always last
 };

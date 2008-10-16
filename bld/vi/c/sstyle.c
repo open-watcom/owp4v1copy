@@ -116,6 +116,7 @@ static void getNextBlock( ss_block *ss_new, char *text, int text_col,
         case LANG_BASIC:
         case LANG_PERL:
         case LANG_DBTEST:
+        case LANG_RC:
         case LANG_USER:
         default:
             GetCBlock( ss_new, text + text_col, line, line_no );
@@ -330,6 +331,7 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
         case LANG_BASIC:
         case LANG_PERL:
         case LANG_DBTEST:
+        case LANG_RC:
         case LANG_USER:
             InitCLine( text );
             break;
@@ -411,6 +413,7 @@ bool SSKillsFlags( char ch )
         case LANG_BASIC:
         case LANG_PERL:
         case LANG_DBTEST:
+        case LANG_RC:
         case LANG_USER:
             if( ch == '#' || ch == '"' || ch == '/' || ch == '*' ) return( TRUE );
             break;
@@ -444,6 +447,7 @@ void SSInitLanguageFlags( linenum line_no )
             case LANG_BASIC:
             case LANG_PERL:
             case LANG_DBTEST:
+            case LANG_RC:
             case LANG_USER:
                 InitCFlags( line_no );
                 break;
@@ -476,6 +480,7 @@ void SSInitLanguageFlagsGivenValues( ss_flags *flags )
             case LANG_BASIC:
             case LANG_PERL:
             case LANG_DBTEST:
+            case LANG_RC:
             case LANG_USER:
                 InitCFlagsGivenValues( &( flags->c ) );
                 break;
@@ -508,6 +513,7 @@ void SSGetLanguageFlags( ss_flags *flags )
             case LANG_BASIC:
             case LANG_PERL:
             case LANG_DBTEST:
+            case LANG_RC:
             case LANG_USER:
                 GetCFlags( &( flags->c ) );
                 break;
