@@ -63,6 +63,8 @@
 #define CONTROLS_DEFX   86
 #define CONTROLS_DEFY   180
 #define CONTROLS_INSET  100
+#define CONTROLS_DEFXCC 96
+#define CONTROLS_DEFYCC 280
 
 /****************************************************************************/
 /* external function prototypes                                             */
@@ -359,10 +361,21 @@ Bool WdeCreateControlsToolBar ( void )
     if( ( t.left == t.right ) &&
         ( t.top == t.bottom ) ) {
         GetWindowRect ( parent, &r );
-        t.left = r.right - CONTROLS_DEFX;
-        t.top  = r.top + CONTROLS_INSET;
-        t.right  = r.right;
-        t.bottom = t.top  + CONTROLS_DEFY;
+#ifdef __NT__
+        if( GetModuleHandle( "COMCTL32.DLL" ) == NULL ) {
+#endif
+            t.left = r.right - CONTROLS_DEFX;
+            t.top  = r.top + CONTROLS_INSET;
+            t.right  = r.right;
+            t.bottom = t.top  + CONTROLS_DEFY;
+#ifdef __NT__
+        } else {
+            t.left = r.right - CONTROLS_DEFXCC;
+            t.top = r.top + CONTROLS_INSET;
+            t.right = r.right;
+            t.bottom = t.top + CONTROLS_DEFYCC;
+        }
+#endif
     }
 
     GetWindowRect( GetDesktopWindow(), &screen );
