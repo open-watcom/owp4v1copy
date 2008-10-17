@@ -63,8 +63,8 @@ enum scan_class {
     SCAN_EOF            // end-of-file
 };
 
-static  char    *ReScanPtr;
-static  int     SavedCurrChar;          // used when get tokens from macro
+static  unsigned char   *ReScanPtr;
+static  int             SavedCurrChar;          // used when get tokens from macro
 static  unsigned char   ClassTable[260];
 
 static unsigned char InitClassTable[] = {
@@ -114,17 +114,17 @@ static  void    ScanComment( void );
 
 void ReScanInit( char *ptr )                            /* 28-oct-92 */
 {
-    ReScanPtr = ptr;
+    ReScanPtr = (unsigned char *)ptr;
 }
 
 char *ReScanPos( void )
 {
-    return( ReScanPtr );
+    return( (char *)ReScanPtr );
 }
 
 int ReScanBuffer( void )
 {
-    CurrChar = *(unsigned char *)SrcFile->src_ptr++;
+    CurrChar = *SrcFile->src_ptr++;
     if( CurrChar == '\0' ) {
         CompFlags.rescan_buffer_done = 1;
     }
@@ -251,7 +251,7 @@ static TOKEN doScanName( void )
     do {
         for( ; (CharSet[c] & (C_AL | C_DI)); ) {
             *p++ = c;
-            c = *(unsigned char *)SrcFile->src_ptr++;
+            c = *SrcFile->src_ptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char    *oldbuf = Buffer;
 
@@ -409,7 +409,7 @@ static void doScanAsmToken( void )
     do {
         for( ; (CharSet[c] & (C_AL | C_DI)); ) {
             *p++ = c;
-            c = *(unsigned char *)SrcFile->src_ptr++;
+            c = *SrcFile->src_ptr++;
             if( p >= &Buffer[BufSize - 16] ) {
                 char    *oldbuf = Buffer;
 
@@ -1177,7 +1177,7 @@ static void ScanComment( void )
             do {
                 do {
                 prev_char = c;
-                    c = *(unsigned char *)SrcFile->src_ptr++;
+                    c = *SrcFile->src_ptr++;
                 } while( (CharSet[c] & C_EX) == 0 );
                 c = GetCharCheck( c );
                 if( c == EOF_CHAR ) {
@@ -1488,7 +1488,7 @@ static TOKEN ScanWhiteSpace( void )
     } else {
         do {
             do {
-                c = *(unsigned char *)SrcFile->src_ptr++;
+                c = *SrcFile->src_ptr++;
             } while( CharSet[c] & C_WS );
             if( (CharSet[c] & C_EX) == 0 )
                 break;
@@ -1670,9 +1670,9 @@ TOKEN PPNextToken( void )                     // called from macro pre-processor
 
 int ReScanToken( void )
 {
-    int         saved_currchar;
-    char        *saved_ScanCharPtr;
-    int         (*saved_nextchar)( void );
+    int             saved_currchar;
+    unsigned char   *saved_ScanCharPtr;
+    int             (*saved_nextchar)( void );
 
     saved_currchar = CurrChar;
     saved_nextchar = NextChar;

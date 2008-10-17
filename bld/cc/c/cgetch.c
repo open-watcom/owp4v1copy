@@ -74,7 +74,7 @@ static int ReadBuffer( FCB *srcfcb )
      * whatever comes next will be tacked onto that unterminated
      * line, possibly confusing the hell out of the user.
      */
-    srcfcb->src_ptr = &srcfcb->src_buf[0];
+    srcfcb->src_ptr = srcfcb->src_buf;
     if( srcfcb->src_cnt ) {
         last_char = srcfcb->src_ptr[ srcfcb->src_cnt - 1 ];
     } else {
@@ -109,7 +109,7 @@ int GetNextChar( void )
 {
     int c;
 
-    c = *(unsigned char *)SrcFile->src_ptr++;
+    c = *SrcFile->src_ptr++;
     if(( CharSet[c] & C_EX ) == 0 ) {
 //      SrcFile->column++;
         CurrChar = c;
@@ -164,13 +164,13 @@ static int getTestCharFromFile( void )
     int c;
 
     for(;;) {
-        c = *(unsigned char *)SrcFile->src_ptr++;
+        c = *SrcFile->src_ptr++;
         if( c != '\0' )
             break;
         /* check to make sure the NUL character we just found is at the
            end of the buffer, and not an embedded NUL character in the
            source file.  26-may-94 */
-        if( SrcFile->src_ptr != &SrcFile->src_buf[ SrcFile->src_cnt + 1 ] )
+        if( SrcFile->src_ptr != SrcFile->src_buf + SrcFile->src_cnt + 1 )
             break;
         if( ReadBuffer( SrcFile ) ) {
             return( CurrChar );
@@ -304,7 +304,7 @@ int GetCharCheck( int c )
                end of the buffer, and not an embedded NUL character in the
                source file.  26-may-94 */
             CurrChar = '\0';
-            if( SrcFile->src_ptr == &SrcFile->src_buf[ SrcFile->src_cnt + 1 ] ) {
+            if( SrcFile->src_ptr == SrcFile->src_buf + SrcFile->src_cnt + 1 ) {
                 if( ! ReadBuffer( SrcFile ) ) {
                     return( GetNextChar() );
                 }
