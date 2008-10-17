@@ -4,6 +4,7 @@
 :include crwatcnt.sp
  */
 
+:include readonly.sp
 /* GUID aliases */
 #define MEDIATYPE_NULL      GUID_NULL
 #define MEDIASUBTYPE_NULL   GUID_NULL
