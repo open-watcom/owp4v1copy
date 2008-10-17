@@ -56,10 +56,10 @@
 /****************************************************************************/
 /* macro definitions                                                        */
 /****************************************************************************/
-#define MAIN_WIN_START_X  0
-#define MAIN_WIN_START_Y  50
+#define MAIN_WIN_START_X  20
+#define MAIN_WIN_START_Y  20
 #define MAIN_WIN_SIZE_X   620
-#define MAIN_WIN_SIZE_Y   300
+#define MAIN_WIN_SIZE_Y   440
 
 /****************************************************************************/
 /* type definitions                                                         */
