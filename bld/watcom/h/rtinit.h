@@ -34,7 +34,7 @@
 
 #include "langenvd.h"
 #if defined( __PPC__ )
-    #define   __TGT_SYS    __TGT_SYS_AXP_PPC
+    #define   __TGT_SYS     __TGT_SYS_PPC_NT
     typedef unsigned        __type_rtp;
     typedef unsigned        __type_pad;
     typedef void(           *__type_rtn ) ( void );

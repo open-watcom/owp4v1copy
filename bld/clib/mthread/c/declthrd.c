@@ -33,7 +33,7 @@
 #include "variety.h"
 #include "langenvd.h"
 #if defined(__PPC__)
-  #define   __TGT_SYS   __TGT_SYS_AXP_PPC
+  #define   __TGT_SYS   __TGT_SYS_PPC_NT
 #elif defined(__AXP__)
   #define   __TGT_SYS   __TGT_SYS_AXP_NT
 #else
