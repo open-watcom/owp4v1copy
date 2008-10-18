@@ -532,17 +532,19 @@ BOOL WdeControlsHook ( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
             break;
 
         case WM_GETMINMAXINFO:
-            minmax = (MINMAXINFO *) lParam;
-            minmax->ptMinTrackSize.x =
-                2 * GetSystemMetrics(SM_CXFRAME) +
-                tbar->info->dinfo.border_size.x +
-                tbar->info->dinfo.button_size.x - 1;
-            minmax->ptMinTrackSize.y =
-                2 * GetSystemMetrics(SM_CYFRAME) +
-                GetSystemMetrics(SM_CYCAPTION) +
-                tbar->info->dinfo.border_size.y +
-                tbar->info->dinfo.button_size.y - 1;
-            ret = TRUE;
+            if( GetModuleHandle( "COMCTL32.DLL" ) == NULL ) {
+                minmax = (MINMAXINFO *) lParam;
+                minmax->ptMinTrackSize.x =
+                    2 * GetSystemMetrics(SM_CXFRAME) +
+                    tbar->info->dinfo.border_size.x +
+                    tbar->info->dinfo.button_size.x - 1;
+                minmax->ptMinTrackSize.y =
+                    2 * GetSystemMetrics(SM_CYFRAME) +
+                    GetSystemMetrics(SM_CYCAPTION) +
+                    tbar->info->dinfo.border_size.y +
+                    tbar->info->dinfo.button_size.y - 1;
+                ret = TRUE;
+            }
             break;
 
         case WM_CLOSE:

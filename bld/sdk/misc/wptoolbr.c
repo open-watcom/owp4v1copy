@@ -795,6 +795,11 @@ HWND ToolBarWindow( toolbar *bar )
     if( bar == NULL ) {
         return( HNULL );
     }
+#ifdef __NT__
+    if( bar->container != NULL ) {
+        return( bar->container );
+    }
+#endif
     return( _wpi_getframe( bar->hwnd ) );
 
 } /* ToolBarWindow */
@@ -1533,8 +1538,19 @@ LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 
 LRESULT WINAPI ToolContainerWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
-    HWND    otherwnd;
-    
+    HWND            otherwnd;
+    struct toolbar  *bar;
+
+    if( msg == WM_NCCREATE ) {
+        bar = ((CREATESTRUCT *)lparam)->lpCreateParams;
+        SetProp( hwnd, "bar", bar );
+    } else {
+        bar = (struct toolbar *)GetProp( hwnd, "bar" );
+    }
+    if( bar != NULL ) {
+        bar->hook( hwnd, msg, wparam, lparam );
+    }
+
     switch( msg ) {
     case WM_SIZE:
         otherwnd = GetWindow( hwnd, GW_CHILD );

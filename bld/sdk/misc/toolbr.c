@@ -381,6 +381,11 @@ void ToolBarDestroy ( toolbar *bar )
         if( bar->hwnd != HNULL ) {
             DestroyWindow( bar->hwnd );
         }
+#ifdef __NT__
+        if( bar->container != NULL ) {
+            DestroyWindow( bar->container );
+        }
+#endif
         curr = bar->tool_list;
         while( curr != NULL ) {
             tmp = curr;
@@ -596,7 +601,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
                                              WS_VISIBLE | WS_CAPTION | WS_SYSMENU |
                                              WS_THICKFRAME, disp->area.left,
                                              disp->area.top, width, height, bar->owner,
-                                             NULL, GET_HINSTANCE( bar->owner ), NULL );
+                                             NULL, GET_HINSTANCE( bar->owner ), bar );
             bar->hwnd = CreateWindow( TOOLBARCLASSNAME, NULL,
                                       WS_CHILD | WS_VISIBLE | TBSTYLE_WRAPABLE |
                                       TBSTYLE_FLAT, 0, 0, 0, 0, bar->container, NULL,
@@ -665,6 +670,11 @@ HWND ToolBarWindow( toolbar *bar )
     if( bar == NULL ) {
         return( HNULL );
     }
+#ifdef __NT__
+    if( bar->container != NULL ) {
+        return( bar->container );
+    }
+#endif
     return( bar->hwnd );
 
 } /* ToolBarWindow */
@@ -1307,7 +1317,18 @@ LRESULT WINAPI WinToolWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 
 LRESULT WINAPI ToolContainerWndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
-    HWND    otherwnd;
+    HWND            otherwnd;
+    struct toolbar  *bar;
+
+    if( msg == WM_NCCREATE ) {
+        bar = ((CREATESTRUCT *)lparam)->lpCreateParams;
+        SetProp( hwnd, "bar", bar );
+    } else {
+        bar = (struct toolbar *)GetProp( hwnd, "bar" );
+    }
+    if( bar != NULL ) {
+        bar->hook( hwnd, msg, wparam, lparam );
+    }
     
     switch( msg ) {
     case WM_SIZE:
