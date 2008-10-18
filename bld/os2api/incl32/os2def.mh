@@ -184,7 +184,7 @@ typedef unsigned short  APIRET16;
 typedef unsigned long   APIRET32;
 
 typedef unsigned char   UCHAR, *PUCHAR;
-typedef char            BYTE, *PBYTE, *NPBYTE;
+typedef unsigned char   BYTE, *PBYTE, *NPBYTE;
 typedef unsigned short  USHORT, *PUSHORT;
 typedef unsigned int    UINT, *PUINT;
 typedef unsigned long   ULONG, *PULONG;
