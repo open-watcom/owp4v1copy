@@ -152,6 +152,13 @@ void InitTools( HWND hparent )
     //TBWidth = TB_WIDTH - 2 + 2 * _wpi_getsystemmetrics(SM_CXBORDER);
     //TBHeight = TB_HEIGHT - 2 + 2 * _wpi_getsystemmetrics(SM_CYBORDER);
 
+#ifdef __NT__
+    if( GetModuleHandle( "COMCTL32.DLL" ) != NULL ) {
+        TBWidth = TB_WIDTHCC;
+        TBHeight = TB_HEIGHTCC;
+    }
+#endif
+
     _wpi_setrectvalues( &toolbar_loc, (IMGED_DIM)ImgedConfigInfo.tool_xpos,
                                       (IMGED_DIM)ImgedConfigInfo.tool_ypos,
                               (IMGED_DIM)(ImgedConfigInfo.tool_xpos + TBWidth),
@@ -224,6 +231,8 @@ void InitTools( HWND hparent )
     ToolBarSetState(tool_Bar, IMGED_FREEHAND, BUTTON_DOWN);
     SetToolType( IMGED_FREEHAND );
     _wpi_enablemenuitem( hmenu, IMGED_HOTSPOT, FALSE, FALSE );
+    SendMessage( htoolbar, WM_SIZE, 0, 0 );
+
 } /* InitTools */
 
 /*

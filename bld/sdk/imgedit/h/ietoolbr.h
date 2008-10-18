@@ -34,3 +34,6 @@
 #define TB_BORDER               2
 #define TB_HEIGHT               160
 #define TB_WIDTH                63
+#define TB_HEIGHTCC             184
+#define TB_WIDTHCC              72
+
