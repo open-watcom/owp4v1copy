@@ -33,7 +33,6 @@
 #define __ANALMEAN_H__
 
 #include "watcom.h"
-#include "bool.h"
 #include "i64.h"
 
 #ifdef __cplusplus
@@ -68,7 +67,7 @@ cmp_result CheckMeaninglessCompare(
     rel_op rel,
     int op1_size,
     int result_size,
-    bool isBitField,
+    int isBitField,
     signed_64 val,
     signed_64 *low,
     signed_64 *high

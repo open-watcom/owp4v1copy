@@ -50,7 +50,7 @@ static char const Meaningless[REL_SIZE][CASE_SIZE] = {
 
 
 cmp_result CheckMeaninglessCompare( rel_op rel, int op1_size, int result_size,
-               bool isBitField, signed_64 val, signed_64 *low, signed_64 *high )
+               int isBitField, signed_64 val, signed_64 *low, signed_64 *high )
 /******************************************************************************/
 // we're checking 'op1 cgop val' where val is a constant expression
 {
