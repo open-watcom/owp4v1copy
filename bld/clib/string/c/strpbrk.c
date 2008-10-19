@@ -62,13 +62,13 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strpbrk,wcspbrk) ( const CHAR_TYPE *str, const CHA
     return( NULL );
 
 #else
-    unsigned char   tc;
-    unsigned char   vector[32];
+    char            tc;
+    unsigned char   vector[ CHARVECTOR_SIZE ];
 
     __setbits( vector, charset );
     for( ; tc = *str; ++str ) {
         /* quit when we find any char in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) != 0 )
+        if( GETCHARBIT( vector, tc ) != 0 )
              return( (char *)str );
     }
     return( NULL );

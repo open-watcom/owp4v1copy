@@ -46,7 +46,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
     const CHAR_TYPE   *p2;
     CHAR_TYPE         tc2;
 #else
-    char              vector[32];
+    unsigned char     vector[ CHARVECTOR_SIZE ];
 #endif
     char              *msg = NULL;
     CHAR_TYPE         *p1 = s1;
@@ -86,7 +86,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
             if( tc2 == NULLCHAR ) break;
 #else
             /* quit if we find any char not in charset */
-            if( ( vector[ tc1 >> 3 ] & _Bits[ tc1 & 0x07 ] ) == 0 )  break;
+            if( GETCHARBIT( vector, tc1 ) == 0 )  break;
 #endif
             --m;
         }
@@ -115,7 +115,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
             }
             if( tc2 != NULLCHAR ) {
 #else
-            if( ( vector[ tc1 >> 3 ] & _Bits[ tc1 & 0x07 ] ) != 0 ) {
+            if( GETCHARBIT( vector, tc1 ) != 0 ) {
 #endif
                 *p1 = NULLCHAR;                         /* terminate the token  */
                 p1++;                                   /* start of next token  */

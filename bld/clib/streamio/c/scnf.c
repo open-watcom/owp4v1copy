@@ -58,6 +58,7 @@
 #if defined( __WIDECHAR__ ) || defined( USE_MBCS_TRANSLATION )
     #include <mbstring.h>
 #endif
+#include "setbits.h"
 
 #define TRUE    1
 #define FALSE   0
@@ -464,25 +465,20 @@ static void report_scan( PTR_SCNF_SPECS specs, my_va_list *arg, int match )
 }
 
 #if !defined( __WIDECHAR__ )
-#define SCANSET_LENGTH  (256 / 8)
-
-static const char lst_mask[8] = {
-    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80
-};
 
 /*
  * makelist -- create scanset for %[ directive.
  *             scanset is stored as 256 bit flags in a 32 byte array.
  */
-static const char *makelist( const char *format, char *scanset )
+static const char *makelist( const char *format, unsigned char *scanset )
 {
-    int     lst_chr;
+    char    lst_chr;
 
-    memset( scanset, 0, SCANSET_LENGTH );
+    memset( scanset, 0, CHARVECTOR_SIZE );
     if( (lst_chr = *format++) == '\0' )
         return( format );
     do {
-        scanset[lst_chr >> 3] |= lst_mask[lst_chr & 0x07];
+        SETCHARBIT( scanset, lst_chr );
         if( (lst_chr = *format) == '\0' )
             break;
         ++format;
@@ -505,7 +501,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
     CHAR_TYPE           ch;
     char                in_list;
 #else
-    char                scanset[SCANSET_LENGTH];
+    unsigned char       scanset[ CHARVECTOR_SIZE ];
 #endif
     DEFINE_VARS( maxelem, nelem );
 
@@ -552,7 +548,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
             break;
         }
 #else
-        if( ((scanset[c >> 3] & lst_mask[c & 0x07]) == 0) != not_flag ) {
+        if( (GETCHARBIT( scanset, c ) == 0) != not_flag ) {
             uncget( c, specs );
             break;
         }

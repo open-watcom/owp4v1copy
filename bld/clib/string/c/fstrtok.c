@@ -39,9 +39,9 @@
 
 _WCRTLINK char _WCFAR *_fstrtok( char _WCFAR *str, const char _WCFAR *charset )
 {
-    unsigned /*char*/       tc;
-    unsigned char           vector[32];
-    unsigned char _WCFAR    *p1;
+    char            tc;
+    unsigned char   vector[ CHARVECTOR_SIZE ];
+    char _WCFAR     *p1;
 
     _INITNEXTFTOK
     if( str == NULL ) {
@@ -49,9 +49,9 @@ _WCRTLINK char _WCFAR *_fstrtok( char _WCFAR *str, const char _WCFAR *charset )
         if( str == NULL ) return( NULL );
     }
     __fsetbits( vector, charset );
-    for( ; tc = (unsigned char)*str; ++str ) {
+    for( ; tc = *str; ++str ) {
         /* quit if we find any char not in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )
+        if( GETCHARBIT( vector, tc ) == 0 )
             break;
     }
     if( tc == '\0' )
@@ -59,7 +59,7 @@ _WCRTLINK char _WCFAR *_fstrtok( char _WCFAR *str, const char _WCFAR *charset )
     p1 = str;
     for( ; tc = *p1; ++p1 ) {
         /* quit when we find any char in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) != 0 ) {
+        if( GETCHARBIT( vector, tc ) != 0 ) {
             *p1 = '\0';             /* terminate the token  */
             p1++;                   /* start of next token  */
             _RWD_nextftok = p1;

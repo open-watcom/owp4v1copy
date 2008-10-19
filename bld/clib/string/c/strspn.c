@@ -64,15 +64,15 @@ _WCRTLINK size_t __F_NAME(strspn,wcsspn)( const CHAR_TYPE *str, const CHAR_TYPE 
 
 
 #else
-    unsigned /*char*/   tc;
-    unsigned char       vector[32];
-    size_t              len;
+    char            tc;
+    unsigned char   vector[ CHARVECTOR_SIZE ];
+    size_t          len;
 
     __setbits( vector, charset );
     len = 0;
-    for( ; tc = (unsigned char) *str; ++str, ++len ) {
+    for( ; tc = *str; ++str, ++len ) {
         /* quit if we find any char not in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )
+        if( GETCHARBIT( vector, tc ) == 0 )
             break;
     }
     return( len );

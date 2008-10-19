@@ -62,9 +62,9 @@ _WCRTLINK wchar_t *_ustrtok( wchar_t *str, const wchar_t *charset )
     CHAR_TYPE           tc1;
     CHAR_TYPE           tc2;
 #else
-    unsigned /*char*/   tc;
-    unsigned char       vector[32];
-    unsigned char       *p1;
+    char            tc;
+    unsigned char   vector[ CHARVECTOR_SIZE ];
+    char            *p1;
 #endif
 
 #if defined(__WIDECHAR__)
@@ -116,15 +116,15 @@ _WCRTLINK wchar_t *_ustrtok( wchar_t *str, const wchar_t *charset )
     /* if necessary, continue from where we left off */
     _INITNEXTTOK
     if( str == NULL ) {
-        str = (CHAR_TYPE*)_RWD_nexttok; /* use previous value */
+        str = _RWD_nexttok; /* use previous value */
         if( str == NULL )
             return( NULL );
     }
 
     __setbits( vector, charset );
-    for( ; tc = (unsigned char) *str; ++str ) {
+    for( ; tc = *str; ++str ) {
         /* quit if we find any char not in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )
+        if( GETCHARBIT( vector, tc ) == 0 )
             break;
     }
     if( tc == '\0' )
@@ -132,7 +132,7 @@ _WCRTLINK wchar_t *_ustrtok( wchar_t *str, const wchar_t *charset )
     p1 = str;
     for( ; tc = *p1; ++p1 ) {
         /* quit when we find any char in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) != 0 ) {
+        if( GETCHARBIT( vector, tc ) != 0 ) {
             *p1 = '\0';             /* terminate the token  */
             p1++;                   /* start of next token  */
             _RWD_nexttok = p1;

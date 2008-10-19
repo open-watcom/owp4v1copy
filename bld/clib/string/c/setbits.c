@@ -33,12 +33,12 @@
 #include <string.h>
 #include "setbits.h"
 
-void __setbits( unsigned char vector[32], const char *charset )
+void __setbits( unsigned char *vector, const char *charset )
 {
-    unsigned char c;
+    char    c;
 
-    memset( vector, 0, 32 );
+    memset( vector, 0, CHARVECTOR_SIZE );
     for( ; c = *charset; ++charset ) {
-        vector[ c >> 3 ] |= _Bits[ c & 0x07 ];
+        SETCHARBIT( vector, c );
     }
 }
