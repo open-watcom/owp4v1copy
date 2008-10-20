@@ -48,7 +48,7 @@
 
 #include "langenvd.h"
 #if _TARGET & _TARG_PPC
-  #define   __TGT_SYS   __TGT_SYS_AXP_PPC
+  #define   __TGT_SYS   __TGT_SYS_PPC_NT
 #elif _TARGET & _TARG_AXP
   #define   __TGT_SYS   __TGT_SYS_AXP_NT
 #elif _TARGET & _TARG_MIPS
