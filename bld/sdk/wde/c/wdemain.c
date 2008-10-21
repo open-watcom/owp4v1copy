@@ -663,6 +663,18 @@ LRESULT WINEXPORT WdeMainWndProc( HWND hWnd, UINT message,
             WdeHandleMenuSelect ( wParam, lParam );
             break;
 
+        case WM_MEASUREITEM:
+            WdeHandleMeasureItem( (MEASUREITEMSTRUCT *)lParam );
+            ret = TRUE;
+            pass_to_def = FALSE;
+            break;
+
+        case WM_DRAWITEM:
+            WdeHandleDrawItem( (DRAWITEMSTRUCT *)lParam );
+            ret = TRUE;
+            pass_to_def = FALSE;
+            break;
+
         case WM_MOVE:
             if ( IsZoomed ( hWnd ) ) {
                 WdeSetOption ( WdeOptIsScreenMax, TRUE );
