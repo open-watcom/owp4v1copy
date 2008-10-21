@@ -60,6 +60,7 @@
 #   include "mtypes.h"
 #   include "make.h"
 #endif
+#include "banner.h"
 
 
 struct Glob Glob;
@@ -71,7 +72,7 @@ struct Glob Glob;
 const char FAR *BuiltIns = {
     "__MAKEOPTS__=%s\n"
     "__MAKEFILES__=\n"
-    "__VERSION__=14\n"
+    "__VERSION__=" BANSTR( _BANVER ) "\n"
 #ifdef DLLS_IMPLEMENTED
     "__LOADDLL__=\n"
 #endif

@@ -49,6 +49,7 @@
 #include "swchar.h"
 #include "asminput.h"
 #include "pathgrp.h"
+#include "banner.h"
 
 #ifdef __OSI__
     #include "ostype.h"
@@ -1122,32 +1123,13 @@ static void do_init_stuff( char **cmdline )
 /*****************************************/
 {
     char        *env;
-    char        *src;
-    char        *dst;
     char        buff[80];
 
     if( !MsgInit() )
         exit(1);
 
     AsmInit( -1, -1, -1, -1 );                // initialize hash table
-    strcpy( buff, "__WASM__=" );
-    dst = &buff[ strlen(buff) ];
-    src = (char *)FingerMsg[0];
-    while( !isdigit( *src ) )
-        ++src;
-    while( isdigit( *src ) ) {
-        *dst++ = *src++;
-    }
-    dst[0] = '0';
-    dst[1] = '0';
-    dst[2] = '\0';
-    if( *src == '.' ) {
-        if( isdigit( src[1] ) )
-            dst[0] = src[1];
-        if( isdigit( src[2] ) ) {
-            dst[0] = src[2];
-        }
-    }
+    strcpy( buff, "__WASM__=" BANSTR( _BANVER ) );
     add_constant( buff );
     ForceInclude = getenv( "FORCE" );
     do_envvar_cmdline( "WASM" );
