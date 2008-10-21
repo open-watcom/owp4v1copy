@@ -6,8 +6,8 @@ REM NOTE: All batch files to set the environment must call this batch
 REM       file at the end.
 
 REM Set the version numbers
-set BLD_VER=18
-set BLD_VER_STR=1.8
+set BLD_VER=19
+set BLD_VER_STR=1.9
 
 REM Set up default path information variable
 if "%DEFPATH%" == "" set DEFPATH=%PATH%
