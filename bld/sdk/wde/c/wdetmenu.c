@@ -31,11 +31,13 @@
 
 
 #define OEMRESOURCE
-#ifdef __NT__
-    #define WINVER          0x0500
-    #define _WIN32_WINNT    0x0500
-#endif
 #include <windows.h>
+
+#ifdef __NT__
+    #ifndef DT_HIDEPREFIX
+        #define DT_HIDEPREFIX   0x00100000L
+    #endif
+#endif
 
 #include "wdeglbl.h"
 #include "wde_rc.h"
