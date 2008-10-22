@@ -23,9 +23,11 @@ of the code and data using the Intel standard hex file format. Default file
 extension is "hex".
 .*
 .mnote OFFSET=n
-(short form "OFF") specifies that the linear address
+(short form "OFF") specifies that linear addresses below
 .sy n
-should be subtracted from all addresses being output to the executable image.
+should be skipped when outputting the executable image. This option does not
+affect address calculations and is intended to avoid unwanted padding when
+writing executable images that do not start at linear address zero.
 .*
 .mnote HSHIFT
 defines the relationship between segment values for type 02 records and
