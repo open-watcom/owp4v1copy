@@ -56,9 +56,10 @@ simply skipped. If the location counter is already beyond the specified
 location, an error message is generated. This would likely be the result of
 having specified classes or segments in incorrect order, or not providing
 enough room for preceding ones. Without the "SEGADDR" and "OFFSET" options,
-classes and segment are placed in the executable consecutively, possibly
+classes and segments are placed in the executable consecutively, possibly
 with a small gap in between if required by the alignment specified for the
-class.
+class. If "SEGADDR" is specified without corresponding "OFFSET", the offset
+portion of the address defaults to 0.
 .*
 .mnote COPY
 (short form "CO")
