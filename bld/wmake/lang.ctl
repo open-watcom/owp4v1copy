@@ -24,9 +24,11 @@ cdsay .
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <DEVDIR>/wmake/os2386/wmk.exe    <RELROOT>/binp/wmake.exe
+    <CPCMD> <DEVDIR>/wmake/os2386/wmk.sym    <RELROOT>/binp/wmake.sym
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/wmake/nt386/wmk.exe     <RELROOT>/binnt/wmake.exe
+    <CPCMD> <DEVDIR>/wmake/nt386/wmk.sym     <RELROOT>/binnt/wmake.sym
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <DEVDIR>/wmake/linux386/wmk.elf  <RELROOT>/binl/wmake
