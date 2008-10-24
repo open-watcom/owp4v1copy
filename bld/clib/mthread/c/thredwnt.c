@@ -68,7 +68,7 @@ static DWORD WINAPI begin_thread_helper( thread_args *td )
     void                *arg;
     REGISTRATION_RECORD rr;
     thread_data         *tdata;
-    HANDLE              *thread_handle;
+    HANDLE              thread_handle;
 
     rtn = td->rtn;
     arg = td->argument;
