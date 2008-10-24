@@ -1,4 +1,4 @@
-Open Watcom C/C++ Version 1.8 - README
+Open Watcom C/C++ Version 1.9 - README
 --------------------------------------
 
 Welcome to the Open Watcom C/C++ version 1.8 release! This README provides
