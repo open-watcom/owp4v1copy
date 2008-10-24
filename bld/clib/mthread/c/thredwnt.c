@@ -58,7 +58,6 @@ extern  DWORD           __TlsIndex;
 typedef struct thread_args {
     thread_fn   *rtn;
     void        *argument;
-    HANDLE      parent;
     HANDLE      thread_handle;
 } thread_args;
 
@@ -140,7 +139,6 @@ int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
 
     td->rtn = start_addr;
     td->argument = arglist;
-    td->parent = GetCurrentThread();
 
     th = CreateThread( NULL, stack_size, (LPTHREAD_START_ROUTINE)&begin_thread_helper,
                 (LPVOID) td, CREATE_SUSPENDED, &tid );

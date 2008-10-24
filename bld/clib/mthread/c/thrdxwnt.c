@@ -58,7 +58,6 @@ extern  DWORD           __TlsIndex;
 typedef struct thread_args {
     thread_fnex *rtn;
     void        *argument;
-    HANDLE      parent;
 } thread_args;
 
 static DWORD WINAPI begin_thread_helper( thread_args *td )
@@ -118,7 +117,6 @@ unsigned long __CBeginThreadEx(
 
     td->rtn = start_addr;
     td->argument = arglist;
-    td->parent = GetCurrentThread();
 
     th = CreateThread(
         (LPSECURITY_ATTRIBUTES)security,
