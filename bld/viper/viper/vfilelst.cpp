@@ -238,6 +238,7 @@ static void addCurrentFile( HWND hwnd  ) {
     SetWindowText( ctl, "" );
 }
 
+#ifdef __NT__
 static void addCurrentFile95( HWND hwnd ) {
     char        fname[MAX_PATH];
     struct stat buf;
@@ -248,6 +249,7 @@ static void addCurrentFile95( HWND hwnd ) {
     if( strpbrk( fname, "?*" ) != NULL ) return;
     addFileToList( hwnd, fname );
 }
+#endif
 
 static void addAllFiles( HWND hwnd ) {
     HWND         ctl;
@@ -275,6 +277,7 @@ static void addAllFiles( HWND hwnd ) {
     free( buf );
 }
 
+#ifdef __NT__
 static void addAllFiles95( HWND hwnd ) {
     int             i;
     int             n;
@@ -313,6 +316,7 @@ static void addAllFiles95( HWND hwnd ) {
         FindClose( find_handle );
     }
 }
+#endif
 
 void GetResults( HWND hwnd ) {
     char                *buf;
@@ -391,6 +395,8 @@ UINT CALLBACK AddSrcDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
             } else {
                 return( FALSE );
             }
+        case IDOK:
+            return( FALSE );
         case FOD_ADD:
             addCurrentFile( hwnd );
             PostMessage( hwnd, WM_COMMAND, IDOK, 0 );
@@ -417,7 +423,7 @@ UINT CALLBACK AddSrcDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
                 checkRemoveButton( hwnd );
             }
             break;
-        case IDOK:
+        case FOD_CLOSE:
             GetResults( hwnd );
             doClose( hwnd );
             PostMessage( hwnd, WM_COMMAND, IDOK, 0 );
@@ -432,6 +438,7 @@ UINT CALLBACK AddSrcDlgProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
     return( TRUE );
 }
 
+#ifdef __NT__
 UINT CALLBACK AddSrcDlgProc95( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
     WORD            cmd;
@@ -519,6 +526,7 @@ UINT CALLBACK AddSrcDlgProc95( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     }
     return( TRUE );
 }
+#endif
 
 static BOOL fileSelectDlg( HINSTANCE hinst, HWND parent, GetFilesInfo *info,
                     const char *caption, const char *filters  )
