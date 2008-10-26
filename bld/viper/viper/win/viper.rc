@@ -32,3 +32,6 @@ CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 
 #include "getfile.h"
 #include "getfile.dlg"
+#ifdef __NT__
+    #include "getfile9.dlg"
+#endif
