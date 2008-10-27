@@ -86,9 +86,9 @@
 #define WSAID_TRANSMITFILE \
     { 0xB5367DF0, 0xCBAC, 0x11CF, { 0x95, 0xCA, 0x00, 0x80, 0x5F, 0x48, 0xA1, 0x92 } }
 #define WSAID_ACCEPTEX \
-    { 0xB5467DF1, 0xCBAC, 0x11CF, { 0x95, 0xCA, 0x00, 0x80, 0x5F, 0x48, 0xA1, 0x92 } }
+    { 0xB5367DF1, 0xCBAC, 0x11CF, { 0x95, 0xCA, 0x00, 0x80, 0x5F, 0x48, 0xA1, 0x92 } }
 #define WSAID_GETACCEPTEXSOCKADDRS \
-    { 0xB5467DF2, 0xCBAC, 0x11CF, { 0x95, 0xCA, 0x00, 0x80, 0x5F, 0x48, 0xA1, 0x92 } }
+    { 0xB5367DF2, 0xCBAC, 0x11CF, { 0x95, 0xCA, 0x00, 0x80, 0x5F, 0x48, 0xA1, 0x92 } }
 #if (_WIN32_WINNT >= 0x0501)
     #define WSAID_TRANSMITPACKETS \
         { 0xD9689DA0, 0x1F90, 0x11D3, { 0x99, 0x71, 0x00, 0xC0, 0x4F, 0x68, 0xC8, 0x76 } }
@@ -148,6 +148,7 @@ typedef TRANSMIT_PACKETS_ELEMENT    *LPTRANSMIT_PACKETS_ELEMENT;
 #endif
 
 /* WSAPoll() data */
+#if (_WIN32_WINNT >= 0x0600)
 typedef struct {
     int         result;
     ULONG       fds;
@@ -155,8 +156,10 @@ typedef struct {
     WSAPOLLFD   fdArray[1];
 } WSAPOLLDATA;
 typedef WSAPOLLDATA *LPWSAPOLLDATA;
+#endif
 
 /* WSASendMsg() data */
+#if (_WIN32_WINNT >= 0x0600)
 typedef struct {
     LPWSAMSG                            lpMsg;
     DWORD                               dwFlags;
@@ -165,6 +168,7 @@ typedef struct {
     LPWSAOVERLAPPED_COMPLETION_ROUTINE  lpCompletionRoutine;
 } WSASENDMSG;
 typedef WSASENDMSG  *LPWSASENDMSG;
+#endif
 
 /* Function pointers */
 typedef BOOL (PASCAL *LPFN_TRANSMITFILE)( SOCKET, HANDLE, DWORD, DWORD, LPOVERLAPPED, LPTRANSMIT_FILE_BUFFERS, DWORD );
