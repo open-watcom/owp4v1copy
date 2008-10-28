@@ -1,28 +1,12 @@
 .extensions:
-.extensions: .mif .lst .exe .obj .c .h
+.extensions: .mif .lst .obj .c .h
 
-../objs.mif : aliases.lst ./aliasgen.exe
+../objs.mif : aliases.lst
     rm -f ../objs.mif ../a/*.asm
-    $]@ aliases.lst ../a/ ../objs.mif
-
-src = $(lib_misc_dir)/c/aliasgen.c
-
-./aliasgen.exe : $(src)
-!ifdef bootstrapmode
-    gcc $< -o $@
-!else
-    $(bld_cl) $(wcl_util_opts) $<
-!endif
+    aliasgen aliases.lst ../a/ ../objs.mif
 
 clean : .symbolic
-    rm -f aliasgen.exe *.?bj *.err ../a/*.asm ../objs.mif
+    rm -f *.?bj *.err ../a/*.asm ../objs.mif
 
 realclean : .symbolic clean
     rm -f ../objs.mif ../a/*.asm
-
-#
-# list of projects required to build the alias sub-component
-#
-project : .symbolic
-    pexist lib_misc
-
