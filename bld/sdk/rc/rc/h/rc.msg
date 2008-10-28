@@ -306,6 +306,9 @@ pick(   ERR_BAD_RES_TYPE,
 pick(   ERR_WIN16_TOO_MANY_CONTROLS,
         "Too many controls for Win16 resource '%d' > 255.",
         "Too many controls for Win16 resource '%d' > 255." )
+pick(   ERR_SYMBOL_NOT_DEFINED,
+        "Symbol '%s' is not defined.",
+        "Can't expand environment variable '%s' recursively." )
 pick(   USAGE_MSG_FIRST,
         "Usage: %s {options} input-filename {options} [output-filename] {options}",
         "Usage: %s {options} input-filename {options} [output-filename] {options}" )

@@ -771,4 +771,13 @@ Make sure the correct file is specified.
 This message is issued when a numeric type has been specified
 for a resource but the value is outside the allowable range.
 .*
+.keep
+.errnote 102 Symbol <value> is not defined.
+.np
+This message is issued when a numeric resource id is expected
+but the symbol representing the resource id has not been defined.
+.np
+This error occurs only for OS/2 resource files.
+Other platforms support symbolic and string constant resource ids.
+.*
 .eerrsect

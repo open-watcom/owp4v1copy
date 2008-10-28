@@ -222,7 +222,7 @@
 %type <nameorord>       control-name
 %type <nameorord>       presparam-name
 %type <integral>        cntl-id
-%type <resid>           cntl-text
+%type <nameorord>       cntl-text
 %type <maskint>         cntl-style
 %type <maskint>         frame-style
 %type <integral>        string-id
@@ -281,9 +281,19 @@ normal-resource
 
 name-id
     : Y_NAME
-        { $$ = WResIDFromStr( $1.string ); RcMemFree( $1.string ); }
+        /* OS/2 accepts quoted strings and numbers only, not bare names */
+        {
+            $$ = WResIDFromNum( 0 );
+            RcError( ERR_SYMBOL_NOT_DEFINED, $1.string );
+            ErrorHasOccured = TRUE;
+        }
     | string-constant
-        { $$ = WResIDFromStr( $1.string ); RcMemFree( $1.string ); }
+        /* OS/2 accepts quoted strings and numbers only, not bare names */
+        {
+            $$ = WResIDFromNum( 0 );
+            RcError( ERR_SYNTAX_STR, $1.string );
+            ErrorHasOccured = TRUE;
+        }
     | constant-expression
         {
             $$ = WResIDFromNum( $1.Value );
@@ -1361,14 +1371,15 @@ control-name
         { $$ = WResIDToNameOrOrd( $1 ); RcMemFree( $1 ); }
     ;
 
+/* OS/2 accepts only numbers or strings for control statement text field */
 control-stmt
-    : Y_CONTROL control-name comma-opt cntl-id comma-opt size-info comma-opt
+    : Y_CONTROL cntl-text comma-opt cntl-id comma-opt size-info comma-opt
                 ctl-class-name presparam-list
         {
             IntMask mask = {0};
             $$ = SemOS2SetControlData( $2, $4, $6, $8, mask, NULL, $9 );
         }
-    | Y_CONTROL control-name comma-opt cntl-id comma-opt size-info comma-opt
+    | Y_CONTROL cntl-text comma-opt cntl-id comma-opt size-info comma-opt
                 ctl-class-name comma-opt cntl-style presparam-list
         {
             $$ = SemOS2SetControlData( $2, $4, $6, $8, $10, NULL, $11 );
@@ -1376,7 +1387,16 @@ control-stmt
     ;
 
 cntl-text
-    : name-id
+    : string-constant
+        { $$ = ResStrToNameOrOrd( $1.string ); RcMemFree( $1.string ); }
+    | constant-expression
+        { $$ = ResNumToNameOrOrd( $1.Value ); }
+    | Y_NAME
+        {
+            $$ = ResNumToNameOrOrd( 0 );
+            RcError( ERR_SYMBOL_NOT_DEFINED, $1.string );
+            ErrorHasOccured = TRUE;
+        }
     ;
 
 dialog-or-frame
