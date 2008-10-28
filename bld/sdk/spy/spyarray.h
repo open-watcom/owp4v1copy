@@ -37,7 +37,10 @@
 msgpick( 1, 0, WM_ACTIVATE,        "WM_ACTIVATE",            MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_ACTIVATEAPP,     "WM_ACTIVATEAPP",         MC_WINDOW, 0L ),
 msgpick( 1, 0, 0x0044,             "WM_ACTIVATESHELLWINDOW", MC_WINDOW, 0L ),
-msgpick( 1, 0, 0x0029,            "WM_ALTTABACTIVE",         MC_INPUT,  0L ),
+msgpick( 1, 0, 0x0029,             "WM_ALTTABACTIVE",        MC_INPUT,  0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_APPCOMMAND,      "WM_APPCOMMAND",          MC_INPUT,  0L ),
+#endif
 msgpick( 1, 0, WM_ASKCBFORMATNAME, "WM_ASKCBFORMATNAME",     MC_CLIPBRD,0L ),
 msgpick( 1, 0, 0x022C,             "WM_BEGINDRAG",           MC_INPUT,  0L ),
 #ifdef NT_MSGS
@@ -48,10 +51,16 @@ msgpick( 1, 0, WM_CANCELMODE,      "WM_CANCELMODE",          MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_CAPTURECHANGED,  "WM_CAPTURECHANGED",      MC_MOUSE,  0L ),
 #endif
 msgpick( 1, 0, WM_CHANGECBCHAIN,   "WM_CHANGECBCHAIN",       MC_CLIPBRD,0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_CHANGEUISTATE,   "WM_CHANGEUISTATE",       MC_OTHER,  0L ),
+#endif
 msgpick( 1, 0, WM_CHAR,            "WM_CHAR",                MC_INPUT,  0L ),
 msgpick( 1, 0, WM_CHARTOITEM,      "WM_CHARTOITEM",          MC_INPUT,  0L ),
 msgpick( 1, 0, WM_CHILDACTIVATE,   "WM_CHILDACTIVATE",       MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_CLEAR,           "WM_CLEAR",               MC_CLIPBRD,0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_CLIPBOARDUPDATE, "WM_CLIPBOARDUPDATE",     MC_CLIPBRD,0L ),
+#endif
 msgpick( 1, 0, WM_CLOSE,           "WM_CLOSE",               MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_COALESCE_FIRST,  "WM_COALESCE_FIRST",      MC_OTHER,  0L ),
 msgpick( 1, 0, WM_COALESCE_LAST,   "WM_COALESCE_LAST",       MC_OTHER,  0L ),
@@ -107,6 +116,12 @@ msgpick( 1, 0, WM_DRAWCLIPBOARD,   "WM_DRAWCLIPBOARD",       MC_CLIPBRD,0L ),
 msgpick( 1, 0, WM_DRAWITEM,        "WM_DRAWITEM",            MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_DROPFILES,       "WM_DROPFILES",           MC_OTHER,  0L ),
 msgpick( 1, 0, 0x022A,             "WM_DROPOBJECT",          MC_INPUT,  0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_DWMCOMPOSITIONCHANGED, "WM_DWMCOMPOSITIONCHANGED", MC_WINDOW, 0L ),
+msgpick( 1, 0, WM_DWMNCRENDERINGCHANGED, "WM_DWMNCRENDERINGCHANGED", MC_WINDOW, 0L ),
+msgpick( 1, 0, WM_DWMCOLORIZATIONCOLORCHANGED, "WM_DWMCOLORIZATIONCOLORCHANGED", MC_WINDOW, 0L ),
+msgpick( 1, 0, WM_DWMWINDOWMAXIMIZEDCHANGE, "WM_DWMWINDOWMAXIMIZEDCHANGE", MC_WINDOW, 0L ),
+#endif
 msgpick( 1, 0, WM_ENABLE,          "WM_ENABLE",              MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_ENDSESSION,      "WM_ENDSESSION",          MC_SYSTEM, 0L ),
 msgpick( 1, 0, WM_ENTERIDLE,       "WM_ENTERIDLE",           MC_SYSTEM, 0L ),
@@ -127,6 +142,7 @@ msgpick( 1, 0, WM_GETMINMAXINFO,   "WM_GETMINMAXINFO",       MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_GETTEXT,         "WM_GETTEXT",             MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_GETTEXTLENGTH,   "WM_GETTEXTLENGTH",       MC_WINDOW, 0L ),
 #ifdef NT_MSGS
+msgpick( 1, 0, WM_GETTITLEBARINFOEX, "WM_GETTITLEBARINFOEX", MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_HELP,            "WM_HELP",                MC_INPUT,  0L ),
 #endif
 msgpick( 1, 0, WM_HSCROLL,         "WM_HSCROLL",             MC_INPUT,  0L ),
@@ -145,11 +161,14 @@ msgpick( 1, 0, WM_IME_SELECT,      "WM_IME_SELECT",          MC_IME,    0L ),
 msgpick( 1, 0, WM_IME_CHAR,        "WM_IME_CHAR",            MC_IME,    0L ),
 msgpick( 1, 0, WM_IME_KEYDOWN,     "WM_IME_KEYDOWN",         MC_IME,    0L ),
 msgpick( 1, 0, WM_IME_KEYUP,       "WM_IME_KEYUP",           MC_IME,    0L ),
+msgpick( 1, 0, WM_IME_REQUEST,     "WM_IME_REQUEST",         MC_IME,    0L ),
 #endif
 msgpick( 1, 0, WM_INITDIALOG,      "WM_INITDIALOG",          MC_INIT,   0L ),
 msgpick( 1, 0, WM_INITMENU,        "WM_INITMENU",            MC_INIT,   0L ),
 msgpick( 1, 0, WM_INITMENUPOPUP,   "WM_INITMENUPOPUP",       MC_INIT,   0L ),
 #ifdef NT_MSGS
+msgpick( 1, 0, WM_INPUT,           "WM_INPUT",               MC_INPUT,  0L ),
+msgpick( 1, 0, WM_INPUT_DEVICE_CHANGE, "WM_INPUT_DEVICE_CHANGE", MC_INPUT, 0L ),
 msgpick( 1, 0, WM_INPUTLANGCHANGE, "WM_INPUTLANGCHANGE",     MC_INPUT, 0L ),
 msgpick( 1, 0, WM_INPUTLANGCHANGEREQUEST, "WM_INPUTLANGCHANGEREQUEST", MC_INPUT, 0L ),
 #endif
@@ -178,9 +197,23 @@ msgpick( 1, 0, WM_MDISETMENU,      "WM_MDISETMENU",          MC_MDI,    0L ),
 msgpick( 1, 0, WM_MDITILE,         "WM_MDITILE",             MC_MDI,    0L ),
 msgpick( 1, 0, WM_MEASUREITEM,     "WM_MEASUREITEM",         MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_MENUCHAR,        "WM_MENUCHAR",            MC_INPUT,  0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_MENUCOMMAND,     "WM_MENUCOMMAND",         MC_INPUT,  0L ),
+msgpick( 1, 0, WM_MENUDRAG,        "WM_MENUDRAG",            MC_INPUT,  0L ),
+msgpick( 1, 0, WM_MENUGETOBJECT,   "WM_MENUGETOBJECT",       MC_INPUT,  0L ),
+msgpick( 1, 0, WM_MENURBUTTONUP,   "WM_MENURBUTTONUP",       MC_INPUT,  0L ),
+#endif
 msgpick( 1, 0, WM_MENUSELECT,      "WM_MENUSELECT",          MC_INPUT,  0L ),
 msgpick( 1, 0, WM_MOUSEACTIVATE,   "WM_MOUSEACTIVATE",       MC_MOUSE,  0L ),
+#ifndef NT_MSGS
+msgpick( 1, 0, WM_MOUSEHOVER,      "WM_MOUSEHOVER",          MC_MOUSE,  0L ),
+msgpick( 1, 0, WM_MOUSEHWHEEL,     "WM_MOUSEHWHEEL",         MC_MOUSE,  0L ),
+msgpick( 1, 0, WM_MOUSELEAVE,      "WM_MOUSELEAVE",          MC_MOUSE,  0L ),
+#endif
 msgpick( 1, 0, WM_MOUSEMOVE,       "WM_MOUSEMOVE",           MC_MOUSE,  0L ),
+#ifndef NT_MSGS
+msgpick( 1, 0, WM_MOUSEWHEEL,      "WM_MOUSEWHEEL",          MC_MOUSE,  0L ),
+#endif
 msgpick( 1, 0, WM_MOVE,            "WM_MOVE",                MC_WINDOW, 0L ),
 #ifdef NT_MSGS
 msgpick( 1, 0, WM_MOVING,          "WM_MOVING",              MC_WINDOW, 0L ),
@@ -196,11 +229,20 @@ msgpick( 1, 0, WM_NCLBUTTONUP,     "WM_NCLBUTTONUP",         MC_NC_MOUSE, 0L ),
 msgpick( 1, 0, WM_NCMBUTTONDBLCLK, "WM_NCMBUTTONDBLCLK",     MC_NC_MOUSE, 0L ),
 msgpick( 1, 0, WM_NCMBUTTONDOWN,   "WM_NCMBUTTONDOWN",       MC_NC_MOUSE, 0L ),
 msgpick( 1, 0, WM_NCMBUTTONUP,     "WM_NCMBUTTONUP",         MC_NC_MOUSE, 0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_NCMOUSEHOVER,    "WM_NCMOUSEHOVER",        MC_NC_MOUSE, 0L ),
+msgpick( 1, 0, WM_NCMOUSELEAVE,    "WM_NCMOUSELEAVE",        MC_NC_MOUSE, 0L ),
+#endif
 msgpick( 1, 0, WM_NCMOUSEMOVE,     "WM_NCMOUSEMOVE",         MC_NC_MOUSE, 0L ),
 msgpick( 1, 0, WM_NCPAINT,         "WM_NCPAINT",             MC_NC_MISC,  0L ),
 msgpick( 1, 0, WM_NCRBUTTONDBLCLK, "WM_NCRBUTTONDBLCLK",     MC_NC_MOUSE, 0L ),
 msgpick( 1, 0, WM_NCRBUTTONDOWN,   "WM_NCRBUTTONDOWN",       MC_NC_MOUSE, 0L ),
 msgpick( 1, 0, WM_NCRBUTTONUP,     "WM_NCRBUTTONUP",         MC_NC_MOUSE, 0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_NCXBUTTONDBLCLK, "WM_NCXBUTTONDBLCLK",     MC_NC_MOUSE, 0L ),
+msgpick( 1, 0, WM_NCXBUTTONDOWN,   "WM_NCXBUTTONDOWN",       MC_NC_MOUSE, 0L ),
+msgpick( 1, 0, WM_NCXBUTTONUP,     "WM_NCXBUTTONUP",         MC_NC_MOUSE, 0L ),
+#endif
 msgpick( 1, 0, WM_NEXTDLGCTL,      "WM_NEXTDLGCTL",          MC_WINDOW,   0L ),
 msgpick( 1, 0, 0x0213,             "WM_NEXTMENU",            MC_INPUT,    0L ),
 #ifdef NT_MSGS
@@ -232,6 +274,9 @@ msgpick( 1, 0, WM_QUERYNEWPALETTE, "WM_QUERYNEWPALETTE",     MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_QUERYOPEN,       "WM_QUERYOPEN",           MC_WINDOW, 0L ),
 msgpick( 1, 0, 0x0036,             "WM_QUERYPARKICON",       MC_WINDOW, 0L ),
 msgpick( 1, 0, 0x0038,             "WM_QUERYSAVESTATE",      MC_OTHER,  0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_QUERYUISTATE,    "WM_QUERYUISTATE",        MC_OTHER,  0L ),
+#endif
 msgpick( 1, 0, WM_QUEUESYNC,       "WM_QUEUESYNC",           MC_OTHER,  0L ),
 msgpick( 1, 0, WM_QUIT,            "WM_QUIT",                MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_RBUTTONDBLCLK,   "WM_RBUTTONDBLCLK",       MC_MOUSE,  0L ),
@@ -275,9 +320,17 @@ msgpick( 1, 0, 0x0118,             "WM_SYSTIMER",            MC_SYSTEM, 0L ),
 msgpick( 1, 0, WM_TCARD,           "WM_TCARD",               MC_INPUT, 0L ),
 #endif
 msgpick( 1, 0, 0x0040,             "WM_TESTING",             MC_OTHER,  0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_THEMECHANGED,    "WM_THEMECHANGED",        MC_SYSTEM, 0L ),
+#endif
 msgpick( 1, 0, WM_TIMECHANGE,      "WM_TIMECHANGE",          MC_SYSTEM, 0L ),
 msgpick( 1, 0, WM_TIMER,           "WM_TIMER",               MC_SYSTEM, 0L ),
 msgpick( 1, 0, WM_UNDO,            "WM_UNDO",                MC_CLIPBRD,0L ),
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_UNICHAR,         "WM_UNICHAR",             MC_INPUT,  0L ),
+msgpick( 1, 0, WM_UNINITMENUPOPUP, "WM_UNINITMENUPOPUP",     MC_INIT,   0L ),
+msgpick( 1, 0, WM_UPDATEUISTATE,   "WM_UPDATEUISTATE",       MC_OTHER,  0L ),
+#endif
 msgpick( 1, 0, WM_USER,            "WM_USER",                MC_USER,   0L ),
 #ifdef NT_MSGS
 msgpick( 1, 0, WM_USERCHANGED,     "WM_USERCHANGED",         MC_SYSTEM, 0L ),
@@ -288,4 +341,11 @@ msgpick( 1, 0, WM_VSCROLLCLIPBOARD,"WM_VSCROLLCLIPBOARD",    MC_CLIPBRD,0L ),
 msgpick( 1, 0, WM_WINDOWPOSCHANGED,"WM_WINDOWPOSCHANGED",    MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_WINDOWPOSCHANGING,"WM_WINDOWPOSCHANGING",  MC_WINDOW, 0L ),
 msgpick( 1, 0, WM_WININICHANGE,    "WM_WININICHANGE",        MC_SYSTEM, 0L ),
-msgpick( 1, 0, 0x0108,             "WM_YOMICHAR",            MC_OTHER,  0L)
+#ifdef NT_MSGS
+msgpick( 1, 0, WM_WTSSESSION_CHANGE, "WM_WTSSESSION_CHANGE", MC_SYSTEM, 0L ),
+msgpick( 1, 0, WM_XBUTTONDBLCLK,   "WM_XBUTTONDBLCLK",       MC_MOUSE,  0L ),
+msgpick( 1, 0, WM_XBUTTONDOWN,     "WM_XBUTTONDOWN",         MC_MOUSE,  0L ),
+msgpick( 1, 0, WM_XBUTTONUP,       "WM_XBUTTONUP",           MC_MOUSE,  0L ),
+#endif
+msgpick( 1, 0, 0x0108,             "WM_YOMICHAR",            MC_OTHER,  0L )
+
