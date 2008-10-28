@@ -37,14 +37,14 @@
 #include "hint.h"
 
 #ifdef __NT__
-#define USE_SNAP_WINDOW         1
+    #define USE_SNAP_WINDOW         1
 #endif
 
 #ifdef __NT__
- #define GCW_STYLE              (-26)
- #define UINT_STR_LEN           8
+    #define GCW_STYLE              (-26)
+    #define UINT_STR_LEN           8
 #else
- #define UINT_STR_LEN           4
+    #define UINT_STR_LEN           4
 #endif
 
 #include "win1632.h"
@@ -53,42 +53,42 @@
 
 /* PenWindows specific messages */
 #ifndef WM_PENWINFIRST
-    #define WM_PENWINFIRST      0x0380
+    #define WM_PENWINFIRST                  0x0380
 #endif
 #ifndef WM_PENWINLAST
-    #define WM_PENWINLAST       0x038F
+    #define WM_PENWINLAST                   0x038F
 #endif
 #ifndef WM_COALESCE_FIRST
-    #define WM_COALESCE_FIRST   0x0390
+    #define WM_COALESCE_FIRST               0x0390
 #endif
 #ifndef WM_COALESCE_LAST
-    #define WM_COALESCE_LAST    0x039F
+    #define WM_COALESCE_LAST                0x039F
 #endif
 #ifndef WM_CTLCOLOR
-    #define WM_CTLCOLOR         0x0019
+    #define WM_CTLCOLOR                     0x0019
 #endif
 #ifndef WM_GETHOTKEY
-    #define WM_GETHOTKEY    0x0033
+    #define WM_GETHOTKEY                    0x0033
 #endif
 #ifndef WM_SETHOTKEY
-    #define WM_SETHOTKEY    0x0032
+    #define WM_SETHOTKEY                    0x0032
 #endif
 #ifndef WM_PAINTICON
-    #define WM_PAINTICON    0x26
+    #define WM_PAINTICON                    0x0026
 #endif
 #ifndef WM_OTHERWINDOWCREATED
-    #define WM_OTHERWINDOWCREATED   0x0042
+    #define WM_OTHERWINDOWCREATED           0x0042
 #endif
 #ifndef WM_OTHERWINDOWDESTROYED
-    #define WM_OTHERWINDOWDESTROYED 0x0043
+    #define WM_OTHERWINDOWDESTROYED         0x0043
 #endif
 
 // Messages undocumented for WINDOWS but documented for NT
 #ifndef WM_ENTERMENULOOP
-    #define WM_ENTERMENULOOP        0x0211
+    #define WM_ENTERMENULOOP                0x0211
 #endif
 #ifndef WM_EXITMENULOOP
-    #define WM_EXITMENULOOP         0x0212
+    #define WM_EXITMENULOOP                 0x0212
 #endif
 
 // Windows 95 specific messages
@@ -235,9 +235,9 @@
 #include "savelbox.h"
 #include "log.h"
 #ifdef __NT__
-#include "spymsgnt.gh"
+    #include "spymsgnt.gh"
 #else
-#include "spymsg.gh"
+    #include "spymsg.gh"
 #endif
 #include "msgs.h"
 #include "winpick.h"
@@ -248,47 +248,47 @@
 #include "spymenu.h"
 #include "ctl3d.h"
 #ifdef USE_SNAP_WINDOW
- #include "desknt.h"
- #define SNAP_MODE      TRUE
+    #include "desknt.h"
+    #define SNAP_MODE   TRUE
 #else
- #define SNAP_MODE      FALSE
+    #define SNAP_MODE   FALSE
 #endif
 
 #define RCSTR_MAX_LEN   128
 #ifndef FILE_OPEN
-#define FILE_OPEN       1
+    #define FILE_OPEN   1
 #endif
 #define FILE_SAVE       2
 
-#define BITMAP_X                ( 23 + 4 )
-#define BITMAP_Y                ( 19 + 4 )
-#define BORDER_X( x )           ( (x) / 4 )
-#define BORDER_Y( y )           ( (y) / 16 )
-#define GET_TOOLBAR_HEIGHT( y ) ( (y) + 2 * BORDER_Y( y ) + 3 )
+#define BITMAP_X                (23 + 4)
+#define BITMAP_Y                (19 + 4)
+#define BORDER_X( x )           ((x) / 4)
+#define BORDER_Y( y )           ((y) / 16)
+#define GET_TOOLBAR_HEIGHT( y ) ((y) + 2 * BORDER_Y( y ) + 3)
 #define TOOLBAR_HEIGHT          GET_TOOLBAR_HEIGHT( BITMAP_Y )
 
 /*
  * offsets in spy messages
  */
-#define SPYOUT_HWND     26
+#define SPYOUT_HWND             26
 #ifdef __NT__
- #define SPYOUT_HWND_LEN        8
- #define SPYOUT_MSG_LEN         8
- #define SPYOUT_WPARAM_LEN      8
- #define SPYOUT_LPARAM_LEN      8
- #define SPYOUT_WPARAM          SPYOUT_MSG+1+SPYOUT_MSG_LEN
- #define SPYOUT_LPARAM          SPYOUT_WPARAM+1+SPYOUT_WPARAM_LEN
+    #define SPYOUT_HWND_LEN     8
+    #define SPYOUT_MSG_LEN      8
+    #define SPYOUT_WPARAM_LEN   8
+    #define SPYOUT_LPARAM_LEN   8
+    #define SPYOUT_WPARAM       SPYOUT_MSG + 1 + SPYOUT_MSG_LEN
+    #define SPYOUT_LPARAM       SPYOUT_WPARAM + 1 + SPYOUT_WPARAM_LEN
 #else
- #define SPYOUT_HWND_LEN        4
- #define SPYOUT_MSG_LEN         4
- #define SPYOUT_WPARAM_LEN      4
- #define SPYOUT_LPARAM_LEN      8
- #define SPYOUT_WPARAM          SPYOUT_MSG+3+SPYOUT_MSG_LEN
- #define SPYOUT_LPARAM          SPYOUT_WPARAM+2+SPYOUT_WPARAM_LEN
+    #define SPYOUT_HWND_LEN     4
+    #define SPYOUT_MSG_LEN      4
+    #define SPYOUT_WPARAM_LEN   4
+    #define SPYOUT_LPARAM_LEN   8
+    #define SPYOUT_WPARAM       SPYOUT_MSG + 3 + SPYOUT_MSG_LEN
+    #define SPYOUT_LPARAM       SPYOUT_WPARAM + 2 + SPYOUT_WPARAM_LEN
 #endif
 
-#define SPYOUT_MSG      SPYOUT_HWND+1+SPYOUT_HWND_LEN
-#define SPYOUT_LENGTH   SPYOUT_LPARAM+SPYOUT_LPARAM_LEN
+#define SPYOUT_MSG      SPYOUT_HWND + 1 + SPYOUT_HWND_LEN
+#define SPYOUT_LENGTH   SPYOUT_LPARAM + SPYOUT_LPARAM_LEN
 
 
 typedef enum {
@@ -341,7 +341,7 @@ typedef struct {
 #define FILTER_ENTRIES  13
 typedef union {
     _filters filts;
-    filter array[ FILTER_ENTRIES ];
+    filter array[FILTER_ENTRIES];
 } filters;
 #define M_WATCH         0
 #define M_STOPON        1
