@@ -40,7 +40,6 @@
 void CALLBACK HandleMessage( LPMSG pmsg )
 {
 
-    static char res[SPYOUT_LENGTH+1];
     static char msg[80];
     int         i;
 
@@ -62,8 +61,7 @@ void CALLBACK HandleMessage( LPMSG pmsg )
     }
     ProcessIncomingMessage( pmsg->message, msg );
     if( msg[0] != 0 ) {
-        FormatSpyMessage( msg, pmsg, res );
-        SpyOut( res );
+        SpyOut( msg, pmsg );
     }
 
 } /* HandleMessage */

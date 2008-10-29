@@ -398,7 +398,7 @@ extern statwnd          *StatusHdl;
  */
 
 /* spybox.c */
-void SpyOut( LPSTR res );
+void SpyOut( char *msg, LPMSG pmsg );
 void CreateSpyBox( HWND );
 void ClearSpyBox( void );
 void SpyMessagePauseToggle( void );

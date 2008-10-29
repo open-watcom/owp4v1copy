@@ -34,6 +34,21 @@ pick(   STR_HEADING_UNDERLINE_WIN,
 pick(   STR_MULTIPLE_WIN_TITLE,
         "%s - Multiple Windows",
         "%s - Multiple Windows" )
+pick(   STR_HEADING_1,
+        "Message Name",
+        "Message Name" )
+pick(   STR_HEADING_2,
+        "hWnd",
+        "hWnd" )
+pick(   STR_HEADING_3,
+        "MsgID",
+        "MsgID" )
+pick(   STR_HEADING_4,
+        "wParam",
+        "wParam" )
+pick(   STR_HEADING_5,
+        "lParam",
+        "lParam" )
 pick(   STR_1_WIN_TITLE,
         "%s - hWnd %0*x",
         "%s - hWnd %0*x" )

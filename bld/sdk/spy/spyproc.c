@@ -213,6 +213,11 @@ static void showHintBar( HWND hwnd ) {
     }
 }
 
+void markCallback( char *res )
+{
+    SpyOut( res, NULL );
+}
+
 /*
  * SpyWindowProc - handle messages for the spy appl.
  */
@@ -327,7 +332,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             pausestate = SpyMessagesPaused;
             SpyMessagesPaused = FALSE;              /* make sure marks are
                                                      * always added */
-            ProcessMark( hwnd, Instance, SpyOut );
+            ProcessMark( hwnd, Instance, markCallback );
             SpyMessagesPaused = pausestate;
             break;
         case SPY_SET_FONT:
