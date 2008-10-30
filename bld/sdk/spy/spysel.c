@@ -131,12 +131,11 @@ BOOL CALLBACK EnumWindowsFunc( HWND hwnd, DWORD lparam )
  */
 static void addFormattedWindow( HWND hwnd )
 {
-    char        res[128];
+    char        res[1024];
     char        name[128];
     char        tmp[5];
     char        lead_bl[128];
     int         i,len;
-
     if( IsMyWindow( hwnd ) ) {
         return;
     }
