@@ -171,6 +171,7 @@ void CreateSpyBox( HWND parent )
 
 #ifdef __NT__
     if( (hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" )) != NULL ) {
+        AllowVariableFonts();
         pfnICC = (PFNICC)GetProcAddress( hInstCommCtrl, "InitCommonControls" );
         pfnICC();
         SpyListBox = CreateWindowEx( WS_EX_CLIENTEDGE, WC_LISTVIEW, NULL,
