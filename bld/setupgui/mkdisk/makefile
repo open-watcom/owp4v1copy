@@ -7,15 +7,19 @@ mkdisk_autodepends = .autodepend
 !ifeq %BUILD_PLATFORM dos386
 host_os  = dos
 host_cpu = 386
+ziplib = ../ziplib/osi386/ziplib.lib
 !else ifeq %BUILD_PLATFORM nt386
 host_os  = nt
 host_cpu = 386
+ziplib = ../ziplib/osi386/ziplib.lib
 !else ifeq %BUILD_PLATFORM os2386
 host_os  = os2
 host_cpu = 386
+ziplib = ../ziplib/osi386/ziplib.lib
 !else ifeq %BUILD_PLATFORM linux386
 host_os  = linux
 host_cpu = 386
+ziplib = ../ziplib/linux386/ziplib.lib
 !else
 !endif
 
@@ -42,4 +46,4 @@ genmkfil.exe : genmkfil.obj
     $(cl) $(clflags) $< $(cl_libs)
 
 uzip.exe : microzip.obj
-    $(cl) $(clflags) $< $(cl_libs) ../ziplib/osi$(host_cpu)/ziplib.lib ../zlib/osi$(host_cpu)/zlib.lib 
+    $(cl) $(clflags) $< $(cl_libs) $(ziplib) ../zlib/osi$(host_cpu)/zlib.lib 
