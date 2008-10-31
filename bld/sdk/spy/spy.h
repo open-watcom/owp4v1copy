@@ -234,11 +234,7 @@
 #include "mem.h"
 #include "savelbox.h"
 #include "log.h"
-#ifdef __NT__
-    #include "spymsgnt.gh"
-#else
-    #include "spymsg.gh"
-#endif
+#include "spymsgs.h"
 #include "msgs.h"
 #include "winpick.h"
 #include "msgsel.h"

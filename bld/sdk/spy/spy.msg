@@ -263,3 +263,7 @@ pick(   STR_TIP_MESSAGES_STOP,
 pick(   STR_TIP_OFFON,
         "Stop Spying Temporarily",
         "Stop Spying Temporarily" )
+
+pick(   STR_IMC_TITLE,
+        "Individual Message Control - Page %d of %d",
+        "Individual Message Control - Page %d of %d" )

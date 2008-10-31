@@ -86,11 +86,7 @@ BEGIN
 END
 
 #include "msgs.dlg"
- #ifdef __NT__
- #include "spymsgnt.dlg"
-#else
- #include "spymsgs.dlg"
-#endif
+#include "spymsgs.dlg"
 #include "winpick.dlg"
 #include "msgsel.dlg"
 #include "selwin.dlg"
