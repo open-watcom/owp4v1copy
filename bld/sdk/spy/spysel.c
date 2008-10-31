@@ -131,7 +131,7 @@ BOOL CALLBACK EnumWindowsFunc( HWND hwnd, DWORD lparam )
  */
 static void addFormattedWindow( HWND hwnd )
 {
-    char        res[1024];
+    char        res[259 + UINT_STR_LEN];
     char        name[128];
     char        tmp[5];
     char        lead_bl[128];
@@ -157,7 +157,8 @@ static void addFormattedWindow( HWND hwnd )
             }
         }
     }
-    sprintf( res,"%s%0*x%s %s", lead_bl, UINT_STR_LEN, (UINT)hwnd, tmp, name );
+    snprintf( res, 259 + UINT_STR_LEN, "%s%0*x%s %s", lead_bl, UINT_STR_LEN, (UINT)hwnd,
+              tmp, name );
     SendDlgItemMessage( (HWND) hWndDialog, SELWIN_LISTBOX, LB_ADDSTRING, 0,
         (LONG) (LPSTR) res );
 
