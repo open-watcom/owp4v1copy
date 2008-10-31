@@ -157,7 +157,7 @@ static void addFormattedWindow( HWND hwnd )
             }
         }
     }
-    snprintf( res, 259 + UINT_STR_LEN, "%s%0*x%s %s", lead_bl, UINT_STR_LEN, (UINT)hwnd,
+    snprintf( res, sizeof( res ), "%s%0*x%s %s", lead_bl, UINT_STR_LEN, (UINT)hwnd,
               tmp, name );
     SendDlgItemMessage( (HWND) hWndDialog, SELWIN_LISTBOX, LB_ADDSTRING, 0,
         (LONG) (LPSTR) res );
