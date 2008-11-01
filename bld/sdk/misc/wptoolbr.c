@@ -1596,7 +1596,7 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
                 bar->button_size.y - bar->border.y - 2 );
             tbb.iBitmap = (int)SendMessage( bar->hwnd, TB_ADDBITMAP, 1, (LPARAM)&tbab );
             SendMessage( bar->hwnd, TB_DELETEBUTTON, n, 0L );
-            SendMessage( bar->hwnd, TB_INSERTBUTTON, n, (LPARAM)&tbab );
+            SendMessage( bar->hwnd, TB_INSERTBUTTON, n, (LPARAM)&tbb );
         }
     }
 #endif
