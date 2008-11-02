@@ -1,17 +1,17 @@
 # bt_(system)
-bt_generic    =-bt=DOS
-bt_msdos      =-bt=DOS
-bt_nw_clib    =-bt=NETWARE
-bt_nw_clibl   =-bt=NETWARE
-bt_nw_libc    =-bt=NETWARE5
-bt_nw_libcl   =-bt=NETWARE5
-bt_os2        =-bt=OS2
-bt_osi        =-D__OSI__ -bt=DOS
-bt_qnx        =-bt=QNX
+bt_generic    =-bt=dos
+bt_msdos      =-bt=dos
+bt_nw_clib    =-bt=netware
+bt_nw_clibl   =-bt=netware
+bt_nw_libc    =-bt=netware5
+bt_nw_libcl   =-bt=netware5
+bt_os2        =-bt=os2
+bt_osi        =-D__OSI__ -bt=dos
+bt_qnx        =-bt=qnx
 bt_windows_086=
 bt_windows_386=-D__WIN386__
-bt_windows    =$(bt_windows_$(processor)) -bt=WINDOWS -DSTRICT
-bt_winnt      =-bt=NT
+bt_windows    =$(bt_windows_$(processor)) -bt=windows -DSTRICT
+bt_winnt      =-bt=nt $(win32ver)
 bt_linux      =-bt=linux
 
 build_target = $(bt_$(system))
