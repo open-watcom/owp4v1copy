@@ -17,6 +17,8 @@ wasm_trmem = 1
 
 !include trmem.mif
 
+fpu_flags = -fpc
+
 inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h"
 
 libs = $(wres_dir)/$(%OBJDIR)/wres.lib
