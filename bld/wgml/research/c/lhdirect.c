@@ -44,11 +44,14 @@
 
 long get_file_size( struct dirent * in_file )
 {
-    in_file = in_file; /* So the compiler sees it used */
+    /* So the compiler sees the parameter used. */
+    
+    in_file = in_file; 
+
     return( 16 );
 }
 
-#else /* DOS, OS/2, Windows */
+#else /* DOS, OS/2, Windows. */
 
 /*  Function get_file_size().
  *  Returns in_file->d_size.

@@ -75,6 +75,7 @@
 *                   df_recordbreak
 *                   df_remainder
 *                   df_setsymbol
+*                   df_sleep
 *                   df_subtract
 *                   df_tab_width
 *                   df_text
@@ -93,6 +94,12 @@
 *                   numeric_literal
 *                   process_parameter
 *
+* Notes:        The Wiki should be consulted for any term whose meaning is
+*               not apparent. This should help in most cases.
+*
+*               Information on the device functions can be found in the
+*               Wiki. This is a first version of the interpreter.
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1
@@ -108,6 +115,8 @@
 
 /* Local data definitions. */
 
+/* This will be simplified or eliminated in wgml. */
+
 typedef struct {
     bool        warning;
     uint8_t *   base;
@@ -118,10 +127,14 @@ typedef struct {
 
 static df_data current_df_data;
 
+/* This should still be useful in wgml. */
+
 typedef struct {
     uint16_t    first;
     uint16_t    second;
 } parameters;
+
+/* This will become void * ( *df_function ) (void) in wgml. */
 
 typedef void (*df_function) (void);
 
@@ -129,234 +142,359 @@ static df_function function_table[0x3D];
 
 /* Local function definitions. */
 
-/* This function reports byte codes not known to be used. */
+/* Function df_bad_code().
+ * Reports byte codes not known to be used.
+ */
 
 static void df_bad_code( void )
 {
-    printf_s( "Unknown byte code: 0x%02x -- parameter type: 0x%02x\n", \
-        current_df_data.df_code,  \
-        current_df_data.parameter_type);
+    printf_s( "\nUnknown byte code: 0x%02x -- parameter type: 0x%02x\n", \
+                        current_df_data.df_code, current_df_data.parameter_type);
     return;
 }
 
-/* These functions are for device functions which take no parameters */
+/* These functions are for device functions which take no parameters. */
 
 /* Type I device functions have an associated parameter type byte, which should
  * always be "0x00" for the functions in this section. 
  */
 
+/* Function df_clear3270().
+ * Implements device function %clear3270().
+ */
+ 
 static void df_clear3270( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
     puts( "%clear3270()" );
     return;
 }
 
+/* Function df_clearPC().
+ * Implements device function %clearPC().
+ */
+ 
 static void df_clearPC( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                            current_df_data.parameter_type );
     puts( "%clearPC()" );
     return;
 }
 
+/* Function df_dotab().
+ * Implements device function %dotab().
+ */
+ 
 static void df_dotab( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                            current_df_data.parameter_type );
     puts( "%dotab()" );
     return;
 }
 
+/* Function df_endif().
+ * Implements device function %endif().
+ */
+ 
 static void df_endif( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+                printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                            current_df_data.parameter_type );
     puts( "%endif()" );
     return;
 }
 
+/* Function df_flushpage().
+ * Implements device function %flushpage().
+ */
+ 
 static void df_flushpage( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
     puts( "%flushpage()" );
     return;
 }
 
+/* Function df_recordbreak().
+ * Implements device function %recordbreak().
+ */
+ 
 static void df_recordbreak( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
     puts( "%recordbreak()" );
     return;
 }
 
+/* Function df_textpass().
+ * Implements device function %textpass().
+ */
+ 
 static void df_textpass( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
     puts( "%textpass()" );
     return;
 }
 
+/* Function df_ulineoff().
+ * Implements device function %ulineoff().
+ */
+ 
 static void df_ulineoff( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                            current_df_data.parameter_type );
     puts( "%ulineoff()" );
     return;
 }
 
+/* Function df_ulineon().
+ * Implements device function %ulineon().
+ */
+ 
 static void df_ulineon( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                        current_df_data.parameter_type );
     puts( "%ulineon()" );
     return;
 }
 
+/* Function df_wait().
+ * Implements device function %wait().
+ */
+ 
 static void df_wait( void )
 {
     if( current_df_data.parameter_type != 0x00 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                            current_df_data.parameter_type );
     puts( "%wait()" );
     return;
 }
 
-/* Type II device functions have no corresponding parameter type byte. */
+/* Type II device functions have no parameter type byte. */
 
+/* Function df_date().
+ * Implements device function %date().
+ */
+ 
 static void df_date( void )
 {
     printf_s( "%%date()" );
     return;
 }
 
+/* Function df_default_width().
+ * Implements device function %default_width().
+ */
+ 
 static void df_default_width( void )
 {
     printf_s( "%%default_width()" );
     return;
 }
 
+/* Function df_font_height().
+ * Implements device function %font_height().
+ */
+ 
 static void df_font_height( void )
 {
     printf_s( "%%font_height()" );
     return;
 }
 
+/* Function df_font_number().
+ * Implements device function %font_number().
+ */
+ 
 static void df_font_number( void )
 {
     printf_s( "%%font_number()" );
     return;
 }
 
+/* Function df_font_outname1().
+ * Implements device function %font_outname1().
+ */
+ 
 static void df_font_outname1( void )
 {
     printf_s( "%%font_outname1()" );
     return;
 }
 
+/* Function df_font_outname2().
+ * Implements device function %font_outname2().
+ */
+ 
 static void df_font_outname2( void )
 {
     printf_s( "%%font_outname2()" );
     return;
 }
 
+/* Function df_font_resident().
+ * Implements device function %font_resident().
+ */
+ 
 static void df_font_resident( void )
 {
     printf_s( "%%font_resident()" );
     return;
 }
 
+/* Function df_font_space().
+ * Implements device function %font_space().
+ */
+ 
 static void df_font_space( void )
 {
     printf_s( "%%font_space()" );
     return;
 }
 
+/* Function df_line_height().
+ * Implements device function %line_height().
+ */
+ 
 static void df_line_height( void )
 {
     printf_s( "%%line_height()" );
     return;
 }
 
+/* Function df_line_space().
+ * Implements device function %line_space().
+ */
+ 
 static void df_line_space( void )
 {
     printf_s( "%%line_space()" );
     return;
 }
 
+/* Function df_page_depth().
+ * Implements device function %page_depth().
+ */
+ 
 static void df_page_depth( void )
 {
     printf_s( "%%page_depth()" );
     return;
 }
 
+/* Function df_page_width().
+ * Implements device function %page_width().
+ */
+ 
 static void df_page_width( void )
 {
     printf_s( "%%page_width()" );
     return;
 }
 
+/* Function df_pages().
+ * Implements device function %pages().
+ */
+ 
 static void df_pages( void )
 {
     printf_s( "%%pages()" );
     return;
 }
 
+/* Function df_tab_width().
+ * Implements device function %tab_width().
+ */
+ 
 static void df_tab_width( void )
 {
     printf_s( "%%tab_width()" );
     return;
 }
 
+/* Function df_thickness().
+ * Implements device function %thickness().
+ */
+ 
 static void df_thickness( void )
 {
     printf_s( "%%thickness()" );
     return;
 }
 
+/* Function df_time().
+ * Implements device function %time().
+ */
+ 
 static void df_time( void )
 {
     printf_s( "%%time()" );
     return;
 }
 
+/* Function df_wgml_header().
+ * Implements device function %wgml_header().
+ */
+ 
 static void df_wgml_header( void )
 {
     printf_s( "%%wgml_header()" );
     return;
 }
 
+/* Function df_x_address().
+ * Implements device function %x_address().
+ */
+ 
 static void df_x_address( void )
 {
     printf_s( "%%x_address()" );
     return;
 }
 
+/* Function df_x_size().
+ * Implements device function %x_size().
+ */
+ 
 static void df_x_size( void )
 {
     printf_s( "%%x_size()" );
     return;
 }
 
+/* Function df_y_address().
+ * Implements device function %y_address().
+ */
+ 
 static void df_y_address( void )
 {
     printf_s( "%%y_address()" );
     return;
 }
 
+/* Function df_y_size().
+ * Implements device function %y_size().
+ */
+ 
 static void df_y_size( void )
 {
     printf_s( "%%y_size()" );
@@ -365,7 +503,7 @@ static void df_y_size( void )
 
 /* Parameter block parsing functions. */
 
-/* Function get_parameters()
+/* Function get_parameters().
  * Place offset2 and offset3 into in_parameters->first and
  * in_parameters->second. This function also skips both offset1 and offset4.
  *
@@ -389,37 +527,31 @@ static void get_parameters ( parameters * in_parameters )
     /* Skip the offset1 value. */
 
     memcpy_s( &offset, sizeof( offset ), current_df_data.current, \
-        sizeof( offset ) );
+                                                            sizeof( offset ) );
     current_df_data.current += sizeof( offset );
 
     /* Get the first parameter offset (offset2). */
 
-    memcpy_s( &in_parameters->first, \
-        sizeof( in_parameters->first ), \
-        current_df_data.current, \
-        sizeof( in_parameters->first ) );
-    current_df_data.current += \
-        sizeof( in_parameters->first );
+    memcpy_s( &in_parameters->first, sizeof( in_parameters->first ), \
+                        current_df_data.current, sizeof( in_parameters->first ) );
+    current_df_data.current += sizeof( in_parameters->first );
 
     /* Get the second parameter offset (offset3). */
 
-    memcpy_s( &in_parameters->second, \
-        sizeof( in_parameters->second ), \
-        current_df_data.current, \
-        sizeof( in_parameters->second ) );
-    current_df_data.current += \
-        sizeof( in_parameters->second );
+    memcpy_s( &in_parameters->second, sizeof( in_parameters->second ), \
+                    current_df_data.current, sizeof( in_parameters->second ) );
+    current_df_data.current += sizeof( in_parameters->second );
 
     /* Skip the offset4 value. */
 
     memcpy_s( &offset, sizeof( offset ), current_df_data.current, \
-        sizeof( offset ) );
+                                                            sizeof( offset ) );
     current_df_data.current += sizeof( offset );
 
     return;    
 }
 
-/* Function process_parameter()
+/* Function process_parameter().
  * Extracts the byte code from the Directive instance, updates
  * current_df_data.current, and invokes the function which handles
  * that byte code.
@@ -437,12 +569,9 @@ void process_parameter( void )
 {
     /* Reset current_df_data for the parameter. */
 
-    memcpy_s( &current_df_data.df_code, \
-        sizeof( current_df_data.df_code ), \
-        current_df_data.current, \
-        sizeof( current_df_data.df_code ) );
-    current_df_data.current += \
-        sizeof( current_df_data.df_code );
+    memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ), \
+                    current_df_data.current, sizeof( current_df_data.df_code ) );
+    current_df_data.current += sizeof( current_df_data.df_code );
 
     /* Invoke parameter function. */
 
@@ -451,7 +580,7 @@ void process_parameter( void )
     return;
 }
 
-/* Function which use parameters.
+/* Functions which use parameters.
  * These functions all take parameters and so have common effects on the global
  * current_df_data. 
  *
@@ -475,6 +604,10 @@ void process_parameter( void )
  * parameter block).
  */
 
+/* Function df_image().
+ * Implements device function %image().
+ */
+ 
 static void df_image( void )
 {
     int         i;
@@ -486,7 +619,8 @@ static void df_image( void )
 
         /* Character literal parameter. */
         
-        memcpy_s( &count, sizeof( count ), current_df_data.current, sizeof( count ) );
+        memcpy_s( &count, sizeof( count ), current_df_data.current, \
+                                                                sizeof( count ) );
         current_df_data.current += sizeof( count );
 
         for( i = 0; i < count; i++ ) {
@@ -503,7 +637,7 @@ static void df_image( void )
 
             } else {
 
-            /* The current character is cannot have been an %image() parameter. */
+            /* The current character cannot have been an %image() parameter. */
             
                 printf_s( "%%binary($%02x)\n", current_df_data.current[i] );
 
@@ -514,11 +648,15 @@ static void df_image( void )
     case 0x10:
 
         /* Parameter block. */
-        /* Extract parameter offset and find start of correct Directive. */
+
+        /* Ensure that this is either a ShortHeader or a LongHeader. */
 
         get_parameters( &my_parameters );
-        if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+        if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+            printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                      "0x%04x\n", my_parameters.first );
             return;
+        }
 
         /* Now invoke the parameter's handler. */
 
@@ -531,12 +669,16 @@ static void df_image( void )
 
     default:
         printf_s( "Incorrect parameter type: 0x%02x for device function ", \
-        current_df_data.parameter_type );
+                                                current_df_data.parameter_type );
         puts( "%image(-?-)" );
     }
     return;
 }
 
+/* Function df_text().
+ * Implements device function %text().
+ */
+ 
 static void df_text( void )
 
 {
@@ -550,7 +692,7 @@ static void df_text( void )
         /* Character literal parameter. */
 
         memcpy_s( &count, sizeof( count ), current_df_data.current, \
-            sizeof( count ) );
+                                                                sizeof( count ) );
         current_df_data.current += sizeof( count );
 
         current_df_data.warning = false;
@@ -565,18 +707,21 @@ static void df_text( void )
         }
         puts( "')" );
         if( current_df_data.warning ) \
-            puts( "String shown above may contain unprintable characters." );
+                puts( "String shown above may contain unprintable characters." );
         break;
 
     case 0x10:
 
         /* Parameter block. */
 
-        /* Extract parameter offset and verify it. */
+        /* Ensure that this is either a ShortHeader or a LongHeader. */
 
         get_parameters( &my_parameters );
-        if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+        if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+            printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                      "0x%04x\n", my_parameters.first );
             return;
+        }
 
         /* Now invoke the parameter's handler. */
 
@@ -589,7 +734,7 @@ static void df_text( void )
 
     default:
         printf_s( "Incorrect parameter type: 0x%02x for device function ", \
-        current_df_data.parameter_type );
+                                                current_df_data.parameter_type );
         puts( "%text(-?-)" );
     }
     return;
@@ -597,6 +742,10 @@ static void df_text( void )
 
 /* These functions handle parameter blocks containing literals. */
 
+/* Function char_literal().
+ * Displays the value of a character literal.
+ */
+ 
 static void char_literal( void )
 {
     int         i;
@@ -609,7 +758,7 @@ static void char_literal( void )
     /* Get the count. */
 
     memcpy_s( &count, sizeof( count ), current_df_data.current, \
-        sizeof( count ) );
+                                                                sizeof( count ) );
     current_df_data.current += sizeof( count );
 
     /* Output the char literal, with delimiters */
@@ -625,6 +774,10 @@ static void char_literal( void )
     return;
 }
 
+/* Function numeric_literal().
+ * Displays the value of a numeric literal.
+ */
+ 
 static void numeric_literal( void )
 {
     uint16_t    value;
@@ -636,7 +789,7 @@ static void numeric_literal( void )
     /* Get and print the value. */
 
     memcpy_s( &value, sizeof( value ), current_df_data.current, \
-        sizeof( value ) );
+                                                                sizeof( value ) );
     printf_s( "$%04x", value );
 
     return;
@@ -648,19 +801,28 @@ static void numeric_literal( void )
  * always be "0x10" for the functions in this section.
  */
 
+/* Function df_cancel().
+ * Implements device function %cancel().
+ */
+ 
 static void df_cancel( void )
 {
     parameters   my_parameters;
     
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offset and verify it. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the parameter's handler. */
 
@@ -670,24 +832,33 @@ static void df_cancel( void )
     process_parameter();
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String shown above may contain unprintable characters." );
+            puts( "String shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_enterfont().
+ * Implements device function %enterfont().
+ */
+ 
 static void df_enterfont( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offset and verify it. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the parameter's handler. */
 
@@ -697,24 +868,73 @@ static void df_enterfont( void )
     process_parameter();
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
+
+/* Function df_sleep().
+ * Implements device function %sleep().
+ *
+ * Note:
+ *      Added for completeness. This device function causes gendev to hang
+ *      if used with a literal, and wgml to hang if used with a non-literal.
+ */
+ 
+static void df_sleep( void )
+{
+    parameters   my_parameters;
+
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
+
+    get_parameters( &my_parameters );
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
+        return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
+
+    /* Now invoke the parameter's handler. */
+
+    printf_s( "%%sleep(" );
+    current_df_data.warning = false;
+    current_df_data.current = current_df_data.base + my_parameters.first;
+    process_parameter();
+    puts( ")" );
+    if( current_df_data.warning ) \
+            puts( "String(s) shown above may contain unprintable characters." );
+
+    return;
+}
+
+/* Function df_setsymbol().
+ * Implements device function %setsymbol().
+ */
 
 static void df_setsymbol( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offsets and verify the first. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the first parameter's handler. */
 
@@ -731,24 +951,37 @@ static void df_setsymbol( void )
 
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_binary1().
+ * Implements device function %binary1().
+ *
+ * Note:
+ *      Device function %binary() has the same byte code, and hence uses
+ *      the same implementation, as device function %binary1().
+ */
+ 
 static void df_binary1( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offset and verify it. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the parameter's handler. */
 
@@ -758,24 +991,33 @@ static void df_binary1( void )
     process_parameter();
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_binary2().
+ * Implements device function %binary2().
+ */
+ 
 static void df_binary2( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offset and verify it. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the parameter's handler. */
 
@@ -785,24 +1027,33 @@ static void df_binary2( void )
     process_parameter();
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_binary4().
+ * Implements device function %binary4().
+ */
+ 
 static void df_binary4( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offset and verify it. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the parameter's handler. */
 
@@ -812,24 +1063,33 @@ static void df_binary4( void )
     process_parameter();
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_ifeqn().
+ * Implements device function %ifeqn().
+ */
+ 
 static void df_ifeqn( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offsets and verify the first. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the first parameter's handler. */
 
@@ -846,24 +1106,33 @@ static void df_ifeqn( void )
 
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_ifnen().
+ * Implements device function %ifnen().
+ */
+ 
 static void df_ifnen( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offsets and verify the first. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the first parameter's handler. */
 
@@ -880,24 +1149,33 @@ static void df_ifnen( void )
 
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_ifeqs().
+ * Implements device function %ifeqs().
+ */
+ 
 static void df_ifeqs( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offsets and verify the first. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the first parameter's handler. */
 
@@ -914,24 +1192,33 @@ static void df_ifeqs( void )
 
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_ifnes().
+ * Implements device function %ifnes().
+ */
+ 
 static void df_ifnes( void )
 {
     parameters   my_parameters;
 
-    if( current_df_data.parameter_type != 0x10 ) \
-        printf_s( "Incorrect parameter type 0x%02x for device function ", \
-        current_df_data.parameter_type );
-
-    /* Extract parameter offsets and verify the first. */
+    /* Ensure that this is either a ShortHeader or a LongHeader. */
 
     get_parameters( &my_parameters );
-    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) \
+    if( (my_parameters.first != 0x0009) && (my_parameters.first != 0x000d) ) {
+        printf_s( "Neither ShortHeader nor LongHeader found: offset is: " \
+                    "0x%04x\n", my_parameters.first );
         return;
+    }
+
+    /* Ensure the parameter_type is correct */
+
+    if( current_df_data.parameter_type != 0x10 ) \
+            printf_s( "Incorrect parameter type 0x%02x for device function ", \
+                                                current_df_data.parameter_type );
 
     /* Now invoke the first parameter's handler. */
 
@@ -948,13 +1235,19 @@ static void df_ifnes( void )
 
     puts( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
-/* Type II device functions have no corresponding parameter type byte. */
+/* Type II device functions have no parameter type byte or ShortHeader/Longheader
+ * check.
+ */
 
+/* Function df_add().
+ * Implements device function %add().
+ */
+ 
 static void df_add( void )
 {
     parameters   my_parameters;
@@ -978,11 +1271,15 @@ static void df_add( void )
 
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_decimal().
+ * Implements device function %decimal().
+ */
+ 
 static void df_decimal( void )
 {
     parameters   my_parameters;
@@ -999,11 +1296,15 @@ static void df_decimal( void )
     process_parameter();
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_divide().
+ * Implements device function %divide().
+ */
+ 
 static void df_divide( void )
 {
     parameters   my_parameters;
@@ -1027,11 +1328,15 @@ static void df_divide( void )
 
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_getstrsymbol().
+ * Implements device function %getstrsymbol().
+ */
+ 
 static void df_getstrsymbol( void )
 {
     parameters   my_parameters;
@@ -1048,11 +1353,15 @@ static void df_getstrsymbol( void )
     process_parameter();
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_getnumsymbol().
+ * Implements device function %getnumsymbol().
+ */
+ 
 static void df_getnumsymbol( void )
 {
     parameters   my_parameters;
@@ -1069,11 +1378,15 @@ static void df_getnumsymbol( void )
     process_parameter();
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_hex().
+ * Implements device function %hex().
+ */
+ 
 static void df_hex( void )
 {
     parameters   my_parameters;
@@ -1091,11 +1404,15 @@ static void df_hex( void )
 
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_lower().
+ * Implements device function %lower().
+ */
+ 
 static void df_lower( void )
 {
     parameters   my_parameters;
@@ -1113,11 +1430,15 @@ static void df_lower( void )
 
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_remainder().
+ * Implements device function %remainder().
+ */
+ 
 static void df_remainder( void )
 {
     parameters   my_parameters;
@@ -1141,11 +1462,15 @@ static void df_remainder( void )
 
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
 
+/* Function df_subtract().
+ * Implements device function %subtract().
+ */
+ 
 static void df_subtract( void )
 {
     parameters   my_parameters;
@@ -1169,7 +1494,7 @@ static void df_subtract( void )
 
     printf_s( ")" );
     if( current_df_data.warning ) \
-        puts( "String(s) shown above may contain unprintable characters." );
+            puts( "String(s) shown above may contain unprintable characters." );
 
     return;
 }
@@ -1216,7 +1541,7 @@ static df_function function_table[0x3D] = {
     &df_dotab,          // 0x23 %dotab()
     &df_cancel,         // 0x24 %cancel()
     &df_wait,           // 0x25 %wait()
-    &df_bad_code,       // 0x26 (%sleep()?)
+    &df_sleep,          // 0x26 %sleep()
     &df_default_width,  // 0x27 %default_width()
     &df_font_number,    // 0x28 %font_number()
     &df_tab_width,      // 0x29 %tab_width()
@@ -1251,7 +1576,7 @@ static df_function function_table[0x3D] = {
  * and Type II device functions, as appropriate.
  *
  * Parameter:
- *      in_function points to a compiled function block .
+ *      in_function points to a compiled function block.
  *
  * Global Variables Used:
  *      current_df_data is updated to reflect the current function.
@@ -1291,7 +1616,7 @@ void interpret_function( uint8_t * in_function )
         current_df_data.base += 3;
         current_df_data.current = current_function;
 
-        /* Get the offset to the next element in the linked list */
+        /* Get the offset to the next element in the linked list. */
 
         memcpy_s( &current_offset, sizeof( current_offset ),
             current_df_data.current, sizeof( current_offset ) );
@@ -1300,11 +1625,10 @@ void interpret_function( uint8_t * in_function )
         /* Get the parameter type for the current device function */
 
         memcpy_s( &current_df_data.parameter_type, \
-            sizeof( current_df_data.parameter_type ), \
-            current_df_data.current, \
-            sizeof( current_df_data.parameter_type ) );
-        current_df_data.current += \
-            sizeof( current_df_data.parameter_type );
+                  sizeof( current_df_data.parameter_type ), \
+                  current_df_data.current, \
+                  sizeof( current_df_data.parameter_type ) );
+        current_df_data.current += sizeof( current_df_data.parameter_type );
 
         /* Either reset current_function to the next list element
          * or record that the last function will be done this iteration.
@@ -1319,14 +1643,11 @@ void interpret_function( uint8_t * in_function )
 
         /* Get the function code. */
 
-        memcpy_s( &current_df_data.df_code, \
-            sizeof( current_df_data.df_code ), \
-            current_df_data.current, \
-            sizeof( current_df_data.df_code ) );
-        current_df_data.current += \
-            sizeof( current_df_data.df_code );
+        memcpy_s( &current_df_data.df_code, sizeof( current_df_data.df_code ), \
+                  current_df_data.current, sizeof( current_df_data.df_code ) );
+        current_df_data.current += sizeof( current_df_data.df_code );
 
-        /* This is where the df_code processing occurs */
+        /* This is where the df_code processing occurs. */
 
         function_table[current_df_data.df_code]();
 

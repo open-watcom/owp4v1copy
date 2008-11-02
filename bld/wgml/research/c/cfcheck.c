@@ -37,28 +37,28 @@
 /*  Function main().
  *  Given a valid directory path, check all files in that directory
  *  for various conditions:
- *      whether the length is a multiple of 16
- *      whether the file type byte is 0x02, 0x03, 0x04 or something unexpected
+ *      whether the length is a multiple of 16.
+ *      whether the file type byte is 0x02, 0x0, 0x04 or something unexpected.
  *  The actual checks are performed in the function check_directory(); main()
  *  is concerned with overall program architecture, not details.
  *
  *  Returns:
- *      EXIT_FAILURE or EXIT_SUCCESS, as appropriate
+ *      EXIT_FAILURE or EXIT_SUCCESS, as appropriate.
  */
 
 int main()
 {
-    /* Declare automatic variables */
+    /* Declare automatic variables. */
 
     size_t  cmdlen  = 0;
     char *  cmdline = NULL;
     int     retval;
 
-    /* Display the banner */
+    /* Display the banner. */
 
     print_banner();
 
-    /* Display the usage information if the command line is empty */
+    /* Display the usage information if the command line is empty. */
 
     cmdlen = _bgetcmd( NULL, 0 );
     if( cmdlen == 0 ) {
@@ -66,9 +66,9 @@ int main()
         return( EXIT_FAILURE );
     }
 
-    /* Get the command line */
+    /* Get the command line. */
 
-    cmdlen++; /* Include space for the terminating null character */
+    cmdlen++; /* Include space for the terminating null character. */
     cmdline = malloc( cmdlen );
     if( cmdline == NULL ) {
         return( EXIT_FAILURE );
@@ -76,12 +76,12 @@ int main()
 
     cmdlen = _bgetcmd( cmdline, cmdlen );
 
-    /* Initialize the globals */
+    /* Initialize the globals. */
 
     initialize_globals();
     res_initialize_globals();
     
-    /* Parse the command line: allocates and sets tgt_path */
+    /* Parse the command line: allocates and sets tgt_path. */
 
     retval = parse_cmdline( cmdline );
     if( retval == FAILURE ) {
@@ -89,23 +89,23 @@ int main()
         return( EXIT_FAILURE );
     }
 
-    /* Free the memory held by cmdline and reset it */
+    /* Free the memory held by cmdline and reset it. */
 
     free( cmdline );
     cmdline = NULL;
 
-    /* Check all files in current directory */
+    /* Check all files in current directory. */
 
     retval = check_directory();
 
-    /* Free the memory held by tgt_path and reset it */
+    /* Free the memory held by tgt_path and reset it. */
 
     free( tgt_path );
     tgt_path = NULL;
 
-    /* Done */
+    /* Display the usage if appropriate. */
 
-    if( retval == FAILURE) {
+    if( retval == FAILURE ) {
       print_usage();
       return( EXIT_FAILURE );
     }

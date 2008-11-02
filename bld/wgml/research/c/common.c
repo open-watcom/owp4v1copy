@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implements the common functions for Open Watcom Script/WGML:
+* Description:  Implements the common functions for the research code:
 *                   initialize_globals()
 *                   skip_spaces()
 *
@@ -33,13 +33,13 @@
 #include <ctype.h>
 #include "swchar.h"
 
-/* Define the global variables */
+/* Define the global variables. */
 
 #define global
 #include "common.h"
 
 /*
- *  Initialize the global variables
+ *  Initialize the global variables.
  */
 
 void    initialize_globals( void )
@@ -51,10 +51,10 @@ void    initialize_globals( void )
  *  Skip whitespace (as defined by isspace()).
  *
  *  Parameter:
- *  start contains the start position
+ *  start contains the start position.
  *
  *  Returns:
- *  the position of the first non-whitespace character encountered
+ *  the position of the first non-whitespace character encountered.
  */
 
 char *  skip_spaces( char * start )
