@@ -125,9 +125,9 @@ rcstr.gh : rcstrmsg.gh $(sdk_misc)/msgtoh.vi
 
 rcstrmsg.gh : ../drwatcom.msg $(msgfiles)
 !ifeq drwatcom_95 1
-        $(cc) -zk0 -p $(inc_path) -DCHICAGO $[@ -fo=$^@
+        $(cc) $(preproc_opts) $(inc_path) -DCHICAGO -fo=$^@
 !else
-        $(cc) -zk0 -p $(inc_path) $[@ -fo=$^@
+        $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 !endif
 
 exever.res: exever.rc

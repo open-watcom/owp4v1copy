@@ -454,5 +454,8 @@ rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)/h -zk0 -r
 rc_aui          = $(rcaui) -bt=windows -I$(watcom_dir)\h -zk0 -r
 !endif
 
+# options used for preprocessing source code only
+preproc_opts    = -p -zk0 $[@
+
 !include bhost.mif
 !include local.mif

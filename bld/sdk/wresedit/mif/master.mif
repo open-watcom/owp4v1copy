@@ -111,7 +111,7 @@ rcstr.gh: rcstrmsg.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh: ../h/master.msg $(msgfiles)
-        $(cc) -zk0 -p -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
+        $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)

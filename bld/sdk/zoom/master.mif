@@ -48,7 +48,7 @@ rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : ../wzoom.msg $(sdk_dir)/misc/about.msg
-        $(cc) $(inc_path) -zk0 -p $[@ -fo=$^@
+        $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 
 $(name).res : ../wzoom.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad -zk0 -I"../res" $(inc_path) $[@ -fo=$^@

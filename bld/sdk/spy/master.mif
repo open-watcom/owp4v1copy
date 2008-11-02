@@ -135,7 +135,7 @@ rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(wspy_dir)/spy.msg $(msgfiles)
-        $(cc) -zk0 -p $(inc_path) $[@ -fo=$^@
+        $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 
 $(dllname).lib : $(dllname).dll
         $(librarian) $(libflags) +$[@

@@ -143,7 +143,7 @@ rcstr.gh: rcstrmsg.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh: ../h/wre.msg $(msgfiles)
-        $(cc) -zk0 -p -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
+        $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@
 
 $(name).res: ../h/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
