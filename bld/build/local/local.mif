@@ -18,7 +18,6 @@ brc        += -q
 
 # redirect standard tools to pre-build versions
 as = $(bas)
-vi = $(bvi)
 librarian = $(blib)
 rc = $(brc)
 rcaui = $(brc)

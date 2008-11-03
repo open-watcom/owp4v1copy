@@ -86,7 +86,6 @@ bas             = $(as)
 bas             = *bwasm
 !endif
 
-bvi             = bvi -q -d -i
 blib            = *bwlib
 bre2c           = re2c
 w32bind         = w32bind

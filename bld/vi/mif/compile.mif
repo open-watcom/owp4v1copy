@@ -58,6 +58,6 @@ extra_c_flags += -ai
 !endif
 
 .ctl.ch:
-        parsectl $[@ $[&.ch Ctl_$^&
+        $(parsectl) $[@ $[&.ch Ctl_$^&
 .dyn.dh:
-        parsedyn $[@ $[&.dh Dyn_$^&
+        $(parsedyn) $[@ $[&.dh Dyn_$^&
