@@ -32,5 +32,5 @@
 
 #define _DEVELOPMENT    _ON
 #define _INT_DEBUG   _ON
-#include "..\h\debug.h"
+#include "../h/debug.h"
 
