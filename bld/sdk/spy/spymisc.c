@@ -468,7 +468,47 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
         if( style & CBS_DISABLENOSCROLL ) {
             strcat( sstr, "CBS_DISABLENOSCROLL " );
         }
+    } else if( !stricmp( tmp, "#32770" ) ) {
+        if( style & DS_ABSALIGN ) {
+            strcat( sstr, "DS_ABSALIGN " );
+        }
+        if( style & DS_SYSMODAL ) {
+            strcat( sstr, "DS_SYSMODAL " );
+        }
+        if( style & DS_LOCALEDIT ) {
+            strcat( sstr, "DS_LOCALEDIT " );
+        }
+        if( style & DS_SETFONT ) {
+            strcat( sstr, "DS_SETFONT " );
+        }
 #ifdef __NT__
+        if( style & DS_SETFOREGROUND ) {
+            strcat( sstr, "DS_SETFOREGROUND " );
+        }
+        if( style & DS_3DLOOK ) {
+            strcat( sstr, "DS_3DLOOK " );
+        }
+        if( style & DS_FIXEDSYS ) {
+            strcat( sstr, "DS_FIXEDSYS " );
+        }
+        if( style & DS_NOFAILCREATE ) {
+            strcat( sstr, "DS_NOFAILCREATE " );
+        }
+        if( style & DS_CONTROL ) {
+            strcat( sstr, "DS_CONTROL " );
+        }
+        if( style & DS_CENTER ) {
+            strcat( sstr, "DS_CENTER " );
+        }
+        if( style & DS_CENTERMOUSE ) {
+            strcat( sstr, "DS_CENTERMOUSE " );
+        }
+        if( style & DS_CONTEXTHELP ) {
+            strcat( sstr, "DS_CONTEXTHELP " );
+        }
+        if( (style & DS_SHELLFONT) == DS_SHELLFONT ) {
+            strcat( sstr, "DS_SHELLFONT " );
+        }
     } else if( !stricmp( tmp, ANIMATE_CLASS ) ) {
         if( style & ACS_CENTER ) {
             strcat( sstr, "ACS_CENTER " );
