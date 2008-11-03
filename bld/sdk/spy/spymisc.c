@@ -36,6 +36,9 @@
 #include <stdlib.h>
 #include "spy.h"
 #include <commdlg.h>
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 
 /*                                                               */
 /* not included in MS WIN32 header files                         */
@@ -46,6 +49,78 @@
 #endif
 #ifndef CS_NOKEYCVT
 #define CS_NOKEYCVT 0x0100
+#endif
+
+/*
+ * Define common controls if they aren't already defined.
+ */
+#ifdef __NT__
+    #ifndef DTS_SHORTDATECENTURYFORMAT
+        #define DTS_SHORTDATECENTURYFORMAT  0x000CL
+    #endif
+    #ifndef MCS_NOTRAILINGDATES
+        #define MCS_NOTRAILINGDATES         0x0040L
+    #endif
+    #ifndef MCS_SHORTDAYSOFWEEK
+        #define MCS_SHORTDAYSOFWEEK         0x0080L
+    #endif
+    #ifndef MCS_NOSELCHANGEONNAV
+        #define MCS_NOSELCHANGEONNAV        0x0100L
+    #endif
+    #ifndef PBS_MARQUEE
+        #define PBS_MARQUEE                 0x0008L
+    #endif
+    #ifndef PBS_SMOOTHREVERSE
+        #define PBS_SMOOTHREVERSE           0x0010L
+    #endif
+    #ifndef SBARS_TOOLTIPS
+        #define SBARS_TOOLTIPS              0x0800L
+    #endif
+    #ifndef TTS_NOANIMATE
+        #define TTS_NOANIMATE               0x0010L
+    #endif
+    #ifndef TTS_NOFADE
+        #define TTS_NOFADE                  0x0020L
+    #endif
+    #ifndef TTS_BALLOON
+        #define TTS_BALLOON                 0x0040L
+    #endif
+    #ifndef TTS_CLOSE
+        #define TTS_CLOSE                   0x0080L
+    #endif
+    #ifndef TTS_USEVISUALSTYLE
+        #define TTS_USEVISUALSTYLE          0x0100L
+    #endif
+    #ifndef TBS_REVERSED
+        #define TBS_REVERSED                0x0200L
+    #endif
+    #ifndef TBS_DOWNISLEFT
+        #define TBS_DOWNISLEFT              0x0400L
+    #endif
+    #ifndef TBS_NOTIFYBEFOREMOVE
+        #define TBS_NOTIFYBEFOREMOVE        0x0800L
+    #endif
+    #ifndef TBS_TRANSPARENTBKGND
+        #define TBS_TRANSPARENTBKGND        0x1000L
+    #endif
+    #ifndef HDS_FILTERBAR
+        #define HDS_FILTERBAR               0x0100L
+    #endif
+    #ifndef HDS_FLAT
+        #define HDS_FLAT                    0x0200L
+    #endif
+    #ifndef HDS_CHECKBOXES
+        #define HDS_CHECKBOXES              0x0400L
+    #endif
+    #ifndef HDS_NOSIZING
+        #define HDS_NOSIZING                0x0800L
+    #endif
+    #ifndef HDS_OVERFLOW
+        #define HDS_OVERFLOW                0x1000L
+    #endif
+    #ifndef TVS_NOHSCROLL
+        #define TVS_NOHSCROLL               0x8000L
+    #endif
 #endif
 
 /*
@@ -393,6 +468,439 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
         if( style & CBS_DISABLENOSCROLL ) {
             strcat( sstr, "CBS_DISABLENOSCROLL " );
         }
+#ifdef __NT__
+    } else if( !stricmp( tmp, ANIMATE_CLASS ) ) {
+        if( style & ACS_CENTER ) {
+            strcat( sstr, "ACS_CENTER " );
+        }
+        if( style & ACS_TRANSPARENT ) {
+            strcat( sstr, "ACS_TRANSPARENT " );
+        }
+        if( style & ACS_AUTOPLAY ) {
+            strcat( sstr, "ACS_AUTOPLAY " );
+        }
+        if( style & ACS_TIMER ) {
+            strcat( sstr, "ACS_TIMER " );
+        }
+    } else if( !stricmp( tmp, DATETIMEPICK_CLASS ) ) {
+        if( style & DTS_UPDOWN ) {
+            strcat( sstr, "DTS_UPDOWN " );
+        }
+        if( style & DTS_SHOWNONE ) {
+            strcat( sstr, "DTS_SHOWNONE " );
+        }
+        if( (style & DTS_SHORTDATECENTURYFORMAT) == DTS_SHORTDATECENTURYFORMAT ) {
+            strcat( sstr, "DTS_SHORTDATECENTURYFORMAT " );
+        } else if( style & DTS_LONGDATEFORMAT ) {
+            strcat( sstr, "DTS_LONGDATEFORMAT " );
+        } else if( (style & DTS_TIMEFORMAT) == DTS_TIMEFORMAT ) {
+            strcat( sstr, "DTS_TIMEFORMAT " );
+        } else {
+            strcat( sstr, "DTS_SHORTDATEFORMAT " );
+        }
+        if( style & DTS_APPCANPARSE ) {
+            strcat( sstr, "DTS_APPCANPARSE " );
+        }
+        if( style & DTS_RIGHTALIGN ) {
+            strcat( sstr, "DTS_RIGHTALIGN " );
+        }
+    } else if( !stricmp( tmp, MONTHCAL_CLASS ) ) {
+        if( style & MCS_DAYSTATE ) {
+            strcat( sstr, "MCS_DAYSTATE " );
+        }
+        if( style & MCS_MULTISELECT ) {
+            strcat( sstr, "MCS_MULTISELECT " );
+        }
+        if( style & MCS_WEEKNUMBERS ) {
+            strcat( sstr, "MCS_WEEKNUMBERS " );
+        }
+        if( style & MCS_NOTODAYCIRCLE ) {
+            strcat( sstr, "MCS_NOTODAYCIRCLE " );
+        }
+        if( style & MCS_NOTODAY ) {
+            strcat( sstr, "MCS_NOTODAY " );
+        }
+        if( style & MCS_NOTRAILINGDATES ) {
+            strcat( sstr, "MCS_NOTRAILINGDATES " );
+        }
+        if( style & MCS_SHORTDAYSOFWEEK ) {
+            strcat( sstr, "MCS_SHORTDAYSOFWEEK " );
+        }
+        if( style & MCS_NOSELCHANGEONNAV ) {
+            strcat( sstr, "MCS_NOSELCHANGEONNAV " );
+        }
+    } else if( !stricmp( tmp, PROGRESS_CLASS ) ) {
+        if( style & PBS_SMOOTH ) {
+            strcat( sstr, "PBS_SMOOTH " );
+        }
+        if( style & PBS_VERTICAL ) {
+            strcat( sstr, "PBS_VERTICAL " );
+        }
+        if( style & PBS_MARQUEE ) {
+            strcat( sstr, "PBS_MARQUEE " );
+        }
+        if( style & PBS_SMOOTHREVERSE ) {
+            strcat( sstr, "PBS_SMOOTHREVERSE " );
+        }
+    } else if( !stricmp( tmp, REBARCLASSNAME ) ) {
+        if( style & RBS_TOOLTIPS ) {
+            strcat( sstr, "RBS_TOOLTIPS " );
+        }
+        if( style & RBS_VARHEIGHT ) {
+            strcat( sstr, "RBS_VARHEIGHT " );
+        }
+        if( style & RBS_BANDBORDERS ) {
+            strcat( sstr, "RBS_BANDBORDERS " );
+        }
+        if( style & RBS_FIXEDORDER ) {
+            strcat( sstr, "RBS_FIXEDORDER " );
+        }
+        if( style & RBS_REGISTERDROP ) {
+            strcat( sstr, "RBS_REGISTERDROP " );
+        }
+        if( style & RBS_AUTOSIZE ) {
+            strcat( sstr, "RBS_AUTOSIZE " );
+        }
+        if( style & RBS_VERTICALGRIPPER ) {
+            strcat( sstr, "RBS_VERTICALGRIPPER " );
+        }
+        if( style & RBS_DBLCLKTOGGLE ) {
+            strcat( sstr, "RBS_DBLCLKTOGGLE " );
+        }
+    } else if( !stricmp( tmp, STATUSCLASSNAME ) ) {
+        if( style & SBARS_SIZEGRIP ) {
+            strcat( sstr, "SBARS_SIZEGRIP " );
+        }
+        if( style & SBARS_TOOLTIPS ) {
+            strcat( sstr, "SBARS_TOOLTIPS " );
+        }
+    } else if( !stricmp( tmp, TOOLBARCLASSNAME ) ) {
+        if( style & TBSTYLE_TOOLTIPS ) {
+            strcat( sstr, "TBSTYLE_TOOLTIPS " );
+        }
+        if( style & TBSTYLE_WRAPABLE ) {
+            strcat( sstr, "TBSTYLE_WRAPABLE " );
+        }
+        if( style & TBSTYLE_ALTDRAG ) {
+            strcat( sstr, "TBSTYLE_ALTDRAG " );
+        }
+        if( style & TBSTYLE_FLAT ) {
+            strcat( sstr, "TBSTYLE_FLAT " );
+        }
+        if( style & TBSTYLE_LIST ) {
+            strcat( sstr, "TBSTYLE_LIST " );
+        }
+        if( style & TBSTYLE_CUSTOMERASE ) {
+            strcat( sstr, "TBSTYLE_CUSTOMERASE " );
+        }
+        if( style & TBSTYLE_REGISTERDROP ) {
+            strcat( sstr, "TBSTYLE_REGISTERDROP " );
+        }
+        if( style & TBSTYLE_TRANSPARENT ) {
+            strcat( sstr, "TBSTYLE_TRANSPARENT " );
+        }
+    } else if( !stricmp( tmp, TOOLTIPS_CLASS ) ) {
+        if( style & TTS_ALWAYSTIP ) {
+            strcat( sstr, "TTS_ALWAYSTIP " );
+        }
+        if( style & TTS_NOPREFIX ) {
+            strcat( sstr, "TTS_NOPREFIX " );
+        }
+        if( style & TTS_NOANIMATE ) {
+            strcat( sstr, "TTS_NOANIMATE " );
+        }
+        if( style & TTS_NOFADE ) {
+            strcat( sstr, "TTS_NOFADE " );
+        }
+        if( style & TTS_BALLOON ) {
+            strcat( sstr, "TTS_BALLOON " );
+        }
+        if( style & TTS_CLOSE ) {
+            strcat( sstr, "TTS_CLOSE " );
+        }
+        if( style & TTS_USEVISUALSTYLE ) {
+            strcat( sstr, "TTS_USEVISUALSTYLE " );
+        }
+    } else if( !stricmp( tmp, TRACKBAR_CLASS ) ) {
+        if( style & TBS_AUTOTICKS ) {
+            strcat( sstr, "TBS_AUTOTICKS " );
+        }
+        if( style & TBS_VERT ) {
+            strcat( sstr, "TBS_VERT " );
+            if( style & TBS_LEFT ) {
+                strcat( sstr, "TBS_LEFT " );
+            } else if( !(style & (TBS_BOTH | TBS_NOTICKS)) ) {
+                strcat( sstr, "TBS_RIGHT " );
+            }
+        } else {
+            strcat( sstr, "TBS_HORZ " );
+            if( style & TBS_TOP ) {
+                strcat( sstr, "TBS_TOP " );
+            } else if( !(style & (TBS_BOTH | TBS_NOTICKS)) ) {
+                strcat( sstr, "TBS_BOTTOM " );
+            }
+        }
+        if( style & TBS_BOTH ) {
+            strcat( sstr, "TBS_BOTH " );
+        }
+        if( style & TBS_NOTICKS ) {
+            strcat( sstr, "TBS_NOTICKS " );
+        }
+        if( style & TBS_ENABLESELRANGE ) {
+            strcat( sstr, "TBS_ENABLESELRANGE " );
+        }
+        if( style & TBS_FIXEDLENGTH ) {
+            strcat( sstr, "TBS_FIXEDLENGTH " );
+        }
+        if( style & TBS_NOTHUMB ) {
+            strcat( sstr, "TBS_NOTHUMB " );
+        }
+        if( style & TBS_TOOLTIPS ) {
+            strcat( sstr, "TBS_TOOLTIPS " );
+        }
+        if( style & TBS_REVERSED ) {
+            strcat( sstr, "TBS_REVERSED " );
+        }
+        if( style & TBS_DOWNISLEFT ) {
+            strcat( sstr, "TBS_DOWNISLEFT " );
+        }
+        if( style & TBS_NOTIFYBEFOREMOVE ) {
+            strcat( sstr, "TBS_NOTIFYBEFOREMOVE " );
+        }
+        if( style & TBS_TRANSPARENTBKGND ) {
+            strcat( sstr, "TBS_TRANSPARENTBKGND " );
+        }
+    } else if( !stricmp( tmp, UPDOWN_CLASS ) ) {
+        if( style & UDS_WRAP ) {
+            strcat( sstr, "UDS_WRAP " );
+        }
+        if( style & UDS_SETBUDDYINT ) {
+            strcat( sstr, "UDS_SETBUDDYINT " );
+        }
+        if( style & UDS_ALIGNRIGHT ) {
+            strcat( sstr, "UDS_ALIGNRIGHT " );
+        }
+        if( style & UDS_ALIGNLEFT ) {
+            strcat( sstr, "UDS_ALIGNLEFT " );
+        }
+        if( style & UDS_AUTOBUDDY ) {
+            strcat( sstr, "UDS_AUTOBUDDY " );
+        }
+        if( style & UDS_ARROWKEYS ) {
+            strcat( sstr, "UDS_ARROWKEYS " );
+        }
+        if( style & UDS_HORZ ) {
+            strcat( sstr, "UDS_HORZ " );
+        }
+        if( style & UDS_NOTHOUSANDS ) {
+            strcat( sstr, "UDS_NOTHOUSANDS " );
+        }
+        if( style & UDS_HOTTRACK ) {
+            strcat( sstr, "UDS_HOTTRACK " );
+        }
+    } else if( !stricmp( tmp, WC_HEADER ) ) {
+        if( style & HDS_BUTTONS ) {
+            strcat( sstr, "HDS_BUTTONS " );
+        }
+        if( style & HDS_HOTTRACK ) {
+            strcat( sstr, "HDS_HOTTRACK " );
+        }
+        if( style & HDS_HIDDEN ) {
+            strcat( sstr, "HDS_HIDDEN " );
+        }
+        if( style & HDS_DRAGDROP ) {
+            strcat( sstr, "HDS_DRAGDROP " );
+        }
+        if( style & HDS_FULLDRAG ) {
+            strcat( sstr, "HDS_FULLDRAG " );
+        }
+        if( style & HDS_FILTERBAR ) {
+            strcat( sstr, "HDS_FILTERBAR " );
+        }
+        if( style & HDS_FLAT ) {
+            strcat( sstr, "HDS_FLAT " );
+        }
+        if( style & HDS_CHECKBOXES ) {
+            strcat( sstr, "HDS_CHECKBOXES " );
+        }
+        if( style & HDS_NOSIZING ) {
+            strcat( sstr, "HDS_NOSIZING " );
+        }
+        if( style & HDS_OVERFLOW ) {
+            strcat( sstr, "HDS_OVERFLOW " );
+        }
+    } else if( !stricmp( tmp, WC_LISTVIEW ) ) {
+        switch( style & LVS_TYPEMASK ) {
+        case LVS_ICON:
+            strcat( sstr, "LVS_ICON " );
+            break;
+        case LVS_REPORT:
+            strcat( sstr, "LVS_REPORT " );
+            break;
+        case LVS_SMALLICON:
+            strcat( sstr, "LVS_SMALLICON " );
+            break;
+        case LVS_LIST:
+            strcat( sstr, "LVS_LIST " );
+            break;
+        }
+        if( style & LVS_SINGLESEL ) {
+            strcat( sstr, "LVS_SINGLESEL" );
+        }
+        if( style & LVS_SHOWSELALWAYS ) {
+            strcat( sstr, "LVS_SHOWSELALWAYS " );
+        }
+        if( style & LVS_SORTASCENDING ) {
+            strcat( sstr, "LVS_SORTASCENDING " );
+        }
+        if( style & LVS_SORTDESCENDING ) {
+            strcat( sstr, "LVS_SORTDESCENDING " );
+        }
+        if( style & LVS_SHAREIMAGELISTS ) {
+            strcat( sstr, "LVS_SHAREIMAGELISTS " );
+        }
+        if( style & LVS_NOLABELWRAP ) {
+            strcat( sstr, "LVS_NOLABELWRAP " );
+        }
+        if( style & LVS_AUTOARRANGE ) {
+            strcat( sstr, "LVS_AUTOARRANGE " );
+        }
+        if( style & LVS_EDITLABELS ) {
+            strcat( sstr, "LVS_EDITLABELS " );
+        }
+        if( style & LVS_OWNERDRAWFIXED ) {
+            strcat( sstr, "LVS_OWNERDRAWFIXED " );
+        }
+        switch( style & LVS_ALIGNMASK ) {
+        case LVS_ALIGNTOP:
+            strcat( sstr, "LVS_ALIGNTOP " );
+            break;
+        case LVS_ALIGNLEFT:
+            strcat( sstr, "LVS_ALIGNLEFT " );
+            break;
+        }
+        if( style & LVS_OWNERDATA ) {
+            strcat( sstr, "LVS_OWNERDATA " );
+        }
+        if( style & LVS_NOSCROLL ) {
+            strcat( sstr, "LVS_NOSCROLL " );
+        }
+        if( style & LVS_NOCOLUMNHEADER ) {
+            strcat( sstr, "LVS_NOCOLUMNHEADER " );
+        }
+        if( style & LVS_NOSORTHEADER ) {
+            strcat( sstr, "LVS_NOSORTHEADER " );
+        }
+    } else if( !stricmp( tmp, WC_TABCONTROL ) ) {
+        if( style & TCS_SCROLLOPPOSITE ) {
+            strcat( sstr, "TCS_SCROLLOPPOSITE " );
+        }
+        if( style & TCS_BOTTOM ) {
+            if( style & TCS_VERTICAL ) {
+                strcat( sstr, "TCS_RIGHT " );
+            } else {
+                strcat( sstr, "TCS_BOTTOM " );
+            }
+        }
+        if( style & TCS_MULTISELECT ) {
+            strcat( sstr, "TCS_MULTISELECT " );
+        }
+        if( style & TCS_FLATBUTTONS ) {
+            strcat( sstr, "TCS_FLATBUTTONS " );
+        }
+        if( style & TCS_FORCEICONLEFT ) {
+            strcat( sstr, "TCS_FORCEICONLEFT " );
+        }
+        if( style & TCS_FORCELABELLEFT ) {
+            strcat( sstr, "TCS_FORCELABELLEFT " );
+        }
+        if( style & TCS_HOTTRACK ) {
+            strcat( sstr, "TCS_HOTTRACK " );
+        }
+        if( style & TCS_VERTICAL ) {
+            strcat( sstr, "TCS_VERTICAL " );
+        }
+        if( style & TCS_BUTTONS ) {
+            strcat( sstr, "TCS_BUTTONS " );
+        } else {
+            strcat( sstr, "TCS_TABS " );
+        }
+        if( style & TCS_MULTILINE ) {
+            strcat( sstr, "TCS_MULTILINE " );
+        } else {
+            strcat( sstr, "TCS_SINGLELINE " );
+        }
+        if( !(style & (TCS_FIXEDWIDTH | TCS_RAGGEDRIGHT)) && (style & TCS_MULTILINE) ) {
+            strcat( sstr, "TCS_RIGHTJUSTIFY " );
+        }
+        if( style & TCS_FIXEDWIDTH ) {
+            strcat( sstr, "TCS_FIXEDWIDTH " );
+        }
+        if( style & TCS_RAGGEDRIGHT ) {
+            strcat( sstr, "TCS_RAGGEDRIGHT " );
+        }
+        if( style & TCS_FOCUSONBUTTONDOWN ) {
+            strcat( sstr, "TCS_FOCUSONBUTTONDOWN " );
+        }
+        if( style & TCS_OWNERDRAWFIXED ) {
+            strcat( sstr, "TCS_OWNERDRAWFIXED " );
+        }
+        if( style & TCS_TOOLTIPS ) {
+            strcat( sstr, "TCS_TOOLTIPS " );
+        }
+        if( style & TCS_FOCUSNEVER ) {
+            strcat( sstr, "TCS_FOCUSNEVER " );
+        }
+    } else if( !stricmp( tmp, WC_TREEVIEW ) ) {
+        if( style & TVS_HASBUTTONS ) {
+            strcat( sstr, "TVS_HASBUTTONS " );
+        }
+        if( style & TVS_HASLINES ) {
+            strcat( sstr, "TVS_HASLINES " );
+        }
+        if( style & TVS_LINESATROOT ) {
+            strcat( sstr, "TVS_LINESATROOT " );
+        }
+        if( style & TVS_EDITLABELS ) {
+            strcat( sstr, "TVS_EDITLABELS " );
+        }
+        if( style & TVS_DISABLEDRAGDROP ) {
+            strcat( sstr, "TVS_DISABLEDRAGDROP " );
+        }
+        if( style & TVS_SHOWSELALWAYS ) {
+            strcat( sstr, "TVS_SHOWSELALWAYS " );
+        }
+        if( style & TVS_RTLREADING ) {
+            strcat( sstr, "TVS_RTLREADING " );
+        }
+        if( style & TVS_NOTOOLTIPS ) {
+            strcat( sstr, "TVS_NOTOOLTIPS " );
+        }
+        if( style & TVS_CHECKBOXES ) {
+            strcat( sstr, "TVS_CHECKBOXES " );
+        }
+        if( style & TVS_TRACKSELECT ) {
+            strcat( sstr, "TVS_TRACKSELECT " );
+        }
+        if( style & TVS_SINGLEEXPAND ) {
+            strcat( sstr, "TVS_SINGLEEXPAND " );
+        }
+        if( style & TVS_INFOTIP ) {
+            strcat( sstr, "TVS_INFOTIP " );
+        }
+        if( style & TVS_FULLROWSELECT ) {
+            strcat( sstr, "TVS_FULLROWSELECT " );
+        }
+        if( style & TVS_NOSCROLL ) {
+            strcat( sstr, "TVS_NOSCROLL " );
+        }
+        if( style & TVS_NONEVENHEIGHT ) {
+            strcat( sstr, "TVS_NONEVENHEIGHT " );
+        }
+        if( style & TVS_NOHSCROLL ) {
+            strcat( sstr, "TVS_NOHSCROLL " );
+        }
+#endif
     } else {
         if( style & WS_EX_DLGMODALFRAME ) {
             strcat( sstr, "WS_EX_DLGMODALFRAME " );
