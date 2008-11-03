@@ -24,9 +24,7 @@ additional_cleanup = *.dh *.ch
 !include deftarg.mif
 !include defrule.mif
 
-!ifndef prebuild
 !include ../mif/rcsdll.mif
-!endif
 !include ../mif/include.mif
 !include ../mif/objects.mif
 !include ../mif/compile.mif
@@ -36,10 +34,6 @@ additional_cleanup = *.dh *.ch
 .h : $(vi_dir)/h
 .ctl : $(vi_dir)/ctl
 .dyn : $(vi_dir)/ctl
-
-!ifdef prebuild
-extra_c_flags += -DPREBUILD
-!endif
 
 !ifdef bind
 .vi : $(vi_dir)/dat
@@ -84,7 +78,6 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
 !endif
         # don't bind - it screws up everything - BBB
 !else
-!ifndef prebuild
         set edpath=$(vi_dir)/dat
 # run the right version of edbind depending on host platform
 !ifdef __OS2__
@@ -99,7 +92,6 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
         $(vi_dir)\bind\ntaxp\edbind.exe $(bindextra) -q $(name)
 !else
         $(vi_dir)\bind\nt386\edbind $(bindextra) -q $(name)
-!endif
 !endif
 !endif
 !endif

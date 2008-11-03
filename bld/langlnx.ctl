@@ -15,7 +15,7 @@ set WLINK_LNK=bootstrp.lnk
 # compiled using wmake + gcc + ar/wlib
 [ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
-[ INCLUDE <DEVDIR>/vi/prereq.ctl ]
+#[ INCLUDE <DEVDIR>/vi/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/prereq.ctl ]
 [ INCLUDE <DEVDIR>/orl/prereq.ctl ]
@@ -69,7 +69,7 @@ set WLINK_LNK=
     rm -rf <DEVDIR>/builder/<OBJDIR>
     rm -rf <DEVDIR>/pmake/<OBJDIR>
     rm -rf <DEVDIR>/yacc/<OBJDIR>
-    rm -rf <DEVDIR>/vi/<OBJDIR>
+#    rm -rf <DEVDIR>/vi/<OBJDIR>
     rm -rf <DEVDIR>/sdk/rc/wres/<OBJDIR>
     rm -rf <DEVDIR>/sdk/rc/rc/<OBJDIR>
     rm -rf <DEVDIR>/wstrip/<OBJDIR>

@@ -108,7 +108,7 @@ version.res: version.rc
         $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
 
 rcstr.gh: rcstrmsg.gh
-        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh: ../h/master.msg $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@

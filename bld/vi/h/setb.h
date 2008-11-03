@@ -61,11 +61,7 @@ PICK( "MEnus\0",                "ME\0", Menus,          FALSE,  SET2_T_MENUS )
 PICK( "MODELess\0",             "MO\0", Modeless,       FALSE,  SET2_T_MODELESS )
 PICK( "PAUSEONSpawnerr\0",      "PE\0", PauseOnSpawnErr,TRUE,   SET2_T_PAUSEONSPAWNERR )
 PICK( "PPKeywordonly\0",        "PP\0", PPKeywordOnly,  FALSE,  SET2_T_PPKEYWORDONLY )
-#if defined( PREBUILD )
-PICK( "QUiet\0",                "QU\0", Quiet,          TRUE,   SET2_T_QUIET )
-#else
 PICK( "QUiet\0",                "QU\0", Quiet,          FALSE,  SET2_T_QUIET )
-#endif
 PICK( "QUITMovesforward\0",     "QF\0", QuitMovesForward,TRUE,  SET2_T_QUITMOVESFORWARD )
 PICK( "QUITATLASTFILEEXIT\0",   "QE\0", QuitAtLastFileExit,TRUE,SET2_T_QUITATLASTFILEEXIT )
 PICK( "READENTIREFIle\0",       "RF\0", ReadEntireFile, TRUE,   SET2_T_READENTIREFILE )

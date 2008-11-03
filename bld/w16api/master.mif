@@ -59,7 +59,7 @@ all : $(headers) $(libs) .SYMBOLIC
 .mh: ../include
 
 .def.lbc:
-        $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.
+        $(awk) -f ../def16lbc.awk $[@ > $@
 
 .lbc.lib:
         $(librarian) $(libflags) @$<

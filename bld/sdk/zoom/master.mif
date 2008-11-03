@@ -45,7 +45,7 @@ $(name)j.exe : $(name).exe $(name)j.res
         $(rc) -k $(name)j.res $^@
 
 rcstr.gh : rcstrmsg.gh
-        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : ../wzoom.msg $(sdk_dir)/misc/about.msg
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@

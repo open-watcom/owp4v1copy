@@ -51,7 +51,7 @@ $(name).exe : rcstr.gh $(dis_prereq) $(objs) $(dis_objs) $(name).res
         $(rc) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
-        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : ../heapwalk.msg $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@

@@ -1,9 +1,0 @@
-set norc
-set nomagic
-set magicstring = ()
-%s/^LIBRARY.*$//g
-%s/^EXPORTS.*$//g
-%s/[ \t]//g
-%s/^\([A-Za-z0-9_]*\)\@\([0-9]*\)$/++\1.\U%1\E.\2/g
-w! %1.lbc
-q!

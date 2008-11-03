@@ -48,7 +48,7 @@ $(name).exe : $(msgh) $(objs) $(lnk) $(name).res
 
 .ERASE
 $(msgh) : $(mastermsg)
-        $(vi) -s $(sdk_misc)\msgtoh.vi -p "$(msgh)" $(mastermsg)
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
         del obj\*.obj
 
 $(mastermsg) : $(msgfiles)

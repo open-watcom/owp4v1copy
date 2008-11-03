@@ -206,8 +206,8 @@ $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         $(byacc) $(yacc_flags) $[@ $(as_dir)/y/yydriver.c > $(nulldevice)
-        $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).c" ytab.c
-        $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).h" ytab.h
+        $(sed) -f $(as_dir)/mif/asyy.sed ytab.c > $(yacc_out_c).c
+        $(sed) -f $(as_dir)/mif/asyy.sed ytab.h > $(yacc_out_c).h
         # $(byacc) $(yacc_flags) $[@
 
 $(lex_in) : $(lex_src)

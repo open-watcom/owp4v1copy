@@ -140,7 +140,7 @@ $(name).exe: rcstr.gh $(OBJS) $(name).res $(xlibs) $(res_objs)
 !endif
 
 rcstr.gh: rcstrmsg.gh
-        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh: ../h/wre.msg $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@

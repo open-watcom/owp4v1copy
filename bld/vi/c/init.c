@@ -554,11 +554,6 @@ static void doInitializeEditor( int argc, char *argv[] )
         SetConsoleActiveScreenBuffer( OutputHandle );
     }
     #endif
-    #if defined( PREBUILD )
-    if( startcnt == 0 ) {
-        ExitEditor( 0 );
-    }
-    #endif
 
 } /* doInitializeEditor */
 

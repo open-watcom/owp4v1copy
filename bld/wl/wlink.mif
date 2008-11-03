@@ -179,8 +179,4 @@ wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerro
         $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
-        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"rcmsg.gh" $[@
-!ifdef __UNIX__
-        chmod +w rcmsg.gh
-!endif
-        $(vi) -s ../h/rcrebase.vi rcmsg.gh
+        $(awk) -v rcbase=800 -f $(misc_dir)/msgtoh.awk $[@ > $^@

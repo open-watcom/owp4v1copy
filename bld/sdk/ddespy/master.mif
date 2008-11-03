@@ -56,7 +56,7 @@ $(name).exe : rcstr.gh $(objs) $(name).res $(res_objs)
 !endif
 
 rcstr.gh : rcstrmsg.gh
-        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@

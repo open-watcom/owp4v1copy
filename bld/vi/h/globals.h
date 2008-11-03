@@ -51,7 +51,7 @@ extern char _NEAR * _NEAR BoolStr[];
 extern int NumEditOpts;
 
 /* mouse data */
-#if defined( __LINUX__ ) && !defined( PREBUILD ) /* compatible with the ui lib */
+#if defined( __LINUX__ )        /* compatible with the ui lib */
 extern unsigned short MouseRow;
 extern unsigned short MouseCol;
 extern unsigned short MouseStatus;

@@ -137,7 +137,7 @@ test.exe: $(name).lib $(TESTLNK) test.obj
         $(linker) $(test_lflags) library $(name) file test
 
 wrcmsg.gh: wrtemp.gh
-        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 wrtemp.gh: ../h/master.msg $(msgfiles)
         $(cc) $(preproc_opts) $(cflags) $(inc_path) -fo=$^@

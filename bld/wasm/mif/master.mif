@@ -145,13 +145,13 @@ usagej.u : $(proj_path)/h/usage.sp
         wsplice -kJAPANESE -k$(host_OS) -t8 -u $[@ $^@
 
 msg.gh : $(proj_path)/h/asmshare.msg
-        $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_SHARE_RC_BASE" $[@
+        $(awk) -v base=MSG_SHARE_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
 
 wasmmsg.gh : $(proj_path)/h/wasm.msg
-        $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_WASM_RC_BASE" $[@
+        $(awk) -v base=MSG_WASM_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
 
 wmpmsg.gh : $(proj_path)/h/womp.msg
-        $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@ MSG_WOMP_RC_BASE" $[@
+        $(awk) -v base=MSG_WOMP_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
 
 ###################################################################
 

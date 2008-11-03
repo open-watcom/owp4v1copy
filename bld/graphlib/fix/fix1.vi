@@ -1,6 +1,0 @@
-set nomagic
-%delete
-read %1
-%substitute/^\(.+\)$/%2\1=.obj/
-write!
-quit!

@@ -62,7 +62,7 @@ void *_inline_memset( void *__s, int __c, unsigned int __n );
   #define FileSysNeedsCR( x )         1
 #endif
 
-#if defined( __WATCOMC__ ) && !defined( __AXP__ ) && !defined( __PPC__ ) && !defined( __MIPS__ ) && !defined( PREBUILD )
+#if defined( __WATCOMC__ ) && !defined( __AXP__ ) && !defined( __PPC__ ) && !defined( __MIPS__ )
   #define VI_RCS  1
 #endif
 

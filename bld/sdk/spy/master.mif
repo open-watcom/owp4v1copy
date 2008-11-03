@@ -132,7 +132,7 @@ $(name).exe : $(objs) $(name).res $(dllname).lib $(res_objs)
 !endif
 
 rcstr.gh : rcstrmsg.gh
-        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : $(wspy_dir)/spy.msg $(msgfiles)
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@

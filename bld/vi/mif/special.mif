@@ -3,7 +3,7 @@ $(proj_name).res : $(vi_dir)/win/viw.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 rcstr.gh : rcstrmsg.gh
-        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : $(vi_dir)/vi.msg $(vi_dir)/tooltips.msg $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" -fo=$^@

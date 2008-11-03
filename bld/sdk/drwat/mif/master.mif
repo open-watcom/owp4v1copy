@@ -120,8 +120,8 @@ $(proj_name).res : ../drnt.rc .AUTODEPEND
 !endif
 !endif
 
-rcstr.gh : rcstrmsg.gh $(sdk_misc)/msgtoh.vi
-        $(vi) -s $]@ -p "$^@" $[@
+rcstr.gh : rcstrmsg.gh
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : ../drwatcom.msg $(msgfiles)
 !ifeq drwatcom_95 1

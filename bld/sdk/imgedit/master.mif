@@ -184,7 +184,7 @@ $(name).exe : $(name).res $(objs) $(libs) $(res_objs)
 !endif
 
 rcstr.gh : rcstrmsg.gh
-        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg $(msgfiles)
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@
