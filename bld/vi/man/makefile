@@ -1,4 +1,3 @@
-#pmake: 386
 host_cpu = 386
 
 !include cproj.mif
