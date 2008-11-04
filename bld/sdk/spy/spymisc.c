@@ -30,6 +30,12 @@
 ****************************************************************************/
 
 
+/* Include new common control styles that require recent versions of Windows. */
+#ifdef __NT__
+    #undef _WIN32_IE
+    #define _WIN32_IE   0x0600
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -55,9 +61,6 @@
  * Define common controls if they aren't already defined.
  */
 #ifdef __NT__
-    #ifndef DTS_SHORTDATECENTURYFORMAT
-        #define DTS_SHORTDATECENTURYFORMAT  0x000CL
-    #endif
     #ifndef MCS_NOTRAILINGDATES
         #define MCS_NOTRAILINGDATES         0x0040L
     #endif
@@ -76,35 +79,14 @@
     #ifndef SBARS_TOOLTIPS
         #define SBARS_TOOLTIPS              0x0800L
     #endif
-    #ifndef TTS_NOANIMATE
-        #define TTS_NOANIMATE               0x0010L
-    #endif
-    #ifndef TTS_NOFADE
-        #define TTS_NOFADE                  0x0020L
-    #endif
-    #ifndef TTS_BALLOON
-        #define TTS_BALLOON                 0x0040L
-    #endif
-    #ifndef TTS_CLOSE
-        #define TTS_CLOSE                   0x0080L
-    #endif
     #ifndef TTS_USEVISUALSTYLE
         #define TTS_USEVISUALSTYLE          0x0100L
-    #endif
-    #ifndef TBS_REVERSED
-        #define TBS_REVERSED                0x0200L
-    #endif
-    #ifndef TBS_DOWNISLEFT
-        #define TBS_DOWNISLEFT              0x0400L
     #endif
     #ifndef TBS_NOTIFYBEFOREMOVE
         #define TBS_NOTIFYBEFOREMOVE        0x0800L
     #endif
     #ifndef TBS_TRANSPARENTBKGND
         #define TBS_TRANSPARENTBKGND        0x1000L
-    #endif
-    #ifndef HDS_FILTERBAR
-        #define HDS_FILTERBAR               0x0100L
     #endif
     #ifndef HDS_FLAT
         #define HDS_FLAT                    0x0200L
@@ -117,9 +99,6 @@
     #endif
     #ifndef HDS_OVERFLOW
         #define HDS_OVERFLOW                0x1000L
-    #endif
-    #ifndef TVS_NOHSCROLL
-        #define TVS_NOHSCROLL               0x8000L
     #endif
 #endif
 
