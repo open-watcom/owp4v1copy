@@ -764,7 +764,7 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
             break;
         }
         if( style & LVS_SINGLESEL ) {
-            strcat( sstr, "LVS_SINGLESEL" );
+            strcat( sstr, "LVS_SINGLESEL " );
         }
         if( style & LVS_SHOWSELALWAYS ) {
             strcat( sstr, "LVS_SHOWSELALWAYS " );
