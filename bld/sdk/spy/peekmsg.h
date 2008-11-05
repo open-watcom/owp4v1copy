@@ -39,3 +39,4 @@
 #define PEEKMSG_STYLECLASS          101
 #define PEEKMSG_STYLECB             107
 #define PEEKMSG_STYLECLASSCB        110
+#define PEEKMSG_ICON                111

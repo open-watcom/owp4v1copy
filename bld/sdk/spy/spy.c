@@ -82,17 +82,6 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         wc.lpszClassName = SPY_CLASS_NAME;
         if( !RegisterClass( &wc ) ) return( FALSE );
 
-        wc.style = CS_DBLCLKS;
-        wc.lpfnWndProc = (LPVOID) SpyPickProc;
-        wc.cbClsExtra = 0;
-        wc.cbWndExtra = 0;
-        wc.hInstance = Instance;
-        wc.hIcon = LoadIcon( ResInstance, "SPYICON" );
-        wc.hCursor = LoadCursor( (HANDLE) NULL, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-        wc.lpszMenuName = NULL;
-        wc.lpszClassName = SpyPickClass;
-        if( !RegisterClass( &wc ) ) return( FALSE );
 #ifdef USE_SNAP_WINDOW
         if( !RegisterSnapClass( Instance ) ) return( FALSE );
 #endif
