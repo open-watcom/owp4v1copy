@@ -320,13 +320,13 @@ BOOL CALLBACK ShowSelectedDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam
                 tmpWndList = doAddSelectedWindow( id, tmpWndList, &tmpWndCnt );
             } else {
                 if( framedHwnd != NULL ) {
-                    FrameAWindow( framedHwnd, FALSE );
+                    FrameAWindow( framedHwnd );
                 }
                 if( id == framedHwnd ) {
                     framedHwnd = NULL;
                 } else {
                     framedHwnd = id;
-                    FrameAWindow( framedHwnd, FALSE );
+                    FrameAWindow( framedHwnd );
                 }
                 break;
             }
@@ -335,17 +335,17 @@ BOOL CALLBACK ShowSelectedDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam
             SendDlgItemMessage( hwnd, SELWIN_LISTBOX, LB_SETCURSEL, sel, 0L );
             break;
         case IDCANCEL:
-            FrameAWindow( framedHwnd, FALSE );
+            FrameAWindow( framedHwnd );
             EndDialog( hwnd, 0 );
             break;
         case IDOK:
-            FrameAWindow( framedHwnd, FALSE );
+            FrameAWindow( framedHwnd );
             EndDialog( hwnd, 1 );
             break;
         }
         break;
     case WM_CLOSE:
-        FrameAWindow( framedHwnd, FALSE );
+        FrameAWindow( framedHwnd );
         EndDialog( hwnd, 1 );
         break;
     default:

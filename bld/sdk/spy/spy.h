@@ -442,7 +442,7 @@ void CopyBitState( char *dst, char *src );
 void SetFilterSaveBitsMsgs( MsgClass type, BOOL val, char *bits );
 
 /* spypick.c */
-void FrameAWindow( HWND hwnd, BOOL use_snap );
+void FrameAWindow( HWND hwnd );
 void UpdateFramedInfo( HWND dlg, HWND framedhwnd, BOOL ispick  );
 HWND DoPickDialog( WORD );
 

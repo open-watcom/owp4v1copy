@@ -407,7 +407,7 @@ BOOL CALLBACK MessageSelectDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam
             break;
         case MSGSEL_HILIGHT:
             if( IsWindow( currHwnd ) ) {
-                FrameAWindow( currHwnd, FALSE );
+                FrameAWindow( currHwnd );
                 doHilite = !doHilite;
             } else {
                 warnmsg = GetRCString( STR_WIN_DOESNT_EXIST );
@@ -448,7 +448,7 @@ BOOL CALLBACK MessageSelectDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam
         break;
     case WM_CLOSE:
         if( doHilite ) {
-            FrameAWindow( currHwnd, FALSE );
+            FrameAWindow( currHwnd );
         }
         EndDialog( hwnd, 0 );
         break;

@@ -47,7 +47,7 @@ static WORD pickProcCmdId;
 /*
  * FrameAWindow - draw a frame around a window
  */
-void FrameAWindow( HWND hwnd, BOOL use_snap )
+void FrameAWindow( HWND hwnd )
 {
     HDC         hdc;
     RECT        rect;
@@ -57,7 +57,6 @@ void FrameAWindow( HWND hwnd, BOOL use_snap )
         return;
     }
 
-    use_snap = use_snap;
     hdc = GetWindowDC( hwnd );
 
     SetROP2( hdc, R2_NOT); /* reverse screen color */
@@ -220,9 +219,9 @@ BOOL CALLBACK PickDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
             if( LastFramed != who ) {
                 if( who != NULL && who != hwnd && GetParent( who ) != hwnd ) {
                     if( LastFramed != NULL ) {
-                        FrameAWindow( LastFramed, FALSE );
+                        FrameAWindow( LastFramed );
                     }
-                    FrameAWindow( who, FALSE );
+                    FrameAWindow( who );
                     UpdateFramedInfo( hwnd, who, (pickProcCmdId == SPY_PEEK_WINDOW) );
                     LastFramed = who;
                     if( pickProcCmdId != SPY_PEEK_WINDOW ) {
@@ -230,7 +229,7 @@ BOOL CALLBACK PickDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
                     }
                 } else {
                     if( LastFramed != NULL ) {
-                        FrameAWindow( LastFramed, FALSE );
+                        FrameAWindow( LastFramed );
                     }
                     UpdateFramedInfo( hwnd, NULL, (pickProcCmdId == SPY_PEEK_WINDOW ) );
                     LastFramed = NULL;
@@ -246,7 +245,7 @@ BOOL CALLBACK PickDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
             Picking = FALSE;
             ReleaseCapture();
             if( LastFramed != NULL ) {
-                FrameAWindow( LastFramed, FALSE );
+                FrameAWindow( LastFramed );
             }
         }
         break;
