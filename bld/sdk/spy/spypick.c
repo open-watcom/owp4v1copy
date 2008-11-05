@@ -120,7 +120,11 @@ void UpdateFramedInfo( HWND dlg, HWND framedhwnd, BOOL ispick  )
 
     } else {
 
-        GetHexStr( id, (DWORD) framedhwnd, SPYOUT_HWND_LEN );
+#ifdef __NT__
+        GetHexStr( id, (DWORD)framedhwnd, SPYOUT_HWND_LEN );
+#else
+        GetHexStr( id, (DWORD)(WORD)framedhwnd, SPYOUT_HWND_LEN );
+#endif
         id[SPYOUT_HWND_LEN] = 0;
         SetDlgItemText( dlg, WINSEL_HWND, id );
         len = GetWindowText( framedhwnd, name, sizeof( name ) );
