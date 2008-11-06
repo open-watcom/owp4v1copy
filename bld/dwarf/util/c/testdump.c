@@ -350,8 +350,8 @@ static char *getAT( uint_32 value ) {
 }
 
 
-static void dumpHex( const char *input, uint length, int offsets ) {
-
+static void dumpHex( const unsigned_8 *input, uint length, int offsets )
+{
     char        *p;
     int         i;
     uint        offset;
@@ -384,7 +384,7 @@ static void dumpHex( const char *input, uint length, int offsets ) {
         }
         *p = 0;
         printable[ i ] = 0;
-        printf( "%08lx:%-49s <%s>\n", old_offset, hex, printable );
+        printf( "%08x:%-49s <%s>\n", old_offset, hex, printable );
         p = printable;
         i = 0;
         if( offset == length ) break;
@@ -490,11 +490,11 @@ static void dumpInfo( const uint_8 *input, uint length ) {
         unit_base = p + sizeof( uint_32 );
         address_size = *(p+10);
         abbrev_offset = getU32( (uint_32 *)(p+6) );
-        printf( "Length: %08lx\nVersion: %04lx\nAbbrev: %08lx\nAddress Size %02lx\n",
+        printf( "Length: %08lx\nVersion: %04x\nAbbrev: %08lx\nAddress Size %02x\n",
             unit_length, getU16( (uint_16 *)(p+4) ), abbrev_offset, address_size );
         p += 11;
         while( p - unit_base < unit_length ) {
-            printf( "offset %08lx: ", p - input );
+            printf( "offset %08x: ", p - input );
             p = DecodeULEB128( p, &abbrev_code );
             printf( "Code: %08lx\n", abbrev_code );
             if( abbrev_code == 0 ) continue;
@@ -585,7 +585,7 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                     break;
                 case DW_FORM_string:
                     printf( "\t\"%s\"\n", p );
-                    p += strlen( p ) + 1;
+                    p += strlen( (const char *)p ) + 1;
                     break;
                 case DW_FORM_strp:  /* 4 byte index into .debug_str */
                     printf_debug_str( getU32( (unsigned long *)p ) );
@@ -610,7 +610,7 @@ static void dumpInfo( const uint_8 *input, uint length ) {
 }
 
 
-extern void dumpAbbrevs( const char *input, uint length ) {
+extern void dumpAbbrevs( const unsigned_8 *input, uint length ) {
 
     const uint_8 *p;
     uint_32     tmp;
@@ -766,7 +766,7 @@ static void dumpLines(
             printf( "%4u: %u\n", u + 1, opcode_lengths[ u ] );
         }
 
-        printf( "-- current_offset = %08lx\n", p - input );
+        printf( "-- current_offset = %08x\n", p - input );
 
         if( p - input >= length ) return;
 
@@ -775,7 +775,7 @@ static void dumpLines(
         while( *p != 0 ) {
             ++file_index;
             name = p;
-            p += strlen( p ) + 1;
+            p += strlen( (const char *)p ) + 1;
             printf( "path %u: '%s'\n", file_index, name );
             if( p - input >= length ) return;
         }
@@ -786,7 +786,7 @@ static void dumpLines(
         while( *p != 0 ) {
             ++file_index;
             name = p;
-            p += strlen( p ) + 1;
+            p += strlen( (const char *)p ) + 1;
             p = DecodeULEB128( p, &dir_index );
             p = DecodeULEB128( p, &mod_time );
             p = DecodeULEB128( p, &file_length );
@@ -841,7 +841,7 @@ static void dumpLines(
                 case DW_LNE_define_file:
                     ++file_index;
                     name = p;
-                    p += strlen( p ) + 1;
+                    p += strlen( (const char *)p ) + 1;
                     p = DecodeULEB128( p, &directory );
                     p = DecodeULEB128( p, &mod_time );
                     p = DecodeULEB128( p, &file_length );
@@ -924,7 +924,7 @@ static void dumpLines(
             }
         }
 hacky:
-        printf( "-- current_offset = %08lx\n", p - input );
+        printf( "-- current_offset = %08x\n", p - input );
     }
 }
 
@@ -1019,6 +1019,7 @@ static const uint_8 *dumpSegAddr( const uint_8 *input, uint_8 addrsize, uint_8 s
         break;
     default:
         printf( "Unknown address size\n" );
+        addr = 0;
         p += addrsize;
         break;
     }
@@ -1091,10 +1092,10 @@ static void dumpARanges( const uint_8 *input, uint length )
         p += sizeof( uint_8 );
 
         printf( "  length:    %08lx\n", ar_header.len );
-        printf( "  version:   %04lx\n", ar_header.version );
+        printf( "  version:   %04x\n", ar_header.version );
         printf( "  dbg_pos:   %08lx\n", ar_header.dbg_pos );
-        printf( "  addr_size: %02lx\n", ar_header.addr_size );
-        printf( "  seg_size:  %02lx\n", ar_header.seg_size );
+        printf( "  addr_size: %02x\n", ar_header.addr_size );
+        printf( "  seg_size:  %02x\n", ar_header.seg_size );
 
         /* tuples should be aligned on twice the size of a tuple; some Watcom
          * versions didn't do this right!

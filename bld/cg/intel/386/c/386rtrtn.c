@@ -238,7 +238,7 @@ rtn_info RTInfo[RT_NOP-BEG_RTNS+1] = {
 typedef struct {
         call_class      class;
         byte_seq_len    length;
-        char            data[];
+        byte            data[];
 } rt_aux_info;
 
 static  rt_aux_info Scn1 = {

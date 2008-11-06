@@ -40,11 +40,10 @@
 #define LEB128                  DW_LEB128
 #define ULEB128                 DW_ULEB128
 
-extern  char *LEB128( char *__buf, dw_sconst value );
-extern  char *ULEB128( char *__buf, dw_uconst value );
+extern  uint_8 *LEB128( uint_8 *buf, dw_sconst value );
+extern  uint_8 *ULEB128( uint_8 *buf, dw_uconst value );
 
-// This is daft - we really need to be looking at endianness
-#if defined( _M_IX86 ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
+#ifndef __BIG_ENDIAN__
 #define WriteU16( __p, __v )    ( *(uint_16 *)(__p) = (__v) )
 #define WriteU32( __p, __v )    ( *(uint_32 *)(__p) = (__v) )
 #define WriteS16( __p, __v )    ( *(uint_16 *)(__p) = (__v) )

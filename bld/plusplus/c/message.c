@@ -207,7 +207,7 @@ static SYMBOL msgBuild(         // BUILD ERROR MESSAGE
 }
 
 
-static IDEBool __stdcall idePrt // PRINT FOR IDE
+static IDEBool IDECALL idePrt // PRINT FOR IDE
     ( IDECBHdl hdl              // - handle
     , IDEMsgInfo *info )        // - information
 {

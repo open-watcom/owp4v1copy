@@ -87,7 +87,7 @@ orl_return PrintSymbolInfo( orl_symbol_handle symbol )
 
     name = ORLSymbolGetName( symbol );
     //printf( "handle = %x", symbol );
-    printf( "%-25s:", name );
+    printf( "%-25s:", name ? name : "" );
     printf( " %4.4x ", ORLSymbolGetValue( symbol ) );
     switch( ORLSymbolGetBinding( symbol ) ) {
         case ORL_SYM_BINDING_NONE:
@@ -136,7 +136,7 @@ orl_return PrintSymbolInfo( orl_symbol_handle symbol )
     }
     sec = ORLSymbolGetSecHandle( symbol );
     if( sec ) {
-        printf( " (in '%s')", ORLSecGetName( sec ), sec );
+        printf( " (in '%s')", ORLSecGetName( sec ) );
     }
     printf( "\n" );
     return( ORL_OKAY );
@@ -414,8 +414,8 @@ orl_return PrintSymTable( orl_sec_handle orl_sec_hnd )
     return( ORL_OKAY );
 }
 
-static void * objRead( void *hdl, unsigned int len )
-/**************************************************/
+static void * objRead( void *hdl, size_t len )
+/********************************************/
 {
     buff_list   ptr;
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory usage tracking.
 *
 ****************************************************************************/
 
@@ -253,7 +252,7 @@ static  void    FreeTrk( TRPTR  entry, tracker *trk ) {
 }
 
 
-static  void    Fill( void *start, unsigned len, char filler )
+static  void    Fill( void *start, unsigned len, unsigned char filler )
 {
     char    *ptr;
 

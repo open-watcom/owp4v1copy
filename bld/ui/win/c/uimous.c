@@ -37,7 +37,6 @@
 #include "biosui.h"
 #include "windows.h"
 
-extern char  _B000h[],_B800h[];
 static int MouseX,MouseY,MouseStatusBits;
 static int ScreenXFudge,ScreenYFudge;
 

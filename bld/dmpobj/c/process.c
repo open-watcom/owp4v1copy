@@ -229,6 +229,8 @@ static int doDisasmDirective( void )
         if( idx == 0 ) {
             /* scan table in a COMDAT */
             nidx = GetIndex();
+        } else {
+            nidx = 0;   // shut up gcc
         }
         if( ddir == DDIR_SCAN_TABLE ) {
             off1 = GetUInt();
@@ -635,6 +637,9 @@ void ProcSegDefs( void )
     ++Segindex;
     acbp = GetByte();
     align = acbp >> 5;
+    /* gcc is too stupid to see the following aren't necessary */
+    ltl_offset = ltl_len = ltl_dat = 0;
+    abs_offset = abs_frame = ovl = seg = class = 0;
     if( align >= ALIGN_4KPAGE ) {
         Output( BAILOUT "Unknown align, acbp=%b" CRLF, acbp );
         longjmp( BailOutJmp, 1 );
@@ -1239,6 +1244,8 @@ static void explicitFixup( byte typ )
     typ = GetByte();
     if( TranslateIndex ) {
         RecPtrsave = RecPtr;
+    } else {
+        RecPtrsave = NULL;      // shut up gcc
     }
     frame = ( typ >> 4 ) & 0x07;
     Output( "  Frame: " );
@@ -1353,6 +1360,7 @@ void ProcGrpDef( void )
     unsigned_16 idxidx;
 
     grpidx = GetIndex();
+    idx = 0;
     if( TranslateIndex ) {
         grpname = GetLname( grpidx );
         AddGrpdef( grpidx, 0 ); /* start new grpdef */
@@ -1395,7 +1403,7 @@ void ProcGrpDef( void )
                     class = GetIndex();
                     ovl = GetIndex();
                     if( TranslateIndex ) {
-                        AddGrpdef( grpidx, idx );
+                        AddGrpdef( grpidx, idx );   // idx may be uninited?
                         idxidx = GetGrpseg( seg );
                         segname = GetLname( idxidx );
                         classname = GetLname( class );

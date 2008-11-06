@@ -162,11 +162,11 @@ static void toGraphicalFast( void )
     setupEGA();
 
     _seq_write( SEQ_MAP_MASK, MSK_MAP_0 );
-    MyMoveData( swapSeg, 0, (WORD) _A000H, 0, pageSize );
+    MyMoveData( swapSeg, 0, (WORD) _A000h, 0, pageSize );
     _seq_write( SEQ_MAP_MASK, MSK_MAP_1 );
-    MyMoveData( swapSeg, pageSize, (WORD) _A000H, 0, pageSize );
+    MyMoveData( swapSeg, pageSize, (WORD) _A000h, 0, pageSize );
     _seq_write( SEQ_MAP_MASK, MSK_MAP_2 );
-    MyMoveData( swapSeg, pageSize*2, (WORD) _A000H, 0, FONT_SIZE );
+    MyMoveData( swapSeg, pageSize*2, (WORD) _A000h, 0, FONT_SIZE );
 
     rmRegs.eax = saveMode | 0x80;
     doAnInt10();
@@ -206,18 +206,18 @@ static void toCharacterFast( void )
 
     setupEGA();
     _graph_write( GRA_READ_MAP, RMS_MAP_0 );
-    MyMoveData( (WORD) _A000H, 0, swapSeg, 0, pageSize );
+    MyMoveData( (WORD) _A000h, 0, swapSeg, 0, pageSize );
     _graph_write( GRA_READ_MAP, RMS_MAP_1 );
-    MyMoveData( (WORD) _A000H, 0, swapSeg, pageSize, pageSize );
+    MyMoveData( (WORD) _A000h, 0, swapSeg, pageSize, pageSize );
     _graph_write( GRA_READ_MAP, RMS_MAP_2 );
-    MyMoveData( (WORD) _A000H, 0, swapSeg, pageSize * 2, FONT_SIZE );
+    MyMoveData( (WORD) _A000h, 0, swapSeg, pageSize * 2, FONT_SIZE );
     _graph_write( GRA_READ_MAP, RMS_MAP_0 );
 
     /*
      * blank regen area (attributes)
      */
     _seq_write( SEQ_MAP_MASK, MSK_MAP_1 );
-    Fillb( (WORD) _A000H, 0, 0, pageSize );
+    Fillb( (WORD) _A000h, 0, 0, pageSize );
 
     rmRegs.eax = scanLines;
     rmRegs.ebx= 0x30;

@@ -37,8 +37,6 @@
 
 extern EVENT Event;
 
-extern char  _B000h[],_B800h[];
-
 void global uiflush( void )
 /*************************/
 {

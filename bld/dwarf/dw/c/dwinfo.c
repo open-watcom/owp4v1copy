@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Manage the .debug_info section.
 *
 ****************************************************************************/
 
-
-/*
-    manage the .debug_info section
-*/
 
 #include "dwpriv.h"
 #include "dwutils.h"
@@ -84,8 +79,8 @@ void InfoLEB128(
     dw_client                   cli,
     dw_sconst                   value )
 {
-    char                        buf[ MAX_LEB128 ];
-    char *                      end;
+    uint_8                      buf[ MAX_LEB128 ];
+    uint_8                      *end;
 
     end = LEB128( buf, value );
     CLIWrite( DW_DEBUG_INFO, buf, end - buf );
@@ -96,8 +91,8 @@ void InfoULEB128(
     dw_client                   cli,
     dw_uconst                   value )
 {
-    char                        buf[ MAX_LEB128 ];
-    char *                      end;
+    uint_8                      buf[ MAX_LEB128 ];
+    uint_8                      *end;
 
     end = ULEB128( buf, value );
     CLIWrite( DW_DEBUG_INFO, buf, end - buf );

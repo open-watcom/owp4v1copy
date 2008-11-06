@@ -47,6 +47,11 @@ extern "C" {
 #define IDEDLL_EXPORT           __export __stdcall
 #endif
 
+#if defined( __WATCOMC__ )
+#define IDECALL                 __stdcall
+#else
+#define IDECALL
+#endif
 
 #define IDE_CUR_DLL_VER         3
 #define IDE_CUR_INFO_VER2       2       //VERSION 2 (see below)
@@ -233,34 +238,34 @@ typedef unsigned        IDEInfoType;
 typedef unsigned long IDEGetInfoWParam;
 typedef unsigned long IDEGetInfoLParam;
 
-typedef IDEBool __stdcall (*IDERunBatchFn)( IDECBHdl hdl, const char *cmdline,
+typedef IDEBool IDECALL (*IDERunBatchFn)( IDECBHdl hdl, const char *cmdline,
                                 BatchFilter cb, void *cookie );
-typedef IDEBool __stdcall (*IDEPrintMsgFn)( IDECBHdl hdl, const char *message );
-typedef IDEBool __stdcall (*IDEGetInfoFn)( IDECBHdl hdl, IDEInfoType type,
+typedef IDEBool IDECALL (*IDEPrintMsgFn)( IDECBHdl hdl, const char *message );
+typedef IDEBool IDECALL (*IDEGetInfoFn)( IDECBHdl hdl, IDEInfoType type,
                                 IDEGetInfoWParam wparam, IDEGetInfoLParam lparam );
-typedef IDEBool __stdcall (*IDEMsgInfoFn)( IDECBHdl hdl, IDEMsgInfo *info );
-typedef IDEBool __stdcall (*IDERunDllFn)( IDECBHdl hdl, const char *dllname,
+typedef IDEBool IDECALL (*IDEMsgInfoFn)( IDECBHdl hdl, IDEMsgInfo *info );
+typedef IDEBool IDECALL (*IDERunDllFn)( IDECBHdl hdl, const char *dllname,
                                 const char *cmdline, BatchDllFilter cb,
                                 void *cookie );
-typedef IDEBool __stdcall (*IDERunBatchCwdFn)( IDECBHdl hdl,
+typedef IDEBool IDECALL (*IDERunBatchCwdFn)( IDECBHdl hdl,
                                 const char *cmdline, const char *cwd,
                                 BatchFilter cb, void *cookie );
-typedef IDEBool __stdcall (*IDEOpenJavaSource)( IDECBHdl hdl, const char *name, IDEIOOpts opt, IDEDataInfo **info );
-typedef IDEBool __stdcall (*IDEOpenClassFile)( IDECBHdl hdl, const char *name, IDEIOOpts opt, IDEDataInfo **info );
-typedef IDEBool __stdcall (*IDEPackageExists)( IDECBHdl hdl, const char *name );
-typedef int     __stdcall (*IDEGetSize)( IDECBHdl hdl, IDEDataInfo *info );
-typedef time_t  __stdcall (*IDEGetTimeStamp)( IDECBHdl hdl, IDEDataInfo *info );
-typedef IDEBool __stdcall (*IDEIsReadOnly)( IDECBHdl hdl, IDEDataInfo *info );
-typedef int     __stdcall (*IDEReadData)( IDECBHdl hdl, IDEDataInfo *info, char *buffer, int max_len );
-typedef IDEBool __stdcall (*IDEClose)( IDECBHdl hdl, IDEDataInfo *info );
-typedef size_t  __stdcall (*IDEReceiveOutput)( IDECBHdl hdl, IDEDataInfo *info, void const *buffer, size_t len );
-typedef void    __stdcall (*IDEReceiveIndex)( IDECBHdl hdl, unsigned index /* 0-99 */ );
+typedef IDEBool IDECALL (*IDEOpenJavaSource)( IDECBHdl hdl, const char *name, IDEIOOpts opt, IDEDataInfo **info );
+typedef IDEBool IDECALL (*IDEOpenClassFile)( IDECBHdl hdl, const char *name, IDEIOOpts opt, IDEDataInfo **info );
+typedef IDEBool IDECALL (*IDEPackageExists)( IDECBHdl hdl, const char *name );
+typedef int     IDECALL (*IDEGetSize)( IDECBHdl hdl, IDEDataInfo *info );
+typedef time_t  IDECALL (*IDEGetTimeStamp)( IDECBHdl hdl, IDEDataInfo *info );
+typedef IDEBool IDECALL (*IDEIsReadOnly)( IDECBHdl hdl, IDEDataInfo *info );
+typedef int     IDECALL (*IDEReadData)( IDECBHdl hdl, IDEDataInfo *info, char *buffer, int max_len );
+typedef IDEBool IDECALL (*IDEClose)( IDECBHdl hdl, IDEDataInfo *info );
+typedef size_t  IDECALL (*IDEReceiveOutput)( IDECBHdl hdl, IDEDataInfo *info, void const *buffer, size_t len );
+typedef void    IDECALL (*IDEReceiveIndex)( IDECBHdl hdl, unsigned index /* 0-99 */ );
 
-typedef IDEBool __stdcall (*IDEJavaSrcDepBegin)( IDECBHdl hdl );
+typedef IDEBool IDECALL (*IDEJavaSrcDepBegin)( IDECBHdl hdl );
 //the values passed in the code parameter of the IDEJavaSrcDepFile are
 //defined as the macros IDE_DEP_FILETYPE_...
-typedef IDEBool __stdcall (*IDEJavaSrcDepFile)( IDECBHdl hdl, char code, char const *filename );
-typedef IDEBool __stdcall (*IDEJavaSrcDepEnd)( IDECBHdl hdl );
+typedef IDEBool IDECALL (*IDEJavaSrcDepFile)( IDECBHdl hdl, char code, char const *filename );
+typedef IDEBool IDECALL (*IDEJavaSrcDepEnd)( IDECBHdl hdl );
 
 // structure used by version 1 DLL's
 typedef struct {

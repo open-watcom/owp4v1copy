@@ -205,7 +205,7 @@ typedef int (*USER_DLL_FUN_ARGV)( int, char ** );
 
 #ifndef CHAIN_CALLBACK
 
-static IDEBool __stdcall stubPrintMsgFn( IDECBHdl hdl, char const *msg )
+static IDEBool IDECALL stubPrintMsgFn( IDECBHdl hdl, char const *msg )
 {
     hdl = hdl;
 #ifndef NDEBUG
@@ -219,7 +219,7 @@ static IDEBool __stdcall stubPrintMsgFn( IDECBHdl hdl, char const *msg )
 }
 
 #ifndef NDEBUG
-static void __stdcall printProgressIndex( IDECBHdl hdl, unsigned index )
+static void IDECALL printProgressIndex( IDECBHdl hdl, unsigned index )
 {
     hdl = hdl;
     fprintf( errout, "progress: %u\n", index );
@@ -228,7 +228,7 @@ static void __stdcall printProgressIndex( IDECBHdl hdl, unsigned index )
 #define printProgressIndex      NULL
 #endif
 
-static IDEBool __stdcall printMessage( IDECBHdl hdl, char const *msg )
+static IDEBool IDECALL printMessage( IDECBHdl hdl, char const *msg )
 {
     hdl = hdl;
     fputs( msg, errout );
@@ -236,7 +236,7 @@ static IDEBool __stdcall printMessage( IDECBHdl hdl, char const *msg )
     return( FALSE );
 }
 
-static IDEBool __stdcall printWithInfo( IDECBHdl hdl, IDEMsgInfo *inf )
+static IDEBool IDECALL printWithInfo( IDECBHdl hdl, IDEMsgInfo *inf )
 {
     FILE    *fp;
     char    prt_buffer[ 512 ];
@@ -265,7 +265,7 @@ static IDEBool __stdcall printWithInfo( IDECBHdl hdl, IDEMsgInfo *inf )
     return( FALSE );
 }
 
-static IDEBool __stdcall printWithCrLf( IDECBHdl hdl, const char *message )
+static IDEBool IDECALL printWithCrLf( IDECBHdl hdl, const char *message )
 {
     hdl = hdl;
     fputs( message, errout );
@@ -273,8 +273,8 @@ static IDEBool __stdcall printWithCrLf( IDECBHdl hdl, const char *message )
     return( FALSE );
 }
 
-static IDEBool __stdcall getInfoCB( IDECBHdl hdl, IDEInfoType type,
-                                unsigned long extra, unsigned long lparam )
+static IDEBool IDECALL getInfoCB( IDECBHdl hdl, IDEInfoType type,
+                                  unsigned long extra, unsigned long lparam )
 {
     int retn;
 

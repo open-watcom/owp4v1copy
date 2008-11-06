@@ -690,10 +690,10 @@ void emitEncodings(
     form.  The first obvious thing is to do the ULEB128 encodings now
     since they are compile-time constant, and much smaller.
 */
-    uint                        u;
-    uint_8 *                    end;
-    uint_8 *                    p;
-    uint_32 const*              data;
+    uint                u;
+    uint_8              *end;
+    uint_8              *p;
+    uint_32 const       *data;
 
     topOfEncoding = 0;
     for( u = 0; u < AB_MAX; ++u ) {
