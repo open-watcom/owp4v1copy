@@ -32,16 +32,16 @@
 #ifndef CFCHECK_H_INCLUDED
 #define CFCHECK_H_INCLUDED
 
-/* Function declarations */
+/* Function declarations. */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 int     check_directory( void );
 
 #ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
 #endif  /* CFCHECK_H_INCLUDED */

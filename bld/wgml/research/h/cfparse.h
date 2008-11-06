@@ -32,16 +32,16 @@
 #ifndef CFPARSE_H_INCLUDED
 #define CFPARSE_H_INCLUDED
 
-/* Function declarations */
+/* Function declarations. */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 int     parse_cop_file( void );
 
 #ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
 #endif  /* CFPARSE_H_INCLUDED */

@@ -41,15 +41,14 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
-/* Function return values */
+/* Function return values. */
 
 #define FAILURE 0
 #define SUCCESS 1
 
-/* Global variable declarations */
+/* Global variable declarations. */
 
-/*
- * This allows the same declarations to function as definitions.
+/* This allows the same declarations to function as definitions.
  * Just #define global before including this file.
  */
 
@@ -57,31 +56,33 @@
     #define global  extern
 #endif
 
-/* This records, generally, whether '\' or '/' is used on the command line */ 
+/* This records, generally, whether '\' or '/' is used on the command line. */ 
 
 global char switch_char;    
 
-#undef global   /* reset so can be reused with other headers */
+/* Reset so can be reused with other headers. */
 
-/* Function declarations */
+#undef global
+
+/* Function declarations. */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-/* These functions must be defined by each program using them */
+/* These functions must be defined by each program using them. */
 
 int     parse_cmdline( char * );
 void    print_banner( void );
 void    print_usage( void );
 
-/* These functions are defined in common.c */
+/* These functions are defined in common.c. */
 
 void    initialize_globals( void );
 char *  skip_spaces( char * );
 
 #ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
 #endif  /* COMMON_H_INCLUDED */

@@ -31,30 +31,30 @@
 *
 ****************************************************************************/
 
-#ifndef DOWLINUX_H_INCLUDED
-#define DOWLINUX_H_INCLUDED
+#ifndef LHDIRECT_H_INCLUDED
+#define LHDIRECT_H_INCLUDED
 
 #ifdef __LINUX__
 
 #include <dirent.h>
 #include <unistd.h>
 
-#else /* DOS, OS/2, Windows */
+#else /* DOS, OS/2, Windows. */
 
 #include <direct.h>
 
 #endif /* __LINUX__ */
 
-/* Function declarations */
+/* Function declarations. */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 long get_file_size( struct dirent * );
 
 #ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
-#endif  /* DOWLINUX_H_INCLUDED */
+#endif  /* LHDIRECT_H_INCLUDED */

@@ -30,16 +30,16 @@
 #ifndef CFHEADER_H_INCLUDED
 #define CFHEADER_H_INCLUDED
 
-/* Function declaration */
+/* Function declaration. */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 int parse_header( FILE *, char * );
 
 #ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
 #endif  /* CFHEADER_H_INCLUDED */
