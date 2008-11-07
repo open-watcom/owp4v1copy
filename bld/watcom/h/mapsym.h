@@ -47,7 +47,7 @@
 #define SYM_VERSION_MAJOR_OLD   4
 #define SYM_VERSION_MINOR_OLD   0
 
-#pragma pack( 1 )
+#include "pushpck1.h"
 
 typedef struct {
     unsigned_16     next_ptr;           /* pointer to next mapdef */
@@ -132,4 +132,4 @@ enum {
     SYM_FLAG_ALPHA = 2                  /* alphasorted symbol table included */
 };
 
-#pragma pack()
+#include "poppck.h"

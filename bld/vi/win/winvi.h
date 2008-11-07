@@ -77,7 +77,7 @@ typedef struct colour {
     long        rgb;
 } colour;
 
-typedef void (*win_func)( struct window *, void * );
+typedef BOOL (*win_func)( struct window *, void * );
 
 /*
  * This structure is mostly an artifact without any real use now...

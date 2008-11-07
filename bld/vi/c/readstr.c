@@ -659,7 +659,7 @@ static bool fileComplete( input_buffer *input, int first_event )
  *          removes the mouse handler.
  */
 
-static window_id    thisWindow = -1;
+static window_id    thisWindow = (window_id)-1;
 
 static bool mouseHandler( window_id id, int x, int y )
 {

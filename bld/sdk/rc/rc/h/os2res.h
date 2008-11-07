@@ -215,7 +215,7 @@
 /* Hack to get the bootstrap wrc building with gcc; note that the _Packed
  * keyword is probably not necessary for most of these structs.
  */
-#ifdef __GNUC__
+#if defined( __GNUC__ ) || defined( __SUNPRO_C ) || defined( _MSC_VER )
     #define _Packed
 #endif
 

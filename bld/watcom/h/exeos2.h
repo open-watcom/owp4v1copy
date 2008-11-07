@@ -32,7 +32,7 @@
 
 #ifndef _EXEOS2_H
 
-#pragma pack(push, 1)
+#include "pushpck1.h"
 
 /* OS/2 EXE file header and various tables */
 /* ======================================= */
@@ -260,7 +260,7 @@ typedef struct resource_record {
 #define REL_IMPORTED_NAME       0x0002
 #define REL_ADDITIVE            0x0004
 
-#pragma pack(pop)
+#include "poppck.h"
 
 #define _EXEOS2_H
 #endif

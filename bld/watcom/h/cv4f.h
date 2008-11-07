@@ -30,7 +30,8 @@
 ****************************************************************************/
 
 
-#pragma pack( 1 )
+#include "pushpck1.h"
+
 enum cv_ptype {
         CV_SPECIAL      =0x00,
         CV_SIGNED       =0x01,
@@ -843,4 +844,4 @@ typedef struct {
 //  u1          name[1];
 } cs_pub32_new;
 
-#pragma pack()
+#include "poppck.h"

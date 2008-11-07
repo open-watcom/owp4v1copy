@@ -46,7 +46,7 @@ typedef struct pubdef_data  pubdef_data;
 #endif
 
 
-#pragma pack( push, 1 )
+#include "pushpck1.h"
 
 struct coment_info {
     uint_8  attr;           /* attribute field from coment record       */
@@ -253,7 +253,7 @@ struct obj_rec {
     union objrec_info d;    /* data depending on record type                */
 };
 
-#pragma pack( pop )
+#include "poppck.h"
 
 /*
     Nothing should rely on the data pointing to the same buffer all the time.

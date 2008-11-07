@@ -1286,7 +1286,7 @@ static void writeMsgTable( void ) {
     current_text = 0;
     current_base = 0;
     msg_base = malloc( ( messageCounter + 1 ) * sizeof( unsigned ) );
-    outputTableName( o_msgc, "unsigned char const", "msg_text" );
+    outputTableName( o_msgc, "uint_8 const", "msg_text" );
     for( m = messageSyms; m != NULL; m = m->next ) {
         msg_base[ current_base++ ] = current_text;
         fputs( "\n/* ", o_msgc );

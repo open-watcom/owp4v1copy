@@ -44,10 +44,10 @@ char _NEAR MEMORIZE_MODE[]="Memorize Mode ";
 char _NEAR CONFIG_FILE[] = CFG_NAME;
 char _NEAR SingleBlank[] = " ";
 char _NEAR SingleSlash[] = "/";
-char _NEAR * _NEAR BoolStr[] = { "FALSE", "TRUE" };
+char * _NEAR BoolStr[] = { "FALSE", "TRUE" };
 
 /* edit options */
-char _NEAR * _NEAR EditOpts[] =  {
+char * _NEAR EditOpts[] =  {
     "<F1> Go To",
     "<F2> Edit",
     "<F3> Get All"
@@ -109,11 +109,11 @@ linenum         TopOfPage=1;
 int             CurrentColumn=1;
 int             LeftColumn;
 int             ColumnDesired=1;
-window_id       CurrentWindow=-1;
-window_id       MessageWindow=-1;
-window_id       StatusWindow=-1;
-window_id       MenuWindow=-1;
-window_id       CurrNumWindow=-1;
+window_id       CurrentWindow = (window_id)-1;
+window_id       MessageWindow = (window_id)-1;
+window_id       StatusWindow = (window_id)-1;
+window_id       MenuWindow = (window_id)-1;
+window_id       CurrNumWindow = (window_id)-1;
 int             LastEvent;
 select_rgn      SelRgn;
 int             CursorBlinkRate=-1;

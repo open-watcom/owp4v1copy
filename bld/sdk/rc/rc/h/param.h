@@ -63,42 +63,42 @@ typedef struct FRStrings {
 
 struct RCParams {
 #ifdef SCANDEBUG
-    int     DebugScanner : 1;
+    unsigned    DebugScanner    : 1;
 #endif
 #ifdef YYDEBUG
-    int     DebugParser     : 1;
+    unsigned    DebugParser     : 1;
 #endif
-    int     PrintHelp       : 1;
-    int     Quiet           : 1;
-    int     Pass1Only       : 1;
-    int     Pass2Only       : 1;
-    int     NoResFile       : 1;    /* no RES file to merge in pass2 */
-    int     IgnoreINCLUDE   : 1;
-    int     IgnoreCWD       : 1;
-    int     MSResFormat     : 1;
-    int     PrivateDLL      : 1;    /* the next 5 option are use to set bits */
-    int     GlobalMemEMS    : 1;    /* in the os2_exe_header.info field */
-    int     EMSInstance     : 1;
-    int     EMSDirect       : 1;
-    int     ProtModeOnly    : 1;
-    int     PreprocessOnly  : 1;
-    int     WritableRes     : 1;
-    int     NoProtectCC     : 1;    /* if set, don't invoke prot. mode comp */
-    int     NoPreprocess    : 1;    /* if set won't attemp any preprocessing */
-    int     GenAutoDep      : 1;    /* generate autodependency info for wmake */
-    int     FindAndReplace;         /* a check to see whether for this option */
-    int     Prepend;
-    unsigned DBCharSupport  : 3;    /* which of the zk switches is set */
-    int     SegmentSorting;         /* which segment sorting method to use */
-    int     TargetOS;
-    char    InFileName[ _MAX_PATH ];
-    char    InExeFileName[ _MAX_PATH ];
-    char    OutResFileName[ _MAX_PATH ];
-    char    OutExeFileName[ _MAX_PATH ];
-    char    CodePageFile[ _MAX_PATH ];
-    char    PrependString[ _MAX_PATH ];
-    char ** CPPArgs;    /* temporary until preprocessing done inline */
-    int     VersionStamp;
+    unsigned    PrintHelp       : 1;
+    unsigned    Quiet           : 1;
+    unsigned    Pass1Only       : 1;
+    unsigned    Pass2Only       : 1;
+    unsigned    NoResFile       : 1;    /* no RES file to merge in pass2 */
+    unsigned    IgnoreINCLUDE   : 1;
+    unsigned    IgnoreCWD       : 1;
+    unsigned    MSResFormat     : 1;
+    unsigned    PrivateDLL      : 1;    /* the next 5 option are use to set bits */
+    unsigned    GlobalMemEMS    : 1;    /* in the os2_exe_header.info field */
+    unsigned    EMSInstance     : 1;
+    unsigned    EMSDirect       : 1;
+    unsigned    ProtModeOnly    : 1;
+    unsigned    PreprocessOnly  : 1;
+    unsigned    WritableRes     : 1;
+    unsigned    NoProtectCC     : 1;    /* if set, don't invoke prot. mode comp */
+    unsigned    NoPreprocess    : 1;    /* if set won't attemp any preprocessing */
+    unsigned    GenAutoDep      : 1;    /* generate autodependency info for wmake */
+    unsigned    FindAndReplace;         /* a check to see whether for this option */
+    unsigned    Prepend;
+    unsigned    DBCharSupport   : 3;    /* which of the zk switches is set */
+    unsigned    SegmentSorting;         /* which segment sorting method to use */
+    int         TargetOS;
+    char        InFileName[ _MAX_PATH ];
+    char        InExeFileName[ _MAX_PATH ];
+    char        OutResFileName[ _MAX_PATH ];
+    char        OutExeFileName[ _MAX_PATH ];
+    char        CodePageFile[ _MAX_PATH ];
+    char        PrependString[ _MAX_PATH ];
+    char        **CPPArgs;    /* temporary until preprocessing done inline */
+    int         VersionStamp;
     ExtraRes    *ExtraResFiles;
     FRStrings   *FindReplaceStrings;
 };

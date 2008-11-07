@@ -24,12 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Overlay manager shared data structures definition
-*               they are used by linker and overlay loader library.
+* Description:  Overlay manager data structure definitions
+*               shared between linker and overlay loader library.
 *
 ****************************************************************************/
 
-//   !!!!!!!!!   must correspond to declaration in ovltab.inc  !!!!!!!!!
+
+//   !!!!!!!!!   must correspond to declarations in ovltab.inc  !!!!!!!!!
 
 #ifndef _OVLTAB_H_
 #define _OVLTAB_H_

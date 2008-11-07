@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF format definitions, including Watcom specifics.
 *
 ****************************************************************************/
 
@@ -33,14 +32,13 @@
 #ifndef _DWARF_H_INCLUDED_
 #define _DWARF_H_INCLUDED_
 
-#pragma pack(push, 1)
+#include "pushpck1.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* DWARF definitions
-
+/*
    All informations are derived from DWARF Debugging Information Format ( by
    Unix International Programming Languages SIG, Version 2, Draft 6, dated
    April 12, 1993 )
@@ -340,5 +338,5 @@ typedef struct {
 #ifdef __cplusplus
 };
 #endif
-#pragma pack (pop)
+#include "poppck.h"
 #endif

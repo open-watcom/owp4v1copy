@@ -47,14 +47,14 @@
 
 typedef struct RcResFileID {
     char                *filename;
-    int                 IsWatcomRes     : 1;
-    int                 IsOpen          : 1;
-    FullStringTable *   StringTable;
-    FullStringTable *   ErrorTable;
+    unsigned            IsWatcomRes     : 1;
+    unsigned            IsOpen          : 1;
+    FullStringTable     *StringTable;
+    FullStringTable     *ErrorTable;
     uint_16             NextCurOrIcon;
     WResDir             dir;                    /* don't write this if !IsWatcomRes */
     int                 handle;                 /* posix level I/O handle */
-    FullFontDir *       FontDir;
+    FullFontDir         *FontDir;
     char                namebuf[ _MAX_PATH ];   /* filename usually points here */
 } RcResFileID;
 

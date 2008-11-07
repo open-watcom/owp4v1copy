@@ -467,7 +467,7 @@ int NullResponse( void )
 
 } /* NullResponse */
 
-static window_id        repeatWindow=-1;
+static window_id        repeatWindow = (window_id)-1;
 
 /*
  * KillRepeatWindow - just like it says
