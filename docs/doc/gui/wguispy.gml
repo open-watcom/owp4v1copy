@@ -326,13 +326,10 @@ from the Messages Menu.
 .result
 This opens a Message Class dialog box.  The caption of
 the dialog box reflects the menu item selected.
-.figure *depth='3.23' *scale=80 *file='spy5' In the Message Class dialog, select change button.
-.step Click on the Change button
-next to the alphabetic range into
-which your first message selection falls.
+.figure *depth='3.23' *scale=80 *file='spy5' In the Message Class dialog, select the Individual Message Control button.
+.step Click on the Individual Message Control button.
 .result
-This opens a dialog that contains a check box for each message
-that falls into that alphabetic range.
+This opens a dialog that contains a check box for each message.
 .figure *depth='2.55' *scale=52 *file='spy6' In the Message Range dialog, you select the individual messages you want &spy to watch or stop on.
 .step Add or remove messages from the list of messages.
 .result
@@ -784,18 +781,12 @@ from the Spy menu.
 This minimizes the &spy window and opens the Select Window dialog
 which prompts you to choose a window to monitor.
 .figure *depth='2.46' *scale=100 *file='spy8' The Select Window dialog displays information for the window on which the cursor rests.
-.step Position the cursor on the window you want to monitor.
+.step Position the cursor inside the icon in the dialog box.  Press the mouse button and hold it down.
 .result
 As you move the cursor across the screen, the window on which the
 cursor is positioned has a highlighted border and information about
 the selected window appears in the dialog box.
-.step Click on the window you want to monitor.
-.result
-Once you select a window by clicking on it, the other windows are not
-selected as you move over them with the cursor. However, you can
-select a window by clicking on it. This de-selects the previously
-selected window and enters information about the new window in the
-dialog box.
+.step Position the cursor on the window you want to monitor.  Release the mouse button.
 .begnote
 .note Note:
 You can select only one window at a time using the Select Window
@@ -820,10 +811,10 @@ select additional windows in the same way you select one window.
 from the Spy menu.
 .result
 This minimizes the &spy window and opens the Select Window dialog.
-.step Position the cursor on the window you want to monitor.
+.step Position the cursor inside the icon in the dialog box.  Press the mouse button and hold it down.
 .result
 Information about the currently selected window appears in the dialog.
-.step Click on the window you want to monitor.
+.step Position the cursor on the window you want to monitor.  Release the mouse button.
 .begnote
 .note Note:
 You can select only one window at a time using the Select Window
@@ -964,7 +955,7 @@ from the Spy menu.
 This minimizes the &spy window and opens the Peek At Window dialog
 box.
 :cmt. .figure *depth='1.xx' *file='spy12' The Peek at Window dialog displays information about the window on which the cursor rests.
-.step Position the cursor on the window you want to monitor.
+.step Position the cursor inside the icon in the dialog box.  Press the mouse button and hold it down.
 .result
 As you move the cursor across the screen, the window on which the
 cursor is positioned has a highlighted border and information about
@@ -988,13 +979,7 @@ the style bits for the window's class
 a numeric identifier associated with the window when it is created
 (This only appears if the selected window is a child window.)
 .endpoint
-.step Click on the desired window to monitor.
-.result
-Once you select a window by clicking on it, the other windows are not
-selected as you move over them with the cursor. However, you can
-select a window by clicking on it. This de-selects the previously
-selected window and enters information specific to the new window in
-the dialog box.
+.step Position the cursor on the window you want to monitor.  Release the mouse button.
 .step Click on OK
 to close the dialog box.
 .result
