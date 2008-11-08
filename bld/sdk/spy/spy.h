@@ -401,6 +401,7 @@ void SpyMessagePauseToggle( void );
 void ResizeSpyBox( WORD width, WORD height );
 void SaveSpyBox( void );
 void ResetSpyListBox( void );
+BOOL GetSpyBoxSelection( char *str );
 
 /* spycfg.c */
 void LoadSpyConfig( char *fname );

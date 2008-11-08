@@ -37,6 +37,9 @@
 #include "mark.h"
 #include "aboutdlg.h"
 #include "wwinhelp.h"
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 
 static BOOL     spyAll;
 static WORD     statusHite = 25;
@@ -500,6 +503,14 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             break;
         }
         break;
+#ifdef __NT__
+    case WM_NOTIFY:
+        if( ((NMHDR *)lparam)->code == NM_DBLCLK &&
+            ((NMHDR *)lparam)->idFrom == SPY_LIST_BOX ) {
+            DoMessageSelDialog( hwnd );
+        }
+        break;
+#endif
     case WM_CLOSE:
         PostMessage( hwnd, WM_COMMAND, GET_WM_COMMAND_MPS( SPY_EXIT, 0, 0 ) );
         break;

@@ -470,13 +470,10 @@ void DoMessageSelDialog( HWND hwnd )
 {
     FARPROC     fp;
     char        str[80];
-    LRESULT     sel;
 
-    sel = SendMessage( SpyListBox, LB_GETCURSEL, 0, 0L );
-    if( sel == (WORD)LB_ERR ) {
+    if( !GetSpyBoxSelection( str ) ) {
         return;
     }
-    SendMessage( SpyListBox, LB_GETTEXT, sel, (DWORD) (LPSTR) str );
     fp = MakeProcInstance( (FARPROC) MessageSelectDialog, Instance );
     JDialogBoxParam( ResInstance, "MSGSELECT", hwnd, (LPVOID) fp, (DWORD) (LPSTR) str );
     FreeProcInstance( fp );
