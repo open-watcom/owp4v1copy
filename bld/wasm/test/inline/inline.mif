@@ -135,7 +135,7 @@ test_cflags=-wx -we -s -os -zq
     @%append $(%error_file) $(%error_msg)
 
 .asm.gc:
-    @bvi -d -q -k ":set norc\n" -s createc.vi -p "$@ $(init_$^&)" $[@
+    @$(vi) -d -q -k ":set norc\n" -s createc.vi -p "$@ $(init_$^&)" $[@
 
 .gc.obj:
     @set error_msg=failure to compile $^&
@@ -152,7 +152,7 @@ test_cflags=-wx -we -s -os -zq
 .obj.ls1:
     @set error_msg=failure to decode $^&
     @wdis -a -l=$@ $[@
-    -@bvi -d -q -s fixlst1.vi -k "ZZ" $@
+    -@$(vi) -d -q -s fixlst1.vi -k "ZZ" $@
     @set CHK_CHECK=diff -i -b $@ $^&.asm
     @if exist $^&.chk @set CHK_CHECK=diff -i -b $@ $^&.chk
     @$(%CHK_CHECK)
@@ -164,12 +164,12 @@ test_cflags=-wx -we -s -os -zq
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
     @wdis -l=$^&.dis -a $[@
-    @bvi -d -q -i -s fixlst2.vi -k "ZZ" $^&.dis
+    @$(vi) -d -q -i -s fixlst2.vi -k "ZZ" $^&.dis
     @$(%ESM_CHECK)
     @set EMP_CHECK=%null
     @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
     @dmpobj -q -l -rec=FIXUPP $[@
-    @bvi -d -q -s fixlst3.vi -k "ZZ" $@
+    @$(vi) -d -q -s fixlst3.vi -k "ZZ" $@
     @$(%EMP_CHECK)
     @echo PASS decoding $[@
     @%append $(%error_file) PASS decoding $[@

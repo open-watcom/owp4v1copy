@@ -35,7 +35,7 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
 .asm: $(inline_dir)
 
 .asm.gc:
-    @bvi -d -q -k ":set norc\n" -s $(inline_dir)/createc.vi -p "$@ $(init_$^&)" $[@
+    @$(vi) -d -q -k ":set norc\n" -s $(inline_dir)/createc.vi -p "$@ $(init_$^&)" $[@
 
 .gc.obj:
     @set error_msg=failure to compile $^&
@@ -48,7 +48,7 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
 .obj.ls1:
     @set error_msg=failure to decode $[@
     wdis -a -l=$@ $[@
-    -@bvi -d -q -s $(inline_dir)/fixlst1.vi -k "ZZ" $@
+    -@$(vi) -d -q -s $(inline_dir)/fixlst1.vi -k "ZZ" $@
     @set CHK_CHECK=diff -i -b $@ $(inline_dir)/$^&.asm
     @if exist $(inline_dir)/$^&.chk @set CHK_CHECK=diff -i -b $@ $(inline_dir)/$^&.chk
     $(%CHK_CHECK)
@@ -59,12 +59,12 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
     @set ESM_CHECK=@%null
     @if exist $(inline_dir)/$^&.esm @set ESM_CHECK=diff -i -b $^&.dis $(inline_dir)/$^&.esm
     -wdis -l=$^&.dis -a $^&.obj
-    -@bvi -d -q -i -s $(inline_dir)/fixlst2.vi -k "ZZ" $^&.dis
+    -@$(vi) -d -q -i -s $(inline_dir)/fixlst2.vi -k "ZZ" $^&.dis
     $(%ESM_CHECK)
     @set EMP_CHECK=@%null
     @if exist $(inline_dir)/$^&.emp @set EMP_CHECK=diff -i -b $^&.lst $(inline_dir)/$^&.emp
     -dmpobj -q -l -rec=FIXUPP $^&.obj
-    -@bvi -d -q -s $(inline_dir)/fixlst3.vi -k "ZZ" $^&.lst
+    -@$(vi) -d -q -s $(inline_dir)/fixlst3.vi -k "ZZ" $^&.lst
     $(%EMP_CHECK)
     @%append exec.out PASS decoding $[@
 
