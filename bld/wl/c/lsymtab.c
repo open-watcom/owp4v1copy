@@ -997,7 +997,7 @@ static symbol * DoSymOp( byte op, char *symname, int length )
     if( NameLen != 0 && NameLen < length ) {
         searchlen = NameLen;
     } else {
-        searchlen = length + 1 ;         /* include NULLCHAR in comparison */
+        searchlen = length;
     }
     if( op & ST_STATIC ) {
         hash = StaticHashFn( symname, searchlen );
