@@ -333,6 +333,7 @@ BOOL CALLBACK MessageSelectDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam
     LPSTR       ptr;
     char        str[256];
     char        tmp[20];
+    char        class_name[80];
     char        *endptr;
     char        *warnmsg;
     char        *strptr;
@@ -362,7 +363,8 @@ BOOL CALLBACK MessageSelectDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam
             EndDialog( hwnd, 0 );
             break;
         }
-        msgPtr = GetMessageDataFromID( id );
+        GetClassName( currHwnd, class_name, 80 );
+        msgPtr = GetMessageDataFromID( id, class_name );
         if( msgPtr == NULL ) {
             EndDialog( hwnd, 0 );
             break;

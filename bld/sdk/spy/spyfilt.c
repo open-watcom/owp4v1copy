@@ -41,6 +41,7 @@ void CALLBACK HandleMessage( LPMSG pmsg )
 {
 
     static char msg[80];
+    static char class_name[80];
     int         i;
 
     if( SpyState != ON ) {
@@ -59,7 +60,8 @@ void CALLBACK HandleMessage( LPMSG pmsg )
             return;
         }
     }
-    ProcessIncomingMessage( pmsg->message, msg );
+    GetClassName( pmsg->hwnd, class_name, 80 );
+    ProcessIncomingMessage( pmsg->message, class_name, msg );
     if( msg[0] != 0 ) {
         SpyOut( msg, pmsg );
     }
