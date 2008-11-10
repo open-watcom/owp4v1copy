@@ -1,1 +1,1 @@
-out dx,eax
+ out dx,eax

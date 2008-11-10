@@ -135,7 +135,7 @@ test_cflags=-wx -we -s -os -zq
     @%append $(%error_file) $(%error_msg)
 
 .asm.gc:
-    @$(vi) -d -q -k ":set norc\n" -s createc.vi -p "$@ $(init_$^&)" $[@
+    awk -v target=$(init_$^&) -f ../createc.awk $[@ >$@
 
 .gc.obj:
     @set error_msg=failure to compile $^&
@@ -151,8 +151,7 @@ test_cflags=-wx -we -s -os -zq
 
 .obj.ls1:
     @set error_msg=failure to decode $^&
-    @wdis -a -l=$@ $[@
-    -@$(vi) -d -q -s fixlst1.vi -k "ZZ" $@
+    wdis -a $[@ | sed -f ../fixlst2.sed | awk -f ../fixlst3.awk >$@
     @set CHK_CHECK=diff -i -b $@ $^&.asm
     @if exist $^&.chk @set CHK_CHECK=diff -i -b $@ $^&.chk
     @$(%CHK_CHECK)
@@ -163,13 +162,11 @@ test_cflags=-wx -we -s -os -zq
     @set error_msg=failure to decode $^&
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
-    @wdis -l=$^&.dis -a $[@
-    @$(vi) -d -q -i -s fixlst2.vi -k "ZZ" $^&.dis
+    -wdis -a $[@ | sed -f ../fixlst2.sed >$^&.dis
     @$(%ESM_CHECK)
     @set EMP_CHECK=%null
     @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
-    @dmpobj -q -l -rec=FIXUPP $[@
-    @$(vi) -d -q -s fixlst3.vi -k "ZZ" $@
+    -dmpobj -q -rec=FIXUPP $[@ | sed -f ../fixlst1.sed >$@
     @$(%EMP_CHECK)
     @echo PASS decoding $[@
     @%append $(%error_file) PASS decoding $[@

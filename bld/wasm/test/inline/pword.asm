@@ -1,2 +1,2 @@
-call pword ptr x
-jmp pword ptr x
+ call pword ptr x
+ jmp pword ptr x

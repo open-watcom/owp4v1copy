@@ -1,1 +1,1 @@
-mov ax,word ptr [di]
+ mov ax,word ptr [di]

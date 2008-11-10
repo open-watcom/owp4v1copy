@@ -11,8 +11,7 @@ tmp_file = tmp.tmp
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
     $(%ESM_CHECK)
-    @dmpobj -q -l -rec=FIXUPP $[@
-    @$(vi) -d -q -s ../fixlst1.vi -k "ZZ" $^&.lst
+    @dmpobj -q -rec=FIXUPP $[@ | sed -f ../fixlst1.sed >$^&.lst
     @set EMP_CHECK=@%null
     @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
     $(%EMP_CHECK)

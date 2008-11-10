@@ -1,1 +1,1 @@
-mov eax,dword ptr [di]
+ mov eax,dword ptr [di]

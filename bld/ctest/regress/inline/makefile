@@ -3,7 +3,8 @@ ctest_name = inline
 !include ../environ.mif
 !include inline.mif
 
-inline_dir = $(wasm_dir)/test/inline
+wasmtest_dir = $(wasm_dir)/test
+inline_dir = $(wasmtest_dir)/inline
 
 !ifdef test1
 test_cflags_386 =
@@ -35,7 +36,7 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
 .asm: $(inline_dir)
 
 .asm.gc:
-    @$(vi) -d -q -k ":set norc\n" -s $(inline_dir)/createc.vi -p "$@ $(init_$^&)" $[@
+    @$(awk) -v target=$(init_$^&) -f $(wasmtest_dir)/createc.awk $[@ >$@
 
 .gc.obj:
     @set error_msg=failure to compile $^&
@@ -47,8 +48,7 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
 
 .obj.ls1:
     @set error_msg=failure to decode $[@
-    wdis -a -l=$@ $[@
-    -@$(vi) -d -q -s $(inline_dir)/fixlst1.vi -k "ZZ" $@
+    wdis -a $[@ | $(sed) -f $(wasmtest_dir)/fixlst2.sed | $(awk) -f $(wasmtest_dir)/fixlst3.awk >$@
     @set CHK_CHECK=diff -i -b $@ $(inline_dir)/$^&.asm
     @if exist $(inline_dir)/$^&.chk @set CHK_CHECK=diff -i -b $@ $(inline_dir)/$^&.chk
     $(%CHK_CHECK)
@@ -58,13 +58,11 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
     @set error_msg=failure to decode $[@
     @set ESM_CHECK=@%null
     @if exist $(inline_dir)/$^&.esm @set ESM_CHECK=diff -i -b $^&.dis $(inline_dir)/$^&.esm
-    -wdis -l=$^&.dis -a $[@
-    -@$(vi) -d -q -i -s $(inline_dir)/fixlst2.vi -k "ZZ" $^&.dis
+    -wdis -a $[@ | $(sed) -f $(wasmtest_dir)/fixlst2.sed >$^&.dis
     $(%ESM_CHECK)
     @set EMP_CHECK=@%null
     @if exist $(inline_dir)/$^&.emp @set EMP_CHECK=diff -i -b $@ $(inline_dir)/$^&.emp
-    -dmpobj -q -l -rec=FIXUPP $[@
-    -@$(vi) -d -q -s $(inline_dir)/fixlst3.vi -k "ZZ" $@
+    -dmpobj -q -rec=FIXUPP $[@ | $(sed) -f $(wasmtest_dir)/fixlst1.sed >$@
     $(%EMP_CHECK)
     @%append exec.out PASS decoding $[@
 

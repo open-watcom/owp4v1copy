@@ -1,2 +1,2 @@
-lea si,x
-lea eax,x
+ lea si,x
+ lea eax,x
