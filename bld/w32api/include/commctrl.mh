@@ -3590,7 +3590,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
 /* Messages used with _TrackMouseEvent() */
 #if (_WIN32_IE >= 0x0300) && !defined( WM_MOUSEHOVER )
     #define WM_MOUSEHOVER   0x02A1
-    #define WM_MOUSELEAVE   0x02A2
+    #define WM_MOUSELEAVE   0x02A3
 #endif
 
 /* Definitions for _TrackMouseEvent() */
