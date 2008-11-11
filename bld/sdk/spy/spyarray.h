@@ -206,7 +206,7 @@ msgpick( 1, 0, WM_MENURBUTTONUP,         "WM_MENURBUTTONUP",         MC_INPUT,  
 #endif
 msgpick( 1, 0, WM_MENUSELECT,            "WM_MENUSELECT",            MC_INPUT,    0L ),
 msgpick( 1, 0, WM_MOUSEACTIVATE,         "WM_MOUSEACTIVATE",         MC_MOUSE,    0L ),
-#ifndef NT_MSGS
+#ifdef NT_MSGS
 msgpick( 1, 0, WM_MOUSEHOVER,            "WM_MOUSEHOVER",            MC_MOUSE,    0L ),
 msgpick( 1, 0, WM_MOUSEHWHEEL,           "WM_MOUSEHWHEEL",           MC_MOUSE,    0L ),
 msgpick( 1, 0, WM_MOUSELEAVE,            "WM_MOUSELEAVE",            MC_MOUSE,    0L ),
