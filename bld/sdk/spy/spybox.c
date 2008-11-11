@@ -62,10 +62,10 @@ typedef struct column_info {
 
 column_info columns[NUM_COLUMNS] = {
     { STR_HEADING_1, 150 },
-    { STR_HEADING_2, 70 },
-    { STR_HEADING_3, 70 },
-    { STR_HEADING_4, 70 },
-    { STR_HEADING_5, 70 }
+    { STR_HEADING_2, 80 },
+    { STR_HEADING_3, 80 },
+    { STR_HEADING_4, 80 },
+    { STR_HEADING_5, 80 }
 };
 #endif
 
