@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "spy.h"
 #include <dde.h>
 #include "wwinhelp.h"
 

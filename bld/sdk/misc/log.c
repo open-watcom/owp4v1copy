@@ -29,6 +29,8 @@
 ****************************************************************************/
 
 
+#include <windows.h>
+#include <commdlg.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -36,8 +38,6 @@
 #include <io.h>
 #include <fcntl.h>
 #include <time.h>
-#include <windows.h>
-#include <commdlg.h>
 #include "log.h"
 #include "mem.h"
 #ifndef NOUSE3D

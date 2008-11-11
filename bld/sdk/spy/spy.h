@@ -30,6 +30,12 @@
 ****************************************************************************/
 
 
+/* Include new common control styles that require recent versions of Windows. */
+#ifdef __NT__
+    #undef _WIN32_IE
+    #define _WIN32_IE   0x0600
+#endif
+
 #include <windows.h>
 #define MSG_RC_BASE     0
 #include "rcstr.gh"

@@ -30,13 +30,13 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <io.h>
 #include <fcntl.h>
 #include <time.h>
-#include "spy.h"
 
 /*
  * writeCRLF - write carriage return/line feed to a file

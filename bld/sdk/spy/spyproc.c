@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "spy.h"
 #include "mark.h"
 #include "aboutdlg.h"
 #include "wwinhelp.h"

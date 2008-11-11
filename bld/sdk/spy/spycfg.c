@@ -30,12 +30,12 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include "spy.h"
 #include "watini.h"
 #include "inipath.h"
 

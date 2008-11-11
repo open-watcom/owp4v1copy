@@ -53,6 +53,34 @@ extra_c_flags_spydll = -bd -mc
 !else ifeq host_os nt
 extra_c_flags_spydll = -bd
 !endif
+extra_c_flags_spy = -fh=spy01.pch
+extra_c_flags_spyglob = -fh=spy01.pch
+extra_c_flags_spybox = -fh=spy01.pch
+extra_c_flags_spyproc = -fh=spy01.pch
+extra_C_flags_spymsgs = -fh=spy01.pch
+extra_c_flags_spyfilt = -fh=spy01.pch
+extra_c_flags_spypick = -fh=spy01.pch
+extra_c_flags_spymdlgs = -fh=spy01.pch
+extra_c_flags_spyarray = -fh=spy01.pch
+extra_c_flags_spyzord = -fh=spy01.pch
+extra_c_flags_spymisc = -fh=spy01.pch
+extra_c_flags_spycfg = -fh=spy01.pch
+extra_c_flags_spylog = -fh=spy01.pch
+extra_c_flags_spytool = -fh=spy01.pch
+extra_c_flags_spysel = -fh=spy01.pch
+extra_c_flags_savelbox = -fh=spy02.pch
+extra_c_flags_toolbr = -fh=spy02.pch
+extra_c_flags_font = -fh=spy02.pch
+extra_c_flags_fontstr = -fh=spy02.pch
+extra_c_flags_log = -fh=spy02.pch
+extra_c_flags_mark = -fh=spy02.pch
+extra_c_flags_desknt = -fh=spy02.pch
+extra_c_flags_ldstr = -fh=spy02.pch
+extra_c_flags_mstatwnd = -fh=spy02.pch
+extra_c_flags_hint = -fh=spy02.pch
+extra_c_flags_wwinhelp = -fh=spy02.pch
+extra_c_flags_jdlg = -fh=spy02.pch
+extra_c_flags_inipath = -fh=spy02.pch
 
 !ifeq release 0
 wspy_non_release_option = option rwr

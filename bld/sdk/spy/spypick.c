@@ -30,11 +30,11 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "watcom.h"
-#include "spy.h"
 
 static FARPROC SpyPickInst;
 static HWND LastFramed;

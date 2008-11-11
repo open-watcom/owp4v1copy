@@ -30,17 +30,11 @@
 ****************************************************************************/
 
 
-/* Include new common control styles that require recent versions of Windows. */
-#ifdef __NT__
-    #undef _WIN32_IE
-    #define _WIN32_IE   0x0600
-#endif
-
+#include "spy.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "spy.h"
 #include <commdlg.h>
 #ifdef __NT__
     #include <commctrl.h>

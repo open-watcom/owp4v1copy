@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "spy.h"
 
 extern WORD _STACKLOW;
 

@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
+#include "spy.h"
 #include <stdio.h>
 #include <string.h>
-#include "spy.h"
 #include <dde.h>
 
 static message *userMsg;

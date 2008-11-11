@@ -29,10 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
 #include <windows.h>
 #include <commdlg.h>
+#include <stdio.h>
+#include <string.h>
 #include "fontstr.h"
 
 static char     *outFmtString="%d %d %d %d %d %d %d %d %d %d %d %d %d \"%s\"";
