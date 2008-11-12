@@ -69,8 +69,17 @@ static orl_sec_size     routineSize = 0;
 
 dis_return DisCliGetData( void *d, unsigned off, unsigned size, void *buff )
 {
-    //NYI: need to handle going beyond the end of the section
-    memcpy( buff, (char *)d + off, size );
+    sa_disasm   pd = d;
+
+    // Check for overrruns, return 0xFFs for reads beyond the end of section
+    if( pd->offs + off + size <= pd->last ) {
+        memcpy( buff, pd->data + pd->offs + off, size );
+    } else {
+        unsigned    valid = pd->last - pd->offs - off + 1;
+
+        memcpy( buff, pd->data + pd->offs + off, valid );
+        memset( (char *)buff + valid, 0xFF, size - valid );
+    }
     return( DR_OK );
 }
 
@@ -525,10 +534,13 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
     unsigned            flags;
     scantab_ptr         st;
     int                 is_intel;
+    sa_disasm_struct    sds;
 
     routineBase = 0;
     st = sec->scan;
     data.size = size;
+    sds.data = contents;
+    sds.last = size - 1;
     if( sec_label_list != NULL ) {
         l_entry = sec_label_list->first;
     }
@@ -589,7 +601,8 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
         }
         DisDecodeInit( &DHnd, &decoded );
         decoded.flags |= flags;
-        DisDecode( &DHnd, &contents[data.loop], &decoded );
+        sds.offs = data.loop;
+        DisDecode( &DHnd, &sds, &decoded );
         if( sec_label_list ) {
             l_entry = handleLabels( sec->name, data.loop, data.loop + decoded.size, l_entry, size );
             if( ( l_entry != NULL )
