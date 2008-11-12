@@ -302,22 +302,29 @@ static int doCCompile(          // COMPILE C++ PROGRAM
             } else {
                 BrinfInit( TRUE );  /* must be before OpenPgmFile() */
             }
-            OpenPgmFile();
-            CtxSetContext( CTX_SOURCE );
-            CompFlags.srcfile_compiled = TRUE;
-            ExitPointAcquire( cpp_preproc );
             if( CompFlags.cpp_output ) {
+                CtxSetContext( CTX_SOURCE );
+                ExitPointAcquire( cpp_preproc );
                 ExitPointAcquire( cpp_preproc_only );
                 CompFlags.ignore_fnf = TRUE;
+                CompFlags.cpp_output = FALSE;
                 if( !CompFlags.disable_ialias ) {
                     OpenSrcFile( "_ialias.h", TRUE );
+                    PpParse();
+                    SrcFileClose( TRUE );
                 }
+                CompFlags.cpp_output = TRUE;
                 CompFlags.ignore_fnf = FALSE;
+                OpenPgmFile();
                 if( ForceInclude ) {
                     openForceIncludeFile();
                 }
                 PpParse();
             } else {
+                OpenPgmFile();
+                CtxSetContext( CTX_SOURCE );
+                CompFlags.srcfile_compiled = TRUE;
+                ExitPointAcquire( cpp_preproc );
                 ExitPointAcquire( cpp_object );
                 ExitPointAcquire( cpp_analysis );
                 CgFrontModInitInit();       // must be before pchdr read point
@@ -527,7 +534,7 @@ static void reallocTokens( void )   // ALLOCATE STORAGE FOR TOKENS
      * to be writable.
      */
     for( i = 0; i < T_LAST_TOKEN; ++i ) {
-	Tokens[i] = strdup( Tokens[i] );
+        Tokens[i] = strdup( Tokens[i] );
     }
 #endif
 }
