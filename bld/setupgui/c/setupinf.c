@@ -975,34 +975,36 @@ static char * textwindow_wrap( char *text, DIALOG_INFO *dlg, bool convert_newlin
         return( NULL );
     }
     orig_index = text;
+    new_index = big_buffer;
     break_candidate = find_break( orig_index, dlg, &chwidth );
-    for( new_index = big_buffer; *orig_index != '\0'; orig_index++, new_index++ ) {
+    for( ; *orig_index != '\0'; orig_index++ ) {
         if( new_line ) {
             while( *orig_index == '\t' || *orig_index == ' ' ) {
                 orig_index++;
             }
         }
 
-        if( (convert_newline && *orig_index == '\\' && *(orig_index + 1) == 'n') ||
-            (!convert_newline && *orig_index == '\r' && *(orig_index + 1) == '\n') ) {
-            *new_index = '\r';
-            new_index++;
+        if( convert_newline && *orig_index == '\\' && *(orig_index + 1) == 'n' ) {
+            *(new_index++) = '\r';
+            *(new_index++) = '\n';
             orig_index++;
-            *new_index = '\n';
+            break_candidate = find_break( orig_index + 1, dlg, &chwidth );
+        } else if( !convert_newline && *orig_index == '\r' ) {
+        } else if( !convert_newline && *orig_index == '\n' ) {
+            *(new_index++) = '\r';
+            *(new_index++) = '\n';
             break_candidate = find_break( orig_index + 1, dlg, &chwidth );
         } else if( break_candidate != NULL && orig_index == break_candidate ) {
-            *new_index = '\r';
-            new_index++;
-            *new_index = '\n';
-            new_index++;
-            *new_index = *break_candidate;
+            *(new_index++) = '\r';
+            *(new_index++) = '\n';
+            *(new_index++) = *break_candidate;
             break_candidate = find_break( orig_index + 1, dlg, &chwidth );
             new_line = TRUE;
             continue;
         } else if( *orig_index == '\t' ) {
-            *new_index = ' ';
+            *(new_index++) = ' ';
         } else {
-            *new_index = *orig_index;
+            *(new_index++) = *orig_index;
         }
         new_line = FALSE;
     }
@@ -4507,4 +4509,3 @@ char *MakeDummyVar( char *buff )
     counter++;
     return( buff );
 }
-
