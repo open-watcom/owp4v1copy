@@ -67,12 +67,6 @@ static void PreProcPrintToken()
     }
 }
 
-static void NextTokenWithPrint()
-{
-    NextToken();
-    PreProcPrintToken();
-}
-
 
 void CPragmaInit( void ) {
 //********************************//
@@ -509,8 +503,7 @@ static int PragRecogAhead( const char *what )
     if( *p == '_' ) ++p;
     if( *p == '_' ) ++p;
     if( stricmp( what, p ) == 0 ) {
-        PreProcPrintToken();    /* PragRecogAhead sneaked the ( token */
-        NextTokenWithPrint();   /* PragRecogAhead sneaked the 'what' token */
+        NextToken();
         return( 1 );
     }
     return( 0 );
@@ -943,16 +936,16 @@ static void PragIncludeAlias( void )
 {
     if( CurToken == T_LEFT_PAREN ) {
         CompFlags.pre_processing = 1;           /* enable macros */
-        NextTokenWithPrint();
+        NextToken();
         if( CurToken == T_STRING ) {
             char    *alias_name;
 
             alias_name = CStrSave( Buffer );
-            NextTokenWithPrint();
+            NextToken();
             MustRecog( T_COMMA );
             if( CurToken == T_STRING ) {
                 SrcFileIncludeAlias( alias_name, Buffer, 0 );
-                NextTokenWithPrint();
+                NextToken();
             }
             CMemFree( alias_name );
         } else if( CurToken == T_LT ) {
@@ -961,9 +954,9 @@ static void PragIncludeAlias( void )
 
             a_buf[0] = '\0';
             for( ;; ) {
-                NextTokenWithPrint();
+                NextToken();
                 if( CurToken == T_GT ) {
-                    NextTokenWithPrint();
+                    NextToken();
                     break;
                 }
                 strncat( a_buf, Buffer, 80 );
@@ -972,9 +965,9 @@ static void PragIncludeAlias( void )
             if( CurToken == T_LT ) {
                 r_buf[0] = '\0';
                 for( ;; ) {
-                    NextTokenWithPrint();
+                    NextToken();
                     if( CurToken == T_GT ) {
-                        NextTokenWithPrint();
+                        NextToken();
                         break;
                     }
                     strncat( r_buf, Buffer, 80 );
@@ -1121,10 +1114,6 @@ void CPragma( void )
      * because it's intended for the preprocessor, not the compiler.
      */
     if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
-        if( CppPrinting() ) {
-            CppPrtf( "#pragma" );
-            CppPrtf( " " );
-        }
         if( PragRecogAhead( "include_alias" ) ) {
             CompFlags.pre_processing = 1;
             CompFlags.in_pragma = 1;
@@ -1134,6 +1123,8 @@ void CPragma( void )
             return;
         }
         if( ! CppPrinting() ) return;               /* 12-dec-89 */
+        CppPrtf( "#pragma" );
+        CppPrtf( " " );
         PreProcPrintToken();    /* PragRecogAhead sneaked a token */
         CompFlags.pre_processing = 1;               /* 28-feb-89 */
         CompFlags.in_pragma = 1;
