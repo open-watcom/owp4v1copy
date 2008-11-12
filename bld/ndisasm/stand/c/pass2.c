@@ -145,48 +145,48 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
     l_entry = r_entry->label;
     if( Options & METAWARE_COMPATIBLE || (ext_pref[0]==0 && int_pref[0]==0) ) {
         switch( l_entry->type ) {
-            case LTYP_ABSOLUTE:
-                FmtHexNum( temp, 0, l_entry->offset );
-                if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
-                    frame = "ds:";
-                sprintf( buff, "%s%s[%s]", frame, sep, temp);
-                break;
-            case LTYP_UNNAMED:
-                sprintf( buff, "%s%s%c$%ld%s", frame, sep, LabelChar,
-                         (long)l_entry->label.number, post );
-                break;
-            default:
-                sprintf( buff, "%s%s%s%s", frame, sep, l_entry->label.name,
-                         post );
-                break;
+        case LTYP_ABSOLUTE:
+            FmtHexNum( temp, 0, l_entry->offset );
+            if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
+                frame = "ds:";
+            sprintf( buff, "%s%s[%s]", frame, sep, temp);
+            break;
+        case LTYP_UNNAMED:
+            sprintf( buff, "%s%s%c$%ld%s", frame, sep, LabelChar,
+                     (long)l_entry->label.number, post );
+            break;
+        default:
+            sprintf( buff, "%s%s%s%s", frame, sep, l_entry->label.name,
+                     post );
+            break;
         }
     } else {
         switch( l_entry->type ) {
-            case LTYP_EXTERNAL_NAMED:
-                sprintf( buff, "%s%s%s%s", ext_pref, frame, sep,
-                         l_entry->label.name );
-                break;
-            case LTYP_NAMED:
-            case LTYP_SECTION:
-            case LTYP_GROUP:
-                sprintf( buff, "%s%s%s%s", int_pref, frame, sep,
-                         l_entry->label.name );
-                break;
+        case LTYP_EXTERNAL_NAMED:
+            sprintf( buff, "%s%s%s%s", ext_pref, frame, sep,
+                     l_entry->label.name );
+            break;
+        case LTYP_NAMED:
+        case LTYP_SECTION:
+        case LTYP_GROUP:
+            sprintf( buff, "%s%s%s%s", int_pref, frame, sep,
+                     l_entry->label.name );
+            break;
 
-            case LTYP_ABSOLUTE:
-                FmtHexNum( temp, 0, l_entry->offset );
-                if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
-                    frame = "ds:";
-                sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
-                break;
+        case LTYP_ABSOLUTE:
+            FmtHexNum( temp, 0, l_entry->offset );
+            if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
+                frame = "ds:";
+            sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
+            break;
 
-            default:
-                sprintf( buff, "%s%s%s%c$%ld", int_pref, frame, sep,
-                         LabelChar, (long)l_entry->label.number );
-                if( l_entry->offset > size ) {
-                    return( ERROR );
-                }
-                break;
+        default:
+            sprintf( buff, "%s%s%s%c$%ld", int_pref, frame, sep,
+                     LabelChar, (long)l_entry->label.number );
+            if( l_entry->offset > size ) {
+                return( ERROR );
+            }
+            break;
         }
     }
     return( OKAY );
@@ -400,37 +400,37 @@ static void FmtSizedHexNum( char *buff, dis_dec_ins *ins, unsigned op_num )
     if( is_sparc ) {
         size = 4;
         switch( ins->op[op_num].ref_type ) {
-            case DRT_SPARC_BYTE:    size = 1;   break;
-            case DRT_SPARC_HALF:    size = 2;   break;
-            case DRT_SPARC_WORD:
-            case DRT_SPARC_SFLOAT:  size = 4;   break;
-            case DRT_SPARC_DWORD:
-            case DRT_SPARC_DFLOAT:  size = 8;   break;
-            default:                            break;
+        case DRT_SPARC_BYTE:    size = 1;   break;
+        case DRT_SPARC_HALF:    size = 2;   break;
+        case DRT_SPARC_WORD:
+        case DRT_SPARC_SFLOAT:  size = 4;   break;
+        case DRT_SPARC_DWORD:
+        case DRT_SPARC_DFLOAT:  size = 8;   break;
+        default:                            break;
         }
     } else {
         switch( ins->op[op_num].ref_type ) {
-            case DRT_X86_BYTE:      size = 1;   break;
-            case DRT_X86_WORD:      size = 2;   break;
-            case DRT_X86_DWORD:
-            case DRT_X86_DWORDF:    size = 4;   break;
-            default:                size = 0;
-                    for ( i = 0; i < ins->num_ops; i++ ) {
-                        switch( ins->op[i].ref_type ) {
-                            case DRT_X86_BYTE:      len = 1;  break;
-                            case DRT_X86_WORD:      len = 2;  break;
-                            case DRT_X86_DWORD:
-                            case DRT_X86_DWORDF:    len = 4;  break;
-                            default:                len = 0;
-                        }
-                        if ( len > size ) {
-                            size = len;
-                        }
-                    }
-                    if ( size == 0 ) {
-                        size = 4;
-                    }
-                    break;
+        case DRT_X86_BYTE:      size = 1;   break;
+        case DRT_X86_WORD:      size = 2;   break;
+        case DRT_X86_DWORD:
+        case DRT_X86_DWORDF:    size = 4;   break;
+        default:                size = 0;
+            for( i = 0; i < ins->num_ops; i++ ) {
+                switch( ins->op[i].ref_type ) {
+                case DRT_X86_BYTE:      len = 1;  break;
+                case DRT_X86_WORD:      len = 2;  break;
+                case DRT_X86_DWORD:
+                case DRT_X86_DWORDF:    len = 4;  break;
+                default:                len = 0;
+                }
+                if ( len > size ) {
+                    size = len;
+                }
+            }
+            if ( size == 0 ) {
+                size = 4;
+            }
+            break;
         }
     }
     FmtHexNum( buff, size * 2, mask[size] & ins->op[op_num].value );
@@ -465,10 +465,10 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op_num,
             if( len != 0 ) return( len );
         }
         switch( op->type & DO_MASK ) {
-            case DO_RELATIVE:
-            case DO_MEMORY_REL:
-                op->value += pd->loop;
-                break;
+        case DO_RELATIVE:
+        case DO_MEMORY_REL:
+            op->value += pd->loop;
+            break;
         }
         if( op->base == DR_NONE && op->index == DR_NONE ) {
             FmtSizedHexNum( buff, ins, op_num );
@@ -608,22 +608,27 @@ num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
         }
         DisFormat( &DHnd, &data, &decoded, DFormat, name, ops );
         if( !(DFormat & DFF_ASM) ) {
-             static unsigned_64 *tmp_64;
-             static unsigned_32 *tmp_32;
-             static unsigned_16 *tmp_16;
-             tmp_64 = (unsigned_64 *)(contents+data.loop);
-             tmp_32 = (unsigned_32 *)(contents+data.loop);
-             tmp_16 = (unsigned_16 *)(contents+data.loop);
-             if( DHnd.need_bswap ) {
+            unsigned_64     *tmp_64;
+            unsigned_32     *tmp_32;
+            unsigned_16     *tmp_16;
+
+            tmp_64 = (unsigned_64 *)(contents + data.loop);
+            tmp_32 = (unsigned_32 *)(contents + data.loop);
+            tmp_16 = (unsigned_16 *)(contents + data.loop);
+            if( DHnd.need_bswap ) {
                 switch( DisInsSizeInc( &DHnd ) ) {
-                   //case 8: SWAP_64(*tmp_64); break;
-                   case 4: SWAP_32(*tmp_32); break;
-                   case 2: SWAP_16(*tmp_16); break;
-                   default: break;
+                //case 8: SWAP_64( *tmp_64 ); 
+                //    break;
+                case 4: SWAP_32( *tmp_32 ); 
+                    break;
+                case 2: SWAP_16( *tmp_16 ); 
+                    break;
+                default:
+                    break;
                 }
             }
-             PrintLinePrefix( contents, data.loop, size,
-                                DisInsSizeInc( &DHnd ), decoded.size );
+            PrintLinePrefix( contents, data.loop, size,
+                             DisInsSizeInc( &DHnd ), decoded.size );
         }
         BufferStore( "    %*s %s", -DisInsNameMax( &DHnd ), name, ops );
         BufferStore("\n");
