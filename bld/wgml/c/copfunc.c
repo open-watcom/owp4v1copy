@@ -29,6 +29,9 @@
 *                   get_p_buffer()
 *                   parse_functions_block()
 *
+* Note:         The Wiki should be consulted for any term whose meaning is
+*               not apparent. This should help in most cases.
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1
@@ -38,7 +41,7 @@
 #include "copfunc.h"
 #include "wgml.h"
 
-/* extern function definitions. */
+/* Extern function definitions. */
 
 /* Function get_code_blocks().
  * Return a pointer to an array of code_block structs containing the
@@ -75,12 +78,12 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count, uint8_t * base
 
     for( i = 0; i < count; i++ ) {
 
-        /* Get the position of the designator in the P-buffer */
+       /* Get the position of the designator in the P-buffer. */
 
         difference = *current - base;
         position = difference % 80;
 
-        /* Get the designator, shifting it if necessary */
+        /* Get the designator, shifting it if necessary. */
             
         if( position == 79 ) {
             *current += 1;
@@ -89,11 +92,11 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count, uint8_t * base
         memcpy_s( &out_block[i].designator, 1, *current, 1 );
         *current += 1;
 
-        /* Skip the "unknown" field, which is 2 bytes in size. */
+        /* Skip the cb05_flag and the lp_flag. */
 
         *current += 2;
 
-        /* Get the pass number, shifting it if necessary */
+        /* Get the pass, shifting it if necessary. */
             
         if( position == 76 ) {
             *current += 1;
@@ -111,7 +114,7 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count, uint8_t * base
         memcpy_s( &out_block[i].count, 2, *current, 2 );
         *current += 2;
 
-        /* Set the pointer to the actual data. */
+        /* Set function, which is the pointer to the actual compiled code. */
 
         if( &out_block[i].count == 0 ) {
             out_block[i].function = NULL;
@@ -153,6 +156,8 @@ p_buffer * get_p_buffer( FILE * in_file )
     uint8_t     p_count;
     char        test_char;
 
+    /* Determine the number of contiguous P-buffers in the file. */
+
     p_count = 0;
     test_char = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( out_buffer );
@@ -173,7 +178,7 @@ p_buffer * get_p_buffer( FILE * in_file )
     fseek( in_file, -1 * ((81 * p_count) + 1), SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( out_buffer );
 
-    /* Allocate out_buffer */ 
+    /* Allocate the out_buffer. */ 
 
     out_buffer = (p_buffer *) mem_alloc( sizeof( p_buffer ) + 80 * p_count);
 
@@ -181,7 +186,7 @@ p_buffer * get_p_buffer( FILE * in_file )
     out_buffer->buffer = (uint8_t *) out_buffer + sizeof( p_buffer );
     current = out_buffer->buffer;
 
-    /* Now get the data into the buffer. */
+    /* Now get the data into the out_buffer. */
 
     for( i = 0; i < p_count; i++ ) {
         test_char = fgetc( in_file );    
@@ -246,12 +251,12 @@ functions_block * parse_functions_block( uint8_t * * current, uint8_t * base )
     memcpy_s( &code_count, 2, *current, 2 );
     *current += 2;
 
-    /* Allocate out_block */
+    /* Allocate the out_block. */
 
     out_block = (functions_block *) mem_alloc( sizeof( functions_block ) );
     out_block->count = code_count;
 
-    /* Now extract the CodeBlocks, if any */
+    /* Now extract the CodeBlocks, if any. */
 
     if( out_block->count == 0 ) {
         out_block->code_blocks = NULL;

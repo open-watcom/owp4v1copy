@@ -43,7 +43,8 @@
 /* Structure declarations. */
 
 /* To hold the data extracted from an IntransBlock struct.
-/* intrans_block is a struct for consistency with outtrans_block. */
+ * intrans_block is a struct for consistency with outtrans_block.
+ */
 
 typedef struct intrans_block_struct
 {
@@ -59,7 +60,8 @@ typedef struct translation_struct
 } translation;
 
 /* To hold the data extracted from an OuttransBlock struct.
-/* The entry for a given character will be NULL if no out-translation is needed. */
+ * The entry for a given character will be NULL if no out-translation is needed.
+ */
 
 typedef struct outtrans_block_struct
 {

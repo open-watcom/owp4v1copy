@@ -51,14 +51,14 @@ static cop_font * resize_cop_font( cop_font *, size_t );
 
 /* Function definitions. */
 
-/*  Function is_fon_file().
- *  Determines whether or not in_file points to the start of a .COP font
- *  file (the first byte after the header).
+/* Function is_fon_file().
+ * Determines whether or not in_file points to the start of a .COP font
+ * file (the first byte after the header).
  *
- *  Parameter:
+ * Parameter:
  *      in_file points to the presumed start of a .COP font file.
  *
- *  Returns:
+ * Returns:
  *      true if this has the correct discriminator.
  *      false otherwise.
  *
@@ -80,14 +80,14 @@ bool is_fon_file( FILE * in_file)
     return( true );
 }
 
-/*  Function parse_font().
- *  Constructs a cop_font instance from the given input stream.
+/* Function parse_font().
+ * Constructs a cop_font instance from the given input stream.
  *  
- *  Parameters:
+ * Parameters:
  *      in_file points to the first byte of a .COP file encoding a :FONT
  *          block after the "FON" descriminator.
  *
- *  Returns:
+ * Returns:
  *      A pointer to a cop_font struct containing the data from in_file
  *          on success.
  *      A NULL pointer on failure.
@@ -128,7 +128,7 @@ cop_font * parse_font( FILE * in_file )
     uint8_t             width_flag;
     uint32_t *          width_ptr;
 
-    /* Used for count and other values */
+    /* Used for count and other values. */
 
     uint8_t             count8;
 
@@ -355,7 +355,7 @@ cop_font * parse_font( FILE * in_file )
 
     /* Get the CharacterDescriptionBlock. */
 
-    /* This value indicates WidthBlock data size, but it is not needed. */
+    /* Get the size_flag, which is not needed. */
 
     fread( &count8, sizeof( count8 ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
@@ -396,11 +396,11 @@ cop_font * parse_font( FILE * in_file )
 
     /* Get the IntransBlock, if present. */
 
-    if(intrans_flag == 0) {
+    if( intrans_flag == 0 ) {
         out_font->intrans = NULL;
     } else {
 
-        /* Verify that the next byte is 0x81. */
+        /* Get the designator and verify it contains 0x81. */
 
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -416,7 +416,7 @@ cop_font * parse_font( FILE * in_file )
            return( out_font );
         }
 
-        /* Get the count byte and verify that it contains 0x00. */
+        /* Get the count and verify that it contains 0x00. */
       
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -456,11 +456,12 @@ cop_font * parse_font( FILE * in_file )
 
     /* Get the OuttransBlock, if present. */
 
-    if(outtrans_flag == 0) {
+    if( outtrans_flag == 0 ) {
         out_font->outtrans = NULL;
     } else {
 
         /* Get the next byte, which indicates the OuttransBlock data size. */
+        /* The name of the variable does not match the Wiki. */
 
         fread( &outtrans_data_size, sizeof( outtrans_data_size ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -469,7 +470,7 @@ cop_font * parse_font( FILE * in_file )
            return( out_font );
         }
 
-        /* Read the count byte. */
+        /* Read the count. */
 
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -480,10 +481,14 @@ cop_font * parse_font( FILE * in_file )
 
         /* The file is positioned at the start of the data. */
 
+        /* Note: each translation is added individually; however, taken 
+         * together, they constitute the field "translations" in the Wiki.
+         */
+
         switch( outtrans_data_size) {
         case 0x81:
 
-            /* The count byte should be 0x00. */
+            /* The count should be 0x00. */
 
             if( count8 != 0x00 ) {
                 printf_s( "Incorrect byte-width OuttransBlock count: %i\n", \
@@ -585,21 +590,20 @@ cop_font * parse_font( FILE * in_file )
                     byte_ptr = (uint8_t *) out_font + \
                                (size_t) translation_ptr->data;
 
-                    /* The translation character is the value in
-                     * the input array.
-                     */
+                    /* The translation character is the value in the input array. */
                     
                     *byte_ptr = uint8_array[i];
                 }
             }
             break;
+
         case 0x82:
 
-            /* The count byte should be equal to data_count. */
+            /* The count should be equal to the data_count. */
         
             if( count8 != data_count ) {
-                printf_s( "Incorrect OuttransBlock data_count: %i instead of "\
-                          "%i\n", data_count, count8 );
+                printf_s( "Incorrect OuttransBlock data_count: %i instead of " \
+                                                  "%i\n", data_count, count8 );
                 free( out_font );
                 out_font = NULL;
                 return( out_font );
@@ -715,6 +719,7 @@ cop_font * parse_font( FILE * in_file )
                 }
             }
             break;
+
         default:
            printf_s( "Incorrect OuttransBlock designator: %i\n", count8 );
            free( out_font );
@@ -727,7 +732,7 @@ cop_font * parse_font( FILE * in_file )
 
     /* Get the WidthBlock, if present. */
 
-    if(width_flag != 0) {
+    if( width_flag != 0 ) {
         out_font->width = NULL;
     } else {
 
@@ -745,7 +750,8 @@ cop_font * parse_font( FILE * in_file )
         out_font->width = (width_block *) out_font->next_offset;
         out_font->next_offset += sizeof( out_font->width->table );
 
-        /* Get the next byte, which indicates the WidthBlock data size. */
+        /* Get the designator, which indicates the WidthBlock data size. */
+        /* The variable name does not match the field name in the Wiki. */
 
         fread( &width_data_size, sizeof( width_data_size ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -767,6 +773,7 @@ cop_font * parse_font( FILE * in_file )
 
         switch ( width_data_size ) {
         case 0x81:
+
             /* The WidthBlock has one-byte elements. */
 
             /* The count should be 0x00. */
@@ -794,7 +801,9 @@ cop_font * parse_font( FILE * in_file )
             }
 
             break;
+
         case 0x82:
+
             /* The WidthBlock has two-byte elements. */
 
             /* The count should be 0x00. */
@@ -822,7 +831,9 @@ cop_font * parse_font( FILE * in_file )
             }
 
             break;
+
         case 0x84:
+
             /* The WidthBlock has four-byte elements. */
 
             /* The count should be 0x01. */
@@ -843,6 +854,7 @@ cop_font * parse_font( FILE * in_file )
                return( out_font );
             }
             break;
+
         default:
             printf_s( "Bad size indicator for Width Block: %i\n", count8 );
             free( out_font );

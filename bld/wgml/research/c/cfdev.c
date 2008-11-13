@@ -282,7 +282,7 @@ cop_device * parse_device( FILE * in_file )
 
         /* Get the 16-bit page_width. */
 
-        fread( &numeric_16, sizeof(numeric_16), 1, in_file );
+        fread( &numeric_16, sizeof( numeric_16 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -405,7 +405,7 @@ cop_device * parse_device( FILE * in_file )
         /* Get the 32-bit horizontal_base_units. */
 
         fread( &out_device->horizontal_base_units, \
-               sizeof( out_device->horizontal_base_units ), 1, in_file );
+                    sizeof( out_device->horizontal_base_units ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -415,7 +415,7 @@ cop_device * parse_device( FILE * in_file )
         /* Get the 32-bit vertical_base_units. */
 
         fread( &out_device->vertical_base_units, \
-               sizeof( out_device->vertical_base_units ), 1, in_file );
+                    sizeof( out_device->vertical_base_units ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
             free( out_device );
             out_device = NULL;
@@ -495,7 +495,7 @@ cop_device * parse_device( FILE * in_file )
     switch( designator ) {
     case 0x0101:
 
-        /* The font attribute is numeric: set font_number. */
+        /* The font attribute is numeric: get the font_number. */
 
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -512,13 +512,13 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        /* Ensure that font_name is NULL. */
+        /* Ensure that the font_name is NULL. */
 
         out_device->box.font_name = NULL;
         break;
     case 0x0201:
 
-        /* The font attribute is a character string: set font_name. */
+        /* The font attribute is a character string: get the font_name. */
 
         fread( &length, sizeof( length ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -549,12 +549,12 @@ cop_device * parse_device( FILE * in_file )
             ++out_device->next_offset;
         } else {
 
-            /* If the string is empty, ensure that font_name is NULL. */
+            /* If the string is empty, ensure that the font_name is NULL. */
 
             out_device->box.font_name = NULL;
         }
 
-        /* Ensure font_number is 0. */
+        /* Ensure that the font_number is 0. */
 
         out_device->box.font_number = 0;
         break;
@@ -616,7 +616,7 @@ cop_device * parse_device( FILE * in_file )
     switch( designator ) {
     case 0x0101:
 
-        /* The font attribute is numeric: set font_number. */
+        /* The font attribute is numeric: get the font_number. */
 
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -633,13 +633,13 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        /* Ensure that font_name is NULL. */
+        /* Ensure that the font_name is NULL. */
 
         out_device->underscore.font_name = NULL;
         break;
     case 0x0201:
 
-        /* The font attribute is a character string: set font_name. */
+        /* The font attribute is a character string: get the font_name. */
 
         fread( &length, sizeof( length ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
@@ -669,12 +669,12 @@ cop_device * parse_device( FILE * in_file )
             ++out_device->next_offset;
         } else {
 
-            /* If the character string is empty, ensure font_name is NULL. */
+            /* If the string is empty, ensure that the font_name is NULL. */
             
             out_device->underscore.font_name = NULL;
         }
 
-        /* Ensure that font_number is "0". */
+        /* Ensure that the font_number is 0. */
 
         out_device->underscore.font_number = 0;
         break;
@@ -763,7 +763,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the IntransBlock, if present. */
 
-    if(intrans_flag == 0) {
+    if( intrans_flag == 0 ) {
         out_device->intrans = NULL;
     } else {
 
@@ -771,25 +771,25 @@ cop_device * parse_device( FILE * in_file )
 
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         if( count8 != 0x81 ) {
-           printf_s( "Incorrect IntransBlock designator: %i\n", count8 );
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
+            printf_s( "Incorrect IntransBlock designator: %i\n", count8 );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         /* Get the count byte and verify that it contains 0x00. */
         
         fread( &count8, sizeof( count8 ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         if( count8 != 0x00 ) {
@@ -812,9 +812,9 @@ cop_device * parse_device( FILE * in_file )
         
         fread( byte_ptr, sizeof( out_device->intrans->table ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         out_device->intrans = (intrans_block *) out_device->next_offset;
@@ -824,7 +824,7 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the OuttransBlock, if present. */
 
-    if(outtrans_flag == 0) {
+    if( outtrans_flag == 0 ) {
         out_device->outtrans = NULL;
     } else {
 
@@ -832,9 +832,9 @@ cop_device * parse_device( FILE * in_file )
 
         fread( &outtrans_data_size, sizeof( outtrans_data_size ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         /* Read the count byte. */
@@ -901,7 +901,7 @@ cop_device * parse_device( FILE * in_file )
 
                 /* If the first byte matches the index, there is no translation. */
 
-                if( uint8_array[i] == i) {
+                if( uint8_array[i] == i ) {
                     outtrans_ptr->table[i] = NULL;
                 } else {
 
@@ -966,8 +966,8 @@ cop_device * parse_device( FILE * in_file )
             /* The count byte should be equal to data_count. */
         
             if( count8 != data_count ) {
-                printf_s( "Incorrect OuttransBlock data_count: %i instead of "\
-                          "%i\n", data_count, count8 );
+                printf_s( "Incorrect OuttransBlock data_count: %i instead of " \
+                                                  "%i\n", data_count, count8 );
                 free( out_device );
                 out_device = NULL;
                 return( out_device );
@@ -1027,7 +1027,7 @@ cop_device * parse_device( FILE * in_file )
 
                 /* If the first byte matches the index, there is no translation. */
 
-                if( uint16_array[i] == i) {
+                if( uint16_array[i] == i ) {
                     outtrans_ptr->table[i] = NULL;
                 } else {
 
@@ -1060,7 +1060,7 @@ cop_device * parse_device( FILE * in_file )
                     ++translation_start;
 
                     if( out_device->allocated_size < (out_device->next_offset + \
-                                                    translation_ptr->count ) ) {
+                                                      translation_ptr->count) ) {
                         out_device = resize_cop_device( out_device, \
                                                     translation_ptr->count );
                         if( out_device == NULL ) {
@@ -1085,10 +1085,10 @@ cop_device * parse_device( FILE * in_file )
             }
             break;
         default:
-           printf_s( "Incorrect OuttransBlock designator: %i\n", count8 );
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
+            printf_s( "Incorrect OuttransBlock designator: %i\n", count8 );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
         free( outtrans_data );
         outtrans_data = NULL;

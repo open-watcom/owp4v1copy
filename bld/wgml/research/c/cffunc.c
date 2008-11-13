@@ -210,7 +210,7 @@ p_buffer * get_p_buffer( FILE * in_file )
     out_buffer->buffer = (uint8_t *) out_buffer + sizeof( p_buffer );
     current = out_buffer->buffer;
 
-    /* Now get the data into the buffer. */
+    /* Now get the data into the out_buffer. */
 
     for( i = 0; i < p_count; i++ ) {
         test_char = fgetc( in_file );    
