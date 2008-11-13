@@ -1016,7 +1016,7 @@ void CPragma()                  // PROCESS A PRAGMA
     SrcFileGuardStateSig();
     if( CompFlags.cpp_output ) {
         PPState = PPS_EOL;
-        GetNextToken();
+        NextToken();
         if( PragRecog( "include_alias" ) ) {
             CompFlags.in_pragma = 1;
             pragIncludeAlias();
