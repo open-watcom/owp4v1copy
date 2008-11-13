@@ -87,6 +87,17 @@ test_cflags_386 += $(add_br_$(no_br_$^*))
     @set error_msg=failure to compile $^@
     $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*)) -fo=.obj
 
+# Rule for compiling via preprocessor
+.EXTENSIONS: .p
+
+.p: $(positive_dir)
+.p.obj:
+    @set error_msg=failure to preprocess $^@
+    $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*)) -pl -fo=.i
+    @set error_msg=failure to compile $[&.i
+    $(wcc_$(arch)) $[&.i $(test_cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*)) -fo=.obj
+    rm $[&.i
+
 .obj.$(exe):
     @set error_msg=failure to link $^@
     $(linker) @test.lnk $(opt_link_$^*) FILE $[@ NAME $^@

@@ -231,6 +231,7 @@ positive_tests = &
     pp31.$(exe) &
     prag01.$(exe) &
     prag02.$(exe) &
+    prep01.$(exe) &
     quest01.$(exe) &
     quest02.$(exe) &
     ret01.$(exe) &
@@ -246,7 +247,6 @@ positive_tests = &
     switch01.$(exe) &
     thread01.$(exe) &
     thread02.$(exe) &
-
 
 !ifeq arch axp
 positive_exes = $+ $(positive_tests) $-
