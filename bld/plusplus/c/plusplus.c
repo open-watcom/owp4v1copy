@@ -315,10 +315,13 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                 }
                 CompFlags.cpp_output = TRUE;
                 CompFlags.ignore_fnf = FALSE;
-                OpenPgmFile();
                 if( ForceInclude ) {
+                    EmitLineNL( 1, WholeFName );
                     openForceIncludeFile();
+                    PpParse();
+                    SrcFileClose( TRUE );
                 }
+                OpenPgmFile();
                 PpParse();
             } else {
                 OpenPgmFile();
