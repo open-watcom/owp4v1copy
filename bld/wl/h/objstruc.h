@@ -146,6 +146,12 @@ enum file_status {
     STAT_USER_SPECD     = 0x00010000
 };
 
+typedef enum lib_priorities {
+    LIB_PRIORITY_MIN    = 0,
+    LIB_PRIORITY_MIDLE  = 128,
+    LIB_PRIORITY_MAX    = 255
+} lib_priority;
+
 typedef struct file_list {
     FILE_LIST           *next_file;
     infilelist          *file;
@@ -155,8 +161,8 @@ typedef struct file_list {
     } u;
     char                *strtab; /* for AR format */
     enum file_status    status;
+    lib_priority        priority;       /* for libraries */
     unsigned            ovlref   : 16;  /* for fixed libraries */
-    unsigned            priority :  8; /* for libraries */
     unsigned                     :  0;
 } file_list;
 

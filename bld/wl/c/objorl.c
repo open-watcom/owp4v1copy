@@ -291,7 +291,7 @@ static orl_return DeflibCallback( char *name, void *dummy )
 /*********************************************************/
 {
     dummy = dummy;
-    AddCommentLib( name, strlen(name), 0xfe );
+    AddCommentLib( name, strlen(name), LIB_PRIORITY_MAX - 1 );
     return( ORL_OKAY );
 }
 

@@ -353,7 +353,7 @@ static void LinkDirective( void )
 /*******************************/
 {
     char            directive;
-    unsigned_8      priority;
+    lib_priority    priority;
     segnode         *seg;
 
     directive = *(char *)ObjBuff;
@@ -520,7 +520,7 @@ static void Comment( void )
         LinkState |= DOSSEG_FLAG;
         break;
     case CMT_DEFAULT_LIBRARY:
-        AddCommentLib( (char *)ObjBuff, EOObjRec - ObjBuff, 0xfe );
+        AddCommentLib( (char *)ObjBuff, EOObjRec - ObjBuff, LIB_PRIORITY_MAX - 1 );
         break;
     case CMT_LINKER_DIRECTIVE:
         LinkDirective();

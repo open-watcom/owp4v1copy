@@ -94,7 +94,7 @@ static  parse_entry   FormatHelp[] = {
     "NOVell",       ProcNovellHelp,         MK_ALL,     0,
 #endif
 #ifdef _DOS16M
-    "DOS16M",	    Proc16MHelp,	        MK_ALL,     0,
+    "DOS16M",       Proc16MHelp,            MK_ALL,     0,
 #endif
 #ifdef _QNXLOAD
     "QNX",          ProcQNXHelp,            MK_ALL,     0,
@@ -248,7 +248,7 @@ void DoCmdFile( char *fname )
 #endif
     if( FmtData.type & MK_OVERLAYS ) {
         CmdOvlFini();
-        AddObjLib( "wovl.lib", 0 );     // add a reference to wovl.lib
+        AddObjLib( "wovl.lib", LIB_PRIORITY_MIN );     // add a reference to wovl.lib
     }
     if( Name == NULL || !(CmdFlags & CF_HAVE_FILES) ) {
         Ignite();
@@ -664,7 +664,7 @@ struct select_format {
 static struct select_format PossibleFmt[] = {
     MK_DOS,         "LIBDOS",       NULL,           NULL,
 #ifdef _DOS16M
-    MK_DOS16M,	    "LIBDOS16M",    SetD16MFmt,     FreeD16MFmt,
+    MK_DOS16M,      "LIBDOS16M",    SetD16MFmt,     FreeD16MFmt,
 #endif
 #ifdef _QNXLOAD
     MK_QNX,         "LIBQNX",       SetQNXFmt,      FreeQNXFmt,
@@ -786,7 +786,7 @@ void FreeFormatStuff( void )
     if( check->free_func != NULL ) check->free_func();
 }
 
-void AddCommentLib( char *ptr, int len, unsigned char priority )
+void AddCommentLib( char *ptr, int len, lib_priority priority )
 /*********************************************************************/
 //  Add a library from a comment record.
 {

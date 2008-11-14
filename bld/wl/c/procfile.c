@@ -171,7 +171,7 @@ static void DoIncLibDefs( void )
     libnamelist         *lib;
 
     for( lib = SavedDefLibs; lib != NULL; lib = lib->next ) {
-        AddObjLib( lib->name, 1 );
+        AddObjLib( lib->name, LIB_PRIORITY_MIN + 1 );
     }
 }
 
@@ -247,7 +247,7 @@ static void PrepareModList( void )
         if( mod->f.fname == NULL ) {
             mod->modinfo |= MOD_KILL;
         } else if( !(mod->modinfo & MOD_VISITED) ) {
-            list = AddObjLib( mod->f.fname, 128 );
+            list = AddObjLib( mod->f.fname, LIB_PRIORITY_MIDLE );
             CheckNewFile( mod, list, 1);
             CheckBlacklist( list, blacklist );
             for( curr = mod->n.next_mod; curr != NULL; curr = curr->n.next_mod){
