@@ -148,7 +148,7 @@ enum file_status {
 
 typedef enum lib_priorities {
     LIB_PRIORITY_MIN    = 0,
-    LIB_PRIORITY_MIDLE  = 128,
+    LIB_PRIORITY_MID    = 128,
     LIB_PRIORITY_MAX    = 255
 } lib_priority;
 

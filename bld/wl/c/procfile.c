@@ -247,7 +247,7 @@ static void PrepareModList( void )
         if( mod->f.fname == NULL ) {
             mod->modinfo |= MOD_KILL;
         } else if( !(mod->modinfo & MOD_VISITED) ) {
-            list = AddObjLib( mod->f.fname, LIB_PRIORITY_MIDLE );
+            list = AddObjLib( mod->f.fname, LIB_PRIORITY_MID );
             CheckNewFile( mod, list, 1);
             CheckBlacklist( list, blacklist );
             for( curr = mod->n.next_mod; curr != NULL; curr = curr->n.next_mod){
