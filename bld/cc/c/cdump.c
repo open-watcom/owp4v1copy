@@ -396,7 +396,7 @@ static void DumpBaseType( TYPEPTR typ, STRCHUNK *pch )
     TYPEPTR             obj;
 
     for( ;; ) {
-        if( typ->decl_type == TYPE_TYPEDEF )
+        if( typ->decl_type == TYPE_TYPEDEF || typ->decl_type == TYPE_ENUM )
             break;
         obj = Object( typ );
         if( obj == NULL )
