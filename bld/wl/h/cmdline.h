@@ -59,4 +59,4 @@ extern void             PruneSystemList( void );
 extern void             BurnSystemList( void );
 extern void             AddLibPaths( char *, int, bool );
 extern void             AddEnvPaths( char * );
-extern file_list *      AddObjLib( char *, unsigned char );
+extern file_list *      AddObjLib( char *, lib_priority );
