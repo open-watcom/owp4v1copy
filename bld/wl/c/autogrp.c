@@ -275,8 +275,8 @@ group_entry *AllocGroup( char *name, group_entry ** grp_list )
     group->leaders = NULL;
     _PermAlloc( sym, sizeof *sym  ); // second class slave citizen
     BasicInitSym( sym );
-    sym->name = AddStringTable( &PermStrings, name, strlen( name ) + 1 );
-    sym->namelen = strlen( name );
+    sym->namelen_cmp = strlen( name );
+    sym->name = AddStringTable( &PermStrings, name, sym->namelen_cmp + 1 );
     SET_SYM_TYPE( sym, SYM_GROUP );
     sym->info |= SYM_STATIC;
     group->next_group = NULL;

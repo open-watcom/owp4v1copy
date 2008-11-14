@@ -960,7 +960,7 @@ static symbol * GlobalSearchSym( char *symname, int hash, int len )
 
     sym = GlobalSymPtrs[ hash ];
     while( sym != NULL ) {
-        if( len == sym->namelen ) {
+        if( len == sym->namelen_cmp ) {
             if( (*CmpRtn)( symname, sym->name, len ) == 0 )
                 break;
         }
@@ -977,7 +977,7 @@ static symbol * StaticSearchSym( char *symname, unsigned hash, int len )
 
     sym = StaticSymPtrs[ hash ];
     while( sym != NULL ) {
-        if( sym->info & SYM_IN_CURRENT && len == sym->namelen ) {
+        if( sym->info & SYM_IN_CURRENT && len == sym->namelen_cmp ) {
             if( memcmp( symname, sym->name, len ) == 0 )
                 break;
         }
@@ -1015,7 +1015,7 @@ static symbol * DoSymOp( byte op, char *symname, int length )
     if( !(op & ST_FIND) ) {
         sym = AddSym();
         sym->name = AddStringTable( &PermStrings, symname, length + 1 );
-        sym->namelen = searchlen;
+        sym->namelen_cmp = searchlen;
 
         if( op & ST_STATIC ) {
             sym->info |= SYM_STATIC;
@@ -1261,7 +1261,7 @@ symbol * HashReplace( symbol *sym )
     newsym = AddSym();
     newsym->e.mainsym = sym;
     newsym->name = sym->name;
-    newsym->namelen = sym->namelen;
+    newsym->namelen_cmp = sym->namelen_cmp;
     newsym->info = sym->info | SYM_DEAD | SYM_IS_ALTDEF;
     Ring2Append( &sym->mod->publist, newsym );
     RingAppend( &sym->u.altdefs, newsym );

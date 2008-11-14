@@ -184,36 +184,36 @@ typedef struct {
 } dos_sym_data;
 
 typedef struct symbol {
-    struct symbol *     hash;
-    struct symbol *     publink;
-    struct symbol *     link;
+    struct symbol       *hash;
+    struct symbol       *publink;
+    struct symbol       *link;
     targ_addr           addr;
-    unsigned_16         namelen;
+    unsigned_16         namelen_cmp;
     sym_info            info;       // flags & floating point fixup type.
-    struct mod_entry *  mod;
+    struct mod_entry    *mod;
     union {
-        void *          edges;      // for dead code elim. when sym undefd
-        struct segdata *seg;        // seg symbol is in.
-        char *          alias;      // for aliased syms.
-        void *          import;     // NOVELL & OS/2 only: imported symbol data.
+        void            *edges;     // for dead code elim. when sym undefd
+        struct segdata  *seg;       // seg symbol is in.
+        char            *alias;     // for aliased syms.
+        void            *import;    // NOVELL & OS/2 only: imported symbol data.
         offset          cdefsize;   // altdef comdefs: size of comdef
     } p;
     union {
         dos_sym_data    d;
-        struct symbol * altdefs;    // for keeping track of comdat & comdef defs
-        struct symbol * datasym;    // altdef comdats: sym which has data def
+        struct symbol   *altdefs;   // for keeping track of comdat & comdef defs
+        struct symbol   *datasym;   // altdef comdats: sym which has data def
         int             aliaslen;   // for aliases - length of name.
     } u;
     union {
-        struct symbol * mainsym;    // altdefs: main symbol definition
-        struct symbol * def;        // for lazy externs
-        struct symbol **vfdata;     // for virtual function lazy externs.
-        void *          export;     // OS/2 & PE only: exported sym info.
+        struct symbol   *mainsym;   // altdefs: main symbol definition
+        struct symbol   *def;       // for lazy externs
+        struct symbol   **vfdata;   // for virtual function lazy externs.
+        void            *export;    // OS/2 & PE only: exported sym info.
     } e;
-    char *              name;
-	char *				prefix;		// primarily for netware, though could be
-									// subverted for other use. gives symbol
-									// namespace qualification
+    char                *name;
+    char                *prefix;    // primarily for netware, though could be
+                                    // subverted for other use. gives symbol
+                                    // namespace qualification
 } symbol;
 
 /* function prototypes */
