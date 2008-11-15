@@ -225,6 +225,14 @@ typedef struct line_block_struct
  *
  * The order of fields follows the order in the .COP file, except for "unknown",
  * which is omitted as it never has any data in it.
+ *
+ * The comments within the structs refer to the "blocks" discussed in the Wiki. 
+ *
+ * The first two fields are used internally and were used for sizing during
+ * development
+ *
+ * The instance returned will be allocated as a single block and so can be
+ * freed in one statement.
  */
 
 typedef struct cop_driver_struct

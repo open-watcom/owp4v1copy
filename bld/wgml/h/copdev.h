@@ -38,14 +38,14 @@
 /* Function declarations */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 bool            is_dev_file( FILE * file );
 cop_device  *   parse_device( FILE * file );
 
 #ifdef  __cplusplus
-}               /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
-#endif          /* COPDEV_H_INCLUDED */
+#endif  /* COPDEV_H_INCLUDED */

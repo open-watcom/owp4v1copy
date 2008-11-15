@@ -56,7 +56,16 @@ typedef struct width_block_struct
     uint32_t         table[0x100];
 } width_block;
 
-/* This struct embodies the binary form of the :DEVICE block. */
+/* This struct embodies the binary form of the :FONT block.
+ *
+ * The comments within the structs refer to the "blocks" discussed in the Wiki. 
+ *
+ * The first two fields are used internally and were used for sizing during
+ * development
+ *
+ * The instance returned will be allocated as a single block and so can be
+ * freed in one statement.
+ */
 
 typedef struct cop_font_struct
 {

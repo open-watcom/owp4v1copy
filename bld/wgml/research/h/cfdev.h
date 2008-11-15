@@ -53,7 +53,7 @@
 
 /* Structure declarations. */
 
-/* Fonts In box_block and underscore_block.
+/* Fonts in box_block and underscore_block.
  *
  * These structs have two font fields: font_name and font_number.
  *

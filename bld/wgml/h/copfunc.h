@@ -33,6 +33,10 @@
 *                   get_p_buffer()
 *                   parse_functions_block()
 *
+* Note:         The field names are intended to correspond to the field names 
+*               shown in the Wiki. The Wiki structs are named when the structs
+*               defined here are defined; they are not identical.
+*
 ****************************************************************************/
 
 #ifndef COPFUNC_H_INCLUDED
@@ -41,11 +45,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/* struct declarations */
-
-/* These structs are based on the discussion in the Wiki, which should be
- * consulted for further information on how the data is structured.
- */
+/* Struct declarations. */
 
 /* This holds the raw contents of one or more contiguous P-buffers. The
  * buffer is to be interpreted as an array of count uint8_t value. The
@@ -58,7 +58,10 @@ typedef struct p_buffer_struct
     uint8_t *   buffer;
 } p_buffer;
 
-/* This is the CodeBlock discussed in the Wiki. */
+/* To implement the CodeBlock struct.
+ * This is the CodeBlock discussed in the Wiki, although the last field name
+ * does differ.
+ */
 
 typedef struct code_block_struct
 {
@@ -77,19 +80,19 @@ typedef struct functions_block_struct
     code_block *    code_blocks;
 } functions_block;
 
-/* function declarations */
+/* Function declarations. */
 
 #ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
+extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 code_block      *   get_code_blocks( uint8_t * * position, uint16_t count, \
-                        uint8_t * );
+                                     uint8_t * );
 p_buffer        *   get_p_buffer( FILE * file );
 functions_block *   parse_functions_block( uint8_t * * position, uint8_t * );
 
 #ifdef  __cplusplus
-}               /* End of "C" linkage for C++ */
+}   /* End of "C" linkage for C++. */
 #endif
 
-#endif          /* COPFUNC_H_INCLUDED */
+#endif  /* COPFUNC_H_INCLUDED */
