@@ -171,7 +171,7 @@ cop_font * parse_font( FILE * in_file )
         }
         out_font->font_out_name1 = (char *) out_font->next_offset;
         out_font->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_font->next_offset;
     } else {
         out_font->font_out_name1 = NULL;
@@ -203,7 +203,7 @@ cop_font * parse_font( FILE * in_file )
     
         out_font->font_out_name2 = (char *) out_font->next_offset;
         out_font->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_font->next_offset;
     } else {
         out_font->font_out_name2 = NULL;

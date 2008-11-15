@@ -144,7 +144,7 @@ static void set_cumulative_index( functions_block * in_block )
 {
     uint8_t         i;
 
-    in_block->code_blocks[0].cumulative_index = 0x0000;
+    in_block->code_blocks[0].cumulative_index = 0;
 
     if( in_block->count > 1 ) {
         for( i = 1; i < in_block->count; i++ ) {
@@ -297,7 +297,7 @@ cop_device * parse_device( FILE * in_file )
         }
         out_device->driver_name = (char *) out_device->next_offset;
         out_device->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_device->next_offset;
     } else {
         out_device->driver_name = NULL;
@@ -328,7 +328,7 @@ cop_device * parse_device( FILE * in_file )
     
         out_device->output_name = (char *) out_device->next_offset;
         out_device->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_device->next_offset;
     } else {
         out_device->output_name = NULL;
@@ -359,7 +359,7 @@ cop_device * parse_device( FILE * in_file )
     
         out_device->output_extension = (char *) out_device->next_offset;
         out_device->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_device->next_offset;
     } else {
         out_device->output_extension = NULL;
@@ -531,7 +531,7 @@ cop_device * parse_device( FILE * in_file )
     
             out_device->box.font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             mem_free( out_device );
@@ -647,7 +647,7 @@ cop_device * parse_device( FILE * in_file )
     
             out_device->underscore.font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
 
             /* Ensure that the font_name is used. */
@@ -1126,7 +1126,7 @@ cop_device * parse_device( FILE * in_file )
 
             defaultfont_ptr[i].font_style = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             defaultfont_ptr[i].font_style = NULL;
@@ -1193,7 +1193,7 @@ cop_device * parse_device( FILE * in_file )
 
             defaultfont_ptr[i].font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             defaultfont_ptr[i].font_name = NULL;
@@ -1721,7 +1721,7 @@ cop_device * parse_device( FILE * in_file )
             }
             devicefont_ptr[i].font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             raw_functions = NULL;
@@ -1775,7 +1775,7 @@ cop_device * parse_device( FILE * in_file )
             }
             devicefont_ptr[i].font_switch = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             devicefont_ptr[i].font_switch = NULL;

@@ -47,10 +47,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* wstd.h must preceed cfdev.h, cfdrv.h, and cffon.h to avoid conflict with */
-/* stdbool.h, which those headers include. */
-
-#include "wstd.h"
 #include "banner.h"
 #include "cfdev.h"
 #include "cfdir.h"
@@ -171,7 +167,7 @@ int parse_cop_file( void )
             puts("Incorrect file type: file error on attempt to get designator");
             break;
         }
-        designator[3] = NULLCHAR;
+        designator[3] = '\0';
         printf_s("Incorrect file type: %s\n", designator);
         break;
     case( 0x04 ): 
@@ -633,7 +629,7 @@ int verify_device( char * in_path, char * in_name)
         fclose( device_file );
         return( READ_ERROR );
     }
-    designator[3] = NULLCHAR;
+    designator[3] = '\0';
     printf_s( "%s has incorrect designator for a device file: %s\n", tgt_path, \
                                                                     designator );
     fclose( device_file );
@@ -891,7 +887,7 @@ int verify_driver( char * in_path, char * in_name )
         fclose( driver_file );
         return( READ_ERROR );
     }
-    designator[3] = NULLCHAR;
+    designator[3] = '\0';
     printf_s( "%s has incorrect designator for a driver file: %s\n", tgt_path, designator );
     fclose( driver_file );
     return( BAD_MATCH );
@@ -1035,7 +1031,7 @@ int verify_font( char * in_path, char * in_name )
         fclose( font_file );
         return( READ_ERROR );
     }
-    designator[3] = NULLCHAR;
+    designator[3] = '\0';
     printf_s( "%s has incorrect designator for a font file: %s\n", tgt_path, \
                                                                     designator );
     fclose( font_file );

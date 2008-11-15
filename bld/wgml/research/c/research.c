@@ -43,7 +43,6 @@
 #include <string.h>
 #include "cmdlhelp.h"
 #include "common.h"
-#include "wstd.h"
 
 /* Global variables. */
 
@@ -128,7 +127,7 @@ void display_hex_char( char * out_chars, char in_char)
 {
     out_chars[0] = hexchar[ ( in_char >> 4 ) & 0x0f ];
     out_chars[1] = hexchar[ in_char & 0x0f ];
-    out_chars[2] = 0x00;
+    out_chars[2] = '\0';
     
     return;    
 }
@@ -143,7 +142,7 @@ void display_hex_char( char * out_chars, char in_char)
  *      16 values, each of which is the value passed in if isprint() indicates
  *          it is printable, or a space otherwise.
  *  The result is the sort of hex display produced by wdump -b. The 69th byte
- *  is 0x00: out_chars is intended to be displayable as a character string.
+ *  is '\0': out_chars is intended to be displayable as a character string.
  *
  *  Parameters:
  *      out_chars must point to an array of at least 69 bytes.
@@ -225,7 +224,7 @@ int parse_cmdline( char * cmdline )
 
     /* In case someone finds a way to enter an all-whitespace command line. */
     
-    if( *cmdline == NULLCHAR ) {
+    if( *cmdline == '\0' ) {
         print_usage();
         return ( FAILURE );
     }

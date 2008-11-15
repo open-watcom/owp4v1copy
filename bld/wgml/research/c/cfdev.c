@@ -192,7 +192,7 @@ cop_device * parse_device( FILE * in_file )
         }
         out_device->driver_name = (char *) out_device->next_offset;
         out_device->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_device->next_offset;
     } else {
         out_device->driver_name = NULL;
@@ -224,7 +224,7 @@ cop_device * parse_device( FILE * in_file )
     
         out_device->output_name = (char *) out_device->next_offset;
         out_device->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_device->next_offset;
     } else {
         out_device->output_name = NULL;
@@ -256,7 +256,7 @@ cop_device * parse_device( FILE * in_file )
     
         out_device->output_extension = (char *) out_device->next_offset;
         out_device->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_device->next_offset;
     } else {
         out_device->output_extension = NULL;
@@ -545,7 +545,7 @@ cop_device * parse_device( FILE * in_file )
     
             out_device->box.font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
 
@@ -665,7 +665,7 @@ cop_device * parse_device( FILE * in_file )
 
             out_device->underscore.font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
 
@@ -1171,7 +1171,7 @@ cop_device * parse_device( FILE * in_file )
 
             defaultfont_ptr[i].font_style = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             defaultfont_ptr[i].font_style = NULL;
@@ -1240,7 +1240,7 @@ cop_device * parse_device( FILE * in_file )
 
             defaultfont_ptr[i].font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             defaultfont_ptr[i].font_style = NULL;
@@ -1778,7 +1778,7 @@ cop_device * parse_device( FILE * in_file )
             }
             devicefont_ptr[i].font_name = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             devicefont_ptr[i].font_name = NULL;
@@ -1832,7 +1832,7 @@ cop_device * parse_device( FILE * in_file )
             }
             devicefont_ptr[i].font_switch = (char *) out_device->next_offset;
             out_device->next_offset += length;
-            string_ptr[length] = 0x00;
+            string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
             devicefont_ptr[i].font_switch = NULL;

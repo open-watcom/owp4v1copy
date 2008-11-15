@@ -177,7 +177,7 @@ cop_driver * parse_driver( FILE * in_file )
         }
         out_driver->rec_spec = (char *) out_driver->next_offset;
         out_driver->next_offset += length;
-        string_ptr[length] = 0x00;
+        string_ptr[length] = '\0';
         ++out_driver->next_offset;
     } else {
         out_driver->rec_spec = NULL;

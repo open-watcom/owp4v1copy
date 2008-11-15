@@ -40,7 +40,6 @@
 #include <stdlib.h>
 #include "cfdir.h"
 #include "common.h"
-#include "wstd.h"
 
 /*  Function get_entry_count().
  *  Reads and returns the entry count.
@@ -120,7 +119,7 @@ int get_entry_type( FILE * in_file, uint16_t * entry_type )
  *      SUCCESS otherwise.
  *
  *  Note: the item_name and the file_name fields will be terminated with
- *        NULLCHAR if SUCCESS is returned.
+ *        '\0' if SUCCESS is returned.
  */
 
 int get_compact_entry( FILE * in_file, compact_entry_t * entry )
@@ -145,7 +144,7 @@ int get_compact_entry( FILE * in_file, compact_entry_t * entry )
 
     /* Make it a null-terminated string. */
 
-    entry->item_name[count] = NULLCHAR;
+    entry->item_name[count] = '\0';
 
     /* Get the length of the file_name. */
     
@@ -165,7 +164,7 @@ int get_compact_entry( FILE * in_file, compact_entry_t * entry )
 
     /* Make it a null-terminated string. */
 
-    entry->file_name[count] = NULLCHAR;
+    entry->file_name[count] = '\0';
 
     return( SUCCESS );
 }
@@ -189,7 +188,7 @@ int get_compact_entry( FILE * in_file, compact_entry_t * entry )
  *      SUCCESS otherwise.
  *
  *  Note: the item_name and the file_name fields will be terminated with
- *        NULLCHAR if SUCCESS is returned.
+ *        '\0' if SUCCESS is returned.
  */
 
 int get_extended_entry( FILE * in_file, extended_entry_t * entry )
@@ -214,7 +213,7 @@ int get_extended_entry( FILE * in_file, extended_entry_t * entry )
 
     /* Make it a null-terminated string. */
 
-    entry->item_name[count] = NULLCHAR;
+    entry->item_name[count] = '\0';
 
     /* Get the marker. */
 
@@ -239,7 +238,7 @@ int get_extended_entry( FILE * in_file, extended_entry_t * entry )
 
     /* Make it a null-terminated string. */
 
-    entry->file_name[count] = NULLCHAR;
+    entry->file_name[count] = '\0';
 
     /* Get the preview. */
 
