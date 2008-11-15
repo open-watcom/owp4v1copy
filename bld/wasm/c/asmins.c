@@ -927,7 +927,7 @@ static int segm_override_memory( expr_list *opndx )
 static int idata_nofixup( expr_list *opndx )
 /******************************************/
 {
-    OPNDTYPE    op_type;
+    OPNDTYPE    op_type = OP_NONE;
     long        value;
 
     if( IS_ANY_BRANCH( Code->info.token ) ) {  // jumps/call processing
