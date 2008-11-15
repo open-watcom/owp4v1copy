@@ -335,3 +335,5 @@ pick(    MSG_FIXED_LOC_BEFORE_CUR_LOC,  "Location counter is already beyond fixe
                                         "Location counter is already beyond fixed Segment Address %a." )
 pick(    MSG_DUP_DIRECTIVE,      "Directive %s can only occur once." ,
                                         "Directive %s can only occur once." )
+pick(    MSG_IMPORT_LOCAL, "Locally defined symbol %s is imported." ,
+                           "Locally defined symbol %s is imported." )

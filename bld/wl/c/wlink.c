@@ -206,6 +206,7 @@ static void CleanSubSystems( void )
     CleanTraces();
     FreePaths();
     FreeUndefs();
+    FreeLocalImports();
     CleanLoadFile();
     CleanLinkStruct();
     FreeFormatStuff();
@@ -247,6 +248,7 @@ static void DoLink( char *cmdline )
         LinkState &= ~SEARCHING_LIBRARIES;
         LinkState |= GENERATE_LIB_LIST;
     }
+    ProcLocalImports();
     DecideFormat();
     SetFormat();
     ConvertLazyRefs();

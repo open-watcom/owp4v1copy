@@ -42,6 +42,9 @@ extern void             GenPEToc( void );
 extern void             ChkPEData( void );
 extern unsigned long    GetPEHeaderSize( void );
 extern void             ResetLoadPE( void );
+extern void             AddPEImportLocalSym( symbol *, symbol * );
+extern bool             ImportPELocalSym( symbol * );
+extern void             FreePELocalImports( void );
 
 struct import_name {
     struct import_name  *next;

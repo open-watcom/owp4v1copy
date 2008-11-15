@@ -102,6 +102,12 @@ typedef struct {
 
 #pragma pack()
 
+typedef struct local_import {
+    struct local_import *next;
+    symbol              *iatsym;
+    symbol              *locsym;
+} local_import;
+
 static alpha_transfer   AlphaJump = {   0, ALPHA_TRANSFER_OP1,
                                         0, ALPHA_TRANSFER_OP2,
                                         0, ALPHA_TRANSFER_OP3 };
@@ -117,14 +123,15 @@ static unsigned_32 PPCJump[]= {
     0x4E800420          //   bctr
 };
 
-#define PPC_TRANSFER_SIZE (sizeof PPCJump)
+#define PPC_TRANSFER_SIZE (sizeof(PPCJump))
 
 #define TRANSFER_SEGNAME "TRANSFER CODE"
 
 static module_import    *PEImpList;
 static unsigned         NumMods;
 static segdata          *XFerSegData;
-
+static local_import     *PELocalImpList;
+static unsigned         NumLocalImports;
 
 static struct {
     offset      ilt_off;
@@ -167,8 +174,7 @@ static offset CalcIDataSize( void )
         for( imp = mod->imports; imp != NULL; imp = imp->next ) {
             if( imp->imp != NULL ) {
                 size += (size & 1); /* round up */
-                size += imp->imp->len +
-                        (sizeof( unsigned_16 ) + sizeof( unsigned_8 ));
+                size += imp->imp->len + sizeof( unsigned_16 ) + sizeof( unsigned_8 );
             }
         }
     }
@@ -183,7 +189,7 @@ void ResetLoadPE( void )
     XFerSegData = NULL;
     NumMods = 0;
     NumImports = 0;
-    memset(&IData, 0, sizeof IData);
+    memset( &IData, 0, sizeof( IData ) );
 }
 
 static offset CalcIATAbsOffset( void )
@@ -260,12 +266,14 @@ signed_32 FindSymPosInTocv( symbol *sym )
 static void GenPETransferTable( void )
 /************************************/
 {
-    offset      off;
-    offset      base;
-    symbol      *sym;
-    void*       data;
-    size_t      datalen;
-    group_entry *group;
+    offset          off;
+    offset          base;
+    symbol          *sym;
+    void*           data;
+    size_t          datalen;
+    group_entry     *group;
+    local_import    *loc_imp;
+    pe_va           addr;
 
     if( IDataGroup == NULL )
         return;
@@ -306,6 +314,17 @@ static void GenPETransferTable( void )
         }
         off = sym->addr.off - base;
         PutInfo( XFerSegData->data + off, data, datalen );
+    }
+    /* dump the local addresses table */
+    for( loc_imp = PELocalImpList; loc_imp != NULL; loc_imp = loc_imp->next ) {
+        off = loc_imp->iatsym->addr.off - base;
+        addr = FindLinearAddr( &loc_imp->locsym->addr ) + FmtData.base;
+        PutInfo( XFerSegData->data + off, &addr, sizeof( addr ) );
+    }
+    if( LinkState & MAKE_RELOCS ) {
+        for( loc_imp = PELocalImpList; loc_imp != NULL; loc_imp = loc_imp->next ) {
+            XFerReloc( loc_imp->iatsym->addr.off, group, PE_FIX_HIGHLOW );
+        }
     }
     group->size = group->totalsize;
 }
@@ -1343,18 +1362,19 @@ static void RegisterImport( dll_sym_info *sym )
     int                         cmp;
     unsigned                    len;
 
-    for( mod = PEImpList; ; mod = mod->next ) {
-        if( mod == NULL ) {
-            ++NumMods;
-            _PermAlloc( mod, sizeof( struct module_import ) );
-            mod->next = PEImpList;
-            PEImpList = mod;
-            mod->mod = sym->m.modnum;
-            mod->imports = NULL;
-            mod->num_entries = 0;
+    for( mod = PEImpList; mod != NULL; mod = mod->next ) {
+        if( mod->mod == sym->m.modnum ) {
             break;
         }
-        if( mod->mod == sym->m.modnum ) break;
+    }
+    if( mod == NULL ) {
+        ++NumMods;
+        _PermAlloc( mod, sizeof( struct module_import ) );
+        mod->next = PEImpList;
+        PEImpList = mod;
+        mod->mod = sym->m.modnum;
+        mod->imports = NULL;
+        mod->num_entries = 0;
     }
     if( !sym->isordinal ) {
         os2_imp = sym->u.entry;
@@ -1414,6 +1434,7 @@ void ChkPEData( void )
         RegisterImport( sym->p.import );
         DBIAddGlobal( sym );
     }
+    size += NumLocalImports * sizeof( pe_va );
     if( size != 0 ) {
         code->flags |= CLASS_TRANSFER;
         sdata = AllocSegData();
@@ -1443,6 +1464,7 @@ void AllocPETransferTable( void )
     offset              off;
     segment             seg;
     int                 glue_size;
+    local_import        *loc_imp;
 
     /*
      *  Moved export check here as otherwise flags don't get propagated
@@ -1466,6 +1488,16 @@ void AllocPETransferTable( void )
     group = lead->group;
     seg = group->grp_addr.seg;
     off = group->grp_addr.off + group->totalsize;
+    // now calc addresses for imported local symbols
+    for( loc_imp = PELocalImpList; loc_imp != NULL; loc_imp = loc_imp->next ) {
+        off -= sizeof( pe_va );
+        loc_imp->iatsym->addr.off = off;
+        loc_imp->iatsym->addr.seg = seg;
+        save = loc_imp->locsym->p.seg;
+        loc_imp->locsym->p.seg = piece;
+        DBIGenGlobal( loc_imp->locsym, Root );
+        loc_imp->locsym->p.seg = save;
+    }
     glue_size = GetTransferGlueSize( LinkState );
     WALK_IMPORT_SYMBOLS( sym ) {
         off -= glue_size;
@@ -1480,4 +1512,49 @@ void AllocPETransferTable( void )
     WalkImportsMods( CalcImpOff, &off );
     SetTocAddr( IData.eof_ilt_off, IDataGroup ); // Set toc's address.
     CurrMod = NULL;
+}
+
+#define PREFIX_LEN (sizeof(ImportSymPrefix)-1)
+
+void AddPEImportLocalSym( symbol *locsym, symbol *iatsym )
+/********************************************************/
+{
+    local_import    *imp;
+
+    _ChkAlloc( imp, sizeof( local_import ) );
+    LinkList( &PELocalImpList, imp );
+    imp->iatsym = iatsym;
+    imp->locsym = locsym;
+    ++NumLocalImports;
+}
+
+bool ImportPELocalSym( symbol *iatsym )
+/*************************************/
+{
+    char            *name;
+    symbol          *locsym;
+
+    name = iatsym->name;
+    if( memcmp( name, ImportSymPrefix, PREFIX_LEN ) != 0 )
+        return( FALSE );
+    locsym = FindISymbol( name + PREFIX_LEN );
+    if( locsym == NULL )
+        return( FALSE );
+    if( IS_SYM_IMPORTED( locsym ) )
+        return( FALSE );
+    LnkMsg( WRN+MSG_IMPORT_LOCAL, "s", locsym->name );
+    iatsym->info |= SYM_DEFINED | SYM_DCE_REF;
+    if( LinkFlags & STRIP_CODE ) {
+        DefStripImpSym( iatsym );
+    }
+    AddPEImportLocalSym( locsym, iatsym );
+    return( TRUE );
+}
+
+void FreePELocalImports( void )
+/*****************************/
+{
+    FreeList( PELocalImpList );
+    PELocalImpList = NULL;
+    NumLocalImports = 0;
 }

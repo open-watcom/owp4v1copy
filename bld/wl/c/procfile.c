@@ -59,6 +59,7 @@
 #include "ring.h"
 #include "procfile.h"
 #include "hash.h"
+#include "loadpe.h"
 
 static bool             EndOfLib( file_list *, unsigned long );
 static void             IncLoadObjFiles( void );
@@ -711,4 +712,27 @@ void ResolveUndefined( void )
 
     BurnLibs();
     PrintBadTraces();
+}
+
+void ProcLocalImports( void )
+/***************************/
+{
+#ifdef _OS2
+    symbol  *sym;
+
+    if( FmtData.type & MK_PE )
+        for( sym = HeadSym; sym != NULL; sym = sym->link ) {
+            if( !(sym->info & SYM_DEFINED) && !IS_SYM_WEAK_REF(sym) && !(sym->info & SYM_IS_ALTDEF) ) {
+                ImportPELocalSym( sym );
+            }
+        }
+#endif
+}
+
+void FreeLocalImports( void )
+/***************************/
+{
+#ifdef _OS2
+    FreePELocalImports();
+#endif
 }

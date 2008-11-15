@@ -54,6 +54,7 @@
 #include "obj2supp.h"
 #include "objpass2.h"
 #include "objpass1.h"
+#include "loadpe.h"
 
 #define MAX_SEGMENT         0x10000
 
@@ -721,8 +722,9 @@ void DefineSymbol( symbol *sym, segnode *seg, offset off,
 /**************************************************************/
 // do the object file independent public symbol definition.
 {
-    unsigned    name_len;
-    bool        frame_ok;
+    unsigned        name_len;
+    bool            frame_ok;
+    sym_info        sym_type;
 
     if( seg != NULL ) {
         frame = 0;
@@ -745,15 +747,21 @@ void DefineSymbol( symbol *sym, segnode *seg, offset off,
             ReportMultiple( sym, sym->name, name_len );
         }
     } else {
-        if( IS_SYM_COMMUNAL(sym) || IS_SYM_IMPORTED(sym) ) {
-            sym = HashReplace( sym );
-            if( IS_SYM_COMMUNAL(sym) ) {
-                sym->p.seg = NULL;
+        sym_type = SYM_REGULAR;
+        if( IS_SYM_IMPORTED(sym) ) {
+            if( FmtData.type & MK_PE && sym->p.import != NULL ) {
+                dll_sym_info  *dll_info = sym->p.import;
+                AddPEImportLocalSym( sym, dll_info->iatsym );
+                sym_type |= SYM_REFERENCED;
+                LnkMsg( WRN+MSG_IMPORT_LOCAL, "s", sym->name );
             }
+        } else if( IS_SYM_COMMUNAL(sym) ) {
+            sym = HashReplace( sym );
+            sym->p.seg = NULL;
         }
 
         ClearSymUnion( sym );
-        SetAddPubSym(sym, SYM_REGULAR, CurrMod, off, frame);
+        SetAddPubSym(sym, sym_type, CurrMod, off, frame);
         sym->info &= ~SYM_DISTRIB;
         if( seg != NULL ) {
             if( LinkFlags & STRIP_CODE ) {
