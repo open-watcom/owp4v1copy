@@ -48,7 +48,7 @@ long get_file_size( struct dirent * in_file )
     
     in_file = in_file; 
 
-    return( 16 );
+    return( 0 );
 }
 
 #else /* DOS, OS/2, Windows. */
