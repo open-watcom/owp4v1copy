@@ -904,7 +904,14 @@ static void df_sleep( void )
 
     printf_s( "%%sleep(" );
     current_df_data.warning = false;
-    current_df_data.current = current_df_data.base + my_parameters.first;
+
+    /* This is wrong because gendev generates a ShortHeader but encodes the first
+     * parameter as if it were a LongHeader. Hence, the literal.
+     * The original line:
+     * current_df_data.current = current_df_data.base + my_parameters.first;
+     */
+
+    current_df_data.current = current_df_data.base + 0x09;
     process_parameter();
     puts( ")" );
     if( current_df_data.warning ) \
