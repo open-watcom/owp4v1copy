@@ -59,6 +59,23 @@ typedef enum {
 // symbols which are going in the map file (for sort global command)
 // SYM_KILL & SYM_RELOC_REFD only used before pass 1
 
+// Here is what is put in the first four bits of the info field.
+
+    SYM_COMMUNAL_16     = 0,    // symbol is a 16-bit communal symbol
+    SYM_COMMUNAL_32     = 1,    // symbol is a 32-bit communal symbol
+    SYM_COMDAT          = 2,    // symbol is an initialized communal.
+    SYM_REGULAR         = 3,    // a good, old-fashioned linker symbol
+    SYM_ALIAS           = 4,    // this is an alias for another symbol.
+    SYM_IMPORTED        = 5,    // symbol is imported (OS/2 & Novell).
+    SYM_GROUP           = 6,    // symbol is attached to a group
+    SYM_LAZY_REF        = 7,    // symbol is a "lazy" reference.
+    SYM_WEAK_REF        = 8,    // symbol is a "weak" reference.
+    SYM_LINK_WEAK_REF   = 9,    // symbol is a linker-generated weak reference
+    SYM_VF_REF          = 10,   // symbol is a virtual function table reference
+    SYM_PURE_REF        = 11,   // symbol is a pure virt. func. table reference
+
+// Here is all other values except the first four bits of the info field.
+
     SYM_DEAD            = 0x00000010, // symbol has been eliminated.
     SYM_FREE_ALIAS      = 0x00000010, // used for aliases only.
     SYM_OLDHAT          = 0x00000020, // symbol referenced in a previous obj
@@ -105,24 +122,7 @@ typedef enum {
     SYM_VF_REFS_DONE    = 0x80000000  // ALL: vf refs added to call graph
 } sym_info;
 
-// Here is what is put in the first four bits of the info field.
-
-enum {
-    SYM_COMMUNAL_16     = 0,    // symbol is a 16-bit communal symbol
-    SYM_COMMUNAL_32     = 1,    // symbol is a 32-bit communal symbol
-    SYM_COMDAT          = 2,    // symbol is an initialized communal.
-    SYM_REGULAR         = 3,    // a good, old-fashioned linker symbol
-    SYM_ALIAS           = 4,    // this is an alias for another symbol.
-    SYM_IMPORTED        = 5,    // symbol is imported (OS/2 & Novell).
-    SYM_GROUP           = 6,    // symbol is attached to a group
-    SYM_LAZY_REF        = 7,    // symbol is a "lazy" reference.
-    SYM_WEAK_REF        = 8,    // symbol is a "weak" reference.
-    SYM_LINK_WEAK_REF   = 9,    // symbol is a linker-generated weak reference
-    SYM_VF_REF          = 10,   // symbol is a virtual function table reference
-    SYM_PURE_REF        = 11    // symbol is a pure virt. func. table reference
-};
-
-// some handy macros for checking and setting this field
+// some handy macros for checking and setting symbol type bits
 
 #define SYM_TYPE_MASK      0xF
 
@@ -249,7 +249,7 @@ extern void             WriteCommunals( void );
 extern void             XDefSymAddr( symbol *, offset, unsigned_16 );
 extern void             XReportSymAddr( symbol * );
 extern void             XWriteImports( void );
-extern symbol *         AddAltDef( symbol *, unsigned );
+extern symbol *         AddAltDef( symbol *, sym_info );
 extern symbol *         HashReplace( symbol * );
 extern void             PurgeSymbols( void );
 extern offset           SymbolAbsAddr( symbol * );

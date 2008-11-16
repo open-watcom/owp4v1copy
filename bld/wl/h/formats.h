@@ -219,7 +219,7 @@ struct fmt_data {
         struct  fmt_dos_data    dos;
         struct  fmt_os2_data    os2;
         struct  fmt_pe_data     pe;
-        struct	fmt_d16m_data	d16m;
+        struct  fmt_d16m_data   d16m;
         struct  fmt_phar_data   phar;
         struct  fmt_nov_data    nov;
         struct  fmt_qnx_data    qnx;

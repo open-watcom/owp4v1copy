@@ -63,7 +63,7 @@ extern class_entry *    FindClass( section *, char *, bool, bool );
 extern seg_leader *     InitLeader( char * );
 extern void             FreeLeader( void * );
 extern void             AddToGroup( group_entry *, seg_leader * );
-extern void             SetAddPubSym( symbol *, int, mod_entry *, offset,
+extern void             SetAddPubSym( symbol *, sym_info, mod_entry *, offset,
                                       unsigned_16 );
 extern void             DefineSymbol( symbol *, segnode *, offset, unsigned_16);
 extern void             AllocCommunal( symbol *, offset );
@@ -76,7 +76,7 @@ extern void             DefineVFTableRecord( symbol *, symbol *, bool,
                                              vflistrtns * );
 extern void             DefineVFReference( void *, symbol *, bool );
 extern void             DefineReference( symbol * );
-extern void             CheckComdatSym( symbol *, unsigned );
+extern void             CheckComdatSym( symbol *, sym_info );
 extern void             DefineComdat( segdata *, symbol *, offset, sym_info,
                                       unsigned_8 * );
 extern group_entry *    GetGroup( char * );

@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  just prototypes a function that sets the global current
-*				prefix string.
+*               prefix string.
 *
 ****************************************************************************/
 

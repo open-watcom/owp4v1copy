@@ -535,17 +535,18 @@ static void DefineComdatSym( segnode *seg, symbol *sym, orl_symbol_value value )
 /******************************************************************************/
 {
     unsigned    select;
+    sym_info    sym_type;
     segdata     *sdata;
 
     sdata = seg->entry;
     sdata->hascdatsym = TRUE;
     select = sdata->select;
     if( select == 0 ) {
-        select = SYM_CDAT_SEL_ANY;
+        sym_type = SYM_CDAT_SEL_ANY;
     } else {
-        select = (select - 1) << SYM_CDAT_SEL_SHIFT;
+        sym_type = (select - 1) << SYM_CDAT_SEL_SHIFT;
     }
-    DefineComdat( sdata, sym, value, select, seg->contents );
+    DefineComdat( sdata, sym, value, sym_type, seg->contents );
 }
 
 static orl_return ProcSymbol( orl_symbol_handle symhdl )

@@ -707,7 +707,7 @@ void AddToGroup( group_entry *group, seg_leader *seg )
     Ring2Append( &group->leaders, seg );
 }
 
-void SetAddPubSym(symbol *sym, int type, mod_entry *mod, offset off,
+void SetAddPubSym(symbol *sym, sym_info type, mod_entry *mod, offset off,
                          unsigned_16 frame )
 /*************************************************************************/
 {
@@ -868,7 +868,7 @@ symbol *MakeCommunalSym( symbol *sym, offset size, bool isfar,
                                  bool is32bit )
 /*********************************************************************/
 {
-    unsigned    symtype;
+    sym_info    symtype;
     symbol      *altsym;
 
     if( is32bit ) {
@@ -903,13 +903,13 @@ symbol *MakeCommunalSym( symbol *sym, offset size, bool isfar,
     return( sym );
 }
 
-void CheckComdatSym( symbol *sym, unsigned flags )
+void CheckComdatSym( symbol *sym, sym_info flags )
 /*******************************************************/
 // check a comdat redefinition to see if it is OK
 // NYI: SYM_CDAT_SEL_SIZE, SYM_CDAT_SEL_EXACT, & SYM_CDAT_SEL_ASSOC not yet
 // handled properly.  no prob. under coff, but OMF makes it very hard...
 {
-    unsigned    symflags;
+    sym_info    symflags;
 
     symflags = sym->info & SYM_CDAT_SEL_MASK;
     if( flags == SYM_CDAT_SEL_NODUP || symflags == SYM_CDAT_SEL_NODUP ) {

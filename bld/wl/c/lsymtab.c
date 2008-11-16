@@ -1227,7 +1227,7 @@ void XWriteImports( void )
     }
 }
 
-symbol * AddAltDef( symbol *sym, unsigned sym_type )
+symbol * AddAltDef( symbol *sym, sym_info sym_type )
 /*********************************************************/
 {
     symbol *    altsym;
