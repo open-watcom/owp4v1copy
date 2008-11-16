@@ -714,7 +714,7 @@ static void FillHeader( Elf32_Shdr *hdr, char *name, stringtable *strtab,
 /***********************************************************************/
 {
     hdr->sh_name = GetStringTableSize( strtab );
-    StringStringTable( strtab, name );
+    AddStringStringTable( strtab, name );
     hdr->sh_type = SHT_PROGBITS;
     hdr->sh_flags = 0;
     hdr->sh_addr = 0;
@@ -877,7 +877,7 @@ void DwarfWrite( void )
     SeekLoad( savepos );
     memset( sect_header, 0, sizeof( Elf32_Shdr ) );   // first fill in the null section
     InitStringTable( &strtab, FALSE );
-    CharStringTable( &strtab, 0 );
+    AddCharStringTable( &strtab, '\0' );
     virt_off = sizeof( Elf32_Ehdr ) + shdr_size;
     virt_off = WriteELFSections( savepos, virt_off, sect_header+1, &strtab );
     sh = sect_header + elf_header.e_shstrndx;

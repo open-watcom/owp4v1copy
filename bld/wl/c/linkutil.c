@@ -337,9 +337,7 @@ name_list *AddNameTable( char *name, unsigned len, bool is_mod,
             _PermAlloc( imp, sizeof( name_list ) );
             imp->next = NULL;
             imp->len = len;
-            ReserveStringTable( &PermStrings, len + 1 );
-            imp->name = AddStringTable( &PermStrings, name, len );
-            CharStringTable( &PermStrings, '\0' );
+            imp->name = AddSymbolStringTable( &PermStrings, name, len );
             imp->num = is_mod ? index : off;
             *owner = imp;
             break;

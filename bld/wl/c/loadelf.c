@@ -182,7 +182,7 @@ static void SetHeaders( ElfHdr *hdr )
     hdr->ph->p_flags = PF_R | PF_X;
     hdr->ph->p_align = 0;
     InitStringTable( &hdr->secstrtab, FALSE );
-    AddStringTable( &hdr->secstrtab, "", 1 );
+    AddCharStringTable( &hdr->secstrtab, '\0' );
     InitSections( hdr );
     hdr->curr_off = hdr->eh.e_ehsize + hdr->ph_size;
     hdr->curr_off = ROUND_UP( hdr->curr_off, 0x100 );
@@ -202,7 +202,7 @@ void AddSecName( ElfHdr *hdr, Elf32_Shdr *sh, char *name )
 /***************************************************************/
 {
     sh->sh_name = GetStringTableSize( &hdr->secstrtab );
-    AddStringTable( &hdr->secstrtab, name, strlen(name)+1 );
+    AddStringStringTable( &hdr->secstrtab, name );
 }
 
 
@@ -414,7 +414,7 @@ void ChkElfData( void )
         }
     }
     InitStringTable( &SymStrTab, FALSE );
-    AddStringTable( &SymStrTab, "", 1 );
+    AddCharStringTable( &SymStrTab, '\0' );
     ElfSymTab = CreateElfSymTable( NumImports + NumExports + NumGroups,
                                    &SymStrTab);
     for( group = Groups; group != NULL; group = group->next_group ) {

@@ -209,9 +209,7 @@ entry_export * AllocExport( char *name, unsigned len )
                 len -= chop;
             }
         }
-        ReserveStringTable( &PermStrings, len + 1 );
-        exp->name = AddStringTable( &PermStrings, name, len );
-        CharStringTable( &PermStrings, '\0' );
+        exp->name = AddSymbolStringTable( &PermStrings, name, len );
     }
     exp->impname = NULL;
     exp->iopl_words = 0;

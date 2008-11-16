@@ -873,14 +873,14 @@ symbol * SymXOp( sym_flags op, char *name, int length )
 }
 
 symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix, int prefixLen)
-/************************************************************/
+/***************************************************************************************/
 {
     symbol * retsym = SymXOp(op, name, length);
 
     if( NULL == retsym )
         return NULL;
 
-    if( ((NULL != prefix) && (0 != prefixLen)) || (NULL != CmdFile->symprefix) ) {
+    if( ( NULL != prefix ) && ( 0 != prefixLen ) || ( NULL != CmdFile->symprefix ) ) {
         char * pfxname = alloca(255+1); /* max len of PString - used to be prefixLen+1 */
 
         if( NULL == pfxname ) {
@@ -891,11 +891,11 @@ symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix, int p
         if( prefix ) {
             memcpy( pfxname, prefix, prefixLen );
             pfxname[ prefixLen] = '\0';
-        }
-        else
+        } else {
             strcpy( pfxname, CmdFile->symprefix );
+        }
 
-        if( NULL == (retsym->prefix = AddStringTable( &PrefixStrings, pfxname, strlen( pfxname ) + 1 )) ) {
+        if( NULL == (retsym->prefix = AddStringStringTable( &PrefixStrings, pfxname )) ) {
             LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
             return NULL;
         }
@@ -1014,7 +1014,7 @@ static symbol * DoSymOp( byte op, char *symname, int length )
     }
     if( !(op & ST_FIND) ) {
         sym = AddSym();
-        sym->name = AddStringTable( &PermStrings, symname, length + 1 );
+        sym->name = AddSymbolStringTable( &PermStrings, symname, length );
         sym->namelen_cmp = searchlen;
 
         if( op & ST_STATIC ) {

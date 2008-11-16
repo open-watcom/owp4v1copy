@@ -528,7 +528,7 @@ class_entry *FindClass( section *sect, char *name, bool is32bit,
 
     if( is32bit )
         is32bit = CLASS_32BIT;
-    
+
     lastclass = sect->classlist;
     for( currclass = sect->classlist; currclass != NULL; currclass = currclass->next_class ) {
         if( stricmp( currclass->name, name ) == 0
@@ -539,7 +539,7 @@ class_entry *FindClass( section *sect, char *name, bool is32bit,
     }
     namelen = strlen( name );
     currclass = CarveAlloc( CarveClass );
-    currclass->name = AddStringTable( &PermStrings, name, namelen + 1 );
+    currclass->name = AddBufferStringTable( &PermStrings, name, namelen + 1 );
     currclass->segs = NULL;
     currclass->section = sect;
     currclass->flags = is32bit;
@@ -640,7 +640,7 @@ seg_leader *InitLeader( char *segname )
     seg->seg_addr.seg = UNDEFINED;
     seg->group = NULL;
     seg->info = 0;
-    seg->segname = StringStringTable( &PermStrings, segname );
+    seg->segname = AddStringStringTable( &PermStrings, segname );
     seg->dbgtype = NOT_DEBUGGING_INFO;
     seg->segflags = FmtData.def_seg_flags;
     return( seg );

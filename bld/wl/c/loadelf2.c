@@ -105,7 +105,7 @@ ElfSymTable *CreateElfSymTable( int maxElems, stringtable *strtab )
     memset( tab->chains, 0, (tab->maxElems) * sizeof(unsigned_32) );
     tab->strtab = strtab;
     if( GetStringTableSize( tab->strtab ) == 0 ) {
-        AddStringTable( tab->strtab, "", 1);
+        AddCharStringTable( tab->strtab, '\0' );
     }
     return tab;
 }
@@ -216,8 +216,8 @@ void WriteElfSymTable( ElfSymTable *tab, ElfHdr *hdr, int hashidx,
     off = GetStringTableSize( tab->strtab );
     for( i = 1; i < tab->numElems; i++ ) {
         sym = tab->table[i];
-        len = strlen(sym->name) + 1;
-        AddStringTable( tab->strtab, sym->name, len );
+        len = strlen( sym->name ) + 1;
+        AddBufferStringTable( tab->strtab, sym->name, len );
         elfsym.st_name = off;
         off += len;
         if( tableSH->sh_info == 0 && !(sym->info & SYM_STATIC) ) {

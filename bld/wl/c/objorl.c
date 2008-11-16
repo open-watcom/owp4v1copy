@@ -574,8 +574,7 @@ static orl_return ProcSymbol( orl_symbol_handle symhdl )
         if( !(CurrMod->modinfo & MOD_GOT_NAME) ) {
             CurrMod->modinfo |= MOD_GOT_NAME;
             _LnkFree( CurrMod->name );
-            CurrMod->name = StringStringTable( &PermStrings,
-                                                name );
+            CurrMod->name = AddStringStringTable( &PermStrings, name );
         }
         return( ORL_OKAY );
     }

@@ -75,18 +75,6 @@ void InitStringTable( stringtable *strtab, bool dontsplit )
     AllocNewBlock( strtab );
 }
 
-void CharStringTable( stringtable *strtab, char data )
-/***********************************************************/
-{
-    AddStringTable( strtab, &data, sizeof(char) );
-}
-
-char * StringStringTable( stringtable *strtab, char *data )
-/****************************************************************/
-{
-    return AddStringTable( strtab, data, strlen(data) + 1 );
-}
-
 void ReserveStringTable( stringtable *strtab, unsigned len )
 /*****************************************************************/
 {
@@ -105,13 +93,15 @@ void ReserveStringTable( stringtable *strtab, unsigned len )
     }
 }
 
-char * AddStringTable( stringtable *strtab, char *data, unsigned len )
-/***************************************************************************/
+static char *AddToStringTable( stringtable *strtab, void *data, unsigned len, bool addnullchar )
+/**********************************************************************************************/
 {
     stringblock *blk;
     unsigned    diff;
     char *      dest;
 
+    if( addnullchar )
+        ++len;
     blk = RingLast( strtab->data );
     if( strtab->currbase & 1 && len > STR_BLOCK_SIZE ) {
         LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", data );
@@ -125,7 +115,7 @@ char * AddStringTable( stringtable *strtab, char *data, unsigned len )
             } else {
                 memcpy( &blk->data[blk->size], data, diff );
                 len -= diff;
-                data += diff;
+                data = (char *)data + diff;
             }
         }
         blk->size = STR_BLOCK_SIZE;
@@ -133,9 +123,35 @@ char * AddStringTable( stringtable *strtab, char *data, unsigned len )
         blk = AllocNewBlock( strtab );
     }
     dest = &blk->data[blk->size];
-    memcpy( dest, data, len );
     blk->size += len;
-    return dest;
+    if( addnullchar )
+        dest[ --len ] = '\0';
+    memcpy( dest, data, len );
+    return( dest );
+}
+
+void AddCharStringTable( stringtable *strtab, char data )
+/*******************************************************/
+{
+    AddToStringTable( strtab, &data, sizeof( char ), FALSE );
+}
+
+char *AddStringStringTable( stringtable *strtab, char *data )
+/***********************************************************/
+{
+    return( AddToStringTable( strtab, data, strlen( data ) + 1, FALSE ) );
+}
+
+char *AddBufferStringTable( stringtable *strtab, void *data, unsigned len )
+/**************************************************************************/
+{
+    return( AddToStringTable( strtab, data, len, FALSE ) );
+}
+
+char *AddSymbolStringTable( stringtable *strtab, char *data, unsigned len )
+/**************************************************************************/
+{
+    return( AddToStringTable( strtab, data, len, TRUE ) );
 }
 
 void ZeroStringTable( stringtable *strtab, unsigned len )

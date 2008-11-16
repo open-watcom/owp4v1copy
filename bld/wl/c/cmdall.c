@@ -1048,14 +1048,14 @@ static void GetCommandBlock( sysblock **hdr, char *name, parse_entry *endtab )
     stringtable strtab;
 
     InitStringTable( &strtab, FALSE );
-    AddStringTable( &strtab, (char *) &strtab, offsetof(sysblock,commands)  );
+    AddBufferStringTable( &strtab, &strtab, offsetof( sysblock, commands ) );
     while( !ProcOne( endtab, SEP_SPACE, FALSE ) ) {
         Token.thumb = OK;
-        AddStringTable( &strtab, Token.this, Token.len );
-        CharStringTable( &strtab, ' ' );
+        AddBufferStringTable( &strtab, Token.this, Token.len );
+        AddCharStringTable( &strtab, ' ' );
         RestoreParser();
     }
-    CharStringTable( &strtab, '\0' );
+    AddCharStringTable( &strtab, '\0' );
     _ChkAlloc( copyptr, GetStringTableSize( &strtab ) );
     sys = (sysblock *) copyptr;
     WriteStringTable( &strtab, CopyBlocks, &copyptr );

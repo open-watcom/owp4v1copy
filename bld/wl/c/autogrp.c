@@ -276,7 +276,7 @@ group_entry *AllocGroup( char *name, group_entry ** grp_list )
     _PermAlloc( sym, sizeof *sym  ); // second class slave citizen
     BasicInitSym( sym );
     sym->namelen_cmp = strlen( name );
-    sym->name = AddStringTable( &PermStrings, name, sym->namelen_cmp + 1 );
+    sym->name = AddBufferStringTable( &PermStrings, name, sym->namelen_cmp + 1 );
     SET_SYM_TYPE( sym, SYM_GROUP );
     sym->info |= SYM_STATIC;
     group->next_group = NULL;

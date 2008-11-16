@@ -102,7 +102,7 @@ void SetupFakeModule( void )
     if( FmtData.type & MK_PE ) {
         FakeModule = NewModEntry();
         FakeModule->modinfo = DBI_ALL|MOD_LAST_SEG|MOD_NEED_PASS_2|FMT_PE_XFER;
-        FakeModule->name = StringStringTable( &PermStrings, LinkerModule );
+        FakeModule->name = AddStringStringTable( &PermStrings, LinkerModule );
         DBIInitModule( FakeModule );
     }
 }
@@ -646,7 +646,7 @@ unsigned long ObjPass1( void )
     SymModEnd();
     if( !(CurrMod->modinfo & MOD_GOT_NAME) ) {
         savename = CurrMod->name;
-        CurrMod->name = StringStringTable( &PermStrings, savename );
+        CurrMod->name = AddStringStringTable( &PermStrings, savename );
         _LnkFree( savename );
         CurrMod->modinfo |= MOD_GOT_NAME;
     }

@@ -73,7 +73,7 @@ static infilelist * AllocEntry( char *name, path_entry *path )
     infilelist *        entry;
 
     _PermAlloc( entry, sizeof(infilelist) );
-    entry->name = StringStringTable( &PermStrings, name );
+    entry->name = AddStringStringTable( &PermStrings, name );
     entry->path_list = path;
     entry->prefix = NULL;
     entry->handle = NIL_HANDLE;

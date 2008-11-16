@@ -146,7 +146,7 @@ static void *GetString( perm_write_info *info, char *str )
     unsigned idx;
 
     idx = GetStringTableSize( &info->strtab );
-    StringStringTable( &info->strtab, str );
+    AddStringStringTable( &info->strtab, str );
     return( (void *)idx );
 }
 
@@ -325,7 +325,7 @@ static void PrepNameTable( name_list *list, perm_write_info *info )
     while( list != NULL ) {
         savename = list->name;
         list->name = (char *) GetStringTableSize( &info->strtab );
-        AddStringTable( &info->strtab, savename, list->len + 1 );
+        AddBufferStringTable( &info->strtab, savename, list->len + 1 );
         list = list->next;
     }
 }
@@ -553,7 +553,7 @@ void WritePermData( void )
     if( !(LinkFlags & INC_LINK_FLAG) || LinkState & LINK_ERROR )
         return;
     InitStringTable( &info.strtab, FALSE );
-    CharStringTable( &info.strtab, '\0' );      // make 0 idx not valid
+    AddCharStringTable( &info.strtab, '\0' );   // make 0 idx not valid
     info.incfhdl = QOpenRW( IncFileName );
     hdr.flags = 0;
     hdr.exename = (unsigned_32) GetString( &info, Root->outfile->fname );
@@ -957,7 +957,7 @@ void ReadPermData( void )
 void PermSaveFixup( void *fix, unsigned size )
 /***************************************************/
 {
-    AddStringTable( &StoredRelocs, (char *) fix, size );
+    AddBufferStringTable( &StoredRelocs, fix, size );
 }
 
  void IterateModRelocs( unsigned offset, unsigned sizeleft,
