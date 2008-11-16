@@ -1853,7 +1853,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        if( memcmp( nulls, "\0\0", 2 ) ) {
+        if( nulls == 0x0000 ) {
             printf_s( "Devicefont %i has this for the nulls: %i\n", i, nulls );
             free( raw_functions );
             raw_functions = NULL;

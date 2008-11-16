@@ -1796,7 +1796,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        if( memcmp( nulls, "\0\0", 2 ) ) {
+        if( nulls == 0x0000 ) {
             mem_free( raw_functions );
             raw_functions = NULL;
             mem_free( cop_functions->code_blocks );
