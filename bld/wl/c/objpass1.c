@@ -749,6 +749,7 @@ void DefineSymbol( symbol *sym, segnode *seg, offset off,
     } else {
         sym_type = SYM_REGULAR;
         if( IS_SYM_IMPORTED(sym) ) {
+            sym = HashReplace( sym );
             if( FmtData.type & MK_PE && sym->p.import != NULL ) {
                 dll_sym_info  *dll_info = sym->p.import;
                 AddPEImportLocalSym( sym, dll_info->iatsym );
