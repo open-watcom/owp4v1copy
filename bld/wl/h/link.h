@@ -152,34 +152,13 @@ typedef enum obj_format {
 #define IS_FMT_INCREMENTAL(x)   (((x) & FMT_OBJ_FMT_MASK) == FMT_INCREMENTAL)
 #define SET_FMT_TYPE(x,type)    (((x) = (x) & ~FMT_OBJ_FMT_MASK) | (type))
 
-/*  File Extension formats */
-// this corresponds to a table of strings in CMDUTILS.
-enum {
-    E_COMMAND,
-    E_MAP,
-    E_LIBRARY,
-    E_OBJECT,
-    E_LOAD,
-    E_OVL,
-    E_DLL,
-    E_PROTECT,
-    E_NLM,
-    E_LAN,
-    E_DSK,
-    E_NAM,
-    E_NOV_MSL,
-    E_NOV_HAM,
-    E_NOV_CDM,
-    E_COM,
-    E_REX,
-    E_QNX,
-    E_SYM,
-    E_LBC,
-    E_ELF,
-    E_ILK,
-    E_HEX,
-    E_BIN
-};
+/* Default File Extension Enumeration, see ldefext.h */
+
+typedef enum file_defext {
+#undef pick1
+#define pick1(enum,text) enum,
+#include "ldefext.h"
+} file_defext;
 
 
 /*  Generic constants */

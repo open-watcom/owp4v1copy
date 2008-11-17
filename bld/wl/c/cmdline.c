@@ -105,7 +105,7 @@ static  parse_entry   FormatHelp[] = {
     NULL
 };
 
-byte            Extension;
+file_defext     Extension;
 file_list       **CurrFList;
 tok             Token;
 commandflag     CmdFlags;
@@ -162,7 +162,7 @@ void DoCmdFile( char *fname )
     exe_format  possible;
     f_handle    file;
     size_t      namelen;
-    unsigned    extension;
+    file_defext extension;
     char        *namelnk;
 
     ResetCmdFile();
@@ -272,7 +272,7 @@ void DoCmdFile( char *fname )
         } else {
             extension = E_LIBRARY;
         }
-        FmtData.implibname = FileName( Name, (int) namelen, (byte) extension, TRUE );
+        FmtData.implibname = FileName( Name, (int) namelen, extension, TRUE );
     }
     CheckTraces();
     BurnUtils();

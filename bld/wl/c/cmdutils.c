@@ -49,43 +49,12 @@
 
 cmdfilelist      *CmdFile = NULL;
 
-static  char            *DefExt[] = {           /* see LINK.H */
-    ".lnk",
-    ".map",
-    ".lib",
-#if defined( __UNIX__ )
-    ".o",
-#else
-    ".obj",
-#endif
-    ".exe",
-    ".ovl",
-    ".dll",
-    ".exp",
-    ".nlm", /* netware loadable module  */
-    ".lan", /* LAN driver               */
-    ".dsk", /* disk driver              */
-    ".nam", /* name space module        */
-    ".msl", /* mirrored server link     */
-    ".ham", /* host adapter module      */
-    ".cdm", /* custom device module     */
-    ".com",
-    ".rex",
-#if defined( __UNIX__ )
-    "",
-#else
-    ".qnx",
-#endif
-    ".sym",
-    ".lbc",
-#if defined( __UNIX__ )
-    "",
-#else
-    ".elf",
-#endif
-    ".ilk",
-    ".hex",
-    ".bin"
+/* Default File Extension array, see ldefext.h */
+
+static  char    *DefExt[] = {
+#undef pick1
+#define pick1(enum,text) text,
+#include "ldefext.h"
 };
 
 static bool     CheckFence( void );
@@ -1033,7 +1002,7 @@ static bool MakeToken( tokcontrol ctrl, sep_type separator )
 }
 
 
-char *FileName( char *buff, int len, byte etype, bool force )
+char *FileName( char *buff, int len, file_defext etype, bool force )
 /******************************************************************/
 {
     char    *namptr;

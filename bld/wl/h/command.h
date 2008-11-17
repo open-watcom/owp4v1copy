@@ -183,7 +183,7 @@ extern parse_entry OutputOpts[];
 
 /* handy globals */
 
-extern byte         Extension;
+extern file_defext  Extension;
 extern file_list    **CurrFList;
 extern tok          Token;
 extern commandflag  CmdFlags;
@@ -210,7 +210,7 @@ extern void             RestoreParser( void );
 extern void             NewCommandSource( char *, char *, method );
 extern void             SetCommandFile( f_handle, char * );
 extern void             EatWhite( void );
-extern char             *FileName( char *, int, byte, bool );
+extern char             *FileName( char *, int, file_defext, bool );
 extern void             RestoreCmdLine( void );
 extern bool             IsSystemBlock( void );
 extern void             BurnUtils( void );
