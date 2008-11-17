@@ -306,7 +306,6 @@ char *GetOMFName( file_list *list, unsigned long *loc )
 {
     obj_record  *rec;
     char        *name;
-    char        *newname;
     unsigned    len;
 
     rec = CacheRead( list, *loc, sizeof(obj_record) );
@@ -318,11 +317,8 @@ char *GetOMFName( file_list *list, unsigned long *loc )
     *loc += len;
     if( name == NULL )
         return( NULL );
-    len = *name;        // get actual name length
-    _ChkAlloc( newname, len + 1 );
-    memcpy( newname, name + 1, len );
-    *(newname + len) = '\0';
-    return( newname );
+    len = *(unsigned char *)name;        // get actual name length
+    return( ChkToString( name + 1, len ) );
 }
 
 void OMFSkipObj( file_list *list, unsigned long *loc )

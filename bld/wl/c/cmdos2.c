@@ -187,24 +187,27 @@ static bool getimport( void )
     unsigned_16         ordinal;
     ord_state           state;
 
-    intname.name = tostring();
-    intname.len = strlen( intname.name );
+    intname.name = alloca( Token.len + 1 );
+    memcpy( intname.name, Token.this, Token.len );
+    intname.name[ Token.len ] = '\0';
+    intname.len = Token.len;
     if( !GetToken( SEP_NO, 0 ) ) {
-        _LnkFree( intname.name );
         return( FALSE );
     }
-    modname.name = tostring();
-    modname.len = strlen( modname.name );
+    modname.name = alloca( Token.len + 1 );
+    memcpy( modname.name, Token.this, Token.len );
+    modname.name[ Token.len ] = '\0';
+    modname.len = Token.len;
     state = ST_INVALID_ORDINAL;   // assume to extname or ordinal.
     if( GetToken( SEP_PERIOD, TOK_INCLUDE_DOT ) ) {
         state =  getatoi( &ordinal );
         if( state == ST_NOT_ORDINAL ) {
-            extname.name = tostring();
-            extname.len = strlen( extname.name );
+            extname.name = alloca( Token.len + 1 );
+            memcpy( extname.name, Token.this, Token.len );
+            extname.name[ Token.len ] = '\0';
+            extname.len = Token.len;
         } else if( state == ST_INVALID_ORDINAL ) {
             LnkMsg( LOC+LINE+MSG_IMPORT_ORD_INVALID + ERR, NULL );
-            _LnkFree( intname.name );
-            _LnkFree( modname.name );
             return( TRUE );
         }
     }
@@ -213,13 +216,10 @@ static bool getimport( void )
     } else {
         if( state == ST_NOT_ORDINAL ) {
             HandleImport( &intname, &modname, &extname, NOT_IMP_BY_ORDINAL );
-            _LnkFree( extname.name );
         } else {
             HandleImport( &intname, &modname, &intname, NOT_IMP_BY_ORDINAL );
         }
     }
-    _LnkFree( intname.name );
-    _LnkFree( modname.name );
     return( TRUE );
 }
 

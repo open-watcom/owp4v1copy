@@ -400,7 +400,7 @@ static bool CheckSameComdat( void *info, void *sym )
 }
 #endif
 
-#define ST_COMDAT (ST_REFERENCE | ST_CREATE | ST_NOALIAS)
+#define ST_COMDAT (ST_CREATE | ST_NOALIAS | ST_REFERENCE)
 
 void ProcComdat( void )
 /****************************/

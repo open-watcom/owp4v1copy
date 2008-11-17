@@ -312,8 +312,8 @@ void FreeList( void *_curr )
 /*********************************/
 /* Free a list of nodes. */
 {
-    node                *curr = _curr;
-    node                *next_node;
+    node        *curr = _curr;
+    node        *next_node;
 
     while( curr ) {
         next_node = curr->next;
@@ -322,9 +322,8 @@ void FreeList( void *_curr )
     }
 }
 
-name_list *AddNameTable( char *name, unsigned len, bool is_mod,
-                                                        name_list **owner )
-/*************************************************************************/
+name_list *AddNameTable( char *name, unsigned len, bool is_mod, name_list **owner )
+/*********************************************************************************/
 {
     name_list   *imp;
     unsigned_32 off;
@@ -332,22 +331,20 @@ name_list *AddNameTable( char *name, unsigned len, bool is_mod,
 
     index = 1;
     off = 1;
-    for( ;; ) {
-        imp = *owner;
-        if( imp == NULL ) {
-            _PermAlloc( imp, sizeof( name_list ) );
-            imp->next = NULL;
-            imp->len = len;
-            imp->name = AddSymbolStringTable( &PermStrings, name, len );
-            imp->num = is_mod ? index : off;
-            *owner = imp;
-            break;
-        }
+    for( imp = *owner; imp != NULL; imp = imp->next ) {
         if( len == imp->len && memcmp( imp->name, name, len ) == 0 )
             break;
         off += imp->len + 1;
-        owner = &imp->next;
         ++index;
+        owner = &imp->next;
+    }
+    if( imp == NULL ) {
+        _PermAlloc( imp, sizeof( name_list ) );
+        imp->next = NULL;
+        imp->len = len;
+        imp->name = AddSymbolStringTable( &PermStrings, name, len );
+        imp->num = is_mod ? index : off;
+        *owner = imp;
     }
     return( imp );
 }

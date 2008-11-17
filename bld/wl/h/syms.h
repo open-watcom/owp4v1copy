@@ -202,7 +202,7 @@ typedef struct symbol {
         dos_sym_data    d;
         struct symbol   *altdefs;   // for keeping track of comdat & comdef defs
         struct symbol   *datasym;   // altdef comdats: sym which has data def
-        int             aliaslen;   // for aliases - length of name.
+        unsigned        aliaslen;   // for aliases - length of name.
     } u;
     union {
         struct symbol   *mainsym;   // altdefs: main symbol definition

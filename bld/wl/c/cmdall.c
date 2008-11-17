@@ -877,14 +877,15 @@ bool ProcVFRemoval( void )
 bool ProcStart( void )
 /***************************/
 {
-    char    *name;
+    char        *name;
 
     if( !GetToken( SEP_EQUALS, TOK_INCLUDE_DOT ) )
         return( FALSE );
     StartInfo.user_specd = TRUE;
-    name = tostring();
+    name = alloca( Token.len + 1 );
+    memcpy( name, Token.this, Token.len );
+    name[ Token.len ] = '\0';
     SetStartSym( name );
-    _LnkFree( name );
     return( TRUE );
 }
 

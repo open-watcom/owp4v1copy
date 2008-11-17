@@ -596,7 +596,7 @@ static orl_return ProcSymbol( orl_symbol_handle symhdl )
         binding = ORLSymbolGetBinding( symhdl );
         symop = ST_CREATE;
         if( binding == ORL_SYM_BINDING_LOCAL ) {
-            symop = ST_STATIC;
+            symop |= ST_STATIC;
         }
         if( type & ORL_SYM_TYPE_UNDEFINED && binding != ORL_SYM_BINDING_ALIAS ){
             symop |= ST_REFERENCE;
@@ -622,7 +622,7 @@ static orl_return ProcSymbol( orl_symbol_handle symhdl )
                 if( binding == ORL_SYM_BINDING_ALIAS ) {
                     MakeSymAlias( sym->name, strlen(sym->name), name, namelen );
                 } else {
-                    assocsym = SymOp(ST_CREATE|ST_REFERENCE, name, namelen);
+                    assocsym = SymOp( ST_CREATE | ST_REFERENCE, name, namelen );
                     DefineLazyExtdef( sym, assocsym, isweak );
                     newnode->isweak = TRUE;
                 }

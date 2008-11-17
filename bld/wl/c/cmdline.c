@@ -207,9 +207,7 @@ void DoCmdFile( char *fname )
         file = SearchPath( namelnk );
     }
     if( file != NIL_HANDLE ) {
-        namelen = strlen( namelnk ) + 1;
-        _ChkAlloc( fname, namelen );
-        memcpy( fname, namelnk, namelen );
+        fname = ChkStrDup( namelnk );
         SetCommandFile( file, fname );
     }
     if( Spawn( DoCmdParse ) ) {
@@ -812,7 +810,7 @@ void AddLibPaths( char *name, unsigned len, bool add_to_front )
 
     _ChkAlloc( newpath, sizeof( path_entry ) + len );
     memcpy( newpath->name, name, len );
-    newpath->name[len] = '\0';
+    newpath->name[ len ] = '\0';
     if( add_to_front ) {
         newpath->next = LibPath;
         LibPath = newpath;
