@@ -39,14 +39,6 @@
 #include "cmd16m.h"
 #include "wlnkmsg.h"
 
-extern int          ProcOne( parse_entry *, sep_type, bool );
-extern bool         GetLong( unsigned_32 * );
-
-extern tok          Token;
-extern byte         Extension;
-
-extern parse_entry  Strategies[];
-extern parse_entry  TransTypes[];
 
 extern bool ProcMemory16M( void )
 /*******************************/
