@@ -74,7 +74,7 @@ typedef enum {
 
 typedef struct tok {
     char        *buff;
-    int         len;
+    unsigned    len;
     char        *next;
     char        *this;
     unsigned_16 line;
@@ -210,7 +210,7 @@ extern void             RestoreParser( void );
 extern void             NewCommandSource( char *, char *, method );
 extern void             SetCommandFile( f_handle, char * );
 extern void             EatWhite( void );
-extern char             *FileName( char *, int, file_defext, bool );
+extern char             *FileName( char *, unsigned, file_defext, bool );
 extern void             RestoreCmdLine( void );
 extern bool             IsSystemBlock( void );
 extern void             BurnUtils( void );

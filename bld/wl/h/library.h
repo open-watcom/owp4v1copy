@@ -36,6 +36,6 @@ extern mod_entry *      SearchLib( file_list *, char * );
 extern bool             DiscardDicts( void );
 extern void             BurnLibs( void );
 extern char *           GetARName( ar_header *, file_list * );
-extern unsigned long    GetARValue( char *, int );
+extern unsigned long    GetARValue( char *, unsigned );
 extern bool             LibFind( char *, bool );
 extern bool             ModNameCompare( char *, char * );

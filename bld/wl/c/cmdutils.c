@@ -365,16 +365,7 @@ char *tostring( void )
 /****************************/
 // make the current token into a C string.
 {
-    char            *src;
-    int             len;
-    char            *str;
-
-    src = Token.this;
-    len = Token.len;
-    _ChkAlloc( str, len + 1 );
-    memcpy( str, src, len );
-    str[ len ] = '\0';
-    return( str );
+    return( ChkToString( Token.this, Token.len ) );
 }
 
 char *totext( void )
@@ -417,9 +408,7 @@ static void ExpandEnvVariable( void )
             memcpy( buff + envlen, Token.this, Token.len );
             buff[ Token.len + envlen ] = '\0';
         } else {
-            _ChkAlloc( buff, envlen + 1 );
-            memcpy( buff, env, envlen );
-            buff[ envlen ] = '\0';
+            buff = ChkToString( env, envlen );
         }
         NewCommandSource( envname, buff, ENVIRONMENT );
     }
@@ -765,7 +754,6 @@ static void StartNewFile( void )
     char        *envstring;
     char        *buff;
     f_handle    file;
-    size_t      envlen;
 
     fname = FileName( Token.this, Token.len, E_COMMAND, FALSE );
     file = QObjOpen( fname );
@@ -774,10 +762,7 @@ static void StartNewFile( void )
         fname = tostring();
         envstring = GetEnvString( fname );
         if( envstring != NULL ) {
-            envlen = strlen( envstring );       // make a copy of envstring
-            _ChkAlloc( buff, envlen + 1 );      // so we can free it
-            memcpy( buff, envstring, envlen );
-            buff[ envlen ] = '\0';
+            buff = ChkStrDup( envstring );
             NewCommandSource( fname, buff, ENVIRONMENT );
         } else {
             LnkMsg( LOC+LINE+ERR+MSG_CANT_OPEN_NO_REASON, "s", fname );
@@ -1002,31 +987,33 @@ static bool MakeToken( tokcontrol ctrl, sep_type separator )
 }
 
 
-char *FileName( char *buff, int len, file_defext etype, bool force )
-/******************************************************************/
+char *FileName( char *buff, unsigned len, file_defext etype, bool force )
+/***********************************************************************/
 {
-    char    *namptr;
-    char    *namstart;
-    char    *ptr;
-    int     cnt;
-    int     namelen;
+    char        *namptr;
+    char        *namstart;
+    char        *ptr;
+    unsigned    cnt;
+    unsigned    namelen;
 
     namptr = buff + len;
     cnt = 0;
     while( cnt != len ) {
         cnt++;
         --namptr;
-        if( IS_PATH_SEP( *namptr ) ) break;
+        if( IS_PATH_SEP( *namptr ) ) {
+            break;
+        }
     }
     if( IS_PATH_SEP( *namptr ) ) {
         namptr++;
     }
     namstart = namptr;
-    cnt = len - ( (int) namptr - (int) buff );
+    cnt = len - ( namptr - buff );
     if( cnt == 0 ) {
         ptr = alloca( len + 1 );
         memcpy( ptr, buff, len );
-        ptr[len] = '\0';
+        ptr[ len ] = '\0';
         LnkMsg( LOC+LINE+FTL+MSG_INV_FILENAME, "s", ptr );
     }
     namelen = cnt;
@@ -1046,9 +1033,7 @@ char *FileName( char *buff, int len, file_defext etype, bool force )
         memcpy( ptr, buff, len );
         strcpy( ptr + len, DefExt[ etype ] );
     } else {
-        _ChkAlloc( ptr, len + 1 );
-        memcpy( ptr, buff, len );
-        ptr[ len ] = '\0';
+        ptr = ChkToString( buff, len );
     }
     return( ptr );
 }
@@ -1188,11 +1173,11 @@ section *NewSection( void )
 char *GetFileName( char **membname, bool setname )
 /********************************************************/
 {
-    char    *ptr;
-    int     namelen;
-    char    *objname;
-    char    *fullmemb;
-    int     memblen;
+    char        *ptr;
+    unsigned    namelen;
+    char        *objname;
+    char        *fullmemb;
+    unsigned    memblen;
 
     namelen = Token.len;
     objname = alloca( namelen );
@@ -1202,16 +1187,12 @@ char *GetFileName( char **membname, bool setname )
         memcpy( fullmemb, Token.this, Token.len );
         fullmemb[Token.len] = '\0';
         fullmemb = RemovePath( fullmemb, &memblen );
-        _ChkAlloc( *membname, memblen + 1 );
-        memcpy( *membname, fullmemb, memblen );
-        (*membname)[memblen] = '\0';
+        *membname = ChkToString( fullmemb, memblen );
         ptr = FileName( objname, namelen, E_LIBRARY, FALSE );
     } else {
         *membname = NULL;
         if( setname && Name == NULL ) {
-            _ChkAlloc( Name, namelen + 1 );
-            memcpy( Name, objname, namelen );
-            Name[ namelen ] = '\0';
+            Name = ChkToString( objname, namelen );
         }
         ptr = FileName( objname, namelen, E_OBJECT, FALSE );
     }

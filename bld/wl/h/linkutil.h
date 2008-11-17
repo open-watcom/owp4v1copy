@@ -35,7 +35,7 @@ extern void             LnkFatal( char * );
 extern void             ClearBit( byte *, unsigned );
 extern bool             TestBit( byte *, unsigned );
 extern char             *ChkStrDup( char * );
-extern void             *ChkMemDup( void *, unsigned );
+extern char             *ChkToString( void *, unsigned );
 extern seg_leader       *FindSegment( section *, char * );
 extern group_entry      *FindGroup( segment );
 extern offset           FindLinearAddr( targ_addr * );
@@ -51,7 +51,7 @@ extern f_handle         SearchPath( char * );
 extern name_list        *AddNameTable( char *, unsigned, bool, name_list ** );
 extern unsigned_16      binary_log( unsigned_16 );
 extern unsigned_16      blog_32( unsigned_32 );
-extern char             *RemovePath( char *, int * );
+extern char             *RemovePath( char *, unsigned * );
 extern void             WriteNulls( f_handle, unsigned_32, char * );
 extern void             VMemQSort( virt_mem, unsigned, unsigned,
                                     void (*swapfn)(virt_mem, virt_mem),

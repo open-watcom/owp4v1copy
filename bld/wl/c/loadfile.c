@@ -100,7 +100,7 @@ static void FlushImpBuffer( void );
 static void ExecWlib( void );
 static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
                          void *(*rtn)(void *, const void *, size_t) );
-static void BufImpWrite( char *buffer, int len );
+static void BufImpWrite( char *buffer, unsigned len );
 static void FlushBuffFile( outfilelist *outfile );
 
 void ResetLoadFile( void )
@@ -650,7 +650,7 @@ static void SetupImpLib( void )
 /*****************************/
 {
     char        *fname;
-    int         namelen;
+    unsigned    namelen;
 
     ImpLib.bufsize = 0;
     ImpLib.handle = NIL_HANDLE;
@@ -831,14 +831,14 @@ static void FlushImpBuffer( void )
     QWrite( ImpLib.handle, ImpLib.buffer, ImpLib.bufsize, ImpLib.fname );
 }
 
-static void BufImpWrite( char *buffer, int len )
-/**********************************************/
+static void BufImpWrite( char *buffer, unsigned len )
+/***************************************************/
 {
-    int     diff;
+    unsigned    diff;
 
-    diff = ImpLib.bufsize + len - IMPLIB_BUFSIZE;
-    if( diff >= 0 ) {
-        memcpy( ImpLib.buffer + ImpLib.bufsize , buffer, len - diff );
+    if( ImpLib.bufsize + len >= IMPLIB_BUFSIZE ) {
+        diff = ImpLib.bufsize + len - IMPLIB_BUFSIZE;
+        memcpy( ImpLib.buffer + ImpLib.bufsize , buffer, IMPLIB_BUFSIZE - ImpLib.bufsize );
         ImpLib.bufsize = IMPLIB_BUFSIZE;
         FlushImpBuffer();
         ImpLib.bufsize = diff;

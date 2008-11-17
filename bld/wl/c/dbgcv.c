@@ -756,8 +756,8 @@ void CVWriteDebugTypeMisc( const char *filename )
 // called during load file generation.  It is assumed that the loadfile is
 // positioned to the right spot.
 {
-    int                     namelen;
-    int                     bufspace;
+    unsigned                namelen;
+    unsigned                bufspace;
     debug_misc_dbgdata      dbg_exename;
 
     memset( &dbg_exename, 0, sizeof( dbg_exename ) );
@@ -766,7 +766,7 @@ void CVWriteDebugTypeMisc( const char *filename )
     dbg_exename.unicode = 0;
 
     if( filename ) {
-        namelen = strlen( filename ) +1;
+        namelen = strlen( filename ) + 1;
         bufspace = sizeof( dbg_exename.data ) - 4;
         if( bufspace >= namelen ) {
             memcpy( dbg_exename.data, filename, namelen );

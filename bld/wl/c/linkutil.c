@@ -200,7 +200,7 @@ void ClearBit( byte *array, unsigned num )
 }
 
 char *ChkStrDup( char *str )
-/***********************************/
+/**************************/
 {
     size_t      len;
     char        *copy;
@@ -211,14 +211,15 @@ char *ChkStrDup( char *str )
     return( copy );
 }
 
-void *ChkMemDup( void *mem, unsigned len  )
-/**************************************************/
+char *ChkToString( void *mem, unsigned len )
+/******************************************/
 {
-    char        *copy;
+    char        *str;
 
-    _ChkAlloc( copy, len  );
-    memcpy( copy, mem, len );
-    return( copy );
+    _ChkAlloc( str, len + 1 );
+    memcpy( str, mem, len );
+    str[ len ] = '\0';
+    return( str );
 }
 
 static void WalkList( node *list, void (*fn)( void * ) )
@@ -391,7 +392,7 @@ unsigned_16 blog_32( unsigned_32 value )
     return( log );
 }
 
-char *RemovePath( char *name, int *len )
+char *RemovePath( char *name, unsigned *len )
 /**********************************************/
 /* parse name as a filename, "removing" the path and the extension */
 /* returns a pointer to the "base" of the filename, and a length without

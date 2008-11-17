@@ -215,7 +215,7 @@ void ProcComdef( bool isstatic )
         if( kind == COMDEF_FAR ) {
             size *= GetLeaf();
         }
-        sym = SymXOp( flags, sym_name, sym_len );
+        sym = SymOp( flags, sym_name, sym_len );
         sym = MakeCommunalSym( sym, size, kind == COMDEF_FAR, is32bit );
         ext = AllocNode( ExtNodes );
         ext->entry = sym;
@@ -413,7 +413,7 @@ void ProcComdat( void )
     segnode *           seg;
     list_of_names *     symname;
     symbol *            sym;
-    int                 namelen;
+    unsigned            namelen;
     unsigned            attr;
     unsigned            flags;
     unsigned            align;

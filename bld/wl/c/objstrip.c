@@ -146,14 +146,14 @@ void DataRef( symbol * sym )
 /* symbol referenced from data, so make sure it is included */
 {
     if( IS_PPC_PE ) {
-        int len = strlen(sym->name) + 3;
-        char *s = alloca(len);
+        unsigned    len = strlen( sym->name ) + 3;
+        char        *s = alloca( len );
 
-        s[0] = s[1] = '.';
-        strcpy(s+2, sym->name);
-        sym = SymOp( ST_FIND, s, len-1 );
+        s[ 0 ] = s[ 1 ] = '.';
+        strcpy( s + 2, sym->name );
+        sym = SymOp( ST_FIND, s, len - 1 );
     }
-    if( sym->info & SYM_DEFINED && !IS_SYM_IMPORTED(sym) ) {
+    if( sym->info & SYM_DEFINED && !IS_SYM_IMPORTED( sym ) ) {
         RefSeg( sym->p.seg );
     }
     sym->info |= SYM_DCE_REF;

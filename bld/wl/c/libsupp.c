@@ -117,9 +117,9 @@ bool ModNameCompare( char *tname, char *membname )
 /*******************************************************/
 // check if a THEADR record name is equal to a library member name
 {
-    int     lentheadr;
-    int     lenmember;
-    char *  namestart;
+    unsigned    lentheadr;
+    unsigned    lenmember;
+    char        *namestart;
 
     namestart = RemovePath( tname, &lentheadr );
     lenmember = strlen( membname );

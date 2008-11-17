@@ -196,11 +196,11 @@ void WriteElfSymTable( ElfSymTable *tab, ElfHdr *hdr, int hashidx,
 {
     int         i;
     long        off;
-    int         len;
+    unsigned    len;
     Elf32_Sym   elfsym;
-    Elf32_Shdr *hashSH;
-    Elf32_Shdr *tableSH;
-    symbol *    sym;
+    Elf32_Shdr  *hashSH;
+    Elf32_Shdr  *tableSH;
+    symbol      *sym;
 
     hashSH = hdr->sh + hashidx;
     tableSH = hdr->sh + symtabidx;

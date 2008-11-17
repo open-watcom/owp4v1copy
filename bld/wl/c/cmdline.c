@@ -257,14 +257,14 @@ void DoCmdFile( char *fname )
     namelen = strlen( Name );
     if( MapFlags & MAP_FLAG ) {
         if( MapFName == NULL ) {
-            MapFName = FileName( Name, (int) namelen, E_MAP, TRUE );
+            MapFName = FileName( Name, namelen, E_MAP, TRUE );
         }
     } else {
         MapFlags = 0;   // if main isn't set, don't set anything.
     }
     if( SymFileName == NULL && (CmdFlags & CF_SEPARATE_SYM ||
                    (LinkFlags & OLD_DBI_FLAG && FmtData.type & MK_COM)) ) {
-        SymFileName = FileName( Name, (int) namelen, E_SYM, TRUE );
+        SymFileName = FileName( Name, namelen, E_SYM, TRUE );
     }
     if( FmtData.make_implib && FmtData.implibname == NULL ) {
         if( FmtData.make_impfile ) {
@@ -272,7 +272,7 @@ void DoCmdFile( char *fname )
         } else {
             extension = E_LIBRARY;
         }
-        FmtData.implibname = FileName( Name, (int) namelen, extension, TRUE );
+        FmtData.implibname = FileName( Name, namelen, extension, TRUE );
     }
     CheckTraces();
     BurnUtils();
@@ -629,7 +629,7 @@ void SetFormat( void )
     if( CmdFlags & CF_NO_EXTENSION ) {
         fname = Name;
     } else {
-        int const len = (int) strlen(Name);
+        unsigned    len = strlen( Name );
 
         if( FmtData.output_hex ) {  // override default extension if hex or raw (bin)
             Extension = E_HEX;       //   has been specified
@@ -786,13 +786,14 @@ void FreeFormatStuff( void )
     if( check->free_func != NULL ) check->free_func();
 }
 
-void AddCommentLib( char *ptr, int len, lib_priority priority )
+void AddCommentLib( char *ptr, unsigned len, lib_priority priority )
 /*********************************************************************/
 //  Add a library from a comment record.
 {
     file_list   *result;
 
-    if( CmdFlags & CF_NO_DEF_LIBS ) return;
+    if( CmdFlags & CF_NO_DEF_LIBS )
+        return;
     ptr = FileName( ptr, len, E_LIBRARY, FALSE );
     result = AddObjLib( ptr, priority );
     CheckLibTrace( result );
@@ -803,14 +804,14 @@ void AddCommentLib( char *ptr, int len, lib_priority priority )
 // we don't need these next two when under workframe
 #ifndef APP
 
-void AddLibPaths( char *name, int len, bool add_to_front )
+void AddLibPaths( char *name, unsigned len, bool add_to_front )
 /***************************************************************/
 {
     path_entry         *newpath;
     file_list const    *libfiles;
 
-    _ChkAlloc( newpath, sizeof( path_entry ) + (size_t) len );
-    memcpy( newpath->name, name, (size_t) len );
+    _ChkAlloc( newpath, sizeof( path_entry ) + len );
+    memcpy( newpath->name, name, len );
     newpath->name[len] = '\0';
     if( add_to_front ) {
         newpath->next = LibPath;
@@ -836,10 +837,11 @@ void AddEnvPaths( char *envname )
 /**************************************/
 {
     char * const        val = GetEnvString( envname );
-    int                 len;
+    unsigned            len;
 
-    if( val == NULL ) return;
-    len = (int) strlen( val );
+    if( val == NULL )
+        return;
+    len = strlen( val );
     AddLibPaths( val, len, FALSE );
 }
 

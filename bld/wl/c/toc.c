@@ -226,7 +226,7 @@ void PrepareToc( void )
         #endif
     }
     if( TocSym != NULL)  {
-        TocSym->info |= SYM_DCE_REF|SYM_DEFINED;
+        TocSym->info |= SYM_DCE_REF | SYM_DEFINED;
         SetAddPubSym( TocSym, SYM_REGULAR, FakeModule, 0, 0 );
         if( LinkFlags & STRIP_CODE ) {
             CleanStripInfo( TocSym );

@@ -626,7 +626,7 @@ static unsigned_16 OMFCompName( const char *name,
 /*************************************************************************/
 /* Compare name. */
 {
-    int         len;
+    unsigned    len;
     unsigned_16 off;
     unsigned_16 returnval;
     size_t      result;
@@ -694,14 +694,15 @@ static bool ARSearchExtLib( file_list *lib, char *name, unsigned long *off )
 char *GetARName( ar_header *header, file_list *list )
 /**********************************************************/
 {
-    char *              buf;
-    char *              name;
-    unsigned long       len;
+    char            *buf;
+    char            *name;
+    unsigned long   size;
+    unsigned        len;
 
     name = NULL;
     if( header->name[0] == '/' ) {
-        len = GetARValue( &header->name[1], AR_NAME_LEN - 1 );
-        buf = list->strtab + len;
+        size = GetARValue( &header->name[1], AR_NAME_LEN - 1 );
+        buf = list->strtab + size;
         len = strlen( buf );
     } else {
         buf = memchr( header->name, '/', AR_NAME_LEN );
@@ -713,14 +714,12 @@ char *GetARName( ar_header *header, file_list *list )
         buf = header->name;
     }
     if( len > 0 ) {
-        _ChkAlloc( name, len + 1 );
-        memcpy( name, buf, len );
-        name[len] = '\0';
+        name = ChkToString( buf, len );
     }
     return( name );
 }
 
-unsigned long GetARValue( char *str, int max )
+unsigned long GetARValue( char *str, unsigned max )
 /***************************************************/
 // get a numeric value from an ar_header
 {

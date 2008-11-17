@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include "linkstd.h"
 #include "alloc.h"
+#include "walloca.h"
 #include "command.h"
 #include "cmdos2.h"
 #include "exeos2.h"
@@ -89,16 +90,61 @@ bool ProcOS2Segment( void )
     return( ProcArgList( &getsegflags, TOK_INCLUDE_DOT ) );
 }
 
+static entry_export *ProcWlibDLLImportEntry( void )
+{
+    unsigned_16     ordinal;
+    entry_export    *exp;
+    length_name     symname;
+    length_name     internal;
+
+    symname.len = Token.len;
+    symname.name = alloca( Token.len + 1 );
+    memcpy( symname.name, Token.this, Token.len );
+    symname.name[ Token.len ] = '\0';
+    if( !GetToken( SEP_DOT_EXT, 0 ) ) {
+        return( NULL );
+    }
+    internal.name = NULL;
+    ordinal = 0;
+    if( GetToken( SEP_DOT_EXT, 0 ) ) {
+        if( getatoi( &ordinal ) != ST_IS_ORDINAL ) {
+            if( Token.len > 0 ) {
+                internal = symname;
+                symname.len = Token.len;
+                symname.name = alloca( Token.len + 1 );
+                memcpy( symname.name, Token.this, Token.len );
+                symname.name[ Token.len ] = '\0';
+            }
+            if( GetToken( SEP_DOT_EXT, 0 )
+                && getatoi( &ordinal ) != ST_IS_ORDINAL ) {
+                if( GetToken( SEP_DOT_EXT, 0 ) ) {
+                    getatoi( &ordinal );
+                }
+            }
+        }
+    }
+    exp = AllocExport( symname.name, symname.len );
+    exp->isanonymous = (CmdFlags & CF_ANON_EXPORT) != 0;
+    if( internal.name != NULL ) {
+        exp->sym = SymOp( ST_CREATE | ST_REFERENCE, internal.name, internal.len );
+    } else {
+        exp->sym = SymOp( ST_CREATE | ST_REFERENCE, symname.name, symname.len );
+    }
+    exp->sym->info |= SYM_DCE_REF;      // make sure it isn't removed
+    exp->ordinal = ordinal;
+    if( ordinal == 0 ) {
+        exp->isresident = TRUE;   // no ord spec'd so must be resident
+    }
+    return( exp );
+}
+
 static bool GetWlibImports( void )
 /********************************/
 /* read in a wlib command file, get the import directives, and treat them
  * as exports (hey man, GO asked for it ...... ) */
 {
     char            *fname;
-    char            *symname;
-    char            *internal;
     f_handle        handle;
-    unsigned_16     ordinal;
     entry_export    *exp;
 
     fname = FileName( Token.this, Token.len, E_LBC, FALSE );
@@ -106,7 +152,8 @@ static bool GetWlibImports( void )
     SetCommandFile( handle, fname );
     Token.locked = TRUE;      /* make sure only this file parsed */
     while( GetToken( SEP_SPACE, 0 ) ) {
-        if( Token.len <= 2 ) continue;
+        if( Token.len <= 2 )
+            continue;
         if( (Token.this[0] == '+') && (Token.this[1] == '+') ) {
             Token.this += 2;
             Token.len -= 2;
@@ -118,41 +165,11 @@ static bool GetWlibImports( void )
                     return( TRUE );
                 }
             }
-            symname = tostring();
-            internal = NULL;
-            if( !GetToken( SEP_DOT_EXT, 0 ) ) {
+            exp = ProcWlibDLLImportEntry();
+            if( exp == NULL ) {
                 LnkMsg( LOC+LINE+ERR+MSG_BAD_WLIB_IMPORT, NULL );
-                _LnkFree( symname );
                 RestoreCmdLine();       /* get rid of this file */
                 return( TRUE );
-            }
-            ordinal = 0;
-            if( GetToken( SEP_DOT_EXT, 0 ) ) {
-                if( getatoi( &ordinal ) != ST_IS_ORDINAL ) {
-                    if( Token.len > 0 ) {
-                        internal = symname;
-                        symname = tostring();
-                    }
-                    if( GetToken( SEP_DOT_EXT, 0 )
-                        && getatoi( &ordinal ) != ST_IS_ORDINAL ) {
-                        if( GetToken( SEP_DOT_EXT, 0 ) ) {
-                            getatoi( &ordinal );
-                        }
-                    }
-                }
-            }
-            exp = AllocExport( symname, strlen(symname) );
-            exp->isanonymous = (CmdFlags & CF_ANON_EXPORT) != 0;
-            if( internal != NULL ) {
-                exp->sym = RefISymbol( internal );
-                _LnkFree( internal );
-            } else {
-                exp->sym = RefISymbol( symname );
-            }
-            exp->sym->info |= SYM_DCE_REF;      // make sure it isn't removed
-            exp->ordinal = ordinal;
-            if( ordinal == 0 ) {
-                exp->isresident = TRUE;   // no ord spec'd so must be resident
             }
             AddToExportList( exp );
         }
@@ -223,7 +240,7 @@ static bool getexport( void )
         }
     }
     if( GetToken( SEP_EQUALS, TOK_INCLUDE_DOT ) ) {
-        exp->sym = SymXOp( ST_CREATE|ST_REFERENCE, Token.this, Token.len );
+        exp->sym = SymOp( ST_CREATE | ST_REFERENCE, Token.this, Token.len );
         if( GetToken( SEP_EQUALS, TOK_INCLUDE_DOT ) ) {
             exp->impname = tostring();
         }

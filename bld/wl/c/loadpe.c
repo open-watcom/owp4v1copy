@@ -549,7 +549,7 @@ static void WriteExportInfo( pe_header *header, pe_object *object )
     unsigned long       size;
     pe_export_directory dir;
     char                *name;
-    int                 namelen;
+    unsigned            namelen;
     entry_export        **sort;
     entry_export        *exp;
     unsigned            i;

@@ -439,8 +439,8 @@ void ODBIAddrSectStart( section *sect )
     AllocDBIClasses( sect->classlist );
 }
 
-static void DoName( char *cname, char *intelname, int len )
-/*********************************************************/
+static void DoName( char *cname, char *intelname, unsigned len )
+/**************************************************************/
 {
     intelname[ 0 ] = len;
     memcpy( &intelname[ 1 ], cname, len );
@@ -449,8 +449,8 @@ static void DoName( char *cname, char *intelname, int len )
 void ODBIGenGlobal( symbol *sym, section *sect )
 /******************************************************/
 {
-    int         len;
-    int         entrylen;
+    unsigned    len;
+    unsigned    entrylen;
     gblinfo     *data;
     char        *name;
     debug_info  *dptr;
@@ -773,7 +773,7 @@ void ODBIGenModule( void )
 {
     odbimodinfo         *rec;
     modinfo             *info;
-    int                 len;
+    unsigned            len;
     char                *name;
     debug_info          *dptr;
 

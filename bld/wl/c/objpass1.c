@@ -1205,7 +1205,7 @@ void HandleImport( length_name *intname, length_name *modname,
 {
     symbol      *sym;
 
-    sym = SymXOp( ST_CREATE, intname->name, intname->len );
+    sym = SymOp( ST_CREATE, intname->name, intname->len );
     if( !(sym->info & SYM_DEFINED) ) {
         if( CurrMod != NULL ) {
             Ring2Append( &CurrMod->publist, sym );
@@ -1225,19 +1225,25 @@ void HandleImport( length_name *intname, length_name *modname,
     }
 }
 
+static void ExportSymbol( length_name *expname )
+/**********************************************/
+{
+    symbol      *sym;
+
+    sym = SymOp( ST_CREATE | ST_REFERENCE, expname->name, expname->len );
+    sym->info |= SYM_EXPORTED;
+    AddNameTable( expname->name, expname->len, TRUE, &FmtData.u.nov.exp.export);
+}
+
 void HandleExport( length_name *expname, length_name *intname,
                           unsigned flags, unsigned ordinal )
 /*******************************************************************/
 {
-    symbol      *sym;
-
     if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         MSExportKeyword( expname, intname, flags, ordinal );
-        return;
+    } else {
+        ExportSymbol( expname );
     }
-    sym = SymXOp( ST_REFERENCE | ST_CREATE, expname->name, expname->len );
-    sym->info |= SYM_EXPORTED;
-    AddNameTable( expname->name, expname->len, TRUE, &FmtData.u.nov.exp.export);
 }
 
 bool CheckVFList( symbol *sym )

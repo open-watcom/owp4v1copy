@@ -219,7 +219,7 @@ static bool AddAlias( void )
 /* add an individual alias */
 {
     char        *name;
-    int         namelen;
+    unsigned    namelen;
 
     namelen = Token.len;
     name = alloca( namelen );
@@ -227,7 +227,7 @@ static bool AddAlias( void )
     if( !GetToken( SEP_EQUALS, TOK_INCLUDE_DOT ) ) {
         return( FALSE );
     }
-    MakeSymAlias( name, namelen, tostring(), Token.len );
+    MakeSymAlias( name, namelen, Token.this, Token.len );
     return( TRUE );
 }
 
@@ -242,7 +242,7 @@ static bool AddReference( void )
 {
     symbol      *sym;
 
-    sym = SymXOp( ST_REFERENCE | ST_CREATE, Token.this, Token.len );
+    sym = SymOp( ST_CREATE | ST_REFERENCE, Token.this, Token.len );
     sym->info |= SYM_DCE_REF;           /* make sure it stays around */
     return( TRUE );
 }
@@ -1233,7 +1233,7 @@ static bool AddSymTrace( void )
 {
     symbol      *sym;
 
-    sym = SymXOp( ST_REFERENCE | ST_CREATE, Token.this, Token.len );
+    sym = SymOp( ST_CREATE | ST_REFERENCE, Token.this, Token.len );
     sym->info |= SYM_TRACE;
     return( TRUE );
 }

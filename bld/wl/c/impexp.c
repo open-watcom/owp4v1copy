@@ -233,9 +233,9 @@ void MSExportKeyword( length_name *expname, length_name *intname,
     exp->iopl_words = flags & EXPDEF_IOPLMASK;
     exp->isresident = (flags & EXPDEF_RESIDENT) != 0;
     if( intname->len != 0 ) {
-        exp->sym = SymXOp( ST_CREATE|ST_REFERENCE, intname->name, intname->len);
+        exp->sym = SymOp( ST_CREATE | ST_REFERENCE, intname->name, intname->len);
     } else {
-        exp->sym = SymXOp( ST_CREATE|ST_REFERENCE, expname->name, expname->len);
+        exp->sym = SymOp( ST_CREATE | ST_REFERENCE, expname->name, expname->len);
     }
     if( LinkFlags & STRIP_CODE ) {
         DataRef( exp->sym );    // make sure it isn't removed.
@@ -284,7 +284,7 @@ static symbol * GetIATSym( symbol *sym )
     memcpy( iatname + prefixlen, name, namelen );
     prefixlen += namelen;
     iatname[prefixlen] = '\0';
-    return SymOp( ST_CREATE, iatname, prefixlen );
+    return( SymOp( ST_CREATE, iatname, prefixlen ) );
 }
 
 void MSImportKeyword( symbol *sym, length_name *modname,

@@ -461,7 +461,7 @@ unsigned long ResNonResNameTable( bool dores )
 /* NOTE: this routine assumes INTEL byte ordering (in the use of namelen) */
 {
     entry_export    *exp;
-    int             namelen;
+    unsigned        namelen;
     unsigned long   size;
     char            *name;
 

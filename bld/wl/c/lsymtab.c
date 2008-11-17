@@ -62,18 +62,18 @@
 
 int             (*CmpRtn)( const void *, const void *, size_t );
 unsigned        NameLen;
-symbol *        LastSym;
+symbol          *LastSym;
 
-static  symbol *        SymList = NULL;
+static  symbol  *SymList = NULL;
 
 // not a static array to save space for watfor
 
-static symbol **    GlobalSymPtrs;
-static symbol **    StaticSymPtrs;
+static symbol   **GlobalSymPtrs;
+static symbol   **StaticSymPtrs;
 
-static unsigned GlobalHashFn( char *, int );
-static unsigned StaticHashFn( char *, int );
-static void     SetSymAlias( symbol * sym, char *target, int targetlen );
+static unsigned GlobalHashFn( char *, unsigned );
+static unsigned StaticHashFn( char *, unsigned );
+static void     SetSymAlias( symbol *sym, char *target, unsigned targetlen );
 
 static const unsigned ScatterTable[] = {
 #ifdef __386__
@@ -623,7 +623,7 @@ static void DumpTable( symbol **table, unsigned tabsize )
     unsigned    val;
     unsigned_32 numsyms;
     unsigned    index;
-    symbol *    sym;
+    symbol      *sym;
 
     numsyms = 0;
     min = 0xFFFF;
@@ -634,10 +634,8 @@ static void DumpTable( symbol **table, unsigned tabsize )
             mask |= DBG_NOCRLF;
         }
         val = 0;
-        sym = table[index];
-        while( sym != 0 ) {
+        for( sym = table[ index ]; sym != NULL; sym = sym->hash ) {
             val++;
-            sym = sym->hash;
         }
         DEBUG(( mask, "%x ", val ));
         if( val > max ) {
@@ -794,14 +792,13 @@ void SymModEnd( void )
             sym = sym->link;
         }
     }
-    while( sym != NULL ) {
+    for( ; sym != NULL; sym = sym->link ) {
         sym->info &= ~SYM_IN_CURRENT;
         sym->info |= SYM_OLDHAT;
         if( sym->info & SYM_REFERENCED && sym->info & SYM_DEFINED ) {
             sym->info &= ~SYM_REFERENCED;
             sym->info |= SYM_LOCAL_REF;
         }
-        sym = sym->link;
     }
     SymList = NULL;
 }
@@ -830,14 +827,14 @@ void ClearSymUnion( symbol * sym )
     }
 }
 
-symbol * RefISymbol( char *name )
-/**************************************/
+symbol *RefISymbol( char *name )
+/******************************/
 {
-    return SymOp( ST_CREATE | ST_REFERENCE, name, strlen( name ) );
+    return( SymOp( ST_CREATE | ST_REFERENCE, name, strlen( name ) ) );
 }
 
-symbol * DefISymbol( char * name )
-/***************************************/
+symbol *DefISymbol( char * name )
+/*******************************/
 {
     symbol * sym;
 
@@ -849,43 +846,26 @@ symbol * DefISymbol( char * name )
     return sym;
 }
 
-symbol * FindISymbol( char *name )
-/***************************************/
+symbol *FindISymbol( char *name )
+/*******************************/
 {
-    return SymOp( ST_FIND | ST_REFERENCE, name, strlen( name ) );
+    return( SymOp( ST_FIND | ST_REFERENCE, name, strlen( name ) ) );
 }
 
-symbol * SymXOp( sym_flags op, char *name, int length )
-/************************************************************/
+symbol *SymOpNWPfx( sym_flags op, char *name, unsigned length, char * prefix, unsigned prefixLen )
+/************************************************************************************************/
 {
-    char *  symname;
-
-    symname = alloca( length + 1 );
-    if( symname == NULL ) {
-        name[length - 1] = '\0';
-        LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", name );
-        symname = name;
-    } else {
-        memcpy( symname, name, length );
-        symname[ length ] = '\0';
-    }
-    return( SymOp( op, symname, length ) );
-}
-
-symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix, int prefixLen)
-/***************************************************************************************/
-{
-    symbol * retsym = SymXOp(op, name, length);
+    symbol  *retsym = SymOp( op, name, length );
 
     if( NULL == retsym )
-        return NULL;
+        return( NULL );
 
     if( ( NULL != prefix ) && ( 0 != prefixLen ) || ( NULL != CmdFile->symprefix ) ) {
-        char * pfxname = alloca(255+1); /* max len of PString - used to be prefixLen+1 */
+        char    *pfxname = alloca( 255 + 1 );   /* max len of PString - used to be prefixLen+1 */
 
         if( NULL == pfxname ) {
             LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", prefix );
-            return NULL;
+            return( NULL );
         }
 
         if( prefix ) {
@@ -897,103 +877,109 @@ symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix, int p
 
         if( NULL == (retsym->prefix = AddStringStringTable( &PrefixStrings, pfxname )) ) {
             LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
-            return NULL;
+            return( NULL );
         }
     }
-    return retsym;
+    return( retsym );
 }
 
-void MakeSymAlias( char *name, int namelen, char *target, int targetlen )
-/******************************************************************************/
+void MakeSymAlias( char *name, unsigned namelen, char *target, unsigned targetlen )
+/*********************************************************************************/
 /* make a symbol table alias */
 {
-    symbol *    sym;
+    symbol      *sym;
+    symbol      *targ;
 
     if( namelen == targetlen && (*CmpRtn)( name, target, namelen ) == 0 ) {
-        LnkMsg( WRN+MSG_CIRCULAR_ALIAS_FOUND, "s", target );
-        _LnkFree( target );
+        char    *buff;
+
+        buff = alloca( targetlen + 1 );
+        memcpy( buff, target, targetlen );
+        buff[ targetlen ] = '\0';
+        LnkMsg( WRN+MSG_CIRCULAR_ALIAS_FOUND, "s", buff );
         return;                 // <--------- NOTE: premature return!!!!
     }
-    sym = SymXOp( ST_CREATE | ST_NOALIAS, name, namelen );
+    sym = SymOp( ST_CREATE | ST_NOALIAS, name, namelen );
     if( IS_SYM_ALIAS( sym ) ) {
         LnkMsg( WRN+MSG_MULTIPLE_ALIASES, "S", sym );
         if( sym->info & SYM_FREE_ALIAS ) {
             _LnkFree( sym->p.alias );
         }
     } else if( sym->info & SYM_DEFINED ) {
-        _LnkFree( target );
         return;                 // <--------- NOTE: premature return!!!!
     }
     sym->info |= SYM_FREE_ALIAS;
-    SetSymAlias( sym, target, targetlen );
 /*
  * need to defined aliased symbol as well, so aliases in .obj files can be
  * hauled in from libraries
 */
-    SymOp( ST_CREATE, target, targetlen );
+    targ = SymOp( ST_CREATE, target, targetlen );
+    SetSymAlias( sym, targ->name, targetlen );
 }
 
-void WeldSyms( symbol * src, symbol * targ )
-/*************************************************/
+void WeldSyms( symbol *src, symbol *targ )
+/****************************************/
 /* make all references to src refer to targ. (alias src to targ) */
 {
     if( targ != NULL ) {
-        SetSymAlias( src, targ->name, strlen(targ->name) );
+        SetSymAlias( src, targ->name, strlen( targ->name ) );
     }
 }
 
-static void SetSymAlias( symbol * sym, char *target, int targetlen )
-/******************************************************************/
+static void SetSymAlias( symbol *sym, char *target, unsigned targetlen )
+/**********************************************************************/
 {
     SET_SYM_TYPE( sym, SYM_ALIAS );
-    sym->p.alias = target;
+    sym->p.alias = ChkToString( target, targetlen );
     sym->u.aliaslen = targetlen;
     sym->info |= SYM_DEFINED;           /* an alias can't be undefined */
     sym->info &= ~SYM_WAS_LAZY;
 }
 
-static symbol * GlobalSearchSym( char *symname, int hash, int len )
-/*****************************************************************/
+static symbol *GlobalSearchSym( char *symname, unsigned hash, unsigned len )
+/**************************************************************************/
 /* search through the given chain for the given name */
 {
-    symbol *    sym;
+    symbol      *sym;
 
-    sym = GlobalSymPtrs[ hash ];
-    while( sym != NULL ) {
-        if( len == sym->namelen_cmp ) {
-            if( (*CmpRtn)( symname, sym->name, len ) == 0 )
-                break;
+    for( sym = GlobalSymPtrs[ hash ]; sym != NULL; sym = sym->hash ) {
+        if( len == sym->namelen_cmp && (*CmpRtn)( symname, sym->name, len ) == 0 ) {
+            break;
         }
-        sym = sym->hash;
     }
     return( sym );
 }
 
-static symbol * StaticSearchSym( char *symname, unsigned hash, int len )
-/**********************************************************************/
+static symbol *StaticSearchSym( char *symname, unsigned hash, unsigned len )
+/**************************************************************************/
 /* search through the given chain for the given name */
 {
-    symbol *    sym;
+    symbol      *sym;
 
-    sym = StaticSymPtrs[ hash ];
-    while( sym != NULL ) {
-        if( sym->info & SYM_IN_CURRENT && len == sym->namelen_cmp ) {
-            if( memcmp( symname, sym->name, len ) == 0 )
+    for( sym = StaticSymPtrs[ hash ]; sym != NULL; sym = sym->hash ) {
+        if( sym->info & SYM_IN_CURRENT ) {
+            if( len == sym->namelen_cmp && memcmp( symname, sym->name, len ) == 0 ) {
                 break;
+            }
         }
-        sym = sym->hash;
     }
     return( sym );
 }
 
-static symbol * DoSymOp( byte op, char *symname, int length )
-/***********************************************************/
+static symbol *DoSymOp( sym_flags op, char *symname, unsigned length )
+/********************************************************************/
 {
     unsigned    hash;
-    symbol *    sym;
-    int         searchlen;
+    symbol      *sym;
+    unsigned    searchlen;
+#ifdef _INT_DEBUG
+    char        *symname_dbg;
 
-    DEBUG(( DBG_OLD, "SymOp( %d, %s, %d )", op, symname, length ));
+    symname_dbg = alloca( length + 1 );
+    memcpy( symname_dbg, symname, length );
+    symname_dbg[ length ] = '\0';
+#endif
+    DEBUG(( DBG_OLD, "SymOp( %d, %s, %d )", op, symname_dbg, length ));
     if( NameLen != 0 && NameLen < length ) {
         searchlen = NameLen;
     } else {
@@ -1008,7 +994,7 @@ static symbol * DoSymOp( byte op, char *symname, int length )
     }
     DEBUG(( DBG_OLD, "- hash %d", hash ));
     if( sym != NULL ) {
-        DEBUG(( DBG_OLD, "found symbol %s", symname ));
+        DEBUG(( DBG_OLD, "found symbol %s", symname_dbg ));
         DEBUG(( DBG_OLD, " - handle = %h", sym ));
         return( sym );
     }
@@ -1025,25 +1011,26 @@ static symbol * DoSymOp( byte op, char *symname, int length )
             sym->hash = GlobalSymPtrs[hash];
             GlobalSymPtrs[hash] = sym;
         }
-        DEBUG((DBG_OLD, "added symbol %s", symname ));
+        DEBUG((DBG_OLD, "added symbol %s", symname_dbg ));
     }
     return( sym );
 }
 
-symbol * UnaliasSym( sym_flags op, symbol *sym )
+symbol *UnaliasSym( sym_flags op, symbol *sym )
 /*****************************************************/
 {
     symbol *orig_sym = sym;
     while( sym != NULL && IS_SYM_ALIAS(sym) ) {
         sym = DoSymOp( op, sym->p.alias, sym->u.aliaslen );
         /* circular ref, may be a weak symbol ! */
-        if( sym == orig_sym )
+        if( sym == orig_sym ) {
             break;
+        }
     }
-    return sym;
+    return( sym );
 }
 
-symbol * SymOp( sym_flags op, char *symname, int length )
+symbol *SymOp( sym_flags op, char *symname, unsigned length )
 /**************************************************************/
 /* search for symbols, handling aliases */
 {
@@ -1065,35 +1052,35 @@ symbol * SymOp( sym_flags op, char *symname, int length )
             sym->info |= SYM_REFERENCED;
         }
     }
-    return sym;
+    return( sym );
 }
 
-static unsigned StaticHashFn( char *name, int len )
-/*************************************************/
+static unsigned StaticHashFn( char *name, unsigned len )
+/******************************************************/
 {
     unsigned    value;
     unsigned    modval;
 
     modval = CurrMod->modtime;
-    value = ScatterTable[modval & 0xff];
+    value = ScatterTable[ modval & 0xff ];
     modval >>= 8;
-    value = value ^ ScatterTable[modval & 0xff];
+    value = value ^ ScatterTable[ modval & 0xff ];
     while( len > 0 ) {
-        value = (value << 1) ^ ScatterTable[(unsigned char)*name];
+        value = (value << 1) ^ ScatterTable[ *(unsigned char *)name ];
         ++name;
         len--;
     }
     return( value % STATIC_TABSIZE );
 }
 
-static unsigned GlobalHashFn( char *name, int len )
-/*************************************************/
+static unsigned GlobalHashFn( char *name, unsigned len )
+/******************************************************/
 {
     unsigned    value;
 
     value = 0;
     while( len > 0 ) {
-        value = (value << 1) ^ ScatterTable[*name | 0x20];
+        value = (value << 1) ^ ScatterTable[ *(unsigned char *)name | 0x20 ];
         ++name;
         len--;
     }
@@ -1104,26 +1091,17 @@ void ReportMultiple( symbol *sym, char *name, unsigned len )
 /*****************************************************************/
 /* report a multiply-defined symbol */
 {
-    char *      symname;
     unsigned    lev;
 
-    symname = alloca( len + 1 );
-    if( symname == NULL ) {
-        name[len - 1] = '\0';
-        LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", name );
+    if( LinkFlags & REDEFS_OK ) {
+        lev = WRN;
     } else {
-        memcpy( symname, name, len );
-        symname[ len ] = '\0';
-        if( LinkFlags & REDEFS_OK ) {
-            lev = WRN;
-        } else {
-            lev = ERR;
-        }
-        if( CmpRtn( sym->name, symname, len+1 ) == 0 ) {
-            LnkMsg( LOC+lev+MSG_MULT_DEF, "S", sym );
-        } else {
-            LnkMsg( LOC+lev+MSG_MULT_DEF_BY, "12", sym->name, symname );
-        }
+        lev = ERR;
+    }
+    if( CmpRtn( sym->name, name, len + 1 ) == 0 ) {
+        LnkMsg( LOC+lev+MSG_MULT_DEF, "S", sym );
+    } else {
+        LnkMsg( LOC+lev+MSG_MULT_DEF_BY, "12", sym->name, name );
     }
 }
 
@@ -1136,7 +1114,7 @@ void ReportUndefined( void )
 
     for( sym = HeadSym; sym != NULL; sym = sym->link ) {
         sym->info &= ~SYM_CLEAR_ON_P2;
-        if( !(sym->info & (SYM_DEFINED|SYM_IS_ALTDEF)) )  {
+        if( !(sym->info & (SYM_DEFINED | SYM_IS_ALTDEF)) )  {
             if( LinkFlags & UNDEFS_ARE_OK ) {
                 level = WRN;
             } else {
@@ -1304,13 +1282,10 @@ static void CleanAltDefs( symbol *sym )
     symbol *    testring;
     symbol *    altsym;
 
-    if( sym->info & (SYM_ALIAS | SYM_DEAD) || sym->u.altdefs == NULL )
+    if( IS_SYM_ALIAS( sym ) || sym->info & SYM_DEAD || sym->u.altdefs == NULL )
         return;
     testring = NULL;
-    for(;;) {
-        altsym = RingPop( &sym->u.altdefs );
-        if( altsym == NULL )
-            break;
+    while( (altsym = RingPop( &sym->u.altdefs)) != NULL ) {
         if( altsym->info & SYM_KILL ) {
             if( altsym->info & SYM_HAS_DATA ) {
                 altsym->u.datasym = NULL;
@@ -1533,11 +1508,11 @@ group_entry *SymbolGroup( symbol *sym )
 
 #define IS_WHITESPACE(ptr) (*(ptr) == ' ' || *(ptr) =='\t' || *(ptr) == '\r')
 
-bool SetCurrentPrefix(const char * pszPrefix, int nLen)
+bool SetCurrentPrefix(const char * pszPrefix, unsigned nLen)
 {
     const char *    pStart = pszPrefix;
     char *          pFix;
-    int             nIntLen = nLen;
+    unsigned        nIntLen = nLen;
     char            *newbuff = NULL;
 
     /*

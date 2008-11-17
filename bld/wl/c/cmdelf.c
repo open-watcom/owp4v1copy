@@ -86,9 +86,9 @@ bool ProcExportAll( void )
 static bool GetELFImport( void )
 /******************************/
 {
-    symbol *        sym;
+    symbol      *sym;
 
-    sym = SymXOp( ST_DEFINE_SYM, Token.this, Token.len );
+    sym = SymOp( ST_DEFINE_SYM, Token.this, Token.len );
     if( sym == NULL ) {
         return( TRUE );
     }

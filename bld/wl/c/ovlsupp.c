@@ -749,7 +749,7 @@ void EmitOvlTable( void )
     unsigned            off;
     ovltab_prolog       template;
     unsigned_16         u16;
-    int                 len;
+    unsigned            len;
     outfilelist         *fnode;
 
     off = OvltabAddr.off;
