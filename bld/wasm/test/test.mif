@@ -28,7 +28,9 @@ tmp_file = tmp.tmp
     @%append $(%ERROR_FILE) PASS compiling $[@
     @if not exist $@ @%create $@
 
-test : .symbolic clean_save global start_test $(dis_objs) $(objs) finish_test save global
+all : .symbolic test global
+
+test : .symbolic clean_save global start_test $(dis_objs) $(objs) finish_test save
 
 finish_test : .symbolic ./chk_exec.exe
     @set ERROR_FILE=error.out
