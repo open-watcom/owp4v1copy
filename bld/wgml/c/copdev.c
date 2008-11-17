@@ -1715,7 +1715,6 @@ cop_device * parse_device( FILE * in_file )
                 mem_free( cop_functions );
                 cop_functions = NULL;
                 mem_free( out_device );
-                mem_free( out_device );
                 out_device = NULL;
                 return( out_device );
             }
@@ -1729,7 +1728,6 @@ cop_device * parse_device( FILE * in_file )
             cop_functions->code_blocks = NULL;
             mem_free( cop_functions );
             cop_functions = NULL;
-            mem_free( out_device );
             mem_free( out_device );
             out_device = NULL;
             return( out_device );

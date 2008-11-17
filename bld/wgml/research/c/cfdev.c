@@ -549,9 +549,12 @@ cop_device * parse_device( FILE * in_file )
             ++out_device->next_offset;
         } else {
 
-            /* If the string is empty, ensure that the font_name is NULL. */
+            /* It is an error if the string is empty. */
 
-            out_device->box.font_name = NULL;
+            puts( "BoxBlock font was empty string." );
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         /* Ensure that the font_number is 0. */
@@ -1772,7 +1775,6 @@ cop_device * parse_device( FILE * in_file )
                 free( cop_functions );
                 cop_functions = NULL;
                 free( out_device );
-                free( out_device );
                 out_device = NULL;
                 return( out_device );
             }
@@ -1781,7 +1783,18 @@ cop_device * parse_device( FILE * in_file )
             string_ptr[length] = '\0';
             ++out_device->next_offset;
         } else {
-            devicefont_ptr[i].font_name = NULL;
+
+            /* An empty font_name is an error. */
+
+            printf_s( "Devicefont %i has an empty font_name.\n", i );
+            raw_functions = NULL;
+            free( cop_functions->code_blocks );
+            cop_functions->code_blocks = NULL;
+            free( cop_functions );
+            cop_functions = NULL;
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         /* Get the font_switch. */

@@ -294,9 +294,7 @@ void display_device( cop_device * in_device)
     printf_s( "Number of Device Fonts: %i\n", in_device->devicefonts.count );
     for( i = 0; i < in_device->devicefonts.count; i++ ) {
         printf_s( "  Device Font Index:   %i:\n", i );
-        if( in_device->devicefonts.font[i].font_name == NULL ) \
-                                                        puts( "    Font Name:");
-        else printf_s( "    Font Name:         %s\n", \
+        printf_s( "    Font Name:         %s\n", \
                                     in_device->devicefonts.font[i].font_name );
         if( in_device->devicefonts.font[i].font_switch == NULL ) \
                                                         puts( "    Font Switch:");
