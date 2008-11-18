@@ -78,7 +78,7 @@ local   void    Parse( void );
 static  int     OpenPgmFile( void );
 static  void    DelDepFile( void );
 static  const char  *IncludeAlias( const char *filename, int delimiter );
-
+static  void    FreeIncFileList( void );
 
 void FrontEndInit( bool reuse )
 //***************************//
@@ -395,6 +395,7 @@ static void DoCCompile( char **cmdline )
     FreeFNames();
     FreeRDir();
     FreeIAlias();
+    FreeIncFileList();
 }
 
 
@@ -817,14 +818,6 @@ void CloseSrcFile( FCB *srcfcb )
     }
     SrcFile = srcfcb->prev_file;
     CurrChar = srcfcb->prev_currchar;
-    if( SrcFile == MainSrcFile ) {
-        if( CompFlags.make_precompiled_header ) {
-            CompFlags.make_precompiled_header = 0;
-            if( ErrCount == 0 ) {
-                BuildPreCompiledHeader( PCH_FileName );
-            }
-        }
-    }
     if( SrcFile != NULL ) {
         if( SrcFile->src_fp == NULL ) {
             SrcFile->src_fp = fopen( SrcFile->src_flist->name, "rb" );
@@ -832,6 +825,14 @@ void CloseSrcFile( FCB *srcfcb )
         }
         SrcFileLoc = SrcFile->src_loc;
         IncLineCount += srcfcb->src_line_cnt;
+        if( SrcFile == MainSrcFile ) {
+            if( CompFlags.make_precompiled_header ) {
+                CompFlags.make_precompiled_header = 0;
+                if( ErrCount == 0 ) {
+                    BuildPreCompiledHeader( PCH_FileName );
+                }
+            }
+        }
         if( CompFlags.cpp_output ) {
             EmitPoundLine( SrcFile->src_loc.line, SrcFile->src_name, 1 );
         }
@@ -1070,6 +1071,16 @@ static void AddIncFileList( char *filename )
     }
 }
 
+static void FreeIncFileList( void )
+{
+    INCFILE *ilist;
+
+    while( (ilist = IncFileList) != NULL ) {
+        IncFileList = ilist->nextfile;
+        CMemFree( ilist );
+    }
+}
+
 RDIRPTR AddRDir( char *path )
 {
     RDIRPTR   dirlist;
@@ -1249,9 +1260,12 @@ static void ParseInit( void )
 local void Parse( void )
 {
     EmitInit();
+    CompFlags.ok_to_use_precompiled_hdr = 0;
+    CompFlags.use_precompiled_header = 0;
     CompFlags.ignore_fnf = TRUE;
     if( !CompFlags.disable_ialias ) {
         OpenSrcFile( "_ialias.h", '<' );
+        FreeIncFileList();
     }
     CompFlags.ignore_fnf = FALSE;
     // The first token in a file should be #include if a user wants to
