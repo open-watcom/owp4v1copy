@@ -25,8 +25,6 @@
 *  ========================================================================
 *
 * Description:  Implements the functions declared in cfdir.h:
-*                   get_entry_count()
-*                   get_entry_type()
 *                   get_compact_entry()
 *                   get_extended_entry()
 *                   skip_compact_entry()
@@ -41,64 +39,7 @@
 #include "cfdir.h"
 #include "common.h"
 
-/*  Function get_entry_count().
- *  Reads and returns the entry count.
- *
- *  Parameters:
- *      in_file points to the first byte of the entry count, which is the
- *          first byte after the .COP file header.
- *      entry_count is intended to contain the number of entries.
- *
- *  Modified Parameter:
- *      entry_count returns the entry count if SUCCESS is returned.
- *      entry_count contains its value on entry if FAILURE is returned.
- *
- *  Returns:
- *      FAILURE on a file error or on EOF.
- *      SUCCESS otherwise.
- *
- */
-
-int get_entry_count( FILE * in_file, uint16_t * entry_count )
-{
-    fread( entry_count, sizeof( *entry_count ), 1, in_file );
-    if( ferror( in_file ) || feof( in_file) ) return( FAILURE );
-    return( SUCCESS );
-}
-
-/*  Function get_entry_type().
- *  Reads and returns the entry type.
- *  This is intended to be used for both meta-types and entry types as such.
- *  There are two meta-types:
- *      0x0000 indicates that the following entries are in compact format.
- *      0x0001 indicates that the following entry is in extended format.
- *  There are three values for the entry type as such:
- *      0x0101 for device files.
- *      0x0201 for driver files.
- *      0x0401 for font files.
- *
- *  Parameters:
- *      in_file points to the first byte of the entry type (either kind).
- *      entry_type is intended to contain the meta-type or the entry type
- *          as such.
- *
- *  Modified Parameter:
- *      entry_type contains the value of the meta-type or the entry type 
- *          as such if SUCCESS is returned.
- *      entry_type contains its value on entry if FAILURE is returned.
- *
- *  Returns:
- *      FAILURE on a file error or on EOF.
- *      SUCCESS otherwise.
- *
- */
-
-int get_entry_type( FILE * in_file, uint16_t * entry_type )
-{
-    fread( entry_type, sizeof( *entry_type ), 1, in_file );
-    if( feof( in_file ) || ferror( in_file ) ) return( FAILURE );
-    return( SUCCESS );
-}
+/* Extern function definitions. */
 
 /*  Function get_compact_entry().
  *  Reads and returns the current entry.
@@ -118,35 +59,35 @@ int get_entry_type( FILE * in_file, uint16_t * entry_type )
  *      FAILURE on a file error or on EOF.
  *      SUCCESS otherwise.
  *
- *  Note: the item_name and the file_name fields will be terminated with
+ *  Note: the defined_name and the member_name fields will be terminated with
  *        '\0' if SUCCESS is returned.
  */
 
-int get_compact_entry( FILE * in_file, compact_entry_t * entry )
+int get_compact_entry( FILE * in_file, directory_entry * entry )
 {
     uint8_t count;
 
-    /* Get the length of the item_name. */
+    /* Get the length of the defined_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Ensure the length is not zero or too long for the buffer. */
 
-    if( (count == 0) || (count > ITEM_MAX) ) {
+    if( (count == 0) || (count > DEFINED_NAME_MAX) ) {
         return( FAILURE );
     }
 
-    /* Get the item_name. */
+    /* Get the defined_name. */
 
-    fread( entry->item_name, count, 1, in_file );
+    fread( entry->defined_name, count, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Make it a null-terminated string. */
 
-    entry->item_name[count] = '\0';
+    entry->defined_name[count] = '\0';
 
-    /* Get the length of the file_name. */
+    /* Get the length of the member_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
@@ -157,14 +98,14 @@ int get_compact_entry( FILE * in_file, compact_entry_t * entry )
         return( FAILURE );
     }
 
-    /* Get the file_name. */
+    /* Get the member_name. */
 
-    fread( entry->file_name, count, 1, in_file );
+    fread( entry->member_name, count, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Make it a null-terminated string. */
 
-    entry->file_name[count] = '\0';
+    entry->member_name[count] = '\0';
 
     return( SUCCESS );
 }
@@ -187,40 +128,40 @@ int get_compact_entry( FILE * in_file, compact_entry_t * entry )
  *      FAILURE on a file error or on EOF.
  *      SUCCESS otherwise.
  *
- *  Note: the item_name and the file_name fields will be terminated with
+ *  Note: the defined_name and the member_name fields will be terminated with
  *        '\0' if SUCCESS is returned.
  */
 
-int get_extended_entry( FILE * in_file, extended_entry_t * entry )
+int get_extended_entry( FILE * in_file, directory_entry * entry )
 {
     uint8_t count;
 
-    /* Get the length of the item_name. */
+    /* Get the length of the defined_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Ensure the length is not zero or too long for the buffer. */
 
-    if( (count == 0) || (count > ITEM_MAX) ) {
+    if( (count == 0) || (count > DEFINED_NAME_MAX) ) {
         return( FAILURE );
     }
 
-    /* Get the item_name. */
+    /* Get the defined_name. */
 
-    fread( entry->item_name, count, 1, in_file );
+    fread( entry->defined_name, count, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Make it a null-terminated string. */
 
-    entry->item_name[count] = '\0';
+    entry->defined_name[count] = '\0';
 
-    /* Get the marker. */
+    /* Skip the marker. */
 
-    fread( &(entry->marker), sizeof( entry->marker ), 1, in_file );
+    fseek( in_file, sizeof( uint16_t ), SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Get the length of the file_name. */
+    /* Get the length of the member_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
@@ -231,18 +172,18 @@ int get_extended_entry( FILE * in_file, extended_entry_t * entry )
         return( FAILURE );
     }
 
-    /* Get the file_name. */
+    /* Get the member_name. */
 
-    fread( &(entry->file_name), count, 1, in_file );
+    fread( &(entry->member_name), count, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Make it a null-terminated string. */
 
-    entry->file_name[count] = '\0';
+    entry->member_name[count] = '\0';
 
-    /* Get the preview. */
+    /* Skip the preview. */
 
-    fread( &(entry->preview), sizeof( entry->preview ), 1, in_file );
+    fseek( in_file, sizeof( uint16_t ), SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     return( SUCCESS );
@@ -264,22 +205,22 @@ int skip_compact_entry( FILE * in_file )
 {
     uint8_t count;
 
-    /* Get the length of the item_name. */
+    /* Get the length of the defined_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Skip the item_name. */
+    /* Skip the defined_name. */
 
     fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Get the length of the file_name. */
+    /* Get the length of the member_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Skip the file_name. */
+    /* Skip the member_name. */
 
     fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
@@ -303,12 +244,12 @@ int skip_extended_entry( FILE * in_file )
 {
     uint8_t count;
 
-    /* Get the length of the item_name. */
+    /* Get the length of the defined_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Skip the item_name. */
+    /* Skip the defined_name. */
 
     fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
@@ -318,12 +259,12 @@ int skip_extended_entry( FILE * in_file )
     fseek( in_file, sizeof( uint16_t ), SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Get the length of the file_name. */
+    /* Get the length of the member_name. */
     
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
-    /* Skip the file_name. */
+    /* Skip the member_name. */
 
     fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );

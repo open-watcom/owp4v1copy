@@ -64,12 +64,10 @@ int parse_header( FILE * in_file, char * type )
     char        count;
     uint16_t    version;
 
-    /* Get the count for the numeric version. */
+    /* Get the count and ensure it is 0x02. */
 
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
-
-    /* If the count is not 0x02, this is not a COP file. */
 
     if( count != 0x02 ) return( FAILURE );
 

@@ -134,8 +134,8 @@ int parse_cop_file( void )
     case( 0x02 ): 
         /* This is a version 3.33 directory file. */
 
-        retval = get_entry_count( current_file, &entry_count );
-        if(retval == FAILURE) return( FAILURE );
+        fread( &entry_count, sizeof( entry_count ), 1, current_file );
+        if( ferror( current_file ) || feof( current_file ) ) return( FAILURE );
         check_directory( current_file, entry_count );
         break;
     case( 0x03 ):
@@ -173,8 +173,8 @@ int parse_cop_file( void )
     case( 0x04 ): 
         /* This is a version 4.1 directory file */
 
-        retval = get_entry_count( current_file, &entry_count );
-        if(retval == FAILURE) return( FAILURE );
+        fread( &entry_count, sizeof( entry_count ), 1, current_file );
+        if( ferror( current_file ) || feof( current_file ) ) return( FAILURE );
         check_directory( current_file, entry_count );
         break;
     default:
@@ -233,8 +233,7 @@ void check_directory( FILE * in_file, uint32_t count)
     char                ext[_MAX_EXT];
     char                file_path[_MAX_PATH];
     char                fname[_MAX_FNAME];
-    compact_entry_t     compact_entry;
-    extended_entry_t    extended_entry;
+    directory_entry      current_entry;
     int                 i;
     int                 retval;
     uint16_t            entry_type;
@@ -259,8 +258,8 @@ void check_directory( FILE * in_file, uint32_t count)
     /* Tabulate the entry types. */
 
     for( i = 0; i < count; i++) {
-        retval = get_entry_type( in_file, &entry_type );
-        if( retval == FAILURE ) {
+        fread( &entry_type, sizeof( entry_type ), 1, in_file );
+        if( feof( in_file ) || ferror( in_file ) ) {
             puts( "File error or EOF: entry counts may not match expected total");
             break;
         }
@@ -276,8 +275,8 @@ void check_directory( FILE * in_file, uint32_t count)
             /* Ensure loop is always exited at some point. */
 
             for( ;; ) {
-                retval = get_entry_type( in_file, &entry_type );
-                if( retval == FAILURE ) {
+                fread( &entry_type, sizeof( entry_type ), 1, in_file );
+                if( feof( in_file ) || ferror( in_file ) ) {
                     puts( "File error or EOF: entry counts may not match " \
                           "expected total");
                     break;
@@ -297,13 +296,13 @@ void check_directory( FILE * in_file, uint32_t count)
                     /* This ExtendedDirEntry is for a device file. */
 
                     dev_file_count++;
-                    retval = get_extended_entry( in_file, &extended_entry );
+                    retval = get_extended_entry( in_file, &current_entry );
                     if( retval == FAILURE ) printf_s( "No data for device entry " \
                                             "%i of type %i\n", i+1, entry_type );
                     else printf_s( "Entry: %i Device Name: %s File Name: %s\n", \
-                        i+1, extended_entry.item_name, extended_entry.file_name );
+                        i+1, current_entry.defined_name, current_entry.member_name );
                     retval = verify_device( &file_path, \
-                                            &extended_entry.file_name );
+                                            &current_entry.member_name );
                     if( retval == BAD_MATCH ) mismatch_count++;
                     else if( retval != GOOD_MATCH) bad_file_count++;
                     break;
@@ -311,14 +310,14 @@ void check_directory( FILE * in_file, uint32_t count)
                     /* This ExtendedDirEntry is for a driver file. */
 
                     drv_file_count++;
-                    retval = get_extended_entry( in_file, &extended_entry );
+                    retval = get_extended_entry( in_file, &current_entry );
                     if( retval == FAILURE ) \
                             printf_s( "No data for device entry %i of type %i\n", \
                                                                 i+1, entry_type );
                     else printf_s( "Entry: %i Driver Name: %s File Name: %s\n", \
-                        i+1, extended_entry.item_name, extended_entry.file_name );
+                        i+1, current_entry.defined_name, current_entry.member_name );
                     retval = verify_driver( &file_path, \
-                                            &extended_entry.file_name );
+                                            &current_entry.member_name );
                     if( retval == BAD_MATCH ) mismatch_count++;
                     else if( retval != GOOD_MATCH) bad_file_count++;
                     break;
@@ -326,27 +325,27 @@ void check_directory( FILE * in_file, uint32_t count)
                     /* This ExtendedDirEntry is for a font file. */
 
                     fon_file_count++;
-                    retval = get_extended_entry( in_file, &extended_entry );
+                    retval = get_extended_entry( in_file, &current_entry );
                     if( retval == FAILURE ) \
                             printf_s( "No data for device entry %i of type %i\n", \
                                                                 i+1, entry_type );
                     else printf_s( "Entry: %i Font Name: %s File Name: %s\n", \
-                        i+1, extended_entry.item_name, extended_entry.file_name );
-                    retval = verify_font( &file_path, & extended_entry.file_name );
+                        i+1, current_entry.defined_name, current_entry.member_name );
+                    retval = verify_font( &file_path, & current_entry.member_name );
                     if( retval == BAD_MATCH ) mismatch_count++;
                     else if( retval != GOOD_MATCH) bad_file_count++;
                     break;
                 default:
                     /* Unknown ExtendedDirEntry type. */
 
-                    retval = get_extended_entry( in_file, &extended_entry );
+                    retval = get_extended_entry( in_file, &current_entry );
                     if( retval == FAILURE ) \
                         printf_s( "No data for unknown entry %i of type %i\n", \
                                                             i+1, entry_type);
                     else printf_s( "Entry: %i Unknown Item Type: %i Name: %20s " \
                                     "File Name: %s\n", i+1, entry_type, \
-                                    extended_entry.item_name, \
-                                    extended_entry.file_name );
+                                    current_entry.defined_name, \
+                                    current_entry.member_name );
                 }
                 /* Ensure loop is exited for any ExtendedDirEntry. */
 
@@ -357,12 +356,12 @@ void check_directory( FILE * in_file, uint32_t count)
             /* This CompactDirEntry is for a device file. */
 
             dev_file_count++;
-            retval = get_compact_entry( in_file, &compact_entry );
+            retval = get_compact_entry( in_file, &current_entry );
             if( retval == FAILURE ) \
                 printf_s( "No data for entry %i of type %i\n", i+1, entry_type);
             else printf_s( "Entry: %i Device Name: %s File Name: %s\n", i+1, \
-                            compact_entry.item_name, compact_entry.file_name );
-            retval = verify_device( &file_path, & compact_entry.file_name );
+                            current_entry.defined_name, current_entry.member_name );
+            retval = verify_device( &file_path, & current_entry.member_name );
             if( retval == BAD_MATCH ) mismatch_count++;
             else if( retval != GOOD_MATCH) bad_file_count++;
             break;
@@ -370,12 +369,12 @@ void check_directory( FILE * in_file, uint32_t count)
             /* This CompactDirEntry is for a driver file. */
 
             drv_file_count++;
-            retval = get_compact_entry( in_file, &compact_entry );
+            retval = get_compact_entry( in_file, &current_entry );
             if( retval == FAILURE ) \
                 printf_s( "No data for entry %i of type %i\n", i+1, entry_type);
             else printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i+1, \
-                            compact_entry.item_name, compact_entry.file_name );
-            retval = verify_driver( &file_path, & compact_entry.file_name );
+                            current_entry.defined_name, current_entry.member_name );
+            retval = verify_driver( &file_path, & current_entry.member_name );
             if( retval == BAD_MATCH ) mismatch_count++;
             else if( retval != GOOD_MATCH) bad_file_count++;
             break;
@@ -383,25 +382,25 @@ void check_directory( FILE * in_file, uint32_t count)
             /* This CompactDirEntry is for a font file. */
 
             fon_file_count++;
-            retval = get_compact_entry( in_file, &compact_entry );
+            retval = get_compact_entry( in_file, &current_entry );
             if( retval == FAILURE ) \
                 printf_s( "No data for entry %i of type %i\n", i+1, entry_type);
             else printf_s( "Entry: %i Font Name: %s File Name: %s\n", i+1, \
-                            compact_entry.item_name, compact_entry.file_name );
-            retval = verify_font( &file_path, & compact_entry.file_name );
+                            current_entry.defined_name, current_entry.member_name );
+            retval = verify_font( &file_path, & current_entry.member_name );
             if( retval == BAD_MATCH ) mismatch_count++;
             else if( retval != GOOD_MATCH) bad_file_count++;
             break;
           default:
             /* Unknown CompactDirEntry type. */
 
-            retval = get_compact_entry( in_file, &compact_entry );
+            retval = get_compact_entry( in_file, &current_entry );
             if( retval == FAILURE ) \
                 printf_s( "No data for unknown entry %i of type %i\n", i+1, \
                                                                     entry_type);
             else printf_s( "Entry: %i Unknown Item Type: %i Name: %20s " \
                            "File Name: %s\n", i+1, entry_type, \
-                           compact_entry.item_name, compact_entry.file_name );
+                           current_entry.defined_name, current_entry.member_name );
       }
     }
 
@@ -580,29 +579,29 @@ void display_device( cop_device * in_device)
 int verify_device( char * in_path, char * in_name)
 {
     char            designator[4];
-    char            file_name[_MAX_PATH];
+    char            member_name[_MAX_PATH];
     char            type;
     cop_device *    current_device = NULL;
     FILE *          device_file = NULL;
     
     /* Build the file name. */
 
-    strcpy_s( file_name, sizeof( file_name ), in_path );
-    strcat_s( file_name, sizeof( file_name ), in_name );
-    strcat_s( file_name, sizeof( file_name ), ".COP" );
+    strcpy_s( member_name, sizeof( member_name ), in_path );
+    strcat_s( member_name, sizeof( member_name ), in_name );
+    strcat_s( member_name, sizeof( member_name ), ".COP" );
 
     /* Open the file. */
 
-    fopen_s( &device_file, file_name, "rb" );
+    fopen_s( &device_file, member_name, "rb" );
     if( device_file == NULL ) {
-        printf_s( "Could not open device file %s\n", file_name );
+        printf_s( "Could not open device file %s\n", member_name );
         return( OPEN_ERROR );
     }
 
     /* Skip the header. */
 
     if( parse_header( device_file, &type ) == FAILURE ) {
-        printf_s( "%s is not a .COP file (bad header)\n", file_name );
+        printf_s( "%s is not a .COP file (bad header)\n", member_name );
         fclose( device_file );
         return( BAD_HEADER );
     }
@@ -838,29 +837,29 @@ void display_driver( cop_driver * in_driver )
 int verify_driver( char * in_path, char * in_name )
 {
     char            designator[4];
-    char            file_name[_MAX_PATH];
+    char            member_name[_MAX_PATH];
     char            type;
     cop_driver *    current_driver = NULL;
     FILE *          driver_file = NULL;
 
     /* Build the file name. */
 
-    strcpy_s( file_name, sizeof( file_name ), in_path );
-    strcat_s( file_name, sizeof( file_name ), in_name );
-    strcat_s( file_name, sizeof( file_name ), ".COP" );
+    strcpy_s( member_name, sizeof( member_name ), in_path );
+    strcat_s( member_name, sizeof( member_name ), in_name );
+    strcat_s( member_name, sizeof( member_name ), ".COP" );
 
     /* Open the file. */
 
-    fopen_s( &driver_file, file_name, "rb" );
+    fopen_s( &driver_file, member_name, "rb" );
     if( driver_file == NULL ) {
-        printf_s( "Could not open driver file %s\n", file_name );
+        printf_s( "Could not open driver file %s\n", member_name );
         return( OPEN_ERROR );
     }
 
     /* Skip the header. */
 
     if( parse_header( driver_file, &type ) == FAILURE ) {
-        printf_s( "%s is not a .COP file (bad header)\n", file_name );
+        printf_s( "%s is not a .COP file (bad header)\n", member_name );
         fclose( driver_file );
         return( BAD_HEADER );
     }
@@ -982,29 +981,29 @@ void display_font( cop_font * in_font )
 int verify_font( char * in_path, char * in_name )
 {
     char       designator[4];
-    char       file_name[_MAX_PATH];
+    char       member_name[_MAX_PATH];
     char       type;
     cop_font * current_font = NULL;
     FILE *     font_file = NULL;
     
     /* Build the file name. */
 
-    strcpy_s( file_name, sizeof( file_name ), in_path );
-    strcat_s( file_name, sizeof( file_name ), in_name );
-    strcat_s( file_name, sizeof( file_name ), ".COP" );
+    strcpy_s( member_name, sizeof( member_name ), in_path );
+    strcat_s( member_name, sizeof( member_name ), in_name );
+    strcat_s( member_name, sizeof( member_name ), ".COP" );
 
     /* Open the file. */
 
-    fopen_s( &font_file, file_name, "rb" );
+    fopen_s( &font_file, member_name, "rb" );
     if( font_file == NULL ) {
-        printf_s( "Could not open font file %s\n", file_name );
+        printf_s( "Could not open font file %s\n", member_name );
         return( OPEN_ERROR );
     }
 
     /* Skip the header. */
 
     if( parse_header( font_file, &type ) == FAILURE ) {
-        printf_s( "%s is not a .COP file (bad header)\n", file_name );
+        printf_s( "%s is not a .COP file (bad header)\n", member_name );
         fclose( font_file );
         return( BAD_HEADER );
     }

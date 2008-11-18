@@ -153,7 +153,7 @@ static void initialize_directory_list( char const * in_path_list, \
     /* Initialize local_list. */
 
     local_list.count = path_count;
-    local_list.directories = (char * *) malloc( \
+    local_list.directories = (char * *) mem_alloc( \
                     (path_count * sizeof( char * )) + byte_count + path_count );
 
     array_base = local_list.directories;
@@ -217,9 +217,13 @@ static void initialize_directory_list( char const * in_path_list, \
         }
     }
 
-    /* If local_list has no entries at all, clear in_list and return. */
+    /* If local_list has no entries at all, free local_list.directories and
+     * clear in_list and return.
+     */
 
     if( path_count == 0 ) {
+        mem_free( local_list.directories );
+        local_list.directories = NULL;
         in_list->count = 0;
         mem_free( in_list->directories );
         in_list->directories = NULL;
@@ -227,13 +231,14 @@ static void initialize_directory_list( char const * in_path_list, \
     }
 
     /* If some paths were eliminated for length, then initialize in_list with
-     * the remaining paths (only).
+     * the remaining paths (only) and free local_list.directories. Otherwise,
+     * local_list.directories becomes in_list->directories.
      */
 
     if( path_count < local_list.count) {
 
         in_list->count = path_count;
-        in_list->directories = (char * *) malloc( \
+        in_list->directories = (char * *) mem_alloc( \
                     (path_count * sizeof( char * )) + byte_count + path_count );
 
         array_base = in_list->directories;
@@ -245,10 +250,13 @@ static void initialize_directory_list( char const * in_path_list, \
             if( local_list.directories[i] != NULL ) {
                 array_base[j] = current;
                 strcpy_s( current, byte_count, local_list.directories[i] );
-                byte_count -= strlen( local_list.directories[i] ) - 1;
+                byte_count -= (strlen( local_list.directories[i] ) + 1);
+                current += (strlen( local_list.directories[i] ) + 1);
                 j++;
             }
         }
+        mem_free( local_list.directories );
+        local_list.directories = NULL;
     } else {
         in_list->count = local_list.count;
         in_list->directories = local_list.directories;
@@ -289,15 +297,13 @@ typedef enum {
 static cop_file_type parse_header( FILE * in_file )
 {
     char        count;
-    char        text_version[0x0c];
+    char        text_version[0x0b];
     uint16_t    version;
 
-    /* Get the count. */
+    /* Get the count and ensure it is 0x02. */
 
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
-
-    /* If count is not equal to 0x02, then this is not a binary device file. */
 
     if( count != 0x02 ) return( not_bin_dev );
 

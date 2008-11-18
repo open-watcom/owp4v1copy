@@ -40,15 +40,20 @@
 #include <stdint.h>
 #include <stdio.h>
 
+/* Macro definition. */
+
 #define DEFINED_NAME_MAX 78 // Per documentation, max length of a defined name.
 
 /* Struct declaration. */
 
 /* _MAX_PATH is used for the member_name because gendev will embed member names
- * which exceed the space allowed by _MAX_FNAME in DOS if one is found.
+ * which exceed the space allowed by NAME_MAX or _MAX_FNAME in DOS if such a
+ * member name is present in the source file. 
  */
 
-/* The field names differ from those in the Wiki. */
+/* To hold the data from either the CompactDirEntry struct or the
+ * ExtendedDirEntry struct, since, in either case, only these two fields are used.
+ */
 
 typedef struct {
     char    defined_name[ DEFINED_NAME_MAX ];
@@ -68,8 +73,8 @@ typedef enum {
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-entry_found     get_compact_entry( FILE * file, directory_entry * entry);
-entry_found     get_extended_entry( FILE * file, directory_entry * entry);
+entry_found     get_compact_entry( FILE * file, directory_entry * entry );
+entry_found     get_extended_entry( FILE * file, directory_entry * entry );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
