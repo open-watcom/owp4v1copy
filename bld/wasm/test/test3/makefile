@@ -36,7 +36,7 @@ seg16.dis &
 segatrep.dis &
 segregs.dis &
 shift.dis &
-sse.dis &
+#sse.dis &
 sse2.dis &
 sse3.dis &
 structdd.dis &
