@@ -1887,7 +1887,7 @@ int UsePreCompiledHeader( char *filename )
     len = _RoundUp( len, sizeof( int ) );
     if( ((HFileList == NULL) && (strlen( p ) > 0))
       || ((HFileList != NULL) && (strcmp( p, HFileList ) != 0)) ) {
-        PCHNote( PCHDR_INCFILE_DIFFERENT );
+        PCHNote( PCHDR_INCPATH_CHANGED );
         AbortPreCompiledHeader();
         return( -1 );
     }
@@ -1903,7 +1903,7 @@ int UsePreCompiledHeader( char *filename )
         } 
     }
     if( ialias_error || strcmp( filename, ifile->filename ) != 0 ) {
-        PCHNote( PCHDR_INCPATH_CHANGED );
+        PCHNote( PCHDR_INCFILE_DIFFERENT );
         AbortPreCompiledHeader();
         return( -1 );                           // can't use PCH
     }
