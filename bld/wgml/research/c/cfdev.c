@@ -1374,8 +1374,7 @@ cop_device * parse_device( FILE * in_file )
         byte_ptr = (uint8_t *) out_device + (size_t) \
                                                     out_device->pauses.startpause;
         memcpy_s(byte_ptr, out_device->pauses.startpause_count, \
-                 cop_functions->code_blocks[j].function, \
-                 out_device->pauses.startpause_count );
+        cop_functions->code_blocks[j].text, out_device->pauses.startpause_count );
     }
     
     /* Get the DOCUMENT Pause. */
@@ -1468,8 +1467,7 @@ cop_device * parse_device( FILE * in_file )
         byte_ptr = (uint8_t *) out_device + \
                                         (size_t) out_device->pauses.documentpause;
         memcpy_s(byte_ptr, out_device->pauses.documentpause_count, \
-                 cop_functions->code_blocks[j].function, \
-                 out_device->pauses.documentpause_count );
+    cop_functions->code_blocks[j].text, out_device->pauses.documentpause_count );
     }
     
     /* Get the DOCUMENT_PAGE Pause. */
@@ -1562,8 +1560,7 @@ cop_device * parse_device( FILE * in_file )
         byte_ptr = (uint8_t *) out_device + \
                                         (size_t) out_device->pauses.docpagepause;
         memcpy_s(byte_ptr, out_device->pauses.docpagepause_count, \
-                 cop_functions->code_blocks[j].function, \
-                 out_device->pauses.docpagepause_count );
+    cop_functions->code_blocks[j].text, out_device->pauses.docpagepause_count );
     }
     
     /* Get the DEVICE_PAGE Pause. */
@@ -1656,8 +1653,7 @@ cop_device * parse_device( FILE * in_file )
         byte_ptr = (uint8_t *) out_device + \
                                         (size_t) out_device->pauses.devpagepause;
         memcpy_s(byte_ptr, out_device->pauses.devpagepause_count, \
-                 cop_functions->code_blocks[j].function, \
-                 out_device->pauses.devpagepause_count );
+    cop_functions->code_blocks[j].text, out_device->pauses.devpagepause_count );
     }
 
     /* Get the DevicefontBlock. */
@@ -1986,8 +1982,7 @@ cop_device * parse_device( FILE * in_file )
             byte_ptr = (uint8_t *) out_device + \
                                             (size_t) devicefont_ptr[i].fontpause;
             memcpy_s(byte_ptr, devicefont_ptr[i].fontpause_count, \
-                     cop_functions->code_blocks[j].function, \
-                     devicefont_ptr[i].fontpause_count );
+        cop_functions->code_blocks[j].text, devicefont_ptr[i].fontpause_count );
         }
     }
 

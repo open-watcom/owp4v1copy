@@ -52,18 +52,18 @@
  * value of count should always be a multiple of 80.
  */
 
-typedef struct p_buffer_struct
+typedef struct
 {
     uint16_t    count;
     uint8_t *   buffer;
 } p_buffer;
 
-/* To implement the CodeBlock struct.
- * This is the CodeBlock discussed in the Wiki, although the last field name
- * does differ.
+/* To hold the data extracted from the CodeBlock struct. This is the complete
+ * CodeBlock discussed in the Wiki, enhanced with the field cumulative_index
+ * for use when parsing the DeviceFile struct.
  */
 
-typedef struct code_block_struct
+typedef struct
 {
     uint8_t     designator;
     uint8_t     cb05_flag;
@@ -71,12 +71,12 @@ typedef struct code_block_struct
     uint16_t    pass;
     uint16_t    count;
     uint16_t    cumulative_index;
-    uint8_t *   function;
+    uint8_t *   text;
 } code_block;
 
-/* To implement the Variant A FunctionsBlock struct. */
+/* To hold the data extracted from the Variant A FunctionsBlock struct. */
 
-typedef struct functions_block_struct
+typedef struct
 {
     uint16_t        count;
     code_block *    code_blocks;
@@ -88,9 +88,11 @@ typedef struct functions_block_struct
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-code_block *        get_code_blocks( uint8_t * *, uint16_t, uint8_t *, char * );
-p_buffer *          get_p_buffer( FILE * );
-functions_block *   parse_functions_block( uint8_t * *, uint8_t *, char * );
+code_block      *   get_code_blocks( uint8_t * * position, uint16_t count, \
+                                     uint8_t * base, char * block );
+p_buffer        *   get_p_buffer( FILE * file );
+functions_block *   parse_functions_block( uint8_t * * position, \
+                                           uint8_t * base, char * block );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

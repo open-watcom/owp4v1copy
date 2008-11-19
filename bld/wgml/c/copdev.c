@@ -1317,7 +1317,7 @@ cop_device * parse_device( FILE * in_file )
 
         byte_ptr = (uint8_t *) out_device + (size_t) pause_ptr->text;
         memcpy_s(byte_ptr, pause_ptr->count, \
-                    cop_functions->code_blocks[j].function, pause_ptr->count );
+                    cop_functions->code_blocks[j].text, pause_ptr->count );
     }
     
     /* Get the document_pause. */
@@ -1416,7 +1416,7 @@ cop_device * parse_device( FILE * in_file )
 
         byte_ptr = (uint8_t *) out_device + (size_t) pause_ptr->text;
         memcpy_s(byte_ptr, pause_ptr->count, \
-                        cop_functions->code_blocks[j].function, pause_ptr->count );
+                        cop_functions->code_blocks[j].text, pause_ptr->count );
     }
     
     /* Get the document_page_pause. */
@@ -1515,7 +1515,7 @@ cop_device * parse_device( FILE * in_file )
 
         byte_ptr = (uint8_t *) out_device + (size_t) pause_ptr->text;
         memcpy_s(byte_ptr, pause_ptr->count, \
-                        cop_functions->code_blocks[j].function, pause_ptr->count );
+                        cop_functions->code_blocks[j].text, pause_ptr->count );
     }
     
     /* Get the device_page_pause. */
@@ -1614,7 +1614,7 @@ cop_device * parse_device( FILE * in_file )
 
         byte_ptr = (uint8_t *) out_device + (size_t) pause_ptr->text;
         memcpy_s(byte_ptr, pause_ptr->count, \
-                        cop_functions->code_blocks[j].function, pause_ptr->count );
+                        cop_functions->code_blocks[j].text, pause_ptr->count );
     }
 
     /* Get the DevicefontBlock. */
@@ -1919,7 +1919,7 @@ cop_device * parse_device( FILE * in_file )
 
             byte_ptr = (uint8_t *) out_device + (size_t) pause_ptr->text;
             memcpy_s(byte_ptr, pause_ptr->count, \
-                    cop_functions->code_blocks[j].function, pause_ptr->count );
+                    cop_functions->code_blocks[j].text, pause_ptr->count );
         }
     }
 

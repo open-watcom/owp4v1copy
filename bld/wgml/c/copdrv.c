@@ -188,7 +188,7 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
         text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].function, \
+        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
                                                         code_text_ptr->count );
         code_text_ptr->text = (uint8_t *) in_driver->next_offset;
         in_driver->next_offset += code_text_ptr->count;
@@ -237,7 +237,7 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
         }
         text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].function, \
+        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
                                                         code_text_ptr->count );
         code_text_ptr->text = (uint8_t *) in_driver->next_offset;
         in_driver->next_offset += code_text_ptr->count;
@@ -499,7 +499,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].function, \
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
                                                         code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
@@ -546,7 +546,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].function, code_text_ptr->count );
+                            cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -603,7 +603,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].function, code_text_ptr->count );
+                            cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -660,7 +660,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].function, code_text_ptr->count );
+                            cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -717,7 +717,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].function, code_text_ptr->count );
+                            cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -774,7 +774,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[i].function, code_text_ptr->count );
+                            cop_codeblocks[i].text, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
@@ -830,7 +830,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
             }
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].function, \
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
                                                             code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
@@ -969,7 +969,7 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, init_text_ptr[i].count, \
-                            cop_codeblocks[i].function, init_text_ptr[i].count );
+                            cop_codeblocks[i].text, init_text_ptr[i].count );
             init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += init_text_ptr[i].count;
         }
@@ -1052,7 +1052,7 @@ static cop_driver * parse_init_block( cop_driver * in_driver, \
             text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
 
             memcpy_s( text_ptr, init_text_ptr[i].count, \
-                            cop_codeblocks[i].function, init_text_ptr[i].count );
+                            cop_codeblocks[i].text, init_text_ptr[i].count );
             init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += init_text_ptr[i].count;
         }
@@ -1486,7 +1486,7 @@ cop_driver * parse_driver( FILE * in_file )
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
         memcpy_s( text_ptr, newline_block_ptr[i].count, \
-                        cop_codeblocks->function, newline_block_ptr[i].count );
+                        cop_codeblocks->text, newline_block_ptr[i].count );
         newline_block_ptr[i].text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += newline_block_ptr[i].count;
 
@@ -1558,7 +1558,7 @@ cop_driver * parse_driver( FILE * in_file )
     text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
     memcpy_s( text_ptr, out_driver->newpage.count, \
-                cop_functions->code_blocks->function, out_driver->newpage.count );
+                cop_functions->code_blocks->text, out_driver->newpage.count );
     out_driver->newpage.text = (uint8_t *) out_driver->next_offset;
     out_driver->next_offset += out_driver->newpage.count;
 
@@ -1595,7 +1595,7 @@ cop_driver * parse_driver( FILE * in_file )
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
         memcpy_s( text_ptr, out_driver->htab.count, \
-            cop_functions->code_blocks->function, out_driver->htab.count );
+            cop_functions->code_blocks->text, out_driver->htab.count );
         out_driver->htab.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->htab.count;
         break;
@@ -1756,7 +1756,7 @@ cop_driver * parse_driver( FILE * in_file )
                                                         out_driver->next_offset;
 
                         memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[j].function, code_text_ptr->count );
+                                    cop_codeblocks[j].text, code_text_ptr->count );
                         code_text_ptr->text = (uint8_t *) \
                                                         out_driver->next_offset;
                         out_driver->next_offset += code_text_ptr->count;
@@ -1797,7 +1797,7 @@ cop_driver * parse_driver( FILE * in_file )
                                                         out_driver->next_offset;
 
                         memcpy_s( text_ptr, code_text_ptr->count, \
-                            cop_codeblocks[j].function, code_text_ptr->count );
+                                    cop_codeblocks[j].text, code_text_ptr->count );
                         code_text_ptr->text = (uint8_t *) \
                                                         out_driver->next_offset;
                         out_driver->next_offset += code_text_ptr->count;
@@ -2000,8 +2000,7 @@ cop_driver * parse_driver( FILE * in_file )
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
         memcpy_s( text_ptr, out_driver->absoluteaddress.count, \
-                                        cop_functions->code_blocks->function, \
-                                        out_driver->absoluteaddress.count );
+            cop_functions->code_blocks->text, out_driver->absoluteaddress.count );
         out_driver->absoluteaddress.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->absoluteaddress.count;
         break;
@@ -2050,7 +2049,7 @@ cop_driver * parse_driver( FILE * in_file )
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
         memcpy_s( text_ptr, out_driver->hline.count, \
-                cop_functions->code_blocks->function, out_driver->hline.count );
+                cop_functions->code_blocks->text, out_driver->hline.count );
         out_driver->hline.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->hline.count;
         break;
@@ -2157,7 +2156,7 @@ cop_driver * parse_driver( FILE * in_file )
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
         memcpy_s( text_ptr, out_driver->vline.count, \
-            cop_functions->code_blocks->function, out_driver->vline.count );
+                    cop_functions->code_blocks->text, out_driver->vline.count );
         out_driver->vline.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->vline.count;
         break;
@@ -2266,7 +2265,7 @@ cop_driver * parse_driver( FILE * in_file )
         text_ptr = (uint8_t *) out_driver + out_driver->next_offset;
 
         memcpy_s( text_ptr, out_driver->dbox.count, \
-            cop_functions->code_blocks->function, out_driver->dbox.count );
+                    cop_functions->code_blocks->text, out_driver->dbox.count );
         out_driver->dbox.text = (uint8_t *) out_driver->next_offset;
         out_driver->next_offset += out_driver->dbox.count;
         break;

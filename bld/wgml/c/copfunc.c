@@ -117,9 +117,9 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count, uint8_t * base
         /* Set function, which is the pointer to the actual compiled code. */
 
         if( &out_block[i].count == 0 ) {
-            out_block[i].function = NULL;
+            out_block[i].text = NULL;
         } else {                        
-            out_block[i].function = *current;
+            out_block[i].text = *current;
             *current += out_block[i].count;
         }
     }
