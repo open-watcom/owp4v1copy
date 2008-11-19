@@ -467,6 +467,9 @@ extern  void    GetNextToken(void);
 extern  void    EmitLine(unsigned,char *);
 extern  void    EmitPoundLine(unsigned,char *,int);
 
+extern  void    AddIncFileList( char *filename );
+extern  void    FreeIncFileList( void );
+
 // cdata.c
 extern  void    InitGlobalVars( void );
 

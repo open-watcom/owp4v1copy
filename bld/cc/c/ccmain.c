@@ -78,7 +78,6 @@ local   void    Parse( void );
 static  int     OpenPgmFile( void );
 static  void    DelDepFile( void );
 static  const char  *IncludeAlias( const char *filename, int delimiter );
-static  void    FreeIncFileList( void );
 
 void FrontEndInit( bool reuse )
 //***************************//
@@ -1051,7 +1050,7 @@ void FreeFNames( void )
     }
 }
 
-static void AddIncFileList( char *filename )
+void AddIncFileList( char *filename )
 {
     INCFILE     *ifile;
     INCFILE     *ifilep;
@@ -1071,7 +1070,7 @@ static void AddIncFileList( char *filename )
     }
 }
 
-static void FreeIncFileList( void )
+void FreeIncFileList( void )
 {
     INCFILE *ilist;
 
@@ -1265,7 +1264,6 @@ local void Parse( void )
     CompFlags.ignore_fnf = TRUE;
     if( !CompFlags.disable_ialias ) {
         OpenSrcFile( "_ialias.h", '<' );
-        FreeIncFileList();
     }
     CompFlags.ignore_fnf = FALSE;
     // The first token in a file should be #include if a user wants to
