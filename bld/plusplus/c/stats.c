@@ -37,6 +37,7 @@
 #include "errdefns.h"
 #include "vbuf.h"
 #include "vstk.h"
+#include "pcheader.h"
 
 
 static void statsInit(          // INITIALIZE STATISTICS GATHERING
@@ -109,6 +110,33 @@ static void statsPrint(         // PRINT STATISTICS
 
 INITDEFN( statistics, statsInit, statsPrint )
 
+
+pch_status PCHReadStats( void )
+{
+    IncLineCount = PCHReadUInt();
+    return( PCHCB_OK );
+}
+
+
+pch_status PCHWriteStats( void )
+{
+    PCHWriteUInt( IncLineCount );
+    return( PCHCB_OK );
+}
+
+
+pch_status PCHInitStats( boolean writing )
+{
+    writing = writing;
+    return( PCHCB_OK );
+}
+
+
+pch_status PCHFiniStats( boolean writing )
+{
+    writing = writing;
+    return( PCHCB_OK );
+}
 
 
 #ifdef XTRA_RPT
