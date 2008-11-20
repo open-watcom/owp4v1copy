@@ -256,6 +256,273 @@
     #define SBM_GETSCROLLBARINFO            0x00EB
 #endif
 
+// Common control messages
+#ifndef HDM_GETITEMDROPDOWNRECT
+    #define HDM_GETITEMDROPDOWNRECT         (HDM_FIRST + 25)
+#endif
+#ifndef HDM_GETOVERFLOWRECT
+    #define HDM_GETOVERFLOWRECT             (HDM_FIRST + 26)
+#endif
+#ifndef HDM_GETFOCUSEDITEM
+    #define HDM_GETFOCUSEDITEM              (HDM_FIRST + 27)
+#endif
+#ifndef HDM_SETFOCUSEDITEM
+    #define HDM_SETFOCUSEDITEM              (HDM_FIRST + 28)
+#endif
+#ifndef TB_GETMETRICS
+    #define TB_GETMETRICS                   (WM_USER + 101)
+#endif
+#ifndef TB_SETMETRICS
+    #define TB_SETMETRICS                   (WM_USER + 102)
+#endif
+#ifndef TB_SETPRESSEDIMAGELIST
+    #define TB_SETPRESSEDIMAGELIST          (WM_USER + 104)
+#endif
+#ifndef TB_GETPRESSEDIMAGELIST
+    #define TB_GETPRESSEDIMAGELIST          (WM_USER + 105)
+#endif
+#define RB_GETBANDINFO_IE3                  (WM_USER + 5)
+#ifndef RB_GETBANDMARGINS
+    #define RB_GETBANDMARGINS               (WM_USER + 40)
+#endif
+#ifndef RB_SETBANDWIDTH
+    #define RB_SETBANDWIDTH                 (WM_USER + 44)
+#endif
+#ifndef TTM_POPUP
+    #define TTM_POPUP                       (WM_USER + 34)
+#endif
+#ifndef TTM_GETTITLE
+    #define TTM_GETTITLE                    (WM_USER + 35)
+#endif
+#ifndef PBM_SETMARQUEE
+    #define PBM_SETMARQUEE                  (WM_USER + 10)
+#endif
+#ifndef PBM_GETSTEP
+    #define PBM_GETSTEP                     (WM_USER + 11)
+#endif
+#ifndef PBM_GETBKCOLOR
+    #define PBM_GETBKCOLOR                  (WM_USER + 12)
+#endif
+#ifndef PBM_GETBARCOLOR
+    #define PBM_GETBARCOLOR                 (WM_USER + 13)
+#endif
+#ifndef PBM_SETSTATE
+    #define PBM_SETSTATE                    (WM_USER + 14)
+#endif
+#ifndef PBM_GETSTATE
+    #define PBM_GETSTATE                    (WM_USER + 15)
+#endif
+#ifndef LVM_GETGROUPSTATE
+    #define LVM_GETGROUPSTATE               (LVM_FIRST + 92)
+#endif
+#ifndef LVM_GETFOCUSEDGROUP
+    #define LVM_GETFOCUSEDGROUP             (LVM_FIRST + 93)
+#endif
+#ifndef LVM_GETGROUPRECT
+    #define LVM_GETGROUPRECT                (LVM_FIRST + 98)
+#endif
+#ifndef LVM_SETSELECTEDCOLUMN
+    #define LVM_SETSELECTEDCOLUMN           (LVM_FIRST + 140)
+#endif
+#ifndef LVM_SETVIEW
+    #define LVM_SETVIEW                     (LVM_FIRST + 142)
+#endif
+#ifndef LVM_GETVIEW
+    #define LVM_GETVIEW                     (LVM_FIRST + 143)
+#endif
+#ifndef LVM_INSERTGROUP
+    #define LVM_INSERTGROUP                 (LVM_FIRST + 145)
+#endif
+#ifndef LVM_SETGROUPINFO
+    #define LVM_SETGROUPINFO                (LVM_FIRST + 147)
+#endif
+#ifndef LVM_GETGROUPINFO
+    #define LVM_GETGROUPINFO                (LVM_FIRST + 149)
+#endif
+#ifndef LVM_REMOVEGROUP
+    #define LVM_REMOVEGROUP                 (LVM_FIRST + 150)
+#endif
+#ifndef LVM_MOVEGROUP
+    #define LVM_MOVEGROUP                   (LVM_FIRST + 151)
+#endif
+#ifndef LVM_GETGROUPCOUNT
+    #define LVM_GETGROUPCOUNT               (LVM_FIRST + 152)
+#endif
+#ifndef LVM_GETGROUPINFOBYINDEX
+    #define LVM_GETGROUPINFOBYINDEX         (LVM_FIRST + 153)
+#endif
+#ifndef LVM_MOVEITEMTOGROUP
+    #define LVM_MOVEITEMTOGROUP             (LVM_FIRST + 154)
+#endif
+#ifndef LVM_SETGROUPMETRICS
+    #define LVM_SETGROUPMETRICS             (LVM_FIRST + 155)
+#endif
+#ifndef LVM_GETGROUPMETRICS
+    #define LVM_GETGROUPMETRICS             (LVM_FIRST + 156)
+#endif
+#ifndef LVM_ENABLEGROUPVIEW
+    #define LVM_ENABLEGROUPVIEW             (LVM_FIRST + 157)
+#endif
+#ifndef LVM_SORTGROUPS
+    #define LVM_SORTGROUPS                  (LVM_FIRST + 158)
+#endif
+#ifndef LVM_INSERTGROUPSORTED
+    #define LVM_INSERTGROUPSORTED           (LVM_FIRST + 159)
+#endif
+#ifndef LVM_REMOVEALLGROUPS
+    #define LVM_REMOVEALLGROUPS             (LVM_FIRST + 160)
+#endif
+#ifndef LVM_HASGROUP
+    #define LVM_HASGROUP                    (LVM_FIRST + 161)
+#endif
+#ifndef LVM_SETTILEVIEWINFO
+    #define LVM_SETTILEVIEWINFO             (LVM_FIRST + 162)
+#endif
+#ifndef LVM_GETTILEVIEWINFO
+    #define LVM_GETTILEVIEWINFO             (LVM_FIRST + 163)
+#endif
+#ifndef LVM_SETTILEINFO
+    #define LVM_SETTILEINFO                 (LVM_FIRST + 164)
+#endif
+#ifndef LVM_GETTILEINFO
+    #define LVM_GETTILEINFO                 (LVM_FIRST + 165)
+#endif
+#ifndef LVM_SETINSERTMARK
+    #define LVM_SETINSERTMARK               (LVM_FIRST + 166)
+#endif
+#ifndef LVM_GETINSERTMARK
+    #define LVM_GETINSERTMARK               (LVM_FIRST + 167)
+#endif
+#ifndef LVM_INSERTMARKHITTEST
+    #define LVM_INSERTMARKHITTEST           (LVM_FIRST + 168)
+#endif
+#ifndef LVM_GETINSERTMARKRECT
+    #define LVM_GETINSERTMARKRECT           (LVM_FIRST + 169)
+#endif
+#ifndef LVM_SETINSERTMARKCOLOR
+    #define LVM_SETINSERTMARKCOLOR          (LVM_FIRST + 170)
+#endif
+#ifndef LVM_GETINSERTMARKCOLOR
+    #define LVM_GETINSERTMARKCOLOR          (LVM_FIRST + 171)
+#endif
+#ifndef LVM_SETINFOTIP
+    #define LVM_SETINFOTIP                  (LVM_FIRST + 173)
+#endif
+#ifndef LVM_GETSELECTEDCOLUMN
+    #define LVM_GETSELECTEDCOLUMN           (LVM_FIRST + 174)
+#endif
+#ifndef LVM_ISGROUPVIEWENABLED
+    #define LVM_ISGROUPVIEWENABLED          (LVM_FIRST + 175)
+#endif
+#ifndef LVM_GETOUTLINECOLOR
+    #define LVM_GETOUTLINECOLOR             (LVM_FIRST + 176)
+#endif
+#ifndef LVM_SETOUTLINECOLOR
+    #define LVM_SETOUTLINECOLOR             (LVM_FIRST + 177)
+#endif
+#ifndef LVM_CANCELEDITLABEL
+    #define LVM_CANCELEDITLABEL             (LVM_FIRST + 179)
+#endif
+#ifndef LVM_MAPINDEXTOID
+    #define LVM_MAPINDEXTOID                (LVM_FIRST + 180)
+#endif
+#ifndef LVM_MAPIDTOINDEX
+    #define LVM_MAPIDTOINDEX                (LVM_FIRST + 181)
+#endif
+#ifndef LVM_ISITEMVISIBLE
+    #define LVM_ISITEMVISIBLE               (LVM_FIRST + 182)
+#endif
+#ifndef LVM_GETEMPTYTEXT
+    #define LVM_GETEMPTYTEXT                (LVM_FIRST + 204)
+#endif
+#ifndef LVM_GETFOOTERRECT
+    #define LVM_GETFOOTERRECT               (LVM_FIRST + 205)
+#endif
+#ifndef LVM_GETFOOTERINFO
+    #define LVM_GETFOOTERINFO               (LVM_FIRST + 206)
+#endif
+#ifndef LVM_GETFOOTERITEMRECT
+    #define LVM_GETFOOTERITEMRECT           (LVM_FIRST + 207)
+#endif
+#ifndef LVM_GETFOOTERITEM
+    #define LVM_GETFOOTERITEM               (LVM_FIRST + 208)
+#endif
+#ifndef LVM_GETITEMINDEXRECT
+    #define LVM_GETITEMINDEXRECT            (LVM_FIRST + 209)
+#endif
+#ifndef LVM_SETITEMINDEXSTATE
+    #define LVM_SETITEMINDEXSTATE           (LVM_FIRST + 210)
+#endif
+#ifndef LVM_GETNEXTITEMINDEX
+    #define LVM_GETNEXTITEMINDEX            (LVM_FIRST + 211)
+#endif
+#ifndef TVM_MAPACCIDTOHTREEITEM
+    #define TVM_MAPACCIDTOHTREEITEM         (TV_FIRST + 42)
+#endif
+#ifndef TVM_MAPHTREEITEMTOACCID
+    #define TVM_MAPHTREEITEMTOACCID         (TV_FIRST + 43)
+#endif
+#ifndef TVM_SETEXTENDEDSTYLE
+    #define TVM_SETEXTENDEDSTYLE            (TV_FIRST + 44)
+#endif
+#ifndef TVM_GETEXTENDEDSTYLE
+    #define TVM_GETEXTENDEDSTYLE            (TV_FIRST + 45)
+#endif
+#ifndef TVM_SETAUTOSCROLLINFO
+    #define TVM_SETAUTOSCROLLINFO           (TV_FIRST + 59)
+#endif
+#ifndef TVM_GETSELECTEDCOUNT
+    #define TVM_GETSELECTEDCOUNT            (TV_FIRST + 70)
+#endif
+#ifndef TVM_SHOWINFOTIP
+    #define TVM_SHOWINFOTIP                 (TV_FIRST + 71)
+#endif
+#ifndef TVM_GETITEMPARTRECT
+    #define TVM_GETITEMPARTRECT             (TV_FIRST + 72)
+#endif
+#ifndef MCM_GETCURRENTVIEW
+    #define MCM_GETCURRENTVIEW              (MCM_FIRST + 22)
+#endif
+#ifndef MCM_GETCALENDARCOUNT
+    #define MCM_GETCALENDARCOUNT            (MCM_FIRST + 23)
+#endif
+#ifndef MCM_GETCALENDARGRIDINFO
+    #define MCM_GETCALENDARGRIDINFO         (MCM_FIRST + 24)
+#endif
+#ifndef MCM_GETCALID
+    #define MCM_GETCALID                    (MCM_FIRST + 25)
+#endif
+#ifndef MCM_SETCALID
+    #define MCM_SETCALID                    (MCM_FIRST + 26)
+#endif
+#ifndef MCM_SIZERECTTOMIN
+    #define MCM_SIZERECTTOMIN               (MCM_FIRST + 27)
+#endif
+#ifndef MCM_SETCALENDARBORDER
+    #define MCM_SETCALENDARBORDER           (MCM_FIRST + 28)
+#endif
+#ifndef MCM_GETCALENDARBORDER
+    #define MCM_GETCALENDARBORDER           (MCM_FIRST + 29)
+#endif
+#ifndef MCM_SETCURRENTVIEW
+    #define MCM_SETCURRENTVIEW              (MCM_FIRST + 30)
+#endif
+#ifndef DTM_SETMCSTYLE
+    #define DTM_SETMCSTYLE                  (DTM_FIRST + 11)
+#endif
+#ifndef DTM_GETMCSTYLE
+    #define DTM_GETMCSTYLE                  (DTM_FIRST + 12)
+#endif
+#ifndef DTM_CLOSEMONTHCAL
+    #define DTM_CLOSEMONTHCAL               (DTM_FIRST + 13)
+#endif
+#ifndef DTM_GETDATETIMEPICKERINFO
+    #define DTM_GETDATETIMEPICKERINFO       (DTM_FIRST + 14)
+#endif
+#ifndef DTM_GETIDEALSIZE
+    #define DTM_GETIDEALSIZE                (DTM_FIRST + 15)
+#endif
+
 #include "font.h"
 #include "mem.h"
 #include "savelbox.h"
@@ -417,9 +684,41 @@ extern WORD             ListBoxMessageArraySize;
 extern message          near ListBoxMessageArray[];
 extern WORD             ComboBoxMessageArraySize;
 extern message          near ComboBoxMessageArray[];
-#ifdef NT_MSGS
+#ifdef __NT__
 extern WORD             ScrollBarMessageArraySize;
 extern message          near ScrollBarMessageArray[];
+extern WORD             HeaderMessageArraySize;
+extern message          near HeaderMessageArray[];
+extern WORD             ToolbarMessageArraySize;
+extern message          near ToolbarMessageArray[];
+extern WORD             RebarMessageArraySize;
+extern message          near RebarMessageArray[];
+extern WORD             ToolTipsMessageArraySize;
+extern message          near ToolTipsMessageArray[];
+extern WORD             StatusBarMessageArraySize;
+extern message          near StatusBarMessageArray[];
+extern WORD             TrackBarMessageArraySize;
+extern message          near TrackBarMessageArray[];
+extern WORD             UpDownMessageArraySize;
+extern message          near UpDownMessageArray[];
+extern WORD             ProgressBarMessageArraySize;
+extern message          near ProgressBarMessageArray[];
+extern WORD             HotKeyMessageArraySize;
+extern message          near HotKeyMessageArray[];
+extern WORD             ListViewMessageArraySize;
+extern message          near ListViewMessageArray[];
+extern WORD             TreeViewMessageArraySize;
+extern message          near TreeViewMessageArray[];
+extern WORD             ComboBoxExMessageArraySize;
+extern message          near ComboBoxExMessageArray[];
+extern WORD             TabControlMessageArraySize;
+extern message          near TabControlMessageArray[];
+extern WORD             AnimateMessageArraySize;
+extern message          near AnimateMessageArray[];
+extern WORD             MonthCalMessageArraySize;
+extern message          near MonthCalMessageArray[];
+extern WORD             DateTimeMessageArraySize;
+extern message          near DateTimeMessageArray[];
 #endif
 extern BOOL             SpyMessagesAutoScroll;
 extern BOOL             AutoSaveConfig;

@@ -34,6 +34,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <dde.h>
+#ifdef __NT__
+    #include <commctrl.h>
+#endif
 
 static message *userMsg;
 
@@ -71,7 +74,7 @@ message *GetMessageDataFromID( int msgid, char *class_name )
                 return( &ListBoxMessageArray[i] );
             }
         }
-#ifdef NT_MSGS
+#ifdef __NT__
     } else if( !stricmp( class_name, "combobox" ) ||
                !stricmp( class_name, WC_COMBOBOXEX ) ) {
 #else
@@ -82,11 +85,108 @@ message *GetMessageDataFromID( int msgid, char *class_name )
                 return( &ComboBoxMessageArray[i] );
             }
         }
-#ifdef NT_MSGS
+#ifdef __NT__
+        if( !stricmp( class_name, WC_COMBOBOXEX ) ) {
+            for( i = 0; i < ComboBoxExMessageArraySize; i++ ) {
+                if( msgid == ComboBoxExMessageArray[i].id ) {
+                    return( &ComboBoxExMessageArray[i] );
+                }
+            }
+        }
     } else if( !stricmp( class_name, "scrollbar" ) ) {
         for( i = 0; i < ScrollBarMessageArraySize; i++ ) {
             if( msgid == ScrollBarMessageArray[i].id ) {
                 return( &ScrollBarMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, WC_HEADER ) ) {
+        for( i = 0; i < HeaderMessageArraySize; i++ ) {
+            if( msgid == HeaderMessageArray[i].id ) {
+                return( &HeaderMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, TOOLBARCLASSNAME ) ) {
+        for( i = 0; i < ToolbarMessageArraySize; i++ ) {
+            if( msgid == ToolbarMessageArray[i].id ) {
+                return( &ToolbarMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, REBARCLASSNAME ) ) {
+        for( i = 0; i < RebarMessageArraySize; i++ ) {
+            if( msgid == RebarMessageArray[i].id ) {
+                return( &RebarMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, TOOLTIPS_CLASS ) ) {
+        for( i = 0; i < ToolTipsMessageArraySize; i++ ) {
+            if( msgid == ToolTipsMessageArray[i].id ) {
+                return( &ToolTipsMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, STATUSCLASSNAME ) ) {
+        for( i = 0; i < StatusBarMessageArraySize; i++ ) {
+            if( msgid == StatusBarMessageArray[i].id ) {
+                return( &StatusBarMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, TRACKBAR_CLASS ) ) {
+        for( i = 0; i < TrackBarMessageArraySize; i++ ) {
+            if( msgid == TrackBarMessageArray[i].id ) {
+                return( &TrackBarMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, UPDOWN_CLASS ) ) {
+        for( i = 0; i < UpDownMessageArraySize; i++ ) {
+            if( msgid == UpDownMessageArray[i].id ) {
+                return( &UpDownMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, PROGRESS_CLASS ) ) {
+        for( i = 0; i < ProgressBarMessageArraySize; i++ ) {
+            if( msgid == ProgressBarMessageArray[i].id ) {
+                return( &ProgressBarMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, HOTKEY_CLASS ) ) {
+        for( i = 0; i < HotKeyMessageArraySize; i++ ) {
+            if( msgid == HotKeyMessageArray[i].id ) {
+                return( &HotKeyMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, WC_LISTVIEW ) ) {
+        for( i = 0; i < ListViewMessageArraySize; i++ ) {
+            if( msgid == ListViewMessageArray[i].id ) {
+                return( &ListViewMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, WC_TREEVIEW ) ) {
+        for( i = 0; i < TreeViewMessageArraySize; i++ ) {
+            if( msgid == TreeViewMessageArray[i].id ) {
+                return( &TreeViewMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, WC_TABCONTROL ) ) {
+        for( i = 0; i < TabControlMessageArraySize; i++ ) {
+            if( msgid == TabControlMessageArray[i].id ) {
+                return( &TabControlMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, ANIMATE_CLASS ) ) {
+        for( i = 0; i < AnimateMessageArraySize; i++ ) {
+            if( msgid == AnimateMessageArray[i].id ) {
+                return( &AnimateMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, MONTHCAL_CLASS ) ) {
+        for( i = 0; i < MonthCalMessageArraySize; i++ ) {
+            if( msgid == MonthCalMessageArray[i].id ) {
+                return( &MonthCalMessageArray[i] );
+            }
+        }
+    } else if( !stricmp( class_name, DATETIMEPICK_CLASS ) ) {
+        for( i = 0; i < DateTimeMessageArraySize; i++ ) {
+            if( msgid == DateTimeMessageArray[i].id ) {
+                return( &DateTimeMessageArray[i] );
             }
         }
 #endif
