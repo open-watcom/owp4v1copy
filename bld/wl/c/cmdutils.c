@@ -179,7 +179,7 @@ bool ProcOne( parse_entry *entry, sep_type req, bool suicide )
 {
     char                *key;
     char                *ptr;
-    int                 plen;
+    unsigned            plen;
     bool                ret;
     char                keybuff[20];
 
@@ -222,13 +222,13 @@ bool ProcOne( parse_entry *entry, sep_type req, bool suicide )
     return( ret );
 }
 
-bool MatchOne( parse_entry *entry , sep_type req , char *match, int len )
-/*******************************************************************/
+bool MatchOne( parse_entry *entry , sep_type req , char *match, unsigned len )
+/****************************************************************************/
 /* recognize token out of parse table */
 {
     char                *key;
     char                *ptr;
-    int                 plen;
+    unsigned            plen;
     bool                ret = FALSE;
 
     while( entry->keyword != NULL ) {
@@ -274,7 +274,7 @@ ord_state getatol( unsigned_32 *pnt )
 /*******************************************/
 {
     char            *p;
-    int             len;
+    unsigned        len;
     unsigned long   value;
     unsigned        radix;
     bool            isvalid;
@@ -283,14 +283,16 @@ ord_state getatol( unsigned_32 *pnt )
     char            ch;
 
     len = Token.len;
-    if( len <= 0 ) return( ST_NOT_ORDINAL );
+    if( len == 0 )
+        return( ST_NOT_ORDINAL );
     p = Token.this;
     gotdigit = FALSE;
     value = 0ul;
     radix = 10;
-    if( *p == '0' ) {
+    if( len >= 2 && *p == '0' ) {
         --len;
-        if( tolower(*++p) == 'x') {
+        ++p;
+        if( tolower( *p ) == 'x' ) {
             radix = 16;
             ++p;
             --len;
@@ -865,8 +867,8 @@ static void MapEscapeChar( void )
     memmove( Token.next + 1, str, strlen( str ) + 1 );
 }
 
-static int MapDoubleByteChar( unsigned char c )
-/*********************************************/
+static unsigned MapDoubleByteChar( unsigned char c )
+/**************************************************/
 /* if the double byte character support is on, check if the current character
  * is a double byte character skip it */
 {
@@ -891,12 +893,12 @@ static int MapDoubleByteChar( unsigned char c )
 static bool MakeToken( tokcontrol ctrl, sep_type separator )
 /**********************************************************/
 {
-    bool    quit;
-    char    hmm;
-    int     len;
-    bool    forcematch;
-    bool    hitmatch;
-    bool    keepspecial;
+    bool        quit;
+    char        hmm;
+    unsigned    len;
+    bool        forcematch;
+    bool        hitmatch;
+    bool        keepspecial;
 
     Token.this = Token.next;
     len = 0;
@@ -1185,7 +1187,7 @@ char *GetFileName( char **membname, bool setname )
     if( GetToken( SEP_PAREN, TOK_INCLUDE_DOT ) ) {   // got LIBNAME(LIB_MEMBER)
         fullmemb = alloca( Token.len + 1 );
         memcpy( fullmemb, Token.this, Token.len );
-        fullmemb[Token.len] = '\0';
+        fullmemb[ Token.len ] = '\0';
         fullmemb = RemovePath( fullmemb, &memblen );
         *membname = ChkToString( fullmemb, memblen );
         ptr = FileName( objname, namelen, E_LIBRARY, FALSE );

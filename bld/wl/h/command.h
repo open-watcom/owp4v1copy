@@ -197,7 +197,7 @@ extern cmdfilelist *CmdFile;
 extern bool             ProcArgList( bool (*)( void ), tokcontrol );
 extern bool             ProcArgListEx( bool (*)( void ), tokcontrol ,cmdfilelist * );
 extern bool             ProcOne( parse_entry *, sep_type, bool );
-extern bool             MatchOne( parse_entry *, sep_type, char *, int );
+extern bool             MatchOne( parse_entry *, sep_type, char *, unsigned );
 extern ord_state        getatoi( unsigned_16 * );
 extern ord_state        getatol( unsigned_32 * );
 extern bool             HaveEquals( tokcontrol );

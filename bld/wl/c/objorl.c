@@ -119,7 +119,7 @@ static void *ORLRead( void *_list, size_t len )
 
     result = CachePermRead( list, ORLFilePos, len );
     ORLFilePos += len;
-    _ChkAlloc( cache, sizeof(readcache) );
+    _ChkAlloc( cache, sizeof( readcache ) );
     cache->next = ReadCacheList;
     ReadCacheList = cache;
     cache->data = result;
@@ -501,7 +501,7 @@ static segnode *FindSegNode( orl_sec_handle sechdl )
 #define PREFIX_LEN (sizeof(ImportSymPrefix) - 1)
 
 static void ImpProcSymbol( segnode *snode, orl_symbol_type type, char *name,
-                           int namelen )
+                           size_t namelen )
 /***************************************************************************/
 {
     if( type & ORL_SYM_TYPE_UNDEFINED ) {
