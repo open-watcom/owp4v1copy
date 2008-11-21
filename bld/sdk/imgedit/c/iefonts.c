@@ -37,7 +37,6 @@
 #include <string.h>
 #include <mbstring.h>
 #include "iemem.h"
-#include "rcstr.h"
 
 #define STATUS_FONTNAME         "Helv"
 #define STATUS_POINTSIZE        8

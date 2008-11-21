@@ -33,7 +33,6 @@
 #include "imgedit.h"
 #include <string.h>
 #include "iemem.h"
-#include "rcstr.h"
 
 static HWND             statusBarWnd;
 static char             leftBlock[3];

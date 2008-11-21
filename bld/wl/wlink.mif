@@ -67,15 +67,15 @@ extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/dw/h"
 !ifdef wlink_trmem
 extra_c_flags_debug      = -DTRMEM
 !endif
-extra_c_flags_loadpe     = -DINSIDE_WLINK -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
-extra_c_flags_loados2    = -I"$(wres_dir)/h"
+extra_c_flags_loadpe     = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
+extra_c_flags_loados2    = -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
 extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
 extra_c_flags_dllentry   = -bd
 extra_c_flags_idedrv     = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
 extra_c_flags_rcstr      = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
 extra_c_flags_exerespe   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
-extra_c_flags_sharedio   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
+extra_c_flags_sharedio   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
 extra_c_flags_stidedrv   = -DSTATIC_LINKAGE -I"$(watcom_dir)/c"
 extra_c_flags_trmem      = $(trmem_cflags)
 extra_c_flags_mem        = $(trmem_cover_cflags)
