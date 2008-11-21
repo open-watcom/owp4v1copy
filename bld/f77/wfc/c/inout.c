@@ -679,10 +679,16 @@ bool    WasStmtListed( void ) {
 void    GetBanner( char *buff ) {
 //===============================
 
+    strcpy( buff, banner1w( _Banner, VERSION ) );
+}
+
+static void    GetBannerWithTime( char *buff ) {
+//===============================
+
     time_t      time_of_day;
     struct tm   *t;
 
-    strcpy( buff, banner1w( _Banner, VERSION ) );
+    GetBanner( buff );
     time_of_day = time( NULL );
     t = localtime( &time_of_day );
     MsgFormat( "  %4d1/%2d2/%2d3 %2d4:%2d5:%2d6", buff + strlen( buff ),
@@ -720,6 +726,8 @@ void    PrtBanner( void ) {
     if( !(Options & OPT_QUIET) && !(Options & OPT_TYPE) ) {
         TOutNL( banner );
     }
+
+    GetBannerWithTime( banner );
     PrtLstNL( banner );
 
     GetCopyright( banner );
