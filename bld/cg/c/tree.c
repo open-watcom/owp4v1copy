@@ -1814,13 +1814,13 @@ static  an  TNBitOpGets( tn node, type_def *tipe, bool yield_before_op )
     FreeTreeNode( (tn)lhs );
     U64ShiftR( &mask, shift, &shiftmask );  // shiftmask = mask >> shift;
     if( after_value->format == NF_CONS && after_value->class == CL_CONS2 ) {
-        retv = Int( shiftmask.u._64[0] & after_value->u.name->c.int_value );
-        if( retv->u.name->c.int_value != shiftmask.u._64[0] ) {
+        retv = Int( shiftmask.u._32[I64LO32] & after_value->u.name->c.int_value );
+        if( retv->u.name->c.int_value != shiftmask.u._32[I64LO32] ) {
             DoAnd( left, mask, node );
         }
         if( retv->u.name->c.int_value != 0 ) {
             free_retv = retv;
-            retv = Int( (unsigned_32)retv->u.name->c.int_value << shift );
+            retv = Int( retv->u.name->c.int_value << shift );
             BGDone( free_retv );
             retv = BGOpGets( O_OR, left, retv, node->tipe, node->tipe );
         } else {
