@@ -557,24 +557,6 @@ static time_t *getFileDepTimeStamp( FNAMEPTR flist )
     return( &stamp );
 }
 
-static FNAMEPTR NextDependency( FNAMEPTR curr )
-{
-    if( !CompFlags.emit_dependencies ) {
-        return( NULL );
-    }
-    if( curr == NULL ) {
-        curr = FNames;
-    } else {
-        curr = curr->next;
-    }
-    while( curr != NULL ) {
-        if( curr->rwflag && !SrcFileInRDir( curr ) )
-            break;
-        curr = curr->next;
-    }
-    return( curr );
-}
-
 /*
 //    NextLibrary
 //        Called (indirectly) from the code generator to inject automagically defined symbols.
@@ -1073,11 +1055,6 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
         return( (VOIDPTR)DataSegName );
     case OBJECT_FILE_NAME:
         return( (VOIDPTR)ObjFileName( OBJ_EXT ) );
-    case TARGET_FILE_NAME:
-        return( (VOIDPTR)ForceSlash( CreateFileName( DependTarget
-                          , OBJ_EXT, FALSE ), DependForceSlash ) );
-    case DEPEND_FILE_NAME:
-        return( (VOIDPTR)DepFileName() );
     case REVISION_NUMBER:
         return( (VOIDPTR)II_REVISION );
     case AUX_LOOKUP:
@@ -1139,7 +1116,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
     case TEMP_LOC_TELL:
         return( NULL );
     case NEXT_DEPENDENCY:                               /* 03-dec-92 */
-        return( NextDependency( (FNAMEPTR) cgsym_handle ) );
+        if( CompFlags.emit_dependencies )
+            return( NextDependency( (FNAMEPTR) cgsym_handle ) );
+        return( NULL );
     case DEPENDENCY_TIMESTAMP:
         return( getFileDepTimeStamp( (FNAMEPTR) cgsym_handle ) );
     case DEPENDENCY_NAME:
@@ -1370,7 +1349,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
     case TEMP_LOC_TELL:
         return( NULL );
     case NEXT_DEPENDENCY:                               /* 03-dec-92 */
-        return( NextDependency( (FNAMEPTR)cgsym_handle ) );
+        if( CompFlags.emit_dependencies )
+            return( NextDependency( (FNAMEPTR) cgsym_handle ) );
+        return( NULL );
     case DEPENDENCY_TIMESTAMP:
         return( getFileDepTimeStamp( (FNAMEPTR)cgsym_handle ) );
     case DEPENDENCY_NAME:

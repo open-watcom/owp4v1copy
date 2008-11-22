@@ -451,6 +451,7 @@ extern  char    *ObjFileName(char *);
 extern  char    *ForceSlash(char *, char );
 extern  char    *CreateFileName( char *template, char *extension, bool forceext );
 extern  char    *GetSourceDepName( void );
+extern  FNAMEPTR NextDependency( FNAMEPTR );
 
 extern  FNAMEPTR AddFlist(char const *);
 extern  FNAMEPTR FileIndexToFName(unsigned);

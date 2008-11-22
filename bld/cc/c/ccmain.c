@@ -217,13 +217,27 @@ char *ForceSlash( char *name, char slash )
 
     if( !slash || !save )
         return( name );
-    while( name[0] )
-    {
+    while( name[0] ) {
         if( name[0] == '\\' || name[0] == '/' )
             name[0] = slash;
         name++;
     }
     return( save );
+}
+
+FNAMEPTR NextDependency( FNAMEPTR curr )
+{
+    if( curr == NULL ) {
+        curr = FNames;
+    } else {
+        curr = curr->next;
+    }
+    while( curr != NULL ) {
+        if( curr->rwflag && !SrcFileInRDir( curr ) )
+            break;
+        curr = curr->next;
+    }
+    return( curr );
 }
 
 void DumpDepFile( void )
@@ -232,30 +246,14 @@ void DumpDepFile( void )
 
     OpenDepFile();
     if( DepFile != NULL ) {
-        if( FNames ) {
-            fprintf( DepFile, "%s :"
-                   , ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE )
-                              , DependForceSlash ) );
-            curr = FNames;
-            if( curr )
-                if( curr->rwflag && !SrcFileInRDir( curr ) )
-                    fprintf( DepFile, " %s"
-                            , ForceSlash( GetSourceDepName()
-                                        , DependForceSlash ) );
-            curr = curr->next;
-            for( ; curr; curr = curr->next ) {
-                if( curr->rwflag && !SrcFileInRDir( curr ) )
-                    fprintf( DepFile, " %s", ForceSlash( curr->name, DependForceSlash ) );
+        curr = NextDependency( NULL );
+        if( curr != NULL ) {
+            fprintf( DepFile, "%s :", ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE ), DependForceSlash ) );
+            fprintf( DepFile, " %s", ForceSlash( GetSourceDepName(), DependForceSlash ) );
+            for( curr = NextDependency( curr ); curr != NULL; curr = NextDependency( curr ) ) {
+                fprintf( DepFile, " %s", ForceSlash( curr->name, DependForceSlash ) );
             }
             fprintf( DepFile, "\n" );
-            /*
-            for( curr = FNames; curr; curr = curr->next )
-            {
-                if( curr->rwflag && !SrcFileInRDir( curr ) )
-                    continue;
-                //fprintf( DepFile, "#Skipped file...%s\n", curr->name );
-            }
-            */
         }
         fclose( DepFile );
         DepFile = NULL;
@@ -697,7 +695,9 @@ static void DelErrFile(void)
     char        *name;
 
     name = ErrFileName();
-    if( name != NULL ) remove( name );
+    if( name != NULL ) {
+        remove( name );
+    }
 }
 
 static void DelDepFile( void )
@@ -705,7 +705,9 @@ static void DelDepFile( void )
     char        *name;
 
     name = DepFileName();
-    if( name != NULL ) remove( name );
+    if( name != NULL ) {
+        remove( name );
+    }
 }
 
 int OpenSrcFile( char *filename, int delimiter )
@@ -928,10 +930,10 @@ static FNAMEPTR FindFlist( char const *filename )
 { // find a flist
     FNAMEPTR    flist;
 
-    flist = FNames;
-    while( flist  != NULL ) {
-        if( strcmp( filename, flist->name ) == 0 ) break;
-        flist = flist->next;
+    for( flist = FNames; flist != NULL; flist = flist->next ) {
+        if( strcmp( filename, flist->name ) == 0 ) {
+            break;
+        }
     }
     return( flist );
 }
