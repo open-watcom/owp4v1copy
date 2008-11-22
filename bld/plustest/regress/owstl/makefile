@@ -132,6 +132,7 @@ save : .symbolic
     @if exist test.out cp test.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
+    @rm -f mmwin16.cpp mmwindef.cpp
     @%make common_clean
 
 # ensures mmwindef.cpp and mmwin16.cpp are always identical to 
