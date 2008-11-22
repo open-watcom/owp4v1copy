@@ -522,7 +522,7 @@ static TOKEN ScanPPDot( void )
     }
 }
 
-static int ScanHex( int max, const char **pbuf )
+static int ScanHex( int max, const unsigned char **pbuf )
 {
     int                 c;
     int                 count;
@@ -536,7 +536,7 @@ static int ScanHex( int max, const char **pbuf )
         if( pbuf == NULL ) {
             c = SaveNextChar();
         } else {
-            c = *++*(unsigned char **)pbuf;
+            c = *++*pbuf;
         }
         if( max == 0 )
             break;
@@ -1218,7 +1218,7 @@ static TOKEN CharConst( int char_type )
     int         n;
     TOKEN       token;
     long        value;
-    char        error;
+    bool        error;
 
     c = SaveNextChar();
     if( c == '\'' ) {                           /* 05-jan-95 */
@@ -1231,7 +1231,7 @@ static TOKEN CharConst( int char_type )
     token = T_CONSTANT;
     i = 0;
     value = 0;
-    error = 0;
+    error = FALSE;
     for( ;; ) {
         if( c == '\r' || c == '\n' ) {
             token = T_BAD_TOKEN;
@@ -1315,7 +1315,7 @@ static TOKEN CharConst( int char_type )
         BadTokenInfo = ERR_INV_CHAR_CONSTANT;
     } else {
         NextChar();
-        if( error != 0 ) {                      /* 16-nov-94 */
+        if( error ) {                      /* 16-nov-94 */
             BadTokenInfo = ERR_INVALID_HEX_CONSTANT;
             token = T_BAD_TOKEN;
         }
@@ -1342,10 +1342,10 @@ static TOKEN ScanString( void )
 {
     int         c;
     int         ok;
-    char        error;
+    bool        error;
 
     ok = 0;
-    error = 0;
+    error = FALSE;
     CompFlags.wide_char_string = 0;
     CompFlags.trigraph_alert = 0;
     c = NextChar();
@@ -1407,7 +1407,7 @@ static TOKEN ScanString( void )
     return( T_BAD_TOKEN );
 }
 
-int ESCChar( int c, const char **pbuf, char *error )
+int ESCChar( int c, const unsigned char **pbuf, bool *error )
 {
     int         n;
     int         i;
@@ -1420,7 +1420,7 @@ int ESCChar( int c, const char **pbuf, char *error )
             if( pbuf == NULL ) {
                 c = SaveNextChar();
             } else {
-                c = *++*(unsigned char **)pbuf;
+                c = *++*pbuf;
             }
             --i;
             if( i == 0 ) {
@@ -1431,7 +1431,7 @@ int ESCChar( int c, const char **pbuf, char *error )
         if( ScanHex( 127, pbuf ) ) {
             n = Constant;
         } else {                        /*  '\xz' where z is not a hex char */
-            *error = 1;
+            *error = TRUE;
             n = 'x';
         }
     } else {

@@ -727,7 +727,7 @@ extern  int     InitPPScan( void );             /* cscan */
 extern  void    FiniPPScan( int );              /* cscan */
 extern  int     CalcHash( const char *, int );  /* cscan */
 extern  unsigned hashpjw( const char * );       /* cscan */
-extern  int     ESCChar( int, const char **, char * );  /* cscan */
+extern  int     ESCChar( int, const unsigned char **, bool * );  /* cscan */
 extern  void    SkipAhead( void );              /* cscan */
 extern  TOKEN   ScanToken( void );              /* cscan */
 extern  void    ReScanInit( char * );           /* cscan */
