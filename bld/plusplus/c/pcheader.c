@@ -627,6 +627,7 @@ static boolean checkCompFlags( COMP_FLAGS *testflags )
     _VERIFY_FLAG( pch_debug_info_opt );
     _VERIFY_FLAG( register_conventions );
     _VERIFY_FLAG( extensions_enabled );
+    _VERIFY_FLAG( disable_ialias );
     #undef _VERIFY_FLAG
     return( FALSE );
 }
