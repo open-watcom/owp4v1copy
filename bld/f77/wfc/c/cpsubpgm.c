@@ -46,7 +46,7 @@
 #include "insert.h"
 #include "utility.h"
 
-extern  TYPE            MapTypes( TYPE,int );
+extern  TYPE            MapTypes( TYPE, uint );
 extern  TYPE            ImplType( char);
 extern  bool            EmptyCSList( void );
 extern  sym_id          LkSym( void );

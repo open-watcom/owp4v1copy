@@ -52,7 +52,7 @@
 
 #include <string.h>
 
-extern  void            Function( int, uint, bool );
+extern  void            Function( TYPE, uint, bool );
 extern  act_dim_list    *STSubsList( act_dim_list * );
 extern  sym_id          LkSym( void );
 extern  bool            LenSpec( TYPE, uint * );

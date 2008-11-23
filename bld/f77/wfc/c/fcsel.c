@@ -45,7 +45,7 @@
 #include "cgprotos.h"
 
 
-extern  label_handle    GetLabel(int);
+extern  label_handle    GetLabel(label_id);
 extern  label_handle    GetStmtLabel(sym_id);
 extern  void            RefStmtLabel(sym_id);
 extern  cg_name         SymValue(sym_id);

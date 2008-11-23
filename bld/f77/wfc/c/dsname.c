@@ -61,7 +61,9 @@ static  void    CkFieldNoList( void );
 static  void    ChkStructName( void );
 static  void    CkNameNoList( void );
 static  void    SetTypeUsage( unsigned_16 type_usage );
-static  void    Function( void );
+// Rename  Function -> ScanningFunction to prevent clash with
+// other external Function declaration
+static  void    ScanningFunction( void );
 static  void    SubProg( void );
 static  void    CkIntrinsic( void );
 void             CkTypeDeclared( void );
@@ -196,7 +198,7 @@ void    DSName( void ) {
             } else if( (CITNode->typ == TY_CHAR) && SubStrung() ) {
                 SetTypeUsage( SY_TYPE | SY_USAGE );
             } else {
-                Function();
+                ScanningFunction();
             }
         } else {
             if( ASType & AST_DIM ) {
@@ -355,7 +357,7 @@ static  void    SubProg( void ) {
 }
 
 
-static  void    Function( void ) {
+static  void    ScanningFunction( void ) {
 //==========================
 
 // Must be scanning a function.

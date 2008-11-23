@@ -56,7 +56,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-extern  int             KwLookUp(char **,int,char *,int,int);
+extern  int             KwLookUp(char **,int,char *,int,bool);
 extern  int             MkHexConst(char *,char *,int);
 extern  char            *SkipBlanks(char *);
 extern  aux_info        *AuxLookupName(char *,int);

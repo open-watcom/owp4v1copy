@@ -43,7 +43,7 @@ extern  sym_id          FieldDecl(void);
 extern  void            ArrayDecl(sym_id);
 extern  void            DataInit(itnode *);
 extern  sym_id          STStruct(char *,uint);
-extern  void            Function(uint,uint,bool);
+extern  void            Function(TYPE,uint,bool);
 extern  bool            IsFunctionDefn(void);
 extern  void            MustBeTypeDecl(void);
 extern  void            EndOfStatement(void);

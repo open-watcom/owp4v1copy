@@ -35,6 +35,7 @@
 #include "errcod.h"
 #include "types.h"
 #include "cg.h"
+#include "typclass.h"
 #include "emitobj.h"
 #include "ferror.h"
 #include "insert.h"
@@ -869,12 +870,7 @@ static  void    DoDataInit( PTYPE var_type ) {
         {
             extern      void            *CFCnvSF(char *,char *);
             extern      void            CFCnvTarget(void *,byte *,unsigned);
-            // fix to Brad's temporary fix (I doubt it will ever be changed)
-#if _CPU == 8086
-            extern      signed_16       TypeLength(cg_type);
-#else
-            extern      signed_32       TypeLength(cg_type);
-#endif
+            extern      type_length     TypeLength(cg_type);
             extern      void            CFFree(void *);
 
             extern      void            CnvS2S(float *,char *);

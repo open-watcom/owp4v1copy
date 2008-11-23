@@ -63,7 +63,7 @@ extern  void            FreeRtRtns(void);
 extern  void            InitInlinePragmas(void);
 extern  void            FreeInlinePragmas(void);
 extern  void            InitLabels(void);
-extern  void            FiniLabels(uint);
+extern  void            FiniLabels(int);
 extern  void            FreeGlobalData(void);
 extern  void            FreeUsedBacks(bool);
 extern  void            InitTmps(void);

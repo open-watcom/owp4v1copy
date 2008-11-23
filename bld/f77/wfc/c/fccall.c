@@ -57,7 +57,7 @@ extern  void            XPush(cg_name);
 extern  cg_name         XPop(void);
 extern  void            XPopCmplx(cg_cmplx *,cg_type);
 extern  cg_name         GetTypedValue(void);
-extern  label_handle    GetLabel(int);
+extern  label_handle    GetLabel(label_id);
 extern  label_handle    GetStmtLabel(sym_id);
 extern  void            MakeSCB(sym_id,cg_name);
 extern  void            SubCodeSeg(void);
