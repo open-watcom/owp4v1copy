@@ -60,6 +60,10 @@ static int              Line_postfix=LPOSTFIX_NONE;
 #define CHR_BULLET              '\x07'
 #define BOX_VBAR                '\xB3'
 #define BOX_HBAR                '\xC4'
+#define BOX_CORNER_TOP_LEFT     '\xDA'
+#define BOX_CORNER_TOP_RIGHT    '\xBF'
+#define BOX_CORNER_BOTOM_LEFT   '\xC0'
+#define BOX_CORNER_BOTOM_RIGHT  '\xD9'
 
 // InfoBench style codes
 #define STR_BOLD_ON             STR_ESCAPE "b"
@@ -578,11 +582,11 @@ int ib_trans_line(
             trans_add_char( ' ', section, &alloc_size);
         }
         // draw the top line of the box
-        trans_add_char( 'Ú', section, &alloc_size );
+        trans_add_char( BOX_CORNER_TOP_LEFT, section, &alloc_size );
         for( ctr = 1; ctr <= Right_Margin - Curr_indent - 2; ctr++ ) {
             trans_add_char( BOX_HBAR, section, &alloc_size );
         }
-        trans_add_char( '¿', section, &alloc_size );
+        trans_add_char( BOX_CORNER_TOP_RIGHT, section, &alloc_size );
 
         trans_add_char_wrap( '\n', section, &alloc_size);
 
@@ -596,11 +600,11 @@ int ib_trans_line(
             trans_add_char( ' ', section, &alloc_size);
         }
 
-        trans_add_char( 'À', section, &alloc_size );
+        trans_add_char( BOX_CORNER_BOTOM_LEFT, section, &alloc_size );
         for( ctr = 1; ctr <= Right_Margin - Curr_indent - 2; ctr++ ) {
             trans_add_char( BOX_HBAR, section, &alloc_size );
         }
-        trans_add_char( 'Ù', section, &alloc_size );
+        trans_add_char( BOX_CORNER_BOTOM_RIGHT, section, &alloc_size );
         Box_Mode = FALSE;
 
         trans_add_char_wrap( '\n', section, &alloc_size );
