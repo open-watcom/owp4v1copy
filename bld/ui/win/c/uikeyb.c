@@ -40,9 +40,9 @@
 
 
 typedef struct {
-char value;
-char regular;
-char shifted;
+    unsigned char   value;
+    char            regular;
+    char            shifted;
 } keytable;
 
 static keytable kt[] = {
@@ -64,7 +64,7 @@ static unsigned         LastKey;
 static volatile bool    HaveKey;
 
 #pragma aux set_carry = 0xf9;
-extern void set_carry(void);
+extern void set_carry( void );
 
 extern void WindowsMouseEvent( unsigned, unsigned );
 

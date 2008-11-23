@@ -125,7 +125,7 @@ void WdeInitEditClass( void )
         use_default = TRUE;
         text = WdeAllocRCString( WDE_EDITWINDOWFONT );
         if( text ) {
-            cp = _mbschr( text, '.' );
+            cp = (char *)_mbschr( (unsigned char const *)text, '.' );
             if( cp ) {
                 *cp = '\0';
                 cp++;

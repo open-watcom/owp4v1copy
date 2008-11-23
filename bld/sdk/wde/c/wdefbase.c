@@ -208,7 +208,7 @@ OBJPTR WINEXPORT WdeBaseCreate ( OBJPTR parent, RECT *obj_rect,
     use_default = TRUE;
     text = WdeAllocRCString( WDE_BASEOBJECTFONT );
     if( text ) {
-        cp = _mbschr( text, '.' );
+        cp = (char *)_mbschr( (unsigned char const *)text, '.' );
         if( cp ) {
             *cp = '\0';
             cp++;

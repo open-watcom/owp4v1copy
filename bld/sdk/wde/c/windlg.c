@@ -197,7 +197,7 @@ GLOBALHANDLE DialogTemplate( LONG dtStyle, int dtx, int dty,
 #pragma pack(1);
 typedef struct MyControlClass {
     unsigned short      crap;
-    char                class[2];
+    unsigned char       class[2];
 } MyControlClass;
 #endif
 
@@ -227,27 +227,27 @@ GLOBALHANDLE AddControl ( GLOBALHANDLE data, int dtilx, int dtily,
     textClass = FALSE;
     classlen = sizeof( cclass );
     cclass.crap = 0xffff;
-    cclass.class[0] = 0;
-    cclass.class[1] = 0;
+    cclass.class[ 0 ] = 0;
+    cclass.class[ 1 ] = 0;
 
-    if( class[0] & 0x80 ) {
-        cclass.class[0] = class[0];
+    if( class[ 0 ] & 0x80 ) {
+        cclass.class[ 0 ] = class[ 0 ];
     } else {
         if( !stricmp( class, "combobox" ) ) {
-            cclass.class[0] = 0x85;
+            cclass.class[ 0 ] = 0x85;
         } else if( !stricmp( class,"scrollbar" ) ) {
-            cclass.class[0] = 0x84;
+            cclass.class[ 0 ] = 0x84;
         } else if( !stricmp( class,"listbox" ) ) {
-            cclass.class[0] = 0x83;
+            cclass.class[ 0 ] = 0x83;
         } else if( !stricmp( class,"static" ) ) {
-            cclass.class[0] = 0x82;
+            cclass.class[ 0 ] = 0x82;
         } else if( !stricmp( class,"edit" ) ) {
-            cclass.class[0] = 0x81;
+            cclass.class[ 0 ] = 0x81;
         } else if( !stricmp( class,"button" ) ) {
-            cclass.class[0] = 0x80;
+            cclass.class[ 0 ] = 0x80;
         }
 
-        if( cclass.class[0] == 0 ) {
+        if( cclass.class[ 0 ] == 0 ) {
             classlen = stringLength( class );
             textClass = TRUE;
         }
@@ -303,7 +303,7 @@ GLOBALHANDLE AddControl ( GLOBALHANDLE data, int dtilx, int dtily,
         ditstr += ROUND_CLASSLEN( classlen );
     }
 #else
-    if( class[0] & 0x80 ) {
+    if( class[ 0 ] & 0x80 ) {
         _FARmemcpy( ditstr, class, classlen );
         ditstr += ROUND_CLASSLEN( classlen );
     } else {

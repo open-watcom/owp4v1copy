@@ -39,9 +39,9 @@
 #include "wrmem.h"
 #include "wrutil.h"
 
-static int WRCountChars( char *str, char c )
+static int WRCountChars( unsigned char *str, char c )
 {
-    int count;
+    int     count;
 
     count = 0;
 
@@ -56,173 +56,174 @@ static int WRCountChars( char *str, char c )
     return( count );
 }
 
-static int WRCountCharsString( char *str, char *s )
+static int WRCountCharsString( unsigned char *str, unsigned char *s )
 {
-    int count;
+    int     count;
 
     if( !str || !s ) {
         return( 0 );
     }
 
     count = 0;
-    while( *str ) {
+    for( ; *str != '\0'; str = _mbsinc( str ) ) {
         if( _mbschr( s, *str ) != NULL ) {
             count++;
         }
-        str = _mbsinc( str );
     }
 
     return( count );
 }
 
 // changes all occurrences of chars in 'from' to '\to' in str
-char * WR_EXPORT WRConvertStringFrom( char *str, char *from, char *to )
+char *WR_EXPORT WRConvertStringFrom( char *_str, char *_from, char *to )
 {
-    char        *new;
-    char        *s;
-    int         len;
-    int         pos;
+    char            *new;
+    unsigned char   *s;
+    int             len;
+    int             pos;
+    unsigned char   *str = (unsigned char *)_str;
+    unsigned char   *from = (unsigned char *)_from;
 
     if( !str || !from || !to ) {
         return( NULL );
     }
-
-    len = strlen( str ) + WRCountCharsString( str, from ) + 1;
+    len = strlen( _str ) + WRCountCharsString( str, from ) + 1;
     new = WRMemAlloc( len );
     if( new == NULL ) {
         return( NULL );
     }
 
     pos = 0;
-    while( *str ) {
+    for( ; *str != '\0'; str = _mbsinc( str ) ) {
         s = _mbschr( from, *str );
         if( s != NULL ) {
-            new[pos++] = '\\';
-            new[pos++] = to[s-from];
+            new[ pos++ ] = '\\';
+            new[ pos++ ] = to[ s - from ];
         } else {
-            new[pos++] = str[0];
-            if( _mbislead( str[0] ) ) {
-                new[pos++] = str[1];
+            new[ pos++ ] = str[ 0 ];
+            if( _mbislead( str[ 0 ] ) ) {
+                new[ pos++ ] = str[ 1 ];
             }
         }
-        str = _mbsinc( str );
     }
-    new[pos] = '\0';
+    new[ pos ] = '\0';
 
     return( new );
 }
 
 // changes all occurrences of 'from' to '\to' in str
-char * WR_EXPORT WRConvertFrom( char *str, char from, char to )
+char *WR_EXPORT WRConvertFrom( char *_str, char from, char to )
 {
-    char        *new;
-    int         len;
-    int         pos;
+    char            *new;
+    int             len;
+    int             pos;
+    unsigned char   *str = (unsigned char *)_str;
 
     if( str == NULL ) {
         return( NULL );
     }
 
-    len = strlen( str ) + WRCountChars( str, from ) + 1;
+    len = strlen( _str ) + WRCountChars( str, from ) + 1;
     new = WRMemAlloc( len );
     if( new == NULL ) {
         return( NULL );
     }
 
     pos = 0;
-    while( *str ) {
+    for( ; *str != '\0'; str = _mbsinc( str ) ) {
         if( *str == from ) {
-            new[pos++] = '\\';
-            new[pos++] = to;
+            new[ pos++ ] = '\\';
+            new[ pos++ ] = to;
         } else {
-            new[pos++] = str[0];
-            if( _mbislead( str[0] ) ) {
-                new[pos++] = str[1];
+            new[ pos++ ] = str[ 0 ];
+            if( _mbislead( str[ 0 ] ) ) {
+                new[ pos++ ] = str[ 1 ];
             }
         }
-        str = _mbsinc( str );
     }
-    new[pos] = '\0';
+    new[ pos ] = '\0';
 
     return( new );
 }
 
 // changes all occurrences of '\from' to 'to' in str
-char * WR_EXPORT WRConvertTo( char *str, char to, char from )
+char *WR_EXPORT WRConvertTo( char *_str, char to, char from )
 {
-    char        *new;
-    int         len;
-    int         pos;
+    char            *new;
+    int             len;
+    int             pos;
+    unsigned char   *str = (unsigned char *)_str;
 
     if( str == NULL ) {
         return( NULL );
     }
 
-    len = strlen( str ) + 1;
+    len = strlen( _str ) + 1;
     new = WRMemAlloc( len );
     if( new == NULL ) {
         return( NULL );
     }
 
     pos = 0;
-    while( *str ) {
-        if( !_mbislead( str[0] ) && !_mbislead( str[1] ) &&
-            ( str[0] == '\\' ) && ( str[1] == from ) ) {
-            new[pos++] = to;
+    for( ; *str != '\0'; str = _mbsinc( str ) ) {
+        if( !_mbislead( str[ 0 ] ) && !_mbislead( str[ 1 ] ) &&
+            ( str[ 0 ] == '\\' ) && ( str[ 1 ] == from ) ) {
+            new[ pos++ ] = to;
             str++;
         } else {
-            new[pos++] = str[0];
-            if( _mbislead( str[0] ) ) {
-                new[pos++] = str[1];
+            new[ pos++ ] = str[ 0 ];
+            if( _mbislead( str[ 0 ] ) ) {
+                new[ pos++ ] = str[ 1 ];
             }
         }
-        str = _mbsinc( str );
     }
-    new[pos] = '\0';
+    new[ pos ] = '\0';
 
     return( new );
 }
 
 // changes all occurrences of the \chars in 'from' to 'to' in str
-char * WR_EXPORT WRConvertStringTo( char *str, char *to, char *from )
+char * WR_EXPORT WRConvertStringTo( char *_str, char *to, char *_from )
 {
-    char        *new;
-    char        *s;
-    int         len;
-    int         pos;
+    char            *new;
+    unsigned char   *s;
+    int             len;
+    int             pos;
+    unsigned char   *str = (unsigned char *)_str;
+    unsigned char   *from = (unsigned char *)_from;
 
     if( !str || !to || !from ) {
         return( NULL );
     }
 
-    len = strlen( str ) + 1;
+    len = strlen( _str ) + 1;
     new = WRMemAlloc( len );
     if( new == NULL ) {
         return( NULL );
     }
 
     pos = 0;
-    while( *str ) {
-        if( !_mbislead( str[0] ) && !_mbislead( str[1] ) &&
-            ( str[0] == '\\' ) && ( s = _mbschr( from, str[1] ) ) != NULL ) {
-            new[pos++] = to[s-from];
+    for( ; *str != '\0'; str = _mbsinc( str ) ) {
+        if( !_mbislead( str[ 0 ] ) && !_mbislead( str[ 1 ] ) &&
+            ( str[ 0 ] == '\\' ) && ( s = _mbschr( from, str[ 1 ] ) ) != NULL ) {
+            new[ pos++ ] = to[ s - from ];
             str++;
         } else {
-            new[pos++] = str[0];
-            if( _mbislead( str[0] ) ) {
-                new[pos++] = str[1];
+            new[ pos++ ] = str[ 0 ];
+            if( _mbislead( str[ 0 ] ) ) {
+                new[ pos++ ] = str[ 1 ];
             }
         }
-        str = _mbsinc( str );
     }
-    new[pos] = '\0';
+    new[ pos ] = '\0';
 
     return( new );
 }
 
-void WR_EXPORT WRMassageFilter( char *filter )
+void WR_EXPORT WRMassageFilter( char *_filter )
 {
-    char        sep;
+    char            sep;
+    unsigned char   *filter = (unsigned char *)_filter;
 
     sep = '\t';
 
@@ -625,11 +626,12 @@ int WR_EXPORT WRStrlen( char *str, int is32bit )
     return( len );
 }
 
-int WR_EXPORT WRFindFnOffset( char *name )
+int WR_EXPORT WRFindFnOffset( char *_name )
 {
-    int         offset;
-    char        *cp;
-    char        *last;
+    int             offset;
+    unsigned char   *cp;
+    unsigned char   *last;
+    unsigned char   *name = (unsigned char *)_name;
 
     if( name == NULL ) {
         return( -1 );

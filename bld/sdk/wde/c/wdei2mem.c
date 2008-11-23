@@ -721,35 +721,36 @@ ResNameOrOrdinal *WdeMem2NameOrOrdinal( uint_8 **data, Bool is32bit )
         return( NULL );
     }
 
-    *data = *data + size;
+    (*data) += size;
 
     return( new );
 }
 
-ControlClass *WdeMem2ControlClass( uint_8 **data, Bool is32bit )
+ControlClass *WdeMem2ControlClass( uint_8 **_data, Bool is32bit )
 {
     ControlClass        *new;
     uint_8              *data8;
     uint_16             *data16;
     int                 stringlen;
     int                 len;
+    char                *data;
 
-    if( !data || !*data ) {
+    if( !_data || !*_data ) {
         return( NULL );
     }
-
+    data = (char *)*_data;
     stringlen = 0;
-    len = sizeof(ControlClass);
+    len = sizeof( ControlClass );
     if( is32bit ) {
-        data16 = (uint_16 *)*data;
+        data16 = (uint_16 *)data;
         if( *data16 != 0xffff ) {
-            WRunicode2mbcs( (char *)*data, NULL, &stringlen );
+            WRunicode2mbcs( data, NULL, &stringlen );
             len = stringlen;
         }
     } else {
-        data8 = (uint_8 *)*data;
+        data8 = (uint_8 *)data;
         if( ( *data8 & 0x80 ) == 0 ) {
-            stringlen = strlen( *data ) + 1;
+            stringlen = strlen( data ) + 1;
             len = stringlen;
         }
     }
@@ -761,38 +762,40 @@ ControlClass *WdeMem2ControlClass( uint_8 **data, Bool is32bit )
 
     if( stringlen == 0 ) {
         if( is32bit ) {
-            new->Class = data16[1] & 0x00ff;
-            len = sizeof(uint_16)*2;
+            new->Class = data16[ 1 ] & 0x00ff;
+            len = sizeof( uint_16 ) * 2;
         } else {
-            new->Class = data8[0];
+            new->Class = data8[ 0 ];
         }
     } else {
         if( is32bit ) {
-            WRunicode2mbcsBuf( *data, (char *)new, len );
+            WRunicode2mbcsBuf( data, (char *)new, len );
             len *= 2;
         } else {
-            memcpy( new, *data, len );
+            memcpy( new, data, len );
         }
     }
 
-    (*data) += len;
+    (*_data) += len;
 
     return( new );
 }
 
-char *WdeMem2String( uint_8 **data, Bool is32bit )
+char *WdeMem2String( uint_8 **_data, Bool is32bit )
 {
     char        *new;
     int         len;
+    char        *data;
 
-    if( !data || !*data ) {
+    if( !_data || !*_data ) {
         return( NULL );
     }
 
+    data = (char *)*_data;
     if( is32bit ) {
-        WRunicode2mbcs( (char *)*data, NULL, &len );
+        WRunicode2mbcs( data, NULL, &len );
     } else {
-        len = strlen( *data ) + 1;
+        len = strlen( data ) + 1;
     }
 
     new = WdeMemAlloc( len );
@@ -801,16 +804,16 @@ char *WdeMem2String( uint_8 **data, Bool is32bit )
     }
 
     if( is32bit ) {
-        WRunicode2mbcsBuf( *data, (char *)new, len );
+        WRunicode2mbcsBuf( data, (char *)new, len );
     } else {
-        memcpy( new, *data, len );
+        memcpy( new, data, len );
     }
 
-    len = WRStrlen( (char *)*data, is32bit ) + 1;
+    len = WRStrlen( data, is32bit ) + 1;
     if( is32bit ) {
         len++;
     }
-    (*data) += len;
+    (*_data) += len;
 
     return( new );
 }

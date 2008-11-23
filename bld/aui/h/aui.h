@@ -252,7 +252,7 @@ typedef struct aui_private_window_structure {
     int                     top;
     char                    button_down_screen_row;
     unsigned char           keyindex;
-    char                    keypiece;
+    unsigned char           keypiece;
     wnd_class               class;
     wnd_switches            switches;
     int                     vscroll_pending;

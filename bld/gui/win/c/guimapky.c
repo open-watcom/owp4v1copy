@@ -47,11 +47,11 @@ static  bool            RetTrue = FALSE; /* set to TRUE of app returned
 #endif
 
 typedef struct {
-    char        value;
-    char        regular;
-    char        shifted;
-    gui_key     alt;
-    gui_key     ctrl;
+    unsigned char   value;
+    char            regular;
+    char            shifted;
+    gui_key         alt;
+    gui_key         ctrl;
 } keytable;
 
 static keytable vk_table[] = {
@@ -567,11 +567,11 @@ static bool convert_table( WORD vk, gui_key *key, ctrlkey *table, int size )
 
 bool GUIWindowsMapKey( WPI_PARAM1 p1, WPI_PARAM2 p2, gui_key *key )
 {
-    WORD        flags;
-    WORD        vk;
-    char        ch;
-    char        scan;
-    char        pm_scan;
+    WORD            flags;
+    WORD            vk;
+    unsigned char   ch;
+    char            scan;
+    char            pm_scan;
 
     flags       = SHORT1FROMMP( p1 );
     vk          = SHORT2FROMMP( p2 );

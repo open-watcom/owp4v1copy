@@ -87,7 +87,7 @@ Bool WInitStatusLines( HINSTANCE inst )
 
     status_font = WAllocRCString( W_STATUSFONT );
     if( status_font ) {
-        cp = _mbschr( status_font, '.' );
+        cp = (char *)_mbschr( (unsigned char const *)status_font, '.' );
         if( cp ) {
             *cp = '\0';
             strcpy( lf.lfFaceName, status_font );

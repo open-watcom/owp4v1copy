@@ -694,7 +694,7 @@ extern          EVENT           uikeyboardevent( void );
 extern          int             uimouseinstalled( void );
 
 extern          int             FlipCharacterMap( void );
-extern          int             UIMapCharacters( char mapchar[], unsigned char mapdata[][16] );
+extern          int             UIMapCharacters( unsigned char mapchar[], unsigned char mapdata[][16] );
 
 extern          void            uiyield( void );
 extern          int             uiforceevadd( EVENT );  // int is a bool

@@ -163,7 +163,7 @@ TEMPLATE_HANDLE AddControl ( TEMPLATE_HANDLE data, int dtilx, int dtily,
     _DLGITEMTEMPLATE    _ISFAR *dit;
     char                _ISFAR * ditstr;
 #if defined(__NT__) && !defined(__DEC__)
-    char                newclass[2];
+    unsigned char       newclass[2];
 #endif
 
     style |= WS_CHILD;
@@ -175,20 +175,20 @@ TEMPLATE_HANDLE AddControl ( TEMPLATE_HANDLE data, int dtilx, int dtily,
 
     classlen = 2;
     if( !stricmp( class, "combobox" ) ) {
-        newclass[0] = 0x85;
+        newclass[ 0 ] = 0x85;
     } else if( !stricmp( class,"scrollbar" ) ) {
-        newclass[0] = 0x84;
+        newclass[ 0 ] = 0x84;
     } else if( !stricmp( class,"listbox" ) ) {
-        newclass[0] = 0x83;
+        newclass[ 0 ] = 0x83;
     } else if( !stricmp( class,"static" ) ) {
-        newclass[0] = 0x82;
+        newclass[ 0 ] = 0x82;
     } else if( !stricmp( class,"edit" ) ) {
-        newclass[0] = 0x81;
+        newclass[ 0 ] = 0x81;
     } else if( !stricmp( class,"button" ) ) {
-        newclass[0] = 0x80;
+        newclass[ 0 ] = 0x80;
     }
-    newclass[1] = 0;
-    class = newclass;
+    newclass[ 1 ] = 0;
+    class = (char *)newclass;
 #else
     classlen = SLEN( class );
 #endif

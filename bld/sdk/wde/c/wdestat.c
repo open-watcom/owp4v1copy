@@ -115,7 +115,7 @@ Bool WdeCreateStatusLine( HWND main, HINSTANCE inst )
 
     status_font = WdeAllocRCString( WDE_STATUSFONT );
     if( status_font ) {
-        cp = _mbschr( status_font, '.' );
+        cp = (char *)_mbschr( (unsigned char *)status_font, '.' );
         if( cp ) {
             *cp = '\0';
             strcpy( lf.lfFaceName, status_font );

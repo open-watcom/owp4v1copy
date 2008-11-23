@@ -32,9 +32,9 @@
 
 #include "disasm.h"
 
-uint_32                 InsAddr;
-char                    *TxtBuff;
-char                    *NameBuff;
+uint_32         InsAddr;
+char            *TxtBuff;
+char            *NameBuff;
 
-char                    Opcode;
-char                    SecondByte;
+uint_8          Opcode;
+uint_8          SecondByte;
