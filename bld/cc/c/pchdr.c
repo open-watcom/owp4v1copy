@@ -114,6 +114,7 @@ static  char            PH_computing_size;
 static  RDIRPTR         PCHRDirNames;       /* list of read-only directories */
 static  IALIASPTR       PCHIAliasNames;     /* list of include aliases */
 static  INCFILE         *PCHOldIncFileList; /* temporary copy of old include file list */
+static  int             PCHOldIncListValid; /* flag to indicate if PCHOldIncFileList is valid */
 
 struct  pheader {
     unsigned long   signature;      //  'WPCH'
@@ -1061,6 +1062,7 @@ static char *FixupIncFileList( char *p, unsigned incfile_count )
     unsigned    len;
 
     PCHOldIncFileList = IncFileList;
+    PCHOldIncListValid = 1;
     IncFileList = NULL;
     if( incfile_count != 0 ) {
         do {
@@ -1076,7 +1078,7 @@ static char *FixupIncFileList( char *p, unsigned incfile_count )
 
 static void RestoreIncFileList( void )
 {
-    if( PCHOldIncFileList != NULL ) {
+    if( PCHOldIncListValid ) {
         FreeIncFileList();
         IncFileList = PCHOldIncFileList;
         PCHOldIncFileList = NULL;
@@ -1087,11 +1089,14 @@ static void FreeOldIncFileList( void )
 {
     INCFILE *ilist;
 
-    while( (ilist = PCHOldIncFileList) != NULL ) {
-        PCHOldIncFileList = ilist->nextfile;
-        CMemFree( ilist );
+    if( PCHOldIncListValid ) {
+        while( (ilist = PCHOldIncFileList) != NULL ) {
+            PCHOldIncFileList = ilist->nextfile;
+            CMemFree( ilist );
+        }
+        PCHOldIncFileList = NULL;
+        PCHOldIncListValid = 0;
     }
-    PCHOldIncFileList = NULL;
 }
 
 static char *FixupIncludes( char *p, unsigned file_count )
@@ -1805,7 +1810,6 @@ void AbortPreCompiledHeader( void )
     TagArray         = NULL;
     TextSegArray     = NULL;
     FNameList        = NULL;
-    IncFileList      = NULL;
     PCHMacroHash     = NULL;
     IAliasNames      = PCHIAliasNames;
     RestoreIncFileList();
@@ -1838,6 +1842,7 @@ int UsePreCompiledHeader( char *filename )
     TagArray = NULL;
     PCHMacroHash = NULL;
     PCHOldIncFileList = NULL;
+    PCHOldIncListValid = 0;
     len = read( handle, &pch, sizeof( struct pheader ) );
     if( len != sizeof( struct pheader ) ) {
         close( handle );
