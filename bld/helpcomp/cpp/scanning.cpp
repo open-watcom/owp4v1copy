@@ -75,7 +75,7 @@ Scanner::~Scanner()
 
 #define     S_ENDC  0xFF
 
-inline char Scanner::nextch()
+inline int Scanner::nextch()
 {
     if( _maxBuf == 0 ) {
         return( S_ENDC );
@@ -111,7 +111,7 @@ void Scanner::putback( char c )
 TokenTypes Scanner::handleSlash( Token * tok )
 {
     TokenTypes  result;
-    char    current = nextch();
+    int     current = nextch();
 
     if( current == S_ENDC ) {
         HCWarning( RTF_BADEOF, _source->name() );
@@ -120,7 +120,7 @@ TokenTypes Scanner::handleSlash( Token * tok )
 
         // Certain RTF commands begin with "\*\", not "\".
 
-        current = nextch( );
+        current = nextch();
         if( current != '\\' ) {
             HCWarning( RTF_BADCOMMAND, _lineNum, _source->name() );
             if( current != S_ENDC ) {
@@ -203,14 +203,14 @@ int Scanner::isFootnoteChar( char c )
 
 void Scanner::pullCommand( Token * tok )
 {
-    char    current;
+    int     current;
     char    num_string[7];
     int     i;
 
     tok->_text[0] = (char)nextch();
 
     for( i=1; i<BUF_SIZE-1; i++ ) {
-        current = nextch( );
+        current = nextch();
 
         if( !islower( current ) ) break;
         tok->_text[i] = (char) current;
@@ -223,7 +223,7 @@ void Scanner::pullCommand( Token * tok )
         tok->_hasValue = 1;
         for( i=0; i<6; i++ ) {
             num_string[i] = (char) current;
-            current = nextch( );
+            current = nextch();
             if( !isdigit(current) ) break;
         }
         num_string[i+1] = '\0';
@@ -241,12 +241,12 @@ void Scanner::pullCommand( Token * tok )
 
 void Scanner::pullText( Token * tok )
 {
-    tok->_text[0] = (char) nextch( );
+    tok->_text[0] = (char) nextch();
 
-    int i=1;
-    char current;
+    int     i = 1;
+    int     current;
     while( i<BUF_SIZE-1 ) {
-        current = nextch( );
+        current = nextch();
 
         if( current == S_ENDC  ||
             current == '{'  ||
@@ -281,18 +281,18 @@ void Scanner::pullText( Token * tok )
 void Scanner::pullHex( Token * tok )
 {
     char    result[3];
-    char    current;
+    int     current;
     int     i;
 
     for( i=0; i<2; ++i ) {
-        current = nextch( );
+        current = nextch();
         if( !isxdigit( current ) ) {
             break;
         }
         result[i] = (char) current;
     }
     result[i] = '\0';
-    if( i<2 && current != S_ENDC ) {
+    if( i < 2 && current != S_ENDC ) {
         putback( current );
     }
     if( i==0 ) {
@@ -308,10 +308,10 @@ void Scanner::pullHex( Token * tok )
 
 void Scanner::getToken( Token * tok )
 {
-    char current;
+    int     current;
 
     for( ;; ) {
-        current = nextch( );
+        current = nextch();
         if( current != '\n' ) break;
         ++_lineNum;
     }

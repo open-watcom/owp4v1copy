@@ -83,7 +83,7 @@ class Scanner
     int         _maxBuf;
     int         _curPos;
 
-    char    nextch();
+    int     nextch();
     void    putback( char c );
 
 
