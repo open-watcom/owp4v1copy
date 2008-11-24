@@ -122,7 +122,7 @@ static void set_compact(
 static int translate_char_rtf(
 /****************************/
 
-    char                ch,
+    int                 ch,
     char                *buf,
     int                 do_quotes
 ) {
@@ -169,7 +169,7 @@ static char *translate_str_rtf(
 
     len = 1;
     for( t_str = str; *t_str != '\0'; ++t_str ) {
-        len += translate_char_rtf( *t_str, buf, do_quotes );
+        len += translate_char_rtf( *(unsigned char *)t_str, buf, do_quotes );
     }
     if( len > Trans_len ) {
         if( Trans_str != NULL ) {
@@ -180,7 +180,7 @@ static char *translate_str_rtf(
     }
     ptr = Trans_str;
     for( t_str = str; *t_str != '\0'; ++t_str ) {
-        len = translate_char_rtf( *t_str, buf, do_quotes );
+        len = translate_char_rtf( *(unsigned char *)t_str, buf, do_quotes );
         strcpy( ptr, buf );
         ptr += len;
     }
@@ -192,7 +192,7 @@ static char *translate_str_rtf(
 static int trans_add_char_rtf(
 /****************************/
 
-    char                ch,
+    int                 ch,
     section_def         *section,
     int                 *alloc_size
 ) {
@@ -266,7 +266,7 @@ int rtf_trans_line(
 ) {
     char                *ptr;
     char                *end;
-    char                ch;
+    int                 ch;
     char                *ctx_name;
     char                *ctx_text;
     char                buf[100];
@@ -275,7 +275,7 @@ int rtf_trans_line(
 
     /* check for special pre-processing stuff first */
     ptr = Line_buf;
-    ch = *ptr;
+    ch = *(unsigned char *)ptr;
 
     if( Blank_line && ( ch != CH_LIST_ITEM ||
                         Curr_list->compact != LIST_SPACE_COMPACT ) ) {
@@ -421,7 +421,7 @@ int rtf_trans_line(
 
     Blank_line = TRUE;
     for( ;; ) {
-        ch = *ptr;
+        ch = *(unsigned char *)ptr;
         if( ch != '\0' && ( ch != ' ' || ch != '\t' ) ) {
             Blank_line = FALSE;
         }
@@ -549,7 +549,7 @@ int rtf_trans_line(
         } else if( ch == CH_BMP ) {
             Curr_ctx->empty = FALSE;
             ++ptr;
-            ch = *ptr;
+            ch = *(unsigned char *)ptr;
             ptr += 2;
             end = strchr( ptr, CH_BMP );
             *end = '\0';

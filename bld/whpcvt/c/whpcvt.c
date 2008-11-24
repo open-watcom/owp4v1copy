@@ -409,7 +409,7 @@ void *check_realloc(
 static void check_brace(
 /**********************/
 
-    char                *buf,
+    void                *buf,
     int                 len
 ) {
     char                *ptr;
@@ -455,7 +455,7 @@ void whp_fprintf(
 void whp_fwrite(
 /**************/
 
-    char                *buf,
+    void                *buf,
     int                 el_size,
     int                 num_el,
     FILE                *f
@@ -882,7 +882,7 @@ bool read_line( void )
             }
 
             if( ch == 255 ) {
-                ch = 32;        // convert special blanks to regular blanks
+                ch = ' ';        // convert special blanks to regular blanks
             }
 
             *buf = (char)ch;
@@ -900,14 +900,15 @@ bool read_line( void )
                         break;
                     }
                 }
-                if( *Line_buf == CH_EXCLUDE_OFF ) {
+                ch = *(unsigned char *)Line_buf;
+                if( ch == CH_EXCLUDE_OFF ) {
                     Exclude_on = FALSE;
                     break;
-                } else if( *Line_buf == CH_EXCLUDE_OFF_BLANK ) {
+                } else if( ch == CH_EXCLUDE_OFF_BLANK ) {
                     Exclude_on = FALSE;
                     eat_blank = TRUE;
                     break;
-                } else if( *Line_buf == CH_EXCLUDE_ON ) {
+                } else if( ch == CH_EXCLUDE_ON ) {
                     Exclude_on = TRUE;
                     break;
                 } else if( Exclude_on ) {
@@ -934,7 +935,7 @@ char *whole_keyword_line(
        can happen in GML when people use index entries to generate
        keywords, so we have to look for this case */
 
-    for( ; *ptr == CH_CTX_KW; ) {
+    for( ; *(unsigned char *)ptr == CH_CTX_KW; ) {
         end = strchr( ptr + 1, CH_CTX_KW );
         memcpy( buf, ptr + 1, end - ptr - 1 );
         buf[end - ptr - 1] = '\0';
@@ -956,7 +957,7 @@ char *whole_keyword_line(
 int trans_add_char(
 /******************/
 
-    char                ch,
+    int                 ch,
     section_def         *section,
     int                 *alloc_size
 ) {
@@ -1186,7 +1187,7 @@ static bool read_topic_text(
         if( !more_to_do ) {
             break;
         }
-        if( *Line_buf == CH_CTX_DEF || *Line_buf == CH_TOPIC ) {
+        if( *(unsigned char *)Line_buf == CH_CTX_DEF || *(unsigned char *)Line_buf == CH_TOPIC ) {
             break;
         }
         if( section == NULL ) {
@@ -1412,16 +1413,16 @@ static ctx_def *define_ctx( void )
     char                ch, o_ch;
     int                 i;
 
-    Delim[0] = CH_CTX_DEF;
+    Delim[0] = (char)CH_CTX_DEF;
     ptr = strtok( Line_buf + 1, Delim );
     head_level = atoi( ptr );
     ctx_name = strtok( NULL, Delim );
 
     title_fmt = TITLE_FMT_DEFAULT;
-    if( *ctx_name == CH_TOPIC_LN ) {
+    if( *(unsigned char *)ctx_name == CH_TOPIC_LN ) {
         title_fmt = TITLE_FMT_LINE;
         ++ctx_name;
-    } else if( *ctx_name == CH_TOPIC_NOLN ) {
+    } else if( *(unsigned char *)ctx_name == CH_TOPIC_NOLN ) {
         title_fmt = TITLE_FMT_NOLINE;
         ++ctx_name;
     }
@@ -1490,7 +1491,7 @@ static bool read_ctx_topic( void )
     ctx_def             *ctx;
     char                *order_str;
 
-    Delim[0] = CH_TOPIC;
+    Delim[0] = (char)CH_TOPIC;
     ctx_name = strtok( Line_buf, Delim );
 
     ctx = find_ctx( ctx_name );
@@ -1700,28 +1701,23 @@ static int ctx_cmp(
 }
 
 // removes empty contexts from a given keyword_def if Remove_empty == TRUE
-static void compress_kw(
-/**********************/
-
-    keyword_def                 *kw
-) {
-    int                         o_size;
-    int                         n_size=0;
-    int                         o_idx = 0;
-    int                         n_idx = 0;
+static void compress_kw( keyword_def *kw )
+/****************************************/
+{
+    int         o_size;
+    int         n_size = 0;
+    int         o_idx;
+    int         n_idx = 0;
 
     if( Remove_empty ) {
         o_size = kw->ctx_list_size;
-
-        while( o_idx < o_size ) {
+        for( o_idx = 0; o_idx < o_size; ++o_idx ) {
             if( !kw->ctx_list[o_idx]->empty ) {
                 kw->ctx_list[n_idx] = kw->ctx_list[o_idx];
                 n_idx++;
                 n_size++;
             }
-            o_idx++;
         }
-
         kw->ctx_list_size = n_size;
     }
 }
@@ -1743,11 +1739,8 @@ static void output_kw_file( void )
     whp_fprintf( KW_file, ":pb.%cc\n", CH_SLIST_START );
 
     // count the number of keywords in our list
-    temp_kw = Keyword_list;
-    while( temp_kw !=NULL ) {
+    for( temp_kw = Keyword_list; temp_kw !=NULL; temp_kw = temp_kw->next )
         kw_num++;
-        temp_kw = temp_kw->next;
-    }
 
     // if we've got any keywords ...
     if( kw_num > 0 ) {
@@ -1756,11 +1749,9 @@ static void output_kw_file( void )
 
         // ... fill it up ...
         kw_num = 0;
-        temp_kw = Keyword_list;
-        while( temp_kw !=NULL ) {
+        for( temp_kw = Keyword_list; temp_kw !=NULL; temp_kw = temp_kw->next ) {
             kw[kw_num] = temp_kw;
             kw_num++;
-            temp_kw = temp_kw->next;
         }
 
         // .. and then sort it.
@@ -1792,8 +1783,7 @@ static void output_kw_file( void )
                 }
             } else if( kw[i]->ctx_list_size >1 ) {
                 // sort the list of contexts by title.
-                qsort( ctx, kw[i]->ctx_list_size, sizeof(ctx_def *),
-                                                                ctx_cmp );
+                qsort( ctx, kw[i]->ctx_list_size, sizeof(ctx_def *), ctx_cmp );
 
                 while( ctx_num < kw[i]->ctx_list_size ) {
                     // if the context is not special output a hyperlink
@@ -1825,10 +1815,7 @@ static void output_kw_file( void )
                     ctx_num++;
                 }
                 if( title ) {
-                    whp_fprintf( KW_file,
-                                ":pb.%c\n",
-
-                                CH_SLIST_END );
+                    whp_fprintf( KW_file, ":pb.%c\n", CH_SLIST_END );
                 }
             }
         }

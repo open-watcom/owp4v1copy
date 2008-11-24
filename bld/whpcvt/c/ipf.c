@@ -93,7 +93,7 @@ static void draw_line(
 static int translate_char_ipf(
 /****************************/
 
-    char                ch,
+    int                 ch,
     char                *buf
 ) {
     switch( ch ) {
@@ -135,7 +135,7 @@ static char *translate_str_ipf(
 
     len = 1;
     for( t_str = str; *t_str != '\0'; ++t_str ) {
-        len += translate_char_ipf( *t_str, buf );
+        len += translate_char_ipf( *(unsigned char *)t_str, buf );
     }
     if( len > Trans_len ) {
         if( Trans_str != NULL ) {
@@ -146,7 +146,7 @@ static char *translate_str_ipf(
     }
     ptr = Trans_str;
     for( t_str = str; *t_str != '\0'; ++t_str ) {
-        len = translate_char_ipf( *t_str, buf );
+        len = translate_char_ipf( *(unsigned char *)t_str, buf );
         strcpy( ptr, buf );
         ptr += len;
     }
@@ -158,7 +158,7 @@ static char *translate_str_ipf(
 static int trans_add_char_ipf(
 /****************************/
 
-    char                ch,
+    int                 ch,
     section_def         *section,
     int                 *alloc_size
 ) {
@@ -179,7 +179,7 @@ static int trans_add_str_ipf(
 
     len = 0;
     for( ; *str != '\0'; ++str ) {
-        len += trans_add_char_ipf( *str, section, alloc_size );
+        len += trans_add_char_ipf( *(unsigned char *)str, section, alloc_size );
     }
 
     return( len );
@@ -272,7 +272,7 @@ int ipf_trans_line(
 ) {
     char                *ptr;
     char                *end;
-    char                ch;
+    int                 ch;
     char                *ctx_name;
     char                *ctx_text;
     char                buf[500];
@@ -285,12 +285,11 @@ int ipf_trans_line(
 
     /* check for special column 0 stuff first */
     ptr = Line_buf;
-    ch = *ptr;
+    ch = *(unsigned char *)ptr;
     ch_len = 0;
     line_len = 0;
 
     switch( ch ) {
-
     case CH_TABXMP:
         if( *skip_blank( ptr + 1 ) == '\0' ) {
             Tab_xmp = FALSE;
@@ -408,15 +407,15 @@ int ipf_trans_line(
 
     Blank_line_sfx = TRUE;
 
-    if( *ptr != CH_LIST_ITEM && *ptr != CH_DLIST_TERM &&
-                                    *ptr != CH_DLIST_DESC && !Tab_xmp ) {
+    ch = *(unsigned char *)ptr;
+    if( ch != CH_LIST_ITEM && ch != CH_DLIST_TERM && ch != CH_DLIST_DESC && !Tab_xmp ) {
         /* a .br in front of li and dt would generate extra spaces */
         line_len += trans_add_str( ".br\n", section, &alloc_size );
     }
 
     term_fix = FALSE;
     for( ;; ) {
-        ch = *ptr;
+        ch = *(unsigned char *)ptr;
         if( ch == '\0' ) {
             if( term_fix ) {
                 trans_add_str( ":ehp2.", section, &alloc_size );
@@ -504,7 +503,7 @@ int ipf_trans_line(
         } else if( ch == CH_BMP ) {
             Curr_ctx->empty = FALSE;
             ++ptr;
-            ch = *ptr;
+            ch = *(unsigned char *)ptr;
             ptr += 2;
             end = strchr( ptr, CH_BMP );
             *end = '\0';
