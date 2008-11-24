@@ -31,21 +31,15 @@
 
 #include <unistd.h>
 #include <string.h>
-#include "watcom.h"
-#include "exeos2.h"
 #include "global.h"
 #include "errors.h"
 #include "rcmem.h"
 #include "rcstr.h"
-#include "exeseg.h"
-#include "exeres.h"
 #include "exeobj.h"
 #include "exelxobj.h"
-#include "exerespe.h"
-#include "exereslx.h"
 #include "exeutil.h"
-#include "pass2.h"
 #include "iortns.h"
+#include "pass2.h"
 
 /*
  * copyStubFile - copy from the begining of the file to the start of

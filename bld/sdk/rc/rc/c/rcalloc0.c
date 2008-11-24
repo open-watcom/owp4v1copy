@@ -128,7 +128,7 @@ extern void *RCMemLayer0Malloc( HeapHandle *heap )
     debugmem->startbyte = RCMEM_STARTBYTE;
 
     freemem = (FreeListInfo *)((char *)freemem + sizeof( DebugMemInfo ) );
-    *( (char *)freemem + size ) = RCMEM_ENDBYTE;
+    *((unsigned char *)freemem + size ) = RCMEM_ENDBYTE;
 #endif
 
     return( freemem );
@@ -144,12 +144,12 @@ extern void RCMemLayer0Free( void *mem, HeapHandle *heap )
         RcFprintf( stderr, NULL, "Free NULL pointer\n" );
     }
     debugmem = (DebugMemInfo *)( (char *)mem - sizeof( DebugMemInfo ) );
-    if( *((char*)mem + debugmem->size ) != RCMEM_ENDBYTE ) {
+    if( *((unsigned char*)mem + debugmem->size ) != RCMEM_ENDBYTE ) {
         RcFprintf( stderr, NULL, "(%x) Memory Overrun\n", mem );
     }
 
     debugmem->startbyte = !RCMEM_STARTBYTE;
-    mem = (char *)mem - sizeof( DebugMemInfo );
+    mem = (unsigned char *)mem - sizeof( DebugMemInfo );
 #endif
 
     *( (char **)mem ) = heap->freeList;

@@ -77,13 +77,13 @@ static char RCMemGetHeapIndex( size_t size )
 static void FreeBigListNode( void *mem, char freemem )
 /****************************************************/
 {
-    BigMemList       *travptr;
-    BigMemList       *prevnode;
-    char             *memptr;
-    unsigned long     headersize;
+    BigMemList      *travptr;
+    BigMemList      *prevnode;
+    unsigned char   *memptr;
+    unsigned long   headersize;
 
     headersize = sizeof( BigMemList ) + sizeof( HeapId );
-    memptr = (char *)BigList + headersize;
+    memptr = (unsigned char *)BigList + headersize;
     travptr = BigList->next;
     if( memptr == mem ) {
         if( freemem ) {
@@ -95,7 +95,7 @@ static void FreeBigListNode( void *mem, char freemem )
     travptr = BigList;
     prevnode = BigList;
     while( travptr != NULL ) {
-        memptr = (char *)travptr + headersize;
+        memptr = (unsigned char *)travptr + headersize;
         if( memptr == mem ) {
             prevnode->next = travptr->next;
 #ifdef RCMEM_DEBUG
@@ -131,12 +131,12 @@ extern void RCMemLayer1Init( void )
 extern void *RCMemLayer1Malloc( size_t size )
 /*******************************************/
 {
-    char            *mem;
+    unsigned char   *mem;
     BigMemList      *memptr;
     HeapHandle      *handle;
     HeapId          *idptr;
-    unsigned char    heapindex;
-    unsigned long    headersize;
+    unsigned char   heapindex;
+    unsigned long   headersize;
 
     heapindex = RCMemGetHeapIndex( size );
     if( heapindex == BIGLIST_ID ) {
@@ -155,9 +155,9 @@ extern void *RCMemLayer1Malloc( size_t size )
         idptr = (HeapId *)( (char *)memptr + sizeof( BigMemList ) );
         idptr->id = BIGLIST_ID;
 #ifdef RCMEM_DEBUG
-        *((char *)memptr + size + headersize ) = RCMEM_ENDBYTE;
+        *((unsigned char *)memptr + size + headersize ) = RCMEM_ENDBYTE;
 #endif
-        mem = (char *)memptr + headersize;
+        mem = (unsigned char *)memptr + headersize;
         BigList = memptr;
     } else {
         handle = Heaps[ heapindex ];
@@ -258,7 +258,7 @@ extern void *RCMemLayer1Realloc( void *mem, size_t size )
             idptr->id = BIGLIST_ID;
             BigList = newbigptr;
 #ifdef RCMEM_DEBUG
-            *((char *)newbigptr + headersize + size ) = RCMEM_ENDBYTE;
+            *((unsigned char *)newbigptr + headersize + size ) = RCMEM_ENDBYTE;
 #endif
             return( (char *)newbigptr + headersize );
         }
@@ -274,7 +274,7 @@ extern void *RCMemLayer1Realloc( void *mem, size_t size )
             debugmem = (DebugMemInfo *)((char *)blockptr -
                                         sizeof( DebugMemInfo ) );
             debugmem->size = size + sizeof( HeapId );
-            *((char *)mem + size) = RCMEM_ENDBYTE;
+            *((unsigned char *)mem + size) = RCMEM_ENDBYTE;
         }
 #endif
     } else {
