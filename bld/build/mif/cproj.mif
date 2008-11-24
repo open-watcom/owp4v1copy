@@ -17,7 +17,7 @@ bootstrapmode = 1
 !ifdef $(proj_name)_win32ver
 win32ver = $($(proj_name)_win32ver)
 !else
-win32ver = -DWINVER=0x400
+win32ver = -DWINVER=0x400 -D_WIN32_IE=0x300
 !endif
 
 cc_386          = *wcc386
