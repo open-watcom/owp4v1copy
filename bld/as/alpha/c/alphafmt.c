@@ -616,7 +616,7 @@ static bool jmpOperandsValidate( instruction *ins, ins_opcount num_op ) {
                                      { OP_REG_INDIRECT, OP_IMMED, OP_NOTHING }};
     static op_type  verify3[][3] = { { OP_GPR, OP_REG_INDIRECT, OP_IMMED } };
     ot_array        *verify;
-    ot_array        *verify_table[3] = { &verify1, &verify2, &verify3 };
+    ot_array        *verify_table[3] = { (ot_array *)&verify1, &verify2, (ot_array *)&verify3 };
     unsigned        num_var;
 
     if( num_op == 0 ) return( TRUE );
@@ -726,7 +726,7 @@ static bool retOperandsValidate( instruction *ins, ins_opcount num_op ) {
                                      { OP_REG_INDIRECT, OP_IMMED, OP_NOTHING }};
     static op_type  verify3[][3] = { { OP_GPR, OP_REG_INDIRECT, OP_IMMED } };
     ot_array        *verify;
-    ot_array        *verify_table[3] = { &verify1, &verify2, &verify3 };
+    ot_array        *verify_table[3] = { (ot_array *)&verify1, (ot_array *)&verify2, (ot_array *)&verify3 };
     unsigned        num_var;
 
     if( num_op == 0 ) return( TRUE );
