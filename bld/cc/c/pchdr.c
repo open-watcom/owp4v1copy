@@ -1899,7 +1899,7 @@ int UsePreCompiledHeader( char *filename )
     p = FixupIncFileList( p + len, pch.incfile_count );
     ifile = IncFileList;
     ialias_error = 0;
-    if( !CompFlags.disable_ialias ) {
+    if( !CompFlags.disable_ialias && !ForceInclude ) {
         if( strstr( ifile->filename, "_ialias.h" ) == NULL ||
             ifile->nextfile == NULL ) {
             ialias_error = 1;

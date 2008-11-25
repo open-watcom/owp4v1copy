@@ -1261,13 +1261,6 @@ static void ParseInit( void )
 local void Parse( void )
 {
     EmitInit();
-    CompFlags.ok_to_use_precompiled_hdr = 0;
-    CompFlags.use_precompiled_header = 0;
-    CompFlags.ignore_fnf = TRUE;
-    if( !CompFlags.disable_ialias ) {
-        OpenSrcFile( "_ialias.h", '<' );
-    }
-    CompFlags.ignore_fnf = FALSE;
     // The first token in a file should be #include if a user wants to
     // use pre-compiled headers. The following call to NextToken() to
     // get the very first token of the file will load the pre-compiled
@@ -1281,8 +1274,16 @@ local void Parse( void )
         // any macros that are defined in forced include file
         InitialMacroFlag = 0;                   /* 02-jun-95 */
         OpenSrcFile( ForceInclude, 0 );
-        CompFlags.use_precompiled_header = 0;
-        CompFlags.ok_to_use_precompiled_hdr = 0;
+    }
+    CompFlags.ok_to_use_precompiled_hdr = 0;
+    CompFlags.use_precompiled_header = 0;
+    CompFlags.ignore_fnf = TRUE;
+    if( !CompFlags.disable_ialias ) {
+        OpenSrcFile( "_ialias.h", '<' );
+    }
+    CompFlags.ignore_fnf = FALSE;
+    if( !ForceInclude ) {
+        CompFlags.ok_to_use_precompiled_hdr = 1;
     }
     NextToken();
     // If we didn't get a #include with the above call to NextToken()
