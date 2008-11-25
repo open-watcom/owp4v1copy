@@ -58,6 +58,16 @@ typedef struct
     uint8_t *   buffer;
 } p_buffer;
 
+/* To hold the data extracted from a CodeBlock struct. This is for use in the
+ * cop_device and cop_driver structs.
+ */
+
+typedef struct
+{
+    uint16_t            count;
+    uint8_t *           text;
+} code_text;
+
 /* To hold the data extracted from the CodeBlock struct. This is the complete
  * CodeBlock discussed in the Wiki, enhanced with the field cumulative_index
  * for use when parsing the DeviceFile struct.

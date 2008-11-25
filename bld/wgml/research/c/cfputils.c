@@ -503,58 +503,59 @@ void display_device( cop_device * in_device)
             }
         }
     }
-    printf_s( "Number of Default Fonts: %i\n", in_device->defaultfonts.count );
-    for( i = 0; i < in_device->defaultfonts.count; i++ ) {
+    printf_s( "Number of Default Fonts: %i\n", \
+                                            in_device->defaultfonts.font_count );
+    for( i = 0; i < in_device->defaultfonts.font_count; i++ ) {
         printf_s( "  Default Font Number  %i:\n", i );
-        if( in_device->defaultfonts.font[i].font_name == NULL ) \
+        if( in_device->defaultfonts.fonts[i].font_name == NULL ) \
                                                         puts( "    Font Name:");
         else printf_s( "    Font Name:         %s\n", \
-                                    in_device->defaultfonts.font[i].font_name );
-        if( in_device->defaultfonts.font[i].font_style == NULL ) \
+                                    in_device->defaultfonts.fonts[i].font_name );
+        if( in_device->defaultfonts.fonts[i].font_style == NULL ) \
                                                         puts( "    FontStyle:");
         else printf_s( "    Font Style:        %s\n", \
-                                    in_device->defaultfonts.font[i].font_style );
+                                    in_device->defaultfonts.fonts[i].font_style );
         printf_s( "    Font Height:       %i\n", \
-                                    in_device->defaultfonts.font[i].font_height );
+                                    in_device->defaultfonts.fonts[i].font_height );
         printf_s( "    Font Space:        %i\n", \
-                                    in_device->defaultfonts.font[i].font_space );
+                                    in_device->defaultfonts.fonts[i].font_space );
     }
-    if( in_device->pauses.startpause == NULL ) puts( "No START Pause" );
+    if( in_device->pauses.start_pause == NULL ) puts( "No START Pause" );
     else {
         puts( "START Pause:" );
-        interpret_function( in_device->pauses.startpause );
+        interpret_function( in_device->pauses.start_pause->text );
     }
-    if( in_device->pauses.documentpause == NULL ) puts( "No DOCUMENT Pause" );
+    if( in_device->pauses.document_pause == NULL ) puts( "No DOCUMENT Pause" );
     else {
         puts( "DOCUMENT Pause:" );
-        interpret_function( in_device->pauses.documentpause );
+        interpret_function( in_device->pauses.document_pause->text );
     }
-    if( in_device->pauses.docpagepause == NULL ) puts( "No DOCUMENT_PAGE Pause" );
+    if( in_device->pauses.docpage_pause == NULL ) puts( "No DOCUMENT_PAGE Pause" );
     else {
         puts( "DOCUMENT_PAGE Pause:" );
-        interpret_function( in_device->pauses.docpagepause );
+        interpret_function( in_device->pauses.docpage_pause->text );
     }
-    if( in_device->pauses.devpagepause == NULL ) puts( "No DEVICE_PAGE Pause" );
+    if( in_device->pauses.devpage_pause == NULL ) puts( "No DEVICE_PAGE Pause" );
     else {
         puts( "DEVICE_PAGE Pause:" );
-        interpret_function( in_device->pauses.devpagepause );
+        interpret_function( in_device->pauses.devpage_pause->text );
     }
-    printf_s( "Number of Device Fonts: %i\n", in_device->devicefonts.count );
-    for( i = 0; i < in_device->devicefonts.count; i++ ) {
+    printf_s( "Number of Device Fonts: %i\n", in_device->devicefonts.font_count );
+    for( i = 0; i < in_device->devicefonts.font_count; i++ ) {
         printf_s( "  Device Font Index:   %i:\n", i );
         printf_s( "    Font Name:         %s\n", \
-                                        in_device->devicefonts.font[i].font_name );
-        if( in_device->devicefonts.font[i].font_switch == NULL ) \
+                                    in_device->devicefonts.fonts[i].font_name );
+        if( in_device->devicefonts.fonts[i].font_switch == NULL ) \
                                                         puts( "    Font Switch:");
         else printf_s( "    Font Switch:       %s\n", \
-                                    in_device->devicefonts.font[i].font_switch );
+                                    in_device->devicefonts.fonts[i].font_switch );
         printf_s( "    Resident Font:     %i\n", \
-                                        in_device->devicefonts.font[i].resident );
-        if( in_device->devicefonts.font[i].fontpause == NULL ) \
+                                        in_device->devicefonts.fonts[i].resident );
+        if( in_device->devicefonts.fonts[i].font_pause == NULL ) \
                                                     puts( "    No Font Pause" );
         else {
             puts( "    Font Pause:" );
-            interpret_function( in_device->devicefonts.font[i].fontpause );
+            interpret_function( in_device->devicefonts.fonts[i].font_pause->text );
         }
     }
 
@@ -654,41 +655,39 @@ void display_driver( cop_driver * in_driver )
     printf_s( "  x_positive:              %i\n", in_driver->x_positive );
     printf_s( "  y_positive:              %i\n", in_driver->y_positive );
     puts( "Start :INIT Block:" );
-    if( in_driver->init.start_initblock != NULL ) {
-        for( i = 0; i < in_driver->init.start_initblock->count; i++ ) {
-            if( in_driver->init.start_initblock->codetext[i].is_fontvalue ) \
+    if( in_driver->inits.start != NULL ) {
+        for( i = 0; i < in_driver->inits.start->count; i++ ) {
+            if( in_driver->inits.start->codeblock[i].is_fontvalue ) \
                                                     puts( ":FONTVALUE Block:");
             else puts( ":VALUE Block:");
-            interpret_function( \
-                            in_driver->init.start_initblock->codetext[i].text );
+            interpret_function( in_driver->inits.start->codeblock[i].text );
         }
     }
     puts( "Document :INIT Block:" );
-    if( in_driver->init.document_initblock != NULL ) {
-        for( i = 0; i < in_driver->init.document_initblock->count; i++ ) {
-            if( in_driver->init.document_initblock->codetext[i].is_fontvalue ) \
+    if( in_driver->inits.document != NULL ) {
+        for( i = 0; i < in_driver->inits.document->count; i++ ) {
+            if( in_driver->inits.document->codeblock[i].is_fontvalue ) \
                                                     puts( ":FONTVALUE Block:");
             else puts( ":VALUE Block:");
-            interpret_function( \
-                            in_driver->init.document_initblock->codetext[i].text );
+            interpret_function( in_driver->inits.document->codeblock[i].text );
         }
     }
     puts( "End :FINISH Block:" );
-    if( in_driver->finish.end_finishblock != NULL ) {
-        interpret_function( in_driver->finish.end_finishblock->text );
+    if( in_driver->finishes.end != NULL ) {
+                            interpret_function( in_driver->finishes.end->text );
     }
     puts( "Document :FINISH Block:" );
-    if( in_driver->finish.document_finishblock != NULL ) {
-        interpret_function( in_driver->finish.document_finishblock->text );
+    if( in_driver->finishes.document != NULL ) {
+                        interpret_function( in_driver->finishes.document->text );
     }
-    if( in_driver->newline.newlineblock == NULL ) puts( ":NEWLINE Block:");
+    if( in_driver->newlines.newlineblocks == NULL ) puts( ":NEWLINE Block:");
     else {
         puts( ":NEWLINE Block(s):" );
-        for( i = 0; i < in_driver->newline.count; i++ ) {
+        for( i = 0; i < in_driver->newlines.count; i++ ) {
             printf_s( "  Advance: %i\n", \
-                                    in_driver->newline.newlineblock[i].advance );
-            if( in_driver->newline.newlineblock[i].text != NULL ) {
-                interpret_function( in_driver->newline.newlineblock[i].text );
+                                    in_driver->newlines.newlineblocks[i].advance );
+            if( in_driver->newlines.newlineblocks[i].text != NULL ) {
+                interpret_function( in_driver->newlines.newlineblocks[i].text );
             }
         }
     }
@@ -700,89 +699,91 @@ void display_driver( cop_driver * in_driver )
     if( in_driver->htab.text != NULL ) {
         interpret_function( in_driver->htab.text );
     }
-    if( in_driver->fontswitch.fontswitchblock == NULL ) \
+    if( in_driver->fontswitches.fontswitchblocks == NULL ) \
                                                     puts( ":FONTSWITCH Block:");
     else {
         puts( ":FONTSWITCH Block(s):" );    
-        for( i = 0; i < in_driver->fontswitch.count; i++ ) {
+        for( i = 0; i < in_driver->fontswitches.count; i++ ) {
             printf_s( "  Type: %s\n", \
-                                in_driver->fontswitch.fontswitchblock[i].type );
-            if( in_driver->fontswitch.fontswitchblock[i].startvalue != NULL ) {
+                                in_driver->fontswitches.fontswitchblocks[i].type );
+            if( in_driver->fontswitches.fontswitchblocks[i].startvalue != NULL ) {
                 puts( "  :STARTVALUE Block:");
                 interpret_function( \
-                    in_driver->fontswitch.fontswitchblock[i].startvalue->text );
+                    in_driver->fontswitches.fontswitchblocks[i].startvalue->text );
             }
-            if( in_driver->fontswitch.fontswitchblock[i].endvalue != NULL ) {
+            if( in_driver->fontswitches.fontswitchblocks[i].endvalue != NULL ) {
                 puts( "  :ENDVALUE Block:");
                 interpret_function( \
-                    in_driver->fontswitch.fontswitchblock[i].endvalue->text );
+                    in_driver->fontswitches.fontswitchblocks[i].endvalue->text );
             }
         }
     }
-    if( in_driver->fontstyle.fontstyle == NULL ) puts( ":FONTSTYLE Block:");
+    if( in_driver->fontstyles.fontstyleblocks == NULL ) puts( ":FONTSTYLE Block:");
     else {
         puts( ":FONTSTYLE Block(s):" );    
-        for( i = 0; i < in_driver->fontstyle.count; i++ ) {
-            printf_s( "  Type: %s\n", in_driver->fontstyle.fontstyle[i].type );
-            if( in_driver->fontstyle.fontstyle[i].startvalue == NULL ) {
+        for( i = 0; i < in_driver->fontstyles.count; i++ ) {
+            printf_s( "  Type: %s\n", \
+                                in_driver->fontstyles.fontstyleblocks[i].type );
+            if( in_driver->fontstyles.fontstyleblocks[i].startvalue == NULL ) {
                 puts( "  No :STARTVALUE Block");
             } else {
                 puts( "  :STARTVALUE Block:");
                 interpret_function( \
-                            in_driver->fontstyle.fontstyle[i].startvalue->text );
+                    in_driver->fontstyles.fontstyleblocks[i].startvalue->text );
             }
-            if( in_driver->fontstyle.fontstyle[i].endvalue == NULL ) {
+            if( in_driver->fontstyles.fontstyleblocks[i].endvalue == NULL ) {
                 puts( "  No :ENDVALUE Block");
             } else {
                 puts( "  :ENDVALUE Block:");
                 interpret_function( \
-                            in_driver->fontstyle.fontstyle[i].endvalue->text );
+                        in_driver->fontstyles.fontstyleblocks[i].endvalue->text );
             }
-            if(in_driver->fontstyle.fontstyle[i].lineprocs == NULL ) {
+            if(in_driver->fontstyles.fontstyleblocks[i].lineprocs == NULL ) {
                 puts( "  No :LINEPROC Blocks");
             } else {
                 puts( "  :LINEPROC Block(s):");
-                for( j = 0; j < in_driver->fontstyle.fontstyle[i].passes; j++ ) { 
+                for( j = 0; j < in_driver->fontstyles.fontstyleblocks[i].passes; \
+                                                                            j++ ) { 
                     printf_s( "  Pass: %i\n", j+1 );
-                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue \
-                                                                    == NULL ) {
+                    if( in_driver->fontstyles.fontstyleblocks[i].lineprocs[j].\
+                                                            startvalue == NULL ) {
                         puts( "  No :STARTVALUE Block");
                     } else {
                         puts( "  :STARTVALUE Block:");
-                        interpret_function( in_driver->fontstyle.fontstyle[i].\
-                                                lineprocs[j].startvalue->text );
+                        interpret_function( in_driver->fontstyles.\
+                                fontstyleblocks[i].lineprocs[j].startvalue->text );
                     }
-                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword \
-                                                                    == NULL ) {
+                    if( in_driver->fontstyles.fontstyleblocks[i].lineprocs[j].\
+                                                            firstword == NULL ) {
                         puts( "  No :FIRSTWORD Block");
                     } else {
                         puts( "  :FIRSTWORD Block:");
-                        interpret_function( in_driver->fontstyle.fontstyle[i].\
-                                                lineprocs[j].firstword->text );
+                        interpret_function( in_driver->fontstyles.\
+                                fontstyleblocks[i].lineprocs[j].firstword->text );
                     }
-                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].startword \
-                                                                    == NULL ) {
+                    if( in_driver->fontstyles.fontstyleblocks[i].lineprocs[j].\
+                                                            startword == NULL ) {
                         puts( "  No :STARTWORD Block");
                     } else {
                         puts( "  :STARTWORD Block");
-                        interpret_function( in_driver->fontstyle.fontstyle[i].\
-                        lineprocs[j].startword->text );
+                        interpret_function( in_driver->fontstyles.\
+                                fontstyleblocks[i].lineprocs[j].startword->text );
                     }
-                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].endword \
-                                                                    == NULL ) {
+                    if( in_driver->fontstyles.fontstyleblocks[i].lineprocs[j].\
+                                                                endword == NULL ) {
                         puts( "  No :ENDWORD Block");
                     } else {
                         puts( "  :ENDWORD Block:");
-                        interpret_function( in_driver->fontstyle.fontstyle[i].\
-                                                    lineprocs[j].endword->text );
+                        interpret_function( in_driver->fontstyles.\
+                                fontstyleblocks[i].lineprocs[j].endword->text );
                     }
-                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue \
-                                                                        == NULL ) {
+                    if( in_driver->fontstyles.fontstyleblocks[i].lineprocs[j].\
+                                                            endvalue == NULL ) {
                         puts( "  No :ENDVALUE Block");
                     } else {
                         puts( "  :ENDVALUE Block:");
-                        interpret_function( in_driver->fontstyle.fontstyle[i].\
-                                                    lineprocs[j].endvalue->text );
+                        interpret_function( in_driver->fontstyles.\
+                                fontstyleblocks[i].lineprocs[j].endvalue->text );
                     }
                 }
             }

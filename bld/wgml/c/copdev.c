@@ -37,6 +37,9 @@
 *
 ****************************************************************************/
 
+#define __STDC_WANT_LIB_EXT1__  1
+#include <string.h>
+
 #include "copdev.h"
 #include "copfunc.h"
 #include "wgml.h"
@@ -1071,8 +1074,8 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the number of DefaultFonts. */
     
-    fread( &out_device->defaultfonts.count, \
-                        sizeof( out_device->defaultfonts.count ), 1, in_file );
+    fread( &out_device->defaultfonts.font_count, \
+                    sizeof( out_device->defaultfonts.font_count ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( out_device );
         out_device = NULL;
@@ -1082,23 +1085,23 @@ cop_device * parse_device( FILE * in_file )
     /* Set defaultfont_ptr and defaultfonts.font and adjust next_offset. */
     
     if( out_device->allocated_size < (out_device->next_offset + \
-                                      sizeof( *out_device->defaultfonts.font) * \
-                                      out_device->defaultfonts.count) ) {
+                                sizeof( out_device->defaultfonts.font_count) * \
+                                out_device->defaultfonts.font_count) ) {
         out_device = resize_cop_device( out_device, \
-                                    sizeof( *out_device->defaultfonts.font) * \
-                                    out_device->defaultfonts.count );
+                                sizeof( out_device->defaultfonts.font_count) * \
+                                out_device->defaultfonts.font_count );
    }
 
-    out_device->defaultfonts.font = (default_font *) out_device->next_offset;
-    out_device->next_offset += sizeof( *out_device->defaultfonts.font) * \
-                                                out_device->defaultfonts.count;
+    out_device->defaultfonts.fonts = (default_font *) out_device->next_offset;
+    out_device->next_offset += sizeof( *out_device->defaultfonts.fonts) * \
+                                            out_device->defaultfonts.font_count;
 
     defaultfont_ptr = (default_font *) ((uint8_t *) out_device + \
-                                    (size_t) out_device->defaultfonts.font);
+                                    (size_t) out_device->defaultfonts.fonts);
 
     /* Get the DefaultFonts. */
 
-    for( i = 0; i < out_device->defaultfonts.count; i++ ) {
+    for( i = 0; i < out_device->defaultfonts.font_count; i++ ) {
 
         /* Get the font_style. */
 
@@ -1112,7 +1115,7 @@ cop_device * parse_device( FILE * in_file )
         if( out_device->allocated_size < (out_device->next_offset + length) ) {
             out_device = resize_cop_device( out_device, length );
             defaultfont_ptr = (default_font *) ((uint8_t *) out_device + \
-                                        (size_t) out_device->defaultfonts.font);
+                                        (size_t) out_device->defaultfonts.fonts);
         }
 
         if( length > 0 ) {
@@ -1179,7 +1182,7 @@ cop_device * parse_device( FILE * in_file )
         if( out_device->allocated_size < (out_device->next_offset + length) ) {
             out_device = resize_cop_device( out_device, length );
             defaultfont_ptr = (default_font *) ((uint8_t *) out_device + \
-                                        (size_t) out_device->defaultfonts.font);
+                                        (size_t) out_device->defaultfonts.fonts);
         }
 
         if( length > 0 ) {
@@ -1419,7 +1422,7 @@ cop_device * parse_device( FILE * in_file )
                         cop_functions->code_blocks[j].text, pause_ptr->count );
     }
     
-    /* Get the document_page_pause. */
+    /* Get the docpage_pause. */
 
     /* Get the count and verify that it is 0x02. */
 
@@ -1466,7 +1469,7 @@ cop_device * parse_device( FILE * in_file )
     /* The value 0xFFFF indicates that no such pause exists. */
 
     if( cumulative_index == 0xFFFF ) {
-        out_device->pauses.document_page_pause = NULL;
+        out_device->pauses.docpage_pause = NULL;
     } else {
 
         /* Ensure that the CodeBlock can be found. */
@@ -1492,12 +1495,11 @@ cop_device * parse_device( FILE * in_file )
             out_device = resize_cop_device( out_device, sizeof( code_text ) );
         }
 
-        out_device->pauses.document_page_pause = (code_text *) \
-                                                        out_device->next_offset;
+        out_device->pauses.docpage_pause = (code_text *) out_device->next_offset;
         out_device->next_offset += sizeof( code_text );
 
         pause_ptr = (code_text *) ((char *) out_device + \
-                                (size_t) out_device->pauses.document_page_pause );
+                                   (size_t) out_device->pauses.docpage_pause );
 
         /* Initialize the code_text instance. */
 
@@ -1507,7 +1509,7 @@ cop_device * parse_device( FILE * in_file )
                                                             pause_ptr->count) ) {
             out_device = resize_cop_device( out_device, pause_ptr->count );
             pause_ptr = (code_text *) ((char *) out_device + \
-                                (size_t) out_device->pauses.document_page_pause );
+                                    (size_t) out_device->pauses.docpage_pause );
         }
 
         pause_ptr->text = (uint8_t *) out_device->next_offset;
@@ -1518,7 +1520,7 @@ cop_device * parse_device( FILE * in_file )
                         cop_functions->code_blocks[j].text, pause_ptr->count );
     }
     
-    /* Get the device_page_pause. */
+    /* Get the devpage_pause. */
 
     /* Get the count and verify that it is 0x02. */
 
@@ -1565,7 +1567,7 @@ cop_device * parse_device( FILE * in_file )
     /* The value 0xFFFF indicates that no such pause exists. */
 
     if( cumulative_index == 0xFFFF ) {
-        out_device->pauses.device_page_pause = NULL;
+        out_device->pauses.devpage_pause = NULL;
     } else {
 
         /* Ensure that the CodeBlock can be found. */
@@ -1591,12 +1593,11 @@ cop_device * parse_device( FILE * in_file )
             out_device = resize_cop_device( out_device, sizeof( code_text ) );
         }
 
-        out_device->pauses.device_page_pause = (code_text *) \
-                                                        out_device->next_offset;
+        out_device->pauses.devpage_pause = (code_text *) out_device->next_offset;
         out_device->next_offset += sizeof( code_text );
 
         pause_ptr = (code_text *) ((char *) out_device + \
-                                (size_t) out_device->pauses.device_page_pause );
+                                   (size_t) out_device->pauses.devpage_pause );
 
         /* Initialize the code_text instance. */
 
@@ -1606,7 +1607,7 @@ cop_device * parse_device( FILE * in_file )
                                                             pause_ptr->count) ) {
             out_device = resize_cop_device( out_device, pause_ptr->count );
             pause_ptr = (code_text *) ((char *) out_device + \
-                                (size_t) out_device->pauses.device_page_pause );
+                                    (size_t) out_device->pauses.devpage_pause );
         }
 
         pause_ptr->text = (uint8_t *) out_device->next_offset;
@@ -1648,8 +1649,8 @@ cop_device * parse_device( FILE * in_file )
 
     /* Get the number of Devicefonts. */
 
-    fread( &out_device->devicefonts.count, \
-                            sizeof( out_device->devicefonts.count ), 1, in_file );
+    fread( &out_device->devicefonts.font_count, \
+                    sizeof( out_device->devicefonts.font_count ), 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) {
         mem_free( raw_functions );
         raw_functions = NULL;
@@ -1665,21 +1666,21 @@ cop_device * parse_device( FILE * in_file )
     /* Get the Devicefonts. */
 
     if( out_device->allocated_size < (out_device->next_offset + \
-                                      out_device->devicefonts.count * \
-                                    sizeof( *out_device->devicefonts.font ) ) ) {
+                                      out_device->devicefonts.font_count * \
+                                    sizeof( *out_device->devicefonts.fonts ) ) ) {
         out_device = resize_cop_device( out_device, \
-                                        out_device->devicefonts.count * \
-                                        sizeof( *out_device->devicefonts.font ) );
+                                    out_device->devicefonts.font_count * \
+                                    sizeof( *out_device->devicefonts.fonts ) );
     }
 
-    out_device->devicefonts.font = (device_font *) out_device->next_offset;
-    out_device->next_offset += out_device->devicefonts.count * \
-                                        sizeof( *out_device->devicefonts.font );
+    out_device->devicefonts.fonts = (device_font *) out_device->next_offset;
+    out_device->next_offset += out_device->devicefonts.font_count * \
+                                        sizeof( *out_device->devicefonts.fonts );
     
     devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
-                                            (size_t) out_device->devicefonts.font);
+                                        (size_t) out_device->devicefonts.fonts);
 
-    for( i = 0; i < out_device->devicefonts.count; i++ ) {
+    for( i = 0; i < out_device->devicefonts.font_count; i++ ) {
 
         /* Get the font_name. */
 
@@ -1702,7 +1703,7 @@ cop_device * parse_device( FILE * in_file )
                                                                     length) ) {
                 out_device = resize_cop_device( out_device, length );
                 devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
-                                            (size_t) out_device->devicefonts.font);
+                                        (size_t) out_device->devicefonts.fonts);
             }
 
             string_ptr = (char *) out_device + out_device->next_offset;
@@ -1754,7 +1755,7 @@ cop_device * parse_device( FILE * in_file )
                                                                         length) ) {
                 out_device = resize_cop_device( out_device, length );
                 devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
-                                            (size_t) out_device->devicefonts.font);
+                                        (size_t) out_device->devicefonts.fonts);
             }
 
             string_ptr = (char *) out_device + out_device->next_offset;
@@ -1909,7 +1910,7 @@ cop_device * parse_device( FILE * in_file )
                                                             pause_ptr->count) ) {
                 out_device = resize_cop_device( out_device, pause_ptr->count );
                 devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
-                                        (size_t) out_device->devicefonts.font);
+                                        (size_t) out_device->devicefonts.fonts);
                 pause_ptr = (code_text *) ((char *) out_device + \
                                         (size_t) devicefont_ptr[i].font_pause );
             }
@@ -1982,17 +1983,18 @@ cop_device * parse_device( FILE * in_file )
         }
     }
     
-    if( out_device->defaultfonts.font != NULL ) {
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->defaultfonts.font;
-        out_device->defaultfonts.font = (default_font *) byte_ptr;
-        for( i = 0; i < out_device->defaultfonts.count; i++ ) {
+    if( out_device->defaultfonts.fonts != NULL ) {
+        byte_ptr = (uint8_t *) out_device + \
+                                        (size_t) out_device->defaultfonts.fonts;
+        out_device->defaultfonts.fonts = (default_font *) byte_ptr;
+        for( i = 0; i < out_device->defaultfonts.font_count; i++ ) {
             string_ptr = (char *) out_device + \
-                         (size_t) out_device->defaultfonts.font[i].font_name;
-            out_device->defaultfonts.font[i].font_name = string_ptr;
-            if( out_device->defaultfonts.font[i].font_style != NULL ) {
+                         (size_t) out_device->defaultfonts.fonts[i].font_name;
+            out_device->defaultfonts.fonts[i].font_name = string_ptr;
+            if( out_device->defaultfonts.fonts[i].font_style != NULL ) {
                 string_ptr = (char *) out_device + \
-                            (size_t) out_device->defaultfonts.font[i].font_style;
-                out_device->defaultfonts.font[i].font_style = string_ptr;
+                            (size_t) out_device->defaultfonts.fonts[i].font_style;
+                out_device->defaultfonts.fonts[i].font_style = string_ptr;
             }
         }
     }
@@ -2019,51 +2021,51 @@ cop_device * parse_device( FILE * in_file )
         }
     }
     
-    if( out_device->pauses.document_page_pause != NULL ) {
+    if( out_device->pauses.docpage_pause != NULL ) {
         byte_ptr = (uint8_t *) out_device + \
-                                (size_t) out_device->pauses.document_page_pause;
-        out_device->pauses.document_page_pause = (code_text *) byte_ptr;
-        if( out_device->pauses.document_page_pause->text != NULL ) {
+                                    (size_t) out_device->pauses.docpage_pause;
+        out_device->pauses.docpage_pause = (code_text *) byte_ptr;
+        if( out_device->pauses.docpage_pause->text != NULL ) {
             byte_ptr = (uint8_t *) out_device + \
-                            (size_t) out_device->pauses.document_page_pause->text;
-            out_device->pauses.document_page_pause->text = byte_ptr;
+                                (size_t) out_device->pauses.docpage_pause->text;
+            out_device->pauses.docpage_pause->text = byte_ptr;
         }
     }
     
-    if( out_device->pauses.device_page_pause != NULL ) {
+    if( out_device->pauses.devpage_pause != NULL ) {
         byte_ptr = (uint8_t *) out_device + \
-                                    (size_t) out_device->pauses.device_page_pause;
-        out_device->pauses.device_page_pause = (code_text *) byte_ptr;
-        if( out_device->pauses.device_page_pause->text != NULL ) {
+                                        (size_t) out_device->pauses.devpage_pause;
+        out_device->pauses.devpage_pause = (code_text *) byte_ptr;
+        if( out_device->pauses.devpage_pause->text != NULL ) {
             byte_ptr = (uint8_t *) out_device + \
-                            (size_t) out_device->pauses.device_page_pause->text;
-            out_device->pauses.device_page_pause->text = byte_ptr;
+                                (size_t) out_device->pauses.devpage_pause->text;
+            out_device->pauses.devpage_pause->text = byte_ptr;
         }
     }
     
-    if( out_device->devicefonts.font != NULL ) {
-        byte_ptr = (uint8_t *) out_device + (size_t) out_device->devicefonts.font;
-        out_device->devicefonts.font = (device_font *) byte_ptr;
-        for( i = 0; i < out_device->devicefonts.count; i++ ) {
-            if( out_device->devicefonts.font[i].font_name != NULL ) {
+    if( out_device->devicefonts.fonts != NULL ) {
+        byte_ptr = (uint8_t *) out_device + (size_t) out_device->devicefonts.fonts;
+        out_device->devicefonts.fonts = (device_font *) byte_ptr;
+        for( i = 0; i < out_device->devicefonts.font_count; i++ ) {
+            if( out_device->devicefonts.fonts[i].font_name != NULL ) {
                 string_ptr = (char *) out_device + \
-                            (size_t) out_device->devicefonts.font[i].font_name;
-                out_device->devicefonts.font[i].font_name = string_ptr;
+                            (size_t) out_device->devicefonts.fonts[i].font_name;
+                out_device->devicefonts.fonts[i].font_name = string_ptr;
             }
-            if( out_device->devicefonts.font[i].font_switch != NULL ) {
+            if( out_device->devicefonts.fonts[i].font_switch != NULL ) {
                 string_ptr = (char *) out_device + \
-                            (size_t) out_device->devicefonts.font[i].font_switch;
-                out_device->devicefonts.font[i].font_switch= string_ptr;
+                            (size_t) out_device->devicefonts.fonts[i].font_switch;
+                out_device->devicefonts.fonts[i].font_switch= string_ptr;
             }
-            if( out_device->devicefonts.font[i].font_pause != NULL ) {
+            if( out_device->devicefonts.fonts[i].font_pause != NULL ) {
                 byte_ptr = (uint8_t *) out_device + \
-                            (size_t) out_device->devicefonts.font[i].font_pause;
-                out_device->devicefonts.font[i].font_pause = \
+                            (size_t) out_device->devicefonts.fonts[i].font_pause;
+                out_device->devicefonts.fonts[i].font_pause = \
                                                         (code_text *) byte_ptr;
-                if( out_device->devicefonts.font[i].font_pause->text != NULL ) {
+                if( out_device->devicefonts.fonts[i].font_pause->text != NULL ) {
                     byte_ptr = (uint8_t *) out_device + (size_t) \
-                                out_device->devicefonts.font[i].font_pause->text;
-                    out_device->devicefonts.font[i].font_pause->text = byte_ptr;
+                                out_device->devicefonts.fonts[i].font_pause->text;
+                    out_device->devicefonts.fonts[i].font_pause->text = byte_ptr;
                 }
             }
         }

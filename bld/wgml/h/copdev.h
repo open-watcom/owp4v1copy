@@ -33,6 +33,8 @@
 #ifndef COPDEV_H_INCLUDED
 #define COPDEV_H_INCLUDED
 
+#include <stdio.h>
+
 #include "copfiles.h"
 
 /* Function declarations */

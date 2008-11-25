@@ -34,6 +34,7 @@
 #define COPFON_H_INCLUDED
 
 #include "copfiles.h"
+#include "wgml.h"
 
 /* Function declarations. */
 

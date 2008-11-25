@@ -51,7 +51,7 @@
  * width_block is a struct for consistency with outtrans_block.
  */
 
-typedef struct width_block_struct
+typedef struct
 {
     uint32_t         table[0x100];
 } width_block;
@@ -67,7 +67,7 @@ typedef struct width_block_struct
  * freed in one statement.
  */
 
-typedef struct cop_font_struct
+typedef struct
 {
     size_t           allocated_size;
     size_t           next_offset;
@@ -92,8 +92,8 @@ typedef struct cop_font_struct
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-bool is_fon_file( FILE * );
-cop_font * parse_font( FILE * );
+bool is_fon_file( FILE * in_file );
+cop_font * parse_font( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

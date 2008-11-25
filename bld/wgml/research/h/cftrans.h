@@ -46,14 +46,14 @@
  * intrans_block is a struct for consistency with outtrans_block.
  */
 
-typedef struct intrans_block_struct
+typedef struct
 {
     uint8_t         table[0x100];
 } intrans_block;
 
 /* To hold the data extracted from an OuttransData struct. */
 
-typedef struct translation_struct
+typedef struct
 {
     uint8_t         count;
     uint8_t *       data;
@@ -63,7 +63,7 @@ typedef struct translation_struct
  * The entry for a given character will be NULL if no out-translation is needed.
  */
 
-typedef struct outtrans_block_struct
+typedef struct
 {
     translation *   table[0x100];
 } outtrans_block;

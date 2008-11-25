@@ -32,8 +32,10 @@
 *                       defaultfont_block
 *                           default_font
 *                       pause_block
+*                           code_text
 *                       devicefont_block
 *                           device_font
+*                               code_text
 *                   is_dev_file()
 *                   parse_device()
 *
@@ -49,6 +51,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
+#include "cffunc.h"
 #include "cftrans.h"
 
 /* Structure declarations. */
@@ -56,6 +60,10 @@
 /* Fonts in box_block and underscore_block.
  *
  * These structs have two font fields: font_name and font_number.
+ *
+ * For the UnderscoreBlock only, if specified_font is false, then both font_name
+ * and font_number are to be ignored and whatever font is in use when the
+ * underscore character is needed is to be used.
  *
  * If font_name is NULL, then font_name is to be ignored and font_number
  * is to be used.
@@ -69,7 +77,7 @@
 
 /* To hold the data from the BoxBlock struct. */
 
-typedef struct box_block_struct
+typedef struct
 {
     char *          font_name;
     uint8_t         font_number;
@@ -88,8 +96,9 @@ typedef struct box_block_struct
 
 /* To hold the data from the UnderscoreBlock struct. */
 
-typedef struct underscore_block_struct
+typedef struct
 {
+    bool            specified_font;
     char *          font_name;
     uint8_t         font_number;
     char            underscore_char;
@@ -97,7 +106,7 @@ typedef struct underscore_block_struct
 
 /* To hold the data from the DefaultFont struct. */
 
-typedef struct default_font_struct
+typedef struct
 {
     char *          font_name;
     char *          font_style;
@@ -105,51 +114,40 @@ typedef struct default_font_struct
     uint16_t        font_space;    
 } default_font;
 
-/* To hold the data from the DefaultfontBlock struct.
-   These field names do not correspond to those in the Wiki.
- */
+/* To hold the data from the DefaultfontBlock struct. */
 
-typedef struct defaultfont_block_struct
+typedef struct
 {
-    uint16_t        count;
-    default_font *  font;
+    uint16_t        font_count;
+    default_font *  fonts;
 } defaultfont_block;
 
 /* This struct duplicates the PauseBlock struct. */
 
-typedef struct pause_block_struct
+typedef struct
 {
-    uint16_t        startpause_count;
-    uint8_t *       startpause;
-    uint16_t        documentpause_count;
-    uint8_t *       documentpause;
-    uint16_t        docpagepause_count;
-    uint8_t *       docpagepause;
-    uint16_t        devpagepause_count;
-    uint8_t *       devpagepause;
+    code_text *     start_pause;
+    code_text *     document_pause;
+    code_text *     docpage_pause;
+    code_text *     devpage_pause;
 } pause_block;
 
-/* To hold the data from the DeviceFont struct.
- * Field names "fontpause" and "fontpause_count" are aberrant.
- */
+/* To hold the data from the DeviceFont struct. */
 
-typedef struct device_font_struct
+typedef struct
 {
     char *          font_name;
     char *          font_switch;
     uint8_t         resident;
-    uint16_t        fontpause_count;
-    uint8_t *       fontpause;
+    code_text *     font_pause;
 } device_font;
 
-/* To hold the data from the DevicefontBlock struct.
-   These field names do not correspond to those in the Wiki.
- */
+/* To hold the data from the DevicefontBlock struct. */
 
-typedef struct devicefont_block_struct
+typedef struct
 {
-    uint16_t            count;
-    device_font *       font;
+    uint16_t        font_count;
+    device_font *   fonts;
 } devicefont_block;
 
 /* This struct embodies the binary form of the :DEVICE block. 
@@ -164,7 +162,7 @@ typedef struct devicefont_block_struct
  * freed in one statement.
  */
 
-typedef struct cop_device_struct
+typedef struct
 {
     size_t              allocated_size;
     size_t              next_offset;
@@ -202,8 +200,8 @@ typedef struct cop_device_struct
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-bool is_dev_file( FILE * );
-cop_device * parse_device( FILE *);
+bool is_dev_file( FILE * in_file );
+cop_device * parse_device( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

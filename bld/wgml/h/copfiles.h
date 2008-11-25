@@ -50,8 +50,8 @@
 *                       fontswitch_funcs
 *                           fontswitch_block
 *                               code_text
-*                       fontstyle_block
-*                           font_style
+*                       fontstyle_group
+*                           fontstyle_block
 *                               code_text
 *                               line_proc
 *                                   code_text
@@ -74,10 +74,9 @@
 #ifndef COPFILE_H_INCLUDED
 #define COPFILE_H_INCLUDED
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-#include "wgml.h"
 
 /* Structure declarations. */
 
@@ -126,6 +125,10 @@ typedef struct
 /* Fonts in box_block and underscore_block.
  *
  * These structs have two font fields: font_name and font_number.
+ *
+ * For the UnderscoreBlock only, if specified_font is false, then both font_name
+ * and font_number are to be ignored and whatever font is in use when the
+ * underscore character is needed is to be used.
  *
  * If font_name is NULL, then font_name is to be ignored and font_number
  * is to be used.
@@ -176,14 +179,12 @@ typedef struct
     uint16_t            font_space;    
 } default_font;
 
-/* To hold the data from the DefaultfontBlock struct.
-   These field names do not correspond to those in the Wiki.
- */
+/* To hold the data from the DefaultfontBlock struct. */
 
 typedef struct
 {
-    uint16_t            count;
-    default_font *      font;
+    uint16_t            font_count;
+    default_font *      fonts;
 } defaultfont_block;
 
 /* To hold the data from the PauseBlock struct. */
@@ -192,8 +193,8 @@ typedef struct
 {
     code_text *         start_pause;
     code_text *         document_pause;
-    code_text *         document_page_pause;
-    code_text *         device_page_pause;
+    code_text *         docpage_pause;
+    code_text *         devpage_pause;
 } pause_block;
 
 /* To hold the data from the DeviceFont struct. */
@@ -206,17 +207,19 @@ typedef struct
     code_text *         font_pause;
 } device_font;
 
-/* To hold the data from the DevicefontBlock struct.
-   These field names do not correspond to those in the Wiki.
- */
+/* To hold the data from the DevicefontBlock struct. */
 
 typedef struct
 {
-    uint16_t            count;
-    device_font *       font;
+    uint16_t            font_count;
+    device_font *       fonts;
 } devicefont_block;
 
 /* These structs are unique to the top-level struct cop_driver. */
+
+/* In all cases: a count of "0" or a NULL pointer indicates that the
+ * corresponding item did not exist in the .COP file
+ */
 
 /* To hold the data extracted from a CodeBlock struct.
  * The :INIT block is unique in allowing multiple intermixed :VALUE and
@@ -239,7 +242,7 @@ typedef struct
 typedef struct
 {
     uint16_t            count;
-    init_text *         codetext;
+    init_text *         codeblock;
 } init_block;
 
 /* To hold the data from the InitFuncs struct.
@@ -312,7 +315,8 @@ typedef struct
     fontswitch_block *  fontswitchblocks;
 } fontswitch_funcs;
 
-/* This struct does not correspond to any struct in the Wiki. Instead, it takes
+/* To hold some of the data extracted from a FontstyleFuncs struct.
+ * This struct does not correspond to the struct in the Wiki. Instead, it takes
  * advantage of the fact that each :LINEPROC block can define at most one of each
  * of its sub-blocks.
  */
@@ -326,11 +330,11 @@ typedef struct
     code_text *         endvalue;
 } line_proc;
 
-/* To hold the data extracted from a ShortFontStyle struct. 
+/* To hold the data extracted from a ShortFontstyleBlock struct. 
  * Only the first two fields are found in the Wiki struct. The next three take
  * advantage of the fact that a :FONTSTYLE block directly defines at most one of
- * each of two sub-blocks, plus any number of :LINEPROC blocks. Note that the
- * number of line_proc instances is equal to the value of the field "passes".
+ * each of two sub-blocks, plus any number of :LINEPROC blocks. The number of
+ * line_proc instances is given by the value of the field "passes".
  */
 
 typedef struct
@@ -340,18 +344,18 @@ typedef struct
     code_text *         startvalue;
     code_text *         endvalue;
     line_proc *         lineprocs;
-} font_style;
+} fontstyle_block;
 
-/* To hold the data extracted from a FontstyleBlock struct. 
- * This struct bears only a function relationship to the struct in the Wiki,
+/* To hold the data extracted from a FontstyleGroup struct. 
+ * This struct bears only a functional relationship to the struct in the Wiki,
  * which must be seen to be believed.
  */
 
 typedef struct
 {
     uint16_t            count;
-    font_style *        fontstyle_list;
-} fontstyle_block;
+    fontstyle_block *   fontstyleblocks;
+} fontstyle_group;
 
 /* To hold the data extracted from an HlineBlock, a VlineBlock, or a DboxBlock
  * struct. 
@@ -380,7 +384,7 @@ typedef struct
 /* These are the top-level structs. These are the only structs intended to
  * be created and passed around independently.
  *
- * The comments within the structs refer to the "blocks" discussed in the Wiki. 
+ * The comments within the structs refer to the blocks discussed in the Wiki. 
  *
  * The first two fields are used internally and were used for sizing during
  * development
@@ -429,8 +433,7 @@ typedef struct
 
 /* This struct embodies the binary form of the :DRIVER block.
  *
- * Note that the "unknown" block is not mentioned. This is because it
- * never has any data in it.
+ * The "unknown" block is not mentioned because it never has any data in it.
  */
 
 typedef struct
@@ -454,8 +457,8 @@ typedef struct
     code_text           htab;
     /* FontswitchFuncs */
     fontswitch_funcs    fontswitches;
-    /* FontstyleBlock */
-    fontstyle_block     fontstyles;
+    /* FontstyleGroup */
+    fontstyle_group     fontstyles;
     /* Variant A FunctionsBlock */
     code_text           absoluteaddress;
     /* HlineBlock */

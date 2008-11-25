@@ -51,7 +51,13 @@
 #include "copdir.h"
 #include "copdrv.h"
 #include "copfon.h"
-#include "gvars.h"
+#include "wgml.h"
+
+/* These items are from gvars.h. */
+
+extern  char            *Pathes;        // content of PATH Envvar
+extern  char            *GMLlibs;       // content of GMMLIB Envvar
+extern  char            *GMLincs;       // content of GMLINC Envvar
 
 /* These items might more properly be globals, used by all of wgml and gendev. */
 

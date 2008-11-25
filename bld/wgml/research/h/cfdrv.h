@@ -37,8 +37,8 @@
 *                       fontswitch_funcs
 *                           fontswitch_block
 *                               code_text
-*                       fontstyle_block
-*                           font_style
+*                       fontstyle_group
+*                           fontstyle_block
 *                               code_text
 *                               line_proc
 *                                   code_text
@@ -59,6 +59,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "cffunc.h"
+
 /* Structure declarations */
 
 /* In all cases: a count of "0" or a NULL pointer indicates that the
@@ -73,7 +75,7 @@
  * block or a :VALUE block.
  */
 
-typedef struct init_text_struct
+typedef struct
 {
     bool                is_fontvalue;
     uint16_t            count;
@@ -83,10 +85,10 @@ typedef struct init_text_struct
 /* To hold the data from the InitBlock struct. */
 /* The field names do not all correspond to those in the Wiki. */
 
-typedef struct init_block_struct
+typedef struct
 {
     uint16_t            count;
-    init_text *         codetext;
+    init_text *         codeblock;
 } init_block;
 
 /* To hold the data from the InitFuncs struct.
@@ -95,19 +97,11 @@ typedef struct init_block_struct
  * be distinguished because wgml processes them at different times.
  */
 
-typedef struct init_funcs_struct
+typedef struct
 {
-    init_block *        start_initblock;
-    init_block *        document_initblock;
+    init_block *        start;
+    init_block *        document;
 } init_funcs;
-
-/* To hold the data extracted from a CodeBlock struct. */
-
-typedef struct code_text_struct
-{
-    uint16_t            count;
-    uint8_t *           text;
-} code_text;
 
 /* The FinishBlock struct is implemented by the code_text struct. */
 
@@ -119,10 +113,10 @@ typedef struct code_text_struct
  * wgml processes at most one of them. 
  */
 
-typedef struct finish_funcs_struct
+typedef struct
 {
-    code_text *         end_finishblock;
-    code_text *         document_finishblock;
+    code_text *         end;
+    code_text *         document;
 } finish_funcs;
 
 /* To hold the data from the NewlineBlock struct.
@@ -130,7 +124,7 @@ typedef struct finish_funcs_struct
  * "advance".
  */
 
-typedef struct newline_block_struct
+typedef struct
 {
     uint16_t            advance;
     uint16_t            count;
@@ -139,10 +133,10 @@ typedef struct newline_block_struct
 
 /* To hold the data extracted from a NewlineFuncs struct. */
 
-typedef struct newline_funcs_struct
+typedef struct
 {
     uint16_t            count;
-    newline_block *     newlineblock;
+    newline_block *     newlineblocks;
 } newline_funcs;
 
 /* To hold the data from the FontswitchBlock struct.
@@ -152,7 +146,7 @@ typedef struct newline_funcs_struct
  * :STARTVALUE block and the other from an :ENDVALUE block.
  */
 
-typedef struct fontswitch_block_struct
+typedef struct
 {
     char *              type;
     code_text *         startvalue;
@@ -161,18 +155,19 @@ typedef struct fontswitch_block_struct
 
 /* To hold the data extracted from a FontswitchFuncs struct. */
 
-typedef struct fontswitch_funcs_struct
+typedef struct
 {
     uint16_t            count;
-    fontswitch_block *  fontswitchblock;
+    fontswitch_block *  fontswitchblocks;
 } fontswitch_funcs;
 
-/* This struct does not correspond to any struct in the Wiki. Instead, it takes
+/* To hold some of the data extracted from a FontstyleFuncs struct.
+ * This struct does not correspond to the struct in the Wiki. Instead, it takes
  * advantage of the fact that each :LINEPROC block can define at most one of each
  * of its sub-blocks.
  */
 
-typedef struct line_proc_struct
+typedef struct
 {
     code_text *         startvalue;
     code_text *         firstword;
@@ -181,32 +176,32 @@ typedef struct line_proc_struct
     code_text *         endvalue;
 } line_proc;
 
-/* To hold the data extracted from a ShortFontStyle struct. 
- * Only the first two fields are found in the Wiki struct. The next two take
+/* To hold the data extracted from a ShortFontstyleBlock struct. 
+ * Only the first two fields are found in the Wiki struct. The next three take
  * advantage of the fact that a :FONTSTYLE block directly defines at most one of
- * each of two sub-blocks, plus any number of :LINEPROC blocks. Note that the
- * number of line_proc instances is equal to the value of the field "passes".
+ * each of two sub-blocks, plus any number of :LINEPROC blocks. The number of
+ * line_proc instances is given by the value of the field "passes".
  */
 
-typedef struct font_style_struct
+typedef struct
 {
     uint16_t            passes;
     char *              type;
     code_text *         startvalue;
     code_text *         endvalue;
     line_proc *         lineprocs;
-} font_style;
+} fontstyle_block;
 
-/* To hold the data extracted from a FontstyleBlock struct. 
- * This struct bears only a function relationship to the struct in the Wiki,
+/* To hold the data extracted from a FontstyleGroup struct. 
+ * This struct bears only a functional relationship to the struct in the Wiki,
  * which must be seen to be believed.
  */
 
-typedef struct fontstyle_block_struct
+typedef struct
 {
     uint16_t            count;
-    font_style *        fontstyle;
-} fontstyle_block;
+    fontstyle_block *   fontstyleblocks;
+} fontstyle_group;
 
 /* To hold the data extracted from an HlineBlock, a VlineBlock, or a DboxBlock
  * struct. 
@@ -214,7 +209,7 @@ typedef struct fontstyle_block_struct
  * most one CodeBlock, as well as the thickness.
  */
 
-typedef struct line_block_struct
+typedef struct
 {
     uint32_t            thickness;
     uint16_t            count;
@@ -223,8 +218,7 @@ typedef struct line_block_struct
 
 /* This struct embodies the binary form of the :DRIVER block.
  *
- * The order of fields follows the order in the .COP file, except for "unknown",
- * which is omitted as it never has any data in it.
+ * The "unknown" block is not mentioned because it never has any data in it.
  *
  * The comments within the structs refer to the "blocks" discussed in the Wiki. 
  *
@@ -235,7 +229,7 @@ typedef struct line_block_struct
  * freed in one statement.
  */
 
-typedef struct cop_driver_struct
+typedef struct
 {
     size_t              allocated_size;
     size_t              next_offset;
@@ -246,24 +240,24 @@ typedef struct cop_driver_struct
     uint8_t             x_positive;
     uint8_t             y_positive;
     /* InitFuncs */
-    init_funcs          init;
+    init_funcs          inits;
     /* FinishFuncs */
-    finish_funcs        finish;
+    finish_funcs        finishes;
     /* NewlineFuncs */
-    newline_funcs       newline;
+    newline_funcs       newlines;
     /* Variant A FunctionsBlocks */
     code_text           newpage;
     code_text           htab;
     /* FontswitchFuncs */
-    fontswitch_funcs    fontswitch;
-    /* FontstyleBlock */
-    fontstyle_block     fontstyle;
+    fontswitch_funcs    fontswitches;
+    /* FontstyleGroup */
+    fontstyle_group     fontstyles;
     /* Variant A FunctionsBlock */
     code_text           absoluteaddress;
     /* HlineBlock */
-    line_block         hline;
+    line_block          hline;
     /* VlineBlock */
-    line_block         vline;
+    line_block          vline;
     /* DboxBlock */
     line_block          dbox;
 } cop_driver;
@@ -274,8 +268,8 @@ typedef struct cop_driver_struct
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-bool is_drv_file( FILE * );
-cop_driver * parse_driver( FILE *);
+bool is_drv_file( FILE * in_file );
+cop_driver * parse_driver( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
