@@ -157,13 +157,19 @@ source\diag0010.c(9): Error! E1069: String literal not terminated before end of 
 source\diag0010.c(11): Error! E1054: Expression must be constant
 source\diag0010.c(11): Error! E1009: Expecting ';' but found 'int'
 source\diag0011.c(6): Error! E1069: String literal not terminated before end of line
-source\diag0012.c(30): Warning! W112: Pointer truncated
-source\diag0012.c(30): Note! I2003: source conversion type is 'void __far *'
-source\diag0012.c(30): Note! I2004: target conversion type is 'struct HMENU__ __near const *'
-source\diag0012.c(39): Warning! W112: Pointer truncated
-source\diag0012.c(39): Note! I2003: source conversion type is 'void __far *'
-source\diag0012.c(39): Note! I2004: target conversion type is 'struct HMENU__ __near const **'
-source\diag0012.c(39): Note! I2002: 'foo' defined in: source\diag0012.c(15)
+source\diag0012.c(43): Warning! W112: Pointer truncated
+source\diag0012.c(43): Note! I2003: source conversion type is 'void __far *'
+source\diag0012.c(43): Note! I2004: target conversion type is 'struct HMENU__ __near const *'
+source\diag0012.c(52): Warning! W112: Pointer truncated
+source\diag0012.c(52): Note! I2003: source conversion type is 'void __far *'
+source\diag0012.c(52): Note! I2004: target conversion type is 'struct HMENU__ __near const **'
+source\diag0012.c(52): Note! I2002: 'foo' defined in: source\diag0012.c(26)
+source\diag0012.c(54): Warning! W113: Pointer type mismatch
+source\diag0012.c(54): Note! I2003: source conversion type is 'int (*)[2]'
+source\diag0012.c(54): Note! I2004: target conversion type is 'int (*)[3]'
+source\diag0012.c(57): Warning! W113: Pointer type mismatch
+source\diag0012.c(57): Note! I2003: source conversion type is 'int (*)[2][3]'
+source\diag0012.c(57): Note! I2004: target conversion type is 'int (*)[3][3]'
 source\diag0013.c(12): Error! E1034: Symbol 'foo' already defined
 source\diag0014.c(13): Warning! W107: Missing return value for function 'fn1'
 source\diag0014.c(17): Warning! W107: Missing return value for function 'fn2'

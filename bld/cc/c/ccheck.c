@@ -290,6 +290,14 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         if( typ1 == typ2 )break;
         if( typ1->decl_type != typ2->decl_type )break;
         if( typ1->decl_type != TYPE_ARRAY && typ1->decl_type != TYPE_POINTER )break;
+        if( typ1->decl_type == TYPE_ARRAY && typ2->decl_type == TYPE_ARRAY ) {
+            /* See C99, 6.7.5.2p5 */
+            if( typ1->u.array->dimension && typ2->u.array->dimension ) {
+                if( typ1->u.array->dimension != typ2->u.array->dimension ) {
+                    ret_val = PM;
+                }
+            }
+        }
         if( typ1->decl_type==TYPE_POINTER ) {
             typ1_flags = typ1->u.p.decl_flags;
             typ2_flags = typ2->u.p.decl_flags;
