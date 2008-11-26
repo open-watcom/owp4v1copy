@@ -79,7 +79,7 @@ typedef enum {
 /*  Space units Horiz + Vert to be redesigned                              */
 /***************************************************************************/
 
-typedef enum space_units {
+typedef enum {
     SU_undefined,                       // don't care = value zero
     SU_chars_lines = 10,                // undimensioned value
     SU_chars = 1,                       // chars horizontal
@@ -171,7 +171,7 @@ typedef struct {
 /*  definitions for getnum routine                                         */
 /***************************************************************************/
 
-typedef enum condcode {            // return code for some scanning functions
+typedef enum {            // return code for some scanning functions
     omit    = 1,                        // parm(s) omitted
     pos     = 2,                        // value >= 0
     neg     = 4,                        // value < 0
@@ -189,7 +189,7 @@ typedef enum {
     enderr      = 32
 } getnumrc;
 
-typedef struct getnum_block {
+typedef struct {
     condcode    cc;
     int         ignore_blanks;          // 1 if blanks are ignored
     char        *argstart;

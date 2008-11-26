@@ -52,8 +52,7 @@
  * value of count should always be a multiple of 80.
  */
 
-typedef struct
-{
+typedef struct {
     uint16_t    count;
     uint8_t *   buffer;
 } p_buffer;
@@ -63,8 +62,7 @@ typedef struct
  * cumulative_index added for use when parsing the DeviceFile struct.
  */
 
-typedef struct
-{
+typedef struct {
     uint8_t     designator;
     uint16_t    pass;
     uint16_t    count;
@@ -74,8 +72,7 @@ typedef struct
 
 /* To hold the data extracted from the Variant A FunctionsBlock struct. */
 
-typedef struct
-{
+typedef struct {
     uint16_t        count;
     code_block *    code_blocks;
 } functions_block;

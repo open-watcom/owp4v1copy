@@ -69,7 +69,8 @@ static char     hexchar[] = "0123456789ABCDEF";
  *  Value Returned:
  *      The values indicated above are returned in the out_chars.
  */
-void display_char( char * out_chars, char in_char)
+
+void display_char( char * out_chars, char in_char )
 {
     if ( isgraph( in_char ) ) {
         out_chars[0] = ' ';
@@ -123,7 +124,7 @@ void display_hex_block( uint8_t * in_data, uint16_t in_count )
  *      out_chars contains a string representing the char in hex.
  */
  
-void display_hex_char( char * out_chars, char in_char)
+void display_hex_char( char * out_chars, char in_char )
 {
     out_chars[0] = hexchar[ ( in_char >> 4 ) & 0x0f ];
     out_chars[1] = hexchar[ in_char & 0x0f ];

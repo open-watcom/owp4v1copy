@@ -43,8 +43,8 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-bool            is_dev_file( FILE * file );
-cop_device  *   parse_device( FILE * file );
+bool            is_dev_file( FILE * in_file );
+cop_device  *   parse_device( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

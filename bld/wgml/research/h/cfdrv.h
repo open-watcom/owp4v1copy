@@ -75,8 +75,7 @@
  * block or a :VALUE block.
  */
 
-typedef struct
-{
+typedef struct {
     bool                is_fontvalue;
     uint16_t            count;
     uint8_t *           text;
@@ -85,8 +84,7 @@ typedef struct
 /* To hold the data from the InitBlock struct. */
 /* The field names do not all correspond to those in the Wiki. */
 
-typedef struct
-{
+typedef struct {
     uint16_t            count;
     init_text *         codeblock;
 } init_block;
@@ -97,8 +95,7 @@ typedef struct
  * be distinguished because wgml processes them at different times.
  */
 
-typedef struct
-{
+typedef struct {
     init_block *        start;
     init_block *        document;
 } init_funcs;
@@ -113,8 +110,7 @@ typedef struct
  * wgml processes at most one of them. 
  */
 
-typedef struct
-{
+typedef struct {
     code_text *         end;
     code_text *         document;
 } finish_funcs;
@@ -124,8 +120,7 @@ typedef struct
  * "advance".
  */
 
-typedef struct
-{
+typedef struct {
     uint16_t            advance;
     uint16_t            count;
     uint8_t *           text;
@@ -133,8 +128,7 @@ typedef struct
 
 /* To hold the data extracted from a NewlineFuncs struct. */
 
-typedef struct
-{
+typedef struct {
     uint16_t            count;
     newline_block *     newlineblocks;
 } newline_funcs;
@@ -146,8 +140,7 @@ typedef struct
  * :STARTVALUE block and the other from an :ENDVALUE block.
  */
 
-typedef struct
-{
+typedef struct {
     char *              type;
     code_text *         startvalue;
     code_text *         endvalue;
@@ -155,8 +148,7 @@ typedef struct
 
 /* To hold the data extracted from a FontswitchFuncs struct. */
 
-typedef struct
-{
+typedef struct {
     uint16_t            count;
     fontswitch_block *  fontswitchblocks;
 } fontswitch_funcs;
@@ -167,8 +159,7 @@ typedef struct
  * of its sub-blocks.
  */
 
-typedef struct
-{
+typedef struct {
     code_text *         startvalue;
     code_text *         firstword;
     code_text *         startword;
@@ -183,8 +174,7 @@ typedef struct
  * line_proc instances is given by the value of the field "passes".
  */
 
-typedef struct
-{
+typedef struct {
     uint16_t            passes;
     char *              type;
     code_text *         startvalue;
@@ -197,8 +187,7 @@ typedef struct
  * which must be seen to be believed.
  */
 
-typedef struct
-{
+typedef struct {
     uint16_t            count;
     fontstyle_block *   fontstyleblocks;
 } fontstyle_group;
@@ -209,8 +198,7 @@ typedef struct
  * most one CodeBlock, as well as the thickness.
  */
 
-typedef struct
-{
+typedef struct {
     uint32_t            thickness;
     uint16_t            count;
     uint8_t *           text;
@@ -229,8 +217,7 @@ typedef struct
  * freed in one statement.
  */
 
-typedef struct
-{
+typedef struct {
     size_t              allocated_size;
     size_t              next_offset;
     /* The Attributes */

@@ -52,8 +52,7 @@
  * value of count should always be a multiple of 80.
  */
 
-typedef struct
-{
+typedef struct {
     uint16_t    count;
     uint8_t *   buffer;
 } p_buffer;
@@ -62,8 +61,7 @@ typedef struct
  * cop_device and cop_driver structs.
  */
 
-typedef struct
-{
+typedef struct {
     uint16_t            count;
     uint8_t *           text;
 } code_text;
@@ -73,8 +71,7 @@ typedef struct
  * for use when parsing the DeviceFile struct.
  */
 
-typedef struct
-{
+typedef struct {
     uint8_t     designator;
     uint8_t     cb05_flag;
     uint8_t     lp_flag;
@@ -86,8 +83,7 @@ typedef struct
 
 /* To hold the data extracted from the Variant A FunctionsBlock struct. */
 
-typedef struct
-{
+typedef struct {
     uint16_t        count;
     code_block *    code_blocks;
 } functions_block;

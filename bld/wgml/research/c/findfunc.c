@@ -154,7 +154,7 @@ void * mem_alloc( size_t size )
     p = malloc( size );
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
-        exit(EXIT_FAILURE);
+        exit( EXIT_FAILURE );
     }
     return( p );
 }
@@ -290,7 +290,7 @@ static int get_dev_func( void )
         file_cbs->scanPtr = file_cbs->filebuf;
     }
     
-    return( SUCCESS) ;
+    return( SUCCESS ) ;
 }
 
 /* Function check_directory().
@@ -499,7 +499,7 @@ int main()
 
     /* Print the useage if the process failed. */
 
-    if( retval == FAILURE) {
+    if( retval == FAILURE ) {
       print_usage();
       return( EXIT_FAILURE );
     }

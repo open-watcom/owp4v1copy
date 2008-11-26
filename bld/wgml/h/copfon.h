@@ -42,8 +42,8 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-bool            is_fon_file( FILE * );
-cop_font    *   parse_font( FILE * );
+bool            is_fon_file( FILE * in_file );
+cop_font    *   parse_font( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

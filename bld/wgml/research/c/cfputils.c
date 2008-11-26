@@ -25,13 +25,14 @@
 *  ========================================================================
 *
 * Description:  Implements the utility functions for cfparse():
+*                   parse_cop_file()
+*                   print_banner()
+*                   print_usage()
+*               and these local functions:
 *                   check_directory()
 *                   display_device()
 *                   display_driver()
 *                   display_font()
-*                   parse_cop_file()
-*                   print_banner()
-*                   print_usage()
 *                   verify_device()
 *                   verify_driver()
 *                   verify_font()
@@ -77,15 +78,15 @@ NULL
 
 /*  Local function declarations. */
 
-static void check_directory( FILE *, uint32_t);
-static void display_device( cop_device *);
-static void display_driver( cop_driver *);
-static void display_font( cop_font *);
-static int  verify_device( char *, char * );
-static int  verify_driver( char *, char * );
-static int  verify_font( char *, char * );
+static void check_directory( FILE * in_file, uint32_t count );
+static void display_device( cop_device * in_device );
+static void display_driver( cop_driver * in_driver );
+static void display_font( cop_font * in_font );
+static int  verify_device( char * in_path, char * in_name );
+static int  verify_driver( char * in_path, char * in_name );
+static int  verify_font( char * in_path, char * in_name );
 
-/*  Function definitions. */
+/*  Extern function definitions. */
 
 /*  Function parse_cop_file().
  *  Verify that the file provided to the program is a .COP file and parse it
@@ -213,6 +214,8 @@ void print_usage( void )
     }
 }
 
+/*  Local function definitions. */
+
 /*  Function check_directory().
  *  Checks the entry types. This function will print a message if an unknown
  *  entry type is found and prints the total number of each known type after
@@ -224,7 +227,7 @@ void print_usage( void )
  *      count contains the number of entries to check.
  */
 
-void check_directory( FILE * in_file, uint32_t count)
+void check_directory( FILE * in_file, uint32_t count )
 {
     /* Used for processing the directory file. */
 
@@ -428,7 +431,7 @@ void check_directory( FILE * in_file, uint32_t count)
  *      in_device is a pointer to the cop_device instance.
  */
 
-void display_device( cop_device * in_device)
+void display_device( cop_device * in_device )
 {
     char        font_character[2];
     int         i;
@@ -577,7 +580,7 @@ void display_device( cop_device * in_device)
  *      GOOD_MATCH if the bytes that should contain "DEV" do contain "DEV".
  */
  
-int verify_device( char * in_path, char * in_name)
+int verify_device( char * in_path, char * in_name )
 {
     char            designator[4];
     char            member_name[_MAX_PATH];

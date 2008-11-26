@@ -51,8 +51,7 @@
  * width_block is a struct for consistency with outtrans_block.
  */
 
-typedef struct
-{
+typedef struct {
     uint32_t         table[0x100];
 } width_block;
 
@@ -67,8 +66,7 @@ typedef struct
  * freed in one statement.
  */
 
-typedef struct
-{
+typedef struct {
     size_t           allocated_size;
     size_t           next_offset;
     /* The Attributes */

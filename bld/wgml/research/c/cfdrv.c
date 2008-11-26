@@ -53,11 +53,15 @@
 
 /*  Local function declarations */
 
-static cop_driver * parse_finish_block( cop_driver *, uint8_t * *, uint8_t * );
-static cop_driver * parse_font_style( FILE *, cop_driver *, fontstyle_block *, \
-                                       p_buffer * *, uint8_t * *, uint8_t );
-static cop_driver * parse_init_block( cop_driver *, uint8_t * *, uint8_t * );
-static cop_driver * resize_cop_driver( cop_driver *, size_t );
+static cop_driver * parse_finish_block( cop_driver * in_driver, \
+                                         uint8_t * * current, uint8_t * base );
+static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
+                               fontstyle_block * fontstyle_block_ptr, \
+                               p_buffer * * p_buffer_set, uint8_t * * current, \
+                               uint8_t count );
+static cop_driver * parse_init_block( cop_driver * in_driver, \
+                                       uint8_t * * current, uint8_t * base );
+static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size );
 
 /*  Function definitions */
 

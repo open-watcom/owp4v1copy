@@ -41,8 +41,8 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-bool            is_drv_file( FILE * file );
-cop_driver  *   parse_driver( FILE * file );
+bool            is_drv_file( FILE * in_file );
+cop_driver  *   parse_driver( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

@@ -87,7 +87,7 @@ void * mem_alloc( size_t size )
     p = malloc( size );
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
-        exit(EXIT_FAILURE);
+        exit( EXIT_FAILURE );
     }
     return( p );
 }
@@ -97,7 +97,7 @@ void * mem_realloc( void * p, size_t size )
     p = realloc( p, size );
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
-        exit(EXIT_FAILURE);
+        exit( EXIT_FAILURE );
     }
     return( p );
 }
@@ -176,7 +176,7 @@ NULL
  *      in_device is a pointer to the cop_device instance.
  */
 
-void display_device( cop_device * in_device)
+void display_device( cop_device * in_device )
 {
     char        font_character[2];
     int         i;
@@ -727,7 +727,7 @@ int main()
 
     /* Respond to failure. */
 
-    if( retval == FAILURE) {
+    if( retval == FAILURE ) {
       print_usage();
       return( EXIT_FAILURE );
     }

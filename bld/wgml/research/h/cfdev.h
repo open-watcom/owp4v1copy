@@ -77,8 +77,7 @@
 
 /* To hold the data from the BoxBlock struct. */
 
-typedef struct
-{
+typedef struct {
     char *          font_name;
     uint8_t         font_number;
     char            horizontal_line;
@@ -96,8 +95,7 @@ typedef struct
 
 /* To hold the data from the UnderscoreBlock struct. */
 
-typedef struct
-{
+typedef struct {
     bool            specified_font;
     char *          font_name;
     uint8_t         font_number;
@@ -106,8 +104,7 @@ typedef struct
 
 /* To hold the data from the DefaultFont struct. */
 
-typedef struct
-{
+typedef struct {
     char *          font_name;
     char *          font_style;
     uint16_t        font_height;
@@ -116,16 +113,14 @@ typedef struct
 
 /* To hold the data from the DefaultfontBlock struct. */
 
-typedef struct
-{
+typedef struct {
     uint16_t        font_count;
     default_font *  fonts;
 } defaultfont_block;
 
 /* This struct duplicates the PauseBlock struct. */
 
-typedef struct
-{
+typedef struct {
     code_text *     start_pause;
     code_text *     document_pause;
     code_text *     docpage_pause;
@@ -134,8 +129,7 @@ typedef struct
 
 /* To hold the data from the DeviceFont struct. */
 
-typedef struct
-{
+typedef struct {
     char *          font_name;
     char *          font_switch;
     uint8_t         resident;
@@ -144,8 +138,7 @@ typedef struct
 
 /* To hold the data from the DevicefontBlock struct. */
 
-typedef struct
-{
+typedef struct {
     uint16_t        font_count;
     device_font *   fonts;
 } devicefont_block;
@@ -162,8 +155,7 @@ typedef struct
  * freed in one statement.
  */
 
-typedef struct
-{
+typedef struct {
     size_t              allocated_size;
     size_t              next_offset;
     /* The Attributes */
