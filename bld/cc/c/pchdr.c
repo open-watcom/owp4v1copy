@@ -309,18 +309,18 @@ static void OutPutHeader( void )
     }
 }
 
-static void OutPutHFileList( void )     // output include paths
+static void OutPutIncPathList( void )     // output include paths
 {
     int         rc;
     unsigned    len;
 
-    if( HFileList == NULL ) {
+    if( IncPathList == NULL ) {
         rc = 0;
         rc = WritePHeader( &rc, sizeof( int ) );
     } else {
-        len = strlen( HFileList ) + 1;
+        len = strlen( IncPathList ) + 1;
         len = _RoundUp( len, sizeof( int ) );
-        rc = WritePHeader( HFileList, len );
+        rc = WritePHeader( IncPathList, len );
     }
     if( rc != 0 ) {
         longjmp( PH_jmpbuf, rc );
@@ -982,7 +982,7 @@ void OutPutEverything( void )
     OutPutIncludes();
     OutPutRoDirList();
     OutPutIncAliasList();
-    OutPutHFileList();
+    OutPutIncPathList();
     OutPutIncFileList();
     OutPutLibraries();
     OutPutAliases();
@@ -1890,10 +1890,10 @@ int UsePreCompiledHeader( char *filename )
         AbortPreCompiledHeader();
         return( -1 );
     }
-    len = strlen( p ) + 1;              // get length of saved HFileList
+    len = strlen( p ) + 1;              // get length of saved IncPathList
     len = _RoundUp( len, sizeof( int ) );
-    if( ((HFileList == NULL) && (strlen( p ) > 0))
-      || ((HFileList != NULL) && (strcmp( p, HFileList ) != 0)) ) {
+    if( ((IncPathList == NULL) && (strlen( p ) > 0))
+      || ((IncPathList != NULL) && (strcmp( p, IncPathList ) != 0)) ) {
         PCHNote( PCHDR_INCPATH_CHANGED );
         AbortPreCompiledHeader();
         return( -1 );

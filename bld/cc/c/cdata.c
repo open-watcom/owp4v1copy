@@ -69,7 +69,7 @@ void InitGlobalVars( void )
     DefFile                 = NULL; /* output for func prototypes */
     CppFile                 = NULL; /* output for preprocessor */
     CppStack                = NULL; /* #if structure control stack */
-    HFileList               = NULL; /* list of path names to try for H files */
+    IncPathList             = NULL; /* list of path names to try for include files */
     SrcLoc.line             = 0;
     SrcLoc.fno              = 0;
     SrcLineCount            = 0;    /* # of lines in primary source file */

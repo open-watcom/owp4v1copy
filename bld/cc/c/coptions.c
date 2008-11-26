@@ -798,20 +798,20 @@ static void AddIncList( char *str )
     char        *p;
 
     len = strlen( str );
-    if( HFileList != NULL ) {
-        len2 = strlen( HFileList );
+    if( IncPathList != NULL ) {
+        len2 = strlen( IncPathList );
         p = (char *) CMemAlloc( len + len2 + 2 );
-        memcpy( p, HFileList, len2 );
+        memcpy( p, IncPathList, len2 );
         p[ len2 ] = INCLUDE_SEP;
         memcpy( p + len2 + 1, str, len );
         p[ len + len2 + 1 ] = '\0';
-        CMemFree( HFileList );
-        HFileList = p;
+        CMemFree( IncPathList );
+        IncPathList = p;
     } else {
         p = (char *) CMemAlloc( (len + 1) * sizeof( char ) );
         memcpy( p, str, len );
         p[ len ] = '\0';
-        HFileList = p;
+        IncPathList = p;
     }
 }
 
@@ -819,7 +819,7 @@ static void AddIncList( char *str )
 
 void MergeInclude( void )
 {
-    /* must be called after GenCOptions to get req'd HFileList */
+    /* must be called after GenCOptions to get req'd IncPathList */
     char        *env_var;
     char        buff[128];
 

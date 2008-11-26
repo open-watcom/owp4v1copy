@@ -76,8 +76,8 @@ void PurgeMemory( void )
     FreeRDir();
     SrcPurge();
     SwitchPurge();
-    Purge( & HFileList );
+    Purge( &IncPathList );
 //  Purge( &ErrSym );               /* ErrSym is in CPermArea */
-    Purge( & SavedId );
+    Purge( &SavedId );
     FreePreCompiledHeader();
 }

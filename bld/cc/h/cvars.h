@@ -117,7 +117,7 @@ global  FILE    *DefFile;       /* output for func prototypes */
 global  FILE    *CppFile;       /* output for preprocessor */
 global  FILE    *DepFile;       /* make style auto depend file */
 global  struct  cpp_info *CppStack; /* #if structure control stack */
-global  char    *HFileList;     /* list of path names to try for H files */
+global  char    *IncPathList;   /* list of path names to try for include files */
 global  source_loc SrcLoc;
 global  unsigned SrcLineCount;   /* # of lines in primary source file */
 global  unsigned IncLineCount;   /* # of lines in all included files  */

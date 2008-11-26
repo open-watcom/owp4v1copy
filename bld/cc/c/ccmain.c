@@ -109,7 +109,7 @@ void ClearGlobals( void )
     DefFile = NULL;
     CppFile = NULL;
     DepFile = NULL;
-    HFileList = NULL;
+    IncPathList = NULL;
     IncFileDepth = MAX_INC_DEPTH;
     SegmentNum = FIRST_PRIVATE_SEGMENT;
     BufSize = BUF_SIZE;
@@ -345,7 +345,7 @@ static void DoCCompile( char **cmdline )
             return;
         }
         DelErrFile();               /* delete old error file */
-        MergeInclude();             /* merge INCLUDE= with HFileList */
+        MergeInclude();             /* merge INCLUDE= with IncPathList */
         CPragmaInit();              /* memory model is known now */
 #if _CPU == 370
         ParseAuxFile();
@@ -743,8 +743,8 @@ int OpenSrcFile( char *filename, int delimiter )
             }
         }
     }
-    if( HFileList != NULL ) {
-        p = HFileList;
+    if( IncPathList != NULL ) {
+        p = IncPathList;
         do {
             i = 0;
             while( *p == ' ' ) ++p;                     /* 28-feb-95 */
