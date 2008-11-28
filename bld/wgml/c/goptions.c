@@ -34,8 +34,7 @@
 #include <io.h>
 #include <fcntl.h>
  
-typedef struct  option
-{
+typedef struct option {
     char            *option;            // the option
     short           optionLenM1;        // length of option - 1
     short           minLength;          // minimum abbreviation

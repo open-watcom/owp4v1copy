@@ -45,9 +45,52 @@
 #define START_SIZE 2048
 #define INC_SIZE   1024
 
-/*  Local function declaration. */
+/*  Local function definition. */
 
-static cop_font * resize_cop_font( cop_font *, size_t );
+/*  Function resize_cop_font().
+ *  Resizes a cop_font instance.
+ *
+ *  Parameters:
+ *      in_font is a pointer to the cop_font to be resized.
+ *      in_size is the minimum acceptable increase in size.
+ *
+ *  Warning:
+ *      If realloc() returns a different value from in_font, then the
+ *      memory pointed to by in_font will be freed whether the function
+ *      succeeds or fails. The intended use is for the pointer passed as
+ *      in_font to be used to store the return value. 
+ *
+ *  Returns:
+ *      A pointer to a cop_font instance at least in_size larger with the same
+ *          data (except for the allocated_size field, which reflects the new size)
+ *          on success.
+ *      A NULL pointer on failure.
+ */
+
+static cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
+{
+    cop_font *  local_font  = NULL;
+    size_t      increment   = INC_SIZE;
+    size_t      new_size;
+    size_t      scale;
+
+    /* Compute how much larger to make the cop_font struct. */
+
+    if( in_size > INC_SIZE ) {
+        scale = in_size / INC_SIZE;
+        ++scale;
+        increment = scale * INC_SIZE;
+    }
+    new_size = in_font->allocated_size + increment;
+
+    /* Reallocate the cop_font. */
+
+    local_font = (cop_font *) realloc( in_font, new_size );
+    if( local_font != in_font ) free( in_font );
+    if( local_font != NULL ) local_font->allocated_size = new_size;
+
+    return( local_font );
+}
 
 /* Function definitions. */
 
@@ -905,50 +948,5 @@ cop_font * parse_font( FILE * in_file )
     
     
     return( out_font );
-}
-
-/*  Function resize_cop_font().
- *  Resizes a cop_font instance.
- *
- *  Parameters:
- *      in_font is a pointer to the cop_font to be resized.
- *      in_size is the minimum acceptable increase in size.
- *
- *  Warning:
- *      If realloc() returns a different value from in_font, then the
- *      memory pointed to by in_font will be freed whether the function
- *      succeeds or fails. The intended use is for the pointer passed as
- *      in_font to be used to store the return value. 
- *
- *  Returns:
- *      A pointer to a cop_font instance at least in_size larger with the same
- *          data (except for the allocated_size field, which reflects the new size)
- *          on success.
- *      A NULL pointer on failure.
- */
-
-cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
-{
-    cop_font *  local_font  = NULL;
-    size_t      increment   = INC_SIZE;
-    size_t      new_size;
-    size_t      scale;
-
-    /* Compute how much larger to make the cop_font struct. */
-
-    if( in_size > INC_SIZE ) {
-        scale = in_size / INC_SIZE;
-        ++scale;
-        increment = scale * INC_SIZE;
-    }
-    new_size = in_font->allocated_size + increment;
-
-    /* Reallocate the cop_font. */
-
-    local_font = (cop_font *) realloc( in_font, new_size );
-    if( local_font != in_font ) free( in_font );
-    if( local_font != NULL ) local_font->allocated_size = new_size;
-
-    return( local_font );
 }
 

@@ -67,16 +67,13 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 
 /* wgml.c                              */
 extern  void    g_banner( void );
-extern  char    *get_filename_full_path( char *buff, char const *name, \
-                                          size_t max );
+extern  char    *get_filename_full_path( char *buff, char const *name, size_t max );
 
 #pragma aux     my_exit aborts;
 extern  void    my_exit( int );
 
-extern  int     search_file_in_dirs( char *filename, char *defext, \
-                                      char *altext, DIRSEQ seq );
-extern  int     try_open( char *prefix, char *separator, char *filename, \
-                           char *suffix );
+extern  int     search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ seq );
+extern  int     try_open( char *prefix, char *separator, char *filename, char *suffix );
 
 
 

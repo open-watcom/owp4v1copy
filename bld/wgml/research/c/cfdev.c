@@ -49,14 +49,106 @@
 #define START_SIZE 2048
 #define INC_SIZE   1024
 
-/*  Local function declarations. */
+/*  Local functions definitions. */
 
-static void set_cumulative_index( functions_block * in_block );
-static cop_device * resize_cop_device( cop_device * in_device, size_t in_size );
+/*  Function find_cumulative_index().
+ *  Finds the index of the CodeBlock matching the in_max value.
+ *
+ *  Parameter:
+ *      in_block contains the functions_block to search.
+ *      in_max contains the value sought.
+ *      out_index will contain the corresponding index.
+ *
+ *  Returns:
+ *      SUCCESS if in_max is found in in_block.
+ *      FAILURE otherwise.
+ */
+
 static int find_cumulative_index( functions_block * in_block, uint16_t in_max, \
-                                   uint8_t * out_index );
+                                   uint8_t * out_index )
+{
+    uint8_t i;
 
-/*  Function definitions. */
+    for( i = 0; i < in_block->count; i++ ) {
+        if( in_block->code_blocks[i].cumulative_index == in_max ) {
+            *out_index = i;
+            return(SUCCESS);
+        }
+    }
+
+    return(FAILURE);
+}
+
+/*  Function resize_cop_device().
+ *  Resizes a cop_device instance.
+ *
+ *  Parameters:
+ *      in_device is a pointer to the cop_device to be resized.
+ *      in_size is the minimum acceptable increase in size.
+ *
+ *  Warning:
+ *      If realloc() returns a different value from in_device, then the
+ *      memory pointed to by in_device will be freed whether the function
+ *      succeeds or fails. The intended use is for the pointer passed as
+ *      in_device to be used to store the return value. 
+ *
+ *  Returns:
+ *      A pointer to a cop_device instance at least in_size larger with the same
+ *          data (except for the allocated_size field, which reflects the new size)
+ *          on success.
+ *      A NULL pointer on failure.
+ */
+
+static cop_device * resize_cop_device( cop_device * in_device, size_t in_size )
+{
+    cop_device *    local_device = NULL;
+    size_t          increment = INC_SIZE;
+    size_t          new_size;
+    size_t          scale;
+
+    /* Compute how much larger to make the cop_device struct. */
+
+    if( in_size > INC_SIZE ) {
+        scale = in_size / INC_SIZE;
+        ++scale;
+        increment = scale * INC_SIZE;
+    }
+    new_size = in_device->allocated_size + increment;
+
+    /* Reallocate the cop_device. */
+
+    local_device = (cop_device *) realloc( in_device, new_size );
+    if( local_device != in_device ) free( in_device );
+    if( local_device != NULL ) local_device->allocated_size = new_size;
+
+    return( local_device );
+}
+
+/*  Function set_cumulative_index().
+ *  Sets the cumulative_index field in each code_block of a functions_block.
+ *
+ *  Parameter:
+ *      in_block contains a pointer to functions_block to index.
+ */
+
+static void set_cumulative_index( functions_block * in_block )
+{
+    uint8_t         i;
+
+    in_block->code_blocks[0].cumulative_index = 0x0000;
+
+    if( in_block->count > 1 ) {
+        for( i = 1; i < in_block->count; i++ ) {
+            in_block->code_blocks[i].cumulative_index = \
+                                    in_block->code_blocks[i-1].cumulative_index \
+                                  + in_block->code_blocks[i-1].count;
+        }
+    }
+
+    return;
+}
+
+/*  Extern function definitions. */
 
 /*  Function is_dev_file().
  *  Determines whether or not in_file points to the start of a binary device
@@ -2254,104 +2346,5 @@ cop_device * parse_device( FILE * in_file )
     }
     
     return( out_device );
-}
-
-/*  Local functions definitions. */
-
-/*  Function find_cumulative_index().
- *  Finds the index of the CodeBlock matching the in_max value.
- *
- *  Parameter:
- *      in_block contains the functions_block to search.
- *      in_max contains the value sought.
- *      out_index will contain the corresponding index.
- *
- *  Returns:
- *      SUCCESS if in_max is found in in_block.
- *      FAILURE otherwise.
- */
-
-int find_cumulative_index( functions_block * in_block, uint16_t in_max, \
-                           uint8_t * out_index )
-{
-    uint8_t i;
-
-    for( i = 0; i < in_block->count; i++ ) {
-        if( in_block->code_blocks[i].cumulative_index == in_max ) {
-            *out_index = i;
-            return(SUCCESS);
-        }
-    }
-
-    return(FAILURE);
-}
-
-/*  Function resize_cop_device().
- *  Resizes a cop_device instance.
- *
- *  Parameters:
- *      in_device is a pointer to the cop_device to be resized.
- *      in_size is the minimum acceptable increase in size.
- *
- *  Warning:
- *      If realloc() returns a different value from in_device, then the
- *      memory pointed to by in_device will be freed whether the function
- *      succeeds or fails. The intended use is for the pointer passed as
- *      in_device to be used to store the return value. 
- *
- *  Returns:
- *      A pointer to a cop_device instance at least in_size larger with the same
- *          data (except for the allocated_size field, which reflects the new size)
- *          on success.
- *      A NULL pointer on failure.
- */
-
-cop_device * resize_cop_device( cop_device * in_device, size_t in_size )
-{
-    cop_device *    local_device = NULL;
-    size_t          increment = INC_SIZE;
-    size_t          new_size;
-    size_t          scale;
-
-    /* Compute how much larger to make the cop_device struct. */
-
-    if( in_size > INC_SIZE ) {
-        scale = in_size / INC_SIZE;
-        ++scale;
-        increment = scale * INC_SIZE;
-    }
-    new_size = in_device->allocated_size + increment;
-
-    /* Reallocate the cop_device. */
-
-    local_device = (cop_device *) realloc( in_device, new_size );
-    if( local_device != in_device ) free( in_device );
-    if( local_device != NULL ) local_device->allocated_size = new_size;
-
-    return( local_device );
-}
-
-/*  Function set_cumulative_index().
- *  Sets the cumulative_index field in each code_block of a functions_block.
- *
- *  Parameter:
- *      in_block contains a pointer to functions_block to index.
- */
-
-void set_cumulative_index( functions_block * in_block )
-{
-    uint8_t         i;
-
-    in_block->code_blocks[0].cumulative_index = 0x0000;
-
-    if( in_block->count > 1 ) {
-        for( i = 1; i < in_block->count; i++ ) {
-            in_block->code_blocks[i].cumulative_index = \
-                                    in_block->code_blocks[i-1].cumulative_index \
-                                  + in_block->code_blocks[i-1].count;
-        }
-    }
-
-    return;
 }
 

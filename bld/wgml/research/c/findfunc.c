@@ -26,11 +26,12 @@
 *
 * Description:  Checks files in a gendev source directory for
 *               unknown device functions.
-*               In addition to main(), these local functions are defined:
-*                   check_directory()
-*                   get_dev_func()
+*               In addition to main(), these global functions are defined:
 *                   print_banner()
 *                   print_usage()
+*               as well as these local functions:
+*                   check_directory()
+*                   get_dev_func()
 *               and copies of
 *                   mem_alloc()
 *                   mem_free()

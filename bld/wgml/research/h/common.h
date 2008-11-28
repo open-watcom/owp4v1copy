@@ -78,8 +78,8 @@ void    print_usage( void );
 
 /* These functions are defined in common.c. */
 
-void    initialize_globals( void );
-char *  skip_spaces( char * );
+void        initialize_globals( void );
+char    *   skip_spaces( char * start );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

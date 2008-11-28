@@ -63,7 +63,7 @@
  *      mem_alloc() will call exit() if the allocation fails.
  */
 
-code_block * get_code_blocks(uint8_t * * current, uint16_t count, uint8_t * base )
+code_block * get_code_blocks( uint8_t * * current, uint16_t count, uint8_t * base )
 {
     code_block *    out_block   = NULL;
     size_t          difference;

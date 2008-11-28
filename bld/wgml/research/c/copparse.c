@@ -25,14 +25,15 @@
 *  ========================================================================
 *
 * Description:  Parses .COP files based on the defined name.
-*               In addition to main(), these functions are implemented:
+*               In addition to main(), these global functions are implemented:
+*                   print_banner()
+*                   print_usage()
+*               as well as these local functions:
 *                   cop_initialize_globals()
 *                   display_device()
 *                   display_driver()
 *                   display_font()
 *                   parse_defined_name()
-*                   print_banner()
-*                   print_usage()
 *               These items from wgml.c are implemented here because the
 *               dual main() functions that result from linking wgml.c do not
 *               prevent linking but do prevent debugging:
@@ -176,7 +177,7 @@ NULL
  *      in_device is a pointer to the cop_device instance.
  */
 
-void display_device( cop_device * in_device )
+static void display_device( cop_device * in_device )
 {
     char        font_character[2];
     int         i;
@@ -322,7 +323,7 @@ void display_device( cop_device * in_device )
  *      in_driver is a pointer to the cop_driver instance.
  */
 
-void display_driver( cop_driver * in_driver )
+static void display_driver( cop_driver * in_driver )
 {
     int i;
     int j;
@@ -512,7 +513,7 @@ void display_driver( cop_driver * in_driver )
  *      in_font is a pointer to the cop_font instance.
  */
 
-void display_font( cop_font * in_font )
+static void display_font( cop_font * in_font )
 {
 
     char        font_character[2];
@@ -596,7 +597,7 @@ void display_font( cop_font * in_font )
  *      FAILURE if the any error occurred.
  */
 
-int parse_defined_name( void )
+static int parse_defined_name( void )
 {
     cop_device *    current_device  = NULL;
     cop_driver *    current_driver  = NULL;

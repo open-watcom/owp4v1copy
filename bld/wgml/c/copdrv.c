@@ -133,7 +133,8 @@ static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
  */
 
 static cop_driver * parse_finish_block( cop_driver * in_driver, \
-                                         uint8_t * * current, uint8_t * base ) {
+                                         uint8_t * * current, uint8_t * base )
+{
 
     code_block *    cop_codeblocks  = NULL;
     code_text *     code_text_ptr   = NULL;
@@ -257,9 +258,9 @@ static cop_driver * parse_finish_block( cop_driver * in_driver, \
 
     return( in_driver );
 }
-// Adjust terminology: ShortFontstyleBlock, fontstyle_block, fontstyle_group
+
 /* Function parse_font_style().
- * Processes a single ShortFontStyle. This may be called any number of times
+ * Processes a single ShortFontstyleBlock. This may be called any number of times
  * when parsing a .COP file encoding a :DRIVER block.
  *
  * Note:
@@ -440,7 +441,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
     *current += 21;
 
-    /* Get the number of codeblocks, which can be 0. */
+    /* Get the number of CodeBlocks, which can be 0. */
 
     memcpy_s( &count16, sizeof( count16 ), *current, sizeof( count16 ) );
     *current += sizeof( count16 );
@@ -1832,12 +1833,11 @@ cop_driver * parse_driver( FILE * in_file )
     }
 
     /* Verify that current is pointing to the end of the p_buffer_set. */
-// Adjust terminology: ShortFontstyleBlock, fontstyle_block, fontstyle_group
 
     factor = (current - p_buffer_set->buffer) / 80;
     if( factor * 80 < p_buffer_set->count ) {
 
-        /* Rewind the file to the count byte of the FontstyleBlock. */
+        /* Rewind the file to the count byte of the FontstyleGroup. */
         /* The number of false P-buffers must be added to the span. */
 
         span = (p_buffer_set->count - (factor * 80));
@@ -1854,7 +1854,7 @@ cop_driver * parse_driver( FILE * in_file )
     mem_free( p_buffer_set );
     p_buffer_set = NULL;
     
-    /* Parse the FontstyleBlock. */
+    /* Parse the FontstyleGroup. */
 
     /* Get the data_count and ensure it is not 0. */
     
@@ -1915,7 +1915,7 @@ cop_driver * parse_driver( FILE * in_file )
 
     /* Note: see the Wiki for the file structure. It is a little odd. */
 
-    /* The initial ShortFontStyle must be processed separately. */
+    /* The initial ShortFontstyleBlock must be processed separately. */
     
     out_driver = parse_font_style( in_file, out_driver, fontstyle_block_ptr, \
                                             &p_buffer_set, &current, count8 );
@@ -1924,12 +1924,12 @@ cop_driver * parse_driver( FILE * in_file )
                                 (size_t) out_driver->fontstyles.fontstyleblocks);
 
 
-    /* The FontStyles, if any, can be done in a loop. */
+    /* The FontstyleBlocks, if any, can be done in a loop. */
 
     for( i = 1; i < out_driver->fontstyles.count; i++ ) {
 
         /* Locate the start of the "next" P-buffer & verify that it is not
-         * present -- that, that the count byte of the next FontStyleBlock
+         * present -- that, that the count byte of the next FontstyleBlock
          * was not 80. */
 
         factor = (current - p_buffer_set->buffer) / 80;

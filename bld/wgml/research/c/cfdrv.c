@@ -51,19 +51,1321 @@
 #define START_SIZE 2048
 #define INC_SIZE   1024
 
-/*  Local function declarations */
+/*  Local function definitions */
+
+/*  Function resize_cop_driver().
+ *  Resizes a cop_driver instance.
+ *
+ *  Parameters:
+ *      in_driver is a pointer to the cop_driver to be resized.
+ *      in_size is the minimum acceptable increase in size.
+ *
+ *  Warning:
+ *      If realloc() returns a different value from in_driver, then the
+ *      memory pointed to by in_driver will be freed whether the function
+ *      succeeds or fails. The intended use is for the pointer passed as
+ *      in_driver to be used to store the return value. 
+ *
+ *  Returns:
+ *      A pointer to a cop_driver instance at least in_size larger with the same
+ *          data (except for the allocated_size field, which reflects the new size)
+ *          on success.
+ *      A NULL pointer on failure.
+ */
+
+static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
+{
+    cop_driver *    local_driver = NULL;
+    size_t          increment = INC_SIZE;
+    size_t          new_size;
+    size_t          scale;
+
+    /* Compute how much larger to make the cop_driver struct. */
+
+    if( in_size > INC_SIZE ) {
+        scale = in_size / INC_SIZE;
+        ++scale;
+        increment = scale * INC_SIZE;
+    }
+    new_size = in_driver->allocated_size + increment;
+
+    /* Reallocate the cop_driver. */
+
+    local_driver = (cop_driver *) realloc( in_driver, new_size );
+    if( local_driver != in_driver ) free( in_driver );
+    if( local_driver != NULL ) local_driver->allocated_size = new_size;
+
+    return( local_driver );
+}
+
+/*  Function parse_finish_block().
+ *  Processes a single FinishBlock. This may be called up to two times when
+ *  parsing a .COP file encoding a :DRIVER block. 
+ *
+ *  Note: although a :FINISH block can contain more than one :VALUE block, and
+ *  gendev will put more than one CodeBlock into the .COP file, wgml only
+ *  invokes the first one. Thus, this function only parses the first CodeBlock.
+ *
+ *  Parameters:
+ *      in_driver contains the cop_driver being initialized.
+ *      *current contains the current position in a p_buffer.buffer.
+ *      base points to the first byte of the underlying P-buffer.
+ *
+ *  Parameter modified:
+ *      if the function succeeds, then *current will point to the first junk
+ *          byte following the last CodeBlock for this FinishBlock.
+ *      if the function fails, the value of *current should be regarded as
+ *          invalid.
+ *
+ *  Returns:
+ *      in_driver, possibly relocated, on success.
+ *      NULL on failure.
+ */
 
 static cop_driver * parse_finish_block( cop_driver * in_driver, \
-                                         uint8_t * * current, uint8_t * base );
-static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
-                               fontstyle_block * fontstyle_block_ptr, \
-                               p_buffer * * p_buffer_set, uint8_t * * current, \
-                               uint8_t count );
-static cop_driver * parse_init_block( cop_driver * in_driver, \
-                                       uint8_t * * current, uint8_t * base );
-static cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size );
+                                         uint8_t * * current, uint8_t * base )
+{
 
-/*  Function definitions */
+    code_block *    cop_codeblocks  = NULL;
+    code_text *     code_text_ptr   = NULL;
+    uint8_t         designator;    
+    uint8_t *       text_ptr        = NULL;
+    uint16_t        count;
+
+    /* Get the designator. */
+
+    memcpy_s( &designator, 1, *current, 1 );
+    (*current)++;
+
+    /* Parse the FinishBlock. */
+
+    switch( designator ) {
+    case 0x01 :
+        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
+        *current += sizeof( count );
+        if( count == 0x0000 ) {
+            puts( "END :FINISH block has no code!" );
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+
+        if( count > 0x0001 ) {
+            printf_s( "END :FINISH block has unexpected number of CodeBlocks: " \
+                                                                  "%i\n", count);
+        }
+
+        /* Add the code_text struct itself. */
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+            in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+            if( in_driver == NULL ) return( in_driver );
+        }
+        code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                    in_driver->next_offset);
+
+        in_driver->finishes.end = (code_text *) in_driver->next_offset;
+        in_driver->next_offset += sizeof( code_text );
+
+        /* Get the CodeBlocks. */
+        
+        cop_codeblocks = get_code_blocks( current, count, base, "END :FINISH" );
+        if( cop_codeblocks == NULL ) {
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+        
+        /* Initialize the code_text struct. */
+
+        if( cop_codeblocks[0].designator != 0x00 ) {
+            printf_s( "END :FINISH block has unexpected CodeBlock designator: " \
+                                                          "%i\n", designator );
+            free( cop_codeblocks );
+            cop_codeblocks = NULL;
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+
+        code_text_ptr->count = cop_codeblocks[0].count;
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        code_text_ptr->count) ) {
+            in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+            if( in_driver == NULL ) {
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                return( in_driver );
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                (size_t) in_driver->finishes.end);
+        }
+
+        text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
+                                                        code_text_ptr->count );
+        code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+        in_driver->next_offset += code_text_ptr->count;
+
+        free( cop_codeblocks );
+        cop_codeblocks = NULL;
+
+        break;
+    case 0x02 :
+        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
+        *current += sizeof( count );
+        if( count == 0 ) {
+            puts( "DOCUMENT :FINISH block has no code!" );
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+
+        if( count > 0x0001 ) {
+            printf_s( "DOCUMENT :FINISH block has unexpected number of " \
+                                                      "CodeBlocks: %i\n", count);
+        }
+
+        /* Add the code_text struct itself. */
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+            in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+            if( in_driver == NULL ) return( in_driver );
+        }
+        code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+        in_driver->finishes.document = (code_text *) in_driver->next_offset;
+        in_driver->next_offset += sizeof( code_text );
+
+        /* Get the CodeBlocks. */
+        
+        cop_codeblocks = get_code_blocks( current, count, base, \
+                                                            "DOCUMENT :FINISH" );
+        if( cop_codeblocks == NULL ) {
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+        
+        /* Initialize the code_text struct. */
+
+        if( cop_codeblocks[0].designator != 0x00 ) {
+            printf_s( "DOCUMENT :FINISH block has unexpected CodeBlock " \
+                                              "designator: %i\n", designator );
+            free( cop_codeblocks );
+            cop_codeblocks = NULL;
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+
+        code_text_ptr->count = cop_codeblocks[0].count;
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        code_text_ptr->count) ) {
+            in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+            if( in_driver == NULL ) {
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                return( in_driver );
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                        (size_t) in_driver->finishes.document);
+        }
+        text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
+                                                        code_text_ptr->count );
+        code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+        in_driver->next_offset += code_text_ptr->count;
+
+        free( cop_codeblocks );
+        cop_codeblocks = NULL;
+
+        break;
+    default :
+        printf_s( ":FINISH block designator incorrect: %i\n", designator );
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    return( in_driver );
+}
+
+/*  Function parse_font_style().
+ *  Processes a single ShortFontStyle. This may be called any number of times
+ *  when parsing a .COP file encoding a :DRIVER block.
+ *
+ *  Note: The Wiki should be consulted if the treatment of p_buffer_set and
+ *        count appears inexplicable. The structure in the .COP file is very
+ *        odd and something like the contortions shown here are unavoidable.
+ *
+ *  Parameters:
+ *      in_file is the file being parsed.
+ *      in_driver contains the cop_drivr being initialized.
+ *      fontstyle_block_ptr is the current fontstyle_block instance.
+ *      p_buffer_set should be NULL and any memory formerly pointed to freed.
+ *      count contains the total length of the pre-P-buffer data.
+ *
+ *  Parameter modified:
+ *      if the function succeeds, then *p_buffer_set will point to the
+ *          current set of P-buffers.
+ *      if the function fails, then *p_buffer_set will be NULL.
+ *
+ *  Returns:
+ *      in_driver, possibly relocated, on success.
+ *      NULL on failure.
+ */
+
+static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
+                                       fontstyle_block * fontstyle_block_ptr, \
+                                       p_buffer * * p_buffer_set, \
+                                       uint8_t * * current, uint8_t count )
+{
+
+    char *          string_ptr              = NULL;
+    code_block *    cop_codeblocks          = NULL;
+    code_text *     code_text_ptr           = NULL;
+    int             i;
+    line_proc *     line_proc_ptr           = NULL;
+    ptrdiff_t       fontstyle_block_offset;
+    uint8_t         save_designator;
+    uint8_t *       text_ptr                = NULL;
+    uint16_t        save_pass;
+    uint16_t        count16;
+
+    /* Get the number of passes, which can be 0. */
+
+    fread( &fontstyle_block_ptr->passes, sizeof( fontstyle_block_ptr->passes ), \
+                                                                        1, in_file );
+    if( ferror( in_file ) || feof( in_file ) ) {
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+    count -= sizeof( fontstyle_block_ptr->passes );
+
+    /* Get the unknown_count, and verify that it is 1. */
+
+    fread( &count16, sizeof( count16 ), 1, in_file );
+    if( ferror( in_file ) || feof( in_file ) ) {
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    if( count16 != 0x0001 ) {
+        printf_s( "ShortFontstyleBlock has incorrect 'unknown count' value: %i\n", \
+                                                                       count16 );
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+    count -= sizeof( count16 );
+
+    /* Get the two nulls, and verify they contain the value 0. */
+
+    fread( &count16, sizeof( count16 ), 1, in_file );
+    if( ferror( in_file ) || feof( in_file ) ) {
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    if( count16 != 0x0000 ) {
+        printf_s( "ShortFontstyleBlock has incorrect 'two-byte nulls' value: " \
+                                                              "%i\n", count16 );
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+    count -= sizeof( count16 );
+
+    /* count should now contain the length of type, including the terminal null. */
+
+    if( count == 0 ) {
+        puts( ":FONTSTYLE block has no type");
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    /* Add the space for the type. */
+
+    if( in_driver->allocated_size < (in_driver->next_offset + count) ) {
+        fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                            (uint8_t *) in_driver);
+        in_driver = resize_cop_driver( in_driver, count );
+        if( in_driver == NULL ) {
+            free( *p_buffer_set );
+            *p_buffer_set = NULL;
+            return( in_driver );
+        }
+        fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
+                                                            fontstyle_block_offset);
+    }
+
+    string_ptr = (char *) in_driver + in_driver->next_offset;
+
+    fontstyle_block_ptr->type = (char *) in_driver->next_offset;
+    in_driver->next_offset += count;
+
+    /* Acquire the type. */
+        
+    fread( string_ptr, count, 1, in_file );
+    if( ferror( in_file ) || feof( in_file ) ) {
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    /* Done here so lineprocs can be used as an array. */
+
+    if( fontstyle_block_ptr->passes == 0 ) {
+        fontstyle_block_ptr->lineprocs = NULL;
+    } else {
+
+        /* Add the space for the line_proc struct instances. */
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                        (fontstyle_block_ptr->passes * sizeof( line_proc )) ) ) {
+            fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                            (uint8_t *) in_driver);
+            in_driver = resize_cop_driver( in_driver, fontstyle_block_ptr->passes \
+                                                        * sizeof( line_proc ) );
+            if( in_driver == NULL ) {
+                free( *p_buffer_set );
+                *p_buffer_set = NULL;
+                return( in_driver );
+            }
+            fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
+                                                        fontstyle_block_offset);
+        }
+        line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+        fontstyle_block_ptr->lineprocs = (line_proc *) in_driver->next_offset;
+        in_driver->next_offset += fontstyle_block_ptr->passes * \
+                                                            sizeof( line_proc );
+
+        /* Set the line_proc struct instance pointers to null. */
+
+        for( i = 0; i < fontstyle_block_ptr->passes; i++ ) {
+            line_proc_ptr[i].startvalue = NULL;
+            line_proc_ptr[i].firstword = NULL;
+            line_proc_ptr[i].startword = NULL;
+            line_proc_ptr[i].endword = NULL;
+            line_proc_ptr[i].endvalue = NULL;
+        }
+    }
+
+    /* Now get the P-buffers. */
+        
+    *p_buffer_set = get_p_buffer( in_file );
+    if( *p_buffer_set == NULL) {
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    *current = (*p_buffer_set)->buffer;
+
+    /* Skip the flags. */
+
+    *current += 21;
+
+    /* Get the number of codeblocks, which can be 0. */
+
+    memcpy_s( &count16, sizeof( count16 ), *current, sizeof( count16 ) );
+    *current += sizeof( count16 );
+    
+    /* If the count is 0, we are done: the P-buffer is empty. */
+
+    if( count16 == 0 ) return( in_driver );
+
+    /* Get the CodeBlocks, after displaying the current font style name. */
+        
+    printf( "Fontstyle: %s\n", string_ptr );
+    cop_codeblocks = get_code_blocks( current, count16, (*p_buffer_set)->buffer, \
+                                      ":FONTSTYLE" );
+    if( cop_codeblocks == NULL ) {
+        free( *p_buffer_set );
+        *p_buffer_set = NULL;
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }
+
+    /* Process the CodeBlocks into the fontstyle_block instance. */
+
+    save_designator = 0;
+    save_pass = 0;
+
+    for( i = 0; i < count16; i++ ) {
+
+        /* Trap zero-length CodeBlocks. */
+
+        if( cop_codeblocks[i].count == 0 ) {
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            continue;
+        }
+        
+        switch( cop_codeblocks[i].designator ) {
+        case 0x04 :
+
+            /* The :FONTSTYLE :ENDVALUE block. */
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                    + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+            fontstyle_block_ptr->endvalue = (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                    + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->endvalue);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                            code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        case 0x05 :
+
+            /* The :FONTSTYLE :STARTVALUE block. */
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+            fontstyle_block_ptr->startvalue = (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                    + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->startvalue);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                        code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            if( (save_designator == 0x04) && (save_pass == \
+                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
+            else puts("");
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        case 0x08 :
+
+            /* A :FONTSTYLE :LINEPROC :ENDVALUE block. */
+
+            /* Ensure that the pass is within range */
+
+            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
+                printf_s( ":FONTSTYLE :LINEPROC :ENDVALUE block has incorrect " \
+                                  "pass value: %i\n", cop_codeblocks[i].pass );
+                free( *p_buffer_set );
+                *p_buffer_set = NULL;
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                free( in_driver );
+                in_driver = NULL;
+                return( in_driver );
+            }
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                    + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+            line_proc_ptr[cop_codeblocks[i].pass - 1].endvalue = \
+                                            (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].endvalue);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                        code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        case 0x09 :
+
+            /* A :FONTSTYLE :LINEPROC :STARTVALUE block. */
+
+            /* Ensure that the pass is within range. */
+
+            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
+                printf_s( ":FONTSTYLE :LINEPROC :STARTVALUE block has incorrect " \
+                                  "pass value: %i\n", cop_codeblocks[i].pass );
+                free( *p_buffer_set );
+                *p_buffer_set = NULL;
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                free( in_driver );
+                in_driver = NULL;
+                return( in_driver );
+            }
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+            line_proc_ptr[cop_codeblocks[i].pass - 1].startvalue = \
+                                            (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                    code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                    (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].startvalue);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                        code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            if( (save_designator == 0x08) && (save_pass == \
+                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
+            else puts("");
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        case 0x28 :
+
+            /* A :FONTSTYLE :LINEPROC :ENDWORD block. */
+
+            /* Ensure that the pass is within range. */
+
+            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
+                printf_s( ":FONTSTYLE :LINEPROC :ENDWORD block has incorrect " \
+                                  "pass value: %i\n", cop_codeblocks[i].pass );
+                free( *p_buffer_set );
+                *p_buffer_set = NULL;
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                free( in_driver );
+                in_driver = NULL;
+                return( in_driver );
+            }
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+            line_proc_ptr[cop_codeblocks[i].pass - 1].endword = \
+                                            (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                    code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                    (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].endword);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                        code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        case 0x29 :
+
+            /* A :FONTSTYLE :LINEPROC :STARTWORD block. */
+
+            /* Ensure that the pass is within range. */
+
+            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
+                printf_s( ":FONTSTYLE :LINEPROC :STARTWORD block has incorrect " \
+                                  "pass value: %i\n", cop_codeblocks[i].pass );
+                free( *p_buffer_set );
+                *p_buffer_set = NULL;
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                free( in_driver );
+                in_driver = NULL;
+                return( in_driver );
+            }
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                    in_driver->next_offset);
+
+            line_proc_ptr[cop_codeblocks[i].pass - 1].startword = \
+                                            (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].startword);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                        code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            if( (save_designator == 0x28) && (save_pass == \
+                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
+            else puts("");
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        case 0x49 :
+
+            /* A :FONTSTYLE :LINEPROC :FIRSTWORD block. */
+
+            /* Ensure that the pass is within range. */
+
+            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
+                printf_s( ":FONTSTYLE :LINEPROC :FIRSTWORD block has incorrect " \
+                                  "pass value: %i\n", cop_codeblocks[i].pass );
+                free( *p_buffer_set );
+                *p_buffer_set = NULL;
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                free( in_driver );
+                in_driver = NULL;
+                return( in_driver );
+            }
+
+            /* Add the code_text struct. */
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( code_text )) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                        (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+            }
+            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+            line_proc_ptr[cop_codeblocks[i].pass - 1].firstword = \
+                                            (code_text *) in_driver->next_offset;
+            in_driver->next_offset += sizeof( code_text );
+
+            /* Initialize the code_text struct. */
+
+            code_text_ptr->count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                    code_text_ptr->count) ) {
+                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
+                                                    (uint8_t *) in_driver);
+                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
+                if( in_driver == NULL ) {
+                    free( *p_buffer_set );
+                    *p_buffer_set = NULL;
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
+                                                        + fontstyle_block_offset);
+                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
+                                        (size_t) fontstyle_block_ptr->lineprocs);
+                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
+                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].firstword);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
+                                                        code_text_ptr->count );
+            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code. */
+
+            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
+                   "pass = %x\n", cop_codeblocks[i].designator, \
+                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
+                   cop_codeblocks[i].pass);
+            if( (save_designator == 0x08) && (save_pass == \
+                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
+            else puts("");
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
+            break;
+        default :
+            printf_s( "  CodeBlock %i has unknown designator: %i\n", \
+                                    string_ptr, i, cop_codeblocks[i].designator );
+            free( *p_buffer_set );
+            *p_buffer_set = NULL;
+            free(cop_codeblocks);
+            cop_codeblocks = NULL;
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+    }
+
+    /* Both in_driver and *p_buffer_set must be returned pointing to data. */
+
+    free(cop_codeblocks);
+    cop_codeblocks = NULL;
+
+    return( in_driver );
+}
+
+/*  Function parse_init_block().
+ *  Processes a single InitBlock. This may be called up to two times when
+ *  parsing a .COP file encoding a :DRIVER block. 
+ *
+ *  Parameters:
+ *      in_driver contains the cop_driver being initialized.
+ *      *current contains the current position in a p_buffer.buffer.
+ *      base points to the first byte of the underlying P-buffer.
+ *
+ *  Parameter modified:
+ *      if the function succeeds, then *current will point to the first junk
+ *          byte following the last CodeBlock for this InitBlock.
+ *      if the function fails, the value of *current should be regarded as
+ *          invalid.
+ *
+ *  Returns:
+ *      in_driver, possibly relocated, on success.
+ *      NULL on failure.
+ */
+static cop_driver * parse_init_block( cop_driver * in_driver, \
+                                       uint8_t * * current, uint8_t * base )
+{
+
+    code_block *    cop_codeblocks  = NULL;
+    init_block *    init_block_ptr  = NULL;
+    init_text *     init_text_ptr   = NULL;
+    int             i;
+    uint8_t         designator;    
+    uint8_t *       text_ptr        = NULL;
+    uint16_t        count;
+
+    /* Get the designator. */
+
+    memcpy_s( &designator, 1, *current, 1 );
+    (*current)++;
+
+    /* Process the InitBlock. */
+
+    switch( designator ) {
+    case 0x01 :
+        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
+        *current += sizeof( count );
+        if( count == 0 ) {
+            puts( "START :INIT block has no code!" );
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+
+        /* Add the init_block struct itself. */
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                        sizeof( init_block )) ) {
+            in_driver = resize_cop_driver( in_driver, sizeof( init_block ) );
+            if( in_driver == NULL ) return( in_driver );
+        }
+        init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+        in_driver->inits.start = (init_block *) in_driver->next_offset;
+        in_driver->next_offset += sizeof( init_block );
+
+        /* Get the CodeBlocks. */
+        
+        cop_codeblocks = get_code_blocks( current, count, base, "START :INIT" );
+        if( cop_codeblocks == NULL ) {
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+        
+        /* Add the init_text struct instances. */
+        
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                count * sizeof( init_text )) ) {
+            in_driver = resize_cop_driver( in_driver, \
+                                                count * sizeof( init_text ) );
+            if( in_driver == NULL ) {
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                return( in_driver );
+            }
+            init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
+                                                (size_t) in_driver->inits.start);
+        }
+        init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+        init_block_ptr->count = count;
+        init_block_ptr->codeblock = (init_text *) in_driver->next_offset;
+        in_driver->next_offset += count * sizeof( init_text );
+
+        /* Initialize the init_text struct instances. */
+
+        for(i = 0; i < init_block_ptr->count; i++ ) {
+
+            if( cop_codeblocks[i].designator == 0x02 ) \
+                                            init_text_ptr[i].is_fontvalue = true;
+            else {
+                if( cop_codeblocks[i].designator == 0x00 ) \
+                                            init_text_ptr[i].is_fontvalue = false;
+                else {
+                    printf_s( "START :INIT block has unexpected CodeBlock " \
+                                              "designator: %i\n", designator );
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    free( in_driver );
+                    in_driver = NULL;
+                    return( in_driver );
+
+                }
+            }
+
+            init_text_ptr[i].count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                    init_text_ptr[i].count) ) {
+                in_driver = resize_cop_driver( in_driver, init_text_ptr[i].count );
+                if( in_driver == NULL ) {
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
+                                                (size_t) in_driver->inits.start);
+                init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
+                                            (size_t) init_block_ptr->codeblock);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, init_text_ptr[i].count, \
+                            cop_codeblocks[i].text, init_text_ptr[i].count );
+            init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += init_text_ptr[i].count;
+
+        }
+
+        free( cop_codeblocks );
+        cop_codeblocks = NULL;
+
+        break;
+    case 0x02 :
+        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
+        *current += sizeof( count );
+        if( count == 0 ) {
+            puts( "DOCUMENT :INIT block has no code!" );
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+
+        /* Add the init_block struct itself. */
+
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                    sizeof( init_block )) ) {
+            in_driver = resize_cop_driver( in_driver, sizeof( init_block ) );
+            if( in_driver == NULL ) return( in_driver );
+        }
+        init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+        in_driver->inits.document = (init_block *) \
+                                                        in_driver->next_offset;
+        in_driver->next_offset += sizeof( init_block );
+
+        /* Get the CodeBlocks. */
+        
+        cop_codeblocks = get_code_blocks( current, count, base, "DOCUMENT :INIT" );
+        if( cop_codeblocks == NULL ) {
+            free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+        
+        /* Add the init_text struct instances. */
+        
+        if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                count * sizeof( init_text )) ) {
+            in_driver = resize_cop_driver( in_driver, \
+                                                    count * sizeof( init_text ) );
+            if( in_driver == NULL ) {
+                free( cop_codeblocks );
+                cop_codeblocks = NULL;
+                return( in_driver );
+            }
+            init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
+                                            (size_t) in_driver->inits.document);
+        }
+
+        init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
+                                                        in_driver->next_offset);
+
+        init_block_ptr->count = count;
+        init_block_ptr->codeblock = (init_text *) in_driver->next_offset;
+        in_driver->next_offset += count * sizeof( init_text );
+
+        /* Initialize the init_text struct instances. */
+
+        for(i = 0; i < init_block_ptr->count; i++ ) {
+
+            if( cop_codeblocks[i].designator == 0x02 ) \
+                                            init_text_ptr[i].is_fontvalue = true;
+            else {
+                if( cop_codeblocks[i].designator == 0x00 ) \
+                                            init_text_ptr[i].is_fontvalue = false;
+                else {
+                    printf_s( "DOCUMENT :INIT block has unexpected CodeBlock " \
+                                              "designator: %i\n", designator );
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    free( in_driver );
+                    in_driver = NULL;
+                    return( in_driver );
+                }
+            }
+
+            init_text_ptr[i].count = cop_codeblocks[i].count;
+
+            if( in_driver->allocated_size < (in_driver->next_offset + \
+                                                    init_text_ptr[i].count) ) {
+                in_driver = resize_cop_driver( in_driver, init_text_ptr[i].count );
+                if( in_driver == NULL ) {
+                    free( cop_codeblocks );
+                    cop_codeblocks = NULL;
+                    return( in_driver );
+                }
+                init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
+                                    (size_t) in_driver->inits.document);
+                init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
+                                            (size_t) init_block_ptr->codeblock);
+            }
+            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
+
+            memcpy_s( text_ptr, init_text_ptr[i].count, \
+                            cop_codeblocks[i].text, init_text_ptr[i].count );
+            init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
+            in_driver->next_offset += init_text_ptr[i].count;
+
+        }
+
+        free( cop_codeblocks );
+        cop_codeblocks = NULL;
+
+        break;
+    default :
+        printf_s( ":INIT block designator incorrect: %i\n", designator );
+        free( in_driver );
+        in_driver = NULL;
+        return( in_driver );
+    }    
+
+    return( in_driver );
+}
+
+/*  Extern function definitions */
 
 /*  Function is_drv_file().
  *  Determines whether or not in_file points to the start of a .COP driver
@@ -1751,1315 +3053,5 @@ cop_driver * parse_driver( FILE * in_file )
     }
 
     return( out_driver );
-}
-
-/*  Function parse_finish_block().
- *  Processes a single FinishBlock. This may be called up to two times when
- *  parsing a .COP file encoding a :DRIVER block. 
- *
- *  Note: although a :FINISH block can contain more than one :VALUE block, and
- *  gendev will put more than one CodeBlock into the .COP file, wgml only
- *  invokes the first one. Thus, this function only parses the first CodeBlock.
- *
- *  Parameters:
- *      in_driver contains the cop_driver being initialized.
- *      *current contains the current position in a p_buffer.buffer.
- *      base points to the first byte of the underlying P-buffer.
- *
- *  Parameter modified:
- *      if the function succeeds, then *current will point to the first junk
- *          byte following the last CodeBlock for this FinishBlock.
- *      if the function fails, the value of *current should be regarded as
- *          invalid.
- *
- *  Returns:
- *      in_driver, possibly relocated, on success.
- *      NULL on failure.
- */
-
-cop_driver * parse_finish_block( cop_driver * in_driver, uint8_t * * current, \
-                                 uint8_t * base ) {
-
-    code_block *    cop_codeblocks  = NULL;
-    code_text *     code_text_ptr   = NULL;
-    uint8_t         designator;    
-    uint8_t *       text_ptr        = NULL;
-    uint16_t        count;
-
-    /* Get the designator. */
-
-    memcpy_s( &designator, 1, *current, 1 );
-    (*current)++;
-
-    /* Parse the FinishBlock. */
-
-    switch( designator ) {
-    case 0x01 :
-        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
-        *current += sizeof( count );
-        if( count == 0x0000 ) {
-            puts( "END :FINISH block has no code!" );
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-
-        if( count > 0x0001 ) {
-            printf_s( "END :FINISH block has unexpected number of CodeBlocks: " \
-                                                                  "%i\n", count);
-        }
-
-        /* Add the code_text struct itself. */
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-            in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-            if( in_driver == NULL ) return( in_driver );
-        }
-        code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                    in_driver->next_offset);
-
-        in_driver->finishes.end = (code_text *) in_driver->next_offset;
-        in_driver->next_offset += sizeof( code_text );
-
-        /* Get the CodeBlocks. */
-        
-        cop_codeblocks = get_code_blocks( current, count, base, "END :FINISH" );
-        if( cop_codeblocks == NULL ) {
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-        
-        /* Initialize the code_text struct. */
-
-        if( cop_codeblocks[0].designator != 0x00 ) {
-            printf_s( "END :FINISH block has unexpected CodeBlock designator: " \
-                                                          "%i\n", designator );
-            free( cop_codeblocks );
-            cop_codeblocks = NULL;
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-
-        code_text_ptr->count = cop_codeblocks[0].count;
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-            in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-            if( in_driver == NULL ) {
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                return( in_driver );
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                (size_t) in_driver->finishes.end);
-        }
-
-        text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
-                                                        code_text_ptr->count );
-        code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-        in_driver->next_offset += code_text_ptr->count;
-
-        free( cop_codeblocks );
-        cop_codeblocks = NULL;
-
-        break;
-    case 0x02 :
-        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
-        *current += sizeof( count );
-        if( count == 0 ) {
-            puts( "DOCUMENT :FINISH block has no code!" );
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-
-        if( count > 0x0001 ) {
-            printf_s( "DOCUMENT :FINISH block has unexpected number of " \
-                                                      "CodeBlocks: %i\n", count);
-        }
-
-        /* Add the code_text struct itself. */
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-            in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-            if( in_driver == NULL ) return( in_driver );
-        }
-        code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-        in_driver->finishes.document = (code_text *) in_driver->next_offset;
-        in_driver->next_offset += sizeof( code_text );
-
-        /* Get the CodeBlocks. */
-        
-        cop_codeblocks = get_code_blocks( current, count, base, \
-                                                            "DOCUMENT :FINISH" );
-        if( cop_codeblocks == NULL ) {
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-        
-        /* Initialize the code_text struct. */
-
-        if( cop_codeblocks[0].designator != 0x00 ) {
-            printf_s( "DOCUMENT :FINISH block has unexpected CodeBlock " \
-                                              "designator: %i\n", designator );
-            free( cop_codeblocks );
-            cop_codeblocks = NULL;
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-
-        code_text_ptr->count = cop_codeblocks[0].count;
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-            in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-            if( in_driver == NULL ) {
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                return( in_driver );
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                        (size_t) in_driver->finishes.document);
-        }
-        text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-        memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[0].text, \
-                                                        code_text_ptr->count );
-        code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-        in_driver->next_offset += code_text_ptr->count;
-
-        free( cop_codeblocks );
-        cop_codeblocks = NULL;
-
-        break;
-    default :
-        printf_s( ":FINISH block designator incorrect: %i\n", designator );
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    return( in_driver );
-}
-
-/*  Function parse_font_style().
- *  Processes a single ShortFontStyle. This may be called any number of times
- *  when parsing a .COP file encoding a :DRIVER block.
- *
- *  Note: The Wiki should be consulted if the treatment of p_buffer_set and
- *        count appears inexplicable. The structure in the .COP file is very
- *        odd and something like the contortions shown here are unavoidable.
- *
- *  Parameters:
- *      in_file is the file being parsed.
- *      in_driver contains the cop_drivr being initialized.
- *      fontstyle_block_ptr is the current fontstyle_block instance.
- *      p_buffer_set should be NULL and any memory formerly pointed to freed.
- *      count contains the total length of the pre-P-buffer data.
- *
- *  Parameter modified:
- *      if the function succeeds, then *p_buffer_set will point to the
- *          current set of P-buffers.
- *      if the function fails, then *p_buffer_set will be NULL.
- *
- *  Returns:
- *      in_driver, possibly relocated, on success.
- *      NULL on failure.
- */
-
-cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
-                               fontstyle_block * fontstyle_block_ptr, \
-                               p_buffer * * p_buffer_set, uint8_t * * current, \
-                               uint8_t count )
-{
-
-    char *          string_ptr              = NULL;
-    code_block *    cop_codeblocks          = NULL;
-    code_text *     code_text_ptr           = NULL;
-    int             i;
-    line_proc *     line_proc_ptr           = NULL;
-    ptrdiff_t       fontstyle_block_offset;
-    uint8_t         save_designator;
-    uint8_t *       text_ptr                = NULL;
-    uint16_t        save_pass;
-    uint16_t        count16;
-
-    /* Get the number of passes, which can be 0. */
-
-    fread( &fontstyle_block_ptr->passes, sizeof( fontstyle_block_ptr->passes ), \
-                                                                        1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) {
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-    count -= sizeof( fontstyle_block_ptr->passes );
-
-    /* Get the unknown_count, and verify that it is 1. */
-
-    fread( &count16, sizeof( count16 ), 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) {
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    if( count16 != 0x0001 ) {
-        printf_s( "ShortFontstyleBlock has incorrect 'unknown count' value: %i\n", \
-                                                                       count16 );
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-    count -= sizeof( count16 );
-
-    /* Get the two nulls, and verify they contain the value 0. */
-
-    fread( &count16, sizeof( count16 ), 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) {
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    if( count16 != 0x0000 ) {
-        printf_s( "ShortFontstyleBlock has incorrect 'two-byte nulls' value: " \
-                                                              "%i\n", count16 );
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-    count -= sizeof( count16 );
-
-    /* count should now contain the length of type, including the terminal null. */
-
-    if( count == 0 ) {
-        puts( ":FONTSTYLE block has no type");
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    /* Add the space for the type. */
-
-    if( in_driver->allocated_size < (in_driver->next_offset + count) ) {
-        fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                            (uint8_t *) in_driver);
-        in_driver = resize_cop_driver( in_driver, count );
-        if( in_driver == NULL ) {
-            free( *p_buffer_set );
-            *p_buffer_set = NULL;
-            return( in_driver );
-        }
-        fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
-                                                            fontstyle_block_offset);
-    }
-
-    string_ptr = (char *) in_driver + in_driver->next_offset;
-
-    fontstyle_block_ptr->type = (char *) in_driver->next_offset;
-    in_driver->next_offset += count;
-
-    /* Acquire the type. */
-        
-    fread( string_ptr, count, 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) {
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    /* Done here so lineprocs can be used as an array. */
-
-    if( fontstyle_block_ptr->passes == 0 ) {
-        fontstyle_block_ptr->lineprocs = NULL;
-    } else {
-
-        /* Add the space for the line_proc struct instances. */
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                        (fontstyle_block_ptr->passes * sizeof( line_proc )) ) ) {
-            fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                            (uint8_t *) in_driver);
-            in_driver = resize_cop_driver( in_driver, fontstyle_block_ptr->passes \
-                                                        * sizeof( line_proc ) );
-            if( in_driver == NULL ) {
-                free( *p_buffer_set );
-                *p_buffer_set = NULL;
-                return( in_driver );
-            }
-            fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver + \
-                                                        fontstyle_block_offset);
-        }
-        line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-        fontstyle_block_ptr->lineprocs = (line_proc *) in_driver->next_offset;
-        in_driver->next_offset += fontstyle_block_ptr->passes * \
-                                                            sizeof( line_proc );
-
-        /* Set the line_proc struct instance pointers to null. */
-
-        for( i = 0; i < fontstyle_block_ptr->passes; i++ ) {
-            line_proc_ptr[i].startvalue = NULL;
-            line_proc_ptr[i].firstword = NULL;
-            line_proc_ptr[i].startword = NULL;
-            line_proc_ptr[i].endword = NULL;
-            line_proc_ptr[i].endvalue = NULL;
-        }
-    }
-
-    /* Now get the P-buffers. */
-        
-    *p_buffer_set = get_p_buffer( in_file );
-    if( *p_buffer_set == NULL) {
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    *current = (*p_buffer_set)->buffer;
-
-    /* Skip the flags. */
-
-    *current += 21;
-
-    /* Get the number of codeblocks, which can be 0. */
-
-    memcpy_s( &count16, sizeof( count16 ), *current, sizeof( count16 ) );
-    *current += sizeof( count16 );
-    
-    /* If the count is 0, we are done: the P-buffer is empty. */
-
-    if( count16 == 0 ) return( in_driver );
-
-    /* Get the CodeBlocks, after displaying the current font style name. */
-        
-    printf( "Fontstyle: %s\n", string_ptr );
-    cop_codeblocks = get_code_blocks( current, count16, (*p_buffer_set)->buffer, \
-                                      ":FONTSTYLE" );
-    if( cop_codeblocks == NULL ) {
-        free( *p_buffer_set );
-        *p_buffer_set = NULL;
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }
-
-    /* Process the CodeBlocks into the fontstyle_block instance. */
-
-    save_designator = 0;
-    save_pass = 0;
-
-    for( i = 0; i < count16; i++ ) {
-
-        /* Trap zero-length CodeBlocks. */
-
-        if( cop_codeblocks[i].count == 0 ) {
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            continue;
-        }
-        
-        switch( cop_codeblocks[i].designator ) {
-        case 0x04 :
-
-            /* The :FONTSTYLE :ENDVALUE block. */
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                    + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-            fontstyle_block_ptr->endvalue = (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                    + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->endvalue);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                            code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        case 0x05 :
-
-            /* The :FONTSTYLE :STARTVALUE block. */
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-            fontstyle_block_ptr->startvalue = (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                    + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->startvalue);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            if( (save_designator == 0x04) && (save_pass == \
-                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
-            else puts("");
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        case 0x08 :
-
-            /* A :FONTSTYLE :LINEPROC :ENDVALUE block. */
-
-            /* Ensure that the pass is within range */
-
-            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
-                printf_s( ":FONTSTYLE :LINEPROC :ENDVALUE block has incorrect " \
-                                  "pass value: %i\n", cop_codeblocks[i].pass );
-                free( *p_buffer_set );
-                *p_buffer_set = NULL;
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                free( in_driver );
-                in_driver = NULL;
-                return( in_driver );
-            }
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                    + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-            line_proc_ptr[cop_codeblocks[i].pass - 1].endvalue = \
-                                            (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].endvalue);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        case 0x09 :
-
-            /* A :FONTSTYLE :LINEPROC :STARTVALUE block. */
-
-            /* Ensure that the pass is within range. */
-
-            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
-                printf_s( ":FONTSTYLE :LINEPROC :STARTVALUE block has incorrect " \
-                                  "pass value: %i\n", cop_codeblocks[i].pass );
-                free( *p_buffer_set );
-                *p_buffer_set = NULL;
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                free( in_driver );
-                in_driver = NULL;
-                return( in_driver );
-            }
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-            line_proc_ptr[cop_codeblocks[i].pass - 1].startvalue = \
-                                            (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                    (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].startvalue);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            if( (save_designator == 0x08) && (save_pass == \
-                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
-            else puts("");
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        case 0x28 :
-
-            /* A :FONTSTYLE :LINEPROC :ENDWORD block. */
-
-            /* Ensure that the pass is within range. */
-
-            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
-                printf_s( ":FONTSTYLE :LINEPROC :ENDWORD block has incorrect " \
-                                  "pass value: %i\n", cop_codeblocks[i].pass );
-                free( *p_buffer_set );
-                *p_buffer_set = NULL;
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                free( in_driver );
-                in_driver = NULL;
-                return( in_driver );
-            }
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-            line_proc_ptr[cop_codeblocks[i].pass - 1].endword = \
-                                            (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                    (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].endword);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        case 0x29 :
-
-            /* A :FONTSTYLE :LINEPROC :STARTWORD block. */
-
-            /* Ensure that the pass is within range. */
-
-            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
-                printf_s( ":FONTSTYLE :LINEPROC :STARTWORD block has incorrect " \
-                                  "pass value: %i\n", cop_codeblocks[i].pass );
-                free( *p_buffer_set );
-                *p_buffer_set = NULL;
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                free( in_driver );
-                in_driver = NULL;
-                return( in_driver );
-            }
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                    in_driver->next_offset);
-
-            line_proc_ptr[cop_codeblocks[i].pass - 1].startword = \
-                                            (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].startword);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            if( (save_designator == 0x28) && (save_pass == \
-                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
-            else puts("");
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        case 0x49 :
-
-            /* A :FONTSTYLE :LINEPROC :FIRSTWORD block. */
-
-            /* Ensure that the pass is within range. */
-
-            if( cop_codeblocks[i].pass > fontstyle_block_ptr->passes ) {
-                printf_s( ":FONTSTYLE :LINEPROC :FIRSTWORD block has incorrect " \
-                                  "pass value: %i\n", cop_codeblocks[i].pass );
-                free( *p_buffer_set );
-                *p_buffer_set = NULL;
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                free( in_driver );
-                in_driver = NULL;
-                return( in_driver );
-            }
-
-            /* Add the code_text struct. */
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( code_text )) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                        (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, sizeof( code_text ) );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-            }
-            code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-            line_proc_ptr[cop_codeblocks[i].pass - 1].firstword = \
-                                            (code_text *) in_driver->next_offset;
-            in_driver->next_offset += sizeof( code_text );
-
-            /* Initialize the code_text struct. */
-
-            code_text_ptr->count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    code_text_ptr->count) ) {
-                fontstyle_block_offset = ((uint8_t *) fontstyle_block_ptr - \
-                                                    (uint8_t *) in_driver);
-                in_driver = resize_cop_driver( in_driver, code_text_ptr->count );
-                if( in_driver == NULL ) {
-                    free( *p_buffer_set );
-                    *p_buffer_set = NULL;
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                fontstyle_block_ptr = (fontstyle_block *) ((uint8_t *) in_driver \
-                                                        + fontstyle_block_offset);
-                line_proc_ptr = (line_proc *) ((uint8_t *) in_driver + \
-                                        (size_t) fontstyle_block_ptr->lineprocs);
-                code_text_ptr = (code_text *) ((uint8_t *) in_driver + \
-                    (size_t) line_proc_ptr[cop_codeblocks[i].pass - 1].firstword);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].text, \
-                                                        code_text_ptr->count );
-            code_text_ptr->text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += code_text_ptr->count;
-
-            /* Research code. */
-
-            printf("  designator = %x, cb05_flag = %x, lp_flag = %x, " \
-                   "pass = %x\n", cop_codeblocks[i].designator, \
-                   cop_codeblocks[i].cb05_flag, cop_codeblocks[i].lp_flag, \
-                   cop_codeblocks[i].pass);
-            if( (save_designator == 0x08) && (save_pass == \
-                                cop_codeblocks[i].pass) ) puts( " <-inversion!" );
-            else puts("");
-            save_designator = cop_codeblocks[i].designator;
-            save_pass = cop_codeblocks[i].pass;
-
-            break;
-        default :
-            printf_s( "  CodeBlock %i has unknown designator: %i\n", \
-                                    string_ptr, i, cop_codeblocks[i].designator );
-            free( *p_buffer_set );
-            *p_buffer_set = NULL;
-            free(cop_codeblocks);
-            cop_codeblocks = NULL;
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-    }
-
-    /* Both in_driver and *p_buffer_set must be returned pointing to data. */
-
-    free(cop_codeblocks);
-    cop_codeblocks = NULL;
-
-    return( in_driver );
-}
-
-/*  Function parse_init_block().
- *  Processes a single InitBlock. This may be called up to two times when
- *  parsing a .COP file encoding a :DRIVER block. 
- *
- *  Parameters:
- *      in_driver contains the cop_driver being initialized.
- *      *current contains the current position in a p_buffer.buffer.
- *      base points to the first byte of the underlying P-buffer.
- *
- *  Parameter modified:
- *      if the function succeeds, then *current will point to the first junk
- *          byte following the last CodeBlock for this InitBlock.
- *      if the function fails, the value of *current should be regarded as
- *          invalid.
- *
- *  Returns:
- *      in_driver, possibly relocated, on success.
- *      NULL on failure.
- */
-cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * current, \
-                               uint8_t * base ) {
-
-    code_block *    cop_codeblocks  = NULL;
-    init_block *    init_block_ptr  = NULL;
-    init_text *     init_text_ptr   = NULL;
-    int             i;
-    uint8_t         designator;    
-    uint8_t *       text_ptr        = NULL;
-    uint16_t        count;
-
-    /* Get the designator. */
-
-    memcpy_s( &designator, 1, *current, 1 );
-    (*current)++;
-
-    /* Process the InitBlock. */
-
-    switch( designator ) {
-    case 0x01 :
-        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
-        *current += sizeof( count );
-        if( count == 0 ) {
-            puts( "START :INIT block has no code!" );
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-
-        /* Add the init_block struct itself. */
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                        sizeof( init_block )) ) {
-            in_driver = resize_cop_driver( in_driver, sizeof( init_block ) );
-            if( in_driver == NULL ) return( in_driver );
-        }
-        init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-        in_driver->inits.start = (init_block *) in_driver->next_offset;
-        in_driver->next_offset += sizeof( init_block );
-
-        /* Get the CodeBlocks. */
-        
-        cop_codeblocks = get_code_blocks( current, count, base, "START :INIT" );
-        if( cop_codeblocks == NULL ) {
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-        
-        /* Add the init_text struct instances. */
-        
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                count * sizeof( init_text )) ) {
-            in_driver = resize_cop_driver( in_driver, \
-                                                count * sizeof( init_text ) );
-            if( in_driver == NULL ) {
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                return( in_driver );
-            }
-            init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                (size_t) in_driver->inits.start);
-        }
-        init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-        init_block_ptr->count = count;
-        init_block_ptr->codeblock = (init_text *) in_driver->next_offset;
-        in_driver->next_offset += count * sizeof( init_text );
-
-        /* Initialize the init_text struct instances. */
-
-        for(i = 0; i < init_block_ptr->count; i++ ) {
-
-            if( cop_codeblocks[i].designator == 0x02 ) \
-                                            init_text_ptr[i].is_fontvalue = true;
-            else {
-                if( cop_codeblocks[i].designator == 0x00 ) \
-                                            init_text_ptr[i].is_fontvalue = false;
-                else {
-                    printf_s( "START :INIT block has unexpected CodeBlock " \
-                                              "designator: %i\n", designator );
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    free( in_driver );
-                    in_driver = NULL;
-                    return( in_driver );
-
-                }
-            }
-
-            init_text_ptr[i].count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    init_text_ptr[i].count) ) {
-                in_driver = resize_cop_driver( in_driver, init_text_ptr[i].count );
-                if( in_driver == NULL ) {
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                (size_t) in_driver->inits.start);
-                init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                            (size_t) init_block_ptr->codeblock);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, init_text_ptr[i].count, \
-                            cop_codeblocks[i].text, init_text_ptr[i].count );
-            init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += init_text_ptr[i].count;
-
-        }
-
-        free( cop_codeblocks );
-        cop_codeblocks = NULL;
-
-        break;
-    case 0x02 :
-        memcpy_s( &count, sizeof( count ), *current, sizeof( count ) );
-        *current += sizeof( count );
-        if( count == 0 ) {
-            puts( "DOCUMENT :INIT block has no code!" );
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-
-        /* Add the init_block struct itself. */
-
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    sizeof( init_block )) ) {
-            in_driver = resize_cop_driver( in_driver, sizeof( init_block ) );
-            if( in_driver == NULL ) return( in_driver );
-        }
-        init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-        in_driver->inits.document = (init_block *) \
-                                                        in_driver->next_offset;
-        in_driver->next_offset += sizeof( init_block );
-
-        /* Get the CodeBlocks. */
-        
-        cop_codeblocks = get_code_blocks( current, count, base, "DOCUMENT :INIT" );
-        if( cop_codeblocks == NULL ) {
-            free( in_driver );
-            in_driver = NULL;
-            return( in_driver );
-        }
-        
-        /* Add the init_text struct instances. */
-        
-        if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                count * sizeof( init_text )) ) {
-            in_driver = resize_cop_driver( in_driver, \
-                                                    count * sizeof( init_text ) );
-            if( in_driver == NULL ) {
-                free( cop_codeblocks );
-                cop_codeblocks = NULL;
-                return( in_driver );
-            }
-            init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                            (size_t) in_driver->inits.document);
-        }
-
-        init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                                        in_driver->next_offset);
-
-        init_block_ptr->count = count;
-        init_block_ptr->codeblock = (init_text *) in_driver->next_offset;
-        in_driver->next_offset += count * sizeof( init_text );
-
-        /* Initialize the init_text struct instances. */
-
-        for(i = 0; i < init_block_ptr->count; i++ ) {
-
-            if( cop_codeblocks[i].designator == 0x02 ) \
-                                            init_text_ptr[i].is_fontvalue = true;
-            else {
-                if( cop_codeblocks[i].designator == 0x00 ) \
-                                            init_text_ptr[i].is_fontvalue = false;
-                else {
-                    printf_s( "DOCUMENT :INIT block has unexpected CodeBlock " \
-                                              "designator: %i\n", designator );
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    free( in_driver );
-                    in_driver = NULL;
-                    return( in_driver );
-                }
-            }
-
-            init_text_ptr[i].count = cop_codeblocks[i].count;
-
-            if( in_driver->allocated_size < (in_driver->next_offset + \
-                                                    init_text_ptr[i].count) ) {
-                in_driver = resize_cop_driver( in_driver, init_text_ptr[i].count );
-                if( in_driver == NULL ) {
-                    free( cop_codeblocks );
-                    cop_codeblocks = NULL;
-                    return( in_driver );
-                }
-                init_block_ptr = (init_block *) ((uint8_t *) in_driver + \
-                                    (size_t) in_driver->inits.document);
-                init_text_ptr = (init_text *) ((uint8_t *) in_driver + \
-                                            (size_t) init_block_ptr->codeblock);
-            }
-            text_ptr = (uint8_t *) in_driver + in_driver->next_offset;
-
-            memcpy_s( text_ptr, init_text_ptr[i].count, \
-                            cop_codeblocks[i].text, init_text_ptr[i].count );
-            init_text_ptr[i].text = (uint8_t *) in_driver->next_offset;
-            in_driver->next_offset += init_text_ptr[i].count;
-
-        }
-
-        free( cop_codeblocks );
-        cop_codeblocks = NULL;
-
-        break;
-    default :
-        printf_s( ":INIT block designator incorrect: %i\n", designator );
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    }    
-
-    return( in_driver );
-}
-
-/*  Function resize_cop_driver().
- *  Resizes a cop_driver instance.
- *
- *  Parameters:
- *      in_driver is a pointer to the cop_driver to be resized.
- *      in_size is the minimum acceptable increase in size.
- *
- *  Warning:
- *      If realloc() returns a different value from in_driver, then the
- *      memory pointed to by in_driver will be freed whether the function
- *      succeeds or fails. The intended use is for the pointer passed as
- *      in_driver to be used to store the return value. 
- *
- *  Returns:
- *      A pointer to a cop_driver instance at least in_size larger with the same
- *          data (except for the allocated_size field, which reflects the new size)
- *          on success.
- *      A NULL pointer on failure.
- */
-
-cop_driver * resize_cop_driver( cop_driver * in_driver, size_t in_size )
-{
-    cop_driver *    local_driver = NULL;
-    size_t          increment = INC_SIZE;
-    size_t          new_size;
-    size_t          scale;
-
-    /* Compute how much larger to make the cop_driver struct. */
-
-    if( in_size > INC_SIZE ) {
-        scale = in_size / INC_SIZE;
-        ++scale;
-        increment = scale * INC_SIZE;
-    }
-    new_size = in_driver->allocated_size + increment;
-
-    /* Reallocate the cop_driver. */
-
-    local_driver = (cop_driver *) realloc( in_driver, new_size );
-    if( local_driver != in_driver ) free( in_driver );
-    if( local_driver != NULL ) local_driver->allocated_size = new_size;
-
-    return( local_driver );
 }
 

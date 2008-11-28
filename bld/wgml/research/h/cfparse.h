@@ -38,7 +38,7 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-int     parse_cop_file( void );
+int parse_cop_file( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

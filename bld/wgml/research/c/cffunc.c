@@ -41,7 +41,7 @@
 #include "common.h"
 #include "research.h"
 
-/*  Function definitions. */
+/*  Extern function definitions. */
 
 /*  Function get_code_blocks().
  *  Return a pointer to an array of code_block structs containing the
@@ -62,8 +62,8 @@
  *      NULL on failure.
  */
 
-code_block * get_code_blocks(uint8_t * * current, uint16_t cb_count, \
-                             uint8_t * base, char * block )
+code_block * get_code_blocks( uint8_t * * current, uint16_t cb_count, \
+                              uint8_t * base, char * block )
 {
     code_block *    out_block   = NULL;
     size_t          difference;
@@ -262,7 +262,7 @@ p_buffer * get_p_buffer( FILE * in_file )
  */
 
 functions_block * parse_functions_block( uint8_t * * current, uint8_t * base, \
-                                                                    char * block )
+                                         char * block )
 {
     uint16_t            code_count;
     functions_block *   out_block   = NULL;
