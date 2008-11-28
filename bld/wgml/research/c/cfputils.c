@@ -470,10 +470,13 @@ void display_device( cop_device * in_device )
     printf_s( "Left join character:       %c\n", in_device->box.left_join );
     printf_s( "Right join character:      %c\n", in_device->box.right_join );
     printf_s( "Inside join character:     %c\n", in_device->box.inside_join );
-    if( in_device->underscore.font_name == NULL ) printf_s( "Underscore Font " \
-                            "Number:    %i\n", in_device->underscore.font_number);
+    if( in_device->underscore.specified_font == false ) \
+                                        puts( "Underscore Font Not Specified");
+    else if( in_device->underscore.font_name == NULL ) \
+        printf_s( "Underscore Font Number:    %i\n", \
+                                            in_device->underscore.font_number);
     else printf_s( "Underscore Font Name:      %s\n", \
-                                                in_device->underscore.font_name );
+                                            in_device->underscore.font_name );
     printf_s( "Underscore character:      %c\n", \
                                         in_device->underscore.underscore_char );
     if( in_device->intrans == NULL) {

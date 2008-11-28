@@ -764,10 +764,15 @@ cop_device * parse_device( FILE * in_file )
             out_device->next_offset += length;
             string_ptr[length] = '\0';
             ++out_device->next_offset;
+
+            /* Ensure that the font_name is used. */
+
+            out_device->underscore.specified_font = true;
         } else {
 
-            /* If the string is empty, ensure that the font_name is NULL. */
-            
+            /* Ensure that the current font is used. */
+
+            out_device->underscore.specified_font = false;
             out_device->underscore.font_name = NULL;
         }
 
