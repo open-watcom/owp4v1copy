@@ -41,6 +41,8 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
+#include <stddef.h>
+
 /* Function return values. */
 
 #define FAILURE 0
@@ -72,14 +74,18 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 
 /* These functions must be defined by each program using them. */
 
-int     parse_cmdline( char * );
-void    print_banner( void );
-void    print_usage( void );
+extern  int         parse_cmdline( char * );
+extern  void        print_banner( void );
+extern  void        print_usage( void );
 
 /* These functions are defined in common.c. */
 
-void        initialize_globals( void );
-char    *   skip_spaces( char * start );
+extern  void        initialize_globals( void );
+extern  void        mem_free( void *p );
+extern  void    *   mem_alloc( size_t size );
+extern  void    *   mem_realloc( void *p, size_t size );
+extern  void        out_msg( char *fmt, ... );
+extern  char    *   skip_spaces( char * start );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

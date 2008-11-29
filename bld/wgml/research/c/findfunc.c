@@ -32,10 +32,6 @@
 *               as well as these local functions:
 *                   check_directory()
 *                   get_dev_func()
-*               and copies of
-*                   mem_alloc()
-*                   mem_free()
-*                   out_msg()
 *
 ****************************************************************************/
 
@@ -134,37 +130,6 @@ NULL
 };
 
 /* Local function definitions. */
-
-/* Borrowed from wgml. */
-
-#include <stdarg.h>
-
-void out_msg( char * msg, ... )
-{
-    va_list args;
-
-    va_start( args, msg );
-    vprintf_s( msg, args );
-    va_end( args );
-}
-
-void * mem_alloc( size_t size )
-{
-    void    *   p;
-
-    p = malloc( size );
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        exit( EXIT_FAILURE );
-    }
-    return( p );
-}
-
-void mem_free( void * p )
-{
-    free( p );
-    p = NULL;
-}
 
 /* Function get_dev_func().
  * Determine the length and start position of the next device function name.

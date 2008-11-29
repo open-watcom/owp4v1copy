@@ -26,11 +26,21 @@
 *
 * Description:  Implements the common functions for the research code:
 *                   initialize_globals()
+*                   mem_alloc()
+*                   mem_free()
+*                   mem_realloc()
+*                   out_msg()
 *                   skip_spaces()
 *
 ****************************************************************************/
 
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include <ctype.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "swchar.h"
 
 /* Define the global variables. */
@@ -63,5 +73,48 @@ char *  skip_spaces( char * start )
     start++;
     }
     return start;
+}
+
+/* Borrowed from wgml. */
+
+/* Error message centralized output. */
+
+void out_msg( char * msg, ... )
+{
+    va_list args;
+
+    va_start( args, msg );
+    vprintf_s( msg, args );
+    va_end( args );
+}
+
+/* The memory allocation functions. These have been simplified. */
+
+void * mem_alloc( size_t size )
+{
+    void    *   p;
+
+    p = malloc( size );
+    if( p == NULL ) {
+        out_msg( "ERR_NOMEM_AVAIL" );
+        exit( EXIT_FAILURE );
+    }
+    return( p );
+}
+
+void * mem_realloc( void * p, size_t size )
+{
+    p = realloc( p, size );
+    if( p == NULL ) {
+        out_msg( "ERR_NOMEM_AVAIL" );
+        exit( EXIT_FAILURE );
+    }
+    return( p );
+}
+
+void mem_free( void * p )
+{
+    free( p );
+    p = NULL;
 }
 

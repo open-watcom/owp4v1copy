@@ -42,15 +42,6 @@
 *                   GMLincs
 *                   get_env_vars()
 *                   GML_get_env()
-*                   mem_alloc()
-*                   mem_realloc()
-*                   mem_free()
-*                   out_msg()
-*
-*                   check_directory()
-*                   verify_device()
-*                   verify_driver()
-*                   verify_font()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
@@ -78,36 +69,6 @@
 char * Pathes;        // content of PATH Envvar
 char * GMLlibs;       // content of GMMLIB Envvar
 char * GMLincs;       // content of GMLINC Envvar
-
-/* The memory allocation functions. These have been simplified. */
-
-void * mem_alloc( size_t size )
-{
-    void    *   p;
-
-    p = malloc( size );
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        exit( EXIT_FAILURE );
-    }
-    return( p );
-}
-
-void * mem_realloc( void * p, size_t size )
-{
-    p = realloc( p, size );
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        exit( EXIT_FAILURE );
-    }
-    return( p );
-}
-
-void mem_free( void * p )
-{
-    free( p );
-    p = NULL;
-}
 
 /* Capture the environmental variables. */
 
@@ -144,19 +105,6 @@ void get_env_vars( void )
     Pathes  = GML_get_env( "PATH" );
     GMLlibs = GML_get_env( "GMLLIB" );
     GMLincs = GML_get_env( "GMLINC" );
-}
-
-/* Error message centralized output. */
-
-#include <stdarg.h>
-
-void out_msg( char * msg, ... )
-{
-    va_list args;
-
-    va_start( args, msg );
-    vprintf_s( msg, args );
-    va_end( args );
 }
 
 /*  Local variables. */
