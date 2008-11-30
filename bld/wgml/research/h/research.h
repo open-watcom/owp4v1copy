@@ -67,11 +67,11 @@ global  char *  tgt_path;
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-void    display_char( char * out_chars, char in_char );
-void    display_hex_block( uint8_t * in_data, uint16_t in_count );
-void    display_hex_char(char * out_chars, char in_char );
-void    display_hex_line( char * out_chars, char * in_chars );
-void    res_initialize_globals( void );
+extern void    display_char( char * out_chars, char in_char );
+extern void    display_hex_block( uint8_t * in_data, uint16_t in_count );
+extern void    display_hex_char(char * out_chars, char in_char );
+extern void    display_hex_line( char * out_chars, char * in_chars );
+extern void    res_initialize_globals( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

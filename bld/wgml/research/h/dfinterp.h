@@ -42,7 +42,7 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-void    interpret_function( uint8_t * function );
+extern void    interpret_function( uint8_t * function );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

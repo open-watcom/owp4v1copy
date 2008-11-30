@@ -83,9 +83,9 @@ typedef struct {
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-code_block      *   get_code_blocks( uint8_t * * position, uint16_t count, uint8_t * base );
-p_buffer        *   get_p_buffer( FILE * file );
-functions_block *   parse_functions_block( uint8_t * * position, uint8_t * base );
+extern code_block      *   get_code_blocks( uint8_t * * position, uint16_t count, uint8_t * base );
+extern p_buffer        *   get_p_buffer( FILE * file );
+extern functions_block *   parse_functions_block( uint8_t * * position, uint8_t * base );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

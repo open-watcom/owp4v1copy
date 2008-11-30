@@ -38,7 +38,7 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-int     check_directory( void );
+extern int     check_directory( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

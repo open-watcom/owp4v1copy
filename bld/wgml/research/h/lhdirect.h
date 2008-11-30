@@ -51,7 +51,7 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-long    get_file_size( struct dirent * in_file );
+extern long    get_file_size( struct dirent * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

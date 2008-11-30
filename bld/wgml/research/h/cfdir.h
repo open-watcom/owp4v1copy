@@ -69,10 +69,10 @@ typedef struct {
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-int get_compact_entry( FILE * in_file, directory_entry * entry );
-int get_extended_entry( FILE * in_file, directory_entry * entry );
-int skip_compact_entry( FILE * in_file );
-int skip_extended_entry( FILE * in_file );
+extern int get_compact_entry( FILE * in_file, directory_entry * entry );
+extern int get_extended_entry( FILE * in_file, directory_entry * entry );
+extern int skip_compact_entry( FILE * in_file );
+extern int skip_extended_entry( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
