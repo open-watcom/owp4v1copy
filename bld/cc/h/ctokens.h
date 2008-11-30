@@ -32,12 +32,10 @@
 #include "weights.gh"
 
 #ifndef pick
-extern  char    *Tokens[];
-extern  char    TokenClass[];
 
 /* the following table is in order of priority of operators */
 
-enum    token_class {
+typedef enum token_class {
         TC_MODIFIER = 1,
         TC_BASED,
         TC_SEGMENT,
@@ -95,7 +93,10 @@ enum    token_class {
         TC_FUNC_CALL,           /* ( */
         TC_DOT,                 /* . */
         TC_ARROW                /* -> */
-};
+} token_class;
+
+extern  char        *Tokens[];
+extern  token_class TokenClass[];
 
 #define pick(token,string,class) token
 enum TOKEN {

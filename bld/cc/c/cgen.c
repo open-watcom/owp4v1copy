@@ -80,8 +80,8 @@ static struct  try_table_back_handles {
 } *TryTableBackHandles;
 #endif
 
-#define PushCGName(name)        cgnames[index++] = name
-#define PopCGName()             cgnames[--index]
+#define PushCGName(name)        ((cg_name *)ValueStack)[index++] = name
+#define PopCGName()             ValueStack[--index]
 
 static label_handle     *CGLabelHandles;
 static TREEPTR          FirstNode;
@@ -790,12 +790,10 @@ local void EmitNodes( TREEPTR tree )
     cg_name     op2;
     cg_name     expr;
     call_handle call_list;
-    cg_name     *cgnames;
-    unsigned    index;
+    int         index;
     OPNODE      *node;
 
     index = 0;
-    cgnames = (cg_name *)&ValueStack[0];
     for( ; tree != NULL; tree = tree->thread ) {
         node = &tree->op;
         switch( node->opr ) {
@@ -1119,7 +1117,7 @@ local void EmitNodes( TREEPTR tree )
             break;
         }
     }
-    if( index != 0 ) {
+    if( index > 0 ) {
         CGDone( PopCGName() );
     }
 }
@@ -1999,25 +1997,23 @@ static void GenerateTryBlock( TREEPTR tree )
 
     try_index = 0;
     max_try_index = -1;
-    for( ;; ) {
+    for( ; tree != NULL; tree = tree->left ) {
         stmt = tree->right;
-        if( stmt->op.opr == OPR_FUNCEND ) break;
+        if( stmt->op.opr == OPR_FUNCEND )
+            break;
         switch( stmt->op.opr ) {
         case OPR_TRY:
             try_index = stmt->op.try_index;
-            if( try_index > max_try_index )  max_try_index = try_index;
+            if( try_index > max_try_index )
+                max_try_index = try_index;
             break;
         case OPR_EXCEPT:
         case OPR_FINALLY:
-            ValueStack[ try_index ] = (TREEPTR)stmt->op.try_sym_handle;
-            Class[ try_index ] = stmt->op.parent_scope;
-            Token[ try_index ] = stmt->op.opr;
+            ValueStack[ try_index ] = stmt;
             break;
         default:
             break;
         }
-        tree = tree->left;
-        if( tree == NULL ) break;               // should never happen
     }
     if( max_try_index != -1 ) {
         segment_id      old_segment;
@@ -2034,15 +2030,15 @@ static void GenerateTryBlock( TREEPTR tree )
         TryTableBackHandles = try_backinfo;
         DGLabel( except_table );
         for( try_index = 0; try_index <= max_try_index; try_index++ ) {
-            DGInteger( Class[ try_index ], T_UINT_1 );  // parent index
-            if( Token[ try_index ] == OPR_EXCEPT ) {
+            stmt = ValueStack[ try_index ];
+            DGInteger( stmt->op.parent_scope, T_UINT_1 );  // parent index
+            if( stmt->op.opr == OPR_EXCEPT ) {
                 DGInteger( 0, T_UINT_1 );
             } else {
                 DGInteger( 1, T_UINT_1 );
             }
-            except_label = FEBack( (SYM_HANDLE)ValueStack[ try_index ] );
-            DGBackPtr( except_label, FESegID( CurFuncHandle ), 0,
-                            T_CODE_PTR );
+            except_label = FEBack( stmt );
+            DGBackPtr( except_label, FESegID( CurFuncHandle ), 0, T_CODE_PTR );
         }
         BESetSeg( old_segment );
         SetTryTable( except_table );

@@ -227,11 +227,11 @@ global  jmp_buf *Environment;   /* var for Suicide() */
 
 #define MAX_LEVEL       1024
 
-/* The following 3 arrays are also used by CGEN for saving _try block info */
-global  TREEPTR ValueStack[ MAX_LEVEL ];
-global  char    Token[ MAX_LEVEL ];
-global  char    Class[ MAX_LEVEL ];
-global  int     Level;
+/* The ValueStack array is also used by CGEN for saving _try block info */
+global  TREEPTR     ValueStack[ MAX_LEVEL ];
+global  char        Token[ MAX_LEVEL ];
+global  token_class Class[ MAX_LEVEL ];
+global  int         Level;
 
 global  struct  segment_list *SegListHead;
 global  int     SegImport;              /* next segment # for import sym */
