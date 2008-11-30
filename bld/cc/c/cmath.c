@@ -835,15 +835,29 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         tree = ErrorNode( tree );
     } else {
         switch( opr ) {
-        case T_EQ:      opr = CC_EQ;    break;
-        case T_NE:      opr = CC_NE;    break;
-        case T_LT:      opr = CC_LT;    break;
-        case T_LE:      opr = CC_LE;    break;
-        case T_GT:      opr = CC_GT;    break;
-        case T_GE:      opr = CC_GE;    break;
-        default:                        break;
+            case T_EQ:
+                tree->op.cc = CC_EQ;
+                break;
+            case T_NE:
+                tree->op.cc = CC_NE;
+                break;
+            case T_LT:
+                tree->op.cc = CC_LT;
+                break;
+            case T_LE:
+                tree->op.cc = CC_LE;
+                break;
+            case T_GT:
+                tree->op.cc = CC_GT;
+                break;
+            case T_GE:
+                tree->op.cc = CC_GE;
+                break;
+            default:
+                assert( 0 );
+                tree->op.cc = 0;
+                break;
         }
-        tree->op.cc = opr;
         tree->op.compare_type = cmp_type;
         tree->expr_type = GetType( TYPE_INT );
     }

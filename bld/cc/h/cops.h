@@ -30,119 +30,16 @@
 
 
 typedef enum ops {
-        OPR_ADD,        // +
-        OPR_SUB,        // -
-        OPR_MUL,        // *
-        OPR_DIV,        // /
-        OPR_NEG,        // negate
-        OPR_CMP,        // compare
-        OPR_MOD,        // %
-        OPR_COM,        // ~
-        OPR_NOT,        // !
-        OPR_OR,         // |
-        OPR_AND,        // &
-        OPR_XOR,        // ^
-        OPR_RSHIFT,     // >>
-        OPR_LSHIFT,     // <<
-        OPR_EQUALS,     // lvalue = rvalue
-        OPR_OR_EQUAL,   // |=
-
-        OPR_AND_EQUAL,  // &=   0x10
-        OPR_XOR_EQUAL,  // ^=
-        OPR_RSHIFT_EQUAL,// >>=
-        OPR_LSHIFT_EQUAL,// <<=
-        OPR_PLUS_EQUAL, // +=
-        OPR_MINUS_EQUAL,// -=
-        OPR_TIMES_EQUAL,// *=
-        OPR_DIV_EQUAL,  // /=
-        OPR_MOD_EQUAL,  // %=
-        OPR_QUESTION,   // ?
-        OPR_COLON,      // :
-        OPR_OR_OR,      // ||
-        OPR_AND_AND,    // &&
-        OPR_POINTS,     // *ptr
-        OPR_PUSHBACKHDL,// created by XCGBackName
-        OPR_CALLBACK,   // callback
-
-        OPR_POSTINC,    // lvalue++     0x20
-        OPR_POSTDEC,    // lvalue--
-        OPR_CONVERT,    // do conversion
-        OPR_PUSHSYM,    // push sym_handle
-        OPR_PUSHADDR,   // push address of sym_handle
-        OPR_PUSHINT,    // push integer constant
-        OPR_PUSHFLOAT,  // push float constant
-        OPR_PUSHSTRING, // push address of string literal
-        OPR_PUSHSEG,    // push seg of sym_handle
-        OPR_DUPE,       // dupe value
-        OPR_CONVERT_PTR,// convert pointer
-        OPR_CONVERT_SEG,// convert pointer to segment value
-        OPR_NOP,        // no operation
-        OPR_DOT,        // sym.field
-        OPR_ARROW,      // sym->field
-        OPR_INDEX,      // array[index]
-        OPR_ADDROF,     // & expr
-
-        OPR_FARPTR,     // segment :> offset         0x30
-        OPR_FUNCNAME,   // function name
-        OPR_CALL,       // function call
-        OPR_CALL_INDIRECT,// indirect function call
-        OPR_PARM,       // function parm
-        OPR_COMMA,      // expr , expr
-        OPR_RETURN,     // return( expr )
-        OPR_LABEL,      // label
-        OPR_CASE,       // case label
-        OPR_JUMPTRUE,   // jump if true
-        OPR_JUMPFALSE,  // jump if false
-        OPR_JUMP,       // jump
-        OPR_SWITCH,     // switch
-        OPR_FUNCTION,   // start of function
-        OPR_FUNCEND,    // end of function
-        OPR_STMT,       // node for linking statements together
-
-        OPR_NEWBLOCK,   // start of new block with local variables    0x40
-        OPR_ENDBLOCK,   // end of block
-        OPR_TRY,        // start of try block
-        OPR_EXCEPT,     // start of except block
-        OPR_EXCEPT_CODE,// __exception_code
-        OPR_EXCEPT_INFO,// __exception_info
-        OPR_UNWIND,     // unwind from try block
-        OPR_FINALLY,    // finally block
-        OPR_END_FINALLY,// end of finally block
-        OPR_ERROR,      // error node
-        OPR_CAST,       // cast type
-        OPR_LABELCOUNT, // number of labels used in function
-        OPR_MATHFUNC,   // intrinsic math function eg. sin, cos,...
-        OPR_MATHFUNC2,  // intrinsic math function with 2 parms, eg. atan2
-        OPR_VASTART,    // va_start (for ALPHA)
-        OPR_INDEX2,     // part of a multi-dimensional array
-
-        OPR_ALLOCA,     // alloca (for ALPHA)   0x50
-        OPR_PATCHNODE,  // patch node
-        OPR_INLINE_CALL,// call is to be made inline
-        OPR_TEMPADDR,   // address of temp
-        OPR_PUSHTEMP,   // push value of temp
-        OPR_PUSH_PARM,  // push parm onto stack (Alpha)
-        OPR_POST_OR,    // C++ "bool++" operation
-        OPR_SIDE_EFFECT,// similar to OPR_COMMA
-        OPR_INDEX_ADDR, // want the address of an index expression
-        OPR_DBG_BEGBLOCK,// start of new block with local variables
-        OPR_DBG_ENDBLOCK,// end of block
-        OPR_ABNORMAL_TERMINATION, // SEH _abnormal_termination()
+#undef pick1
+#define pick1(enum,dump,cgenum) enum,
+#include "copcodes.h"
 } opr_code;
 
-enum  condition_codes {
-        CC_EQ,
-        CC_NE,
-        CC_LT,
-        CC_LE,
-        CC_GT,
-        CC_GE,
-        CC_ALWAYS,
-        CC_B,
-        CC_BE,
-        CC_A,
-        CC_AE
-};
+typedef enum condition_codes {
+#undef pick1
+#define pick1(enum,dump,cgenum) enum,
+#include "copcond.h"
+} cond_code;
 
 typedef enum{
         OPFLAG_NONE        = 0x00,         // nothing
@@ -242,10 +139,10 @@ typedef struct  opnode {
     opr_code            opr;            // see opr_code above
     op_flags            flags;
     union {
-        DATA_TYPE               const_type;     // OPR_PUSHINT, OPR_PUSHFLOAT
-        enum  condition_codes   cc;             // OPR_CMP: EQ,NE,LT,LE,GT,GE
-        unsigned char           mathfunc;       // OPR_MATHFUNC
-        unsigned char           unroll_count;   // OPR_STMT
+        DATA_TYPE       const_type;     // OPR_PUSHINT, OPR_PUSHFLOAT
+        cond_code       cc;             // OPR_CMP: EQ,NE,LT,LE,GT,GE
+        unsigned char   mathfunc;       // OPR_MATHFUNC
+        unsigned char   unroll_count;   // OPR_STMT
     };
     union {
         cg_sym_handle   sym_handle;     // OPR_PUSHSYM, OPR_PUSHADDR, ...

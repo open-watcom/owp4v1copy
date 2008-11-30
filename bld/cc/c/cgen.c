@@ -107,45 +107,17 @@ static  char    CGDataType[] = {
 #include "cdatatyp.h"
 };
 
-static  char    CGOperator[] = {
-    O_PLUS,         //      OPR_ADD,        // +
-    O_MINUS,        //      OPR_SUB,        // -
-    O_TIMES,        //      OPR_MUL,        // *
-    O_DIV,          //      OPR_DIV,        // /
-    O_UMINUS,       //      OPR_NEG,        // negate
-    0,              //      OPR_CMP,        // compare
-    O_MOD,          //      OPR_MOD,        // %
-    O_COMPLEMENT,   //      OPR_COM,        // ~
-    O_FLOW_NOT,     //      OPR_NOT,        // !
-    O_OR,           //      OPR_OR,         // |
-    O_AND,          //      OPR_AND,        // &
-    O_XOR,          //      OPR_XOR,        // ^
-    O_RSHIFT,       //      OPR_RSHIFT,     // >>
-    O_LSHIFT,       //      OPR_LSHIFT,     // <<
-    O_GETS,         //      OPR_EQUALS,     // lvalue = rvalue
-    O_OR,           //      OPR_OR_EQUAL,   // |=
-    O_AND,          //      OPR_AND_EQUAL,  // &=
-    O_XOR,          //      OPR_XOR_EQUAL,  // ^=
-    O_RSHIFT,       //      OPR_RSHIFT_EQUAL,// >>=
-    O_LSHIFT,       //      OPR_LSHIFT_EQUAL,// <<=
-    O_PLUS,         //      OPR_PLUS_EQUAL, // +=
-    O_MINUS,        //      OPR_MINUS_EQUAL,// -=
-    O_TIMES,        //      OPR_TIMES_EQUAL,// *=
-    O_DIV,          //      OPR_DIV_EQUAL,  // /=
-    O_MOD,          //      OPR_MOD_EQUAL,  // %=
-    0,              //      OPR_QUESTION,   // ?
-    0,              //      OPR_COLON,      // :
-    O_FLOW_OR,      //      OPR_OR_OR,      // ||
-    O_FLOW_AND,     //      OPR_AND_AND,    // &&
-    O_POINTS,       //      OPR_POINTS,     // *ptr
-    0,              //      OPR_UNUSED1,    // spare
-    0,              //      OPR_UNUSED2,    // spare
-    O_PLUS,         //      OPR_POSTINC,    // lvalue++
-    O_MINUS,        //      OPR_POSTDEC,    // lvalue--
-    O_CONVERT,      //      OPR_CONVERT,    // do conversion
+static  cg_op   CGOperator[] = {
+#undef pick1
+#define pick1(enum,dump,cgenum) cgenum,
+#include "copcodes.h"
 };
 
-static  char    CC2CGOp[] = { O_EQ, O_NE, O_LT, O_LE, O_GT, O_GE };
+static  cg_op   CC2CGOp[] = {
+#undef pick1
+#define pick1(enum,dump,cgenum) cgenum,
+#include "copcond.h"
+};
 
 #ifdef HEAP_SIZE_STAT
 
