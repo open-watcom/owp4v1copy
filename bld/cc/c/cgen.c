@@ -2037,7 +2037,7 @@ static void GenerateTryBlock( TREEPTR tree )
             } else {
                 DGInteger( 1, T_UINT_1 );
             }
-            except_label = FEBack( stmt );
+            except_label = FEBack( stmt->op.try_sym_handle );
             DGBackPtr( except_label, FESegID( CurFuncHandle ), 0, T_CODE_PTR );
         }
         BESetSeg( old_segment );
