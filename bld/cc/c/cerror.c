@@ -382,7 +382,7 @@ struct ErrPostList
             char        *sym_name;
             char        *sym_file;
             unsigned    sym_line;
-        };
+        } s;
         TYPEPTR types[2];   /* POSTLIST_TWOTYPES */
     };
 };
@@ -405,11 +405,11 @@ void SetDiagSymbol( SYMPTR sym, SYM_HANDLE handle )
     struct ErrPostList  *np;
 
     np = NewPostList( POSTLIST_SYMBOL );
-    np->sym_name = SymName( sym, handle );
-    if( np->sym_name == NULL )
-        np->sym_name = "???";
-    np->sym_file = FileIndexToCorrectName( sym->src_loc.fno );
-    np->sym_line = sym->src_loc.line;
+    np->s.sym_name = SymName( sym, handle );
+    if( np->s.sym_name == NULL )
+        np->s.sym_name = "???";
+    np->s.sym_file = FileIndexToCorrectName( sym->src_loc.fno );
+    np->s.sym_line = sym->src_loc.line;
 }
 
 void SetDiagEnum( ENUMPTR ep )
@@ -417,9 +417,9 @@ void SetDiagEnum( ENUMPTR ep )
     struct ErrPostList  *np;
 
     np = NewPostList( POSTLIST_SYMBOL );
-    np->sym_name = ep->name;
-    np->sym_file = FileIndexToCorrectName( ep->src_loc.fno );
-    np->sym_line = ep->src_loc.line;
+    np->s.sym_name = ep->name;
+    np->s.sym_file = FileIndexToCorrectName( ep->src_loc.fno );
+    np->s.sym_line = ep->src_loc.line;
 }
 
 void SetDiagType1( TYPEPTR typ_source )
@@ -463,7 +463,7 @@ static void PrintPostNotes( void )
     while( PostList ) {
         switch( PostList->type ) {
         case POSTLIST_SYMBOL:
-            CInfoMsg( INFO_SYMBOL_DECLARATION, PostList->sym_name, PostList->sym_file, PostList->sym_line );
+            CInfoMsg( INFO_SYMBOL_DECLARATION, PostList->s.sym_name, PostList->s.sym_file, PostList->s.sym_line );
             break;
         case POSTLIST_TWOTYPES:
             PrintType( INFO_SRC_CNV_TYPE, PostList->types[0] );

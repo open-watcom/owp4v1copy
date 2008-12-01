@@ -185,7 +185,7 @@ boolean SymIsNameSpaceMember(    // TEST IF SYMBOL IS MEMBER OF NAMESPACE
         NAME_SPACE *ns;
 
         ns = scope->owner.ns;
-        if( !ns->global_fs  ){
+        if( !ns->s.global_fs  ){
             ret = TRUE;
         }
     }

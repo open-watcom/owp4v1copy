@@ -356,7 +356,7 @@ static void UnWindTry( int try_scope )
     TREEPTR     tree;
 
     tree = LeafNode( OPR_UNWIND );
-    tree->op.try_index = try_scope;
+    tree->op.st.try_index = try_scope;
     AddStmt( tree );
 #else
     try_scope = try_scope;
@@ -881,8 +881,8 @@ static void TryStmt( void )
     BlockStack->try_index = TryCount;
     TryScope = TryCount;
     tree = LeafNode( OPR_TRY );
-    tree->op.try_index = 0;
-    tree->op.parent_scope = TryCount;
+    tree->op.st.try_index = 0;
+    tree->op.st.parent_scope = TryCount;
     AddStmt( tree );
 }
 
@@ -910,8 +910,8 @@ static int EndTry( void )
     DropBreakLabel();           /* _leave jumps to this label */
     parent_scope = BlockStack->parent_index;
     tree = LeafNode( OPR_TRY );
-    tree->op.try_index = BlockStack->try_index;
-    tree->op.parent_scope = parent_scope;
+    tree->op.st.try_index = BlockStack->try_index;
+    tree->op.st.parent_scope = parent_scope;
     AddStmt( tree );
     if( (CurToken == T__EXCEPT) || (CurToken == T___EXCEPT) ) {
         NextToken();
@@ -920,8 +920,8 @@ static int EndTry( void )
         Jump( BlockStack->break_label );
         DeadCode = 0;
         tree = LeafNode( OPR_EXCEPT );
-        tree->op.try_sym_handle = DummyTrySymbol();
-        tree->op.parent_scope = parent_scope;
+        tree->op.st.try_sym_handle = DummyTrySymbol();
+        tree->op.st.parent_scope = parent_scope;
         AddStmt( tree );
         CompFlags.exception_filter_expr = 1;
         expr = RValue( BracketExpr() );
@@ -949,8 +949,8 @@ static int EndTry( void )
         BlockStack->block_type = T__FINALLY;
         DeadCode = 0;
         tree = LeafNode( OPR_FINALLY );
-        tree->op.try_sym_handle = DummyTrySymbol();
-        tree->op.parent_scope = parent_scope;
+        tree->op.st.try_sym_handle = DummyTrySymbol();
+        tree->op.st.parent_scope = parent_scope;
         AddStmt( tree );
         return( 1 );
     }

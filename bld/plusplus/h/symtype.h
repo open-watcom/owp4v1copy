@@ -875,7 +875,7 @@ PCH_struct name_space {
           unsigned      global_fs : 1;  // - global filescope
           unsigned      free : 1;       // - used for PCH
           unsigned      unnamed : 1;    // - unnamed namespace
-        };
+        } s;
     };
 };
 
@@ -934,7 +934,7 @@ PCH_struct scope {
           unsigned      colour : 1;     // - using in common enclosing algorithm
           unsigned      fn_template : 1;// - SCOPE_TEMPLATE_PARM -- function
           unsigned      dirty : 1;      // - a symbol has been added
-        };
+        } s;
     };
     scope_type_t        id;             // - type of scope
 };
@@ -1207,7 +1207,7 @@ extern boolean ScopeAccessType( scope_type_t );
 extern boolean ScopeType( SCOPE, scope_type_t );
 extern boolean ScopeEquivalent( SCOPE, scope_type_t );
 #define ScopeId( s )    ((s)->id)
-#define ScopeEnclosedInUnnamedNameSpace( s )    ((s)->in_unnamed)
+#define ScopeEnclosedInUnnamedNameSpace( sc )   ((sc)->s.in_unnamed)
 
 typedef enum {
     FVS_VIRTUAL_ABOVE   = 0x01, // sym[0] will be set

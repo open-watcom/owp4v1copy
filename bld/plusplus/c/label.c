@@ -262,7 +262,7 @@ static boolean labelMarkDtorSym(// MARK A SYMBOL FOR DTORing
             dtor->flag |= SF_ADDR_TAKEN;
             if( ! SymIsModuleDtorable( sym ) ) {
                 blk->sym_dtored = sym;
-                blk->scope->dtor_reqd = TRUE;
+                blk->scope->s.dtor_reqd = TRUE;
                 ScopeKeep( blk->scope );
             }
             retn = TRUE;
@@ -282,7 +282,7 @@ void LabelDeclInited(           // SIGNAL NEXT INITIALIZATION IN BLOCK
     BLK_INIT *blk;              // - current initialization block
 
     if( SymRequiresDtoring( sym ) && ! SymRequiresCtoring( sym ) ) {
-        GetCurrScope()->dtor_naked = TRUE;
+        GetCurrScope()->s.dtor_naked = TRUE;
     }
     blk = labelFindBlk( SymScope( sym ) );
     if( SymIsInitialized( sym ) ) {
@@ -712,7 +712,7 @@ void LabelBlockClose(           // CLOSE CURRENT BLOCK SCOPE
     blk_end = FALSE;
     blk = labelFindBlk( GetCurrScope() );
     enclosing = blk->containing;
-    if( GetCurrScope()->keep || blk->catch_blk ) {
+    if( GetCurrScope()->s.keep || blk->catch_blk ) {
         if( blk->open_zap ) {
             CgFrontZapPtr( blk->open_ins, IC_BLOCK_OPEN, GetCurrScope() );
             blk_end = TRUE;
@@ -764,7 +764,7 @@ void LabelBlkTry(               // INDICATE TRY BLOCK
 
     blk = labelFindBlk( GetCurrScope() );
     blk->try_blk = TRUE;
-    GetCurrScope()->try_catch = TRUE;
+    GetCurrScope()->s.try_catch = TRUE;
     blk->locn = *posn;
     ScopeKeep( GetCurrScope() );
     CgFrontCodePtr( IC_SET_TRY_STATE, try_var );
@@ -787,7 +787,7 @@ void LabelBlkCatch(             // INDICATE CATCH BLOCK
     blk = labelFindBlk( GetCurrScope() );
     blk->catch_blk = TRUE;
     blk->try_id = try_id;
-    GetCurrScope()->try_catch = TRUE;
+    GetCurrScope()->s.try_catch = TRUE;
     blk->locn = *posn;
     ScopeKeep( GetCurrScope() );
     CgFrontCode( IC_SET_CATCH_STATE );

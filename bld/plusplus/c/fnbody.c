@@ -1400,7 +1400,7 @@ static boolean endOfStmt(       // PROCESS END-OF-STATEMENT
             switch( next->id ) {
             case CS_SWITCH :
                 if( top_block->u.b.block_switch ) {
-                    if( next->u.s.default_dropped || ! GetCurrScope()->dtor_naked ) {
+                    if( next->u.s.default_dropped || ! GetCurrScope()->s.dtor_naked ) {
                         if( ! next->u.s.default_dropped ) {
                             TOKEN_LOCN locn;
                             locn = SrcPosnEmitCurrent();

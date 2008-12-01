@@ -171,11 +171,11 @@ typedef struct  opnode {
                 short           try_index;      // OPR_TRY
             };
             short       parent_scope;
-        };
+        } st;
         struct { /* ptr_conv_info */        // OPR_CONVERT_PTR
             char        oldptr_class;
             char        newptr_class;
-        };
+        } sp;
     };
 } OPNODE;
 

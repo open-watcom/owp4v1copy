@@ -1795,7 +1795,7 @@ PTREE NodeDtorExpr(             // MARK FOR DTOR'ING AFTER EXPRESSION
         orig = expr;
         if( ! SymIsModuleDtorable( sym ) ) {
             sym->flag |= SF_CG_ADDR_TAKEN;
-            SymScope( sym )->dtor_reqd = TRUE;
+            SymScope( sym )->s.dtor_reqd = TRUE;
         }
         PTreeExtractLocn( expr, &err_locn );
         dtor = DtorFindLocn( sym->sym_type, &err_locn );

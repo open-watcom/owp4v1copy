@@ -593,7 +593,7 @@ static void brinfWriteFileContents  // WRITE OUT BROWSE INFORMATION CONTENTS
 
                     case SCOPE_TEMPLATE_PARM:
                         flags = BRI_ST_TemplateParm;
-                        if( scope->fn_template ) {
+                        if( scope->s.fn_template ) {
                             template_sym = scope->owner.defn->sym;
                         } else {
                             template_sym = scope->owner.tinfo->sym;

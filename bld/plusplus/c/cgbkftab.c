@@ -170,7 +170,7 @@ boolean FstabSetup(             // SETUP FUNCTION STATE TABLE
     if( 0 == CgNonThunkDepth( fctl ) && ! SymIsThunk( fctl->func ) ) {
         fstab.marked_posn = NULL;
         flag_bytes = ( file_ctl->cond_flags + 7 ) / 8;
-        if( file_ctl->state_table && file_ctl->stab_gen ) {
+        if( file_ctl->s.state_table && file_ctl->s.stab_gen ) {
 #ifndef NDEBUG
             if( PragDbgToggle.dump_stab ) {
                 printf( "State Table for Function: %x\n"

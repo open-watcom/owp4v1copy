@@ -136,8 +136,8 @@ TREEPTR FarPtr16Cvt( TREEPTR newparm  )
         op2_class = ExprTypeClass( newparm->expr_type );
         newparm = ExprNode( NULL, OPR_CONVERT_PTR, newparm );
         newparm->expr_type = parmtyp;
-        newparm->op.oldptr_class = op2_class;
-        newparm->op.newptr_class = op1_class;
+        newparm->op.sp.oldptr_class = op2_class;
+        newparm->op.sp.newptr_class = op1_class;
     }
     return( newparm );
 }

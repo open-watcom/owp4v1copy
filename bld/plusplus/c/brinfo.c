@@ -331,7 +331,7 @@ static void endBlkScope         // END OF BLK SCOPE
     if( canWriteIc() ) {
         ACTBLK* act = findActiveScope( scope );
         if( NULL != act ) {
-            if( ! scope->keep ) {
+            if( ! scope->s.keep ) {
                 SCPINS* curr;
                 RingIterBeg( act->ins, curr ) {
                     CgioBuffZap( curr->scope_ins, &nop_ins );
@@ -1038,7 +1038,7 @@ void BrinfCloseScope            // CLOSE A SCOPE
 #ifdef XTRA_RPT
         _dbgScope( scope, "Br-inf-end" );
         if( ! ScopeType( scope, SCOPE_CLASS )
-         && scope->keep
+         && scope->s.keep
          && NULL != scope->ordered ) {
             ExtraRptIncrementCtr( ctr_nontrivial_scopes );
         }

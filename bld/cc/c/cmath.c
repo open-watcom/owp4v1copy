@@ -1414,8 +1414,8 @@ TREEPTR AsgnOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         if( op1_class != op2_class ) {
             if( FAR16_PTRCLASS( op1_class ) || FAR16_PTRCLASS( op2_class ) ) {  // if far16 pointer
                 op2 = ExprNode( NULL, OPR_CONVERT_PTR, op2 );
-                op2->op.oldptr_class = op2_class;
-                op2->op.newptr_class = op1_class;
+                op2->op.sp.oldptr_class = op2_class;
+                op2->op.sp.newptr_class = op1_class;
             } else {
                  op2 = ExprNode( NULL, OPR_CONVERT, op2 );
                  op2->op.result_type = typ;
@@ -1673,8 +1673,8 @@ convert:                                /* moved here 30-aug-89 */
                     if( new_class != old_class &&
                     (FAR16_PTRCLASS( new_class ) || FAR16_PTRCLASS( old_class )) ) { // foreign pointers
                         opnd = ExprNode( NULL, OPR_CONVERT_PTR, opnd );
-                        opnd->op.oldptr_class = old_class;
-                        opnd->op.newptr_class = new_class;
+                        opnd->op.sp.oldptr_class = old_class;
+                        opnd->op.sp.newptr_class = new_class;
 #if _CPU == 8086
                     } else if( cnv == P2A && newtyp->type_flags & TF2_TYPE_SEGMENT ) {
                         // getting segment value of pointer
@@ -1735,8 +1735,8 @@ TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp )
         old_class = ExprTypeClass( typ );
         if( new_class != old_class ) {
             opnd = ExprNode( NULL, OPR_CONVERT_PTR, opnd );
-            opnd->op.oldptr_class = old_class;
-            opnd->op.newptr_class = new_class;
+            opnd->op.sp.oldptr_class = old_class;
+            opnd->op.sp.newptr_class = new_class;
         } else {
             opnd = ExprNode( NULL, OPR_CONVERT, opnd );
             opnd->op.result_type = newtyp;

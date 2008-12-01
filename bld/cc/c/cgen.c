@@ -719,9 +719,9 @@ static cg_name DoIndirection( OPNODE *node, cg_name name )
 static cg_name ConvertPointer( OPNODE *node, cg_name name )
 {
 #if _CPU == 386
-    if( FAR16_PTRCLASS( node->oldptr_class ) ) {
+    if( FAR16_PTRCLASS( node->sp.oldptr_class ) ) {
         name = CGUnary( O_PTR_TO_NATIVE, name, T_POINTER );
-    } else if( FAR16_PTRCLASS( node->newptr_class ) ) {
+    } else if( FAR16_PTRCLASS( node->sp.newptr_class ) ) {
         name = CGUnary( O_PTR_TO_FOREIGN, name, T_POINTER );
     }
 #endif
@@ -1072,7 +1072,7 @@ local void EmitNodes( TREEPTR tree )
             break;
 #ifdef __SEH__
         case OPR_TRY:                   // start of try block
-            SetTryScope( node->parent_scope );
+            SetTryScope( node->st.parent_scope );
             break;
         case OPR_EXCEPT:
         case OPR_FINALLY:
@@ -1082,7 +1082,7 @@ local void EmitNodes( TREEPTR tree )
             EndFinally();
             break;
         case OPR_UNWIND:
-            TryUnwind( node->try_index );
+            TryUnwind( node->st.try_index );
             break;
         case OPR_EXCEPT_CODE:
             op1 = TryExceptionInfoAddr();
@@ -2003,7 +2003,7 @@ static void GenerateTryBlock( TREEPTR tree )
             break;
         switch( stmt->op.opr ) {
         case OPR_TRY:
-            try_index = stmt->op.try_index;
+            try_index = stmt->op.st.try_index;
             if( try_index > max_try_index )
                 max_try_index = try_index;
             break;
@@ -2031,13 +2031,13 @@ static void GenerateTryBlock( TREEPTR tree )
         DGLabel( except_table );
         for( try_index = 0; try_index <= max_try_index; try_index++ ) {
             stmt = ValueStack[ try_index ];
-            DGInteger( stmt->op.parent_scope, T_UINT_1 );  // parent index
+            DGInteger( stmt->op.st.parent_scope, T_UINT_1 );  // parent index
             if( stmt->op.opr == OPR_EXCEPT ) {
                 DGInteger( 0, T_UINT_1 );
             } else {
                 DGInteger( 1, T_UINT_1 );
             }
-            except_label = FEBack( stmt->op.try_sym_handle );
+            except_label = FEBack( stmt->op.st.try_sym_handle );
             DGBackPtr( except_label, FESegID( CurFuncHandle ), 0, T_CODE_PTR );
         }
         BESetSeg( old_segment );

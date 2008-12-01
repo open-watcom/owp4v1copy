@@ -84,8 +84,8 @@ struct cgfile {                 // CGFILE -- control for a virtual file
     unsigned    write_to_pch :1;// - TRUE ==> write out to PCH
     unsigned    opt_retn_val :1;// - TRUE ==> optimize struct return: value
     unsigned    opt_retn_ref :1;// - TRUE ==> optimize struct return: reference
-          }; // of struct
-        };   // of union
+          } s;  // of struct
+        };      // of union
     SYMBOL      opt_retn;       // - symbol translated for optimized return
 };
 

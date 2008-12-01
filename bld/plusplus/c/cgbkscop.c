@@ -422,7 +422,7 @@ static SCOPE_RES* markScopeGen  // MARK SCOPE AS GENERATED
         }
 #endif
         if( enc->scope != NULL ) {
-            enc->scope->cg_stab = TRUE;
+            enc->scope->s.cg_stab = TRUE;
             break;
         }
     }

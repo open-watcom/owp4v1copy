@@ -227,14 +227,14 @@ void DumpInfix( TREEPTR node )
         printf( " %s ", CCOps[ node->op.cc ] );
         break;
     case OPR_TRY:
-        printf( "%s %d", _Ops[ node->op.opr ], node->op.parent_scope );
+        printf( "%s %d", _Ops[ node->op.opr ], node->op.st.parent_scope );
         break;
     case OPR_UNWIND:
-        printf( "%s %d", _Ops[ node->op.opr ], node->op.try_index );
+        printf( "%s %d", _Ops[ node->op.opr ], node->op.st.try_index );
         break;
     case OPR_EXCEPT:
     case OPR_FINALLY:
-        printf( "%s parent=%d", _Ops[ node->op.opr ], node->op.parent_scope );
+        printf( "%s parent=%d", _Ops[ node->op.opr ], node->op.st.parent_scope );
         break;
     default:
         printf( " " );
