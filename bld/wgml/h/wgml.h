@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2007 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -46,15 +46,6 @@
 #include <process.h>
 
 
-//================= Some global defines ========================
-#define MAX_NESTING     32              // max nesting of option files
-#define MAX_PASSES      10              // max no of passes
-#define MAX_INC_DEPTH   255             // max include level depth
-#define BUF_SIZE        512             // buffersize for filecb e.a.
-#define MAX_FILE_ATTR   16              // max size for fileattr (T:xxxx)
-#define TAG_NAME_LENGTH 12              // :tag name length
-
-
 #include "gtype.h"
 
 
@@ -67,28 +58,29 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 
 /* wgml.c                              */
 extern  void    g_banner( void );
-extern  char    *get_filename_full_path( char *buff, char const *name, size_t max );
+extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
+extern  bool    get_line( void );
 
 #pragma aux     my_exit aborts;
 extern  void    my_exit( int );
 
-extern  int     search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ seq );
-extern  int     try_open( char *prefix, char *separator, char *filename, char *suffix );
+extern  int     search_file_in_dirs( char * filename, char * defext, char * altext, DIRSEQ seq );
+extern  int     try_open( char * prefix, char * separator, char * filename, char * suffix );
 
 
-
-/* garginit.c                           */
-extern  void    garg_init( void );
+/* gargutil.c                           */
+extern  void        garginit( void );
+extern  condcode    getarg( void );
 
 
 /* gdata.c                              */
 extern  void    init_global_vars( void );
 extern  void    get_env_vars( void );
-extern  char    *GML_get_env( char *name );
+extern  char  * GML_get_env( char * name );
 
 
 /* gerror.c                             */
-extern  void    out_msg( char *fmt, ... );
+extern  void    out_msg( char * fmt, ... );
 
 /* -------------------------------- TBD
 extern  void    g_err( int, ... );
@@ -99,20 +91,30 @@ extern  void    g_info( int, ... );
 extern  void    g_suicide( void );
 
 
-/* gmemory.c                            */
-extern  void    mem_free( void *p );
-extern  void    *mem_alloc( size_t size );
-extern  void    *mem_realloc( void *p, size_t size );
-
-extern  void    g_trmem_init( void );
-extern  void    g_trmem_prt_list( void );
-extern  void    g_trmem_close( void );
+/* gmacdict.c                         */
+extern  void        init_macro_dict( mac_entry * * dict );
+extern  void        free_macro_dict( mac_entry * * dict );
+extern  void        print_macro_dict( mac_entry * dict );
+extern  mac_entry * find_macro( mac_entry * dict, char const * name );
 
 
-/* goptions.c                           */
-extern  void    proc_options( char *cmdline );
-extern  void    split_attr_file( char *filename, char *attr, size_t attrlen );
+/* gmemory.c                          */
+extern  void        mem_free( void * p );
+extern  void    *   mem_alloc( size_t size );
+extern  void    *   mem_realloc( void * p, size_t size );
 
+extern  void        g_trmem_init( void );
+extern  void        g_trmem_prt_list( void );
+extern  void        g_trmem_close( void );
+
+
+/* goptions.c                         */
+extern  void    proc_options( char * cmdline );
+extern  void    split_attr_file( char * filename, char * attr, size_t attrlen );
+
+/* gprocess.c                         */
+extern  void    process_line( void );
+extern  void    split_input( char * buf, char * split_pos );
 
 /* gresrch.c                          */
 extern  void    add_GML_tag_research( char * tag );
@@ -129,12 +131,20 @@ extern  void    scan_line( void );
 
 
 /* gsetvar.c                          */
-extern condcode getnum( getnum_block *gn );
-extern void     sc_se( void );
+extern condcode     getnum( getnum_block * gn );
+extern void         scr_se( void );
+extern char     *   scan_sym( char * p, symvar * sym );
+
+/* gsymvar.c                          */
+extern void     init_dict( symvar * * dict );
+extern void     free_dict( symvar * * dict );
+extern void     print_sym_dict( symvar * dict );
+extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
+extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f );
 
 
 /* gutils.c                           */
-extern  bool    to_internal_SU( char **scaninput, su *spaceunit );
+extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 
 
 #ifdef  __cplusplus
