@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2007 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -45,9 +45,20 @@
 
 #define ulong           unsigned long
 
+//================= Some global defines ========================
+#define MAX_NESTING     32              // max nesting of option files
+#define MAX_PASSES      10              // max no of passes
+#define MAX_INC_DEPTH   255             // max include level depth
+#define BUF_SIZE        512             // default buffersize for filecb e.a.
+#define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
+#define TAG_NAME_LENGTH 15              // :tag name length
+#define ATT_NAME_LENGTH 9               // :tag attr name len
+#define SYM_NAME_LENGTH 11              // symbol name length
+#define MAC_NAME_LENGTH 8               // macro name length
 
 
-/* default extensions */
+
+/* default filename extensions */
 #define DEF_EXT         ".def"
 #define ERR_EXT         ".err"
 #define GML_EXT         ".gml"
@@ -59,9 +70,9 @@
 #define GMLINC          "GMLINC"
 
 
-#define GML_CHAR_DEFAULT    ':'
-#define SCR_CHAR_DEFAULT    '.'
-#define CW_SEP_CHAR_DEFAULT ';'
+#define GML_CHAR_DEFAULT    ':'         // start of GML tag
+#define SCR_CHAR_DEFAULT    '.'         // start of Script keyword
+#define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
 
 
 /***************************************************************************/
@@ -76,10 +87,10 @@ typedef enum {
 
 
 /***************************************************************************/
-/*  Space units Horiz + Vert to be redesigned                              */
+/*  Space units Horiz + Vert              to be redesigned                 */
 /***************************************************************************/
 
-typedef enum {
+typedef enum space_units {
     SU_undefined,                       // don't care = value zero
     SU_chars_lines = 10,                // undimensioned value
     SU_chars = 1,                       // chars horizontal
@@ -100,51 +111,151 @@ typedef struct {
     char        su_txt[ MAX_SU_CHAR ];
     long        su_whole;               // integer part
     long        su_dec;                 // decimal part (if any)
-    long        su_conv;              // absolute value in mm with 4 decimals
+    long        su_conv;                // abs. value in mm with 4 decimals
     space_units su_u;                   // unit
     bool        su_relative;            // + - sign found
 } su;
 
+/***************************************************************************/
+/*  Symbolic variables related                                             */
+/***************************************************************************/
+
+typedef enum {
+    min_subscript = -1000000L,          // smallest valid subscript
+    max_subscript =  1000000L,          // largest  valid subscript
+    no_subscript  = 0x11223344          // value if not subscripted
+                // must be outside of range min_scubscript,max_subscript
+} sub_index;
+
+typedef enum {
+    local_var   = 1,
+    subscripted = 2,
+    deleted     = 0x100
+} sym_flags;
+
+
+/***************************************************************************/
+/*  entry for a subscripted symbolic variable                              */
+/***************************************************************************/
+typedef struct symsub {
+    struct symsub   *   next;           // next subscript entry
+    struct symvar   *   base;           // the base symvar
+    sub_index           subscript;      // the subscript
+    char            *   value;          // the value
+} symsub;
+
+
+/***************************************************************************/
+/*  Symbol variable base entry                                             */
+/***************************************************************************/
+typedef struct symvar {
+    struct symvar   *   next;           // next base entry
+    char                name[ SYM_NAME_LENGTH + 1];
+    sub_index           subscript_used; // highest used subscript
+    symsub          *   subscripts;     // subscript entries
+    sym_flags           flags;
+} symvar;
+
+
+/***************************************************************************/
+/*  Flags for filecb and macrocb                                           */
+/***************************************************************************/
+
 typedef enum {
     FF_clear        = 0x0000,           // clear all flags
     FF_startofline  = 0x0001,           // at start of physical line
-    FF_eof          = 0x0002,           // file eof
+    FF_eof          = 0x0002,           // eof
     FF_err          = 0x0004,           // file error
-    FF_crlf         = 0x0008,           // delete trailing CR and or LF
+    FF_crlf         = 0x0008,           // delete trailing CR and / or LF
+    FF_macro        = 0x0010,           // entry is macro not file
     FF_open         = 0x8000            // file is open
 } fflags;
 
+/***************************************************************************/
+/*  List of (defined macro / input) lines                                  */
+/***************************************************************************/
+typedef struct inp_line {
+    struct inp_line *   next;           // next line
+    char                value[ 1 ];     // line content variable length
+} inp_line;
+
+/***************************************************************************/
+/*  macro definition entry  for macro dictionary                           */
+/***************************************************************************/
+typedef struct mac_entry {
+    struct mac_entry    *   next;
+    char                    name[ MAC_NAME_LENGTH + 1 ];
+    inp_line            *   macline;    // macro definition lines
+    ulong                   lineno;     // lineno start of macro definition
+    char                    mac_file_name[ 1 ]; // file name macro definition
+                                            // var length
+} mac_entry;
+
+
+/***************************************************************************/
+/*  entry for an included file                                             */
+/***************************************************************************/
 
 typedef struct filecb {
-    struct filecb   *prev;
-    FILE            *fp;                // FILE ptr
+    fflags          flags;
+    FILE        *   fp;                 // FILE ptr
     ulong           lineno;             // current line number
     ulong           linemin;            // first line number to process
     ulong           linemax;            // last line number to process
-    size_t          buflen;             // length of filebuf
-    char            fileattr[ MAX_FILE_ATTR ]; // T:xxxx
-    char            *filebuf;
-    char            *scanPtr;           // ptr into filebuf
-    char            *scanStop;          // last position to scan
     size_t          usedlen;            // used data of filebuf
     fpos_t          pos;                // position for reopen
-    fflags          flags;
-    char            filename[1];        // full filename var length
+    char            fileattr[ MAX_FILE_ATTR + 1];  // T:xxxx
+    char            filename[ 1 ];      // full filename var length
 } filecb;
 
+/***************************************************************************/
+/*  Entry for an included macro                                            */
+/***************************************************************************/
+
+typedef struct  macrocb {
+    fflags          flags;
+    ulong           lineno;             // current macro line number
+    inp_line    *   macline;            // list of macro lines
+    mac_entry   *   mac;                // macro definition entry
+} macrocb;
+
+typedef enum {
+    II_file     = 0x01,                 // inputcb is file
+    II_macro    = 0x02,                 // inputcb is macro
+    II_eof      = 0x04                  // end of file (input)
+} i_flags;
+
+/***************************************************************************/
+/*  input stack for files and macros                                       */
+/***************************************************************************/
+typedef struct  inputcb {
+    struct inputcb  *   prev;
+    i_flags             fmflags;
+    inp_line        *   hidden_head;    // manage split lines at ; or :
+    inp_line        *   hidden_tail;    // manage split lines at ; or :
+    symvar          *   local_dict;     // local symbol dictionary
+    union  {
+        filecb      *   f;              // used if input is from file
+        macrocb     *   m;              // used if input is from macro
+    } s;
+} inputcb;
 
 
-typedef struct tag {
-    struct tag  *next;
-    char        tagname[ 16 ];
-    unsigned    min_abbrev;
-    void       (*tagproc)( void );
-} tag;
 
 
 
 
 
+/***************************************************************************/
+/*  scr keywords                                                           */
+/***************************************************************************/
+#define SCR_KW_LENGTH   2
+
+typedef struct scrtag {
+    char            tagname[ SCR_KW_LENGTH + 1 ];
+    void            (*tagproc)( void );
+    ulong           callcount;
+} scrtag;
 
 
 /***************************************************************************/
@@ -152,7 +263,7 @@ typedef struct tag {
 /***************************************************************************/
 
 typedef enum {
-    tagonly     = 1,                    // tag without any attr
+    tagonly     = 1,                    // tag without any attribute
     tagbasic    = 2,                    // basic elements possible on tag line.
     tagtext     = 4,                    // only text possible
     etagreq     = 8,                    // eTAG required
@@ -162,21 +273,30 @@ typedef enum {
 
 typedef struct {
    char             tagname[ TAG_NAME_LENGTH ];
+   unsigned         callcount;
    gmlflags         tagflags;
-   void             (*proctag)( void );
+   void             (*tagproc)( void );
 } gmltag;
+
+/***************************************************************************/
+/*  condcode  returncode for several conditions during parameterchecking   */
+/*            loosely adapted from wgml 88.1 aon IBM S/360 code            */
+/***************************************************************************/
+
+typedef enum condcode {            // return code for some scanning functions
+    zero            = 0,
+    omit            = 1,                // argument omitted
+    pos             = 2,                // argument affirmative
+    neg             = 4,                // argument negative
+    no              = 8,                // argument undefined
+    notnum          = 8                 // value not numeric / overflow
+}  condcode;
 
 
 /***************************************************************************/
 /*  definitions for getnum routine                                         */
 /***************************************************************************/
 
-typedef enum {            // return code for some scanning functions
-    omit    = 1,                        // parm(s) omitted
-    pos     = 2,                        // value >= 0
-    neg     = 4,                        // value < 0
-    notnum  = 8                         // value not numeric / overflow
-} condcode;
 
 typedef enum {
     selfdef     = 4,
@@ -189,18 +309,17 @@ typedef enum {
     enderr      = 32
 } getnumrc;
 
-typedef struct {
+typedef struct getnum_block {
     condcode    cc;
     int         ignore_blanks;          // 1 if blanks are ignored
-    char        *argstart;
-    char        *argstop;
-    char        *errstart;
-    char        *first;
+    char    *   argstart;
+    char    *   argstop;
+    char    *   errstart;
+    char    *   first;
     long        length;
     long        res;
     getnumrc    error;
     char        resc[5];
 } getnum_block;
 
-
-#endif                                 // GTYPE_H_INCLUDED
+#endif                                  // GTYPE_H_INCLUDED

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2007 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -27,23 +27,23 @@
 * Description:  wgml utility functions
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
- 
-char    *skip_to_quote( char *p, char quote )
+
+
+char    *skip_to_quote( char * p, char quote )
 {
     while( *p && quote != *p ) {
         p++;
     }
     return( p+1 );
 }
- 
+
 /***************************************************************************/
 /*  conversion routines for Horizontal / Vertical space units              */
 /*  Accepted formats:                                                      */
@@ -66,25 +66,25 @@ char    *skip_to_quote( char *p, char quote )
 /*    returns  filled structure su, returncode TRUE                        */
 /*               or  returncode FALSE in case of error                     */
 /***************************************************************************/
- 
-bool    to_internal_SU( char **scanp, su *converted )
+
+bool    to_internal_SU( char * * scanp, su * converted )
 {
-    bool    converterror = true;
-    char    *p;
-    char    *ps;
-    ldiv_t          div;
-    su              *s;
-    long            wh;
-    long            wd;
-    char            *pp;               // ptr to decimal point or embedded unit
-    char            *pu;               // ptr to trailing unit
-    char            *pd1;              // ptr to 0.1 decimal
-    char            *pdn;              // ptr to last digit +1
-    char            unit[ 4 ];
-    char            quote;
-    int             k;
-    char            sign;
- 
+    bool        converterror = true;
+    char    *   p;
+    char    *   ps;
+    ldiv_t      div;
+    su      *   s;
+    long        wh;
+    long        wd;
+    char    *   pp;                  // ptr to decimal point or embedded unit
+    char    *   pu;                     // ptr to trailing unit
+    char    *   pd1;                    // ptr to 0.1 decimal
+    char    *   pdn;                    // ptr to last digit +1
+    char        unit[ 4 ];
+    char        quote;
+    int         k;
+    char        sign;
+
     unit[ 3 ] = '\0';
     unit[ 2 ] = '\0';
     unit[ 1 ] = '\0';
@@ -96,7 +96,7 @@ bool    to_internal_SU( char **scanp, su *converted )
     wd = 0;
     pp = NULL;
     quote = '\0';
- 
+
     s->su_u = SU_undefined;
     if( *p == '\'' || *p == '"' ) {     // ignore but remember quote
         quote = *p++;
@@ -142,7 +142,7 @@ bool    to_internal_SU( char **scanp, su *converted )
     }
     pd1 = NULL;
     pdn = NULL;
- 
+
     if( p == pp && *p == '.' ) {        // no unit found, try dec point
         *ps++ = *p++;
         pd1 = p;                        // remember start of decimals
@@ -218,12 +218,12 @@ bool    to_internal_SU( char **scanp, su *converted )
             }
         }
     }
- 
+
     *ps = '\0';
- 
+
     s->su_whole = wh;
     s->su_dec   = wd;
- 
+
     if( (quote && *p != quote ) || (!quote && *p == '\'') ) {
         if( quote ) {
             p = skip_to_quote( p, quote );
@@ -234,9 +234,9 @@ bool    to_internal_SU( char **scanp, su *converted )
     if( quote ) {
         p++;                            // over quote
     }
- 
+
     *scanp = p;                         // report back scan position
- 
+
     if( k == 0 ) {                      // no trailing unit
         pu = NULL;
     } else {
@@ -253,7 +253,7 @@ bool    to_internal_SU( char **scanp, su *converted )
             return( converterror );
         }
     }
- 
+
     /***********************************************************************/
     /*  check for valid unit                                               */
     /***********************************************************************/
@@ -294,7 +294,7 @@ bool    to_internal_SU( char **scanp, su *converted )
             return( converterror );
         }
     }
- 
+
     s->su_conv = 0;
     k = 1;
     switch( s->su_u ) {
@@ -356,19 +356,18 @@ bool    to_internal_SU( char **scanp, su *converted )
     return( converterror );
 }
 #if 0
-int main( int argc, char *argv[] )
+int main( int argc, char *cargv[] )
 {
     bool    error;
     su      aus;
 //    char    ein1[] = "1.2I";
     char    *ein1 = "'6p11'";
     char   *p = ein1;
- 
+
     error = to_internal_SU( &p, &aus );
- 
- 
+
+
     return(0);
 }
 #endif
- 
- 
+

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2007 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -36,39 +36,40 @@
     #define global  extern
 #endif
 
-global  jmp_buf         *environment;   // var for GSuicide()
+global  jmp_buf     *   environment;    // var for GSuicide()
 
-global  char            *scan_char_ptr;// used by character scanning routines
+global  char        *   scan_char_ptr; // used by character scanning routines
 global  int             curr_char;
 
 global  int             switch_char;    // DOS switch character
-global  char            *alt_ext;       // alternate extension
-global  char            *def_ext;       // default extension
+global  char        *   alt_ext;        // alternate extension
+global  char        *   def_ext;        // default extension
 
 
-global  char            *master_fname;  // Primary input file name
-global  char            *master_fname_attr;// Primary input file name attributes
+global  char        *   master_fname;   // Primary input file name
+global  char        *   master_fname_attr;// Primary input file name attributes
 global  ulong           print_from;     // first page to print
 global  ulong           print_to;       // last page to print
 
-global  filecb          *file_cbs;      // GML input files
-global  char            *out_file;      // output file name
-global  char            *out_file_attr; // output file attributes (T:2222)
+global  inputcb     *   input_cbs;      // GML input stack (files + macros)
+global  char        *   out_file;       // output file name
+global  char        *   out_file_attr;  // output file attributes (T:2222)
 global  unsigned        inc_level;   // include nesting level 1 = MasterFname
+global  unsigned        max_inc_level;  // maximum include level depth
 global  ulong           line_from;      // starting lineno to process
 global  ulong           line_to;        // ending lineno to process
 #define LINEFROM_DEFAULT    1
 #define LINETO_DEFAULT      (0x1000000) // 16 meg lines should be enough
 
 global  size_t          buf_size;
-global  char            *buffer;
-global  char            *token_buf;
-global  char            *try_file_name;
-global  FILE            *try_fp;
+global  char        *   buffer;
+global  char        *   token_buf;
+global  char        *   try_file_name;
+global  FILE        *   try_fp;
 
-global  char            *Pathes;        // content of PATH Envvar
-global  char            *GMLlibs;       // content of GMMLIB Envvar
-global  char            *GMLincs;       // content of GMLINC Envvar
+global  char        *   Pathes;         // content of PATH Envvar
+global  char        *   GMLlibs;        // content of GMMLIB Envvar
+global  char        *   GMLincs;        // content of GMLINC Envvar
 
 global  int             err_count;      // Overall Errrorcount
 global  int             wng_count;      // Overall warning count
@@ -89,54 +90,75 @@ global  su              bind_even;      // Bind value for even pages
 global  int             passes;         // Max no of passes
 global  int             pass;           // current pass no
 
-global  char            *scan_start;
-global  char            *scan_stop;
+global  char        *   scan_start;
+global  char        *   scan_stop;
 
 
+global  symvar      *   global_dict;    // global symbol dictionary
+global  mac_entry   *   macro_dict;     // macro dictionary
 
 
+global  struct GlobalFlags {
+    unsigned        quiet         : 1;  // show Productinfo?
+    unsigned        bannerprinted : 1;  // Productinfo shown
+    unsigned        wscript       : 1;  // enable WATCOM script extension
+    unsigned        firstpass     : 1;  // first or only pass
+    unsigned        lastpass      : 1;  // last pass
+    unsigned        inclist       : 1;  // show included files
+    unsigned        warning       : 1;  // show warnings
+    unsigned        statistics    : 1;  // output statistics at end
 
-global struct GlobalFlags {
-    unsigned            quiet         : 1;  // show Productinfo?
-    unsigned            bannerprinted : 1;  // Productinfo shown
-    unsigned            wscript       : 1;  // enable WATCOM script extension
-    unsigned            firstpass     : 1;  // first or only pass
-    unsigned            lastpass      : 1;  // last pass
-    unsigned            inclist       : 1;  // show included files
-
-    unsigned            warning       : 1;  // show warnings
-    unsigned            free7         : 1;
-
-    unsigned            free8         : 1;
-    unsigned            free9         : 1;
-    unsigned            freea         : 1;
-    unsigned            freeb         : 1;
-    unsigned            freec         : 1;
-    unsigned            freed         : 1;
-    unsigned            freee         : 1;
-    unsigned            research      : 1;  // research mode, no formatting
-                                            // research mode will eventually go away
-} GlobalFlags;
+    unsigned        free8         : 1;
+    unsigned        free9         : 1;
+    unsigned        freea         : 1;
+    unsigned        freeb         : 1;
+    unsigned        freec         : 1;
+    unsigned        freed         : 1;
+    unsigned        freee         : 1;
+    unsigned        research      : 1;  // research mode, no formatting
+                                        // research mode will eventually go away
+} GlobalFlags;                          // Global flags
 
 global struct ProcFlags {
-    unsigned            macro_ignore  : 1;  // .. in col 1-2
-    unsigned            CW_sep_ignore : 1;  // .' in col 1-2
-    unsigned            newLevel      : 1;  // start new include Level
+    unsigned        newLevelFile    : 1;// start new include Level (file)
+    unsigned        newLevelMacro   : 1;// start new include Level (macro)
+    unsigned        nocase          : 1;// case insensitive switch
+    unsigned        macro_ignore    : 1;// .. in col 1-2
+    unsigned        CW_sep_ignore   : 1;// .' in col 1-2
+    unsigned        GML_tag_cont    : 1;// tag continued from prev line
+    unsigned        in_macro_define : 1;// macro definition active
+    unsigned        free7           : 1;
+} ProcFlags;                            // processing flags
 
-    unsigned            GML_tag_cont  : 1;// tag continued from prev line
-    unsigned            nocase        : 1;  // case insensitive switch
-    unsigned            free6         : 1;
-    unsigned            free7         : 1;
 
-} ProcFlags;
+global char         *   buff1;          // output buffer
+global char         *   buff2;          // input buffer
+global char             buff2_lg;       // input buffer used length
+global char         *   arg_start;      // start of arg scan
+global char         *   arg_stop;       // end of arg scan area
+global char         *   err_start;      // in case of error
+global size_t           arg_flen;       // arg length
+global char         *   open_paren;     // ( in input
+global char         *   clos_paren;     // ) in input
 
-global char            *buff2;          // input buffer
-global char            *buff2_lg;       // input buffer used length
-global char            *arg_start;      // start of Arg
-global char            *arg_stop;       // End of Arg
-global char            *open_paren;     // ( in input
-global char            *clos_paren;     // ) in input
+global char             srnm[ SYM_NAME_LENGTH + 1 ];// symbol name for getsym()
+global sub_index        srnmsub;        // subscript
 
+/* ----                 will eventually be deleted
+SRNM     DC    CL10' '             WORKING REFERENCE NAME               15760000
+SRNMSUB  DC    AL2(*-*,0)          SUBSCRIPT VALUE AND DEFAULT          15780000
+SRNMFR   DC    AL2(*-*,1)          FROM SUBLIST VALUE AND DEFAULT       15800000
+SRNMTO   DC    AL2(*-*,255)        TO SUBLIST VALUE AND DEFAULT         15820000
+SRNMFLG  DC    X'00'               REFERENCE NAME FLAG BYTE             15840000
+SRNMALL  EQU   X'80'                    ALL SUBSCRIPT FLAG              15860000
+SRNMALLP EQU   X'40'                    ALL BUT POSITIVE                15880000
+SRNMALLN EQU   X'20'                    ALL BUT NEGATIVE                15900000
+*        EQU   X'10'                    UNUSED                          15920000
+SRNMTSYM EQU   X'08'                    ERROR IN REFERENCE SYMBOL       15940000
+SRNMTSUB EQU   X'04'                    ERROR IN REFERENCE SUBSCRIPT    15960000
+SRNMTFR  EQU   X'02'                    ERROR IN REF SUBLIST FROM       15980000
+SRNMTTO  EQU   X'01'                    ERROR IN REF SUBLIST TO         16000000
+-------------------------------------------------------- */
 
 
 

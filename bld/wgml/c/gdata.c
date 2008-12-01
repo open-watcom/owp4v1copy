@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2007 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -28,24 +28,24 @@
 *
 ****************************************************************************/
 #include    "wgml.h"
- 
+
 #define global                          // allocate storage for global vars
 #include    "gvars.h"
 #undef  global
- 
+
 #include    "swchar.h"
- 
+
 /***************************************************************************/
 /*  Read an environment variable and return content in allocated buffer    */
 /***************************************************************************/
- 
-char *GML_get_env( char *name )
+
+char * GML_get_env( char *name )
 {
     errno_t     rc;
     size_t      len;
-    char       *value;
+    char    *   value;
     size_t      maxsize;
- 
+
     maxsize = 128;
     value = mem_alloc( maxsize );
     rc = getenv_s( &len, value, maxsize, name );
@@ -66,77 +66,81 @@ char *GML_get_env( char *name )
     }
     return( value );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  get the wgml environment variables                                     */
 /***************************************************************************/
- 
+
 void get_env_vars( void )
 {
     Pathes  = GML_get_env( "PATH" );
     GMLlibs = GML_get_env( GMLLIB );
     GMLincs = GML_get_env( GMLINC );
 }
- 
+
 /***************************************************************************/
 /*  Init some global variables                                             */
 /***************************************************************************/
- 
+
 void init_global_vars( void )
 {
- 
+
     memset( &GlobalFlags, 0, sizeof( GlobalFlags ) );
-    GlobalFlags.wscript = true;         // we want (w)script support
-    GlobalFlags.warning = true;         // display warnings default
- 
+    GlobalFlags.wscript = 1;            // (w)script support + warnings
+    GlobalFlags.warning = 1;
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
- 
+
     try_file_name       = NULL;
     Pathes              = NULL;         // content of PATH environment var
     GMLlibs             = NULL;         // content of GMLLIB environment var
     GMLincs             = NULL;         // content of GMLINC environment var
- 
+
     master_fname        = NULL;         // Master input file name
     master_fname_attr   = NULL;         // Master input file name attributes
     line_from           = 1;            // default first line to process
     line_to             = ULONG_MAX -1; // default last line to process
- 
-    file_cbs            = NULL;         // list of open GML files
-    out_file            = NULL;         // output file name
+
+    input_cbs           = NULL;         // list of active input sources
     inc_level           = 0;            // include nesting level
+    max_inc_level       = 0;            // maximum include level
+    out_file            = NULL;         // output file name
+    out_file_attr       = NULL;         // output file name attributes
+
     switch_char         = _dos_switch_char();
     alt_ext             = mem_alloc( 5 );   // alternate extension   .xxx
     *alt_ext            = '\0';
- 
     def_ext             = mem_alloc( sizeof( GML_EXT ) );
     strcpy_s( def_ext, sizeof( GML_EXT ), GML_EXT );
- 
+
     err_count           = 0;            // total error count
     wng_count           = 0;            // total warnig count
- 
+
     GML_char            = GML_CHAR_DEFAULT; // GML start char
     SCR_char            = SCR_CHAR_DEFAULT; // Script start char
     CW_sep_char         = CW_SEP_CHAR_DEFAULT;  // control word seperator
- 
+
     CPI                 = 10;           // chars per inch
     CPI_units           = SU_chars;
- 
+
     LPI                 = 6;            // lines per inch
     LPI_units           = SU_lines;
- 
+
     memset( &bind_odd, 0, sizeof( bind_odd ) ); // bind value odd pages
     bind_odd.su_u        = SU_chars_lines;
- 
+
     memset( &bind_even, 0, sizeof( bind_even ) );   // bind value Even pages
     bind_even.su_u       = SU_chars_lines;
- 
+
     passes              = 1;            // default number of passes
- 
+
+    init_dict( &global_dict );
+    init_macro_dict( &macro_dict );
+
     buf_size            = BUF_SIZE;
     buffer              = NULL;
     buff2               = NULL;
 //    buffer              = mem_alloc( buf_size );
-//    buff2               = mem_alloc( buf_size );
+    buff1               = mem_alloc( buf_size );
+    buff2               = mem_alloc( buf_size );
 }
- 

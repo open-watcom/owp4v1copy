@@ -93,7 +93,12 @@ void g_trmem_prt_list( void )
 void g_trmem_close( void )
 {
 #ifdef TRMEM
-    _trmem_close( handle );
+    unsigned chunks;
+
+    chunks = _trmem_close( handle );
+    if( chunks > 0 ) {
+        out_msg("\ntrmem close() unfreed chunks: %d\n", chunks );
+    }
 #endif
 }
 
@@ -122,9 +127,9 @@ void *mem_alloc( size_t size )
 /*  Re-allocate some storage                                               */
 /***************************************************************************/
 
-void *mem_realloc( void *oldp, size_t size )
+void *mem_realloc( void * oldp, size_t size )
 {
-    void *p;
+    void    *   p;
 
     #ifdef TRMEM
         p = _trmem_realloc( oldp, size, _trmem_guess_who(), handle );
@@ -144,7 +149,7 @@ void *mem_realloc( void *oldp, size_t size )
 /*  Free storage                                                           */
 /***************************************************************************/
 
-void mem_free( void *p )
+void mem_free( void * p )
 {
     #ifdef TRMEM
         _trmem_free( p, _trmem_guess_who(), handle );
