@@ -50,7 +50,7 @@ message near MessageArray[] =  {
 
 WORD MessageArraySize = sizeof( MessageArray ) / sizeof( message );
 
-message near EditMessageArray[] = {
+static message near EditMessageArray[] = {
     msgpick( 1, 0, EM_GETSEL,               "EM_GETSEL",                MC_CONTROL, 0L ),
     msgpick( 1, 0, EM_SETSEL,               "EM_SETSEL",                MC_CONTROL, 0L ),
     msgpick( 1, 0, EM_GETRECT,              "EM_GETRECT",               MC_CONTROL, 0L ),
@@ -101,9 +101,9 @@ message near EditMessageArray[] = {
 #endif
 };
 
-WORD EditMessageArraySize = sizeof( EditMessageArray ) / sizeof( message );
+static WORD EditMessageArraySize = sizeof( EditMessageArray ) / sizeof( message );
 
-message near ButtonMessageArray[] = {
+static message near ButtonMessageArray[] = {
     msgpick( 1, 0, BM_GETCHECK,     "BM_GETCHECK",      MC_CONTROL, 0L ),
     msgpick( 1, 0, BM_SETCHECK,     "BM_SETCHECK",      MC_CONTROL, 0L ),
     msgpick( 1, 0, BM_GETSTATE,     "BM_GETSTATE",      MC_CONTROL, 0L ),
@@ -119,9 +119,9 @@ message near ButtonMessageArray[] = {
 #endif
 };
 
-WORD ButtonMessageArraySize = sizeof( ButtonMessageArray ) / sizeof( message );
+static WORD ButtonMessageArraySize = sizeof( ButtonMessageArray ) / sizeof( message );
 
-message near StaticMessageArray[] = {
+static message near StaticMessageArray[] = {
     msgpick( 1, 0, STM_SETICON,     "STM_SETICON",  MC_CONTROL, 0L ),
 #ifndef NT_MSGS
     msgpick( 1, 0, STM_GETICON,     "STM_GETICON",  MC_CONTROL, 0L )
@@ -132,9 +132,9 @@ message near StaticMessageArray[] = {
 #endif
 };
 
-WORD StaticMessageArraySize = sizeof( StaticMessageArray ) / sizeof( message );
+static WORD StaticMessageArraySize = sizeof( StaticMessageArray ) / sizeof( message );
 
-message near ListBoxMessageArray[] = {
+static message near ListBoxMessageArray[] = {
     msgpick( 1, 0, LB_ADDSTRING,            "LB_ADDSTRING",             MC_CONTROL, 0L ),
     msgpick( 1, 0, LB_INSERTSTRING,         "LB_INSERTSTRING",          MC_CONTROL, 0L ),
     msgpick( 1, 0, LB_DELETESTRING,         "LB_DELETESTRING",          MC_CONTROL, 0L ),
@@ -188,55 +188,67 @@ message near ListBoxMessageArray[] = {
 #endif
 };
 
-WORD ListBoxMessageArraySize = sizeof( ListBoxMessageArray ) / sizeof( message );
+static WORD ListBoxMessageArraySize = sizeof( ListBoxMessageArray ) / sizeof( message );
 
-message near ComboBoxMessageArray[] = {
-    msgpick( 1, 0, CB_GETEDITSEL,           "CB_GETEDITSEL",            MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_LIMITTEXT,            "CB_LIMITTEXT",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETEDITSEL,           "CB_SETEDITSEL",            MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_ADDSTRING,            "CB_ADDSTRING",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_DELETESTRING,         "CB_DELETESTRING",          MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_DIR,                  "CB_DIR",                   MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETCOUNT,             "CB_GETCOUNT",              MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETCURSEL,            "CB_GETCURSEL",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETLBTEXT,            "CB_GETLBTEXT",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETLBTEXTLEN,         "CB_GETLBTEXTLEN",          MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_INSERTSTRING,         "CB_INSERTSTRING",          MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_RESETCONTENT,         "CB_RESETCONTENT",          MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_FINDSTRING,           "CB_FINDSTRING",            MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SELECTSTRING,         "CB_SELECTSTRING",          MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETCURSEL,            "CB_SETCURSEL",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SHOWDROPDOWN,         "CB_SHOWDROPDOWN",          MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETITEMDATA,          "CB_GETITEMDATA",           MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETITEMDATA,          "CB_SETITEMDATA",           MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETDROPPEDCONTROLRECT, "CB_GETDROPPEDCONTROLRECT",
-             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETITEMHEIGHT,        "CB_SETITEMHEIGHT",         MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETITEMHEIGHT,        "CB_GETITEMHEIGHT",         MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETEXTENDEDUI,        "CB_SETEXTENDEDUI",         MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETEXTENDEDUI,        "CB_GETEXTENDEDUI",         MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETDROPPEDSTATE,      "CB_GETDROPPEDSTATE",       MC_CONTROL, 0L ),
-#ifndef NT_MSGS
-    msgpick( 1, 0, CB_FINDSTRINGEXACT,      "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L )
-#else
-    msgpick( 1, 0, CB_FINDSTRINGEXACT,      "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETLOCALE,            "CB_SETLOCALE",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETLOCALE,            "CB_GETLOCALE",             MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETTOPINDEX,          "CB_GETTOPINDEX",           MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETTOPINDEX,          "CB_SETTOPINDEX",           MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETHORIZONTALEXTENT,  "CB_GETHORIZONTALEXTENT",   MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETHORIZONTALEXTENT,  "CB_SETHORIZONTALEXTENT",   MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETDROPPEDWIDTH,      "CB_GETDROPPEDWIDTH",       MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_SETDROPPEDWIDTH,      "CB_SETDROPPEDWIDTH",       MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_INITSTORAGE,          "CB_INITSTORAGE",           MC_CONTROL, 0L ),
-    msgpick( 1, 0, CB_GETCOMBOBOXINFO,      "CB_GETCOMBOBOXINFO",       MC_CONTROL, 0L )
-#endif
-};
+#define combobox_messages_old() \
+    msgpick( 1, 0, CB_GETEDITSEL,       "CB_GETEDITSEL",            MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_LIMITTEXT,        "CB_LIMITTEXT",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETEDITSEL,       "CB_SETEDITSEL",            MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_ADDSTRING,        "CB_ADDSTRING",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_DELETESTRING,     "CB_DELETESTRING",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_DIR,              "CB_DIR",                   MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETCOUNT,         "CB_GETCOUNT",              MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETCURSEL,        "CB_GETCURSEL",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETLBTEXT,        "CB_GETLBTEXT",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETLBTEXTLEN,     "CB_GETLBTEXTLEN",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_INSERTSTRING,     "CB_INSERTSTRING",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_RESETCONTENT,     "CB_RESETCONTENT",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_FINDSTRING,       "CB_FINDSTRING",            MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SELECTSTRING,     "CB_SELECTSTRING",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETCURSEL,        "CB_SETCURSEL",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SHOWDROPDOWN,     "CB_SHOWDROPDOWN",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETITEMDATA,      "CB_GETITEMDATA",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETITEMDATA,      "CB_SETITEMDATA",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETDROPPEDCONTROLRECT, "CB_GETDROPPEDCONTROLRECT", \
+             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETITEMHEIGHT,    "CB_SETITEMHEIGHT",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETITEMHEIGHT,    "CB_GETITEMHEIGHT",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETEXTENDEDUI,    "CB_SETEXTENDEDUI",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETEXTENDEDUI,    "CB_GETEXTENDEDUI",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETDROPPEDSTATE,  "CB_GETDROPPEDSTATE",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_FINDSTRINGEXACT,  "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L )
 
-WORD ComboBoxMessageArraySize = sizeof( ComboBoxMessageArray ) / sizeof( message );
+#define combobox_messages_new() \
+    msgpick( 1, 0, CB_FINDSTRINGEXACT,  "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETLOCALE,        "CB_SETLOCALE",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETLOCALE,        "CB_GETLOCALE",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETTOPINDEX,      "CB_GETTOPINDEX",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETTOPINDEX,      "CB_SETTOPINDEX",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETHORIZONTALEXTENT, "CB_GETHORIZONTALEXTENT", MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETHORIZONTALEXTENT, "CB_SETHORIZONTALEXTENT", MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETDROPPEDWIDTH,  "CB_GETDROPPEDWIDTH",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETDROPPEDWIDTH,  "CB_SETDROPPEDWIDTH",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_INITSTORAGE,      "CB_INITSTORAGE",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETCOMBOBOXINFO,  "CB_GETCOMBOBOXINFO",       MC_CONTROL, 0L )
 
 #ifdef NT_MSGS
-message near ScrollBarMessageArray[] = {
+    #define combobox_messages() \
+        combobox_messages_old(), \
+        combobox_messages_new()
+#else
+    #define combobox_messages() \
+        combobox_messages_old()
+#endif
+
+static message near ComboBoxMessageArray[] = {
+    combobox_messages()
+};
+
+static WORD ComboBoxMessageArraySize = sizeof( ComboBoxMessageArray ) /
+                                       sizeof( message );
+
+#ifdef NT_MSGS
+static message near ScrollBarMessageArray[] = {
     msgpick( 1, 0, SBM_SETPOS,              "SBM_SETPOS",           MC_CONTROL, 0L ),
     msgpick( 1, 0, SBM_GETPOS,              "SBM_GETPOS",           MC_CONTROL, 0L ),
     msgpick( 1, 0, SBM_SETRANGE,            "SBM_SETRANGE",         MC_CONTROL, 0L ),
@@ -248,9 +260,10 @@ message near ScrollBarMessageArray[] = {
     msgpick( 1, 0, SBM_GETSCROLLBARINFO,    "SBM_GETSCROLLBARINFO", MC_CONTROL, 0L )
 };
 
-WORD ScrollBarMessageArraySize = sizeof( ScrollBarMessageArray ) / sizeof( message );
+static WORD ScrollBarMessageArraySize = sizeof( ScrollBarMessageArray ) /
+                                        sizeof( message );
 
-message near HeaderMessageArray[] = {
+static message near HeaderMessageArray[] = {
     msgpick( 1, 0, HDM_GETITEMCOUNT,        "HDM_GETITEMCOUNT",         MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_INSERTITEMA,         "HDM_INSERTITEM",           MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_DELETEITEM,          "HDM_DELETEITEM",           MC_CONTROL, 0L ),
@@ -281,9 +294,9 @@ message near HeaderMessageArray[] = {
     msgpick( 1, 0, HDM_SETFOCUSEDITEM,      "HDM_SETFOCUSEDITEM",       MC_CONTROL, 0L ),
 };
 
-WORD HeaderMessageArraySize = sizeof( HeaderMessageArray ) / sizeof( message );
+static WORD HeaderMessageArraySize = sizeof( HeaderMessageArray ) / sizeof( message );
 
-message near ToolbarMessageArray[] = {
+static message near ToolbarMessageArray[] = {
     msgpick( 1, 0, TB_ENABLEBUTTON,         "TB_ENABLEBUTTON",          MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_CHECKBUTTON,          "TB_CHECKBUTTON",           MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_PRESSBUTTON,          "TB_PRESSBUTTON",           MC_CONTROL, 0L ),
@@ -377,9 +390,9 @@ message near ToolbarMessageArray[] = {
     msgpick( 1, 0, TB_GETPRESSEDIMAGELIST,  "TB_GETPRESSEDIMAGELIST",   MC_CONTROL, 0L ),
 };
 
-WORD ToolbarMessageArraySize = sizeof( ToolbarMessageArray ) / sizeof( message );
+static WORD ToolbarMessageArraySize = sizeof( ToolbarMessageArray ) / sizeof( message );
 
-message near RebarMessageArray[] = {
+static message near RebarMessageArray[] = {
     msgpick( 1, 0, RB_INSERTBANDA,      "RB_INSERTBAND",        MC_CONTROL, 0L ),
     msgpick( 1, 0, RB_DELETEBAND,       "RB_DELETEBAND",        MC_CONTROL, 0L ),
     msgpick( 1, 0, RB_GETBARINFO,       "RB_GETBARINFO",        MC_CONTROL, 0L ),
@@ -422,9 +435,9 @@ message near RebarMessageArray[] = {
     msgpick( 1, 0, RB_SETBANDWIDTH,     "RB_SETBANDWIDTH",      MC_CONTROL, 0L ),
 };
 
-WORD RebarMessageArraySize = sizeof( RebarMessageArray ) / sizeof( message );
+static WORD RebarMessageArraySize = sizeof( RebarMessageArray ) / sizeof( message );
 
-message near ToolTipsMessageArray[] = {
+static message near ToolTipsMessageArray[] = {
     msgpick( 1, 0, TTM_ACTIVATE,        "TTM_ACTIVATE",         MC_CONTROL, 0L ),
     msgpick( 1, 0, TTM_SETDELAYTIME,    "TTM_SETDELAYTIME",     MC_CONTROL, 0L ),
     msgpick( 1, 0, TTM_ADDTOOLA,        "TTM_ADDTOOL",          MC_CONTROL, 0L ),
@@ -471,9 +484,10 @@ message near ToolTipsMessageArray[] = {
     msgpick( 1, 0, TTM_GETCURRENTTOOLW, "TTM_GETCURRENTTOOL",   MC_CONTROL, 0L ),
 };
 
-WORD ToolTipsMessageArraySize = sizeof( ToolTipsMessageArray ) / sizeof( message );
+static WORD ToolTipsMessageArraySize = sizeof( ToolTipsMessageArray ) /
+                                       sizeof( message );
 
-message near StatusBarMessageArray[] = {
+static message near StatusBarMessageArray[] = {
     msgpick( 1, 0, SB_SETTEXTA,         "SB_SETTEXT",       MC_CONTROL, 0L ),
     msgpick( 1, 0, SB_GETTEXTA,         "SB_GETTEXT",       MC_CONTROL, 0L ),
     msgpick( 1, 0, SB_GETTEXTLENGTHA,   "SB_GETTEXTLENGTH", MC_CONTROL, 0L ),
@@ -495,9 +509,10 @@ message near StatusBarMessageArray[] = {
     msgpick( 1, 0, SB_GETICON,          "SB_GETICON",       MC_CONTROL, 0L ),
 };
 
-WORD StatusBarMessageArraySize = sizeof( StatusBarMessageArray ) / sizeof( message );
+static WORD StatusBarMessageArraySize = sizeof( StatusBarMessageArray ) /
+                                        sizeof( message );
 
-message near TrackBarMessageArray[] = {
+static message near TrackBarMessageArray[] = {
     msgpick( 1, 0, TBM_GETPOS,          "TBM_GETPOS",           MC_CONTROL, 0L ),
     msgpick( 1, 0, TBM_GETRANGEMIN,     "TBM_GETRANGEMIN",      MC_CONTROL, 0L ),
     msgpick( 1, 0, TBM_GETRANGEMAX,     "TBM_GETRANGEMAX",      MC_CONTROL, 0L ),
@@ -533,9 +548,10 @@ message near TrackBarMessageArray[] = {
     msgpick( 1, 0, TBM_GETBUDDY,        "TBM_GETBUDDY",         MC_CONTROL, 0L )
 };
 
-WORD TrackBarMessageArraySize = sizeof( TrackBarMessageArray ) / sizeof( message );
+static WORD TrackBarMessageArraySize = sizeof( TrackBarMessageArray ) /
+                                       sizeof( message );
 
-message near UpDownMessageArray[] = {
+static message near UpDownMessageArray[] = {
     msgpick( 1, 0, UDM_SETRANGE,    "UDM_SETRANGE",     MC_CONTROL, 0L ),
     msgpick( 1, 0, UDM_GETRANGE,    "UDM_GETRANGE",     MC_CONTROL, 0L ),
     msgpick( 1, 0, UDM_SETPOS,      "UDM_SETPOS",       MC_CONTROL, 0L ),
@@ -552,9 +568,9 @@ message near UpDownMessageArray[] = {
     msgpick( 1, 0, UDM_GETPOS32,    "UDM_GETPOS32",     MC_CONTROL, 0L ),
 };
 
-WORD UpDownMessageArraySize = sizeof( UpDownMessageArray ) / sizeof( message );
+static WORD UpDownMessageArraySize = sizeof( UpDownMessageArray ) / sizeof( message );
 
-message near ProgressBarMessageArray[] = {
+static message near ProgressBarMessageArray[] = {
     msgpick( 1, 0, PBM_SETRANGE,    "PBM_SETRANGE",     MC_CONTROL, 0L ),
     msgpick( 1, 0, PBM_SETPOS,      "PBM_SETPOS",       MC_CONTROL, 0L ),
     msgpick( 1, 0, PBM_DELTAPOS,    "PBM_DELTAPOS",     MC_CONTROL, 0L ),
@@ -572,17 +588,18 @@ message near ProgressBarMessageArray[] = {
     msgpick( 1, 0, PBM_GETSTATE,    "PBM_GETSTATE",     MC_CONTROL, 0L )
 };
 
-WORD ProgressBarMessageArraySize = sizeof( ProgressBarMessageArray ) / sizeof( message );
+static WORD ProgressBarMessageArraySize = sizeof( ProgressBarMessageArray ) /
+                                          sizeof( message );
 
-message near HotKeyMessageArray[] = {
+static message near HotKeyMessageArray[] = {
     msgpick( 1, 0, HKM_SETHOTKEY,   "HKM_SETHOTKEY",    MC_CONTROL, 0L ),
     msgpick( 1, 0, HKM_GETHOTKEY,   "HKM_GETHOTKEY",    MC_CONTROL, 0L ),
     msgpick( 1, 0, HKM_SETRULES,    "HKM_SETRULES",     MC_CONTROL, 0L )
 };
 
-WORD HotKeyMessageArraySize = sizeof( HotKeyMessageArray ) / sizeof( message );
+static WORD HotKeyMessageArraySize = sizeof( HotKeyMessageArray ) / sizeof( message );
 
-message near ListViewMessageArray[] = {
+static message near ListViewMessageArray[] = {
     msgpick( 1, 0, LVM_GETBKCOLOR,          "LVM_GETBKCOLOR",           MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SETBKCOLOR,          "LVM_SETBKCOLOR",           MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_GETIMAGELIST,        "LVM_GETIMAGELIST",         MC_CONTROL, 0L ),
@@ -726,9 +743,9 @@ message near ListViewMessageArray[] = {
     msgpick( 1, 0, LVM_GETNEXTITEMINDEX,    "LVM_GETNEXTITEMINDEX",     MC_CONTROL, 0L ),
 };
 
-WORD ListViewMessageArraySize = sizeof( ListViewMessageArray ) / sizeof( message );
+static WORD ListViewMessageArraySize = sizeof( ListViewMessageArray ) / sizeof( message );
 
-message near TreeViewMessageArray[] = {
+static message near TreeViewMessageArray[] = {
     msgpick( 1, 0, TVM_INSERTITEMA,         "TVM_INSERTITEM",           MC_CONTROL, 0L ),
     msgpick( 1, 0, TVM_DELETEITEM,          "TVM_DELETEITEM",           MC_CONTROL, 0L ),
     msgpick( 1, 0, TVM_EXPAND,              "TVM_EXPAND",               MC_CONTROL, 0L ),
@@ -783,9 +800,11 @@ message near TreeViewMessageArray[] = {
     msgpick( 1, 0, TVM_GETITEMPARTRECT,     "TVM_GETITEMPARTRECT",      MC_CONTROL, 0L )
 };
 
-WORD TreeViewMessageArraySize = sizeof( TreeViewMessageArray ) / sizeof( message );
+static WORD TreeViewMessageArraySize = sizeof( TreeViewMessageArray ) /
+                                       sizeof( message );
 
-message near ComboBoxExMessageArray[] = {
+static message near ComboBoxExMessageArray[] = {
+    combobox_messages(),
     msgpick( 1, 0, CBEM_INSERTITEMA,        "CBEM_INSERTITEM",          MC_CONTROL, 0L ),
     msgpick( 1, 0, CBEM_SETIMAGELIST,       "CBEM_SETIMAGELIST",        MC_CONTROL, 0L ),
     msgpick( 1, 0, CBEM_GETIMAGELIST,       "CBEM_GETIMAGELIST",        MC_CONTROL, 0L ),
@@ -802,9 +821,10 @@ message near ComboBoxExMessageArray[] = {
     msgpick( 1, 0, CBEM_SETEXTENDEDSTYLE,   "CBEM_SETEXTENDEDSTYLE",    MC_CONTROL, 0L )
 };
 
-WORD ComboBoxExMessageArraySize = sizeof( ComboBoxExMessageArray ) / sizeof( message );
+static WORD ComboBoxExMessageArraySize = sizeof( ComboBoxExMessageArray ) /
+                                         sizeof( message );
 
-message near TabControlMessageArray[] = {
+static message near TabControlMessageArray[] = {
     msgpick( 1, 0, TCM_GETIMAGELIST,        "TCM_GETIMAGELIST",     MC_CONTROL, 0L ),
     msgpick( 1, 0, TCM_SETIMAGELIST,        "TCM_SETIMAGELIST",     MC_CONTROL, 0L ),
     msgpick( 1, 0, TCM_GETITEMCOUNT,        "TCM_GETITEMCOUNT",     MC_CONTROL, 0L ),
@@ -837,9 +857,10 @@ message near TabControlMessageArray[] = {
     msgpick( 1, 0, TCM_INSERTITEMW,         "TCM_INSERTITEM",       MC_CONTROL, 0L )
 };
 
-WORD TabControlMessageArraySize = sizeof( TabControlMessageArray ) / sizeof( message );
+static WORD TabControlMessageArraySize = sizeof( TabControlMessageArray ) /
+                                         sizeof( message );
 
-message near AnimateMessageArray[] = {
+static message near AnimateMessageArray[] = {
     msgpick( 1, 0, ACM_OPENA,       "ACM_OPEN",         MC_CONTROL, 0L ),
     msgpick( 1, 0, ACM_PLAY,        "ACM_PLAY",         MC_CONTROL, 0L ),
     msgpick( 1, 0, ACM_STOP,        "ACM_STOP",         MC_CONTROL, 0L ),
@@ -847,9 +868,9 @@ message near AnimateMessageArray[] = {
     msgpick( 1, 0, ACM_ISPLAYING,   "ACM_ISPLAYING",    MC_CONTROL, 0L )
 };
 
-WORD AnimateMessageArraySize = sizeof( AnimateMessageArray ) / sizeof( message );
+static WORD AnimateMessageArraySize = sizeof( AnimateMessageArray ) / sizeof( message );
 
-message near MonthCalMessageArray[] = {
+static message near MonthCalMessageArray[] = {
     msgpick( 1, 0, MCM_GETCURSEL,           "MCM_GETCURSEL",            MC_CONTROL, 0L ),
     msgpick( 1, 0, MCM_SETCURSEL,           "MCM_SETCURSEL",            MC_CONTROL, 0L ),
     msgpick( 1, 0, MCM_GETMAXSELCOUNT,      "MCM_GETMAXSELCOUNT",       MC_CONTROL, 0L ),
@@ -882,9 +903,10 @@ message near MonthCalMessageArray[] = {
     msgpick( 1, 0, MCM_SETCURRENTVIEW,      "MCM_SETCURRENTVIEW",       MC_CONTROL, 0L )
 };
 
-WORD MonthCalMessageArraySize = sizeof( MonthCalMessageArray ) / sizeof( message );
+static WORD MonthCalMessageArraySize = sizeof( MonthCalMessageArray ) /
+                                       sizeof( message );
 
-message near DateTimeMessageArray[] = {
+static message near DateTimeMessageArray[] = {
     msgpick( 1, 0, DTM_GETSYSTEMTIME,   "DTM_GETSYSTEMTIME",    MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_SETSYSTEMTIME,   "DTM_SETSYSTEMTIME",    MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_GETRANGE,        "DTM_GETRANGE",         MC_CONTROL, 0L ),
@@ -898,13 +920,45 @@ message near DateTimeMessageArray[] = {
     msgpick( 1, 0, DTM_SETMCSTYLE,      "DTM_SETMCSTYLE",       MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_GETMCSTYLE,      "DTM_GETMCSTYLE",       MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_CLOSEMONTHCAL,   "DTM_CLOSEMONTHCAL",    MC_CONTROL, 0L ),
-    msgpick( 1, 0, DTM_GETDATETIMEPICKERINFO,   "DTM_GETDATETIMEPICKERINFO",
+    msgpick( 1, 0, DTM_GETDATETIMEPICKERINFO, "DTM_GETDATETIMEPICKERINFO",
              MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_GETIDEALSIZE,    "DTM_GETIDEALSIZE",     MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_SETFORMATW,      "DTM_SETFORMAT",        MC_CONTROL, 0L ),
 };
 
-WORD DateTimeMessageArraySize = sizeof( DateTimeMessageArray ) / sizeof( message );
+static WORD DateTimeMessageArraySize = sizeof( DateTimeMessageArray ) /
+                                       sizeof( message );
+
+class_messages near ClassMessages[] = {
+    { "edit",               EditMessageArray,           &EditMessageArraySize           },
+    { "button",             ButtonMessageArray,         &ButtonMessageArraySize         },
+    { "static",             StaticMessageArray,         &StaticMessageArraySize         },
+    { "listbox",            ListBoxMessageArray,        &ListBoxMessageArraySize        },
+#ifndef NT_MSGS
+    { "combobox",           ComboBoxMessageArray,       &ComboBoxMessageArraySize       }
+#else
+    { "combobox",           ComboBoxMessageArray,       &ComboBoxMessageArraySize       },
+    { "scrollbar",          ScrollBarMessageArray,      &ScrollBarMessageArraySize      },
+    { WC_HEADER,            HeaderMessageArray,         &HeaderMessageArraySize         },
+    { TOOLBARCLASSNAME,     ToolbarMessageArray,        &ToolbarMessageArraySize        },
+    { REBARCLASSNAME,       RebarMessageArray,          &RebarMessageArraySize          },
+    { TOOLTIPS_CLASS,       ToolTipsMessageArray,       &ToolTipsMessageArraySize       },
+    { STATUSCLASSNAME,      StatusBarMessageArray,      &StatusBarMessageArraySize      },
+    { TRACKBAR_CLASS,       TrackBarMessageArray,       &TrackBarMessageArraySize       },
+    { UPDOWN_CLASS,         UpDownMessageArray,         &UpDownMessageArraySize         },
+    { PROGRESS_CLASS,       ProgressBarMessageArray,    &ProgressBarMessageArraySize    },
+    { HOTKEY_CLASS,         HotKeyMessageArray,         &HotKeyMessageArraySize         },
+    { WC_LISTVIEW,          ListViewMessageArray,       &ListViewMessageArraySize       },
+    { WC_TREEVIEW,          TreeViewMessageArray,       &TreeViewMessageArraySize       },
+    { WC_COMBOBOXEX,        ComboBoxExMessageArray,     &ComboBoxExMessageArraySize     },
+    { WC_TABCONTROL,        TabControlMessageArray,     &TabControlMessageArraySize     },
+    { ANIMATE_CLASS,        AnimateMessageArray,        &AnimateMessageArraySize        },
+    { MONTHCAL_CLASS,       MonthCalMessageArray,       &MonthCalMessageArraySize       },
+    { DATETIMEPICK_CLASS,   DateTimeMessageArray,       &DateTimeMessageArraySize       }
+#endif
+};
+
+WORD ClassMessagesSize = sizeof( ClassMessages ) / sizeof( class_messages );
 
 #endif
 

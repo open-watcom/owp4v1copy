@@ -177,6 +177,12 @@ typedef struct {
 } message;
 
 typedef struct {
+    char    *class_name;
+    message *message_array;
+    WORD    *message_array_size;
+} class_messages;
+
+typedef struct {
     WORD                xsize;
     WORD                ysize;
     int                 xpos;
@@ -207,52 +213,8 @@ extern HANDLE           ResInstance;
 extern filters          Filters;
 extern WORD             MessageArraySize;
 extern message          near MessageArray[];
-extern WORD             EditMessageArraySize;
-extern message          near EditMessageArray[];
-extern WORD             ButtonMessageArraySize;
-extern message          near ButtonMessageArray[];
-extern WORD             StaticMessageArraySize;
-extern message          near StaticMessageArray[];
-extern WORD             ListBoxMessageArraySize;
-extern message          near ListBoxMessageArray[];
-extern WORD             ComboBoxMessageArraySize;
-extern message          near ComboBoxMessageArray[];
-#ifdef __NT__
-extern WORD             ScrollBarMessageArraySize;
-extern message          near ScrollBarMessageArray[];
-extern WORD             HeaderMessageArraySize;
-extern message          near HeaderMessageArray[];
-extern WORD             ToolbarMessageArraySize;
-extern message          near ToolbarMessageArray[];
-extern WORD             RebarMessageArraySize;
-extern message          near RebarMessageArray[];
-extern WORD             ToolTipsMessageArraySize;
-extern message          near ToolTipsMessageArray[];
-extern WORD             StatusBarMessageArraySize;
-extern message          near StatusBarMessageArray[];
-extern WORD             TrackBarMessageArraySize;
-extern message          near TrackBarMessageArray[];
-extern WORD             UpDownMessageArraySize;
-extern message          near UpDownMessageArray[];
-extern WORD             ProgressBarMessageArraySize;
-extern message          near ProgressBarMessageArray[];
-extern WORD             HotKeyMessageArraySize;
-extern message          near HotKeyMessageArray[];
-extern WORD             ListViewMessageArraySize;
-extern message          near ListViewMessageArray[];
-extern WORD             TreeViewMessageArraySize;
-extern message          near TreeViewMessageArray[];
-extern WORD             ComboBoxExMessageArraySize;
-extern message          near ComboBoxExMessageArray[];
-extern WORD             TabControlMessageArraySize;
-extern message          near TabControlMessageArray[];
-extern WORD             AnimateMessageArraySize;
-extern message          near AnimateMessageArray[];
-extern WORD             MonthCalMessageArraySize;
-extern message          near MonthCalMessageArray[];
-extern WORD             DateTimeMessageArraySize;
-extern message          near DateTimeMessageArray[];
-#endif
+extern WORD             ClassMessagesSize;
+extern class_messages   near ClassMessages[];
 extern BOOL             SpyMessagesAutoScroll;
 extern BOOL             AutoSaveConfig;
 extern WORD             WindowCount;

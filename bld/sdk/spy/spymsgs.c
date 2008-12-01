@@ -46,150 +46,19 @@ static message *userMsg;
 message *GetMessageDataFromID( int msgid, char *class_name )
 {
     int i;
+    int j;
 
     for( i=0;i< MessageArraySize;i++ ) {
         if( msgid == MessageArray[i].id ) return( &MessageArray[i] );
     }
-    if( !stricmp( class_name, "edit" ) ) {
-        for( i = 0; i < EditMessageArraySize; i++ ) {
-            if( msgid == EditMessageArray[i].id ) {
-                return( &EditMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, "button" ) ) {
-        for( i = 0; i < ButtonMessageArraySize; i++ ) {
-            if( msgid == ButtonMessageArray[i].id ) {
-                return( &ButtonMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, "static" ) ) {
-        for( i = 0; i < StaticMessageArraySize; i++ ) {
-            if( msgid == StaticMessageArray[i].id ) {
-                return( &StaticMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, "listbox" ) ) {
-        for( i = 0; i < ListBoxMessageArraySize; i++ ) {
-            if( msgid == ListBoxMessageArray[i].id ) {
-                return( &ListBoxMessageArray[i] );
-            }
-        }
-#ifdef __NT__
-    } else if( !stricmp( class_name, "combobox" ) ||
-               !stricmp( class_name, WC_COMBOBOXEX ) ) {
-#else
-    } else if( !stricmp( class_name, "combobox" ) ) {
-#endif
-        for( i = 0; i < ComboBoxMessageArraySize; i++ ) {
-            if( msgid == ComboBoxMessageArray[i].id ) {
-                return( &ComboBoxMessageArray[i] );
-            }
-        }
-#ifdef __NT__
-        if( !stricmp( class_name, WC_COMBOBOXEX ) ) {
-            for( i = 0; i < ComboBoxExMessageArraySize; i++ ) {
-                if( msgid == ComboBoxExMessageArray[i].id ) {
-                    return( &ComboBoxExMessageArray[i] );
+    for( i = 0; i < ClassMessagesSize; i++ ) {
+        if( !stricmp( class_name, ClassMessages[i].class_name ) ) {
+            for( j = 0; j < *ClassMessages[i].message_array_size; j++ ) {
+                if( msgid == ClassMessages[i].message_array[j].id ) {
+                    return( &ClassMessages[i].message_array[j] );
                 }
             }
         }
-    } else if( !stricmp( class_name, "scrollbar" ) ) {
-        for( i = 0; i < ScrollBarMessageArraySize; i++ ) {
-            if( msgid == ScrollBarMessageArray[i].id ) {
-                return( &ScrollBarMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, WC_HEADER ) ) {
-        for( i = 0; i < HeaderMessageArraySize; i++ ) {
-            if( msgid == HeaderMessageArray[i].id ) {
-                return( &HeaderMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, TOOLBARCLASSNAME ) ) {
-        for( i = 0; i < ToolbarMessageArraySize; i++ ) {
-            if( msgid == ToolbarMessageArray[i].id ) {
-                return( &ToolbarMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, REBARCLASSNAME ) ) {
-        for( i = 0; i < RebarMessageArraySize; i++ ) {
-            if( msgid == RebarMessageArray[i].id ) {
-                return( &RebarMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, TOOLTIPS_CLASS ) ) {
-        for( i = 0; i < ToolTipsMessageArraySize; i++ ) {
-            if( msgid == ToolTipsMessageArray[i].id ) {
-                return( &ToolTipsMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, STATUSCLASSNAME ) ) {
-        for( i = 0; i < StatusBarMessageArraySize; i++ ) {
-            if( msgid == StatusBarMessageArray[i].id ) {
-                return( &StatusBarMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, TRACKBAR_CLASS ) ) {
-        for( i = 0; i < TrackBarMessageArraySize; i++ ) {
-            if( msgid == TrackBarMessageArray[i].id ) {
-                return( &TrackBarMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, UPDOWN_CLASS ) ) {
-        for( i = 0; i < UpDownMessageArraySize; i++ ) {
-            if( msgid == UpDownMessageArray[i].id ) {
-                return( &UpDownMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, PROGRESS_CLASS ) ) {
-        for( i = 0; i < ProgressBarMessageArraySize; i++ ) {
-            if( msgid == ProgressBarMessageArray[i].id ) {
-                return( &ProgressBarMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, HOTKEY_CLASS ) ) {
-        for( i = 0; i < HotKeyMessageArraySize; i++ ) {
-            if( msgid == HotKeyMessageArray[i].id ) {
-                return( &HotKeyMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, WC_LISTVIEW ) ) {
-        for( i = 0; i < ListViewMessageArraySize; i++ ) {
-            if( msgid == ListViewMessageArray[i].id ) {
-                return( &ListViewMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, WC_TREEVIEW ) ) {
-        for( i = 0; i < TreeViewMessageArraySize; i++ ) {
-            if( msgid == TreeViewMessageArray[i].id ) {
-                return( &TreeViewMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, WC_TABCONTROL ) ) {
-        for( i = 0; i < TabControlMessageArraySize; i++ ) {
-            if( msgid == TabControlMessageArray[i].id ) {
-                return( &TabControlMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, ANIMATE_CLASS ) ) {
-        for( i = 0; i < AnimateMessageArraySize; i++ ) {
-            if( msgid == AnimateMessageArray[i].id ) {
-                return( &AnimateMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, MONTHCAL_CLASS ) ) {
-        for( i = 0; i < MonthCalMessageArraySize; i++ ) {
-            if( msgid == MonthCalMessageArray[i].id ) {
-                return( &MonthCalMessageArray[i] );
-            }
-        }
-    } else if( !stricmp( class_name, DATETIMEPICK_CLASS ) ) {
-        for( i = 0; i < DateTimeMessageArraySize; i++ ) {
-            if( msgid == DateTimeMessageArray[i].id ) {
-                return( &DateTimeMessageArray[i] );
-            }
-        }
-#endif
     }
     return( NULL );
 
