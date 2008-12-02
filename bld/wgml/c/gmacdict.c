@@ -1,0 +1,142 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  Implements script macros (tables and access routines)
+*               still incomplete
+****************************************************************************/
+
+#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
+
+#include <stdarg.h>
+#include <errno.h>
+
+#include "wgml.h"
+#include "gvars.h"
+
+
+
+/***************************************************************************/
+/*  init_macro_dict   initialize dictionary pointer                        */
+/***************************************************************************/
+
+void    init_macro_dict( mac_entry **dict )
+{
+
+    *dict = NULL;
+    return;
+}
+
+/***************************************************************************/
+/*  free_macro_entry  free storage for a macro entry                       */
+/*   this routine is static because deleting a single entry only disturbs  */
+/*   the dictionary chain from the previous macro entry.                   */
+/***************************************************************************/
+
+static  void    free_macro_entry( mac_entry *me )
+{
+    inp_line    *   ml;
+    inp_line    *   mln;
+
+    if( me != NULL ) {
+        ml = me->macline;
+        while( ml != NULL ) {           // free all macro lines
+             mln = ml->next;
+             mem_free( ml );
+             ml = mln;
+        }
+        mem_free( me );                 // now the entry itself
+    }
+    return;
+}
+
+/***************************************************************************/
+/*  free_macro_dict   free all macro dictionary entries                    */
+/***************************************************************************/
+
+void    free_macro_dict( mac_entry **dict )
+{
+    mac_entry   *   wk;
+    mac_entry   *   wkn;
+
+    wk = *dict;
+    while( wk != NULL ) {
+        wkn = wk->next;
+        free_macro_entry( wk );
+        wk = wkn;
+    }
+    *dict = NULL;                       // dictionary is empty
+    return;
+}
+
+
+
+/***************************************************************************/
+/*  search macro entry in specified dictionary                             */
+/*  returns ptr to macro or NULL if not found                              */
+/***************************************************************************/
+mac_entry   *find_macro( mac_entry *dict, const char *name )
+{
+    mac_entry   *wk;
+    mac_entry   *curr;
+
+    wk   = NULL;
+    curr = dict;
+    while( curr != NULL) {
+        if( !strcmp( curr->name, name ) ) {
+            wk = curr;
+            break;
+        }
+        curr = curr->next;
+    }
+    return( wk );
+}
+
+
+/***************************************************************************/
+/*  print_macro_dict  output all of the macro dictionary                   */
+/***************************************************************************/
+
+void    print_macro_dict( mac_entry *dict )
+{
+    mac_entry   *   wk;
+    int             cnt;
+    int             len;
+    static char     fill[ 10 ] = "         ";
+    cnt = 0;
+    wk = dict;
+    out_msg( "\nList of defined macros:\n");
+    while( wk != NULL ) {
+
+        len =  strlen( wk->name );
+        out_msg( "Macro='%s'%sdefined line %d file '%s'\n", wk->name,
+                &fill[ len ], wk->lineno, wk->mac_file_name );
+        wk = wk->next;
+        cnt++;
+    }
+    out_msg( "\nTotal macros defined: %d\n", cnt );
+    return;
+}
+
