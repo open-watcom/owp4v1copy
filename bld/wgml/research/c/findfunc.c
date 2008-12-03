@@ -63,9 +63,19 @@ typedef struct {
     size_t      count;
 } token;
 
+/* This is based on the original version of struct filecb. */
+
+typedef struct file_info {
+    FILE                *   fp;             // FILE ptr
+    size_t                  buflen;         // length of filebuf
+    char                *   filebuf;
+    char                *   scanptr;        // ptr into filebuf
+    size_t                  usedlen;        // used data of filebuf
+} file_info;
+
 /* Local variables. */
 
-static filecb   *   file_cbs;   // duplicates wgml def
+static file_info   *   cur_file;
 
 /* These should probably be globals in gendev. */
 
@@ -135,11 +145,11 @@ NULL
  * Determine the length and start position of the next device function name.
  *
  * Static Variables Used:
- *      file_cbs is a pointer to the current file_cb.
+ *      cur_file is a pointer to the current file_info entry.
  *      cur_token is a pointer to the current file_cur_token.
  *
  * Static Variables modified on success:
- *      file_cbs->scanPtr is set to the first character after the device
+ *      cur_file->scanptr is set to the first character after the device
  *          function name which was found.
  *      cur_token->start is set to the first character of the device 
  *          function name which was found.
@@ -152,8 +162,8 @@ NULL
  *
  * Notes:
  *      on the first call, file_cbs should be in this minimal state:
- *          file_cbs->fp should be the FILE * for the current file.
- *          file_cbs->scanPtr should be NULL.
+ *          cur_file->fp should be the FILE * for the current file.
+ *          cur_file->scanptr should be NULL.
  *      FAILURE should be taken as meaning that all device function names have
  *          been found. The value of cur_token is undefined in this case.
  */
@@ -166,16 +176,16 @@ static int get_dev_func( void )
     size_t      scanned;
     size_t      unscanned;
     
-    if( file_cbs->scanPtr == NULL ) {
+    if( cur_file->scanptr == NULL ) {
 
         /* First call: start by getting data into the buffer. */
 
-        file_cbs->usedlen = fread( file_cbs->filebuf, 1, \
-            file_cbs->buflen, file_cbs->fp );
-        if( ferror( file_cbs->fp ) ) return( FAILURE );
-        if( file_cbs->usedlen == 0 ) return( FAILURE );
+        cur_file->usedlen = fread( cur_file->filebuf, 1, \
+                                            cur_file->buflen, cur_file->fp );
+        if( ferror( cur_file->fp ) ) return( FAILURE );
+        if( cur_file->usedlen == 0 ) return( FAILURE );
 
-        file_cbs->scanPtr = file_cbs->filebuf;
+        cur_file->scanptr = cur_file->filebuf;
     }
 
     /* Initialize the output values to clear any old data. */
@@ -187,25 +197,25 @@ static int get_dev_func( void )
 
         /* Find the next device function name. */
 
-        position = file_cbs->scanPtr - file_cbs->filebuf;
-        for( i = 0; i < file_cbs->usedlen - position; i++ ){
-            if( *file_cbs->scanPtr == '%' ) break;
-            file_cbs->scanPtr++;
+        position = cur_file->scanptr - cur_file->filebuf;
+        for( i = 0; i < cur_file->usedlen - position; i++ ){
+            if( *cur_file->scanptr == '%' ) break;
+            cur_file->scanptr++;
         }
 
-        if( *file_cbs->scanPtr == '%' ) {
+        if( *cur_file->scanptr == '%' ) {
 
-            /* file_cbs->scanPtr points to the start of a device
+            /* cur_file->scanptr points to the start of a device
              * function name.
              */
 
-            cur_token->start = file_cbs->scanPtr;
+            cur_token->start = cur_file->scanptr;
 
             /* Find the length of the device function name. */
 
             end = cur_token->start;
-            position = file_cbs->scanPtr - file_cbs->filebuf;
-            for( i = 0; i < file_cbs->usedlen - position; i++ ){
+            position = cur_file->scanptr - cur_file->filebuf;
+            for( i = 0; i < cur_file->usedlen - position; i++ ){
                 if( *end == '(' ) break;
                 end++;
             }
@@ -214,46 +224,46 @@ static int get_dev_func( void )
 
             /* end points to one position beyond the end of the name. */
 
-                file_cbs->scanPtr = end;
+                cur_file->scanptr = end;
                 cur_token->count = end - cur_token->start;
                 break;
             }
 
-            if( feof( file_cbs->fp ) ) return( FAILURE );
+            if( feof( cur_file->fp ) ) return( FAILURE );
 
             /* If we get here, we ran out of data before finding the end of
              * the device function name: reset the buffer to start with the
              * start of the device function name and read more data in.
              */
 
-            scanned = cur_token->start - file_cbs->filebuf;
-            unscanned = &file_cbs->filebuf[file_cbs->usedlen] - \
-                cur_token->start;
-            memmove_s( file_cbs->filebuf, file_cbs->buflen, \
-                cur_token->start, unscanned );
+            scanned = cur_token->start - cur_file->filebuf;
+            unscanned = &cur_file->filebuf[cur_file->usedlen] - \
+                                                            cur_token->start;
+            memmove_s( cur_file->filebuf, cur_file->buflen, \
+                                                cur_token->start, unscanned );
 
-            file_cbs->usedlen = fread( &file_cbs->filebuf[ unscanned ], 1, \
-                file_cbs->buflen - unscanned, file_cbs->fp );
-            file_cbs->usedlen += unscanned;
-            if( ferror( file_cbs->fp ) ) return( FAILURE );
-            if( file_cbs->usedlen == 0 ) return( FAILURE );
+            cur_file->usedlen = fread( &cur_file->filebuf[ unscanned ], 1, \
+                                cur_file->buflen - unscanned, cur_file->fp );
+            cur_file->usedlen += unscanned;
+            if( ferror( cur_file->fp ) ) return( FAILURE );
+            if( cur_file->usedlen == 0 ) return( FAILURE );
 
-            file_cbs->scanPtr = file_cbs->filebuf;
+            cur_file->scanptr = cur_file->filebuf;
             continue;
         }
 
-        if( feof( file_cbs->fp ) ) return( FAILURE );
+        if( feof( cur_file->fp ) ) return( FAILURE );
 
         /* If we get here, then we ran out of buffer before finding the start
          * of a device function name: replace the entire buffer.
          */
 
-        file_cbs->usedlen = fread( file_cbs->filebuf, 1, \
-            file_cbs->buflen, file_cbs->fp );
-        if( ferror( file_cbs->fp ) ) return( FAILURE );
-        if( file_cbs->usedlen == 0 ) return( FAILURE );
+        cur_file->usedlen = fread( cur_file->filebuf, 1, \
+                                            cur_file->buflen, cur_file->fp );
+        if( ferror( cur_file->fp ) ) return( FAILURE );
+        if( cur_file->usedlen == 0 ) return( FAILURE );
 
-        file_cbs->scanPtr = file_cbs->filebuf;
+        cur_file->scanptr = cur_file->filebuf;
     }
     
     return( SUCCESS ) ;
@@ -304,8 +314,8 @@ static int check_directory( void )
 
         /* Process the file. */
 
-        file_cbs->fp = current_file;
-        file_cbs->scanPtr = NULL;
+        cur_file->fp = current_file;
+        cur_file->scanptr = NULL;
         ret_val = SUCCESS;
 
         while( ret_val != FAILURE ) {
@@ -427,11 +437,11 @@ int main()
 
     /* Initialize the statics, which should be globals in gendev. */
 
-    file_cbs = (filecb * ) mem_alloc( sizeof( filecb ) );
-    file_cbs->filebuf = (char * ) mem_alloc( BUF_SIZE );
-    file_cbs->buflen = BUF_SIZE;
-    file_cbs->scanPtr = NULL;
-    file_cbs->usedlen = 0;
+    cur_file = (file_info *) mem_alloc( sizeof( file_info ) );
+    cur_file->filebuf = (char * ) mem_alloc( BUF_SIZE );
+    cur_file->buflen = BUF_SIZE;
+    cur_file->scanptr = NULL;
+    cur_file->usedlen = 0;
 
     cur_token = (token *) mem_alloc( sizeof( token ) );
 
@@ -456,11 +466,11 @@ int main()
 
     free( tgt_path );
     tgt_path = NULL;
-    mem_free(file_cbs->filebuf);
-    file_cbs->filebuf = NULL;
-    mem_free(file_cbs);
-    file_cbs = NULL;
-    mem_free(cur_token);
+    mem_free( cur_file->filebuf );
+    cur_file->filebuf = NULL;
+    mem_free( cur_file );
+    cur_file = NULL;
+    mem_free( cur_token );
     cur_token = NULL;
 
     /* Print the useage if the process failed. */
