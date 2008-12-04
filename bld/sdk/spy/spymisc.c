@@ -52,6 +52,19 @@
 #endif
 
 /*
+ * Define styles if they aren't already defined.
+ */
+#ifndef BS_TYPEMASK
+    #define BS_TYPEMASK         0x000FL
+#endif
+#ifndef SS_TYPEMASK
+    #define SS_TYPEMASK         0x001FL
+#endif
+#ifndef SS_REALSIZECONTROL
+    #define SS_REALSIZECONTROL  0x0040L
+#endif
+
+/*
  * Define common controls if they aren't already defined.
  */
 #ifdef __NT__
@@ -95,6 +108,470 @@
         #define HDS_OVERFLOW                0x1000L
     #endif
 #endif
+
+typedef struct {
+    char    *name;
+    DWORD   flags;
+    DWORD   mask;
+} style_info;
+
+typedef struct {
+    char        *class_name;
+    style_info  *style_array;
+    WORD        *style_array_size;
+} class_styles;
+
+static style_info near StyleArray[] = {
+    { "WS_POPUP",           WS_POPUP,           WS_POPUP            },
+    { "WS_CHILD",           WS_CHILD,           WS_CHILD            },
+    { "WS_OVERLAPPED",      WS_OVERLAPPED,      WS_POPUP | WS_CHILD },
+    { "WS_BORDER",          WS_BORDER,          WS_BORDER           },
+    { "WS_CAPTION",         WS_CAPTION,         WS_CAPTION          },
+    { "WS_SYSMENU",         WS_SYSMENU,         WS_SYSMENU          },
+    { "WS_THICKFRAME",      WS_THICKFRAME,      WS_THICKFRAME       },
+    { "WS_MINIMIZEBOX",     WS_MINIMIZEBOX,     WS_MINIMIZEBOX      },
+    { "WS_MAXIMIZEBOX",     WS_MAXIMIZEBOX,     WS_MAXIMIZEBOX      },
+    { "WS_MINIMIZE",        WS_MINIMIZE,        WS_MINIMIZE         },
+    { "WS_VISIBLE",         WS_VISIBLE,         WS_VISIBLE          },
+    { "WS_DISABLED",        WS_DISABLED,        WS_DISABLED         },
+    { "WS_CLIPSIBLINGS",    WS_CLIPSIBLINGS,    WS_CLIPSIBLINGS     },
+    { "WS_CLIPCHILDREN",    WS_CLIPCHILDREN,    WS_CLIPCHILDREN     },
+    { "WS_MAXIMIZE",        WS_MAXIMIZE,        WS_MAXIMIZE         },
+    { "WS_DLGFRAME",        WS_DLGFRAME,        WS_DLGFRAME         },
+    { "WS_VSCROLL",         WS_VSCROLL,         WS_VSCROLL          },
+    { "WS_HSCROLL",         WS_HSCROLL,         WS_HSCROLL          },
+    { "WS_GROUP",           WS_GROUP,           WS_GROUP            },
+    { "WS_TABSTOP",         WS_TABSTOP,         WS_TABSTOP          }
+};
+
+static WORD StyleArraySize = sizeof( StyleArray ) / sizeof( style_info );
+
+static style_info near ButtonStyleArray[] = {
+    { "BS_PUSHBUTTON",      BS_PUSHBUTTON,      BS_TYPEMASK         },
+    { "BS_DEFPUSHBUTTON",   BS_DEFPUSHBUTTON,   BS_TYPEMASK         },
+    { "BS_CHECKBOX",        BS_CHECKBOX,        BS_TYPEMASK         },
+    { "BS_AUTOCHECKBOX",    BS_AUTOCHECKBOX,    BS_TYPEMASK         },
+    { "BS_RADIOBUTTON",     BS_RADIOBUTTON,     BS_TYPEMASK         },
+    { "BS_3STATE",          BS_3STATE,          BS_TYPEMASK         },
+    { "BS_AUTO3STATE",      BS_AUTO3STATE,      BS_TYPEMASK         },
+    { "BS_GROUPBOX",        BS_GROUPBOX,        BS_TYPEMASK         },
+    { "BS_USERBUTTON",      BS_USERBUTTON,      BS_TYPEMASK         },
+    { "BS_AUTORADIOBUTTON", BS_AUTORADIOBUTTON, BS_TYPEMASK         },
+    { "BS_OWNERDRAW",       BS_OWNERDRAW,       BS_TYPEMASK         },
+#ifndef __NT__
+    { "BS_LEFTTEXT",        BS_LEFTTEXT,        BS_LEFTTEXT         }
+#else
+    { "BS_LEFTTEXT",        BS_LEFTTEXT,        BS_LEFTTEXT         },
+    { "BS_TEXT",            BS_TEXT,            BS_ICON | BS_BITMAP },
+    { "BS_ICON",            BS_ICON,            BS_ICON | BS_BITMAP },
+    { "BS_BITMAP",          BS_BITMAP,          BS_ICON | BS_BITMAP },
+    { "BS_LEFT",            BS_LEFT,            BS_LEFT | BS_RIGHT  },
+    { "BS_RIGHT",           BS_RIGHT,           BS_LEFT | BS_RIGHT  },
+    { "BS_CENTER",          BS_CENTER,          BS_LEFT | BS_RIGHT  },
+    { "BS_TOP",             BS_TOP,             BS_TOP | BS_BOTTOM  },
+    { "BS_BOTTOM",          BS_BOTTOM,          BS_TOP | BS_BOTTOM  },
+    { "BS_VCENTER",         BS_VCENTER,         BS_TOP | BS_BOTTOM  },
+    { "BS_PUSHLIKE",        BS_PUSHLIKE,        BS_PUSHLIKE         },
+    { "BS_MULTILINE",       BS_MULTILINE,       BS_MULTILINE        },
+    { "BS_NOTIFY",          BS_NOTIFY,          BS_NOTIFY           },
+    { "BS_FLAT",            BS_FLAT,            BS_FLAT             }
+#endif
+};
+
+static WORD ButtonStyleArraySize = sizeof( ButtonStyleArray ) / sizeof( style_info );
+
+static style_info near EditStyleArray[] = {
+    { "ES_LEFT",        ES_LEFT,        ES_CENTER | ES_RIGHT },
+    { "ES_CENTER",      ES_CENTER,      ES_CENTER | ES_RIGHT },
+    { "ES_RIGHT",       ES_RIGHT,       ES_CENTER | ES_RIGHT },
+    { "ES_MULTILINE",   ES_MULTILINE,   ES_MULTILINE         },
+    { "ES_UPPERCASE",   ES_UPPERCASE,   ES_UPPERCASE         },
+    { "ES_LOWERCASE",   ES_LOWERCASE,   ES_LOWERCASE         },
+    { "ES_PASSWORD",    ES_PASSWORD,    ES_PASSWORD          },
+    { "ES_AUTOVSCROLL", ES_AUTOVSCROLL, ES_AUTOVSCROLL       },
+    { "ES_AUTOHSCROLL", ES_AUTOHSCROLL, ES_AUTOHSCROLL       },
+    { "ES_NOHIDESEL",   ES_NOHIDESEL,   ES_NOHIDESEL         },
+    { "ES_OEMCONVERT",  ES_OEMCONVERT,  ES_OEMCONVERT        },
+    { "ES_READONLY",    ES_READONLY,    ES_READONLY          },
+#ifndef __NT__
+    { "ES_WANTRETURN",  ES_WANTRETURN,  ES_WANTRETURN        }
+#else
+    { "ES_WANTRETURN",  ES_WANTRETURN,  ES_WANTRETURN        },
+    { "ES_NUMBER",      ES_NUMBER,      ES_NUMBER            }
+#endif
+};
+
+static WORD EditStyleArraySize = sizeof( EditStyleArray ) / sizeof( style_info );
+
+static style_info near StaticStyleArray[] = {
+    { "SS_LEFT",            SS_LEFT,            SS_TYPEMASK        },
+    { "SS_CENTER",          SS_CENTER,          SS_TYPEMASK        },
+    { "SS_RIGHT",           SS_RIGHT,           SS_TYPEMASK        },
+    { "SS_ICON",            SS_ICON,            SS_TYPEMASK        },
+    { "SS_BLACKRECT",       SS_BLACKRECT,       SS_TYPEMASK        },
+    { "SS_GRAYRECT",        SS_GRAYRECT,        SS_TYPEMASK        },
+    { "SS_WHITERECT",       SS_WHITERECT,       SS_TYPEMASK        },
+    { "SS_BLACKFRAME",      SS_BLACKFRAME,      SS_TYPEMASK        },
+    { "SS_GRAYFRAME",       SS_GRAYFRAME,       SS_TYPEMASK        },
+    { "SS_WHITEFRAME",      SS_WHITEFRAME,      SS_TYPEMASK        },
+#ifdef __NT__
+    { "SS_USERITEM",        SS_USERITEM,        SS_TYPEMASK        },
+#endif
+    { "SS_SIMPLE",          SS_SIMPLE,          SS_TYPEMASK        },
+    { "SS_LEFTNOWORDWRAP",  SS_LEFTNOWORDWRAP,  SS_TYPEMASK        },
+#ifndef __NT__
+    { "SS_NOPREFIX",        SS_NOPREFIX,        SS_NOPREFIX        }
+#else
+    { "SS_OWNERDRAW",       SS_OWNERDRAW,       SS_TYPEMASK        },
+    { "SS_BITMAP",          SS_BITMAP,          SS_TYPEMASK        },
+    { "SS_ENHMETAFILE",     SS_ENHMETAFILE,     SS_TYPEMASK        },
+    { "SS_ETCHEDHORZ",      SS_ETCHEDHORZ,      SS_TYPEMASK        },
+    { "SS_ETCHEDVERT",      SS_ETCHEDVERT,      SS_TYPEMASK        },
+    { "SS_ETCHEDFRAME",     SS_ETCHEDFRAME,     SS_TYPEMASK        },
+    { "SS_REALSIZECONTROL", SS_REALSIZECONTROL, SS_REALSIZECONTROL },
+    { "SS_NOPREFIX",        SS_NOPREFIX,        SS_NOPREFIX        },
+    { "SS_NOTIFY",          SS_NOTIFY,          SS_NOTIFY          },
+    { "SS_CENTERIMAGE",     SS_CENTERIMAGE,     SS_CENTERIMAGE     },
+    { "SS_RIGHTJUST",       SS_RIGHTJUST,       SS_RIGHTJUST       },
+    { "SS_REALSIZEIMAGE",   SS_REALSIZEIMAGE,   SS_REALSIZEIMAGE   },
+    { "SS_SUNKEN",          SS_SUNKEN,          SS_SUNKEN          },
+    { "SS_EDITCONTROL",     SS_EDITCONTROL,     SS_EDITCONTROL     },
+    { "SS_ENDELLIPSIS",     SS_ENDELLIPSIS,     SS_ELLIPSISMASK    },
+    { "SS_PATHELLIPSIS",    SS_PATHELLIPSIS,    SS_ELLIPSISMASK    },
+    { "SS_WORDELLIPSIS",    SS_WORDELLIPSIS,    SS_ELLIPSISMASK    }
+#endif
+};
+
+static WORD StaticStyleArraySize = sizeof( StaticStyleArray ) / sizeof( style_info );
+
+static style_info near ListBoxStyleArray[] = {
+    { "LBS_NOTIFY",             LBS_NOTIFY,             LBS_NOTIFY            },
+    { "LBS_SORT",               LBS_SORT,               LBS_SORT              },
+    { "LBS_NOREDRAW",           LBS_NOREDRAW,           LBS_NOREDRAW          },
+    { "LBS_MULTIPLESEL",        LBS_MULTIPLESEL,        LBS_MULTIPLESEL       },
+    { "LBS_OWNERDRAWFIXED",     LBS_OWNERDRAWFIXED,     LBS_OWNERDRAWFIXED    },
+    { "LBS_OWNERDRAWVARIABLE",  LBS_OWNERDRAWVARIABLE,  LBS_OWNERDRAWVARIABLE },
+    { "LBS_HASSTRINGS",         LBS_HASSTRINGS,         LBS_HASSTRINGS        },
+    { "LBS_USETABSTOPS",        LBS_USETABSTOPS,        LBS_USETABSTOPS       },
+    { "LBS_NOINTEGRALHEIGHT",   LBS_NOINTEGRALHEIGHT,   LBS_NOINTEGRALHEIGHT  },
+    { "LBS_MULTICOLUMN",        LBS_MULTICOLUMN,        LBS_MULTICOLUMN       },
+    { "LBS_WANTKEYBOARDINPUT",  LBS_WANTKEYBOARDINPUT,  LBS_WANTKEYBOARDINPUT },
+    { "LBS_EXTENDEDSEL",        LBS_EXTENDEDSEL,        LBS_EXTENDEDSEL       },
+#ifndef __NT__
+    { "LBS_DISABLENOSCROLL",    LBS_DISABLENOSCROLL,    LBS_DISABLENOSCROLL   }
+#else
+    { "LBS_DISABLENOSCROLL",    LBS_DISABLENOSCROLL,    LBS_DISABLENOSCROLL   },
+    { "LBS_NODATA",             LBS_NODATA,             LBS_NODATA            },
+    { "LBS_NOSEL",              LBS_NOSEL,              LBS_NOSEL             },
+    { "LBS_COMBOBOX",           LBS_COMBOBOX,           LBS_COMBOBOX          }
+#endif
+};
+
+static WORD ListBoxStyleArraySize = sizeof( ListBoxStyleArray ) / sizeof( style_info );
+
+static style_info near ComboBoxStyleArray[] = {
+    { "CBS_SIMPLE",             CBS_SIMPLE,             CBS_SIMPLE | CBS_DROPDOWN },
+    { "CBS_DROPDOWN",           CBS_DROPDOWN,           CBS_SIMPLE | CBS_DROPDOWN },
+    { "CBS_DROPDOWNLIST",       CBS_DROPDOWNLIST,       CBS_SIMPLE | CBS_DROPDOWN },
+    { "CBS_OWNERDRAWFIXED",     CBS_OWNERDRAWFIXED,     CBS_OWNERDRAWFIXED        },
+    { "CBS_OWNERDRAWVARIABLE",  CBS_OWNERDRAWVARIABLE,  CBS_OWNERDRAWVARIABLE     },
+    { "CBS_AUTOHSCROLL",        CBS_AUTOHSCROLL,        CBS_AUTOHSCROLL           },
+    { "CBS_OEMCONVERT",         CBS_OEMCONVERT,         CBS_OEMCONVERT            },
+    { "CBS_SORT",               CBS_SORT,               CBS_SORT                  },
+    { "CBS_HASSTRINGS",         CBS_HASSTRINGS,         CBS_HASSTRINGS            },
+    { "CBS_NOINTEGRALHEIGHT",   CBS_NOINTEGRALHEIGHT,   CBS_NOINTEGRALHEIGHT      },
+#ifndef __NT__
+    { "CBS_DISABLENOSCROLL",    CBS_DISABLENOSCROLL,    CBS_DISABLENOSCROLL       }
+#else
+    { "CBS_DISABLENOSCROLL",    CBS_DISABLENOSCROLL,    CBS_DISABLENOSCROLL       },
+    { "CBS_UPPERCASE",          CBS_UPPERCASE,          CBS_UPPERCASE             },
+    { "CBS_LOWERCASE",          CBS_LOWERCASE,          CBS_LOWERCASE             }
+#endif
+};
+
+static WORD ComboBoxStyleArraySize = sizeof( ComboBoxStyleArray ) / sizeof( style_info );
+
+static style_info near DialogStyleArray[] = {
+    { "DS_ABSALIGN",        DS_ABSALIGN,        DS_ABSALIGN              },
+    { "DS_SYSMODAL",        DS_SYSMODAL,        DS_SYSMODAL              },
+    { "DS_LOCALEDIT",       DS_LOCALEDIT,       DS_LOCALEDIT             },
+#ifndef __NT__
+    { "DS_SETFONT",         DS_SETFONT,         DS_SETFONT               }
+#else
+    { "DS_SETFONT",         DS_SETFONT,         DS_SETFONT | DS_FIXEDSYS },
+    { "DS_SETFOREGROUND",   DS_SETFOREGROUND,   DS_SETFOREGROUND         },
+    { "DS_3DLOOK",          DS_3DLOOK,          DS_3DLOOK                },
+    { "DS_FIXEDSYS",        DS_FIXEDSYS,        DS_SETFONT | DS_FIXEDSYS },
+    { "DS_NOFAILCREATE",    DS_NOFAILCREATE,    DS_NOFAILCREATE          },
+    { "DS_CONTROL",         DS_CONTROL,         DS_CONTROL               },
+    { "DS_CENTER",          DS_CENTER,          DS_CENTER                },
+    { "DS_CENTERMOUSE",     DS_CENTERMOUSE,     DS_CENTERMOUSE           },
+    { "DS_CONTEXTHELP",     DS_CONTEXTHELP,     DS_CONTEXTHELP           },
+    { "DS_SHELLFONT",       DS_SHELLFONT,       DS_SETFONT | DS_FIXEDSYS }
+#endif
+};
+
+static WORD DialogStyleArraySize = sizeof( DialogStyleArray ) / sizeof( style_info );
+
+#ifdef __NT__
+static style_info near AnimateStyleArray[] = {
+    { "ACS_CENTER",         ACS_CENTER,         ACS_CENTER      },
+    { "ACS_TRANSPARENT",    ACS_TRANSPARENT,    ACS_TRANSPARENT },
+    { "ACS_AUTOPLAY",       ACS_AUTOPLAY,       ACS_AUTOPLAY    },
+    { "ACS_TIMER",          ACS_TIMER,          ACS_TIMER       }
+};
+
+static WORD AnimateStyleArraySize = sizeof( AnimateStyleArray ) / sizeof( style_info );
+
+static style_info near DateTimeStyleArray[] = {
+    { "DTS_UPDOWN",             DTS_UPDOWN,         DTS_UPDOWN         },
+    { "DTS_SHOWNONE",           DTS_SHOWNONE,       DTS_SHOWNONE       },
+    { "DTS_SHORTDATECENTURYFORMAT", DTS_SHORTDATECENTURYFORMAT,
+      DTS_SHORTDATECENTURYFORMAT },
+    { "DTS_LONGDATEFORMAT",     DTS_LONGDATEFORMAT, DTS_LONGDATEFORMAT },
+    { "DTS_TIMEFORMAT",         DTS_TIMEFORMAT,     DTS_TIMEFORMAT     },
+    { "DTS_SHORTDATEFORMAT",    DTS_SHORTDATEFORMAT,
+      DTS_SHORTDATECENTURYFORMAT | DTS_LONGDATEFORMAT | DTS_TIMEFORMAT },
+    { "DTS_APPCANPARSE",        DTS_APPCANPARSE,    DTS_APPCANPARSE    },
+    { "DTS_RIGHTALIGN",         DTS_RIGHTALIGN,     DTS_RIGHTALIGN     }
+};
+
+static WORD DateTimeStyleArraySize = sizeof( DateTimeStyleArray ) / sizeof( style_info );
+
+static style_info near MonthCalStyleArray[] = {
+    { "MCS_DAYSTATE",           MCS_DAYSTATE,           MCS_DAYSTATE         },
+    { "MCS_MULTISELECT",        MCS_MULTISELECT,        MCS_MULTISELECT      },
+    { "MCS_WEEKNUMBERS",        MCS_WEEKNUMBERS,        MCS_WEEKNUMBERS      },
+    { "MCS_NOTODAYCIRCLE",      MCS_NOTODAYCIRCLE,      MCS_NOTODAYCIRCLE    },
+    { "MCS_NOTODAY",            MCS_NOTODAY,            MCS_NOTODAY          },
+    { "MCS_NOTRAILINGDATES",    MCS_NOTRAILINGDATES,    MCS_NOTRAILINGDATES  },
+    { "MCS_SHORTDAYSOFWEEK",    MCS_SHORTDAYSOFWEEK,    MCS_SHORTDAYSOFWEEK  },
+    { "MCS_NOSELCHANGEONNAV",   MCS_NOSELCHANGEONNAV,   MCS_NOSELCHANGEONNAV }
+};
+
+static WORD MonthCalStyleArraySize = sizeof( MonthCalStyleArray ) / sizeof( style_info );
+
+static style_info near ProgressBarStyleArray[] = {
+    { "PBS_SMOOTH",         PBS_SMOOTH,         PBS_SMOOTH        },
+    { "PBS_VERTICAL",       PBS_VERTICAL,       PBS_VERTICAL      },
+    { "PBS_MARQUEE",        PBS_MARQUEE,        PBS_MARQUEE       },
+    { "PBS_SMOOTHREVERSE",  PBS_SMOOTHREVERSE,  PBS_SMOOTHREVERSE }
+};
+
+static WORD ProgressBarStyleArraySize = sizeof( ProgressBarStyleArray ) /
+                                        sizeof( style_info );
+
+static style_info near RebarStyleArray[] = {
+    { "RBS_TOOLTIPS",           RBS_TOOLTIPS,           RBS_TOOLTIPS        },
+    { "RBS_VARHEIGHT",          RBS_VARHEIGHT,          RBS_VARHEIGHT       },
+    { "RBS_BANDBORDERS",        RBS_BANDBORDERS,        RBS_BANDBORDERS     },
+    { "RBS_FIXEDORDER",         RBS_FIXEDORDER,         RBS_FIXEDORDER      },
+    { "RBS_REGISTERDROP",       RBS_REGISTERDROP,       RBS_REGISTERDROP    },
+    { "RBS_AUTOSIZE",           RBS_AUTOSIZE,           RBS_AUTOSIZE        },
+    { "RBS_VERTICALGRIPPER",    RBS_VERTICALGRIPPER,    RBS_VERTICALGRIPPER },
+    { "RBS_DBLCLKTOGGLE",       RBS_DBLCLKTOGGLE,       RBS_DBLCLKTOGGLE    }
+};
+
+static WORD RebarStyleArraySize = sizeof( RebarStyleArray ) / sizeof( style_info );
+
+static style_info near StatusBarStyleArray[] = {
+    { "SBARS_SIZEGRIP", SBARS_SIZEGRIP, SBARS_SIZEGRIP },
+    { "SBARS_TOOLTIPS", SBARS_TOOLTIPS, SBARS_TOOLTIPS }
+};
+
+static WORD StatusBarStyleArraySize = sizeof( StatusBarStyleArray ) /
+                                      sizeof( style_info );
+
+static style_info near ToolbarStyleArray[] = {
+    { "TBSTYLE_TOOLTIPS",       TBSTYLE_TOOLTIPS,       TBSTYLE_TOOLTIPS     },
+    { "TBSTYLE_WRAPABLE",       TBSTYLE_WRAPABLE,       TBSTYLE_WRAPABLE     },
+    { "TBSTYLE_ALTDRAG",        TBSTYLE_ALTDRAG,        TBSTYLE_ALTDRAG      },
+    { "TBSTYLE_FLAT",           TBSTYLE_FLAT,           TBSTYLE_FLAT         },
+    { "TBSTYLE_LIST",           TBSTYLE_LIST,           TBSTYLE_LIST         },
+    { "TBSTYLE_CUSTOMERASE",    TBSTYLE_CUSTOMERASE,    TBSTYLE_CUSTOMERASE  },
+    { "TBSTYLE_REGISTERDROP",   TBSTYLE_REGISTERDROP,   TBSTYLE_REGISTERDROP },
+    { "TBSTYLE_TRANSPARENT",    TBSTYLE_TRANSPARENT,    TBSTYLE_TRANSPARENT  }
+};
+
+static WORD ToolbarStyleArraySize = sizeof( ToolbarStyleArray ) / sizeof( style_info );
+
+static style_info near ToolTipsStyleArray[] = {
+    { "TTS_ALWAYSTIP",      TTS_ALWAYSTIP,      TTS_ALWAYSTIP      },
+    { "TTS_NOPREFIX",       TTS_NOPREFIX,       TTS_NOPREFIX       },
+    { "TTS_NOANIMATE",      TTS_NOANIMATE,      TTS_NOANIMATE      },
+    { "TTS_NOFADE",         TTS_NOFADE,         TTS_NOFADE         },
+    { "TTS_BALLOON",        TTS_BALLOON,        TTS_BALLOON        },
+    { "TTS_CLOSE",          TTS_CLOSE,          TTS_CLOSE          },
+    { "TTS_USEVISUALSTYLE", TTS_USEVISUALSTYLE, TTS_USEVISUALSTYLE }
+};
+
+static WORD ToolTipsStyleArraySize = sizeof( ToolTipsStyleArray ) / sizeof( style_info );
+
+static style_info near TrackBarStyleArray[] = {
+    { "TBS_AUTOTICKS",          TBS_AUTOTICKS,          TBS_AUTOTICKS        },
+    { "TBS_VERT",               TBS_VERT,               TBS_VERT             },
+    { "TBS_LEFT",               TBS_VERT | TBS_LEFT,    TBS_VERT | TBS_LEFT  },
+    { "TBS_RIGHT",              TBS_VERT,
+      TBS_VERT | TBS_LEFT | TBS_BOTH | TBS_NOTICKS },
+    { "TBS_HORZ",               TBS_HORZ,               TBS_VERT             },
+    { "TBS_TOP",                TBS_TOP,                TBS_VERT | TBS_TOP   },
+    { "TBS_BOTTOM",             TBS_HORZ,
+      TBS_VERT | TBS_TOP | TBS_BOTH | TBS_NOTICKS },
+    { "TBS_BOTH",               TBS_BOTH,               TBS_BOTH             },
+    { "TBS_NOTICKS",            TBS_NOTICKS,            TBS_NOTICKS          },
+    { "TBS_ENABLESELRANGE",     TBS_ENABLESELRANGE,     TBS_ENABLESELRANGE   },
+    { "TBS_FIXEDLENGTH",        TBS_FIXEDLENGTH,        TBS_FIXEDLENGTH      },
+    { "TBS_NOTHUMB",            TBS_NOTHUMB,            TBS_NOTHUMB          },
+    { "TBS_TOOLTIPS",           TBS_TOOLTIPS,           TBS_TOOLTIPS         },
+    { "TBS_REVERSED",           TBS_REVERSED,           TBS_REVERSED         },
+    { "TBS_DOWNISLEFT",         TBS_DOWNISLEFT,         TBS_DOWNISLEFT       },
+    { "TBS_NOTIFYBEFOREMOVE",   TBS_NOTIFYBEFOREMOVE,   TBS_NOTIFYBEFOREMOVE },
+    { "TBS_TRANSPARENTBKGND",   TBS_TRANSPARENTBKGND,   TBS_TRANSPARENTBKGND }
+};
+
+static WORD TrackBarStyleArraySize = sizeof( TrackBarStyleArray ) / sizeof( style_info );
+
+static style_info near UpDownStyleArray[] = {
+    { "UDS_WRAP",           UDS_WRAP,           UDS_WRAP        },
+    { "UDS_SETBUDDYINT",    UDS_SETBUDDYINT,    UDS_SETBUDDYINT },
+    { "UDS_ALIGNRIGHT",     UDS_ALIGNRIGHT,     UDS_ALIGNRIGHT  },
+    { "UDS_ALIGNLEFT",      UDS_ALIGNLEFT,      UDS_ALIGNLEFT   },
+    { "UDS_AUTOBUDDY",      UDS_AUTOBUDDY,      UDS_AUTOBUDDY   },
+    { "UDS_ARROWKEYS",      UDS_ARROWKEYS,      UDS_ARROWKEYS   },
+    { "UDS_HORZ",           UDS_HORZ,           UDS_HORZ        },
+    { "UDS_NOTHOUSANDS",    UDS_NOTHOUSANDS,    UDS_NOTHOUSANDS },
+    { "UDS_HOTTRACK",       UDS_HOTTRACK,       UDS_HOTTRACK    }
+};
+
+static WORD UpDownStyleArraySize = sizeof( UpDownStyleArray ) / sizeof( style_info );
+
+static style_info near HeaderStyleArray[] = {
+    { "HDS_BUTTONS",    HDS_BUTTONS,    HDS_BUTTONS    },
+    { "HDS_HOTTRACK",   HDS_HOTTRACK,   HDS_HOTTRACK   },
+    { "HDS_HIDDEN",     HDS_HIDDEN,     HDS_HIDDEN     },
+    { "HDS_DRAGDROP",   HDS_DRAGDROP,   HDS_DRAGDROP   },
+    { "HDS_FULLDRAG",   HDS_FULLDRAG,   HDS_FULLDRAG   },
+    { "HDS_FILTERBAR",  HDS_FILTERBAR,  HDS_FILTERBAR  },
+    { "HDS_FLAT",       HDS_FLAT,       HDS_FLAT       },
+    { "HDS_CHECKBOXES", HDS_CHECKBOXES, HDS_CHECKBOXES },
+    { "HDS_NOSIZING",   HDS_NOSIZING,   HDS_NOSIZING   },
+    { "HDS_OVERFLOW",   HDS_OVERFLOW,   HDS_OVERFLOW   }
+};
+
+static WORD HeaderStyleArraySize = sizeof( HeaderStyleArray ) / sizeof( style_info );
+
+static style_info near ListViewStyleArray[] = {
+    { "LVS_ICON",               LVS_ICON,               LVS_TYPEMASK        },
+    { "LVS_REPORT",             LVS_REPORT,             LVS_TYPEMASK        },
+    { "LVS_SMALLICON",          LVS_SMALLICON,          LVS_TYPEMASK        },
+    { "LVS_LIST",               LVS_LIST,               LVS_TYPEMASK        },
+    { "LVS_SINGLESEL",          LVS_SINGLESEL,          LVS_SINGLESEL       },
+    { "LVS_SHOWSELALWAYS",      LVS_SHOWSELALWAYS,      LVS_SHOWSELALWAYS   },
+    { "LVS_SORTASCENDING",      LVS_SORTASCENDING,      LVS_SORTASCENDING   },
+    { "LVS_SORTDESCENDING",     LVS_SORTDESCENDING,     LVS_SORTDESCENDING  },
+    { "LVS_SHAREIMAGELISTS",    LVS_SHAREIMAGELISTS,    LVS_SHAREIMAGELISTS },
+    { "LVS_NOLABELWRAP",        LVS_NOLABELWRAP,        LVS_NOLABELWRAP     },
+    { "LVS_AUTOARRANGE",        LVS_AUTOARRANGE,        LVS_AUTOARRANGE     },
+    { "LVS_EDITLABELS",         LVS_EDITLABELS,         LVS_EDITLABELS      },
+    { "LVS_OWNERDRAWFIXED",     LVS_OWNERDRAWFIXED,     LVS_OWNERDRAWFIXED  },
+    { "LVS_ALIGNTOP",           LVS_ALIGNTOP,           LVS_ALIGNMASK       },
+    { "LVS_ALIGNLEFT",          LVS_ALIGNLEFT,          LVS_ALIGNMASK       },
+    { "LVS_OWNERDATA",          LVS_OWNERDATA,          LVS_OWNERDATA       },
+    { "LVS_NOSCROLL",           LVS_NOSCROLL,           LVS_NOSCROLL        },
+    { "LVS_NOCOLUMNHEADER",     LVS_NOCOLUMNHEADER,     LVS_NOCOLUMNHEADER  },
+    { "LVS_NOSORTHEADER",       LVS_NOSORTHEADER,       LVS_NOSORTHEADER    }
+};
+
+static WORD ListViewStyleArraySize = sizeof( ListViewStyleArray ) / sizeof( style_info );
+
+static style_info near TabControlStyleArray[] = {
+    { "TCS_SCROLLOPPOSITE",     TCS_SCROLLOPPOSITE,         TCS_SCROLLOPPOSITE        },
+    { "TCS_BOTTOM",             TCS_BOTTOM | TCS_VERTICAL,  TCS_BOTTOM | TCS_VERTICAL },
+    { "TCS_RIGHT",              TCS_RIGHT,                  TCS_BOTTOM | TCS_VERTICAL },
+    { "TCS_MULTISELECT",        TCS_MULTISELECT,            TCS_MULTISELECT           },
+    { "TCS_FLATBUTTONS",        TCS_FLATBUTTONS,            TCS_FLATBUTTONS           },
+    { "TCS_FORCEICONLEFT",      TCS_FORCEICONLEFT,          TCS_FORCEICONLEFT         },
+    { "TCS_FORCELABELLEFT",     TCS_FORCELABELLEFT,         TCS_FORCELABELLEFT        },
+    { "TCS_HOTTRACK",           TCS_HOTTRACK,               TCS_HOTTRACK              },
+    { "TCS_VERTICAL",           TCS_VERTICAL,               TCS_VERTICAL              },
+    { "TCS_BUTTONS",            TCS_BUTTONS,                TCS_BUTTONS               },
+    { "TCS_TABS",               TCS_TABS,                   TCS_BUTTONS               },
+    { "TCS_MULTILINE",          TCS_MULTILINE,              TCS_MULTILINE             },
+    { "TCS_SINGLELINE",         TCS_SINGLELINE,             TCS_MULTILINE             },
+    { "TCS_RIGHTJUSTIFY",       TCS_MULTILINE,
+      TCS_MULTILINE | TCS_FIXEDWIDTH | TCS_RAGGEDRIGHT },
+    { "TCS_FIXEDWIDTH",         TCS_FIXEDWIDTH,             TCS_FIXEDWIDTH            },
+    { "TCS_RAGGEDRIGHT",        TCS_RAGGEDRIGHT,            TCS_RAGGEDRIGHT           },
+    { "TCS_FOCUSONBUTTONDOWN",  TCS_FOCUSONBUTTONDOWN,      TCS_FOCUSONBUTTONDOWN     },
+    { "TCS_OWNERDRAWFIXED",     TCS_OWNERDRAWFIXED,         TCS_OWNERDRAWFIXED        },
+    { "TCS_TOOLTIPS",           TCS_TOOLTIPS,               TCS_TOOLTIPS              },
+    { "TCS_FOCUSNEVER",         TCS_FOCUSNEVER,             TCS_FOCUSNEVER            }
+};
+
+static WORD TabControlStyleArraySize = sizeof( TabControlStyleArray ) /
+                                       sizeof( style_info );
+
+static style_info near TreeViewStyleArray[] = {
+    { "TVS_HASBUTTONS",         TVS_HASBUTTONS,         TVS_HASBUTTONS      },
+    { "TVS_HASLINES",           TVS_HASLINES,           TVS_HASLINES        },
+    { "TVS_LINESATROOT",        TVS_LINESATROOT,        TVS_LINESATROOT     },
+    { "TVS_EDITLABELS",         TVS_EDITLABELS,         TVS_EDITLABELS      },
+    { "TVS_DISABLEDRAGDROP",    TVS_DISABLEDRAGDROP,    TVS_DISABLEDRAGDROP },
+    { "TVS_SHOWSELALWAYS",      TVS_SHOWSELALWAYS,      TVS_SHOWSELALWAYS   },
+    { "TVS_RTLREADING",         TVS_RTLREADING,         TVS_RTLREADING      },
+    { "TVS_NOTOOLTIPS",         TVS_NOTOOLTIPS,         TVS_NOTOOLTIPS      },
+    { "TVS_CHECKBOXES",         TVS_CHECKBOXES,         TVS_CHECKBOXES      },
+    { "TVS_TRACKSELECT",        TVS_TRACKSELECT,        TVS_TRACKSELECT     },
+    { "TVS_SINGLEEXPAND",       TVS_SINGLEEXPAND,       TVS_SINGLEEXPAND    },
+    { "TVS_INFOTIP",            TVS_INFOTIP,            TVS_INFOTIP         },
+    { "TVS_FULLROWSELECT",      TVS_FULLROWSELECT,      TVS_FULLROWSELECT   },
+    { "TVS_NOSCROLL",           TVS_NOSCROLL,           TVS_NOSCROLL        },
+    { "TVS_NONEVENHEIGHT",      TVS_NONEVENHEIGHT,      TVS_NONEVENHEIGHT   },
+    { "TVS_NOHSCROLL",          TVS_NOHSCROLL,          TVS_NOHSCROLL       }
+};
+
+static WORD TreeViewStyleArraySize = sizeof( TreeViewStyleArray ) /
+                                     sizeof( style_info );
+#endif
+
+static class_styles near ClassStyles[] = {
+    { "button",             ButtonStyleArray,       &ButtonStyleArraySize      },
+    { "edit",               EditStyleArray,         &EditStyleArraySize        },
+    { "static",             StaticStyleArray,       &StaticStyleArraySize      },
+    { "listbox",            ListBoxStyleArray,      &ListBoxStyleArraySize     },
+    { "combobox",           ComboBoxStyleArray,     &ComboBoxStyleArraySize    },
+#ifndef __NT__
+    { "#32770",             DialogStyleArray,       &DialogStyleArraySize      }
+#else
+    { "#32770",             DialogStyleArray,       &DialogStyleArraySize      },
+    { ANIMATE_CLASS,        AnimateStyleArray,      &AnimateStyleArraySize     },
+    { DATETIMEPICK_CLASS,   DateTimeStyleArray,     &DateTimeStyleArraySize    },
+    { MONTHCAL_CLASS,       MonthCalStyleArray,     &MonthCalStyleArraySize    },
+    { PROGRESS_CLASS,       ProgressBarStyleArray,  &ProgressBarStyleArraySize },
+    { REBARCLASSNAME,       RebarStyleArray,        &RebarStyleArraySize       },
+    { STATUSCLASSNAME,      StatusBarStyleArray,    &StatusBarStyleArraySize   },
+    { TOOLBARCLASSNAME,     ToolbarStyleArray,      &ToolbarStyleArraySize     },
+    { TOOLTIPS_CLASS,       ToolTipsStyleArray,     &ToolTipsStyleArraySize    },
+    { TRACKBAR_CLASS,       TrackBarStyleArray,     &TrackBarStyleArraySize    },
+    { UPDOWN_CLASS,         UpDownStyleArray,       &UpDownStyleArraySize      },
+    { WC_HEADER,            HeaderStyleArray,       &HeaderStyleArraySize      },
+    { WC_LISTVIEW,          ListViewStyleArray,     &ListViewStyleArraySize    },
+    { WC_TABCONTROL,        TabControlStyleArray,   &TabControlStyleArraySize  },
+    { WC_TREEVIEW,          TreeViewStyleArray,     &TreeViewStyleArraySize    }
+#endif
+};
+
+static WORD ClassStylesSize = sizeof( ClassStyles ) / sizeof( class_styles );
+
+static style_info near ExStyleArray[] = {
+    { "WS_EX_DLGMODALFRAME",    WS_EX_DLGMODALFRAME,    WS_EX_DLGMODALFRAME  },
+    { "WS_EX_NOPARENTNOTIFY",   WS_EX_NOPARENTNOTIFY,   WS_EX_NOPARENTNOTIFY },
+    { "WS_EX_TOPMOST",          WS_EX_TOPMOST,          WS_EX_TOPMOST        },
+    { "WS_EX_ACCEPTFILES",      WS_EX_ACCEPTFILES,      WS_EX_ACCEPTFILES    },
+    { "WS_EX_TRANSPARENT",      WS_EX_TRANSPARENT,      WS_EX_TRANSPARENT    }
+};
+
+static WORD ExStyleArraySize = sizeof( ExStyleArray ) / sizeof( style_info );
 
 /*
  * GetHexStr - convert a number to a hex string, padded out with 0's
@@ -166,769 +643,51 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
 {
     UINT        id;
     DWORD       style;
-    WORD        wstyle;
+    DWORD       exstyle;
     char        tmp[40];
     int         len;
     char        *rcstr;
+    int         i;
+    int         j;
 
     style = GetWindowLong( hwnd, GWL_STYLE );
-    wstyle = (WORD) style;
+    exstyle = GetWindowLong( hwnd, GWL_EXSTYLE );
 
     GetHexStr( str, style, 8 );
     str[8] = 0;
     sstr[0] = 0;
 
-    if( style & WS_POPUP ) {
-        strcat( sstr, "WS_POPUP " );
-    }
     if( style & WS_CHILD ) {
-        strcat( sstr, "WS_CHILD " );
         id = GET_ID( hwnd );
         rcstr = GetRCString( STR_CHILD_ID );
         sprintf( tmp, rcstr, id, UINT_STR_LEN, id );
         strcat( str, tmp );
     }
-    if( !(style & (WS_POPUP|WS_CHILD) ) ) {
-        strcat( sstr, "WS_OVERLAPPED " );
-    }
-
-    if( style & WS_BORDER ) {
-        strcat( sstr, "WS_BORDER " );
-    }
-    if( style & WS_CAPTION ) {
-        strcat( sstr, "WS_CAPTION " );
-    }
-    if( style & WS_SYSMENU ) {
-        strcat( sstr, "WS_SYSMENU " );
-    }
-    if( style & WS_THICKFRAME ) {
-        strcat( sstr, "WS_THICKFRAME " );
-    }
-    if( style & WS_MINIMIZEBOX ) {
-        strcat( sstr, "WS_MINIMIZEBOX " );
-    }
-    if( style & WS_MAXIMIZEBOX ) {
-        strcat( sstr, "WS_MAXIMIZEBOX " );
-    }
-    if( style & WS_MINIMIZE ) {
-        strcat( sstr, "WS_MINIMIZE " );
-    }
-    if( style & WS_VISIBLE ) {
-        strcat( sstr, "WS_VISIBLE " );
-    }
-    if( style & WS_DISABLED ) {
-        strcat( sstr, "WS_DISABLED " );
-    }
-    if( style & WS_CLIPSIBLINGS ) {
-        strcat( sstr, "WS_CLIPSIBLINGS " );
-    }
-    if( style & WS_CLIPCHILDREN ) {
-        strcat( sstr, "WS_CLIPCHILDREN " );
-    }
-    if( style & WS_MAXIMIZE ) {
-        strcat( sstr, "WS_MAXIMIZE " );
-    }
-    if( style & WS_DLGFRAME ) {
-        strcat( sstr, "WS_DLGFRAME " );
-    }
-    if( style & WS_VSCROLL ) {
-        strcat( sstr, "WS_VSCROLL " );
-    }
-    if( style & WS_HSCROLL ) {
-        strcat( sstr, "WS_HSCROLL " );
-    }
-    if( style & WS_GROUP ) {
-        strcat( sstr, "WS_GROUP " );
-    }
-    if( style & WS_TABSTOP ) {
-        strcat( sstr, "WS_TABSTOP " );
+    for( i = 0; i < StyleArraySize; i++ ) {
+        if( (style & StyleArray[i].mask) == StyleArray[i].flags ) {
+            strcat( sstr, StyleArray[i].name );
+            strcat( sstr, " " );
+        }
     }
 
     len = GetClassName( hwnd, tmp, sizeof( tmp ) );
     tmp[ len ] = 0;
-    if( !stricmp( tmp, "button" ) ) {
-        if( style & BS_LEFTTEXT ) {
-            strcat( sstr, "BS_LEFTTEXT " );
-        }
-        switch( wstyle & ~BS_LEFTTEXT ) {
-        case BS_PUSHBUTTON:
-            strcat( sstr, "BS_PUSHBUTTON " );
-            break;
-        case BS_DEFPUSHBUTTON:
-            strcat( sstr, "BS_DEFPUSHBUTTON " );
-            break;
-        case BS_CHECKBOX:
-            strcat( sstr, "BS_CHECKBOX " );
-            break;
-        case BS_AUTOCHECKBOX:
-            strcat( sstr, "BS_AUTOCHECKBOX " );
-            break;
-        case BS_RADIOBUTTON:
-            strcat( sstr, "BS_RADIOBUTTON " );
-            break;
-        case BS_3STATE:
-            strcat( sstr, "BS_3STATE " );
-            break;
-        case BS_AUTO3STATE:
-            strcat( sstr, "BS_AUTO3STATE " );
-            break;
-        case BS_GROUPBOX:
-            strcat( sstr, "BS_GROUPBOX " );
-            break;
-        case BS_USERBUTTON:
-            strcat( sstr, "BS_USERBUTTON " );
-            break;
-        case BS_AUTORADIOBUTTON:
-            strcat( sstr, "BS_AUTORADIOBUTTON " );
-            break;
-        case BS_OWNERDRAW:
-            strcat( sstr, "BS_OWNERDRAW " );
-            break;
-        }
-    } else if( !stricmp( tmp, "edit" ) ) {
-        if( style & ES_LEFT ) {
-            strcat( sstr, "ES_LEFT " );
-        }
-        if( style & ES_CENTER ) {
-            strcat( sstr, "ES_CENTER " );
-        }
-        if( style & ES_RIGHT ) {
-            strcat( sstr, "ES_RIGHT " );
-        }
-        if( style & ES_MULTILINE ) {
-            strcat( sstr, "ES_MULTILINE " );
-        }
-        if( style & ES_UPPERCASE ) {
-            strcat( sstr, "ES_UPPERCASE " );
-        }
-        if( style & ES_LOWERCASE ) {
-            strcat( sstr, "ES_LOWERCASE " );
-        }
-        if( style & ES_PASSWORD ) {
-            strcat( sstr, "ES_PASSWORD " );
-        }
-        if( style & ES_AUTOVSCROLL ) {
-            strcat( sstr, "ES_AUTOVSCROLL " );
-        }
-        if( style & ES_AUTOHSCROLL ) {
-            strcat( sstr, "ES_AUTOHSCROLL " );
-        }
-        if( style & ES_NOHIDESEL ) {
-            strcat( sstr, "ES_NOHIDESEL " );
-        }
-        if( style & ES_OEMCONVERT ) {
-            strcat( sstr, "ES_OEMCONVERT " );
-        }
-        if( style & ES_READONLY ) {
-            strcat( sstr, "ES_READONLY " );
-        }
-    } else if( !stricmp( tmp, "static" ) ) {
-        if( style & SS_NOPREFIX ) {
-            strcat( sstr, "SS_NOPREFIX " );
-        }
-        switch( wstyle & ~SS_NOPREFIX ) {
-        case SS_LEFT:
-            strcat( sstr, "SS_LEFT " );
-            break;
-        case SS_CENTER:
-            strcat( sstr, "SS_CENTER " );
-            break;
-        case SS_RIGHT:
-            strcat( sstr, "SS_RIGHT " );
-            break;
-        case SS_ICON:
-            strcat( sstr, "SS_ICON " );
-            break;
-        case SS_BLACKRECT:
-            strcat( sstr, "SS_BLACKRECT " );
-            break;
-        case SS_GRAYRECT:
-            strcat( sstr, "SS_GRAYRECT " );
-            break;
-        case SS_WHITERECT:
-            strcat( sstr, "SS_WHITERECT " );
-            break;
-        case SS_BLACKFRAME:
-            strcat( sstr, "SS_BLACKFRAME " );
-            break;
-        case SS_GRAYFRAME:
-            strcat( sstr, "SS_GRAYFRAME " );
-            break;
-        case SS_WHITEFRAME:
-            strcat( sstr, "SS_WHITEFRAME " );
-            break;
-//      case SS_USERITEM:
-//          strcat( sstr, "SS_USERITEM " );
-//          break;
-        case SS_SIMPLE:
-            strcat( sstr, "SS_SIMPLE " );
-            break;
-        case SS_LEFTNOWORDWRAP:
-            strcat( sstr, "SS_LEFTNOWORDWRAP " );
-            break;
-        }
-    } else if( !stricmp( tmp, "listbox" ) ) {
-        if( style & LBS_NOTIFY ) {
-            strcat( sstr, "LBS_NOTIFY " );
-        }
-        if( style & LBS_SORT ) {
-            strcat( sstr, "LBS_SORT " );
-        }
-        if( style & LBS_NOREDRAW ) {
-            strcat( sstr, "LBS_NOREDRAW " );
-        }
-        if( style & LBS_MULTIPLESEL ) {
-            strcat( sstr, "LBS_MULTIPLESEL " );
-        }
-        if( style & LBS_OWNERDRAWFIXED ) {
-            strcat( sstr, "LBS_OWNERDRAWFIXED " );
-        }
-        if( style & LBS_OWNERDRAWVARIABLE ) {
-            strcat( sstr, "LBS_OWNERDRAWVARIABLE " );
-        }
-        if( style & LBS_HASSTRINGS ) {
-            strcat( sstr, "LBS_HASSTRINGS " );
-        }
-        if( style & LBS_USETABSTOPS ) {
-            strcat( sstr, "LBS_USETABSTOPS " );
-        }
-        if( style & LBS_NOINTEGRALHEIGHT ) {
-            strcat( sstr, "LBS_NOINTEGRALHEIGHT " );
-        }
-        if( style & LBS_MULTICOLUMN ) {
-            strcat( sstr, "LBS_MULTICOLUMN " );
-        }
-        if( style & LBS_WANTKEYBOARDINPUT ) {
-            strcat( sstr, "LBS_WANTKEYBOARDINPUT " );
-        }
-        if( style & LBS_EXTENDEDSEL ) {
-            strcat( sstr, "LBS_EXTENDEDSEL " );
-        }
-        if( style & LBS_DISABLENOSCROLL ) {
-            strcat( sstr, "LBS_DISABLENOSCROLL " );
-        }
-    } else if( !stricmp( tmp, "combobox" ) ) {
-        if( style & CBS_SIMPLE ) {
-            strcat( sstr, "CBS_SIMPLE " );
-        }
-        if( style & CBS_DROPDOWN ) {
-            strcat( sstr, "CBS_DROPDOWN " );
-        }
-        if( style & CBS_DROPDOWNLIST ) {
-            strcat( sstr, "CBS_DROPDOWNLIST " );
-        }
-        if( style & CBS_OWNERDRAWFIXED ) {
-            strcat( sstr, "CBS_OWNERDRAWFIXED " );
-        }
-        if( style & CBS_OWNERDRAWVARIABLE ) {
-            strcat( sstr, "CBS_OWNERDRAWVARIABLE " );
-        }
-        if( style & CBS_AUTOHSCROLL ) {
-            strcat( sstr, "CBS_AUTOHSCROLL " );
-        }
-        if( style & CBS_OEMCONVERT ) {
-            strcat( sstr, "CBS_OEMCONVERT " );
-        }
-        if( style & CBS_SORT ) {
-            strcat( sstr, "CBS_SORT " );
-        }
-        if( style & CBS_HASSTRINGS ) {
-            strcat( sstr, "CBS_HASSTRINGS " );
-        }
-        if( style & CBS_NOINTEGRALHEIGHT ) {
-            strcat( sstr, "CBS_NOINTEGRALHEIGHT " );
-        }
-        if( style & CBS_DISABLENOSCROLL ) {
-            strcat( sstr, "CBS_DISABLENOSCROLL " );
-        }
-    } else if( !stricmp( tmp, "#32770" ) ) {
-        if( style & DS_ABSALIGN ) {
-            strcat( sstr, "DS_ABSALIGN " );
-        }
-        if( style & DS_SYSMODAL ) {
-            strcat( sstr, "DS_SYSMODAL " );
-        }
-        if( style & DS_LOCALEDIT ) {
-            strcat( sstr, "DS_LOCALEDIT " );
-        }
-        if( style & DS_SETFONT ) {
-            strcat( sstr, "DS_SETFONT " );
-        }
-#ifdef __NT__
-        if( style & DS_SETFOREGROUND ) {
-            strcat( sstr, "DS_SETFOREGROUND " );
-        }
-        if( style & DS_3DLOOK ) {
-            strcat( sstr, "DS_3DLOOK " );
-        }
-        if( style & DS_FIXEDSYS ) {
-            strcat( sstr, "DS_FIXEDSYS " );
-        }
-        if( style & DS_NOFAILCREATE ) {
-            strcat( sstr, "DS_NOFAILCREATE " );
-        }
-        if( style & DS_CONTROL ) {
-            strcat( sstr, "DS_CONTROL " );
-        }
-        if( style & DS_CENTER ) {
-            strcat( sstr, "DS_CENTER " );
-        }
-        if( style & DS_CENTERMOUSE ) {
-            strcat( sstr, "DS_CENTERMOUSE " );
-        }
-        if( style & DS_CONTEXTHELP ) {
-            strcat( sstr, "DS_CONTEXTHELP " );
-        }
-        if( (style & DS_SHELLFONT) == DS_SHELLFONT ) {
-            strcat( sstr, "DS_SHELLFONT " );
-        }
-    } else if( !stricmp( tmp, ANIMATE_CLASS ) ) {
-        if( style & ACS_CENTER ) {
-            strcat( sstr, "ACS_CENTER " );
-        }
-        if( style & ACS_TRANSPARENT ) {
-            strcat( sstr, "ACS_TRANSPARENT " );
-        }
-        if( style & ACS_AUTOPLAY ) {
-            strcat( sstr, "ACS_AUTOPLAY " );
-        }
-        if( style & ACS_TIMER ) {
-            strcat( sstr, "ACS_TIMER " );
-        }
-    } else if( !stricmp( tmp, DATETIMEPICK_CLASS ) ) {
-        if( style & DTS_UPDOWN ) {
-            strcat( sstr, "DTS_UPDOWN " );
-        }
-        if( style & DTS_SHOWNONE ) {
-            strcat( sstr, "DTS_SHOWNONE " );
-        }
-        if( (style & DTS_SHORTDATECENTURYFORMAT) == DTS_SHORTDATECENTURYFORMAT ) {
-            strcat( sstr, "DTS_SHORTDATECENTURYFORMAT " );
-        } else if( style & DTS_LONGDATEFORMAT ) {
-            strcat( sstr, "DTS_LONGDATEFORMAT " );
-        } else if( (style & DTS_TIMEFORMAT) == DTS_TIMEFORMAT ) {
-            strcat( sstr, "DTS_TIMEFORMAT " );
-        } else {
-            strcat( sstr, "DTS_SHORTDATEFORMAT " );
-        }
-        if( style & DTS_APPCANPARSE ) {
-            strcat( sstr, "DTS_APPCANPARSE " );
-        }
-        if( style & DTS_RIGHTALIGN ) {
-            strcat( sstr, "DTS_RIGHTALIGN " );
-        }
-    } else if( !stricmp( tmp, MONTHCAL_CLASS ) ) {
-        if( style & MCS_DAYSTATE ) {
-            strcat( sstr, "MCS_DAYSTATE " );
-        }
-        if( style & MCS_MULTISELECT ) {
-            strcat( sstr, "MCS_MULTISELECT " );
-        }
-        if( style & MCS_WEEKNUMBERS ) {
-            strcat( sstr, "MCS_WEEKNUMBERS " );
-        }
-        if( style & MCS_NOTODAYCIRCLE ) {
-            strcat( sstr, "MCS_NOTODAYCIRCLE " );
-        }
-        if( style & MCS_NOTODAY ) {
-            strcat( sstr, "MCS_NOTODAY " );
-        }
-        if( style & MCS_NOTRAILINGDATES ) {
-            strcat( sstr, "MCS_NOTRAILINGDATES " );
-        }
-        if( style & MCS_SHORTDAYSOFWEEK ) {
-            strcat( sstr, "MCS_SHORTDAYSOFWEEK " );
-        }
-        if( style & MCS_NOSELCHANGEONNAV ) {
-            strcat( sstr, "MCS_NOSELCHANGEONNAV " );
-        }
-    } else if( !stricmp( tmp, PROGRESS_CLASS ) ) {
-        if( style & PBS_SMOOTH ) {
-            strcat( sstr, "PBS_SMOOTH " );
-        }
-        if( style & PBS_VERTICAL ) {
-            strcat( sstr, "PBS_VERTICAL " );
-        }
-        if( style & PBS_MARQUEE ) {
-            strcat( sstr, "PBS_MARQUEE " );
-        }
-        if( style & PBS_SMOOTHREVERSE ) {
-            strcat( sstr, "PBS_SMOOTHREVERSE " );
-        }
-    } else if( !stricmp( tmp, REBARCLASSNAME ) ) {
-        if( style & RBS_TOOLTIPS ) {
-            strcat( sstr, "RBS_TOOLTIPS " );
-        }
-        if( style & RBS_VARHEIGHT ) {
-            strcat( sstr, "RBS_VARHEIGHT " );
-        }
-        if( style & RBS_BANDBORDERS ) {
-            strcat( sstr, "RBS_BANDBORDERS " );
-        }
-        if( style & RBS_FIXEDORDER ) {
-            strcat( sstr, "RBS_FIXEDORDER " );
-        }
-        if( style & RBS_REGISTERDROP ) {
-            strcat( sstr, "RBS_REGISTERDROP " );
-        }
-        if( style & RBS_AUTOSIZE ) {
-            strcat( sstr, "RBS_AUTOSIZE " );
-        }
-        if( style & RBS_VERTICALGRIPPER ) {
-            strcat( sstr, "RBS_VERTICALGRIPPER " );
-        }
-        if( style & RBS_DBLCLKTOGGLE ) {
-            strcat( sstr, "RBS_DBLCLKTOGGLE " );
-        }
-    } else if( !stricmp( tmp, STATUSCLASSNAME ) ) {
-        if( style & SBARS_SIZEGRIP ) {
-            strcat( sstr, "SBARS_SIZEGRIP " );
-        }
-        if( style & SBARS_TOOLTIPS ) {
-            strcat( sstr, "SBARS_TOOLTIPS " );
-        }
-    } else if( !stricmp( tmp, TOOLBARCLASSNAME ) ) {
-        if( style & TBSTYLE_TOOLTIPS ) {
-            strcat( sstr, "TBSTYLE_TOOLTIPS " );
-        }
-        if( style & TBSTYLE_WRAPABLE ) {
-            strcat( sstr, "TBSTYLE_WRAPABLE " );
-        }
-        if( style & TBSTYLE_ALTDRAG ) {
-            strcat( sstr, "TBSTYLE_ALTDRAG " );
-        }
-        if( style & TBSTYLE_FLAT ) {
-            strcat( sstr, "TBSTYLE_FLAT " );
-        }
-        if( style & TBSTYLE_LIST ) {
-            strcat( sstr, "TBSTYLE_LIST " );
-        }
-        if( style & TBSTYLE_CUSTOMERASE ) {
-            strcat( sstr, "TBSTYLE_CUSTOMERASE " );
-        }
-        if( style & TBSTYLE_REGISTERDROP ) {
-            strcat( sstr, "TBSTYLE_REGISTERDROP " );
-        }
-        if( style & TBSTYLE_TRANSPARENT ) {
-            strcat( sstr, "TBSTYLE_TRANSPARENT " );
-        }
-    } else if( !stricmp( tmp, TOOLTIPS_CLASS ) ) {
-        if( style & TTS_ALWAYSTIP ) {
-            strcat( sstr, "TTS_ALWAYSTIP " );
-        }
-        if( style & TTS_NOPREFIX ) {
-            strcat( sstr, "TTS_NOPREFIX " );
-        }
-        if( style & TTS_NOANIMATE ) {
-            strcat( sstr, "TTS_NOANIMATE " );
-        }
-        if( style & TTS_NOFADE ) {
-            strcat( sstr, "TTS_NOFADE " );
-        }
-        if( style & TTS_BALLOON ) {
-            strcat( sstr, "TTS_BALLOON " );
-        }
-        if( style & TTS_CLOSE ) {
-            strcat( sstr, "TTS_CLOSE " );
-        }
-        if( style & TTS_USEVISUALSTYLE ) {
-            strcat( sstr, "TTS_USEVISUALSTYLE " );
-        }
-    } else if( !stricmp( tmp, TRACKBAR_CLASS ) ) {
-        if( style & TBS_AUTOTICKS ) {
-            strcat( sstr, "TBS_AUTOTICKS " );
-        }
-        if( style & TBS_VERT ) {
-            strcat( sstr, "TBS_VERT " );
-            if( style & TBS_LEFT ) {
-                strcat( sstr, "TBS_LEFT " );
-            } else if( !(style & (TBS_BOTH | TBS_NOTICKS)) ) {
-                strcat( sstr, "TBS_RIGHT " );
-            }
-        } else {
-            strcat( sstr, "TBS_HORZ " );
-            if( style & TBS_TOP ) {
-                strcat( sstr, "TBS_TOP " );
-            } else if( !(style & (TBS_BOTH | TBS_NOTICKS)) ) {
-                strcat( sstr, "TBS_BOTTOM " );
+    for( i = 0; i < ClassStylesSize; i++ ) {
+        if( !stricmp( tmp, ClassStyles[i].class_name ) ) {
+            for( j = 0; j < *ClassStyles[i].style_array_size; j++ ) {
+                if( (style & ClassStyles[i].style_array[j].mask) ==
+                    ClassStyles[i].style_array[j].flags ) {
+                    strcat( sstr, ClassStyles[i].style_array[j].name );
+                    strcat( sstr, " " );
+                }
             }
         }
-        if( style & TBS_BOTH ) {
-            strcat( sstr, "TBS_BOTH " );
-        }
-        if( style & TBS_NOTICKS ) {
-            strcat( sstr, "TBS_NOTICKS " );
-        }
-        if( style & TBS_ENABLESELRANGE ) {
-            strcat( sstr, "TBS_ENABLESELRANGE " );
-        }
-        if( style & TBS_FIXEDLENGTH ) {
-            strcat( sstr, "TBS_FIXEDLENGTH " );
-        }
-        if( style & TBS_NOTHUMB ) {
-            strcat( sstr, "TBS_NOTHUMB " );
-        }
-        if( style & TBS_TOOLTIPS ) {
-            strcat( sstr, "TBS_TOOLTIPS " );
-        }
-        if( style & TBS_REVERSED ) {
-            strcat( sstr, "TBS_REVERSED " );
-        }
-        if( style & TBS_DOWNISLEFT ) {
-            strcat( sstr, "TBS_DOWNISLEFT " );
-        }
-        if( style & TBS_NOTIFYBEFOREMOVE ) {
-            strcat( sstr, "TBS_NOTIFYBEFOREMOVE " );
-        }
-        if( style & TBS_TRANSPARENTBKGND ) {
-            strcat( sstr, "TBS_TRANSPARENTBKGND " );
-        }
-    } else if( !stricmp( tmp, UPDOWN_CLASS ) ) {
-        if( style & UDS_WRAP ) {
-            strcat( sstr, "UDS_WRAP " );
-        }
-        if( style & UDS_SETBUDDYINT ) {
-            strcat( sstr, "UDS_SETBUDDYINT " );
-        }
-        if( style & UDS_ALIGNRIGHT ) {
-            strcat( sstr, "UDS_ALIGNRIGHT " );
-        }
-        if( style & UDS_ALIGNLEFT ) {
-            strcat( sstr, "UDS_ALIGNLEFT " );
-        }
-        if( style & UDS_AUTOBUDDY ) {
-            strcat( sstr, "UDS_AUTOBUDDY " );
-        }
-        if( style & UDS_ARROWKEYS ) {
-            strcat( sstr, "UDS_ARROWKEYS " );
-        }
-        if( style & UDS_HORZ ) {
-            strcat( sstr, "UDS_HORZ " );
-        }
-        if( style & UDS_NOTHOUSANDS ) {
-            strcat( sstr, "UDS_NOTHOUSANDS " );
-        }
-        if( style & UDS_HOTTRACK ) {
-            strcat( sstr, "UDS_HOTTRACK " );
-        }
-    } else if( !stricmp( tmp, WC_HEADER ) ) {
-        if( style & HDS_BUTTONS ) {
-            strcat( sstr, "HDS_BUTTONS " );
-        }
-        if( style & HDS_HOTTRACK ) {
-            strcat( sstr, "HDS_HOTTRACK " );
-        }
-        if( style & HDS_HIDDEN ) {
-            strcat( sstr, "HDS_HIDDEN " );
-        }
-        if( style & HDS_DRAGDROP ) {
-            strcat( sstr, "HDS_DRAGDROP " );
-        }
-        if( style & HDS_FULLDRAG ) {
-            strcat( sstr, "HDS_FULLDRAG " );
-        }
-        if( style & HDS_FILTERBAR ) {
-            strcat( sstr, "HDS_FILTERBAR " );
-        }
-        if( style & HDS_FLAT ) {
-            strcat( sstr, "HDS_FLAT " );
-        }
-        if( style & HDS_CHECKBOXES ) {
-            strcat( sstr, "HDS_CHECKBOXES " );
-        }
-        if( style & HDS_NOSIZING ) {
-            strcat( sstr, "HDS_NOSIZING " );
-        }
-        if( style & HDS_OVERFLOW ) {
-            strcat( sstr, "HDS_OVERFLOW " );
-        }
-    } else if( !stricmp( tmp, WC_LISTVIEW ) ) {
-        switch( style & LVS_TYPEMASK ) {
-        case LVS_ICON:
-            strcat( sstr, "LVS_ICON " );
-            break;
-        case LVS_REPORT:
-            strcat( sstr, "LVS_REPORT " );
-            break;
-        case LVS_SMALLICON:
-            strcat( sstr, "LVS_SMALLICON " );
-            break;
-        case LVS_LIST:
-            strcat( sstr, "LVS_LIST " );
-            break;
-        }
-        if( style & LVS_SINGLESEL ) {
-            strcat( sstr, "LVS_SINGLESEL " );
-        }
-        if( style & LVS_SHOWSELALWAYS ) {
-            strcat( sstr, "LVS_SHOWSELALWAYS " );
-        }
-        if( style & LVS_SORTASCENDING ) {
-            strcat( sstr, "LVS_SORTASCENDING " );
-        }
-        if( style & LVS_SORTDESCENDING ) {
-            strcat( sstr, "LVS_SORTDESCENDING " );
-        }
-        if( style & LVS_SHAREIMAGELISTS ) {
-            strcat( sstr, "LVS_SHAREIMAGELISTS " );
-        }
-        if( style & LVS_NOLABELWRAP ) {
-            strcat( sstr, "LVS_NOLABELWRAP " );
-        }
-        if( style & LVS_AUTOARRANGE ) {
-            strcat( sstr, "LVS_AUTOARRANGE " );
-        }
-        if( style & LVS_EDITLABELS ) {
-            strcat( sstr, "LVS_EDITLABELS " );
-        }
-        if( style & LVS_OWNERDRAWFIXED ) {
-            strcat( sstr, "LVS_OWNERDRAWFIXED " );
-        }
-        switch( style & LVS_ALIGNMASK ) {
-        case LVS_ALIGNTOP:
-            strcat( sstr, "LVS_ALIGNTOP " );
-            break;
-        case LVS_ALIGNLEFT:
-            strcat( sstr, "LVS_ALIGNLEFT " );
-            break;
-        }
-        if( style & LVS_OWNERDATA ) {
-            strcat( sstr, "LVS_OWNERDATA " );
-        }
-        if( style & LVS_NOSCROLL ) {
-            strcat( sstr, "LVS_NOSCROLL " );
-        }
-        if( style & LVS_NOCOLUMNHEADER ) {
-            strcat( sstr, "LVS_NOCOLUMNHEADER " );
-        }
-        if( style & LVS_NOSORTHEADER ) {
-            strcat( sstr, "LVS_NOSORTHEADER " );
-        }
-    } else if( !stricmp( tmp, WC_TABCONTROL ) ) {
-        if( style & TCS_SCROLLOPPOSITE ) {
-            strcat( sstr, "TCS_SCROLLOPPOSITE " );
-        }
-        if( style & TCS_BOTTOM ) {
-            if( style & TCS_VERTICAL ) {
-                strcat( sstr, "TCS_RIGHT " );
-            } else {
-                strcat( sstr, "TCS_BOTTOM " );
-            }
-        }
-        if( style & TCS_MULTISELECT ) {
-            strcat( sstr, "TCS_MULTISELECT " );
-        }
-        if( style & TCS_FLATBUTTONS ) {
-            strcat( sstr, "TCS_FLATBUTTONS " );
-        }
-        if( style & TCS_FORCEICONLEFT ) {
-            strcat( sstr, "TCS_FORCEICONLEFT " );
-        }
-        if( style & TCS_FORCELABELLEFT ) {
-            strcat( sstr, "TCS_FORCELABELLEFT " );
-        }
-        if( style & TCS_HOTTRACK ) {
-            strcat( sstr, "TCS_HOTTRACK " );
-        }
-        if( style & TCS_VERTICAL ) {
-            strcat( sstr, "TCS_VERTICAL " );
-        }
-        if( style & TCS_BUTTONS ) {
-            strcat( sstr, "TCS_BUTTONS " );
-        } else {
-            strcat( sstr, "TCS_TABS " );
-        }
-        if( style & TCS_MULTILINE ) {
-            strcat( sstr, "TCS_MULTILINE " );
-        } else {
-            strcat( sstr, "TCS_SINGLELINE " );
-        }
-        if( !(style & (TCS_FIXEDWIDTH | TCS_RAGGEDRIGHT)) && (style & TCS_MULTILINE) ) {
-            strcat( sstr, "TCS_RIGHTJUSTIFY " );
-        }
-        if( style & TCS_FIXEDWIDTH ) {
-            strcat( sstr, "TCS_FIXEDWIDTH " );
-        }
-        if( style & TCS_RAGGEDRIGHT ) {
-            strcat( sstr, "TCS_RAGGEDRIGHT " );
-        }
-        if( style & TCS_FOCUSONBUTTONDOWN ) {
-            strcat( sstr, "TCS_FOCUSONBUTTONDOWN " );
-        }
-        if( style & TCS_OWNERDRAWFIXED ) {
-            strcat( sstr, "TCS_OWNERDRAWFIXED " );
-        }
-        if( style & TCS_TOOLTIPS ) {
-            strcat( sstr, "TCS_TOOLTIPS " );
-        }
-        if( style & TCS_FOCUSNEVER ) {
-            strcat( sstr, "TCS_FOCUSNEVER " );
-        }
-    } else if( !stricmp( tmp, WC_TREEVIEW ) ) {
-        if( style & TVS_HASBUTTONS ) {
-            strcat( sstr, "TVS_HASBUTTONS " );
-        }
-        if( style & TVS_HASLINES ) {
-            strcat( sstr, "TVS_HASLINES " );
-        }
-        if( style & TVS_LINESATROOT ) {
-            strcat( sstr, "TVS_LINESATROOT " );
-        }
-        if( style & TVS_EDITLABELS ) {
-            strcat( sstr, "TVS_EDITLABELS " );
-        }
-        if( style & TVS_DISABLEDRAGDROP ) {
-            strcat( sstr, "TVS_DISABLEDRAGDROP " );
-        }
-        if( style & TVS_SHOWSELALWAYS ) {
-            strcat( sstr, "TVS_SHOWSELALWAYS " );
-        }
-        if( style & TVS_RTLREADING ) {
-            strcat( sstr, "TVS_RTLREADING " );
-        }
-        if( style & TVS_NOTOOLTIPS ) {
-            strcat( sstr, "TVS_NOTOOLTIPS " );
-        }
-        if( style & TVS_CHECKBOXES ) {
-            strcat( sstr, "TVS_CHECKBOXES " );
-        }
-        if( style & TVS_TRACKSELECT ) {
-            strcat( sstr, "TVS_TRACKSELECT " );
-        }
-        if( style & TVS_SINGLEEXPAND ) {
-            strcat( sstr, "TVS_SINGLEEXPAND " );
-        }
-        if( style & TVS_INFOTIP ) {
-            strcat( sstr, "TVS_INFOTIP " );
-        }
-        if( style & TVS_FULLROWSELECT ) {
-            strcat( sstr, "TVS_FULLROWSELECT " );
-        }
-        if( style & TVS_NOSCROLL ) {
-            strcat( sstr, "TVS_NOSCROLL " );
-        }
-        if( style & TVS_NONEVENHEIGHT ) {
-            strcat( sstr, "TVS_NONEVENHEIGHT " );
-        }
-        if( style & TVS_NOHSCROLL ) {
-            strcat( sstr, "TVS_NOHSCROLL " );
-        }
-#endif
-    } else {
-        if( style & WS_EX_DLGMODALFRAME ) {
-            strcat( sstr, "WS_EX_DLGMODALFRAME " );
-        }
-        if( style & WS_EX_NOPARENTNOTIFY ) {
-            strcat( sstr, "WS_EX_NOPARENTNOTIFY " );
-        }
-        if( style & WS_EX_TOPMOST ) {
-            strcat( sstr, "WS_EX_TOPMOST " );
-        }
-        if( style & WS_EX_ACCEPTFILES ) {
-            strcat( sstr, "WS_EX_ACCEPTFILES " );
-        }
-        if( style & WS_EX_TRANSPARENT ) {
-            strcat( sstr, "WS_EX_TRANSPARENT " );
+    }
+
+    for( i = 0; i < ExStyleArraySize; i++ ) {
+        if( (exstyle & ExStyleArray[i].mask) == ExStyleArray[i].flags ) {
+            strcat( sstr, ExStyleArray[i].name );
+            strcat( sstr, " " );
         }
     }
 

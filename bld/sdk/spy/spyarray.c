@@ -929,6 +929,8 @@ static message near DateTimeMessageArray[] = {
 static WORD DateTimeMessageArraySize = sizeof( DateTimeMessageArray ) /
                                        sizeof( message );
 
+#endif
+
 class_messages near ClassMessages[] = {
     { "edit",               EditMessageArray,           &EditMessageArraySize           },
     { "button",             ButtonMessageArray,         &ButtonMessageArraySize         },
@@ -959,6 +961,4 @@ class_messages near ClassMessages[] = {
 };
 
 WORD ClassMessagesSize = sizeof( ClassMessages ) / sizeof( class_messages );
-
-#endif
 
