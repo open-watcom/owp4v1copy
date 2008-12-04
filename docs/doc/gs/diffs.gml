@@ -10,9 +10,211 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2007/06/25
+:cmt. Reflects main Perforce branch as of 2008/10/27
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
+.*
+.*
+.section Differences from Open Watcom Version 1.7
+.*
+.np
+Following is a list of changes made in &product 1.8:
+.begbull
+.bull
+The C compiler now adds location information about enumerated symbols in
+appropriate diagnostics.
+.bull
+The C compiler has been improved with respect to the handling of near/far
+pointers, especially when converting or comparing pointers and integers of
+different sizes.
+.bull
+The C compiler now properly recognizes functions that do not return, such as
+longjmp(), and correctly diagnoses control flow issues such as unreachable
+code or missing return statements.
+.bull
+The C compiler now supports a #pragma alias. This pragma emits alias records
+into the object file for processing by the linker.
+.bull
+The C compiler now has larger capacity and can compile some complex source
+files that previously caused out of memory errors (E1064).
+.bull
+The C compiler now always warns about unprototyped functions (W131).
+Previously, some forgivable instances of missing prototypes were undiagnosed
+by default, which caused users to write non-portable code usually by accident.
+.bull
+Warning W139 (Divisor for modulo or division operation is zero) has been added
+to the C compiler. This warning is triggered whenever the right operand of an
+integer division or modulo operation is a constant expression with the value
+of zero.
+.bull
+The handling of pragam aux is now correct in cases where code is emitted and a
+function body already exists for the corresponding symbolic name.
+.bull
+Various fixes to the handling of the include_alias pragma have been made.
+.bull
+The C and C++ compilers now have diagnostics for meaningless comparision of
+64-bit and bit-field operands.
+.bull
+The C and C++ compilers now have conversion tables from CP=1250,1252
+(Latin-2,1 for Windows ANSI) to Unicode to support Windows programming.
+.bull
+The C++ compiler now supports the explicit specification of function template
+arguments. For example: f<T>().
+.bull
+The C++ compiler now uses lazy instantiation for class templates and template
+members. Only the members actually used are instantiated.
+.bull
+The C++ compiler now allows member templates to be defined outside their
+class.
+.bull
+Numerous bugs in the C++ compiler have been fixed.
+.bull
+The C++ compiler allows a class declaration with modifiers to have those
+modifiers propagate into the class definition.
+.bull
+When -SH switch is used with the Fortran compiler, the default size of an
+integer constant is now INTEGER*2.
+.bull
+The Fortran compiler no longer crashes when equivalencing common/global with
+automatics.
+.bull
+Fortran processing for the text record EOL has been normalized. On UNIX
+systems write/seek uses LF and read uses LF or CRLF. On non-UNIX systems
+write/seek uses CRLF and read uses LF or CRLF.
+.bull
+Various code generation bug fixes to both the 16-bit and 32-bit compilers have
+been made.
+.bull
+The Win32 headers and libraries are now Open Watcom's own internal version.
+The MinGW headers and libraries are no longer being used. The new headers and
+libraries provider greater compatibility with the Microsoft SDK and better
+support for Microsoft Vista.
+.bull
+The version of Causeway in the official distribution is now version 4.03. 
+.bull
+The Linux run time libraries now have recvfrom() and sendto() implementations.
+.bull
+A POSIX compatible fnmatch() function and a corresponding fnmatch.h header has
+been added.
+.bull
+The _dos_getfileattr() function no longer crashes in large data models on
+16-bit DOS and Windows.
+.bull
+The C run time library now has implementations of the following functions to
+improve compatibility with other compilers: _chmod, _chsize, _creat, _dup2,
+_eof, _filelength, _isatty, _read, _sopen, _tell, _umask, _unlink, and _write.
+.bull
+The date and time arguments to _dos_getftime() and _dos_setftime() are now
+using 'unsigned int' type instead of 'unsigned short'. This change has been
+made to improve compatibility with other compilers.
+.bull
+The segment argument used with _dos_allocmem(), _dos_freemem() and
+_dos_setblock() is now unsigned int instead of unsigned short. This change was
+made for compatibility with other compilers.
+.bull
+The Fortran run time environment now works on Linux.
+.bull
+The Linux Fortran run time libraries now have FSYSTEM and FSPAWN
+implementations.
+.bull
+The Fortran run time now exposes the saved stack pointer for when crashes
+occur in the IO subsystems.
+.bull
+The debugger's options context menu now has an option to allow all child nodes
+to be expanded recursively.
+.bull
+The debugger now uses the full size of the type when displaying hexadecimal
+values (for example 0x03 instead of 0x3).
+.bull
+The debugger now has a new menu entry to change the display format of all
+values in an array (all hex or all decimal).
+.bull
+The debugger now supports break on write rather than just break on change. The
+trap must support exact breakpoints for this to happen.
+.bull
+The Windows debugger now properly handles quoted program names.
+.bull
+The Windows debugger now has proper color support.
+.bull
+The NetWare TCP server and trap have been updated for NW6.5SP7 with the latest
+libcpre.obj file.
+.bull
+The DOS real-mode trap file (std.trp) now correctly displays high parts of
+32-bit registers on 386+ CPUs. Previously, the high parts were always
+displayed as zeros.
+.bull
+WLIB now has a new -pa option to set up library page size automaticaly to
+optimal size.
+.bull
+WLIB now handles COFF import libraries more correctly.
+.bull
+WCL now properly handles the -fd and -fm options without the file name
+specified.
+.bull
+WASM now handles EXTERNDEF directives properly; an EXTDEF record is created
+only if the symbol is actually referenced.
+.bull
+WASM now handles the auto-dependency filename properly. 
+.bull
+WASM now implicitly creates the __UNIX__ macro for the BSD target as it has
+for LINUX and QNX.
+.bull
+The internal version numbers for WASM and WMAKE are now compatible with that
+used by the C and C++ compilers. Specifically the macro __WASM__ has the value
+1280 for WASM and the macro __VERSION__ has the value 1280 for WMAKE.
+.bull
+The 32-bit DOS WD and WPROF can now be used with DOS/4G 2.x. The DOS4GOPTIONS
+settings are no longer exported. Users may still override the defaults by
+supplying their own wd.ini and wprof.ini, respectively. These files must be in
+the appropriate format for the DOS/4G version used. Note that this does not
+affect DOS/4GW users.
+.bull
+WLINK now handles offsets and groups larger than 64 KB for 32 bit code and 16
+bit targets.
+.bull
+WLINK now ignores fixup displacement when the target relocation is absolute.
+This is required for compatibility with object files generated by MASM 5.1.
+.bull
+WLINK now properly handles the alignment of the last segment in a group if the
+last segment fragment is blank.
+.bull
+WLINK can now use the WLINK_LNK environment variable to override the default
+directive file name (wlink.lnk). If the specified file isn't found then
+default file is used as usual.
+.bull
+WLINK now properly emits segments overlaped by groups to output file.
+.bull
+WLINK now properly handles imported symbols that are locally defined with the
+dllimport specifier in PE formatted files.
+.bull
+WRC on Far-Eastern NT-based systems now honors the DBCS encoding specified on
+the command line.
+.bull
+The text editor now supports syntax highlighting for resource files.
+.bull
+The Fgrep dialog box in graphical editor now has a browse button to display
+the standard browse for folder dialog box on versions of Windows that support
+it.
+.bull
+The ide2make utility has been added to the Open Watcom distribution. This
+utility converts IDE project files to make files.
+.bull
+The exe2bin utility now performs properly if relocation items are unsorted.
+.bull
+The installer now generates a batch file that automatically sets the
+environment variables used by the Open Watcom tools.
+.endbull
+.*
+.section Changes in 1.8 that may Require Recompilation
+.*
+.begnote
+.note _dos_getftime and _dos_setftime functions
+32-bit users of _dos_getftime() and _dos_setftime() need to recompile.
+Consider using stat()/utime() instead of the non-portable functions.
+.note _dos_allocmem and _dos_freemem functions
+32-bit DOS users of _dos_allocmem() and _dos_freemem() need to recompile.
+Consider not using this functions in the first place.
+.endnote
 .*
 .*
 .section Differences from Open Watcom Version 1.6
