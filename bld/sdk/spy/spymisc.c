@@ -573,6 +573,24 @@ static style_info near ExStyleArray[] = {
 
 static WORD ExStyleArraySize = sizeof( ExStyleArray ) / sizeof( style_info );
 
+static style_info near ClassStyleArray[] = {
+    { "CS_VREDRAW",         CS_VREDRAW,         CS_VREDRAW         },
+    { "CS_HREDRAW",         CS_HREDRAW,         CS_HREDRAW         },
+    { "CS_KEYCVTWINDOW",    CS_KEYCVTWINDOW,    CS_KEYCVTWINDOW    },
+    { "CS_DBLCLKS",         CS_DBLCLKS,         CS_DBLCLKS         },
+    { "CS_OWNDC",           CS_OWNDC,           CS_OWNDC           },
+    { "CS_CLASSDC",         CS_CLASSDC,         CS_CLASSDC         },
+    { "CS_PARENTDC",        CS_PARENTDC,        CS_PARENTDC        },
+    { "CS_NOKEYCVT",        CS_NOKEYCVT,        CS_NOKEYCVT        },
+    { "CS_NOCLOSE",         CS_NOCLOSE,         CS_NOCLOSE         },
+    { "CS_SAVEBITS",        CS_SAVEBITS,        CS_SAVEBITS        },
+    { "CS_BYTEALIGNCLIENT", CS_BYTEALIGNCLIENT, CS_BYTEALIGNCLIENT },
+    { "CS_BYTEALIGNWINDOW", CS_BYTEALIGNWINDOW, CS_BYTEALIGNWINDOW },
+    { "CS_GLOBALCLASS",     CS_GLOBALCLASS,     CS_GLOBALCLASS     }
+};
+
+static WORD ClassStyleArraySize = sizeof( ClassStyleArray ) / sizeof( style_info );
+
 /*
  * GetHexStr - convert a number to a hex string, padded out with 0's
  */
@@ -707,6 +725,7 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
 void GetClassStyleString( HWND hwnd, char *str, char *sstr )
 {
     STYLE_TYPE          style;
+    int                 i;
 
     style = GET_CLASS_STYLE( hwnd );
 
@@ -714,44 +733,11 @@ void GetClassStyleString( HWND hwnd, char *str, char *sstr )
     str[ STYLE_HEX_LEN ] = 0;
     sstr[0] = 0;
 
-    if( style & CS_VREDRAW ) {
-        strcat( sstr, "CS_VREDRAW " );
-    }
-    if( style & CS_HREDRAW ) {
-        strcat( sstr, "CS_HREDRAW " );
-    }
-    if( style & CS_KEYCVTWINDOW ) {
-        strcat( sstr, "CS_KEYCVTWINDOW " );
-    }
-    if( style & CS_DBLCLKS ) {
-        strcat( sstr, "CS_DBLCLKS " );
-    }
-    if( style & CS_OWNDC ) {
-        strcat( sstr, "CS_OWNDC " );
-    }
-    if( style & CS_CLASSDC ) {
-        strcat( sstr, "CS_CLASSDC " );
-    }
-    if( style & CS_PARENTDC ) {
-        strcat( sstr, "CS_PARENTDC " );
-    }
-    if( style & CS_NOKEYCVT ) {
-        strcat( sstr, "CS_NOKEYCVT " );
-    }
-    if( style & CS_NOCLOSE ) {
-        strcat( sstr, "CS_NOCLOSE " );
-    }
-    if( style & CS_SAVEBITS ) {
-        strcat( sstr, "CS_SAVEBITS " );
-    }
-    if( style & CS_BYTEALIGNCLIENT ) {
-        strcat( sstr, "CS_BYTEALIGNCLIENT " );
-    }
-    if( style & CS_BYTEALIGNWINDOW ) {
-        strcat( sstr, "CS_BYTEALIGNWINDOW " );
-    }
-    if( style & CS_GLOBALCLASS ) {
-        strcat( sstr, "CS_GLOBALCLASS " );
+    for( i = 0; i < ClassStyleArraySize; i++ ) {
+        if( (style & ClassStyleArray[i].mask) == ClassStyleArray[i].flags ) {
+            strcat( sstr, ClassStyleArray[i].name );
+            strcat( sstr, " " );
+        }
     }
 
 } /* GetClassStyleString */
