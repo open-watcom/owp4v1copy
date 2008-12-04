@@ -32,10 +32,13 @@
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
+
 #include <stdio.h>
+
 #include "banner.h"
 #include "cfheader.h"
 #include "common.h"
+#include "heapchk.h"
 #include "lhdirect.h"
 #include "research.h"
 
@@ -76,8 +79,11 @@ int check_directory( void )
 
     current_dir = opendir( tgt_path );
     if( current_dir == NULL ) return( FAILURE );
+
     chdir( tgt_path );
+
     for(;;) {
+
         dir_entry = readdir( current_dir );
         if( dir_entry == NULL ) break;
 
@@ -89,7 +95,9 @@ int check_directory( void )
         /* Open the file. */
 
         fopen_s( &current_file, dir_entry->d_name, "rb" );
-        if( current_file == NULL ) continue;
+        if( current_file == NULL ) {
+            continue;
+        }
 
         /* Process the file. */
 
@@ -97,6 +105,8 @@ int check_directory( void )
         if(retval == FAILURE)
         {
             printf_s( "%s is not a valid .COP file\n", dir_entry->d_name );
+            fclose( current_file );
+            current_file = NULL;
             continue;
         }
         switch( type ) {

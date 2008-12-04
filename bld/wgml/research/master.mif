@@ -22,32 +22,33 @@ cf_common_objs = &
 	    cffunc.obj &
             cfheader.obj &
             cmdlhelp.obj &
-            common.obj   &
+            common.obj &
 	    dfinterp.obj &
+	    heapchk.obj &
             lhdirect.obj &
             research.obj &
             swchar.obj
 
 cfc_objs = &
-            cfcheck.obj  &
+            cfcheck.obj &
             cfcutils.obj
 
 copp_objs = &
             copparse.obj &
-            copdev.obj   &
-	    copdir.obj   &
-	    copdrv.obj   &
+            copdev.obj &
+	    copdir.obj &
+	    copdrv.obj &
             copfiles.obj &
-	    copfon.obj   &
-	    copfunc.obj  &
-            common.obj   &
+	    copfon.obj &
+	    copfunc.obj &
+            common.obj &
 	    dfinterp.obj &
             research.obj &
             cmdlhelp.obj &
             swchar.obj
 
 ff_objs = &
-            common.obj   &
+            common.obj &
 	    findfunc.obj &
             research.obj &
             cmdlhelp.obj &

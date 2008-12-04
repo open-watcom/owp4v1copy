@@ -30,8 +30,10 @@
 
 #include <process.h>
 #include <stdlib.h>
+
 #include "cfcheck.h"
 #include "common.h"
+#include "heapchk.h"
 #include "research.h"
 
 /*  Function main().
@@ -109,6 +111,6 @@ int main()
       print_usage();
       return( EXIT_FAILURE );
     }
-    
+
     return( EXIT_SUCCESS );
 }
