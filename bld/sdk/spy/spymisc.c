@@ -39,6 +39,7 @@
 #ifdef __NT__
     #include <commctrl.h>
 #endif
+#include "spyexmsg.h"
 
 /*                                                               */
 /* not included in MS WIN32 header files                         */
@@ -49,64 +50,6 @@
 #endif
 #ifndef CS_NOKEYCVT
 #define CS_NOKEYCVT 0x0100
-#endif
-
-/*
- * Define styles if they aren't already defined.
- */
-#ifndef BS_TYPEMASK
-    #define BS_TYPEMASK         0x000FL
-#endif
-#ifndef SS_TYPEMASK
-    #define SS_TYPEMASK         0x001FL
-#endif
-#ifndef SS_REALSIZECONTROL
-    #define SS_REALSIZECONTROL  0x0040L
-#endif
-
-/*
- * Define common controls if they aren't already defined.
- */
-#ifdef __NT__
-    #ifndef MCS_NOTRAILINGDATES
-        #define MCS_NOTRAILINGDATES         0x0040L
-    #endif
-    #ifndef MCS_SHORTDAYSOFWEEK
-        #define MCS_SHORTDAYSOFWEEK         0x0080L
-    #endif
-    #ifndef MCS_NOSELCHANGEONNAV
-        #define MCS_NOSELCHANGEONNAV        0x0100L
-    #endif
-    #ifndef PBS_MARQUEE
-        #define PBS_MARQUEE                 0x0008L
-    #endif
-    #ifndef PBS_SMOOTHREVERSE
-        #define PBS_SMOOTHREVERSE           0x0010L
-    #endif
-    #ifndef SBARS_TOOLTIPS
-        #define SBARS_TOOLTIPS              0x0800L
-    #endif
-    #ifndef TTS_USEVISUALSTYLE
-        #define TTS_USEVISUALSTYLE          0x0100L
-    #endif
-    #ifndef TBS_NOTIFYBEFOREMOVE
-        #define TBS_NOTIFYBEFOREMOVE        0x0800L
-    #endif
-    #ifndef TBS_TRANSPARENTBKGND
-        #define TBS_TRANSPARENTBKGND        0x1000L
-    #endif
-    #ifndef HDS_FLAT
-        #define HDS_FLAT                    0x0200L
-    #endif
-    #ifndef HDS_CHECKBOXES
-        #define HDS_CHECKBOXES              0x0400L
-    #endif
-    #ifndef HDS_NOSIZING
-        #define HDS_NOSIZING                0x0800L
-    #endif
-    #ifndef HDS_OVERFLOW
-        #define HDS_OVERFLOW                0x1000L
-    #endif
 #endif
 
 typedef struct {
@@ -564,11 +507,31 @@ static class_styles near ClassStyles[] = {
 static WORD ClassStylesSize = sizeof( ClassStyles ) / sizeof( class_styles );
 
 static style_info near ExStyleArray[] = {
-    { "WS_EX_DLGMODALFRAME",    WS_EX_DLGMODALFRAME,    WS_EX_DLGMODALFRAME  },
-    { "WS_EX_NOPARENTNOTIFY",   WS_EX_NOPARENTNOTIFY,   WS_EX_NOPARENTNOTIFY },
-    { "WS_EX_TOPMOST",          WS_EX_TOPMOST,          WS_EX_TOPMOST        },
-    { "WS_EX_ACCEPTFILES",      WS_EX_ACCEPTFILES,      WS_EX_ACCEPTFILES    },
-    { "WS_EX_TRANSPARENT",      WS_EX_TRANSPARENT,      WS_EX_TRANSPARENT    }
+    { "WS_EX_DLGMODALFRAME",    WS_EX_DLGMODALFRAME,    WS_EX_DLGMODALFRAME   },
+    { "WS_EX_NOPARENTNOTIFY",   WS_EX_NOPARENTNOTIFY,   WS_EX_NOPARENTNOTIFY  },
+    { "WS_EX_TOPMOST",          WS_EX_TOPMOST,          WS_EX_TOPMOST         },
+    { "WS_EX_ACCEPTFILES",      WS_EX_ACCEPTFILES,      WS_EX_ACCEPTFILES     },
+#ifndef __NT__
+    { "WS_EX_TRANSPARENT",      WS_EX_TRANSPARENT,      WS_EX_TRANSPARENT     }
+#else
+    { "WS_EX_TRANSPARENT",      WS_EX_TRANSPARENT,      WS_EX_TRANSPARENT     },
+    { "WS_EX_MDICHILD",         WS_EX_MDICHILD,         WS_EX_MDICHILD        },
+    { "WS_EX_TOOLWINDOW",       WS_EX_TOOLWINDOW,       WS_EX_TOOLWINDOW      },
+    { "WS_EX_WINDOWEDGE",       WS_EX_WINDOWEDGE,       WS_EX_WINDOWEDGE      },
+    { "WS_EX_CLIENTEDGE",       WS_EX_CLIENTEDGE,       WS_EX_CLIENTEDGE      },
+    { "WS_EX_CONTEXTHELP",      WS_EX_CONTEXTHELP,      WS_EX_CONTEXTHELP     },
+    { "WS_EX_RIGHT",            WS_EX_RIGHT,            WS_EX_RIGHT           },
+    { "WS_EX_RTLREADING",       WS_EX_RTLREADING,       WS_EX_RTLREADING      },
+    { "WS_EX_LEFTSCROLLBAR",    WS_EX_LEFTSCROLLBAR,    WS_EX_LEFTSCROLLBAR   },
+    { "WS_EX_CONTROLPARENT",    WS_EX_CONTROLPARENT,    WS_EX_CONTROLPARENT   },
+    { "WS_EX_STATICEDGE",       WS_EX_STATICEDGE,       WS_EX_STATICEDGE      },
+    { "WS_EX_APPWINDOW",        WS_EX_APPWINDOW,        WS_EX_APPWINDOW       },
+    { "WS_EX_LAYERED",          WS_EX_LAYERED,          WS_EX_LAYERED         },
+    { "WS_EX_NOINHERITLAYOUT",  WS_EX_NOINHERITLAYOUT,  WS_EX_NOINHERITLAYOUT },
+    { "WS_EX_LAYOUTRTL",        WS_EX_LAYOUTRTL,        WS_EX_LAYOUTRTL       },
+    { "WS_EX_COMPOSITED",       WS_EX_COMPOSITED,       WS_EX_COMPOSITED      },
+    { "WS_EX_NOACTIVATE",       WS_EX_NOACTIVATE,       WS_EX_NOACTIVATE      }
+#endif
 };
 
 static WORD ExStyleArraySize = sizeof( ExStyleArray ) / sizeof( style_info );

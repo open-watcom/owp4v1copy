@@ -30,6 +30,76 @@
 ****************************************************************************/
 
 
+// Control styles
+#ifndef BS_TYPEMASK
+    #define BS_TYPEMASK         0x000FL
+#endif
+#ifndef SS_TYPEMASK
+    #define SS_TYPEMASK         0x001FL
+#endif
+#ifndef SS_REALSIZECONTROL
+    #define SS_REALSIZECONTROL  0x0040L
+#endif
+
+// Common control style
+#ifndef MCS_NOTRAILINGDATES
+    #define MCS_NOTRAILINGDATES         0x0040L
+#endif
+#ifndef MCS_SHORTDAYSOFWEEK
+    #define MCS_SHORTDAYSOFWEEK         0x0080L
+#endif
+#ifndef MCS_NOSELCHANGEONNAV
+    #define MCS_NOSELCHANGEONNAV        0x0100L
+#endif
+#ifndef PBS_MARQUEE
+    #define PBS_MARQUEE                 0x0008L
+#endif
+#ifndef PBS_SMOOTHREVERSE
+    #define PBS_SMOOTHREVERSE           0x0010L
+#endif
+#ifndef SBARS_TOOLTIPS
+    #define SBARS_TOOLTIPS              0x0800L
+#endif
+#ifndef TTS_USEVISUALSTYLE
+    #define TTS_USEVISUALSTYLE          0x0100L
+#endif
+#ifndef TBS_NOTIFYBEFOREMOVE
+    #define TBS_NOTIFYBEFOREMOVE        0x0800L
+#endif
+#ifndef TBS_TRANSPARENTBKGND
+    #define TBS_TRANSPARENTBKGND        0x1000L
+#endif
+#ifndef HDS_FLAT
+    #define HDS_FLAT                    0x0200L
+#endif
+#ifndef HDS_CHECKBOXES
+    #define HDS_CHECKBOXES              0x0400L
+#endif
+#ifndef HDS_NOSIZING
+    #define HDS_NOSIZING                0x0800L
+#endif
+#ifndef HDS_OVERFLOW
+    #define HDS_OVERFLOW                0x1000L
+#endif
+
+// Extended styles
+#ifndef WS_EX_LAYERED
+    #define WS_EX_LAYERED           0x00080000L
+#endif
+#ifndef WS_EX_NOINHERITLAYOUT
+    #define WS_EX_NOINHERITLAYOUT   0x00100000L
+#endif
+#ifndef WS_EX_LAYOUTRTL
+    #define WS_EX_LAYOUTRTL         0x00400000L
+#endif
+#ifndef WS_EX_COMPOSITED
+    #define WS_EX_COMPOSITED        0x02000000L
+#endif
+#ifndef WS_EX_NOACTIVATE
+    #define WS_EX_NOACTIVATE        0x08000000L
+#endif
+
+// Common control message ranges
 #ifndef MCM_FIRST
     #define MCM_FIRST                       0x1000
 #endif
