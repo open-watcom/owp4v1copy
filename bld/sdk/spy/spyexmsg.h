@@ -40,6 +40,12 @@
 #ifndef SS_REALSIZECONTROL
     #define SS_REALSIZECONTROL  0x0040L
 #endif
+#ifndef SS_EDITCONTROL
+    #define SS_EDITCONTROL      0x2000L
+#endif
+#ifndef LBS_COMBOBOX
+    #define LBS_COMBOBOX        0x8000L
+#endif
 
 // Common control style
 #ifndef MCS_NOTRAILINGDATES
