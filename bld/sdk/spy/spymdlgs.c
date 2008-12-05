@@ -40,6 +40,8 @@
 static int      currBit;
 static char     *savedBits;
 
+#define SDM_SETPAGE (WM_USER + 1)
+
 /*
  * SpyMsgDialog - process message range dialogs
  */
@@ -55,6 +57,9 @@ BOOL CALLBACK SpyMsgDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
 
     switch( msg ) {
     case WM_INITDIALOG:
+        SendMessage( hwnd, SDM_SETPAGE, 0, lparam );
+        break;
+    case SDM_SETPAGE:
         which = lparam;
         firstmsg = (which - 1) * NUM_DLGMSGS;
         pages = MessageArraySize / NUM_DLGMSGS;
@@ -83,7 +88,6 @@ BOOL CALLBACK SpyMsgDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
             }
         }
         for( i = 0; i < max; i++ ) {
-//            SetDlgMonoFont( hwnd, i );
             SetDlgItemText( hwnd, DLGMSG1 + i, MessageArray[firstmsg + i].str );
             CheckDlgButton( hwnd, DLGMSG1 + i, savedBits[firstmsg + i] );
         }
@@ -119,10 +123,10 @@ BOOL CALLBACK SpyMsgDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
             }
             break;
         case DLGMSG_NEXT:
-            EndDialog( hwnd, which+1 );
+            SendMessage( hwnd, SDM_SETPAGE, 0, which + 1 );
             break;
         case DLGMSG_PREV:
-            EndDialog( hwnd, which-1 );
+            SendMessage( hwnd, SDM_SETPAGE, 0, which - 1 );
             break;
         case IDCANCEL:
             EndDialog( hwnd, -1 );
@@ -151,14 +155,9 @@ void DoSpyMsgDialog( HWND hwnd, int which )
     char        *savewatch;
 
     savewatch = CloneBitState( savedBits );
-    while( 1 ) {
-        fp = MakeProcInstance( (FARPROC) SpyMsgDialog, Instance );
-        which = JDialogBoxParam( ResInstance, "SPYMSGS", hwnd, (LPVOID) fp, which );
-        FreeProcInstance( fp );
-        if( which <= 0 ) {
-            break;
-        }
-    }
+    fp = MakeProcInstance( (FARPROC) SpyMsgDialog, Instance );
+    which = JDialogBoxParam( ResInstance, "SPYMSGS", hwnd, (LPVOID) fp, which );
+    FreeProcInstance( fp );
     if( which == -1 ) {
         CopyBitState( savedBits, savewatch );
     }
