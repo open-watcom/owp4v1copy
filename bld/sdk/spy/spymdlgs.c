@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy message dialogs implementation.
 *
 ****************************************************************************/
 
@@ -179,8 +178,8 @@ BOOL CALLBACK MessageDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam )
 
     switch( msg ) {
     case WM_INITDIALOG:
-        for( i=SPYMSG_CLIPBOARD; i<= SPYMSG_WINDOW; i++ ) {
-            fl = Filters.array[i-SPYMSG_CLIPBOARD].flag[ currBit ];
+        for( i = SPYMSG_CLIPBOARD; i <= SPYMSG_WINDOW; i++ ) {
+            fl = Filters.array[i - SPYMSG_CLIPBOARD].flag[currBit];
             CheckDlgButton( hwnd, i, fl );
         }
         if( currBit == M_WATCH ) {
@@ -199,14 +198,14 @@ BOOL CALLBACK MessageDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam )
         cmdid = LOWORD( wparam );
         if( cmdid >= SPYMSG_CLIPBOARD && cmdid <= SPYMSG_WINDOW ) {
             i = cmdid - SPYMSG_CLIPBOARD;
-            fl = Filters.array[i].flag[ currBit ];
+            fl = Filters.array[i].flag[currBit];
             if( fl ) {
                 fl = FALSE;
             } else {
                 fl = TRUE;
             }
             CheckDlgButton( hwnd, cmdid, fl );
-            Filters.array[i].flag[ currBit ] = fl;
+            Filters.array[i].flag[currBit] = fl;
             SetFilterSaveBitsMsgs( Filters.array[i].type, fl, savedBits );
             break;
         }
@@ -215,10 +214,10 @@ BOOL CALLBACK MessageDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam )
         case SPYMSG_ALLSET:
             fl = (cmdid == SPYMSG_ALLSET);
             for( i = DLGMSG1; i < DLGMSG1 + NUM_DLGMSGS; i++ ) {
-                savedBits[i-DLGMSG1] = fl;
+                savedBits[i - DLGMSG1] = fl;
             }
-            for( i=SPYMSG_CLIPBOARD;i<=SPYMSG_WINDOW;i++ ) {
-                Filters.array[i-SPYMSG_CLIPBOARD].flag[ currBit ] = fl;
+            for( i = SPYMSG_CLIPBOARD;i <= SPYMSG_WINDOW; i++ ) {
+                Filters.array[i - SPYMSG_CLIPBOARD].flag[currBit] = fl;
                 CheckDlgButton( hwnd, i, fl );
             }
             break;
@@ -253,7 +252,7 @@ void DoMessageDialog( HWND hwnd, WORD cmdid )
 {
     FARPROC     fp;
     int         rc;
-    char        filts[SPYMSG_WINDOW-SPYMSG_CLIPBOARD+2];
+    char        filts[SPYMSG_WINDOW - SPYMSG_CLIPBOARD + 2];
     int         i;
 
     if( cmdid == SPY_MESSAGES_WATCH ) {
@@ -261,15 +260,15 @@ void DoMessageDialog( HWND hwnd, WORD cmdid )
     } else {
         currBit = M_STOPON;
     }
-    for( i=SPYMSG_CLIPBOARD; i<= SPYMSG_WINDOW; i++ ) {
-        filts[i-SPYMSG_CLIPBOARD] = Filters.array[i-SPYMSG_CLIPBOARD].flag[ currBit ];
+    for( i = SPYMSG_CLIPBOARD; i <= SPYMSG_WINDOW; i++ ) {
+        filts[i - SPYMSG_CLIPBOARD] = Filters.array[i - SPYMSG_CLIPBOARD].flag[currBit];
     }
     savedBits = SaveBitState( currBit );
     fp = MakeProcInstance( (FARPROC) MessageDialog, Instance );
     rc = JDialogBox( ResInstance, "SPYMSGDIALOG", hwnd, (LPVOID) fp );
     if( rc ) {
-        for( i=SPYMSG_CLIPBOARD; i<= SPYMSG_WINDOW; i++ ) {
-            Filters.array[i-SPYMSG_CLIPBOARD].flag[ currBit ] = filts[i-SPYMSG_CLIPBOARD];
+        for( i = SPYMSG_CLIPBOARD; i <= SPYMSG_WINDOW; i++ ) {
+            Filters.array[i - SPYMSG_CLIPBOARD].flag[currBit] = filts[i - SPYMSG_CLIPBOARD];
         }
     } else {
         RestoreBitState( savedBits, currBit );
@@ -351,7 +350,7 @@ BOOL CALLBACK MessageSelectDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam
         strcpy( strptr, str );
         SetWindowLong( hwnd, DWL_USER, (DWORD)strptr );
         setMessageName( hwnd, str );
-        str[SPYOUT_MSG+SPYOUT_MSG_LEN] = 0;
+        str[SPYOUT_MSG + SPYOUT_MSG_LEN] = 0;
         id = strtol( &str[SPYOUT_MSG], &endptr, 16 );
         if( endptr != str + SPYOUT_MSG + SPYOUT_MSG_LEN ) {
             EndDialog( hwnd, 0 );
@@ -480,3 +479,4 @@ void DoMessageSelDialog( HWND hwnd )
     FreeProcInstance( fp );
 
 } /* DoMessageSelDialog */
+

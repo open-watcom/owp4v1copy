@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy hook DLL implementation.
 *
 ****************************************************************************/
 
@@ -51,15 +50,16 @@ static BOOL             isFiltering = FALSE;
 static HINSTANCE        dllInstance;
 
 #ifndef __NT__
- void (WINAPI *HandleMessage)( LPMSG pmsg );
+void (WINAPI *HandleMessage)( LPMSG pmsg );
 #else
- static HWND            spyHwnd;
- static HWND            spyLBHwnd;
+static HWND             spyHwnd;
+static HWND             spyLBHwnd;
 #endif
 
 #ifdef __NT__
 
-static void findSpyHwnd( void ) {
+static void findSpyHwnd( void )
+{
     spyHwnd = FindWindow( SPY_CLASS_NAME, NULL );
     spyLBHwnd = (HWND)GetWindowLong( spyHwnd, 0 );
 }
@@ -67,8 +67,8 @@ static void findSpyHwnd( void ) {
 /*
  * HandleMessage - send info back to spy for the NT version ONLY
  */
-static void HandleMessage( MSG *data ) {
-
+static void HandleMessage( MSG *data )
+{
     COPYDATASTRUCT      info;
 
     if( !IsWindow( spyHwnd ) ) {
@@ -129,7 +129,7 @@ LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
         msg.message = pcm->wMsg;
         HandleMessage( &msg );
     }
-    return( CallNextHookEx( callHookHandle, ncode, wparam, lparam));
+    return( CallNextHookEx( callHookHandle, ncode, wparam, lparam ) );
 
 } /* CallWndProcFilter */
 
@@ -138,11 +138,10 @@ LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
  */
 LRESULT CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
-
     if( ncode >= 0 ) {
         HandleMessage( (LPMSG) lparam );
     }
-    return( CallNextHookEx( getHookHandle, ncode, wparam, lparam ));
+    return( CallNextHookEx( getHookHandle, ncode, wparam, lparam ) );
 
 } /* GetMessageFilter */
 
@@ -151,7 +150,6 @@ LRESULT CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
  */
 void CALLBACK SetFilter( LPVOID hdlmsg )
 {
-
 #ifdef __NT__
     hdlmsg = hdlmsg;
 #else
@@ -159,14 +157,10 @@ void CALLBACK SetFilter( LPVOID hdlmsg )
 #endif
 
     if( !isFiltering ) {
-        callHookHandle = SetWindowsHookEx( WH_CALLWNDPROC,
-                        CallWndProcFilter,
-                        dllInstance,
-                        /*(HTASK)*/ 0 );
-        getHookHandle = SetWindowsHookEx( WH_GETMESSAGE,
-                        GetMessageFilter,
-                        dllInstance,
-                        /*(HTASK)*/ 0 );
+        callHookHandle = SetWindowsHookEx( WH_CALLWNDPROC, CallWndProcFilter, dllInstance,
+                                           /*(HTASK)*/ 0 );
+        getHookHandle = SetWindowsHookEx( WH_GETMESSAGE, GetMessageFilter, dllInstance,
+                                          /*(HTASK)*/ 0 );
         isFiltering = TRUE;
     }
 
@@ -184,3 +178,4 @@ void CALLBACK ClearFilter( void )
     }
 
 } /* ClearFilter */
+

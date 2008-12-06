@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main source file for the spy.
 *
 ****************************************************************************/
 
@@ -80,10 +79,14 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
 #endif
         wc.lpszMenuName = NULL;
         wc.lpszClassName = SPY_CLASS_NAME;
-        if( !RegisterClass( &wc ) ) return( FALSE );
+        if( !RegisterClass( &wc ) ) {
+            return( FALSE );
+        }
 
 #ifdef USE_SNAP_WINDOW
-        if( !RegisterSnapClass( Instance ) ) return( FALSE );
+        if( !RegisterSnapClass( Instance ) ) {
+            return( FALSE );
+        }
 #endif
     }
 
@@ -97,17 +100,17 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
      */
     LoadSpyConfig( NULL );
     SpyMainWindow = CreateWindow(
-        SPY_CLASS_NAME,     /* Window class name */
-        SpyName,            /* Window caption */
-        WS_OVERLAPPEDWINDOW,  /* Window style */
-        SpyMainWndInfo.xpos,  /* initial x position */
-        SpyMainWndInfo.ypos,  /* initial y position */
-        SpyMainWndInfo.xsize, /* initial x size */
-        SpyMainWndInfo.ysize, /* initial y size */
-        (HWND) NULL,        /* Parent window handle */
-        (HMENU) SpyMenu,    /* Window menu handle */
-        Instance,           /* Program instance handle */
-        NULL);              /* Create parameters */
+        SPY_CLASS_NAME,         /* Window class name */
+        SpyName,                /* Window caption */
+        WS_OVERLAPPEDWINDOW,    /* Window style */
+        SpyMainWndInfo.xpos,    /* Initial x position */
+        SpyMainWndInfo.ypos,    /* Initial y position */
+        SpyMainWndInfo.xsize,   /* Initial x size */
+        SpyMainWndInfo.ysize,   /* Initial y size */
+        (HWND) NULL,            /* Parent window handle */
+        (HMENU) SpyMenu,        /* Window menu handle */
+        Instance,               /* Program instance handle */
+        NULL);                  /* Create parameters */
 
     if( SpyMainWindow == NULL ) {
         return( FALSE );
@@ -135,12 +138,14 @@ void SpyFini( void )
     SpyLogClose();
     SaveSpyConfig( NULL );
     JDialogFini();
+
 } /* SpyFini */
 
 /*
  * WinMain - main entry point
  */
-int WINMAINENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
+int WINMAINENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline,
+                          int cmdshow)
 {
     MSG         msg;
     HWND        prev_hwnd;
@@ -164,18 +169,21 @@ int WINMAINENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline,
 
         SetWindowPos( prev_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         SetWindowPos( prev_hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-        exit(0);
+        exit( 0 );
     }
 #else
     prev_hwnd = prev_hwnd;
 #endif
-    if( !spyInit( currinst, previnst, cmdshow ) ) exit( 0 );
+    if( !spyInit( currinst, previnst, cmdshow ) ) {
+        exit( 0 );
+    }
 
     while( GetMessage( &msg, (HWND) NULL, 0, 0 ) ) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        TranslateMessage( &msg );
+        DispatchMessage( &msg );
     }
     SpyFini();
     return( 1 );
 
 } /* WinMain */
+

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy message filter function.
 *
 ****************************************************************************/
 
@@ -39,7 +38,6 @@
  */
 void CALLBACK HandleMessage( LPMSG pmsg )
 {
-
     static char msg[80];
     static char class_name[80];
     int         i;
@@ -51,7 +49,7 @@ void CALLBACK HandleMessage( LPMSG pmsg )
         return;
     }
     if( WindowCount != 0 ) {
-        for( i=0;i<WindowCount;i++ ) {
+        for( i = 0; i < WindowCount; i++ ) {
             if( pmsg->hwnd == WindowList[i] ) {
                 break;
             }
@@ -67,3 +65,4 @@ void CALLBACK HandleMessage( LPMSG pmsg )
     }
 
 } /* HandleMessage */
+

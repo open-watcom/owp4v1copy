@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy list box functions.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@
 #define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 6)
 #else
 #define LISTBOX_X       10
-#define LISTBOX_Y       ((TOOLBAR_HEIGHT)+8)
+#define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 8)
 #endif
 
 static int          xChar, yChar;
@@ -187,34 +186,35 @@ void CreateSpyBox( HWND parent )
             FreeRCString( lvc.pszText );
         }
     } else if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
-        SpyListBox = CreateWindowEx( WS_EX_CLIENTEDGE,
-            "LISTBOX",          /* Window class name */
-            "Messages",         /* Window caption */
+        SpyListBox = CreateWindowEx(
+            WS_EX_CLIENTEDGE,       /* Window extended style */
+            "LISTBOX",              /* Window class name */
+            "Messages",             /* Window caption */
             WS_CHILD | LBS_NOTIFY
-            | WS_VSCROLL,       /* Window style */
-            LISTBOX_X,          /* Initial X position */
-            LISTBOX_Y,          /* Initial Y position */
-            0,                  /* Initial X size */
-            0,                  /* Initial Y size */
-            parent,             /* Parent window handle */
-            (HANDLE) SPY_LIST_BOX,              /* Window menu handle */
-            Instance,           /* Program instance handle */
-            NULL);              /* Create parameters */
+            | WS_VSCROLL,           /* Window style */
+            LISTBOX_X,              /* Initial X position */
+            LISTBOX_Y,              /* Initial Y position */
+            0,                      /* Initial X size */
+            0,                      /* Initial Y size */
+            parent,                 /* Parent window handle */
+            (HANDLE) SPY_LIST_BOX,  /* Window menu handle */
+            Instance,               /* Program instance handle */
+            NULL );                 /* Create parameters */
     } else
 #endif
         SpyListBox = CreateWindow(
-            "LISTBOX",          /* Window class name */
-            "Messages",         /* Window caption */
-            WS_CHILD | LBS_NOTIFY
-            | WS_VSCROLL | WS_BORDER ,/* Window style */
-            LISTBOX_X,          /* Initial X position */
-            LISTBOX_Y,          /* Initial Y position */
-            0,                  /* Initial X size */
-            0,                  /* Initial Y size */
-            parent,             /* Parent window handle */
-            (HANDLE) SPY_LIST_BOX, /* Window menu handle */
-            Instance,           /* Program instance handle */
-            NULL);              /* Create parameters */
+            "LISTBOX",              /* Window class name */
+            "Messages",             /* Window caption */
+            WS_CHILD | LBS_NOTIFY | WS_VSCROLL
+            | WS_BORDER ,           /* Window style */
+            LISTBOX_X,              /* Initial X position */
+            LISTBOX_Y,              /* Initial Y position */
+            0,                      /* Initial X size */
+            0,                      /* Initial Y size */
+            parent,                 /* Parent window handle */
+            (HANDLE) SPY_LIST_BOX,  /* Window menu handle */
+            Instance,               /* Program instance handle */
+            NULL );                 /* Create parameters */
 
     ShowWindow( SpyListBox, SW_NORMAL );
     UpdateWindow( SpyListBox );
@@ -224,17 +224,17 @@ void CreateSpyBox( HWND parent )
     if( hInstCommCtrl == NULL ) {
 #endif
         SpyListBoxTitle = CreateWindow(
-            "STATIC",               /* Window class name */
-            TitleBar,
-            SS_LEFT | WS_CHILD,     /* Window style */
-            LISTBOX_X+4,            /* Initial X position */
-            LISTBOX_Y,              /* Initial Y position */
-            (1+ TitleBarLen) * xChar,/* Initial X size */
-            yChar,                  /* Initial Y size */
-            parent,                 /* Parent window handle */
-            (HMENU) NULL,           /* Window menu handle */
-            Instance,               /* Program instance handle */
-            NULL);                  /* Create parameters */
+            "STATIC",                   /* Window class name */
+            TitleBar,                   /* Window caption */
+            SS_LEFT | WS_CHILD,         /* Window style */
+            LISTBOX_X + 4,              /* Initial X position */
+            LISTBOX_Y,                  /* Initial Y position */
+            (1 + TitleBarLen) * xChar,  /* Initial X size */
+            yChar,                      /* Initial Y size */
+            parent,                     /* Parent window handle */
+            (HMENU) NULL,               /* Window menu handle */
+            Instance,                   /* Program instance handle */
+            NULL );                     /* Create parameters */
         ShowWindow( SpyListBoxTitle, SW_NORMAL );
         UpdateWindow( SpyListBoxTitle );
         SetMonoFont( SpyListBoxTitle );
@@ -331,8 +331,8 @@ void ResetSpyListBox( void  )
     GetClientRect( SpyMainWindow, &r );
     ResizeSpyBox( r.right - r.left, r.bottom - r.top );
 
-    MoveWindow( SpyListBoxTitle, LISTBOX_X+4, LISTBOX_Y,
-                (1+ TitleBarLen) * xChar, yChar, TRUE );
+    MoveWindow( SpyListBoxTitle, LISTBOX_X + 4, LISTBOX_Y,
+                (1 + TitleBarLen) * xChar, yChar, TRUE );
 
     InvalidateRect( SpyListBox, NULL, FALSE );
     InvalidateRect( SpyListBoxTitle, NULL, FALSE );

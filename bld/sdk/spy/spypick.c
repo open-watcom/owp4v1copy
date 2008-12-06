@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy pick window dialog functions.
 *
 ****************************************************************************/
 
@@ -59,12 +58,12 @@ void FrameAWindow( HWND hwnd )
 
     hdc = GetWindowDC( hwnd );
 
-    SetROP2( hdc, R2_NOT); /* reverse screen color */
+    SetROP2( hdc, R2_NOT ); /* reverse screen color */
 
-    SelectObject( hdc, GetStockObject( NULL_BRUSH) );
+    SelectObject( hdc, GetStockObject( NULL_BRUSH ) );
 
     hpen = CreatePen( PS_INSIDEFRAME, 4 * GetSystemMetrics( SM_CXBORDER ),
-                  RGB( 0, 0, 0) );
+                      RGB( 0, 0, 0) );
     SelectObject( hdc, hpen );
 
     GetWindowRect( hwnd, &rect );
@@ -97,14 +96,14 @@ void UpdateFramedInfo( HWND dlg, HWND framedhwnd, BOOL ispick  )
         SetDlgItemText( dlg, PEEKMSG_PARENT, str );
 
         len = GetClassName( framedhwnd, name, sizeof( name ) );
-        name[ len ] = 0;
+        name[len] = 0;
         SetDlgItemText( dlg, PEEKMSG_CLASS, name );
 
         if( framedhwnd != NULL ) {
             GetWindowRect( framedhwnd, &rect );
             fmtstr = GetRCString( STR_DIM_COORD_FMT );
             sprintf( str, fmtstr, rect.left, rect.top, rect.right, rect.bottom,
-                     rect.right-rect.left, rect.bottom - rect.top);
+                     rect.right - rect.left, rect.bottom - rect.top);
             SetDlgItemText( dlg, PEEKMSG_SIZE, str );
         } else {
             SetDlgItemText( dlg, PEEKMSG_SIZE, NULL );
@@ -128,7 +127,7 @@ void UpdateFramedInfo( HWND dlg, HWND framedhwnd, BOOL ispick  )
         id[SPYOUT_HWND_LEN] = 0;
         SetDlgItemText( dlg, WINSEL_HWND, id );
         len = GetWindowText( framedhwnd, name, sizeof( name ) );
-        name[ len ] = 0;
+        name[len] = 0;
         SetDlgItemText( dlg, WINSEL_NAME, name );
     }
 
@@ -286,3 +285,4 @@ HWND DoPickDialog( WORD cmdid )
     return( NULL );
 
 } /* DoPickDialog */
+

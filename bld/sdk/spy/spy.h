@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main header file for the spy.
 *
 ****************************************************************************/
 
@@ -163,8 +162,8 @@ typedef struct {
 
 #define FILTER_ENTRIES  13
 typedef union {
-    _filters filts;
-    filter array[FILTER_ENTRIES];
+    _filters    filts;
+    filter      array[FILTER_ENTRIES];
 } filters;
 #define M_WATCH         0
 #define M_STOPON        1
@@ -308,3 +307,4 @@ void SpyFini( void );
 HWND GetHwndFromPt( POINT *pt );
 void IdentifyWindows( HWND toplevel, HWND topmost );
 void RemoveWindow( HWND hwnd );
+

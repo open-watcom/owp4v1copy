@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy toolbar functions.
 *
 ****************************************************************************/
 
@@ -47,15 +46,15 @@ typedef struct {
 } button;
 
 static button toolList[] = {
-    { "MAGNIFY", SPY_ANOTHER_WINDOW, 0, STR_TIP_ANOTHER_WINDOW },
-    { "MAGNO", SPY_STOP, 0, STR_TIP_STOP },
-    { "PEEK", SPY_PEEK_WINDOW, 0, STR_TIP_PEEK_WINDOW },
-    { "MARK", SPY_MARK, 0, STR_TIP_MARK },
-    { "ERASE", SPY_CLEAR_MESSAGES, 0, STR_TIP_CLEAR_MESSAGES },
-    { "SHOWWIN", SPY_SHOW_SELECTED_WINDOWS, 0, STR_TIP_SHOW_SELECTED_WINDOWS },
-    { "WATCHMSG", SPY_MESSAGES_WATCH, 0, STR_TIP_MESSAGES_WATCH },
-    { "STOPMSG", SPY_MESSAGES_STOP, 0, STR_TIP_MESSAGES_STOP },
-    { "NOTONOFF", SPY_OFFON, 0, STR_TIP_OFFON }
+    { "MAGNIFY",    SPY_ANOTHER_WINDOW,         0,  STR_TIP_ANOTHER_WINDOW        },
+    { "MAGNO",      SPY_STOP,                   0,  STR_TIP_STOP                  },
+    { "PEEK",       SPY_PEEK_WINDOW,            0,  STR_TIP_PEEK_WINDOW           },
+    { "MARK",       SPY_MARK,                   0,  STR_TIP_MARK                  },
+    { "ERASE",      SPY_CLEAR_MESSAGES,         0,  STR_TIP_CLEAR_MESSAGES        },
+    { "SHOWWIN",    SPY_SHOW_SELECTED_WINDOWS,  0,  STR_TIP_SHOW_SELECTED_WINDOWS },
+    { "WATCHMSG",   SPY_MESSAGES_WATCH,         0,  STR_TIP_MESSAGES_WATCH        },
+    { "STOPMSG",    SPY_MESSAGES_STOP,          0,  STR_TIP_MESSAGES_STOP         },
+    { "NOTONOFF",   SPY_OFFON,                  0,  STR_TIP_OFFON                 }
 };
 
 static void     *toolBar = NULL;
@@ -132,7 +131,7 @@ void CreateSpyTool( HWND parent )
 
     ToolBarDisplay( toolBar, &dinfo );
 
-    for( i=0;i<sizeof( toolList ) / sizeof( button );i++ ) {
+    for( i = 0; i < sizeof( toolList ) / sizeof( button ); i++ ) {
         addToolButton( &toolList[i] );
     }
 
@@ -163,7 +162,7 @@ void DestroySpyTool( void )
         ToolBarFini( toolBar );
         toolBar = NULL;
     }
-    for( i=0;i<sizeof( toolList ) / sizeof( button );i++ ) {
+    for( i = 0; i < sizeof( toolList ) / sizeof( button ); i++ ) {
         DeleteObject( toolList[i].hbmp );
     }
 
@@ -187,8 +186,9 @@ void SetOnOffTool( spystate ss )
         str = "NOTONOFF";
         break;
     }
-    DeleteObject( toolList[ OFFON_ITEM ].hbmp );
-    toolList[ OFFON_ITEM ].hbmp = LoadBitmap( Instance, str );
-    ChangeToolButtonBitmap( toolBar, SPY_OFFON, toolList[ OFFON_ITEM].hbmp );
+    DeleteObject( toolList[OFFON_ITEM].hbmp );
+    toolList[OFFON_ITEM].hbmp = LoadBitmap( Instance, str );
+    ChangeToolButtonBitmap( toolBar, SPY_OFFON, toolList[OFFON_ITEM].hbmp );
 
 } /* SetOnOffTool */
+

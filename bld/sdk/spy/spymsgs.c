@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy message functions.
 *
 ****************************************************************************/
 
@@ -48,8 +47,10 @@ message *GetMessageDataFromID( int msgid, char *class_name )
     int i;
     int j;
 
-    for( i=0;i< MessageArraySize;i++ ) {
-        if( msgid == MessageArray[i].id ) return( &MessageArray[i] );
+    for( i = 0;i < MessageArraySize; i++ ) {
+        if( msgid == MessageArray[i].id ) {
+            return( &MessageArray[i] );
+        }
     }
     for( i = 0; i < ClassMessagesSize; i++ ) {
         if( !stricmp( class_name, ClassMessages[i].class_name ) ) {
@@ -120,28 +121,32 @@ void ProcessIncomingMessage( int msgid, char *class_name, char *res )
 /*
  * SetFilterMsgs
  */
-void SetFilterMsgs( MsgClass type, BOOL val, int bit ) {
+void SetFilterMsgs( MsgClass type, BOOL val, int bit )
+{
     int i;
 
-    for( i=0; i< MessageArraySize; i++ ) {
+    for( i = 0; i < MessageArraySize; i++ ) {
         if( MessageArray[i].type == type ) {
             MessageArray[i].bits[bit] = val;
         }
     }
-}
+
+} /* SetFilterMsgs */
 
 /*
  * SetFilterSaveBitsMsgs
  */
-void SetFilterSaveBitsMsgs( MsgClass type, BOOL val, char *bits ) {
+void SetFilterSaveBitsMsgs( MsgClass type, BOOL val, char *bits )
+{
     int i;
 
-    for( i=0; i< MessageArraySize; i++ ) {
+    for( i = 0; i < MessageArraySize; i++ ) {
         if( MessageArray[i].type == type ) {
             bits[i] = val;
         }
     }
-}
+
+} /* SetFilterSaveBitsMsgs */
 
 /*
  * InitMessages - init. messages structres
@@ -161,8 +166,10 @@ char *SaveBitState( int x )
     int         i;
 
     data = MemAlloc( MessageArraySize );
-    if( data == NULL ) return( NULL );
-    for( i=0;i<MessageArraySize;i++) {
+    if( data == NULL ) {
+        return( NULL );
+    }
+    for( i = 0; i < MessageArraySize; i++) {
         data[i] = MessageArray[i].bits[x];
     }
     return( data );
@@ -176,10 +183,13 @@ char *CloneBitState( char *old ) {
     char        *data;
 
     data = MemAlloc( MessageArraySize );
-    if( data == NULL ) return( NULL );
+    if( data == NULL ) {
+        return( NULL );
+    }
     memcpy( data, old, MessageArraySize );
     return( data );
-}
+
+} /* CloneBitState */
 
 /*
  * RestoreBitState - put back watch/stopon state
@@ -188,8 +198,10 @@ void RestoreBitState( char *data, int x )
 {
     int         i;
 
-    if( data == NULL ) return;
-    for( i=0;i<MessageArraySize;i++) {
+    if( data == NULL ) {
+        return;
+    }
+    for( i = 0; i < MessageArraySize; i++) {
         MessageArray[i].bits[x] = data[i];
     }
     MemFree( data );
@@ -201,13 +213,20 @@ void RestoreBitState( char *data, int x )
  *              - should not be called for states for which RestoreBitState
  *                has been called
  */
-void FreeBitState( char *data ) {
+void FreeBitState( char *data )
+{
     MemFree( data );
-}
 
-void CopyBitState( char *dst, char *src ) {
+} /* FreeBitState */
+
+/*
+ * CopyBitState
+ */
+void CopyBitState( char *dst, char *src )
+{
     memcpy( dst, src, MessageArraySize );
-}
+
+} /* CopyBitState */
 
 /*
  * ClearMessageCount - clear count of each type of message
@@ -216,8 +235,9 @@ void ClearMessageCount( void )
 {
     int i;
 
-    for( i=0;i<MessageArraySize;i++) {
+    for( i = 0; i < MessageArraySize; i++) {
         MessageArray[i].count = 0L;
     }
 
 } /* ClearMessageCount */
+

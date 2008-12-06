@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy miscellaneous functions.
 *
 ****************************************************************************/
 
@@ -41,15 +40,12 @@
 #endif
 #include "spyexmsg.h"
 
-/*                                                               */
-/* not included in MS WIN32 header files                         */
-/* It looks like as MS remove support for this on WIN32 platform */
-/*                                                               */
+/* These styles are included in Win16 headers, but not Win32 headers. */
 #ifndef CS_KEYCVTWINDOW
-#define CS_KEYCVTWINDOW 0x0004
+    #define CS_KEYCVTWINDOW 0x0004
 #endif
 #ifndef CS_NOKEYCVT
-#define CS_NOKEYCVT 0x0100
+    #define CS_NOKEYCVT     0x0100
 #endif
 
 typedef struct {
@@ -566,10 +562,10 @@ void GetHexStr( LPSTR res, DWORD num, int padlen )
     ultoa( num, tmp, 16 );
     i = strlen( tmp );
     k = 0;
-    for( j=i;j<padlen;j++ ) {
+    for( j = i; j < padlen; j++ ) {
         res[k++] = '0';
     }
-    for( j=0;j<i;j++ ) {
+    for( j = 0; j < i; j++ ) {
         res[k++] = tmp[j];
     }
 
@@ -607,12 +603,12 @@ void GetWindowName( HWND hwnd, char *str )
         return;
     }
     len = GetWindowText( hwnd, name, sizeof( name ) );
-    name[ len ] = 0;
+    name[len] = 0;
     if( len == 0 ) {
         GetHexStr( str, (UINT) hwnd, 4 );
         str[4] = 0;
     } else {
-        sprintf( str,"%0*x: %s", UINT_STR_LEN, (UINT) hwnd, name );
+        sprintf( str, "%0*x: %s", UINT_STR_LEN, (UINT) hwnd, name );
     }
 
 } /* GetWindowName */
@@ -652,7 +648,7 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
     }
 
     len = GetClassName( hwnd, tmp, sizeof( tmp ) );
-    tmp[ len ] = 0;
+    tmp[len] = 0;
     for( i = 0; i < ClassStylesSize; i++ ) {
         if( !stricmp( tmp, ClassStyles[i].class_name ) ) {
             for( j = 0; j < *ClassStyles[i].style_array_size; j++ ) {
@@ -675,11 +671,11 @@ void GetWindowStyleString( HWND hwnd, char *str, char *sstr )
 } /* GetWindowStyleString */
 
 #ifndef __NT__
- #define STYLE_TYPE             WORD
- #define STYLE_HEX_LEN          4
+    #define STYLE_TYPE          WORD
+    #define STYLE_HEX_LEN       4
 #else
- #define STYLE_TYPE             DWORD
- #define STYLE_HEX_LEN          8
+    #define STYLE_TYPE          DWORD
+    #define STYLE_HEX_LEN       8
 #endif
 
 /*
@@ -693,7 +689,7 @@ void GetClassStyleString( HWND hwnd, char *str, char *sstr )
     style = GET_CLASS_STYLE( hwnd );
 
     GetHexStr( str, style, STYLE_HEX_LEN  );
-    str[ STYLE_HEX_LEN ] = 0;
+    str[STYLE_HEX_LEN] = 0;
     sstr[0] = 0;
 
     for( i = 0; i < ClassStyleArraySize; i++ ) {
@@ -735,10 +731,9 @@ void DumpToComboBox( char *str, HWND cb )
  */
 void FormatSpyMessage( char *msg, LPMSG pmsg, char *res )
 {
-
     memset( res,' ', SPYOUT_LENGTH );
     strcpy( res, msg );
-    res[ strlen( msg ) ] = ' ';
+    res[strlen( msg )] = ' ';
     GetHexStr( &res[SPYOUT_HWND], (DWORD) pmsg->hwnd, SPYOUT_HWND_LEN );
     GetHexStr( &res[SPYOUT_MSG], pmsg->message, SPYOUT_MSG_LEN );
     GetHexStr( &res[SPYOUT_WPARAM], pmsg->wParam, SPYOUT_WPARAM_LEN );
@@ -762,18 +757,18 @@ void SetSpyState( spystate ss )
     case OFF:
         if( str[1] != '<' ) {
             str[0] = '<';
-            str[len+1] = '>';
-            str[len+2] = 0;
+            str[len + 1] = '>';
+            str[len + 2] = 0;
             SetWindowText( SpyMainWindow, str );
         }
         rcstr = GetRCString( STR_SPY_ON );
         ModifyMenu( SpyMenu, SPY_OFFON, MF_BYCOMMAND | MF_ENABLED | MF_STRING,
-                        SPY_OFFON, rcstr );
+                    SPY_OFFON, rcstr );
         break;
     case ON:
         rcstr = GetRCString( STR_SPY_OFF );
         ModifyMenu( SpyMenu, SPY_OFFON, MF_BYCOMMAND | MF_ENABLED | MF_STRING,
-                        SPY_OFFON, rcstr );
+                    SPY_OFFON, rcstr );
         if( str[1] == '<' ) {
             str[len] = 0;
             SetWindowText( SpyMainWindow, &str[2] );
@@ -782,7 +777,7 @@ void SetSpyState( spystate ss )
     case NEITHER:
         rcstr = GetRCString( STR_SPY_OFF );
         ModifyMenu( SpyMenu, SPY_OFFON, MF_BYCOMMAND | MF_GRAYED | MF_STRING,
-                        SPY_OFFON, rcstr );
+                    SPY_OFFON, rcstr );
         if( str[1] == '<' ) {
             str[len] = 0;
             SetWindowText( SpyMainWindow, &str[2] );
@@ -794,9 +789,9 @@ void SetSpyState( spystate ss )
 } /* SetSpyState */
 
 static char filterList[] = "File (*.*)" \
-                        "\0" \
-                        "*.*" \
-                        "\0\0";
+                           "\0" \
+                           "*.*" \
+                           "\0\0";
 
 /*
  * GetFileName - get a file name using common dialog stuff
@@ -806,7 +801,7 @@ BOOL GetFileName( char *ext, int type, char *fname )
     OPENFILENAME        of;
     BOOL                rc;
 
-    fname[ 0 ] = 0;
+    fname[0] = 0;
     memset( &of, 0, sizeof( OPENFILENAME ) );
     of.lStructSize = sizeof( OPENFILENAME );
     of.hwndOwner = SpyMainWindow;
@@ -832,7 +827,9 @@ BOOL InitGblStrings( void ) {
     DWORD       heading_uline;
 
     SpyName = AllocRCString( STR_APP_NAME );
-    if( SpyName == NULL ) return( FALSE );
+    if( SpyName == NULL ) {
+        return( FALSE );
+    }
 
 #ifdef __NT__
     heading = STR_HEADINGS_NT;
@@ -843,9 +840,15 @@ BOOL InitGblStrings( void ) {
 #endif
     TitleBar = AllocRCString( heading );
     TitleBarLen = strlen( TitleBar + 1 );
-    if( TitleBar == NULL ) return( FALSE );
+    if( TitleBar == NULL ) {
+        return( FALSE );
+    }
 
     TitleBarULine = AllocRCString( heading_uline );
-    if( TitleBarULine == NULL ) return( FALSE );
+    if( TitleBarULine == NULL ) {
+        return( FALSE );
+    }
     return( TRUE );
-}
+
+} /* InitGblStrings */
+

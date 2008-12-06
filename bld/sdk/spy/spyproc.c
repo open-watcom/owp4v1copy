@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spy window procedure implementation.
 *
 ****************************************************************************/
 
@@ -82,7 +81,6 @@ static MenuItemHint menuHints[] = {
  */
 static void enableSpy( void )
 {
-
     SetFilter( HandleMessageInst );
     EnableMenuItem( SpyMenu, SPY_ADD_WINDOW, MF_ENABLED );
     EnableMenuItem( SpyMenu, SPY_STOP, MF_ENABLED );
@@ -183,7 +181,7 @@ static void doSpyAll( HWND hwnd, BOOL state ) {
 
     if( !state ) {
         SendMessage( hwnd, WM_COMMAND,
-                    GET_WM_COMMAND_MPS( SPY_STOP, 0, 0 ) );
+                     GET_WM_COMMAND_MPS( SPY_STOP, 0, 0 ) );
     }  else {
         spyAll = state;
         EnableMenuItem( SpyMenu, SPY_STOP, MF_ENABLED );
@@ -243,7 +241,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         area.top = area.bottom - statusHite;
         StatusHdl = HintWndCreate( hwnd, &area, Instance, NULL );
         statusHite = SizeHintBar( StatusHdl );
-        SetHintText( StatusHdl, (MenuItemHint*)menuHints,
+        SetHintText( StatusHdl, (MenuItemHint *)menuHints,
                      sizeof( menuHints ) / sizeof( MenuItemHint ) );
         if( SpyMainWndInfo.show_hints ) {
             CheckMenuItem( mh, SPY_SHOW_HELP, MF_CHECKED | MF_BYCOMMAND );
@@ -292,7 +290,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         break;
 #ifdef __NT__
     case WM_COPYDATA:
-        HandleMessage( (LPMSG) ( (COPYDATASTRUCT *)lparam )->lpData );
+        HandleMessage( (LPMSG) ((COPYDATASTRUCT *)lparam)->lpData );
         break;
 #endif
     case WM_MENUSELECT:
@@ -349,7 +347,8 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             SaveListBox( SLB_SAVE_AS, SaveExtra, "", SpyName, hwnd, SpyListBox );
             break;
         case SPY_SAVE:
-            SaveListBox( SLB_SAVE_TMP, SaveExtra, ".\\wspy.txt", SpyName, hwnd, SpyListBox );
+            SaveListBox( SLB_SAVE_TMP, SaveExtra, ".\\wspy.txt", SpyName, hwnd,
+                         SpyListBox );
             break;
         case SPY_LOG:
             if( LogToggle() ) {
@@ -413,11 +412,11 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         case SPY_ABOUT:
             ai.owner = hwnd;
             ai.inst = Instance;
-            #ifdef __NT__
-                ai.name = AllocRCString( STR_ABOUT_NAME_NT );
-            #else
-                ai.name = AllocRCString( STR_ABOUT_NAME_WIN );
-            #endif
+#ifdef __NT__
+            ai.name = AllocRCString( STR_ABOUT_NAME_NT );
+#else
+            ai.name = AllocRCString( STR_ABOUT_NAME_WIN );
+#endif
             ai.version = (LPSTR)banner1p2( _SPY_VERSION_ );
             ai.first_cr_year = (LPSTR)AllocRCString( STR_COPYRIGHT_YEAR );
             ai.title = (LPSTR)AllocRCString( STR_ABOUT_TITLE );
@@ -438,10 +437,10 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         case SPY_PAUSE_LOG:
             if( SpyLogPauseToggle() ) {
                 CheckMenuItem( SpyMenu, SPY_PAUSE_LOG,
-                                        MF_BYCOMMAND | MF_CHECKED );
+                               MF_BYCOMMAND | MF_CHECKED );
             } else {
                 CheckMenuItem( SpyMenu, SPY_PAUSE_LOG,
-                                        MF_BYCOMMAND | MF_UNCHECKED );
+                               MF_BYCOMMAND | MF_UNCHECKED );
             }
             break;
         case SPY_PAUSE_MESSAGES:
@@ -484,10 +483,10 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         case SPY_ANOTHER_WINDOW:
             if( SpyState == NEITHER || spyAll ) {
                 SendMessage( hwnd, WM_COMMAND,
-                            GET_WM_COMMAND_MPS( SPY_WINDOW, 0, 0 ) );
+                             GET_WM_COMMAND_MPS( SPY_WINDOW, 0, 0 ) );
             } else {
                 SendMessage( hwnd, WM_COMMAND,
-                            GET_WM_COMMAND_MPS( SPY_ADD_WINDOW, 0, 0 ) );
+                             GET_WM_COMMAND_MPS( SPY_ADD_WINDOW, 0, 0 ) );
             }
             break;
         case SPY_PEEK_WINDOW:
@@ -565,7 +564,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     case WM_ERASEBKGND: {
         static RECT r;
         GetClientRect( hwnd, &r );
-        FillRect( (HDC)wparam, &r, (HBRUSH)(COLOR_BTNFACE+1) );
+        FillRect( (HDC)wparam, &r, (HBRUSH)(COLOR_BTNFACE + 1) );
         return 1;
     }
 #endif
@@ -575,3 +574,4 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     return( 0 );
 
 } /* SpyWindowProc */
+
