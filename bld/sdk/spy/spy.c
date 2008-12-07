@@ -66,12 +66,12 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
      */
     if( !previnst ) {
         wc.style = 0L;
-        wc.lpfnWndProc = (LPVOID) SpyWindowProc;
+        wc.lpfnWndProc = (LPVOID)SpyWindowProc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = sizeof( DWORD );
         wc.hInstance = Instance;
         wc.hIcon = LoadIcon( ResInstance, "APPLICON" );
-        wc.hCursor = LoadCursor( (HANDLE) NULL, IDC_ARROW);
+        wc.hCursor = LoadCursor( (HANDLE)NULL, IDC_ARROW);
 #ifdef __NT__
         wc.hbrBackground = NULL;
 #else
@@ -107,10 +107,10 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
         SpyMainWndInfo.ypos,    /* Initial y position */
         SpyMainWndInfo.xsize,   /* Initial x size */
         SpyMainWndInfo.ysize,   /* Initial y size */
-        (HWND) NULL,            /* Parent window handle */
-        (HMENU) SpyMenu,        /* Window menu handle */
+        (HWND)NULL,             /* Parent window handle */
+        (HMENU)SpyMenu,         /* Window menu handle */
         Instance,               /* Program instance handle */
-        NULL);                  /* Create parameters */
+        NULL );                 /* Create parameters */
 
     if( SpyMainWindow == NULL ) {
         return( FALSE );
@@ -130,7 +130,6 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
  */
 void SpyFini( void )
 {
-
 #ifndef NOUSE3D
     Ctl3dUnregister( Instance );
 #endif
@@ -145,7 +144,7 @@ void SpyFini( void )
  * WinMain - main entry point
  */
 int WINMAINENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline,
-                          int cmdshow)
+                          int cmdshow )
 {
     MSG         msg;
     HWND        prev_hwnd;
@@ -178,7 +177,7 @@ int WINMAINENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline,
         exit( 0 );
     }
 
-    while( GetMessage( &msg, (HWND) NULL, 0, 0 ) ) {
+    while( GetMessage( &msg, (HWND)NULL, 0, 0 ) ) {
         TranslateMessage( &msg );
         DispatchMessage( &msg );
     }

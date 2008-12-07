@@ -112,15 +112,15 @@ BOOL CALLBACK EnumWindowsFunc( HWND hwnd, DWORD lparam )
     FARPROC     fp;
 
     if( lparam != 0 ) {
-        if( GetParent( hwnd ) != (HWND) lparam ) {
+        if( GetParent( hwnd ) != (HWND)lparam ) {
             return( 1 );
         }
     }
     addFormattedWindow( hwnd );
 
     indentLevel += 3;
-    fp = MakeProcInstance( (FARPROC) EnumWindowsFunc, Instance );
-    EnumChildWindows( hwnd, (LPVOID) fp, (DWORD) hwnd );
+    fp = MakeProcInstance( (FARPROC)EnumWindowsFunc, Instance );
+    EnumChildWindows( hwnd, (LPVOID)fp, (DWORD)hwnd );
     FreeProcInstance( fp );
     indentLevel -= 3;
     return( 1 );
@@ -161,8 +161,8 @@ static void addFormattedWindow( HWND hwnd )
     }
     snprintf( res, sizeof( res ), "%s%0*x%s %s", lead_bl, UINT_STR_LEN, (UINT)hwnd,
               tmp, name );
-    SendDlgItemMessage( (HWND) hWndDialog, SELWIN_LISTBOX, LB_ADDSTRING, 0,
-                        (LONG) (LPSTR) res );
+    SendDlgItemMessage( (HWND)hWndDialog, SELWIN_LISTBOX, LB_ADDSTRING, 0,
+                        (LONG)(LPSTR)res );
 
 } /* addFormattedWindow */
 
@@ -175,8 +175,8 @@ static void setUpWindows( void )
 
     indentLevel = 0;
     SendDlgItemMessage( hWndDialog, SELWIN_LISTBOX, LB_RESETCONTENT, 0, 0L );
-    fp = MakeProcInstance( (FARPROC) EnumWindowsFunc, Instance);
-    EnumWindows( (LPVOID) fp, (DWORD) NULL );
+    fp = MakeProcInstance( (FARPROC)EnumWindowsFunc, Instance);
+    EnumWindows( (LPVOID)fp, (DWORD)NULL );
     FreeProcInstance( fp );
     addFormattedWindow( GetDesktopWindow() );
 
@@ -190,7 +190,7 @@ BOOL CALLBACK ShowInfoProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
 {
     switch( msg ) {
     case WM_INITDIALOG:
-        UpdateFramedInfo( hwnd, (HWND) lparam, TRUE );
+        UpdateFramedInfo( hwnd, (HWND)lparam, TRUE );
         return( TRUE );
         break;
 #ifndef NOUSE3D
@@ -220,9 +220,9 @@ void ShowFramedInfo( HWND hwnd, HWND framed )
 {
     DLGPROC     fp;
 
-    fp = (DLGPROC) MakeProcInstance( (FARPROC) ShowInfoProc, Instance );
-    JDialogBoxParam( Instance, "PEEKWIN", (HWND) hwnd, (LPVOID) fp, (DWORD) framed );
-    FreeProcInstance( (FARPROC) fp );
+    fp = (DLGPROC)MakeProcInstance( (FARPROC)ShowInfoProc, Instance );
+    JDialogBoxParam( Instance, "PEEKWIN", (HWND)hwnd, (LPVOID)fp, (DWORD)framed );
+    FreeProcInstance( (FARPROC)fp );
 
 } /* ShowFramedInfo */
 
@@ -300,7 +300,7 @@ BOOL CALLBACK ShowSelectedDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam
             }
             top = SendDlgItemMessage( hwnd, SELWIN_LISTBOX, LB_GETTOPINDEX, 0, 0L );
             SendDlgItemMessage( hwnd, SELWIN_LISTBOX, LB_GETTEXT, sel,
-                                (LONG) (LPSTR) resdata );
+                                (LONG)(LPSTR)resdata );
             res = resdata;
             while( isspace( *res ) ) {
                 res++;
@@ -310,7 +310,7 @@ BOOL CALLBACK ShowSelectedDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam
             }
             ch = res[SPYOUT_HWND_LEN];
             res[SPYOUT_HWND_LEN] = 0;
-            id = (HWND) strtol( res, NULL, 16 );
+            id = (HWND)strtol( res, NULL, 16 );
             if( parm == SELWIN_LISTBOX ) {
                 if( ch == '*' ) {
                     parm = SELWIN_DELETE;
@@ -376,8 +376,8 @@ void DoShowSelectedDialog( HWND hwnd, BOOL *spyall )
         tmpWndList = MemAlloc( WindowCount * sizeof( HWND ) );
         memcpy( tmpWndList, WindowList, WindowCount * sizeof( HWND ) );
     }
-    fp = MakeProcInstance( (FARPROC) ShowSelectedDialog, Instance );
-    rc = JDialogBox( ResInstance, "SELECTEDWINS", hwnd, (LPVOID) fp );
+    fp = MakeProcInstance( (FARPROC)ShowSelectedDialog, Instance );
+    rc = JDialogBox( ResInstance, "SELECTEDWINS", hwnd, (LPVOID)fp );
     if( rc ) {
         *spyall = tmpSpyAll;
         WindowCount = tmpWndCnt;

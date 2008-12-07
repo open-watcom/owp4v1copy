@@ -46,7 +46,7 @@ static char iniPath[_MAX_PATH] = WATCOM_INI;
  */
 void LoadSpyConfig( char *fname )
 {
-    char        *str,*vals;
+    char        *str, *vals;
     char        c;
     int         i;
     int         x, y;
@@ -55,7 +55,7 @@ void LoadSpyConfig( char *fname )
     str = alloca( MessageArraySize + 1 );
     vals = alloca( MessageArraySize + 1 );
     if( fname == NULL ) {
-        GetConfigFilePath( iniPath, sizeof(iniPath) );
+        GetConfigFilePath( iniPath, sizeof( iniPath ) );
         strcat( iniPath, "\\" WATCOM_INI );
         fname = iniPath;
         LoadLogConfig( fname, spyApp );

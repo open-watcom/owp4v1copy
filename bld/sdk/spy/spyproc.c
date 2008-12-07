@@ -290,7 +290,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         break;
 #ifdef __NT__
     case WM_COPYDATA:
-        HandleMessage( (LPMSG) ((COPYDATASTRUCT *)lparam)->lpData );
+        HandleMessage( (LPMSG)((COPYDATASTRUCT *)lparam)->lpData );
         break;
 #endif
     case WM_MENUSELECT:
@@ -560,7 +560,7 @@ LONG CALLBACK SpyWindowProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         showHintBar( hwnd );
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
         break;
-#if defined (__NT__)
+#if defined( __NT__ )
     case WM_ERASEBKGND: {
         static RECT r;
         GetClientRect( hwnd, &r );

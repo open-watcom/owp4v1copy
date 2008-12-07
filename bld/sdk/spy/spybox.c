@@ -38,12 +38,12 @@
     #include <commctrl.h>
 #endif
 
-#if defined (__NT__)
-#define LISTBOX_X       6
-#define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 6)
+#if defined( __NT__ )
+    #define LISTBOX_X       6
+    #define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 6)
 #else
-#define LISTBOX_X       10
-#define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 8)
+    #define LISTBOX_X       10
+    #define LISTBOX_Y       ((TOOLBAR_HEIGHT) + 8)
 #endif
 
 static int          xChar, yChar;
@@ -197,7 +197,7 @@ void CreateSpyBox( HWND parent )
             0,                      /* Initial X size */
             0,                      /* Initial Y size */
             parent,                 /* Parent window handle */
-            (HANDLE) SPY_LIST_BOX,  /* Window menu handle */
+            (HANDLE)SPY_LIST_BOX,   /* Window menu handle */
             Instance,               /* Program instance handle */
             NULL );                 /* Create parameters */
     } else
@@ -212,7 +212,7 @@ void CreateSpyBox( HWND parent )
             0,                      /* Initial X size */
             0,                      /* Initial Y size */
             parent,                 /* Parent window handle */
-            (HANDLE) SPY_LIST_BOX,  /* Window menu handle */
+            (HANDLE)SPY_LIST_BOX,   /* Window menu handle */
             Instance,               /* Program instance handle */
             NULL );                 /* Create parameters */
 
@@ -232,7 +232,7 @@ void CreateSpyBox( HWND parent )
             (1 + TitleBarLen) * xChar,  /* Initial X size */
             yChar,                      /* Initial Y size */
             parent,                     /* Parent window handle */
-            (HMENU) NULL,               /* Window menu handle */
+            (HMENU)NULL,                /* Window menu handle */
             Instance,                   /* Program instance handle */
             NULL );                     /* Create parameters */
         ShowWindow( SpyListBoxTitle, SW_NORMAL );

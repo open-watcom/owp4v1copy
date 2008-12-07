@@ -605,10 +605,10 @@ void GetWindowName( HWND hwnd, char *str )
     len = GetWindowText( hwnd, name, sizeof( name ) );
     name[len] = 0;
     if( len == 0 ) {
-        GetHexStr( str, (UINT) hwnd, 4 );
+        GetHexStr( str, (UINT)hwnd, 4 );
         str[4] = 0;
     } else {
-        sprintf( str, "%0*x: %s", UINT_STR_LEN, (UINT) hwnd, name );
+        sprintf( str, "%0*x: %s", UINT_STR_LEN, (UINT)hwnd, name );
     }
 
 } /* GetWindowName */
@@ -805,7 +805,7 @@ BOOL GetFileName( char *ext, int type, char *fname )
     memset( &of, 0, sizeof( OPENFILENAME ) );
     of.lStructSize = sizeof( OPENFILENAME );
     of.hwndOwner = SpyMainWindow;
-    of.lpstrFilter = (LPSTR) filterList;
+    of.lpstrFilter = (LPSTR)filterList;
     of.lpstrDefExt = ext;
     of.nFilterIndex = 1L;
     of.lpstrFile = fname;

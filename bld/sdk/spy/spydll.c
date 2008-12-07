@@ -122,7 +122,7 @@ LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
     LPCALLMSG   pcm;
 
     if( ncode >= 0 ) {
-        pcm = (LPCALLMSG) lparam;
+        pcm = (LPCALLMSG)lparam;
         msg.hwnd = pcm->hWnd;
         msg.lParam = pcm->lParam;
         msg.wParam = pcm->wParam;
@@ -139,7 +139,7 @@ LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
 LRESULT CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
     if( ncode >= 0 ) {
-        HandleMessage( (LPMSG) lparam );
+        HandleMessage( (LPMSG)lparam );
     }
     return( CallNextHookEx( getHookHandle, ncode, wparam, lparam ) );
 

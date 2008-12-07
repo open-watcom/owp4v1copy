@@ -270,7 +270,7 @@ HWND DoPickDialog( WORD cmdid )
     LastFramed = NULL;
     Cancelled = FALSE;
 
-    SpyPickInst = MakeProcInstance( (FARPROC) PickDialog, Instance );
+    SpyPickInst = MakeProcInstance( (FARPROC)PickDialog, Instance );
     if( cmdid == SPY_PEEK_WINDOW ) {
         JDialogBox( ResInstance, "PEEKMSGS", SpyMainWindow, (LPVOID)SpyPickInst );
     } else {
