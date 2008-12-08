@@ -330,8 +330,8 @@ bool WWindow::mouseMove( int, int, WMouseKeyFlags ) {
 }
 
 
-void WWindow::makeWindow( const char *text, WStyle style ) {
-/**********************************************************/
+void WWindow::makeWindow( const char *text, WStyle style, WExStyle exstyle ) {
+/****************************************************************************/
 
     gui_create_info     create_info;
     unsigned long       gui_style;
@@ -349,6 +349,7 @@ void WWindow::makeWindow( const char *text, WStyle style ) {
     create_info.rect.height = r.h();
     create_info.scroll = _WStyleToScrollStyle( style );
     gui_style = GUI_INIT_INVISIBLE | GUI_VISIBLE | _WStyleToCreateStyle( style );
+    gui_style |= exstyle;
     create_info.style = (gui_create_styles)gui_style;
     create_info.parent = hparent;
     create_info.num_menus = 0;
@@ -379,7 +380,7 @@ WEXPORT WWindow::WWindow( WWindow *parent )
 
 }
 
-WEXPORT WWindow::WWindow( const char *text, WStyle style )
+WEXPORT WWindow::WWindow( const char *text, WStyle style, WExStyle exstyle )
     : _painting( FALSE )
     , _firstDirtyRow( 0 )
     , _numDirtyRows( 0 )
@@ -392,11 +393,12 @@ WEXPORT WWindow::WWindow( const char *text, WStyle style )
 /*********************/
 
     WSystemMetrics::defaultRectangle( _autosize );
-    makeWindow( text, style );
+    makeWindow( text, style, exstyle );
 }
 
 
-WEXPORT WWindow::WWindow( WWindow *parent, const char *text, WStyle style )
+WEXPORT WWindow::WWindow( WWindow *parent, const char *text, WStyle style,
+                          WExStyle exstyle )
     : _painting( FALSE )
     , _firstDirtyRow( 0 )
     , _numDirtyRows( 0 )
@@ -409,12 +411,12 @@ WEXPORT WWindow::WWindow( WWindow *parent, const char *text, WStyle style )
 /*********************/
 
     WSystemMetrics::defaultRectangle( _autosize );
-    makeWindow( text, style );
+    makeWindow( text, style, exstyle );
 }
 
 
 WEXPORT WWindow::WWindow( WWindow* parent, const WRect& r, const char *text,
-                          WStyle style )
+                          WStyle style, WExStyle exstyle )
     : _painting( FALSE )
     , _firstDirtyRow( 0 )
     , _numDirtyRows( 0 )
@@ -427,7 +429,7 @@ WEXPORT WWindow::WWindow( WWindow* parent, const WRect& r, const char *text,
     , _handle( NULL ) {
 /*********************/
 
-    makeWindow( text, style );
+    makeWindow( text, style, exstyle );
 }
 
 

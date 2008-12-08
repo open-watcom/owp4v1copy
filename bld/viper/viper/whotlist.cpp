@@ -36,8 +36,8 @@
 
 
 WHotSpotList::WHotSpotList( WWindow * prt, const WRect & r, const char * text, WHotSpots* hs,
-                            WStyle wstyle )
-    : WWindow( prt, r, text, wstyle )
+                            WStyle wstyle, WExStyle wexstyle )
+    : WWindow( prt, r, text, wstyle, wexstyle )
     , _topIndex( 0 )
     , _selected( -1 )
     , _leftDown( FALSE )

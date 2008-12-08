@@ -467,6 +467,8 @@ bool GUIXCreateWindow( gui_window *wnd, gui_create_info *info,
     ULONG               show_flags;
     WPI_RECT            rect;
     WPI_RECT            parent_client;
+#else
+    DWORD               exstyle;
 #endif
 
 #ifdef __OS2_PM__
@@ -618,10 +620,16 @@ bool GUIXCreateWindow( gui_window *wnd, gui_create_info *info,
         }
     }
 #else
-        hwnd = _wpi_createwindow_ex( WS_EX_NOPARENTNOTIFY,
-                   class_name, info->text, style, 0, 0, pos.x,
-                   pos.y, size.x, size.y, parent_hwnd, hmenu,
-                   GUIMainHInst, &wmcreateinfo, &frame_hwnd );
+    exstyle = WS_EX_NOPARENTNOTIFY;
+#ifdef __NT__
+    if( info->style & GUI_3D_BORDER ) {
+        exstyle |= WS_EX_CLIENTEDGE;
+        style &= ~WS_BORDER;
+    }
+#endif
+    hwnd = _wpi_createwindow_ex( exstyle, class_name, info->text, style, 0, 0, pos.x,
+                                 pos.y, size.x, size.y, parent_hwnd, hmenu, GUIMainHInst,
+                                 &wmcreateinfo, &frame_hwnd );
 #endif
     if( hwnd == NULLHANDLE ) {
         return( FALSE );

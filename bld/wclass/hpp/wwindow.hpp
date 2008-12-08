@@ -84,6 +84,13 @@ typedef unsigned long   WStyle;
 #define WStyleVScrollAll        (WStyleVScroll | WStyleVDrag | \
                                  WStyleVTrack | WStyleVRows )
 
+// Window extended styles:
+
+typedef unsigned long   WExStyle;
+
+#define WExStyleDefault     0
+#define WExStyle3DBorder    GUI_3D_BORDER
+
 // Scroll bar identifiers:
 
 typedef unsigned WScrollBar;
@@ -153,7 +160,7 @@ private:
     bool                    _keyHandled;
 
 protected:
-    void makeWindow( const char *title, WStyle wstyle=0 );
+    void makeWindow( const char *title, WStyle wstyle = 0, WExStyle wexstyle = 0 );
     void autoPosition( WRect& r );
     void setParent( WWindow *parent ) { _parent = parent; }
     void setAutosize( const WRect& r ) { _autosize = r; }
@@ -168,12 +175,13 @@ protected:
     WVList                  _accelKeys;
 
 public:
-    WEXPORT WWindow( WWindow *parent=NULL );
-    WEXPORT WWindow( const char *text, WStyle style=WStyleDefault );
-    WEXPORT WWindow( WWindow *parent, const char *text,
-                        WStyle style=WStyleDefault );
+    WEXPORT WWindow( WWindow *parent = NULL );
+    WEXPORT WWindow( const char *text, WStyle style = WStyleDefault,
+                     WExStyle exstyle = WExStyleDefault );
+    WEXPORT WWindow( WWindow *parent, const char *text, WStyle style = WStyleDefault,
+                     WExStyle exstyle = WExStyleDefault );
     WEXPORT WWindow( WWindow *parent, const WRect& r, const char *text,
-                        WStyle style=WStyleDefault );
+                     WStyle style = WStyleDefault, WExStyle exstyle = WExStyleDefault );
     WEXPORT ~WWindow();
 
     void WEXPORT addChild( WObject *child );
