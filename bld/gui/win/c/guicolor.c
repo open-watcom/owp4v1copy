@@ -60,17 +60,18 @@ WPI_COLOUR GUIColours[] = {
     0x00ff0000, /* GUI_BRIGHT_RED     */
     0x00ff00ff, /* GUI_BRIGHT_MAGENTA */
     0x00ffff00, /* GUI_BRIGHT_YELLOW  */
-    0x00ffffff  /* GUI_BRIGHT_WHITE   */
+    0x00ffffff, /* GUI_BRIGHT_WHITE   */
+    0x00808080  /* GUIEX_DLG_BKGRND   */
 #else
 //      B G R
     0x00000000, /* GUI_BLACK          */
-    0x00800000, /* GUI_BLUE           IDE std back col */
+    0x00800000, /* GUI_BLUE           */
     0x00008000, /* GUI_GREEN          */
     0x00808000, /* GUI_CYAN           */
     0x000000C0, /* GUI_RED            */
     0x00800080, /* GUI_MAGENTA        */
     0x00008080, /* GUI_BROWN          */
-    0x00c0c0c0, /* GUI_WHITE          IDE std fore col */
+    0x00c0c0c0, /* GUI_WHITE          */
     0x00808080, /* GUI_GREY           */
     0x00ff0000, /* GUI_BRIGHT_BLUE    */
     0x0000ff00, /* GUI_BRIGHT_GREEN   */
@@ -78,11 +79,8 @@ WPI_COLOUR GUIColours[] = {
     0x000000ff, /* GUI_BRIGHT_RED     */
     0x00ff00ff, /* GUI_BRIGHT_MAGENTA */
     0x0000ffff, /* GUI_BRIGHT_YELLOW  */
-    0x00ffffff  /* GUI_BRIGHT_WHITE   */
-#ifdef __NT__
-    /* CEY - ChangeList 31754: Changed to use dialog background 'special' colour. */
-    ,0x00ffffff /* GUIEX_DLG_BKGRND   - default to bright white to stand out in dialogs if lookup fails */
-#endif
+    0x00ffffff, /* GUI_BRIGHT_WHITE   */
+    0x00808080  /* GUIEX_DLG_BKGRND   */
 #endif
 };
 
@@ -90,39 +88,10 @@ WPI_COLOUR GUIColours[] = {
 
 void InitSystemRGB( void )
 {
-/* CEY - ChangeList 31754: 
- *  Stopped setting colours to sys colours.
- *  Changed to use dialog background 'special' colour. See guicolor.c 
- */
-#if 0
-    /* Overwrite static default colors above, with system colors */
-    /* Should be able to support WM_SYSCOLORCHANGE: later.       */
-    /* Done to avoid hardcoded RGB values. (looks BAD!)          */
-    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
-       GUIColours[0]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_BLACK   / Text */
-       GUIColours[1]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_BLUE    / Selected menu/list backgr */
-       GUIColours[2]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_GREEN   / */
-       GUIColours[3]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_CYAN    / Main MDI backgr. */
-//     Dark blue looks too much like black; dark red is much easier to distinguish
-//     GUIColours[4]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_RED     / TEXT FG HILITE WDW */
-       GUIColours[5]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_MAGENTA / */
-       GUIColours[6]  = GetSysColor(COLOR_HIGHLIGHTTEXT);  /* GUI_BROWN   / */
-       GUIColours[7]  = GetSysColor(COLOR_BTNFACE);        /* GUI_WHITE   / Dialog items Backgr */
-       GUIColours[8]  = GetSysColor(COLOR_BTNFACE);        /* GUI_GREY    / Button face  */
-       GUIColours[9]  = GetSysColor(COLOR_MENU);           /* GUI_BRIGHT_BLUE   */
-       GUIColours[10] = GetSysColor(COLOR_MENUTEXT);       /* GUI_BRIGHT_GREEN  */
-       GUIColours[11] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_CYAN / Used as text BG info on WDW splash */
-       GUIColours[12] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_RED     */
-       GUIColours[13] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_MAGENTA */
-       GUIColours[14] = GetSysColor(COLOR_BTNTEXT);        /* GUI_BRIGHT_YELLOW */
-       GUIColours[15] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_WHITE / Window Backg */
-    }
-#endif
-
-#ifdef __NT__
-    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
-        // All other colours are hardcoded. What we call white maps to a grey as nearest colour.
-        GUIColours[GUIEX_DLG_BKGRND] = GetSysColor(COLOR_BTNFACE);  /* Dialog background */
+#ifndef __OS2_PM__
+    if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
+        // All other colours are hardcoded.
+        GUIColours[GUIEX_DLG_BKGRND] = GetSysColor( COLOR_BTNFACE );
     }
 #endif
 }
