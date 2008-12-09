@@ -27,6 +27,7 @@
 * Description:  define and initialize global variables for wgml
 *
 ****************************************************************************/
+#include    "findfile.h"
 #include    "wgml.h"
 
 #define global                          // allocate storage for global vars
@@ -34,50 +35,6 @@
 #undef  global
 
 #include    "swchar.h"
-
-/***************************************************************************/
-/*  Read an environment variable and return content in allocated buffer    */
-/***************************************************************************/
-
-char * GML_get_env( char *name )
-{
-    errno_t     rc;
-    size_t      len;
-    char    *   value;
-    size_t      maxsize;
-
-    maxsize = 128;
-    value = mem_alloc( maxsize );
-    rc = getenv_s( &len, value, maxsize, name );
-    if( rc ) {
-        mem_free( value );
-        value = NULL;
-        if( len ) {   /*  we need more space */
-            maxsize = len + 1;
-            value = mem_alloc( maxsize );
-            rc = getenv_s( &len, value, maxsize, name );
-        }
-    }
-    if( len == 0 ) {
-        if( value != NULL ) {
-            mem_free( value );
-        }
-        value = NULL;
-    }
-    return( value );
-}
-
-
-/***************************************************************************/
-/*  get the wgml environment variables                                     */
-/***************************************************************************/
-
-void get_env_vars( void )
-{
-    Pathes  = GML_get_env( "PATH" );
-    GMLlibs = GML_get_env( GMLLIB );
-    GMLincs = GML_get_env( GMLINC );
-}
 
 /***************************************************************************/
 /*  Init some global variables                                             */
@@ -92,9 +49,6 @@ void init_global_vars( void )
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
 
     try_file_name       = NULL;
-    Pathes              = NULL;         // content of PATH environment var
-    GMLlibs             = NULL;         // content of GMLLIB environment var
-    GMLincs             = NULL;         // content of GMLINC environment var
 
     master_fname        = NULL;         // Master input file name
     master_fname_attr   = NULL;         // Master input file name attributes

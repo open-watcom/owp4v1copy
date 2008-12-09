@@ -15,48 +15,49 @@ inc_dirs = -I"../h;../../h"
 .c: ../c;../../c;../../../watcom/c
 
 cf_common_objs = &
-	    cfdir.obj &
-	    cfdev.obj &
-	    cfdrv.obj &
-	    cffon.obj &
-	    cffunc.obj &
+	    cfdir.obj    &
+	    cfdev.obj    &
+	    cfdrv.obj    &
+	    cffon.obj    &
+	    cffunc.obj   &
             cfheader.obj &
             cmdlhelp.obj &
-            common.obj &
+            common.obj   &
 	    dfinterp.obj &
-	    heapchk.obj &
+	    heapchk.obj  &
             lhdirect.obj &
             research.obj &
             swchar.obj
 
 cfc_objs = &
-            cfcheck.obj &
+            cfcheck.obj  &
             cfcutils.obj
 
 copp_objs = &
-            copparse.obj &
-            copdev.obj &
-	    copdir.obj &
-	    copdrv.obj &
-            copfiles.obj &
-	    copfon.obj &
-	    copfunc.obj &
-            common.obj &
-	    dfinterp.obj &
-            research.obj &
-            cmdlhelp.obj &
+            copparse.obj  &
+            copdev.obj    &
+	    copdir.obj    &
+	    copdrv.obj    &
+            copfiles.obj  &
+	    copfon.obj    &
+	    copfunc.obj   &
+            common.obj    &
+	    dfinterp.obj  &
+	    findfile.obj  &
+            research.obj  &
+            cmdlhelp.obj  &
             swchar.obj
 
 ff_objs = &
-            common.obj &
-	    findfunc.obj &
-            research.obj &
-            cmdlhelp.obj &
+            common.obj    &
+	    findfunc.obj  &
+            research.obj  &
+            cmdlhelp.obj  &
             swchar.obj
 
 objs = &
             $(cf_common_objs) &
-            cfparse.obj  &
+            cfparse.obj       &
             cfputils.obj
 
 nwgml : cfcheck.exe cfparse.exe copparse.exe findfunc.exe .SYMBOLIC

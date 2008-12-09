@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 #include "wgml.h"
+#include "findfile.h"
 #include "gvars.h"
 
 #include <io.h>

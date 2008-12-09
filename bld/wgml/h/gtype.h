@@ -65,25 +65,9 @@
 #define LAY_EXT         ".lay"
 #define OPT_EXT         ".opt"
 
-/* environment variable names */
-#define GMLLIB          "GMLLIB"
-#define GMLINC          "GMLINC"
-
-
 #define GML_CHAR_DEFAULT    ':'         // start of GML tag
 #define SCR_CHAR_DEFAULT    '.'         // start of Script keyword
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
-
-
-/***************************************************************************/
-/*  search sequence for gml, opt or layout files                           */
-/***************************************************************************/
-
-typedef enum {
-    DS_cur_lib_inc_path = 1,            // curdir, gmllib, gmlinc, path
-    DS_cur_inc_lib_path,                // curdir, gmlinc, gmllib, path
-    DS_cur_lib_path                     // curdir,         gmllib, path
-} DIRSEQ;
 
 
 /***************************************************************************/

@@ -37,18 +37,13 @@
 #include <errno.h>
 
 #include "wgml.h"
+#include "findfile.h"
 #include "gvars.h"
 #include "banner.h"
 
 
 #define mystr(x)            # x
 #define xmystr(s)           mystr(s)
-
-#if defined( __UNIX__ )
-    #define IS_PATH_SEP( ch ) ((ch) == '/')
-#else
-    #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
-#endif
 
 #define CRLF            "\n"
 
@@ -193,166 +188,6 @@ static void reopen_inc_fp( filecb *cb )
     }
     return;
 }
-
-/***************************************************************************/
-/*  Compose full path / filename and try to open for reading               */
-/***************************************************************************/
-
-int try_open( char * prefix, char * separator, char * filename, char * suffix )
-{
-    int         i;
-    FILE    *   fp;
-    char        buf[ FILENAME_MAX ];
-    errno_t     erc;
-
-    i = 0;
-    while( (buf[i] = *prefix++) )    ++i;
-    while( (buf[i] = *separator++) ) ++i;
-    while( (buf[i] = *filename++) )  ++i;
-    while( (buf[i] = *suffix++) )    ++i;
-    filename = &buf[0];                 // point to the full name
-
-    try_file_name = NULL;
-    try_fp = NULL;
-
-    for( ;; ) {
-        erc = fopen_s( &fp, filename, "rb" );
-        if( erc == 0 ) break;
-        if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
-        if( !free_inc_fp() ) break;     // try closing an include file
-    }
-    if( fp == NULL ) return( 0 );
-
-    try_file_name = mem_alloc( i + 2 );
-    strcpy_s( try_file_name, i + 2, buf );
-    try_fp = fp;
-    return( 1 );
-}
-
-
-/***************************************************************************/
-/*  Search for filename in curdir, and along environment vars              */
-/***************************************************************************/
-
-int search_file_in_dirs( char * filename, char * defext, char * altext, DIRSEQ sequence )
-{
-    char        buff[ FILENAME_MAX ];
-    char        try[ FILENAME_MAX ];
-    char    *   drive;
-    char    *   dir;
-    char    *   name;
-    char    *   ext;
-    char    *   p;
-    char    *   searchdirs[ 3 ];
-    int         i;
-    int         k;
-
-    _splitpath2( filename, buff, &drive, &dir, &name, &ext );
-    if( drive[0] != '\0' || IS_PATH_SEP(dir[0]) ) {
-        /* Drive or path from root specified */
-        if( try_open( "", "", filename, "" ) != 0 ) return( 1 );
-        if( *ext == '\0' ) {
-            if( try_open( "", "", filename, defext ) != 0 ) return( 1 );
-            if( *altext != '\0' ) {
-                if( try_open( "", "", filename, altext ) != 0 ) return( 1 );
-            }
-            if( strcmp(defext, GML_EXT )) { // one more try with .gml
-                if( try_open( "", "", filename, GML_EXT ) != 0 ) return( 1 );
-            }
-        } else {
-            if( *altext != '\0' ) {
-                _makepath( try, drive, dir, filename, altext );
-                if( try_open( "", "", try, "" ) != 0 ) return( 1 );
-            }
-        }
-        return( 0 );
-    }
-    /* no absolute path specified, try curr dir */
-    if( try_open( "", "", filename, "" ) != 0 ) return( 1 );
-    if( *ext == '\0' ) {
-        if( try_open( "", "", filename, defext ) != 0 ) return( 1 );
-        if( *altext != '\0' ) {
-            if( try_open( "", "", filename, altext ) != 0 ) return( 1 );
-        }
-        if( strcmp(defext, GML_EXT )) { // one more try with .gml
-            if( try_open( "", "", filename, GML_EXT ) != 0 ) return( 1 );
-        }
-    } else {
-        if( *altext != '\0' ) {
-            _makepath( try, drive, dir, name, altext );
-            if( try_open( "", "", try, "" ) != 0 ) return( 1 );
-        }
-    }
-
-    /* now try the dirs in specified sequence */
-    if( sequence == DS_cur_lib_inc_path ) {
-        searchdirs[ 0 ] = GMLlibs;
-        searchdirs[ 1 ] = GMLincs;
-        searchdirs[ 2 ] = Pathes;
-    } else if( sequence == DS_cur_inc_lib_path ) {
-        searchdirs[ 0 ] = GMLincs;
-        searchdirs[ 1 ] = GMLlibs;
-        searchdirs[ 2 ] = Pathes;
-    } else if( sequence == DS_cur_lib_path ) {
-        searchdirs[ 0 ] = GMLlibs;
-        searchdirs[ 1 ] = Pathes;
-        searchdirs[ 2 ] = NULL;
-    } else {
-        searchdirs[ 0 ] = NULL;
-        searchdirs[ 1 ] = NULL;
-        searchdirs[ 2 ] = NULL;
-    }
-    for( k = 0; k < 3; k++ ) {
-        p = searchdirs[ k ];
-        if( p == NULL ) break;
-
-        do {
-            i = 0;
-            while( *p == ' ' ) ++p;
-            for( ; ; ) {
-                if( *p == INCLUDE_SEP || *p == ';' ) break;
-                if( *p == '\0' ) break;
-                if( i < sizeof( try ) - 2 ) {
-                    try[ i++ ] = *p;
-                }
-                ++p;
-            }
-            while( i != 0 ) {
-                if( try[ i-1 ] != ' ' ) break;
-                --i;
-            }
-
-#define SEP_LEN (sizeof( PATH_SEP ) - 1)
-
-            try[ i ] = '\0';
-            if( i >= SEP_LEN && strcmp( &try[ i - SEP_LEN ], PATH_SEP ) == 0 ) {
-                try[ i - SEP_LEN ] = '\0';
-            }
-
-#undef  SEP_LEN
-
-            if( try_open( try, PATH_SEP, filename, "" ) != 0 ) return( 1 );
-
-            if( *ext == '\0' ) {
-                if( try_open( try, PATH_SEP, filename, defext ) != 0 ) return( 1 );
-                if( *altext != '\0' ) {
-                    if( try_open( try, PATH_SEP, filename, altext ) != 0 ) return( 1 );
-                }
-                if( strcmp(defext, GML_EXT )) { // one more try with .gml
-                    if( try_open( try, PATH_SEP, filename, GML_EXT ) != 0 ) return( 1 );
-                }
-            } else {
-                if( *altext != '\0' ) {
-                    _makepath( try, drive, dir, filename, altext );
-                    if( try_open( "", "", try, "" ) != 0 ) return( 1 );
-                }
-            }
-            if( *p == INCLUDE_SEP || *p == ';' ) ++p;
-        } while( *p != '\0' );
-    }
-    return( 0 );
-}
-
 
 /***************************************************************************/
 /*  Set the extension of the Master input file as default extension        */
@@ -737,14 +572,14 @@ int main( int argc, char * argv[] )
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
-            g_trmem_prt_list();    // all memory freed if no output from call
+//            g_trmem_prt_list();    // all memory freed if no output from call
 
             out_msg( "\nStarting pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );
 
             proc_GML( master_fname );
 
-            g_trmem_prt_list();         // show allocated memory at pass end
+//            g_trmem_prt_list();         // show allocated memory at pass end
 
             out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );
@@ -792,15 +627,6 @@ int main( int argc, char * argv[] )
     if( out_file_attr != NULL ) {
         mem_free( out_file_attr );
     }
-    if( GMLlibs != NULL ) {
-        mem_free( GMLlibs );
-    }
-    if( GMLincs != NULL) {
-        mem_free( GMLincs );
-    }
-    if( Pathes != NULL ) {
-        mem_free( Pathes );
-    }
     if( global_dict != NULL ) {
         free_dict( &global_dict );
     }
@@ -814,10 +640,12 @@ int main( int argc, char * argv[] )
         mem_free( buff2 );
     }
 
-    g_trmem_prt_list();            // all memory freed if no output from call
+    ff_teardown();                  // free memory allocated in findfunc
+
+    g_trmem_prt_list();             // all memory freed if no output from call
     g_trmem_close();
 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
-    return( 0 );                   // never reached, but makes compiler happy
+    return( 0 );                    // never reached, but makes compiler happy
 }
 

@@ -64,10 +64,6 @@ extern  bool    get_line( void );
 #pragma aux     my_exit aborts;
 extern  void    my_exit( int );
 
-extern  int     search_file_in_dirs( char * filename, char * defext, char * altext, DIRSEQ seq );
-extern  int     try_open( char * prefix, char * separator, char * filename, char * suffix );
-
-
 /* gargutil.c                           */
 extern  void        garginit( void );
 extern  condcode    getarg( void );
@@ -75,8 +71,6 @@ extern  condcode    getarg( void );
 
 /* gdata.c                              */
 extern  void    init_global_vars( void );
-extern  void    get_env_vars( void );
-extern  char  * GML_get_env( char * name );
 
 
 /* gerror.c                             */

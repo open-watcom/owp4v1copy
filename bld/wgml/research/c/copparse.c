@@ -34,14 +34,6 @@
 *                   display_driver()
 *                   display_font()
 *                   parse_defined_name()
-*               These items from wgml.c are implemented here because the
-*               dual main() functions that result from linking wgml.c do not
-*               prevent linking but do prevent debugging:
-*                   Pathes
-*                   GMLlibs
-*                   GMLincs
-*                   get_env_vars()
-*                   GML_get_env()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
@@ -61,51 +53,47 @@
 #include "banner.h"
 #include "common.h"
 #include "copfiles.h"
+#include "findfile.h"
 #include "dfinterp.h"
 #include "research.h"
 
-/* Done here because gvars.c includes wgml.h, and wgml.c cannot be linked in. */
+/***************************************************************************/
+/*  Flags for filecb and macrocb                                           */
+/***************************************************************************/
 
-char * Pathes;        // content of PATH Envvar
-char * GMLlibs;       // content of GMMLIB Envvar
-char * GMLincs;       // content of GMLINC Envvar
+typedef enum {
+    FF_clear        = 0x0000,           // clear all flags
+    FF_startofline  = 0x0001,           // at start of physical line
+    FF_eof          = 0x0002,           // eof
+    FF_err          = 0x0004,           // file error
+    FF_crlf         = 0x0008,           // delete trailing CR and / or LF
+    FF_macro        = 0x0010,           // entry is macro not file
+    FF_open         = 0x8000            // file is open
+} fflags;
 
-/* Capture the environmental variables. */
+/***************************************************************************/
+/*  entry for an included file                                             */
+/***************************************************************************/
 
-char * GML_get_env( char * name )
-{
-    errno_t     rc;
-    size_t      len;
-    char    *   value;
-    size_t      maxsize;
+#define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
+#define ulong           unsigned long
 
-    maxsize = 128;
-    value = (char *) mem_alloc( maxsize );
-    rc = getenv_s( &len, value, maxsize, name );
-    if( rc ) {
-        mem_free( value );
-        value = NULL;
-        if( len ) {   /*  we need more space. */
-            maxsize = len + 1;
-            value = (char *) mem_alloc( maxsize );
-            rc = getenv_s( &len, value, maxsize, name );
-        }
-    }
-    if( len == 0 ) {
-        if( value != NULL ) {
-            mem_free( value );
-        }
-        value = NULL;
-    }
-    return( value );
-}
+typedef struct filecb {
+    fflags          flags;
+    FILE        *   fp;                 // FILE ptr
+    ulong           lineno;             // current line number
+    ulong           linemin;            // first line number to process
+    ulong           linemax;            // last line number to process
+    size_t          usedlen;            // used data of filebuf
+    fpos_t          pos;                // position for reopen
+    char            fileattr[ MAX_FILE_ATTR + 1];  // T:xxxx
+    char            filename[ 1 ];      // full filename var length
+} filecb;
 
-void get_env_vars( void )
-{
-    Pathes  = GML_get_env( "PATH" );
-    GMLlibs = GML_get_env( "GMLLIB" );
-    GMLincs = GML_get_env( "GMLINC" );
-}
+filecb  *   input_cbs;
+int         err_count;
+
+void g_suicide( void ) {}
 
 /*  Local variables. */
 

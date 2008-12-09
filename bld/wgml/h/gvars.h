@@ -64,12 +64,6 @@ global  ulong           line_to;        // ending lineno to process
 global  size_t          buf_size;
 global  char        *   buffer;
 global  char        *   token_buf;
-global  char        *   try_file_name;
-global  FILE        *   try_fp;
-
-global  char        *   Pathes;         // content of PATH Envvar
-global  char        *   GMLlibs;        // content of GMMLIB Envvar
-global  char        *   GMLincs;        // content of GMLINC Envvar
 
 global  int             err_count;      // Overall Errrorcount
 global  int             wng_count;      // Overall warning count
@@ -143,6 +137,10 @@ global char         *   clos_paren;     // ) in input
 
 global char             srnm[ SYM_NAME_LENGTH + 1 ];// symbol name for getsym()
 global sub_index        srnmsub;        // subscript
+
+/* Reset so can be reused with other headers. */
+
+#undef global
 
 /* ----                 will eventually be deleted
 SRNM     DC    CL10' '             WORKING REFERENCE NAME               15760000

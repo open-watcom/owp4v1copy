@@ -27,6 +27,13 @@ inc_dirs = -I"../h" -I$(trmem_dir)
  
 objs =  &
         wgml.obj        &
+	copdev.obj      &
+	copdir.obj      &
+	copdrv.obj      &
+	copfiles.obj    &
+	copfon.obj      &
+	copfunc.obj     &
+        findfile.obj    &
         gargutil.obj    &
         gdata.obj       &
         gargutil.obj    &
