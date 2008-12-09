@@ -322,6 +322,7 @@ public:
     void WEXPORT invalidateRect( const WRect & );
     void WEXPORT getPaintRect( WRect & );
     Color WEXPORT backgroundColour( void );
+    void WEXPORT changeBackground( WPaintAttr );
     void WEXPORT fillRect( const WRect &, Color );
     void WEXPORT fillRect( const WRect &, WPaintAttr );
     void WEXPORT drawRect( const WRect &, Color );

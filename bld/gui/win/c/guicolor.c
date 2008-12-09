@@ -45,42 +45,48 @@ static int init_rgb = 0;
 WPI_COLOUR GUIColours[] = {
 #ifdef __OS2_PM__
 //      R G B
-    0x00000000, /* GUI_BLACK          */
-    0x00000080, /* GUI_BLUE           */
-    0x00008000, /* GUI_GREEN          */
-    0x00008080, /* GUI_CYAN           */
-    0x00C00000, /* GUI_RED            */
-    0x00800080, /* GUI_MAGENTA        */
-    0x00808000, /* GUI_BROWN          */
-    0x00cccccc, /* GUI_WHITE          */
-    0x00808080, /* GUI_GREY           */
-    0x000000ff, /* GUI_BRIGHT_BLUE    */
-    0x0000ff00, /* GUI_BRIGHT_GREEN   */
-    0x0000ffff, /* GUI_BRIGHT_CYAN    */
-    0x00ff0000, /* GUI_BRIGHT_RED     */
-    0x00ff00ff, /* GUI_BRIGHT_MAGENTA */
-    0x00ffff00, /* GUI_BRIGHT_YELLOW  */
-    0x00ffffff, /* GUI_BRIGHT_WHITE   */
-    0x00808080  /* GUIEX_DLG_BKGRND   */
+    0x00000000, /* GUI_BLACK           */
+    0x00000080, /* GUI_BLUE            */
+    0x00008000, /* GUI_GREEN           */
+    0x00008080, /* GUI_CYAN            */
+    0x00C00000, /* GUI_RED             */
+    0x00800080, /* GUI_MAGENTA         */
+    0x00808000, /* GUI_BROWN           */
+    0x00cccccc, /* GUI_WHITE           */
+    0x00808080, /* GUI_GREY            */
+    0x000000ff, /* GUI_BRIGHT_BLUE     */
+    0x0000ff00, /* GUI_BRIGHT_GREEN    */
+    0x0000ffff, /* GUI_BRIGHT_CYAN     */
+    0x00ff0000, /* GUI_BRIGHT_RED      */
+    0x00ff00ff, /* GUI_BRIGHT_MAGENTA  */
+    0x00ffff00, /* GUI_BRIGHT_YELLOW   */
+    0x00ffffff, /* GUI_BRIGHT_WHITE    */
+    0x00808080, /* GUIEX_DLG_BKGRND    */
+    0x00FFFFFF, /* GUIEX_WND_BKGRND    */
+    0x00000080, /* GUIEX_HIGHLIGHT     */
+    0x00FFFFFF  /* GUIEX_HIGHLIGHTTEXT */
 #else
 //      B G R
-    0x00000000, /* GUI_BLACK          */
-    0x00800000, /* GUI_BLUE           */
-    0x00008000, /* GUI_GREEN          */
-    0x00808000, /* GUI_CYAN           */
-    0x000000C0, /* GUI_RED            */
-    0x00800080, /* GUI_MAGENTA        */
-    0x00008080, /* GUI_BROWN          */
-    0x00c0c0c0, /* GUI_WHITE          */
-    0x00808080, /* GUI_GREY           */
-    0x00ff0000, /* GUI_BRIGHT_BLUE    */
-    0x0000ff00, /* GUI_BRIGHT_GREEN   */
-    0x00ffff00, /* GUI_BRIGHT_CYAN    */
-    0x000000ff, /* GUI_BRIGHT_RED     */
-    0x00ff00ff, /* GUI_BRIGHT_MAGENTA */
-    0x0000ffff, /* GUI_BRIGHT_YELLOW  */
-    0x00ffffff, /* GUI_BRIGHT_WHITE   */
-    0x00808080  /* GUIEX_DLG_BKGRND   */
+    0x00000000, /* GUI_BLACK           */
+    0x00800000, /* GUI_BLUE            */
+    0x00008000, /* GUI_GREEN           */
+    0x00808000, /* GUI_CYAN            */
+    0x000000C0, /* GUI_RED             */
+    0x00800080, /* GUI_MAGENTA         */
+    0x00008080, /* GUI_BROWN           */
+    0x00c0c0c0, /* GUI_WHITE           */
+    0x00808080, /* GUI_GREY            */
+    0x00ff0000, /* GUI_BRIGHT_BLUE     */
+    0x0000ff00, /* GUI_BRIGHT_GREEN    */
+    0x00ffff00, /* GUI_BRIGHT_CYAN     */
+    0x000000ff, /* GUI_BRIGHT_RED      */
+    0x00ff00ff, /* GUI_BRIGHT_MAGENTA  */
+    0x0000ffff, /* GUI_BRIGHT_YELLOW   */
+    0x00ffffff, /* GUI_BRIGHT_WHITE    */
+    0x00808080, /* GUIEX_DLG_BKGRND    */
+    0x00FFFFFF, /* GUIEX_WND_BKGRND    */
+    0x00800000, /* GUIEX_HIGHLIGHT     */
+    0x00FFFFFF  /* GUIEX_HIGHLIGHTTEXT */
 #endif
 };
 
@@ -89,10 +95,11 @@ WPI_COLOUR GUIColours[] = {
 void InitSystemRGB( void )
 {
 #ifndef __OS2_PM__
-    if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
-        // All other colours are hardcoded.
-        GUIColours[GUIEX_DLG_BKGRND] = GetSysColor( COLOR_BTNFACE );
-    }
+    // All other colours are hardcoded.
+    GUIColours[GUIEX_DLG_BKGRND] = GetSysColor( COLOR_BTNFACE );
+    GUIColours[GUIEX_WND_BKGRND] = GetSysColor( COLOR_WINDOW );
+    GUIColours[GUIEX_HIGHLIGHT] = GetSysColor( COLOR_HIGHLIGHT );
+    GUIColours[GUIEX_HIGHLIGHTTEXT] = GetSysColor( COLOR_HIGHLIGHTTEXT );
 #endif
 }
 

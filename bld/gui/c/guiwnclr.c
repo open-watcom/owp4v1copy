@@ -38,38 +38,38 @@
 static gui_colour_set Default[GUI_NUM_ATTRS] =
 {
 #if defined (__NT__) && (GUI_IS_GUI == TRUE)
-    /* GUI_BRIGHT_WHITE will be GetSysColor(COLOR_WINDOW)  */
-    /* GUI_WHITE        will be GetSysColor(COLOR_BTNFACE) */
+    /* GUIEX_DLG_BKGRND will be GetSysColor(COLOR_BTNFACE)       */
     /* and so on and so forth. See InitSystemRGB() in guicolor.c */
-    { GUI_BRIGHT_GREEN, GUI_BRIGHT_BLUE   }, // GUI_MENU_PLAIN
-    { GUI_BLUE,         GUI_BRIGHT_GREEN  }, // GUI_MENU_STANDOUT
-    { GUI_GREY,         GUI_BRIGHT_BLUE   }, // GUI_MENU_GRAYED
-    { GUI_BROWN,        GUI_BLUE,         }, // GUI_MENU_ACTIVE    (selected in list)
-    { GUI_BRIGHT_BLUE,  GUI_BRIGHT_GREEN  }, // GUI_MENU_ACTIVE_STANDOUT
-    /* CEY - ChangeList 31754: Changed to use dialog background 'special' colour. See guicolor.c */
-    { GUI_BLACK,        GUIEX_DLG_BKGRND  }, // GUI_BACKGROUND
-    { GUI_BLUE,         GUI_GREY          }, // GUI_MENU_FRAME
-    { GUI_GREY,         GUI_WHITE         }, // GUI_TITLE_INACTIVE
-    { GUI_BLUE,         GUI_GREY          }, // GUI_FRAME_ACTIVE,
-    { GUI_BLACK,        GUI_GREY          }, // GUI_FRAME_INACTIVE
-    { GUI_BLUE,         GUI_GREY          }, // GUI_ICON
-    { GUI_BLUE,         GUI_GREY          }, // GUI_MENU_GRAYED_ACTIVE
-    { GUI_BLACK,        GUI_WHITE         }, // GUI_FRAME_RESIZE,
+    { GUI_BRIGHT_GREEN,     GUI_BRIGHT_BLUE   }, // GUI_MENU_PLAIN
+    { GUI_BLUE,             GUI_BRIGHT_GREEN  }, // GUI_MENU_STANDOUT
+    { GUI_GREY,             GUI_BRIGHT_BLUE   }, // GUI_MENU_GRAYED
+    { GUIEX_HIGHLIGHTTEXT,  GUIEX_HIGHLIGHT   }, // GUI_MENU_ACTIVE    (selected in list)
+    { GUI_BRIGHT_BLUE,      GUI_BRIGHT_GREEN  }, // GUI_MENU_ACTIVE_STANDOUT
+    { GUI_BLACK,            GUIEX_DLG_BKGRND  }, // GUI_BACKGROUND
+    { GUI_BLUE,             GUI_GREY          }, // GUI_MENU_FRAME
+    { GUI_GREY,             GUI_WHITE         }, // GUI_TITLE_INACTIVE
+    { GUI_BLUE,             GUI_GREY          }, // GUI_FRAME_ACTIVE,
+    { GUI_BLACK,            GUI_GREY          }, // GUI_FRAME_INACTIVE
+    { GUI_BLUE,             GUI_GREY          }, // GUI_ICON
+    { GUI_BLUE,             GUI_GREY          }, // GUI_MENU_GRAYED_ACTIVE
+    { GUI_BLACK,            GUI_WHITE         }, // GUI_FRAME_RESIZE
+    { GUI_BLACK,            GUIEX_WND_BKGRND  }  // GUI_CONTROL_BACKGROUND
 #else
-    /*  fore/text       backgr. */
-    { GUI_WHITE,        GUI_BLUE        }, // GUI_MENU_PLAIN
-    { GUI_BRIGHT_WHITE, GUI_BLUE        }, // GUI_MENU_STANDOUT
-    { GUI_GREY,         GUI_BLUE        }, // GUI_MENU_GRAYED
-    { GUI_WHITE,        GUI_BLACK       }, // GUI_MENU_ACTIVE
-    { GUI_BRIGHT_WHITE, GUI_BLACK       }, // GUI_MENU_ACTIVE_STANDOUT
-    { GUI_BLUE,         GUI_WHITE       }, // GUI_BACKGROUND
-    { GUI_BRIGHT_YELLOW,GUI_BLUE        }, // GUI_MENU_FRAME
-    { GUI_GREY,         GUI_WHITE       }, // GUI_TITLE_INACTIVE
-    { GUI_BLUE,         GUI_CYAN        }, // GUI_FRAME_ACTIVE,
-    { GUI_GREY,         GUI_WHITE       }, // GUI_FRAME_INACTIVE
-    { GUI_BRIGHT_WHITE, GUI_RED         }, // GUI_ICON
-    { GUI_GREY,         GUI_BLACK       }, // GUI_MENU_GRAYED_ACTIVE
-    { GUI_GREY,         GUI_CYAN        }, // GUI_FRAME_RESIZE,
+    /*  fore/text           backgr. */
+    { GUI_WHITE,            GUI_BLUE          }, // GUI_MENU_PLAIN
+    { GUI_BRIGHT_WHITE,     GUI_BLUE          }, // GUI_MENU_STANDOUT
+    { GUI_GREY,             GUI_BLUE          }, // GUI_MENU_GRAYED
+    { GUI_WHITE,            GUI_BLACK         }, // GUI_MENU_ACTIVE
+    { GUI_BRIGHT_WHITE,     GUI_BLACK         }, // GUI_MENU_ACTIVE_STANDOUT
+    { GUI_BLUE,             GUI_WHITE         }, // GUI_BACKGROUND
+    { GUI_BRIGHT_YELLOW,    GUI_BLUE          }, // GUI_MENU_FRAME
+    { GUI_GREY,             GUI_WHITE         }, // GUI_TITLE_INACTIVE
+    { GUI_BLUE,             GUI_CYAN          }, // GUI_FRAME_ACTIVE
+    { GUI_GREY,             GUI_WHITE         }, // GUI_FRAME_INACTIVE
+    { GUI_BRIGHT_WHITE,     GUI_RED           }, // GUI_ICON
+    { GUI_GREY,             GUI_BLACK         }, // GUI_MENU_GRAYED_ACTIVE
+    { GUI_GREY,             GUI_CYAN          }, // GUI_FRAME_RESIZE
+    { GUI_BLUE,             GUI_WHITE         }  // GUI_CONTROL_BACKGROUND
 #endif
 };
 
