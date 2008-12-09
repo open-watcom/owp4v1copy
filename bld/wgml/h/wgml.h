@@ -60,13 +60,19 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 extern  void    g_banner( void );
 extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( void );
+extern  void    inc_inc_level( void );
 
 #pragma aux     my_exit aborts;
 extern  void    my_exit( int );
+extern  void    show_include_stack( void );
 
 /* gargutil.c                           */
 extern  void        garginit( void );
 extern  condcode    getarg( void );
+extern  condcode    getargq( void );
+extern  bool        test_identifier_char( char c );
+extern  bool        test_macro_char( char c );
+extern  bool        test_symbol_char( char c );
 
 
 /* gdata.c                              */
@@ -88,6 +94,7 @@ extern  void    g_suicide( void );
 /* gmacdict.c                         */
 extern  void        init_macro_dict( mac_entry * * dict );
 extern  void        free_macro_dict( mac_entry * * dict );
+extern  void        free_macro_entry( mac_entry * me, mac_entry * * dict );
 extern  void        print_macro_dict( mac_entry * dict );
 extern  mac_entry * find_macro( mac_entry * dict, char const * name );
 
@@ -121,15 +128,17 @@ extern  void    printf_research( char * msg, ... );
 
 
 /* gscan.c                            */
+extern  void    free_lines( inp_line * line );
 extern  void    scan_line( void );
 
 
 /* gsetvar.c                          */
 extern condcode     getnum( getnum_block * gn );
 extern void         scr_se( void );
-extern char     *   scan_sym( char * p, symvar * sym );
+extern char     *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
 /* gsymvar.c                          */
+extern bool     check_subscript( sub_index sub );
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
 extern void     print_sym_dict( symvar * dict );

@@ -39,6 +39,40 @@
 inputcb *   cb;
 
 /***************************************************************************/
+/*  add info about macro   to LIFO input list                              */
+/***************************************************************************/
+
+static  void    add_macro_cb_entry( mac_entry *me )
+{
+    macrocb *   new;
+    inputcb *   nip;
+
+    new = mem_alloc( sizeof( macrocb ) );
+
+    nip = mem_alloc( sizeof( inputcb ) );
+    nip->hidden_head = NULL;
+    nip->hidden_tail = NULL;
+    init_dict( &nip->local_dict );
+
+    nip->fmflags = II_macro;
+    nip->s.m     = new;
+
+    new->lineno  = 0;
+    new->macline = me->macline;
+    new->mac     = me;
+    new->flags   = FF_macro;
+
+    new->mparms.star  = NULL;
+    new->mparms.starx = NULL;
+    new->mparms.star0 = 0;
+
+    nip->prev = input_cbs;
+    input_cbs = nip;
+    return;
+}
+
+
+/***************************************************************************/
 /*  .im   processing  IMBED                                                */
 /*  format .im filename                                                    */
 /***************************************************************************/
@@ -97,7 +131,12 @@ static  void    scr_ap( void )
 }
 
 
-static  void    free_mac_lines( inp_line * line )
+/*
+ * free storage for the macro lines
+ *
+ */
+
+void    free_lines( inp_line * line )
 {
     inp_line    *wk;
     inp_line    *wk1;
@@ -111,10 +150,8 @@ static  void    free_mac_lines( inp_line * line )
     return;
 }
 
-/* .dm processing define macro
- *
- *
- *
+/*
+ * .dm processing define macro
  */
 static  void    scr_dm( void )
 {
@@ -259,7 +296,7 @@ static  void    scr_dm( void )
             get_line();
 
             if( cb->s.f->flags & (FF_eof | FF_err) ) {
-                break;
+                break;                  // out of read loop
             }
             p = buff2;
             if( *p == SCR_char ) {      // possible macro end
@@ -272,7 +309,7 @@ static  void    scr_dm( void )
                     cc = getarg();
                     if( cc == omit ) {  // only .dm  means macro end
                         compend = 1;
-                        break;
+                        break;          // out of read loop
                     }
                     p = arg_start;
                     save = *p;
@@ -287,7 +324,7 @@ static  void    scr_dm( void )
                                 cb->s.f->lineno,
                                 cb->s.f->filename );
                         *p = save;
-                        free_mac_lines( head );
+                        free_lines( head );
                         return;
                     }
                     *p = save;
@@ -300,7 +337,7 @@ static  void    scr_dm( void )
                                 "\t\t\tLine %d of file '%s'\n",
                                 cb->s.f->lineno,
                                 cb->s.f->filename );
-                        free_mac_lines( head );
+                        free_lines( head );
                         return;
                     }
                     p = arg_start;
@@ -314,7 +351,7 @@ static  void    scr_dm( void )
                                 "\t\t\tLine %d of file '%s'\n",
                                 cb->s.f->lineno,
                                 cb->s.f->filename );
-                        free_mac_lines( head );
+                        free_lines( head );
                         return;
                     }
                     compend = 1;
@@ -331,7 +368,7 @@ static  void    scr_dm( void )
             if( head == NULL ) {
                 head = work;
             }
-        }
+        }                               // end read loop
         if( cb->s.f->flags & (FF_eof | FF_err) ) {
             err_count++;
             // error SC--004 End of file reached
@@ -342,7 +379,7 @@ static  void    scr_dm( void )
                     cb->s.f->lineno,
                     cb->s.f->filename,
                     macname );
-            free_mac_lines( head );
+            free_lines( head );
             return;
         }
     }                                   // end compbegin
@@ -351,7 +388,13 @@ static  void    scr_dm( void )
         mac_entry   *   me;
         mac_entry   *   dict;
 
+        me = find_macro( macro_dict, macname );
+        if( me != NULL ) {              // delete macro with same name
+            free_macro_entry( me, &macro_dict );
+        }
+
         ProcFlags.in_macro_define = 0;
+
         len = strlen( cb->s.f->filename );
         me  = mem_alloc( len + sizeof( mac_entry ) );
         me->next = NULL;
@@ -372,7 +415,7 @@ static  void    scr_dm( void )
     } else {
         err_count++;
         out_msg("ERR_MACRO_DEFINE_logic error '%s'\n", macname );
-        free_mac_lines( head );
+        free_lines( head );
         return;
     }
     return;
@@ -399,6 +442,63 @@ static scrtag  scr_tags[] = {
 #define MAX_SCRTAGNAME_LENGTH   (sizeof( scr_tags->tagname ) - 1)
 
 
+void    show_macro_parms( macrocb * cb )
+{
+    int             k;
+    inp_line    *   parm;
+
+    out_msg( "&* ='%s'\n", (cb->mparms.star == NULL ? "": cb->mparms.star) );
+    out_msg( "&*0='%d'\n", cb->mparms.star0 );
+    parm = cb->mparms.starx;
+    for( k = 1; k <= cb->mparms.star0; ++k ) {
+        out_msg( "&*%d='%s'\n", k, parm->value );
+        parm = parm->next;
+    }
+}
+
+/*
+ * add macro parms from input line to macro parm structure
+ */
+
+static void     add_macro_parms( char * p )
+{
+    macrocb     *   cb;
+    inp_line    *   wkline;
+    int             len;
+    char        *   pparm;
+
+    cb  = input_cbs->s.m;
+
+    while( *p && *p == ' ' ) {
+        ++p;
+    }
+    len   = strlen( p );
+    if( len > 0 ) {
+        pparm = mem_alloc( len + 1 );
+        strcpy_s( pparm, len + 1, p );
+        cb->mparms.star = pparm;
+
+
+        garginit();
+        while( getargq() == pos ) {     // as long as there are parms
+            inp_line    *   curr;
+
+            curr = mem_alloc( arg_flen + sizeof( inp_line ) );
+            if( cb->mparms.starx  == NULL) {
+                cb->mparms.starx = curr;
+            } else {
+                wkline->next = curr;
+            }
+            wkline = curr;
+            curr->next = NULL;
+            strncpy_s( curr->value, arg_flen + 1, err_start, arg_flen );
+            cb->mparms.star0++;
+        }
+    }
+    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        show_macro_parms( cb );
+    }
+}
 /*
  * Process script control line
  *
@@ -406,17 +506,18 @@ static scrtag  scr_tags[] = {
 
 static void     scan_script( void)
 {
-    char    *   p;
-    char    *   pt;
-    int         toklen;
-    int         k;
-    char        c;
+    mac_entry   *   me;
+    char        *   p;
+    char        *   pt;
+    int             toklen;
+    int             k;
+    char            c;
 
     cb = input_cbs;
     p = ++scan_start;
 
     if( *p == '*' ) {
-        return;                         // .*   +++ ignore comment line
+        return;                         // .*   +++ ignore comment up to EOL
     }
     if( *p == SCR_char && *(p+1) == SCR_char ) {
         return;                         // ...  +++ ignore label line for now
@@ -431,6 +532,7 @@ static void     scan_script( void)
         if( *p == SCR_char ) {          // ..
             p++;
             ProcFlags.macro_ignore = 1;
+            me = NULL;
         } else {
             ProcFlags.macro_ignore = 0;
         }
@@ -460,34 +562,55 @@ static void     scan_script( void)
 
     token_buf[ 0 ] = '\0';
     pt = token_buf;
-    while( isalnum( *p ) && *p != SCR_char ) {  // end of controlword
+    while( *p && test_macro_char( *p ) ) {  // end of controlword
        *pt++ = *p++;                    // copy to TokenBuf
     }
-
-    *pt = '\0';
     toklen = pt - token_buf;
-    if( toklen >= TAG_NAME_LENGTH ) {
-        *(token_buf + TAG_NAME_LENGTH) = '\0';
+    if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
+
+
+//       copy_buff2_to_output();    TBD
+
+
+       return;
     }
-    if( toklen ) {
+    *pt = '\0';
+
+    if( toklen >= MAC_NAME_LENGTH ) {
+        *(token_buf + MAC_NAME_LENGTH) = '\0';
+    }
+    if( !ProcFlags.macro_ignore ) {
+        me = find_macro( macro_dict, token_buf );
+    } else {
+        me = NULL;
+    }
+    if( me != NULL ) {                  // macro found
+        add_macro_cb_entry( me );
+        inc_inc_level();
+        add_macro_parms( p );
+    } else {                            // try script controlword
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
-            printf_research("L%d    %c%s found %s(%d)\n\n", inc_level,
-                            SCR_char,token_buf, cb->s.f->filename, cb->s.f->lineno );
+            if( cb->fmflags & II_macro ) {
+                printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                                 inc_level, SCR_char, token_buf,
+                                 cb->s.m->mac->name, cb->s.m->lineno );
+            } else {
+                printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                                 inc_level, SCR_char, token_buf,
+                                 cb->s.f->filename, cb->s.f->lineno );
+            }
             add_SCR_tag_research( token_buf );
         }
 
         for( k = 0; k < SCR_TAGMAX; ++k ) {
             if( toklen == SCR_KW_LENGTH ) {
                 if( !stricmp( scr_tags[ k ].tagname, token_buf ) ) {
-                    scan_start = p;     // script controlword found, process
+                    scan_start = p; // script controlword found, process
                     scr_tags[ k ].tagproc();
                     break;
                 }
             }
         }
-    } else {
-        out_msg("WNG_SCR_KEYWORD_MISSING\n" );  // only SCR_char in input
-        wng_count++;
     }
 }
 
@@ -548,8 +671,15 @@ void    scan_line( void )
             }
 
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                printf_research("L%d    %s found %s(%d)\n\n", inc_level,
-                       scan_start, cb->s.f->filename, cb->s.f->lineno );
+                if( cb->fmflags & II_macro ) {
+                    printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                                     inc_level, GML_char, scan_start + 1,
+                                     cb->s.m->mac->name, cb->s.m->lineno );
+                } else {
+                    printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                                     inc_level, GML_char, scan_start + 1,
+                                     cb->s.f->filename, cb->s.f->lineno );
+                }
                 add_GML_tag_research( scan_start + 1 );
             }
 

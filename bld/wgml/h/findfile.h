@@ -76,6 +76,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 extern  void        ff_teardown( void );
+extern  bool        free_inc_fp( void );
 extern char     *   get_cop_file( char const * in_name );
 extern  void        get_env_vars( void );
 extern  char    *   GML_get_env( char * name );

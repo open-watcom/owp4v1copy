@@ -121,7 +121,7 @@ char *get_filename_full_path( char *buff, char const * name, size_t max )
 }
 
 
-
+#if 0
 /***************************************************************************/
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
@@ -156,7 +156,7 @@ static  bool    free_inc_fp( void )
     }
     return( false );                    // nothing to close
 }
-
+#endif
 
 static void reopen_inc_fp( filecb *cb )
 {
@@ -228,7 +228,6 @@ static  void    add_file_cb_entry( void )
     nip->hidden_head = NULL;
     nip->hidden_tail = NULL;
     nip->fmflags = II_file;
-    nip->s.m    = NULL;
     nip->s.f    = new;
     init_dict( &nip->local_dict );
 
@@ -255,32 +254,61 @@ static  void    add_file_cb_entry( void )
 
 
 /***************************************************************************/
-/*  remove info about file  from LIFO list                                 */
+/*  remove info about file or macro  from LIFO list                        */
 /***************************************************************************/
 
 static  void    del_input_cb_entry( void )
 {
     inputcb     *   wk;
-    inp_line    *   nxt;
 
     wk = input_cbs;
     if( wk == NULL ) {
         return;
     }
-    while( wk->hidden_head != NULL ) {
-        nxt = wk->hidden_head->next;
-        mem_free( wk->hidden_head );
-        wk->hidden_head = nxt;
-    }
-    if( wk->s.f && (wk->s.f->flags & FF_open) ) { // close file if neccessary
-       fclose( wk->s.f->fp );
-    }
-    if( wk->s.m ) {
+    free_lines( wk->hidden_head );
+
+/*
+ *  The macrolines in s.m don't need to be freed, as these point to
+ *  mac_entry, and freeing is done with macro_dict
+ */
+    if( wk->fmflags & II_macro ) {
+        free_lines( wk->s.m->mparms.starx );// free macro call parms
+        if( wk->s.m->mparms.star != NULL ) {
+            mem_free( wk->s.m->mparms.star );   // free macro parameter
+        }
         mem_free( wk->s.m );
+    } else {
+        if( wk->s.f->flags & FF_open ) {// close file if neccessary
+            fclose( wk->s.f->fp );
+        }
+        mem_free( wk->s.f );
     }
     input_cbs = wk->prev;
     mem_free( wk );
     return;
+}
+
+
+/***************************************************************************/
+/*  get line from current macro                                            */
+/***************************************************************************/
+static  void    get_macro_line( void )
+{
+    macrocb *   cb;
+
+    cb = input_cbs->s.m;
+
+    if( cb->macline == NULL ) {         // no more macrolines
+        input_cbs->fmflags |= II_eof;
+        cb->flags          |= FF_eof;
+        cb->flags          &= ~FF_startofline;
+        *buff2              = '\0';
+    } else {
+        cb->lineno++;
+        cb->flags          |= FF_startofline;
+        strcpy_s( buff2, buf_size, cb->macline->value );
+        cb->macline         = cb->macline->next;
+    }
 }
 
 
@@ -294,13 +322,8 @@ bool    get_line( void )
     char        *   p;
     inp_line    *   pline;
 
-    if( input_cbs->fmflags == II_macro ) {
-        out_msg("\nin wgml.c getline() for macro TBD\n");
-        err_count++;
-        return( false );
-    }
-    if( input_cbs->hidden_head != NULL ) { // line was split, take 2nd part
-        strcpy( buff2, input_cbs->hidden_head->value );
+    if( input_cbs->hidden_head != NULL ) {  // line was previously split,
+        strcpy( buff2, input_cbs->hidden_head->value ); // take 2nd part
         pline = input_cbs->hidden_head;
         input_cbs->hidden_head = input_cbs->hidden_head->next;
         mem_free( pline );
@@ -308,51 +331,55 @@ bool    get_line( void )
             input_cbs->hidden_tail = NULL;
         }
     } else {
-        cb = input_cbs->s.f;
-        if( !(cb->flags & FF_open) ) {
-            reopen_inc_fp( cb );
-        }
-        do {
-            p = fgets( buff2, buf_size, cb->fp );
-            if( p != NULL ) {
-                if( cb->lineno >= cb->linemax ) {
-                    input_cbs->fmflags |= II_eof;
-                    cb->flags |= FF_eof;
-                    cb->flags &= ~FF_startofline;
-                    *buff2 = '\0';
-                    break;
-                }
-                cb->lineno++;
-                cb->flags |= FF_startofline;
+        if( input_cbs->fmflags == II_macro ) {
+            get_macro_line();           // input from macro line
+        } else {
+            cb = input_cbs->s.f;        // input from file
+            if( !(cb->flags & FF_open) ) {
+                reopen_inc_fp( cb );
+            }
+            do {
+                p = fgets( buff2, buf_size, cb->fp );
+                if( p != NULL ) {
+                    if( cb->lineno >= cb->linemax ) {
+                        input_cbs->fmflags |= II_eof;
+                        cb->flags |= FF_eof;
+                        cb->flags &= ~FF_startofline;
+                        *buff2 = '\0';
+                        break;
+                    }
+                    cb->lineno++;
+                    cb->flags |= FF_startofline;
 
-                if( cb->flags & FF_crlf ) { // try to delete CRLF at end
-                    p += strlen( p ) - 1;
-                    if( *p == '\r' ) {
-                        *p-- = '\0';
-                        if( *p == '\n' ) {
-                            *p-- = '\0';
-                        }
-                    } else if( *p == '\n' ) {
-                        *p-- = '\0';
+                    if( cb->flags & FF_crlf ) { // try to delete CRLF at end
+                        p += strlen( p ) - 1;
                         if( *p == '\r' ) {
                             *p-- = '\0';
+                            if( *p == '\n' ) {
+                                *p-- = '\0';
+                            }
+                        } else if( *p == '\n' ) {
+                            *p-- = '\0';
+                            if( *p == '\r' ) {
+                                *p-- = '\0';
+                            }
                         }
                     }
-                }
-            } else {
-                if( feof( cb->fp ) ) {
-                    input_cbs->fmflags |= II_eof;
-                    cb->flags |= FF_eof;
-                    cb->flags &= ~FF_startofline;
-                    *buff2 = '\0';
-                    break;
                 } else {
-                    out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                    err_count++;
-                    g_suicide();
+                    if( feof( cb->fp ) ) {
+                        input_cbs->fmflags |= II_eof;
+                        cb->flags |= FF_eof;
+                        cb->flags &= ~FF_startofline;
+                        *buff2 = '\0';
+                        break;
+                    } else {
+                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        err_count++;
+                        g_suicide();
+                    }
                 }
-            }
-        } while( cb->lineno < cb->linemin );
+            } while( cb->lineno < cb->linemin );
+        }
     }
 
     buff2_lg = strnlen_s( buff2, buf_size );
@@ -360,14 +387,15 @@ bool    get_line( void )
         input_cbs->s.f->usedlen = buff2_lg;
     }
 
-    if( (GlobalFlags.research && GlobalFlags.firstpass) ) {
+    if( !(input_cbs->fmflags & II_eof) && GlobalFlags.research &&
+        GlobalFlags.firstpass ) {
         printf( "%s\n", buff2 );
     }
     return( !(input_cbs->fmflags & II_eof) );
 }
 
 
-static  void    show_include_stack( void )
+void    show_include_stack( void )
 {
     inputcb *   ip;
 
@@ -380,9 +408,11 @@ static  void    show_include_stack( void )
                      ip->s.f->filename );
             break;
         case    II_macro :
-            out_msg( "\tIncluded from line %d of macro '%s'\n",
+            out_msg( "\tLine %d of macro '%s' defined at line %d of file '%s'\n",
                      ip->s.m->lineno,
-                     ip->s.m->mac->name );
+                     ip->s.m->mac->name,
+                     ip->s.m->mac->lineno,
+                     ip->s.m->mac->mac_file_name);
             break;
         default:
             out_msg( "\tERR Included from unknown\n" );
@@ -391,6 +421,14 @@ static  void    show_include_stack( void )
         ip = ip->prev;
     }
     return;
+}
+
+void    inc_inc_level( void )
+{
+    inc_level++;                        // start new level
+    if( inc_level > max_inc_level ) {
+        max_inc_level = inc_level;      // record highest level
+    }
 }
 
 /***************************************************************************/
@@ -432,15 +470,13 @@ static  void    proc_GML( char * filename )
                 err_count++;
                 if( inc_level > 0 ) {
                     show_include_stack();
+                    continue;           // don't start new include level
                 } else {                // masterfile included from cmdline
                     out_msg( "\tIncluded from %s\n", "cmdline" );
+                    break;              // no input file leave loop
                 }
-                continue;               // don't start new include level
             }
-            inc_level++;                // start new level
-            if( inc_level > max_inc_level ) {
-                max_inc_level = inc_level;
-            }
+            inc_inc_level();            // record max include level
             add_file_cb_entry();
             cb = input_cbs->s.f;
             cb->flags |= FF_crlf;       // delete crlf at end
@@ -471,11 +507,11 @@ static  void    proc_GML( char * filename )
             process_line();
             scan_line();
 
-            if( ProcFlags.newLevelFile | ProcFlags.newLevelMacro ) {
+            if( ProcFlags.newLevelFile || ProcFlags.newLevelMacro ) {
                 break;             // imbed and friends found start new level
             }
         }
-        if( ProcFlags.newLevelFile | ProcFlags.newLevelMacro ) {
+        if( ProcFlags.newLevelFile || ProcFlags.newLevelMacro ) {
             continue;
         }
 

@@ -86,9 +86,7 @@ void        process_line( void )
     char            *   p2;
     char            *   pchar;
     char            *   varstart;
-//  char                var_name[ SYM_NAME_LENGTH +1 ];
-//  int                 k;
-//  sub_index           var_ind;
+    sub_index           var_ind;
     symvar              symvar_entry;
     symsub          *   symsubval;
     int                 rc;
@@ -118,13 +116,13 @@ void        process_line( void )
         varstart = p1;                  // remember start of var
         p1++;                           // over &
 
-        pchar = scan_sym( p1, &symvar_entry );  // isolate symbolic var
+        pchar = scan_sym( p1, &symvar_entry, &var_ind );// isolate symbolic var
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
             rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                              no_subscript, &symsubval );
+                              var_ind, &symsubval );
         } else {
-            rc = find_symvar( &global_dict, symvar_entry.name, no_subscript,
+            rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                               &symsubval );
         }
         if( rc == 2 ) {                  // found
@@ -136,10 +134,11 @@ void        process_line( void )
             p1 = pchar;
         } else {
             if( symvar_entry.flags & local_var ) { // local var not found
-                                                   // replaced by nullstring
+                                                   // replace by nullstring
                 if( *pchar == '.' ) {
                     pchar++;            // skip terminating dot
                 }
+                p1 = pchar;
             } else {                    // global var not found
                 p1 = varstart;
                 if( *pchar == '.' ) {

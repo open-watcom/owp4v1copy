@@ -27,6 +27,7 @@
 * Description:  Implements the global function used by wgml to find and
 *               open files:
 *                   ff_teardown()
+*                   free_inc_fp()
 *                   get_cop_file()
 *                   get_env_vars()
 *                   GML_get_env()
@@ -38,7 +39,6 @@
 *                   gml_inc_dirs
 *                   initialize_directory_list()
 *                   IS_PATH_SEP()
-*                   my_free_inc_fp()
 *                   path_dirs
 *                   try_open()
 *
@@ -112,10 +112,10 @@ static  directory_list  path_dirs;
  * Notes:
  *      in_directory_list should be in its as-created state.
  *      If in_path_list is NULL, *in_directory_list will be cleared.
- *      If *in_directory_list->directories is not NULL on exit, it is a 
+ *      If *in_directory_list->directories is not NULL on exit, it is a
  *          single block of memory and can be freed with one mem_free().
  */
- 
+
 static void initialize_directory_list( char const * in_path_list, \
                                         directory_list * in_list )
 {
@@ -146,13 +146,13 @@ static void initialize_directory_list( char const * in_path_list, \
     /* Determine the number of paths and the total length needed. */
 
     byte_count = 0;
-    path_count = 0; 
+    path_count = 0;
     for( i = 0; i < strlen( in_path_list ); i++ ) {
         if( in_path_list[i] == '"' ) {
             for( j = i + 1; j < strlen( in_path_list ); j++ ) {
                 if( in_path_list[j] == '"' ) break;
                 byte_count++;
-            }    
+            }
             i = j;
             if( in_path_list[i] == '\0' ) {
                 if( in_path_list[i - 1] == INCLUDE_SEP ) path_count++;
@@ -197,7 +197,7 @@ static void initialize_directory_list( char const * in_path_list, \
             for( j = i + 1; j < strlen( in_path_list ); j++ ) {
                 if( in_path_list[j] == '"' ) break;
                 *current++ = in_path_list[j];
-            }    
+            }
             i = j;
             if( in_path_list[i] == '\0' ) {
                 if( in_path_list[i - 1] == INCLUDE_SEP ) {
@@ -274,7 +274,7 @@ static void initialize_directory_list( char const * in_path_list, \
 
         array_base = in_list->directories;
         current = (char *) (array_base + path_count * sizeof( char * ));
- 
+
         byte_count += path_count;
         j = 0;
         for( i = 0; i < local_list.count; i++ ) {
@@ -314,7 +314,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 {
     char    *       member_name     = NULL;
     char            filename_buffer[_MAX_PATH];
-    cop_file_type   file_type;    
+    cop_file_type   file_type;
     directory_entry current_entry;
     entry_found     entry_status;
     FILE    *       directory_file  = NULL;
@@ -368,7 +368,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
         break;
 
     case dir_v4_1_se:
-    
+
         /* The file was a same-endian version 4.1 directory file. */
 
         /* Skip the number of entries. */
@@ -382,11 +382,11 @@ static char * get_member_name( char const * in_dir, char const * in_name )
              * depending on whether this is a CompactDirEntry or an
              * ExtendedDirEntry.
              */
-        
+
             fread( &entry_type, sizeof( entry_type ), 1, directory_file );
 
             /* Exit the loop when the final entry has been processed. */
-        
+
             if( feof( directory_file ) || ferror( directory_file ) ) break;
 
             switch( entry_type) {
@@ -397,7 +397,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                  */
 
                 continue;
-                
+
             case 0x0001:
 
             /* This will be an ExtendedDirEntry. */
@@ -411,7 +411,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                     fread( &entry_type, sizeof( entry_type ), 1, directory_file );
 
                     /* Exit the loop when the final entry has been processed. */
-        
+
                     if( feof( directory_file ) || ferror( directory_file ) ) \
                                                                             break;
 
@@ -423,9 +423,9 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                          */
 
                         continue;
-                
+
                     case 0x0001:
-                 
+
                         /* This should never actually occur; however, continue
                          * in case there is more data.
                          */
@@ -444,7 +444,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                         case valid_entry:
 
                             /* Return the member name, if found. */
-       
+
                             if( !strcmp( in_name, current_entry.defined_name ) \
                                                                             ) {
                                 fclose( directory_file );
@@ -497,14 +497,14 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                 case valid_entry:
 
                     /* Return the member name, if found. */
-       
+
                     if( !strcmp( in_name, current_entry.defined_name) ) {
                         fclose( directory_file );
                         directory_file = NULL;
                         member_name = (char *) mem_alloc( strnlen_s( \
                                     current_entry.member_name, _MAX_PATH ) + 1 );
                         strcpy_s( member_name, strnlen_s( \
-        current_entry.member_name, _MAX_PATH ) + 1, current_entry.member_name );    
+        current_entry.member_name, _MAX_PATH ) + 1, current_entry.member_name );
                         return( member_name );
                     }
 
@@ -563,7 +563,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
 
-static  bool    my_free_inc_fp( void )
+bool    free_inc_fp( void )
 {
     inputcb *   ip;
     filecb  *   cb;
@@ -571,22 +571,24 @@ static  bool    my_free_inc_fp( void )
 
     ip = input_cbs;
     while( ip != NULL ) {              // as long as input stack is not empty
-        if( (cb = ip->s.f) != NULL ) {  // if file (not macro)
-            if( (cb->flags & FF_open) ) {   // and file is open
-                rc = fgetpos( cb->fp, &cb->pos );
-                if( rc != 0 ) {
-                    out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                    err_count++;
-                    g_suicide();
+        if( ip->fmflags & II_file ) {   // if file (not macro)
+            if( (cb = ip->s.f) != NULL ) {
+                if( (cb->flags & FF_open) ) {   // and file is open
+                    rc = fgetpos( cb->fp, &cb->pos );
+                    if( rc != 0 ) {
+                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        err_count++;
+                        g_suicide();
+                    }
+                    rc = fclose( cb->fp );
+                    if( rc != 0 ) {
+                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        err_count++;
+                        g_suicide();
+                    }
+                    cb->flags &= ~FF_open;
+                    return( true );
                 }
-                rc = fclose( cb->fp );
-                if( rc != 0 ) {
-                    out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                    err_count++;
-                    g_suicide();
-                }
-                cb->flags &= ~FF_open;
-                return( true );
             }
         }
         ip = ip->prev;                  // next higher input level
@@ -619,7 +621,7 @@ int try_open( char * prefix, char * separator, char * filename, char * suffix )
         erc = fopen_s( &fp, filename, "rb" );
         if( erc == 0 ) break;
         if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
-        if( !my_free_inc_fp() ) break;     // try closing an include file
+        if( !free_inc_fp() ) break;     // try closing an include file
     }
     if( fp == NULL ) return( 0 );
 
@@ -653,7 +655,7 @@ extern char * get_cop_file( char const * in_name )
     char        *   current_path    = NULL;
     char        *   file_name       = NULL;
     char        *   member_name     = NULL;
-    int             i;    
+    int             i;
     size_t          buffer_length;
 
     /* Process the directories in GMLlibs. */
@@ -672,7 +674,7 @@ extern char * get_cop_file( char const * in_name )
             }
         }
     }
-    
+
     /* Process the directories in GMLincs. */
 
     if( member_name == NULL ) {
@@ -711,7 +713,7 @@ extern char * get_cop_file( char const * in_name )
             }
         }
     }
-        
+
     /* Now combine the member name and the path into name_buffer,
      * adding ".cop" if the member name has no extension.
      */
@@ -738,9 +740,9 @@ extern char * get_cop_file( char const * in_name )
                 return( file_name );
             }
         }
-            
+
         /* If we get here, then the file name is too long. */
-                
+
         out_msg( "File name for %s is too long (limit is %i):\n  %s%s\n", \
                                 in_name, _MAX_PATH, current_path, member_name );
         mem_free( file_name );

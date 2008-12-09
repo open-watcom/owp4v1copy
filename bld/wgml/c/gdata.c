@@ -27,8 +27,8 @@
 * Description:  define and initialize global variables for wgml
 *
 ****************************************************************************/
-#include    "findfile.h"
 #include    "wgml.h"
+#include    "findfile.h"
 
 #define global                          // allocate storage for global vars
 #include    "gvars.h"

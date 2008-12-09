@@ -51,10 +51,13 @@
 #define MAX_INC_DEPTH   255             // max include level depth
 #define BUF_SIZE        512             // default buffersize for filecb e.a.
 #define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
+#define SCR_KW_LENGTH   2               // script control word length
 #define TAG_NAME_LENGTH 15              // :tag name length
 #define ATT_NAME_LENGTH 9               // :tag attr name len
 #define SYM_NAME_LENGTH 11              // symbol name length
 #define MAC_NAME_LENGTH 8               // macro name length
+#define MAX_MAC_PARMS   32              // maximum macro parm count
+                                        // arbitrary value, not found in docu!!!
 
 
 
@@ -130,12 +133,12 @@ typedef struct symsub {
 
 
 /***************************************************************************/
-/*  Symbol variable base entry                                             */
+/*  Symbolic variable base entry                                           */
 /***************************************************************************/
 typedef struct symvar {
     struct symvar   *   next;           // next base entry
     char                name[ SYM_NAME_LENGTH + 1];
-    sub_index           subscript_used; // highest used subscript
+    sub_index           subscript_used; // count of used subscript
     symsub          *   subscripts;     // subscript entries
     sym_flags           flags;
 } symvar;
@@ -193,6 +196,16 @@ typedef struct filecb {
 } filecb;
 
 /***************************************************************************/
+/*  parameter strucure for macro call                                      */
+/***************************************************************************/
+typedef struct mac_parms {
+    char        *   star;               // &*  complete parmline
+    int             star0;              // &*0 parmcount
+    inp_line    *   starx;              // &*1 - &*x parms
+
+} mac_parms;
+
+/***************************************************************************/
 /*  Entry for an included macro                                            */
 /***************************************************************************/
 
@@ -201,6 +214,7 @@ typedef struct  macrocb {
     ulong           lineno;             // current macro line number
     inp_line    *   macline;            // list of macro lines
     mac_entry   *   mac;                // macro definition entry
+    mac_parms       mparms;             // macro call parameters
 } macrocb;
 
 typedef enum {
@@ -233,7 +247,6 @@ typedef struct  inputcb {
 /***************************************************************************/
 /*  scr keywords                                                           */
 /***************************************************************************/
-#define SCR_KW_LENGTH   2
 
 typedef struct scrtag {
     char            tagname[ SCR_KW_LENGTH + 1 ];

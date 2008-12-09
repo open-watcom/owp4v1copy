@@ -25,8 +25,9 @@
 *  ========================================================================
 *
 * Description: Internal functions:
-*                         Garginit  --- initialize operand scan
-*                         getarg    --- scan blank delimited argument
+*                         Garginit      --- initialize operand scan
+*                         getarg        --- scan blank delimited argument
+*                         test_xxx_char --- test for allowed char
 *
 ****************************************************************************/
 
@@ -101,4 +102,89 @@ condcode    getarg( void )
         }
     }
     return( cc );
+}
+
+/***************************************************************************/
+/*  scan blank delimited argument with quotes                              */
+/***************************************************************************/
+
+condcode    getargq( void )
+{
+    condcode    cc;
+    char    *   p;
+    char        quote;
+
+    if( arg_stop <= arg_start ) {       // already at end
+        cc = omit;                      // arg omitted
+    } else {
+        p = arg_start;
+        while( *p && *p == ' ' && p <= arg_stop ) {    // skip leading blanks
+            p++;
+        }
+
+        err_start = p;                  // err ptr in case of later error
+        if( *p == '\'' || *p == '"' ) {
+            quote = *p;
+            p++;
+        } else {
+            quote = '\0';
+        }
+        for( ; p <= arg_stop; p++ ) {
+
+            if( quote == '\0' && *p == ' ' ) {
+                break;
+            }
+            if( *p == quote ) {
+                quote = '\0';                   // prepare stop at next blank
+            }
+            if( *p == '\0' ) {
+                break;
+            }
+        }
+        arg_start = p;                  // address of start for next call
+        arg_flen = p - err_start;       // length of arg
+        if( arg_flen > 0 ) {
+            cc = pos;                   // arg found
+        } else {
+            cc = omit;                  // length zero
+        }
+    }
+    return( cc );
+}
+
+
+/*
+ * Test character as valid for an identifier name
+ */
+bool    test_identifier_char( char c )
+{
+    bool    test;
+
+    test = isalnum( c );
+    return( test );
+}
+
+/*
+ * Test character as valid for a macro name
+ */
+bool    test_macro_char( char c )
+{
+    bool    test;
+
+    test = isalnum( c );
+    return( test );
+}
+
+/*
+ * Test character as valid for a symbol name
+ */
+bool    test_symbol_char( char c )
+{
+    bool    test;
+
+    test = isalnum( c );
+    if( !test ) {
+        test = ( c == '@' ) || ( c == '#' ) || ( c == '$' ) || ( c == '_' );
+    }
+    return( test );
 }

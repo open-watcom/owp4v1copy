@@ -38,12 +38,12 @@
 
 
 
-/* construct symbol name from input
+/* construct symbol name and optionally subscript from input
  *
  *
  */
 
-char    *scan_sym( char * p, symvar * sym )
+char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 {
     size_t      k;
     char    *   sym_start;
@@ -86,6 +86,36 @@ char    *scan_sym( char * p, symvar * sym )
         }
         p++;
     }
+    *subscript = no_subscript;          // not subscripted
+    if( *p == '(' ) {                   // subscripted
+        char    *   psave = p;
+        int         sign = 1;           // default positive
+        long        val  = 0;
+
+        p++;
+        if( !isdigit( *p ) ) {
+            if( *p == '-' ) {
+                sign = -1;
+            } else if( *p == '+' ) {
+                sign = 1;
+            } else {
+                scan_err = true;
+            }
+        }
+        while( *p && *p != ')' ) {
+            if( isdigit( *p ) ) {
+                val = val * 10 + *p - '0';
+            }
+            p++;
+        }
+        if( !scan_err && (*p == ')') ) {
+            p++;
+        }
+        *subscript = val * sign;
+        if( scan_err ) {
+           p = psave;
+        }
+    }
     return( p );
 }
 
@@ -108,8 +138,9 @@ void    scr_se( void )
     int             rc;
     symvar      * * working_dict;
 
+    subscript = no_subscript;           // not subscripted
     scan_err = false;
-    p = scan_sym( scan_start, &sym );
+    p = scan_sym( scan_start, &sym, &subscript );
 
     if( sym.flags & local_var ) {
         working_dict = &input_cbs->local_dict;
@@ -122,9 +153,49 @@ void    scr_se( void )
     }
     if( *p == '\0' ) {
         out_msg( "WNG_SYMBOL_VALUE_MISSING for %s\n", sym.name );
+        show_include_stack();
         wng_count++;
         scan_err = true;
     } else {
+        if( *p == '(' ) {               // subscripted
+            int sign = 1;               // default positive
+            long val  = 0;
+
+            p++;
+            if( !isdigit( *p ) ) {
+                if( *p == '-' ) {
+                    sign = -1;
+                } else if( *p == '+' ) {
+                    sign = 1;
+                } else {
+                    if( *p == ')' ) {
+                        out_msg( "ERR_SYMBOL_autoincrement not supported %s\n",
+                                 sym.name );
+                        show_include_stack();
+                        err_count++;
+                        scan_err = true;
+                    } else {
+                        out_msg( "ERR_SYMBOL_subscript invalid %s\n", sym.name );
+                        show_include_stack();
+                        err_count++;
+                        scan_err = true;
+                    }
+                }
+            }
+            while( *p && *p != ')' ) {
+                if( isdigit( *p ) ) {
+                    val = val * 10 + *p - '0';
+                }
+                p++;
+            }
+            if( *p == ')' ) {
+                p++;
+            }
+            subscript = val * sign;
+        }
+        while( *p && *p == ' ' ) {      // skip over spaces
+            p++;
+        }
         if( *p == '=' ) {
             p++;
             while( *p && *p == ' ' ) {  // skip over spaces
@@ -141,7 +212,6 @@ void    scr_se( void )
                     *p = '\0';
                 }
             }
-            subscript = no_subscript;   // subscripts TBD
 
             rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
 

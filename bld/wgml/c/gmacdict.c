@@ -42,20 +42,18 @@
 /*  init_macro_dict   initialize dictionary pointer                        */
 /***************************************************************************/
 
-void    init_macro_dict( mac_entry **dict )
+void    init_macro_dict( mac_entry * * dict )
 {
-
     *dict = NULL;
     return;
 }
 
 /***************************************************************************/
-/*  free_macro_entry  free storage for a macro entry                       */
-/*   this routine is static because deleting a single entry only disturbs  */
-/*   the dictionary chain from the previous macro entry.                   */
+/*  free_macro_entry_short  free storage for a macro entry                 */
+/*  without chain update                                                   */
 /***************************************************************************/
 
-static  void    free_macro_entry( mac_entry *me )
+static  void    free_macro_entry_short( mac_entry * me )
 {
     inp_line    *   ml;
     inp_line    *   mln;
@@ -73,10 +71,46 @@ static  void    free_macro_entry( mac_entry *me )
 }
 
 /***************************************************************************/
+/*  free_macro_entry  delete single macroentry with chain update           */
+/***************************************************************************/
+void    free_macro_entry( mac_entry * me, mac_entry * * dict )
+{
+    inp_line    *   ml;
+    inp_line    *   mln;
+    mac_entry   *   wk;
+    mac_entry   *   wkn;
+
+
+    if( me != NULL ) {
+        ml = me->macline;
+        while( ml != NULL ) {           // free all macro lines
+             mln = ml->next;
+             mem_free( ml );
+             ml = mln;
+        }
+        if( *dict == me ) {                // delete first entry
+            *dict = me->next;
+        } else {
+            wk = *dict;
+            while( wk != NULL ) {     // search the entry in macro dictionary
+                wkn = wk->next;
+                if( wkn == me ) {
+                    wk->next = me->next;// chain update
+                    break;
+                }
+                wk = wkn;
+            }
+        }
+        mem_free( me );                 // now the entry itself
+    }
+    return;
+}
+
+/***************************************************************************/
 /*  free_macro_dict   free all macro dictionary entries                    */
 /***************************************************************************/
 
-void    free_macro_dict( mac_entry **dict )
+void    free_macro_dict( mac_entry * * dict )
 {
     mac_entry   *   wk;
     mac_entry   *   wkn;
@@ -84,7 +118,7 @@ void    free_macro_dict( mac_entry **dict )
     wk = *dict;
     while( wk != NULL ) {
         wkn = wk->next;
-        free_macro_entry( wk );
+        free_macro_entry_short( wk );
         wk = wkn;
     }
     *dict = NULL;                       // dictionary is empty
@@ -97,10 +131,10 @@ void    free_macro_dict( mac_entry **dict )
 /*  search macro entry in specified dictionary                             */
 /*  returns ptr to macro or NULL if not found                              */
 /***************************************************************************/
-mac_entry   *find_macro( mac_entry *dict, const char *name )
+mac_entry   * find_macro( mac_entry * dict, const char * name )
 {
-    mac_entry   *wk;
-    mac_entry   *curr;
+    mac_entry   *   wk;
+    mac_entry   *   curr;
 
     wk   = NULL;
     curr = dict;
@@ -119,7 +153,7 @@ mac_entry   *find_macro( mac_entry *dict, const char *name )
 /*  print_macro_dict  output all of the macro dictionary                   */
 /***************************************************************************/
 
-void    print_macro_dict( mac_entry *dict )
+void    print_macro_dict( mac_entry * dict )
 {
     mac_entry   *   wk;
     int             cnt;
@@ -127,7 +161,7 @@ void    print_macro_dict( mac_entry *dict )
     static char     fill[ 10 ] = "         ";
     cnt = 0;
     wk = dict;
-    out_msg( "\nList of defined macros:\n");
+    out_msg( "\nList of defined macros:\n" );
     while( wk != NULL ) {
 
         len =  strlen( wk->name );
