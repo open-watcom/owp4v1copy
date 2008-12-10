@@ -25,7 +25,9 @@
 !inject connect.obj                                                                     l32 lpc lmp
 !inject gtscknam.obj                                                                    l32 lpc lmp
 !inject htons.obj                                                                       l32 lpc lmp
+!inject htonl.obj                                                                       l32 lpc lmp
 !inject ntohs.obj                                                                       l32 lpc lmp
+!inject ntohl.obj                                                                       l32 lpc lmp
 !inject inetaddr.obj                                                                    l32 lpc lmp
 !inject inetntoa.obj                                                                    l32 lpc lmp
 !inject gthstnam.obj                                                                    l32 lpc lmp
