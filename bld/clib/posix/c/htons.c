@@ -30,10 +30,13 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "syslinux.h"
 #include <netinet/in.h>
 
 _WCRTLINK unsigned short htons( unsigned short hostshort )
 {
-    return ( ( (hostshort >> 8) & 0xff) | ((hostshort & 0xff) << 8) );
+#if defined( __BIG_ENDIAN__ )
+    return ( hostshort );
+#else
+    return ( ((hostshort >> 8) & 0xff) | ((hostshort & 0xff) << 8) );
+#endif
 }

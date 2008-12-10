@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of ntohs() for Linux.
+* Description:  Implementation of ntohl() for Linux.
 *
 ****************************************************************************/
 
@@ -32,11 +32,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-_WCRTLINK unsigned short int ntohs( unsigned short int netshort )
+_WCRTLINK unsigned long int ntohl( unsigned long int netlong )
 {
 #if defined( __BIG_ENDIAN__ )
-    return ( netshort );
+    return( netlong );
 #else
-    return ( ((netshort >> 8) & 0xff) | ((netshort & 0xff) << 8) );
+    return( ((netlong >> 24) & 0xff) | ((netlong >> 16) & 0xff) << 8 |
+                     ((netlong >> 8) & 0xff) << 16 | (netlong & 0xff) << 24 );
 #endif
 }
