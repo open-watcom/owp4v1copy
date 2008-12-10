@@ -609,6 +609,15 @@ int ColorFind( char *data, int findfl )
 } /* ColorFind */
 
 /*
+ * SetLastFind - set the last find string
+ */
+void SetLastFind( char* newLastFind )
+{
+    AddString2( &lastFind, newLastFind );
+
+} /* SetLastFind */
+
+/*
  * FancyDoReplace - get strings, search for one, replace with other
  */
 int FancyDoReplace( void )

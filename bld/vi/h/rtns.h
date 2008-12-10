@@ -375,6 +375,7 @@ int GetFind( char *, linenum *, int *, int *, int );
 int FindBackwardsWithString( char * );
 void SaveFindRowColumn( void );
 int ColorFind( char *, int );
+void SetLastFind( char * );
 void FindCmdFini( void );
 
 int DoFindBackwards( range *, long );
