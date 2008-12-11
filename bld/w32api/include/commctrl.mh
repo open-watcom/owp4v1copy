@@ -6775,7 +6775,7 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
 #define TreeView_SortChildrenCB( x, p1, p2 ) \
     (BOOL)SNDMSG( x, TVM_SORTCHILDRENCB, (WPARAM)(p2), (LPARAM)(LPTV_SORTCB)(p2) )
 #define TreeView_EndEditLabelNow( x, p ) \
-    (BOOL)SNDMSG( x, TVM_ENDLABELEDITNOW, (WPARAM)(p), 0L )
+    (BOOL)SNDMSG( x, TVM_ENDEDITLABELNOW, (WPARAM)(p), 0L )
 #define TreeView_GetISearchString( x, p ) \
     (BOOL)SNDMSG( x, TVM_GETISEARCHSTRING, 0, (LPARAM)(LPTSTR)(p) )
 #if (_WIN32_IE >= 0x0300)
