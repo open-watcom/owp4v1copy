@@ -80,10 +80,7 @@ void DefaultWindows( RECT *world, RECT *workspace )
          * like adding yet another define.
          * This whole function reeks a little anyway :)
          */
-        if( StatusWidth < 0 ) {
-            StatusWidth = FontHeight( WIN_FONT( w ) ) + 2 * border + 7;
-        }
-        r->top = r->bottom - StatusWidth;
+        r->top = r->bottom - (FontHeight( WIN_FONT( w ) ) + 2 * border + 7);
         last = r;
     } else {
         tmp = *world;

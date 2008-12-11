@@ -46,8 +46,6 @@ static BOOL Fini( window *, void * );
 static BOOL     capIndex = -1;
 static short    *sections;
 
-int StatusWidth = -1;
-
 window StatusBar = {
     &statusw_info,
     { 0, 0, 0, 0 },
@@ -245,7 +243,6 @@ window_id NewStatWindow( void )
     size.bottom += 1;
     stat = StatusWndCreate( Root, &size, InstanceHandle, NULL );
     GetWindowRect( stat, &size );
-    StatusWidth = size.bottom - size.top;
     return( stat );
 
 } /* NewStatWindow */
