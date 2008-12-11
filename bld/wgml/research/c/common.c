@@ -25,10 +25,12 @@
 *  ========================================================================
 *
 * Description:  Implements the common functions for the research code:
+*                   free_resources()
 *                   initialize_globals()
 *                   mem_alloc()
 *                   mem_free()
 *                   mem_realloc()
+*                   my_exit()
 *                   out_msg()
 *                   skip_spaces()
 *
@@ -37,6 +39,7 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,7 +100,7 @@ void * mem_alloc( size_t size )
     p = malloc( size );
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
-        exit( EXIT_FAILURE );
+        my_exit( EXIT_FAILURE );
     }
     return( p );
 }
@@ -107,7 +110,7 @@ void * mem_realloc( void * p, size_t size )
     p = realloc( p, size );
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
-        exit( EXIT_FAILURE );
+        my_exit( EXIT_FAILURE );
     }
     return( p );
 }
@@ -117,4 +120,17 @@ void mem_free( void * p )
     free( p );
     p = NULL;
 }
+
+void my_exit( int rc )
+{
+    exit( rc );
+}
+
+bool free_resources( errno_t in_errno )
+{
+    if( in_errno == ENOMEM) out_msg( "Out of memory!\n" );
+    else out_msg( "Out of file handles!\n" );
+    return( false );
+}
+
 

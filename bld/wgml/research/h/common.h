@@ -33,7 +33,13 @@
 *                   print_usage()
 *
 *               The remaining functions are implemented in common.c:
+*                   free_resources()
 *                   initialize_globals()
+*                   mem_alloc()
+*                   mem_free()
+*                   mem_realloc()
+*                   my_exit()
+*                   out_msg()
 *                   skip_spaces()
 *
 ****************************************************************************/
@@ -41,6 +47,7 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
+#include <stdbool.h>
 #include <stddef.h>
 
 /* Function return values. */
@@ -80,10 +87,12 @@ extern  void        print_usage( void );
 
 /* These functions are defined in common.c. */
 
+extern  bool        free_resources( errno_t in_errno );
 extern  void        initialize_globals( void );
 extern  void        mem_free( void *p );
 extern  void    *   mem_alloc( size_t size );
 extern  void    *   mem_realloc( void *p, size_t size );
+extern  void        my_exit( int rc );
 extern  void        out_msg( char *fmt, ... );
 extern  char    *   skip_spaces( char * start );
 

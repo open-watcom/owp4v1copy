@@ -57,6 +57,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 //================= Function Prototypes ========================
 
 /* wgml.c                              */
+extern  bool     free_resources( errno_t in_errno );
 extern  void    g_banner( void );
 extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( void );

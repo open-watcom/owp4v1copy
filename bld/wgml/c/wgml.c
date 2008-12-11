@@ -121,12 +121,11 @@ char *get_filename_full_path( char *buff, char const * name, size_t max )
 }
 
 
-#if 0
 /***************************************************************************/
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
 
-static  bool    free_inc_fp( void )
+bool    free_inc_fp( void )
 {
     inputcb *   ip;
     filecb  *   cb;
@@ -134,29 +133,30 @@ static  bool    free_inc_fp( void )
 
     ip = input_cbs;
     while( ip != NULL ) {              // as long as input stack is not empty
-        if( (cb = ip->s.f) != NULL ) {  // if file (not macro)
-            if( (cb->flags & FF_open) ) {   // and file is open
-                rc = fgetpos( cb->fp, &cb->pos );
-                if( rc != 0 ) {
-                    out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                    err_count++;
-                    g_suicide();
+        if( ip->fmflags & II_file ) {   // if file (not macro)
+            if( (cb = ip->s.f) != NULL ) {
+                if( (cb->flags & FF_open) ) {   // and file is open
+                    rc = fgetpos( cb->fp, &cb->pos );
+                    if( rc != 0 ) {
+                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        err_count++;
+                        g_suicide();
+                    }
+                    rc = fclose( cb->fp );
+                    if( rc != 0 ) {
+                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        err_count++;
+                        g_suicide();
+                    }
+                    cb->flags &= ~FF_open;
+                    return( true );
                 }
-                rc = fclose( cb->fp );
-                if( rc != 0 ) {
-                    out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                    err_count++;
-                    g_suicide();
-                }
-                cb->flags &= ~FF_open;
-                return( true );
             }
         }
         ip = ip->prev;                  // next higher input level
     }
     return( false );                    // nothing to close
 }
-#endif
 
 static void reopen_inc_fp( filecb *cb )
 {
@@ -187,6 +187,18 @@ static void reopen_inc_fp( filecb *cb )
         }
     }
     return;
+}
+
+/***************************************************************************/
+/*  Report resource exhaustion: may eventually try to correct the problem  */
+/***************************************************************************/
+
+bool free_resources( errno_t in_errno )
+{
+    if( in_errno == ENOMEM) out_msg( "Out of memory!\n" );
+    else out_msg( "Out of file handles!\n" );
+    err_count++;
+    return( false );
 }
 
 /***************************************************************************/
@@ -456,8 +468,7 @@ static  void    proc_GML( char * filename )
                 out_msg( "WNG_FILEATTR_IGNORED (%s) %s\n", attrwork, token_buf );
                 wng_count++;
             }
-            if( search_file_in_dirs( token_buf, def_ext, alt_ext,
-                                     DS_cur_inc_lib_path ) ) {
+            if( search_file_in_dirs( token_buf, def_ext, alt_ext, ds_doc_spec ) ) {
 
                 if( inc_level >= MAX_INC_DEPTH ) {
                     out_msg( "ERR_MAX_INPUT_NESTING %s\n", token_buf );
@@ -591,7 +602,7 @@ int main( int argc, char * argv[] )
     init_global_vars();
 
     token_buf = mem_alloc( buf_size );
-    get_env_vars();
+    ff_setup();                         // init findfile
 
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
     cmdline = mem_alloc( cmdlen );

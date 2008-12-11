@@ -25,13 +25,13 @@
 *  ========================================================================
 *
 * Description:  Declares everything used by wgml to find and open files:
-*                   DIRSEQ
+*                   dirseq
+*                   ff_setup()
 *                   ff_teardown()
 *                   get_cop_file()
-*                   get_env_vars()
-*                   GML_get_env()
 *                   search_file_in_dirs()
 *                   try_file_name
+*                   try_fp
 *
 ****************************************************************************/
 
@@ -59,15 +59,14 @@ global  FILE    *   try_fp;
 
 /* Extern enum declaration. */
 
-/***************************************************************************/
-/*  search sequence for gml, opt or layout files                           */
-/***************************************************************************/
+/* Search sequences for various types of files. */
 
 typedef enum {
-    DS_cur_lib_inc_path = 1,            // curdir, gmllib, gmlinc, path
-    DS_cur_inc_lib_path,                // curdir, gmlinc, gmllib, path
-    DS_cur_lib_path                     // curdir,         gmllib, path
-} DIRSEQ;
+    ds_opt_file = 1,    // wgml option files:     curdir, gmllib, gmlinc, path
+    ds_doc_spec,        // wgml document source:  curdir, gmlinc, gmllib, path
+    ds_bin_lib,         // wgml binary library:           gmllib, gmlinc, path
+    ds_lib_src          // gendev source:         curdir, gmlinc
+} dirseq;
 
 /* Function declarations. */
 
@@ -76,11 +75,9 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 extern  void        ff_teardown( void );
-extern  bool        free_inc_fp( void );
 extern char     *   get_cop_file( char const * in_name );
-extern  void        get_env_vars( void );
-extern  char    *   GML_get_env( char * name );
-extern  int         search_file_in_dirs( char * filename, char * defext, char * altext, DIRSEQ seq );
+extern  void        ff_setup( void );
+extern  int         search_file_in_dirs( char * filename, char * defext, char * altext, dirseq seq );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

@@ -573,8 +573,7 @@ static void set_OPTFile( option * opt )
 
             buffers[ level + 1 ] = NULL;
             file_names[ level + 1] = NULL;
-            if( search_file_in_dirs( token_buf, OPT_EXT, "",
-                                  DS_cur_lib_inc_path ) ) {
+            if( search_file_in_dirs( token_buf, OPT_EXT, "", ds_opt_file ) ) {
                 bool  skip = false;
 
                 fclose( try_fp );

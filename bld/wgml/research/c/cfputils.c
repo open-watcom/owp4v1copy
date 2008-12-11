@@ -586,7 +586,7 @@ void display_device( cop_device * in_device )
 int verify_device( char * in_path, char * in_name )
 {
     char            designator[4];
-    char            member_name[_MAX_PATH];
+    char            member_name[FILENAME_MAX];
     char            type;
     cop_device *    current_device = NULL;
     FILE *          device_file = NULL;
@@ -844,7 +844,7 @@ void display_driver( cop_driver * in_driver )
 int verify_driver( char * in_path, char * in_name )
 {
     char            designator[4];
-    char            member_name[_MAX_PATH];
+    char            member_name[FILENAME_MAX];
     char            type;
     cop_driver *    current_driver = NULL;
     FILE *          driver_file = NULL;
@@ -988,7 +988,7 @@ void display_font( cop_font * in_font )
 int verify_font( char * in_path, char * in_name )
 {
     char       designator[4];
-    char       member_name[_MAX_PATH];
+    char       member_name[FILENAME_MAX];
     char       type;
     cop_font * current_font = NULL;
     FILE *     font_file = NULL;

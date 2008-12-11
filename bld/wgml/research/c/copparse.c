@@ -639,7 +639,7 @@ int main()
 
     initialize_globals();
     res_initialize_globals();
-    get_env_vars();
+    ff_setup();
     
     /* Parse the command line: allocates and sets tgt_path. */
 
@@ -662,6 +662,8 @@ int main()
 
     retval = parse_defined_name();
 
+    ff_teardown();
+    
     /* Respond to failure. */
 
     if( retval == FAILURE ) {
