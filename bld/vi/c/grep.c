@@ -45,9 +45,9 @@
     #include "winvi.h"
     #include "filelist.h"
     #include "font.h"
-#endif
-#ifdef __NT__
-    #include <commctrl.h>
+    #ifdef __NT__
+        #include <commctrl.h>
+    #endif
 #endif
 
 #define isEOL(x)        ((x==CR)||(x==LF)||(x==CTLZ))
@@ -65,7 +65,7 @@ static char *origString;
 static char *cTable;
 static bool isFgrep,caseIgn;
 
-#ifdef __NT__
+#if defined( __WIN__ ) && defined( __NT__ )
 typedef VOID (WINAPI *PFNICC)( VOID );
 
 static HINSTANCE    hInstCommCtrl = NULL;
@@ -572,7 +572,7 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
     char        ext[_MAX_EXT];
     int         i,j;
-#ifdef __NT__
+#if defined( __WIN__ ) && defined( __NT__ )
     LVITEM      lvi;
 #endif
 
