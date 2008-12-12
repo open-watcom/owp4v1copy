@@ -42,9 +42,12 @@
 #include "rxsupp.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
-#include "filelist.h"
-#include "font.h"
+    #include "winvi.h"
+    #include "filelist.h"
+    #include "font.h"
+#endif
+#ifdef __NT__
+    #include <commctrl.h>
 #endif
 
 #define isEOL(x)        ((x==CR)||(x==LF)||(x==CTLZ))
@@ -61,6 +64,13 @@ static char *sString;
 static char *origString;
 static char *cTable;
 static bool isFgrep,caseIgn;
+
+#ifdef __NT__
+typedef VOID (WINAPI *PFNICC)( VOID );
+
+static HINSTANCE    hInstCommCtrl = NULL;
+static PFNICC       pfnInitCommonControls = NULL;
+#endif
 
 /*
  * DoFGREP - do a fast grep
@@ -203,19 +213,43 @@ static void getOneFile( HWND dlg, char **files, int *count, bool leave )
 {
     int         i, j;
     HWND        list_box;
+#ifdef __NT__
+    LVITEM      lvi;
+#endif
 
     list_box = GetDlgItem( dlg, ID_FILE_LIST );
-    i = SendMessage( list_box, LB_GETCURSEL, 0, 0L );
+#ifdef __NT__
+    if( pfnInitCommonControls != NULL ) {
+        i = SendMessage( list_box, LVM_GETNEXTITEM, (WPARAM)-1, LVNI_SELECTED );
+    } else {
+#endif
+        i = SendMessage( list_box, LB_GETCURSEL, 0, 0L );
+#ifdef __NT__
+    }
+#endif
     getFile( files[ i ] );
     if( leave ) {
         EndDialog( dlg, ERR_NO_ERR );
     } else {
         /* remove it from the list box */
-        j = SendMessage( list_box, LB_DELETESTRING, i, 0L );
-        assert( (j+1) == (*count) );
-        if( SendMessage( list_box, LB_SETCURSEL, i, 0L ) == LB_ERR ) {
-            SendMessage( list_box, LB_SETCURSEL, i-1, 0L );
+#ifdef __NT__
+        if( pfnInitCommonControls != NULL ) {
+            SendMessage( list_box, LVM_DELETEITEM, i, 0L );
+            lvi.stateMask = LVIS_SELECTED;
+            lvi.state = LVIS_SELECTED;
+            if( !SendMessage( list_box, LVM_SETITEMSTATE, i, (LPARAM)&lvi ) ) {
+                SendMessage( list_box, LVM_SETITEMSTATE, i - 1, (LPARAM)&lvi );
+            }
+        } else {
+#endif
+            j = SendMessage( list_box, LB_DELETESTRING, i, 0L );
+            assert( (j+1) == (*count) );
+            if( SendMessage( list_box, LB_SETCURSEL, i, 0L ) == LB_ERR ) {
+                SendMessage( list_box, LB_SETCURSEL, i-1, 0L );
+            }
+#ifdef __NT__
         }
+#endif
         MemFree( files[ i ] );
         for( j = i; j < *count; j++ ) {
             files[ j ] = files[ j + 1 ];
@@ -292,13 +326,101 @@ BOOL WINEXP GrepListProc( HWND dlg, UINT msg, UINT wparam, LONG lparam )
 
 } /* GrepListProc */
 
+#ifdef __NT__
+BOOL WINEXP GrepListProc95( HWND dlg, UINT msg, WPARAM wparam, LPARAM lparam )
+{
+    static char         **fileList;
+    static int          fileCount;
+    HWND                list_box;
+    char                tmp[MAX_STR];
+    WORD                cmd;
+    LVCOLUMN            lvc;
+    LVITEM              lvi;
+    RECT                rc;
+
+    switch( msg ) {
+    case WM_INITDIALOG:
+        list_box = GetDlgItem( dlg, ID_FILE_LIST );
+        SendMessage( list_box, WM_SETFONT, (UINT)FontHandle( dirw_info.text.font ), 0L );
+        MySprintf( tmp, "Files Containing \"%s\"", sString );
+        SetWindowText( dlg, tmp );
+        rc.left = 0;
+        rc.right = 70;
+        MapDialogRect( dlg, &rc );
+        lvc.mask = LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
+        lvc.cx = rc.right;
+        lvc.pszText = "File Name";
+        lvc.iSubItem = 0;
+        SendMessage( list_box, LVM_INSERTCOLUMN, 0, (LPARAM)&lvc );
+        lvc.cx = rc.right * 3;
+        lvc.pszText = "Line";
+        lvc.iSubItem = 1;
+        SendMessage( list_box, LVM_INSERTCOLUMN, 1, (LPARAM)&lvc );
+        fileList = (char **)MemAlloc( sizeof( char * ) * MAX_FILES );
+        fileCount = initList( list_box, (char *)lparam, fileList );
+        if( fileCount == 0 ) {
+            Message1( "String \"%s\" not found", sString );
+            EndDialog( dlg, DO_NOT_CLEAR_MESSAGE_WINDOW );
+        } else {
+            lvi.stateMask = LVIS_SELECTED;
+            lvi.state = LVIS_SELECTED;
+            SendMessage( list_box, LVM_SETITEMSTATE, 0, (LPARAM)&lvi );
+            BringWindowToTop( dlg );
+            SetFocus( dlg );
+        }
+        break;
+    case WM_COMMAND:
+        cmd = LOWORD( wparam );
+        switch( cmd ) {
+        case ID_EDIT:
+        case ID_GOTO:
+            getOneFile( dlg, fileList, &fileCount, cmd == ID_GOTO );
+            break;
+        case ID_GETALL:
+            getAllFiles( dlg, fileList, &fileCount );
+            break;
+        case IDCANCEL:
+            EndDialog( dlg, ERR_NO_ERR );
+            return( TRUE );
+        }
+        break;
+    case WM_NOTIFY:
+        if( ((NMHDR *)lparam)->code == NM_DBLCLK ) {
+            getOneFile( dlg, fileList, &fileCount, TRUE );
+        }
+        break;
+    case WM_DESTROY:
+        finiList( fileCount, fileList );
+        break;
+    }
+    return( FALSE );
+
+} /* GrepListProc95 */
+#endif
+
 static int doGREP( char *dirlist )
 {
     DLGPROC     grep_proc;
     int         rc;
 
-    grep_proc = (DLGPROC) MakeProcInstance( (FARPROC) GrepListProc, InstanceHandle );
-    rc = DialogBoxParam( InstanceHandle, "GREPLIST", Root, grep_proc, (LONG)(LPVOID)dirlist );
+#ifdef __NT__
+    if( hInstCommCtrl == NULL ) {
+        hInstCommCtrl = GetModuleHandle( "COMCTL32.DLL" );
+        pfnInitCommonControls = (PFNICC)GetProcAddress( hInstCommCtrl,
+                                                        "InitCommonControls" );
+    }
+    if( pfnInitCommonControls != NULL ) {
+        pfnInitCommonControls();
+        grep_proc = (DLGPROC)MakeProcInstance( (FARPROC)GrepListProc95, InstanceHandle );
+        rc = DialogBoxParam( InstanceHandle, "GREPLIST95", Root, grep_proc,
+                             (LONG)(LPVOID)dirlist );
+    } else {
+#endif
+        grep_proc = (DLGPROC) MakeProcInstance( (FARPROC) GrepListProc, InstanceHandle );
+        rc = DialogBoxParam( InstanceHandle, "GREPLIST", Root, grep_proc, (LONG)(LPVOID)dirlist );
+#ifdef __NT__
+    }
+#endif
     FreeProcInstance( (FARPROC) grep_proc );
     return( rc );
 }
@@ -450,6 +572,9 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
     char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
     char        ext[_MAX_EXT];
     int         i,j;
+#ifdef __NT__
+    LVITEM      lvi;
+#endif
 
     /*
      * get file path prefix
@@ -489,15 +614,30 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
                 ExpandTabsInABuffer(ts,strlen(ts),data,MAX_DISP );
                 strcpy( ts,data );
                 MySprintf(data,"%X \"%s\"",fn,ts );
-                #ifdef __WIN__
-                    /*
-                     * for windows - the handle passed in is the list box
-                     * and the entire string is added to it but only the file
-                     * name is added to the list
-                     */
+#ifdef __WIN__
+                /*
+                 * for windows - the handle passed in is the list box
+                 * and the entire string is added to it but only the file
+                 * name is added to the list
+                 */
+#ifdef __NT__
+                if( pfnInitCommonControls != NULL ) {
+                    lvi.mask = LVIF_TEXT;
+                    lvi.iItem = SendMessage( wn, LVM_GETITEMCOUNT, 0, 0L );
+                    lvi.iSubItem = 0;
+                    lvi.pszText = fn;
+                    SendMessage( wn, LVM_INSERTITEM, 0, (LPARAM)&lvi );
+                    lvi.iSubItem = 1;
+                    lvi.pszText = ts;
+                    SendMessage( wn, LVM_SETITEM, 0, (LPARAM)&lvi );
+                } else {
+#endif
                     SendMessage( wn, LB_ADDSTRING, 0, (LONG)(LPVOID)data );
                     MySprintf( data, "%X", fn );
-                #endif
+#ifdef __NT__
+                }
+#endif
+#endif
                 AddString( &(list[*clist]), data );
                 (*clist)++;
 
