@@ -187,6 +187,9 @@ WLINK now properly emits segments overlaped by groups to output file.
 WLINK now properly handles imported symbols that are locally defined with the
 dllimport specifier in PE formatted files.
 .bull
+WLINK DLL was renamed from wlink.dll to wlinkd.dll. It requires to correct 
+wmake directive "!loaddll" to use this new name if it is used in makefile.
+.bull
 WRC on Far-Eastern NT-based systems now honors the DBCS encoding specified on
 the command line.
 .bull
