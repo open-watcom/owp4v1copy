@@ -47,6 +47,8 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
 

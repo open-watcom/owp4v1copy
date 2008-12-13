@@ -39,7 +39,6 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <ctype.h>
-#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
