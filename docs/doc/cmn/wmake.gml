@@ -4135,7 +4135,7 @@ cc286d  = wppdi86
 cc386   = wpp386
 cc386d  = wppd386
 linker  = wlink
-linkerd = wlink
+linkerd = wlinkd
 
 CFLAGS  = -d1
 CC      = $(cc386) $(CFLAGS)
