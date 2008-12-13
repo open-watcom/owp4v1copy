@@ -98,6 +98,11 @@ void        process_line( void )
         split_input( buff2, pchar );    // if found at pos > 1 split
         buff2_lg = strlen( buff2 );     // new length of first part
     }
+    // if macro define start ( .dm xxx ... ) supress variable substitution
+    // for the sake of  .dm xxx /&*1/&*2/&*0/&*/
+    if( !strnicmp( buff2 + 1, "dm ", 3 ) ) {
+        return;
+    }
 
     // look for symbolic variable start
 
@@ -125,7 +130,7 @@ void        process_line( void )
             rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
                               &symsubval );
         }
-        if( rc == 2 ) {                  // found
+        if( rc == 2 ) {                 // found
             strcpy( p2, symsubval->value );
             p2 += strlen( symsubval->value );
             if( *pchar == '.' ) {
@@ -135,6 +140,7 @@ void        process_line( void )
         } else {
             if( symvar_entry.flags & local_var ) { // local var not found
                                                    // replace by nullstring
+
                 if( *pchar == '.' ) {
                     pchar++;            // skip terminating dot
                 }

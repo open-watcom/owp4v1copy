@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description: Internal functions:
-*                         Garginit      --- initialize operand scan
-*                         getarg        --- scan blank delimited argument
-*                         test_xxx_char --- test for allowed char
+* Description: functions:
+*                  garginit      --- initialize operand scan in buff2
+*                  getarg        --- scan (quoted) blank delimited argument
+*                  test_xxx_char --- test for allowed char
 *
 ****************************************************************************/
 
@@ -57,62 +57,16 @@ void    garginit( void )
 }
 
 
-
-
 /***************************************************************************/
-/*  scan blank delimited argument                                          */
+/*  scan blank delimited argument perhaps quoted                           */
 /***************************************************************************/
 
 condcode    getarg( void )
 {
     condcode    cc;
     char    *   p;
-
-    if( arg_stop <= arg_start ) {       // already at end
-        cc = omit;                      // arg omitted
-    } else {
-        p = arg_start;
-        while( *p && *p == ' ' && p <= arg_stop ) {    // skip leading blanks
-            p++;
-        }
-
-        err_start = p;                  // err ptr in case of later error
-        for( ; p <= arg_stop; p++ ) {
-
-            if( *p == ' ' ) {
-                break;
-            }
-            if( *p == '(' ) {
-                open_paren = p;
-            }
-            if( *p == ')' ) {
-                clos_paren = p;
-            }
-            if( *p == '\0' ) {
-                break;
-            }
-            *p = tolower( *p );         // lowercase
-        }
-        arg_start = p;                  // address of start for next call
-        arg_flen = p - err_start;       // length of arg
-        if( arg_flen > 0 ) {
-            cc = pos;                   // arg found
-        } else {
-            cc = omit;                  // length zero
-        }
-    }
-    return( cc );
-}
-
-/***************************************************************************/
-/*  scan blank delimited argument with quotes                              */
-/***************************************************************************/
-
-condcode    getargq( void )
-{
-    condcode    cc;
-    char    *   p;
     char        quote;
+    bool        quoted;
 
     if( arg_stop <= arg_start ) {       // already at end
         cc = omit;                      // arg omitted
@@ -122,29 +76,41 @@ condcode    getargq( void )
             p++;
         }
 
-        err_start = p;                  // err ptr in case of later error
+        err_start = p;
         if( *p == '\'' || *p == '"' ) {
             quote = *p;
             p++;
+            quoted = true;
         } else {
             quote = '\0';
+            quoted = false;
         }
         for( ; p <= arg_stop; p++ ) {
 
-            if( quote == '\0' && *p == ' ' ) {
+            if( *p == ' ' && quote == '\0' ) {
                 break;
             }
             if( *p == quote ) {
-                quote = '\0';                   // prepare stop at next blank
+                break;
             }
             if( *p == '\0' ) {
                 break;
             }
         }
-        arg_start = p;                  // address of start for next call
-        arg_flen = p - err_start;       // length of arg
+        if( quoted ) {
+            err_start++;
+            arg_start = p + 1;          // address of start for next call
+            arg_flen = p - err_start;   // length of arg
+        } else {
+            arg_start = p;              // address of start for next call
+            arg_flen = p - err_start;   // length of arg
+        }
         if( arg_flen > 0 ) {
-            cc = pos;                   // arg found
+            if( quoted ) {
+                cc = quotes;            // quoted arg found
+            } else {
+                cc = pos;               // arg found
+            }
         } else {
             cc = omit;                  // length zero
         }

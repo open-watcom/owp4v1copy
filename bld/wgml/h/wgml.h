@@ -70,7 +70,6 @@ extern  void    show_include_stack( void );
 /* gargutil.c                           */
 extern  void        garginit( void );
 extern  condcode    getarg( void );
-extern  condcode    getargq( void );
 extern  bool        test_identifier_char( char c );
 extern  bool        test_macro_char( char c );
 extern  bool        test_symbol_char( char c );

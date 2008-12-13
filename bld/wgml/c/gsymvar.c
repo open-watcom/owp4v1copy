@@ -279,16 +279,18 @@ void    print_sym_dict( symvar * dict )
     int         symcnt;
     int         symsubcnt;
     int         len;
-    static char fill[ 11 ] = "          ";
+    static const char   fill[ 11 ] = "          ";
 
     symcnt      = 0;
     symsubcnt   = 0;
     wk          = dict;
-    out_msg( "\nList of global symbolic variables:\n" );
+    out_msg( "\nList of symbolic variables:\n" );
     while( wk != NULL ) {
         len = strlen( wk->name );
-        out_msg( "Variable='%s'%s flags=%s subscript_used=%d", wk->name,
+
+        out_msg( "Variable='%s'%s flags=%s%s subscript_used=%d", wk->name,
                  &fill[ len ], wk->flags & deleted ? "deleted " : "",
+                 wk->flags & local_var ? "local " : "",
                  wk->subscript_used );
         ws = wk->subscripts;
         if( wk->flags & subscripted ) {
@@ -308,8 +310,8 @@ void    print_sym_dict( symvar * dict )
         }
         wk = wk->next;
     }
-    out_msg( "\nTotal unsubscripted symbols defined: %d\n", symcnt );
-    out_msg( "Total subscripted   symbols defined: %d\n", symsubcnt );
+    out_msg( "\nUnsubscripted symbols defined: %d\n", symcnt );
+    out_msg( "Subscripted   symbols defined: %d\n", symsubcnt );
     return;
 }
 

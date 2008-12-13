@@ -38,7 +38,8 @@
 
 global  jmp_buf     *   environment;    // var for GSuicide()
 
-global  char        *   scan_char_ptr; // used by character scanning routines
+global  char        *   scan_char_ptr;  // used by character scanning routines
+global  bool            scan_err;       // used by character scanning routines
 global  int             curr_char;
 
 global  int             switch_char;    // DOS switch character
@@ -121,7 +122,17 @@ global struct ProcFlags {
     unsigned        CW_sep_ignore   : 1;// .' in col 1-2
     unsigned        GML_tag_cont    : 1;// tag continued from prev line
     unsigned        in_macro_define : 1;// macro definition active
-    unsigned        free7           : 1;
+    unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
+
+    unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
+    unsigned        free9           : 1;
+    unsigned        freea           : 1;
+    unsigned        freeb           : 1;
+    unsigned        freec           : 1;
+    unsigned        freed           : 1;
+    unsigned        freee           : 1;
+    unsigned        freef           : 1;
+
 } ProcFlags;                            // processing flags
 
 

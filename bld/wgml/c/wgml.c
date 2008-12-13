@@ -248,6 +248,7 @@ static  void    add_file_cb_entry( void )
     new->linemax = line_to;
     strcpy_s( new->filename, fnlen + 1, try_file_name );
     mem_free( try_file_name );
+    try_file_name = NULL;
 
     if( try_fp ) {
         new->flags = FF_open;
@@ -279,15 +280,13 @@ static  void    del_input_cb_entry( void )
     }
     free_lines( wk->hidden_head );
 
+    free_dict( &wk->local_dict );
+
+    if( wk->fmflags & II_macro ) {
 /*
  *  The macrolines in s.m don't need to be freed, as these point to
  *  mac_entry, and freeing is done with macro_dict
  */
-    if( wk->fmflags & II_macro ) {
-        free_lines( wk->s.m->mparms.starx );// free macro call parms
-        if( wk->s.m->mparms.star != NULL ) {
-            mem_free( wk->s.m->mparms.star );   // free macro parameter
-        }
         mem_free( wk->s.m );
     } else {
         if( wk->s.f->flags & FF_open ) {// close file if neccessary
@@ -348,6 +347,8 @@ bool    get_line( void )
         } else {
             cb = input_cbs->s.f;        // input from file
             if( !(cb->flags & FF_open) ) {
+                out_msg( "INF CALLING REOPEN_INC_FP\n" );
+                show_include_stack();
                 reopen_inc_fp( cb );
             }
             do {
@@ -619,14 +620,15 @@ int main( int argc, char * argv[] )
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
-//            g_trmem_prt_list();    // all memory freed if no output from call
+
+//            g_trmem_prt_list();  // all memory freed if no output from call
 
             out_msg( "\nStarting pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );
 
             proc_GML( master_fname );
 
-//            g_trmem_prt_list();         // show allocated memory at pass end
+//            g_trmem_prt_list();       // show allocated memory at pass end
 
             out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );

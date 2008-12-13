@@ -47,27 +47,26 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 {
     size_t      k;
     char    *   sym_start;
-    bool        scan_err;
 
     scan_err = false;
-    k = 0;
     sym->next = NULL;
     sym->flags = 0;
+    *subscript = no_subscript;          // not subscripted
+
     while( *p && *p == ' ' ) {          // skip over spaces
         p++;
     }
     if( *p == '*' ) {                   // local var
         p++;
-        sym->flags |= local_var;
+        sym->flags = local_var;
     }
     sym_start = p;
 
-    while( *p &&
-           (isalnum( *p )
-            || *p == '@' || *p == '#' || *p == '$' || *p == '_') ) {
+    k = 0;
+    while( *p && test_symbol_char( *p ) ) {
 
         if( k < SYM_NAME_LENGTH ) {
-            if( (k == 3) && (sym->name[0] != '$') ) {
+            if( (k == 3) && (sym->name[ 0 ] != '$') ) {
                 if( sym->name[ 0 ] == 's' &&
                     sym->name[ 1 ] == 'y' &&
                     sym->name[ 2 ] == 's' ) {
@@ -80,17 +79,31 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             sym->name[ k ] = '\0';
         } else {
             if( !scan_err ) {
-                out_msg( "WNG_SYMBOL_NAME_TOO_LONG %s\n", sym_start );
-                wng_count++;
+                scan_err = true;
+                if( !ProcFlags.suppress_msg ) {
+                    out_msg( "WNG_SYMBOL_NAME_TOO_LONG %s\n", sym_start );
+                    wng_count++;
+                }
             }
         }
         p++;
     }
-    *subscript = no_subscript;          // not subscripted
-    if( *p == '(' ) {                   // subscripted
+
+    if( p == sym_start ) {
+        if( (sym->flags & local_var) && (input_cbs->fmflags & II_macro) ) {
+            strcpy_s( sym->name, SYM_NAME_LENGTH, MAC_STAR_NAME );
+        } else {
+            scan_err = true;
+            if( !ProcFlags.suppress_msg ) {
+                out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
+                err_count++;
+            }
+        }
+    }
+    if( !scan_err && (*p == '(') ) {    // subscripted ?
         char    *   psave = p;
-        int         sign = 1;           // default positive
-        long        val  = 0;
+        int         sign  = 1;          // default positive
+        long        val   = 0;
 
         p++;
         if( !isdigit( *p ) ) {
@@ -134,7 +147,6 @@ void    scr_se( void )
     char        *   valstart;
     symvar          sym;
     sub_index       subscript;
-    bool            scan_err;
     int             rc;
     symvar      * * working_dict;
 
@@ -148,58 +160,25 @@ void    scr_se( void )
         working_dict = &global_dict;
     }
 
-    while( *p && *p == ' ' ) {          // skip over spaces
-        p++;
-    }
-    if( *p == '\0' ) {
-        out_msg( "WNG_SYMBOL_VALUE_MISSING for %s\n", sym.name );
-        show_include_stack();
-        wng_count++;
-        scan_err = true;
-    } else {
-        if( *p == '(' ) {               // subscripted
-            int sign = 1;               // default positive
-            long val  = 0;
-
-            p++;
-            if( !isdigit( *p ) ) {
-                if( *p == '-' ) {
-                    sign = -1;
-                } else if( *p == '+' ) {
-                    sign = 1;
-                } else {
-                    if( *p == ')' ) {
-                        out_msg( "ERR_SYMBOL_autoincrement not supported %s\n",
-                                 sym.name );
-                        show_include_stack();
-                        err_count++;
-                        scan_err = true;
-                    } else {
-                        out_msg( "ERR_SYMBOL_subscript invalid %s\n", sym.name );
-                        show_include_stack();
-                        err_count++;
-                        scan_err = true;
-                    }
-                }
-            }
-            while( *p && *p != ')' ) {
-                if( isdigit( *p ) ) {
-                    val = val * 10 + *p - '0';
-                }
-                p++;
-            }
-            if( *p == ')' ) {
-                p++;
-            }
-            subscript = val * sign;
-        }
+    if( ProcFlags.blanks_allowed ) {
         while( *p && *p == ' ' ) {      // skip over spaces
             p++;
         }
+    }
+    if( *p == '\0' ) {
+        if( !ProcFlags.suppress_msg ) {
+            out_msg( "WNG_SYMBOL_VALUE_MISSING for %s\n", sym.name );
+            show_include_stack();
+            wng_count++;
+        }
+        scan_err = true;
+    } else {
         if( *p == '=' ) {
             p++;
-            while( *p && *p == ' ' ) {  // skip over spaces
-                p++;
+            if( ProcFlags.blanks_allowed ) {
+                while( *p && *p == ' ' ) {  // skip over spaces
+                    p++;
+                }
             }
             valstart = p;
             if( *valstart == '\'' || *valstart == '"' ) { // quotes ?
@@ -213,7 +192,8 @@ void    scr_se( void )
                 }
             }
 
-            rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
+            rc = add_symvar( working_dict, sym.name, valstart, subscript,
+                             sym.flags );
 
         } else {                        // OFF value = delete variable ?
             if( tolower( *p )       == 'o' &&
@@ -223,8 +203,11 @@ void    scr_se( void )
                 p += 3;
                 sym.flags |= deleted;
             } else {
-                out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n", sym.name, p );
-                wng_count++;
+                if( !ProcFlags.suppress_msg ) {
+                     out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",
+                              sym.name, p );
+                     wng_count++;
+                }
                 scan_err = true;
             }
         }

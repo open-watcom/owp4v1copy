@@ -47,7 +47,9 @@ void init_global_vars( void )
     GlobalFlags.wscript = 1;            // (w)script support + warnings
     GlobalFlags.warning = 1;
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
-
+    ProcFlags.blanks_allowed = 1;       // blanks during scanning
+                                        // i.e. .se var  =    7
+                                        // .se var=7  without
     try_file_name       = NULL;
 
     master_fname        = NULL;         // Master input file name
@@ -94,7 +96,6 @@ void init_global_vars( void )
     buf_size            = BUF_SIZE;
     buffer              = NULL;
     buff2               = NULL;
-//    buffer              = mem_alloc( buf_size );
     buff1               = mem_alloc( buf_size );
     buff2               = mem_alloc( buf_size );
 }

@@ -97,7 +97,7 @@ void    print_GML_tags_research( void )
 {
     taglist *   wk = tags;
 
-    printf_research("\nGML tag list sorted by first occurrence\n\n" );
+    printf_research( "\nGML tag / macro list sorted by first occurrence\n\n" );
     while( wk ) {
         printf_research("%6ld  :%s\n", wk->count, wk->tagname );
         wk = wk->nxt;
@@ -161,7 +161,8 @@ void    print_SCR_tags_research( void )
 {
     taglist *   wk = scrkws;
 
-    printf_research("\nScript tag list sorted by first occurrence\n\n" );
+    printf_research(
+        "\nScript controlword / macro list sorted by first occurrence\n\n" );
     while( wk ) {
         printf_research("%6ld  .%s\n", wk->count, wk->tagname );
         wk= wk->nxt;

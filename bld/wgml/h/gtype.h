@@ -58,7 +58,7 @@
 #define MAC_NAME_LENGTH 8               // macro name length
 #define MAX_MAC_PARMS   32              // maximum macro parm count
                                         // arbitrary value, not found in docu!!!
-
+#define MAC_STAR_NAME   "_"             // local variable name for &*
 
 
 /* default filename extensions */
@@ -196,7 +196,7 @@ typedef struct filecb {
 } filecb;
 
 /***************************************************************************/
-/*  parameter strucure for macro call                                      */
+/*  parameter structure for macro call                                     */
 /***************************************************************************/
 typedef struct mac_parms {
     char        *   star;               // &*  complete parmline
@@ -214,7 +214,6 @@ typedef struct  macrocb {
     ulong           lineno;             // current macro line number
     inp_line    *   macline;            // list of macro lines
     mac_entry   *   mac;                // macro definition entry
-    mac_parms       mparms;             // macro call parameters
 } macrocb;
 
 typedef enum {
@@ -237,11 +236,6 @@ typedef struct  inputcb {
         macrocb     *   m;              // used if input is from macro
     } s;
 } inputcb;
-
-
-
-
-
 
 
 /***************************************************************************/
@@ -277,7 +271,7 @@ typedef struct {
 
 /***************************************************************************/
 /*  condcode  returncode for several conditions during parameterchecking   */
-/*            loosely adapted from wgml 88.1 aon IBM S/360 code            */
+/*            loosely adapted from wgml 88.1 on  IBM S/360 code            */
 /***************************************************************************/
 
 typedef enum condcode {            // return code for some scanning functions
@@ -285,13 +279,14 @@ typedef enum condcode {            // return code for some scanning functions
     omit            = 1,                // argument omitted
     pos             = 2,                // argument affirmative
     neg             = 4,                // argument negative
+    quotes          = 6,                // argument within quotes
     no              = 8,                // argument undefined
     notnum          = 8                 // value not numeric / overflow
 }  condcode;
 
 
 /***************************************************************************/
-/*  definitions for getnum routine                                         */
+/*  definitions for getnum routine  to be reworked  TBD                    */
 /***************************************************************************/
 
 

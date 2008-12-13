@@ -62,10 +62,6 @@ static  void    add_macro_cb_entry( mac_entry *me )
     new->mac     = me;
     new->flags   = FF_macro;
 
-    new->mparms.star  = NULL;
-    new->mparms.starx = NULL;
-    new->mparms.star0 = 0;
-
     nip->prev = input_cbs;
     input_cbs = nip;
     return;
@@ -332,11 +328,11 @@ static  void    scr_dm( void )
                     if( cc == omit ) {
                         err_count++;
                         // SC--048 A control word parameter is missing
-                        out_msg(
-                            "ERR_PARM_MISSING A control word parameter is missing\n"
-                                "\t\t\tLine %d of file '%s'\n",
-                                cb->s.f->lineno,
-                                cb->s.f->filename );
+                        out_msg( "ERR_PARM_MISSING "
+                                 "A control word parameter is missing\n"
+                                 "\t\t\tLine %d of file '%s'\n",
+                                 cb->s.f->lineno,
+                                 cb->s.f->filename );
                         free_lines( head );
                         return;
                     }
@@ -348,9 +344,9 @@ static  void    scr_dm( void )
                         // SC--002 The control word parameter '%s' is invalid
                         out_msg( "ERR_PARMINVALID "
                                  "The control word parameter '%s' is invalid\n"
-                                "\t\t\tLine %d of file '%s'\n",
-                                cb->s.f->lineno,
-                                cb->s.f->filename );
+                                 "\t\t\tLine %d of file '%s'\n",
+                                 cb->s.f->lineno,
+                                 cb->s.f->filename );
                         free_lines( head );
                         return;
                     }
@@ -373,12 +369,12 @@ static  void    scr_dm( void )
             err_count++;
             // error SC--004 End of file reached
             // macro '%s' is still being defined
-            out_msg("ERR_MACRO_DEFINE End of file reached"
-                    " line %d of file '%s'\n"
-                    "\t\t\tmacro '%s' is still being defined\n",
-                    cb->s.f->lineno,
-                    cb->s.f->filename,
-                    macname );
+            out_msg( "ERR_MACRO_DEFINE End of file reached"
+                     " line %d of file '%s'\n"
+                     "\t\t\tmacro '%s' is still being defined\n",
+                     cb->s.f->lineno,
+                     cb->s.f->filename,
+                     macname );
             free_lines( head );
             return;
         }
@@ -414,8 +410,9 @@ static  void    scr_dm( void )
         }
     } else {
         err_count++;
-        out_msg("ERR_MACRO_DEFINE_logic error '%s'\n", macname );
+        out_msg( "ERR_MACRO_DEFINE_logic error '%s'\n", macname );
         free_lines( head );
+        show_include_stack();
         return;
     }
     return;
@@ -442,63 +439,88 @@ static scrtag  scr_tags[] = {
 #define MAX_SCRTAGNAME_LENGTH   (sizeof( scr_tags->tagname ) - 1)
 
 
-void    show_macro_parms( macrocb * cb )
-{
-    int             k;
-    inp_line    *   parm;
-
-    out_msg( "&* ='%s'\n", (cb->mparms.star == NULL ? "": cb->mparms.star) );
-    out_msg( "&*0='%d'\n", cb->mparms.star0 );
-    parm = cb->mparms.starx;
-    for( k = 1; k <= cb->mparms.star0; ++k ) {
-        out_msg( "&*%d='%s'\n", k, parm->value );
-        parm = parm->next;
-    }
-}
-
 /*
- * add macro parms from input line to macro parm structure
+ * add macro parms from input line as local symbolic variables
+ * for non quoted parms try to assign symbolic variables
+ * i.e.  a b c var="1.8" d "1 + 2"
+ *    will give &* =a b c var="1.2" d
+ *              &*0=5
+ *              &*1=a
+ *              &*2=b
+ *              &*3=c
+ *              &*4=d
+ *              &*5=1 + 2
+ *       and &*var = 1.8
+ *
+ *  the variable for &* is named _  This can change if this leads to
+ *  conflicts  -> change define MAC_STAR_NAME in gtype.h
+ *
  */
 
 static void     add_macro_parms( char * p )
 {
-    macrocb     *   cb;
-    inp_line    *   wkline;
     int             len;
-    char        *   pparm;
-
-    cb  = input_cbs->s.m;
+    condcode        cc;
 
     while( *p && *p == ' ' ) {
         ++p;
     }
     len   = strlen( p );
     if( len > 0 ) {
-        pparm = mem_alloc( len + 1 );
-        strcpy_s( pparm, len + 1, p );
-        cb->mparms.star = pparm;
+        char    starbuf[ 12 ];
+        int     star0;
 
+                                        // the macro parameter line
+                                        // the name _ has to change (perhaps)
+        add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript, local_var );
 
+        star0 = 0;
         garginit();
-        while( getargq() == pos ) {     // as long as there are parms
-            inp_line    *   curr;
+        cc = getarg();
+        while( cc > omit ) {            // as long as there are parms
+            char    c;
 
-            curr = mem_alloc( arg_flen + sizeof( inp_line ) );
-            if( cb->mparms.starx  == NULL) {
-                cb->mparms.starx = curr;
-            } else {
-                wkline->next = curr;
+            if( cc == pos ) {           // argument not quoted
+                           /* look if it is a symbolic variable definition */
+                scan_start = err_start;
+                c          = *arg_start;// prepare value end
+                *arg_start = '\0';      // terminate string
+                ProcFlags.suppress_msg = true;  // no errmsg please
+                ProcFlags.blanks_allowed = 0;   // no blanks please
+
+                scr_se();               // try to set variable and value
+                if( scan_err ) {        // not valid
+                    cc = quotes;        // treat as positional parm
+                }
+
+                ProcFlags.suppress_msg = false; // reenable err msg
+                ProcFlags.blanks_allowed = 1;   // blanks again
+                *arg_start = c;      // replace string end with original char
+
             }
-            wkline = curr;
-            curr->next = NULL;
-            strncpy_s( curr->value, arg_flen + 1, err_start, arg_flen );
-            cb->mparms.star0++;
+            if( cc == quotes ) {       // copy argument as local symbolic var
+                star0++;
+                sprintf( starbuf, "%d", star0 );
+                p = err_start + arg_flen ;
+                c = *p;                 // prepare value end
+                *p = '\0';              // terminate string
+                add_symvar( &input_cbs->local_dict, starbuf, err_start,
+                            no_subscript, local_var );
+                *p = c;              // replace string end with original char
+            }
+            cc = getarg();              // look for next parm
         }
+                                        // the positional parameter count
+        add_symvar( &input_cbs->local_dict, "0", starbuf,
+                    no_subscript, local_var );
     }
+
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        show_macro_parms( cb );
+        print_sym_dict( input_cbs->local_dict );
     }
 }
+
+
 /*
  * Process script control line
  *
@@ -585,6 +607,18 @@ static void     scan_script( void)
         me = NULL;
     }
     if( me != NULL ) {                  // macro found
+        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            if( cb->fmflags & II_macro ) {
+                printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                                 inc_level, SCR_char, token_buf,
+                                 cb->s.m->mac->name, cb->s.m->lineno );
+            } else {
+                printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                                 inc_level, SCR_char, token_buf,
+                                 cb->s.f->filename, cb->s.f->lineno );
+            }
+            add_SCR_tag_research( token_buf );
+        }
         add_macro_cb_entry( me );
         inc_inc_level();
         add_macro_parms( p );
@@ -618,7 +652,7 @@ static void     scan_script( void)
 
 
 /*
- *
+ *  scan_line look whether input is script / gml control line or text
  *
  */
 
