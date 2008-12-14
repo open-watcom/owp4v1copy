@@ -1344,7 +1344,7 @@ WINSOCK_API_LINKAGE int WSAAPI      WSAPoll( LPWSAPOLLFD, ULONG, INT );
             __counter++; \
         } \
         if( ((fd_set *)(p2))->fd_array[__counter] == p1 ) { \
-            for( ; __counter < ((fd_set *)(p2)->fd_count - 1; __counter++ ) { \
+            for( ; __counter < ((fd_set *)(p2))->fd_count - 1; __counter++ ) { \
                 ((fd_set *)(p2))->fd_array[__counter] = \
                     ((fd_set *)(p2))->fd_array[__counter - 1]; \
             } \
