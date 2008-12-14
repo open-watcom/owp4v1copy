@@ -657,7 +657,7 @@ static void CompareParms( TYPEPTR *master, TREEPTR parm, source_loc *src_loc )
         typ = *master++;
         if( typ != NULL && typ->decl_type == TYPE_DOT_DOT_DOT )
             return;
-        parm = parm->right;
+        parm = parm->left;
         ++parm_num;
     }
     if( typ != NULL || parm != NULL ) {     /* should both be NULL now */
@@ -681,8 +681,8 @@ static TREEPTR reverse_parms_tree( TREEPTR parm ) {
 
     prev = NULL;
     while( parm != NULL ) {
-        next = parm->right;
-        parm->right = prev;
+        next = parm->left;
+        parm->left = prev;
         prev = parm;
         parm = next;
     }
