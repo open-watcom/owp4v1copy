@@ -11,6 +11,7 @@ cdsay .
 
 set BLD_OPT=prebuild=1
 set ODIR=<PREOBJDIR>
+set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
@@ -23,9 +24,17 @@ set ODIR=<OBJDIR>
     rm -f -r <PROJDIR>/<ODIR>
     rm -f <OWBINDIR>/<PROJNAME>
     rm -f <OWBINDIR>/<PROJNAME>.exe
+    set BUILD_PLATFORM=
 
-[ BLOCK <1> build rel2 ]
-#=======================
+[ BLOCK <BUILD_PLATFORM> dos386 ]
+#================================
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
+    wmake -h -f ../dosi86/makefile <BLD_OPT>
+    <CPCMD> <PROJNAME>.exe <OWBINDIR>/<PROJNAME><CMDEXT>
+
+[ BLOCK <BUILD_PLATFORM> linux386 nt386 os2386 ]
+#===============================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../<BUILD_PLATFORM>/makefile <BLD_OPT>
@@ -35,5 +44,7 @@ set ODIR=<OBJDIR>
 #============
 set BLD_OPT=
 set ODIR=
+set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
+set TMP_BUILD_PLATFORM=
 
 cdsay <PROJDIR>
