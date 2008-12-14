@@ -1092,7 +1092,7 @@ static void X86GetRelVal( void *d, dis_dec_ins *ins )
     ins->op[oper].op_position = ins->size;
     ins->op[oper].type = DO_RELATIVE;
     ++ins->num_ops;
-    if( ins->flags & DIF_X86_ADDR_LONG ) {
+    if( ins->flags & DIF_X86_OPND_LONG ) {
         ins->op[oper].value = GetULong( d, ins->size );
         ins->size += 4;
     } else {
