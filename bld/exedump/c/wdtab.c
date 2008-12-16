@@ -172,7 +172,7 @@ static void dmp_import_tab( unsigned_32 imp_nam_tab )
     for( ;; ) {
         resident = alloca( string_len );
         if( resident == NULL ) {
-            Wdputslc( "Error! Dynamic memory exausted.\n" );
+            Wdputslc( "Error! Dynamic memory exhausted.\n" );
             longjmp( Se_env, 1 );
         }
         Wread( resident, string_len );

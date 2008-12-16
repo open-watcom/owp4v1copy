@@ -267,7 +267,7 @@ void * Wmalloc( size_t size )
 
     start = malloc( size );
     if( start == NULL ) {
-        Wdputslc( "Error! Dynamic memory exausted.\n" );
+        Wdputslc( "Error! Dynamic memory exhausted.\n" );
         longjmp( Se_env, 1 );
     }
     return( start );
