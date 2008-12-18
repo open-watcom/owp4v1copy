@@ -428,7 +428,7 @@ void    show_include_stack( void )
                      ip->s.m->mac->mac_file_name);
             break;
         default:
-            out_msg( "\tERR Included from unknown\n" );
+            out_msg( "\tERR Included from unknown ( master document? )\n" );
             break;
         }
         ip = ip->prev;
@@ -519,11 +519,11 @@ static  void    proc_GML( char * filename )
             process_line();
             scan_line();
 
-            if( ProcFlags.newLevelFile || ProcFlags.newLevelMacro ) {
-                break;             // imbed and friends found start new level
+            if( ProcFlags.newLevelFile ) {
+                break;            // imbed and friends found, start new level
             }
         }
-        if( ProcFlags.newLevelFile || ProcFlags.newLevelMacro ) {
+        if( ProcFlags.newLevelFile ) {
             continue;
         }
 
@@ -681,9 +681,6 @@ int main( int argc, char * argv[] )
     }
     if( macro_dict != NULL ) {
         free_macro_dict( &macro_dict );
-    }
-    if( buff1 != NULL ) {
-        mem_free( buff1 );
     }
     if( buff2 != NULL ) {
         mem_free( buff2 );
