@@ -69,6 +69,36 @@ void        split_input( char * buf, char * split_pos )
     return;
 }
 
+/*  split_input_var
+ *  The second part is constructed from 2 parts
+ *  used if a substituted variable starts with CW_sep_char
+ */
+
+static  void    split_input_var( char * buf, char * split_pos, char * part2 )
+{
+    inp_line    *   wk;
+    size_t          len;
+
+    len = strlen( split_pos ) + strlen( part2 );// length of second part
+    if( len > 0 ) {
+        wk = mem_alloc( len + sizeof( inp_line ) );
+        wk->next = NULL;
+
+        strcpy(wk->value, part2 );      // second part
+        strcat(wk->value, split_pos );  // second part
+
+        if( input_cbs->hidden_tail != NULL ) {
+            input_cbs->hidden_tail->next = wk;
+        }
+        input_cbs->hidden_tail = wk;
+
+        if( input_cbs->hidden_head == NULL ) {
+            input_cbs->hidden_head = wk;
+        }
+    }
+    return;
+}
+
 
 /***************************************************************************/
 /*  take the contents of the input line in buff2 and try to make the best  */
@@ -81,11 +111,13 @@ void        split_input( char * buf, char * split_pos )
 void        process_line( void )
 {
     static const char   ampchar = '&';
-    char            *   p1;
-    char            *   p1end;
+    char            *   workbuf;
+    char            *   pw;
+    char            *   pwend;
     char            *   p2;
     char            *   pchar;
     char            *   varstart;
+    int                 varunresolved;
     sub_index           var_ind;
     symvar              symvar_entry;
     symsub          *   symsubval;
@@ -99,74 +131,116 @@ void        process_line( void )
         buff2_lg = strlen( buff2 );     // new length of first part
     }
     // if macro define start ( .dm xxx ... ) supress variable substitution
-    // for the sake of  .dm xxx /&*1/&*2/&*0/&*/
+    // for the sake of single line macro definition
+    // .dm xxx /&*1/&*2/&*0/&*/
     if( !strnicmp( buff2 + 1, "dm ", 3 ) ) {
         return;
     }
 
+    workbuf = mem_alloc( buf_size );
+
     // look for symbolic variable start
-
-    strcpy( buff1, buff2 );
-    p1 = buff1;
-    p1end = buff1 + buff2_lg;
-    p2 = buff2;
-    varstart = NULL;
-    pchar = strchr( buff1, ampchar );   // look for & in buffer
-    while( pchar != NULL ) {            // & found
-        if( buff1 < pchar ) {
-            while( p1 < pchar ) {       // copy all data preceding &
-                *p2++ = *p1++;
-            }
-        }
-        varstart = p1;                  // remember start of var
-        p1++;                           // over &
-
-        pchar = scan_sym( p1, &symvar_entry, &var_ind );// isolate symbolic var
-
-        if( symvar_entry.flags & local_var ) {  // lookup var in dict
-            rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
-                              var_ind, &symsubval );
-        } else {
-            rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
-                              &symsubval );
-        }
-        if( rc == 2 ) {                 // found
-            strcpy( p2, symsubval->value );
-            p2 += strlen( symsubval->value );
-            if( *pchar == '.' ) {
-                pchar++;                // skip terminating dot
-            }
-            p1 = pchar;
-        } else {
-            if( symvar_entry.flags & local_var ) { // local var not found
-                                                   // replace by nullstring
-
-                if( *pchar == '.' ) {
-                    pchar++;            // skip terminating dot
-                }
-                p1 = pchar;
-            } else {                    // global var not found
-                p1 = varstart;
-                if( *pchar == '.' ) {
-                    pchar++;            // copy terminating dot, too
-                }
-                while( p1 < pchar ) {   // treat var name as text
-                    *p2++ = *p1++;
+    varunresolved = 0;
+    do {
+        strcpy( workbuf, buff2 );
+        pw = workbuf;
+        pwend = workbuf + buff2_lg;
+        p2 = buff2;
+        varstart = NULL;
+        pchar = strchr( workbuf, ampchar ); // look for & in buffer
+        while( pchar != NULL ) {        // & found
+            if( workbuf < pchar ) {
+                while( pw < pchar ) {   // copy all data preceding &
+                    *p2++ = *pw++;
                 }
             }
-        }
-        *p2 = '\0';
-        pchar = strchr( p1, ampchar );  // look for next & in buffer
-    }
+            varstart = pw;              // remember start of var
+            pw++;                       // over &
 
-    while( p1 <= p1end) {               // copy remaining input
-         *p2++ = *p1++;
-    }
+            pchar = scan_sym( pw, &symvar_entry, &var_ind );// isolate symbolic var
+
+            if( symvar_entry.flags & local_var ) {  // lookup var in dict
+                rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
+                                  var_ind, &symsubval );
+            } else {
+                rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
+                                  &symsubval );
+            }
+            if( rc == 2 ) {             // variable found
+                if( symsubval->value[ 0 ] == CW_sep_char ) {// starting with seperator
+                    if( *pchar == '.' ) {
+                        pchar++;        // skip optional terminating dot
+                    }
+                    *(varstart - workbuf + buff2) = '\0';
+                    split_input_var( buff2, pchar - workbuf + buff2, &symsubval->value[ 1 ] );
+                    pw = pwend + 1;     // stop substituion for this record
+                    varstart = NULL;
+                    break;
+                } else {
+                    strcpy( p2, symsubval->value ); // copy value
+                    p2 += strlen( symsubval->value );
+                    if( *pchar == '.' ) {
+                        pchar++;        // skip optional terminating dot
+                    }
+                    pw = pchar;
+                }
+            } else {
+                if( symvar_entry.flags & local_var ) { // local var not found
+                                                       // replace by nullstring
+
+                    if( *pchar == '.' ) {
+                        pchar++;        // skip optional terminating dot
+                    }
+                    pw = pchar;
+                } else {                // global var not found
+
+                /***********************************************************/
+                /*  keep trying for constructs such as                     */
+                /*                                                         */
+                /* .se prodgml = "Open Watcom GML"                         */
+                /* .se name = "GML"                                        */
+                /*                                                         */
+                /* My name is &prod&name..!                                */
+                /*                                                         */
+                /*  to become                                              */
+                /*                                                         */
+                /* My name is Open Watcom GML!                             */
+                /*                                                         */
+                /* This does not work for local variables, as these are    */
+                /* replaced by nullstring if not found                     */
+                /* My name is &*prod&*name..!                              */
+                /*  will become                                            */
+                /* My name is !                                            */
+                /***********************************************************/
+
+                    varunresolved++;
+
+                    if( varunresolved > 10 ) {  // max 10 iterations
+                        varunresolved = 0;
+                    }
+                    pw = varstart;
+                    if( *pchar == '.' ) {
+                        pchar++;        // copy terminating dot, too
+                    }
+                    while( pw < pchar ) {   // treat var name as text
+                        *p2++ = *pw++;
+                    }
+                }
+            }
+            *p2 = '\0';
+            pchar = strchr( pw, ampchar );  // look for next & in buffer
+        }
+        while( pw <= pwend) {           // copy remaining input
+             *p2++ = *pw++;
+        }
+    } while( (varunresolved > 0) && (varstart != NULL) );
+
     buff2_lg = strnlen_s( buff2, buf_size );
 
-    if( (GlobalFlags.research && GlobalFlags.firstpass && (varstart != NULL)) ) {
-        printf( "> >%s\n", buff2 );     // show line if something replaced
+    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        printf( "> >%s\n", buff2 ); // show line with possible substitution(s)
     }
+    mem_free( workbuf );
 
     arg_start = buff2;
     arg_stop  = buff2 + buff2_lg;

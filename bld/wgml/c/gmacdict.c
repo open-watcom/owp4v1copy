@@ -131,6 +131,7 @@ void    free_macro_dict( mac_entry * * dict )
 /*  search macro entry in specified dictionary                             */
 /*  returns ptr to macro or NULL if not found                              */
 /***************************************************************************/
+
 mac_entry   * find_macro( mac_entry * dict, const char * name )
 {
     mac_entry   *   wk;
@@ -155,10 +156,10 @@ mac_entry   * find_macro( mac_entry * dict, const char * name )
 
 void    print_macro_dict( mac_entry * dict )
 {
-    mac_entry   *   wk;
-    int             cnt;
-    int             len;
-    static char     fill[ 10 ] = "         ";
+    mac_entry           *   wk;
+    int                     cnt;
+    int                     len;
+    static  const   char    fill[ 10 ] = "         ";
     cnt = 0;
     wk = dict;
     out_msg( "\nList of defined macros:\n" );

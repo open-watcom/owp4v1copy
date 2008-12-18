@@ -47,6 +47,8 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 {
     size_t      k;
     char    *   sym_start;
+    inputcb *   cb = input_cbs;
+    char        quote;
 
     scan_err = false;
     sym->next = NULL;
@@ -55,6 +57,11 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 
     while( *p && *p == ' ' ) {          // skip over spaces
         p++;
+    }
+    if( *p == '"' || *p == '\'' ) {
+        quote = *p++;
+    } else {
+        quote = '\0';
     }
     if( *p == '*' ) {                   // local var
         p++;
@@ -81,8 +88,21 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             if( !scan_err ) {
                 scan_err = true;
                 if( !ProcFlags.suppress_msg ) {
-                    out_msg( "WNG_SYMBOL_NAME_TOO_LONG %s\n", sym_start );
-                    wng_count++;
+                    // SC--074 For the symbol '%s'
+                    //         The length of a symbol cannot exceed ten characters
+                    if( cb->fmflags & II_macro ) {
+                        out_msg( "ERR_SYM_NAME_too_long '%s'\n"
+                            "The length of a symbol cannot exceed ten characters\n"
+                            "\t\t\tLine %d of macro '%s'\n",
+                            token_buf, cb->s.m->mac->name, cb->s.m->lineno );
+                    } else {
+                        out_msg( "ERR_SYM_NAME_too_long '%s'\n"
+                            "The length of a symbol cannot exceed ten characters\n"
+                            "\t\t\tLine %d of macro '%s'\n",
+                            token_buf, cb->s.f->lineno, cb->s.f->filename );
+                    }
+                    show_include_stack();
+                    err_count++;
                 }
             }
         }
@@ -97,7 +117,15 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             if( !ProcFlags.suppress_msg ) {
                 out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
                 err_count++;
+                show_include_stack();
             }
+        }
+    }
+    if( quote && quote == *p ) {        // over terminating quote
+        p++;
+    } else {
+        if( (*p != '(')  && (*p != ' ') ) {
+            scan_err = true;
         }
     }
     if( !scan_err && (*p == '(') ) {    // subscripted ?
@@ -291,62 +319,6 @@ typedef enum  {                      // internal character representation for
    i_alpha  = 0x26                      // = iat
 } ichar;
 
-#if 0
-static const UCHAR ext2int[256] = {
-
-    /* .0     .1     .2     .3     .4     .5     .6     .7  */
-    '\xff','\xff','\xff','\xff','\xff','\xff','\xff','\xff', //0x
-    '\xff','\xff','\xff','\xff','\xff','\xff','\xff','\xff',
-
-    '\xff','\xff','\xff','\xff','\xff','\xff','\xff','\xff', //1x
-    '\xff','\xff','\xff','\xff','\xff','\xff','\xff','\xff',
-
-    '\x33','\xFF','\x32','\x25','\x24','\xff','\x17','\x31', //2x
-    '\x2f','\x30','\x29','\x27','\x2b','\x28','\x2e','\x2a',
-
-    '\x00','\x01','\x02','\x03','\x04','\x05','\x06','\x07', //3x
-    '\x08','\x09','\xff','\xff','\xff','\x2c','\xff','\xff',
-
-    '\x26','\x0a','\x0b','\x0c','\x0e','\x0F','\x10','\x11', //4x
-    '\x12','\x13','\x14','\x15','\x16','\x17','\x18','\x19',
-
-    '\x1a','\x1b','\x1c','\x1d','\x1e','\x1F','\x20','\x21', //5x
-    '\x22','\x23','\x24','\xff','\xff','\xff','\xff','\xff',
-
-    '\xff','\xff','\xff','\xff','\xff','\xff','\xff','\xff', //6x
-    '\xFF','\xFF','\xff','\xff','\xff','\xff','\xff','\xff',
-
-    '\xFF','\xFF','\xFF','\xFF','\xFF','\xFF','\xFF','\xFF', //7x
-    '\xFF','\xff','\xff','\xff','\xff','\xff','\xff','\xff',
-
-    /* .0     .1     .2     .3     .4     .5     .6     .7  */
-    '\xFF','\x61','\x62','\x63','\x64','\x65','\x66','\x67',
-    '\x68','\x69','\xFF','\xFF','\xFF','\xFF','\xFF','\xFF',
-
-    '\xFF','\x6A','\x6B','\x6C','\x6D','\x6E','\x6F','\x70',
-    '\x71','\x72','\xFF','\xFF','\xFF','\xFF','\xFF','\xFF',
-
-    '\xFF','\xe1','\x73','\x74','\x75','\x76','\x77','\x78',
-    '\x79','\x7A','\xFF','\xFF','\xFF','\x5B','\xFF','\xFF',
-
-    '\xFF','\xFF','\xFF','\xFF','\xFF','\x40','\xFF','\xFF',
-    '\xFF','\xFF','\xFF','\x7C','\xFF','\x5D','\xFF','\xFF',
-
-    '\x84','\x41','\x42','\x43','\x44','\x45','\x46','\x47',
-    '\x48','\x49','\xFF','\xFF','\xDD','\xFF','\xFF','\xFF',
-
-    '\x81','\x4A','\x4B','\x4C','\x4D','\x4E','\x4F','\x50',
-    '\x51','\x52','\xFF','\xFF','\x7D','\xFF','\xFF','\xFF',
-
-    '\x99','\xFF','\x53','\x54','\x55','\x56','\x57','\x58',
-    '\x59','\x5A','\xFF','\xFF','\x5C','\xFF','\xFF','\xFF',
-
-    '\x30','\x31','\x32','\x33','\x34','\x35','\x36','\x37',
-    '\x38','\x39','\xFF','\xFF','\x5D','\xFF','\xFF','\xFF'
-        };
-#endif
-
-
 
 
 static  ichar ext_i( char c )
@@ -362,31 +334,57 @@ static  ichar ext_i( char c )
     case   '7':  return( i_7 ); break;
     case   '8':  return( i_8 ); break;
     case   '9':  return( i_9 ); break;
+    case   'a':
     case   'A':  return( i_a ); break;
+    case   'b':
     case   'B':  return( i_b ); break;
+    case   'c':
     case   'C':  return( i_c ); break;
+    case   'd':
     case   'D':  return( i_d ); break;
+    case   'e':
     case   'E':  return( i_e ); break;
+    case   'f':
     case   'F':  return( i_f ); break;
+    case   'g':
     case   'G':  return( i_g ); break;
+    case   'h':
     case   'H':  return( i_h ); break;
+    case   'i':
     case   'I':  return( i_i ); break;
+    case   'j':
     case   'J':  return( i_j ); break;
+    case   'k':
     case   'K':  return( i_k ); break;
+    case   'l':
     case   'L':  return( i_l ); break;
+    case   'm':
     case   'M':  return( i_m ); break;
+    case   'n':
     case   'N':  return( i_n ); break;
+    case   'o':
     case   'O':  return( i_o ); break;
+    case   'p':
     case   'P':  return( i_p ); break;
+    case   'q':
     case   'Q':  return( i_q ); break;
+    case   'r':
     case   'R':  return( i_r ); break;
+    case   's':
     case   'S':  return( i_s ); break;
+    case   't':
     case   'T':  return( i_t ); break;
+    case   'u':
     case   'U':  return( i_u ); break;
+    case   'v':
     case   'V':  return( i_v ); break;
+    case   'w':
     case   'W':  return( i_w ); break;
+    case   'x':
     case   'X':  return( i_x ); break;
+    case   'y':
     case   'Y':  return( i_y ); break;
+    case   'z':
     case   'Z':  return( i_z ); break;
 
     case   '$':  return( i_dollar ); break;
@@ -523,7 +521,7 @@ static  int     sdv08[ 8 ] = { 1, 0, 9, 15, 0,0,0, 255 };
                     charcnt = 10;       // overflow
                 } else {
                     res = res * 10 + ic;
-                    if( res > INT_MAX - 1 ) {
+                    if( res > LONG_MAX - 1 ) {
                         charcnt = 10;
                     }
                 }
@@ -550,8 +548,8 @@ static  int     sdv08[ 8 ] = { 1, 0, 9, 15, 0,0,0, 255 };
 
 condcode getnum( getnum_block *gn )
 {
-    char    *a;                         // arg start
-    char    *z;                         // arg stop
+    char    *a;                         // arg start  (X2)
+    char    *z;                         // arg stop   (R1)
     char    c;
     ichar   ic;
 
@@ -576,7 +574,6 @@ condcode getnum( getnum_block *gn )
         return( omit );                 // nothing there
     }
     c = *a;
-    ic = ext_i( c );                    // to internal representation
     if( c == '+' || c == '-' ) {
         num_sign = c;                   // unary sign
     }
@@ -586,7 +583,7 @@ condcode getnum( getnum_block *gn )
         if( a > z ) {
             break;
         }
-
+//look01:
     /***********************************************************************/
     /*  test/expand  pageno symbol ???? not implemented                    */
     /***********************************************************************/
@@ -611,13 +608,13 @@ condcode getnum( getnum_block *gn )
                 c = tolower( c );
                 ic = ext_i( c );
                 switch ( c ) {
-                case 'b' :                  // binary selfdefining value
+                case 'b' :              // binary selfdefining value
                     a += 2;
                     a = sdvcf( BIN, 32, a, z );
                     termswk.terms[ termswk.currterm ] = result;
                     charcntmax = 32;
                     break;
-                case 'c' :                  // char self defining value
+                 case 'c' :             // char self defining value
                     a += 2;
                     a = sdvcf( CHAR, 4, a, z );
                     termswk.terms[ termswk.currterm ] = (long) result_c;
@@ -636,7 +633,6 @@ condcode getnum( getnum_block *gn )
                     break;
                 }
 //ckq:
-
                 if( *a != '\'' ) {          // closing quote?
                     gn->cc = notnum;
                     gn->error = illchar;
@@ -684,24 +680,25 @@ condcode getnum( getnum_block *gn )
                     termswk.cond = condD;   // set mult / div condition
                     termswk.newop = ic - (i_alpha - 2); // set hierarchy code
                 } else {                    // leaves + or -
-                    if( termswk.cond == condE ) {
+//plmin:
+                    if( termswk.cond >= condE ) {
 //plmin3:
                         termswk.cond = condB;   // binary + or -
                         termswk.newop = ic - i_alpha;   // set hierarchy code
-
                     } else {
                         if( termswk.cond != condA ) {
                             termswk.cond = condC;   // unary + or -
 //plmin2:
                             termswk.newop = ic - (i_alpha - 2);// set hierarchy code
                         } else {
+//compt4:
                             termswk.cond = condE;
 
                             goto compt; // +++++++++++++++++++++++++++++++++
                         }
                     }
                 }
-//loop:
+loop:
                 if( termswk.curroper == 0 ) {
                     if( termswk.endoe ) {
 
@@ -709,10 +706,13 @@ condcode getnum( getnum_block *gn )
                     }
 //put:
                     termswk.oprns[ termswk.curroper ] = termswk.newop;
+//bumpy:
                     termswk.curroper++;
+//bumpr:
                     a++;
                     continue;
                 } else {
+//onz:
                     if( termswk.oprns[ termswk.curroper - 1 ] >= termswk.newop ) {
 //le:
                         if( termswk.newop == opuminus || termswk.newop == opuplus) {
@@ -725,8 +725,6 @@ condcode getnum( getnum_block *gn )
 //work:
                       //          int     ncomp = termswk.currrlist;
                         //        long    *firstx1 = &termswk.terms[ termswk.currterm -2 ];
-
-
 
                                 switch ( termswk.oprns[ termswk.curroper ] ) {
                                 case opplus :
@@ -743,16 +741,10 @@ condcode getnum( getnum_block *gn )
                                 default:
                                     break;
                                 }
-
-
                   //              goto work;
-
-
                             } else {
                                 termswk.currparn--;
-
-                                termswk.curroper--;
-
+//bumpr:
                                 a++;
                                 continue;
                             }
@@ -772,6 +764,7 @@ condcode getnum( getnum_block *gn )
                 }
             } else {                        // not less i_comma
                 if( ic == i_lparn ) {
+//lpar:
                     if( termswk.cond < condE ) {
                         termswk.cond = condB;   // left paren cond
                         if( termswk.currparn >= MAXPARENS - 1 ) {
@@ -784,7 +777,16 @@ condcode getnum( getnum_block *gn )
                         termswk.curroper++;
                         a++;
                     } else {
-//lpend:
+//lpen:
+                        if( termswk.currparn ) {
+                            gn->cc = notnum;
+                            gn->error = parerr;
+                            return( notnum );
+                        }
+                        termswk.endoe = true;   // end of expression
+                        termswk.newop = opend;
+
+                        goto loop;
                     }
                 } else {
                     if( ic == i_rparn ) {
@@ -803,11 +805,12 @@ condcode getnum( getnum_block *gn )
 //noend:
                         termswk.newop = opend;
 
-//   b loop:
+                        goto loop;
 
                     } else {
                         if( ic == i_blank ) {
                             if( gn->ignore_blanks == 0 ) {
+//lpend:
                                 if( termswk.cond < condE || termswk.currparn > 0) {
                                     gn->cc = notnum;// no term prceceding
                                     gn->error = enderr;
@@ -818,7 +821,7 @@ condcode getnum( getnum_block *gn )
 //noend:
                                 termswk.newop = opend;
 
-//   b loop:
+                                goto loop;
 
 
                             } else {
@@ -844,7 +847,7 @@ compt:
         termswk.currterm++;
         termswk.currrlist++;
     }                                   // for(;;)
-
+//blcom01:
 
     return( 0 );
 }

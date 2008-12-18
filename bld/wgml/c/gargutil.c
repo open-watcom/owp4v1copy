@@ -25,7 +25,8 @@
 *  ========================================================================
 *
 * Description: functions:
-*                  garginit      --- initialize operand scan in buff2
+*                  garginit      --- initialize operand scan in buff2 (SCR)
+*                  garginitdot   --- initialize operand scan in buff2 (GML)
 *                  getarg        --- scan (quoted) blank delimited argument
 *                  test_xxx_char --- test for allowed char
 *
@@ -46,7 +47,26 @@ void    garginit( void )
 
     p = buff2;                          // adress of input buffer
     arg_stop = buff2 + buff2_lg - 1;    // store scan stop address
-    while( *p != ' ' && p < arg_stop ) {// search end of keyword
+    while( *p != ' ' && p <= arg_stop ) {   // search end of keyword
+        p++;
+    }
+    arg_start = p;                      // store argument start address
+
+    open_paren = NULL;                  // clear open parenthesis pointer
+    clos_paren = NULL;                  // clear close parenthesis pointer
+    err_start = NULL;                   // clear error address
+}
+
+
+
+
+void    garginitdot( void )
+{
+    char    *   p;
+
+    p = buff2;                          // adress of input buffer
+    arg_stop = buff2 + buff2_lg - 1;    // store scan stop address
+    while( *p != ' ' && *p != '.' && p <= arg_stop ) {// search end of keyword
         p++;
     }
     arg_start = p;                      // store argument start address

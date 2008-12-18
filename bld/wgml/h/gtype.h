@@ -54,7 +54,7 @@
 #define SCR_KW_LENGTH   2               // script control word length
 #define TAG_NAME_LENGTH 15              // :tag name length
 #define ATT_NAME_LENGTH 9               // :tag attr name len
-#define SYM_NAME_LENGTH 11              // symbol name length
+#define SYM_NAME_LENGTH 10              // symbol name length
 #define MAC_NAME_LENGTH 8               // macro name length
 #define MAX_MAC_PARMS   32              // maximum macro parm count
                                         // arbitrary value, not found in docu!!!
@@ -245,7 +245,6 @@ typedef struct  inputcb {
 typedef struct scrtag {
     char            tagname[ SCR_KW_LENGTH + 1 ];
     void            (*tagproc)( void );
-    ulong           callcount;
 } scrtag;
 
 
@@ -254,19 +253,20 @@ typedef struct scrtag {
 /***************************************************************************/
 
 typedef enum {
-    tagonly     = 1,                    // tag without any attribute
-    tagbasic    = 2,                    // basic elements possible on tag line.
-    tagtext     = 4,                    // only text possible
-    etagreq     = 8,                    // eTAG required
-    etagopt     = 16                    // eTAG optional
+    tag_only     = 1,                   // tag without any attribute
+    tag_basic    = 2,                   // basic elements possible on tag line.
+    tag_text     = 4,                   // text line possible
+    etag_req     = 8,                   // eTAG required
+    etag_opt     = 16,                  // eTAG optional
+    tag_is_basic = 32                   // basic tag
 } gmlflags;
 
 
-typedef struct {
-   char             tagname[ TAG_NAME_LENGTH ];
-   unsigned         callcount;
+typedef struct gmltag {
+   char             tagname[ TAG_NAME_LENGTH + 1 ];
+   size_t           taglen;
+   void             (*gmlproc)( const struct gmltag * entry );
    gmlflags         tagflags;
-   void             (*tagproc)( void );
 } gmltag;
 
 /***************************************************************************/

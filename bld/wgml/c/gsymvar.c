@@ -125,6 +125,7 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
 /***************************************************************************/
 /*  check subscript for allowed range                                      */
 /***************************************************************************/
+
 bool    check_subscript( sub_index sub )
 {
 
@@ -274,11 +275,11 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
 
 void    print_sym_dict( symvar * dict )
 {
-    symvar  *   wk;
-    symsub  *   ws;
-    int         symcnt;
-    int         symsubcnt;
-    int         len;
+    symvar          *   wk;
+    symsub          *   ws;
+    int                 symcnt;
+    int                 symsubcnt;
+    int                 len;
     static const char   fill[ 11 ] = "          ";
 
     symcnt      = 0;

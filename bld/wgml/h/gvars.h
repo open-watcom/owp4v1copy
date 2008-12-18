@@ -46,7 +46,6 @@ global  int             switch_char;    // DOS switch character
 global  char        *   alt_ext;        // alternate extension
 global  char        *   def_ext;        // default extension
 
-
 global  char        *   master_fname;   // Primary input file name
 global  char        *   master_fname_attr;// Primary input file name attributes
 global  ulong           print_from;     // first page to print
@@ -60,13 +59,9 @@ global  unsigned        max_inc_level;  // maximum include level depth
 global  ulong           line_from;      // starting lineno to process
 global  ulong           line_to;        // ending lineno to process
 #define LINEFROM_DEFAULT    1
-#define LINETO_DEFAULT      (0x1000000) // 16 meg lines should be enough
+#define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
 
-global  size_t          buf_size;
-global  char        *   buffer;
-global  char        *   token_buf;
-
-global  int             err_count;      // Overall Errrorcount
+global  int             err_count;      // Overall Errorcount
 global  int             wng_count;      // Overall warning count
 
 global  char            GML_char;       // GML Keywword start char :
@@ -110,21 +105,21 @@ global  struct GlobalFlags {
     unsigned        freec         : 1;
     unsigned        freed         : 1;
     unsigned        freee         : 1;
-    unsigned        research      : 1;  // research mode, no formatting
+    unsigned        research      : 1;  // research mode, minimal formatting
                                         // research mode will eventually go away
 } GlobalFlags;                          // Global flags
 
 global struct ProcFlags {
     unsigned        newLevelFile    : 1;// start new include Level (file)
-    unsigned        newLevelMacro   : 1;// start new include Level (macro)
-    unsigned        nocase          : 1;// case insensitive switch
     unsigned        macro_ignore    : 1;// .. in col 1-2
     unsigned        CW_sep_ignore   : 1;// .' in col 1-2
-    unsigned        GML_tag_cont    : 1;// tag continued from prev line
     unsigned        in_macro_define : 1;// macro definition active
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
-
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
+    unsigned        free6           : 1;
+    unsigned        free7           : 1;
+
+    unsigned        free8           : 1;
     unsigned        free9           : 1;
     unsigned        freea           : 1;
     unsigned        freeb           : 1;
@@ -136,13 +131,17 @@ global struct ProcFlags {
 } ProcFlags;                            // processing flags
 
 
-global char         *   buff1;          // output buffer
+global  size_t          buf_size;       // default buffer size
+global  char        *   token_buf;
+
+global char         *   buffout;        // output buffer
+
 global char         *   buff2;          // input buffer
-global char             buff2_lg;       // input buffer used length
+global size_t           buff2_lg;       // input buffer used length
 global char         *   arg_start;      // start of arg scan
 global char         *   arg_stop;       // end of arg scan area
-global char         *   err_start;      // in case of error
 global size_t           arg_flen;       // arg length
+global char         *   err_start;      // in case of error
 global char         *   open_paren;     // ( in input
 global char         *   clos_paren;     // ) in input
 

@@ -418,32 +418,333 @@ static  void    scr_dm( void )
     return;
 }
 
-/* the following table and the processing routines will be split into
+
+
+/***************************************************************************/
+/*  :CMT.                                                                  */
+/*                                                                         */
+/* The information following the comment tag on the input line is treated  */
+/* as a comment. Text data and GML tags following the comment tag are not  */
+/* processed. Except between tag attributes, this tag may appear at any    */
+/* point in the GML sourc                                                  */
+/***************************************************************************/
+
+static  void    gml_cmt( const gmltag * entry )
+{
+    return;
+}
+
+
+/***************************************************************************/
+/*  :IMBED   file='abc.gml'                                                */
+/*  :INCLUDE file="abc.gml"                                                */
+/*                                                                         */
+/* :IMBED and :INCLUDE are eqivalent.                                      */
+/*                                                                         */
+/* The value of the required attribute file is used as the name of the     */
+/* file to include.  The content of the included file is processed by      */
+/* WATCOM Script/GML as if the data was in the original file.  This tag    */
+/* provides the means whereby a document may be specified using a          */
+/* collection of separate files.  Entering the source text into separate   */
+/* files, such as one file for each chapter, may help in managing the      */
+/* document.  if( the specified file does not have a file type, the        */
+/* default document file type is used.  For example, if the main document  */
+/* file is manual.doc, doc is the default document file type.  If the file */
+/* is not found, the alternate extension supplied on the command line is   */
+/* used.  If the file is still not found, the file type GML is used.  When */
+/* working on a PC/DOS system, the DOS environment symbol GMLINC may be    */
+/* set with an include file list.  This symbol is defined in the same way  */
+/* as a library definition list, and provides a list of alternate          */
+/* directories for file inclusion.  If an included file is not defined in  */
+/* the current directory, the directories specified by the include path    */
+/* list are searched for the file.  If the file is still not found, the    */
+/* directories specified by the DOS environment symbol PATH are searched.  */
+/*                                                                         */
+/***************************************************************************/
+
+static  void    gml_include( const gmltag * entry )
+{
+    char    *   p;
+
+    p = scan_start;
+    p++;
+    while( *p == ' ' ) {
+        p++;
+    }
+    *token_buf = '\0';
+    if( !strnicmp( "file=", p, 5 ) ) {
+        char    quote;
+        char    *fnstart;
+
+        p += 5;
+        if( *p == '"' || *p == '\'' ) {
+            quote = *p;
+            ++p;
+        } else {
+            quote = '.';                // error?? filename without quotes
+        }
+        fnstart = p;
+        while( *p && *p != quote ) {
+            ++p;
+        }
+        *p = '\0';
+        strcpy_s( token_buf, buf_size, fnstart );
+        ProcFlags.newLevelFile = 1;     // start new include level
+    }
+    return;
+}
+
+
+/***************************************************************************/
+/*   :SET symbol='symbol-name'                                             */
+/*        value='character-string'                                         */
+/*              delete.                                                    */
+/*                                                                         */
+/* This tag defines and assigns a value to a symbol name.  The symbol      */
+/* attribute must be specified.  The value of this attribute is the name   */
+/* of the symbol being defined, and cannot have a length greater than ten  */
+/* characters.  The symbol name may only contain letters, numbers, and the */
+/* characters @, #, $ and underscore(_).  The value attribute must be      */
+/* specified.  The attribute value delete or a valid character string may  */
+/* be assigned to the symbol name.  If the attribute value delete is used, */
+/* the symbol referred to by the symbol name is deleted.                   */
+/***************************************************************************/
+
+static  void    gml_set( const gmltag * entry )
+{
+    char        *   p;
+    char        *   symstart;
+    char        *   valstart;
+    char            c;
+    bool            symbolthere = false;
+    bool            valuethere = false;
+    symvar          sym;
+    sub_index       subscript;
+    int             rc;
+    symvar      * * working_dict;
+
+    subscript = no_subscript;           // not subscripted
+    scan_err = false;
+
+    p = scan_start;
+    p++;
+
+    for( ;;) {
+        while( *p == ' ' ) {            // over WS to attribute
+            p++;
+        }
+
+        if( !strnicmp( "symbol=", p, 7 ) ) {
+
+            p += 7;
+            symstart = p;
+
+            p = scan_sym( symstart, &sym, &subscript );
+            if( scan_err ) {
+                return;
+            }
+            if( *p == '"' || *p == '\'' ) {
+                p++;                    // skip terminating quote
+            }
+            if( sym.flags & local_var ) {
+                working_dict = &input_cbs->local_dict;
+            } else {
+                working_dict = &global_dict;
+            }
+            symbolthere = true;
+        }
+
+        while( *p == ' ' ) {
+            p++;
+        }
+        if( !strnicmp( "value=", p, 6 ) ) {
+            char    quote;
+
+            p += 6;
+            if( *p == '"' || *p == '\'' ) {
+                quote = *p;
+                ++p;
+            } else {
+                quote = ' ';
+            }
+            valstart = p;
+            while( *p && *p != quote ) {
+                ++p;
+            }
+            c = *p;
+            *p = '\0';
+            strcpy_s( token_buf, buf_size, valstart );
+            *p = c;
+            if( c == '"' || c == '\'' ) {
+                p++;
+            }
+            valuethere = true;
+        }
+        if( symbolthere && valuethere ) {   // both attributes
+
+            if( !strnicmp( token_buf, "delete", 6 ) ) {
+                sym.flags |= deleted;
+            }
+            rc = add_symvar( working_dict, sym.name, token_buf, subscript,
+                             sym.flags );
+        }
+
+        if( symbolthere && valuethere ) {   // tag complete with attributes
+            break;
+        }
+        c = *p;
+        if( p >= scan_stop ) {
+            c = '.';                    // simulate end of tag
+
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line() ) {      // next line for missing attribute
+
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||
+                        (*scan_start == GML_char) ) {
+                                        //  missing attribute not supplied error
+
+                    } else {
+                        p = scan_start;
+                        continue;       // scanning
+                    }
+                }
+            }
+        }
+        if( c == '.' ) {                // end of tag found
+            err_count++;
+            // AT-001 Required attribute not found
+            if( input_cbs->fmflags & II_macro ) {
+                out_msg( "ERR_ATT_missing Required attribute not found\n"
+                         "\t\t\tLine %d of macro '%s'\n",
+                         input_cbs->s.m->mac->name, input_cbs->s.m->lineno );
+            } else {
+                out_msg( "ERR_ATT_missing Required attribute not found\n"
+                         "\t\t\tLine %d of file '%s'\n",
+                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            }
+            if( inc_level > 0 ) {
+                show_include_stack();
+            }
+            break;
+        }
+    }
+    return;
+}
+
+
+
+/* the following tables and the processing routines will be split into
  * different modules later
  *
  *
  */
 
 /***************************************************************************/
-/*    SCR keywords                                                         */
+/*    GML tags                                                             */
 /***************************************************************************/
-static scrtag  scr_tags[] = {
-    { "ap", scr_ap, 0 },
-    { "dm", scr_dm, 0 },
-    { "im", scr_im, 0 },
-    { "se", scr_se, 0 },
-    { "  ", NULL  , 0 }  };
+
+static  const   gmltag  gml_tags[] = {
+
+#define pick(name, length, routine, flags) { name, length, routine, flags },
+#include "gtags.h"
+#undef pick
+    { "   ", 0, NULL, 0 } // end
+
+};
+
+#define GML_TAGMAX  (sizeof( gml_tags ) / sizeof( gml_tags[ 0 ] ) - 1)
+
+
+
+/***************************************************************************/
+/*    SCR control words                                                    */
+/***************************************************************************/
+static  const   scrtag  scr_tags[] = {
+    { "ap", scr_ap },
+    { "dm", scr_dm },
+    { "im", scr_im },
+    { "se", scr_se },
+    { "  ", NULL   }
+};
 
 #define SCR_TAGMAX  (sizeof( scr_tags ) / sizeof( scr_tags[ 0 ] ) - 1)
 
-#define MAX_SCRTAGNAME_LENGTH   (sizeof( scr_tags->tagname ) - 1)
+
+static void scan_gml( void )
+{
+    char    *   p;
+    int         toklen;
+    int         k;
+    char        csave;
+
+    cb = input_cbs;
+
+    p = scan_start +1;
+    arg_stop = buff2 + buff2_lg - 1;    // store scan stop address
+    while( *p != ' ' && *p != '.' && p <= arg_stop ) {// search end of keyword
+        p++;
+    }
+    arg_start = p;                      // store argument start address
+    err_start = NULL;                   // clear error address
+    toklen = p - scan_start - 1;
+    csave = *p;
+    *p = '\0';
+    if( toklen >= TAG_NAME_LENGTH ) {
+        err_count++;
+        // SC--074 For the symbol '%s'
+        //         The length of a symbol cannot exceed ten characters
+        if( cb->fmflags & II_macro ) {
+            out_msg( "ERR_SYM_NAME_too_long '%s'\n"
+                     "\t\tThe length of a symbol cannot exceed ten characters\n"
+                     "\t\t\tLine %d of macro '%s'\n",
+                     scan_start,
+                     cb->s.m->mac->name, cb->s.m->lineno );
+        } else {
+            out_msg( "ERR_SYM_NAME_too_long '%s'\n"
+                     "\t\tThe length of a symbol cannot exceed ten characters\n"
+                     "\t\t\tLine %d of file '%s'\n",
+                     scan_start,
+                     cb->s.f->lineno, cb->s.f->filename );
+        }
+        show_include_stack();
+        return;
+    }
+
+    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        if( cb->fmflags & II_macro ) {
+            printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                             inc_level, GML_char, scan_start + 1,
+                             cb->s.m->mac->name, cb->s.m->lineno );
+        } else {
+            printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                             inc_level, GML_char, scan_start + 1,
+                             cb->s.f->filename, cb->s.f->lineno );
+        }
+        add_GML_tag_research( scan_start + 1 );
+    }
+
+
+    for( k = 0; k < GML_TAGMAX; ++k ) {
+        if( toklen == gml_tags[ k].taglen ) {
+            if( !stricmp( gml_tags[ k ].tagname, scan_start + 1 ) ) {
+                *p = csave;
+                scan_start = p;         // gml tag found, process
+                gml_tags[ k ].gmlproc( &gml_tags[ k ] );
+                break;
+            }
+        }
+    }
+}
 
 
 /*
  * add macro parms from input line as local symbolic variables
  * for non quoted parms try to assign symbolic variables
- * i.e.  a b c var="1.8" d "1 + 2"
- *    will give &* =a b c var="1.2" d
+ * i.e.  a b c *var="1.8" d "1 + 2"
+ *    will give &* =a b c *var="1.8" d
  *              &*0=5
  *              &*1=a
  *              &*2=b
@@ -495,7 +796,8 @@ static void     add_macro_parms( char * p )
 
                 ProcFlags.suppress_msg = false; // reenable err msg
                 ProcFlags.blanks_allowed = 1;   // blanks again
-                *arg_start = c;      // replace string end with original char
+                *arg_start = c;        // restore original char at string end
+
 
             }
             if( cc == quotes ) {       // copy argument as local symbolic var
@@ -506,7 +808,7 @@ static void     add_macro_parms( char * p )
                 *p = '\0';              // terminate string
                 add_symvar( &input_cbs->local_dict, starbuf, err_start,
                             no_subscript, local_var );
-                *p = c;              // replace string end with original char
+                *p = c;                // restore original char at string end
             }
             cc = getarg();              // look for next parm
         }
@@ -518,6 +820,43 @@ static void     add_macro_parms( char * p )
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
         print_sym_dict( input_cbs->local_dict );
     }
+}
+
+
+
+/*
+ * search for (control word) separator in string outside of quotes
+ *       returns ptr to sep char or NULL if not found
+ *      quotes are single or double quotes
+ */
+char    *   search_separator( char * str, char sep )
+{
+    bool        instring = false;
+    char        quote = '\0';
+
+    while( *str != '\0' ) {
+        if( instring ) {
+            if( *str == quote ) {
+                instring = false;
+            }
+        } else {
+            if( (*str == '\"') || (*str == '\'') ) {
+                instring = true;
+                quote = *str;
+            } else {
+                if( *str == sep ) {
+                    break;
+                }
+            }
+        }
+        str++;
+    }
+    if( *str == sep ) {
+        return( str );
+    } else {
+        return( NULL );
+    }
+
 }
 
 
@@ -563,7 +902,8 @@ static void     scan_script( void)
     if( !ProcFlags.CW_sep_ignore ) { // scan line for CW_sep_char
         char    *   pchar;
 
-        pchar = strchr( buff2, CW_sep_char );// look for controlword separator
+        pchar = search_separator( buff2, CW_sep_char );
+
         if( pchar != NULL ) {
             split_input( buff2, pchar + 1 );// ignore CW_sep_char
             *pchar= '\0';               // delete CW_sep_char
@@ -658,153 +998,17 @@ static void     scan_script( void)
 
 void    scan_line( void )
 {
-    char    *   p;
-    int         toklen;
-    char        c;
-
-    cb = input_cbs;
 
     scan_start = buff2;
     scan_stop  = buff2 + buff2_lg;
 
-    if( *scan_start == SCR_char  ) {    // script control line
-        scan_script();
+
+    if( *scan_start == SCR_char ) {
+        scan_script();                  // script control line
+    } else if( *scan_start == GML_char ) {
+        scan_gml();                     // gml tags
     } else {
-
-        while( *scan_start == ' ' ) {       // skip blanks
-             scan_start++;
-        }
-        c = *scan_start;
-
-        if( c == GML_char ) {
-
-        /*******************************************************/
-        /*  process GML Tags                                   */
-        /*******************************************************/
-            p = scan_start +1;
-
-            if( !strnicmp( "CMT", p, 3 ) ) {
-                if( *(p + 3) == '.' ||
-                    *(p + 3) == ' ' ||
-                    *(p + 3) == '\0' ) {
-                    return;             // :CMT ignore comment line
-                }
-            }
-
-            /*******************************************************/
-            /*  look for end of tagname                            */
-            /*******************************************************/
-            while( *p > ' ' ) {
-                if( *p == '.' ) break;
-                p++;
-            }
-            *p = '\0';
-            toklen = p - scan_start;
-            if( toklen >= TAG_NAME_LENGTH ) {
-                *(scan_start + TAG_NAME_LENGTH) = '\0';
-            }
-
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                if( cb->fmflags & II_macro ) {
-                    printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
-                                     inc_level, GML_char, scan_start + 1,
-                                     cb->s.m->mac->name, cb->s.m->lineno );
-                } else {
-                    printf_research( "L%d    %c%s found in file %s(%d)\n\n",
-                                     inc_level, GML_char, scan_start + 1,
-                                     cb->s.f->filename, cb->s.f->lineno );
-                }
-                add_GML_tag_research( scan_start + 1 );
-            }
-
-            if( !stricmp( ":include", scan_start ) ||
-                !stricmp( ":imbed", scan_start ) ) {
-                p++;
-                while( *p == ' ' ) {
-                    p++;
-                }
-                if( !strnicmp( "file=", p, 5 ) ) {
-                    char    quote;
-                    char    *fnstart;
-
-                    p += 5;
-                    if( *p == '"' || *p == '\'' ) {
-                        quote = *p;
-                        ++p;
-                    } else {
-                        quote = '.';    // error?? filename without quotes
-                    }
-                    fnstart = p;
-                    while( *p && *p != quote ) {
-                        ++p;
-                    }
-                    *p = '\0';
-                    strcpy_s( token_buf, buf_size, fnstart );
-                    ProcFlags.newLevelFile = 1;
-                    return;
-                }
-            }
-
-            /***************************************************************/
-            /*  :set symbol="varname" value="abc".                         */
-            /*                              delete.                        */
-            /***************************************************************/
-
-            /* to be reworked TBD
-             *
-             *
-             *
-             */
-
-            if( !stricmp( ":set", scan_start ) ) {
-                p++;
-                while( *p == ' ' ) {
-                    p++;
-                }
-                if( !strnicmp( "symbol=", p, 7 ) ) {
-                    char    quote;
-                    char    *nstart;
-
-                    p += 7;
-                    if( *p == '"' || *p == '\'' ) {
-                        quote = *p;
-                        ++p;
-                    } else {
-                        quote = '.';    // error?? name without quotes
-                    }
-                    nstart = p;
-                    while( *p && *p != quote ) {
-                        ++p;
-                    }
-                    *p = '\0';
-                    strcpy_s( token_buf, buf_size, nstart );
-                } else {
-
-                }
-                p++;
-                while( *p == ' ' ) {
-                    p++;
-                }
-                if( !strnicmp( "value=", p, 6 ) ) {
-                    char    quote;
-                    char    *fnstart;
-
-                    p += 6;
-                    if( *p == '"' || *p == '\'' ) {
-                        quote = *p;
-                        ++p;
-                    } else {
-                        quote = '.';
-                    }
-                    fnstart = p;
-                    while( *p && *p != quote ) {
-                        ++p;
-                    }
-                    *p = '\0';
-                    strcpy_s( token_buf, buf_size, fnstart );
-                }
-            }
-        }
+                                        // textline
     }
 }
 

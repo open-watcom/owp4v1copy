@@ -57,7 +57,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 //================= Function Prototypes ========================
 
 /* wgml.c                              */
-extern  bool     free_resources( errno_t in_errno );
+extern  bool    free_resources( errno_t in_errno );
 extern  void    g_banner( void );
 extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( void );
@@ -69,6 +69,7 @@ extern  void    show_include_stack( void );
 
 /* gargutil.c                           */
 extern  void        garginit( void );
+extern  void        garginitdot( void );
 extern  condcode    getarg( void );
 extern  bool        test_identifier_char( char c );
 extern  bool        test_macro_char( char c );
@@ -149,6 +150,15 @@ extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index 
 /* gutils.c                           */
 extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 
+/*
+ * protoypes for the gml processing routines
+ */
+
+#define pick(name, length, routine, flags)  static void routine( const gmltag * entry );
+
+#include "gtags.h"
+
+#undef pick
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */
