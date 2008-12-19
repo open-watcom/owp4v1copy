@@ -32,15 +32,19 @@
 *                   print_banner()
 *                   print_usage()
 *
-*               The remaining functions are implemented in common.c:
-*                   free_resources()
+*               The remaining functions are implemented in common.c. These
+*               are part of the research framework:
 *                   initialize_globals()
+*                   skip_spaces()
+*
+*               These are needed to reproduce enough of the wgml context for
+*               research programs that use parts of wgml to work:               
+*                   free_resources()
+*                   g_suicide()
 *                   mem_alloc()
 *                   mem_free()
 *                   mem_realloc()
-*                   my_exit()
 *                   out_msg()
-*                   skip_spaces()
 *
 ****************************************************************************/
 
@@ -67,9 +71,8 @@
     #define global  extern
 #endif
 
-/* This records, generally, whether '\' or '/' is used on the command line. */ 
-
-global char switch_char;    
+global char switch_char;    // Either '\', '/', or whatever DOS is using.
+global int  err_count;      // Part of the wgml context.
 
 /* Reset so can be reused with other headers. */
 
@@ -89,14 +92,19 @@ extern  void        print_usage( void );
 
 /* These functions are defined in common.c. */
 
-extern  bool        free_resources( errno_t in_errno );
+/* These functions are part of the research framework. */
+
 extern  void        initialize_globals( void );
+extern  char    *   skip_spaces( char * start );
+
+/* These are part of the wgml context. */
+
+extern  bool        free_resources( errno_t in_errno ); 
+extern  void        g_suicide( void );
 extern  void        mem_free( void *p );
 extern  void    *   mem_alloc( size_t size );
 extern  void    *   mem_realloc( void *p, size_t size );
-extern  void        my_exit( int rc );
 extern  void        out_msg( char *fmt, ... );
-extern  char    *   skip_spaces( char * start );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

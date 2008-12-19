@@ -27,6 +27,7 @@
 * Description:  Declares functions used to manipulate .COP directory files:
 *                   get_compact_entry()
 *                   get_extended_entry()
+*                   get_member_name()
 *
 * Note:         The field names are intended to correspond to the field names 
 *               shown in the Wiki. The Wiki structs are named when the structs
@@ -73,8 +74,9 @@ typedef enum {
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-extern entry_found     get_compact_entry( FILE * in_file, directory_entry * entry );
-extern entry_found     get_extended_entry( FILE * in_file, directory_entry * entry );
+extern entry_found  get_compact_entry( FILE * in_file, directory_entry * entry );
+extern entry_found  get_extended_entry( FILE * in_file, directory_entry * entry );
+extern char *       get_member_name( char const * in_name );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

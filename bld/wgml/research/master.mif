@@ -15,22 +15,22 @@ inc_dirs = -I"../h;../../h"
 .c: ../c;../../c;../../../watcom/c
 
 cf_common_objs = &
-	    cfdir.obj    &
-	    cfdev.obj    &
-	    cfdrv.obj    &
-	    cffon.obj    &
-	    cffunc.obj   &
-            cfheader.obj &
-            cmdlhelp.obj &
-            common.obj   &
-	    dfinterp.obj &
-	    heapchk.obj  &
-            lhdirect.obj &
-            research.obj &
+	    cfdir.obj     &
+	    cfdev.obj     &
+	    cfdrv.obj     &
+	    cffon.obj     &
+	    cffunc.obj    &
+            cfheader.obj  &
+            cmdlhelp.obj  &
+            common.obj    &
+	    dfinterp.obj  &
+	    heapchk.obj   &
+            lhdirect.obj  &
+            research.obj  &
             swchar.obj
 
 cfc_objs = &
-            cfcheck.obj  &
+            cfcheck.obj   &
             cfcutils.obj
 
 copp_objs = &
@@ -44,6 +44,7 @@ copp_objs = &
             common.obj    &
 	    dfinterp.obj  &
 	    findfile.obj  &
+	    heapchk.obj   &
             research.obj  &
             cmdlhelp.obj  &
             swchar.obj

@@ -55,6 +55,7 @@
 #include "copfiles.h"
 #include "findfile.h"
 #include "dfinterp.h"
+#include "heapchk.h"
 #include "research.h"
 
 /***************************************************************************/
@@ -91,9 +92,6 @@ typedef struct filecb {
 } filecb;
 
 filecb  *   input_cbs;
-int         err_count;
-
-void g_suicide( void ) {}
 
 /*  Local variables. */
 
@@ -640,7 +638,7 @@ int main()
     initialize_globals();
     res_initialize_globals();
     ff_setup();
-    
+
     /* Parse the command line: allocates and sets tgt_path. */
 
     retval = parse_cmdline( cmdline );
@@ -662,8 +660,13 @@ int main()
 
     retval = parse_defined_name();
 
+    /* Free tgt_path. */
+
+    mem_free( tgt_path );
+    tgt_path = NULL;
+
     ff_teardown();
-    
+
     /* Respond to failure. */
 
     if( retval == FAILURE ) {

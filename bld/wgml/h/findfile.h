@@ -28,7 +28,6 @@
 *                   dirseq
 *                   ff_setup()
 *                   ff_teardown()
-*                   get_cop_file()
 *                   search_file_in_dirs()
 *                   try_file_name
 *                   try_fp
@@ -75,7 +74,6 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 extern  void        ff_teardown( void );
-extern char     *   get_cop_file( char const * in_name );
 extern  void        ff_setup( void );
 extern  int         search_file_in_dirs( char * filename, char * defext, char * altext, dirseq seq );
 

@@ -27,15 +27,21 @@
 * Description:  Implements the external functions declared in cfdir.h:
 *                   get_compact_entry()
 *                   get_extended_entry()
+*                   get_member_name()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
 *
 ****************************************************************************/
 
-#include <stdlib.h>
+#include <setjmp.h> // Required (but not included) by gvars.h.
 
 #include "copdir.h"
+#include "copfiles.h"
+#include "findfile.h"
+#include "gtype.h" // Required (but not included) by gvars.h.
+#include "gvars.h"
+#include "wgml.h"
 
 /* Global function definitions. */
 
@@ -92,7 +98,7 @@ entry_found get_compact_entry( FILE * in_file, directory_entry * entry )
 
     /* Ensure the member_name_length is not zero or too long for the buffer. */
 
-    if( (count == 0) || ((uint16_t) count > _MAX_PATH) ) {
+    if( (count == 0) || ((uint16_t) count > FILENAME_MAX) ) {
         return( not_valid_entry );
     }
 
@@ -163,7 +169,7 @@ entry_found get_extended_entry( FILE * in_file, directory_entry * entry )
 
     /* Ensure the member_name_length is not zero or too long for the buffer. */
 
-    if( (count == 0) || ((uint16_t) count > _MAX_PATH) ) {
+    if( (count == 0) || ((uint16_t) count > FILENAME_MAX) ) {
         return( not_valid_entry );
     }
 
@@ -180,4 +186,228 @@ entry_found get_extended_entry( FILE * in_file, directory_entry * entry )
 
     return( valid_entry );
 }
+
+/* Function get_member_name().
+ * Searches the given directory file for the defined name. If the defined name
+ * is found, returns the corresponding member name.
+ *
+ * Parameter:
+ *      in_name points to the defined name to match.
+ *
+ * Globals Used:
+ *      try_file_name contains the name of the directory file.
+ *      try_fp contains the FILE * for the directory file.
+ *
+ * Returns:
+ *      on success, the corresponding member name.
+ *      on failure, a NULL pointer.
+ */
+
+char * get_member_name( char const * in_name )
+{
+    char    *       member_name     = NULL;
+    cop_file_type   file_type;
+    directory_entry current_entry;
+    entry_found     entry_status;
+    size_t          member_length;
+    uint16_t        entry_type;
+
+    /* See if in_name is found in in_dir. */
+
+    file_type = parse_header( try_fp );
+
+    switch( file_type ) {
+    case file_error:
+
+        /* File error, including premature eof. */
+
+        out_msg( "ERR_FILE_IO %d %s\n", errno, try_file_name );
+        err_count++;
+        g_suicide();
+
+    case not_bin_dev:
+    case not_se_v4_1:
+    case se_v4_1_not_dir:
+
+        /* Wrong type of file: something is wrong with the device library. */
+
+        out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
+        return( member_name );
+
+    case dir_v4_1_se:
+
+        /* try_fp was a same-endian version 4.1 directory file. */
+
+        /* Skip the number of entries. */
+
+        fseek( try_fp, sizeof( uint32_t ), SEEK_CUR );
+        if( ferror( try_fp ) || feof( try_fp ) ) break;
+
+        for( ;; ) {
+
+            /* Get the entry_type. This is either the type or the metatype,
+             * depending on whether this is a CompactDirEntry or an
+             * ExtendedDirEntry.
+             */
+
+            fread( &entry_type, sizeof( entry_type ), 1, try_fp );
+
+            /* Exit the loop when the final entry has been processed. */
+
+            if( feof( try_fp ) || ferror( try_fp ) ) break;
+
+            switch( entry_type) {
+            case 0x0000:
+
+                /* This should only happen when the end-of-file padding is
+                 * reached, but continue in case there is more data.
+                 */
+
+                continue;
+
+            case 0x0001:
+
+            /* This will be an ExtendedDirEntry. */
+
+                for( ;; ) {
+
+                    /* Get the entry_type. This is always the type, since the
+                     * metatype has already been read.
+                     */
+
+                    fread( &entry_type, sizeof( entry_type ), 1, try_fp );
+
+                    /* Exit the loop when the final entry has been processed. */
+
+                    if( feof( try_fp ) || ferror( try_fp ) ) break;
+
+                    switch( entry_type ) {
+                    case 0x0000:
+
+                        /* This should only happen when the end-of-file padding is
+                         * reached, but continue in case there is more data.
+                         */
+
+                        continue;
+
+                    case 0x0001:
+
+                        /* This should never actually occur; however, continue
+                         * in case there is more data.
+                         */
+
+                        continue;
+
+                    case 0x0101:
+                    case 0x0201:
+                    case 0x0401:
+
+                        /* For any type, check the defined name. */
+
+                        entry_status = get_extended_entry( try_fp, \
+                                                                &current_entry );
+                        switch( entry_status ) {
+                        case valid_entry:
+
+                            /* Return the member name, if found. */
+
+                            if( !strcmp( in_name, current_entry.defined_name ) ) {
+                                member_length = \
+                        strnlen_s( current_entry.member_name, FILENAME_MAX ) + 1;
+                                member_name = (char *) mem_alloc( member_length );
+                                strcpy_s( member_name, member_length, \
+                                                    current_entry.member_name );
+                                return( member_name );
+                            }
+
+                            break;
+
+                        case not_valid_entry:
+
+                            break;
+
+                        default:
+
+                            /* The entry_status is an unknown value. */
+
+                            out_msg("wgml internal error\n");
+                            err_count++;
+                            g_suicide();
+                        }
+                        break;
+
+                    default:
+
+                        /* The entry_type is an unknown value. */
+
+                        out_msg("wgml internal error\n");
+                        err_count++;
+                        g_suicide();
+                    }
+                    break;
+                }
+                break;
+
+            case 0x0101:
+            case 0x0201:
+            case 0x0401:
+
+                /* For any type, check the defined name. */
+
+                entry_status = get_compact_entry( try_fp, &current_entry );
+                switch( entry_status ) {
+
+                case valid_entry:
+
+                    /* Return the member name, if found. */
+
+                    if( !strcmp( in_name, current_entry.defined_name) ) {
+                        member_length = \
+                    strnlen_s( current_entry.member_name, FILENAME_MAX ) + 1;
+                        member_name = (char *) mem_alloc( member_length );
+                        strcpy_s( member_name, member_length, \
+                                                    current_entry.member_name );
+                        return( member_name );
+                    }
+
+                    break;
+
+                case not_valid_entry:
+
+                    break;
+
+                default:
+
+                    /* The entry_status is an unknown value. */
+
+                    out_msg("wgml internal error\n");
+                    err_count++;
+                    g_suicide();
+                }
+                break;
+
+            default:
+
+                /* The entry_type is an unknown value. */
+
+                out_msg("wgml internal error\n");
+                err_count++;
+                g_suicide();
+          }
+        }
+
+        break;
+
+    default:
+
+        /* The file_type is an unknown value. */
+
+        out_msg("wgml internal error\n");
+        err_count++;
+        g_suicide();
+    }
+
+    return( member_name );
+}
+
 

@@ -25,14 +25,17 @@
 *  ========================================================================
 *
 * Description:  Implements the common functions for the research code:
-*                   free_resources()
 *                   initialize_globals()
+*                   skip_spaces()
+*
+*               and those needed to reproduce enough of the wgml context for
+*               research programs that use parts of wgml to work:               
+*                   free_resources()
+*                   g_suicide()
 *                   mem_alloc()
 *                   mem_free()
 *                   mem_realloc()
-*                   my_exit()
 *                   out_msg()
-*                   skip_spaces()
 *
 ****************************************************************************/
 
@@ -56,6 +59,7 @@
 
 void    initialize_globals( void )
 {
+    err_count = 0;
     switch_char = _dos_switch_char();
 }
 
@@ -98,8 +102,8 @@ void * mem_alloc( size_t size )
 
     p = malloc( size );
     if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        my_exit( EXIT_FAILURE );
+        out_msg( "ERR_NOMEM_AVAIL\n" );
+        g_suicide();
     }
     return( p );
 }
@@ -108,8 +112,8 @@ void * mem_realloc( void * p, size_t size )
 {
     p = realloc( p, size );
     if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        my_exit( EXIT_FAILURE );
+        out_msg( "ERR_NOMEM_AVAIL\n" );
+        g_suicide();
     }
     return( p );
 }
@@ -120,14 +124,14 @@ void mem_free( void * p )
     p = NULL;
 }
 
-void my_exit( int rc )
+void g_suicide( void )
 {
-    exit( rc );
+    exit( 16 );
 }
 
 bool free_resources( errno_t in_errno )
 {
-    if( in_errno == ENOMEM) out_msg( "Out of memory!\n" );
+    if( in_errno == ENOMEM) out_msg( "ERR_NOMEM_AVAIL\n" );
     else out_msg( "Out of file handles!\n" );
     return( false );
 }
