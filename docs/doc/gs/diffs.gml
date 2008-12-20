@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2008/10/27
+:cmt. Reflects main Perforce branch as of 2008/12/20
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
@@ -20,6 +20,10 @@ recompile your application.
 .np
 Following is a list of changes made in &product 1.8:
 .begbull
+.bull
+The C compiler now performs stricter type checking on enumerated types.
+Previously, enums were treated as their underlying type (signed/unsigned char,
+int, etc.) for type checks.
 .bull
 The C compiler now adds location information about enumerated symbols in
 appropriate diagnostics.
