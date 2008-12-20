@@ -59,8 +59,9 @@
 
 void    initialize_globals( void )
 {
-    err_count = 0;
     switch_char = _dos_switch_char();
+    err_count = 0;
+    wng_count = 0;
 }
 
 /*  Function skip_spaces().

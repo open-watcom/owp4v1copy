@@ -39,12 +39,14 @@
 *
 *               These are needed to reproduce enough of the wgml context for
 *               research programs that use parts of wgml to work:               
+*                   err_cnt
 *                   free_resources()
 *                   g_suicide()
 *                   mem_alloc()
 *                   mem_free()
 *                   mem_realloc()
 *                   out_msg()
+*                   wng_cnt
 *
 ****************************************************************************/
 
@@ -73,6 +75,7 @@
 
 global char switch_char;    // Either '\', '/', or whatever DOS is using.
 global int  err_count;      // Part of the wgml context.
+global int  wng_count;      // Part of the wgml context.
 
 /* Reset so can be reused with other headers. */
 

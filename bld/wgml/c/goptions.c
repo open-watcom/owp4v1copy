@@ -338,6 +338,33 @@ static void set_delim( option * opt )
     }
 }
 
+/* These will be removed once the code is brought back to the real functions. */
+
+extern void set_device2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
+extern void set_font2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
+
+/***************************************************************************/
+/*  ( device      defined_name                   **temporary definition**  */
+/***************************************************************************/
+
+static void set_device( option * opt )
+{
+
+    set_device2( opt, opt_scan_ptr, tokennext );
+    return;
+}
+
+/***************************************************************************/
+/*  ( font        number name style space height **temporary definition**  */
+/***************************************************************************/
+
+static void set_font( option * opt )
+{
+
+    set_font2( opt, opt_scan_ptr, tokennext );
+    return;
+}
+
 /***************************************************************************/
 /*  ( output      filename or (T:1234)filename                             */
 /***************************************************************************/
@@ -655,11 +682,11 @@ static option GML_old_Options[] =
     { "bind",          3,  1,       0,       set_bind,       1 },
     { "cpinch",        5,  3,       10,      ign_option,     1 },
     { "delim",         4,  3,       0,       set_delim,      1 },
-    { "device",        5,  3,       0,       ign_option,     1 },
+    { "device",        5,  3,       0,       set_device,     1 },
     { "description",   10, 4,       0,       ign_option,     1 },
     { "duplex",        5,  3,       0,       ign_option,     0 },
     { "file",          3,  4,       0,       set_OPTFile,    1 },
-    { "font",          3,  4,       0,       ign_option,     5 },
+    { "font",          3,  4,       0,       set_font,       5 },
     { "fontfamily",    9,  5,       0,       ign_option,     0 },
     { "format",        5,  4,       0,       ign_option,     1 },
     { "from",          3,  4,       1,       set_from,       1 },

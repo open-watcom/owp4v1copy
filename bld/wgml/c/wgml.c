@@ -37,6 +37,7 @@
 #include <errno.h>
 
 #include "wgml.h"
+#include "copfiles.h"
 #include "findfile.h"
 #include "gvars.h"
 #include "banner.h"
@@ -600,10 +601,14 @@ int main( int argc, char * argv[] )
 
     g_trmem_init();                     // init memory tracker if necessary
 
+    get_systime();                      // initialize symbols date and time
+
     init_global_vars();
 
     token_buf = mem_alloc( buf_size );
+
     ff_setup();                         // init findfile
+    cop_setup();                        // init copfiles
 
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
     cmdline = mem_alloc( cmdlen );
@@ -687,6 +692,7 @@ int main( int argc, char * argv[] )
     }
 
     ff_teardown();                  // free memory allocated in findfunc
+    cop_teardown();                 // free memory allocated in copfiles
 
     g_trmem_prt_list();             // all memory freed if no output from call
     g_trmem_close();
