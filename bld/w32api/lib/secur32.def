@@ -24,7 +24,7 @@ ExportSecurityContext@16
 FreeContextBuffer@4
 FreeCredentialsHandle@4
 GetComputerObjectNameA@12
-GetComputerObjectNameA@12
+GetComputerObjectNameW@12
 GetUserNameExA@12
 GetUserNameExW@12
 ImpersonateSecurityContext@4
