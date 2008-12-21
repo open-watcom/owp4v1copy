@@ -151,15 +151,16 @@ static  int     split_tokens( char *str )
 /***************************************************************************/
 /*  Format error in cmdline                                                */
 /***************************************************************************/
-/*
+
 static  char    *bad_cmd_line( char * msg, char *str, char n )
 {
     char    *   p;
-    char        buffer[128];
+    char    *   pbuff;
 
-    p = buffer;
-    split_tokens( p );
-    for( ; p < buffer + sizeof( buffer ) - 1; ) {
+    pbuff = mem_alloc( strlen( str ) + 1 );
+    p = pbuff;
+
+    for( ; ; ) {
         if( *str == '\0' ) break;
         if( *str == '\n' ) break;
         *p++ = *str++;
@@ -170,11 +171,11 @@ static  char    *bad_cmd_line( char * msg, char *str, char n )
     }
     *p = '\0';
     g_banner();
-    out_msg( msg, buffer );
+    out_msg( msg, pbuff );
+    mem_free( pbuff );
     err_count++;
     return( str );
 }
-*/
 
 /***************************************************************************/
 /*  read an option file into memory                                        */
@@ -223,10 +224,8 @@ static void ign_option( option * opt )
     out_msg( "WNG_IGN_OPTION %s\n", opt->option );
     wng_count++;
     if( opt->parmcount > 0 ) {
-        char    *p = opt_scan_ptr;
         int     k;
 
-        while( *p == ' ' || *p == '\t' ) ++p;
         for( k = 0; k < opt->parmcount; k++ ) {
             if( tokennext == NULL )  break;
             if( tokennext->bol ) break;
@@ -973,8 +972,8 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
             }
         }
     }
-//    p = bad_cmd_line( "Invalid option %s\n", option_start, ' ' );
-    out_msg( "Invalid option %s\n", option_start );
+    p = bad_cmd_line( "Invalid option %s\n", option_start, ' ' );
+//  out_msg( "Invalid option %s\n", option_start );
     return( tokennext );
 }
 
@@ -1118,8 +1117,8 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
         }
         out_msg( "INF_RECOGNIZED 5 %s\n", option_start );
     }
-//    p = bad_cmd_line( "ERR_INVALID_OPTION %s\n", option_start, '(' );
-    out_msg( "ERR_INVALID_OPTION %s\n", option_start );
+    p = bad_cmd_line( "ERR_INVALID_OPTION %s\n", option_start, '(' );
+//  out_msg( "ERR_INVALID_OPTION %s\n", option_start );
     return( tokennext );
 }
 
@@ -1132,7 +1131,7 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
 {
     char        attrwork[ MAX_FILE_ATTR ];
     char    *   p;
-//    char    *   str;
+    char    *   str;
     int         len;
 
     len = tok->toklen;
@@ -1143,12 +1142,13 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
     strip_quotes( p );
     if( master_fname != NULL ) {         // more than one master file ?
         g_banner();
-/*        str = bad_cmd_line(
+        str = bad_cmd_line(
                 "ERR_Document_source_file_specified_more_than_once %s\n",
                 tok->token, ' ' );
-*/
+/*
         out_msg( "ERR_Document_source_file_specified_more_than_once %s\n",
                                                                     tok->token );
+*/
         mem_free( p );
     } else {
         split_attr_file( p , attrwork, sizeof( attrwork ) );
