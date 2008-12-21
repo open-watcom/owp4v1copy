@@ -67,12 +67,10 @@
 *                   get_cop_font()
 *                   parse_header()
 *
-*               Also these functions for integration with wgml:
+*               Also these items for integration with wgml:
 *                   cop_setup()
 *                   cop_teardown()
 *                   get_systime()
-*                   set_device()
-*                   set_font()
 *
 * Note:         The field names are intended to correspond to the field names 
 *               shown in the Wiki. The Wiki structs are named when the structs
@@ -87,8 +85,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-
-#include "gtype.h" // Only needed for set_device2 & set_font2.
 
 /* Enum definition. */
 
@@ -500,28 +496,9 @@ extern cop_file_type    parse_header( FILE * in_file );
 
 /* For integration with wgml. */
 
-typedef struct  option {
-    char        *   option;             // the option
-    short           optionLenM1;        // length of option - 1
-    short           minLength;          // minimum abbreviation
-    long            value;              // sometimes value to set option to
-    void            (*function)( struct option *optentry );
-    int             parmcount;          // expected number of parms
-} option;
-
-typedef struct cmd_tok {
-    struct cmd_tok  *   nxt;
-    size_t              toklen;
-    bool                bol;
-    char                token[1];       // variable length
-
-} cmd_tok;
-
 extern void cop_setup( void );
 extern void cop_teardown( void );
 extern void get_systime( void );
-extern void set_device2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
-extern void set_font2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

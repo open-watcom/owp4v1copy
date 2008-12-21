@@ -675,6 +675,12 @@ int main( int argc, char * argv[] )
     if( master_fname_attr != NULL ) {
         mem_free( master_fname_attr );
     }
+    if( dev_name != NULL ) {
+        mem_free( dev_name );
+    }
+    if( opt_fonts != NULL ) {
+        mem_free( opt_fonts );
+    }
     if( out_file != NULL ) {
         mem_free( out_file );
     }

@@ -151,7 +151,7 @@ static  int     split_tokens( char *str )
 /***************************************************************************/
 /*  Format error in cmdline                                                */
 /***************************************************************************/
-
+/*
 static  char    *bad_cmd_line( char * msg, char *str, char n )
 {
     char    *   p;
@@ -174,7 +174,7 @@ static  char    *bad_cmd_line( char * msg, char *str, char n )
     err_count++;
     return( str );
 }
-
+*/
 
 /***************************************************************************/
 /*  read an option file into memory                                        */
@@ -338,11 +338,6 @@ static void set_delim( option * opt )
     }
 }
 
-/* These will be removed once the code is brought back to the real functions. */
-
-extern void set_device2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
-extern void set_font2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
-
 /***************************************************************************/
 /*  ( device      defined_name                   **temporary definition**  */
 /***************************************************************************/
@@ -350,7 +345,30 @@ extern void set_font2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext );
 static void set_device( option * opt )
 {
 
-    set_device2( opt, opt_scan_ptr, tokennext );
+    char    *   pw;
+    char    *   p;
+    int         len;
+
+    if( tokennext == NULL || tokennext->bol ) {
+        out_msg( "ERR_INVALID_MISSING_DEVICE_NAME %s\n", opt->option );
+        err_count++;
+    } else {
+        len = tokennext->toklen;
+        p = tokennext->token;
+
+        out_msg( "INF_RECOGNIZED_DEVICE_NAME %s\n", p );
+        if( dev_name ) {
+            mem_free( dev_name );
+        }
+        dev_name = mem_alloc( len + 1 );
+        pw = dev_name;
+        while( len > 0 ) {
+             len--;
+             *pw++ = *p++;
+        }
+        *pw = '\0';
+        tokennext = tokennext->nxt;
+    }
     return;
 }
 
@@ -358,13 +376,109 @@ static void set_device( option * opt )
 /*  ( font        number name style space height **temporary definition**  */
 /***************************************************************************/
 
+/* disabled until probably working
+
 static void set_font( option * opt )
 {
 
-    set_font2( opt, opt_scan_ptr, tokennext );
+    char    *   pw;
+    char    *   p;
+    int         len;
+    int         old_errs;
+
+    opt_font *  new_font;
+    opt_font *  f;
+
+    old_errs = err_count;
+    new_font = (opt_font *) mem_alloc( sizeof( opt_font ) );
+    new_font->nxt = NULL;
+
+    if( tokennext == NULL || tokennext->bol ) {
+        out_msg( "ERR_INVALID_MISSING_FONT_NUMBER %s\n", opt->option );
+        err_count++;
+    } else {
+        len = tokennext->toklen;
+        p = tokennext->token;
+
+        out_msg( "INF_RECOGNIZED_FONT_NUMBER %s\n", p );
+        new_font->font = (uint8_t) atoi( p );
+        tokennext = tokennext->nxt;
+    }
+
+    if( tokennext == NULL || tokennext->bol ) {
+        out_msg( "ERR_INVALID_MISSING_FONT_NAME %s\n", opt->option );
+        err_count++;
+    } else {
+        len = tokennext->toklen;
+        p = tokennext->token;
+
+        out_msg( "INF_RECOGNIZED_FONT_NAME %s\n", p );
+        new_font->name = mem_alloc( len + 1 );
+        pw = new_font->name;
+        while( len > 0 ) {
+             len--;
+             *pw++ = *p++;
+        }
+        *pw = '\0';
+        tokennext = tokennext->nxt;
+    }
+
+    if( tokennext == NULL || tokennext->bol ) {
+        out_msg( "ERR_INVALID_MISSING_FONT_STYLE %s\n", opt->option );
+        err_count++;
+    } else {
+        len = tokennext->toklen;
+        p = tokennext->token;
+
+        out_msg( "INF_RECOGNIZED_FONT_STYLE %s\n", p );
+        new_font->style = mem_alloc( len + 1 );
+        pw = new_font->style;
+        while( len > 0 ) {
+             len--;
+             *pw++ = *p++;
+        }
+        *pw = '\0';
+        tokennext = tokennext->nxt;
+    }
+
+    if( tokennext == NULL || tokennext->bol ) {
+        out_msg( "ERR_INVALID_MISSING_FONT_SPACE %s\n", opt->option );
+        err_count++;
+    } else {
+        len = tokennext->toklen;
+        p = tokennext->token;
+
+        out_msg( "INF_RECOGNIZED_FONT_SPACE %s\n", p );
+        new_font->space = (uint32_t) atoi( p );
+        tokennext = tokennext->nxt;
+    }
+
+    if( tokennext == NULL || tokennext->bol ) {
+        out_msg( "ERR_INVALID_MISSING_FONT_HEIGHT %s\n", opt->option );
+        err_count++;
+    } else {
+        len = tokennext->toklen;
+        p = tokennext->token;
+
+        out_msg( "INF_RECOGNIZED_FONT_HEIGHT %s\n", p );
+        new_font->height = (uint32_t) atoi( p );
+        tokennext = tokennext->nxt;
+    }
+
+    if( old_errs == err_count ) {
+        if( opt_fonts == NULL ) {
+            opt_fonts = new_font;
+        } else {
+            f = opt_fonts;
+            while( f->nxt != NULL ) {
+                f = f->nxt;
+            }
+            f->nxt = new_font;
+        }
+    }
     return;
 }
-
+*/
 /***************************************************************************/
 /*  ( output      filename or (T:1234)filename                             */
 /***************************************************************************/
@@ -686,7 +800,7 @@ static option GML_old_Options[] =
     { "description",   10, 4,       0,       ign_option,     1 },
     { "duplex",        5,  3,       0,       ign_option,     0 },
     { "file",          3,  4,       0,       set_OPTFile,    1 },
-    { "font",          3,  4,       0,       set_font,       5 },
+    { "font",          3,  4,       0,       ign_option,     5 },
     { "fontfamily",    9,  5,       0,       ign_option,     0 },
     { "format",        5,  4,       0,       ign_option,     1 },
     { "from",          3,  4,       1,       set_from,       1 },
@@ -859,7 +973,8 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
             }
         }
     }
-    p = bad_cmd_line( "Invalid option %s\n", option_start, ' ' );
+//    p = bad_cmd_line( "Invalid option %s\n", option_start, ' ' );
+    out_msg( "Invalid option %s\n", option_start );
     return( tokennext );
 }
 
@@ -1003,7 +1118,8 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
         }
         out_msg( "INF_RECOGNIZED 5 %s\n", option_start );
     }
-    p = bad_cmd_line( "ERR_INVALID_OPTION %s\n", option_start, '(' );
+//    p = bad_cmd_line( "ERR_INVALID_OPTION %s\n", option_start, '(' );
+    out_msg( "ERR_INVALID_OPTION %s\n", option_start );
     return( tokennext );
 }
 
@@ -1016,7 +1132,7 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
 {
     char        attrwork[ MAX_FILE_ATTR ];
     char    *   p;
-    char    *   str;
+//    char    *   str;
     int         len;
 
     len = tok->toklen;
@@ -1027,9 +1143,12 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
     strip_quotes( p );
     if( master_fname != NULL ) {         // more than one master file ?
         g_banner();
-        str = bad_cmd_line(
+/*        str = bad_cmd_line(
                 "ERR_Document_source_file_specified_more_than_once %s\n",
                 tok->token, ' ' );
+*/
+        out_msg( "ERR_Document_source_file_specified_more_than_once %s\n",
+                                                                    tok->token );
         mem_free( p );
     } else {
         split_attr_file( p , attrwork, sizeof( attrwork ) );

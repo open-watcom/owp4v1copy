@@ -314,4 +314,17 @@ typedef struct getnum_block {
     char        resc[5];
 } getnum_block;
 
+/***************************************************************************/
+/*  struct used to hold parameters of option FONT                          */
+/***************************************************************************/
+
+typedef struct opt_font {
+    struct opt_font *   nxt;
+    uint8_t             font;
+    char *              name;
+    char *              style;
+    uint32_t            space;
+    uint32_t            height;
+} opt_font;
+
 #endif                                  // GTYPE_H_INCLUDED

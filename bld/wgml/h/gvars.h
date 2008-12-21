@@ -50,6 +50,8 @@ global  char        *   master_fname;   // Primary input file name
 global  char        *   master_fname_attr;// Primary input file name attributes
 global  ulong           print_from;     // first page to print
 global  ulong           print_to;       // last page to print
+global  char        *   dev_name;       // device defined_name
+global  opt_font    *   opt_fonts;      // option FONT parameters (linked list)
 
 global  inputcb     *   input_cbs;      // GML input stack (files + macros)
 global  char        *   out_file;       // output file name

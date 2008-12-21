@@ -34,8 +34,6 @@
 *                   cop_setup()
 *                   cop_teardown()
 *                   get_systime()
-*                   set_device()
-*                   set_font()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
@@ -367,44 +365,5 @@ cop_file_type parse_header( FILE * in_file )
 extern void cop_setup( void ) {}
 extern void cop_teardown( void ) {}
 extern void get_systime( void ) {}
-extern void set_device2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext )
-{
-
-    out_msg( "WNG_IGN_OPTION %s\n", opt->option );
-    wng_count++;
-    if( opt->parmcount > 0 ) {
-        char    *p = opt_scan_ptr;
-        int     k;
-
-        while( *p == ' ' || *p == '\t' ) ++p;
-        for( k = 0; k < opt->parmcount; k++ ) {
-            if( tokennext == NULL )  break;
-            if( tokennext->bol ) break;
-            if( tokennext->token[ 0 ] == '(' ) break;
-            tokennext = tokennext->nxt;
-        }
-    }
-    return;
-}
-
-extern void set_font2( option * opt, char * opt_scan_ptr, cmd_tok * tokennext )
-{
-
-    out_msg( "WNG_IGN_OPTION %s\n", opt->option );
-    wng_count++;
-    if( opt->parmcount > 0 ) {
-        char    *p = opt_scan_ptr;
-        int     k;
-
-        while( *p == ' ' || *p == '\t' ) ++p;
-        for( k = 0; k < opt->parmcount; k++ ) {
-            if( tokennext == NULL )  break;
-            if( tokennext->bol ) break;
-            if( tokennext->token[ 0 ] == '(' ) break;
-            tokennext = tokennext->nxt;
-        }
-    }
-    return;
-}
 
 
