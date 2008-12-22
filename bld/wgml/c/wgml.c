@@ -139,13 +139,15 @@ bool    free_inc_fp( void )
                 if( (cb->flags & FF_open) ) {   // and file is open
                     rc = fgetpos( cb->fp, &cb->pos );
                     if( rc != 0 ) {
-                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        strerror_s( buff2, buf_size, errno );
+                        out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
                         err_count++;
                         g_suicide();
                     }
                     rc = fclose( cb->fp );
                     if( rc != 0 ) {
-                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        strerror_s( buff2, buf_size, errno );
+                        out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
                         err_count++;
                         g_suicide();
                     }
@@ -176,13 +178,15 @@ static void reopen_inc_fp( filecb *cb )
         if( erc == 0 ) {
             rc = fsetpos( cb->fp, &cb->pos );
             if( rc != 0 ) {
-                out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                strerror_s( buff2, buf_size, errno );
+                out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
                 err_count++;
                 g_suicide();
             }
             cb->flags |= FF_open;
         } else {
-            out_msg( "ERR_FILE_IO %d %s\n", erc2, cb->filename );
+            strerror_s( buff2, buf_size, erc2 );
+            out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
             err_count++;
             g_suicide();
         }
@@ -387,7 +391,9 @@ bool    get_line( void )
                         *buff2 = '\0';
                         break;
                     } else {
-                        out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                        strerror_s( buff2, buf_size, errno );
+                        out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
+
                         err_count++;
                         g_suicide();
                     }

@@ -38,6 +38,7 @@
 
 void g_suicide( void )
 {
+    out_msg( "\n\nWGML suicide\n\n" );
     if( environment ) {
         longjmp( *environment, 1 );
     }

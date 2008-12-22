@@ -46,15 +46,15 @@ void    garginit( void )
     char    *   p;
 
     p = buff2;                          // adress of input buffer
-    arg_stop = buff2 + buff2_lg - 1;    // store scan stop address
-    while( *p != ' ' && p <= arg_stop ) {   // search end of keyword
+    scan_stop = buff2 + buff2_lg - 1;   // store scan stop address
+    while( *p != ' ' && p <= scan_stop ) {  // search end of keyword
         p++;
     }
-    arg_start = p;                      // store argument start address
+    scan_start = p;                     // store argument start address
 
     open_paren = NULL;                  // clear open parenthesis pointer
     clos_paren = NULL;                  // clear close parenthesis pointer
-    err_start = NULL;                   // clear error address
+    tok_start = NULL;                   // clear token start address
 }
 
 
@@ -65,15 +65,15 @@ void    garginitdot( void )
     char    *   p;
 
     p = buff2;                          // adress of input buffer
-    arg_stop = buff2 + buff2_lg - 1;    // store scan stop address
-    while( *p != ' ' && *p != '.' && p <= arg_stop ) {// search end of keyword
+    scan_stop = buff2 + buff2_lg - 1;   // store scan stop address
+    while( *p != ' ' && *p != '.' && p <= scan_stop ) {// search end of keyword
         p++;
     }
-    arg_start = p;                      // store argument start address
+    scan_start = p;                     // store argument start address
 
     open_paren = NULL;                  // clear open parenthesis pointer
     clos_paren = NULL;                  // clear close parenthesis pointer
-    err_start = NULL;                   // clear error address
+    tok_start = NULL;                   // clear token start address
 }
 
 
@@ -88,15 +88,15 @@ condcode    getarg( void )
     char        quote;
     bool        quoted;
 
-    if( arg_stop <= arg_start ) {       // already at end
+    if( scan_stop <= scan_start ) {     // already at end
         cc = omit;                      // arg omitted
     } else {
-        p = arg_start;
-        while( *p && *p == ' ' && p <= arg_stop ) {    // skip leading blanks
+        p = scan_start;
+        while( *p && *p == ' ' && p <= scan_stop ) {// skip leading blanks
             p++;
         }
 
-        err_start = p;
+        tok_start = p;
         if( *p == '\'' || *p == '"' ) {
             quote = *p;
             p++;
@@ -105,7 +105,7 @@ condcode    getarg( void )
             quote = '\0';
             quoted = false;
         }
-        for( ; p <= arg_stop; p++ ) {
+        for( ; p <= scan_stop; p++ ) {
 
             if( *p == ' ' && quote == '\0' ) {
                 break;
@@ -118,12 +118,12 @@ condcode    getarg( void )
             }
         }
         if( quoted ) {
-            err_start++;
-            arg_start = p + 1;          // address of start for next call
-            arg_flen = p - err_start;   // length of arg
+            tok_start++;
+            scan_start = p + 1;         // address of start for next call
+            arg_flen = p - tok_start;   // length of arg
         } else {
-            arg_start = p;              // address of start for next call
-            arg_flen = p - err_start;   // length of arg
+            scan_start = p;             // address of start for next call
+            arg_flen = p - tok_start;   // length of arg
         }
         if( arg_flen > 0 ) {
             if( quoted ) {

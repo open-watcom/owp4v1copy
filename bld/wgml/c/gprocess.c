@@ -242,7 +242,7 @@ void        process_line( void )
     }
     mem_free( workbuf );
 
-    arg_start = buff2;
-    arg_stop  = buff2 + buff2_lg;
+    scan_start = buff2;
+    scan_stop  = buff2 + buff2_lg;
     return;
 }

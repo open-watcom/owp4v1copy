@@ -38,8 +38,12 @@
 
 global  jmp_buf     *   environment;    // var for GSuicide()
 
+global  char        *   scan_start;
+global  char        *   scan_stop;
 global  char        *   scan_char_ptr;  // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
+global char         *   tok_start;      // start of scanned token
+global size_t           arg_flen;       // arg length
 global  int             curr_char;
 
 global  int             switch_char;    // DOS switch character
@@ -82,8 +86,6 @@ global  su              bind_even;      // Bind value for even pages
 global  int             passes;         // Max no of passes
 global  int             pass;           // current pass no
 
-global  char        *   scan_start;
-global  char        *   scan_stop;
 
 
 global  symvar      *   global_dict;    // global symbol dictionary
@@ -140,10 +142,6 @@ global char         *   buffout;        // output buffer
 
 global char         *   buff2;          // input buffer
 global size_t           buff2_lg;       // input buffer used length
-global char         *   arg_start;      // start of arg scan
-global char         *   arg_stop;       // end of arg scan area
-global size_t           arg_flen;       // arg length
-global char         *   err_start;      // in case of error
 global char         *   open_paren;     // ( in input
 global char         *   clos_paren;     // ) in input
 

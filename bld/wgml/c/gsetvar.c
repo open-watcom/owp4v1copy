@@ -89,17 +89,17 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                 scan_err = true;
                 if( !ProcFlags.suppress_msg ) {
                     // SC--074 For the symbol '%s'
-                    //         The length of a symbol cannot exceed ten characters
+                    //     The length of a symbol cannot exceed ten characters
                     if( cb->fmflags & II_macro ) {
                         out_msg( "ERR_SYM_NAME_too_long '%s'\n"
-                            "The length of a symbol cannot exceed ten characters\n"
+                            "The length of a symbol cannot exceed 10 characters\n"
                             "\t\t\tLine %d of macro '%s'\n",
-                            token_buf, cb->s.m->mac->name, cb->s.m->lineno );
+                            sym_start, cb->s.m->mac->name, cb->s.m->lineno );
                     } else {
                         out_msg( "ERR_SYM_NAME_too_long '%s'\n"
-                            "The length of a symbol cannot exceed ten characters\n"
+                            "The length of a symbol cannot exceed 10 characters\n"
                             "\t\t\tLine %d of macro '%s'\n",
-                            token_buf, cb->s.f->lineno, cb->s.f->filename );
+                            sym_start, cb->s.f->lineno, cb->s.f->filename );
                     }
                     show_include_stack();
                     err_count++;
@@ -124,7 +124,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     if( quote && quote == *p ) {        // over terminating quote
         p++;
     } else {
-        if( (*p != '(')  && (*p != ' ') ) {
+        if( (*p != '=') && (*p != '(')  && (*p != ')') && (*p != ' ') ) {
             scan_err = true;
         }
     }
@@ -445,17 +445,17 @@ static struct  {
     int8_t      ntrms[ MAXTERMS ];
     oper_hier   oprns[ MAXOPERS ];
 
-    int         currterm;
-    int         currrlist;
-    int         currntrms;
-    int         curroper;
+    int         cterm;
+    int         crlist;
+    int         cntrms;
+    oper_hier   coper;
 
-    int         currparn;
+    int         cparen;
 
     conditions  cond;
-    int         endoe;
-    int         newop;
-} termswk;
+    bool        endoe;
+    oper_hier   newop;
+} twk;
 
 
 static int      charcnt;
@@ -474,7 +474,7 @@ static  char *sdvcf( selfdef_types typ, int bitcnt, char *s, char *stop )
         long    res;
         char    c;
         ichar   ic;
-static  int     sdv08[ 8 ] = { 1, 0, 9, 15, 0,0,0, 255 };
+static  int     sdv08[ 8 ] = { 1, 0, 9, 15, 0, 0, 0, 255 };
         char    resc[ 5 ] = "    ";
 
     res = 0;
@@ -548,19 +548,19 @@ static  int     sdv08[ 8 ] = { 1, 0, 9, 15, 0,0,0, 255 };
 
 condcode getnum( getnum_block *gn )
 {
-    char    *a;                         // arg start  (X2)
-    char    *z;                         // arg stop   (R1)
-    char    c;
-    ichar   ic;
+    char    *   a;                      // arg start  (X2)
+    char    *   z;                      // arg stop   (R1)
+    char        c;
+    ichar       ic;
 
 
 
-    memset( &termswk, sizeof( termswk ), '\0' );
+    memset( &twk, sizeof( twk ), '\0' );
 /*
-    termswk.currterm = 0;
-    termswk.currparn = 0;
-    termswk.curroper = 0;
-    termswk.currrlist = 0;
+    twk.cterm = 0;
+    twk.cparen = 0;
+    twk.coper = 0;
+    twk.crlist = 0;
 */
     a = gn->argstart;
     z = gn->argstop;
@@ -576,12 +576,15 @@ condcode getnum( getnum_block *gn )
     c = *a;
     if( c == '+' || c == '-' ) {
         num_sign = c;                   // unary sign
+    } else {
+        num_sign = ' ';                 // no unary sign
     }
 
 //look:
-    for( ;; ) {
+    for( ;; ) {                         // scan for terms and operators
         if( a > z ) {
-            break;
+            goto blcom01;
+   //         break;
         }
 //look01:
     /***********************************************************************/
@@ -592,10 +595,10 @@ condcode getnum( getnum_block *gn )
         c = *a;
         ic = ext_i( c );                // to internal representation
         if( ic <= i_alpha ) {
-            gn->errstart = a;
+            gn->errstart = a;           // save ptr to first byte of term
             if( isdigit( c ) ) {
                 a = sdvcf( DEC, 8, a, z );
-                termswk.terms[ termswk.currterm ] = result;
+                twk.terms[ twk.cterm ] = result;
                 charcntmax = 8;
             } else {
                 if( *(a+1) != '\'' ) {
@@ -611,19 +614,19 @@ condcode getnum( getnum_block *gn )
                 case 'b' :              // binary selfdefining value
                     a += 2;
                     a = sdvcf( BIN, 32, a, z );
-                    termswk.terms[ termswk.currterm ] = result;
+                    twk.terms[ twk.cterm ] = result;
                     charcntmax = 32;
                     break;
                  case 'c' :             // char self defining value
                     a += 2;
                     a = sdvcf( CHAR, 4, a, z );
-                    termswk.terms[ termswk.currterm ] = (long) result_c;
+                    twk.terms[ twk.cterm ] = (long) result_c;
                     charcntmax = 4;
                     break;
                 case 'x' :                  // hex self defining value
                     a += 2;
                     a = sdvcf( HEX, 8, a, z );
-                    termswk.terms[ termswk.currterm ] = result;
+                    twk.terms[ twk.cterm ] = result;
                     charcntmax = 8;
                     break;
                 default:                    // invalid
@@ -645,25 +648,25 @@ condcode getnum( getnum_block *gn )
                     gn->error = illchar;
                     return( notnum );
                 }
+            }
 //absd:
-                if( charcnt > charcntmax ) {// actual length > maximum
+            if( charcnt > charcntmax ) {// actual length > maximum
+                gn->cc = notnum;
+                gn->error = selfdef;
+                return( notnum );
+            }
+            if( twk.cond > condA ) {
+//absck:
+                if( twk.cond >= condE ) {   // 2 terms in a row
                     gn->cc = notnum;
-                    gn->error = selfdef;
+                    gn->error = ilorder;
                     return( notnum );
                 }
-                if( termswk.cond > condA ) {
-//absck:
-                    if( termswk.cond >= condE ) {   // 2 terms in a row
-                        gn->cc = notnum;
-                        gn->error = ilorder;
-                        return( notnum );
-                    }
-                }
+            }
 //compt4:
-                termswk.cond = condE;       // set absolute term
+            twk.cond = condE;       // set absolute term
 //  goto compt;
 
-            }
         } else {
 
 //notam:    first char not alfanumeric
@@ -672,61 +675,77 @@ condcode getnum( getnum_block *gn )
 
 //ltcom:    first char is one of + - * /
                 if( ic >= i_aster ) {       // mult / div
-                    if( termswk.cond < condE ) {
+                    if( twk.cond < condE ) {
                         gn->cc = notnum;
                         gn->error = operr;
                         return( notnum );
                     }
-                    termswk.cond = condD;   // set mult / div condition
-                    termswk.newop = ic - (i_alpha - 2); // set hierarchy code
-                } else {                    // leaves + or -
-//plmin:
-                    if( termswk.cond >= condE ) {
+                    twk.cond = condD;   // set mult / div condition
+                    twk.newop = ic - (i_alpha - 2); // set hierarchy code
+                } else {
+//plmin:                                // + or -
+                    if( twk.cond >= condE ) {
 //plmin3:
-                        termswk.cond = condB;   // binary + or -
-                        termswk.newop = ic - i_alpha;   // set hierarchy code
+                        twk.cond = condB;   // binary + or -
+                        twk.newop = ic - i_alpha;   // set hierarchy code
                     } else {
-                        if( termswk.cond != condA ) {
-                            termswk.cond = condC;   // unary + or -
+                        if( twk.cond != condA ) {
+                            twk.cond = condC;   // unary + or -
 //plmin2:
-                            termswk.newop = ic - (i_alpha - 2);// set hierarchy code
+                            twk.newop = ic - (i_alpha - 2);// set hierarchy code
                         } else {
-//compt4:
-                            termswk.cond = condE;
+                            twk.cond = condE;
 
                             goto compt; // +++++++++++++++++++++++++++++++++
                         }
                     }
                 }
-loop:
-                if( termswk.curroper == 0 ) {
-                    if( termswk.endoe ) {
+                goto loop;
 
+
+blcom01:
+//lpend:
+    if( twk.cond < condE || twk.cparen > 0) {
+        gn->cc = notnum;                // no term prceceding
+        gn->error = enderr;
+        return( notnum );
+    }
+//endng:
+    twk.endoe = true;                   // end of expression
+//noend:
+    twk.newop = opend;
+
+
+loop:                                   // main loop to perform arithmetic
+                if( twk.coper == 0 ) {
+                    if( twk.endoe ) {
                         break;
                     }
 //put:
-                    termswk.oprns[ termswk.curroper ] = termswk.newop;
+                    twk.oprns[ twk.coper ] = twk.newop;
 //bumpy:
-                    termswk.curroper++;
+                    twk.coper++;
 //bumpr:
                     a++;
                     continue;
                 } else {
 //onz:
-                    if( termswk.oprns[ termswk.curroper - 1 ] >= termswk.newop ) {
+                    if( twk.oprns[ twk.coper - 1 ] >= twk.newop ) {
 //le:
-                        if( termswk.newop == opuminus || termswk.newop == opuplus) {
-                            termswk.oprns[ termswk.curroper ] = termswk.newop;
-                            termswk.curroper++;
+                        if( twk.newop == opuminus || twk.newop == opuplus) {
+//put:
+                            twk.oprns[ twk.coper ] = twk.newop;
+                            twk.coper++;
                             a++;
                             continue;
                         } else {
-                            if( termswk.oprns[ termswk.curroper - 1 ] ) {
-//work:
-                      //          int     ncomp = termswk.currrlist;
-                        //        long    *firstx1 = &termswk.terms[ termswk.currterm -2 ];
+                            if( twk.oprns[ twk.coper - 1 ] ) {
+work:
+                    //            int     ncomp = twk.crlist;
+                      //          int     ntrms1 = twk.cterm - 2;
 
-                                switch ( termswk.oprns[ termswk.curroper ] ) {
+
+                                switch ( twk.oprns[ twk.coper ] ) {
                                 case opplus :
                                     break;
                                 case opminus :
@@ -743,21 +762,22 @@ loop:
                                 }
                   //              goto work;
                             } else {
-                                termswk.currparn--;
+                                twk.cparen--;
 //bumpr:
                                 a++;
                                 continue;
                             }
                         }
                     } else {
-                        if( opslash == termswk.newop &&
-                            termswk.oprns[ termswk.curroper - 1 ] == opstar ) {
+                        if( opslash == twk.newop &&
+                            twk.oprns[ twk.coper - 1 ] == opstar ) {
 
-                    //        goto work;  // +++++++++++++++++++++
+                            goto work;
 
                         }
-                        termswk.oprns[ termswk.curroper ] = termswk.newop;
-                        termswk.curroper++;
+//put:
+                        twk.oprns[ twk.coper ] = twk.newop;
+                        twk.coper++;
                         a++;
                         continue;
                     }
@@ -765,45 +785,45 @@ loop:
             } else {                        // not less i_comma
                 if( ic == i_lparn ) {
 //lpar:
-                    if( termswk.cond < condE ) {
-                        termswk.cond = condB;   // left paren cond
-                        if( termswk.currparn >= MAXPARENS - 1 ) {
+                    if( twk.cond < condE ) {
+                        twk.cond = condB;   // left paren cond
+                        if( twk.cparen >= MAXPARENS - 1 ) {
                             gn->cc = notnum;
                             gn->error = parerr;
                             return( notnum );
                         }
-                        termswk.currparn++;
-                        termswk.oprns[ termswk.curroper ] = 0;
-                        termswk.curroper++;
+                        twk.cparen++;
+                        twk.oprns[ twk.coper ] = 0;
+                        twk.coper++;
                         a++;
                     } else {
 //lpen:
-                        if( termswk.currparn ) {
+                        if( twk.cparen ) {
                             gn->cc = notnum;
                             gn->error = parerr;
                             return( notnum );
                         }
-                        termswk.endoe = true;   // end of expression
-                        termswk.newop = opend;
+                        twk.endoe = true;   // end of expression
+                        twk.newop = opend;
 
                         goto loop;
                     }
                 } else {
                     if( ic == i_rparn ) {
 //rpar:
-                        if( termswk.cond < condE ) {// right paren following term?
+                        if( twk.cond < condE ) {// right paren following term?
                             gn->cc = notnum;
                             gn->error = operr;
                             return( notnum );
                         }
-                        termswk.cond = condE;   // right paren cond
-                        if( termswk.currparn == 0 ) {   // no paren open?
+                        twk.cond = condE;   // right paren cond
+                        if( twk.cparen == 0 ) {   // no paren open?
                             gn->cc = notnum;
                             gn->error = illchar;
                             return( notnum );
                         }
 //noend:
-                        termswk.newop = opend;
+                        twk.newop = opend;
 
                         goto loop;
 
@@ -811,15 +831,15 @@ loop:
                         if( ic == i_blank ) {
                             if( gn->ignore_blanks == 0 ) {
 //lpend:
-                                if( termswk.cond < condE || termswk.currparn > 0) {
+                                if( twk.cond < condE || twk.cparen > 0) {
                                     gn->cc = notnum;// no term prceceding
                                     gn->error = enderr;
                                     return( notnum );
                                 }
 //endng:
-                                termswk.endoe = true;   // end of expression
+                                twk.endoe = true;   // end of expression
 //noend:
-                                termswk.newop = opend;
+                                twk.newop = opend;
 
                                 goto loop;
 
@@ -838,16 +858,15 @@ loop:
             }
         }
 compt:
-        if( termswk.currterm >= MAXTERMS - 1 ) {
+        if( twk.cterm >= MAXTERMS - 1 ) {
             gn->cc = notnum;
             gn->error = mnyerr;         // too many terms
             return( notnum );
         }
-        termswk.ntrms[ termswk.currterm ] = 2;
-        termswk.currterm++;
-        termswk.currrlist++;
+        twk.ntrms[ twk.cterm ] = 2;
+        twk.cterm++;
+        twk.crlist++;
     }                                   // for(;;)
-//blcom01:
 
     return( 0 );
 }
@@ -1076,4 +1095,4 @@ delete is used, the symbol referred to by the symbol name is deleted. Refer to
        .sr var OFF    ;.* Set Symbol 'var' is undefined
        .sr var = next ;.* Set Symbol 'var' defined again
 
-*************************************************************************************/
+*******************************************************************************/
