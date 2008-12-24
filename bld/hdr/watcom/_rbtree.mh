@@ -19,8 +19,6 @@
 #error The header _rbtree.h requires C++
 #endif
 
-#line 22 "_rbtree.mh"
-
 #ifndef _UTILITY_INCLUDED
     #include <utility>
 #endif

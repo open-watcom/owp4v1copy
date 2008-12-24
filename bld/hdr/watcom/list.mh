@@ -32,8 +32,6 @@
     #include <function>
 #endif
 
-#line 35 "list.mh"
-
 namespace std {
 
 /* ==================================================================

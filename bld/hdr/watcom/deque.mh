@@ -316,7 +316,6 @@ namespace std {
         */
     }
   };
-//#line 319 "deque.mh"
 
   // ===================================
   // Member functions of deque::iterator

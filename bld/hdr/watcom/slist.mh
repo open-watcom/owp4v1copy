@@ -40,8 +40,6 @@
     #include <_meta.h>
 #endif
 
-#line 43 "slist.mh"
-
 namespace _watcom{
 /* ==================================================================
  * slist class template

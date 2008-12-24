@@ -15,8 +15,6 @@
 #error The header map requires C++
 #endif
 
-//#line 19 "map.mh"
-
 #ifndef __RBTREE_H_INCLUDED
   #include <_rbtree.h>
 #endif

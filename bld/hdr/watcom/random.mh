@@ -18,8 +18,6 @@
 
 #include <cstdint>
 
-#line 22 "random.mh"
-
 namespace _ow{
      /*---------------------------------------------------------------
      * helpers
