@@ -614,7 +614,6 @@ int main( int argc, char * argv[] )
     token_buf = mem_alloc( buf_size );
 
     ff_setup();                         // init findfile
-    cop_setup();                        // init copfiles
 
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
     cmdline = mem_alloc( cmdlen );
@@ -623,6 +622,7 @@ int main( int argc, char * argv[] )
     out_msg( "cmdline=%s\n", cmdline );
 
     proc_options( cmdline );
+    cop_setup();                        // init copfiles
     g_banner();
 
     if( master_fname != NULL ) {        // filename specified
@@ -683,9 +683,6 @@ int main( int argc, char * argv[] )
     }
     if( dev_name != NULL ) {
         mem_free( dev_name );
-    }
-    if( opt_fonts != NULL ) {
-        mem_free( opt_fonts );
     }
     if( out_file != NULL ) {
         mem_free( out_file );

@@ -91,7 +91,20 @@ typedef struct filecb {
     char            filename[ 1 ];      // full filename var length
 } filecb;
 
-filecb  *   input_cbs;
+filecb  *   input_cbs = NULL;
+
+/* This is part of the wgml context. */
+
+typedef struct opt_font {
+    struct opt_font *   nxt;
+    uint8_t             font;
+    char *              name;
+    char *              style;
+    uint32_t            space;
+    uint32_t            height;
+} opt_font;
+
+opt_font    *   opt_fonts = NULL;      // Part of the wgml context.
 
 /*  Local variables. */
 

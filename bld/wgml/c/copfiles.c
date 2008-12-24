@@ -362,8 +362,59 @@ cop_file_type parse_header( FILE * in_file )
 
 /* For integration with wgml. */
 
-extern void cop_setup( void ) {}
-extern void cop_teardown( void ) {}
+
+static void free_opt_fonts( void )
+{
+    opt_font    *   current;
+    opt_font    *   old;
+
+    if( opt_fonts == NULL) return;
+
+    if( opt_fonts->name != NULL) {
+        mem_free( opt_fonts->name );
+        opt_fonts->name = NULL;
+    }
+
+    if( opt_fonts->style != NULL) {
+        mem_free( opt_fonts->style );
+        opt_fonts->style = NULL;
+    }
+
+    current = opt_fonts->nxt;
+    while( current != NULL) {
+        old = current;
+
+        if( current->name != NULL) {
+            mem_free( current->name );
+            current->name = NULL;
+        }
+
+        if( current->style != NULL) {
+            mem_free( current->style );
+            current->style = NULL;
+        }
+
+        current = current->nxt;
+        mem_free( old );
+    }
+
+    mem_free( opt_fonts );
+    opt_fonts = NULL;
+
+    return;
+}
+
+extern void cop_setup( void )
+{
+    free_opt_fonts();    
+    return;
+}
+
+extern void cop_teardown( void )
+{
+    return;
+}
+
 extern void get_systime( void ) {}
 
 
