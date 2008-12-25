@@ -1476,12 +1476,8 @@ HWND VFWAPI capCreateCaptureWindowW( LPCWSTR, DWORD, int, int, int, int, HWND, i
 BOOL VFWAPI capGetDriverDescriptionA( UINT, LPSTR, int, LPSTR, int );
 BOOL VFWAPI capGetDriverDescriptionW( UINT, LPWSTR, int, LPWSTR, int );
 
-/* This variable is used internally by certain macros.  Microsoft defines this as static.
- * However, the OW compiler will warn if the variable isn't used, if the highest warning
- * level is used.  To avoid this problem, the variable is declared extern here and
- * instantiated in VFW32.LIB.
- */
-extern DWORD    dwICValue;
+/* Variable used internally by various macros */
+static DWORD    dwICValue;
 
 /* Functions implemented as macros */
 #define ICQueryAbout( x ) \
@@ -1498,12 +1494,6 @@ extern DWORD    dwICValue;
     ICSendMessage( x, ICM_SETSTATE, (DWORD_PTR)(LPVOID)(p1), (DWORD_PTR)(p2) )
 #define ICGetStateSize( x ) \
     (DWORD)ICGetState( x, NULL, 0 )
-#define ICGetDefaultQuality( x ) \
-    (ICSendMessage( x, ICM_GETDEFAULTQUALITY, (DWORD_PTR)(LPVOID)&dwICValue, \
-    sizeof( DWORD ) ), dwICValue)
-#define ICGetDefaultKeyFrameRate( x ) \
-    (ICSendMessage( x, ICM_GETDEFAULTKEYFRAMERATE, (DWORD_PTR)(LPVOID)&dwICValue, \
-    sizeof( DWORD ) ), dwICValue)
 #define ICDrawWindow( x, p ) \
     ICSendMessage( x, ICM_DRAW_WINDOW, (DWORD_PTR)(LPVOID)(p), sizeof( RECT ) )
 #define ICCompressBegin( x, p1, p2 ) \
@@ -1893,6 +1883,26 @@ extern DWORD    dwICValue;
     (BOOL)AVICapSM( x, WM_CAP_PAL_AUTOCREATE, (WPARAM)(p1), (LPARAM)(DWORD)(p2) )
 #define capPaletteManual( x, p1, p2 ) \
     (BOOL)AVICapSM( x, WM_CAP_PAL_MANUALCREATE, (WPARAM)(p1), (LPARAM)(DWORD)(p2) )
+
+/* The following two functions are implemented inline rather than as macros to prevent
+ * a compiler warning that dwICValue has not been used.
+ */
+
+__inline DWORD ICGetDefaultQuality( HIC x )
+/*****************************************/
+{
+    ICSendMessage( x, ICM_GETDEFAULTQUALITY, (DWORD_PTR)(LPVOID)&dwICValue,
+                   sizeof( DWORD ) );
+    return( dwICValue );
+}
+
+__inline DWORD ICGetDefaultKeyFrameRate( HIC x )
+/**********************************************/
+{
+    ICSendMessage( x, ICM_GETDEFAULTKEYFRAMERATE, (DWORD_PTR)(LPVOID)&dwICValue,
+                   sizeof( DWORD ) );
+    return( dwICValue );
+}
 
 /* Aliases */
 #define AVIFileClose            AVIFileRelease

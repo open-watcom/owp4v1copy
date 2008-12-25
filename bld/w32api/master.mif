@@ -600,11 +600,10 @@ all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
 winsock2.h: winsock.mh
     $(ws2splice)
 
-vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj vfwvar.obj
+vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
     @%create $@
     @for %i in ($(vfw32_lbcs)) do @%append $@ @ %i
     @%append $@ +vfwuuid.obj
-    @%append $@ +vfwvar.obj
 
 dinput.lbc: dinput.def dinpstat.obj
     $(awk) -v cpu=$(host_cpu) -f $(root_dir)/def2lbc.awk $[@ > $@
