@@ -1476,8 +1476,12 @@ HWND VFWAPI capCreateCaptureWindowW( LPCWSTR, DWORD, int, int, int, int, HWND, i
 BOOL VFWAPI capGetDriverDescriptionA( UINT, LPSTR, int, LPSTR, int );
 BOOL VFWAPI capGetDriverDescriptionW( UINT, LPWSTR, int, LPWSTR, int );
 
-/* Variable used internally by various macros */
-static DWORD    dwICValue;
+/* This variable is used internally by certain macros.  Microsoft defines this as static.
+ * However, the OW compiler will warn if the variable isn't used, if the highest warning
+ * level is used.  To avoid this problem, the variable is declared extern here and
+ * instantiated in VFW32.LIB.
+ */
+extern DWORD    dwICValue;
 
 /* Functions implemented as macros */
 #define ICQueryAbout( x ) \
