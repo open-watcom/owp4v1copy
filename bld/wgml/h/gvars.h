@@ -38,7 +38,7 @@
     #define global  extern
 #endif
 
-global struct tm        doc_tm;
+global struct tm        doc_tm;         // document time/date
 
 global  jmp_buf     *   environment;    // var for GSuicide()
 
