@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WGML input line processing functions
-*               not yet functional
+* Description:  WGML input line processing
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
 ****************************************************************************/
 
@@ -120,6 +119,8 @@ void        process_line( void )
     int                 varunresolved;
     sub_index           var_ind;
     symvar              symvar_entry;
+    symsub              symsubdummy;
+    char                valdummy[ 10 ];
     symsub          *   symsubval;
     int                 rc;
 
@@ -130,34 +131,76 @@ void        process_line( void )
         split_input( buff2, pchar );    // if found at pos > 1 split
         buff2_lg = strlen( buff2 );     // new length of first part
     }
-    // if macro define start ( .dm xxx ... ) supress variable substitution
+
+    // if macro define ( .dm xxx ... ) supress variable substitution
     // for the sake of single line macro definition
     // .dm xxx /&*1/&*2/&*0/&*/
-    if( !strnicmp( buff2 + 1, "dm ", 3 ) ) {
+    // this is the same as wgml 4.0
+
+    if( (*buff2 == SCR_char) && !strnicmp( buff2 + 1, "dm ", 3 ) ) {
         return;
+    }
+
+    if( (*buff2 == SCR_char) ) {
+    // for lines starting .* or .' ignore control word seperator
+        if( !((*(buff2 + 1) == '*') || (*(buff2 + 1) == '\'')) ) {
+            pchar = strchr( buff2, CW_sep_char );
+            if( (pchar != NULL) ) {
+                split_input( buff2, pchar + 1 );// split after CW_sep_char
+
+                buff2_lg = strlen( buff2 ); // new length of first part
+                buff2_lg--;             // ignore CW_sep_char
+                *(buff2 + buff2_lg) = '\0';
+            }
+        }
     }
 
     workbuf = mem_alloc( buf_size );
 
     // look for symbolic variable start
+
     varunresolved = 0;
     do {
-        strcpy( workbuf, buff2 );
+        strcpy_s( workbuf, buf_size, buff2 );   // input buffer copy
         pw = workbuf;
         pwend = workbuf + buff2_lg;
         p2 = buff2;
         varstart = NULL;
         pchar = strchr( workbuf, ampchar ); // look for & in buffer
         while( pchar != NULL ) {        // & found
+            buff2_lg = strnlen_s( buff2, buf_size );
             if( workbuf < pchar ) {
                 while( pw < pchar ) {   // copy all data preceding &
                     *p2++ = *pw++;
                 }
             }
-            varstart = pw;              // remember start of var
-            pw++;                       // over &
 
-            pchar = scan_sym( pw, &symvar_entry, &var_ind );// isolate symbolic var
+    /***********************************************************************/
+    /*  Some single letter functions are resolved here:                    */
+    /*                                                                     */
+    /*  functions used within the OW doc build system:                     */
+    /*   &e'  existance of variable 0 or 1                                 */
+    /*   &l'  length of variable content or if undefined length of name    */
+    /*   &u'  upper                                                        */
+    /*                                                                     */
+    /*   &s'  subscript    These are recognized, but processed as &u'      */
+    /*   &S'  superscript           TBD                                    */
+    /*                                                                     */
+    /*   other single letter functions are not used AFAIK                  */
+    /*                                                                     */
+    /***********************************************************************/
+            if( *(pchar + 2) == '\'' ) {
+                char ** ppval = &p2;
+                symsubdummy.value = valdummy;
+
+                pw = scr_single_funcs( pchar, pwend, ppval );
+                pchar = strchr( pw, ampchar );  // look for next & in buffer
+                continue;
+            }
+            varstart = pw;              // remember start of var
+            pw++;                       // over & or ' if function
+
+            pchar = scan_sym( pw, &symvar_entry, &var_ind );
 
             if( symvar_entry.flags & local_var ) {  // lookup var in dict
                 rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
@@ -167,13 +210,15 @@ void        process_line( void )
                                   &symsubval );
             }
             if( rc == 2 ) {             // variable found
-                if( symsubval->value[ 0 ] == CW_sep_char ) {// starting with seperator
+                if( symsubval->value[ 0 ] == CW_sep_char ) {
+                    // split record at control word seperator
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }
                     *(varstart - workbuf + buff2) = '\0';
-                    split_input_var( buff2, pchar - workbuf + buff2, &symsubval->value[ 1 ] );
-                    pw = pwend + 1;     // stop substituion for this record
+                    split_input_var( buff2, pchar - workbuf + buff2,
+                                     &symsubval->value[ 1 ] );
+                    pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
                     break;
                 } else {
@@ -187,7 +232,6 @@ void        process_line( void )
             } else {
                 if( symvar_entry.flags & local_var ) { // local var not found
                                                        // replace by nullstring
-
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }
@@ -223,13 +267,14 @@ void        process_line( void )
                         pchar++;        // copy terminating dot, too
                     }
                     while( pw < pchar ) {   // treat var name as text
-                        *p2++ = *pw++;
+                        *p2++ = *pw++;  // and copy
                     }
                 }
             }
             *p2 = '\0';
             pchar = strchr( pw, ampchar );  // look for next & in buffer
-        }
+        }                               // while & found
+
         while( pw <= pwend) {           // copy remaining input
              *p2++ = *pw++;
         }
@@ -238,7 +283,7 @@ void        process_line( void )
     buff2_lg = strnlen_s( buff2, buf_size );
 
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        printf( "> >%s\n", buff2 ); // show line with possible substitution(s)
+        printf( "> >%s< <\n", buff2 );  // show line with substitution(s)
     }
     mem_free( workbuf );
 

@@ -36,7 +36,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-inputcb *   cb;
 
 /***************************************************************************/
 /*  add info about macro   to LIFO input list                              */
@@ -165,6 +164,7 @@ static  void    scr_dm( void )
     inp_line    *   work;
     ulong           lineno_start;
     condcode        cc;
+    inputcb     *   cb;
 
     cb = input_cbs;
 
@@ -543,10 +543,22 @@ static  void    gml_set( const gmltag * entry )
             p++;
         }
 
-        if( !strnicmp( "symbol=", p, 7 ) ) {
+        if( !strnicmp( "symbol", p, 6 ) ) {
 
-            p += 7;
+            p += 6;
+            while( *p == ' ' ) {        // over WS to attribute
+                p++;
+            }
+            if( *p == '=' ) {
+                p++;
+                while( *p == ' ' ) {    // over WS to attribute
+                    p++;
+                }
+            } else {
+                continue;
+            }
             symstart = p;
+
 
             p = scan_sym( symstart, &sym, &subscript );
             if( scan_err ) {
@@ -567,10 +579,21 @@ static  void    gml_set( const gmltag * entry )
             }
         }
 
-        if( !strnicmp( "value=", p, 6 ) ) {
+        if( !strnicmp( "value", p, 5 ) ) {
             char    quote;
 
-            p += 6;
+            p += 5;
+            while( *p == ' ' ) {        // over WS to attribute
+                p++;
+            }
+            if( *p == '=' ) {
+                p++;
+                while( *p == ' ' ) {    // over WS to attribute
+                    p++;
+                }
+            } else {
+                continue;
+            }
             if( *p == '"' || *p == '\'' ) {
                 quote = *p;
                 ++p;
@@ -627,7 +650,8 @@ static  void    gml_set( const gmltag * entry )
             if( input_cbs->fmflags & II_macro ) {
                 out_msg( "ERR_ATT_missing Required attribute not found\n"
                          "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->mac->name, input_cbs->s.m->lineno );
+                         input_cbs->s.m->lineno,
+                         input_cbs->s.m->mac->name );
             } else {
                 out_msg( "ERR_ATT_missing Required attribute not found\n"
                          "\t\t\tLine %d of file '%s'\n",
@@ -683,10 +707,11 @@ static  const   scrtag  scr_tags[] = {
 
 static void scan_gml( void )
 {
-    char    *   p;
-    int         toklen;
-    int         k;
-    char        csave;
+    inputcb     *   cb;
+    char        *   p;
+    int             toklen;
+    int             k;
+    char            csave;
 
     cb = input_cbs;
 
@@ -708,7 +733,7 @@ static void scan_gml( void )
                      "\t\tThe length of a symbol cannot exceed ten characters\n"
                      "\t\t\tLine %d of macro '%s'\n",
                      tok_start + 1,
-                     cb->s.m->mac->name, cb->s.m->lineno );
+                     cb->s.m->lineno, cb->s.m->mac->name );
         } else {
             out_msg( "ERR_SYM_NAME_too_long '%s'\n"
                      "\t\tThe length of a symbol cannot exceed ten characters\n"
@@ -716,7 +741,9 @@ static void scan_gml( void )
                      tok_start + 1,
                      cb->s.f->lineno, cb->s.f->filename );
         }
-        show_include_stack();
+        if( inc_level > 0 ) {
+            show_include_stack();
+        }
         return;
     }
 
@@ -799,14 +826,24 @@ static void     add_macro_parms( char * p )
                 ProcFlags.blanks_allowed = 0;   // no blanks please
 
                 scr_se();               // try to set variable and value
-                if( scan_err ) {        // not valid
-                    cc = quotes;        // treat as positional parm
-                }
 
                 ProcFlags.suppress_msg = false; // reenable err msg
                 ProcFlags.blanks_allowed = 1;   // blanks again
                 *scan_save = c;        // restore original char at string end
                 scan_start = scan_save; // restore scan address
+                if( scan_err ) {        // not valid
+                    cc = omit;
+             //    scan_start = tok_start;
+                    star0++;
+                    sprintf( starbuf, "%d", star0 );
+                    p = tok_start + arg_flen ;
+                    c = *p;                 // prepare value end
+                    *p = '\0';              // terminate string
+                    add_symvar( &input_cbs->local_dict, starbuf, tok_start,
+                                no_subscript, local_var );
+                    *p = c;                // restore original char at string end
+                }
+
             }
             if( cc == quotes ) {        // add argument as local symbolic var
                 star0++;
@@ -875,6 +912,7 @@ char    *   search_separator( char * str, char sep )
 
 static void     scan_script( void)
 {
+    inputcb     *   cb;
     mac_entry   *   me;
     char        *   p;
     char        *   pt;

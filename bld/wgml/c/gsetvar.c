@@ -68,6 +68,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
         sym->flags = local_var;
     }
     sym_start = p;
+    sym->name[ 0 ] = '\0';
 
     k = 0;
     while( *p && test_symbol_char( *p ) ) {
@@ -101,7 +102,9 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                             "\t\t\tLine %d of macro '%s'\n",
                             sym_start, cb->s.f->lineno, cb->s.f->filename );
                     }
-                    show_include_stack();
+                    if( inc_level > 1) {
+                        show_include_stack();
+                    }
                     err_count++;
                 }
             }
@@ -117,16 +120,18 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             if( !ProcFlags.suppress_msg ) {
                 out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
                 err_count++;
-                show_include_stack();
+                if( inc_level > 1) {
+                    show_include_stack();
+                }
             }
         }
     }
     if( quote && quote == *p ) {        // over terminating quote
         p++;
-    } else {
-        if( (*p != '=') && (*p != '(')  && (*p != ')') && (*p != ' ') ) {
-            scan_err = true;
-        }
+//  } else {
+//      if( (*p != '=') && (*p != '(')  && (*p != ')') && (*p != ' ') ) {
+//          scan_err = true;
+//      }
     }
     if( !scan_err && (*p == '(') ) {    // subscripted ?
         char    *   psave = p;
@@ -167,6 +172,14 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 /*         .SE       symbol = <numeric expression>                         */
 /*                          <OFF>                                          */
 /*                                                                         */
+/*         .se x1     'string            case 1                            */
+/*         .se x2  =  'string            case 2 a                          */
+/*         .se x2  =  'string'           case 2 b                          */
+/*         .se x2  =  "string"           case 2 b                          */
+/*         .se x2     off                case 3                            */
+/*         .se n1  =  1234               case 2                            */
+/*         .se n2  =  (1+(2+5)/6)        case x    TBD                     */
+/*                                                                         */
 /***************************************************************************/
 
 void    scr_se( void )
@@ -177,6 +190,7 @@ void    scr_se( void )
     sub_index       subscript;
     int             rc;
     symvar      * * working_dict;
+    symsub      *   symsubval;
 
     subscript = no_subscript;           // not subscripted
     scan_err = false;
@@ -196,13 +210,18 @@ void    scr_se( void )
     if( *p == '\0' ) {
         if( !ProcFlags.suppress_msg ) {
             out_msg( "WNG_SYMBOL_VALUE_MISSING for %s\n", sym.name );
-            show_include_stack();
+            if( inc_level > 1) {
+                show_include_stack();
+            }
             wng_count++;
         }
         scan_err = true;
-    } else {
-        if( *p == '=' ) {
-            p++;
+    }
+    if( !scan_err ) {
+        if( (*p == '=') || (*p == '\'') ) {
+            if( *p == '=' ) {
+                p++;                    // over =
+            }
             if( ProcFlags.blanks_allowed ) {
                 while( *p && *p == ' ' ) {  // skip over spaces
                     p++;
@@ -214,9 +233,13 @@ void    scr_se( void )
                 while( *p && (*valstart != *p) ) { // look for quote end
                     ++p;
                 }
-                if( *p == *valstart ) { // delete quotes
+                if( *p == *valstart ) { // delete quotes case 2 b
                     valstart++;
                     *p = '\0';
+                } else {
+                    if( *valstart == '\'' ) {   // case 1 and 2a
+                        valstart++;
+                    }
                 }
             }
 
@@ -227,9 +250,14 @@ void    scr_se( void )
             if( tolower( *p )       == 'o' &&
                 tolower( *(p + 1) ) == 'f' &&
                 tolower( *(p + 2) ) == 'f' &&
-                *(p + 3)            == '\0' ) {
+                *(p + 3)            == '\0' ) { // case 3
+
                 p += 3;
-                sym.flags |= deleted;
+                rc = find_symvar( working_dict, sym.name, subscript,
+                                  &symsubval );
+                if( rc == 2 ) {
+                    symsubval->base->flags |= deleted;
+                }
             } else {
                 if( !ProcFlags.suppress_msg ) {
                      out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",

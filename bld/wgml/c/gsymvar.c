@@ -80,7 +80,7 @@ void    free_dict( symvar * * dict )
 
 /***************************************************************************/
 /*  search symbol and subscript entry in specified  dictionary             */
-/*  fills symsub struktur pointer if found                                 */
+/*  fills symsub structure pointer if found                                */
 /*                                                                         */
 /***************************************************************************/
 

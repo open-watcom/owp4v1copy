@@ -393,7 +393,7 @@ static bool font_points( cmd_tok * in_tok, char buff[5] )
     int         len;
     int         post_pt;
     int         pre_pt;
-    
+
     good = true;
     has_pt = false;
     p = in_tok->token;
@@ -572,7 +572,7 @@ static void set_font( option * opt )
             }
             *pw = '\0';
         }
- 
+
         break;
     case 2:
         for( i = 0; i < 4; i++ ) pts[i] = '0';
@@ -645,7 +645,7 @@ static void set_font( option * opt )
                 }
             }
         }
- 
+
         break;
     case 3:
         len = opts[0]->toklen;
@@ -691,7 +691,7 @@ static void set_font( option * opt )
                     new_font->space = (uint32_t) fn;
                 }
             }
- 
+
             for( i = 0; i < 4; i++ ) pts[i] = '0';
             pts[4] = '\0';
             len = opts[2]->toklen;
@@ -739,7 +739,7 @@ static void set_font( option * opt )
             new_font->style = NULL;
         }
         mem_free( new_font );
-        new_font = NULL;        
+        new_font = NULL;
     }
     return;
 }
@@ -863,7 +863,7 @@ static void set_from( option * opt )
 
 
 /***************************************************************************/
-/*  ( setsymbol  x y      set variable x to y                               */
+/*  ( setsymbol  x y     set variable x to y                               */
 /***************************************************************************/
 
 static void set_symbol( option * opt )
@@ -954,7 +954,7 @@ static void set_OPTFile( option * opt )
     char    *   str;
 
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true 
+    if( tokennext == NULL || tokennext->bol || is_option() == true
         /* || tokennext->token[ 0 ] == '('  allow (t:123)file.opt construct */
                                          ) {
         out_msg( "ERR_MISSING_OPTION_VALUE %s\n", opt->option );
@@ -983,6 +983,7 @@ static void set_OPTFile( option * opt )
                 bool  skip = false;
 
                 fclose( try_fp );
+                try_fp = NULL;
                 if( level > 0 ) {
                     int     k;
 
@@ -1400,7 +1401,7 @@ static bool is_option( void )
     char    *   p;
     char    *   option_start;
 
-    if( tokennext == NULL ) return( false ); 
+    if( tokennext == NULL ) return( false );
     p = tokennext->token;
     option_start = p;
     len = tokennext->toklen;

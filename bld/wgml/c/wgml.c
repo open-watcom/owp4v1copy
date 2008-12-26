@@ -241,7 +241,6 @@ static  void    add_file_cb_entry( void )
     new = mem_alloc( sizeof( filecb ) + fnlen );// count for terminating \0
                                                 //  is in filecb structure
     nip = mem_alloc( sizeof( inputcb ) );
-    nip->prev   = NULL;
     nip->hidden_head = NULL;
     nip->hidden_tail = NULL;
     nip->fmflags = II_file;
@@ -258,14 +257,13 @@ static  void    add_file_cb_entry( void )
     if( try_fp ) {
         new->flags = FF_open;
         new->fp    = try_fp;
+        try_fp     = NULL;
     } else {
         new->flags = FF_clear;
         new->fp    = NULL;
     }
 
-    if( input_cbs != NULL ) {
-        nip->prev = input_cbs;
-    }
+    nip->prev = input_cbs;
     input_cbs = nip;
     return;
 }
@@ -312,6 +310,12 @@ static  void    get_macro_line( void )
 {
     macrocb *   cb;
 
+    if( input_cbs->fmflags & II_file ) {
+        out_msg( "ERR_logic get_macroline() for file\n");
+        show_include_stack();
+        err_count++;
+        g_suicide();
+    }
     cb = input_cbs->s.m;
 
     if( cb->macline == NULL ) {         // no more macrolines
@@ -574,8 +578,14 @@ static  void    init_pass( void )
 
     if( pass > 1 ) {
         GlobalFlags.firstpass = 0;
-        free_dict( &global_dict );      // free dictionaries
-        free_macro_dict( &macro_dict );
+
+/*
+ * design question: free dictionaries or not                            TBD
+ *                  setsymbol defines from cmdline must not be deleted
+ */
+
+//      free_dict( &global_dict );      // free dictionaries
+//      free_macro_dict( &macro_dict );
     } else {
         GlobalFlags.firstpass = 1;
     }
