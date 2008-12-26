@@ -133,6 +133,13 @@ extern  void    free_lines( inp_line * line );
 extern  void    scan_line( void );
 
 
+/* gsfunelu.c                         */
+extern  char    *   scr_single_funcs( char * in, char * end, char * * result );
+extern  char    *   scr_single_func_e( char * in, char * end, char * * result );
+extern  char    *   scr_single_func_l( char * in, char * end, char * * result );
+extern  char    *   scr_single_func_u( char * in, char * end, char * * result );
+
+
 /* gsetvar.c                          */
 extern condcode     getnum( getnum_block * gn );
 extern void         scr_se( void );
