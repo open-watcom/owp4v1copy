@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Declares an enum, structs and functions used by wgml to
-*               parse and interpret the information from .COP files:
+* Description:  Declares an enum, structs and functions used to parse
+*               and interpret the information from .COP files:
 *                   cop_file_type
 *                   cop_device
 *                       box_block
@@ -62,15 +62,12 @@
 *                       outtrans_block
 *                           translation
 *                       width_block
+*                   cop_setup()
+*                   cop_teardown()
 *                   get_cop_device()
 *                   get_cop_driver()
 *                   get_cop_font()
 *                   parse_header()
-*
-*               Also these items for integration with wgml:
-*                   cop_setup()
-*                   cop_teardown()
-*                   get_systime()
 *
 * Note:         The field names are intended to correspond to the field names 
 *               shown in the Wiki. The Wiki structs are named when the structs
@@ -489,16 +486,12 @@ typedef struct {
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
+extern void             cop_setup( void );
+extern void             cop_teardown( void );
 extern cop_device   *   get_cop_device( char const * defined_name );
 extern cop_driver   *   get_cop_driver( char const * defined_name );
 extern cop_font     *   get_cop_font( char const * defined_name );
 extern cop_file_type    parse_header( FILE * in_file );
-
-/* For integration with wgml. */
-
-extern void cop_setup( void );
-extern void cop_teardown( void );
-extern void get_systime( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

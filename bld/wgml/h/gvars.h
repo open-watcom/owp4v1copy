@@ -32,9 +32,13 @@
 #ifndef GVARS_H_INCLUDED
 #define GVARS_H_INCLUDED
 
+#include <time.h>
+
 #ifndef global
     #define global  extern
 #endif
+
+global struct tm        doc_tm;
 
 global  jmp_buf     *   environment;    // var for GSuicide()
 

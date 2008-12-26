@@ -591,6 +591,25 @@ static  void    init_pass( void )
 }
 
 /***************************************************************************/
+/*  get_systime   gets system time and initializes symbols date and time   */
+/***************************************************************************/
+
+static void get_systime( void )
+{
+    char        date_str[80];
+    char        time_str[80];
+    time_t      gtime;
+
+    gtime = time( NULL );
+    localtime_s( &gtime, &doc_tm );
+    strftime( date_str, 80, "%B %d, %Y", &doc_tm );
+    strftime( time_str, 80, "%H:%M:%S", &doc_tm );
+    printf( "%s %s\n", date_str, time_str );
+    add_symvar( &global_dict, "date", date_str, no_subscript, 0 );
+    add_symvar( &global_dict, "time", time_str, no_subscript, 0 );
+}
+
+/***************************************************************************/
 /*  main WGML                                                              */
 /***************************************************************************/
 
@@ -607,9 +626,8 @@ int main( int argc, char * argv[] )
 
     g_trmem_init();                     // init memory tracker if necessary
 
-    get_systime();                      // initialize symbols date and time
-
     init_global_vars();
+    get_systime();                      // initialize symbols date and time
 
     token_buf = mem_alloc( buf_size );
 

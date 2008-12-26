@@ -24,16 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Implements the functions used by wgml to parse .COP files:
+* Description:  Implements the functions used to parse .COP files:
+*                   cop_setup()
+*                   cop_teardown()
 *                   get_cop_device()
 *                   get_cop_driver()
 *                   get_cop_font()
 *                   parse_header()
-*
-*               Also these functions for integration with wgml:
-*                   cop_setup()
-*                   cop_teardown()
-*                   get_systime()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
@@ -42,6 +39,7 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <setjmp.h> // Required (but not included) by gvars.h.
 #include <stdlib.h>
+#include <time.h>
 
 #include "copdev.h"
 #include "copdrv.h"
@@ -415,6 +413,5 @@ extern void cop_teardown( void )
     return;
 }
 
-extern void get_systime( void ) {}
 
 
