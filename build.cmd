@@ -4,13 +4,13 @@ REM build.cmd - build Open Watcom using selected compiler
 REM
 REM will build the builder, wattcp, watcom and installer
 REM
-REM combined OS/2 and Windows version
+REM combined OS/2, eCS and Windows version
 REM
 REM If first argument is "self", uses tools in rel2 to build,
 REM requiring customized devvars.cmd. Otherwise, customized
 REM myvars.cmd is needed. If the appropriate file does not exist,
 REM owconfig.bat will be invoked to automatically generate it.
-REM If running on OS/2, it has to be created manually.
+REM If running on OS/2 or eCS, it has to be created manually.
 REM
 REM Call without parms for "builder rel2" operation -> build
 REM Call with clean for "builder clean"  operation  -> build clean
@@ -32,9 +32,10 @@ rem the makefiles dont know a target rel2, so only pass target if clean
    set makeclean=
    if [%target%] == [clean] set makeclean=clean
 
-rem NT/XP? or OS/2?
+rem NT/XP? or OS/2 or eCS?
    if [%OS2_SHELL%] == [] goto noOS2
    if [%OS%] == [] goto noWIN
+   if [%OS%] == [ecs] goto noWIN
    echo Operating System not recognized, sorry
    goto eof
 
