@@ -33,6 +33,7 @@ base_headers =       &
         aclapi.h     &
         aclui.h      &
         adsprop.h    &
+        afxres.h     &
         amaudio.h    &
         amstream.h   &
         amvideo.h    &
@@ -299,6 +300,7 @@ base_headers =       &
         winnt.rh     &
         winperf.h    &
         winreg.h     &
+        winres.h     &
         winresrc.h   &
         winscard.h   &
         winsmcrd.h   &
