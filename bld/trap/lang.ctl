@@ -27,6 +27,7 @@ cdsay .
     <CCCMD> <DEVDIR>/trap/lcl/dos/dosx/pls/dosped.srv/pedhelp.exp   <RELROOT>/binw/
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/cw/dos.trp/cw.trp            <RELROOT>/binw/
     <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/cw/dos.srv/cwhelp.exe        <RELROOT>/binw/
+    <CPCMD> <DEVDIR>/trap/lcl/dos/dosx/cw/dos.srv/cwhelp.cfg        <RELROOT>/binw/
     <CPCMD> <DEVDIR>/trap/net/dos.trp/net.trp                       <RELROOT>/binw/
     <CPCMD> <DEVDIR>/trap/net/dos.srv/netserv.exe                   <RELROOT>/binw/
     <CPCMD> <DEVDIR>/trap/nmp/dos.trp/nmp.trp                       <RELROOT>/binw/

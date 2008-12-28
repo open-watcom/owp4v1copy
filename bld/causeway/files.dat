@@ -2,7 +2,6 @@
 
 [ DEFAULT type="e" dir="binw" rel="." cond="dostarg" where="c jc f77 jf77" ]
 # CauseWay
-usr="cwhelp.cfg"
 usr="cwc.exe"
 usr="cwdstub.exe"
 usr="cwstub.exe"

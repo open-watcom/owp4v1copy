@@ -20,7 +20,6 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <PROJDIR>/cwhelp.cfg              <RELROOT>/binw/
     <CPCMD> <PROJDIR>/cwc.exe                 <RELROOT>/binw/
     <CPCMD> <PROJDIR>/cw32/dosi86/cwstub.exe  <RELROOT>/binw/
     <CPCMD> <PROJDIR>/cw32/dosi86/cwdstub.exe <RELROOT>/binw/
