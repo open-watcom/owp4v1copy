@@ -65,18 +65,18 @@ static  char    *FNameBuf = NULL;
 int PrintWhiteSpace;     // also refered from cmac2.c
 
 // local function prototypes
-static  void    DoCCompile( char **cmdline );
-static  void    DelErrFile( void );
-static  void    MakePgmName( void );
-static  int     OpenFCB( FILE *fp, char *filename );
-static  bool    IsFNameOnce( char const *filename );
-static  int     TryOpen( char *prefix, char *separator, char *filename, char *suffix );
-static  void    ParseInit( void );
-static  void    CPP_Parse( void );
-static  int     FCB_Alloc( FILE *fp, char *filename );
-local   void    Parse( void );
-static  int     OpenPgmFile( void );
-static  void    DelDepFile( void );
+static  void        DoCCompile( char **cmdline );
+static  void        DelErrFile( void );
+static  void        MakePgmName( void );
+static  int         OpenFCB( FILE *fp, char *filename );
+static  bool        IsFNameOnce( char const *filename );
+static  int         TryOpen( char *prefix, char *separator, char *filename, char *suffix );
+static  void        ParseInit( void );
+static  void        CPP_Parse( void );
+static  int         FCB_Alloc( FILE *fp, char *filename );
+local   void        Parse( void );
+static  int         OpenPgmFile( void );
+static  void        DelDepFile( void );
 static  const char  *IncludeAlias( const char *filename, int delimiter );
 
 void FrontEndInit( bool reuse )
@@ -188,11 +188,6 @@ static bool ParseCmdLine( char **cmdline )
     }
     GenCOptions( cmdline );
     FESetCurInc();
-    if( WholeFName != NULL ) {
-        MakePgmName( );
-        OpenPgmFile();
-        MainSrcFile = SrcFile;                  /* 05-jan-94 */
-    }
     return( TRUE );
 }
 
@@ -344,6 +339,7 @@ static void DoCCompile( char **cmdline )
             CErr1( ERR_FILENAME_REQUIRED );
             return;
         }
+        MakePgmName( );
         DelErrFile();               /* delete old error file */
         MergeInclude();             /* merge INCLUDE= with IncPathList */
         CPragmaInit();              /* memory model is known now */
@@ -351,7 +347,23 @@ static void DoCCompile( char **cmdline )
         ParseAuxFile();
 #endif
         if( CompFlags.cpp_output ) {
+            PrintWhiteSpace = TRUE;
+            if( !CompFlags.disable_ialias ) {
+                CompFlags.cpp_output = FALSE;
+                CompFlags.ignore_fnf = TRUE;
+                OpenSrcFile( "_ialias.h", '<' );
+                if( SrcFile != NULL )
+                    CPP_Parse();
+                CompFlags.ignore_fnf = FALSE;
+                CompFlags.cpp_output = TRUE;
+            }
+            OpenPgmFile();
+            if( ForceInclude ) {
+                PrtChar( '\n' );
+                OpenSrcFile( ForceInclude, 0 );
+            }
             CPP_Parse();
+            MacroFini();
             if( !CompFlags.quiet_mode ) {
                 PrintStats();
             }
@@ -359,6 +371,7 @@ static void DoCCompile( char **cmdline )
                 ErrCount += WngCount;
             }
         } else {
+            OpenPgmFile();
             MacroAddComp(); // Add any compile time only macros
             Parse();
             if( !CompFlags.quiet_mode ) {
@@ -436,7 +449,9 @@ static void MakePgmName( void )
     len = strlen( fname );
     SrcFName = CMemAlloc( len + sizeof( char ) );
     strcpy( SrcFName, fname );
-    if( ModuleName == NULL ) ModuleName = SrcFName;
+    if( ModuleName == NULL ) {
+        ModuleName = SrcFName;
+    }
 }
 
 local void CantOpenFile( char *name )
@@ -452,20 +467,25 @@ local void CantOpenFile( char *name )
 static int OpenPgmFile( void )
 {
     if( IsStdIn ) {
-        return( OpenFCB( stdin, "stdin" ) );
+        if( OpenFCB( stdin, "stdin" ) ) {
+            MainSrcFile = SrcFile;
+            return( TRUE );
+        }
+        return( FALSE );
     }
-    if( TryOpen( "", "", WholeFName, "" ) == 0 ) {
-        if( TryOpen( C_PATH, PATH_SEP, WholeFName, "" ) == 0 ) {
+    if( !TryOpen( "", "", WholeFName, "" ) ) {
+        if( !TryOpen( C_PATH, PATH_SEP, WholeFName, "" ) ) {
             CantOpenFile( WholeFName );
             CSuicide();
-            return( 0 );
+            return( FALSE );
         }
     }
 #if _CPU == 370
     SrcFile->colum = Column;
     SrcFile->trunc = Trunc;
 #endif
-    return( 1 );
+    MainSrcFile = SrcFile;
+    return( TRUE );
 }
 
 
@@ -728,18 +748,23 @@ int OpenSrcFile( char *filename, int delimiter )
     _splitpath2( filename, buff, &drive, &dir, NULL, NULL );
     if( drive[0] != '\0' || IS_PATH_SEP(dir[0]) ) {
         // 14-sep-94 if drive letter given or path from root given
-        if( TryOpen( "", "", filename, "" ) != 0 ) return( 1 );
+        if( TryOpen( "", "", filename, "" ) )
+            return( 1 );
         goto cant_open_file;
     }
     if( delimiter != '<' ) {                                /* 17-mar-91 */
         if( CompFlags.curdir_inc ) {  // try current directory
-            if( TryOpen( "", "", filename, "" ) != 0 ) return( 1 );
+            if( TryOpen( "", "", filename, "" ) ) {
+                return( 1 );
+            }
         }
         if( drive[0] == '\0' && !IS_PATH_SEP( dir[0] ) ) {
             for( curr = SrcFile; curr!= NULL; curr = curr->prev_file ) {
                 _splitpath2( curr->src_flist->name, buff, &drive, &dir, NULL, NULL );
                 _makepath( try, drive, dir, filename, NULL );
-                if( TryOpen( "", "", try, "" ) != 0 ) return( 1 );
+                if( TryOpen( "", "", try, "" ) ) {
+                    return( 1 );
+                }
             }
         }
     }
@@ -747,17 +772,21 @@ int OpenSrcFile( char *filename, int delimiter )
         p = IncPathList;
         do {
             i = 0;
-            while( *p == ' ' ) ++p;                     /* 28-feb-95 */
+            while( *p == ' ' )
+                ++p;                     /* 28-feb-95 */
             for(;;) {
-                if( *p == INCLUDE_SEP || *p == ';' ) break;
-                if( *p == '\0' ) break;
+                if( *p == INCLUDE_SEP || *p == ';' )
+                    break;
+                if( *p == '\0' )
+                    break;
                 if( i < sizeof( buff ) - 2 ) {
                     buff[i++] = *p;
                 }
                 ++p;
             }
             while( i != 0 ) {                           /* 28-feb-95 */
-                if( buff[i-1] != ' ' ) break;
+                if( buff[i-1] != ' ' )
+                    break;
                 --i;
             }
 #define SEP_LEN (sizeof( PATH_SEP ) - 1)
@@ -765,12 +794,17 @@ int OpenSrcFile( char *filename, int delimiter )
             if( i>=SEP_LEN && strcmp( &buff[i-SEP_LEN], PATH_SEP )==0 ) {
                 buff[i-SEP_LEN] = '\0';
             }
-            if( TryOpen( buff, PATH_SEP, filename, "" ) != 0 ) return( 1 );
-            if( *p == INCLUDE_SEP || *p == ';' ) ++p;
+            if( TryOpen( buff, PATH_SEP, filename, "" ) )
+                return( 1 );
+            if( *p == INCLUDE_SEP || *p == ';' ) {
+                ++p;
+            }
         } while( *p != '\0' );
     }
     if( delimiter != '<' ) {                        /* 17-mar-91 */
-        if( TryOpen( H_PATH, PATH_SEP, filename, "" ) != 0 ) return( 1 );
+        if( TryOpen( H_PATH, PATH_SEP, filename, "" ) ) {
+            return( 1 );
+        }
     }
 cant_open_file:
     save = CompFlags.cpp_output;
@@ -849,15 +883,16 @@ static int OpenFCB( FILE *fp, char *filename )
     if( CompFlags.track_includes ) {
         // Don't track the top level file (any semi-intelligent user should
         // have no trouble tracking *that* down)
-        if( IncFileDepth < MAX_INC_DEPTH )
+        if( IncFileDepth < MAX_INC_DEPTH ) {
             CInfoMsg( INFO_INCLUDING_FILE, filename );
+        }
     }
 
-    if( FCB_Alloc( fp, filename ) == 0 ) {       /* split apart 19-sep-89 */
-        CErr1( ERR_OUT_OF_MEMORY );
-        return( FALSE );
+    if( FCB_Alloc( fp, filename ) ) {
+        return( TRUE );
     }
-    return( TRUE );
+    CErr1( ERR_OUT_OF_MEMORY );
+    return( FALSE );
 }
 
 bool FreeSrcFP( void )
@@ -892,7 +927,7 @@ static int TryOpen( char *prefix, char *separator, char *filename, char *suffix 
     if( IncFileDepth == 0 ) {
         CErr2( ERR_INCDEPTH, MAX_INC_DEPTH );
         CSuicide();
-        return( 0 );
+        return( FALSE );
     }
     i = 0;
     while( (buf[i] = *prefix++) )    ++i;
@@ -902,28 +937,33 @@ static int TryOpen( char *prefix, char *separator, char *filename, char *suffix 
     while( (buf[i] = *suffix++) )    ++i;
     filename = &buf[0];                 /* point to the full name */
     if( IsFNameOnce( filename ) ) {
-        return( 1 );
+        return( TRUE );
     }
     for( ;; ) {
         fp = fopen( filename, "rb" );
-        if( fp != NULL )break;
-        if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
-        if( !FreeSrcFP() )break;      // try closing an include file
+        if( fp != NULL )
+            break;
+        if( errno != ENOMEM && errno != ENFILE && errno != EMFILE )
+            break;
+        if( !FreeSrcFP() ) {      // try closing an include file
+            break;
+        }
     }
-    if( fp == NULL )  return( 0 );
+    if( fp == NULL )
+        return( FALSE );
 
     if( CompFlags.use_precompiled_header ) {
         CompFlags.use_precompiled_header = 0;
         if( UsePreCompiledHeader( filename ) == 0 ) {
             fclose( fp );
-            return( 1 );
+            return( TRUE );
         }
     }
     if( OpenFCB( fp, filename ) ) {
-        return( 1 );
+        return( TRUE );
     }
     fclose( fp );
-    return( 0 );
+    return( FALSE );
 }
 
 static FNAMEPTR FindFlist( char const *filename )
@@ -1017,7 +1057,7 @@ char *FileIndexToCorrectName( unsigned file_index )
     char        *name;
 
     if(NULL == ( flist = FileIndexToFName( file_index ) ) )
-        return NULL;
+        return( NULL );
     if( CompFlags.ef_switch_used ) {
         name = FNameFullPath( flist );
     } else {
@@ -1028,15 +1068,12 @@ char *FileIndexToCorrectName( unsigned file_index )
 
 static bool IsFNameOnce( char const *filename )
 {
-    bool        ret;
     FNAMEPTR    flist;
 
-    ret = FALSE;
     flist = FindFlist( filename );
-    if( flist != NULL ) {
-        ret = flist->once;
-    }
-    return( ret );
+    if( flist == NULL )
+        return( FALSE );
+    return( flist->once );
 }
 
 void FreeFNames( void )
@@ -1193,11 +1230,11 @@ static int FCB_Alloc( FILE *fp, char *filename )
     unsigned char   *src_buffer;
     FNAMEPTR        flist;
 
-   --IncFileDepth;
+    --IncFileDepth;
     srcfcb = (FCB *)CMemAlloc( sizeof( FCB ) );
     i = SRC_BUF_SIZE;
     src_buffer = FEmalloc( i + 3 );
-    if( srcfcb ) {
+    if( srcfcb != NULL ) {
         srcfcb->src_buf = src_buffer;
         srcfcb->src_ptr = src_buffer;
         src_buffer[0] = '\0';
@@ -1229,13 +1266,14 @@ static int FCB_Alloc( FILE *fp, char *filename )
         SrcFile = srcfcb;
         CurrChar = '\n';    /* set next character to newline */
         if( CompFlags.cpp_output ) {            /* 10-aug-91 */
-            if( CppFile == NULL )  OpenCppFile();
+            if( CppFile == NULL )
+                OpenCppFile();
             EmitPoundLine( 1, filename, 1 );
             CppFirstChar = 1;
         }
-        return( 1 );
+        return( TRUE );
     }
-    return( 0 );
+    return( FALSE );
 }
 
 void SetSrcFNameOnce( void )
@@ -1277,11 +1315,11 @@ local void Parse( void )
     }
     CompFlags.ok_to_use_precompiled_hdr = 0;
     CompFlags.use_precompiled_header = 0;
-    CompFlags.ignore_fnf = TRUE;
     if( !CompFlags.disable_ialias ) {
+        CompFlags.ignore_fnf = TRUE;
         OpenSrcFile( "_ialias.h", '<' );
+        CompFlags.ignore_fnf = FALSE;
     }
-    CompFlags.ignore_fnf = FALSE;
     if( !ForceInclude ) {
         CompFlags.ok_to_use_precompiled_hdr = 1;
     }
@@ -1301,17 +1339,12 @@ local void Parse( void )
 
 static void CPP_Parse( void )
 {
-    if( ForceInclude ) {
-        PrtChar( '\n' );
-        OpenSrcFile( ForceInclude, 0 );
-    }
-    PrintWhiteSpace = TRUE;
     for( ;; ) {
         GetNextToken();
-        if( CurToken == T_EOF ) break;
+        if( CurToken == T_EOF )
+            break;
         PrtToken();
     }
-    MacroFini();
 }
 
 
