@@ -352,18 +352,16 @@ static void DoCCompile( char **cmdline )
                 CompFlags.cpp_output = FALSE;
                 CompFlags.ignore_fnf = TRUE;
                 OpenSrcFile( "_ialias.h", '<' );
-                if( SrcFile != NULL )
-                    CPP_Parse();
                 CompFlags.ignore_fnf = FALSE;
+                if( SrcFile != NULL ) {
+                    for( ; CurToken != T_EOF; ) {
+                        GetNextToken();
+                    }
+                }
                 CompFlags.cpp_output = TRUE;
             }
             OpenPgmFile();
-            if( ForceInclude ) {
-                PrtChar( '\n' );
-                OpenSrcFile( ForceInclude, 0 );
-            }
             CPP_Parse();
-            MacroFini();
             if( !CompFlags.quiet_mode ) {
                 PrintStats();
             }
@@ -1339,12 +1337,17 @@ local void Parse( void )
 
 static void CPP_Parse( void )
 {
+    if( ForceInclude ) {
+        PrtChar( '\n' );
+        OpenSrcFile( ForceInclude, 0 );
+    }
     for( ;; ) {
         GetNextToken();
         if( CurToken == T_EOF )
             break;
         PrtToken();
     }
+    MacroFini();
 }
 
 
