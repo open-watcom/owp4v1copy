@@ -9,7 +9,6 @@
 
 :include readonly.sp
 #include <sql.h>
-#include <sqlucode.h>
 
 :include cpluspro.sp
 
@@ -1696,6 +1695,8 @@ SQLRETURN SQL_API   SQLBulkOperations( SQLHSTMT, SQLSMALLINT );
 #endif
 
 :include cplusepi.sp
+
+#include <sqlucode.h>
 
 #endif /* __SQLEXT */
 
