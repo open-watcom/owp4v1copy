@@ -19,9 +19,9 @@ Please note that there was a slight discrepancy between the old MinGW headers
 and the official Microsoft headers.  The MinGW version of windows.h included
 winsock2.h, while the Microsoft version includes winsock.h, as does the new
 Open Watcom version.  This may cause compiler errors when compiling code that
-includes windows.h followed by winsock2.h when the _WIN32_LEAN_AND_MEAN macro
+includes windows.h followed by winsock2.h when the WIN32_LEAN_AND_MEAN macro
 is not defined.  These errors will also occur when compiling such code with
-the Microsoft headers.  They can be eliminated by defining _WIN32_LEAN_AND_MEAN
+the Microsoft headers.  They can be eliminated by defining WIN32_LEAN_AND_MEAN
 to suppress inclusion of winsock.h by windows.h
 
 Documentation for the Win32 API is available over the Internet from Microsoft
