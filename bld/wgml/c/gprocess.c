@@ -271,7 +271,7 @@ void        process_line( void )
                     }
                 }
             }
-            *p2 = '\0';
+//          *p2 = '\0';
             pchar = strchr( pw, ampchar );  // look for next & in buffer
         }                               // while & found
 
