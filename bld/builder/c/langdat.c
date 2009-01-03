@@ -424,8 +424,8 @@ static void ProcessLine( const char *line )
     if( !special ) {
         /* Check if 'where' matches specified product */
         if( !Product || !where || ContainsWord( where, Product ) ) {
-            Log( TRUE, "<%s><%s><%s><%s><%s><%s><%s><%s><%s>\n",
-                redist, dir, old, usr, rel, where, dstvar, cond, desc );
+            Log( TRUE, "<%s><%s><%s><%s><%s><%s><%s><%s><%s><%s>\n",
+                type, redist, dir, old, usr, rel, where, dstvar, cond, desc );
         }
     }
     free( line_copy );

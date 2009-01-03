@@ -59,6 +59,7 @@ extern bool SimSubFileInNewDir( int parm, int subfile );
 extern bool SimSubFileInOldDir( int parm, int subfile );
 extern time_t SimSubFileDate( int parm, int subfile );
 extern bool SimSubFileNewer( int parm, int subfile );
+extern bool SimSubFileExecutable( int parm, int subfile );
 extern bool SimSubFileReadOnly( int parm, int subfile );
 extern long SimSubFileSize( int parm, int subfile );
 extern bool SimFileSplit( int parm );

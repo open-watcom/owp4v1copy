@@ -187,6 +187,7 @@ typedef struct a_file_info {
     unsigned            in_new_dir  : 1;
     unsigned            read_only   : 1;
     unsigned            is_nlm      : 1;
+    unsigned            executable  : 1;
 } a_file_info;
 
 typedef enum {
@@ -1882,16 +1883,22 @@ static bool ProcLine( char *line, pass_type pass )
             }
             line = p; p = NextToken( line, '!' );
             file->size = get36( line ) * 512UL;
-            if( p != NULL && p[0] != '\0' && p[0] != '!' ) {
+            if( p != NULL && *p != '\0' && *p != '!' ) {
                 file->date = get36( p );
             } else {
                 file->date = SetupInfo.stamp;
             }
             line = p; p = NextToken( line, '!' );
-            if( p != NULL && p[0] != '\0' && p[0] != '!' ) {
+            if( p != NULL && *p != '\0' && *p != '!' ) {
                 file->dst_var = AddVariable( p );
             } else {
                 file->dst_var = NO_VAR;
+            }
+            line = p; p = NextToken( line, '!' );
+            if( p != NULL ) {
+                if( *p == 'e' ) {
+                    file->executable = TRUE;
+                }
             }
             line = p; p = NextToken( line, '!' );
             if( p != NULL ) {
@@ -2312,6 +2319,7 @@ static bool GetDiskSizes()
             FileInfo[i].files[j].in_old_dir = FALSE;
             FileInfo[i].files[j].in_new_dir = FALSE;
             FileInfo[i].files[j].read_only = FALSE;
+            FileInfo[i].files[j].executable = FALSE;
         }
         GetFileInfo( FileInfo[i].dir_index, i, FALSE, &zeroed );
         GetFileInfo( FileInfo[i].old_dir_index, i, TRUE, &zeroed );
@@ -2870,6 +2878,12 @@ extern bool SimSubFileReadOnly( int parm, int subfile )
 /*****************************************************/
 {
     return( FileInfo[parm].files[subfile].read_only != 0 );
+}
+
+extern bool SimSubFileExecutable( int parm, int subfile )
+/*******************************************************/
+{
+    return( FileInfo[parm].files[subfile].executable != 0 );
 }
 
 extern bool SimSubFileNewer( int parm, int subfile )

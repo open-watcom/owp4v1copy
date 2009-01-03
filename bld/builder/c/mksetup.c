@@ -63,6 +63,7 @@ struct size_list {
     size_list   *next;
     long        size;
     long        stamp;
+    char        type;
     char        redist;
     char        *dst_var;
     char        name[1];
@@ -470,7 +471,7 @@ static int mkdir_nested( char *path )
     return( 0 );
 }
 
-int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file, char *dst_var, char *cond )
+int AddFile( char *path, char *old_path, char type, char redist, char *file, char *rel_file, char *dst_var, char *cond )
 /***********************************************************************************************************/
 {
     int                 path_dir, old_path_dir, target;
@@ -654,6 +655,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
             }
             ns->size = act_size;
             ns->stamp = time;
+            ns->type = type;
             ns->redist = redist;
             ns->dst_var = dst_var;
             ns->next = curr->sizes;
@@ -687,6 +689,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         ns->size = act_size;
         ns->stamp = time;
         ns->next = NULL;
+        ns->type = type;
         ns->redist = redist;
         ns->dst_var = dst_var;
         new->sizes = ns;
@@ -719,6 +722,7 @@ int ReadList( FILE *fp )
     char        *where;
     char        buf[ 1024 ];
     char        redist;
+    char        type;
     int         no_error;
 
     printf( "Checking files...\n" );
@@ -726,14 +730,18 @@ int ReadList( FILE *fp )
     while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
         s = GetBracketedString( buf, &p );
         if( s == NULL ) {
+            printf( "Invalid list file format - 'type' not found\n" );
+            exit( 2 );
+        }
+        type = s[0];
+        free( s );
+        s = GetBracketedString( p, &p );
+        if( s == NULL ) {
             printf( "Invalid list file format - 'redist' not found\n" );
             exit( 2 );
         }
         redist = s[0];
         free( s );
-        if( redist == '\0' )
-            redist = ' ';
-
         path = GetBracketedString( p, &p );
         if( path == NULL ) {
             printf( "Invalid list file format - 'dir' not found\n" );
@@ -786,14 +794,19 @@ int ReadList( FILE *fp )
             printf( "Invalid list file format - 'description' not found\n" );
             exit( 2 );
         }
-        if( dst_var && strcmp( dst_var, "." ) == 0 ) {
+        if( ( dst_var != NULL ) && strcmp( dst_var, "." ) == 0 ) {
             free( dst_var );
             dst_var = NULL;
         }
-        if( !AddFile( path, old_path, redist, file, rel_fil, dst_var, condition ) ) {
+        if( !AddFile( path, old_path, type, redist, file, rel_fil, dst_var, condition ) ) {
             no_error = FALSE;
         }
-        // TODO: free strings here
+        free( path );
+        free( old_path );
+        free( file );
+        free( rel_fil );
+        free( condition );
+        free( desc );
     }
     printf( ".\n" );
     return( no_error );
@@ -1045,20 +1058,21 @@ void DumpSizes( FILE *fp, FILE_INFO *curr )
         fprintf( fp, "%s!", csize->name );
         fput36( fp, csize->size/512 );
         fprintf( fp, "!" );
-        if( csize->redist != ' ' ) {
+        if( csize->redist != '\0' ) {
             fput36( fp, csize->stamp );
         }
         fprintf( fp, "!" );
-        if( csize->dst_var ) {
+        if( csize->dst_var != NULL ) {
             fprintf( fp, "%s", csize->dst_var );
         }
-        if( csize->redist != ' ' ) {
+        fprintf( fp, "!" );
+        if( csize->type != '\0' ) {
+            fprintf( fp, "%c", tolower( csize->type ) );
+        }
+        if( csize->redist != '\0' ) {
             // 'o' for ODBC file
             // 's' for supplemental file (not deleted)
             fprintf( fp, "!%c", tolower( csize->redist ) );
-        }
-        if( csize->dst_var ) {
-            fprintf( fp, "!%s", csize->dst_var );
         }
         fprintf( fp, "," );
         if( curr->num_files > 1 ) {

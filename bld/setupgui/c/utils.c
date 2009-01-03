@@ -1496,7 +1496,11 @@ static bool RelocateFiles( void )
                 if( DoCopyFile( src_path, dst_path, FALSE ) != CFE_NOERROR ) {
                     return( FALSE );
                 }
-                SameFileDate( src_path, dst_path );
+#if defined( __UNIX__ )
+                if( SimSubFileExecutable( filenum, subfilenum ) ) {
+                    chmod( dst_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH );
+                }
+#endif
                 remove( src_path );
                 num_installed += SimSubFileSize( filenum, subfilenum );
                 StatusAmount( num_installed, num_total_install );
@@ -1828,6 +1832,11 @@ static bool DoCopyFiles( void )
                 }
             } while( copy_error != CFE_NOERROR );
 
+#if defined( __UNIX__ )
+            if( SimSubFileExecutable( filenum, subfilenum ) ) {
+                chmod( tmp_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH );
+            }
+#endif
             SetVariableByHandle( var_handle, tmp_path );
             UpdateCheckList( tmp_path, var_handle );
         }
