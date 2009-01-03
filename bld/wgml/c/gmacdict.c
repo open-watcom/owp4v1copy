@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Implements script macros (tables and access routines)
-*               still incomplete
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -47,6 +47,27 @@ void    init_macro_dict( mac_entry * * dict )
     *dict = NULL;
     return;
 }
+
+
+/***************************************************************************/
+/*  add_macro_entry   add macro entry to dictionary                        */
+/***************************************************************************/
+
+void    add_macro_entry( mac_entry * * dict, mac_entry * me )
+{
+    mac_entry   *   wk;
+
+    if( *dict == NULL ) {           // empty dictionary
+        *dict = me;
+    } else {
+        wk = *dict;
+        while( wk->next != NULL ) { // search last entry in dictionary
+            wk = wk->next;
+        }
+        wk->next = me;
+    }
+}
+
 
 /***************************************************************************/
 /*  free_macro_entry_short  free storage for a macro entry                 */
@@ -73,7 +94,7 @@ static  void    free_macro_entry_short( mac_entry * me )
 /***************************************************************************/
 /*  free_macro_entry  delete single macroentry with chain update           */
 /***************************************************************************/
-void    free_macro_entry( mac_entry * me, mac_entry * * dict )
+void    free_macro_entry( mac_entry * * dict, mac_entry * me )
 {
     inp_line    *   ml;
     inp_line    *   mln;

@@ -91,11 +91,14 @@ extern  void    g_info( int, ... );
 
 extern  void    g_suicide( void );
 
+/* getnum.c                             */
+extern condcode     getnum( getnum_block * gn );
 
 /* gmacdict.c                         */
+extern  void        add_macro_entry( mac_entry * * dict, mac_entry * me );
 extern  void        init_macro_dict( mac_entry * * dict );
 extern  void        free_macro_dict( mac_entry * * dict );
-extern  void        free_macro_entry( mac_entry * me, mac_entry * * dict );
+extern  void        free_macro_entry( mac_entry * * dict, mac_entry * me );
 extern  void        print_macro_dict( mac_entry * dict );
 extern  mac_entry * find_macro( mac_entry * dict, char const * name );
 
@@ -141,7 +144,6 @@ extern  char    *   scr_single_func_u( char * in, char * end, char * * result );
 
 
 /* gsetvar.c                          */
-extern condcode     getnum( getnum_block * gn );
 extern void         scr_se( void );
 extern char     *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
@@ -149,9 +151,10 @@ extern char     *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 extern bool     check_subscript( sub_index sub );
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
-extern void     print_sym_dict( symvar * dict );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f );
+extern void     print_sym_dict( symvar * dict );
+extern void     reset_auto_inc_dict( symvar * dict );
 
 
 /* gutils.c                           */

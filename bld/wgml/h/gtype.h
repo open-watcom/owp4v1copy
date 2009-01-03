@@ -111,12 +111,13 @@ typedef enum {
     min_subscript = -1000000L,          // smallest valid subscript
     max_subscript =  1000000L,          // largest  valid subscript
     no_subscript  = 0x11223344          // value if not subscripted
-                // must be outside of range min_scubscript,max_subscript
+                // must be outside of range min_subscript,max_subscript
 } sub_index;
 
 typedef enum {
     local_var   = 1,
     subscripted = 2,
+    auto_inc    = 4,
     deleted     = 0x100
 } sym_flags;
 
@@ -138,7 +139,8 @@ typedef struct symsub {
 typedef struct symvar {
     struct symvar   *   next;           // next base entry
     char                name[ SYM_NAME_LENGTH + 1];
-    sub_index           subscript_used; // count of used subscript
+    long                last_auto_inc;// last autoincremented subscript value
+    long                subscript_used; // count of used subscript
     symsub          *   subscripts;     // subscript entries
     sym_flags           flags;
 } symvar;
@@ -309,9 +311,10 @@ typedef struct getnum_block {
     char    *   errstart;
     char    *   first;
     long        length;
-    long        res;
+    long        result;                 // result as long
+    char        resultstr[12];          // result in char format
     getnumrc    error;
-    char        resc[5];
+    char        num_sign;              // remember absolute or relative value
 } getnum_block;
 
 /***************************************************************************/

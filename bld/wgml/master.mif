@@ -6,28 +6,28 @@
 #                 bld\watcom\c\swchar  DOS switch Char
 #                 bld\trmem            memory tracker
 #
-
+ 
 proj_name = wgml
-
+ 
 wgml_autodepends = .AUTODEPEND
 wgml_nosymfile   = 1
 wgml_trmem       = 1
-
+ 
 debug_build      = 1
 verbose          = 1
-
+ 
 #  extra_c_flags      += -fti
 #  extra_c_flags      += -pcl
-
+ 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 !include trmem.mif
-
+ 
 inc_dirs = -I"../h" -I$(trmem_dir)
-
+ 
 .c: ../c;../../watcom/c;$(trmem_dir)
-
+ 
 objs =  &
         wgml.obj        &
         copdev.obj      &
@@ -41,6 +41,7 @@ objs =  &
         gdata.obj       &
         gargutil.obj    &
         gerror.obj      &
+        getnum.obj      &
         gmacdict.obj    &
         gmemory.obj     &
         goptions.obj    &
@@ -52,19 +53,19 @@ objs =  &
         gsymvar.obj     &
         gutil.obj       &
         swchar.obj
-
+ 
 !ifeq wgml_trmem 1
 extra_c_flags      += -of+ -dTRMEM
 objs               += $(trmem_objs)
 !endif
-
+ 
 # don't build wgml.exe for linux
-
+ 
 !ifneq host_os linux
 nwgml : wgml.exe .SYMBOLIC
-
+ 
 !include exetarg.mif
 !else
 nwgml : .SYMBOLIC
 !endif
-
+ 

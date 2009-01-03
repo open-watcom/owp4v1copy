@@ -70,6 +70,7 @@ static  void    add_macro_cb_entry( mac_entry *me )
 /***************************************************************************/
 /*  .im   processing  IMBED                                                */
 /*  format .im filename                                                    */
+/*         .im nn        -> SYSUSR0n.GML                                   */
 /***************************************************************************/
 
 static  void    scr_im( void )
@@ -88,22 +89,27 @@ static  void    scr_im( void )
     gn.argstart = p;
     gn.argstop  = scan_stop;
     gn.ignore_blanks = 0;
+
     cc = getnum( &gn );
 
-    p = gn.argstart;
-
-    if( *p == '"' || *p == '\'' ) {
-        quote = *p;
-        ++p;
+    if( (cc == pos) && (gn.result < 10) ) {  // include SYSUSR0x.GML
+        sprintf_s( token_buf, buf_size, "SYSUSR0%d.GML", gn.result );
     } else {
-        quote = ' ';                    // error??
+        p = gn.argstart;
+
+        if( *p == '"' || *p == '\'' ) {
+            quote = *p;
+            ++p;
+        } else {
+            quote = ' ';                // error??
+        }
+        fnstart = p;
+        while( *p && *p != quote ) {
+            ++p;
+        }
+        *p = '\0';
+        strcpy_s( token_buf, buf_size, fnstart );
     }
-    fnstart = p;
-    while( *p && *p != quote ) {
-        ++p;
-    }
-    *p = '\0';
-    strcpy_s( token_buf, buf_size, fnstart );
 
     ProcFlags.newLevelFile = 1;
     line_from = LINEFROM_DEFAULT;
@@ -216,7 +222,7 @@ static  void    scr_dm( void )
     p = scan_start;
     head = NULL;
     last = NULL;
-    save = *p;
+    save = *p;             // save char so we can make null terminated string
     *p   = '\0';
     macro_line_count = 0;
 
@@ -386,11 +392,10 @@ static  void    scr_dm( void )
 
     if( compend ) {                     // macro END definition processing
         mac_entry   *   me;
-        mac_entry   *   dict;
 
         me = find_macro( macro_dict, macname );
         if( me != NULL ) {              // delete macro with same name
-            free_macro_entry( me, &macro_dict );
+            free_macro_entry( &macro_dict, me );
         }
 
         ProcFlags.in_macro_define = 0;
@@ -403,15 +408,7 @@ static  void    scr_dm( void )
         me->lineno = lineno_start;
         strcpy( me->mac_file_name, cb->s.f->filename );
 
-        if( macro_dict == NULL ) {
-            macro_dict = me;
-        } else {
-            dict = macro_dict;
-            while( dict->next != NULL ) {
-                dict = dict->next;
-            }
-            dict->next = me;
-        }
+        add_macro_entry( &macro_dict, me );
 
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
             out_msg( "INF_MACRO '%s' defined with %d lines\n", macname,
@@ -833,7 +830,6 @@ static void     add_macro_parms( char * p )
                 scan_start = scan_save; // restore scan address
                 if( scan_err ) {        // not valid
                     cc = omit;
-             //    scan_start = tok_start;
                     star0++;
                     sprintf( starbuf, "%d", star0 );
                     p = tok_start + arg_flen ;
@@ -1054,7 +1050,7 @@ void    scan_line( void )
     } else if( *scan_start == GML_char ) {
         scan_gml();                     // gml tags
     } else {
-                                        // textline
+                                        // textline               TBD
     }
 }
 

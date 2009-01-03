@@ -27,6 +27,7 @@
 * Description:  WGML top level driver module and file I/O.
 *               not yet functional
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
+*   as found on www.cbttape.org files 280 - 288
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -584,6 +585,8 @@ static  void    init_pass( void )
  *                  setsymbol defines from cmdline must not be deleted
  */
 
+    reset_auto_inc_dict( global_dict ); // let auto inc start with 1 again
+
 //      free_dict( &global_dict );      // free dictionaries
 //      free_macro_dict( &macro_dict );
     } else {
@@ -669,6 +672,9 @@ int main( int argc, char * argv[] )
 
 //            g_trmem_prt_list();       // show allocated memory at pass end
 
+            if( GlobalFlags.research && (pass < passes) ) {
+                print_sym_dict( global_dict );
+            }
             out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );
         }
