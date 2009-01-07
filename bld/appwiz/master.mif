@@ -19,11 +19,14 @@ gendeps = $(objs) $(libs) appwiz.lnk
 
 inc_dirs = -I"../h" -I"$(gui_dir)/h"
 
+resfile = appwiz.res
+rcinclude = -I"../h"
+
 all : appwiz.exe .SYMBOLIC
 
-appwiz.exe: $(gendeps)
+appwiz.exe: $(gendeps) $(resfile)
     $(linker) name $^@ @appwiz.lnk
-
+    $(rc) -k $(resfile) $^@
 
 appwiz.lnk : makefile ../master.mif
     %create appwiz.lnk
@@ -31,3 +34,6 @@ appwiz.lnk : makefile ../master.mif
     @%append appwiz.lnk option map, verbose
     @for %i in ( $(objs) ) do @%append appwiz.lnk file %i
     @for %i in ( $(libs) ) do @%append appwiz.lnk lib %i
+
+$(resfile) : ../h/appwiz.rc .AUTODEPEND
+    $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_$(host_os)) $]@ -fo=$^@

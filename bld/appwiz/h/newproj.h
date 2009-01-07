@@ -24,45 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  Application Wizard main source file.
+* Description:  New project dialog control identifiers.
 *
 ****************************************************************************/
 
 
-#include "gui.h"
-#include "newproj.h"
-
-bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
-/****************************************************************/
-{
-    return( TRUE );
-}
-
-extern void GUImain( void )
-/*************************/
-{
-    gui_create_info newProjInfo = {
-        NULL,
-        { 0, 0, 0, 0 },
-        GUI_NOSCROLL,
-        GUI_VISIBLE | GUI_CLOSEABLE,
-        NULL,
-        0,
-        NULL,
-        0,
-        NULL,
-        &NewProjCallback,
-        NULL,
-        NULL,
-        0
-    };
-    gui_rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = 1000;
-    rect.height = 1000;
-    GUISetScale( &rect );
-    GUIWndInit( 300, GUI_GMOUSE );
-    GUICreateResDialog( &newProjInfo, NEWPROJDLG );
-}
-
+#define NEWPROJDLG      100
+#define IDC_PROJTYPE    1000
+#define IDC_PROJDIR     1001
+#define IDC_PROJNAME    1002
