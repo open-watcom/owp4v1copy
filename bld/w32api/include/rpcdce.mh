@@ -12,7 +12,11 @@
 
 /* RPC string data types */
 typedef unsigned char   *RPC_CSTR;
+#ifdef RPC_USE_NATIVE_WCHAR
 typedef wchar_t         *RPC_WSTR;
+#else
+typedef unsigned short  *RPC_WSTR;
+#endif
 
 /* RPC handle data types */
 typedef I_RPC_HANDLE            RPC_BINDING_HANDLE;
