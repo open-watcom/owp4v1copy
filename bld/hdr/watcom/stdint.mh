@@ -25,34 +25,34 @@
 #ifdef __cpluplus
 #include <cstdint>
 
-using std::tr1::int8_t;
-using std::tr1::uint8_t;
-using std::tr1::int16_t;
-using std::tr1::uint16_t;
-using std::tr1::int32_t;
-using std::tr1::uint32_t
-using std::tr1::int64_t;
-using std::tr1::uint64_t;
-using std::tr1::int_least8_t;
-using std::tr1::uint_least8_t;
-using std::tr1::int_least16_t;
-using std::tr1::uint_least16_t;
-using std::tr1::int_least32_t;
-using std::tr1::uint_least32_t;
-using std::tr1::int_least64_t;
-using std::tr1::uint_least64_t;
-using std::tr1::int_fast8_t;
-using std::tr1::uint_fast8_t;
-using std::tr1::int_fast16_t;
-using std::tr1::uint_fast16_t;
-using std::tr1::int_fast32_t;
-using std::tr1::uint_fast32_t;
-using std::tr1::int_fast64_t;
-using std::tr1::uint_fast64_t;
-using std::tr1::intptr_t;
-using std::tr1::uintptr_t;
-using std::tr1::intmax_t;
-using std::tr1::uintmax_t;
+using std::int8_t;
+using std::uint8_t;
+using std::int16_t;
+using std::uint16_t;
+using std::int32_t;
+using std::uint32_t
+using std::int64_t;
+using std::uint64_t;
+using std::int_least8_t;
+using std::uint_least8_t;
+using std::int_least16_t;
+using std::uint_least16_t;
+using std::int_least32_t;
+using std::uint_least32_t;
+using std::int_least64_t;
+using std::uint_least64_t;
+using std::int_fast8_t;
+using std::uint_fast8_t;
+using std::int_fast16_t;
+using std::uint_fast16_t;
+using std::int_fast32_t;
+using std::uint_fast32_t;
+using std::int_fast64_t;
+using std::uint_fast64_t;
+using std::intptr_t;
+using std::uintptr_t;
+using std::intmax_t;
+using std::uintmax_t;
 
 #else // end C++ stdint.h, start C stdint.h
 :: End .h version additions
@@ -61,7 +61,6 @@ using std::tr1::uintmax_t;
 :: In cname version place all these typedefs in std::tr1 namespace
 :segment CNAME
 namespace std{
-namespace tr1{
 :endsegment
 
 :: "The Alpha NT version (the only one we have) has 32-bit long ints and
@@ -75,9 +74,15 @@ namespace tr1{
  /* 64 bit : 8      16      32    64     64     No targets implemented.   */
 
 /* Exact-width types. */
-:: Some of these types are also defined in sys/types.h.
+:: Some of these types are also defined in sys/types.h. However, protection
+:: with the _EXACT_WIDTH_INTS is not needed in cstdint because the types are
+:: declared in namespace std (and thus can't conflict with the global types
+:: in sys/types.h anyway). In fact, if both sys/types.h and cstdint are
+:: included we want the exact width integer types declared in both namespaces.
+:segment !CNAME
 #ifndef _EXACT_WIDTH_INTS
 #define _EXACT_WIDTH_INTS
+:endsegment
 typedef signed char         int8_t;
 typedef unsigned char       uint8_t;
 typedef short               int16_t;
@@ -91,7 +96,9 @@ typedef unsigned int        uint32_t;
 #endif
 typedef long long           int64_t;
 typedef unsigned long long  uint64_t;
+:segment !CNAME
 #endif
+:endsegment
 
 /* Minimum-width types. */
 typedef signed   char      int_least8_t;
@@ -139,7 +146,6 @@ typedef long long intmax_t;
 typedef unsigned long long uintmax_t;
 
 :segment CNAME
-}; // end namespace tr1
 }; // end namepace std
 :endsegment
 
