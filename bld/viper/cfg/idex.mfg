@@ -100,5 +100,3 @@ MsgLog
   Help .cpp, wpperrs.hlp, 1
   Help .for, wfcerrs.hlp, 0
 :endsegment
-  
-HostMask ????@

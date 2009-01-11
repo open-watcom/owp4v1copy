@@ -2,11 +2,7 @@ $(host_OS)_3d.dll: $(host_OS)_3d.mk1
         wmake -i -h -f project.mk
 
 $(host_OS)_3d.mk1: $(host_OS)_3d.tgt
-!ifdef __UNIX__
-        ide2make -r $< -c ../../../viper/viper/ideunix.cfg
-!else
-        ide2make -r $< -c ..\..\..\viper\viper\ide.cfg
-!endif
+        ide2make -r $< -c "../../../viper/cfg/ide.cfg"
 
 clean: .SYMBOLIC
         rm -f *.obj *.mk *.mk1 *.lk1 *.ilk *.dll *.lib *.map *.err

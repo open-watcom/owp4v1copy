@@ -59,6 +59,8 @@ rem     w Windows 3.x
 rem     j Japanese Windows 3.x on an IBM
 rem     8 Japanese Windows 3.x on a Nec98
 rem     a Dec Alpha (Windows NT)
+rem     d DOS
+rem     x Linux
 rem If you add new hosts, also change bld\viper\mviper\mconfig.c
 
 
@@ -124,29 +126,29 @@ Tool WDEBUG "Local Debugger"
     CSwitch 0, x???n, "", "!Error Cannot locally debug a Linux target under Win32$", ON
     CSwitch 0, x???q, "", "!Error Cannot locally debug a Linux target under QNX$", ON
     CSwitch 0, x???w, "", "!Error Cannot locally debug a Linux target under Win16$", ON
-    CSwitch 0, dr2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dw2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\cw.trp $&\n", ON
-    CSwitch 0, dp2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
-    CSwitch 0, dt2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
-    CSwitch 0, da2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, db2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dm2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, d?6en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\std.trp $&\n", ON
-    CSwitch 0, dr2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dw2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\cw.trp $&\n", ON
-    CSwitch 0, dp2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
-    CSwitch 0, dt2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
-    CSwitch 0, da2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, db2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dm2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dr2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dw2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\cw.trp $&\n", ON
-    CSwitch 0, dp2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
-    CSwitch 0, dt2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
-    CSwitch 0, da2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, db2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, dm2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
-    CSwitch 0, d?6eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\std.trp $&\n", ON
+    CSwitch 0, dr2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dw2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\cw.trp $&\n", ON
+    CSwitch 0, dp2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\pls.trp $&\n", ON
+    CSwitch 0, dt2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\pls.trp $&\n", ON
+    CSwitch 0, da2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, db2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dm2en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, d?6en, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\std.trp $&\n", ON
+    CSwitch 0, dr2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dw2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\cw.trp $&\n", ON
+    CSwitch 0, dp2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\pls.trp $&\n", ON
+    CSwitch 0, dt2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\pls.trp $&\n", ON
+    CSwitch 0, da2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, db2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dm2e9, "", "$(%watcom)\\binw\\winserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dr2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dw2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\cw.trp $&\n", ON
+    CSwitch 0, dp2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\pls.trp $&\n", ON
+    CSwitch 0, dt2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\pls.trp $&\n", ON
+    CSwitch 0, da2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, db2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dm2eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, d?6eo, "", "$(%watcom)\\binw\\vdmserv -once -tr=$(%watcom)\\binw\\std.trp $&\n", ON
 :segment !C_FOR_PB
     RGroup "Debugger"
         RSwitch 0, w???o, "Windowed", "!Fullscreen $(%watcom)\\binw\\wdw", ON
@@ -200,7 +202,7 @@ rem binw\wd is used because wdw doesn't load trap files
     CSwitch 0, w???9, "", $(%watcom)\binw\wdw, ON
     CSwitch 0, wp6d8, " Run", "!Fullscreen $(%watcom)\\n98bw\\wdc.exe", ON
     CSwitch 0, wp6d?, " Run", "!Fullscreen $(%watcom)\\binw\\wdc.exe", ON
-    CSwitch 0, np2d?, " Run", "$(%watcom)\\binnt\\wdw /powerbuilder /tr=std;2", ON
+    CSwitch 0, np2d?, " Run", "$(%watcom)\\binnt\\wdw -powerbuilder -tr=std;2", ON
     CSwitch 0, l???w, " Run", "$(%watcom)\\binw\\wdw", ON
     CSwitch 0, l???j, " Run", "$(%watcom)\\binw\\wdw", ON
     CSwitch 0, l???8, " Run", "$(%watcom)\\n98bw\\wdw", ON
@@ -208,85 +210,85 @@ rem binw\wd is used because wdw doesn't load trap files
 ::
 :segment !C_FOR_PB
 ::
-    VSwitch 1, dr2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dw2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dp2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dt2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, da2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, db2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dm2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dr2ej, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dw2ej, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dp2ej, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dt2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, da2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, db2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dm2ew, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dr2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dw2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dp2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dt2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, da2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, db2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dm2e8, "Trap file:", /tr, =, ONE, REQ, "win"
-    VSwitch 1, dr2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, dw2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, dp2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, dt2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, da2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, db2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, dm2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
-    VSwitch 1, d???o, "Trap file:", /tr, =, ONE, REQ, "vdm;$&"
-    VSwitch 1, d???n, "Trap file:", /tr, =, ONE, REQ, "vdm;$&"
-    VSwitch 1, dr2e?, "Trap file:", /tr, =, ONE, REQ, "rsi"
-    VSwitch 1, da2e?, "Trap file:", /tr, =, ONE, REQ, "rsi"
-    VSwitch 1, db2e?, "Trap file:", /tr, =, ONE, REQ, "rsi"
-    VSwitch 1, dm2e?, "Trap file:", /tr, =, ONE, REQ, "rsi"
-    VSwitch 1, dw2e?, "Trap file:", /tr, =, ONE, REQ, "cw"
-    VSwitch 1, dp2e?, "Trap file:", /tr, =, ONE, REQ, "pls"
-    VSwitch 1, dt2e?, "Trap file:", /tr, =, ONE, REQ, "pls"
-    VSwitch 1, l?2e?, "Trap file:", /tr, =, ONE, REQ, "nov;$&"
-    VSwitch 1, ?????, "Trap file:", /tr, =, ONE, REQ, ""
+    VSwitch 1, dr2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dw2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dp2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dt2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, da2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, db2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dm2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dr2ej, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dw2ej, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dp2ej, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dt2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, da2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, db2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dm2ew, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dr2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dw2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dp2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dt2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, da2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, db2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dm2e8, "Trap file:", -tr, =, ONE, REQ, "win"
+    VSwitch 1, dr2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, dw2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, dp2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, dt2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, da2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, db2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, dm2e9, "Trap file:", -tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, d???o, "Trap file:", -tr, =, ONE, REQ, "vdm;$&"
+    VSwitch 1, d???n, "Trap file:", -tr, =, ONE, REQ, "vdm;$&"
+    VSwitch 1, dr2e?, "Trap file:", -tr, =, ONE, REQ, "rsi"
+    VSwitch 1, da2e?, "Trap file:", -tr, =, ONE, REQ, "rsi"
+    VSwitch 1, db2e?, "Trap file:", -tr, =, ONE, REQ, "rsi"
+    VSwitch 1, dm2e?, "Trap file:", -tr, =, ONE, REQ, "rsi"
+    VSwitch 1, dw2e?, "Trap file:", -tr, =, ONE, REQ, "cw"
+    VSwitch 1, dp2e?, "Trap file:", -tr, =, ONE, REQ, "pls"
+    VSwitch 1, dt2e?, "Trap file:", -tr, =, ONE, REQ, "pls"
+    VSwitch 1, l?2e?, "Trap file:", -tr, =, ONE, REQ, "nov;$&"
+    VSwitch 1, ?????, "Trap file:", -tr, =, ONE, REQ, ""
 ::
 :endsegment
 ::
   Family "Debugger Options"
-    VSwitch 0, wp6d?, "Configuration file:", /i, =, ONE, REQ, "pbwd.dbg"
-    VSwitch 0, np2d?, "Configuration file:", /i, =, ONE, REQ, "pbwdnt.dbg"
-    VSwitch 0, ?????, "Configuration file:", /i, =, ONE, REQ, ""
-    VSwitch 0, wp6d?, "", /initcmd, =, ONE, REQ, "{pbstart.dbg $&}"
+    VSwitch 0, wp6d?, "Configuration file:", -i, =, ONE, REQ, "pbwd.dbg"
+    VSwitch 0, np2d?, "Configuration file:", -i, =, ONE, REQ, "pbwdnt.dbg"
+    VSwitch 0, ?????, "Configuration file:", -i, =, ONE, REQ, ""
+    VSwitch 0, wp6d?, "", -initcmd, =, ONE, REQ, "{pbstart.dbg $&}"
 :segment !C_FOR_PB
-    CSwitch 0, ?????, "Don't invoke configuration", /noi, OFF
+    CSwitch 0, ?????, "Don't invoke configuration", -noi, OFF
 :endsegment
     CSwitch 0, ?????, "Use symbol file", :$*.sym, OFF
 :segment !C_FOR_PB
-    CSwitch 0, ?????, "Don't process symbolic info", /nosy, OFF
-    CSwitch 0, ?????, "Ignore any floating point hdwr", /nof, OFF
-    CSwitch 0, ?????, "Ignore any attached mouse", /nom, OFF
-    CSwitch 0, ?????, "Don't use graphical mouse", /nog, OFF
-    CSwitch 0, ?????, "Don't do char remapping", /noch, OFF
-    VSwitch 1, ?????, "Dip files:", /di, =, MULTI, REQ, ""
-    VSwitch 1, ?????, "Dynamic memory:", /dy, =, ONE, REQ, ""
-    VSwitch 1, ?????, "Free guarantee:", /ch, =, ONE, REQ, ""
+    CSwitch 0, ?????, "Don't process symbolic info", -nosy, OFF
+    CSwitch 0, ?????, "Ignore any floating point hdwr", -nof, OFF
+    CSwitch 0, ?????, "Ignore any attached mouse", -nom, OFF
+    CSwitch 0, ?????, "Don't use graphical mouse", -nog, OFF
+    CSwitch 0, ?????, "Don't do char remapping", -noch, OFF
+    VSwitch 1, ?????, "Dip files:", -di, =, MULTI, REQ, ""
+    VSwitch 1, ?????, "Dynamic memory:", -dy, =, ONE, REQ, ""
+    VSwitch 1, ?????, "Free guarantee:", -ch, =, ONE, REQ, ""
 :endsegment
   Family "Debugger Display"
-    VSwitch 0, ?????, "Lines of char mode screen:", /li, =, ONE, REQ, ""
-    VSwitch 0, ?????, "Columns of char mode screen:", /co, =, ONE, REQ, ""
+    VSwitch 0, ?????, "Lines of char mode screen:", -li, =, ONE, REQ, ""
+    VSwitch 0, ?????, "Columns of char mode screen:", -co, =, ONE, REQ, ""
     RGroup "Char Mode Screen"
         RSwitch 0, ?????, "Default Adapter", , ON
-        RSwitch 0, ?????, "Monochrome Adapter", /m, OFF
-        RSwitch 0, ?????, "Color Adapter", /c, OFF
-        RSwitch 0, ?????, "43 line EGA Adapter", /e, OFF
-        RSwitch 0, ?????, "50 line VGA Adapter", /v, OFF
+        RSwitch 0, ?????, "Monochrome Adapter", -m, OFF
+        RSwitch 0, ?????, "Color Adapter", -c, OFF
+        RSwitch 0, ?????, "43 line EGA Adapter", -e, OFF
+        RSwitch 0, ?????, "50 line VGA Adapter", -v, OFF
     RGroup "Char Mode Screen Protocol"
         RSwitch 1, ?????, "Default protocol", , ON
 :segment !C_FOR_PB
-        RSwitch 1, ?????, "Overwrite protocol", /o, OFF
+        RSwitch 1, ?????, "Overwrite protocol", -o, OFF
 :endsegment
-        RSwitch 1, ?????, "Page protocol", /p, OFF
-        RSwitch 1, ?????, "Swap protocol", /s, OFF
-        RSwitch 1, ?????, "Fast-swap protocol", /f, OFF
-        RSwitch 1, ?????, "Two protocol", /t, OFF
+        RSwitch 1, ?????, "Page protocol", -p, OFF
+        RSwitch 1, ?????, "Swap protocol", -s, OFF
+        RSwitch 1, ?????, "Fast-swap protocol", -f, OFF
+        RSwitch 1, ?????, "Two protocol", -t, OFF
     CSwitch 1, wp6d?, " Name", "$(%watcom)\\binw\\dlldbg.exe $@", ON
     CSwitch 1, np2d?, " Name",, ON
 rem For remote debugging, don't put a full path name
@@ -295,27 +297,27 @@ rem For remote debugging, don't put a full path name
 :segment !C_FOR_PB
     VSwitch 1, ?????, "Application parameters:",,, ONE, REQ, ""
 :endsegment
-    CSwitch 1, dr2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, da2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, db2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, dm2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, dw2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=cw /once\n", ON
-    CSwitch 1, dp2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
-    CSwitch 1, dt2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
-    CSwitch 1, dr2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, da2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, db2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, dm2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, dw2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=cw /once\n", ON
-    CSwitch 1, dp2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
-    CSwitch 1, dt2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
-    CSwitch 1, dr2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, da2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, db2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, dm2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
-    CSwitch 1, dw2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=cw /once\n", ON
-    CSwitch 1, dp2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
-    CSwitch 1, dt2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
+    CSwitch 1, dr2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, da2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, db2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, dm2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, dw2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=cw -once\n", ON
+    CSwitch 1, dp2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=pls -once\n", ON
+    CSwitch 1, dt2ew, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=pls -once\n", ON
+    CSwitch 1, dr2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, da2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, db2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, dm2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, dw2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=cw -once\n", ON
+    CSwitch 1, dp2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=pls -once\n", ON
+    CSwitch 1, dt2ej, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=pls -once\n", ON
+    CSwitch 1, dr2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, da2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, db2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, dm2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=rsi -once\n", ON
+    CSwitch 1, dw2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=cw -once\n", ON
+    CSwitch 1, dp2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=pls -once\n", ON
+    CSwitch 1, dt2e8, "", "\n$(%watcom)\\binw\\wsrv.pif -tr=pls -once\n", ON
 
 Tool RDEBUG "Remote Debugging"
   Family "Debugging Session"
@@ -336,32 +338,32 @@ Tool RDEBUG "Remote Debugging"
         RSwitch 0, ????j, "Character mode", "!Fullscreen $(%watcom)\\binw\\wdc.exe", OFF
         RSwitch 0, ????8, "Character mode", "!Fullscreen $(%watcom)\\n98bw\\wdc.exe", OFF
         RSwitch 0, ????a, "Character mode", "!Fullscreen $(%watcom)\\axpnt\\wd.exe", OFF
-    VSwitch 1, ?????, "Local trap file:", /tr, =, ONE, REQ, ""
+    VSwitch 1, ?????, "Local trap file:", -tr, =, ONE, REQ, ""
     RGroup "Target Location"
-        RSwitch 1, ?????, "Exists on target", /rem, OFF
-        RSwitch 2, ?????, "Download to target", /do, ON
-    VSwitch 1, ?????, "Local info:", /lo, =, MULTI, REQ, ""
+        RSwitch 1, ?????, "Exists on target", -rem, OFF
+        RSwitch 2, ?????, "Download to target", -do, ON
+    VSwitch 1, ?????, "Local info:", -lo, =, MULTI, REQ, ""
   Family "Debugger Options"
-    VSwitch 0, wp6d?, "Configuration file:", /i, =, ONE, REQ, "pbwd.dbg"
-    VSwitch 0, np2d?, "Configuration file:", /i, =, ONE, REQ, "pbwdnt.dbg"
-    VSwitch 0, ?????, "Configuration file:", /i, =, ONE, REQ, ""
-    VSwitch 0, wp6d?, "", /initcmd, =, ONE, REQ, "{pbstart.dbg $&}"
-    CSwitch 0, ?????, "Don't invoke configuration", /noi, OFF
+    VSwitch 0, wp6d?, "Configuration file:", -i, =, ONE, REQ, "pbwd.dbg"
+    VSwitch 0, np2d?, "Configuration file:", -i, =, ONE, REQ, "pbwdnt.dbg"
+    VSwitch 0, ?????, "Configuration file:", -i, =, ONE, REQ, ""
+    VSwitch 0, wp6d?, "", -initcmd, =, ONE, REQ, "{pbstart.dbg $&}"
+    CSwitch 0, ?????, "Don't invoke configuration", -noi, OFF
     CSwitch 0, ?????, "Use symbol file", :$*.sym, OFF
-    CSwitch 0, ?????, "Don't process symbolic info", /nosy, OFF
-    CSwitch 0, ?????, "Ignore any floating point hdwr", /nof, OFF
-    CSwitch 0, ?????, "Don't do char remapping", /noch, OFF
-    VSwitch 0, ?????, "Dip files:", /di, =, MULTI, REQ, ""
-    VSwitch 0, ?????, "Dynamic memory:", /dy, =, ONE, REQ, ""
+    CSwitch 0, ?????, "Don't process symbolic info", -nosy, OFF
+    CSwitch 0, ?????, "Ignore any floating point hdwr", -nof, OFF
+    CSwitch 0, ?????, "Don't do char remapping", -noch, OFF
+    VSwitch 0, ?????, "Dip files:", -di, =, MULTI, REQ, ""
+    VSwitch 0, ?????, "Dynamic memory:", -dy, =, ONE, REQ, ""
     CSwitch 0, ?????, " Name", $., ON
-    VSwitch 1, ?????, "Lines of char mode screen:", /li, =, ONE, REQ, ""
-    VSwitch 1, ?????, "Columns of char mode screen:", /co, =, ONE, REQ, ""
+    VSwitch 1, ?????, "Lines of char mode screen:", -li, =, ONE, REQ, ""
+    VSwitch 1, ?????, "Columns of char mode screen:", -co, =, ONE, REQ, ""
     RGroup "Char Mode Screen"
         RSwitch 1, ?????, "Default Adapter", , ON
-        RSwitch 1, ?????, "Monochrome Adapter", /m, OFF
-        RSwitch 1, ?????, "Color Adapter", /c, OFF
-        RSwitch 1, ?????, "43 line EGA Adapter", /e, OFF
-        RSwitch 1, ?????, "50 line VGA Adapter", /v, OFF
+        RSwitch 1, ?????, "Monochrome Adapter", -m, OFF
+        RSwitch 1, ?????, "Color Adapter", -c, OFF
+        RSwitch 1, ?????, "43 line EGA Adapter", -e, OFF
+        RSwitch 1, ?????, "50 line VGA Adapter", -v, OFF
     VSwitch 1, ?????, "Application parameters:",,, ONE, REQ, ""
 ::
 :segment !C_FOR_PB
@@ -536,7 +538,7 @@ Tool WCG "Code Generator"
     CSwitch 1, ??2??, "Generate Easy OMF object files", -ez, OFF
     CSwitch 1, ?????, "Save/Restore segment registers", -r, OFF
 :endsegment
-:segment !C_FOR_PB_NT
+:segment !C_FOR_PB | FOR_WIN
     CSwitch 1, ??6d?, "", -zu, ON
     CSwitch 1, ???e?, "SS not assumed equal to DS", -zu, OFF
     CSwitch 1, ???s?, "SS not assumed equal to DS", -zu, OFF
@@ -579,6 +581,7 @@ Tool WCG "Code Generator"
     CSwitch 0, n????, "", -bt=nt, ON
     CSwitch 0, l????, "", -bt=netware, ON
     CSwitch 0, x????, "", -bt=linux, ON
+    CSwitch 0, ?????, "", -fo=.obj, ON
 :segment C_FOR_PB
     CSwitch 1, n?2d?, "32bit Flat model", -mf, ON
 :endsegment
@@ -603,17 +606,17 @@ Tool WCG "Code Generator"
 Tool WLANG "Languages"
   IncludeTool WCG
   Family "File Option"
-    VSwitch 0, w????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\win
-    VSwitch 0, d????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
-    VSwitch 0, o?6??, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\os21x
-    VSwitch 0, o?2??, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\os2
-    VSwitch 0, nm???, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt;$(%watcom)\mfc\include
-    VSwitch 0, na???, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt;$(%watcom)\mfc\include
-    VSwitch 0, no???, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt;$(%watcom)\mfc\include
-    VSwitch 0, nu???, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt;$(%watcom)\mfc\include
-    VSwitch 0, n????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt
-    VSwitch 0, l????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\novh
-    VSwitch 0, x????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\lh
+    VSwitch 0, w????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/win"
+    VSwitch 0, d????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h"
+    VSwitch 0, o?6??, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/os21x"
+    VSwitch 0, o?2??, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/os2"
+    VSwitch 0, nm???, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/nt;$(%watcom)/mfc/include"
+    VSwitch 0, na???, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/nt;$(%watcom)/mfc/include"
+    VSwitch 0, no???, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/nt;$(%watcom)/mfc/include"
+    VSwitch 0, nu???, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/nt;$(%watcom)/mfc/include"
+    VSwitch 0, n????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/nt"
+    VSwitch 0, l????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/novh"
+    VSwitch 0, x????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/lh"
     VSwitch 0, ?????, "Include files:", -fi, =, MULTI, REQ, ""
     CSwitch 0, wm???, "Use precompiled headers", -fhq, ON
     CSwitch 0, wa???, "Use precompiled headers", -fhq, ON
@@ -766,9 +769,9 @@ Tool WFOR "Fortran Compiler"
         RSwitch 0, ?????, "Listing file to disk", "-lis -di" , OFF
     CSwitch 0, ?????, "Include files in listing file", -incl, OFF
     C2Switch 0, ?????, "Generate error file", "", -noer, ON
-    VSwitch 1, w????, "Path for include files:", -incp, =, ONE, REQ, "$(%watcom)\\src\\fortran\\win;$(%watcom)\\src\\fortran"
-    VSwitch 1, o????, "Path for include files:", -incp, =, ONE, REQ, "$(%watcom)\\src\\fortran\\os2;$(%watcom)\\src\\fortran"
-    VSwitch 1, d????, "Path for include files:", -incp, =, ONE, REQ, "$(%watcom)\\src\\fortran\\dos;$(%watcom)\\src\\fortran"
+    VSwitch 1, w????, "Path for include files:", -incp, =, ONE, REQ, "$(%watcom)/src/fortran/win;$(%watcom)/src/fortran"
+    VSwitch 1, o????, "Path for include files:", -incp, =, ONE, REQ, "$(%watcom)/src/fortran/os2;$(%watcom)/src/fortran"
+    VSwitch 1, d????, "Path for include files:", -incp, =, ONE, REQ, "$(%watcom)/src/fortran/dos;$(%watcom)/src/fortran"
     VSwitch 1, ?????, "Path for include files:", -incp, =, ONE, REQ, ""
   Family "Compile-time Diagnostic"
     CSwitch 0, ?????, "Require symbol declaration", -exp, OFF
@@ -888,13 +891,13 @@ Tool WASM "Assembler"
   Family "File Option"
     CSwitch 0, ?????, "", "wasm $@", ON
     VSwitch 0, ?????, "Include file:", -fi, =, MULTI, REQ, ""
-    VSwitch 0, w????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\win
-    VSwitch 0, d????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
-    VSwitch 0, o?6??, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
-    VSwitch 0, o?2??, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%toolkit)\c\os2h
-    VSwitch 0, n????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h;$(%watcom)\h\nt
-    VSwitch 0, l????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\h
-    VSwitch 0, x????, "Include directories:", -i, =, MULTI, REQ, $(%watcom)\lh
+    VSwitch 0, w????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/win"
+    VSwitch 0, d????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h"
+    VSwitch 0, o?6??, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h"
+    VSwitch 0, o?2??, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%toolkit)/c/os2h"
+    VSwitch 0, n????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h;$(%watcom)/h/nt"
+    VSwitch 0, l????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/h"
+    VSwitch 0, x????, "Include directories:", -i, =, MULTI, REQ, "$(%watcom)/lh"
     VSwitch 0, ?????, "Name error file:", -fe, =, ONE, REQ, ""
   Family "Memory Model and Processor"
     RGroup "Memory Model"
@@ -1239,9 +1242,9 @@ Tool WRC "Resource Compiler"
     VSwitch 1, nu???, "Macro definitions:", -d, , MULTI, REQ, "_UNICODE WIN32 _WIN32 __NT__"
     VSwitch 1, n????, "Macro definitions:", -d, , MULTI, REQ, "WIN32 _WIN32 __NT__"
     VSwitch 1, ?????, "Macro definitions:", -d, , MULTI, REQ, ""
-    VSwitch 1, w????, "Include directories:", -i, =, MULTI, REQ, $[:;$(%watcom)\h;$(%watcom)\h\win
-    VSwitch 1, n????, "Include directories:", -i, =, MULTI, REQ, $[:;$(%watcom)\h;$(%watcom)\h\nt
-    VSwitch 1, o????, "Include directories:", -i, =, MULTI, REQ, $[:;$(%watcom)\h;$(%watcom)\h\os2
+    VSwitch 1, w????, "Include directories:", -i, =, MULTI, REQ, "$[:;$(%watcom)/h;$(%watcom)/h/win"
+    VSwitch 1, n????, "Include directories:", -i, =, MULTI, REQ, "$[:;$(%watcom)/h;$(%watcom)/h/nt"
+    VSwitch 1, o????, "Include directories:", -i, =, MULTI, REQ, "$[:;$(%watcom)/h;$(%watcom)/h/os2"
     VSwitch 1, ?????, "Include directories:", -i, =, MULTI, REQ, ""
     CSwitch 1, ?????, "Ignore INCLUDE env variable", -x, OFF
     CSwitch 1, w????, "Microsoft format .RES file", -zm, OFF
@@ -1544,13 +1547,13 @@ Rule WEXE, WINLINK, w??e?
   Command " @%append $*.lk1 LIBR $'.imp"
   Command "!endif"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " @%append $*.lk1 op resource=$<RES!>",               ??6??
+  Command " @%append $*.lk1 op resource=$<RES!>",                               ??6??
   Command "!endif"
   Command " *$<#WLINK> @$'.lk1"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " wbind $* -q -s $(%watcom)\\binw\\win386.ext -R -q $<RES!> $*.exe",  ??2??
-  Command "!else",                              ??2??
-  Command " wbind $* -q -n -s $(%watcom)\\binw\\win386.ext",                    ??2??
+  Command " wbind $* -q -s \"$(%watcom)/binw/win386.ext\" -R -q $<RES!> $*.exe",??2??
+  Command "!else",                                                              ??2??
+  Command " wbind $* -q -s \"$(%watcom)/binw/win386.ext\" -n",                  ??2??
   Command "!endif"
 
 Rule NEXE, WINLINK, n??e?
@@ -1643,10 +1646,9 @@ rem --DLLs--
 ::
 :segment C_FOR_PB
 ::
-:segment C_FOR_PB_NT
+:segment FOR_NT
 Rule WPBDLL, WLINK, np2d?
-:endsegment
-:segment !C_FOR_PB_NT
+:elsesegment
 Rule WPBDLL, WLINK, wp6d?
 :endsegment
   Target *.dll
@@ -1666,10 +1668,9 @@ Rule WPBDLL, WLINK, wp6d?
   Command " @%append $*.lk1 op resource=$<RES!>"
   Command "!endif"
   Command " *$<#> @$'.lk1"
-:segment C_FOR_PB_NT
+:segment FOR_NT
   Command " copy $@ $(%watcom)\\binnt\\$."
-:endsegment
-:segment !C_FOR_PB_NT
+:elsesegment
   Command " wfscopy $@ $(%watcom)\\binw\\$."
 :endsegment
 :endsegment
@@ -1691,15 +1692,15 @@ Rule WDLL, WLINK, w??d?
   Command " @%append $*.lk1 LIBR $'.imp"
   Command "!endif"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " @%append $*.lk1 op resource=$<RES!>",               ??6??
+  Command " @%append $*.lk1 op resource=$<RES!>",                                   ??6??
   Command "!endif"
   Command " *$<#> @$'.lk1"
   Command "!ifneq BLANK \"$<RES!>\""
-  Command " wbind $* -q -s $(%watcom)\\binw\\w386dll.ext -d -R -q $<RES!> $*.exe",??2??
-  Command "!else",                              ??2??
-  Command " wbind $* -q -d -n -s $(%watcom)\\binw\\w386dll.ext",        ??2??
+  Command " wbind $* -q -d -s \"$(%watcom)/binw/w386dll.ext\" -R -q $<RES!> $*.exe",??2??
+  Command "!else",                                                                  ??2??
+  Command " wbind $* -q -d -s \"$(%watcom)/binw/w386dll.ext\" -n",                  ??2??
   Command "!endif"
-  Command " wlib -q -n -b $*.lib +$*.dll",         ??6??
+  Command " wlib -q -n -b $*.lib +$*.dll",                                          ??6??
 
 rem Change this when wrc is mature
 Rule ODLL, WLINK, o??do
@@ -1782,7 +1783,7 @@ rem --Static Libraries--
 Rule LIB, WLIB, ???s?
   Target *.lib
   Autodepend
-  Symbol  OBJ, *.obj *.o
+  Symbol  OBJ, *.obj
   Symbol  LIB, *.lib
   Command " %create $*.lb1"
   Command "!ifneq BLANK \"$<OBJ!>\""
@@ -1810,10 +1811,9 @@ Rule TBROWSEABLE
     Hint "Invoke the program browser on the target browser database"
 :endsegment
 
-:segment C_FOR_PB_NT
+:segment FOR_NT
 Rule PBDLL, , np2d?
-:endsegment
-:segment !C_FOR_PB_NT
+:elsesegment
 Rule PBDLL, , wp6d?
 :endsegment
   Target *.dll
@@ -1889,14 +1889,14 @@ Rule WRES, , w????
   Target *.res
   Action "&Edit Resources"
     Default
-    Command "wre /n $!"
+    Command "wre -n $!"
     Hint "Edit the .res file"
 
 Rule NRES, , n????
   Target *.res
   Action "&Edit Resources"
     Default
-    Command "wre /n $!"
+    Command "wre -n $!"
     Hint "Edit the .res file"
 
 Rule DLGEDIT, , o????
@@ -1910,7 +1910,7 @@ Rule DLGEDIT, , ?????
   Target *.dlg
   Action "&Edit Dialog"
     Default
-    Command "wde /n $!"
+    Command "wde -n $!"
     Hint "Edit the .dlg file"
 
 Rule IMAGE
@@ -1924,7 +1924,7 @@ Rule EDITRES
   Target *.str *.mnu, *.acc
   Action "&Edit Resource"
     Default
-    Command "wre /nointerface /n $@"
+    Command "wre -nointerface -n $@"
     Hint "Edit the resource file"
 
 Rule OFNT, , o????
@@ -1976,11 +1976,10 @@ Project
     Hint "Invoke editor"
 :segment C_FOR_PB
   Action "&PowerBuilder"
-:segment !C_FOR_PB_NT
-    Command "$(%watcom)\\binw\\watrun.exe PBFRAME040 \"PowerBuilder\" pb040.exe"
-:endsegment
-:segment C_FOR_PB_NT
+:segment FOR_NT
     Command "$(%watcom)\\binnt\\watrun.exe PBFRAME040 \"PowerBuilder\" pb040.exe"
+:elsesegment
+    Command "$(%watcom)\\binw\\watrun.exe PBFRAME040 \"PowerBuilder\" pb040.exe"
 :endsegment
     Hint "Return to PowerBuilder"
 :endsegment
@@ -2047,3 +2046,5 @@ IncludeFile pbidex.cfg
 :segment !C_FOR_PB
 IncludeFile idex.cfg
 :endsegment
+  
+HostMask ????@
