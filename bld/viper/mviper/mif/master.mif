@@ -40,7 +40,7 @@ objects =       contfile.obj &
 
 extra_c_flags_i86       = -zc -zm
 
-inc_dirs = $(wclass_inc_dirs)
+inc_dirs = $(wclass_inc_dirs) -I"$(lib_misc_dir)/h"
 
 .before:
         @set include=$(inc_path)

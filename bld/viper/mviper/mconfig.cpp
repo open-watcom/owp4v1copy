@@ -48,7 +48,7 @@ extern "C" {
     #if defined( __WINDOWS__ ) || defined( __NT__ )
         #include <windows.h>    //temporary ?
     #endif
-//    int __nonIBM();
+    #include "nonibm.h"
 };
 
 #define MALLOC(s) (char*)malloc(s)
@@ -74,35 +74,37 @@ MConfig::MConfig( WFileName& filename, bool debug )
     , _debug( debug )
     , _version( 0 )
     , _kludge( 0 )
-#ifdef __WINDOWS__
+#if defined( __WINDOWS__ )
     , _hostType( HOST_WINDOWS )
     , _batserv( DOS_BATSERV )
-#endif
-#ifdef __OS2__
+#elif defined( __OS2__ )
     , _hostType( HOST_PM )
     , _batserv( OS2_BATSERV )
-#endif
-#ifdef __NT__
-#ifdef __AXP
+#elif defined( __NT__ )
+  #ifdef __AXP
     , _hostType( HOST_AXP_NT )
-    , _batserv( NT_BATSERV )
-#else
+  #else
     , _hostType( HOST_NT )
+  #endif
     , _batserv( NT_BATSERV )
-#endif
+#elif defined( __DOS__ )
+    , _hostType( HOST_DOS )
+    , _batserv( NULL )
+#elif defined( __LINUX__ )
+    , _hostType( HOST_LINUX )
+    , _batserv( NULL )
 #endif
 {
     _configPtr = this;
 #ifdef __WINDOWS__
     if( __IsDBCS ) {
-// Looks like we lost __nonIBM() somewhere... remove for now. MN
-//        if( __nonIBM() ) {
-//            /* japanese windows on a nec 98 pc */
-//            _hostType = HOST_NEC_WIN;
-//        } else {
+        if( __NonIBM ) {
+            /* japanese windows on a nec 98 pc */
+            _hostType = HOST_NEC_WIN;
+        } else {
             /* japanese windows on an IBM */
             _hostType = HOST_J_WIN;
-//        }
+        }
     } else {
         /* assume no DBCS win-os/2 */
         union {
@@ -135,21 +137,21 @@ MConfig::MConfig( WFileName& filename, bool debug )
         _filename = "ide.cfg";
     }
     // set editor to default values
-    #if defined( __WINDOWS__ ) || defined( __NT__ )
-        if( __IsDBCS ) {
-            _editor = DBCS_DEFAULT_EDITOR_NAME;
-            _editorIsDLL = DBCS_DEFAULT_EDITOR_IS_DLL;
-            _editorParms = DBCS_DEFAULT_EDITOR_PARMS;
-        } else {
-            _editor = DEFAULT_EDITOR_NAME;
-            _editorIsDLL = DEFAULT_EDITOR_IS_DLL;
-            _editorParms = DEFAULT_EDITOR_PARMS;
-        }
-    #elif defined( __OS2__ )
-        _editor = OS2_DEFAULT_EDITOR_NAME;
-        _editorIsDLL = OS2_DEFAULT_EDITOR_IS_DLL;
-        _editorParms = OS2_DEFAULT_EDITOR_PARMS;
-    #endif
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+    if( __IsDBCS ) {
+        _editor = DBCS_DEFAULT_EDITOR_NAME;
+        _editorIsDLL = DBCS_DEFAULT_EDITOR_IS_DLL;
+        _editorParms = DBCS_DEFAULT_EDITOR_PARMS;
+    } else {
+        _editor = DEFAULT_EDITOR_NAME;
+        _editorIsDLL = DEFAULT_EDITOR_IS_DLL;
+        _editorParms = DEFAULT_EDITOR_PARMS;
+    }
+#elif defined( __OS2__ )
+    _editor = OS2_DEFAULT_EDITOR_NAME;
+    _editorIsDLL = OS2_DEFAULT_EDITOR_IS_DLL;
+    _editorParms = OS2_DEFAULT_EDITOR_PARMS;
+#endif
     readConfig();
 }
 
@@ -179,7 +181,11 @@ bool MConfig::readConfig()
 
 void MConfig::zapTargetMasks()
 {
-    static char hostChars[] = { 'w', 'o', 'n', 's', '9', 'j', '8', 'a' };
+    static char hostChars[] = {
+        #undef pick
+        #define pick(a,b) b,
+        #include "hosttype.h"
+    };
     int     i;
 
     for( i=0; i<_hostMask.size(); i++ ) {
@@ -367,21 +373,21 @@ void MConfig::configProject( WTokenFile& fil, WString& tok )
             fil.flushLine( tok );
             fil.token( tok );
 
-            #if defined( __WINDOWS__ ) || defined( __NT__ )
-                if( __IsDBCS ) {
-                    _editor = DBCS_DEFAULT_EDITOR_NAME;
-                    _editorIsDLL = DBCS_DEFAULT_EDITOR_IS_DLL;
-                    _editorParms = DBCS_DEFAULT_EDITOR_PARMS;
-                } else {
-                    _editor = DEFAULT_EDITOR_NAME;
-                    _editorIsDLL = DEFAULT_EDITOR_IS_DLL;
-                    _editorParms = DEFAULT_EDITOR_PARMS;
-                }
-            #elif defined( __OS2__ )
-                _editor = OS2_DEFAULT_EDITOR_NAME;
-                _editorIsDLL = OS2_DEFAULT_EDITOR_IS_DLL;
-                _editorParms = OS2_DEFAULT_EDITOR_PARMS;
-            #endif
+#if defined( __WINDOWS__ ) || defined( __NT__ )
+            if( __IsDBCS ) {
+                _editor = DBCS_DEFAULT_EDITOR_NAME;
+                _editorIsDLL = DBCS_DEFAULT_EDITOR_IS_DLL;
+                _editorParms = DBCS_DEFAULT_EDITOR_PARMS;
+            } else {
+                _editor = DEFAULT_EDITOR_NAME;
+                _editorIsDLL = DEFAULT_EDITOR_IS_DLL;
+                _editorParms = DEFAULT_EDITOR_PARMS;
+            }
+#elif defined( __OS2__ )
+            _editor = OS2_DEFAULT_EDITOR_NAME;
+            _editorIsDLL = OS2_DEFAULT_EDITOR_IS_DLL;
+            _editorParms = OS2_DEFAULT_EDITOR_PARMS;
+#endif
 
         } else if( tok == "Browse" ) {
             fil.token( _browseMerge );

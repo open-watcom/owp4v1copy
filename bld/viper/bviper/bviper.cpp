@@ -134,7 +134,7 @@ WEXPORT VpeMain::VpeMain( int argc, char** argv )
     new MConfig( cfg, debug );
     WString err;
     if( !_config->ok() ) {
-        printf( "IDE-B: %s\n", (const char*)_config->errMsg() );
+        printf( "ide2make: %s\n", (const char*)_config->errMsg() );
     } else {
         if( pfile.attribs() ) {
             if( !loadProject( pfile ) ) {

@@ -8,19 +8,13 @@ set PROJDIR=<CWD>
 
 cdsay .
 
-set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
-
-[ BLOCK <BUILD_PLATFORM> linux386 ]
-#==================================
-    set IDECFGFILE=<DEVDIR>/viper/viper/ideunix.cfg
-
 [ BLOCK <1> build rel2 ]
 #=======================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>
 
     cdsay src/os2
-    ide2make -r drawos2.tgt -c <IDECFGFILE>
+    ide2make -r drawos2.tgt -c "<DEVDIR>/viper/cfg/ide.cfg"
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f drawos2.mk1  <DEVDIR>/viprdemo/src/os2/box.obj
     wmake -i -h -f drawos2.mk1  <DEVDIR>/viprdemo/src/os2/drawroom.obj
@@ -28,7 +22,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     # rm -f wpp386.exe
 
     cdsay ../win
-    ide2make -r draw16.tgt -c <IDECFGFILE>
+    ide2make -r draw16.tgt -c "<DEVDIR>/viper/cfg/ide.cfg"
     # <CPCMD> <DEVDIR>\plusplus\bin\rppi8610.exe wpp.exe
     wmake -i -h -f draw16.mk1   <DEVDIR>/viprdemo/src/win/box.obj
     wmake -i -h -f draw16.mk1   <DEVDIR>/viprdemo/src/win/drawroom.obj
@@ -36,7 +30,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     # rm -f wpp.exe
 
     cdsay ../win386
-    ide2make -r draw.tgt -c <IDECFGFILE>
+    ide2make -r draw.tgt -c "<DEVDIR>/viper/cfg/ide.cfg"
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw.mk1     <DEVDIR>/viprdemo/src/win386/box.obj
     wmake -i -h -f draw.mk1     <DEVDIR>/viprdemo/src/win386/drawroom.obj
@@ -44,7 +38,7 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     # rm -f wpp386.exe
 
     cdsay ../win32
-    ide2make -r draw32.tgt -c <IDECFGFILE>
+    ide2make -r draw32.tgt -c "<DEVDIR>/viper/cfg/ide.cfg"
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/box.obj
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/drawroom.obj
@@ -105,6 +99,5 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
 
 [ BLOCK . . ]
 #============
-set IDECFGFILE=
 
 cdsay <PROJDIR>

@@ -1,0 +1,104 @@
+:segment C_FOR_PB
+:segment FOR_NT
+IncludeFile idepbnt.cfg
+:elsesegment
+IncludeFile idepb.cfg
+:endsegment
+:elsesegment
+:segment FOR_WIN
+IncludeFile idewin.cfg
+IncludeFile idew386.cfg
+:elsesegment FOR_NT
+:segment FOR_AXP
+IncludeFile ideaxp.cfg
+IncludeFile idew32.cfg
+:elsesegment
+IncludeFile idew32.cfg
+IncludeFile ideaxp.cfg
+:endsegment
+:elsesegment FOR_OS2
+IncludeFile ideos2.cfg
+IncludeFile ideos232.cfg
+:elsesegment FOR_LINUX
+IncludeFile ideos2.cfg
+IncludeFile ideos232.cfg
+:endsegment
+IncludeFile idedos.cfg
+IncludeFile idedos32.cfg
+:segment !FOR_WIN
+IncludeFile idewin.cfg
+IncludeFile idew386.cfg
+:endsegment
+:segment !FOR_NT
+IncludeFile idew32.cfg
+IncludeFile ideaxp.cfg
+:endsegment
+:segment !FOR_OS2
+IncludeFile ideos2.cfg
+IncludeFile ideos232.cfg
+:endsegment
+IncludeFile idenlm.cfg
+:segment !FOR_LINUX
+IncludeFile idelnx.cfg
+:endsegment
+:endsegment
+
+Project
+:segment C_FOR_PB
+  Editor "weditviw"  DLL
+  Browse wbrg "wbrw"
+  Help ide.hlp
+:elsesegment FOR_OS2
+  Editor "epmlink" DLL
+  Browse wbrg wbrw
+  Help ide.hlp
+:elsesegment FOR_WIN
+  Editor "$(%watcom)\\binw\\weditviw"  DLL
+  Browse wbrg "$(%watcom)\\binw\\wbrw"
+  Action &Zoom...
+    Command "$(%watcom)\\binw\\wzoom"
+    Hint "Invoke WZOOM Utility"
+  Action "&Heap walker..."
+    Command "$(%watcom)\\binw\\wheapwlk"
+    Hint "Invoke WHEAPWLK Utility"
+  Action &Spy...
+    Command "$(%watcom)\\binw\\wspy"
+    Hint "Invoke WSPY Utility"
+  Action "&DDE Spy..."
+    Command "$(%watcom)\\binw\\wddespy"
+    Hint "Invoke WDDESPY Utility"
+  Help ide.hlp
+:elsesegment FOR_NT
+  Editor "weditviw" DLL
+  Browse wbrg wbrw
+  Action &Zoom...
+    Command "wzoom"
+    Hint "Invoke WZOOM Utility"
+  Action "&Heap walker..."
+    Command "wheapwlk"
+    Hint "Invoke WHEAPWLK Utility"
+  Action &Spy...
+    Command "wspy"
+    Hint "Invoke WSPY Utility"
+  Action "&DDE Spy..."
+    Command "wddespy"
+    Hint "Invoke WDDESPY Utility"
+  Help ide.hlp
+:endsegment
+
+MsgLog
+:segment FOR_OS2
+  Help .c, wccerrs.hlp, 20000
+  Help .cpp, wpperrs.hlp, 20000
+  Help .for, wfcerrs.hlp, 20000
+:elsesegment FOR_NT & FOR_AXP
+  Help .c, wccerrs.hlp, 0
+  Help .cpp, wpperrs.hlp, 1
+  Help .for, wfcerrs.hlp, 0
+:elsesegment C_FOR_PB | FOR_NT | FOR_WIN
+  Help .c, wccerrs.hlp, 1
+  Help .cpp, wpperrs.hlp, 1
+  Help .for, wfcerrs.hlp, 0
+:endsegment
+  
+HostMask ????@
