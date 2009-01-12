@@ -5,7 +5,8 @@ proj_name = appwiz
 !include deftarg.mif
 
 objs = &
-    appwiz.obj
+    appwiz.obj &
+    projtype.obj
 
 libs_nt = $(gui_dir)/win/nt$(host_cpu)/gui.lib
 libs_os2 = $(gui_dir)/win/os2$(host_cpu)/gui.lib
@@ -13,7 +14,7 @@ libs_win = $(gui_dir)/win/win$(host_cpu)/gui.lib
 
 libs = $(libs_$(host_os)) $(libs_$(host_os)$(host_cpu))
 
-gendeps = $(objs) $(libs) appwiz.lnk
+gendeps = rcstr.gh $(objs) $(libs) appwiz.lnk
 
 .c : ../c
 
@@ -34,6 +35,9 @@ appwiz.lnk : makefile ../master.mif
     @%append appwiz.lnk option map, verbose
     @for %i in ( $(objs) ) do @%append appwiz.lnk file %i
     @for %i in ( $(libs) ) do @%append appwiz.lnk lib %i
+
+rcstr.gh : ../h/appwiz.msg
+    $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
 $(resfile) : ../h/appwiz.rc .AUTODEPEND
     $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_$(host_os)) $]@ -fo=$^@

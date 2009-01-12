@@ -24,50 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  Application Wizard main source file.
+* Description:  Project type functions.
 *
 ****************************************************************************/
 
 
+#include <stdio.h>
 #include "gui.h"
-#include "newproj.h"
 #include "projtype.h"
+#include "rcstr.gh"
 
-bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
-/****************************************************************/
+#define PROJTYPE_CONFIG_FILE    "projtype.cfg"
+
+bool ReadProjectTypes()
+/*********************/
 {
-    return( TRUE );
-}
+    FILE    *fh;
+    char    fmt[128];
+    char    msg[128];
 
-extern void GUImain( void )
-/*************************/
-{
-    gui_create_info newProjInfo = {
-        NULL,
-        { 0, 0, 0, 0 },
-        GUI_NOSCROLL,
-        GUI_VISIBLE | GUI_CLOSEABLE,
-        NULL,
-        0,
-        NULL,
-        0,
-        NULL,
-        &NewProjCallback,
-        NULL,
-        NULL,
-        0
-    };
-    gui_rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = 1000;
-    rect.height = 1000;
-    GUISetScale( &rect );
-    GUIWndInit( 300, GUI_GMOUSE );
-
-    if( !ReadProjectTypes() ) {
-        return;
+    fh = fopen( PROJTYPE_CONFIG_FILE, "r" );
+    if( fh == NULL ) {
+        GUILoadString( APPWIZ_CFG_MISSING, fmt, 128 );
+        sprintf( msg, fmt, PROJTYPE_CONFIG_FILE );
+        GUIDisplayMessage( NULL, msg, "", GUI_OK );
+        return( FALSE );
     }
-    GUICreateResDialog( &newProjInfo, NEWPROJDLG );
+    fclose( fh );
+
+    return( TRUE );
 }
 

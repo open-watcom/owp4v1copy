@@ -24,50 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Application Wizard main source file.
+* Description:  Project type functions.
 *
 ****************************************************************************/
 
 
-#include "gui.h"
-#include "newproj.h"
-#include "projtype.h"
-
-bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
-/****************************************************************/
-{
-    return( TRUE );
-}
-
-extern void GUImain( void )
-/*************************/
-{
-    gui_create_info newProjInfo = {
-        NULL,
-        { 0, 0, 0, 0 },
-        GUI_NOSCROLL,
-        GUI_VISIBLE | GUI_CLOSEABLE,
-        NULL,
-        0,
-        NULL,
-        0,
-        NULL,
-        &NewProjCallback,
-        NULL,
-        NULL,
-        0
-    };
-    gui_rect rect;
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = 1000;
-    rect.height = 1000;
-    GUISetScale( &rect );
-    GUIWndInit( 300, GUI_GMOUSE );
-
-    if( !ReadProjectTypes() ) {
-        return;
-    }
-    GUICreateResDialog( &newProjInfo, NEWPROJDLG );
-}
+extern bool ReadProjectTypes( void );
 
