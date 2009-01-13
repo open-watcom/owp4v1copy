@@ -57,11 +57,25 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
+
+#include "heapchk.h"    // Ensure is always available.
 
 /* Function return values. */
 
 #define FAILURE 0
 #define SUCCESS 1
+
+/* This struct is part of the wgml context. */
+
+typedef struct opt_font {
+    struct opt_font *   nxt;
+    uint8_t             font;
+    char *              name;
+    char *              style;
+    uint32_t            space;
+    uint32_t            height;
+} opt_font;
 
 /* Global variable declarations. */
 
@@ -73,9 +87,11 @@
     #define global  extern
 #endif
 
-global char switch_char;    // Either '\', '/', or whatever DOS is using.
-global int  err_count;      // Part of the wgml context.
-global int  wng_count;      // Part of the wgml context.
+global char         switch_char;    // Either '\', '/', or whatever DOS is using.
+global int          err_count;      // Part of the wgml context.
+global int          wng_count;      // Part of the wgml context.
+global opt_font *   opt_fonts;      // Part of the wgml context.
+global char     *   dev_name;       // Part of the wgml context.
 
 /* Reset so can be reused with other headers. */
 

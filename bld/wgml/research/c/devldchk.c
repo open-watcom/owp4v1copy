@@ -28,6 +28,8 @@
 *               In addition to main(), these global functions are implemented:
 *                   print_banner()
 *                   print_usage()
+*               and this local function:
+*                   display_binary_device_library()
 * Notes:        The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
 *
@@ -37,17 +39,16 @@
 *
 ****************************************************************************/
 
-//#define __STDC_WANT_LIB_EXT1__ 1
-//#include <process.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <process.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "banner.h"
-//#include "common.h"
-//#include "copfiles.h"
-//#include "dfinterp.h"
-//#include "research.h"
+#include "common.h"
+#include "copfiles.h"
+#include "findfile.h"
+#include "research.h"
 
 /*  Local variables. */
 
@@ -56,11 +57,49 @@
 static  char const *    usage_text[] = {
 "Usage:  devldchk defined-name",
 "'defined-name' is the defined name for the device to check",
-"'defined-name' must be enclosed in quotes if it contains spaces",
+"'defined-name' must be surrounded by double quotes if it contains spaces",
 NULL
 };
 
 /* Local function definitions. */
+
+static void display_binary_device_library( void )
+{
+    int i;
+
+    out_msg( "Device name: %s\n", dev_name );
+    out_msg( "Driver name: %s\n", bin_device->driver_name );
+
+    out_msg( "Available fonts:\n" );
+    for( i = 0; i < wgml_font_cnt; i++ ) {
+        out_msg( "  Nr: %i\n", i );
+        if( wgml_fonts[i].bin_font == NULL ) {
+            out_msg( "Font name not found: ERROR!\n" );
+        } else {
+            out_msg( "  Font name:          %s\n", \
+                                        wgml_fonts[i].bin_font->defined_name );
+        }
+        if( wgml_fonts[1].font_switch == NULL ) {
+            out_msg( "Font switch: none\n" );
+        } else {
+            out_msg( "  Font switch:        %s\n", \
+                                                wgml_fonts[i].font_switch->type );
+        }
+        if( wgml_fonts[i].font_style == NULL ) {
+            out_msg( "Font style not found: ERROR!\n" );
+        } else {
+            out_msg( "  Font style:         %s\n", \
+                                                wgml_fonts[i].font_style->type );
+        }
+        out_msg( "  Font pause present: " );
+        if( wgml_fonts[i].font_style == NULL ) out_msg( "No\n" );
+        else out_msg( "Yes\n" );
+        out_msg( "  Font space:         %i\n", wgml_fonts[i].font_space );
+        out_msg( "  Font height:        %i\n", wgml_fonts[i].font_height );
+    }
+}
+
+/* Global function definitions. */
 
 /* Function print_banner().
  * Print the banner to the screen.
@@ -68,8 +107,7 @@ NULL
 
 void print_banner( void )
 {
-    puts( banner1w( "Device Load Procedure Test Program", \
-                                                        _RESEARCH_VERSION_ ) );
+    puts( banner1w( "Device Load Procedure Test Program", _RESEARCH_VERSION_ ) );
     puts( banner2( "1983" ) );
     puts( banner3 );
     puts( banner3a );
@@ -91,12 +129,8 @@ void print_usage( void )
 }
 
 /* Function main().
- * ***needs to be redone***
- * Given a valid defined name, verify that it is a valid .COP file and parse 
- * it if it is.
- *
- * The actual parsing is performed in the function parse_defined_name(); main()
- * is concerned with overall program architecture, not details.
+ * Given a valid defined name for a device, loads the binary device library
+ * and prints out the resulting information for verification. 
  *
  * Returns:
  *      EXIT_FAILURE or EXIT_SUCCESS, as appropriate.
@@ -137,8 +171,7 @@ int main()
 
     initialize_globals();
     res_initialize_globals();
-    get_env_vars();
-    
+
     /* Parse the command line: allocates and sets tgt_path. */
 
     retval = parse_cmdline( cmdline );
@@ -152,20 +185,53 @@ int main()
     free( cmdline );
     cmdline = NULL;
 
-    /* Adjust tgt_path if necessary; see the Wiki. */
+    dev_name = tgt_path;
 
-    if( !strcmp( tgt_path, "''" ) ) tgt_path[0] = '\0';
+    /* Special preparations for test01 and test02. */
 
-    /* Parse the alleged .COP file. */
+    if( (!stricmp( dev_name, "test01") ) || (!stricmp( dev_name, "test02") ) ) {
+        opt_font * current = (opt_font *) mem_alloc( sizeof( opt_font ) );
 
-    retval = parse_defined_name();
+        current->nxt = NULL;
+        current->font = 11;
+        current->name = (char *) mem_alloc( sizeof( "tfon09" ) + 1 );
+        strcpy_s( current->name,  sizeof( "tfon09" ) + 1, "tfon09" );
+        current->style = (char *) mem_alloc( sizeof( "plain" ) + 1 );
+        strcpy_s( current->style, sizeof( "plain" ) + 1, "plain" );
+        current->space = 900;
+        current->height = 900;
 
-    /* Respond to failure. */
+        opt_fonts = current;
 
-    if( retval == FAILURE ) {
-      print_usage();
-      return( EXIT_FAILURE );
+        current = (opt_font *) mem_alloc( sizeof( opt_font ) );
+        opt_fonts->nxt = current;
+
+        current->nxt = NULL;
+        current->font = 12;
+        current->name = (char *) mem_alloc( sizeof( "tfon10" ) + 1 );
+        strcpy_s( current->name,  sizeof( "tfon10" ) + 1, "tfon10" );
+        current->style = (char *) mem_alloc( sizeof( "bold" ) + 1 );
+        strcpy_s( current->style, sizeof( "bold" ) + 1, "bold" );
+        current->space = 800;
+        current->height = 800;
     }
+
+    /* Initialize the binary device library. */
+
+    ff_setup();
+    cop_setup();
+
+    /* Print out the data. */
+
+    display_binary_device_library();
+
+    /* Release the memory allocated. */
+
+    cop_teardown();
+    ff_teardown();
+
+    mem_free(tgt_path);
+    tgt_path = NULL;
 
     return( EXIT_SUCCESS );
 }

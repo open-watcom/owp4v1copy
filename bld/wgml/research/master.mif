@@ -14,41 +14,46 @@ inc_dirs = -I"../h;../../h"
 
 .c: ../c;../../c;../../../watcom/c
 
+common_objs = &
+            common.obj    &
+	    dfinterp.obj  &
+	    heapchk.obj   &
+            research.obj  &
+            cmdlhelp.obj  &
+            swchar.obj
+
 cf_common_objs = &
+	    $(common_objs) &
 	    cfdir.obj     &
 	    cfdev.obj     &
 	    cfdrv.obj     &
 	    cffon.obj     &
 	    cffunc.obj    &
             cfheader.obj  &
-            cmdlhelp.obj  &
-            common.obj    &
-	    dfinterp.obj  &
-	    heapchk.obj   &
-            lhdirect.obj  &
-            research.obj  &
-            swchar.obj
+            lhdirect.obj
 
 cfc_objs = &
             cfcheck.obj   &
             cfcutils.obj
 
-copp_objs = &
-            copparse.obj  &
+cop_common_objs = &
+	    $(common_objs) &
             copdev.obj    &
 	    copdir.obj    &
 	    copdrv.obj    &
             copfiles.obj  &
 	    copfon.obj    &
 	    copfunc.obj   &
-            common.obj    &
-	    dfinterp.obj  &
-	    findfile.obj  &
-	    heapchk.obj   &
-            research.obj  &
-            cmdlhelp.obj  &
-            swchar.obj
+	    findfile.obj
+	    
+copp_objs = &
+            $(cop_common_objs) &
+            copparse.obj
 
+devld_objs = &
+            $(cop_common_objs) &
+	    devldchk.obj
+	    
 ff_objs = &
             common.obj    &
 	    findfunc.obj  &
@@ -61,7 +66,7 @@ objs = &
             cfparse.obj       &
             cfputils.obj
 
-nwgml : cfcheck.exe cfparse.exe copparse.exe findfunc.exe .SYMBOLIC
+nwgml : cfcheck.exe cfparse.exe copparse.exe devldchk.exe findfunc.exe .SYMBOLIC
 !include exetarg.mif
 
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
@@ -73,6 +78,14 @@ cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
 !endif
 
 copparse.exe : $(copp_objs) $(libs)
+!ifeq verbose 1
+        $(cl) $(clflags) $< $(cl_libs)
+!else
+        @echo cl $@
+        @$(cl) $(clflags) $< $(cl_libs)
+!endif
+
+devldchk.exe : $(devld_objs) $(libs)
 !ifeq verbose 1
         $(cl) $(clflags) $< $(cl_libs)
 !else

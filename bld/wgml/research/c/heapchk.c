@@ -28,6 +28,7 @@
 *                   end_heapcheck()
 *                   display_heap()
 *                   start_heapcheck()
+*                   null_buffer()
 *               and this local function:
 *                   do_heapcheck()
 *
@@ -63,7 +64,7 @@ static _HEAPINFO do_heapcheck( char * location )
         if( heap_node._useflag == _USEDENTRY ) block_status = "USED";
         else block_status = "FREE";
 
-        printf_s( "%s block at 0x%x of size 0x%x\n", block_status, \
+        printf_s( "%s block at 0x%llx of size 0x%x\n", block_status, \
                                             heap_node._pentry, heap_node._size );
         return_node._pentry = heap_node._pentry;
         return_node._size = heap_node._size;
@@ -123,3 +124,10 @@ void    start_heapcheck( char * location )
     return;
 };
 
+void null_buffer( void )
+{
+    FILE * temp = NULL;
+
+    fopen_s( &temp, ".", "rb" );
+    return;
+}

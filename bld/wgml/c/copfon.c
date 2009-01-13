@@ -35,14 +35,19 @@
 *
 ****************************************************************************/
 
+#include <setjmp.h>     // Required (but not included) by gvars.h.
+
 #include "copfon.h"
 #include "copfunc.h"
+#include "gtype.h"      // Required (but not included) by gvars.h.
+#include "gvars.h"
 #include "wgml.h"
 
 /*  Local macros */
 
 #define START_SIZE 2048
 #define INC_SIZE   1024
+#define TYPE_MAX     79 // Maximum length of a :FONTSWITCH or :FONTSTYLE name.
 
 /* Static function definition */
 
@@ -53,19 +58,17 @@
  *      in_font is a pointer to the cop_font to be resized.
  *      in_size is the minimum acceptable increase in size.
  *
- * Warning:
- *      If mem_realloc() returns a different value from in_font, then the
- *      memory pointed to by in_font will be freed whether the function
- *      succeeds or fails. The intended use is for the pointer passed as
- *      in_font to be used to store the return value. 
- *
  * Returns:
  *      A pointer to a cop_font instance at least in_size larger with the
  *          same data (except for the allocated_size field, which reflects
  *          the new size) on success.
  *
- * Note:
+ * Notes:
  *      mem_realloc() will call exit() if the reallocation fails.
+ *      mem_realloc() will free in_font if the instance is actually moved to a
+ *          new location.
+ *      The intended use is for the pointer passed as in_font to be used to
+ *          store the return value.
  */
 
 static cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
@@ -87,7 +90,6 @@ static cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
     /* Reallocate the cop_font. */
 
     local_font = (cop_font *) mem_realloc( in_font, new_size );
-    if( local_font != in_font ) mem_free( in_font );
     local_font->allocated_size = new_size;
 
     return( local_font );
@@ -130,6 +132,10 @@ bool is_fon_file( FILE * in_file)
  * Parameters:
  *      in_file points to the first byte of a .COP file encoding a :FONT
  *          block after the "FON" descriminator.
+ *      in_name points to the defined name of the :FONT block. It must be
+ *          provided this way because the .COP itself does not contain it
+ *          and it must be incorporated into the block allocated for the
+ *          cop_font instance.
  *
  * Returns:
  *      A pointer to a cop_font struct containing the data from in_file
@@ -145,7 +151,7 @@ bool is_fon_file( FILE * in_file)
  *          the format must be entirely present for there to be no error.
  */
 
-cop_font * parse_font( FILE * in_file )
+cop_font * parse_font( FILE * in_file, char const * in_name )
 {
 
     /* The cop_font instance. */
@@ -183,10 +189,20 @@ cop_font * parse_font( FILE * in_file )
 
     uint8_t             count8;
 
+    /* Ensure in_name contains a value. */
+
+    length = strnlen_s( in_name, TYPE_MAX );
+    if( (in_name == NULL) || (length == 0) ) {
+        out_msg( "Defined name missing for desired font\n" );
+        err_count++;
+        g_suicide();
+    }
+
     /* Initialize the out_font. */
         
     out_font = (cop_font *) mem_alloc( START_SIZE );
 
+    out_font->next_font = NULL;
     out_font->allocated_size = START_SIZE;
     out_font->next_offset = sizeof( cop_font );
 
@@ -194,6 +210,20 @@ cop_font * parse_font( FILE * in_file )
      * and then converted to pointers before returning because out_font
      * may be reallocated at any point and that invalidates actual pointers.
      */
+
+    /* Incorporate the defined name. */
+
+    length++;
+    if( out_font->allocated_size < (out_font->next_offset + length) ) {
+        out_font = resize_cop_font( out_font, length );
+    }
+
+    string_ptr = (char *) out_font + out_font->next_offset;
+    strcpy_s( string_ptr, length, in_name );
+
+    out_font->defined_name = (char *) out_font->next_offset;
+    out_font->next_offset += length;
+
 
     /* Get the font_out_name1. */
 
@@ -663,6 +693,8 @@ cop_font * parse_font( FILE * in_file )
                                     translation_start, translation_ptr->count );
                 }
             }
+            mem_free( outtrans_data );
+            outtrans_data = NULL;
             break;
 
         default:
@@ -670,8 +702,6 @@ cop_font * parse_font( FILE * in_file )
            out_font = NULL;
            return( out_font );
         }
-        mem_free( outtrans_data );
-        outtrans_data = NULL;
     }  
 
     /* Get the WidthBlock, if present. */
@@ -777,6 +807,11 @@ cop_font * parse_font( FILE * in_file )
     }
 
     /* Convert non-NULL offsets to pointers. */
+
+    if( out_font->defined_name != NULL ) {
+        string_ptr = (char *) out_font + (size_t) out_font->defined_name;
+        out_font->defined_name = string_ptr;
+    }
 
     if( out_font->font_out_name1 != NULL ) {
         string_ptr = (char *) out_font + (size_t) out_font->font_out_name1;

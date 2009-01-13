@@ -24,9 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Declares an enum, structs and functions used to parse
-*               and interpret the information from .COP files:
+* Description:  Declares the items needed to parse and interpret the 
+*               information from .COP files:
+*               an enum:
 *                   cop_file_type
+*               the structs:
 *                   cop_device
 *                       box_block
 *                       underscore_block
@@ -62,6 +64,14 @@
 *                       outtrans_block
 *                           translation
 *                       width_block
+*                   wgml_font
+*               the variables:
+*                   bin_device
+*                   bin_driver
+*                   bin_fonts
+*                   wgml_font_cnt
+*                   wgml_fonts
+*               the functions:
 *                   cop_setup()
 *                   cop_teardown()
 *                   get_cop_device()
@@ -460,11 +470,16 @@ typedef struct {
     line_block          dbox;
 } cop_driver;
 
-/* This struct embodies the binary form of the :FONT block. */
+/* This struct embodies the binary form of the :FONT block.
+ * Only the fonts need to be treated as a linked list.
+ */
 
-typedef struct {
+typedef struct cop_font {
+    struct cop_font *   next_font;
     size_t              allocated_size;
     size_t              next_offset;
+    /* For matching by defined name. */
+    char *              defined_name;
     /* The Attributes */
     char *              font_out_name1;
     char *              font_out_name2;
@@ -479,6 +494,31 @@ typedef struct {
     outtrans_block *    outtrans;
     width_block *       width;
 } cop_font;
+
+typedef struct {
+    cop_font            *   bin_font;
+    fontswitch_block    *   font_switch;
+    code_text           *   font_pause;
+    fontstyle_block     *   font_style;
+    uint16_t                font_height;
+    uint16_t                font_space;    
+} wgml_font;
+
+/* Global variable declarations. */
+
+#ifndef global
+    #define global  extern
+#endif
+
+global cop_device   *   bin_device;     // binary device being used
+global cop_driver   *   bin_driver;     // binary driver being used
+global cop_font     *   bin_fonts;      // binary fonts being used (linked list)
+global int              wgml_font_cnt;  // number of available fonts
+global wgml_font    *   wgml_fonts;     // the available fonts
+
+/* Reset so can be reused with other headers. */
+
+#undef global
 
 /* Function declarations. */
 

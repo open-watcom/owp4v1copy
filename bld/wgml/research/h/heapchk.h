@@ -27,9 +27,12 @@
 * Description:  Declares functions used to check the heap.
 *               Does not require special compilation switches or provide
 *               endless undocumented options.
+*               These are the primary functions:
 *                   end_heapcheck()
 *                   display_heap()
 *                   start_heapcheck()
+*               and this is the auxiliary function:
+*                   null_buffer()
 *
 ****************************************************************************/
 
@@ -38,10 +41,10 @@
 
 /* How to Use These Functions.
  *
- * Each function has a single parameter, a character string. This string will
- * be displayed at the start of each heap dump. It is not used in any other way.
- * In particular, it is not used to associate calls to end_heapcheck() with
- * calls to start_heapcheck().
+ * The three primary functions each have a single parameter, a character string.
+ * This string will be displayed at the start of the heap dump. It is not used
+ * in any other way. In particular, it is not used to associate calls to
+ * end_heapcheck() with calls to start_heapcheck().
  *
  * display_heap() simply produces a heap dump. No attempt to determine if the
  * heap has changed from the last heap dump is made.
@@ -79,6 +82,18 @@
  *      identify regions in a program over which the heap is not the same at the
  *          end as it is at the start.
  *      map heap usage at any number of points in the program. 
+ *
+ * The auxiliary function null_buffer() compensates for a minor quirk observed in
+ * the Open Watcom runtime: when a file cannot be found, so that a NULL pointer is
+ * returned as the value of FILE *, a buffer is allocated which cannot be
+ * deallocated by the user program. In particular, fclose(), although documented to
+ * close any automatically-allocated buffer associated with the FILE *, will not
+ * close it when the value of the FiLE * is a NULL pointer. Although the run-time
+ * allocates several buffers before main() starts, this is not one of them.
+ * null_buffer() attempts to open a file (".") that is guaranteed not to exist,
+ * thus causing the buffer to be allocated. If called before the first call to
+ * start_heapcheck(), it ensures that this unfreeable buffer is allocated before
+ * the testing begins.
  */
  
 /* Function declarations. */
@@ -90,6 +105,8 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 extern void end_heapcheck( char * location );
 extern void display_heap( char * location );
 extern void start_heapcheck( char * location );
+
+extern void null_buffer( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

@@ -54,17 +54,18 @@
  *      in_font is a pointer to the cop_font to be resized.
  *      in_size is the minimum acceptable increase in size.
  *
- *  Warning:
- *      If realloc() returns a different value from in_font, then the
- *      memory pointed to by in_font will be freed whether the function
- *      succeeds or fails. The intended use is for the pointer passed as
- *      in_font to be used to store the return value. 
- *
  *  Returns:
  *      A pointer to a cop_font instance at least in_size larger with the same
  *          data (except for the allocated_size field, which reflects the new size)
  *          on success.
  *      A NULL pointer on failure.
+ *
+ * Notes:
+ *      realloc() will free in_font if the instance is actually moved to a
+ *          new location.
+ *      if realloc() returns NULL, then in_font will be freed.
+ *      The intended use is for the pointer passed as in_font to be used to
+ *          store the return value.
  */
 
 static cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
@@ -86,8 +87,8 @@ static cop_font * resize_cop_font( cop_font * in_font, size_t in_size )
     /* Reallocate the cop_font. */
 
     local_font = (cop_font *) realloc( in_font, new_size );
-    if( local_font != in_font ) free( in_font );
-    if( local_font != NULL ) local_font->allocated_size = new_size;
+    if( local_font == NULL ) free( in_font );
+    else local_font->allocated_size = new_size;
 
     return( local_font );
 }
@@ -556,11 +557,7 @@ cop_font * parse_font( FILE * in_file )
                                         sizeof( out_font->outtrans->table )) ) {
                 out_font = resize_cop_font( out_font, \
                                         sizeof( out_font->outtrans->table ) );
-                if( out_font == NULL ) {
-                    free( outtrans_data );
-                    outtrans_data = NULL;
-                    return( out_font );
-                }
+                if( out_font == NULL ) return( out_font );
             }
 
             out_font->outtrans = (outtrans_block *) out_font->next_offset;
@@ -592,11 +589,7 @@ cop_font * parse_font( FILE * in_file )
                                                     sizeof( translation )) ) {
                         out_font = resize_cop_font( out_font, \
                                                     sizeof( translation ) );
-                        if( out_font == NULL ) {
-                            free( outtrans_data );
-                            outtrans_data = NULL;
-                            return( out_font );
-                        }
+                        if( out_font == NULL ) return( out_font );
                         outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font + \
                                                     (size_t) out_font->outtrans);
                     }
@@ -616,11 +609,7 @@ cop_font * parse_font( FILE * in_file )
                     if( out_font->allocated_size < (out_font->next_offset + \
                                                     translation_ptr->count ) ) {
                         out_font = resize_cop_font( out_font, translation_ptr->count );
-                        if( out_font == NULL ) {
-                            free( outtrans_data );
-                            outtrans_data = NULL;
-                            return( out_font );
-                        }
+                        if( out_font == NULL ) return( out_font );
                         outtrans_ptr = (outtrans_block *) ((uint8_t *) out_font + \
                                                     (size_t) out_font->outtrans);
                         translation_ptr = (translation *) ((uint8_t *) out_font + \
@@ -631,7 +620,7 @@ cop_font * parse_font( FILE * in_file )
                     out_font->next_offset += translation_ptr->count;
 
                     byte_ptr = (uint8_t *) out_font + \
-                               (size_t) translation_ptr->data;
+                                                (size_t) translation_ptr->data;
 
                     /* The translation character is the value in the input array. */
                     
@@ -761,6 +750,8 @@ cop_font * parse_font( FILE * in_file )
                                        translation_ptr->count );
                 }
             }
+            free( outtrans_data );
+            outtrans_data = NULL;
             break;
 
         default:
@@ -769,8 +760,6 @@ cop_font * parse_font( FILE * in_file )
            out_font = NULL;
            return( out_font );
         }
-        free( outtrans_data );
-        outtrans_data = NULL;
     }  
 
     /* Get the WidthBlock, if present. */

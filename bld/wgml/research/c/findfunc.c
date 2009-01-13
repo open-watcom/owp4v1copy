@@ -40,11 +40,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "banner.h"
 #include "common.h"
 #include "lhdirect.h"
 #include "research.h"
-#include "wgml.h"
+
+/* From gtype.h, this is what wgml is using. */
+
+#define BUF_SIZE        512             // default buffersize for filecb e.a.
 
 /* Local structs. */
 
