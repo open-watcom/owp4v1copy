@@ -30,6 +30,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gui.h"
 #include "projtype.h"
 #include "rcstr.gh"
@@ -42,14 +43,16 @@ bool ReadProjectTypes()
     FILE    *fh;
     char    fmt[128];
     char    msg[128];
+    char    filepath[PATH_MAX];
 
-    fh = fopen( PROJTYPE_CONFIG_FILE, "r" );
-    if( fh == NULL ) {
+    _searchenv( PROJTYPE_CONFIG_FILE, "PATH", filepath );
+    if( filepath[0] == '\0' ) {
         GUILoadString( APPWIZ_CFG_MISSING, fmt, 128 );
         sprintf( msg, fmt, PROJTYPE_CONFIG_FILE );
         GUIDisplayMessage( NULL, msg, "", GUI_OK );
         return( FALSE );
     }
+    fh = fopen( filepath, "r" );
     fclose( fh );
 
     return( TRUE );
