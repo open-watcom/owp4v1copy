@@ -12,16 +12,16 @@
 
 /* LAN Manager string data types */
 #if defined( _WIN32_WINNT ) || defined( WINNT ) || defined( FORCE_UNICODE )
-typedef LPWSTR  LMSTR;
-typedef LPCWSTR LMCSTR;
+    #define LMSTR   LPWSTR
+    #define LMCSTR  LPCWSTR
 #else
-typedef LPSTR   LMSTR;
-typedef LPCSTR  LMCSTR;
+    #define LMSTR   LPSTR
+    #define LMCSTR  LPCSTR
 #endif
 
 /* LAN Manager return code data types */
-typedef DWORD           NET_API_STATUS;
-typedef NET_API_STATUS  API_RET_TYPE;
+#define NET_API_STATUS  DWORD
+#define API_RET_TYPE    NET_API_STATUS
 
 /* LAN Manager calling convention */
 #define NET_API_FUNCTION    __stdcall
