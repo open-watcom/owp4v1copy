@@ -7,8 +7,8 @@
 #ifndef _INC_COMMDLG
 #define _INC_COMMDLG
 
-:include cpluspro.sp
 :include readonly.sp
+:include cpluspro.sp
 
 /* Macro to specify common dialog functions */
 #define WINCOMMDLGAPI   DECLSPEC_IMPORT
