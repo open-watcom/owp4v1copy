@@ -1513,6 +1513,9 @@ STATIC RET_T handleCD( char *cmd )
         }
     }
 
+    // handle long filenames
+    RemoveDoubleQuotes( (char *)p, strlen( p ) + 1, p );
+
     if( chdir( p ) != 0 ) {         /* an error changing path */
         PrtMsg( ERR | CHANGING_DIR, p );
         return( RET_ERROR );
