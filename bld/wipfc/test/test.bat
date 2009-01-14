@@ -1,0 +1,25 @@
+call env.bat
+echo Test pos1
+wipfc -i .\pos\pos1.ipf
+echo Test pos2
+wipfc -i .\pos\pos2.ipf
+echo Test pos3
+wipfc -i .\pos\pos3.ipf
+echo Test pos4
+wipfc -i .\pos\pos4.ipf
+echo Test pos5
+wipfc -i .\pos\pos5.ipf
+echo Test pos6
+wipfc -i .\pos\pos6.ipf
+echo Test pos7
+wipfc -i .\pos\pos7.ipf
+echo Test pos8
+wipfc -i .\pos\pos8.ipf
+echo Test neg1
+wipfc -i .\neg\neg1.ipf
+echo Test neg2
+wipfc -i .\neg\neg2.ipf
+echo Test neg3
+wipfc -i .\neg\neg3.ipf
+echo Test neg4
+wipfc -i .\neg\neg4.ipf
