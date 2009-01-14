@@ -40,6 +40,15 @@
 
 #define PROJTYPE_CONFIG_FILE    "projtype.cfg"
 
+typedef struct project_type {
+    char                typename[128];
+    char                friendlyname[128];
+    struct project_type *next;
+} project_type;
+
+project_type    *projectTypes = NULL;
+project_type    *lastProjectType = NULL;
+
 static bool nextToken( FILE *fh, char *buf, int nbuf )
 /****************************************************/
 {
@@ -85,8 +94,23 @@ static bool nextToken( FILE *fh, char *buf, int nbuf )
     return( FALSE );
 }
 
-void showError( int errcode, ... )
-/********************************/
+static void addProjectType( char *typename, char *friendlyname )
+/**************************************************************/
+{
+    if( lastProjectType == NULL ) {
+        projectTypes = (project_type *)malloc( sizeof( project_type ) );
+        lastProjectType = projectTypes;
+    } else {
+        lastProjectType->next = (project_type *)malloc( sizeof( project_type ) );
+        lastProjectType = lastProjectType->next;
+    }
+    strcpy( lastProjectType->typename, typename );
+    strcpy( lastProjectType->friendlyname, friendlyname );
+    lastProjectType->next = NULL;
+}
+
+static void showError( int errcode, ... )
+/***************************************/
 {
     char    fmt[128];
     char    msg[128];
@@ -122,6 +146,7 @@ bool ReadProjectTypes()
                 showError( APPWIZ_INVALID_PROJTYPES );
                 return( FALSE );
             }
+            addProjectType( typename, friendlyname );
         } else if( !feof( fh ) ) {
             showError( APPWIZ_INVALID_PROJTYPES );
             return( FALSE );
@@ -131,3 +156,44 @@ bool ReadProjectTypes()
 
     return( TRUE );
 }
+
+void FreeProjectTypes()
+/*********************/
+{
+    project_type    *this_type;
+    project_type    *next_type;
+
+    next_type = projectTypes;
+    while( next_type != NULL ) {
+        this_type = next_type;
+        next_type = this_type->next;
+        free( this_type );
+    }
+    projectTypes = NULL;
+    lastProjectType = NULL;
+}
+
+project_type_iterator GetFirstProjectType()
+/*****************************************/
+{
+    return( (project_type_iterator)projectTypes );
+}
+
+void GetNextProjectType( project_type_iterator *iter, char *typename,
+                         char *friendlyname )
+/*******************************************************************/
+{
+    project_type    *type;
+
+    if( *iter != NULL ) {
+        type = (project_type *)*iter;
+        if( typename != NULL ) {
+            strcpy( typename, type->typename );
+        }
+        if( friendlyname != NULL ) {
+            strcpy( friendlyname, type->friendlyname );
+        }
+        *iter = (project_type_iterator)type->next;
+    }
+}
+

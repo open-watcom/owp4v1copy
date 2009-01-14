@@ -36,6 +36,18 @@
 bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
 /****************************************************************/
 {
+    project_type_iterator   iter;
+    char                    friendlyname[128];
+    
+    switch( ev ) {
+    case GUI_INIT_DIALOG:
+        iter = GetFirstProjectType();
+        while( iter != NULL ) {
+            GetNextProjectType( &iter, NULL, friendlyname );
+            GUIAddText( wnd, IDC_PROJTYPE, friendlyname );
+        }
+        break;
+    }
     return( TRUE );
 }
 
@@ -66,8 +78,10 @@ extern void GUImain( void )
     GUIWndInit( 300, GUI_GMOUSE );
 
     if( !ReadProjectTypes() ) {
+        FreeProjectTypes();
         return;
     }
     GUICreateResDialog( &newProjInfo, NEWPROJDLG );
+    FreeProjectTypes();
 }
 
