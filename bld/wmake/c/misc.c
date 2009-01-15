@@ -115,7 +115,7 @@ char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
     // leave space for NUL terminator
     maxlen--;
 
-    while( pos < ( maxlen - 1 ) ) {
+    while( pos < maxlen ) {
         t = *src++;
 
         if( t == NULLCHAR ) {
@@ -132,7 +132,7 @@ char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src )
                 *dst++ = BACKSLASH;
                 pos++;
 
-                if( pos < ( maxlen - 1 ) ) {
+                if( pos < maxlen ) {
                     *dst++ = t;
                     pos++;
                 }
