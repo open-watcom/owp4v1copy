@@ -240,9 +240,13 @@ static char * get_exp( char * str )
     struct operator *op;
 
     while( *ptr ) {
-        if( *ptr == ' ' && ignore_blanks ) {
-            ptr++;
-            continue;
+        if( *ptr == ' ' ) {
+            if( ignore_blanks ) {
+                ptr++;
+                continue;
+            } else {
+                break;
+            }
         }
         op = get_op( ptr );
         if (NULL != op ) {
@@ -271,7 +275,7 @@ static char * get_exp( char * str )
     return tokbuf;
 }
 
-static  int evaluate( char *line, long *val )
+static  int evaluate( char * * line, long *val )
 {
     long        arg;
     char    *   ptr;
@@ -285,12 +289,16 @@ static  int evaluate( char *line, long *val )
     coper     = 0;
     cvalue    = 0;
     nparens   = 0;
-    ptr       = line;
+    ptr       = *line;
 
     while( *ptr ) {
-        if( *ptr == ' ' && ignore_blanks ) {
-            ptr++;
-            continue;
+        if( *ptr == ' ' ) {
+            if( ignore_blanks ) {
+                ptr++;
+                continue;
+            } else {
+                break;
+            }
         }
         switch( expr_oper ) {
         case 0:                         // look for term
@@ -393,10 +401,11 @@ condcode getnum( getnum_block *gn )
         gn->num_sign = ' ';             // no unary sign
     }
     ignore_blanks = gn->ignore_blanks;
-    rc = evaluate( a, &gn->result );
+    rc = evaluate( &a, &gn->result );
     if( rc != 0 ) {
         gn->cc = notnum;
     } else {
+        gn->argstart = a + 1;           // start for next scan
         gn->length = sprintf_s( gn->resultstr, sizeof( gn->resultstr ), "%ld",
                                 gn->result );
         if( gn->result >= 0 ) {

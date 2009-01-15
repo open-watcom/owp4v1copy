@@ -28,6 +28,7 @@
 *                  garginit      --- initialize operand scan in buff2 (SCR)
 *                  garginitdot   --- initialize operand scan in buff2 (GML)
 *                  getarg        --- scan (quoted) blank delimited argument
+*                  getqst        --- scan quoted string
 *                  test_xxx_char --- test for allowed char
 *
 ****************************************************************************/
@@ -47,10 +48,10 @@ void    garginit( void )
 
     p = buff2;                          // adress of input buffer
     scan_stop = buff2 + buff2_lg - 1;   // store scan stop address
-    while( *p != ' ' && p <= scan_stop ) {  // search end of keyword
+    while( *p != ' ' && p <= scan_stop ) {// search end of script control word
         p++;
     }
-    scan_start = p;                     // store argument start address
+    scan_start = p;                     // store control word end address
 
     open_paren = NULL;                  // clear open parenthesis pointer
     clos_paren = NULL;                  // clear close parenthesis pointer
@@ -66,10 +67,10 @@ void    garginitdot( void )
 
     p = buff2;                          // adress of input buffer
     scan_stop = buff2 + buff2_lg - 1;   // store scan stop address
-    while( *p != ' ' && *p != '.' && p <= scan_stop ) {// search end of keyword
+    while( *p != ' ' && *p != '.' && p <= scan_stop ) {// search end of gml tag
         p++;
     }
-    scan_start = p;                     // store argument start address
+    scan_start = p;                     // store tag end or space address
 
     open_paren = NULL;                  // clear open parenthesis pointer
     clos_paren = NULL;                  // clear close parenthesis pointer
@@ -79,6 +80,7 @@ void    garginitdot( void )
 
 /***************************************************************************/
 /*  scan blank delimited argument perhaps quoted                           */
+/*                                                                         */
 /***************************************************************************/
 
 condcode    getarg( void )
@@ -130,6 +132,75 @@ condcode    getarg( void )
                 cc = quotes;            // quoted arg found
             } else {
                 cc = pos;               // arg found
+            }
+        } else {
+            cc = omit;                  // length zero
+        }
+    }
+    return( cc );
+}
+
+
+
+/***************************************************************************/
+/*  scan       quoted string argument                                      */
+/***************************************************************************/
+
+condcode    getqst( void )
+{
+    condcode    cc;
+    char    *   p;
+    char        c;
+    char        quote;
+    bool        quoted;
+
+    if( scan_stop <= scan_start ) {     // already at end
+        cc = omit;                      // arg omitted
+    } else {
+        p = scan_start;
+        while( *p && *p == ' ' && p <= scan_stop ) {// skip leading blanks
+            p++;
+        }
+
+        tok_start = p;
+        c = *p;
+        if( c == '\'' || c == '"' || c == '\x7c' || c == '\x9b' ) {
+            quote = c;     // single and double quotes, vertical bar and cent
+            p++;
+            quoted = true;
+        } else {
+            quote = '\0';
+            quoted = false;
+        }
+        for( ; p <= scan_stop; p++ ) {
+
+            if( *p == ' ' && quote == '\0' ) {
+                break;
+            }
+            if( *p == quote && *(p+1) != quote ) {// 2 quote chars not end of string
+                break;
+            }
+            if( *p == '\0' ) {
+                break;
+            }
+        }
+        if( quoted ) {
+            tok_start++;
+            scan_start = p + 1;         // start address for next call
+            arg_flen = p - tok_start;   // length of arg
+        } else {
+            scan_start = p;             // address of start for next call
+            arg_flen = p - tok_start;   // length of arg
+        }
+        if( arg_flen > 0 ) {
+            if( quoted ) {
+                if( *p != quote ) {
+                    cc = no;            // only start quote found
+                } else {
+                    cc = quotes;        // quoted arg found
+                }
+            } else {
+                cc = no;                // not quoted
             }
         } else {
             cc = omit;                  // length zero

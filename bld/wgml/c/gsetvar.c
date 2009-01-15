@@ -95,11 +95,11 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                         out_msg( "ERR_SYM_NAME_too_long '%s'\n"
                             "The length of a symbol cannot exceed 10 characters\n"
                             "\t\t\tLine %d of macro '%s'\n",
-                            sym_start, cb->s.m->mac->name, cb->s.m->lineno );
+                            sym_start, cb->s.m->lineno, cb->s.m->mac->name );
                     } else {
                         out_msg( "ERR_SYM_NAME_too_long '%s'\n"
                             "The length of a symbol cannot exceed 10 characters\n"
-                            "\t\t\tLine %d of macro '%s'\n",
+                            "\t\t\tLine %d of file '%s'\n",
                             sym_start, cb->s.f->lineno, cb->s.f->filename );
                     }
                     if( inc_level > 1) {
@@ -295,9 +295,23 @@ void    scr_se( void )
                 }
             } else {
                 if( !ProcFlags.suppress_msg ) {
-                     out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",
-                              sym.name, p );
                      wng_count++;
+                     if( input_cbs->fmflags & II_macro ) {
+                         out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",
+                                  "\t\t\tLine %d of macro '%s'\n",
+                                  sym.name, p,
+                                  input_cbs->s.m->lineno,
+                                  input_cbs->s.m->mac->name );
+                     } else {
+                         out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",
+                                  "\t\t\tLine %d of file '%s'\n",
+                                  sym.name, p,
+                                  input_cbs->s.f->lineno,
+                                  input_cbs->s.f->filename );
+                     }
+                     if( inc_level > 1 ) {
+                         show_include_stack();
+                     }
                 }
                 scan_err = true;
             }

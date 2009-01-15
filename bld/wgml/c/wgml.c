@@ -26,8 +26,12 @@
 *
 * Description:  WGML top level driver module and file I/O.
 *               not yet functional
+*
+*
+*
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
 *   as found on www.cbttape.org files 280 - 288
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -244,6 +248,8 @@ static  void    add_file_cb_entry( void )
     nip = mem_alloc( sizeof( inputcb ) );
     nip->hidden_head = NULL;
     nip->hidden_tail = NULL;
+    nip->if_cb       = mem_alloc( sizeof( ifcb) );
+    memset( nip->if_cb, '\0', sizeof( ifcb ) );
     nip->fmflags = II_file;
     nip->s.f    = new;
     init_dict( &nip->local_dict );
@@ -285,6 +291,14 @@ static  void    del_input_cb_entry( void )
     free_lines( wk->hidden_head );
 
     free_dict( &wk->local_dict );
+    if( wk->if_cb != NULL ) {
+        if( wk->if_cb->if_level > 0 ) {
+            out_msg( "ERR_IF_level not zero at EOF %d\n", wk->if_cb->if_level );
+            show_include_stack();
+            err_count++;
+        }
+        mem_free( wk->if_cb );
+    }
 
     if( wk->fmflags & II_macro ) {
 /*
@@ -420,6 +434,10 @@ bool    get_line( void )
 }
 
 
+/***************************************************************************/
+/*  output the filenames + lines which were included                       */
+/***************************************************************************/
+
 void    show_include_stack( void )
 {
     inputcb *   ip;
@@ -448,6 +466,11 @@ void    show_include_stack( void )
     return;
 }
 
+
+/***************************************************************************/
+/*  increment include level                                                */
+/***************************************************************************/
+
 void    inc_inc_level( void )
 {
     inc_level++;                        // start new level
@@ -456,13 +479,43 @@ void    inc_inc_level( void )
     }
 }
 
+
+/***************************************************************************/
+/* remove leading  .  from input                                           */
+/***************************************************************************/
+
+static void remove_indentation( void )
+{
+    char    *   p;
+
+    p = buff2;
+    while( *p == SCR_char && *(p+1) == ' ' ) {
+        while( *++p == ' ' ) /* empty */ ;  // skip blanks
+    }
+    if( p != buff2 ) {                  // found some blanks now copy buffer
+        char *   pb = buff2;
+
+        while( *p ) {
+            *pb++ = *p++;
+        }
+        *pb = '\0';
+        buff2_lg = strnlen_s( buff2, buf_size );
+//      if( GlobalFlags.research && GlobalFlags.firstpass ) {
+//          out_msg( "%s<< Indentremoved\n", buff2 );
+//      }
+    }
+}
+
+
 /***************************************************************************/
 /*  process the input file                                                 */
 /***************************************************************************/
 
 static  void    proc_GML( char * filename )
 {
+    ifcb    *   ic;
     filecb  *   cb;
+
     char        attrwork[ 32 ];
 
     ProcFlags.newLevelFile = 1;
@@ -521,14 +574,33 @@ static  void    proc_GML( char * filename )
         /*******************************************************************/
         /*  process an input file / macro                                  */
         /*******************************************************************/
+        ic = input_cbs->if_cb;          // .if .th .el controlblock
 
         while( !(input_cbs->fmflags & II_eof) ) {
+
+            if( !ProcFlags.keep_ifstate ) {
+                if( ic->if_level > 0 ) {// if .if active
+                    if( ic->if_flags[ ic->if_level ].ifelse // after else
+                        && !ic->if_flags[ ic->if_level ].ifdo ) {// no do group
+                        ic->if_level--; // pop .if stack one level
+                    }
+                }
+            }
 
             if( !get_line() ) {
                 break;                  // eof
             }
+            if( !ProcFlags.keep_ifstate ) {
+                if( !ic->if_flags[ ic->if_level ].ifdo ) {  // no do group
+                    ic->if_flags[ ic->if_level ].ifthen = false;// not in then
+                    ic->if_flags[ ic->if_level ].ifelse = false;// not in else
+                }
+            } else {
+                ProcFlags.keep_ifstate = false;
+            }
 
-            process_line();
+            remove_indentation();       // ".  .  .  .cw"  becomes ".cw" only
+            process_line();             // substitute variables
             scan_line();
 
             if( ProcFlags.newLevelFile ) {
@@ -557,6 +629,7 @@ static  void    proc_GML( char * filename )
     }
 }
 
+
 /***************************************************************************/
 /*  printStats show statistics at program end                              */
 /***************************************************************************/
@@ -570,6 +643,7 @@ static  void    print_stats( void )
     out_msg( "   Returncode: %6d\n",  err_count ? 8 : wng_count ? 4 : 0 );
 
 }
+
 
 /***************************************************************************/
 /*  initPass                                                               */

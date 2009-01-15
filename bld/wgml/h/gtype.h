@@ -60,6 +60,7 @@
                                         // arbitrary value, not found in docu!!!
 #define MAC_STAR_NAME   "_"             // local variable name for &*
 
+#define MAX_IF_LEVEL    10              // maximum nested .if s
 
 /* default filename extensions */
 #define DEF_EXT         ".def"
@@ -218,6 +219,38 @@ typedef struct  macrocb {
     mac_entry   *   mac;                // macro definition entry
 } macrocb;
 
+
+/***************************************************************************/
+/*  Stack for .if .th .el .do processing                                   */
+/***************************************************************************/
+
+typedef struct ifflags {
+
+    unsigned    iflast  : 1;            // .if was last line
+    unsigned    iftrue  : 1;            // last .if was true
+    unsigned    iffalse : 1;            // last .if was false
+
+    unsigned    ifthen  : 1;            // processing object of then
+    unsigned    ifelse  : 1;            // processing object of else
+    unsigned    ifdo    : 1;            // processing object of do group
+
+    unsigned    ifcwte  : 1;            // .th or .el control word
+    unsigned    ifcwdo  : 1;            // .do control word
+    unsigned    ifcwif  : 1;            // .if control word
+
+} ifflags;
+
+
+typedef struct ifcb {
+    int             if_level;           // nesting level
+    ifflags         if_flags[ MAX_IF_LEVEL + 1];// index 0 not used
+} ifcb;
+
+
+/***************************************************************************/
+/*  Flags for input                                                        */
+/***************************************************************************/
+
 typedef enum {
     II_file     = 0x01,                 // inputcb is file
     II_macro    = 0x02,                 // inputcb is macro
@@ -233,6 +266,7 @@ typedef struct  inputcb {
     inp_line        *   hidden_head;    // manage split lines at ; or :
     inp_line        *   hidden_tail;    // manage split lines at ; or :
     symvar          *   local_dict;     // local symbol dictionary
+    ifcb            *   if_cb;          // for controlling .if .th .el
     union  {
         filecb      *   f;              // used if input is from file
         macrocb     *   m;              // used if input is from macro
@@ -329,5 +363,7 @@ typedef struct opt_font {
     uint32_t            space;
     uint32_t            height;
 } opt_font;
+
+
 
 #endif                                  // GTYPE_H_INCLUDED

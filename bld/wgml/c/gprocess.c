@@ -26,6 +26,7 @@
 *
 * Description:  WGML input line processing
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
+*   see comment in wgml.c
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -271,7 +272,6 @@ void        process_line( void )
                     }
                 }
             }
-//          *p2 = '\0';
             pchar = strchr( pw, ampchar );  // look for next & in buffer
         }                               // while & found
 

@@ -114,7 +114,6 @@ global  struct GlobalFlags {
     unsigned        freed         : 1;
     unsigned        freee         : 1;
     unsigned        research      : 1;  // research mode, minimal formatting
-                                        // research mode will eventually go away
 } GlobalFlags;                          // Global flags
 
 global struct ProcFlags {
@@ -124,7 +123,7 @@ global struct ProcFlags {
     unsigned        in_macro_define : 1;// macro definition active
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
-    unsigned        free6           : 1;
+    unsigned        keep_ifstate    : 1;// leave ifstak unchanged for next line
     unsigned        free7           : 1;
 
     unsigned        free8           : 1;
@@ -137,7 +136,6 @@ global struct ProcFlags {
     unsigned        freef           : 1;
 
 } ProcFlags;                            // processing flags
-
 
 global  size_t          buf_size;       // default buffer size
 global  char        *   token_buf;

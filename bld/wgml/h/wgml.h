@@ -71,6 +71,7 @@ extern  void    show_include_stack( void );
 extern  void        garginit( void );
 extern  void        garginitdot( void );
 extern  condcode    getarg( void );
+extern  condcode    getqst( void );
 extern  bool        test_identifier_char( char c );
 extern  bool        test_macro_char( char c );
 extern  bool        test_symbol_char( char c );
@@ -161,12 +162,22 @@ extern void     reset_auto_inc_dict( symvar * dict );
 extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 
 /*
- * protoypes for the gml processing routines
+ * prototypes for the gml processing routines
  */
 
-#define pick(name, length, routine, flags)  static void routine( const gmltag * entry );
+#define pick( name, length, routine, flags )  extern void routine( const gmltag * entry );
 
 #include "gtags.h"
+
+#undef pick
+
+/*
+ * prototypes for the script control word processing routines
+ */
+
+#define pick( name, length, routine, flags )  extern void routine( void );
+
+#include "gscrcws.h"
 
 #undef pick
 
