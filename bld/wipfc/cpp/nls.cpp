@@ -56,7 +56,7 @@ void Nls::setCodePage( int cp )
 #ifndef __LINUX__
     _setmbcp( cp ); //doesn't do much of anything in OW
 #endif
-    std::string path( Environment.value( "IPFC" ) );
+    std::string path( Environment.value( "WIPFC" ) );
     if( path.length() )
 #ifndef __LINUX__
         path += '\\';
@@ -104,7 +104,7 @@ void Nls::readEntityFile( std::FILE *entty )
 /*****************************************************************************/
 void Nls::setLocalization( const char *loc)
 {
-    std::string path( Environment.value( "IPFC" ) );
+    std::string path( Environment.value( "WIPFC" ) );
     if( path.length() )
 #ifndef __LINUX__
         path += '\\';

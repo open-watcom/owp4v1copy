@@ -48,9 +48,9 @@ int main(int argc, char **argv)
     std::cout << "Copyright (c) " << CURR_YEAR << " Open Watcom Contributors. All Rights Reserved." << std::endl;
     std::cout << "Source code is available under the Sybase Open Watcom Public License." << std::endl;
     std::cout << "See http://www.openwatcom.org/ for details." << std::endl;
-    Environment.add( "IPFC" );
-    if( Environment.value( "IPFC" ).empty() ) {
-        std::cout << "The 'IPFC' environment variable needs to be set. ";
+    Environment.add( "WIPFC" );
+    if( Environment.value( "WIPFC" ).empty() ) {
+        std::cout << "The 'WIPFC' environment variable needs to be set. ";
         std::cout << "It should contain the name of the directory containing .nls and entity.txt" << std::endl;
         return retval;
     }
