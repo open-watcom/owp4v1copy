@@ -9,8 +9,10 @@
 
 :include readonly.sp
 #include <lmcons.h>
-#include <naptypes.h>
 #include <in6addr.h>
+#ifdef USES_RAS_QUARANTINE_APIS
+    #include <naptypes.h>
+#endif
 
 :include cpluspro.sp
 
@@ -19,7 +21,9 @@ DECLARE_HANDLE( HRASCONN );
 typedef HRASCONN    *LPHRASCONN;
 
 /* RAS NAP flags */
-#define RASNAP_ProbationTime    0x00000001L
+#ifdef USES_RAS_QUARANTINE_APIS
+    #define RASNAP_ProbationTime    0x00000001L
+#endif
 
 /* RAS maximum sizes */
 #define RAS_MaxDeviceType           16
@@ -324,6 +328,7 @@ typedef HRASCONN    *LPHRASCONN;
 #endif
 
 /* RAS NAP state */
+#ifdef USES_RAS_QUARANTINE_APIS
 typedef struct _tagRasNapState {
     DWORD           dwSize;
     DWORD           dwFlags;
@@ -331,6 +336,7 @@ typedef struct _tagRasNapState {
     ProbationTime   probationTime;
 } RASNAPSTATE;
 typedef RASNAPSTATE *LPRASNAPSTATE;
+#endif
 
 /* RAS connection */
 typedef struct tagRASCONNA {
@@ -1239,7 +1245,9 @@ DWORD APIENTRY  RasSetEapUserDataW( HANDLE, LPCWSTR, LPCWSTR, BYTE *, DWORD );
 #if (WINVER >= 0x0501)
 DWORD APIENTRY  RasDeleteSubEntryA( LPCSTR, LPCSTR, DWORD );
 DWORD APIENTRY  RasDeleteSubEntryW( LPCWSTR, LPCWSTR, DWORD );
+#ifdef USES_RAS_QUARANTINE_APIS
 DWORD APIENTRY  RasGetNapStatus( HRASCONN, LPRASNAPSTATE );
+#endif
 #endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
