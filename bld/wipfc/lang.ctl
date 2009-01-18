@@ -30,8 +30,8 @@ cdsay .
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/wipfc.exe       <RELROOT>/binnt/wipfc.exe
 
-#  [ IFDEF (os_linux "") <2*> ]
-#    <CPCMD> <PROJDIR>/linux386/wipfc.exe    <RELROOT>/binl/wipfc
+  [ IFDEF (os_linux "") <2*> ]
+    <CPCMD> <PROJDIR>/linux386/wipfc.exe    <RELROOT>/binl/wipfc
 
 [ BLOCK <1> clean ]
 #==================

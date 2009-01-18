@@ -1,31 +1,21 @@
 proj_name = wipfc
 
-#next line is temporary
-wipfc_dir = $dev_dir/$proj_name
-
-!ifndef wipfc_autodepends
 wipfc_autodepends = .autodepend
-!endif
-
-name = $(proj_name).exe
-
-PROJECT : $(name) .symbolic
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
 extra_cpp_flags = -xs -d__STDC_LIMIT_MACROS
-extra_l_flags = op eliminate
-
 !ifeq release 0
-extra_l_flags = $(extra_l_flags) op map
-extra_cpp_flags = $(extra_cpp_flags) -et
+extra_cpp_flags += -et
 !endif
 
-inc_dirs = -I"$(wipfc_dir)/cpp" -I"$(watcom_dir)/h"
+extra_l_flags = op eliminate,map
 
-.cpp : $(wipfc_dir)/cpp
+inc_dirs = -I"../cpp" -I"$(watcom_dir)/h"
+
+.cpp : ../cpp
 
 objs =  main.obj compiler.obj document.obj env.obj ipfbuffer.obj ipffile.obj lexer.obj
 
@@ -40,6 +30,5 @@ tagobjs=element.obj text.obj entity.obj punct.obj whtspc.obj word.obj tag.obj ar
         ol.obj p.obj parml.obj pbutton.obj rm.obj sl.obj table.obj title.obj ul.obj&
         warning.obj xmp.obj
 
-$(name) : $(objs) $(objobjs) $(tagobjs)
-    $(linker) $(lflags) name $(name) file {$(objs) $(objobjs) $(tagobjs)}
-
+wipfc.exe : $(objs) $(objobjs) $(tagobjs)
+    $(linker) $(lflags) name $@ file {$(objs) $(objobjs) $(tagobjs)}

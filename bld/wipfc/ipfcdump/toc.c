@@ -28,7 +28,7 @@ static void readTOCEntry( FILE *in, FILE *out, uint32_t offset, size_t count1, s
     size_t count2;
     size_t textSize;
     uint16_t cellIndex;
-    uint8_t text[ 256 ];
+    char text[ 256 ];
     wchar_t wtext[ 256 ];
     //long int nextPos = ftell(in);
     fread( &toc, sizeof(TocEntry), 1, in );

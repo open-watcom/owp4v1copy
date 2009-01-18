@@ -1,7 +1,7 @@
 // Dump the cell data
 
 #include <malloc.h>
-#include <memory.h>
+#include <string.h>
 #include "ipfcdump.h"
 
 static void readCell( FILE *, FILE * );

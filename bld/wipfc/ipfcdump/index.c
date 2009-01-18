@@ -1,6 +1,6 @@
 // Dump the index data
 
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "ipfcdump.h"
 
@@ -33,7 +33,7 @@ static void processIndex( FILE *in, FILE *out, size_t items )
     IndexItem   idx;
     size_t      count1;
     size_t      count2;
-    uint8_t     buffer[ 256 ];
+    char        buffer[ 256 ];
     wchar_t     text[ 256 ];
     for( count1 = 0; count1 < items; count1++ ) {
         fread( &idx, sizeof(IndexItem), 1, in );

@@ -1,8 +1,7 @@
 // Dump bitmap information
 
 #include <ctype.h>
-#include <malloc.h>
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "ipfcdump.h"
 

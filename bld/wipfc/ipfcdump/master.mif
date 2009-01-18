@@ -1,32 +1,21 @@
 proj_name = ipfcdump
 
-#next line is temporary
-wipfc_dir = $dev_dir/wipfc/$proj_name
-
-!ifndef ipfcdump_autodepends
 ipfcdump_autodepends = .autodepend
-!endif
-
-name = $(proj_name).exe
-
-PROJECT : $(name) .symbolic
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-extra_l_flags = op eliminate
+extra_l_flags = op eliminate, map
 
-!ifeq release 0
-extra_l_flags = $(extra_l_flags) op map
-!endif
+inc_dirs = -I..
 
-.c : $ipfcdump_dir
+.c : ..
 
 objs =  ipfcdump.obj bitmap.obj cells.obj child.obj controls.obj dict.obj&
         extfiles.obj fonts.obj fts.obj gnames.obj header.obj&
         index.obj nls.obj panel.obj strings.obj toc.obj
 
-$(name) : $(objs)
-    $(linker) $(lflags) name $(name) file {$(objs) $(objobjs) $(tagobjs)}
+ipfcdump.exe : $(objs)
+    $(linker) $(lflags) name $@ file {$(objs)}
 

@@ -1,7 +1,7 @@
 // Dump the dictionary
 
 #include <malloc.h>
-#include <memory.h>
+#include <string.h>
 #include <stdlib.h>
 #include "ipfcdump.h"
 
