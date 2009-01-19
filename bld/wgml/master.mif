@@ -49,6 +49,7 @@ objs =  &
         gresrch.obj     &
         gscan.obj       &
         gsfunelu.obj    &
+        gsgoto.obj      &
         gsifdoel.obj    &
         gsetvar.obj     &
         gsymvar.obj     &

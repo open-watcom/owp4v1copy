@@ -169,6 +169,18 @@ typedef struct inp_line {
     char                value[ 1 ];     // line content variable length
 } inp_line;
 
+
+/***************************************************************************/
+/*  label control block                                                    */
+/***************************************************************************/
+typedef struct labelcb {
+    struct labelcb  *   prev;
+    fpos_t              pos;            // file position for label if file
+    ulong               lineno;         // lineno of label
+    char                label_name[ MAC_NAME_LENGTH + 1 ];
+} labelcb;
+
+
 /***************************************************************************/
 /*  macro definition entry  for macro dictionary                           */
 /***************************************************************************/
@@ -177,6 +189,7 @@ typedef struct mac_entry {
     char                    name[ MAC_NAME_LENGTH + 1 ];
     inp_line            *   macline;    // macro definition lines
     ulong                   lineno;     // lineno start of macro definition
+    labelcb             *   label_cb;   // controlling label definitions
     char                    mac_file_name[ 1 ]; // file name macro definition
                                             // var length
 } mac_entry;
@@ -194,6 +207,7 @@ typedef struct filecb {
     ulong           linemax;            // last line number to process
     size_t          usedlen;            // used data of filebuf
     fpos_t          pos;                // position for reopen
+    labelcb     *   label_cb;           // controlling label definitions
     char            fileattr[ MAX_FILE_ATTR + 1];  // T:xxxx
     char            filename[ 1 ];      // full filename var length
 } filecb;
@@ -207,6 +221,7 @@ typedef struct mac_parms {
     inp_line    *   starx;              // &*1 - &*x parms
 
 } mac_parms;
+
 
 /***************************************************************************/
 /*  Entry for an included macro                                            */

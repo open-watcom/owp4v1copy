@@ -182,7 +182,7 @@ static  char    *bad_cmd_line( char * msg, char *str, char n )
 /*  read an option file into memory                                        */
 /***************************************************************************/
 
-char *read_indirect_file( const char * filename )
+static  char    *read_indirect_file( const char * filename )
 {
     char    *   buf;
     char    *   str;

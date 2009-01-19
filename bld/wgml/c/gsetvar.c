@@ -102,9 +102,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                             "\t\t\tLine %d of file '%s'\n",
                             sym_start, cb->s.f->lineno, cb->s.f->filename );
                     }
-                    if( inc_level > 1) {
-                        show_include_stack();
-                    }
+                    show_include_stack();
                     err_count++;
                 }
             }
@@ -120,9 +118,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             if( !ProcFlags.suppress_msg ) {
                 out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
                 err_count++;
-                if( inc_level > 1) {
-                    show_include_stack();
-                }
+                show_include_stack();
             }
         }
     }
@@ -233,9 +229,7 @@ void    scr_se( void )
     if( *p == '\0' ) {
         if( !ProcFlags.suppress_msg ) {
             out_msg( "WNG_SYMBOL_VALUE_MISSING for %s\n", sym.name );
-            if( inc_level > 1) {
-                show_include_stack();
-            }
+            show_include_stack();
             wng_count++;
         }
         scan_err = true;
@@ -309,9 +303,7 @@ void    scr_se( void )
                                   input_cbs->s.f->lineno,
                                   input_cbs->s.f->filename );
                      }
-                     if( inc_level > 1 ) {
-                         show_include_stack();
-                     }
+                     show_include_stack();
                 }
                 scan_err = true;
             }

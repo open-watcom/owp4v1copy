@@ -28,13 +28,13 @@
 *               only uncommented control words are processed so far
 *
 ****************************************************************************/
-
+ 
 #ifndef pick
     #error macro pick not defined
 #endif
 //       control     tagname  routinename     flags
 //       word        length
-
+ 
   pick( "ap",         2,      scr_ap,       0           )
 //pick( "bd",         2,      scr_bd,       0           )
 //pick( "bi",         2,      scr_bi,       0           )
@@ -59,6 +59,7 @@
 //pick( "fn",         2,      scr_fn,       0           )
 //pick( "fo",         2,      scr_fo,       0           )
 //pick( "ga",         2,      scr_ga,       0           )
+  pick( "go",         2,      scr_go,       0           )
 //pick( "gt",         2,      scr_gt,       0           )
 //pick( "h1",         2,      scr_h1,       0           )
 //pick( "h2",         2,      scr_h2,       0           )
@@ -82,7 +83,7 @@
   pick( "se",         2,      scr_se,       0           )
 //pick( "sk",         2,      scr_sk,       0           )
 //pick( "sp",         2,      scr_sp,       0           )
-//pick( "sr",         2,      scr_sr,       0           )
+  pick( "sr",         2,      scr_se,       0           ) // treat as .se as substitute is always on
 //pick( "sy",         2,      scr_sy,       0           )
 //pick( "tb",         2,      scr_tb,       0           )
 //pick( "ti",         2,      scr_ti,       0           )
@@ -92,13 +93,5 @@
 //pick( "ty",         2,      scr_ty,       0           )
 //pick( "ul",         2,      scr_ul,       0           )
 //pick( "us",         2,      scr_us,       0           )
-//pick( "..",         2,      scr_label,    0           )
-
-
-#if 0
-   .  2022   not sure whether to put these into table
-  .'    40
-  .5     4
- .*  12591
- ...     2
-#endif
+  pick( "..",         2,      scr_label,    0           )
+ 

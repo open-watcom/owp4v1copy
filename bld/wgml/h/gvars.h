@@ -71,6 +71,9 @@ global  ulong           line_to;        // ending lineno to process
 #define LINEFROM_DEFAULT    1
 #define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
 
+global  char            gotarget[ MAC_NAME_LENGTH +1 ]; // .go to target name
+global  ulong           gotargetno;     // .go to line no
+
 global  int             err_count;      // Overall Errorcount
 global  int             wng_count;      // Overall warning count
 
@@ -124,7 +127,7 @@ global struct ProcFlags {
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
     unsigned        keep_ifstate    : 1;// leave ifstak unchanged for next line
-    unsigned        free7           : 1;
+    unsigned        goto_active     : 1;// processing .go label
 
     unsigned        free8           : 1;
     unsigned        free9           : 1;

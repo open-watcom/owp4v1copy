@@ -254,9 +254,10 @@ static  void    add_file_cb_entry( void )
     nip->s.f    = new;
     init_dict( &nip->local_dict );
 
-    new->lineno  = 0;
-    new->linemin = line_from;
-    new->linemax = line_to;
+    new->lineno   = 0;
+    new->linemin  = line_from;
+    new->linemax  = line_to;
+    new->label_cb = NULL;
     strcpy_s( new->filename, fnlen + 1, try_file_name );
     mem_free( try_file_name );
     try_file_name = NULL;
@@ -283,6 +284,7 @@ static  void    add_file_cb_entry( void )
 static  void    del_input_cb_entry( void )
 {
     inputcb     *   wk;
+    labelcb     *   lw;
 
     wk = input_cbs;
     if( wk == NULL ) {
@@ -309,6 +311,15 @@ static  void    del_input_cb_entry( void )
     } else {
         if( wk->s.f->flags & FF_open ) {// close file if neccessary
             fclose( wk->s.f->fp );
+        }
+        lw = wk->s.f->label_cb;         // free labels
+        if( GlobalFlags.research ) {
+            print_labels( lw );         // print labels
+        }
+        while( lw != NULL ) {
+           wk->s.f->label_cb = lw->prev;
+           mem_free( lw );
+           lw = wk->s.f->label_cb;
         }
         mem_free( wk->s.f );
     }
@@ -341,6 +352,8 @@ static  void    get_macro_line( void )
     } else {
         cb->lineno++;
         cb->flags          |= FF_startofline;
+        cb->flags          &= ~FF_eof;
+        input_cbs->fmflags &= ~II_eof;
         strcpy_s( buff2, buf_size, cb->macline->value );
         cb->macline         = cb->macline->next;
     }
@@ -376,6 +389,7 @@ bool    get_line( void )
                 reopen_inc_fp( cb );
             }
             do {
+                fgetpos( cb->fp, &cb->pos );// remember position for label
                 p = fgets( buff2, buf_size, cb->fp );
                 if( p != NULL ) {
                     if( cb->lineno >= cb->linemax ) {
@@ -442,26 +456,28 @@ void    show_include_stack( void )
 {
     inputcb *   ip;
 
-    ip = input_cbs;
-    while( ip != NULL ) {
-        switch( ip->fmflags ) {
-        case    II_file:
-            out_msg( "\tIncluded from line %d of file '%s'\n",
-                     ip->s.f->lineno,
-                     ip->s.f->filename );
-            break;
-        case    II_macro :
-            out_msg( "\tLine %d of macro '%s' defined at line %d of file '%s'\n",
-                     ip->s.m->lineno,
-                     ip->s.m->mac->name,
-                     ip->s.m->mac->lineno,
-                     ip->s.m->mac->mac_file_name);
-            break;
-        default:
-            out_msg( "\tERR Included from unknown ( master document? )\n" );
-            break;
+    if( inc_level > 1 ) {
+        ip = input_cbs;
+        while( ip != NULL ) {
+            switch( ip->fmflags ) {
+            case    II_file:
+                out_msg( "\tIncluded from line %d of file '%s'\n",
+                         ip->s.f->lineno,
+                         ip->s.f->filename );
+                break;
+            case    II_macro :
+                out_msg( "\tLine %d of macro '%s' defined at line %d of file '%s'\n",
+                         ip->s.m->lineno,
+                         ip->s.m->mac->name,
+                         ip->s.m->mac->lineno,
+                         ip->s.m->mac->mac_file_name);
+                break;
+            default:
+                out_msg( "\tERR Included from unknown ( master document? )\n" );
+                break;
+            }
+            ip = ip->prev;
         }
-        ip = ip->prev;
     }
     return;
 }
@@ -574,9 +590,9 @@ static  void    proc_GML( char * filename )
         /*******************************************************************/
         /*  process an input file / macro                                  */
         /*******************************************************************/
-        ic = input_cbs->if_cb;          // .if .th .el controlblock
 
         while( !(input_cbs->fmflags & II_eof) ) {
+            ic = input_cbs->if_cb;      // .if .th .el controlblock
 
             if( !ProcFlags.keep_ifstate ) {
                 if( ic->if_level > 0 ) {// if .if active
@@ -599,7 +615,14 @@ static  void    proc_GML( char * filename )
                 ProcFlags.keep_ifstate = false;
             }
 
-            remove_indentation();       // ".  .  .  .cw"  becomes ".cw" only
+            remove_indentation();       // ".  .  .  .cw"  becomes ".cw"
+
+            if( ProcFlags.goto_active ) {
+                if( !gotarget_reached() ) {
+                    continue;           // skip processing
+                }
+                ProcFlags.goto_active = false;
+            }
             process_line();             // substitute variables
             scan_line();
 
@@ -610,7 +633,34 @@ static  void    proc_GML( char * filename )
         if( ProcFlags.newLevelFile ) {
             continue;
         }
-
+        if( ProcFlags.goto_active ) {
+            err_count++;
+            if( input_cbs->fmflags & II_macro ) {
+                out_msg( "ERR_GOTO Label not found %s\n"
+                         "\t\t\tLine %d of macro '%s'\n",
+                         gotarget,
+                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            } else {
+                out_msg( "ERR_GOTO Label not found %s\n"
+                         "\t\t\tLine %d of file '%s'\n",
+                         gotarget,
+                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            }
+            show_include_stack();
+        }
+        if( ic->if_level > 0 ) {        // if .if active
+            err_count++;
+            if( input_cbs->fmflags & II_macro ) {
+                out_msg( "ERR_IFlevel nesting\n"
+                         "\t\t\tLine %d of macro '%s'\n",
+                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            } else {
+                out_msg( "ERR_IFlevel nesting\n"
+                         "\t\t\tLine %d of file '%s'\n",
+                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            }
+            show_include_stack();
+        }
         del_input_cb_entry();           // one level finished
         inc_level--;
         if( inc_level == 0 ) {          // EOF master document file

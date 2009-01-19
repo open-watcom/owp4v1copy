@@ -71,6 +71,9 @@ void init_global_vars( void )
     def_ext             = mem_alloc( sizeof( GML_EXT ) );
     strcpy_s( def_ext, sizeof( GML_EXT ), GML_EXT );
 
+    gotarget[ 0 ]       = '\0';         // no .go to target yet
+    gotargetno          = 0;            // no .go to target lineno
+
     err_count           = 0;            // total error count
     wng_count           = 0;            // total warnig count
 

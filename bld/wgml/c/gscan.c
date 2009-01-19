@@ -92,13 +92,13 @@ static  void    add_macro_cb_entry( mac_entry *me )
 
     init_dict( &nip->local_dict );
 
-    nip->fmflags = II_macro;
-    nip->s.m     = new;
+    nip->fmflags      = II_macro;
+    nip->s.m          = new;
 
-    new->lineno  = 0;
-    new->macline = me->macline;
-    new->mac     = me;
-    new->flags   = FF_macro;
+    new->lineno       = 0;
+    new->macline      = me->macline;
+    new->mac          = me;
+    new->flags        = FF_macro;
 
     nip->prev = input_cbs;
     input_cbs = nip;
@@ -172,8 +172,8 @@ extern  void    scr_ap( void )
 
 
 /*
- * free storage for the macro lines
- *
+ * free storage for macro lines
+ *              or split input lines
  */
 
 void    free_lines( inp_line * line )
@@ -283,7 +283,7 @@ extern  void    scr_dm( void )
      *  this is wgml 4.0 behaviour
      *
      */
-    while( *p && *p != ' ' ) {
+    while( *p && test_macro_char( *p ) ) {
         if( len < MAC_NAME_LENGTH ) {
             *pn++ = *p++;               // copy macroname
             *pn   = '\0';
@@ -477,6 +477,7 @@ extern  void    scr_dm( void )
         len = strlen( cb->s.f->filename );
         me  = mem_alloc( len + sizeof( mac_entry ) );
         me->next = NULL;
+        me->label_cb = NULL;
         strcpy( me->name, macname );
         me->macline = head;
         me->lineno = lineno_start;
@@ -952,7 +953,6 @@ static void     scan_script( void)
     char        *   pt;
     int             toklen;
     int             k;
-    char            c;
 
     cb = input_cbs;
     p = scan_start + 1;
@@ -960,64 +960,72 @@ static void     scan_script( void)
     if( *p == '*' ) {
         return;                         // .*   +++ ignore comment up to EOL
     }
+
     if( *p == SCR_char && *(p+1) == SCR_char ) {
-        return;                         // ...  +++ ignore label line for now
-    }
-
-    if( *p == '\'' ) {                  // .'
-        p++;
-        ProcFlags.CW_sep_ignore = 1;
-    } else {
-        ProcFlags.CW_sep_ignore = 0;
-
-        if( *p == SCR_char ) {          // ..
-            p++;
-            ProcFlags.macro_ignore = 1;
+            pt = token_buf;
+            *pt++ = SCR_char;               // special for ...label
+            *pt++ = SCR_char;
+            *pt   = '\0';
             me = NULL;
-        } else {
-            ProcFlags.macro_ignore = 0;
-        }
-    }
-
-    if( !ProcFlags.CW_sep_ignore ) { // scan line for CW_sep_char
-        char    *   pchar;
-
-        pchar = search_separator( buff2, CW_sep_char );
-
-        if( pchar != NULL ) {
-            split_input( buff2, pchar + 1 );// ignore CW_sep_char
-            *pchar= '\0';               // delete CW_sep_char
-            buff2_lg = strlen( buff2 ); // new length of first part
-        }
-    }
-
-    scan_start = p;
-    c = *scan_start;
-
-    token_buf[ 0 ] = '\0';
-    pt = token_buf;
-    while( *p && test_macro_char( *p ) ) {  // end of controlword
-       *pt++ = *p++;                    // copy to TokenBuf
-    }
-    toklen = pt - token_buf;
-    if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
-
-
-//       copy_buff2_to_output();    TBD
-
-
-       return;
-    }
-    *pt = '\0';
-
-    if( toklen >= MAC_NAME_LENGTH ) {
-        *(token_buf + MAC_NAME_LENGTH) = '\0';
-    }
-    if( !ProcFlags.macro_ignore ) {
-        me = find_macro( macro_dict, token_buf );
+            scan_start = p + 2;
+            toklen = 2;
     } else {
-        me = NULL;
+
+        if( *p == '\'' ) {                  // .'
+            p++;
+            ProcFlags.CW_sep_ignore = 1;
+        } else {
+            ProcFlags.CW_sep_ignore = 0;
+
+            if( *p == SCR_char ) {          // ..
+                p++;
+                ProcFlags.macro_ignore = 1;
+                me = NULL;
+            } else {
+                ProcFlags.macro_ignore = 0;
+            }
+        }
+
+        if( !ProcFlags.CW_sep_ignore ) { // scan line for CW_sep_char
+            char    *   pchar;
+
+            pchar = search_separator( buff2, CW_sep_char );
+
+            if( pchar != NULL ) {
+                split_input( buff2, pchar + 1 );// ignore CW_sep_char
+                *pchar= '\0';               // delete CW_sep_char
+                buff2_lg = strlen( buff2 ); // new length of first part
+            }
+        }
+
+        scan_start = p;
+
+        token_buf[ 0 ] = '\0';
+        pt = token_buf;
+        while( *p && test_macro_char( *p ) ) {  // end of controlword
+           *pt++ = *p++;                    // copy to TokenBuf
+        }
+
+        toklen = pt - token_buf;
+
+        if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
+
+//         copy_buff2_to_output();    TBD
+
+           return;
+        }
+        *pt = '\0';
+
+        if( toklen >= MAC_NAME_LENGTH ) {
+            *(token_buf + MAC_NAME_LENGTH) = '\0';
+        }
+        if( !ProcFlags.macro_ignore ) {
+            me = find_macro( macro_dict, token_buf );
+        } else {
+            me = NULL;
+        }
     }
+
     if( me != NULL ) {                  // macro found
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_macro ) {

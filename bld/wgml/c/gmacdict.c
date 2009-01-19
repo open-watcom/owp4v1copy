@@ -78,13 +78,23 @@ static  void    free_macro_entry_short( mac_entry * me )
 {
     inp_line    *   ml;
     inp_line    *   mln;
+    labelcb     *   cb;
 
     if( me != NULL ) {
+        cb = me->label_cb;
+        if( GlobalFlags.research ) {
+            print_labels( cb );         // print label info
+        }
+        while( cb != NULL ) {
+            me->label_cb = cb->prev;
+            mem_free( cb );
+            cb = me->label_cb;
+        }
         ml = me->macline;
         while( ml != NULL ) {           // free all macro lines
-             mln = ml->next;
-             mem_free( ml );
-             ml = mln;
+            mln = ml->next;
+            mem_free( ml );
+            ml = mln;
         }
         mem_free( me );                 // now the entry itself
     }
@@ -100,9 +110,18 @@ void    free_macro_entry( mac_entry * * dict, mac_entry * me )
     inp_line    *   mln;
     mac_entry   *   wk;
     mac_entry   *   wkn;
-
+    labelcb     *   cb;
 
     if( me != NULL ) {
+        cb = me->label_cb;
+        if( GlobalFlags.research ) {
+            print_labels( cb );         // print label info
+        }
+        while( cb != NULL ) {
+            me->label_cb = cb->prev;
+            mem_free( cb );
+            cb = me->label_cb;
+        }
         ml = me->macline;
         while( ml != NULL ) {           // free all macro lines
              mln = ml->next;
@@ -181,6 +200,7 @@ void    print_macro_dict( mac_entry * dict )
     int                     cnt;
     int                     len;
     static  const   char    fill[ 10 ] = "         ";
+
     cnt = 0;
     wk = dict;
     out_msg( "\nList of defined macros:\n" );

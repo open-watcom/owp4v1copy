@@ -306,9 +306,7 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
                      "\t\t\tLine %d of file '%s'\n",
                      input_cbs->s.f->lineno, input_cbs->s.f->filename );
         }
-        if( inc_level > 1) {
-            show_include_stack();
-        }
+        show_include_stack();
         break;
     }
     return( result );
@@ -409,9 +407,7 @@ void    scr_if( void )
                          "\t\t\tLine %d of file '%s'\n",
                          input_cbs->s.f->lineno, input_cbs->s.f->filename );
             }
-            if( inc_level > 1) {
-                show_include_stack();
-            }
+            show_include_stack();
             err_count++;
             return;
         }
@@ -426,9 +422,7 @@ void    scr_if( void )
                          "\t\t\tLine %d of file '%s'\n",
                          input_cbs->s.f->lineno, input_cbs->s.f->filename );
             }
-            if( inc_level > 1) {
-                show_include_stack();
-            }
+            show_include_stack();
             err_count++;
             return;
         }
@@ -454,9 +448,7 @@ void    scr_if( void )
                              "\t\t\tLine %d of file '%s'\n",
                              input_cbs->s.f->lineno, input_cbs->s.f->filename );
                 }
-                if( inc_level > 1) {
-                    show_include_stack();
-                }
+                show_include_stack();
                 err_count++;
                 return;
             }
@@ -533,7 +525,8 @@ void    scr_if( void )
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
         out_msg( "\t.if %s Level %d\n"
                  "\t.ifcb iftrue %d, iffalse %d\n",
-                 cb->if_level, totalcondition ? "true" : "false",
+                 totalcondition ? "true" : "false",
+                 cb->if_level,
                  cb->if_flags[ cb->if_level ].iftrue,
                  cb->if_flags[ cb->if_level ].iffalse );
     }
@@ -604,9 +597,7 @@ void    scr_th( void )
                      "\t\t\tLine %d of file '%s'\n",
                      input_cbs->s.f->lineno, input_cbs->s.f->filename );
         }
-        if( inc_level > 1) {
-            show_include_stack();
-        }
+        show_include_stack();
         err_count++;
         return;
     }
@@ -676,9 +667,7 @@ void    scr_el( void )
                      "\t\t\tLine %d of file '%s'\n",
                      input_cbs->s.f->lineno, input_cbs->s.f->filename );
         }
-        if( inc_level > 1) {
-            show_include_stack();
-        }
+        show_include_stack();
         err_count++;
         return;
     }
@@ -743,9 +732,7 @@ void    scr_do( void )
                          "\t\t\tLine %d of file '%s'\n",
                          input_cbs->s.f->lineno, input_cbs->s.f->filename );
             }
-            if( inc_level > 1) {
-                show_include_stack();
-            }
+            show_include_stack();
             err_count++;
             return;
         }
@@ -775,9 +762,7 @@ void    scr_do( void )
                                  "\t\t\tLine %d of file '%s'\n",
                                  input_cbs->s.f->lineno, input_cbs->s.f->filename );
                     }
-                    if( inc_level > 1) {
-                        show_include_stack();
-                    }
+                    show_include_stack();
                     err_count++;
                     return;
                 }
@@ -794,9 +779,7 @@ void    scr_do( void )
                          "\t\t\tLine %d of file '%s'\n",
                          input_cbs->s.f->lineno, input_cbs->s.f->filename );
             }
-            if( inc_level > 1) {
-                show_include_stack();
-            }
+            show_include_stack();
             err_count++;
             return;
         }
