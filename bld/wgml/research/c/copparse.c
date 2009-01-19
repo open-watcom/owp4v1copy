@@ -33,6 +33,9 @@
 *                   display_device()
 *                   display_driver()
 *                   display_font()
+*                   get_cop_device()
+*                   get_cop_driver()
+*                   get_cop_font()
 *                   parse_defined_name()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
@@ -52,7 +55,11 @@
 
 #include "banner.h"
 #include "common.h"
+#include "copdev.h"
+#include "copdrv.h"
 #include "copfiles.h"
+#include "copfon.h"
+#include "cophdr.h"
 #include "findfile.h"
 #include "dfinterp.h"
 #include "research.h"
@@ -510,6 +517,235 @@ static void display_font( cop_font * in_font )
     }
 
     return;
+}
+
+/* Function get_cop_device().
+ * Converts the defined name of a :DEVICE block into a cop_device struct
+ * containing the information in that :DEVICE block.
+ *
+ * Parameter:
+ *      in_name points to the defined name of the device.
+ *
+ * Globals Used:
+ *      try_file_name contains the name of the device file, if found.
+ *      try_fp contains the FILE * for the device file, if found.
+ *
+ * Return:
+ *      on success, a cop_device instance containing the data.
+ *      on failure, a NULL pointer.
+ */
+
+static cop_device * get_cop_device( char const * in_name )
+{
+    cop_device      *   out_device  = NULL;
+    cop_file_type       file_type;
+
+    /* Acquire the file, if it exists. */
+
+    if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
+        out_msg( "The file for the device %s was not found\n", in_name );
+        err_count++;
+        g_suicide();
+    }
+
+    /* Determine if the file encodes a :DEVICE block. */
+    
+    file_type = parse_header( try_fp );
+
+    switch( file_type ) {
+    case file_error:
+
+        /* File error, including premature eof. */
+
+        out_msg( "ERR_FILE_IO %d %s\n", errno, try_file_name );
+        err_count++;
+        g_suicide();
+
+    case not_bin_dev:
+    case not_se_v4_1:
+    case dir_v4_1_se:
+    
+        /* Wrong type of file: something is wrong with the device library. */
+
+        out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
+        return( out_device );
+
+    case se_v4_1_not_dir:
+
+        /* try_fp was a same-endian version 4.1 file, but not a directory file. */
+
+        if( !is_dev_file( try_fp ) ) {
+            out_msg( "Device library problem: file given for device %s does not" \
+                            " encode a device:\n  %s\n", in_name, try_file_name );
+            break;
+        }
+
+        out_device = parse_device( try_fp );
+        if( out_device == NULL ) \
+            out_msg( "Device library problem: file given for device %s appears" \
+                            " to be corrupted:\n  %s\n", in_name, try_file_name );
+        break;
+
+    default:
+
+        /* parse_header() returned an unknown value. */
+
+        out_msg("wgml internal error\n");
+        err_count++;
+        g_suicide();
+    }
+
+    return( out_device );
+}
+
+/* Function get_cop_driver().
+ * Converts the defined name of a :DRIVER block into a cop_driver struct
+ * containing the information in that :DRIVER block.
+ *
+ * Parameter:
+ *      in_name points to the defined name of the device.
+ *
+ * Returns:
+ *      on success, a cop_driver instance containing the data.
+ *      on failure, a NULL pointer.
+ */
+
+static cop_driver * get_cop_driver( char const * in_name )
+{
+    cop_driver      *   out_driver  = NULL;
+    cop_file_type       file_type;
+
+    /* Acquire the file, if it exists. */
+
+    if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
+        out_msg( "The file for the driver %s was not found\n", in_name );
+        err_count++;
+        g_suicide();
+    }
+
+    /* Determine if the file encodes a :DRIVER block. */
+    
+    file_type = parse_header( try_fp );
+
+    switch( file_type ) {
+    case file_error:
+
+        /* File error, including premature eof. */
+
+        out_msg( "ERR_FILE_IO %d %s\n", errno, try_file_name );
+        err_count++;
+        g_suicide();
+
+    case not_bin_dev:
+    case not_se_v4_1:
+    case dir_v4_1_se:
+    
+        /* Wrong type of file: something is wrong with the device library. */
+
+        out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
+        return( out_driver );
+
+    case se_v4_1_not_dir:
+
+        /* try_fp was a same-endian version 4.1 file, but not a directory file. */
+
+        if( !is_drv_file( try_fp ) ) {
+            out_msg( "Device library problem: file given for driver %s does not" \
+                            " encode a driver:\n  %s\n", in_name, try_file_name );
+            break;
+        }
+
+        out_driver = parse_driver( try_fp );
+        if( out_driver == NULL ) \
+            out_msg( "Device library problem: file given for driver %s appears" \
+                            " to be corrupted:\n  %s\n", in_name, try_file_name );
+        break;
+
+    default:
+
+        /* parse_header() returned an unknown value. */
+
+        out_msg("wgml internal error\n");
+        err_count++;
+        g_suicide();
+    }
+
+    return( out_driver );
+}
+
+/* Function get_cop_font().
+ * Converts the defined name of a :FONT block into a cop_font struct
+ * containing the information in that :FONT block.
+ *
+ * Parameter:
+ *      in_name points to the defined name of the font.
+ *
+ * Returns:
+ *      on success, a cop_font instance containing the data.
+ *      on failure, a NULL pointer.
+ */
+
+static cop_font * get_cop_font( char const * in_name )
+{
+    cop_font        *   out_font    = NULL;
+    cop_file_type       file_type;
+
+    /* Acquire the file, if it exists. */
+
+    if( !search_file_in_dirs( (char *) in_name, "", "", ds_bin_lib ) ) {
+        out_msg( "The file for the font %s was not found\n", in_name );
+        err_count++;
+        g_suicide();
+    }
+
+    /* Determine if the file encodes a :FONT block. */
+    
+    file_type = parse_header( try_fp );
+
+    switch( file_type ) {
+    case file_error:
+
+        /* File error, including premature eof. */
+
+        out_msg( "ERR_FILE_IO %d %s\n", errno, try_file_name );
+        err_count++;
+        g_suicide();
+
+    case not_bin_dev:
+    case not_se_v4_1:
+    case dir_v4_1_se:
+    
+        /* Wrong type of file: something is wrong with the device library. */
+
+        out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
+        return( out_font );
+
+    case se_v4_1_not_dir:
+
+        /* try_fp was a same-endian version 4.1 file, but not a directory file. */
+
+        if( !is_fon_file( try_fp ) ) {
+            out_msg( "Device library problem: file given for font %s does not" \
+                            " encode a font:\n  %s\n", in_name, try_file_name );
+            break;
+        }
+
+        out_font = parse_font( try_fp, in_name );
+        if( out_font == NULL ) \
+            out_msg( "Device library problem: file given for font %s appears" \
+                            " to be corrupted:\n  %s\n", in_name, try_file_name );
+        break;
+
+    default:
+
+        /* parse_header() returned an unknown value. */
+
+        out_msg("wgml internal error\n");
+        err_count++;
+        g_suicide();
+    }
+
+    return( out_font );
 }
 
 /* Function parse_defined_name().

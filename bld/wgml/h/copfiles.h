@@ -26,8 +26,6 @@
 *
 * Description:  Declares the items needed to parse and interpret the 
 *               information from .COP files:
-*               an enum:
-*                   cop_file_type
 *               the structs:
 *                   cop_device
 *                       box_block
@@ -74,15 +72,10 @@
 *               the functions:
 *                   cop_setup()
 *                   cop_teardown()
-*                   get_cop_device()
-*                   get_cop_driver()
-*                   get_cop_font()
-*                   parse_header()
 *
 * Note:         The field names are intended to correspond to the field names 
 *               shown in the Wiki. The Wiki structs are named when the structs
 *               defined here are defined; they are not identical.
-*
 ****************************************************************************/
 
 #ifndef COPFILE_H_INCLUDED
@@ -92,18 +85,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-
-/* Enum definition. */
-
-/* This enum is used for the return value of function parse_header(). */
-
-typedef enum {
-    dir_v4_1_se,        // The file is a same-endian version 4.1 directory file.
-    se_v4_1_not_dir,    // The file is a same-endian version 4.1 device, driver, or font file.
-    not_se_v4_1,        // The file is not same-endian and/or not version 4.1.
-    not_bin_dev,        // The file is not a binary device file at all.
-    file_error          // An error occurred while reading the file.
-} cop_file_type;
 
 /* Structure declarations. */
 
@@ -528,10 +509,6 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 
 extern void             cop_setup( void );
 extern void             cop_teardown( void );
-extern cop_device   *   get_cop_device( char const * defined_name );
-extern cop_driver   *   get_cop_driver( char const * defined_name );
-extern cop_font     *   get_cop_font( char const * defined_name );
-extern cop_file_type    parse_header( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

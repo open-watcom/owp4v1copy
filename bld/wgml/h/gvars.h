@@ -143,8 +143,6 @@ global struct ProcFlags {
 global  size_t          buf_size;       // default buffer size
 global  char        *   token_buf;
 
-global char         *   buffout;        // output buffer
-
 global char         *   buff2;          // input buffer
 global size_t           buff2_lg;       // input buffer used length
 global char         *   open_paren;     // ( in input

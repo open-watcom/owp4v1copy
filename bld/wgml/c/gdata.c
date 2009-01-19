@@ -99,6 +99,5 @@ void init_global_vars( void )
     init_macro_dict( &macro_dict );
 
     buf_size            = BUF_SIZE;
-    buffout             = NULL;
     buff2               = mem_alloc( buf_size );
 }

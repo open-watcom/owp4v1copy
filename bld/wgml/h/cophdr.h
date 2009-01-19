@@ -24,16 +24,31 @@
 *
 *  ========================================================================
 *
-* Description:  Declares functions used to manipulate .COP font files:
-*                   is_fon_file()
-*                   parse_font()
+* Description:  Declares an enum and a function which are used to parse
+*               .COP file headers: 
+*                   cop_file_type
+*                   parse_header()
 *
+* Note:         The Wiki should be consulted for any term whose meaning is
+*               not apparent. This should help in most cases.
 ****************************************************************************/
 
-#ifndef COPFON_H_INCLUDED
-#define COPFON_H_INCLUDED
+#ifndef COPHDR_H_INCLUDED
+#define COPHDR_H_INCLUDED
 
-#include "copfiles.h"
+#include <stdio.h>
+
+/* Enum definition. */
+
+/* This enum is used for the return value of function parse_header(). */
+
+typedef enum {
+    dir_v4_1_se,        // The file is a same-endian version 4.1 directory file.
+    se_v4_1_not_dir,    // The file is a same-endian version 4.1 device, driver, or font file.
+    not_se_v4_1,        // The file is not same-endian and/or not version 4.1.
+    not_bin_dev,        // The file is not a binary device file at all.
+    file_error          // An error occurred while reading the file.
+} cop_file_type;
 
 /* Function declarations. */
 
@@ -41,11 +56,10 @@
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-extern bool            is_fon_file( FILE * in_file );
-extern cop_font    *   parse_font( FILE * in_file, char const * in_name );
+extern cop_file_type    parse_header( FILE * in_file );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
 #endif
 
-#endif  /* COPFON_H_INCLUDED */
+#endif  /* COPHDR_H_INCLUDED */
