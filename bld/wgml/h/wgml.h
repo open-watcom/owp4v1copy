@@ -144,6 +144,11 @@ extern  char    *   scr_single_func_l( char * in, char * end, char * * result );
 extern  char    *   scr_single_func_u( char * in, char * end, char * * result );
 
 
+/* gsgoto.c                           */
+extern  void    print_labels( labelcb * lb );
+extern  bool    gotarget_reached( void );
+
+
 /* gsetvar.c                          */
 extern void         scr_se( void );
 extern char     *   scan_sym( char * p, symvar * sym, sub_index * subscript );
