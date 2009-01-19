@@ -43,42 +43,55 @@ bool IndexItem::operator==( const IndexItem& rhs ) const
 {
     if( sortKey.empty() ) {
         if( rhs.sortKey.empty() ) 
-            return text == rhs.text;
+            return wstricmp( text.c_str(), rhs.text.c_str() ) == 0;
         else
-            return text == rhs.sortKey;
+            return wstricmp( text.c_str(), rhs.sortKey.c_str() ) == 0;
     }
     else {
         if( rhs.sortKey.empty() )
-            return sortKey == rhs.text;
+            return wstricmp( sortKey.c_str(), rhs.text.c_str() ) == 0;
         else
-            return sortKey == rhs.sortKey;
+            return wstricmp( sortKey.c_str(), rhs.sortKey.c_str() ) == 0;
     }
 }
 /***************************************************************************/
 bool IndexItem::operator==( const std::wstring& rhs ) const
 {
     if( sortKey.empty() )
-        return text == rhs;
+        return wstricmp( text.c_str(), rhs.c_str() ) == 0;
     else
-        return sortKey == rhs;
+        return wstricmp( sortKey.c_str(), rhs.c_str() ) == 0;
 }
 /***************************************************************************/
 bool IndexItem::operator<( const IndexItem& rhs ) const
 {
     if( sortKey.empty() ) {
         if( rhs.sortKey.empty() ) 
-            return text < rhs.text;
+            return wstricmp( text.c_str(), rhs.text.c_str() ) < 0;
         else
-            return text < rhs.sortKey;
+            return wstricmp( text.c_str(), rhs.sortKey.c_str() ) < 0;
     }
     else {
         if( rhs.sortKey.empty() )
-            return sortKey < rhs.text;
+            return wstricmp( sortKey.c_str(), rhs.text.c_str() ) < 0;
         else
-            return sortKey < rhs.sortKey;
+            return wstricmp( sortKey.c_str(), rhs.sortKey.c_str() ) < 0;
     }
 }
 /***************************************************************************/
+//return <0 if s < t, 0 if s == t, >0 if s > t
+int IndexItem::wstricmp( const wchar_t *s, const wchar_t *t ) const
+{
+    wchar_t c1( std::towupper( *s ) );
+    wchar_t c2( std::towupper( *t ) );
+    while( c1 == c2 && c1 != L'\0' ) {
+        ++s;
+        ++t;
+        c1 = std::towupper( *s );
+        c2 = std::towupper( *t );
+    }
+    return( c1 - c2 );
+}/***************************************************************************/
 //calculate size of text
 //write header
 //variable length data follows:

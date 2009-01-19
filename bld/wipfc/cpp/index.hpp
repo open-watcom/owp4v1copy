@@ -78,6 +78,7 @@ private:
     std::vector< std::uint32_t > synonyms;
     typedef std::vector< std::uint32_t >::iterator SynIter;
     typedef std::vector< std::uint32_t >::const_iterator ConstSynIter;
+    int wstricmp( const wchar_t *s, const wchar_t *t ) const;
 };
 
 #endif //INDEX_INCLUDED
