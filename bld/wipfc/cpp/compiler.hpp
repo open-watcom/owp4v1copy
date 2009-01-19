@@ -69,6 +69,9 @@ public:
     //set the output type (inf or hlp)
     void setOutputType( OutputType t ) { outType = t; };
     OutputType outputType( ) { return outType; };
+    //suppress banner
+    void noBanner() { printBanner = false; };
+    bool banner() { return printBanner; };
     //Output cross-reference (not implemented)
     void noSearch() { search = false; };
     bool searchable() { return search; };
@@ -108,6 +111,7 @@ private:
     unsigned int warningLevel;
     OutputType outType;
     bool parseContinuously;
+    bool printBanner;
     bool search;    //construct search table
     bool xref;      //make cross-reference (not implemented)
 };

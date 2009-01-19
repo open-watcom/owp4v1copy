@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  main() for the OS/2 help compiler
+* Description:  Mainline for the OS/2 help compiler.
 *
 ****************************************************************************/
 
@@ -41,15 +41,20 @@ static void usage();
 
 Env Environment;
 
-int main(int argc, char **argv)
+static void printBanner( void )
 {
-    int retval( EXIT_FAILURE );
     std::cout << "Open Watcom OS/2 Help Compiler Version " << BAN_VER_STR << std::endl;
     std::cout << "Copyright (c) " << CURR_YEAR << " Open Watcom Contributors. All Rights Reserved." << std::endl;
     std::cout << "Source code is available under the Sybase Open Watcom Public License." << std::endl;
     std::cout << "See http://www.openwatcom.org/ for details." << std::endl;
+}
+
+int main(int argc, char **argv)
+{
+    int retval( EXIT_FAILURE );
     Environment.add( "WIPFC" );
     if( Environment.value( "WIPFC" ).empty() ) {
+        printBanner();
         std::cout << "The 'WIPFC' environment variable needs to be set. ";
         std::cout << "It should contain the name of the directory containing .nls and entity.txt" << std::endl;
         return retval;
@@ -60,6 +65,9 @@ int main(int argc, char **argv)
     Compiler c;
     try {
         processCommandLine(argc, argv, c);
+        if( c.banner() ) {
+            printBanner();
+        }
         retval = c.compile();
     }
     catch( FatalError& e ) {
@@ -126,6 +134,10 @@ static void processCommandLine(int argc, char **argv, Compiler& c)
                     else
                         c.setLocalization( argv[count] + 3 );
                     break;
+                case 'Q':
+                case 'q':
+                    c.noBanner();
+                    break;
                 case 'S':
                 case 's':
                     c.noSearch();
@@ -177,6 +189,7 @@ static void processCommandLine(int argc, char **argv, Compiler& c)
 /*****************************************************************************/
 static void usage()
 {
+    printBanner();
     std::cout << "Usage:" << std::endl;
     std::cout << "wipfc [-switches] [-options] infile [outfile]" << std::endl;
     std::cout << std::endl;
@@ -187,8 +200,8 @@ static void usage()
     std::cout <<  std::endl;
     std::cout << "Options\n" << std::endl;
     std::cout << "-l:xx_YY localization code (default: en_US)" << std::endl;
+    std::cout << "-q  operate quietly" << std::endl;
     std::cout << "-w:n     1 digit warning level  (default: 3)" << std::endl;
     std::cout << "-X:?     display help on option X" << std::endl;
     std::exit( EXIT_FAILURE );
 }
-

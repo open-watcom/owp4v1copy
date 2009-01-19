@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  the OS/2 help compiler
+* Description:  The OS/2 help compiler.
 *
 ****************************************************************************/
+
 
 #include <cstdio>
 #include <cstdlib>
@@ -43,6 +44,7 @@ Compiler::Compiler():
     warningLevel( 3 ),
     parseContinuously( true ),
     search( true ),
+    printBanner( true ),
     xref( false ),
     lexer( new Lexer() ),
     loc( "en_US" )
@@ -162,4 +164,3 @@ void Compiler::popInput( )
     inFiles.pop_back();
     delete f;
 }
-
