@@ -304,13 +304,13 @@ _WCRTLINK extern wint_t   towupper( wint_t __wc );
 :: C99 says this function is named mbsinit.
 _WCRTLINK extern int     sisinit( const std::mbstate_t *__ps );
 
-_WCRTLINK extern int    _fmbrlen( const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _fmbrtowc( wchar_t _WCFAR *__pwc, const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern size_t _fmbsrtowcs( wchar_t _WCFAR *__dst, const char _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _fwcrtomb( char _WCFAR *__s, wchar_t __wc, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _swprintf( wchar_t *__s, const wchar_t *__format, ... );
-_WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, std::va_list __arg );
+_WCRTLINK extern int         _fmbrlen( const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int         _fmbrtowc( wchar_t _WCFAR *__pwc, const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern std::size_t _fmbsrtowcs( wchar_t _WCFAR *__dst, const char _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int         _fwcrtomb( char _WCFAR *__s, wchar_t __wc, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern std::size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int         _swprintf( wchar_t *__s, const wchar_t *__format, ... );
+_WCRTLINK extern int         _vswprintf( wchar_t *__s, const wchar_t *__format, std::va_list __arg );
 
 :elsesegment
 :: C99 says this function is named mbsinit.
