@@ -285,7 +285,7 @@
 :DDHD.description:
 .do end
 .el .do begin
-:ZDT.:SF font=2.where:eSF.
+:ZDT.where
 :ZDD.:SF font=2.description:eSF.
 .do end
 .dm synote end
@@ -475,7 +475,7 @@
 :DDHD.~b
 .do end
 .el .do begin
-:ZDT.:SF font=2.&*:eSF.
+:ZDT.&*
 :ZDD.~b
 .do end
 .do end

@@ -576,7 +576,7 @@
 :DDHD.~b
 .do end
 .el .do begin
-:ZDT.:SF font=2.&*:eSF.
+:ZDT.&*
 :ZDD.~b
 .do end
 .do end
@@ -638,7 +638,7 @@
 :DTHD.&*
 .do end
 .el .do begin
-:ZDT.:SF font=2.&*:eSF.
+:ZDT.&*
 .do end
 .dm notehd1 end
 .*
@@ -647,7 +647,7 @@
 :DDHD.&*
 .do end
 .el .do begin
-:ZDD.:SF font=2.&*:eSF.
+:ZDD.&*
 .do end
 .dm notehd2 end
 .*

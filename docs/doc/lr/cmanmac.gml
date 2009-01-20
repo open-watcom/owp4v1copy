@@ -330,7 +330,7 @@ contains a value indicating the type of error that has been detected.
 .do end
 .el .do begin
 :cmt. :ZDD.:SF font=2.&*:eSF.
-:ZDT.:SF font=2.&termhd1$.~b~b~b~b~b&*:eSF.
+:ZDT.&termhd1$.~b~b~b~b~b&*
 .do end
 .dm termhd2 end
 .*
