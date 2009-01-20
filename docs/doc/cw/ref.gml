@@ -27,6 +27,18 @@
 .*
 .* Error message macros.
 .*
+.dm errsect begin
+.if &e'&dohelp eq 0 .do begin
+.   .begnote
+.do end
+.dm errsect end
+.*
+.dm eerrsect begin
+.if &e'&dohelp eq 0 .do begin
+.   .endnote
+.do end
+.dm eerrsect end
+.*
 .dm errnote begin
 .se *ttl$=&'substr(&*,&'pos(' ',&*)+1)
 .se *pos=0
@@ -41,10 +53,10 @@
 .   .pu 1 .ixsect &*
 :ZI1.&*ttl$
 .   .pu 1 .ixline `&*ttl$`
-.   .se *ctxn=&'substr(&*,2,&'pos(' ',&*)-2)
+.   .se *ctxn=&'substr(&*,1,&'pos(' ',&*)-1)
 .   .se *pos=&'pos(',',&*1)
 .   .if &*pos. ne 0 .do begin
-.   .   .se *ctxn=&'substr(&*,2,&*pos.-2)
+.   .   .se *ctxn=&'substr(&*,1,&*pos.)
 .   .   .se *ttl$=&'substr(&*,&*pos.+1)
 :ZI1.&*ttl$
 .   .   .pu 1 .ixline `&*ttl$`
@@ -1511,7 +1523,7 @@ that it cannot recover from.  The DOS extender then terminates the
 application with the appropriate return code, displaying a dump of
 register values, and writing system information to the file CW.ERR.
 .np
-.begnote
+.errsect
 .errnote 01 Unable to resize program memory block.
 .np
 Generated if DOS reports an error when CauseWay tries to resize
@@ -1622,4 +1634,4 @@ application or perhaps marked as read-only.
 The CauseWay application attempted to use an obsolete DOS
 function which used file control blocks (FCBs).  Use the file handle DOS
 functions in the application instead.
-.endnote
+.eerrsect
