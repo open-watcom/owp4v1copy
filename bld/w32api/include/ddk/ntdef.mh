@@ -89,10 +89,11 @@
 
 /* Macro to specify neutral strings */
 #ifdef UNICODE
-    #define TEXT( x )   L##x
+    #define __TEXT( x ) L##x
 #else
-    #define TEXT( x )   x
+    #define __TEXT( x ) x
 #endif
+#define TEXT( x )       __TEXT( x )
 
 /* Primitive data types */
 typedef void                *PVOID;
