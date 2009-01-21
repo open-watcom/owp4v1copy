@@ -2928,6 +2928,9 @@ static PTREE nameOfId( PTREE id )
     if( id == NULL || id->op == PT_ID ) {
         return( id );
     }
+    if( ( id->op == PT_BINARY ) && ( id->cgop == CO_TEMPLATE ) ) {
+        CFatal( "template-id not supported in this context" );
+    }
 #ifndef NDEBUG
     if( id->op != PT_BINARY || ( id->cgop != CO_COLON_COLON && id->cgop != CO_STORAGE )) {
         CFatal( "corrupted qualified id" );
