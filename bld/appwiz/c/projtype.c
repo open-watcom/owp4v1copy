@@ -33,8 +33,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdarg.h>
 #include "gui.h"
+#include "errmsg.h"
 #include "projtype.h"
 #include "rcstr.gh"
 
@@ -109,20 +109,6 @@ static void addProjectType( char *typename, char *friendlyname )
     lastProjectType->next = NULL;
 }
 
-static void showError( int errcode, ... )
-/***************************************/
-{
-    char    fmt[128];
-    char    msg[128];
-    va_list args;
-
-    va_start( args, errcode );
-    GUILoadString( errcode, fmt, 128 );
-    vsprintf( msg, fmt, args );
-    GUIDisplayMessage( NULL, msg, "", GUI_OK );
-    va_end( args );
-}
-
 bool ReadProjectTypes()
 /*********************/
 {
@@ -134,7 +120,7 @@ bool ReadProjectTypes()
     
     _searchenv( PROJTYPE_CONFIG_FILE, "PATH", filepath );
     if( filepath[0] == '\0' ) {
-        showError( APPWIZ_CFG_MISSING, PROJTYPE_CONFIG_FILE );
+        ShowError( APPWIZ_CFG_MISSING, PROJTYPE_CONFIG_FILE );
         return( FALSE );
     }
     fh = fopen( filepath, "r" );
@@ -143,12 +129,12 @@ bool ReadProjectTypes()
             if( !nextToken( fh, typename, 128 ) || !isalpha( typename[0] ) ||
                 !nextToken( fh, token, 128 ) || strcmp( token, "," ) != 0 ||
                 !nextToken( fh, friendlyname, 128 ) ) {
-                showError( APPWIZ_INVALID_PROJTYPES );
+                ShowError( APPWIZ_INVALID_PROJTYPES );
                 return( FALSE );
             }
             addProjectType( typename, friendlyname );
         } else if( !feof( fh ) ) {
-            showError( APPWIZ_INVALID_PROJTYPES );
+            ShowError( APPWIZ_INVALID_PROJTYPES );
             return( FALSE );
         }
     }

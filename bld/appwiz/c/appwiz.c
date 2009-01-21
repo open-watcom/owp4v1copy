@@ -29,22 +29,74 @@
 ****************************************************************************/
 
 
+#include <string.h>
+#include <stdlib.h>
+#include <direct.h>
+#include <errno.h>
 #include "gui.h"
 #include "newproj.h"
 #include "projtype.h"
+#include "errmsg.h"
+#include "rcstr.gh"
+
+static bool createProjectDir( char *dir )
+/***************************************/
+{
+    char *dircopy;
+    char *ptr;
+    char ch;
+
+    dircopy = strdup( dir );
+    ptr = dircopy;
+    while( *ptr != '\0' ) {
+        if( *ptr == '/' || (*ptr == '\\' && ptr != dircopy && *(ptr - 1) != ':') ) {
+            ch = *ptr;
+            *ptr = '\0';
+            if( mkdir( dircopy ) != 0 && errno != EEXIST ) {
+                free( dircopy );
+                ShowError( APPWIZ_MKDIR_FAILED );
+                return( FALSE );
+            }
+            *ptr = ch;
+        }
+        ptr++;
+    }
+    if( mkdir( dircopy ) != 0 && errno != EEXIST ) {
+        free( dircopy );
+        ShowError( APPWIZ_MKDIR_FAILED );
+        return( FALSE );
+    }
+    free( dircopy );
+    return( TRUE );
+}
 
 bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
 /****************************************************************/
 {
     project_type_iterator   iter;
     char                    friendlyname[128];
+    unsigned                id;
+    char                    *ctltext;
     
     switch( ev ) {
     case GUI_INIT_DIALOG:
         iter = GetFirstProjectType();
         while( iter != NULL ) {
             GetNextProjectType( &iter, NULL, friendlyname );
-            GUIAddText( wnd, IDC_PROJTYPE, friendlyname );
+            GUIAddText( wnd, CTL_NEWPROJ_PROJTYPE, friendlyname );
+        }
+        break;
+    case GUI_CONTROL_CLICKED:
+        GUI_GETID( extra, id );
+        if( id == CTL_NEWPROJ_OK ) {
+            ctltext = GUIGetText( wnd, CTL_NEWPROJ_PROJDIR );
+            if( ctltext == NULL ) {
+                ShowError( APPWIZ_NO_PROJDIR );
+            } else if( createProjectDir( ctltext ) ) {
+                GUICloseDialog( wnd );
+            }
+        } else if( id == CTL_NEWPROJ_CANCEL ) {
+            GUICloseDialog( wnd );
         }
         break;
     }
@@ -81,7 +133,7 @@ extern void GUImain( void )
         FreeProjectTypes();
         return;
     }
-    GUICreateResDialog( &newProjInfo, NEWPROJDLG );
+    GUICreateResDialog( &newProjInfo, DIALOG_NEWPROJ );
     FreeProjectTypes();
 }
 

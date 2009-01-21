@@ -29,7 +29,10 @@
 ****************************************************************************/
 
 
-#define NEWPROJDLG      100
-#define IDC_PROJTYPE    1000
-#define IDC_PROJDIR     1001
-#define IDC_PROJNAME    1002
+#define DIALOG_NEWPROJ          3001
+#define CTL_NEWPROJ_OK          100
+#define CTL_NEWPROJ_CANCEL      101
+#define CTL_NEWPROJ_PROJTYPE    102
+#define CTL_NEWPROJ_PROJDIR     103
+#define CTL_NEWPROJ_PROJNAME    104
+

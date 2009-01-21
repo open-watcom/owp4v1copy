@@ -4,3 +4,10 @@ pick(   APPWIZ_CFG_MISSING,
 pick(   APPWIZ_INVALID_PROJTYPES,
         "The Application Wizard could not read the list of project types.",
         "The Application Wizard could not read the list of project types." )
+pick(   APPWIZ_MKDIR_FAILED,
+        "Creation of the project directory has failed.",
+        "Creation of the project directory has failed." )
+pick(   APPWIZ_NO_PROJDIR,
+        "Please enter a project directory.",
+        "Please enter a project directory." )
+

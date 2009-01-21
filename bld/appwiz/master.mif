@@ -6,6 +6,7 @@ proj_name = appwiz
 
 objs = &
     appwiz.obj &
+    errmsg.obj &
     projtype.obj
 
 libs_nt = $(gui_dir)/win/nt$(host_cpu)/gui.lib
