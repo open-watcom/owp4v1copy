@@ -500,6 +500,68 @@ extern  void    scr_dm( void )
 }
 
 
+/***************************************************************************/
+/* MACRO EXIT  causes immediate  termination of the  macro or  input file  */
+/* currently being processed  and resumption of the  higher-level file or  */
+/* macro (if any) or termination of processing (if none).                  */
+/*                                                                         */
+/*     +----------------------------------------------------------+        */
+/*     |       |                                                  |        */
+/*     |  .ME  |    <line>                                        |        */
+/*     |       |                                                  |        */
+/*     +----------------------------------------------------------+        */
+/*                                                                         */
+/* This control word does  not cause a break.   If an  operand "line" has  */
+/* been specified,  it will be processed  as an input line immediately on  */
+/* return to the higher-level file or macro.   If the .ME control word is  */
+/* used in the highest-level file, SCRIPT advances to the top of the next  */
+/* page  and  prints  any  stacked   output  before  termination  of  all  */
+/* processing.                                                             */
+/*                                                                         */
+/* EXAMPLES                                                                */
+/*  (1) .me .im nextfile                                                   */
+/*      This will  terminate the file  or macro currently  being processed */
+/*      and  cause the  higher-level  file or  macro  to imbed  "nextfile" */
+/*      before it does anything else.                                      */
+/*  (2) .me .me                                                            */
+/*      This will  terminate the current  file or  macro and will  in turn */
+/*      terminate the higher-level file or macro.                          */
+/*                                                                         */
+/*                                                                         */
+/* ! the line operand is ignored for .me in the master document file       */
+/*                                                                         */
+/***************************************************************************/
+
+void    scr_me( void )
+{
+    condcode        cc;
+
+    if( input_cbs->prev != NULL ) {     // if not master document file
+
+        garginit();
+
+        cc = getarg();
+        if( cc != omit ) {              // line operand present
+
+            free_lines( input_cbs->hidden_head );   // clear stacked input
+            split_input( buff2, tok_start );// stack line operand
+
+            // now move stacked line to previous input stack
+
+            input_cbs->hidden_head->next = input_cbs->prev->hidden_head;
+            input_cbs->prev->hidden_head = input_cbs->hidden_head;
+
+            input_cbs->hidden_head = NULL;  // and delete from current input
+            input_cbs->hidden_tail = NULL;
+        }
+    }
+
+    input_cbs->fmflags |= II_eof;       // set eof
+
+    input_cbs->if_cb->if_level = 0;     // terminate
+    ProcFlags.keep_ifstate = false;     // ... all .if controls
+    return;
+}
 
 /***************************************************************************/
 /*  :CMT.                                                                  */
