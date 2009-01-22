@@ -59,7 +59,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 /* wgml.c                              */
 extern  bool    free_resources( errno_t in_errno );
 extern  void    g_banner( void );
-extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
+// extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( void );
 extern  void    inc_inc_level( void );
 
@@ -133,7 +133,6 @@ extern  void    printf_research( char * msg, ... );
 
 
 /* gscan.c                            */
-extern  void    free_lines( inp_line * line );
 extern  void    scan_line( void );
 
 
@@ -150,11 +149,16 @@ extern  bool    gotarget_reached( void );
 
 
 /* gsetvar.c                          */
-extern void         scr_se( void );
 extern char     *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
+
+/* gsmacro.c                          */
+extern  void        add_macro_cb_entry( mac_entry * me );
+extern  void        add_macro_parms( char * p );
+extern  void        free_lines( inp_line * line );
+
+
 /* gsymvar.c                          */
-extern bool     check_subscript( sub_index sub );
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );

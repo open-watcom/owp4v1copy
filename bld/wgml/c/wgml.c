@@ -102,7 +102,7 @@ static void usage( void )
     my_exit( 4 );
 }
 
-
+#if 0                                   // not used for the moment
 char *get_filename_full_path( char *buff, char const * name, size_t max )
 {
     char    *   p;
@@ -125,13 +125,14 @@ char *get_filename_full_path( char *buff, char const * name, size_t max )
 #endif
     return( p );
 }
+#endif
 
 
 /***************************************************************************/
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
 
-bool    free_inc_fp( void )
+static  bool    free_inc_fp( void )
 {
     inputcb *   ip;
     filecb  *   cb;
@@ -203,7 +204,7 @@ static void reopen_inc_fp( filecb *cb )
 /*  Report resource exhaustion: may eventually try to correct the problem  */
 /***************************************************************************/
 
-bool free_resources( errno_t in_errno )
+bool    free_resources( errno_t in_errno )
 {
     if( in_errno == ENOMEM) out_msg( "Out of memory!\n" );
     else out_msg( "Out of file handles!\n" );
@@ -215,7 +216,7 @@ bool free_resources( errno_t in_errno )
 /*  Set the extension of the Master input file as default extension        */
 /***************************************************************************/
 
-void set_default_extension( const char * masterfname )
+static  void    set_default_extension( const char * masterfname )
 {
     char        buff[ FILENAME_MAX ];
     char    *   ext;

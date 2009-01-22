@@ -37,7 +37,7 @@ objs =  &
         copfiles.obj    &
         copfon.obj      &
         copfunc.obj     &
-	cophdr.obj	&
+        cophdr.obj      &
         findfile.obj    &
         gargutil.obj    &
         gdata.obj       &
@@ -49,10 +49,11 @@ objs =  &
         gprocess.obj    &
         gresrch.obj     &
         gscan.obj       &
+        gsetvar.obj     &
         gsfunelu.obj    &
         gsgoto.obj      &
         gsifdoel.obj    &
-        gsetvar.obj     &
+        gsmacro.obj     &
         gsymvar.obj     &
         gutil.obj       &
         swchar.obj
