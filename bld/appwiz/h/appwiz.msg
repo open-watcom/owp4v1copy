@@ -10,4 +10,7 @@ pick(   APPWIZ_MKDIR_FAILED,
 pick(   APPWIZ_NO_PROJDIR,
         "Please enter a project directory.",
         "Please enter a project directory." )
+pick(   APPWIZ_NO_PROJNAME,
+        "Please enter a project name.",
+        "Please enter a project name." )
 

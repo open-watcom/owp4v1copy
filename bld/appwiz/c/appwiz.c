@@ -39,6 +39,10 @@
 #include "errmsg.h"
 #include "rcstr.gh"
 
+int     projectTypeIndex;
+char    projectDir[256];
+char    projectName[256];
+
 static bool createProjectDir( char *dir )
 /***************************************/
 {
@@ -85,6 +89,7 @@ bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
             GetNextProjectType( &iter, NULL, friendlyname );
             GUIAddText( wnd, CTL_NEWPROJ_PROJTYPE, friendlyname );
         }
+        GUISetCurrSelect( wnd, CTL_NEWPROJ_PROJTYPE, 0 );
         break;
     case GUI_CONTROL_CLICKED:
         GUI_GETID( extra, id );
@@ -92,9 +97,20 @@ bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
             ctltext = GUIGetText( wnd, CTL_NEWPROJ_PROJDIR );
             if( ctltext == NULL ) {
                 ShowError( APPWIZ_NO_PROJDIR );
-            } else if( createProjectDir( ctltext ) ) {
-                GUICloseDialog( wnd );
+                break;
             }
+            strcpy( projectDir, ctltext );
+            ctltext = GUIGetText( wnd, CTL_NEWPROJ_PROJNAME );
+            if( ctltext == NULL ) {
+                ShowError( APPWIZ_NO_PROJNAME );
+                break;
+            }
+            strcpy( projectName, ctltext );
+            projectTypeIndex = GUIGetCurrSelect( wnd, CTL_NEWPROJ_PROJTYPE );
+            if( !createProjectDir( projectDir ) ) {
+                break;
+            }
+            GUICloseDialog( wnd );
         } else if( id == CTL_NEWPROJ_CANCEL ) {
             GUICloseDialog( wnd );
         }
