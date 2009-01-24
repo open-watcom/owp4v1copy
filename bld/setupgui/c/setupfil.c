@@ -1133,8 +1133,8 @@ static void CheckVersion( char *path, char *drive, char *dir )
     _makepath( path, drive, dir, NULL, NULL );
     len = strlen( path );
     sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
-             timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours,
-             timeptr->tm_min, am_pm );
+             timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year + 1900,
+             hours, timeptr->tm_min, am_pm );
 
     // also concat version number if it exists
     VersionStr( fp, "VeRsIoN=", 8, buf );
