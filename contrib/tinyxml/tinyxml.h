@@ -462,13 +462,13 @@ public:
 	*/
 	enum NodeType
 	{
-		DOCUMENT,
-		ELEMENT,
-		COMMENT,
-		UNKNOWN,
-		TEXT,
-		DECLARATION,
-		TYPECOUNT
+		TIXML_DOCUMENT,
+		TIXML_ELEMENT,
+		TIXML_COMMENT,
+		TIXML_UNKNOWN,
+		TIXML_TEXT,
+		TIXML_DECLARATION,
+		TIXML_TYPECOUNT
 	};
 
 	virtual ~TiXmlNode();
@@ -679,8 +679,8 @@ public:
 	#endif
 
 	/** Query the type (as an enumerated value, above) of this node.
-		The possible types are: DOCUMENT, ELEMENT, COMMENT,
-								UNKNOWN, TEXT, and DECLARATION.
+		The possible types are: TIXML_DOCUMENT, TIXML_ELEMENT, TIXML_COMMENT,
+					TIXML_UNKNOWN, TIXML_TEXT, and TIXML_DECLARATION.
 	*/
 	int Type() const	{ return type; }
 
@@ -1155,9 +1155,9 @@ class TiXmlComment : public TiXmlNode
 {
 public:
 	/// Constructs an empty comment.
-	TiXmlComment() : TiXmlNode( TiXmlNode::COMMENT ) {}
+	TiXmlComment() : TiXmlNode( TiXmlNode::TIXML_COMMENT ) {}
 	/// Construct a comment from text.
-	TiXmlComment( const char* _value ) : TiXmlNode( TiXmlNode::COMMENT ) {
+	TiXmlComment( const char* _value ) : TiXmlNode( TiXmlNode::TIXML_COMMENT ) {
 		SetValue( _value );
 	}
 	TiXmlComment( const TiXmlComment& );
@@ -1209,7 +1209,7 @@ public:
 		normal, encoded text. If you want it be output as a CDATA text
 		element, set the parameter _cdata to 'true'
 	*/
-	TiXmlText (const char * initValue ) : TiXmlNode (TiXmlNode::TEXT)
+	TiXmlText (const char * initValue ) : TiXmlNode (TiXmlNode::TIXML_TEXT)
 	{
 		SetValue( initValue );
 		cdata = false;
@@ -1218,14 +1218,14 @@ public:
 
 	#ifdef TIXML_USE_STL
 	/// Constructor.
-	TiXmlText( const std::string& initValue ) : TiXmlNode (TiXmlNode::TEXT)
+	TiXmlText( const std::string& initValue ) : TiXmlNode (TiXmlNode::TIXML_TEXT)
 	{
 		SetValue( initValue );
 		cdata = false;
 	}
 	#endif
 
-	TiXmlText( const TiXmlText& copy ) : TiXmlNode( TiXmlNode::TEXT )	{ copy.CopyTo( this ); }
+	TiXmlText( const TiXmlText& copy ) : TiXmlNode( TiXmlNode::TIXML_TEXT )	{ copy.CopyTo( this ); }
 	void operator=( const TiXmlText& base )							 	{ base.CopyTo( this ); }
 
 	// Write this text object to a FILE stream.
@@ -1278,7 +1278,7 @@ class TiXmlDeclaration : public TiXmlNode
 {
 public:
 	/// Construct an empty declaration.
-	TiXmlDeclaration()   : TiXmlNode( TiXmlNode::DECLARATION ) {}
+	TiXmlDeclaration()   : TiXmlNode( TiXmlNode::TIXML_DECLARATION ) {}
 
 #ifdef TIXML_USE_STL
 	/// Constructor.
@@ -1346,10 +1346,10 @@ private:
 class TiXmlUnknown : public TiXmlNode
 {
 public:
-	TiXmlUnknown() : TiXmlNode( TiXmlNode::UNKNOWN )	{}
+	TiXmlUnknown() : TiXmlNode( TiXmlNode::TIXML_UNKNOWN )	{}
 	virtual ~TiXmlUnknown() {}
 
-	TiXmlUnknown( const TiXmlUnknown& copy ) : TiXmlNode( TiXmlNode::UNKNOWN )		{ copy.CopyTo( this ); }
+	TiXmlUnknown( const TiXmlUnknown& copy ) : TiXmlNode( TiXmlNode::TIXML_UNKNOWN )		{ copy.CopyTo( this ); }
 	void operator=( const TiXmlUnknown& copy )										{ copy.CopyTo( this ); }
 
 	/// Creates a copy of this Unknown and returns it.
