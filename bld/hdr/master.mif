@@ -124,7 +124,6 @@ common = &
         mmintrin.h &
         new.h &
         ostream.h &
-        pgchart.h &
         process.h &
         search.h &
         setjmp.h &
@@ -187,6 +186,7 @@ DOS_files = &
         graph.h &
         graph98.h &
         memory.h &
+        pgchart.h &
         setjmpex.h &
         sys/utime.h &
         wdefwin.h &
@@ -206,6 +206,7 @@ QNX_files = &
         libc.h &
         mig.h &
         mqueue.h &
+        pgchart.h &
         pwd.h &
         queue.h &
         regex.h &
