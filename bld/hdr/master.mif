@@ -102,7 +102,6 @@ common = &
         fnmatch.h &
         fstream.h &
         generic.h &
-        graph.h &
         i86.h &
         inttypes.h &
         iomanip.h &
@@ -185,6 +184,7 @@ DOS_files = &
         bios98.h &
         dos.h &
         eh.h &
+        graph.h &
         graph98.h &
         memory.h &
         setjmpex.h &
@@ -201,6 +201,7 @@ QNX_files = &
         dirent.h &
         form.h &
         ftw.h &
+        graph.h &
         grp.h &
         libc.h &
         mig.h &
