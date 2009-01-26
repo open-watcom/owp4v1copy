@@ -35,5 +35,7 @@ extern void                     FreeProjectTypes( void );
 extern project_type_iterator    GetFirstProjectType( void );
 extern void                     GetNextProjectType( project_type_iterator *iter,
                                                     char *typename, char *friendlyname );
+extern bool                     GetTemplateFilePath( char *typename, char *filename,
+                                                     char *buffer );
 extern bool                     ReadProjectTypes( void );
 

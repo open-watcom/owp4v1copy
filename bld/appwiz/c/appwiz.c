@@ -39,6 +39,8 @@
 #include "errmsg.h"
 #include "rcstr.gh"
 
+#define NEWPROJ_INF_FILE    "newproj.inf"
+
 int     projectTypeIndex;
 char    projectDir[256];
 char    projectName[256];
@@ -112,6 +114,7 @@ bool NewProjCallback( gui_window *wnd, gui_event ev, void *extra )
             }
             GUICloseDialog( wnd );
         } else if( id == CTL_NEWPROJ_CANCEL ) {
+            projectTypeIndex = -1;
             GUICloseDialog( wnd );
         }
         break;
@@ -137,7 +140,12 @@ extern void GUImain( void )
         NULL,
         0
     };
-    gui_rect rect;
+    
+    gui_rect                rect;
+    project_type_iterator   iter;
+    char                    typename[256];
+    char                    newprojpath[256];
+
     rect.x = 0;
     rect.y = 0;
     rect.width = 1000;
@@ -150,6 +158,14 @@ extern void GUImain( void )
         return;
     }
     GUICreateResDialog( &newProjInfo, DIALOG_NEWPROJ );
+    if( projectTypeIndex >= 0 ) {
+        iter = GetFirstProjectType();
+        while( projectTypeIndex >= 0 ) {
+            GetNextProjectType( &iter, typename, NULL );
+            projectTypeIndex--;
+        }
+        GetTemplateFilePath( typename, NEWPROJ_INF_FILE, newprojpath );
+    }
     FreeProjectTypes();
 }
 

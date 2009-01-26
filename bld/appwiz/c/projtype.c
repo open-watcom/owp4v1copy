@@ -39,6 +39,13 @@
 #include "rcstr.gh"
 
 #define PROJTYPE_CONFIG_FILE    "projtype.cfg"
+#define TEMPLATE_DIR            "template"
+
+#if defined( __WIN__ )
+    #define PATH_SEP    "\\"
+#else
+    #define PATH_SEP    "/"
+#endif
 
 typedef struct project_type {
     char                typename[128];
@@ -181,5 +188,22 @@ void GetNextProjectType( project_type_iterator *iter, char *typename,
         }
         *iter = (project_type_iterator)type->next;
     }
+}
+
+bool GetTemplateFilePath( char *typename, char *filename, char *buffer )
+/**********************************************************************/
+{
+    char searchname[256];
+    strcpy( searchname, TEMPLATE_DIR );
+    strcat( searchname, PATH_SEP );
+    strcat( searchname, typename );
+    strcat( searchname, PATH_SEP );
+    strcat( searchname, filename );
+    _searchenv( searchname, "WATCOM", buffer );
+    if( buffer[0] == '\0' ) {
+        ShowError( APPWIZ_TEMPLATE_MISSING, filename );
+        return( FALSE );
+    }
+    return( TRUE );
 }
 

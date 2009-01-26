@@ -13,4 +13,7 @@ pick(   APPWIZ_NO_PROJDIR,
 pick(   APPWIZ_NO_PROJNAME,
         "Please enter a project name.",
         "Please enter a project name." )
+pick(   APPWIZ_TEMPLATE_MISSING,
+        "The template file '%s' could not be found.",
+        "The template file '%s' could not be found." )
 
