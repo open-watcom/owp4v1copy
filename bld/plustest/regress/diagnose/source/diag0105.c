@@ -41,7 +41,9 @@
 #error <generic.h>
 #include <generic.h>
 #error <graph.h>
-#include <graph.h>
+#if !defined( __LINUX__ )
+  #include <graph.h>
+#endif
 #error <graph98.h>
 #if !defined( __UNIX__ )
   #include <graph98.h>
@@ -67,7 +69,9 @@
 #error <new.h>
 #include <new.h>
 #error <pgchart.h>
-#include <pgchart.h>
+#if !defined( __LINUX__ )
+  #include <pgchart.h>
+#endif
 #error <process.h>
 #include <process.h>
 #error <search.h>
