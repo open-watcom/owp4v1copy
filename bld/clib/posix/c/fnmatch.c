@@ -160,8 +160,8 @@ static const char *cclass_match( const char *patt, int c )
 }
 
 
-int fnmatch( const char *patt, const char *s, int flags )
-/*******************************************************/
+_WCRTLINK int   fnmatch( const char *patt, const char *s, int flags )
+/*******************************************************************/
 {
     char        c, cl;
     const char  *start = s;

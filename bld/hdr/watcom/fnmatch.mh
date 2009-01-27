@@ -8,6 +8,10 @@
 
 :include readonly.sp
 
+#ifndef _COMDEF_H_INCLUDED
+ #include <_comdef.h>
+#endif
+
 #define FNM_NOMATCH     1           /* Failed to match. */
 
 #define FNM_NOESCAPE    0x01        /* No backslash escaping. */
@@ -24,7 +28,7 @@
 
 :include cpluspro.sp
 
-extern  int fnmatch( const char *__pattern, const char *__string, int __flags );
+_WCRTLINK extern int    fnmatch( const char *__pattern, const char *__string, int __flags );
 
 :include cplusepi.sp
 
