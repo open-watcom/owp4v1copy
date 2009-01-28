@@ -68,6 +68,7 @@ typedef struct {
 
 static record_buffer    *   buffout;
 static FILE             *   out_file_fb;
+
 /* Static function definitions. */
 
 /* Function set_out_file().
@@ -187,6 +188,14 @@ static void set_out_file( void )
     } else {
         if( (*cmd_drive != '\0') && (*cmd_dir != '\0') ) {
 
+            /* Command line OPTION was used with something like "c:" or "..\" but
+             * with no filename or extension.
+             */
+
+                _makepath( temp_outfile, cmd_drive, cmd_dir, doc_fname, \
+                                                bin_device->output_extension );
+        } else {
+
             /* The situation here is that command-line option OUTPUT was not
              * used with only a drive letter and/or a path but with no file name,
              * not even "*", and no extension. In other words, it was not used
@@ -210,14 +219,6 @@ static void set_out_file( void )
                 _makepath( temp_outfile, dev_drive, dev_dir, doc_fname, \
                                                 bin_device->output_extension );
             }
-        } else {
-
-            /* Command line OPTION was used with something like "c:" or "..\" but
-             * with no filename or extension.
-             */
-
-                _makepath( temp_outfile, cmd_drive, cmd_dir, doc_fname, \
-                                                bin_device->output_extension );
         }
     }
 
@@ -358,7 +359,6 @@ extern void ob_setup( void )
         err_count++;
         g_suicide();
     }
-fputs( "test", out_file_fb );
 
     return;
 }
