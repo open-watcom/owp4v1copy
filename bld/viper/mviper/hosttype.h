@@ -28,14 +28,14 @@
 *
 ****************************************************************************/
 
-
-pick( HOST_WINDOWS, 'w' )  // Windows 3.x
-pick( HOST_PM,      'o' )  // OS/2 PM
-pick( HOST_NT,      'n' )  // Windows NT
-pick( HOST_WINOS2,  's' )  // Win-OS/2
-pick( HOST_WIN95,   '9' )  // Windows 95
-pick( HOST_J_WIN,   'j' )  // Japanese Windows 3.x on an IBM
-pick( HOST_NEC_WIN, '8' )  // Japanese Windows 3.x on a Nec98
-pick( HOST_AXP_NT,  'a' )  // Dec Alpha (Windows NT)
-pick( HOST_DOS,     'd' )  // DOS
-pick( HOST_LINUX,   'x' )  // Linux
+//    enum          type    batchserv       editor       DLL     parms
+pick( HOST_WINDOWS, 'w',    "BATCHBOX.PIF", "weditviw", TRUE,   "" )    // Windows 3.x
+pick( HOST_PM,      'o',    "BATSERV.EXE",  "epmlink",  TRUE,   "" )    // OS/2 PM
+pick( HOST_NT,      'n',    "BATSERV.EXE",  "weditviw", TRUE,   "" )    // Windows NT
+pick( HOST_WINOS2,  's',    "BATSERV.EXE",  "epmlink",  TRUE,   "" )    // Win-OS/2
+pick( HOST_WIN95,   '9',    "BATSERV.EXE",  "weditviw", TRUE,   "" )    // Windows 95
+pick( HOST_J_WIN,   'j',    "BATCHBOX.PIF", "notepad",  FALSE,  "%f" )  // Japanese Windows 3.x on an IBM
+pick( HOST_NEC_WIN, '8',    "BATCHBOX.PIF", "notepad",  FALSE,  "%f" )  // Japanese Windows 3.x on a Nec98
+pick( HOST_AXP_NT,  'a',    "BATSERV.EXE",  "weditviw", TRUE,   "" )    // Dec Alpha (Windows NT)
+pick( HOST_DOS,     'd',    NULL,           NULL,       FALSE,  "" )    // DOS
+pick( HOST_LINUX,   'x',    NULL,           NULL,       FALSE,  "" )    // Linux
