@@ -418,78 +418,78 @@ File: source\diag0105.c
 (39,2): Error! E080: <fstream.h>
 (41,2): Error! E080: <generic.h>
 (43,2): Error! E080: <graph.h>
-(45,2): Error! E080: <graph98.h>
-(49,2): Error! E080: <i86.h>
-(51,2): Error! E080: <io.h>
-(55,2): Error! E080: <iomanip.h>
-(57,2): Error! E080: <iostream.h>
-(59,2): Error! E080: <limits.h>
-(61,2): Error! E080: <locale.h>
-(63,2): Error! E080: <malloc.h>
-(65,2): Error! E080: <math.h>
-(67,2): Error! E080: <new.h>
-(69,2): Error! E080: <pgchart.h>
-(71,2): Error! E080: <process.h>
-(73,2): Error! E080: <search.h>
-(75,2): Error! E080: <setjmp.h>
-(77,2): Error! E080: <share.h>
-(79,2): Error! E080: <signal.h>
-(81,2): Error! E080: <stdarg.h>
-(83,2): Error! E080: <stddef.h>
-(85,2): Error! E080: <stdio.h>
-(87,2): Error! E080: <stdiobuf.h>
-(89,2): Error! E080: <stdlib.h>
-(91,2): Error! E080: <streambu.h>
-(93,2): Error! E080: <string.h>
-(95,2): Error! E080: <strstrea.h>
-(97,2): Error! E080: <time.h>
-(99,2): Error! E080: <unistd.h>
-(101,2): Error! E080: <utime.h>
-(103,2): Error! E080: <windows.h>
-(107,2): Error! E080: <wsample.h>
-(109,2): Error! E080: <sys/locking.h>
-(111,2): Error! E080: <sys/stat.h>
-(113,2): Error! E080: <sys/timeb.h>
-(115,2): Error! E080: <sys/types.h>
-(117,2): Error! E080: <sys/utime.h>
-(121,2): Error! E080: <custcntl.h>
-(123,2): Error! E080: <dde.h>
-(129,5): Error! E611: 'catch' does not immediately follow a 'try' or 'catch'
-(135,12): Error! E492: delete expression is not a pointer to data
-(136,12): Error! E490: delete expression is a pointer to a function
-(140,22): Warning! W300: function 'x54' has already been declared as a friend
+(47,2): Error! E080: <graph98.h>
+(51,2): Error! E080: <i86.h>
+(53,2): Error! E080: <io.h>
+(57,2): Error! E080: <iomanip.h>
+(59,2): Error! E080: <iostream.h>
+(61,2): Error! E080: <limits.h>
+(63,2): Error! E080: <locale.h>
+(65,2): Error! E080: <malloc.h>
+(67,2): Error! E080: <math.h>
+(69,2): Error! E080: <new.h>
+(71,2): Error! E080: <pgchart.h>
+(75,2): Error! E080: <process.h>
+(77,2): Error! E080: <search.h>
+(79,2): Error! E080: <setjmp.h>
+(81,2): Error! E080: <share.h>
+(83,2): Error! E080: <signal.h>
+(85,2): Error! E080: <stdarg.h>
+(87,2): Error! E080: <stddef.h>
+(89,2): Error! E080: <stdio.h>
+(91,2): Error! E080: <stdiobuf.h>
+(93,2): Error! E080: <stdlib.h>
+(95,2): Error! E080: <streambu.h>
+(97,2): Error! E080: <string.h>
+(99,2): Error! E080: <strstrea.h>
+(101,2): Error! E080: <time.h>
+(103,2): Error! E080: <unistd.h>
+(105,2): Error! E080: <utime.h>
+(107,2): Error! E080: <windows.h>
+(111,2): Error! E080: <wsample.h>
+(113,2): Error! E080: <sys/locking.h>
+(115,2): Error! E080: <sys/stat.h>
+(117,2): Error! E080: <sys/timeb.h>
+(119,2): Error! E080: <sys/types.h>
+(121,2): Error! E080: <sys/utime.h>
+(125,2): Error! E080: <custcntl.h>
+(127,2): Error! E080: <dde.h>
+(133,5): Error! E611: 'catch' does not immediately follow a 'try' or 'catch'
+(139,12): Error! E492: delete expression is not a pointer to data
+(140,12): Error! E490: delete expression is a pointer to a function
+(144,22): Warning! W300: function 'x54' has already been declared as a friend
   definition: 'void x54( void )'
-(142,22): Warning! W299: 'x53' has already been declared as a friend
-(146,9): Error! E029: symbol 'b' has not been declared
-(147,9): Error! E019: 'break' may only appear in a for, do, while, or switch statement
-(148,5): Error! E020: 'case' may only appear in a switch statement
-(149,13): Error! E029: symbol 'b' has not been declared
-(150,13): Error! E021: 'continue' may only appear in a for, do, or while statement
-(152,5): Error! E022: 'default' may only appear in a switch statement
+(146,22): Warning! W299: 'x53' has already been declared as a friend
+(150,9): Error! E029: symbol 'b' has not been declared
+(151,9): Error! E019: 'break' may only appear in a for, do, while, or switch statement
+(152,5): Error! E020: 'case' may only appear in a switch statement
 (153,13): Error! E029: symbol 'b' has not been declared
-(156,32): Error! E182: invalid storage class for an argument
-(157,1): Error! E037: invalid storage class for function
-(157,1): Error! E238: 'x81' is not a function
-(159,13): Error! E177: invalid storage class in file scope
-(160,21): Error! E270: 'operator new' must have at least one argument
+(154,13): Error! E021: 'continue' may only appear in a for, do, or while statement
+(156,5): Error! E022: 'default' may only appear in a switch statement
+(157,13): Error! E029: symbol 'b' has not been declared
+(160,32): Error! E182: invalid storage class for an argument
+(161,1): Error! E037: invalid storage class for function
+(161,1): Error! E238: 'x81' is not a function
+(163,13): Error! E177: invalid storage class in file scope
+(164,21): Error! E270: 'operator new' must have at least one argument
   argument count is 0 for a non-member function
-(162,17): Error! E288: constructor cannot be a static member
-(166,18): Warning! W364: adjacent >=, <=, >, < operators
-(174,11): Warning! W001: assignment of constant found in boolean expression
-(175,15): Warning! W391: assignment found in boolean expression
-(176,21): Warning! W369: selection expression in switch statement is a constant value
-(180,17): Error! E027: only one 'default' per switch statement is allowed
-  previous default label defined at: (179,17)
-(185,1): Error! E073: statement required after label
-(185,1): Warning! W017: label 'label' has not been referenced by a goto
-  label defined at: (184,10)
-(188,5): Error! E121: syntax error
-(189,5): Error! E121: syntax error
-(191,15): Error! E117: too many storage class specifiers
-(193,29): Error! E276: the second argument of 'operator ++' or 'operator --' must be int
-(196,8): Warning! W627: text following pre-processor directive
-(200,18): Warning! W556: testing expression for 'for' is always false
-(202,11): Warning! W690: conditional expression is always false (zero)
+(166,17): Error! E288: constructor cannot be a static member
+(170,18): Warning! W364: adjacent >=, <=, >, < operators
+(178,11): Warning! W001: assignment of constant found in boolean expression
+(179,15): Warning! W391: assignment found in boolean expression
+(180,21): Warning! W369: selection expression in switch statement is a constant value
+(184,17): Error! E027: only one 'default' per switch statement is allowed
+  previous default label defined at: (183,17)
+(189,1): Error! E073: statement required after label
+(189,1): Warning! W017: label 'label' has not been referenced by a goto
+  label defined at: (188,10)
+(192,5): Error! E121: syntax error
+(193,5): Error! E121: syntax error
+(195,15): Error! E117: too many storage class specifiers
+(197,29): Error! E276: the second argument of 'operator ++' or 'operator --' must be int
+(200,8): Warning! W627: text following pre-processor directive
+(204,18): Warning! W556: testing expression for 'for' is always false
+(206,11): Warning! W690: conditional expression is always false (zero)
   range of possible values for type 'unsigned' is 0 to 4294967295
   constant expression in comparison has value 0
 File: source\diag0153.c

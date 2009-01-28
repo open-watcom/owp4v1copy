@@ -55,7 +55,7 @@ inc_dirs = -I"../h" -I"$(dev_dir)/graphlib/h" -I"$(mathlib_dir)/h" -I"$(watcom_d
 
 .c: ../c
 
-extra_c_flags = -os -s -zl -d_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@
+extra_c_flags = -os -s -zl -d_FARD= -D_ENABLE_AUTODEPEND -nm=$[&$(suffix_$(convention)) -fo=$@
 
 extra_c_flags_386_register = -3r
 extra_c_flags_386_stack = -3s -d__STACK

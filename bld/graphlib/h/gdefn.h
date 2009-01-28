@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <i86.h>
-#include "graph.h"
+#include "_graph.h"
 
 #pragma pack(push, 1);
 

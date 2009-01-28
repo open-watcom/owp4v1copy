@@ -126,11 +126,16 @@ vector       : $(vector_deps)
 
 # The follow describe the dependences for the various *.h files.
 
+graph_deps     = ../watcom/graph.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
+pgchart_deps   = ../watcom/pgchart.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
+
 _algmut.h       : ../watcom/_algmut.mh ../readonly.sp ../crwatcnt.sp
 _algnmod.h      : ../watcom/_algnmod.mh ../readonly.sp ../crwatcnt.sp
 _algsort.h      : ../watcom/_algsort.mh ../readonly.sp ../crwatcnt.sp
 _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
+_graph.h        : ../watcom/_graph.mh $(graph_deps)
 _hash.h         : ../watcom/_hash.mh ../readonly.sp ../crwatcnt.sp
+_pgchart.h      : ../watcom/_pgchart.mh $(pgchart_deps)
 _rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwatcnt.sp
 _strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwatcnt.sp
 alloca.h        : ../watcom/alloca.mh ../readonly.sp $(cplus) ../crwat.sp ../null.sp ../alloca.sp
@@ -156,8 +161,8 @@ fenv.h          : ../watcom/fenv.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ..
 float.h         : $(float_deps)
 fstream.h       : $(fstream_deps)
 generic.h       : ../watcom/generic.mh ../readonly.sp ../crwat.sp
-graph.h         : ../watcom/graph.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
-graph98.h       : ../watcom/graph98.mh ../watcom/graph.mh
+graph.h         : $(graph_deps)
+graph98.h       : ../watcom/graph98.mh $(graph_deps)
 i86.h           : ../watcom/i86.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 inttypes.h      : ../watcom/inttypes.mh ../readonly.sp ../crwat.sp
 io.h            : ../watcom/io.mh ../readonly.sp $(cplus) ../crwat.sp ../maxpath.sp ../wchar_t.sp
@@ -181,7 +186,7 @@ memory.h        : $(memory_deps)
 mmintrin.h      : ../watcom/mmintrin.mh ../readonly.sp ../crwat.sp $(cplus)
 new.h           : $(new_deps)
 ostream.h       : $(ostream_deps)
-pgchart.h       : ../watcom/pgchart.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
+pgchart.h       : $(pgchart_deps)
 process.h       : ../watcom/process.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../wchar_t.sp
 search.h        : ../watcom/search.mh ../readonly.sp $(cplus) ../crwat.sp
 setjmp.h        : $(setjmp_deps)

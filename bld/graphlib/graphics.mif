@@ -176,7 +176,7 @@ inc_dirs += -I"$(hdr_dir)/dos"
 
 .c: ../c
 
-extra_c_flags = -os -s -zl -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
+extra_c_flags = -os -s -zl -D_ENABLE_AUTODEPEND -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
 
 extra_c_flags_i86 = -nt=GRAPH_TEXT -D_CGRAPH=_loadds
 extra_c_flags_386_register = -3r

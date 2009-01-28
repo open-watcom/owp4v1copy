@@ -175,6 +175,8 @@ common = &
 
 DOS_files = &
       $(common) &
+        _graph.h &
+        _pgchart.h &
         common.cnv &
         direct.h &
         dosfunc.h &
@@ -195,6 +197,8 @@ DOS_files = &
 
 QNX_files = &
       $(common) &
+        _graph.h &
+        _pgchart.h &
         cdrom.h &
         curses.h &
         dir.h &
