@@ -56,6 +56,7 @@ objs =  &
         gsmacro.obj     &
         gsymvar.obj     &
         gutil.obj       &
+	outbuff.obj     &
         swchar.obj
 
 gendeps = $(objs) $(libs) wgml.lnk

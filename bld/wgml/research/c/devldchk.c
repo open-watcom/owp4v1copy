@@ -30,13 +30,13 @@
 *                   print_usage()
 *               and this local function:
 *                   display_binary_device_library()
+*
 * Notes:        The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
 *
-*               This program uses/tests the production code for parsing the
+*               This program uses/tests the production code for loading the
 *               binary device library. As such, all structs and field names
 *               refer to those in "copfiles.h", not the research code.
-*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
@@ -61,7 +61,13 @@ static  char const *    usage_text[] = {
 NULL
 };
 
-/* Local function definitions. */
+/* Local function definition. */
+
+/* Function display_binary_device_library().
+ * This function loads the binary device library using the same code as wgml,
+ * and then displays the device name, the driver name, and information from
+ * each of the available fonts.
+ */
 
 static void display_binary_device_library( void )
 {
@@ -105,7 +111,7 @@ static void display_binary_device_library( void )
  * Print the banner to the screen.
  */
 
-void print_banner( void )
+extern void print_banner( void )
 {
     puts( banner1w( "Device Load Procedure Test Program", _RESEARCH_VERSION_ ) );
     puts( banner2( "1983" ) );
@@ -117,7 +123,7 @@ void print_banner( void )
  * Print the usage information to the screen.
  */
 
-void print_usage( void )
+extern void print_usage( void )
 {
     char const * *  list;
 

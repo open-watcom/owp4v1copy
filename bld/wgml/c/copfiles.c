@@ -27,6 +27,7 @@
 * Description:  Implements the functions used to parse .COP files:
 *                   cop_setup()
 *                   cop_teardown()
+*                   fb_start()
 *               plus these local functions:
 *                   find_cop_font()
 *                   find_dev_font()
@@ -63,6 +64,7 @@
 #include "findfile.h"
 #include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
+#include "outbuff.h"
 #include "wgml.h"
 
 /* Local function definitions. */
@@ -754,6 +756,10 @@ extern void cop_setup( void )
         g_suicide;
     }
 
+    /* Initialize the dependent module. */
+
+    ob_setup();
+
     return;
 }
 
@@ -792,7 +798,24 @@ extern void cop_teardown( void )
         wgml_fonts = NULL;
     }
 
+    /* Release any memory allocated by the dependent module. */
+
+    ob_teardown();
+
     return;
 }
 
+/* Function fb_start().
+ * Performs the processing which occurs before document processing starts. Indeed,
+ * wgml 4.0 does not even look for the document specification file until the
+ * actions taken here have been completed!
+ */
 
+extern void fb_start( void )
+{
+    /* Interpret the START :PAUSE block. */
+
+    /* Interpret the START :INIT block. */
+
+    return;
+}

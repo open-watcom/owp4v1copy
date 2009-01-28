@@ -45,7 +45,8 @@ cop_common_objs = &
 	    copfon.obj    &
 	    copfunc.obj   &
 	    cophdr.obj    &
-	    findfile.obj
+	    findfile.obj  &
+	    outbuff.obj
 	    
 copp_objs = &
             $(cop_common_objs) &
@@ -62,12 +63,17 @@ ff_objs = &
             cmdlhelp.obj  &
             swchar.obj
 
+outc_objs = &
+            $(cop_common_objs) &
+	    outcheck.obj
+
 objs = &
             $(cf_common_objs) &
             cfparse.obj       &
             cfputils.obj
 
-nwgml : cfcheck.exe cfparse.exe copparse.exe devldchk.exe findfunc.exe .SYMBOLIC
+nwgml : cfcheck.exe cfparse.exe copparse.exe devldchk.exe findfunc.exe outcheck.exe .SYMBOLIC
+
 !include exetarg.mif
 
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
@@ -101,4 +107,13 @@ findfunc.exe : $(ff_objs) $(libs)
         @echo cl $@
         @$(cl) $(clflags) $< $(cl_libs)
 !endif
+
+outcheck.exe : $(outc_objs) $(libs)
+!ifeq verbose 1
+        $(cl) $(clflags) $< $(cl_libs)
+!else
+        @echo cl $@
+        @$(cl) $(clflags) $< $(cl_libs)
+!endif
+
 

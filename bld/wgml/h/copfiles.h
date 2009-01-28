@@ -72,6 +72,7 @@
 *               the functions:
 *                   cop_setup()
 *                   cop_teardown()
+*                   fb_start()
 *
 * Note:         The field names are intended to correspond to the field names 
 *               shown in the Wiki. The Wiki structs are named when the structs
@@ -509,6 +510,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 
 extern void             cop_setup( void );
 extern void             cop_teardown( void );
+extern void             fb_start( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

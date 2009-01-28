@@ -24,34 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  Tests the device library load function for wgml.
+* Description:  Tests the text file output functions for wgml.
 *               In addition to main(), these global functions are implemented:
 *                   print_banner()
 *                   print_usage()
+*               and this local function:
+*                   emulate_wgml()
+*
 * Notes:        The Wiki should be consulted for any term whose meaning is
 *               not apparent. This should help in most cases.
 *
-*               This program uses/tests the production code for parsing the
-*               binary device library. As such, all structs and field names
-*               refer to those in "copfiles.h", not the research code.
-*
+*               This program uses/tests the binary device library to output
+*               a text file. As such, all structs and field names refer to
+*               those in "copfiles.h", not the research code.
 ****************************************************************************/
 
-//#define __STDC_WANT_LIB_EXT1__ 1
-//#include <process.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
+#include <process.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "banner.h"
-//#include "common.h"
-//#include "copfiles.h"
-//#include "dfinterp.h"
-//#include "research.h"
+#include "common.h"
+#include "copfiles.h"
+#include "findfile.h"
+#include "research.h"
 
-/*  Local variables. */
+/* Local variables. */
 
-/*  Load the usage text array. */
+/* Load the usage text array. */
 
 static  char const *    usage_text[] = {
 "Usage:  outcheck defined-name",
@@ -60,16 +60,73 @@ static  char const *    usage_text[] = {
 NULL
 };
 
-/* Local function definitions. */
+/* Load the document text arrays. */
+#if 0
+static  char const *    page1_para1[] = {
+"This is not a very interesting document. The reason for this is that it is",
+"very self-referential. For example, this is the third sentence in the first",
+"paragraph of the first page.",
+NULL
+};
+
+static  char const *    page1_para2[] = {
+"And here we have the second paragraph of the first page. This is, of course,",
+"it second sentence. It is amazing how uninteresting this is, isn't it? One might",
+"even say it was boring.",
+NULL
+};
+
+static  char const *    page1_box[] = {
+"For variety, here we emulate some,",
+"boxed text. Actually doing this in",
+"wgml will be interesting.",
+NULL
+};
+
+static  char const *    page2_para1[] = {
+"In fact, this is so boring that I am going to make the second page very short.",
+"I hope that you have found this demonstration convincing.",
+NULL
+};
+#endif
+/* Local function definition. */
+
+/* Function emulate_wgml().
+ * This function loads the binary device library using the same code as wgml,
+ * and then produces an text image output file using the device specified on
+ * the command line. No parsing is done: the text is entirely static and the
+ * assignment of words to lines etc is done manually; only the actual output
+ * is being tested. 
+ */
+
+static void emulate_wgml( void )
+{
+    /* START processing.*/
+
+    fb_start();
+
+    /* DOCUMENT processing.*/
+
+    /* First page. */
+
+    /* :NEWPAGE block. */
+
+    /* Second page. */
+
+    /* :FINISH block. */
+
+    return;
+}
+
+/* Global function definitions. */
 
 /* Function print_banner().
  * Print the banner to the screen.
  */
 
-void print_banner( void )
+extern void print_banner( void )
 {
-    puts( banner1w( "Document Output Test Program", \
-                                                        _RESEARCH_VERSION_ ) );
+    puts( banner1w( "Document Output Test Program", _RESEARCH_VERSION_ ) );
     puts( banner2( "1983" ) );
     puts( banner3 );
     puts( banner3a );
@@ -79,7 +136,7 @@ void print_banner( void )
  * Print the usage information to the screen.
  */
 
-void print_usage( void )
+extern void print_usage( void )
 {
     char const * *  list;
 
@@ -91,7 +148,6 @@ void print_usage( void )
 }
 
 /* Function main().
- * ***needs to be redone***
  * Given a valid defined name, verify that it is a valid .COP file and parse 
  * it if it is.
  *
@@ -107,6 +163,9 @@ int main()
     size_t  cmdlen          = 0;
     char *  cmdline         = NULL;
     int     retval;
+
+null_buffer();
+start_heapcheck( "main" );
 
     /* Display the banner. */
 
@@ -137,7 +196,6 @@ int main()
 
     initialize_globals();
     res_initialize_globals();
-    get_env_vars();
     
     /* Parse the command line: allocates and sets tgt_path. */
 
@@ -152,20 +210,41 @@ int main()
     free( cmdline );
     cmdline = NULL;
 
-    /* Adjust tgt_path if necessary; see the Wiki. */
+    dev_name = tgt_path;
+    master_fname = "plain";
+    out_file = NULL;
+    out_file_attr = NULL;
 
-    if( !strcmp( tgt_path, "''" ) ) tgt_path[0] = '\0';
+    /* Initialize the binary device library. */
 
-    /* Parse the alleged .COP file. */
+    ff_setup();
+    cop_setup();
 
-    retval = parse_defined_name();
+    /* Create the output file. */
 
-    /* Respond to failure. */
+    emulate_wgml();
 
-    if( retval == FAILURE ) {
-      print_usage();
-      return( EXIT_FAILURE );
+    out_msg( "out_file name: %s\n", out_file);
+    out_msg( "out_file format: %s\n", out_file_attr);
+    
+    /* Release the memory allocated. */
+
+    cop_teardown();
+    ff_teardown();
+
+    mem_free(tgt_path);
+    tgt_path = NULL;
+
+    if( out_file != NULL ) {
+        mem_free( out_file );
+        out_file = NULL;
     }
+    if( out_file_attr != NULL ) {
+        mem_free( out_file_attr );
+        out_file_attr = NULL;
+    }
+
+end_heapcheck( "main" );
 
     return( EXIT_SUCCESS );
 }

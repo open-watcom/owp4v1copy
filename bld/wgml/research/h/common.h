@@ -42,9 +42,12 @@
 *                   err_cnt
 *                   free_resources()
 *                   g_suicide()
+*                   master_fname
 *                   mem_alloc()
 *                   mem_free()
 *                   mem_realloc()
+*                   out_file
+*                   out_file_attr
 *                   out_msg()
 *                   wng_cnt
 *
@@ -88,10 +91,13 @@ typedef struct opt_font {
 #endif
 
 global char         switch_char;    // Either '\', '/', or whatever DOS is using.
+global char     *   dev_name;       // Part of the wgml context.
+global char     *   master_fname;   // Part of the wgml context.
+global char     *   out_file;       // Part of the wgml context.
+global char     *   out_file_attr;  // Part of the wgml context.
 global int          err_count;      // Part of the wgml context.
 global int          wng_count;      // Part of the wgml context.
 global opt_font *   opt_fonts;      // Part of the wgml context.
-global char     *   dev_name;       // Part of the wgml context.
 
 /* Reset so can be reused with other headers. */
 
