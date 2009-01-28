@@ -60,8 +60,6 @@ public:
     std::wstring* addFileName( std::wstring* name );
     //set the output file name
     void setOutputFile( const char *name ) { outFileName = std::string( name ); };
-    //set the base path for other files
-    void setBasePath( const char *name ) { basePath = std::string( name ); };
     //set the warning level
     void setWarningLevel( int wl ) { warningLevel = wl; };
     //set the current locale
@@ -98,7 +96,6 @@ public:
 private:
     Compiler( const Compiler &rhs );            //no copy constructor
     Compiler& operator=( const Compiler &rhs ); //no assignment
-    std::string basePath;
     std::string outFileName;
     std::auto_ptr< Lexer > lexer;
     std::vector< IpfData* > inFiles;            //a stack of files being parsed
