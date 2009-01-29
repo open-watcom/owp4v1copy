@@ -48,6 +48,7 @@ gui_colour_set WndColours[] = {
     { GUI_BRIGHT_WHITE, GUI_RED },              /* GUI_ICON    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_MENU_GRAYED_ACTIVE */
     { GUI_GREY,         GUI_CYAN },             /* GUI_FRAME_RESIZE    */
+    { GUI_BLACK,        GUIEX_WND_BKGRND },     /* GUI_CONTROL_BACKGROUND */
     { GUI_BLACK,        GUI_BRIGHT_WHITE },     /* WPA_PLAIN    */
     { GUI_BRIGHT_WHITE, GUI_BLACK },            /* WPA_TABSTOP */
     { GUI_BRIGHT_WHITE, GUI_RED },              /* WPA_SELECTED */
@@ -78,6 +79,7 @@ gui_colour_set NecColours[] = {
     { GUI_BRIGHT_WHITE, GUI_RED },              /* GUI_ICON    */
     { GUI_GREY,         GUI_BLACK },            /* GUI_MENU_GRAYED_ACTIVE */
     { GUI_GREY,         GUI_CYAN },             /* GUI_FRAME_RESIZE    */
+    { GUI_BLACK,        GUIEX_WND_BKGRND },     /* GUI_CONTROL_BACKGROUND */
     { GUI_WHITE,        GUI_NORMAL },           /* WPA_PLAIN    */
     { GUI_RED,          GUI_NORMAL },           /* WPA_TABSTOP */
     { GUI_WHITE,        GUI_REVERSE },          /* WPA_SELECTED */
