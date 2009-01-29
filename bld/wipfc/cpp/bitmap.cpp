@@ -281,7 +281,7 @@ void Bitmap::findBlockSize( size_t width, size_t height, size_t bitsPerPixel )
         bytesPerRow = (( width / 8 ) & 3 ) ? (( width / 8 ) & ~3 ) + 4 : width / 8;
         break;
     case 4:
-        bytesPerRow = (( width / 2 ) & 3 ) ? (( width / 2 ) & ~3 ) + 4 : width / 2;
+        bytesPerRow = (( (width + 1) / 2 ) & 3 ) ? (( (width + 1) / 2 ) & ~3 ) + 4 : (width + 1) / 2;
         break;
     case 8:
         bytesPerRow = ( width & 3 ) ? ( width & ~3 ) + 4 : width;
@@ -300,7 +300,11 @@ void Bitmap::findBlockSize( size_t width, size_t height, size_t bitsPerPixel )
         throw Class1Error( ERR1_BADFMT );
     }
     std::uint32_t totalSize( bytesPerRow * height );
-    blockSize = static_cast< std::uint16_t >( ( ( UINT16_MAX - 32 ) / bytesPerRow - 1 ) * bytesPerRow );
+    blockSize = static_cast< std::uint16_t >( ( ( UINT16_MAX - 256 ) / bytesPerRow - 1 ) * bytesPerRow );
+#ifdef CHECKCOMP
+    std::printf( "  width=%u bitsPerPixel=%u, bytesPerRow=%u\n", width, bitsPerPixel, bytesPerRow );
+    std::printf( "  calculated blockSize=%u\n", blockSize );
+#endif
     if( totalSize < static_cast< std::uint32_t >( blockSize ))
         blockSize = static_cast< std::uint16_t >( totalSize );
 }

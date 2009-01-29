@@ -99,10 +99,11 @@ std::uint32_t BitmapBlock::compress( std::FILE* in )
                 if( nextCode > maxCode ) {                  // if table full
                     if( bitsPerCode < MAXBITS )             // if more bits available
                         maxCode = maxVal( ++bitsPerCode );  // use 'em
-                    else if( bytesIn > checkPoint ) {       // else if check time
+                    /* Temp change: The decompressor table must *never* grow past 4096 entries! */
+                    else if( bytesIn > 0/*checkPoint*/ ) {       // else if check time
                         if( bitsPerCode == MAXBITS ) {
                             newCompRatio = bytesOut * 100 / bytesIn;
-                            if( newCompRatio > oldCompRatio ) { //check for compression loss
+                            if( newCompRatio > 0/*oldCompRatio*/ ) { //check for compression loss
                                 outputCode( CLEAR );
                                 bitsPerCode = INITBITS;
                                 nextCode = FIRST;
@@ -124,10 +125,7 @@ std::uint32_t BitmapBlock::compress( std::FILE* in )
         if( nextCode == maxCode )               // Special case: increment on EOF
             ++bitsPerCode;
         bytesOut += outputCode( TERMINATE );
-        if( bitCount > 0 && bitBuffer != 0L )
-            bytesOut += outputCode( 0 );            //flush
-        //bytesOut += outputCode( 0 );
-        //bytesOut += outputCode( 0 );
+        bytesOut += flushCode();
         size = static_cast< std::uint16_t >( ( data.size() + 1 ) * sizeof( std::uint8_t ) );
 #ifdef CHECKCOMP
         std::vector< std::uint8_t> buffer2( blockSize );
@@ -186,6 +184,19 @@ std::uint16_t BitmapBlock::outputCode( std::uint16_t code )
         //std::uint8_t byte( static_cast< std::uint8_t >( bitBuffer >> 24 ) );
         //size_t bytesWritten( data.size() );
         //data.push_back( byte );
+        data.push_back( static_cast< std::uint8_t >( bitBuffer >> 24 ) );
+        bitBuffer <<= 8;
+        bitCount -= 8;
+        ++bytesOut;
+    }
+    return bytesOut;
+}
+/***************************************************************************/
+std::uint16_t BitmapBlock::flushCode( void )
+{
+    std::uint16_t bytesOut( 0 );
+    bitCount += bitsPerCode;
+    while( bitCount >= 8 && bitBuffer ) {
         data.push_back( static_cast< std::uint8_t >( bitBuffer >> 24 ) );
         bitBuffer <<= 8;
         bitCount -= 8;

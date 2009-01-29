@@ -76,6 +76,7 @@ private:
         std::vector< std::uint8_t >& append,
         std::int16_t hashPrefix, std::uint16_t character ) const;
     std::uint16_t outputCode( std::uint16_t code );
+    std::uint16_t flushCode( void );
 //#define CHECKCOMP
 #ifdef CHECKCOMP
     typedef std::vector< std::uint8_t >::iterator DecodeIter;
