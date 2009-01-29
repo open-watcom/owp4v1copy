@@ -33,6 +33,8 @@
 #ifndef ERRORS_INCLUDED
 #define ERRORS_INCLUDED
 
+#include <string>
+
 enum ErrCode {
     ERR_NO_ERR = 0,
     #define PICK(a,b) a,
@@ -46,6 +48,14 @@ class FatalError {
 public:
     FatalError ( ErrCode c ) : code( c ) { }
     ErrCode code;
+};
+/*****************************************************************************/
+class FatalIOError {
+public:
+    FatalIOError ( ErrCode c, const std::wstring& f ) : code( c ), fname( f ) { }
+    FatalIOError ( ErrCode c, const wchar_t* f ) : code( c ), fname( f ) { }
+    ErrCode code;
+    std::wstring fname;
 };
 /*****************************************************************************/
 class Class1Error {

@@ -36,7 +36,7 @@ IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname )
     char buffer[ _MAX_PATH ];
     std::wcstombs( buffer, fname->c_str(), _MAX_PATH );
     if(( stream = std::fopen( buffer, "r" ) ) == 0)
-        throw FatalError( ERR_OPEN );
+        throw FatalIOError( ERR_OPEN, *fileName );
 }
 /*****************************************************************************/
 //Read a character
@@ -52,7 +52,7 @@ std::wint_t IpfFile::get()
     else if( ch == WEOF ) {
         ch = EOB;
         if( !std::feof( stream ) )
-            throw FatalError( ERR_READ );
+            throw FatalIOError( ERR_READ, *fileName );
     }
     return ch;
 }

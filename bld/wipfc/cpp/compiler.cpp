@@ -86,13 +86,17 @@ int Compiler::compile()
     doc->build();
     std::FILE* out( std::fopen( outFileName.c_str() , "wb" ) );
     if( !out )
-        throw FatalError( ERR_OPEN );
+        throw FatalIOError( ERR_OPEN, L"for inf or hlp output" );
     try {
         doc->write( out );
     }
     catch( FatalError& e ) {
         retval = EXIT_FAILURE;
         printError( e.code );
+    }
+    catch( FatalIOError& e ) {
+        retval = EXIT_FAILURE;
+        printError( e.code, e.fname );
     }
     std::fclose( out );
     return retval;
@@ -111,14 +115,44 @@ void Compiler::printError( ErrCode c ) const
            std::cout << lexerLine();
            std::cout << ':';
            std::cout << lexerCol();
-           std::cout << "> " << std::setw( 2 ) << std::setfill( '0' );
+           std::cout << "> " << ( c > ERR_LAST ? "Warning" : "Fatal Error" );
+           std::cout << std::setw( 2 ) << std::setfill( '0' );
            std::cout << static_cast< unsigned int >( c );
-           std::cout << ' ' << ErrText[ c ];
+           std::cout << ': ' << ErrText[ c ] << std::endl;
 */
-        std::fprintf( stdout, "<%ls:%u:%u> %02u %s\n", \
-            inFiles.size() ? dataName()->c_str() : L"(no current file)", \
-            lexerLine(), lexerCol(), \
-            static_cast< unsigned int >( c ), ErrText[ c ] );
+        std::fprintf( stdout, "<%ls:%u:%u> %s %02u: %s\n",
+            inFiles.size() ? dataName()->c_str() : L"(no current file)",
+            lexerLine(), lexerCol(),
+            c > ERR_LAST ? "Warning" : "Fatal Error",
+            static_cast< unsigned int >( c ),
+            ErrText[ c ] );
+    }
+}
+/*****************************************************************************/
+//Error message format is <fullfilename:line:col> errnum: text [optional info]
+void Compiler::printError( ErrCode c, std::wstring& txt ) const
+{
+    if( c <= ERR_LAST || warningLevel > 2 ||
+       ( c <= ERR1_LAST && warningLevel > 0 ) ||
+       ( c <= ERR2_LAST && warningLevel > 1 )) {
+/*
+           std::cout << '<';
+           std::cout << dataName();
+           std::cout << ':';
+           std::cout << lexerLine();
+           std::cout << ':';
+           std::cout << lexerCol();
+           std::cout << "> " << ( c > ERR_LAST ? "Warning" : "Fatal Error" );
+           std::cout << std::setw( 2 ) << std::setfill( '0' );
+           std::cout << static_cast< unsigned int >( c );
+           std::cout << ': ' << ErrText[ c ] << txt << std::endl;
+*/
+        std::fprintf( stdout, "<%ls:%u:%u> %s %02u: %s %ls\n",
+            inFiles.size() ? dataName()->c_str() : L"(no current file)",
+            lexerLine(), lexerCol(),
+            c > ERR_LAST ? "Warning" : "Fatal Error",
+            static_cast< unsigned int >( c ),
+            ErrText[ c ], txt.c_str() );
     }
 }
 /*****************************************************************************/
@@ -136,13 +170,15 @@ void Compiler::printError( ErrCode c, const std::wstring* name, unsigned int row
            std::cout << row;
            std::cout << ':';
            std::cout << col;
-           std::cout << "> " << std::setw( 2 ) << std::setfill( '0' );
+           std::cout << "> " ( c > ERR_LAST ? "Warning" : "Fatal Error" );
+           std::cout << std::setw( 2 ) << std::setfill( '0' );
            std::cout << static_cast< unsigned int >( c );
-           std::cout << ' ' << ErrText[ c ];
+           std::cout << ' ' << ErrText[ c ] << std::endl;
 */
-        std::fprintf( stdout, "<%ls:%u:%u> %02u %s\n", \
-            name->c_str(), row, col, \
-            static_cast< unsigned int >( c ), \
+        std::fprintf( stdout, "<%ls:%u:%u> %s %02u: %s\n",
+            name->c_str(), row, col,
+            c > ERR_LAST ? "Warning" : "Fatal Error",
+            static_cast< unsigned int >( c ),
             ErrText[ c ] );
     }
 }

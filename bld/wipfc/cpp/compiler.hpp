@@ -79,6 +79,7 @@ public:
     void popInput();
     //print an error message
     void printError( ErrCode c ) const;
+    void printError( ErrCode c, std::wstring& txt ) const;
     void printError( ErrCode c, const std::wstring* name, unsigned int row, unsigned int col ) const;
     //get the name of the data block currently being parsed
     const std::wstring* dataName() const { return inFiles[ inFiles.size() - 1 ]->name(); };

@@ -151,7 +151,7 @@ public:
     //To GNames
     void addGNameOrId( GlobalDictionaryWord* key, std::uint16_t value )
         { gnames->insert( key, value ); };
-    
+
     //To Nls
     int codePage() const { return nls->codePage(); };
     const std::wstring& note() const { return nls->note(); };

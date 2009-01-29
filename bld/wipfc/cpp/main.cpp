@@ -73,6 +73,9 @@ int main(int argc, char **argv)
     catch( FatalError& e ) {
         c.printError( e.code );
     }
+    catch( FatalIOError& e ) {
+        c.printError( e.code, e.fname );
+    }
     return retval;
 }
 /*****************************************************************************/

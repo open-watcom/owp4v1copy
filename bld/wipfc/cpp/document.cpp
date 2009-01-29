@@ -453,7 +453,7 @@ void Document::makeBitmaps()
         tmpName += std::tmpnam( NULL );
         std::FILE* tmp( std::fopen( tmpName.c_str(), "wb" ) );
         if( !tmp )
-            throw FatalError( ERR_OPEN );
+            throw FatalIOError( ERR_OPEN, L"(temporary file for bitmaps)" );
         //get IPFCARTWORK from env
         std::string env( Environment.value( "IPFCARTWORK" ) );
         std::vector< std::string > paths;
@@ -479,7 +479,8 @@ void Document::makeBitmaps()
                     throw FatalError( ERR_T_CONV );
                 for( size_t count = 0; count < paths.size(); ++count ) {
                     std::string fname( paths[ count ] );
-                    fname += slash;
+                    if( !fname.empty() )
+                        fname += slash;
                     fname += fbuffer;
                     try {
 #ifdef CHECKCOMP
@@ -491,12 +492,17 @@ void Document::makeBitmaps()
                     }
                     catch( FatalError& e ) {
                         if( count == paths.size() - 1 )
-                            throw e;
+                            throw FatalIOError( e.code, itr->first );
                     }
                 }
             }
         }
         catch( FatalError& e ) {
+            std::fclose( tmp );
+            std::remove( tmpName.c_str() );
+            throw e;
+        }
+        catch( FatalIOError& e ) {
             std::fclose( tmp );
             std::remove( tmpName.c_str() );
             throw e;
@@ -512,7 +518,7 @@ std::uint32_t Document::writeBitmaps( std::FILE* out )
         offset = std::ftell( out );
         std::FILE* tmp( std::fopen( tmpName.c_str(), "rb" ) );
         if( !tmp )
-            throw FatalError( ERR_OPEN );
+            throw FatalIOError( ERR_OPEN, L"(temporary file for bitmaps)" );
         std::fseek( tmp, 0L, SEEK_END );
         std::uint32_t length( std::ftell( tmp ) );
         std::fseek( tmp, 0L, SEEK_SET );
@@ -521,19 +527,23 @@ std::uint32_t Document::writeBitmaps( std::FILE* out )
         try {
             while( length > BUFSIZ ) {
                 if( std::fread( &buffer[0], sizeof( std::uint8_t ), BUFSIZ, tmp ) != BUFSIZ )
-                    throw FatalError( ERR_READ );
+                    throw FatalIOError( ERR_READ, L"(temporary file for bitmaps)" );
                 if( std::fwrite( &buffer[0], sizeof( std::uint8_t ), BUFSIZ, out ) != BUFSIZ )
                     throw FatalError( ERR_WRITE );
                 length -= BUFSIZ;
             }
             if( length ) {
                 if( std::fread( &buffer[0], sizeof( std::uint8_t ), length, tmp ) != length )
-                    throw FatalError( ERR_READ );
+                    throw FatalIOError( ERR_READ, L"(temporary file for bitmaps)" );
                 if( std::fwrite( &buffer[0], sizeof( std::uint8_t ), length, out ) != length )
                     throw FatalError( ERR_WRITE );
             }
         }
         catch( FatalError& e ) {
+            std::fclose( tmp );
+            throw e;
+        }
+        catch( FatalIOError& e ) {
             std::fclose( tmp );
             throw e;
         }
@@ -723,7 +733,8 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         }
         for( size_t count = 0; count < paths.size(); ++count ) {
             std::wstring* fname( new std::wstring( paths[ count ] ) );
-            *fname += slash;
+            if( !fname->empty() )
+                *fname += slash;
             *fname += lexer->text();
             try {
                 IpfFile* ipff( new IpfFile( fname ) );
@@ -732,6 +743,11 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
                 break;
             }
             catch( FatalError& e ) {
+                delete fname;
+                if( count == paths.size() - 1 )
+                    throw e;
+            }
+            catch( FatalIOError& e ) {
                 delete fname;
                 if( count == paths.size() - 1 )
                     throw e;
