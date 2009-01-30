@@ -1,27 +1,22 @@
-:segment C_FOR_PB
-:segment FOR_NT
+:segment C_FOR_PB & FOR_NT
 IncludeFile idepbnt.cfg
-:elsesegment
+:elsesegment C_FOR_PB
 IncludeFile idepb.cfg
-:endsegment
 :elsesegment
 :segment FOR_WIN
 IncludeFile idewin.cfg
 IncludeFile idew386.cfg
+:elsesegment FOR_NT & FOR_AXP
+IncludeFile ideaxp.cfg
+IncludeFile idew32.cfg
 :elsesegment FOR_NT
-:segment FOR_AXP
-IncludeFile ideaxp.cfg
-IncludeFile idew32.cfg
-:elsesegment
 IncludeFile idew32.cfg
 IncludeFile ideaxp.cfg
-:endsegment
 :elsesegment FOR_OS2
-IncludeFile ideos2.cfg
 IncludeFile ideos232.cfg
+IncludeFile ideos2.cfg
 :elsesegment FOR_LINUX
-IncludeFile ideos2.cfg
-IncludeFile ideos232.cfg
+IncludeFile idelnx.cfg
 :endsegment
 IncludeFile idedos.cfg
 IncludeFile idedos32.cfg
@@ -34,8 +29,8 @@ IncludeFile idew32.cfg
 IncludeFile ideaxp.cfg
 :endsegment
 :segment !FOR_OS2
-IncludeFile ideos2.cfg
 IncludeFile ideos232.cfg
+IncludeFile ideos2.cfg
 :endsegment
 IncludeFile idenlm.cfg
 :segment !FOR_LINUX
