@@ -1,13 +1,19 @@
 proj_name=hdr
 
+!include ../hfiles.mif
+
 !include cproj.mif
 
-splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
-psplice = wsplice -i.. -k$(system) $(options) $(options_$^&) ../common.sp $[@ $^@
-csplice = wsplice -i.. -k$(system) $(options) $(options_c_$^&) ../common.sp $[@ $^@
+dos_options   = -kDOS -kUNICODE
+linux_options = -kLINUX -t8 -u
+qnx_options   = -kQNX -t8 -u
+
+splice = wsplice -i.. $($(system)_options) ../common.sp $[@ $^@
+psplice = wsplice -i.. $($(system)_options) $(options_$^&) ../common.sp $[@ $^@
+csplice = wsplice -i.. $($(system)_options) $(options_c_$^&) ../common.sp $[@ $^@
 
 .EXTENSIONS
-.EXTENSIONS : .h .hpp .cnv .mh .mhp
+.EXTENSIONS : . .h .hpp .cnv .mh .mhp
 
 #
 # Handle C++ and cname style headers through .default command.
@@ -16,309 +22,15 @@ csplice = wsplice -i.. -k$(system) $(options) $(options_c_$^&) ../common.sp $[@ 
 .DEFAULT
         $(psplice)
 
-common_no_ext = &
-        algorith &
-        bitset &
-        cassert &
-        cctype &
-        cerrno &
-        cfloat &
-        ciso646 &
-        climits &
-        clocale &
-        cmath &
-        complex &
-        csetjmp &
-        csignal &
-        cstdarg &
-        cstddef &
-        cstdint &
-        cstdio &
-        cstdlib &
-        cstring &
-        ctime &
-        cwchar &
-        cwctype &
-        deque &
-        exceptio &
-        fstream &
-        function &
-        iomanip &
-        ios &
-        iosfwd &
-        iostream &
-        istream &
-        iterator &
-        limits &
-        list &
-        locale &
-        map &
-        memory &
-        new &
-        numeric &
-        ostream &
-        queue &
-        random &
-        set &
-        slist &
-        sstream &
-        stack &
-        stdexcep &
-        streambu &
-        string &
-        strstrea &
-        typeinfo &
-        type_tra &
-        unordere &
-        utility &
-        valarray &
-        vector
-
-common = &
-        $(common_no_ext) &
-        _algmut.h &
-        _algnmod.h &
-        _algsort.h &
-        _comdef.h &
-        _hash.h &
-        _ialias.h &
-        _meta.h &
-        _rbtree.h &
-        _strdef.h &
-        alloca.h &
-        assert.h &
-        complex.h &
-        conio.h &
-        crtdbg.h &
-        ctype.h &
-        env.h &
-        errno.h &
-        except.h &
-        exceptio.h &
-        excpt.h &
-        fcntl.h &
-        fenv.h &
-        float.h &
-        fnmatch.h &
-        fstream.h &
-        generic.h &
-        i86.h &
-        inttypes.h &
-        iomanip.h &
-        ios.h &
-        iosfwd.h &
-        iostream.h &
-        iso646.h &
-        istream.h &
-        jctype.h &
-        jstring.h &
-        jtime.h &
-        libgen.h &
-        limits.h &
-        locale.h &
-        malloc.h &
-        math.h &
-        mbctype.h &
-        mbstring.h &
-        mem.h &
-        mmintrin.h &
-        new.h &
-        ostream.h &
-        process.h &
-        search.h &
-        setjmp.h &
-        share.h &
-        signal.h &
-        sstream.h &
-        stdarg.h &
-        stdbool.h &
-        stddef.h &
-        stdexcep.h &
-        stdint.h &
-        stdio.h &
-        stdiobuf.h &
-        stdlib.h &
-        streambu.h &
-        string.h &
-        string.hpp &
-        strings.h &
-        strstrea.h &
-        sys/locking.h &
-        sys/stat.h &
-        sys/timeb.h &
-        sys/types.h &
-        tchar.h &
-        time.h &
-        typeinfo.h &
-        varargs.h &
-        wcdefs.h &
-        wcexcept.h &
-        wchar.h &
-        wchash.h &
-        wchbase.h &
-        wchiter.h &
-        wclbase.h &
-        wclcom.h &
-        wclibase.h &
-        wclist.h &
-        wclistit.h &
-        wcqueue.h &
-        wcsbase.h &
-        wcsibase.h &
-        wcskip.h &
-        wcskipit.h &
-        wcstack.h &
-        wctype.h &
-        wcvbase.h &
-        wcvector.h &
-        wsample.h
-
-DOS_files = &
-      $(common) &
-        _graph.h &
-        _pgchart.h &
-        common.cnv &
-        direct.h &
-        dosfunc.h &
-        io.h &
-        bios.h &
-        bios98.h &
-        dos.h &
-        eh.h &
-        graph.h &
-        graph98.h &
-        memory.h &
-        pgchart.h &
-        setjmpex.h &
-        sys/utime.h &
-        wdefwin.h &
-        unistd.h &
-        utime.h
-
-QNX_files = &
-      $(common) &
-        _graph.h &
-        _pgchart.h &
-        cdrom.h &
-        curses.h &
-        dir.h &
-        dirent.h &
-        form.h &
-        ftw.h &
-        graph.h &
-        grp.h &
-        libc.h &
-        mig.h &
-        mqueue.h &
-        pgchart.h &
-        pwd.h &
-        queue.h &
-        regex.h &
-        semaphor.h &
-        sgtty.h &
-        shadow.h &
-        tar.h &
-        term.h &
-        termcap.h &
-        termios.h &
-        unistd.h &
-        unix.h &
-        ustat.h &
-        utime.h &
-        utmp.h &
-        syslog.h &
-        sys/cdrom.h &
-        sys/console.h &
-        sys/con_msg.h &
-        sys/debug.h &
-        sys/dev.h &
-        sys/dev_msg.h &
-        sys/dir.h &
-        sys/disk.h &
-        sys/dumper.h &
-        sys/fd.h &
-        sys/feedback.h &
-        sys/file.h &
-        sys/fsys.h &
-        sys/fsys_msg.h &
-        sys/inline.h &
-        sys/interact.h &
-        sys/io_msg.h &
-        sys/ioctl.h &
-        sys/irqinfo.h &
-        sys/kernel.h &
-        sys/keyboard.h &
-        sys/lmf.h &
-        sys/magic.h &
-        sys/mman.h &
-        sys/mouse.h &
-        sys/mous_msg.h &
-        sys/name.h &
-        sys/osinfo.h &
-        sys/osstat.h &
-        sys/param.h &
-        sys/prfx.h &
-        sys/pci.h &
-        sys/pointer.h &
-        sys/proc_msg.h &
-        sys/proxy.h &
-        sys/psinfo.h &
-        sys/qioctl.h &
-        sys/qnxterm.h &
-        sys/qnx_glob.h &
-        sys/sched.h &
-        sys/seginfo.h &
-        sys/select.h &
-        sys/sendmx.h &
-        sys/ser_msg.h &
-        sys/sidinfo.h &
-        sys/slib16.h &
-        sys/statfs.h &
-        sys/sys_msg.h &
-        sys/termio.h &
-        sys/time.h &
-        sys/timers.h &
-        sys/times.h &
-        sys/trace.h &
-        sys/tracecod.h &
-        sys/uio.h &
-        sys/uscsi.h &
-        sys/utsname.h &
-        sys/vc.h &
-        sys/wait.h &
-        sys/fsysinfo.h &
-        sys/sigconte.h &
-        sys/sysi86.h
-
-LINUX_files = &
-      $(common) &
-        dirent.h &
-        grp.h &
-        netdb.h &
-        pwd.h &
-        unistd.h &
-        utime.h &
-        termios.h &
-        sys/time.h &
-        sys/times.h &
-        sys/ioctl.h &
-        sys/mman.h &
-        sys/mount.h &
-        sys/ptrace.h &
-        sys/sysmips.h &
-        sys/utsname.h &
-        sys/wait.h &
-        sys/socket.h &
-        sys/un.h &
-        netinet/in.h &
-        netinet/tcp.h &
-        arpa/inet.h
-
 all : $($(system)_files) .symbolic
     @%null
 
-.mh:$(path)
-.mhp:$(path)
+dos_path   = ../watcom/dos
+linux_path = ../watcom/linux
+qnx_path   = ../quantum
+
+.mh:  $($(system)_path);../watcom
+.mhp: $($(system)_path);../watcom
 
 .mhp.hpp:
         $(splice)
@@ -328,6 +40,9 @@ all : $($(system)_files) .symbolic
 
 .mh.cnv:
         $(splice)
+
+.mh.:
+        $(psplice)
 
 #
 # Special case for sys/time.h since there is also a time.h
@@ -409,11 +124,11 @@ options_c_time    = -kCONLY
 options_c_wchar   = -kCONLY
 options_c_wctype  = -kCONLY
 
+
+dos_clean   = win/*.h
+linux_clean = arpa/*.h netinet/*.h
+qnx_clean   =
+
 clean: .SYMBOLIC
-      rm -f *.h sys/*.h *.hpp common.cnv $(common_no_ext)
-!ifeq system DOS
-      rm -f win/*.h
-!else ifeq system LINUX
-      rm -f arpa/*.h
-      rm -f netinet/*.h
-!endif
+      rm -f *.h sys/*.h *.hpp common.cnv $($(system)_clean)
+      rm -f $(noext)
