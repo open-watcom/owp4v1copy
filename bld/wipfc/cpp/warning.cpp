@@ -78,6 +78,7 @@ Lexer::Token Warning::parse( Lexer* lexer )
     }
     document->pushInput( new IpfBuffer( fname, document->dataLine(),
         document->dataCol(), temp ) );
+    bool oldBlockParsing( document->blockParsing() );
     document->setBlockParsing( true );
     whiteSpace = Tag::LITERAL;
     appendChild( new P( document, this, document->dataName(), document->lexerLine(),
@@ -88,7 +89,7 @@ Lexer::Token Warning::parse( Lexer* lexer )
             parseCleanup( tok );
     }
     whiteSpace = Tag::NONE;
-    document->setBlockParsing( false );
+    document->setBlockParsing( oldBlockParsing );
     document->popInput();
     appendChild( new WhiteSpace( document, this, document->dataName(), document->lexerLine(),
         document->lexerCol(), L"  ", Tag::LITERAL, false ) );
