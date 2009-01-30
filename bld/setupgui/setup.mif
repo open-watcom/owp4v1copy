@@ -305,7 +305,7 @@ setup.res : setup.rc $(dep_res1) ../res/generic.bmp
     $(rc) $(rc_flags) $(res_inc_dirs) $[@ -fo=$^@
 
 dosstub.exe : dosstub.c
-    wcl -zq -l=dos -os -d0 -bt=dos $[@
+    wcl -zq -l=dos -os -d0 -bt=dos $(inc_dirs_sys) $[@
 
 .res.exe :
 !if "$(host_os)" == "win" && "$(host_cpu)" == "386"
