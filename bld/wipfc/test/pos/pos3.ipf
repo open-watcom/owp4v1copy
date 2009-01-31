@@ -96,5 +96,11 @@ from the left window border&per. The right margin remains unchanged&per.
 :i2 refid='1'.link
 :p.This :link reftype=hd res=2.link:elink. links to the highlighed phrase topic&per.
 
+:h2 res=9.Centered Text
+:i2 refid='1'.center
+:p.This text is flush left&per.
+.ce This text is centered&per.
+:p.This text is flush left&per.
+
 :euserdoc.
 

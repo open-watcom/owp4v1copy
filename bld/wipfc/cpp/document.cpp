@@ -163,6 +163,7 @@
 #include "document.hpp"
 #include "bitmap.hpp"
 #include "brcmd.hpp"
+#include "cecmd.hpp"
 #include "cell.hpp"
 #include "ctrldef.hpp"
 #include "docprof.hpp"
@@ -708,6 +709,11 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         ;//do nothing
     else if( lexer->cmdId() == Lexer::BREAK )
         parent->appendChild( new BrCmd( this, parent, dataName(), dataLine(), dataCol() ) );
+    else if( lexer->cmdId() == Lexer::CENTER ) {
+        CeCmd* cecmd( new CeCmd( this, parent, dataName(), dataLine(), dataCol() ) );
+        parent->appendChild( cecmd );
+        return cecmd->parse( lexer );
+    }
     else if( lexer->cmdId() == Lexer::IMBED ) {
         std::string env( Environment.value( "IPFCIMBED" ) );
         std::vector< std::wstring > paths;

@@ -139,7 +139,12 @@ Lexer::Token Lexer::lex( IpfData* input )
                     type = WORD;
             }
             else {
-                if( ch == L':' || ch == L'&' ) {
+                if( type == COMMAND ) {
+                    if( ch == L'\n' ) {
+                        break;
+                    }
+                }
+                else if( ch == L':' || ch == L'&' ) {
                     //beginning of another token
                     input->unget( ch );
                     buffer.erase( buffer.size() - 1 );
@@ -156,10 +161,6 @@ Lexer::Token Lexer::lex( IpfData* input )
                         type = ERROR_ENTITY;
                         break;
                     }
-                }
-                else if( type == COMMAND  && ch == L'\n' ) {
-                    buffer.erase( buffer.size() - 1 );
-                    break;
                 }
                 else if( type == WHITESPACE &&
                        ( !std::iswspace( ch ) || ch == L'\n' ) ) {
@@ -205,7 +206,6 @@ void Lexer::getCmdId()
     }
     else if( buffer.find( L".br", 0, 2 ) == 0 )
         cmdCode = BREAK;
-/*
     else if( buffer.find( L".ce", 0, 2 ) == 0 ) {
         size_t cut( 0 );
         cmdCode = CENTER;
@@ -213,13 +213,13 @@ void Lexer::getCmdId()
         for( cut = 0; cut <= buffer.length() && buffer[ cut ] == L' '; ++cut )
              ;
         if( cut )
-            buffer.erase( 0, cut + 1 ); //trim leading spaces
+            buffer.erase( 0, cut );     //trim leading spaces
     }
-*/
     else if( buffer.find( L".im", 0, 3 ) == 0 ) {
         size_t cut( 0 );
         cmdCode = IMBED;
         buffer.erase( 0, 3 );
+        buffer.erase( buffer.size() - 1 );  //trim '/n'
         for( cut = 0; cut <= buffer.length() && buffer[cut] == L' '; ++cut )
              ;
         if( cut )

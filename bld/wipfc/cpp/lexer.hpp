@@ -57,7 +57,7 @@ public:
     enum CmdId {
         COMMENT,
         BREAK,
-        //CENTER,
+        CENTER,
         IMBED,
         BADCMD
     };
