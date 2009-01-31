@@ -19,9 +19,9 @@ inc_dirs = -I"../cpp" -I"$(watcom_dir)/h"
 
 objs =  main.obj compiler.obj document.obj env.obj ipfbuffer.obj ipffile.obj lexer.obj
 
-objobjs=bitmap.obj btmpblk.obj cell.obj ctrlbtn.obj ctrlgrp.obj controls.obj errors.obj&
-        extfiles.obj fnt.obj fntcol.obj fts.obj gdword.obj gdict.obj gnames.obj header.obj&
-        index.obj nls.obj page.obj strings.obj synonym.obj toc.obj util.obj
+objobjs=bitmap.obj btmpblk.obj cecmd.obj cell.obj ctrlbtn.obj ctrlgrp.obj controls.obj&
+        errors.obj extfiles.obj fnt.obj fntcol.obj fts.obj gdword.obj gdict.obj gnames.obj&
+        header.obj index.obj nls.obj page.obj strings.obj synonym.obj toc.obj util.obj
 
 tagobjs=element.obj text.obj entity.obj punct.obj whtspc.obj word.obj tag.obj artlink.obj&
         artwork.obj brcmd.obj caution.obj cgraphic.obj color.obj ctrl.obj ctrldef.obj&
