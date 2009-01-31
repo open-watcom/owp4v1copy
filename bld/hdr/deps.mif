@@ -146,7 +146,6 @@ common.cnv      : ../watcom/common.mh ../crwat.sp
 complex.h       : $(complex_deps)
 conio.h         : ../watcom/conio.mh ../readonly.sp $(cplus) ../crwat.sp ../valist.sp
 crtdbg.h        : ../watcom/crtdbg.mh ../readonly.sp $(cplus) ../crwat.sp
-cstdlib.h       : ../watcom/cstdlib.mh ../readonly.sp ../crwat.sp
 ctype.h         : $(ctype_deps)
 direct.h        : ../watcom/direct.mh ../readonly.sp $(cplus) ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 dos.h           : ../watcom/dos.mh ../readonly.sp $(cplus) ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
