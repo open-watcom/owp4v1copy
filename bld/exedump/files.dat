@@ -1,5 +1,5 @@
 # WDUMP component of install manifest
-[ DEFAULT ]
+[ DEFAULT type="e" ]
 
 usr="wdump.exe" 	dir="binw" 	cond="doshost winhost |" where="c f77"
 usr="wdump.exe" 	dir="binp" 	cond="os2host" 		where="c f77"

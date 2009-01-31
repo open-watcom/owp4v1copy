@@ -1,12 +1,12 @@
 # Win386 component of install manifest
 
-[ DEFAULT type="e" dir="binw" rel="."  where="c jc f77 jf77" ]
-usr="win386.ext"	cond="wintarg"		desc="32-bit Windows Supervisor"
-usr="w386dll.ext"	cond="wintarg"		desc="32-bit Windows Supervisor for DLLs"
-usr="wemu387.386"	cond="wintarg"
-usr="wdebug.386"	cond="winhost wintarg | MinimalInstall |"
-usr="wbind.exe"		cond="wnthost wintarg"	dir="binnt"
-usr="win386.lib"	cond="wintarg"		type="l" dir="lib386/win"
-usr="wbind.exe"		cond="wintarg"		desc="32-bit Windows supervisor bind utility"	old="binb"
-usr="wbind.exe"		cond="os2host wintarg"	dir="binp"
-usr="wbind"		cond="lnxhost wintarg"	dir="binl"
+[ DEFAULT dir="binw" rel="." where="c jc f77 jf77" ]
+type="e" usr="win386.ext"	cond="wintarg"		desc="32-bit Windows Supervisor"
+type="e" usr="w386dll.ext"	cond="wintarg"		desc="32-bit Windows Supervisor for DLLs"
+type="e" usr="wemu387.386"	cond="wintarg"
+type="e" usr="wdebug.386"	cond="winhost wintarg | MinimalInstall |"
+type="e" usr="wbind.exe"		cond="wnthost wintarg"	dir="binnt"
+type="l" usr="win386.lib"	cond="wintarg"		dir="lib386/win"
+type="e" usr="wbind.exe"		cond="wintarg"		desc="32-bit Windows supervisor bind utility"	old="binb"
+type="e" usr="wbind.exe"		cond="os2host wintarg"	dir="binp"
+type="e" usr="wbind"		cond="lnxhost wintarg"	dir="binl"

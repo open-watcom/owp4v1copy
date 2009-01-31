@@ -1,5 +1,5 @@
 # IDEBATCH component of LANG11.DAT
-[ DEFAULT ]
+[ DEFAULT type="e" ]
 usr="dosserv.exe" 	dir="binw" 	cond="doshost winhost |" where="c jc f77 jf77"
 usr="batchbox.pif" 	dir="binw" 	cond="doshost winhost |" where="c jc f77 jf77"
 usr="batserv.exe" 	dir="binp" 	cond="os2host" 		where="c jc f77 jf77"

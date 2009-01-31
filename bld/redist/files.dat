@@ -1,31 +1,31 @@
 # Redistributable binaries component of install manifest
 
-[ DEFAULT type="e" dir="binw" rel="." cond="dostarg" where="c jc f77 jf77" ]
+[ DEFAULT dir="binw" rel="." cond="dostarg" where="c jc f77 jf77" ]
 # DOS/4GW
-usr="dos4gw.doc"
-usr="dos4gw.exe"
-usr="pminfo.exe"
-usr="rminfo.exe"
+type="s"    usr="dos4gw.doc"
+type="e"    usr="dos4gw.exe"
+type="e"    usr="pminfo.exe"
+type="e"    usr="rminfo.exe"
 
 # PMODE/W
-usr="pmodew.doc"
-usr="pmodew.exe"
-usr="pmodew.faq"
-usr="pmwbind.exe"
-usr="pmwlite.exe"
-usr="pmwsetup.exe"
-usr="pmwver.com"
+type="s"    usr="pmodew.doc"
+type="e"    usr="pmodew.exe"
+type="s"    usr="pmodew.faq"
+type="e"    usr="pmwbind.exe"
+type="e"    usr="pmwlite.exe"
+type="e"    usr="pmwsetup.exe"
+type="e"    usr="pmwver.com"
 
 # DOS/32A"
-usr="dos32a.exe"
-usr="license.d32"
-usr="readme.d32"
-usr="sb.exe"
-usr="sc.exe"
-usr="sd.exe"
-usr="ss.exe"
-usr="stub32a.exe"
-usr="stub32c.exe"
-usr="sver.exe"
+type="e"    usr="dos32a.exe"
+type="s"    usr="license.d32"
+type="s"    usr="readme.d32"
+type="e"    usr="sb.exe"
+type="e"    usr="sc.exe"
+type="e"    usr="sd.exe"
+type="e"    usr="ss.exe"
+type="e"    usr="stub32a.exe"
+type="e"    usr="stub32c.exe"
+type="e"    usr="sver.exe"
 
 

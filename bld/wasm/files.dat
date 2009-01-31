@@ -1,5 +1,5 @@
 # WASM component of LANG11.DAT
-[ DEFAULT ]
+[ DEFAULT type="e" ]
 usr="wasm.exe" 	dir="binw" 	cond="doshost winhost |"	where="c jc f77 jf77"
 usr="wasmr.exe"	dir="binw" 	cond="doshost winhost |"	where="c jc f77 jf77"
 usr="wasm.exe" 	dir="binp" 	cond="os2host" 		where="c jc f77 jf77"

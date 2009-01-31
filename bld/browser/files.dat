@@ -1,5 +1,5 @@
 # browser piece of lang11.dat
-[DEFAULT where="c jc" ]
+[DEFAULT where="c jc" type="e" ]
 dir="binp"	usr="wbrw.exe"	cond="os2host"				desc="OS/2-hosted source browser"
 dir="binw"	usr="wbrw.exe"	cond="winhost"   			desc="Source browser"
 dir="binw"	usr="wbrg.exe"	cond="winhost wnthost os2host | |"	desc="Browsing information merger"	old="binb"

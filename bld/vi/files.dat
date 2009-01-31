@@ -1,5 +1,5 @@
 # VI component of install manifest
-[ DEFAULT ]
+[ DEFAULT type="e" ]
     
 usr="vi.exe" 	dir="binnt" 	cond="wnthost" 				where="c f77 ac"
 usr="viw.exe" 	dir="binnt" 	cond="wnthost" 				where="c f77 ac"

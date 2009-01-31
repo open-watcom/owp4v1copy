@@ -1,4 +1,4 @@
-[ DEFAULT ]
+[ DEFAULT type="e" ]
 dir="binw"	usr="wsample.exe"	cond="dostarg"		where="c jc f77 jf77"
 #dir="binw"	usr="wsamprsi.exe"	cond="dostarg"		where="c jc f77 jf77"
 #dir="binw"	usr="wsamppls.exp"	cond="dostarg"		where="c jc f77 jf77"

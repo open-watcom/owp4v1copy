@@ -1,5 +1,5 @@
 # wasm component of lang.dat
-[ DEFAULT ]
+[ DEFAULT type="e" ]
 usr="wmaker.exe" 	dir="binw" 	cond="doshost"	where="c jc f77 jf77"
 usr="wmake.exe" 	dir="binw" 	cond="doshost winhost |"	where="c jc f77 jf77"
 usr="wmake.exe" 	dir="binp" 	cond="os2host" 		where="c jc f77 jf77"

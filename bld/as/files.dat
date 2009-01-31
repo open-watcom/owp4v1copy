@@ -1,6 +1,6 @@
 # AS component of install manifest
 
-[ DEFAULT ]
+[ DEFAULT type="e" ]
 usr="wasaxp.exe" 	dir="binw" 	cond="doshost" 		where="c jc"
 usr="wasppc.exe" 	dir="binw" 	cond="doshost" 		where="c jc"
 usr="wasaxp.exe" 	dir="binp" 	cond="os2host" 		where="c jc"

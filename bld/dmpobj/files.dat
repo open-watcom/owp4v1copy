@@ -1,5 +1,5 @@
 # DMPOBJ component of install manifest
-[ DEFAULT ]
+[ DEFAULT type="e" ]
  
 usr="dmpobj.exe" 	dir="binw" 	cond="doshost winhost |" where="c jc f77 jf77"
 usr="dmpobj.exe" 	dir="binp" 	cond="os2host" 		where="c jc f77 jf77"
