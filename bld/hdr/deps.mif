@@ -208,7 +208,7 @@ string.hpp      : ../watcom/string.mhp ../readonly.sp ../crwat.sp
 strings.h       : ../watcom/strings.mh ../readonly.sp $(cplus) ../crwat.sp ../sizet.sp
 strstrea.h      : $(strstrea_deps)
 sys/locking.h   : ../watcom/locking.mh ../readonly.sp $(cplus) ../crwat.sp
-!ifeq system QNX
+!ifeq system qnx
 dirent.h        : ../quantum/dirent.mh ../poppack.sp ../pshpackl.sp
 cdrom.h         : ../quantum/cdrom.mh ../poppack.sp ../pshpackl.sp
 grp.h           : ../quantum/grp.mh ../poppack.sp ../pshpackl.sp
@@ -264,7 +264,7 @@ ustat.h         : ../quantum/ustat.mh ../poppack.sp ../pshpackl.sp
 !else
 sys/stat.h      : ../watcom/stat.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 !endif
-!ifeq system LINUX
+!ifeq system linux
 dirent.h        : ../watcom/linux/dirent.mh ../poppack.sp ../pshpackl.sp ../lnxkpack.sp
 termios.h       : ../watcom/linux/termios.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp
 sys/ioctl.h     : ../watcom/linux/ioctl.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp ../incdir.sp
