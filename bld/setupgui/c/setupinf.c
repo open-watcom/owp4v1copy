@@ -1895,6 +1895,7 @@ static bool ProcLine( char *line, pass_type pass )
                 file->dst_var = NO_VAR;
             }
             line = p; p = NextToken( line, '!' );
+            file->executable = FALSE;
             if( p != NULL ) {
                 if( *p == 'e' ) {
                     file->executable = TRUE;
@@ -2319,7 +2320,6 @@ static bool GetDiskSizes()
             FileInfo[i].files[j].in_old_dir = FALSE;
             FileInfo[i].files[j].in_new_dir = FALSE;
             FileInfo[i].files[j].read_only = FALSE;
-            FileInfo[i].files[j].executable = FALSE;
         }
         GetFileInfo( FileInfo[i].dir_index, i, FALSE, &zeroed );
         GetFileInfo( FileInfo[i].old_dir_index, i, TRUE, &zeroed );
@@ -2883,7 +2883,7 @@ extern bool SimSubFileReadOnly( int parm, int subfile )
 extern bool SimSubFileExecutable( int parm, int subfile )
 /*******************************************************/
 {
-    return( FileInfo[parm].files[subfile].executable != 0 );
+    return( FileInfo[parm].files[subfile].executable );
 }
 
 extern bool SimSubFileNewer( int parm, int subfile )

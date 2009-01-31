@@ -69,6 +69,14 @@
 
 #define TEST_UNC(x) (x[0] == '\\' && x[1] == '\\')
 
+#ifdef __UNIX__
+ #define DEF_ACCESS (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR)
+ #define DEF_EXEC (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
+#else
+ #define DEF_ACCESS (S_IRUSR | S_IWUSR)
+ #define DEF_EXEC (S_IRUSR | S_IWUSR | S_IXUSR)
+#endif
+
 typedef struct def_var {
     char                *variable;
     char                *value;
@@ -1352,7 +1360,7 @@ extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
     } else {
         style = O_CREAT + O_TRUNC + O_WRONLY + O_BINARY;
     }
-    dst_files = open( dst_path, style, S_IREAD + S_IWRITE );
+    dst_files = open( dst_path, style, DEF_ACCESS );
     if( dst_files == -1 ) {
         FileClose( src_files );
         if( pbuff != lastchance )
@@ -1496,11 +1504,9 @@ static bool RelocateFiles( void )
                 if( DoCopyFile( src_path, dst_path, FALSE ) != CFE_NOERROR ) {
                     return( FALSE );
                 }
-#if defined( __UNIX__ )
                 if( SimSubFileExecutable( filenum, subfilenum ) ) {
-                    chmod( dst_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH );
+                    chmod( dst_path, DEF_EXEC );
                 }
-#endif
                 remove( src_path );
                 num_installed += SimSubFileSize( filenum, subfilenum );
                 StatusAmount( num_installed, num_total_install );
@@ -1832,11 +1838,9 @@ static bool DoCopyFiles( void )
                 }
             } while( copy_error != CFE_NOERROR );
 
-#if defined( __UNIX__ )
             if( SimSubFileExecutable( filenum, subfilenum ) ) {
-                chmod( tmp_path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH );
+                chmod( tmp_path, DEF_EXEC );
             }
-#endif
             SetVariableByHandle( var_handle, tmp_path );
             UpdateCheckList( tmp_path, var_handle );
         }
