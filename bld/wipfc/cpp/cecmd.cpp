@@ -44,12 +44,11 @@ Lexer::Token CeCmd::parse( Lexer* lexer )
     std::wstring* fname( new std::wstring() );
     prepBufferName( fname, *( document->dataName() ) );
     fname = document->addFileName( fname );
-    unsigned int startLine( document->dataLine() );
     bool oldBlockParsing( document->blockParsing() );
-    IpfBuffer* buffer = new IpfBuffer( fname, document->dataLine(), document->dataCol(), lexer->text() );
+    IpfBuffer* buffer( new IpfBuffer( fname, document->dataLine(), document->dataCol(), lexer->text() ) );
     document->pushInput( buffer );
     document->setBlockParsing( true );
-    Lexer::Token tok = document->getNextToken();
+    Lexer::Token tok( document->getNextToken() );
     while( tok != Lexer::END ) {
         if( tok == Lexer::WHITESPACE ) {
             WhiteSpace* ws( new WhiteSpace( document, this,
