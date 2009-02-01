@@ -33,11 +33,13 @@
 #include "document.hpp"
 #include "page.hpp"
 
+#include "acvwport.hpp"
 #include "artlink.hpp"
 #include "artwork.hpp"
 #include "caution.hpp"
 #include "cgraphic.hpp"
 #include "color.hpp"
+#include "ddf.hpp"
 #include "dl.hpp"
 #include "document.hpp"
 #include "entity.hpp"
@@ -395,10 +397,12 @@ bool Tag::parseBlock( Lexer* lexer, Lexer::Token& tok )
         case Lexer::FN:
             break;
         case Lexer::ACVIEWPORT:
-            document->printError( ERR3_NOTSUPPORTED );
-            while( tok != Lexer::TAGEND )
-                tok = document->getNextToken();
-            tok = document->getNextToken();
+            {
+                Element* elt( new AcViewport( document, this, document->dataName(),
+                    document->lexerLine(), document->lexerCol() ) );
+                appendChild( elt );
+                tok = elt->parse( lexer );
+            }
             break;
         case Lexer::CAUTION:
             {
@@ -433,10 +437,12 @@ bool Tag::parseBlock( Lexer* lexer, Lexer::Token& tok )
             }
             break;
         case Lexer::DDF:
-            document->printError( ERR3_NOTSUPPORTED );
-            while( tok != Lexer::TAGEND )
-                tok = document->getNextToken();
-            tok = document->getNextToken();
+            {
+                Element* elt( new Ddf( document, this, document->dataName(),
+                    document->lexerLine(), document->lexerCol() ) );
+                appendChild( elt );
+                tok = elt->parse( lexer );
+            }
             break;
         case Lexer::FIG:
             {

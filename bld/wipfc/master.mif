@@ -23,12 +23,12 @@ objobjs=bitmap.obj btmpblk.obj cecmd.obj cell.obj ctrlbtn.obj ctrlgrp.obj contro
         errors.obj extfiles.obj fnt.obj fntcol.obj fts.obj gdword.obj gdict.obj gnames.obj&
         header.obj index.obj nls.obj page.obj strings.obj synonym.obj toc.obj util.obj
 
-tagobjs=element.obj text.obj entity.obj punct.obj whtspc.obj word.obj tag.obj artlink.obj&
-        artwork.obj brcmd.obj caution.obj cgraphic.obj color.obj ctrl.obj ctrldef.obj&
-        dl.obj docprof.obj fig.obj figcap.obj fn.obj font.obj hide.obj hn.obj hpn.obj&
-        i1.obj i2.obj icmd.obj isyn.obj lines.obj link.obj lm.obj lp.obj note.obj nt.obj&
-        ol.obj p.obj parml.obj pbutton.obj rm.obj sl.obj table.obj title.obj ul.obj&
-        warning.obj xmp.obj
+tagobjs=element.obj text.obj entity.obj punct.obj whtspc.obj word.obj tag.obj acvwport.obj&
+        artlink.obj artwork.obj brcmd.obj caution.obj cgraphic.obj color.obj ctrl.obj&
+        ctrldef.obj ddf.obj dl.obj docprof.obj fig.obj figcap.obj fn.obj font.obj hide.obj&
+        hn.obj hpn.obj i1.obj i2.obj icmd.obj isyn.obj lines.obj link.obj lm.obj lp.obj&
+        note.obj nt.obj ol.obj p.obj parml.obj pbutton.obj rm.obj sl.obj table.obj&
+        title.obj ul.obj warning.obj xmp.obj
 
 wipfc.exe : $(objs) $(objobjs) $(tagobjs)
     $(linker) $(lflags) name $@ file {$(objs) $(objobjs) $(tagobjs)}
