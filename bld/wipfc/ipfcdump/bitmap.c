@@ -7,10 +7,145 @@
 
 #define FILEBITMAP
 #ifdef FILEBITMAP
-static size_t   expand( uint8_t *, uint8_t *, uint8_t *, size_t);
-static uint16_t getCode( uint8_t *, size_t *, size_t);
-static uint8_t *decodeString( uint8_t *, uint16_t, char *);
-static void     blockToHex( uint8_t *, size_t, FILE *);
+
+#define CLEAR_TABLE 256                 /* flush the string table */
+#define TERMINATOR  257                 /* marks EOF */
+#define FIRST_CODE  258                 /* First available code for code_value table */
+#define INIT_BITS   9
+#define MAX_BITS    12
+#define TABLE_SIZE  4096
+#define MAXVAL(n)   ((1 << ( n )) - 1)  /* max_value formula macro */
+
+typedef struct {
+    uint16_t    offset;
+    uint16_t    length;
+} codepos_t;
+
+unsigned expand( uint8_t *src, uint8_t *dst, size_t length )
+/**********************************************************/
+{
+    uint8_t     *dstStart;      /* Saved start of output buffer */
+    uint8_t     *srcStart;      /* Saved start of compressed data */
+    uint8_t     *tmpChar;
+    codepos_t   *codePos;       /* Position of previous strings in output */
+    uint16_t    numBits;
+    uint16_t    maxCode;
+    uint16_t    nextCode;
+    uint16_t    newCode;
+    uint16_t    oldCode = 0; 
+    uint16_t    code;
+    uint8_t     character = 0;
+    uint8_t     clearFlg = 1;
+
+    uint16_t    bitCount  = 0;
+    uint32_t    bitBuffer = 0;
+
+    srcStart    = src;
+    dstStart    = dst;
+    nextCode    = FIRST_CODE;
+    numBits     = INIT_BITS;
+    maxCode     = MAXVAL( numBits );
+
+    codePos     = calloc( 1, TABLE_SIZE * sizeof( codepos_t ) );
+    if( codePos == NULL ) {
+        printf( "Error: failed to allocate decompressor table.\n" );
+        return( 0 );
+    }
+
+    for( ;; ) {
+        /* Check for source buffer overrun */
+        if( src - srcStart > length ) {
+            printf( "Error: src - start = %d, length = %d\n", src - srcStart, length );
+            break;
+        }
+        while( bitCount <= 24 ) {
+            bitBuffer |= (uint32_t)*src++ << ( 24 - bitCount );
+            bitCount  += 8;
+        }
+
+        newCode = (uint16_t)( bitBuffer >> ( 32 - numBits ) );
+        if( newCode == TERMINATOR )
+            break;
+
+        /* Check for decompressor table overflow */
+        if( newCode >= TABLE_SIZE ) {
+            printf( "Error: newCode = %d\n", newCode );
+            break;
+        } else {
+//            printf( "newCode = %d\n", newCode );
+        }
+
+        bitBuffer <<= numBits;
+        bitCount   -= numBits;
+
+        if( clearFlg ) {    /* Clear the decompressor's tables */
+            clearFlg = 0;
+            codePos[ newCode ].offset = (uint16_t)( dst - dstStart );
+            codePos[ newCode ].length = 1;
+            oldCode = newCode;
+            *dst++ = character = (uint8_t)newCode;
+        } else if( newCode == CLEAR_TABLE ) {
+            clearFlg = 1;
+            nextCode = FIRST_CODE;
+            numBits  = INIT_BITS;
+            maxCode  = MAXVAL( numBits );
+        } else {
+            if( newCode < CLEAR_TABLE ) {
+                codePos[ newCode ].offset = (uint16_t)( ( tmpChar = dst ) - dstStart );
+                codePos[ newCode ].length = 1;
+                *dst++ = character = (uint8_t)newCode;
+            } else {
+                code = newCode;
+                if( code >= nextCode )
+                    code = oldCode;     /* Special handling for string/char/string */
+
+                /* Copy previously decompressed string to output buffer */
+                tmpChar = memcpy( dst, dstStart + codePos[ code ].offset, codePos[ code ].length );
+
+                dst += codePos[ code ].length;
+                if( newCode >= nextCode )
+                    *dst++ = character;
+
+                character = *tmpChar;
+            }
+
+            /* Check for decompressor table overflow */
+            if( nextCode >= TABLE_SIZE ) {
+                printf( "Error: nextCode = %d\n", nextCode );
+                break;
+            }
+
+            codePos[ nextCode ].offset = (uint16_t)( tmpChar - dstStart ) - codePos[ oldCode ].length;
+            codePos[ nextCode ].length = codePos[ oldCode ].length + 1;
+            ++nextCode;
+
+            if( nextCode == maxCode && numBits < 12 )
+                maxCode = MAXVAL( ++numBits );
+
+            oldCode = newCode;
+        }
+    }
+
+    free( codePos );
+    return( dst - dstStart );
+}
+
+static void blockToHex( uint8_t *data, size_t size, FILE* out )
+/*************************************************************/
+{
+    size_t bytes = 0;
+    while( bytes < size ) {
+        unsigned int count1;
+        for( count1 = 0; count1 < 16; count1++ ) {
+            if (bytes >= size)
+                break;
+            fprintf( out, "%2.2X ", data[ bytes ] );
+            ++bytes;
+        }
+        fputc('\n', out);
+    }
+}
+
 #endif
 
 void readBitMaps( FILE *in, FILE *out )
@@ -167,11 +302,15 @@ void readBitMaps( FILE *in, FILE *out )
                 fprintf(lzw, "  Block #%u\n", count2);
                 fprintf(lzw, "    Size:             %4.4x (%hu)\n", bmb.size, bmb.size);
                 fprintf(lzw, "    Compression type: %4.2x (%u)\n", bmb.type, bmb.type);
+                /* NB: The compressor does not emit trailing zeros, if any, but they are
+                 * needed by the decompressor. The source buffer must be zeroed out.
+                 */
+                memset( compressed, 0, 65504 * sizeof( uint8_t ) );
                 fread( compressed, sizeof( uint8_t ), bmb.size - 1, in );
                 blockToHex( compressed, sizeof( uint8_t ) * ( bmb.size - 1 ), lzw );
                 if( bmb.type ) {
-                    uint8_t filler;
-                    size_t bytes = expand( compressed, expanded, &filler, bmb.size - 1 );
+                    uint8_t filler = 0;
+                    size_t bytes = expand( compressed, expanded, bmb.size );
                     if( bytes < blockSize ) {
                         memset(expanded + bytes, filler, blockSize - bytes);
                         //fprintf(out, "Adding %u bytes of filler %2.2x\n", blockSize - bytes, filler);
@@ -204,160 +343,3 @@ void readBitMaps( FILE *in, FILE *out )
     else
         fputs("  There are no bitmaps\n", out);
 }
-/*******************************************************************************************/
-/* Based on code in 2 articls from DDJ:
-    1. Mark R. Nelson, October 1989
-    2. Shawn M. Regan, January 1990
-*/
-#ifdef FILEBITMAP
-
-#define CLEAR_TABLE 256                 /* flush the string table */
-#define TERMINATOR  257                 /* marks EOF */
-#define FIRST_CODE  258                 /* First available code for code_value table */
-#define INIT_BITS 9
-#define MAX_BITS 12
-#define TABLE_SIZE 5021
-#define MAXVAL(n) ((1 << ( n )) - 1)    /* max_value formula macro */
-
-static uint16_t    *PrefixCode;         /* This array holds the prefix codes */
-static uint8_t     *AppendCharacter;    /* This array holds the appended chars */
-static uint8_t     *DecodeStack;        /* This array holds the decoded string */
-static uint32_t     BitBuffer = 0L;
-static size_t       BitCount = 0;
-static uint16_t     NumBits = INIT_BITS;/* Starting with 9 bit codes */
-
-static size_t expand( uint8_t *src, uint8_t *dst, uint8_t *lastCode, size_t size )
-{
-    uint8_t    *string;
-    size_t      bytes = 0;
-    size_t      index = 0;
-    uint16_t    nextCode = FIRST_CODE;
-    uint16_t    newCode;
-    uint16_t    oldCode;
-    uint16_t    maxCode = MAXVAL(INIT_BITS);
-    uint16_t    character;
-    char        clearF = 1;
-    char        errorF = 0;
-    
-    PrefixCode = ( uint16_t * )calloc( TABLE_SIZE, sizeof( uint16_t ) );
-    AppendCharacter = ( uint8_t * )calloc( TABLE_SIZE, sizeof( uint8_t ) );
-    DecodeStack =  ( uint8_t * )calloc( TABLE_SIZE, sizeof( uint8_t ) );
-    BitBuffer = 0L;
-    BitCount = 0;
-    NumBits = INIT_BITS;
-    while( ( newCode = getCode( src, &index, size ) ) != TERMINATOR ) {
-        if (clearF) {                /* (re-)initialize */
-            clearF = 0;
-            oldCode = newCode;
-            character = newCode;
-            dst[ bytes ] = ( uint8_t )newCode;
-            ++bytes;
-            *lastCode = ( uint8_t )newCode;
-            continue;
-        }
-        if (newCode == CLEAR_TABLE) {   /* Clear string table */
-            clearF = 1;
-            NumBits = INIT_BITS;
-            nextCode = FIRST_CODE;
-            maxCode = MAXVAL(INIT_BITS);
-            continue;
-        }
-        if (newCode >= nextCode) {      /* Check for string+char+string */
-            DecodeStack[0] = character;
-            string = decodeString(&DecodeStack[1], oldCode, &errorF);
-        }
-        else
-            string = decodeString(&DecodeStack[0], newCode, &errorF);
-        if (errorF) {
-            printf("DecodeStack limit exceeded\n\a");
-            break;
-        }
-        character = *string;            /* Output decoded string in reverse */
-        while( string >= &DecodeStack[0] ){
-            dst[bytes] = *string;
-            ++bytes;
-            --string;
-            if (bytes >= 65504) {
-                errorF = 1;
-                break;
-            }
-        }
-        if (errorF) {
-            printf("destination limit exceeded\n\a");
-            break;
-        }
-        *lastCode = *( ++string );
-        if( nextCode <= maxCode ) {     /* Add to string table if not full */
-            PrefixCode[ nextCode ] = oldCode;
-            AppendCharacter[ nextCode ] = character;
-            ++nextCode;
-            if( nextCode == maxCode && NumBits < MAX_BITS )
-                maxCode = MAXVAL( ++NumBits );
-        }
-        oldCode = newCode;
-    }
-    free( PrefixCode );
-    PrefixCode = NULL;
-    free( AppendCharacter );
-    AppendCharacter = NULL;
-    free( DecodeStack );
-    DecodeStack = NULL;
-    return bytes;
-}
-/*******************************************************************************************/
-static uint16_t getCode( uint8_t *src, size_t *index, size_t size )
-{
-    uint16_t retval;
-    
-    while( BitCount <= 24 ) {
-        if (*index < size) {
-            BitBuffer |= ( ( uint32_t )src[ *index ] << ( 24 - BitCount ) );
-            *index += 1;
-        }
-        else
-            BitBuffer |= /*0x00*/ (( uint32_t )EOF << ( 24 - BitCount ) );
-        BitCount += 8;
-    }
-    if (*index < size)
-        retval = BitBuffer >> (32 - NumBits);
-    else
-        retval = TERMINATOR;
-    BitBuffer <<= NumBits;
-    BitCount -= NumBits;
-    return( retval );
-}
-/*******************************************************************************************/
-static uint8_t *decodeString( uint8_t *buffer, uint16_t code, char *errorF )
-{
-    unsigned int index = 0;
-    *errorF = 0;
-    while( code > 255 ) {
-        *buffer = AppendCharacter[ code ];
-        ++buffer;
-        code = PrefixCode[ code ];
-        if( index >= TABLE_SIZE ) {
-            *errorF = 1;
-            return( buffer );
-        }
-        ++index;
-    }
-    *buffer = code;
-    return( buffer );
-}
-/*******************************************************************************************/
-static void blockToHex( uint8_t *data, size_t size, FILE* out )
-{
-    size_t bytes = 0;
-    while( bytes < size ) {
-        unsigned int count1;
-        for( count1 = 0; count1 < 16; count1++ ) {
-            if (bytes >= size)
-                break;
-            fprintf( out, "%2.2X ", data[ bytes ] );
-            ++bytes;
-        }
-        fputc('\n', out);
-    }
-}
-
-#endif
