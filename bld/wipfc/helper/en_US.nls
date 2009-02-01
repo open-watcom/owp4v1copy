@@ -8,7 +8,7 @@ Warning="Warning&colon."
 olChars=abcdefghijklmnopqrstuvwxyz
 olClose1=.
 olClose2=)
-ulItemId1=o
+ulItemId1=
 ulItemId2=-
 ulItemId3=--
 cgraphicFontFaceName="Courier"
@@ -21,4 +21,3 @@ cgraphicFontHeight=18
 Grammer
 Words=0-9+A-Z+a-z
 eGrammer
-
