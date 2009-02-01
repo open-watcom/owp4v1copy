@@ -24,11 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  An abstract text element (WHITESPACE, WORD, ENTITY, or PUNCTUATION)
+* Description:  An abstract text element (WHITESPACE, WORD, ENTITY,
+*               or PUNCTUATION).
 *
 ****************************************************************************/
 
-#include <cctype>
+
+#include <cwctype>
 #include "text.hpp"
 #include "cell.hpp"
 #include "document.hpp"

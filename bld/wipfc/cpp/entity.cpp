@@ -28,7 +28,8 @@
 *
 ****************************************************************************/
 
-#include <cctype>
+
+#include <cwctype>
 #include "entity.hpp"
 #include "document.hpp"
 #include "ipfbuffer.hpp"

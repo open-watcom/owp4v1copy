@@ -474,9 +474,10 @@ void Document::makeBitmaps()
             paths.push_back( env.substr( idx1, idx2 - idx1 ) );
         }
         try {
-            char fbuffer[ _MAX_PATH ];
+            char fbuffer[ PATH_MAX ];
+
             for( BitmapNameIter itr = bitmapNames.begin(); itr != bitmapNames.end(); ++itr ) {
-                if( std::wcstombs( fbuffer, itr->first.c_str(), _MAX_PATH ) == -1 )
+                if( std::wcstombs( fbuffer, itr->first.c_str(), sizeof( fbuffer ) ) == -1 )
                     throw FatalError( ERR_T_CONV );
                 for( size_t count = 0; count < paths.size(); ++count ) {
                     std::string fname( paths[ count ] );
@@ -724,16 +725,17 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         char separator( ':' );
         wchar_t slash( L'/' );
 #endif
-        wchar_t fbuffer[ _MAX_PATH ];
+        wchar_t fbuffer[ PATH_MAX ];
+
         std::string::size_type idx1( 0 );
         std::string::size_type idx2( env.find( separator, idx1 ) );
-        if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), _MAX_PATH ) == -1 )
+        if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), sizeof( fbuffer ) ) == -1 )
             throw FatalError( ERR_T_CONV );
         paths.push_back( std::wstring( fbuffer ) );
         while( idx2 != std::string::npos ) {
             idx1 = idx2 + 1;
             idx2 = env.find( separator, idx1 );
-            if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), _MAX_PATH ) == -1 )
+            if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), sizeof( fbuffer ) ) == -1 )
                 throw FatalError( ERR_T_CONV );
             paths.push_back( std::wstring( fbuffer ) );
         }

@@ -61,7 +61,8 @@ Compiler::~Compiler()
 /*****************************************************************************/
 void Compiler::setInputFile( const char *name )
 {
-    wchar_t fbuffer[ _MAX_PATH ];
+    wchar_t fbuffer[ PATH_MAX ];
+
     if( std::mbstowcs( fbuffer, name, sizeof( fbuffer ) / sizeof( wchar_t ) ) == -1)
         throw FatalError( ERR_T_CONV );
     std::wstring* wname( new std::wstring( fbuffer ) );

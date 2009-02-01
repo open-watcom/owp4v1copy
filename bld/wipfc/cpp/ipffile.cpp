@@ -28,13 +28,15 @@
 *
 ****************************************************************************/
 
+
 #include "ipffile.hpp"
 #include "errors.hpp"
 
 IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname )
 {
-    char buffer[ _MAX_PATH ];
-    std::wcstombs( buffer, fname->c_str(), _MAX_PATH );
+    char buffer[ PATH_MAX ];
+
+    std::wcstombs( buffer, fname->c_str(), sizeof( buffer ) );
     if(( stream = std::fopen( buffer, "r" ) ) == 0)
         throw FatalIOError( ERR_OPEN, *fileName );
 }

@@ -28,7 +28,8 @@
 *
 ****************************************************************************/
 
-#include <cctype>
+
+#include <cwctype>
 #include "word.hpp"
 #include "document.hpp"
 #include "gdword.hpp"

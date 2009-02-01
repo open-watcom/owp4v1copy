@@ -24,11 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  A PUNCTUATION element
+* Description:  A PUNCTUATION element.
 *
 ****************************************************************************/
 
-#include <cctype>
+
+#include <cwctype>
 #include "punct.hpp"
 #include "document.hpp"
 

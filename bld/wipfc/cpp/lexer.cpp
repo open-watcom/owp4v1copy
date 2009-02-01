@@ -28,8 +28,9 @@
 *
 ****************************************************************************/
 
+
 #include <cstdio>
-#include <cctype>
+#include <cwctype>
 #include "lexer.hpp"
 #include "errors.hpp"
 #include "ipfdata.hpp"
