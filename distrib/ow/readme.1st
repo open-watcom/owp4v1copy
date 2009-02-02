@@ -73,3 +73,12 @@ win32_helpfiles     - Win32 help files
 whelp_helpfiles     - WHELP format help files
 os2_helpfiles       - OS/2 help files
 pdf_helpfiles       - PDF help files
+
+
+Types:
+------
+
+d   - DLL file
+e   - executable file
+l   - library file
+s   - supplemental file
