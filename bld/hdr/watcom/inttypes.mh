@@ -20,8 +20,6 @@
 
 :include cpluspro.sp
 
-:include pshpackl.sp
-
 :include wchar_t.sp
 
 typedef struct {
@@ -267,8 +265,6 @@ _WCRTLINK extern intmax_t   strtoimax( const char *__nptr, char **__endptr, int 
 _WCRTLINK extern uintmax_t  strtoumax( const char *__nptr, char **__endptr, int __base );
 _WCRTLINK extern intmax_t   wcstoimax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
 _WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
-
-:include poppack.sp
 
 :include cplusepi.sp
 #endif

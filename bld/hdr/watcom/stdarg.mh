@@ -39,8 +39,6 @@ using std::va_list;
  #include <_comdef.h>
 #endif
 
-:include pshpackl.sp
-
 :include valist.sp
 
 :segment CNAME
@@ -119,8 +117,6 @@ typedef __va_list va_list;
 :include ext.sp
 #define va_copy(dest,src) __va_copy(dest,src)
 #endif /* End of extensions section. */
-
-:include poppack.sp
 
 :segment CNAME
 :include cplusepi.sp

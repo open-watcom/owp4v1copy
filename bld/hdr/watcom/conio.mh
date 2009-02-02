@@ -12,8 +12,6 @@
  #include <_comdef.h>
 #endif
 
-:include pshpackl.sp
-
 :include valist.sp
 
 _WCRTLINK extern char *cgets(char *__buf);
@@ -47,8 +45,6 @@ _WCRTLINK extern int vcscanf( const char *__format, __va_list __arg );
   #pragma intrinsic(inpd,outpd)
  #endif
 #endif
-
-:include poppack.sp
 
 :include cplusepi.sp
 #endif
