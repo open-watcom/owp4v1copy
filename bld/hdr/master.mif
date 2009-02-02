@@ -19,9 +19,6 @@ csplice = wsplice -i.. $($(system)_options) $(options_c_$^&) ../common.sp $[@ $^
 # Handle C++ and cname style headers through .default command.
 #
 
-.DEFAULT
-        $(psplice)
-
 all : $($(system)_files) .symbolic
     @%null
 
@@ -68,26 +65,7 @@ sys/utime.h : dos/sys_utim.mh
 #
 # Special case for cname style headers
 #
-options_cassert  = -kCNAME
-options_cctype   = -kCNAME
-options_cerrno   = -kCNAME
-options_cfloat   = -kCNAME
-options_ciso646  = -kCNAME
-options_climits  = -kCNAME
-options_clocale  = -kCNAME
-options_cmath    = -kCNAME
 options_complex  = -kCPPCOMPLEX
-options_csetjmp  = -kCNAME
-options_csignal  = -kCNAME
-options_cstdarg  = -kCNAME
-options_cstddef  = -kCNAME
-options_cstdint  = -kCNAME
-options_cstdio   = -kCNAME
-options_cstdlib  = -kCNAME
-options_cstring  = -kCNAME
-options_ctime    = -kCNAME
-options_cwchar   = -kCNAME
-options_cwctype  = -kCNAME
 options_exceptio = -kCNAME
 options_fstream  = -kCNAME
 options_iomanip  = -kCNAME
