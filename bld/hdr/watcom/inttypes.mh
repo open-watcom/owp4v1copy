@@ -9,7 +9,6 @@
 #ifndef _INTTYPES_H_INCLUDED
 #define _INTTYPES_H_INCLUDED
 :include readonly.sp
-:include cpluspro.sp
 
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
@@ -18,6 +17,10 @@
 #ifndef _STDINT_H_INCLUDED
   #include <stdint.h>
 #endif
+
+:include cpluspro.sp
+
+:include pshpackl.sp
 
 :include wchar_t.sp
 
@@ -264,6 +267,8 @@ _WCRTLINK extern intmax_t   strtoimax( const char *__nptr, char **__endptr, int 
 _WCRTLINK extern uintmax_t  strtoumax( const char *__nptr, char **__endptr, int __base );
 _WCRTLINK extern intmax_t   wcstoimax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
 _WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
+
+:include poppack.sp
 
 :include cplusepi.sp
 #endif
