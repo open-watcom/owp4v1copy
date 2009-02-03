@@ -52,6 +52,7 @@
 #define BUF_SIZE        512             // default buffersize for filecb e.a.
 #define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
 #define SCR_KW_LENGTH   2               // script control word length
+#define FUN_NAME_LENGTH 11              // &'function name max length
 #define TAG_NAME_LENGTH 15              // :tag name length
 #define ATT_NAME_LENGTH 9               // :tag attr name len
 #define SYM_NAME_LENGTH 10              // symbol name length
@@ -141,8 +142,9 @@ typedef struct symvar {
     struct symvar   *   next;           // next base entry
     char                name[ SYM_NAME_LENGTH + 1];
     long                last_auto_inc;// last autoincremented subscript value
-    long                subscript_used; // count of used subscript
+    long                subscript_used; // count of used subscripts
     symsub          *   subscripts;     // subscript entries
+    symsub          *   sub_0;          // special subscript 0 entry
     sym_flags           flags;
 } symvar;
 
@@ -320,9 +322,24 @@ typedef struct gmltag {
    gmlflags         tagflags;
 } gmltag;
 
+
+/***************************************************************************/
+/*  scr string functions                                                   */
+/***************************************************************************/
+
+typedef struct scrfunc {
+    const   char    fname[ FUN_NAME_LENGTH + 1 ];   // function name
+    const   size_t  length;             // actual length of fname
+    const   size_t  parm_cnt;           // mandatory parms
+    const   size_t  opt_parm_cnt;       // optional parms
+    char        *   (*fun)( char * in, const char * end, char * * ppval,
+                            const int parm_cnt );
+} scrfunc;
+
+
 /***************************************************************************/
 /*  condcode  returncode for several conditions during parameterchecking   */
-/*            loosely adapted from wgml 88.1 on  IBM S/360 code            */
+/*            loosely adapted from wgml 88.1 IBM S/360 ASM code            */
 /***************************************************************************/
 
 typedef enum condcode {            // return code for some scanning functions

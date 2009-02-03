@@ -25,11 +25,14 @@
 *  ========================================================================
 *
 * Description:  macro utility functions
-*               add_macro_cb_entry  -- add macro as input source
-*               add_macro_parms     -- add macro call parms to local dictionary
-*               free_lines          -- free macro source lines
-*               scr_dm              -- .dm control word processing
-*               scr_me              -- .me control word processing
+*
+*             add_macro_cb_entry  -- add macro as input source
+*             add_macro_parms     -- add macro call parms to local dictionary
+*             free_lines          -- free macro source lines
+*
+*             scr_dm              -- .dm control word define macro
+*             scr_me              -- .me control word macro end
+*             scr_em              -- .em control word execute macro
 *
 ****************************************************************************/
 
@@ -242,7 +245,7 @@ void    free_lines( inp_line * line )
 /*     be local to the invoked macro.                                      */
 /***************************************************************************/
 
-extern  void    scr_dm( void )
+void    scr_dm( void )
 {
     char        *   nmstart;
     char        *   p;
@@ -559,6 +562,126 @@ void    scr_me( void )
 
     input_cbs->if_cb->if_level = 0;     // terminate
     ProcFlags.keep_ifstate = false;     // ... all .if controls
+    return;
+}
+
+
+
+
+/**************************************************************************/
+/* EMPTY PAGE  is not implemeted ( not used in OW documentation )         */
+/*                                                                        */
+/* EMPTY PAGE,  EXECUTE MACRO:   EMPTY PAGE controls suppression of empty */
+/* pages (pages  that contain nothing in  the text area);   EXECUTE MACRO */
+/* treats the operand line as a  macro,  even if Macro Substitution (.MS) */
+/* is OFF.                                                                */
+/*                                                                        */
+/*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커      */
+/*      |       |                                                  |      */
+/*      |  .EM  |    <YES|NO|OFFNO>   not implemented              |      */
+/*      |       |                                                  |      */
+/*      |컴컴컴�|컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴|      */
+/*      |       |                                                  |      */
+/*      |  .EM  |    .macro <args>                                 |      */
+/*      |       |                                                  |      */
+/*      읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸      */
+/*                                                                        */
+/* Neither form of this control word causes a break.                      */
+/*                                                                        */
+/* .EM <YES|NO|OFFNO>:  The  situation can often arise in  which an empty */
+/*    page  is created  (a  page that  contains  only  top and/or  bottom */
+/*    running titles).    By default,   SCRIPT does  output these  pages. */
+/*    Specifying .EM YES allows  SCRIPT to print them,   .EM NO specifies */
+/*    that they are not to be printed,  and .EM OFFNO specifies that they */
+/*    are not to be printed and that the  page number is not to be incre- */
+/*    mented.   ".EM YES"  is the  initial value.    Empty pages  will be */
+/*    printed unless ".em no" is encountered.   If the operand is omitted */
+/*    then "YES" is assumed.                                              */
+/* .EM .macro <parameters>:  If the operands are missing it is treated as */
+/*    EMPTY PAGE (See above).   If the first operand of the ".EM" control */
+/*    word begins with a control word indicator,  then that first operand */
+/*    is  treated as  a  Macro or  Remote  name.    Optional keyword  and */
+/*    positional parameters  may follow the  macro name.   The  local set */
+/*    symbol &*0  is set to the  count of positional parameters  and &*1, */
+/*    &*2, etc. contain their values.   The symbol &* contains the entire */
+/*    parameter list.   Keyword parameters are accessed as set symbols by */
+/*    the keyword name.                                                   */
+/*                                                                        */
+/* EXAMPLES                                                               */
+/* (1) .EM .TEST parm1 KW1=parm2                                          */
+/*     A macro named  TEST is invoked;  &*0 is  set to 1,  &*1  is set to */
+/*     "parm1",   &KW1   is  set   to  "parm2",    and  &*   is  set   to */
+/*     "parm1 KW1=parm2".                                                 */
+/* (2) .EM .SK 1                                                          */
+/*     A macro named "SK" is invoked.    A native control word will never */
+/*     be assumed.   If the specified macro has not already been defined, */
+/*     an error will result.                                              */
+/**************************************************************************/
+
+void    scr_em( void )
+{
+    char        *   p;
+    char        *   pn;
+    char            macname[ MAC_NAME_LENGTH + 1 ];
+    condcode        cc;
+    inputcb     *   cb;
+    mac_entry   *   me;
+    int             len;
+
+    cb = input_cbs;
+
+    garginit();
+
+    cc = getarg();
+
+    if( cc == omit ) {
+        err_count++;
+        if( cb->fmflags & II_macro ) {
+            out_msg( "ERR_MACRO_NAME_MISSING line %d of macro '%s'\n",
+                     cb->s.m->lineno, cb->s.m->mac->name );
+        } else {
+            out_msg( "ERR_MACRO_NAME_MISSING line %d of file '%s'\n",
+                     cb->s.f->lineno, cb->s.f->filename );
+        }
+        show_include_stack();
+        return;
+    }
+
+    p = tok_start + 1;                  // over .
+
+    pn      = macname;
+    len     = 0;
+
+    /*  truncate name if too long WITHOUT error msg
+     *  this is wgml 4.0 behaviour
+     *
+     */
+    while( *p && test_macro_char( *p ) ) {
+        if( len < MAC_NAME_LENGTH ) {
+            *pn++ = *p++;               // copy macroname
+            *pn   = '\0';
+        } else {
+            break;
+        }
+        len++;
+    }
+    macname[ MAC_NAME_LENGTH ] = '\0';
+
+    me = find_macro( macro_dict, macname );
+    if( me == NULL ) {
+        err_count++;
+        if( cb->fmflags & II_macro ) {
+            out_msg( "ERR_MACRO_NAME_UNDEFINED '&s' line %d of macro '%s'\n",
+                     macname, cb->s.m->lineno, cb->s.m->mac->name );
+        } else {
+            out_msg( "ERR_MACRO_NAME_UNDEFINED '%s' line %d of file '%s'\n",
+                     macname, cb->s.f->lineno, cb->s.f->filename );
+        }
+        show_include_stack();
+        return;
+    } else {
+        split_input( buff2, tok_start); // stack line operand in input
+    }
     return;
 }
 

@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  process :set tag, .se and .sr keywords and symbolic substitution
+* Description:  process .se and .sr script control words
 *
 ****************************************************************************/
 
@@ -111,28 +111,27 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     }
 
     if( p == sym_start ) {              // special for &*
-        if( (sym->flags & local_var) && (input_cbs->fmflags & II_macro) ) {
-            strcpy_s( sym->name, SYM_NAME_LENGTH, MAC_STAR_NAME );
-        } else {
-            scan_err = true;
-            if( !ProcFlags.suppress_msg ) {
-                out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
-                err_count++;
-                show_include_stack();
+        if( *p != '&' ) {               // not &*&xx construct
+
+            if( (sym->flags & local_var)
+                && (input_cbs->fmflags & II_macro) ) {
+
+                strcpy_s( sym->name, SYM_NAME_LENGTH, MAC_STAR_NAME );
+            } else {
+                scan_err = true;
+                if( !ProcFlags.suppress_msg ) {
+                    out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
+                    err_count++;
+                    show_include_stack();
+                }
             }
         }
     }
     if( quote && quote == *p ) {        // over terminating quote
         p++;
-//  } else {
-//      if( (*p != '=') && (*p != '(')  && (*p != ')') && (*p != ' ') ) {
-//          scan_err = true;
-//      }
     }
     if( !scan_err && (*p == '(') ) {    // subscripted ?
         char    *   psave = p;
-        int         sign  = 1;          // default positive
-        long        val   = 0;
         sub_index   var_ind;
         symsub  *   symsubval;
         int         rc;
@@ -155,25 +154,39 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             }
             sym->flags |= auto_inc + subscripted;
         } else {
-            if( !isdigit( *p ) ) {
-                if( *p == '-' ) {
-                    sign = -1;
-                } else if( *p == '+' ) {
-                    sign = 1;
-                } else {
-                    scan_err = true;
-                }
-            }
-            while( *p && *p != ')' ) {
-                if( isdigit( *p ) ) {
-                    val = val * 10 + *p - '0';
-                }
+            getnum_block    gn;
+            condcode        cc;
+            char            csave;
+
+            gn.argstart      = p;
+            while( *p && (*p != ')') ) {
                 p++;
             }
-            if( !scan_err && (*p == ')') ) {
-                p++;
+            gn.argstop       = p - 1;
+            csave            = *p;
+            *p               = '\0';
+            gn.ignore_blanks = 0;
+
+            cc = getnum( &gn );     // try numeric expression evaluation
+
+            *p = csave;
+            if( cc == pos || cc == neg ) {
+                *subscript = gn.result;
+                if( *p == ')' ) {
+                    p++;
+                }
+                if( *p == '.' ) {
+                    p++;
+                }
+            } else {
+                if( !scan_err && !ProcFlags.suppress_msg ) {
+                    out_msg( "ERR_SUBSCRIPT_invalid %s\n", psave );
+                    err_count++;
+                    show_include_stack();
+                }
+                scan_err = true;
             }
-            *subscript = val * sign;
+
             if( scan_err ) {
                p = psave;
             }

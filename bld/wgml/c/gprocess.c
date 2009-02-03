@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -41,7 +41,8 @@
 
 
 /*  split_input
- *  The second part will be processed by the next read
+ *  The (physical) line is split
+ *  The second part will be processed by the next getline()
  *
  */
 
@@ -120,8 +121,6 @@ void        process_line( void )
     int                 varunresolved;
     sub_index           var_ind;
     symvar              symvar_entry;
-    symsub              symsubdummy;
-    char                valdummy[ 10 ];
     symsub          *   symsubval;
     int                 rc;
 
@@ -143,7 +142,9 @@ void        process_line( void )
     }
 
     if( (*buff2 == SCR_char) ) {
-    // for lines starting .* or .' ignore control word seperator
+
+        // for lines starting .* or .' ignore control word seperator
+
         if( !((*(buff2 + 1) == '*') || (*(buff2 + 1) == '\'')) ) {
             pchar = strchr( buff2, CW_sep_char );
             if( (pchar != NULL) ) {
@@ -158,11 +159,10 @@ void        process_line( void )
 
     workbuf = mem_alloc( buf_size );
 
-    // look for symbolic variable start
-
+    // look for symbolic variable or function start
     varunresolved = 0;
     do {
-        strcpy_s( workbuf, buf_size, buff2 );   // input buffer copy
+        strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
         pw = workbuf;
         pwend = workbuf + buff2_lg;
         p2 = buff2;
@@ -191,17 +191,74 @@ void        process_line( void )
     /*                                                                     */
     /***********************************************************************/
             if( *(pchar + 2) == '\'' ) {
-                char ** ppval = &p2;
-                symsubdummy.value = valdummy;
+                char * * ppval = &p2;
 
                 pw = scr_single_funcs( pchar, pwend, ppval );
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
                 continue;
             }
+
+    /***********************************************************************/
+    /*  Some multi  letter functions are resolved here:                    */
+    /*                                                                     */
+    /*  functions used within the OW doc build system:                     */
+    /*   &'delstr(                                                         */
+    /*   &'d2c(                                                            */
+    /*   ...                                                               */
+    /*   &'upper(                                                          */
+    /*   ...                                                               */
+    /*                                                                     */
+    /*   Others are recognized but not processed                           */
+    /*                                                                     */
+    /*                                                                     */
+    /***********************************************************************/
+            if( *(pchar + 1) == '\'' ) {
+                char * * ppval = &p2;
+
+                pw = scr_multi_funcs( pchar, pwend, ppval );
+                pchar = strchr( pw, ampchar );  // look for next & in buffer
+                continue;
+            }
+
+
             varstart = pw;              // remember start of var
-            pw++;                       // over & or ' if function
+            pw++;                       // over &
+            ProcFlags.suppress_msg = true;
+            scan_err = false;
 
             pchar = scan_sym( pw, &symvar_entry, &var_ind );
+            if( scan_err && *pchar == '(' ) {   // problem with subscript
+                if( *(pchar+1) == ampchar ) {
+                    symvar          symvar_ind;
+                    char        *   pchar2;
+
+                    scan_err = false;
+                    pchar2 = scan_sym( pchar + 2, &symvar_ind, &var_ind );
+                    if( !scan_err ) {
+                        if( symvar_ind.flags & local_var ) {
+                            rc = find_symvar( &input_cbs->local_dict,
+                                              symvar_ind.name,
+                                              var_ind, &symsubval );
+                        } else {
+                            rc = find_symvar( &global_dict, symvar_ind.name,
+                                              var_ind, &symsubval );
+                        }
+                        if( rc == 2 ) {
+                            var_ind = atoi( symsubval->value );
+                            pchar = pchar2;
+                            if( *pchar == '.' ) {
+                                pchar++;
+                            }
+                            if( *pchar == ')' ) {
+                                pchar++;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            ProcFlags.suppress_msg = false;
 
             if( symvar_entry.flags & local_var ) {  // lookup var in dict
                 rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
@@ -232,11 +289,25 @@ void        process_line( void )
                 }
             } else {
                 if( symvar_entry.flags & local_var ) { // local var not found
-                                                       // replace by nullstring
-                    if( *pchar == '.' ) {
-                        pchar++;        // skip optional terminating dot
+                    if( (symvar_entry.name[ 0 ] == '\0') &&
+                        (*pchar == ampchar) ) { // only &* as var name
+                                                // followed by another var
+
+                        varunresolved++;
+
+                        pw = varstart;
+                        while( pw < pchar ) {   // treat var name as text
+                            *p2++ = *pw++;  // and copy
+                        }
+                        continue;       // pchar points already to next &
+
+                    } else {
+                                                  // replace by nullstring
+                        if( *pchar == '.' ) {
+                            pchar++;        // skip optional terminating dot
+                        }
+                        pw = pchar;
                     }
-                    pw = pchar;
                 } else {                // global var not found
 
                 /***********************************************************/

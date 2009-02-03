@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -69,6 +69,8 @@ void    free_dict( symvar * * dict )
             mem_free( ws );
             ws = wsn;
         }
+        mem_free( wk->sub_0->value );
+        mem_free( wk->sub_0 );
         wkn = wk->next;
         mem_free( wk );
         wk = wkn;
@@ -103,17 +105,21 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
         wk = wk->next;
     }
     if( rc ) {
-        *symsubval = wk->subscripts;    // return at least first subscript
+        *symsubval = wk->sub_0;         // return at least sub 0
         if( wk->flags & subscripted ) {
-            rc = 1;                     // name is found
-            ws = wk->subscripts;
-            while( ws != NULL ) {
-                if( sub == ws->subscript ) {
-                    *symsubval = ws;    // subscript found
-                    rc = 2;
-                    break;
+            if( (sub == no_subscript) || (sub == 0) ) {
+                rc = 2;                 // subscript found
+            } else {
+                rc = 1;                 // name is found
+                ws = wk->subscripts;
+                while( ws != NULL ) {
+                    if( sub == ws->subscript ) {
+                        *symsubval = ws;// subscript found
+                        rc = 2;
+                        break;
+                    }
+                    ws = ws->next;
                 }
-                ws = ws->next;
             }
         } else {
             rc = 2;                     // not subscripted -> all found
@@ -128,7 +134,8 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
 /*  finds deleted variables too internal routine                                                                       */
 /***************************************************************************/
 
-static  int find_symvar_del( symvar * * dict, char * name, sub_index sub, symsub * * symsubval )
+static  int find_symvar_del( symvar * * dict, char * name, sub_index sub,
+                             symsub * * symsubval, symvar * * delentry )
 {
     symvar  *   wk;
     symsub  *   ws;
@@ -138,23 +145,33 @@ static  int find_symvar_del( symvar * * dict, char * name, sub_index sub, symsub
     wk = *dict;
     while( wk != NULL) {
         if( !strcmp( wk->name, name ) ) {
-            rc = 1;                     // symbol name found
+            if( wk->flags & deleted ) {
+                *delentry = wk;
+                rc = -1;                // deleted symbol found
+            } else {
+                rc = 1;                 // symbol name found
+            }
             break;
         }
         wk = wk->next;
     }
-    if( rc ) {
-        *symsubval = wk->subscripts;    // return at least first subscript
+    if( rc > 0 ) {                      // non deleted symbol found
+
+        *symsubval = wk->sub_0;         // return at least sub 0
         if( wk->flags & subscripted ) {
-            rc = 1;                     // name is found
-            ws = wk->subscripts;
-            while( ws != NULL ) {
-                if( sub == ws->subscript ) {
-                    *symsubval = ws;    // subscript found
-                    rc = 2;
-                    break;
+            if( (sub == no_subscript) || (sub == 0) ) {
+                rc = 2;                 // subscript found
+            } else {
+                rc = 1;                 // name is found
+                ws = wk->subscripts;
+                while( ws != NULL ) {
+                    if( sub == ws->subscript ) {
+                        *symsubval = ws;// subscript found
+                        rc = 2;
+                        break;
+                    }
+                    ws = ws->next;
                 }
-                ws = ws->next;
             }
         } else {
             rc = 2;                     // not subscripted -> all found
@@ -193,54 +210,72 @@ static bool add_symvar_sub( symvar * var, char * val, sub_index sub )
     symsub  *   newsub;
     symsub  *   ws;
     symsub  *   wsv;
+    char        sub_cnt[12];
 
     if( sub != no_subscript ) {
         if( !check_subscript( sub ) ) {
             return( false );
         } else {
             var->subscript_used++;
+                                        // update special sub 0 entry
+            sprintf( sub_cnt, "%ld", var->subscript_used );
+            if( strlen( var->sub_0->value ) < strlen( sub_cnt ) ) {// need more room
+                var->sub_0->value = mem_realloc( var->sub_0->value,
+                                                 strlen( sub_cnt ) + 1 );
+            }
+            strcpy_s( var->sub_0->value, strlen( sub_cnt ) + 1, sub_cnt );
+
             var->flags |= subscripted;
             if( (var->flags & auto_inc) && (sub == var->last_auto_inc + 1) ) {
                 var->last_auto_inc++;
             }
         }
-    }
-    newsub            = mem_alloc( sizeof( symsub ) );
-    newsub->next      = NULL;
-    newsub->base      = var;
-    newsub->subscript = sub;
-    newsub->value     = mem_alloc( strlen( val ) + 1 );
-    strcpy_s( newsub->value, strlen( val ) + 1, val );
+
+        newsub            = mem_alloc( sizeof( symsub ) );
+        newsub->next      = NULL;
+        newsub->base      = var;
+        newsub->subscript = sub;
+        newsub->value     = mem_alloc( strlen( val ) + 1 );
+        strcpy_s( newsub->value, strlen( val ) + 1, val );
 
 /*
  * insert subscript in ascending sort order
  */
-    ws  = var->subscripts;
-    if( ws == NULL || (sub < ws->subscript) ) {
-        newsub->next    = var->subscripts;
-        var->subscripts = newsub;
-    } else {
-        while( (ws != NULL) ) {
-            if( sub > ws->subscript ) {
-                wsv = ws;
-                ws  = ws->next;
-            } else {
-                break;
+        ws  = var->subscripts;
+        if( ws == NULL || (sub < ws->subscript) ) {
+            newsub->next    = var->subscripts;
+            var->subscripts = newsub;
+        } else {
+            while( (ws != NULL) ) {
+                if( sub > ws->subscript ) {
+                    wsv = ws;
+                    ws  = ws->next;
+                } else {
+                    break;
+                }
             }
+            newsub->next = ws;
+            wsv->next    = newsub;
         }
-        newsub->next = ws;
-        wsv->next    = newsub;
+
+    } else {                            // unsubscripted variable
+        newsub = var->sub_0;
+        if( strlen( newsub->value ) < strlen( val ) ) { // need more room
+            newsub->value = mem_realloc( newsub->value, strlen( val ) + 1 );
+        }
+        strcpy_s( newsub->value, strlen( val ) + 1, val );
     }
     return( true );
 }
 
 /***************************************************************************/
-/*  add_symsym  add symbol base entry                                      */
+/*  add_symsym  add symbol base entry and prepare subscript 0 entry        */
 /***************************************************************************/
 
 static void add_symsym( symvar * * dict, char * name, sym_flags f, symvar * * n )
 {
     symvar  *   new;
+    symsub  *   newsub;
     int         k;
 
     new = mem_alloc( sizeof( symvar ) );
@@ -259,6 +294,16 @@ static void add_symsym( symvar * * dict, char * name, sym_flags f, symvar * * n 
     new->subscript_used = 0;
     new->subscripts = NULL;
     new->flags = f & ~deleted;
+
+    newsub = mem_alloc( sizeof( symsub ) );
+    new->sub_0 = newsub;
+    newsub->next      = NULL;
+    newsub->base      = new;
+    newsub->subscript = 0;
+    newsub->value     = mem_alloc( 12 + 1 );// for min subscript as string
+                                        // -1000000
+    newsub->value[0]  = '0';
+    newsub->value[1]  = '\0';
 
     *n = new;
     new->next = *dict;
@@ -281,8 +326,15 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
     if( !check_subscript( subscript ) ) {
         rc = 3;
     } else {
-        rc = find_symvar_del( dict, name, subscript, &newsub );
+        rc = find_symvar_del( dict, name, subscript, &newsub, &new );
         switch ( rc ) {
+        case -1 :                       // deleted symbol found
+            new->flags &= ~deleted;     // reset deleted switch
+            ok = add_symvar_sub( new, val, subscript );
+            if( !ok ) {
+                rc = 3;
+            }
+            break;
         case 0 :                        // nothing found
             add_symsym( dict, name, f, &new );
             ok = add_symvar_sub( new, val, subscript );
@@ -302,14 +354,17 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
             if( !strcmp( newsub->value, val ) ) {
                 ;                       // nothing to do value is unchanged
             } else {
-                if( strlen( newsub->value ) < strlen( val ) ) {
-                    mem_free( newsub->value );  // need more room
-                    newsub->value = mem_alloc( strlen( val ) + 1 );
+                if( strlen( newsub->value ) < strlen( val ) ) { // need more room
+                    newsub->value = mem_realloc( newsub->value, strlen( val ) + 1 );
                 }
                 strcpy_s( newsub->value, strlen( val ) + 1, val );
             }
             break;
         default:
+            out_msg( "ERR_SYMVAR_Logic error\n");
+            show_include_stack();
+            err_count++;
+            g_suicide();
             break;
         }
     }
@@ -329,15 +384,15 @@ void    reset_auto_inc_dict( symvar * dict )
     wk = dict;
     while( wk != NULL ) {
 
+
         if( wk->flags & auto_inc ) {
+
+            wk->sub_0->value[0] = '0';
+            wk->sub_0->value[1] = '\0';
 
             wk->flags |= deleted;
             wk->subscript_used = 0;
             while( (ws = wk->subscripts) != NULL ) {
-                if( ws->next == NULL ) {// keep last subscript as sub 0
-                    ws->subscript = 0;
-                    break;
-                }
                 wk->subscripts = ws->next;
                 mem_free( ws->value );
                 mem_free( ws );
@@ -379,16 +434,15 @@ void    print_sym_dict( symvar * dict )
             symsubcnt++;
             out_msg( "\n" );
         } else {
+            out_msg(" value='%s'\n", wk->sub_0->value );
             symcnt++;
         }
-        while( ws != NULL ) {
-            if( wk->flags & subscripted ) {
+       if( wk->flags & subscripted ) {
+            while( ws != NULL ) {
                 out_msg( "   subscript= %8ld value='%s'\n",
                         ws->subscript, ws->value );
-            } else {
-                out_msg(" value='%s'\n", ws->value );
+                ws = ws->next;
             }
-            ws = ws->next;
         }
         wk = wk->next;
     }

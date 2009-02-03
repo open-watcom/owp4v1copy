@@ -72,6 +72,7 @@ extern  void        garginit( void );
 extern  void        garginitdot( void );
 extern  condcode    getarg( void );
 extern  condcode    getqst( void );
+extern  bool        test_function_char( char c );
 extern  bool        test_identifier_char( char c );
 extern  bool        test_macro_char( char c );
 extern  bool        test_symbol_char( char c );
@@ -136,6 +137,10 @@ extern  void    printf_research( char * msg, ... );
 extern  void    scan_line( void );
 
 
+/* gsfuncs.c                          */
+extern  char    *   scr_multi_funcs( char * in, char * end, char * * ppval );
+
+
 /* gsfunelu.c                         */
 extern  char    *   scr_single_funcs( char * in, char * end, char * * result );
 extern  char    *   scr_single_func_e( char * in, char * end, char * * result );
@@ -149,7 +154,7 @@ extern  bool    gotarget_reached( void );
 
 
 /* gsetvar.c                          */
-extern char     *   scan_sym( char * p, symvar * sym, sub_index * subscript );
+extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
 
 /* gsmacro.c                          */
@@ -187,6 +192,18 @@ extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 #define pick( name, length, routine, flags )  extern void routine( void );
 
 #include "gscrcws.h"
+
+#undef pick
+
+/*
+ * prototypes for the script string function routines , ie. &'substr( ,..
+ */
+
+#define pick( name, length, parms, optparms, routine ) \
+    extern char * routine( char * in, const char * end, char * * ppval, \
+                           const int parm_cnt );
+
+#include "gsfuncs.h"
 
 #undef pick
 

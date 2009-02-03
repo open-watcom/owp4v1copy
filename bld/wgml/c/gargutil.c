@@ -211,6 +211,17 @@ condcode    getqst( void )
 
 
 /*
+ * Test character as valid for an function name
+ */
+bool    test_function_char( char c )
+{
+    bool    test;
+
+    test = isalnum( c );
+    return( test );
+}
+
+/*
  * Test character as valid for an identifier name
  */
 bool    test_identifier_char( char c )

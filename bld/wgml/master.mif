@@ -40,23 +40,28 @@ objs =  &
         cophdr.obj      &
         findfile.obj    &
         gargutil.obj    &
+        gcmt.obj        &
         gdata.obj       &
         gerror.obj      &
         getnum.obj      &
+        ginclude.obj    &
         gmacdict.obj    &
         gmemory.obj     &
         goptions.obj    &
         gprocess.obj    &
         gresrch.obj     &
         gscan.obj       &
+        gset.obj        &
         gsetvar.obj     &
+        gsfuncs.obj     &
         gsfunelu.obj    &
         gsgoto.obj      &
         gsifdoel.obj    &
+        gsimbed.obj     &
         gsmacro.obj     &
         gsymvar.obj     &
         gutil.obj       &
-	outbuff.obj     &
+        outbuff.obj     &
         swchar.obj
 
 gendeps = $(objs) $(libs) wgml.lnk
@@ -70,10 +75,12 @@ objs               += $(trmem_objs)
 # don't build wgml.exe for linux
 
 !ifneq host_os linux
+
 all : wgml.exe .SYMBOLIC
 
 wgml.exe: $(gendeps)
     $(linker) name $^@ @wgml.lnk
+    rm wgml.lnk
 
 !else
 

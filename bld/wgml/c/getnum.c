@@ -52,7 +52,7 @@ static  operator opers[] = {
     {128,    '/'  },
     {256,    ')'  },
     {  0,    '('  },
-    {  0,    NULC,}                     // terminating entry
+    {  0,    NULC }                     // terminating entry
 };
 
 #define MAXOPER 128                     // operator maximum
