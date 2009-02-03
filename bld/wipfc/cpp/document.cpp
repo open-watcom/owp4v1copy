@@ -467,7 +467,7 @@ void Document::makeBitmaps()
         //get IPFCARTWORK from env
         std::string env( Environment.value( "IPFCARTWORK" ) );
         std::vector< std::string > paths;
-#ifndef __LINUX__
+#ifndef __UNIX__
         char separator( ';' );
         char slash( '\\' );
 #else
@@ -727,7 +727,7 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
     else if( lexer->cmdId() == Lexer::IMBED ) {
         std::string env( Environment.value( "IPFCIMBED" ) );
         std::vector< std::wstring > paths;
-#ifndef __LINUX__
+#ifndef __UNIX__
         char separator( ';' );
         wchar_t slash( L'\\' );
 #else
