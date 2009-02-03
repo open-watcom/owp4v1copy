@@ -207,9 +207,9 @@ void Lexer::getCmdId()
         cmdCode = COMMENT;
         buffer.erase( 0, 2 );
     }
-    else if( buffer.find( L".br", 0, 2 ) == 0 )
+    else if( buffer.find( L".br", 0, 3 ) == 0 )
         cmdCode = BREAK;
-    else if( buffer.find( L".ce", 0, 2 ) == 0 ) {
+    else if( buffer.find( L".ce", 0, 3 ) == 0 ) {
         size_t cut( 0 );
         cmdCode = CENTER;
         buffer.erase( 0, 3 );
