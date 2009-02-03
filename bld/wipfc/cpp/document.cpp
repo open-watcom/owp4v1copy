@@ -176,6 +176,7 @@
 #include "ptrops.hpp"
 #include "synonym.hpp"
 #include "title.hpp"
+#include "util.hpp"
 
 extern Env Environment;
 
@@ -223,10 +224,18 @@ void Document::parse( Lexer* lexer )
 {
     Lexer::Token tok( getNextToken() );
     while( tok != Lexer::END && !inDoc ) {
-        //only comments are allowed before :userdoc tag
+        //only comments and whitespace are allowed before :userdoc tag
         if( tok == Lexer::TAG && lexer->tagId() == Lexer::USERDOC )
             inDoc = true;
-        else if( tok != Lexer::COMMAND && lexer->cmdId() != Lexer::COMMENT )
+        else if( tok == Lexer::COMMAND ) {
+            if( lexer->cmdId() == Lexer::NAMEIT || lexer->cmdId() == Lexer::COMMENT ) {
+                tok = processCommand( lexer, 0 );
+                continue;
+            }
+            else
+                printError( ERR1_TAGCONTEXT );
+        }
+        else if( tok != Lexer::WHITESPACE )
             printError( ERR1_HEADTEXT );
         tok = getNextToken();
     }
@@ -726,7 +735,6 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         wchar_t slash( L'/' );
 #endif
         wchar_t fbuffer[ PATH_MAX ];
-
         std::string::size_type idx1( 0 );
         std::string::size_type idx2( env.find( separator, idx1 ) );
         if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), sizeof( fbuffer ) ) == -1 )
@@ -761,6 +769,22 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
                     throw e;
             }
         }
+    }
+    else if( lexer->cmdId() == Lexer::NAMEIT ) {
+        std::wstring::size_type idx1( lexer->text().find( L"symbol=" ) );
+        std::wstring::size_type idx2( lexer->text().find( L' ', idx1 ) );
+        std::wstring sym( lexer->text().substr( idx1 + 7, idx2 - idx1 - 7 ) );
+        killQuotes( sym );
+        sym.insert( sym.begin(), L'&' );
+        sym += L'.';
+        idx1 = lexer->text().find( L"text=" );
+        idx2 = lexer->text().find( L' ', idx1 );
+        std::wstring txt( lexer->text().substr( idx1 + 5, idx2 - idx1 - 5 ) );
+        killQuotes( txt );
+        if( nameIts.find( sym ) == nameIts.end() )    //add it to the list
+            nameIts.insert( std::map< std::wstring, std::wstring >::value_type( sym, txt ) );
+        else
+            printError( ERR3_DUPSYMBOL );
     }
     else
         printError( ERR1_CMDNOTDEF );
@@ -816,4 +840,19 @@ I1* Document::indexById( const std::wstring& key )
         throw Class1Error( ERR1_NOID );
     return itr->second;
 }
-
+/***************************************************************************/
+const std::wstring* Document::nameit( const std::wstring& key )
+{
+    NameItIter itr( nameIts.find( key ) );
+    if( itr == nameIts.end() )
+        return 0;
+    return &(itr->second);
+}
+/***************************************************************************/
+std::wstring* Document::prepNameitName( const std::wstring& key )
+{
+    std::wstring* name( new std::wstring( L"Expansion of .nameit " ) );
+    name->append( key );
+    name = addFileName( name );
+    return name;
+}

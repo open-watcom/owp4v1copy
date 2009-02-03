@@ -114,6 +114,9 @@ public:
     std::uint16_t tocIndexByRes( std::uint16_t res );
     //get a TOC index from the id or name to TOC index map
     std::uint16_t tocIndexById( GlobalDictionaryWord* id );
+    //get a .nameit expansion
+    const std::wstring* nameit( const std::wstring& key );
+    std::wstring* Document::prepNameitName( const std::wstring& key );
 
     //Forwarding functions
 
@@ -206,6 +209,10 @@ private:
     std::map< std::wstring, Synonym* > synonyms;    //each Synonym is owned by an ISym tag
     typedef std::map< std::wstring, Synonym* >::iterator SynIter;
     typedef std::map< std::wstring, Synonym* >::const_iterator ConstSynIter;
+
+    std::map< std::wstring, std::wstring > nameIts;
+    typedef std::map< std::wstring, std::wstring >::iterator NameItIter;
+    typedef std::map< std::wstring, std::wstring >::const_iterator ConstNameItIter;
 
     std::vector< I1* > index;
     typedef std::vector< I1* >::iterator IndexIter;

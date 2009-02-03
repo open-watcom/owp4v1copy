@@ -59,6 +59,20 @@ Lexer::Token Title::parse( Lexer* lexer, IpfHeader* hdr )
             tok == Lexer::PUNCTUATION ) {
             txt += lexer->text();
         }
+        else if( tok == Lexer::ENTITY ) {
+            const std::wstring* exp( document->nameit( lexer->text() ) );
+            if( exp )
+                txt += *exp;
+            else {
+                try {
+                    wchar_t ch( document->entity( lexer->text() ) );
+                    txt += ch;
+                }
+                catch( Class2Error& e ) {
+                    document->printError( e.code );
+                }
+            }
+        }
         else if( tok == Lexer::END )
             throw FatalError( ERR_EOF );
         else

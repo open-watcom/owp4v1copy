@@ -33,6 +33,7 @@
 #include "word.hpp"
 #include "document.hpp"
 #include "gdword.hpp"
+#include "ipfbuffer.hpp"
 
 Lexer::Token Word::parse( Lexer* lexer )
 {
@@ -44,16 +45,24 @@ Lexer::Token Word::parse( Lexer* lexer )
         if( tok == Lexer::WORD )
             txt += lexer->text();       //part of a compound ...-word-entity-word-...
         else if( tok == Lexer::ENTITY ) {
-            try {
-                wchar_t entity( document->entity( lexer->text() ) );
-                if ( std::iswpunct( entity ) )
-                    break;
-                else
-                    txt += entity;
+            const std::wstring* exp( document->nameit( lexer->text() ) );
+            if( exp ) {
+                std::wstring* name( document->prepNameitName( lexer->text() ) );
+                IpfBuffer* buffer( new IpfBuffer( name, document->dataLine(), document->dataCol(), *exp ) );
+                document->pushInput( buffer );
             }
-            catch( Class2Error& e ) {
-                document->printError( e.code );
-                break;
+            else {
+                try {
+                    wchar_t entity( document->entity( lexer->text() ) );
+                    if ( std::iswpunct( entity ) )
+                        break;
+                    else
+                        txt += entity;
+                }
+                catch( Class2Error& e ) {
+                    document->printError( e.code );
+                    break;
+                }
             }
         }
         else

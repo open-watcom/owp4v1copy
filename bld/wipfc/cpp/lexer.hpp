@@ -59,6 +59,7 @@ public:
         BREAK,
         CENTER,
         IMBED,
+        NAMEIT,
         BADCMD
     };
     enum TagId {

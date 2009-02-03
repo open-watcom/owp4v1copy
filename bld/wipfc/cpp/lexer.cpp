@@ -149,13 +149,15 @@ Lexer::Token Lexer::lex( IpfData* input )
                     //beginning of another token
                     input->unget( ch );
                     buffer.erase( buffer.size() - 1 );
+                    if( type == ENTITY )
+                        type = ERROR_ENTITY;    //'.' not found
                     break;
                 }
                 else if( type == ENTITY ) {
                     if( ch == L'.' )
                         //end of entity
                         break;
-                    if( !std::iswalpha( ch ) ) {
+                    if( !std::iswalnum( ch ) ) {
                         //non-fatal malformed entity
                         input->unget( ch );
                         buffer.erase( buffer.size() - 1 );
@@ -220,6 +222,16 @@ void Lexer::getCmdId()
         size_t cut( 0 );
         cmdCode = IMBED;
         buffer.erase( 0, 3 );
+        buffer.erase( buffer.size() - 1 );  //trim '/n'
+        for( cut = 0; cut <= buffer.length() && buffer[cut] == L' '; ++cut )
+             ;
+        if( cut )
+            buffer.erase( 0, cut );     //trim leading spaces
+    }
+    else if( buffer.find( L".nameit", 0, 7 ) == 0 ) {
+        cmdCode = NAMEIT;
+        size_t cut( 0 );
+        buffer.erase( 0, 7 );
         buffer.erase( buffer.size() - 1 );  //trim '/n'
         for( cut = 0; cut <= buffer.length() && buffer[cut] == L' '; ++cut )
              ;

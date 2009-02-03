@@ -37,6 +37,13 @@
 
 Lexer::Token Entity::parse( Lexer* lexer )
 {
+    const std::wstring* txt( document->nameit( lexer->text() ) ); //lookup nameit
+    if( txt ) {
+        std::wstring* name( document->prepNameitName( lexer->text() ) );
+        IpfBuffer* buffer( new IpfBuffer( name, document->dataLine(), document->dataCol(), *txt ) );
+        document->pushInput( buffer );
+        return document->getNextToken();
+    }
     wchar_t entity( 0 );
     try {
         entity = document->entity( lexer->text() ); //lookup entity

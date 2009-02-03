@@ -85,12 +85,17 @@ Lexer::Token Hn::parse( Lexer* lexer )
             tmp += lexer->text();
         }
         else if( tok == Lexer::ENTITY ) {
-            try {
-                wchar_t entity( document->entity( lexer->text() ) ); //lookup entity
-                tmp += entity;
-            }
-            catch( Class2Error& e ) {
-                document->printError( e.code );
+            const std::wstring* exp( document->nameit( lexer->text() ) );
+            if( exp )
+                tmp += *exp;
+            else {
+                try {
+                    wchar_t ch( document->entity( lexer->text() ) );
+                    tmp += ch;
+                }
+                catch( Class2Error& e ) {
+                    document->printError( e.code );
+                }
             }
         }
         else if( tok == Lexer::END )

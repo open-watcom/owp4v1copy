@@ -60,12 +60,17 @@ Lexer::Token I1::parse( Lexer* lexer )
         if( tok == Lexer::WORD )
             txt += lexer->text();
         else if( tok == Lexer::ENTITY ) {
-            try {
-                wchar_t ch( document->entity( lexer->text() ) );
-                txt += ch;
-            }
-            catch( Class2Error& e ) {
-                document->printError( e.code );
+            const std::wstring* exp( document->nameit( lexer->text() ) );
+            if( exp )
+                txt += *exp;
+            else {
+                try {
+                    wchar_t ch( document->entity( lexer->text() ) );
+                    txt += ch;
+                }
+                catch( Class2Error& e ) {
+                    document->printError( e.code );
+                }
             }
         }
         else if( tok == Lexer::PUNCTUATION )
