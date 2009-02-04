@@ -303,8 +303,9 @@ void Document::parse( Lexer* lexer )
             }
             else if( lexer->tagId() == Lexer::EUSERDOC ) {
                 inDoc = false;
-                tok = getNextToken(); //Lexer::TAGEND
-                tok = getNextToken(); //Lexer::WHITESPACE
+                tok = getNextToken();       //Lexer::TAGEND
+                if( tok == Lexer::TAGEND )
+                    tok = getNextToken();   //Lexer::WHITESPACE
                 break;
             }
             else {
@@ -314,10 +315,11 @@ void Document::parse( Lexer* lexer )
         }
         else if( tok == Lexer::COMMAND ) {
             if( lexer->cmdId() == Lexer::COMMENT || lexer->cmdId() == Lexer::IMBED )
-                processCommand( lexer, NULL );
-            else
+                tok = processCommand( lexer, NULL );
+            else {
                 printError( ERR1_TAGCONTEXT );
-            tok = getNextToken();
+                tok = getNextToken();
+            }
         }
         else {
             if( tok != Lexer::WHITESPACE )
