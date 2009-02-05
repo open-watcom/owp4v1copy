@@ -61,6 +61,9 @@ private:
     IpfFile& operator=( const IpfFile& rhs );   //no assignment
     const std::wstring* fileName;
     std::FILE* stream;
+    wchar_t ungottenChar;
+    bool ungotten;
+    wchar_t readMBChar();
 };
 
 #endif

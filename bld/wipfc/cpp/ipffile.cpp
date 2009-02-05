@@ -31,13 +31,14 @@
 
 #include "ipffile.hpp"
 #include "errors.hpp"
+#include <mbctype.h>
 
 IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname )
 {
     char buffer[ PATH_MAX ];
 
     std::wcstombs( buffer, fname->c_str(), sizeof( buffer ) );
-    if(( stream = std::fopen( buffer, "r" ) ) == 0)
+    if(( stream = std::fopen( buffer, "rb" ) ) == 0)
         throw FatalIOError( ERR_OPEN, *fileName );
 }
 /*****************************************************************************/
@@ -45,7 +46,10 @@ IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname )
 //Returns EOB if end-of-file reached
 std::wint_t IpfFile::get()
 {
-    wchar_t ch( std::fgetwc( stream ) );
+    //wchar_t ch( std::fgetwc( stream ) );
+    wchar_t ch( readMBChar() );
+    if( ch == L'\r' )
+        ch = readMBChar();
     incCol();
     if( ch == L'\n' ) {
         incLine();
@@ -61,9 +65,31 @@ std::wint_t IpfFile::get()
 /*****************************************************************************/
 void IpfFile::unget( wchar_t ch )
 {
-    std::ungetwc( ch, stream );
+    //std::ungetwc( ch, stream );
+    ungottenChar = ch;
+    ungotten = true;
     decCol();
     if( ch == L'\n' )
         decLine();
 }
-
+/*****************************************************************************/
+wchar_t IpfFile::readMBChar()
+{
+    wchar_t ch( 0 );
+    if( ungotten ) {
+        ch = ungottenChar;
+        ungotten = false;
+    }
+    else {
+        char    mbc[ MB_CUR_MAX ];
+        if( std::fread( &mbc[0], sizeof( char ), 1, stream ) != 1 )
+            return WEOF;
+        else if( _ismbblead( mbc[0] ) ) {
+            if( std::fread( &mbc[1], sizeof( char ), 1, stream ) != 1 )
+                return WEOF;
+        }
+        if( std::mbtowc( &ch, mbc, MB_CUR_MAX ) < 0 )
+            throw FatalError( ERR_T_CONV );
+    }
+    return ch;
+}
