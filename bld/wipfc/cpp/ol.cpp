@@ -187,7 +187,7 @@ Lexer::Token OlLi::parse( Lexer* lexer )
         appendChild( new Word( document, this, document->dataName(),
             document->dataLine(), document->dataCol(), txt, false ) );
         appendChild( new Punctuation( document, this, document->dataName(),
-            document->dataLine(), document->dataCol(), document->olClose( 0 ), true ) );
+            document->dataLine(), document->dataCol(), document->olClose( nestLevel ), true ) );
     }
     else {
         wchar_t tmp[ 4 ];
@@ -199,7 +199,7 @@ Lexer::Token OlLi::parse( Lexer* lexer )
         appendChild( new Word( document, this, document->dataName(),
             document->dataLine(), document->dataCol(), txt, itemNumber >= 9 ) );
         appendChild( new Punctuation( document, this, document->dataName(),
-            document->dataLine(), document->dataCol(), document->olClose( 0 ), true ) );
+            document->dataLine(), document->dataCol(), document->olClose( nestLevel ), true ) );
     }
     appendChild( new Lm( document, this, document->dataName(), document->dataLine(),
         document->dataCol(), indent + 3 ) );
