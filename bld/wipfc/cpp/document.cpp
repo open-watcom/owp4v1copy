@@ -783,7 +783,7 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         idx2 = lexer->text().find( L' ', idx1 );
         std::wstring txt( lexer->text().substr( idx1 + 5, idx2 - idx1 - 5 ) );
         killQuotes( txt );
-        if( nameIts.find( sym ) == nameIts.end() )    //add it to the list
+        if( !nls->isEntity( sym ) && nameIts.find( sym ) == nameIts.end() ) //add it to the list
             nameIts.insert( std::map< std::wstring, std::wstring >::value_type( sym, txt ) );
         else
             printError( ERR3_DUPSYMBOL );

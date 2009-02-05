@@ -63,6 +63,7 @@ public:
     const std::wstring* ulBullets() const { return ulBul; };
     //resolve an entity reference
     wchar_t entity( const std::wstring& key );
+    bool isEntity( const std::wstring& key ) { return entityMap.find( key ) != entityMap.end(); };
     //number of bytes written
     std::uint32_t length() { return bytes; };
     std::uint32_t write( std::FILE* out );
