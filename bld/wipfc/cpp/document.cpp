@@ -225,8 +225,23 @@ void Document::parse( Lexer* lexer )
     Lexer::Token tok( getNextToken() );
     while( tok != Lexer::END && !inDoc ) {
         //only comments and whitespace are allowed before :userdoc tag
-        if( tok == Lexer::TAG && lexer->tagId() == Lexer::USERDOC )
+        if( tok == Lexer::TAG && lexer->tagId() == Lexer::USERDOC ) {
             inDoc = true;
+            tok = getNextToken();
+            while( tok != Lexer::TAGEND ) {
+                if( tok == Lexer::ATTRIBUTE )
+                    printError( ERR1_ATTRNOTDEF );
+                else if( tok == Lexer::FLAG )
+                    printError( ERR1_ATTRNOTDEF );
+                else if( tok == Lexer::ERROR_TAG )
+                    throw FatalError( ERR_SYNTAX );
+                else if( tok == Lexer::END )
+                    throw FatalError( ERR_EOF );
+                else
+                    printError( ERR1_TAGSYNTAX );
+                tok = getNextToken();
+            }
+        }
         else if( tok == Lexer::COMMAND ) {
             if( lexer->cmdId() == Lexer::NAMEIT || lexer->cmdId() == Lexer::COMMENT ) {
                 tok = processCommand( lexer, 0 );
@@ -241,7 +256,6 @@ void Document::parse( Lexer* lexer )
     }
     if( tok == Lexer::END )                 //:userdoc tag not found
         throw FatalError( ERR_DOCBODY );
-    tok = getNextToken();                   //consume TAGEND
     //process tokens until first :h1 or :fn tag
     while( tok != Lexer::END ) {
         //instructions for the document
@@ -303,9 +317,22 @@ void Document::parse( Lexer* lexer )
             }
             else if( lexer->tagId() == Lexer::EUSERDOC ) {
                 inDoc = false;
-                tok = getNextToken();       //Lexer::TAGEND
+                tok = getNextToken();   //should be Lexer::TAGEND
+                while( tok != Lexer::TAGEND ) {
+                    if( tok == Lexer::ATTRIBUTE )
+                        printError( ERR1_ATTRNOTDEF );
+                    else if( tok == Lexer::FLAG )
+                        printError( ERR1_ATTRNOTDEF );
+                    else if( tok == Lexer::ERROR_TAG )
+                        throw FatalError( ERR_SYNTAX );
+                    else if( tok == Lexer::END )
+                        throw FatalError( ERR_EOF );
+                    else
+                        printError( ERR1_TAGSYNTAX );
+                    tok = getNextToken();
+                }
                 if( tok == Lexer::TAGEND )
-                    tok = getNextToken();   //Lexer::WHITESPACE
+                    tok = getNextToken();   //should be Lexer::WHITESPACE
                 break;
             }
             else {
