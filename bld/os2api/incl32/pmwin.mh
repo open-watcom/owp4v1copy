@@ -902,6 +902,13 @@ ULONG  APIENTRY WinCopyAccelTable(HACCEL,PACCELTABLE,ULONG);
 
 #endif
 
+/* * * * Extended Attribute Flags (Association Table) */
+
+#define EAF_DEFAULTOWNER 0x0001
+#define EAF_UNCHANGEABLE 0x0002
+#define EAF_REUSEICON    0x0004
+
+
 #ifdef INCL_WINDDE
 
 #define DDE_FACK         0x0001
