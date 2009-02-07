@@ -122,14 +122,31 @@ Lexer::Token Lexer::lex( IpfData* input )
                             break;
                     }
                     else if ( ch == L':' ) {
-                        type = TAG;
-                        inTag = true;
+                        wchar_t ch2( input->get() );
+                        input->unget( ch2 );
+                        if( std::iswalpha( ch2 ) ) {
+                            type = TAG;
+                            inTag = true;
+                        }
+                        else {
+                            type = PUNCTUATION;
+                            break;
+                        }
                     }
-                    else if ( ch == L'&' )
-                        type = ENTITY;
+                    else if ( ch == L'&' ) {
+                        wchar_t ch2( input->get() );
+                        input->unget( ch2 );
+                        if( !std::iswalnum( ch2 ) )
+                            type = ENTITY;
+                        else
+                            type = WORD;
+                    }
                     else if ( ch == L'.' ) {
-                        if( charNum == 1 ) {
+                        if( charNum == 1 )
                             type = COMMAND;
+                        else {
+                            type = PUNCTUATION;
+                            break;
                         }
                     }
                     else if ( std::iswpunct( ch ) ) {
