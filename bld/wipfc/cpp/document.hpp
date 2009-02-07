@@ -74,6 +74,9 @@ public:
     //set the lowest header level for which new pages are made
     void setHeaderCutOff( unsigned int co ) { maxHeaderLevel = co; };
     unsigned int headerCutOff() const { return maxHeaderLevel; };
+    //track the current left margin
+    void setLeftMargin( unsigned char lm ) { currentLeftMargin = lm; } ;
+    unsigned char leftMargin() const { return currentLeftMargin; };
     //store a graphics file name
     void addBitmap( std::wstring& bmn );
     std::uint32_t bitmapByName( std::wstring& bmn );
@@ -237,6 +240,7 @@ private:
     Text* lastPrintableItem;
     unsigned int maxHeaderLevel;
     unsigned int headerLevel;
+    unsigned char currentLeftMargin;
     Lexer::Token lastPrintableToken;
     bool inDoc;             //true if parsing between userdoc and euserdoc
     bool spacing;           //true if automatically inserting spaces

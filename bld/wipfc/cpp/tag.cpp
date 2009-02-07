@@ -583,7 +583,7 @@ bool Tag::parseListBlock( Lexer* lexer, Lexer::Token& tok )
         case Lexer::DL:
             {
                 Element* elt( new Dl( document, this, document->dataName(),
-                    document->lexerLine(), document->lexerCol(), 1 ) );
+                    document->lexerLine(), document->lexerCol(), document->leftMargin() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
@@ -591,7 +591,7 @@ bool Tag::parseListBlock( Lexer* lexer, Lexer::Token& tok )
         case Lexer::OL:
             {
                 Element* elt( new Ol( document, this, document->dataName(),
-                    document->dataLine(), document->dataCol(), 0, 1 ) );
+                    document->dataLine(), document->dataCol(), 0, document->leftMargin() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
@@ -599,7 +599,7 @@ bool Tag::parseListBlock( Lexer* lexer, Lexer::Token& tok )
         case Lexer::PARML:
                 {
                     Element* elt( new Parml( document, this, document->dataName(),
-                        document->dataLine(), document->dataCol(), 1 ) );
+                        document->dataLine(), document->dataCol(), document->leftMargin() ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
                 }
@@ -607,7 +607,7 @@ bool Tag::parseListBlock( Lexer* lexer, Lexer::Token& tok )
         case Lexer::SL:
             {
                 Element* elt( new Sl( document, this, document->dataName(),
-                    document->dataLine(), document->dataCol(), 0, 1 ) );
+                    document->dataLine(), document->dataCol(), 0, document->leftMargin() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
@@ -615,7 +615,7 @@ bool Tag::parseListBlock( Lexer* lexer, Lexer::Token& tok )
         case Lexer::UL:
             {
                 Element* elt( new Ul( document, this, document->dataName(),
-                    document->dataLine(), document->dataCol(), 0, 1 ) );
+                    document->dataLine(), document->dataCol(), 0, document->leftMargin() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }

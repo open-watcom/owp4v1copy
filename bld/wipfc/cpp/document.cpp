@@ -185,6 +185,7 @@ Document::Document( Compiler& c, const char* loc ) :
     lastPrintableItem( 0 ),
     maxHeaderLevel( 3 ),
     headerLevel( 1 ),
+    currentLeftMargin( 1 ),
     lastPrintableToken( Lexer::END ),
     inDoc( false ),
     spacing( true ),
