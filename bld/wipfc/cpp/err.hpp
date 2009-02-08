@@ -92,7 +92,9 @@ PICK( ERR1_TABLEWIDTH, "The total width of the table is >250 characters" )
 PICK( ERR1_TABLETEXT, "Ignoring text before :c. tag" )
 PICK( ERR1_TABLECELLTAG, "Ignoring invalid tag in table cell" )
 PICK( ERR1_TABLECELLTEXTWIDTH, "Text in this table column is too long, truncating" )
-PICK( ERR1_TABLECELLCOUNT, "Ignoring extra table columns in this row" )
+PICK( ERR1_TABLECELLCOUNTHIGH, "Ignoring extra table columns in this row" )
+PICK( ERR1_TABLECELLCOUNTLOW, "Not enough columns have been specified for this row" )
+PICK( ERR1_TABLEELINK, "The required :elink. tag is missing, but has been appended to this column" )
 PICK( ERR1_LAST, "Last level 1 error code" )
 /*
 Class1 Errors
