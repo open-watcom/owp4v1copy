@@ -32,8 +32,6 @@
 #endif
 :elsesegment DOS
 #pragma library (graph);
-:elsesegment NEC
-#pragma library (graph98);
 :endsegment
 
 struct xycoord {                /* structure for pixel position */
@@ -203,17 +201,6 @@ _WCRTLINK short
 #define _ZRES64KCOLOR   0x11E   /* 1600 x 1200, 64K color          */
 #define _ZRESTRUECOLOR  0x11F   /* 1600 x 1200, 16.8M color        */
 :endsegment
-:segment NEC
-#define _98TEXT80        3      /* 80 column text, 8 color         */
-#define _98RESSCOLOR     81     /* 640 x 400, 8 color (superimpose)*/
-#define _98RESS8COLOR    84     /* 640 x 400, 8 of 4096 (superimpose)*/
-#define _98RESS16COLOR   85     /* 640 x 400, 16 of 4096 (superimpose)*/
-#define _98HIRESS16COLOR 93     /* 1120 x 750, 16 of 4096 (superimpose)*/
-#define _98RESCOLOR      97     /* 640 x 400, 8 color              */
-#define _98RES8COLOR     100    /* 640 x 400, 8 of 4096 color      */
-#define _98RES16COLOR    101    /* 640 x 400, 16 of 4096 color     */
-#define _98HIRES16COLOR  109    /* 1120 x 750, 16 of 4096 color    */
-:endsegment
 
 #define _NODISPLAY      (-1)    /* no display device            */
 #define _UNKNOWN        0       /* unknown adapter/monitor type */
@@ -233,13 +220,6 @@ _WCRTLINK short
 #define _ENHANCED       3       /* enhanced color     */
 #define _ANALOGMONO     5       /* analog monochrome  */
 #define _ANALOGCOLOR    6       /* analog color       */
-:endsegment
-:segment NEC
-#define _98CGA          0x2000  /* Color Graphics Adapter (digital)   */
-#define _98EGA          0x4000  /* Enhanced Graphics Adapter (analog) */
-
-#define _98ANALOG       0x0100  /* Analog color monitor               */
-#define _98DIGITAL      0x0200  /* Digital color monitor              */
 :endsegment
 
 #define _GROK                   0      /* no error                     */
@@ -309,33 +289,6 @@ _WCRTLINK short
 #define _YELLOW         0x153f3fL
 #define _BRIGHTWHITE    0x3f3f3fL
 #define _LIGHTYELLOW    _YELLOW
-:endsegment
-:segment NEC
-#define _98BLACK        0x000000L      /* colour values for analog display */
-#define _98BLUE         0x0F0000L
-#define _98GREEN        0x000F00L
-#define _98CYAN         0x0F0F00L
-#define _98RED          0x00000FL
-#define _98MAGENTA      0x0F000FL
-#define _98YELLOW       0x000F0FL
-#define _98WHITE        0x0F0F0FL
-#define _98GRAY         0x080808L
-#define _98DARKBLUE     0x080000L
-#define _98DARKGREEN    0x000800L
-#define _98DARKCYAN     0x080800L
-#define _98DARKRED      0x000008L
-#define _98DARKMAGENTA  0x080008L
-#define _98DARKYELLOW   0x000808L
-#define _98DARKWHITE    0x0C0C0CL
-
-#define _98BLACK_D      0x000000L      /* colour values for digital display */
-#define _98BLUE_D       0x000001L
-#define _98GREEN_D      0x000002L
-#define _98CYAN_D       0x000003L
-#define _98RED_D        0x000004L
-#define _98MAGENTA_D    0x000005L
-#define _98YELLOW_D     0x000006L
-#define _98WHITE_D      0x000007L
 :endsegment
 
 /* Shape and Curve Drawing Functions */
@@ -613,10 +566,6 @@ _WCRTLINK short
 #define _GCLEARSCREEN   0
 #define _GVIEWPORT      1
 #define _GWINDOW        2
-:segment NEC
-#define _GCLEARGRAPH    3
-#define _GCLEARTEXT     4
-:endsegment
 
 #define _GBORDER        2
 #define _GFILLINTERIOR  3
@@ -813,27 +762,6 @@ _WCRTLINK long
 :endsegment
     _WCI86FAR _imagesize_wxy( struct _wxycoord _WCI86FAR *,
                                          struct _wxycoord _WCI86FAR * );
-:segment NEC
-
-/* KANJI Font Functions */
-
-_WCRTLINK short
-:segment INTERNAL
-  _CGRAPH
-:endsegment
-    _WCI86FAR _getkanji( unsigned short, unsigned char _WCI86FAR * );
-_WCRTLINK short
-:segment INTERNAL
-  _CGRAPH
-:endsegment
-    _WCI86FAR _setkanji( unsigned short, unsigned char _WCI86FAR * );
-_WCRTLINK short
-:segment INTERNAL
-  _CGRAPH
-:endsegment
-    _WCI86FAR _kanjisize( short );
-:endsegment
-
 /* Font Manipulation Functions */
 
 _WCRTLINK short

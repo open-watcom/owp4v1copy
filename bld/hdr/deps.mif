@@ -161,7 +161,6 @@ float.h         : $(float_deps)
 fstream.h       : $(fstream_deps)
 generic.h       : ../watcom/generic.mh ../readonly.sp ../crwat.sp
 graph.h         : $(graph_deps)
-graph98.h       : ../watcom/graph98.mh $(graph_deps)
 i86.h           : ../watcom/i86.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 inttypes.h      : ../watcom/inttypes.mh ../readonly.sp ../crwat.sp
 io.h            : ../watcom/io.mh ../readonly.sp $(cplus) ../crwat.sp ../maxpath.sp ../wchar_t.sp

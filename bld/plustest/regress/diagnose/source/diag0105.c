@@ -44,10 +44,6 @@
 #if !defined( __LINUX__ )
   #include <graph.h>
 #endif
-#error <graph98.h>
-#if !defined( __UNIX__ )
-  #include <graph98.h>
-#endif
 #error <i86.h>
 #include <i86.h>
 #error <io.h>
