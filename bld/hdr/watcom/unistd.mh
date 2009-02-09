@@ -94,7 +94,7 @@
 #define _PC_DOS_SHARE           10  /* test for dos share support   */
 #define _PC_DOS_LOCKS           11  /* test for dos locking support */
 
-:include posix.sp
+:include posixext.sp
 
 _WCRTDATA extern int    optind;     /*  index of current option being scanned */
 _WCRTDATA extern char   *optarg;    /*  points to optional argument */
@@ -239,7 +239,7 @@ _WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 #endif
 
 :segment QNX | LINUX
-:include posix.sp
+:include posixext.sp
 _WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *__optstring );
 _WCRTLINK extern char   *basename( char *__fname );
 _WCRTLINK extern size_t confstr( int, char*, size_t );

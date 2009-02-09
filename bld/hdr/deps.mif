@@ -151,7 +151,7 @@ direct.h        : ../watcom/direct.mh ../readonly.sp $(cplus) ../crwat.sp ../dsk
 dos.h           : ../watcom/dos.mh ../readonly.sp $(cplus) ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 dosfunc.h       : ../watcom/dosfunc.mh ../readonly.sp ../crwat.sp
 eh.h            : ../watcom/eh.mh ../readonly.sp ../crwat.sp
-env.h           : ../watcom/env.mh ../readonly.sp $(cplus) ../crwat.sp ../posix.sp ../wchar_t.sp
+env.h           : ../watcom/env.mh ../readonly.sp $(cplus) ../crwat.sp ../posixext.sp ../wchar_t.sp
 errno.h         : $(errno_deps)
 except.h        : ../watcom/except.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ../watexc.sp
 exceptio.h      : $(exception_deps)
@@ -275,7 +275,7 @@ sys/types.h     : ../watcom/types.mh ../readonly.sp $(cplus) ../crqnx.sp ../crwa
 tchar.h         : ../watcom/tchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../wchar_t.sp ../wctypet.sp
 time.h          : $(time_deps)
 typeinfo.h      : $(typeinfo_deps)
-unistd.h        : ../watcom/unistd.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../posix.sp ../sizet.sp ../ssizet.sp
+unistd.h        : ../watcom/unistd.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../posixext.sp ../sizet.sp ../ssizet.sp
 utime.h         : ../watcom/utime.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../timet.sp
 varargs.h       : ../watcom/varargs.mh ../readonly.sp $(cplus) ../crwat.sp
 wcdefs.h        : ../watcom/wcdefs.mh ../readonly.sp ../crwat.sp ../sizet.sp
