@@ -136,7 +136,7 @@ Lexer::Token Lexer::lex( IpfData* input )
                     else if ( ch == L'&' ) {
                         wchar_t ch2( input->get() );
                         input->unget( ch2 );
-                        if( !std::iswalnum( ch2 ) )
+                        if( std::iswalnum( ch2 ) )
                             type = ENTITY;
                         else
                             type = WORD;
