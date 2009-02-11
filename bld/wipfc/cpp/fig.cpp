@@ -38,6 +38,7 @@
 #include "cell.hpp"
 #include "document.hpp"
 #include "figcap.hpp"
+#include "p.hpp"
 #include "page.hpp"
 #include "util.hpp"
 
@@ -51,6 +52,12 @@ Lexer::Token Fig::parse( Lexer* lexer )
             else if( lexer->tagId() == Lexer::FIGCAP ) {
                 Element* elt( new Figcap( document, this, document->dataName(),
                     document->dataLine(), document->dataCol() ) );
+                appendChild( elt );
+                tok = elt->parse( lexer );
+            }
+            else if( lexer->tagId() == Lexer::P ) {
+                Element* elt( new P( document, this, document->dataName(),
+                    document->lexerLine(), document->lexerCol() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }

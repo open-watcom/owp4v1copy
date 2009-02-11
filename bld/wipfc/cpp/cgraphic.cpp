@@ -36,6 +36,7 @@
 #include "brcmd.hpp"
 #include "cell.hpp"
 #include "document.hpp"
+#include "p.hpp"
 #include "page.hpp"
 #include "util.hpp"
 
@@ -46,6 +47,12 @@ Lexer::Token CGraphic::parse( Lexer* lexer )
         if( parseInline( lexer, tok ) ) {
             if( lexer->tagId() == Lexer::ECGRAPHIC )
                 break;
+            else if( lexer->tagId() == Lexer::P ) {
+                Element* elt( new P( document, this, document->dataName(),
+                    document->lexerLine(), document->lexerCol() ) );
+                appendChild( elt );
+                tok = elt->parse( lexer );
+            }
             else
                 parseCleanup( tok );
         }

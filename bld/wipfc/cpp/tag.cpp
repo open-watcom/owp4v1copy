@@ -388,14 +388,6 @@ bool Tag::parseBlock( Lexer* lexer, Lexer::Token& tok )
         switch( lexer->tagId() ) {
         //make new tag
         //append pointer to this tag's list
-        case Lexer::H1:
-        case Lexer::H2:
-        case Lexer::H3:
-        case Lexer::H4:
-        case Lexer::H5:
-        case Lexer::H6:
-        case Lexer::FN:
-            break;
         case Lexer::ACVIEWPORT:
             {
                 Element* elt( new AcViewport( document, this, document->dataName(),
