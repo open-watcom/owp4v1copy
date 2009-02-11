@@ -228,6 +228,13 @@ void        process_line( void )
 
             pchar = scan_sym( pw, &symvar_entry, &var_ind );
             if( scan_err && *pchar == '(' ) {   // problem with subscript
+                varunresolved++;
+                p2 = pchar - workbuf + buff2;
+                pw = pchar;
+                pchar = strchr( pw, ampchar );  // look for next & in buffer
+                continue;
+
+#if 0
                 if( *(pchar+1) == ampchar ) {
                     symvar          symvar_ind;
                     char        *   pchar2;
@@ -256,6 +263,7 @@ void        process_line( void )
 
                     }
                 }
+#endif
             }
 
             ProcFlags.suppress_msg = false;

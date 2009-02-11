@@ -240,11 +240,11 @@ static void     scan_script( void)
 
         scan_start = p;
 
-        token_buf[ 0 ] = '\0';
         pt = token_buf;
         while( *p && test_macro_char( *p ) ) {  // end of controlword
-           *pt++ = *p++;                    // copy to TokenBuf
+           *pt++ = tolower( *p++ );     // copy lowercase to TokenBuf
         }
+        *pt = '\0';
 
         toklen = pt - token_buf;
 
@@ -254,7 +254,6 @@ static void     scan_script( void)
 
            return;
         }
-        *pt = '\0';
 
         if( toklen >= MAC_NAME_LENGTH ) {
             *(token_buf + MAC_NAME_LENGTH) = '\0';

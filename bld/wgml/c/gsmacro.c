@@ -287,7 +287,7 @@ void    scr_dm( void )
      */
     while( *p && test_macro_char( *p ) ) {
         if( len < MAC_NAME_LENGTH ) {
-            *pn++ = *p++;               // copy macroname
+            *pn++ = tolower( *p++ );    // copy lowercase macroname
             *pn   = '\0';
         } else {
             break;
@@ -401,7 +401,7 @@ void    scr_dm( void )
                     p = scan_start;
                     save = *p;
                     *p = '\0';
-                    if( strncmp( macname, tok_start, MAC_NAME_LENGTH ) ) {
+                    if( strnicmp( macname, tok_start, MAC_NAME_LENGTH ) ) {
                         // macroname from begin different from end
                         err_count++;
                         // SC--005 Macro '%s' is not being defined
@@ -427,12 +427,13 @@ void    scr_dm( void )
                     p = scan_start;
                     save = *p;
                     *p = '\0';
-                    if( strcmp( tok_start, "end") ) {
+                    if( stricmp( tok_start, "end") ) {
                         err_count++;
                         // SC--002 The control word parameter '%s' is invalid
                         out_msg( "ERR_PARMINVALID "
                                  "The control word parameter '%s' is invalid\n"
                                  "\t\t\tLine %d of file '%s'\n",
+                                 tok_start,
                                  cb->s.f->lineno, cb->s.f->filename );
                         free_lines( head );
                         return;
@@ -566,10 +567,20 @@ void    scr_me( void )
 }
 
 
+static void macro_missing( void )
+{
+    if( input_cbs->fmflags & II_macro ) {
+        out_msg( "ERR_MACRO_NAME missing/invalid line %d of macro '%s'\n",
+                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+    } else {
+        out_msg( "ERR_MACRO_NAME missing/invalid line %d of file '%s'\n",
+                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+    }
+}
 
 
 /**************************************************************************/
-/* EMPTY PAGE  is not implemeted ( not used in OW documentation )         */
+/* ! EMPTY PAGE  is not implemeted ( not used in OW documentation )        */
 /*                                                                        */
 /* EMPTY PAGE,  EXECUTE MACRO:   EMPTY PAGE controls suppression of empty */
 /* pages (pages  that contain nothing in  the text area);   EXECUTE MACRO */
@@ -578,7 +589,7 @@ void    scr_me( void )
 /*                                                                        */
 /*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커      */
 /*      |       |                                                  |      */
-/*      |  .EM  |    <YES|NO|OFFNO>   not implemented              |      */
+/*      |  .EM  |    <YES|NO|OFFNO>  !not implemented              |      */
 /*      |       |                                                  |      */
 /*      |컴컴컴�|컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴|      */
 /*      |       |                                                  |      */
@@ -636,47 +647,40 @@ void    scr_em( void )
 
     if( cc == omit ) {
         err_count++;
-        if( cb->fmflags & II_macro ) {
-            out_msg( "ERR_MACRO_NAME_MISSING line %d of macro '%s'\n",
-                     cb->s.m->lineno, cb->s.m->mac->name );
-        } else {
-            out_msg( "ERR_MACRO_NAME_MISSING line %d of file '%s'\n",
-                     cb->s.f->lineno, cb->s.f->filename );
-        }
+        macro_missing();
         show_include_stack();
         return;
     }
 
-    p = tok_start + 1;                  // over .
+    if( *tok_start == SCR_char ) {      // possible macro name
+        p = tok_start + 1;              // over .
 
-    pn      = macname;
-    len     = 0;
+        pn      = macname;
+        len     = 0;
 
-    /*  truncate name if too long WITHOUT error msg
-     *  this is wgml 4.0 behaviour
-     *
-     */
-    while( *p && test_macro_char( *p ) ) {
-        if( len < MAC_NAME_LENGTH ) {
-            *pn++ = *p++;               // copy macroname
-            *pn   = '\0';
-        } else {
-            break;
+        /*  truncate name if too long WITHOUT error msg
+         *  this is wgml 4.0 behaviour
+         *
+         */
+        while( *p && test_macro_char( *p ) ) {
+            if( len < MAC_NAME_LENGTH ) {
+                *pn++ = *p++;           // copy macroname
+                *pn   = '\0';
+            } else {
+                break;
+            }
+            len++;
         }
-        len++;
+        macname[ MAC_NAME_LENGTH ] = '\0';
+
+        me = find_macro( macro_dict, macname );
+    } else {
+        me = NULL;                      // no macro name
     }
-    macname[ MAC_NAME_LENGTH ] = '\0';
 
-    me = find_macro( macro_dict, macname );
-    if( me == NULL ) {
+    if( me == NULL ) {                  // macro not specified or not defined
         err_count++;
-        if( cb->fmflags & II_macro ) {
-            out_msg( "ERR_MACRO_NAME_UNDEFINED '&s' line %d of macro '%s'\n",
-                     macname, cb->s.m->lineno, cb->s.m->mac->name );
-        } else {
-            out_msg( "ERR_MACRO_NAME_UNDEFINED '%s' line %d of file '%s'\n",
-                     macname, cb->s.f->lineno, cb->s.f->filename );
-        }
+        macro_missing();
         show_include_stack();
         return;
     } else {

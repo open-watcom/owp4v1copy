@@ -240,6 +240,9 @@ bool    test_macro_char( char c )
     bool    test;
 
     test = isalnum( c );
+    if( !test ) {
+        test = ( c == '@' ) || ( c == '#' ) || ( c == '$' ) || ( c == '_' );
+    }
     return( test );
 }
 

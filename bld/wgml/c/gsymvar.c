@@ -131,7 +131,7 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
 /***************************************************************************/
 /*  search symbol and subscript entry in specified  dictionary             */
 /*  fills symsub structure pointer if found                                */
-/*  finds deleted variables too internal routine                                                                       */
+/*  finds deleted variables too internal routine                           */
 /***************************************************************************/
 
 static  int find_symvar_del( symvar * * dict, char * name, sub_index sub,
