@@ -37,7 +37,7 @@ cdsay .
 
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> bviper/dos386/ide2make.exe <RELROOT>/binw/
-    <CPCMD> viper/win/idex.cfg   <RELROOT>/binw/idex.cfg
+    <CPCMD> cfg/wini86/idex.cfg  <RELROOT>/binw/
 
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> viper/wini86/ide.exe <RELROOT>/binw/
