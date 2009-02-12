@@ -369,8 +369,10 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             if( lexer->text() == L"auto" ) {
                 if( type == FOOTNOTE )
                     document->printError( ERR3_FNNOAUTO );
-                else
+                else {
                     automatic = true;
+                    noElink = true;
+                }
             }
             else if( lexer->text() == L"viewport" )
                 viewport = true;
