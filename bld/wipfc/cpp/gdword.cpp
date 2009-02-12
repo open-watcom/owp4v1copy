@@ -38,6 +38,15 @@
 #include "gdword.hpp"
 #include "errors.hpp"
 
+void GlobalDictionaryWord::toUpper()
+{
+    wchar_t ch;
+    for( size_t count = 0; count < text.size(); ++count ) {
+        ch = std::towupper( text[ count ] );
+        text[ count ] = ch;
+    }
+}
+/***************************************************************************/
 size_t GlobalDictionaryWord::writeWord( std::FILE* out ) const
 {
     char buffer[ 256 ];

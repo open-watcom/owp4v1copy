@@ -162,10 +162,10 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             else if( key == L"res" )
                 res = static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
             else if( key == L"refid" ) {
-                if( document->isInf() )
-                    refid = new GlobalDictionaryWord( value );
-                else
-                    refid = document->addWord( new GlobalDictionaryWord( value ) );
+                refid = new GlobalDictionaryWord( value );
+                refid->toUpper();           //to uppercase
+                if( !document->isInf() )
+                    refid = document->addWord( refid );
             }
             else if( key == L"database" ) {
                 database = value;

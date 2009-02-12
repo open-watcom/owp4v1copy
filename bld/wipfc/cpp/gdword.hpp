@@ -41,6 +41,8 @@ class GlobalDictionaryWord {
 public:
     GlobalDictionaryWord() : idx( 0 ) { };
     GlobalDictionaryWord( const std::wstring& t ) : idx( 0 ), text( t ) { };
+    //convert to upper case
+    void toUpper();
     //set the index postion in the collection
     void setIndex( std::uint16_t i ) { idx = i; };
     std::uint16_t index() const { return idx; };
@@ -58,8 +60,8 @@ public:
 private:
     GlobalDictionaryWord( const GlobalDictionaryWord& rhs );            //no copy
     GlobalDictionaryWord& operator=( const GlobalDictionaryWord& rhs ); //no assignment
-    std::uint16_t idx;             //index in Dictionary
-    std::wstring text;                  //the actual text
+    std::uint16_t idx;              //index in Dictionary
+    std::wstring text;              //the actual text
     FTSElement fts;
     int wstricmp( const wchar_t *s, const wchar_t *t ) const;
 };

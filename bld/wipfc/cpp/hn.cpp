@@ -299,18 +299,16 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                     document->printError( ERR1_HIDERES );
             }
             else if( key == L"id" ) {
-                if( document->isInf() ) {
-                    id = new GlobalDictionaryWord( value );
-                }
-                else
-                    id = document->addWord( new GlobalDictionaryWord( value ) );
+                id = new GlobalDictionaryWord( value );
+                id->toUpper();              //convert to upper case
+                if( !document->isInf() )
+                    id = document->addWord( id );
             }
             else if( key == L"name" ) {
-                if( document->isInf() ) {
-                    name = new GlobalDictionaryWord( value );
-                }
-                else
-                    name = document->addWord( new GlobalDictionaryWord( value ) );
+                name = new GlobalDictionaryWord( value );
+                name->toUpper();            //convert to upper case
+                if( !document->isInf() )
+                    name = document->addWord( name );
             }
             else if( key == L"tutorial" )
                 tutorial = value;
@@ -547,11 +545,13 @@ void Hn::buildTOC( Page* page )
         page->SetControls( controls );
         //FIXME: need the index of the parent?
         //page->setSearchable( !nosearch );
-        try {
-            document->addRes( res, page->index() );
-        }
-        catch ( Class3Error& e ) {
-            printError( e.code );
+        if( res || !document->isInf() ) {
+            try {
+                document->addRes( res, page->index() );
+            }
+            catch ( Class3Error& e ) {
+                printError( e.code );
+            }
         }
         if( id ) {
             try {
