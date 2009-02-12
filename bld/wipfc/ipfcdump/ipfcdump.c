@@ -24,7 +24,6 @@ static int parseFile( char *filename )
     if( in ) {
         fprintf( out, "File name: %s\n", filename );
         readHeader( in, out );
-        readGNames( in, out );
         readExtFiles( in, out );
         readStrings( in, out );
         readNLS( in, out );
@@ -32,6 +31,7 @@ static int parseFile( char *filename )
         readControls( in, out );
         readTOC( in, out );
         readDictionary( in, out );
+        readGNames( in, out );
         readPanels( in, out );
         readCells( in, out );
         readBitMaps( in, out );

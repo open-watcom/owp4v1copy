@@ -11,7 +11,7 @@ void readHeader( FILE *in, FILE *out )
 {
     wchar_t wtext[ 256 ];
     fread( &Hdr, sizeof( IpfHeader ),1, in );
-    if ( memcmp( Hdr.id, "HSP", 3 ) ) {
+    if ( ( Hdr.id[0] != 'H' && Hdr.id[0] != 'I' ) || Hdr.id[1] != 'S' || Hdr.id[2] != 'P' ) {
         fputs( "This is not an OS/2 help file\n\a", out );
         exit( EXIT_FAILURE );
     }
