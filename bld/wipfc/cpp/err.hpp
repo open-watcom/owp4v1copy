@@ -69,6 +69,7 @@ Fatal errors
 PICK( ERR1_CMDNOTDEF, "This command is not defined" )
 PICK( ERR1_TAGNOTDEF, "This tag is not defined" )
 PICK( ERR1_ATTRNOTDEF, "This attribute is not defined for this tag" )
+PICK( ERR1_NOATTR, "Attributtes are not allowed for this tag--probably missing '.' to end the tag" )
 PICK( ERR1_TAGCONTEXT, "The tag, word, or command is not allowed in this context" )
 PICK( ERR1_TAGSYNTAX, "Syntax error in tag" )
 PICK( ERR1_HEADTEXT, "Ignoring text before the :h1. tag" )

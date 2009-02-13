@@ -84,9 +84,9 @@ Lexer::Token Tag::parseAttributes( Lexer* lexer )
     lexer = lexer;
     while( tok != Lexer::TAGEND ) {
         if( tok == Lexer::ATTRIBUTE )
-            document->printError( ERR1_ATTRNOTDEF );
+            document->printError( ERR1_NOATTR );
         else if( tok == Lexer::FLAG )
-            document->printError( ERR1_ATTRNOTDEF );
+            document->printError( ERR1_NOATTR );
         else if( tok == Lexer::ERROR_TAG )
             throw FatalError( ERR_SYNTAX );
         else if( tok == Lexer::END )
