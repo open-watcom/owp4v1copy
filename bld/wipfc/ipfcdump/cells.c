@@ -396,7 +396,7 @@ static unsigned int readEscape(FILE *out, uint8_t *text, uint8_t type, uint8_t s
         memset( buffer, 0, 256 );
         ++count;
         memcpy( buffer, &text[ count ], size - 2 );
-        count += size - 1;
+        count += size - 3;
         fprintf( out, "15: tutorial %s>]", buffer );
         break;
     case 0x16:
