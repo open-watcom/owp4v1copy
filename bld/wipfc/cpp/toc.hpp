@@ -62,7 +62,8 @@ struct ExtTocEntry {
     std::uint16_t setSize :1;       //PanelSize is present
     std::uint16_t setView :1;       //force new window
     std::uint16_t setStyle:1;       //PanelStyle is present
-    std::uint16_t unknown1:2;
+    std::uint16_t noSearch:1;
+    std::uint16_t noPrint :1;
     std::uint16_t setCtrl :1;       //PanelControls is present
     std::uint16_t unknown2:1;
     std::uint16_t clear   :1;       //erase window

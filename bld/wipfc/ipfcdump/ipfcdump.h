@@ -381,7 +381,8 @@ typedef struct {
     uint16_t    setSize :1;
     uint16_t    setView :1;
     uint16_t    setStyle:1;
-    uint16_t    unknown1:2;         // 3 if it's a child?
+    uint16_t    noSearch:1;
+    uint16_t    noPrint :1;
     uint16_t    setCtrl :1;
     uint16_t    unknown2:1;
     uint16_t    clear   :1;

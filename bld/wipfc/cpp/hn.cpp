@@ -489,9 +489,12 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                     document->setHeaderCutOff( static_cast< unsigned int >( tmp ) );
             }
             else if( key == L"ctrlarea" ) {
-                toc.extended = 1;
-                //page|none
-                //FIXME: Don't know how to encode this
+                if( value == L"page" ) {
+                    toc.extended = 1;
+                    etoc.setCtrl = 1;
+                }
+                else
+                    etoc.setCtrl = 0;
             }
             else if( key == L"ctrlrefid" ) {
                 toc.extended = 1;
@@ -511,10 +514,14 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                 toc.extended = 1;
                 etoc.clear = 1;
             }
-            else if( lexer->text() == L"nosearch" )
-                nosearch = true;
-            else if( lexer->text() == L"noprint" )
-                noprint = true;
+            else if( lexer->text() == L"nosearch" ) {
+                toc.extended = 1;
+                etoc.nosearch = 1;
+            }
+            else if( lexer->text() == L"noprint" ) {
+                toc.extended = 1;
+                etoc.noprint = 1;
+            }
             else if( lexer->text() == L"hide" )
                 toc.hidden = 1;
             else

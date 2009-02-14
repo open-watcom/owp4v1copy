@@ -53,7 +53,8 @@ static void readTOCEntry( FILE *in, FILE *out, uint32_t offset, size_t count1, s
         fprintf( out, "      ExtTocEntry.setSize:  %s\n", etoc.setSize ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.setView:  %s\n", etoc.setView ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.setStyle: %s\n", etoc.setStyle ? "yes" : "no" );
-        fprintf( out, "      ExtTocEntry.unknown1: %1.1x\n", etoc.unknown1);
+        fprintf( out, "      ExtTocEntry.noSearch: %s\n", etoc.noSearch ? "yes" : "no" );
+        fprintf( out, "      ExtTocEntry.noPrint:  %s\n", etoc.noPrint ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.setCtrl:  %s\n", etoc.setCtrl ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.unknown2: %1.1x\n", etoc.unknown2);
         fprintf( out, "      ExtTocEntry.clear:    %s\n", etoc.clear ? "clear" : "set" );
