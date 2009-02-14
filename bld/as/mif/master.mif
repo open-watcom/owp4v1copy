@@ -182,8 +182,8 @@ $(asi_lib_j) : $(asi_lib) asmsgj.obj
         $(librarian) $(libflags) +$[@ -asmsg.obj +asmsgj.obj
 !endif
 
-$(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res
-        $(cl) $(clflags) $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(cl_libs)
+$(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res $(name).lnk
+        $(linker) name $@ @$(name).lnk
 !ifeq host_os osi
         $(w32bind) $^&.rex $^@ $(os2ldr)
         @rm -f $^&.rex
@@ -194,6 +194,13 @@ $(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res
 $(name).res : as.rc msg.gh
         $(rc_aui) $(as_extra_defines) $(dbg_extra_defines) $[@ -fo=$^@
 !endif
+
+$(name).lnk : $(__MAKEFILES__)
+        @%write $@ $(lflags)
+        @for %i in ($(as_objs)) do @%append $@ file %i
+        @for %i in ($(cl_objs)) do @%append $@ file %i
+        @for %i in ($(libs)) do @%append $@ lib %i
+        @for %i in ($(owl_lib)) do @%append $@ lib %i
 
 msg.gh : ./mkstrid.exe
         $[@ $^@
