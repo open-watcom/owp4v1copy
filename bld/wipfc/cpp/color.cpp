@@ -130,4 +130,6 @@ void Color::buildText( Cell* cell )
         cell->addByte( 0x14 );  //set background color
         cell->addByte( static_cast< std::uint8_t >( background ) );
     }
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }

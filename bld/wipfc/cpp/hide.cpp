@@ -96,7 +96,8 @@ void Hide::buildText( Cell* cell )
         esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
     esc[1] = static_cast< std::uint8_t >( esc.size() - 1 );
     cell->addEsc( esc );
-
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /***************************************************************************/
 EHide::EHide( Document* d, Element *p, const std::wstring* f, unsigned int r,
@@ -133,6 +134,7 @@ void EHide::buildText( Cell* cell )
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x02 );  //size
     cell->addByte( 0x18 );  //end hide
-
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 

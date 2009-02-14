@@ -57,7 +57,9 @@ public:
     //is this cell empty?
     bool empty() const { return text.empty(); }
     //is the local dictionary full (time for a new cell)?
-    bool full() const { return localDictionary.size() == maxDictSize; };
+    bool dictFull() const { return localDictionary.size() == maxDictSize; };
+    //is the text block full?
+    bool textFull() const {return text.size() > 16000; };
     //add an element to this cell's list
     void addElement( Element* element ) { elements.push_back( element ); };
     //build the encoded text

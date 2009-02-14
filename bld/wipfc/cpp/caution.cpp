@@ -122,6 +122,8 @@ Lexer::Token Caution::parse( Lexer* lexer )
 void ECaution::buildText( Cell* cell )
 {
     cell->addByte( 0xFA );  //line break
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
 static void Caution::prepBufferName( std::wstring* buffer, const std::wstring& fname )

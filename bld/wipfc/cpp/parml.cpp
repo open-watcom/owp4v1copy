@@ -145,6 +145,8 @@ void EParml::buildText( Cell* cell )
     cell->addByte( 0x03 );  //size
     cell->addByte( 0x02 );  //set left margin
     cell->addByte( 1 );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /***************************************************************************/
 Lexer::Token Pt::parse( Lexer* lexer )

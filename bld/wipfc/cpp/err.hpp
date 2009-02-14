@@ -96,6 +96,7 @@ PICK( ERR1_TABLECELLTEXTWIDTH, "Text in this table column is too long, truncatin
 PICK( ERR1_TABLECELLCOUNTHIGH, "Ignoring extra table columns in this row" )
 PICK( ERR1_TABLECELLCOUNTLOW, "Not enough columns have been specified for this row" )
 PICK( ERR1_TABLEELINK, "The required :elink. tag is missing, but has been appended to this column" )
+PICK( ERR1_LARGEPAGE, "This page has too many elements (words, punctuation, etc.)" )
 PICK( ERR1_LAST, "Last level 1 error code" )
 /*
 Class1 Errors

@@ -100,6 +100,8 @@ void Lines::buildText( Cell* cell )
     cell->addByte( 0x03 );  //size
     cell->addByte( 0x1A );  //begin lines sequence
     cell->addByte( alignment );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
 void ELines::buildText( Cell* cell )
@@ -108,5 +110,7 @@ void ELines::buildText( Cell* cell )
     cell->addByte( 0x02 );  //size
     cell->addByte( 0x1B );  //end lines sequence
     cell->addByte( 0xFA );  //end paragraph
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 

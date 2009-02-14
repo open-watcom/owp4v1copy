@@ -82,6 +82,8 @@ void Ddf::buildText( Cell* cell )
         cell->addByte( 0x20 );  //ddf
         cell->addByte( static_cast< std::uint8_t >( res ) );
         cell->addByte( static_cast< std::uint8_t >( res >> 8 ) );
+        if( cell->textFull() )
+            printError( ERR1_LARGEPAGE );
     }
     catch( Class1Error& e ) {
         printError( e.code );

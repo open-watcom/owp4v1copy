@@ -89,6 +89,8 @@ Lexer::Token CeCmd::parse( Lexer* lexer )
 void CeCmd::buildText( Cell* cell )
 {
     cell->addByte( 0xFB );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
 static void CeCmd::prepBufferName( std::wstring* buffer, const std::wstring& fname )

@@ -502,6 +502,8 @@ void Link::doTopic( Cell* cell )
                 }
                 esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
                 cell->addEsc( esc );
+                if( cell->textFull() )
+                    printError( ERR1_LARGEPAGE );
             }
             catch( Class1Error& e ) {
                 printError( e.code );
@@ -543,6 +545,8 @@ void Link::doTopic( Cell* cell )
                 esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
             esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
             cell->addEsc( esc );
+            if( cell->textFull() )
+                printError( ERR1_LARGEPAGE );
         }
     }
     else
@@ -584,6 +588,8 @@ void Link::doFootnote( Cell* cell )
             }
             esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
             cell->addEsc( esc );
+            if( cell->textFull() )
+                printError( ERR1_LARGEPAGE );
         }
         catch( Class1Error& e ) {
             printError( e.code );
@@ -634,6 +640,8 @@ void Link::doLaunch( Cell* cell )
             esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
             esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
         cell->addEsc( esc );
+        if( cell->textFull() )
+            printError( ERR1_LARGEPAGE );
     }
     else
         printError( ERR2_VALUE );
@@ -669,6 +677,8 @@ void Link::doInform( Cell* cell )
         }
         esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
         cell->addEsc( esc );
+        if( cell->textFull() )
+            printError( ERR1_LARGEPAGE );
     }
     else
         printError( ERR2_VALUE );
@@ -679,4 +689,6 @@ void ELink::buildText( Cell* cell )
     cell->addByte( 0xFF );
     cell->addByte( 0x02 );
     cell->addByte( 0x08 );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }

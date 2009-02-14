@@ -34,4 +34,6 @@
 void BrCmd::buildText( Cell* cell )
 {
     cell->addByte( 0xFD );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }

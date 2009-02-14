@@ -154,6 +154,8 @@ void Artwork::buildText( Cell* cell )
     esc.push_back( static_cast< std::uint8_t >( index >> 24) );
     esc[1] = static_cast< std::uint8_t >( esc.size() - 1 );
     cell->addEsc( esc );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 
 

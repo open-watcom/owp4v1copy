@@ -74,6 +74,7 @@ void Rm::buildText( Cell* cell )
     cell->addByte( 0x03 );  //size
     cell->addByte( 0x03 );  //set right margin
     cell->addByte( margin );
-
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 

@@ -66,7 +66,7 @@ void Page::buildLocalDictionary()
 bool Page::addWord( GlobalDictionaryWord* word )
 {
     if( word ) {    //can be 0 for unrecognized entity references
-        if( currentCell->full() )
+        if( currentCell->dictFull() )
             return true;
         currentCell->addWord( word->index() );
         word->onPage( idx );

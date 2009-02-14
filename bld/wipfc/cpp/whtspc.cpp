@@ -80,6 +80,8 @@ void WhiteSpace::buildText( Cell* cell )
             cell->addByte( 0xFE );
         }
     }
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /***************************************************************************/
 void LiteralWhiteSpace::buildText( Cell* cell )
@@ -87,4 +89,6 @@ void LiteralWhiteSpace::buildText( Cell* cell )
     if( toggleSpacing )
         cell->addByte( 0xFC );
     cell->addByte( 0xFE );
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }

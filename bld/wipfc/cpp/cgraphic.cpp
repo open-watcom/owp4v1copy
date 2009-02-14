@@ -65,6 +65,8 @@ void CGraphic::buildText( Cell* cell )
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x02 );  //size
     cell->addByte( 0x0B );  //begin monospaced
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
 void ECGraphic::buildText( Cell* cell )
@@ -72,5 +74,7 @@ void ECGraphic::buildText( Cell* cell )
     cell->addByte( 0xFF );  //esc
     cell->addByte( 0x02 );  //size
     cell->addByte( 0x0C );  //end monospaced
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 

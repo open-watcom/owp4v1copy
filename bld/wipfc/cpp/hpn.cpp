@@ -89,6 +89,8 @@ void Hpn::buildText( Cell* cell )
         else
             cell->addByte( static_cast< std::uint8_t >( lvl - 6) );
     }
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /***************************************************************************/
 EHpn::EHpn( Document* d, Element *p, const std::wstring* f, unsigned int r,
@@ -134,4 +136,6 @@ void EHpn::buildText( Cell* cell )
         cell->addByte( 0x0D );  //change style
         cell->addByte( 0x00 );  //default
     }
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }

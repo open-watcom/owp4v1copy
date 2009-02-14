@@ -126,6 +126,8 @@ Lexer::Token Warning::parse( Lexer* lexer )
 void EWarning::buildText( Cell* cell )
 {
     cell->addByte( 0xFA );  //line break
+    if( cell->textFull() )
+        printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
 static void Warning::prepBufferName( std::wstring* buffer, const std::wstring& fname )
