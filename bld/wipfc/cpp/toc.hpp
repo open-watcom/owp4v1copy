@@ -65,12 +65,12 @@ struct ExtTocEntry {
     std::uint16_t noSearch:1;
     std::uint16_t noPrint :1;
     std::uint16_t setCtrl :1;       //PanelControls is present
-    std::uint16_t unknown2:1;
+    std::uint16_t setTutor:1;
     std::uint16_t clear   :1;       //erase window
-    std::uint16_t unknown3:1;
+    std::uint16_t unknown1:1;
     std::uint16_t setGroup:1;       //PanelGroup is present
     std::uint16_t isParent:1;       //has child windows
-    std::uint16_t unknown4:4;
+    std::uint16_t unknown2:4;
     ExtTocEntry() { std::memset( this, 0, sizeof( ExtTocEntry ) ); };
     void write( std::FILE* out ) const;
     enum Position {

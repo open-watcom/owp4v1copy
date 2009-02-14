@@ -310,8 +310,11 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                 if( !document->isInf() )
                     name = document->addWord( name );
             }
-            else if( key == L"tutorial" )
+            else if( key == L"tutorial" ) {
+                toc.extended = 1;
+                etoc.setTutor = 1;
                 tutorial = value;
+            }
             else if( key == L"x" ) {
                 toc.extended = 1;
                 if( value == L"left" ) {
@@ -516,11 +519,11 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             }
             else if( lexer->text() == L"nosearch" ) {
                 toc.extended = 1;
-                etoc.nosearch = 1;
+                etoc.noSearch = 1;
             }
             else if( lexer->text() == L"noprint" ) {
                 toc.extended = 1;
-                etoc.noprint = 1;
+                etoc.noPrint = 1;
             }
             else if( lexer->text() == L"hide" )
                 toc.hidden = 1;
@@ -594,6 +597,27 @@ void Hn::buildTOC( Page* page )
                 }
             }
         }
+    }
+}
+/***************************************************************************/
+void Hn::buildText( Cell* cell )
+{
+    if( etoc.setTutor ) {
+        char tmp[ 256 ];
+        size_t size( std::wcstombs( tmp, tutorial.c_str(), sizeof( tmp ) / sizeof( char ) ) );
+        if( size == -1 )
+            throw FatalError( ERR_T_CONV );
+        std::vector< std::uint8_t > esc;
+        esc.reserve( size + 3 );
+        esc.push_back( 0xFF );  //esc
+        esc.push_back( 0x02 );  //size
+        esc.push_back( 0x15 );  //begin hide
+        for( unsigned int count1 = 0; count1 < size; count1++ )
+            esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
+        esc[1] = static_cast< std::uint8_t >( esc.size() - 1 );
+        cell->addEsc( esc );
+        if( cell->textFull() )
+            printError( ERR1_LARGEPAGE );
     }
 }
 /***************************************************************************/

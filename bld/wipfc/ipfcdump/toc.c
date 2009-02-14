@@ -56,12 +56,12 @@ static void readTOCEntry( FILE *in, FILE *out, uint32_t offset, size_t count1, s
         fprintf( out, "      ExtTocEntry.noSearch: %s\n", etoc.noSearch ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.noPrint:  %s\n", etoc.noPrint ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.setCtrl:  %s\n", etoc.setCtrl ? "yes" : "no" );
-        fprintf( out, "      ExtTocEntry.unknown2: %1.1x\n", etoc.unknown2);
+        fprintf( out, "      ExtTocEntry.setTutor: %s\n", etoc.setTutor ? "yes" : "no" );
         fprintf( out, "      ExtTocEntry.clear:    %s\n", etoc.clear ? "clear" : "set" );
-        fprintf( out, "      ExtTocEntry.unknown3: %1.1x\n", etoc.unknown3);
+        fprintf( out, "      ExtTocEntry.unknown1: %1.1x\n", etoc.unknown1);
         fprintf( out, "      ExtTocEntry.setGroup: %s\n", etoc.setGroup ? "yes" : "no");
         fprintf( out, "      ExtTocEntry.isParent: %s\n", etoc.isParent ? "yes" : "no");
-        fprintf( out, "      ExtTocEntry.unknown4: %1.1x\n", etoc.unknown4);
+        fprintf( out, "      ExtTocEntry.unknown2: %1.1x\n", etoc.unknown2);
         if( etoc.setPos ) {
             PanelOrigin p;
             textSize -= sizeof( PanelOrigin );

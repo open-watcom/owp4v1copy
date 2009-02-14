@@ -64,12 +64,12 @@ class GlobalDictionaryWord; //forward references
 class Hn : public Tag {
 public:
     Hn( Document* d, Element *p, const std::wstring* f, unsigned int r, unsigned int c, unsigned int l ) :
-        Tag( d, p, f, r, c ), id( 0 ), name( 0 ), res( 0 ), global( false ), nosearch( false ),
-        noprint( false ) { toc.nestLevel = static_cast< std::uint8_t >( l ); };
+        Tag( d, p, f, r, c ), id( 0 ), name( 0 ), res( 0 ), global( false )
+        { toc.nestLevel = static_cast< std::uint8_t >( l ); };
     ~Hn();
     Lexer::Token parse( Lexer* lexer );
     void buildTOC( Page* page );
-    void buildText( Cell* cell ) { cell = cell; };
+    void buildText( Cell* cell );
     //this header is at level l
     void setLevel( unsigned int l ) { toc.nestLevel = static_cast< std::uint8_t >( l ); };
     unsigned int level() const { return toc.nestLevel; };
@@ -102,8 +102,6 @@ private:
     GlobalDictionaryWord* name;
     std::uint16_t res;
     bool global;
-    bool nosearch;
-    bool noprint;
 };
 
 #endif //HN_INCLUDED
