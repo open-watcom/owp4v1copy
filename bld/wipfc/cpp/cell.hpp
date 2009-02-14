@@ -44,7 +44,7 @@ public:
     Cell( size_t m) : maxDictSize( m ) { };
     ~Cell() { };
     //add a word to the local dictionary
-    bool addWord( std::uint16_t word );
+    void addWord( std::uint16_t word );
     //add a word to the encoded text
     void addText( std::uint16_t word );
     //add a byte code to the encoded text

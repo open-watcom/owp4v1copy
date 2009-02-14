@@ -44,7 +44,7 @@ void Cell::build()
         text.push_back( 0xFE );
 }
 /***************************************************************************/
-bool Cell::addWord( std::uint16_t word )
+void Cell::addWord( std::uint16_t word )
 {
     if( !std::binary_search( localDictionary.begin(), localDictionary.end(), word ) ) {
         LDIter itr( 
@@ -52,11 +52,7 @@ bool Cell::addWord( std::uint16_t word )
             std::find_if( localDictionary.begin(), localDictionary.end(),
                 std::bind2nd( std::greater< std::uint16_t >(), word ) ) );
         localDictionary.insert( itr, word );
-        if( localDictionary.size() == maxDictSize )
-            return false;                   //need a new cell
-        return true;
     }
-    return true;
 }
 /***************************************************************************/
 void Cell::addText( std::uint16_t word )
@@ -91,8 +87,8 @@ std::uint32_t Cell::write( std::FILE* out ) const
     std::uint32_t offset( std::ftell( out ) );
     cellData data;
     data.zero = 0;
-    data.dictOffset = offset + 1 + sizeof( std::uint32_t ) + 1 +
-        sizeof( std::uint16_t ) + text.size();
+    data.dictOffset = offset + sizeof( std::uint8_t ) + sizeof( std::uint32_t ) +
+        sizeof( std::uint8_t ) + sizeof( std::uint16_t ) + text.size();
     data.dictCount = static_cast< std::uint8_t >( localDictionary.size() );
     data.textCount = static_cast< std::uint16_t >( text.size() );
     if( std::fwrite( &data, sizeof( cellData ), 1, out ) != 1 )

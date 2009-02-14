@@ -45,12 +45,14 @@ Text::Text( Document* d, Element* p, const std::wstring* f, unsigned int r,
     text = document->addWord( word );   //insert into global dictionary
 }
 /***************************************************************************/
-bool Text::buildLocalDict( Page* page )
+std::pair< bool, bool > Text::buildLocalDict( Page* page )
 {
-    if( text )
-        return page->addWord( text );
-    else
-        return false;
+    std::pair< bool, bool > retval( false, false );
+    if( text ) {
+        retval.first = page->addWord( text );
+        retval.second = toggleSpacing;
+    }
+    return retval;
 }
 /***************************************************************************/
 void Text::buildText( Cell* cell )

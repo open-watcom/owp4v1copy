@@ -43,7 +43,7 @@ public:
     Text( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& txt, bool ts );
     ~Text() { };
-    bool buildLocalDict( Page* page );
+    std::pair< bool, bool > buildLocalDict( Page* page );
     void buildText( Cell* cell );
     void setToggleSpacing() { toggleSpacing = true; };
     void clearToggleSpacing() { toggleSpacing = false; };

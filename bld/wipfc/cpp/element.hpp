@@ -59,7 +59,7 @@ public:
     void linearize( Page* page );
     //add words, punctuation to local dictionary
     virtual
-    bool buildLocalDict( Page* page ) { page = page; return false;};
+    std::pair< bool, bool > buildLocalDict( Page* page ) { page = page; return std::make_pair( false, false ); };
     //add encoded text to a cell
     virtual
     void buildText( Cell* cell ) = 0;
