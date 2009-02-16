@@ -87,13 +87,14 @@ Lexer::Token DocProf::parse( Lexer* lexer )
 void DocProf::build( Controls* ctrls, StringTable* strs )
 {
     document->setHeaderCutOff( headerCutOff );
-    ctrls->setCover( 0 );
+    if( area == NONE || area == PAGE )
+        ctrls->setCover( 0xFFFF );
+    else
+        ctrls->setCover( 0 );   //may be modified by :ctrl. tag later
     if( !objName.empty() )
         strs->addString( objName );
     if( !dll.empty() )
         strs->addString( dll );
     if( !objInfo.empty() )
         strs->addString( objInfo );
-    //FIXME: How do we set the control area?
-    //not clear what to do with this value, but it may be a panel default
 }

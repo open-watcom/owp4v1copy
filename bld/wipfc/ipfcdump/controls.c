@@ -1,6 +1,9 @@
 // Dump the controls data
 
 #include "ipfcdump.h"
+#include <stdlib.h>
+
+static size_t readCtrlString(FILE *, wchar_t *);
 
 void readControls( FILE *in, FILE *out )
 {
@@ -19,7 +22,7 @@ void readControls( FILE *in, FILE *out )
             wchar_t name[256];
             for( count = 0; count < ctrls.controlCount; count++ ) {
                 fread( &cd, sizeof( ControlDef ), 1, in );
-                readDictString( in, name );
+                readCtrlString( in, name );
                 fprintf( out, "  Control #%u\n", count );
                 fprintf( out, "    ControlDef.type:  %4.4x (%hu)\n", cd.type, cd.type );
                 fprintf( out, "    ControlDef.resid: %4.4x (%hu)\n", cd.resid, cd.resid );
@@ -37,7 +40,7 @@ void readControls( FILE *in, FILE *out )
                 fprintf( out, "    GroupDef.count: %4.4x (%hu)\n", gd.count, gd.count );
                 fputs( "    GroupDef.data: ", out );
                 for (count2 = 0; count2 < gd.count; count2++ ) {
-                    fread( &index, sizeof(unsigned short int), 1, in );
+                    fread( &index, sizeof(uint16_t), 1, in );
                     fprintf( out, "%4.4x (%hu) ", index, index );
                 }
                 fputc( '\n', out );
@@ -46,4 +49,15 @@ void readControls( FILE *in, FILE *out )
     }
     else
         fputs("  No panel controls found\n", out);
+}
+/*****************************************************************************/
+size_t readCtrlString( FILE *in, wchar_t *buffer )
+{
+    char    temp[ 256 ];
+    size_t  length = fgetc( in );
+    fread( temp, sizeof( char ), length, in );
+    temp[ length ] = '\0';
+    length = mbstowcs( buffer, temp, 255 );
+    buffer[ length ] = L'\0';
+    return( length + 1 );
 }

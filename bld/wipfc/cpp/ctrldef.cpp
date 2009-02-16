@@ -86,16 +86,33 @@ Lexer::Token CtrlDef::parse( Lexer* lexer )
             tok = document->getNextToken();
         }
         else if( tok == Lexer::TAG ) {
-            if( lexer->tagId() == Lexer::ECTRLDEF )
+            if( lexer->tagId() == Lexer::ECTRLDEF ) {
+                tok = document->getNextToken();
+                while( tok != Lexer::TAGEND ) {
+                    if( tok == Lexer::ATTRIBUTE )
+                        document->printError( ERR1_ATTRNOTDEF );
+                    else if( tok == Lexer::FLAG )
+                        document->printError( ERR1_ATTRNOTDEF );
+                    else if( tok == Lexer::ERROR_TAG )
+                        throw FatalError( ERR_SYNTAX );
+                    else if( tok == Lexer::END )
+                        throw FatalError( ERR_EOF );
+                    else
+                        document->printError( ERR1_TAGSYNTAX );
+                    tok = document->getNextToken();
+                }
                 break;
+            }
             else if( lexer->tagId() == Lexer::PBUTTON ) {
                 PButton* pb( new PButton( document, 0, document->dataName(), \
                     document->dataLine(), document->dataCol() ) );
+                appendChild( pb );
                 tok = pb->parse( lexer );
             }
             else if( lexer->tagId() == Lexer::CTRL ) {
                 Ctrl* ctrl( new Ctrl( document, 0, document->dataName(), \
                     document->dataLine(), document->dataCol() ) );
+                appendChild( ctrl );
                 tok = ctrl->parse( lexer );
             }
             else

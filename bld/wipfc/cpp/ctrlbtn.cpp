@@ -34,7 +34,8 @@
 std::uint32_t ControlButton::write( std::FILE *out ) const
 {
     std::uint32_t bytes( sizeof( std::uint16_t ) * 2 );
-    if( std::fwrite( &idx, sizeof( std::uint16_t), 1, out) != 1 )
+    std::uint16_t type( 1 );
+    if( std::fwrite( &type, sizeof( std::uint16_t), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
     if( std::fwrite( &res, sizeof( std::uint16_t), 1, out) != 1 ) 
         throw FatalError( ERR_WRITE );
@@ -42,7 +43,7 @@ std::uint32_t ControlButton::write( std::FILE *out ) const
     size_t length( std::wcstombs( buffer, txt.c_str(), sizeof(buffer) / sizeof(char) ) );
     if( length == -1 )
         throw FatalError( ERR_T_CONV );
-    if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out) == EOF ||
+    if( std::fputc( static_cast< std::uint8_t >( length ), out) == EOF ||
         std::fwrite( buffer, sizeof( char ), length, out ) != length )
         throw FatalError( ERR_WRITE );
     bytes += length + 1;

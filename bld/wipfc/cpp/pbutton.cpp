@@ -60,12 +60,13 @@ Lexer::Token PButton::parse( Lexer* lexer )
             throw FatalError( ERR_EOF );
         else
             document->printError( ERR1_TAGSYNTAX );
+        tok = document->getNextToken();
     }
     return document->getNextToken();
 }
 /***************************************************************************/
 void PButton::build( Controls* ctrls)
 {
-    ControlButton btn( id, static_cast< unsigned short int>( res ), text);
+    ControlButton btn( id, static_cast< std::uint16_t >( res ), text);
     ctrls->addButton( btn );
 }

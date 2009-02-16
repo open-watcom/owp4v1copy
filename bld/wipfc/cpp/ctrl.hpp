@@ -27,7 +27,7 @@
 * Description: A ctrl tag
 *   :ctrl
 *       ctrlid=[::alphanum::]+
-*       controls='' (Search, Print, Index, Contents, Esc, Back, Forward, id)
+*       controls='' (Esc, Search, Print, Index, Contents, Back, Forward, id)
 *       page
 *       coverpage
 *   Must be a child of :ctrldef

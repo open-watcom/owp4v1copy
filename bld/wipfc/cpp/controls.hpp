@@ -44,15 +44,15 @@ public:
     ~Controls() { };
     void addButton( ControlButton& btn )
     {
-        btn.setIndex( static_cast< std::uint16_t >( controls.size() ) );
+        btn.setIndex( static_cast< std::uint16_t >( controls.size() + 7 ) );
         controls.push_back( btn );
     };
     ControlButton* button() { return &controls[ controls.size() - 1 ]; };
     ControlButton* getButtonById( const std::wstring& i );
     void addGroup( ControlGroup& grp )
     {
-        grp.setIndex( static_cast< std::uint16_t >( groups.size() ) );
         groups.push_back( grp );
+        grp.setIndex( static_cast< std::uint16_t >( groups.size() ) );
     };
     ControlGroup* group() { return &groups[ groups.size() - 1 ]; };
     ControlGroup* getGroupById( const std::wstring& i );

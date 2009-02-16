@@ -69,6 +69,7 @@ Lexer::Token Ctrl::parse( Lexer* lexer )
             throw FatalError( ERR_EOF );
         else
             document->printError( ERR1_TAGSYNTAX );
+        tok = document->getNextToken();
     }
     return document->getNextToken();
 }
@@ -76,58 +77,37 @@ Lexer::Token Ctrl::parse( Lexer* lexer )
 void Ctrl::build( Controls* ctrls)
 {
     ControlGroup grp( ctrlid );
-    ctrls->addGroup( grp );
-    if( page )
-        ;//FIXME: don't know what to do with this
-    if( coverpage )
-        ctrls->setCover( grp.index() );
     if( !controls.empty() ) {
         std::wstring::size_type p1( 0 );
         while( p1 < std::wstring::npos ) {
             std::wstring::size_type p2( controls.find( L' ', p1 ) );
             std::wstring temp( controls.substr( p1, p2 - p1 ) );
             ControlButton* btn( ctrls->getButtonById( temp ) ); //check if button is present
-            if( btn == 0 ) {                       //if not, add specified button
-                if( temp == L"Previous" ) {
-                    ControlButton btn( L"Previous", 1, L"Pr~evious" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
-                else if( temp == L"Search" ) {
-                    ControlButton btn( L"Search", 2, L"~Search" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
-                else if( temp == L"Print" ) {
-                    ControlButton btn( L"Print", 3, L"~Print" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
-                else if( temp == L"Index" ) {
-                    ControlButton btn( L"Index", 4, L"~Index" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
-                else if( temp == L"Contents" ) {
-                    ControlButton btn( L"Contents", 5, L"Con~tents" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
-                else if( temp == L"Back" ) {
-                    ControlButton btn( L"Back", 6, L"~Back" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
-                else if( temp == L"Forward" ) {
-                    ControlButton btn( L"Forward", 7, L"~Forward" );
-                    ctrls->addButton( btn );
-                    ctrls->group()->addButtonIndex( btn.index() );
-                }
+            if( btn )
+                grp.addButtonIndex( btn->index() );
+            else {
+                if( temp == L"Esc" )
+                    grp.addButtonIndex( 0 );
+                else if( temp == L"Search" )
+                    grp.addButtonIndex( 1 );
+                else if( temp == L"Print" )
+                    grp.addButtonIndex( 2 );
+                else if( temp == L"Index" )
+                    grp.addButtonIndex( 3 );
+                else if( temp == L"Contents" )
+                    grp.addButtonIndex( 4 );
+                else if( temp == L"Back" )
+                    grp.addButtonIndex( 5 );
+                else if( temp == L"Forward" )
+                    grp.addButtonIndex( 6 );
                 else
                     document->printError( ERR3_NOBUTTON );
             }
             p1 = p2 == std::wstring::npos ? std::wstring::npos : p2 + 1;
         }
+    ctrls->addGroup( grp );
+    if( coverpage )
+        ctrls->setCover( ctrls->group()->index() + 1);
     }
 }
 

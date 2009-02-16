@@ -124,8 +124,7 @@ public:
     //Forwarding functions
 
     //To Controls
-    void addControlButton( ControlButton& btn ) { controls->addButton( btn ); };
-    void addControlGroup( ControlGroup& grp ) { controls->addGroup( grp ); };
+    std::uint16_t getGroupById( const std::wstring& i ) { return controls->getGroupById( i )->index() + 1; };
 
     //To Compiler
     std::wstring* addFileName( std::wstring* name ) { return compiler.addFileName( name ); };

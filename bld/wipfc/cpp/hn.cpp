@@ -501,7 +501,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             }
             else if( key == L"ctrlrefid" ) {
                 toc.extended = 1;
-                controls.word |= static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
+                controls.word |= document->getGroupById( value );
             }
             else
                 document->printError( ERR1_ATTRNOTDEF );

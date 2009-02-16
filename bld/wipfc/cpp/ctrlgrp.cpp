@@ -34,10 +34,11 @@
 std::uint32_t ControlGroup::write( std::FILE *out ) const
 {
     std::uint32_t bytes( sizeof( std::uint16_t ) * ( buttonIndex.size() + 1 ) );
-    for( ConstButtonIter itr = buttonIndex.begin(); itr != buttonIndex.end(); ++itr ) {
-        if( std::fwrite( itr, sizeof( std::uint16_t), 1, out) != 1 )
-            throw FatalError( ERR_WRITE );
-    }
+    std::uint16_t items( static_cast< std::uint16_t >( buttonIndex.size() ) );
+    if( std::fwrite( &items, sizeof( std::uint16_t), 1, out) != 1 )
+        throw FatalError( ERR_WRITE );
+    if( std::fwrite( &buttonIndex[0], sizeof( std::uint16_t), buttonIndex.size(), out) != buttonIndex.size() )
+        throw FatalError( ERR_WRITE );
     return bytes;
 }
 
