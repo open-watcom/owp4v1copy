@@ -37,7 +37,7 @@ static void readCell( FILE *in, FILE *out )
     fread( &cell, sizeof( Cell ), 1, in );
     fprintf(out, "    Flags:      %8.2x (%u)\n", cell.zero, cell.zero);
     fprintf(out, "    Dictionary: %8.8x (%lu)\n", cell.dictOffset, cell.dictOffset);
-    fprintf(out, "    Dict size:  %8.4x (%u)\n", cell.dictCount, cell.dictCount);
+    fprintf(out, "    Dict size:  %8.2x (%u)\n", cell.dictCount, cell.dictCount);
     fprintf(out, "    Text size:  %8.4x (%u)\n", cell.textCount, cell.textCount);
     text = calloc( cell.textCount, sizeof( uint8_t ) );
     if( text != NULL ) {
@@ -130,11 +130,14 @@ static unsigned int readEscape(FILE *out, uint8_t *text, uint8_t type, uint8_t s
         if( size > 4 ) {
             uint8_t carg2 = 0;
             carg = text[ ++count ];
-            if( size > 5 )
+            fprintf( out, ", flag byte1 %2.2x", carg );
+            if( size > 5 ) {
                 carg2 = text[ ++count ];
+                fprintf( out, ", flag byte2 %2.2x", carg );
+            }
             if( carg & 0x01 ) {
                 PanelOrigin p;
-                memcpy( &p, &text[ count + 1], sizeof( PanelOrigin ) );
+                memcpy( &p, &text[ count + 1 ], sizeof( PanelOrigin ) );
                 count += sizeof( PanelOrigin );
                 fprintf( out, ", target position supplied (" );
                 if( p.xPosType == DYNAMIC)
@@ -148,7 +151,7 @@ static unsigned int readEscape(FILE *out, uint8_t *text, uint8_t type, uint8_t s
             }
             if( carg & 0x02 ) {
                 PanelSize p;
-                memcpy(&p, &text[ count + 1], sizeof( PanelSize ) );
+                memcpy(&p, &text[ count + 1 ], sizeof( PanelSize ) );
                 count += sizeof( PanelSize );
                 fprintf( out, ", target size supplied (" );
                 if( p.widthType == DYNAMIC )
@@ -420,7 +423,7 @@ static unsigned int readEscape(FILE *out, uint8_t *text, uint8_t type, uint8_t s
         break;
     case 0x1A:
         carg = text[ ++count ];
-        fprintf( out, "1A: begin \"lines\" sequence, align " );
+        fprintf( out, "1A: begin \"lines\" sequence, flags %2.2x, align ", carg );
         if( carg & 0x01 )
             fprintf( out, "left>]" );
         if( carg & 0x02 )
@@ -453,8 +456,77 @@ static unsigned int readEscape(FILE *out, uint8_t *text, uint8_t type, uint8_t s
         sarg |= ( ( uint16_t )text[ ++count ] ) << 8;
         fprintf( out, "20: begin ddf, resource id %4.4x (%hu)>]", sarg, sarg );
         break;
+    case 0x21:
+        carg = text[ ++count ];
+        fprintf( out, "21: acviewport, reserved %2.2x (%hu)", carg, carg );
+        carg = text[ ++count ];
+        if( carg ) {
+            size_t dataBytes = carg;
+            fprintf( out, ", data length %2.2x (%hu)", carg, carg );
+            sarg = ( uint16_t )text[ ++count ];
+            sarg |= ( ( uint16_t )text[ ++count ] ) << 8;
+            fprintf( out, ", objectid %4.4x (%hu)", sarg, sarg );
+            carg = text[ ++count ];
+            memset( buffer, 0, 256 );
+            memcpy( buffer, &text[ ++count ], carg - 1 );
+            count += carg - 2;
+            fprintf( out, ", objectname \"%s\"", buffer );
+            carg = text[ ++count ];
+            if( carg > 1 ) {
+                memset( buffer, 0, 256 );
+                memcpy( buffer, &text[ ++count ], carg - 1 );
+                count += carg - 2;
+                fprintf( out, ", dll \"%s\"", buffer );
+            }
+            carg = text[ ++count ];
+            if( carg > 1 ) {
+                memset( buffer, 0, 256 );
+                memcpy( buffer, &text[ ++count ], carg - 1 );
+                count += carg - 2;
+                fprintf( out, ", objectinfo \"%s\"", buffer );
+            }
+            if( size - 6 - dataBytes ) {
+                uint8_t carg2;
+                carg = text[ ++count ];
+                carg2 = text[ ++count ];
+                fprintf( out, ", flag bytes %2.2x %2.2x", carg, carg2 );
+                if( carg & 0x01 ) {
+                    PanelOrigin p;
+                    memcpy( &p, &text[ count + 1 ], sizeof( PanelOrigin ) );
+                    count += sizeof( PanelOrigin );
+                    fprintf( out, ", position (" );
+                    if( p.xPosType == DYNAMIC)
+                        fprintf( out, "%s %s, ", getDPosString( p.xpos ), getPosString( p.xPosType ) );
+                    else
+                        fprintf( out, "%hu %s,", p.xpos, getPosString(p.xPosType));
+                    if( p.yPosType == DYNAMIC)
+                        fprintf( out, "%s %s)", getDPosString( p.ypos ), getPosString( p.yPosType ) );
+                    else
+                        fprintf( out, "%hu %s)", p.ypos, getPosString( p.yPosType ) );
+                }
+                if( carg & 0x02 ) {
+                    PanelSize p;
+                    memcpy(&p, &text[ count + 1 ], sizeof( PanelSize ) );
+                    count += sizeof( PanelSize );
+                    fprintf( out, ", size (" );
+                    if( p.widthType == DYNAMIC )
+                        fprintf( out, "%s %s, ", getDPosString( p.width ), getPosString( p.widthType ) );
+                    else
+                        fprintf( out, "%hu %s,", p.width, getPosString( p.widthType ) );
+                    if( p.heightType == DYNAMIC )
+                        fprintf( out, "%s %s)", getDPosString( p.height ), getPosString( p.heightType ) );
+                    else
+                        fprintf( out, "%hu %s)", p.height, getPosString( p.heightType ) );
+                }
+            }
+        }
+        fprintf( out, ">]" );
+        break;
     default:
-        fprintf( out, "%2.2x: unknown type>]", type );
+        fprintf( out, "%2.2x: unknown type of size %2.2x (%u) bytes:", type, size, size );
+        while( --size > 1 )
+            fprintf( out, " %2.2x", text[ ++count ] );
+        fprintf( out, ">]" );
         break;
     }
     return count;

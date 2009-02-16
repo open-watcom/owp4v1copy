@@ -358,7 +358,22 @@ Type    Meaning
             std::uint16_t res;
                 value of res attribute
 
-    };
+0x21:   :acviewport.
+        Arguments:
+            std::uint8_t    reserved, always 0
+            std::uint8_t    bytes of text
+            std::uint16_t   objectid
+            std::uint8_t    length of objectname + 1
+            char            length - 1 bytes of objectname
+            std::uint8_t    length of dll name + 1
+            char            length - 1 bytes of dll name
+            std::uint8_t    length of objectinfo + 1
+            char            length - 1 bytes of objectinfo
+        Optional (if position or size specified):
+            std::uint8_t    flag1 (bit1: origin, bit2: size) upper nibble always 0xC?
+            std::uint8_t    flag2 always 0
+            PanelOrigin     if flag1:bit1
+            PanelSize       if flag1:bit2
 */
 
 #endif //CELL_INCLUDED

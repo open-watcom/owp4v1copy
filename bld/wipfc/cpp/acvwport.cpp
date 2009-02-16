@@ -46,29 +46,41 @@
 
 Lexer::Token AcViewport::parse( Lexer* lexer )
 {
-    document->printError( ERR3_NOTSUPPORTED );
     Lexer::Token tok( parseAttributes( lexer ) );
+    if( objectId == 0 ) {
+        std::wstring txt( L"objectid" );
+        document->printError( ERR2_VALUE, txt );
+    }
+    if( objectName.empty() ) {
+        std::wstring txt( L"objectname" );
+        document->printError( ERR2_VALUE, txt );
+    }
     return tok;
 }
 /***************************************************************************/
 Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
 {
     Lexer::Token tok( document->getNextToken() );
+    bool xorg( false );
+    bool yorg( false );
+    bool dx( false );
+    bool dy( false );
     while( tok != Lexer::TAGEND ) {
         if( tok == Lexer::ATTRIBUTE ) {
             std::wstring key;
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
-            if( key == L"dll" ) {
+            if( key == L"dll" )
                 dll = value;
-            }
             else if( key == L"objectname" )
                 objectName = value;
             else if( key == L"objectinfo" )
                 objectInfo = value;
             else if( key == L"objectid" )
-                objectId = value;
+                objectId = static_cast< std::uint16_t >( _wtol( value.c_str() ) );
             else if( key == L"vpx" ) {
+                doOrigin = true;
+                xorg = true;
                 if( value == L"left" ) {
                     origin.xPosType = ExtTocEntry::DYNAMIC;
                     origin.xpos = ExtTocEntry::DYNAMIC_LEFT;
@@ -86,7 +98,7 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int x( std::wcstoul( value.c_str(), &end, 10 ) );
-                    origin.xpos = static_cast< unsigned short >( x );
+                    origin.xpos = static_cast< uint16_t >( x );
                     if( *end == L'c' )
                         origin.xPosType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -98,10 +110,12 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
+                if( dx && origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"vpy" ) {
+                doOrigin = true;
+                yorg = true;
                 if( value == L"top" ) {
                     origin.yPosType = ExtTocEntry::DYNAMIC;
                     origin.ypos = ExtTocEntry::DYNAMIC_TOP;
@@ -119,7 +133,7 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int y( std::wcstoul( value.c_str(), &end, 10 ) );
-                    origin.ypos = static_cast< unsigned short >( y );
+                    origin.ypos = static_cast< std::uint16_t >( y );
                     if( *end == L'c' )
                         origin.yPosType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -131,10 +145,12 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
+                if( dy && origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"vpcx" ) {
+                doSize = true;
+                dx = true;
                 if( value == L"left" ||
                     value == L"center" ||
                     value == L"right" ||
@@ -144,7 +160,7 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int width = std::wcstoul( value.c_str(), &end, 10 );
-                    size.width = static_cast< unsigned short >( width );
+                    size.width = static_cast< std::uint16_t >( width );
                     if( *end == L'c' )
                         size.widthType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -156,10 +172,12 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
+                if( xorg && origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"vpcy" ) {
+                doSize = true;
+                dy = true;
                 if( value == L"left" ||
                     value == L"center" ||
                     value == L"right" ||
@@ -169,7 +187,7 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int height = std::wcstoul( value.c_str(), &end, 10 );
-                    size.height = static_cast< unsigned short >( height );
+                    size.height = static_cast< uint16_t >( height );
                     if( *end == L'c' )
                         size.heightType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -181,7 +199,7 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
+                if( yorg && origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else
@@ -201,8 +219,67 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
 /***************************************************************************/
 void AcViewport::buildText( Cell* cell )
 {
-    //FIXME: how do we encode this?
-    cell = cell;
+    if( objectId && !objectName.empty() ) {
+        std::vector< std::uint8_t > esc;
+        esc.reserve( 3 + 4 + objectName.size() + 1 + dll.size() + 1 +
+            objectInfo.size() + 1 + 2 + sizeof( PageOrigin ) + sizeof( PageSize ) );
+        esc.push_back( 0xFF );          //ESC
+        esc.push_back( 2 );             //size
+        esc.push_back( 0x21 );          //type
+        esc.push_back( 0 );             //reserved
+        esc.push_back( static_cast< std::uint8_t >( objectName.size() + 1 +
+            dll.size() + 1 + objectInfo.size() + 1 ) );
+        esc.push_back( static_cast< std::uint8_t >( objectId ) );
+        esc.push_back( static_cast< std::uint8_t >( objectId >> 8 ) );
+        esc.push_back( static_cast< std::uint8_t >( objectName.size() + 1 ) );
+        if( !objectName.empty() ) {
+            char buffer[ 256 ];
+            size_t bytes( std::wcstombs( buffer, objectName.c_str(), 256 ) );
+            if( bytes == -1 )
+                throw FatalError( ERR_T_CONV );
+            for( size_t count1 = 0; count1 < bytes; ++count1 )
+                esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
+        }
+        esc.push_back( static_cast< std::uint8_t >( dll.size() + 1 ) );
+        if( !dll.empty() ) {
+            char buffer[ 256 ];
+            size_t bytes( std::wcstombs( buffer, dll.c_str(), 256 ) );
+            if( bytes == -1 )
+                throw FatalError( ERR_T_CONV );
+            for( size_t count1 = 0; count1 < bytes; ++count1 )
+                esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
+        }
+        esc.push_back( static_cast< std::uint8_t >( objectInfo.size() + 1 ) );
+        if( !objectInfo.empty() ) {
+            char buffer[ 256 ];
+            size_t bytes( std::wcstombs( buffer, objectInfo.c_str(), 256 ) );
+            if( bytes == -1 )
+                throw FatalError( ERR_T_CONV );
+            for( size_t count1 = 0; count1 < bytes; ++count1 )
+                esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
+        }
+        if( doOrigin || doSize ) {
+            std::uint8_t flag( 0xC0 );
+            if( doOrigin )
+                flag |= 0x01;
+            if( doSize )
+                flag |= 0x02;
+            esc.push_back( flag );
+            esc.push_back( 0 );
+            if( doOrigin ) {
+                std::uint8_t* src = reinterpret_cast< std::uint8_t* >( &origin );
+                for( size_t count1 = 0; count1 < sizeof( PageOrigin ); ++count1, ++src)
+                    esc.push_back( *src );
+            }
+            if( doSize ) {
+                std::uint8_t* src = reinterpret_cast< std::uint8_t* >( &size );
+                for( size_t count1 = 0; count1 < sizeof( PageSize ); ++count1, ++src)
+                    esc.push_back( *src );
+            }
+        }
+        esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+        cell->addEsc( esc );
+    }
 }
 
 

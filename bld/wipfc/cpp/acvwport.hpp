@@ -30,7 +30,7 @@
 *       dll=[a-zA-z][a-zA-z0-9]*
 *       objectname=[a-zA-z][a-zA-z0-9]*
 *       objectinfo=[a-zA-z][a-zA-z0-9]*
-*       objectid=[a-zA-z][a-zA-z0-9]*
+*       objectid=[0-9]*
 *       vpx=([0-9]+[c|x|p|%]) | (left|center|right)
 *       vpy=([0-9]+[c|x|p|%]) | (top|center|bottom)
 *       vpcx=([0-9]+[c|x|p|%])
@@ -47,7 +47,7 @@
 class AcViewport : public Element {
 public:
     AcViewport( Document* d, Element *p, const std::wstring* f, unsigned int r, unsigned int c ) :
-        Element( d, p, f, r, c ) { };
+        Element( d, p, f, r, c ), objectId( 0 ), doOrigin( false ), doSize( false ) { };
     ~AcViewport() { };
     Lexer::Token parse( Lexer* lexer );
     void buildText( Cell* cell );
@@ -57,9 +57,11 @@ private:
     std::wstring dll;
     std::wstring objectName;
     std::wstring objectInfo;
-    std::wstring objectId;
+    std::uint16_t objectId;
     PageOrigin origin;
     PageSize size;
+    bool doOrigin;
+    bool doSize;
     Lexer::Token parseAttributes( Lexer* lexer );
 };
 
