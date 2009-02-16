@@ -135,6 +135,10 @@ Lexer::Token Link::parse( Lexer* lexer )
 Lexer::Token Link::parseAttributes( Lexer* lexer )
 {
     Lexer::Token tok( document->getNextToken() );
+    bool xorg( false );
+    bool yorg( false );
+    bool dx( false );
+    bool dy( false );
     while( tok != Lexer::TAGEND ) {
         //parse attributes
         if( tok == Lexer::ATTRIBUTE ) {
@@ -186,6 +190,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             }
             else if( key == L"vpx" ) {
                 doOrigin = true;
+                xorg = true;
                 if( value == L"left" ) {
                     origin.xPosType = ExtTocEntry::DYNAMIC;
                     origin.xpos = ExtTocEntry::DYNAMIC_LEFT;
@@ -215,11 +220,12 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
+                if( dx && origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"vpy" ) {
                 doOrigin = true;
+                yorg = true;
                 if( value == L"top" ) {
                     origin.yPosType = ExtTocEntry::DYNAMIC;
                     origin.ypos = ExtTocEntry::DYNAMIC_TOP;
@@ -249,11 +255,12 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
+                if( dy && origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"vpcx" ) {
                 doSize = true;
+                dx = true;
                 if( value == L"left" ||
                     value == L"center" ||
                     value == L"right" ||
@@ -275,11 +282,12 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
+                if( xorg && origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"vpcy" ) {
                 doSize = true;
+                dy = true;
                 if( value == L"left" ||
                     value == L"center" ||
                     value == L"right" ||
@@ -301,7 +309,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
+                if( yorg && origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"x" ) {

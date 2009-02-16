@@ -284,9 +284,12 @@ Lexer::Token Hn::parse( Lexer* lexer )
 Lexer::Token Hn::parseAttributes( Lexer* lexer )
 {
     Lexer::Token tok( document->getNextToken() );
+    bool xorg( false );
+    bool yorg( false );
+    bool dx( false );
+    bool dy( false );
     while( tok != Lexer::TAGEND ) {
         //parse attributes
-        // FIXME: Don't know what to do with nosearch, noprint, tutorial, ctrlarea
         if( tok == Lexer::ATTRIBUTE ) {
             std::wstring key;
             std::wstring value;
@@ -316,6 +319,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                 tutorial = value;
             }
             else if( key == L"x" ) {
+                xorg = true;
                 toc.extended = 1;
                 if( value == L"left" ) {
                     origin.xPosType = ExtTocEntry::DYNAMIC;
@@ -346,10 +350,11 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
+                if( dx && origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"y" ) {
+                yorg = true;
                 toc.extended = 1;
                 if( value == L"top" ) {
                     origin.yPosType = ExtTocEntry::DYNAMIC;
@@ -380,10 +385,11 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
+                if( dy && origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"width" ) {
+                dx = true;
                 toc.extended = 1;
                 if( value == L"left" ||
                     value == L"center" ||
@@ -406,10 +412,11 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
+                if( xorg && origin.xPosType == ExtTocEntry::DYNAMIC && size.widthType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"height" ) {
+                dy = true;
                 toc.extended = 1;
                 if( value == L"left" ||
                     value == L"center" ||
@@ -432,7 +439,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                     else
                         document->printError( ERR2_VALUE );
                 }
-                if( origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
+                if( yorg && origin.yPosType == ExtTocEntry::DYNAMIC && size.heightType != ExtTocEntry::RELATIVE_PERCENT )
                     document->printError( ERR3_MIXEDUNITS );
             }
             else if( key == L"group" ) {
