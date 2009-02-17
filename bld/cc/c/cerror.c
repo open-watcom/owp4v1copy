@@ -156,7 +156,7 @@ void CErr2( int msgnum, int p1 )
 }
 
 
-void CErr2p( int msgnum, char *p1 )
+void CErr2p( int msgnum, const char *p1 )
 {
     CErr( msgnum, p1 );
 }

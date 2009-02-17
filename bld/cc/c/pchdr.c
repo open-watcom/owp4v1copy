@@ -1825,7 +1825,7 @@ void AbortPreCompiledHeader( void )
 //      - all the include files are the same and have not been modified
 //========================================================================
 
-int UsePreCompiledHeader( char *filename )
+int UsePreCompiledHeader( const char *filename )
 {
     int                 handle;
     unsigned            len;

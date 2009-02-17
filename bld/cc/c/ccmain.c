@@ -68,12 +68,12 @@ int PrintWhiteSpace;     // also refered from cmac2.c
 static  void        DoCCompile( char **cmdline );
 static  void        DelErrFile( void );
 static  void        MakePgmName( void );
-static  int         OpenFCB( FILE *fp, char *filename );
+static  int         OpenFCB( FILE *fp, const char *filename );
 static  bool        IsFNameOnce( char const *filename );
-static  int         TryOpen( char *prefix, char *separator, char *filename, char *suffix );
+static  int         TryOpen( char *prefix, char *separator, const char *filename, char *suffix );
 static  void        ParseInit( void );
 static  void        CPP_Parse( void );
-static  int         FCB_Alloc( FILE *fp, char *filename );
+static  int         FCB_Alloc( FILE *fp, const char *filename );
 local   void        Parse( void );
 static  int         OpenPgmFile( void );
 static  void        DelDepFile( void );
@@ -728,7 +728,7 @@ static void DelDepFile( void )
     }
 }
 
-int OpenSrcFile( char *filename, int delimiter )
+int OpenSrcFile( const char *filename, int delimiter )
 {
     int         i;
     char        *p;
@@ -876,7 +876,7 @@ void CloseSrcFile( FCB *srcfcb )
     CMemFree( srcfcb );
 }
 
-static int OpenFCB( FILE *fp, char *filename )
+static int OpenFCB( FILE *fp, const char *filename )
 {
     if( CompFlags.track_includes ) {
         // Don't track the top level file (any semi-intelligent user should
@@ -916,7 +916,7 @@ bool FreeSrcFP( void )
     return( ret );
 }
 
-static int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
+static int TryOpen( char *prefix, char *separator, const char *filename, char *suffix )
 {
     int         i, j;
     FILE        *fp;
@@ -1087,7 +1087,7 @@ void FreeFNames( void )
     }
 }
 
-void AddIncFileList( char *filename )
+void AddIncFileList( const char *filename )
 {
     INCFILE     *ifile;
     INCFILE     *ifilep;
@@ -1221,7 +1221,7 @@ void SrcFileIncludeAlias( const char *alias_name, const char *real_name, int del
     AddIAlias( alias_name, real_name, delimiter );
 }
 
-static int FCB_Alloc( FILE *fp, char *filename )
+static int FCB_Alloc( FILE *fp, const char *filename )
 {
     int             i;
     FCB             *srcfcb;
@@ -1351,7 +1351,7 @@ static void CPP_Parse( void )
 }
 
 
-void EmitPoundLine( unsigned line_num, char *filename, int newline )
+void EmitPoundLine( unsigned line_num, const char *filename, int newline )
 {
     if( CompFlags.cpp_line_wanted ) {
         if( CppPrinting() ) {
@@ -1366,7 +1366,7 @@ void EmitPoundLine( unsigned line_num, char *filename, int newline )
     }
 }
 
-void EmitLine( unsigned line_num, char *filename )
+void EmitLine( unsigned line_num, const char *filename )
 {
     EmitPoundLine( line_num, filename, 0 );
 }

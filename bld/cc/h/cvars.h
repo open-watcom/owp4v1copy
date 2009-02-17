@@ -439,7 +439,7 @@ extern  void    CppPrtf(char *,...);
 extern  void    SetCppWidth(unsigned);
 extern  void    PrtChar(int);
 extern  void    PrtToken(void);
-extern  int     OpenSrcFile(char *,int);
+extern  int     OpenSrcFile(const char *,int);
 extern  void    OpenDefFile(void);
 extern  FILE    *OpenBrowseFile(void);
 extern  void    CloseFiles(void);
@@ -465,10 +465,10 @@ extern  void    SrcFileIncludeAlias( const char *alias_name, const char *real_na
 extern  int     SrcFileTime(char const *,time_t *);
 extern  void    SetSrcFNameOnce( void );
 extern  void    GetNextToken(void);
-extern  void    EmitLine(unsigned,char *);
-extern  void    EmitPoundLine(unsigned,char *,int);
+extern  void    EmitLine(unsigned,const char *);
+extern  void    EmitPoundLine(unsigned,const char *,int);
 
-extern  void    AddIncFileList( char *filename );
+extern  void    AddIncFileList( const char *filename );
 extern  void    FreeIncFileList( void );
 
 // cdata.c
@@ -518,7 +518,7 @@ extern  void    FreeEnums(void);                /* cenum */
 //cerror.c
 extern  void    CErr1(int);
 extern  void    CErr2(int,int);
-extern  void    CErr2p(int,char *);
+extern  void    CErr2p(int,const char *);
 extern  void    CErr(int,...);
 extern  void    SetErrLoc(source_loc *);
 extern  void    InitErrLoc(void);
@@ -830,7 +830,7 @@ extern  char    *ftoa( FLOATVAL * );                    /* ftoa */
 extern  unsigned int JIS2Unicode( unsigned );           /* jis2unic */
 
 // pchdr.c
-extern  int     UsePreCompiledHeader( char * );
+extern  int     UsePreCompiledHeader( const char * );
 extern  void    InitBuildPreCompiledHeader( void );
 extern  void    BuildPreCompiledHeader( char * );
 extern  void    FreePreCompiledHeader( void );
