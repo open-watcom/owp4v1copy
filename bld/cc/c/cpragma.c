@@ -944,7 +944,7 @@ static void PragIncludeAlias( void )
             NextToken();
             MustRecog( T_COMMA );
             if( CurToken == T_STRING ) {
-                SrcFileIncludeAlias( alias_name, Buffer, 0 );
+                SrcFileIncludeAlias( alias_name, Buffer, FALSE );
                 NextToken();
             }
             CMemFree( alias_name );
@@ -972,7 +972,7 @@ static void PragIncludeAlias( void )
                     }
                     strncat( r_buf, Buffer, 80 );
                 }
-                SrcFileIncludeAlias( a_buf, r_buf, '<' );
+                SrcFileIncludeAlias( a_buf, r_buf, TRUE );
             }
         }
         CompFlags.pre_processing = 2;
