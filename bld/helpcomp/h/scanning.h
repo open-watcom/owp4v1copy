@@ -62,9 +62,9 @@ struct Token
 {
     TokenTypes      _type;
     Buffer<char>    _text;
-    int         _hasValue;
-    int         _value;
-    int         _lineNum;
+    int             _hasValue;
+    int             _value;
+    int             _lineNum;
     Token();
 };
 
@@ -79,17 +79,17 @@ class Scanner
     int     _lineNum;
 
     // A buffer to provide a little extra lookahead.
-    Buffer<char>    _buffer;
+    Buffer<uint_8> _buffer;
     int         _maxBuf;
     int         _curPos;
 
     int     nextch();
-    void    putback( char c );
+    void    putback( int c );
 
 
     // Various helper functions to handle specific cases.
     TokenTypes  handleSlash( Token * tok );
-    int     isSpecial( char c );
+    int     isSpecial( int c );
     void    pullCommand( Token * tok );
     void    pullText( Token * tok );
     void    pullHex( Token * tok );
@@ -113,7 +113,7 @@ public:
     Token   *look( int i ) { return i<3?tokens[i]:NULL; };
 
     // Check if a certain character can start a .HLP "footnote".
-    int     isFootnoteChar( char c );
+    int     isFootnoteChar( int c );
 
     // Access function.
     InFile  const *file() { return _source; };
