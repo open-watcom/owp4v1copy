@@ -33,7 +33,7 @@
 #if defined(__OS2__) || defined(__NT__) || defined(__UNIX__)
 #define MAX_CMD 10240
 #else
-#define MAX_CMD 250
+#define MAX_CMD 500
 #endif
 
 #ifdef __UNIX__
