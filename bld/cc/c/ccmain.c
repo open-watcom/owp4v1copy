@@ -77,7 +77,7 @@ static  int         FCB_Alloc( FILE *fp, const char *filename );
 local   void        Parse( void );
 static  int         OpenPgmFile( void );
 static  void        DelDepFile( void );
-static  const char  *IncludeAlias( const char *filename, int delimiter );
+static  const char  *IncludeAlias( const char *filename, bool is_lib );
 
 void FrontEndInit( bool reuse )
 //***************************//
@@ -257,7 +257,7 @@ void DumpDepFile( void )
     }
 }
 
-static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, int delimiter )
+static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, bool is_lib )
 {
     size_t      alias_size, alias_len;
     IALIASPTR   alias, old_alias;
@@ -265,7 +265,7 @@ static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, int d
 
     lnk = &IAliasNames;
     while( (old_alias = *lnk) != NULL ) {
-        if( (old_alias->delimiter == delimiter) && !strcmp( alias_name, old_alias->alias_name ) ) {
+        if( (old_alias->is_lib == is_lib) && !strcmp( alias_name, old_alias->alias_name ) ) {
             break;
         }
         lnk = &old_alias->next;
@@ -275,7 +275,7 @@ static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, int d
     alias_size = sizeof( struct ialias_list ) + alias_len + strlen( real_name ) + 1;
     alias = CMemAlloc( alias_size );
     alias->next = NULL;
-    alias->delimiter = delimiter;
+    alias->is_lib = is_lib;
     strcpy( alias->alias_name, alias_name );
     alias->real_name = alias->alias_name + alias_len + 1;
     strcpy( alias->real_name, real_name );
@@ -300,14 +300,14 @@ static void FreeIAlias( void )
     }
 }
 
-static const char *IncludeAlias( const char *filename, int delimiter )
+static const char *IncludeAlias( const char *filename, bool is_lib )
 {
     IALIASPTR       alias;
     const char      *real_name = filename;
 
     alias = IAliasNames;
     while( alias ) {
-        if( !strcmp( filename, alias->alias_name ) && (alias->delimiter == delimiter) ) {
+        if( !strcmp( filename, alias->alias_name ) && (alias->is_lib == is_lib) ) {
             real_name = alias->real_name;
             break;
         }
@@ -351,7 +351,7 @@ static void DoCCompile( char **cmdline )
             if( !CompFlags.disable_ialias ) {
                 CompFlags.cpp_output = FALSE;
                 CompFlags.ignore_fnf = TRUE;
-                OpenSrcFile( "_ialias.h", '<' );
+                OpenSrcFile( "_ialias.h", TRUE );
                 CompFlags.ignore_fnf = FALSE;
                 if( SrcFile != NULL ) {
                     for( ; CurToken != T_EOF; ) {
@@ -728,7 +728,7 @@ static void DelDepFile( void )
     }
 }
 
-int OpenSrcFile( const char *filename, int delimiter )
+int OpenSrcFile( const char *filename, bool is_lib )
 {
     int         i;
     char        *p;
@@ -740,7 +740,7 @@ int OpenSrcFile( const char *filename, int delimiter )
     FCB         *curr;
 
     // See if there's an alias for this filename
-    filename = (char *)IncludeAlias( filename, delimiter );
+    filename = IncludeAlias( filename, is_lib );
 
     // include path here...
     _splitpath2( filename, buff, &drive, &dir, NULL, NULL );
@@ -750,7 +750,7 @@ int OpenSrcFile( const char *filename, int delimiter )
             return( 1 );
         goto cant_open_file;
     }
-    if( delimiter != '<' ) {                                /* 17-mar-91 */
+    if( !is_lib ) {
         if( CompFlags.curdir_inc ) {  // try current directory
             if( TryOpen( "", "", filename, "" ) ) {
                 return( 1 );
@@ -799,7 +799,7 @@ int OpenSrcFile( const char *filename, int delimiter )
             }
         } while( *p != '\0' );
     }
-    if( delimiter != '<' ) {                        /* 17-mar-91 */
+    if( !is_lib ) {
         if( TryOpen( H_PATH, PATH_SEP, filename, "" ) ) {
             return( 1 );
         }
@@ -807,7 +807,7 @@ int OpenSrcFile( const char *filename, int delimiter )
 cant_open_file:
     save = CompFlags.cpp_output;
     if( CompFlags.cpp_output ) {                        /* 18-aug-91 */
-        if( delimiter == '<' ) {
+        if( is_lib ) {
             CppPrtf( "#include <%s>", filename );
         } else {
             CppPrtf( "#include \"%s\"", filename );
@@ -1216,9 +1216,9 @@ void SrcFileReadOnlyFile( char const *file )
     }
 }
 
-void SrcFileIncludeAlias( const char *alias_name, const char *real_name, int delimiter )
+void SrcFileIncludeAlias( const char *alias_name, const char *real_name, bool is_lib )
 {
-    AddIAlias( alias_name, real_name, delimiter );
+    AddIAlias( alias_name, real_name, is_lib );
 }
 
 static int FCB_Alloc( FILE *fp, const char *filename )
@@ -1309,13 +1309,13 @@ local void Parse( void )
         // we want to keep in the pre-compiled header
         // any macros that are defined in forced include file
         InitialMacroFlag = 0;                   /* 02-jun-95 */
-        OpenSrcFile( ForceInclude, 0 );
+        OpenSrcFile( ForceInclude, FALSE );
     }
     CompFlags.ok_to_use_precompiled_hdr = 0;
     CompFlags.use_precompiled_header = 0;
     if( !CompFlags.disable_ialias ) {
         CompFlags.ignore_fnf = TRUE;
-        OpenSrcFile( "_ialias.h", '<' );
+        OpenSrcFile( "_ialias.h", TRUE );
         CompFlags.ignore_fnf = FALSE;
     }
     if( !ForceInclude ) {
@@ -1339,7 +1339,7 @@ static void CPP_Parse( void )
 {
     if( ForceInclude ) {
         PrtChar( '\n' );
-        OpenSrcFile( ForceInclude, 0 );
+        OpenSrcFile( ForceInclude, FALSE );
     }
     for( ;; ) {
         GetNextToken();

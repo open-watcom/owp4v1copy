@@ -238,7 +238,7 @@ void CInclude( void )
     CompFlags.pre_processing = 1;
     PPNextToken();
     if( CurToken == T_STRING ) {
-        OpenSrcFile( Buffer, 0 );
+        OpenSrcFile( Buffer, FALSE );
 #if _CPU == 370
         if( !CompFlags.use_precompiled_header ) {
             SrcFile->colum = Column;    /* do trunc and col on  */
@@ -252,7 +252,7 @@ void CInclude( void )
         for( ;; ) {
             PPNextToken();
             if( CurToken == T_GT ) {
-                OpenSrcFile( buf, '<' );
+                OpenSrcFile( buf, TRUE );
                 break;
             }
             strncat( buf, Buffer, 80 );

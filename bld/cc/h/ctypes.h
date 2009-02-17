@@ -290,7 +290,7 @@ typedef struct ialias_list {
         char                *real_name;
         int                 alias_name_len; /* for pre-compiled header */
     };
-    int             delimiter;
+    bool            is_lib;
     char            alias_name[1];
 } *IALIASPTR;
 
