@@ -281,7 +281,7 @@ static TOKEN doScanName( void )
         if( NextMacro->macro_defn == 0 ) {
             return( SpecialMacro( NextMacro ) );
         }
-        NextMacro->macro_flags |= MACRO_REFERENCED;     /* 04-apr-94 */
+        NextMacro->macro_flags |= MFLAG_REFERENCED;
         /* if macro requires parameters and next char is not a '('
         then this is not a macro */
         if( NextMacro->parm_count != 0 ) {

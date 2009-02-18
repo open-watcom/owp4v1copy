@@ -1316,11 +1316,11 @@ static int VerifyMacros( char *p, unsigned macro_count, unsigned undef_count )
 
         prev_mpch = NULL;
         for( mpch = PCHMacroHash[ i ]; mpch != NULL; mpch = mpch->next_macro ) {
-            if( mpch->macro_flags & MACRO_DEFINED_BEFORE_FIRST_INCLUDE ) {
+            if( mpch->macro_flags & MFLAG_DEFINED_BEFORE_FIRST_INCLUDE ) {
                 for( mcur = MacHash[ i ]; mcur != NULL; mcur = mcur->next_macro ) {
                     if( strcmp( mcur->macro_name, mpch->macro_name ) == 0 ) {
                         macro_compare = MacroCompare( mpch, mcur );
-                        if( mpch->macro_flags & MACRO_REFERENCED ) {
+                        if( mpch->macro_flags & MFLAG_REFERENCED ) {
                             if( macro_compare == 0 )
                                 break;
                             return( -1 );       // abort: macros different
@@ -1337,7 +1337,7 @@ static int VerifyMacros( char *p, unsigned macro_count, unsigned undef_count )
                     }
                 }
                 if( mcur == NULL ) {  /* macro not found in current compile */
-                    if( mpch->macro_flags & MACRO_REFERENCED ) {
+                    if( mpch->macro_flags & MFLAG_REFERENCED ) {
                         return( -1 );   // abort: macro definition required
                     }
                     // delete macro from PCH list
@@ -1372,11 +1372,11 @@ static int VerifyMacros( char *p, unsigned macro_count, unsigned undef_count )
                     break;
                 }
             }
-            if( mpch == NULL || !(mpch->macro_flags & MACRO_DEFINED_BEFORE_FIRST_INCLUDE) ) {
+            if( mpch == NULL || !(mpch->macro_flags & MFLAG_DEFINED_BEFORE_FIRST_INCLUDE) ) {
             // macro may either have been undef'd (mpch == NULL ) or undef'd and defined
-                if( mcur->macro_flags & MACRO_USER_DEFINED ) {  //compiler defined macros not saved on undefs
+                if( mcur->macro_flags & MFLAG_USER_DEFINED ) {  //compiler defined macros not saved on undefs
                     for( mpch = PCHUndefMacroList; mpch != NULL; mpch = mpch->next_macro ) {
-                        if( strcmp(mpch->macro_name,mcur->macro_name) == 0 ) {
+                        if( strcmp( mpch->macro_name, mcur->macro_name ) == 0 ) {
                             if( MacroCompare( mpch, mcur ) != 0 ) {
                                 return( -1 );
                             } else {

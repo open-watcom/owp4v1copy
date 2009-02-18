@@ -48,13 +48,14 @@ struct  macro_parm {
 };
 
 /* Actual macro definition is at (char *)mentry + mentry->macro_defn */
-enum macro_flags {
-    MACRO_DEFINED_BEFORE_FIRST_INCLUDE  =   0x01,
-    MACRO_CAN_BE_REDEFINED              =   0x02,
-    MACRO_USER_DEFINED                  =   0x04,
-    MACRO_REFERENCED                    =   0x08,
-    MACRO_VAR_ARGS                      =   0x10,   // macro has varargs.
-};
+typedef enum macro_flags {
+    MFLAG_NONE,
+    MFLAG_DEFINED_BEFORE_FIRST_INCLUDE  =   0x01,
+    MFLAG_CAN_BE_REDEFINED              =   0x02,
+    MFLAG_USER_DEFINED                  =   0x04,
+    MFLAG_REFERENCED                    =   0x08,
+    MFLAG_VAR_ARGS                      =   0x10,   // macro has varargs.
+} macro_flags;
 
 typedef struct  macro_entry {
     union {
@@ -64,7 +65,7 @@ typedef struct  macro_entry {
     unsigned    macro_defn;     /* offset to defn, 0 ==>special macro name*/
     unsigned    macro_len;      /* length of macro definition */
     unsigned    parm_count;     /* special macro indicator if defn == 0 */
-    unsigned    macro_flags;    /* flags */
+    macro_flags macro_flags;    /* flags */
     char        macro_name[1];  /* name,parms, and macro definition */
 } MEDEFN, *MEPTR;
 

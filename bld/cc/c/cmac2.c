@@ -234,7 +234,7 @@ void CInclude( void )
     if( CompFlags.use_precompiled_header ) {
         InitBuildPreCompiledHeader();
     }
-    InitialMacroFlag = 0;
+    InitialMacroFlag = MFLAG_NONE;
     in_macro = 0;
     if( MacroPtr != NULL )
         in_macro = 1;
@@ -370,13 +370,14 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char
     TOKEN       prev_token;
     int         prev_non_ws_token;
     unsigned    mlen;
-    int         has_var_args = 0;
+    macro_flags mflags;
     TOKEN       *p_token;
 
     j = strlen( mac_name ) + 1;
     mentry = (MEPTR)CMemAlloc( sizeof( MEDEFN ) + j );
+    mflags = MFLAG_USER_DEFINED;
     if( parm_cnt < 0 ) {
-        has_var_args = 1;
+        mflags |= MFLAG_VAR_ARGS;
         parm_cnt = -parm_cnt;
     }
     mentry->parm_count = parm_cnt;
@@ -384,7 +385,7 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char
     mlen = offsetof( MEDEFN, macro_name ) + j;
     mentry->macro_defn = mlen;
     MacroOverflow( mlen, 0 );
-    MacroCopy( (const char *)mentry, MacroOffset, mlen );
+    MacroCopy( mentry, MacroOffset, mlen );
     prev_token = T_NULL;
     prev_non_ws_token = T_NULL;
     if( CurToken != T_NULL ) {
@@ -426,7 +427,7 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char
         case T_ID:
             j = FormalParm( formal_parms );
             if( j != 0 ) {
-                if( has_var_args && ( j == parm_cnt - 1 ) )
+                if( (mflags & MFLAG_VAR_ARGS) && (j == parm_cnt - 1) )
                     CurToken = T_MACRO_VAR_PARM;
                 else
                     CurToken = T_MACRO_PARM;
@@ -490,7 +491,7 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char
         CErr1( ERR_MISPLACED_SHARP_SHARP );
     }
     mentry->macro_len = mlen;
-    MacLkAdd( mentry, mlen, MACRO_USER_DEFINED | (has_var_args ? MACRO_VAR_ARGS : 0) );
+    MacLkAdd( mentry, mlen, mflags );
     CMemFree( mentry );                     /* 22-aug-88, FWC */
     MacroSize += mlen;
 }
@@ -523,7 +524,7 @@ local void CIfDef( void )
     }
     mentry = MacroLookup( Buffer );
     if( mentry != NULL ) {
-        mentry->macro_flags |= MACRO_REFERENCED;
+        mentry->macro_flags |= MFLAG_REFERENCED;
         IncLevel( 1 );
     } else {
         IncLevel( 0 );
@@ -545,7 +546,7 @@ local void CIfNDef( void )
     }
     mentry = MacroLookup( Buffer );
     if( mentry != NULL ) {
-        mentry->macro_flags |= MACRO_REFERENCED;
+        mentry->macro_flags |= MFLAG_REFERENCED;
         IncLevel( 0 );
     } else {
         IncLevel( 1 );
@@ -729,9 +730,9 @@ extern bool MacroDel( char *name )
             } else {
                 MacHash[ MacHashValue ] = mentry->next_macro;
             }
-            if( (InitialMacroFlag & MACRO_DEFINED_BEFORE_FIRST_INCLUDE) == 0 ) {
+            if( (InitialMacroFlag & MFLAG_DEFINED_BEFORE_FIRST_INCLUDE) == 0 ) {
                 /* remember macros that were defined before first include */
-                if( mentry->macro_flags & MACRO_DEFINED_BEFORE_FIRST_INCLUDE ) {
+                if( mentry->macro_flags & MFLAG_DEFINED_BEFORE_FIRST_INCLUDE ) {
                     mentry->next_macro = UndefMacroList;
                     UndefMacroList = mentry;
                 }

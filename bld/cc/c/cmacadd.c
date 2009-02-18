@@ -35,7 +35,7 @@
 #include "cgstd.h"
 
 
-void MacroAdd( MEPTR mentry, char *buf, int len, enum macro_flags flags )
+void MacroAdd( MEPTR mentry, char *buf, int len, macro_flags mflags )
 {
     unsigned    size;
 
@@ -45,11 +45,11 @@ void MacroAdd( MEPTR mentry, char *buf, int len, enum macro_flags flags )
     }
     mentry->macro_len = size + len;
     MacroOverflow( size + len, 0 );
-    MacroCopy( (char *)mentry, MacroOffset, size );     /* 01-apr-94 */
+    MacroCopy( mentry, MacroOffset, size );     /* 01-apr-94 */
     if( len != 0 ) {
         MacroCopy( buf, MacroOffset + size, len );
     }
-    MacLkAdd( mentry, size + len, flags );
+    MacLkAdd( mentry, size + len, mflags );
     CMemFree( mentry );
 }
 
@@ -86,7 +86,7 @@ void FreeMacroSegments( void )
 }
 
 
-void MacroCopy( MPTR_T mptr, MACADDR_T offset, unsigned amount )
+void MacroCopy( void *mptr, MACADDR_T offset, unsigned amount )
 {
     memcpy( offset, mptr, amount );
 }
@@ -122,20 +122,20 @@ local MEPTR *MacroLkUp( const char *name, MEPTR *lnk )
 }
 
 
-void MacLkAdd( MEPTR mentry, int len, enum macro_flags flags )
+void MacLkAdd( MEPTR mentry, int len, macro_flags mflags )
 {
     MEPTR       old_mentry, *lnk;
-    enum macro_flags  old_flags;
+    macro_flags old_mflags;
 
-    MacroCopy( (char *)mentry, MacroOffset, offsetof(MEDEFN,macro_name) + 1 );
+    MacroCopy( mentry, MacroOffset, offsetof(MEDEFN,macro_name) + 1 );
     mentry = (MEPTR)MacroOffset;
     CalcHash( mentry->macro_name, strlen( mentry->macro_name ) );
     lnk  = &MacHash[ MacHashValue ];
     lnk = MacroLkUp( mentry->macro_name, lnk );
     old_mentry = *lnk;
     if( old_mentry != NULL ) {
-        old_flags = old_mentry->macro_flags;
-        if( old_flags & MACRO_CAN_BE_REDEFINED ){//delete old entry
+        old_mflags = old_mentry->macro_flags;
+        if( old_mflags & MFLAG_CAN_BE_REDEFINED ){//delete old entry
             *lnk = old_mentry->next_macro;
             old_mentry = NULL;
         } else if( MacroCompare( mentry, old_mentry ) != 0 ) {
@@ -147,7 +147,7 @@ void MacLkAdd( MEPTR mentry, int len, enum macro_flags flags )
         mentry->next_macro = MacHash[ MacHashValue ];
         MacHash[ MacHashValue ] = mentry;
         MacroOffset += _RoundUp( len, sizeof(int) );
-        mentry->macro_flags = InitialMacroFlag | flags;
+        mentry->macro_flags = InitialMacroFlag | mflags;
     }
 }
 

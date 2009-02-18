@@ -1636,7 +1636,7 @@ local int IsMacroDefined( void )
     } else {
         mentry = MacroLookup( Buffer );
         if( mentry != NULL ) {
-            mentry->macro_flags |= MACRO_REFERENCED;    /* 04-apr-94 */
+            mentry->macro_flags |= MFLAG_REFERENCED;
             return( 1 );
         }
     }

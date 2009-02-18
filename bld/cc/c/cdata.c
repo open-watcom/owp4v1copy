@@ -63,7 +63,9 @@ void InitGlobalVars( void )
     DefFName                = NULL; /* .def file name (prototypes) */
     WholeFName              = NULL; /* whole file name with suffix */
     ForceInclude            = NULL;
+#if _CPU == 370
     AuxName                 = NULL;
+#endif
     FNames                  = NULL; /* list of file names processed */
     ErrFile                 = NULL; /* error file */
     DefFile                 = NULL; /* output for func prototypes */
@@ -219,7 +221,7 @@ void InitGlobalVars( void )
     DefCodeSegment          = NULL; /* #pragma code_seg("seg","c") */
 
     UnrollCount             = 0;    /* #pragma unroll(#); */
-    InitialMacroFlag        = 0;
+    InitialMacroFlag        = MFLAG_NONE;
     Stack87                 = 0;
     ErrorFileName           = NULL;
 

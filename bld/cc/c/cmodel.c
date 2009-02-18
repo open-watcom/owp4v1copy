@@ -81,7 +81,7 @@ char *BadCmdLine( int error_code, char *str )
 }
 
 
-static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
+static char *Def_Macro_Tokens( char *str, int multiple_tokens, macro_flags mflags )
 {
     int         i;
     MEPTR       mentry;
@@ -148,7 +148,7 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
     }
     *(TOKEN *)&TokenBuf[i] = T_NULL;
     if( strcmp( mentry->macro_name, "defined" ) != 0 ){
-        MacroAdd( mentry, TokenBuf, i + sizeof( TOKEN ), flags );
+        MacroAdd( mentry, TokenBuf, i + sizeof( TOKEN ), mflags );
     }else{
         CErr1( ERR_CANT_DEFINE_DEFINED );
         CMemFree( mentry );
@@ -158,14 +158,12 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
 
 char *Define_Macro( char *str )
 {
-    return( Def_Macro_Tokens( str, CompFlags.extended_defines, 0 ) );
+    return( Def_Macro_Tokens( str, CompFlags.extended_defines, MFLAG_NONE ) );
 }
 
 char *Define_UserMacro( char *str )
 {
-    return( Def_Macro_Tokens( str,
-                              CompFlags.extended_defines,
-                              MACRO_USER_DEFINED ) );
+    return( Def_Macro_Tokens( str, CompFlags.extended_defines, MFLAG_USER_DEFINED ) );
 }
 
 void PreDefine_Macro( char *str )
@@ -190,7 +188,7 @@ void PreDefine_Macro( char *str )
                 }
             }
         }
-        Def_Macro_Tokens( str, 1, MACRO_CAN_BE_REDEFINED );
+        Def_Macro_Tokens( str, 1, MFLAG_CAN_BE_REDEFINED );
     }
 }
 

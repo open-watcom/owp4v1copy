@@ -70,7 +70,7 @@ static  void        DelErrFile( void );
 static  void        MakePgmName( void );
 static  int         OpenFCB( FILE *fp, const char *filename );
 static  bool        IsFNameOnce( char const *filename );
-static  int         TryOpen( char *prefix, char *separator, const char *filename, char *suffix );
+static  bool        TryOpen( char *prefix, char *separator, const char *filename, char *suffix );
 static  void        ParseInit( void );
 static  void        CPP_Parse( void );
 static  int         FCB_Alloc( FILE *fp, const char *filename );
@@ -269,7 +269,6 @@ static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, bool 
             break;
         }
     }
-
     alias_len = strlen( alias_name );
     alias_size = sizeof( struct ialias_list ) + alias_len + strlen( real_name ) + 1;
     alias = CMemAlloc( alias_size );
@@ -301,16 +300,14 @@ static void FreeIAlias( void )
 
 static const char *IncludeAlias( const char *filename, bool is_lib )
 {
-    IALIASPTR       alias;
-    const char      *real_name = filename;
+    IALIASPTR   alias;
 
     for( alias = IAliasNames; alias != NULL; alias = alias->next ) {
         if( !strcmp( filename, alias->alias_name ) && ( alias->is_lib == is_lib ) ) {
-            real_name = alias->real_name;
-            break;
+            return( alias->real_name );
         }
     }
-    return( real_name );
+    return( filename );
 }
 
 static void DoCCompile( char **cmdline )
@@ -336,7 +333,7 @@ static void DoCCompile( char **cmdline )
             CErr1( ERR_FILENAME_REQUIRED );
             return;
         }
-        MakePgmName( );
+        MakePgmName();
         DelErrFile();               /* delete old error file */
         MergeInclude();             /* merge INCLUDE= with IncPathList */
         CPragmaInit();              /* memory model is known now */
@@ -741,7 +738,7 @@ static void DelDepFile( void )
     }
 }
 
-int OpenSrcFile( const char *filename, bool is_lib )
+bool OpenSrcFile( const char *filename, bool is_lib )
 {
     int         i;
     char        *p;
@@ -760,21 +757,22 @@ int OpenSrcFile( const char *filename, bool is_lib )
     if( drive[ 0 ] != '\0' || IS_PATH_SEP( dir[ 0 ] ) ) {
         // 14-sep-94 if drive letter given or path from root given
         if( TryOpen( "", "", filename, "" ) )
-            return( 1 );
+            return( TRUE );
         goto cant_open_file;
     }
     if( !is_lib ) {
         if( CompFlags.curdir_inc ) {  // try current directory
             if( TryOpen( "", "", filename, "" ) ) {
-                return( 1 );
+                return( TRUE );
             }
         }
         if( drive[ 0 ] == '\0' && !IS_PATH_SEP( dir[ 0 ] ) ) {
             for( curr = SrcFile; curr!= NULL; curr = curr->prev_file ) {
+                // physical file name must be used, not logical
                 _splitpath2( curr->src_flist->name, buff, &drive, &dir, NULL, NULL );
                 _makepath( try, drive, dir, filename, NULL );
                 if( TryOpen( "", "", try, "" ) ) {
-                    return( 1 );
+                    return( TRUE );
                 }
             }
         }
@@ -814,7 +812,7 @@ int OpenSrcFile( const char *filename, bool is_lib )
     }
     if( !is_lib ) {
         if( TryOpen( H_PATH, PATH_SEP, filename, "" ) ) {
-            return( 1 );
+            return( TRUE );
         }
     }
 cant_open_file:
@@ -866,6 +864,7 @@ void CloseSrcFile( FCB *srcfcb )
     CurrChar = srcfcb->prev_currchar;
     if( SrcFile != NULL ) {
         if( SrcFile->src_fp == NULL ) {
+            // physical file name must be used, not logical
             SrcFile->src_fp = fopen( SrcFile->src_flist->name, "rb" );
             fseek( SrcFile->src_fp, SrcFile->rseekpos, SEEK_SET );
         }
@@ -930,7 +929,7 @@ bool FreeSrcFP( void )
     return( ret );
 }
 
-static int TryOpen( char *prefix, char *separator, const char *filename, char *suffix )
+static bool TryOpen( char *prefix, char *separator, const char *filename, char *suffix )
 {
     int         i, j;
     FILE        *fp;
@@ -961,7 +960,7 @@ static int TryOpen( char *prefix, char *separator, const char *filename, char *s
             break;
         if( errno != ENOMEM && errno != ENFILE && errno != EMFILE )
             break;
-        if( !FreeSrcFP() ) {      // try closing an include file
+        if( !FreeSrcFP() ) {        // try closing an include file
             break;
         }
     }
@@ -1167,7 +1166,7 @@ void FreeRDir( void )
 }
 
 // GET ONE PATH ELEMENT FROM INCLUDE LIST
-static char *IncPathElement( const char *path, char *prefix )
+static const char *IncPathElement( const char *path, char *prefix )
 {
     unsigned    length;
 
@@ -1188,7 +1187,7 @@ static char *IncPathElement( const char *path, char *prefix )
     if( (length > 1) && IS_PATH_SEP( *(prefix - 1) ) )
         --prefix;
     *prefix = '\0';
-    return( (char *)path );
+    return( path );
 }
 
 void SrcFileReadOnlyDir( char const *dir )
@@ -1327,7 +1326,7 @@ local void Parse( void )
         }
         // we want to keep in the pre-compiled header
         // any macros that are defined in forced include file
-        InitialMacroFlag = 0;                   /* 02-jun-95 */
+        InitialMacroFlag = MFLAG_NONE;
         OpenSrcFile( ForceInclude, FALSE );
     }
     CompFlags.ok_to_use_precompiled_hdr = 0;

@@ -117,7 +117,7 @@ void MacroInit( void )
     NestedMacros = NULL;
     TokenList = NULL;
     UndefMacroList = NULL;                              /* 26-may-94 */
-    InitialMacroFlag = MACRO_DEFINED_BEFORE_FIRST_INCLUDE;
+    InitialMacroFlag = MFLAG_DEFINED_BEFORE_FIRST_INCLUDE;
     AllocMacroSegment( 0x1000 );
     MacHash = (MEPTR *)MacroSegment;
     MacroOffset = MacroSegment + MACRO_HASH_SIZE * sizeof(MEPTR);
@@ -126,7 +126,7 @@ void MacroInit( void )
     }
     for( mac = SpcMacros; mac->name; ++mac ) {
         mentry = MKSpcMacEntry( mac );
-        MacroAdd( mentry, NULL, 0, 0 );
+        MacroAdd( mentry, NULL, 0, MFLAG_NONE );
     }
     TimeInit(); /* grab time and date for __TIME__ and __DATE__ */
 }
@@ -144,7 +144,7 @@ void MacroAddComp( void )
 
     for( mac = SpcMacroCompOnly; mac->name; ++mac ) {
         mentry = MKSpcMacEntry( mac );
-        MacroAdd( mentry, NULL, 0, 0 );
+        MacroAdd( mentry, NULL, 0, MFLAG_NONE );
     }
 }
 
@@ -496,7 +496,7 @@ static MACRO_ARG *CollectParms(void)
                 if( bracket == 0 ) break;
                 --bracket;
             } else if( tok == T_COMMA  &&  bracket == 0 &&
-                      ( !( (mentry->macro_flags & MACRO_VAR_ARGS ) &&
+                      ( !( (mentry->macro_flags & MFLAG_VAR_ARGS ) &&
                           parm_cnt == mentry->parm_count - 2 ) ) ) {
                 if( prev_tok == T_WHITE_SPACE ) {
                     MTokenLen -= sizeof( TOKEN );
@@ -574,12 +574,12 @@ static MACRO_ARG *CollectParms(void)
         } else if( MTokenLen != 0 ) {
             ++parm_cnt;                 // will cause "too many parms" error
         }
-        if( ( (mentry->macro_flags & MACRO_VAR_ARGS) &&
+        if( ( (mentry->macro_flags & MFLAG_VAR_ARGS) &&
               (parm_cnt < mentry->parm_count - 2) )
-           || ( !(mentry->macro_flags & MACRO_VAR_ARGS) &&
+           || ( !(mentry->macro_flags & MFLAG_VAR_ARGS) &&
                  (parm_cnt < mentry->parm_count - 1) ) ) {
             CErr( ERR_TOO_FEW_MACRO_PARMS, mentry->macro_name );
-        } else if( !(mentry->macro_flags & MACRO_VAR_ARGS) &&
+        } else if( !(mentry->macro_flags & MFLAG_VAR_ARGS) &&
                    (parm_cnt > mentry->parm_count - 1) ) {
             if( mentry->parm_count - 1 != 0 ) {
                 CWarn( WARN_PARM_COUNT_MISMATCH, ERR_TOO_MANY_MACRO_PARMS, mentry->macro_name  );
