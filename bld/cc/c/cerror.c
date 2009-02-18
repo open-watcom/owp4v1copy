@@ -78,7 +78,7 @@ static void CMsgInfo( cmsg_info *info, msg_codes msgnum, va_list args )
     msgstr = CGetMsgStr( msgnum );
     charsWritten = _vsnprintf( info->msgtxt, MAX_MSG_LEN, msgstr, args );
     if( charsWritten == -1 ) {  /* did we overflow? */
-        info->msgtxt[MAX_MSG_LEN - 1] = '\0';
+        info->msgtxt[ MAX_MSG_LEN - 1 ] = '\0';
     }
     info->line = line;
     info->fname = fname;
@@ -114,28 +114,29 @@ void FmtCMsg( char *buff, cmsg_info *info )
     len = 0;
     if( info->line != 0 ) {
         if( info->fname != NULL ) {
-            len += _snprintf( &buff[len], MAX_MSG_LEN - len, "%s(%u): ",
+            len += _snprintf( &buff[ len ], MAX_MSG_LEN - len, "%s(%u): ",
                               info->fname, info->line );
         }
     } else {
-        buff[0] = '\0';
+        buff[ 0 ] = '\0';
     }
     code_prefix = CGetMsgPrefix( info->msgnum );
     phrase = MsgClassPhrase( info->class );
-    len += _snprintf( &buff[len], MAX_MSG_LEN - len, "%s %s%03d: ",
+    len += _snprintf( &buff[ len ], MAX_MSG_LEN - len, "%s %s%03d: ",
               phrase, code_prefix, info->msgnum );
 }
 
 // print message to streams
 static void OutMsg( cmsg_info  *info )
 {
-    char        pre[MAX_MSG_LEN]; //actual message text
+    char        pre[ MAX_MSG_LEN ]; //actual message text
 
-    if( ErrFile == NULL ) OpenErrFile();
+    if( ErrFile == NULL )
+        OpenErrFile();
     if( CompFlags.no_conmsg == 0 ){
         ConsErrMsg( info );
     }
-    if( ErrFile ) {
+    if( ErrFile != NULL ) {
         FmtCMsg( pre, info );
         fputs( pre, ErrFile );
         fputs( info->msgtxt, ErrFile );
@@ -168,7 +169,8 @@ void CErr( int msgnum, ... )
     va_list     args1;
     cmsg_info   info;
 
-    if( CompFlags.cpp_output )  return;             /* 29-sep-90 */
+    if( CompFlags.cpp_output )
+        return;
 #if 0   //shoudn't allow an error to be disabled
     if( MsgDisabled( msgnum ) ) {                   /* 18-jun-92 */
         error_fname = NULL;                              /* 27-sep-92 */
@@ -211,7 +213,8 @@ void CWarn( int level, int msgnum, ... )
     va_list     args1;
     cmsg_info   info;
 
-    if( CompFlags.cpp_output ) return;              /* 29-sep-90 */
+    if( CompFlags.cpp_output )
+        return;
     if( ! MsgDisabled( msgnum ) ) {                 /* 18-jun-92 */
         if( level <= WngLevel ) {
             info.class = CMSG_WARN;
@@ -232,7 +235,8 @@ void CInfoMsg( int msgnum, ... )
     va_list     args1;
     cmsg_info   info;
 
-    if( CompFlags.cpp_output )  return;             /* 29-sep-90 */
+    if( CompFlags.cpp_output )
+        return;
     if( MsgDisabled( msgnum ) ) {                   /* 18-jun-92 */
         error_fname = NULL;                              /* 27-sep-92 */
         return;
@@ -249,7 +253,7 @@ void CInfoMsg( int msgnum, ... )
 void PCHNote( int msgnum, ... )
 {
     va_list     args1;
-    char        msgbuf[MAX_MSG_LEN];
+    char        msgbuf[ MAX_MSG_LEN ];
     char const  *msgstr;
 
     if( !CompFlags.no_pch_warnings ) {
@@ -293,7 +297,7 @@ void OpenErrFile( void )
 
 void CSuicide( void )
 {
-    if( Environment ) {
+    if( Environment != NULL ) {
         longjmp( *Environment, 1 );
     }
     MyExit(1);
@@ -341,7 +345,7 @@ static void DoMsgInfo( msg_codes msgnum )
 {
     cmsg_info   sinfo;
     cmsg_info   *info;
-    char        pre[MAX_MSG_LEN]; //actual message text
+    char        pre[ MAX_MSG_LEN ]; //actual message text
     unsigned    line;
 
     info = &sinfo;
@@ -383,7 +387,7 @@ struct ErrPostList
             char        *sym_file;
             unsigned    sym_line;
         } s;
-        TYPEPTR types[2];   /* POSTLIST_TWOTYPES */
+        TYPEPTR types[ 2 ]; /* POSTLIST_TWOTYPES */
     };
 };
 
@@ -432,8 +436,8 @@ void SetDiagType2( TYPEPTR typ_source, TYPEPTR typ_target )
     struct ErrPostList  *np;
 
     np = NewPostList( POSTLIST_TWOTYPES );
-    np->types[0] = typ_source;
-    np->types[1] = typ_target;
+    np->types[ 0 ] = typ_source;
+    np->types[ 1 ] = typ_target;
 }
 
 void SetDiagPop( void )
@@ -441,7 +445,7 @@ void SetDiagPop( void )
     struct ErrPostList  *np;
 
     np = PostList;
-    if( np ) {
+    if( np != NULL ) {
         PostList = np->next;
         CMemFree( np );
     }
@@ -451,7 +455,8 @@ static void PrintType( int msg, TYPEPTR typ )
 {
     char    *text;
 
-    if( typ == NULL ) return;
+    if( typ == NULL )
+        return;
 
     text = DiagGetTypeName( typ );
     CInfoMsg( msg, text );
@@ -460,14 +465,14 @@ static void PrintType( int msg, TYPEPTR typ )
 
 static void PrintPostNotes( void )
 {
-    while( PostList ) {
+    while( PostList != NULL ) {
         switch( PostList->type ) {
         case POSTLIST_SYMBOL:
             CInfoMsg( INFO_SYMBOL_DECLARATION, PostList->s.sym_name, PostList->s.sym_file, PostList->s.sym_line );
             break;
         case POSTLIST_TWOTYPES:
-            PrintType( INFO_SRC_CNV_TYPE, PostList->types[0] );
-            PrintType( INFO_TGT_CNV_TYPE, PostList->types[1] );
+            PrintType( INFO_SRC_CNV_TYPE, PostList->types[ 0 ] );
+            PrintType( INFO_TGT_CNV_TYPE, PostList->types[ 1 ] );
             break;
         }
         SetDiagPop();

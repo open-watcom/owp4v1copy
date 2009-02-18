@@ -270,7 +270,7 @@ TREEPTR StringLeaf( int flags )
     TREEPTR             leaf_index;
     unsigned            hash;
 
-    strlit = 0;
+    strlit = NULL;
     new_lit = GetLiteral();
     if( TargetSwitches & BIG_DATA ) {                   /* 06-oct-88 */
         if( !CompFlags.strings_in_code_segment ) {      /* 01-sep-89 */
@@ -285,18 +285,15 @@ TREEPTR StringLeaf( int flags )
         CompFlags.far_strings = 1;
     hash = CalcStringHash( new_lit );
     if( Toggles & TOGGLE_REUSE_DUPLICATE_STRINGS ) {    /* 24-mar-92 */
-        strlit = StringHash[ hash ];
-        while( strlit != 0 ) {
-            if( strlit->length == new_lit->length  &&
-                strlit->flags == flags ) {
-                if( memcmp(strlit->literal, new_lit->literal,
-                                 new_lit->length) == 0 )
+        for( strlit = StringHash[ hash ]; strlit != NULL; strlit = strlit->next_string ) {
+            if( strlit->length == new_lit->length && strlit->flags == flags ) {
+                if( memcmp( strlit->literal, new_lit->literal, new_lit->length ) == 0 ) {
                     break;
+                }
             }
-            strlit = strlit->next_string;
         }
     }
-    if( strlit == 0 ) {
+    if( strlit == NULL ) {
         new_lit->flags = flags;
         ++LitCount;
         LitPoolSize += CLitLength;
@@ -315,6 +312,5 @@ TREEPTR StringLeaf( int flags )
     if( CurFunc != NULL ) {                             /* 22-feb-92 */
         CurFuncNode->op.func.flags &= ~FUNC_OK_TO_INLINE;
     }
-
     return( leaf_index );
 }

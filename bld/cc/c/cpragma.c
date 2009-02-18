@@ -107,9 +107,13 @@ void CPragmaInit( void ) {
 local void EndOfPragma( void )
 /*****************************/
 {
-    if( CurToken == T_SEMI_COLON ) NextToken();
-    if( CurToken != T_NULL ) ExpectEndOfLine();
-    while( CurToken != T_NULL && CurToken != T_EOF ) NextToken();
+    if( CurToken == T_SEMI_COLON )
+        NextToken();
+    if( CurToken != T_NULL )
+        ExpectEndOfLine();
+    while( CurToken != T_NULL && CurToken != T_EOF ) {
+        NextToken();
+    }
 }
 
 
@@ -121,11 +125,11 @@ extern int SetToggleFlag( char const *name, int const value )
     int     ret;
 
     ret = FALSE;
-    for( i=0; ( pnt = ToggleNames[ i ].name ) != NULL; ++i ) {
+    for( i = 0; (pnt = ToggleNames[ i ].name) != NULL; ++i ) {
         if( strcmp( pnt, name ) == 0 ) {
             if( value == 0 ) {
                 Toggles &= ~ToggleNames[ i ].flag;
-            }else{
+            } else {
                 Toggles |= ToggleNames[ i ].flag;
             }
             ret = TRUE;
@@ -139,7 +143,8 @@ local void PragFlag( int value )
 /******************************/
 {
 
-    if( CurToken != T_LEFT_PAREN ) return;
+    if( CurToken != T_LEFT_PAREN )
+        return;
     NextToken();
     while( CurToken == T_ID ) {
         SetToggleFlag( Buffer, value );
@@ -157,7 +162,7 @@ local void GetLibraryNames( void )
     for( owner = &HeadLibs; *owner != NULL; owner = &(*owner)->next )
             ; /* nothing to do */
     while( CurToken == T_ID  ||  CurToken == T_STRING ) {
-        new = ( void * ) CMemAlloc( sizeof( struct library_list ) + TokenLen );
+        new = (void *)CMemAlloc( sizeof( struct library_list ) + TokenLen );
         new->next = NULL;
         new->prio = USER_LIB_PRIO;
         strcpy( new->name, Buffer );
@@ -210,13 +215,15 @@ local void PragPack( void )
 {
     struct pack_info    *pi;
 
-    if( CurToken != T_LEFT_PAREN ) return;
+    if( CurToken != T_LEFT_PAREN )
+        return;
     CompFlags.pre_processing = 1;           /* enable macros */
     NextToken();
     CompFlags.pre_processing = 2;
     if( CurToken == T_RIGHT_PAREN ) {
         NextToken();
-        if( CurToken == T_SEMI_COLON ) NextToken();
+        if( CurToken == T_SEMI_COLON )
+            NextToken();
         PackAmount = GblPackAmount;
         return;
     }
@@ -225,7 +232,7 @@ local void PragPack( void )
         SetPackAmount();
         NextToken();
     } else if( PragRecog( "push" ) ) {                  /* 29-sep-94 */
-        pi = ( struct pack_info * ) CMemAlloc( sizeof( struct pack_info ) );
+        pi = (struct pack_info *)CMemAlloc( sizeof( struct pack_info ) );
         pi->next = PackInfo;
         pi->pack_amount = PackAmount;
         PackInfo = pi;
@@ -274,20 +281,19 @@ struct aux_info *MagicKeyword( char *name )
             ++name;
         }
     }
-    for( i = 0; MagicWords[i].name; ++i ) {
-        if( strcmp( name, MagicWords[i].name ) == 0 ) {
+    for( i = 0; MagicWords[ i ].name != NULL; ++i ) {
+        if( strcmp( name, MagicWords[ i ].name ) == 0 ) {
             break;
         }
     }
-    return( MagicWords[i].info );
+    return( MagicWords[ i ].info );
 }
 
 
 void CreateAux( char *id )
 /************************/
 {
-    CurrEntry = ( struct aux_entry * )
-            CMemAlloc( sizeof( struct aux_entry ) + strlen( id ) );
+    CurrEntry = (struct aux_entry *)CMemAlloc( sizeof( struct aux_entry ) + strlen( id ) );
     strcpy( CurrEntry->name, id );
 #if _CPU == 370
     CurrEntry->offset = -1;
@@ -359,10 +365,13 @@ local void CopyLinkage( void )
 #if _CPU == 370
     linkage_regs *regs;
 
-    if( CurrInfo->linkage == &DefaultLinkage ) return;
-    if( CurrInfo->linkage == &OSLinkage ) return;
-    if( CurrInfo->linkage != CurrAlias->linkage ) return;
-    regs = ( linkage_regs * ) CMemAlloc( sizeof( linkage_regs ) );
+    if( CurrInfo->linkage == &DefaultLinkage )
+        return;
+    if( CurrInfo->linkage == &OSLinkage )
+        return;
+    if( CurrInfo->linkage != CurrAlias->linkage )
+        return;
+    regs = (linkage_regs *)CMemAlloc( sizeof( linkage_regs ) );
     memcpy( regs, CurrInfo->linkage, sizeof( linkage_regs ) );
     CurrInfo->linkage = regs;
 #endif
@@ -375,13 +384,15 @@ local void CopyParms( void )
     int         i;
     hw_reg_set  *regs;
 
-    if( CurrInfo->parms != CurrAlias->parms ) return;
-    if( IsAuxParmsBuiltIn( CurrInfo->parms ) ) return;
+    if( CurrInfo->parms != CurrAlias->parms )
+        return;
+    if( IsAuxParmsBuiltIn( CurrInfo->parms ) )
+        return;
     for( i = 1, regs = CurrInfo->parms;
          !HW_CEqual( *regs, HW_EMPTY ); ++i, ++regs )
         ;
     i *= sizeof( hw_reg_set );
-    regs = ( hw_reg_set * ) CMemAlloc( i );
+    regs = (hw_reg_set *)CMemAlloc( i );
     memcpy( regs, CurrInfo->parms, i );
     CurrInfo->parms = regs;
 }
@@ -398,10 +409,12 @@ local void CopyCode( void )
     BYTE_SEQ    *code;
     int         size;
 //TODO deal with reloc list
-    if( CurrInfo->code == NULL ) return;
-    if( CurrInfo->code != CurrAlias->code ) return;
+    if( CurrInfo->code == NULL )
+        return;
+    if( CurrInfo->code != CurrAlias->code )
+        return;
     size = sizeof( BYTE_SEQ ) + CurrInfo->code->length;
-    code = ( BYTE_SEQ * ) CMemAlloc( size );
+    code = (BYTE_SEQ *)CMemAlloc( size );
     memcpy( code, CurrInfo->code, size );
     CurrInfo->code = code;
 }
@@ -434,8 +447,7 @@ void PragEnding( void )
     if( CurrEntry == NULL )
         return;
     CurrInfo->use = CurrAlias->use; /* for compare */
-    if( memcmp( CurrAlias, CurrInfo,
-                sizeof( struct aux_info ) ) == 0 ) {
+    if( memcmp( CurrAlias, CurrInfo, sizeof( struct aux_info ) ) == 0 ) {
         CurrEntry->info = CurrAlias;
         CurrAlias->use++;
         CMemFree( CurrInfo );
@@ -452,11 +464,11 @@ void PragEnding( void )
     }
     
     /* If this pragma defines code, check to see if we already have a function body */   
-    if( CurrEntry->name && CurrEntry->info && CurrEntry->info->code ) {
+    if( CurrEntry->name != NULL && CurrEntry->info != NULL && CurrEntry->info->code != NULL ) {
         SYM_HANDLE  sym_handle;
         SYM_ENTRY   sym;
             
-        if( 0 != ( sym_handle = SymLook( CalcHash( CurrEntry->name, strlen( CurrEntry->name ) ), CurrEntry->name ))) {
+        if( 0 != (sym_handle = SymLook( CalcHash( CurrEntry->name, strlen( CurrEntry->name ) ), CurrEntry->name )) ) {
             SymGet( &sym, sym_handle );
             if( ( sym.flags & SYM_DEFINED ) && ( sym.flags & SYM_FUNCTION ) ) {
                 CErr2p( ERR_SYM_ALREADY_DEFINED, CurrEntry->name );
@@ -474,13 +486,14 @@ int PragRecog( char *what )
 {
     char        *p;
 
-    if( !( CurToken == T_ID
-      || ( CurToken >= FIRST_KEYWORD && CurToken < T_MACRO_PARM ) ) ) {
+    if( !( CurToken == T_ID || ( CurToken >= FIRST_KEYWORD && CurToken < T_MACRO_PARM ) ) ) {
         return( 0 );
     }
     p = Buffer;
-    if( *p == '_' ) ++p;
-    if( *p == '_' ) ++p;
+    if( *p == '_' )
+        ++p;
+    if( *p == '_' )
+        ++p;
     if( stricmp( what, p ) == 0 ) {
         NextToken();
         return( 1 );
@@ -495,13 +508,14 @@ static int PragRecogAhead( const char *what )
     char        *p;
 
     LookAhead();
-    if( !( LAToken == T_ID
-      || ( LAToken >= FIRST_KEYWORD && LAToken < T_MACRO_PARM ) ) ) {
+    if( !( LAToken == T_ID || ( LAToken >= FIRST_KEYWORD && LAToken < T_MACRO_PARM ) ) ) {
         return( 0 );
     }
     p = Buffer;
-    if( *p == '_' ) ++p;
-    if( *p == '_' ) ++p;
+    if( *p == '_' )
+        ++p;
+    if( *p == '_' )
+        ++p;
     if( stricmp( what, p ) == 0 ) {
         NextToken();
         return( 1 );
@@ -535,7 +549,7 @@ hw_reg_set PragRegList( void )
 {
     hw_reg_set  res, reg;
     TOKEN       close;
-    char        buf[80];
+    char        buf[ 80 ];
 
     HW_CAsgn( res, HW_EMPTY );
     HW_CAsgn( reg, HW_EMPTY );
@@ -576,10 +590,10 @@ hw_reg_set *PragManyRegSets( void )
     if( !HW_CEqual( list, HW_EMPTY ) ) {
         CErr1( ERR_TOO_MANY_PARM_SETS );
     }
-    HW_CAsgn( buff[i], HW_EMPTY );
+    HW_CAsgn( buff[ i ], HW_EMPTY );
     i++;
     i *= sizeof( hw_reg_set );
-    sets = ( hw_reg_set * ) CMemAlloc( i );
+    sets = (hw_reg_set *)CMemAlloc( i );
     memcpy( sets, buff, i );
     return( sets );
 }
@@ -588,17 +602,17 @@ struct textsegment *NewTextSeg( char *name, char *suffix, char *classname )
 /*************************************************************************/
 {
     struct textsegment  *seg;
-    int         len1;
-    int         len2;
-    int         len3;
+    int                 len1;
+    int                 len2;
+    int                 len3;
 
     len1 = strlen( name );
     len2 = strlen( suffix );
     len3 = strlen( classname ) + 1;
     seg = CMemAlloc( len1 + len2 + len3 + sizeof( struct textsegment ) );
     strcpy( seg->segname, name );
-    strcpy( &seg->segname[len1], suffix );
-    strcpy( &seg->segname[len1+len2+1], classname );
+    strcpy( &seg->segname[ len1 ], suffix );
+    strcpy( &seg->segname[ len1 + len2 + 1 ], classname );
     seg->next = TextSegList;
     TextSegList = seg;
     return( seg );
@@ -611,9 +625,9 @@ struct textsegment *LkSegName( char *segname, char *classname )
     int                 len;
 
     len = strlen( segname ) + 1;
-    for( seg = TextSegList; seg; seg = seg->next ) {
+    for( seg = TextSegList; seg != NULL; seg = seg->next ) {
         if( strcmp( seg->segname, segname ) == 0 ) {
-            if( strcmp( &seg->segname[len], classname ) == 0 ) {
+            if( strcmp( &seg->segname[ len ], classname ) == 0 ) {
                 return( seg );
             }
         }
@@ -648,14 +662,18 @@ local void PragAllocText( void )                              /* 26-oct-91 */
             }
         }
         NextToken();
-        if( CurToken == T_RIGHT_PAREN )  break;
-        if( CurToken == T_EOF )  break;
-        if( CurToken == T_NULL ) break;
+        if( CurToken == T_RIGHT_PAREN )
+            break;
+        if( CurToken == T_EOF )
+            break;
+        if( CurToken == T_NULL ) {
+            break;
+        }
     }
     MustRecog( T_RIGHT_PAREN );
-    #if _CPU == 8086 || _CPU == 386
-        CompFlags.multiple_code_segments = 1;
-    #endif
+#if _CPU == 8086 || _CPU == 386
+    CompFlags.multiple_code_segments = 1;
+#endif
 }
 
 void EnableDisableMessage( int enable, unsigned msg_num )
@@ -670,9 +688,9 @@ void EnableDisableMessage( int enable, unsigned msg_num )
         mask = 1 << ( msg_num & 7 );
         msg_num = msg_num >> 3;
         if( enable ) {
-            MsgFlags[ msg_num ]  &=  ~mask;
+            MsgFlags[ msg_num ] &= ~mask;
         } else {
-            MsgFlags[ msg_num ]  |=  mask;
+            MsgFlags[ msg_num ] |= mask;
         }
     }
 }
@@ -686,13 +704,17 @@ void EnableDisableMessage( int enable, unsigned msg_num )
 local void PragEnableDisableMessage( int enable )
 /***********************************************/
 {
-    if( CurToken != T_LEFT_PAREN ) return;
+    if( CurToken != T_LEFT_PAREN )
+        return;
     NextToken();
     for( ; ; ) {
-        if( CurToken != T_CONSTANT )  break;
+        if( CurToken != T_CONSTANT )
+            break;
         EnableDisableMessage( enable, Constant );
         NextToken();
-        if( CurToken == T_COMMA )  NextToken();
+        if( CurToken == T_COMMA ) {
+            NextToken();
+        }
     }
     MustRecog( T_RIGHT_PAREN );
 }
@@ -706,11 +728,13 @@ local void PragEnableDisableMessage( int enable )
 static void PragMessage( void )
 /*****************************/
 {
-    if( CurToken != T_LEFT_PAREN ) return;
+    if( CurToken != T_LEFT_PAREN )
+        return;
     CompFlags.pre_processing = 1;           /* enable macros */
     for( ; ; ) {
         NextToken();
-        if( CurToken != T_STRING ) break;
+        if( CurToken != T_STRING )
+            break;
         printf( "%s", Buffer );
     }
     printf( "\n" );
@@ -785,11 +809,13 @@ static void PragIntrinsic( int intrinsic )              /* 09-oct-92 */
             if( sym_handle != 0 ) {
                 SymGet( &sym, sym_handle );
                 sym.flags &= ~ SYM_INTRINSIC;
-                if( intrinsic )  sym.flags |= SYM_INTRINSIC;
+                if( intrinsic )
+                    sym.flags |= SYM_INTRINSIC;
                 SymReplace( &sym, sym_handle );
             }
             NextToken();
-            if( CurToken != T_COMMA )  break;
+            if( CurToken != T_COMMA )
+                break;
             NextToken();
         }
         MustRecog( T_RIGHT_PAREN );
@@ -870,18 +896,23 @@ static void PragUnroll( void )
 {
     unsigned    unroll_count;
 
-    if( CurToken != T_LEFT_PAREN ) return;
+    if( CurToken != T_LEFT_PAREN )
+        return;
     NextToken();
     if( CurToken == T_RIGHT_PAREN ) {
         unroll_count = 0;
     } else {
-        if( CurToken != T_CONSTANT ) return;
+        if( CurToken != T_CONSTANT )
+            return;
         unroll_count = Constant;
         NextToken();
-        if( CurToken != T_RIGHT_PAREN ) return;
+        if( CurToken != T_RIGHT_PAREN ) {
+            return;
+        }
     }
     NextToken();
-    if( unroll_count > 255 ) unroll_count = 255;
+    if( unroll_count > 255 )
+        unroll_count = 255;
     UnrollCount = unroll_count;
 }
 
@@ -949,10 +980,10 @@ static void PragIncludeAlias( void )
             }
             CMemFree( alias_name );
         } else if( CurToken == T_LT ) {
-            char    a_buf[82];  /* same size as CInclude() in cmac2.c */
-            char    r_buf[82];
+            char    a_buf[ 82 ];    /* same size as CInclude() in cmac2.c */
+            char    r_buf[ 82 ];
 
-            a_buf[0] = '\0';
+            a_buf[ 0 ] = '\0';
             for( ;; ) {
                 NextToken();
                 if( CurToken == T_GT ) {
@@ -963,7 +994,7 @@ static void PragIncludeAlias( void )
             }
             MustRecog( T_COMMA );
             if( CurToken == T_LT ) {
-                r_buf[0] = '\0';
+                r_buf[ 0 ] = '\0';
                 for( ;; ) {
                     NextToken();
                     if( CurToken == T_GT ) {
@@ -994,10 +1025,8 @@ local void PragSTDCOption( void )
 /*******************************/
 {
     if( PragRecog( "ON" ) ) {
-    }
-    else if( PragRecog( "OFF" ) ) {
-    }
-    else if( PragRecog( "DEFAULT" ) ) {
+    } else if( PragRecog( "OFF" ) ) {
+    } else if( PragRecog( "DEFAULT" ) ) {
     }
 }
 
@@ -1008,13 +1037,11 @@ static void PragSTDC( void )
 /**************************/
 {
     if( PragRecog( "FP_CONTRACT" ) ) {
-           PragSTDCOption();
-    }
-    else if( PragRecog( "FENV_ACCESS" ) ) {
-           PragSTDCOption();
-    }
-    else if( PragRecog( "CX_LIMITED_RANGE" ) ) {
-           PragSTDCOption();
+        PragSTDCOption();
+    } else if( PragRecog( "FENV_ACCESS" ) ) {
+        PragSTDCOption();
+    } else if( PragRecog( "CX_LIMITED_RANGE" ) ) {
+        PragSTDCOption();
     }
 }
 
@@ -1064,7 +1091,7 @@ static void PragAlias( void )
 
     if( CurToken == T_ID ) {
         alias_sym = SymLook( HashValue, Buffer );
-        if( alias_sym == 0) {
+        if( alias_sym == 0 ) {
             CErr2p( ERR_UNDECLARED_SYM, Buffer );
         }
     } else if( CurToken == T_STRING ) {
@@ -1076,7 +1103,7 @@ static void PragAlias( void )
     MustRecog( T_COMMA );
     if( CurToken == T_ID ) {
         subst_sym = SymLook( HashValue, Buffer );
-        if( subst_sym == 0) {
+        if( subst_sym == 0 ) {
             CErr2p( ERR_UNDECLARED_SYM, Buffer );
         }
     } else if( CurToken == T_STRING ) {
@@ -1087,10 +1114,10 @@ static void PragAlias( void )
     PPNextToken();
 
     /* Add a new alias record - if it's valid - to the list */
-    if( ( alias_name || alias_sym ) && ( subst_name || subst_sym ) ) {
+    if( ( alias_name != NULL || alias_sym != NULL ) && ( subst_name != NULL || subst_sym != NULL ) ) {
         for( alias = &AliasHead; *alias != NULL; alias = &(*alias)->next )
             ; /* nothing to do */
-        new_alias = ( void * ) CMemAlloc( sizeof( struct alias_list ) );
+        new_alias = (void *)CMemAlloc( sizeof( struct alias_list ) );
         new_alias->next = NULL;
         if( alias_name ) {
             new_alias->name = alias_name;
@@ -1122,7 +1149,8 @@ void CPragma( void )
             EndOfPragma();
             return;
         }
-        if( ! CppPrinting() ) return;               /* 12-dec-89 */
+        if( ! CppPrinting() )
+            return;
         CppPrtf( "#pragma" );
         CppPrtf( " " );
         PreProcPrintToken();    /* PragRecogAhead sneaked a token */
@@ -1130,7 +1158,8 @@ void CPragma( void )
         CompFlags.in_pragma = 1;
         for( ; ; ) {
             GetNextToken();
-            if( CurToken == T_NULL ) break;
+            if( CurToken == T_NULL )
+                break;
             PrtToken();
         }
         CompFlags.in_pragma = 0;

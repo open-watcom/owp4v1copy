@@ -78,7 +78,7 @@ void FreeMacroSegments( void )
 {
     struct macro_seg_list *msl;
 
-    for( ; (msl = MacSegList); ) {
+    for( ; (msl = MacSegList) != NULL; ) {
         FEfree( (void *)(msl->segment) );
         MacSegList = msl->next;
         CMemFree( msl );
@@ -114,7 +114,8 @@ local MEPTR *MacroLkUp( const char *name, MEPTR *lnk )
 
     len = strlen( name ) + 1;
     while( (mentry = *lnk) != NULL ) {
-        if( NameCmp( mentry->macro_name, name, len ) == 0 ) break;
+        if( NameCmp( mentry->macro_name, name, len ) == 0 )
+            break;
         lnk = &mentry->next_macro;
     }
     return( lnk );
@@ -169,9 +170,12 @@ int MacroCompare( MEPTR m1, MEPTR m2 )
     char        *p1;
     char        *p2;
 
-    if( m1->macro_len  != m2->macro_len )   return( -1 );
-    if( m1->macro_defn != m2->macro_defn )  return( -1 );
-    if( m1->parm_count != m2->parm_count )  return( -1 );
+    if( m1->macro_len != m2->macro_len )
+        return( -1 );
+    if( m1->macro_defn != m2->macro_defn )
+        return( -1 );
+    if( m1->parm_count != m2->parm_count )
+        return( -1 );
     p1 = (char *)m1 + offsetof(MEDEFN,macro_name);
     p2 = (char *)m2 + offsetof(MEDEFN,macro_name);
     return( memcmp( p1, p2, m1->macro_len - offsetof(MEDEFN,macro_name) ) );
