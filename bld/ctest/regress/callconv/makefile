@@ -115,6 +115,7 @@ fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
 
 start_test : .symbolic test.lnk
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+    @if exist x$(arch)_$(alt_error).sav rm x$(arch)_$(alt_error).sav
     %create exec.out
     %create symbols.out
     @set ERROR_FILE=exec.out

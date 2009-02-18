@@ -453,7 +453,7 @@ host_cpu = $(arch)
 !    define linker wlink
 !  endif
 !  ifdef use_dll
-!    loaddll wlink wlink.dll
+!    loaddll wlink wlinkd.dll
 !  endif
 !endif
 
