@@ -51,7 +51,7 @@
 void FTSElement::setPages( size_t count )
 {
     size_t elements( ( count + 7 ) / 8 );
-    pages.resize(elements );
+    pages.resize( elements );
     maxPage = count;
 }
 /***************************************************************************/
@@ -73,25 +73,25 @@ void FTSElement::build()
         comp = ALL;
     else {
         size_t score[ 5 ];
+        score[ 0 ] = pageCount * sizeof( std::uint16_t );
+        score[ 1 ] = ( maxPage - pageCount ) * sizeof( std::uint16_t );
         //find the last non-zero byte
-        PageIter itr( pages.end() - 1 );
-        while( itr != pages.begin() && *itr == 0 )
-            --itr;
-        pages.erase( itr + 1, pages.end() );    //remove bytes containing 0's from end
-        score[ 3 ] = pages.size() * sizeof( std::uint8_t );
+        PageIter lnz( pages.end() - 1 );
+        while( lnz != pages.begin() && *lnz == 0 )
+            --lnz;
+        pages.erase( lnz + 1, pages.end() );    //remove bytes containing 0's from end
+        score[ 2 ] = pages.size() * sizeof( std::uint8_t );
         //find first non-zero byte
         PageIter fnz( pages.begin() );
         while( fnz != pages.end() && *fnz == 0 ) {
             ++fnz;
             ++firstPage;
         }
-        score[ 4 ] = ( score[3] - firstPage ) * sizeof( std::uint8_t ) + sizeof( std::uint16_t );
+        score[ 3 ] = ( score[ 2 ] - firstPage ) * sizeof( std::uint8_t ) + sizeof( std::uint16_t );
         //run length encode the truncated bitstring
         std::vector< std::uint8_t > rle;
         encode( rle );
-        score[ 0 ] = ( rle.size() + 1 ) * sizeof( std::uint8_t );
-        score[ 1 ] = pageCount * sizeof( std::uint16_t );
-        score[ 2 ] = ( maxPage - pageCount ) * sizeof( std::uint16_t );
+        score[ 4 ] = ( rle.size() + 1 ) * sizeof( std::uint8_t );
         size_t index = 0;
         size_t value = score[ 0 ];
         for( size_t count = 1; count < sizeof( score ) / sizeof( size_t ); ++count ) {
@@ -100,19 +100,19 @@ void FTSElement::build()
                 index = count;
             }
         }
-        if( index == 0 ) {
-            comp = RLE;
-            pages = rle;
-        }
-        else if( index == 1 )
+        if( index == 0 )    //in order of preference (complexity)
             comp = PRESENT;
-        else if( index == 2 )
+        else if( index == 1 )
             comp = ABSENT;
-        else if( index == 3 )
+        else if( index == 2 )
             comp = TRUNC;
-        else if( index == 4 ) {
+        else if( index == 3 ) {
             comp = DBL_TRUNC;
             pages.erase( pages.begin(), fnz );  //truncate front
+        }
+        else if( index == 4 ) {
+            comp = RLE;
+            pages = rle;
         }
     }
 }
@@ -122,35 +122,27 @@ void FTSElement::build()
 void FTSElement::encode( std::vector< std::uint8_t >& rle )
 {
     std::vector< std::uint8_t > dif;
-    size_t sameCount( 0 );
     ConstPageIter tst( pages.begin() );
     ConstPageIter itr( pages.begin() + 1 );
     bool same( *itr == *tst );
+    size_t sameCount( 2 );
     while( itr != pages.end() ) {
         if( same ) {
             if( *itr != *tst ) {
                 --sameCount;
                 if( sameCount < 0x80 ) {
-                    rle.push_back( static_cast< std::uint8_t >( sameCount ) | 0x80 );
+                    rle.push_back( static_cast< std::uint8_t >( sameCount ) );
                     rle.push_back( *tst );
                 }
                 else {
-/*
-                    while( sameCount > 65536 ) {
-                        rle.push_back( 0x80 );
-                        rle.push_back( *tst );
-                        rle.push_back( 0xFF );
-                        rle.push_back( 0xFF );
-                        sameCount -= 65536;
-                    }
-*/
+                    //sameCount will never exceed 65536 because the number of pages
+                    //must be less than 65536 (it's stored in a std::uint16_t)
                     rle.push_back( 0x80 );
                     rle.push_back( *tst );
                     rle.push_back( static_cast< std::uint8_t >( sameCount ) );
                     rle.push_back( static_cast< std::uint8_t >( sameCount >> 8 ) );
                 }
                 tst = itr;
-                sameCount = 0;
                 same = false;
             }
             else
@@ -169,7 +161,10 @@ void FTSElement::encode( std::vector< std::uint8_t >& rle )
                     }
                     difSize -= 128;
                 }
-                code = static_cast< std::uint8_t >( difSize - 1 ) | 0x80;
+                if( difSize > 1 )
+                    code = static_cast< std::uint8_t >( difSize - 1 ) | 0x80;
+                else
+                    code = 0;
                 rle.push_back( code );
                 for( size_t count = 0; count < difSize; ++count ) {
                     rle.push_back( *byte );
@@ -177,6 +172,7 @@ void FTSElement::encode( std::vector< std::uint8_t >& rle )
                 }
                 dif.clear();
                 same = true;
+                sameCount = 2;
             }
             else {
                 dif.push_back( *tst );
@@ -188,19 +184,10 @@ void FTSElement::encode( std::vector< std::uint8_t >& rle )
     if( same ) {
         --sameCount;
         if( sameCount < 0x80 ) {
-            rle.push_back( static_cast< std::uint8_t >( sameCount ) | 0x80 );
+            rle.push_back( static_cast< std::uint8_t >( sameCount ) );
             rle.push_back( *tst );
         }
         else {
-/*
-            while( sameCount > 65536 ) {
-                rle.push_back( 0x80 );
-                rle.push_back( *tst );
-                rle.push_back( 0xFF );
-                rle.push_back( 0xFF );
-                sameCount -= 65536;
-            }
-*/
             rle.push_back( 0x80 );
             rle.push_back( *tst );
             rle.push_back( static_cast< std::uint8_t >( sameCount ) );
@@ -220,7 +207,10 @@ void FTSElement::encode( std::vector< std::uint8_t >& rle )
             }
             difSize -= 128;
         }
-        code = static_cast< std::uint8_t >( difSize - 1 ) | 0x80;
+        if( difSize > 1 )
+            code = static_cast< std::uint8_t >( difSize - 1 ) | 0x80;
+        else
+            code = 0;
         rle.push_back( code );
         for( size_t count = 0; count < difSize; ++count ) {
             rle.push_back( *byte );
@@ -271,7 +261,7 @@ size_t FTSElement::write( std::FILE *out, bool big ) const
             std::uint16_t index( 0 );
             for( ConstPageIter itr = pages.begin(); itr != pages.end(); ++itr ) {
                 for( std::uint8_t mask = 0x80; mask != 0; mask >>= 1, ++index ) {
-                    if( !( *itr & mask ) )
+                    if( !( *itr & mask ) && index < maxPage )
                         pg.push_back( index );
                 }
             }
@@ -337,7 +327,7 @@ size_t FTSElement::write( std::FILE *out, bool big ) const
             std::uint16_t index( 0 );
             for( ConstPageIter itr = pages.begin(); itr != pages.end(); ++itr ) {
                 for( std::uint8_t mask = 0x80; mask != 0; mask >>= 1, ++index ) {
-                    if( !( *itr & mask ) )
+                    if( !( *itr & mask ) && index < maxPage )
                         pg.push_back( index );
                 }
             }

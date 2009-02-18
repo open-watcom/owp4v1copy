@@ -263,7 +263,7 @@ std::uint32_t Nls::write( std::FILE *out )
     }
     else {
         sbcsT.write( out );
-        bytes = sbcsT.size;
+        bytes += sbcsT.size;
         sbcsG.write( out );
         bytes += sbcsG.size;
     }
