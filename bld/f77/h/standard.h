@@ -44,9 +44,7 @@ typedef void            *pointer;
 typedef float           real;
 typedef double          reallong;
 
-#if !defined( __AXP__ ) && !defined( __PPC__ )
 #pragma aux Suicide aborts;
-#endif
 
 #ifdef _M_I86
 #define __FAR far

@@ -39,11 +39,11 @@
 #include "ftnstd.h"
 #include "ifenv.h"
 
-#if defined( __AXP__ ) || defined( __PPC__ )
+#if defined( _M_IX86 )
+  #define VAR_SINGLE    single
+#else
   #define VAR_SINGLE    double          // required because according to ansi
                                         // we cannot pass singles using varargs
-#else
-  #define VAR_SINGLE    single
 #endif
 
 single XAMAX1( int num_args, ... ) {

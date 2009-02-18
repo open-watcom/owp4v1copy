@@ -35,7 +35,7 @@
 
 #define PGM     // defines a pointer to program data
 
-#if defined( __386__ ) || defined( __MEDIUM__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if !defined( _M_I86 ) || defined( __MEDIUM__ )
 #define HPGM            // defines a huge pointer to program data
 #else
 #define HPGM    huge    // defines a huge pointer to program data

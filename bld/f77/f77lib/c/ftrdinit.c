@@ -33,7 +33,7 @@
 // Default FORTRAN thread initialization routine.
 // Used if user does not write his own
 
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
   #pragma aux __fthrd_initialize "^_"
 #endif
 

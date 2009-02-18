@@ -34,7 +34,7 @@
 
 typedef PTYPE (io_type_rtn)(void);
 
-#if !defined( __AXP__ ) && !defined(__PPC__)
+#if defined( _M_IX86 )
 #ifdef __386__
   #pragma aux io_type_decl modify [eax ebx ecx edx esi edi];
 #else

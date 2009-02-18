@@ -36,7 +36,7 @@
 #include <stdarg.h>
 #include <malloc.h>
 #include <limits.h>
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
   #include <i86.h>
   #if defined( __WINDOWS_386__ )
     #include <win386.h>
@@ -169,7 +169,7 @@ void    Alloc( unsigned_16 alloc_type, uint num, ... ) {
             } else {
                 *item = (void *)location;
             }
-#elif !defined( __AXP__ ) && !defined( __PPC__ )
+#elif defined( _M_IX86 )
             if( alloc_flags & ALLOC_EXTENDED ) {
                 *(void __far **)item = MK_FP( location >> 16,
                                               location & 0x0000ffff );

@@ -40,7 +40,7 @@
 
 #include <stdlib.h>
 
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
   #pragma aux __ASTACKSIZ "*"
   #pragma aux __ASTACKPTR "*"
   #pragma aux __SwitchStkLow "*"

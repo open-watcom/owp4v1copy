@@ -34,7 +34,7 @@
 #include <stdlib.h>
 
 
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
   #pragma aux __fdll_initialize "^_"
   #pragma aux __fdll_terminate "^_"
 #endif
@@ -49,7 +49,7 @@ extern  void            __FTermDLL(void);
 
 #include <windows.h>
 
-#if !defined( __AXP__ ) && !defined( __PPC__ )
+#if defined( _M_IX86 )
   #pragma aux __fthrd_initialize "^_"
   #pragma aux __fthrd_terminate "^_"
 #endif
