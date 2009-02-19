@@ -171,6 +171,11 @@ void Nls::readNLS( std::FILE *nls )
             killQuotes( text );
             warningText = text;
         }
+        else if( std::wcscmp( buffer, L"Reference" ) == 0 ) {
+            std::wstring text( value );
+            killQuotes( text );
+            referenceText = text;
+        }
         else if( std::wcscmp( buffer, L"olChars" ) == 0 ) {
             std::wstring text( value );
             olCh = text;

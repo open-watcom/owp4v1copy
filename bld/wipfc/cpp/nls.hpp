@@ -52,6 +52,7 @@ public:
     const std::wstring& note() const { return noteText; };
     const std::wstring& warning() const { return warningText; };
     const std::wstring& caution() const { return cautionText; };
+    const std::wstring& reference() const { return referenceText; };
     const std::wstring& grammer() const { return grammerChars; };
     //graphics font characteristics
     const std::wstring& cgraphicFontFaceName() const { return cgraphicFontFace; };
@@ -115,6 +116,7 @@ private:
     std::wstring noteText;                  //stuff from nls file
     std::wstring cautionText;
     std::wstring warningText;
+    std::wstring referenceText;
     std::wstring grammerChars;
     std::wstring cgraphicFontFace;
     std::uint32_t bytes;

@@ -5,6 +5,7 @@ CodePage=850
 Note="Anmerkung&colon."
 Caution="ACHTUNG&colon."
 Warning="ACHTUNG&colon."
+Reference="Nachschlagewerk"
 olChars=abcdefghijklmnopqrstuvwxyzÑîÅ·
 olClose1=.
 olClose2=)

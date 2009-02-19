@@ -5,6 +5,7 @@ CodePage=850
 Note="Remarque&colon."
 Caution="ATTENTION!"
 Warning="Avertissement&per."
+Reference="R‚f‚rence"
 olChars=abcdefghijklmnopqrstuvwxyz
 olClose1=.
 olClose2=)

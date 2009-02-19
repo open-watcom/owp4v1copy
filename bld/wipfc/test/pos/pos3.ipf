@@ -95,6 +95,7 @@ from the left window border&per. The right margin remains unchanged&per.
 :h2 res=8.Link
 :i2 refid='1'.link
 :p.This :link reftype=hd res=2.link:elink. links to the highlighed phrase topic&per.
+:p.Alternatively, one can use a :hdref res=2. to the highlihgted phrase topic&per.
 
 :h2 res=9.Centered Text
 :i2 refid='1'.center

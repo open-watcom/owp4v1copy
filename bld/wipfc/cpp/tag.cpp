@@ -45,6 +45,7 @@
 #include "entity.hpp"
 #include "fig.hpp"
 #include "font.hpp"
+#include "hdref.hpp"
 #include "hide.hpp"
 #include "hn.hpp"
 #include "hpn.hpp"
@@ -166,6 +167,14 @@ bool Tag::parseInline( Lexer* lexer, Lexer::Token& tok )
         case Lexer::FONT:
             {
                 Element* elt( new Font( document, this, document->dataName(),
+                    document->lexerLine(), document->lexerCol() ) );
+                appendChild( elt );
+                tok = elt->parse( lexer );
+            }
+            break;
+        case Lexer::HDREF:
+            {
+                Element* elt( new Hdref( document, this, document->dataName(),
                     document->lexerLine(), document->lexerCol() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
