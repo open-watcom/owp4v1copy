@@ -96,8 +96,8 @@ short _SuperVGAType( void )
 
 {
     char                dcc;
-    char far            *p;
-    char far            *s;
+    unsigned char far   *p;
+    unsigned char far   *s;
     short               len;
     short               val;
     char                id;

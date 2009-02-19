@@ -32,7 +32,7 @@
 #include "variety.h"
 #include <ctype.h>
 
-_WCRTDATA const char _HUGEDATA  _IsTable[257] = {
+_WCRTDATA const unsigned char _HUGEDATA  _IsTable[257] = {
 
 #define ___0__ 0
 

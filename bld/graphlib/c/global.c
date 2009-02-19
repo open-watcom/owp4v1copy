@@ -96,8 +96,8 @@ unsigned char           _IsDBCS;                    // is this a DBCS system
 dbcs_pair               _DBCSPairs[ 5 ];            // range of DBCS chars
 
 #if defined( _SUPERVGA )
-char                    _VGAPage;                   // SuperVGA page number
-char                    _VGAGran;                   // SuperVGA page granularity
+unsigned char           _VGAPage;                   // SuperVGA page number
+unsigned char           _VGAGran;                   // SuperVGA page granularity
 short                   _SVGAType;                  // type of SuperVGA
 void                    ( _FARC *_SetVGAPage )( short );  // function to set SVGA page
 short                   _VGAStride;                 // SuperVGA mode stride

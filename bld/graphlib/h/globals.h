@@ -83,8 +83,8 @@ extern long             _VGA_Colours[ 16 ];         // VGA to EGA mapping
 extern unsigned char    _IsDBCS;                    // is this a DBCS system
 extern dbcs_pair        _DBCSPairs[];               // range of DBCS chars
 
-extern char             _VGAPage;                   // SuperVGA page number
-extern char             _VGAGran;                   // SuperVGA page granularity
+extern unsigned char    _VGAPage;                   // SuperVGA page number
+extern unsigned char    _VGAGran;                   // SuperVGA page granularity
 extern short            _SVGAType;                  // type of SuperVGA
 extern void             ( _FARC *_SetVGAPage )( short );  // function to set SVGA page
 extern short            _VGAStride;                 // SuperVGA mode stride

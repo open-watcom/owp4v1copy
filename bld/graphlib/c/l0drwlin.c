@@ -90,13 +90,13 @@ void _L0DrawLine( char far *screen_ptr, short color, short style,
 */
 
 {
-    short               size;
-    char                plot_len;
-    char                minor_len;
-    char                major_len;
-    char COMP_FAR       *stack;
-    char COMP_FAR       *start;
-    line_fn             *line;
+    short                   size;
+    char                    plot_len;
+    char                    minor_len;
+    char                    major_len;
+    unsigned char COMP_FAR  *stack;
+    unsigned char COMP_FAR  *start;
+    line_fn                 *line;
 
     plot_len = *( (char FUNC_FAR *)plot - 1 );
     minor_len = *( (char FUNC_FAR *)minorfn - 1 );
