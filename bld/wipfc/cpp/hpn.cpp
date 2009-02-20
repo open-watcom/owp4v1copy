@@ -28,6 +28,7 @@
 *
 *   :hp1-:hp9 / :ehp1-:ehp9
 *   Cannot nest
+*   Note that the treatment here is an extension to allow nesting
 *
 ****************************************************************************/
 
@@ -38,15 +39,16 @@
 #include "util.hpp"
 
 
-unsigned int Hpn::nestLevel( 0 );
+std::vector< std::uint8_t > Hpn::levelStack;
 
 Hpn::Hpn( Document* d, Element *p, const std::wstring* f, unsigned int r,
-          unsigned int c, unsigned int l ) : Element( d, p, f, r, c ), lvl( l )
+          unsigned int c, unsigned int l ) : Element( d, p, f, r, c ),
+          level( static_cast< std::uint8_t >( l ) )
 {
-    if( nestLevel )
+    if( !levelStack.empty() ) {
         d->printError( ERR2_NEST );
-    else
-        nestLevel = l;
+    }
+    levelStack.push_back( l );
 }
 /***************************************************************************/
 Lexer::Token Hpn::parse( Lexer* lexer )
@@ -71,35 +73,40 @@ Lexer::Token Hpn::parse( Lexer* lexer )
 /***************************************************************************/
 void Hpn::buildText( Cell* cell )
 {
-    if( lvl != 4 && lvl < 8 ) {
+    if( level != 4 && level < 8 ) {
         cell->addByte( 0xFF );  //esc
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x04 );  //change style
-        if( lvl < 4 )
-            cell->addByte( static_cast< std::uint8_t >( lvl ) );
+        if( level < 4 )
+            cell->addByte( static_cast< std::uint8_t >( level ) );
         else
-            cell->addByte( static_cast< std::uint8_t >( lvl - 1) );
+            cell->addByte( static_cast< std::uint8_t >( level - 1) );
     }
     else {
         cell->addByte( 0xFF );  //esc
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x0D );  //change style
-        if( lvl == 4 )
+        if( level == 4 )
             cell->addByte( 0x01 );  //default
         else
-            cell->addByte( static_cast< std::uint8_t >( lvl - 6) );
+            cell->addByte( static_cast< std::uint8_t >( level - 6) );
     }
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
 }
 /***************************************************************************/
 EHpn::EHpn( Document* d, Element *p, const std::wstring* f, unsigned int r,
-            unsigned int c, unsigned int l ) : Element ( d, p, f, r, c ), level( l )
+            unsigned int c, unsigned int l ) : Element ( d, p, f, r, c ),
+            level( static_cast< std::uint8_t >( l ) ), previousLevel( 0 )
 {
-    if( Hpn::level() == l )
-        Hpn::setLevel( 0 );
-    else
+    std::vector< std::uint8_t >& levelStack( Hpn::levels() );
+    if( levelStack[ levelStack.size() - 1 ] != l )
+        d->printError( ERR2_NEST );
+    levelStack.pop_back();
+    if( !levelStack.empty() ) {
         d->printError( ERR1_TAGCONTEXT );
+        previousLevel = levelStack[ levelStack.size() - 1 ];
+    }
 }
 /***************************************************************************/
 Lexer::Token EHpn::parse( Lexer* lexer )
@@ -124,17 +131,23 @@ Lexer::Token EHpn::parse( Lexer* lexer )
 /***************************************************************************/
 void EHpn::buildText( Cell* cell )
 {
-    if( level != 4 && level < 8 ) {
+    if( previousLevel != 4 && previousLevel < 8 ) {
         cell->addByte( 0xFF );  //esc
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x04 );  //change style
-        cell->addByte( 0x00 );  //default
+        if( previousLevel < 4 )
+            cell->addByte( static_cast< std::uint8_t >( previousLevel ) );
+        else
+            cell->addByte( static_cast< std::uint8_t >( previousLevel - 1) );
     }
     else {
         cell->addByte( 0xFF );  //esc
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x0D );  //change style
-        cell->addByte( 0x00 );  //default
+        if( previousLevel == 4 )
+            cell->addByte( 0x01 );  //default
+        else
+            cell->addByte( static_cast< std::uint8_t >( previousLevel - 6) );
     }
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
