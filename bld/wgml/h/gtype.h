@@ -61,6 +61,8 @@
                                         // arbitrary value, not found in docu!!!
 #define MAC_STAR_NAME   "_"             // local variable name for &*
 
+#define MAX_FUN_PARMS   7             // max parmcount found in documentation
+
 #define MAX_IF_LEVEL    10              // maximum nested .if s
 
 /* default filename extensions */
@@ -324,20 +326,6 @@ typedef struct gmltag {
 
 
 /***************************************************************************/
-/*  scr string functions                                                   */
-/***************************************************************************/
-
-typedef struct scrfunc {
-    const   char    fname[ FUN_NAME_LENGTH + 1 ];   // function name
-    const   size_t  length;             // actual length of fname
-    const   size_t  parm_cnt;           // mandatory parms
-    const   size_t  opt_parm_cnt;       // optional parms
-    char        *   (*fun)( char * in, const char * end, char * * ppval,
-                            const int parm_cnt );
-} scrfunc;
-
-
-/***************************************************************************/
 /*  condcode  returncode for several conditions during parameterchecking   */
 /*            loosely adapted from wgml 88.1 IBM S/360 ASM code            */
 /***************************************************************************/
@@ -351,6 +339,27 @@ typedef enum condcode {            // return code for some scanning functions
     no              = 8,                // argument undefined
     notnum          = 8                 // value not numeric / overflow
 }  condcode;
+
+
+/***************************************************************************/
+/*  scr string functions                                                   */
+/***************************************************************************/
+
+
+typedef struct parm {
+    char    *       a;                  // start of parm ptr
+    char    *       e;                  // end of parm ptr
+} parm;
+
+
+typedef struct scrfunc {
+    const   char    fname[ FUN_NAME_LENGTH + 1 ];   // function name
+    const   size_t  length;             // actual length of fname
+    const   size_t  parm_cnt;           // mandatory parms
+    const   size_t  opt_parm_cnt;       // optional parms
+    condcode        (*fun)( parm parms[ MAX_FUN_PARMS ], size_t parm_count,
+                            char * * ppval );
+} scrfunc;
 
 
 /***************************************************************************/

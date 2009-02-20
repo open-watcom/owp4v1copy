@@ -76,6 +76,7 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
     if( *pchar == '.' ) {
         pchar++;                        // skip optional terminating dot
     }
+    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -114,6 +115,7 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
     if( *pchar == '.' ) {
         pchar++;                        // skip optional terminating dot
     }
+    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -158,6 +160,7 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
     if( *pchar == '.' ) {
         pchar++;                        // skip optional terminating dot
     }
+    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -222,6 +225,7 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
                          "\t\t\tLine %d of macro '%s'\n", *(in + 1),
                          input_cbs->s.m->lineno,
                          input_cbs->s.m->mac->name );
+                show_include_stack();
             } else {
                 out_msg( "WNG_FUNCTION not yet implemented &%c'\n"
                          "\t\t\tLine %d of file '%s'\n", *(in + 1),
