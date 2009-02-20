@@ -48,7 +48,7 @@ Hpn::Hpn( Document* d, Element *p, const std::wstring* f, unsigned int r,
     if( !levelStack.empty() ) {
         d->printError( ERR2_NEST );
     }
-    levelStack.push_back( l );
+    levelStack.push_back( level );
 }
 /***************************************************************************/
 Lexer::Token Hpn::parse( Lexer* lexer )
