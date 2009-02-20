@@ -55,15 +55,6 @@ Lexer::Token Fig::parse( Lexer* lexer )
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
-            else if( lexer->tagId() == Lexer::P ) {
-                //substitute .br for :p because :p resets autospacing
-                //Element* elt( new BrCmd( document, this, document->dataName(),
-                //    document->lexerLine(), document->lexerCol() ) );
-                //appendChild( elt );
-                while( tok != Lexer::TAGEND )
-                    tok = document->getNextToken();
-                tok = document->getNextToken(); //consume TAGEND
-            }
             else
                 parseCleanup( tok );
         }
