@@ -76,6 +76,7 @@ extern  bool        test_function_char( char c );
 extern  bool        test_identifier_char( char c );
 extern  bool        test_macro_char( char c );
 extern  bool        test_symbol_char( char c );
+extern  void        unquote_if_quoted( char * * a, char * * z );
 
 
 /* gdata.c                              */
@@ -183,8 +184,6 @@ extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 
 #include "gtags.h"
 
-#undef pick
-
 /*
  * prototypes for the script control word processing routines
  */
@@ -193,19 +192,15 @@ extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 
 #include "gscrcws.h"
 
-#undef pick
-
 /*
  * prototypes for the script string function routines , ie. &'substr( ,..
  */
 
-#define pick( name, length, parms, optparms, routine ) \
-    extern char * routine( char * in, const char * end, char * * ppval, \
-                           const int parm_cnt );
+#define pick( name, length, mand_parms, opt_parms, routine ) \
+    extern condcode routine( parm parms[ MAX_FUN_PARMS ], size_t parm_count, char * * ppval );
 
 #include "gsfuncs.h"
 
-#undef pick
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */

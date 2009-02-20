@@ -39,6 +39,7 @@
 #include "wgml.h"
 #include "gvars.h"
 
+static  char    *   var_unresolved2;
 
 /*  split_input
  *  The (physical) line is split
@@ -118,18 +119,19 @@ void        process_line( void )
     char            *   p2;
     char            *   pchar;
     char            *   varstart;
-    int                 varunresolved;
     sub_index           var_ind;
     symvar              symvar_entry;
     symsub          *   symsubval;
     int                 rc;
+    bool                resolve_functions;
+    bool                functions_found;
 
     //  look for GML tag start character and split line if found
 
     pchar = strchr( buff2, GML_char );  // look for GML tag start
     if( (pchar != NULL) && (buff2 < pchar) ) {
         split_input( buff2, pchar );    // if found at pos > 1 split
-        buff2_lg = strlen( buff2 );     // new length of first part
+        buff2_lg = strnlen_s( buff2, buf_size ); // new length of first part
     }
 
     // if macro define ( .dm xxx ... ) supress variable substitution
@@ -150,7 +152,7 @@ void        process_line( void )
             if( (pchar != NULL) ) {
                 split_input( buff2, pchar + 1 );// split after CW_sep_char
 
-                buff2_lg = strlen( buff2 ); // new length of first part
+                buff2_lg = strnlen_s( buff2, buf_size ); // new length of first part
                 buff2_lg--;             // ignore CW_sep_char
                 *(buff2 + buff2_lg) = '\0';
             }
@@ -159,67 +161,36 @@ void        process_line( void )
 
     workbuf = mem_alloc( buf_size );
 
-    // look for symbolic variable or function start
-    varunresolved = 0;
+    // look for symbolic variables, ignore functions for now
+    var_unresolved = NULL;
+    ProcFlags.unresolved  = false;
     do {
         strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
-        pw = workbuf;
+        buff2_lg = strnlen_s( buff2, buf_size );
         pwend = workbuf + buff2_lg;
-        p2 = buff2;
+        if( var_unresolved == NULL ) {
+            pw = workbuf;
+            p2 = buff2;
+        } else {
+            pw = workbuf + (var_unresolved2 - buff2);
+            p2 = var_unresolved2;
+        }
         varstart = NULL;
+
+        ProcFlags.substituted = false;
+
         pchar = strchr( workbuf, ampchar ); // look for & in buffer
         while( pchar != NULL ) {        // & found
+            while( pw < pchar ) {       // copy all data preceding &
+                *p2++ = *pw++;
+            }
             buff2_lg = strnlen_s( buff2, buf_size );
-            if( workbuf < pchar ) {
-                while( pw < pchar ) {   // copy all data preceding &
-                    *p2++ = *pw++;
-                }
+
+            if( (*(pchar + 1) == '\'') ||  (*(pchar + 2) == '\'') ) {
+                *p2++ = *pw++;          // over & and copy
+                pchar = strchr( pw, ampchar ); // look for & in buffer
+                continue;               // and ignore functions
             }
-
-    /***********************************************************************/
-    /*  Some single letter functions are resolved here:                    */
-    /*                                                                     */
-    /*  functions used within the OW doc build system:                     */
-    /*   &e'  existance of variable 0 or 1                                 */
-    /*   &l'  length of variable content or if undefined length of name    */
-    /*   &u'  upper                                                        */
-    /*                                                                     */
-    /*   &s'  subscript    These are recognized, but processed as &u'      */
-    /*   &S'  superscript           TBD                                    */
-    /*                                                                     */
-    /*   other single letter functions are not used AFAIK                  */
-    /*                                                                     */
-    /***********************************************************************/
-            if( *(pchar + 2) == '\'' ) {
-                char * * ppval = &p2;
-
-                pw = scr_single_funcs( pchar, pwend, ppval );
-                pchar = strchr( pw, ampchar );  // look for next & in buffer
-                continue;
-            }
-
-    /***********************************************************************/
-    /*  Some multi  letter functions are resolved here:                    */
-    /*                                                                     */
-    /*  functions used within the OW doc build system:                     */
-    /*   &'delstr(                                                         */
-    /*   &'d2c(                                                            */
-    /*   ...                                                               */
-    /*   &'upper(                                                          */
-    /*   ...                                                               */
-    /*                                                                     */
-    /*   Others are recognized but not processed                           */
-    /*                                                                     */
-    /*                                                                     */
-    /***********************************************************************/
-            if( *(pchar + 1) == '\'' ) {
-                char * * ppval = &p2;
-
-                pw = scr_multi_funcs( pchar, pwend, ppval );
-                pchar = strchr( pw, ampchar );  // look for next & in buffer
-                continue;
-            }
-
 
             varstart = pw;              // remember start of var
             pw++;                       // over &
@@ -228,42 +199,20 @@ void        process_line( void )
 
             pchar = scan_sym( pw, &symvar_entry, &var_ind );
             if( scan_err && *pchar == '(' ) {   // problem with subscript
-                varunresolved++;
-                p2 = pchar - workbuf + buff2;
+
+                if( var_unresolved == NULL ) {
+                    ProcFlags.unresolved  = true;
+                    var_unresolved = varstart;
+                    var_unresolved2 = p2;
+                } else {
+                    if( var_unresolved != varstart ) {
+                        ProcFlags.unresolved  = true;
+                    }
+                }
+                p2 += pchar - varstart;
                 pw = pchar;
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
                 continue;
-
-#if 0
-                if( *(pchar+1) == ampchar ) {
-                    symvar          symvar_ind;
-                    char        *   pchar2;
-
-                    scan_err = false;
-                    pchar2 = scan_sym( pchar + 2, &symvar_ind, &var_ind );
-                    if( !scan_err ) {
-                        if( symvar_ind.flags & local_var ) {
-                            rc = find_symvar( &input_cbs->local_dict,
-                                              symvar_ind.name,
-                                              var_ind, &symsubval );
-                        } else {
-                            rc = find_symvar( &global_dict, symvar_ind.name,
-                                              var_ind, &symsubval );
-                        }
-                        if( rc == 2 ) {
-                            var_ind = atoi( symsubval->value );
-                            pchar = pchar2;
-                            if( *pchar == '.' ) {
-                                pchar++;
-                            }
-                            if( *pchar == ')' ) {
-                                pchar++;
-                            }
-                        }
-
-                    }
-                }
-#endif
             }
 
             ProcFlags.suppress_msg = false;
@@ -276,14 +225,15 @@ void        process_line( void )
                                   &symsubval );
             }
             if( rc == 2 ) {             // variable found
+                ProcFlags.substituted = true;
                 if( symsubval->value[ 0 ] == CW_sep_char ) {
-                    // split record at control word seperator
+                                        // split record at control word separator
+                                        // if variable starts with cw separator
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }
-                    *(varstart - workbuf + buff2) = '\0';
-                    split_input_var( buff2, pchar - workbuf + buff2,
-                                     &symsubval->value[ 1 ] );
+                    *p2 = '\0';
+                    split_input_var( buff2, p2, &symsubval->value[ 1 ] );
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
                     break;
@@ -301,8 +251,15 @@ void        process_line( void )
                         (*pchar == ampchar) ) { // only &* as var name
                                                 // followed by another var
 
-                        varunresolved++;
-
+                        if( var_unresolved == NULL ) {
+                            ProcFlags.unresolved  = true;
+                            var_unresolved = varstart;
+                            var_unresolved2 = p2;
+                        } else {
+                            if( var_unresolved != varstart ) {
+                                ProcFlags.unresolved  = true;
+                            }
+                        }
                         pw = varstart;
                         while( pw < pchar ) {   // treat var name as text
                             *p2++ = *pw++;  // and copy
@@ -310,6 +267,7 @@ void        process_line( void )
                         continue;       // pchar points already to next &
 
                     } else {
+                        ProcFlags.substituted = true;
                                                   // replace by nullstring
                         if( *pchar == '.' ) {
                             pchar++;        // skip optional terminating dot
@@ -318,30 +276,35 @@ void        process_line( void )
                     }
                 } else {                // global var not found
 
-                /***********************************************************/
-                /*  keep trying for constructs such as                     */
-                /*                                                         */
-                /* .se prodgml = "Open Watcom GML"                         */
-                /* .se name = "GML"                                        */
-                /*                                                         */
-                /* My name is &prod&name..!                                */
-                /*                                                         */
-                /*  to become                                              */
-                /*                                                         */
-                /* My name is Open Watcom GML!                             */
-                /*                                                         */
-                /* This does not work for local variables, as these are    */
-                /* replaced by nullstring if not found                     */
-                /* My name is &*prod&*name..!                              */
-                /*  will become                                            */
-                /* My name is !                                            */
-                /***********************************************************/
+                    /*******************************************************/
+                    /*  keep trying for constructs such as                 */
+                    /*                                                     */
+                    /* .se prodgml = "Open Watcom GML"                     */
+                    /* .se name = "GML"                                    */
+                    /*                                                     */
+                    /* My name is &prod&name..!                            */
+                    /*                                                     */
+                    /*  to become                                          */
+                    /*                                                     */
+                    /* My name is Open Watcom GML!                         */
+                    /*                                                     */
+                    /* This does not work for local variables, as these are*/
+                    /* replaced by nullstring if not found                 */
+                    /* My name is &*prod&*name..!                          */
+                    /*  will become                                        */
+                    /* My name is !                                        */
+                    /*******************************************************/
 
-                    varunresolved++;
-
-                    if( varunresolved > 10 ) {  // max 10 iterations
-                        varunresolved = 0;
+                    if( var_unresolved == NULL ) {
+                        ProcFlags.unresolved  = true;
+                        var_unresolved = varstart;
+                        var_unresolved2 = p2;
+                    } else {
+                        if( var_unresolved != varstart ) {
+                            ProcFlags.unresolved  = true;
+                        }
                     }
+
                     pw = varstart;
                     if( *pchar == '.' ) {
                         pchar++;        // copy terminating dot, too
@@ -357,7 +320,111 @@ void        process_line( void )
         while( pw <= pwend) {           // copy remaining input
              *p2++ = *pw++;
         }
-    } while( (varunresolved > 0) && (varstart != NULL) );
+
+    } while( ProcFlags.unresolved && ProcFlags.substituted );
+
+
+    // now handle functions and ignore unresolved variables
+    if( functions_found ) {
+        resolve_functions = false;
+        functions_found   = false;
+        // look for function start only, ignore unresolved variables
+        var_unresolved = NULL;
+        ProcFlags.unresolved  = false;
+        do {
+            strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
+            buff2_lg = strnlen_s( buff2, buf_size );
+            pwend = workbuf + buff2_lg;
+            if( var_unresolved == NULL ) {
+                pw = workbuf;
+                p2 = buff2;
+            } else {
+                pw = workbuf + (var_unresolved2 - buff2);
+                p2 = var_unresolved2;
+            }
+            varstart = NULL;
+
+            ProcFlags.substituted = false;
+
+            pchar = strchr( workbuf, ampchar ); // look for & in buffer
+            while( pchar != NULL ) {    // & found
+                while( pw < pchar ) {   // copy all data preceding &
+                    *p2++ = *pw++;
+                }
+                buff2_lg = strnlen_s( buff2, buf_size );
+
+                /***********************************************************/
+                /*  Some single letter functions are resolved here:        */
+                /*                                                         */
+                /*  functions used within the OW doc build system:         */
+                /*   &e'  existance of variable 0 or 1                     */
+                /*   &l'  length of variable content                       */
+                /*        or if undefined length of name                   */
+                /*   &u'  upper                                            */
+                /*                                                         */
+                /*   &s'  subscript    These are recognized,               */
+                /*   &S'  superscript  ... but processed as &u'            */
+                /*                                                         */
+                /*   other single letter functions are not used AFAIK      */
+                /*                                                         */
+                /***********************************************************/
+                if( *(pchar + 2) == '\'' ) {
+                    char * * ppval = &p2;
+
+                    pw = scr_single_funcs( pchar, pwend, ppval );
+                    pchar = strchr( pw, ampchar );// look for next & in buffer
+                    continue;
+                }  else
+
+                /***********************************************************/
+                /*  Some multi  letter functions are resolved here:        */
+                /*                                                         */
+                /*  functions used within the OW doc build system:         */
+                /*                                                         */
+                /*   &'delstr(                                             */
+                /*   &'d2c(                                                */
+                /*   &'index(                                              */
+                /*   &'insert(                                             */
+                /*   &'left(                                               */
+                /*   &'length(                                             */
+                /*   &'lower(                                              */
+                /*   &'min(                                                */
+                /*   &'pos(                                                */
+                /*   &'right(                                              */
+                /*   &'strip(                                              */
+                /*   &'substr(                                             */
+                /*   &'subword(                                            */
+                /*   &'translate(                                          */
+                /*   &'upper(                                              */
+                /*   &'veclastpos(                                         */
+                /*   &'vecpos(                                             */
+                /*   &'word(                                               */
+                /*   &'wordpos(                                            */
+                /*   &'words(                                              */
+                /*                                                         */
+                /*   Others are recognized but not processed               */
+                /*                                                         */
+                /***********************************************************/
+                if( *(pchar + 1) == '\'' ) {
+                    char * * ppval = &p2;
+
+                    pw = scr_multi_funcs( pchar, pwend, ppval );
+                    pchar = strchr( pw, ampchar );// look for next & in buffer
+                    continue;
+                } else {
+                    *p2++ = *pw++;      // over &
+                    pchar = strchr( pw, ampchar );// look for next & in buffer
+                }
+            }                           // while & found
+
+            while( pw <= pwend) {           // copy remaining input
+                 *p2++ = *pw++;
+            }
+
+        } while( ProcFlags.unresolved && ProcFlags.substituted );
+
+    }                                   // if functions_found
+
 
     buff2_lg = strnlen_s( buff2, buf_size );
 

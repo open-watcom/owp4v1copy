@@ -28,13 +28,13 @@
 *               only uncommented tags are processed so far
 *
 ****************************************************************************/
-
+ 
 #ifndef pick
     #error macro pick not defined
 #endif
 //       tagname     tagname  routinename     flags
 //                   length
-
+ 
 //pick( "ABSTRACT",   8,      gml_abstract,
 //pick( "ADDRESS",    7,      gml_address,
 //pick( "ALINE",      5,      gml_aline,
@@ -128,5 +128,5 @@
 //pick( "TOC",        3,      gml_toc,
 //pick( "UL",         2,      gml_ul,
 //pick( "XMP",        3,      gml_xmp,
-
-
+ 
+#undef  pick 

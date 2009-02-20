@@ -78,8 +78,8 @@ void init_global_vars( void )
     wng_count           = 0;            // total warnig count
 
     GML_char            = GML_CHAR_DEFAULT; // GML start char
-    SCR_char            = SCR_CHAR_DEFAULT; // Script start char
-    CW_sep_char         = CW_SEP_CHAR_DEFAULT;  // control word seperator
+    SCR_char            = SCR_CHAR_DEFAULT; // script start char
+    CW_sep_char         = CW_SEP_CHAR_DEFAULT;// script control word seperator
 
     CPI                 = 10;           // chars per inch
     CPI_units           = SU_chars;

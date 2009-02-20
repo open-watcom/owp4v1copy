@@ -53,8 +53,19 @@ objs =  &
         gscan.obj       &
         gset.obj        &
         gsetvar.obj     &
+        gsfd2c.obj      &
+        gsfdelst.obj    &
+        gsfindex.obj    &
+        gsfinsrt.obj    &
+        gsfleft.obj     &
+        gsflngth.obj    &
+        gsflower.obj    &
+        gsfmin.obj      &
+        gsfright.obj    &
+        gsfstrip.obj    &
         gsfuncs.obj     &
         gsfunelu.obj    &
+        gsfupper.obj    &
         gsgoto.obj      &
         gsifdoel.obj    &
         gsimbed.obj     &
@@ -80,7 +91,7 @@ all : wgml.exe .SYMBOLIC
 
 wgml.exe: $(gendeps)
     $(linker) name $^@ @wgml.lnk
-    rm wgml.lnk
+    -rm wgml.lnk
 
 !else
 

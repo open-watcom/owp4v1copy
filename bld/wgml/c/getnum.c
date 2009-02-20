@@ -358,12 +358,13 @@ static  int evaluate( char * * line, long *val )
         }
     }
 
-    while (1 < cvalue) {
+    while( 1 < cvalue ) {
         ercode = do_expr();
         if( ok > ercode )
              return ercode;
     }
-    if ( !coper ) {
+    if( !coper ) {
+        *line = ptr;                    // next scan position
         return( pop_val( val ) );       // no operations left return result
     } else {
         return( not_ok );
@@ -401,7 +402,10 @@ condcode getnum( getnum_block *gn )
         gn->num_sign = ' ';             // no unary sign
     }
     ignore_blanks = gn->ignore_blanks;
+    c = *(z + 1);
+    *(z + 1) = '\0';                    // make null terminated string
     rc = evaluate( &a, &gn->result );
+    *(z + 1) = c;
     if( rc != 0 ) {
         gn->cc = notnum;
     } else {

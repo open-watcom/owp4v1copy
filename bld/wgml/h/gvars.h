@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -126,11 +126,11 @@ global struct ProcFlags {
     unsigned        in_macro_define : 1;// macro definition active
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
-    unsigned        keep_ifstate    : 1;// leave ifstak unchanged for next line
+    unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
     unsigned        goto_active     : 1;// processing .go label
 
-    unsigned        free8           : 1;
-    unsigned        free9           : 1;
+    unsigned        substituted     : 1;// & found in current input line
+    unsigned        unresolved      : 1;// variable not (yet) resolved
     unsigned        freea           : 1;
     unsigned        freeb           : 1;
     unsigned        freec           : 1;
@@ -147,6 +147,7 @@ global char         *   buff2;          // input buffer
 global size_t           buff2_lg;       // input buffer used length
 global char         *   open_paren;     // ( in input
 global char         *   clos_paren;     // ) in input
+global char         *   var_unresolved; // first unresolved var in input
 
 global char             srnm[ SYM_NAME_LENGTH + 1 ];// symbol name for getsym()
 global sub_index        srnmsub;        // subscript

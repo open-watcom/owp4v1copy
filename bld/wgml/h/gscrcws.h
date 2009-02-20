@@ -28,13 +28,13 @@
 *               only uncommented control words are processed so far
 *
 ****************************************************************************/
-
+ 
 #ifndef pick
     #error macro pick not defined
 #endif
 //       control     tagname  routinename     flags
 //       word        length
-
+ 
   pick( "ap",         2,      scr_ap,       0           )
 //pick( "bd",         2,      scr_bd,       0           )
 //pick( "bi",         2,      scr_bi,       0           )
@@ -95,4 +95,5 @@
 //pick( "ul",         2,      scr_ul,       0           )
 //pick( "us",         2,      scr_us,       0           )
   pick( "..",         2,      scr_label,    0           )
-
+ 
+#undef pick

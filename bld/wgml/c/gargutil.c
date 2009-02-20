@@ -24,12 +24,13 @@
 *
 *  ========================================================================
 *
-* Description: functions:
-*                  garginit      --- initialize operand scan in buff2 (SCR)
-*                  garginitdot   --- initialize operand scan in buff2 (GML)
-*                  getarg        --- scan (quoted) blank delimited argument
-*                  getqst        --- scan quoted string
-*                  test_xxx_char --- test for allowed char
+* Description: utility functions for arguments:
+*         garginit             --- initialize operand scan in buff2 (SCR)
+*         garginitdot          --- initialize operand scan in buff2 (GML)
+*         getarg               --- scan (quoted) blank delimited argument
+*         getqst               --- scan quoted string
+*         test_xxx_char        --- test for allowed char
+*         unquote_if_quoted    --- adjust ptrs inside quoted string
 *
 ****************************************************************************/
 
@@ -259,3 +260,26 @@ bool    test_symbol_char( char c )
     }
     return( test );
 }
+
+/*
+ * If first and last character are the same and one of the quote chars
+ * the start and end pointers are adjusted
+ */
+void    unquote_if_quoted( char * * a, char * * z )
+{
+#define s_q     '\''
+#define d_q     '\"'
+#define vbar    0xdd
+#define cent    0x9b
+
+    if( **a == **z ) {
+        if( (**a == d_q) || (**a == s_q)
+            || (**a == vbar) || ( **a == cent) ) {
+
+            *a += 1;
+            *z -= 1;
+        }
+    }
+}
+
+
