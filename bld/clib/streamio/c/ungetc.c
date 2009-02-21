@@ -87,11 +87,11 @@ _WCRTLINK INTCHAR_TYPE __F_NAME(ungetc,ungetwc)( INTCHAR_TYPE c, FILE *fp )
             return( WEOF );
         }
     } else {
-        char    mbc[MB_CUR_MAX];
-        int     mbcLen;
+        unsigned char   mbc[MB_CUR_MAX];
+        int             mbcLen;
 
         /*** Convert the character to multibyte form ***/
-        if( wctomb( mbc, c ) == -1 ) {
+        if( wctomb( (char *)mbc, c ) == -1 ) {
             __set_errno( EILSEQ );
             return( WEOF );
         }
@@ -115,17 +115,17 @@ _WCRTLINK INTCHAR_TYPE __F_NAME(ungetc,ungetwc)( INTCHAR_TYPE c, FILE *fp )
     }
 #else
     if( fp->_cnt == 0 ) {               /* read buffer is empty */
-        fp->_cnt = CHARSIZE;
-        fp->_ptr = _FP_BASE(fp) + fp->_bufsize - CHARSIZE;
+        fp->_cnt = 1;
+        fp->_ptr = _FP_BASE(fp) + fp->_bufsize - 1;
         fp->_flag |= _UNGET;                                /* 10-mar-90 */
-        *(CHAR_TYPE *)(fp->_ptr) = c;
+        *fp->_ptr = c;
     } else if( fp->_ptr != _FP_BASE(fp) ) {
-        fp->_cnt += CHARSIZE;
-        fp->_ptr -= CHARSIZE;
-        if( *(CHAR_TYPE *)(fp->_ptr) != c ) {
+        fp->_cnt++;
+        fp->_ptr--;
+        if( *fp->_ptr != c ) {
             fp->_flag |= _UNGET;                            /* 10-mar-90 */
         }
-        *(CHAR_TYPE *)(fp->_ptr) = c;
+        *fp->_ptr = c;
     } else {                            /* read buffer is full */
         _ReleaseFile( fp );
         return( EOF );

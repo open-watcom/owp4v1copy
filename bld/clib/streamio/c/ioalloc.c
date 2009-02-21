@@ -58,7 +58,7 @@ void __ioalloc( FILE *fp )
     if( _FP_BASE(fp) == NULL ) {
         fp->_flag &= ~(_IONBF | _IOLBF | _IOFBF);
         fp->_flag |= _IONBF;        /* can't get big buffer */
-        _FP_BASE(fp) = (char *)&(fp->_ungotten);
+        _FP_BASE(fp) = (unsigned char *)&(fp->_ungotten);
         fp->_bufsize = 1;
     } else {
         fp->_flag |= _BIGBUF;       /* got big buffer */

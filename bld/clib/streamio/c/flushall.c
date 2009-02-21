@@ -36,8 +36,6 @@
 #include "flush.h"
 
 
-/* __fill_buffer calls this routine with _ISTTY mask */
-
 int __flushall( int mask )
 {
     __stream_link   *link;

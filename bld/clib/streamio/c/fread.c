@@ -48,8 +48,8 @@ extern int  __fill_buffer( FILE * );    /* located in fgetc */
 
 _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
 {
-    char    *buf = _buf;
-    size_t  len_read;
+    unsigned char   *buf = _buf;
+    size_t          len_read;
 
     _ValidFile( fp, 0 );
     _AccessFile( fp );
@@ -137,7 +137,8 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
             }
             // get character
             --fp->_cnt;
-            c = *fp->_ptr++ & 0xff;
+            c = *fp->_ptr;
+            fp->_ptr++;
             // perform new-line translation
             if( c == '\r' ) {
                 // ensure non-empty buffer
@@ -146,7 +147,8 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
                 }
                 // get character
                 --fp->_cnt;
-                c = *fp->_ptr++ & 0xff;
+                c = *fp->_ptr;
+                fp->_ptr++;
             }
             // check for DOS end of file marker
             if( c == DOS_EOF_CHAR ) {

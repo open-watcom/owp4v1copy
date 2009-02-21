@@ -49,16 +49,11 @@
 #include "flush.h"
 #include "streamio.h"
 
-
 #define DOS_EOF_CHAR        0x1a
 
-#ifdef __WIDECHAR__
-    #define CHARMASK        0xffff
-#else
-    #define CHARMASK        0xff
-#endif
+#ifndef __WIDECHAR__
 
-int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
+int __fill_buffer( FILE *fp )
 {
     if( _FP_BASE(fp) == NULL ) {
         __ioalloc( fp );
@@ -72,7 +67,7 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
     fp->_ptr = _FP_BASE(fp);
 #ifdef __UNIX__
     fp->_cnt = __qread( fileno( fp ), fp->_ptr,
-        (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
+        (fp->_flag & _IONBF) ? 1 : fp->_bufsize );
 #else
     if(( fp->_flag & (_IONBF | _ISTTY)) == (_IONBF | _ISTTY) &&
        ( fileno( fp ) == STDIN_FILENO ))
@@ -82,12 +77,12 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
         fp->_cnt = 0;
         c = getche();
         if( c != EOF ) {
-            *(CHAR_TYPE *)fp->_ptr = c;
-            fp->_cnt = CHARSIZE;
+            *fp->_ptr = c;
+            fp->_cnt = 1;
         }
     } else {
         fp->_cnt = __qread( fileno( fp ), fp->_ptr,
-            (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
+            (fp->_flag & _IONBF) ? 1 : fp->_bufsize );
     }
 #endif
     if( fp->_cnt <= 0 ) {
@@ -101,20 +96,16 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
     return( fp->_cnt );
 }
 
-int __F_NAME(__filbuf,__wfilbuf)( FILE *fp )
+static int __filbuf( FILE *fp )
 {
-    if( __F_NAME(__fill_buffer,__wfill_buffer)( fp ) == 0 ) {
+    if( __fill_buffer( fp ) == 0 ) {
         return( EOF );
-    }
-    else {
-        fp->_cnt -= CHARSIZE;
-        fp->_ptr += CHARSIZE;
-        return( *(CHAR_TYPE *)(fp->_ptr - CHARSIZE) & CHARMASK );
+    } else {
+        fp->_cnt--;
+        fp->_ptr++;
+        return( *(fp->_ptr - 1) );
     }
 }
-
-
-#ifndef __WIDECHAR__
 
 _WCRTLINK int fgetc( FILE *fp )
 {
@@ -135,9 +126,9 @@ _WCRTLINK int fgetc( FILE *fp )
         // it is important that this remain a relative comparison
         // to ensure that the getc() macro works properly
         if( fp->_cnt < 0 ) {
-            c = __F_NAME(__filbuf,__wfilbuf)( fp );
+            c = __filbuf( fp );
         } else {
-            c = *(char *)fp->_ptr;
+            c = *fp->_ptr;
             fp->_ptr++;
         }
     }
@@ -148,10 +139,10 @@ _WCRTLINK int fgetc( FILE *fp )
             // it is important that this remain a relative comparison
             // to ensure that the getc() macro works properly
             if( fp->_cnt < 0 ) {
-                c = __F_NAME(__filbuf,__wfilbuf)( fp );
+                c = __filbuf( fp );
             } else {
-                c = *(CHAR_TYPE*)fp->_ptr & CHARMASK;
-                fp->_ptr += CHARSIZE;
+                c = *fp->_ptr;
+                fp->_ptr++;
             }
         }
         if( c == DOS_EOF_CHAR ) {

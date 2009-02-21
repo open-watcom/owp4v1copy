@@ -53,11 +53,11 @@ _WCRTLINK int __flush( FILE *fp )
 
 _WCRTLINK int __flush( FILE *fp )
 {
-    int         len;
-    long        offset;
-    int         ret;
-    char        *ptr;
-    unsigned    amount;
+    int             len;
+    long            offset;
+    int             ret;
+    unsigned char   *ptr;
+    unsigned        amount;
 
     ret = 0;
     _AccessFile( fp );

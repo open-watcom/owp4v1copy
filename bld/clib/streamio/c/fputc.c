@@ -72,7 +72,7 @@ _WCRTLINK int fputc( int c, FILE *fp )
 #ifndef __UNIX__
         if( !(fp->_flag & _BINARY) ) {
             fp->_flag |= _DIRTY;
-            *(char*)fp->_ptr = '\r';   /* '\n' -> '\r''\n' */
+            *fp->_ptr = '\r';   /* '\n' -> '\r''\n' */
             fp->_ptr++;
             fp->_cnt++;
             if( fp->_cnt == fp->_bufsize ) {
@@ -85,7 +85,7 @@ _WCRTLINK int fputc( int c, FILE *fp )
 #endif
     }
     fp->_flag |= _DIRTY;
-    *(char *)fp->_ptr = c;
+    *fp->_ptr = c;
     fp->_ptr++;
     fp->_cnt++;
     if( (fp->_flag & flags) || (fp->_cnt == fp->_bufsize) ) {
