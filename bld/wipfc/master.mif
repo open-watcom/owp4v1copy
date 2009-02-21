@@ -6,14 +6,14 @@ wipfc_autodepends = .autodepend
 !include deftarg.mif
 !include defrule.mif
 
-extra_cpp_flags = -xs -d__STDC_LIMIT_MACROS
+extra_cpp_flags = -xs -D__STDC_LIMIT_MACROS
 !ifeq release 0
 extra_cpp_flags += -et
 !endif
 
 extra_l_flags = op eliminate,map
 
-inc_dirs = -I"../cpp" -I"$(watcom_dir)/h"
+inc_dirs = -I"../cpp"
 
 .cpp : ../cpp
 
