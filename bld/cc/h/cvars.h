@@ -434,12 +434,12 @@ extern  void    FrontEndInit( bool reuse );
 extern  int     FrontEnd(char **);
 extern  void    FrontEndFini( void );
 extern  void    CppComment(int);
-extern  int     CppPrinting(void);
+extern  bool    CppPrinting(void);
 extern  void    CppPutc(int);
 extern  void    CppPrtf(char *,...);
 extern  void    SetCppWidth(unsigned);
-extern  void    PrtChar(int);
-extern  void    PrtToken(void);
+extern  void    CppPrtChar(int);
+extern  void    CppPrtToken(void);
 extern  bool    OpenSrcFile(const char *,bool);
 extern  void    OpenDefFile(void);
 extern  FILE    *OpenBrowseFile(void);
@@ -833,7 +833,7 @@ extern  unsigned int JIS2Unicode( unsigned );           /* jis2unic */
 // pchdr.c
 extern  int     UsePreCompiledHeader( const char * );
 extern  void    InitBuildPreCompiledHeader( void );
-extern  void    BuildPreCompiledHeader( char * );
+extern  void    BuildPreCompiledHeader( const char * );
 extern  void    FreePreCompiledHeader( void );
 
 extern  void    CBanner( void );                        /* watcom */

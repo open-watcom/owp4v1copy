@@ -147,7 +147,7 @@ TOKEN ChkControl( void )
         lines_skipped = 0;
         for( ; CurrChar != EOF_CHAR; ) {
             if( CompFlags.cpp_output ) {
-                PrtChar( '\n' );
+                CppPrtChar( '\n' );
             }
             NextChar();
             if( CurrChar != PreProcChar ) {
@@ -466,8 +466,7 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char
                 CErr1( ERR_MUST_BE_MACRO_PARM );
                 prev_token = *(TOKEN *)TokenBuf;
                 *(TOKEN *)TokenBuf = T_SHARP;               /* 17-jul-92 */
-                MacroCopy( TokenBuf, MacroOffset + mlen - sizeof( TOKEN ),
-                           sizeof( TOKEN ) );
+                MacroCopy( TokenBuf, MacroOffset + mlen - sizeof( TOKEN ), sizeof( TOKEN ) );
                 *(TOKEN *)TokenBuf = prev_token;
             }
             prev_non_ws_token = CurToken;

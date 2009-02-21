@@ -547,18 +547,18 @@ char *ErrFileName( void )
     return( CreateFileName( ErrorFileName, ERR_EXT, FALSE ) );
 }
 
-void PrtChar( int c )
+void CppPrtChar( int c )
 {
-    if( !CppPrinting() )
-        return;
-    CppPutc( c );
+    if( CppPrinting() ) {
+        CppPutc( c );
+    }
 }
 
 
 static unsigned CppColumn = 0;
 static unsigned CppWidth = 0;
-static unsigned CommentChar = 0;
-static unsigned CppFirstChar = 0;
+static unsigned CommentChar = '\0';
+static bool     CppFirstChar = FALSE;
 
 void SetCppWidth( unsigned width )
 {
@@ -567,70 +567,63 @@ void SetCppWidth( unsigned width )
 
 void CppComment( int ch )
 {
-    if( !CompFlags.cpp_output )
-        return;
-    if( !CompFlags.keep_comments )
-        return;
-    if( !CppPrinting() )
-        return;
-    if( ch != 0 ) {
-        if( CppColumn + 2 >= CppWidth )
-            CppPutc( '\n' );
-        CppPutc( '/' );
-        CppPutc( ch );
-    } else if( CommentChar == '*' ) {
-        if( CppColumn + 2 >= CppWidth )
-            CppPutc( '\n' );
-        CppPutc( '*' );
-        CppPutc( '/' );
-//  } else if( CommentChar == '/' ) {
-//      CppPutc( '\n' );
+    if( CompFlags.keep_comments && CppPrinting() ) {
+        if( ch != '\0' ) {
+            if( CppColumn + 2 >= CppWidth )
+                CppPutc( '\n' );
+            CppPutc( '/' );
+            CppPutc( ch );
+        } else if( CommentChar == '*' ) {
+            if( CppColumn + 2 >= CppWidth )
+                CppPutc( '\n' );
+            CppPutc( '*' );
+            CppPutc( '/' );
+//        } else if( CommentChar == '/' ) {
+//            CppPutc( '\n' );
+        }
+        CommentChar = ch;
     }
-    CommentChar = ch;
 }
 
 
 void CppPutc( int ch )
 {
+    int     rc;
+
     if( CppFirstChar ) {
-        CppFirstChar = 0;
+        CppFirstChar = FALSE;
         if( ch == '\n' ) {
             return;
         }
     }
     if( ch == '\n' ) {
         CppColumn = 0;
+        rc = fputc( '\n', CppFile );
     } else if( CppColumn >= CppWidth ) {
-        if( CommentChar == 0 ) {
-            if( fputc( '\\', CppFile ) < 0 ) {
-                goto werror;
+        CppColumn = 1;
+        if( CommentChar == '\0' ) {
+            if( (rc = fputc( '\\', CppFile )) != EOF ) {
+                rc = fputc( '\n', CppFile );
+            }
+        } else if( (rc = fputc( '\n', CppFile )) != EOF ) {
+            if( CommentChar == '/' ) {
+                CppColumn += 2;
+                if( (rc = fputc( '/', CppFile )) != EOF ) {
+                    rc = fputc( '/', CppFile );
+                }
             }
         }
-        if( fputc( '\n', CppFile ) < 0 ) {
-            goto werror;
-        }
-        if( CommentChar == '/' ) {
-            if( fputc( '/', CppFile ) < 0 ) {
-                goto werror;
-            }
-            if( fputc( '/', CppFile ) < 0 ) {
-                goto werror;
-            }
-            CppColumn = 3;
-        } else {
-            CppColumn = 1;
+        if( rc != EOF ) {
+            rc = fputc( ch, CppFile );
         }
     } else {
         ++CppColumn;
+        rc = fputc( ch, CppFile );
     }
-    if( fputc( ch, CppFile ) >= 0 ) {
-        return;
+    if( rc == EOF ) {
+        CloseFiles();       /* get rid of temp file */
+        MyExit( 1 );        /* exit */
     }
-
-werror:
-    CloseFiles();       /* get rid of temp file */
-    MyExit( 1 );        /* exit to DOS do not pass GO */
-    return;
 }
 
 
@@ -662,7 +655,7 @@ void OpenCppFile( void )
         CppFile = stdout;
     }
     CppColumn = 0;
-    CppFirstChar = 1;
+    CppFirstChar = TRUE;
     if( CppFile == NULL ) {
         CantOpenFile( name );
         MyExit( 1 );
@@ -782,7 +775,7 @@ bool OpenSrcFile( const char *filename, bool is_lib )
         do {
             i = 0;
             while( *p == ' ' )
-                ++p;                     /* 28-feb-95 */
+                ++p;
             for( ;; ) {
                 if( *p == INCLUDE_SEP || *p == ';' )
                     break;
@@ -793,7 +786,7 @@ bool OpenSrcFile( const char *filename, bool is_lib )
                 }
                 ++p;
             }
-            while( i != 0 ) {                           /* 28-feb-95 */
+            while( i != 0 ) {
                 if( buff[ i - 1 ] != ' ' )
                     break;
                 --i;
@@ -879,7 +872,7 @@ void CloseSrcFile( FCB *srcfcb )
             }
         }
         if( CompFlags.cpp_output ) {
-            EmitPoundLine( SrcFile->src_loc.line, SrcFile->src_name, 1 );
+            EmitPoundLine( SrcFile->src_loc.line, SrcFile->src_name, TRUE );
         }
     } else {
         SrcLineCount = srcfcb->src_line_cnt;
@@ -1071,7 +1064,7 @@ char *FileIndexToCorrectName( unsigned file_index )
     FNAMEPTR    flist;
     char        *name;
 
-    if( NULL == ( flist = FileIndexToFName( file_index ) ) )
+    if( NULL == (flist = FileIndexToFName( file_index )) )
         return( NULL );
     if( CompFlags.ef_switch_used ) {
         name = FNameFullPath( flist );
@@ -1184,7 +1177,7 @@ static const char *IncPathElement( const char *path, char *prefix )
             *prefix++ = *path++;
         }
     }
-    if( (length > 1) && IS_PATH_SEP( *(prefix - 1) ) )
+    if( ( length > 1 ) && IS_PATH_SEP( *(prefix - 1) ) )
         --prefix;
     *prefix = '\0';
     return( path );
@@ -1284,8 +1277,8 @@ static int FCB_Alloc( FILE *fp, const char *filename )
         if( CompFlags.cpp_output ) {            /* 10-aug-91 */
             if( CppFile == NULL )
                 OpenCppFile();
-            EmitPoundLine( 1, filename, 1 );
-            CppFirstChar = 1;
+            EmitPoundLine( 1, filename, TRUE );
+            CppFirstChar = TRUE;
         }
         return( TRUE );
     }
@@ -1356,14 +1349,14 @@ local void Parse( void )
 static void CPP_Parse( void )
 {
     if( ForceInclude ) {
-        PrtChar( '\n' );
+        CppPrtChar( '\n' );
         OpenSrcFile( ForceInclude, FALSE );
     }
     for( ;; ) {
         GetNextToken();
         if( CurToken == T_EOF )
             break;
-        PrtToken();
+        CppPrtToken();
     }
     MacroFini();
 }
@@ -1371,63 +1364,59 @@ static void CPP_Parse( void )
 
 void EmitPoundLine( unsigned line_num, const char *filename, int newline )
 {
-    if( CompFlags.cpp_line_wanted ) {
-        if( CppPrinting() ) {
-            CppPrtf( "#line %u \"", line_num );    /* 04-apr-91 */
-            while( *filename != '\0' ) {
-                PrtChar( *filename );
-                ++filename;
-            }
-            PrtChar( '\"' );
-            if( newline ) {
-                PrtChar( '\n' );
-            }
+    if( CompFlags.cpp_line_wanted && CppPrinting() ) {
+        CppPrtf( "#line %u \"", line_num );
+        while( *filename != '\0' ) {
+            CppPutc( *filename );
+            ++filename;
+        }
+        CppPutc( '\"' );
+        if( newline ) {
+            CppPutc( '\n' );
         }
     }
 }
 
 void EmitLine( unsigned line_num, const char *filename )
 {
-    EmitPoundLine( line_num, filename, 0 );
+    EmitPoundLine( line_num, filename, FALSE );
 }
 
-int CppPrinting( void )
+bool CppPrinting( void )
 {
     if( NestLevel != SkipLevel )
-        return( 0 );
-    return( 1 );
+        return( FALSE );
+    return( TRUE );
 }
 
-
-void PrtToken( void )
+void CppPrtToken( void )
 {
-    if( !CppPrinting() )
-        return;
-    switch( CurToken ) {
-    case T_BAD_CHAR:                    /* 12-apr-89 */
-    case T_BAD_TOKEN:                   /* 12-apr-89 */
-    case T_ID:
-    case T_CONSTANT:
-        CppPrtf( "%s", Buffer );
-        break;
-    case T_STRING:
-        if( CompFlags.wide_char_string ) {              /* 18-feb-90 */
-            PrtChar( 'L' );
-        }
-        CppPrtf( "\"%s\"", Buffer );
-        break;
-    case T_EOF:
-    case T_NULL:
-        break;
-    case T_WHITE_SPACE:
-        if( PrintWhiteSpace ) {
+    if( CppPrinting() ) {
+        switch( CurToken ) {
+        case T_BAD_CHAR:                    /* 12-apr-89 */
+        case T_BAD_TOKEN:                   /* 12-apr-89 */
+        case T_ID:
+        case T_CONSTANT:
+            CppPrtf( "%s", Buffer );
+            break;
+        case T_STRING:
+                if( CompFlags.wide_char_string )
+                    CppPutc( 'L' );
+            CppPrtf( "\"%s\"", Buffer );
+            break;
+        case T_EOF:
+        case T_NULL:
+            break;
+        case T_WHITE_SPACE:
+            if( PrintWhiteSpace ) {
+                CppPrtf( "%s", Tokens[ CurToken ] );
+            } else {
+                PrintWhiteSpace = TRUE; //Toggle
+            }
+            break;
+        default:
             CppPrtf( "%s", Tokens[ CurToken ] );
-        } else {
-            PrintWhiteSpace = TRUE; //Toggle
         }
-        break;
-    default:
-        CppPrtf( "%s", Tokens[ CurToken ] );
     }
 }
 
@@ -1438,13 +1427,11 @@ void GetNextToken( void )
     if( MacroPtr != NULL ) {
         GetMacroToken();
     } else {
-        for( ;; ) {
-            if( CurrChar == EOF_CHAR )
-                break;
+        for( ; CurrChar != EOF_CHAR; ) {
             if( (CharSet[ CurrChar ] & C_WS) == 0 )
                 break;
             if( CurrChar != '\r' )
-                PrtChar( CurrChar );
+                CppPrtChar( CurrChar );
             NextChar();
         }
         CurToken = ScanToken();

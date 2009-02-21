@@ -48,7 +48,7 @@ extern TREEPTR         CurFuncNode;
 
 static int RemoveEscapes( char *buf, const char *inbuf, size_t length );
 
-static int OpenUnicodeFile( char *filename )
+static int OpenUnicodeFile( const char *filename )
 {
     int         handle;
     char        fullpath[ _MAX_PATH ];

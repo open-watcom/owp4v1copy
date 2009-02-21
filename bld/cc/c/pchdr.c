@@ -195,7 +195,7 @@ static void InitPHVars( void )
     PH_computing_size  = 0;
 }
 
-static void CreatePHeader( char *filename )
+static void CreatePHeader( const char *filename )
 {
     PH_handle = sopen4( filename, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, SH_DENYRW, PMODE );
     if( PH_handle == -1 ) {
@@ -1006,7 +1006,7 @@ void InitBuildPreCompiledHeader( void )
     PCHIAliasNames = IAliasNames;
 }
 
-void BuildPreCompiledHeader( char *filename )
+void BuildPreCompiledHeader( const char *filename )
 {
     int         rc;
     char        *cwd;

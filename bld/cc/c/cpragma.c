@@ -57,12 +57,10 @@ static struct toggle ToggleNames[] = {
 static void PreProcPrintToken()
 {
     TOKEN lastToken;
-    if( CompFlags.cpp_output ) {
-        if( ! CppPrinting() ) 
-            return;
+    if( CppPrinting() ) {
         lastToken = CurToken;
         CurToken = T_ID;
-        PrtToken();   
+        CppPrtToken();
         CurToken = lastToken;
     }
 }
@@ -1160,7 +1158,7 @@ void CPragma( void )
             GetNextToken();
             if( CurToken == T_NULL )
                 break;
-            PrtToken();
+            CppPrtToken();
         }
         CompFlags.in_pragma = 0;
     } else {

@@ -239,10 +239,10 @@ static int tryBackSlashNewLine( void )
         }
         if( CompFlags.cpp_output ) {            /* 30-may-95 */
             if( CompFlags.in_pragma ) {
-                PrtChar( '\\' );
-                PrtChar( '\n' );
+                CppPrtChar( '\\' );
+                CppPrtChar( '\n' );
             } else if( CompFlags.cpp_line_wanted ) {
-                PrtChar( '\n' );
+                CppPrtChar( '\n' );
             }
         }
         SrcFile->src_line_cnt++;

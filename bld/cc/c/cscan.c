@@ -966,7 +966,9 @@ static TOKEN ScanSlash( void )
         Buffer[ 2 ] = '\0';
         return( T_DIVIDE_EQUAL );
     } else if( c == '/' && !CompFlags.strict_ANSI ) {   /* if C++ // style comment */
-        CppComment( '/' );
+        if( CompFlags.cpp_output ) {
+            CppComment( '/' );
+        }
         CompFlags.scanning_cpp_comment = 1;
         for( ;; ) {
             c = CurrChar;
@@ -980,10 +982,12 @@ static TOKEN ScanSlash( void )
             if( CurrChar == '\n' || c == '\r' )
                 break;
             if( CompFlags.cpp_output && CompFlags.keep_comments && CurrChar != '\r' ) {
-                PrtChar( CurrChar );
+                CppPrtChar( CurrChar );
             }
         }
-        CppComment( 0 );
+        if( CompFlags.cpp_output ) {
+            CppComment( '\0' );
+        }
         CompFlags.scanning_cpp_comment = 0;
         Buffer[ 0 ] = ' ';
         Buffer[ 1 ] = '\0';
@@ -1149,22 +1153,22 @@ static void ScanComment( void )
                 if( c == '/' )
                     break;
                 if( CompFlags.keep_comments ) {
-                    PrtChar( '*' );
+                    CppPrtChar( '*' );
                 }
                 continue; //could be **/
             }
             if( c == EOF_CHAR ) {
-                CppComment( 0 );
+                CppComment( '\0' );
                 return;
             }
             if( c == '\n' ) {
-                PrtChar( c );
+                CppPrtChar( c );
             } else if( c != '\r' && CompFlags.keep_comments ) {
-                PrtChar( c );
+                CppPrtChar( c );
             }
             c = NextChar();
         }
-        CppComment( 0 );
+        CppComment( '\0' );
     } else {
         // make '/' a special character so that we only have to do one test
         // for each character inside the main loop
@@ -1508,7 +1512,7 @@ static void SkipWhiteSpace( int c )
             if( (CharSet[ c ] & C_WS) == 0 )
                 break;
             if( c != '\r' && !CompFlags.pre_processing ) {
-                PrtChar( c );
+                CppPrtChar( c );
             }
             c = NextChar();
         }
@@ -1526,7 +1530,7 @@ void SkipAhead( void )
             if( CurrChar != '\n' )
                 break;
             if( CompFlags.cpp_output && !CompFlags.pre_processing ) {
-                PrtChar( '\n' );
+                CppPrtChar( '\n' );
             }
             SrcFileLoc = SrcFile->src_loc;
             NextChar();
@@ -1589,7 +1593,7 @@ static TOKEN ScanMacroToken( void )
     GetMacroToken();
     if( CurToken == T_NULL ) {
         if( CompFlags.cpp_output ) {
-            PrtChar( ' ' );
+            CppPrtChar( ' ' );
         }
         CurrChar = SavedCurrChar;
         CurToken = ScanToken();
@@ -1657,7 +1661,7 @@ TOKEN PPNextToken( void )                     // called from macro pre-processor
             GetMacroToken();
             if( CurToken == T_NULL ) {
                 if( CompFlags.cpp_output ) {
-                    PrtChar( ' ' );
+                    CppPrtChar( ' ' );
                 }
                 CurToken = ScanToken();
             }
