@@ -64,8 +64,6 @@ typedef struct  a_variable {
     void        (*hook)( vhandle );
 } a_variable;
 
-extern int __nonIBM();
-
             //only reference to this Structure is through functions.
 static a_variable   *GlobalVarList = NULL;
 static array_info   GlobalVarArray;

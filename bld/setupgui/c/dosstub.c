@@ -3,8 +3,6 @@
 #include <process.h>
 #include <io.h>
 
-extern int __nonIBM();
-
 int main( int argc, char **argv )
 {
     char    buff[_MAX_PATH];
