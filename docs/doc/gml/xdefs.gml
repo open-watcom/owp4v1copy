@@ -13,7 +13,7 @@
 :set symbol="pcompany"  value="Sybase".
 :set symbol="spcompany" value="Sybase, Inc.".
 .do end
-:set symbol="cpyyear"   value="2008".
+:set symbol="cpyyear"   value="2009".
 .dm cpyrit begin
 Copyright (c) &cpyyear. the Open Watcom Contributors. All Rights Reserved.
 Portions Copyright (c) &*, 2002 Sybase, Inc. All Rights Reserved.
@@ -33,11 +33,11 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 .dm tmarkqnx end
 
 :set symbol="ver"       value="1".
-:set symbol="rev"       value="8".
+:set symbol="rev"       value="9".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
-:set symbol="version"   value="180".
-:set symbol="vermacro"  value="1280".
+:set symbol="version"   value="190".
+:set symbol="vermacro"  value="1290".
 :set symbol="minram"    value="8 MB".
 :set symbol="mfc16"     value="MFC 2.52b".
 :set symbol="mfc32"     value="MFC 4.1".

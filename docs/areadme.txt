@@ -1,5 +1,5 @@
 
-Open Watcom C/C++ Version 1.8 for Alpha AXP - README
+Open Watcom C/C++ Version 1.9 for Alpha AXP - README
 ----------------------------------------------------
 
 Welcome to the Open Watcom C/C++ Alpha Release.  This README provides

@@ -6,8 +6,8 @@ REM NOTE: All scripts to set the environment must call this script at
 REM       the end.
 
 REM Set the version numbers
-set BLD_VER=18
-set BLD_VER_STR=1.8
+set BLD_VER=19
+set BLD_VER_STR=1.9
 
 REM Set up default path information variable
 if "%DEFPATH%" == "" set DEFPATH=%PATH%
