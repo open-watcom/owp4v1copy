@@ -58,29 +58,29 @@ static CHAR_TYPE *pcopy( CHAR_TYPE **pdst, CHAR_TYPE *dst, const CHAR_TYPE *b_sr
 
     unsigned    len;
 
-    if( pdst == NULL ) return( dst );
+    if( pdst == NULL )
+        return( dst );
     *pdst = dst;
     len = e_src - b_src;
-    if( len >= _MAX_PATH2 )
-    {
+    if( len >= _MAX_PATH2 ) {
         len = _MAX_PATH2 - 1;
     }
-    #ifdef __WIDECHAR__
-        memcpy( dst, b_src, len * CHARSIZE );
-        dst[ len ] = NULLCHAR;
-        return( dst + len + 1 );
-    #else
-        #ifdef __UNIX__
-            memcpy( dst, b_src, len*CHARSIZE );
-            dst[len] = NULLCHAR;
-            return( dst + len + 1 );
-        #else
-            len = _mbsnccnt( b_src, len );          /* # chars in len bytes */
-            _mbsncpy( dst, b_src, len );            /* copy the chars */
-            dst[ _mbsnbcnt(dst,len) ] = NULLCHAR;
-            return( dst + _mbsnbcnt(dst,len) + 1 );
-        #endif
-    #endif
+#ifdef __WIDECHAR__
+    memcpy( dst, b_src, len * CHARSIZE );
+    dst[ len ] = NULLCHAR;
+    return( dst + len + 1 );
+#else
+  #ifdef __UNIX__
+    memcpy( dst, b_src, len * CHARSIZE );
+    dst[ len ] = NULLCHAR;
+    return( dst + len + 1 );
+  #else
+    len = _mbsnccnt( b_src, len );          /* # chars in len bytes */
+    _mbsncpy( dst, b_src, len );            /* copy the chars */
+    dst[ _mbsnbcnt( dst,len ) ] = NULLCHAR;
+    return( dst + _mbsnbcnt( dst, len ) + 1 );
+  #endif
+#endif
 }
 
 _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_TYPE *outp,
@@ -102,55 +102,49 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
 
     /* process node/drive/UNC specification */
     startp = inp;
-    #ifdef __UNIX__
-        if( inp[0] == PC  &&  inp[1] == PC )
-    #else
-        if( (inp[0] == PC || inp[0] == ALT_PC)
-         && (inp[1] == PC || inp[1] == ALT_PC) )
-    #endif
+#ifdef __UNIX__
+    if( inp[ 0 ] == PC && inp[ 1 ] == PC )
+#else
+    if( ( inp[ 0 ] == PC || inp[ 0 ] == ALT_PC )
+         && ( inp[ 1 ] == PC || inp[ 1 ] == ALT_PC ) )
+#endif
     {
         inp += 2;
-        for( ;; )
-        {
+        for( ;; ) {
             if( *inp == NULLCHAR )
                 break;
             if( *inp == PC )
                 break;
-            #ifndef __UNIX__
+#ifndef __UNIX__
                 if( *inp == ALT_PC )
                     break;
-            #endif
+#endif
             if( *inp == '.' )
                 break;
-            #ifdef __WIDECHAR__
+#ifdef __WIDECHAR__
                 ++inp;
-            #else
-                #ifdef __UNIX__
+#else
+  #ifdef __UNIX__
                     inp++;
-                #else
+  #else
                     inp = _mbsinc( inp );
-                #endif
-            #endif
+  #endif
+#endif
         }
         outp = pcopy( drive, outp, startp, inp );
 #if !defined(__UNIX__)
     /* process drive specification */
-    }
-    else if( inp[0] != NULLCHAR && inp[1] == ':' )
-    {
-        if( drive != NULL )
-        {
+    } else if( inp[ 0 ] != NULLCHAR && inp[ 1 ] == ':' ) {
+        if( drive != NULL ) {
             *drive = outp;
-            outp[0] = inp[0];
-            outp[1] = ':';
-            outp[2] = NULLCHAR;
+            outp[ 0 ] = inp[ 0 ];
+            outp[ 1 ] = ':';
+            outp[ 2 ] = NULLCHAR;
             outp += 3;
         }
         inp += 2;
 #endif
-    }
-    else if( drive != NULL )
-    {
+    } else if( drive != NULL ) {
         *drive = outp;
         *outp = NULLCHAR;
         ++outp;
@@ -163,40 +157,36 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
     fnamep = inp;
     startp = inp;
 
-    for(;;)
-    {
-        #ifdef __WIDECHAR__
-            ch = *inp;
-        #else
-            #ifdef __UNIX__
-                ch = *inp;
-            #else
-                ch = _mbsnextc( inp );
-            #endif
-        #endif
+    for( ;; ) {
+#ifdef __WIDECHAR__
+        ch = *inp;
+#else
+  #ifdef __UNIX__
+        ch = *inp;
+  #else
+        ch = _mbsnextc( inp );
+  #endif
+#endif
         if( ch == 0 )
             break;
-        if( ch == '.' )
-        {
+        if( ch == '.' ) {
             dotp = inp;
             ++inp;
             continue;
         }
-        #ifdef __WIDECHAR__
-            inp++;
-        #else
-            #ifdef __UNIX__
-                inp++;
-            #else
-                inp = _mbsinc( inp );
-            #endif
-        #endif
+#ifdef __WIDECHAR__
+        inp++;
+#else
+  #ifdef __UNIX__
+        inp++;
+  #else
+        inp = _mbsinc( inp );
+  #endif
+#endif
 #if defined(__UNIX__)
-        if( ch == PC )
-        {
+        if( ch == PC ) {
 #else /* DOS, OS/2, Windows */
-        if( ch == PC  ||  ch == ALT_PC )
-        {
+        if( ch == PC || ch == ALT_PC ) {
 #endif
             fnamep = inp;
             dotp = NULL;

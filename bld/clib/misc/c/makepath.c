@@ -66,10 +66,11 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
             path = __F_NAME(strchr,wcschr)( path, NULLCHAR );
 
             /* if node did not end in '/' then put in a provisional one */
-            if( path[-1] == PC )
+            if( path[ -1 ] == PC ) {
                 path--;
-            else
+            } else {
                 *path = PC;
+            }
         }
     }
     if( dir != NULL ) {
@@ -77,13 +78,14 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
             /*  if dir does not start with a '/' and we had a node then
                     stick in a separator
             */
-            if( (*dir != PC) && (*path == PC) ) path++;
+            if( ( *dir != PC ) && ( *path == PC ) )
+                path++;
 
             __F_NAME(strcpy,wcscpy)( path, dir );
             path = __F_NAME(strchr,wcschr)( path, NULLCHAR );
 
             /* if dir did not end in '/' then put in a provisional one */
-            if( path[-1] == PC )
+            if( path[ -1 ] == PC )
                 path--;
             else
                 *path = PC;
@@ -91,17 +93,21 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
     }
 
     if( fname != NULL ) {
-        if( (*fname != PC) && (*path == PC) ) path++;
+        if( ( *fname != PC ) && ( *path == PC ) )
+            path++;
 
         __F_NAME(strcpy,wcscpy)( path, fname );
         path = __F_NAME(strchr,wcschr)( path, NULLCHAR );
 
     } else {
-        if( *path == PC ) path++;
+        if( *path == PC ) {
+            path++;
+        }
     }
     if( ext != NULL ) {
         if( *ext != '\0' ) {
-            if( *ext != '.' )  *path++ = '.';
+            if( *ext != '.' )
+                *path++ = '.';
             __F_NAME(strcpy,wcscpy)( path, ext );
             path = __F_NAME(strchr,wcschr)( path, NULLCHAR );
         }
@@ -119,7 +125,8 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
 static char pickup( char c, char *pc_of_choice )
 {
     if( c == PC || c == ALT_PC ) {
-        if( *pc_of_choice == '\0' ) *pc_of_choice = c;
+        if( *pc_of_choice == '\0' )
+            *pc_of_choice = c;
         c = *pc_of_choice;
     }
     return( c );
@@ -147,9 +154,10 @@ _WCRTLINK extern void _makepath( char *path, const char *volume,
                 *path++ = pickup( *dir++, &first_pc );
             } while( *dir != '\0' );
             /* if no path separator was specified then pick a default */
-            if( first_pc == '\0' ) first_pc = PC;
+            if( first_pc == '\0' )
+                first_pc = PC;
             /* if dir did not end in path sep then put in a provisional one */
-            if( path[-1] == first_pc ) {
+            if( path[ -1 ] == first_pc ) {
                 path--;
             } else {
                 *path = first_pc;
@@ -157,18 +165,26 @@ _WCRTLINK extern void _makepath( char *path, const char *volume,
         }
     }
     /* if no path separator was specified thus far then pick a default */
-    if( first_pc == '\0' ) first_pc = PC;
+    if( first_pc == '\0' )
+        first_pc = PC;
     if( fname != NULL ) {
-        if( (pickup( *fname, &first_pc ) != first_pc)
-            && (*path == first_pc) ) path++;
-        while( *fname != '\0' ) *path++ = pickup( *fname++, &first_pc );
+        if( ( pickup( *fname, &first_pc ) != first_pc ) && ( *path == first_pc ) )
+            path++;
+        while( *fname != '\0' ) {
+            *path++ = pickup( *fname++, &first_pc );
+        }
     } else {
-        if( *path == first_pc ) path++;
+        if( *path == first_pc ) {
+            path++;
+        }
     }
     if( ext != NULL ) {
         if( *ext != '\0' ) {
-            if( *ext != '.' )  *path++ = '.';
-            while( *ext != '\0' ) *path++ = *ext++;
+            if( *ext != '.' )
+                *path++ = '.';
+            while( *ext != '\0' ) {
+                *path++ = *ext++;
+            }
         }
     }
     *path = '\0';
@@ -184,7 +200,8 @@ _WCRTLINK extern void _makepath( char *path, const char *volume,
 static unsigned pickup( unsigned c, unsigned *pc_of_choice )
 {
     if( c == PC || c == ALT_PC ) {
-        if( *pc_of_choice == '\0' ) *pc_of_choice = c;
+        if( *pc_of_choice == '\0' )
+            *pc_of_choice = c;
         c = *pc_of_choice;
     }
     return( c );
@@ -196,16 +213,16 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
                 const CHAR_TYPE *dir, const CHAR_TYPE *fname, const CHAR_TYPE *ext )
 {
     unsigned            first_pc = '\0';
-#ifndef __WIDECHAR__
-    char *              pathstart = path;
+  #ifndef __WIDECHAR__
+    char                *pathstart = path;
     unsigned            ch;
-#endif
+  #endif
 
     if( drive != NULL ) {
         if( *drive != '\0' ) {
-            if ((*drive == '\\') && (drive[1] == '\\')) {
-                __F_NAME(strcpy, wcscpy)(path, drive);
-                path += __F_NAME(strlen, wcslen)(drive);
+            if( ( drive[ 0 ] == '\\' ) && ( drive[ 1 ] == '\\') ) {
+                __F_NAME(strcpy, wcscpy)( path, drive );
+                path += __F_NAME(strlen, wcslen)( drive );
             } else {
                 *path++ = *drive;                               /* OK for MBCS */
                 *path++ = ':';
@@ -216,68 +233,75 @@ _WCRTLINK void __F_NAME(_makepath,_wmakepath)( CHAR_TYPE *path, const CHAR_TYPE 
     if( dir != NULL ) {
         if( *dir != '\0' ) {
             do {
-                #ifdef __WIDECHAR__
-                    *path++ = pickup( *dir++, &first_pc );
-                #else
-                    ch = pickup( _mbsnextc(dir), &first_pc );
-                    _mbvtop( ch, path );
-                    path[_mbclen(path)] = '\0';
-                    path = _mbsinc( path );
-                    dir = _mbsinc( dir );
-                #endif
+  #ifdef __WIDECHAR__
+                *path++ = pickup( *dir++, &first_pc );
+  #else
+                ch = pickup( _mbsnextc( dir ), &first_pc );
+                _mbvtop( ch, path );
+                path[ _mbclen( path ) ] = '\0';
+                path = _mbsinc( path );
+                dir = _mbsinc( dir );
+  #endif
             } while( *dir != '\0' );
             /* if no path separator was specified then pick a default */
-            if( first_pc == '\0' ) first_pc = PC;
+            if( first_pc == '\0' )
+                first_pc = PC;
             /* if dir did not end in '/' then put in a provisional one */
-            #ifdef __WIDECHAR__
-                if( path[-1] == first_pc )
-                    path--;
-                else
-                    *path = first_pc;
-            #else
-                if( *(_mbsdec(pathstart,path)) == first_pc )
-                    path--;
-                else
-                    *path = first_pc;
-            #endif
+  #ifdef __WIDECHAR__
+            if( path[ -1 ] == first_pc ) {
+                path--;
+            } else {
+                *path = first_pc;
+            }
+  #else
+            if( *(_mbsdec( pathstart, path )) == first_pc ) {
+                path--;
+            } else {
+                *path = first_pc;
+            }
+  #endif
         }
     }
 
     /* if no path separator was specified thus far then pick a default */
-    if( first_pc == '\0' ) first_pc = PC;
+    if( first_pc == '\0' )
+        first_pc = PC;
     if( fname != NULL ) {
-        #ifdef __WIDECHAR__
-            if( pickup(*fname,&first_pc) != first_pc  &&  *path == first_pc )
-                path++;
-        #else
-            ch = _mbsnextc( fname );
-            if( pickup(ch,&first_pc) != first_pc  &&  *path == first_pc )
-                path++;
-        #endif
+  #ifdef __WIDECHAR__
+        if( pickup( *fname, &first_pc ) != first_pc && *path == first_pc )
+            path++;
+  #else
+        ch = _mbsnextc( fname );
+        if( pickup( ch, &first_pc ) != first_pc && *path == first_pc )
+            path++;
+  #endif
 
-        while (*fname != '\0')
-        {
+        while( *fname != '\0' ) {
         //do {
-            #ifdef __WIDECHAR__
-                *path++ = pickup( *fname++, &first_pc );
-            #else
-                ch = pickup( _mbsnextc(fname), &first_pc );
-                _mbvtop( ch, path );
-                path[_mbclen(path)] = '\0';
-                path = _mbsinc( path );
-                fname = _mbsinc( fname );
-            #endif
+  #ifdef __WIDECHAR__
+            *path++ = pickup( *fname++, &first_pc );
+  #else
+            ch = pickup( _mbsnextc( fname ), &first_pc );
+            _mbvtop( ch, path );
+            path[ _mbclen( path ) ] = '\0';
+            path = _mbsinc( path );
+            fname = _mbsinc( fname );
+  #endif
         } //while( *fname != '\0' );
     } else {
-        if( *path == first_pc ) path++;
+        if( *path == first_pc ) {
+            path++;
+        }
     }
     if( ext != NULL ) {
         if( *ext != '\0' ) {
-            if( *ext != '.' )  *path++ = '.';
-            while( *ext != '\0' ) *path++ = *ext++;     /* OK for MBCS */
+            if( *ext != '.' )
+                *path++ = '.';
+            while( *ext != '\0' ) {
+                *path++ = *ext++;     /* OK for MBCS */
+            }
         }
     }
     *path = '\0';
 }
 #endif
-

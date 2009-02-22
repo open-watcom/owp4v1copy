@@ -89,24 +89,24 @@ extern char *ConvertNameToFullPath( const char *, char * );
 #endif
 
 #if defined(__QNX__)
-static char *__qnx_fullpath(char *fullpath, const char *path)
+static char *__qnx_fullpath( char *fullpath, const char *path )
 {
     struct {
             struct _io_open _io_open;
-            char  m[_QNX_PATH_MAX];
+            char            m[ _QNX_PATH_MAX ];
     } msg;
     int             fd;
 
     msg._io_open.oflag = _IO_HNDL_INFO;
     fd = __resolve_net( _IO_HANDLE, 1, &msg._io_open, path, 0, fullpath );
-    if( fd != -1) {
-        close(fd);
-    } else if (errno != ENOENT) {
-        return 0;
+    if( fd != -1 ) {
+        close( fd );
+    } else if( errno != ENOENT ) {
+        return( NULL );
     } else {
         __resolve_net( 0, 0, &msg._io_open, path, 0, fullpath );
     }
-    return fullpath;
+    return( fullpath );
 }
 #endif
 
@@ -116,8 +116,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
 {
 
 #if defined(__NT__)
-    CHAR_TYPE *         filepart;
-    DWORD               rc;
+    CHAR_TYPE       *filepart;
+    DWORD           rc;
 
     if( __F_NAME(stricmp,_wcsicmp)( path, __F_NAME("con",L"con") ) == 0 ) {
         _WILL_FIT( 3 );
@@ -125,16 +125,16 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     }
 
     /*** Get the full pathname ***/
-    #ifdef __WIDECHAR__
-        rc = __lib_GetFullPathNameW( path, size, buff, &filepart );
-    #else
-        rc = GetFullPathNameA( path, size, buff, &filepart );
-    #endif
+  #ifdef __WIDECHAR__
+    rc = __lib_GetFullPathNameW( path, size, buff, &filepart );
+  #else
+    rc = GetFullPathNameA( path, size, buff, &filepart );
+  #endif
     // If the buffer is too small, the return value is the size of
     // the buffer, in TCHARs, required to hold the path.
     // If the function fails, the return value is zero. To get extended error
     // information, call GetLastError.
-    if( (rc == 0) || (rc > size) ) {
+    if( ( rc == 0 ) || ( rc > size ) ) {
         __set_errno_nt();
         return( NULL );
     }
@@ -142,18 +142,16 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     return( buff );
 #elif defined(__WARP__)
     APIRET      rc;
-    char        root[4];    /* SBCS: room for drive, ':', '\\', and null */
-    #ifdef __WIDECHAR__
-        char    mbBuff[_MAX_PATH*MB_CUR_MAX];
-        char    mbPath[_MAX_PATH*MB_CUR_MAX];
-    #endif
+    char        root[ 4 ];      /* SBCS: room for drive, ':', '\\', and null */
+  #ifdef __WIDECHAR__
+    char        mbBuff[ _MAX_PATH*MB_CUR_MAX ];
+    char        mbPath[ _MAX_PATH*MB_CUR_MAX ];
+  #endif
 
-    if (__F_NAME(isalpha,iswalpha)( path[0] ) && ( path[1] == ':' )
-            && ( path[2] == '\\' ) )
-    {
+    if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && ( path[ 1 ] == ':' ) && ( path[ 2 ] == '\\' ) ) {
         int i;
         i = __F_NAME(strlen,wcslen)( path );
-        _WILL_FIT(i);
+        _WILL_FIT( i );
         __F_NAME(strcpy,wcscpy)( buff, path );
         return( buff );
     }
@@ -163,58 +161,58 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
      * case, return x:\filename.ext, not NULL, to be consistent with
      * MS and with the NT version of _fullpath.
      */
-    if( __F_NAME(isalpha,iswalpha)( path[0] )  &&  path[1] == ':' ) {
+    if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && path[ 1 ] == ':' ) {
         /*** We got this far, so path can't start with letter:\ ***/
-        root[0] = (char) path[0];
-        root[1] = ':';
-        root[2] = '\\';
-        root[3] = NULLCHAR;
+        root[ 0 ] = (char)path[ 0 ];
+        root[ 1 ] = ':';
+        root[ 2 ] = '\\';
+        root[ 3 ] = NULLCHAR;
         rc = DosQueryPathInfo( root, FIL_QUERYFULLNAME, buff, size );
         if( rc != NO_ERROR ) {
             /*** Drive does not exist; return x:\filename.ext ***/
-            _WILL_FIT( __F_NAME(strlen,wcslen)( &path[2] ) + 3 );
-            buff[0] = root[0];
-            buff[1] = ':';
-            buff[2] = '\\';
-            __F_NAME(strcpy,wcscpy)( &buff[3], &path[2] );
+            _WILL_FIT( __F_NAME(strlen,wcslen)( &path[ 2 ] ) + 3 );
+            buff[ 0 ] = root[ 0 ];
+            buff[ 1 ] = ':';
+            buff[ 2 ] = '\\';
+            __F_NAME(strcpy,wcscpy)( &buff[ 3 ], &path[ 2 ] );
             return( buff );
         }
     }
 
-    #ifdef __WIDECHAR__
-        if( wcstombs( mbPath, path, _MAX_PATH*MB_CUR_MAX ) == (size_t)-1 ) {
-            return( NULL );
-        }
-        rc = DosQueryPathInfo( (PSZ)mbPath, FIL_QUERYFULLNAME, mbBuff, size );
-    #else
-        rc = DosQueryPathInfo( (PSZ)path, FIL_QUERYFULLNAME, buff, size );
-    #endif
+  #ifdef __WIDECHAR__
+    if( wcstombs( mbPath, path, _MAX_PATH*MB_CUR_MAX ) == (size_t)-1 ) {
+        return( NULL );
+    }
+    rc = DosQueryPathInfo( (PSZ)mbPath, FIL_QUERYFULLNAME, mbBuff, size );
+  #else
+    rc = DosQueryPathInfo( (PSZ)path, FIL_QUERYFULLNAME, buff, size );
+  #endif
     if( rc != 0 ) {
         __set_errno_dos( rc );
         return( NULL );
     }
-    #ifdef __WIDECHAR__
-        if( mbstowcs( buff, mbBuff, size ) != (size_t)-1 ) {
-            return( buff );
-        } else {
-            return( NULL );
-        }
-    #else
+  #ifdef __WIDECHAR__
+    if( mbstowcs( buff, mbBuff, size ) != (size_t)-1 ) {
         return( buff );
-    #endif
+    } else {
+        return( NULL );
+    }
+  #else
+    return( buff );
+  #endif
 #elif defined(__QNX__) || defined( __NETWARE__ )
     size_t len;
-    char temp_dir[_MAX_PATH];
+    char temp_dir[ _MAX_PATH ];
 
-    #if defined(__NETWARE__)
-        if( ConvertNameToFullPath( path, temp_dir ) != 0 ) {
-            return( NULL );
-        }
-    #else
-        if( __qnx_fullpath( temp_dir, path ) == NULL ) {
-            return( NULL );
-        }
-    #endif
+  #if defined(__NETWARE__)
+    if( ConvertNameToFullPath( path, temp_dir ) != 0 ) {
+        return( NULL );
+    }
+  #else
+    if( __qnx_fullpath( temp_dir, path ) == NULL ) {
+        return( NULL );
+    }
+  #endif
     len = strlen( temp_dir );
     if( len >= size ) {
         __set_errno( ERANGE );
@@ -225,12 +223,12 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     const char  *p;
     char        *q;
     size_t      len;
-    char        curr_dir[_MAX_PATH];
+    char        curr_dir[ _MAX_PATH ];
 
     p = path;
     q = buff;
-    if( ! _IS_SLASH( p[0] ) ) {
-        if( getcwd( curr_dir, sizeof(curr_dir) ) == NULL ) {
+    if( ! _IS_SLASH( p[ 0 ] ) ) {
+        if( getcwd( curr_dir, sizeof( curr_dir ) ) == NULL ) {
             __set_errno( ENOENT );
             return( NULL );
         }
@@ -238,39 +236,42 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         _WILL_FIT( len );
         strcpy( q, curr_dir );
         q += len;
-        if( q[-1] != '/' ) {
+        if( q[ -1 ] != '/' ) {
             _WILL_FIT( 1 );
             *(q++) = '/';
         }
-        for(;;) {
-            if( p[0] == '\0' ) break;
-            if( p[0] != '.' ) {
+        for( ;; ) {
+            if( p[ 0 ] == '\0' )
+                break;
+            if( p[ 0 ] != '.' ) {
                 _WILL_FIT( 1 );
                 *(q++) = *(p++);
                 continue;
             }
             ++p;
-            if( _IS_SLASH( p[0] ) ) {
+            if( _IS_SLASH( p[ 0 ] ) ) {
                 /* ignore "./" in directory specs */
-                if( ! _IS_SLASH( q[-1] ) ) {
+                if( ! _IS_SLASH( q[ -1 ] ) ) {
                     *q++ = '/';
                 }
                 ++p;
                 continue;
             }
-            if( p[0] == '\0' ) break;
-            if( p[0] == '.' && _IS_SLASH( p[1] ) ) {
+            if( p[ 0 ] == '\0' )
+                break;
+            if( p[ 0 ] == '.' && _IS_SLASH( p[ 1 ] ) ) {
                 /* go up a directory for a "../" */
                 p += 2;
-                if( ! _IS_SLASH( q[-1] ) ) {
+                if( ! _IS_SLASH( q[ -1 ] ) ) {
                     return( NULL );
                 }
                 q -= 2;
-                for(;;) {
+                for( ;; ) {
                     if( q < buff ) {
                         return( NULL );
                     }
-                    if( _IS_SLASH( *q ) ) break;
+                    if( _IS_SLASH( *q ) )
+                        break;
                     --q;
                 }
                 ++q;
@@ -288,19 +289,19 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     }
     return( buff );
 #else
-    const CHAR_TYPE *   p;
-    CHAR_TYPE *         q;
+    const CHAR_TYPE     *p;
+    CHAR_TYPE           *q;
     size_t              len;
     unsigned            path_drive_idx;
-    char                curr_dir[_MAX_PATH];
+    char                curr_dir[ _MAX_PATH ];
 
     p = path;
     q = buff;
     _WILL_FIT( 2 );
-    if( __F_NAME(isalpha,iswalpha)( p[0] ) && p[1] == ':' ) {
-        path_drive_idx = ( __F_NAME(tolower,towlower)( p[0] ) - 'a' ) + 1;
-        q[0] = p[0];
-        q[1] = p[1];
+    if( __F_NAME(isalpha,iswalpha)( p[ 0 ] ) && p[ 1 ] == ':' ) {
+        path_drive_idx = ( __F_NAME(tolower,towlower)( p[ 0 ] ) - 'a' ) + 1;
+        q[ 0 ] = p[ 0 ];
+        q[ 1 ] = p[ 1 ];
         p += 2;
     } else {
   #if defined(__OS2__)
@@ -315,11 +316,11 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
   #else
         path_drive_idx = TinyGetCurrDrive() + 1;
   #endif
-        q[0] = 'A' + ( path_drive_idx - 1 );
-        q[1] = ':';
+        q[ 0 ] = 'A' + ( path_drive_idx - 1 );
+        q[ 1 ] = ':';
     }
     q += 2;
-    if( ! _IS_SLASH( p[0] ) ) {
+    if( ! _IS_SLASH( p[ 0 ] ) ) {
   #if defined(__OS2__)
         OS_UINT dir_len = sizeof( curr_dir );
 
@@ -337,54 +338,57 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         }
   #endif
         len = strlen( curr_dir );
-        if( curr_dir[0] != '\\' ) {
+        if( curr_dir[ 0 ] != '\\' ) {
             _WILL_FIT( 1 );
             *(q++) = '\\';
         }
         _WILL_FIT( len );
-        #ifdef __WIDECHAR__
-            if( mbstowcs( q, curr_dir, len+1 ) == (size_t)-1 ) {
-                return( NULL );
-            }
-        #else
-            strcpy( q, curr_dir );
-        #endif
+  #ifdef __WIDECHAR__
+        if( mbstowcs( q, curr_dir, len + 1 ) == (size_t)-1 ) {
+            return( NULL );
+        }
+  #else
+        strcpy( q, curr_dir );
+  #endif
         q += len;
-        if( q[-1] != '\\' ) {
+        if( q[ -1 ] != '\\' ) {
             _WILL_FIT( 1 );
             *(q++) = '\\';
         }
-        for(;;) {
-            if( p[0] == '\0' ) break;
-            if( p[0] != '.' ) {
+        for( ;; ) {
+            if( p[ 0 ] == '\0' )
+                break;
+            if( p[ 0 ] != '.' ) {
                 _WILL_FIT( 1 );
                 *(q++) = *(p++);
                 continue;
             }
             ++p;     // at least '.'
-            if( _IS_SLASH( p[0] ) ) {
+            if( _IS_SLASH( p[ 0 ] ) ) {
                 /* ignore "./" in directory specs */
-                if( ! _IS_SLASH( q[-1] ) ) {            /* 14-jan-93 */
+                if( ! _IS_SLASH( q[ -1 ] ) ) {            /* 14-jan-93 */
                     *q++ = '\\';
                 }
                 ++p;
                 continue;
             }
-            if( p[0] == '\0' ) break;
-            if( p[0] == '.' ) {  /* .. */
+            if( p[ 0 ] == '\0' )
+                break;
+            if( p[ 0 ] == '.' ) {  /* .. */
                 ++p;
-                if( _IS_SLASH( p[0] ) ){ /* "../" */
+                if( _IS_SLASH( p[ 0 ] ) ) {   /* "../" */
                     ++p;
                 }
-                if( ! _IS_SLASH( q[-1] ) ) {
+                if( ! _IS_SLASH( q[ -1 ] ) ) {
                     return( NULL );
                 }
                 q -= 2;
-                for(;;) {
+                for( ;; ) {
                     if( q < buff ) {
                         return( NULL );
                     }
-                    if( _IS_SLASH( *q ) ) break;
+                    if( _IS_SLASH( *q ) )
+                        break;
                     if( *q == ':' ) {
                         ++q;
                         *q = '\\';
@@ -406,7 +410,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         __F_NAME(strcpy,wcscpy)( q, p );
     }
     /* force to all backslashes */
-    for( q = buff; *q; ++q ) {
+    for( q = buff; *q != NULLCHAR; ++q ) {
         if( *q == '/' ) {
             *q = '\\';
         }
@@ -422,26 +426,28 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_fullpath,_wfullpath)
     CHAR_TYPE *ptr = NULL;
 
     if( buff == NULL ) {
-        #ifdef __WIDECHAR__
-            size = _MAX_PATH * sizeof(wchar_t);
-        #else
-            size = _MAX_PATH;
-        #endif
+  #ifdef __WIDECHAR__
+        size = _MAX_PATH * sizeof( wchar_t );
+  #else
+        size = _MAX_PATH;
+  #endif
         ptr = lib_malloc( size );
-        if( ptr == NULL ) __set_errno( ENOMEM );
+        if( ptr == NULL )
+            __set_errno( ENOMEM );
         buff = ptr;
     }
     if( buff != NULL ) {
-        buff[0] = '\0';
-        if( path == NULL || path[0] == '\0' ) {
+        buff[ 0 ] = '\0';
+        if( path == NULL || path[ 0 ] == '\0' ) {
             buff = __F_NAME(getcwd,_wgetcwd)( buff, size );
         } else {
             buff = __F_NAME(_sys_fullpath,_sys_wfullpath)( buff, path, size );
         }
         if( buff == NULL ) {
-            if( ptr != NULL ) lib_free( ptr );
+            if( ptr != NULL ) {
+                lib_free( ptr );
+            }
         }
     }
-    return buff;
+    return( buff );
 }
-
