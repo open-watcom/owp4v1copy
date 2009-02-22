@@ -10,7 +10,7 @@ char __far *_fstrchr( const char __far *s, int c );
 .do end
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wchar.h>
-wchar_t *wcschr( const wchar_t *s, int c );
+wchar_t *wcschr( const wchar_t *s, wint_t c );
 .ixfunc2 '&String' &wfunc
 .ixfunc2 '&Search' &wfunc
 .ixfunc2 '&Wide' &wfunc
