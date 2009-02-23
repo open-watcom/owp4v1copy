@@ -50,8 +50,8 @@ public:
         ALL
     };
     Dl( Document* d, Element *p, const std::wstring* f, unsigned int r,
-        unsigned int c, unsigned char i ) : Tag( d, p, f, r, c ), indent( i ),
-        tabSize( 10 ), breakage( NONE ), compact( false ) { };
+        unsigned int c, unsigned char n, unsigned char i ) : Tag( d, p, f, r, c ),
+        nestLevel( n ), indent( i ), tabSize( 10 ), breakage( NONE ), compact( false ) { };
     ~Dl() { };
     Lexer::Token parse( Lexer* lexer );
     void linearize( Page* page ) { linearizeChildren( page ); };
@@ -61,6 +61,7 @@ protected:
 private:
     Dl( const Dl& rhs );            //no copy
     Dl& operator=( const Dl& rhs ); //no assignment
+    unsigned char nestLevel;        //counts from 0
     unsigned char indent;           //in character spaces
     unsigned char tabSize;          //in character spaces
     Break breakage;

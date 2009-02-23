@@ -58,7 +58,7 @@ Lexer::Token Ul::parse( Lexer* lexer )
             case Lexer::DL:
                 {
                     Element* elt( new Dl( document, this, document->dataName(),
-                        document->dataLine(), document->dataCol(),
+                        document->dataLine(), document->dataCol(), nestLevel + 1,
                         indent == 1 ? 4 : indent + 3 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
@@ -93,7 +93,7 @@ Lexer::Token Ul::parse( Lexer* lexer )
             case Lexer::PARML:
                 {
                     Element* elt( new Parml( document, this, document->dataName(),
-                        document->dataLine(), document->dataCol(),
+                        document->dataLine(), document->dataCol(), nestLevel + 1,
                         indent == 1 ? 4 : indent + 3 ) );
                     appendChild( elt );
                     tok = elt->parse( lexer );
@@ -122,7 +122,11 @@ Lexer::Token Ul::parse( Lexer* lexer )
                     Element* elt( new EUl( document, this, document->dataName(),
                         document->dataLine(), document->dataCol() ) );
                     appendChild( elt );
-                    return elt->parse( lexer );
+                    tok = elt->parse( lexer );
+                    if( !nestLevel )
+                        appendChild( new BrCmd( document, this, document->dataName(),
+                            document->dataLine(), document->dataCol() ) );
+                    return tok;
                 }
             default:
                 document->printError( ERR1_NOENDLIST );
