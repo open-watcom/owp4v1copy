@@ -73,16 +73,12 @@ void WhiteSpace::buildText( Cell* cell )
             Text::buildText( cell );
         }
         else if( spaces > 1 ) {
+            for( unsigned char count = 0; count < spaces / 2; ++count )
+                cell->addByte( 0xFE );
             if( spaces & 1 ) {
-                for( unsigned char count = 0; count < spaces / 2; ++count )
-                    cell->addByte( 0xFE );
                 cell->addByte( 0xFC );
                 cell->addByte( 0xFE );
                 cell->addByte( 0xFC );
-            }
-            else {
-                for( unsigned char count = 0; count < spaces / 2; ++count )
-                    cell->addByte( 0xFE );
             }
         }
     }
