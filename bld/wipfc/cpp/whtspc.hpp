@@ -38,7 +38,7 @@ class WhiteSpace : public Text {
 public:
     WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, Tag::WsHandling w = Tag::NONE ) :
-        whiteSpace( w ), Text( d, p, f, r, c ) { };
+        whiteSpace( w ), spaces( 0 ), Text( d, p, f, r, c ) { };
     WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& tx, Tag::WsHandling w = Tag::NONE,
         bool ts = false );
@@ -48,7 +48,7 @@ public:
 private:
     WhiteSpace( const WhiteSpace& rhs );            //no copy
     WhiteSpace& operator=( const WhiteSpace& rhs ); //no assignment
-    std::wstring txt;
+    unsigned char spaces;
     Tag::WsHandling whiteSpace;
 };
 

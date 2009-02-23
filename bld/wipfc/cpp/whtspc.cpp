@@ -25,6 +25,7 @@
 *  ========================================================================
 *
 * Description:  A WHITESPACE element
+* Note that only single spaces are elided; all others are significant
 *
 ****************************************************************************/
 
@@ -34,8 +35,12 @@
 
 WhiteSpace::WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
     unsigned int c, const std::wstring& tx, Tag::WsHandling w, bool ts ) :
-    whiteSpace( w ), txt( tx ), Text( d, p, f, r, c, ts )
+    whiteSpace( w ), Text( d, p, f, r, c, ts )
 {
+    if( tx[0] != L'\n' )
+        spaces = static_cast< unsigned char >( tx.size() );
+    else
+        spaces = 0;
     if( w == Tag::SPACES ) {
         GlobalDictionaryWord* word( new GlobalDictionaryWord( tx ) );
         text = document->addWord( word );   //insert into global dictionary
@@ -44,10 +49,12 @@ WhiteSpace::WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned
 /***************************************************************************/
 Lexer::Token WhiteSpace::parse( Lexer* lexer )
 {
-    txt = lexer->text();                    //get text from lexer
-    if( whiteSpace == Tag::SPACES && lexer->text()[0] != L'\n') {
-        GlobalDictionaryWord* word( new GlobalDictionaryWord( txt ) );
-        text = document->addWord( word );   //insert into global dictionary
+    if( lexer->text()[0] != L'\n' ) {
+        spaces = static_cast< unsigned char >( lexer->text().size() ); //number of spaces
+        if( whiteSpace == Tag::SPACES ) {
+            GlobalDictionaryWord* word( new GlobalDictionaryWord( lexer->text() ) );
+            text = document->addWord( word );   //insert into global dictionary
+        }
     }
     if( !document->autoSpacing() ) {
         document->toggleAutoSpacing();
@@ -61,25 +68,26 @@ Lexer::Token WhiteSpace::parse( Lexer* lexer )
 /***************************************************************************/
 void WhiteSpace::buildText( Cell* cell )
 {
-    if( whiteSpace != Tag::NONE && txt[0] == L'\n' )
-        cell->addByte( 0xFD );
-    else if( whiteSpace == Tag::SPACES && text ) {
-        Text::buildText( cell );
-    }
-    else if( whiteSpace == Tag::LITERAL ) {
-        size_t length = txt.length();
-        if( length > 2 ) {
-            //toggleSpacing on the first and last, do n - 1
-            cell->addByte( 0xFC );
-            for( size_t count1 = 0; count1 < length - 1; ++count1 )
+    if( spaces ) {
+        if( whiteSpace == Tag::SPACES && text ) {
+            Text::buildText( cell );
+        }
+        else if( spaces > 1 ) {
+            if( spaces & 1 ) {
+                for( unsigned char count = 0; count < spaces / 2; ++count )
+                    cell->addByte( 0xFE );
+                cell->addByte( 0xFC );
                 cell->addByte( 0xFE );
-            cell->addByte( 0xFC );
-            cell->addByte( 0xFE );
-        }
-        else if( length == 2 ) {
-            cell->addByte( 0xFE );
+                cell->addByte( 0xFC );
+            }
+            else {
+                for( unsigned char count = 0; count < spaces / 2; ++count )
+                    cell->addByte( 0xFE );
+            }
         }
     }
+    else if( whiteSpace != Tag::NONE )  //'\n'
+        cell->addByte( 0xFD );
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
 }
