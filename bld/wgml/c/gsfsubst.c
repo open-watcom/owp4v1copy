@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WGML implement multi letter function &'lower( )
+* Description:  WGML implement multi letter function &'substr( )
 *
 ****************************************************************************/
 
@@ -39,40 +39,48 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*  script string function &'lower(                                        */
+/*  script string function &'substr(                                       */
 /*                                                                         */
 /***************************************************************************/
 
 /***************************************************************************/
 /*                                                                         */
-/* &'lower(string<,n<,length>>):   The  Lowercase  function  returns  the  */
-/*    lowercase equivalent of the 'string' operand.   The first character  */
-/*    to be lowercased may be specified  by 'n' and the 'length' defaults  */
-/*    to the  end of the string.    The conversion to  lowercase includes  */
-/*    only the alphabetic characters.                                      */
-/*      &'lower(ABC) ==> abc                                               */
-/*      &'lower('Now is the time') ==> now is the time                     */
-/*      ABC&'lower(TIME FLIES)890 ==> ABCtime flies890                     */
-/*      &'lower(ABC)...&'lower(890) ==> abc...890                          */
-/*      &'lower(ABCDEFG,3) ==> ABcdefg                                     */
-/*      &'lower(ABCDEFG,3,2) ==> ABcdEFG                                   */
-/*      &'lower(ONE,TWO,THREE) ==> invalid operands                        */
+/* &'substr(string,n<,length<,pad>>):  The Substring function returns the  */
+/*    portion of 'string' starting at  character number 'n'.   The number  */
+/*    of  characters  to return  may  be  specified  in 'length'  and  it  */
+/*    defaults from  character 'n' to the  end of the 'string'.    If the  */
+/*    'length' is  present and it  would exceed  the total length  of the  */
+/*    'string' then  string is  extended with  blanks or  the user  'pad'  */
+/*    character.                                                           */
+/*      "&'substr('123456789*',5)" ==> "56789*"                            */
+/*      "&'substr('123456789*',5,9)" ==> "56789*   "                       */
+/*      "&'substr('123456789*',5,9,'.')" ==> "56789*..."                   */
+/*      "&'substr('123456789*',1,3,':')" ==> "123"                         */
+/*      .se alpha = 'abcdefghijklmnopqrstuvwxyz'                           */
+/*      "&'substr(&alpha,24)" ==> "xyz"                                    */
+/*      "&'substr(&alpha,24,1)" ==> "x"                                    */
+/*      "&'substr(&alpha,24,5)" ==> "xyz  "                                */
+/*      "&'substr(&alpha,24,5,':')" ==> "xyz::"                            */
+/*      "&'substr(&alpha,30,5,':')" ==> ":::::"                            */
+/*      "&'substr(abcde,0,5)" ==> start column too small                   */
+/*      "&'substr(abcde,1,-1)" ==> length too small                        */
 /*                                                                         */
 /***************************************************************************/
 
-condcode    scr_lower( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * result )
+condcode    scr_substr( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * result )
 {
     char            *   pval;
     char            *   pend;
     condcode            cc;
     int                 k;
     int                 n;
+    int                 stringlen;
     int                 len;
     getnum_block        gn;
+    char                padchar;
 
-    if( (parmcount < 1) || (parmcount > 3) ) {
-        cc = neg;
-        return( cc );
+    if( (parmcount < 2) || (parmcount > 4) ) {
+        return( neg );
     }
 
     pval = parms[ 0 ].a;
@@ -80,14 +88,11 @@ condcode    scr_lower( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
 
     unquote_if_quoted( &pval, &pend );
 
-    len = pend - pval + 1;              // default length
+    stringlen = pend - pval + 1;        // length of string
+    padchar = ' ';                      // default padchar
+    len = 0;
 
-    if( len <= 0 ) {                    // null string nothing to do
-        **result = '\0';
-        return( pos );
-    }
-
-    n   = 0;                            // default start pos
+    n = 0;                              // default start pos
     gn.ignore_blanks = false;
 
     if( parmcount > 1 ) {               // evalute start pos
@@ -95,21 +100,21 @@ condcode    scr_lower( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
             gn.argstart = parms[ 1 ].a;
             gn.argstop  = parms[ 1 ].e;
             cc = getnum( &gn );
-            if( (cc != pos) || (gn.result > len) ) {
+            if( (cc != pos) || (gn.result == 0) ) {
                 if( !ProcFlags.suppress_msg ) {
-                    if( input_cbs->fmflags & II_macro ) {
-                        out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
-                                 "\t\t\tLine %d of macro '%s'\n",
-                                 input_cbs->s.m->lineno,
-                                 input_cbs->s.m->mac->name );
-                    } else {
-                        out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
-                                 "\t\t\tLine %d of file '%s'\n",
-                                 input_cbs->s.f->lineno,
-                                 input_cbs->s.f->filename );
-                    }
-                    err_count++;
-                    show_include_stack();
+                     if( input_cbs->fmflags & II_macro ) {
+                         out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
+                                  "\t\t\tLine %d of macro '%s'\n",
+                                  input_cbs->s.m->lineno,
+                                  input_cbs->s.m->mac->name );
+                     } else {
+                         out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
+                                  "\t\t\tLine %d of file '%s'\n",
+                                  input_cbs->s.f->lineno,
+                                  input_cbs->s.f->filename );
+                     }
+                     err_count++;
+                     show_include_stack();
                 }
                 return( cc );
             }
@@ -117,7 +122,7 @@ condcode    scr_lower( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
         }
     }
 
-    if( parmcount > 2 ) {               // evalute length for upper
+    if( parmcount > 2 ) {               // evalute length
         if( parms[ 2 ].e >= parms[ 2 ].a ) {// length specified
             gn.argstart = parms[ 2 ].a;
             gn.argstop  = parms[ 2 ].e;
@@ -144,24 +149,32 @@ condcode    scr_lower( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
         }
     }
 
-    for( k = 0; k < n; k++ ) {          // copy unchanged before startpos
+    if( parmcount > 3 ) {               // isolate padchar
+        if( parms[ 3 ].e >= parms[ 3 ].a ) {
+            char *  pa = parms[ 3 ].a;
+            char *  pe = parms[ 3 ].e;
+
+            unquote_if_quoted( &pa, &pe );
+            padchar = *pa;
+        }
+    }
+
+    pval += n;                          // position to startpos
+    if( len == 0 ) {                    // no length specified
+        len = pend - pval + 1;          // take rest of string
+        if( len < 0 ) {                 // if there is one
+            len = 0;
+        }
+    }
+    for( k = 0; k < len; k++ ) {
         if( pval > pend ) {
             break;
         }
         **result = *pval++;
         *result += 1;
     }
-
-    for( k = 0; k < len; k++ ) {        // translate
-        if( pval > pend ) {
-            break;
-        }
-        **result = tolower( *pval++ );
-        *result += 1;
-    }
-
-    for( ; pval <= pend; pval++ ) {     // copy unchanged
-        **result = *pval;
+    for( ; k < len; k++ ) {
+        **result = padchar;
         *result += 1;
     }
 

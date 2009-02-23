@@ -504,18 +504,22 @@ void    inc_inc_level( void )
 static void remove_indentation( void )
 {
     char    *   p;
+    char    *   pb;
+    int         offset;
 
     p = buff2;
     while( *p == SCR_char && *(p+1) == ' ' ) {
         while( *++p == ' ' ) /* empty */ ;  // skip blanks
     }
     if( p != buff2 ) {                  // found some blanks now copy buffer
-        char *   pb = buff2;
 
+        offset = p - buff2;
+        pb = buff2;
         while( *p ) {
             *pb++ = *p++;
         }
         *pb = '\0';
+        memset( pb, '\0', offset );     // clear rest
         buff2_lg = strnlen_s( buff2, buf_size );
 //      if( GlobalFlags.research && GlobalFlags.firstpass ) {
 //          out_msg( "%s<< Indentremoved\n", buff2 );

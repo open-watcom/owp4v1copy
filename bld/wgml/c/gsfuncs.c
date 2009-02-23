@@ -65,6 +65,7 @@ const   scrfunc scr_functions[] = {
 
 char    *scr_multi_funcs( char * in, char * end, char * * result )
 {
+    static const char   ampchar = '&';
     char            *   pchar;
     int                 rc;
     char            *   pval;
@@ -80,6 +81,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     parm                parms[ MAX_FUN_PARMS ];
     int                 parmcount;
     condcode            cc;
+    bool                multiletter_function;
 
 
     end   = end;
@@ -116,14 +118,6 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
         err_count++;
         show_include_stack();
 
-        if( var_unresolved == NULL ) {
-            ProcFlags.unresolved  = true;
-            var_unresolved = in;
-        } else {
-            if( var_unresolved != in ) {
-                ProcFlags.unresolved  = true;
-            }
-        }
         **result = '&';                 // result is & to preserve the input
         *result += 1;
         **result = '\0';
@@ -166,6 +160,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
         return( in + 1 );               // but avoid endless loop
     }
     funcind = k;
+    multiletter_function = false;
 
     // collect the mandatory parm(s)
     paren_level_start = 0;
@@ -181,6 +176,9 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
             }
             paren_level += (*pchar == '(');
             paren_level -= (*pchar == ')');
+            if( (*pchar == ampchar) && (*(pchar + 1) == '\'') ) {
+                multiletter_function = true;
+            }
             pchar++;
         }
         parms[ k ].e = pchar - 1;
@@ -232,6 +230,9 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
                 }
                 paren_level += (*pchar == '(');
                 paren_level -= (*pchar == ')');
+                if( (*pchar == ampchar) && (*(pchar + 1) == '\'') ) {
+                    multiletter_function = true;
+                }
                 pchar++;
             }
             parms[ m + k ].e     = pchar - 1;
@@ -266,16 +267,21 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
         return( in + 1 );               // but avoid endless loop
     }
 
+    ProcFlags.suppress_msg = multiletter_function;
+
     cc = scr_functions[ funcind ].fun( parms, parmcount, result );
 
+    ProcFlags.suppress_msg = false;
     if( cc != pos ) {                   // error in function
         **result = '&';                 // result is & to preserve the input
 
+        ProcFlags.unresolved = true;
         *result += 1;
         **result = '\0';
         return( in + 1 );
     }
 
+    ProcFlags.substituted = true;
     return( pchar + 1 );                // all OK new scan position
 }
 

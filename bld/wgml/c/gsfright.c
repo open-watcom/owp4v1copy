@@ -84,19 +84,21 @@ condcode    scr_right( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
     gn.argstop  = parms[ 1 ].e;
     cc = getnum( &gn );
     if( cc != pos ) {
-        if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     input_cbs->s.m->lineno,
-                     input_cbs->s.m->mac->name );
-        } else {
-            out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     input_cbs->s.f->lineno,
-                     input_cbs->s.f->filename );
+        if( !ProcFlags.suppress_msg ) {
+            if( input_cbs->fmflags & II_macro ) {
+                out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
+                         "\t\t\tLine %d of macro '%s'\n",
+                         input_cbs->s.m->lineno,
+                         input_cbs->s.m->mac->name );
+            } else {
+                out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
+                         "\t\t\tLine %d of file '%s'\n",
+                         input_cbs->s.f->lineno,
+                         input_cbs->s.f->filename );
+            }
+            err_count++;
+            show_include_stack();
         }
-        err_count++;
-        show_include_stack();
         return( cc );
     }
     n = gn.result;
@@ -117,17 +119,16 @@ condcode    scr_right( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
                 **result = padchar;
                 *result += 1;
             }
-            while( pval <= pend ) {
-                **result = *pval++;
+            for( ; pval <= pend; pval++ ) {
+                **result = *pval;
                 *result += 1;
             }
         } else {                        // no padding
 
             pval += len - n;
-            while( pval <= pend ) {
-                **result = *pval++;
+            for( ; pval <= pend; pval++ ) {
+                **result = *pval;
                 *result += 1;
-                k++;
             }
         }
     }

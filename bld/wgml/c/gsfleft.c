@@ -87,35 +87,37 @@ condcode    scr_left( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * re
         gn.argstop  = parms[ 1 ].e;
         cc = getnum( &gn );
         if( cc != pos ) {
-            if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno,
-                         input_cbs->s.m->mac->name );
-            } else {
-                out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno,
-                         input_cbs->s.f->filename );
+            if( !ProcFlags.suppress_msg ) {
+                if( input_cbs->fmflags & II_macro ) {
+                    out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
+                             "\t\t\tLine %d of macro '%s'\n",
+                             input_cbs->s.m->lineno,
+                             input_cbs->s.m->mac->name );
+                } else {
+                    out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
+                             "\t\t\tLine %d of file '%s'\n",
+                             input_cbs->s.f->lineno,
+                             input_cbs->s.f->filename );
+                }
+                err_count++;
+                show_include_stack();
             }
-            err_count++;
-            show_include_stack();
             return( cc );
         }
         len = gn.result;
     }
 
-    k = 0;
-    while( (k < len) && (pval <= pend) ) {  // copy from start
+    for( k = 0; k < len; k++ ) {        // copy from start
+        if( pval > pend ) {
+            break;
+        }
         **result = *pval++;
         *result += 1;
-        k++;
     }
 
-    while( k < len  ) {                 // pad to length
+    for( ; k < len; k++ ) {             // pad to length
         **result = ' ';
         *result += 1;
-        k++;
     }
 
     **result = '\0';

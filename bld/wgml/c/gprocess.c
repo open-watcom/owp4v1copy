@@ -161,9 +161,14 @@ void        process_line( void )
 
     workbuf = mem_alloc( buf_size );
 
-    // look for symbolic variables, ignore functions for now
+/*
+ * look for symbolic variables and single letter functions,
+ *  ignore multi letter functions for now
+ */
+
     var_unresolved = NULL;
     ProcFlags.unresolved  = false;
+    functions_found = false;
     do {
         strcpy_s( workbuf, buf_size, buff2 );   // copy input buffer
         buff2_lg = strnlen_s( buff2, buf_size );
@@ -186,10 +191,34 @@ void        process_line( void )
             }
             buff2_lg = strnlen_s( buff2, buf_size );
 
-            if( (*(pchar + 1) == '\'') ||  (*(pchar + 2) == '\'') ) {
+            /***********************************************************/
+            /*  Some single letter functions are resolved here:        */
+            /*                                                         */
+            /*  functions used within the OW doc build system:         */
+            /*   &e'  existance of variable 0 or 1                     */
+            /*   &l'  length of variable content                       */
+            /*        or if undefined length of name                   */
+            /*   &u'  upper                                            */
+            /*                                                         */
+            /*   &s'  subscript    These are recognized,               */
+            /*   &S'  superscript  ... but processed as &u'            */
+            /*                                                         */
+            /*   other single letter functions are not used AFAIK      */
+            /*                                                         */
+            /***********************************************************/
+            if( *(pchar + 2) == '\'' ) {
+                char * * ppval = &p2;
+
+                pw = scr_single_funcs( pchar, pwend, ppval );
+                pchar = strchr( pw, ampchar );// look for next & in buffer
+                continue;
+            }
+
+            if( *(pchar + 1) == '\'' ) {
                 *p2++ = *pw++;          // over & and copy
-                pchar = strchr( pw, ampchar ); // look for & in buffer
-                continue;               // and ignore functions
+                pchar = strchr( pw, ampchar );  // look for next & in buffer
+                functions_found = true; // remember there is a function
+                continue;               // and ignore function
             }
 
             varstart = pw;              // remember start of var
@@ -324,11 +353,12 @@ void        process_line( void )
     } while( ProcFlags.unresolved && ProcFlags.substituted );
 
 
-    // now handle functions and ignore unresolved variables
+/* handle multi letter functions, ignore any unresolved variable
+ */
+
     if( functions_found ) {
         resolve_functions = false;
         functions_found   = false;
-        // look for function start only, ignore unresolved variables
         var_unresolved = NULL;
         ProcFlags.unresolved  = false;
         do {
@@ -352,29 +382,6 @@ void        process_line( void )
                     *p2++ = *pw++;
                 }
                 buff2_lg = strnlen_s( buff2, buf_size );
-
-                /***********************************************************/
-                /*  Some single letter functions are resolved here:        */
-                /*                                                         */
-                /*  functions used within the OW doc build system:         */
-                /*   &e'  existance of variable 0 or 1                     */
-                /*   &l'  length of variable content                       */
-                /*        or if undefined length of name                   */
-                /*   &u'  upper                                            */
-                /*                                                         */
-                /*   &s'  subscript    These are recognized,               */
-                /*   &S'  superscript  ... but processed as &u'            */
-                /*                                                         */
-                /*   other single letter functions are not used AFAIK      */
-                /*                                                         */
-                /***********************************************************/
-                if( *(pchar + 2) == '\'' ) {
-                    char * * ppval = &p2;
-
-                    pw = scr_single_funcs( pchar, pwend, ppval );
-                    pchar = strchr( pw, ampchar );// look for next & in buffer
-                    continue;
-                }  else
 
                 /***********************************************************/
                 /*  Some multi  letter functions are resolved here:        */

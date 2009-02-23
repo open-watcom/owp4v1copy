@@ -96,19 +96,21 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
             gn.argstop  = parms[ 1 ].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result > len) ) {
-                if( input_cbs->fmflags & II_macro ) {
-                    out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
-                             "\t\t\tLine %d of macro '%s'\n",
-                             input_cbs->s.m->lineno,
-                             input_cbs->s.m->mac->name );
-                } else {
-                    out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
-                             "\t\t\tLine %d of file '%s'\n",
-                             input_cbs->s.f->lineno,
-                             input_cbs->s.f->filename );
+                if( !ProcFlags.suppress_msg ) {
+                    if( input_cbs->fmflags & II_macro ) {
+                        out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
+                                 "\t\t\tLine %d of macro '%s'\n",
+                                 input_cbs->s.m->lineno,
+                                 input_cbs->s.m->mac->name );
+                    } else {
+                        out_msg( "ERR_FUNCTION parm 2 (startpos) invalid\n"
+                                 "\t\t\tLine %d of file '%s'\n",
+                                 input_cbs->s.f->lineno,
+                                 input_cbs->s.f->filename );
+                    }
+                    err_count++;
+                    show_include_stack();
                 }
-                err_count++;
-                show_include_stack();
                 return( cc );
             }
             n = gn.result - 1;
@@ -121,41 +123,45 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
             gn.argstop  = parms[ 2 ].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
-                if( input_cbs->fmflags & II_macro ) {
-                    out_msg( "ERR_FUNCTION parm 3 (length) invalid\n"
-                             "\t\t\tLine %d of macro '%s'\n",
-                             input_cbs->s.m->lineno,
-                             input_cbs->s.m->mac->name );
-                } else {
-                    out_msg( "ERR_FUNCTION parm 3 (length) invalid\n"
-                             "\t\t\tLine %d of file '%s'\n",
-                             input_cbs->s.f->lineno,
-                             input_cbs->s.f->filename );
+                if( !ProcFlags.suppress_msg ) {
+                    if( input_cbs->fmflags & II_macro ) {
+                        out_msg( "ERR_FUNCTION parm 3 (length) invalid\n"
+                                 "\t\t\tLine %d of macro '%s'\n",
+                                 input_cbs->s.m->lineno,
+                                 input_cbs->s.m->mac->name );
+                    } else {
+                        out_msg( "ERR_FUNCTION parm 3 (length) invalid\n"
+                                 "\t\t\tLine %d of file '%s'\n",
+                                 input_cbs->s.f->lineno,
+                                 input_cbs->s.f->filename );
+                    }
+                    err_count++;
+                    show_include_stack();
                 }
-                err_count++;
-                show_include_stack();
                 return( cc );
             }
             len = gn.result;
         }
     }
 
-    k = 0;
-    while( (k < n) && (pval <= pend) ) {// copy unchanged before startpos
+    for( k = 0; k < n; k++ ) {          // copy unchanged before startpos
+        if( pval > pend ) {
+            break;
+        }
         **result = *pval++;
         *result += 1;
-        k++;
     }
 
-    k = 0;
-    while( (k < len) && (pval <= pend) ) {  // translate
+    for( k = 0; k < len; k++ ) {        // translate
+        if( pval > pend ) {
+            break;
+        }
         **result = toupper( *pval++ );
         *result += 1;
-        k++;
     }
 
-    while( pval <= pend ) {             // copy unchanged
-        **result = *pval++;
+    for( ; pval <= pend; pval++ ) {     // copy unchanged
+        **result = *pval;
         *result += 1;
     }
 

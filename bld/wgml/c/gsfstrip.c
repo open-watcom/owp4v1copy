@@ -103,19 +103,21 @@ condcode    scr_strip( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
                 // type value is valid do nothing
                 break;
             default:
-                if( input_cbs->fmflags & II_macro ) {
-                    out_msg( "ERR_FUNCTION parm 2 (type) invalid not l, b, or t\n"
-                             "\t\t\tLine %d of macro '%s'\n",
-                             input_cbs->s.m->lineno,
-                             input_cbs->s.m->mac->name );
-                } else {
-                    out_msg( "ERR_FUNCTION parm 2 (type) invalid not l, b, or t\n"
-                             "\t\t\tLine %d of file '%s'\n",
-                             input_cbs->s.f->lineno,
-                             input_cbs->s.f->filename );
+                if( !ProcFlags.suppress_msg ) {
+                    if( input_cbs->fmflags & II_macro ) {
+                        out_msg( "ERR_FUNCTION parm 2 (type) invalid not l, b, or t\n"
+                                 "\t\t\tLine %d of macro '%s'\n",
+                                 input_cbs->s.m->lineno,
+                                 input_cbs->s.m->mac->name );
+                    } else {
+                        out_msg( "ERR_FUNCTION parm 2 (type) invalid not l, b, or t\n"
+                                 "\t\t\tLine %d of file '%s'\n",
+                                 input_cbs->s.f->lineno,
+                                 input_cbs->s.f->filename );
+                    }
+                    err_count++;
+                    show_include_stack();
                 }
-                err_count++;
-                show_include_stack();
                 return( neg );
                 break;
             }
@@ -133,13 +135,15 @@ condcode    scr_strip( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
     }
 
     if( type != 't' ) {                 // strip leading requested
-        while( (*pval == stripchar) && (pval <= pend) ) {   // strip leading
-            pval++;
+        for( ; pval <= pend; pval++ ) {
+            if( *pval != stripchar ) {
+                break;
+            }
         }
     }
 
-    while( pval <= pend ) {
-        **result = *pval++;
+    for( ; pval <= pend; pval++ ) {
+        **result = *pval;
         *result += 1;
     }
 

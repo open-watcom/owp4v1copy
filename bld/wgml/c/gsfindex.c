@@ -124,19 +124,21 @@ condcode    scr_index( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
             gn.argstop  = parms[ 2 ].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
-                if( input_cbs->fmflags & II_macro ) {
-                    out_msg( "ERR_FUNCTION parm 3 (startpos) invalid\n"
-                             "\t\t\tLine %d of macro '%s'\n",
-                             input_cbs->s.m->lineno,
-                             input_cbs->s.m->mac->name );
-                } else {
-                    out_msg( "ERR_FUNCTION parm 3 (startpos) invalid\n"
-                             "\t\t\tLine %d of file '%s'\n",
-                             input_cbs->s.f->lineno,
-                             input_cbs->s.f->filename );
+                if( !ProcFlags.suppress_msg ) {
+                    if( input_cbs->fmflags & II_macro ) {
+                        out_msg( "ERR_FUNCTION parm 3 (startpos) invalid\n"
+                                 "\t\t\tLine %d of macro '%s'\n",
+                                 input_cbs->s.m->lineno,
+                                 input_cbs->s.m->mac->name );
+                    } else {
+                        out_msg( "ERR_FUNCTION parm 3 (startpos) invalid\n"
+                                 "\t\t\tLine %d of file '%s'\n",
+                                 input_cbs->s.f->lineno,
+                                 input_cbs->s.f->filename );
+                    }
+                    err_count++;
+                    show_include_stack();
                 }
-                err_count++;
-                show_include_stack();
                 return( cc );
             }
             n = gn.result - 1;
@@ -157,15 +159,16 @@ condcode    scr_index( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
 
     ph = phay + n;                      // startpos in haystack
     pn = pneedle;
+    index = 0;
 
-    for( ph = phay + n; ph <= phayend - needle_len - 1; ph++ ) {
+    for( ph = phay + n; ph <= phayend - needle_len + 1; ph++ ) {
         pn = pneedle;
         while( (*ph == *pn) && (pn <= pneedlend)) {
             ph++;
             pn++;
         }
         if( pn > pneedlend ) {
-            index = ph - phay;          // found set index
+            index = ph - phay;          // found, set index
             break;
         }
     }

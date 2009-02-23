@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  process .se and .sr script control words
+* Description:  implement .se and .sr script control words
 *
 ****************************************************************************/
 
@@ -164,7 +164,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             }
             gn.argstop       = p - 1;
             csave            = *p;
-            *p               = '\0';
+            *p               = '\0';    // make nul terminated string
             gn.ignore_blanks = 0;
 
             cc = getnum( &gn );     // try numeric expression evaluation
@@ -289,10 +289,10 @@ void    scr_se( void )
                              sym.flags );
 
         } else {                        // OFF value = delete variable ?
-            if( tolower( *p )       == 'o' &&
+            if( *(p + 3)            == '\0' &&  // case 3
+                tolower( *p )       == 'o' &&
                 tolower( *(p + 1) ) == 'f' &&
-                tolower( *(p + 2) ) == 'f' &&
-                *(p + 3)            == '\0' ) { // case 3
+                tolower( *(p + 2) ) == 'f' ) {
 
                 p += 3;
                 rc = find_symvar( working_dict, sym.name, subscript,

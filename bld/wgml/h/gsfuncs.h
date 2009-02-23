@@ -25,7 +25,6 @@
 *  ========================================================================
 *
 * Description:  WGML script string functions definitions
-*               only uncommented functions are implemented so far
 *
 *   some functions are implemented without some optional parameters
 *   as these are not used in the OW doc build system
@@ -60,15 +59,19 @@
   pick( "min",         3,   2,      4,  scr_min        )// restricted to 6 parms
   pick( "right",       5,   2,      1,  scr_right      )
   pick( "strip",       5,   1,      2,  scr_strip      )
-//pick( "substr",      6,   2,      2,  scr_substr     )
-//pick( "subword",     7,   2,      1,  scr_subword    )
-//pick( "translate",   9,   1,      3,  scr_translate  )
+  pick( "substr",      6,   2,      2,  scr_substr     )
+  pick( "subword",     7,   2,      1,  scr_subword    )
+  pick( "translate",   9,   1,      3,  scr_translate  )
   pick( "upper",       5,   1,      2,  scr_upper      )
+
+  pick( "veclastpos", 10,   2,      0,  scr_veclastpos )// optional parms 3 + 4
+  pick( "vecpos",      6,   2,      0,  scr_vecpos     )// not implemented
 //pick( "veclastpos", 10,   2,      2,  scr_veclastpos )
 //pick( "vecpos",      6,   2,      2,  scr_vecpos     )
-//pick( "word",        4,   2,      0,  scr_word       )
-//pick( "wordpos",     7,   2,      1,  scr_wordpos    )
-//pick( "words",       5,   1,      0,  scr_words      )
+
+  pick( "word",        4,   2,      0,  scr_word       )
+  pick( "wordpos",     7,   2,      1,  scr_wordpos    )
+  pick( "words",       5,   1,      0,  scr_words      )
 
 #undef  pick
 
