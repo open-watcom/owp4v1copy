@@ -92,6 +92,7 @@ extern  unsigned_16     RecLen;
 extern  data_ptr        RecBuff;
 extern  data_ptr        RecPtr;
 extern  unsigned_16     RecMaxLen;
+extern  unsigned_16     Grpindex;
 extern  unsigned_16     Segindex;
 extern  unsigned_16     Nameindex;
 extern  unsigned_16     Importindex;

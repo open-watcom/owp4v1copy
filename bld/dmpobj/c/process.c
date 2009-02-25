@@ -100,6 +100,7 @@ void ProcTHeadr( int first )
 /**************************/
 {
     if( first ) {
+        Grpindex    = 0;
         Segindex    = 0;
         Nameindex   = 0;
         Importindex = 0;
@@ -1359,14 +1360,15 @@ void ProcGrpDef( void )
     unsigned_16 idx;
     unsigned_16 idxidx;
 
+    ++Grpindex;
     grpidx = GetIndex();
     idx = 0;
     if( TranslateIndex ) {
         grpname = GetLname( grpidx );
         AddGrpdef( grpidx, 0 ); /* start new grpdef */
-        Output( INDENT "name: %u - '%s'" CRLF, grpidx, grpname );
+        Output( INDENT "%u: name: %u - '%s'" CRLF, Grpindex, grpidx, grpname );
     } else {
-        Output( INDENT "name: %u" CRLF, grpidx );
+        Output( INDENT "%u: name: %u" CRLF, Grpindex, grpidx );
     }
     while( !EndRec() ) {
         grptype = GetByte();

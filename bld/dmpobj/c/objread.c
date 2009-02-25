@@ -41,6 +41,7 @@ data_ptr    RecBuff;
 data_ptr    RecPtr;
 unsigned_16 RecMaxLen;
 unsigned    RecNum;
+unsigned_16 Grpindex;
 unsigned_16 Segindex;
 unsigned_16 Nameindex;
 unsigned_16 Importindex;
