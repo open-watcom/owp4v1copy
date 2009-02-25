@@ -19,28 +19,26 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header deque requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _ITERATOR_INCLUDED
-  #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _LIMITS_INCLUDED
-  #include <limits>
+ #include <limits>
 #endif
 
 #ifndef _MEMORY_INCLUDED
-  #include <memory>
+ #include <memory>
 #endif
 
 #ifndef _STDEXCEPT_INCLUDED
-  #include <stdexcep>
+ #include <stdexcep>
 #endif
 
 #ifndef _TYPE_TRAITS_INCLUDED
-    #include <type_tra>
+ #include <type_tra>
 #endif
 
 namespace std {
@@ -1358,6 +1356,6 @@ namespace std {
   }
   #endif
 */
-} // End of namespace std.
+} // namespace std
 
 #endif

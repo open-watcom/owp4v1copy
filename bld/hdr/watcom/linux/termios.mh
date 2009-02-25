@@ -5,9 +5,17 @@
  */
 #ifndef _TERMIOS_H_INCLUDED
 #define _TERMIOS_H_INCLUDED
-#include <time.h>
+
 :include readonly.sp
+
+:include owrtlink.sp
+
+#ifndef _TIME_H_INCLUDED
+ #include <time.h>
+#endif
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
 typedef unsigned char   cc_t;
@@ -175,5 +183,7 @@ _WCRTLINK extern int     tcflush( int __fd, int __queue_selector );
 _WCRTLINK extern int     tcflow( int __fd, int __action );
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif /* !_TERMIOS_H_INCLUDED */

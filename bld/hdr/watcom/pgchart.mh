@@ -14,11 +14,9 @@
 
 :include readonly.sp
 
-:include cpluspro.sp
+:include owrtlink.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include cpluspro.sp
 
 :include pshpackl.sp
 

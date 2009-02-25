@@ -14,7 +14,7 @@
 :include readonly.sp
 
 #ifndef _STRSTREA_INCLUDED
-  #include <strstrea>
+ #include <strstrea>
 #endif
 using std::strstreambuf;
 using std::strstreambase;
@@ -31,14 +31,12 @@ using std::strstream;
 :elsesegment
 #ifndef _STRSTREA_INCLUDED
 #define _STRSTREA_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header strstream requires C++
-#endif
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include cpponly.sp
+
+:include owrtlink.sp
 
 #ifndef _IOSTREAM_INCLUDED
  #include <iostream>

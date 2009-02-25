@@ -12,24 +12,22 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header list requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _ITERATOR_INCLUDED
-    #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _MEMORY_INCLUDED
-    #include <memory>
+ #include <memory>
 #endif
 
 #ifndef _TYPE_TRAITS_INCLUDED
-    #include <type_tra>
+ #include <type_tra>
 #endif
 
 #ifndef _FUNCTIONAL_INCLUDED
-    #include <function>
+ #include <function>
 #endif
 
 namespace std {
@@ -898,6 +896,6 @@ list< Type, Allocator >::_Sane( )
     return( true );
 }
 
-}; // End of namespace std.
+} // namespace std
 
 #endif

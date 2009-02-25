@@ -11,17 +11,17 @@
 #ifndef _CSTDDEF_INCLUDED
 #define _CSTDDEF_INCLUDED
 
-#ifndef __cplusplus
-#error the header cstddef requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _STDDEF_H_INCLUDED
 #define _STDDEF_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-:segment !CNAME
+
 #ifdef __cplusplus
+
 #include <cstddef>
 
 // C99 types in stddef.h
@@ -39,18 +39,18 @@ using std::ptrdiff_t;
 #else /* __cplusplus not defined */
 :endsegment
 
+:include owrtlink.sp
+
 :segment CNAME
 :include cpluspro.sp
+
 :endsegment
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 :include sizet.sp
 
+:segment !CNAME
 :include wchar_t.sp
 
+:endsegment
 :include null.sp
 
 :include ptrdiff.sp
@@ -61,8 +61,8 @@ using std::ptrdiff_t;
 :include rsizet.sp
 
 :include saferepi.sp
-:endsegment
 
+:endsegment
 :segment CNAME
 #define offsetof(__typ,__id) __offsetof(__typ,__id)
 :elsesegment
@@ -79,16 +79,16 @@ using std::ptrdiff_t;
 #endif
 :elsesegment DOS
 :include ext.sp
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
+#if defined(_M_I86)
+ _WCRTDATA extern int _WCFAR *_threadid;        /* pointer to thread id */
+#else
  _WCRTLINK extern int *__threadid(void); /* pointer to thread id */
  #define _threadid (__threadid())
  #if defined(__NT__)
   _WCRTLINK extern unsigned long __threadhandle( void );
  #endif
-#else
- _WCRTDATA extern int _WCFAR *_threadid;        /* pointer to thread id */
 #endif
-#endif
+:include extepi.sp
 :endsegment
 
 :segment CNAME

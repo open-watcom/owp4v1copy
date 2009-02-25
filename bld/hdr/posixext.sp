@@ -1,5 +1,5 @@
 :segment QNX | LINUX
 #if defined(_POSIX_SOURCE) || !defined(NO_EXT_KEYS) /* extensions enabled */
 :elsesegment
-:include ext.sp
+#if !defined(NO_EXT_KEYS) /* extensions enabled */
 :endsegment

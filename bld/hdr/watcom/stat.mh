@@ -6,18 +6,21 @@
  *
 :include crwat.sp
  */
-:segment LINUX
 #ifndef _STAT_H_INCLUDED
 #define _STAT_H_INCLUDED
+
 :include readonly.sp
-:include cpluspro.sp
+
+:include owrtlink.sp
 
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
 
+:include cpluspro.sp
+
+:segment LINUX
 :include lnxkpack.sp
-:include incdir.sp
 
 /* Versions of the `struct stat' data structure.  */
 #define _STAT_VER_LINUX_OLD 1
@@ -25,6 +28,8 @@
 #define _STAT_VER_SVR4      2
 #define _STAT_VER_LINUX     3
 #define _STAT_VER           _STAT_VER_LINUX /* The one defined below.  */
+
+:include incdir.sp
 
 #include _ARCH_INCLUDE(sys/stat.h)
 
@@ -50,7 +55,8 @@
 #define S_ISBLK(m)  (((m)&_S_IFMT)==_S_IFBLK) /* Test for block specl file. */
 #define S_ISREG(m)  (((m)&_S_IFMT)==_S_IFREG) /* Test for regular file.     */
 
-#if defined(_POSIX_SOURCE) || !defined(NO_EXT_KEYS)
+:include posixext.sp
+
 #define S_ISLNK(m)  (((m)&_S_IFMT)==_S_IFLNK) /* Test for symbolic link.    */
 #define S_ISNAM(m)  (((m)&_S_IFMT)==_S_IFNAM) /* Test for special named file*/
 #define S_ISSOCK(m) (((m)&_S_IFMT)==_S_IFSOCK)/* Test for socket.           */
@@ -67,7 +73,8 @@
 #define S_IFREG     _S_IFREG            /*  Regular                         */
 #define S_IFLNK     _S_IFLNK            /*  Symbolic link                   */
 #define S_IFSOCK    _S_IFSOCK           /*  Socket                          */
-#endif
+
+:include extepi.sp
 
 #define S_ISUID     004000              /* set user id on execution         */
 #define S_ISGID     002000              /* set group id on execution        */
@@ -118,21 +125,10 @@ _WCRTLINK extern int     fstat64( int __fildes, struct stat64 * __buf );
 _WCRTLINK extern int     lstat64( const char *filename, struct stat64 * __buf );
 _WCRTLINK extern int     stat64( const char *filename, struct stat64 * __buf );
 :endsegment
-#ifdef __cplusplus
-};
-#endif
-
-:include poppack.sp
-#endif
+::
 :elsesegment
-#ifndef _STAT_H_INCLUDED
-#define _STAT_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+::
+:include pshpackl.sp
 
 :segment DOS
 #ifndef _MAX_NAME
@@ -141,12 +137,6 @@ _WCRTLINK extern int     stat64( const char *filename, struct stat64 * __buf );
 :endsegment
 
 :include wchar_t.sp
-
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
-
-:include pshpackl.sp
 
 struct _stat {
         dev_t   st_dev;         /* disk drive file resides on */
@@ -206,7 +196,7 @@ struct stat {
 :endsegment
 };
 :: end of extensions
-#endif
+:include extepi.sp
 
 struct _stati64 {
         dev_t   st_dev;         /* disk drive file resides on */
@@ -309,10 +299,12 @@ _WCRTLINK extern int fstat( int, struct stat * );
 _WCRTLINK extern int stat( const char *, struct stat * );
 _WCRTLINK extern int lstat( const char *, struct stat * );
 :: end of extensions
-#endif
+:include extepi.sp
+:endsegment
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif
-:endsegment
 :endsegment

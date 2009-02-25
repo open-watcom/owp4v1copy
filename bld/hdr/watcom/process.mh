@@ -5,18 +5,19 @@
  */
 #ifndef _PROCESS_H_INCLUDED
 #define _PROCESS_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
 
 :segment QNX | LINUX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
+
 :endsegment
+:include cpluspro.sp
+
 :include wchar_t.sp
 
 /*
@@ -32,6 +33,9 @@ _WCRTLINK extern int execvp( const char *__file, const char *const __argv[] );
 
 :segment QNX | LINUX
 :include ext.sp
+::
+:: Begin of extension section
+::
 :endsegment
 :segment QNX
 
@@ -82,40 +86,40 @@ _WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
 
 :segment QNX | LINUX
 #if defined(__386__)
-_WCRTLINK extern int  _beginthread( void (*__start_address)(void *),
-   void *__stack_bottom, unsigned __stack_size, void *__arglist );
-#pragma intrinsic(_beginthread);
-_WCRTLINK extern void _endthread( void );
+ _WCRTLINK extern int  _beginthread( void (*__start_address)(void *),
+     void *__stack_bottom, unsigned __stack_size, void *__arglist );
+ #pragma intrinsic(_beginthread);
+ _WCRTLINK extern void _endthread( void );
 :elsesegment
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-#if defined(__NT__)
-_WCRTLINK extern unsigned long _beginthread(
+ #if defined(__NT__)
+  _WCRTLINK extern unsigned long _beginthread(
                 void (*__start_address)(void *),
                 unsigned __stack_size, void *__arglist );
-_WCRTLINK extern unsigned long _beginthreadex( void *__security,
+  _WCRTLINK extern unsigned long _beginthreadex( void *__security,
                 unsigned __stack_size,
                 unsigned (__stdcall *__start_address)(void *),
                 void *__arglist, unsigned __initflag, unsigned *__thrdaddr );
-#pragma intrinsic(_beginthread,_beginthreadex);
-_WCRTLINK extern void _endthreadex( unsigned __retval );
-_WCRTLINK extern unsigned long __threadhandle( void );
+  #pragma intrinsic(_beginthread,_beginthreadex);
+  _WCRTLINK extern void _endthreadex( unsigned __retval );
+  _WCRTLINK extern unsigned long __threadhandle( void );
+ #else
+  _WCRTLINK extern int _beginthread( void (*__start_address)(void *),
+      void *__stack_bottom, unsigned __stack_size, void *__arglist );
+  #pragma intrinsic(_beginthread);
+ #endif
+ _WCRTLINK extern void _endthread( void );
 #else
-_WCRTLINK extern int _beginthread( void (*__start_address)(void *),
-   void *__stack_bottom, unsigned __stack_size, void *__arglist );
-#pragma intrinsic(_beginthread);
-#endif
-_WCRTLINK extern void _endthread( void );
-#else
-_WCRTLINK extern int _WCFAR  _beginthread(
+ _WCRTLINK extern int _WCFAR  _beginthread(
     void (_WCFAR *__start_address)(void _WCFAR *),
     void _WCFAR *__stack_bottom, unsigned __stack_size, void _WCFAR *__arglist );
-#pragma intrinsic(_beginthread);
-_WCRTLINK extern void _WCFAR _endthread( void );
-#ifndef __SW_ZU
+ #pragma intrinsic(_beginthread);
+ _WCRTLINK extern void _WCFAR _endthread( void );
+ #ifndef __SW_ZU
   _WCRTLINK void _WCFAR *__chkstack( void _WCFAR * );
   #define _beginthread( __sa, __sb, __ss, __al ) \
           _beginthread( __sa, __chkstack(__sb), __ss, __al )
-#endif
+ #endif
 :endsegment
 #endif
 :segment !QNX
@@ -235,8 +239,12 @@ _WCRTLINK extern pid_t  wait( int *__status );
 :endsegment
 
 :segment QNX | LINUX
-#endif
-:endsegment
+::
+:: End of extension section
+::
+:include extepi.sp
 
+:endsegment
 :include cplusepi.sp
+
 #endif

@@ -10,19 +10,18 @@
 #ifndef _CSIGNAL_INCLUDED
 #define _CSIGNAL_INCLUDED
 
-#ifndef __cplusplus
-#error The header csignal requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _SIGNAL_H_INCLUDED
 #define _SIGNAL_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following segment only appears in signal.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <csignal>
 
 // C99 types in signal.h.
@@ -36,20 +35,19 @@ using std::raise;
 :: End of segment that is only in signal.h
 :endsegment
 
-:: Only need extern "C" in csignal
-:segment CNAME
-:include cpluspro.sp
-:endsegment
+:include owrtlink.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
 :segment QNX | LINUX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
-:endsegment
 
+:endsegment
+:: Only need extern "C" in csignal
+:segment CNAME
+:include cpluspro.sp
+
+:endsegment
 :segment CNAME
 namespace std {
   typedef int sig_atomic_t;
@@ -65,18 +63,27 @@ typedef __sig_func __sighandler_t;
 :include incdir.sp
 #include _ARCH_INCLUDE(signal.h)
 
-#if defined(_POSIX_SOURCE) || !defined(NO_EXT_KEYS)
+:include posixext.sp
+
 :include pshpackl.sp
+
 #include _ARCH_INCLUDE(sigposix.h)
+
 :include poppack.sp
-#endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
+
+:include extepi.sp
 
 :elsesegment QNX
 
 #define __SIG_FAR _WCI86FAR
 
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:include unixext.sp
+::
+:: Begin of extension section
+::
+
 :include pshpackl.sp
+
 #ifdef __NEUTRINO__
 typedef struct {
     long    nrt;
@@ -129,8 +136,13 @@ struct msigevent {
     union sigval sigev_value;
 };
 #endif
+
 :include poppack.sp
-#endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
+
+::
+:: End of extension section
+::
+:include extepi.sp
 
 typedef void (__SIG_FAR *__far_sig_func)( int );
 
@@ -208,8 +220,8 @@ typedef void (__SIG_FAR *__far_sig_func)( int );
 #define SIG_SETMASK 2
 
 #define SA_NOCLDSTOP 0x00000001
-:endsegment
 
+:endsegment
 :segment CNAME
 namespace std {
 :endsegment
@@ -220,7 +232,7 @@ _WCRTLINK extern void (*signal( int __sig, void (*__func)(int) ) )(int);
 :endsegment
 
 :segment QNX | LINUX
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:include unixext.sp
 _WCRTLINK extern int  kill( pid_t __pid, int __signum );
 _WCRTLINK extern int  sigaction( int __signo, const struct sigaction *__act, struct sigaction *__oact );
 _WCRTLINK extern int  sigaddset( sigset_t *__set, int __signo );
@@ -231,9 +243,9 @@ _WCRTLINK extern int  sigismember( const sigset_t *__set, int __signo );
 _WCRTLINK extern int  sigpending( sigset_t *__set );
 _WCRTLINK extern int  sigprocmask( int __how, const sigset_t *__set, sigset_t *__oset );
 _WCRTLINK extern int  sigsuspend( const sigset_t *sigmask );
-#endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
-:endsegment
+:include extepi.sp
 
+:endsegment
 :segment CNAME
 :include cplusepi.sp
 :elsesegment

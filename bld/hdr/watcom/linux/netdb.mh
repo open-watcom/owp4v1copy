@@ -5,9 +5,17 @@
  */
 #ifndef _NETDB_H_INCLUDED
 #define _NETDB_H_INCLUDED
-#include <sys/socket.h>        /* for AF_INET */
+
 :include readonly.sp
+
+:include owrtlink.sp
+
+#ifndef _SYS_SOCKET_H_INCLUDED
+ #include <sys/socket.h>        /* for AF_INET */
+#endif
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
 struct protoent {
@@ -55,6 +63,7 @@ _WCRTLINK extern void            herror( const char *__s );
 _WCRTLINK extern const char      *hstrerror( int __err );
 
 :include poppack.sp
-:include cplusepi.sp
-#endif /* !_NETDB_H_INCLUDED */
 
+:include cplusepi.sp
+
+#endif /* !_NETDB_H_INCLUDED */

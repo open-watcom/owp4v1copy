@@ -5,17 +5,21 @@
  */
 #ifndef _SYS_UTSNAME_H_INCLUDED
 #define _SYS_UTSNAME_H_INCLUDED
+
 :include readonly.sp
+
+:include owrtlink.sp
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
-
 #define  _UTSNAME_LENGTH           65
-# define _UTSNAME_SYSNAME_LENGTH  _UTSNAME_LENGTH
-# define _UTSNAME_NODENAME_LENGTH _UTSNAME_LENGTH
-# define _UTSNAME_RELEASE_LENGTH  _UTSNAME_LENGTH
-# define _UTSNAME_VERSION_LENGTH  _UTSNAME_LENGTH
-# define _UTSNAME_MACHINE_LENGTH  _UTSNAME_LENGTH
+#define  _UTSNAME_SYSNAME_LENGTH  _UTSNAME_LENGTH
+#define  _UTSNAME_NODENAME_LENGTH _UTSNAME_LENGTH
+#define  _UTSNAME_RELEASE_LENGTH  _UTSNAME_LENGTH
+#define  _UTSNAME_VERSION_LENGTH  _UTSNAME_LENGTH
+#define  _UTSNAME_MACHINE_LENGTH  _UTSNAME_LENGTH
 
 struct utsname {
     char sysname[_UTSNAME_LENGTH];      /* name of operating system */
@@ -29,6 +33,7 @@ struct utsname {
 _WCRTLINK extern int uname( struct utsname *__name );
 
 :include poppack.sp
-:include cplusepi.sp
-#endif /* !_SYS_UTSNAME_H_INCLUDED */
 
+:include cplusepi.sp
+
+#endif /* !_SYS_UTSNAME_H_INCLUDED */

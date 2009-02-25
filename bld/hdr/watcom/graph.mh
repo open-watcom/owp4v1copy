@@ -14,21 +14,19 @@
 
 :include readonly.sp
 
-:include cpluspro.sp
+:include owrtlink.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include cpluspro.sp
 
 :include pshpackl.sp
 
 :segment QNX
 #if !defined(__386__)
-    #pragma library (graph);
+ #pragma library (graph);
 #elif defined(__SW_3S)
-    #pragma library (graph3s);
+ #pragma library (graph3s);
 #else
-    #pragma library (graph3r);
+ #pragma library (graph3r);
 #endif
 :elsesegment DOS
 #pragma library (graph);
@@ -86,23 +84,23 @@ struct _fontinfo {              /* structure for _getfontinfo */
 
 /* Calling conventions for -fpi(87) are different than for -fpc */
 #if defined( __FPI__ )
-    #define _arc_w              _arc_w_87
-    #define _ellipse_w          _ellipse_w_87
-    #define _floodfill_w        _floodfill_w_87
-    #define _getimage_w         _getimage_w_87
-    #define _getpixel_w         _getpixel_w_87
-    #define _getviewcoord_w     _getviewcoord_w_87
-    #define _grtext_w           _grtext_w_87
-    #define _imagesize_w        _imagesize_w_87
-    #define _lineto_w           _lineto_w_87
-    #define _moveto_w           _moveto_w_87
-    #define _pie_w              _pie_w_87
-    #define _putimage_w         _putimage_w_87
-    #define _rectangle_w        _rectangle_w_87
-    #define _setcharsize_w      _setcharsize_w_87
-    #define _setcharspacing_w   _setcharspacing_w_87
-    #define _setpixel_w         _setpixel_w_87
-    #define _setwindow          _setwindow_87
+ #define _arc_w              _arc_w_87
+ #define _ellipse_w          _ellipse_w_87
+ #define _floodfill_w        _floodfill_w_87
+ #define _getimage_w         _getimage_w_87
+ #define _getpixel_w         _getpixel_w_87
+ #define _getviewcoord_w     _getviewcoord_w_87
+ #define _grtext_w           _grtext_w_87
+ #define _imagesize_w        _imagesize_w_87
+ #define _lineto_w           _lineto_w_87
+ #define _moveto_w           _moveto_w_87
+ #define _pie_w              _pie_w_87
+ #define _putimage_w         _putimage_w_87
+ #define _rectangle_w        _rectangle_w_87
+ #define _setcharsize_w      _setcharsize_w_87
+ #define _setcharspacing_w   _setcharspacing_w_87
+ #define _setpixel_w         _setpixel_w_87
+ #define _setwindow          _setwindow_87
 #endif
 
 /* Video Setup and Query Functions */

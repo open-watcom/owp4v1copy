@@ -5,14 +5,15 @@
  */
 #ifndef _UTIME_H_INCLUDED
 #define _UTIME_H_INCLUDED
+
 :include readonly.sp
+
+:include owrtlink.sp
+
 :include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 :include pshpackl.sp
+
 :include timet.sp
 
 :include wchar_t.sp
@@ -34,5 +35,7 @@ _WCRTLINK extern int __futime( int __fildes, const struct utimbuf *__times );
 :endsegment
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif

@@ -8,6 +8,8 @@
 
 :include readonly.sp
 
+:include owrtlink.sp
+
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
@@ -19,7 +21,10 @@
 #define _DIRENT_HAVE_D_OFF
 #undef  _DIRENT_HAVE_D_TYPE
 
+:include cpluspro.sp
+
 :include pshpackl.sp
+
 struct dirent {
     ino_t           d_ino;
     off_t           d_off;
@@ -37,19 +42,16 @@ struct dirent {
 typedef struct __dirstream DIR;
 
 :include poppack.sp
+
 /*
  *  POSIX 1003.1 Prototypes.
  */
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 _WCRTLINK extern DIR              *opendir( const char *__dirname );
 _WCRTLINK extern struct dirent    *readdir( DIR *__dirp );
 _WCRTLINK extern void             rewinddir( DIR *__dirp );
 _WCRTLINK extern int              closedir( DIR *__dirp );
-#ifdef __cplusplus
-};
-#endif
+
+:include cplusepi.sp
 
 #endif
-

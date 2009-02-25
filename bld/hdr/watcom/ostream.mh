@@ -15,7 +15,7 @@
 :include readonly.sp
 
 #ifndef _OSTREAM_INCLUDED
-  #include <ostream>
+ #include <ostream>
 #endif
 using std::ostream;
 using std::endl;
@@ -24,7 +24,7 @@ using std::flush;
 
 // All included names should also be in the global namespace.
 #ifndef _IOS_H_INCLUDED
-  #include <ios.h>
+ #include <ios.h>
 #endif
 
 #endif
@@ -34,16 +34,12 @@ using std::flush;
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header ostream requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef _IOS_INCLUDED
-  #include <ios>
+ #include <ios>
 #endif
 
 namespace std {

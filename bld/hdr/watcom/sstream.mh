@@ -13,7 +13,7 @@
 :include readonly.sp
 
 #ifndef _SSTREAM_INCLUDED
-  #include <sstream>
+ #include <sstream>
 #endif
 
 #endif
@@ -23,9 +23,7 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header sstream requires C++
-#endif
+:include cpponly.sp
 
 namespace std {
 

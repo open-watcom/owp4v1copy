@@ -8,18 +8,19 @@
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __ALGNMOD_H_INCLUDED
 #define __ALGNMOD_H_INCLUDED
+
 :include readonly.sp
 
 #ifndef _ALGORITHM_INCLUDED
-#error The header _algnmod.h requires algorithm.
+ #error The header _algnmod.h requires algorithm.
 #endif
 
 #ifndef _ITERATOR_INCLUDED
-  #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _UTILITY_INCLUDED
-  #include <utility>
+ #include <utility>
 #endif
 
 namespace std {
@@ -297,6 +298,6 @@ bool equal( InputIterator1 first1,
     return( true );
 }
 
-}
+} // namespace std
 
 #endif

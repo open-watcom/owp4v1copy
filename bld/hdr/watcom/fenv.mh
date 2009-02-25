@@ -8,16 +8,16 @@
  ***************************************************************************/
 #ifndef _FENV_H_INCLUDED
 #define _FENV_H_INCLUDED
+
 :include readonly.sp
 
 #if !defined(__STDC_VERSION__) || __STDC_VERSION__ >= 199901L
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
+
+:include pshpackl.sp
 
 /* type for holding FPU environment */
-:include pshpackl.sp
 #if defined(__386__)
 typedef struct {
     unsigned short control_word;
@@ -44,6 +44,7 @@ typedef struct {
     unsigned short op_ptr_seg;
 } fenv_t;
 #endif
+
 :include poppack.sp
 
 /* type for holding FPU exception flags */
@@ -76,11 +77,10 @@ _WCRTLINK extern int  feraiseexcept( int __excepts );
 _WCRTLINK extern int  fesetexceptflag( const fexcept_t *__flagp, int __excepts );
 _WCRTLINK extern int  fetestexcept( int __excepts );
 
-#ifndef NO_EXT_KEYS
-/* OW extensions */
+#if !defined(NO_EXT_KEYS) /* extensions enabled */
 _WCRTLINK extern void __feenableexcept( int __excepts );
 _WCRTLINK extern void __fedisableexcept( int __excepts );
-#endif
+#endif /* extensions enabled */
 
 /* rounding mode functions */
 _WCRTLINK extern int  fegetround( void );

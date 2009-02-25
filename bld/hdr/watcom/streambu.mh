@@ -14,39 +14,36 @@
 :include readonly.sp
 
 #ifndef _STREAMBUF_INCLUDED
-  #include <streambu>
+ #include <streambu>
 #endif
 using std::streambuf;
 
 // All included names should also be in the global namespace.
 #ifndef _STDDEF_H_INCLUDED
-  #include <stddef.h>
+ #include <stddef.h>
 #endif
 
 #ifndef _STRING_H_INCLUDED
-  #include <string.h>
+ #include <string.h>
 #endif
 
 #endif
 :elsesegment
 #ifndef _STREAMBUF_INCLUDED
 #define _STREAMBUF_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header streambuf requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
-  #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef _CSTDDEF_INCLUDED
-  #include <cstddef>
+ #include <cstddef>
 #endif
 
 #ifndef _CSTRING_INCLUDED
-  #include <cstring>
+ #include <cstring>
 #endif
 
 :include cpplock.sp

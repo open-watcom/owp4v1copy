@@ -11,31 +11,31 @@
 ::
 :segment CNAME
 #ifndef _STDCLOCK_T_DEFINED
-  #define _STDCLOCK_T_DEFINED
-  namespace std {
-    typedef unsigned long clock_t;
-  }
+#define _STDCLOCK_T_DEFINED
+ namespace std {
+   typedef unsigned long clock_t;
+ }
 #endif
 :elsesegment
 :segment !CONLY
 #ifdef __cplusplus
-  #ifndef _STDCLOCK_T_DEFINED
-    #define _STDCLOCK_T_DEFINED
-    namespace std {
-      typedef unsigned long clock_t;
-    }
-  #endif
-  #ifndef _CLOCK_T_DEFINED
-    #define _CLOCK_T_DEFINED
-    using std::clock_t;
-  #endif
-#else
-:endsegment
-  #ifndef _CLOCK_T_DEFINED
-    #define _CLOCK_T_DEFINED
+ #ifndef _STDCLOCK_T_DEFINED
+ #define _STDCLOCK_T_DEFINED
+  namespace std {
     typedef unsigned long clock_t;
-  #endif
+  }
+ #endif
+ #ifndef _CLOCK_T_DEFINED
+ #define _CLOCK_T_DEFINED
+  using std::clock_t;
+ #endif
+#else  /* __cplusplus not defined */
+:endsegment
+ #ifndef _CLOCK_T_DEFINED
+ #define _CLOCK_T_DEFINED
+  typedef unsigned long clock_t;
+ #endif
 :segment !CONLY
-#endif /* __cplusplus */
+#endif /* __cplusplus not defined */
 :endsegment
 :endsegment

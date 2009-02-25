@@ -12,9 +12,7 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-  #error The header _meta.h requires C++
-#endif
+:include cpponly.sp
 
 namespace _ow {
 

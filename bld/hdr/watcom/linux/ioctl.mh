@@ -5,10 +5,19 @@
  */
 #ifndef _SYS_IOCTL_H_INCLUDED
 #define _SYS_IOCTL_H_INCLUDED
-#include <time.h>
+
 :include readonly.sp
+
+:include owrtlink.sp
+
+#ifndef _TIME_H_INCLUDED
+ #include <time.h>
+#endif
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
+
 :include incdir.sp
 
 #include _ARCH_INCLUDE(sys/ioctl.h)
@@ -204,5 +213,7 @@ struct termio {
 _WCRTLINK extern int ioctl( int __fd, unsigned long int __request, ... );
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif /* !_SYS_IOCTL_H_INCLUDED */

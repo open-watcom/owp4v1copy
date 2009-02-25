@@ -13,12 +13,10 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header iterator requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _CSTDDEF_INCLUDED
-  #include <cstddef>
+ #include <cstddef>
 #endif
 
 namespace std {

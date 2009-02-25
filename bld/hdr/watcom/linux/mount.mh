@@ -5,8 +5,13 @@
  */
 #ifndef _SYS_MOUNT_H_INCLUDED
 #define _SYS_MOUNT_H_INCLUDED
+
 :include readonly.sp
+
+:include owrtlink.sp
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
 #define MS_RDONLY        1 /* mount read-only */
@@ -27,5 +32,7 @@ _WCRTLINK extern int mount( const char *__specialfile, const char *__dir,
 _WCRTLINK extern int umount(const char *__dir);
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif /* !_SYS_MOUNT_H_INCLUDED */

@@ -16,7 +16,7 @@
 :include readonly.sp
 
 #ifndef _IOSFWD_INCLUDED
-  #include <iosfwd>
+ #include <iosfwd>
 #endif
 using std::ios;
 using std::streambuf;
@@ -35,13 +35,9 @@ using std::fstream;
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header iosfwd requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 namespace std {
   class _WPRTLINK ios;

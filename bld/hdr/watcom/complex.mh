@@ -11,9 +11,9 @@
 :include readonly.sp
 
 #ifndef __cplusplus
-    #if __STDC_VERSION__ < 199901L
-        #error complex.h is for use with C++ or C99
-    #else
+ #if __STDC_VERSION__ < 199901L
+  #error complex.h is for use with C++ or C99
+ #else
 
 #define complex _Complex
 /* NB. This will change, it's not C99 standard */
@@ -117,61 +117,59 @@ double creal(double complex z);
 float crealf(float complex z);
 long double creall(long double complex z);
 
-    #endif
-#else
+ #endif
+#else  /* __cplusplus */
 
-#if defined( __AXP__) || defined( __PPC__ )
-#pragma library( "cplx.lib" )
+#if !defined(_M_IX86)
+ #pragma library( "cplx.lib" )
+#elif defined(__SW_FPC)
+ #if defined(_M_I86)
+  #if defined(__MEDIUM__)
+   #pragma library ( "cplxm.lib" )
+  #elif defined(__COMPACT__)
+   #pragma library ( "cplxc.lib" )
+  #elif defined(__LARGE__)
+   #pragma library ( "cplxl.lib" )
+  #elif defined(__HUGE__)
+   #pragma library ( "cplxh.lib" )
+  #else
+   #pragma library ( "cplxs.lib" )
+  #endif
+ #else
+  #if defined(__3S__)
+   #pragma library ( "cplx3s.lib" )
+  #else
+   #pragma library ( "cplx3r.lib" )
+  #endif
+ #endif
 #else
-#if defined(__SW_FPC)
-#if defined(__386__)
-#if defined(__3S__)
-#pragma library ( "cplx3s.lib" )
-#else
-#pragma library ( "cplx3r.lib" )
-#endif
-#else
-#if defined(__MEDIUM__)
-#pragma library ( "cplxm.lib" )
-#elif defined(__COMPACT__)
-#pragma library ( "cplxc.lib" )
-#elif defined(__LARGE__)
-#pragma library ( "cplxl.lib" )
-#elif defined(__HUGE__)
-#pragma library ( "cplxh.lib" )
-#else
-#pragma library ( "cplxs.lib" )
-#endif
-#endif
-#else
-#if defined(__386__)
-#if defined(__3S__)
-#pragma library ( "cplx73s.lib" )
-#else
-#pragma library ( "cplx73r.lib" )
-#endif
-#else
-#if defined(__MEDIUM__)
-#pragma library ( "cplx7m.lib" )
-#elif defined(__COMPACT__)
-#pragma library ( "cplx7c.lib" )
-#elif defined(__LARGE__)
-#pragma library ( "cplx7l.lib" )
-#elif defined(__HUGE__)
-#pragma library ( "cplx7h.lib" )
-#else
-#pragma library ( "cplx7s.lib" )
-#endif
-#endif
-#endif
+ #if defined(_M_I86)
+  #if defined(__MEDIUM__)
+   #pragma library ( "cplx7m.lib" )
+  #elif defined(__COMPACT__)
+   #pragma library ( "cplx7c.lib" )
+  #elif defined(__LARGE__)
+   #pragma library ( "cplx7l.lib" )
+  #elif defined(__HUGE__)
+   #pragma library ( "cplx7h.lib" )
+  #else
+   #pragma library ( "cplx7s.lib" )
+  #endif
+ #else
+  #if defined(__3S__)
+   #pragma library ( "cplx73s.lib" )
+  #else
+   #pragma library ( "cplx73r.lib" )
+  #endif
+ #endif
 #endif
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
+
 #ifndef _IOSTREAM_H_INCLUDED
  #include <iostream.h>
 #endif
+
 :include pshpackl.sp
 
 class _WPRTLINK Complex {
@@ -203,6 +201,7 @@ public:
     friend _WPRTLINK istream &operator >> ( istream &, Complex & );
     friend _WPRTLINK ostream &operator << ( ostream &, Complex const & );
 };
+
 :include poppack.sp
 
 typedef Complex complex;        // for compatibility
@@ -418,7 +417,8 @@ inline double norm( Complex const &__cv ) {
     return( __cv.real() * __cv.real() + __cv.imag() * __cv.imag() );
 }
 
-#endif /* defined __cplusplus */
+#endif /* __cplusplus */
+
 #endif
 :elsesegment
 :: Note that <complex> has nothing to do with <complex.h>. Both targets
@@ -440,9 +440,7 @@ inline double norm( Complex const &__cv ) {
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header complex requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _CMATH_INCLUDED
  #include <cmath>

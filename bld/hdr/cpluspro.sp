@@ -3,5 +3,5 @@
 :endsegment
 extern "C" {
 :segment !CNAME
-#endif /* __cplusplus */
+#endif
 :endsegment

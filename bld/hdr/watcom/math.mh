@@ -10,19 +10,18 @@
 #ifndef _CMATH_INCLUDED
 #define _CMATH_INCLUDED
 
-#ifndef __cplusplus
-#error the header cmath requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _MATH_H_INCLUDED
 #define _MATH_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following somewhat long segment only appears in math.h
-:segment !CNAME
 #ifdef __cplusplus
+
 #define _INCLUDED_FROM_MATH_H
 #include <cmath>
 #undef  _INCLUDED_FROM_MATH_H
@@ -51,28 +50,26 @@ using std::sqrt;
 using std::tan;
 using std::tanh;
 
-:include ext.sp
 // C99 functions in math.h that are currently considered extensions.
+:include ext.sp
 using std::acosh;
 using std::asinh;
 using std::atanh;
 using std::hypot;
 using std::log2;
-#endif
+:include extepi.sp
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in math.h
 :endsegment
 
+:include owrtlink.sp
+
 :: Only need extern "C" in cmath
 :segment CNAME
 :include cpluspro.sp
+
 :endsegment
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 :include pshpackl.sp
 
 _WCRTLINK extern const double   *__get_HugeValue_ptr( void );
@@ -126,8 +123,6 @@ _WMRTDATA extern const float    __f_posqnan;
 #define INFINITY   __f_infinity
 #define NAN        __f_posqnan
 
-::#endif
-
 :segment CNAME
 namespace std {
 :endsegment
@@ -159,11 +154,15 @@ _WMIRTLINK extern double sqrt( double __x );
 _WMIRTLINK extern double tan( double __x );
 _WMIRTLINK extern double tanh( double __x );
 :segment CNAME
-}
+} // namespace std
 :endsegment
 
-/* non-ANSI */
 :include ext.sp
+::
+:: Begin of extension section
+::
+
+/* non-ANSI */
 
 struct _complex {
         double  x;
@@ -229,17 +228,20 @@ struct  exception {
 _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
 _WMRTLINK extern void   _set_matherr( int (*rtn)( struct _exception * ) );
-:segment !SNAP & !SNAPDRV
 
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
 _WCRTLINK extern int _dmsbintoieee( double *__x, double *__y );
 _WCRTLINK extern int _fieeetomsbin( float *__x, float *__y );
 _WCRTLINK extern int _fmsbintoieee( float *__x, float *__y );
+
 :endsegment
+::
+:: End of extension section
+::
+:include extepi.sp
 
-#endif /* EXTENSIONS */
-
-#if !defined( __NO_MATH_OPS ) && defined(_M_IX86)
+#if !defined(__NO_MATH_OPS) && defined(_M_IX86)
 /*
     Defining the __NO_MATH_OPS macro will stop the compiler from
     recognizing the following functions as intrinsic operators.
@@ -271,6 +273,7 @@ namespace std {
 #ifndef _INCLUDED_FROM_MATH_H
 #ifndef _CMATH_AUX_INCLUDED
 #define _CMATH_AUX_INCLUDED
+
 namespace std {
   // double
   inline double abs( double __x ) { return( fabs( __x ) ); }
@@ -352,7 +355,9 @@ namespace std {
   inline long double sqrt ( long double __x ) { return( sqrt ( (double)__x ) ); }
   inline long double tan  ( long double __x ) { return( tan  ( (double)__x ) ); }
   inline long double tanh ( long double __x ) { return( tanh ( (double)__x ) ); }
-}
+} // namespace std
+
 #endif
+
 #endif
 :endsegment

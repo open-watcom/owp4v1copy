@@ -1,5 +1,5 @@
 /***************************************************************************
- * FILE: stdint.h (Various integer type definitions)
+ * FILE: stdint.h/cstdint (Various integer type definitions)
  *
 :include crwat.sp
  *
@@ -10,19 +10,18 @@
 #ifndef _CSTDINT_INCLUDED
 #define _CSTDINT_INCLUDED
 
-#ifndef __cplusplus
-#error The header cstdint requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _STDINT_H_INCLUDED
 #define _STDINT_H_INCLUDED
-:endsegment
 
 :include readonly.sp
 
 :: In C++ .h header version import names into standard namespace
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <cstdint>
 
 using std::int8_t;
@@ -54,51 +53,16 @@ using std::uintptr_t;
 using std::intmax_t;
 using std::uintmax_t;
 
-#else // end C++ stdint.h, start C stdint.h
+#else /* __cplusplus not defined */
 :: End .h version additions
 :endsegment
 
 :: In cname version place all these typedefs in std namespace
 :segment CNAME
 namespace std {
-:endsegment
 
-:: "The Alpha NT version (the only one we have) has 32-bit long ints and
-:: 64-bit long long ints. Essentially the system behaves just like a
-:: 32-bit machine (pointers are only 32-bit, too), except long longs fit
-:: in registers. The PPC port was only targeted for 32-bit PPC systems,
-:: it's much like a 386."
- /*          char | short | int | long | long long                        */
- /* 16 bit : 8      16      16    32     64     All 16 bit targets.       */
- /* 32 bit : 8      16      32    32     64     386, AXP, PPC, MIPS       */
- /* 64 bit : 8      16      32    64     64     No targets implemented.   */
-
-/* Exact-width types. */
-:: Some of these types are also defined in sys/types.h. However, protection
-:: with the _EXACT_WIDTH_INTS is not needed in cstdint because the types are
-:: declared in namespace std (and thus can't conflict with the global types
-:: in sys/types.h anyway). In fact, if both sys/types.h and cstdint are
-:: included we want the exact width integer types declared in both namespaces.
-:segment !CNAME
-#ifndef _EXACT_WIDTH_INTS
-#define _EXACT_WIDTH_INTS
 :endsegment
-typedef signed char         int8_t;
-typedef unsigned char       uint8_t;
-typedef short               int16_t;
-typedef unsigned short      uint16_t;
-#if defined _M_I86
-typedef long                int32_t;
-typedef unsigned long       uint32_t;
-#else
-typedef int                 int32_t;
-typedef unsigned int        uint32_t;
-#endif
-typedef long long           int64_t;
-typedef unsigned long long  uint64_t;
-:segment !CNAME
-#endif
-:endsegment
+:include exactint.sp
 
 /* Minimum-width types. */
 typedef signed   char      int_least8_t;
@@ -123,21 +87,21 @@ typedef unsigned long      uint_fast32_t;
 typedef unsigned long long uint_fast64_t;
 
 /* Integer types able to hold *object* pointers. */
-#if defined(__386__) || defined(__AXP__) || defined (__PPC__) || defined(__MIPS__)
-#if defined(__COMPACT__) || defined(__LARGE__)
-typedef long long intptr_t;
-typedef unsigned long long uintptr_t;
-#else
-typedef long intptr_t;
-typedef unsigned long uintptr_t;
-#endif
-#else /* 16 bit */
+#if defined(_M_I86)
 #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
 typedef long intptr_t;
 typedef unsigned long uintptr_t;
 #else
 typedef int intptr_t;
 typedef unsigned int uintptr_t;
+#endif
+#else /* 32 bit */
+#if defined(__COMPACT__) || defined(__LARGE__)
+typedef long long intptr_t;
+typedef unsigned long long uintptr_t;
+#else
+typedef long intptr_t;
+typedef unsigned long uintptr_t;
 #endif
 #endif
 
@@ -146,13 +110,18 @@ typedef long long intmax_t;
 typedef unsigned long long uintmax_t;
 
 :segment CNAME
-}; // end namepace std
+} // namespace std
+
 :endsegment
+/* Limit macros */
 
-/* Limit macros. According to C99 these are only visible in C++ programs
-   if __STDC_LIMIT_MACROS is defined. */
-#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
+:: According to C99 these are only visible in C++ programs
+:: if __STDC_LIMIT_MACROS is defined.
+::
+:segment CNAME
+#if defined(__STDC_LIMIT_MACROS)
 
+:endsegment
 /* Exact-width types. */
 #define INT8_MIN   (-128)
 #define INT8_MAX   127
@@ -164,10 +133,10 @@ typedef unsigned long long uintmax_t;
 #define INT64_MAX  9223372036854775807LL
 
 #define UINT8_MAX   255
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-#define UINT16_MAX  65535
+#if defined(_M_I86)
+ #define UINT16_MAX  65535U
 #else
-#define UINT16_MAX  65535U
+ #define UINT16_MAX  65535
 #endif
 #define UINT32_MAX  4294967295UL
 #define UINT64_MAX  18446744073709551615ULL
@@ -183,62 +152,62 @@ typedef unsigned long long uintmax_t;
 #define INT_LEAST64_MAX  9223372036854775807LL
 
 #define UINT_LEAST8_MAX   255
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-#define UINT_LEAST16_MAX  65535
+#if defined(_M_I86)
+ #define UINT_LEAST16_MAX  65535U
 #else
-#define UINT_LEAST16_MAX  65535U
+ #define UINT_LEAST16_MAX  65535
 #endif
 #define UINT_LEAST32_MAX  4294967295UL
 #define UINT_LEAST64_MAX  18446744073709551615ULL
 
 /* Fast minimum-width types. */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-#define INT_FAST8_MIN   (-2147483647-1)
-#define INT_FAST8_MAX   2147483647
-#define INT_FAST16_MIN  (-2147483647-1)
-#define INT_FAST16_MAX  2147483647
+#if defined(_M_I86)
+ #define INT_FAST8_MIN   (-32767-1)
+ #define INT_FAST8_MAX   32767
+ #define INT_FAST16_MIN  (-32767-1)
+ #define INT_FAST16_MAX  32767
 #else
-#define INT_FAST8_MIN   (-32767-1)
-#define INT_FAST8_MAX   32767
-#define INT_FAST16_MIN  (-32767-1)
-#define INT_FAST16_MAX  32767
+ #define INT_FAST8_MIN   (-2147483647-1)
+ #define INT_FAST8_MAX   2147483647
+ #define INT_FAST16_MIN  (-2147483647-1)
+ #define INT_FAST16_MAX  2147483647
 #endif
 #define INT_FAST32_MIN  (-2147483647L-1)
 #define INT_FAST32_MAX  2147483647L
 #define INT_FAST64_MIN  (-9223372036854775807LL-1)
 #define INT_FAST64_MAX  9223372036854775807LL
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-#define UINT_FAST8_MAX   4294967295U
-#define UINT_FAST16_MAX  4294967295U
+#if defined(_M_I86)
+ #define UINT_FAST8_MAX   65535U
+ #define UINT_FAST16_MAX  65535U
 #else
-#define UINT_FAST8_MAX   65535U
-#define UINT_FAST16_MAX  65535U
+ #define UINT_FAST8_MAX   4294967295U
+ #define UINT_FAST16_MAX  4294967295U
 #endif
 #define UINT_FAST32_MAX  4294967295UL
 #define UINT_FAST64_MAX  18446744073709551615ULL
 
 /* Integer types able to hold object pointers. */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-#if defined(__COMPACT__) || defined(__LARGE__)
-#define INTPTR_MIN   (-9223372036854775807LL-1)
-#define INTPTR_MAX   9223372036854775807LL
-#define UINTPTR_MAX  18446744073709551615ULL
-#else
-#define INTPTR_MIN   (-2147483647L-1)
-#define INTPTR_MAX   2147483647L
-#define UINTPTR_MAX  4294967295UL
-#endif
-#else /* 16 bit */
-#if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
-#define INTPTR_MIN   (-2147483647L-1)
-#define INTPTR_MAX   2147483647L
-#define UINTPTR_MAX  4294967295UL
-#else
-#define INTPTR_MIN   (-32767-1)
-#define INTPTR_MAX   32767
-#define UINTPTR_MAX  65535U
-#endif
+#if defined(_M_I86)
+ #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
+  #define INTPTR_MIN   (-2147483647L-1)
+  #define INTPTR_MAX   2147483647L
+  #define UINTPTR_MAX  4294967295UL
+ #else
+  #define INTPTR_MIN   (-32767-1)
+  #define INTPTR_MAX   32767
+  #define UINTPTR_MAX  65535U
+ #endif
+#else /* 32 bit */
+ #if defined(__COMPACT__) || defined(__LARGE__)
+  #define INTPTR_MIN   (-9223372036854775807LL-1)
+  #define INTPTR_MAX   9223372036854775807LL
+  #define UINTPTR_MAX  18446744073709551615ULL
+ #else
+  #define INTPTR_MIN   (-2147483647L-1)
+  #define INTPTR_MAX   2147483647L
+  #define UINTPTR_MAX  4294967295UL
+ #endif
 #endif
 
 /* Greatest-width types. */
@@ -254,31 +223,38 @@ typedef unsigned long long uintmax_t;
 #define WINT_MAX        WCHAR_MAX
 
 /* Limits of other integer types. */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-#define PTRDIFF_MIN     (-2147483647-1)
-#define PTRDIFF_MAX     2147483647
-#define SIG_ATOMIC_MIN  (-2147483647-1)
-#define SIG_ATOMIC_MAX  2147483647
-#define SIZE_MAX        4294967295U
-#else /* 16 bit */
-#if defined(__HUGE__)
-#define PTRDIFF_MIN     (-2147483647L-1)
-#define PTRDIFF_MAX     2147483647L
-#else
-#define PTRDIFF_MIN     (-32767-1)
-#define PTRDIFF_MAX     32767
-#endif
-#define SIG_ATOMIC_MIN  (-32767-1)
-#define SIG_ATOMIC_MAX  32767
-#define SIZE_MAX        65535U
+#if defined(_M_I86)
+ #if defined(__HUGE__)
+  #define PTRDIFF_MIN     (-2147483647L-1)
+  #define PTRDIFF_MAX     2147483647L
+ #else
+  #define PTRDIFF_MIN     (-32767-1)
+  #define PTRDIFF_MAX     32767
+ #endif
+ #define SIG_ATOMIC_MIN  (-32767-1)
+ #define SIG_ATOMIC_MAX  32767
+ #define SIZE_MAX        65535U
+#else /* 32 bit */
+ #define PTRDIFF_MIN     (-2147483647-1)
+ #define PTRDIFF_MAX     2147483647
+ #define SIG_ATOMIC_MIN  (-2147483647-1)
+ #define SIG_ATOMIC_MAX  2147483647
+ #define SIZE_MAX        4294967295U
 #endif
 
+:segment CNAME
 #endif /* Limit macros. */
 
-/* Constant macros. According to C99 these are only visible in C++ programs
-   if __STDC_CONSTANT_MACROS is defined. */
-#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
+:endsegment
+/* Constant macros */
 
+:: According to C99 these are only visible in C++ programs
+:: if __STDC_CONSTANT_MACROS is defined.
+::
+:segment CNAME
+#if defined(__STDC_CONSTANT_MACROS)
+
+:endsegment
 #define INT8_C(x)    (x)
 #define INT16_C(x)   (x)
 #define INT32_C(x)   (x + (INT32_MAX - INT32_MAX))
@@ -292,23 +268,25 @@ typedef unsigned long long uintmax_t;
 #define INTMAX_C(x)  (x + (INT64_MAX - INT64_MAX))
 #define UINTMAX_C(x) (x + (UINT64_MAX - UINT64_MAX))
 
+:segment CNAME
 #endif /* Constant macros. */
 
+:endsegment
 :include saferpro.sp
 
 #if SIZE_MAX > 65535U
 :: In 32-bit environments, objects up to 2GB are allowed. This could be
 :: refined with OS-specific and possibly dynamically determined values.
-  #define RSIZE_MAX     (SIZE_MAX >> 1)
+ #define RSIZE_MAX      (SIZE_MAX >> 1)
 #else
 :: In 16-bit environments, anything up to SIZE_MAX is definitely valid!
-  #define RSIZE_MAX     SIZE_MAX
+ #define RSIZE_MAX      SIZE_MAX
 #endif
 
 :include saferepi.sp
 
 :segment !CNAME
-#endif // end if C++ else C
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

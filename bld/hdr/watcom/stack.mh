@@ -12,12 +12,10 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header stack requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _VECTOR_INCLUDED
-    #include <vector>
+ #include <vector>
 #endif
 
 namespace std {
@@ -89,6 +87,6 @@ bool operator<=( stack< Type, Container > const & x,
     return( x.c <= y.c );
 }
 
-} // End of namespace std.
+} // namespace std
 
 #endif

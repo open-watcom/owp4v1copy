@@ -13,9 +13,7 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header utility requires C++
-#endif
+:include cpponly.sp
 
 namespace std {
 
@@ -45,7 +43,7 @@ namespace std {
       return( !( x < y ) );
     }
 
-  }
+  } // namespace rel_ops
 
   // Pair support
 
@@ -95,6 +93,6 @@ namespace std {
     return( pair< Type1, Type2 >( x, y ) );
   }
 
-}
+} // namespace std
 
 #endif

@@ -10,19 +10,18 @@
 #ifndef _CCTYPE_INCLUDED
 #define _CCTYPE_INCLUDED
 
-#ifndef __cplusplus
-#error the header cctype requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _CTYPE_H_INCLUDED
 #define _CTYPE_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following somewhat long segment only appears in ctype.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <cctype>
 
 // C99 functions in ctype.h
@@ -41,23 +40,21 @@ using std::tolower;
 using std::toupper;
 
 :: Now the extensions section.
-:include ext.sp
 // C99 functions in ctype.h that are currently considered extensions.
+:include ext.sp
 using std::isblank;
-#endif
+:include extepi.sp
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in ctype.h
 :endsegment
 
+:include owrtlink.sp
+
 :segment CNAME
 :include cpluspro.sp
+
 :endsegment
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 #define _LOWER  0x80
 #define _UPPER  0x40
 #define _DIGIT  0x20
@@ -69,6 +66,7 @@ using std::isblank;
 
 :segment CNAME
 namespace std {
+
 :endsegment
 _WCRTLINK extern int    isalnum(int);
 _WCRTLINK extern int    isalpha(int);
@@ -84,22 +82,23 @@ _WCRTLINK extern int    isxdigit(int);
 _WCRTLINK extern int    tolower(int);
 _WCRTLINK extern int    toupper(int);
 
-:include ext.sp
 /* These names are in ctype.h according to C99. */
+:include ext.sp
 _WCRTLINK extern int    isblank(int);
-#endif
-:segment CNAME
-}
-:endsegment
+:include extepi.sp
 
+:segment CNAME
+} // namespace std
+
+:endsegment
 :segment !SNAP & !SNAPDRV
 /* These names are not in ctype.h according to C99. */
 _WCRTLINK extern int    _tolower(int);
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
 _WCRTLINK extern int    __iscsym(int);
-:endsegment
 
+:endsegment
 :include ext.sp
  _WCRTLINK extern int   isleadbyte(int);
  _WCRTLINK extern int   isascii(int);
@@ -108,7 +107,7 @@ _WCRTLINK extern int    __iscsym(int);
   #define isascii(__c) ((unsigned)(__c) <= 0x7f)
   #define __isascii(__c) ((unsigned)(__c) <= 0x7f)
  #endif
-#endif
+:include extepi.sp
 
 #if (defined(__SW_BR) || defined(_RTDLL))
  #define _IsTable _IsTable_br
@@ -132,7 +131,7 @@ _WCRTDATA extern const unsigned char _WCDATA _IsTable[257];
 
 :include ext.sp
 #define isblank(__c)  (((__c)==' ')||((__c)=='\t'))
-#endif
+:include extepi.sp
 
 :endsegment
 :segment !SNAP & !SNAPDRV

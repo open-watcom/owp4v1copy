@@ -5,12 +5,16 @@
  */
 #ifndef _GRP_H_INCLUDED
 #define _GRP_H_INCLUDED
+
 :include readonly.sp
-:include cpluspro.sp
+
+:include owrtlink.sp
 
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
+
+:include cpluspro.sp
 
 :include pshpackl.sp
 
@@ -33,4 +37,5 @@ _WCRTLINK extern int          setgrent( void );
 _WCRTLINK extern int          endgrent( void );
 
 :include cplusepi.sp
+
 #endif

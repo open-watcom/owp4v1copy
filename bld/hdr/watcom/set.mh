@@ -11,27 +11,29 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header set requires C++
-#endif
+:include cpponly.sp
 
 #ifndef __RBTREE_H_INCLUDED
-  #include <_rbtree.h>
-#endif
-#ifndef _UTIILITY_INCLUDED
-  #include <utility>
-#endif
-#ifndef _MEMORY_INCLUDED
-  #include <memory>
-#endif
-#ifndef _ITERATOR_INCLUDED
-  #include <iterator>
-#endif
-#ifndef _FUNCTIONAL_INCLUDED
-  #include <function>
+ #include <_rbtree.h>
 #endif
 
-namespace std{
+#ifndef _UTIILITY_INCLUDED
+ #include <utility>
+#endif
+
+#ifndef _MEMORY_INCLUDED
+ #include <memory>
+#endif
+
+#ifndef _ITERATOR_INCLUDED
+ #include <iterator>
+#endif
+
+#ifndef _FUNCTIONAL_INCLUDED
+ #include <function>
+#endif
+
+namespace std {
 
 //associative container set, as defined in incits/iso/iec14882-2003
 template< class Key,
@@ -145,6 +147,6 @@ public:
 };//class multiset
 
 
-};//namespace std
+} // namespace std
 
 #endif

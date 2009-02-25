@@ -1,16 +1,16 @@
 /*
- *  float.h     Floating point functions
+ *  float.h/cfloat     Floating point functions
  *
 :include crwat.sp
  */
 #ifndef _FLOAT_H_INCLUDED
 #define _FLOAT_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 :include null.sp
 
@@ -21,12 +21,13 @@
 #define _DBL_ROUNDS     1
 #define _LDBL_RADIX     _DBL_RADIX
 #define _LDBL_ROUNDS    _DBL_ROUNDS
+
 :include ext.sp
 #define DBL_RADIX      _DBL_RADIX
 #define DBL_ROUNDS     _DBL_ROUNDS
 #define LDBL_RADIX     _DBL_RADIX
 #define LDBL_ROUNDS    _DBL_ROUNDS
-#endif
+:include extepi.sp
 
 /* number of base-FLT_RADIX digits in the floating-point mantissa */
 #define FLT_MANT_DIG    24
@@ -153,6 +154,10 @@
 #define _FPE_MODERR             0x8f
 
 :include ext.sp
+::
+:: Begin of extension section
+::
+
 /*
  *  8087/80287/80387 math co-processor control information
  */
@@ -240,7 +245,11 @@ _WMRTDATA extern const long double  __ld_posqnan;
 #define _NAN       __d_posqnan
 #define _NANL      __ld_posqnan
 
-#endif
+::
+:: End of extension section
+::
+:include extepi.sp
 
 :include cplusepi.sp
+
 #endif

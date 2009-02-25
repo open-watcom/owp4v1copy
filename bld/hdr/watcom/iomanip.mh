@@ -14,7 +14,7 @@
 :include readonly.sp
 
 #ifndef _IOMANIP_INCLUDED
-  #include <iomanip>
+ #include <iomanip>
 #endif
 using std::resetiosflags;
 using std::setbase;
@@ -32,15 +32,12 @@ using std::setw;
 :elsesegment
 #ifndef _IOMANIP_INCLUDED
 #define _IOMANIP_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header iomanip requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef _IOSTREAM_INCLUDED
  #include <iostream>
@@ -212,8 +209,8 @@ namespace std {
 }
 
 :elsesegment
-
 :include pshpackl.sp
+
 template<class T>
     class _WPRTLINK smanip;
 template<class T>

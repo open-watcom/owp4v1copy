@@ -1,16 +1,16 @@
 /*
- *  errno.h     Error numbers
+ *  errno.h/cerrno     Error numbers
  *
 :include crwatqnx.sp
  */
 #ifndef _ERRNO_H_INCLUDED
 #define _ERRNO_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 :include errno.sp
 
@@ -20,10 +20,9 @@
 :include errnot.sp
 
 :include saferepi.sp
+
 :endsegment
-
 :segment QNX
-
 /* --- Symbolic names of the error return conditions --- */
 
 #define EOK              0  /* No error                                 */
@@ -224,4 +223,5 @@
 :endsegment
 
 :include cplusepi.sp
+
 #endif

@@ -12,12 +12,10 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header type_traits requires C++
-#endif
+:include cpponly.sp
 
 namespace std {
-namespace tr1{
+namespace tr1 {
 
 template< class T, T v >
 struct integral_constant{
@@ -293,7 +291,7 @@ template <class T> struct add_pointer;
 template <std::size_t Len, std::size_t Align> struct aligned_storage;
 */
 
-} // End of namespace tr1.
-} // End of namespace std.
+} // namespace tr1
+} // namespace std
 
 #endif

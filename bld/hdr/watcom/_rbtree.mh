@@ -13,27 +13,29 @@
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __RBTREE_H_INCLUDED
 #define __RBTREE_H_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header _rbtree.h requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _UTILITY_INCLUDED
-    #include <utility>
-#endif
-#ifndef _ITERATOR_INCLUDED
-    #include <iterator>
-#endif
-#ifndef _FUNCTIONAL_INCLUDED
-    #include <function>
-#endif
-#ifndef _MEMORY_INCLUDED
-    #include <memory>
+ #include <utility>
 #endif
 
-namespace std{
-namespace _ow{
+#ifndef _ITERATOR_INCLUDED
+ #include <iterator>
+#endif
+
+#ifndef _FUNCTIONAL_INCLUDED
+ #include <function>
+#endif
+
+#ifndef _MEMORY_INCLUDED
+ #include <memory>
+#endif
+
+namespace std {
+namespace _ow {
 
 /* ==================================================================
  * value wrappers
@@ -1858,7 +1860,7 @@ MultiListRBTree< Key, Compare, Allocator, ValueWrapper >::upper_bound( key_type 
 }
 
 
-}; //namespace _ow
-}; //namespace std
+} // namespace _ow
+} // namespace std
 
 #endif

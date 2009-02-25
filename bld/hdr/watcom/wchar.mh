@@ -11,19 +11,18 @@
 #ifndef _CWCHAR_INCLUDED
 #define _CWCHAR_INCLUDED
 
-#ifndef __cplusplus
-#error the header cwchar requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _WCHAR_H_INCLUDED
 #define _WCHAR_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following somewhat long segment only appears in wchar.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <cwchar>
 
 // C99 types in wchar.h
@@ -113,58 +112,68 @@ using std::iswctype;
 using std::wctype;
 using std::towlower;
 using std::towupper;
-#endif
+
+:include extepi.sp
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in wchar.h
 :endsegment
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-:segment !QNX & !LINUX
+:include owrtlink.sp
+
+:segment DOS
 #ifndef _IO_H_INCLUDED
-    #include <io.h>
+ #include <io.h>
 #endif
+
 #ifndef _STAT_H_INCLUDED
-    #include <sys/stat.h>
+ #include <sys/stat.h>
 #endif
+
 :endsegment
 :segment CNAME
 #ifndef _CSTDARG_INCLUDED
-    #include <cstdarg>
+ #include <cstdarg>
 #endif
+
 #ifndef _CSTDIO_INCLUDED
-    #include <cstdio>
+ #include <cstdio>
 #endif
+
 #ifndef _CSTDLIB_INCLUDED
-    #include <cstdlib>
+ #include <cstdlib>
 #endif
+
 #ifndef _CTIME_INCLUDED
-    #include <ctime>
+ #include <ctime>
 #endif
 :elsesegment
 #ifndef _STDARG_H_INCLUDED
-    #include <stdarg.h>
+ #include <stdarg.h>
 #endif
+
 #ifndef _STDIO_H_INCLUDED
-    #include <stdio.h>
+ #include <stdio.h>
 #endif
+
 #ifndef _STDLIB_H_INCLUDED
-    #include <stdlib.h>
+ #include <stdlib.h>
 #endif
+
 #ifndef _TIME_H_INCLUDED
-    #include <time.h>
+ #include <time.h>
 #endif
 :endsegment
 
 :: Only need extern "C" in cwchar
 :segment CNAME
 :include cpluspro.sp
-:endsegment
 
+:endsegment
+:segment !CNAME
 :include wchar_t.sp
 
+:endsegment
 :include wctypet.sp
 
 :include sizet.sp
@@ -177,8 +186,8 @@ using std::towupper;
 :include rsizet.sp
 
 :include saferepi.sp
-:endsegment
 
+:endsegment
 :include null.sp
 
 :include mbmax.sp
@@ -246,7 +255,7 @@ _WCRTLINK extern wchar_t  *wmemset( wchar_t *__s, wchar_t __wc, size_t __n );
 _WCRTLINK extern int      wprintf( const wchar_t *__format, ... );
 _WCRTLINK extern int      wscanf( const wchar_t *__format, ... );
 :segment CNAME
-}
+} // namespace std
 :endsegment
 
 _WCRTLINK extern wchar_t  *_wcsdup( const wchar_t * );
@@ -297,7 +306,7 @@ _WCRTLINK extern wctype_t wctype( const char *__property );
 _WCRTLINK extern wint_t   towlower( wint_t __wc );
 _WCRTLINK extern wint_t   towupper( wint_t __wc );
 :segment CNAME
-}
+} // namespace std
 :endsegment
 
 :segment CNAME
@@ -311,7 +320,6 @@ _WCRTLINK extern int         _fwcrtomb( char _WCFAR *__s, wchar_t __wc, std::mbs
 _WCRTLINK extern std::size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
 _WCRTLINK extern int         _swprintf( wchar_t *__s, const wchar_t *__format, ... );
 _WCRTLINK extern int         _vswprintf( wchar_t *__s, const wchar_t *__format, std::va_list __arg );
-
 :elsesegment
 :: C99 says this function is named mbsinit.
 _WCRTLINK extern int     sisinit( const mbstate_t *__ps );
@@ -323,10 +331,9 @@ _WCRTLINK extern int    _fwcrtomb( char _WCFAR *__s, wchar_t __wc, mbstate_t _WC
 _WCRTLINK extern size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, size_t __n, mbstate_t _WCFAR *__ps );
 _WCRTLINK extern int    _swprintf( wchar_t *__s, const wchar_t *__format, ... );
 _WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, va_list __arg );
-
 :endsegment
 
-#endif
+:include extepi.sp
 
 :segment !CNAME
 :include saferpro.sp
@@ -370,8 +377,8 @@ _WCRTLINK extern errno_t _fwcrtomb_s( size_t _WCFAR * __restrict __retval, char 
 _WCRTLINK extern errno_t _fwcsrtombs_s( size_t _WCFAR * __restrict __retval, char _WCFAR * __restrict __dst, rsize_t __dstmax, const wchar_t _WCFAR * _WCFAR * __restrict __src, rsize_t __len, mbstate_t _WCFAR * __restrict __ps );
 
 :include saferepi.sp
-:endsegment
 
+:endsegment
 :segment CNAME
 :include cplusepi.sp
 :elsesegment

@@ -5,6 +5,7 @@
  */
 #ifndef _SHARE_H_INCLUDED
 #define _SHARE_H_INCLUDED
+
 :include readonly.sp
 
 #define _SH_COMPAT  0x00    /* compatibility mode   */
@@ -27,6 +28,6 @@
 #define SH_MASK     _SH_MASK
 #define SH_DOS      _SH_DOS
 :endsegment
-#endif
+:include extepi.sp
 
 #endif

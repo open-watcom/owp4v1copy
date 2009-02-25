@@ -15,7 +15,7 @@
 :include readonly.sp
 
 #ifndef _IOSTREAM_INCLUDED
-  #include <iostream>
+ #include <iostream>
 #endif
 using std::cin;
 using std::cout;
@@ -24,7 +24,7 @@ using std::clog;
 
 // All included names should also be in the global namespace.
 #ifndef _IOS_H_INCLUDED
-  #include <ios.h>
+ #include <ios.h>
 #endif
 
 #ifndef _STREAMBUF_H_INCLUDED
@@ -32,35 +32,26 @@ using std::clog;
 #endif
 
 #ifndef _ISTREAM_H_INCLUDED
-  #include <istream.h>
+ #include <istream.h>
 #endif
 
 #ifndef _OSTREAM_H_INCLUDED
-  #include <ostream.h>
+ #include <ostream.h>
 #endif
 
 #endif
 :elsesegment
 #ifndef _IOSTREAM_INCLUDED
 #define _IOSTREAM_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header iostream requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
-enum {
-    DEFAULT_PUTBACK_SIZE = 4,
-    DEFAULT_MAINBUF_SIZE = 512,
-    DEFAULT_BUF_SIZE     = DEFAULT_MAINBUF_SIZE + DEFAULT_PUTBACK_SIZE
-};
+:include owrtlink.sp
 
 #ifndef _IOS_INCLUDED
-  #include <ios>
+ #include <ios>
 #endif
 
 #ifndef _STREAMBUF_INCLUDED
@@ -68,12 +59,18 @@ enum {
 #endif
 
 #ifndef _ISTREAM_INCLUDED
-  #include <istream>
+ #include <istream>
 #endif
 
 #ifndef _OSTREAM_INCLUDED
-  #include <ostream>
+ #include <ostream>
 #endif
+
+enum {
+    DEFAULT_PUTBACK_SIZE = 4,
+    DEFAULT_MAINBUF_SIZE = 512,
+    DEFAULT_BUF_SIZE     = DEFAULT_MAINBUF_SIZE + DEFAULT_PUTBACK_SIZE
+};
 
 // **************************** PREDEFINED STREAMS ***************************
 

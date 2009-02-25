@@ -19,6 +19,7 @@
  ***************************************************************************/
 #ifndef _LIMITS_H_INCLUDED
 #define _LIMITS_H_INCLUDED
+
 :include readonly.sp
 
 :include mbmax.sp
@@ -40,33 +41,33 @@
 
 #define SHRT_MIN    (-32767-1)  /*  minimum value of a short int        */
 #define SHRT_MAX    32767       /*  maximum value of a short int        */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
- #define USHRT_MAX  65535       /*  maximum value of an unsigned short  */
-#else
+#if defined(_M_I86)
  #define USHRT_MAX  65535U      /*  maximum value of an unsigned short  */
+#else
+ #define USHRT_MAX  65535       /*  maximum value of an unsigned short  */
 #endif
 #define LONG_MAX    2147483647L       /* maximum value of a long int      */
 #define LONG_MIN    (-2147483647L-1L) /* minimum value of a long int      */
 #define ULONG_MAX   4294967295UL      /* maximum value of an unsigned long*/
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
- #define INT_MIN    (-2147483647-1) /*  minimum value of an int         */
- #define INT_MAX    2147483647      /*  maximum value of an int         */
- #define UINT_MAX   4294967295U     /*  maximum value of an unsigned int*/
-#else
+#if defined(_M_I86)
  #define INT_MIN    (-32767-1)      /*  minimum value of an int         */
  #define INT_MAX    32767           /*  maximum value of an int         */
  #define UINT_MAX   65535U          /*  maximum value of an unsigned int*/
+#else
+ #define INT_MIN    (-2147483647-1) /*  minimum value of an int         */
+ #define INT_MAX    2147483647      /*  maximum value of an int         */
+ #define UINT_MAX   4294967295U     /*  maximum value of an unsigned int*/
 #endif
 #ifdef __WATCOM_INT64__
- #define LONGLONG_MIN    (-9223372036854775807I64-1I64)
+ #define LONGLONG_MIN   (-9223372036854775807I64-1I64)
                                     /*  minimum value of an __int64         */
- #define LONGLONG_MAX    9223372036854775807I64
+ #define LONGLONG_MAX   9223372036854775807I64
                                     /*  maximum value of an __int64         */
- #define ULONGLONG_MAX   18446744073709551615UI64
+ #define ULONGLONG_MAX  18446744073709551615UI64
                                     /*  maximum value of an unsigned __int64*/
- #define LLONG_MIN       (-9223372036854775807LL-1LL) /* for C99 */
- #define LLONG_MAX       9223372036854775807LL        /* for C99 */
- #define ULLONG_MAX      18446744073709551615ULL      /* for C99 */
+ #define LLONG_MIN      (-9223372036854775807LL-1LL) /* for C99 */
+ #define LLONG_MAX      9223372036854775807LL        /* for C99 */
+ #define ULLONG_MAX     18446744073709551615ULL      /* for C99 */
 #endif
 
 #define _I8_MIN     SCHAR_MIN   /*  minimum value of a signed 8 bit type   */
@@ -95,11 +96,16 @@
 
 :segment QNX | LINUX
 :include unixext.sp
+::
+:: Begin of extension section
+::
+
 /*
  *  POSIX required limits.
  *  These are minimums values, not absolute limits,
  *  and the real value may be greater.
  */
+
 #define _POSIX_ARG_MAX      4096    /*  Length of args for exec             */
                                     /*  functions including environment data*/
 #define _POSIX_CHILD_MAX    6       /*  Number of simultaneous              */
@@ -176,11 +182,14 @@
 #define SED_PATTERN_MAX 20480
 #define SENDTO_MAX      90000L
 #define SORT_LINE_MAX   20480
-#endif  /* _POSIX_SOURCE || !NO_EXT_KEYS */
 
-:include ext.sp
+::
+:: End of extension section
+::
+:include extepi.sp
 
 :segment QNX
+:include ext.sp
 #define _QNX_ROOT_PREFIX_MAX  128
 #define _QNX_PROXY_SIZE_MAX   100
 #define _QNX_MXTAB_LEN        255
@@ -188,10 +197,10 @@
 #define _QNX_ATTACHEDNAME_MAX 64
 #define _QNX_PREFIX_MAX       48
 #define _QNX_ERRNOSTR_MAX     64
-:endsegment
-#endif
+:include extepi.sp
 :endsegment
 
+:endsegment
 #endif
 :elsesegment
 ///////////////////////////////////////////////////////////////////////////
@@ -206,11 +215,10 @@
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _LIMITS_INCLUDED
 #define _LIMITS_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header limits requires C++
-#endif
+:include cpponly.sp
 
 :: I have mixed feelings about these inclusions. On one hand they allow
 :: fixes in the C library to be immediately felt in numeric_limits. On
@@ -495,12 +503,12 @@ namespace std {
     static const bool is_specialized = true;
     static int min() { return( INT_MIN ); }
     static int max() { return( INT_MAX ); }
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-    static const int digits = 31;
-    static const int digits10 = 9;
-#else
+#if defined(_M_I86)
     static const int digits = 15;
     static const int digits10 = 4;
+#else
+    static const int digits = 31;
+    static const int digits10 = 9;
 #endif
     static const bool is_signed = true;
     static const bool is_integer = true;
@@ -642,12 +650,12 @@ namespace std {
     static const bool is_specialized = true;
     static unsigned int min() { return( 0 ); }
     static unsigned int max() { return( UINT_MAX ); }
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-    static const int digits = 32;
-    static const int digits10 = 9;
-#else
+#if defined(_M_I86)
     static const int digits = 16;
     static const int digits10 = 4;
+#else
+    static const int digits = 32;
+    static const int digits10 = 9;
 #endif
     static const bool is_signed = false;
     static const bool is_integer = true;
@@ -854,5 +862,6 @@ namespace std {
   };
 
 } // namespace std
+
 #endif
 :endsegment

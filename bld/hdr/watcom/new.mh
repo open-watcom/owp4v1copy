@@ -13,7 +13,7 @@
 :include readonly.sp
 
 #ifndef _NEW_INCLUDED
-  #include <new>
+ #include <new>
 #endif
 :: No using declarations here. <new.h> exists only to support legacy
 :: programs. Thus access to new features (like std::bad_alloc) via
@@ -26,20 +26,16 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header new requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
-  #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef _STDDEF_H_INCLUDED
-  #include <stddef.h>
+ #include <stddef.h>
 #endif
 
 #ifndef _EXCEPTION_INCLUDED
-  #include <exceptio>
+ #include <exceptio>
 #endif
 
 :include cpppfv.sp
@@ -54,10 +50,10 @@ _WPRTLINK extern PFV set_new_handler( PFV );
 _WPRTLINK extern PFU _set_new_handler( PFU );
 :segment !QNX
 #if defined(__SW_BR)
-  _WPRTLINK extern _PUP _set_op_new( _PUP );
-  _WPRTLINK extern _PUP _set_op_new_array( _PUP );
-  _WPRTLINK extern _PVV _set_op_delete( _PVV );
-  _WPRTLINK extern _PVV _set_op_delete_array( _PVV );
+ _WPRTLINK extern _PUP _set_op_new( _PUP );
+ _WPRTLINK extern _PUP _set_op_new_array( _PUP );
+ _WPRTLINK extern _PVV _set_op_delete( _PVV );
+ _WPRTLINK extern _PVV _set_op_delete_array( _PVV );
 #endif
 :endsegment
 

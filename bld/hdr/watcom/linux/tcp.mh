@@ -1,12 +1,15 @@
 /*
- *  sys/socket.h      Socket functions
+ *  netinet/tcp.h      TCP Protocol
  *
 :include crwat.sp
  */
 #ifndef _NETINET_TCP_H_INCLUDED
 #define _NETINET_TCP_H_INCLUDED
+
 :include readonly.sp
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
 /* TCP socket options */
@@ -24,5 +27,7 @@
 #define TCP_QUICKACK            12
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif /* !_NETINET_TCP_H_INCLUDED */

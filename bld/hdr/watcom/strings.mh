@@ -8,13 +8,11 @@
 
 :include readonly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
-:include sizet.sp
+:include owrtlink.sp
 
 :include cpluspro.sp
+
+:include sizet.sp
 
 /* Legacy functions */
 

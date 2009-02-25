@@ -5,12 +5,16 @@
  */
 #ifndef _SYS_SYSMIPS_H_INCLUDED
 #define _SYS_SYSMIPS_H_INCLUDED
+
 :include readonly.sp
-:include cpluspro.sp
 
 #if !defined(__MIPS__)
-    #error sysmips.h is only supported on MIPS architecture
+ #error sysmips.h is only supported on MIPS architecture
 #endif
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 /*
  * Commands for the sysmips(2) call
@@ -27,5 +31,5 @@
 _WCRTLINK extern int sysmips( const int __cmd, const int __arg1, const int __arg2, const int __arg3 );
 
 :include cplusepi.sp
-#endif /* !_SYS_SYSMIPS_H_INCLUDED */
 
+#endif /* !_SYS_SYSMIPS_H_INCLUDED */

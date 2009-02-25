@@ -5,29 +5,32 @@
  */
 #ifndef _UNISTD_H_INCLUDED
 #define _UNISTD_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
 :segment DOS
 #ifndef _IO_H_INCLUDED
  #include <io.h>
 #endif
+:elsesegment
+#ifndef __TYPES_H_INCLUDED
+ #include <sys/types.h>
+#endif
+:endsegment
 
+:include cpluspro.sp
+
+:segment DOS
 #if defined(__OS2__) && defined(__386__) && defined(__TCPIP_HEADERS)
- #include <tcpustd.h>   /* unistd.h conflicts with OS/2 TCP/IP headers */
+ #include <tcpustd.h>  /* unistd.h conflicts with OS/2 TCP/IP headers */
 #endif
 
 :endsegment
 :include wchar_t.sp
 
 :segment !DOS
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
-
 :include null.sp
 
 /* Symbolic constants for the access() function */
@@ -105,22 +108,17 @@ _WCRTDATA extern int    optopt;     /*  offending letter when error detected */
 
 #define _CS_PATH            1
 
-#endif
+:include extepi.sp
 :endsegment
 
 /*
  *  POSIX 1003.1 Prototypes
  */
 
-:segment QNX
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:segment QNX | LINUX
+:include unixext.sp
 _WCRTLINK extern void   _exit( int __status );
-#endif
-:endsegment
-:segment LINUX
-#if defined(_POSIX_SOURCE) || defined(_LINUX_SOURCE) || !defined(NO_EXT_KEYS)
-_WCRTLINK extern void   _exit( int __status );
-#endif
+:include extepi.sp
 :endsegment
 
 _WCRTLINK extern int    access( const char *__path, int __mode );
@@ -236,7 +234,7 @@ _WCRTLINK extern int    qnx_sync( nid_t nid );
 _WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 :endsegment
 
-#endif
+:include extepi.sp
 
 :segment QNX | LINUX
 :include posixext.sp
@@ -253,7 +251,7 @@ _WCRTDATA extern char   *optarg;
 _WCRTDATA extern int    optind;
 _WCRTDATA extern int    opterr;
 _WCRTDATA extern int    optopt;
-#endif
+:include extepi.sp
 
 :endsegment
 :segment LINUX
@@ -290,4 +288,5 @@ _WCRTDATA extern int    optopt;
 :endsegment
 
 :include cplusepi.sp
+
 #endif

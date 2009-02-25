@@ -5,9 +5,15 @@
  */
 #ifndef _SYS_TIME_H_INCLUDED
 #define _SYS_TIME_H_INCLUDED
-#include <time.h>
+
 :include readonly.sp
+
+#ifndef _TIME_H_INCLUDED
+ #include <time.h>
+#endif
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
 /* I am not sure where this should go, so I am putting it here for now.
@@ -101,6 +107,7 @@ _WCRTLINK extern int setitimer( int __which, const struct itimerval *__value, st
 //_WCRTLINK extern int utimes( char *__path, struct timeval *tvp );
 
 :include poppack.sp
-:include cplusepi.sp
-#endif /* !_SYS_TIME_H_INCLUDED */
 
+:include cplusepi.sp
+
+#endif /* !_SYS_TIME_H_INCLUDED */

@@ -16,28 +16,26 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header _strdef.h requires C++
-#endif
+:include cpponly.sp
 
 #if !defined(_STDEXCEPT_INCLUDED)
-#error The header _strdef.h is not to be directly included in user programs
+ #error The header _strdef.h is not to be directly included in user programs
 #endif
 
 #ifndef _CSTRING_INCLUDED
-  #include <cstring>
+ #include <cstring>
 #endif
 
 #ifndef _CWCHAR_INCLUDED
-  #include <cwchar>
+ #include <cwchar>
 #endif
 
 #ifndef _ITERATOR_INCLUDED
-  #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _MEMORY_INCLUDED
-  #include <memory>
+ #include <memory>
 #endif
 
 namespace std {

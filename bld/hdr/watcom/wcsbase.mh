@@ -7,11 +7,12 @@
 //
 #ifndef _WCSBASE_H_INCLUDED
 #define _WCSBASE_H_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error wcsbase.h is for use with C++
-#endif
+:include owrtlink.sp
+
+:include cpponly.sp
 
 #ifndef _STDDEF_H_INCLUDED
  #include <stddef.h>

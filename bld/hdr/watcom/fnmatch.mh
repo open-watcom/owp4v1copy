@@ -8,9 +8,7 @@
 
 :include readonly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #define FNM_NOMATCH     1           /* Failed to match. */
 
@@ -24,7 +22,7 @@
 #define FNM_IGNORECASE  0x08        /* Case insensitive matching. */
 #define FNM_LEADING_DIR 0x10        /* Ignore final path component. */
 #define FNM_CASEFOLD    FNM_IGNORECASE
-#endif
+:include extepi.sp
 
 :include cpluspro.sp
 

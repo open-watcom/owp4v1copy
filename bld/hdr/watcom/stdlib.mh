@@ -11,19 +11,18 @@
 #ifndef _CSTDLIB_INCLUDED
 #define _CSTDLIB_INCLUDED
 
-#ifndef __cplusplus
-#error The header cstdlib requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _STDLIB_H_INCLUDED
 #define _STDLIB_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following segment only appears in stdlib.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #define _INCLUDED_FROM_STDLIB_H
 #include <cstdlib>
 #undef  _INCLUDED_FROM_STDLIB_H
@@ -80,25 +79,25 @@ using std::wcstod;
 using std::wcstoul;
 using std::wcstoull;
 :endsegment
-#endif
+:include extepi.sp
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in stdlib.h
 :endsegment
 
+:include owrtlink.sp
+
 :: Only need extern "C" in cstdlib
 :segment CNAME
 :include cpluspro.sp
+
 :endsegment
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 :include pshpackl.sp
 
+:segment !CNAME
 :include wchar_t.sp
 
+:endsegment
 :include sizet.sp
 
 :segment !CNAME
@@ -111,8 +110,8 @@ using std::wcstoull;
 typedef void (*constraint_handler_t)( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
 
 :include saferepi.sp
-:endsegment
 
+:endsegment
 :include null.sp
 
 :include mbmax.sp
@@ -171,10 +170,10 @@ _WCIRTLINK extern long int labs( long int __j );
 #pragma aux labs    parm nomemory modify nomemory;
 #endif
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-_WCIRTLINK
-#else
+#if defined(_M_I86)
 _WCRTLINK
+#else
+_WCIRTLINK
 #endif
 extern ldiv_t ldiv( long int __numer, long int __denom );
 _WCRTLINK extern long long int llabs( long long int __j );
@@ -201,35 +200,35 @@ _WCRTLINK extern unsigned long strtoul( const char *__nptr, char **__endptr, int
 _WCRTLINK extern unsigned long long int strtoull( const char *__nptr, char **__endptr, int __base );
 _WCRTLINK extern int     system( const char *__string );
 :segment CNAME
-}
+} // namespace std
 :endsegment
 
 #if defined(__INLINE_FUNCTIONS__)
 :segment CNAME
 namespace std {
   #pragma intrinsic(abs,div,labs)
-  #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-    #pragma intrinsic(ldiv)
+  #if !defined(_M_I86)
+   #pragma intrinsic(ldiv)
   #endif
 }
 :elsesegment
 #pragma intrinsic(abs,div,labs)
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-  #pragma intrinsic(ldiv)
+#if !defined(_M_I86)
+ #pragma intrinsic(ldiv)
 #endif
 :endsegment
 #endif
 
 :segment !CNAME
 #define atof(p)  strtod(p,(char **)NULL)
-:endsegment
 
+:endsegment
 :segment QNX | LINUX
 :include unixext.sp
 _WCRTLINK void           _exit( int __status );
-#endif
-:endsegment
+:include extepi.sp
 
+:endsegment
 :include ext.sp
 
 _WCRTLINK extern void    break_on( void );
@@ -250,16 +249,16 @@ _WMRTLINK extern char    *gcvt( double __val, int __ndig, char *__buf );
 _WMRTLINK extern char    *_gcvt( double __val, int __ndig, char *__buf );
 _WCRTLINK extern char    *itoa( int __value, char *__buf, int __radix );
 _WCRTLINK extern char    *_itoa( int __value, char *__buf, int __radix );
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-_WCIRTLINK
-#else
+#if defined(_M_I86)
 _WCRTLINK
+#else
+_WCIRTLINK
 #endif
 extern unsigned long     _lrotl( unsigned long __value, unsigned int __shift );
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-_WCIRTLINK
-#else
+#if defined(_M_I86)
 _WCRTLINK
+#else
+_WCIRTLINK
 #endif
 extern unsigned long     _lrotr( unsigned long __value, unsigned int __shift );
 _WCRTLINK extern char    *ltoa( long int __value, char *__buf, int __radix );
@@ -365,13 +364,11 @@ _WCRTLINK extern unsigned __int64 _strtoui64( const char *__nptr, char **__endpt
 :segment !CNAME
 #if defined(__INLINE_FUNCTIONS__)
  #pragma intrinsic(_rotl,_rotr)
- #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+ #if !defined(_M_I86)
   #pragma intrinsic(_lrotl,_lrotr)
  #endif
 #endif
-:endsegment
 
-:segment !CNAME
 :include saferpro.sp
 
 _WCRTLINK extern constraint_handler_t set_constraint_handler_s( constraint_handler_t __handler );
@@ -390,8 +387,8 @@ _WCRTLINK extern errno_t mbstowcs_s( size_t * __restrict __retval, wchar_t * __r
 _WCRTLINK extern errno_t wcstombs_s( size_t * __restrict __retval, char * __restrict __dst, rsize_t __dstmax, const wchar_t * __restrict __src, rsize_t __len );
 
 :include saferepi.sp
-:endsegment
 
+:endsegment
 /* min and max macros */
 #if !defined(__max)
 #define __max(a,b)  (((a) > (b)) ? (a) : (b))
@@ -593,8 +590,8 @@ extern  wchar_t **__wargv;      /* vector of wide cmd line args */
 
 :segment QNX | LINUX
 :include alloca.sp
-:endsegment
 
+:endsegment
 :segment QNX
 #if defined(__386__)
 :endsegment
@@ -616,7 +613,7 @@ _WCRTLINK extern void _WCNEAR *sbrk( int __increment );
 typedef void (*onexit_t)( void );
 _WCRTLINK extern onexit_t     onexit( onexit_t __func );
 
-#endif /* End of extensions section. */
+:include extepi.sp
 
 :include poppack.sp
 

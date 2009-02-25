@@ -11,19 +11,18 @@
 #ifndef _CSTDARG_INCLUDED
 #define _CSTDARG_INCLUDED
 
-#ifndef __cplusplus
-#error the header cstdarg requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _STDARG_H_INCLUDED
 #define _STDARG_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following segment only appears in stdarg.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <cstdarg>
 
 using std::va_list;
@@ -31,14 +30,12 @@ using std::va_list;
 #else /* __cplusplus not defined */
 :endsegment
 
+:include owrtlink.sp
+
 :segment CNAME
 :include cpluspro.sp
+
 :endsegment
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 :include valist.sp
 
 :segment CNAME
@@ -108,15 +105,15 @@ typedef __va_list va_list;
 
 :: define __va_copy even if -za is used
 #if defined(__PPC__) || defined(__AXP__)
-  #define __va_copy(dest,src) ((dest)=(src),(void)0)
+ #define __va_copy(dest,src) ((dest)=(src),(void)0)
 #else
-  #define __va_copy(dest,src) ((dest)[0]=(src)[0],(void)0)
+ #define __va_copy(dest,src) ((dest)[0]=(src)[0],(void)0)
 #endif
 
 :: Extensions section (C99 va_copy definition)
 :include ext.sp
 #define va_copy(dest,src) __va_copy(dest,src)
-#endif /* End of extensions section. */
+:include extepi.sp
 
 :segment CNAME
 :include cplusepi.sp

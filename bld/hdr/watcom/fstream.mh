@@ -14,7 +14,7 @@
 :include readonly.sp
 
 #ifndef _FSTREAM_INCLUDED
-  #include <fstream>
+ #include <fstream>
 #endif
 using std::filebuf;
 using std::fstreambase;
@@ -31,14 +31,12 @@ using std::fstream;
 :elsesegment
 #ifndef _FSTREAM_INCLUDED
 #define _FSTREAM_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header fstream requires C++
-#endif
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include cpponly.sp
+
+:include owrtlink.sp
 
 #ifndef _IOSTREAM_INCLUDED
  #include <iostream>
@@ -216,7 +214,7 @@ namespace std {
     fstreambase::open( __n, __m, __p );
   }
 
-}
+} // namespace std
 
 #endif
 :endsegment

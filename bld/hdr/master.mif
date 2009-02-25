@@ -45,18 +45,18 @@ qnx_path   = ../quantum
 # Special case for sys/time.h since there is also a time.h
 #
 !ifeq system qnx
-sys/time.h : ../quantum/sys_time.mh ../poppack.sp ../pshpackl.sp
+sys/time.h : ../quantum/sys_time.mh $(packll)
         $(splice)
 !endif
 !ifeq system linux
-sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../poppack.sp ../cplusepi.sp
+sys/time.h : linux/sys_time.mh ../crwat.sp ../readonly.sp $(cplus) $(packlnxk)
         $(splice)
 !endif
 #
 # Special case for sys/utime.h since there is also a utime.h
 #
 !ifeq system dos
-sys/utime.h : dos/sys_utim.mh
+sys/utime.h : dos/sys_utim.mh ../crwat.sp ../readonly.sp
         $(splice)
 !endif
 

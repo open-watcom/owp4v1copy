@@ -6,17 +6,18 @@
  */
 #ifndef _VARARGS_H_INCLUDED
 #define _VARARGS_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
 #ifndef _STDARG_H_INCLUDED
  #include <stdarg.h>
 #else
  #error stdarg.h has already been included
 #endif
+
+:include cpluspro.sp
 
 #undef va_start
 
@@ -43,4 +44,5 @@
 #endif
 
 :include cplusepi.sp
+
 #endif

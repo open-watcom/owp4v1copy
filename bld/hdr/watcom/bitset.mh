@@ -13,24 +13,22 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header bitset requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _CSTDDEF_INCLUDED
-  #include <cstddef>
+ #include <cstddef>
 #endif
 
 #ifndef _STRING_INCLUDED
-  #include <string>
+ #include <string>
 #endif
 
 #ifndef _STDEXCEPT_INCLUDED
-  #include <stdexcep>
+ #include <stdexcep>
 #endif
 
 #ifndef _IOSFWD_INCLUDED
-  #include <iosfwd>
+ #include <iosfwd>
 #endif
 
 namespace std {
@@ -458,6 +456,6 @@ namespace std {
     }
 #endif
 
-} // End of namespace std.
+} // namespace std
 
 #endif

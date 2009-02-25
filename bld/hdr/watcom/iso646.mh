@@ -1,10 +1,11 @@
 /*
- *  iso646.h    C99 Standard:  7.9  Alternative spellings  <iso646.h>
+ *  iso646.h/ciso646    C99 Standard:  7.9  Alternative spellings  <iso646.h>
  *
 :include crwat.sp
  */
 #ifndef _ISO646_H_INCLUDED
 #define _ISO646_H_INCLUDED
+
 :include readonly.sp
 
 #ifndef __cplusplus

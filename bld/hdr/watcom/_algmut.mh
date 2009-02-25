@@ -8,18 +8,19 @@
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __ALGMUT_H_INCLUDED
 #define __ALGMUT_H_INCLUDED
+
 :include readonly.sp
 
 #ifndef _ALGORITHM_INCLUDED
-#error The header _algmut.h requires algorithm.
+ #error The header _algmut.h requires algorithm.
 #endif
 
 #ifndef _CSTDLIB_INCLUDED
-  #include <cstdlib>
+ #include <cstdlib>
 #endif
 
 #ifndef _ITERATOR_INCLUDED
-  #include <iterator>
+ #include <iterator>
 #endif
 
 namespace std {
@@ -476,6 +477,6 @@ void random_shuffle( RandomAccess first,
     }
 }
 
-}
+} // namespace std
 
 #endif

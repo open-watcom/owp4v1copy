@@ -8,9 +8,7 @@
 
 :include readonly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 :include sizet.sp
 

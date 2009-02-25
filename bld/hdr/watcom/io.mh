@@ -5,16 +5,20 @@
  */
 #ifndef _IO_H_INCLUDED
 #define _IO_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
 
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
+
+#ifndef _STAT_H_INCLUDED
+ #include <sys/stat.h>
+#endif
+
+:include cpluspro.sp
 
 :include pshpackl.sp
 
@@ -45,13 +49,13 @@
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
-#ifndef NO_EXT_KEYS     /* extensions enabled */
+
+:include ext.sp
 #if ! defined(__NT__)
 #define STDAUX_FILENO   3
 #define STDPRN_FILENO   4
 #endif
-#endif
-
+:include extepi.sp
 
 typedef unsigned long   _fsize_t;
 
@@ -182,10 +186,8 @@ _WCRTLINK extern __int64    _lseeki64( int __handle, __int64 __offset,
 _WCRTLINK extern __int64    _telli64( int __handle );
 #endif
 
-#ifndef _STAT_H_INCLUDED
- #include <sys/stat.h>
-#endif
-
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif

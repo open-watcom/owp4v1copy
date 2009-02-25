@@ -5,26 +5,25 @@
  */
 #ifndef _DIRECT_H_INCLUDED
 #define _DIRECT_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
+:include readonly.sp
+
+:include owrtlink.sp
+
+#ifndef __TYPES_H_INCLUDED
+ #include <sys/types.h>
 #endif
+
+:include cpluspro.sp
 
 :include pshpackl.sp
 
 :include wchar_t.sp
 
-::endsegment
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
-
 #if defined(__OS2__) || defined(__NT__) || defined(__WATCOM_LFN__)
-#define NAME_MAX        255             /* maximum filename for HPFS or NTFS */
+ #define NAME_MAX       255             /* maximum filename for HPFS or NTFS */
 #else
-#define NAME_MAX        12              /* 8 chars + '.' +  3 chars */
+ #define NAME_MAX       12              /* 8 chars + '.' +  3 chars */
 #endif
 
 struct _wdirent {
@@ -116,5 +115,7 @@ _WCRTLINK extern void             _wrewinddir( struct _wdirent * );
 _WCRTLINK extern int              _wrmdir( const wchar_t *__path );
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif

@@ -5,12 +5,12 @@
  */
 #ifndef _SEARCH_H_INCLUDED
 #define _SEARCH_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 _WCRTLINK extern void *lfind( const void *__key, const void *__base,
                               unsigned *__num, unsigned __width,
@@ -18,5 +18,7 @@ _WCRTLINK extern void *lfind( const void *__key, const void *__base,
 _WCRTLINK extern void *lsearch( const void *__key, void *__base,
                                 unsigned *__num, unsigned __width,
                                 int (* __compare)(const void *, const void *) );
+
 :include cplusepi.sp
+
 #endif

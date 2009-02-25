@@ -6,28 +6,30 @@
 //
 #ifndef _WCHASH_H_INCLUDED
 #define _WCHASH_H_INCLUDED
+
 :include readonly.sp
 
-#ifndef __cplusplus
-#error wchash.h is for use with C++
-#endif
+:include cpponly.sp
 
 #ifndef _WCDEFS_H_INCLUDED
  #include <wcdefs.h>
 #endif
+
 #ifndef _WCEXCEPT_H_INCLUDED
  #include <wcexcept.h>
 #endif
+
 #ifndef _WCLIST_H_INCLUDED
  #include <wclist.h>
 #endif
+
 #ifndef _WCLISTIT_H_INCLUDED
  #include <wclistit.h>
 #endif
+
 #ifndef _WCHBASE_H_INCLUDED
  #include <wchbase.h>
 #endif
-
 
 :include undefnew.sp
 

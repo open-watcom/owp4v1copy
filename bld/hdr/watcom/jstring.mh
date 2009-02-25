@@ -5,12 +5,12 @@
  */
 #ifndef _JSTRING_H_INCLUDED
 #define _JSTRING_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 :include sizet.sp
 
@@ -123,4 +123,5 @@ _WCRTLINK extern FJSTRING _WCI86FAR _fjstrupr( JCHAR _WCFAR *__s );
 /* ----------- end of memory model independent equivalents ----------- */
 
 :include cplusepi.sp
+
 #endif

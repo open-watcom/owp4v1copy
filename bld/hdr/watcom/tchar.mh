@@ -5,28 +5,39 @@
  */
 #ifndef _TCHAR_H_INCLUDED
 #define _TCHAR_H_INCLUDED
+
 :include readonly.sp
 
-:include null.sp
+:include owrtlink.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
 #ifndef _STRING_H_INCLUDED
  #include <string.h>
 #endif
+
 #ifndef _TIME_H_INCLUDED
  #include <time.h>
 #endif
 
 #if defined(_UNICODE) || defined(__UNICODE__)
-// **************************** UNICODE **************************************
 
 #ifndef _WCHAR_H_INCLUDED
  #include <wchar.h>
 #endif
 
+#elif defined(_MBCS)
+
+#ifndef _MBSTRING_H_INCLUDED
+ #include <mbstring.h>
+#endif
+
+#endif
+
 :include cpluspro.sp
+
+:include null.sp
+
+#if defined(_UNICODE) || defined(__UNICODE__)
+// **************************** UNICODE **************************************
 
 #ifndef __TCHAR_DEFINED
 typedef wchar_t _TCHAR;
@@ -38,9 +49,11 @@ typedef wchar_t _TINT;
 #endif
 
 #ifndef _TCHAR_DEFINED
+
 :include ext.sp
 typedef wchar_t TCHAR;
-#endif
+:include extepi.sp
+
 #define _TCHAR_DEFINED
 #endif
 
@@ -360,12 +373,8 @@ _WCRTLINK extern wchar_t *_wcsset( wchar_t *, wchar_t );
 _WCRTLINK extern wchar_t *_wcsnset( wchar_t *, int, size_t );
 _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 
-:include cplusepi.sp
-
 #else
 // **************************** SBCS and MBCS ********************************
-
-:include cpluspro.sp
 
 #define _TEOF           EOF
 
@@ -544,10 +553,6 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #ifdef _MBCS
 // **************************** MBCS *****************************************
 
-#ifndef _MBSTRING_H_INCLUDED
- #include <mbstring.h>
-#endif
-
 #ifndef __TCHAR_DEFINED
 typedef char            _TCHAR;
 typedef signed char     _TSCHAR;
@@ -558,9 +563,11 @@ typedef unsigned int    _TINT;
 #endif
 
 #ifndef _TCHAR_DEFINED
+
 :include ext.sp
 typedef char            TCHAR;
-#endif
+:include extepi.sp
+
 #define _TCHAR_DEFINED
 #endif
 
@@ -889,9 +896,11 @@ typedef int             _TINT;
 #endif
 
 #ifndef _TCHAR_DEFINED
+
 :include ext.sp
 typedef char            TCHAR;
-#endif
+:include extepi.sp
+
 #define _TCHAR_DEFINED
 #endif
 
@@ -1012,12 +1021,11 @@ inline char *_strspnp( const char *__p1, const char *__p2 ) {
                                 ((__p1)+strspn(__p1,__p2)) : NULL)
 #endif
 
+#endif
 
 #endif
 
 :include cplusepi.sp
-
-#endif
 
 #define _T(x)           __T(x)
 #define _TEXT(x)        __T(x)

@@ -13,15 +13,13 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-  #error The header _hash.h requires C++
-#endif
+:include cpponly.sp
 
 namespace std {
-namespace tr1 {
+  namespace tr1 {
     
 
-} // namespace tr1
+  } // namespace tr1
 } // namespace std
 
 #endif

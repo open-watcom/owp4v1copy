@@ -5,12 +5,12 @@
  */
 #ifndef _LIBGEN_H_INCLUDED
 #define _LIBGEN_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 /*
  *  POSIX 1003.1 Prototypes.
@@ -19,4 +19,5 @@ _WCRTLINK extern char   *basename( char *__path );
 _WCRTLINK extern char   *dirname( char *__path );
 
 :include cplusepi.sp
+
 #endif

@@ -5,9 +5,15 @@
  */
 #ifndef _SYS_SOCKET_H_INCLUDED
 #define _SYS_SOCKET_H_INCLUDED
+
 :include readonly.sp
+
+:include owrtlink.sp
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
+
 :include incdir.sp
 
 typedef unsigned short sa_family_t;
@@ -102,6 +108,7 @@ _WCRTLINK extern int getsockname( int __s , struct sockaddr *__name, socklen_t *
 _WCRTLINK extern int connect( int __sockfd, const struct sockaddr *__serv_addr, socklen_t __addrlen );
 
 :include poppack.sp
-:include cplusepi.sp
-#endif /* !_SYS_SOCKET_H_INCLUDED */
 
+:include cplusepi.sp
+
+#endif /* !_SYS_SOCKET_H_INCLUDED */

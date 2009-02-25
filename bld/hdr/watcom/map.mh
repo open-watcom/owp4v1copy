@@ -11,27 +11,29 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header map requires C++
-#endif
+:include cpponly.sp
 
 #ifndef __RBTREE_H_INCLUDED
-  #include <_rbtree.h>
-#endif
-#ifndef _UTILITY_INCLUDED
-  #include <utility>
-#endif
-#ifndef _MEMORY_INCLUDED
-  #include <memory>
-#endif
-#ifndef _ITERATOR_INCLUDED
-  #include <iterator>
-#endif
-#ifndef _FUNCTIONAL_INCLUDED
-  #include <function>
+ #include <_rbtree.h>
 #endif
 
-namespace std{
+#ifndef _UTILITY_INCLUDED
+ #include <utility>
+#endif
+
+#ifndef _MEMORY_INCLUDED
+ #include <memory>
+#endif
+
+#ifndef _ITERATOR_INCLUDED
+ #include <iterator>
+#endif
+
+#ifndef _FUNCTIONAL_INCLUDED
+ #include <function>
+#endif
+
+namespace std {
 /* ==================================================================
  * class map
  */
@@ -239,7 +241,6 @@ public:
         
 }; //end template class multimap
 
-} //end namespace std
-
+} // namespace std
 
 #endif

@@ -11,12 +11,10 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header valarray requires C++
-#endif
+:include cpponly.sp
 
 namespace std {
 
-} // End of namespace std.
+} // namespace std
 
 #endif

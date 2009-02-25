@@ -5,12 +5,12 @@
  */
 #ifndef _MBSTRING_H_INCLUDED
 #define _MBSTRING_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 :include sizet.sp
 
@@ -77,10 +77,12 @@ _WCRTLINK extern int           mblen( const char *__ch, size_t __n );
 _WCRTLINK extern unsigned char *_mbvtop( unsigned int __ch, unsigned char *__addr );
 _WCRTLINK extern unsigned int _mbsnextc( const unsigned char *__s );
 
-
 /* Far versions */
 
 :include ext.sp
+::
+:: Begin of extension section
+::
 
 _WCRTLINK extern unsigned char _WCFAR *_fmbscpy( unsigned char _WCFAR *__s1, const unsigned char _WCFAR *__s2 );
 _WCRTLINK extern unsigned char _WCFAR *_fmbsncpy( unsigned char _WCFAR *__s1, const unsigned char _WCFAR *__s2, size_t __n );
@@ -137,8 +139,10 @@ _WCRTLINK extern int           _fmblen( const char _WCFAR *__ch, size_t __n );
 _WCRTLINK extern unsigned char _WCFAR *_fmbvtop( unsigned int __ch, unsigned char _WCFAR *__addr );
 _WCRTLINK extern unsigned int  _fmbsnextc( const unsigned char _WCFAR *__s );
 
-#endif
-
+::
+:: End of extension section
+::
+:include extepi.sp
 
 /* Character classification functions */
 _WCRTLINK extern int (_ismbblead)( unsigned int __ch );
@@ -157,7 +161,6 @@ _WCRTLINK extern int _ismbcspace( unsigned int __ch );
 _WCRTLINK extern int _ismbcupper( unsigned int __ch );
 _WCRTLINK extern int _ismbcxdigit( unsigned int __ch );
 
-
 /*
  * Character conversion routines applicable to all code pages.
  */
@@ -166,7 +169,6 @@ _WCRTLINK extern unsigned int   _mbctombb( unsigned int __ch );
 
 _WCRTLINK extern unsigned int   _mbctolower( unsigned int __ch );
 _WCRTLINK extern unsigned int   _mbctoupper( unsigned int __ch );
-
 
 /*
  * Character conversion routines specific to code page 932 (Japanese).
@@ -177,7 +179,6 @@ _WCRTLINK extern unsigned int   _mbdzentohan( unsigned int __ch );
 _WCRTLINK extern unsigned int   _mbdtolower( unsigned int __ch );
 _WCRTLINK extern unsigned int   _mbdtoupper( unsigned int __ch );
 
-
 /* Global data */
 #if defined(__SW_BR) || defined(_RTDLL)
  #define __MBCSIsTable __MBCSIsTable_br
@@ -186,13 +187,11 @@ _WCRTLINK extern unsigned int   _mbdtoupper( unsigned int __ch );
 _WCRTDATA extern unsigned char __MBCSIsTable[257];
 _WCRTDATA extern int           __IsDBCS;
 
-
 /* Flag used in __MBCSIsTable table */
 #ifndef _MB_TABLE_FLAGS_DEFINED
     #define _MB_LEAD            0x01
     #define _MB_TABLE_FLAGS_DEFINED
 #endif
-
 
 /* Since only "C" locale supported, we can remap locale compare functions */
 #define _mbscoll        _mbscmp
@@ -202,7 +201,6 @@ _WCRTDATA extern int           __IsDBCS;
 #define _mbsnicoll      _mbsnicmp
 #define _mbsnbicoll     _mbsnbicmp
 
-
 /* _setmbcp parameter defines */
 #define _MB_CP_SBCS     0
 #define _MB_CP_OEM      (-2)
@@ -211,7 +209,6 @@ _WCRTDATA extern int           __IsDBCS;
 /* MB control routines */
 _WCRTLINK extern int _setmbcp( int );
 _WCRTLINK extern int _getmbcp( void );
-
 
 /* Implement small functions as macros for speed */
 #if !defined(__FUNCTION_DATA_ACCESS)
@@ -224,7 +221,6 @@ _WCRTLINK extern int _getmbcp( void );
 #ifndef _mbisblead
  #define _mbislead(__b) _ismbblead(__b)
 #endif
-
 
 /**
  * types used by LIFEBOAT code
@@ -267,6 +263,6 @@ _WCRTLINK extern unsigned int _mbcjmstojis( unsigned int );
 _WCRTLINK extern unsigned int _mbctohira( unsigned int );
 _WCRTLINK extern unsigned int _mbctokata( unsigned int );
 
-
 :include cplusepi.sp
+
 #endif

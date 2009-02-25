@@ -8,14 +8,13 @@
  ***************************************************************************/
 #ifndef _INTTYPES_H_INCLUDED
 #define _INTTYPES_H_INCLUDED
+
 :include readonly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef _STDINT_H_INCLUDED
-  #include <stdint.h>
+ #include <stdint.h>
 #endif
 
 :include cpluspro.sp
@@ -27,8 +26,11 @@ typedef struct {
     intmax_t    rem;
 } imaxdiv_t;
 
-/* Format macros. According to C99 these are only visible in C++ programs
-   if __STDC_FORMAT_MACROS is defined. */
+/* Format macros */
+
+:: According to C99 these are only visible in C++ programs
+:: if __STDC_FORMAT_MACROS is defined. */
+::
 #if !defined(__cplusplus) || defined(__STDC_FORMAT_MACROS)
 
 #define PRId8   "hhd"
@@ -191,39 +193,8 @@ typedef struct {
 #define SCNxMAX     "llx"
 #define SCNXMAX     "llX"
 
-#if defined(__386__) || defined(__AXP__) || defined (__PPC__) || defined(__MIPS__)
-#if defined(__COMPACT__) || defined(__LARGE__)
-:: typedef long long intptr_t;
-:: typedef unsigned long long uintptr_t;
-#define PRIdPTR     "lld"
-#define PRIiPTR     "lli"
-#define PRIoPTR     "llo"
-#define PRIuPTR     "llu"
-#define PRIxPTR     "llx"
-#define PRIXPTR     "llX"
-#define SCNdPTR     "lld"
-#define SCNiPTR     "lli"
-#define SCNoPTR     "llo"
-#define SCNuPTR     "llu"
-#define SCNxPTR     "llx"
-#define SCNXPTR     "llX"
-#else
-:: typedef long intptr_t;
-:: typedef unsigned long uintptr_t;
-#define PRIdPTR     "ld"
-#define PRIiPTR     "li"
-#define PRIoPTR     "lo"
-#define PRIuPTR     "lu"
-#define PRIxPTR     "lx"
-#define PRIXPTR     "lX"
-#define SCNdPTR     "ld"
-#define SCNiPTR     "li"
-#define SCNoPTR     "lo"
-#define SCNuPTR     "lu"
-#define SCNxPTR     "lx"
-#define SCNXPTR     "lX"
-#endif
-#else /* 16 bit */
+#if defined(_M_I86)
+::
 #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
 :: typedef long intptr_t;
 :: typedef unsigned long uintptr_t;
@@ -255,6 +226,41 @@ typedef struct {
 #define SCNxPTR     "x"
 #define SCNXPTR     "X"
 #endif
+::
+#else /* 32 bit */
+::
+#if defined(__COMPACT__) || defined(__LARGE__)
+:: typedef long long intptr_t;
+:: typedef unsigned long long uintptr_t;
+#define PRIdPTR     "lld"
+#define PRIiPTR     "lli"
+#define PRIoPTR     "llo"
+#define PRIuPTR     "llu"
+#define PRIxPTR     "llx"
+#define PRIXPTR     "llX"
+#define SCNdPTR     "lld"
+#define SCNiPTR     "lli"
+#define SCNoPTR     "llo"
+#define SCNuPTR     "llu"
+#define SCNxPTR     "llx"
+#define SCNXPTR     "llX"
+#else
+:: typedef long intptr_t;
+:: typedef unsigned long uintptr_t;
+#define PRIdPTR     "ld"
+#define PRIiPTR     "li"
+#define PRIoPTR     "lo"
+#define PRIuPTR     "lu"
+#define PRIxPTR     "lx"
+#define PRIXPTR     "lX"
+#define SCNdPTR     "ld"
+#define SCNiPTR     "li"
+#define SCNoPTR     "lo"
+#define SCNuPTR     "lu"
+#define SCNxPTR     "lx"
+#define SCNXPTR     "lX"
+#endif
+::
 #endif
 
 #endif  /* __STDC_FORMAT_MACROS */
@@ -267,4 +273,5 @@ _WCRTLINK extern intmax_t   wcstoimax( const wchar_t *__nptr, wchar_t **__endptr
 _WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
 
 :include cplusepi.sp
+
 #endif

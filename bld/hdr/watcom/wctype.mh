@@ -11,19 +11,18 @@
 #ifndef _CWCTYPE_INCLUDED
 #define _CWCTYPE_INCLUDED
 
-#ifndef __cplusplus
-#error The header cwctype requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _WCTYPE_H_INCLUDED
 #define _WCTYPE_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following segment only appears in wctype.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <cwctype>
 
 // C99 types in wctype.h
@@ -52,31 +51,31 @@ using std::towlower;
 using std::towupper;
 
 :: Now the extensions section.
-:include ext.sp
 // C99 functions in ctype.h that are currently considered extensions.
+:include ext.sp
 using std::iswblank;
-#endif
+:include extepi.sp
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in wctype.h
 :endsegment
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 :: Only need extern "C" in cwctype
 :segment CNAME
 :include cpluspro.sp
-:endsegment
 
+:endsegment
+:segment !CNAME
 :include wchar_t.sp
 
+:endsegment
 :include wctypet.sp
 
 #ifndef _WCTRANS_T_DEFINED
-  #define _WCTRANS_T_DEFINED
-  typedef wchar_t wctrans_t;
+ #define _WCTRANS_T_DEFINED
+ typedef wchar_t wctrans_t;
 #endif
 
 :segment CNAME
@@ -87,6 +86,7 @@ using std::iswblank;
 
 :segment CNAME
 namespace std {
+
 :endsegment
 _WCRTLINK extern int      iswalnum( wint_t __wc );
 _WCRTLINK extern int      iswalpha( wint_t __wc );
@@ -107,12 +107,13 @@ _WCRTLINK extern wint_t   towlower( wint_t __wc );
 _WCRTLINK extern wint_t   towupper( wint_t __wc );
 _WCRTLINK extern wctrans_t wctrans( const char *__property );
 
-:include ext.sp
 /* These names are in ctype.h according to C99. */
+:include ext.sp
 _WCRTLINK extern int      iswblank( wint_t __wc );
-#endif
+:include extepi.sp
 :segment CNAME
-}
+
+} // namespace std
 :endsegment
 
 :segment CNAME

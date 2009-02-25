@@ -10,19 +10,18 @@
 #ifndef _CSTDIO_INCLUDED
 #define _CSTDIO_INCLUDED
 
-#ifndef __cplusplus
-#error the header cstdio requires C++
-#endif
+:include readonly.sp
+
+:include cpponly.sp
 :elsesegment
 #ifndef _STDIO_H_INCLUDED
 #define _STDIO_H_INCLUDED
-:endsegment
 
 :include readonly.sp
-::
+
 :: The following somewhat long segment only appears in stdio.h.
-:segment !CNAME
 #ifdef __cplusplus
+
 #include <cstdio>
 
 // C99 types in stdio.h.
@@ -77,8 +76,10 @@ using std::vfprintf;
 using std::vprintf;
 using std::vsprintf;
 
-:: Now the extensions section.
 :include ext.sp
+::
+:: Begin of extension section
+::
 // C99 types that are not specified for stdio.h
 #ifndef _WCTYPE_T_DEFINED
 #define _WCTYPE_T_DEFINED
@@ -94,7 +95,8 @@ using std::vscanf;
 using std::vsnprintf;
 using std::vsscanf;
 
-:segment !SNAPDRV & !NO_WIDECHAR
+:segment !SNAPDRV
+:segment !NO_WIDECHAR
 // C99 functions that are not specified for stdio.h
 using std::fgetwc;
 using std::fgetws;
@@ -120,21 +122,23 @@ using std::vwscanf;
 using std::wprintf;
 using std::wscanf;
 :endsegment
-#endif
+:endsegment
+::
+:: End of extension section
+::
+:include extepi.sp
 
 #else /* __cplusplus not defined */
 :: End of segment that is only in stdio.h
 :endsegment
 
+:include owrtlink.sp
+
 :: Only need extern "C" in cstdio
 :segment CNAME
 :include cpluspro.sp
+
 :endsegment
-
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
-
 :include pshpackl.sp
 
 :include sizet.sp
@@ -148,10 +152,10 @@ using std::wscanf;
 #define _NFILES         16          /*  minimum guaranteed open files       */
 #define FILENAME_MAX    255
 :elsesegment
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
- #define BUFSIZ         4096
-#else
+#if defined(_M_I86)
  #define BUFSIZ         512
+#else
+ #define BUFSIZ         4096
 #endif
 ::
 #define _NFILES         20      /* number of files that can be handled */
@@ -200,9 +204,9 @@ typedef long           fpos_t;
  #else
   #define PATH_MAX      143 /* maximum length of full pathname excl. '\0' */
  #endif
-#else                   /* extensions not enabled */
+#else  /* extensions disabled */
  #define FOPEN_MAX      (_NFILES-2)
-#endif
+#endif /* extensions disabled */
 :endsegment
 
 :segment CNAME
@@ -239,7 +243,7 @@ _WCRTDATA extern FILE _WCNEAR __iob[];
 #define stderr  ((FILE *)&__iob[2])     /* standard error file  */
 :endsegment
 :segment DOS
-#ifndef NO_EXT_KEYS     /* extensions enabled */
+:include ext.sp
 #if defined(__DOS__) || defined(__WINDOWS__) || defined(__OSI__)
 :segment CNAME
 #define stdaux  ((std::FILE *)&__iob[3])     /* standard auxiliary file  */
@@ -249,7 +253,7 @@ _WCRTDATA extern FILE _WCNEAR __iob[];
 #define stdprn  ((FILE *)&__iob[4])     /* standard printer file  */
 :endsegment
 #endif
-#endif
+:include extepi.sp
 :endsegment
 
 #else /* __OBSCURE_STREAM_INTERNALS is defined */
@@ -264,12 +268,12 @@ _WCRTLINK extern FILE *__get_std_file(unsigned handle);
 #define stdout  (__get_std_file(1))     /* standard output file */
 #define stderr  (__get_std_file(2))     /* standard error file  */
 :segment DOS
-#ifndef NO_EXT_KEYS     /* extensions enabled */
+:include ext.sp
 #if defined(__DOS__) || defined(__WINDOWS__)
 #define stdaux  (__get_std_file(3))     /* standard auxiliary file  */
 #define stdprn  (__get_std_file(4))     /* standard printer file  */
 #endif
-#endif
+:include extepi.sp
 :endsegment
 
 #endif /* __OBSCURE_STREAM_INTERNALS */
@@ -324,7 +328,8 @@ _WCRTLINK extern FILE *__get_std_file(unsigned handle);
 #define L_cuserid   14                  /*  Max length of login names       */
 #define L_ctermid   16                  /*  Max length of terminal names    */
 #define P_tmpdir    "/usr/tmp"          /*  Temporary file directory        */
-#endif
+:include extepi.sp
+
 #define L_tmpnam    255                 /*  Max length of tmp file names    */
 :elsesegment
 #define L_tmpnam    13
@@ -384,9 +389,8 @@ _WCRTLINK extern int    vfprintf( FILE *__fp, const char *__format,
 _WCRTLINK extern int    vprintf( const char *__format, __va_list __arg );
 _WCRTLINK extern int    vsprintf( char *__s, const char *__format,
                                   __va_list __arg );
-:: End of namespace std
 :segment CNAME
-}
+} // namespace std
 :endsegment
 
 :: Implementation specific functions remain in the global namespace.
@@ -406,10 +410,15 @@ _WCRTLINK extern int   _putw( int __binint, FILE *__fp );
 _WCRTLINK extern char  *_tempnam( char *__dir, char *__prefix );
 :endsegment
 
-:: Extensions section.
 :include ext.sp
+::
+:: Begin of extension section
+::
+
+:segment !CNAME
 :include wchar_t.sp
 
+:endsegment
 :include wctypet.sp
 
 :segment CNAME
@@ -432,7 +441,8 @@ _WCRTLINK extern int     vsnprintf( char *__s, size_t __bufsize,
 _WCRTLINK extern int     vsscanf( const char *__s, const char *__format,
                                   __va_list __arg );
 
-:segment !SNAPDRV & !NO_WIDECHAR
+:segment !SNAPDRV
+:segment !NO_WIDECHAR
 /* These names are not in stdio according to C99. */
 _WCRTLINK extern wint_t   getwc( FILE * );
 _WCRTLINK extern wint_t   getwchar( void );
@@ -460,8 +470,9 @@ _WCRTLINK extern int      vwscanf( const wchar_t *, __va_list );
 _WCRTLINK extern int      wprintf( const wchar_t *, ... );
 _WCRTLINK extern int      wscanf( const wchar_t *, ... );
 :endsegment
+:endsegment
 :segment CNAME
-}
+} // namespace std
 :endsegment
 
 /* These names are not part of C89 or C99. */
@@ -527,6 +538,7 @@ _WCRTLINK extern std::wint_t   fgetwchar( void );
 _WCRTLINK extern std::wint_t   fputwchar( std::wint_t );
 _WCRTLINK extern wchar_t       *getws( wchar_t * );
 _WCRTLINK extern int           putws( const wchar_t * );
+
 :endsegment
 :endsegment
 ::
@@ -589,10 +601,10 @@ _WCRTLINK extern wint_t   fgetwchar( void );
 _WCRTLINK extern wint_t   fputwchar( wint_t );
 _WCRTLINK extern wchar_t  *getws( wchar_t * );
 _WCRTLINK extern int      putws( const wchar_t * );
-:endsegment
-:endsegment
-:endsegment
 
+:endsegment
+:endsegment
+:endsegment
 :segment !CNAME
 :include saferpro.sp
 
@@ -653,12 +665,13 @@ _WCRTLINK extern errno_t _wfreopen_s( FILE * __restrict * __restrict __newstream
                                       const wchar_t * __restrict __mode,
                                       FILE * __restrict __stream );
 _WCRTLINK extern errno_t _wtmpnam_s( wchar_t *__s, rsize_t __maxsize );
-:endsegment
 
+:endsegment
 :include saferepi.sp
-:endsegment
 
-:segment !SNAPDRV & QNX
+:endsegment
+:segment !SNAPDRV
+:segment QNX
 #ifdef _this_belongs_in_a_private_qnx_header
  extern int _input_line_max;            /* defaults to 20 */
 :segment CNAME
@@ -667,8 +680,13 @@ _WCRTLINK extern errno_t _wtmpnam_s( wchar_t *__s, rsize_t __maxsize );
  char   *input_line( FILE *, char *, int );
 :endsegment
 #endif
+
 :endsegment
-#endif /* End of extensions section */
+:endsegment
+::
+:: End of extension section
+::
+:include extepi.sp
 
 :segment QNX | LINUX
 :include unixext.sp
@@ -683,9 +701,9 @@ _WCRTLINK extern FILE       *fdopen( int __handle, const char *__mode );
 _WCRTLINK extern FILE       *popen( const char *__filename, const char *__mode );
 _WCRTLINK extern int         pclose( FILE *__stream );
 :endsegment
-#endif
-:endsegment
+:include extepi.sp
 
+:endsegment
 :: Eliminate all macro versions of these functions from cstdio
 :: Eventually they can be re-introduced as proper in-line functions.
 :segment !CNAME
@@ -722,8 +740,8 @@ _WCRTLINK extern int         pclose( FILE *__stream );
 ::
 #define getchar()       getc(stdin)
 #define putchar(c)      putc(c,stdout)
-:endsegment
 
+:endsegment
 :include poppack.sp
 
 :segment CNAME

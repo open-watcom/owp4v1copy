@@ -12,35 +12,33 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header list requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _ITERATOR_INCLUDED
-    #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _MEMORY_INCLUDED
-    #include <memory>
+ #include <memory>
 #endif
 
 #ifndef _TYPE_TRAITS_INCLUDED
-    #include <type_tra>
+ #include <type_tra>
 #endif
 
 #ifndef _LIMITS_INCLUDED
-    #include <limits>
+ #include <limits>
 #endif
 
 #ifndef _FUNCTIONAL_INCLUDED
-    #include <function>
+ #include <function>
 #endif
 
 #ifndef __META_H_INCLUDED
-    #include <_meta.h>
+ #include <_meta.h>
 #endif
 
-namespace _watcom{
+namespace _watcom {
 /* ==================================================================
  * slist class template
  * see list and SGI slist for inspiration
@@ -1285,6 +1283,6 @@ void swap( slist<T,A> const & x, slist<T,A> const & y )
 
 
 
-}; //end namespace _watcom
+} // namespace _watcom
 
 #endif

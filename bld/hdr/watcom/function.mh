@@ -13,12 +13,10 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header functional requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _CSTDDEF_INCLUDED
-#include <cstddef>
+ #include <cstddef>
 #endif
 
 namespace std {
@@ -469,45 +467,7 @@ namespace std {
             { return( static_cast< size_t >( value ) ); }
     };
 
-#if defined(__386__) || defined(__AXP__) || defined (__PPC__) || defined(__MIPS__)
-
-    template< >
-    struct hash< long > : public unary_function< long, size_t >
-    {
-        size_t operator( )( long value ) const
-            { return( static_cast< size_t >( value ) ); }
-    };
-
-    template< >
-    struct hash< unsigned long > : public unary_function< unsigned long, size_t >
-    {
-        size_t operator( )( unsigned long value ) const
-            { return( static_cast< size_t >( value ) ); }
-    };
-
-    template< >
-    struct hash< long long > : public unary_function< long long, size_t >
-    {
-        size_t operator( )( long long value ) const
-        {
-            long long result = value;
-            result ^= (value & 0xFFFFFFFF00000000ULL) >> 32;
-            return( static_cast< size_t >( result ) );
-        }
-    };
-
-    template< >
-    struct hash< unsigned long long > : public unary_function< unsigned long long, size_t >
-    {
-        size_t operator( )( unsigned long long value ) const
-        {
-            unsigned long long result = value;
-            result ^= (value & 0xFFFFFFFF00000000ULL) >> 32;
-            return( static_cast< size_t >( result ) );
-        }
-    };
-
-#else  // 16 bit
+#if defined(_M_I86)
 
     template< >
     struct hash< long > : public unary_function< long, size_t >
@@ -557,6 +517,44 @@ namespace std {
         }
     };
 
+#else  // 32 bit
+
+    template< >
+    struct hash< long > : public unary_function< long, size_t >
+    {
+        size_t operator( )( long value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< unsigned long > : public unary_function< unsigned long, size_t >
+    {
+        size_t operator( )( unsigned long value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< long long > : public unary_function< long long, size_t >
+    {
+        size_t operator( )( long long value ) const
+        {
+            long long result = value;
+            result ^= (value & 0xFFFFFFFF00000000ULL) >> 32;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+    template< >
+    struct hash< unsigned long long > : public unary_function< unsigned long long, size_t >
+    {
+        size_t operator( )( unsigned long long value ) const
+        {
+            unsigned long long result = value;
+            result ^= (value & 0xFFFFFFFF00000000ULL) >> 32;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
 #endif
 
 :: Not really what one would want for far pointers.
@@ -567,6 +565,6 @@ namespace std {
             { return( static_cast< size_t >( p ) ); }
     };
 
-} // End of namespace std.
+} // namespace std
 
 #endif

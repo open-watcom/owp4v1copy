@@ -5,20 +5,23 @@
  */
 #ifndef _FCNTL_H_INCLUDED
 #define _FCNTL_H_INCLUDED
+
 :include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
-:segment LINUX
-:include lnxkpack.sp
-:include wchar_t.sp
-
+:segment LINUX | QNX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
+
+:endsegment
+:include cpluspro.sp
+
+:include wchar_t.sp
+
+:segment LINUX
+:include lnxkpack.sp
 
 :include incdir.sp
 
@@ -31,7 +34,7 @@
 :include ext.sp
 #define O_DSYNC     O_SYNC  /* Synchronize data.  */
 #define O_RSYNC     O_SYNC  /* Synchronize read operations.  */
-#endif
+:include extepi.sp
 
 #define O_TEMP      000000  /*  Temporary file, don't put to disk (QNX thing) */
 #define O_TEXT      000000  /*  Text file   (DOS thing)     */
@@ -39,11 +42,6 @@
 
 :elsesegment QNX
 :include pshpackl.sp
-:include wchar_t.sp
-
-#ifndef __TYPES_H_INCLUDED
- #include <sys/types.h>
-#endif
 
 /*
  *  Flag values accessible to both open() and fcntl()
@@ -81,7 +79,7 @@
 :include ext.sp
 #define O_DSYNC     000020  /*  Data integrity synch    */
 #define O_SYNC      000040  /*  File integrity synch    */
-#endif
+:include extepi.sp
 
 #define O_PRIV      010000
 
@@ -99,7 +97,7 @@
 #define O_CACHE     020000  /*  Cache sequential files too      */
 #define O_TEXT      000000  /*  Text file   (DOS thing)     */
 #define O_BINARY    000000  /*  Binary file (DOS thing)     */
-#endif
+:include extepi.sp
 
 /*
  *  fcntl() requests
@@ -159,7 +157,6 @@ typedef struct flock {
 
 :elsesegment DOS
 :include pshpackl.sp
-:include wchar_t.sp
 
 #define O_RDONLY        0x0000  /* open for read only */
 #define _O_RDONLY       0x0000  /* open for read only */
@@ -220,8 +217,8 @@ _WCRTLINK extern int _wcreat( const wchar_t *, int );
 :segment QNX | LINUX
 
 _WCRTLINK extern int fcntl( int __fildes, int __cmd, ... );
-
 :segment QNX
+
 struct _io_open; /* for C++ */
 
 _WCRTLINK extern int __fcntl_slib( int, int, int, struct flock * );
@@ -231,9 +228,11 @@ _WCRTLINK extern int __sopen_slib( const char *__path, int __oflag, int __share,
                                    mode_t __mode );
 _WCRTLINK extern int __resolve_net( unsigned, int, struct _io_open *,
                                     const char *, unsigned, char * );
+:endsegment
+:endsegment
 
-:endsegment
-:endsegment
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif

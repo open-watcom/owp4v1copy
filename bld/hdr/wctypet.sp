@@ -1,36 +1,36 @@
 :segment CNAME
 #ifndef _STDWCTYPE_T_DEFINED
-  #define _STDWCTYPE_T_DEFINED
-  namespace std {
-    typedef wchar_t wint_t;
-    typedef wchar_t wctype_t;
-  }
+#define _STDWCTYPE_T_DEFINED
+ namespace std {
+   typedef wchar_t wint_t;
+   typedef wchar_t wctype_t;
+ }
 #endif
 :elsesegment
 :segment !CONLY
 #ifdef __cplusplus
-  #ifndef _STDWCTYPE_T_DEFINED
-    #define _STDWCTYPE_T_DEFINED
-    namespace std {
-      typedef wchar_t wint_t;
-      typedef wchar_t wctype_t;
-    }
-  #endif
-  #ifndef _WCTYPE_T_DEFINED
-    #define _WCTYPE_T_DEFINED
-    #define _WCTYPE_T_DEFINED_
-    using std::wint_t;
-    using std::wctype_t;
-  #endif
-#else
-:endsegment
-  #ifndef _WCTYPE_T_DEFINED
-    #define _WCTYPE_T_DEFINED
-    #define _WCTYPE_T_DEFINED_
+ #ifndef _STDWCTYPE_T_DEFINED
+ #define _STDWCTYPE_T_DEFINED
+  namespace std {
     typedef wchar_t wint_t;
     typedef wchar_t wctype_t;
-  #endif
+  }
+ #endif
+ #ifndef _WCTYPE_T_DEFINED
+ #define _WCTYPE_T_DEFINED
+  #define _WCTYPE_T_DEFINED_
+  using std::wint_t;
+  using std::wctype_t;
+ #endif
+#else  /* __cplusplus not defined */
+:endsegment
+ #ifndef _WCTYPE_T_DEFINED
+ #define _WCTYPE_T_DEFINED
+  #define _WCTYPE_T_DEFINED_
+  typedef wchar_t wint_t;
+  typedef wchar_t wctype_t;
+ #endif
 :segment !CONLY
-#endif /* __cplusplus */
+#endif /* __cplusplus not defined */
 :endsegment
 :endsegment

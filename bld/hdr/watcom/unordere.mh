@@ -13,19 +13,17 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-  #error The header unordered_set/unordered_map requires C++
-#endif
+:include cpponly.sp
 
 #ifndef __HASH_H_INCLUDED
-  #include <_hash.h>
+ #include <_hash.h>
 #endif
 
 namespace std {
-namespace tr1 {
+  namespace tr1 {
     
 
-} // namespace tr1
+  } // namespace tr1
 } // namespace std
 
 #endif

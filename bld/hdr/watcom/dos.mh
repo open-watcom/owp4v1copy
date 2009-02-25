@@ -7,15 +7,16 @@
  */
 #ifndef _DOS_H_INCLUDED
 #define _DOS_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
 #if defined(_M_IX86) && !defined(_I86_H_INCLUDED)
  #include <i86.h>
 #endif
+
+:include cpluspro.sp
 
 #if defined(__DOS__) && defined(__386__)
  #define _DOSFAR _WCFAR
@@ -201,4 +202,5 @@ _WCRTLINK extern unsigned _wdos_findclose( struct _wfind_t *__buf );
 #undef _DOSFAR
 
 :include cplusepi.sp
+
 #endif

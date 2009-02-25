@@ -12,13 +12,11 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header random requires C++
-#endif
+:include cpponly.sp
 
 #include <cstdint>
 
-namespace _ow{
+namespace _ow {
      /*---------------------------------------------------------------
      * helpers
      */
@@ -189,11 +187,11 @@ namespace _ow{
             return( x );
         }
     };
-};//end namespace _ow
+} // namespace _ow
 
 
-namespace std{
-  namespace tr1{
+namespace std {
+  namespace tr1 {
     
     template< class UIntType, UIntType a, UIntType c, UIntType m >
     class linear_congruential{
@@ -338,10 +336,10 @@ namespace std{
                               31,0x9908b0df,11,7,0x9d2c5680,
                               15,0xefc60000,18>  mt19937;
     
-  }// end namespace tr1
-}// end namespace std
+  } // namespace tr1
+} // namespace std
 
-namespace _watcom{
+namespace _watcom {
     
     // to do - would like to add WELL generator
     
@@ -362,6 +360,6 @@ namespace _watcom{
         0xE4BD75F5, 11, 7, 0x655E5280, 15, 0xFFD58000, 17 > mt11213a;
     // to do
     
-};
+} // namespace _watcom
 
 #endif

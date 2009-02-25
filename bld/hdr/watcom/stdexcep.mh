@@ -14,7 +14,7 @@
 :include readonly.sp
 
 #ifndef _STDEXCEPT_INCLUDED
-  #include <stdexcep>
+ #include <stdexcep>
 #endif
 using std::logic_error;
 using std::domain_error;
@@ -28,7 +28,7 @@ using std::underflow_error;
 
 // All included names should also be in the global namespace.
 #ifndef _EXCEPTION_H_INCLUDED
-  #include <exceptio.h>
+ #include <exceptio.h>
 #endif
 
 #endif
@@ -38,20 +38,16 @@ using std::underflow_error;
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header stdexcept requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
-  #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef __STRDEF_H_INCLUDED
-  #include <_strdef.h>
+ #include <_strdef.h>
 #endif
 
 #ifndef _EXCEPTION_INCLUDED
-  #include <exceptio>
+ #include <exceptio>
 #endif
 
 namespace std {

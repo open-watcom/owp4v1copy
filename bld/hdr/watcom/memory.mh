@@ -10,7 +10,7 @@
 :include readonly.sp
 
 #ifndef _STRING_H_INCLUDED
-  #include <string.h>
+ #include <string.h>
 #endif
 
 #endif
@@ -34,24 +34,22 @@
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header memory requires C++
-#endif
+:include cpponly.sp
 
 #ifndef _CSTDDEF_INCLUDED
-  #include <cstddef>
+ #include <cstddef>
 #endif
 
 #ifndef _ITERATOR_INCLUDED
-  #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _NEW_INCLUDED
-  #include <new>
+ #include <new>
 #endif
 
 #ifndef _TYPEINFO_INCLUDED  
-  #include <typeinfo>
+ #include <typeinfo>
 #endif 
 
 :include throws.sp
@@ -898,7 +896,7 @@ namespace std {
 
     } // namespace detail
 
-} // namespace std.
+} // namespace std
 
 #endif
 :endsegment

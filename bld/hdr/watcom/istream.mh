@@ -15,7 +15,7 @@
 :include readonly.sp
 
 #ifndef _ISTREAM_INCLUDED
-  #include <istream>
+ #include <istream>
 #endif
 using std::istream;
 using std::ws;
@@ -23,11 +23,11 @@ using std::iostream;
 
 // All included names should also be in the global namespace.
 #ifndef _IOS_H_INCLUDED
-  #include <ios.h>
+ #include <ios.h>
 #endif
 
 #ifndef _OSTREAM_H_INCLUDED
-  #include <ostream.h>
+ #include <ostream.h>
 #endif
 
 #endif
@@ -37,20 +37,16 @@ using std::iostream;
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header istream requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 #ifndef _IOS_INCLUDED
-  #include <ios>
+ #include <ios>
 #endif
 
 #ifndef _OSTREAM_INCLUDED
-  #include <ostream>
+ #include <ostream>
 #endif
 
 namespace std {

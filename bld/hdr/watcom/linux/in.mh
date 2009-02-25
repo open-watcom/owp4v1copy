@@ -5,9 +5,17 @@
  */
 #ifndef _NETINET_IN_H_INCLUDED
 #define _NETINET_IN_H_INCLUDED
-#include <sys/types.h>
+
 :include readonly.sp
+
+:include owrtlink.sp
+
+#ifndef __TYPES_H_INCLUDED
+ #include <sys/types.h>
+#endif
+
 :include cpluspro.sp
+
 :include lnxkpack.sp
 
 /* Internet address. */
@@ -87,5 +95,7 @@ _WCRTLINK unsigned long int ntohl(unsigned long int netlong);
 _WCRTLINK unsigned short int ntohs(unsigned short int netshort);
 
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif /* !_NETINET_IN_H_INCLUDED */

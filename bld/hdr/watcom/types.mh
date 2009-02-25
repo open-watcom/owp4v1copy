@@ -9,12 +9,18 @@
  */
 #ifndef __TYPES_H_INCLUDED
 #define __TYPES_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
+:include readonly.sp
+
+:include owrtlink.sp
+
+:segment LINUX | QNX
+#ifndef _LIMITS_H_INCLUDED
+ #include <limits.h>
 #endif
+
+:endsegment
+:include cpluspro.sp
 
 :include timet.sp
 
@@ -22,29 +28,9 @@
 
 :include ssizet.sp
 
-:: The exact width integer types are shared with stdint.h
-#ifndef _EXACT_WIDTH_INTS
-#define _EXACT_WIDTH_INTS
-typedef signed char         int8_t;
-typedef unsigned char       uint8_t;
-typedef short               int16_t;
-typedef unsigned short      uint16_t;
-#if defined _M_I86
-typedef long                int32_t;
-typedef unsigned long       uint32_t;
-#else
-typedef int                 int32_t;
-typedef unsigned int        uint32_t;
-#endif
-typedef long long           int64_t;
-typedef unsigned long long  uint64_t;
-#endif /* _EXACT_WIDTH_INTS */
+:include exactint.sp
 
 :segment LINUX
-#ifndef _LIMITS_H_INCLUDED
- #include <limits.h>
-#endif
-
 :include incdir.sp
 
 /* Define POSIX 1003.1 types */
@@ -63,17 +49,13 @@ typedef long            blkcnt_t;
 typedef quad_t          loff_t;
 
 :elsesegment QNX
-#ifndef _LIMITS_H_INCLUDED
- #include <limits.h>
-#endif
-
 /* Define POSIX 1003.1 types */
 
 typedef long            dev_t;  /* Combination of node and device   */
 #ifndef _GID_T_DEFINED_
+#define _GID_T_DEFINED_
  typedef int            gid_t;  /* Used for group IDs               */
  typedef short          mgid_t; /* Used for group in messages       */
- #define _GID_T_DEFINED_
 #endif
 typedef long            ino_t;  /* Used for file serial numbers     */
 typedef short unsigned  mode_t; /* Used for some file attributes    */
@@ -82,45 +64,48 @@ typedef long            off_t;  /* Used for file sizes, offsets     */
 typedef int             pid_t;  /* Used for process IDs & group IDs */
 typedef short           mpid_t; /* Used for process & group IDs in messages */
 #ifndef _UID_T_DEFINED_
+#define _UID_T_DEFINED_
  typedef int            uid_t;  /* Used for user IDs                */
  typedef short          muid_t; /* used in messages                 */
- #define _UID_T_DEFINED_
 #endif
-#if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+
+:include ext.sp
+
 typedef short unsigned  msg_t;  /* Used for message passing         */
 typedef long            nid_t;  /* Used for network IDs             */
 #ifndef _TIMER_T_DEFINED_
- #define _TIMER_T_DEFINED_
-typedef int             timer_t;/* Used for timer IDs               */
+#define _TIMER_T_DEFINED_
+ typedef int            timer_t;/* Used for timer IDs               */
 #endif
 #ifndef _CLOCKID_T_DEFINED_
- #define _CLOCKID_T_DEFINED_
-typedef int             clockid_t;/* Used for clock IDs             */
+#define _CLOCKID_T_DEFINED_
+ typedef int            clockid_t;/* Used for clock IDs             */
 #endif
-#endif
+
+:include extepi.sp
 
 #define minor(device)                   ((int)((device) & 0x3ff))
 #define major(device)                   ((int)(((device) >> 10) & 0x3f))
 #define makedev(node,major,minor)       ((dev_t)(((node) << 16) | ((major) << 10) | (minor)))
 
 #ifndef _WCHAR_T_DEFINED
-#  define _WCHAR_T_DEFINED
-#  ifndef _WCHAR_T_DEFINED_
-#    define _WCHAR_T_DEFINED_
-#    ifdef X_LOCALE
-typedef unsigned long wchar_t;
-#    else
-#      ifdef __cplusplus
-typedef long char wchar_t;
-#      else
-typedef unsigned short wchar_t;
-#      endif
-#    endif
-#  endif
+#define _WCHAR_T_DEFINED
+ #ifndef _WCHAR_T_DEFINED_
+ #define _WCHAR_T_DEFINED_
+  #ifdef X_LOCALE
+   typedef unsigned long wchar_t;
+  #else
+   #ifdef __cplusplus
+    typedef long char wchar_t;
+   #else
+    typedef unsigned short wchar_t;
+   #endif
+  #endif
+ #endif
 #else
-#  ifndef _WCHAR_T_DEFINED_
-#    define _WCHAR_T_DEFINED_
-#  endif
+ #ifndef _WCHAR_T_DEFINED_
+ #define _WCHAR_T_DEFINED_
+ #endif
 #endif
 
 typedef char _WCI86FAR *caddr_t;
@@ -168,4 +153,5 @@ typedef long long       id_t;   /* pid_t, uid_t or gid_t */
 :endsegment
 
 :include cplusepi.sp
+
 #endif

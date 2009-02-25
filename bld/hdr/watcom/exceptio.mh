@@ -16,7 +16,7 @@
 :include readonly.sp
 
 #ifndef _EXCEPTION_INCLUDED
-  #include <exceptio>
+ #include <exceptio>
 #endif
 using std::exception;
 using std::bad_exception;
@@ -38,13 +38,9 @@ using std::terminate;
 
 :include readonly.sp
 
-#ifndef __cplusplus
-#error The header exception requires C++
-#endif
+:include cpponly.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include owrtlink.sp
 
 :include cpppfv.sp
 

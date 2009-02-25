@@ -8,22 +8,23 @@
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __ALGSORT_H_INCLUDED
 #define __ALGSORT_H_INCLUDED
+
 :include readonly.sp
 
 #ifndef _ALGORITHM_INCLUDED
-#error The header _algsort.h requires algorithm.
+ #error The header _algsort.h requires algorithm.
 #endif
 
 #ifndef _FUNCTIONAL_INCLUDED
-  #include <function>
+ #include <function>
 #endif
 
 #ifndef _ITERATOR_INCLUDED
-  #include <iterator>
+ #include <iterator>
 #endif
 
 #ifndef _STDEXCEPT_INCLUDED
-  #include <stdexcep>
+ #include <stdexcep>
 #endif
 
 namespace std {
@@ -384,6 +385,6 @@ ForwardIterator max_element( ForwardIterator first,
     return( tmp );
 }
 
-}
+} // namespace std
 
 #endif

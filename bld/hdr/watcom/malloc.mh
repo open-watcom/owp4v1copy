@@ -5,12 +5,12 @@
  */
 #ifndef _MALLOC_H_INCLUDED
 #define _MALLOC_H_INCLUDED
-:include readonly.sp
-:include cpluspro.sp
 
-#ifndef _COMDEF_H_INCLUDED
- #include <_comdef.h>
-#endif
+:include readonly.sp
+
+:include owrtlink.sp
+
+:include cpluspro.sp
 
 :include pshpackl.sp
 
@@ -52,7 +52,7 @@ _WCRTLINK extern int _heapshrink( void );
 _WCRTLINK extern int _nheapshrink( void );
 
 :segment DOS | QNX
-#if defined( _M_I86 )
+#if defined(_M_I86)
 _WCRTLINK extern int _fheapchk( void );
 _WCRTLINK extern int _fheapset( unsigned int __fill );
 _WCRTLINK extern int _fheapwalk( struct _heapinfo *__entry );
@@ -87,7 +87,7 @@ _WCRTLINK extern size_t _nmsize( void _WCNEAR *__ptr );
 #endif
 
 :segment DOS | QNX
-#if defined( _M_I86 )
+#if defined(_M_I86)
 _WCRTLINK extern int __fmemneed( size_t );
 #if !defined(_fcalloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCFAR *_fcalloc( size_t __n, size_t __size );
@@ -153,5 +153,7 @@ _WCRTLINK extern void __based(void) *_brealloc( __segment __seg, void __based(vo
 
 :endsegment
 :include poppack.sp
+
 :include cplusepi.sp
+
 #endif
