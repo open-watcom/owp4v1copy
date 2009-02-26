@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -56,7 +56,7 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
 
     end   = end;
 
-    pchar = scan_sym( in + 3, &symvar_entry, &var_ind );
+    pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
@@ -96,7 +96,7 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
 
     end  = end;
 
-    pchar = scan_sym( in + 3, &symvar_entry, &var_ind );
+    pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
@@ -137,7 +137,7 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
     end   = end;
 
 
-    pchar = scan_sym( in + 3, &symvar_entry, &var_ind );
+    pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
@@ -249,6 +249,7 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
         err_count++;
         g_suicide();
     }
+    ProcFlags.substituted = true;
     return( pw );
 }
 

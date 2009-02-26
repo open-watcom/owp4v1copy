@@ -74,6 +74,7 @@ objs =  &
         gsifdoel.obj &
         gsimbed.obj  &
         gsmacro.obj  &
+        gstype.obj   &
         gsymvar.obj  &
         gutil.obj    &
         outbuff.obj  &

@@ -77,6 +77,13 @@
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
 
 
+/* string start / end characters */
+#define s_q     '\''
+#define d_q     '\"'
+#define vbar    0xdd
+#define cent    0x9b
+
+
 /***************************************************************************/
 /*  Space units Horiz + Vert              to be redesigned                 */
 /***************************************************************************/

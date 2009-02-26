@@ -123,6 +123,7 @@ extern  void    split_attr_file( char * filename, char * attr, size_t attrlen );
 /* gprocess.c                         */
 extern  void    process_line( void );
 extern  void    split_input( char * buf, char * split_pos );
+extern  void    split_input_LIFO( char * buf, char * split_pos );
 
 /* gresrch.c                          */
 extern  void    add_GML_tag_research( char * tag );

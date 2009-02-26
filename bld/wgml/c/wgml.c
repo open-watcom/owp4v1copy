@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -295,11 +295,11 @@ static  void    del_input_cb_entry( void )
 
     free_dict( &wk->local_dict );
     if( wk->if_cb != NULL ) {
-        if( wk->if_cb->if_level > 0 ) {
-            out_msg( "ERR_IF_level not zero at EOF %d\n", wk->if_cb->if_level );
-            show_include_stack();
-            err_count++;
-        }
+//      if( wk->if_cb->if_level > 0 ) {
+//          out_msg( "ERR_IF_level not zero at EOF %d\n", wk->if_cb->if_level );
+//          show_include_stack();
+//          err_count++;
+//      }
         mem_free( wk->if_cb );
     }
 
@@ -437,6 +437,8 @@ bool    get_line( void )
     }
 
     buff2_lg = strnlen_s( buff2, buf_size );
+    *(buff2 + buff2_lg) = '\0';
+    *(buff2 + buff2_lg + 1) = '\0';
     if( input_cbs->fmflags & II_file ) {
         input_cbs->s.f->usedlen = buff2_lg;
     }
@@ -518,12 +520,13 @@ static void remove_indentation( void )
         while( *p ) {
             *pb++ = *p++;
         }
-        *pb = '\0';
-        memset( pb, '\0', offset );     // clear rest
+        if( offset > 0 ) {
+            memset( pb, '\0', offset ); // clear rest
+        }
         buff2_lg = strnlen_s( buff2, buf_size );
-//      if( GlobalFlags.research && GlobalFlags.firstpass ) {
-//          out_msg( "%s<< Indentremoved\n", buff2 );
-//      }
+//        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+//            out_msg( "%s<< Indentremoved\n", buff2 );
+//        }
     }
 }
 
@@ -628,7 +631,7 @@ static  void    proc_GML( char * filename )
                 }
                 ProcFlags.goto_active = false;
             }
-            process_line();             // substitute variables
+            process_line();             // substitute variables + functions
             scan_line();
 
             if( ProcFlags.newLevelFile ) {
@@ -653,22 +656,24 @@ static  void    proc_GML( char * filename )
             }
             show_include_stack();
         }
+#if 0
         if( ic->if_level > 0 ) {        // if .if active
             err_count++;
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_IFlevel nesting\n"
+                out_msg( "ERR_IF_Level nesting\n"
                          "\t\t\tLine %d of macro '%s'\n",
                          input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_IFlevel nesting\n"
+                out_msg( "ERR_IF_Level nesting\n"
                          "\t\t\tLine %d of file '%s'\n",
                          input_cbs->s.f->lineno, input_cbs->s.f->filename );
             }
             show_include_stack();
         }
+#endif
         del_input_cb_entry();           // one level finished
         inc_level--;
-        if( inc_level == 0 ) {          // EOF master document file
+        if( inc_level == 0 ) {          // EOF for master document file
             break;
         }
         if( input_cbs->fmflags & II_file ) {

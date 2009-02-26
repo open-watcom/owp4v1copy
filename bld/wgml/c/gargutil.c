@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -30,7 +30,8 @@
 *         getarg               --- scan (quoted) blank delimited argument
 *         getqst               --- scan quoted string
 *         test_xxx_char        --- test for allowed char
-*         unquote_if_quoted    --- adjust ptrs inside quoted string
+*         is_quote_char        --- test for different quote chars
+*         unquote_if_quoted    --- adjust ptrs for quoted string
 *
 ****************************************************************************/
 
@@ -42,6 +43,16 @@
 #include "wgml.h"
 #include "gvars.h"
 
+
+
+bool    is_quote_char( char c )
+{
+    if( c == s_q || c == d_q || c == vbar || c == cent ) {
+        return( true );
+    } else {
+        return( false );
+    }
+}
 
 void    garginit( void )
 {
@@ -98,9 +109,15 @@ condcode    getarg( void )
         while( *p && *p == ' ' && p <= scan_stop ) {// skip leading blanks
             p++;
         }
+        if( p > scan_stop ) {
+            return( omit );             // nothing found
+        }
 
+        quote = '\0';
+        quoted = false;
         tok_start = p;
-        if( *p == '\'' || *p == '"' ) {
+
+        if( is_quote_char( *p ) ) {
             quote = *p;
             p++;
             quoted = true;
@@ -163,9 +180,15 @@ condcode    getqst( void )
             p++;
         }
 
+        if( p > scan_stop ) {
+            return( omit );             // nothing found
+        }
+
+        quote = '\0';
+        quoted = false;
         tok_start = p;
         c = *p;
-        if( c == '\'' || c == '"' || c == '\x7c' || c == '\x9b' ) {
+        if( is_quote_char( c ) ) {
             quote = c;     // single and double quotes, vertical bar and cent
             p++;
             quoted = true;
@@ -261,25 +284,17 @@ bool    test_symbol_char( char c )
     return( test );
 }
 
+
 /*
  * If first and last character are the same and one of the quote chars
  * the start and end pointers are adjusted
  */
 void    unquote_if_quoted( char * * a, char * * z )
 {
-#define s_q     '\''
-#define d_q     '\"'
-#define vbar    0xdd
-#define cent    0x9b
 
-    if( **a == **z ) {
-        if( (**a == d_q) || (**a == s_q)
-            || (**a == vbar) || ( **a == cent) ) {
-
-            *a += 1;
-            *z -= 1;
-        }
+    if( **a == **z && is_quote_char( **a ) ) {
+        *a += 1;
+        *z -= 1;
     }
 }
-
 

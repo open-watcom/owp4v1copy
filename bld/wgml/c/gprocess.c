@@ -71,6 +71,34 @@ void        split_input( char * buf, char * split_pos )
     return;
 }
 
+
+/*  split_input LIFO
+ *  The (physical) line is split
+ *  The second part will be processed by the next getline()
+ *   pushing any already split part down
+ */
+
+void        split_input_LIFO( char * buf, char * split_pos )
+{
+    inp_line    *   wk;
+    size_t          len;
+
+    len = strlen( split_pos );          // length of second part
+    if( len > 0 ) {
+        wk = mem_alloc( len + sizeof( inp_line ) );
+        wk->next = input_cbs->hidden_head;
+        strcpy(wk->value, split_pos );  // save second part
+
+        input_cbs->hidden_head = wk;
+        if( input_cbs->hidden_tail == NULL ) {
+            input_cbs->hidden_tail = wk;
+        }
+
+        *split_pos = '\0';              // terminate first part
+    }
+    return;
+}
+
 /*  split_input_var
  *  The second part is constructed from 2 parts
  *  used if a substituted variable starts with CW_sep_char
@@ -125,6 +153,7 @@ void        process_line( void )
     int                 rc;
     bool                resolve_functions;
     bool                functions_found;
+    bool                anything_substituted;
 
     //  look for GML tag start character and split line if found
 
@@ -143,11 +172,22 @@ void        process_line( void )
         return;
     }
 
+    // for :cmt. minimal processing
+    if( (*buff2 == GML_char) && !strnicmp( buff2 + 1, "cmt.", 4 ) ) {
+        return;
+    }
+
+
     if( (*buff2 == SCR_char) ) {
 
-        // for lines starting .* or .' ignore control word seperator
+        // for .* comment minimal processing
+        if( *(buff2 + 1) == '*' ) {
+            return;
+        }
 
-        if( !((*(buff2 + 1) == '*') || (*(buff2 + 1) == '\'')) ) {
+        // for lines starting  .' ignore control word seperator
+
+        if( !(*(buff2 + 1) == '\'') ) {
             pchar = strchr( buff2, CW_sep_char );
             if( (pchar != NULL) ) {
                 split_input( buff2, pchar + 1 );// split after CW_sep_char
@@ -165,7 +205,8 @@ void        process_line( void )
  * look for symbolic variables and single letter functions,
  *  ignore multi letter functions for now
  */
-
+    ProcFlags.substituted = false;
+    anything_substituted = false;
     var_unresolved = NULL;
     ProcFlags.unresolved  = false;
     functions_found = false;
@@ -182,6 +223,7 @@ void        process_line( void )
         }
         varstart = NULL;
 
+        anything_substituted |= ProcFlags.substituted;
         ProcFlags.substituted = false;
 
         pchar = strchr( workbuf, ampchar ); // look for & in buffer
@@ -206,7 +248,10 @@ void        process_line( void )
             /*   other single letter functions are not used AFAIK      */
             /*                                                         */
             /***********************************************************/
-            if( *(pchar + 2) == '\'' ) {
+            if( *(pchar + 2) == '\'' && *(pchar + 3) > ' ' ) {
+                // not for .if '&*' eq '' .th ...
+                // only    .if '&x'foo' eq '' .th
+
                 char * * ppval = &p2;
 
                 pw = scr_single_funcs( pchar, pwend, ppval );
@@ -214,7 +259,7 @@ void        process_line( void )
                 continue;
             }
 
-            if( *(pchar + 1) == '\'' ) {
+            if( *(pchar + 1) == '\'' ) {// multi letter function
                 *p2++ = *pw++;          // over & and copy
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
                 functions_found = true; // remember there is a function
@@ -352,6 +397,7 @@ void        process_line( void )
 
     } while( ProcFlags.unresolved && ProcFlags.substituted );
 
+    anything_substituted |= ProcFlags.substituted;
 
 /* handle multi letter functions, ignore any unresolved variable
  */
@@ -428,14 +474,15 @@ void        process_line( void )
                  *p2++ = *pw++;
             }
 
+            anything_substituted |= ProcFlags.substituted;
         } while( ProcFlags.unresolved && ProcFlags.substituted );
 
     }                                   // if functions_found
-
+    anything_substituted |= ProcFlags.substituted;
 
     buff2_lg = strnlen_s( buff2, buf_size );
 
-    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+    if( GlobalFlags.research && GlobalFlags.firstpass && anything_substituted ) {
         printf( "> >%s< <\n", buff2 );  // show line with substitution(s)
     }
     mem_free( workbuf );

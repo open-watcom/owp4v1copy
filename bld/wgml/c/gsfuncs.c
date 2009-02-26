@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WGML controls multi letter functions
+* Description:  WGML controls multi letter functions  &'substr(), ...
 *               and calls corresponding function see gsfuncs.h
 *
 ****************************************************************************/
@@ -38,7 +38,6 @@
 
 #include "wgml.h"
 #include "gvars.h"
-
 
 /***************************************************************************/
 /*    SCR multi letter functions                                           */
@@ -56,6 +55,88 @@ const   scrfunc scr_functions[] = {
 
 #define SCR_FUNC_MAX (sizeof( scr_functions ) / sizeof( scr_functions[ 0 ] ) - 1)
 
+static const char   ampchar = '&';
+static bool         multiletter_function;
+
+
+/*  find end of parm for multi letter functions
+ *     end of parm is either , or )
+ *     but only if outside of string and not in deeper ( level
+ *      string delimiters are single quote, double quote, vertical bar, cent
+ */
+
+static  char    * find_end_of_parm( char * pchar )
+{
+#define max_paren 100                   // should be enough
+    char    quotechar[ max_paren ];
+    bool    instring[ max_paren ];
+    int     paren_level;
+    char    c;
+    char    cm1;
+    char    cm2;
+    bool    finished;
+
+    paren_level = 0;
+    quotechar[ paren_level ] ='\0';
+    instring[ paren_level ] = false;
+    finished = false;
+    cm1 = '\0';
+    cm2 = '\0';
+    for(  ; *pchar != '\0' ; pchar++ ) {
+        cm2 = cm1;
+        cm1 = c;
+        c = *pchar;
+        if( (cm1 == ampchar) && (c == '\'') ) {
+            multiletter_function = true;
+        }
+        if( instring[ paren_level ] ) {
+            if( c == quotechar[ paren_level ] ) {
+                instring[ paren_level ] = false;
+            }
+        } else {
+            switch( c ) {
+            case    '(' :
+                if( paren_level < max_paren ) {
+                    paren_level++;
+                    instring[ paren_level ] = false;
+                } else {
+                    finished = true;    // error msg ??? TBD
+                }
+                break;
+            case    ')' :
+                if( paren_level == 0 ) {
+                    finished = true;
+                }
+                paren_level--;
+                break;
+            case    ',' :
+                if( paren_level == 0 ) {
+                    finished = true;
+                }
+                break;
+            case    s_q :
+                if( (cm1 == ampchar) || // &' sequence
+                    ((cm2 == ampchar) && isalpha( cm1 )) ) { // &X' sequence
+                  /* no instring change */
+                  break;
+                }
+                // possible fallthru
+            case    d_q :
+            case    vbar :
+            case    cent :
+                instring[ paren_level ] = true;
+                quotechar[ paren_level ] = c;
+                break;
+            default:
+                break;
+            }
+        }
+        if( finished ) {
+            break;
+        }
+    }
+    return( pchar );
+}
 
 /***************************************************************************/
 /*  scr_multi_funcs  isolate function name, lookup name in table           */
@@ -65,37 +146,26 @@ const   scrfunc scr_functions[] = {
 
 char    *scr_multi_funcs( char * in, char * end, char * * result )
 {
-    static const char   ampchar = '&';
     char            *   pchar;
     int                 rc;
-    char            *   pval;
-    char            *   pfunc;
     size_t              fnlen;
     int                 funcind;
     int                 k;
     int                 m;
-    int                 paren_level;
-    int                 paren_level_start;
     char                fn[ FUN_NAME_LENGTH + 1 ];
     bool                found;
     parm                parms[ MAX_FUN_PARMS ];
     int                 parmcount;
     condcode            cc;
-    bool                multiletter_function;
 
-
-    end   = end;
     rc = 0;
-    pval = end;
-    pfunc = end;
-
     fnlen = 0;
     pchar = in + 2;                     // over &'
 
     // collect function name
     while( *pchar && pchar <= end && test_function_char( *pchar ) ) {
         fn[ fnlen ] = *pchar++;
-        if( fnlen <= FUN_NAME_LENGTH ) {
+        if( fnlen < FUN_NAME_LENGTH ) {
             fnlen++;
         } else {
             break;
@@ -160,27 +230,15 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
         return( in + 1 );               // but avoid endless loop
     }
     funcind = k;
-    multiletter_function = false;
 
     // collect the mandatory parm(s)
-    paren_level_start = 0;
 
     for( k = 0; k < scr_functions[ funcind ].parm_cnt; k++ ) {
-        parms[ k ].a = ++pchar;         // first over ( then over ,
-        paren_level = paren_level_start;
 
-        while( (paren_level > paren_level_start) ||
-                ((*pchar != ',') && (*pchar != ')')) ) {
-            if( pchar > end ) {
-                break;
-            }
-            paren_level += (*pchar == '(');
-            paren_level -= (*pchar == ')');
-            if( (*pchar == ampchar) && (*(pchar + 1) == '\'') ) {
-                multiletter_function = true;
-            }
-            pchar++;
-        }
+        parms[ k ].a = ++pchar;         // first over ( then over ,
+
+        pchar = find_end_of_parm( pchar );
+
         parms[ k ].e = pchar - 1;
         parms[ k + 1 ].a = pchar + 1;
 
@@ -221,20 +279,9 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     } else {
         for( k = 0; k < scr_functions[ funcind ].opt_parm_cnt; k++ ) {
             parms[ m + k ].a = ++pchar;
-            paren_level = paren_level_start;
 
-            while( (paren_level > paren_level_start) ||
-                    ((*pchar != ',') && (*pchar != ')')) ) {
-                if( pchar > end ) {
-                    break;
-                }
-                paren_level += (*pchar == '(');
-                paren_level -= (*pchar == ')');
-                if( (*pchar == ampchar) && (*(pchar + 1) == '\'') ) {
-                    multiletter_function = true;
-                }
-                pchar++;
-            }
+            pchar = find_end_of_parm( pchar );
+
             parms[ m + k ].e     = pchar - 1;
             parms[ m + k + 1 ].a = pchar + 1;
             if( *pchar == ')' ) {

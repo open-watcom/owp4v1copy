@@ -53,11 +53,10 @@ static  labelcb *   find_label( char    *   name )
     } else {
         lb = input_cbs->s.f->label_cb;
     }
-    while( lb != NULL ) {
+    for( ; lb != NULL; lb = lb->prev ) {
         if( !strncmp( name, lb->label_name, MAC_NAME_LENGTH ) ) {
             return( lb );
         }
-        lb = lb->prev;
     }
     return( NULL );
 }
@@ -498,12 +497,14 @@ void        print_labels( labelcb * lcb )
     labelcb         *   lb;
 
     lb = lcb;
-    out_msg( "\nList of defined labels for current input:\n\n");
-    while( lb != NULL ) {
-        len = strlen( lb->label_name );
-        out_msg( "Label='%s'%s at line %d\n", lb->label_name, &fill[ len ],
-                  lb->lineno );
-        lb = lb->prev;
+    if( lb != NULL ) {
+        out_msg( "\nList of defined labels for current input:\n\n");
+        while( lb != NULL ) {
+            len = strlen( lb->label_name );
+            out_msg( "Label='%s'%s at line %d\n", lb->label_name, &fill[ len ],
+                      lb->lineno );
+            lb = lb->prev;
+        }
     }
 }
 

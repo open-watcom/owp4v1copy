@@ -307,6 +307,7 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
                      input_cbs->s.f->lineno, input_cbs->s.f->filename );
         }
         show_include_stack();
+        err_count++;
         break;
     }
     return( result );
@@ -432,6 +433,7 @@ void    scr_if( void )
         mem_free( t1.term_string );     // don't need the strings anymore
         mem_free( t2.term_string );
         if( firstcondition ) {
+            firstcondition = false;
             if( cb->if_level < MAX_IF_LEVEL ) {
                 cb->if_level++;
                 memset( &cb->if_flags[ cb->if_level ], '\0',
@@ -480,27 +482,31 @@ void    scr_if( void )
  *                   ^^
  */
         if( *scan_start ) {
+            if( *scan_start == SCR_char ) {
+                break;                  // .xx can't be logical operator
+            }
             if( *(scan_start + 1) == ' ' ) {// single char + blank
                 if( *scan_start  == '&' ) {
                     logical = AND;
-                    firstcondition = false;
+                    scan_start += 2;
                     continue;           // do next conditions
                 } else if( *scan_start == '|' ) {
                     logical = OR;
-                    firstcondition = false;
+                    scan_start += 2;
                     continue;           // do next conditions
                 }
             } else {
                 if( !strnicmp( scan_start, "and ", 4 ) ) {
                     logical = AND;
-                    firstcondition = false;
-                    continue;               // do next conditions
+                    scan_start += 4;
+                    continue;           // do next conditions
                 } else if( !strnicmp( scan_start, "or ", 3 ) ) {
                         logical = OR;
-                        firstcondition = false;
-                        continue;           // do next conditions
+                        scan_start += 3;
+                        continue;       // do next conditions
                 }
             }
+
         }
         break;                          // no more operators / conditions
     }
@@ -523,16 +529,16 @@ void    scr_if( void )
         }
     }
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        out_msg( "\t.if %s Level %d\n"
+        out_msg( "\t.if is %s Level %d\n"
                  "\t.ifcb iftrue %d, iffalse %d\n",
-                 totalcondition ? "true" : "false",
+                 totalcondition ? "true " : "false",
                  cb->if_level,
                  cb->if_flags[ cb->if_level ].iftrue,
                  cb->if_flags[ cb->if_level ].iffalse );
     }
 
     if( *scan_start ) {                 // rest of line is not empty
-        split_input(  buff2, scan_start );  // split and process next
+        split_input_LIFO(  buff2, scan_start );  // split and process next
     }
     return;
 }
@@ -612,7 +618,7 @@ void    scr_th( void )
     }
 
     if( *scan_start ) {                 // rest of line is not empty split
-        split_input(  buff2, scan_start );  // and process next
+        split_input_LIFO( buff2, scan_start );  // and process next
     }
     return;
 }
@@ -681,7 +687,7 @@ void    scr_el( void )
     }
 
     if( *scan_start ) {                 // rest of line is not empty split
-        split_input(  buff2, scan_start );  // and process next
+        split_input_LIFO( buff2, scan_start );  // and process next
     }
     return;
 }
@@ -740,6 +746,13 @@ void    scr_do( void )
         return;
     } else {
         if( !strnicmp( tok_start, "end", 3 )) {
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                out_msg( "\t.do end Level %d\n"
+                         "\t.ifcb iftrue %d, iffalse %d\n",
+                         cb->if_level,
+                         cb->if_flags[ cb->if_level ].iftrue,
+                         cb->if_flags[ cb->if_level ].iffalse );
+            }
             do {
 
                 if( cb->if_flags[ cb->if_level ].ifdo ) {
@@ -750,7 +763,7 @@ void    scr_do( void )
                 if( cb->if_flags[ cb->if_level ].ifthen
                     || cb->if_flags[ cb->if_level ].ifelse
                     || !(cb->if_flags[ cb->if_level ].iftrue
-                         || cb->if_flags[ cb->if_level ].iftrue) ) {
+                         || cb->if_flags[ cb->if_level ].iffalse) ) {
 
                     scan_err = true;
                     if( input_cbs->fmflags & II_macro ) {
@@ -768,6 +781,13 @@ void    scr_do( void )
                 }
 
             } while( cb->if_level-- > 0 );
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                out_msg( "\t.do end Level %d\n"
+                         "\t.ifcb iftrue %d, iffalse %d\n",
+                         cb->if_level,
+                         cb->if_flags[ cb->if_level ].iftrue,
+                         cb->if_flags[ cb->if_level ].iffalse );
+            }
         } else {
             scan_err = true;
             if( input_cbs->fmflags & II_macro ) {

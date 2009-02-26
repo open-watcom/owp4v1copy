@@ -118,14 +118,18 @@ static void scan_gml( void )
     }
 
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        if( cb->fmflags & II_macro ) {
-            printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
-                             inc_level, GML_char, tok_start + 1,
-                             cb->s.m->mac->name, cb->s.m->lineno );
-        } else {
-            printf_research( "L%d    %c%s found in file %s(%d)\n\n",
-                             inc_level, GML_char, tok_start + 1,
-                             cb->s.f->filename, cb->s.f->lineno );
+
+        if(  stricmp( tok_start + 1, "cmt" ) ) {   // quiet for :cmt.
+
+            if( cb->fmflags & II_macro ) {
+                printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                                 inc_level, GML_char, tok_start + 1,
+                                 cb->s.m->mac->name, cb->s.m->lineno );
+            } else {
+                printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                                 inc_level, GML_char, tok_start + 1,
+                                 cb->s.f->filename, cb->s.f->lineno );
+            }
         }
         add_GML_tag_research( tok_start + 1 );
     }
@@ -149,7 +153,7 @@ static void scan_gml( void )
  *       returns ptr to sep char or NULL if not found
  *      quotes are single or double quotes
  */
-char    *   search_separator( char * str, char sep )
+static char *   search_separator( char * str, char sep )
 {
     bool        instring = false;
     char        quote = '\0';
@@ -309,28 +313,45 @@ static void     scan_script( void)
 
 /***************************************************************************/
 /*  logic for decision on skipping or processing line depending on         */
-/*  the current state of the .if .th .el .do  controlword encountered      */
+/*  the current state of the .if .th .el .do  controlwords encountered     */
 /*                                                                         */
 /*  The //comments refer to labels in the ASM code  see comment in wgml.c  */
 /*  file cbt284.011                                                        */
 /***************************************************************************/
 
-condcode    mainif( void)
+static  condcode    mainif( void)
 {
     condcode    cc;
     ifcb    *   cb;
 
     cb = input_cbs->if_cb;
     cc = no;
+#if 0
+    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        out_msg( "ANF mainif L %d t %d, f %d"
+                " th(%d)  el(%d)  do(%d) last(%d) cwif,do,te(%d,%d,%d)\n",
+                 cb->if_level,
+                 cb->if_flags[ cb->if_level ].iftrue,
+                 cb->if_flags[ cb->if_level ].iffalse,
+                 cb->if_flags[ cb->if_level ].ifthen,
+                 cb->if_flags[ cb->if_level ].ifelse,
+                 cb->if_flags[ cb->if_level ].ifdo,
+                 cb->if_flags[ cb->if_level ].iflast,
+                 cb->if_flags[ cb->if_level ].ifcwif,
+                 cb->if_flags[ cb->if_level ].ifcwdo,
+                 cb->if_flags[ cb->if_level ].ifcwte
+              );
+    }
+#endif
 //mainif
-    if(  cb->if_flags[ cb->if_level ].iflast// 1. rec after .if
+    if( cb->if_flags[ cb->if_level ].iflast // 1. rec after .if
         && !cb->if_flags[ cb->if_level ].ifcwte) {  // not .th or .el
 
         cb->if_flags[ cb->if_level ].iflast = false;// reset first switch
         cb->if_flags[ cb->if_level ].ifthen = true; // treat as then
     }
 //mnif01
-    if(  cb->if_flags[ cb->if_level ].ifcwif ) {// .if
+    if( cb->if_flags[ cb->if_level ].ifcwif ) { // .if
 //mnif03
         if( cb->if_flags[ cb->if_level ].ifthen
             || cb->if_flags[ cb->if_level ].ifelse ) {// object of .th or .el
@@ -346,11 +367,37 @@ condcode    mainif( void)
             }
             cc = pos;                   // .do or all popped
         }
+#if 0
+        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            out_msg( "END mainif L %d t %d, f %d"
+                    " th(%d)  el(%d)  do(%d) last(%d)\n",
+                     cb->if_level,
+                     cb->if_flags[ cb->if_level ].iftrue,
+                     cb->if_flags[ cb->if_level ].iffalse,
+                     cb->if_flags[ cb->if_level ].ifthen,
+                     cb->if_flags[ cb->if_level ].ifelse,
+                     cb->if_flags[ cb->if_level ].ifdo,
+                     cb->if_flags[ cb->if_level ].iflast );
+        }
+#endif
         return( cc );
     } else {                            // not .if
 //mnif01 cont.
         if( cb->if_flags[ cb->if_level ].ifcwdo ) { // if  .do
             cc = pos;
+#if 0
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                out_msg( "END mainif L %d t %d, f %d"
+                        " th(%d)  el(%d)  do(%d) last(%d)\n",
+                         cb->if_level,
+                         cb->if_flags[ cb->if_level ].iftrue,
+                         cb->if_flags[ cb->if_level ].iffalse,
+                         cb->if_flags[ cb->if_level ].ifthen,
+                         cb->if_flags[ cb->if_level ].ifelse,
+                         cb->if_flags[ cb->if_level ].ifdo,
+                         cb->if_flags[ cb->if_level ].iflast );
+            }
+#endif
             return( cc );
         }
         if( cb->if_flags[ cb->if_level ].ifthen
@@ -419,6 +466,19 @@ condcode    mainif( void)
         }
         err_count++;
     }
+#if 0
+    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        out_msg( "END mainif L %d t %d, f %d"
+                " th(%d)  el(%d)  do(%d) last(%d)\n",
+                 cb->if_level,
+                 cb->if_flags[ cb->if_level ].iftrue,
+                 cb->if_flags[ cb->if_level ].iffalse,
+                 cb->if_flags[ cb->if_level ].ifthen,
+                 cb->if_flags[ cb->if_level ].ifelse,
+                 cb->if_flags[ cb->if_level ].ifdo,
+                 cb->if_flags[ cb->if_level ].iflast );
+    }
+#endif
     return( cc );
 
 }
@@ -479,17 +539,27 @@ void    scan_line( void )
         if( cc == pos ) {
             scan_script();              // script control line
         } else {
-            out_msg( "skip control line\n" );
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                out_msg( "skip .xx control line\n" );
+            }
         }
     } else if( *scan_start == GML_char ) {
-        scan_gml();                     // gml tags
+        cc = mainif();
+        if( cc == pos ) {
+            scan_gml();                 // gml tags
+        } else {
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                out_msg( "skip :xxx tag line\n" );
+            }
+        }
     } else {
         cc = mainif();
         if( cc == pos ) {
             // process text     TBD
         } else {
-
-            out_msg( "skip text\n" );   // skip text
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                out_msg( "skip text line\n" );  // skip text
+            }
         }
     }
 }
