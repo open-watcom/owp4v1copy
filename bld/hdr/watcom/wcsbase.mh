@@ -10,9 +10,9 @@
 
 :include readonly.sp
 
-:include owrtlink.sp
-
 :include cpponly.sp
+
+:include owrtlink.sp
 
 #ifndef _STDDEF_H_INCLUDED
  #include <stddef.h>

@@ -9,9 +9,9 @@
 
 :include readonly.sp
 
-:include owrtlink.sp
-
 :include cpponly.sp
+
+:include owrtlink.sp
 
 #ifndef _WCDEFS_H_INCLUDED
  #include <wcdefs.h>

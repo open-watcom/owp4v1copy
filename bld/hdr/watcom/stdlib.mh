@@ -175,7 +175,7 @@ _WCRTLINK
 #else
 _WCIRTLINK
 #endif
-extern ldiv_t ldiv( long int __numer, long int __denom );
+          extern ldiv_t  ldiv( long int __numer, long int __denom );
 _WCRTLINK extern long long int llabs( long long int __j );
 _WCRTLINK extern lldiv_t lldiv( long long int __numer, long long int __denom );
 _WCRTLINK extern void    *malloc( size_t __size );
@@ -254,13 +254,13 @@ _WCRTLINK
 #else
 _WCIRTLINK
 #endif
-extern unsigned long     _lrotl( unsigned long __value, unsigned int __shift );
+    extern unsigned long _lrotl( unsigned long __value, unsigned int __shift );
 #if defined(_M_I86)
 _WCRTLINK
 #else
 _WCIRTLINK
 #endif
-extern unsigned long     _lrotr( unsigned long __value, unsigned int __shift );
+    extern unsigned long _lrotr( unsigned long __value, unsigned int __shift );
 _WCRTLINK extern char    *ltoa( long int __value, char *__buf, int __radix );
 _WCRTLINK extern char    *lltoa( long long int __value, char *__buf, int __radix );
 _WCRTLINK extern char    *_ltoa( long int __value, char *__buf, int __radix );
