@@ -60,6 +60,7 @@
 #include "icmd.hpp"
 #include "isyn.hpp"
 #include "page.hpp"
+#include "tocref.hpp"
 #include "util.hpp"
 
 Hn::~Hn()
@@ -562,9 +563,10 @@ void Hn::buildTOC( Page* page )
         page->SetControls( controls );
         //FIXME: need the index of the parent?
         //page->setSearchable( !nosearch );
+        TocRef tr( fileName, row, page->index() );
         if( res || !document->isInf() ) {
             try {
-                document->addRes( res, page->index() );
+                document->addRes( res, tr );
             }
             catch ( Class3Error& e ) {
                 printError( e.code );
@@ -572,7 +574,7 @@ void Hn::buildTOC( Page* page )
         }
         if( id ) {
             try {
-                document->addNameOrId( id, page->index() );
+                document->addNameOrId( id, tr );
             }
             catch( Class3Error& e ) {
                 printError( e.code );
@@ -580,7 +582,7 @@ void Hn::buildTOC( Page* page )
         }
         if( name ) {
             try {
-                document->addNameOrId( name, page->index() );
+                document->addNameOrId( name, tr );
             }
             catch( Class3Error& e ) {
                 printError( e.code );

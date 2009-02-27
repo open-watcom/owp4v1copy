@@ -438,6 +438,27 @@ void Document::write( std::FILE *out )
     hdr->write( out );   //rewrite the header to update the offsets
 }
 /***************************************************************************/
+void Document::summary( std::FILE* out )
+{
+    std::fprintf( out, "Number of pages:          %u\n", pages.size() );
+    std::fprintf( out, "Pages defined by name:    %u\n", nameMap.size() );
+    std::fprintf( out, "Pages defined by number:  %u\n", resMap.size() );
+    std::fprintf( out, "Words in dictionary:      %u\n", dict->size() );
+    std::fprintf( out, "Number of index entries:  %u\n", index.size() ); 
+    std::fprintf( out, "Global index entries:     %u\n", eHdr->gIndexCount );
+    std::fprintf( out, "Number of fonts used:     %u\n", fonts->size() );
+    std::fprintf( out, "Number of External files: %u\n", extfiles->size() );
+    std::fprintf( out, "\nIdentifier Cross-reference\n" );
+    for( ConstResMapIter itr( resMap.begin() ); itr != resMap.end(); ++itr ) {
+        std::fprintf( out, "%5u:", itr->first );
+        itr->second.write( out );
+    }
+    for( ConstNameMapIter itr( nameMap.begin() ); itr != nameMap.end(); ++itr ) {
+        std::fprintf( out, "%ls:\n      ", itr->first->getText().c_str() );
+        itr->second.write( out );
+    }
+}
+/***************************************************************************/
 void Document::addBitmap( std::wstring& bmn )
 {
     bitmapNames.insert( std::map< std::wstring, unsigned long int >::value_type( bmn, 0 ) );
@@ -451,20 +472,36 @@ std::uint32_t Document::bitmapByName( std::wstring& bmn )
     return itr->second;
 }
 /***************************************************************************/
-void Document::addRes( std::uint16_t key, std::uint16_t value )
+void Document::addRes( std::uint16_t key, TocRef& value )
 {
     if( resMap.find( key ) == resMap.end() )    //add it to the list
-        resMap.insert( std::map< std::uint16_t, std::uint16_t >::value_type( key, value ) );
+        resMap.insert( std::map< std::uint16_t, TocRef >::value_type( key, value ) );
     else
         throw Class3Error( ERR3_DUPRES );
 }
 /***************************************************************************/
-void Document::addNameOrId( GlobalDictionaryWord* key, std::uint16_t value )
+void Document::addNameOrId( GlobalDictionaryWord* key, TocRef& value )
 {
     if( nameMap.find( key ) == nameMap.end() )  //add it to the list
-        nameMap.insert( std::map< GlobalDictionaryWord*, std::uint16_t, ptrLess< GlobalDictionaryWord* > >::value_type( key, value ) );
+        nameMap.insert( std::map< GlobalDictionaryWord*, TocRef, ptrLess< GlobalDictionaryWord* > >::value_type( key, value ) );
     else
         throw Class3Error( ERR3_DUPID );
+}
+/***************************************************************************/
+void Document::addXRef( std::uint16_t res, XRef& xref )
+{
+    ResMapIter itr( resMap.find( res ) );
+    if( itr == resMap.end() )
+        throw Class1Error( ERR1_NORES );
+    itr->second.addXRef( xref );
+}
+/***************************************************************************/
+void Document::addXRef( GlobalDictionaryWord* id, XRef& xref )
+{
+    NameMapIter itr( nameMap.find( id ) );
+    if( itr == nameMap.end() )
+        throw Class1Error( ERR1_NOID );
+    itr->second.addXRef( xref );
 }
 /***************************************************************************/
 void Document::addPage( Page* page )
@@ -604,7 +641,8 @@ std::uint32_t Document::writeResMap( std::FILE* out )
                 throw FatalError( ERR_WRITE );
         }
         for( itr = resMap.begin(); itr != resMap.end(); ++itr ) {
-            if( std::fwrite( &itr->second, sizeof( std::uint16_t ), 1, out ) != 1 )
+            std::uint16_t idx( itr->second.index() );
+            if( std::fwrite( &idx, sizeof( std::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
     }
@@ -623,7 +661,8 @@ std::uint32_t Document::writeNameMap( std::FILE* out )
                 throw FatalError( ERR_WRITE );
         }
         for( itr = nameMap.begin(); itr != nameMap.end(); ++itr ) {
-            if( std::fwrite( &itr->second, sizeof( std::uint16_t ), 1, out ) != 1 )
+            std::uint16_t idx( itr->second.index() );
+            if( std::fwrite( &idx, sizeof( std::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
     }
@@ -827,7 +866,7 @@ std::uint16_t Document::tocIndexByRes( std::uint16_t res )
     ResMapIter itr( resMap.find( res ) );
     if( itr == resMap.end() )
         throw Class1Error( ERR1_NORES );
-    return itr->second;
+    return itr->second.index();
 }
 /***************************************************************************/
 //get a TOC index from the id or name to TOC index map
@@ -836,7 +875,7 @@ std::uint16_t Document::tocIndexById( GlobalDictionaryWord* id )
     NameMapIter itr( nameMap.find( id ) );
     if( itr == nameMap.end() )
         throw Class1Error( ERR1_NOID );
-    return itr->second;
+    return itr->second.index();
 }
 /***************************************************************************/
 void Document::addSynonym( std::wstring& key, Synonym* value )

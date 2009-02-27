@@ -39,6 +39,7 @@
 #include "document.hpp"
 #include "lexer.hpp"
 #include "page.hpp"
+#include "tocref.hpp"
 #include "util.hpp"
 
 Lexer::Token Fn::parse( Lexer* lexer )
@@ -93,7 +94,9 @@ Lexer::Token Fn::parseAttributes( Lexer* lexer )
 void Fn::buildTOC( Page* page )
 {
     page->setTOC( toc );
-    if( id )
-        document->addNameOrId( id, page->index() );
+    if( id ) {
+        TocRef tr( fileName, row, page->index() ); 
+        document->addNameOrId( id, tr );
+    }
 }
 

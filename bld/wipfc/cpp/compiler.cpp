@@ -100,6 +100,27 @@ int Compiler::compile()
         printError( e.code, e.fname );
     }
     std::fclose( out );
+    if( xref ) {
+        std::string fname( outFileName );
+        fname.erase( fname.rfind( '.' ) );
+        fname += ".log";
+        out = std::fopen( fname.c_str(), "w" );
+        if( !out )
+            throw FatalIOError( ERR_OPEN, L"for log output" );
+        try {
+            std::fprintf( out, "Summary for %s\n\n", outFileName.c_str() );
+            doc->summary( out );
+        }
+        catch( FatalError& e ) {
+            retval = EXIT_FAILURE;
+            printError( e.code );
+        }
+        catch( FatalIOError& e ) {
+            retval = EXIT_FAILURE;
+            printError( e.code, e.fname );
+        }
+        std::fclose( out );
+    }
     return retval;
 }
 /*****************************************************************************/

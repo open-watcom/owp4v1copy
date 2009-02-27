@@ -155,7 +155,6 @@ static void processCommandLine(int argc, char **argv, Compiler& c)
                     break;
                 case 'X':
                 case 'x':
-                    //This doesn't actually do anything
                     c.setXRef( true );
                     break;
                 default:

@@ -145,10 +145,15 @@ Lexer::Token I1::parseAttributes( Lexer* lexer )
 void I1::buildIndex()
 {
     try {
-        if( parentRes )
+        XRef xref( fileName, row );
+        if( parentRes ) {
             primary->setTOC( document->tocIndexByRes( parentRes ) );
-        else if( parentId )
+            document->addXRef( parentRes, xref );
+        }
+        else if( parentId ) {
             primary->setTOC( document->tocIndexById( parentId ) );
+            document->addXRef( parentId, xref );
+        }
     }
     catch( Class1Error& e ) {
         printError( e.code );

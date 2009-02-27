@@ -427,11 +427,16 @@ void Link::doTopic( Cell* cell )
     if( refid || res ) {                    //either refid or res is required
         if( database.empty() ) {            //jump to internal link
             try {
+                XRef xref( fileName, row );
                 std::uint16_t tocIndex;
-                if( refid )
+                if( refid ) {
                     tocIndex = document->tocIndexById( refid );
-                else
+                    document->addXRef( refid, xref );
+                }
+                else {
                     tocIndex = document->tocIndexByRes( res );
+                    document->addXRef( res, xref );
+                }
                 std::vector< std::uint8_t > esc;
                 esc.reserve( 7 + sizeof( PageOrigin ) + sizeof( PageSize ) + \
                     sizeof( PageStyle ) + sizeof( PageGroup ) );
@@ -565,11 +570,16 @@ void Link::doFootnote( Cell* cell )
 {
     if( refid || res ) {                    //refid is required
         try {
+            XRef xref( fileName, row );
             size_t tocIndex;
-            if( refid )
+            if( refid ) {
                 tocIndex = document->tocIndexById( refid );
-            else
+                document->addXRef( refid, xref );
+            }
+            else {
                 tocIndex = document->tocIndexByRes( res );
+                document->addXRef( res, xref );
+            }
             std::vector< std::uint8_t > esc;
             esc.reserve( 5 );
             esc.push_back( 0xFF );          //ESC

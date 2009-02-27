@@ -37,6 +37,7 @@
 #include "errors.hpp"
 #include "gdword.hpp"
 #include "util.hpp"
+#include "xref.hpp"
 
 ICmd::ICmd( Document* d, Element* p, const std::wstring* f, unsigned int r, unsigned int c ) :
     Element( d, p, f, r, c ), index( new IndexItem( IndexItem::CMD ) ),
@@ -103,10 +104,15 @@ Lexer::Token ICmd::parse( Lexer* lexer )
 void ICmd::buildIndex()
 {
     try {
-        if( parentRes )
+        XRef xref( fileName, row );
+        if( parentRes ) {
             index->setTOC( document->tocIndexByRes( parentRes ) );
-        else if( parentId )
+            document->addXRef( parentRes, xref );
+        }
+        else if( parentId ) {
             index->setTOC( document->tocIndexById( parentId ) );
+            document->addXRef( parentId, xref );
+        }
     }
     catch( Class1Error& e ) {
         printError( e.code );

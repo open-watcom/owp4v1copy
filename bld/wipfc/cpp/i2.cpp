@@ -42,6 +42,7 @@
 #include "i1.hpp"
 #include "ptrops.hpp"
 #include "util.hpp"
+#include "xref.hpp"
 
 Lexer::Token I2::parse( Lexer* lexer )
 {
@@ -120,10 +121,15 @@ Lexer::Token I2::parseAttributes( Lexer* lexer )
 void I2::buildIndex()
 {
     try {
-        if( parentRes )
+        XRef xref( fileName, row );
+        if( parentRes ) {
             index->setTOC( document->tocIndexByRes( parentRes ) );
-        else if( parentId )
+            document->addXRef( parentRes, xref );
+        }
+        else if( parentId ) {
             index->setTOC( document->tocIndexById( parentId ) );
+            document->addXRef( parentId, xref );
+        }
         I1* i1( document->indexById( refid ) );
         i1->addSecondary( index.get() );
     }

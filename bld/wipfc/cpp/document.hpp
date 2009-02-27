@@ -50,6 +50,7 @@
 #include "lexer.hpp"
 #include "nls.hpp"
 #include "strings.hpp"
+#include "tocref.hpp"
 
 class Cell; //forward reference
 class Page;
@@ -66,6 +67,7 @@ public:
     void parse( Lexer* lexer );
     void build();
     void write( std::FILE* out );
+    void summary( std::FILE* out );
 
     //set the output file type
     void setOutputType( Compiler::OutputType t )
@@ -87,9 +89,12 @@ public:
     Text* lastText() { return lastPrintableItem; };
     Lexer::Token lastToken() const { return lastPrintableToken; };
     //add a resource number to TOC index mapping
-    void addRes( std::uint16_t key, std::uint16_t value );
+    void addRes( std::uint16_t key, TocRef& value );
     //add a name/id to TOC index mapping
-    void addNameOrId( GlobalDictionaryWord* key, std::uint16_t value );
+    void addNameOrId( GlobalDictionaryWord* key, TocRef& value );
+    //add a cross-reference to an identifier
+    void addXRef( std::uint16_t res, XRef& xref );
+    void addXRef( GlobalDictionaryWord* id, XRef& xref );
     //add a page to the page collection
     void addPage( Page* page );
     //add a cell to the cell collection
@@ -202,13 +207,13 @@ private:
     typedef std::map< std::wstring, std::uint32_t >::iterator BitmapNameIter;
     typedef std::map< std::wstring, std::uint32_t >::const_iterator ConstBitmapNameIter;
 
-    std::map< std::uint16_t, std::uint16_t > resMap;
-    typedef std::map< std::uint16_t, std::uint16_t >::iterator ResMapIter;
-    typedef std::map< std::uint16_t, std::uint16_t >::const_iterator ConstResMapIter;
+    std::map< std::uint16_t, TocRef > resMap;
+    typedef std::map< std::uint16_t, TocRef >::iterator ResMapIter;
+    typedef std::map< std::uint16_t, TocRef >::const_iterator ConstResMapIter;
 
-    std::map< GlobalDictionaryWord*, std::uint16_t, ptrLess< GlobalDictionaryWord* > > nameMap;
-    typedef std::map< GlobalDictionaryWord*, std::uint16_t, ptrLess< GlobalDictionaryWord* > >::iterator NameMapIter;
-    typedef std::map< GlobalDictionaryWord*, std::uint16_t, ptrLess< GlobalDictionaryWord* > >::const_iterator ConstNameMapIter;
+    std::map< GlobalDictionaryWord*, TocRef, ptrLess< GlobalDictionaryWord* > > nameMap;
+    typedef std::map< GlobalDictionaryWord*, TocRef, ptrLess< GlobalDictionaryWord* > >::iterator NameMapIter;
+    typedef std::map< GlobalDictionaryWord*, TocRef, ptrLess< GlobalDictionaryWord* > >::const_iterator ConstNameMapIter;
 
     std::map< std::wstring, Synonym* > synonyms;    //each Synonym is owned by an ISym tag
     typedef std::map< std::wstring, Synonym* >::iterator SynIter;

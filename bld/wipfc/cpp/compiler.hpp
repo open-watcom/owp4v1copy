@@ -111,7 +111,7 @@ private:
     bool parseContinuously;
     bool printBanner;
     bool search;    //construct search table
-    bool xref;      //make cross-reference (not implemented)
+    bool xref;
 };
 
 #endif //COMPILER_INCLUDED
