@@ -59,7 +59,7 @@ public:
     //is the local dictionary full (time for a new cell)?
     bool dictFull() const { return localDictionary.size() == maxDictSize; };
     //is the text block full?
-    bool textFull() const {return text.size() > 16000; };
+    bool textFull() const {return text.size() > 64000; };
     //add an element to this cell's list
     void addElement( Element* element ) { elements.push_back( element ); };
     //build the encoded text
