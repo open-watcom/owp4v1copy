@@ -73,7 +73,7 @@ char                    _HaveMask = 0;              // is there a fill mask?
 short                   _Transparent = 1;           // fill transparency
 short                   _PaRf_x = 0;                // pattern reference x-coord
 short                   _PaRf_y = 0;                // pattern reference y-coord
-unsigned short          _LineStyle = 0xffff;        // current line style
+unsigned short          _LineStyle = SOLID_LINE;    // current line style
 short                   _StyleWrap = 0;             // flag for continuous style
 short                   _PlotAct = 0;               // plotting action
 

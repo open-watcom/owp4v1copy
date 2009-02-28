@@ -67,7 +67,7 @@ typedef void (FUNC_FAR line_fn)( char far *, int, int, int, int, int );
                         stack += sizeof( int );
 
 
-void _L0DrawLine( char far *screen_ptr, short color, short style,
+void _L0DrawLine( char far *screen_ptr, short color, unsigned short style,
 /*=============*/ short bit_mask, short majordif, short minordif,
                   void (near *majorfn)(), void (near *minorfn)(),
                   void (near *plot)() )
@@ -113,18 +113,18 @@ void _L0DrawLine( char far *screen_ptr, short color, short style,
         _ErrorStatus = _GRINSUFFICIENTMEMORY;
         return;         /* not enough memory to proceed */
     }
-    #if defined( __386__ )
-        line = (line_fn *)stack;
-    #else
-        line = MK_FP( _StackSeg, FP_OFF( stack ) );
-    #endif
+  #if defined( __386__ )
+    line = (line_fn *)stack;
+  #else
+    line = MK_FP( _StackSeg, FP_OFF( stack ) );
+  #endif
 #endif
 
     start = stack;              /* save start address of compiled routine   */
-    if( style != -1 ) {             /* add instructions for a style line    */
-        #if defined ( __386__ )
-            OutByte( 0x66 );                    /* rotate only bx, not ebx  */
-        #endif
+    if( style != SOLID_LINE ) {             /* add instructions for a style line    */
+#if defined ( __386__ )
+        OutByte( 0x66 );                        /* rotate only bx, not ebx  */
+#endif
         OutByte( 0xD1 );                        /* rol      bx,1    */
         OutByte( 0xC3 );
         OutByte( 0x73 );                        /* jnc      xxx     */

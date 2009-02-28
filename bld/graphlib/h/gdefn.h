@@ -203,7 +203,7 @@ extern short                _SysMonType( void );
 extern short                _SuperVGAType( void );
 
 extern short                _L0BlockClip( short *, short *, short *, short * );
-extern void                 _L0DrawLine( char far *, short, short, short,
+extern void                 _L0DrawLine( char far *, short, unsigned short, short,
                                          short, short, void (near *)(),
                                          void (near *)(), void (near *)() );
 extern void                 _L0Ellipse( short, short, short, short, void (*)( short, short, short ) );

@@ -220,7 +220,7 @@ static void _InitVariables( void )
     _CurrActivePage = _CurrVisualPage = 0;
     _CurrState->screen_seg = _CurrState->screen_seg_base;/* pg 0 scrn segment */
     _CurrState->screen_off = _CurrState->screen_off_base;/* pg 0 scrn offset */
-    _LineStyle = 0xFFFF;                        /* solid line */
+    _LineStyle = SOLID_LINE;                    /* solid line */
     _StyleWrap = 0;                             /* line style continuation  */
     _PlotAct = 0;                               /* replace mode */
     _Transparent = 1;                           /* transparent mode */
@@ -252,7 +252,7 @@ short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
     short               clipy1, clipy2;
     WPI_RECTDIM         right, bottom, height;
   #if defined( __OS2__ )
-    ULONG               style;
+    ULONG               winstyle;
     HWND                frame;
     MENUITEM            gphmenu;
   #endif
@@ -317,11 +317,11 @@ short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
     _GetWindowNameAndCoords( name, dest, &x1, &x2, &y1, &y2 );
 
   #if defined( __OS2__ )
-    style = FCF_TITLEBAR | FCF_SYSMENU | FCF_SIZEBORDER | FCF_MINMAX |
+    winstyle = FCF_TITLEBAR | FCF_SYSMENU | FCF_SIZEBORDER | FCF_MINMAX |
             FCF_VERTSCROLL | FCF_HORZSCROLL;
     frame = WinCreateStdWindow( _MainWindow,
                 WS_VISIBLE | WS_CLIPSIBLINGS,
-                &style, "GraphWndClass", dest, 0, NULL, 0, &Win );
+                &winstyle, "GraphWndClass", dest, 0, NULL, 0, &Win );
     if( frame == 0 ) return( FALSE );
     WinSetOwner( Win, _MainWindow );
     _OldFrameProc = WinSubclassWindow( frame, GraphFrameProc );

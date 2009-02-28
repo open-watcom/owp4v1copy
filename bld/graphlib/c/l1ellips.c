@@ -182,7 +182,7 @@ void _L1Ellipse( short fill, short x1, short y1, short x2, short y2 )
         EllInfo.prev_y = -1;            // no previous line
         _L0Ellipse( x1, y1, x2, y2, EllFill );
     } else {
-        if( clip1 == clip2 && _LineStyle == 0xffff ) {
+        if( clip1 == clip2 && _LineStyle == SOLID_LINE ) {
             // no clipping and solid line
             _L0Ellipse( x1, y1, x2, y2, FastPlot );
         } else {
@@ -610,7 +610,7 @@ void _L1Arc( short fill, short x1, short y1, short x2, short y2,
     if( fill == _GFILLINTERIOR ) {
         FilledArc( x1, y1, x2, y2, a, b );
     } else {
-        if( _LineStyle == 0xffff ) {
+        if( _LineStyle == SOLID_LINE ) {
             EllInfo.line_mask[ 0 ] = _LineStyle;
             EllInfo.line_mask[ 1 ] = _LineStyle;
             EllInfo.line_mask[ 2 ] = _LineStyle;
