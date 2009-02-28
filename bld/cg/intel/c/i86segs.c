@@ -98,7 +98,7 @@ extern  hw_reg_set      CalcSegment( sym_handle sym, cg_class class ) {
             return( *reg );
         FEMessage( MSG_BAD_PEG_REG, AskForLblSym( CurrProc->label ) );
     }
-    if( class == CG_FE && ( attr & FE_PROC ) != EMPTY ) {
+    if( class == CG_FE && (attr & FE_PROC) && (attr & FE_DLLIMPORT) == 0 ) {
 #if _TARGET & _TARG_80386
         if( _IsTargetModel( FLAT_MODEL ) )
             return( HW_CS ); /* all have same CS */
