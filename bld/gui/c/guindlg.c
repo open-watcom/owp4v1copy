@@ -208,7 +208,7 @@ static void DlgOpen( gui_window *parent, char *name, int rows, int cols,
     DlgControl.parent = parent;
     GUIGetDlgTextMetrics( &metrics );
     charspace.x = metrics.max.x;
-    charspace.y = metrics.max.y / 2;
+    charspace.y = metrics.max.y;
 #ifdef __OS2_PM__
     // brutal hack to get OS/2 and Windows dialogs to look the same.
     charuse.x = ( 5 * metrics.avg.x ) / 4;
