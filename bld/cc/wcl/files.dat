@@ -14,11 +14,11 @@ dir="axpnt"	usr="wclaxp.exe"	cond="alphahost"	where="ac"
 dir="axpnt"	usr="wcl386.exe"	cond="alphahost"	where="ac"
 dir="axpnt"	usr="wcl.exe"		cond="alphahost"	where="ac"
 
-dir="binp"	usr="wcl.exe"		cond="os2host tools16"	where="c jc"	desc=" Compile and link utility for 32-bit C and C++ compiler"
+dir="binp"	usr="wcl.exe"		cond="os2host tools16"	where="c jc"	desc=" Compile and link utility for 16-bit C and C++ compiler"
 dir="binp"	usr="wcl386.exe"	cond="os2host"		where="c jc"	desc=" Compile and link utility for 32-bit C and C++ compiler"
 dir="binp"	usr="owcc.exe"		cond="os2host"		where="c jc"	desc=" POSIX style Compile and link utility for C and C++ compiler"
 
-dir="binl"	usr="wcl"		cond="lnxhost tools16"	where="c jc"	desc=" Compile and link utility for 32-bit C and C++ compiler"
+dir="binl"	usr="wcl"		cond="lnxhost tools16"	where="c jc"	desc=" Compile and link utility for 16-bit C and C++ compiler"
 dir="binl"	usr="wcl386"		cond="lnxhost"		where="c jc"	desc=" Compile and link utility for 32-bit C and C++ compiler"
 dir="binl"	usr="owcc"		cond="lnxhost"		where="c jc"	desc=" POSIX style Compile and link utility for C and C++ compiler"
 type="s"    dir="binl"	usr="specs.owc"		cond="lnxhost"		where="c jc"	desc=" POSIX style Compile and link utility control file"
