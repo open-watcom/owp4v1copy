@@ -68,8 +68,13 @@ if( $^O eq "MSWin32" ) {
     $ext    = "sh";
     $setenv = "export";
     $build_platform = "linux-x86";
+} elsif( $^O eq "os2" ) {
+    $OStype = "OS2";
+    $ext    = "cmd";
+    $setenv = "set";
+    $build_platform = "os2-x86";
 } else {
-    print "Unsupported or unknown platform!\n";
+    print "Unsupported or unknown platform '$^O' !\n";
     print "Review dobuild.pl file and fix it for new platform!\n";
     exit 1;
 }
@@ -117,6 +122,8 @@ sub make_build_batch
         print BATCH "cd builder\ncd nt386\n";
     } elsif( $^O eq "linux" ) {
         print BATCH "cd builder\ncd linux386\n";
+    } elsif( $^O eq "os2" ) {
+        print BATCH "cd builder\ncd os2386\n";
     }
     print BATCH "wmake -h clean\n";
     print BATCH "wmake -h\n";
@@ -133,6 +140,8 @@ sub make_build_batch
         print BATCH "cd builder\ncd nt386\n";
     } elsif( $^O eq "linux" ) {
         print BATCH "cd builder\ncd linux386\n";
+    } elsif( $^O eq "os2" ) {
+        print BATCH "cd builder\ncd os2386\n";
     }
     print BATCH "wmake -h\n";
     # Create Watcom DOS TCP/IP library.
