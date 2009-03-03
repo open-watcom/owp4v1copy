@@ -1,6 +1,14 @@
 plustest_name = ehmix
 !include ../environ.mif
 
+!ifdef __OS2__
+check_file = os2386.chk
+!else ifdef __LINUX__
+check_file = linux386.chk
+!else
+check_file = nt386.chk
+!endif
+
 !ifdef test1
 comp_flags = -d2-xs-hd $(br_opt)
 alt_error=01
@@ -41,7 +49,7 @@ stack_axp=opt stack=64k
 test : .symbolic start_test
 !else
 test : .symbolic start_test ehmix.lnk ehmix.exe
-    diff exec.out exec.chk
+    diff exec.out $(check_file)
 !endif
     @%make global
     %append $(log_file) PASS $(%__CWD__)
