@@ -35,14 +35,14 @@ inc_dirs += -I. $(inc_dirs_targ) -I"$(dwarf_dir)/dw/h" $(mem_include)
 .asm: $(asm_path)
 
 libfile: .PROCEDURE
-        rm -f $^&.lbc
+    rm -f $^&.lbc
 !ifdef bootstrap
 # to be fixed: wlib -fa now produces a library that gnu ld can't read
 # can be a bug in wlib or in gnu ld, I don't know right now...
-        ar crs $^. $<
+    ar crs $^. $<
 !else
-        @for %i in ($<) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) @$^&.lbc
+    @for %i in ($<) do @%append $^&.lbc +%i
+    $(librarian) $(libflags) @$^&.lbc
 !endif
 
 ./bitset.exe : $(watcom_dir)/c/bitset.c
@@ -58,8 +58,7 @@ dbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
     $[@ $(dbit_size) _DBit dom_bit_set $@
 
 cgprotos.gh : $(cg_dir)/h/cgapicvr.h $(cg_dir)/h/cgfuntab.h
-    $(cc) $(preproc_opts) -I"$(cg_dir)/h" >cgprotos.tmp
-    $(sed) -e "/$#/d" -e "s/DEFINE_PLACEHOLDER/$#define/" cgprotos.tmp >$@
+    $(cc) $(preproc_opts) -I"$(cg_dir)/h" >$@
 
 feprotos.gh : $(cg_dir)/h/cgfecvr.h $(cg_dir)/h/cgfertns.h
-    $(cc) $(preproc_opts) -I"$(cg_dir)/h" | $(sed) -e "/$#/d" -e "s/DEFINE_PLACEHOLDER/$#define/" >$@
+    $(cc) $(preproc_opts) -I"$(cg_dir)/h" >$@
