@@ -41,6 +41,9 @@ typedef HPOWERNOTIFY    *PHPOWERNOTIFY;
 DECLARE_HANDLE( HRAWINPUT );
 #endif
 
+/* Macro to check whether a value is a resource identifier */
+#define IS_INTRESOURCE( x ) ((((ULONG_PTR)(x)) >> 16) == 0)
+
 /* Macro to define a resource identifier */
 #define MAKEINTRESOURCEA( x )   ((LPSTR)(ULONG_PTR)(WORD)(x))
 #define MAKEINTRESOURCEW( x )   ((LPWSTR)(ULONG_PTR)(WORD)(x))
@@ -4225,9 +4228,9 @@ typedef TRACKMOUSEEVENT *LPTRACKMOUSEEVENT;
 
 /* Accelerator information */
 typedef struct tagACCEL {
-    WORD    fVirt;
+    BYTE    fVirt;
     WORD    key;
-    DWORD   cmd;
+    WORD    cmd;
 } ACCEL;
 typedef ACCEL   *LPACCEL;
 

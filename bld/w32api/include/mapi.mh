@@ -28,9 +28,9 @@ typedef ULONG_PTR   *LPLHANDLE;
 :include mapircls.sp
 
 /* MAPI message flags */
-#define MAPI_UNREAD                 0x00000001L
-#define MAPI_RECIPIENT_REQUESTED    0x00000002L
-#define MAPI_SENT                   0x00000004L
+#define MAPI_UNREAD             0x00000001L
+#define MAPI_RECEIPT_REQUESTED  0x00000002L
+#define MAPI_SENT               0x00000004L
 
 /* MAPILogon() flags */
 #define MAPI_LOGON_UI       0x00000001L
