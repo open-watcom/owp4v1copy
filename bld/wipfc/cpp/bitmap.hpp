@@ -79,7 +79,7 @@ private:
         std::uint8_t   blue;
         std::uint8_t   green;
         std::uint8_t   red;
-        RGB() { };
+        RGB() : blue( 0 ), green( 0 ), red( 0 ) { };
         RGB( RGBA& rhs ) : blue( rhs.blue ), green( rhs.green ), red( rhs.red ) { };
         RGB& operator=( RGBA& rhs ) { blue = rhs.blue; green = rhs.green; red = rhs.red; return *this; };
         void read( std::FILE* in );

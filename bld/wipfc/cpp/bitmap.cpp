@@ -194,7 +194,7 @@ void Bitmap::RGBA::read( std::FILE* in )
 void Bitmap::readHeader16( std::FILE* in )
 {
     bmih.read( in );
-    if( bmih.bitsPerPixel == 4 || bmih.bitsPerPixel == 8 ) {
+    if( bmih.bitsPerPixel <= 8 ) {
         size_t rgbSize( 1 << bmih.bitsPerPixel );
         rgb.resize( rgbSize );
         if( std::fread( &rgb[0], sizeof( RGB ), rgbSize, in ) != rgbSize )
@@ -252,14 +252,27 @@ void Bitmap::readHeaderOS2( std::FILE* in )
     if( bmih.bitsPerPixel <= 8 ) {
         size_t rgbSize( 1 << bmih.bitsPerPixel );
         rgb.reserve( rgbSize );
-        for( size_t count1 = 0; count1 < rgbSize; ++count1 ) {
-            RGBA tmp1;
-            tmp1.read( in );
-            RGB tmp2( tmp1 );
-            rgb.push_back( tmp2 );
+        if( bmihOS22x.usedColors ) {
+            for( size_t count1 = 0; count1 < bmihOS22x.usedColors; ++count1 ) {
+                RGBA tmp1;
+                tmp1.read( in );
+                RGB tmp2( tmp1 );
+                rgb.push_back( tmp2 );
+            }
+            RGB tmp;
+            for( size_t count1 = bmihOS22x.usedColors; count1 < rgbSize; ++count1 )
+                rgb.push_back( tmp );
         }
-        bmfh.size -= rgbSize * ( sizeof( RGBA ) - sizeof( RGB ) );
-        bmfh.bitsOffset -= rgbSize * ( sizeof( RGBA ) - sizeof( RGB ) );
+        else {
+            for( size_t count1 = 0; count1 < rgbSize; ++count1 ) {
+                RGBA tmp1;
+                tmp1.read( in );
+                RGB tmp2( tmp1 );
+                rgb.push_back( tmp2 );
+            }
+        }
+        bmfh.bitsOffset = sizeof( BitmapFileHeader ) + sizeof( BitmapInfoHeader16 ) + 3 * rgb.size();
+        bmfh.size = bmfh.bitsOffset + bmihOS22x.imageSize;
     }
     else if (bmihOS22x.compression == 3) {
         //read and discard 3 items

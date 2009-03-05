@@ -189,7 +189,7 @@ void readBitMaps( FILE *in, FILE *out )
             btmp = fopen( name, "wb" );
             snprintf( name, sizeof(name) / sizeof(char), "btmp%4.4u.lzw", count1 );
             lzw = fopen( name, "w" );
-            if( bm.hdr.size )
+            if( bm.hdr.size && bm.hdr.size > bm.hdr.bitsOffset )
                 bytesLeft = bm.hdr.size - bm.hdr.bitsOffset /* sizeof(BitMap) */;
             else {
                 bm.hdr.size = sizeof( BitMap );
@@ -197,6 +197,7 @@ void readBitMaps( FILE *in, FILE *out )
                     bytesLeft = bm.hdr.info.width / 8;
                     bytesLeft = bytesLeft & 3 ? ( bytesLeft & ~3 ) + 4 : bytesLeft;
                     bytesLeft *= bm.hdr.info.height;
+                    bm.hdr.size += bytesLeft + 2 * sizeof( RGB );
                 }
                 else if( bm.hdr.info.bitsPerPixel == 4 ) {
                     bytesLeft = bm.hdr.info.width / 2;
@@ -228,7 +229,9 @@ void readBitMaps( FILE *in, FILE *out )
             }
             bm.hdr.type[ 0 ] = toupper( bm.hdr.type[ 0 ] );
             bm.hdr.bitsOffset = sizeof( BitMap );
-            if( bm.hdr.info.bitsPerPixel == 4 )
+            if( bm.hdr.info.bitsPerPixel == 1 )
+                bm.hdr.bitsOffset += 2 * sizeof( RGB );
+            else if( bm.hdr.info.bitsPerPixel == 4 )
                 bm.hdr.bitsOffset += 16 * sizeof( RGB );
             else if( bm.hdr.info.bitsPerPixel == 8 )
                 bm.hdr.bitsOffset += 256 * sizeof( RGB );
@@ -247,7 +250,24 @@ void readBitMaps( FILE *in, FILE *out )
             fprintf( lzw, "  Bits per Pixel: %8.4x (%hu)\n", bm.hdr.info.bitsPerPixel, bm.hdr.info.bitsPerPixel );
 #endif
             memset( &rgb, 0, 256 * sizeof( RGB ) );
-            if( bm.hdr.info.bitsPerPixel == 4 ) {
+            if( bm.hdr.info.bitsPerPixel == 1 ) {
+#ifdef COLOR_PAL
+                unsigned int count;
+                fread( rgb, sizeof( RGB ), 2, in );
+                fputs( "    Color Palette\n", out );
+                for( count = 0; count < 2; count++ )
+                    fprintf( out, "      %2d [%2.2x %2.2x %2.2x]\n", count, rgb[count].blue, rgb[count].green, rgb[count].red );
+#else
+                fread( rgb, sizeof( RGB ), 2, in );
+                fputs( "    Skipping color 2 palette entries...\n", out );
+#endif
+#ifdef FILEBITMAP
+                fwrite( rgb, sizeof(RGB), 2, btmp );
+                fputs( "Color Palette\n", lzw );
+                blockToHex( ( unsigned char * )&rgb[ 0 ], 2 * sizeof( RGB ), lzw );
+#endif
+            }
+            else if( bm.hdr.info.bitsPerPixel == 4 ) {
 #ifdef COLOR_PAL
                 unsigned int count;
                 fread( rgb, sizeof( RGB ), 16, in );
@@ -256,7 +276,7 @@ void readBitMaps( FILE *in, FILE *out )
                     fprintf( out, "      %2d [%2.2x %2.2x %2.2x]\n", count, rgb[count].blue, rgb[count].green, rgb[count].red );
 #else
                 fread( rgb, sizeof( RGB ), 16, in );
-                fputs( "    Skipping color palette...\n", out );
+                fputs( "    Skipping color 16 palette entries...\n", out );
 #endif
 #ifdef FILEBITMAP
                 fwrite( rgb, sizeof(RGB), 16, btmp );
@@ -273,7 +293,7 @@ void readBitMaps( FILE *in, FILE *out )
                     fprintf(out, "      %3d [%2.2x %2.2x %2.2x]\n", count, rgb[count].blue, rgb[count].green, rgb[count].red );
 #else
                 fread( rgb, sizeof( RGB ), 256, in );
-                fputs( "    Skipping color palette...\n", out );
+                fputs( "    Skipping color 256 palette entries...\n", out );
 #endif
 #ifdef FILEBITMAP
                 fwrite(rgb, sizeof(RGB), 256, btmp);
