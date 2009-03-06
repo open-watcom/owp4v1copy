@@ -96,8 +96,14 @@ pick( USAGE_WLIB_17,        "                | -?                       (display
                 "                | -?                       (この画面を表示します)" )
 pick( USAGE_WLIB_18,        "" ,
                 "" )
-pick( USAGE_WLIB_19,        "                | -fa                      (output AR format library)" ,
+pick( USAGE_WLIB_19A,       "                | -fa                      (output AR format library)" ,
                 "                | -fa                      (AR形式ﾗｲﾌﾞﾗﾘを出力します)" )
+pick( USAGE_WLIB_19B,       "                | -fab                     (output AR format (BSD) library)" ,
+                "                | -fab                     (AR形式ﾗｲﾌﾞﾗﾘを出力します)" )
+pick( USAGE_WLIB_19C,       "                | -fac                     (output AR format (COFF) library)" ,
+                "                | -fac                     (AR形式ﾗｲﾌﾞﾗﾘを出力します)" )
+pick( USAGE_WLIB_19D,       "                | -fag                     (output AR format (GNU) library)" ,
+                "                | -fag                     (AR形式ﾗｲﾌﾞﾗﾘを出力します)" )
 pick( USAGE_WLIB_20,        "                | -fm                      (output MLIB format library)" ,
                 "                | -fm                      (MLIB形式ライブラリを出力します)" )
 pick( USAGE_WLIB_21,        "                | -fo                      (output OMF format library)" ,

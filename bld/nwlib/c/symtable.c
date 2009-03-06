@@ -36,6 +36,9 @@ static sym_file         *CurrFile;
 static sym_entry        **HashTable;
 static sym_entry        **SortedSymbols;
 
+static char             *padding_string;
+static int              padding_string_len;
+
 #define HASH_SIZE       256
 
 static int Hash( char *string, unsigned *plen );
@@ -226,7 +229,7 @@ static void WritePad( file_offset size )
 /**************************************/
 {
     if( NeedsRounding( size ) ) {
-        WriteNew( AR_FILE_PADDING_STRING, 1 );
+        WriteNew( padding_string, padding_string_len );
     }
 }
 
@@ -244,24 +247,14 @@ static void SortSymbols( void )
     sym_entry   **sym_curr;
     int         i;
     int         name_length = 0;
-    int         name_extra = 0;
 
     NumFiles = 0;
     NumSymbols = 0;
     TotalNameLength = 0;
     TotalFFNameLength = 0;
     TotalSymbolLength = 0;
-    switch( Options.libtype ) {
-    case WL_LTYPE_AR:
-        name_extra = 1;
-        break;
-    case WL_LTYPE_MLIB:
-        name_extra = 2;
-        break;
-    }
     for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
         ++NumFiles;
-        sfile->name_offset = TotalNameLength;
         switch( Options.libtype ) {
         case WL_LTYPE_AR:
             // Always using "full" filename for AR
@@ -270,6 +263,22 @@ static void SortSymbols( void )
             } else {
                 sfile->ffname_length = 0;
                 name_length = sfile->name_length;
+            }
+            if( Options.ar_libformat == AR_FMT_BSD ) {
+                // BSD doesn't use special file name table
+                sfile->name_offset = -1;
+                name_length = 0;
+            } else if( Options.ar_libformat == AR_FMT_GNU ) {
+                if( name_length < AR_NAME_LEN ) {
+                    sfile->name_offset = -1;
+                    name_length = 0;
+                } else {
+                    sfile->name_offset = TotalNameLength;
+                    name_length += AR_LONG_NAME_END_STRING_LEN;   // + "/\n"
+                }
+            } else {
+                sfile->name_offset = TotalNameLength;
+                name_length += 1;     // + "\n"
             }
             break;
         case WL_LTYPE_MLIB:
@@ -284,9 +293,11 @@ static void SortSymbols( void )
                 sfile->name_length = strlen( sfile->arch.name );
             }
             name_length = sfile->name_length;
+            sfile->name_offset = TotalNameLength;
+            name_length += LIB_LONG_NAME_END_STRING_LEN;  // + "/\n"
             break;
         }
-        TotalNameLength += name_length + name_extra;
+        TotalNameLength += name_length;
         TotalFFNameLength += sfile->ffname_length + 1;
         for( sym = sfile->first; sym != NULL; sym = sym->next ) {
             ++NumSymbols;
@@ -449,9 +460,7 @@ static void WriteArMlibFileTable( void )
     time_t          currenttime = time( NULL );
     file_offset     obj_offset;
     int             index;
-    char            buff[ 20 ];
-    char            *stringpad = NULL;
-    int             stringpadlen = 0;
+    bool            isBSD;
 
 
     SortSymbols();
@@ -460,36 +469,58 @@ static void WriteArMlibFileTable( void )
 
     switch( Options.libtype ) {
     case WL_LTYPE_AR:
-        dict1_size = sizeof( unsigned_32 )
-                   + NumSymbols * sizeof(unsigned_32)
-                   + RoundWord( TotalSymbolLength );
-
-        dict2_size = sizeof( unsigned_32 )
-                   + NumFiles * sizeof( unsigned_32 )
-                   + sizeof( unsigned_32 )
-                   + NumSymbols * sizeof( unsigned_16 )
-                   + RoundWord( TotalSymbolLength );
+        dict1_size = ( NumSymbols + 1 ) * sizeof(unsigned_32)
+                    + TotalSymbolLength;
 
         header_size = AR_IDENT_LEN
-                    + 3 * AR_HEADER_SIZE
-                    + dict1_size
-                    + dict2_size
-                    + RoundWord( TotalNameLength );
-        stringpad   = "\0";
-        stringpadlen= 1;
+                    + AR_HEADER_SIZE + dict1_size;
+
+        switch( Options.ar_libformat ) {
+        case AR_FMT_BSD:
+            dict2_size = 0;
+
+            padding_string     = "\0";
+            padding_string_len = 1;
+            break;
+        case AR_FMT_GNU:
+            dict2_size = 0;
+
+            if( TotalNameLength > 0 ) {
+                header_size += AR_HEADER_SIZE + RoundWord( TotalNameLength );
+            }
+
+            padding_string     = "\0";
+            padding_string_len = 1;
+            break;
+        default:
+            dict2_size = ( NumFiles + 1 ) * sizeof( unsigned_32 )
+                        + sizeof( unsigned_32 ) + NumSymbols * sizeof( unsigned_16 )
+                        + RoundWord( TotalSymbolLength );
+
+            header_size += AR_HEADER_SIZE + dict2_size;
+
+            if( TotalNameLength > 0 ) {
+                header_size += AR_HEADER_SIZE + RoundWord( TotalNameLength );
+            }
+
+            padding_string     = AR_FILE_PADDING_STRING;
+            padding_string_len = AR_FILE_PADDING_STRING_LEN;
+            break;
+        }
         break;
     case WL_LTYPE_MLIB:
-        dict2_size = sizeof( unsigned_32 )
-                    + NumSymbols * (1 + sizeof( unsigned_32 ) )
+        dict1_size = 0;
+
+        dict2_size = ( NumSymbols + 1 ) * sizeof( unsigned_32 ) + NumSymbols
                     + TotalSymbolLength;
 
         header_size = LIBMAG_LEN + LIB_CLASS_LEN + LIB_DATA_LEN
-                    + 3 * LIB_HEADER_SIZE
-                    + RoundWord( dict2_size )
-                    + RoundWord( TotalNameLength )
-                    + RoundWord( TotalFFNameLength );
-        stringpad   = LIB_LONG_NAME_END_STRING;
-        stringpadlen= LIB_LONG_NAME_END_STRING_LEN;
+                    + LIB_HEADER_SIZE + RoundWord( dict2_size )
+                    + LIB_HEADER_SIZE + RoundWord( TotalNameLength )
+                    + LIB_HEADER_SIZE + RoundWord( TotalFFNameLength );
+
+        padding_string     = LIB_FILE_PADDING_STRING;
+        padding_string_len = LIB_FILE_PADDING_STRING_LEN;
         break;
     }
 
@@ -497,10 +528,15 @@ static void WriteArMlibFileTable( void )
 
     index = 0;
     obj_offset = 0;
+    isBSD = ( ( Options.libtype == WL_LTYPE_AR ) && ( Options.ar_libformat == AR_FMT_BSD ) );
     for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
         sfile->new_offset = obj_offset + header_size;
         sfile->index = ++index;
-        obj_offset += RoundWord( sfile->arch.size ) + AR_HEADER_SIZE;
+        if( isBSD && ( sfile->name_length > AR_NAME_LEN || strchr( sfile->arch.name, ' ' ) != NULL ) ) {
+            obj_offset += RoundWord( sfile->arch.size + sfile->name_length ) + AR_HEADER_SIZE;
+        } else {
+            obj_offset += RoundWord( sfile->arch.size ) + AR_HEADER_SIZE;
+        }
     }
 
     switch( Options.libtype ) {
@@ -519,8 +555,8 @@ static void WriteArMlibFileTable( void )
     arch.uid = 0;
     arch.gid = 0;
     arch.mode = 0;
-    if( Options.libtype == WL_LTYPE_AR ) {
-        arch.size = dict1_size;
+    if( dict1_size > 0 ) {
+        arch.size = dict1_size;     // word round size
         arch.name = "/";
         WriteFileHeader( &arch );
 
@@ -540,67 +576,87 @@ static void WriteArMlibFileTable( void )
 
     // write the useful dictionary
 
-    arch.size = dict2_size;
-    arch.name = "/";
-    WriteFileHeader( &arch );
+    if( dict2_size > 0 ) {
+        arch.size = dict2_size;     // word round size
+        arch.name = "/";
+        WriteFileHeader( &arch );
 
-    if( Options.libtype == WL_LTYPE_AR ) {
-        WriteLittleEndian32( NumFiles );
-        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
-            WriteLittleEndian32( sfile->new_offset );
+        if( Options.libtype == WL_LTYPE_AR ) {
+            WriteLittleEndian32( NumFiles );
+            for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+                WriteLittleEndian32( sfile->new_offset );
+            }
         }
-    }
 
-    WriteLittleEndian32( NumSymbols );
-    switch( Options.libtype ) {
-    case WL_LTYPE_AR:
-        for( i = 0; i < NumSymbols; ++i ) {
-            WriteLittleEndian16( SortedSymbols[ i ]->file->index );
+        WriteLittleEndian32( NumSymbols );
+        switch( Options.libtype ) {
+        case WL_LTYPE_AR:
+            for( i = 0; i < NumSymbols; ++i ) {
+                WriteLittleEndian16( SortedSymbols[ i ]->file->index );
+            }
+            break;
+        case WL_LTYPE_MLIB:
+            for( i = 0; i < NumSymbols; ++i ) {
+                WriteLittleEndian32( SortedSymbols[ i ]->file->index );
+            }
+            for( i = 0; i < NumSymbols; ++i ) {
+                WriteNew( &(SortedSymbols[ i ]->info), 1 );
+            }
+            break;
         }
-        break;
-    case WL_LTYPE_MLIB:
         for( i = 0; i < NumSymbols; ++i ) {
-            WriteLittleEndian32( SortedSymbols[ i ]->file->index );
+            WriteNew( SortedSymbols[ i ]->name, SortedSymbols[ i ]->len + 1 );
         }
-        for( i = 0; i < NumSymbols; ++i ) {
-            WriteNew( &(SortedSymbols[ i ]->info), 1 );
+        switch( Options.libtype ) {
+        case WL_LTYPE_AR:
+            WritePad( TotalSymbolLength );
+            break;
+        case WL_LTYPE_MLIB:
+            WritePad( dict2_size );
+            break;
         }
-        break;
-    }
-    for( i = 0; i < NumSymbols; ++i ) {
-        WriteNew( SortedSymbols[ i ]->name, SortedSymbols[ i ]->len + 1 );
-    }
-    switch( Options.libtype ) {
-    case WL_LTYPE_AR:
-        WritePad( TotalSymbolLength );
-        break;
-    case WL_LTYPE_MLIB:
-        WritePad( dict2_size );
-        break;
     }
 
     // write the string table
 
-    arch.size = TotalNameLength;
-    arch.name = "//";
-    WriteFileHeader( &arch );
-    for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
-        if( sfile->name_offset == -1 )
-            continue;
-        // Always write the "full" filename for AR
-        if( Options.libtype == WL_LTYPE_AR && sfile->arch.ffname ) {
-            WriteNew( sfile->arch.ffname, sfile->ffname_length );
+    if( TotalNameLength > 0 ) {
+        char    *stringpad;
+        int     stringpadlen;
+
+        if( Options.libtype == WL_LTYPE_MLIB ) {
+            stringpad    = LIB_LONG_NAME_END_STRING;
+            stringpadlen = LIB_LONG_NAME_END_STRING_LEN;
+        } else if( Options.ar_libformat == AR_FMT_GNU ) {
+            stringpad    = AR_LONG_NAME_END_STRING;
+            stringpadlen = AR_LONG_NAME_END_STRING_LEN;
+        } else if( Options.ar_libformat == AR_FMT_BSD ) {
+            stringpad    = NULL;
+            stringpadlen = 0;
         } else {
-            WriteNew( sfile->arch.name, sfile->name_length );
+            stringpad    = "\0";
+            stringpadlen = 1;
         }
-        WriteNew( stringpad, stringpadlen );
+        arch.size = TotalNameLength;        // real size
+        arch.name = "//";
+        WriteFileHeader( &arch );
+        for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+            if( sfile->name_offset == -1 )
+                continue;
+            // Always write the "full" filename for AR
+            if( Options.libtype == WL_LTYPE_AR && sfile->arch.ffname ) {
+                WriteNew( sfile->arch.ffname, sfile->ffname_length );
+            } else {
+                WriteNew( sfile->arch.name, sfile->name_length );
+            }
+            WriteNew( stringpad, stringpadlen );
+        }
+        WritePad( TotalNameLength );
     }
-    WritePad( TotalNameLength );
 
     // write the full filename table
 
     if( Options.libtype == WL_LTYPE_MLIB ) {
-        arch.size = TotalFFNameLength;
+        arch.size = TotalFFNameLength;      // real size
         arch.name = "///";
         WriteFileHeader( &arch );
         for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
@@ -610,11 +666,39 @@ static void WriteArMlibFileTable( void )
     }
 
     for( sfile = FileTable.first; sfile != NULL; sfile = sfile->next ) {
+        char        buff[ AR_NAME_LEN + 1 ];
+        bool        append_name;
+
+        append_name = FALSE;
         arch = sfile->arch;
-        buff[ 0 ] = '/';
-        itoa( sfile->name_offset, buff+1, 10 );
-        arch.name = buff;
+        if( sfile->name_offset == -1 ) {
+            if( Options.ar_libformat == AR_FMT_BSD ) {
+                // BSD append file name after header and before file image if it is longer then
+                //  max.length or it contains space
+                if( sfile->name_length > AR_NAME_LEN || strchr( sfile->arch.name, ' ' ) != NULL ) {
+                    append_name = TRUE;
+                    arch.size += sfile->name_length;
+                    strcpy( buff, AR_NAME_CONTINUED_AFTER );
+                    itoa( sfile->name_length, buff + AR_NAME_CONTINUED_AFTER_LEN, 10 );
+                    arch.name = buff;
+                } else {
+                    arch.name = sfile->arch.name;
+                }
+            } else {        // COFF, GNU
+                strcpy( buff, sfile->arch.name );
+                buff[ sfile->name_length ] = AR_NAME_END_CHAR;
+                buff[ sfile->name_length + 1 ] = '\0';
+                arch.name = buff;
+            }
+        } else {
+            buff[ 0 ] = '/';
+            itoa( sfile->name_offset, buff+1, 10 );
+            arch.name = buff;
+        }
         WriteFileHeader( &arch );
+        if( append_name ) {
+            WriteNew( sfile->arch.name, sfile->name_length );
+        }
         WriteFile( sfile );
         WritePad( arch.size );
     }

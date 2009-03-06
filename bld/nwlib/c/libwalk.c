@@ -86,7 +86,7 @@ void LibWalk( libfile io, char *name, void (*rtn)( arch_header *, libfile io ) )
         } else if( ar.name[ 0 ] == '/' && ar.name[ 1 ] == '/' && ar.name[ 2 ] == '/' ) {
             AllocFFNameTab( name, io, &arch );
         } else {
-            arch.name = GetARName( &ar, &arch );
+            arch.name = GetARName( io, &ar, &arch );
             arch.ffname = GetFFName( &arch );
             rtn( &arch, io );
             MemFree( arch.name );

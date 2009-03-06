@@ -76,7 +76,13 @@ perform case sensitive comparison
 .note d=<output_directory>
 directory in which extracted object modules will be placed
 .note fa
-output AR format library
+output AR format library (host default ar format)
+.note fab
+output AR format library (BSD ar format)
+.note fac
+output AR format library (COFF ar format)
+.note fag
+output AR format library (GNU ar format)
 .note fm
 output MLIB format library
 .note fo
@@ -532,7 +538,13 @@ that are added to the library when it is created.
 The possible output format options are:
 .begnote
 .note fa
-output AR format library
+output AR format library, host OS default ar format
+.note fab
+output AR format library, BSD ar format
+.note fac
+output AR format library, COFF ar format
+.note fag
+output AR format library, GNU ar format
 .note fm
 output MLIB format library
 .note fo
