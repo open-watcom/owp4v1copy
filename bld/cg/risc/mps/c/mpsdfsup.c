@@ -54,7 +54,7 @@
 
 typedef enum {
     #define DW_REG( __n  )   DW_MIPS_##__n,
-    #include "dwregmips.h"
+    #include "dwregmps.h"
     DW_REG( MAX )
     #undef DW_REG
 } dw_regs;
