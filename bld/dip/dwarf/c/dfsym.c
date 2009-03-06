@@ -1501,7 +1501,8 @@ walk_result DIPENTRY DIPImpWalkSymListEx( imp_image_handle *ii,
 }
 
 
-#define SH_ESCAPE       '\xf0'
+#define SH_ESCAPE       0xf0
+
 static void CollectSymHdl( byte *ep, imp_sym_handle *is )
 /*******************************************************/
 {
@@ -1514,7 +1515,8 @@ static void CollectSymHdl( byte *ep, imp_sym_handle *is )
     ++is;
     while( sp < (byte *)is ) {
         curr = *ep++;
-        if( curr == SH_ESCAPE ) curr = escapes[ *ep++ - 1 ];
+        if( curr == SH_ESCAPE )
+            curr = escapes[ *ep++ - 1 ];
         *sp++ = curr;
     }
 }
@@ -1660,7 +1662,7 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
     char                buff[256];
     int                 cont;
 
-    if( *li->name.start == SH_ESCAPE ) {
+    if( *(unsigned_8 *)li->name.start == SH_ESCAPE ) {
         CollectSymHdl( (unsigned_8 *)li->name.start, DCSymCreate( ii, d ) );
         return( SR_EXACT );
     }
