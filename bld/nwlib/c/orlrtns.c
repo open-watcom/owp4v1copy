@@ -57,7 +57,7 @@ static long ObjSeek( void *fil, long pos, int where )
 
     switch( where ) {
     case SEEK_SET:
-        where += ofile->offset;
+        pos += ofile->offset;
         break;
     case SEEK_CUR:
         break;
