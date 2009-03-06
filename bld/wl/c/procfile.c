@@ -575,7 +575,7 @@ char *IdentifyObject( file_list *list, unsigned long *loc,
     if( list->status & STAT_AR_LIB ) {
         ar_hdr = CacheRead( list, *loc, sizeof(ar_header) );
         *loc += sizeof(ar_header);
-        name = GetARName( ar_hdr, list );
+        name = GetARName( ar_hdr, list, loc );
         *size = GetARValue( ar_hdr->size, AR_SIZE_LEN );
     }
     if( !IsORL( list, *loc ) ) {

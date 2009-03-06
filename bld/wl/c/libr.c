@@ -255,7 +255,7 @@ int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
     char *              fname_save;
     unsigned_32         offset_save;
 
-    omf_hdr = CacheRead( list, 0, sizeof(lib_header) );
+    omf_hdr = CacheRead( list, *loc, sizeof(lib_header) );
     header = (unsigned_8*) omf_hdr;
     reclength = 0;
 
@@ -286,74 +286,76 @@ int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
         *loc = AR_IDENT_LEN;
         numdicts = 0;
         while( ReadARDict( list, loc, &numdicts, makedict ) ) {} // NULL loop
-        if( numdicts < 1 && makedict ) {
-            Locator( list->file->name, NULL, 0 );
-            LnkMsg( ERR+MSG_NO_DICT_FOUND, NULL );
-            _LnkFree( list->u.dict );
-            list->u.dict = NULL;
-            return -1;
-        }
-        ar_dict = &list->u.dict->a;
-        if( (!(LinkFlags & CASE_FLAG) || numdicts == 1) &&
-              (ar_dict->num_entries > 0) ) {
-            // Create an index table that we will sort to match the
-            // case-insensitive sort order that we want for our symbol names.
-            _ChkAlloc( index_tab, sizeof(unsigned_16) * ar_dict->num_entries );
-            for( ix = 0; ix < ar_dict->num_entries; ix++ ) {
-                index_tab[ix] = ix;
+        if( makedict ) {
+            if( numdicts < 1 ) {
+                Locator( list->file->name, NULL, 0 );
+                LnkMsg( ERR+MSG_NO_DICT_FOUND, NULL );
+                _LnkFree( list->u.dict );
+                list->u.dict = NULL;
+                return -1;
             }
-            // store the dictionary pointer into memory so we can fetch ar_dict in ARCompI
-            ARDict = ar_dict;
-            // Sort the index table using the corresponding symbol names
-            // to determine the sort order (see ARCompI() for more info).
-            if (LinkFlags & CASE_FLAG) {
-                qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
-                       ARComp );
-            } else {
-                qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
-                       ARCompI );
-            }
-
-            // Reorder the function name table (a vector of pointers to
-            // symbol names) and the offset table (a vector of 16-bit offsets
-            // into the file position table) (see ReadARDict() for info).
-            for( ix = 0; ix < ar_dict->num_entries; ) {
-                ix_save = ix;
-                // If this entry hasn't been corrected
-                // then move out the entry that is present
-                // so that we can correct it.
-                if( ix != index_tab[ix] ) {
-                    fname_save = ar_dict->fnametab[ix];
-                    if (ar_dict->offsettab == NULL)
-                        offset_save = ar_dict->filepostab[ix];
-                    else
-                        offset_save = ar_dict->offsettab[ix];
-                    // Correct all the entries in this sequence
-                    for(;;) {
-                        ix_next = index_tab[ix];
-                        index_tab[ix] = ix;
-
-                        if( ix_next == ix_save ) break;
-
-                        ar_dict->fnametab[ix] = ar_dict->fnametab[ix_next];
-                        if (ar_dict->offsettab == NULL)
-                            ar_dict->filepostab[ix] = ar_dict->filepostab[ix_next];
-                        else
-                            ar_dict->offsettab[ix] = ar_dict->offsettab[ix_next];
-                        ix = ix_next;
-                    }
-                    // Update this final entry in the sequence from the
-                    // values we set aside.
-                    ar_dict->fnametab[ix] = fname_save;
-                    if (ar_dict->offsettab == NULL)
-                        ar_dict->filepostab[ix] = offset_save;
-                    else
-                        ar_dict->offsettab[ix] = offset_save;
+            ar_dict = &list->u.dict->a;
+            if( (!(LinkFlags & CASE_FLAG) || numdicts == 1) &&
+                  (ar_dict->num_entries > 0) ) {
+                // Create an index table that we will sort to match the
+                // case-insensitive sort order that we want for our symbol names.
+                _ChkAlloc( index_tab, sizeof(unsigned_16) * ar_dict->num_entries );
+                for( ix = 0; ix < ar_dict->num_entries; ix++ ) {
+                    index_tab[ix] = ix;
                 }
-                ix = ix_save + 1;
-            }
+                // store the dictionary pointer into memory so we can fetch ar_dict in ARCompI
+                ARDict = ar_dict;
+                // Sort the index table using the corresponding symbol names
+                // to determine the sort order (see ARCompI() for more info).
+                if (LinkFlags & CASE_FLAG) {
+                    qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
+                           ARComp );
+                } else {
+                    qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
+                           ARCompI );
+                }
 
-            _LnkFree( index_tab );
+                // Reorder the function name table (a vector of pointers to
+                // symbol names) and the offset table (a vector of 16-bit offsets
+                // into the file position table) (see ReadARDict() for info).
+                for( ix = 0; ix < ar_dict->num_entries; ) {
+                    ix_save = ix;
+                    // If this entry hasn't been corrected
+                    // then move out the entry that is present
+                    // so that we can correct it.
+                    if( ix != index_tab[ix] ) {
+                        fname_save = ar_dict->fnametab[ix];
+                        if (ar_dict->offsettab == NULL)
+                            offset_save = ar_dict->filepostab[ix];
+                        else
+                            offset_save = ar_dict->offsettab[ix];
+                        // Correct all the entries in this sequence
+                        for(;;) {
+                            ix_next = index_tab[ix];
+                            index_tab[ix] = ix;
+
+                            if( ix_next == ix_save ) break;
+
+                            ar_dict->fnametab[ix] = ar_dict->fnametab[ix_next];
+                            if (ar_dict->offsettab == NULL)
+                                ar_dict->filepostab[ix] = ar_dict->filepostab[ix_next];
+                            else
+                                ar_dict->offsettab[ix] = ar_dict->offsettab[ix_next];
+                            ix = ix_next;
+                        }
+                        // Update this final entry in the sequence from the
+                        // values we set aside.
+                        ar_dict->fnametab[ix] = fname_save;
+                        if (ar_dict->offsettab == NULL)
+                            ar_dict->filepostab[ix] = offset_save;
+                        else
+                            ar_dict->offsettab[ix] = offset_save;
+                    }
+                    ix = ix_save + 1;
+                }
+
+                _LnkFree( index_tab );
+            }
         }
     }
     return reclength;
@@ -691,8 +693,8 @@ static bool ARSearchExtLib( file_list *lib, char *name, unsigned long *off )
     return FALSE;
 }
 
-char *GetARName( ar_header *header, file_list *list )
-/**********************************************************/
+char *GetARName( ar_header *header, file_list *list, unsigned long *loc )
+/***********************************************************************/
 {
     char            *buf;
     char            *name;
@@ -704,6 +706,10 @@ char *GetARName( ar_header *header, file_list *list )
         size = GetARValue( &header->name[1], AR_NAME_LEN - 1 );
         buf = list->strtab + size;
         len = strlen( buf );
+    } else if( header->name[ 0 ] == '#' && header->name[ 1 ] == '1' && header->name[ 2 ] == '/') {
+        len = GetARValue( &header->name[ 3 ], AR_NAME_LEN - 3 );
+        buf = CacheRead( list, *loc, len );
+        *loc += len;
     } else {
         buf = memchr( header->name, '/', AR_NAME_LEN );
         if( buf == NULL ) {
