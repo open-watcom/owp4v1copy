@@ -247,7 +247,6 @@ system begin netware_libc
     option osname='NetWare LibC NLM (Full-RTL)'
     format novell ^
     option nodefault
-    option caseexact
     option start=_LibCPrelude
     option exit=_LibCPostlude
     option pseudopreemption
@@ -266,7 +265,6 @@ system begin netware_libc_lite
     option osname='NetWare LibC NLM (Lite-RTL)'
     format novell ^
     option nodefault
-    option caseexact
     option start=_LibCPrelude
     option exit=_LibCPostlude
     option pseudopreemption
@@ -285,7 +283,6 @@ system begin netware_clib
     option osname='NetWare CLIB NLM (Full-RTL)'
     format novell ^
     option nodefault
-    option caseexact
     option start=_Prelude
     option exit=_Stop
     library %WATCOM%/lib386/netware/clib3s.lib
@@ -299,7 +296,6 @@ system begin netware_clib_lite
     option osname='NetWare CLIB NLM (Lite-RTL)'
     format novell ^
     option nodefault
-    option caseexact
     option start=_Prelude
     option exit=_Stop
     file %NOVELLNDK%/imports/clibpre.obj
