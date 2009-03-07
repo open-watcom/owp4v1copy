@@ -60,7 +60,7 @@
 !inject enterdb.obj  d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject errno.obj    d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject errnovar.obj                                                            q32             l32
-!inject _exit.obj    d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject _exit.obj    d16 d32             nt nta ntp                 o16 o32 q16 q32     w32 osi l32 lpc lmp
 !inject exit.obj     d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject fltused.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject fpexcept.obj d16 d32 dpm         nt         nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32
