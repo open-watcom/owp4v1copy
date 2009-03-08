@@ -470,7 +470,7 @@ static void WriteArMlibFileTable( void )
     switch( Options.libtype ) {
     case WL_LTYPE_AR:
         dict1_size = ( NumSymbols + 1 ) * sizeof(unsigned_32)
-                    + TotalSymbolLength;
+                    + RoundWord( TotalSymbolLength );
 
         header_size = AR_IDENT_LEN
                     + AR_HEADER_SIZE + dict1_size;
