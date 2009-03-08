@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <orl.h>
+#include "orl.h"
 
 orl_handle ORLInit( orl_funcs *funcs )
 {

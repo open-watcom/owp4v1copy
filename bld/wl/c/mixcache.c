@@ -48,7 +48,7 @@
 
 static bool             DumpFileCache( infilelist *, bool );
 
-static bool     Multipage;
+static bool             Multipage;
 
 #define CACHE_PAGE_SIZE         (8*1024)
 
@@ -68,9 +68,9 @@ static unsigned NumCacheBlocks( unsigned long len )
 bool CacheOpen( file_list *list )
 /**************************************/
 {
-    infilelist *file;
+    infilelist  *file;
     unsigned    numblocks;
-    char **     cache;
+    char        **cache;
 
     if( list == NULL )
         return( TRUE );
@@ -114,7 +114,7 @@ bool CacheOpen( file_list *list )
             file->currpos = file->len;
         } else {
             numblocks = NumCacheBlocks( file->len );
-            _Pass1Alloc( file->cache, numblocks * sizeof(char *) );
+            _Pass1Alloc( file->cache, numblocks * sizeof( char * ) );
             cache = file->cache;
             while( numblocks > 0 ) {
                 *cache = NULL;
@@ -158,11 +158,11 @@ void CacheClose( file_list *list, unsigned pass )
     }
 }
 
-void * CachePermRead( file_list *list, unsigned long pos, unsigned len )
+void *CachePermRead( file_list *list, unsigned long pos, unsigned len )
 /*****************************************************************************/
 {
-    char *      buf;
-    char *      result;
+    char        *buf;
+    char        *result;
 
     buf = CacheRead( list, pos, len );
     if( list->file->flags & INSTAT_FULL_CACHE )
@@ -178,18 +178,18 @@ void * CachePermRead( file_list *list, unsigned long pos, unsigned len )
     return( result );
 }
 
-void * CacheRead( file_list * list, unsigned long pos, unsigned len )
+void *CacheRead( file_list *list, unsigned long pos, unsigned len )
 /**************************************************************************/
 /* read len bytes out of the cache. */
 {
-    unsigned    bufnum;
-    unsigned    startnum;
-    unsigned    offset;
-    unsigned    amtread;
-    char *      result;
-    char **     cache;
-    unsigned long newpos;
-    infilelist *file;
+    unsigned        bufnum;
+    unsigned        startnum;
+    unsigned        offset;
+    unsigned        amtread;
+    char            *result;
+    char            **cache;
+    unsigned long   newpos;
+    infilelist      *file;
 
     if( list->file->flags & INSTAT_FULL_CACHE ) {
         if( pos + len > list->file->len )
@@ -206,7 +206,7 @@ void * CacheRead( file_list * list, unsigned long pos, unsigned len )
     for( ;; ) {
         if( cache[ bufnum ] == NULL ) {   // make sure page is in.
             _ChkAlloc( cache[ bufnum ], CACHE_PAGE_SIZE );
-            newpos = (unsigned long) bufnum * CACHE_PAGE_SIZE;
+            newpos = (unsigned long)bufnum * CACHE_PAGE_SIZE;
             if( file->currpos != newpos ) {
                 QSeek( file->handle, newpos, file->name );
             }
@@ -252,7 +252,7 @@ bool CacheIsPerm( void )
     return( !Multipage );
 }
 
-bool CacheEnd( file_list * list, unsigned long pos )
+bool CacheEnd( file_list *list, unsigned long pos )
 /*********************************************************/
 {
     return( pos >= list->file->len );

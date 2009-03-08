@@ -30,12 +30,13 @@
 
 
 #include <unistd.h>
+#include <sys/stat.h>
 #include <string.h>
 #include "linkstd.h"
 #include "msg.h"
 #include "wlnkmsg.h"
 #include "alloc.h"
-#include <orl.h>
+#include "orl.h"
 #include "specials.h"
 #include "obj2supp.h"
 #include "objnode.h"

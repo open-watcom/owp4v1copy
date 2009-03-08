@@ -71,7 +71,7 @@ void ProcObjFiles( void )
 /* Perform Pass 1 on all object files */
 {
     CurrMod = NULL;
-    if( LinkFlags & INC_LINK_FLAG) {
+    if( LinkFlags & INC_LINK_FLAG ) {
         if( (LinkFlags & DWARF_DBI_FLAG) == 0 && (LinkFlags & ANY_DBI_FLAG) ) {
             LnkMsg( FTL+MSG_INC_ONLY_SUPPORTS_DWARF, NULL );
         }
@@ -124,7 +124,7 @@ static void CheckNewFile( mod_entry *mod, file_list *list,
     time_t      modtime;
 
     if( !(LinkFlags & GOT_CHGD_FILES) || AlwaysCheckUsingDate ) {
-        if( QModTime(list->file->name, &modtime) || modtime > mod->modtime ) {
+        if( QModTime( list->file->name, &modtime ) || modtime > mod->modtime ) {
             list->status |= STAT_HAS_CHANGED;
         }
     } else {
@@ -159,7 +159,7 @@ static void SetupModule( mod_entry **mod, file_list *list )
 
     CheckNewFile( currmod, list, 0 );
     fname = currmod->f.fname;
-    for(;;) {
+    for( ;; ) {
         currmod->f.source = list;
         currmod = currmod->n.next_mod;
         if( currmod == NULL )
@@ -345,7 +345,6 @@ static void IncIterateMods( mod_entry *mod, void (*proc_fn)(mod_entry *),
 static void AddToModList( mod_entry *mod )
 /****************************************/
 {
-    mod->modinfo |= ObjFormat & FMT_OBJ_FMT_MASK;
     if( CurrMod == NULL ) {
         CurrSect->mods = mod;
     } else {
@@ -360,6 +359,7 @@ static void SavedPass1( mod_entry *mod )
 {
     ObjFormat = FMT_INCREMENTAL;
     mod->modinfo &= ~FMT_OBJ_FMT_MASK;
+    mod->modinfo |= FMT_INCREMENTAL;
     AddToModList( mod );
     ObjPass1();
 }
@@ -388,10 +388,10 @@ static void ProcessMods( void )
         if( mod == NULL )
             break;
         if( mod->f.source == list ) {
-            for(;;) {
+            for( ;; ) {
                 next = mod->n.next_mod;
                 if( list->status & STAT_HAS_CHANGED ) {
-                    memset( mod, 0, sizeof(mod_entry) );
+                    memset( mod, 0, sizeof( mod_entry ) );
                     DoPass1( mod, list );
                 } else {
                     SavedPass1( mod );
@@ -495,7 +495,6 @@ static void DoPass1( mod_entry *next, file_list *list )
 /*****************************************************/
 /* do pass 1 on the object file */
 {
-    mod_entry           *old;
     member_list         *member;
     char                *membname;
     unsigned long       loc;
@@ -508,7 +507,7 @@ static void DoPass1( mod_entry *next, file_list *list )
     lastmod = FALSE;
     if( CacheOpen( list ) ) {
         reclength = CheckLibraryType( list, &loc, FALSE );
-        for(;;) { /*  there may be more than 1 object module in a file */
+        for( ;; ) { /*  there may be more than 1 object module in a file */
             member = NULL;
             ignoreobj = FALSE;
             if( EndOfLib( list, loc ) )
@@ -538,6 +537,7 @@ static void DoPass1( mod_entry *next, file_list *list )
                 next->n.next_mod = NULL;
                 next->f.source = list;
                 next->modtime = next->f.source->file->modtime;
+                next->modinfo |= ObjFormat & FMT_OBJ_FMT_MASK;
                 if( member != NULL ) {
                     next->modinfo |= member->flags;
                     _LnkFree( member );
@@ -548,7 +548,6 @@ static void DoPass1( mod_entry *next, file_list *list )
                         next->modinfo |= MOD_LAST_SEG;
                     }
                 }
-                old = CurrMod;
                 AddToModList( next );
                 next->location = loc;
                 if( membname == NULL ) {
@@ -590,8 +589,8 @@ char *IdentifyObject( file_list *list, unsigned long *loc,
     name = NULL;
     *size = 0;
     if( list->status & STAT_AR_LIB ) {
-        ar_hdr = CacheRead( list, *loc, sizeof(ar_header) );
-        *loc += sizeof(ar_header);
+        ar_hdr = CacheRead( list, *loc, sizeof( ar_header ) );
+        *loc += sizeof( ar_header );
         name = GetARName( ar_hdr, list, loc );
         *size = GetARValue( ar_hdr->size, AR_SIZE_LEN );
     }
@@ -635,7 +634,7 @@ static bool EndOfLib( file_list *list, unsigned long loc )
     unsigned_8 *id;
 
     if( list->status & STAT_OMF_LIB ) {
-        id = CacheRead( list, loc, sizeof(unsigned_8) );
+        id = CacheRead( list, loc, sizeof( unsigned_8 ) );
         return( *id == LIB_TRAILER_REC );
     } else {
         return( FALSE );
@@ -745,12 +744,13 @@ void ProcLocalImports( void )
 #ifdef _OS2
     symbol  *sym;
 
-    if( FmtData.type & MK_PE )
+    if( FmtData.type & MK_PE ) {
         for( sym = HeadSym; sym != NULL; sym = sym->link ) {
             if( !(sym->info & SYM_DEFINED) && !IS_SYM_WEAK_REF(sym) && !(sym->info & SYM_IS_ALTDEF) ) {
                 ImportPELocalSym( sym );
             }
         }
+    }
 #endif
 }
 
