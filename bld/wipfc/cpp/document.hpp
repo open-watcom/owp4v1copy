@@ -134,7 +134,7 @@ public:
     //To Compiler
     std::wstring* addFileName( std::wstring* name ) { return compiler.addFileName( name ); };
     void printError( ErrCode c ) const { compiler.printError( c ); };
-    void printError( ErrCode c, std::wstring& txt ) const { compiler.printError( c, txt ); };
+    void printError( ErrCode c, const std::wstring& txt ) const { compiler.printError( c, txt ); };
     void printError( ErrCode c, const std::wstring* name, unsigned int row, unsigned int col ) const
         { compiler.printError( c, name, row, col ); };
     Lexer::Token getNextToken() { return compiler.getNextToken(); };

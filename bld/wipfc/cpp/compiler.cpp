@@ -152,7 +152,7 @@ void Compiler::printError( ErrCode c ) const
 }
 /*****************************************************************************/
 //Error message format is <fullfilename:line:col> errnum: text [optional info]
-void Compiler::printError( ErrCode c, std::wstring& txt ) const
+void Compiler::printError( ErrCode c, const std::wstring& txt ) const
 {
     if( c <= ERR_LAST || warningLevel > 2 ||
        ( c <= ERR1_LAST && warningLevel > 0 ) ||
