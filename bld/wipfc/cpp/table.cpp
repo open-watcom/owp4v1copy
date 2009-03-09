@@ -78,7 +78,7 @@ Lexer::Token Table::parse( Lexer* lexer )
             }
             else {
                 document->printError( ERR1_TAGCONTEXT );
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
             }
         }
         else {
@@ -310,7 +310,7 @@ Lexer::Token TableRow::parse( Lexer* lexer )
             }
             else {
                 document->printError( ERR1_TAGCONTEXT );
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
             }
         }
         else {
@@ -672,7 +672,10 @@ Lexer::Token TableCol::parse( Lexer* lexer )
                 }
                 break;
             default:
-                parseCleanup( tok );
+                document->printError( ERR1_TABLECELLTAG );
+                while( tok != Lexer::TAGEND )
+                    tok = document->getNextToken();
+                tok = document->getNextToken();
                 break;
             }
         }

@@ -86,7 +86,7 @@ Lexer::Token Warning::parse( Lexer* lexer )
     tok = document->getNextToken(); //first token from buffer
     while( tok != Lexer::END ) {
         if( parseInline( lexer, tok ) )
-            parseCleanup( tok );
+            parseCleanup( lexer, tok );
     }
     whiteSpace = Tag::NONE;
     document->setBlockParsing( oldBlockParsing );
@@ -113,10 +113,10 @@ Lexer::Token Warning::parse( Lexer* lexer )
                 lexer->tagId() == Lexer::ENT ||
                 lexer->tagId() == Lexer::WARNING ||
                 lexer->tagId() == Lexer::EWARNING )
-                    parseCleanup( tok );
+                    parseCleanup( lexer, tok );
             else if( parseBlock( lexer, tok ) ) {
                 if( parseListBlock( lexer, tok ) )
-                    parseCleanup( tok );
+                    parseCleanup( lexer, tok );
             }
         }
     }

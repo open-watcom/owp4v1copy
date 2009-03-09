@@ -77,7 +77,7 @@ Lexer::Token Figcap::parse( Lexer* lexer )
             if( lexer->tagId() == Lexer::EUSERDOC || lexer->tagId() == Lexer::EFIG )
                 break;
             else
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
         }
         else if( tok == Lexer::ERROR_TAG ) {
             document->printError( ERR1_TAGNOTDEF );

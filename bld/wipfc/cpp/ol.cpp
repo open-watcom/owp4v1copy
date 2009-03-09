@@ -131,9 +131,7 @@ Lexer::Token Ol::parse( Lexer* lexer )
                 break;
             default:
                 document->printError( ERR1_NOENDLIST );
-                while( tok != Lexer::TAGEND )
-                    tok = document->getNextToken();
-                tok = document->getNextToken();
+                return tok;
             }
         }
     }
@@ -211,23 +209,14 @@ Lexer::Token OlLi::parse( Lexer* lexer )
         document->dataCol(), indent + 3 ) );
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC ) ) {
         if( parseInline( lexer, tok ) ) {
-            if( lexer->tagId() == Lexer::DL ||
-                lexer->tagId() == Lexer::PARML ||
-                lexer->tagId() == Lexer::OL ||
-                lexer->tagId() == Lexer::LI ||
-                lexer->tagId() == Lexer::EOL ||
-                lexer->tagId() == Lexer::SL ||
-                lexer->tagId() == Lexer::UL ) {
-                break;
-            }
-            else if( lexer->tagId() == Lexer::LP ) {
+            if( lexer->tagId() == Lexer::LP ) {
                 Element* elt( new P( document, this, document->dataName(),
                     document->dataLine(), document->dataCol() ) );
                 appendChild( elt );
                 tok = elt->parse( lexer );
             }
             else
-                parseCleanup( tok );
+                break;
         }
     }
     return tok;

@@ -108,7 +108,7 @@ Lexer::Token Dl::parse( Lexer* lexer )
                         tok = elt->parse( lexer );
                     }
                     else {
-                        document->printError( ERR1_TAGCONTEXT );
+                        document->printError( ERR1_DLHEADMATCH );
                         while( tok != Lexer::TAGEND )
                             tok = document->getNextToken();
                         tok = document->getNextToken();
@@ -178,9 +178,7 @@ Lexer::Token Dl::parse( Lexer* lexer )
                     break;
                 default:
                     document->printError( ERR1_NOENDLIST );
-                    while( tok != Lexer::TAGEND )
-                        tok = document->getNextToken();
-                    tok = document->getNextToken();
+                    return tok;
                 }
             }
         }
@@ -361,7 +359,7 @@ Lexer::Token Dd::parse( Lexer* lexer )
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC ) ) {
         if( parseInline( lexer, tok ) ) {
             if( lexer->tagId() == Lexer::DD )
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
             break;
         }
     }

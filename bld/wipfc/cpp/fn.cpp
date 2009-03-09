@@ -53,7 +53,7 @@ Lexer::Token Fn::parse( Lexer* lexer )
                 break;
             }
             else if( parseBlock( lexer, tok ) )
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
         }
     }
     return tok;

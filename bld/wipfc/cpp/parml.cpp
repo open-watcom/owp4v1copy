@@ -126,9 +126,7 @@ Lexer::Token Parml::parse( Lexer* lexer )
                     break;
                 default:
                     document->printError( ERR1_NOENDLIST );
-                    while( tok != Lexer::TAGEND )
-                        tok = document->getNextToken();
-                    tok = document->getNextToken();
+                    return tok;
                 }
             }
         }
@@ -260,7 +258,7 @@ Lexer::Token Pd::parse( Lexer* lexer )
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC ) ) {
         if( parseInline( lexer, tok ) ) {
             if( lexer->tagId() == Lexer::PD )
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
             break;
         }
     }

@@ -295,7 +295,7 @@ void Document::parse( Lexer* lexer )
         }
         else {
             if( tok != Lexer::WHITESPACE )
-                printError( ERR1_TAGCONTEXT );
+                printError( ERR1_HEADTEXT );
             tok = getNextToken();
         }
     }
@@ -351,7 +351,7 @@ void Document::parse( Lexer* lexer )
         }
         else {
             if( tok != Lexer::WHITESPACE )
-                printError( ERR1_TAGCONTEXT );
+                printError( ERR1_HEADTEXT );
             tok = getNextToken();
         }
     }
@@ -551,7 +551,6 @@ void Document::makeBitmaps()
         }
         try {
             char fbuffer[ PATH_MAX ];
-
             for( BitmapNameIter itr = bitmapNames.begin(); itr != bitmapNames.end(); ++itr ) {
                 if( std::wcstombs( fbuffer, itr->first.c_str(), sizeof( fbuffer ) ) == -1 )
                     throw FatalError( ERR_T_CONV );
@@ -571,6 +570,9 @@ void Document::makeBitmaps()
                     catch( FatalError& e ) {
                         if( count == paths.size() - 1 )
                             throw FatalIOError( e.code, itr->first );
+                    }
+                    catch( Class1Error& e ) {
+                        printError( e.code, itr->first );
                     }
                 }
             }

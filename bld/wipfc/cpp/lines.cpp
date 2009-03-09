@@ -48,7 +48,7 @@ Lexer::Token Lines::parse( Lexer* lexer )
             if( lexer->tagId() == Lexer::ELINES )
                 break;
             else
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
         }
     }
     return tok;

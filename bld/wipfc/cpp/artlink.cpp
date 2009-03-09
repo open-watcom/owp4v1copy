@@ -53,7 +53,7 @@ Lexer::Token Artlink::parse( Lexer* lexer )
             else if( lexer->tagId() == Lexer::EARTLINK || lexer->tagId() == Lexer::EUSERDOC )
                 break;
             else
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
         }
         else {
             if( tok != Lexer::WHITESPACE )

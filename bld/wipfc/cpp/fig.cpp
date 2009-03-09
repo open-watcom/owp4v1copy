@@ -56,7 +56,7 @@ Lexer::Token Fig::parse( Lexer* lexer )
                 tok = elt->parse( lexer );
             }
             else
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
         }
     }
     return tok;

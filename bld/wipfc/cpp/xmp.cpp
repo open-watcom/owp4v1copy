@@ -48,7 +48,7 @@ Lexer::Token Xmp::parse( Lexer* lexer )
             if( lexer->tagId() == Lexer::EXMP )
                 break;
             else
-                parseCleanup( tok );
+                parseCleanup( lexer, tok );
             }
     }
     return tok;

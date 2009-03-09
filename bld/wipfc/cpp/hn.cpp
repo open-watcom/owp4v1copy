@@ -274,7 +274,7 @@ Lexer::Token Hn::parse( Lexer* lexer )
             default:
                 if( parseBlock( lexer, tok ) ) {
                     if( parseListBlock( lexer, tok ) )
-                        parseCleanup( tok );
+                        parseCleanup( lexer, tok );
                 }
             }
         }

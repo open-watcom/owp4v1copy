@@ -88,7 +88,7 @@ Lexer::Token Note::parse( Lexer* lexer )
     tok = document->getNextToken(); //first token from buffer
     while( tok != Lexer::END ) {
         if( parseInline( lexer, tok ) )
-            parseCleanup( tok );
+            parseCleanup( lexer, tok );
     }
     whiteSpace = Tag::NONE;
     document->setBlockParsing( oldBlockParsing );

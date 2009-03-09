@@ -61,7 +61,7 @@ protected:
     bool parseInline( Lexer* lexer, Lexer::Token& tok );
     bool parseBlock( Lexer* lexer, Lexer::Token& tok );
     bool parseListBlock( Lexer* lexer, Lexer::Token& tok );
-    void parseCleanup( Lexer::Token& tok );
+    void parseCleanup( Lexer* lexer, Lexer::Token& tok );
 private:
     Tag( const Tag& rhs );              //no copy
     Tag& operator=( const Tag& rhs );   //no assignment

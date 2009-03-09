@@ -507,6 +507,7 @@ bool Tag::parseBlock( Lexer* lexer, Lexer::Token& tok )
             while( tok != Lexer::TAGEND )
                 tok = document->getNextToken();
             tok = document->getNextToken();
+            break;
         case Lexer::P:
             {
                 Element* elt( new P( document, this, document->dataName(),
@@ -629,9 +630,12 @@ bool Tag::parseListBlock( Lexer* lexer, Lexer::Token& tok )
     return notHandled;
 }
 /***************************************************************************/
-void Tag::parseCleanup( Lexer::Token& tok )
+void Tag::parseCleanup( Lexer* lexer, Lexer::Token& tok )
 {
-    document->printError( ERR1_TAGCONTEXT );
+    if( lexer->tagId() == Lexer::BADTAG )
+        document->printError( ERR1_TAGNOTDEF );
+    else
+        document->printError( ERR1_TAGCONTEXT );
     while( tok != Lexer::TAGEND )
         tok = document->getNextToken();
     tok = document->getNextToken();
