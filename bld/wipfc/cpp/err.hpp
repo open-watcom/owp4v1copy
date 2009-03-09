@@ -135,7 +135,6 @@ Class1 Errors
 */
 
 //Class 2 Errors
-PICK( ERR2_ATTRIB, "Invalid attribute" )
 PICK( ERR2_VALUE, "Invalid or missing attribute value" )
 PICK( ERR2_SYMBOL, "Invalid symbol (entity reference or .nameit expansion)" )
 PICK( ERR2_NEST, "Invalid tag nesting" )

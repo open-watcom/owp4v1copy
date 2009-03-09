@@ -74,7 +74,7 @@ Lexer::Token DocProf::parse( Lexer* lexer )
                 document->printError( ERR1_ATTRNOTDEF );
         }
         else if ( tok == Lexer::FLAG )
-            document->printError( ERR2_ATTRIB );
+            document->printError( ERR1_ATTRNOTDEF );
         else if( tok == Lexer::END )
             throw FatalError( ERR_EOF );
         else
