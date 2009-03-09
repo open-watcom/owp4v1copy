@@ -142,7 +142,7 @@ PICK( ERR2_NEST, "Invalid tag nesting" )
 PICK( ERR2_FNIDX, "Footnote cannot be indexed" )
 PICK( ERR2_FONTS, "Too many (> 14) fonts have been used" )
 PICK( ERR2_TEXTTOOLONG, "Title or index text is too long" )
-PICK( ERR2_SUBNOTGLOBAL, "Subindexes of a global index mustbe global, too" )
+PICK( ERR2_SUBNOTGLOBAL, "Subindexes of a global index must be global, too" )
 PICK( ERR2_INOTEXT, "An index entry requires text" )
 PICK( ERR2_LAST, "Last level 2 error code" )
 /*
@@ -172,7 +172,6 @@ PICK( ERR3_NOBUTTON, "Control group references an undefined button" )
 PICK( ERR3_MIXEDUNITS, "Cannot mix dynamic and absolute units" )
 PICK( ERR3_FNNOAUTO, "Footnotes cannot be opened automatically" )
 PICK( ERR3_FNNOSPLIT, "Footnote cannot be opened from a split window" )
-PICK( ERR3_NOTSUPPORTED, "This tag is not supported by wipfc. If you know how it is encoded, contact us.")
 PICK( ERR3_LAST, "Last level 3 error code" )
 /*
 Class3 Errors
