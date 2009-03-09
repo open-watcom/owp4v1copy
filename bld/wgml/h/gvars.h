@@ -48,7 +48,6 @@ global  char        *   scan_char_ptr;  // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
 global char         *   tok_start;      // start of scanned token
 global size_t           arg_flen;       // arg length
-global  int             curr_char;
 
 global  int             switch_char;    // DOS switch character
 global  char        *   alt_ext;        // alternate extension
@@ -97,6 +96,7 @@ global  int             pass;           // current pass no
 
 global  symvar      *   global_dict;    // global symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
+global  gtentry     *   tag_dict;       // User tag dictionary
 
 
 global  struct GlobalFlags {
@@ -152,26 +152,16 @@ global char         *   var_unresolved; // first unresolved var in input
 global char             srnm[ SYM_NAME_LENGTH + 1 ];// symbol name for getsym()
 global sub_index        srnmsub;        // subscript
 
+// the following to manage .gt * and .ga * * syntax
+global char        tagname[ TAG_NAME_LENGTH + 1 ];// last defined GML tag name
+global gtentry  *  tag_entry;           // ... entry in tag_dict
+global char        attname[ ATT_NAME_LENGTH + 1 ];// last defined GML attribute
+global gaentry  *  att_entry;           // ... entry in tag_dict
+
+
 /* Reset so can be reused with other headers. */
 
 #undef global
-
-/* ----                 will eventually be deleted
-SRNM     DC    CL10' '             WORKING REFERENCE NAME               15760000
-SRNMSUB  DC    AL2(*-*,0)          SUBSCRIPT VALUE AND DEFAULT          15780000
-SRNMFR   DC    AL2(*-*,1)          FROM SUBLIST VALUE AND DEFAULT       15800000
-SRNMTO   DC    AL2(*-*,255)        TO SUBLIST VALUE AND DEFAULT         15820000
-SRNMFLG  DC    X'00'               REFERENCE NAME FLAG BYTE             15840000
-SRNMALL  EQU   X'80'                    ALL SUBSCRIPT FLAG              15860000
-SRNMALLP EQU   X'40'                    ALL BUT POSITIVE                15880000
-SRNMALLN EQU   X'20'                    ALL BUT NEGATIVE                15900000
-*        EQU   X'10'                    UNUSED                          15920000
-SRNMTSYM EQU   X'08'                    ERROR IN REFERENCE SYMBOL       15940000
-SRNMTSUB EQU   X'04'                    ERROR IN REFERENCE SUBSCRIPT    15960000
-SRNMTFR  EQU   X'02'                    ERROR IN REF SUBLIST FROM       15980000
-SRNMTTO  EQU   X'01'                    ERROR IN REF SUBLIST TO         16000000
--------------------------------------------------------- */
-
 
 
 

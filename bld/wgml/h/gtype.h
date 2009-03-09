@@ -53,8 +53,12 @@
 #define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
 #define SCR_KW_LENGTH   2               // script control word length
 #define FUN_NAME_LENGTH 11              // &'function name max length
+
 #define TAG_NAME_LENGTH 15              // :tag name length
-#define ATT_NAME_LENGTH 9               // :tag attr name len
+#define ATT_NAME_LENGTH 9               // :tag attr name length
+#define VAL_LENGTH      10              // max length for attribute value
+                                        // longer strings will be allocated
+
 #define SYM_NAME_LENGTH 10              // symbol name length
 #define MAC_NAME_LENGTH 8               // macro name length
 #define MAX_MAC_PARMS   32              // maximum macro parm count
@@ -169,6 +173,7 @@ typedef enum {
     FF_err          = 0x0004,           // file error
     FF_crlf         = 0x0008,           // delete trailing CR and / or LF
     FF_macro        = 0x0010,           // entry is macro not file
+    FF_tag          = 0x0030,           // entry is macro via tag
     FF_open         = 0x8000            // file is open
 } fflags;
 
@@ -239,10 +244,11 @@ typedef struct mac_parms {
 /***************************************************************************/
 
 typedef struct  macrocb {
-    fflags          flags;
-    ulong           lineno;             // current macro line number
-    inp_line    *   macline;            // list of macro lines
-    mac_entry   *   mac;                // macro definition entry
+    fflags              flags;
+    ulong               lineno;         // current macro line number
+    inp_line        *   macline;        // list of macro lines
+    mac_entry       *   mac;            // macro definition entry
+    struct gtentry  *   tag;            // tag entry if macro called via tag
 } macrocb;
 
 
@@ -280,7 +286,8 @@ typedef struct ifcb {
 typedef enum {
     II_file     = 0x01,                 // inputcb is file
     II_macro    = 0x02,                 // inputcb is macro
-    II_eof      = 0x04                  // end of file (input)
+    II_tag      = 0x06,                 // inputcb is macro via tag
+    II_eof      = 0x08                  // end of file (input)
 } i_flags;
 
 /***************************************************************************/
@@ -295,7 +302,7 @@ typedef struct  inputcb {
     ifcb            *   if_cb;          // for controlling .if .th .el
     union  {
         filecb      *   f;              // used if input is from file
-        macrocb     *   m;              // used if input is from macro
+        macrocb     *   m;              // used if input is from macro/tag
     } s;
 } inputcb;
 
@@ -311,7 +318,7 @@ typedef struct scrtag {
 
 
 /***************************************************************************/
-/*  GML tags                                                               */
+/*  GML tags    predefined                                                 */
 /***************************************************************************/
 
 typedef enum {
@@ -333,6 +340,110 @@ typedef struct gmltag {
 
 
 /***************************************************************************/
+/*  GML tags   user defined                                                */
+/*  i.e.  via .gt and .ga script control words                             */
+/*  enum values have to be single bits 2**x                                */
+/***************************************************************************/
+
+typedef enum gavalflags {
+    val_def     = 1,                    // value is default
+    val_any     = 2,                    // any value allowed
+    val_length  = 4,                    // max length of value
+    val_range   = 8,                    // allowed range (numeric)
+    val_value   = 16,                   // allowed value stored in union
+    val_valptr  = 32,                   // allowed value allocated
+    val_auto    = 64,                   // automatic (not used / implemented)
+    val_reset   = 128                   // reset (not used / implemented)
+} gavalflags;
+
+
+/***************************************************************************/
+/*  options B   from .ga control word                                      */
+/***************************************************************************/
+
+typedef struct gavalentry {
+    struct gavalentry   *   next;
+    gavalflags              valflags;
+    union a {
+       size_t   length;           // possible max length of (character) value
+       long     range[ 4 ];// min, max, default omitted, default without value
+       char     value[ VAL_LENGTH + 1 ];// string value if short enough
+       char *   valptr;                 // ... else allocated
+    } a;
+} gavalentry;
+
+
+/***************************************************************************/
+/*  options A   from .ga control word                                      */
+/*  enum values have to be single bits 2**x                                */
+/*  exception are the att_proc_xxx values                                  */
+/***************************************************************************/
+
+typedef enum {
+    att_def         = 0x0001,           // attribute has default value
+    att_range       = 0x0002,           // attribute has range
+    att_auto        = 0x0004,           // attribute is automatic
+    att_any         = 0x0008,           // attribute any value allowed
+    att_req         = 0x0010,           // attribute required
+    att_upper       = 0x0020,           // translate to upper
+    att_off         = 0x0040,           // attribute is inactive
+
+    att_proc_all    = 0x0f00,           // mask for processing flags
+
+    att_proc_req    = 0x0100,           // req attr not yet seen
+    att_proc_auto   = 0x0200,           // auto attr cannot be specified
+    att_proc_seen   = 0x0400,           // attr specified
+    att_proc_val    = 0x0800            // ... with value specified
+} gaflags;
+
+
+/***************************************************************************/
+/*  entry from .ga control word                                            */
+/***************************************************************************/
+
+typedef struct gaentry {
+    struct gaentry  *   next;
+    gavalentry      *   vals;
+    char                name[ ATT_NAME_LENGTH + 1 ];
+    gaflags             attflags;
+} gaentry;
+
+
+/***************************************************************************/
+/*  GML tag options from the .gt Control word                              */
+/*  enum values have to be single bits 2**x                                */
+/***************************************************************************/
+
+typedef enum {
+    tag_attr     = 1,                   // tag has attributes
+    tag_cont     = 2,                   // CONTinue specified
+    tag_nocont   = 4,                   // NOCONTinue specified
+    tag_csoff    = 8,                   // CSOFF specified
+    tag_next     = 16,                  // TAGnext specified
+    tag_textdef  = 32,                  // TEXTDef specified
+    tag_texterr  = 64,                  // TEXTError specified
+    tag_textline = 128,                 // TEXTLine specified
+    tag_textreq  = 256,                 // TEXTRequired specified
+    tag_off      = 512                  // tag OFF specified
+} gtflags;
+
+
+/***************************************************************************/
+/*  Tag entry  from .gt control word                                       */
+/***************************************************************************/
+
+typedef struct gtentry {
+    struct gtentry  *   next;
+    gaentry         *   attribs;        // list of attributes
+    ulong               usecount;
+    size_t              namelen;        // actual length of name
+    char                name[ TAG_NAME_LENGTH + 1 ];
+    char                macname[ MAC_NAME_LENGTH + 1];  // macro to call
+    gtflags             tagflags;
+} gtentry;
+
+
+/***************************************************************************/
 /*  condcode  returncode for several conditions during parameterchecking   */
 /*            loosely adapted from wgml 88.1 IBM S/360 ASM code            */
 /***************************************************************************/
@@ -342,16 +453,16 @@ typedef enum condcode {            // return code for some scanning functions
     omit            = 1,                // argument omitted
     pos             = 2,                // argument affirmative
     neg             = 4,                // argument negative
-    quotes          = 6,                // argument within quotes
-    no              = 8,                // argument undefined
-    notnum          = 8                 // value not numeric / overflow
+    quotes          = 8,                // argument within quotes
+    quotes0         = 16,               // only quotes
+    no              = 32,               // argument undefined
+    notnum          = 32                 // value not numeric / overflow
 }  condcode;
 
 
 /***************************************************************************/
 /*  scr string functions                                                   */
 /***************************************************************************/
-
 
 typedef struct parm {
     char    *       a;                  // start of parm ptr

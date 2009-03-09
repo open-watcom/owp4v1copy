@@ -97,6 +97,12 @@ void init_global_vars( void )
 
     init_dict( &global_dict );
     init_macro_dict( &macro_dict );
+    init_tag_dict( &tag_dict );
+
+    tagname[ 0 ]        = '*';          // last defined GML tag name none
+    tag_entry           = NULL;         // ... entry in tag_dict
+    attname[ 0 ]        = '*';          // last defined GML attribute none
+    att_entry           = NULL;         // ... entry in tag_dict
 
     buf_size            = BUF_SIZE;
     buff2               = mem_alloc( buf_size );

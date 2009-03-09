@@ -72,10 +72,11 @@ extern  void        garginit( void );
 extern  void        garginitdot( void );
 extern  condcode    getarg( void );
 extern  condcode    getqst( void );
-extern  bool        test_function_char( char c );
-extern  bool        test_identifier_char( char c );
-extern  bool        test_macro_char( char c );
-extern  bool        test_symbol_char( char c );
+extern  bool        is_quote_char( char c );
+extern  bool        is_function_char( char c );
+extern  bool        is_id_char( char c );
+extern  bool        is_macro_char( char c );
+extern  bool        is_symbol_char( char c );
 extern  void        unquote_if_quoted( char * * a, char * * z );
 
 
@@ -102,7 +103,7 @@ extern  void        add_macro_entry( mac_entry * * dict, mac_entry * me );
 extern  void        init_macro_dict( mac_entry * * dict );
 extern  void        free_macro_dict( mac_entry * * dict );
 extern  void        free_macro_entry( mac_entry * * dict, mac_entry * me );
-extern  void        print_macro_dict( mac_entry * dict );
+extern  void        print_macro_dict( mac_entry * dict, bool with_mac_lines );
 extern  mac_entry * find_macro( mac_entry * dict, char const * name );
 
 
@@ -160,7 +161,7 @@ extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
 
 /* gsmacro.c                          */
-extern  void        add_macro_cb_entry( mac_entry * me );
+extern  void        add_macro_cb_entry( mac_entry * me, gtentry * ge );
 extern  void        add_macro_parms( char * p );
 extern  void        free_lines( inp_line * line );
 
@@ -173,6 +174,18 @@ extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index 
 extern void     print_sym_dict( symvar * dict );
 extern void     reset_auto_inc_dict( symvar * dict );
 
+/* gtagdict.c                         */
+extern  gtentry *   add_tag( gtentry * * dict, char const * name, char const * macro, const int flags );
+extern  gtentry *   change_tag( gtentry * * dict, char const * name, char const * macro );
+extern  void        init_tag_dict( gtentry * * dict );
+extern  void        free_tag_dict( gtentry * * dict );
+extern  gtentry *   free_tag( gtentry * * dict, gtentry * ge );
+extern  void        print_tag_dict( gtentry * dict );
+extern  void        print_tag_entry( gtentry * entry );
+extern  gtentry *   find_tag( gtentry * * dict, char const * name );
+
+/* gusertag.c                         */
+extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 /* gutils.c                           */
 extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
@@ -189,7 +202,7 @@ extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
  * prototypes for the script control word processing routines
  */
 
-#define pick( name, length, routine, flags )  extern void routine( void );
+#define pick( name, routine, flags )  extern void routine( void );
 
 #include "gscrcws.h"
 

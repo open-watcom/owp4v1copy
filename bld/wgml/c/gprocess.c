@@ -155,40 +155,53 @@ void        process_line( void )
     bool                functions_found;
     bool                anything_substituted;
 
-    //  look for GML tag start character and split line if found
+
+    /***********************************************************************/
+    /*  look for GML tag start character and split line if valid GML tag   */
+    /***********************************************************************/
 
     pchar = strchr( buff2, GML_char );  // look for GML tag start
     if( (pchar != NULL) && (buff2 < pchar) ) {
-        split_input( buff2, pchar );    // if found at pos > 1 split
-        buff2_lg = strnlen_s( buff2, buf_size ); // new length of first part
+        for( p2 = pchar; (p2 < (buff2 + buf_size)) && is_id_char( *p2 ); p2++ )
+            ;                           // empty
+
+        if( (*p2 == '.') || (*p2 == ' ') ) {// 'good' tag end
+            split_input( buff2, pchar );// split line
+            buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
+        }
+
     }
 
-    // if macro define ( .dm xxx ... ) supress variable substitution
-    // for the sake of single line macro definition
-    // .dm xxx /&*1/&*2/&*0/&*/
-    // this is the same as wgml 4.0
 
-    if( (*buff2 == SCR_char) && !strnicmp( buff2 + 1, "dm ", 3 ) ) {
-        return;
-    }
+    /***********************************************************************/
+    /* for :cmt. minimal processing                                        */
+    /***********************************************************************/
 
-    // for :cmt. minimal processing
     if( (*buff2 == GML_char) && !strnicmp( buff2 + 1, "cmt.", 4 ) ) {
         return;
     }
 
-
     if( (*buff2 == SCR_char) ) {
 
-        // for .* comment minimal processing
         if( *(buff2 + 1) == '*' ) {
+            return;                     // for .* comment minimal processing
+        }
+
+        /***********************************************************************/
+        /* if macro define ( .dm xxx ... ) supress variable substitution       */
+        /* for the sake of single line macro definition                        */
+        /* .dm xxx / &*1 / &*2 / &*0 / &* /                                    */
+        /***********************************************************************/
+
+        if( !strnicmp( buff2 + 1, "dm ", 3 ) ) {
             return;
         }
+
 
         // for lines starting  .' ignore control word seperator
 
         if( !(*(buff2 + 1) == '\'') ) {
-            pchar = strchr( buff2, CW_sep_char );
+            pchar = strchr( buff2 + 2, CW_sep_char );
             if( (pchar != NULL) ) {
                 split_input( buff2, pchar + 1 );// split after CW_sep_char
 
@@ -342,9 +355,9 @@ void        process_line( void )
 
                     } else {
                         ProcFlags.substituted = true;
-                                                  // replace by nullstring
+                                        // replace by nullstring
                         if( *pchar == '.' ) {
-                            pchar++;        // skip optional terminating dot
+                            pchar++;    // skip optional terminating dot
                         }
                         pw = pchar;
                     }
@@ -470,7 +483,7 @@ void        process_line( void )
                 }
             }                           // while & found
 
-            while( pw <= pwend) {           // copy remaining input
+            while( pw <= pwend) {       // copy remaining input
                  *p2++ = *pw++;
             }
 

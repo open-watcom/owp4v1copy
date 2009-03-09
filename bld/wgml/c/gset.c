@@ -194,6 +194,7 @@ extern  void    gml_set( const gmltag * entry )
             break;
         }
     }
+    scan_start = scan_stop + 1;
     return;
 }
 

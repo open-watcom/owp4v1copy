@@ -29,7 +29,7 @@
 *         garginitdot          --- initialize operand scan in buff2 (GML)
 *         getarg               --- scan (quoted) blank delimited argument
 *         getqst               --- scan quoted string
-*         test_xxx_char        --- test for allowed char
+*         is_xxx_char          --- test for allowed char
 *         is_quote_char        --- test for different quote chars
 *         unquote_if_quoted    --- adjust ptrs for quoted string
 *
@@ -140,11 +140,10 @@ condcode    getarg( void )
         if( quoted ) {
             tok_start++;
             scan_start = p + 1;         // address of start for next call
-            arg_flen = p - tok_start;   // length of arg
         } else {
             scan_start = p;             // address of start for next call
-            arg_flen = p - tok_start;   // length of arg
         }
+        arg_flen = p - tok_start;       // length of arg
         if( arg_flen > 0 ) {
             if( quoted ) {
                 cc = quotes;            // quoted arg found
@@ -152,7 +151,11 @@ condcode    getarg( void )
                 cc = pos;               // arg found
             }
         } else {
-            cc = omit;                  // length zero
+            if( quoted ) {
+                cc = quotes0;           // Nullstring
+            } else {
+                cc = omit;              // length zero
+            }
         }
     }
     return( cc );
@@ -237,7 +240,7 @@ condcode    getqst( void )
 /*
  * Test character as valid for an function name
  */
-bool    test_function_char( char c )
+bool    is_function_char( char c )
 {
     bool    test;
 
@@ -248,7 +251,7 @@ bool    test_function_char( char c )
 /*
  * Test character as valid for an identifier name
  */
-bool    test_identifier_char( char c )
+bool    is_id_char( char c )
 {
     bool    test;
 
@@ -259,7 +262,7 @@ bool    test_identifier_char( char c )
 /*
  * Test character as valid for a macro name
  */
-bool    test_macro_char( char c )
+bool    is_macro_char( char c )
 {
     bool    test;
 
@@ -273,7 +276,7 @@ bool    test_macro_char( char c )
 /*
  * Test character as valid for a symbol name
  */
-bool    test_symbol_char( char c )
+bool    is_symbol_char( char c )
 {
     bool    test;
 

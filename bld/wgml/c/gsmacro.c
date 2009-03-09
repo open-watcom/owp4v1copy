@@ -48,9 +48,10 @@
 
 /***************************************************************************/
 /*  add info about macro   to LIFO input list                              */
+/*  if second parm is not null, macro is called via GML tag                */
 /***************************************************************************/
 
-void    add_macro_cb_entry( mac_entry *me )
+void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 {
     macrocb *   new;
     inputcb *   nip;
@@ -65,13 +66,20 @@ void    add_macro_cb_entry( mac_entry *me )
 
     init_dict( &nip->local_dict );
 
-    nip->fmflags      = II_macro;
-    nip->s.m          = new;
+    nip->s.m        = new;
 
-    new->lineno       = 0;
-    new->macline      = me->macline;
-    new->mac          = me;
-    new->flags        = FF_macro;
+    new->lineno     = 0;
+    new->macline    = me->macline;
+    new->mac        = me;
+    new->tag        = ge;
+
+    if( ge == NULL ) {
+        new->flags      = FF_macro;
+        nip->fmflags    = II_macro;
+    } else {
+        new->flags      = FF_tag;
+        nip->fmflags    = II_tag;
+    }
 
     nip->prev = input_cbs;
     input_cbs = nip;
@@ -285,7 +293,7 @@ void    scr_dm( void )
      *  this is wgml 4.0 behaviour
      *
      */
-    while( *p && test_macro_char( *p ) ) {
+    while( *p && is_macro_char( *p ) ) {
         if( len < MAC_NAME_LENGTH ) {
             *pn++ = tolower( *p++ );    // copy lowercase macroname
             *pn   = '\0';
@@ -662,7 +670,7 @@ void    scr_em( void )
          *  this is wgml 4.0 behaviour
          *
          */
-        while( *p && test_macro_char( *p ) ) {
+        while( *p && is_macro_char( *p ) ) {
             if( len < MAC_NAME_LENGTH ) {
                 *pn++ = *p++;           // copy macroname
                 *pn   = '\0';

@@ -71,7 +71,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     sym->name[ 0 ] = '\0';
 
     k = 0;
-    while( *p && test_symbol_char( *p ) ) {
+    while( *p && is_symbol_char( *p ) ) {
 
         if( k < SYM_NAME_LENGTH ) {
             if( (k == 3) && (sym->name[ 0 ] != '$') ) {

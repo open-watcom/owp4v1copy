@@ -59,7 +59,7 @@ static  const   gmltag  gml_tags[] = {
 /*    SCR control words                                                    */
 /***************************************************************************/
 
-#define pick(name, length, routine, flags) { name, routine },
+#define pick(name, routine, flags) { name, routine },
 
 static  const   scrtag  scr_tags[] = {
 
@@ -84,12 +84,15 @@ static void scan_gml( void )
     int             toklen;
     int             k;
     char            csave;
+    bool            processed;
+    gtentry     *   ge;                 // GML user tag entry
+    mac_entry   *   me;                // script macro for processing GML tag
 
     cb = input_cbs;
 
     p = scan_start +1;
     tok_start = scan_start;
-    while( *p != ' ' && *p != '.' && p <= scan_stop ) {// search end of keyword
+    while( is_id_char( *p ) && p <= scan_stop ) { // search end of TAG
         p++;
     }
     scan_start = p;                      // store argument start address
@@ -98,22 +101,21 @@ static void scan_gml( void )
     *p = '\0';
     if( toklen >= TAG_NAME_LENGTH ) {
         err_count++;
-        // SC--074 For the symbol '%s'
-        //         The length of a symbol cannot exceed ten characters
+        // SC--009 The tagname is too long
         if( cb->fmflags & II_macro ) {
-            out_msg( "ERR_SYM_NAME_too_long '%s'\n"
-                     "\t\tThe length of a symbol cannot exceed ten characters\n"
+            out_msg( "ERR_TAG_NAME too long '%s'\n"
                      "\t\t\tLine %d of macro '%s'\n",
                      tok_start + 1, cb->s.m->lineno, cb->s.m->mac->name );
         } else {
-            out_msg( "ERR_SYM_NAME_too_long '%s'\n"
-                     "\t\tThe length of a symbol cannot exceed ten characters\n"
+            out_msg( "ERR_TAG_NAME too long '%s'\n"
                      "\t\t\tLine %d of file '%s'\n",
                      tok_start + 1, cb->s.f->lineno, cb->s.f->filename );
         }
         if( inc_level > 0 ) {
             show_include_stack();
         }
+        *p = csave;
+        scan_start = tok_start;         // process as text
         return;
     }
 
@@ -134,17 +136,62 @@ static void scan_gml( void )
         add_GML_tag_research( tok_start + 1 );
     }
 
+    ge = find_tag( &tag_dict, tok_start + 1 );
+    processed = false;
+    if( ge != NULL ) {                  // GML user defined Tag found
+        *p = csave;
+        if( ge->tagflags & tag_off ) {  // tag off, treat as text
+            scan_start = tok_start;
+            return;
+        }
+        me = find_macro( macro_dict, ge->macname );
+        if( me == NULL ) {
+            err_count++;
+            // SC--037: The macro 'xxxxxx' for the gml tag 'yyyyy'
+            //          is not defined
+            if( cb->fmflags & II_macro ) {
+                out_msg( "ERR_TAG_macro   The macro '%s' for the gml tag '%s'\n"
+                         "\t\tis not defined\n"
+                         "\t\t\tLine %d of macro '%s'\n",
+                         ge->macname, ge->name,
+                         cb->s.m->lineno, cb->s.m->mac->name );
+            } else {
+                out_msg( "ERR_TAG_macro   The macro '%s' for the gml tag '%s'\n"
+                         "\t\tis not defined\n"
+                         "\t\t\tLine %d of file '%s'\n",
+                         ge->macname, ge->name,
+                         cb->s.f->lineno, cb->s.f->filename );
+            }
+            if( inc_level > 0 ) {
+                show_include_stack();
+            }
+            *p = csave;
+            scan_start = tok_start;         // process as text
+            return;
+        } else {
 
-    for( k = 0; k < GML_TAGMAX; ++k ) {
-        if( toklen == gml_tags[ k].taglen ) {
-            if( !stricmp( gml_tags[ k ].tagname, tok_start + 1 ) ) {
-                *p = csave;
-                gml_tags[ k ].gmlproc( &gml_tags[ k ] );
-                break;
+            processed = process_tag( ge, me );
+
+        }
+    } else {
+        for( k = 0; k < GML_TAGMAX; ++k ) {
+            if( toklen == gml_tags[ k].taglen ) {
+                if( !stricmp( gml_tags[ k ].tagname, tok_start + 1 ) ) {
+                    *p = csave;
+                    gml_tags[ k ].gmlproc( &gml_tags[ k ] );
+                    processed = true;
+                    if( *scan_start == '.' ) {
+                        scan_start++;
+                    }
+                    break;
+                }
             }
         }
     }
     *p = csave;
+    if( !processed ) {
+        scan_start = tok_start;
+    }
 }
 
 
@@ -245,7 +292,7 @@ static void     scan_script( void)
         scan_start = p;
 
         pt = token_buf;
-        while( *p && test_macro_char( *p ) ) {  // end of controlword
+        while( *p && is_macro_char( *p ) ) {  // end of controlword
            *pt++ = tolower( *p++ );     // copy lowercase to TokenBuf
         }
         *pt = '\0';
@@ -253,6 +300,8 @@ static void     scan_script( void)
         toklen = pt - token_buf;
 
         if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
+
+           scan_start = p;
 
 //         copy_buff2_to_output();    TBD
 
@@ -282,7 +331,7 @@ static void     scan_script( void)
             }
             add_SCR_tag_research( token_buf );
         }
-        add_macro_cb_entry( me );
+        add_macro_cb_entry( me, NULL );
         inc_inc_level();
         add_macro_parms( p );
     } else {                            // try script controlword
@@ -299,8 +348,8 @@ static void     scan_script( void)
             add_SCR_tag_research( token_buf );
         }
 
-        for( k = 0; k < SCR_TAGMAX; ++k ) {
-            if( toklen == SCR_KW_LENGTH ) {
+        if( toklen == SCR_KW_LENGTH ) {
+            for( k = 0; k < SCR_TAGMAX; ++k ) {
                 if( !stricmp( scr_tags[ k ].tagname, token_buf ) ) {
                     scan_start = p; // script controlword found, process
                     scr_tags[ k ].tagproc();
@@ -535,32 +584,25 @@ void    scan_line( void )
 
     if( *scan_start == SCR_char ) {
         set_if_then_do();
-        cc = mainif();
-        if( cc == pos ) {
+    }
+    cc = mainif();
+    if( cc == pos ) {
+        if( *scan_start == SCR_char ) {
             scan_script();              // script control line
-        } else {
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                out_msg( "skip .xx control line\n" );
-            }
-        }
-    } else if( *scan_start == GML_char ) {
-        cc = mainif();
-        if( cc == pos ) {
+            scan_start = scan_stop + 1; // cannot have unprocessed text
+        } else if( *scan_start == GML_char ) {
             scan_gml();                 // gml tags
-        } else {
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                out_msg( "skip :xxx tag line\n" );
-            }
         }
-    } else {
-        cc = mainif();
-        if( cc == pos ) {
-            // process text     TBD
-        } else {
+        if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                out_msg( "skip text line\n" );  // skip text
+                out_msg(") )%s( (\n", scan_start);
             }
+
+                           /* process text or unprocessed tag      TBD */
+
         }
+    } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        out_msg( "skip line\n" );
     }
 }
 

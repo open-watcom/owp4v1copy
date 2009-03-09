@@ -194,22 +194,28 @@ mac_entry   * find_macro( mac_entry * dict, const char * name )
 /*  print_macro_dict  output all of the macro dictionary                   */
 /***************************************************************************/
 
-void    print_macro_dict( mac_entry * dict )
+void    print_macro_dict( mac_entry * dict, bool with_mac_lines )
 {
     mac_entry           *   wk;
     int                     cnt;
     int                     len;
+    inp_line            *   ml;
+    int                     lc;
     static  const   char    fill[ 10 ] = "         ";
 
     cnt = 0;
     wk = dict;
-    out_msg( "\nList of defined macros:\n" );
-    while( wk != NULL ) {
+    out_msg( "\nList of defined macros:\n\n" );
+    for( wk = dict; wk != NULL; wk = wk->next ) {
 
         len =  strlen( wk->name );
         out_msg( "Macro='%s'%sdefined line %d file '%s'\n", wk->name,
                 &fill[ len ], wk->lineno, wk->mac_file_name );
-        wk = wk->next;
+        if( with_mac_lines ) {
+            for( ml = wk->macline, lc = 1; ml != NULL; ml = ml->next, lc++ ) {
+                out_msg("%+.3d %s\n", lc, ml->value );
+            }
+        }
         cnt++;
     }
     out_msg( "\nTotal macros defined: %d\n", cnt );

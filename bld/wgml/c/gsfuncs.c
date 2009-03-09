@@ -163,7 +163,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     pchar = in + 2;                     // over &'
 
     // collect function name
-    while( *pchar && pchar <= end && test_function_char( *pchar ) ) {
+    while( *pchar && pchar <= end && is_function_char( *pchar ) ) {
         fn[ fnlen ] = *pchar++;
         if( fnlen < FUN_NAME_LENGTH ) {
             fnlen++;

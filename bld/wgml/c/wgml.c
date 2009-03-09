@@ -96,8 +96,10 @@ static void usage( void )
     out_msg( CRLF "Usage: wgml [options] srcfile [options]" CRLF );
     out_msg( "Options:" CRLF );
     out_msg( "-q\t\tQuiet, don't show product info." CRLF );
-    out_msg( "-r\t\tResearch, no formatting, only count GML/SCR keywords" CRLF );
-    out_msg( "\t\tand follow .im, .ap, :INCLUDE tags." CRLF );
+    out_msg( "-r\t\tResearch, no formatting, only process some GML/SCR keywords," CRLF );
+    out_msg( "\t\tfollow .im, .ap, :INCLUDE tags and show substituted lines." CRLF );
+    out_msg( "\t\t> >substituted line< <" CRLF );
+    out_msg( "\t\t) )resulting text line after macro / tag processing( (" CRLF );
     out_msg( "\tother options to be done / documented." CRLF );
     my_exit( 4 );
 }
@@ -380,7 +382,7 @@ bool    get_line( void )
             input_cbs->hidden_tail = NULL;
         }
     } else {
-        if( input_cbs->fmflags == II_macro ) {
+        if( input_cbs->fmflags & II_macro ) {
             get_macro_line();           // input from macro line
         } else {
             cb = input_cbs->s.f;        // input from file
@@ -784,7 +786,7 @@ int main( int argc, char * argv[] )
     cmdline = mem_alloc( cmdlen );
     _bgetcmd( cmdline, cmdlen );
 
-    out_msg( "cmdline=%s\n", cmdline );
+    out_msg( "cmdline='%s'\n", cmdline );
 
     proc_options( cmdline );
     cop_setup();                        // init copfiles
@@ -824,10 +826,13 @@ int main( int argc, char * argv[] )
         print_SCR_tags_research();
         free_SCR_tags_research();
 
-        print_macro_dict( macro_dict );
+        print_macro_dict( macro_dict, true );
 
         if( global_dict != NULL ) {
             print_sym_dict( global_dict );
+        }
+        if( tag_dict != NULL ) {
+            print_tag_dict( tag_dict );
         }
     }
 
@@ -863,6 +868,9 @@ int main( int argc, char * argv[] )
     }
     if( macro_dict != NULL ) {
         free_macro_dict( &macro_dict );
+    }
+    if( tag_dict != NULL ) {
+        free_tag_dict( &tag_dict );
     }
     if( buff2 != NULL ) {
         mem_free( buff2 );
