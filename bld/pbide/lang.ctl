@@ -27,6 +27,8 @@ cdsay .
     <CPCMD> <DEVDIR>/pbide/run/wini86/run.exe       <RELROOT>/binw/watrun.exe
     <CPCMD> <DEVDIR>/pbide/dlldbg/wini86/dlldbg.exe <RELROOT>/binw/dlldbg.exe
     <CPCMD> <DEVDIR>/pbide/wig/wini86.dll/pbide.dll <RELROOT>/binw/pbide.dll
+    <CPCMD> <DEVDIR>/pbide/cfg/wini86/pbide.cfg     <RELROOT>/binw/pbide.cfg
+    <CPCMD> <DEVDIR>/pbide/cfg/wini86/pbidex.cfg    <RELROOT>/binw/pbidex.cfg
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/pbide/run/nt386/run.exe        <RELROOT>/binnt/watrun.exe
     <CPCMD> <DEVDIR>/pbide/dlldbg/nt386/dlldbg.exe  <RELROOT>/binnt/dlldbg.exe
@@ -40,8 +42,6 @@ cdsay .
     <CPCMD> <DEVDIR>/pbide/dlldbg/pbstart.dbg       <RELROOT>/binw/pbstart.dbg
     <CPCMD> <DEVDIR>/pbide/dlldbg/pbwd.dbg          <RELROOT>/binw/pbwd.dbg
     <CPCMD> <DEVDIR>/pbide/pbdll.h                  <RELROOT>/h/pbdll.h
-    <CPCMD> <DEVDIR>/pbide/cfg/wini86/pbide.cfg     <RELROOT>/binw/pbide.cfg
-    <CPCMD> <DEVDIR>/pbide/cfg/wini86/pbidex.cfg    <RELROOT>/binw/pbidex.cfg
     <CPCMD> <DEVDIR>/viper/cfg/idepb.cfg            <RELROOT>/binw/idepb.cfg
 
 [ BLOCK <1> clean ]
