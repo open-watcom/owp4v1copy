@@ -100,12 +100,12 @@ static void att_val_err( char * attname )
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
     err_count++;
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_val Value '%s' for the '&s' attribute is not defined\n"
+        out_msg( "ERR_ATT_val Value '%s' for the '%s' attribute is not defined\n"
                  "\t\t\tLine %d of macro '%s'\n",
                  token_buf, attname,
                  input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_val Value '%s' for the '&s' attribute is not defined\n"
+        out_msg( "ERR_ATT_val Value '%s' for the '%s' attribute is not defined\n"
                  "\t\t\tLine %d of file '%s'\n",
                  token_buf, attname,
                  input_cbs->s.f->lineno, input_cbs->s.f->filename );
@@ -120,12 +120,12 @@ static void tag_text_err( char * tagname )
 //****ERROR**** SC--038: Tag text may not be specified for the 'xxx' tag
     err_count++;
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_txt Tag text may not be specified for the '&s' tag\n"
+        out_msg( "ERR_TAG_txt Tag text may not be specified for the '5s' tag\n"
                  "\t\t\tLine %d of macro '%s'\n",
                  tagname,
                  input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_txt Tag text may not be specified for the '&s' tag\n"
+        out_msg( "ERR_TAG_txt Tag text may not be specified for the '%s' tag\n"
                  "\t\t\tLine %d of file '%s'\n",
                  tagname,
                  input_cbs->s.f->lineno, input_cbs->s.f->filename );
@@ -139,7 +139,7 @@ static void tag_text_req_err( char * tagname )
 //****ERROR**** SC--039: Tag text must be specified with the 'xxx' tag
     err_count++;
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_txt Tag text must be specified with the '&s' tag\n"
+        out_msg( "ERR_TAG_txt Tag text must be specified with the '%s' tag\n"
                  "\t\t\tLine %d of macro '%s'\n",
                  tagname,
                  input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
@@ -258,11 +258,13 @@ static bool check_att_value( gaentry * ga )
                 }
             } else {
                 if( gaval->valflags & val_length ) {
-                    if( strlen( token_buf ) <= gaval->a.length ) {
+                    if( strlen( token_buf ) > gaval->a.length ) {
                         att_len_err();  // value too long
                         msg_done = true;
-                        break;
+                    } else {
+                        scan_err = false;
                     }
+                    break;
                 }
             }
         }
@@ -288,6 +290,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
 {
     bool            processed;
     gaentry     *   ga;
+    gavalentry  *   gaval;
     char        *   p;
     char        *   p2;
     int             rc;

@@ -261,7 +261,8 @@ void        process_line( void )
             /*   other single letter functions are not used AFAIK      */
             /*                                                         */
             /***********************************************************/
-            if( *(pchar + 2) == '\'' && *(pchar + 3) > ' ' ) {
+            if( isalpha( *(pchar + 1) ) && *(pchar + 2) == '\''
+                && *(pchar + 3) > ' ' ) {
                 // not for .if '&*' eq '' .th ...
                 // only    .if '&x'foo' eq '' .th
 

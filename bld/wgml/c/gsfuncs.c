@@ -121,9 +121,10 @@ static  char    * find_end_of_parm( char * pchar )
                   break;
                 }
                 // possible fallthru
-            case    d_q :
-            case    vbar :
-            case    cent :
+            case    d_q   :
+            case    vbar1 :
+            case    vbar2 :
+            case    cent  :
                 instring[ paren_level ] = true;
                 quotechar[ paren_level ] = c;
                 break;

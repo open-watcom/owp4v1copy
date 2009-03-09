@@ -47,7 +47,7 @@
 
 bool    is_quote_char( char c )
 {
-    if( c == s_q || c == d_q || c == vbar || c == cent ) {
+    if( c == s_q || c == d_q || c == vbar1 || c == vbar2 || c == cent ) {
         return( true );
     } else {
         return( false );

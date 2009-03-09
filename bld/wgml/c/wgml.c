@@ -725,6 +725,7 @@ static  void    init_pass( void )
 
 //      free_dict( &global_dict );      // free dictionaries
 //      free_macro_dict( &macro_dict );
+        free_tag_dict( &tag_dict );
     } else {
         GlobalFlags.firstpass = 1;
     }

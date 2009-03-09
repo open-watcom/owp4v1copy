@@ -513,6 +513,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                 cc = neg;
                 return( cc );
             } else {
+                scan_start = gn.argstart;
                 ranges [ 0 ] = gn.result;
             }
         } else {

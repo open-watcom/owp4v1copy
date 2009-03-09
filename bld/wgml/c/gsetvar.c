@@ -258,7 +258,7 @@ void    scr_se( void )
                 }
             }
             valstart = p;
-            if( *valstart == '\'' || *valstart == '"' ) { // quotes ?
+            if( is_quote_char( *valstart ) ) {  // quotes ?
                 p++;
                 while( *p && (*valstart != *p) ) { // look for quote end
                     ++p;

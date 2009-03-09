@@ -84,7 +84,8 @@
 /* string start / end characters */
 #define s_q     '\''
 #define d_q     '\"'
-#define vbar    0xdd
+#define vbar1   '|'
+#define vbar2   0xdd
 #define cent    0x9b
 
 
