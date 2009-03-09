@@ -107,7 +107,7 @@ Lexer::Token Artwork::parseAttributes( Lexer* lexer )
                     flags |= Artwork::CENTER;
                 }
                 else
-                    document->printError( ERR2_ATTRIB );
+                    document->printError( ERR2_VALUE );
             }
             else if( key == L"linkfile" ) {
                 linkfile = new std::wstring( value );
