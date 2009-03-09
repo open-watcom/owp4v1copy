@@ -184,11 +184,11 @@ int WEXPORT MCommand::expand( WString& command, WFileName* target, MTool* tool, 
                         if( com[i] != ' ' ) f.concat( com[i++] );
                     }
                 }
-                if( f.needQuotes() ) {
-                    f.addSQuotes();
+                if( f.needQuotes( '\'' ) ) {
+                    f.addQuotes( '\'' );
                 }
                 command.concat( f );
-                f.removeQuotes();
+                f.removeQuotes( '\'' );
             } else if( strncmp( &com[i], "$&", 2 ) == 0 ) {
                 i += 2;
                 target->noPathNoExt( f );
