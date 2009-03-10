@@ -2882,6 +2882,13 @@ Bool WINEXPORT WdeDialogDefineProc ( HWND hDlg, WORD message,
                                       o_info->info.d.id,
                                       o_info->info.d.use_id );
 
+        if( !ret ) {
+            ret = WdeProcessHelpSymbolCombo( hDlg, message, wParam, lParam,
+                                             o_info->res_info->hash_table,
+                                             o_info->info.d.header->HelpId,
+                                             TRUE );
+        }
+
         if ( !ret && o_info->hook_func ) {
             ret = (*(o_info->hook_func) ) ( hDlg, message, wParam, lParam,
                                             o_info->mask );
