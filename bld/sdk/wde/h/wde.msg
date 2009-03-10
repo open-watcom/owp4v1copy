@@ -162,11 +162,11 @@ pick(   WDE_HINT_COMBOBOX_TOOL,
         "Use pointer to create a combo box",
         "Use pointer to create a combo box" )
 pick(   WDE_HINT_HSCROLL_TOOL,
-        "Use pointer to create a horiz. scroll bar",
-        "Use pointer to create a horiz. scroll bar" )
+        "Use pointer to create a horizontal scroll bar",
+        "Use pointer to create a horizontal scroll bar" )
 pick(   WDE_HINT_VSCROLL_TOOL,
-        "Use pointer to create a vert. scroll bar",
-        "Use pointer to create a vert. scroll bar" )
+        "Use pointer to create a vertical scroll bar",
+        "Use pointer to create a vertical scroll bar" )
 pick(   WDE_HINT_SIZEBOX_TOOL,
         "Use pointer to create a size box",
         "Use pointer to create a size box" )
@@ -183,20 +183,20 @@ pick(   WDE_HINT_TABCNTL_TOOL,
         "Use pointer to create a tab control",
         "Use pointer to create a tab control" )
 pick(   WDE_HINT_ANIMATE_TOOL,
-        "Use pointer to create a animation control",
-        "Use pointer to create a animation control" )
+        "Use pointer to create an animation control",
+        "Use pointer to create an animation control" )
 pick(   WDE_HINT_UPDOWN_TOOL,
         "Use pointer to create an up/down control",
         "Use pointer to create an up/down control" )
 pick(   WDE_HINT_TRACKBAR_TOOL,
-        "Use pointer to create a slider control",
-        "Use pointer to create a slider control" )
+        "Use pointer to create a trackbar",
+        "Use pointer to create a trackbar" )
 pick(   WDE_HINT_PROGRESS_TOOL,
-        "Use pointer to create a progress control",
-        "Use pointer to create a progress control" )
+        "Use pointer to create a progress bar",
+        "Use pointer to create a progress bar" )
 pick(   WDE_HINT_HOTKEY_TOOL,
-        "Use pointer to create a hotkey control",
-        "Use pointer to create a hotkey control" )
+        "Use pointer to create a hot key control",
+        "Use pointer to create a hot key control" )
 pick(   WDE_HINT_HEADER_TOOL,
         "Use pointer to create a header control",
         "Use pointer to create a header control" )
@@ -249,8 +249,8 @@ pick(   WDE_HINT_FMLEFT,
         "Align the left sides of selected objects",
         "Align the left sides of selected objects" )
 pick(   WDE_HINT_FMHCENTRE,
-        "Align the horiz. centres of selected objects",
-        "Align the horiz. centres of selected objects" )
+        "Align the horizontal centres of selected objects",
+        "Align the horizontal centres of selected objects" )
 pick(   WDE_HINT_FMRIGHT,
         "Align the right sides of selected objects",
         "Align the right sides of selected objects" )
@@ -258,8 +258,8 @@ pick(   WDE_HINT_FMTOP,
         "Align the tops of the selected objects",
         "Align the tops of the selected objects" )
 pick(   WDE_HINT_FMVCENTRE,
-        "Align the vert. centres of the selected objects",
-        "Align the vert. centres of the selected objects" )
+        "Align the vertical centres of the selected objects",
+        "Align the vertical centres of the selected objects" )
 pick(   WDE_HINT_FMBOTTOM,
         "Align the bottoms of the selected objects",
         "Align the bottoms of the selected objects" )
