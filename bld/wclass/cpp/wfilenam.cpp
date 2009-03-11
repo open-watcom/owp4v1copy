@@ -52,8 +52,6 @@ extern "C" {
 #endif
 };
 
-#define MAX_BUFFER 500
-
 typedef struct fullName {
     char        path[ _MAX_PATH + 1 ];
     char        drive[ _MAX_DRIVE + 1 ];
@@ -492,16 +490,10 @@ bool WEXPORT WFileName::needQuotes( char ch ) const
 {
     if( !isMask() ) {
         int len = size();
-        if( len > 0 ) {
-            if( (*this)[0] == ch && (*this)[ len-1 ] == ch ) {
-                return FALSE;
-            } else {
-                _splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
-                if( isLongDirName( _x.dir ) ) {
-                    return TRUE;
-                } else {
-                    return isLongName( _x.fname );
-                }
+        if( len > 0 && ( (*this)[0] != ch || (*this)[ len-1 ] != ch ) ) {
+            _splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
+            if( isLongDirName( _x.dir ) || isLongName( _x.fname ) ) {
+                return TRUE;
             }
         }
     }
@@ -520,7 +512,7 @@ void WEXPORT WFileName::removeQuotes( char ch )
 void WEXPORT WFileName::addQuotes( char ch )
 {
     int len = size();
-    char* quotedName = new char[ MAX_BUFFER+1 ];
+    char* quotedName = new char[ len + 3 ];
     quotedName[0] = ch;
     for( int i=0; i<len; i++ ) {
         quotedName[ i+1 ] = (*this)[i];
