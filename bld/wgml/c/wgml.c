@@ -470,6 +470,10 @@ void    show_include_stack( void )
                          ip->s.f->lineno,
                          ip->s.f->filename );
                 break;
+            case    II_tag :
+                out_msg( "\tCalled from GML tag '%s' in\n",
+                         ip->s.m->tag->name );
+                // fallthrough
             case    II_macro :
                 out_msg( "\tLine %d of macro '%s' defined at line %d of file '%s'\n",
                          ip->s.m->lineno,
@@ -738,6 +742,8 @@ static  void    init_pass( void )
     line_from   = 1;                  // processing line range Masterdocument
     line_to     = ULONG_MAX - 1;
 
+    init_tag_att();                     // reset last defined GML tag
+
 }
 
 /***************************************************************************/
@@ -790,8 +796,8 @@ int main( int argc, char * argv[] )
     out_msg( "cmdline='%s'\n", cmdline );
 
     proc_options( cmdline );
-    cop_setup();                        // init copfiles
     g_banner();
+    cop_setup();                        // init copfiles
 
     if( master_fname != NULL ) {        // filename specified
         set_default_extension( master_fname );// make this extension first choice
@@ -838,6 +844,8 @@ int main( int argc, char * argv[] )
     }
 
     print_stats();
+
+    close_all_pu_files();
 
     mem_free( cmdline );
     if( token_buf != NULL ) {
