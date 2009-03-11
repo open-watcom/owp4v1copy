@@ -81,12 +81,15 @@
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
 
 
-/* string start / end characters */
-#define s_q     '\''
-#define d_q     '\"'
+/* string start / end characters Possible incomplete list*/
+#define d_q     '\"'                    // change also is_quote_char()
+#define s_q     '\''                    // in gargutil.c
+#define cent    0x9b
+#define excl    '!'
+#define not_c   '^'
+#define slash   '/'
 #define vbar1   '|'
 #define vbar2   0xdd
-#define cent    0x9b
 
 
 /***************************************************************************/

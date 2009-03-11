@@ -46,7 +46,7 @@
 #define pick( name, length, parms, optparms, routine ) \
             { name, length, parms, optparms, routine },
 
-const   scrfunc scr_functions[] = {
+static  const   scrfunc scr_functions[] = {
 
 #include "gsfuncs.h"
 
@@ -62,7 +62,8 @@ static bool         multiletter_function;
 /*  find end of parm for multi letter functions
  *     end of parm is either , or )
  *     but only if outside of string and not in deeper ( level
- *      string delimiters are single quote, double quote, vertical bar, cent
+ *      string delimiters are several still growing number of chars
+ *
  */
 
 static  char    * find_end_of_parm( char * pchar )
@@ -94,42 +95,38 @@ static  char    * find_end_of_parm( char * pchar )
                 instring[ paren_level ] = false;
             }
         } else {
-            switch( c ) {
-            case    '(' :
-                if( paren_level < max_paren ) {
-                    paren_level++;
-                    instring[ paren_level ] = false;
-                } else {
-                    finished = true;    // error msg ??? TBD
-                }
-                break;
-            case    ')' :
-                if( paren_level == 0 ) {
-                    finished = true;
-                }
-                paren_level--;
-                break;
-            case    ',' :
-                if( paren_level == 0 ) {
-                    finished = true;
-                }
-                break;
-            case    s_q :
+            if( is_quote_char( c ) ) {
                 if( (cm1 == ampchar) || // &' sequence
-                    ((cm2 == ampchar) && isalpha( cm1 )) ) { // &X' sequence
-                  /* no instring change */
-                  break;
+                    ((cm2 == ampchar) && isalpha( cm1 )) ) {// &X' sequence
+                            /* no instring change */
+                } else {
+                    instring[ paren_level ] = true;
+                    quotechar[ paren_level ] = c;
                 }
-                // possible fallthru
-            case    d_q   :
-            case    vbar1 :
-            case    vbar2 :
-            case    cent  :
-                instring[ paren_level ] = true;
-                quotechar[ paren_level ] = c;
-                break;
-            default:
-                break;
+            } else {
+                switch( c ) {
+                case    '(' :
+                    if( paren_level < max_paren ) {
+                        paren_level++;
+                        instring[ paren_level ] = false;
+                    } else {
+                        finished = true;// error msg ??? TBD
+                    }
+                    break;
+                case    ')' :
+                    if( paren_level == 0 ) {
+                        finished = true;
+                    }
+                    paren_level--;
+                    break;
+                case    ',' :
+                    if( paren_level == 0 ) {
+                        finished = true;
+                    }
+                    break;
+                default:
+                    break;
+                }
             }
         }
         if( finished ) {

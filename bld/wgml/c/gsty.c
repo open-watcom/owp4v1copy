@@ -66,7 +66,7 @@
 void    scr_ty( void )
 {
 
-    out_msg( " %s\n", scan_start + 1 );
+    out_msg( "%s\n", scan_start + 1 );
     return;
 }
 

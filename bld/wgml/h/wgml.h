@@ -156,6 +156,10 @@ extern  void    print_labels( labelcb * lb );
 extern  bool    gotarget_reached( void );
 
 
+/* gsgt.c                             */
+extern  void    init_tag_att( void );
+
+
 /* gsetvar.c                          */
 extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 
@@ -164,6 +168,11 @@ extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 extern  void        add_macro_cb_entry( mac_entry * me, gtentry * ge );
 extern  void        add_macro_parms( char * p );
 extern  void        free_lines( inp_line * line );
+
+
+/* gspu.c                             */
+extern  void    close_pu_file( int numb );
+extern  void    close_all_pu_files( void );
 
 
 /* gsymvar.c                          */

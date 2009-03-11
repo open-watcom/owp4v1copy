@@ -632,9 +632,7 @@ void    scr_ga( void )
     } else {
         savetag = ' ';                  // no quick access
 
-        tag_entry = NULL;          // forget previous values for quick access
-        att_entry = NULL;
-        attname[ 0 ] = '*';
+        init_tag_att();            // forget previous values for quick access
 
         pn      = tagname;
         len     = 0;

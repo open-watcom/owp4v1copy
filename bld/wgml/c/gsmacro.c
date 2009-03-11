@@ -327,6 +327,9 @@ void    scr_dm( void )
     if( !(compbegin | compend) ) { // only .dm macname /line1/line2/ possible
         char    sepchar;
 
+        if( cc == quotes ) {
+            tok_start--;    // for single line .dm /yy/xxy/.. back to sepchar
+        }
         if( ProcFlags.in_macro_define ) {
             err_count++;
             out_msg( "ERR_NESTED_MACRO_DEFINE '%s' expecting END\n"

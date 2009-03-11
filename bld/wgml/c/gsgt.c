@@ -41,6 +41,19 @@
 
 
 /***************************************************************************/
+/*  reset last used  tag and att entries                                   */
+/***************************************************************************/
+
+void    init_tag_att( void )
+{
+    tag_entry = NULL;
+    att_entry = NULL;
+    tagname[ 0 ] = '*';
+    attname[ 0 ] = '*';
+}
+
+
+/***************************************************************************/
 /* GML TAG defines a GML tag.                                              */
 /*                                                                         */
 /*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커       */
@@ -477,8 +490,7 @@ void    scr_gt( void )
     } else {
         savetag = ' ';               // no global function for delete / print
 
-        tag_entry = NULL;          // forget previous values for quick access
-        att_entry = NULL;
+        init_tag_att();            // forget previous values for quick access
         attname[ 0 ] = '*';
 
         pn      = tagname;

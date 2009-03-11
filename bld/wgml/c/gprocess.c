@@ -151,6 +151,7 @@ void        process_line( void )
     symvar              symvar_entry;
     symsub          *   symsubval;
     int                 rc;
+    int                 k;
     bool                resolve_functions;
     bool                functions_found;
     bool                anything_substituted;
@@ -187,27 +188,49 @@ void        process_line( void )
             return;                     // for .* comment minimal processing
         }
 
-        /***********************************************************************/
-        /* if macro define ( .dm xxx ... ) supress variable substitution       */
-        /* for the sake of single line macro definition                        */
-        /* .dm xxx / &*1 / &*2 / &*0 / &* /                                    */
-        /***********************************************************************/
-
-        if( !strnicmp( buff2 + 1, "dm ", 3 ) ) {
+        /*******************************************************************/
+        /* if macro define ( .dm xxx ... ) supress variable substitution   */
+        /* for the sake of single line macro definition                    */
+        /* .dm xxx / &*1 / &*2 / &*0 / &* /                                */
+        /*  and                                                            */
+        /* ..dm xxx / &*1 / &*2 / &*0 / &* /                               */
+        /*******************************************************************/
+        if( *(buff2 + 1) == SCR_char ) {
+            k = 2;
+        } else {
+            k = 1;
+        }
+        if( !strnicmp( buff2 + k, "dm ", 3 ) ) {
             return;
         }
 
+        /*******************************************************************/
+        /*  for lines starting  .' ignore control word seperator           */
+        /*******************************************************************/
 
-        // for lines starting  .' ignore control word seperator
+        /*******************************************************************/
+        /*  if 2 CW_sep_chars follow, don't split line                     */
+        /*  ... this is NOWHERE documented, but wgml 4.0 tested            */
+        /*******************************************************************/
+
 
         if( !(*(buff2 + 1) == '\'') ) {
             pchar = strchr( buff2 + 2, CW_sep_char );
             if( (pchar != NULL) ) {
-                split_input( buff2, pchar + 1 );// split after CW_sep_char
+                if( *(pchar + 1) != CW_sep_char ) {
+                    split_input( buff2, pchar + 1 );// split after CW_sep_char
 
-                buff2_lg = strnlen_s( buff2, buf_size ); // new length of first part
-                buff2_lg--;             // ignore CW_sep_char
-                *(buff2 + buff2_lg) = '\0';
+                    buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
+                    buff2_lg--;         // ignore CW_sep_char
+                    *(buff2 + buff2_lg) = '\0';
+#if 0
+                } else {                // ignore 1 CW_sep_char
+                    memmove_s( pchar, pchar - buff2 + buff2_lg + 1,
+                               pchar + 1, pchar - buff2 + buff2_lg );
+                    buff2_lg = strnlen_s( buff2, buf_size );
+#endif
+                }
+
             }
         }
     }
@@ -314,20 +337,28 @@ void        process_line( void )
             }
             if( rc == 2 ) {             // variable found
                 ProcFlags.substituted = true;
-                if( symsubval->value[ 0 ] == CW_sep_char ) {
+                if( symsubval->value[ 0 ] == CW_sep_char &&
+                    symsubval->value[ 1 ] != CW_sep_char ) {
+
                                         // split record at control word separator
-                                        // if variable starts with cw separator
+                                        // if variable starts with SINGLE cw separator
+
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }
                     *p2 = '\0';
-                    split_input_var( buff2, p2, &symsubval->value[ 1 ] );
+                    split_input_var( buff2, pchar, &symsubval->value[ 1 ] );
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
                     break;
                 } else {
-                    strcpy( p2, symsubval->value ); // copy value
-                    p2 += strlen( symsubval->value );
+                    pw = symsubval->value;
+                    if( symsubval->value[ 0 ] == CW_sep_char &&
+                        symsubval->value[ 1 ] == CW_sep_char ) {
+                        pw++;           // skip 1 CW_sep_char
+                    }
+                    strcpy( p2, pw );   // copy value
+                    p2 += strlen( pw );
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
                     }
