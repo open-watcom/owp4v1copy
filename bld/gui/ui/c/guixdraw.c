@@ -110,7 +110,7 @@ static unsigned char DrawIndex[] =
     DRAW_BLOCK,                 // GUI_DIAL_SCROLL_SLIDER
 };
 
-char DrawingChars[DRAW_LAST];
+char DrawingChars[ DRAW_LAST ];
 #define GET_CHAR( val, inact ) ( &DrawingChars[ DrawIndex[val+ GUI_INACTIVE_OFFSET * inact] ] )
 
 #define TOP( inact )            GET_CHAR( GUI_FRAME_TOP, inact )
@@ -165,17 +165,17 @@ void GUIInitDrawingChars( bool dbcs )
 }
 
 
-char GUIGetCharacter( gui_draw_char draw_char )
+int GUIGetCharacter( gui_draw_char draw_char )
 {
     if( draw_char < GUI_NUM_DRAW_CHARS ) {
-        return( DrawingChars[ (unsigned)DrawIndex[ draw_char ] ] );
+        return( (unsigned char)DrawingChars[ DrawIndex[ draw_char ] ] );
     }
-    return( (char)0 );
+    return( 0 );
 }
 
-void GUISetCharacter( gui_draw_char draw_char, char ch )
+void GUISetCharacter( gui_draw_char draw_char, int ch )
 {
-    ch=ch;draw_char=draw_char;
+    ch=ch; draw_char=draw_char;
     // not implemented in this revision
     // some apps do a
     // if an app calls GUISetCharacter( GUI_SCROLL_SLIDER, 177 );
