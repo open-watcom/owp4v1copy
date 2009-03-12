@@ -106,7 +106,6 @@ extern bool             SetupInit( void );
 extern void             SetupFini( void );
 extern void             SetupError( char * );
 extern gui_message_return MsgBox( gui_window *, char *, gui_message_type, ... );
-extern char *           ReplaceVarsInplace( char *, bool );
 extern void             ReplaceVars( char *, char * );
 extern bool             StatusInit( void );
 extern void             StatusFini( void );
@@ -120,9 +119,7 @@ extern bool             IsNLMNewerThanExistingNLM(char *name);
 extern bool             CreatePMInfo( bool );
 extern bool             ModifyConfiguration( void );
 extern bool             ModifyAutoExec( void );
-#if defined( __NT__ ) || defined( __WINDOWS__ )
 extern bool             GenerateBatchFile( bool );
-#endif
 #if defined( __NT__ )
 extern bool             GetRegString( HKEY, char *, char *, char *, DWORD );
 extern bool             ModifyRegAssoc( bool );

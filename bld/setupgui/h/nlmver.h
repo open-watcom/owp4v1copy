@@ -61,6 +61,6 @@ typedef struct _NLMHDR
         BYTE    otherData[400];
 } NLMHDR;
 
-int     ReturnNLMVersionInfoFromFile(BYTE *,LONG *,LONG *,LONG *,LONG *,LONG *,LONG *,BYTE *,BYTE *);
+int     ReturnNLMVersionInfoFromFile(char *,LONG *,LONG *,LONG *,LONG *,LONG *,LONG *,char *,char *);
 
 #endif

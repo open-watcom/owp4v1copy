@@ -91,9 +91,8 @@ extern void     ResetDriveInfo();
 
 int VisibilityCondition = 0;
 
-static gui_control_class ControlClass( int id,
-                                       a_dialog_header *curr_dialog )
-/********************************************************************/
+static gui_control_class ControlClass( int id, a_dialog_header *curr_dialog )
+/***************************************************************************/
 /* return the control class of a variable based on its id. */
 {
     int                 i;
@@ -104,7 +103,7 @@ static gui_control_class ControlClass( int id,
         }
     }
     SetupError( "IDS_CONTROLCLASSERROR" );
-    return( GUI_NUM_CONTROL_CLASSES );
+    return( GUI_BAD_CLASS );
 }
 
 

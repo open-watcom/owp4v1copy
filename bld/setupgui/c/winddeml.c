@@ -52,7 +52,7 @@ static bool SendCommand( DWORD ddeinst, HCONV hconv, char *buff )
     HDDEDATA    hData, hrc;
 
     // Note data handle is freed by call to DdeClientTransaction
-    hData = DdeCreateDataHandle( ddeinst, buff, strlen( buff ) + 1,
+    hData = DdeCreateDataHandle( ddeinst, (PBYTE)buff, strlen( buff ) + 1,
                                  0, NULL, 0L, 0L );
     if( hData == NULL ) {
         return( FALSE );

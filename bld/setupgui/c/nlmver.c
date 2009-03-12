@@ -34,12 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#if defined( __UNIX__ )
-    #include <unistd.h>
-    #include <sys/stat.h>
-#else
-    #include <io.h>
-#endif
+#include <sys/stat.h>
+#include <unistd.h>
 #include <fcntl.h>
 
 #include "gui.h"
@@ -52,21 +48,21 @@
 
 #include "nlmver.h"
 
-static void LenToASCIIZStr( char *tobuf, char *frombuf )
+static void LenToASCIIZStr( char *tobuf, BYTE *frombuf )
 {
     memcpy( tobuf, frombuf + 1, *frombuf );
-    tobuf[(int)*frombuf] = NULL;
+    tobuf[ *frombuf ] = '\0';
 }
 
-int ReturnNLMVersionInfoFromFile( BYTE *__pathName, LONG *majorVersion,
+int ReturnNLMVersionInfoFromFile( char *__pathName, LONG *majorVersion,
                                   LONG *minorVersion, LONG *revision, LONG *year,
-                                  LONG *month, LONG *day, BYTE *copyrightString,
-                                  BYTE *description )
+                                  LONG *month, LONG *day, char *copyrightString,
+                                  char *description )
 {
-    int     handle, bytes, offset, found = FALSE;
-    LONG    *verPtr;
-    NLMHDR  *nlmHeader;
-    BYTE    buffer[READ_SIZE];
+    int         handle, bytes, offset, found = FALSE;
+    LONG        *verPtr;
+    NLMHDR      *nlmHeader;
+    BYTE        buffer[ READ_SIZE ];
 
     handle = open( __pathName, O_BINARY | O_RDONLY, 0 );
     if( handle != EFAILURE ) {
@@ -78,13 +74,13 @@ int ReturnNLMVersionInfoFromFile( BYTE *__pathName, LONG *majorVersion,
                 LenToASCIIZStr( description, &(nlmHeader->descriptionLength) );
             }
 
-            for( offset = 0; !found && (offset < READ_SIZE); offset++ ) {
-                if( !memcmp( "VeRsIoN", &buffer[offset], 7 ) ) {
+            for( offset = 0; !found && ( offset < READ_SIZE ); offset++ ) {
+                if( !memcmp( "VeRsIoN", &buffer[ offset ], 7 ) ) {
                     found = TRUE;
                 }
             }
             if( found ) {
-                verPtr = (LONG *)(&buffer[offset + 7]);
+                verPtr = (LONG *)(&buffer[ offset + 7 ]);
                 if( majorVersion ) {
                     *majorVersion = *verPtr++;
                 }
@@ -104,14 +100,14 @@ int ReturnNLMVersionInfoFromFile( BYTE *__pathName, LONG *majorVersion,
                     *day = *verPtr++;
                 }
                 found = FALSE;
-                for( ; !found && (offset < READ_SIZE); offset++ ) {
-                    if( !memcmp( "CoPyRiGhT", &buffer[offset], 9 ) ) {
+                for( ; !found && ( offset < READ_SIZE ); offset++ ) {
+                    if( !memcmp( "CoPyRiGhT", &buffer[ offset ], 9 ) ) {
                         found = TRUE;
                     }
                 }
                 if( found ) {
                     if( copyrightString ) {
-                        LenToASCIIZStr( copyrightString, &buffer[offset + 9] );
+                        LenToASCIIZStr( copyrightString, &buffer[ offset + 9 ] );
                     }
                 }
                 return( ESUCCESS );

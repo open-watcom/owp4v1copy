@@ -74,15 +74,17 @@ static char             envbuf[MAXENVVAR + 1];
 extern vhandle          UnInstall;
 
 #if defined( __NT__ )
-struct reg_location {
+
+static struct reg_location {
     HKEY    key;
     bool    key_is_open;
     bool    modify;
 } RegLocation[NUM_REG_LOCATIONS];
+
 #endif
 
-bool GetOldConfigFileDir( char *newauto, char *drive_path )
-/*********************************************************/
+static bool GetOldConfigFileDir( char *newauto, char *drive_path )
+/****************************************************************/
 {
     char                        drive[_MAX_DRIVE];
 
@@ -100,7 +102,7 @@ bool GetOldConfigFileDir( char *newauto, char *drive_path )
     return( TRUE );
 }
 
-extern void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
+static void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
 /******************************************************************************/
 {
     char        *semi;
@@ -160,9 +162,9 @@ extern void NoDupPaths( char *new_value, char *old_value, bool add, char delim )
 
 #ifndef __AXP__
 
-#ifdef __OS2__
-extern short GetBootDrive(void)
+static short GetBootDrive(void)
 {
+#ifdef __OS2__
     UCHAR           DataBuf[10];
     unsigned long   drive;
     APIRET          rc;
@@ -173,25 +175,19 @@ extern short GetBootDrive(void)
     }
     drive = *(unsigned long *)DataBuf;
     return( (int)drive );
-}
-#elif defined( __UNIX__ ) || defined( __NT__ )
-extern short GetBootDrive( void )
-{
-    return( 0 );
-}
-#else
-extern short GetBootDrive( void )
-{
+#elif defined( __DOS__ )
     union REGS  r;
 
     r.w.ax = 0x3305;
     intdos( &r, &r );
     return( r.h.dl );
-}
+#else
+    return( 0 );
 #endif
+}
 
-char                    OrigAutoExec[] = "?:\\AUTOEXEC.BAT";
-char                    OrigConfig[] = "?:\\CONFIG.SYS";
+static char             OrigAutoExec[] = "?:\\AUTOEXEC.BAT";
+static char             OrigConfig[] = "?:\\CONFIG.SYS";
 
 static void BackupName( char *filename );
 static void ReplaceExt( char *filename, char *new_ext );
@@ -556,7 +552,7 @@ static void CheckConfigLine( char *buf, int num )
 
 static char *WinDotCom = NULL;
 
-void CheckAutoLine( char *buf, int num )
+static void CheckAutoLine( char *buf, int num )
 /**************************************/
 {
     int                 i, append;
@@ -646,7 +642,7 @@ void CheckAutoLine( char *buf, int num )
     } while( found );
 }
 
-void FinishAutoLines( FILE *fp, char *buf, int num )
+static void FinishAutoLines( FILE *fp, char *buf, int num )
 /**************************************************/
 {
     int                 i;
@@ -685,8 +681,9 @@ static bool ModAuto( char *orig, char *new )
 }
 
 static void FinishOS2ConfigLines( FILE *fp, char *buf, int num );
-void FinishConfigLines( FILE *fp, char *buf, int num )
-/****************************************************/
+
+static void FinishConfigLines( FILE *fp, char *buf, int num )
+/***********************************************************/
 {
     int                 i;
     if( GetVariableIntVal( "IsOS2DosBox" ) == 1 ) {
@@ -763,8 +760,8 @@ static bool ModOS2Config( char *orig, char *new )
 
 #endif   // !__AXP__
 
-char *ReplaceVarsInplace( char *buff, bool dorealloc )
-/****************************************************/
+static char *ReplaceVarsInplace( char *buff, bool dorealloc )
+/***********************************************************/
 //  Replace occurrences of %variable% in src with the destination directory,
 //  and place the result in dst.
 {
@@ -885,6 +882,7 @@ static void secondarysearch( char *filename, char *buffer )
 }
 
 static void CheckVersion( char *path, char *drive, char *dir );
+
 extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
 /*************************************************************************/
 {
@@ -1405,8 +1403,6 @@ extern bool ModifyRegAssoc( bool uninstall )
 
 #endif
 
-#if defined( __WINDOWS__ ) || defined( __NT__ )
-
 extern bool GenerateBatchFile( bool uninstall )
 /*********************************************/
 {
@@ -1444,6 +1440,3 @@ extern bool GenerateBatchFile( bool uninstall )
     }
     return( TRUE );
 }
-
-#endif
-

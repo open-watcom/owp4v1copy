@@ -121,7 +121,7 @@ void CreateRegEntry( char *hive_key, char *app_name, char *key_name,
                 } else {
                     type = REG_SZ;
                 }
-                rc = RegSetValueEx( hkey1, key_name, 0, type, value,
+                rc = RegSetValueEx( hkey1, key_name, 0, type, (LPBYTE)value,
                                     strlen( value ) + 1 );
             }
         }
@@ -222,8 +222,7 @@ signed int AddToUsageCount( char *path, signed int value )
 
     if( new_value > 0 ) {
         memcpy( buff, ConvertDWORDToData( new_value, value_type ), sizeof( new_value ) );
-        result = RegSetValueEx( key_handle, path, 0, value_type, (LPBYTE)&buff,
-                                sizeof( new_value ) );
+        result = RegSetValueEx( key_handle, path, 0, value_type, buff, sizeof( new_value ) );
     } else if( new_value == 0 ) {
         result = RegDeleteValue( key_handle, path );
     }
