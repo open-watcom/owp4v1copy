@@ -24,43 +24,39 @@
 *
 *  ========================================================================
 *
-* Description:  Declares the public interface to the output buffer (and so to
-*               the output file or device).
-*                   ob_flush()
-*                   ob_insert_block()
-*                   ob_insert_byte()
-*                   ob_setup()
-*                   ob_teardown()
-*               as well as this struct:
-*                   record_buffer
+* Description:  Declares functions used to interpret function blocks:
+*                   df_interpret_device_functions()
+*                   df_interpret_driver_functions()
+*                   df_populate_device_table()
+*                   df_setup()
+*                   df_teardown()
+*                   fb_enterfont()
+*                   fb_init()
 *
 ****************************************************************************/
 
-#ifndef OUTBUFF_H_INCLUDED
-#define OUTBUFF_H_INCLUDED
+#ifndef DEVFUNCS_H_INCLUDED
+#define DEVFUNCS_H_INCLUDED
 
-/* Struct definition. */
+#include <stdint.h>
+#include <stdio.h>
 
-typedef struct {
-    size_t          current;    // Next write position
-    size_t          length;     // Total length of data
-    uint8_t     *   data;       // The data itself
-} record_buffer;
+#include "copfiles.h"
 
 /* Function declarations. */
 
 #ifdef  __cplusplus
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
-
-extern void ob_flush( void );
-extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, bool out_text );
-extern void ob_insert_byte( uint8_t in_char );
-extern void ob_setup( void );
-extern void ob_teardown( void );
-
+extern void    df_interpret_device_functions( uint8_t * in_function );
+extern void    df_interpret_driver_functions( uint8_t * in_function );
+extern void    df_populate_device_table( void );
+extern void    df_setup( void );
+extern void    df_teardown( void );
+extern void    fb_enterfont( void );
+extern void    fb_init( init_block * in_block );
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
 #endif
 
-#endif  /* OUTBUFF_H_INCLUDED */
+#endif  /* DEVFUNCS_H_INCLUDED */

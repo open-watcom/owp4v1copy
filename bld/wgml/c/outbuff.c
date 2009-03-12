@@ -26,11 +26,12 @@
 *
 * Description:  Implements the functions used with to the output buffer (and
 *               so with the output file or device).
+*                   ob_flush()
+*                   ob_insert_block()
+*                   ob_insert_byte()
 *                   ob_setup()
 *                   ob_teardown()
-*               as well as this struct:
-*                   record_buffer
-*               these local variables:
+*               as well as these local variables:
 *                   buffout
 *                   out_file_fb
 *               and these local functions:
@@ -54,15 +55,8 @@
 #include "copfiles.h"
 #include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
+#include "outbuff.h"
 #include "wgml.h"
-
-/* Struct definition. */
-
-typedef struct {
-    size_t          current;    // Next write position
-    size_t          length;     // Total length of data
-    uint8_t     *   data;       // The data itself
-} record_buffer;
 
 /* Local variable declaration. */
 
@@ -186,7 +180,7 @@ static void set_out_file( void )
             }
         }
     } else {
-        if( (*cmd_drive != '\0') && (*cmd_dir != '\0') ) {
+        if( (*cmd_drive != '\0') || (*cmd_dir != '\0') ) {
 
             /* Command line OPTION was used with something like "c:" or "..\" but
              * with no filename or extension.
@@ -289,6 +283,128 @@ static void set_out_file_attr( void )
 
 /* Global function definitions. */
 
+/* Function ob_flush().
+ * This function actually flushes the output buffer to the output device/file.
+ *
+ * Notes:
+ *      This implementation uses '\n' for "newline". This is supposed to work
+ *          for Linux, however, that depends in part on how the Linux programs
+ *          processing PS files work and on how those printers which require
+ *          a CRLF sequence are supported by Linux.
+ *      This implementation implicitly assumes that either a word will fit or
+ *          it will be part of the next line. Handling over-long groups of
+ *          letters is actually more complicated and may eventually require
+ *          that a larger buffer be allocated than the record format calls for
+ *          or that a second parameter be passed to suppress the "newline"
+ *          when appropriate. This was discovered while attempting to discover
+ *          whether a multicharacter output translation is split over two
+ *          buffer flushes. It appears that it is not, so a second function that
+ *          handles output translation will be needed eventually.
+ */
+ 
+void ob_flush( void )
+{
+    fwrite( buffout->data, sizeof( uint8_t ), buffout->length, out_file_fb );
+    fprintf_s( out_file_fb, "\n" );
+    buffout->current = 0;
+
+    return;
+}
+
+/* Function ob_insert_block().
+ * This function inserts a block of bytes into the output buffer. This is done
+ * byte-by-byte because the block may include nulls.
+ *
+ * Parameter:
+ *      in_block contains the bytes to be inserted.
+ *      count contains the number of bytes in the block.
+ *      out_trans is true if the bytes are to be translated before insertion.
+ *      out_text is true is the bytes are to appear in the document itself.
+ *
+ * Notes:
+ *      This implementation does not actually do the output translation when
+ *          out_trans is set to "true".
+ *      This implementation does not actually do anything special when out_text
+ *          is set to "true"; it does not even check to see if the device is
+ *          PS. 
+ */
+
+extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
+                                                                    bool out_text )
+{
+    char    *   text_block  = NULL;
+    size_t      current;
+    size_t      difference;
+    size_t      text_count;
+
+    if( out_trans == true ) {
+
+        /* Do the output translation of in_block. */
+
+        /***then continue on with translated text!***/
+        /*text_block & text_count must be initialized!*/
+        
+        text_block = in_block;
+        text_count = count;
+
+    } else {
+
+        /* No output translation needed. */
+
+        text_block = in_block;
+        text_count = count;
+    }
+    
+    /* Start at the beginning of text_block. */
+
+    /* Note: ignores any PS-specific actions. */
+
+    current = 0;
+
+    /* If the block won't fit, copy as much as possible into the buffer
+     * and then flush it.
+     */
+
+    while( (buffout->current + text_count) > buffout->length ) {
+        difference = buffout->length - buffout->current;
+        memcpy_s( &buffout->data[buffout->current], difference, \
+                                            &text_block[current], difference );
+        current+= difference;
+        text_count -= difference;
+        ob_flush();
+    }
+
+    /* Insert any remaining text, but do not flush the buffer. */
+
+    if( text_count > 0 ) {
+        memcpy_s( &buffout->data[buffout->current], text_count, \
+                                            &text_block[current], text_count );
+
+        buffout->current += count;
+    }
+}
+
+/* Function ob_insert_byte().
+ * This function inserts a single byte into the output buffer.
+ *
+ * Parameter:
+ *      in_char contains the byte to be inserted.
+ */
+
+void ob_insert_byte( uint8_t in_char )
+{
+    /* Flush the buffer if it is full. */
+
+    if( buffout->current == buffout->length ) ob_flush();
+
+    /* Insert the character and increment the current position pointer. */
+
+    buffout->data[buffout->current] = in_char;
+    buffout->current++;
+
+    return;
+}
+
 /* Function ob_setup().
  * Determines the output file/device name and format. Opens the output
  * file/device (if appropriate) and initializes the output buffer itself.
@@ -367,11 +483,8 @@ extern void ob_setup( void )
  * Determines the output file/device name and format. Opens the output
  * file/device (if appropriate) and initializes the output buffer itself.
  */
-
 extern void ob_teardown( void )
 {
-    int rc;
-    
     if( buffout != NULL ) {
         mem_free( buffout->data );
         mem_free( buffout );
@@ -379,10 +492,9 @@ extern void ob_teardown( void )
     }
 
     if( out_file_fb != NULL ) {
-        rc = fclose( out_file_fb );
+        fclose( out_file_fb );
         out_file_fb = NULL;
     }
-
 
     return;
 }

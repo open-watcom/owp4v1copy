@@ -67,6 +67,7 @@
 *                   bin_device
 *                   bin_driver
 *                   bin_fonts
+*                   ps_device
 *                   wgml_font_cnt
 *                   wgml_fonts
 *               the functions:
@@ -482,8 +483,12 @@ typedef struct {
     fontswitch_block    *   font_switch;
     code_text           *   font_pause;
     fontstyle_block     *   font_style;
+    uint8_t                 font_resident;
+    uint16_t                default_width;
     uint16_t                font_height;
     uint16_t                font_space;    
+    uint16_t                line_height;
+    uint16_t                line_space;
 } wgml_font;
 
 /* Global variable declarations. */
@@ -492,6 +497,7 @@ typedef struct {
     #define global  extern
 #endif
 
+global bool             ps_device;      // true if device is PostScript
 global cop_device   *   bin_device;     // binary device being used
 global cop_driver   *   bin_driver;     // binary driver being used
 global cop_font     *   bin_fonts;      // binary fonts being used (linked list)

@@ -30,8 +30,11 @@
 *
 *               and those needed to reproduce enough of the wgml context for
 *               research programs that use parts of wgml to work:               
+*                   add_symvar()
+*                   find_symvar()
 *                   free_resources()
 *                   g_suicide()
+*                   global_dict
 *                   mem_alloc()
 *                   mem_free()
 *                   mem_realloc()
@@ -45,6 +48,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "swchar.h"
 
@@ -64,6 +68,7 @@ void    initialize_globals( void )
     wng_count       = 0;
     
     dev_name        = NULL;
+    global_dict     = NULL;
     master_fname    = NULL;
     opt_fonts       = NULL;
     out_file        = NULL;
@@ -141,6 +146,52 @@ void mem_free( void * p )
 void g_suicide( void )
 {
     exit( 16 );
+}
+
+int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, \
+                sym_flags f )
+{
+    symvar  *   new     = NULL;
+    symsub  *   newsub  = NULL;
+
+    find_symvar( dict, name, subscript, &newsub );
+    if( newsub == NULL ) {
+        newsub = (symsub *) mem_alloc( sizeof( symsub ) );
+        newsub->value = (char *) mem_alloc( strlen(val) + 1);
+        strcpy_s( newsub->value, strlen(val) + 1, val );
+
+        new = (symvar *) mem_alloc( sizeof( symvar ) );
+        new->next = NULL;
+        strcpy_s( new->name, SYM_NAME_LENGTH + 1, name );
+        new->sub_0 = newsub;
+    } else {
+        if( strcmp( newsub->value, val ) ) {
+            if( strlen( newsub->value ) < strlen( val ) ) {
+                newsub->value = mem_realloc( newsub->value, strlen( val ) + 1 );
+            }
+            strcpy_s( newsub->value, strlen( val ) + 1, val );
+        }
+    }
+    return( 0 );
+}
+
+int find_symvar( symvar * * dict, char * name, sub_index subscript, \
+                 symsub * * symsubval )
+{
+    symvar  *   wk;
+
+    *symsubval = NULL;
+    wk = *dict;
+    while( wk != NULL) {
+        if( !strcmp( wk->name, name ) ) {
+            *symsubval = wk->sub_0;
+            break;
+        }
+        wk = wk->next;
+    }
+
+    if( symsubval == NULL ) return( 0 );
+    return( 1 );
 }
 
 bool free_resources( errno_t in_errno )

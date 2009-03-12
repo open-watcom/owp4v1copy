@@ -1953,6 +1953,10 @@ cop_device * parse_device( FILE * in_file )
             if( out_device->allocated_size < (out_device->next_offset + \
                                                         sizeof( code_text ) ) ) {
                 out_device = resize_cop_device( out_device, sizeof( code_text ) );
+                devicefont_ptr = (device_font *) ((uint8_t *) out_device + \
+                                        (size_t) out_device->devicefonts.fonts);
+                pause_ptr = (code_text *) ((char *) out_device + \
+                                        (size_t) devicefont_ptr[i].font_pause );
             }
 
             devicefont_ptr[i].font_pause = (code_text *) out_device->next_offset;

@@ -38,6 +38,7 @@ objs =  &
         copfon.obj   &
         copfunc.obj  &
         cophdr.obj   &
+	devfuncs.obj &
         findfile.obj &
         gargutil.obj &
         gcmt.obj     &

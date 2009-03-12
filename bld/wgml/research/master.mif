@@ -45,6 +45,7 @@ cop_common_objs = &
 	    copfon.obj    &
 	    copfunc.obj   &
 	    cophdr.obj    &
+	    devfuncs.obj  &
 	    findfile.obj  &
 	    outbuff.obj
 	    
@@ -72,7 +73,8 @@ objs = &
             cfparse.obj       &
             cfputils.obj
 
-nwgml : cfcheck.exe cfparse.exe copparse.exe devldchk.exe findfunc.exe outcheck.exe .SYMBOLIC
+nwgml : cfcheck.exe cfparse.exe copparse.exe devldchk.exe findfunc.exe &
+	outcheck.exe .SYMBOLIC
 
 !include exetarg.mif
 

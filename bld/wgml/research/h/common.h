@@ -39,9 +39,12 @@
 *
 *               These are needed to reproduce enough of the wgml context for
 *               research programs that use parts of wgml to work:               
+*                   add_symvar()
 *                   err_cnt
+*                   find_symvar()
 *                   free_resources()
 *                   g_suicide()
+*                   global_dict
 *                   master_fname
 *                   mem_alloc()
 *                   mem_free()
@@ -69,7 +72,26 @@
 #define FAILURE 0
 #define SUCCESS 1
 
-/* This struct is part of the wgml context. */
+/* This macro is part of the wgml context. */
+
+#define SYM_NAME_LENGTH 10
+
+/* These enums are part of the wgml context. */
+
+typedef enum {
+    min_subscript = -1000000L,
+    max_subscript =  1000000L,
+    no_subscript  = 0x11223344
+} sub_index;
+
+typedef enum {
+    local_var   = 1,
+    subscripted = 2,
+    auto_inc    = 4,
+    deleted     = 0x100
+} sym_flags;
+
+/* These structs are part of the wgml context. */
 
 typedef struct opt_font {
     struct opt_font *   nxt;
@@ -79,6 +101,16 @@ typedef struct opt_font {
     uint32_t            space;
     uint32_t            height;
 } opt_font;
+
+typedef struct symsub {
+    char            *   value;
+} symsub;
+
+typedef struct symvar {
+    struct symvar   *   next;
+    char                name[SYM_NAME_LENGTH + 1];
+    symsub          *   sub_0;
+} symvar;
 
 /* Global variable declarations. */
 
@@ -98,6 +130,7 @@ global char     *   out_file_attr;  // Part of the wgml context.
 global int          err_count;      // Part of the wgml context.
 global int          wng_count;      // Part of the wgml context.
 global opt_font *   opt_fonts;      // Part of the wgml context.
+global symvar   *   global_dict;    // Part of the wgml context.
 
 /* Reset so can be reused with other headers. */
 
@@ -124,6 +157,8 @@ extern  char    *   skip_spaces( char * start );
 
 /* These are part of the wgml context. */
 
+extern int          add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f );
+extern int          find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern  bool        free_resources( errno_t in_errno ); 
 extern  void        g_suicide( void );
 extern  void        mem_free( void *p );
@@ -136,3 +171,4 @@ extern  void        out_msg( char *fmt, ... );
 #endif
 
 #endif  /* COMMON_H_INCLUDED */
+

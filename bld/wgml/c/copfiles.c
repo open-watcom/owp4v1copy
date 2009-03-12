@@ -29,6 +29,7 @@
 *                   cop_teardown()
 *                   fb_start()
 *               plus these local functions:
+*                   compute_metrics()
 *                   find_cop_font()
 *                   find_dev_font()
 *                   find_style()
@@ -43,6 +44,7 @@
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
+#include <math.h>
 #include <setjmp.h> // Required (but not included) by gvars.h.
 #include <stdlib.h>
 #include <time.h>
@@ -61,6 +63,7 @@
 #include "copdrv.h"
 #include "copfon.h"
 #include "cophdr.h"
+#include "devfuncs.h"
 #include "findfile.h"
 #include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
@@ -68,6 +71,126 @@
 #include "wgml.h"
 
 /* Local function definitions. */
+
+/* Function compute_metrics().
+ * Computes and initializes the default_width, line_height and line_space values
+ * for the given wgml_font instance.
+ *
+ * Parameter:
+ *      in_font points to the given wgml_font instance.
+ */
+
+static void compute_metrics( wgml_font * in_font )
+{
+    uint16_t factor;
+    uint16_t height;
+    uint16_t overage;
+    uint16_t points;
+    uint16_t scaling;
+
+    /* Compute the default character width. */
+
+    if( in_font->bin_font->scale_basis == 0 ) {
+
+        /* The default_width is the char_width. */
+
+        in_font->default_width = in_font->bin_font->char_width;
+
+    } else {
+
+        /* The default_width is the char_width times a computed value:
+         * horizontal_base_units * font_height
+         * -----------------------------------
+         *             scale_basis
+         * which is placed in "points" because that is what it is measures.
+         * font_height is in centipoints, hence the conversion to points.
+         */
+
+        height = in_font->font_height / 100;
+        points = (bin_device->horizontal_base_units * height) \
+                 / in_font->bin_font->scale_basis;
+
+        /* This rounds points up if the division did not produce an integer.
+         * This produces correct results with the test values, but may need
+         * to be modified (or the entire algorithm reconsidered) when
+         * side-by-side comparisons of wgml 4.0 and our wgml become possible.
+         */
+
+        if( (bin_device->horizontal_base_units * height) \
+             / in_font->bin_font->scale_basis > 0 ) points++;
+        in_font->default_width = in_font->bin_font->char_width * points;
+    }
+
+    /* Compute the line height and space values. */
+
+    if( in_font->font_height == 0 ) {
+
+        /* Use the line_height and line_space values from the :FONT block. */
+
+        in_font->line_space = in_font->bin_font->line_space;
+        in_font->line_height = in_font->bin_font->line_height + \
+                                                            in_font->line_space;
+    } else {
+
+        /* Use the font_height, font_space, and vertical_base_units values. */
+
+        factor = 7200 / bin_device->vertical_base_units;
+        height = in_font->font_height + in_font->font_space;
+
+        /* line_height is set to the number of vertical_base_units needed to
+         * ensure that sufficient height is provided. This may need to be
+         * tweaked when side-by-side comparisons of wgml 4.0 and our wgml
+         * become possible.
+         */
+         
+        in_font->line_height = height / factor;
+        if( (height % factor) > 0 ) in_font->line_height++;
+
+        in_font->line_space = 0;
+        if( in_font->font_space > 0) {
+        
+            /* line_space is set initially to the number of vertical_base_units
+             * corresponding to the value of font_space.
+             */
+
+            in_font->line_space = in_font->font_space / factor;
+
+            /* points contains the height of the line in points. overage contains
+             * the size, in points, of the extra space, if any, added to the line
+             * when height is not an even multiple of factor. scaling contains
+             * the number of points relative to font_height corresponding to the
+             * number of points in points occupied by blank space. It solves the
+             * the equation:
+             *     scaling           font_space+overage
+             *     -----------   =   ------------------
+             *     font_height       points
+             */
+
+            points = in_font->line_height * factor;
+            overage =  points - height;
+            scaling = ((in_font->font_space + overage) * \
+                                                in_font->font_height) / points;
+
+            /* This increments line_space if scaling is more than 1/2 of the
+             * value of font_height. This produces correct results with the
+             * test values, but may need to be modified (or the entire
+             * algorithm reconsidered) when side-by-side comparisons of wgml 4.0
+             * and our wgml become possible.
+             */
+
+            if( (scaling * 2) > in_font->font_height ) in_font->line_space++;
+
+            /* If in_font->line_space is still 0, set it to 1, since it cannot
+             * be 0 if in_font->font_space is not 0.
+             */
+
+            if( in_font->line_space == 0) in_font->line_space = 1;
+        }
+    }
+
+    return;
+}
+
 
 /* Function get_cop_device().
  * Converts the defined name of a :DEVICE block into a cop_device struct
@@ -490,6 +613,7 @@ extern void cop_setup( void )
     bin_device = NULL;
     bin_driver = NULL;
     bin_fonts = NULL;
+    ps_device = false;
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
 
@@ -511,6 +635,24 @@ extern void cop_setup( void )
         g_suicide();
     }
 
+    /* The value of horizontal_base_units cannot be "0". */
+
+    if( bin_device->horizontal_base_units == 0 ) {
+        out_msg( \
+        "Device library error: horizontal_base_units cannot have value \"0\"\n" );
+        err_count++;
+        g_suicide();
+    }
+
+    /* The value of vertical_base_units cannot be "0". */
+
+    if( bin_device->vertical_base_units == 0 ) {
+        out_msg( \
+            "Device library error: vertical_base_units cannot have value \"0\"\n" );
+        err_count++;
+        g_suicide();
+    }
+
     /* A driver name must exist. */
 
     if( bin_device->driver_name == NULL ) {
@@ -525,6 +667,10 @@ extern void cop_setup( void )
         err_count++;
         g_suicide();
     }
+
+    /* Set ps_device to "true" if the driver name begins with "ps" or "PS". */
+
+    if( !_strnicmp( bin_device->driver_name, "ps", 2 ) ) ps_device = true;
 
     /* Get the highest font_number. */
 
@@ -607,8 +753,11 @@ extern void cop_setup( void )
             wgml_fonts[i].font_switch = find_switch( cur_dev_font->font_switch );
         }
         wgml_fonts[i].font_pause = cur_dev_font->font_pause;
+        if( cur_dev_font->resident == 0x00 ) wgml_fonts[i].font_resident = 'n';
+        else wgml_fonts[i].font_resident = 'y';
+        compute_metrics( &wgml_fonts[i] );
     }
-    
+
     /* Process the FONT command-line option instances. */
 
     cur_opt = opt_fonts;
@@ -629,6 +778,9 @@ extern void cop_setup( void )
             wgml_fonts[i].font_switch = find_switch( cur_dev_font->font_switch );
         }
         wgml_fonts[i].font_pause = cur_dev_font->font_pause;
+        if( cur_dev_font->resident == 0x00 ) wgml_fonts[i].font_resident = 'n';
+        else wgml_fonts[i].font_resident = 'y';
+        compute_metrics( &wgml_fonts[i] );
         cur_opt = cur_opt->nxt;
     }
     free_opt_fonts();    
@@ -658,6 +810,10 @@ extern void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
+            wgml_fonts[i].font_resident = 'n';
+            wgml_fonts[i].default_width = 1;
+            wgml_fonts[i].line_height = 1;
+            wgml_fonts[i].line_space = 0;
             break;
         }
         if( bin_device->box.font_name != NULL ) {
@@ -675,6 +831,10 @@ extern void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
+            wgml_fonts[i].font_resident = 'n';
+            wgml_fonts[i].default_width = 1;
+            wgml_fonts[i].line_height = 1;
+            wgml_fonts[i].line_space = 0;
             break;
         }
         break;
@@ -695,6 +855,10 @@ extern void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
+            wgml_fonts[i].font_resident = 'n';
+            wgml_fonts[i].default_width = 1;
+            wgml_fonts[i].line_height = 1;
+            wgml_fonts[i].line_space = 0;
         }
         if( bin_device->box.font_name != NULL ) {
             font_base++;
@@ -712,6 +876,10 @@ extern void cop_setup( void )
                                         find_switch( cur_dev_font->font_switch );
             }
             wgml_fonts[i].font_pause = cur_dev_font->font_pause;
+            wgml_fonts[i].font_resident = 'n';
+            wgml_fonts[i].default_width = 1;
+            wgml_fonts[i].line_height = 1;
+            wgml_fonts[i].line_space = 0;
         }
         break;
     default:
@@ -734,8 +902,12 @@ extern void cop_setup( void )
     def_font.font_switch = wgml_fonts[0].font_switch;
     def_font.font_pause = wgml_fonts[0].font_pause;
     def_font.font_style = wgml_fonts[0].font_style;
+    def_font.font_resident = wgml_fonts[0].font_resident;
     def_font.font_height = wgml_fonts[0].font_height;
     def_font.font_space = wgml_fonts[0].font_space;
+    def_font.default_width = wgml_fonts[0].default_width;
+    def_font.line_height = wgml_fonts[0].line_height;
+    def_font.line_space = wgml_fonts[0].line_space;
 
     for( i = 0; i < wgml_font_cnt; i++ ) {
         if( wgml_fonts[i].bin_font == NULL ) {
@@ -743,8 +915,12 @@ extern void cop_setup( void )
             wgml_fonts[i].font_switch = def_font.font_switch;
             wgml_fonts[i].font_pause = def_font.font_pause;
             wgml_fonts[i].font_style = def_font.font_style;
+            wgml_fonts[i].font_resident = def_font.font_resident;
             wgml_fonts[i].font_height = def_font.font_height;
             wgml_fonts[i].font_space = def_font.font_space;
+            wgml_fonts[i].default_width = def_font.default_width;
+            wgml_fonts[i].line_height = def_font.line_height;
+            wgml_fonts[i].line_space = def_font.line_space;
         }
     }
 
@@ -756,8 +932,9 @@ extern void cop_setup( void )
         g_suicide;
     }
 
-    /* Initialize the dependent module. */
+    /* Initialize the dependent modules. */
 
+    df_setup();
     ob_setup();
 
     return;
@@ -798,8 +975,9 @@ extern void cop_teardown( void )
         wgml_fonts = NULL;
     }
 
-    /* Release any memory allocated by the dependent module. */
+    /* Release any memory allocated by the dependent modules. */
 
+    df_teardown();
     ob_teardown();
 
     return;
@@ -813,9 +991,15 @@ extern void cop_teardown( void )
 
 extern void fb_start( void )
 {
-    /* Interpret the START :PAUSE block. */
+    /* Interpret the START :PAUSE block and reset the function table. */
+
+    if( bin_device->pauses.start_pause != NULL ) \
+            df_interpret_device_functions( bin_device->pauses.start_pause->text );
+    df_populate_device_table();
 
     /* Interpret the START :INIT block. */
+
+    if( bin_driver->inits.start != NULL ) fb_init( bin_driver->inits.start );
 
     return;
 }

@@ -98,10 +98,14 @@ static void display_binary_device_library( void )
                                                 wgml_fonts[i].font_style->type );
         }
         out_msg( "  Font pause present: " );
-        if( wgml_fonts[i].font_style == NULL ) out_msg( "No\n" );
+        if( wgml_fonts[i].font_pause == NULL ) out_msg( "No\n" );
         else out_msg( "Yes\n" );
-        out_msg( "  Font space:         %i\n", wgml_fonts[i].font_space );
+        out_msg( "  Font resident:      %c\n", wgml_fonts[i].font_resident );
+        out_msg( "  Default Width:      %i\n", wgml_fonts[i].default_width );
         out_msg( "  Font height:        %i\n", wgml_fonts[i].font_height );
+        out_msg( "  Font space:         %i\n", wgml_fonts[i].font_space );
+        out_msg( "  Line height:        %i\n", wgml_fonts[i].line_height );
+        out_msg( "  Line space:         %i\n", wgml_fonts[i].line_space );
     }
 }
 
@@ -192,6 +196,9 @@ int main()
     cmdline = NULL;
 
     dev_name = tgt_path;
+    master_fname = "dvldchk";
+    out_file = NULL;
+    out_file_attr = NULL;
 
     /* Special preparations for test01 and test02. */
 

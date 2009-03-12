@@ -39,6 +39,7 @@
 *               those in "copfiles.h", not the research code.
 ****************************************************************************/
 
+#include <conio.h>
 #include <process.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -211,7 +212,7 @@ start_heapcheck( "main" );
     cmdline = NULL;
 
     dev_name = tgt_path;
-    master_fname = "plain";
+    master_fname = "outcheck";
     out_file = NULL;
     out_file_attr = NULL;
 
