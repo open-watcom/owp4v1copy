@@ -12,7 +12,7 @@ DoCopyFiles=1
 DoFileAssociations=1
 ToolHelp=%CDDir%\binw\toolhelp.dll
 GenerateBatchFile=1
-BatchFileName=%DstDir%\owsetenv.bat
+BatchFileName=%DstDir%/owsetenv
 BatchFileCaption=Open Watcom Build Environment
 spawnbefore=%CDDir%\binp\nmpbind.exe q, SrcIsCD IsOS2
 spawnbefore=%CDDir%\binp\batserv.exe q, SrcIsCD IsOS2DosBox
@@ -73,65 +73,45 @@ dialog=hnewinst.dlg
 dialog=htarget.dlg
 dialog=hother.dlg
 dialog=hhelpfil.dlg
-cfg=+PATH=%DstDir%\BINP,                        IsOS2 IsOS2DosBox |
-cfg=+PATH=%DstDir%\BINW,                        IsOS2 IsOS2DosBox |
-cfg=+PATH=%CDDir%\BINP,                         IsOS2 IsOS2DosBox | MinimalInstall
-cfg=+PATH=%CDDir%\BINW,                         IsOS2 IsOS2DosBox | MinimalInstall
-cfg=+LIBPATH=%DstDir%\BINP\DLL,                 IsOS2 IsOS2DosBox |
-cfg=+LIBPATH=%CDDir%\BINP\DLL,                  IsOS2 IsOS2DosBox | MinimalInstall
-cfg=+INCLUDE=%DstDir%\H\OS2;%DstDir%\H,         IsOS2 IsOS2DosBox |
-cfg=+INCLUDE=%CDDir%\H\OS2;%CDDir%\H,           IsOS2 IsOS2DosBox | MinimalInstall
-cfg=+FINCLUDE=%DstDir%\SRC\FORTRAN,             IsOS2 IsOS2DosBox | ?%DstDir%\binw\wfc386.exe
-cfg=+FINCLUDE=%DstDir%\SRC\FORTRAN\OS2,         IsOS2 IsOS2DosBox | ?%DstDir%\binw\wfc386.exe
-cfg=+FINCLUDE=%CDDir%\SRC\FORTRAN,              IsOS2 IsOS2DosBox | MinimalInstall ?%CDDir%\binw\wfc386.exe
-cfg=+FINCLUDE=%CDDir%\SRC\FORTRAN\OS2,          IsOS2 IsOS2DosBox | MinimalInstall ?%CDDir%\binw\wfc386.exe
-cfg=+HELP=%DstDir%\BINP\HELP,                   IsOS2 IsOS2DosBox |
-cfg=+HELP=%CDDir%\BINP\HELP,                    IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
-cfg=+BOOKSHELF=%DstDir%\BINP\HELP,              IsOS2 IsOS2DosBox |
-cfg=+BOOKSHELF=%CDDir%\BINP\HELP,               IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
-cfg=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox |
-cfg=EDPATH=%OWDir%\EDDAT,                       IsOS2 IsOS2DosBox |
+cfg=++LIBPATH=%DstDir%\BINP\DLL,                IsOS2 IsOS2DosBox |
+cfg=++LIBPATH=%CDDir%\BINP\DLL,                 IsOS2 IsOS2DosBox | MinimalInstall
+cfg=++HELP=%DstDir%\BINP\HELP,                  IsOS2 IsOS2DosBox |
+cfg=++HELP=%CDDir%\BINP\HELP,                   IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
+cfg=++BOOKSHELF=%DstDir%\BINP\HELP,             IsOS2 IsOS2DosBox |
+cfg=++BOOKSHELF=%CDDir%\BINP\HELP,              IsOS2 IsOS2DosBox | MinimalInstall helpfiles ! SrcIsCD & |
 cfg=RUN=%DstDir%\BINP\BATSERV.EXE,              IsOS2DosBox ?%DstDir%\binp\batserv.exe
 cfg=RUN=%DstDir%\BINP\NMPBIND.EXE,              IsOS2 IsOS2DosBox | ?%DstDir%\binp\nmpbind.exe
 cfg=FILES=20,                                   IsDOS IsWin |
-auto=+PATH=%DstDir%\BINNT,                      IsWin95
-auto=+PATH=%CDDir%\BINNT,                       IsWin95 MinimalInstall
-auto=+PATH=%DstDir%\BINW,                       IsDOS IsWin IsWin95 | |
-auto=+PATH=%CDDir%\BINW,                        IsDOS IsWin IsWin95 | | MinimalInstall
-auto=+PATH=%DstDir%\BIN,                        false
-auto=+PATH=%DstDir%\BINB,                       false
-auto=+INCLUDE=%DstDir%\H,                       IsDOS IsWin IsWin95 | |
-auto=+INCLUDE=%CDDir%\H,                        IsDOS IsWin IsWin95 | | MinimalInstall
-auto=+INCLUDE=%DstDir%\H\WIN,                   IsWin
-auto=+INCLUDE=%CDDir%\H\WIN,                    IsWin MinimalInstall
-auto=+INCLUDE=%DstDir%\H\NT,                    IsWin95
-auto=+INCLUDE=%CDDir%\H\NT,                     IsWin95 MinimalInstall
-auto=+FINCLUDE=%DstDir%\SRC\FORTRAN,            IsDOS IsWin IsWin95 | | ?%DstDir%\binw\wfc386.exe
-auto=+FINCLUDE=%CDDir%\SRC\FORTRAN,             IsDOS IsWin IsWin95 | | MinimalInstall ?%CDDir%\binw\wfc386.exe
-auto=+FINCLUDE=%DstDir%\SRC\FORTRAN\WIN,        IsWin IsWin95 | ?%DstDir%\binw\wfc386.exe
-auto=+FINCLUDE=%CDDir%\SRC\FORTRAN\WIN,         IsWin IsWin95 | MinimalInstall ?%CDDir%\binw\wfc386.exe
-auto=+FINCLUDE=%DstDir%\SRC\FORTRAN\DOS,        IsDOS ?%DstDir%\binw\wfc386.exe
-auto=+FINCLUDE=%CDDir%\SRC\FORTRAN\DOS,         IsDOS MinimalInstall ?%CDDir%\binw\wfc386.exe
-auto=WATCOM=%OWDir%,                            IsDOS IsWin IsWin95 | |
-auto=EDPATH=%OWDir%\EDDAT,                      IsDOS IsWin IsWin95 | |
-auto=WWINHELP=%HDir%\BINW,                      IsDOS IsWin IsWin95 | | MinimalInstall helpfiles ! SrcIsCD & |
 ini=386Enh, *device, %DstDir%\binw\wdebug.386, system.ini, , IsWin IsWin95 | ?%DstDir%\binw\wdebug.386
-env=+PATH=%DstDir%\BINNT,                       IsWinNT
-env=+PATH=%DstDir%\BINW,                        IsWinNT
+env=+PATH=%DstDir%\BIN,                         false
 env=+PATH=%DstDir%\BINB,                        false
-env=+PATH=%CDDir%\BINNT,                        IsWinNT MinimalInstall
-env=+PATH=%CDDir%\BINW,                         IsWinNT MinimalInstall
-env=+INCLUDE=%DstDir%\H,                        IsWinNT
-env=+INCLUDE=%DstDir%\H\NT,                     IsWinNT
-env=+INCLUDE=%CDDir%\H,                         IsWinNT MinimalInstall
-env=+INCLUDE=%CDDir%\H\NT,                      IsWinNT MinimalInstall
-env=+FINCLUDE=%DstDir%\SRC\FORTRAN\WIN,         IsWinNT ?%DstDir%\binw\wfc386.exe
-env=+FINCLUDE=%DstDir%\SRC\FORTRAN,             IsWinNT ?%DstDir%\binw\wfc386.exe
-env=+FINCLUDE=%CDDir%\SRC\FORTRAN\WIN,          IsWinNT MinimalInstall ?%CDDir%\binw\wfc386.exe
-env=+FINCLUDE=%CDDir%\SRC\FORTRAN,              IsWinNT MinimalInstall ?%CDDir%\binw\wfc386.exe
-env=WATCOM=%OWDir%,                             IsWinNT
-env=EDPATH=%OWDir%\EDDAT,                       IsWinNT
-env=WWINHELP=%HDir%\BINW,                       IsWinNT MinimalInstall helpfiles ! SrcIsCD & |
+env=++PATH=%CDDir%\BINW,                        IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | MinimalInstall
+env=++PATH=%DstDir%\BINW,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=++PATH=%CDDir%\BINP,                        IsOS2 IsOS2DosBox | MinimalInstall
+env=++PATH=%CDDir%\BINNT,                       IsWin95 IsWinNT | MinimalInstall
+env=++PATH=%DstDir%\BINP,                       IsOS2 IsOS2DosBox |
+env=++PATH=%DstDir%\BINNT,                      IsWin95 IsWinNT |
+env=++PATH=%DstDir%/binl,                       IsLinux
+env=++INCLUDE=%CDDir%\H\OS2,                    IsOS2 IsOS2DosBox | MinimalInstall
+env=++INCLUDE=%DstDir%\H\OS2,                   IsOS2 IsOS2DosBox |
+env=++INCLUDE=%CDDir%\H\WIN,                    IsWin MinimalInstall
+env=++INCLUDE=%DstDir%\H\WIN,                   IsWin
+env=++INCLUDE=%CDDir%\H\NT,                     IsWin95 IsWinNT | MinimalInstall
+env=++INCLUDE=%DstDir%\H\NT,                    IsWin95 IsWinNT |
+env=++INCLUDE=%CDDir%\H,                        IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | MinimalInstall
+env=++INCLUDE=%DstDir%\H,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=++INCLUDE=%DstDir%/lh,                      IsLinux
+env=++FINCLUDE=%CDDir%\SRC\FORTRAN\OS2,         IsOS2 IsOS2DosBox | MinimalInstall ?%CDDir%\binw\wfc386.exe
+env=++FINCLUDE=%DstDir%\SRC\FORTRAN\OS2,        IsOS2 IsOS2DosBox | ?%DstDir%\binw\wfc386.exe
+env=++FINCLUDE=%CDDir%\SRC\FORTRAN\WIN,         IsWin IsWin95 IsWinNT | | MinimalInstall ?%CDDir%\binw\wfc386.exe
+env=++FINCLUDE=%DstDir%\SRC\FORTRAN\WIN,        IsWin IsWin95 IsWinNT | | ?%DstDir%\binw\wfc386.exe
+env=++FINCLUDE=%CDDir%\SRC\FORTRAN\DOS,         IsDOS MinimalInstall ?%CDDir%\binw\wfc386.exe
+env=++FINCLUDE=%DstDir%\SRC\FORTRAN\DOS,        IsDOS ?%DstDir%\binw\wfc386.exe
+env=++FINCLUDE=%CDDir%\SRC\FORTRAN,             IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | MinimalInstall ?%CDDir%\binw\wfc386.exe
+env=++FINCLUDE=%DstDir%\SRC\FORTRAN,            IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | | ?%DstDir%\binw\wfc386.exe
+env=WATCOM=%OWDir%,                             IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=EDPATH=%OWDir%\EDDAT,                       IsOS2 IsOS2DosBox IsDOS IsWin IsWin95 IsWinNT | | | | |
+env=WWINHELP=%HDir%\BINW,                       IsDOS IsWin IsWin95 IsWinNT | | | MinimalInstall helpfiles ! SrcIsCD & |
 icon=view.exe, %HDir%\binp\help\c_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall !
 icon=view.exe, %HDir%\binp\help\f_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall
 icon=e.exe, %OWDir%\readme.txt, Read Me,,, IsOS2 DoCreateHelpIcons IsFortranInstall ! IsJapanese !

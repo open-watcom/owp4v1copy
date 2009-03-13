@@ -61,6 +61,8 @@ static gui_rect         StatusRect;
 static char             StatusBarBuf[256];
 extern int              IsPatch;
 
+extern gui_ord          BitMapBottom;
+
 int                     MsgLine0 = STAT_BLANK;
 bool                    CancelSetup = FALSE;
 
@@ -89,6 +91,35 @@ char *Messages[] = {
 };
 #undef pick
 
+static GUICALLBACK StatusEventProc;
+
+static gui_create_info StatusInfo = {
+    NULL,                               // Title
+    { 1500, 2500, 6500, 6000 },         // Position
+    GUI_NOSCROLL,                       // Scroll Styles
+    GUI_VISIBLE
+//  | GUI_CLOSEABLE
+    | GUI_SYSTEM_MENU
+//  | GUI_RESIZEABLE
+//  | GUI_MAXIMIZE
+//  | GUI_MINIMIZE
+    /*| GUI_DIALOG_LOOK*/,                      // Window Styles
+    NULL,                               // Parent
+    0,                                  // Number of menus
+    NULL,                               // Menu's
+    WND_NUMBER_OF_COLORS,               // number of color attributes
+                                        // ArraySize( StatusColours );
+    &StatusColours,                     // Array of color attributes
+    &StatusEventProc,                   // Callback function
+    NULL,                               // Extra
+    NULL                                // Icon
+};
+
+static gui_control_info Cancel = {
+      GUI_DEFPUSH_BUTTON, NULL, 0,0,0,0, NULL, // nyi - kanji
+      GUI_NOSCROLL, GUI_TAB_GROUP | GUI_AUTOMATIC, CTL_CANCEL
+};
+
 extern void StatusShow( bool show )
 /********************************/
 {
@@ -111,6 +142,7 @@ extern void StatusFini( void )
     if( StatusWnd == NULL ){
         return;
     } else {
+        GUIMemFree( StatusInfo.text );
         GUIDestroyWnd( StatusWnd );
         StatusWnd = NULL;
     }
@@ -230,7 +262,6 @@ extern bool StatusCancelled( void )
     return( CancelSetup );
 }
 
-static GUICALLBACK StatusEventProc;
 static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
 /**************************************************************************/
 {
@@ -416,35 +447,6 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
     }
     return( FALSE );
 }
-
-static gui_create_info StatusInfo = {
-    NULL,                               // Title
-    { 1500, 2500, 6500, 6000 },         // Position
-    GUI_NOSCROLL,                       // Scroll Styles
-    GUI_VISIBLE
-//  | GUI_CLOSEABLE
-    | GUI_SYSTEM_MENU
-//  | GUI_RESIZEABLE
-//  | GUI_MAXIMIZE
-//  | GUI_MINIMIZE
-    /*| GUI_DIALOG_LOOK*/,                      // Window Styles
-    NULL,                               // Parent
-    0,                                  // Number of menus
-    NULL,                               // Menu's
-    WND_NUMBER_OF_COLORS,               // number of color attributes
-                                        // ArraySize( StatusColours );
-    &StatusColours,                     // Array of color attributes
-    &StatusEventProc,                   // Callback function
-    NULL,                               // Extra
-    NULL                                // Icon
-};
-
-static gui_control_info Cancel = {
-      GUI_DEFPUSH_BUTTON, NULL, 0,0,0,0, NULL, // nyi - kanji
-      GUI_NOSCROLL, GUI_TAB_GROUP | GUI_AUTOMATIC, CTL_CANCEL
-};
-
-extern gui_ord BitMapBottom;
 
 extern bool OpenStatusWindow( char *title )
 /*****************************************/

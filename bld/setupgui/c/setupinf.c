@@ -187,6 +187,7 @@ typedef struct a_file_info {
     unsigned            in_new_dir  : 1;
     unsigned            read_only   : 1;
     unsigned            is_nlm      : 1;
+    unsigned            is_dll      : 1;
     unsigned            executable  : 1;
 } a_file_info;
 
@@ -350,6 +351,8 @@ static int              CharWidth;
     x( IsWin32s, y ) \
     x( IsWin95, y ) \
     x( IsWinNT, y ) \
+    x( IsLinux, y ) \
+    x( IsAlpha, y ) \
     x( HelpFiles, y ) \
 
 #define defvar( x, y ) vhandle x;
@@ -1880,6 +1883,7 @@ static bool ProcLine( char *line, pass_type pass )
                 char    fext[_MAX_EXT];
                 _splitpath( file->name, NULL, NULL, NULL, fext );
                 file->is_nlm = stricmp( fext, ".nlm" ) == 0;
+                file->is_dll = stricmp( fext, ".dll" ) == 0;
             }
             line = p; p = NextToken( line, '!' );
             file->size = get36( line ) * 512UL;
@@ -2524,6 +2528,7 @@ extern long SimInit( char *inf_name )
     io = FileOpen( inf_name, O_RDONLY + O_BINARY );
     if( io == NULL ) {
         GUIMemFree( ReadBuf );
+        GUIMemFree( RawReadBuf );
         return( SIM_INIT_NOFILE );
     }
     SetVariableByName( "SetupInfFile", inf_name );
@@ -2536,6 +2541,7 @@ extern long SimInit( char *inf_name )
     io = FileOpen( inf_name, O_RDONLY + O_BINARY );
     if( io == NULL ) {
         GUIMemFree( ReadBuf );
+        GUIMemFree( RawReadBuf );
         return( SIM_INIT_NOFILE );
     }
 #endif
@@ -2573,6 +2579,7 @@ extern long SimInit( char *inf_name )
     result = PrepareSetupInfo( io, FINAL_SCAN );
     FileClose( io );
     GUIMemFree( ReadBuf );
+    GUIMemFree( RawReadBuf );
     for( i = 0; i < SetupInfo.files.num; ++i ) {
         FileInfo[i].condition.p = &FileCondInfo[FileInfo[i].condition.i];
     }
@@ -2659,7 +2666,7 @@ extern int SimGetTargNumFiles( int i )
 }
 
 extern void SimSetTargTempDisk( int parm, char disk )
-/***************************************************/
+/****************************************************/
 {
     *TargetInfo[parm].temp_disk = disk;
 }
@@ -2886,6 +2893,18 @@ extern bool SimSubFileExecutable( int parm, int subfile )
     return( FileInfo[parm].files[subfile].executable );
 }
 
+extern bool SimSubFileIsNLM( int parm, int subfile )
+/**************************************************/
+{
+    return( FileInfo[parm].files[subfile].is_nlm );
+}
+
+extern bool SimSubFileIsDLL( int parm, int subfile )
+/**************************************************/
+{
+    return( FileInfo[parm].files[subfile].is_dll );
+}
+
 extern bool SimSubFileNewer( int parm, int subfile )
 /**************************************************/
 {
@@ -3040,8 +3059,7 @@ extern long SimGetPMIconInfo( int parm, char *buff )
     char                t1[_MAX_PATH];
 
     if( PMInfo[parm].icoioname == NULL ) {
-        strcpy( buff, PMInfo[parm].filename );
-        ReplaceVars( t1, buff );
+        ReplaceVars( t1, PMInfo[parm].filename );
         strcpy( buff, t1 );
     } else {
         strcpy( buff, PMInfo[parm].icoioname );
@@ -3116,23 +3134,27 @@ extern bool SimCheckProfCondition( int parm )
  * =======================================================================
  */
 
-static bool SimGetConfigStringsFrom( struct config_info *array, int i, char *new_var,
-                                     char *new_val )
-/***********************************************************************************/
+static append_mode SimGetConfigStringsFrom( struct config_info *array, int i, 
+                                        const char **new_var, char *new_val )
+/***************************************************************************/
 {
-    bool        append;
+    append_mode append;
     char        *p;
 
-    strcpy( new_var, array[i].value );
-    ReplaceVars( new_val, new_var );
+    ReplaceVars( new_val, array[i].value );
     p = array[i].var;
-    if( *p == '+' ) {   // append
+    if( *p != '+' ) {
+        append = AM_OVERWRITE;
+    } else if( *p == '+' ) {
         ++p;
-        append = TRUE;
-    } else {
-        append = FALSE;
+        if( *p == '+' ) {
+            ++p;
+            append = AM_BEFORE;
+        } else {
+            append = AM_AFTER;
+        }
     }
-    strcpy( new_var, p );
+    *new_var = p;
     return( append );
 }
 
@@ -3142,8 +3164,8 @@ extern int SimNumAutoExec()
     return( SetupInfo.autoexec.num );
 }
 
-extern bool SimGetAutoExecStrings( int i, char *new_var, char *new_val )
-/**********************************************************************/
+extern append_mode SimGetAutoExecStrings( int i, const char **new_var, char *new_val )
+/************************************************************************************/
 {
     return( SimGetConfigStringsFrom( AutoExecInfo, i, new_var, new_val ) );
 }
@@ -3161,8 +3183,8 @@ extern int SimNumConfig()
 }
 
 
-extern bool SimGetConfigStrings( int i, char *new_var, char *new_val )
-/********************************************************************/
+extern append_mode SimGetConfigStrings( int i, const char **new_var, char *new_val )
+/**********************************************************************************/
 {
     return( SimGetConfigStringsFrom( ConfigInfo, i, new_var, new_val ) );
 }
@@ -3180,8 +3202,8 @@ extern int SimNumEnvironment()
 }
 
 
-extern bool SimGetEnvironmentStrings( int i, char *new_var, char *new_val )
-/*************************************************************************/
+extern append_mode SimGetEnvironmentStrings( int i, const char **new_var, char *new_val )
+/***************************************************************************************/
 {
     return( SimGetConfigStringsFrom( EnvironmentInfo, i, new_var, new_val ) );
 }
@@ -3289,10 +3311,10 @@ extern char *SimGetUpgradeName( int parm )
  * =======================================================================
  */
 
-extern char * SimGetDriveLetter( int parm )
-/*****************************************/
+extern char *SimGetTargetDriveLetter( int parm )
+/**********************************************/
 {
-    char * buff;
+    char *buff;
     char temp[_MAX_PATH];
 
     buff = GUIMemAlloc( _MAX_PATH );
@@ -3342,7 +3364,7 @@ extern void CheckDLLCount( char *install_name )
         if( FileInfo[DLLsToCheck[i].index].core_component ) {
             continue;
         }
-        if( GetVariableIntVal( "UnInstall" ) != 0 ||
+        if( VarGetIntVal( UnInstall ) ||
             FileInfo[DLLsToCheck[i].index].remove ||
             (!FileInfo[DLLsToCheck[i].index].add &&
             GetVariableIntVal( "ReInstall" ) != 0) ) {
@@ -3434,7 +3456,7 @@ extern void SimCalcAddRemove()
             DirInfo[dir_index].num_files += FileInfo[i].num_files;
         }
         TargetInfo[targ_index].num_files += FileInfo[i].num_files;
-        cs = GetClusterSize( *TargetInfo[targ_index].temp_disk );
+        cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
         FileInfo[i].remove = remove;
         FileInfo[i].add = add;
         for( k = 0; k < FileInfo[i].num_files; ++k ) {
@@ -3504,7 +3526,7 @@ extern void SimCalcAddRemove()
     /* Estimate space used for directories. Be generous. */
     if( !uninstall ) {
         for( i = 0; i < SetupInfo.target.num; ++i ) {
-            cs = GetClusterSize( *TargetInfo[targ_index].temp_disk );
+            cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
             for( j = 0; j < SetupInfo.dirs.num; ++j ) {
                 if( DirInfo[j].target != i )
                     continue;
@@ -3536,10 +3558,11 @@ extern bool SimCalcTargetSpaceNeeded()
     }
     cursor = GUISetMouseCursor( GUI_HOURGLASS_CURSOR );
     for( i = 0; i < SetupInfo.target.num; ++i ) {
-        temp = SimGetDriveLetter( i );
+        temp = SimGetTargetDriveLetter( i );
         if( temp == NULL )
             return( FALSE );
-        TargetInfo[i].temp_disk = temp;
+        strcpy( TargetInfo[ i ].temp_disk, temp );
+        GUIMemFree( temp );
         TargetInfo[i].space_needed = 0;
         TargetInfo[i].max_tmp_file = 0;
         TargetInfo[i].num_files = 0;

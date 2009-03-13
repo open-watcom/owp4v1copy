@@ -463,7 +463,7 @@ extern void GUImain( void )
     FreeGlobalVarList( TRUE );
     FreeDefaultDialogs();
     FreeAllStructs();
-    FreeDirParams( &inf_name, &tmp_path );
+    FreeDirParams( &inf_name, &tmp_path, &arc_name );
     CloseDownProgram();
 }
 

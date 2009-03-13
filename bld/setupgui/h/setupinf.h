@@ -46,8 +46,14 @@ typedef enum {
     FINAL_SCAN,
 } pass_type;
 
+typedef enum {
+    AM_OVERWRITE,
+    AM_BEFORE,
+    AM_AFTER
+} append_mode;
+
 extern void CheckStateVars();
-extern char *SimGetDriveLetter( int parm );
+extern char *SimGetTargetDriveLetter( int parm );
 extern bool SimFileAdd( int parm );
 extern bool SimFileUpToDate( int parm );
 extern bool SimFileRemove( int parm );
@@ -60,6 +66,8 @@ extern bool SimSubFileInOldDir( int parm, int subfile );
 extern time_t SimSubFileDate( int parm, int subfile );
 extern bool SimSubFileNewer( int parm, int subfile );
 extern bool SimSubFileExecutable( int parm, int subfile );
+extern bool SimSubFileIsNLM( int parm, int subfile );
+extern bool SimSubFileIsDLL( int parm, int subfile );
 extern bool SimSubFileReadOnly( int parm, int subfile );
 extern long SimSubFileSize( int parm, int subfile );
 extern bool SimFileSplit( int parm );
@@ -107,14 +115,14 @@ extern int SimNumProfile(void);
 extern void SimProfInfo(int parm,char *app_name,char *key_name,char *value,char *file_name,char *hive_name);
 extern unsigned char SimCheckProfCondition(int parm);
 extern int SimNumAutoExec(void);
-extern unsigned char SimGetAutoExecStrings(int parm,char *new_var, char *new_val);
+extern append_mode SimGetAutoExecStrings(int parm,const char **new_var,char *new_val);
 extern unsigned char SimCheckAutoExecCondition(int parm);
 extern int SimNumConfig(void);
-extern unsigned char SimGetConfigStrings(int parm,char *new_var, char *new_val);
+extern append_mode SimGetConfigStrings(int parm,const char **new_var,char *new_val);
 extern unsigned char SimCheckConfigCondition(int parm);
 extern int SimNumEnvironment(void);
 extern bool SimCheckEnvironmentCondition( int parm );
-extern unsigned char SimGetEnvironmentStrings(int parm,char *new_var, char *new_val);
+extern append_mode SimGetEnvironmentStrings(int parm,const char **new_var,char *new_val);
 extern void SimGetEnvironmentVal(int parm,char *buff);
 extern int SimNumAssociations( void );
 extern void SimGetAssociationExt( int parm, char *buff );
