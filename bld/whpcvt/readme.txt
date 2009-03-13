@@ -395,7 +395,7 @@ Using The GML Help Layouts:
 ===========================
     A layout, tag set, and device driver have been written for GML
     to generate WHP help format files. The WPROJ project you need
-    to generate WHP files is in x:\groupdir\utils\whelp. In there,
+    to generate WHP files is in docs\doc\whelp. In there,
     you will find:
         - whelp.opt
         - whelp.gml
