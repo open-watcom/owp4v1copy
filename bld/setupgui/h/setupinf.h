@@ -157,7 +157,7 @@ extern bool SimDeleteIsDialog( int );
 extern bool SimDeleteIsDir( int );
 extern int SimNumUpgrades();
 extern char *SimGetUpgradeName( int );
-extern char *MakeDummyVar( char *buff );
+extern vhandle MakeDummyVar( void );
 
 // Possible return values from sending the SIM_INITIALIZE message.
 typedef enum {

@@ -177,7 +177,6 @@ extern int set_dlg_push_button( char *var_name, char *text,
     int                 but_pos = 0;
     gui_control_info    *control;
     int                 id;
-    char                dummy_var[DUMMY_VAR_SIZE];
 
     control = &gui_controls[num_controls];
 
@@ -227,8 +226,7 @@ extern int set_dlg_push_button( char *var_name, char *text,
             id = VarGetId( GetVariableByName( var_name ) );
             if( id == 0 ) {
                 // dummy_var allows control to have an id - used by dynamic visibility feature
-                MakeDummyVar( dummy_var );
-                id = AddVariable( dummy_var );
+                id = MakeDummyVar();
             }
         }
         break;

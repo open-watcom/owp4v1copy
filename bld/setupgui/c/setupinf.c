@@ -923,7 +923,6 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
     int                 len;
     char                *text;
     bool                rc = TRUE;
-    char                dummy_var[DUMMY_VAR_SIZE];
     vhandle             var_handle;
 
     line = next; next = NextToken( line, '"' );
@@ -938,9 +937,8 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
             GUIStrDup( line,
                        &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls] );
         }
-        MakeDummyVar( dummy_var );
         // dummy_var allows control to have an id - used by dynamic visibility feature
-        var_handle = AddVariable( dummy_var );
+        var_handle = MakeDummyVar();
         if( text != NULL ) {
             text = AddInstallName( text, TRUE );
             len = strlen( text );
@@ -1030,7 +1028,6 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
     bool                rc = TRUE;
     void                *io;
     struct stat         buf;
-    char                dummy_var[DUMMY_VAR_SIZE];
     vhandle             var_handle;
 
     text = NULL;
@@ -1073,9 +1070,8 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
                 GUIStrDup( line,
                            &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls] );
             }
-            MakeDummyVar( dummy_var );
             // dummy_var allows control to have an id - used by dynamic visibility feature
-            var_handle = AddVariable( dummy_var );
+            var_handle = MakeDummyVar();
             set_dlg_textwindow( dlg->curr_dialog->controls, dlg->array.num - 1,
                                 text, var_handle, C0, dlg->row_num, dlg->max_width + 2,
                                 rows, GUI_VSCROLL );
@@ -1191,7 +1187,6 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
     vhandle             var_handle_2;
     char                buff[MAXBUF];
     bool                rc = TRUE;
-    char                dummy_var[DUMMY_VAR_SIZE];
 
     line = next; next = NextToken( line, ',' );
     GUIStrDup( line, &vbl_name );
@@ -1256,11 +1251,10 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
             GUIStrDup( line,
                        &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls + 1] );
         }
-        MakeDummyVar( dummy_var );
-        var_handle_2 = AddVariable( dummy_var );
+        var_handle_2 = MakeDummyVar();
         SetVariableByHandle( var_handle_2, dialog_name );
 
-        set_dlg_push_button( dummy_var, button_text, dlg->curr_dialog->controls,
+        set_dlg_push_button( VarGetName( var_handle_2 ), button_text, dlg->curr_dialog->controls,
                              dlg->array.num - 1, dlg->row_num, 4, 4, W, BW );
         BumpArray( &dlg->array );
         set_dlg_edit( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
@@ -1272,9 +1266,8 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
                 GUIStrDup( line,
                            &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls + 2] );
             }
-            MakeDummyVar( dummy_var );
             // dummy_var allows control to have an id - used by dynamic visibility feature
-            var_handle = AddVariable( dummy_var );
+            var_handle = MakeDummyVar();
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
                                  var_handle, C0, dlg->row_num, C0 + strlen( buff ) );
         }
@@ -1289,7 +1282,6 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
 static bool dialog_other_button( char *next, DIALOG_INFO *dlg )
 /*************************************************************/
 {
-    char                dummy_var[DUMMY_VAR_SIZE];
     char                *line, *button_text, *next_copy, *text, *dialog_name;
     char                *condition, *vis_condition;
     vhandle             var_handle;
@@ -1308,10 +1300,9 @@ static bool dialog_other_button( char *next, DIALOG_INFO *dlg )
     vis_condition = line;
 
     if( condition == NULL || *condition == '\0' || EvalCondition( condition ) ) {
-        MakeDummyVar( dummy_var );
-        var_handle = AddVariable( dummy_var );
+        var_handle = MakeDummyVar();
         SetVariableByHandle( var_handle, dialog_name );
-        set_dlg_push_button( dummy_var, button_text, dlg->curr_dialog->controls,
+        set_dlg_push_button( VarGetName( var_handle ), button_text, dlg->curr_dialog->controls,
                              dlg->array.num - 1, dlg->row_num, 4, 4, W, BW );
         if( text != NULL ) {
             BumpArray( &dlg->array );
@@ -1513,7 +1504,6 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
     vhandle             var_handle;
     char                buff[MAXBUF];
     bool                rc = TRUE;
-    char                dummy_var[DUMMY_VAR_SIZE];
 
     line = next; next = NextToken( line, ',' );
     GUIStrDup( line, &vbl_name );
@@ -1578,9 +1568,8 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
                 GUIStrDup( line,
                            &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls + 1] );
             }
-            MakeDummyVar( dummy_var );
             // dummy_var allows control to have an id - used by dynamic visibility feature
-            var_handle = AddVariable( dummy_var );
+            var_handle = MakeDummyVar();
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
                                  var_handle, C0, dlg->row_num, C0 + strlen( buff ) );
         }
@@ -4532,17 +4521,13 @@ static void CompileCondition( char *str, char **to )
     GUIStrDup( buff, to );
 }
 
-char *MakeDummyVar( char *buff )
-/******************************/
+vhandle MakeDummyVar( void )
+/**************************/
 {
     static unsigned int counter;
-    static char         buffer[DUMMY_VAR_SIZE];
+    char                buffer[DUMMY_VAR_SIZE];
 
-    if( buff == NULL ) {
-        buff = buffer;
-    }
-
-    sprintf( buff, "DUMMY_VAR_%u", counter );
+    sprintf( buffer, "DUMMY_VAR_%u", counter );
     counter++;
-    return( buff );
+    return( AddVariable( buffer ) );
 }
