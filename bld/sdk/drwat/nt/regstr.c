@@ -75,7 +75,7 @@ void UpdateRegString( HWND string, HWND list, int x, int y, int width, int heigh
     LONG flags;
 
     len = GetWindowTextLength( string ) + 1;
-    cmp = alloca( len + 1 );
+    cmp = alloca( len );
     GetWindowText( string, cmp, len );
     if( strcmp( text, cmp ) != 0 ) {
         SetWindowText( string, text );
@@ -125,7 +125,7 @@ static void RegStrPaint(HWND hwnd)
 
     SelectObject( hdc, GetMonoFont() );
     GetClientRect( hwnd, &r );
-    GetWindowText( hwnd, buff, 255 );
+    GetWindowText( hwnd, buff, sizeof( buff ) );
     len = strlen( buff );
     GetTextExtentPoint32( hdc, buff, len, &size );
     if( flags & REG_SELECTED ){

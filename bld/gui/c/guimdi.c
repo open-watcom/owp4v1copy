@@ -129,13 +129,13 @@ static bool AddMenu( gui_window *wnd, gui_window *parent, int num_menus,
 
 static void MakeLabel( int index, char *name, char *label )
 {
-    if( GUIGetWindowText( MDIWindows[index], name, MAX_LENGTH - 4) == 0 ) {
-        name[0] = '\0';
+    if( GUIGetWindowText( MDIWindows[ index ], name, MAX_LENGTH - 3 ) == 0 ) {
+        name[ 0 ] = '\0';
     }
-    label[0] = '&';
-    itoa( (index+1), label+1, 10 );
-    label[2] = ' ';
-    strcpy( label+3, name );
+    label[ 0 ] = '&';
+    itoa( index + 1, label + 1, 10 );
+    label[ 2 ] = ' ';
+    strcpy( label + 3, name );
 }
 
 
@@ -150,8 +150,8 @@ static void MakeHintText( int index, char *name )
 
 static void InsertMenuForWindow( gui_window *root, int index, int offset )
 {
-    char                name[MAX_LENGTH];
-    char                label[MAX_LENGTH];
+    char                name[ MAX_LENGTH ];
+    char                label[ MAX_LENGTH ];
     gui_menu_struct     menu;
 
     MakeLabel( index, name, label );
@@ -260,8 +260,8 @@ void InitMDI( gui_window *wnd, gui_create_info *info )
 
 static void ChangeMenuTitle( gui_window *root, int index )
 {
-    char        name[MAX_LENGTH];
-    char        label[MAX_LENGTH];
+    char        name[ MAX_LENGTH ];
+    char        label[ MAX_LENGTH ];
 
     MakeLabel( index, name, label );
     GUISetMenuText( root, GUI_MDI_FIRST_WINDOW + index, label, FALSE );
@@ -424,7 +424,7 @@ static void DlgInit( gui_window *wnd, void *param )
     info = (dlg_init *)param;
     TotalWindows++;
     ChildWindows[TotalWindows-1] = wnd;
-    if( GUIGetWindowText( wnd, buffer, MAX_LENGTH - 1 ) != 0 ) {
+    if( GUIGetWindowText( wnd, buffer, sizeof( buffer ) ) != 0 ) {
         GUIAddText( info->dlg_wnd, info->list_ctrl, buffer );
     } else {
         GUIAddText( info->dlg_wnd, info->list_ctrl, "" );

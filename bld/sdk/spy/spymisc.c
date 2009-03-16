@@ -752,13 +752,13 @@ void SetSpyState( spystate ss )
     int         len;
 
     SpyState = ss;
-    len = GetWindowText( SpyMainWindow, &str[1], 128 );
+    len = GetWindowText( SpyMainWindow, &str[1], sizeof( str ) - 2 );
     switch( ss ) {
     case OFF:
-        if( str[1] != '<' ) {
-            str[0] = '<';
-            str[len + 1] = '>';
-            str[len + 2] = 0;
+        if( str[ 1 ] != '<' ) {
+            str[ 0 ] = '<';
+            str[ len + 1 ] = '>';
+            str[ len + 2 ] = 0;
             SetWindowText( SpyMainWindow, str );
         }
         rcstr = GetRCString( STR_SPY_ON );
@@ -769,18 +769,18 @@ void SetSpyState( spystate ss )
         rcstr = GetRCString( STR_SPY_OFF );
         ModifyMenu( SpyMenu, SPY_OFFON, MF_BYCOMMAND | MF_ENABLED | MF_STRING,
                     SPY_OFFON, rcstr );
-        if( str[1] == '<' ) {
-            str[len] = 0;
-            SetWindowText( SpyMainWindow, &str[2] );
+        if( str[ 1 ] == '<' ) {
+            str[ len ] = 0;
+            SetWindowText( SpyMainWindow, &str[ 2 ] );
         }
         break;
     case NEITHER:
         rcstr = GetRCString( STR_SPY_OFF );
         ModifyMenu( SpyMenu, SPY_OFFON, MF_BYCOMMAND | MF_GRAYED | MF_STRING,
                     SPY_OFFON, rcstr );
-        if( str[1] == '<' ) {
-            str[len] = 0;
-            SetWindowText( SpyMainWindow, &str[2] );
+        if( str[ 1 ] == '<' ) {
+            str[ len ] = 0;
+            SetWindowText( SpyMainWindow, &str[ 2 ] );
         }
         break;
     }

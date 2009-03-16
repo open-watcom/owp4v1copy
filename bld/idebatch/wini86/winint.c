@@ -261,7 +261,7 @@ LONG __export FAR PASCAL WindowProc( HWND hwnd, UINT msg,
                                      UINT wparam, LONG lparam )
 {
     FARPROC     fp;
-    char        buff[MAX_BUFF+1];
+    char        buff[ MAX_BUFF + 1 ];
     int         len;
     HDC         hdc;
     MSG         peek;
@@ -286,29 +286,29 @@ LONG __export FAR PASCAL WindowProc( HWND hwnd, UINT msg,
     case WM_COMMAND:
         switch( LOWORD( wparam ) ) {
         case PRESSED_ENTER:
-            len = GetWindowText( editControl, buff, MAX_BUFF-1 );
+            len = GetWindowText( editControl, buff, sizeof( buff ) );
             SetWindowText( editControl, "" );
             if( hasConnect ) {
 #ifndef __EDITOR__
                 if( !stricmp( buff, ":ol" ) ) {
                     if( hasOL ) {
-                        VxDPut( END_OPEN_LIST, sizeof( END_OPEN_LIST )+1 );
+                        VxDPut( END_OPEN_LIST, sizeof( END_OPEN_LIST ) + 1 );
                         hasOL = 0;
                     } else {
-                        VxDPut( NEW_OPEN_LIST, sizeof( NEW_OPEN_LIST )+1 );
+                        VxDPut( NEW_OPEN_LIST, sizeof( NEW_OPEN_LIST ) + 1 );
                         hasOL = 1;
                     }
                     VxDGet( buff, sizeof( buff ) );
                 } else if( hasOL ) {
-                    VxDPut( buff, strlen( buff )+1 );
+                    VxDPut( buff, strlen( buff ) + 1 );
                     VxDGet( buff, sizeof( buff ) );
                 } else {
 #endif
-                    VxDPut( buff, len+1 );
+                    VxDPut( buff, len + 1 );
                     while( 1 ) {
                         len = VxDGet( buff, sizeof( buff ) );
                         buff[len] = 0;
-                        if( !strnicmp( buff, GET_REAL_NAME, sizeof( GET_REAL_NAME )-1 ) ) {
+                        if( !strnicmp( buff, GET_REAL_NAME, sizeof( GET_REAL_NAME ) - 1 ) ) {
                             listBoxOut( "REQUEST: %s\r\n", &buff[ sizeof( GET_REAL_NAME ) ] );
                             sprintf( buff,"y.c" );
                             VxDPut( buff, strlen( buff ) + 1 );
@@ -349,7 +349,7 @@ LONG __export FAR PASCAL WindowProc( HWND hwnd, UINT msg,
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
 
     case WM_CLOSE:
-        VxDPut( TERMINATE_CLIENT_STR, sizeof( TERMINATE_CLIENT_STR )+1 );
+        VxDPut( TERMINATE_CLIENT_STR, sizeof( TERMINATE_CLIENT_STR ) + 1 );
         while( 1 ) {
             if( VxDUnLink() == 0 ) {
                 break;

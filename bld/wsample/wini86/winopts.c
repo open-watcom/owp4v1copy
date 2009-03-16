@@ -114,9 +114,9 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
 {
     FARPROC     farproc;
     HWND        tmpw;
-    int         i;
-    char        data[_MAX_PATH];
-    char        tmp[256];
+    int         len;
+    char        data[ _MAX_PATH ];
+    char        tmp[ 80 + _MAX_PATH ];
     HINSTANCE   inst;
 
     switch( message ) {
@@ -138,8 +138,10 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
         case MSG_GETFILES:
             data[0] = 0;
             if( getFile( data ) ) {
-                i = GetWindowTextLength( editChild ) + 1;
-                GetWindowText( editChild, tmp, i );
+                len = GetWindowTextLength( editChild ) + 1;
+                if( len > sizeof( tmp ) )
+                    len = sizeof( tmp );
+                GetWindowText( editChild, tmp, len );
                 strcat( tmp, data );
                 SetWindowText( editChild, tmp );
             }
@@ -148,8 +150,10 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
 
         case PUSH_OK_ID:
         case SELECT_ID:
-            i = GetWindowTextLength( editChild ) + 1;
-            GetWindowText( editChild, dataPtr, i );
+            len = GetWindowTextLength( editChild ) + 1;
+            if( len > _MAX_PATH )
+                len = _MAX_PATH;
+            GetWindowText( editChild, dataPtr, len );
             canContinue = TRUE;
             tmpw = GetParent( editChild );
             SetWindowLong( editChild, GWL_WNDPROC, (LONG) oldClassProc );

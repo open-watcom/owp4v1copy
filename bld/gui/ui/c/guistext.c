@@ -73,15 +73,15 @@ int GUIGetWindowText( gui_window *wnd, char *data, int max_length )
 {
     int length;
 
-    if( wnd->screen.name != NULL ) {
-        strncpy( data, wnd->screen.name, max_length );
-        length = strlen( wnd->screen.name );
-        if( length > max_length ) {
-            return( max_length );
-        } else {
-            return( length );
-        }
+    if( wnd->screen.name == NULL || max_length == 0 ) {
+        length = 0;
     } else {
-        return( 0 );
+        max_length--;       // reserve space for null character on the end
+        length = strlen( wnd->screen.name );
+        if( length > max_length )
+            length = max_length;
+        strncpy( data, wnd->screen.name, length );
     }
+    data[ length ] = '\0';
+    return( length );
 }

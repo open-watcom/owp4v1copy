@@ -344,7 +344,7 @@ void SetIsSaved( HWND hwnd, BOOL fissaved )
     }
 
     if( fissaved ) {
-        _wpi_getwindowtext( _wpi_getframe(node->hwnd), title, 14 );
+        _wpi_getwindowtext( _wpi_getframe(node->hwnd), title, sizeof( title ) );
         if( ( strnicmp( title, IEImageUntitled, strlen( IEImageUntitled ) ) == 0 ) &&
             ( strnicmp( node->fname, IEImageUntitled, strlen( IEImageUntitled ) ) == 0 ) ) {
             return;
@@ -365,7 +365,7 @@ void SetIsSaved( HWND hwnd, BOOL fissaved )
             MemFree( main_title );
         }
     } else {
-        _wpi_getwindowtext( _wpi_getframe(node->hwnd), title, 14 );
+        _wpi_getwindowtext( _wpi_getframe(node->hwnd), title, sizeof( title ) );
         if( strnicmp( title, IEImageUntitled, strlen( IEImageUntitled ) ) == 0 ) {
             return;
         } else if (title[strlen(title)-1] == '*') {
