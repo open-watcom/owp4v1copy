@@ -1103,11 +1103,11 @@ extern WPI_PROC _wpi_subclasswindow( HWND hwnd, WPI_PROC newcursor );
 
 extern BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                              unsigned attr_flags, unsigned id,
-                             HMENU popup, char *text, BOOL by_position );
+                             HMENU popup, const char *text, BOOL by_position );
 
 extern BOOL _wpi_appendmenu( HMENU hmenu, unsigned menu_flags,
                              unsigned attr_flags, unsigned id,
-                             HMENU popup, char *text );
+                             HMENU popup, const char *text );
 
 extern BOOL _wpi_getmenustate( HMENU hmenu, unsigned id, WPI_MENUSTATE *state,
                                BOOL by_position );
@@ -1126,7 +1126,8 @@ extern void _wpi_getmenuflagsfromstate( WPI_MENUSTATE *state,
 
 extern BOOL _wpi_modifymenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                              unsigned attr_flags, unsigned new_id,
-                             HMENU new_popup, char *new_text, BOOL by_position );
+                             HMENU new_popup, const char *new_text,
+                             BOOL by_position );
 
     #define _wpi_createmenu() CreateMenu()
 
@@ -1148,7 +1149,7 @@ extern BOOL _wpi_setmenu( HWND hwnd, HMENU hmenu );
                        ((fenabled) ? MF_ENABLED : MF_GRAYED ) | \
                        ((by_position) ? MF_BYPOSITION : MF_BYCOMMAND) )
 
-extern BOOL _wpi_setmenutext( HMENU hmenu, unsigned id, char *text,
+extern BOOL _wpi_setmenutext( HMENU hmenu, unsigned id, const char *text,
                               BOOL by_position );
 
 extern BOOL _wpi_getmenutext( HMENU hmenu, unsigned id, char *text, int ctext,

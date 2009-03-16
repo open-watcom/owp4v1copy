@@ -1300,10 +1300,10 @@ extern BOOL _wpi_iszoomed( HWND hwnd );
 
 extern BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                              unsigned attr_flags, unsigned id,
-                             HMENU popup, char *text, BOOL by_position );
+                             HMENU popup, const char *text, BOOL by_position );
 extern BOOL _wpi_appendmenu( HMENU hmenu, unsigned menu_flags,
                              unsigned attr_flags, unsigned id,
-                             HMENU popup, char *text );
+                             HMENU popup, const char *text );
 extern BOOL _wpi_getmenustate( HMENU hmenu, unsigned id, WPI_MENUSTATE *state,
                                BOOL by_position );
 extern void _wpi_getmenuflagsfromstate( WPI_MENUSTATE *state,
@@ -1324,7 +1324,8 @@ extern void _wpi_getmenuflagsfromstate( WPI_MENUSTATE *state,
 
 extern BOOL _wpi_modifymenu( HMENU hmenu, unsigned id, unsigned menu_flags,
                              unsigned attr_flags, unsigned new_id,
-                             HMENU new_popup, char *new_text, BOOL by_position );
+                             HMENU new_popup, const char *new_text,
+                             BOOL by_position );
 
     #define _wpi_createmenu() WinCreateMenu( HWND_DESKTOP, NULL )
 
@@ -1337,7 +1338,7 @@ extern BOOL _wpi_checkmenuitem( HMENU hmenu, unsigned id,
 extern BOOL _wpi_enablemenuitem( HMENU hmenu, unsigned id,
                                  BOOL fenabled, BOOL by_position );
 extern BOOL _wpi_setmenutext( HMENU hmenu, unsigned id,
-                              char *text, BOOL by_position );
+                              const char *text, BOOL by_position );
 extern BOOL _wpi_getmenutext( HMENU hmenu, unsigned id, char *text, int ctext,
                               BOOL by_position );
 extern UINT _wpi_getmenuitemid( HMENU hmenu, unsigned pos );

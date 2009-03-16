@@ -83,7 +83,7 @@ static BOOL _wpi_setmenuitemattr( HMENU hmenu, unsigned id,
 
 void _wpi_menutext2win( char *text )
 {
-    if( text ) {
+    if( text != NULL ) {
         while( *text ) {
             if( *text == '~' ) {
                 *text = '&';
@@ -746,7 +746,7 @@ BOOL _wpi_ptinrect( WPI_RECT *prect, WPI_POINT pt )
 
 BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                       unsigned attr_flags, unsigned id,
-                      HMENU popup, char *text, BOOL by_position )
+                      HMENU popup, const char *text, BOOL by_position )
 {
     MENUITEM    mi;
     MRESULT     result;
@@ -781,7 +781,7 @@ BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
     new_text = _wpi_menutext2pm( text );
 
     t = NULL;
-    if( new_text && *new_text ) {
+    if( new_text != NULL && *new_text != '\0' ) {
         t = new_text;
     }
     result = WinSendMsg( parent, MM_INSERTITEM, MPFROMP(&mi), MPFROMP(t) );
@@ -796,7 +796,7 @@ BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
 
 BOOL _wpi_appendmenu( HMENU hmenu, unsigned menu_flags,
                       unsigned attr_flags, unsigned id,
-                      HMENU popup, char *text )
+                      HMENU popup, const char *text )
 {
     return( _wpi_insertmenu( hmenu, -1, menu_flags, attr_flags, id, popup, text, TRUE ) );
 }
@@ -825,7 +825,7 @@ void _wpi_getmenuflagsfromstate( WPI_MENUSTATE *state, unsigned *menu_flags,
 
 BOOL _wpi_modifymenu( HMENU hmenu, unsigned id, unsigned menu_flags,
                       unsigned attr_flags, unsigned new_id,
-                      HMENU new_popup, char *new_text, BOOL by_position )
+                      HMENU new_popup, const char *new_text, BOOL by_position )
 {
     HMENU               parent;
     unsigned            pos;
@@ -943,7 +943,7 @@ BOOL _wpi_enablemenuitem( HMENU hmenu, unsigned id,
     return ( _wpi_setmenuitemattr( hmenu, id, MIA_DISABLED, (fenabled)? ~MIA_DISABLED : MIA_DISABLED ) );
 }
 
-BOOL _wpi_setmenutext( HMENU hmenu, unsigned id, char *text, BOOL by_position )
+BOOL _wpi_setmenutext( HMENU hmenu, unsigned id, const char *text, BOOL by_position )
 {
     BOOL        ret;
     char        *new_text;
@@ -985,7 +985,7 @@ BOOL _wpi_getmenutext( HMENU hmenu, unsigned id, char *text, int ctext,
     if( id == -1 ) {
         return( FALSE );
     }
-    ret = (BOOL) WinSendMsg( hmenu, MM_QUERYITEMTEXT, MPFROM2SHORT(id, ctext), MPFROMP(text) );
+    ret = (BOOL)WinSendMsg( hmenu, MM_QUERYITEMTEXT, MPFROM2SHORT(id, ctext), MPFROMP(text) );
     if ( ret ) {
         _wpi_menutext2win( text );
     }
@@ -1723,7 +1723,7 @@ char *_wpi_menutext2pm( const char *text )
     if( text == NULL )
         return( NULL );
     len = strlen( text ) + 1;
-    new = (char *)_wpi_malloc( len );
+    new = _wpi_malloc( len );
     if( new == NULL )
         return( NULL );
     text = memcpy( new, text, len );

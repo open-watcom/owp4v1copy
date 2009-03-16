@@ -82,7 +82,7 @@ WPI_PROC _wpi_subclasswindow( HWND hwnd, WPI_PROC new )
 
 BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                       unsigned attr_flags, unsigned id,
-                      HMENU popup, char *text, BOOL by_position )
+                      HMENU popup, const char *text, BOOL by_position )
 {
     if( !hmenu ) {
         return( FALSE );
@@ -97,7 +97,7 @@ BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
 
 BOOL _wpi_appendmenu( HMENU hmenu, unsigned menu_flags,
                       unsigned attr_flags, unsigned id,
-                      HMENU popup, char *text )
+                      HMENU popup, const char *text )
 {
     return( AppendMenu( hmenu, menu_flags | attr_flags | MF_BYPOSITION,
                         ( (menu_flags & MF_POPUP) ? (UINT)popup : (UINT)id ),
@@ -123,7 +123,7 @@ void _wpi_getmenuflagsfromstate( WPI_MENUSTATE *state, unsigned *menu_flags,
 
 BOOL _wpi_modifymenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                       unsigned attr_flags, unsigned new_id,
-                      HMENU new_popup, char *new_text, BOOL by_position )
+                      HMENU new_popup, const char *new_text, BOOL by_position )
 {
     if( !hmenu ) {
         return( FALSE );
@@ -136,7 +136,7 @@ BOOL _wpi_modifymenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                         new_text ) );
 }
 
-BOOL _wpi_setmenutext( HMENU hmenu, unsigned id, char *text, BOOL by_position )
+BOOL _wpi_setmenutext( HMENU hmenu, unsigned id, const char *text, BOOL by_position )
 {
     WPI_MENUSTATE       state;
     HMENU               popup;
