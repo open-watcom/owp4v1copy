@@ -4,12 +4,11 @@
 :keep CPP_HDR
 :include crwatcnt.sp
 //
-// Description: This header is an OpenWatcom red black tree container 
-//              implementation.
-//              Although it not part of the 14882 C++ standard library it is 
-//              written with a similar interface.
-//              It is used by the OpenWatcom implementation of the C++
-//              standard library (map, set, multimap, multiset)
+// Description: This header is an OpenWatcom red black tree container
+//              implementation. Although it not part of the 14882 C++ standard
+//              library it is written with a similar interface. It is used by
+//              the OpenWatcom implementation of the C++ standard library
+//              (map, set, multimap, multiset)
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __RBTREE_H_INCLUDED
 #define __RBTREE_H_INCLUDED
@@ -287,9 +286,10 @@ public:
     
     //pair< iterator, bool > insert( value_type const & );
 
-    // TODO: Make out-of-line.
+    // TODO: Move to out-of-line when compiler supports syntax.
     template< class InputIterator >
-    void insert( InputIterator first_it, InputIterator last_it )
+    void RedBlackTree< Key, Compare, Allocator, ValueWrapper>::insert(
+        InputIterator first_it, InputIterator last_it )
     {
         // presume data sorted; use last insert point as hint
         iterator hint;
@@ -325,7 +325,7 @@ public:
 protected:
     void    doubleBlackTransform( Node* parent, bool lefty );
     void    insBalTransform( Node* inserted );
-    // std::pair< iterator,bool > unbalancedInsert( value_type const & );
+    // std::pair< iterator, bool > unbalancedInsert( value_type const & );
     int     blackHeight( iterator );
     int     height( iterator );
     Node*   walkRight( Node* ) const;
@@ -337,176 +337,15 @@ protected:
     Compare cmp;
     ValueWrapper keyGetter;
 
-
-    // ---=== !!MOVE ME OUTTA HERE!! ===---
-    /* ------------------------------------------------------------------
-     * unbalancedInsert( value_type const & )
-     *
-     * like find but create new node after last node visited if cant find an
-     * existing key
-     */
-    std::pair< RedBlackTree< Key, Compare, Allocator, ValueWrapper >::iterator,
-               bool >
-    RedBlackTree< Key, Compare, Allocator, ValueWrapper >::unbalancedInsert(
-      value_type const & v)
-    {
-        if( mRoot==0 ) {                 //special case nothing exists yet
-            mRoot = mem.allocate( 1 );
-            try{
-                mem.construct( mRoot, Node( v, 0, Node::black ) );
-            } catch( ... ) {
-                mem.deallocate( mRoot, 1 );
-                mRoot = 0;
-                throw;
-            }
-            mFirst = mRoot;
-            mLast = mRoot;
-            mSize++;
-            return( std::pair<iterator, bool>( iterator(this, mRoot), true ) );
-        }
-    
-        Node* n = mRoot;
-        Node* notLT = 0;
-        Node* last = n;
-        bool LtLast;
-    
-        while( n ) {
-            if( cmp(keyGetter( v ), keyGetter( n->value ) ) ) {
-                last = n;
-                LtLast = true;
-                n = n->left;
-            } else {
-                last = n;
-                LtLast = false;
-                notLT = n;
-                n = n->right;
-            }
-        }
-
-        // the last node the key is not less than (if any) may be equal, in
-        // which case it was found
-        if( notLT && 
-            !( cmp( keyGetter( notLT->value ), keyGetter( v ) ) ) ) {
-            // !(a<b) & !(b<a) then a==b
-            return( std::pair<iterator,bool>( iterator(this, notLT), false ) );
-        }
-        // else insert the new node with parent as last node travelled to
-        Node* newnode = mem.allocate( 1 );
-        try {
-            mem.construct( newnode, Node( v, last, Node::red ) );
-        } catch( ... ) {
-            mem.deallocate( newnode, 1 );
-            throw;
-        }
-        mSize++;
-        if( LtLast ) {
-            last->left = newnode;
-            if( last == mFirst ) mFirst = newnode;
-        } else {
-            last->right = newnode;
-            if( last == mLast ) mLast = newnode;
-        }
-    
-        return( std::pair<iterator,bool>( iterator(this, newnode), true ) );
-    }
+    std::pair< RedBlackTree::iterator, bool >
+        unbalancedInsert( value_type const & v );
 
 public:
-    /* ------------------------------------------------------------------
-     * !!MOVE ME OUTSIDE CLASS!!
-     * insert( value_type const & )
-     *
-     * inserts v into the tree if it doesn't exist already and maintains
-     * balance returns a pair containing iterator with key equivelent to that
-     * of v and a bool that is true if v was inserted or false if the key
-     * already existed
-     */
-    std::pair< RedBlackTree< Key, Compare, Allocator, ValueWrapper >::iterator,
-               bool >
-    RedBlackTree< Key, Compare, Allocator, ValueWrapper >::insert(
-        value_type const & v)
-    {
-        pair< iterator, bool > inserted = unbalancedInsert( v );
-        if( inserted.second ) { 
-            Node* n = inserted.first.getNodePtr();
-            if( n != mRoot ) {
-                //do some operations to keep rb tree valid
-                insBalTransform( n );
-            }
-            // else if n==mRoot it has been inserted as single black node and
-            // there is nothing else to do
-        }
-        return inserted;
-    }
+    std::pair< RedBlackTree::iterator, bool >
+        insert( value_type const & v );
 
-    /* ------------------------------------------------------------------
-     * !!MOVE ME OUTSIDE CLASS!!
-     * insert( iterator hint, value_type const &)
-     *
-     * inserts v into the tree if it doesn't exist already and maintains
-     * ballance returns a pair containing iterator with key equivelent to that
-     * of v and a bool that is true if v was inserted or false if the key
-     * already existed Written in the spirit of N1780 (not strictly standard
-     * compliant?)
-     */
-    std::pair< RedBlackTree< Key, Compare, Allocator, ValueWrapper >::iterator,
-               bool >
-    RedBlackTree< Key, Compare, Allocator, ValueWrapper >::insert(
-        iterator hint, value_type const & v )
-    {
-        pair< iterator, bool > inserted;
-        iterator b4hint;
-        if( mSize &&
-            ( hint == end() || cmp( keyGetter(v), keyGetter(*hint) ) ) ) {
-
-            //at this point tree isn't empty and key is before hint
-            b4hint = hint;
-            if( hint == begin() ||
-                cmp( keyGetter( *(--b4hint) ), keyGetter( v ) ) ) {
-
-                //at this point key is also before begin or after (hint-1) so
-                //hint is good now, either hint->left or (hint-1)->right must
-                //have a unused leaf node where the new node belongs
-                Node* parent;
-                bool lefty = true;
-
-                if( hint != end() && hint.getNodePtr()->left == 0 ) {
-                    parent = hint.getNodePtr();
-                } else {
-                    parent = b4hint.getNodePtr();
-                    lefty = false;
-                }
-                //create the new node
-                Node* newnode = mem.allocate( 1 );
-                try{
-                    mem.construct( newnode, Node(v, parent, Node::red) );
-                } catch( ... ) {
-                    mem.deallocate( newnode, 1 );
-                    throw;
-                }
-                mSize++;
-                //fix up pointers
-                if( lefty ) {
-                    parent->left = newnode;
-                    if( parent == mFirst ) mFirst = newnode;
-                } else {
-                    parent->right = newnode;
-                    if( parent == mLast ) mLast = newnode;
-                }
-                inserted = make_pair( iterator(this, newnode), true );
-            } else inserted = unbalancedInsert( v ); //hint bad (or key already exists)
-        } else inserted = unbalancedInsert( v ); //hint is bad or tree is empty
-        
-        if( inserted.second ) { 
-            Node* n = inserted.first.getNodePtr();
-            if( n != mRoot ) {
-                //do some operations to keep rb tree valid
-                insBalTransform(n);
-            }
-            // else if n==mRoot it has been inserted as single black node and
-            // there is nothing else to do
-        }
-        return inserted;
-    }
+    std::pair< RedBlackTree::iterator, bool >
+        insert( iterator hint, value_type const & v );
 
 }; //class RedBlackTree
 
@@ -519,7 +358,7 @@ public:
  * Copy Ctor
  */
 template< class Key, class Compare, class Allocator, class ValueWrapper >
-RedBlackTree< Key,Compare, Allocator, ValueWrapper >::RedBlackTree(
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::RedBlackTree(
     RedBlackTree< Key, Compare, Allocator, ValueWrapper > const & that )
     : mem(that.mem)
 {
@@ -1438,6 +1277,181 @@ RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform(
     }//end for( ever )
 }
 
+
+/* ------------------------------------------------------------------
+ * unbalancedInsert( value_type const & )
+ *
+ * like find but create new node after last node visited if cant find an
+ * existing key
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper>
+std::pair< typename RedBlackTree< Key,
+                                  Compare,
+                                  Allocator,
+                                  ValueWrapper >::iterator, bool >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::unbalancedInsert(
+  value_type const & v)
+{
+    if( mRoot==0 ) {                 //special case nothing exists yet
+        mRoot = mem.allocate( 1 );
+        try{
+            mem.construct( mRoot, Node( v, 0, Node::black ) );
+        } catch( ... ) {
+            mem.deallocate( mRoot, 1 );
+            mRoot = 0;
+            throw;
+        }
+        mFirst = mRoot;
+        mLast = mRoot;
+        mSize++;
+        return( std::pair<iterator, bool>( iterator(this, mRoot), true ) );
+    }
+    
+    Node* n = mRoot;
+    Node* notLT = 0;
+    Node* last = n;
+    bool LtLast;
+    
+    while( n ) {
+        if( cmp(keyGetter( v ), keyGetter( n->value ) ) ) {
+            last = n;
+            LtLast = true;
+            n = n->left;
+        } else {
+            last = n;
+            LtLast = false;
+            notLT = n;
+            n = n->right;
+        }
+    }
+
+    // the last node the key is not less than (if any) may be equal, in which
+    // case it was found
+    if( notLT && 
+        !( cmp( keyGetter( notLT->value ), keyGetter( v ) ) ) ) {
+        // !(a<b) & !(b<a) then a==b
+        return( std::pair<iterator,bool>( iterator(this, notLT), false ) );
+    }
+    // else insert the new node with parent as last node travelled to
+    Node* newnode = mem.allocate( 1 );
+    try {
+        mem.construct( newnode, Node( v, last, Node::red ) );
+    } catch( ... ) {
+        mem.deallocate( newnode, 1 );
+        throw;
+        }
+    mSize++;
+    if( LtLast ) {
+        last->left = newnode;
+        if( last == mFirst ) mFirst = newnode;
+    } else {
+        last->right = newnode;
+        if( last == mLast ) mLast = newnode;
+    }
+    
+    return( std::pair<iterator,bool>( iterator(this, newnode), true ) );
+}
+
+
+/* ------------------------------------------------------------------
+ * insert( value_type const & )
+ *
+ * inserts v into the tree if it doesn't exist already and maintains balance
+ * returns a pair containing iterator with key equivelent to that of v and a
+ * bool that is true if v was inserted or false if the key already existed
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+std::pair< typename RedBlackTree< Key,
+                                  Compare,
+                                  Allocator,
+                                  ValueWrapper >::iterator, bool >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::insert(
+    value_type const & v)
+{
+    pair< iterator, bool > inserted = unbalancedInsert( v );
+    if( inserted.second ) { 
+        Node* n = inserted.first.getNodePtr();
+        if( n != mRoot ) {
+            //do some operations to keep rb tree valid
+            insBalTransform( n );
+        }
+        // else if n==mRoot it has been inserted as single black node and
+        // there is nothing else to do
+    }
+    return inserted;
+}
+
+
+/* ------------------------------------------------------------------
+ * insert( iterator hint, value_type const &)
+ *
+ * inserts v into the tree if it doesn't exist already and maintains ballance
+ * returns a pair containing iterator with key equivelent to that of v and a
+ * bool that is true if v was inserted or false if the key already existed
+ * Written in the spirit of N1780 (not strictly standard compliant?)
+ */
+template< class Key, class Compare, class Allocator, class ValueWrapper >
+std::pair< typename RedBlackTree< Key,
+                                  Compare,
+                                  Allocator,
+                                  ValueWrapper >::iterator, bool >
+RedBlackTree< Key, Compare, Allocator, ValueWrapper >::insert(
+    iterator hint, value_type const & v )
+{
+    pair< iterator, bool > inserted;
+    iterator b4hint;
+    if( mSize &&
+        ( hint == end() || cmp( keyGetter(v), keyGetter(*hint) ) ) ) {
+
+        //at this point tree isn't empty and key is before hint
+        b4hint = hint;
+        if( hint == begin() ||
+            cmp( keyGetter( *(--b4hint) ), keyGetter( v ) ) ) {
+
+            //at this point key is also before begin or after (hint-1) so hint
+            //is good now, either hint->left or (hint-1)->right must have a
+            //unused leaf node where the new node belongs
+            Node* parent;
+            bool lefty = true;
+
+            if( hint != end() && hint.getNodePtr()->left == 0 ) {
+                parent = hint.getNodePtr();
+            } else {
+                parent = b4hint.getNodePtr();
+                lefty = false;
+            }
+            //create the new node
+            Node* newnode = mem.allocate( 1 );
+            try {
+                mem.construct( newnode, Node(v, parent, Node::red) );
+            } catch( ... ) {
+                mem.deallocate( newnode, 1 );
+                throw;
+            }
+            mSize++;
+            //fix up pointers
+            if( lefty ) {
+                parent->left = newnode;
+                if( parent == mFirst ) mFirst = newnode;
+            } else {
+                parent->right = newnode;
+                if( parent == mLast ) mLast = newnode;
+            }
+            inserted = make_pair( iterator(this, newnode), true );
+        } else inserted = unbalancedInsert( v ); //hint bad (or key already exists)
+    } else inserted = unbalancedInsert( v ); //hint is bad or tree is empty
+    
+    if( inserted.second ) { 
+        Node* n = inserted.first.getNodePtr();
+        if( n != mRoot ) {
+            //do some operations to keep rb tree valid
+            insBalTransform(n);
+        }
+        // else if n==mRoot it has been inserted as single black node and
+        // there is nothing else to do
+    }
+    return inserted;
+}
 
 
 /* ================================================================== */
