@@ -873,7 +873,7 @@ extern void _wpi_setbmphdrvalues( WPI_BITMAPINFOHEADER *bmih, ULONG size,
 
     #define _wpi_ptvisible( pres, pt ) PtVisible( pres, pt )
 
-extern void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
+extern void _wpi_gettextextent( WPI_PRES pres, LPCSTR string, int len_string,
                                                     int *width, int *height );
 
     #define _wpi_arc( pres, x1, y1, x2, y2, x3, y3, x4, y4 ) \
@@ -1169,7 +1169,7 @@ extern BOOL _wpi_getmenutext( HMENU hmenu, unsigned id, char *text, int ctext,
 
     #define _wpi_menutext2win( ptext ) // do nothing
 
-    #define _wpi_menutext2pm( ptext ) ptext
+    #define _wpi_menutext2pm( ptext ) (char *)ptext
 
     #define _wpi_freemenutext( ptext ) // do nothing
 

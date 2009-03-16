@@ -1714,30 +1714,26 @@ void _wpi_checkradiobutton( HWND hwnd, int start_id, int end_id, int check_id )
     }
 } /* _wpi_checkradiobutton */
 
-char *_wpi_menutext2pm( char *text )
-/************************************************************/
+char *_wpi_menutext2pm( const char *text )
+/****************************************/
 {
     char        *new;
     int         len;
 
-    new = NULL;
-
-    if( text ) {
-        len = strlen( text ) + 1;
-        new = (char *)_wpi_malloc( len );
-        if( new ) {
-            memcpy( new, text, len );
-            text = new;
-            while( *text ) {
-                if( *text == '&' ) {
-                    *text = '~';
-                }
-                text++;
-            }
+    if( text == NULL )
+        return( NULL );
+    len = strlen( text ) + 1;
+    new = (char *)_wpi_malloc( len );
+    if( new == NULL )
+        return( NULL );
+    text = memcpy( new, text, len );
+    while( *new ) {
+        if( *new == '&' ) {
+            *new = '~';
         }
+        new++;
     }
-
-    return( new );
+    return( (char *)text );
 }
 
 LONG _wpi_getbitmapbits( WPI_HANDLE hbitmap, int size, BYTE *bits )
@@ -2630,7 +2626,7 @@ int _wpi_selectcliprgn( WPI_PRES pres, HRGN rgn )
     return( (int)ret );
 } /* _wpi_selectcliprgn */
 
-BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG len )
+BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPCSTR text, ULONG len )
 /**************************************************************************/
 {
     WPI_POINT   pt;
@@ -2639,13 +2635,13 @@ BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG len )
     pt.x = (LONG)left;
     pt.y = (LONG)top;
 
-    success = GpiCharStringAt( pres, &pt, (LONG)len, text );
+    success = GpiCharStringAt( pres, &pt, (LONG)len, (PCH)text );
 
     return( success );
 } /* _wpi_textout */
 
 BOOL _wpi_exttextout( WPI_PRES pres, int left, int top, UINT options,
-                      WPI_RECT *rect, LPSTR text, ULONG len, LPINT spacing )
+                      WPI_RECT *rect, LPCSTR text, ULONG len, LPINT spacing )
 /**************************************************************************/
 {
     WPI_POINT   pt;
@@ -2654,7 +2650,7 @@ BOOL _wpi_exttextout( WPI_PRES pres, int left, int top, UINT options,
     pt.x = (LONG)left;
     pt.y = (LONG)top;
 
-    success = GpiCharStringPosAt( pres, &pt, rect, options, (LONG)len, text,
+    success = GpiCharStringPosAt( pres, &pt, rect, options, (LONG)len, (PCH)text,
                                                             (PLONG)spacing);
     return( success );
 } /* _wpi_exttextout */
@@ -2810,7 +2806,7 @@ void _wpi_deletesysmenupos( HMENU hmenu, SHORT pos )
     WinSendMsg(newmenu, MM_DELETEITEM, MPFROM2SHORT(id, FALSE), MPFROMSHORT(0));
 } /* _wpi_deletesysmenupos */
 
-void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
+void _wpi_gettextextent( WPI_PRES pres, LPCSTR string, int len_string,
                                                     int *width, int *height )
 /***************************************************************************/
 {

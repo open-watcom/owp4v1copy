@@ -1301,8 +1301,8 @@ extern bool CheckDrive( bool issue_message )
     return( ret );
 }
 
-static void SetFileDate( char *dst_path, time_t date )
-/****************************************************/
+static void SetFileDate( const char *dst_path, time_t date )
+/**********************************************************/
 {
     struct utimbuf      timebuf;
 
@@ -1311,8 +1311,8 @@ static void SetFileDate( char *dst_path, time_t date )
     utime( dst_path, &timebuf );
 }
 
-static void SameFileDate( char *src_path, char *dst_path )
-/********************************************************/
+static void SameFileDate( const char *src_path, const char *dst_path )
+/********************************************************************/
 {
     struct stat         statblk;
 
@@ -1337,8 +1337,8 @@ extern bool DoDeleteFile( char *Path )
 
 // ******************* Functions for Copying Files ***************************
 
-extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
-/****************************************************************************/
+extern COPYFILE_ERROR DoCopyFile( const char *src_path, char *dst_path, int append )
+/**********************************************************************************/
 {
     static char         lastchance[ 1024 ];
     size_t              buffer_size = 16 * 1024;
@@ -1606,7 +1606,7 @@ static bool CheckPendingFiles( void )
 static void CopySetupInfFile( void )
 /**********************************/
 {
-    char                *p;
+    const char          *p;
     char                dst_path[ _MAX_PATH ];
     char                tmp_path[ _MAX_PATH ];
 
@@ -1699,6 +1699,7 @@ static bool DoCopyFiles( void )
     int                 max_files = SimNumFiles();
     int                 len;
     char                *p;
+    const char          *cp;
 
 
     num_total_install = 0;
@@ -1813,9 +1814,9 @@ static bool DoCopyFiles( void )
 
         strcpy( src_path, GetVariableStrVal( "SrcDir" ) );
         SetPathEnd( src_path );
-        p = GetVariableStrVal( "DstDir" );
-        len = strlen( p );
-        if( strncmp( dir, p, len ) == 0 ) {
+        cp = GetVariableStrVal( "DstDir" );
+        len = strlen( cp );
+        if( strncmp( dir, cp, len ) == 0 ) {
             if( dir[ len ] == SYS_DIR_SEP_CHAR )  // if 1st char to concat is a backslash, skip it
                 len++;
             strcat( src_path, dir + len );  // get rid of the dest directory, just keep the subdir
@@ -1918,7 +1919,7 @@ static void RemoveExtraFiles( void )
 // remove supplemental files
 {
 #if !defined( __UNIX__ )
-    char                *p;
+    const char          *p;
     char                dst_path[ _MAX_PATH ];
 
     if( VarGetIntVal( UnInstall ) ) {
@@ -2171,7 +2172,7 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid,
     gui_message_return  result;
     char                buff[ 1024 ];
     char                msg[ 1024 ];
-    char *              errormessage;
+    const char          *errormessage;
     va_list             arglist;
     int                 i;
     int                 msg_index;
@@ -2482,8 +2483,8 @@ extern bool FreeDirParams( char **inf_name, char **tmp_path, char **arc_name )
     return( TRUE );
 }
 
-extern void ReadVariablesFile( char * name )
-/******************************************/
+extern void ReadVariablesFile( const char * name )
+/************************************************/
 {
     FILE   *fp;
     char   buf[ 256 ];

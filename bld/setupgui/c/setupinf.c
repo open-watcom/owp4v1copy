@@ -71,7 +71,6 @@ extern char             *TrimQuote(char*);
 extern int              SkipDialogs;
 extern int              VisibilityCondition;
 extern char             *VariablesFile;
-extern void             ReadVariablesFile( char * );
 
 #define RoundUp( v, r ) (((v) + (r) - 1) & ~(unsigned long)((r)-1))
 
@@ -378,8 +377,8 @@ static tree_node *TreeNode( tree_op op, void *left, void *right )
 }
 
 static vhandle GetTokenHandle( char *p );
-static tree_node *BuildExprTree( char *str )
-/******************************************/
+static tree_node *BuildExprTree( const char *str )
+/************************************************/
 {
     char                *token;
     int                 stack_top;
@@ -572,8 +571,8 @@ static int EvalExprTree( tree_node *tree, bool is_minimal )
     return( value );
 }
 
-static int DoEvalCondition( char *str, bool is_minimal )
-/******************************************************/
+static int DoEvalCondition( const char *str, bool is_minimal )
+/************************************************************/
 {
     int         value;
     tree_node   *tree;
@@ -584,8 +583,8 @@ static int DoEvalCondition( char *str, bool is_minimal )
     return( value );
 }
 
-int EvalCondition( char *str )
-/****************************/
+int EvalCondition( const char *str )
+/**********************************/
 {
     return( DoEvalCondition( str, FALSE ) );
 }
@@ -1176,7 +1175,7 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
     int                 len;
     char                *line;
     char                *vbl_name;
-    char                *val;
+    const char          *val;
     char                *section;
     char                *button_text;
     char                *dialog_name;
@@ -1496,7 +1495,7 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
 {
     char                *line;
     char                *vbl_name;
-    char                *val;
+    const char          *val;
     char                *section;
 #if defined( __NT__ )
     char                *value;
@@ -4456,7 +4455,7 @@ static void ZeroAutoSetValues()
 void SetDefaultAutoSetValue( vhandle var_handle )
 /***********************************************/
 {
-    char        *cond;
+    const char      *cond;
 
     cond = VarGetAutoSetCond( var_handle );
     if( cond != NULL ) {

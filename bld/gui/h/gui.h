@@ -713,14 +713,14 @@ extern bool GUIFillRectRGB( gui_window *wnd, gui_rect *rect, gui_rgb rgb );
 extern bool GUIDrawRectRGB( gui_window *wnd, gui_rect *rect, gui_rgb rgb );
 extern bool GUIDrawLineRGB( gui_window *wnd, gui_point *start, gui_point *end,
                          gui_line_styles style, gui_ord thickness, gui_rgb rgb );
-extern void GUIDrawText( gui_window *wnd, char *text, int length,
+extern void GUIDrawText( gui_window *wnd, const char *text, int length,
                          gui_ord row, gui_ord indent, gui_attr attr );
-extern void GUIDrawTextPos( gui_window *wnd, char *text, int length,
+extern void GUIDrawTextPos( gui_window *wnd, const char *text, int length,
                             gui_coord *pos, gui_attr attr );
-extern void GUIDrawTextExtent( gui_window *wnd, char *text, int length,
+extern void GUIDrawTextExtent( gui_window *wnd, const char *text, int length,
                                gui_ord row, gui_ord indent, gui_attr attr,
                                gui_ord extentx );
-extern void GUIDrawTextExtentPos( gui_window *wnd, char *text, int length,
+extern void GUIDrawTextExtentPos( gui_window *wnd, const char *text, int length,
                                gui_coord *pos, gui_attr attr, gui_ord extentx );
 extern void GUIDrawTextRGB( gui_window *wnd, char *text, int length,
                             gui_ord row, gui_ord indent,
@@ -751,10 +751,10 @@ extern gui_ord GUIGetRow( gui_window * wnd, gui_point *pos );
 extern gui_ord GUIGetCol( gui_window * wnd, char *text, gui_point *pos );
 extern gui_ord GUIGetStringPos( gui_window *wnd, gui_ord indent,
                                 char * string, int mouse_x );
-extern gui_ord GUIGetExtentX( gui_window *wnd, char * text, int length );
-extern gui_ord GUIGetExtentY( gui_window *wnd, char * text );
-extern gui_ord GUIGetControlExtentX( gui_window * wnd, unsigned id, char * text, int length );
-extern gui_ord GUIGetControlExtentY( gui_window * wnd, unsigned id, char * text );
+extern gui_ord GUIGetExtentX( gui_window *wnd, const char * text, int length );
+extern gui_ord GUIGetExtentY( gui_window *wnd, const char * text );
+extern gui_ord GUIGetControlExtentX( gui_window * wnd, unsigned id, const char * text, int length );
+extern gui_ord GUIGetControlExtentY( gui_window * wnd, unsigned id, const char * text );
 extern void GUIGetTextMetrics( gui_window *wnd, gui_text_metrics *metrics );
 extern void GUIGetDlgTextMetrics( gui_text_metrics *metrics );
 extern void GUIGetPoint( gui_window* wnd, gui_ord extent, gui_ord row,
@@ -929,7 +929,7 @@ extern int GUIGetCurrSelect( gui_window *wnd, unsigned id );
 extern bool GUISetCurrSelect( gui_window *wnd, unsigned id, int choice );
 extern char *GUIGetListItem( gui_window *wnd, unsigned id, int choice );
 
-extern bool GUISetText( gui_window *wnd, unsigned id, char *text );
+extern bool GUISetText( gui_window *wnd, unsigned id, const char *text );
 extern bool GUIClearText( gui_window *wnd, unsigned id );
 extern char * GUIGetText( gui_window *wnd, unsigned id );
 extern bool GUISelectAll( gui_window *wnd, unsigned id, bool select );

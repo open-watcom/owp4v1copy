@@ -594,14 +594,14 @@ extern          void           *uicalloc( unsigned , unsigned );
 extern          int             uichecklist( EVENT, EVENT _FARD * );
 extern          void            uiclose( VSCREEN _FARD * );
 extern          void            uicntrtext( VSCREEN _FARD *, SAREA *, ATTR,
-                                            unsigned int, char * );
+                                            unsigned int, const char * );
 extern          int             uiconfig( char *, char ** );
 extern          void            uicursor( VSCREEN _FARD *, unsigned char,
                                           unsigned char, int );
 extern          int             uidialogevent( VSCREEN _FARD * );
 extern          void            uidirty( SAREA );
 extern          void            uidrawbox( VSCREEN _FARD *, SAREA *area,
-                                           ATTR attr, char * );
+                                           ATTR attr, const char * );
 extern          EVENT           uieventsource( int );
 extern          void __FAR*     uifaralloc( int );
 extern          void            uifarfree( void __FAR * );
@@ -685,9 +685,9 @@ extern          void            uivsetactive( VSCREEN _FARD* );
 extern          void            uivsetcursor( VSCREEN _FARD* );
 extern          unsigned        uivshow( VSCREEN _FARD * );
 extern          void            uivtextput( VSCREEN _FARD*, ORD, ORD,
-                                ATTR, char _FARD*, int );
+                                ATTR, const char _FARD*, int );
 extern          void            uitextfield( VSCREEN _FARD*, ORD, ORD,
-                                ORD, ATTR, char __FAR *, int );
+                                ORD, ATTR, const char __FAR *, int );
 extern          void            uimousespeed( unsigned );
 extern          unsigned char   uicheckshift( void );
 extern          EVENT           uikeyboardevent( void );

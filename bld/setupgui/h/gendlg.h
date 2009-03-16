@@ -35,12 +35,12 @@
 */
 
 
-extern a_dialog_header  *AddNewDialog       ( char * );
+extern a_dialog_header  *AddNewDialog       ( const char * );
 extern a_dialog_header  *GetNextDialog      ( void );
-extern a_dialog_header  *FindDialogByName   ( char * );
-extern bool             CheckDialog         ( char * );
-extern dlg_state        DoDialog            ( char * );
-extern dlg_state        DoDialogWithParent  ( void *, char * );
+extern a_dialog_header  *FindDialogByName   ( const char * );
+extern bool             CheckDialog         ( const char * );
+extern dlg_state        DoDialog            ( const char * );
+extern dlg_state        DoDialogWithParent  ( void *, const char * );
 extern dlg_state        DoDialogByPointer   ( gui_window *parent, a_dialog_header *dlg );
 extern void             InitDefaultDialogs  ( void );
 extern void             FreeDefaultDialogs  ( void );

@@ -82,7 +82,7 @@ bool GUISetEditText( an_edit_control *edit_control, char const *text, bool is_GU
  * GUISetText - set the text in the given control
  */
 
-bool GUISetText( gui_window *wnd, unsigned id, char *text )
+bool GUISetText( gui_window *wnd, unsigned id, const char *text )
 {
     VFIELD              *field;
     a_dialog            *dialog;

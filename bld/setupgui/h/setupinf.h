@@ -143,7 +143,7 @@ extern void MsgPut(int resourceid,va_list arglist);
 extern void PatchError(int format,... );
 extern void FilePatchError(int format,... );
 extern void FreeAllStructs(void );
-extern int EvalCondition(char *str);
+extern int EvalCondition(const char *str);
 extern  bool SimTargetNeedsUpdate( int parm );
 extern vhandle SimSubFileVar( int parm, int subfile );
 extern int SimNumSpawns();
@@ -169,9 +169,6 @@ typedef enum {
 // Fixes bug in 32-bit comparisons... I hate it when
 // people mix return codes and out params...
 #define SIM_INIT_ERROR          ((unsigned short)(-1))
-
-
-int                     EvalCondition( char *str );
 
 
 // Defines used by the SETUP program.

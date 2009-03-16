@@ -183,7 +183,7 @@ intern void cdecl farcopy( LPPIXEL src, LPPIXEL dst, int len, int snow )
 
 
 intern void cdecl farstring( LPPIXEL start, int attr, int len,
-                                          int snow, char __FAR *str )
+                                          int snow, const char __FAR *str )
 {
     int         i;
     PIXEL       p;

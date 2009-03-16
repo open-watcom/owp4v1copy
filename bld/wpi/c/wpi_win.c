@@ -395,7 +395,7 @@ void _wpi_setbmphdrvalues( WPI_BITMAPINFOHEADER *bmih, ULONG size,
     bmih->biClrImportant = important;
 } /* _wpi_setbmphdrvalues */
 
-void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
+void _wpi_gettextextent( WPI_PRES pres, LPCSTR string, int len_string,
                                                     int *width, int *height )
 /***************************************************************************/
 {

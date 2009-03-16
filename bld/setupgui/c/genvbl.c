@@ -46,6 +46,7 @@
 #include "dlggen.h"
 #include "dynarray.h"
 #include "hash.h"
+#include "genvbl.h"
 
 #ifdef __NT__
     #include <windows.h>
@@ -120,8 +121,8 @@ int VarIsRestrictedTrue( vhandle var_handle )
 }
 
 
-char *VarGetAutoSetCond( vhandle var_handle )
-/*******************************************/
+const char *VarGetAutoSetCond( vhandle var_handle )
+/*************************************************/
 {
     if( GlobalVarList[var_handle].restriction == 't' )
         return( "true" );
@@ -157,8 +158,8 @@ extern vhandle GetVariableById( int id )
 }
 
 
-extern char *VarGetName( vhandle var_handle )
-/*******************************************/
+extern const char *VarGetName( vhandle var_handle )
+/*************************************************/
 {
     if( var_handle == NO_VAR )
         return( "" );
@@ -175,8 +176,8 @@ extern int VarGetId( vhandle var_handle )
 }
 
 
-extern char *VarGetStrVal( vhandle var_handle )
-/*********************************************/
+extern const char *VarGetStrVal( vhandle var_handle )
+/***************************************************/
 {
     if( var_handle == NO_VAR )
         return( "" );
@@ -213,8 +214,8 @@ extern int GetVariableIntVal( const char *vbl_name )
     return( VarGetIntVal( GetVariableByName( vbl_name ) ) );
 }
 
-extern char *GetVariableStrVal( const char *vbl_name )
-/****************************************************/
+extern const char *GetVariableStrVal( const char *vbl_name )
+/**********************************************************/
 {
     return( VarGetStrVal( GetVariableByName( vbl_name ) ) );
 }
@@ -252,8 +253,8 @@ extern vhandle AddVariable( char *vbl_name )
     return( var_handle );
 }
 
-static vhandle DoSetVariable( vhandle var_handle, char *strval, char *vbl_name )
-/******************************************************************************/
+static vhandle DoSetVariable( vhandle var_handle, const char *strval, char *vbl_name )
+/************************************************************************************/
 {
     a_variable  *tmp_variable;
 
@@ -283,14 +284,14 @@ static vhandle DoSetVariable( vhandle var_handle, char *strval, char *vbl_name )
     return( var_handle );
 }
 
-extern vhandle SetVariableByName( char *vbl_name, char *strval )
-/**************************************************************/
+extern vhandle SetVariableByName( char *vbl_name, const char *strval )
+/********************************************************************/
 {
     return( DoSetVariable( GetVariableByName( vbl_name ), strval, vbl_name ) );
 }
 
-extern vhandle SetVariableByHandle( vhandle var_handle, char *strval )
-/********************************************************************/
+extern vhandle SetVariableByHandle( vhandle var_handle, const char *strval )
+/**************************************************************************/
 {
     if( var_handle == NO_VAR )
         return( NO_VAR );

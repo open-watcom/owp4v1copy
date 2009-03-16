@@ -190,7 +190,7 @@ bool GUIClearList( gui_window *wnd, unsigned id )
  * GUISetText - Set the text of the given control to the given text
  */
 
-bool GUISetText( gui_window *wnd, unsigned control, char *text )
+bool GUISetText( gui_window *wnd, unsigned control, const char *text )
 {
     char                *new_text;
     gui_control_class   control_class;

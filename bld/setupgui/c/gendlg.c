@@ -58,8 +58,8 @@ static a_dialog_header *FirstDialog = NULL;
 static a_dialog_header *LastDialog = NULL;
 extern int             SkipDialogs;
 
-extern a_dialog_header *FindDialogByName( char *dlg_name )
-/********************************************************/
+extern a_dialog_header *FindDialogByName( const char *dlg_name )
+/**************************************************************/
 {
     a_dialog_header *d;
 
@@ -94,8 +94,8 @@ static void FreeDialog( a_dialog_header *tmp_dialog)
     GUIMemFree( tmp_dialog );
 }
 
-extern a_dialog_header *AddNewDialog( char *dlg_name )
-/****************************************************/
+extern a_dialog_header *AddNewDialog( const char *dlg_name )
+/**********************************************************/
 // Add new dialogs to front of linked list.
 // Delete default dialogs if specified.
 {
@@ -148,8 +148,8 @@ extern a_dialog_header *AddNewDialog( char *dlg_name )
     return( new_dialog );
 }
 
-bool CheckDialog( char *name )
-/****************************/
+bool CheckDialog( const char *name )
+/**********************************/
 {
     a_dialog_header     *dlg;
 
@@ -171,7 +171,7 @@ dlg_state DoDialogByPointer( gui_window *parent, a_dialog_header *dlg )
     return( GenericDialog( parent, dlg ) );
 }
 
-dlg_state DoDialogWithParent( void *parent, char *name )
+dlg_state DoDialogWithParent( void *parent, const char *name )
 /************************************************************/
 {
     a_dialog_header     *dlg;
@@ -206,8 +206,8 @@ dlg_state DoDialogWithParent( void *parent, char *name )
     return( return_state );
 }
 
-dlg_state DoDialog( char *name )
-/******************************/
+dlg_state DoDialog( const char *name )
+/************************************/
 {
     dlg_state result;
 

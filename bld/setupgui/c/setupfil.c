@@ -99,8 +99,8 @@ static struct reg_location {
 } RegLocation[ NUM_REG_LOCATIONS ];
 #endif
 
-static bool GetOldConfigFileDir( char *newauto, char *drive_path )
-/****************************************************************/
+static bool GetOldConfigFileDir( char *newauto, const char *drive_path )
+/**********************************************************************/
 {
     char        drive[ _MAX_DRIVE ];
 
@@ -247,7 +247,7 @@ extern bool ModifyAutoExec( void )
             OrigAutoExec[ 0 ] = 'C';   // assume C if it is a hard drive
         } else {
             // otherwise guess it is the same as the windows system directory
-            char *sys_drv;
+            const char  *sys_drv;
             sys_drv = GetVariableStrVal( "WinSystemDir" );
             boot_drive = toupper( sys_drv[ 0 ] ) - 'A' + 1;
             OrigAutoExec[ 0 ] = 'A' + boot_drive - 1;
@@ -965,7 +965,7 @@ static char *ReplaceVarsInplace( char *buff, bool dorealloc )
     char                *p, *quest;
     char                *e;
     char                varname[ 128 ];
-    char                *varval;
+    const char          *varval;
     size_t              varlen;
     char                *colon;
     char                *newbuff;
@@ -1029,8 +1029,8 @@ static char *ReplaceVarsInplace( char *buff, bool dorealloc )
     return( buff );
 }
 
-void ReplaceVars( char *dst, char *src )
-/**************************************/
+void ReplaceVars( char *dst, const char *src )
+/********************************************/
 //  Replace occurrences of %variable% in src with the destination directory,
 //  and place the result in dst.
 {
@@ -1082,7 +1082,7 @@ static void CheckVersion( char *path, char *drive, char *dir );
 extern gui_message_return CheckInstallDLL( char *name, vhandle var_handle )
 /*************************************************************************/
 {
-    char                *dst;
+    const char          *dst;
     unsigned            dst_len;
     char                drive[ _MAX_DRIVE ];
     char                dir[ _MAX_DIR ];

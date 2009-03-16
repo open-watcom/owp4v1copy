@@ -34,14 +34,14 @@
 #include "uidef.h"
 
 extern  void cdecl intern farcopy( LPPIXEL, LPPIXEL, int, int );
-extern  void cdecl intern farstring( LPPIXEL, int, int, int, char __FAR *);
+extern  void cdecl intern farstring( LPPIXEL, int, int, int, const char __FAR *);
 
 
 void intern bstring( register BUFFER            *bptr,
                      register int               row,
                      register int               col,
                      register ATTR              attr,
-                     register char __FAR        *string,
+                     register const char __FAR  *string,
                      register int               len )
 /******************************************************/
 {

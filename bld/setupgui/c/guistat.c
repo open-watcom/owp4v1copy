@@ -269,7 +269,7 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
     unsigned            id;
     gui_key             key;
     gui_keystate        state;
-    char *              msg;
+    const char          *msg;
 
     parm = parm;
     if( gui == NULL ) return( FALSE );

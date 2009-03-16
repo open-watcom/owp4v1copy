@@ -33,7 +33,7 @@ extern bool             ModifyEnvironment( bool );
 extern bool             ModifyStartup( bool );
 extern bool             ModifyAssociations( bool );
 extern bool             SpawnNextScript( );
-extern COPYFILE_ERROR   DoCopyFile( char *, char *, int );
+extern COPYFILE_ERROR   DoCopyFile( const char *, char *, int );
 extern bool             CopyAllFiles( void );
 extern gui_message_return MsgBox( gui_window *, char *, gui_message_type, ... );
 extern bool             CheckDrive( bool );
@@ -58,5 +58,6 @@ extern bool             GetRootFromPath( char *root, char *path );
 extern long             FreeSpace( char *path );
 extern long             ClusterSize( char *path );
 #endif
-signed int              IncrementDLLUsageCount( char *path );
-signed int              DecrementDLLUsageCount( char *path );
+extern signed int       IncrementDLLUsageCount( char *path );
+extern signed int       DecrementDLLUsageCount( char *path );
+extern void             ReadVariablesFile( const char * name );

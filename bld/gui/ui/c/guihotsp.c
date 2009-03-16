@@ -83,7 +83,7 @@ void GUIFreeHotSpot( a_hot_spot *hot_spot )
     GUIMemFree( hot_spot );
 }
 
-bool GUISetHotSpotText( a_hot_spot *hot_spot, char *text )
+bool GUISetHotSpotText( a_hot_spot *hot_spot, const char *text )
 {
     char        *new;
 

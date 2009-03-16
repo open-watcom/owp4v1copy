@@ -565,7 +565,7 @@
     #define GetGValue(rgb)              ((BYTE)(((WORD)(rgb)) >> 8))
     #define GetRValue(rgb)              ((BYTE)((rgb)>>16))
     #define RGB(r,g,b)                  ((WPI_COLOUR)(((BYTE)(b)|((WORD)(g)<<8))|(((DWORD)(BYTE)(r))<<16)))
-    #define LPCSTR                      ULONG
+    #define LPCSTR                      const char FAR *
     #define MAKEINTRESOURCE(i)          i
     #define HMENU                       HWND
     #define SW_HIDE                     SWP_HIDE
@@ -641,28 +641,28 @@
     #define WPI_CLIPPED                 CHS_CLIP
 
 typedef struct {
-    DWORD       lStructSize;    /* */
-    HWND        hwndOwner;              /* caller's window handle   */
-    HDC         hDC;            /* printer DC/IC or NULL    */
-    WPI_LOGFONT *lpLogFont;          /* ptr. to a LOGFONT struct */
-    int         iPointSize;             /* 10 * size in points of selected font */
-    DWORD       Flags;          /* enum. type flags         */
+    DWORD       lStructSize;        /* */
+    HWND        hwndOwner;          /* caller's window handle   */
+    HDC         hDC;                /* printer DC/IC or NULL    */
+    WPI_LOGFONT *lpLogFont;         /* ptr. to a LOGFONT struct */
+    int         iPointSize;         /* 10 * size in points of selected font */
+    DWORD       Flags;              /* enum. type flags         */
     WPI_COLOUR  rgbColors;          /* returned text color      */
     LPARAM      lCustData;          /* data passed to hook fn.  */
     UINT (APIENTRY *lpfnHook)(HWND, UINT, WPARAM, LPARAM);
-                                        /* ptr. to hook function    */
-    const LPSTR lpTemplateName;     /* custom template name     */
+                                    /* ptr. to hook function    */
+    LPCSTR      lpTemplateName;     /* custom template name     */
     HINSTANCE   hInstance;          /* instance handle of.EXE that
-                                         * contains cust. dlg. template
-                                         */
-    LPSTR       lpszStyle;              /* return the style field here
-                                         * must be LF_FACESIZE or bigger */
+                                     * contains cust. dlg. template
+                                     */
+    LPSTR       lpszStyle;          /* return the style field here
+                                     * must be LF_FACESIZE or bigger */
     UINT        nFontType;          /* same value reported to the EnumFonts
-                                         * call back with the extra FONTTYPE_
-                                         * bits added */
-    int         nSizeMin;               /* minimum pt size allowed & */
-    int         nSizeMax;               /* max pt size allowed if    */
-                                /* CF_LIMITSIZE is used      */
+                                     * call back with the extra FONTTYPE_
+                                     * bits added */
+    int         nSizeMin;           /* minimum pt size allowed & */
+    int         nSizeMax;           /* max pt size allowed if    */
+                                    /* CF_LIMITSIZE is used      */
 } WPI_CHOOSEFONT;
 
 typedef struct {

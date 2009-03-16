@@ -106,7 +106,7 @@ extern bool             SetupInit( void );
 extern void             SetupFini( void );
 extern void             SetupError( char * );
 extern gui_message_return MsgBox( gui_window *, char *, gui_message_type, ... );
-extern void             ReplaceVars( char *, char * );
+extern void             ReplaceVars( char *, const char * );
 extern bool             StatusInit( void );
 extern void             StatusFini( void );
 extern void             StatusShow( bool );

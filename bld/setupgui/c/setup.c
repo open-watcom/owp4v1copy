@@ -255,9 +255,9 @@ bool DirParamStack( char **inf_name, char **tmp_path, DIR_PARAM_STACK_OPS functi
 extern bool DoMainLoop( dlg_state * state )
 /*****************************************/
 {
-    char                *diag_list[MAX_DIAGS + 1];
-    char                *diags;
-    char                *dstdir;
+    const char          *diag_list[MAX_DIAGS + 1];
+    const char          *diags;
+    const char          *dstdir;
     int                 dstlen;
     bool                got_disk_sizes = FALSE;
     int                 i;

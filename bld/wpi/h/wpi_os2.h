@@ -663,7 +663,7 @@ extern WPI_COLOUR _wpi_setbackcolour( WPI_PRES, WPI_COLOUR );
 
     #define _wpi_getbackcolour( pres ) GpiQueryBackColor( pres )
 
-extern BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG
+extern BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPCSTR text, ULONG
                                                                         len );
     #define _wpi_getdeffm( fm ) memset( &fm, 0, sizeof( FONTMETRICS ) )
 
@@ -1100,7 +1100,7 @@ extern void _wpi_getoldpen( WPI_PRES pres, HPEN oldobj );
 
     #define _wpi_ptvisible( pres, pt ) GpiPtVisible( pres, pt )
 
-extern void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
+extern void _wpi_gettextextent( WPI_PRES pres, LPCSTR string, int len_string,
                                                     int *width, int *height );
 extern int _wpi_setrop2( WPI_PRES pres, int mode );
 
@@ -1382,7 +1382,7 @@ extern WPI_HANDLE __wpi_selectobject( WPI_PRES pres, WPI_HANDLE v_obj,
         __wpi_selectobject( pres, obj, alloca( sizeof(WPI_OBJECT) ) )
 
 extern void _wpi_deleteobject( WPI_HANDLE object );
-extern char *_wpi_menutext2pm( char *text );
+extern char *_wpi_menutext2pm( const char *text );
 extern void _wpi_menutext2win( char *text );
 
     #define _wpi_freemenutext( ptext ) _wpi_free( ptext )

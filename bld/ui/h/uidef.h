@@ -114,7 +114,7 @@ void            intern          bfill( BUFFER *, int, int, ATTR, char, int );
 void            intern          blowup( BUFFER *, SAREA, char *, ATTR );
 void            intern          bpixel( BUFFER *, ORD, ORD, ATTR, char );
 void            intern          braw( BUFFER *, int, int, PIXEL *, int );
-void            intern          bstring( BUFFER *, int, int, ATTR, char __FAR *, int );
+void            intern          bstring( BUFFER *, int, int, ATTR, const char __FAR *, int );
 void            intern          bunframe(struct buffer *);
 int             intern          checkkey( void );
 void            intern          checkmouse(unsigned short *,unsigned short *,

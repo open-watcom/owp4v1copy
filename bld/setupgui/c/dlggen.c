@@ -111,7 +111,7 @@ static void SetDynamic( gui_window *gui, vhandle var_handle, bool *drive_checked
 /*******************************************************************************/
 {
     char        buff[256];
-    char        *p;
+    const char  *p;
 
     p = VarGetStrVal( var_handle );
     if( !*drive_checked ) {
@@ -641,7 +641,7 @@ static bool GenericEventProc( gui_window *gui, gui_event gui_ev, void *param )
             break;
         default:
             {
-                char            *dlg_name;
+                const char      *dlg_name;
                 a_dialog_header *child;
                 int             old_val;
                 dlg_state       return_state;

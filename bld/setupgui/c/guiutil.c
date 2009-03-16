@@ -40,7 +40,8 @@
 #include "banner.h"
 #include <stdio.h>
 
-extern char             *GetVariableStrVal( const char *vbl_name );
+#include "genvbl.h"
+
 extern gui_colour_set   MainColours[];
 extern  void            GUISetJapanese();
 extern int              Invisible;
