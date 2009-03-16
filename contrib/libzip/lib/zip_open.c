@@ -51,8 +51,7 @@ static int _zip_checkcons(FILE *, struct zip_cdir *, struct zip_error *);
 static int _zip_headercomp(struct zip_dirent *, int,
 			   struct zip_dirent *, int);
 static void *_zip_memdup(const void *, size_t, struct zip_error *);
-static unsigned char *_zip_memmem(const unsigned char *, int,
-				  const unsigned char *, int);
+static void *_zip_memmem(const void *, size_t, const void *, size_t);
 static struct zip_cdir *_zip_readcdir(FILE *, unsigned char *, unsigned char *,
 				 int, struct zip_error *);
 
@@ -432,18 +431,17 @@ _zip_headercomp(struct zip_dirent *h1, int local1p, struct zip_dirent *h2,
 
 
 
-static unsigned char *
-_zip_memmem(const unsigned char *big, int biglen, const unsigned char *little, 
-       int littlelen)
+static void *
+_zip_memmem(const void *big, size_t biglen, const void *little, size_t littlelen)
 {
-    const unsigned char *p;
-    
+    const char *p;
+
     if ((biglen < littlelen) || (littlelen == 0))
 	return NULL;
-    p = big-1;
-    while ((p=memchr(p+1, little[0], big-(p+1)+biglen-littlelen+1))!=NULL) {
-	if (memcmp(p+1, little+1, littlelen-1)==0)
-	    return (unsigned char *)p;
+    p = (char *)big-1;
+    while ((p=memchr(p+1, ((unsigned char *)little)[0],(char *)big-(p+1)+biglen-littlelen+1))!=NULL) {
+	if (memcmp(p+1, (char *)little+1, littlelen-1)==0)
+	    return (void *)p;
     }
 
     return NULL;
