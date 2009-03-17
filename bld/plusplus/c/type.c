@@ -548,8 +548,10 @@ static void verifyBasedRef( SEARCH_RESULT *result, SYMBOL sym )
       char __based(fp) *pp;             -- add offset to fp to produce pointer
       char __based(void) *vp;           -- just an offset (based on nothing)
       char __based((__segment)__self) *sp; -- inherits base from expression
-  (2) __based(__segname("_CODE"))       -- pre-defined segment names
-      __based(__segname("_CONST"))      (^ code segment) (data segment)
+
+  (2) -- pre-defined segment names
+      __based(__segname("_CODE"))       (code segment)
+      __based(__segname("_CONST"))      (data segment)
       __based(__segname("_DATA"))       (data segment)
       __based(__segname("_STACK"))      (stack segment)
       __based(__segname("_MYSEG"))      (user-defined segment)
