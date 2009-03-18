@@ -1,6 +1,6 @@
 .func chmod _chmod _wchmod _uchmod
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .if '&machsys' eq 'QNX' .do begin
 int chmod( const char *path, mode_t permission );
 .do end
@@ -128,8 +128,8 @@ The named file resides on a read-only file system.
 .exmp break
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 #include <&iohdr>

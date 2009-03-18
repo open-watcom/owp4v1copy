@@ -1,5 +1,5 @@
 .func stat _stat _stati64 _wstat _wstati64 lstat
-#include <sys&pc.stat.h>
+#include <sys/stat.h>
 int stat( const char *path, struct stat *buf );
 .ixfunc2 '&FileOp' &func
 .if &'length(&_func.) ne 0 .do begin
@@ -79,7 +79,7 @@ is not a directory.
 .see end
 .exmp begin
 #include <stdio.h>
-#include <sys&pc.stat.h>
+#include <sys/stat.h>
 
 void main()
 {

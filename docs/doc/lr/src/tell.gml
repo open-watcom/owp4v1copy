@@ -53,7 +53,7 @@ A value of 0 indicates the start of the file.
 .*
 .exmp begin
 #include <stdio.h>
-#include <sys&pc.stat.h>
+#include <sys/stat.h>
 #include <&iohdr>
 #include <fcntl.h>
 

@@ -1,5 +1,5 @@
 .func chdir _chdir _wchdir _uchdir
-#include <sys&pc.types.h>
+#include <sys/types.h>
 .if '&machsys' eq 'QNX' .do begin
 #include <unistd.h>
 .do end

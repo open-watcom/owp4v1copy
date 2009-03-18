@@ -1,7 +1,7 @@
 .func mkdir _mkdir _wmkdir _umkdir
 .if '&machsys' eq 'QNX' .do begin
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 int mkdir( const char *path, mode_t mode );
 .ixfunc2 '&Direct' &func
 .if &'length(&_func.) ne 0 .do begin
@@ -10,7 +10,7 @@ int _mkdir( const char *path, mode_t mode );
 .do end
 .do end
 .el .do begin
-#include <sys&pc.types.h>
+#include <sys/types.h>
 #include <direct.h>
 int mkdir( const char *path );
 .ixfunc2 '&Direct' &func
@@ -153,11 +153,11 @@ on drive
 .blktext end
 .blkcode begin
 .if '&machsys' eq 'QNX' .do begin
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .do end
 .el .do begin
-#include <sys&pc.types.h>
+#include <sys/types.h>
 #include <direct.h>
 .do end
 

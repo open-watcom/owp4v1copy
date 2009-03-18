@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
-#include "..\h\myfile.h"
-#include "..\h\compress.h"
-#include "..\h\hcmem.h"
+#include "myfile.h"
+#include "compress.h"
+#include "hcmem.h"
 
 #define BLOCK_SIZE      128
 #define PAGE_SIZE       1024

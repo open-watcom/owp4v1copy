@@ -1,5 +1,5 @@
 .func locking _locking
-#include <sys&pc.locking.h>
+#include <sys/locking.h>
 int locking( int &fd, int mode, long nbyte );
 .ixfunc2 '&OsIo' &func
 .if &'length(&_func.) ne 0 .do begin
@@ -107,7 +107,7 @@ Indicates that an invalid argument was given to the function.
 .see end
 .exmp begin
 #include <stdio.h>
-#include <sys&pc.locking.h>
+#include <sys/locking.h>
 #include <share.h>
 #include <fcntl.h>
 #include <&iohdr>

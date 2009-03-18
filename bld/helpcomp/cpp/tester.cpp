@@ -32,13 +32,13 @@
 
 #include <iostream.h>
 #include <stdlib.h>
-#include "..\h\hlpdir.h"
-#include "..\h\hpjread.h"
-#include "..\h\hcmem.h"
+#include "hlpdir.h"
+#include "hpjread.h"
+#include "hcmem.h"
 
 static Memory bogus;
 
-main( )
+int main( void )
 {
     HFS_Directory       helpfile("test.hlp");
     HPJReader           projfile( &helpfile, "test.hpj" );

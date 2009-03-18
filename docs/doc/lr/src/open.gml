@@ -1,6 +1,6 @@
 .func open _open _wopen _uopen
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 int open( const char *path, int access, ... );
 .ixfunc2 '&OsIo' &func
@@ -74,8 +74,8 @@ Path or file not found
 .im seeioos open
 .see end
 .exmp begin
-#include <sys&pc.stat.h>
-#include <sys&pc.types.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <fcntl.h>
 
 void main()

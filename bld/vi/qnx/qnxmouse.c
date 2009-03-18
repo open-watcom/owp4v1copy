@@ -46,7 +46,7 @@
 #include <sys/mouse.h>
 #include <sys/timers.h>
 #include "vi.h"
-#include "..\h\mouse.h"
+#include "mouse.h"
 
 static int                      lastStatus;
 static int                      lastRow;

@@ -39,7 +39,7 @@
 #define INCL_WININPUT
 #include <os2.h>
 
-#include "..\wedit.h"
+#include "wedit.h"
 
 static char Err1[] = { "fshapes.for: *ERR* SP-24 in FMAIN, structure QMSG has not been defined" };
 static char Err2[] = { "fshapes.for(44): *ERR* MD-03 column 51, operator not expecting REAL operands" };

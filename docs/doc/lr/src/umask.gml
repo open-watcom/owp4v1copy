@@ -1,6 +1,6 @@
 .func umask _umask
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .if '&machsys' eq 'QNX' .do begin
 mode_t umask( mode_t cmask );
 .do end
@@ -68,8 +68,8 @@ The &func function returns the previous value of
 .seelist umask chmod creat mkdir mkfifo open sopen
 .see end
 .exmp begin
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .if '&machsys' ne 'QNX' .do begin
 #include <fcntl.h>
 #include <&iohdr>

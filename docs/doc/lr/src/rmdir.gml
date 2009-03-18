@@ -1,5 +1,5 @@
 .func rmdir _rmdir _wrmdir _urmdir
-#include <sys&pc.types.h>
+#include <sys/types.h>
 .if '&machsys' eq 'QNX' .do begin
 #include <unistd.h>
 .do end
@@ -142,11 +142,11 @@ on drive
 .blktext end
 .blkcode begin
 .if '&machsys' eq 'QNX' .do begin
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .do end
 .el .do begin
-#include <sys&pc.types.h>
+#include <sys/types.h>
 #include <direct.h>
 .do end
 

@@ -40,7 +40,7 @@ MEM:  memory functions and tracking
 
 #ifdef TRACKER
 extern "C" {
-#include "..\..\trmem\trmem.h"
+#include "trmem.h"
 }
 #include <io.h>
 #include <fcntl.h>

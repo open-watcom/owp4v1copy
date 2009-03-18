@@ -1,6 +1,6 @@
 .func fstat _fstat _fstati64 _wfstat _wfstati64
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 int fstat( int &fd, struct stat *buf );
 .ixfunc2 '&OsIo' &func
 .if &'length(&_func.) ne 0 .do begin
@@ -60,8 +60,8 @@ argument is not a valid file &handle..
 .see end
 .exmp begin
 #include <stdio.h>
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <&iohdr>
 .exmp break

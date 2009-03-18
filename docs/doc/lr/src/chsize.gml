@@ -62,7 +62,7 @@ Not enough space left on the device to extend the file.
 #include <stdio.h>
 #include <&iohdr>
 #include <fcntl.h>
-#include <sys&pc.stat.h>
+#include <sys/stat.h>
 
 void main()
   {

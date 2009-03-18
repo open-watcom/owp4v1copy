@@ -1,6 +1,6 @@
 .func lseek _lseek _lseeki64
 .if '&machsys' eq 'QNX' .do begin
-#include <sys&pc.types.h>
+#include <sys/types.h>
 .do end
 .if '&machsys' ne 'QNX' .do begin
 #include <stdio.h>

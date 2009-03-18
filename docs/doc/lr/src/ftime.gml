@@ -1,5 +1,5 @@
 .func ftime
-#include <sys&pc.timeb.h>
+#include <sys/timeb.h>
 int ftime( struct timeb *timeptr );
 
 struct timeb {
@@ -27,7 +27,7 @@ value otherwise.
 .exmp begin
 #include <stdio.h>
 #include <time.h>
-#include <sys&pc.timeb.h>
+#include <sys/timeb.h>
 .exmp break
 void main()
   {

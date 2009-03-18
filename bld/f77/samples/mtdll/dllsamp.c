@@ -36,8 +36,8 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <process.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #if defined( __cplusplus )
 extern "C" {

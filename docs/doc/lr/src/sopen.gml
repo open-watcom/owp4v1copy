@@ -1,8 +1,8 @@
 .func sopen _sopen _wsopen
 #include <&iohdr>
 #include <fcntl.h>
-#include <sys&pc.stat.h>
-#include <sys&pc.types.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <share.h>
 int sopen( const char *filename,
            int access, int share, ... );
@@ -127,8 +127,8 @@ Path or file not found
 .im seeioos sopen
 .see end
 .exmp begin
-#include <sys&pc.stat.h>
-#include <sys&pc.types.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <fcntl.h>
 #include <share.h>
 

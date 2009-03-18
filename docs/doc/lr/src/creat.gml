@@ -1,6 +1,6 @@
 .func creat _creat _wcreat _ucreat
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .ixfunc2 '&OsIo' &func
 .if '&machsys' eq 'QNX' .do begin
 #include <fcntl.h>
@@ -160,8 +160,8 @@ is an empty string.
 .im seeioos creat
 .see end
 .exmp begin
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 .if '&machsys' eq 'PP' .do begin
 #include <fcntl.h>
 .do end

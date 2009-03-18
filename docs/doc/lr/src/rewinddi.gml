@@ -1,5 +1,5 @@
 .func rewinddir _wrewinddir
-#include <sys&pc.types.h>
+#include <sys/types.h>
 #include <&dirhdr>
 .if '&machsys' eq 'QNX' .do begin
 void rewinddir( DIR *dirp );
@@ -63,8 +63,8 @@ creates a new file, and then relists the directory.
 .blktext end
 .blkcode begin
 #include <stdio.h>
-#include <sys&pc.types.h>
-#include <sys&pc.stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <&dirhdr>
 .exmp break
 void main()

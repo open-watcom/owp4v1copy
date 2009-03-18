@@ -13,6 +13,8 @@ sys_dll = 1
 !include deftarg.mif
 !include defrule.mif
 
+inc_dirs = -I..
+
 extra_l_flags_os2 = initinstance terminstance pm
 extra_l_flags_os2 += op manyautodata
 extra_l_flags_os2 += op map
@@ -26,7 +28,7 @@ wedit.dll: epmlink.obj dll.lnk
     $(linker) name $@ @$]@ file $[@
     
 wedit.lib: wedit.dll
-    $(librarian) $(libflags) +$[@
+    $(librarian) $(libflags) +$<
 
 epmtest.exe : epmtest.obj wedit.lib
     $(linker) d a op st=32k, case sys os2v2_pm file epmtest.obj lib wedit.lib

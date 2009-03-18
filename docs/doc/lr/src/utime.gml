@@ -1,10 +1,10 @@
 .func utime _utime _wutime _uutime
 .if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
-#include <sys&pc.types.h>
+#include <sys/types.h>
 #include <utime.h>
 .do end
 .el .do begin
-#include <sys&pc.utime.h>
+#include <sys/utime.h>
 .do end
 int utime( const char *path,
            const struct utimbuf *times );
@@ -158,7 +158,7 @@ The named file resides on a read-only file system.
 .error end
 .exmp begin
 #include <stdio.h>
-#include <sys&pc.utime.h>
+#include <sys/utime.h>
 
 void main( int argc, char *argv[] )
   {
