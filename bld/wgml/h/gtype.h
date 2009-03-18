@@ -34,10 +34,10 @@
 
 
 #if defined(__QNX__) || defined(__LINUX__) // try to be nice to linux
-    #define PATH_SEP        "/"
+    #define PATH_SEP        '/'
     #define INCLUDE_SEP     ':'
 #elif defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)
-    #define PATH_SEP        "\\"
+    #define PATH_SEP        '\\'
     #define INCLUDE_SEP     ';'
 #else
     #error gtype.h not configured for system
@@ -68,6 +68,7 @@
 #define MAX_FUN_PARMS   7             // max parmcount found in documentation
 
 #define MAX_IF_LEVEL    10              // maximum nested .if s
+#define MAX_L_AS_STR    16              // long as string
 
 /* default filename extensions */
 #define DEF_EXT         ".def"
@@ -138,7 +139,7 @@ typedef enum {
     subscripted = 2,
     auto_inc    = 4,
     deleted     = 0x100
-} sym_flags;
+} symbol_flags;
 
 
 /***************************************************************************/
@@ -162,7 +163,7 @@ typedef struct symvar {
     long                subscript_used; // count of used subscripts
     symsub          *   subscripts;     // subscript entries
     symsub          *   sub_0;          // special subscript 0 entry
-    sym_flags           flags;
+    symbol_flags        flags;
 } symvar;
 
 
@@ -527,6 +528,23 @@ typedef struct opt_font {
     uint32_t            height;
 } opt_font;
 
+/***************************************************************************/
+/*  message numbers  + severities                                          */
+/***************************************************************************/
+#undef pick
+#define pick( id, en, jp ) id,
+typedef enum msg_ids  {
+    #include "wgml.msg"
+} msg_ids;
+
+typedef enum {
+    SEV_BANNER,
+    SEV_DEBUG,
+    SEV_INFO,
+    SEV_WARNING,
+    SEV_ERROR,
+    SEV_FATAL_ERR
+} severity;
 
 
 #endif                                  // GTYPE_H_INCLUDED

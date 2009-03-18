@@ -39,7 +39,7 @@
 #include "wgml.h"
 #include "gvars.h"
 
-static FILE * workfile[ 9 ] =
+static FILE * workfile[ 9 ] =           // support for 9 workfiles SYSUSR0x.GML
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 /***************************************************************************/
@@ -131,15 +131,15 @@ static  errno_t open_pu_file( int n )
 
 static void numb_err( void )
 {
+    char    linestr[ MAX_L_AS_STR ];
+
     err_count++;
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_PU_num Workfile number not 1 - 9\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_err( ERR_PU_NUM, linestr, "macro", input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_PU_num Workfile number not 1 - 9\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_err( ERR_PU_NUM, linestr, "file", input_cbs->s.f->filename );
     }
     show_include_stack();
     return;

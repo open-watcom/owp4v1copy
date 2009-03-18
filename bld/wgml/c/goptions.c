@@ -222,7 +222,7 @@ static  char    *read_indirect_file( const char * filename )
 static void ign_option( option * opt )
 {
 
-    out_msg( "WNG_IGN_OPTION %s\n", opt->option );
+    g_warn( WNG_IGN_OPTION, opt->option );
     wng_count++;
     if( opt->parmcount > 0 ) {
         int     k;
@@ -283,6 +283,7 @@ static void set_bind( option * opt )
 
     if( tokennext == NULL || tokennext->bol || tokennext->token[ 0 ] == '(' \
                                             || is_option() == true ) {
+
         out_msg( "ERR_MISSING_OPTION_VALUE %.*s\n", opt->optionLenM1+1,
                 opt->option );
         err_count++;

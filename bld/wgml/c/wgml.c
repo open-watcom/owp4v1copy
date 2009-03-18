@@ -148,14 +148,14 @@ static  bool    free_inc_fp( void )
                     rc = fgetpos( cb->fp, &cb->pos );
                     if( rc != 0 ) {
                         strerror_s( buff2, buf_size, errno );
-                        out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
+                        g_err( ERR_FILE_IO, buff2, cb->filename );
                         err_count++;
                         g_suicide();
                     }
                     rc = fclose( cb->fp );
                     if( rc != 0 ) {
                         strerror_s( buff2, buf_size, errno );
-                        out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
+                        g_err( ERR_FILE_IO, buff2, cb->filename );
                         err_count++;
                         g_suicide();
                     }
@@ -187,14 +187,14 @@ static void reopen_inc_fp( filecb *cb )
             rc = fsetpos( cb->fp, &cb->pos );
             if( rc != 0 ) {
                 strerror_s( buff2, buf_size, errno );
-                out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
+                g_err( ERR_FILE_IO, buff2, cb->filename );
                 err_count++;
                 g_suicide();
             }
             cb->flags |= FF_open;
         } else {
             strerror_s( buff2, buf_size, erc2 );
-            out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
+            g_err( ERR_FILE_IO, buff2, cb->filename );
             err_count++;
             g_suicide();
         }
@@ -208,8 +208,8 @@ static void reopen_inc_fp( filecb *cb )
 
 bool    free_resources( errno_t in_errno )
 {
-    if( in_errno == ENOMEM) out_msg( "Out of memory!\n" );
-    else out_msg( "Out of file handles!\n" );
+    if( in_errno == ENOMEM) g_err( ERR_NO_MEMORY );
+    else g_err( ERR_NO_HANDLES );
     err_count++;
     return( false );
 }
@@ -298,7 +298,9 @@ static  void    del_input_cb_entry( void )
     free_dict( &wk->local_dict );
     if( wk->if_cb != NULL ) {
 //      if( wk->if_cb->if_level > 0 ) {
-//          out_msg( "ERR_IF_level not zero at EOF %d\n", wk->if_cb->if_level );
+//          char linestr[ MAX_L_AS_STR ];
+//          utoa( wk->if_cb->if_level, linestr, 10 );
+//          g_err( ERR_IF_LEVEL, linestr );
 //          show_include_stack();
 //          err_count++;
 //      }
@@ -340,7 +342,7 @@ static  void    get_macro_line( void )
     macrocb *   cb;
 
     if( input_cbs->fmflags & II_file ) {
-        out_msg( "ERR_logic get_macroline() for file\n");
+        g_err( ERR_LOGIC_MAC );
         show_include_stack();
         err_count++;
         g_suicide();
@@ -387,7 +389,7 @@ bool    get_line( void )
         } else {
             cb = input_cbs->s.f;        // input from file
             if( !(cb->flags & FF_open) ) {
-                out_msg( "INF CALLING REOPEN_INC_FP\n" );
+                g_info( ERR_INF_REOPEN );
                 show_include_stack();
                 reopen_inc_fp( cb );
             }
@@ -428,7 +430,7 @@ bool    get_line( void )
                         break;
                     } else {
                         strerror_s( buff2, buf_size, errno );
-                        out_msg( "ERR_FILE_IO %s %s\n", buff2, cb->filename );
+                        g_err( ERR_FILE_IO, buff2, cb->filename );
 
                         err_count++;
                         g_suicide();
@@ -460,29 +462,28 @@ bool    get_line( void )
 void    show_include_stack( void )
 {
     inputcb *   ip;
+    char        linestr[ MAX_L_AS_STR ];
+    char        linemac[ MAX_L_AS_STR ];
 
     if( inc_level > 1 ) {
         ip = input_cbs;
         while( ip != NULL ) {
             switch( ip->fmflags ) {
             case    II_file:
-                out_msg( "\tIncluded from line %d of file '%s'\n",
-                         ip->s.f->lineno,
-                         ip->s.f->filename );
+                utoa( ip->s.f->lineno, linestr, 10 );
+                g_info( ERR_INF_LINE_FILE, linestr, ip->s.f->filename );
                 break;
             case    II_tag :
-                out_msg( "\tCalled from GML tag '%s' in\n",
-                         ip->s.m->tag->name );
+                g_info( ERR_INF_TAG, ip->s.m->tag->name );
                 // fallthrough
             case    II_macro :
-                out_msg( "\tLine %d of macro '%s' defined at line %d of file '%s'\n",
-                         ip->s.m->lineno,
-                         ip->s.m->mac->name,
-                         ip->s.m->mac->lineno,
-                         ip->s.m->mac->mac_file_name);
+                utoa( ip->s.m->lineno, linestr, 10 );
+                utoa( ip->s.m->mac->lineno, linemac, 10 );
+                g_info( ERR_INF_MAC_DEF, linestr, ip->s.m->mac->name,
+                        linemac, ip->s.m->mac->mac_file_name);
                 break;
             default:
-                out_msg( "\tERR Included from unknown ( master document? )\n" );
+                g_info( ERR_INC_UNKNOWN );
                 break;
             }
             ip = ip->prev;
@@ -531,7 +532,7 @@ static void remove_indentation( void )
         }
         buff2_lg = strnlen_s( buff2, buf_size );
 //        if( GlobalFlags.research && GlobalFlags.firstpass ) {
-//            out_msg( "%s<< Indentremoved\n", buff2 );
+//            g_info( INF_INDENT_REM, buff2 );
 //        }
     }
 }
@@ -551,7 +552,7 @@ static  void    proc_GML( char * filename )
     ProcFlags.newLevelFile = 1;
     strcpy_s( token_buf, buf_size, filename );
 
-    for( ; ; ) {                        // as long as there is more input
+    for( ; ; ) {                        // as long as there is input
         if( ProcFlags.newLevelFile ) {
             ProcFlags.newLevelFile = 0; // start a new include FILE level
 
@@ -561,25 +562,25 @@ static  void    proc_GML( char * filename )
             split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
 
             if( attrwork[ 0 ] ) {
-                out_msg( "WNG_FILEATTR_IGNORED (%s) %s\n", attrwork, token_buf );
+                g_warn( WNG_FILEATTR_IGNORED, attrwork, token_buf );
                 wng_count++;
             }
             if( search_file_in_dirs( token_buf, def_ext, alt_ext, ds_doc_spec ) ) {
 
                 if( inc_level >= MAX_INC_DEPTH ) {
-                    out_msg( "ERR_MAX_INPUT_NESTING %s\n", token_buf );
+                    g_err( ERR_MAX_INPUT_NESTING, token_buf );
                     err_count++;
                     show_include_stack();
                     continue;           // don't start new include level
                 }
             } else {
-                out_msg( "ERR_INPUT_FILE_NOT_FOUND %s\n\n\n", token_buf );
+                g_err( ERR_INPUT_FILE_NOT_FOUND, token_buf );
                 err_count++;
                 if( inc_level > 0 ) {
                     show_include_stack();
                     continue;           // don't start new include level
                 } else {                // masterfile included from cmdline
-                    out_msg( "\tIncluded from %s\n", "cmdline" );
+                    g_info( INF_INCLUDED, "cmdline" );
                     break;              // no input file leave loop
                 }
             }
@@ -593,7 +594,7 @@ static  void    proc_GML( char * filename )
                 cb->fileattr[ 0 ] = '\0';
             }
             if( GlobalFlags.inclist ) {
-                out_msg( "\nCurrent file is '%s'\n", cb->filename );
+                g_info( INF_CURR_INPUT, "file", cb->filename );
             }
         } // new include FILE processing
 
@@ -648,17 +649,16 @@ static  void    proc_GML( char * filename )
             continue;
         }
         if( ProcFlags.goto_active ) {
+            char    linestr[ MAX_L_AS_STR ];
             err_count++;
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_GOTO Label not found %s\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         gotarget,
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_err( ERR_GOTO, gotarget, linestr,
+                       input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_GOTO Label not found %s\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         gotarget,
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_err( ERR_GOTO, gotarget, linestr,
+                       input_cbs->s.f->filename );
             }
             show_include_stack();
         }
@@ -683,13 +683,15 @@ static  void    proc_GML( char * filename )
             break;
         }
         if( input_cbs->fmflags & II_file ) {
+            char    linestr[ MAX_L_AS_STR ];
             cb = input_cbs->s.f;
             if( GlobalFlags.inclist ) {
-                out_msg( "Current file is '%s'(%d)\n", cb->filename, cb->lineno );
+                utoa( cb->lineno, linestr, 10 );
+                g_info( INF_CURR_LINE, cb->filename, linestr );
             }
         } else {
             if( GlobalFlags.inclist ) {
-                out_msg( "Current macro is '%s'\n", input_cbs->s.m->mac->name );
+                g_info( INF_CURR_INPUT, "macro", input_cbs->s.m->mac->name );
             }
         }
     }
@@ -702,11 +704,21 @@ static  void    proc_GML( char * filename )
 
 static  void    print_stats( void )
 {
-    out_msg( "\nStatistics:\n" );
-    out_msg( "Max inc level: %6ld\n", max_inc_level );
-    out_msg( "  Error count: %6ld\n", err_count );
-    out_msg( "Warning count: %6ld\n", wng_count );
-    out_msg( "   Returncode: %6d\n",  err_count ? 8 : wng_count ? 4 : 0 );
+    char linestr[ MAX_L_AS_STR ];
+
+    g_info( INF_STAT_1 );
+
+    utoa( max_inc_level, linestr, 10 );
+    g_info( INF_STAT_2, linestr );
+
+    utoa( err_count, linestr, 10 );
+    g_info( INF_STAT_2, linestr );
+
+    utoa( wng_count, linestr, 10 );
+    g_info( INF_STAT_3, linestr );
+
+    utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
+    g_info( INF_STAT_4, linestr );
 
 }
 
@@ -783,9 +795,14 @@ int main( int argc, char * argv[] )
     g_trmem_init();                     // init memory tracker if necessary
 
     init_global_vars();
+
     get_systime();                      // initialize symbols date and time
 
     token_buf = mem_alloc( buf_size );
+
+    init_msgs();                        // init msg resouces
+
+
 
     ff_setup();                         // init findfile
 
@@ -793,13 +810,19 @@ int main( int argc, char * argv[] )
     cmdline = mem_alloc( cmdlen );
     _bgetcmd( cmdline, cmdlen );
 
-    out_msg( "cmdline='%s'\n", cmdline );
+    g_info( INF_CMDLINE, cmdline );
 
     proc_options( cmdline );
     g_banner();
     cop_setup();                        // init copfiles
 
+
+
     if( master_fname != NULL ) {        // filename specified
+        char    linestr1[ MAX_L_AS_STR ];
+        char    linestr2[ MAX_L_AS_STR ];
+
+        utoa( passes, linestr2, 10 );
         set_default_extension( master_fname );// make this extension first choice
 
         for( pass = 1; pass <= passes; pass++ ) {
@@ -807,9 +830,9 @@ int main( int argc, char * argv[] )
             init_pass();
 
 //            g_trmem_prt_list();  // all memory freed if no output from call
-
-            out_msg( "\nStarting pass %d of %d ( %s mode ) \n", pass, passes,
-                     GlobalFlags.research ? "research" : "normal" );
+            utoa( pass, linestr1, 10 );
+            g_info( INF_PASS_1, linestr1, linestr2,
+                    GlobalFlags.research ? "research" : "normal" );
 
             proc_GML( master_fname );
 
@@ -818,11 +841,11 @@ int main( int argc, char * argv[] )
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }
-            out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
-                     GlobalFlags.research ? "research" : "normal" );
+            g_info( INF_PASS_2, linestr1, linestr2,
+                    GlobalFlags.research ? "research" : "normal" );
         }
     } else {
-        out_msg( "ERR_MISSING_MAINFILENAME\n");
+        g_err( ERR_MISSING_MAINFILENAME );
         err_count++;
         usage();
     }
@@ -890,6 +913,8 @@ int main( int argc, char * argv[] )
 
     g_trmem_prt_list();             // all memory freed if no output from call
     g_trmem_close();
+
+    fini_msgs();                        // end of msg resources
 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy

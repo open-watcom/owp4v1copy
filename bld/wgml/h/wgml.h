@@ -85,14 +85,10 @@ extern  void    init_global_vars( void );
 
 
 /* gerror.c                             */
-extern  void    out_msg( char * fmt, ... );
-
-/* -------------------------------- TBD
-extern  void    g_err( int, ... );
-extern  void    g_warn( int, ... );
-extern  void    g_info( int, ... );
-----------------------------------*/
-
+extern  void    out_msg( const char * fmt, ... );
+extern  void    g_err( const msg_ids err, ... );
+extern  void    g_warn( const msg_ids err, ... );
+extern  void    g_info( const msg_ids err, ... );
 extern  void    g_suicide( void );
 
 /* getnum.c                             */
@@ -179,7 +175,7 @@ extern  void    close_all_pu_files( void );
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
-extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f );
+extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f );
 extern void     print_sym_dict( symvar * dict );
 extern void     reset_auto_inc_dict( symvar * dict );
 
@@ -199,10 +195,20 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 /* gutils.c                           */
 extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
 
+/* wgmlmsg.c                          */
+extern  int     init_msgs( void );
+extern  void    fini_msgs( void );
+extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
+//extern  void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info, char *types, ... );
+//extern  void Msg_Put_Args( char message[], MSG_ARG_LIST *arg_info, char *types, va_list *args );
+
 /*
  * prototypes for the gml processing routines
  */
 
+#ifdef pick
+    #undef pick
+#endif
 #define pick( name, length, routine, flags )  extern void routine( const gmltag * entry );
 
 #include "gtags.h"

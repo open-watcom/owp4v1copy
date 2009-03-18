@@ -190,8 +190,10 @@ static  bool    check_subscript( sub_index sub )
     if( sub != no_subscript ) {
         if( (sub < min_subscript) || (sub > max_subscript) ) {
             // SC--076 Subscript index must be between -1000000 and 1000000
-            out_msg( "ERR_SUBSCRIPT_OUT_OF_RANGE (-1000000 - +1000000) %d\n",
-                     sub );
+            char    linestr[ MAX_L_AS_STR ];
+
+            ltoa( sub, linestr, 10 );
+            g_err( ERR_SUBSCRIPT_OUT_OF_RANGE, linestr );
             show_include_stack();
             err_count++;
             return( false );
@@ -272,7 +274,7 @@ static bool add_symvar_sub( symvar * var, char * val, sub_index sub )
 /*  add_symsym  add symbol base entry and prepare subscript 0 entry        */
 /***************************************************************************/
 
-static void add_symsym( symvar * * dict, char * name, sym_flags f, symvar * * n )
+static void add_symsym( symvar * * dict, char * name, symbol_flags f, symvar * * n )
 {
     symvar  *   new;
     symsub  *   newsub;
@@ -316,7 +318,7 @@ static void add_symsym( symvar * * dict, char * name, sym_flags f, symvar * * n 
 /*  add_symvar  add symbol with subscript and value                        */
 /***************************************************************************/
 
-int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f )
+int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f )
 {
     symvar  *   new = NULL;
     symsub  *   newsub = NULL;
@@ -361,7 +363,7 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
             }
             break;
         default:
-            out_msg( "ERR_SYMVAR_Logic error\n");
+            g_err( ERR_LOGIC_ERR, __FILE__ );
             show_include_stack();
             err_count++;
             g_suicide();

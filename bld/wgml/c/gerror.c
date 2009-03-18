@@ -25,16 +25,19 @@
 *  ========================================================================
 *
 * Description:  Error and warning message output.
-*               Message definition and output to be improved
+*
 ****************************************************************************/
 
-
+#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
 #include "gvars.h"
 #include <stdarg.h>
 
+#define MAX_ERR_LEN     1024
 
+static  char    err_buf[ MAX_ERR_LEN + 2 ]; // +2 for \n and \0
+static  char    str_buf[ MAX_ERR_LEN + 2 ];
 
 void g_suicide( void )
 {
@@ -45,13 +48,110 @@ void g_suicide( void )
     my_exit( 16 );
 }
 
-void out_msg( char *msg, ... )
-/***************************/
+void out_msg( const char *msg, ... )
 {
     va_list args;
 
     va_start( args, msg );
     vprintf_s( msg, args );
+    va_end( args );
+}
+
+#define MAX_LINE_LEN            75
+static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
+/***************************************************************************/
+{
+    int                         len;
+    const char                  *prefix;
+
+    switch( sev ) {
+#if 0
+    case SEV_INFO:
+        prefix = "Info:";
+        break;
+#endif
+    case SEV_WARNING:
+        prefix = "Warning!";
+        break;
+    case SEV_ERROR:
+        prefix = "Error!";
+        break;
+    case SEV_FATAL_ERR:
+        prefix = "Fatal Error!";
+        break;
+    default:
+        prefix = "";
+        break;
+    }
+    switch( errornum ) {
+    case ERR_STR_NOT_FOUND:
+        /* this message means the error strings cannot be obtained from
+         * the exe so its text is hard coded */
+        sprintf( err_buf, "%s %d: %nResource strings not found", prefix,
+                    errornum, &len );
+        break;
+    case ERR_DUMMY:
+        /* dont print anything */
+        return;
+    default:
+        get_msg( errornum, err_buf, sizeof( err_buf ) );
+        vsprintf( str_buf, err_buf, arglist );
+        if( *prefix == '\0' ) {
+            // no prefix and errornumber
+            sprintf( err_buf, "%n%s", &len, str_buf );
+        } else {
+            sprintf( err_buf, "%s %d: %n%s", prefix, errornum, &len, str_buf );
+        }
+        break;
+    }
+
+    {
+        int             indent;
+        char            *start;
+        char            *end;
+
+        indent = 0;
+        start = err_buf;
+        while( strlen( start ) > MAX_LINE_LEN - indent ) {
+            end = start + MAX_LINE_LEN - indent;
+            while( !isspace( *end ) && end > start ) end--;
+            if( end != start )  {
+                *end = '\0';
+            } else {
+                break;
+            }
+            out_msg( "%*s%s\n", indent, "", start );
+            start = end + 1;
+            indent = len;
+        }
+        out_msg( "%*s%s\n", indent, "", start );
+    }
+}
+
+void g_err( const msg_ids num, ... )
+{
+    va_list args;
+
+    va_start( args, num );
+    g_msg_var( num, SEV_ERROR, args );
+    va_end( args );
+}
+
+void g_warn( const msg_ids num, ... )
+{
+    va_list args;
+
+    va_start( args, num );
+    g_msg_var( num, SEV_WARNING, args );
+    va_end( args );
+}
+
+void g_info( const msg_ids num, ... )
+{
+    va_list args;
+
+    va_start( args, num );
+    g_msg_var( num, SEV_INFO, args );
     va_end( args );
 }
 
