@@ -34,7 +34,7 @@
 #include "picdef.h"
 
 
-void _WCI86FAR _CGRAPH _putimage( short x, short y, char _WCI86HUGE * image,
+_WCRTLINK void _WCI86FAR _CGRAPH _putimage( short x, short y, char _WCI86HUGE * image,
 /*==========================================*/ short dispmode )
 
 /* This routine retrieves an picture stored at image and places it on the

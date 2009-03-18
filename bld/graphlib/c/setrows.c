@@ -354,7 +354,7 @@ static void Load_MCGA( short rows, short font, short cursor )
 #endif
 
 
-short _WCI86FAR _CGRAPH _settextrows( short rows )
+_WCRTLINK short _WCI86FAR _CGRAPH _settextrows( short rows )
 /*===========================================
 
    This function sets the number of text rows in the current mode. It only
@@ -374,7 +374,7 @@ Entry( _SETTEXTROWS, _settextrows ) // alternate entry-point
 
 
 
-short _WCI86FAR _CGRAPH _setvideomoderows( short mode, short rows )
+_WCRTLINK short _WCI86FAR _CGRAPH _setvideomoderows( short mode, short rows )
 /*============================================================
 
    This routine sets the video mode if it is supported by the current

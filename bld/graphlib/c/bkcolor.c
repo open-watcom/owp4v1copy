@@ -35,7 +35,7 @@
 #endif
 
 
-long _WCI86FAR _CGRAPH _getbkcolor( void )
+_WCRTLINK long _WCI86FAR _CGRAPH _getbkcolor( void )
 /*===================================
 
    This function returns the current background colour. */
@@ -47,7 +47,7 @@ long _WCI86FAR _CGRAPH _getbkcolor( void )
 Entry( _GETBKCOLOR, _getbkcolor ) // alternate entry-point
 
 
-long _WCI86FAR _CGRAPH _setbkcolor( long pixval )
+_WCRTLINK long _WCI86FAR _CGRAPH _setbkcolor( long pixval )
 /*==========================================
 
    This routine sets the background colour.  In text modes, it simply

@@ -824,6 +824,18 @@ _WCRTLINK short
   _CGRAPH
 :endsegment
     _WCI86FAR _setclip( short mode );
+
+:: Internal functions
+::  shared by pgchart and graphlib
+char _WCI86FAR *_getbitmap( short ch, short _WCI86FAR *width );
+
+#if defined( _DEFAULT_WINDOWS )
+_WCRTLINK void
+:segment INTERNAL
+  _CGRAPH
+:endsegment
+    _WCI86FAR _freeimage( char _WCI86HUGE *image );
+#endif
 :endsegment
 
 :include poppack.sp

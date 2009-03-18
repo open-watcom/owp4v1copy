@@ -33,7 +33,7 @@
 #include "gbios.h"
 
 
-short _WCI86FAR _CGRAPH _getvisualpage( void )
+_WCRTLINK short _WCI86FAR _CGRAPH _getvisualpage( void )
 /*=======================================
 
    This function queries the current visual page.   */
@@ -45,7 +45,7 @@ short _WCI86FAR _CGRAPH _getvisualpage( void )
 Entry( _GETVISUALPAGE, _getvisualpage ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _setvisualpage( short pagenum )
+_WCRTLINK short _WCI86FAR _CGRAPH _setvisualpage( short pagenum )
 /*================================================
 
    This routine sets the visual display page. */

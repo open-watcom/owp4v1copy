@@ -58,7 +58,7 @@ static short            _MemoryTab[ 8 ] = {
 
 #endif
 
-struct videoconfig _WCI86FAR * _WCI86FAR _CGRAPH
+_WCRTLINK struct videoconfig _WCI86FAR * _WCI86FAR _CGRAPH
 /*===================*/ _getvideoconfig( struct videoconfig _WCI86FAR *config )
 
 /* This function returns a structure containing information about the

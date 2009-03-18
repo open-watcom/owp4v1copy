@@ -44,7 +44,7 @@ static void             PutPalette( short, long );
 #endif
 
 
-long _WCI86FAR _CGRAPH _remappalette( short pixval, long colour )
+_WCRTLINK long _WCI86FAR _CGRAPH _remappalette( short pixval, long colour )
 /*==========================================================
 
    This routine sets the colour indexed by pixval to the new colour.  It
@@ -89,7 +89,7 @@ void _RemapNum( long _WCI86FAR *colours, short num )
 }
 
 
-short _WCI86FAR _CGRAPH _remapallpalette( long _WCI86FAR *colours )
+_WCRTLINK short _WCI86FAR _CGRAPH _remapallpalette( long _WCI86FAR *colours )
 /*=======================================================
 
    This routine remaps the entire palette to the colours specified by

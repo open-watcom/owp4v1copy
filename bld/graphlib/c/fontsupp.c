@@ -406,7 +406,7 @@ static short GlyphWidth( FONT_ENTRY _WCI86FAR *curr )
 }
 
 
-short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
+_WCRTLINK short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
 //=======================================================
 
 {
@@ -498,7 +498,7 @@ short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
 Entry( _REGISTERFONTS, _registerfonts ) // alternate entry-point
 
 
-void _WCI86FAR _CGRAPH _unregisterfonts( void )
+_WCRTLINK void _WCI86FAR _CGRAPH _unregisterfonts( void )
 //========================================
 
 {
@@ -645,7 +645,7 @@ This function tells if the current font is a stock font.*/
 }
 
 
-short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
+_WCRTLINK short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
 //=======================================================
 
 {
@@ -658,7 +658,7 @@ short _WCI86FAR _CGRAPH _registerfonts( char _WCI86FAR *font_path )
 Entry( _REGISTERFONTS, _registerfonts ) // alternate entry-point
 
 
-void _WCI86FAR _CGRAPH _unregisterfonts( void )
+_WCRTLINK void _WCI86FAR _CGRAPH _unregisterfonts( void )
 //========================================
 
 {
@@ -703,7 +703,7 @@ static PFONTMETRICS getfonts( WPI_PRES dc, PLONG fnts, char* facename )
 #endif
 
 
-short _WCI86FAR _CGRAPH _setfont( char _WCI86FAR *opt )
+_WCRTLINK short _WCI86FAR _CGRAPH _setfont( char _WCI86FAR *opt )
 //===========================================
 
 {
@@ -957,7 +957,7 @@ static short _charwidth( short ch )
 #endif
 
 
-short _WCI86FAR _CGRAPH _getfontinfo( struct _fontinfo _WCI86FAR *font )
+_WCRTLINK short _WCI86FAR _CGRAPH _getfontinfo( struct _fontinfo _WCI86FAR *font )
 //============================================================
 
 {
@@ -1006,7 +1006,7 @@ short _WCI86FAR _CGRAPH _getfontinfo( struct _fontinfo _WCI86FAR *font )
 Entry( _GETFONTINFO, _getfontinfo ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _getgtextextent( char _WCI86FAR *text )
+_WCRTLINK short _WCI86FAR _CGRAPH _getgtextextent( char _WCI86FAR *text )
 //============================================================
 
 /*  Calculates the width of 'text' in pixels.  */
@@ -1036,7 +1036,7 @@ short _WCI86FAR _CGRAPH _getgtextextent( char _WCI86FAR *text )
 Entry( _GETGTEXTEXTENT, _getgtextextent ) // alternate entry-point
 
 
-struct xycoord _WCI86FAR _CGRAPH _getgtextvector( void )
+_WCRTLINK struct xycoord _WCI86FAR _CGRAPH _getgtextvector( void )
 //=================================================
 
 {
@@ -1050,7 +1050,7 @@ struct xycoord _WCI86FAR _CGRAPH _getgtextvector( void )
 Entry( _GETGTEXTVECTOR, _getgtextvector ) // alternate entry-point
 
 
-struct xycoord _WCI86FAR _CGRAPH _setgtextvector( short x, short y )
+_WCRTLINK struct xycoord _WCI86FAR _CGRAPH _setgtextvector( short x, short y )
 //=============================================================
 
 {
@@ -1231,7 +1231,7 @@ static struct xycoord _outstrokechar( float x0, float y0, short ch )
 #endif
 
 
-void _WCI86FAR _CGRAPH _outgtext( char _WCI86FAR *str )
+_WCRTLINK void _WCI86FAR _CGRAPH _outgtext( char _WCI86FAR *str )
 //===========================================
 
 {

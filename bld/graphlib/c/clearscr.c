@@ -64,7 +64,7 @@ void _WCI86FAR _L2clearscreen( short area )
 }
 
 
-void _WCI86FAR _CGRAPH _clearscreen( short area )
+_WCRTLINK void _WCI86FAR _CGRAPH _clearscreen( short area )
 /*==========================================
 
    This routine clears either the entire screen, the current viewport, or

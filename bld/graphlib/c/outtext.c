@@ -128,7 +128,7 @@ static void OutputString( char _WCI86FAR *text, short length, short newline )
 }
 
 
-void _WCI86FAR _CGRAPH _outtext( char _WCI86FAR *text )
+_WCRTLINK void _WCI86FAR _CGRAPH _outtext( char _WCI86FAR *text )
 /*===========================================
 
    This routine displays the string of text pointed to by the parameter.
@@ -144,7 +144,7 @@ void _WCI86FAR _CGRAPH _outtext( char _WCI86FAR *text )
 Entry( _OUTTEXT, _outtext ) // alternate entry-point
 
 
-void _WCI86FAR _CGRAPH _outmem( unsigned char _WCI86FAR * text, short length )
+_WCRTLINK void _WCI86FAR _CGRAPH _outmem( unsigned char _WCI86FAR * text, short length )
 /*==================================================================
 
    This routine writes "length" characters from the buffer pointed to by
@@ -160,7 +160,7 @@ void _WCI86FAR _CGRAPH _outmem( unsigned char _WCI86FAR * text, short length )
 Entry( _OUTMEM, _outmem ) // alternate entry-point
 
 
-void _WCI86FAR _CGRAPH _scrolltextwindow( short rows )
+_WCRTLINK void _WCI86FAR _CGRAPH _scrolltextwindow( short rows )
 /*===============================================
 
    This routine scrolls the text window up or down by "rows" lines. */
@@ -190,7 +190,7 @@ void _WCI86FAR _CGRAPH _scrolltextwindow( short rows )
 Entry( _SCROLLTEXTWINDOW, _scrolltextwindow ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _gettextcursor( void )
+_WCRTLINK short _WCI86FAR _CGRAPH _gettextcursor( void )
 /*=======================================
 
    This function returns the shape of the active text cursor.   */
@@ -203,7 +203,7 @@ short _WCI86FAR _CGRAPH _gettextcursor( void )
 Entry( _GETTEXTCURSOR, _gettextcursor ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _settextcursor( short shape )
+_WCRTLINK short _WCI86FAR _CGRAPH _settextcursor( short shape )
 /*==============================================
 
    This function sets the shape of the text cursor and returns the shape

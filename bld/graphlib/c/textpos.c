@@ -33,7 +33,7 @@
 #include "gbios.h"
 
 
-struct rccoord _WCI86FAR _CGRAPH _gettextposition( void )
+_WCRTLINK struct rccoord _WCI86FAR _CGRAPH _gettextposition( void )
 /*==================================================
 
    This function returns the current text output position relative to
@@ -51,7 +51,7 @@ struct rccoord _WCI86FAR _CGRAPH _gettextposition( void )
 Entry( _GETTEXTPOSITION, _gettextposition ) // alternate entry-point
 
 
-struct rccoord _WCI86FAR _CGRAPH _settextposition( short row, short col )
+_WCRTLINK struct rccoord _WCI86FAR _CGRAPH _settextposition( short row, short col )
 /*==================================================================
 
    This routine sets the current text output position. */

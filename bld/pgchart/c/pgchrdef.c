@@ -34,9 +34,6 @@
 #include "pgvars.h"
 
 
-extern char _WCI86FAR *      _getbitmap( char ch, short _WCI86FAR *width );
-
-
 static char _WCI86FAR *GetCharPtr( short ch )
 //======================================
 
@@ -53,7 +50,7 @@ static char _WCI86FAR *GetCharPtr( short ch )
 }
 
 
-short _WCI86FAR _CGRAPH _pg_getchardef( short charnum,
+_WCRTLINK short _WCI86FAR _CGRAPH _pg_getchardef( short charnum,
                                    unsigned char _WCI86FAR *chardef )
 //==============================================================
 
@@ -75,7 +72,7 @@ short _WCI86FAR _CGRAPH _pg_getchardef( short charnum,
 Entry( _PG_GETCHARDEF, _pg_getchardef ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _pg_setchardef( short charnum,
+_WCRTLINK short _WCI86FAR _CGRAPH _pg_setchardef( short charnum,
                                    unsigned char _WCI86FAR *chardef )
 //==============================================================
 

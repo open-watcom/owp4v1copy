@@ -228,7 +228,7 @@ static void _InitVariables( void )
 }
 
 
-short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
+_WCRTLINK short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
 /*================================================
 
    This routine sets the video mode if it is supported by the current

@@ -33,7 +33,7 @@
 #include "gbios.h"
 
 
-short _WCI86FAR _CGRAPH _getactivepage( void )
+_WCRTLINK short _WCI86FAR _CGRAPH _getactivepage( void )
 /*=======================================
 
    This function queries the current active page.   */
@@ -45,7 +45,7 @@ short _WCI86FAR _CGRAPH _getactivepage( void )
 Entry( _GETACTIVEPAGE, _getactivepage ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _setactivepage( short pagenum )
+_WCRTLINK short _WCI86FAR _CGRAPH _setactivepage( short pagenum )
 /*================================================
 
    This routine sets the active page for graphics output. */
