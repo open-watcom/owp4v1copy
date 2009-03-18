@@ -31,21 +31,21 @@
 
 
 #ifdef __386__
-#define _nheapgrow()
-#define _nheapshrink()
+    #define _nheapgrow()
+    #define _nheapshrink()
 #endif
 
 #define InitialStack() \
     { \
         _nheapgrow(); \
         sp = GetSP(); \
-        stackptr = _nmalloc( MIN_STACK_K*1024 ); \
+        stackptr = _nmalloc( MIN_STACK_K * 1024 ); \
         if( stackptr == NULL ) { \
             exit( 1 ); \
         } \
-        SetSP( stackptr+MIN_STACK_K*1024-16 ); \
+        SetSP( stackptr + MIN_STACK_K * 1024 - 16 ); \
         _STACKLOW = (unsigned) stackptr; \
-        _STACKTOP = (unsigned) (stackptr+MIN_STACK_K*1024-16); \
+        _STACKTOP = (unsigned) (stackptr + MIN_STACK_K * 1024 - 16); \
     }
 
 #define FinalStack() \
@@ -53,7 +53,7 @@
         SetSP( sp ); \
         _nfree( stackptr ); \
         while( 1 ) { \
-            stackptr2 = _nmalloc( StackK*1024 ); \
+            stackptr2 = _nmalloc( StackK * 1024 ); \
             if( stackptr2 == NULL ) { \
                 StackK--; \
                 if( StackK < MIN_STACK_K ) { \
@@ -63,14 +63,14 @@
                 break; \
             } \
         } \
-        SetSP( stackptr2+StackK*1024-16 ); \
+        SetSP( stackptr2 + StackK * 1024 - 16 ); \
         _STACKLOW = (unsigned) stackptr2; \
-        _STACKTOP = (unsigned) (stackptr2+StackK*1024-16); \
+        _STACKTOP = (unsigned) (stackptr2 + StackK * 1024 - 16); \
         _nheapshrink(); \
     }
 
-static char near *stackptr,near *stackptr2;
-static char near *sp;
+static char near    *stackptr, near *stackptr2;
+static char near    *sp;
 
 extern unsigned _STACKLOW;
 extern unsigned _STACKTOP;

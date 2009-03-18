@@ -39,14 +39,14 @@
 
 
 /*----- CONSTANTS -----*/
-#define BEYOND_TEXT ( SHRT_MAX )
+#define BEYOND_TEXT     SHRT_MAX
 #define MAX_SS_BLOCKS   200
 
 enum syntax_elements {
     SE_UNPARSED = -2,   // basically used to flag problems
-    SE_UNUSED = -1, // use to temporarily setup a style
-    SE_TEXT = 0,    // always first
-    SE_WHITESPACE,  // don't mess with order (fonts in .cfg parallel #s)
+    SE_UNUSED = -1,     // use to temporarily setup a style
+    SE_TEXT = 0,        // always first
+    SE_WHITESPACE,      // don't mess with order (fonts in .cfg parallel #s)
     SE_SELECTION,
     SE_EOFTEXT,
     SE_KEYWORD,
@@ -62,55 +62,55 @@ enum syntax_elements {
     SE_COMMENT,
     SE_FLOAT,
     SE_STRING,
-    SE_NUMTYPES,    // always last
+    SE_NUMTYPES,        // always last
 };
 
 
 /*----- STRUCTURES -----*/
 typedef struct ss_block {
     signed char type;
-    short   end;
-    short   len;
+    short       end;
+    short       len;
 #ifdef __WIN__
     // offset of start of following block
-    int     offset;
+    int         offset;
 #endif
 } ss_block;
 
 typedef struct ss_flags_c {
-    char inCComment:1;
-    char inCPPComment:1;
-    char inString:1;
-    char inPreprocessor:1;
-    char spare:4;
+    char    inCComment      : 1;
+    char    inCPPComment    : 1;
+    char    inString        : 1;
+    char    inPreprocessor  : 1;
+    char    spare           : 4;
 } ss_flags_c;
 
 typedef struct ss_flags_f {
-    char inString:1;
-    char spare:7;
+    char    inString    : 1;
+    char    spare       : 7;
 } ss_flags_f;
 
 typedef struct ss_flags_h {
-    char inHTMLComment:1;
-    char inHTMLKeyword:1;
-    char inAltHTMLKeyword:1;
-    char inString:1;
-    char spare:4;
+    char    inHTMLComment       : 1;
+    char    inHTMLKeyword       : 1;
+    char    inAltHTMLKeyword    : 1;
+    char    inString            : 1;
+    char    spare               : 4;
 } ss_flags_h;
 
 typedef struct ss_flags_g {
-    char inGMLComment:1;
-    char inGMLKeyword:1;
-    char inAltGMLKeyword:1;
-    char inString:1;
-    char spare:4;
+    char    inGMLComment    : 1;
+    char    inGMLKeyword    : 1;
+    char    inAltGMLKeyword : 1;
+    char    inString        : 1;
+    char    spare           : 4;
 } ss_flags_g;
 
 typedef struct ss_flags_m {
-    char inPreproc:1;
-    char inInlineFile:1;
-    char inMacro:1;
-    char spare:5;
+    char    inPreproc       : 1;
+    char    inInlineFile    : 1;
+    char    inMacro         : 1;
+    char    spare           : 5;
 } ss_flags_m;
 
 typedef union ss_flags {
@@ -122,7 +122,7 @@ typedef union ss_flags {
 } ss_flags;
 
 /*----- EXPORTS -----*/
-extern type_style   SEType[ SE_NUMTYPES ];
+extern type_style   SEType[SE_NUMTYPES];
 
 
 /*----- PROTOTYPES -----*/

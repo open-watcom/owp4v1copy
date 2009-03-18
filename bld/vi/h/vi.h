@@ -31,6 +31,7 @@
 
 #ifndef __VI_INCLUDED__
 #define __VI_INCLUDED__
+
 #include "control.h"
 
 #ifndef _FAR
@@ -43,12 +44,12 @@
 
 typedef unsigned int U_INT;
 
-char *_inline_strchr( const char *__s, int __c );
-unsigned int _inline_strlen( const char *__s );
-int _inline_strcmp( const char *__s1, const char *__s2 );
-char *_inline_strcat( char *__s1, const char *__s2 );
-void *_inline_memcpy( void *__s1, const void *__s2, unsigned int __n );
-void *_inline_memset( void *__s, int __c, unsigned int __n );
+char            *_inline_strchr( const char *__s, int __c );
+unsigned int    _inline_strlen( const char *__s );
+int             _inline_strcmp( const char *__s1, const char *__s2 );
+char            *_inline_strcat( char *__s1, const char *__s2 );
+void            *_inline_memcpy( void *__s1, const void *__s2, unsigned int __n );
+void            *_inline_memset( void *__s, int __c, unsigned int __n );
 
 #ifdef __UNIX__
   #define FSYS_CASE_SENSITIVE         1
@@ -75,4 +76,5 @@ void *_inline_memset( void *__s, int __c, unsigned int __n );
 #include "rtns2.h"
 #include "mouse.h"
 #include "dc.h"
+
 #endif

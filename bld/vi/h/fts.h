@@ -34,38 +34,38 @@
 #define _FTS_INCLUDED
 
 typedef struct template_ll {
-    struct  template_ll     *next, *prev;
-    char                    data[ 1 ];
+    struct template_ll  *next, *prev;
+    char                data[1];
 } template_ll;
 
 typedef struct cmd_ll {
-    struct  cmd_ll      *next, *prev;
-    char                data[ 1 ];
+    struct cmd_ll       *next, *prev;
+    char                data[1];
 } cmd_ll;
 
 typedef struct ft_src {
-    struct  ft_src      *next, *prev;
+    struct ft_src       *next, *prev;
     template_ll         *template_head, *template_tail;
     cmd_ll              *cmd_head, *cmd_tail;
 } ft_src;
 
-void FTSInit( void );
-void FTSFini( void );
-int FTSStart( char * );
-int FTSAddCmd( char *, int );
-int FTSAddBoolean( bool, char * );
-int FTSAddChar( char, char * );
-int FTSAddInt( int, char * );
-int FTSAddStr( char *, char * );
-int FTSRunCmds( char * );
-int FTSEnd( void );
-void FTSBarfData( FILE * );
-ft_src *FTSGetFirst( void );
-ft_src *FTSGetNext( ft_src * );
+void        FTSInit( void );
+void        FTSFini( void );
+int         FTSStart( char * );
+int         FTSAddCmd( char *, int );
+int         FTSAddBoolean( bool, char * );
+int         FTSAddChar( char, char * );
+int         FTSAddInt( int, char * );
+int         FTSAddStr( char *, char * );
+int         FTSRunCmds( char * );
+int         FTSEnd( void );
+void        FTSBarfData( FILE * );
+ft_src      *FTSGetFirst( void );
+ft_src      *FTSGetNext( ft_src * );
 template_ll *FTSGetFirstTemplate( ft_src * );
 template_ll *FTSGetNextTemplate( template_ll * );
-ft_src *FTSMatchTemplate( template_ll * );
-ft_src *FTSMatchTemplateData( char * );
-void FTSKill( ft_src * );
+ft_src      *FTSMatchTemplate( template_ll * );
+ft_src      *FTSMatchTemplateData( char * );
+void        FTSKill( ft_src * );
 
 #endif

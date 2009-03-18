@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-void GetMkBlock( ss_block *, char *, int );
-void InitMkFlags( linenum );
-void GetMkFlags( ss_flags_m * );
-void InitMkFlagsGivenValues( ss_flags_m * );
-void InitMkLine( char * );
+void    GetMkBlock( ss_block *, char *, int );
+void    InitMkFlags( linenum );
+void    GetMkFlags( ss_flags_m * );
+void    InitMkFlagsGivenValues( ss_flags_m * );
+void    InitMkLine( char * );

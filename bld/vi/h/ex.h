@@ -36,18 +36,18 @@
  * constants
  */
 enum {
-EX_T_APPEND,
-EX_T_CHANGE,
-EX_T_COPY,
-EX_T_INSERT,
-EX_T_JOIN,
-EX_T_LIST,
-EX_T_MARK,
-EX_T_MOVE,
-EX_T_UNDO,
-EX_T_VERSION,
-EX_T_VISUAL,
-EX_T_EQUALS
+    EX_T_APPEND,
+    EX_T_CHANGE,
+    EX_T_COPY,
+    EX_T_INSERT,
+    EX_T_JOIN,
+    EX_T_LIST,
+    EX_T_MARK,
+    EX_T_MOVE,
+    EX_T_UNDO,
+    EX_T_VERSION,
+    EX_T_VISUAL,
+    EX_T_EQUALS
 };
 
 

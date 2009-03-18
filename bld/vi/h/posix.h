@@ -38,15 +38,15 @@
 #if defined( __UNIX__ )
   #include <unistd.h>
   #include <dirent.h>
-  #define _mkdir( a, b ) mkdir( a, b )
-  #define DIRFLAGS S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH
-  #define WRITEATTRS      (CurrentFile->attr)
+  #define _mkdir( a, b )    mkdir( a, b )
+  #define DIRFLAGS          S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH
+  #define WRITEATTRS        (CurrentFile->attr)
 #else
   #include <direct.h>
   #include <io.h>
-  #define _mkdir( a, b ) mkdir( a )
+  #define _mkdir( a, b )    mkdir( a )
   #define DIRFLAGS 0
-  #define WRITEATTRS      (S_IRWXU)
+  #define WRITEATTRS        (S_IRWXU)
   #ifdef __IBMC__
     typedef struct dirent DIR;
   #endif

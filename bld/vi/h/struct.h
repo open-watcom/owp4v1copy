@@ -32,11 +32,11 @@
 #ifndef _STRUCT_INCLUDED
 #define _STRUCT_INCLUDED
 
-typedef unsigned short vi_ushort;
-typedef unsigned short vi_key;
+typedef unsigned short  vi_ushort;
+typedef unsigned short  vi_key;
 
 typedef struct ss {
-    struct ss *next,*prev;
+    struct ss   *next, *prev;
 } ss;
 
 typedef struct {
@@ -45,13 +45,13 @@ typedef struct {
 } cursor_type;
 
 typedef struct {
-    char        case_ignore:1;
-    char        use_regexp:1;
-    char        search_forward:1;
-    char        search_wrap:1;
-    char        prompt:1;
-    char        selection:1;
-    char        spare:2;
+    char        case_ignore     : 1;
+    char        use_regexp      : 1;
+    char        search_forward  : 1;
+    char        search_wrap     : 1;
+    char        prompt          : 1;
+    char        selection       : 1;
+    char        spare           : 2;
     char        *find;
     int         findlen;
     char        *replace;
@@ -69,11 +69,14 @@ typedef struct {
 } history_data;
 
 typedef struct {
-    char        inuse:1;
-    char        is_base:1;
-    char        was_inuse:1;
-    char        no_input_window:1;
-    char        fill5:1,fill6:1,fill7:1,fill8:1;
+    char        inuse           : 1;
+    char        is_base         : 1;
+    char        was_inuse       : 1;
+    char        no_input_window : 1;
+    char        fill5           : 1;
+    char        fill6           : 1;
+    char        fill7           : 1;
+    char        fill8           : 1;
     vi_key      *data;
 } key_map;
 
@@ -87,7 +90,7 @@ typedef struct {
  * alias type
  */
 typedef struct alias_list {
-    struct alias_list   *next,*prev;
+    struct alias_list   *next, *prev;
     char                *alias;
     char                *expand;
 } alias_list;
@@ -110,15 +113,15 @@ typedef struct file_stack {
  * directory entry
  */
 typedef struct {
-    unsigned    sec:5;
-    unsigned    min:6;
-    unsigned    hour:5;
+    unsigned    sec     : 5;
+    unsigned    min     : 6;
+    unsigned    hour    : 5;
 } time_struct;
 
 typedef struct {
-    unsigned    day:5;
-    unsigned    month:4;
-    unsigned    year:7;
+    unsigned    day     : 5;
+    unsigned    month   : 4;
+    unsigned    year    : 7;
 } date_struct;
 
 typedef struct {
@@ -138,7 +141,7 @@ typedef struct {
  * window dimension
  */
 typedef struct {
-    short       x1,y1,x2,y2;
+    short       x1, y1, x2, y2;
 } windim;
 
 /*
@@ -163,17 +166,23 @@ typedef struct {
  * info for a single text file line
  */
 typedef struct linedata {
-    vi_ushort   mark:5;         // first mark on the line
-    vi_ushort   globmatch:1;    // global command matched this line
-    vi_ushort   nolinedata:1;   // no data associated with this line (WorkLine
-                                // has the data instead)
-    vi_ushort   hidden:1;       // line is hidden (NYI)
-    vi_ushort   hilite:1;       // line need hiliting
-    vi_ushort   fill10:1,fill11:1,fill12:1,fill13:1,fill14:1,fill15:1,fill16:1;
+    vi_ushort   mark        : 5;    // first mark on the line
+    vi_ushort   globmatch   : 1;    // global command matched this line
+    vi_ushort   nolinedata  : 1;    // no data associated with this line (WorkLine
+                                    // has the data instead)
+    vi_ushort   hidden      : 1;    // line is hidden (NYI)
+    vi_ushort   hilite      : 1;    // line need hiliting
+    vi_ushort   fill10      : 1;
+    vi_ushort   fill11      : 1;
+    vi_ushort   fill12      : 1;
+    vi_ushort   fill13      : 1;
+    vi_ushort   fill14      : 1;
+    vi_ushort   fill15      : 1;
+    vi_ushort   fill16      : 1;
 } linedata;
 
 typedef struct line {
-    struct line *next,*prev;    // links for other lines
+    struct line *next, *prev;   // links for other lines
     short       len;            // length of line
     union {
         linedata        ld;
@@ -188,31 +197,34 @@ typedef struct line {
  */
 struct file;
 typedef struct fcb {
-    struct fcb  *next,*prev;            // links fcbs in a file
-    struct fcb  *thread_next,*thread_prev;// links all fcbs created
-    struct file *f;                     // file associated with fcb
-    line        *line_head,*line_tail;  // linked list of lines
-    linenum     start_line,end_line;    // starting/ending line number
-    short       byte_cnt;               // number of bytes in lines
-    long        offset;                 // offset in swap file
-    long        last_swap;              // time fcb was last swapped
-    vi_ushort   swapped:1;              // fcb is swapped
-    vi_ushort   in_memory:1;            // fcb is in memory
-    vi_ushort   on_display:1;           // lines in fcb are displayed
-    vi_ushort   non_swappable:1;        // fcb is not swappable
-    vi_ushort   dead:1;                 // fcb is dead (obsolete)
-    vi_ushort   was_on_display:1;       // fcb was on display (used to save
-                                        // display state when switching files)
-    vi_ushort   in_extended_memory:1;   // fcb is in extended memory
-    vi_ushort   in_xms_memory:1;        // fcb is in XMS memory
-    vi_ushort   in_ems_memory:1;        // fcb is in EMS memory
-    vi_ushort   nullfcb:1;              // fcb is a special one that has no
-                                        // lines associated with it
-    vi_ushort   globalmatch:1;          // a global command matched at least
-                                        // one line in this fcb
-    vi_ushort   flag12:1;
-    vi_ushort   flag13:1,flag14:1,flag15:1,flag16:1;
-    long        xmemaddr;               // address of fcb in extended memory
+    struct fcb  *next, *prev;               // links fcbs in a file
+    struct fcb  *thread_next, *thread_prev; // links all fcbs created
+    struct file *f;                         // file associated with fcb
+    line        *line_head, *line_tail;     // linked list of lines
+    linenum     start_line, end_line;       // starting/ending line number
+    short       byte_cnt;                   // number of bytes in lines
+    long        offset;                     // offset in swap file
+    long        last_swap;                  // time fcb was last swapped
+    vi_ushort   swapped             : 1;    // fcb is swapped
+    vi_ushort   in_memory           : 1;    // fcb is in memory
+    vi_ushort   on_display          : 1;    // lines in fcb are displayed
+    vi_ushort   non_swappable       : 1;    // fcb is not swappable
+    vi_ushort   dead                : 1;    // fcb is dead (obsolete)
+    vi_ushort   was_on_display      : 1;    // fcb was on display (used to save
+                                            // display state when switching files)
+    vi_ushort   in_extended_memory  : 1;    // fcb is in extended memory
+    vi_ushort   in_xms_memory       : 1;    // fcb is in XMS memory
+    vi_ushort   in_ems_memory       : 1;    // fcb is in EMS memory
+    vi_ushort   nullfcb             : 1;    // fcb is a special one that has no
+                                            // lines associated with it
+    vi_ushort   globalmatch         : 1;    // a global command matched at least
+                                            // one line in this fcb
+    vi_ushort   flag12              : 1;
+    vi_ushort   flag13              : 1;
+    vi_ushort   flag14              : 1;
+    vi_ushort   flag15              : 1;
+    vi_ushort   flag16              : 1;
+    long        xmemaddr;                   // address of fcb in extended memory
 } fcb;
 #define FCB_SIZE sizeof( fcb )
 
@@ -222,24 +234,25 @@ typedef struct fcb {
 typedef struct file {
     char        *name;                  // file name
     char        *home;                  // home directory of file
-    fcb         *fcb_head,*fcb_tail;    // linked list of fcbs
+    fcb         *fcb_head, *fcb_tail;   // linked list of fcbs
     long        curr_pos;               // current offset in file on disk
-    vi_ushort   modified:1;             // file has been modified
-    vi_ushort   bytes_pending:1;        // there are still bytes to be read
+    vi_ushort   modified        : 1;    // file has been modified
+    vi_ushort   bytes_pending   : 1;    // there are still bytes to be read
                                         // off the disk for the file
-    vi_ushort   viewonly:1;             // file is view only
-    vi_ushort   read_only:1;            // file is read only
-    vi_ushort   check_readonly:1;       // file needs its read-only status
+    vi_ushort   viewonly        : 1;    // file is view only
+    vi_ushort   read_only       : 1;    // file is read only
+    vi_ushort   check_readonly  : 1;    // file needs its read-only status
                                         // checked against the file on disk
-    vi_ushort   dup_count:4;            // number of duplicate views on the
+    vi_ushort   dup_count       : 4;    // number of duplicate views on the
                                         // file that have been opened
-    vi_ushort   been_autosaved:1;       // file has been autosaved
-    vi_ushort   need_autosave:1;        // file needs to be autosaved
-    vi_ushort   is_stdio:1;             // file is a "stdio" file (reads from
+    vi_ushort   been_autosaved  : 1;    // file has been autosaved
+    vi_ushort   need_autosave   : 1;    // file needs to be autosaved
+    vi_ushort   is_stdio        : 1;    // file is a "stdio" file (reads from
                                         // stdin and writes to stdout)
-    vi_ushort   needs_display:1;        // file needs to be displayed
-    vi_ushort   check_for_crlf:1;       // check file system when we write it out
-    vi_ushort   fill15:1,fill16:1;
+    vi_ushort   needs_display   : 1;    // file needs to be displayed
+    vi_ushort   check_for_crlf  : 1;    // check file system when we write it out
+    vi_ushort   fill15          : 1;
+    vi_ushort   fill16          : 1;
     long        size;                   // size of file in bytes
     int         handle;                 // file handle (if entire file is not
                                         // read, will be an open file handle)
@@ -256,9 +269,9 @@ typedef struct file {
 typedef struct {
     linenum     lineno;         // line number that mark is on
     char        next;           // pointer to next mark on the same line
-    vi_ushort   col:12;         // column that mark is on
-    vi_ushort   inuse:1;        // mark is being used
-    vi_ushort   spare:3;
+    vi_ushort   col     : 12;   // column that mark is on
+    vi_ushort   inuse   : 1;    // mark is being used
+    vi_ushort   spare   : 3;
 } mark;
 #define MARK_SIZE sizeof( mark )
 
@@ -279,15 +292,15 @@ typedef struct range {
  */
     i_mark      hi_start;
     i_mark      hi_end;
-    char        highlight:1;
-    char        line_based:1;
+    char        highlight   : 1;
+    char        line_based  : 1;
 /*
  * Double ACK! Some times we need to treat a range differently depending
  * on whether an operator or a move is using it. This tells us if we should
  * include the last character or not (compare "d/foo" to "/foo"). Puke.
  */
-    char        fix_range:1;
-    char        spare:5;
+    char        fix_range   : 1;
+    char        spare       : 5;
 } range;
 
 typedef int (*insert_rtn)( void );
@@ -308,14 +321,14 @@ typedef union command_rtn {
 } command_rtn;
 
 typedef struct {
-    unsigned    type:3;                 // type of event (list in const.h)
-    unsigned    keep_selection:1;       // keep selection after this event?
-    unsigned    is_number:1;            // is event a digit? (repeat count)
-    unsigned    fix_range:1;            // see comment in doMove (editmain.c)
-    unsigned    is_op_alias:1;          // event is an aliased operator
-    unsigned    keep_selection_maybe:1; // keep selection if already selecting
-    unsigned    modifies:1;             // does this event modify the file?
-    unsigned    spare:7;
+    unsigned    type                    : 3;    // type of event (list in const.h)
+    unsigned    keep_selection          : 1;    // keep selection after this event?
+    unsigned    is_number               : 1;    // is event a digit? (repeat count)
+    unsigned    fix_range               : 1;    // see comment in doMove (editmain.c)
+    unsigned    is_op_alias             : 1;    // event is an aliased operator
+    unsigned    keep_selection_maybe    : 1;    // keep selection if already selecting
+    unsigned    modifies                : 1;    // does this event modify the file?
+    unsigned    spare                   : 7;
 } event_bits;
 
 typedef struct {
@@ -327,7 +340,7 @@ typedef struct {
 } event;
 
 /* used to cast a base event (as in keys.h) to a char */
-#define EVENT_CHAR( e ) ( (char)e )
+#define EVENT_CHAR( e ) ((char) e)
 
 /*
  * structure to define all the goop needed to display text
@@ -343,26 +356,26 @@ typedef struct {
  */
 typedef struct {
     bool        has_border;
-    short       border_color1,border_color2;
+    short       border_color1, border_color2;
     type_style  text;
     type_style  hilight;
-    short       x1,y1,x2,y2;
+    short       x1, y1, x2, y2;
 } window_info;
 
 /*
  * undo info
  */
 typedef struct {
-    linenum     start,end;
+    linenum     start, end;
 } undo_insert;
 
 typedef struct {
-    fcb *fcb_head,*fcb_tail;
+    fcb *fcb_head, *fcb_tail;
 } undo_delete;
 
 typedef struct {
-    linenum     line,top;
-    short       col,depth;
+    linenum     line, top;
+    short       col, depth;
     long        time_stamp;
 } undo_start;
 
@@ -389,10 +402,10 @@ typedef struct undo_stack {
 } undo_stack;
 
 typedef struct select_rgn {
-    vi_ushort   selected:1;
-    vi_ushort   lines:1;
-    vi_ushort   dragging:1;
-    vi_ushort   empty:13;
+    vi_ushort   selected    : 1;
+    vi_ushort   lines       : 1;
+    vi_ushort   dragging    : 1;
+    vi_ushort   empty       : 13;
     linenum     start_line;
     linenum     end_line;
     int         start_col;
@@ -404,12 +417,12 @@ typedef struct select_rgn {
  * all info for a file being edited
  */
 typedef struct info {
-    struct info *next,*prev;
+    struct info *next, *prev;
     file        *CurrentFile;
-    linenum     CurrentLineNumber,TopOfPage;
-    int         CurrentColumn,LeftColumn;
+    linenum     CurrentLineNumber, TopOfPage;
+    int         CurrentColumn, LeftColumn;
     undo_stack  *UndoStack, *UndoUndoStack;
-    int         CurrentUndoItem,CurrentUndoUndoItem;
+    int         CurrentUndoItem, CurrentUndoUndoItem;
     window_id   CurrNumWindow;
     mark        *MarkList;
     bool        linenumflag;
@@ -423,14 +436,14 @@ typedef struct info {
     void        *dc;
     int         dc_size;
     int         Language;
-    bool     RealTabs;
-    bool     ReadEntireFile;
-    bool     ReadOnlyCheck;
-    bool     EightBits;
-    int      TabAmount;
-    int      HardTab;
-    int      ShiftWidth;
-    int      AutoIndent;
+    bool        RealTabs;
+    bool        ReadEntireFile;
+    bool        ReadOnlyCheck;
+    bool        EightBits;
+    int         TabAmount;
+    int         HardTab;
+    int         ShiftWidth;
+    int         AutoIndent;
 #ifdef __WIN__
     long        VScrollBarScale;
     int         HScrollBarScale;
@@ -455,7 +468,7 @@ typedef struct savebuf {
  * color settings
  */
 typedef struct {
-    char        red,green,blue;
+    char        red, green, blue;
 } rgb;
 
 /*
@@ -476,33 +489,33 @@ typedef struct {
     linenum     cln;            // current line to display
     window_id   eiw;            // alternate window to accept events in (like
                                 // the options window after fgrep...)
-    bool        is_menu:1;      // is a menu we are showing
-    bool        spare:7;
+    bool        is_menu : 1;    // is a menu we are showing
+    bool        spare   : 7;
 } selectitem;
 
 /*
  * SelectLineInFile data structure
  */
 typedef struct {
-    file        *f;             // file with data for lines
-    char        **vals;         // values associated with each line
-    int         valoff;         // offset to display values beside line data
-    window_info *wi;            // info describing window to create
-    linenum     sl;             // selected line
-    char        *title;         // title of window
+    file        *f;                 // file with data for lines
+    char        **vals;             // values associated with each line
+    int         valoff;             // offset to display values beside line data
+    window_info *wi;                // info describing window to create
+    linenum     sl;                 // selected line
+    char        *title;             // title of window
     int         (*checkres)(char *, char *, int * ); // check if selected
-                                // change is valid
-    int         *allow_rl;      // allow cursor right/left (for menu bar)
-    char        **hilite;       // chars to highlight
-    bool        show_lineno;    // show lines in top-right corner
-    int         *retevents;     // events that simulate pressing enter
-    int         event;          // event that caused a return
-    linenum     cln;            // current line to display
-    window_id   eiw;            // alternate window to accept events in (like
-                                // the options window after fgrep...)
-    bool        is_menu:1;      // select list is a menu
-    bool        has_scroll_gadgets:1; // list has scroll gadgets
-    bool        spare:6;
+                                    // change is valid
+    int         *allow_rl;          // allow cursor right/left (for menu bar)
+    char        **hilite;           // chars to highlight
+    bool        show_lineno;        // show lines in top-right corner
+    int         *retevents;         // events that simulate pressing enter
+    int         event;              // event that caused a return
+    linenum     cln;                // current line to display
+    window_id   eiw;                // alternate window to accept events in (like
+                                    // the options window after fgrep...)
+    bool        is_menu             : 1; // select list is a menu
+    bool        has_scroll_gadgets  : 1; // list has scroll gadgets
+    bool        spare               : 6;
 } selflinedata;
 
 /*
@@ -510,7 +523,7 @@ typedef struct {
  */
 typedef struct {
     int length;
-    int maxlines,currline;
+    int maxlines, currline;
 } gfa;
 
 typedef struct {
@@ -532,15 +545,15 @@ typedef struct {
 } GENERIC_FILE;
 
 typedef struct {
-/*
- * set booleans are here
- */
-    #define PICK( a,b,c,d,e ) bool c;
+    /*
+     * set booleans are here
+     */
+    #define PICK( a, b, c, d, e ) bool c;
     #include "setb.h"
 
-/*
- * internal booleans are here
- */
+    /*
+     * internal booleans are here
+     */
     bool DisplayHold;
     bool Starting;
     bool DotMode;
@@ -610,4 +623,5 @@ typedef struct {
     bool ScrollCommand;
     bool FileTypeSource;
 } eflags;               // don't forget to give default in globals.c
+
 #endif

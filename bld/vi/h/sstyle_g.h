@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-void GetGMLBlock( ss_block *, char *, int );
-void InitGMLFlags( linenum );
-void GetGMLFlags( ss_flags_g * );
-void InitGMLFlagsGivenValues( ss_flags_g * );
-void InitGMLLine( char * );
+void    GetGMLBlock( ss_block *, char *, int );
+void    InitGMLFlags( linenum );
+void    GetGMLFlags( ss_flags_g * );
+void    InitGMLFlagsGivenValues( ss_flags_g * );
+void    InitGMLLine( char * );

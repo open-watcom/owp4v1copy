@@ -31,69 +31,70 @@
 
 
 /* win\eddrvr.c */
-void PositionScrollThumb( void );
+void    PositionScrollThumb( void );
 
 /* biosos2.c */
-void MyVioShowBuf( unsigned, int );
+void    MyVioShowBuf( unsigned, int );
 
 /* biosqnx.c */
-int KeyboardInit( void );
-void KeyboardFini( void );
-void KeyboardRestore( void );
-void RestoreKeyboard( void );
-void StopKeyboard( void );
-void WaitForProxy( void );
+int     KeyboardInit( void );
+void    KeyboardFini( void );
+void    KeyboardRestore( void );
+void    RestoreKeyboard( void );
+void    StopKeyboard( void );
+void    WaitForProxy( void );
 
 /* qnxmouse.c */
-void StopMouse( void );
+void    StopMouse( void );
 
 /* int.c */
-void SetInterrupts( void );
-void RestoreInterrupts( void );
+void    SetInterrupts( void );
+void    RestoreInterrupts( void );
 
 /* dosdos.c */
-void MyDelay( int );
-void ClearScreen( void );
-long MemSize( void );
-void MyBeep( void );
-int SetCWD( char * );
-void KillCursor( void );
-void TurnOffCursor( void );
-void RestoreCursor( void );
-void NewCursor( window_id, cursor_type );
-void SetCursorBlinkRate( int );
-void SetCursorOnScreen( int, int );
-int PixelFromColumnOnCurrentLine( int );
-int GetNumColors( void );
-bool GetColorSetting( int clr, rgb *c  );
-void ScreenInit( void );
-void ScreenFini( void );
-void ChkExtendedKbd( void );
-bool KeyboardHit( void );
-int GetKeyboard( int * );
-int SetAColor( char * );
-int SetFont( char * );
-void InitColors( void );
-void ResetColors( void );
-void FiniColors( void );
-void SetColorPalette( char * );
-void GetColorPalette( char * );
-void SetColorRegister( int, rgb * );
-void GetBlockOfColorRegisters( int, int, rgb * );
-void ScreenPage( int );
-void GetClockStart( void );
-void GetSpinStart( void );
-int SameFile( char *, char * );
-int ChangeDrive( int );
-void PushDirectory( char * );
-void PopDirectory( void );
-bool ShiftDown( void );
-bool CtrlDown( void );
-bool AltDown( void );
-void TurnOffCapsLock( void );
-drive_type DoGetDriveType( int );
+void        MyDelay( int );
+void        ClearScreen( void );
+long        MemSize( void );
+void        MyBeep( void );
+int         SetCWD( char * );
+void        KillCursor( void );
+void        TurnOffCursor( void );
+void        RestoreCursor( void );
+void        NewCursor( window_id, cursor_type );
+void        SetCursorBlinkRate( int );
+void        SetCursorOnScreen( int, int );
+int         PixelFromColumnOnCurrentLine( int );
+int         GetNumColors( void );
+bool        GetColorSetting( int clr, rgb *c  );
+void        ScreenInit( void );
+void        ScreenFini( void );
+void        ChkExtendedKbd( void );
+bool        KeyboardHit( void );
+int         GetKeyboard( int * );
+int         SetAColor( char * );
+int         SetFont( char * );
+void        InitColors( void );
+void        ResetColors( void );
+void        FiniColors( void );
+void        SetColorPalette( char * );
+void        GetColorPalette( char * );
+void        SetColorRegister( int, rgb * );
+void        GetBlockOfColorRegisters( int, int, rgb * );
+void        ScreenPage( int );
+void        GetClockStart( void );
+void        GetSpinStart( void );
+int         SameFile( char *, char * );
+int         ChangeDrive( int );
+void        PushDirectory( char * );
+void        PopDirectory( void );
+bool        ShiftDown( void );
+bool        CtrlDown( void );
+bool        AltDown( void );
+void        TurnOffCapsLock( void );
+drive_type  DoGetDriveType( int );
 //void FreeReserved( void );
 //void GrabMinMem( void );
+
 /* xmem.c */
 void ExtendedMemoryInit( void );
 void ExtendedMemoryFini( void );

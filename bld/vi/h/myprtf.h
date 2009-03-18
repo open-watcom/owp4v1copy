@@ -29,5 +29,5 @@
 ****************************************************************************/
 
 
-void MyVSprintf( char *, const char *, va_list );
-void MyVPrintf( const char *, va_list );
+void    MyVSprintf( char *, const char *, va_list );
+void    MyVPrintf( const char *, va_list );

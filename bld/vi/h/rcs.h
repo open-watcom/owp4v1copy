@@ -29,5 +29,5 @@
 ****************************************************************************/
 
 
-extern int ViRCSInit( void ); // just stubs for dos
-extern int ViRCSFini( void );
+extern int  ViRCSInit( void ); // just stubs for dos
+extern int  ViRCSFini( void );

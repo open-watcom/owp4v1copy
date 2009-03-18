@@ -51,17 +51,17 @@ typedef struct dc_line {
 
 typedef dc_line *dc;
 
-void DCCreate( void );
-void DCResize( info * );
-void DCScroll( int );
-void DCDestroy( void );
-int DCUpdate( void );
-void DCUpdateAll( void );
-void DCDisplaySomeLines( int, int );
-void DCDisplayAllLines( void );
-void DCInvalidateSomeLines( int, int );
-void DCInvalidateAllLines( void );
-dc DCFindLine( int, window_id );
-void DCValidateLine( dc, int, char * );
+void    DCCreate( void );
+void    DCResize( info * );
+void    DCScroll( int );
+void    DCDestroy( void );
+int     DCUpdate( void );
+void    DCUpdateAll( void );
+void    DCDisplaySomeLines( int, int );
+void    DCDisplayAllLines( void );
+void    DCInvalidateSomeLines( int, int );
+void    DCInvalidateAllLines( void );
+dc      DCFindLine( int, window_id );
+void    DCValidateLine( dc, int, char * );
 
 #endif

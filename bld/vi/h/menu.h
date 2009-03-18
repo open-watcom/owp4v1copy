@@ -35,24 +35,24 @@
 #define MAX_FLOAT_MENUS 4
 
 /* menu.c */
-void BarfMenuData( FILE *f );
-int StartMenu( char *data );
-int ViEndMenu( void );
-int MenuItem( char *data );
-int MenuItemFileList( void );
-int MenuItemLastFiles( void );
-int AddMenuItem( char *data );
-int DoItemDelete( char *data );
-int DoMenuDelete( char *data );
-int InitMenu( void );
-void FiniMenu( void );
-int DoMenu( void );
-int GetMenuIdFromCoord( int x );
-int GetCurrentMenuId( void );
-int SetToMenuId( int id );
-int DoFloatMenu( int id, int slen, int x1, int y1 );
-int ActivateFloatMenu( char * );
-int DoWindowGadgetMenu( void );
-int IsMenuHotKey( int );
+void    BarfMenuData( FILE *f );
+int     StartMenu( char *data );
+int     ViEndMenu( void );
+int     MenuItem( char *data );
+int     MenuItemFileList( void );
+int     MenuItemLastFiles( void );
+int     AddMenuItem( char *data );
+int     DoItemDelete( char *data );
+int     DoMenuDelete( char *data );
+int     InitMenu( void );
+void    FiniMenu( void );
+int     DoMenu( void );
+int     GetMenuIdFromCoord( int x );
+int     GetCurrentMenuId( void );
+int     SetToMenuId( int id );
+int     DoFloatMenu( int id, int slen, int x1, int y1 );
+int     ActivateFloatMenu( char * );
+int     DoWindowGadgetMenu( void );
+int     IsMenuHotKey( int );
 
 #endif

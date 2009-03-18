@@ -54,8 +54,8 @@ typedef enum {
 } drive_type;
 
 typedef enum {
-    SAVEBUF_FLAG = 0x01,
-    USE_UNDO_UNDO = 0x02
+    SAVEBUF_FLAG    = 0x01,
+    USE_UNDO_UNDO   = 0x02
 } linedel_flags;
 
 #if defined( __UNIX__ ) || defined( __IBMC__ )
@@ -89,7 +89,7 @@ typedef enum {
  */
 #define LINE_EXTRA      4
 
-#define Tab( col, ta ) ( ( ta == 0 ) ? 0 : ( (((col-1)/ta)+1)*ta - (col-1) ) )
+#define Tab( col, ta )  ((ta == 0) ? 0 : ((((col - 1) / ta) + 1) * ta - (col - 1)))
 
 #ifndef __UNIX__
 #ifndef __WIN__
@@ -114,35 +114,35 @@ typedef enum {
 #endif
 
 #define INITIAL_MATCH_COUNT     4
-#define MIN_LINE_LEN    128
-#define MAX_LONG        0x7fffffffL
-#define MAX_REPEAT_STRING 10
-#define MAX_FILES       640
-#define MAX_BOOL_TOKENS 2
-#define MAX_SAVEBUFS    9
+#define MIN_LINE_LEN            128
+#define MAX_LONG                0x7fffffffL
+#define MAX_REPEAT_STRING       10
+#define MAX_FILES               640
+#define MAX_BOOL_TOKENS         2
+#define MAX_SAVEBUFS            9
 #define MAX_SPECIAL_SAVEBUFS    26
-#define WORK_SAVEBUF (MAX_SAVEBUFS + MAX_SPECIAL_SAVEBUFS)
+#define WORK_SAVEBUF            (MAX_SAVEBUFS + MAX_SPECIAL_SAVEBUFS)
 #define NO_SAVEBUF              -1
 #define CLIPBOARD_SAVEBUF       -2
-#define SCROLL_HLINE    10
-#define SCROLL_VLINE    2
-#define MAX_MARKS       26
-#define MAX_SEARCH_STRINGS 9
-#define MAX_SCRIPT_LENGTH 2048
-#define MAX_MOUSE_SPEED 250
+#define SCROLL_HLINE            10
+#define SCROLL_VLINE            2
+#define MAX_MARKS               26
+#define MAX_SEARCH_STRINGS      9
+#define MAX_SCRIPT_LENGTH       2048
+#define MAX_MOUSE_SPEED         250
 #define MAX_OVERRIDE_KEY_BUFF   512
-#define MAX_STR 256
-#define FGREP_BUFFSIZE  32000
-#define NUM_EDIT_OPTS   4
-#define EXTENSION_LENGTH 5
-#define CR      0x0d
-#define LF      0x0a
-#define CTLZ    26
-#define MAX_STATIC_BUFFERS 5
-#define MAX_STARTUP     10
-#define MAX_INPUT_LINE  512
-#define DATE_LEN        24
-#define MIN_STACK_K     10
+#define MAX_STR                 256
+#define FGREP_BUFFSIZE          32000
+#define NUM_EDIT_OPTS           4
+#define EXTENSION_LENGTH        5
+#define CR                      0x0d
+#define LF                      0x0a
+#define CTLZ                    26
+#define MAX_STATIC_BUFFERS      5
+#define MAX_STARTUP             10
+#define MAX_INPUT_LINE          512
+#define DATE_LEN                24
+#define MIN_STACK_K             10
 #define MAX_DUPLICATE_FILES     10
 
 #define MAX_IO_BUFFER   0x2000

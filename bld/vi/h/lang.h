@@ -49,7 +49,7 @@ enum {
     LANG_MAKEFILE,
     LANG_RC,
     LANG_USER,
-    LANG_MAX,           // LANG_MAX always last
+    LANG_MAX            // LANG_MAX always last
 };
 
 typedef struct tag_hash_entry {
@@ -60,14 +60,14 @@ typedef struct tag_hash_entry {
 
 typedef struct tag_lang_info {
     hash_entry          *keyword_table;
-    int                  table_entries;
-    int                  ref_count;
+    int                 table_entries;
+    int                 ref_count;
     char                *read_buf;
 } lang_info;
 
-bool IsKeyword( char *keyword, bool case_ignore );
-void LangInit( int );
-void LangFini( int );
-void LangFiniAll( void );
+bool    IsKeyword( char *keyword, bool case_ignore );
+void    LangInit( int );
+void    LangFini( int );
+void    LangFiniAll( void );
 
 #endif

@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-void GetHTMLBlock( ss_block *, char *, int );
-void InitHTMLFlags( linenum );
-void GetHTMLFlags( ss_flags_h * );
-void InitHTMLFlagsGivenValues( ss_flags_h * );
-void InitHTMLLine( char * );
+void    GetHTMLBlock( ss_block *, char *, int );
+void    InitHTMLFlags( linenum );
+void    GetHTMLFlags( ss_flags_h * );
+void    InitHTMLFlagsGivenValues( ss_flags_h * );
+void    InitHTMLLine( char * );
