@@ -75,7 +75,7 @@ static WORD                     currSelCount;
 static char                     SelBitArray[MAX_SELECTORS/8];
 memblk                          *MemBlkList;
 
-static char BitMask[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+static unsigned char BitMask[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 /*
  * addToSelList - add selector to list of non-cached selectors
  */

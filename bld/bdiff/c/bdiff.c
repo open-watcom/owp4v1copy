@@ -242,10 +242,10 @@ void Usage( char *name )
     exit( EXIT_FAILURE );
 }
 
-char *ReadIn( char *name, foff buff_size, foff read_size )
+void *ReadIn( char *name, foff buff_size, foff read_size )
 {
     int         fd;
-    char        *buff;
+    void        *buff;
 
     buff = _allocate( buff_size );
     NotNull( buff, "file buffer" );
@@ -1648,8 +1648,8 @@ void main( int argc, char **argv )
 
     buffsize = ( EndOld > EndNew ) ? ( EndOld ) : ( EndNew );
     buffsize += sizeof( LEVEL );
-    OldFile = (byte *)ReadIn( argv[1], buffsize, EndOld );
-    NewFile = (byte *)ReadIn( argv[2], buffsize, EndNew );
+    OldFile = ReadIn( argv[1], buffsize, EndOld );
+    NewFile = ReadIn( argv[2], buffsize, EndNew );
 
     ScanSyncString();
 

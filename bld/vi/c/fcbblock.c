@@ -38,7 +38,7 @@
 /*
  * GiveBackBlock - return a block to the swap file
  */
-void GiveBackBlock( long offset, char *blocks )
+void GiveBackBlock( long offset, unsigned char *blocks )
 {
     int i,j,k,l;
 
@@ -69,7 +69,7 @@ void GiveBackBlock( long offset, char *blocks )
 /*
  * GetNewBlock - find free space in some storage area
  */
-bool GetNewBlock( long *p, char *blocks, int size )
+bool GetNewBlock( long *p, unsigned char *blocks, int size )
 {
     int i,j,k,l;
 

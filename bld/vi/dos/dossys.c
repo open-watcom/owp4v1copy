@@ -98,7 +98,7 @@ void NewCursor( window_id id, cursor_type ct )
  */
 static void noteOn( int freq )
 {
-    char        pbstate;
+    unsigned char   pbstate;
 
     /*
      * beeper on
@@ -121,7 +121,7 @@ static void noteOn( int freq )
  */
 static void noteOff( void )
 {
-    char        pbstate;
+    unsigned char   pbstate;
 
     pbstate = In61();
     pbstate &= 0xFC;
@@ -135,8 +135,9 @@ static void noteOff( void )
  */
 void MyBeep( void )
 {
-    int         i,j=0;
-    char        pbstate;
+    int             i;
+    int             j = 0;
+    unsigned char   pbstate;
 
     if( EditFlags.BeepFlag ) {
         pbstate = In61();

@@ -149,7 +149,8 @@ static const byte __FAR CharSet[] = {
 static  bool    IsDoubleByteBlank( char *ptr ) {
 // Determine if character is a double-byte blank character.
 
-    if( ( *ptr == 0x81 ) && ( *(ptr + 1) == 0x40 ) ) return( TRUE );
+    if( ( (unsigned char)*ptr == 0x81 ) && ( (unsigned char)*(ptr + 1) == 0x40 ) )
+        return( TRUE );
     return( FALSE );
 }
 
@@ -157,8 +158,10 @@ static  bool    IsDoubleByteBlank( char *ptr ) {
 static  bool    IsDoubleByteChar( char ch ) {
 // Determine if character is a double-byte character.
 
-    if( ( 0x81 <= ch ) && ( ch <= 0x9f ) ) return( TRUE );
-    if( ( 0xe0 <= ch ) && ( ch <= 0xfc ) ) return( TRUE );
+    if( ( 0x81 <= (unsigned char)ch ) && ( (unsigned char)ch <= 0x9f ) )
+        return( TRUE );
+    if( ( 0xe0 <= (unsigned char)ch ) && ( (unsigned char)ch <= 0xfc ) )
+        return( TRUE );
     return( FALSE );
 }
 
@@ -166,10 +169,10 @@ static  bool    IsDoubleByteChar( char ch ) {
 static  int     CharacterWidth( char PGM *ptr ) {
 // Determine character width.
 
-    char        ch;
+    unsigned char   ch;
 
     if( IsDoubleByteChar( *ptr ) ) {
-        ch = ptr[1];
+        ch = (unsigned char)ptr[1];
         if( ( 0x40 <= ch ) && ( ch <= 0xfc ) ) {
             if( ch == 0x7f) return( 1 );
         }
@@ -183,7 +186,8 @@ static  bool    IsForeign( char ch ) {
 // Determine if character is a foreign character (i.e. non-ASCII).
 
     if( IsDoubleByteChar( ch ) ) return( TRUE );
-    if( ( 0xa0 <= ch ) && ( ch <= 0xdf ) ) return( TRUE );
+    if( ( 0xa0 <= (unsigned char)ch ) && ( (unsigned char)ch <= 0xdf ) )
+        return( TRUE );
     return( FALSE );
 }
 

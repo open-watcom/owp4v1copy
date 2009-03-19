@@ -77,8 +77,8 @@ void PollMouse( int *status, int *row, int *col )
 void InitMouse( void )
 {
     int                 and_mask, or_mask;
-    unsigned short      _FAR *vector;
-    char                _FAR *intrtn;
+    unsigned short _FAR *vector;
+    unsigned char _FAR  *intrtn;
 
     if( !EditFlags.UseMouse ) {
         return;
@@ -86,7 +86,7 @@ void InitMouse( void )
 
 #if defined(__4G__)
     vector = (unsigned short *)(MOUSE_INT * 4);
-    intrtn = (char *)(( ((unsigned) vector[1]) << 4 ) + vector[0] );
+    intrtn = (unsigned char *)(( ((unsigned) vector[1]) << 4 ) + vector[0]);
 #elif defined(__386__)
     vector = MK_FP( 0x34, MOUSE_INT * 4 );
     intrtn = MK_FP( 0x34, ( ((unsigned) vector[1]) << 4 ) + vector[0] );

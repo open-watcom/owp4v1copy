@@ -598,7 +598,7 @@ NO__CARET,
 };
 
 
-extern const char __FAR GrpCodes[] = {
+extern const unsigned char __FAR GrpCodes[] = {
      'A','R',13
     ,'B','D',2
     ,'C','C',9

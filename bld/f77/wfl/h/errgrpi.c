@@ -34,7 +34,7 @@
 
 
 
-extern const char __FAR GrpCodes[] = {
+extern const unsigned char __FAR GrpCodes[] = {
      ' ',' ',0
     ,' ',' ',0
     ,' ',' ',0
@@ -79,4 +79,4 @@ extern const char __FAR GrpCodes[] = {
     ,' ',' ',0
     ,' ',' ',0
     ,'M','S',230
-    };
+};

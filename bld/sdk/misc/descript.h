@@ -35,19 +35,19 @@
 typedef struct {
     unsigned short  limit_15_0;
     unsigned short  base_15_0;
-    char            base_23_16;
-    char            available:1;
-    char            writeable_or_readable:1;
-    char            expanddown_or_conforming:1;
-    char            type:2;
-    char            dpl:2;
-    char            present:1;
-    char            limit_19_16:4;
-    char            avl:1;
-    char            reserved:1;
-    char            big_or_default:1;
-    char            granularity:1;
-    char            base_31_24;
+    unsigned char   base_23_16;
+    unsigned char   available                : 1;
+    unsigned char   writeable_or_readable    : 1;
+    unsigned char   expanddown_or_conforming : 1;
+    unsigned char   type                     : 2;
+    unsigned char   dpl                      : 2;
+    unsigned char   present                  : 1;
+    unsigned char   limit_19_16              : 4;
+    unsigned char   avl                      : 1;
+    unsigned char   reserved                 : 1;
+    unsigned char   big_or_default           : 1;
+    unsigned char   granularity              : 1;
+    unsigned char   base_31_24;
 } descriptor;
 
 #define GET_DESC_BASE( desc ) ((DWORD) (desc).base_15_0 + \

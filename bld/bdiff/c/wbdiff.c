@@ -246,10 +246,10 @@ void Usage( char *name )
     exit( EXIT_FAILURE );
 }
 
-char *ReadIn( char *name, foff buff_size, foff read_size )
+void *ReadIn( char *name, foff buff_size, foff read_size )
 {
     int         fd;
-    char        *buff;
+    void        *buff;
 
     buff = _allocate( buff_size );
     NotNull( buff, "file buffer" );
@@ -1450,7 +1450,7 @@ void CopyComment( void )
 {
     int         fd;
     foff        size;
-    byte        *comment;
+    char        *comment;
 
     if( CommentFile != NULL ) {
         fd = open( CommentFile, O_RDONLY | O_BINARY, 0 );

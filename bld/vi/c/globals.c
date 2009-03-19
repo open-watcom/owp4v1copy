@@ -279,7 +279,7 @@ char            *CurrentDirectory;
 char            *HomeDirectory;
 char            *ReadBuffer;
 char            *WriteBuffer;
-char            *SwapBlocks;
+unsigned char   *SwapBlocks;
 int             SwapFileHandle=-1;
 int             SwapBlockArraySize;
 int             SwapBlocksInUse;
