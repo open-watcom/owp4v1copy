@@ -180,7 +180,7 @@ word IP       - Return address, returns to
                 interrupt/exception dispatch code
 .millust end
 .*
-.section Defaut API
+.section Default API
 .*
 .np
 .ix 'CauseWay API'
@@ -190,6 +190,134 @@ are intended only for backwards compatibility with CauseWay's near
 memory model.  This model is now obsolete.  The assembly language
 include file *CW.INC* also contains this list.
 .*
+.beglevel
+.*
+.section API functions (numerical index)
+.*
+.np
+.ix 'CauseWay API numerical index'
+.begnote $setptnt 15
+.note FF00 Info
+Get system selectors/flags
+.note FF01 IntXX
+Simulate real mode interrupt
+.note FF02 FarCallReal
+Simulate real mode far call
+.note FF03 GetSel
+Allocate a new selector
+.note FF04 RelSel
+Release a selector
+.note FF05 CodeSel
+Make a selector execute/read type
+.note FF06 AliasSel
+Create a read/write data selector from source selector
+.note FF07 GetSelDet
+Get selector linear base and limit
+.note FF08 GetSelDet32
+Get selector linear base and limit
+.note FF09 SetSelDet
+Set selector linear base and limit
+.note FF0A SetSelDet32
+Set selector linear base and limit
+.note FF0B GetMem
+Allocate a block of memory
+.note FF0C GetMem32
+Allocate a block of memory
+.note FF0D ResMem
+Resize a previously allocated block of memory
+.note FF0E ResMem32
+Resize a previously allocated block of memory
+.note FF0F RelMem
+Release memory allocated by either GetMem or GetMem32
+.note FF10 GetMemLinear
+Allocate a block of memory without a selector
+.note FF11 GetMemLinear32
+Allocate a block of memory without a selector
+.note FF12 ResMemLinear
+Resize a previously allocated block of memory without a selector
+.note FF13 ResMemLinear32
+Resize a previously allocated block of memory without a selector
+.note FF14 RelMemLinear
+Release previously allocated block of memory (linear address)
+.note FF15 RelMemLinear32
+Release previously allocated block of memory (linear address)
+.note FF16 GetMemNear
+Deprecated - Allocate an application relative block of memory
+.note FF17 ResMemNear
+Deprecated - Resize a previously allocated application relative block of memory
+.note FF18 RelMemNear
+Deprecated - Release previously allocated application relative block of memory
+.note FF19 Linear2Near
+Deprecated - Convert linear address to application relative address
+.note FF1A Near2Linear
+Deprecated - Convert application relative address to linear address
+.note FF1B LockMem
+Lock a region of memory
+.note FF1C LockMem32
+Lock a region of memory
+.note FF1D UnLockMem
+Unlock a region of memory
+.note FF1E UnLockMem32
+Unlock a region of memory
+.note FF1F LockMemNear
+Deprecated - Lock a region of memory using application relative address
+.note FF20 UnLockMemNear
+Deprecated - Unlock a region of memory using application relative address
+.note FF21 GetMemDOS
+Allocate a region of DOS (conventional) memory
+.note FF22 ResMemDOS
+Resize a block of DOS (conventional) memory allocated with GetMemDOS
+.note FF23 RelMemDOS
+Release a block of DOS (conventional) memory allocated by GetMemDOS
+.note FF24 Exec
+Run another CauseWay program directly
+.note FF25 GetDOSTrans
+Get current address and size of the buffer used for DOS memory transfers
+.note FF26 SetDOSTrans
+Set new address and size of the buffer used for DOS memory transfers
+.note FF27 GetMCBSize
+Get current memory control block (MCB) memory allocation block size
+.note FF28 SetMCBSize
+Set new MCB memory allocation block size
+.note FF29 GetSels
+Allocate multiple selectors
+.note FF2A cwLoad
+Load another CauseWay program as an overlay
+.note FF2B cwcInfo
+Validate and get expanded length of a CWC'ed file
+.note FF2C GetMemSO
+Allocate a block of memory with selector:offset
+.note FF2D ResMemSO
+Resize a block of memory allocated via GetMemSO
+.note FF2E RelMemSO
+Release a block of memory allocated via GetMemSO
+.note FF2F UserDump
+Setup user-defined error buffer dump in CW.ERR
+.note FF30 SetDump
+Disable/enable error display and CW.ERR creation
+.note FF31 UserErrTerm
+Call user error termination routine
+.note FF32 CWErrName
+Change error file name, with optional drive/pathspec
+.*
+.note FFF9 ID
+Get CauseWay identifier, PageDIRLinear and Page1stLinear info
+.note FFFA GetPatch
+Get patch table address
+.note FFFB cwcLoad
+Load/Expand a CWC'ed data file into memory
+.note FFFC LinearCheck
+Check linear address of memory
+.note FFFD ExecDebug
+Load CauseWay program for debug
+.note FFFE CleanUp
+Close all open file handles
+.endnote
+.*
+.section API functions (alphabetical order)
+.*
+.np
+.ix 'CauseWay API reference'
 .mbox begin
 :api.AliasSel:eapi. :dsc.Create a read/write data selector from source selector.:edsc.
 .mbox end
@@ -209,6 +337,18 @@ returns with carry set.
 This function always creates a read/write data
 selector regardless of the source selector type.  It can be used to
 provide write access to variables in a code segment.
+.endnote
+.*
+.mbox begin
+:api.CleanUp:eapi. :dsc.Close all open file handles.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0fffeh
+.note Outputs:
+None.
+.note Errors:
+None.
 .endnote
 .*
 .mbox begin
@@ -232,6 +372,55 @@ type suitable for execution.
 .endnote
 .*
 .mbox begin
+:api.cwcInfo:eapi. :dsc.Validate and get expanded length of a CWC'd file.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0ff2bh
+.br
+BX= File handle.
+.note Outputs:
+Carry set if not a CWC'd file, else
+.br
+ECX= Expanded data size.
+.note Errors:
+None.
+.note Notes:
+The file pointer is not altered by this function.
+.endnote
+.*
+.mbox begin
+:api.cwcLoad:eapi. :dsc.Load/Expand a CWC'ed data file into memory.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0fffbh
+.br
+BX= Source file handle.
+ES:EDI= Destination memory.
+.note Outputs:
+Carry set on error and EAX is error code, else
+.br
+ECX= Expanded data length.
+.note Errors:
+1 - Error during file access.
+.br
+2 - Bad data.
+.br
+3 - Not a CWC'ed file.
+.note Notes:
+The source file's file pointer doesn't have to be at zero. A single file might
+be several CWC'ed files lumped together, as long as the file pointer is moved
+to the right place before calling this function.
+.br
+If error codes 1 or 2 are reported then the file pointer will be wherever it
+was last moved to by this function. For error code 3 the file pointer will be
+back at its original position on entry to this function. If no error occurs
+then the file pointer will be moved to whatever comes after the compressed
+data.
+.endnote
+.*
+.mbox begin
 :api.CWErrName:eapi. :dsc.Change error file name, with optional drive/pathspec.:edsc.
 .mbox end
 .begnote
@@ -252,6 +441,100 @@ validity and passing invalid values may cause a fault within the DOS
 extender.  The ASCIIZ name pointed to by CX:EDX is copied to an internal
 DOS extender location and may be safely modified after calling the
 CWErrName function.
+.endnote
+.*
+.mbox begin
+:api.cwLoad:eapi. :dsc.Load another CauseWay program as an overlay.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0ff2ah
+.br
+DS:EDX= File name.
+.note Outputs:
+Carry set on error and AX = error code, else
+.br
+CX:EDX= Entry CS:EIP
+.br
+BX:EAX= Entry SS:ESP
+.br
+SI= PSP.
+.note Errors:
+1 - DOS file access error.
+.br
+2 - Not recognisable file format.
+.br
+3 - Not enough memory.
+.note Notes:
+Program is loaded into memory, but not executed.
+.br
+The PSP returned in SI can be passed to RelMem to release the loaded programs
+memory and selectors. Only the memory and selectors allocated during loading
+will be released, it is the programs responsability to release any additional
+memory etc allocated while the program is running. Alternatively, if you pass
+the PSP value to INT 21h, AH=50h before makeing additional memory requests
+and then reset to the origional PSP the memory allocated will be released
+when the PSP is released.
+.endnote
+.*
+.mbox begin
+:api.Exec:eapi. :dsc.Run another CauseWay program directly.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0ff24h
+.br
+DS:[E]DX= File name.
+.br
+ES:[E]SI= Command line. First byte is length, then real data.
+.br
+CX= Environment selector, 0 to use existing copy. 
+.note Outputs:
+Carry set on error and AX = error code, else
+.br
+AL=ErrorLevel.
+.note Errors:
+1 - DOS file access error.
+.br
+2 - Not recognisable file format.
+.br
+3 - Not enough memory.
+.note Notes:
+Only the first byte of the command line (length) has any significance to
+CauseWay so you are not restricted to ASCII values. It is still stored in the
+PSP at 80h though so the length is still limited to 127 bytes.
+.endnote
+.*
+.mbox begin
+:api.ExecDebug:eapi. :dsc.Load CauseWay program for debug.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0fffdh
+.br
+DS:EDX= File name.
+.br
+ES:ESI= Command line. First byte is length, then real data.
+.br
+CX= Environment selector, 0 to use existing copy. 
+.note Outputs:
+Carry set on error and AX = error code, else
+.br
+CX:EDX= Entry CS:EIP
+.br
+BX:EAX= Entry SS:ESP
+.br
+SI= PSP.
+.br
+DI= Auto DS.
+.br
+EBP= Segment definition memory.
+.note Errors:
+1 - DOS file access error.
+.br
+2 - Not recognisable file format.
+.br
+3 - Not enough memory.
 .endnote
 .*
 .mbox begin
@@ -512,6 +795,18 @@ the block can change the selector:offset of the block.
 .endnote
 .*
 .mbox begin
+:api.GetPatch:eapi. :dsc.Get patch table address.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0fffah
+.note Outputs:
+EDX= Linear address of patch table.
+.note Errors:
+None.
+.endnote
+.*
+.mbox begin
 :api.GetRVect:eapi. :dsc.Get real mode interrupt handler address.:edsc.
 .mbox end
 .begnote
@@ -584,6 +879,23 @@ returns with carry set.
 .endnote
 .*
 .mbox begin
+:api.GetSels:eapi. :dsc.Allocate multiple selectors.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0ff29h
+.br
+CX= Number of selectors. 
+.note Outputs:
+BX= Base selector.
+.note Errors:
+None.
+.note Notes:
+The selectors are allocated and initialised with a base of 0, a limit of 0 and
+as read/write expand up data. Use SetSelDet to make the selectors useful.
+.endnote
+.*
+.mbox begin
 :api.GetVect:eapi. :dsc.Get Protected mode interrupt handler address.:edsc.
 .mbox end
 .begnote
@@ -593,6 +905,22 @@ AX= 0204h
 BL= Interrupt vector number.
 .note Outputs:
 CX:[E]DX= selector:offset of handler.
+.note Errors:
+None.
+.endnote
+.*
+.mbox begin
+:api.ID:eapi. :dsc.Get CauseWay identifier, PageDIRLinear and Page1stLinear info.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0fff9h
+.note Outputs:
+ECX:EDX= CauseWay identifies.
+.br
+ESI= Linear address (PageDIRLinear)
+.br
+EDI= Linear address (Page1stLinear)
 .note Errors:
 None.
 .endnote
@@ -671,6 +999,20 @@ access to INT APIs that require segment pointers.
 .endnote
 .*
 .mbox begin
+:api.LinearCheck:eapi. :dsc.Check linear address of memory.:edsc.
+.mbox end
+.begnote
+.note Inputs:
+AX= 0fffch
+.br
+ESI= Linear address of memory.
+.note Outputs:
+Carry set on invalid memory address.
+.note Errors:
+None.
+.endnote
+.*
+.mbox begin
 :api.LockMem:eapi. :dsc.Lock a region of memory.:edsc.
 .mbox end
 .begnote
@@ -722,9 +1064,9 @@ specified region is not aligned to a page boundary.
 AX= 0304h
 .br
 CX:DX= Real mode address returned by GetCallBack
-.note Errors:
-None.
 .note Outputs:
+None.
+.note Errors:
 None.
 .note Notes:
 Uspe this function to release call-back addresses once
@@ -960,7 +1302,7 @@ ESI= Linear address of block to resize.
 .br
 ECX= Size of block required in bytes.
 .note Outputs:
-Carry set on error else,
+Carry set on error, else
 .br
 ESI= New linear address of block.
 .note Errors:
@@ -1281,6 +1623,8 @@ word             ExceptionNumber;
 dword            ErrorCode;
 .millust end
 .endnote
+.*
+.endlevel
 .*
 .section API Notes
 .*
