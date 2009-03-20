@@ -40,7 +40,6 @@ extern  void (far *_close_ovl_file)(void);
 void ovl3a( void ) {
     puts( "in ovl3a" );
     longjmp( env1, 1 );
-    puts( "bogus! returned to ovl3a after longjmp!!" );
 }
 
 void ovl3( void ) {
@@ -49,139 +48,112 @@ void ovl3( void ) {
     _close_ovl_file();
     puts( "overlay file closed" );
 }
+
 int cg24( unsigned short c ) {
-switch( c ) {
-case 0:
-case 3:
-case 6:
-case 9:
-case 12:
-case 15:
-case 18:
-case 21:
-case 24:
-case 27:
-case 30:
-case 33:
-case 36:
-case 39:
-case 42:
-case 45:
-case 48:
-case 51:
-case 54:
-case 57:
-case 60:
-case 63:
-case 66:
-case 69:
-return( 1 );
-default:
-return( 0 );
 }
-}
+
 int cg26( unsigned short c ) {
-switch( c ) {
-case 0:
-case 3:
-case 6:
-case 9:
-case 12:
-case 15:
-case 18:
-case 21:
-case 24:
-case 27:
-case 30:
-case 33:
-case 36:
-case 39:
-case 42:
-case 45:
-case 48:
-case 51:
-case 54:
-case 57:
-case 60:
-case 63:
-case 66:
-case 69:
-case 72:
-case 75:
-return( 1 );
-default:
-return( 0 );
-}
+    switch( c ) {
+    case 0:
+    case 3:
+    case 6:
+    case 9:
+    case 12:
+    case 15:
+    case 18:
+    case 21:
+    case 24:
+    case 27:
+    case 30:
+    case 33:
+    case 36:
+    case 39:
+    case 42:
+    case 45:
+    case 48:
+    case 51:
+    case 54:
+    case 57:
+    case 60:
+    case 63:
+    case 66:
+    case 69:
+    case 72:
+    case 75:
+        return( 1 );
+    default:
+        return( 0 );
+    }
 }
 int cg28( unsigned short c ) {
-switch( c ) {
-case 0:
-case 3:
-case 6:
-case 9:
-case 12:
-case 15:
-case 18:
-case 21:
-case 24:
-case 27:
-case 30:
-case 33:
-case 36:
-case 39:
-case 42:
-case 45:
-case 48:
-case 51:
-case 54:
-case 57:
-case 60:
-case 63:
-case 66:
-case 69:
-case 72:
-case 75:
-case 78:
-case 81:
-return( 1 );
-default:
-return( 0 );
-}
+    switch( c ) {
+    case 0:
+    case 3:
+    case 6:
+    case 9:
+    case 12:
+    case 15:
+    case 18:
+    case 21:
+    case 24:
+    case 27:
+    case 30:
+    case 33:
+    case 36:
+    case 39:
+    case 42:
+    case 45:
+    case 48:
+    case 51:
+    case 54:
+    case 57:
+    case 60:
+    case 63:
+    case 66:
+    case 69:
+    case 72:
+    case 75:
+    case 78:
+    case 81:
+        return( 1 );
+    default:
+        return( 0 );
+    }
 }
 int cg30( unsigned short c ) {
-switch( c ) {
-case 0:
-case 3:
-case 6:
-case 9:
-case 12:
-case 15:
-case 18:
-case 21:
-case 24:
-case 27:
-case 30:
-case 33:
-case 36:
-case 39:
-case 42:
-case 45:
-case 48:
-case 51:
-case 54:
-case 57:
-case 60:
-case 63:
-case 66:
-case 69:
-case 72:
-case 75:
-case 78:
-case 81:
-case 84:
-case 87:
-return( 1 );
-default:
-return( 0 );
-}
+    switch( c ) {
+    case 0:
+    case 3:
+    case 6:
+    case 9:
+    case 12:
+    case 15:
+    case 18:
+    case 21:
+    case 24:
+    case 27:
+    case 30:
+    case 33:
+    case 36:
+    case 39:
+    case 42:
+    case 45:
+    case 48:
+    case 51:
+    case 54:
+    case 57:
+    case 60:
+    case 63:
+    case 66:
+    case 69:
+    case 72:
+    case 75:
+    case 78:
+    case 81:
+    case 84:
+    case 87:
+        return( 1 );
+    default:
+        return( 0 );
+    }
 }

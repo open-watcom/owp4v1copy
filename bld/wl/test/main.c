@@ -57,5 +57,4 @@ void root1( void ) {
 
     puts( "in root1, about to longjmp" );
     longjmp( env1, 1 );
-    puts( "error! longjmp in root1 is bogus!" );
 }
