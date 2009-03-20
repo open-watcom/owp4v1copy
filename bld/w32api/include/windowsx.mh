@@ -346,7 +346,7 @@
 #define FORWARD_WM_COMMAND( x, p1, p2, p3, f ) \
     (void)(f)( x, WM_COMMAND, MAKEWPARAM( (UINT)(p1), (UINT)(p3) ), (LPARAM)(HWND)(p2) )
 #define HANDLE_WM_HSCROLL( x, p1, p2, f ) \
-    ((fn)( x, (HWND)(p2), (UINT)LOWORD( p1 ), (int)(short)HIWORD( p1 ) ), 0L)
+    ((f)( x, (HWND)(p2), (UINT)LOWORD( p1 ), (int)(short)HIWORD( p1 ) ), 0L)
 #define FORWARD_WM_HSCROLL( x, p1, p2, p3, f ) \
     (void)(f)( x, WM_HSCROLL, MAKEWPARAM( (UINT)(int)(p2), (UINT)(int)(p3) ), \
     (LPARAM)(HWND)(p1) )
@@ -406,7 +406,7 @@
 #define FORWARD_WM_VSCROLLCLIPBOARD( x, p1, p2, p3, f ) \
     (void)(f)( x, WM_VSCROLLCLIPBOARD, (WPARAM)(HWND)(p1), MAKELPARAM( p2, p3 ) )
 #define HANDLE_WM_HSCROLLCLIPBOARD( x, p1, p2, f ) \
-    ((fn)( x, (HWND)(p1), (UINT)LOWORD( p2 ), (int)(short)HIWORD( p2 ) ), 0L)
+    ((f)( x, (HWND)(p1), (UINT)LOWORD( p2 ), (int)(short)HIWORD( p2 ) ), 0L)
 #define FORWARD_WM_HSCROLLCLIPBOARD( x, p1, p2, p3, f ) \
     (void)(f)( x, WM_HSCROLLCLIPBOARD, (WPARAM)(HWND)(p1), MAKELPARAM( p2, p3 ) )
 #define HANDLE_WM_ASKCBFORMATNAME( x, p1, p2, f ) \
