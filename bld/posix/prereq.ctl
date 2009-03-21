@@ -21,7 +21,6 @@ set ODIR=<PREOBJDIR>
     echo rm -f -r <PROJDIR>/<ODIR>
     rm -f -r <PROJDIR>/<ODIR>
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean
-    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean_build
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]

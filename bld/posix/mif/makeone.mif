@@ -63,4 +63,5 @@ $(name).lnk : $(objs) $(__MAKEFILES__)
         @%make $(extra_lnk)
 !endif
 
-!include $(posix_dir)/mif/clean.mif
+clean : .symbolic
+        rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym

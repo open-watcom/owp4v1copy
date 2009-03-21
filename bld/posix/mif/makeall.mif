@@ -3,8 +3,6 @@ all : .symbolic
 
 clean : .symbolic
 
-clean_build : .symbolic
-
 !else
 
 !ifdef prebuild
@@ -45,15 +43,25 @@ $(commands) : .symbolic $(__MAKEFILES__)
 !endif
 
 clean : .symbolic
-        !@wmake -h -f $(posixlibdir)/makefile clean clean_dir=$(posixlibdir)
-!ifeq targos dos
-        !@wmake -h -f $(altposixlibdir)/makefile clean clean_dir=$(altposixlibdir)
-!else ifeq targos dosos2
-        !@wmake -h -f $(altposixlibdir)/makefile clean clean_dir=$(altposixlibdir)
-!endif
+        @echo clean $(posixlibdir)
+curr_dir_all=$+ $(%cwd) $-
+        @cd $(posixlibdir)
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
-        @if exist rm.exe erase rm.exe
-
-clean_build : .symbolic
+!ifeq targos dos
+        @echo clean $(altposixlibdir)
+curr_dir_all=$+ $(%cwd) $-
+        @cd $(altposixlibdir)
+        rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
+!else ifeq targos dosos2
+        @echo clean $(altposixlibdir)
+curr_dir_all=$+ $(%cwd) $-
+        @cd $(altposixlibdir)
+        rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
+!endif
+        @cd $(curr_dir_all)
+        @echo clean $(curr_dir_all)
+        rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
+!ifdef prebuild
         @for %i in ($(commands)) do rm -f $(%OWBINDIR)/%i.exe
+!endif
 !endif
