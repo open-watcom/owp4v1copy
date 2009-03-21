@@ -33,6 +33,7 @@
 #include "winvi.h"
 #include <string.h>
 #include <dos.h>
+#include <sys/stat.h>
 #include <io.h>
 #ifdef __NT__
     #include <shlobj.h>
