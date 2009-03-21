@@ -31,7 +31,7 @@
 
 #include <unistd.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK unsigned alarm( unsigned int __seconds )
 {

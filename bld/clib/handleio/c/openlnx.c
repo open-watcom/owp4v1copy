@@ -35,7 +35,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <fcntl.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 #ifdef __WIDECHAR__
     #include "mbwcconv.h"
 #endif

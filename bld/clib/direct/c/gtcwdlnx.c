@@ -36,8 +36,7 @@
 #include <unistd.h>
 #include "seterrno.h"
 #include "liballoc.h"
-
-#include "../../linux/h/syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK CHAR_TYPE *__F_NAME(getcwd,_wgetcwd)( CHAR_TYPE *buf, size_t size )
 {

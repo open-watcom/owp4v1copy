@@ -31,7 +31,7 @@
 
 #include <signal.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int sigaction( int __signum, const struct sigaction *__act,
                             struct sigaction *__oldact )

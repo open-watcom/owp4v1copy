@@ -30,7 +30,7 @@
 
 
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 long __socketcall( int call, u_long *args )
 {

@@ -31,7 +31,7 @@
 
 #include <time.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK extern int settimeofday( const struct timeval *__tv, const struct timezone *__tz )
 {

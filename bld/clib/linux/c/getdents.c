@@ -32,7 +32,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 int sys_getdents( u_int fd, struct dirent *dirp, u_int count )
 {

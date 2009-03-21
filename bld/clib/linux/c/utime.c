@@ -31,7 +31,7 @@
 
 #include <utime.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int utime( const char *__path, const struct utimbuf * __times )
 {

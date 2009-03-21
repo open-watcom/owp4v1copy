@@ -33,7 +33,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "exitwmsg.h"
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {

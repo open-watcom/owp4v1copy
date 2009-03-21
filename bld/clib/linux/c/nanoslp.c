@@ -31,7 +31,7 @@
 
 #include <time.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int nanosleep( const struct timespec *__rqtp,
                          struct timespec *__rmtp )

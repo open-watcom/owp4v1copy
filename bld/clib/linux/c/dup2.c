@@ -31,7 +31,7 @@
 
 #include <unistd.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int dup2( int __oldfd, int __newfd )
 {

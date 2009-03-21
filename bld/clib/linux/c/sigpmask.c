@@ -31,7 +31,7 @@
 
 #include <signal.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int sigprocmask( int __how, const sigset_t *__set, sigset_t *__oldset )
 {

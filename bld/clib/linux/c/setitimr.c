@@ -31,7 +31,7 @@
 
 #include <sys/time.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int getitimer( int which, struct itimerval *value )
 {

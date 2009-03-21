@@ -31,7 +31,7 @@
 
 #include <time.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK time_t time( time_t *t )
 {

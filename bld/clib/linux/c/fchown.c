@@ -31,7 +31,7 @@
 
 #include <unistd.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int fchown( int __fd, uid_t __owner, gid_t __group )
 {

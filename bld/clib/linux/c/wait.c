@@ -31,7 +31,7 @@
 
 #include <sys/wait.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK pid_t wait( __WAIT_STATUS __stat_loc )
 {

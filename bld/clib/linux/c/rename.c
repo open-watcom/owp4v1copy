@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int rename( const char *__old, const char *__new )
 {

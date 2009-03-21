@@ -31,7 +31,7 @@
 
 #include <sys/mman.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int mprotect( void *addr, size_t len, int prot )
 {

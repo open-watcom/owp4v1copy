@@ -31,7 +31,7 @@
 
 #include <unistd.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 /* The MIPS version is a little unusual - the two descriptors are returned
  * in $v0 and $v1 instead of being written to wherever __fildes points to.

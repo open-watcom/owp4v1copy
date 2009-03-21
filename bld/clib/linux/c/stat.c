@@ -31,7 +31,7 @@
 
 #include <sys/stat.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int stat( const char *filename, struct stat * __buf )
 {

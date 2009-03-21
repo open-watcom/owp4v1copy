@@ -30,7 +30,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
 {

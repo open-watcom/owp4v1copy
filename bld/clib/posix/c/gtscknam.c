@@ -30,7 +30,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int getsockname( int s , struct sockaddr *name , socklen_t *namelen )
 {

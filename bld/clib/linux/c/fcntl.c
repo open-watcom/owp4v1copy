@@ -32,7 +32,7 @@
 #include <stdarg.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int fcntl( int __fildes, int __cmd, ... )
 {

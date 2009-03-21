@@ -30,7 +30,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int getsockopt( int s, int level, int optname, void *optval, socklen_t *optlen )
 {

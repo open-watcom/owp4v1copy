@@ -32,7 +32,7 @@
 #include <dirent.h>
 #include <stdio.h>
 
-#include "syslinux.h"
+#include "linuxsys.h"
 #include "dirstrea.h"
 
 _WCRTLINK struct dirent *readdir( DIR *dirp )

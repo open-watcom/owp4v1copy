@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include "syslinux.h"
+#include "linuxsys.h"
 
 _WCRTLINK int fchmod( int __fd, mode_t __mode )
 {

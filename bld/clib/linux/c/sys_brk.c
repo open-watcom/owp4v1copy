@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include "syslinux.h"
+#include "linuxsys.h"
 
 u_long sys_brk( u_long brk )
 {

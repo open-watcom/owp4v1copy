@@ -35,7 +35,7 @@
 #include "initfini.h"
 #include "thread.h"
 #include "rtdata.h"
-#include "syslinux.h"
+#include "linuxsys.h"
 
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */

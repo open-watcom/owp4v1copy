@@ -24,16 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Linux SYS_open system call.
+* Description:  Implementation of raise() for Linux.
 *
 ****************************************************************************/
 
+#include <signal.h>
+#include <unistd.h>
 
-#include <errno.h>
-#include "linuxsys.h"
-
-long sys_open( const char * filename, int flags, int mode )
+_WCRTLINK int raise( int sig )
 {
-    u_long res = sys_call3( SYS_open, (u_long)filename, flags, mode );
-    __syscall_return( ssize_t, res );
+    return ( kill( getpid(), sig ) );
 }
