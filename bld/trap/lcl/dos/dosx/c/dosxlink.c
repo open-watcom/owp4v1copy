@@ -528,7 +528,7 @@ char *RemoteLink( char *parm, char server )
     parm = parm;
     server = server;
     _DBG_ExitFunc( "RemoteLink()" );
-    return( 0 );
+    return( NULL );
 }
 
 #pragma aux doskludge = 0xB8 0x00 0x2a  /* mov  ax,2a00H */ \

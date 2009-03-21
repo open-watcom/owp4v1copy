@@ -679,11 +679,13 @@ unsigned ReqProg_load( void )
     if( rc == 0 ) {
         if( Flags.NoOvlMgr || !CheckOvl( parmblock.startcsip ) ) {
             if( exe == EXE_OS2 ) {
+                byte    far *pbyte;
+
                 BoundAppLoading = TRUE;
                 RunProg( &TaskRegs, &TaskRegs );
-                parm = MK_FP(TaskRegs.CS, TaskRegs.EIP);
-                if( *parm == 0xCC ) {
-                    *parm = SavedByte;
+                pbyte = MK_FP(TaskRegs.CS, TaskRegs.EIP);
+                if( *pbyte == 0xCC ) {
+                    *pbyte = SavedByte;
                 }
                 BoundAppLoading = FALSE;
                 rc = TinyOpen( exe_name, TIO_READ_WRITE );
@@ -774,7 +776,7 @@ unsigned ReqClear_watch( void )
 
 unsigned ReqSet_break( void )
 {
-    char            far *loc;
+    byte            far *loc;
     set_break_req   *acc;
     set_break_ret   *ret;
 

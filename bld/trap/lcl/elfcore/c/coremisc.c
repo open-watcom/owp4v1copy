@@ -288,7 +288,7 @@ unsigned FindFilePath( int exe, char *name, char *result )
     struct stat     tmp;
     unsigned        len;
 
-    if( stat( (char *)name, &tmp ) == 0 ) {
+    if( stat( name, &tmp ) == 0 ) {
         strcpy( result, name );
         return( strlen( result ) + 1 );
     }

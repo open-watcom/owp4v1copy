@@ -1522,10 +1522,10 @@ unsigned ReqClear_watch( void )
 
 unsigned ReqSet_break( void )
 {
-    byte             l;
-    set_break_req       *acc;
-    set_break_ret       *ret;
-    char                ch;
+    byte            l;
+    set_break_req   *acc;
+    set_break_ret   *ret;
+    byte            ch;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );

@@ -37,19 +37,19 @@
 #include "trpimp.h"
 #include "packet.h"
 
-static char             PackBuff[0x400];
+static char             PackBuff[ 0x400 ];
 static unsigned         PackInd = 0;
 
 #undef MAX_PACK_LEN
 #define MAX_PACK_LEN (sizeof(PackBuff))
 
-void StartPacket()
+void StartPacket( void )
 {
     _DBG_Writeln( "in StartPacket()" );
     PackInd = 0;
 }
 
-unsigned PutPacket()
+unsigned PutPacket( void )
 {
     unsigned rc;
 
@@ -59,7 +59,7 @@ unsigned PutPacket()
     return( rc );
 }
 
-unsigned PutBuffPacket( unsigned len, char *buff )
+unsigned PutBuffPacket( unsigned len, void *buff )
 {
     unsigned rc;
 
@@ -69,37 +69,37 @@ unsigned PutBuffPacket( unsigned len, char *buff )
     return( rc );
 }
 
-void AddPacket( int len, char *ptr )
+void AddPacket( int len, void *ptr )
 {
     if( ( len + PackInd ) > MAX_PACK_LEN ) {
         len = MAX_PACK_LEN - PackInd;
     }
-    memcpy( &PackBuff[PackInd], ptr, len );
+    memcpy( &PackBuff[ PackInd ], ptr, len );
     PackInd += len;
 }
 
-unsigned GetPacket()
+unsigned GetPacket( void )
 {
     _DBG_Writeln( "in GetPacket()" );
     PackInd = 0;
     return( RemoteGet( PackBuff, MAX_PACK_LEN ) );
 }
 
-void RemovePacket( int len, char *ptr )
+void RemovePacket( int len, void *ptr )
 {
     if( ( len + PackInd ) > MAX_PACK_LEN ) {
         len = MAX_PACK_LEN - PackInd;
     }
-    memcpy( ptr, &PackBuff[PackInd], len );
+    memcpy( ptr, &PackBuff[ PackInd ], len );
     PackInd += len;
 }
 
-char *GetPacketBuffPtr()
+char *GetPacketBuffPtr( void )
 {
-    return( &PackBuff[PackInd] );
+    return( &PackBuff[ PackInd ] );
 }
 
-unsigned MaxPacketSize()
+unsigned MaxPacketSize( void )
 {
     return( MAX_PACK_LEN );
 }

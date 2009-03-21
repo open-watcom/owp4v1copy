@@ -32,10 +32,10 @@
 
 extern void             StartPacket(void);
 extern unsigned         PutPacket(void);
-extern unsigned         PutBuffPacket( unsigned, char * );
-extern void             AddPacket( int, char * );
+extern unsigned         PutBuffPacket( unsigned, void * );
+extern void             AddPacket( int, void * );
 extern unsigned         GetPacket(void);
-extern void             RemovePacket( int, char * );
+extern void             RemovePacket( int, void * );
 extern char             *GetPacketBuffPtr(void);
 extern unsigned         MaxPacketSize(void);
 

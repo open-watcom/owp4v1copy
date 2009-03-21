@@ -504,13 +504,13 @@ void DelProcess( BOOL closeHandles )
 
 static void force16SegmentLoad( thread_info *ti, WORD sel )
 {
-    static char     getMemIns[INS_BYTES] = {
+    static unsigned char    getMemIns[INS_BYTES] = {
         0x8e, 0xc0, 0x26, 0xa1, 0x00, 0x00, 0xcc
     };
-    static char     origBytes[INS_BYTES];
-    static BOOL     gotOrig;
-    auto   CONTEXT  con;
-    auto   CONTEXT  oldcon;
+    static unsigned char    origBytes[INS_BYTES];
+    static BOOL             gotOrig;
+    auto   CONTEXT          con;
+    auto   CONTEXT          oldcon;
 
     if( !UseVDMStuff ) {
         return;

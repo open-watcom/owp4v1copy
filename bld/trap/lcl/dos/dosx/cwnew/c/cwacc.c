@@ -951,11 +951,11 @@ unsigned ReqGet_err_text( void )
     err_txt = GetOutPtr( 0 );
     if( acc->err > MAX_CODE ) {
         _DBG( "After acc->error_code > MAX_CODE" );
-        strcpy( (char *)err_txt, TRP_ERR_unknown_system_error );
-        ultoa( acc->err, (char *)err_txt + strlen( err_txt ), 16 );
+        strcpy( err_txt, TRP_ERR_unknown_system_error );
+        ultoa( acc->err, err_txt + strlen( err_txt ), 16 );
         _DBG( "After ultoa()\r\n" );
     } else {
-        strcpy( (char *)err_txt, DosErrMsgs[ acc->err ] );
+        strcpy( err_txt, DosErrMsgs[ acc->err ] );
         _DBG( "After strcpy\r\n" );
     }
     return( strlen( err_txt ) + 1 );

@@ -97,7 +97,7 @@ unsigned FindFilePath( int exe, char *name, char *result )
     unsigned    len;
     char        *end;
 
-    if( stat( (char *)name, &tmp ) == 0 ) {
+    if( stat( name, &tmp ) == 0 ) {
         end = StrCopy( name, result );
         return( end - result );
     }
@@ -127,7 +127,7 @@ unsigned ReqRead_user_keyboard( void )
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     CONV_LE_16( acc->wait );
-    
+
     tcgetattr( STDIN_FILENO, &old );
     new = old;
     new.c_iflag &= ~(IXOFF | IXON);
@@ -136,7 +136,7 @@ unsigned ReqRead_user_keyboard( void )
     new.c_cc[VMIN] = 1;
     new.c_cc[VTIME] = 0;
     tcsetattr( STDIN_FILENO, TCSADRAIN, &new );
-    
+
     FD_ZERO( &rdfs );
     FD_SET( STDIN_FILENO, &rdfs );
     tv.tv_sec = acc->wait;

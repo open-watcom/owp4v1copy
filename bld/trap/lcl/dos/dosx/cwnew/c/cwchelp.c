@@ -130,7 +130,7 @@ struct trap_info {
 };
 
 struct req_header {
-    void            *buffer;
+    char            *buffer;
     unsigned_32     length;
 };
 
@@ -143,12 +143,12 @@ typedef unsigned_32 (req_fn)( void *req_in, void *req_out, unsigned_32 req_len )
 
 typedef req_fn *preq_fn;
 
-extern preq_fn   ReqTable[128];
+extern preq_fn   ReqTable[ 128 ];
 #pragma aux ReqTable "*";
 
 
 static struct req_header    *ReqAddress;
-static char                 ReqBuffer[1024];
+static char                 ReqBuffer[ 1024 ];
 static unsigned_32          ReqLength;
 static rm_call_struct       RealModeRegs;
 
@@ -156,9 +156,9 @@ extern unsigned_32  DebugLevel;
 #pragma aux DebugLevel "*";
 
 char    banner[] =
-    "컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�\r\n"
+    "-------------------------------------------------------------------------------\r\n"
     "CauseWay Trap helper v4.00.  Helper code is public domain.  No rights reserved.\r\n"
-    "컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�\r\n"
+    "-------------------------------------------------------------------------------\r\n"
     "\r\n$";
 
 #if 0
@@ -169,7 +169,7 @@ char    banner[] =
 
 void dos_printf( const char *format, ... )
 {
-    static char     dbg_buf[256];
+    static char     dbg_buf[ 256 ];
     va_list         args;
 
     va_start( args, format );
@@ -210,7 +210,7 @@ void Dispatcher( void )
 {
     int         len;
     unsigned_8  request;
-    void        *out_ptr;
+    char        *out_ptr;
 
     DBG( "Entered trap dispatcher\r\n" );
     for( ;; ) {
@@ -222,7 +222,7 @@ void Dispatcher( void )
         len = ReqAddress->length;
         if( len > sizeof( ReqBuffer ) ) {
             dos_printf( "Request buffer too long (%d bytes)!\r\n", len );
-            len = sizeof( ReqBuffer - 1 );
+            len = sizeof( ReqBuffer );
         }
         memcpy( ReqBuffer, ReqAddress->buffer, len );
         ReqLength = len;
@@ -270,7 +270,7 @@ void Dispatcher( void )
                 DBG( "Calling C trap request handler..." );
                 ret_len = CoreRequests[request]();
                 DBG( "...back from request\r\n" );
-                out_ptr = (char *)out_ptr + ret_len;
+                out_ptr += ret_len;
                 new_len = 0;
 
             } else if( ReqTable[request] == NULL ) {
@@ -300,7 +300,7 @@ void Dispatcher( void )
             len = new_len;
         } while( len );
 
-        ReqAddress->length = (char *)out_ptr - (char *)ReqAddress->buffer;
+        ReqAddress->length = out_ptr - ReqAddress->buffer;
 
         if( DebugLevel )
             HexDumpBuffer( ReqAddress->buffer, ReqAddress->length );

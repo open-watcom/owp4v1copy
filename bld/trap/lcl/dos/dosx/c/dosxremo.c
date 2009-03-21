@@ -352,7 +352,7 @@ unsigned ReqProg_load( void )
     _DBG_EnterFunc( "AccLoadProg()" );
     ret = GetOutPtr( 0 );
     src = name = GetInPtr( sizeof( prog_load_req ) );
-    rc = FindFilePath( src, (char *)buffer, DosXExtList );
+    rc = FindFilePath( src, buffer, DosXExtList );
     endparm = LinkParm + strlen( LinkParm ) + 1;
     strcpy( endparm, buffer );
     err = RemoteLink( LinkParm, 0 );
@@ -383,7 +383,7 @@ unsigned ReqProg_load( void )
             _DBG_Writeln( "GetPacket" );
             len = GetPacket();
             _DBG_Writeln( "RemovePacket" );
-            RemovePacket( sizeof( *ret ), (char*)ret );
+            RemovePacket( sizeof( *ret ), ret );
         } else {
             len = DoAccess();
         }
@@ -401,7 +401,7 @@ unsigned ReqProg_load( void )
                 _DBG_Writeln( "StartPacket" );
                 StartPacket();
                 _DBG_Writeln( "AddPacket" );
-                AddPacket( sizeof( erracc ), (char*)&erracc );
+                AddPacket( sizeof( erracc ), &erracc );
                 _DBG_Writeln( "PutPacket" );
                 PutPacket();
                 _DBG_Writeln( "GetPacket" );
@@ -418,7 +418,7 @@ unsigned ReqProg_load( void )
             _DBG_Writeln( "StartPacket" );
             StartPacket();
             _DBG_Writeln( "AddPacket" );
-            AddPacket( sizeof( killacc ), (char*)&killacc );
+            AddPacket( sizeof( killacc ), &killacc );
             _DBG_Writeln( "PutPacket" );
             PutPacket();
             _DBG_Writeln( "GetPacket" );
