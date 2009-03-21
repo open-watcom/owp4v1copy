@@ -24,16 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  forward declarations for creating controls ( guictrl.c file )
 *
 ****************************************************************************/
 
 
-/*
-*   COMMENTS: forward declarations for creating controls ( guictrl.c file )
-*/
-
+#include "vhandle.h"
 
 extern void set_dlg_textwindow( gui_control_info *gui_controls,
                           int num_controls, char *s,
@@ -61,7 +57,7 @@ extern void set_dlg_edit( gui_control_info *gui_controls,
                           int num_controls, char *s,
                           int id, gui_ord x1, gui_ord y1, gui_ord x2 );
 
-extern int set_dlg_push_button( const char *var_name, char *text,
+extern int set_dlg_push_button( vhandle var_handle, char *text,
                                 gui_control_info *gui_controls,
                                 int num_controls, int row, int num_buttons,
                                 int of, int cols, int bwidth );

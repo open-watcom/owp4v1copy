@@ -281,8 +281,9 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
 
     case GUI_PAINT:
         {
-            if( StatusBarLen == 0 ) break;
-            msg = GetVariableStrVal( Messages[MsgLine0] );
+            if( StatusBarLen == 0 )
+                break;
+            msg = GetVariableStrVal( Messages[ MsgLine0 ] );
             GUIDrawTextExtent( gui, msg, strlen( msg ), LINE0_ROW,
                                LINE0_COL * CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
             GUIDrawTextExtent( gui, StatusLine1, strlen( StatusLine1 ), LINE1_ROW,
@@ -291,7 +292,7 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
             {
                 #include "uigchar.h"
                 int         len1, len2;
-                char        num[20];
+                char        num[ 20 ];
 
                 memset( StatusBarBuf, ' ', StatusBarLen );
                 StatusBarBuf[StatusBarLen] = '\0';

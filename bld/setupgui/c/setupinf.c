@@ -377,6 +377,7 @@ static tree_node *TreeNode( tree_op op, void *left, void *right )
 }
 
 static vhandle GetTokenHandle( char *p );
+
 static tree_node *BuildExprTree( const char *str )
 /************************************************/
 {
@@ -942,11 +943,11 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
             text = AddInstallName( text, TRUE );
             len = strlen( text );
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1,
-                                 text, var_handle, dlg->col_num, dlg->row_num, dlg->col_num + len );
+                text, VarGetId( var_handle ), dlg->col_num, dlg->row_num, dlg->col_num + len );
             dlg->max_width = max( dlg->max_width, dlg->col_num + len );
         } else {
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1,
-                                 "", var_handle, dlg->col_num, dlg->row_num, dlg->col_num + 0 );
+                    "", VarGetId( var_handle ), dlg->col_num, dlg->row_num, dlg->col_num + 0 );
         }
     } else {
         rc = FALSE;
@@ -1067,12 +1068,12 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
             if( line != NULL ) {
                 // condition for visibility (dynamic)
                 GUIStrDup( line,
-                           &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls] );
+                    &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls] );
             }
             // dummy_var allows control to have an id - used by dynamic visibility feature
             var_handle = MakeDummyVar();
             set_dlg_textwindow( dlg->curr_dialog->controls, dlg->array.num - 1,
-                                text, var_handle, C0, dlg->row_num, dlg->max_width + 2,
+                    text, VarGetId( var_handle ), C0, dlg->row_num, dlg->max_width + 2,
                                 rows, GUI_VSCROLL );
             dlg->curr_dialog->rows += rows;
             dlg->row_num += rows;
@@ -1140,6 +1141,7 @@ static bool dialog_pushbutton( char *next, DIALOG_INFO *dlg )
     int                 id;
     bool                def_ret;
     bool                rc = TRUE;
+    vhandle             var_handle;
 
     line_start = next; next = NextToken( line_start, ',' );
     line = next; next = NextToken( line, ',' );
@@ -1150,7 +1152,8 @@ static bool dialog_pushbutton( char *next, DIALOG_INFO *dlg )
             ++line_start;
             def_ret = TRUE;
         }
-        id = set_dlg_push_button( line_start, line_start, dlg->curr_dialog->controls,
+        var_handle = GetVariableByName( line_start );
+        id = set_dlg_push_button( var_handle, line_start, dlg->curr_dialog->controls,
                                   dlg->array.num - 1, dlg->row_num,
                                   dlg->num_push_buttons, W / BW - 1, W, BW );
         if( def_ret ) {
@@ -1253,7 +1256,7 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
         var_handle_2 = MakeDummyVar();
         SetVariableByHandle( var_handle_2, dialog_name );
 
-        set_dlg_push_button( VarGetName( var_handle_2 ), button_text, dlg->curr_dialog->controls,
+        set_dlg_push_button( var_handle_2, button_text, dlg->curr_dialog->controls,
                              dlg->array.num - 1, dlg->row_num, 4, 4, W, BW );
         BumpArray( &dlg->array );
         set_dlg_edit( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
@@ -1268,7 +1271,7 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
             // dummy_var allows control to have an id - used by dynamic visibility feature
             var_handle = MakeDummyVar();
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
-                                 var_handle, C0, dlg->row_num, C0 + strlen( buff ) );
+                            VarGetId( var_handle ), C0, dlg->row_num, C0 + strlen( buff ) );
         }
         dlg->max_width = max( dlg->max_width, 2 * strlen( buff ) );
     } else {
@@ -1301,7 +1304,7 @@ static bool dialog_other_button( char *next, DIALOG_INFO *dlg )
     if( condition == NULL || *condition == '\0' || EvalCondition( condition ) ) {
         var_handle = MakeDummyVar();
         SetVariableByHandle( var_handle, dialog_name );
-        set_dlg_push_button( VarGetName( var_handle ), button_text, dlg->curr_dialog->controls,
+        set_dlg_push_button( var_handle, button_text, dlg->curr_dialog->controls,
                              dlg->array.num - 1, dlg->row_num, 4, 4, W, BW );
         if( text != NULL ) {
             BumpArray( &dlg->array );
@@ -1467,7 +1470,7 @@ static bool dialog_detail_check( char *next, DIALOG_INFO *dlg )
     added = dialog_checkbox( next, dlg );
     if( added ) {
         BumpArray( &dlg->array );
-        set_dlg_push_button( VarGetName( var_handle ), line, dlg->curr_dialog->controls,
+        set_dlg_push_button( var_handle, line, dlg->curr_dialog->controls,
                              dlg->array.num - 1, dlg->row_num, 4, 4, W, BW );
     }
     line = next2; next2 = NextToken( line, ',' );
@@ -1565,12 +1568,12 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
             if( line != NULL ) {
                 // condition for visibility (dynamic)
                 GUIStrDup( line,
-                           &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls + 1] );
+                    &dlg->curr_dialog->pVisibilityConds[dlg->curr_dialog->num_controls + 1] );
             }
             // dummy_var allows control to have an id - used by dynamic visibility feature
             var_handle = MakeDummyVar();
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
-                                 var_handle, C0, dlg->row_num, C0 + strlen( buff ) );
+                        VarGetId( var_handle ), C0, dlg->row_num, C0 + strlen( buff ) );
         }
         dlg->max_width = max( dlg->max_width, 2 * strlen( buff ) );
     } else {
