@@ -144,8 +144,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     APIRET      rc;
     char        root[ 4 ];      /* SBCS: room for drive, ':', '\\', and null */
   #ifdef __WIDECHAR__
-    char        mbBuff[ _MAX_PATH*MB_CUR_MAX ];
-    char        mbPath[ _MAX_PATH*MB_CUR_MAX ];
+    char        mbBuff[ _MAX_PATH * MB_CUR_MAX ];
+    char        mbPath[ _MAX_PATH * MB_CUR_MAX ];
   #endif
 
     if( __F_NAME(isalpha,iswalpha)( path[ 0 ] ) && ( path[ 1 ] == ':' ) && ( path[ 2 ] == '\\' ) ) {
@@ -180,10 +180,10 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
     }
 
   #ifdef __WIDECHAR__
-    if( wcstombs( mbPath, path, _MAX_PATH*MB_CUR_MAX ) == (size_t)-1 ) {
+    if( wcstombs( mbPath, path, sizeof( mbPath ) ) == (size_t)-1 ) {
         return( NULL );
     }
-    rc = DosQueryPathInfo( (PSZ)mbPath, FIL_QUERYFULLNAME, mbBuff, size );
+    rc = DosQueryPathInfo( (PSZ)mbPath, FIL_QUERYFULLNAME, mbBuff, sizeof( mbBuff ) );
   #else
     rc = DosQueryPathInfo( (PSZ)path, FIL_QUERYFULLNAME, buff, size );
   #endif
@@ -426,12 +426,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_fullpath,_wfullpath)
     CHAR_TYPE *ptr = NULL;
 
     if( buff == NULL ) {
-  #ifdef __WIDECHAR__
-        size = _MAX_PATH * sizeof( wchar_t );
-  #else
         size = _MAX_PATH;
-  #endif
-        ptr = lib_malloc( size );
+        ptr = lib_malloc( size * CHARSIZE );
         if( ptr == NULL )
             __set_errno( ENOMEM );
         buff = ptr;
