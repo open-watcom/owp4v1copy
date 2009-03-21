@@ -1145,6 +1145,40 @@ cwcInfo equ     0ff2bh
 
 ;-------------------------------------------------------------------------------
 ;
+;Get CauseWay identifier, PageDIRLinear and Page1stLinear info.
+;
+;On Exit:
+;
+;ECX:EDX - CauseWay identifier.
+;
+;ESI     - Linear address (PageDIRLinear)
+;
+;EDI     - Linear address (Page1stLinear)
+;
+;NOTES:
+;
+;
+ID equ          0fff9h
+
+
+;-------------------------------------------------------------------------------
+;
+;Get patch table address.
+;
+;On Exit:
+;
+;EDX    - Linear address of patch table.
+;
+;Error codes:
+;
+;NOTES:
+;
+;
+GetPatch equ    0fffah
+
+
+;-------------------------------------------------------------------------------
+;
 ;Load/Expand a CWC'd data file into memory.
 ;
 ;On Entry:
@@ -1176,7 +1210,71 @@ cwcInfo equ     0ff2bh
 ;then the file pointer will be moved to whatever comes after the compressed
 ;data.
 ;
-cwcLoad equ     0fffbh
+cwcLoad     equ 0fffbh
+
+
+;-------------------------------------------------------------------------------
+;
+;Check linear address of memory.
+;
+;On Entry:
+;
+;ESI    - Linear address of memory.
+;
+;On Exit:
+;
+;Carry set on invalid memory address.
+;
+;NOTES:
+;
+;
+LinearCheck equ 0fffch
+
+
+;-------------------------------------------------------------------------------
+;
+;Load CauseWay program for debug.
+;
+;On Entry:
+;
+;DS:EDX - File name.
+;
+;ES:ESI - Command line. First byte is length, then real data.
+;
+;CX     - Environment selector, 0 to use existing copy. 
+;
+;On Exit:
+;
+;Carry set on error and AX = error code else,
+;
+;CX:EDX - Entry CS:EIP
+;BX:EAX - Entry SS:ESP
+;SI     - PSP.
+;DI     - Auto DS.
+;EBP    - Segment definition memory.
+;
+;Error codes:
+;
+;1      - DOS file access error.
+;2      - Not recognisable file format.
+;3      - Not enough memory.
+;
+;NOTES:
+;
+;
+ExecDebug equ   0fffdh
+
+
+;-------------------------------------------------------------------------------
+;
+;Close all open file handles.
+;
+;On Exit:
+;
+;NOTES:
+;
+;
+CleanUp equ     0fffeh
 
 
 ;-------------------------------------------------------------------------------

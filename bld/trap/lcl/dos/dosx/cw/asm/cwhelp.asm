@@ -1671,8 +1671,7 @@ addrsetb:
         mov     esi,offset ProgCommand
         xor     cx,cx
         push    ebp             ; save critical register chewed by debug EXEC (fffdh) API
-        mov     ax,0fffdh
-        int     31h
+        sys     ExecDebug
         pushs   ds,ds,ds
         pops    es,fs,gs
         jnc     @@3load
