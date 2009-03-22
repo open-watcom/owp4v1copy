@@ -33,17 +33,16 @@
 #include <conio.h>
 #include <unistd.h>
 #include <termios.h>
-
-extern  unsigned    _cbyte;
+#include "rtdata.h"
 
 _WCRTLINK int (getche)( void )
 {
-    auto char buf[1];
-    register unsigned int c;
+    unsigned char   buf[ 1 ];
+    int             c;
     struct termios  old, new;
 
-    c = _cbyte;
-    _cbyte = 0;
+    c = _RWD_cbyte;
+    _RWD_cbyte = 0;
     if( c == 0 ) {
         tcgetattr( STDIN_FILENO, &old );
         new = old;
@@ -53,7 +52,7 @@ _WCRTLINK int (getche)( void )
         new.c_cc[VMIN] = 1;
         new.c_cc[VTIME] = 0;
         tcsetattr( STDIN_FILENO, TCSADRAIN, &new );
-        read( STDIN_FILENO, &buf, 1 );  /* must be read with no echo */
+        read( STDIN_FILENO, buf, 1 );  /* must be read with no echo */
         c = buf[0];
         tcsetattr( STDIN_FILENO, TCSADRAIN, &old );
     }

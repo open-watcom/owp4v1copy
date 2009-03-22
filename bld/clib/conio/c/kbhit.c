@@ -36,7 +36,7 @@
 #include "defwin.h"
 
 #ifndef DEFAULT_WINDOWING
-    extern      signed char _os_kbhit( void );
+    extern      unsigned char _os_kbhit( void );
 
     #pragma aux _os_kbhit =  "mov ah,0bh"   \
                              "int 21h"      \

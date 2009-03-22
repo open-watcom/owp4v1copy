@@ -43,21 +43,21 @@
 #endif
 
 _WCRTLINK int getche( void )
-    {
-        unsigned int c;
+{
+    int         c;
 
-        c = _RWD_cbyte;
-        _RWD_cbyte = 0;
-        if( c == 0 ) {
-            #ifdef DEFAULT_WINDOWING
-                if( _WindowsGetche != 0 ) {
-                    LPWDATA     res;
-                    res = _WindowsIsWindowedHandle( STDOUT_FILENO );
-                    c = _WindowsGetche( res );
-                }
-            #else
-                c = _dos( 1 );
-            #endif
+    c = _RWD_cbyte;
+    _RWD_cbyte = 0;
+    if( c == 0 ) {
+#ifdef DEFAULT_WINDOWING
+        if( _WindowsGetche != 0 ) {
+            LPWDATA     res;
+            res = _WindowsIsWindowedHandle( STDOUT_FILENO );
+            c = _WindowsGetche( res );
         }
-        return( c );
+#else
+        c = _dos( 1 );
+#endif
     }
+    return( c );
+}

@@ -36,15 +36,14 @@
 #include "rtdata.h"
 
 _WCRTLINK int getche( void )
-    {
-        unsigned        c;
-        unsigned        stashed;
+{
+    int         c;
+    int         stashed;
 
-        stashed = _RWD_cbyte;
-
-        c = getch();
-        if( c != EOF && stashed == 0 ) {
-            putch( c );
-        }
-        return( c );
+    stashed = _RWD_cbyte;
+    c = getch();
+    if( c != EOF && stashed == 0 ) {
+        putch( c );
     }
+    return( c );
+}

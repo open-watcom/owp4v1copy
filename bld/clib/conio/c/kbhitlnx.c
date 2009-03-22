@@ -36,8 +36,6 @@
 #include <termios.h>
 #include <conio.h>
 
-extern  unsigned    _cbyte;
-
 _WCRTLINK int (kbhit)( void )
 {
     int    rc;

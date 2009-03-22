@@ -65,7 +65,7 @@ static int do_getch( HANDLE console_in )
             state = KS_HANDLE_SECOND_CALL;
         }
         return( c );
-    case 2:
+    case KS_HANDLE_SECOND_CALL:
         if( repeat == 0 ) {
             state = KS_EMPTY;
         } else {
@@ -73,13 +73,14 @@ static int do_getch( HANDLE console_in )
         }
         return( e );
     }
-    for(;;) {
-        if( ! ReadConsoleInput( console_in, &ir, 1, &n ) ) break;
-        if( ! __NTRealKey( &ir ) ) continue;
+    for( ;; ) {
+        if( ! ReadConsoleInput( console_in, &ir, 1, &n ) )
+            break;
+        if( ! __NTRealKey( &ir ) )
+            continue;
         repeat = ir.Event.KeyEvent.wRepeatCount - 1;
-        c = ir.Event.KeyEvent.uChar.AsciiChar;
-        if(( ir.Event.KeyEvent.dwControlKeyState & ENHANCED_KEY ) != 0
-          || c == 0 ) {
+        c = (unsigned char)ir.Event.KeyEvent.uChar.AsciiChar;
+        if( (ir.Event.KeyEvent.dwControlKeyState & ENHANCED_KEY) != 0 || c == 0 ) {
             c = 0;
             e = ir.Event.KeyEvent.wVirtualScanCode;
             state = KS_HANDLE_SECOND_CALL;
@@ -90,16 +91,16 @@ static int do_getch( HANDLE console_in )
         }
         return( c );
     }
-    return( -1 );
+    return( EOF );
 }
 
 _WCRTLINK int getch( void )
 {
-    int c;
-    HANDLE h;
-    DWORD mode;
+    int         c;
+    HANDLE      h;
+    DWORD       mode;
 
-    if( ( c = _RWD_cbyte ) != 0 ) {
+    if( (c = _RWD_cbyte) != 0 ) {
         _RWD_cbyte = 0;
         return( c );
     }
