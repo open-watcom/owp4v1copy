@@ -36,9 +36,9 @@
 #include "keys.h"
 
 #ifdef __WIN__
-extern int AddLineToClipboard( char *data, int scol, int ecol );
-extern int AddFcbsToClipboard( fcb *head, fcb *tail );
-extern int GetClipboardSavebuf( savebuf *clip );
+extern int  AddLineToClipboard( char *data, int scol, int ecol );
+extern int  AddFcbsToClipboard( fcb *head, fcb *tail );
+extern int  GetClipboardSavebuf( savebuf *clip );
 extern bool IsClipboardEmpty( void );
 #endif
 
@@ -47,7 +47,7 @@ extern bool IsClipboardEmpty( void );
  */
 static void freeSavebuf( savebuf *tmp )
 {
-    fcb *cfcb,*tfcb;
+    fcb *cfcb, *tfcb;
 
     switch( tmp->type ) {
     case SAVEBUF_NOP:
@@ -74,13 +74,13 @@ static void rotateSavebufs( int start )
 {
     int i;
 
-    freeSavebuf( &Savebufs[ MAX_SAVEBUFS-1 ] );
+    freeSavebuf( &Savebufs[MAX_SAVEBUFS - 1] );
 
     /*
      * now, rotate the buffers forward
      */
-    for( i=MAX_SAVEBUFS-1; i > start ;i-- ) {
-        memcpy( &(Savebufs[i]),&(Savebufs[i-1]), SAVEBUF_SIZE );
+    for( i = MAX_SAVEBUFS - 1; i > start; i-- ) {
+        memcpy( &(Savebufs[i]), &(Savebufs[i - 1]), SAVEBUF_SIZE );
     }
 
 } /* rotateSavebufs */
@@ -94,8 +94,8 @@ static int insertGenericSavebuf( int buf, int afterflag )
     savebuf     clip;
 #endif
     savebuf     *tmp;
-    fcb         *head=NULL,*tail=NULL,*end;
-    int         rc,i,scol,len;
+    fcb         *head = NULL, *tail = NULL, *end;
+    int         rc, i, scol, len;
     int         maxCursor;
 
     if( rc = ModificationTest() ) {
@@ -117,7 +117,7 @@ static int insertGenericSavebuf( int buf, int afterflag )
     } else
 #endif
     if( buf >= MAX_SAVEBUFS ) {
-        tmp = &SpecialSavebufs[buf-MAX_SAVEBUFS];
+        tmp = &SpecialSavebufs[buf - MAX_SAVEBUFS];
     } else {
         tmp = &Savebufs[buf];
     }
@@ -137,7 +137,7 @@ static int insertGenericSavebuf( int buf, int afterflag )
         if( afterflag ) {
             scol = CurrentColumn;
         } else {
-            scol = CurrentColumn-1;
+            scol = CurrentColumn - 1;
         }
         CurrentLineReplaceUndoStart();
         GetCurrentLine();
@@ -148,11 +148,11 @@ static int insertGenericSavebuf( int buf, int afterflag )
         if( WorkLine->len == 0 ) {
             scol = 0;
         }
-        for( i=WorkLine->len;i>=scol;i-- ) {
-            WorkLine->data[i+len] = WorkLine->data[i];
+        for( i = WorkLine->len; i >= scol; i-- ) {
+            WorkLine->data[i + len] = WorkLine->data[i];
         }
-        for( i=0;i<len;i++ ) {
-            WorkLine->data[i+scol] = tmp->first.data[i];
+        for( i = 0; i < len; i++ ) {
+            WorkLine->data[i + scol] = tmp->first.data[i];
         }
         WorkLine->len += len;
         DisplayWorkLine( TRUE );
@@ -182,7 +182,7 @@ static int insertGenericSavebuf( int buf, int afterflag )
             if( afterflag) {
                 rc = InsertLines( CurrentLineNumber, head, tail, UndoStack );
             } else {
-                rc = InsertLines( CurrentLineNumber-1, head, tail, UndoStack );
+                rc = InsertLines( CurrentLineNumber - 1, head, tail, UndoStack );
             }
         }
         break;
@@ -218,11 +218,11 @@ int InsertSavebufBefore( void )
 int InsertSavebufBefore2( void )
 {
     if( SavebufNumber == NO_SAVEBUF ) {
-        #ifdef __WIN__
-            return( insertGenericSavebuf( CLIPBOARD_SAVEBUF, FALSE ) );
-        #else
-            return( insertGenericSavebuf( CurrentSavebuf, FALSE ) );
-        #endif
+#ifdef __WIN__
+        return( insertGenericSavebuf( CLIPBOARD_SAVEBUF, FALSE ) );
+#else
+        return( insertGenericSavebuf( CurrentSavebuf, FALSE ) );
+#endif
     } else {
         return( insertGenericSavebuf( SavebufNumber, FALSE ) );
     }
@@ -248,11 +248,11 @@ int InsertSavebufAfter( void )
 int InsertSavebufAfter2( void )
 {
     if( SavebufNumber == NO_SAVEBUF ) {
-        #ifdef __WIN__
-            return( insertGenericSavebuf( CLIPBOARD_SAVEBUF, TRUE ) );
-        #else
-            return( insertGenericSavebuf( CurrentSavebuf, TRUE ) );
-        #endif
+#ifdef __WIN__
+        return( insertGenericSavebuf( CLIPBOARD_SAVEBUF, TRUE ) );
+#else
+        return( insertGenericSavebuf( CurrentSavebuf, TRUE ) );
+#endif
     } else {
         return( insertGenericSavebuf( SavebufNumber, TRUE ) );
     }
@@ -293,7 +293,7 @@ int GetSavebufString( char **data )
     } else
 #endif
     if( SavebufNumber >= MAX_SAVEBUFS ) {
-        tmp = &SpecialSavebufs[SavebufNumber-MAX_SAVEBUFS];
+        tmp = &SpecialSavebufs[SavebufNumber - MAX_SAVEBUFS];
     } else {
         tmp = &Savebufs[SavebufNumber];
     }
@@ -318,7 +318,7 @@ int GetSavebufString( char **data )
         break;
     }
     rc = ERR_NO_ERR;
-    if( len > MAX_STR*4 ) {
+    if( len > MAX_STR * 4 ) {
         rc = ERR_SAVEBUF_TOO_BIG;
     } else {
         *data = MemAlloc( len );
@@ -358,7 +358,7 @@ void InitSavebufs( void )
 {
     int i;
 
-    for( i=MAX_SAVEBUFS-1;i>=0;i-- ) {
+    for( i = MAX_SAVEBUFS - 1; i >= 0; i-- ) {
         Savebufs[i].type = SAVEBUF_NOP;
         Savebufs[i].first.data = NULL;
         Savebufs[i].fcb_tail = NULL;
@@ -370,7 +370,7 @@ void FiniSavebufs( void )
 {
     int i;
 
-    for( i=MAX_SAVEBUFS-1;i>=0;i-- ) {
+    for( i = MAX_SAVEBUFS - 1; i >= 0; i-- ) {
         freeSavebuf( &Savebufs[i] );
     }
 
@@ -382,7 +382,7 @@ void FiniSavebufs( void )
 void AddLineToSavebuf( char *data, int scol, int ecol )
 {
     savebuf     *tmp;
-    int         i,len,j;
+    int         i, len, j;
 
     /*
      * set up for copy
@@ -392,7 +392,7 @@ void AddLineToSavebuf( char *data, int scol, int ecol )
         scol = ecol;
         ecol = i;
     }
-    len = ecol-scol+1;
+    len = ecol - scol + 1;
 
     /*
      * set to appropriate savebuf and rotate others forward
@@ -402,19 +402,22 @@ void AddLineToSavebuf( char *data, int scol, int ecol )
         AddLineToClipboard( data, scol, ecol );
         LastSavebuf = 0;
         return;
-    } else
-#endif
-    if( SavebufNumber == NO_SAVEBUF ) {
-        j = CurrentSavebuf;
     } else {
-        j = SavebufNumber;
+#endif
+        if( SavebufNumber == NO_SAVEBUF ) {
+            j = CurrentSavebuf;
+        } else {
+            j = SavebufNumber;
+        }
+#ifdef __WIN__
     }
+#endif
     if( j >= MAX_SAVEBUFS ) {
         LastSavebuf = (char) j + (char) 'a' - (char) MAX_SAVEBUFS;
-        tmp = &SpecialSavebufs[ j - MAX_SAVEBUFS ];
+        tmp = &SpecialSavebufs[j - MAX_SAVEBUFS];
     } else {
         LastSavebuf = (char) j + (char) '1';
-        tmp = &Savebufs[ j ];
+        tmp = &Savebufs[j];
         rotateSavebufs( j );
     }
     tmp->type = SAVEBUF_LINE;
@@ -422,9 +425,9 @@ void AddLineToSavebuf( char *data, int scol, int ecol )
     /*
      * get and copy buffer
      */
-    tmp->first.data = MemAlloc( len+1 );
-    for( i=scol;i<=ecol;i++ ) {
-        tmp->first.data[i-scol] = data[i];
+    tmp->first.data = MemAlloc( len + 1 );
+    for( i = scol; i <= ecol; i++ ) {
+        tmp->first.data[i - scol] = data[i];
     }
     tmp->first.data[len] = 0;
 
@@ -462,7 +465,7 @@ void AddFcbsToSavebuf( fcb *head, fcb *tail, int duplflag )
 {
     int         j;
     savebuf     *tmp;
-    fcb         *cfcb,*nhead=NULL,*ntail=NULL;
+    fcb         *cfcb, *nhead = NULL, *ntail = NULL;
 
     /*
      * set to appropriate savebuf and rotate others forward
@@ -472,19 +475,22 @@ void AddFcbsToSavebuf( fcb *head, fcb *tail, int duplflag )
         AddFcbsToClipboard( head, tail );
         LastSavebuf = 0;
         return;
-    } else
-#endif
-    if( SavebufNumber == NO_SAVEBUF ) {
-        j = CurrentSavebuf;
     } else {
-        j = SavebufNumber;
+#endif
+        if( SavebufNumber == NO_SAVEBUF ) {
+            j = CurrentSavebuf;
+        } else {
+            j = SavebufNumber;
+        }
+#ifdef __WIN__
     }
+#endif
     if( j >= MAX_SAVEBUFS ) {
         LastSavebuf = (char) j + (char) 'a' - (char) MAX_SAVEBUFS;
-        tmp = &SpecialSavebufs[ j - MAX_SAVEBUFS ];
+        tmp = &SpecialSavebufs[j - MAX_SAVEBUFS];
     } else {
         LastSavebuf = (char) j + (char) '1';
-        tmp = &Savebufs[ j ];
+        tmp = &Savebufs[j];
         rotateSavebufs( j );
     }
 
@@ -506,9 +512,9 @@ void AddFcbsToSavebuf( fcb *head, fcb *tail, int duplflag )
 /*
  * SwitchSavebuf - switch current save buffer
  */
-int SwitchSavebuf( void  )
+int SwitchSavebuf( void )
 {
-    int         buf,i;
+    int         buf, i;
     linenum     lcnt;
     savebuf     *tmp;
     char        *data;
@@ -518,7 +524,7 @@ int SwitchSavebuf( void  )
      * validate savebuf
      */
     buf = -1;
-    for( i=0;i< MAX_SAVEBUFS;i++ ) {
+    for( i = 0; i < MAX_SAVEBUFS; i++ ) {
         if( LastEvent == SavebufBound[i] ){
             buf = i;
             break;
@@ -528,14 +534,15 @@ int SwitchSavebuf( void  )
         return( ERR_NO_ERR );
     }
     CurrentSavebuf = buf;
-    tmp = &Savebufs[ buf ];
+    tmp = &Savebufs[buf];
     switch( tmp->type ) {
     case SAVEBUF_NOP:
-        Message1( "Buffer %d now active. (empty buffer)",buf+1 );
+        Message1( "Buffer %d now active. (empty buffer)", buf + 1 );
         return( DO_NOT_CLEAR_MESSAGE_WINDOW );
     case SAVEBUF_LINE:
         data = tmp->first.data;
-        Message1( "Buffer %d active, %d characters:",buf+1, strlen( tmp->first.data ) );
+        Message1( "Buffer %d active, %d characters:", buf + 1,
+                  strlen( tmp->first.data ) );
         break;
     case SAVEBUF_FCBS:
         cfcb = tmp->first.fcb_head;
@@ -543,13 +550,13 @@ int SwitchSavebuf( void  )
         data = cfcb->line_head->data;
         lcnt = 0;
         while( cfcb != NULL ) {
-            lcnt += cfcb->end_line - cfcb->start_line+1;
+            lcnt += cfcb->end_line - cfcb->start_line + 1;
             cfcb = cfcb->next;
         }
-        Message1( "Buffer %d active, %l lines:",buf+1, lcnt );
+        Message1( "Buffer %d active, %l lines:", buf + 1, lcnt );
         break;
     }
-    Message2( "\"%s\"",data );
+    Message2( "\"%s\"", data );
 
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
@@ -560,7 +567,7 @@ int SwitchSavebuf( void  )
  */
 int DoSavebufNumber( void )
 {
-    int         i,rc;
+    int         i, rc;
     char        buff[2];
 
     /*
@@ -591,22 +598,25 @@ int SetSavebufNumber( char *data )
     if( NextWord1( data, st ) > 0 ) {
 
         if( st[1] != 0 ) {
-            Error( GetErrorMsg( ERR_INVALID_SAVEBUF) , st[0] );
+            Error( GetErrorMsg( ERR_INVALID_SAVEBUF), st[0] );
             return( DO_NOT_CLEAR_MESSAGE_WINDOW );
         }
 #ifdef __WIN__
         if( st[0] == '0' ) {
             SavebufNumber = CLIPBOARD_SAVEBUF;
-        } else
-#endif
-        if( st[0] >= '1' && st[0] <= '9' ) {
-            SavebufNumber = st[0] - '1';
-        } else if( st[0] >= 'a' && st[0] <= 'z' ) {
-            SavebufNumber = st[0] - 'a' + MAX_SAVEBUFS;
         } else {
-            Error( GetErrorMsg( ERR_INVALID_SAVEBUF) , st[0] );
-            return( DO_NOT_CLEAR_MESSAGE_WINDOW );
+#endif
+            if( st[0] >= '1' && st[0] <= '9' ) {
+                SavebufNumber = st[0] - '1';
+            } else if( st[0] >= 'a' && st[0] <= 'z' ) {
+                SavebufNumber = st[0] - 'a' + MAX_SAVEBUFS;
+            } else {
+                Error( GetErrorMsg( ERR_INVALID_SAVEBUF), st[0] );
+                return( DO_NOT_CLEAR_MESSAGE_WINDOW );
+            }
+#ifdef __WIN__
         }
+#endif
 
     }
     return( ERR_NO_ERR );
@@ -623,20 +633,24 @@ bool IsEmptySavebuf( char ch )
 #ifdef __WIN__
     if( ch == '0' ) {
         return( IsClipboardEmpty() );
-    } else
+    } else {
 #endif
-    if( ch >= '1' && ch <= '9' ) {
-        bufnum = ch - '1';
-        if( Savebufs[bufnum].type == SAVEBUF_NOP ) {
-            return( TRUE );
+        if( ch >= '1' && ch <= '9' ) {
+            bufnum = ch - '1';
+            if( Savebufs[bufnum].type == SAVEBUF_NOP ) {
+                return( TRUE );
+            }
+            return( FALSE );
+        } else if( ch >= 'a' && ch <= 'z' ) {
+            bufnum = ch - 'a';
+            if( SpecialSavebufs[bufnum].type == SAVEBUF_NOP ) {
+                return( TRUE );
+            }
         }
-        return( FALSE );
-    } else if( ch >= 'a' && ch <= 'z' ) {
-        bufnum = ch - 'a';
-        if( SpecialSavebufs[bufnum].type == SAVEBUF_NOP ) {
-            return( TRUE );
-        }
+#ifdef __WIN__
     }
+#endif
+
     return( FALSE );
 
 } /* IsEmptySavebuf */

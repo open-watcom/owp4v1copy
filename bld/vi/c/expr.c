@@ -39,19 +39,19 @@
 #include "source.h"
 #include "expr.h"
 
-static long _NEAR cExpr1( void );
-static long _NEAR cExpr2( void );
-static long _NEAR cExpr3( void );
-static long _NEAR cExpr4( void );
-static long _NEAR cExpr5( void );
-static long _NEAR cExpr6( void );
-static long _NEAR cExpr7( void );
-static long _NEAR cExpr8( void );
-static long _NEAR cExpr9( void );
-static long _NEAR cExpr10( void );
-static long _NEAR cExpr11( void );
-static long _NEAR cExpr12( void );
-static token nextToken( void );
+static long _NEAR   cExpr1( void );
+static long _NEAR   cExpr2( void );
+static long _NEAR   cExpr3( void );
+static long _NEAR   cExpr4( void );
+static long _NEAR   cExpr5( void );
+static long _NEAR   cExpr6( void );
+static long _NEAR   cExpr7( void );
+static long _NEAR   cExpr8( void );
+static long _NEAR   cExpr9( void );
+static long _NEAR   cExpr10( void );
+static long _NEAR   cExpr11( void );
+static long _NEAR   cExpr12( void );
+static token        nextToken( void );
 
 static char     wasString;
 static char     lastString[TBUFF_SIZE];
@@ -358,7 +358,7 @@ static token nextToken( void )
             if( tokenBuff[0] == '.' ) {
                 strcpy( tokenBuff, GetASetVal( &tokenBuff[1] ) );
                 constantVal = strtol( tokenBuff, NULL, 0 );
-                j = tokenBuffCnt-1;
+                j = tokenBuffCnt - 1;
                 while( j >= 0 ) {
                     if( !isdigit( tokenBuff[j] ) ) {
                         currToken = T_STRING;
@@ -367,39 +367,40 @@ static token nextToken( void )
                     j--;
                 }
            } else if( !strcmp( tokenBuff, "config" ) ) {
-                constantVal = EditFlags.Color * 100 + EditFlags.BlackAndWhite * 10 + EditFlags.Monocolor;
+                constantVal = EditFlags.Color * 100 + EditFlags.BlackAndWhite * 10 +
+                    EditFlags.Monocolor;
             } else if( !strcmp( tokenBuff, "rdonly" ) ) {
                 constantVal = CFileReadOnly();
             } else if( !strcmp( tokenBuff, "lastrc" ) ) {
                 constantVal = LastRC;
-            } else if( !strcmp( tokenBuff,"pagelen" ) ) {
+            } else if( !strcmp( tokenBuff, "pagelen" ) ) {
                 constantVal = WindMaxHeight;
-            } else if( !strcmp( tokenBuff,"endcolumn" ) ) {
+            } else if( !strcmp( tokenBuff, "endcolumn" ) ) {
                 constantVal = WindMaxWidth;
-            } else if( !strcmp( tokenBuff,"numundos" ) ) {
+            } else if( !strcmp( tokenBuff, "numundos" ) ) {
                 if( UndoStack == NULL ) {
                     constantVal = 0;
                 } else {
-                    constantVal = UndoStack->current+1;
+                    constantVal = UndoStack->current + 1;
                 }
-            } else if( !strcmp( tokenBuff,"numredos" ) ) {
+            } else if( !strcmp( tokenBuff, "numredos" ) ) {
                 if( UndoUndoStack == NULL ) {
                     constantVal = 0;
                 } else {
-                    constantVal = UndoUndoStack->current+1;
+                    constantVal = UndoUndoStack->current + 1;
                 }
-            } else if( !strcmp( tokenBuff,"hassel" ) ) {
+            } else if( !strcmp( tokenBuff, "hassel" ) ) {
                 constantVal = SelRgn.selected;
-            } else if( !strcmp( tokenBuff,"hasfile" ) ) {
+            } else if( !strcmp( tokenBuff, "hasfile" ) ) {
                 constantVal = (CurrentFile != NULL);
-            } else if( !strncmp( tokenBuff,"emptybuf", 8 ) ) {
+            } else if( !strncmp( tokenBuff, "emptybuf", 8 ) ) {
                 j = tokenBuff[8];
                 constantVal = IsEmptySavebuf( j );
-            } else if( (j=Tokenize( colorTokens, tokenBuff, TRUE )) >= 0 ) {
+            } else if( (j = Tokenize( colorTokens, tokenBuff, TRUE )) >= 0 ) {
                 constantVal = j;
 #ifdef __WIN__
-            } else if( (j=Tokenize( ddeTokens, tokenBuff, TRUE )) >= 0 ) {
-                constantVal = ddeNums[ j ];
+            } else if( (j = Tokenize( ddeTokens, tokenBuff, TRUE )) >= 0 ) {
+                constantVal = ddeNums[j];
 #endif
             } else {
                 ReadErrorTokens();
@@ -512,7 +513,7 @@ static long doCompare( long val1, long (_NEAR *fn)( void ) )
 {
     char        tmp1[TBUFF_SIZE];
     char        tmp2[TBUFF_SIZE];
-    char        cmp_str=0;
+    char        cmp_str = 0;
     long        val2;
 
     if( wasString ) {
@@ -655,7 +656,7 @@ static long _NEAR cExpr10( void )
 
 static long _NEAR cExpr11( void )
 {
-    long        value,v2,v3;
+    long        value, v2, v3;
     long        i;
 
     value = cExpr12();
@@ -663,7 +664,7 @@ static long _NEAR cExpr11( void )
         nextToken();
         v2 = cExpr2();
         v3 = 1;
-        for( i=0;i<v2;i++ ) {
+        for( i = 0; i < v2; i++ ) {
             v3 *= value;
         }
         value = v3;

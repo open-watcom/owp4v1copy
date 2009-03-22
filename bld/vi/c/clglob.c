@@ -41,11 +41,11 @@
  */
 int Global( linenum n1, linenum n2, char *data, int dmt )
 {
-    char        *sstr,*cmd,*linedata;
-    int         i,todo;
-    int         ccol,rc;
-    long        changecnt=0;
-    linenum     clineno,llineno,ll;
+    char        *sstr, *cmd, *linedata;
+    int         i, todo;
+    int         ccol, rc;
+    long        changecnt = 0;
+    linenum     clineno, llineno, ll;
     fcb         *cfcb;
     line        *cline;
     regexp      crx;
@@ -66,7 +66,7 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
         return( ERR_INVALID_GLOBAL_CMD );
     }
     RemoveLeadingSpaces( data );
-    EliminateFirstN( data,1 );
+    EliminateFirstN( data, 1 );
 
     /*
      * verify last line
@@ -92,7 +92,7 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
         return( i );
     }
     SaveCurrentFilePos();
-    llineno = n1-1;
+    llineno = n1 - 1;
     clineno = n1;
     ccol = 0;
     StartUndoGroup( UndoStack );
@@ -111,7 +111,8 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
         if( !i ) {
             ccol = GetCurrRegExpColumn( linedata );
         } else {
-            if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND || i == ERR_FIND_END_OF_FILE )  {
+            if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND ||
+                i == ERR_FIND_END_OF_FILE ) {
                 break;
             }
             RestoreCurrentFilePos();
@@ -216,8 +217,9 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
 
                 if( !todo ) {
                     CurrentFcb->globalmatch = FALSE;
+                } else {
+                    break;
                 }
-                else break;
 
             }
             CurrentFcb = CurrentFcb->next;

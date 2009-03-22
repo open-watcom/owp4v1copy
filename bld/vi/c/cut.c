@@ -40,9 +40,9 @@
  */
 int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
 {
-    fcb         *sfcb,*efcb;
+    fcb         *sfcb, *efcb;
     line        *cline;
-    int         i,rc,j;
+    int         i, rc, j;
 
     // bloody computers!
     ecol++;
@@ -66,8 +66,8 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
      * prune start line
      */
     sfcb->byte_cnt -= cline->len;
-    for( i=scol;i<=cline->len;i++ ) {
-        cline->data[i-scol] = cline->data[i];
+    for( i = scol; i <= cline->len; i++ ) {
+        cline->data[i - scol] = cline->data[i];
     }
     cline->len = strlen( cline->data );
     sfcb->byte_cnt += cline->len;
@@ -77,8 +77,8 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
      */
     cline = efcb->line_tail;
     j = strlen( WorkLine->data );
-    for( i=ecol;i<=cline->len;i++ ) {
-        WorkLine->data[i-ecol+j] = cline->data[i];
+    for( i = ecol; i <= cline->len; i++ ) {
+        WorkLine->data[i - ecol + j] = cline->data[i];
     }
     WorkLine->len = strlen( WorkLine->data );
 
@@ -96,7 +96,7 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
      * check if just yanking; if so, then go back
      */
     if( !delflag ) {
-        LineYankMessage( s,e );
+        LineYankMessage( s, e );
         return( ERR_NO_ERR );
     }
 
@@ -122,7 +122,7 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
     /*
      * delete all lines but first
      */
-    rc = DeleteLineRange( s+1, e, 0 );
+    rc = DeleteLineRange( s + 1, e, 0 );
     if( rc ) {
         return( rc );
     }

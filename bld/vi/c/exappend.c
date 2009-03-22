@@ -85,7 +85,7 @@ int AppendAnother( char *data )
     }
 
     if( CurrentFcb->nullfcb ) {
-        dontmove=TRUE;
+        dontmove = TRUE;
     }
 
     cln = CurrentLineNumber;
@@ -96,14 +96,14 @@ int AppendAnother( char *data )
     UndoInsert( cln, cln, UndoStack );
 
     if( !beforeFlag ) {
-        AddNewLineAroundCurrent( data,i, INSERT_AFTER );
+        AddNewLineAroundCurrent( data, i, INSERT_AFTER );
     } else {
         beforeFlag = FALSE;
-        AddNewLineAroundCurrent( data,i, INSERT_BEFORE );
+        AddNewLineAroundCurrent( data, i, INSERT_BEFORE );
     }
 
 
-    if( !dontmove) {
+    if( !dontmove ) {
         i = SetCurrentLine( cln );
         if( i ) {
             return( i );

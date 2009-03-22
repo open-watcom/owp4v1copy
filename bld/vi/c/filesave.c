@@ -39,8 +39,8 @@
 #include "source.h"
 #include "keys.h"
 #ifdef __WIN__
-#include "winvi.h"
-#include "utils.h"
+    #include "winvi.h"
+    #include "utils.h"
 #endif
 
 static int fileHandle;
@@ -51,8 +51,8 @@ static int fileHandle;
 static int writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
 {
     line        *cline;
-    int         i,len=0;
-    char        *buff,*data;
+    int         i, len = 0;
+    char        *buff, *data;
 
     if( s > e ) {
         return( ERR_NO_ERR );
@@ -138,12 +138,12 @@ static int readOnlyCheck( void )
  */
 int SaveFileAs( void )
 {
-    char    fn[ FILENAME_MAX ];
-    char    cmd[ 14 + FILENAME_MAX ];
+    char    fn[FILENAME_MAX];
+    char    cmd[14 + FILENAME_MAX];
     int     rc;
 
     rc = SelectFileSave( fn );
-    if( rc || fn[ 0 ] == '\0' ) {
+    if( rc || fn[0] == '\0' ) {
         return( rc );
     }
     // rename current file
@@ -156,7 +156,8 @@ int SaveFileAs( void )
 
     // flag dammit as user must have already said overwrite ok
     return( SaveFile( fn, -1L, -1L, TRUE ) );
-}
+
+} /* SaveFileAs */
 #endif
 
 /*
@@ -164,12 +165,12 @@ int SaveFileAs( void )
  */
 int SaveFile( char *name, linenum start, linenum end, int dammit )
 {
-    int         i,rc;
-    bool        existflag=FALSE,restpath=FALSE,makerw=FALSE;
+    int         i, rc;
+    bool        existflag = FALSE, restpath = FALSE, makerw = FALSE;
     char        *fn;
-    fcb         *cfcb,*sfcb,*efcb;
-    linenum     s,e,lc;
-    long        bc=0;
+    fcb         *cfcb, *sfcb, *efcb;
+    linenum     s, e, lc;
+    long        bc = 0;
     int         lastst;
 
     if( CurrentFile == NULL ) {
@@ -221,12 +222,12 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
         s = start;
         e = end;
     }
-    lc = e-s+1;
-    i = FindFcbWithLine( s,CurrentFile, &sfcb );
+    lc = e - s + 1;
+    i = FindFcbWithLine( s, CurrentFile, &sfcb );
     if( i ) {
         return( i );
     }
-    i = FindFcbWithLine( e,CurrentFile, &efcb );
+    i = FindFcbWithLine( e, CurrentFile, &efcb );
     if( i ) {
         return( i );
     }
@@ -241,8 +242,8 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
         if( makerw ) {
             chmod( fn, S_IWRITE | S_IREAD );
         }
-        i = FileOpen( fn, existflag,O_TRUNC | O_WRONLY | O_BINARY | O_CREAT,
-                    WRITEATTRS, &fileHandle);
+        i = FileOpen( fn, existflag, O_TRUNC | O_WRONLY | O_BINARY | O_CREAT,
+                      WRITEATTRS, &fileHandle);
         if( i ) {
             Message1( strerror( errno ) );
             return( i );
@@ -257,23 +258,23 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
     /*
      * start writing fcbs
      */
-    #ifdef __WIN__
-        ToggleHourglass( TRUE );
-    #endif
+#ifdef __WIN__
+    ToggleHourglass( TRUE );
+#endif
     if( CurrentFile->check_for_crlf ) {
         if( fileHandle ) {
             EditFlags.WriteCRLF = FALSE;
-        #ifndef __LINUX__
+#ifndef __LINUX__
             if( FileSysNeedsCR( fileHandle ) ) {
                 EditFlags.WriteCRLF = TRUE;
             }
-        #endif 
+#endif 
         } else {
-        #ifdef __UNIX__
+#ifdef __UNIX__
             EditFlags.WriteCRLF = FALSE;
-        #else
+#else
             EditFlags.WriteCRLF = TRUE;
-        #endif
+#endif
         }
     }
     lastst = UpdateCurrentStatus( CSTATUS_WRITING );
@@ -282,9 +283,9 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
 
         i = writeRange( s, cfcb->end_line, cfcb, &bc );
         if( i ) {
-            #ifdef __WIN__
-                ToggleHourglass( FALSE );
-            #endif
+#ifdef __WIN__
+            ToggleHourglass( FALSE );
+#endif
             UpdateCurrentStatus( lastst );
             return( i );
         }
@@ -296,10 +297,10 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
     /*
      * last bit
      */
-    i = writeRange( s,e,efcb, &bc );
-    #ifdef __WIN__
-        ToggleHourglass( FALSE );
-    #endif
+    i = writeRange( s, e, efcb, &bc );
+#ifdef __WIN__
+    ToggleHourglass( FALSE );
+#endif
     UpdateCurrentStatus( lastst );
     if( i ) {
         return( i );
@@ -331,7 +332,7 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
  */
 int StartSaveExit( void )
 {
-    int key,levent;
+    int key, levent;
 
     /*
      * get the next key
@@ -380,57 +381,57 @@ int SaveAndExit( char *fname )
  */
 bool FilePromptForSaveChanges( file *f )
 {
-    int rc;
-    char        buffer[MAX_STR];
-    #ifdef __WIN__
+    int     rc;
+    char    buffer[MAX_STR];
 
-        MySprintf( buffer, "\"%s\" has been modified - save changes?",
-            f->name );
-        BringWindowToTop( Root );
-        SetWindowPos( Root, HWND_TOPMOST,0,0,0,0, SWP_NOMOVE|SWP_NOSIZE );
-        rc = MessageBox( Root, buffer, EditorName, MB_YESNO | MB_TASKMODAL );
+#ifdef __WIN__
+    MySprintf( buffer, "\"%s\" has been modified - save changes?",
+        f->name );
+    BringWindowToTop( Root );
+    SetWindowPos( Root, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+    rc = MessageBox( Root, buffer, EditorName, MB_YESNO | MB_TASKMODAL );
 
-        if( rc == IDYES ) {
+    if( rc == IDYES ) {
+        rc = SaveFile( NULL, -1, -1, FALSE );
+        if( rc != ERR_NO_ERR ) {
+            MySprintf( buffer, "Error saving \"%s\"", f->name );
+            MessageBox( Root, buffer, EditorName, MB_OK | MB_TASKMODAL );
+        } else {
+            Modified( FALSE );
+        }
+    }
+    SetWindowPos( Root, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+    SetWindowPos( Root, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+#else
+    char response[MAX_SRC_LINE];
+
+//  MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no|cancel)?",
+    MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no)?",
+        f->name );
+    rc = GetResponse( buffer, response );
+    if( rc == GOT_RESPONSE ) {
+        switch( response[0] ) {
+        case 0:
+            // if the user hit ENTER then the buffer will be
+            // a string of 0 chars so act as if y had been hit
+        case 'y':
+        case 'Y':
             rc = SaveFile( NULL, -1, -1, FALSE );
             if( rc != ERR_NO_ERR ) {
                 MySprintf( buffer, "Error saving \"%s\"", f->name );
-                MessageBox( Root, buffer, EditorName,
-                                        MB_OK | MB_TASKMODAL );
+                Message1( buffer );
             } else {
                 Modified( FALSE );
             }
+            break;
         }
-        SetWindowPos( Root, HWND_NOTOPMOST,0,0,0,0, SWP_NOMOVE|SWP_NOSIZE );
-        SetWindowPos( Root, HWND_BOTTOM,0,0,0,0, SWP_NOMOVE|SWP_NOSIZE );
-    #else
-        char response[MAX_SRC_LINE];
-
-//      MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no|cancel)?",
-        MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no)?",
-            f->name );
-        rc = GetResponse( buffer, response );
-        if( rc == GOT_RESPONSE ) {
-            switch( response[ 0 ] ) {
-            case 0:
-                // if the user hit ENTER then the buffer will be
-                // a string of 0 chars so act as if y had been hit
-            case 'y':
-            case 'Y':
-                rc = SaveFile( NULL, -1, -1, FALSE );
-                if( rc != ERR_NO_ERR ) {
-                    MySprintf( buffer, "Error saving \"%s\"", f->name );
-                    Message1( buffer );
-                } else {
-                    Modified( FALSE );
-                }
-                break;
-            }
-        }
-    #endif
+    }
+#endif
     /* would return TRUE if we supported a CANCEL option
      * the same as the FileExitOptionSaveChanges function below */
     return( FALSE );
-}
+
+} /* FilePromptForSaveChanges */
 
 /*
  * FileExitOptionSaveChanges - exit file, giving option to save if modified
@@ -441,60 +442,56 @@ bool FileExitOptionSaveChanges( file *f )
     int         rc;
     char        buffer[MAX_STR];
 
-    #ifdef __WIN__
-        MySprintf( buffer, "\"%s\" has been modified - save changes?",
-            f->name );
-        rc = MessageBox( Root, buffer, EditorName,
-                                    MB_YESNOCANCEL | MB_TASKMODAL );
-        if( rc == IDYES ) {
-            rc = SaveFile( NULL, -1, -1, FALSE );
-            if( rc != ERR_NO_ERR ) {
-                MySprintf( buffer, "Error saving \"%s\"",
-                                f->name );
-                MessageBox( Root, buffer, EditorName,
-                                        MB_OK | MB_TASKMODAL );
-                aborted = TRUE;
-            }
-            else {
-                NextFileDammit();
-            }
-        } else if( rc == IDCANCEL ) {
+#ifdef __WIN__
+    MySprintf( buffer, "\"%s\" has been modified - save changes?", f->name );
+    rc = MessageBox( Root, buffer, EditorName, MB_YESNOCANCEL | MB_TASKMODAL );
+    if( rc == IDYES ) {
+        rc = SaveFile( NULL, -1, -1, FALSE );
+        if( rc != ERR_NO_ERR ) {
+            MySprintf( buffer, "Error saving \"%s\"", f->name );
+            MessageBox( Root, buffer, EditorName, MB_OK | MB_TASKMODAL );
             aborted = TRUE;
         } else {
             NextFileDammit();
         }
-    #else
-        char response[MAX_SRC_LINE];
+    } else if( rc == IDCANCEL ) {
+        aborted = TRUE;
+    } else {
+        NextFileDammit();
+    }
+#else
+    char response[MAX_SRC_LINE];
 
-        MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no|cancel)?",
-            f->name );
-        rc = GetResponse( buffer, response );
-        if( rc == GOT_RESPONSE ) {
-            switch( response[ 0 ] ) {
-            case 0:
-                // if the user hit ENTER then the buffer will be
-                // a string of 0 chars so act as if y had been hit
-            case 'y':
-            case 'Y':
-                SaveAndExit( NULL );
-                break;
-            case 'n':
-            case 'N':
-                NextFileDammit();
-                break;
-            case 'c':
-            case 'C':
-            default:
-                aborted = TRUE;
-                // return( FALSE );
-            }
-        } else {
+    MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no|cancel)?",
+        f->name );
+    rc = GetResponse( buffer, response );
+    if( rc == GOT_RESPONSE ) {
+        switch( response[0] ) {
+        case 0:
+            // if the user hit ENTER then the buffer will be
+            // a string of 0 chars so act as if y had been hit
+        case 'y':
+        case 'Y':
+            SaveAndExit( NULL );
+            break;
+        case 'n':
+        case 'N':
+            NextFileDammit();
+            break;
+        case 'c':
+        case 'C':
+        default:
             aborted = TRUE;
+            // return( FALSE );
         }
-    #endif
+    } else {
+        aborted = TRUE;
+    }
+#endif
 
     return aborted;
-}
+
+} /* FileOptionExitSaveChanges */
 
 /*
  * FancyFileSave
@@ -503,15 +500,14 @@ int FancyFileSave( void )
 {
     int         rc;
 
-    if( CurrentFile == NULL )
-    {
+    if( CurrentFile == NULL ) {
         return( ERR_NO_FILE );
     }
     rc = SaveFile( CurrentFile->name, -1, -1, TRUE );
-    if( rc == ERR_NO_ERR )
-    {
+    if( rc == ERR_NO_ERR ) {
         CurrentFile->modified = FALSE;
         UpdateLastFileList( CurrentFile->name );
     }
     return( rc );
-}
+
+} /* FancyFileSave */

@@ -58,8 +58,8 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
      * add the line
      */
     InsertNewLine( CurrentLine, &(CurrentFcb->line_head),
-                    &(CurrentFcb->line_tail), data, copylen,dir );
-    CurrentFcb->byte_cnt += (copylen+1);
+                   &(CurrentFcb->line_tail), data, copylen,dir );
+    CurrentFcb->byte_cnt += copylen + 1;
     CurrentFcb->end_line += 1;
 
     /*
@@ -70,7 +70,7 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
         SetCurrentLineNumber( 1 );
     } else {
         if( dir == INSERT_BEFORE ) {
-            SetCurrentLineNumber( CurrentLineNumber +1 );
+            SetCurrentLineNumber( CurrentLineNumber + 1 );
         }
         UpdateLineNumbers( 1L, CurrentFcb->next );
     }
@@ -82,7 +82,7 @@ void AddNewLineAroundCurrent( char *data, int copylen, insert_dir dir )
  * InsertNewLine - do just that
  */
 void InsertNewLine( line *who, line **head, line **tail, char *data, int copylen,
-        insert_dir dir )
+                    insert_dir dir )
 {
     line        *cl;
 
@@ -92,12 +92,12 @@ void InsertNewLine( line *who, line **head, line **tail, char *data, int copylen
     }
     cl = LineAlloc( data, copylen );
     if( *head == NULL ) {
-        AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)cl );
+        AddLLItemAtEnd( (ss **)head, (ss **)tail, (ss *)cl );
     } else {
         if( dir == INSERT_AFTER ) {
-            InsertLLItemAfter( (ss**)tail, (ss*)who, (ss*)cl );
+            InsertLLItemAfter( (ss **)tail, (ss *)who, (ss *)cl );
         } else {
-            InsertLLItemBefore( (ss**)head, (ss*)who, (ss*)cl );
+            InsertLLItemBefore( (ss **)head, (ss *)who, (ss *)cl );
         }
     }
 
@@ -130,7 +130,7 @@ void CreateNullLine( fcb *cfcb )
 
     cline = LineAlloc( NULL, 0 );
     FetchFcb( cfcb );
-    AddLLItemAtEnd( (ss**)&(cfcb->line_head), (ss**)&(cfcb->line_tail), (ss*)cline );
+    AddLLItemAtEnd( (ss **)&(cfcb->line_head), (ss **)&(cfcb->line_tail), (ss *)cline );
     cfcb->byte_cnt = 1;
     cfcb->start_line = cfcb->end_line = 1;
     cfcb->nullfcb = TRUE;

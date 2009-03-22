@@ -36,7 +36,7 @@
 #include "rxsupp.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 
 // LastSubstituteCancelled is a global used to perform an interactive
@@ -49,7 +49,8 @@ int LastLineCount;
  *                     doing substitute in 2 parts if it has to, that
  *                     appear as 1
  */
-int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap ){
+int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap )
+{
     int rc;
     long changecnt, linecnt;
     linenum end_line;
@@ -65,20 +66,22 @@ int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap ){
     rc = Substitute( CurrentLineNumber, end_line, cmd );
     changecnt = LastChangeCount;
     linecnt = LastLineCount;
-    if( wrap && !LastSubstituteCancelled && CurrentLineNumber != 1 && rc == ERR_NO_ERR ) {
+    if( wrap && !LastSubstituteCancelled && CurrentLineNumber != 1 &&
+        rc == ERR_NO_ERR ) {
         // search from beginning of do to here
-        sprintf( cmd, "/%s/%s/g%c", find, replace, ( prompt == TRUE ) ? 'i' : '\0' );
-        rc = Substitute( 1,CurrentLineNumber-1, cmd );
+        sprintf( cmd, "/%s/%s/g%c", find, replace, (prompt == TRUE) ? 'i' : '\0' );
+        rc = Substitute( 1, CurrentLineNumber - 1, cmd );
         linecnt += LastLineCount;
         changecnt += LastChangeCount;
     }
     if( rc == ERR_NO_ERR ) {
-        Message1( "%l changes on %l lines",changecnt,linecnt );
+        Message1( "%l changes on %l lines", changecnt, linecnt );
     }
     EndUndoGroup( UndoStack );
 
     MemFree( cmd );
     return( rc );
+
 } /* TwoPartSubstitute */
 
 /*
@@ -86,14 +89,14 @@ int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap ){
  */
 int Substitute( linenum n1, linenum n2, char *data )
 {
-    char        *sstr,*rstr,*newr;
-    char        flag[20],*linedata;
-    bool        iflag=FALSE,gflag=FALSE,undoflag=FALSE,restline=FALSE;
-    bool        splitpending=FALSE,undoline=FALSE;
-    int         i,rlen,slen,key;
-    int         ccol,rc,splitme,k;
-    long        changecnt=0,linecnt=0;
-    linenum     clineno,llineno,ll,lastline=0,extra;
+    char        *sstr, *rstr, *newr;
+    char        flag[20], *linedata;
+    bool        iflag = FALSE, gflag = FALSE, undoflag = FALSE, restline = FALSE;
+    bool        splitpending = FALSE, undoline = FALSE;
+    int         i, rlen, slen, key;
+    int         ccol, rc, splitme, k;
+    long        changecnt = 0, linecnt = 0;
+    linenum     clineno, llineno, ll, lastline = 0, extra;
 
     LastSubstituteCancelled = 0;
     LastChangeCount = 0;
@@ -118,8 +121,8 @@ int Substitute( linenum n1, linenum n2, char *data )
     if( NextWordSlash( data, rstr ) < 0 ) {
         return( ERR_INVALID_SUBS_CMD );
     }
-    if( (k=NextWord1( data, flag ) ) >= 0 ) {
-        for( i=0;i<k;i++ ) {
+    if( (k = NextWord1( data, flag )) >= 0 ) {
+        for( i = 0; i < k; i++ ) {
             switch( flag[i] ) {
             case 'g':
                 gflag = TRUE;
@@ -156,7 +159,7 @@ int Substitute( linenum n1, linenum n2, char *data )
         ClearWindow( MessageWindow );
     }
     SaveCurrentFilePos();
-    llineno = n1-1;
+    llineno = n1 - 1;
     clineno = n1;
     ccol = 0;
 
@@ -172,7 +175,8 @@ int Substitute( linenum n1, linenum n2, char *data )
             ccol = GetCurrRegExpColumn( linedata );
             slen = GetCurrRegExpLength();
         } else {
-            if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND || i == ERR_FIND_END_OF_FILE ) {
+            if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND ||
+                i == ERR_FIND_END_OF_FILE ) {
                 break;
             }
             RestoreCurrentFilePos();
@@ -214,43 +218,43 @@ int Substitute( linenum n1, linenum n2, char *data )
                 EditFlags.DisplayHold = TRUE;
             }
             HilightSearchString( clineno, ccol, slen );
-            #ifdef __WIN__
-                key = MessageBox( Root, "Change this occurence?", "Replace Text",
-                                  MB_ICONQUESTION | MB_YESNOCANCEL );
-                switch( key ) {
-                case IDNO:
-                    ResetDisplayLine();
-                    rlen = 1;
-                    goto TRYNEXTMATCH;
-                case IDCANCEL:
-                    ResetDisplayLine();
-                    LastSubstituteCancelled = 1;
-                    goto DONEALLREPLACEMENTS;
-                }
-                if( key == 0 ) {
-            #endif
-                    Message1( "Change? (y)es/(n)o/(a)ll/(q)uit" );
-                    key = 0;
-                    while( key != 'y' ) {
-                        key = GetNextEvent( FALSE );
-                        switch( key ) {
-                        case 'a':
-                                ResetDisplayLine();
-                                iflag = FALSE;
-                                key='y';
-                                break;
-                        case 'q':
-                                ResetDisplayLine();
-                                goto DONEALLREPLACEMENTS;
-                        case 'n':
-                                ResetDisplayLine();
-                                rlen = 1;
-                                goto TRYNEXTMATCH;
-                        }
+#ifdef __WIN__
+            key = MessageBox( Root, "Change this occurence?", "Replace Text",
+                              MB_ICONQUESTION | MB_YESNOCANCEL );
+            switch( key ) {
+            case IDNO:
+                ResetDisplayLine();
+                rlen = 1;
+                goto TRYNEXTMATCH;
+            case IDCANCEL:
+                ResetDisplayLine();
+                LastSubstituteCancelled = 1;
+                goto DONEALLREPLACEMENTS;
+            }
+            if( key == 0 ) {
+#endif
+                Message1( "Change? (y)es/(n)o/(a)ll/(q)uit" );
+                key = 0;
+                while( key != 'y' ) {
+                    key = GetNextEvent( FALSE );
+                    switch( key ) {
+                    case 'a':
+                            ResetDisplayLine();
+                            iflag = FALSE;
+                            key = 'y';
+                            break;
+                    case 'q':
+                            ResetDisplayLine();
+                            goto DONEALLREPLACEMENTS;
+                    case 'n':
+                            ResetDisplayLine();
+                            rlen = 1;
+                            goto TRYNEXTMATCH;
                     }
-            #ifdef __WIN__
                 }
-            #endif
+#ifdef __WIN__
+            }
+#endif
         }
 
         /*
@@ -288,7 +292,7 @@ int Substitute( linenum n1, linenum n2, char *data )
             return( i );
         }
         if( CurrentLine->len + rlen - slen >= MaxLine ) {
-            rc=ERR_LINE_FULL;
+            rc = ERR_LINE_FULL;
             break;
         }
 
@@ -310,7 +314,7 @@ int Substitute( linenum n1, linenum n2, char *data )
          */
         GetCurrentLine();
         WorkLine->len = ReplaceSubString( WorkLine->data, WorkLine->len,
-                                    ccol, ccol+slen-1, newr, rlen );
+                                          ccol, ccol + slen - 1, newr, rlen );
         if( iflag ) {
             DisplayWorkLine( TRUE );
         }
@@ -326,7 +330,7 @@ int Substitute( linenum n1, linenum n2, char *data )
 TRYNEXTMATCH:
         if( gflag ) {
             ccol += rlen;
-            if( (slen == 0 && rlen == 0) || CurrentLine->data[ ccol ] == 0 ) {
+            if( (slen == 0 && rlen == 0) || CurrentLine->data[ccol] == 0 ) {
                 clineno++;
                 if( clineno > n2 ) {
                     break;
@@ -366,7 +370,7 @@ DONEALLREPLACEMENTS:
     if( rc == ERR_LINE_FULL ) {
         Message1( "Stopped at line %l - line full", clineno );
     } else {
-        Message1( "%l changes on %l lines",changecnt,linecnt );
+        Message1( "%l changes on %l lines", changecnt, linecnt );
         LastLineCount = linecnt;
         LastChangeCount = changecnt;
     }
@@ -382,7 +386,7 @@ DONEALLREPLACEMENTS:
 linenum SplitUpLine( linenum cl )
 {
     linenum     extra = 0;
-    int         j,i,k;
+    int         j, i, k;
     char        *buff;
 
     /*
@@ -393,11 +397,11 @@ linenum SplitUpLine( linenum cl )
         /*
          * get current line
          */
-        CurrentLineNumber = cl+extra;
+        CurrentLineNumber = cl + extra;
         CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
         GetCurrentLine();
 
-        for( i=0;i<=WorkLine->len;i++ ) {
+        for( i = 0; i <= WorkLine->len; i++ ) {
             /*
              * found a place to split.  make this line shorter,
              * and create a new line with the rest of the data
@@ -406,13 +410,13 @@ linenum SplitUpLine( linenum cl )
             if( WorkLine->data[i] == SPLIT_CHAR ) {
                 buff = StaticAlloc();
                 k = 0;
-                for( j=i+1;j<=WorkLine->len;j++ ) {
+                for( j = i + 1; j <= WorkLine->len; j++ ) {
                     buff[k++] = WorkLine->data[j];
                 }
                 WorkLine->data[i] = 0;
                 WorkLine->len = i;
                 ReplaceCurrentLine();
-                AddNewLineAroundCurrent( buff,k-1, INSERT_AFTER );
+                AddNewLineAroundCurrent( buff, k - 1, INSERT_AFTER );
                 extra++;
                 StaticFree( buff );
                 break;
@@ -423,12 +427,10 @@ linenum SplitUpLine( linenum cl )
              */
             if( WorkLine->data[i] == 0 ) {
                 ReplaceCurrentLine();
-                UndoInsert( cl+1, cl+extra, UndoStack );
+                UndoInsert( cl + 1, cl + extra, UndoStack );
                 return( extra );
             }
-
         }
-
     }
 
 } /* SplitUpLine */

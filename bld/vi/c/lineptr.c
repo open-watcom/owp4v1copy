@@ -41,6 +41,7 @@
 int CGimmeLinePtr( linenum lineno, fcb **cfcb, line **cline )
 {
     return( GimmeLinePtr( lineno, CurrentFile, cfcb, cline ) );
+
 } /* CGimmeLinePtr */
 
 /*
@@ -70,6 +71,7 @@ int GimmeLinePtr( linenum lineno, file *cfile, fcb **cfcb, line **cline )
 int CGimmeNextLinePtr( fcb **cfcb, line **cline )
 {
     return( GimmeNextLinePtr( CurrentFile, cfcb, cline ) );
+
 } /* CGimmeNextLinePtr */
 
 /*

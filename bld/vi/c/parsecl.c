@@ -39,15 +39,16 @@
 #include "parsecl.h"
 #include "ex.h"
 
-static char pDelims[]=" /!";
+static char pDelims[] = " /!";
 
 /*
  * ParseCommandLine - parse a command line
  */
-int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2flag,  int *token, char *data, int *dammit )
+int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2flag,
+                      int *token, char *data, int *dammit )
 {
-    char        *tres,*tmp;
-    int         i,rc,j,k;
+    char        *tres, *tmp;
+    int         i, rc, j, k;
     linenum     l;
 
     /*
@@ -119,7 +120,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
             *n1 = l;
             RemoveLeadingSpaces( buff );
             if( buff[0] == ',' ) {
-                EliminateFirstN( buff,1 );
+                EliminateFirstN( buff, 1 );
                 RemoveLeadingSpaces( buff );
                 rc = GetAddress( buff, &l );
                 if( rc > 0 ) {
@@ -136,7 +137,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
                     *n2 = *n1;
                     *n1 = l;
                 } else {
-                    *n2=l;
+                    *n2 = l;
                 }
             }
         }
@@ -146,7 +147,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
      * check for system token
      */
     if( buff[0] == '!' ) {
-        strcpy( data, buff+1 );
+        strcpy( data, buff + 1 );
         *token = PCL_T_SYSTEM;
         return( ERR_NO_ERR );
     }
@@ -158,12 +159,12 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
         return( ERR_NO_ERR );
     }
     if( !CheckAlias( tres, tmp ) ) {
-        j = strlen(tmp);
-        k = strlen(buff);
-        for( i=k;i>=0;i-- ) {
-            buff[i+j] = buff[i];
+        j = strlen( tmp );
+        k = strlen( buff );
+        for( i = k; i >= 0; i-- ) {
+            buff[i + j] = buff[i];
         }
-        for( i=0;i<j;i++ ) {
+        for( i = 0; i < j; i++ ) {
             buff[i] = tmp[i];
         }
         if( NextWord( buff, tres, pDelims ) < 0 ) {
@@ -172,7 +173,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
     }
 
     if( buff[0] == '!' ) {
-        EliminateFirstN( buff,1 );
+        EliminateFirstN( buff, 1 );
         *dammit = TRUE;
     } else {
         *dammit = FALSE;
@@ -200,23 +201,23 @@ int GetAddress( char *buff, linenum *num  )
     char        currnum[NUM_STACK_SIZE];
     linenum     sum;
     int         numptr;
-    int         k,nument,csign,numsign;
-    int         i,j;
-    bool        numinprog,stopnum,endparse;
+    int         k, nument, csign, numsign;
+    int         i, j;
+    bool        numinprog, stopnum, endparse;
     char        c;
-    char        *tmp,st[2];
-    int         rc,col,len,fl;
+    char        *tmp, st[2];
+    int         rc, col, len, fl;
     linenum     s;
 
     /*
      * check if we have a numeric type thingy here
      */
     c = buff[0];
-    if( !(c=='/' || c=='?' || c=='+' || c == '-' || c== '\'' ||
-                c == '.' || c == '$' || (c >= '0' && c <= '9') ) ) {
+    if( !(c == '/' || c == '?' || c == '+' || c == '-' || c == '\'' ||
+        c == '.' || c == '$' || (c >= '0' && c <= '9')) ) {
         return( NO_NUMBER );
     }
-    if( c =='+' || c =='-' ) {
+    if( c == '+' || c == '-' ) {
         sum = CurrentLineNumber;
     } else {
         sum = 0;
@@ -228,87 +229,92 @@ int GetAddress( char *buff, linenum *num  )
     while( !endparse ) {
         c = buff[k];
         if( c >= '0' && c <= '9' ) {
-            currnum[numptr++]=c;
-            numinprog=TRUE;
-        } else switch( c ) {
-        case '/': case '?': {
-            if( numinprog ) {
-                return( NO_NUMBER );
-            }
-            tmp = StaticAlloc();
-            st[0] = c;
-            st[1] = 0;
-            NextWord( &buff[k], tmp, st );
-            if( c == '?' ) {
-                fl = FINDFL_BACKWARDS | FINDFL_NEXTLINE;
-            }
-            else fl = FINDFL_FORWARD | FINDFL_NEXTLINE;
-            rc = GetFind( tmp, &s, &col, &len, fl );
-            numstack[nument] = s;
-            stopnum = TRUE;
-            StaticFree( tmp );
-            if( rc ) {
-                return( rc );
-            }
-            if( buff[k] == 0 ) {
-                k--;
-            }
-            break;
-        }
+            currnum[numptr++] = c;
+            numinprog = TRUE;
+        } else {
+            switch( c ) {
+            case '/':
+            case '?':
+                {
+                    if( numinprog ) {
+                        return( NO_NUMBER );
+                    }
+                    tmp = StaticAlloc();
+                    st[0] = c;
+                    st[1] = 0;
+                    NextWord( &buff[k], tmp, st );
+                    if( c == '?' ) {
+                        fl = FINDFL_BACKWARDS | FINDFL_NEXTLINE;
+                    } else {
+                        fl = FINDFL_FORWARD | FINDFL_NEXTLINE;
+                    }
+                    rc = GetFind( tmp, &s, &col, &len, fl );
+                    numstack[nument] = s;
+                    stopnum = TRUE;
+                    StaticFree( tmp );
+                    if( rc ) {
+                        return( rc );
+                    }
+                    if( buff[k] == 0 ) {
+                        k--;
+                    }
+                    break;
+                }
 
-        case '\'':
-            if( numinprog ) {
-                return( NO_NUMBER );
-            }
-            j = buff[k+1]-'a';
-            i = VerifyMark( j+1, TRUE );
-            if( i ) {
-                return( i );
-            }
-            numstack[nument] = MarkList[j].lineno;
-            stopnum = TRUE;
-            k++;
-            break;
-        case '+':
-            csign = 1;
-            if( numinprog ) {
+            case '\'':
+                if( numinprog ) {
+                    return( NO_NUMBER );
+                }
+                j = buff[k + 1] - 'a';
+                i = VerifyMark( j + 1, TRUE );
+                if( i ) {
+                    return( i );
+                }
+                numstack[nument] = MarkList[j].lineno;
                 stopnum = TRUE;
-            } else {
-                numsign=1;
-            }
-            break;
-        case '-':
-            if( numinprog ) {
-                stopnum = TRUE;
-                csign = -1;
-            } else {
-                numsign = -1;
+                k++;
+                break;
+            case '+':
                 csign = 1;
-            }
-            break;
-        case '.':
-            if( numinprog ) {
-                return( NO_NUMBER );
-            }
-            numstack[nument] = CurrentLineNumber;
-            stopnum = TRUE;
-            break;
-        case '$':
-            if( numinprog ) {
-                return( NO_NUMBER );
-            }
-            i = CFindLastLine( &numstack[nument] );
-            if( i ) {
-                return( i );
-            }
-            stopnum = TRUE;
-            break;
-        default:
-            endparse = TRUE;
-            if( numinprog ) {
+                if( numinprog ) {
+                    stopnum = TRUE;
+                } else {
+                    numsign = 1;
+                }
+                break;
+            case '-':
+                if( numinprog ) {
+                    stopnum = TRUE;
+                    csign = -1;
+                } else {
+                    numsign = -1;
+                    csign = 1;
+                }
+                break;
+            case '.':
+                if( numinprog ) {
+                    return( NO_NUMBER );
+                }
+                numstack[nument] = CurrentLineNumber;
                 stopnum = TRUE;
+                break;
+            case '$':
+                if( numinprog ) {
+                    return( NO_NUMBER );
+                }
+                i = CFindLastLine( &numstack[nument] );
+                if( i ) {
+                    return( i );
+                }
+                stopnum = TRUE;
+                break;
+            default:
+                endparse = TRUE;
+                if( numinprog ) {
+                    stopnum = TRUE;
+                }
+                break;
             }
-            break;
         }
         if( !endparse ) {
             k++;
@@ -320,7 +326,7 @@ int GetAddress( char *buff, linenum *num  )
         if( stopnum && numinprog ) {
             currnum[numptr] = 0;
             numptr = 0;
-            numstack[nument] = atol(currnum);
+            numstack[nument] = atol( currnum );
             numinprog = FALSE;
         }
         if( stopnum ) {
@@ -330,11 +336,10 @@ int GetAddress( char *buff, linenum *num  )
             csign = 1;
             stopnum = FALSE;
         }
-
     }
     EliminateFirstN( buff, k );
 
-    for( i=0;i<nument;i++ ) {
+    for( i = 0; i < nument; i++ ) {
         sum += numstack[i];
     }
 

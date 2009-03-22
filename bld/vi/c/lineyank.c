@@ -39,14 +39,14 @@
 int YankLineRange( linenum s, linenum e )
 {
     int i;
-    fcb *s1fcb,*e1fcb;
+    fcb *s1fcb, *e1fcb;
 
-    i = GetCopyOfLineRange( s,e, &s1fcb, &e1fcb );
+    i = GetCopyOfLineRange( s, e, &s1fcb, &e1fcb );
     if( i ) {
         return( i );
     }
-    AddFcbsToSavebuf( s1fcb,e1fcb, FALSE );
-    LineYankMessage( s,e );
+    AddFcbsToSavebuf( s1fcb, e1fcb, FALSE );
+    LineYankMessage( s, e );
     return( ERR_NO_ERR );
 
 } /* YankLineRange */
@@ -56,11 +56,11 @@ int YankLineRange( linenum s, linenum e )
  */
 int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
 {
-    int         i,j,k;
+    int         i, j, k;
     file        *cfile;
     linenum     ll;
-    fcb         *sfcb,*efcb;
-    fcb         *head=NULL,*tail=NULL;
+    fcb         *sfcb, *efcb;
+    fcb         *head = NULL, *tail = NULL;
 
     /*
      * check line range
@@ -68,7 +68,7 @@ int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
     if( EditFlags.Modeless == FALSE ) {
         UnselectRegion();
     }
-    if( s<1 ) {
+    if( s < 1 ) {
         return( ERR_NO_SUCH_LINE );
     }
     if( s > e ) {
@@ -84,7 +84,7 @@ int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
     if( i ) {
         return( i );
     }
-    i = FindFcbWithLine( e+1, CurrentFile, &efcb );
+    i = FindFcbWithLine( e + 1, CurrentFile, &efcb );
     if( i ) {
         if( i != ERR_NO_SUCH_LINE ) {
             return( i );
@@ -116,7 +116,7 @@ int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
     if( k > 0 ) {
         return( k );
     }
-    i = FindFcbWithLine( e+1, cfile, &efcb );
+    i = FindFcbWithLine( e + 1, cfile, &efcb );
     if( i ) {
         if( i != ERR_NO_SUCH_LINE )  {
             return( i );
@@ -126,7 +126,7 @@ int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
             return( i );
         }
     }
-    j = SplitFcbAtLine( e+1, cfile, efcb );
+    j = SplitFcbAtLine( e + 1, cfile, efcb );
     if( j > 0 ) {
         return( j );
     }
@@ -134,7 +134,7 @@ int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
     /*
      * select appropriate part of split fcbs
      */
-    if( k== NO_SPLIT_CREATED_AT_START_LINE ) {
+    if( k == NO_SPLIT_CREATED_AT_START_LINE ) {
         *s1fcb = head;
     } else {
         *s1fcb = head->next;
@@ -170,11 +170,14 @@ int GetCopyOfLineRange( linenum s, linenum e, fcb **s1fcb, fcb **e1fcb )
  */
 void LineYankMessage( linenum s, linenum e )
 {
-    #ifdef __WIN__
-        if( LastSavebuf == 0 ) {
-            Message1( "%l lines copied into the clipboard",e-s+1 );
-        } else
-    #endif
-    Message1( "%l lines yanked into buffer %c",e-s+1, LastSavebuf );
+#ifdef __WIN__
+    if( LastSavebuf == 0 ) {
+        Message1( "%l lines copied into the clipboard", e - s + 1 );
+    } else {
+#endif
+        Message1( "%l lines yanked into buffer %c", e - s + 1, LastSavebuf );
+#ifdef __WIN__
+    }
+#endif
 
 } /* LineYankMessage */

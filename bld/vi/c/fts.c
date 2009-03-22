@@ -45,7 +45,7 @@ static  ft_src  *ftsTail;
  */
 int FTSStart( char *data )
 {
-    char        template_data[ MAX_STR ];
+    char        template_data[MAX_STR];
     template_ll *templatePtr;
     ft_src      *fts, *ftsOld;
 
@@ -56,26 +56,27 @@ int FTSStart( char *data )
         templatePtr = MemAlloc( sizeof( template_ll ) +
                                 strlen( template_data ) ); // +1 not needed
         strcpy( templatePtr->data, template_data );
-        AddLLItemAtEnd( (ss**)&fts->template_head,
-                        (ss**)&fts->template_tail, (ss*)templatePtr );
+        AddLLItemAtEnd( (ss **)&fts->template_head,
+                        (ss **)&fts->template_tail, (ss *)templatePtr );
     }
 
     if( ftsOld = FTSMatchTemplate( fts->template_head ) ) {
         FTSKill( ftsOld );
     }
-    AddLLItemAtEnd( (ss**)&ftsHead, (ss**)&ftsTail, (ss*)fts );
+    AddLLItemAtEnd( (ss **)&ftsHead, (ss **)&ftsTail, (ss *)fts );
 
     EditFlags.FileTypeSource = TRUE;
 
     return( ERR_NO_ERR );
-}
+
+} /* FTSStart */
 
 /*
  * FTSAddCmd - add a 1-line command to the current (tail) fts
  */
 int FTSAddCmd( char *data, int setkilled )
 {
-    char    cmd_data[ MAX_STR ];
+    char    cmd_data[MAX_STR];
     cmd_ll  *cmd;
 
     assert( ftsTail );
@@ -92,53 +93,58 @@ int FTSAddCmd( char *data, int setkilled )
     cmd = MemAlloc( sizeof( cmd_ll ) + strlen( cmd_data ) );
     strcpy( cmd->data, cmd_data );
 
-    AddLLItemAtEnd( (ss**)&ftsTail->cmd_head, (ss**)&ftsTail->cmd_tail, (ss*)cmd );
+    AddLLItemAtEnd( (ss **)&ftsTail->cmd_head, (ss **)&ftsTail->cmd_tail, (ss *)cmd );
 
     return( ERR_NO_ERR );
-}
+
+} /* FTSAddCmd */
 
 /*
  * FTSAddBoolean - add a boolean set to the current (tail) fts
  */
 int FTSAddBoolean( bool val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ] = "set ";
+    char    cmd[MAX_SRC_LINE] = "set ";
     if( !val ) {
         strcat( cmd, "no" );
     }
     strcat( cmd, name );
     return( FTSAddCmd( cmd, 0 ) );
-}
+
+} /* FTSAddBoolean */
 
 /*
  * FTSAddInt - add an integral set to the current (tail) fts
  */
 int FTSAddInt( int val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ];
+    char    cmd[MAX_SRC_LINE];
     sprintf( cmd, "set %s %d", name, val );
     return( FTSAddCmd( cmd, 0 ) );
-}
+
+} /* FTSAddInt */
 
 /*
  * FTSAddChar - add a character set to the current (tail) fts
  */
 int FTSAddChar( char val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ];
+    char    cmd[MAX_SRC_LINE];
     sprintf( cmd, "set %s %c", name, val );
     return( FTSAddCmd( cmd, 0 ) );
-}
+
+} /* FTSAddChar */
 
 /*
  * FTSAddStr - add a string set to the current (tail) fts
  */
 int FTSAddStr( char *val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ];
+    char    cmd[MAX_SRC_LINE];
     sprintf( cmd, "set %s %s", name, val );
     return( FTSAddCmd( cmd, 0 ) );
-}
+
+} /* FTSAddStr */
 
 /*
  * FTSEnd - done with this filetypesource entry
@@ -147,11 +153,12 @@ int FTSEnd( void )
 {
     EditFlags.FileTypeSource = FALSE;
     return( ERR_NO_ERR );
-}
+
+} /* FTSEnd */
 
 int runCmds( ft_src *fts )
 {
-    char    cmd_data[ MAX_STR ];
+    char    cmd_data[MAX_STR];
     int     rc;
     cmd_ll  *cmd;
 
@@ -210,7 +217,8 @@ int FTSRunCmds( char *name )
     EditFlags.DisplayHold = oldHold;
 
     return( ERR_NO_ERR );
-}
+
+} /* FTSRunCmds */
 
 /*
  * FTSGetFirst - return first fts entry
@@ -218,7 +226,8 @@ int FTSRunCmds( char *name )
 ft_src *FTSGetFirst( void )
 {
     return( ftsHead );
-}
+
+} /* FTSGetFirst */
 
 /*
  * FTSGetNext - return entry after given
@@ -229,7 +238,8 @@ ft_src *FTSGetNext( ft_src *this )
         return( this->next );
     }
     return( this );
-}
+
+} /* FTSGetNext */
 
 /*
  * FTSGetFirstTemplate - return 1st entry of template linked list
@@ -237,7 +247,8 @@ ft_src *FTSGetNext( ft_src *this )
 template_ll *FTSGetFirstTemplate( ft_src *this )
 {
     return( this->template_head );
-}
+
+} /* FTSGetFirstTemplate */
 
 /*
  * FTSGetNextTemplate - return next entry in template linked list
@@ -248,7 +259,8 @@ template_ll *FTSGetNextTemplate( template_ll *this )
         return( this->next );
     }
     return( this );
-}
+
+} /* FTSGetNextTemplate */
 
 /*
  * FTSBarfData - generate source for current state
@@ -279,7 +291,8 @@ void FTSBarfData( FILE *f )
 
         fts = fts->next;
     }
-}
+
+} /* FTSBarfData */
 
 /*
  * FTSMatchTemplate - return fts of an existing entry with given template list
@@ -306,7 +319,8 @@ ft_src *FTSMatchTemplate( template_ll *template_head )
         fts = fts->next;
     }
     return( NULL );
-}
+
+} /* FTSMatchTemplate */
 
 void deleteTemplateList( template_ll *template_head )
 {
@@ -324,7 +338,7 @@ void deleteTemplateList( template_ll *template_head )
  */
 ft_src *FTSMatchTemplateData( char *data )
 {
-    char            template_data[ MAX_STR ];
+    char            template_data[MAX_STR];
     template_ll     *templatePtr;
     template_ll     *template_head, *template_tail;
     ft_src          *fts;
@@ -335,7 +349,8 @@ ft_src *FTSMatchTemplateData( char *data )
         templatePtr = MemAlloc( sizeof( template_ll ) +
                                 strlen( template_data ) ); // +1 not needed
         strcpy( templatePtr->data, template_data );
-        AddLLItemAtEnd( (ss**)&template_head, (ss**)&template_tail, (ss*)templatePtr );
+        AddLLItemAtEnd( (ss **)&template_head, (ss **)&template_tail,
+                        (ss *)templatePtr );
     }
 
     fts = FTSMatchTemplate( template_head );
@@ -344,13 +359,14 @@ ft_src *FTSMatchTemplateData( char *data )
     deleteTemplateList( template_head );
 
     return( fts );
-}
+
+} /* FTSMatchTemplateData */
 
 void FTSKill( ft_src *fts )
 {
     cmd_ll      *cmd, *cmdnext;
 
-    DeleteLLItem( (ss**)&ftsHead, (ss**)&ftsTail, (ss*)fts );
+    DeleteLLItem( (ss **)&ftsHead, (ss **)&ftsTail, (ss *)fts );
 
     deleteTemplateList( fts->template_head );
 
@@ -375,7 +391,8 @@ void FTSInit( void )
 {
     ftsHead = NULL;
     ftsTail = NULL;
-}
+
+} /* FTSInit */
 
 /*
  * FTSFini - call at program startup
@@ -385,5 +402,6 @@ void FTSFini( void )
     while( ftsHead ) {
         FTSKill( ftsHead );
     }
-}
+
+} /* FTSFini */
 

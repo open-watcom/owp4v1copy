@@ -41,13 +41,13 @@
 #include "source.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winrtns.h"
+    #include "winrtns.h"
 #endif
 
 static event *nextEvent( void )
 {
     LastEvent = GetNextEvent( TRUE );
-    return( &EventList[ LastEvent ] );
+    return( &EventList[LastEvent] );
 }
 
 static void defaultRange( range *range )
@@ -89,7 +89,7 @@ static int doOperator( event *ev )
         next = nextEvent();
         // a count is the only thing allowed to interfere between an op and
         // its argument so we just keep chewing...
-        if( next != &EventList[ '0' ] ) {
+        if( next != &EventList['0'] ) {
             while( next->b.is_number ) {
                 if( EditFlags.Modeless ) {
                     next->alt_rtn.old();
@@ -124,12 +124,12 @@ static int doOperator( event *ev )
              * - even better kludge: if we are currently on white
              *   space, then treat 'cw' as 'cw'. arrrrr. cge.
              */
-            if( (ev == &EventList[ 'c' ] || ev == &EventList[ VI_KEY(ALT_F1) ]) &&
+            if( (ev == &EventList['c'] || ev == &EventList[VI_KEY( ALT_F1 )]) &&
                         LastEvent == 'w' ) {
                 EditFlags.IsChangeWord = TRUE;
                 if( CurrentLine != NULL ) {
-                    if( !isspace( CurrentLine->data[CurrentColumn-1] ) ) {
-                        next = &EventList[ 'e' ];
+                    if( !isspace( CurrentLine->data[CurrentColumn - 1] ) ) {
+                        next = &EventList['e'];
                         range.fix_range = FALSE;
                     }
                 }
@@ -225,7 +225,7 @@ static void ensureCursorDisplayed( void )
         len = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
         if( CurrentLineNumber < TopOfPage ||
             CurrentLineNumber > TopOfPage + len - 1 ) {
-                SetCurrentLine( CurrentLineNumber );
+            SetCurrentLine( CurrentLineNumber );
         }
 
         wc = VirtualCursorPosition() - LeftColumn;
@@ -253,7 +253,7 @@ int DoLastEvent( void )
                     return( DoKeyMap( LastEvent ) );
                 }
             }
-            event = &EventList[ LastEvent ];
+            event = &EventList[LastEvent];
             keep_sel = event->b.keep_selection;
             if( event->b.keep_selection_maybe ) {
                 if( SelRgn.selected ) {
@@ -366,13 +366,13 @@ void EditMain( void )
      */
     while( TRUE ) {
 
-    #if 0
-    #ifdef __WIN__
+#if 0
+#ifdef __WIN__
         PushMode();
         UpdateFiles();
         PopMode();
-    #endif
-    #endif
+#endif
+#endif
         if( !EditFlags.InsertModeActive || EditFlags.Modeless ) {
             if( EditFlags.Modeless ) {
                 UpdateEditStatus();
@@ -392,9 +392,9 @@ void EditMain( void )
                 }
             } else {
                 DCUpdateAll();
-                #ifdef __WIN__
-                    SetWindowCursorForReal();
-                #endif
+#ifdef __WIN__
+                SetWindowCursorForReal();
+#endif
                 LastEvent = GetNextEvent( TRUE );
             }
             EditFlags.NoCapsLock = FALSE;
@@ -408,9 +408,9 @@ void EditMain( void )
                 if( EditFlags.AutoMessageClear ) {
                     ClearWindow( MessageWindow );
                 }
-                #ifndef __WIN__
-                    ResetDisplayLine();
-                #endif
+#ifndef __WIN__
+                ResetDisplayLine();
+#endif
             }
         } else {
             // Cannot do a RestoreInfo while we are in insert mode
@@ -418,9 +418,9 @@ void EditMain( void )
             // do something stupid on us... PushMode/PopMode solution
             // not working yet... this needs a little work
             DCUpdate();
-            #ifdef __WIN__
-                SetWindowCursorForReal();
-            #endif
+#ifdef __WIN__
+            SetWindowCursorForReal();
+#endif
             LastEvent = GetNextEvent( TRUE );
         }
 
@@ -485,7 +485,7 @@ void KillRepeatWindow( void )
  */
 void DoneRepeat( void )
 {
-    RepeatDigits=0;
+    RepeatDigits = 0;
     if( !EditFlags.MemorizeMode ) {
         DotDigits = 0;
     }
@@ -544,7 +544,7 @@ int DoDigit( void )
         return( ERR_NO_ERR );
     }
 
-    if( RepeatDigits == MAX_REPEAT_STRING-1 ) {
+    if( RepeatDigits == MAX_REPEAT_STRING - 1 ) {
         DoneRepeat();
         return( ERR_REPEAT_STRING_TOO_LONG );
     }
@@ -604,7 +604,7 @@ void Modified( bool f )
 void ResetDisplayLine( void )
 {
     if( EditFlags.ResetDisplayLine ) {
-        memcpy( WorkLine->data, CurrentLine->data, CurrentLine->len+1 );
+        memcpy( WorkLine->data, CurrentLine->data, CurrentLine->len + 1 );
         WorkLine->len = CurrentLine->len;
         DisplayWorkLine( FALSE );
         DCUpdate();

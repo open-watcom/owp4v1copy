@@ -45,11 +45,11 @@
  */
 int SrcAssign( char *data, vlist *vl )
 {
-    int         i,j,k,l,rc;
+    int         i, j, k, l, rc;
     long        val;
-    bool        rxflag=FALSE,envflag=FALSE,setflag=FALSE,expflag=FALSE;
-    bool        timeflag=FALSE,lnumflag=FALSE;
-    char        tmp[MAX_SRC_LINE],v1[MAX_SRC_LINE],name[MAX_SRC_LINE];
+    bool        rxflag = FALSE, envflag = FALSE, setflag = FALSE, expflag = FALSE;
+    bool        timeflag = FALSE, lnumflag = FALSE;
+    char        tmp[MAX_SRC_LINE], v1[MAX_SRC_LINE], name[MAX_SRC_LINE];
     char        *t;
     vars        *v;
     jmp_buf     jmpaddr;
@@ -92,7 +92,7 @@ int SrcAssign( char *data, vlist *vl )
             }
         }
         if( check_end ) {
-            EliminateFirstN( data,1 );
+            EliminateFirstN( data, 1 );
             while( data[0] != 0 ) {
                 switch( data[0] ) {
                 case 't':
@@ -114,7 +114,7 @@ int SrcAssign( char *data, vlist *vl )
                     lnumflag = TRUE;
                     break;
                 }
-                EliminateFirstN( data,1 );
+                EliminateFirstN( data, 1 );
             }
         }
         Expand( v1, vl );
@@ -123,7 +123,7 @@ int SrcAssign( char *data, vlist *vl )
             return( ERR_SRC_INVALID_ASSIGN );
         }
         j = Tokenize( StrTokens, v1, FALSE );
-        if( j>=0 ) {
+        if( j >= 0 ) {
             if( NextWord1( data, v1 ) <= 0 ) {
                 return( ERR_SRC_INVALID_ASSIGN );
             }
@@ -138,29 +138,29 @@ int SrcAssign( char *data, vlist *vl )
                 } else {
                     j = 0;
                 }
-                itoa( j,v1, 10 );
+                itoa( j, v1, 10 );
                 break;
             case STR_T_SUBSTR:
                 if( NextWord1( data, v1 ) <= 0 ) {
                     return( ERR_SRC_INVALID_ASSIGN );
                 }
                 Expand( v1, vl );
-                i = atoi( v1 )-1;
+                i = atoi( v1 ) - 1;
                 if( NextWord1( data, v1 ) <= 0 ) {
                     return( ERR_SRC_INVALID_ASSIGN );
                 }
                 Expand( v1, vl );
-                j = atoi( v1 )-1;
+                j = atoi( v1 ) - 1;
                 if( v == NULL ) {
                     v1[0] = 0;
                     break;
                 }
                 k = v->len;
                 if( j >= k || i < 0 ) {
-                    v1[0] =0;
+                    v1[0] = 0;
                 } else {
                     l = 0;
-                    for( k=i;k<=j;k++ ) {
+                    for( k = i; k <= j; k++ ) {
                         v1[l++] = v->value[k];
                     }
                     v1[l] = 0;
@@ -182,7 +182,7 @@ int SrcAssign( char *data, vlist *vl )
                     }
                     j++;
                 }
-                itoa( j,v1, 10 );
+                itoa( j, v1, 10 );
                 break;
             }
         } else {

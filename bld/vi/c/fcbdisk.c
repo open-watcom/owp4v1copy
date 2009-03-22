@@ -39,16 +39,16 @@
 
 static char swapFileName[L_tmpnam];
 
-static int swapFileOpen( void );
-static int getNewSwapFilePosition( long * );
-static int swapFileWrite( long *, int );
+static int  swapFileOpen( void );
+static int  getNewSwapFilePosition( long * );
+static int  swapFileWrite( long *, int );
 
 /*
  * SwapToDisk - swap an fcb to disk from memory
  */
 int SwapToDisk( fcb *fb )
 {
-    int i,len;
+    int i, len;
 
     /*
      * set up data
@@ -80,7 +80,7 @@ int SwapToDisk( fcb *fb )
  */
 int SwapToMemoryFromDisk( fcb *fb )
 {
-    int len,i,expect;
+    int len, i, expect;
 
     /*
      * prepare swap file
@@ -143,6 +143,7 @@ void GiveBackSwapBlock( long offset )
 {
     GiveBackBlock( offset, SwapBlocks );
     SwapBlocksInUse--;
+
 } /* GiveBackSwapBlock */
 
 /*
@@ -155,6 +156,7 @@ static int getNewSwapFilePosition( long *p )
     }
     SwapBlocksInUse++;
     return( ERR_NO_ERR );
+
 } /* getNewSwapFilePosition */
 
 /*
@@ -198,10 +200,10 @@ void SwapBlockInit( int i )
 
     if( SwapBlocks == NULL ) {
         MaxSwapBlocks = i;
-        MaxSwapBlocks /= (MAX_IO_BUFFER/1024);
+        MaxSwapBlocks /= (MAX_IO_BUFFER / 1024);
         SwapBlockArraySize = MaxSwapBlocks >> 3;
-        SwapBlocks = MemAlloc( SwapBlockArraySize+1 );
-        for( k=0;k< SwapBlockArraySize;k++ ) {
+        SwapBlocks = MemAlloc( SwapBlockArraySize + 1 );
+        for( k = 0; k < SwapBlockArraySize; k++ ) {
             SwapBlocks[k] = 0xff;
         }
     }
@@ -217,4 +219,5 @@ void SwapBlockFini( void )
     if( SwapBlocks != NULL ) {
         MemFree( SwapBlocks );
     }
+
 } /* SwapBlockFini */

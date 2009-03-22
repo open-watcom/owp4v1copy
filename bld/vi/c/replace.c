@@ -41,7 +41,7 @@
  */
 int ReplaceChar( void )
 {
-    int         key,start,end,i,ai,rc;
+    int         key, start, end, i, ai, rc;
     char        *buff;
     bool        redrawAll;
 
@@ -63,7 +63,7 @@ int ReplaceChar( void )
 
         buff = StaticAlloc();
         GetAutoIndentAmount( buff, 0, FALSE );
-        CurrentLine->data[ CurrentColumn-1 ] = (char) 1;
+        CurrentLine->data[CurrentColumn - 1] = (char) 1;
         SaveCurrentFilePos();
         SplitUpLine( CurrentLineNumber );
         RestoreCurrentFilePos();
@@ -84,7 +84,7 @@ int ReplaceChar( void )
                 WorkLine->len = i;
                 ReplaceCurrentLine();
             }
-            rc = GoToColumn( ai+1, CurrentLine->len );
+            rc = GoToColumn( ai + 1, CurrentLine->len );
             if( rc == ERR_NO_SUCH_COLUMN ) {
                 GoToColumnOK( ai );
             }
@@ -97,17 +97,17 @@ int ReplaceChar( void )
             key = '\t';
         }
         GetCurrentLine();
-        start = CurrentColumn-1;
-        end = start+(int) GetRepeatCount();
+        start = CurrentColumn - 1;
+        end = start + (int) GetRepeatCount();
         if( end > WorkLine->len ) {
             end = WorkLine->len;
         }
         redrawAll = FALSE;
-        for( i=start;i<end;i++ ) {
-            if( !redrawAll && SSKillsFlags( WorkLine->data[ i ] ) ) {
+        for( i = start; i < end; i++ ) {
+            if( !redrawAll && SSKillsFlags( WorkLine->data[i] ) ) {
                 redrawAll = TRUE;
             }
-            WorkLine->data[ i ] = (char) key;
+            WorkLine->data[i] = (char) key;
         }
         redrawAll |= SSKillsFlags( key );
         DisplayWorkLine( redrawAll );
@@ -116,7 +116,7 @@ int ReplaceChar( void )
 
     }
 
-    EditFlags.Dotable=TRUE;
+    EditFlags.Dotable = TRUE;
     return( ERR_NO_ERR );
 
 } /* ReplaceChar */

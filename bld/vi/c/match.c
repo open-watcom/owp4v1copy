@@ -58,10 +58,10 @@ int DoMatching( range *r, long count )
 int FindMatch( linenum *xln, int *xcol )
 {
     char        *match[2];
-    int         matchcnt,which,m1,m2,i;
+    int         matchcnt, which, m1, m2, i;
     linenum     ln;
     int         cl;
-    char        matchd[MAX_STR],tmp[MAX_STR];
+    char        matchd[MAX_STR], tmp[MAX_STR];
     char        *linedata;
 
     /*
@@ -69,11 +69,11 @@ int FindMatch( linenum *xln, int *xcol )
      */
     matchd[0] = '!';
     matchd[1] = 0;
-    for( i=0;i<MatchCount;i++ ) {
-        MySprintf(tmp,"(%s)",MatchData[i] );
-        strcat( matchd,tmp );
-        if( i != MatchCount-1 ) {
-            strcat( matchd,"|" );
+    for( i = 0; i < MatchCount; i++ ) {
+        MySprintf( tmp, "(%s)", MatchData[i] );
+        strcat( matchd, tmp );
+        if( i != MatchCount - 1 ) {
+            strcat( matchd, "|" );
         }
     }
 
@@ -81,7 +81,7 @@ int FindMatch( linenum *xln, int *xcol )
      * find start of match on this line
      */
     ln = CurrentLineNumber;
-    cl = CurrentColumn-1;
+    cl = CurrentColumn - 1;
 
     if( FindRegularExpression( matchd, &ln, cl, &linedata, ln, FALSE ) ) {
         return( ERR_NOTHING_TO_MATCH );
@@ -90,9 +90,9 @@ int FindMatch( linenum *xln, int *xcol )
     /*
      * find out which matched
      */
-    for( i=1;i<NSUBEXP;i++ ) {
+    for( i = 1; i < NSUBEXP; i++ ) {
         if( CurrentRegularExpression->startp[i] != NULL ) {
-            which = i-1;
+            which = i - 1;
             break;
         }
     }
@@ -102,12 +102,12 @@ int FindMatch( linenum *xln, int *xcol )
     /*
      * get appropriate array entry
      */
-    m1 = 2*(which>>1);
+    m1 = 2 * (which >> 1);
     m2 = which % 2;
-    match[0] = MatchData[ m1 ];
-    match[1] = MatchData[ m1+1 ];
+    match[0] = MatchData[m1];
+    match[1] = MatchData[m1 + 1];
     matchcnt = 1;
-    MySprintf( matchd,"!(%s)|(%s)",match[0],match[1] );
+    MySprintf( matchd, "!(%s)|(%s)", match[0], match[1] );
     i = CurrentRegComp( matchd );
     if( i ) {
         return( i );
@@ -119,29 +119,29 @@ int FindMatch( linenum *xln, int *xcol )
     while( TRUE ) {
         if( m2 ) {
             cl--;
-            if( FindRegularExpressionBackwards( NULL, &ln, cl, &linedata, -1L, FALSE) ) {
+            if( FindRegularExpressionBackwards( NULL, &ln, cl, &linedata, -1L, FALSE ) ) {
                 break;
             }
         } else {
             cl++;
-            if( FindRegularExpression( NULL, &ln, cl, &linedata, MAX_LONG, FALSE) ) {
+            if( FindRegularExpression( NULL, &ln, cl, &linedata, MAX_LONG, FALSE ) ) {
                 break;
             }
         }
         cl = GetCurrRegExpColumn( linedata );
-        if( CurrentRegularExpression->startp[m2 +1] != NULL ) {
+        if( CurrentRegularExpression->startp[m2 + 1] != NULL ) {
             matchcnt++;
         } else {
             matchcnt--;
             if( matchcnt == 0 ) {
                 *xln = ln;
-                *xcol = 1+ cl;
+                *xcol = 1 + cl;
                 return( ERR_NO_ERR );
             }
         }
     }
 
-    Error( GetErrorMsg( ERR_MATCH_NOT_FOUND ), match[ (m2==0) ] );
+    Error( GetErrorMsg( ERR_MATCH_NOT_FOUND ), match[(m2 == 0)] );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
 } /* FindMatch */
@@ -151,30 +151,31 @@ int FindMatch( linenum *xln, int *xcol )
  */
 int AddMatchString( char *data )
 {
-    char        st[MAX_STR],st2[MAX_STR];
+    char        st[MAX_STR], st2[MAX_STR];
 
-    if( MatchCount >= MAX_SEARCH_STRINGS*2-2 ) {
+    if( MatchCount >= MAX_SEARCH_STRINGS * 2 - 2 ) {
         return( ERR_TOO_MANY_MATCH_STRINGS );
     }
     RemoveLeadingSpaces( data );
-    if( NextWordSlash( data,st ) <= 0 ) {
+    if( NextWordSlash( data, st ) <= 0 ) {
         return( ERR_INVALID_MATCH );
     }
-    if( NextWordSlash( data,st2 ) <= 0 ) {
+    if( NextWordSlash( data, st2 ) <= 0 ) {
         return( ERR_INVALID_MATCH );
     }
     AddString( &(MatchData[MatchCount]), st );
-    AddString( &(MatchData[MatchCount+1]), st2 );
+    AddString( &(MatchData[MatchCount + 1]), st2 );
     MatchCount += 2;
     Message1( "match pair \"%s\"-\"%s\" added", st, st2 );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
 } /* AddMatchString */
 
-void MatchFini( void ){
+void MatchFini( void )
+{
     int i;
 
-    for( i=0; i<MatchCount; i++ ){
+    for( i = 0; i < MatchCount; i++ ){
         MemFree( MatchData[i] );
     }
 }

@@ -41,8 +41,8 @@
 #include "source.h"
 #include "mouse.h"
 #ifdef __WIN__
-#include "winvi.h"
-#include "utils.h"
+    #include "winvi.h"
+    #include "utils.h"
 #endif
 
 #define HANDLED     0
@@ -69,14 +69,14 @@ typedef struct input_buffer {
     int             curr_pos;
     int             left_column;
     int             line;
-    unsigned        overstrike:1;
+    unsigned        overstrike  : 1;
 } input_buffer;
 
 /*
  * This is half of a kluge connected with the window proc for the
  * command window under the __WIN__ environs. Puke...
  */
-bool ReadingAString = FALSE;
+bool    ReadingAString = FALSE;
 
 /*
  * General utility funtions:
@@ -103,15 +103,15 @@ static bool insertChar( input_buffer *input, int ch )
     /* if we are in overstrike more or at the end of the line... */
     if( input->overstrike ) {
         len = strlen( input->buffer ) + 1;
-        input->buffer[ input->curr_pos++ ] = ch;
+        input->buffer[input->curr_pos++] = ch;
         if( input->curr_pos == len ) {
-            input->buffer[ input->curr_pos ] = 0;
+            input->buffer[input->curr_pos] = 0;
         }
     } else {
         if( strlen( input->buffer ) >= input->buffer_length - 1 ) {
             return( FALSE );
         }
-        ptr = &input->buffer[ input->curr_pos++ ];
+        ptr = &input->buffer[input->curr_pos++];
         memmove( ptr + 1, ptr, strlen( ptr ) + 1 );
         *ptr = ch;
     }
@@ -135,7 +135,7 @@ static bool deleteChar( input_buffer *input, bool backwards )
             input->left_column -= 1;
         }
     }
-    ptr = &input->buffer[ input->curr_pos ];
+    ptr = &input->buffer[input->curr_pos];
     memmove( ptr, ptr + 1, strlen( ptr + 1 ) + 1 );
     return( TRUE );
 
@@ -143,7 +143,7 @@ static bool deleteChar( input_buffer *input, bool backwards )
 
 static void displayLine( input_buffer *input )
 {
-    char            display[ MAX_STR ];
+    char            display[MAX_STR];
     char            *buffer, *dest;
     unsigned        length;
     int             cursor_pos;
@@ -154,7 +154,7 @@ static void displayLine( input_buffer *input )
     assert( strlen( input->prompt ) < MAX_STR );
     strcpy( display, input->prompt );
     length = strlen( display );
-    dest = &display[ length ];
+    dest = &display[length];
     buffer = input->buffer + input->left_column;
     while( *buffer && length < input->window.width ) {
         *dest++ = *buffer++;
@@ -164,30 +164,30 @@ static void displayLine( input_buffer *input )
     cursor_pos = input->curr_pos - input->left_column + 1;
     cursor_pos += strlen( input->prompt );
 #ifdef __WIN__
-{
-    RECT        rect;
-    char        *ptr, *c;
-    int         len, x;
-    HWND        id;
+    {
+        RECT        rect;
+        char        *ptr, *c;
+        int         len, x;
+        HWND        id;
 
-    id = (HWND) input->window.id;
-    MyHideCaret( id );
-    GetClientRect( id, &rect );
-    // BlankRectIndirect( input->window.id, input->window.style.background, &rect );
-    c = input->cache;
-    for( len = 0, ptr = input->buffer; *ptr; ptr++, len++ ) {
-        if( *c != *ptr ) {
-            break;
+        id = (HWND) input->window.id;
+        MyHideCaret( id );
+        GetClientRect( id, &rect );
+        // BlankRectIndirect( input->window.id, input->window.style.background, &rect );
+        c = input->cache;
+        for( len = 0, ptr = input->buffer; *ptr; ptr++, len++ ) {
+            if( *c != *ptr ) {
+                break;
+            }
+            c++;
         }
-        c++;
+        x = MyTextExtent( id, &input->window.style, input->cache, len );
+        WriteString( id, x, 0, &input->window.style, display + len );
+        rect.left = MyTextExtent( id, &input->window.style, display, strlen( display ) );
+        BlankRectIndirect( id, input->window.style.background, &rect );
+        MyShowCaret( id );
+        SetCursorOnLine( input->window.id, cursor_pos, display, &input->window.style );
     }
-    x = MyTextExtent( id, &input->window.style, input->cache, len );
-    WriteString( id, x, 0, &input->window.style, display + len );
-    rect.left = MyTextExtent( id, &input->window.style, display, strlen( display ) );
-    BlankRectIndirect( id, input->window.style.background, &rect );
-    MyShowCaret( id );
-    SetCursorOnLine( input->window.id, cursor_pos, display, &input->window.style );
-}
 #else
     DisplayLineInWindowWithColor( input->window.id, input->window.line,
         display, &input->window.style, 0 );
@@ -303,7 +303,7 @@ static bool getHistory( input_buffer *input )
     char            *cmd;
 
     offset = input->curr_hist % input->history->max;
-    cmd = input->history->data[ offset ];
+    cmd = input->history->data[offset];
     if( cmd != NULL ) {
         saveStr( input );
         strcpy( input->buffer, cmd );
@@ -319,8 +319,8 @@ static bool addHistory( input_buffer *input )
     history_data    *h;
 
     h = input->history;
-    if( h != NULL && input->buffer[ 0 ] != 0 ) {
-        AddString2( &(h->data[ h->curr % h->max ] ), input->buffer );
+    if( h != NULL && input->buffer[0] != 0 ) {
+        AddString2( &(h->data[h->curr % h->max] ), input->buffer );
         h->curr += 1;
         return( TRUE );
     }
@@ -341,8 +341,8 @@ static int searchHistory( input_buffer *input, char *str, int curr )
             curr = h->curr - 1;
         }
         index = curr % h->max;
-        if( !strnicmp( str, h->data[ index ], len ) ) {
-            strcpy( input->buffer, h->data[ index ] );
+        if( !strnicmp( str, h->data[index], len ) ) {
+            strcpy( input->buffer, h->data[index] );
             endColumn( input );
             return( curr );
         }
@@ -438,12 +438,12 @@ static bool insertString( input_buffer *input, char *str )
 bool GetTextForSpecialKey( int str_max, int event, char *tmp )
 {
     int         i, l;
-    #ifndef __WIN__
+#ifndef __WIN__
     int         str_len;
-    #endif
+#endif
 
     switch( event ) {
-    #ifndef __WIN__
+#ifndef __WIN__
     /* these commands are no longer safe under windows, since events
      * don't fit into a char any more
      */
@@ -452,10 +452,10 @@ bool GetTextForSpecialKey( int str_max, int event, char *tmp )
         if( str_len > str_max ) {
             str_len = str_max;
         }
-        for( i=0; i < str_len; i++ ) {
+        for( i = 0; i < str_len; i++ ) {
             tmp[i] = (char)(AltDotBuffer[i]);
         }
-        tmp[ str_len ] = 0;
+        tmp[str_len] = 0;
         break;
     case VI_KEY( CTRL_D ):
         str_len = DotCmdCount;
@@ -465,14 +465,14 @@ bool GetTextForSpecialKey( int str_max, int event, char *tmp )
         for( i=0; i < str_len; i++ ) {
             tmp[i] = (char)(DotCmd[i]);
         }
-        tmp[ str_len ] = 0;
+        tmp[str_len] = 0;
         break;
-    #endif
+#endif
     case VI_KEY( CTRL_E ):
     case VI_KEY( CTRL_W ):
-        tmp[ 0 ] = 0;
+        tmp[0] = 0;
         GimmeCurrentWord( tmp, str_max, event == VI_KEY( CTRL_E ) );
-        tmp[ str_max ] = 0;
+        tmp[str_max] = 0;
         break;
     case VI_KEY( ALT_L ):
         i = CurrentColumn - 1;
@@ -484,8 +484,8 @@ bool GetTextForSpecialKey( int str_max, int event, char *tmp )
         if( event == VI_KEY( CTRL_L ) ) {
             i = 0;
         }
-        ExpandTabsInABuffer( &CurrentLine->data[ i ], CurrentLine->len - i,
-                tmp, str_max );
+        ExpandTabsInABuffer( &CurrentLine->data[i], CurrentLine->len - i,
+                             tmp, str_max );
         break;
     case VI_KEY( CTRL_R ):
         if( CurrentLine == NULL ) {
@@ -504,8 +504,8 @@ bool GetTextForSpecialKey( int str_max, int event, char *tmp )
                 l = SelRgn.start_col - SelRgn.end_col + 1;
             }
         }
-        ExpandTabsInABuffer( &CurrentLine->data[ i - 1 ], l, tmp, str_max );
-        tmp[ l ] = 0;
+        ExpandTabsInABuffer( &CurrentLine->data[i - 1], l, tmp, str_max );
+        tmp[l] = 0;
     default:
         return( FALSE );
     }
@@ -569,7 +569,7 @@ static int specialKeyFilter( input_buffer *input, int event )
             tmp = MemAlloc( input->buffer_length );
             assert( tmp != NULL );
             GetTextForSpecialKey( input->buffer_length - strlen( input->buffer ) - 1,
-                                        event, tmp );
+                                  event, tmp );
             saveStr( input );
             insertString( input, tmp );
             MemFree( tmp );
@@ -604,7 +604,7 @@ static bool fileComplete( input_buffer *input, int first_event )
         saveStr( input );
         old_len = strlen( input->buffer ) - 1;
         ret = StartFileComplete( input->buffer, old_len,
-                input->buffer_length, first_event );
+                                 input->buffer_length, first_event );
         if( ret > 0 ) {
             MyBeep();
         } else {
@@ -626,8 +626,8 @@ static bool fileComplete( input_buffer *input, int first_event )
                     case VI_KEY( PAGEDOWN ):
                     case VI_KEY( PAGEUP ):
                     case VI_KEY( ALT_END ):
-                        ret = ContinueFileComplete( input->buffer,
-                            old_len, input->buffer_length, event );
+                        ret = ContinueFileComplete( input->buffer, old_len,
+                                                    input->buffer_length, event );
                         if( ret ) {
                             FinishFileComplete();
                             if( ret == FILE_COMPLETE_ENTER ) {
@@ -742,8 +742,8 @@ static bool getStringInWindow( input_buffer *input )
             }
             /* fall through */
         case VI_KEY( ENTER ):
-            if( input->buffer[ 0 ] == NO_ADD_TO_HISTORY_KEY ) {
-                strcpy( &input->buffer[ 0 ], &input->buffer[ 1 ] );
+            if( input->buffer[0] == NO_ADD_TO_HISTORY_KEY ) {
+                strcpy( &input->buffer[0], &input->buffer[1] );
             } else {
                 addHistory( input );
             }
@@ -767,12 +767,12 @@ static bool getStringInWindow( input_buffer *input )
             break;
         case VI_KEY( CTRL_END ):
             saveStr( input );
-            input->buffer[ input->curr_pos ] = 0;
+            input->buffer[input->curr_pos] = 0;
             break;
         case VI_KEY( CTRL_X ):
         case VI_KEY( CTRL_U ):
             saveStr( input );
-            input->buffer[ 0 ] = 0;
+            input->buffer[0] = 0;
             endColumn( input );
             break;
         case VI_KEY( CTRL_INS ):
@@ -810,7 +810,7 @@ static bool getStringInWindow( input_buffer *input )
 } /* getStringInWindow */
 
 bool ReadStringInWindow( window_id id, int line, char *prompt, char *str,
-    int max_len, history_data *history )
+                         int max_len, history_data *history )
 {
     input_buffer        input;
     int                 rc;
@@ -823,7 +823,7 @@ bool ReadStringInWindow( window_id id, int line, char *prompt, char *str,
     input.window.line = line;
 #ifdef __WIN__
     input.cache = (char *)MemAlloc( max_len );
-    input.cache[ 0 ] = 0;
+    input.cache[0] = 0;
 #endif
     rc = getStringInWindow( &input );
 #ifdef __WIN__

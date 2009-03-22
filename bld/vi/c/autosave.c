@@ -41,8 +41,8 @@
   #define sopen3 sopen
   #define sopen4 sopen
 #else
-  #define sopen3(a,b,c)   open(a,b)
-  #define sopen4(a,b,c,d) open(a,b,d)
+  #define sopen3( a, b, c )     open( a, b )
+  #define sopen4( a, b, c, d )  open( a, b, d )
 #endif
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -52,32 +52,32 @@
 #include "source.h"
 #include "fts.h"
 #ifdef __WIN__
-#include "winrtns.h"
+  #include "winrtns.h"
 #endif
 
 /*
  * note that the lock file and the data file had better have the
  * same name length!
  */
-#define AS_LOCK         "alock_"
-#define AS_FILE         "asave_"
-#define AS_FILE_EXT     ".fil"
+#define AS_LOCK             "alock_"
+#define AS_FILE             "asave_"
+#define AS_FILE_EXT         ".fil"
 #ifdef __UNIX__
-#define EXTRA_EXT "0000_"
-#define LOCK_NAME_LEN   22
-#define EXTRA_EXT_OFF   6
-#define CHAR_OFF        16
+    #define EXTRA_EXT       "0000_"
+    #define LOCK_NAME_LEN   22
+    #define EXTRA_EXT_OFF   6
+    #define CHAR_OFF        16
 #else
-#define CHAR_OFF        6
-#define EXTRA_EXT ""
-#define LOCK_NAME_LEN   14
+    #define CHAR_OFF        6
+    #define EXTRA_EXT       ""
+    #define LOCK_NAME_LEN   14
 #endif
-#define TMP_FNAME_LEN   (TMP_NAME_LEN-6)
+#define TMP_FNAME_LEN       (TMP_NAME_LEN - 6)
 
-#define START_CHAR      'a'
-#define END_CHAR        'h'
+#define START_CHAR          'a'
+#define END_CHAR            'h'
 
-#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
+#define isWSorCtrlZ( x )    (isspace( x ) || (x == 0x1A))
 
 
 static bool     noEraseFileList;
@@ -95,16 +95,16 @@ void GetCurrentFilePath( char *path )
     vars        *v;
 
     v = VarFind( "D", NULL );
-    if( v ){
+    if( v ) {
         strcpy( path, v->value );
         v = VarFind( "P", NULL );
-        if( v ){
+        if( v ) {
             strcat( path, v->value );
             v = VarFind( "N", NULL );
-            if( v ){
+            if( v ) {
                 strcat( path, v->value );
                 v = VarFind( "E", NULL );
-                if( v ){
+                if( v ) {
                     strcat( path, v->value );
                 }
             }
@@ -127,7 +127,7 @@ static void getTmpName( char *path, char *tmpname )
         if( access( tmp, F_OK ) == -1 ) {
             break;
         }
-        for( i=0;i<TMP_FNAME_LEN;i++ ) {
+        for( i = 0; i < TMP_FNAME_LEN; i++ ) {
             currTmpName[i]++;
             if( currTmpName[i] < 'z' ) {
                 break;
@@ -192,7 +192,7 @@ void DoAutoSave( void )
         GetCurrentFilePath( path2 );
         CurrentFile->been_autosaved = TRUE;
         MakeTmpPath( tmp, checkFileName );
-        f = fopen( tmp,"a" );
+        f = fopen( tmp, "a" );
         if( f != NULL ) {
             MyFprintf( f, "%s %s\n", path, path2 );
             fclose( f );
@@ -208,7 +208,6 @@ void DoAutoSave( void )
  */
 static bool handleKey( char ch )
 {
-
     if( ch == 'i' ) {
         EditFlags.IgnoreLostFiles = TRUE;
     } else if( ch == 'r' ) {
@@ -236,15 +235,15 @@ bool LostFileCheck( void )
 
     MakeTmpPath( path, lockFileName );
     off = strlen( path ) - 5;
-    for( ch =START_CHAR;ch<=END_CHAR;ch++ ) {
-        path[ off ] = ch;
+    for( ch = START_CHAR; ch <= END_CHAR; ch++ ) {
+        path[off] = ch;
         handle = sopen3( path, O_RDONLY | O_TEXT, SH_DENYRW );
         if( handle > 0 ) {
             MakeTmpPath( path, checkFileName );
-            path[ off ] = ch;
+            path[off] = ch;
             if( access( path, F_OK ) == -1 ) {
                 MakeTmpPath( path, lockFileName );
-                path[ off ] = ch;
+                path[off] = ch;
                 close( handle );
                 handle = -1;
                 remove( path );
@@ -257,23 +256,23 @@ bool LostFileCheck( void )
         close( handle );
         if( !EditFlags.RecoverLostFiles ) {
             if( !EditFlags.IgnoreLostFiles ) {
-                #ifdef __WIN__
-                    CloseStartupDialog();
-                    ch = GetAutosaveResponse();
-                    handleKey( ch );
-                    ShowStartupDialog();
-                    return( TRUE );
-                #else
-                    SetCursorOnScreen( (int) WindMaxHeight - 1, 0 );
-                    MyPrintf( "Files have been lost since your last session, do you wish to:\n" );
-                    MyPrintf( "\ti)gnore\n\tr)ecover\n\tq)uit\n" );
-                    while( 1 ) {
-                        ch = GetKeyboard( NULL );
-                        if( handleKey( ch ) ) {
-                            return( TRUE );
-                        }
+#ifdef __WIN__
+                CloseStartupDialog();
+                ch = GetAutosaveResponse();
+                handleKey( ch );
+                ShowStartupDialog();
+                return( TRUE );
+#else
+                SetCursorOnScreen( (int) WindMaxHeight - 1, 0 );
+                MyPrintf( "Files have been lost since your last session, do you wish to:\n" );
+                MyPrintf( "\ti)gnore\n\tr)ecover\n\tq)uit\n" );
+                while( 1 ) {
+                    ch = GetKeyboard( NULL );
+                    if( handleKey( ch ) ) {
+                        return( TRUE );
                     }
-                #endif
+                }
+#endif
             } else {
                 remove( path );
                 return( FALSE );
@@ -311,34 +310,34 @@ void AutoSaveInit( void )
     /*
      * initialize tmpname
      */
-    #ifdef __UNIX__
-        strcpy( currTmpName,"aaaaaaaaaaaa.tmp" );
-    #else
-        strcpy( currTmpName,"aaaaaaaa.tmp" );
-    #endif
+#ifdef __UNIX__
+    strcpy( currTmpName,"aaaaaaaaaaaa.tmp" );
+#else
+    strcpy( currTmpName,"aaaaaaaa.tmp" );
+#endif
     pid = getpid();
     itoa( pid, path, 36 );
     len = strlen( path );
-    memcpy( &currTmpName[TMP_FNAME_LEN-len], path, len );
-    #ifdef __QNX__
+    memcpy( &currTmpName[TMP_FNAME_LEN - len], path, len );
+#ifdef __QNX__
     {
-        int     len2,len3;
-        int     nid,uid;
+        int     len2, len3;
+        int     nid, uid;
 
         nid = getnid();
         itoa( nid, path, 36 );
         len2 = strlen( path );
-        memcpy( &currTmpName[TMP_FNAME_LEN-len-len2], path, len2 );
+        memcpy( &currTmpName[TMP_FNAME_LEN - len - len2], path, len2 );
 
         uid = getuid();
         itoa( uid, path, 36 );
         len3 = strlen( path );
-        memcpy( &currTmpName[TMP_FNAME_LEN-len-len2-len3], path, len3 );
-        memcpy( &checkFileName[ EXTRA_EXT_OFF ], path, len3 );
-        memcpy( &checkFileTmpName[ EXTRA_EXT_OFF ], path, len3 );
-        memcpy( &lockFileName[ EXTRA_EXT_OFF ], path, len3 );
+        memcpy( &currTmpName[TMP_FNAME_LEN - len - len2 - len3], path, len3 );
+        memcpy( &checkFileName[EXTRA_EXT_OFF], path, len3 );
+        memcpy( &checkFileTmpName[EXTRA_EXT_OFF], path, len3 );
+        memcpy( &lockFileName[EXTRA_EXT_OFF], path, len3 );
     }
-    #endif
+#endif
 
     /*
      * check if we need to recover lost files
@@ -348,9 +347,9 @@ void AutoSaveInit( void )
         MakeTmpPath( as_path, checkFileName );
         MakeTmpPath( asl_path, lockFileName );
         off = strlen( as_path ) - 5;
-        for( ch =START_CHAR;ch<=END_CHAR;ch++ ) {
-            as_path[ off ] = ch;
-            asl_path[ off ] = ch;
+        for( ch = START_CHAR; ch <= END_CHAR; ch++ ) {
+            as_path[off] = ch;
+            asl_path[off] = ch;
             handle = sopen3( as_path, O_RDONLY | O_TEXT, SH_DENYRW );
             if( handle < 0 ) {
                 continue;
@@ -358,8 +357,9 @@ void AutoSaveInit( void )
             f = fdopen( handle, "r" );
             if( f != NULL ) {
                 while( fgets( path2, FILENAME_MAX, f ) != NULL ) {
-                    for( i = strlen( path2 ); i && isWSorCtrlZ( path2[ i - 1] ); --i )
-                        path2[ i - 1 ] = '\0';
+                    for( i = strlen( path2 ); i && isWSorCtrlZ( path2[i - 1] ); --i ) {
+                        path2[i - 1] = '\0';
+                    }
                     NextWord1( path2, path );
                     RemoveLeadingSpaces( path2 );
                     NewFile( path, FALSE );
@@ -393,8 +393,8 @@ void AutoSaveInit( void )
     MakeTmpPath( path, lockFileName );
     len = strlen( path ) - strlen( lockFileName );
     off = len + CHAR_OFF;
-    for( ch =START_CHAR;ch<=END_CHAR;ch++ ) {
-        path[ off ] = ch;
+    for( ch = START_CHAR; ch <= END_CHAR; ch++ ) {
+        path[off] = ch;
         lockFileHandle = sopen4( path, O_CREAT | O_TRUNC | O_RDWR |O_TEXT,
                                         SH_DENYRW, S_IREAD | S_IWRITE );
         if( lockFileHandle > 0 ) {
@@ -406,9 +406,10 @@ void AutoSaveInit( void )
         MyPrintf( "Error opening temp file - '%s'\n", strerror( errno ) );
         ExitEditor( -1 );
     }
-    lockFileName[ CHAR_OFF ] = ch;
-    checkFileName[ CHAR_OFF ] = ch;
-    checkFileTmpName[ CHAR_OFF ] = ch;
+    lockFileName[CHAR_OFF] = ch;
+    checkFileName[CHAR_OFF] = ch;
+    checkFileTmpName[CHAR_OFF] = ch;
+
 } /* AutoSaveInit */
 
 /*
@@ -454,7 +455,7 @@ void SetNextAutoSaveTime( void )
  */
 void RemoveFromAutoSaveList( void )
 {
-    FILE        *f,*f2;
+    FILE        *f, *f2;
     char        as_path[FILENAME_MAX];
     char        as2_path[FILENAME_MAX];
     char        path[FILENAME_MAX];
@@ -489,8 +490,9 @@ void RemoveFromAutoSaveList( void )
         return;
     }
     while( fgets( path2, FILENAME_MAX, f ) != NULL ) {
-        for( i = strlen( path2 ); i && isWSorCtrlZ( path2[ i - 1] ); --i )
-            path2[ i - 1 ] = '\0';
+        for( i = strlen( path2 ); i && isWSorCtrlZ( path2[i - 1] ); --i ) {
+            path2[i - 1] = '\0';
+        }
         NextWord1( path2, data );
         RemoveLeadingSpaces( path2 );
         if( !strcmp( path, path2 ) ) {
@@ -499,8 +501,9 @@ void RemoveFromAutoSaveList( void )
                 found = TRUE;
                 remove( path2 );
                 while( fgets( data, FILENAME_MAX, f ) != NULL ) {
-                    for( i = strlen( data ); i && isWSorCtrlZ( data[ i - 1] ); --i )
-                        data[ i - 1 ] = '\0';
+                    for( i = strlen( data ); i && isWSorCtrlZ( data[i - 1] ); --i ) {
+                        data[i - 1] = '\0';
+                    }
                     MyFprintf( f2, "%s\n", data );
                 }
                 break;

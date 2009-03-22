@@ -37,7 +37,7 @@
 /*
  * DeleteRangeOnCurrentLine - perform the deletion
  */
-int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag  )
+int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag )
 {
     int i;
 
@@ -62,16 +62,18 @@ int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag  )
     DisplayWorkLine( TRUE );
     ReplaceCurrentLine();
     CurrentLineReplaceUndoEnd( TRUE );
-    EditFlags.Dotable=TRUE;
+    EditFlags.Dotable = TRUE;
     if( savebuf_flag ) {
-        #ifdef __WIN__
-            if( LastSavebuf == 0 ) {
-                Message1( "%d characters deleted into the clipboard",
-                                ecol-scol+1 );
-            } else
-        #endif
-        Message1( "%d %s%s%c", ecol-scol+1, MSG_CHARACTERS,
-            MSG_DELETEDINTOBUFFER, LastSavebuf );
+#ifdef __WIN__
+        if( LastSavebuf == 0 ) {
+            Message1( "%d characters deleted into the clipboard", ecol - scol + 1 );
+        } else {
+#endif
+            Message1( "%d %s%s%c", ecol - scol + 1, MSG_CHARACTERS,
+                      MSG_DELETEDINTOBUFFER, LastSavebuf );
+#ifdef __WIN__
+        }
+#endif
     }
     return( ERR_NO_ERR );
 
@@ -80,7 +82,7 @@ int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag  )
 /*
  * DeleteBlockFromCurrentLine - remove chars from line, leave result in work line
  */
-int DeleteBlockFromCurrentLine( int scol, int ecol, int saveb_flag  )
+int DeleteBlockFromCurrentLine( int scol, int ecol, int saveb_flag )
 {
     int i;
 
@@ -104,10 +106,10 @@ int DeleteBlockFromCurrentLine( int scol, int ecol, int saveb_flag  )
      * remove chars
      */
     GetCurrentLine();
-    for( i=ecol+1; i <= CurrentLine->len;i++ ) {
-        WorkLine->data[ scol + (i-(ecol+1)) ] = WorkLine->data[i];
+    for( i = ecol + 1; i <= CurrentLine->len; i++ ) {
+        WorkLine->data[scol + (i - (ecol + 1))] = WorkLine->data[i];
     }
-    WorkLine->len -= (ecol-scol+1);
+    WorkLine->len -= ecol - scol + 1;
     return( ERR_NO_ERR );
 
 } /* DeleteBlockFromCurrentLine */

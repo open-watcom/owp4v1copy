@@ -44,7 +44,7 @@ void InitFileStack( void )
 {
     fDepth = 0;
     MemFree( fStack );
-    fStack = MemAlloc( MaxPush * sizeof( file_stack *) );
+    fStack = MemAlloc( MaxPush * sizeof( file_stack * ) );
 
 } /* InitFileStack */
 
@@ -70,18 +70,18 @@ int PushFileStack( void )
     len = strlen( CurrentFile->name );
 
     fs = MemAlloc( sizeof( file_stack ) + len );
-    memcpy( fs->fname, CurrentFile->name, len+1 );
+    memcpy( fs->fname, CurrentFile->name, len + 1 );
     fs->lineno = CurrentLineNumber;
     fs->col = CurrentColumn;
 
     if( fDepth == MaxPush ) {
-        for( i=1;i<MaxPush;i++ ) {
-            fStack[i-1] = fStack[i];
+        for( i = 1; i < MaxPush; i++ ) {
+            fStack[i - 1] = fStack[i];
         }
     } else {
         fDepth++;
     }
-    fStack[ fDepth-1] = fs;
+    fStack[fDepth - 1] = fs;
 
     return( ERR_NO_ERR );
 
@@ -114,8 +114,8 @@ int PopFileStack( void )
         return( ERR_FILE_STACK_EMPTY );
     }
     fDepth--;
-    fs = fStack[ fDepth ];
-    fStack[ fDepth ] = NULL;
+    fs = fStack[fDepth];
+    fStack[fDepth] = NULL;
 
     rc = EditFile( fs->fname, FALSE );
     if( rc != ERR_NO_ERR ) {

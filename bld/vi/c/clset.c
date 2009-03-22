@@ -44,13 +44,13 @@
 #include "menu.h"
 #include "source.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 #include "lang.h"
 
 static bool msgFlag;
 static bool needsRedisplay = FALSE;
-static char msgString[ MAX_STR ];
+static char msgString[MAX_STR];
 
 static void setMessage( char *msg, bool redisplay )
 {
@@ -71,231 +71,233 @@ static void putMessage( void )
  * getOneSetVal - get a single set value
  */
 static char *getOneSetVal( int token, bool isnonbool, char *tmpstr,
-                        bool want_boolstr )
+                           bool want_boolstr )
 {
-    char        *str,*fign;
+    char        *str, *fign;
     cursor_type ct;
-    int         i,j;
+    int         i, j;
 
     tmpstr[0] = 0;
     if( !isnonbool ) {
-        j=(int) ((bool *)&EditFlags)[token];
+        j = (int) ((bool *)&EditFlags)[token];
         if( want_boolstr ) {
             str = BoolStr[j];
         } else {
             str = tmpstr;
             itoa( j, tmpstr, 10 );
         }
-    } else switch( token ) {
-    case SET1_T_STATUSSECTIONS:
-        str = tmpstr;
-        *str = 0;
-        for( i=0;i<NumStatusSections; i++ ) {
-            char        buff[16];
-            itoa( StatusSections[i], buff, 10 );
-            strcat( str, buff );
-            strcat( str, " " );
-        }
-        break;
-    case SET1_T_FILEENDSTRING:
-        str = FileEndString;
-        break;
-    case SET1_T_STATUSSTRING:
-        str = StatusString;
-        break;
-    case SET1_T_TILECOLOR:
-        str = tmpstr;
-        break;
-    case SET1_T_FIGNORE:
-        fign = FIgnore;
-        str = tmpstr;
-        for( j=0;j<CurrFIgnore;j++ ) {
-            strcat( str, fign );
-            fign += EXTENSION_LENGTH;
-        }
-        break;
-    case SET1_T_GADGETSTRING:
-        str = GadgetString;
-        break;
-    case SET1_T_SHELLPROMPT:
-        str = SpawnPrompt;
-        break;
-    case SET1_T_GREPDEFAULT:
-        str = GrepDefault;
-        break;
-    case SET1_T_TMPDIR:
-        str = TmpDir;
-        break;
-    case SET1_T_WORD:
-        str = WordDefn;
-        break;
-    case SET1_T_WORDALT:
-        str = WordAltDefn;
-        break;
-    case SET1_T_FILENAME:
-        if( CurrentFile == NULL ) {
-            str = "";
-        } else {
-            str = CurrentFile->name;
-        }
-        break;
-    case SET1_T_HISTORYFILE:
-        str = HistoryFile;
-        break;
-    case SET1_T_TAGFILENAME:
-        str = TagFileName;
-        break;
-    case SET1_T_MAGICSTRING:
-        str = Majick;
-        break;
-    case SET1_T_COMMANDCURSORTYPE:
-    case SET1_T_OVERSTRIKECURSORTYPE:
-    case SET1_T_INSERTCURSORTYPE:
-        if( token == SET1_T_COMMANDCURSORTYPE ) {
-            ct = NormalCursorType;
-        } else if( token == SET1_T_OVERSTRIKECURSORTYPE ) {
-            ct = OverstrikeCursorType;
-        } else {
-            ct = InsertCursorType;
-        }
-        str = tmpstr;
-        MySprintf( tmpstr, "%d %d", ct.height, ct.width );
-        break;
-    default:
+    } else {
         switch( token ) {
-        case SET1_T_WRAPMARGIN:
-            j = WrapMargin;
-            break;
-        case SET1_T_CURSORBLINKRATE:
-            j = CursorBlinkRate;
-            break;
-        case SET1_T_MAXPUSH:
-            j = MaxPush;
-            break;
-        case SET1_T_RADIX:
-            j = Radix;
-            break;
-        case SET1_T_AUTOSAVEINTERVAL:
-            j = AutoSaveInterval;
-            break;
-        case SET1_T_LANGUAGE:
-            if( CurrentInfo == NULL ) {
-                j = LANG_NONE;
-            } else {
-                j = CurrentInfo->Language;
+        case SET1_T_STATUSSECTIONS:
+            str = tmpstr;
+            *str = 0;
+            for( i = 0; i < NumStatusSections; i++ ) {
+                char        buff[16];
+                itoa( StatusSections[i], buff, 10 );
+                strcat( str, buff );
+                strcat( str, " " );
             }
             break;
-        case SET1_T_MOUSEDCLICKSPEED:
-            j = MouseDoubleClickSpeed;
+        case SET1_T_FILEENDSTRING:
+            str = FileEndString;
             break;
-        case SET1_T_MOUSESPEED:
-            j = MouseSpeed;
+        case SET1_T_STATUSSTRING:
+            str = StatusString;
             break;
-        case SET1_T_MOUSEREPEATDELAY:
-            j = MouseRepeatDelay;
+        case SET1_T_TILECOLOR:
+            str = tmpstr;
             break;
-        case SET1_T_CURRENTSTATUSCOLUMN:
-            j = CurrentStatusColumn;
+        case SET1_T_FIGNORE:
+            fign = FIgnore;
+            str = tmpstr;
+            for( j = 0; j < CurrFIgnore; j++ ) {
+                strcat( str, fign );
+                fign += EXTENSION_LENGTH;
+            }
             break;
-        case SET1_T_ENDOFLINECHAR:
-            j = EndOfLineChar;
+        case SET1_T_GADGETSTRING:
+            str = GadgetString;
             break;
-        case SET1_T_EXITATTR:
-            j= ExitAttr;
+        case SET1_T_SHELLPROMPT:
+            str = SpawnPrompt;
             break;
-        case SET1_T_MAXSWAPK:
-            j=MaxSwapBlocks;
-            j *= (MAX_IO_BUFFER/1024);
+        case SET1_T_GREPDEFAULT:
+            str = GrepDefault;
             break;
-        case SET1_T_MAXEMSK:
+        case SET1_T_TMPDIR:
+            str = TmpDir;
+            break;
+        case SET1_T_WORD:
+            str = WordDefn;
+            break;
+        case SET1_T_WORDALT:
+            str = WordAltDefn;
+            break;
+        case SET1_T_FILENAME:
+            if( CurrentFile == NULL ) {
+                str = "";
+            } else {
+                str = CurrentFile->name;
+            }
+            break;
+        case SET1_T_HISTORYFILE:
+            str = HistoryFile;
+            break;
+        case SET1_T_TAGFILENAME:
+            str = TagFileName;
+            break;
+        case SET1_T_MAGICSTRING:
+            str = Majick;
+            break;
+        case SET1_T_COMMANDCURSORTYPE:
+        case SET1_T_OVERSTRIKECURSORTYPE:
+        case SET1_T_INSERTCURSORTYPE:
+            if( token == SET1_T_COMMANDCURSORTYPE ) {
+                ct = NormalCursorType;
+            } else if( token == SET1_T_OVERSTRIKECURSORTYPE ) {
+                ct = OverstrikeCursorType;
+            } else {
+                ct = InsertCursorType;
+            }
+            str = tmpstr;
+            MySprintf( tmpstr, "%d %d", ct.height, ct.width );
+            break;
+        default:
+            switch( token ) {
+            case SET1_T_WRAPMARGIN:
+                j = WrapMargin;
+                break;
+            case SET1_T_CURSORBLINKRATE:
+                j = CursorBlinkRate;
+                break;
+            case SET1_T_MAXPUSH:
+                j = MaxPush;
+                break;
+            case SET1_T_RADIX:
+                j = Radix;
+                break;
+            case SET1_T_AUTOSAVEINTERVAL:
+                j = AutoSaveInterval;
+                break;
+            case SET1_T_LANGUAGE:
+                if( CurrentInfo == NULL ) {
+                    j = LANG_NONE;
+                } else {
+                    j = CurrentInfo->Language;
+                }
+                break;
+            case SET1_T_MOUSEDCLICKSPEED:
+                j = MouseDoubleClickSpeed;
+                break;
+            case SET1_T_MOUSESPEED:
+                j = MouseSpeed;
+                break;
+            case SET1_T_MOUSEREPEATDELAY:
+                j = MouseRepeatDelay;
+                break;
+            case SET1_T_CURRENTSTATUSCOLUMN:
+                j = CurrentStatusColumn;
+                break;
+            case SET1_T_ENDOFLINECHAR:
+                j = EndOfLineChar;
+                break;
+            case SET1_T_EXITATTR:
+                j = ExitAttr;
+                break;
+            case SET1_T_MAXSWAPK:
+                j = MaxSwapBlocks;
+                j *= (MAX_IO_BUFFER / 1024);
+                break;
+            case SET1_T_MAXEMSK:
 #ifndef NOEMS
-            j=MaxEMSBlocks;
-            j *= (MAX_IO_BUFFER/1024);
+                j = MaxEMSBlocks;
+                j *= (MAX_IO_BUFFER / 1024);
 #else
-            j = 0;
+                j = 0;
 #endif
-            break;
-        case SET1_T_MAXXMSK:
+                break;
+            case SET1_T_MAXXMSK:
 #ifndef NOXMS
-            j=MaxXMSBlocks;
-            j *= (MAX_IO_BUFFER/1024);
+                j = MaxXMSBlocks;
+                j *= (MAX_IO_BUFFER / 1024);
 #else
-            j = 0;
+                j = 0;
 #endif
-            break;
-        case SET1_T_RESIZECOLOR:
-            j=ResizeColor;
-            break;
-        case SET1_T_MOVECOLOR:
-            j=MoveColor;
-            break;
-        case SET1_T_INACTIVEWINDOWCOLOR:
-            j=InactiveWindowColor;
-            break;
-        case SET1_T_MAXTILECOLORS:
-            j=MaxTileColors;
-            break;
-        case SET1_T_MAXWINDOWTILEX:
-            j=MaxWindowTileX;
-            break;
-        case SET1_T_MAXWINDOWTILEY:
-            j=MaxWindowTileY;
-            break;
-        case SET1_T_HARDTAB:
-            j = HardTab;
-            break;
-        case SET1_T_TABAMOUNT:
-            j = TabAmount;
-            break;
-        case SET1_T_SHIFTWIDTH:
-            j=ShiftWidth;
-            break;
-        case SET1_T_STACKK:
-            j = StackK;
-            break;
-        case SET1_T_LINENUMWINWIDTH:
-            j=LineNumWinWidth;
-            break;
-        case SET1_T_CLOCKX:
-            j=ClockX;
-            break;
-        case SET1_T_CLOCKY:
-            j=ClockY;
-            break;
-        case SET1_T_SPINX:
-            j=SpinX;
-            break;
-        case SET1_T_SPINY:
-            j=SpinY;
-            break;
-        case SET1_T_MAXCLHISTORY:
-            j=CLHist.max;
-            break;
-        case SET1_T_MAXFILTERHISTORY:
-            j=FilterHist.max;
-            break;
-        case SET1_T_MAXFINDHISTORY:
-            j=FindHist.max;
-            break;
-        case SET1_T_MAXLINELEN:
-            j=MaxLine;
-            break;
-        case SET1_T_PAGELINESEXPOSED:
-            j=PageLinesExposed;
-            break;
-        case SET1_T_TOOLBARBUTTONHEIGHT:
-            j = ToolBarButtonHeight;
-            break;
-        case SET1_T_TOOLBARBUTTONWIDTH:
-            j = ToolBarButtonWidth;
-            break;
-        case SET1_T_TOOLBARCOLOR:
-            j = ToolBarColor;
+                break;
+            case SET1_T_RESIZECOLOR:
+                j = ResizeColor;
+                break;
+            case SET1_T_MOVECOLOR:
+                j = MoveColor;
+                break;
+            case SET1_T_INACTIVEWINDOWCOLOR:
+                j = InactiveWindowColor;
+                break;
+            case SET1_T_MAXTILECOLORS:
+                j = MaxTileColors;
+                break;
+            case SET1_T_MAXWINDOWTILEX:
+                j = MaxWindowTileX;
+                break;
+            case SET1_T_MAXWINDOWTILEY:
+                j = MaxWindowTileY;
+                break;
+            case SET1_T_HARDTAB:
+                j = HardTab;
+                break;
+            case SET1_T_TABAMOUNT:
+                j = TabAmount;
+                break;
+            case SET1_T_SHIFTWIDTH:
+                j = ShiftWidth;
+                break;
+            case SET1_T_STACKK:
+                j = StackK;
+                break;
+            case SET1_T_LINENUMWINWIDTH:
+                j = LineNumWinWidth;
+                break;
+            case SET1_T_CLOCKX:
+                j = ClockX;
+                break;
+            case SET1_T_CLOCKY:
+                j = ClockY;
+                break;
+            case SET1_T_SPINX:
+                j = SpinX;
+                break;
+            case SET1_T_SPINY:
+                j = SpinY;
+                break;
+            case SET1_T_MAXCLHISTORY:
+                j = CLHist.max;
+                break;
+            case SET1_T_MAXFILTERHISTORY:
+                j = FilterHist.max;
+                break;
+            case SET1_T_MAXFINDHISTORY:
+                j = FindHist.max;
+                break;
+            case SET1_T_MAXLINELEN:
+                j = MaxLine;
+                break;
+            case SET1_T_PAGELINESEXPOSED:
+                j = PageLinesExposed;
+                break;
+            case SET1_T_TOOLBARBUTTONHEIGHT:
+                j = ToolBarButtonHeight;
+                break;
+            case SET1_T_TOOLBARBUTTONWIDTH:
+                j = ToolBarButtonWidth;
+                break;
+            case SET1_T_TOOLBARCOLOR:
+                j = ToolBarColor;
+                break;
+            }
+            itoa( j, tmpstr, 10 );
+            str = tmpstr;
             break;
         }
-        itoa( j, tmpstr, 10 );
-        str = tmpstr;
-        break;
     }
     if( str == NULL ) {
         return( "" );
@@ -313,14 +315,14 @@ int GetNewValueDialog( char *value )
     int         rc;
     char        st[MAX_STR];
     window_id   clw;
-    static char prompt[]="New:";
+    static char prompt[] = "New:";
 
     rc = NewWindow2( &clw, &setvalw_info );
     if( rc ) {
         return( rc );
     }
     WPrintfLine( clw, 1, "Old: %s", value );
-    rc = ReadStringInWindow( clw, 2, prompt, st, MAX_STR-1, NULL );
+    rc = ReadStringInWindow( clw, 2, prompt, st, MAX_STR - 1, NULL );
     CloseAWindow( clw );
     SetWindowCursor();
     KillCursor();
@@ -336,7 +338,7 @@ int GetNewValueDialog( char *value )
 
 } /* GetNewValueDialog */
 #else
-extern int GetNewValueDialog( char *);
+extern int GetNewValueDialog( char * );
 #endif
 
 /*
@@ -345,7 +347,7 @@ extern int GetNewValueDialog( char *);
 static int getAColor( char *name, int *cval )
 {
     char        fn[MAX_STR];
-    int         fg,bg;
+    int         fg, bg;
 
     if( NextWord1( name, fn ) <= 0 ) {
         return( ERR_INVALID_SET_COMMAND );
@@ -355,7 +357,7 @@ static int getAColor( char *name, int *cval )
         return( ERR_INVALID_SET_COMMAND );
     }
     bg = atoi( fn );
-    (*cval) = (fg + bg*16);
+    (*cval) = (fg + bg * 16);
     return( ERR_NO_ERR );
 
 } /* getAColor */
@@ -365,13 +367,13 @@ static int getAColor( char *name, int *cval )
  */
 static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
 {
-    char        fn[MAX_STR],str[MAX_STR],tmp[3];
+    char        fn[MAX_STR], str[MAX_STR], tmp[3];
     char        tokstr[MAX_STR];
     char        save[MAX_STR];
-    int         rc=ERR_NO_ERR;
-    int         i,clr,cval,k;
+    int         rc = ERR_NO_ERR;
+    int         i, clr, cval, k;
     bool        newset;
-    bool        set1,toggle,*ptr;
+    bool        set1, toggle, *ptr;
     jmp_buf     jmpaddr;
     cursor_type ct;
     char        *name;
@@ -426,7 +428,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
         case SET2_T_MODELESS:
             if( (newset && !EditFlags.Modeless) ||
                 (!newset && EditFlags.Modeless) ) {
-                for( k=0;k<EventCount;k++ ) {
+                for( k = 0; k < EventCount; k++ ) {
                     fptr = EventList[k].rtn.ptr;
                     eb = EventList[k].b;
                     EventList[k].rtn.ptr = EventList[k].alt_rtn.ptr;
@@ -462,9 +464,9 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             break;
         case SET2_T_STATUSINFO:
             EditFlags.StatusInfo = newset;
-        #ifdef __WIN__
+#ifdef __WIN__
             ResizeRoot();
-        #endif
+#endif
             rc = NewStatusWindow();
             break;
         case SET2_T_WINDOWGADGETS:
@@ -489,39 +491,39 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             break;
         case SET2_T_TOOLBAR:
             EditFlags.Toolbar = newset;
-            #ifdef __WIN__
-                ResizeRoot();
-            #endif
+#ifdef __WIN__
+            ResizeRoot();
+#endif
             break;
         case SET2_T_COLORBAR:
             EditFlags.Colorbar = newset;
-            #ifdef __WIN__
-                if( Root == NULL ) {
-                    EditFlags.Colorbar = FALSE;
-                } else {
-                    RefreshColorbar();
-                }
-            #endif
+#ifdef __WIN__
+            if( Root == NULL ) {
+                EditFlags.Colorbar = FALSE;
+            } else {
+                RefreshColorbar();
+            }
+#endif
             break;
         case SET2_T_SSBAR:
             EditFlags.SSbar = newset;
-            #ifdef __WIN__
-                if( Root == NULL ) {
-                    EditFlags.SSbar = FALSE;
-                } else {
-                    RefreshSSbar();
-                }
-            #endif
+#ifdef __WIN__
+            if( Root == NULL ) {
+                EditFlags.SSbar = FALSE;
+            } else {
+                RefreshSSbar();
+            }
+#endif
             break;
         case SET2_T_FONTBAR:
             EditFlags.Fontbar = newset;
-            #ifdef __WIN__
-                if( Root == NULL ) {
-                    EditFlags.Fontbar = FALSE;
-                } else {
-                    RefreshFontbar();
-                }
-            #endif
+#ifdef __WIN__
+            if( Root == NULL ) {
+                EditFlags.Fontbar = FALSE;
+            } else {
+                RefreshFontbar();
+            }
+#endif
             break;
         case SET2_T_MARKLONGLINES:
             EditFlags.MarkLongLines = newset;
@@ -564,12 +566,12 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             } else {
                 tmp[0] = 0;
             }
-            strcpy( tokstr, GetTokenString( SetTokens2,j ) );
+            strcpy( tokstr, GetTokenString( SetTokens2, j ) );
             strlwr( tokstr );
-            MySprintf( fn,"%s%s set",tmp, tokstr );
+            MySprintf( fn, "%s%s set", tmp, tokstr );
         }
         if( toggle ) {
-            strcpy( save, BoolStr[(int) newset ] );
+            strcpy( save, BoolStr[(int) newset] );
             (*winflag) += 1;
         }
 
@@ -587,7 +589,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
         RemoveLeadingSpaces( value );
         if( value[0] == '"' ) {
             k = NextWord( value, fn, "\"" );
-            EliminateFirstN( value,1 );
+            EliminateFirstN( value, 1 );
         } else {
             k = NextWord1( value, fn );
         }
@@ -631,17 +633,17 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                     break;
                 }
                 StatusSections = MemReAlloc( StatusSections,
-                                    sizeof( short ) * (NumStatusSections+1) );
-                StatusSections[ NumStatusSections ] = k;
+                                    sizeof( short ) * (NumStatusSections + 1) );
+                StatusSections[NumStatusSections] = k;
                 NumStatusSections++;
                 if( NextWord1( value, fn ) <= 0 ) {
                     break;
                 }
             }
             if( StatusSections == NULL ) {
-                MySprintf( fn,"statussections turned off" );
+                MySprintf( fn, "statussections turned off" );
             } else {
-                MySprintf( fn,"statussections set" );
+                MySprintf( fn, "statussections set" );
             }
             break;
         case SET1_T_FILEENDSTRING:
@@ -656,7 +658,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 UpdateStatusWindow();
             }
             if( msgFlag ) {
-                MySprintf( fn,"statusstring set to %s",StatusString );
+                MySprintf( fn, "statusstring set to %s", StatusString );
             }
             break;
         case SET1_T_GREPDEFAULT:
@@ -664,7 +666,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             break;
         case SET1_T_TILECOLOR:
             if( TileColors == NULL ) {
-                TileColors = (char *) MemAlloc( MaxTileColors+1 );
+                TileColors = (char *) MemAlloc( MaxTileColors + 1 );
             }
             clr = atoi( fn );
             if( clr > MaxTileColors ) {
@@ -674,16 +676,16 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             if( rc ) {
                 return( rc );
             }
-            TileColors[ clr ] = (char) cval;
+            TileColors[clr] = (char) cval;
             if( msgFlag ) {
-                MySprintf( fn,"tilecolor %d set",clr);
+                MySprintf( fn, "tilecolor %d set", clr );
             }
             break;
 
         case SET1_T_GADGETSTRING:
             SetGadgetString( fn );
             if( msgFlag ) {
-                MySprintf( fn,"gadget string set to %s",GadgetString );
+                MySprintf( fn, "gadget string set to %s", GadgetString );
             }
             ResetAllWindows();
             break;
@@ -698,32 +700,32 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 MemFree2( &FIgnore );
                 CurrFIgnore = 0;
                 if( msgFlag ) {
-                    MySprintf( fn,"fignore reset" );
+                    MySprintf( fn, "fignore reset" );
                 }
             } else {
-                FIgnore = MemReAlloc( FIgnore, EXTENSION_LENGTH * (CurrFIgnore+1 ) );
+                FIgnore = MemReAlloc( FIgnore, EXTENSION_LENGTH * (CurrFIgnore + 1) );
                 str[0] = '.';
                 str[1] = 0;
                 strcat( str, fn );
-                str[EXTENSION_LENGTH-1] = 0;
-                strcpy( &FIgnore[ EXTENSION_LENGTH*CurrFIgnore ], str );
+                str[EXTENSION_LENGTH - 1] = 0;
+                strcpy( &FIgnore[EXTENSION_LENGTH * CurrFIgnore], str );
                 CurrFIgnore++;
                 if( msgFlag ) {
-                    MySprintf( fn,"%s added to fignore",str);
+                    MySprintf( fn, "%s added to fignore", str );
                 }
             }
             break;
         case SET1_T_HISTORYFILE:
             AddString2( &HistoryFile, fn );
             if( msgFlag ) {
-                MySprintf( fn,"history file set to %s",HistoryFile );
+                MySprintf( fn, "history file set to %s", HistoryFile );
             }
             break;
 
         case SET1_T_TAGFILENAME:
             AddString2( &TagFileName, fn );
             if( msgFlag ) {
-                MySprintf( fn,"tag file name set to %s",TagFileName );
+                MySprintf( fn, "tag file name set to %s", TagFileName );
             }
             break;
 
@@ -732,7 +734,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 AddString2( &(CurrentFile->name), fn );
                 SetFileWindowTitle( CurrentWindow, CurrentInfo, TRUE );
                 if( msgFlag ) {
-                    MySprintf( fn,"filename set to %s",CurrentFile->name);
+                    MySprintf( fn, "filename set to %s", CurrentFile->name );
                 }
                 FileSPVAR();
             }
@@ -741,26 +743,26 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             AddString2( &TmpDir, fn );
             VerifyTmpDir();
             if( msgFlag ) {
-                MySprintf( fn,"tmpdir set to %s",TmpDir );
+                MySprintf( fn, "tmpdir set to %s", TmpDir );
             }
             break;
         case SET1_T_WORD:
             AddString2( &WordDefn, fn );
             InitWordSearch( WordDefn );
             if( msgFlag ) {
-                MySprintf( fn,"word set to %s",WordDefn );
+                MySprintf( fn, "word set to %s", WordDefn );
             }
             break;
         case SET1_T_WORDALT:
             AddString2( &WordAltDefn, fn );
             if( msgFlag ) {
-                MySprintf( fn,"wordalt set to %s",WordAltDefn );
+                MySprintf( fn, "wordalt set to %s", WordAltDefn );
             }
             break;
         case SET1_T_MAGICSTRING:
             SetMajickString( fn );
             if( msgFlag ) {
-                MySprintf( fn,"magicstring set to %s",Majick );
+                MySprintf( fn, "magicstring set to %s", Majick );
             }
             break;
         case SET1_T_COMMANDCURSORTYPE:
@@ -795,7 +797,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 name = "insert";
             }
             if( msgFlag ) {
-                MySprintf( fn,"%s cursor type set to %d,%d", name,
+                MySprintf( fn, "%s cursor type set to %d,%d", name,
                                 ct.height, ct.width );
             }
             break;
@@ -870,16 +872,16 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 InactiveWindowColor = i;
                 break;
             case SET1_T_TABAMOUNT:
-                TabAmount=i;
+                TabAmount = i;
                 break;
             case SET1_T_SHIFTWIDTH:
-                ShiftWidth=i;
+                ShiftWidth = i;
                 break;
             case SET1_T_PAGELINESEXPOSED:
-                PageLinesExposed=i;
+                PageLinesExposed = i;
                 break;
             case SET1_T_HARDTAB:
-                HardTab=i;
+                HardTab = i;
                 redisplay = TRUE;
                 break;
             case SET1_T_STACKK:
@@ -888,13 +890,13 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 }
                 break;
             case SET1_T_LINENUMWINWIDTH:
-                LineNumWinWidth=i;
+                LineNumWinWidth = i;
                 break;
             case SET1_T_MAXWINDOWTILEX:
-                MaxWindowTileX=i;
+                MaxWindowTileX = i;
                 break;
             case SET1_T_MAXWINDOWTILEY:
-                MaxWindowTileY=i;
+                MaxWindowTileY = i;
                 break;
             case SET1_T_MAXSWAPK:
                 SwapBlockInit( i );
@@ -919,62 +921,63 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 FindHistInit( i );
                 break;
             case SET1_T_MAXTILECOLORS:
-                MaxTileColors=i;
-                TileColors = MemReAlloc( TileColors, MaxTileColors+1 );
+                MaxTileColors = i;
+                TileColors = MemReAlloc( TileColors, MaxTileColors + 1 );
                 break;
             case SET1_T_CLOCKX:
-                ClockX=i;
+                ClockX = i;
                 GetClockStart();
                 break;
             case SET1_T_CLOCKY:
-                ClockY=i;
+                ClockY = i;
                 GetClockStart();
                 break;
             case SET1_T_SPINX:
-                SpinX=i;
+                SpinX = i;
                 GetSpinStart();
                 break;
             case SET1_T_SPINY:
-                SpinY=i;
+                SpinY = i;
                 GetSpinStart();
                 break;
             case SET1_T_MAXLINELEN:
                 /* file save fails if 1 line is > MAX_IO_BUFFER */
                 i = min( i, MAX_IO_BUFFER );
                 MaxLine = i;
-                MaxLinem1 = MaxLine-1;
+                MaxLinem1 = MaxLine - 1;
                 StaticStart();
                 /* 94/05/11 -- WorkLine was not realloced - thus too short */
-                WorkLine = MemReAlloc( WorkLine, LINE_SIZE + MaxLine+2 );
+                WorkLine = MemReAlloc( WorkLine, LINE_SIZE + MaxLine + 2 );
                 break;
             case SET1_T_TOOLBARBUTTONHEIGHT:
                 ToolBarButtonHeight = i;
-                #ifdef __WIN__
-                    ResizeRoot();
-                #endif
+#ifdef __WIN__
+                ResizeRoot();
+#endif
                 break;
             case SET1_T_TOOLBARBUTTONWIDTH:
                 ToolBarButtonWidth = i;
-                #ifdef __WIN__
-                    ResizeRoot();
-                #endif
+#ifdef __WIN__
+                ResizeRoot();
+#endif
                 break;
             case SET1_T_TOOLBARCOLOR:
                 ToolBarColor = i;
-                #ifdef __WIN__
-                    if( GetToolbarWindow() != NULL ) {
-                        InvalidateRect( GetToolbarWindow(), NULL, TRUE );
-                        UpdateWindow( GetToolbarWindow() );
-                    }
-                #endif
+#ifdef __WIN__
+                if( GetToolbarWindow() != NULL ) {
+                    InvalidateRect( GetToolbarWindow(), NULL, TRUE );
+                    UpdateWindow( GetToolbarWindow() );
+                }
+#endif
                 break;
-            default: return( ERR_INVALID_SET_COMMAND );
+            default:
+                return( ERR_INVALID_SET_COMMAND );
             }
 
             if( msgFlag ) {
-                strcpy( tokstr, GetTokenString( SetTokens1,j ) );
+                strcpy( tokstr, GetTokenString( SetTokens1, j ) );
                 strlwr( tokstr );
-                MySprintf( fn,"%s set to %d", tokstr, i );
+                MySprintf( fn, "%s set to %d", tokstr, i );
             }
             break;
         }
@@ -1038,35 +1041,30 @@ int CompareString( void const *_p1, void const *_p2 )
  */
 static int getSetInfo( char ***vals, char ***list, int *longest )
 {
-    int         i,j;
+    int         i, j;
     char        tmpstr[MAX_STR];
     set_data    **sdata;
-    int         tc,tc1,tc2;
+    int         tc, tc1, tc2;
 
     tc1 = GetNumberOfTokens( SetTokens1 );
     tc2 = GetNumberOfTokens( SetTokens2 );
-    tc = tc1+tc2;
+    tc = tc1 + tc2;
     sdata = MemAlloc( tc * sizeof( set_data * ) );
     *list = MemAlloc( tc * sizeof( char * ) );
     *vals = MemAlloc( tc * sizeof( char * ) );
 
-    for( i=0;i<tc1;i++ ) {
-
+    for( i = 0; i < tc1; i++ ) {
         sdata[i] = MemAlloc( sizeof( set_data ) );
         AddString( &(sdata[i]->setting), GetTokenString( SetTokens1, i ) );
         AddString( &(sdata[i]->val), getOneSetVal( i, TRUE, tmpstr, TRUE ) );
-
     }
-    for( i=0;i<tc2;i++ ) {
-
-        sdata[tc1+i] = MemAlloc( sizeof( set_data ) );
-        AddString( &(sdata[tc1+i]->setting), GetTokenString( SetTokens2, i ) );
-        AddString( &(sdata[tc1+i]->val), getOneSetVal( i, FALSE, tmpstr, TRUE ) );
-
-
+    for( i = 0; i < tc2; i++ ) {
+        sdata[tc1 + i] = MemAlloc( sizeof( set_data ) );
+        AddString( &(sdata[tc1 + i]->setting), GetTokenString( SetTokens2, i ) );
+        AddString( &(sdata[tc1 + i]->val), getOneSetVal( i, FALSE, tmpstr, TRUE ) );
     }
     qsort( sdata, tc, sizeof( set_data * ), CompareString );
-    for( i=0;i<tc;i++ ) {
+    for( i = 0; i < tc; i++ ) {
         (*list)[i] = sdata[i]->setting;
         (*vals)[i] = sdata[i]->val;
         MemFree( sdata[i] );
@@ -1090,14 +1088,14 @@ static int getSetInfo( char ***vals, char ***list, int *longest )
 int Set( char *name )
 {
     char        fn[MAX_STR];
-    int         rc=ERR_NO_ERR;
-    int         j,i;
-    #ifndef __WIN__
-        int     tmp,tc;
-        char    **vals=NULL;
-        char    **list;
-        int     longest;
-    #endif
+    int         rc = ERR_NO_ERR;
+    int         j, i;
+#ifndef __WIN__
+    int         tmp, tc;
+    char        **vals = NULL;
+    char        **list;
+    int         longest;
+#endif
 
     /*
      * get item to set
@@ -1106,7 +1104,7 @@ int Set( char *name )
     if( !EditFlags.ScriptIsCompiled ) {
         RemoveLeadingSpaces( name );
         j = strlen( name );
-        for( i=0;i<j;i++ ) {
+        for( i = 0; i < j; i++ ) {
             if( name[i] == '=' || name[i] == ',' ) {
                 name[i] = ' ';
             }
@@ -1117,23 +1115,23 @@ int Set( char *name )
         if( !EditFlags.WindowsStarted ) {
             return( ERR_NO_ERR );
         }
-        #ifndef __WIN__
-            tc = getSetInfo( &vals, &list, &longest );
-            tmp = setw_info.y2;
-            i = setw_info.y2 - setw_info.y1+1;
-            if( setw_info.has_border ) {
-                i -= 2;
-            }
-            if( tc < i ) {
-                setw_info.y2 -= ( i-tc );
-            }
-            rc = SelectItemAndValue( &setw_info, "Settings", list,
-                          tc, SettingSelected, 1, vals, longest+3 );
-            setw_info.y2=tmp;
-            MemFreeList( tc, vals );
-            MemFreeList( tc, list );
-            ReDisplayScreen();
-        #endif
+#ifndef __WIN__
+        tc = getSetInfo( &vals, &list, &longest );
+        tmp = setw_info.y2;
+        i = setw_info.y2 - setw_info.y1 + 1;
+        if( setw_info.has_border ) {
+            i -= 2;
+        }
+        if( tc < i ) {
+            setw_info.y2 -= (i - tc);
+        }
+        rc = SelectItemAndValue( &setw_info, "Settings", list,
+                          tc, SettingSelected, 1, vals, longest + 3 );
+        setw_info.y2 = tmp;
+        MemFreeList( tc, vals );
+        MemFreeList( tc, list );
+        ReDisplayScreen();
+#endif
         return( rc );
     } else {
         if( !EditFlags.Starting) {

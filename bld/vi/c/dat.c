@@ -40,11 +40,11 @@
  * ReadDataFile - do just that
  */
 int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
-                        bool hasvals )
+                  bool hasvals )
 {
     GENERIC_FILE        gf;
-    int                 i,dcnt,len,size;
-    char                token[MAX_STR],buff[MAX_STR];
+    int                 i, dcnt, len, size;
+    char                token[MAX_STR], buff[MAX_STR];
     char                *buffdata;
     int                 *valdata;
 
@@ -58,7 +58,7 @@ int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
     /*
      * get counts
      */
-    if( SpecialFgets( buff,MAX_STR-1,&gf ) < 0 ) {
+    if( SpecialFgets( buff, MAX_STR - 1, &gf ) < 0 ) {
         SpecialFclose( &gf );
         return( ERR_INVALID_DATA_FILE );
     }
@@ -74,7 +74,7 @@ int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
     /*
      * read all tokens
      */
-    for( i=0;i<dcnt;i++ ) {
+    for( i = 0; i < dcnt; i++ ) {
 
         len = SpecialFgets( buff, sizeof( buff ) - 1, &gf );
         if( len < 0 ) {
@@ -88,10 +88,10 @@ int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
                 return( ERR_INVALID_DATA_FILE );
             }
         } else {
-            memcpy( token, buff, len+1 );
+            memcpy( token, buff, len + 1 );
         }
         len++;
-        buffdata = MemReAlloc( buffdata, size + len + 1);
+        buffdata = MemReAlloc( buffdata, size + len + 1 );
         memcpy( &buffdata[size], token, len );
         size += len;
         buffdata[size] = 0;

@@ -43,7 +43,7 @@
  */
 int SrcNextWord( char *data, vlist *vl )
 {
-    char        v1[MAX_SRC_LINE],v2[MAX_SRC_LINE],str[MAX_STR];
+    char        v1[MAX_SRC_LINE], v2[MAX_SRC_LINE], str[MAX_STR];
     vars        *v;
 
     /*

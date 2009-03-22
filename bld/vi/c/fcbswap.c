@@ -104,7 +104,6 @@ void SwapFcb( fcb *fb )
         fb->in_memory = FALSE;
     }
 
-
     if( rc ) {
         AbandonHopeAllYeWhoEnterHere( rc );
     }
@@ -116,7 +115,7 @@ void SwapFcb( fcb *fb )
  */
 int RestoreToNormalMemory( fcb *fb, int len )
 {
-    int         used,linecnt;
+    int         used, linecnt;
     char        *buff;
     line        *cline;
     char        savech;
@@ -124,8 +123,8 @@ int RestoreToNormalMemory( fcb *fb, int len )
     /*
      * remove line data from buffer that is restored
      */
-    len -= (int) 2*(fb->end_line - fb->start_line+1 );
-    buff = &ReadBuffer[ len ];
+    len -= (int) 2 * (fb->end_line - fb->start_line + 1);
+    buff = &ReadBuffer[len];
     savech = *buff;
 
     /*

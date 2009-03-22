@@ -40,11 +40,11 @@
  */
 int DoDeleteRegion( event **ev, event **next )
 {
-    #ifdef __WIN__
-        SavebufNumber = CLIPBOARD_SAVEBUF;
-    #endif
-    *ev = &EventList[ 'd' ];
-    *next = &EventList[ 'r' ];
+#ifdef __WIN__
+    SavebufNumber = CLIPBOARD_SAVEBUF;
+#endif
+    *ev = &EventList['d'];
+    *next = &EventList['r'];
     LastEvent = 'r';
     return( ERR_NO_ERR );
 
@@ -55,8 +55,8 @@ int DoDeleteRegion( event **ev, event **next )
  */
 int DoDeleteLineEnd( event **ev, event **next )
 {
-    *ev = &EventList[ 'd' ];
-    *next = &EventList[ '$' ];
+    *ev = &EventList['d'];
+    *next = &EventList['$'];
     LastEvent = '$';
     return( ERR_NO_ERR );
 
@@ -68,12 +68,12 @@ int DoDeleteLineEnd( event **ev, event **next )
  */
 int DoDeleteCharAtCursor( event **ev, event **next )
 {
-    *ev = &EventList[ 'd' ];
+    *ev = &EventList['d'];
     if( SelRgn.selected && EditFlags.Modeless ) {
-        *next = &EventList[ 'r' ];
+        *next = &EventList['r'];
         LastEvent = 'r';
     } else {
-        *next = &EventList[ 'l'];
+        *next = &EventList['l'];
         LastEvent = 'l';
     }
     return( ERR_NO_ERR );
@@ -86,11 +86,11 @@ int DoDeleteCharAtCursor( event **ev, event **next )
  */
 int DoDeleteCharBeforeCursor( event **ev, event **next )
 {
-    *ev = &EventList[ 'd' ];
+    *ev = &EventList['d'];
     if( SelRgn.selected && EditFlags.Modeless ) {
-        *next = &EventList[ 'r' ];
+        *next = &EventList['r'];
     } else {
-        *next = &EventList[ 'h'];
+        *next = &EventList['h'];
     }
     LastEvent = ' ';
     return( ERR_NO_ERR );

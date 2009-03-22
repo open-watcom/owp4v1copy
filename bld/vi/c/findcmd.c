@@ -36,10 +36,10 @@
 #include "rxsupp.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 
-static char     *lastFind=NULL,*sStr=NULL;
+static char     *lastFind = NULL, *sStr = NULL;
 #ifdef __WIN__
 static bool     lastFindWasRegExp;
 static bool     lastFindWasCaseIgnore;
@@ -47,11 +47,11 @@ static bool     lastFindWasForward;
 static bool     lastFindWasWrap;
 #endif
 
-static linenum  lastLine=0,cLineNumber=0;
-static int      lastCol=0,cColumn=0;
+static linenum  lastLine = 0, cLineNumber = 0;
+static int      lastCol = 0, cColumn = 0;
 
-static int setLineCol( char *, linenum *, int *, int );
-static int processFind( range *, char *, int (*)( char *, long *, int *, int * ) );
+static int  setLineCol( char *, linenum *, int *, int );
+static int  processFind( range *, char *, int (*)( char *, long *, int *, int * ) );
 
 void FindCmdFini( void ){
     MemFree( lastFind );
@@ -65,16 +65,16 @@ void FindCmdFini( void ){
 void HilightSearchString( linenum lineno, int col, int slen )
 {
     if( slen > 0 ) {
-        GoToColumnOK( col+slen );
+        GoToColumnOK( col + slen );
     }
-    GoToColumnOK( col+1 );
+    GoToColumnOK( col + 1 );
     if( slen > 0 ) {
 #ifdef __WIN__
-        SetSelRegionCols( lineno, col+1, col + slen );
+        SetSelRegionCols( lineno, col + 1, col + slen );
         DCUpdate();
 #else
         DCUpdate();
-        HiliteAColumnRange( lineno, col, col+slen-1 );
+        HiliteAColumnRange( lineno, col, col + slen - 1 );
 #endif
     }
     EditFlags.ResetDisplayLine = TRUE;
@@ -116,92 +116,92 @@ int GetFindBackwards( char *st, linenum *ln1, int *col1, int *len1 )
 static int getFindString( range *r, bool is_forward, bool is_fancy, bool search_again )
 {
     int         rc;
-    char        st[MAX_INPUT_LINE+1];
+    char        st[MAX_INPUT_LINE + 1];
     char        *res;
     char        *prompt;
-    #ifdef __WIN__
-        bool            old_ci;
-        bool            old_sw;
-        bool            old_no;
-        fancy_find      ff;
-    #endif
+#ifdef __WIN__
+    bool        old_ci;
+    bool        old_sw;
+    bool        old_no;
+    fancy_find  ff;
+#endif
 
     is_fancy = is_fancy;
     search_again = search_again;
 
-    #ifdef __WIN__
-        old_ci = EditFlags.CaseIgnore;
-        old_sw = EditFlags.SearchWrap;
-        old_no = EditFlags.NoReplaceSearchString;
-        if( is_fancy ) {
-            if( lastFind != NULL ) {
-                strcpy( st, lastFind );
-                ff.use_regexp = lastFindWasRegExp;
-                ff.case_ignore = lastFindWasCaseIgnore;
-                ff.search_forward = is_forward;
-                ff.search_wrap  = lastFindWasWrap;
-            } else {
-                st[0] = 0;
-            }
-            ff.find = st;
-            ff.findlen = sizeof( st );
-            if( !search_again ) {
-                if( !GetFindStringDialog( &ff ) ) {
-                    return( ERR_NO_ERR );
-                }
-            } else {
-                EditFlags.NoReplaceSearchString = TRUE;
-            }
-
-            is_forward = ff.search_forward;
-            EditFlags.CaseIgnore = ff.case_ignore;
-            EditFlags.SearchWrap = ff.search_wrap;
-            if( !ff.use_regexp ) {
-                /* we need to add the string without any changes */
-                if( !EditFlags.NoReplaceSearchString ) {
-                    AddString2( &lastFind, st );
-                    lastFindWasRegExp = FALSE;
-                }
-                MakeExpressionNonRegular( st );
-                EditFlags.NoReplaceSearchString = TRUE;
-            }
-            res = st;
+#ifdef __WIN__
+    old_ci = EditFlags.CaseIgnore;
+    old_sw = EditFlags.SearchWrap;
+    old_no = EditFlags.NoReplaceSearchString;
+    if( is_fancy ) {
+        if( lastFind != NULL ) {
+            strcpy( st, lastFind );
+            ff.use_regexp = lastFindWasRegExp;
+            ff.case_ignore = lastFindWasCaseIgnore;
+            ff.search_forward = is_forward;
+            ff.search_wrap  = lastFindWasWrap;
         } else {
-    #endif
-            if( is_forward ) {
-                prompt = "/";
-            } else {
-                prompt = "?";
-            }
-            st[0] = prompt[0];
-            rc = PromptForString( prompt, st+1, sizeof( st )-1, &FindHist );
-            if( rc != ERR_NO_ERR ) {
-                if( rc == NO_VALUE_ENTERED ) {
-                    return( ERR_NO_ERR );
-                }
-                return( rc );
-            }
-            res = &st[1];       // skip prompt
-    #ifdef __WIN__
+            st[0] = 0;
         }
-    #endif
+        ff.find = st;
+        ff.findlen = sizeof( st );
+        if( !search_again ) {
+            if( !GetFindStringDialog( &ff ) ) {
+                return( ERR_NO_ERR );
+            }
+        } else {
+            EditFlags.NoReplaceSearchString = TRUE;
+        }
+        is_forward = ff.search_forward;
+        EditFlags.CaseIgnore = ff.case_ignore;
+        EditFlags.SearchWrap = ff.search_wrap;
+        if( !ff.use_regexp ) {
+            /* we need to add the string without any changes */
+            if( !EditFlags.NoReplaceSearchString ) {
+                AddString2( &lastFind, st );
+                lastFindWasRegExp = FALSE;
+            }
+            MakeExpressionNonRegular( st );
+            EditFlags.NoReplaceSearchString = TRUE;
+        }
+        res = st;
+    } else {
+#endif
+        if( is_forward ) {
+            prompt = "/";
+        } else {
+            prompt = "?";
+        }
+        st[0] = prompt[0];
+        rc = PromptForString( prompt, st + 1, sizeof( st ) - 1, &FindHist );
+        if( rc != ERR_NO_ERR ) {
+            if( rc == NO_VALUE_ENTERED ) {
+                return( ERR_NO_ERR );
+            }
+            return( rc );
+        }
+        res = &st[1];       // skip prompt
+#ifdef __WIN__
+    }
+#endif
 
     if( is_forward ) {
         rc = processFind( r, res, GetFindForward );
     } else {
         rc = processFind( r, res, GetFindBackwards );
     }
-    #ifdef __WIN__
-        EditFlags.NoReplaceSearchString = old_no;
-        EditFlags.CaseIgnore = old_ci;
-        EditFlags.SearchWrap = old_sw;
-        lastFindWasRegExp = ff.use_regexp;
-        lastFindWasCaseIgnore = ff.case_ignore;
-        lastFindWasForward = ff.search_forward;
-        lastFindWasWrap = ff.search_wrap;
-    #endif
+#ifdef __WIN__
+    EditFlags.NoReplaceSearchString = old_no;
+    EditFlags.CaseIgnore = old_ci;
+    EditFlags.SearchWrap = old_sw;
+    lastFindWasRegExp = ff.use_regexp;
+    lastFindWasCaseIgnore = ff.case_ignore;
+    lastFindWasForward = ff.search_forward;
+    lastFindWasWrap = ff.search_wrap;
+#endif
     EditFlags.LastSearchWasForward = is_forward;
     return( rc );
+
 } /* getFindString */
 
 /*
@@ -252,7 +252,8 @@ int FancyDoFindMisc( void )
         GoToColumnOK( r.start.column );
     }
     return( rc );
-}
+
+} /* FancyDoFindMisc */
 
 /*
  * FancyDoFind - get string and search for it
@@ -276,7 +277,7 @@ int FancyDoFind( range *r, long count )
  */
 int DoNextFindForward( range *r, long count )
 {
-    char        st=0;
+    char        st = 0;
 
     count = count;
     if( EditFlags.LastSearchWasForward ) {
@@ -292,7 +293,7 @@ int DoNextFindForward( range *r, long count )
  */
 int DoNextFindBackwards( range *r, long count )
 {
-    char        st=0;
+    char        st = 0;
 
     count = count;
     if( !EditFlags.LastSearchWasForward ) {
@@ -357,7 +358,7 @@ int DoNextFindBackwardsMisc( void )
  */
 static int processFind( range *r, char *st, int (*rtn)( char *, long *, int *, int * ) )
 {
-    int         rc,col,len;
+    int         rc, col, len;
     linenum     lineno;
 
     rc = rtn( st, &lineno, &col, &len );
@@ -378,7 +379,7 @@ static int processFind( range *r, char *st, int (*rtn)( char *, long *, int *, i
             r->start.column = col;
 
             if( rtn == &GetFindBackwards ) {
-                r->end.column-=2;
+                r->end.column -= 2;
             } else {
                 r->fix_range = TRUE;    /* fix off by 1 error */
             }
@@ -391,14 +392,14 @@ static int processFind( range *r, char *st, int (*rtn)( char *, long *, int *, i
             r->hi_end.line = lineno;
             r->hi_end.column = col + len - 1;
         }
-        #if 0
-            // This does not work if last char is end of line
-            #ifdef __WIN__
-            if( !EditFlags.Modeless ) {
-                HilightSearchString( lineno, col, len );
-            }
-            #endif
-        #endif
+#if 0
+// This does not work if last char is end of line
+#ifdef __WIN__
+        if( !EditFlags.Modeless ) {
+            HilightSearchString( lineno, col, len );
+        }
+#endif
+#endif
     }
     SaveFindRowColumn();
 
@@ -415,7 +416,7 @@ static int processFind( range *r, char *st, int (*rtn)( char *, long *, int *, i
  */
 int GetFind( char *st, linenum *ln1, int *col1, int *len1, int flag )
 {
-    int         rc,col,len;
+    int         rc, col, len;
     linenum     lineno;
     char        *linedata;
 
@@ -429,10 +430,10 @@ int GetFind( char *st, linenum *ln1, int *col1, int *len1, int flag )
     if( !rc ) {
         if( flag & FINDFL_FORWARD ) {
             rc = FindRegularExpression( sStr, &lineno, col,
-                               &linedata, MAX_LONG, EditFlags.SearchWrap );
+                &linedata, MAX_LONG, EditFlags.SearchWrap );
         } else {
             rc = FindRegularExpressionBackwards( sStr, &lineno, col,
-                                &linedata, -1, EditFlags.SearchWrap );
+                &linedata, -1, EditFlags.SearchWrap );
         }
     }
 
@@ -455,9 +456,9 @@ int GetFind( char *st, linenum *ln1, int *col1, int *len1, int flag )
     } else {
 
         if( rc == ERR_FIND_NOT_FOUND || rc == ERR_FIND_END_OF_FILE ||
-          rc == ERR_FIND_TOP_OF_FILE ) {
-            if( !(flag & FINDFL_NOERROR ) ) {
-                Error( GetErrorMsg(rc), sStr );
+            rc == ERR_FIND_TOP_OF_FILE ) {
+            if( !(flag & FINDFL_NOERROR) ) {
+                Error( GetErrorMsg( rc ), sStr );
                 rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
             }
             if( flag & FINDFL_FORWARD ) {
@@ -494,7 +495,7 @@ static int setLineCol( char *st, linenum *lineno, int *col, int flag )
             cLineNumber == CurrentLineNumber ) {
             *lineno = lastLine;
             if( flag & FINDFL_FORWARD ) {
-                *col = lastCol+1;
+                *col = lastCol + 1;
             } else {
                 *col = lastCol - 2;
             }
@@ -524,7 +525,7 @@ static int setLineCol( char *st, linenum *lineno, int *col, int flag )
      * wrap if needed
      */
     if( (flag & FINDFL_NEXTLINE) || (*col < 0) ||
-        (CurrentLine->data[ *col ] == 0 ) ) {
+        (CurrentLine->data[*col] == 0 ) ) {
         wrapped = FALSE;
         if( flag & FINDFL_FORWARD ) {
             *col = 0;
@@ -573,8 +574,8 @@ void SaveFindRowColumn( void )
  */
 int ColorFind( char *data, int findfl )
 {
-    int         rc=ERR_NO_ERR;
-    int         col,len;
+    int         rc = ERR_NO_ERR;
+    int         col, len;
     linenum     s;
     char        *buff;
 
@@ -595,12 +596,12 @@ int ColorFind( char *data, int findfl )
     rc = GetFind( buff, &s, &col, &len, FINDFL_FORWARD | findfl );
     if( !rc ) {
         GoToLineNoRelCurs( s );
-        GoToColumnOK( col+1 );
+        GoToColumnOK( col + 1 );
         DCUpdate();
-        #ifndef __WIN__
-            // Windows selects instead
-            HiliteAColumnRange( s,  col, col+len-1 );
-        #endif
+#ifndef __WIN__
+        // Windows selects instead
+        HiliteAColumnRange( s,  col, col + len - 1 );
+#endif
         EditFlags.ResetDisplayLine = TRUE;
     }
     StaticFree( buff );
@@ -625,7 +626,7 @@ int FancyDoReplace( void )
 #ifdef __WIN__
     static char *lastReplace;
     int         rc;
-    char        find[MAX_INPUT_LINE+1], replace[MAX_INPUT_LINE+1];
+    char        find[MAX_INPUT_LINE + 1], replace[MAX_INPUT_LINE + 1];
     fancy_find  ff;
     bool        is_forward = TRUE;
     bool        old_ci;
@@ -644,7 +645,7 @@ int FancyDoReplace( void )
         ff.use_regexp = lastFindWasRegExp;
         ff.case_ignore = lastFindWasCaseIgnore;
         ff.search_forward = is_forward;
-        ff.search_wrap  = lastFindWasWrap;
+        ff.search_wrap = lastFindWasWrap;
     } else {
         find[0] = 0;
     }
@@ -687,4 +688,5 @@ int FancyDoReplace( void )
 #else
     return( ERR_NO_ERR );
 #endif
+
 } /* FancyDoReplace */

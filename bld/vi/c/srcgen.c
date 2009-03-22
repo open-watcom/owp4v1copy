@@ -40,7 +40,7 @@
 #include "ex.h"
 
 static sfile    *tmpTail;
-static bool     freeSrcData,hasVar;
+static bool     freeSrcData, hasVar;
 static labels   *cLab;
 jmp_buf         GenExit;
 
@@ -66,7 +66,7 @@ static void genItem( int token, label where )
         AddString( &(tsf->data), where );
     }
 
-    InsertLLItemAfter( (ss**)&tmpTail, (ss*)tmpTail, (ss*)tsf );
+    InsertLLItemAfter( (ss **)&tmpTail, (ss *)tmpTail, (ss *)tsf );
 
 } /* genItem */
 
@@ -75,7 +75,6 @@ static void genItem( int token, label where )
  */
 void GenJmpIf( int when, label where )
 {
-
     if( !EditFlags.ScriptIsCompiled ) {
         genItem( SRC_T_GOTO, where );
         tmpTail->branchcond = when;
@@ -89,7 +88,6 @@ void GenJmpIf( int when, label where )
  */
 void GenJmp( label where )
 {
-
     genItem( SRC_T_GOTO, where );
     tmpTail->branchcond = 2;
     tmpTail->hasvar = FALSE;
@@ -108,7 +106,7 @@ void GenLabel( label where )
         abortGen( i );
     }
     tmpTail->hasvar = FALSE;
-    strcpy( where, cLab->name[cLab->cnt-1] );
+    strcpy( where, cLab->name[cLab->cnt - 1] );
 
 } /* GenLabel */
 
@@ -146,7 +144,7 @@ void GenTestCond( void )
  */
 static void genExpr( void )
 {
-    char        v1[MAX_SRC_LINE],v2[MAX_SRC_LINE],tmp[MAX_SRC_LINE];
+    char        v1[MAX_SRC_LINE], v2[MAX_SRC_LINE], tmp[MAX_SRC_LINE];
     expr_oper   oper;
 
     /*
@@ -184,7 +182,7 @@ static void genExpr( void )
     }
     if( EditFlags.CompileScript ) {
 
-        genItem( SRC_T_EXPR, StrMerge(  4,v1,SingleBlank, tmp,SingleBlank, v2 ) );
+        genItem( SRC_T_EXPR, StrMerge( 4, v1, SingleBlank, tmp, SingleBlank, v2 ) );
 
     } else {
         /*
@@ -206,7 +204,7 @@ label NewLabel( void )
     char        buff[MAX_NUM_STR];
     label       tmp;
 
-    MySprintf( buff,"_l_%l",CurrentSrcLabel++ );
+    MySprintf( buff, "_l_%l", CurrentSrcLabel++ );
     AddString( &tmp, buff );
     return( tmp );
 
@@ -218,9 +216,9 @@ label NewLabel( void )
 int PreProcess( char *fn, sfile **sf, labels *lab )
 {
     GENERIC_FILE        gf;
-    int                 i,token,k,len,dammit,rec;
+    int                 i, token, k, len, dammit, rec;
     sfile               *tsf;
-    char                tmp[MAX_SRC_LINE],tmp2[MAX_SRC_LINE];
+    char                tmp[MAX_SRC_LINE], tmp2[MAX_SRC_LINE];
     char                tmp3[MAX_SRC_LINE];
 
     /*
@@ -258,7 +256,7 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
     /*
      * process each line
      */
-    while( SpecialFgets( tmp,MAX_SRC_LINE-1,&gf ) >= 0 ) {
+    while( SpecialFgets( tmp, MAX_SRC_LINE - 1, &gf ) >= 0 ) {
 
         /*
          * prepare this line
@@ -267,15 +265,15 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
         if( !EditFlags.ScriptIsCompiled ) {
             RemoveLeadingSpaces( tmp );
             k = strlen( tmp );
-            memcpy( tmp3, tmp, k+1 );
-            if( (len=NextWord1( tmp, tmp2 )) <= 0 ) {
+            memcpy( tmp3, tmp, k + 1 );
+            if( (len = NextWord1( tmp, tmp2 )) <= 0 ) {
                 continue;
             }
             if( tmp2[0] == '#' ) {
                 continue;
             }
             hasVar = FALSE;
-            for( i=0;i<k;i++ ){
+            for( i = 0; i < k; i++ ){
                 if( tmp3[i] == '%' ) {
                     hasVar = TRUE;
                     break;
@@ -297,10 +295,9 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
             }
         } else {
             len = NextWord1( tmp, tmp2 );
-            hasVar = (bool) tmp2[0]-'0';
+            hasVar = (bool) tmp2[0] - '0';
             token = atoi( &tmp2[1] );
         }
-
 
         /*
          * process recognized tokens
@@ -347,7 +344,8 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
             case SRC_T_LOOP:
                 CSLoop();
                 break;
-            case SRC_T_ENDLOOP: case SRC_T_ENDWHILE:
+            case SRC_T_ENDLOOP:
+            case SRC_T_ENDWHILE:
                 CSEndLoop();
                 break;
             case SRC_T_WHILE:
@@ -389,9 +387,9 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
                 genItem( token, tmp );
                 continue;
             }
-            if( tmp2[ len-1 ] == '!' ) {
+            if( tmp2[len - 1] == '!' ) {
                 dammit = TRUE;
-                tmp2[ len-1 ] = 0;
+                tmp2[len - 1] = 0;
             } else {
                 dammit = FALSE;
             }
@@ -399,34 +397,60 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
             if( !EditFlags.Appending ) {
                 rec = token = Tokenize( ParseClTokens, tmp2, TRUE );
                 if( dammit && token != PCL_T_MAP ) {
-                    tmp2[ len-1 ] = '!';
+                    tmp2[len - 1] = '!';
                     token = -1;
                 }
             } else {
                 token = -1;
             }
             switch( token ) {
-            case PCL_T_COMMANDWINDOW: case PCL_T_STATUSWINDOW:
-            case PCL_T_COUNTWINDOW: case PCL_T_EDITWINDOW:
-            case PCL_T_EXTRAINFOWINDOW: case PCL_T_FILECWINDOW: case PCL_T_LINENUMBERWINDOW:
-            case PCL_T_DIRWINDOW: case PCL_T_FILEWINDOW: case PCL_T_SETWINDOW:
-            case PCL_T_SETVALWINDOW: case PCL_T_MESSAGEWINDOW:
-            case PCL_T_MENUWINDOW: case PCL_T_MENUBARWINDOW: case PCL_T_ENDWINDOW:
-            case PCL_T_SETCOLOR: case PCL_T_MATCH: case PCL_T_DIMENSION:
-            case PCL_T_BORDER: case PCL_T_HILIGHT: case PCL_T_TEXT:
-            case PCL_T_ALIAS: case PCL_T_ABBREV:
-            case PCL_T_MENU: case PCL_T_MENUITEM: case PCL_T_ENDMENU:
-            case PCL_T_WHITESPACE: case PCL_T_SELECTION:
-            case PCL_T_EOFTEXT: case PCL_T_KEYWORD:
-            case PCL_T_OCTAL: case PCL_T_HEX: case PCL_T_INTEGER:
-            case PCL_T_CHAR: case PCL_T_PREPROCESSOR: case PCL_T_SYMBOL:
-            case PCL_T_INVALIDTEXT: case PCL_T_IDENTIFIER:
-            case PCL_T_JUMPLABEL: case PCL_T_COMMENT: case PCL_T_FLOAT:
+            case PCL_T_COMMANDWINDOW:
+            case PCL_T_STATUSWINDOW:
+            case PCL_T_COUNTWINDOW:
+            case PCL_T_EDITWINDOW:
+            case PCL_T_EXTRAINFOWINDOW:
+            case PCL_T_FILECWINDOW:
+            case PCL_T_LINENUMBERWINDOW:
+            case PCL_T_DIRWINDOW:
+            case PCL_T_FILEWINDOW:
+            case PCL_T_SETWINDOW:
+            case PCL_T_SETVALWINDOW:
+            case PCL_T_MESSAGEWINDOW:
+            case PCL_T_MENUWINDOW:
+            case PCL_T_MENUBARWINDOW:
+            case PCL_T_ENDWINDOW:
+            case PCL_T_SETCOLOR:
+            case PCL_T_MATCH:
+            case PCL_T_DIMENSION:
+            case PCL_T_BORDER:
+            case PCL_T_HILIGHT:
+            case PCL_T_TEXT:
+            case PCL_T_ALIAS:
+            case PCL_T_ABBREV:
+            case PCL_T_MENU:
+            case PCL_T_MENUITEM:
+            case PCL_T_ENDMENU:
+            case PCL_T_WHITESPACE:
+            case PCL_T_SELECTION:
+            case PCL_T_EOFTEXT:
+            case PCL_T_KEYWORD:
+            case PCL_T_OCTAL:
+            case PCL_T_HEX:
+            case PCL_T_INTEGER:
+            case PCL_T_CHAR:
+            case PCL_T_PREPROCESSOR:
+            case PCL_T_SYMBOL:
+            case PCL_T_INVALIDTEXT:
+            case PCL_T_IDENTIFIER:
+            case PCL_T_JUMPLABEL:
+            case PCL_T_COMMENT:
+            case PCL_T_FLOAT:
             case PCL_T_STRING:
-            case PCL_T_FILETYPESOURCE: case PCL_T_ENDFILETYPESOURCE:
+            case PCL_T_FILETYPESOURCE:
+            case PCL_T_ENDFILETYPESOURCE:
             case PCL_T_LOCATE:
                 RemoveLeadingSpaces( tmp );
-                token += SRC_T_NULL+1;
+                token += SRC_T_NULL + 1;
                 genItem( token, tmp );
                 break;
 
@@ -435,14 +459,14 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
                 if( !dammit ) {
                     genItem( token, tmp );
                 } else {
-                    strcpy( tmp2,"! ");
+                    strcpy( tmp2, "! " );
                     strcat( tmp2, tmp );
                     genItem( token, tmp2 );
                 }
                 break;
 
             case PCL_T_SET:
-                token += SRC_T_NULL+1;
+                token += SRC_T_NULL + 1;
                 if( EditFlags.CompileScript ) {
                     WorkLine->data[0] = 0;
                     i = Set( tmp );

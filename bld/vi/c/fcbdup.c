@@ -39,7 +39,7 @@
  */
 static void duplicateFcb( fcb *cfcb, fcb **dfcb )
 {
-    line        *cline,*nline;
+    line        *cline, *nline;
 
     /*
      * get fcb and create a new one
@@ -58,7 +58,8 @@ static void duplicateFcb( fcb *cfcb, fcb **dfcb )
     cline = cfcb->line_head;
     while( cline != NULL ) {
         nline = LineAlloc( cline->data, cline->len );
-        AddLLItemAtEnd( (ss**)&((*dfcb)->line_head), (ss**)&((*dfcb)->line_tail), (ss*)nline );
+        AddLLItemAtEnd( (ss **)&((*dfcb)->line_head), (ss **)&((*dfcb)->line_tail),
+            (ss *)nline );
         cline = cline->next;
     }
 
@@ -72,12 +73,12 @@ static void duplicateFcb( fcb *cfcb, fcb **dfcb )
  */
 void CreateDuplicateFcbList( fcb *sfcb, fcb **head, fcb **tail )
 {
-    fcb *cfcb,*xfcb;
+    fcb *cfcb, *xfcb;
 
     cfcb = sfcb;
     while( cfcb != NULL ) {
         duplicateFcb( cfcb, &xfcb );
-        AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)xfcb );
+        AddLLItemAtEnd( (ss **)head, (ss **)tail, (ss *)xfcb );
         cfcb = cfcb->next;
     }
 

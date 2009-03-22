@@ -40,7 +40,7 @@
  */
 void GetCurrentLine( void )
 {
-    memcpy( WorkLine->data, CurrentLine->data, CurrentLine->len+1 );
+    memcpy( WorkLine->data, CurrentLine->data, CurrentLine->len + 1 );
     WorkLine->len = CurrentLine->len;
     CurrentLine->inf.ld.nolinedata = TRUE;
 
@@ -67,8 +67,8 @@ int ReplaceCurrentLine( void )
      */
     tmp = LineAlloc( WorkLine->data, WorkLine->len );
     tmp->inf.ld.mark = CurrentLine->inf.ld.mark;
-    ReplaceLLItem( (ss**)&CurrentFcb->line_head, (ss**)&CurrentFcb->line_tail,
-            (ss*)CurrentLine, (ss*)tmp );
+    ReplaceLLItem( (ss **)&CurrentFcb->line_head, (ss **)&CurrentFcb->line_tail,
+                   (ss *)CurrentLine, (ss *)tmp );
     MemFree( CurrentLine );
     CurrentLine = tmp;
 
@@ -92,4 +92,5 @@ void DisplayWorkLine( bool killsFlags )
         i = (int)( CurrentLineNumber - TopOfPage );
         DCDisplaySomeLines( i, i );
     }
+
 } /* DisplayWorkLine */

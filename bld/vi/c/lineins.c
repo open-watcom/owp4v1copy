@@ -57,7 +57,7 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     cfcb = fcbhead;
     e = 0;
     while( cfcb != NULL ) {
-        e += (cfcb->end_line - cfcb->start_line + 1 );
+        e += (cfcb->end_line - cfcb->start_line + 1);
         cfcb = cfcb->next;
     }
 
@@ -92,7 +92,7 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     FetchFcb( fcbhead );
     fcbhead->non_swappable = TRUE;
     fcbhead->start_line++;
-    fcbhead->byte_cnt -= ( fcbhead->line_head->len + 1 );
+    fcbhead->byte_cnt -= fcbhead->line_head->len + 1;
     tLine = fcbhead->line_head;
     fcbhead->line_head = fcbhead->line_head->next;
     fcbhead->line_head->prev = NULL;
@@ -112,6 +112,7 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     }
 
     return( ERR_NO_ERR );
+
 } /* InsertLinesAtCursor */
 
 /*
@@ -120,8 +121,8 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
 int InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
 {
     int         i;
-    fcb         *sfcb,*cfcb;
-    linenum     l,e;
+    fcb         *sfcb, *cfcb;
+    linenum     l, e;
 
     if( i = ModificationTest() ) {
         return( i );
@@ -136,7 +137,7 @@ int InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     cfcb = fcbhead;
     e = 0;
     while( cfcb != NULL ) {
-        e += (cfcb->end_line - cfcb->start_line + 1 );
+        e += cfcb->end_line - cfcb->start_line + 1;
         cfcb = cfcb->next;
     }
     e += s;
@@ -164,7 +165,7 @@ int InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
          * if we are inserting after the last fcb in the file,
          * make this block of fcbs the last set in the text
          */
-        i = FindFcbWithLine( s+1, CurrentFile, &sfcb );
+        i = FindFcbWithLine( s + 1, CurrentFile, &sfcb );
         if( i ) {
             if( i != ERR_NO_SUCH_LINE ) {
                 return( i );
@@ -178,7 +179,7 @@ int InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
          * the fcb containing the line to have text inserted
          */
         } else {
-            i = SplitFcbAtLine( s+1, CurrentFile, sfcb );
+            i = SplitFcbAtLine( s + 1, CurrentFile, sfcb );
             if( i > 0 ) {
                 return( i );
             }
@@ -246,7 +247,7 @@ int InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
         return( i );
     }
     Modified( TRUE );
-    UndoInsert( s+1,e, us );
+    UndoInsert( s + 1, e, us );
     EndUndoGroup( us );
 
     return( ERR_NO_ERR );

@@ -48,7 +48,7 @@
  */
 int NextFileDammit( void )
 {
-    info        *cinfo,*tinfo;
+    info        *cinfo, *tinfo;
     vi_ushort   lastid;
     int         dont_exit_this_time = 0;
 
@@ -68,7 +68,7 @@ int NextFileDammit( void )
             cinfo = CurrentInfo->prev;
         }
         lastid = CurrentInfo->DuplicateID;
-        MemFree( DeleteLLItem( (ss**)&InfoHead, (ss**)&InfoTail, (ss*)CurrentInfo ) );
+        MemFree( DeleteLLItem( (ss **)&InfoHead, (ss **)&InfoTail, (ss *)CurrentInfo ) );
         CurrentInfo = NULL;
 
         /*
@@ -94,10 +94,10 @@ int NextFileDammit( void )
             FreeEntireFile( CurrentFile );
             // CurrentFile = NULL;
         }
-        #ifdef __WIN__
-            CloseAChildWindow( CurrentWindow );
-            CurrentWindow = NO_WINDOW;
-        #endif
+#ifdef __WIN__
+        CloseAChildWindow( CurrentWindow );
+        CurrentWindow = NO_WINDOW;
+#endif
         dont_exit_this_time = 1;
 
     } else {
@@ -115,20 +115,22 @@ int NextFileDammit( void )
         if( EditFlags.QuitAtLastFileExit || !dont_exit_this_time ) {
             CurrentWindow = (window_id) 0;
             // EditFlags.Quiet = TRUE;
-            if( CommandBuffer ) MemFree( CommandBuffer );
+            if( CommandBuffer ) {
+                MemFree( CommandBuffer );
+            }
             QuitEditor( 0 );
         }
     }
-    #ifndef __WIN__
-     else {
-            CloseAWindow( CurrentWindow );
-            CurrentWindow = NO_WINDOW;
-     }
-    #endif
+#ifndef __WIN__
+    else {
+        CloseAWindow( CurrentWindow );
+        CurrentWindow = NO_WINDOW;
+    }
+#endif
     /*
      * now, set up with next file
      */
-    if( cinfo ){
+    if( cinfo ) {
         BringUpFile( cinfo, TRUE );
     } else {
         CurrentFile = NULL;
@@ -271,4 +273,5 @@ void BringUpFile( info *ci, bool runCmds )
         SetWindowCursorForReal();
     }
 #endif
+
 } /* BringUpFile */

@@ -46,10 +46,10 @@
  */
 static int goToLine( linenum lineno, int relcurs )
 {
-    int         i,text_lines,tl;
-    linenum     diff,cwl,nwl;
-//    linenum   s,e,hiddcnt;
-    bool        dispall,pageshift;
+    int         i, text_lines, tl;
+    linenum     diff, cwl, nwl;
+//    linenum   s, e, hiddcnt;
+    bool        dispall, pageshift;
     fcb         *cfcb;
     line        *cline;
     int         pad;
@@ -69,9 +69,9 @@ static int goToLine( linenum lineno, int relcurs )
     if( cline->inf.ld.hidden ) {
         GetHiddenRange( lineno, &s, &e );
         if( lineno > CurrentLineNumber ) {
-            lineno = e+1;
+            lineno = e + 1;
         } else {
-            lineno = s-1;
+            lineno = s - 1;
         }
         i = CGimmeLinePtr( lineno, &cfcb, &cline );
         if( i ) {
@@ -86,10 +86,10 @@ static int goToLine( linenum lineno, int relcurs )
     CurrentFcb = cfcb;
     CurrentLine = cline;
     diff = lineno - CurrentLineNumber;
-    if( diff == 0 && !EditFlags.GlobalInProgress) {
+    if( diff == 0 && !EditFlags.GlobalInProgress ) {
         return( ERR_NO_ERR );
     }
-    cwl = CurrentLineNumber - TopOfPage+1;
+    cwl = CurrentLineNumber - TopOfPage + 1;
     nwl = cwl + diff;
 
     /*
@@ -100,7 +100,7 @@ static int goToLine( linenum lineno, int relcurs )
 
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
     if( nwl < 1 || nwl > text_lines ) {
-        tl = text_lines/2;
+        tl = text_lines / 2;
         if( !relcurs ) {
             TopOfPage = lineno - tl;
         } else {
@@ -173,8 +173,15 @@ static int goToLine( linenum lineno, int relcurs )
 
 } /* goToLine */
 
-int GoToLineRelCurs( linenum lineno ) { return( goToLine( lineno, TRUE ) ); }
-int GoToLineNoRelCurs( linenum lineno ) { return( goToLine( lineno, FALSE ) ); }
+int GoToLineRelCurs( linenum lineno )
+{
+    return( goToLine( lineno, TRUE ) );
+}
+
+int GoToLineNoRelCurs( linenum lineno )
+{
+    return( goToLine( lineno, FALSE ) );
+}
 
 void SetCurrentLineNumber( linenum l )
 {
@@ -228,7 +235,7 @@ int GoToColumnOnCurrentLine( int colno )
 /*
  * GoToColumn - go to a specified column
  */
-int GoToColumn( int colno, int maxcol  )
+int GoToColumn( int colno, int maxcol )
 {
     int vc;
 
@@ -237,10 +244,10 @@ int GoToColumn( int colno, int maxcol  )
     }
 
     if( maxcol == 0 ) {
-        maxcol=1;
+        maxcol = 1;
     }
     if( colno == 0 ) {
-        colno=1;
+        colno = 1;
     }
     if( colno < 1 || colno > maxcol ) {
         return( ERR_NO_SUCH_COLUMN );
@@ -268,9 +275,9 @@ int GoToColumn( int colno, int maxcol  )
 /*
  * SetCurrentLine - reset current line after changes in current file structure
  */
-int SetCurrentLine( linenum lineno  )
+int SetCurrentLine( linenum lineno )
 {
-    int         i,text_lines;
+    int         i, text_lines;
     fcb         *cfcb;
     line        *cline;
 
@@ -286,8 +293,8 @@ int SetCurrentLine( linenum lineno  )
     CurrentFcb = cfcb;
 
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-    if( lineno < TopOfPage || lineno > ( TopOfPage + text_lines - 1 ) ) {
-        TopOfPage = lineno - text_lines/2;
+    if( lineno < TopOfPage || lineno > (TopOfPage + text_lines - 1) ) {
+        TopOfPage = lineno - text_lines / 2;
     }
     if( TopOfPage < 1 ) {
         TopOfPage = 1;
@@ -299,6 +306,7 @@ int SetCurrentLine( linenum lineno  )
     SetWindowCursor();
     DCDisplayAllLines();
     return( ERR_NO_ERR );
+
 } /* SetCurrentLine */
 
 /*
@@ -307,7 +315,7 @@ int SetCurrentLine( linenum lineno  )
  */
 int CheckLeftColumn( void )
 {
-    int diff,wc,rc=TRUE,pad;
+    int diff, wc, rc = TRUE, pad;
 
     wc = VirtualCursorPosition() - LeftColumn;
 
@@ -316,9 +324,9 @@ int CheckLeftColumn( void )
         // |diff| is already at least 1
         pad = ( EditFlags.JumpyScroll == TRUE ) ? SCROLL_HLINE - 1 : 0;
         if( diff < 0 ) {
-            LeftColumn += ( diff - pad );
+            LeftColumn += diff - pad;
         } else {
-            LeftColumn += ( diff + pad );
+            LeftColumn += diff + pad;
         }
         if( LeftColumn < 0 ) {
             LeftColumn = 0;
@@ -346,8 +354,8 @@ void ValidateCurrentColumn( void )
 
     if( CurrentColumn >= cline->len ) {
         if( (EditFlags.InsertModeActive || EditFlags.Modeless) &&
-                        CurrentColumn > cline->len ) {
-            CurrentColumn = cline->len+1;
+            CurrentColumn > cline->len ) {
+            CurrentColumn = cline->len + 1;
         } else {
             CurrentColumn = cline->len;
         }
@@ -364,11 +372,11 @@ void ValidateCurrentColumn( void )
  */
 int CheckCurrentColumn( void )
 {
-    int clen,vcp, dispall = FALSE;
+    int clen, vcp, dispall = FALSE;
 
     clen = RealLineLen( CurrentLine->data );
     if( clen == 0 ) {
-        clen=1;
+        clen = 1;
     }
     ValidateCurrentColumn();
 
@@ -379,7 +387,7 @@ int CheckCurrentColumn( void )
             CurrentColumn = RealCursorPosition( ColumnDesired );
         } else {
             if( EditFlags.InsertModeActive || EditFlags.Modeless ) {
-                CurrentColumn = CurrentLine->len+1;
+                CurrentColumn = CurrentLine->len + 1;
             } else {
                 CurrentColumn = CurrentLine->len;
             }
@@ -400,11 +408,11 @@ int CheckCurrentColumn( void )
  */
 int ShiftTab( int col, int ta )
 {
-    int i,j;
+    int i, j;
 
     col--;
-    j = col/ta;
-    i = col-j*ta;
+    j = col / ta;
+    i = col - j * ta;
     if( i == 0 && col != 0 ) {
         i = ta;
     }
@@ -446,6 +454,7 @@ int SetCurrentColumn( int newcol )
     SetWindowCursor();
     DCDisplayAllLines();
     return( ERR_NO_ERR );
+
 } /* SetCurrentColumn */
 
 /*
@@ -453,13 +462,13 @@ int SetCurrentColumn( int newcol )
  */
 int LocateCmd( char *data )
 {
-    char        tmp[ MAX_STR ];
+    char        tmp[MAX_STR];
     linenum     r;
     int         c;
     int         len;
 
 #ifdef __WIN__
-    if( BAD_ID( CurrentWindow ) ){
+    if( BAD_ID( CurrentWindow ) ) {
         return( ERR_INVALID_LOCATE );
     }
 #endif
@@ -505,4 +514,5 @@ int LocateCmd( char *data )
         SetSelRegionCols( CurrentLineNumber, c, c + len - 1 );
     }
     return( ERR_NO_ERR );
-}
+
+} /* LocateCmd */

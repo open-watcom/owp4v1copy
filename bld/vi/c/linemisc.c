@@ -53,16 +53,19 @@ int FindStartOfALine( line *cline )
 
 } /* FindStartOfALine */
 
-int FindStartOfCurrentLine( void ) { return( FindStartOfALine( CurrentLine ) ); }
+int FindStartOfCurrentLine( void )
+{
+    return( FindStartOfALine( CurrentLine ) );
+}
 
 /*
  * GenericJoinCurrentLineToNext
  */
 int GenericJoinCurrentLineToNext( bool remsp )
 {
-    line        *nline=CurrentLine;
-    fcb         *nfcb=CurrentFcb;
-    int         i,j,k;
+    line        *nline = CurrentLine;
+    fcb         *nfcb = CurrentFcb;
+    int         i, j, k;
 
     /*
      * get next line data
@@ -71,7 +74,7 @@ int GenericJoinCurrentLineToNext( bool remsp )
     if( i ) {
         return( i );
     }
-    if( CurrentLine->len+nline->len +1 >= MaxLine ) {
+    if( CurrentLine->len + nline->len + 1 >= MaxLine ) {
         return( ERR_LINE_FULL );
     }
 
@@ -84,26 +87,26 @@ int GenericJoinCurrentLineToNext( bool remsp )
     GetCurrentLine();
 
     if( remsp ) {
-        while( WorkLine->len > 0 && WorkLine->data[ WorkLine->len - 1 ] == ' ' ) {
-            WorkLine->data[ WorkLine->len - 1 ] = 0;
+        while( WorkLine->len > 0 && WorkLine->data[WorkLine->len - 1] == ' ' ) {
+            WorkLine->data[WorkLine->len - 1] = 0;
             WorkLine->len--;
         }
-        j = FindStartOfALine( nline )-1;
-        if( !(j==0 && nline->data[0] == ' ') ) {
+        j = FindStartOfALine( nline ) - 1;
+        if( !(j == 0 && nline->data[0] == ' ') ) {
             if( WorkLine->len != 0 ) {
                 WorkLine->data[WorkLine->len] = ' ';
-                k = WorkLine->len+1;
+                k = WorkLine->len + 1;
             } else {
                 k = 0;
             }
-            for( i=j;i<=nline->len;i++ ) {
-                WorkLine->data[k+i-j] = nline->data[i];
+            for( i = j; i <= nline->len; i++ ) {
+                WorkLine->data[k + i - j] = nline->data[i];
             }
         }
     } else {
         k = WorkLine->len;
-        for( i=0;i<=nline->len;i++ ) {
-            WorkLine->data[k+i] = nline->data[i];
+        for( i = 0; i <= nline->len; i++ ) {
+            WorkLine->data[k + i] = nline->data[i];
         }
     }
     WorkLine->len = strlen( WorkLine->data );
@@ -112,16 +115,16 @@ int GenericJoinCurrentLineToNext( bool remsp )
     /*
      * delete next line
      */
-    i = DeleteLineRange( CurrentLineNumber+1, CurrentLineNumber+1, 0 );
+    i = DeleteLineRange( CurrentLineNumber + 1, CurrentLineNumber + 1, 0 );
     if( i ) {
         return( i );
     }
     EndUndoGroup( UndoStack );
     if( remsp ) {
-        if( k<2 ) {
+        if( k < 2 ) {
             k = 2;
         }
-        i = GoToColumn( k-1, CurrentLine->len );
+        i = GoToColumn( k - 1, CurrentLine->len );
         if( i ) {
             return( i );
         }
@@ -136,14 +139,14 @@ int GenericJoinCurrentLineToNext( bool remsp )
  */
 int JoinCurrentLineToNext( void )
 {
-    int rc,i,j;
+    int rc, i, j;
 
     if( i = ModificationTest() ) {
         return( i );
     }
     i = (int) GetRepeatCount();
     StartUndoGroup( UndoStack );
-    for( j=0;j<i;j++ ) {
+    for( j = 0; j < i; j++ ) {
         rc = GenericJoinCurrentLineToNext( TRUE );
         if( rc ) {
             break;

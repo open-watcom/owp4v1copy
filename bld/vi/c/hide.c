@@ -41,9 +41,9 @@
  */
 int DoHideCmd( void )
 {
-    int         wasline=TRUE,rc;
-    int         scol,ecol;
-    linenum     s,e;
+    int         wasline = TRUE, rc;
+    int         scol, ecol;
+    linenum     s, e;
 
     UpdateCurrentStatus( CSTATUS_HIDE );
     rc = GetRange( 'g', &wasline, &scol, &ecol, &s, &e );
@@ -83,7 +83,7 @@ int HideLineRange( linenum s, linenum e, bool unhide )
         hideval = FALSE;
     }
 
-    for( c=s;c<=e;c++ ) {
+    for( c = s; c <= e; c++ ) {
         rc = CGimmeLinePtr( c, &cfcb, &cline );
         if( rc ) {
             return( rc );
@@ -97,7 +97,7 @@ int HideLineRange( linenum s, linenum e, bool unhide )
     } else {
         st = "hidden";
     }
-    Message1( "%l lines %s", e-s+1, st );
+    Message1( "%l lines %s", e - s + 1, st );
     EditFlags.Dotable = TRUE;
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
@@ -109,8 +109,8 @@ int HideLineRange( linenum s, linenum e, bool unhide )
  */
 void GetHiddenRange( linenum l, linenum *s, linenum *e )
 {
-    line        *cline,*oline;
-    fcb         *cfcb,*ofcb;
+    line        *cline, *oline;
+    fcb         *cfcb, *ofcb;
     int         i;
 
     (*s) = (*e) = l;
@@ -167,7 +167,7 @@ linenum GetHiddenLineBreaks( linenum s, linenum e )
     line        *cline;
     fcb         *cfcb;
     int         i;
-    linenum     cnt,s1,e1,tmp;
+    linenum     cnt, s1, e1, tmp;
 
     if( s > e ) {
         tmp = s;
@@ -183,7 +183,7 @@ linenum GetHiddenLineBreaks( linenum s, linenum e )
         }
         if( cline->inf.ld.hidden ) {
             GetHiddenRange( curr, &s1, &e1 );
-            curr = e1+1;
+            curr = e1 + 1;
             cnt++;
         } else {
             curr++;
@@ -201,7 +201,7 @@ linenum GetHiddenLineCount( linenum s, linenum e )
     line        *cline;
     fcb         *cfcb;
     int         i;
-    linenum     cnt,tmp;
+    linenum     cnt, tmp;
 
     if( s > e ) {
         tmp = s;
@@ -213,7 +213,7 @@ linenum GetHiddenLineCount( linenum s, linenum e )
         return( 0L );
     }
     cnt = 0L;
-    while( s <=e ) {
+    while( s <= e ) {
         if( cline->inf.ld.hidden ) {
             cnt++;
         }

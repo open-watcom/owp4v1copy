@@ -41,12 +41,12 @@
 #include "ex.h"
 #include "fts.h"
 
-static void finiSource( labels *, vlist *, sfile *, undo_stack * );
-static int initSource( vlist *, char *);
-static int barfScript( char *, sfile *, vlist *,int *, char *);
-static void addResidentScript( char *, sfile *, labels * );
+static void     finiSource( labels *, vlist *, sfile *, undo_stack * );
+static int      initSource( vlist *, char *);
+static int      barfScript( char *, sfile *, vlist *,int *, char *);
+static void     addResidentScript( char *, sfile *, labels * );
 static resident *residentScript( char * );
-static void finiSourceErrFile( char * );
+static void     finiSourceErrFile( char * );
 
 /*
  * Source - main driver
@@ -54,14 +54,14 @@ static void finiSourceErrFile( char * );
 int Source( char *fn, char *data, int *ln )
 {
     undo_stack  *atomic = NULL;
-    labels      *lab,lb;
+    labels      *lab, lb;
     vlist       vl;
     files       fi;
-    sfile       *sf,*curr;
+    sfile       *sf, *curr;
     char        tmp[MAX_SRC_LINE];
     char        sname[FILENAME_MAX];
-    int         i,rc;
-    bool        sicmp,wfb,ssa,exm;
+    int         i, rc;
+    bool        sicmp, wfb, ssa, exm;
     resident    *res;
     int         cTokenID;
 
@@ -130,7 +130,7 @@ int Source( char *fn, char *data, int *ln )
      * if we were compiling, dump results and go back
      */
     if( EditFlags.CompileScript ) {
-        rc = barfScript( fn, sf, &vl,ln, sname );
+        rc = barfScript( fn, sf, &vl, ln, sname );
         finiSource( lab, &vl, sf, NULL );
         return( rc );
     }
@@ -267,15 +267,15 @@ int Source( char *fn, char *data, int *ln )
             break;
 
         default:
-            #ifdef __WIN__
-                {
-                    extern bool RunWindowsCommand( char *, long *, vlist * );
-                    if( RunWindowsCommand( tmp, &LastRC, &vl ) ) {
-                        rc = LastRC;
-                        break;
-                    }
+#ifdef __WIN__
+            {
+                extern bool RunWindowsCommand( char *, long *, vlist * );
+                if( RunWindowsCommand( tmp, &LastRC, &vl ) ) {
+                    rc = LastRC;
+                    break;
                 }
-            #endif
+            }
+#endif
             if( curr->hasvar ) {
                 Expand( tmp, &vl );
             }
@@ -322,8 +322,8 @@ evil_exit:
  */
 static int initSource( vlist *vl, char *data )
 {
-    int         i,j;
-    char        tmp[MAX_SRC_LINE],name[MAX_NUM_STR],all[MAX_SRC_LINE];
+    int         i, j;
+    char        tmp[MAX_SRC_LINE], name[MAX_NUM_STR], all[MAX_SRC_LINE];
 
     all[0] = 0;
 
@@ -353,7 +353,7 @@ static int initSource( vlist *vl, char *data )
  */
 static void finiSource( labels *lab, vlist *vl, sfile *sf, undo_stack *atomic )
 {
-    sfile       *curr,*tmp;
+    sfile       *curr, *tmp;
     info        *cinfo;
 
     if( lab != NULL ) {
@@ -397,7 +397,7 @@ static void finiSource( labels *lab, vlist *vl, sfile *sf, undo_stack *atomic )
 void FileSPVAR( void )
 {
     char        path[FILENAME_MAX];
-    char        drive[_MAX_DRIVE],dir[_MAX_DIR],fname[_MAX_FNAME],ext[_MAX_EXT];
+    char        drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
     int         i;
 
     /*
@@ -417,7 +417,7 @@ void FileSPVAR( void )
     VarAddGlobalStr( "D1", drive );
     strcpy( path, drive );
     strcat( path, dir );
-    i = strlen( path ) -1 ;
+    i = strlen( path ) - 1;
     if( path[i] == FILE_SEP && i > 0 ) {
         path[i] = 0;
     }
@@ -429,7 +429,7 @@ void FileSPVAR( void )
     } else {
         path[0] = 0;
     }
-    if( path[ strlen(path)-1 ] == FILE_SEP ) {
+    if( path[strlen(path) - 1] == FILE_SEP ) {
         StrMerge( 2, path, fname, ext );
     } else {
         StrMerge( 3, path,FILE_SEP_STR, fname, ext );
@@ -444,6 +444,7 @@ void FileSPVAR( void )
 
 static char srcErrFileName[] = "__err__.vi_";
 static FILE *srcErrFile;
+
 /*
  * SourceError - dump a source error
  */
@@ -456,8 +457,7 @@ void SourceError( char *msg )
                 return;
             }
         }
-        MyFprintf( srcErrFile, "Error on line %d: \"%s\"\n",
-                    CurrentSrcLine, msg );
+        MyFprintf( srcErrFile, "Error on line %d: \"%s\"\n", CurrentSrcLine, msg );
     }
     SourceErrCount++;
 
@@ -469,7 +469,7 @@ void SourceError( char *msg )
  */
 static void finiSourceErrFile( char *fn )
 {
-    char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
+    char        drive[_MAX_DRIVE], directory[_MAX_DIR], name[_MAX_FNAME];
     char        path[FILENAME_MAX];
     char        tmp[MAX_SRC_LINE];
 
@@ -477,12 +477,11 @@ static void finiSourceErrFile( char *fn )
         return;
     }
     _splitpath( fn, drive, directory, name, NULL );
-    _makepath( path, drive, directory, name,".err" );
+    _makepath( path, drive, directory, name, ".err" );
     remove( path );
     if( srcErrFile != NULL ) {
         GetDateTimeString( tmp );
-        MyFprintf( srcErrFile, "\nCompile of %s finished on %s\n",
-                        fn, tmp );
+        MyFprintf( srcErrFile, "\nCompile of %s finished on %s\n", fn, tmp );
         MyFprintf( srcErrFile, "%d errors encountered\n", SourceErrCount );
         fclose( srcErrFile );
         srcErrFile = NULL;
@@ -498,17 +497,17 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
 {
     sfile       *curr;
     FILE        *foo;
-    char        drive[_MAX_DRIVE],directory[_MAX_DIR],name[_MAX_FNAME];
+    char        drive[_MAX_DRIVE], directory[_MAX_DIR], name[_MAX_FNAME];
     char        path[FILENAME_MAX];
-    char        tmp[MAX_SRC_LINE],*tmp2;
-    int         i,k,rc;
+    char        tmp[MAX_SRC_LINE], *tmp2;
+    int         i, k, rc;
 
     /*
      * get compiled file name, and make error file
      */
     if( vn[0] == 0 ) {
         _splitpath( fn, drive, directory, name, NULL );
-        _makepath( path,drive,directory,name,"._vi" );
+        _makepath( path, drive, directory, name, "._vi" );
     } else {
         strcpy( path, vn );
     }
@@ -516,9 +515,9 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
     if( foo == NULL ) {
         return( ERR_FILE_OPEN );
     }
-    MyFprintf( foo,"VBJ__\n" );
+    MyFprintf( foo, "VBJ__\n" );
     curr = sf;
-    (*ln) = 1;
+    *ln = 1;
 
     /*
      * process all lines
@@ -561,7 +560,7 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
                         Expand( tmp, vl );
                         curr->hasvar = FALSE;
                         k = strlen( curr->data );
-                        for( i=0;i<k;i++ ){
+                        for( i = 0; i < k; i++ ) {
                             if( curr->data[i] == '%' ) {
                                 curr->hasvar = TRUE;
                                 break;
@@ -579,7 +578,7 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
         /*
          * process the map command
          */
-        case PCL_T_MAP+ SRC_T_NULL + 1:
+        case PCL_T_MAP + SRC_T_NULL + 1:
             if( tmp[0] == '!' ) {
                 k = MAPFLAG_DAMMIT;
                 tmp2 = &tmp[1];
@@ -602,12 +601,12 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
         /*
          * spew out line
          */
-        MyFprintf( foo,"%c%d %s", (char)((char)curr->hasvar+'0'),curr->token, tmp);
+        MyFprintf( foo, "%c%d %s", (char)((char)curr->hasvar + '0'), curr->token, tmp );
         if( curr->token == SRC_T_GOTO ) {
-            MyFprintf( foo," %d", curr->branchcond );
+            MyFprintf( foo, " %d", curr->branchcond );
         }
-        MyFprintf( foo,"\n" );
-        (*ln) += 1;
+        MyFprintf( foo, "\n" );
+        *ln += 1;
 
     }
     fclose( foo );
@@ -616,7 +615,8 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
 } /* barfScript */
 
 
-static resident *resHead=NULL;
+static resident *resHead = NULL;
+
 /*
  * addResidentScript - add a script to the resident list
  */
@@ -640,10 +640,10 @@ static void addResidentScript( char *fn, sfile *sf, labels *lab )
  */
 void DeleteResidentScripts( void )
 {
-    resident    *tmp,*tmp_next;
-    sfile       *curr,*next;
+    resident    *tmp, *tmp_next;
+    sfile       *curr, *next;
 
-    for( tmp = resHead; tmp != NULL; ){
+    for( tmp = resHead; tmp != NULL; ) {
         tmp_next = tmp->next;
 
         MemFreeList( tmp->lab.cnt, tmp->lab.name );
@@ -663,6 +663,7 @@ void DeleteResidentScripts( void )
 
         tmp = tmp_next;
     }
+
 } /* DeleteResidentScripts */
 
 
@@ -671,7 +672,7 @@ void DeleteResidentScripts( void )
  */
 static resident *residentScript( char *fn )
 {
-    resident    *tmp=resHead;
+    resident    *tmp = resHead;
 
     while( tmp != NULL ) {
         if( !stricmp( fn, tmp->fn ) ) {

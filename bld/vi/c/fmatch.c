@@ -64,7 +64,7 @@ static char *majickStr;
 int FileMatchInit( char *wild )
 {
     char        *tomatch;
-    int         i,j,len;
+    int         i, j, len;
 
     magicFlag = EditFlags.Magic;
     caseignFlag = EditFlags.CaseIgnore;
@@ -78,7 +78,7 @@ int FileMatchInit( char *wild )
      */
     j = 3;
     len = strlen( wild );
-    for( i=0; i<len;i++ ) {
+    for( i = 0; i < len; i++ ) {
         if( wild[i] == '?' ) {
             j += 2;
         } else if( wild[i] == '*' ) {
@@ -95,7 +95,7 @@ int FileMatchInit( char *wild )
     tomatch[0] = '^';
     j = 1;
     len = strlen( wild );
-    for( i=0; i<len;i++ ) {
+    for( i = 0; i < len; i++ ) {
         if( wild[i] == '?' ) {
             tomatch[j++] = '\\';
             tomatch[j++] = '.';

@@ -89,7 +89,6 @@ fcb *FcbAlloc( file *f )
  */
 void FcbFree( fcb *cfcb )
 {
-
     /*
      * release swap data
      */
@@ -140,7 +139,7 @@ void FcbFree( fcb *cfcb )
  */
 void FreeEntireFcb( fcb *cfcb )
 {
-    line        *cline,*tline;
+    line        *cline, *tline;
 
     if( cfcb->in_memory ) {
         cline = cfcb->line_head;
@@ -159,7 +158,7 @@ void FreeEntireFcb( fcb *cfcb )
  */
 void FreeFcbList( fcb *fcbhead )
 {
-    fcb *cfcb,*tfcb;
+    fcb *cfcb, *tfcb;
 
     cfcb = fcbhead;
     while( cfcb != NULL ) {

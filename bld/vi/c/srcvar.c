@@ -44,6 +44,7 @@
 void VarAddGlobalStr( char *name, char *val )
 {
     VarAddStr( name, val, NULL );
+
 } /* VarAddGlobalStr */
 
 
@@ -94,7 +95,7 @@ void VarAddGlobalLong( char *name, long val )
  */
 void VarAddStr( char *name, char *val, vlist *vl )
 {
-    vars        *new,*curr,*head;
+    vars        *new, *curr, *head;
     bool        glob;
     int         len;
     int         name_len;
@@ -132,15 +133,15 @@ void VarAddStr( char *name, char *val, vlist *vl )
      */
     name_len = strlen( name );
     new = MemAlloc( sizeof( vars ) + name_len );
-    memcpy( new->name, name, name_len+1 );
+    memcpy( new->name, name, name_len + 1 );
     AddString( &new->value, val );
     new->len = len;
 
     if( glob ) {
-        AddLLItemAtEnd( (ss**)&VarHead, (ss**)&VarTail, (ss*)new );
+        AddLLItemAtEnd( (ss **)&VarHead, (ss **)&VarTail, (ss *)new );
         EditFlags.CompileAssignments = FALSE;
     } else {
-        AddLLItemAtEnd( (ss**)&vl->head, (ss**)&vl->tail, (ss*)new );
+        AddLLItemAtEnd( (ss **)&vl->head, (ss **)&vl->tail, (ss *)new );
     }
 
 } /* VarAddStr */
@@ -150,7 +151,7 @@ void VarAddStr( char *name, char *val, vlist *vl )
  */
 void VarListDelete( vlist *vl )
 {
-    vars *curr,*next;
+    vars *curr, *next;
 
     curr = vl->head;
     while( curr != NULL ) {
@@ -170,12 +171,12 @@ bool VarName( char *name, vlist *vl )
     if( name[0] != '%' || name[1] == 0 ) {
         return( FALSE );
     }
-    EliminateFirstN( name,1 );
+    EliminateFirstN( name, 1 );
     if( name[0] == '(' ) {
-        EliminateFirstN( name,1 );
-        name[ strlen( name ) -1 ] = 0;
+        EliminateFirstN( name, 1 );
+        name[strlen( name ) - 1] = 0;
     }
-    if( strchr( name,'%' ) != NULL ) {
+    if( strchr( name, '%' ) != NULL ) {
         Expand( name, vl );
     }
     return( TRUE );
@@ -221,8 +222,9 @@ vars * VarFind( char *name, vlist *vl )
 
 
 /* Free the globals */
-void VarFini( void ){
-    vars *curr,*next;
+void VarFini( void )
+{
+    vars *curr, *next;
 
     curr = VarHead;
     while( curr != NULL ) {
@@ -231,14 +233,13 @@ void VarFini( void ){
         MemFree( curr );
         curr = next;
     }
-
 }
 
 
 void VarDump( void ){
     vars        *curr;
-    int         count=0;
-    FILE *f= fopen( "C:\\vi.out", "a+t" );
+    int         count = 0;
+    FILE        *f = fopen( "C:\\vi.out", "a+t" );
 
     curr = VarHead;
     while( curr != NULL ) {
@@ -246,22 +247,23 @@ void VarDump( void ){
         count++;
         curr = curr->next;
     }
-    if( count == 13){
+    if( count == 13 ) {
         count = 13;
     }
-    fprintf( f,"count %d\n", count );
+    fprintf( f, "count %d\n", count );
     fclose( f );
 }
 
-void VarSC( char *str ){
+void VarSC( char *str )
+{
     /// DEBUG BEGIN
     {
         vars    *currn = VarHead;
-        if( currn ){
+        if( currn ) {
             while( currn->next != NULL ) {
                 currn = currn->next;
             }
-            if( VarTail != currn ){
+            if( VarTail != currn ) {
                printf( "%s\n", str );
             }
         }

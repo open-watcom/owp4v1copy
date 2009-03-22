@@ -64,24 +64,23 @@ int hashpjw( char *s )
     unsigned long   h = 0, g;
     
     while( *s != '\0' ) {
-        h = (h << 4) + toupper(*s);
+        h = (h << 4) + toupper( *s );
         if( g = h & 0xf0000000 ) {
             h = h ^ (g >> 24);
             h = h ^ g;
         }
         s++;
     }
-    return( h % langInfo[ CurrentInfo->Language ].table_entries );
+    return( h % langInfo[CurrentInfo->Language].table_entries );
 }
 
 bool IsKeyword( char *keyword, bool case_ignore )
 {
     hash_entry  *entry;
 
-    assert( langInfo[ CurrentInfo->Language ].ref_count > 0 );
+    assert( langInfo[CurrentInfo->Language].ref_count > 0 );
 
-    entry = langInfo[ CurrentInfo->Language ].keyword_table +
-            hashpjw( keyword );
+    entry = langInfo[CurrentInfo->Language].keyword_table + hashpjw( keyword );
     if( entry->real == FALSE ) {
         return( FALSE );
     }
@@ -130,14 +129,14 @@ void addTable( hash_entry *table, char *Keyword, int NumKeyword )
         int     hashValue;
         char    *keyword;
     } TmpValue;
-    TmpValue *tmpValue, *tmpIndex;
+    TmpValue    *tmpValue, *tmpIndex;
 
     tmpValue = tmpIndex = MemAlloc( NumKeyword * sizeof( TmpValue ) );
     keyword = Keyword;
     for( i = 0; i < NumKeyword; i++ ) {
         tmpIndex->hashValue = hashpjw( keyword );
         tmpIndex->keyword = keyword;
-        table[ tmpIndex->hashValue ].real = TRUE;
+        table[tmpIndex->hashValue].real = TRUE;
         keyword = nextKeyword( keyword );
         tmpIndex++;
     }
@@ -145,7 +144,7 @@ void addTable( hash_entry *table, char *Keyword, int NumKeyword )
     empty = table;
     tmpIndex = tmpValue;
     for( i = 0; i < NumKeyword; i++ ) {
-        assert( table[ tmpIndex->hashValue ].real == TRUE );
+        assert( table[tmpIndex->hashValue].real == TRUE );
 
         entry = table + tmpIndex->hashValue;
         if( entry->keyword != NULL ) {
@@ -176,8 +175,8 @@ void LangInit( int newLanguage )
     int         rc, nkeywords;
     char        *buff;
     char        *fname[] = { NULL, "c.dat", "cpp.dat", "fortran.dat", "java.dat", "sql.dat",
-                            "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
-                            "gml.dat", "dbtest.dat", "mif.dat", "rc.dat", "user.dat" };
+                             "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
+                             "gml.dat", "dbtest.dat", "mif.dat", "rc.dat", "user.dat" };
 
     assert( CurrentInfo != NULL );
     CurrentInfo->Language = newLanguage;
@@ -186,8 +185,8 @@ void LangInit( int newLanguage )
         return;
     }
 
-    if( langInfo[ newLanguage ].ref_count == 0 ) {
-        rc = ReadDataFile( fname[ newLanguage ], &nkeywords,
+    if( langInfo[newLanguage].ref_count == 0 ) {
+        rc = ReadDataFile( fname[newLanguage], &nkeywords,
                            &buff, &dummy, FALSE );
         if( rc ) {
             Error( GetErrorMsg( rc ) );
@@ -195,34 +194,36 @@ void LangInit( int newLanguage )
             return;
         }
         // build new langInfo entry
-        langInfo[ newLanguage ].table_entries = nkeywords;
-        langInfo[ newLanguage ].keyword_table =
-                createTable( NextBiggestPrime( nkeywords ) );
-        addTable( langInfo[ newLanguage ].keyword_table, buff, nkeywords );
-        langInfo[ newLanguage ].read_buf = buff;
+        langInfo[newLanguage].table_entries = nkeywords;
+        langInfo[newLanguage].keyword_table =
+            createTable( NextBiggestPrime( nkeywords ) );
+        addTable( langInfo[newLanguage].keyword_table, buff, nkeywords );
+        langInfo[newLanguage].read_buf = buff;
         MemFree( dummy );
     }
-    langInfo[ newLanguage ].ref_count++;
+    langInfo[newLanguage].ref_count++;
 
     return;
-}
+
+} /* LangInit */
 
 /*
  * LangFini
  */
 void LangFini( int language )
 {
-    if( language == LANG_NONE || langInfo[ language ].ref_count == 0 ) {
+    if( language == LANG_NONE || langInfo[language].ref_count == 0 ) {
         return;
     }
-    langInfo[ language ].ref_count--;
-    if( langInfo[ language ].ref_count == 0 ) {
-        MemFree( langInfo[ language ].keyword_table );
-        MemFree( langInfo[ language ].read_buf );
-        langInfo[ language ].keyword_table = NULL;
-        langInfo[ language ].table_entries = 0;
+    langInfo[language].ref_count--;
+    if( langInfo[language].ref_count == 0 ) {
+        MemFree( langInfo[language].keyword_table );
+        MemFree( langInfo[language].read_buf );
+        langInfo[language].keyword_table = NULL;
+        langInfo[language].table_entries = 0;
     }
-}
+
+} /* LangFini */
 
 /*
  * LangFiniAll
@@ -231,8 +232,9 @@ void LangFiniAll( void )
 {
     int i;
     for( i = LANG_NONE; i < LANG_MAX; i++ ) {
-        while( langInfo[ i ].ref_count ) {
+        while( langInfo[i].ref_count ) {
             LangFini( i );
         }
     }
-}
+
+} /* LangFiniAll */

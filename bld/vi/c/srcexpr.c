@@ -43,8 +43,8 @@
  */
 int SrcExpr( sfile *sf, vlist *vl )
 {
-    char        tmp[MAX_SRC_LINE],v1[MAX_SRC_LINE];
-    long        val,oval;
+    char        tmp[MAX_SRC_LINE], v1[MAX_SRC_LINE];
+    long        val, oval;
     int         rc;
     jmp_buf     jmpaddr;
     vars        *v;
@@ -87,7 +87,7 @@ int SrcExpr( sfile *sf, vlist *vl )
         }
     }
 
-    VarAddStr( tmp, ltoa( val,v1,10), vl );
+    VarAddStr( tmp, ltoa( val, v1, 10 ), vl );
     return( ERR_NO_ERR );
 
 } /* SrcExpr */

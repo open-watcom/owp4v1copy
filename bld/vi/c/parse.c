@@ -43,7 +43,7 @@ static bool isIgnorable( char, char * );
  */
 void RemoveLeadingSpaces( char *buff )
 {
-    int k=0;
+    int k = 0;
 
     if( buff[0] == 0 ) {
         return;
@@ -51,7 +51,7 @@ void RemoveLeadingSpaces( char *buff )
     while( isspace( buff[k] ) ) {
         k++;
     }
-    if( k==0 ) {
+    if( k == 0 ) {
         return;
     }
     EliminateFirstN( buff, k );
@@ -63,7 +63,7 @@ void RemoveLeadingSpaces( char *buff )
  */
 void TranslateTabs( char *buff )
 {
-    int k=0, j;
+    int k = 0, j;
 
     if( buff[0] == 0 ) {
         return;
@@ -77,7 +77,8 @@ void TranslateTabs( char *buff )
         }
         k++;
     }
-}
+
+} /* TranslateTabs */
 
 /*
  * GetStringWithPossibleQuote
@@ -86,17 +87,17 @@ int GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
 {
     RemoveLeadingSpaces( data );
     if( allow_slash && data[0] == '/' ) {
-        if( NextWord( data, st, SingleSlash ) <=0 ) {
+        if( NextWord( data, st, SingleSlash ) <= 0 ) {
             return( ERR_NO_STRING );
         }
-        EliminateFirstN( data,1 );
+        EliminateFirstN( data, 1 );
     } else if( data[0] == '"' ) {
-        if( NextWord( data, st, "\"" ) <=0 ) {
+        if( NextWord( data, st, "\"" ) <= 0 ) {
             return( ERR_NO_STRING );
         }
-        EliminateFirstN( data,1 );
+        EliminateFirstN( data, 1 );
     } else {
-        if( NextWord1( data, st ) <=0 ) {
+        if( NextWord1( data, st ) <= 0 ) {
             return( ERR_NO_STRING );
         }
     }
@@ -107,6 +108,7 @@ int GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
 int GetStringWithPossibleQuote( char *data, char *st )
 {
     return GetStringWithPossibleQuote2( data, st, TRUE );
+
 } /* GetStringWithPossibleQuote */
 
 /*
@@ -114,7 +116,7 @@ int GetStringWithPossibleQuote( char *data, char *st )
  */
 int NextWord1( char *buff, char *res )
 {
-    int         j,k=0;
+    int         j, k = 0;
     char        c;
 
     while( isspace( buff[k] ) ) {
@@ -157,7 +159,7 @@ int NextWordSlash( char *buff, char *res )
  */
 int NextWord( char *buff, char *res, char *ign )
 {
-    int         j=0,k=0,sl;
+    int         j = 0, k = 0, sl;
     char        c;
 
     /*
@@ -166,7 +168,7 @@ int NextWord( char *buff, char *res, char *ign )
      */
     sl = strlen( ign );
     if( sl == 1 ) {
-        if( isIgnorable( buff[0],ign ) ) {
+        if( isIgnorable( buff[0], ign ) ) {
             k = 1;
         }
     } else {
@@ -188,13 +190,13 @@ int NextWord( char *buff, char *res, char *ign )
          * look for escaped delimiters
          */
         if( c == '\\' && sl == 1 ) {
-            if( buff[k+1] == ign[0] ) {
+            if( buff[k + 1] == ign[0] ) {
                 k++;
                 res[j++] = buff[k];
                 k++;
                 continue;
             }
-            if( buff[k+1] == '\\' ) {
+            if( buff[k + 1] == '\\' ) {
                 k += 2;
                 res[j++] = '\\';
                 res[j++] = '\\';
@@ -218,7 +220,6 @@ int NextWord( char *buff, char *res, char *ign )
  */
 static bool isIgnorable( char c, char *ign )
 {
-
     while( *ign != 0 ) {
         if( *ign == ' ' ) {
             if( isspace( c ) ) {
@@ -237,7 +238,7 @@ static bool isIgnorable( char c, char *ign )
 /*
  * EliminateFirstN - eliminate first n chars from buff
  */
-void EliminateFirstN( char *buff, int n  )
+void EliminateFirstN( char *buff, int n )
 {
     char        *buff2;
 
@@ -255,21 +256,21 @@ void EliminateFirstN( char *buff, int n  )
 #else
 extern char toUpper( char );
 #pragma aux toUpper = \
-        "cmp    al,061h" \
+        "cmp    al, 061h" \
         "jl     LL34" \
-        "cmp    al,07ah" \
+        "cmp    al, 07ah" \
         "jg     LL34" \
-        "sub    al,0020H" \
+        "sub    al, 0020H" \
         "LL34:" \
         parm[al] value[al];
 
 extern char toLower( char );
 #pragma aux toLower = \
-        "cmp    al,041h" \
+        "cmp    al, 041h" \
         "jl     LL35" \
-        "cmp    al,05ah" \
+        "cmp    al, 05ah" \
         "jg     LL35" \
-        "add    al,0020H" \
+        "add    al, 0020H" \
         "LL35:" \
         parm[al] value[al];
 #endif
@@ -277,10 +278,10 @@ extern char toLower( char );
 /*
  * Tokenize - convert character to a token
  */
-int Tokenize( char *Tokens,  char *token, bool entireflag )
+int Tokenize( char *Tokens, char *token, bool entireflag )
 {
-    int         i=0;
-    char        *t,*tkn,c,tc;
+    int         i = 0;
+    char        *t, *tkn, c, tc;
 
     if( Tokens == NULL ) {
         return( -1 );
@@ -295,10 +296,10 @@ int Tokenize( char *Tokens,  char *token, bool entireflag )
         while( 1 ) {
             c = *t;
             tc = *tkn;
-            if( c==0 && (tc != ' ' && tc != 0 ) ) {
+            if( c == 0 && (tc != ' ' && tc != 0) ) {
                 break;
             }
-            if( isupper(c) ) {
+            if( isupper( c ) ) {
                 if( c != toUpper( tc ) ) {
                     break;
                 }
@@ -341,7 +342,7 @@ int Tokenize( char *Tokens,  char *token, bool entireflag )
  */
 int GetNumberOfTokens( char *list )
 {
-    int         i=0,off=0,k;
+    int         i = 0, off = 0, k;
     char        *t;
 
     while( TRUE ) {
@@ -350,8 +351,8 @@ int GetNumberOfTokens( char *list )
         if( *t == 0 ) {
             break;
         }
-        k = strlen(t);
-        off += k+1;
+        k = strlen( t );
+        off += k + 1;
         i++;
 
     }
@@ -365,7 +366,7 @@ int GetNumberOfTokens( char *list )
  */
 int GetLongestTokenLength( char *list )
 {
-    int         i=0,off=0,l=0,k;
+    int         i = 0, off = 0, l = 0, k;
     char        *t;
 
     while( TRUE ) {
@@ -374,11 +375,11 @@ int GetLongestTokenLength( char *list )
         if( *t == 0 ) {
             break;
         }
-        k = strlen(t);
+        k = strlen( t );
         if( k > l ) {
             l = k;
         }
-        off += k+1;
+        off += k + 1;
         i++;
 
     }
@@ -393,8 +394,8 @@ int GetLongestTokenLength( char *list )
  */
 char **BuildTokenList( int num, char *list )
 {
-    char        **arr,*data,*t;
-    int         k,i=0,off=0;
+    char        **arr, *data, *t;
+    int         k, i = 0, off = 0;
 
     arr = MemAlloc( num * sizeof( char * ) );
     while( TRUE ) {
@@ -403,11 +404,11 @@ char **BuildTokenList( int num, char *list )
         if( *t == 0 ) {
             break;
         }
-        k = strlen(t);
+        k = strlen( t );
         data = MemAlloc( k + 1 );
         memcpy( data, t, k + 1 );
         arr[i] = data;
-        off += k+1;
+        off += k + 1;
         i++;
 
     }
@@ -421,7 +422,7 @@ char **BuildTokenList( int num, char *list )
  */
 char *GetTokenString( char *list, int num )
 {
-    int         off=0,i=0,k;
+    int         off  =0, i = 0, k;
     char        *t;
 
     while( TRUE ) {
@@ -433,8 +434,8 @@ char *GetTokenString( char *list, int num )
         if( i == num ) {
             return( t );
         }
-        k = strlen(t);
-        off += k+1;
+        k = strlen( t );
+        off += k + 1;
         i++;
 
     }
@@ -446,10 +447,10 @@ char *GetTokenString( char *list, int num )
  */
 int ReplaceSubString( char *data, int len, int s, int e, char *rep, int replen )
 {
-    int i,ln,delta,slen;
+    int i, ln, delta, slen;
 
-    slen = e - s+1;
-    delta = slen-replen;
+    slen = e - s + 1;
+    delta = slen - replen;
 
     /*
      * make room
@@ -458,20 +459,20 @@ int ReplaceSubString( char *data, int len, int s, int e, char *rep, int replen )
     len -= delta;
     if( delta < 0 ) {
         delta *= -1;
-        for(i=ln;i>e;i--) {
-            data[i+delta] = data[i];
+        for( i = ln; i > e; i-- ) {
+            data[i + delta] = data[i];
         }
     } else if( delta > 0 ) {
-        for(i=e+1;i<=ln;i++ ) {
-            data[i-delta] = data[i];
+        for(i = e + 1; i <= ln; i++ ) {
+            data[i - delta] = data[i];
         }
     }
 
     /*
      * copy in new string
      */
-    for( i=0;i<replen;i++ ) {
-        data[s+i] = rep[i];
+    for( i = 0; i < replen; i++ ) {
+        data[s + i] = rep[i];
     }
     return( len );
 

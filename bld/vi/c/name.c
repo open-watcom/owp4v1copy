@@ -31,29 +31,29 @@
 
 #include "control.h"
 #if defined( __WINDOWS_386__ )
-char TITLE[] = "vi/win386";
+char    TITLE[] = "vi/win386";
 #elif defined( __WINDOWS__ )
-char TITLE[] = "vi/win";
+char    TITLE[] = "vi/win";
 #elif defined( __OS2V2__ )
-char TITLE[] = "vi/os2v2";
+char    TITLE[] = "vi/os2v2";
 #elif defined( __OS2__ )
-char TITLE[] = "vi/os2";
+char    TITLE[] = "vi/os2";
 #elif defined( __NT__ )
 #if defined( __WIN__ )
-char TITLE[] = "vi/ntwin";
+char    TITLE[] = "vi/ntwin";
 #else
-char TITLE[] = "vi/nt";
+char    TITLE[] = "vi/nt";
 #endif
 #elif defined( __PHAR__ ) || defined( __4G__ )
-char TITLE[] = "vi/386";
+char    TITLE[] = "vi/386";
 #elif defined( __QNX__ )
-char TITLE[] = "vi/qnx";
+char    TITLE[] = "vi/qnx";
 #elif defined( __LINUX__ )
-char TITLE[] = "vi/linux";
+char    TITLE[] = "vi/linux";
 #elif defined( __UNIX__ )
-char TITLE[] = "vi/unix";
+char    TITLE[] = "vi/unix";
 #elif defined( __286__ )
-char TITLE[] = "vi/286";
+char    TITLE[] = "vi/286";
 #else
-char TITLE[] = "vi/86";
+char    TITLE[] = "vi/86";
 #endif

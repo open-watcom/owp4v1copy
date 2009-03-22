@@ -81,7 +81,7 @@ static void getText( ss_block *ss_new, char *start )
     char    save_char;
 
     // gather up symbol
-    while( isalnum( *text ) || ( *text == '_' ) ) {
+    while( isalnum( *text ) || (*text == '_') ) {
         text++;
     }
     ss_new->type = SE_IDENTIFIER;
@@ -90,7 +90,9 @@ static void getText( ss_block *ss_new, char *start )
     if( flags.inGMLKeyword ) {
         save_char = *text;
         *text = '\0';
-        if( IsKeyword( start, TRUE ) ) ss_new->type = SE_KEYWORD;
+        if( IsKeyword( start, TRUE ) ) {
+            ss_new->type = SE_KEYWORD;
+        }
         *text = save_char;
         // only check first word after a ":" (should check all tokens?)
         flags.inGMLKeyword = FALSE;
@@ -121,12 +123,18 @@ static void getGMLComment( ss_block *ss_new, char *start, int skip )
     for( ;; ) {
         // check for "-->"
         comment1 = text[0];
-        if( comment1 == '\0' ) break;
+        if( comment1 == '\0' ) {
+            break;
+        }
 
         comment2 = '\0';
         comment3 = '\0';
-        if( comment1 != '\0' ) comment2 = text[1];
-        if( comment2 != '\0' ) comment3 = text[2];
+        if( comment1 != '\0' ) {
+            comment2 = text[1];
+        }
+        if( comment2 != '\0' ) {
+            comment3 = text[2];
+        }
 
         if( comment1 == '-' && comment2 == '-' && comment3 == '>' ) {
             flags.inGMLComment = FALSE;
@@ -149,7 +157,7 @@ static void getString( ss_block *ss_new, char *start, int skip )
         text++;
     }
     if( *text == '\0' ) {
-    // string continued on next line
+        // string continued on next line
         flags.inString = TRUE;
     } else {
         text++;
@@ -180,7 +188,7 @@ void GetGMLBlock( ss_block *ss_new, char *start, int line )
 {
     line = line;
 
-    if( start[ 0 ] == '\0' ) {
+    if( start[0] == '\0' ) {
         if( firstNonWS == start ) {
             // line is empty -
             // do not flag following line as having anything to do
@@ -204,12 +212,12 @@ void GetGMLBlock( ss_block *ss_new, char *start, int line )
         return;
     }
 
-    if( isspace( start[ 0 ] ) ) {
+    if( isspace( start[0] ) ) {
         getWhiteSpace( ss_new, start );
         return;
     }
 
-    switch( start[ 0 ] ) {
+    switch( start[0] ) {
     case '"':
         getString( ss_new, start, 1 );
         return;

@@ -47,8 +47,8 @@ static void     *extraData;
 int ReadFcbData( file *f )
 {
     int         handle;
-    int         cnt,used,linecnt,i;
-    bool        eofflag=FALSE;
+    int         cnt, used, linecnt, i;
+    bool        eofflag = FALSE;
     fcb         *cfcb;
 
     /*
@@ -56,7 +56,7 @@ int ReadFcbData( file *f )
      */
     f->bytes_pending = FALSE;
     cfcb = FcbAlloc( f );
-    AddLLItemAtEnd( (ss**)&(f->fcb_head), (ss**)&(f->fcb_tail), (ss*)cfcb );
+    AddLLItemAtEnd( (ss **)&(f->fcb_head), (ss **)&(f->fcb_tail), (ss *)cfcb );
 
     /*
      * open file handle if we need to
@@ -76,7 +76,7 @@ int ReadFcbData( file *f )
         handle = f->handle;
     }
     if( f->handle == -1 ) {
-        CreateNullLine(cfcb);
+        CreateNullLine( cfcb );
         return( ERR_FILE_NOT_FOUND );
     }
     if( f->size == 0 && !f->is_stdio ) {
@@ -105,8 +105,8 @@ int ReadFcbData( file *f )
      * read file data
      */
     if( f->is_stdio ) {
-        cnt = fread( ReadBuffer+extraDataSize, 1, MAX_IO_BUFFER-extraDataSize,
-                        stdin );
+        cnt = fread( ReadBuffer + extraDataSize, 1, MAX_IO_BUFFER - extraDataSize,
+                     stdin );
         cnt += extraDataSize;
         extraDataSize = 0;
         if( ferror( stdin ) ) {
@@ -147,7 +147,7 @@ int ReadFcbData( file *f )
         } else {
             extraDataSize = cnt - used;
             extraData = MemAlloc( extraDataSize );
-            memcpy( extraData, ReadBuffer+used, extraDataSize );
+            memcpy( extraData, ReadBuffer + used, extraDataSize );
         }
     }
     if( f->fcb_tail->prev == NULL ) {
@@ -155,10 +155,10 @@ int ReadFcbData( file *f )
     } else {
         cfcb->start_line = f->fcb_tail->prev->end_line + 1;
     }
-    cfcb->end_line = cfcb->start_line + linecnt-1;
+    cfcb->end_line = cfcb->start_line + linecnt - 1;
     cfcb->non_swappable = FALSE;
 
-    if( eofflag) {
+    if( eofflag ) {
         if( !f->is_stdio ) {
             close( handle );
         }
@@ -175,8 +175,8 @@ int ReadFcbData( file *f )
  */
 int FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
 {
-    int lastflag = FALSE,i;
-    fcb *tfcb,*ofcb;
+    int lastflag = FALSE, i;
+    fcb *tfcb, *ofcb;
 
     /*
      * are we looking for the last line?
@@ -220,7 +220,7 @@ int FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
             if( EditFlags.Verbose ) {
                 Message1( "At line %l", ofcb->end_line );
             }
-            if( (i=ReadFcbData( cfile )) > 0 ) {
+            if( (i = ReadFcbData( cfile )) > 0 ) {
                 return( i );
             }
             tfcb = cfile->fcb_tail;
@@ -235,20 +235,20 @@ int FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
  */
 void CreateFcbData( file *f, int cnt )
 {
-    int used,linecnt;
+    int used, linecnt;
     fcb *cfcb;
 
     /*
      * get new fcb
      */
     cfcb = FcbAlloc( f );
-    AddLLItemAtEnd( (ss**)&(f->fcb_head), (ss**)&(f->fcb_tail), (ss*)cfcb );
+    AddLLItemAtEnd( (ss **)&(f->fcb_head), (ss **)&(f->fcb_tail), (ss *)cfcb );
 
     /*
      * create lines from buffer info
      */
     CreateLinesFromBuffer( cnt, &(cfcb->line_head), &(cfcb->line_tail),
-                               &used, &linecnt,&(cfcb->byte_cnt) );
+                           &used, &linecnt, &(cfcb->byte_cnt) );
 
     /*
      * update position and line numbers
@@ -258,7 +258,7 @@ void CreateFcbData( file *f, int cnt )
     } else {
         cfcb->start_line = f->fcb_tail->prev->end_line + 1;
     }
-    cfcb->end_line = cfcb->start_line + linecnt-1;
+    cfcb->end_line = cfcb->start_line + linecnt - 1;
     cfcb->non_swappable = FALSE;
 
 } /* CreateFcbData */
@@ -277,7 +277,7 @@ int FcbSize( fcb *cfcb )
      * each line.  As well, each line has 2 bytes of information,
      * which are also swapped.
      */
-    i = cfcb->byte_cnt + 3*((int)(cfcb->end_line-cfcb->start_line + 1));
+    i = cfcb->byte_cnt + 3 * ((int)(cfcb->end_line-cfcb->start_line + 1));
     return( i );
 
 } /* FcbSize */

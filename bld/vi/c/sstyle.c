@@ -46,7 +46,7 @@
 
 
 /*----- EXPORTS -----*/
-type_style      SEType[ SE_NUMTYPES ];
+type_style      SEType[SE_NUMTYPES];
 
 
 static void getEOFText( ss_block *ss_new, char *text )
@@ -89,38 +89,40 @@ static void getNextBlock( ss_block *ss_new, char *text, int text_col,
         return;
     }
 
-    if( CurrentInfo == NULL ) return;
+    if( CurrentInfo == NULL ) {
+        return;
+    }
 
     switch( CurrentInfo->Language ) {
-        case LANG_NONE:
-            getText( ss_new, text + text_col );
-            break;
-        case LANG_HTML:
-        case LANG_WML:
-            GetHTMLBlock( ss_new, text + text_col, text_col );
-            break;
-        case LANG_GML:
-            GetGMLBlock( ss_new, text + text_col, text_col );
-            break;
-        case LANG_MAKEFILE:
-            GetMkBlock( ss_new, text + text_col, text_col );
-            break;
-        case LANG_FORTRAN:
-            GetFORTRANBlock( ss_new, text + text_col, text_col );
-            break;
-        case LANG_C:
-        case LANG_CPP:
-        case LANG_JAVA:
-        case LANG_SQL:
-        case LANG_BAT:
-        case LANG_BASIC:
-        case LANG_PERL:
-        case LANG_DBTEST:
-        case LANG_RC:
-        case LANG_USER:
-        default:
-            GetCBlock( ss_new, text + text_col, line, line_no );
-            break;
+    case LANG_NONE:
+        getText( ss_new, text + text_col );
+        break;
+    case LANG_HTML:
+    case LANG_WML:
+        GetHTMLBlock( ss_new, text + text_col, text_col );
+        break;
+    case LANG_GML:
+        GetGMLBlock( ss_new, text + text_col, text_col );
+        break;
+    case LANG_MAKEFILE:
+        GetMkBlock( ss_new, text + text_col, text_col );
+        break;
+    case LANG_FORTRAN:
+        GetFORTRANBlock( ss_new, text + text_col, text_col );
+        break;
+    case LANG_C:
+    case LANG_CPP:
+    case LANG_JAVA:
+    case LANG_SQL:
+    case LANG_BAT:
+    case LANG_BASIC:
+    case LANG_PERL:
+    case LANG_DBTEST:
+    case LANG_RC:
+    case LANG_USER:
+    default:
+        GetCBlock( ss_new, text + text_col, line, line_no );
+        break;
     }
 
     /* GetCBlock, GetFORTRANBlock, GetHTMLBlock and getText fill in only ss->len.
@@ -134,13 +136,13 @@ static void getNextBlock( ss_block *ss_new, char *text, int text_col,
 
 void addSelection( ss_block *ss_start, linenum line_no )
 {
-    int         sel_start_col, sel_end_col;
-    int         sel_start_line, sel_end_line;
-    int         tmp, i;
-    bool        swap_cols;
-    ss_block    *ss, *ss2;
-    static ss_block ss_copy[ MAX_SS_BLOCKS ];
-    ss_block    ss_save;
+    int             sel_start_col, sel_end_col;
+    int             sel_start_line, sel_end_line;
+    int             tmp, i;
+    bool            swap_cols;
+    ss_block        *ss, *ss2;
+    static ss_block ss_copy[MAX_SS_BLOCKS];
+    ss_block        ss_save;
 
     // don't call me unless something selected
     assert( SelRgn.selected );
@@ -149,12 +151,12 @@ void addSelection( ss_block *ss_start, linenum line_no )
     // get nicely ordered values from SelRgn
     sel_end_col = VirtualCursorPosition2( SelRgn.end_col ) - 1;
     sel_start_col = SelRgn.start_col_v - 1;
-    #ifdef __WIN__
-    if( EditFlags.RealTabs ){
+#ifdef __WIN__
+    if( EditFlags.RealTabs ) {
         sel_end_col = SelRgn.end_col - 1;
-        sel_start_col = SelRgn.start_col- 1;
+        sel_start_col = SelRgn.start_col - 1;
     }
-    #endif
+#endif
     swap_cols = FALSE;
     if( SelRgn.start_line > SelRgn.end_line ) {
         sel_start_line = SelRgn.end_line;
@@ -164,8 +166,7 @@ void addSelection( ss_block *ss_start, linenum line_no )
         sel_start_line = SelRgn.start_line;
         sel_end_line = SelRgn.end_line;
     }
-    if( SelRgn.start_line == SelRgn.end_line &&
-        sel_start_col > sel_end_col ) {
+    if( SelRgn.start_line == SelRgn.end_line && sel_start_col > sel_end_col ) {
         swap_cols = TRUE;
     }
     if( swap_cols ) {
@@ -175,9 +176,8 @@ void addSelection( ss_block *ss_start, linenum line_no )
     }
 
     // select entire line
-    if( ( sel_start_line < line_no && sel_end_line > line_no ) ||
-        ( SelRgn.lines &&
-            ( sel_start_line == line_no || sel_end_line == line_no ) ) ) {
+    if( (sel_start_line < line_no && sel_end_line > line_no) ||
+        (SelRgn.lines && (sel_start_line == line_no || sel_end_line == line_no)) ) {
         ss_start->type = SE_SELECTION;
         ss_start->end = ss_start->len = BEYOND_TEXT;
         return;
@@ -196,10 +196,10 @@ void addSelection( ss_block *ss_start, linenum line_no )
             ss++;
         }
         ss_save = *ss;
-        if( ( ss == ss_start && sel_start_col > 0 ) ||
-            ( ss != ss_start && ( ss - 1 )->end + 1 != sel_start_col ) ) {
+        if( (ss == ss_start && sel_start_col > 0) ||
+            (ss != ss_start && (ss - 1)->end + 1 != sel_start_col) ) {
             ss2->type = ss->type;
-            ss2->len = ss->len - ( ss->end - sel_start_col + 1 );
+            ss2->len = ss->len - (ss->end - sel_start_col + 1);
             if( ss2->len != 0 ) {
                 ss2->end = sel_start_col - 1;
                 ss2++;
@@ -246,10 +246,10 @@ void addSelection( ss_block *ss_start, linenum line_no )
         while( ss->end < sel_start_col ) {
             ss++;
         }
-        if( ( ss == ss_start && sel_start_col > 0 ) ||
-            ( ss != ss_start && ( ss - 1 )->end + 1 != sel_start_col ) ) {
+        if( (ss == ss_start && sel_start_col > 0) ||
+            (ss != ss_start && (ss - 1)->end + 1 != sel_start_col) ) {
             // split block just to the left
-            ss->len -= ( ss->end - sel_start_col + 1 );
+            ss->len -= ss->end - sel_start_col + 1;
             if( ss->len != 0 ) {
                 ss->end = sel_start_col - 1;
                 ss++;
@@ -277,12 +277,12 @@ void addSelection( ss_block *ss_start, linenum line_no )
                 i++;
             }
         }
-        memmove( ss2, ss + 1, ( MAX_SS_BLOCKS - i - 1 ) * sizeof( ss_block ) );
+        memmove( ss2, ss + 1, (MAX_SS_BLOCKS - i - 1) * sizeof( ss_block ) );
         ss_start->type = SE_SELECTION;
         ss_start->end = sel_end_col - 1;
         ss_start->len = sel_end_col;
         if( ss2 == ss_start + 2 ) {
-            *( ss_start + 1 ) = ss_save;
+            *(ss_start + 1) = ss_save;
         }
         return;
     }
@@ -293,7 +293,7 @@ void addSelection( ss_block *ss_start, linenum line_no )
 void fixSelection( ss_block *ss_start, int start_col )
 {
     ss_block    *ss;
-    int i = MAX_SS_BLOCKS;
+    int         i = MAX_SS_BLOCKS;
 
     ss = ss_start;
     while( ss->end < start_col ) {
@@ -323,31 +323,31 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
     index = 0;
     anychange = FALSE;
     switch( CurrentInfo->Language ) {
-        case LANG_C:
-        case LANG_CPP:
-        case LANG_JAVA:
-        case LANG_SQL:
-        case LANG_BAT:
-        case LANG_BASIC:
-        case LANG_PERL:
-        case LANG_DBTEST:
-        case LANG_RC:
-        case LANG_USER:
-            InitCLine( text );
-            break;
-        case LANG_FORTRAN:
-            InitFORTRANLine( text, line_no );
-            break;
-        case LANG_HTML:
-        case LANG_WML:
-            InitHTMLLine( text );
-            break;
-        case LANG_GML:
-            InitGMLLine( text );
-            break;
-        case LANG_MAKEFILE:
-            InitMkLine( text );
-            break;
+    case LANG_C:
+    case LANG_CPP:
+    case LANG_JAVA:
+    case LANG_SQL:
+    case LANG_BAT:
+    case LANG_BASIC:
+    case LANG_PERL:
+    case LANG_DBTEST:
+    case LANG_RC:
+    case LANG_USER:
+        InitCLine( text );
+        break;
+    case LANG_FORTRAN:
+        InitFORTRANLine( text, line_no );
+        break;
+    case LANG_HTML:
+    case LANG_WML:
+        InitHTMLLine( text );
+        break;
+    case LANG_GML:
+        InitGMLLine( text );
+        break;
+    case LANG_MAKEFILE:
+        InitMkLine( text );
+        break;
     }
     ss_inc = ss_old;
     text_col = 0;
@@ -374,7 +374,7 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
         if( !anychange ) {
             *dif = ss_inc->end + 1;
         }
-    } while( ( ss_inc++ )->end != BEYOND_TEXT );
+    } while( (ss_inc++)->end != BEYOND_TEXT );
 
     if( SelRgn.selected ) {
         addSelection( ss_old, line_no );
@@ -415,20 +415,30 @@ bool SSKillsFlags( char ch )
         case LANG_DBTEST:
         case LANG_RC:
         case LANG_USER:
-            if( ch == '#' || ch == '"' || ch == '/' || ch == '*' ) return( TRUE );
+            if( ch == '#' || ch == '"' || ch == '/' || ch == '*' ) {
+                return( TRUE );
+            }
             break;
         case LANG_FORTRAN:
-            if( ch == '\'' ) return( TRUE );
+            if( ch == '\'' ) {
+                return( TRUE );
+            }
             break;
         case LANG_HTML:
         case LANG_WML:
-            if( ch == '<' || ch == '>' ) return( TRUE );
+            if( ch == '<' || ch == '>' ) {
+                return( TRUE );
+            }
             break;
         case LANG_GML:
-            if( ch == ':' || ch == '.' ) return( TRUE );
+            if( ch == ':' || ch == '.' ) {
+                return( TRUE );
+            }
             break;
         case LANG_MAKEFILE:
-            if( ch == '#' ) return( TRUE );
+            if( ch == '#' ) {
+                return( TRUE );
+            }
             break;
         }
     }
@@ -439,31 +449,31 @@ void SSInitLanguageFlags( linenum line_no )
 {
     if( CurrentInfo != NULL ) {
         switch( CurrentInfo->Language ) {
-            case LANG_C:
-            case LANG_CPP:
-            case LANG_JAVA:
-            case LANG_SQL:
-            case LANG_BAT:
-            case LANG_BASIC:
-            case LANG_PERL:
-            case LANG_DBTEST:
-            case LANG_RC:
-            case LANG_USER:
-                InitCFlags( line_no );
-                break;
-            case LANG_FORTRAN:
-                InitFORTRANFlags( line_no );
-                break;
-            case LANG_HTML:
-            case LANG_WML:
-                InitHTMLFlags( line_no );
-                break;
-            case LANG_GML:
-                InitGMLFlags( line_no );
-                break;
-            case LANG_MAKEFILE:
-                InitMkFlags( line_no );
-                break;
+        case LANG_C:
+        case LANG_CPP:
+        case LANG_JAVA:
+        case LANG_SQL:
+        case LANG_BAT:
+        case LANG_BASIC:
+        case LANG_PERL:
+        case LANG_DBTEST:
+        case LANG_RC:
+        case LANG_USER:
+            InitCFlags( line_no );
+            break;
+        case LANG_FORTRAN:
+            InitFORTRANFlags( line_no );
+            break;
+        case LANG_HTML:
+        case LANG_WML:
+            InitHTMLFlags( line_no );
+            break;
+        case LANG_GML:
+            InitGMLFlags( line_no );
+            break;
+        case LANG_MAKEFILE:
+            InitMkFlags( line_no );
+            break;
         }
     }
 }
@@ -472,31 +482,31 @@ void SSInitLanguageFlagsGivenValues( ss_flags *flags )
 {
     if( CurrentInfo != NULL ) {
         switch( CurrentInfo->Language ) {
-            case LANG_C:
-            case LANG_CPP:
-            case LANG_JAVA:
-            case LANG_SQL:
-            case LANG_BAT:
-            case LANG_BASIC:
-            case LANG_PERL:
-            case LANG_DBTEST:
-            case LANG_RC:
-            case LANG_USER:
-                InitCFlagsGivenValues( &( flags->c ) );
-                break;
-            case LANG_FORTRAN:
-                InitFORTRANFlagsGivenValues( &( flags->f ) );
-                break;
-            case LANG_HTML:
-            case LANG_WML:
-                InitHTMLFlagsGivenValues( &( flags->h ) );
-                break;
-            case LANG_GML:
-                InitGMLFlagsGivenValues( &( flags->g ) );
-                break;
-            case LANG_MAKEFILE:
-                InitMkFlagsGivenValues( &( flags->m ) );
-                break;
+        case LANG_C:
+        case LANG_CPP:
+        case LANG_JAVA:
+        case LANG_SQL:
+        case LANG_BAT:
+        case LANG_BASIC:
+        case LANG_PERL:
+        case LANG_DBTEST:
+        case LANG_RC:
+        case LANG_USER:
+            InitCFlagsGivenValues( &( flags->c ) );
+            break;
+        case LANG_FORTRAN:
+            InitFORTRANFlagsGivenValues( &( flags->f ) );
+            break;
+        case LANG_HTML:
+        case LANG_WML:
+            InitHTMLFlagsGivenValues( &( flags->h ) );
+            break;
+        case LANG_GML:
+            InitGMLFlagsGivenValues( &( flags->g ) );
+            break;
+        case LANG_MAKEFILE:
+            InitMkFlagsGivenValues( &( flags->m ) );
+            break;
         }
     }
 }
@@ -505,31 +515,31 @@ void SSGetLanguageFlags( ss_flags *flags )
 {
     if( CurrentInfo != NULL ) {
         switch( CurrentInfo->Language ) {
-            case LANG_C:
-            case LANG_CPP:
-            case LANG_JAVA:
-            case LANG_SQL:
-            case LANG_BAT:
-            case LANG_BASIC:
-            case LANG_PERL:
-            case LANG_DBTEST:
-            case LANG_RC:
-            case LANG_USER:
-                GetCFlags( &( flags->c ) );
-                break;
-            case LANG_FORTRAN:
-                GetFORTRANFlags( &( flags->f ) );
-                break;
-            case LANG_HTML:
-            case LANG_WML:
-                GetHTMLFlags( &( flags->h ) );
-                break;
-            case LANG_GML:
-                GetGMLFlags( &( flags->g ) );
-                break;
-            case LANG_MAKEFILE:
-                GetMkFlags( &( flags->m ) );
-                break;
+        case LANG_C:
+        case LANG_CPP:
+        case LANG_JAVA:
+        case LANG_SQL:
+        case LANG_BAT:
+        case LANG_BASIC:
+        case LANG_PERL:
+        case LANG_DBTEST:
+        case LANG_RC:
+        case LANG_USER:
+            GetCFlags( &(flags->c) );
+            break;
+        case LANG_FORTRAN:
+            GetFORTRANFlags( &(flags->f) );
+            break;
+        case LANG_HTML:
+        case LANG_WML:
+            GetHTMLFlags( &(flags->h) );
+            break;
+        case LANG_GML:
+            GetGMLFlags( &(flags->g) );
+            break;
+        case LANG_MAKEFILE:
+            GetMkFlags( &(flags->m) );
+            break;
         }
     }
 }
@@ -563,9 +573,9 @@ void SSInitBeforeConfig( void )
     int i;
 
     for( i = 0; i < SE_NUMTYPES; i++ ) {
-        SEType[ i ].foreground = -1;
-        SEType[ i ].background = -1;
-        SEType[ i ].font = 0;
+        SEType[i].foreground = -1;
+        SEType[i].background = -1;
+        SEType[i].font = 0;
     }
 }
 
@@ -577,22 +587,22 @@ void SSInitAfterConfig( void )
     int i;
 
     // text must have some color
-    if( SEType[ SE_TEXT ].foreground == -1 ) {
-        SEType[ SE_TEXT ].foreground = WHITE;
-        SEType[ SE_TEXT ].background = BLACK;
+    if( SEType[SE_TEXT].foreground == -1 ) {
+        SEType[SE_TEXT].foreground = WHITE;
+        SEType[SE_TEXT].background = BLACK;
     }
 
     // selection should default to inverse of text
-    if( SEType[ SE_SELECTION ].foreground == -1 ) {
-        SEType[ SE_SELECTION ].foreground = SEType[ SE_TEXT ].background;
-        SEType[ SE_SELECTION ].background = SEType[ SE_TEXT ].foreground;
+    if( SEType[SE_SELECTION].foreground == -1 ) {
+        SEType[SE_SELECTION].foreground = SEType[SE_TEXT].background;
+        SEType[SE_SELECTION].background = SEType[SE_TEXT].foreground;
     }
 
     // any syntax style not specified defaults to SE_TEXT style
     for( i = 0; i < SE_NUMTYPES; i++ ) {
-        if( SEType[ i ].foreground == -1 ) {
-            SEType[ i ].foreground = SEType[ SE_TEXT ].foreground;
-            SEType[ i ].background = SEType[ SE_TEXT ].background;
+        if( SEType[i].foreground == -1 ) {
+            SEType[i].foreground = SEType[SE_TEXT].foreground;
+            SEType[i].background = SEType[SE_TEXT].background;
         }
     }
 }

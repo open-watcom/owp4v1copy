@@ -64,11 +64,11 @@ int MoveScreenML( linenum ntop )
  */
 int MoveScreenDown( void )
 {
-    linenum     lne,cnt,lines,top,x;
+    linenum     lne, cnt, lines, top, x;
 
     CFindLastLine( &lne );
-    lines = WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_LINES );
-    x = lne-lines+1;
+    lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
+    x = lne - lines + 1;
     if( x <= 0 ) {
         return( ERR_NO_ERR );
     }
@@ -92,18 +92,18 @@ int MoveScreenDown( void )
  */
 int MoveScreenUp( void )
 {
-    linenum     lne,cnt,lines,top,nlne;
+    linenum     lne, cnt, lines, top, nlne;
 
-    lines = WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_LINES );
+    lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
     CFindLastLine( &lne );
     cnt = GetRepeatCount();
-    top = TopOfPage-cnt;
+    top = TopOfPage - cnt;
     if( top < 1 ) {
         top = 1;
     }
     TopOfPage = top;
-    if( CurrentLineNumber >= top+lines ) {
-        nlne = top +lines-1;
+    if( CurrentLineNumber >= top + lines ) {
+        nlne = top + lines - 1;
         if( nlne > lne ) {
             nlne = lne;
         }
@@ -118,25 +118,25 @@ int MoveScreenUp( void )
 int MoveScreenDownPageML( void )
 {
     return MoveScreenML( TopOfPage +
-                         WindowAuxInfo(CurrentWindow,WIND_INFO_TEXT_LINES) );
+                         WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) );
 }
 
 int MoveScreenUpPageML( void )
 {
     return MoveScreenML( TopOfPage -
-                         WindowAuxInfo(CurrentWindow,WIND_INFO_TEXT_LINES) );
+                         WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) );
 }
 
 int MoveScreenLeftPageML( void )
 {
-    return MoveScreenLeftRightML
-        ( LeftColumn - WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_COLS ) + 2 );
+    return MoveScreenLeftRightML(
+        LeftColumn - WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) + 2 );
 }
 
 int MoveScreenRightPageML( void )
 {
-    return MoveScreenLeftRightML
-        ( LeftColumn + WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_COLS ) - 2 );
+    return MoveScreenLeftRightML(
+        LeftColumn + WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) - 2 );
 }
 
 /*
@@ -145,19 +145,19 @@ int MoveScreenRightPageML( void )
 int MovePage( int dir, long repcnt, bool keepselect )
 {
     int         rc;
-    linenum     x,top,ll;
+    linenum     x, top, ll;
     linenum     tmp;
 
-    if( EditFlags.Modeless && ( keepselect == FALSE ) ) {
+    if( EditFlags.Modeless && (keepselect == FALSE) ) {
         UnselectRegion();
     }
 
-    tmp = (repcnt*dir*
+    tmp = (repcnt * dir *
                 WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ))
-                - (dir * PageLinesExposed );
+                - (dir * PageLinesExposed);
 #if 0
-    x = CurrentLineNumber+tmp;
-    top = TopOfPage+tmp;
+    x = CurrentLineNumber + tmp;
+    top = TopOfPage + tmp;
     CFindLastLine( &ll );
     if( top > ll ) {
         top = ll;
@@ -170,7 +170,7 @@ int MovePage( int dir, long repcnt, bool keepselect )
         x = 1;
     }
 #else
-    top = TopOfPage+tmp;
+    top = TopOfPage + tmp;
     if( top < 1 ) {
         top = 1;
     }
@@ -182,7 +182,7 @@ int MovePage( int dir, long repcnt, bool keepselect )
     if( rc ) {
         return( rc );
     }
-    x = CurrentLineNumber+tmp;
+    x = CurrentLineNumber + tmp;
     if( x < 1 ) {
         x = 1;
     }
@@ -225,8 +225,8 @@ int MovePageUp( void )
  */
 int MovePosition( void )
 {
-    linenum     lne,lines;
-    int         key,i;
+    linenum     lne, lines;
+    int         key, i;
 
     if( RepeatDigits == 0 ) {
         lne = CurrentLineNumber;
@@ -236,17 +236,17 @@ int MovePosition( void )
             return( ERR_INVALID_REDRAW );
         }
     }
-    lines = WindowAuxInfo( CurrentWindow,WIND_INFO_TEXT_LINES );
+    lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
     key = GetNextEvent( FALSE );
     switch( key ) {
     case '.':
-        TopOfPage = lne-lines/2;
+        TopOfPage = lne - lines / 2;
         break;
     case VI_KEY( ENTER ):
         TopOfPage = lne;
         break;
     case '-':
-        TopOfPage = lne - lines+1;
+        TopOfPage = lne - lines + 1;
         break;
     default:
         return( ERR_INVALID_REDRAW );
@@ -272,14 +272,14 @@ int MovePosition( void )
  */
 static int moveHalfPage( int dir )
 {
-    int         ople,rc;
+    int         ople, rc;
     long        repcnt;
     int         ln;
 
     ople = PageLinesExposed;
     repcnt = GetRepeatCount();
     if( repcnt > 1 ) {
-        ln = WindowAuxInfo(CurrentWindow,WIND_INFO_TEXT_LINES) - repcnt;
+        ln = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) - repcnt;
         if( ln < 1 ) {
             ln = 1;
         }
@@ -312,8 +312,8 @@ int MoveScreenLeftRightML( int newleft )
     if( LeftColumn <= 0 ) {
         LeftColumn = 0;
     } else {
-        if( LeftColumn >= MAX_INPUT_LINE-1 ) {
-            LeftColumn = MAX_INPUT_LINE-1;
+        if( LeftColumn >= MAX_INPUT_LINE - 1 ) {
+            LeftColumn = MAX_INPUT_LINE - 1;
         }
     }
     return( ERR_NO_ERR );

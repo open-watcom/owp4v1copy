@@ -49,7 +49,7 @@
     #define MSIZE( x )          _trmem_msize( x, trmemHandle )
 #else
     typedef void *_trmem_who;
-    #define _trmem_guess_who() 0
+    #define _trmem_guess_who()  0
     #define MSIZE( x )          _msize( x )
 #endif
 
@@ -81,9 +81,9 @@ static void *getMem( unsigned size, _trmem_who who )
  */
 static fcb *getLRU( unsigned upper_bound )
 {
-    long lru=MAX_LONG;
-    fcb *cfcb,*tfcb=NULL;
-    int bootlimit = MAX_IO_BUFFER/2;
+    long lru = MAX_LONG;
+    fcb *cfcb, *tfcb = NULL;
+    int bootlimit = MAX_IO_BUFFER / 2;
 
     while( 1 ) {
 
@@ -91,13 +91,13 @@ static fcb *getLRU( unsigned upper_bound )
         while( cfcb != NULL ) {
             if( !cfcb->on_display && !cfcb->non_swappable && cfcb->in_memory
                 && cfcb->byte_cnt >= bootlimit && cfcb != CurrentFcb ) {
-                    if( cfcb->last_swap == 0 ) {
-                        return( cfcb );
-                    }
-                    if( cfcb->last_swap < lru ) {
-                        lru = cfcb->last_swap;
-                        tfcb = cfcb;
-                    }
+                if( cfcb->last_swap == 0 ) {
+                    return( cfcb );
+                }
+                if( cfcb->last_swap < lru ) {
+                    lru = cfcb->last_swap;
+                    tfcb = cfcb;
+                }
             }
             cfcb = cfcb->thread_next;
         }
@@ -118,7 +118,7 @@ static fcb *getLRU( unsigned upper_bound )
  */
 static void *trySwap( unsigned size, unsigned upper_bound, _trmem_who who )
 {
-    void        *tmp=NULL;
+    void        *tmp = NULL;
     fcb         *tfcb;
 
     while( 1 ) {
@@ -207,6 +207,7 @@ void *MemAlloc( unsigned size )
 void *MemAllocUnsafe( unsigned size )
 {
     return( doMemAllocUnsafe( size, _trmem_guess_who() ) );
+
 } /* MemAllocUnsafe */
 
 /*
@@ -219,6 +220,7 @@ void MemFree( void *ptr )
 #else
     free( ptr );
 #endif
+
 } /* MemFree */
 
 /*
@@ -268,7 +270,7 @@ void *doMemReAllocUnsafe( void *ptr, unsigned size, _trmem_who who )
         size = MSIZE( tmp );
 #endif
         if( size > orig_size ) {
-            memset( &(((char *)tmp)[orig_size]), 0, size-orig_size );
+            memset( &(((char *)tmp)[orig_size]), 0, size - orig_size );
         }
     }
     return( tmp );
@@ -295,9 +297,9 @@ void *MemReAlloc( void *ptr, unsigned size )
 
 } /* MemReAlloc */
 
-static char *staticBuffs[ MAX_STATIC_BUFFERS ];
-static bool staticUse[ MAX_STATIC_BUFFERS ];
-int maxStatic=0;
+static char *staticBuffs[MAX_STATIC_BUFFERS];
+static bool staticUse[MAX_STATIC_BUFFERS];
+int         maxStatic = 0;
 
 /*
  * StaticAlloc - allocate one of the static buffers
@@ -306,12 +308,12 @@ void *StaticAlloc( void )
 {
     int i;
 
-    for( i=0;i<MAX_STATIC_BUFFERS;i++ ) {
+    for( i = 0; i < MAX_STATIC_BUFFERS; i++ ) {
         if( !staticUse[i] ) {
             staticUse[i] = TRUE;
             {
-                int j,k=0;
-                for( j=0;j<MAX_STATIC_BUFFERS;j++ ) {
+                int j, k = 0;
+                for( j = 0; j < MAX_STATIC_BUFFERS; j++ ) {
                     if( staticUse[j] ) {
                         k++;
                     }
@@ -334,7 +336,7 @@ void StaticFree( char *item )
 {
     int i;
 
-    for( i=0;i<MAX_STATIC_BUFFERS;i++ ) {
+    for( i = 0; i < MAX_STATIC_BUFFERS; i++ ) {
         if( item == staticBuffs[i] ) {
             staticUse[i] = FALSE;
             return;
@@ -348,26 +350,28 @@ void StaticFree( char *item )
  */
 void StaticStart( void )
 {
-    int i,bs;
+    int i, bs;
 
     MemFree( StaticBuffer );
-    bs = MaxLine+2;
-    StaticBuffer = MemAlloc( MAX_STATIC_BUFFERS* bs );
-    for( i=0;i<MAX_STATIC_BUFFERS;i++ ) {
+    bs = MaxLine + 2;
+    StaticBuffer = MemAlloc( MAX_STATIC_BUFFERS * bs );
+    for( i = 0; i < MAX_STATIC_BUFFERS; i++ ) {
         staticUse[i] = FALSE;
-        staticBuffs[i] = &StaticBuffer[i*bs];
+        staticBuffs[i] = &StaticBuffer[i * bs];
     }
 
 } /* StaticStart */
 
-void StaticFini( void ) {
+void StaticFini( void )
+{
     MemFree( StaticBuffer );
 }
 
 /*
  * MemStrDup - Safe strdup()
  */
-char *MemStrDup( char *string ){
+char *MemStrDup( char *string )
+{
     char *rptr;
 
     if( string == NULL ){
@@ -376,14 +380,14 @@ char *MemStrDup( char *string ){
         rptr = (char *)MemAlloc( strlen( string ) + 1 );
         strcpy( rptr, string );
     }
-    return rptr;
+    return( rptr );
 }
 
 
 #ifdef TRMEM
 
 extern void trmemPrint( int * handle, const char * buff, size_t len )
-/********************************************************************/
+/*******************************************************************/
 {
     write( *handle, buff, len );
 }
@@ -399,16 +403,16 @@ void DumpTRMEM( void )
 
 void InitTRMEM( void )
 {
-    char        file[ FILENAME_MAX ];
+    char        file[FILENAME_MAX];
 
     strcpy( file, getenv( "EDPATH" ) );
     strcat( file, "\\trmem.out" );
     trmemOutput = open( file, O_RDWR | O_CREAT | O_TEXT );
 
     trmemHandle = _trmem_open( malloc, free, realloc, _expand,
-            &trmemOutput, trmemPrint,
-            _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
-            _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
+        &trmemOutput, trmemPrint,
+        _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
+        _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
     // atexit( DumpTRMEM );
 }
 #endif

@@ -35,9 +35,9 @@
 #include "vi.h"
 #include "myprtf.h"
 #ifdef __WIN__
-#include "winrtns.h"
-#include "subclass.h"
-#include "utils.h"
+    #include "winrtns.h"
+    #include "subclass.h"
+    #include "utils.h"
 #endif
 #include "menu.h"
 #include "win.h"
@@ -49,36 +49,36 @@
 #include "rcs.h"
 
 #ifdef __WIN__
-#define T1      ""
-#define T2      "\t"
+    #define T1      ""
+    #define T2      "\t"
 #else
-#define T1      "\t"
-#define T2      "\t\t"
+    #define T1      "\t"
+    #define T2      "\t\t"
 #endif
 
 char * UsageMsg[] = {
 #ifdef __WIN__
-"viw [-?-dinqrvz] +<n> -k\"keys\" [-s<scr> [-p\"prm\"]] [-t<tag>]",
-"    [-c<cfg>] files",
+    "viw [-?-dinqrvz] +<n> -k\"keys\" [-s<scr> [-p\"prm\"]] [-t<tag>]",
+    "    [-c<cfg>] files",
 #else
-"Usage: vi [-?-dinqrvz] +<n> -k\"keys\" [-s<scr> [-p\"prm\"]] [-t<tag>]\n          [-c<cfg>] files",
+    "Usage: vi [-?-dinqrvz] +<n> -k\"keys\" [-s<scr> [-p\"prm\"]] [-t<tag>]\n          [-c<cfg>] files",
 #endif
-T1 "files             : files to edit (may contain wild cards)",
-T1 "Options: -?       : print this list",
-T2 " --       : file is read from stdin, and written to stdout",
-T2 " -d       : use default configuration (do not invoke ed.cfg)",
-T2 " -i       : ignore lost files",
-T2 " -n       : no readentirefile",
-T2 " -q       : quiet mode (no screen output)",
-T2 " -r       : recover lost files",
-T2 " -v       : set view-only mode",
-T2 " -z       : do not terminate file read when finding a ctrl-z",
-T2 " +<n>     : go to line number <n> in first file loaded",
-T2 " -k \"keys\": keystrokes to execute after the editor has started",
-T2 " -s <scr> : execute source script <scr> after editing files",
-T2 " -p \"prm\" : parameters associated with source script",
-T2 " -t <tag> : edit file with specified <tag>",
-T2 " -c <cfg> : use <cfg> as the configuration file"
+    T1 "files             : files to edit (may contain wild cards)",
+    T1 "Options: -?       : print this list",
+    T2 " --       : file is read from stdin, and written to stdout",
+    T2 " -d       : use default configuration (do not invoke ed.cfg)",
+    T2 " -i       : ignore lost files",
+    T2 " -n       : no readentirefile",
+    T2 " -q       : quiet mode (no screen output)",
+    T2 " -r       : recover lost files",
+    T2 " -v       : set view-only mode",
+    T2 " -z       : do not terminate file read when finding a ctrl-z",
+    T2 " +<n>     : go to line number <n> in first file loaded",
+    T2 " -k \"keys\": keystrokes to execute after the editor has started",
+    T2 " -s <scr> : execute source script <scr> after editing files",
+    T2 " -p \"prm\" : parameters associated with source script",
+    T2 " -t <tag> : edit file with specified <tag>",
+    T2 " -c <cfg> : use <cfg> as the configuration file"
 };
 
 char *OptEnvVar = "VI";
@@ -91,7 +91,7 @@ void Quit( const char **usage_msg, const char *str, ... )
     va_list     al;
 
     usage_msg = usage_msg;
-    #ifdef __WIN__
+#ifdef __WIN__
     {
         char    buff[MAX_STR];
 
@@ -103,9 +103,9 @@ void Quit( const char **usage_msg, const char *str, ... )
             buff[0] = 0;
         }
         CloseStartupDialog();
-        UsageDialog( UsageMsg, buff,  sizeof( UsageMsg )/sizeof( char *) );
+        UsageDialog( UsageMsg, buff,  sizeof( UsageMsg ) / sizeof( char *) );
     }
-    #else
+#else
     {
         int     i;
         int     cnt;
@@ -116,27 +116,28 @@ void Quit( const char **usage_msg, const char *str, ... )
             va_end( al );
             cnt = 1;
         } else {
-            cnt = sizeof( UsageMsg )/sizeof( char *);
+            cnt = sizeof( UsageMsg ) / sizeof( char *);
         }
 
-        for( i=0; i<cnt; i++ ) {
-            MyPrintf("%s\n",UsageMsg[i] );
+        for( i = 0; i < cnt; i++ ) {
+            MyPrintf( "%s\n", UsageMsg[i] );
         }
     }
-    #endif
+#endif
     // can't do an ExitEditor because we will not have initialized anything
     // yet (this is always called from checkFlags)
     // ExitEditor( 0 );
     ChangeDirectory( HomeDirectory );
-    #ifdef TRMEM
-        DumpTRMEM();
-    #endif
+#ifdef TRMEM
+    DumpTRMEM();
+#endif
     exit( 0 );
 
 } /* Usage */
 
 // free globals allocated directly in InitEditor
-static void miscGlobalsFini( void ){
+static void miscGlobalsFini( void )
+{
     MemFree( WorkLine );
     MemFree( DotBuffer );
     MemFree( AltDotBuffer );
@@ -162,15 +163,15 @@ static void miscGlobalsFini( void ){
  */
 void ExitEditor( int rc )
 {
-    #ifdef __WIN__
-        WriteProfile();
-    #endif
-    #ifdef __IDE__
-        IDEFini();
-    #endif
-    #ifdef __WIN__
-        DDEFini();
-    #endif
+#ifdef __WIN__
+    WriteProfile();
+#endif
+#ifdef __IDE__
+    IDEFini();
+#endif
+#ifdef __WIN__
+    DDEFini();
+#endif
     SaveHistory();
     RestoreInterrupts();
     SwapFileClose();
@@ -187,13 +188,13 @@ void ExitEditor( int rc )
     CurrentWindow = (window_id)-1;
     FinishWindows();
     ScreenFini();
-    #ifdef __WIN__
-        FiniClrPick();
-        FiniFtPick();
-        CursorOp( COP_FINI );
-        SubclassGenericFini();
-                FiniProfile();
-    #endif
+#ifdef __WIN__
+    FiniClrPick();
+    FiniFtPick();
+    CursorOp( COP_FINI );
+    SubclassGenericFini();
+    FiniProfile();
+#endif
     FiniFileStack();
     DeleteResidentScripts();
     MatchFini();
@@ -215,7 +216,7 @@ void ExitEditor( int rc )
     ViRCSFini();
 #endif
 #ifdef TRMEM
-        DumpTRMEM();
+    DumpTRMEM();
 #endif
     exit( rc );
 

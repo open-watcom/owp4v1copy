@@ -48,7 +48,7 @@ static int      *charVals;
 static int readKeyData( void )
 {
     int         *vals;
-    int         rc,cnt;
+    int         rc, cnt;
     char        *buff;
 
     if( keysRead ) {
@@ -76,7 +76,7 @@ int MapKey( int flag, char *data )
 {
     char        key[MAX_STR];
     key_map     *maps;
-    int         rc,j,k;
+    int         rc, j, k;
 
     if( !EditFlags.ScriptIsCompiled || (flag & MAPFLAG_UNMAP) ) {
         rc = readKeyData();
@@ -104,7 +104,7 @@ int MapKey( int flag, char *data )
      */
     if( !EditFlags.ScriptIsCompiled || (flag & MAPFLAG_UNMAP) ) {
         j = Tokenize( charTokens, key, TRUE );
-        if( j<0 ) {
+        if( j < 0 ) {
             k = (int) key[0];
         } else {
             k = charVals[j];
@@ -114,22 +114,22 @@ int MapKey( int flag, char *data )
     }
 
     if( EditFlags.CompileScript ) {
-        if( !(flag & MAPFLAG_UNMAP)) {
+        if( !(flag & MAPFLAG_UNMAP) ) {
             key_map     scr;
 
             rc = AddKeyMap( &scr, data, strlen( data ) );
             if( !rc ) {
                 if( scr.no_input_window ) {
-                    MySprintf( WorkLine->data,"%d \\x%s", k, scr.data );
+                    MySprintf( WorkLine->data, "%d \\x%s", k, scr.data );
                 } else {
-                    MySprintf( WorkLine->data,"%d %s", k, scr.data );
+                    MySprintf( WorkLine->data, "%d %s", k, scr.data );
                 }
             }
             MemFree( scr.data );
             return( rc );
 
         } else {
-            MySprintf( WorkLine->data,"%d %s", k, data );
+            MySprintf( WorkLine->data, "%d %s", k, data );
             return( ERR_NO_ERR );
         }
     }
@@ -141,7 +141,7 @@ int MapKey( int flag, char *data )
     maps[k].is_base = FALSE;
     MemFree( maps[k].data );
     maps[k].data = NULL;
-    if( !(flag & MAPFLAG_UNMAP )) {
+    if( !(flag & MAPFLAG_UNMAP ) ) {
         if( flag & MAPFLAG_BASE ) {
             maps[k].is_base = TRUE;
         }
@@ -159,26 +159,26 @@ int DoKeyMap( int scr )
     int         rc;
     long        total;
     int         i;
-    bool        was_base=FALSE;
+    bool        was_base = FALSE;
 
-    KeyMaps[ scr ].inuse = TRUE;
-    if( KeyMaps[ scr ].is_base ) {
+    KeyMaps[scr].inuse = TRUE;
+    if( KeyMaps[scr].is_base ) {
         was_base = TRUE;
-        for( i=0;i<EventCount;i++ ) {
+        for( i =0; i < EventCount; i++ ) {
             KeyMaps[i].was_inuse = KeyMaps[i].inuse;
             KeyMaps[i].inuse = TRUE;
         }
     }
     total = GetRepeatCount();
 
-    rc = RunKeyMap( &KeyMaps[ scr ], total );
+    rc = RunKeyMap( &KeyMaps[scr], total );
 
     if( was_base ) {
-        for( i=0;i<EventCount;i++ ) {
+        for( i = 0; i < EventCount; i++ ) {
             KeyMaps[i].inuse = KeyMaps[i].was_inuse;
         }
     }
-    KeyMaps[ scr ].inuse = FALSE;
+    KeyMaps[scr].inuse = FALSE;
 
     return( rc );
 
@@ -187,10 +187,10 @@ int DoKeyMap( int scr )
 /*
  * doRunKeyMap - execute a key map a specified number of times
  */
-static int doRunKeyMap( key_map *scr, long total  )
+static int doRunKeyMap( key_map *scr, long total )
 {
     int         max;
-    int         rc=ERR_NO_ERR;
+    int         rc = ERR_NO_ERR;
     undo_stack  *cstack;
 
     if( EditFlags.InputKeyMapMode ) {
@@ -207,7 +207,7 @@ static int doRunKeyMap( key_map *scr, long total  )
             EditFlags.NoInputWindow = TRUE;
         }
         // max = strlen( CurrentKeyMap );
-        for( max=0; CurrentKeyMap[max] != 0; max++ );
+        for( max = 0; CurrentKeyMap[max] != 0; max++ );
 
         CurrentKeyMapCount = 0;
         EditFlags.KeyMapInProgress = TRUE;
@@ -248,10 +248,10 @@ static int doRunKeyMap( key_map *scr, long total  )
 /*
  * RunKeyMap - run a key mapping
  */
-int RunKeyMap( key_map *scr, long total  )
+int RunKeyMap( key_map *scr, long total )
 {
-    int         oldcount,rc;
-    bool        restore=FALSE;
+    int         oldcount, rc;
+    bool        restore = FALSE;
     vi_key      *oldmap;
 
     /*
@@ -284,11 +284,10 @@ undo_stack *currUndoStack;
  */
 int StartInputKeyMap( int num )
 {
-
     if( EditFlags.InputKeyMapMode || EditFlags.KeyMapMode ) {
         return( ERR_INPUT_KEYMAP_RUNNING );
     }
-    CurrentKeyMap = InputKeyMaps[ num ].data;
+    CurrentKeyMap = InputKeyMaps[num].data;
     CurrentKeyMapCount = 0;
     EditFlags.InputKeyMapMode = TRUE;
     currUndoStack = UndoStack;
@@ -303,7 +302,7 @@ int StartInputKeyMap( int num )
 /*
  * DoneInputKeyMap - finished with undo stack
  */
-void DoneInputKeyMap( void  )
+void DoneInputKeyMap( void )
 {
     EditFlags.InputKeyMapMode = FALSE;
     TryEndUndoGroup( currUndoStack );
@@ -317,7 +316,7 @@ void DoneInputKeyMap( void  )
 vi_key extractViKeyToken( char *data, int *off )
 {
     char        str[MAX_STR];
-    int         i,j;
+    int         i, j;
     int         rc;
     vi_key      c;
 
@@ -361,14 +360,14 @@ int AddKeyMap( key_map *scr, char *data, int len )
     /*
      * get storage for key map
      */
-    scr->data = MemAlloc( ( len + 1 ) * sizeof( vi_key ) );
+    scr->data = MemAlloc( (len + 1) * sizeof( vi_key ) );
     scr->inuse = FALSE;
 
     /*
      * copy in key map data
      */
     sdata = scr->data;
-    for( i=0;i<len;i++ ) {
+    for( i = 0; i < len; i++ ) {
         c = data[i];
         if( c == '\\' ) {
             i++;
@@ -419,7 +418,6 @@ int AddKeyMap( key_map *scr, char *data, int len )
  */
 void InitKeyMaps( void )
 {
-
     KeyMaps = MemAlloc( EventCount * sizeof( key_map ) );
     InputKeyMaps = MemAlloc( EventCount * sizeof( key_map ) );
 
@@ -437,12 +435,17 @@ void FiniKeyMaps( void )
 
     // assuming Keymaps and InputKeymaps are inited to 0
     // this should be OK
-    for( i = 0; i<EventCount; i++){
-        if( KeyMaps[i].data != NULL ) MemFree( KeyMaps[i].data );
-        if( InputKeyMaps[i].data != NULL ) MemFree( InputKeyMaps[i].data );
+    for( i = 0; i < EventCount; i++){
+        if( KeyMaps[i].data != NULL ) {
+            MemFree( KeyMaps[i].data );
+        }
+        if( InputKeyMaps[i].data != NULL ) {
+            MemFree( InputKeyMaps[i].data );
+        }
     }
     MemFree( KeyMaps );
     MemFree( InputKeyMaps );
+
 } /* InitKeyMaps */
 
 /*
@@ -477,7 +480,7 @@ int ExecuteBuffer( void )
 char *LookUpCharToken( int ch, bool want_single )
 {
     int         i;
-    static int  num=0;
+    static int  num = 0;
 
     if( num == 0 ) {
         if( readKeyData() != ERR_NO_ERR ) {
@@ -499,7 +502,7 @@ char *LookUpCharToken( int ch, bool want_single )
             return( "\\" );
         }
     }
-    for( i=0;i<num;i++ ) {
+    for( i = 0; i < num; i++ ) {
         if( ch == charVals[i] ) {
             return( GetTokenString( charTokens, i ) );
         }

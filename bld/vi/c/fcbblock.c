@@ -40,7 +40,7 @@
  */
 void GiveBackBlock( long offset, unsigned char *blocks )
 {
-    int i,j,k,l;
+    int i, j, k, l;
 
     /*
      * get block index
@@ -50,12 +50,12 @@ void GiveBackBlock( long offset, unsigned char *blocks )
     /*
      * compute array element
      */
-    j = i/8;
+    j = i / 8;
 
     /*
      * compute which bit needs to be turned on
      */
-    k = (i%8);
+    k = (i % 8);
     k = 7 - k;
     l = 1 << k;
 
@@ -71,19 +71,19 @@ void GiveBackBlock( long offset, unsigned char *blocks )
  */
 bool GetNewBlock( long *p, unsigned char *blocks, int size )
 {
-    int i,j,k,l;
+    int i, j, k, l;
 
     /*
      * hunt for an empty block
      */
-    for( i=0;i< size;i++ ) {
+    for( i = 0; i < size; i++ ) {
         if( blocks[i] ) {
             /*
              * now, hunt for an single position
              */
             k = blocks[i];
             j = 0x80;
-            l = 8*i;
+            l = 8 * i;
             while( TRUE ) {
                 /*
                  * if we find a position, return it
@@ -108,9 +108,9 @@ bool GetNewBlock( long *p, unsigned char *blocks, int size )
  */
 int MakeWriteBlock( fcb *fb )
 {
-    line        *cline,*tline;
+    line        *cline, *tline;
     char        *buff;
-    int         len=0;
+    int         len = 0;
 
     /*
      * build a block

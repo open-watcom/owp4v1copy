@@ -42,7 +42,7 @@
  */
 int DoGenericFilter( linenum s, linenum e, char *cmd )
 {
-    fcb         *cfcb,*s1fcb,*e1fcb,*tfcb;
+    fcb         *cfcb, *s1fcb, *e1fcb, *tfcb;
     line        *cline;
     FILE        *f;
     int         rc;
@@ -60,14 +60,14 @@ int DoGenericFilter( linenum s, linenum e, char *cmd )
     tmpnam( filtin );
     tmpnam( filtout );
     f = fopen( filtin, "w" );
-    if( f==NULL ) {
+    if( f == NULL ) {
         return( ERR_FILE_OPEN );
     }
 
     /*
      * filter on a line
      */
-    rc = GetCopyOfLineRange( s,e, &s1fcb, &e1fcb );
+    rc = GetCopyOfLineRange( s, e, &s1fcb, &e1fcb );
     if( rc ) {
         fclose( f );
         return( rc );
@@ -98,8 +98,8 @@ int DoGenericFilter( linenum s, linenum e, char *cmd )
     rc = DeleteLineRange( s, e, 0 );
     if( !rc ) {
         strcpy( realcmd, filtout );
-        ReadAFile( s-1, realcmd );
-        Message1( "%l lines filtered through %s",e-s+1, cmd );
+        ReadAFile( s - 1, realcmd );
+        Message1( "%l lines filtered through %s", e - s + 1, cmd );
     }
     EndUndoGroup( UndoStack );
 

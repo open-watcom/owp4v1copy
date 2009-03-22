@@ -33,8 +33,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#if defined( _M_IX86 ) && defined (__WATCOMC__)
-#include <i86.h>
+#if defined( _M_IX86 ) && defined( __WATCOMC__ )
+    #include <i86.h>
 #endif
 #include "vi.h"
 #include "pragmas.h"
@@ -119,7 +119,7 @@ void WinGetFullPath( char *filename, char *full ) {
     }
 
     // find the paragraph and selector portions
-    para = handle>>16;
+    para = handle >> 16;
     sel = handle & 0xFFFF;
 
     // copy the filename to be expanded into the first half of block

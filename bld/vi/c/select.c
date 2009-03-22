@@ -39,9 +39,9 @@
  * tempFileSetup - set up a temp file with data in it
  */
 static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
-                                bool makelower )
+                           bool makelower )
 {
-    int         j,boff,i,k;
+    int         j, boff, i, k;
     char        dd[FILENAME_MAX];
 
     /*
@@ -54,31 +54,31 @@ static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
      */
     j = boff = 0;
     while( j < maxlist ) {
-        strcpy( dd,list[j] );
+        strcpy( dd, list[j] );
         if( makelower ) {
             FileLower( dd );
         }
         k = strlen( dd );
-        if( k +2 +indent + boff > MAX_IO_BUFFER ) {
+        if( k + 2 + indent + boff > MAX_IO_BUFFER ) {
             CreateFcbData( *cfile, boff );
             (*cfile)->fcb_tail->non_swappable = TRUE;
             boff = 0;
         }
         if( indent ) {
-            for( i=0;i<indent;i++ ) {
-                ReadBuffer[boff+i] = ' ';
+            for( i = 0; i < indent; i++ ) {
+                ReadBuffer[boff + i] = ' ';
             }
         }
-        memcpy( &ReadBuffer[boff+indent], dd, k );
+        memcpy( &ReadBuffer[boff + indent], dd, k );
         /* Don't change the CRLF state of the current file */
         if( EditFlags.WriteCRLF ) {
-            memcpy( &ReadBuffer[boff+k+indent],crlf,2 );
+            memcpy( &ReadBuffer[boff + k + indent], crlf, 2 );
             boff += 2;
         } else {
-            memcpy( &ReadBuffer[boff+k+indent],&crlf[1],1 );
+            memcpy( &ReadBuffer[boff + k + indent], &crlf[1], 1 );
             boff += 1;
         }
-        boff += k+indent;
+        boff += k + indent;
         j++;
     }
 
@@ -92,7 +92,7 @@ static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
  */
 int SelectItem( selectitem *si )
 {
-    int                 j,rc;
+    int                 j, rc;
     file                *cfile;
     selflinedata        sfd;
 
@@ -145,10 +145,10 @@ int SelectItem( selectitem *si )
  * SelectItemAndValue - select item from list and give it a value
  */
 int SelectItemAndValue( window_info *wi, char *title, char **list,
-                        int maxlist, int (*updatertn)( char *, char *, int * ), int indent,
-                        char **vals, int valoff )
+                        int maxlist, int (*updatertn)( char *, char *, int * ),
+                        int indent, char **vals, int valoff )
 {
-    int                 j,rc;
+    int                 j, rc;
     file                *cfile;
     selflinedata        sfd;
 

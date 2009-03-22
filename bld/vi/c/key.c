@@ -30,41 +30,43 @@
 ****************************************************************************/
 
 
-#if defined(__WIN__)
-#include "winvi.h"
+#if defined( __WIN__ )
+    #include "winvi.h"
 #else
-#include <stdio.h>
-#include "vi.h"
-#include "win.h"
+    #include <stdio.h>
+    #include "vi.h"
+    #include "win.h"
 #endif
 #ifdef _M_IX86
-#ifdef __WATCOMC__
-#include <i86.h>
-#endif
+    #ifdef __WATCOMC__
+        #include <i86.h>
+    #endif
 #endif
 #include <string.h>
 #include "keys.h"
-#if defined(__OS2__)
-#define INCL_BASE
-#include <os2.h>
+#if defined( __OS2__ )
+    #define INCL_BASE
+    #include <os2.h>
 #endif
 
 static int      overrideKeyBuff[MAX_OVERRIDE_KEY_BUFF];
-static int      overrideKeyPos,overrideKeyEnd;
+static int      overrideKeyPos, overrideKeyEnd;
 
-#if !defined(__UNIX__) && !defined(__NT__) || defined( __WIN__ )
-#define BUSYWAIT
+#if !defined( __UNIX__ ) && !defined( __NT__ ) || defined( __WIN__ )
+    #define BUSYWAIT
 #endif
 
-#if defined(__UNIX__) || defined(__NT__) && !defined( __WIN__ )
-#define NO_TRANSLATE
+#if defined( __UNIX__ ) || defined( __NT__ ) && !defined( __WIN__ )
+    #define NO_TRANSLATE
 #endif
 
-#if !defined(NO_TRANSLATE)
+#if !defined( NO_TRANSLATE )
 static char altLookup[] = { 30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37,
-                38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47, 17, 45, 21, 44  };
-static char altLookup2[] = { 117,147,146,119,132,118,115,116,141,145,
-               159,163,162,151,153,161,155,158,152,160,148,165 };
+                            38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47,
+                            17, 45, 21, 44  };
+static char altLookup2[] = { 117, 147, 146, 119, 132, 118, 115, 116, 141, 145,
+                             159, 163, 162, 151, 153, 161, 155, 158, 152, 160,
+                             148, 165 };
 #endif
 /*
  * clearSpin - clear spin area
@@ -72,12 +74,12 @@ static char altLookup2[] = { 117,147,146,119,132,118,115,116,141,145,
 static void clearSpin( void )
 {
     if( EditFlags.Spinning ) {
-        #if !defined(__WIN__)
-            (*(char_info _FAR *)SpinLoc).ch = ' ';
-        #endif
-        #ifdef __VIO__
-            MyVioShowBuf( SpinLoc - Scrn, 1 );
-        #endif
+#if !defined(__WIN__)
+        (*(char_info _FAR *)SpinLoc).ch = ' ';
+#endif
+#ifdef __VIO__
+        MyVioShowBuf( SpinLoc - Scrn, 1 );
+#endif
         EditFlags.SpinningOurWheels = FALSE;
     }
 
@@ -93,8 +95,8 @@ static int getOverrideKey( void )
     int         mcnt = 0;
 
     while( 1 ) {
-        c = overrideKeyBuff[ overrideKeyPos ];
-        if( overrideKeyPos == MAX_OVERRIDE_KEY_BUFF-1 ) {
+        c = overrideKeyBuff[overrideKeyPos];
+        if( overrideKeyPos == MAX_OVERRIDE_KEY_BUFF - 1 ) {
             overrideKeyPos = 0;
         } else {
             overrideKeyPos++;
@@ -150,7 +152,9 @@ int GetVIKey( int ch, int scan, int shift )
     int     i;
 #endif
 
-    if( EditFlags.EscapedInsertChar ) return( ch );
+    if( EditFlags.EscapedInsertChar ) {
+        return( ch );
+    }
 
     if( ch != 0 ) {
         if( ch == 127 && scan == 14 ) {
@@ -167,7 +171,7 @@ int GetVIKey( int ch, int scan, int shift )
         }
         return( ch );
     }
-#if !defined(NO_TRANSLATE)
+#if !defined( NO_TRANSLATE )
 
     /*
      * special characters: fcn keys, and cursor control
@@ -239,23 +243,23 @@ int GetVIKey( int ch, int scan, int shift )
             return( VI_KEY( DEL ) );
         }
     }
-    if( ch >= 59 && ch <=68 ) {
-        return ( ( ch-59+ VI_KEY( F1 ) ) );
+    if( ch >= 59 && ch <= 68 ) {
+        return ( ch - 59 + VI_KEY( F1 ) );
     }
     if( ch >= 84 && ch <= 113 ) {
-        if( ch >= 84 && ch <=93 ) {
-            return ( ( ch-84+ VI_KEY( SHIFT_F1 ) ) );
+        if( ch >= 84 && ch <= 93 ) {
+            return ( ch - 84 + VI_KEY( SHIFT_F1 ) );
         }
-        if( ch >= 94 && ch <=103 ) {
-            return ( ( ch-94+ VI_KEY( CTRL_F1 ) ) );
+        if( ch >= 94 && ch <= 103 ) {
+            return ( ch - 94 + VI_KEY( CTRL_F1 ) );
         }
 #ifdef __WIN
-        if( ch >= 104 && ch <=105 ) {
-            return( ( ch-104+ VI_KEY( ALT_F1 ) ) );
+        if( ch >= 104 && ch <= 105 ) {
+            return( ch - 104 + VI_KEY( ALT_F1 ) );
         }
 #else
-        if( ch >= 104 && ch <=113 ) {
-            return( ( ch-104+ VI_KEY( ALT_F1 ) ) );
+        if( ch >= 104 && ch <= 113 ) {
+            return( ch - 104 + VI_KEY( ALT_F1 ) );
         }
 #endif
     }
@@ -263,16 +267,16 @@ int GetVIKey( int ch, int scan, int shift )
         return( VI_KEY( ALT_HYPHEN ) );
     }
     if( ch >= 133 && ch <= 140 ) {
-        return( ch-133 + VI_KEY( F11 ) );
+        return( ch - 133 + VI_KEY( F11 ) );
     }
-    for( i=0;i<sizeof( altLookup);i++ ) {
+    for( i = 0; i < sizeof( altLookup ); i++ ) {
         if( altLookup[i] == (char) ch ) {
-            return( VI_KEY( ALT_A )+i );
+            return( VI_KEY( ALT_A ) + i );
         }
     }
-    for( i=0;i<sizeof( altLookup2 );i++ ) {
+    for( i = 0; i < sizeof( altLookup2 ); i++ ) {
         if( altLookup2[i] == (char) ch ) {
-            return( VI_KEY( CTRL_END )+i );
+            return( VI_KEY( CTRL_END ) + i );
         }
     }
     return( 128 );
@@ -292,7 +296,7 @@ int GetKey( bool usemouse )
 {
     bool        shift;
     bool        hit;
-    int         ch,scan;
+    int         ch, scan;
 
     clearSpin();
     while( 1 ) {
@@ -324,21 +328,21 @@ int GetKey( bool usemouse )
         hit = KeyboardHit();
         if( !hit ) {
             DoAutoSave();
-            #ifdef __IDE__
-                IDEGetKeys();
-            #endif
-            #ifdef __QNX__
-                WaitForProxy();
-                if( !KeyboardHit() ) {
-                    continue;
-                }
-            #endif
+#ifdef __IDE__
+            IDEGetKeys();
+#endif
+#ifdef __QNX__
+            WaitForProxy();
+            if( !KeyboardHit() ) {
+                continue;
+            }
+#endif
         }
-#if defined(BUSYWAIT)
+#if defined( BUSYWAIT )
         else {
 #endif
             ch = GetKeyboard( &scan );
-#if defined(__NT__)
+#if defined( __NT__ )
             if( ch == VI_KEY( MOUSEEVENT ) ) {
                 continue;
             }
@@ -346,16 +350,15 @@ int GetKey( bool usemouse )
             shift = ShiftDown();
             DisplayMouse( FALSE );
 #ifdef __WIN__
-            if( ch==0 && scan==0 ) {
+            if( ch == 0 && scan == 0 ) {
                 GetKeyboard( NULL );
                 ExitWithVerify();
                 clearSpin();
                 continue;
             }
 #else
-            if( !EditFlags.EscapedInsertChar &&
-                ( ch == 3 || (ch==0 && scan==0) ) ) {
-                if( ch==0 && scan == 0 ) {
+            if( !EditFlags.EscapedInsertChar && (ch == 3 || (ch == 0 && scan == 0)) ) {
+                if( ch == 0 && scan == 0 ) {
                     GetKeyboard( NULL );
                 }
                 ExitWithVerify();
@@ -364,10 +367,10 @@ int GetKey( bool usemouse )
             }
 #endif
             break;
-#if defined(BUSYWAIT)
+#if defined( BUSYWAIT )
         }
 #endif
-#if defined(__OS2__)
+#if defined( __OS2__ )
         DosSleep( 1 );
 #endif
     }
@@ -415,7 +418,7 @@ int GetNextEvent( bool usemouse )
 
     if( EditFlags.InputKeyMapMode || EditFlags.KeyMapMode ) {
 
-        c = CurrentKeyMap[ CurrentKeyMapCount++ ];
+        c = CurrentKeyMap[CurrentKeyMapCount++];
 
         if( c == 0 ) {
             EditFlags.NoInputWindow = FALSE;
@@ -439,7 +442,7 @@ int GetNextEvent( bool usemouse )
         if( AltDotCount > AltDotDigits ) {
             return( VI_KEY( ESC ) );
         }
-        c = AltDotBuffer[ AltDotCount++];
+        c = AltDotBuffer[AltDotCount++];
     } else {
         c = GetKey( usemouse );
     }
@@ -448,15 +451,15 @@ int GetNextEvent( bool usemouse )
         if( c != VI_KEY( MOUSEEVENT ) ) {
             if( EditFlags.AltMemorizeMode ) {
                 if( AltDotDigits < maxdotbuffer ) {
-                    AltDotBuffer[ AltDotDigits++ ] = c;
+                    AltDotBuffer[AltDotDigits++] = c;
                 } else {
-                    AltDotBuffer[AltDotDigits-1] = (char) VI_KEY( ESC );
+                    AltDotBuffer[AltDotDigits - 1] = (char) VI_KEY( ESC );
                 }
             }
             if( DotDigits < maxdotbuffer ) {
-                DotBuffer[ DotDigits++ ] = c;
+                DotBuffer[DotDigits++] = c;
             } else {
-                DotBuffer[DotDigits-1] = (char) VI_KEY( ESC );
+                DotBuffer[DotDigits - 1] = (char) VI_KEY( ESC );
             }
         }
     }
@@ -482,7 +485,7 @@ void ClearBreak( void )
  */
 void KeyAdd( int ch )
 {
-    overrideKeyBuff[ overrideKeyEnd ] = ch;
+    overrideKeyBuff[overrideKeyEnd] = ch;
     if( overrideKeyEnd == MAX_OVERRIDE_KEY_BUFF - 1 ) {
         overrideKeyEnd = 0;
     } else {

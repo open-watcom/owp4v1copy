@@ -35,8 +35,8 @@
 #include <string.h>
 #include "vi.h"
 
-static alias_list *alHead,*alTail;
-static alias_list *abHead,*abTail;
+static alias_list *alHead, *alTail;
+static alias_list *abHead, *abTail;
 /*
  * setGenericAlias - define an alias/abbreviation
  */
@@ -45,7 +45,7 @@ static int setGenericAlias( char *what, alias_list **head, alias_list **tail )
     alias_list  *curr;
     char        str[MAX_STR];
 
-    if( NextWord1( what, str ) <=0 ) {
+    if( NextWord1( what, str ) <= 0 ) {
         return( ERR_INVALID_ALIAS );
     }
     RemoveLeadingSpaces( what );
@@ -56,11 +56,11 @@ static int setGenericAlias( char *what, alias_list **head, alias_list **tail )
      */
     curr = *head;
     while( curr != NULL ) {
-        if( !strcmp( str,curr->alias ) ) {
+        if( !strcmp( str, curr->alias ) ) {
             MemFree( curr->expand );
             if( what == NULL ) {
                 MemFree( curr->alias );
-                MemFree( DeleteLLItem( (ss**)head, (ss**)tail, (ss*)curr ) );
+                MemFree( DeleteLLItem( (ss **)head, (ss **)tail, (ss *)curr ) );
             } else {
                 AddString( &(curr->expand), what );
             }
@@ -75,7 +75,7 @@ static int setGenericAlias( char *what, alias_list **head, alias_list **tail )
     AddString( &(curr->alias), str );
     AddString( &(curr->expand), what );
 
-    AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)curr );
+    AddLLItemAtEnd( (ss **)head, (ss **)tail, (ss *)curr );
     Message1( "%s set to \"%s\"", str, what );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
@@ -111,7 +111,7 @@ static int removeGenericAlias( char *which, alias_list **head, alias_list **tail
     if( curr == NULL ) {
         return( ERR_NO_SUCH_ALIAS );
     }
-    DeleteLLItem( (ss**)head, (ss**)tail, (ss*)curr );
+    DeleteLLItem( (ss **)head, (ss **)tail, (ss *)curr );
     Message1( "%s removed", which );
     return( ERR_NO_ERR );
 
@@ -123,7 +123,8 @@ static int removeGenericAlias( char *which, alias_list **head, alias_list **tail
  */
 int SetAlias( char *what )
 {
-    return( setGenericAlias( what, &alHead, &alTail ));
+    return( setGenericAlias( what, &alHead, &alTail ) );
+
 } /* SetAlias */
 
 /*
@@ -132,6 +133,7 @@ int SetAlias( char *what )
 int UnAlias( char *what )
 {
     return( removeGenericAlias( what, &alHead, &alTail ) );
+
 } /* UnAlias */
 
 /*
@@ -185,7 +187,7 @@ int UnAbbrev( char *abbrev )
  */
 bool CheckAbbrev( char *data, int *ccnt )
 {
-    int         i,j,owl,col;
+    int         i, j, owl, col;
     alias_list  *curr;
 
     if( EditFlags.Modeless == TRUE ) {
@@ -204,8 +206,8 @@ bool CheckAbbrev( char *data, int *ccnt )
         return( FALSE );
     }
 
-    i = CurrentColumn-1- (*ccnt);
-    j = CurrentColumn-2;
+    i = CurrentColumn - 1 - (*ccnt);
+    j = CurrentColumn - 2;
     *ccnt = 0;
 
     /*
@@ -213,9 +215,9 @@ bool CheckAbbrev( char *data, int *ccnt )
      */
     owl = WorkLine->len;
     WorkLine->len = ReplaceSubString( WorkLine->data, WorkLine->len,
-                      i, j, curr->expand, strlen( curr->expand) );
+                      i, j, curr->expand, strlen( curr->expand ) );
     col = CurrentColumn + WorkLine->len - owl;
-    GoToColumn( col, WorkLine->len+1 );
+    GoToColumn( col, WorkLine->len + 1 );
     return( TRUE );
 
 } /* CheckAbbrev */

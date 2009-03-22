@@ -56,7 +56,7 @@ static int getDir( char *dname, bool want_all_dirs )
     DIR                 *d;
     struct dirent       *nd;
     direct_ent          *tmp;
-    int                 i,j,len;
+    int                 i, j, len;
     char                wild[FILENAME_MAX];
     char                path[FILENAME_MAX];
     char                ch;
@@ -66,22 +66,22 @@ static int getDir( char *dname, bool want_all_dirs )
      * initialize for file scan
      */
     len = strlen( dname );
-    for( i=len-1;i>=0;i-- ) {
+    for( i = len - 1; i >= 0; i-- ) {
         if( dname[i] == '/' || dname[i] == '\\' || dname[i] == ':' ) {
             break;
         }
     }
-    for( j=0;j<i+1;j++ ) {
+    for( j = 0; j < i + 1; j++ ) {
         path[j] = dname[j];
     }
-    path[i+1] = 0;
+    path[i + 1] = 0;
     if( i >= 0 ) {
         ch = path[i];
     } else {
         ch = 0;
     }
-    for( j=i+1;j<=len;j++ ) {
-        wild[j-i-1] = dname[j];
+    for( j = i + 1; j <= len; j++ ) {
+        wild[j - i - 1] = dname[j];
     }
     i = FileMatchInit( wild );
     if( i ) {
@@ -89,9 +89,9 @@ static int getDir( char *dname, bool want_all_dirs )
     }
 #ifndef __UNIX__
     if( ch != '\\' && ch != '/' && ch != ':' && ch != 0 ) {
-        strcat( path,FILE_SEP_STR );
+        strcat( path, FILE_SEP_STR );
     }
-    strcat( path,ALL_FILES_WILD_CARD );
+    strcat( path, ALL_FILES_WILD_CARD );
 #else
     if( ch == 0 ) {
         path[0] = '.';
@@ -99,7 +99,7 @@ static int getDir( char *dname, bool want_all_dirs )
     }
 #endif
 
-    for( i=0;i<DirFileCount;i++ ) {
+    for( i = 0; i < DirFileCount; i++ ) {
         MemFree2( &DirFiles[i] );
     }
     DirFileCount = 0;
@@ -112,7 +112,7 @@ static int getDir( char *dname, bool want_all_dirs )
     /*
      * loop through all directory entries
      */
-    while( (nd = readdir( d ) ) != NULL ) {
+    while( (nd = readdir( d )) != NULL ) {
 
         if( DirFileCount >= MAX_FILES ) {
             break;
@@ -143,8 +143,8 @@ static int getDir( char *dname, bool want_all_dirs )
         }
 
         len = strlen( nd->d_name );
-        DirFiles[ DirFileCount ] = MemAlloc( sizeof( direct_ent ) + len );
-        tmp = DirFiles[ DirFileCount ];
+        DirFiles[DirFileCount] = MemAlloc( sizeof( direct_ent ) + len );
+        tmp = DirFiles[DirFileCount];
         GetFileInfo( tmp, nd, path );
 
         memcpy( tmp->name, nd->d_name, len + 1 );
@@ -179,7 +179,7 @@ int GetSortDir( char *name, bool want_all_dirs )
 void DirFini(void){
     int i;
 
-    for( i=0;i<DirFileCount;i++ ) {
+    for( i = 0; i < DirFileCount; i++ ) {
         MemFree( DirFiles[i] );
     }
     DirFileCount = 0;

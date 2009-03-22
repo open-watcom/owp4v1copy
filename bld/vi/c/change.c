@@ -41,8 +41,8 @@
  */
 int DoLineSubstitute( event **ev, event **next )
 {
-    *ev = &EventList[ 'c' ];
-    *next = &EventList[ 'c' ];
+    *ev = &EventList['c'];
+    *next = &EventList['c'];
     return( ERR_NO_ERR );
 
 } /* DoLineSubstitute */
@@ -52,8 +52,8 @@ int DoLineSubstitute( event **ev, event **next )
  */
 int DoSubstitute( event **ev, event **next )
 {
-    *ev = &EventList[ 'c' ];
-    *next = &EventList[ ' ' ];
+    *ev = &EventList['c'];
+    *next = &EventList[' '];
     return( ERR_NO_ERR );
 
 } /* DoSubstitute */
@@ -63,8 +63,8 @@ int DoSubstitute( event **ev, event **next )
  */
 int DoChangeLineEnd( event **ev, event **next )
 {
-    *ev = &EventList[ 'c' ];
-    *next = &EventList[ '$' ];
+    *ev = &EventList['c'];
+    *next = &EventList['$'];
     return( ERR_NO_ERR );
 
 } /* DoChangeLineEnd */

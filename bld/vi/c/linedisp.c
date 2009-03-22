@@ -36,7 +36,7 @@
 #include "vi.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 
 /*
@@ -96,4 +96,5 @@ int ReDisplayBuffers( bool runFts )
     BringUpFile( ocurrinfo, runFts );
 
     return( ERR_NO_ERR );
-}
+
+} /* ReDisplayBuffers */

@@ -77,7 +77,7 @@ int GetErrorTokenValue( int *value, char *str )
     }
     i = Tokenize( ErrorTokens, str, TRUE );
     if( i >= 0 ) {
-        *value = ErrorValues[ i ];
+        *value = ErrorValues[i];
     } else {
         *value = atoi( str );
     }
@@ -92,7 +92,7 @@ static bool errorRead = FALSE;
 int ReadErrorTokens( void )
 {
     int         *vals;
-    int         rc,cnt;
+    int         rc, cnt;
     char        *buff;
 
     if( errorRead ) {

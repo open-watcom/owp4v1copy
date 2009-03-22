@@ -52,7 +52,7 @@ static int getBracketLoc( linenum *mline, int *mcol )
     tmp[1] = ')';
     tmp[2] = 0;
     lne = CurrentLineNumber;
-    rc = GetFind( tmp, mline, mcol, &len, FINDFL_BACKWARDS|FINDFL_NOERROR);
+    rc = GetFind( tmp, mline, mcol, &len, FINDFL_BACKWARDS | FINDFL_NOERROR );
     EditFlags.NoReplaceSearchString = oldnrss;
     if( *mline != CurrentLineNumber ) {
         EditFlags.Magic = oldmagic;
@@ -80,9 +80,9 @@ static int getBracketLoc( linenum *mline, int *mcol )
  */
 int GetAutoIndentAmount( char *buff, int extra, bool above_line )
 {
-    int         i,j=0,k;
+    int         i, j = 0, k;
     bool        tabme;
-    int         rc,col;
+    int         rc, col;
     linenum     sline;
     line        *cline;
     fcb         *cfcb;
@@ -98,7 +98,7 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
         if( EditFlags.CMode ) {
             if( EditFlags.CaseShift ) {
             }
-            for( k=cline->len-1;k>=0;k-- ) {
+            for( k = cline->len - 1; k >= 0; k-- ) {
                 ch = cline->data[k];
                 if( ch == '{' || ch == '}' ) {
                     if( ch == '{' && above_line ) {
@@ -109,13 +109,13 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
                     }
                     extra += ShiftWidth;
                     SaveCurrentFilePos();
-                    CurrentColumn = k+1;
+                    CurrentColumn = k + 1;
                     /* add a { to keep matches even! */
                     if( ch == '}' ) {
                         rc = FindMatch( &sline, &col );
                         if( !rc ) {
                             CurrentLineNumber = sline;
-                            CurrentColumn = col-1;
+                            CurrentColumn = col - 1;
                             CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
                         }
                     }
@@ -133,8 +133,8 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
         /*
          * create the final indent amount
          */
-        if( i==1 ) {
-            if( cline->len != 0 && !isspace( cline->data[0] )) {
+        if( i == 1 ) {
+            if( cline->len != 0 && !isspace( cline->data[0] ) ) {
                 indent_amount = 1;
             } else {
                 indent_amount = GetVirtualCursorPosition( cline->data, cline->len + 1 );
@@ -144,10 +144,10 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
         }
         tabme = EditFlags.RealTabs;
         indent_amount += extra;
-        j = InsertTabSpace( indent_amount-1, buff, &tabme );
+        j = InsertTabSpace( indent_amount - 1, buff, &tabme );
         break;
     }
-    buff[j]=0;
+    buff[j] = 0;
     return( j );
 
 } /* GetAutoIndentAmount */

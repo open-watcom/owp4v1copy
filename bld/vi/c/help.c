@@ -79,20 +79,20 @@ int DoHelp( char *data )
 {
     // Use the windows help till we get one of our own
     LPSTR vi_helpfile = "editor.hlp";
-    #ifdef __NT__
-        //LPSTR win_helpfile = "api32wh.hlp";
-        LPSTR win_helpfile = "win32sdk.hlp";
-    #else
-        LPSTR win_helpfile = "win31wh.hlp";
-    #endif
+#ifdef __NT__
+    //LPSTR win_helpfile = "api32wh.hlp";
+    LPSTR win_helpfile = "win32sdk.hlp";
+#else
+    LPSTR win_helpfile = "win31wh.hlp";
+#endif
 
     RemoveLeadingSpaces( data );
-    if( !strcmp( data, "OnHelp" ) ){
+    if( !strcmp( data, "OnHelp" ) ) {
        WWinHelp( Root, NULL, HELP_HELPONHELP, 0L );
-    } else if( !strcmp( data, "Contents" ) ){
-       WWinHelp( Root, vi_helpfile,  HELP_CONTENTS, 0L );
-    } else if( !strcmp( data, "Search" ) ){
-       WWinHelp( Root, vi_helpfile,  HELP_PARTIALKEY, (DWORD)(LPSTR)"" );
+    } else if( !strcmp( data, "Contents" ) ) {
+       WWinHelp( Root, vi_helpfile, HELP_CONTENTS, 0L );
+    } else if( !strcmp( data, "Search" ) ) {
+       WWinHelp( Root, vi_helpfile, HELP_PARTIALKEY, (DWORD)(LPSTR)"" );
     } else {
        WWinHelp( Root, win_helpfile, HELP_KEY, (DWORD)(LPSTR)data );
     }
@@ -101,7 +101,10 @@ int DoHelp( char *data )
 
 #else
 
-int DoHelpOnContext( void ){ return(ERR_NO_ERR); }
+int DoHelpOnContext( void )
+{
+    return( ERR_NO_ERR );
+}
 
 int DoHelp( char *data )
 {
@@ -117,10 +120,10 @@ int DoHelp( char *data )
     token = Tokenize( helpCmds, data, FALSE );
     if( token < 0 ) {
         if( data[0] == 0 ) {
-            strcpy( tmp,"Topics: " );
-            for( i=0;i<nHelpFiles;i++ ) {
+            strcpy( tmp, "Topics: " );
+            for( i = 0; i < nHelpFiles; i++ ) {
                 if( i != 0 ) {
-                    strcat( tmp,", " );
+                    strcat( tmp, ", " );
                 }
                 strcat( tmp, GetTokenString( helpCmds, i ) );
             }

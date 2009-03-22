@@ -44,8 +44,8 @@
 #include "utils.h"
 
 
-extern int MouseX, MouseY;
-static int last_start_line = 1, last_end_line = 1;
+extern int  MouseX, MouseY;
+static int  last_start_line = 1, last_end_line = 1;
 #endif
 
 #ifndef __WIN__
@@ -57,7 +57,7 @@ static void markRegion( bool val )
     fcb         *cfcb;
     line        *cline;
     linenum     ln;
-    linenum     s,e;
+    linenum     s, e;
 
     if( SelRgn.start_line > SelRgn.end_line ) {
         s = SelRgn.end_line;
@@ -81,12 +81,13 @@ static void markRegion( bool val )
             break;
         }
     }
+
 } /* markRegion */
 #endif
 
 /*
  * GetFixedSelectedRegion - put the fixed selected region into
- * the select_rgn specified
+ *                          the select_rgn specified
  */
 void GetFixedSelectedRegion( select_rgn *rgn )
 {
@@ -172,6 +173,7 @@ static void updateRegion( void )
     markRegion( TRUE );
     DCDisplayAllLines();
 #endif
+
 } /* updateRegion */
 
 /*
@@ -222,7 +224,7 @@ void UpdateDrag( window_id id, int win_x, int win_y )
         nx = RealCursorPosition( win_x );
         GoToColumnOnCurrentLine( nx );
     } else {
-    #ifndef __WIN__
+#ifndef __WIN__
         if( MouseRow >= WindowAuxInfo( CurrentWindow, WIND_INFO_Y2 ) ) {
             GoToLineRelCurs( TopOfPage + height );
         } else if( MouseRow <= WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) ) {
@@ -230,40 +232,41 @@ void UpdateDrag( window_id id, int win_x, int win_y )
         } else if( MouseCol <= WindowAuxInfo( CurrentWindow, WIND_INFO_X1 ) ) {
             GoToColumnOnCurrentLine( LeftColumn - 1 );
         } else if( MouseCol >= WindowAuxInfo( CurrentWindow, WIND_INFO_X2 ) ) {
-            GoToColumnOnCurrentLine( LeftColumn +WindowAuxInfo( CurrentWindow, WIND_INFO_WIDTH ));
+            GoToColumnOnCurrentLine( LeftColumn + WindowAuxInfo( CurrentWindow,
+                WIND_INFO_WIDTH ));
         }
-    #else
-    {
-        RECT            rect;
+#else
+        {
+            RECT            rect;
 
-        GetClientRect( CurrentWindow, &rect );
-        if( MouseY > rect.bottom ) {
-            ny = TopOfPage + height;
-            if( ny > CurrentFile->fcb_tail->end_line ) {
-                ny = CurrentFile->fcb_tail->end_line;
-                moveCursor = 1;
-            }
-            GoToLineRelCurs( ny );
-        } else if( MouseY < 0 ) {
-            ny = TopOfPage - 1;
-            if( ny < 1 ) {
-                ny = 1;
-                moveCursor = -1;
-            }
-            GoToLineRelCurs( ny );
-        } else if( MouseX < 0 ) {
-            GoToColumnOnCurrentLine( LeftColumn - 1 );
-        } else if( MouseX > rect.right ) {
-            if( EditFlags.Modeless ) {
-                GoToColumnOnCurrentLine( 1 + LeftColumn +
+            GetClientRect( CurrentWindow, &rect );
+            if( MouseY > rect.bottom ) {
+                ny = TopOfPage + height;
+                if( ny > CurrentFile->fcb_tail->end_line ) {
+                    ny = CurrentFile->fcb_tail->end_line;
+                    moveCursor = 1;
+                }
+                GoToLineRelCurs( ny );
+            } else if( MouseY < 0 ) {
+                ny = TopOfPage - 1;
+                if( ny < 1 ) {
+                    ny = 1;
+                    moveCursor = -1;
+                }
+                GoToLineRelCurs( ny );
+            } else if( MouseX < 0 ) {
+                GoToColumnOnCurrentLine( LeftColumn - 1 );
+            } else if( MouseX > rect.right ) {
+                if( EditFlags.Modeless ) {
+                    GoToColumnOnCurrentLine( 1 + LeftColumn +
                         WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) );
-            } else {
-                GoToColumnOnCurrentLine( LeftColumn +
+                } else {
+                    GoToColumnOnCurrentLine( LeftColumn +
                         WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) );
+                }
             }
         }
-    }
-    #endif
+#endif
     }
 
     if( moveCursor == -1 ) {
@@ -271,6 +274,7 @@ void UpdateDrag( window_id id, int win_x, int win_y )
     } else if( moveCursor == 1 ) {
         GoToColumnOnCurrentLine( CurrentFile->fcb_tail->line_tail->len + 1 );
     }
+
 } /* UpdateDrag */
 
 /*
@@ -278,12 +282,10 @@ void UpdateDrag( window_id id, int win_x, int win_y )
  */
 void UpdateCursorDrag( void )
 {
-
     if( !EditFlags.Dragging ) {
         return;
     }
-    if( SelRgn.end_line == CurrentLineNumber &&
-        SelRgn.end_col == CurrentColumn ) {
+    if( SelRgn.end_line == CurrentLineNumber && SelRgn.end_col == CurrentColumn ) {
         return;
     }
 #ifndef __WIN__
@@ -323,8 +325,7 @@ void SetSelRegionCols( linenum sl, int sc, int ec )
     rc = CGimmeLinePtr( sl, &fcb, &line );
     if( rc == ERR_NO_ERR ) {
         data = ( line->inf.ld.nolinedata ) ? WorkLine->data : line->data;
-        SelRgn.start_col_v =
-                GetVirtualCursorPosition( data, SelRgn.start_col );
+        SelRgn.start_col_v = GetVirtualCursorPosition( data, SelRgn.start_col );
     }
 
     updateRegion();
@@ -379,6 +380,7 @@ int SelectLeft( range *r, long count )
         startSelectedRegion( FALSE );
     }
     return MoveLeft( r, count );
+
 } /* SelectLeft */
 
 /*
@@ -390,6 +392,7 @@ int SelectRight( range *r, long count )
         startSelectedRegion( FALSE );
     }
     return MoveRight( r, count );
+
 } /* SelectRight */
 
 /*
@@ -460,6 +463,7 @@ int SelectPageUp( void )
         }
     }
     return( MovePage( -1, 1, TRUE ) );
+
 } /* SelectPageUp */
 
 /*
@@ -474,6 +478,7 @@ int SelectPageDown( void )
         }
     }
     return( MovePage( 1, 1, TRUE ) );
+
 } /* SelectPageDown */
 
 int SelectBackwardsWord( range *r, long count )
@@ -529,8 +534,8 @@ int SelectBottomOfPage( range *r, long count )
  */
 int DoSelectSelection( bool doMenu )
 {
-    linenum     sl,el,tl;
-    int         sc,ec,tc;
+    linenum     sl, el, tl;
+    int         sc, ec, tc;
     int         rc = ERR_NO_ERR;
 
     if( SelRgn.selected && doMenu ) {
@@ -550,18 +555,15 @@ int DoSelectSelection( bool doMenu )
                     tc = sc;
                     sc = ec;
                     ec = tc;
-                }
-                else
-                if( sc < ec ) {
+                } else if( sc < ec ) {
                     ec--;
                 }
 
-                if( CurrentColumn >= sc && CurrentColumn <= ( ec + 1 ) ) {
+                if( CurrentColumn >= sc && CurrentColumn <= (ec + 1) ) {
                     rc = InvokeColSelHook( sc, ec );
                 }
             } else {
-                rc = InvokeLineSelHook( SelRgn.start_line,
-                                        SelRgn.end_line );
+                rc = InvokeLineSelHook( SelRgn.start_line, SelRgn.end_line );
             }
             UnselectRegion();
             return( rc );
@@ -612,9 +614,9 @@ int GetSelectedRegion( range *r )
         r->line_based = SelRgn.lines;
         r->start.line = SelRgn.start_line;
         r->end.line = SelRgn.end_line;
-        if( ( SelRgn.start_line > SelRgn.end_line ) ||
-                ( SelRgn.start_line == SelRgn.end_line &&
-                  SelRgn.end_col < SelRgn.start_col ) ) {
+        if( (SelRgn.start_line > SelRgn.end_line) ||
+            (SelRgn.start_line == SelRgn.end_line &&
+            SelRgn.end_col < SelRgn.start_col) ) {
             // don't include char at SelRgn.start_col
             r->end.column = SelRgn.end_col;
             r->start.column = SelRgn.start_col - 1;
@@ -659,8 +661,8 @@ int SetSelectedRegion( range *r )
         }
         rc = CGimmeLinePtr( SelRgn.start_line, &fcb, &line );
         if( rc == ERR_NO_ERR ) {
-            SelRgn.start_col_v =
-                    WinVirtualCursorPosition( line->data, SelRgn.start_col );
+            SelRgn.start_col_v = WinVirtualCursorPosition( line->data,
+                                                           SelRgn.start_col );
         }
     }
     SelRgn.selected = TRUE;
@@ -685,11 +687,12 @@ int SetSelectedRegionFromLine( range *r, linenum lineno )
     if( rc != ERR_NO_ERR ) {
         return( rc );
     }
-    data = ( line->inf.ld.nolinedata ) ? WorkLine->data : line->data;
+    data = line->inf.ld.nolinedata ? WorkLine->data : line->data;
     SelRgn.start_col_v = GetVirtualCursorPosition( data, SelRgn.start_col );
 
     return( ERR_NO_ERR );
-}
+
+} /* SetSelectedRegionFromLine */
 
 /*
  * NormalizeRange - convert a range to the (external) selrgn format
@@ -728,5 +731,5 @@ void NormalizeRange( range *r )
     /* change these to be zero-based instead of one-based */
     r->start.column -= 1;
     r->end.column -= 1;
-}
 
+} /* NormalizeRange */

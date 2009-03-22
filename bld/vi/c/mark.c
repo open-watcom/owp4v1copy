@@ -36,11 +36,11 @@
 #include "vi.h"
 #include "keys.h"
 
-static int unMark( mark * );
-static int invalidMark( mark *, int );
-static int goToMark( range * );
-static int getAMark( int, linenum *, int * );
-static int tryToFindMark( mark *, int );
+static int  unMark( mark * );
+static int  invalidMark( mark *, int );
+static int  goToMark( range * );
+static int  getAMark( int, linenum *, int * );
+static int  tryToFindMark( mark *, int );
 
 /*
  * Mark numbers etc: everywhere you see a "no" used to indicate a
@@ -52,8 +52,7 @@ static int tryToFindMark( mark *, int );
  */
 #define NO_MARK         0
 #define MARK_PTR( x )   (&MarkList[ (x) - 1 ])
-#define KEY_TO_NO( c )  ( ( (c) == '`' || (c) == '\'') ? MAX_MARKS+1 : \
-                            (c) - 'a' + 1 )
+#define KEY_TO_NO( c )  (((c) == '`' || (c) == '\'') ? MAX_MARKS + 1 : (c) - 'a' + 1)
 
 static mark *currContext;
 
@@ -75,7 +74,7 @@ int SetMark( void )
         if( EditFlags.MemorizeMode ) {
             return( DoDotMode() );
         } else {
-            Message1( "%sstarted",MEMORIZE_MODE );
+            Message1( "%sstarted", MEMORIZE_MODE );
             DotDigits = 0;
             EditFlags.MemorizeMode = TRUE;
             return( ERR_NO_ERR );
@@ -85,7 +84,7 @@ int SetMark( void )
         if( EditFlags.AltMemorizeMode ) {
             return( DoAltDotMode() );
         } else {
-            Message1("Alternate %sstarted", MEMORIZE_MODE );
+            Message1( "Alternate %sstarted", MEMORIZE_MODE );
             AltDotDigits = 0;
             EditFlags.AltMemorizeMode = TRUE;
             return( ERR_NO_ERR );
@@ -130,14 +129,16 @@ int RemoveMarkFromLine( int no )
     fcb         *fcb;
     line        *line;
 
-    assert( no > 0 && no <= MAX_MARKS+1 );
+    assert( no > 0 && no <= MAX_MARKS + 1 );
     mark = MARK_PTR( no );
     i = CGimmeLinePtr( mark->lineno, &fcb, &line );
     if( i ) {
         /* hmmmm.... we are in trouble here I believe */
         /* should try and find it somewhere else */
         i = tryToFindMark( mark, no - 1 );
-        if( i ) return( i );
+        if( i ) {
+            return( i );
+        }
         /* this gimme should be guaranteed to work since we did it in
            tryToFindMark */
         CGimmeLinePtr( mark->lineno, &fcb, &line );
@@ -170,7 +171,7 @@ int RemoveMarkFromLine( int no )
  */
 int SetGenericMark( linenum num, int col, char mlet )
 {
-    int         i,no;
+    int         i, no;
     mark        *cmark;
     line        *mline;
     fcb         *mfcb;
@@ -247,7 +248,7 @@ int GetMarkLine( linenum *ln )
 
 int GetMark( linenum *ln, int *cl )
 {
-    return( getAMark( FALSE, ln,cl ) );
+    return( getAMark( FALSE, ln, cl ) );
 }
 
 /*
@@ -327,10 +328,10 @@ int VerifyMark( int no, int lineonly )
     mark        *cmark;
     int         len;
 
-    if( no <= 0 || no > MAX_MARKS+1 ) {
+    if( no <= 0 || no > MAX_MARKS + 1 ) {
         return( ERR_INVALID_MARK_RANGE );
     }
-    if( no == MAX_MARKS+1 ) {
+    if( no == MAX_MARKS + 1 ) {
         return( ERR_NO_ERR );
     }
     cmark = MARK_PTR( no );
@@ -396,7 +397,7 @@ static int invalidMark( mark *cmark, int no )
     int         i;
     mark        *m;
 
-    m = &MarkList[ 0 ];
+    m = &MarkList[0];
     /* remove the mark from any linked lists it is in */
     for( i = 0; i < MAX_MARKS; i++, m++ ) {
         if( m->next == no ) {
@@ -405,7 +406,7 @@ static int invalidMark( mark *cmark, int no )
         }
     }
     unMark( cmark );
-    Error( GetErrorMsg( ERR_MARK_NOW_INVALID ), no+'a'-1 );
+    Error( GetErrorMsg( ERR_MARK_NOW_INVALID ), no + 'a' - 1 );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
 } /* invalidMark */
@@ -415,7 +416,7 @@ static int invalidMark( mark *cmark, int no )
  */
 void AllocateMarkList( void )
 {
-    MarkList = MemAlloc( MARK_SIZE*(MAX_MARKS+1) );
+    MarkList = MemAlloc( MARK_SIZE * (MAX_MARKS + 1) );
     SetMarkContext();
     currContext->inuse = TRUE;
     currContext->lineno = 1;
@@ -429,7 +430,7 @@ void AllocateMarkList( void )
 void SetMarkContext( void )
 {
     if( MarkList != NULL ) {
-        currContext = &MarkList[ MAX_MARKS ];
+        currContext = &MarkList[MAX_MARKS];
     } else {
         currContext = NULL;
     }
@@ -454,7 +455,7 @@ static int tryToFindMark( mark *cmark, int no )
 {
     fcb         *cfcb;
     line        *cline;
-    linenum     lineno=1;
+    linenum     lineno = 1;
     int         i;
 
     i = CGimmeLinePtr( 1, &cfcb, &cline );
@@ -472,6 +473,7 @@ static int tryToFindMark( mark *cmark, int no )
             return( i );
         }
     }
+
 } /* tryToFindMark */
 
 /*

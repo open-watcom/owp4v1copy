@@ -49,7 +49,7 @@ void SaveDotCmd( void )
  */
 int DoDotMode( void )
 {
-    int rc=ERR_NO_ERR;
+    int rc = ERR_NO_ERR;
     int cnt;
 
     /*
@@ -57,7 +57,7 @@ int DoDotMode( void )
      */
     if( EditFlags.MemorizeMode ) {
         EditFlags.MemorizeMode = FALSE;
-        Message1( "%sended",MEMORIZE_MODE );
+        Message1( "%sended", MEMORIZE_MODE );
         DotDigits--;
         SaveDotCmd();
         DotDigits = 0;
@@ -110,12 +110,12 @@ int DoDotMode( void )
  */
 int DoAltDotMode( void )
 {
-    int rc=ERR_NO_ERR;
+    int rc = ERR_NO_ERR;
     int cnt;
 
     if( EditFlags.AltMemorizeMode ) {
         EditFlags.AltMemorizeMode = FALSE;
-        Message1( "Alternate %sended",MEMORIZE_MODE );
+        Message1( "Alternate %sended", MEMORIZE_MODE );
         AltDotDigits--;
         return( ERR_NO_ERR );
     }

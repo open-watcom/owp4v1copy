@@ -40,17 +40,18 @@
 #include "xmem.h"
 #include "fcbmem.h"
 
-xms_struct XMSCtrl;
-static unsigned long *xmsPtrs;
-static int xmsRead( long, void *, int );
-static int xmsWrite( long, void *, int );
+xms_struct              XMSCtrl;
+static unsigned long    *xmsPtrs;
+
+static int  xmsRead( long, void *, int );
+static int  xmsWrite( long, void *, int );
 
 int XMSBlockTest( unsigned short blocks )
 {
     if( !XMSCtrl.inuse ) {
         return( ERR_NO_XMS_MEMORY );
     }
-    if( XMSBlocksInUse +blocks > TotalXMSBlocks ) {
+    if( XMSBlocksInUse + blocks > TotalXMSBlocks ) {
         return( ERR_NO_XMS_MEMORY );
     }
     return( ERR_NO_ERR );
@@ -59,7 +60,8 @@ int XMSBlockTest( unsigned short blocks )
 
 void XMSBlockRead( long addr, void *buff, unsigned len )
 {
-        xmsRead( addr, buff, len );
+    xmsRead( addr, buff, len );
+
 } /* XMSBlockRead */
 
 void XMSBlockWrite( long addr, void *buff, unsigned len )
@@ -71,14 +73,14 @@ void XMSBlockWrite( long addr, void *buff, unsigned len )
 int XMSGetBlock( long *addr )
 {
     int         i;
-    long        found=NULL;
+    long        found = NULL;
 
     i = XMSBlockTest( 1 );
     if( i ) {
         return( i );
     }
     XMSBlocksInUse++;
-    for( i=0;i<TotalXMSBlocks;i++ ) {
+    for( i = 0; i < TotalXMSBlocks; i++ ) {
         if( xmsPtrs[i] != NULL ) {
             found = xmsPtrs[i];
             xmsPtrs[i] = NULL;
@@ -95,8 +97,8 @@ int XMSGetBlock( long *addr )
  */
 int SwapToXMSMemory( fcb *fb )
 {
-    int         i,len;
-    long        found=NULL;
+    int         i, len;
+    long        found = NULL;
 
     i = XMSGetBlock( &found );
     if( i ) {
@@ -136,10 +138,10 @@ static void *xmsControl;
 static unsigned long xmsAlloc( int size )
 {
     xms_addr            h;
-    U_INT               handle,new_size,page_request;
+    U_INT               handle, new_size, page_request;
     unsigned long       offset;
 
-    size = ( size + 0x03 ) & ~0x03;
+    size = (size + 0x03) & ~0x03;
     if( XMSCtrl.exhausted ) {
         return( NULL );
     }
@@ -150,18 +152,19 @@ static unsigned long xmsAlloc( int size )
         }
 
         /* align offset to 1k boundary */
-        offset = ( XMSCtrl.offset + 0x03ff ) & ~0x03ff;
+        offset = (XMSCtrl.offset + 0x03ff) & ~0x03ff;
         if( offset < XMSCtrl.size ) {
             /* reallocate the block to eliminate internal fragmentation */
             new_size = offset / 0x0400;
-            _XMSReallocate( &xmsControl, XMSCtrl.handles[ XMSCtrl.next_handle - 1 ],
-                             new_size );
+            _XMSReallocate( &xmsControl, XMSCtrl.handles[XMSCtrl.next_handle - 1],
+                            new_size );
         }
 
         page_request = XMS_MAX_BLOCK_SIZE_IN_K;
-        while(1) {
+        while( 1 ) {
 
-            if( _XMSAllocate( &xmsControl, page_request, (unsigned short *) &handle ) != 0 ) {
+            if( _XMSAllocate( &xmsControl, page_request,
+                (unsigned short *) &handle ) != 0 ) {
                 break;
             }
 
@@ -176,7 +179,7 @@ static unsigned long xmsAlloc( int size )
 
         XMSCtrl.offset = 0;
         XMSCtrl.size = page_request * 0x0400L;
-        XMSCtrl.handles[ XMSCtrl.next_handle++ ] = handle;
+        XMSCtrl.handles[XMSCtrl.next_handle++] = handle;
         if( XMSCtrl.offset + size > XMSCtrl.size ) {
             return( NULL );
         }
@@ -184,7 +187,7 @@ static unsigned long xmsAlloc( int size )
     }
 
     h.internal.offset = XMSCtrl.offset >> 2;
-    h.internal.handle = XMSCtrl.handles[ XMSCtrl.next_handle - 1 ];
+    h.internal.handle = XMSCtrl.handles[XMSCtrl.next_handle - 1];
 
     XMSCtrl.offset += size;
 
@@ -227,7 +230,7 @@ void XMSInit( void )
 
     i = _XMSRequestHMA( &xmsControl, XMS_APPLICATION_AMT );
     if( i ) {
-        XMSCtrl.handles[ XMSCtrl.next_handle++ ] = XMS_HMA_HANDLE;
+        XMSCtrl.handles[XMSCtrl.next_handle++] = XMS_HMA_HANDLE;
         XMSCtrl.offset = XMS_HMA_INITIAL_OFFSET;
         XMSCtrl.size = XMS_HMA_BLOCK_SIZE;
     } else {
@@ -237,7 +240,7 @@ void XMSInit( void )
 
     xmsPtrs = MemAlloc( sizeof( long ) * MaxXMSBlocks );
 
-    for( i=0;i<MaxXMSBlocks;i++ ) {
+    for( i = 0; i < MaxXMSBlocks; i++ ) {
         xmsPtrs[i] = xmsAlloc( MAX_IO_BUFFER );
         if( xmsPtrs[i] == NULL ) {
             break;
@@ -265,7 +268,7 @@ void XMSFini( void )
         return;
     }
     while( XMSCtrl.next_handle > 0 ) {
-        handle = XMSCtrl.handles[ XMSCtrl.next_handle - 1 ];
+        handle = XMSCtrl.handles[XMSCtrl.next_handle - 1];
         if( handle == XMS_HMA_HANDLE ) {
             if( _XMSReleaseHMA( &xmsControl ) == 0 ) {
                 break;
@@ -277,7 +280,7 @@ void XMSFini( void )
         }
         XMSCtrl.next_handle--;
     }
-    XMSCtrl.inuse = FALSE ;
+    XMSCtrl.inuse = FALSE;
 
 } /* XMSFini */
 
@@ -294,7 +297,7 @@ static int xmsRead( long addr, void *buff, int size )
     if( addr == NULL ) {
         return( -1 );
     }
-    size = (size+1) & ~1;
+    size = (size + 1) & ~1;
 
     h.external = addr;
     offset = h.internal.offset << 2;
@@ -331,15 +334,15 @@ static int xmsRead( long addr, void *buff, int size )
  */
 static int xmsWrite( long addr, void *buff, int size )
 {
-    xms_addr h;
+    xms_addr            h;
     xms_move_descriptor control;
-    U_INT offset;
-    void *dest;
+    U_INT               offset;
+    void                *dest;
 
     if( addr == NULL ) {
         return( -1 );
     }
-    size = (size+1) & ~1;
+    size = (size + 1) & ~1;
     h.external = addr;
     offset = h.internal.offset << 2;
     if( h.internal.handle == XMS_HMA_HANDLE ) {
@@ -376,7 +379,7 @@ void GiveBackXMSBlock( long addr )
 {
     int i;
 
-    for( i=0;i<TotalXMSBlocks;i++ ) {
+    for( i = 0; i < TotalXMSBlocks; i++ ) {
         if( xmsPtrs[i] == NULL ) {
             xmsPtrs[i] = addr;
             break;
@@ -391,12 +394,11 @@ void GiveBackXMSBlock( long addr )
  */
 void XMSBlockInit( int i )
 {
-
     if( XMSCtrl.inuse ) {
         return;
     }
     MaxXMSBlocks = i;
-    MaxXMSBlocks /= (MAX_IO_BUFFER/1024);
+    MaxXMSBlocks /= (MAX_IO_BUFFER / 1024);
 
 } /* XMSBlockInit */
 

@@ -45,9 +45,9 @@ static bool wrapMsgPrinted;
 int FindRegularExpression( char *pat, linenum *clineno, int ccol,
                            char **linedata, linenum termline, int sw )
 {
-    int         i,scol,rc=FALSE;
+    int         i, scol, rc = FALSE;
     linenum     ilineno;
-    bool        wrapped=FALSE;
+    bool        wrapped = FALSE;
     char        *data;
     line        *cline;
     fcb         *cfcb;
@@ -80,7 +80,7 @@ int FindRegularExpression( char *pat, linenum *clineno, int ccol,
     while( TRUE ) {
 
         data = &cline->data[scol];
-        rc = RegExec( CurrentRegularExpression, data, (scol==0) );
+        rc = RegExec( CurrentRegularExpression, data, (scol == 0) );
         if( RegExpError != ERR_NO_ERR ) {
             return( RegExpError );
         }
@@ -136,11 +136,11 @@ int FindRegularExpression( char *pat, linenum *clineno, int ccol,
  * FindRegularExpressionBackwards - do a reverse search for a regular expression
  */
 int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
-                           char **linedata, linenum termline, int sw )
+                                    char **linedata, linenum termline, int sw )
 {
-    int         i,scol,rc,col,len;
+    int         i, scol, rc, col, len;
     char        *data;
-    bool        wrapped=FALSE,found;
+    bool        wrapped = FALSE, found;
     linenum     ilineno;
     line        *cline;
     fcb         *cfcb;
@@ -176,7 +176,7 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
          * only the last one
          */
         while( TRUE ) {
-            rc = RegExec( CurrentRegularExpression, data, (data==cline->data) );
+            rc = RegExec( CurrentRegularExpression, data, (data == cline->data) );
             if( RegExpError != ERR_NO_ERR ) {
                 return( RegExpError );
             }
@@ -188,7 +188,7 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
                 }
                 found = TRUE;
                 memcpy( &rcpy, CurrentRegularExpression, sizeof( regexp ) );
-                data = &(cline->data[col+1]);
+                data = &(cline->data[col + 1]);
                 if( *data == 0 ) {
                     break;
                 }
@@ -233,7 +233,7 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
                 return( i );
             }
         }
-        scol = cline->len-1;
+        scol = cline->len - 1;
         (*clineno) -= 1;
         if( *clineno < termline ) {
             return( ERR_FIND_PAST_TERM_LINE );

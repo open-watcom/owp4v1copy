@@ -35,7 +35,7 @@
 #include "menu.h"
 #include "ex.h"
 #ifdef __WIN__
-#include "winrtns.h"
+    #include "winrtns.h"
 #endif
 
 /*                           non-modeless             non-modeless bits           modeless bits (events MISC & INS

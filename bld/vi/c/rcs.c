@@ -34,8 +34,8 @@
 #include "rcs.h"
 
 #ifndef TRUE
-#define TRUE 1
-#define FALSE 0
+    #define TRUE    1
+    #define FALSE   0
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2__ )
@@ -56,54 +56,65 @@ extern RCSFiniFn                *RCSFini = NULL;
 
 #if defined( __WINDOWS__ ) || defined( __NT__ )
 
-    #define GET_ADDR( inst, name, proc, type ) proc = (type*)GetProcAddress( inst, name )
-    static HINSTANCE LibHandle;
-    static void getFunctionPtrs( void );
+#define GET_ADDR( inst, name, proc, type ) proc = (type *)GetProcAddress( inst, name )
+static HINSTANCE LibHandle;
+static void getFunctionPtrs( void );
 
-    int ViRCSInit( void )
-    {
-        LibHandle = LoadLibrary( RCS_DLLNAME );
-        if( LibHandle < (HINSTANCE)32 ) {
-            return( FALSE );
-        }
-        getFunctionPtrs();
-        return( TRUE );
+int ViRCSInit( void )
+{
+    LibHandle = LoadLibrary( RCS_DLLNAME );
+    if( LibHandle < (HINSTANCE)32 ) {
+        return( FALSE );
     }
-    int ViRCSFini( void )
-    {
-        FreeLibrary( LibHandle );
-        return( TRUE );
-    }
+    getFunctionPtrs();
+    return( TRUE );
+}
+int ViRCSFini( void )
+{
+    FreeLibrary( LibHandle );
+    return( TRUE );
+}
+
 #elif defined( __OS2__ ) && defined( __386__ )
 
-    static HMODULE LibHandle;
-    APIRET APIENTRY  DosLoadModule(PSZ pszName, ULONG cbName, PSZ pszModname, PHMODULE phmod);
-    APIRET APIENTRY  DosFreeModule(HMODULE hmod);
-    APIRET APIENTRY  DosQueryProcAddr(HMODULE hmod, ULONG ordinal, PSZ pszName,PFN* ppfn);
-    #define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN*)(&proc) )
-    static void getFunctionPtrs( void );
+static HMODULE LibHandle;
+APIRET APIENTRY  DosLoadModule( PSZ pszName, ULONG cbName, PSZ pszModname, PHMODULE phmod );
+APIRET APIENTRY  DosFreeModule( HMODULE hmod );
+APIRET APIENTRY  DosQueryProcAddr( HMODULE hmod, ULONG ordinal, PSZ pszName, PFN *ppfn );
+#define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN *)(&proc) )
+static void getFunctionPtrs( void );
 
-    int ViRCSInit( void )
-    {
-        #define BUFF_LEN 128
-        char fail_name[BUFF_LEN];
-        int rc;
-        rc = DosLoadModule( fail_name, BUFF_LEN, RCS_DLLNAME, &LibHandle );
-        if( rc != 0 ) {
-            return( FALSE );
-        } else {
-            getFunctionPtrs();
-            return( LibHandle );
-        }
+int ViRCSInit( void )
+{
+    #define BUFF_LEN 128
+    char    fail_name[BUFF_LEN];
+    int     rc;
+    rc = DosLoadModule( fail_name, BUFF_LEN, RCS_DLLNAME, &LibHandle );
+    if( rc != 0 ) {
+        return( FALSE );
+    } else {
+        getFunctionPtrs();
+        return( LibHandle );
     }
-    int ViRCSFini( void )
-    {
-        DosFreeModule( LibHandle );
-        return( TRUE );
-    }
+}
+int ViRCSFini( void )
+{
+    DosFreeModule( LibHandle );
+    return( TRUE );
+}
+
 #else
-    int ViRCSInit( void ) { return( TRUE ); }
-    int ViRCSFini( void ) { return( TRUE ); }
+
+int ViRCSInit( void )
+{
+    return( TRUE );
+}
+
+int ViRCSFini( void )
+{
+    return( TRUE );
+}
+
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || (defined( __OS2__ ) && defined( __386__ ))

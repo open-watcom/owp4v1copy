@@ -106,7 +106,7 @@ void CSInit( void )
  */
 int CSFini( void )
 {
-    bool        iserr=FALSE;
+    bool        iserr = FALSE;
 
     if( !EditFlags.ScriptIsCompiled ) {
         while( TOS->type != CS_EOS ) {
@@ -140,7 +140,6 @@ int CSFini( void )
  */
 void CSIf( void )
 {
-
     Push( CS_IF );
     GenTestCond();
     GenJmpIf( FALSE, TOS->top );
@@ -152,7 +151,6 @@ void CSIf( void )
  */
 void CSElseIf( void )
 {
-
     if( TOS->type != CS_IF ) {
         oopsBob( "elseif", "if" );
     }
@@ -170,7 +168,6 @@ void CSElseIf( void )
  */
 void CSElse( void )
 {
-
     if( TOS->type != CS_IF ) {
         oopsBob( "else", "if" );
     }
@@ -186,7 +183,6 @@ void CSElse( void )
  */
 void CSEndif( void )
 {
-
     if( TOS->type != CS_IF && TOS->type != CS_ELSE ) {
         oopsBob( "endif", "if" );
     }
@@ -201,7 +197,6 @@ void CSEndif( void )
  */
 void CSWhile( void )
 {
-
     Push( CS_LOOP );
     GenLabel( TOS->top );
     GenTestCond();
@@ -214,7 +209,6 @@ void CSWhile( void )
  */
 void CSLoop( void )
 {
-
     Push( CS_LOOP );
     GenLabel( TOS->top );
 
@@ -226,7 +220,6 @@ static char _strlw[] = "loop/while";
  */
 void CSEndLoop( void )
 {
-
     if( TOS->type != CS_LOOP ) {
         oopsBob( "endloop", _strlw );
     }
@@ -241,7 +234,6 @@ void CSEndLoop( void )
  */
 void CSUntil( void )
 {
-
     if( TOS->type != CS_LOOP ) {
         oopsBob( "until", _strlw );
     }
@@ -257,7 +249,7 @@ void CSUntil( void )
  */
 static cs_entry *FindLoop( void )
 {
-cs_entry *s;
+    cs_entry *s;
 
     s = TOS;
     for( s = TOS; s->type != CS_EOS; s = s->next ) {
@@ -272,7 +264,8 @@ cs_entry *s;
         oopsBob( "break/quif", _strlw );
     }
 
-    return 0;
+    return( 0 );
+
 } /* FindLoop */
 
 /*
@@ -280,8 +273,7 @@ cs_entry *s;
  */
 void CSContinue( void )
 {
-
-    GenJmp( (FindLoop())->top );
+    GenJmp( FindLoop()->top );
 
 } /* CSContinue */
 
@@ -290,8 +282,7 @@ void CSContinue( void )
  */
 void CSBreak( void )
 {
-
-    GenJmp( (FindLoop())->end );
+    GenJmp( FindLoop()->end );
 
 } /* CSBreak */
 
@@ -300,8 +291,7 @@ void CSBreak( void )
  */
 void CSQuif( void )
 {
-
     GenTestCond();
-    GenJmpIf( TRUE, (FindLoop())->end );
+    GenJmpIf( TRUE, FindLoop()->end );
 
 } /* CSQuif */

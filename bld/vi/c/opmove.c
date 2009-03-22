@@ -76,7 +76,6 @@ static int checkLeftMove( linenum line, int *col, range *r )
                 r->start.line = line - 1;
                 r->line_based = TRUE;
                 *col = LineLength( line - 1 ) + 1;
-
             } else {
                 *col = 1;
             }
@@ -110,7 +109,7 @@ static int checkRightMove( linenum line, int *col, range *r )
             }
         } else {
             if( EditFlags.OperatorWantsMove ) {
-                if( *col == len+1 ) {
+                if( *col == len + 1 ) {
                     return( ERR_NO_ERR );
                 }
             }
@@ -307,6 +306,7 @@ int MoveTab( range *r, long count )
     }
     r->start.column = RealCursorPosition( vc );
     return( ERR_NO_ERR );
+
 } /* MoveTab */
 
 /*
@@ -333,6 +333,7 @@ int MoveShiftTab( range *r, long count )
     }
     r->start.column = RealCursorPosition( vc );
     return( ERR_NO_ERR );
+
 } /* MoveShiftTab */
 
 static int doMoveToStartEndOfLine( range *r, long count, bool start )
@@ -395,7 +396,9 @@ static int moveForwardAWord( range *r, bool end, bool bigword, int count )
         } else {
             rc = MarkStartOfNextWordForward( &r->start, &curr, bigword );
         }
-        if( rc != ERR_NO_ERR ) break;
+        if( rc != ERR_NO_ERR ) {
+            break;
+        }
         curr = r->start;
     }
     r->line_based = FALSE;
@@ -438,7 +441,9 @@ static int moveBackwardsAWord( range *r, bool bigword, int count )
     curr = r->end;
     for( i = 0; i < count; i++ ) {
         rc = MarkStartOfNextWordBackward( &r->start, &curr, bigword );
-        if( rc != ERR_NO_ERR ) break;
+        if( rc != ERR_NO_ERR ) {
+            break;
+        }
         curr = r->start;
     }
     r->line_based = FALSE;
@@ -461,7 +466,7 @@ int MoveBackwardsBigWord( range *r, long count )
  */
 static int doACharFind( range *r, int forward, int num, long count )
 {
-    int         i,c;
+    int         i, c;
     char        lc;
 
     if( CurrentLine == NULL ) {
@@ -582,6 +587,7 @@ int MoveStartOfFile( range *r, long count )
     r->start.column = 1;
     r->line_based = FALSE;
     return( ERR_NO_ERR );
+
 } /* MoveStartOfFile */
 
 /*
@@ -604,6 +610,7 @@ int MoveEndOfFile( range *r, long count )
     }
     r->line_based = FALSE;
     return( ERR_NO_ERR );
+
 } /* MoveEndOfFile */
 
 int MoveTopOfPage( range *r, long count )

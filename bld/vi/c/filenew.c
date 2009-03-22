@@ -37,7 +37,7 @@
 #include "source.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 #include "lang.h"
 #include "fts.h"
@@ -47,7 +47,7 @@
  */
 static int createNewFile( char *name, bool same_file )
 {
-    int         i,rc,height;
+    int         i, rc, height;
     window_id   cw;
     info        *tmp;
 
@@ -56,7 +56,7 @@ static int createNewFile( char *name, bool same_file )
      */
     if( !same_file ) {
         i = FileExists( name );
-        if( !( i == ERR_READ_ONLY_FILE || i==ERR_NO_ERR || i == ERR_FILE_EXISTS ) ) {
+        if( !(i == ERR_READ_ONLY_FILE || i == ERR_NO_ERR || i == ERR_FILE_EXISTS) ) {
             return( i );
         }
     } else {
@@ -113,11 +113,11 @@ static int createNewFile( char *name, bool same_file )
         FTSRunCmds( name );
 
         CurrentFile = FileAlloc( name );
-        height = editw_info.y2-editw_info.y1+1;
+        height = editw_info.y2 - editw_info.y1 + 1;
         if( EditFlags.CRLFAutoDetect ) {
             EditFlags.WriteCRLF = FALSE;
         }
-        for(;;) {
+        for( ;; ) {
             i = ReadFcbData( CurrentFile );
             if( i ) {
                 break;
@@ -143,20 +143,20 @@ static int createNewFile( char *name, bool same_file )
             if( EditFlags.CRLFAutoDetect ) {
                 CurrentFile->check_for_crlf = TRUE;
             }
-        #ifdef __UNIX__
+#ifdef __UNIX__
             CurrentFile->attr = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
-                                    S_IROTH | S_IWOTH ;
-        #endif
+                S_IROTH | S_IWOTH;
+#endif
         } else {
             rc = ERR_NO_ERR;
             EditFlags.NewFile = FALSE;
-            #ifdef __UNIX__
+#ifdef __UNIX__
             {
                 struct stat     sb;
                 stat( name, &sb );
                 CurrentFile->attr = sb.st_mode & ~S_IFMT;
             }
-            #endif
+#endif
         }
         CurrentFile->check_readonly = TRUE;
     }
@@ -197,9 +197,9 @@ static int createNewFile( char *name, bool same_file )
     }
 
     if( tmp != NULL ) {
-        InsertLLItemAfter( (ss**)&InfoTail, (ss*)tmp, (ss*)CurrentInfo );
+        InsertLLItemAfter( (ss **)&InfoTail, (ss *)tmp, (ss *)CurrentInfo );
     } else {
-        AddLLItemAtEnd( (ss**)&InfoHead, (ss**)&InfoTail, (ss*)CurrentInfo );
+        AddLLItemAtEnd( (ss **)&InfoHead, (ss **)&InfoTail, (ss *)CurrentInfo );
     }
 
     return( rc );
@@ -252,7 +252,6 @@ int NewFile( char *name, bool same_file )
 #if 0
     rc = FTSRunCmds( CurrentFile->name );
     FTSRunCmds( CurrentFile->name );
-#else
 #endif
 
     /*
@@ -321,7 +320,6 @@ file *FileAlloc( char *name )
  */
 void FileFree( file *f )
 {
-
     MemFree( f->name );
     MemFree( f->home );
     MemFree( f );
@@ -333,7 +331,7 @@ void FileFree( file *f )
  */
 void FreeEntireFile( file *cfile  )
 {
-    fcb *cfcb,*tfcb;
+    fcb *cfcb, *tfcb;
 
     cfcb = cfile->fcb_head;
     while( cfcb != NULL ) {

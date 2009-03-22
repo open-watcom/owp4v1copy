@@ -107,23 +107,23 @@ void GetFileInfo( direct_ent *tmp, struct dirent *nd, char *path )
  */
 void FormatFileEntry( direct_ent *file, char *res )
 {
-    char        buff[FILENAME_MAX],tmp[FILENAME_MAX];
+    char        buff[FILENAME_MAX], tmp[FILENAME_MAX];
     long        size;
 
     if( file->attr & _A_SUBDIR ) {
-        MySprintf(tmp," " FILE_SEP_STR "%S", file->name);
+        MySprintf(tmp, " " FILE_SEP_STR "%S", file->name);
     } else {
         if( !IsTextFile( file->name ) ) {
-            MySprintf(tmp," *%S",file->name);
+            MySprintf(tmp, " *%S", file->name);
         } else {
-            MySprintf(tmp,"  %S",file->name);
+            MySprintf(tmp, "  %S", file->name);
         }
     }
 
     /*
      * build attributeibutes
      */
-    strcpy(buff,"-------");
+    strcpy( buff, "-------" );
     size = file->fsize;
     if( file->attr & _A_SUBDIR ) {
         buff[0] = 'd';
@@ -139,20 +139,21 @@ void FormatFileEntry( direct_ent *file, char *res )
         buff[3] = 's';
     }
     buff[4] = 'r';
-    if( !(file->attr & _A_RDONLY ) ) {
+    if( !(file->attr & _A_RDONLY) ) {
         buff[5] = 'w';
     }
     if( !IsTextFile( file->name ) ) {
         buff[6] = 'x';
     }
 
-    MySprintf(res, "%s  %s %L  %D/%D/%d  %D:%D",
-            tmp,
-            buff,
-            size,
-            (int)file->date.month,
-            (int)file->date.day,
-            (int)file->date.year+1980,
-            (int)file->time.hour,
-            (int)file->time.min);
+    MySprintf( res, "%s  %s %L  %D/%D/%d  %D:%D",
+               tmp,
+               buff,
+               size,
+               (int)file->date.month,
+               (int)file->date.day,
+               (int)file->date.year + 1980,
+               (int)file->time.hour,
+               (int)file->time.min );
+
 } /* FormatFileEntry */

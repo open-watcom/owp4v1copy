@@ -37,7 +37,7 @@
  * command line tokens
  */
 char _NEAR ParseClTokens[] = {
-    #define PICK( a,b ) a
+    #define PICK( a, b ) a
     #include "cmds.h"
     "\0"
 };
@@ -46,7 +46,7 @@ char _NEAR ParseClTokens[] = {
  * Set tokens (values)
  */
 char _NEAR SetTokens1[] = {
-    #define PICK( a,b,c ) a
+    #define PICK( a, b, c ) a
     #include "setnb.h"
     "\0"
 };
@@ -55,13 +55,13 @@ char _NEAR SetTokens1[] = {
  * Set tokens (booleans)
  */
 char _NEAR SetTokens2[] = {
-    #define PICK( a,b,c,d,e ) a
+    #define PICK( a, b, c, d, e ) a
     #include "setb.h"
     "\0"
 };
 
 char _NEAR SetTokens2a[] = {
-    #define PICK( a,b,c,d,e ) b
+    #define PICK( a, b, c, d, e ) b
     #include "setb.h"
     "\0"
 };

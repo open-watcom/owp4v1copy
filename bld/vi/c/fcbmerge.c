@@ -45,7 +45,8 @@ int CMergeFcbs( fcb *fcb1, fcb *fcb2 )
     if( i ) {
         return( i );
     }
-    DeleteLLItem( (ss**)&(CurrentFile->fcb_head), (ss**)&(CurrentFile->fcb_tail), (ss*)fcb2 );
+    DeleteLLItem( (ss **)&(CurrentFile->fcb_head), (ss **)&(CurrentFile->fcb_tail),
+        (ss *)fcb2 );
 
     if( fcb2->globalmatch ) {
         fcb1->globalmatch = TRUE;
@@ -70,15 +71,16 @@ int CMergeAllFcbs( void )
             break;
         }
         if( !cfcb->in_memory || !cfcb->next->in_memory ) {
-            cfcb=cfcb->next;
+            cfcb = cfcb->next;
             continue;
         }
         i = CMergeFcbs( cfcb, cfcb->next );
         if( i ) {
             if( i == COULD_NOT_MERGE_FCBS ) {
                 cfcb = cfcb->next;
+            } else {
+                return( i );
             }
-            else return( i );
         }
     }
 
@@ -91,17 +93,17 @@ int CMergeAllFcbs( void )
  */
 int JoinFcbs( fcb *fcb1, fcb *fcb2 )
 {
-    unsigned    j,k;
+    unsigned    j, k;
 
     /*
      * see if we can merge them
      */
-    if( fcb1->end_line != (fcb2->start_line -1) ) {
+    if( fcb1->end_line != (fcb2->start_line - 1) ) {
         return( COULD_NOT_MERGE_FCBS );
     }
     j = FcbSize( fcb1 );
     k = FcbSize( fcb2 );
-    if( j+k > (unsigned) MAX_IO_BUFFER ) {
+    if( j + k > (unsigned) MAX_IO_BUFFER ) {
         return( COULD_NOT_MERGE_FCBS );
     }
 

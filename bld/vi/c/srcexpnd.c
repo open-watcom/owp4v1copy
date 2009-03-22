@@ -49,9 +49,9 @@ static int      recurseDepth;
  */
 static bool addChar( char ch )
 {
-    bPtr[ bPos ] = ch;
+    bPtr[bPos] = ch;
     bPos++;
-    if( bPos >= MAX_SRC_LINE -1 ) {
+    if( bPos >= MAX_SRC_LINE - 1 ) {
         bPtr[bPos] = 0;
         return( FALSE );
     }
@@ -66,7 +66,7 @@ void Expand( char *data, vlist *vl )
 {
     char        result[MAX_SRC_LINE];
     char        varname[MAX_SRC_LINE];
-    char        *ptr,*odata;
+    char        *ptr, *odata;
     int         paren_level;
     char        ch;
     bool        done;

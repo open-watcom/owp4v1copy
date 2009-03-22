@@ -42,8 +42,8 @@
  */
 int Shift( linenum s, linenum e, char dir, bool msgflag )
 {
-    int         i,shv;
-    linenum     fullcnt=0;
+    int         i, shv;
+    linenum     fullcnt = 0;
 
     /*
      * set up undo
@@ -51,7 +51,7 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
     if( i = ModificationTest() ) {
         return( i );
     }
-    i = UndoReplaceLines( s,e );
+    i = UndoReplaceLines( s, e );
     if( i ) {
         return( i );
     }
@@ -67,7 +67,7 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
     /*
      * process all lines
      */
-    for( CurrentLineNumber=s;CurrentLineNumber<=e;CurrentLineNumber++ ) {
+    for( CurrentLineNumber = s; CurrentLineNumber <= e; CurrentLineNumber++ ) {
 
         /*
          * Add/Subtract leading tab space
@@ -95,7 +95,7 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
      */
     RestoreCurrentFilePos();
     if( msgflag ) {
-        Message1( "%l lines %c'ed",e-s+1, dir );
+        Message1( "%l lines %c'ed", e - s + 1, dir );
         if( fullcnt > 0 ) {
             Message2( "%l full lines not processed", fullcnt );
         }

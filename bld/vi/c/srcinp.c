@@ -42,7 +42,7 @@
 static int srcGenericInput( char *data, vlist *vl, bool input )
 {
     int         i;
-    char        tmp[MAX_SRC_LINE],v1[MAX_SRC_LINE],str[MAX_STR];
+    char        tmp[MAX_SRC_LINE], v1[MAX_SRC_LINE], str[MAX_STR];
     vars        *v;
 
     /*
@@ -60,7 +60,7 @@ static int srcGenericInput( char *data, vlist *vl, bool input )
         if( v != NULL ) {
             strcpy( str, v->value );
         } else {
-            strcpy( str,"Enter value:");
+            strcpy( str, "Enter value:" );
         }
         i = GetResponse( str, tmp );
     } else {

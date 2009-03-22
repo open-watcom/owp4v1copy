@@ -43,12 +43,12 @@
 extern void interrupt XMemIntHandler( volatile union INTPACK r );
 
 static descriptor GDT[] = {
-{ 0, 0, 0 },    /* dummy segment */
-{ 0, 0, 0 },    /* data segment */
-{ 0, 0, 0 },    /* source segment */
-{ 0, 0, 0 },    /* target segment */
-{ 0, 0, 0 },    /* BIOS code segment */
-{ 0, 0, 0 }     /* stack segment */
+    { 0, 0, 0 },    /* dummy segment */
+    { 0, 0, 0 },    /* data segment */
+    { 0, 0, 0 },    /* source segment */
+    { 0, 0, 0 },    /* target segment */
+    { 0, 0, 0 },    /* BIOS code segment */
+    { 0, 0, 0 }     /* stack segment */
 };
 
 xtd_struct XMemCtrl;
@@ -109,8 +109,8 @@ int SwapToMemoryFromExtendedMemory( fcb *fb )
  */
 void XMemInit( void )
 {
-    long        blocks,rc;
-    int         j,i,extra;
+    long        blocks, rc;
+    int         j, i, extra;
     U_INT       amount;
 
     /*
@@ -134,8 +134,8 @@ void XMemInit( void )
     if( amount <= 16 ) return;      /* to allow for ibm cache bug */
     amount -= 16;
 
-    XMemCtrl.amount_left = (((unsigned long)amount)*1024 +
-                    XMEM_MEMORY_START ) - XMemCtrl.offset;
+    XMemCtrl.amount_left = (((unsigned long)amount) * 1024 +
+                    XMEM_MEMORY_START) - XMemCtrl.offset;
     if( XMemCtrl.amount_left <= 0 ) {
         return;
     }
@@ -153,8 +153,8 @@ void XMemInit( void )
     if( extra > 0 ) {
         XMemBlockArraySize++;
     }
-    XMemBlocks = MemAlloc( XMemBlockArraySize+1 );
-    for( i=0;i< XMemBlockArraySize;i++ ) {
+    XMemBlocks = MemAlloc( XMemBlockArraySize + 1 );
+    for( i = 0; i < XMemBlockArraySize; i++ ) {
         XMemBlocks[i] = 0xff;
     }
 
@@ -168,7 +168,7 @@ void XMemInit( void )
             j >>= 1;
             i |= j;
         }
-        XMemBlocks[ XMemBlockArraySize-1] = (char) i;
+        XMemBlocks[XMemBlockArraySize - 1] = (char) i;
     }
 
     XMemCtrl.allocated = 0;
@@ -201,15 +201,15 @@ void XMemFini( void )
  */
 static void xmemRead( long addr, void *buff, unsigned size )
 {
-    flat_address        source,target;
+    flat_address        source, target;
 
-    size = (size+1) & ~1;
+    size = (size + 1) & ~1;
     source = addr;
-    GDT[ GDT_SOURCE ].address = GDT_RW_DATA | source;
-    GDT[ GDT_SOURCE ].length = size;
+    GDT[GDT_SOURCE].address = GDT_RW_DATA | source;
+    GDT[GDT_SOURCE].length = size;
     target = MAKE_LINEAR( buff );
-    GDT[ GDT_TARGET ].address = GDT_RW_DATA | target;
-    GDT[ GDT_TARGET ].length = size;
+    GDT[GDT_TARGET].address = GDT_RW_DATA | target;
+    GDT[GDT_TARGET].length = size;
 
     _XtdMoveMemory( &GDT, size >> 1 );
 
@@ -220,15 +220,15 @@ static void xmemRead( long addr, void *buff, unsigned size )
  */
 static void xmemWrite( long addr, void *buff, unsigned size )
 {
-    flat_address        source,target;
+    flat_address        source, target;
 
-    size = (size+1) & ~1;
+    size = (size + 1) & ~1;
     target = addr;
-    GDT[ GDT_TARGET ].address = GDT_RW_DATA | target;
-    GDT[ GDT_TARGET ].length = size;
+    GDT[GDT_TARGET].address = GDT_RW_DATA | target;
+    GDT[GDT_TARGET].length = size;
     source = MAKE_LINEAR( buff );
-    GDT[ GDT_SOURCE ].address = GDT_RW_DATA | source;
-    GDT[ GDT_SOURCE ].length = size;
+    GDT[GDT_SOURCE].address = GDT_RW_DATA | source;
+    GDT[GDT_SOURCE].length = size;
 
     _XtdMoveMemory( &GDT, size >> 1 );
 
@@ -243,12 +243,12 @@ static bool checkVDISK( flat_address *start )
     void                *value;
     char                *name;
     flat_address        *avail;
-    static char _vdisk[] = "VDISK  V";
+    static char         _vdisk[] = "VDISK  V";
 
     *start = XMEM_MEMORY_START;
     value = DosGetVect( VDISK_INTERRUPT );
     name = MK_FP( FP_SEG( value ), VDISK_NAME_OFFSET );
-    for( i=0;i<=7;i++ ) {
+    for( i = 0; i <= 7; i++ ) {
         if( name[i] != _vdisk[i] ) {
             return( FALSE );
         }
@@ -264,7 +264,6 @@ static bool checkVDISK( flat_address *start )
  */
 void GiveBackXMemBlock( long addr )
 {
-
     GiveBackBlock( addr - XMemCtrl.offset, XMemBlocks );
     XMemCtrl.allocated--;
 

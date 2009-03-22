@@ -47,13 +47,13 @@ void FatalError( int err )
 {
     char *str;
 
-    SetCursorOnScreen( (int)WindMaxHeight -1, 0 );
+    SetCursorOnScreen( (int)WindMaxHeight - 1, 0 );
     if( err == ERR_NO_MEMORY ) {
         str = "Out of memory";
     } else {
         str = GetErrorMsg( err );
     }
-    MyPrintf("%s (fatal)\n", str );
+    MyPrintf( "%s (fatal)\n", str );
     ExitEditor( -1 );
 
 } /* FatalError */
@@ -66,18 +66,18 @@ void Die( const char *str, ... )
     va_list     al;
 
     SetCursorOnScreen(  (int) WindMaxHeight - 1, 0 );
-    MyPrintf("Failure: ");
+    MyPrintf( "Failure: " );
     va_start( al, str );
     MyVPrintf( str, al );
     va_end( al );
-    MyPrintf("\n");
+    MyPrintf( "\n" );
     ExitEditor( -1 );
 
 } /* Die */
 
 static char strBuff[25];
 static char readMsgData = FALSE;
-static int errCnt;
+static int  errCnt;
 static char *errorList;
 
 /*
@@ -97,12 +97,12 @@ char *GetErrorMsg( int err )
         EditFlags.Dotable = FALSE;
     }
     if( err < 0 || err > errCnt ) {
-        MySprintf( strBuff,"Err no. %d (no msg)",err);
+        MySprintf( strBuff, "Err no. %d (no msg)", err );
         return( strBuff );
     }
     msg = GetTokenString( errorList, err );
     if( msg == NULL ) {
-        MySprintf( strBuff,"Err no. %d (no msg)",err);
+        MySprintf( strBuff, "Err no. %d (no msg)", err );
         return( strBuff );
     }
     return( msg );
@@ -143,7 +143,6 @@ void Error( char *str, ... )
         va_end( al );
     }
 
-
 } /* Error */
 
 /*
@@ -152,7 +151,7 @@ void Error( char *str, ... )
 static void readErrorMsgData( void )
 {
     int         *vals;
-    int         rc,cnt;
+    int         rc, cnt;
     char        *buff;
 
     rc = ReadDataFile( "errmsg.dat", &cnt, &buff, &vals, FALSE );
@@ -168,8 +167,10 @@ static void readErrorMsgData( void )
 
 } /* readErrorMsgData */
 
-void ErrorFini( void ){
+void ErrorFini( void )
+{
     MemFree( errorList );
     MemFree( ErrorTokens );
     MemFree( ErrorValues );
-}
+
+} /* ErrorFini */

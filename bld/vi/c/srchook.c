@@ -58,7 +58,7 @@ static vars *findHook( char *which )
     char        foo[64];
     vars        *v;
 
-    MySprintf( foo,"%shook",which );
+    MySprintf( foo, "%shook", which );
     v = VarFind( foo, NULL );
     return( v );
 
@@ -104,7 +104,7 @@ vars *GetHookVar( hooktype num )
 static int srcHook( hooktype num, int lastrc )
 {
     vars        *v;
-    int         ln,rc;
+    int         ln, rc;
 
     if( hookRun & num ) {
         return( lastrc );
@@ -114,7 +114,7 @@ static int srcHook( hooktype num, int lastrc )
      * check script type
      */
     v = GetHookVar( num );
-    if( num == SRC_HOOK_COMMAND &&  v != NULL ) {
+    if( num == SRC_HOOK_COMMAND && v != NULL ) {
         VarAddGlobalStr( "Com", CommandBuffer );
     }
     if( num == SRC_HOOK_MODIFIED && v != NULL ) {
@@ -199,52 +199,54 @@ void HookScriptCheck( void )
  */
 int InvokeColSelHook( int sc, int ec )
 {
-    int         j,i;
+    int         j, i;
     char        wordbuff[MAX_STR];
-    char        data[MAX_STR+32];
+    char        data[MAX_STR + 32];
     int         lne;
-    #ifndef __WIN__
-        int     x1;
-        bool    has_bord;
-    #endif
+#ifndef __WIN__
+    int         x1;
+    bool        has_bord;
+#endif
 
 #ifndef __WIN__
     has_bord = WindowAuxInfo( CurrentWindow, WIND_INFO_HAS_BORDER );
     x1 = WindowAuxInfo( CurrentWindow, WIND_INFO_X1 );
     if( LastEvent != VI_KEY( MOUSEEVENT ) ) {
         lne = WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) +
-                    CurrentLineNumber - TopOfPage + has_bord;
+            CurrentLineNumber - TopOfPage + has_bord;
     } else {
         lne = MouseRow;
     }
 #else
     if( LastEvent != VI_KEY( FAKEMOUSE ) ) {
-        lne = ( CurrentLineNumber - TopOfPage ) * FontHeight( WIN_FONT( &EditWindow ) );
+        lne = (CurrentLineNumber - TopOfPage) * FontHeight( WIN_FONT( &EditWindow ) );
     } else {
         lne = MouseY;
     }
 #endif
 
     j = 0;
-    if( ec-sc >= MAX_STR ) {
-        ec = sc+MAX_STR-2;
+    if( ec - sc >= MAX_STR ) {
+        ec = sc + MAX_STR - 2;
     }
-    for( i=sc-1;i<=ec-1;i++ ) {
+    for( i = sc - 1; i <= ec - 1; i++ ) {
         wordbuff[j++] = CurrentLine->data[i];
     }
     wordbuff[j] = 0;
 #ifndef __WIN__
-    sc = x1+VirtualCursorPosition2( sc ) - LeftColumn;
-    ec = x1+VirtualCursorPosition2( ec ) - LeftColumn;
+    sc = x1 + VirtualCursorPosition2( sc ) - LeftColumn;
+    ec = x1 + VirtualCursorPosition2( ec ) - LeftColumn;
     if( !has_bord ) {
         sc--;
         ec--;
     }
 #else
-    sc = MyTextExtent( CurrentWindow, WIN_STYLE( &EditWindow ), &CurrentLine->data[ 0 ], sc );
-    ec = MyTextExtent( CurrentWindow, WIN_STYLE( &EditWindow ), &CurrentLine->data[ 0 ], ec );
+    sc = MyTextExtent( CurrentWindow, WIN_STYLE( &EditWindow ),
+        &CurrentLine->data[0], sc );
+    ec = MyTextExtent( CurrentWindow, WIN_STYLE( &EditWindow ),
+        &CurrentLine->data[0], ec );
 #endif
-    MySprintf( data,"\"%s\" %d %d %d %d", wordbuff, lne, sc, ec, ec - sc + 1 );
+    MySprintf( data, "\"%s\" %d %d %d %d", wordbuff, lne, sc, ec, ec - sc + 1 );
     return( SourceHookData( SRC_HOOK_MOUSE_CHARSEL, data ) );
 
 } /* InvokeColSelHook */
@@ -256,18 +258,18 @@ int InvokeColSelHook( int sc, int ec )
 int InvokeLineSelHook( linenum s, linenum e )
 {
     char        tmp[32];
-    int         lne,col;
-    #ifndef __WIN__
-        bool    has_bord;
-    #endif
+    int         lne, col;
+#ifndef __WIN__
+    bool        has_bord;
+#endif
 
 #ifndef __WIN__
     if( LastEvent != VI_KEY( MOUSEEVENT ) ) {
         has_bord = WindowAuxInfo( CurrentWindow, WIND_INFO_HAS_BORDER );
         lne = WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) +
-                    CurrentLineNumber - TopOfPage + has_bord;
+              CurrentLineNumber - TopOfPage + has_bord;
         col = WindowAuxInfo( CurrentWindow, WIND_INFO_X1 ) +
-                        VirtualCursorPosition()-LeftColumn - 1 + has_bord;
+              VirtualCursorPosition() - LeftColumn - 1 + has_bord;
         if( col < 0 ) {
             col = 0;
         }
@@ -279,13 +281,13 @@ int InvokeLineSelHook( linenum s, linenum e )
     if( LastEvent != VI_KEY( FAKEMOUSE ) ) {
         /* assume we're not in insert mode *ouch* */
         col = PixelFromColumnOnCurrentLine( CurrentColumn );
-        lne = ( CurrentLineNumber - TopOfPage ) * FontHeight( WIN_FONT( &EditWindow ) );
+        lne = (CurrentLineNumber - TopOfPage) * FontHeight( WIN_FONT( &EditWindow ) );
     } else {
         col = MouseX;
         lne = MouseY;
     }
 #endif
-    MySprintf( tmp,"%d %d %l %l", lne, col, s, e );
+    MySprintf( tmp, "%d %d %l %l", lne, col, s, e );
     return( SourceHookData( SRC_HOOK_MOUSE_LINESEL, tmp ) );
 
 } /* InvokeLineSelHook */
@@ -298,7 +300,7 @@ int InvokeMenuHook( int menunum, int line )
     char        tmp[16];
     int         rc;
 
-    MySprintf( tmp,"%d %d", menunum, line );
+    MySprintf( tmp, "%d %d", menunum, line );
     rc = SourceHookData( SRC_HOOK_MENU, tmp );
     return( rc );
 

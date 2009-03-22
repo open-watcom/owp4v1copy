@@ -40,7 +40,7 @@
 #include "winaux.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 
 int LineLength( linenum l )
@@ -123,19 +123,22 @@ int Yank( range *r )
     } else if( r->start.line == r->end.line ) {
         assert( CurrentLineNumber == r->start.line );
         AddLineToSavebuf( CurrentLine->data, r->start.column, r->end.column );
-        #ifdef __WIN__
-            if( LastSavebuf == 0 ) {
-                Message1( "%d characters copied into the clipboard",
-                            r->end.column - r->start.column + 1 );
-            } else
-        #endif
-        Message1( "%d %s yanked into buffer %c",
-                r->end.column - r->start.column + 1,
-                MSG_CHARACTERS, LastSavebuf );
+#ifdef __WIN__
+        if( LastSavebuf == 0 ) {
+            Message1( "%d characters copied into the clipboard",
+                      r->end.column - r->start.column + 1 );
+        } else {
+#endif
+            Message1( "%d %s yanked into buffer %c",
+                      r->end.column - r->start.column + 1,
+                      MSG_CHARACTERS, LastSavebuf );
+#ifdef __WIN__
+        }
+#endif
         rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
     } else {
         rc = Cut( r->start.line, r->start.column,
-                        r->end.line, r->end.column, FALSE );
+                  r->end.line, r->end.column, FALSE );
     }
     if( rc != ERR_NO_ERR ) {
         rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
@@ -166,7 +169,7 @@ int Change( range *r )
         StartUndoGroup( UndoStack );
         if( !r->line_based ) {
             rc = Cut( r->start.line, r->start.column,
-                        r->end.line, r->end.column, TRUE );
+                      r->end.line, r->end.column, TRUE );
             r->end.column = -1;
             scol = -1;
             ecol = -1;
@@ -184,7 +187,7 @@ int Change( range *r )
                 }
             }
             scol = FindStartOfCurrentLine() - 1;
-            ecol = CurrentLine->len-1;
+            ecol = CurrentLine->len - 1;
         }
         DCDisplayAllLines();
         rc = DeleteAndInsertText( scol, ecol );
@@ -203,10 +206,10 @@ int Change( range *r )
     vecol = vecol;
 //    GetCurrentLine();
     strcpy( WorkLine->data, CurrentLine->data );
-    tmp = WorkLine->data[ ecol ];
-    WorkLine->data[ ecol ] = '$';
+    tmp = WorkLine->data[ecol];
+    WorkLine->data[ecol] = '$';
 #else
-    vecol = VirtualCursorPosition2( ecol+1 );
+    vecol = VirtualCursorPosition2( ecol + 1 );
     vecol--;
     ExpandTabsInABuffer( CurrentLine->data, CurrentLine->len, WorkLine->data, MaxLine );
     WorkLine->len = strlen( WorkLine->data );
@@ -217,7 +220,7 @@ int Change( range *r )
         WorkLine->data[1] = 0;
     }
     EditFlags.InsertModeActive = TRUE;
-    GoToColumn( scol+1, CurrentLine->len );
+    GoToColumn( scol + 1, CurrentLine->len );
     EditFlags.InsertModeActive = FALSE;
     DisplayWorkLine( TRUE );
     UnselectRegion();
@@ -231,14 +234,14 @@ int Change( range *r )
      */
     key = GetNextEvent( FALSE );
 #ifdef __WIN__
-    WorkLine->data[ ecol ] = tmp;
+    WorkLine->data[ecol] = tmp;
 #else
-    WorkLine->data[ vecol ] = tmp;
+    WorkLine->data[vecol] = tmp;
 #endif
     DisplayWorkLine( TRUE );
     if( key == VI_KEY( ESC ) && !EditFlags.ChangeLikeVI ) {
         WorkLine->len = -1;
-        GoToColumn( scol+1, CurrentLine->len );
+        GoToColumn( scol + 1, CurrentLine->len );
     } else {
         KeyAdd( key );
         rc = DeleteAndInsertText( scol, ecol );
@@ -262,9 +265,9 @@ static int doPush( range *r, bool shove )
     } else {
         rc = Shift( r->start.line, r->end.line, shove ? '>' : '<', TRUE );
         if( rc <= 0 ) {
-        #if 0
+#if 0
             GoToLineNoRelCurs( r->start.line );
-        #endif
+#endif
             GoToColumnOnCurrentLine( FindStartOfCurrentLine() );
             EditFlags.Dotable = TRUE;
         }
@@ -303,7 +306,7 @@ static int changeOneLine( linenum line_num, int start_col, int end_col )
     if( rc == ERR_NO_ERR ) {
         assert( end_col < line->len && end_col >= start_col );
         num_cols = end_col - start_col + 1;
-        s = &line->data[ start_col ];
+        s = &line->data[start_col];
         for( i = 0; i < num_cols; i++ ) {
             if( isupper( *s ) ) {
                 *s = tolower( *s );
@@ -326,7 +329,6 @@ static int changeToEndOfLine( linenum line, int start )
         rc = changeOneLine( line, start, len - 1 );
     }
     return( rc );
-
 }
 
 int ChangeCase( range *r )
@@ -367,7 +369,7 @@ int ChangeCase( range *r )
 int Filter( range *r )
 {
     int         rc;
-    char        cmd[ MAX_STR ];
+    char        cmd[MAX_STR];
 
     rc = PromptForString( "Command: ", cmd, sizeof( cmd ), &FilterHist );
     if( rc == ERR_NO_ERR ) {

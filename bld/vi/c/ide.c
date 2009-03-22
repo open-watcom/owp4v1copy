@@ -88,7 +88,7 @@ void IDEGetKeys( void )
     VxDGet( buff, sizeof( buff ) );
     KeyAddString( buff );
     GetCurrentFilePath( path );
-    MySprintf( buff,"(%ld, %d) %s\r\n", CurrentLineNumber, CurrentColumn, path );
+    MySprintf( buff, "(%ld, %d) %s\r\n", CurrentLineNumber, CurrentColumn, path );
     VxDPut( buff, strlen( buff ) + 1 );
     VxDPut( TERMINATE_COMMAND_STR, sizeof( TERMINATE_COMMAND_STR ) );
 
