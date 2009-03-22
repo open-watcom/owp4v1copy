@@ -34,7 +34,8 @@ static void processIndex( FILE *in, FILE *out, size_t items )
     size_t      count1;
     size_t      count2;
     char        buffer[ 256 ];
-    wchar_t     text[ 256 ];
+    wchar_t     text[ WSTRING_MAX_LEN ];
+
     for( count1 = 0; count1 < items; count1++ ) {
         fread( &idx, sizeof(IndexItem), 1, in );
         fprintf( out, "  Index Item #%u\n", count1 );
@@ -51,10 +52,10 @@ static void processIndex( FILE *in, FILE *out, size_t items )
             readDictString( in, text );
             fprintf( out, "    IndexItem.sortKeyText:     %ls\n", text );
         }
-        memset( buffer, 0, 256 * sizeof( uint8_t ) );
-        memset( text, 0, 256 * sizeof( wchar_t ) );
+        memset( buffer, 0, sizeof( buffer ) );
+        memset( text, 0, sizeof( text ) );
         fread( buffer, sizeof( uint8_t ), idx.size, in );
-        mbstowcs( text, buffer, 255 );
+        mbstowcs( text, buffer, WSTRING_MAX_LEN );
         fprintf( out, "    IndexItem.text:          %ls\n", text );
         for( count2 = 0; count2 < idx.synonymCount; count2++ ) {
             uint32_t    offset;

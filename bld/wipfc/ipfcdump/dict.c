@@ -13,7 +13,7 @@ Vocabulary = calloc( Hdr.dictCount, sizeof( wchar_t * ) );
 if( Vocabulary != NULL ) {
     size_t count1;
     size_t size;
-    wchar_t text[ 256 ];
+    wchar_t text[ WSTRING_MAX_LEN ];
     fputs( "\nDictionary (vocabulary list)\n", out );
     fseek( in, Hdr.dictOffset, SEEK_SET );
     for( count1 = 0; count1 < Hdr.dictCount; count1++ ) {

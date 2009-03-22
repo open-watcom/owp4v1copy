@@ -7,7 +7,7 @@ void readExtFiles( FILE *in, FILE *out )
     fputs( "\nExternal File References\n", out );
     if( eHdr.dbCount ) {
         size_t  count;
-        wchar_t name[ 256 ];
+        wchar_t name[ WSTRING_MAX_LEN ];
         fseek( in, eHdr.dbOffset, SEEK_SET );
         for( count = 0; count < eHdr.dbCount; count++ ) {
             readDictString( in, name );

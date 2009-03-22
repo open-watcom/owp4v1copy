@@ -57,11 +57,10 @@ static int parseFile( char *filename )
 /*****************************************************************************/
 size_t readDictString(FILE *in, wchar_t *buffer)
 {
-    char    temp[ 256 ];
+    char    temp[ STRING_MAX_LEN ];
     size_t  length = fgetc( in ) - 1;
     fread( temp, sizeof( char ), length, in );
     temp[ length ] = '\0';
-    length = mbstowcs( buffer, temp, 255 );
-    buffer[ length ] = L'\0';
+    length = mbstowcs( buffer, temp, WSTRING_MAX_LEN );
     return( length + 1 );
 }

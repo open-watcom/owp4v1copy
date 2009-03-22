@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define STRING_MAX_LEN      256
+#define WSTRING_MAX_LEN     256
+
 #pragma pack(push, 1)
 typedef struct {
     uint8_t     id[3];              // "HSP"

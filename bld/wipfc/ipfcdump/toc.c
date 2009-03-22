@@ -29,7 +29,7 @@ static void readTOCEntry( FILE *in, FILE *out, uint32_t offset, size_t count1, s
     size_t textSize;
     uint16_t cellIndex;
     char text[ 256 ];
-    wchar_t wtext[ 256 ];
+    wchar_t wtext[ WSTRING_MAX_LEN ];
     //long int nextPos = ftell(in);
     fread( &toc, sizeof(TocEntry), 1, in );
     fprintf( out, "  TOC Entry #%u at offset %8.8x (%lu)\n", count1, offset, offset );
@@ -126,7 +126,7 @@ static void readTOCEntry( FILE *in, FILE *out, uint32_t offset, size_t count1, s
     fputc( '\n', out);
     fread( text, sizeof( char ), textSize, in );
     text[ textSize ] = '\0';
-    mbstowcs(wtext, text, sizeof( wtext ) / sizeof( wchar_t ) );
+    mbstowcs( wtext, text, WSTRING_MAX_LEN );
     fprintf( out, "    TocEntry.title:       %ls\n", wtext );
     fflush( out );
     //fseek(in, nextPos, SEEK_SET);

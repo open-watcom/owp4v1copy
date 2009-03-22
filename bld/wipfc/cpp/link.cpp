@@ -645,13 +645,13 @@ void Link::doLaunch( Cell* cell )
             esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
         }
         char buffer[ 256 ];
-        size_t bytes( std::wcstombs( buffer, object.c_str(), 256 ) );
+        size_t bytes( std::wcstombs( buffer, object.c_str(), sizeof( buffer ) ) );
         if( bytes == -1 )
             throw FatalError( ERR_T_CONV );
         for( size_t count1 = 0; count1 < bytes; ++count1 )
             esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
         esc.push_back( ' ' );
-        bytes = std::wcstombs( buffer, data.c_str(), 256 );
+        bytes = std::wcstombs( buffer, data.c_str(), sizeof( buffer ) );
         if( bytes == -1 )
             throw FatalError( ERR_T_CONV );
         for( size_t count1 = 0; count1 < bytes; ++count1 )

@@ -19,7 +19,7 @@ void readControls( FILE *in, FILE *out )
         if( ctrls.controlCount) {
             ControlDef cd;
             size_t  count;
-            wchar_t name[256];
+            wchar_t name[ WSTRING_MAX_LEN ];
             for( count = 0; count < ctrls.controlCount; count++ ) {
                 fread( &cd, sizeof( ControlDef ), 1, in );
                 readCtrlString( in, name );
@@ -53,11 +53,10 @@ void readControls( FILE *in, FILE *out )
 /*****************************************************************************/
 size_t readCtrlString( FILE *in, wchar_t *buffer )
 {
-    char    temp[ 256 ];
+    char    temp[ STRING_MAX_LEN ];
     size_t  length = fgetc( in );
     fread( temp, sizeof( char ), length, in );
     temp[ length ] = '\0';
-    length = mbstowcs( buffer, temp, 255 );
-    buffer[ length ] = L'\0';
+    length = mbstowcs( buffer, temp, WSTRING_MAX_LEN );
     return( length + 1 );
 }

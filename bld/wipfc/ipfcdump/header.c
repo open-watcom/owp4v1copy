@@ -9,7 +9,8 @@ IpfExtHeader eHdr;
 
 void readHeader( FILE *in, FILE *out )
 {
-    wchar_t wtext[ 256 ];
+    wchar_t wtext[ WSTRING_MAX_LEN ];
+
     fread( &Hdr, sizeof( IpfHeader ),1, in );
     if ( ( Hdr.id[0] != 'H' && Hdr.id[0] != 'I' ) || Hdr.id[1] != 'S' || Hdr.id[2] != 'P' ) {
         fputs( "This is not an OS/2 help file\n\a", out );
@@ -50,7 +51,7 @@ void readHeader( FILE *in, FILE *out )
     fprintf( out, "  IpfHeader.reserved: %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x %2.2x\n",
         Hdr.reserved[0], Hdr.reserved[1], Hdr.reserved[2], Hdr.reserved[3], Hdr.reserved[4], Hdr.reserved[5], Hdr.reserved[6],
         Hdr.reserved[7], Hdr.reserved[8], Hdr.reserved[9], Hdr.reserved[10], Hdr.reserved[11] );
-    mbstowcs( wtext, (char *)Hdr.title, sizeof( wtext ) / sizeof( wchar_t ) );
+    mbstowcs( wtext, (char *)Hdr.title, WSTRING_MAX_LEN );
     fprintf( out, "  IpfHeader.title:            %ls\n", wtext );
     fseek( in, Hdr.extOffset, SEEK_SET );
     fread( &eHdr, sizeof( IpfExtHeader ), 1, in );

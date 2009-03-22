@@ -234,7 +234,7 @@ void AcViewport::buildText( Cell* cell )
         esc.push_back( static_cast< std::uint8_t >( objectName.size() + 1 ) );
         if( !objectName.empty() ) {
             char buffer[ 256 ];
-            size_t bytes( std::wcstombs( buffer, objectName.c_str(), 256 ) );
+            size_t bytes( std::wcstombs( buffer, objectName.c_str(), sizeof( buffer ) ) );
             if( bytes == -1 )
                 throw FatalError( ERR_T_CONV );
             for( size_t count1 = 0; count1 < bytes; ++count1 )
@@ -243,7 +243,7 @@ void AcViewport::buildText( Cell* cell )
         esc.push_back( static_cast< std::uint8_t >( dll.size() + 1 ) );
         if( !dll.empty() ) {
             char buffer[ 256 ];
-            size_t bytes( std::wcstombs( buffer, dll.c_str(), 256 ) );
+            size_t bytes( std::wcstombs( buffer, dll.c_str(), sizeof( buffer ) ) );
             if( bytes == -1 )
                 throw FatalError( ERR_T_CONV );
             for( size_t count1 = 0; count1 < bytes; ++count1 )
@@ -252,7 +252,7 @@ void AcViewport::buildText( Cell* cell )
         esc.push_back( static_cast< std::uint8_t >( objectInfo.size() + 1 ) );
         if( !objectInfo.empty() ) {
             char buffer[ 256 ];
-            size_t bytes( std::wcstombs( buffer, objectInfo.c_str(), 256 ) );
+            size_t bytes( std::wcstombs( buffer, objectInfo.c_str(), sizeof( buffer ) ) );
             if( bytes == -1 )
                 throw FatalError( ERR_T_CONV );
             for( size_t count1 = 0; count1 < bytes; ++count1 )
