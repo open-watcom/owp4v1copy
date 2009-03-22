@@ -133,10 +133,12 @@ static int is_directory( const CHAR_TYPE *name )
 static void filenameToWide( DIR_TYPE *dir )
 /*****************************************/
 {
-    wchar_t             wcs[_MAX_PATH];
+    wchar_t             wcs[ _MAX_PATH ];
 
-    mbstowcs( wcs, (char*)dir->d_name, _MAX_PATH );     /* convert string */
-    wcscpy( dir->d_name, wcs );                         /* copy string */
+    /* convert string */
+    mbstowcs( wcs, (char*)dir->d_name, sizeof( wcs ) / sizeof( wchar_t ) );
+    /* copy string */
+    wcscpy( dir->d_name, wcs );
 }
 #endif
 
@@ -162,9 +164,9 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, unsign
 
     /*** Convert a wide char string to a multibyte string ***/
 #ifdef __WIDECHAR__
-    char            mbcsName[MB_CUR_MAX*_MAX_PATH];
+    char            mbcsName[ MB_CUR_MAX * _MAX_PATH ];
 
-    if( wcstombs( mbcsName, name, MB_CUR_MAX*(wcslen( name ) + 1) ) == (size_t) - 1 )
+    if( wcstombs( mbcsName, name, sizeof( mbcsName ) ) == (size_t) - 1 )
         return( NULL );
 #endif
 
@@ -225,7 +227,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, unsign
 #endif
 #else
                 wcscpy( &pathname[i], L"*.*" );
-                if( wcstombs( mbcsName, pathname, MB_CUR_MAX*(wcslen( pathname ) + 1) ) == (size_t) - 1 )
+                if( wcstombs( mbcsName, pathname, sizeof( mbcsName ) ) == (size_t) - 1 )
                     return( NULL );
 #ifdef __WATCOM_LFN__
                 rc = _dos_findfirst( mbcsName, attr, &lfntemp );

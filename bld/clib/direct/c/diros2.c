@@ -90,7 +90,7 @@ static void copydir( DIR_TYPE *dirp, FF_BUFFER *dir_buff )
     *(struct name *)dirp->d_name = *(struct name *)dir_buff->achName;
 
 #ifdef __WIDECHAR__
-    mbstowcs( wcs, (char*)dirp->d_name, _MAX_PATH );    /* convert string */
+    mbstowcs( wcs, (char*)dirp->d_name, sizeof( wcs ) / sizeof( wchar_t ) );    /* convert string */
     wcscpy( dirp->d_name, wcs );                        /* copy string */
 #endif
 }
@@ -144,9 +144,9 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
 
     /*** Convert a wide char string to a multibyte string ***/
 #ifdef __WIDECHAR__
-    char            mbcsName[MB_CUR_MAX*_MAX_PATH];
+    char            mbcsName[ MB_CUR_MAX * _MAX_PATH ];
 
-    if( wcstombs( mbcsName, dirname, MB_CUR_MAX*(wcslen(dirname)+1) ) == (size_t)-1 )
+    if( wcstombs( mbcsName, dirname, sizeof( mbcsName ) ) == (size_t)-1 )
         return( NULL );
 #endif
 

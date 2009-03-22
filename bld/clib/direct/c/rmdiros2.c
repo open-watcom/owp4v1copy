@@ -54,11 +54,11 @@ _WCRTLINK int __F_NAME(rmdir,_wrmdir)( const CHAR_TYPE *path )
 #else
     APIRET              rc;
     size_t              rcConvert;
-    char                mbcsPath[MB_CUR_MAX*_MAX_PATH];
+    char                mbcsPath[ MB_CUR_MAX * _MAX_PATH ];
     unsigned char *     p;
 
     /*** Convert the wide character string to a multibyte string ***/
-    rcConvert = wcstombs( mbcsPath, path, MB_CUR_MAX*_MAX_PATH );
+    rcConvert = wcstombs( mbcsPath, path, sizeof( mbcsPath ) );
     p = _mbsninc( mbcsPath, rcConvert );
     *p = '\0';
 
