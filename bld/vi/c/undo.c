@@ -32,11 +32,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "vi.h"
+
 /*
  * StartUndoGroupWithPosition - begin set of undos, save start position
  */
 void StartUndoGroupWithPosition( undo_stack *stack, linenum lne,
-                        linenum top, int col )
+                                 linenum top, int col )
 {
     undo        *cundo;
 
@@ -73,7 +74,7 @@ void StartUndoGroupWithPosition( undo_stack *stack, linenum lne,
     cundo->data.sdata.top = top;
     cundo->data.sdata.time_stamp = ClockTicks;
     if( col == 0 ) {
-        col=1;
+        col = 1;
     }
     cundo->data.sdata.col = col;
     PushUndoStack( cundo, stack );
@@ -88,13 +89,14 @@ void StartUndoGroupWithPosition( undo_stack *stack, linenum lne,
     }
 
 } /* StartUndoGroupWithPosition */
+
 /*
  * UndoReplaceLines - undo the replacement of a group of lines
  */
 int UndoReplaceLines( linenum sline, linenum eline  )
 {
     int i;
-    fcb *head,*tail;
+    fcb *head, *tail;
 
     if( !EditFlags.Undo || UndoStack == NULL ) {
         return( ERR_NO_ERR );
@@ -104,7 +106,7 @@ int UndoReplaceLines( linenum sline, linenum eline  )
         return( i );
     }
     StartUndoGroup( UndoStack );
-    UndoDeleteFcbs( sline-1, head, tail, UndoStack );
+    UndoDeleteFcbs( sline - 1, head, tail, UndoStack );
     UndoInsert( sline, eline, UndoStack );
     EndUndoGroup( UndoStack );
     return( ERR_NO_ERR );
@@ -121,8 +123,8 @@ static void numberLines( fcb *cfcb, linenum sline )
     while( cfcb != NULL ) {
         tot = cfcb->end_line - cfcb->start_line;
         cfcb->start_line = sline;
-        cfcb->end_line = sline+tot;
-        sline += tot+1;
+        cfcb->end_line = sline + tot;
+        sline += tot + 1;
         cfcb = cfcb->next;
     }
 
@@ -132,7 +134,7 @@ static void numberLines( fcb *cfcb, linenum sline )
  * UndoDeleteFcbs - set up transaction to undo the deletion of fcbs
  */
 void UndoDeleteFcbs( linenum sline, fcb *fcbhead, fcb *fcbtail,
-                undo_stack *stack  )
+                     undo_stack *stack  )
 {
     undo        *cundo;
 
@@ -166,7 +168,7 @@ void UndoDeleteFcbs( linenum sline, fcb *fcbhead, fcb *fcbtail,
  */
 void UndoInsert( linenum sline, linenum eline , undo_stack *stack )
 {
-    undo        *top,*cundo;
+    undo        *top, *cundo;
     bool        neednew = FALSE;
 
     if( stack == NULL || stack->current < 0 || !EditFlags.Undo ) {
@@ -177,7 +179,7 @@ void UndoInsert( linenum sline, linenum eline , undo_stack *stack )
      * check if we need a new entry; ie, if this line number
      * is not part of the current sequence, allocate a new entry
      */
-    top = stack->stack[ stack->current];
+    top = stack->stack[stack->current];
     if( top->type != UNDO_INSERT_LINES ) {
         neednew = TRUE;
     } else if( top->data.del_range.end != sline - 1 ) {
@@ -209,10 +211,10 @@ void UndoInsert( linenum sline, linenum eline , undo_stack *stack )
  */
 void PatchDeleteUndo( undo_stack *stack )
 {
-    undo        *top,*next,*del,*topdel,*after,*tmp;
+    undo        *top, *next, *del, *topdel, *after, *tmp;
     bool        merge;
     int         i;
-    fcb         *cfcb,*nfcb;
+    fcb         *cfcb, *nfcb;
 
     /*
      * see if we can merge this with the last undo record
@@ -224,10 +226,11 @@ void PatchDeleteUndo( undo_stack *stack )
      *      - must have same start line as the first one
      * START_UNDO_GROUP
      */
-    if( stack == NULL || stack->OpenUndo <= 0 || stack->current < 0 || !EditFlags.Undo ) {
+    if( stack == NULL || stack->OpenUndo <= 0 || stack->current < 0 ||
+        !EditFlags.Undo ) {
         return;
     }
-    top = stack->stack[ stack->current];
+    top = stack->stack[stack->current];
     topdel = top->next;
     next = top->next->next->next;   /* go past first delete group */
     if( next == NULL || next->type != END_UNDO_GROUP ) {
@@ -302,8 +305,8 @@ void PatchDeleteUndo( undo_stack *stack )
             if( i == COULD_NOT_MERGE_FCBS ) {
                 cfcb = nfcb;
             } else {
-                DeleteLLItem( (ss**)&(topdel->data.fcbs.fcb_head),
-                        (ss**)&(topdel->data.fcbs.fcb_tail), (ss*)nfcb );
+                DeleteLLItem( (ss **)&(topdel->data.fcbs.fcb_head),
+                              (ss **)&(topdel->data.fcbs.fcb_tail), (ss *)nfcb );
                 FcbFree( nfcb );
             }
         }

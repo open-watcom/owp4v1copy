@@ -38,7 +38,7 @@
 #include "keys.h"
 #include "rxsupp.h"
 #ifdef __WIN__
-#include "winrtns.h"
+    #include "winrtns.h"
 #endif
 
 /*
@@ -63,8 +63,8 @@ int GetCurrentTag( void )
  */
 int TagHunt( char *str )
 {
-    char        buff[MAX_STR],file[FILENAME_MAX];
-    int         num,rc=ERR_NO_ERR;
+    char        buff[MAX_STR], file[FILENAME_MAX];
+    int         num, rc = ERR_NO_ERR;
 
     rc = LocateTag( str, file, buff );
     if( !rc ) {
@@ -90,7 +90,7 @@ int TagHunt( char *str )
     }
 
     if( rc == ERR_TAG_NOT_FOUND ) {
-        Error( GetErrorMsg(rc), str );
+        Error( GetErrorMsg( rc ), str );
         rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
     }
     return( rc );
@@ -102,9 +102,9 @@ int TagHunt( char *str )
  */
 int FindTag( char *tag )
 {
-    extern char _NEAR META[];
-    int         rc,omag;
-    char        *oldms;
+    extern char _NEAR   META[];
+    int                 rc, omag;
+    char                *oldms;
 
     omag = EditFlags.Magic;
     EditFlags.Magic = FALSE;
@@ -134,13 +134,13 @@ int PickATag( int clist, char **list, char *tagname )
 
     memcpy( &tw, &dirw_info, sizeof( window_info ) );
     tw.x1 = 12;
-    tw.x2 = WindMaxWidth-12;
-    i = tw.y2 - tw.y1+1;
+    tw.x2 = WindMaxWidth - 12;
+    i = tw.y2 - tw.y1 + 1;
     if( tw.has_border ) {
         i -= 2;
     }
     if( clist < i ) {
-        tw.y2 -= ( i-clist );
+        tw.y2 -= i - clist;
     }
     if( clist > i ) {
         show_lineno = TRUE;
@@ -186,7 +186,7 @@ static int selectTag( FILE *f, char *str, char *buff, char *fname )
 
     while( 1 ) {
         RemoveLeadingSpaces( buff );
-        taglist = MemReAlloc( taglist, sizeof( char * ) * (tagcnt+1) );
+        taglist = MemReAlloc( taglist, sizeof( char * ) * (tagcnt + 1) );
         AddString( &taglist[tagcnt], buff );
         i = 0;
         while( !isspace( taglist[tagcnt][i] ) ) {
@@ -194,16 +194,16 @@ static int selectTag( FILE *f, char *str, char *buff, char *fname )
         }
         taglist[tagcnt][i] = 0;
         tagcnt++;
-        if( fgets( buff,MAX_STR,f ) == NULL )  {
+        if( fgets( buff, MAX_STR, f ) == NULL )  {
             break;
         }
-        if( NextWord1( buff,tag ) <= 0 ) {
+        if( NextWord1( buff, tag ) <= 0 ) {
             continue;
         }
         if( EditFlags.IgnoreTagCase ) {
-            i = stricmp( str,tag );
+            i = stricmp( str, tag );
         } else {
-            i = strcmp( str,tag );
+            i = strcmp( str, tag );
         }
         if( i ) {
             break;
@@ -218,14 +218,14 @@ static int selectTag( FILE *f, char *str, char *buff, char *fname )
     } else {
         whichtag = 0;
     }
-    taglist[ whichtag ][ strlen( taglist[ whichtag ] ) ] = ' ';
-    strcpy( buff, taglist[ whichtag ] );
+    taglist[whichtag][strlen( taglist[whichtag] )] = ' ';
+    strcpy( buff, taglist[whichtag] );
     MemFreeList( tagcnt, taglist );
 
     if( NextWord1( buff, fname ) <= 0 ) {
         return( ERR_INVALID_TAG_FOUND );
     }
-    buff[strlen(buff)-1] = 0;
+    buff[strlen( buff ) - 1] = 0;
     RemoveLeadingSpaces( buff );
     if( buff[0] == 0 ) {
         return( ERR_INVALID_TAG_FOUND );
@@ -241,12 +241,12 @@ static int selectTag( FILE *f, char *str, char *buff, char *fname )
  * SearchForTags - search up the directory tree to see if there are any
  *                 tagfiles kicking around
  */
-FILE *SearchForTags(void)
+FILE *SearchForTags( void )
 {
-    char  path[FILENAME_MAX];
-    char *eop;
+    char    path[FILENAME_MAX];
+    char    *eop;
 
-    if (CurrentFile && CurrentFile->name) {
+    if( CurrentFile && CurrentFile->name ) {
         _fullpath(path, CurrentFile->name, FILENAME_MAX);
 
         /*
@@ -257,30 +257,30 @@ FILE *SearchForTags(void)
             *eop = 0x00;
         }
     } else {
-        GetCWD2(path, FILENAME_MAX);
+        GetCWD2( path, FILENAME_MAX );
     }
 
-    eop = &path[strlen(path) - 1];
+    eop = &path[strlen( path ) - 1];
 
-    while (eop >= path) {
-        strcpy((eop + 1), TAGFILE);
+    while( eop >= path ) {
+        strcpy( eop + 1, TAGFILE );
 
-        if (!access(path, F_OK)) {
-            return fopen(path, "r");
+        if( !access( path, F_OK ) ) {
+            return fopen( path, "r" );
         }
 
-        while ((eop >= path) && (*eop != '\\')) {
+        while( eop >= path && *eop != '\\' ) {
             --eop;
         }
 
-        if (eop >= path) {
+        if( eop >= path ) {
             *eop-- = 0x00;
         }
     } /* while */
 
-    return NULL;
-} /* SearchForTags() */
+    return( NULL );
 
+} /* SearchForTags() */
 
 /*
  * LocateTag - locate a tag in the tag file
@@ -294,13 +294,13 @@ int LocateTag( char *str, char *fname, char *buff )
     /*
      * get file and buffer
      */
-    f = GetFromEnvAndOpen(TagFileName);
-    if (!f) {
-        if (EditFlags.SearchForTagfile) {
+    f = GetFromEnvAndOpen( TagFileName );
+    if( !f ) {
+        if( EditFlags.SearchForTagfile ) {
             f = SearchForTags();
         }
 
-        if (!f) {
+        if( !f ) {
             return ERR_FILE_NOT_FOUND;
         }
     }
@@ -310,17 +310,17 @@ int LocateTag( char *str, char *fname, char *buff )
      */
     while( TRUE ) {
 
-        if( fgets( buff,MAX_STR,f ) == NULL )  {
+        if( fgets( buff, MAX_STR, f ) == NULL )  {
             fclose( f );
             return( ERR_TAG_NOT_FOUND );
         }
-        if( NextWord1( buff,tag ) <= 0 ) {
+        if( NextWord1( buff, tag ) <= 0 ) {
             continue;
         }
         if( EditFlags.IgnoreTagCase ) {
-            i = stricmp( str,tag );
+            i = stricmp( str, tag );
         } else {
-            i = strcmp( str,tag );
+            i = strcmp( str, tag );
             if( i < 0 ) {
                 fclose( f );
                 return( ERR_TAG_NOT_FOUND );
@@ -330,4 +330,5 @@ int LocateTag( char *str, char *fname, char *buff )
             return( selectTag( f, str, buff, fname ) );
         }
     }
+
 } /* LocateTag */

@@ -43,7 +43,7 @@ static char     uusName[] = "undo-undo stack";
 static int validateUndo( undo *cundo )
 {
     bool        done = FALSE;
-    int         depth=0;
+    int         depth = 0;
 
     /*
      * run through entries in this undo record, counting the
@@ -82,11 +82,11 @@ static int validateUndo( undo *cundo )
  */
 static int realUndo( undo_stack *stack, undo_stack *us )
 {
-    undo                *cundo,*tundo;
-    bool                done=FALSE;
-    int                 rc=ERR_NO_ERR;
-    int                 col,depth=0;
-    linenum             lne,top;
+    undo                *cundo, *tundo;
+    bool                done = FALSE;
+    int                 rc = ERR_NO_ERR;
+    int                 col, depth = 0;
+    linenum             lne, top;
     char                *name;
     linedel_flags       ldf;
 
@@ -94,7 +94,7 @@ static int realUndo( undo_stack *stack, undo_stack *us )
         return( ERR_NO_FILE );
     }
 
-    if( stack->OpenUndo >  0 ) {
+    if( stack->OpenUndo > 0 ) {
         return( ERR_OPEN_UNDO );
     }
 
@@ -144,12 +144,12 @@ static int realUndo( undo_stack *stack, undo_stack *us )
 
         case UNDO_INSERT_LINES:
             rc = DeleteLineRange( cundo->data.del_range.start,
-                            cundo->data.del_range.end, ldf );
+                                  cundo->data.del_range.end, ldf );
             break;
 
         case UNDO_DELETE_FCBS:
             rc = InsertLines( cundo->data.fcbs.fcb_head->start_line,
-                 cundo->data.fcbs.fcb_head,cundo->data.fcbs.fcb_tail, us );
+                              cundo->data.fcbs.fcb_head,cundo->data.fcbs.fcb_tail, us );
             break;
         }
         if( rc > 0 ) {
@@ -193,7 +193,7 @@ static int realUndo( undo_stack *stack, undo_stack *us )
                 }
             }
         } else {
-            Message1( "%d items left on %s",stack->current+1,name );
+            Message1( "%d items left on %s", stack->current + 1, name );
         }
         rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
     }
@@ -204,7 +204,7 @@ static int realUndo( undo_stack *stack, undo_stack *us )
 /*
  * DoUndo - do an undo
  */
-int DoUndo( void  )
+int DoUndo( void )
 {
     return( realUndo( UndoStack, UndoUndoStack ) );
 
@@ -213,7 +213,7 @@ int DoUndo( void  )
 /*
  * DoUndoUndo - do an undo
  */
-int DoUndoUndo( void  )
+int DoUndoUndo( void )
 {
     int rc;
 

@@ -41,11 +41,11 @@ extern long TabCnt;
  */
 static int doCompressExpand( bool compress )
 {
-    int         i,k;
-    long        bytes_saved=0;
-    long        bytes_added=0;
+    int         i, k;
+    long        bytes_saved = 0;
+    long        bytes_added = 0;
     long        otabcnt;
-    linenum     linecnt=0;
+    linenum     linecnt = 0;
     char        *tmp;
 
     /*
@@ -68,7 +68,7 @@ static int doCompressExpand( bool compress )
         if( compress ) {
             otabcnt = TabCnt;
             ExpandTabsInABuffer( CurrentLine->data, CurrentLine->len, tmp,
-                        MaxLine );
+                                 MaxLine );
             TabCnt = otabcnt;
             k = strlen( tmp );
             ConvertSpacesToTabsUpToColumn( k, tmp, k, WorkLine->data, MaxLine );
@@ -76,7 +76,7 @@ static int doCompressExpand( bool compress )
             bytes_saved += CurrentLine->len - WorkLine->len;
         } else {
             ExpandTabsInABuffer( CurrentLine->data, CurrentLine->len,
-                        WorkLine->data, MaxLine );
+                                 WorkLine->data, MaxLine );
             WorkLine->len = strlen( WorkLine->data );
             bytes_added += WorkLine->len - CurrentLine->len;
         }

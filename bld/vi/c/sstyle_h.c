@@ -48,7 +48,7 @@ static  char        *firstNonWS;
 void InitHTMLLine( char *text )
 {
     while( *text && isspace( *text ) ) {
-    text++;
+        text++;
     }
     firstNonWS = text;
 }
@@ -57,7 +57,7 @@ static void getWhiteSpace( ss_block *ss_new, char *start )
 {
     char    *text = start + 1;
     while( isspace( *text ) ) {
-    text++;
+        text++;
     }
     ss_new->type = SE_WHITESPACE;
     ss_new->len = text - start;
@@ -69,19 +69,21 @@ static void getText( ss_block *ss_new, char *start )
     char    save_char;
 
     // gather up symbol
-    while( isalnum( *text ) || ( *text == '_' ) ) {
-    text++;
+    while( isalnum( *text ) || (*text == '_') ) {
+        text++;
     }
     ss_new->type = SE_IDENTIFIER;
 
     // see if symbol is a keyword
     if( flags.inHTMLKeyword ) {
-    save_char = *text;
-    *text = '\0';
-    if( IsKeyword( start, TRUE ) ) ss_new->type = SE_KEYWORD;
-    *text = save_char;
-    // only check first word after a "<" (change this to check all tokens)
-    flags.inHTMLKeyword = FALSE;
+        save_char = *text;
+        *text = '\0';
+        if( IsKeyword( start, TRUE ) ) {
+            ss_new->type = SE_KEYWORD;
+        }
+        *text = save_char;
+        // only check first word after a "<" (change this to check all tokens)
+        flags.inHTMLKeyword = FALSE;
     }
 
     ss_new->len = text - start;
@@ -107,21 +109,27 @@ extern void getHTMLComment( ss_block *ss_new, char *start, int skip )
     char    comment3;
 
     for( ;; ) {
-    // check for "-->"
-    comment1 = text[0];
-    if( comment1 == '\0' ) break;
+        // check for "-->"
+        comment1 = text[0];
+        if( comment1 == '\0' ) {
+            break;
+        }
 
-    comment2 = '\0';
-    comment3 = '\0';
-    if( comment1 != '\0' ) comment2 = text[1];
-    if( comment2 != '\0' ) comment3 = text[2];
+        comment2 = '\0';
+        comment3 = '\0';
+        if( comment1 != '\0' ) {
+            comment2 = text[1];
+        }
+        if( comment2 != '\0' ) {
+            comment3 = text[2];
+        }
 
-    if( comment1 == '-' && comment2 == '-' && comment3 == '>' ) {
-        flags.inHTMLComment = FALSE;
-        text += 3;
-        break;
-    }
-    text++;
+        if( comment1 == '-' && comment2 == '-' && comment3 == '>' ) {
+            flags.inHTMLComment = FALSE;
+            text += 3;
+            break;
+        }
+        text++;
     }
     ss_new->type = SE_COMMENT;
     ss_new->len = text - start;
@@ -134,15 +142,15 @@ static void getString( ss_block *ss_new, char *start, int skip )
 
     ss_new->type = SE_STRING;
     while( *text && *text != '"' ) {
-    text++;
+        text++;
     }
     if( *text == '\0' ) {
-    // string continued on next line
-    flags.inString = TRUE;
+        // string continued on next line
+        flags.inString = TRUE;
     } else {
-    text++;
-    // definitely finished string
-    flags.inString = FALSE;
+        text++;
+        // definitely finished string
+        flags.inString = FALSE;
     }
     ss_new->len = text - start;
 }
@@ -170,41 +178,41 @@ void GetHTMLBlock( ss_block *ss_new, char *start, int line )
     line = line;
 
     if( start[ 0 ] == '\0' ) {
-    if( firstNonWS == start ) {
-        // line is empty -
-        // do not flag following line as having anything to do
-        // with an unterminated "
-        flags.inString = FALSE;
-    }
-    getBeyondText( ss_new );
-    return;
+        if( firstNonWS == start ) {
+            // line is empty -
+            // do not flag following line as having anything to do
+            // with an unterminated "
+            flags.inString = FALSE;
+        }
+        getBeyondText( ss_new );
+        return;
     }
 
     if( flags.inHTMLComment ) {
-    getHTMLComment( ss_new, start, 0 );
-    return;
+        getHTMLComment( ss_new, start, 0 );
+        return;
     }
     if( flags.inString ) {
-    getString( ss_new, start, 0 );
-    return;
+        getString( ss_new, start, 0 );
+        return;
     }
 
-    if( isspace( start[ 0 ] ) ) {
-    getWhiteSpace( ss_new, start );
-    return;
+    if( isspace( start[0] ) ) {
+        getWhiteSpace( ss_new, start );
+        return;
     }
 
-    switch( start[ 0 ] ) {
+    switch( start[0] ) {
     case '"':
         getString( ss_new, start, 1 );
         return;
     case '<':
-        if( start[ 1 ] == '!' && start[2] == '-' && start[3] == '-' ) {
-        flags.inHTMLComment = TRUE;
-        getHTMLComment( ss_new, start, 4 );
-        return;
+        if( start[1] == '!' && start[2] == '-' && start[3] == '-' ) {
+            flags.inHTMLComment = TRUE;
+            getHTMLComment( ss_new, start, 4 );
+            return;
         } else {
-        flags.inHTMLKeyword = TRUE;
+            flags.inHTMLKeyword = TRUE;
         }
         break;
     case '>':
@@ -212,10 +220,10 @@ void GetHTMLBlock( ss_block *ss_new, char *start, int line )
         break;
     }
 
-    if( isalnum( start[0] ) || ( start[0] == '_' ) ) {
-    getText( ss_new, start );
+    if( isalnum( start[0] ) || (start[0] == '_') ) {
+        getText( ss_new, start );
     } else {
-    getSymbol( ss_new );
+        getSymbol( ss_new );
     }
 
 }

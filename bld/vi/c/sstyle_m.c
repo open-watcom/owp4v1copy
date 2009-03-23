@@ -171,16 +171,22 @@ static void getMacro( ss_block *ss_new, char *start, int skip )
         // parse a parenthesized macro
         ++text;
         // the '%' char is only allowed at start of macro
-        if( *text == '%' ) ++text;
+        if( *text == '%' ) {
+            ++text;
+        }
 
         while( *text && nesting && (isalnum( *text ) || (*text == '_')
             || (*text == '(') || (*text == ')') || (*text == '$')
             || (*text == '&') || (*text == '[')) ) {
-            if( *text == '(' ) ++nesting;
-            if( *text == ')' ) --nesting;
+            if( *text == '(' ) {
+                ++nesting;
+            }
+            if( *text == ')' ) {
+                --nesting;
+            }
             ++text;
         }
-    } else if( *text && isalnum(*text) ) {
+    } else if( *text && isalnum( *text ) ) {
         // parse a non-parenthesized macro
         ++text;
         while( *text && (isalnum( *text ) || (*text == '_')) ) {
@@ -241,7 +247,7 @@ void GetMkBlock( ss_block *ss_new, char *start, int line )
 {
     line = line;
 
-    if( start[ 0 ] == '\0' ) {
+    if( start[0] == '\0' ) {
         if( firstNonWS == start ) {
             // line is empty -
             // do not flag following line as having anything to do
@@ -253,7 +259,7 @@ void GetMkBlock( ss_block *ss_new, char *start, int line )
     }
 
     // Preprocessor directives must start at beginning of line
-    if( (start[ 0 ] == '!') && (firstChar == start) ) {
+    if( (start[0] == '!') && (firstChar == start) ) {
         getPreproc( ss_new, start );
         return;
     }
@@ -263,12 +269,12 @@ void GetMkBlock( ss_block *ss_new, char *start, int line )
         return;
     }
 
-    if( isspace( start[ 0 ] ) ) {
+    if( isspace( start[0] ) ) {
         getWhiteSpace( ss_new, start );
         return;
     }
 
-    switch( start[ 0 ] ) {
+    switch( start[0] ) {
     case '$':
         getMacro( ss_new, start, 1 );
         return;

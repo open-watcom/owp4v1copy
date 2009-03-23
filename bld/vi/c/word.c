@@ -44,6 +44,7 @@ static bool     noWrap;
 void InitWordSearch( char *regword )
 {
     wordList = regword;
+
 } /* InitWordSearch */
 
 /*
@@ -61,12 +62,12 @@ static char *ptrFromMark( i_mark *curr )
     rc = CGimmeLinePtr( curr->line, &fcb, &line );
     if( rc == ERR_NO_ERR ) {
         if( curr->column > 0 && curr->column <= line->len ) {
-            ptr = &line->data[ curr->column - 1 ];
+            ptr = &line->data[curr->column - 1];
         } else if( !EditFlags.WordWrap ) {
             if( curr->column == 0 ) {
-                ptr = &line->data[ curr->column ];
+                ptr = &line->data[curr->column];
             } else {
-                ptr = &line->data[ line->len-1 ];
+                ptr = &line->data[line->len - 1];
             }
             noWrap = TRUE;
         }
@@ -121,7 +122,6 @@ static char *decrementMark( i_mark *mark )
 
 static char *nextLine( i_mark *mark )
 {
-
     do {
         mark->line += 1;
         mark->column = 1;
@@ -239,7 +239,7 @@ int MarkEndOfNextWordForward( i_mark *result, i_mark *curr, bool big )
             return( ERR_NO_ERR );
         }
         block_type = charType( *s, big );
-        block_type2 = charType( *(s+1), big );
+        block_type2 = charType( *(s + 1), big );
         if( block_type == BLOCK_ENDOFLINE ||
             block_type != block_type2 ) {
             return( ERR_NO_ERR );
@@ -261,7 +261,7 @@ int MarkEndOfNextWordForward( i_mark *result, i_mark *curr, bool big )
         return( ERR_NOT_THAT_MANY_WORDS );
     }
     block_type = charType( *s, big );
-    while( charType( *(s+1), big ) == block_type ) {
+    while( charType( *(s + 1), big ) == block_type ) {
         s = incrementMark( result );
         if( s == NULL ) {
             break;
@@ -304,7 +304,7 @@ int MarkStartOfNextWordBackward( i_mark *result, i_mark *curr, bool big )
      */
     if( result->column > 1 ) {
         block_type = charType( *s, big );
-        while( charType( *(s-1), big ) == block_type ) {
+        while( charType( *(s - 1), big ) == block_type ) {
             s = decrementMark( result );
             if( s == NULL || result->column == 1 ) {
                 break;
@@ -332,12 +332,13 @@ int GimmeCurrentWord( char *buffer, int buffer_size, bool big )
     if( rc == ERR_NO_ERR ) {
         rc = CGimmeLinePtr( end.line, &fcb, &line );
         if( rc == ERR_NO_ERR ) {
-            i = start.column - 1; j = 0;
+            i = start.column - 1;
+            j = 0;
             buffer_size -= 1;
             while( i < end.column && j < buffer_size ) {
-                buffer[ j++ ] = line->data[ i++ ];
+                buffer[j++] = line->data[i++];
             }
-            buffer[ j ] = 0;
+            buffer[j] = 0;
         }
     }
     return( rc );

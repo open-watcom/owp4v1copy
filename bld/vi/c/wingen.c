@@ -39,7 +39,7 @@
 #include "mouse.h"
 #include "source.h"
 #ifdef __WIN__
-#include "winvi.h"
+    #include "winvi.h"
 #endif
 
 static  bool    cursorNeedsDisplay = FALSE;
@@ -67,8 +67,8 @@ int NewMessageWindow( void )
 int NewWindow2( window_id *wn, window_info *wi )
 {
     return( NewWindow( wn, wi->x1, wi->y1, wi->x2, wi->y2,
-                   wi->has_border, wi->border_color1,
-                   wi->border_color2,  &wi->text ) );
+                       wi->has_border, wi->border_color1,
+                       wi->border_color2,  &wi->text ) );
 
 } /* NewWindow2 */
 #endif
@@ -88,14 +88,14 @@ void Message1( char *str, ... )
     }
     ClearWindow( MessageWindow );
     va_start( al, str );
-    MyVSprintf( tmp,str, al );
+    MyVSprintf( tmp, str, al );
     va_end( al );
-    tmp[WindMaxWidth-1] = 0;
+    tmp[WindMaxWidth - 1] = 0;
 
     if( !EditFlags.LineDisplay ) {
         DisplayLineInWindow( MessageWindow, 1, tmp );
     } else {
-        MyPrintf("%s\n", tmp );
+        MyPrintf( "%s\n", tmp );
     }
 
 } /* Message1 */
@@ -114,12 +114,12 @@ void Message2( char *str, ... )
     va_start( al, str );
     MyVSprintf( tmp,str, al );
     va_end( al );
-    tmp[WindMaxWidth-1] = 0;
+    tmp[WindMaxWidth - 1] = 0;
 
     if( !EditFlags.LineDisplay ) {
         DisplayLineInWindow( MessageWindow, 2, tmp );
     } else {
-        MyPrintf("%s\n", tmp );
+        MyPrintf( "%s\n", tmp );
     }
 
 } /* Message2 */
@@ -134,9 +134,9 @@ int WPrintfLine( window_id w, int line, char *str, ... )
     char        tmp[MAX_STR];
 
     va_start( al, str );
-    MyVSprintf( tmp,str, al );
+    MyVSprintf( tmp, str, al );
     va_end( al );
-    tmp[WindMaxWidth-1] = 0;
+    tmp[WindMaxWidth - 1] = 0;
 
     return( DisplayLineInWindow( w, line, tmp ) );
 
@@ -151,7 +151,8 @@ void SetWindowCursor( void )
 #ifndef __WIN__
     SetWindowCursorForReal();
 #endif
-}
+
+} /* SetWindowCursor */
 
 /*
  * SetWindowCursorForReal - set cursor in current window, if cursorNeedsDisp
@@ -166,16 +167,16 @@ void SetWindowCursorForReal( void )
         return;
     }
 #ifndef __WIN__
-    SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber-TopOfPage+1),
-                    VirtualCursorPosition()-LeftColumn );
+    SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber - TopOfPage + 1),
+                            VirtualCursorPosition() - LeftColumn );
 #else
     // for windows assume tabs to be of lenght 1
     if( !EditFlags.RealTabs ){
-        SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber-TopOfPage+1),
-                        VirtualCursorPosition()-LeftColumn );
+        SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber - TopOfPage + 1),
+                                VirtualCursorPosition() - LeftColumn );
     } else {
 
-        SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber-TopOfPage+1),
+        SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber - TopOfPage + 1),
                                 VirtualCursorPosition() );
     }
 #endif
@@ -187,20 +188,20 @@ void SetWindowCursorForReal( void )
 /*
  * DisplayExtraInfo - display info in extra window
  */
-int DisplayExtraInfo( window_info *wi, window_id *wn, char _NEAR * _NEAR * data,
-                int numopts )
+int DisplayExtraInfo( window_info *wi, window_id *wn, char _NEAR * _NEAR *data,
+                      int numopts )
 {
-    int i,j;
+    int i, j;
 
-    wi->y2 = wi->y1+numopts+1;
+    wi->y2 = wi->y1 + numopts + 1;
 
     i = NewWindow2( wn, wi );
     if( i ) {
         return( i );
     }
     WindowTitle( *wn, "Special Keys" );
-    for( j=0;j<numopts;j++ ) {
-        DisplayLineInWindow( *wn, j+1, data[j] );
+    for( j = 0; j < numopts; j++ ) {
+        DisplayLineInWindow( *wn, j + 1, data[j] );
     }
     return( ERR_NO_ERR );
 
@@ -223,6 +224,7 @@ bool ColumnInWindow( int col, int *diff )
         return( FALSE );
     }
     return( TRUE );
+
 } /* ColumnInWindow */
 
 /*
@@ -232,40 +234,40 @@ void SetWindowSizes( void )
 {
     VarAddGlobalLong( "SW", WindMaxWidth );
     VarAddGlobalLong( "SH", WindMaxHeight );
-    SpinX = WindMaxWidth-15;
-    ClockX = WindMaxWidth-9;
-    filecw_info.x2 = WindMaxWidth-5;
-    filecw_info.y2 = WindMaxHeight-8;
-    repcntw_info.y1 = WindMaxHeight-5;
-    repcntw_info.y2 = WindMaxHeight-3;
+    SpinX = WindMaxWidth - 15;
+    ClockX = WindMaxWidth - 9;
+    filecw_info.x2 = WindMaxWidth - 5;
+    filecw_info.y2 = WindMaxHeight - 8;
+    repcntw_info.y1 = WindMaxHeight - 5;
+    repcntw_info.y2 = WindMaxHeight - 3;
 #ifdef __WIN__
-    editw_info.x2 = WindMaxWidth-1;
-    editw_info.y2 = WindMaxHeight-3;
+    editw_info.x2 = WindMaxWidth - 1;
+    editw_info.y2 = WindMaxHeight - 3;
     cmdlinew_info.x1 = 2;
-    cmdlinew_info.x2 = WindMaxWidth-3;
-    cmdlinew_info.y1 = WindMaxHeight-7;
-    cmdlinew_info.y2 = WindMaxHeight-5;
-    messagew_info.x2 = WindMaxWidth-1;
-    messagew_info.y1 = WindMaxHeight-2;
-    messagew_info.y2 = WindMaxHeight-1;
+    cmdlinew_info.x2 = WindMaxWidth - 3;
+    cmdlinew_info.y1 = WindMaxHeight - 7;
+    cmdlinew_info.y2 = WindMaxHeight - 5;
+    messagew_info.x2 = WindMaxWidth - 1;
+    messagew_info.y1 = WindMaxHeight - 2;
+    messagew_info.y2 = WindMaxHeight - 1;
 #else
-    editw_info.x2 = WindMaxWidth-1;
-    editw_info.y2 = WindMaxHeight-2;
+    editw_info.x2 = WindMaxWidth - 1;
+    editw_info.y2 = WindMaxHeight - 2;
     cmdlinew_info.x1 = 0;
-    cmdlinew_info.x2 = WindMaxWidth-1;
-    cmdlinew_info.y1 = WindMaxHeight-1;
-    cmdlinew_info.y2 = WindMaxHeight-1;
-    messagew_info.x2 = WindMaxWidth-1;
-    messagew_info.y1 = WindMaxHeight-1;
-    messagew_info.y2 = WindMaxHeight-1;
+    cmdlinew_info.x2 = WindMaxWidth - 1;
+    cmdlinew_info.y1 = WindMaxHeight - 1;
+    cmdlinew_info.y2 = WindMaxHeight - 1;
+    messagew_info.x2 = WindMaxWidth - 1;
+    messagew_info.y1 = WindMaxHeight - 1;
+    messagew_info.y2 = WindMaxHeight - 1;
 #endif
-    dirw_info.x2 = WindMaxWidth-12;
-    dirw_info.y2 = WindMaxHeight-7;
-    setw_info.y2 = WindMaxHeight-4;
-    filelistw_info.x2 = WindMaxWidth-2;
-    filelistw_info.y2 = WindMaxHeight-7;
-    statusw_info.y1 = WindMaxHeight-2;
-    statusw_info.y2 = WindMaxHeight-1;
+    dirw_info.x2 = WindMaxWidth - 12;
+    dirw_info.y2 = WindMaxHeight - 7;
+    setw_info.y2 = WindMaxHeight - 4;
+    filelistw_info.x2 = WindMaxWidth - 2;
+    filelistw_info.y2 = WindMaxHeight - 7;
+    statusw_info.y1 = WindMaxHeight - 2;
+    statusw_info.y2 = WindMaxHeight - 1;
 
 } /* SetWindSizes */
 
@@ -274,24 +276,24 @@ void SetWindowSizes( void )
  */
 int CurrentWindowResize( int x1, int y1, int x2, int y2 )
 {
-    int         i,text_lines;
+    int         i, text_lines;
     linenum     ln;
 
     if( EditFlags.LineNumbers ) {
         if( EditFlags.LineNumsOnRight ) {
-            i = ResizeWindow( CurrentWindow,x1,y1,x2+LineNumWinWidth,y2,TRUE );
+            i = ResizeWindow( CurrentWindow, x1, y1, x2 + LineNumWinWidth, y2, TRUE );
         } else {
-            i = ResizeWindow( CurrentWindow,x1-LineNumWinWidth,y1,x2,y2,TRUE );
+            i = ResizeWindow( CurrentWindow, x1 - LineNumWinWidth, y1, x2, y2, TRUE );
         }
     } else {
-        i = ResizeWindow( CurrentWindow,x1,y1,x2,y2,TRUE );
+        i = ResizeWindow( CurrentWindow, x1, y1, x2, y2, TRUE );
     }
     if( i ) {
         return( i );
     }
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-    if( CurrentLineNumber >= TopOfPage+text_lines ) {
-        ln = TopOfPage+text_lines-1;
+    if( CurrentLineNumber >= TopOfPage + text_lines ) {
+        ln = TopOfPage + text_lines - 1;
         GoToLineNoRelCurs( ln );
     }
     CheckLeftColumn();
@@ -305,7 +307,7 @@ int CurrentWindowResize( int x1, int y1, int x2, int y2 )
         }
     }
     PositionVerticalScrollThumb( CurrentWindow, TopOfPage,
-                CurrentFile->fcb_tail->end_line );
+                                 CurrentFile->fcb_tail->end_line );
 
     return( ERR_NO_ERR );
 
@@ -320,7 +322,7 @@ void SetFileWindowTitle( window_id cw, info *cinfo, bool hilite )
     char        name[MAX_STR];
 
     if( CurrentFile->dup_count > 0 ) {
-        MySprintf( name,"%s [%d]", CurrentFile->name, cinfo->DuplicateID );
+        MySprintf( name, "%s [%d]", CurrentFile->name, cinfo->DuplicateID );
         n = name;
     } else {
         n = CurrentFile->name;
