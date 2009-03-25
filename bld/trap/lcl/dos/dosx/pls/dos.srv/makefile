@@ -14,7 +14,7 @@ which = SERVER
 
 pharlap_c_flags = -dWATCOM=7 -dCMPLR=7 -d__STKCALL=cdecl -d_Far=__far -d_Near=__Near -I"$(plsdir)"
 
-extra_c_flags = -dPHARLAP -dDOSXHELP $(compflags_$[&)
+extra_c_flags = -dPHARLAP $(compflags_$[&)
 
 extra_c_flags_dilglue = -3s $(pharlap_c_flags)
 extra_c_flags_dosxlink = $(pharlap_c_flags)

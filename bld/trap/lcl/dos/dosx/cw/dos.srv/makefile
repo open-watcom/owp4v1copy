@@ -9,17 +9,14 @@ cpu = x86
 name = cwhelp
 which = SERVER
 
-extra_c_flags = -DCAUSEWAY -DDOSXHELP
+extra_c_flags = -DCAUSEWAY
 extra_a_flags_cwhelp = -fpi87
 
 inc_dirs = -I"$(cw_dir)/inc"
 
-!define substitute_linker
+extra_libs = ../lib/system.lib
+
+extra_objs =  cwhelp.obj c2asm.obj
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
 !include $(trap_dir)/master.mif
-
-objs =  cwhelp.obj c2asm.obj
-
-$(target) : $(objs) $(__MAKEFILES__)
-    $(linker) system causeway name $^@ op map, stub=$(cw_dir)/cw32/dosi86/cwdstub.exe f {$(objs)} l ../lib/system

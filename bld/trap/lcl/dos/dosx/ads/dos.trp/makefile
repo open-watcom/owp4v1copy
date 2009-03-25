@@ -8,7 +8,7 @@ srv = ads
 which = TRAP
 
 extra_objs = $(dosx_trap_objs)
-extra_c_flags = -dACAD -dDOSXTRAP
+extra_c_flags = -DACAD
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
 !include $(trap_dir)/master.mif

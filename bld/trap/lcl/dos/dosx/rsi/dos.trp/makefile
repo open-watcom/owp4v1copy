@@ -8,7 +8,7 @@ srv = rsi
 cpu = x86
 which = TRAP
 
-extra_c_flags = -DDOS4G -DDOSXTRAP
+extra_c_flags = -DDOS4G
 
 extra_objs = $(dosx_trap_objs)
 

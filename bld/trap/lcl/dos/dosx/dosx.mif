@@ -1,3 +1,9 @@
+!ifeq which SERVER
+extra_c_flags += -DDOSXHELP
+!else
+extra_c_flags += -DDOSXTRAP
+!endif
+
 !include $(trap_dir)/lcl/dos/dos.mif
 
 dosx_trap_objs = &

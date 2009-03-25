@@ -7,7 +7,7 @@ srv = pls
 cpu = x86
 which = TRAP
 
-extra_c_flags = -dPHARLAP -dDOSXTRAP
+extra_c_flags = -dPHARLAP
 
 extra_objs = $(dosx_trap_objs)
 

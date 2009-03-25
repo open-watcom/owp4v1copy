@@ -21,7 +21,7 @@ extra_objs = &
         rmhdlr.obj &
         sbrk.obj
 
-extra_c_flags        = -DDOS4G -DDOSXHELP -zu -zdp
+extra_c_flags        = -DDOS4G -zu -zdp
 extra_c_flags_rsiacc = -3
 
 extra_a_flags = -Dcompact -DDOS4G

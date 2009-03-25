@@ -74,6 +74,10 @@ extra_c_flags += -D$(which) -DMD_$(cpu) $(extra_cflags)
 extra_c_flags += -s
 !endif
 
+!ifeq which TRAP
+extra_c_flags += -zlf
+!endif
+
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES
 !endif
@@ -100,25 +104,6 @@ extra_a_flags_misc7386 = -fpi87
 
 # lflags stuff
 ###############
-libs_x86_os2            = clib$(memory_model_i86)
-libs_x86_os2v2          = clib3r
-libs_x86_qnx            = $(lang_root)/lib386/qnx/clib3r
-!ifdef __LINUX__
-libs_x86_linux          = $(clib_dir)/library/linux.386/mf_r/clib3r
-!else
-libs_x86_linux          = $(lang_root)/lib386/linux/clib3r
-!endif
-libs_x86_win            = clib$(memory_model_i86)
-libs_x86_dos            = clib$(memory_model_i86)
-libs_x86_rsi            = clib3r
-libs_x86_ads            = clib3s
-libs_x86_pls            = clib3r
-libs_x86_nt             = clib3r
-libs_x86_nlm            = math3s
-
-libs_axp_nt             = clib
-
-libs_ppc_nt             = clib
 
 !ifeq host_os dos
 extra_libs += dbgstr.lib
