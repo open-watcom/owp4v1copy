@@ -141,6 +141,28 @@ static uint_32 objNameHash( uint_32 h, char *s )
     return( h );
 }
 
+static char __Alphabet62[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+static char *utoa62( unsigned value, char *buffer )
+{
+    char        *p = buffer;
+    char        *q;
+    unsigned    rem;
+    char        buf[ 16 ];       // only holds ASCII so 'char' is OK
+
+    buf[0] = '\0';
+    q = &buf[1];
+    do {
+        rem = value % 62;
+        value = value / 62;
+        *q = __Alphabet62[ rem ];
+        ++q;
+    } while( value != 0 );
+    while( (*p++ = *--q) )
+        ;
+    return( buffer );
+}
+
 static TYPE typeLookAhead( TYPE type, type_flag *flags, void **base )
 {
     return TypeModExtract( type
@@ -194,9 +216,9 @@ static void appendStr(          // APPEND A STRING
 static void appendZZLen(        // CONCATENATE A 'ZZ' length
     unsigned len )              // - the length
 {
-    char sbuf[16];
+    char sbuf[ 60 ];
 
-    ultoa( len, sbuf, 36 );
+    utoa62( len, sbuf );
     switch( strlen( sbuf ) ){
     case 1:
         appendChar( '0' );
@@ -205,7 +227,8 @@ static void appendZZLen(        // CONCATENATE A 'ZZ' length
         appendStr( sbuf );
         break;
     default:
-        CFatal( "internal name length > 36*36" );
+        sprintf( sbuf, "internal name length=%d is > 62*62 (1)", len );
+        CFatal( sbuf );
         break;
     }
 }
@@ -233,10 +256,10 @@ static void prependLen(         // PREPEND A THE CURRENT STRING LEN
     void )
 {
     int len;
-    char sbuf[16];              // - buffer
+    char sbuf[ 60 ];           // - buffer
 
     len = VbufLen( &mangled_name );
-    ultoa( len, sbuf, 36 );
+    utoa62( len, sbuf );
     switch( strlen( sbuf ) ){
     case 1:
         prependStr( sbuf );
@@ -246,7 +269,8 @@ static void prependLen(         // PREPEND A THE CURRENT STRING LEN
         prependStr( sbuf );
         break;
     default:
-        CFatal( "internal name length > 36*36" );
+        sprintf( sbuf, "internal name length=%d is > 62*62 (2)", len );
+        CFatal( sbuf );
         break;
     }
 }

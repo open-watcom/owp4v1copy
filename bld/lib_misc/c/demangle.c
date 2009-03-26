@@ -679,6 +679,14 @@ static unsigned char_to_digit( char c )
     return( -1 );
 }
 
+static unsigned char_to_digit_62( char c )
+{
+    if( c >= '0' && c <= '9' ) return( c - '0' );
+    if( c >= 'A' && c <= 'Z' ) return( c - 'A' + 10 );
+    if( c >= 'a' && c <= 'z' ) return( c - 'a' + 36 );
+    return( -1 );
+}
+
 static int base_32_num( output_desc *data, int *value )
 {
     unsigned    dig;
@@ -711,6 +719,7 @@ static int base_10_num( output_desc *data, int *value )
     return( TRUE );
 }
 
+#if 0
 static int base_36_2digit( output_desc *data, size_t *value )
 {
     unsigned    first;
@@ -723,6 +732,25 @@ static int base_36_2digit( output_desc *data, size_t *value )
         if( second < 36 ) {
             advanceChar( data );
             *value = (first * 36) + second;
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+#endif
+
+static int base_62_2digit( output_desc *data, size_t *value )
+{
+    unsigned    first;
+    unsigned    second;
+
+    first = char_to_digit_62( nextChar( data ) );
+    if( first < 62 ) {
+        advanceChar( data );
+        second = char_to_digit_62( nextChar( data ) );
+        if( second < 62 ) {
+            advanceChar( data );
+            *value = (first * 62) + second;
             return( TRUE );
         }
     }
@@ -972,7 +1000,7 @@ static int based_encoding( output_desc *data, state_desc *state )
         break;
     case 'L':
         advanceChar( data );
-        if( base_36_2digit( data, &len ) ) {
+        if( base_62_2digit( data, &len ) ) {
             _output1( DM_BASED_STRING_PREFIX );
             _output3( DM_IDENTIFIER, len, data->input );
             while( len-- ) {
@@ -1153,7 +1181,7 @@ static int watcom_object( output_desc *data, state_desc *state )
             _output2( DM_WATCOM_OBJECT, 0 );
         }
     }
-    if( base_36_2digit( data, &len ) ) {
+    if( base_62_2digit( data, &len ) ) {
         while( len-- ) {
             advanceChar( data );
         }
