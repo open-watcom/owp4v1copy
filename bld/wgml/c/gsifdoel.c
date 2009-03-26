@@ -380,6 +380,7 @@ void    scr_if( void )
     bool            ifcond;             // current condition
     bool            totalcondition;     // resultant condition
     bool            firstcondition;     // first comparison .if
+    char            linestr[ MAX_L_AS_STR ];
 
     scan_err = false;
 
@@ -399,32 +400,30 @@ void    scr_if( void )
 
         if( (cct1 == no) || (cct2 == no) ) {
             scan_err = true;
+            err_count++;
+            g_err( err_if_term );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_IF_condition missing term\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_IF_condition missing term\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
-            err_count++;
             return;
         }
         if( ccrelop != pos ) {
             scan_err = true;
+            err_count++;
+            g_err( err_if_relop );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_IF_invalid relational operator\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_IF_invalid relational operator\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
-            err_count++;
             return;
         }
 
@@ -441,14 +440,13 @@ void    scr_if( void )
                 cb->if_flags[ cb->if_level ].iflast = true;
             } else {
                 scan_err = true;
+                g_err( err_if_nesting );
                 if( input_cbs->fmflags & II_macro ) {
-                    out_msg( "ERR_IF_nesting too deep\n"
-                             "\t\t\tLine %d of macro '%s'\n",
-                             input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                    utoa( input_cbs->s.m->lineno, linestr, 10 );
+                    g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
-                    out_msg( "ERR_IF_nesting too deep\n"
-                             "\t\t\tLine %d of file '%s'\n",
-                             input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                 }
                 show_include_stack();
                 err_count++;
@@ -582,6 +580,7 @@ void    scr_if( void )
 void    scr_th( void )
 {
     ifcb    *   cb = input_cbs->if_cb;
+    char        linestr[ MAX_L_AS_STR ];
 
     scan_err = false;
     if( !cb->if_flags[ cb->if_level ].iflast
@@ -594,14 +593,13 @@ void    scr_th( void )
         || cb->if_flags[ cb->if_level ].ifdo ) {
 
         scan_err = true;
+        g_err( err_if_then );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_TH .th must follow .if\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_TH .th must follow .if\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_include_stack();
         err_count++;
@@ -652,6 +650,7 @@ void    scr_th( void )
 void    scr_el( void )
 {
     ifcb    *   cb = input_cbs->if_cb;
+    char        linestr[ MAX_L_AS_STR ];
 
     scan_err = false;
     cb->if_flags[ cb->if_level ].iflast = false;
@@ -664,14 +663,13 @@ void    scr_el( void )
         || cb->if_flags[ cb->if_level ].ifdo ) {
 
         scan_err = true;
+        g_err( err_if_else );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_EL .el not allowed\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_EL .el not allowed\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_include_stack();
         err_count++;
@@ -717,6 +715,7 @@ void    scr_do( void )
 {
     ifcb    *   cb = input_cbs->if_cb;
     condcode    cc;
+    char        linestr[ MAX_L_AS_STR ];
 
     scan_err = false;
     garginit();                         // find end of control word
@@ -729,14 +728,13 @@ void    scr_do( void )
             || cb->if_flags[ cb->if_level ].ifdo ) {
 
             scan_err = true;
+            g_err( err_if_do );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_DO not allowed .do\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_DO not allowed .do\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
             err_count++;
@@ -766,14 +764,13 @@ void    scr_do( void )
                          || cb->if_flags[ cb->if_level ].iffalse) ) {
 
                     scan_err = true;
+                    g_err( err_if_do_end );
                     if( input_cbs->fmflags & II_macro ) {
-                        out_msg( "ERR_DO .do END does not match\n"
-                                 "\t\t\tLine %d of macro '%s'\n",
-                                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                        utoa( input_cbs->s.m->lineno, linestr, 10 );
+                        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                     } else {
-                        out_msg( "ERR_DO .do END does not match\n"
-                                 "\t\t\tLine %d of file '%s'\n",
-                                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     }
                     show_include_stack();
                     err_count++;
@@ -790,14 +787,13 @@ void    scr_do( void )
             }
         } else {
             scan_err = true;
+            g_err( err_if_do_fun );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_DO invalid .do operand\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_DO invalid .do operand\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
             err_count++;

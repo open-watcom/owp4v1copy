@@ -65,6 +65,7 @@ condcode    scr_right( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
     int                 len;
     getnum_block        gn;
     char                padchar;
+    char                linestr[ MAX_L_AS_STR ];
 
     if( (parmcount < 2) || (parmcount > 3) ) {
         cc = neg;
@@ -85,16 +86,13 @@ condcode    scr_right( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
     cc = getnum( &gn );
     if( cc != pos ) {
         if( !ProcFlags.suppress_msg ) {
+            g_err( err_func_parm, "2 (length)" );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno,
-                         input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_FUNCTION parm 2 (length) invalid\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno,
-                         input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             err_count++;
             show_include_stack();

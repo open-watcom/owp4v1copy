@@ -270,6 +270,7 @@ void    scr_dm( void )
     ulong           lineno_start;
     condcode        cc;
     inputcb     *   cb;
+    char            linestr[ MAX_L_AS_STR ];
 
     cb = input_cbs;
 
@@ -279,8 +280,10 @@ void    scr_dm( void )
 
     if( cc == omit ) {
         err_count++;
-        out_msg( "ERR_MACRO_NAME_MISSING line %d of file '%s'\n",
-                 cb->s.f->lineno, cb->s.f->filename );
+        g_err( err_missing_name );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
+        show_include_stack();
         return;
     }
 
@@ -308,10 +311,9 @@ void    scr_dm( void )
     if( cc == omit ) {                  // nothing found
         err_count++;
         // SC--048 A control word parameter is missing
-        out_msg( "ERR_MACRO_DEFINITON '%s'"
-                 " expecting BEGIN END /macro/lines/\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 macname, cb->s.f->lineno, cb->s.f->filename );
+        g_err( err_mac_def_fun, macname );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         return;
     }
 
@@ -332,9 +334,9 @@ void    scr_dm( void )
         }
         if( ProcFlags.in_macro_define ) {
             err_count++;
-            out_msg( "ERR_NESTED_MACRO_DEFINE '%s' expecting END\n"
-                     "\t\t\tline %d of file '%s'\n",
-                     tok_start, cb->s.f->lineno, cb->s.f->filename );
+            g_err( err_mac_def_nest, tok_start );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             return;
         }
         ProcFlags.in_macro_define = 1;
@@ -371,17 +373,17 @@ void    scr_dm( void )
     if( compend && !(ProcFlags.in_macro_define) ) {
         err_count++;
         // SC--003: A macro is not being defined
-        out_msg( "ERR_MACRO_DEFINE END without BEGIN '%s'\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 macname, cb->s.f->lineno, cb->s.f->filename );
+        g_err( err_mac_def_end, macname );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         return;
     }
     if( compbegin && (ProcFlags.in_macro_define) ) {
         err_count++;
         // SC--002 The control word parameter '%s' is invalid
-        out_msg( "ERR_NESTED_MACRO_DEFINE '%s' expecting END\n"
-                 "\t\t\tline %d of file '%s'\n",
-                 macname, cb->s.f->lineno, cb->s.f->filename );
+        g_err( err_mac_def_nest, macname );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     *p   = save;
     if( compbegin ) {                   // start new macro define
@@ -416,9 +418,9 @@ void    scr_dm( void )
                         // macroname from begin different from end
                         err_count++;
                         // SC--005 Macro '%s' is not being defined
-                        out_msg( "ERR_MACRO_DEF Macro '%s' is not being defined\n"
-                                 "\t\t\tLine %d of file '%s'\n",
-                                 tok_start, cb->s.f->lineno, cb->s.f->filename );
+                        g_err( err_mac_def_not, tok_start );
+                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                         *p = save;
                         free_lines( head );
                         return;
@@ -428,10 +430,9 @@ void    scr_dm( void )
                     if( cc == omit ) {
                         err_count++;
                         // SC--048 A control word parameter is missing
-                        out_msg( "ERR_PARM_MISSING "
-                                 "A control word parameter is missing\n"
-                                 "\t\t\tLine %d of file '%s'\n",
-                                 cb->s.f->lineno, cb->s.f->filename );
+                        g_err( err_mac_def_miss );
+                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                         free_lines( head );
                         return;
                     }
@@ -441,11 +442,9 @@ void    scr_dm( void )
                     if( stricmp( tok_start, "end") ) {
                         err_count++;
                         // SC--002 The control word parameter '%s' is invalid
-                        out_msg( "ERR_PARMINVALID "
-                                 "The control word parameter '%s' is invalid\n"
-                                 "\t\t\tLine %d of file '%s'\n",
-                                 tok_start,
-                                 cb->s.f->lineno, cb->s.f->filename );
+                        g_err( err_mac_def_inv, tok_start );
+                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                         free_lines( head );
                         return;
                     }
@@ -469,10 +468,9 @@ void    scr_dm( void )
             err_count++;
             // error SC--004 End of file reached
             // macro '%s' is still being defined
-            out_msg( "ERR_MACRO_DEFINE End of file reached"
-                     " line %d of file '%s'\n"
-                     "\t\t\tmacro '%s' is still being defined\n",
-                     cb->s.f->lineno, cb->s.f->filename, macname );
+            g_err( err_mac_def_eof, macname );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             free_lines( head );
             return;
         }
@@ -500,12 +498,12 @@ void    scr_dm( void )
         add_macro_entry( &macro_dict, me );
 
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
-            out_msg( "INF_MACRO '%s' defined with %d lines\n", macname,
-                     macro_line_count );
+            utoa( macro_line_count, linestr, 10 );
+            g_info( inf_mac_defined, macname, linestr );
         }
     } else {
         err_count++;
-        out_msg( "ERR_MACRO_DEFINE_logic error '%s'\n", macname );
+        g_err( err_mac_def_logic, macname );
         free_lines( head );
         show_include_stack();
         return;
@@ -580,12 +578,15 @@ void    scr_me( void )
 
 static void macro_missing( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
+    g_err( err_mac_name_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_MACRO_NAME missing/invalid line %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_MACRO_NAME missing/invalid line %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
 }
 

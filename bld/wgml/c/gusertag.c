@@ -45,35 +45,35 @@ static  symvar  *   loc_dict;           // for preparing local vars
 /***************************************************************************/
 static void auto_att_err( void )
 {
+    char            linestr[ MAX_L_AS_STR ];
+
     //****ERROR**** SC--041: Cannot specify the automatic attribute 'xxx'
     err_count++;
+
+    g_err( err_auto_att, token_buf );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_auto Cannot specify the automatic attribute '%s'\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 token_buf, input_cbs->s.m->lineno,
-                 input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_auto Cannot specify the automatic attribute '%s'\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 token_buf, input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
-    if( inc_level > 0 ) {
-        show_include_stack();
-    }
+    show_include_stack();
     return;
 }
 
 static void att_range_err( void )
 {
+    char            linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_att_range_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_range missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_range missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -81,15 +81,16 @@ static void att_range_err( void )
 
 static void att_len_err( void )
 {
+    char            linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_att_len_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_length value too long\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_length value too long\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -97,18 +98,17 @@ static void att_len_err( void )
 
 static void att_val_err( char * attname )
 {
+    char            linestr[ MAX_L_AS_STR ];
+
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
     err_count++;
+    g_err( err_att_val, token_buf, attname );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_val Value '%s' for the '%s' attribute is not defined\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 token_buf, attname,
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_val Value '%s' for the '%s' attribute is not defined\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 token_buf, attname,
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -117,18 +117,17 @@ static void att_val_err( char * attname )
 
 static void tag_text_err( char * tagname )
 {
+    char            linestr[ MAX_L_AS_STR ];
+
 //****ERROR**** SC--038: Tag text may not be specified for the 'xxx' tag
     err_count++;
+    g_err( err_att_text, tagname );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_txt Tag text may not be specified for the '5s' tag\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 tagname,
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_txt Tag text may not be specified for the '%s' tag\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 tagname,
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -136,18 +135,17 @@ static void tag_text_err( char * tagname )
 
 static void tag_text_req_err( char * tagname )
 {
+    char            linestr[ MAX_L_AS_STR ];
+
 //****ERROR**** SC--039: Tag text must be specified with the 'xxx' tag
     err_count++;
+    g_err( err_att_text_req, tagname );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_txt Tag text must be specified with the '%s' tag\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 tagname,
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_txt Tag text must be specified with the '%s' tag\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 tagname,
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -375,22 +373,19 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             }
         }
         if( ga == NULL ) {              // attribute not found
+            char        linestr[ MAX_L_AS_STR ];
+
             wng_count++;
             //***WARNING*** SC--040: 'abd' is not a valid attribute name
+            g_warn( wng_att_name, token_buf );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "WNG_ATT_NAME '%s' is not a valid attribute name\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         token_buf, input_cbs->s.m->lineno,
-                         input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "WNG_ATT_NAME '%s' is not a valid attribute name\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         token_buf, input_cbs->s.f->lineno,
-                         input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
-            if( inc_level > 0 ) {
-                show_include_stack();
-            }
+            show_include_stack();
         }
     }
 
@@ -412,6 +407,8 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         }
     }
     if( *token_buf != '\0' ) {          // some req attr missing
+        char        linestr[ MAX_L_AS_STR ];
+
         // the errmsg in wgml 4.0 is wrong, it shows the macroname, not tag.
 //****ERROR**** SC--047: For the tag '@willi', the required attribute(s)
 //                       'muss2'
@@ -419,22 +416,13 @@ bool        process_tag( gtentry * ge, mac_entry * me )
 //                       have not been specified
 
         err_count++;
+        g_err( err_att_req, ge->name, token_buf );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_ATT_req For the tag '%s', the required attribute(s)\n"
-                     "\t\t\t%s\n"
-                     "\t\t\thave not been specified\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     ge->name,
-                     token_buf,
-                     input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_ATT_req For the tag '%s', the required attribute(s)\n"
-                     "\t\t\t%s\n"
-                     "\t\t\thave not been specified\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     ge->name,
-                     token_buf,
-                     input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_include_stack();
     }

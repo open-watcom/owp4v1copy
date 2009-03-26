@@ -172,18 +172,18 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
 
 static  char    *scr_single_func_unsupport( char * in, char * * result )
 {
+    char        linestr[ MAX_L_AS_STR ];
+    char        charstr[ 2 ];
 
+    charstr[ 0 ] = *(in + 1);
+    charstr[ 1 ] = '\0';
+    g_warn( wng_func_unsupport, charstr );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "WNG_FUNCTION invalid / unsupported &%c'\n"
-                 "\t\t\tLine %d of macro '%s'\n", *(in + 1),
-                 input_cbs->s.m->lineno,
-                 input_cbs->s.m->mac->name );
-        show_include_stack();
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "WNG_FUNCTION invalid / unsupported &%c'\n"
-                 "\t\t\tLine %d of file '%s'\n", *(in + 1),
-                 input_cbs->s.f->lineno,
-                 input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
 
     // do nothing
@@ -209,6 +209,8 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
 char    *scr_single_funcs( char * in, char * end, char * * result )
 {
     char            *   pw;
+    char                linestr[ MAX_L_AS_STR ];
+    char                charstr[ 2 ];
 
     if( *(in + 2) == '\'' ) {
         switch( *(in + 1) ) {
@@ -220,17 +222,15 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
             break;
         case  's' :             // subscript
         case  'S' :             // superscript
+            charstr[ 0 ] = *(in + 1);
+            charstr[ 1 ] = '\0';
+            g_warn( wng_func_unimpl, charstr );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "WNG_FUNCTION not yet implemented &%c'\n"
-                         "\t\t\tLine %d of macro '%s'\n", *(in + 1),
-                         input_cbs->s.m->lineno,
-                         input_cbs->s.m->mac->name );
-                show_include_stack();
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "WNG_FUNCTION not yet implemented &%c'\n"
-                         "\t\t\tLine %d of file '%s'\n", *(in + 1),
-                         input_cbs->s.f->lineno,
-                         input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             wng_count++;
 

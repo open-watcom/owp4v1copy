@@ -59,18 +59,18 @@ gtentry *   add_tag( gtentry * * dict, const char * name, const char * mac,
 {
     gtentry     *   ge;
     gtentry     *   wk;
+    char            linestr[ MAX_L_AS_STR ];
 
     wk = find_tag( dict, name );
     if( wk != NULL ) {
         err_count++;
+        g_err( err_tag_exist, name );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_TAG_ User tag '%s' already exists\n"
-                     "\t\t\tLine %d of macro '%s'\n", name,
-                     input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_TAG_ User tag '%s' already exists\n"
-                     "\t\t\tLine %d of file '%s'\n", name,
-                     input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_include_stack();
         return( NULL );

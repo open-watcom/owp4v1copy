@@ -155,6 +155,7 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     parm                parms[ MAX_FUN_PARMS ];
     int                 parmcount;
     condcode            cc;
+    char                linestr[ MAX_L_AS_STR ];
 
     rc = 0;
     fnlen = 0;
@@ -172,16 +173,13 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     fn[ fnlen ] = '\0';
 
     if( *pchar != '(' ) {         // open paren does not follow function name
+        g_err( err_func_parm_miss );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_FUNCTION parms missing no ( found\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     input_cbs->s.m->lineno,
-                     input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_FUNCTION parms missing no ( found\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     input_cbs->s.f->lineno,
-                     input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         err_count++;
         show_include_stack();
@@ -206,18 +204,13 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
         }
     }
     if( !found ) {
+        g_err( err_func_name, fn );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_FUNCTION unknown function '%s'\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     fn,
-                     input_cbs->s.m->lineno,
-                     input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_FUNCTION unknown function '%s'\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     fn,
-                     input_cbs->s.f->lineno,
-                     input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         err_count++;
         show_include_stack();
@@ -247,18 +240,13 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     m = k + (k < scr_functions[ funcind ].parm_cnt);// mandatory parm count
 
     if( m < scr_functions[ funcind ].parm_cnt ) {
+        g_err( err_func_parm_miss );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_FUNCTION %d parms missing\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     scr_functions[ funcind ].parm_cnt - m,
-                     input_cbs->s.m->lineno,
-                     input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_FUNCTION %d parms missing\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     scr_functions[ funcind ].parm_cnt - m,
-                     input_cbs->s.f->lineno,
-                     input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         err_count++;
         show_include_stack();
@@ -292,16 +280,13 @@ char    *scr_multi_funcs( char * in, char * end, char * * result )
     parms[ parmcount ].a = NULL;        // end of parms indicator
 
     if( *pchar != ')' ) {
+        g_err( err_func_parm_end );
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_FUNCTION missing closing paren\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     input_cbs->s.m->lineno,
-                     input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_FUNCTION missing closing paren\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     input_cbs->s.f->lineno,
-                     input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         err_count++;
         show_include_stack();

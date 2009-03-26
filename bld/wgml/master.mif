@@ -43,7 +43,6 @@ extra_rc_flags_osi = -D__OSI__
 
 !ifeq wgml_trmem 1
 extra_c_flags += -of+ -dTRMEM
-# extra_c_flags += -dTRMEM
 objs          += $(trmem_objs)
 inc_dirs      += -I"$(trmem_dir)"
 !endif
@@ -71,7 +70,8 @@ all : .SYMBOLIC
 
 !endif
 
-$(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlerr.rc ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
+##$(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlerr.rc ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
+$(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
         $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg

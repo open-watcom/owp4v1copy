@@ -201,15 +201,16 @@ static  long        ranges[ 4 ];
 
 static void tagname_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_tag_name_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_NAME missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_NAME missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -217,15 +218,16 @@ static void tagname_err( void )
 
 static void attname_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_att_name_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_NAME missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_NAME missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -234,15 +236,16 @@ static void attname_err( void )
 
 static void attval_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_att_val_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_val missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_val missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -251,15 +254,16 @@ static void attval_err( void )
 
 static void attrange_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_att_range_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_range missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_range missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -268,15 +272,16 @@ static void attrange_err( void )
 
 static void attdef_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_att_default );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_ATT_def default outside range\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_ATT_def default outside range\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -285,15 +290,16 @@ static void attdef_err( void )
 
 static void nottag_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_user_tag, tagname );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG User tag '%s' has not been defined\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG User tag '%s' has not been defined\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -302,15 +308,16 @@ static void nottag_err( void )
 
 static void toomany_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_tag_toomany );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_ too many attributes\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_ too many attributes\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;

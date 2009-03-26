@@ -91,16 +91,13 @@ void g_banner( void )
 
 static void usage( void )
 {
+    int     k;
+
     g_banner();
 
-    out_msg( CRLF "Usage: wgml [options] srcfile [options]" CRLF );
-    out_msg( "Options:" CRLF );
-    out_msg( "-q\t\tQuiet, don't show product info." CRLF );
-    out_msg( "-r\t\tResearch, no formatting, only process some GML/SCR keywords," CRLF );
-    out_msg( "\t\tfollow .im, .ap, :INCLUDE tags and show substituted lines." CRLF );
-    out_msg( "\t\t> >substituted line< <" CRLF );
-    out_msg( "\t\t) )resulting text line after macro / tag processing( (" CRLF );
-    out_msg( "\tother options to be done / documented." CRLF );
+    for( k = inf_use_01; k <= inf_use_end; k++ ) {
+        g_info( k );
+    }
     my_exit( 4 );
 }
 

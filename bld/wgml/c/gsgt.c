@@ -264,15 +264,16 @@ void    init_tag_att( void )
 
 static void tagname_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_missing_name, "" );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_NAME missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_NAME missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -280,15 +281,16 @@ static void tagname_err( void )
 
 static void tagmac_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_tag_mac_name );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_ macroname missing / invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_ macroname missing / invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -296,15 +298,16 @@ static void tagmac_err( void )
 
 static void tagfunc_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_tag_func_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_func missing / invalid (not ADD, CHANGE, OFF, ON, DELETE, PRINT\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_func missing / invalid (not ADD, CHANGE, OFF, ON, DELETE, PRINT\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -312,15 +315,16 @@ static void tagfunc_err( void )
 
 static void tagopt_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_tag_opt_inv );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_option invalid\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_option invalid\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
@@ -328,15 +332,16 @@ static void tagopt_err( void )
 
 static void toomany_err( void )
 {
+    char        linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_tag_toomany );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_TAG_ too many attributes\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_TAG_ too many attributes\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
