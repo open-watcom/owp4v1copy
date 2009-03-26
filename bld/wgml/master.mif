@@ -8,19 +8,15 @@
 #
 
 proj_name = wgml
+name = wgml
 
 !ifndef wgml_autodepends
 wgml_autodepends = .AUTODEPEND
 !endif
 
-# don't undefine for now (I can't get reading msg from resource to work)
-incl_msgtext     = 1
 
 debug_build      = 1
 verbose          = 1
-
-# get rid of the -zc
-suppress_zc = 1
 
 # extra_c_flags      += -fti
 # extra_c_flags      += -pcl
@@ -33,20 +29,24 @@ suppress_zc = 1
 
 !include ../wgmlobjs.mif
 
-inc_dirs = -I"../h" -I"$(wres_dir)/h" -I"$(wrc_dir)/h"
 
-!ifeq incl_msgtext 1
-extra_c_flags   += -dINCL_MSGTEXT
-!endif
+inc_dirs = -I. -I"../h" -I"$(wres_dir)/h" -I"$(wrc_dir)/h"
+
+res_depends = wgml.res  wgmlmsgs.gh wgmlmsge.gh
+#inc_dirs    += -I"$(wrc_dir)/$(host_os)$(host_cpu)"
 
 .c: ../c;../../watcom/c;$(trmem_dir);$(wrc_dir)/c;$(wres_dir)/c
 
-!ifeq wgml_trmem 1
-extra_c_flags   += -of+ -dTRMEM
-objs            += $(trmem_objs)
-inc_dirs        += -I"$(trmem_dir)"
-!endif
+extra_rc_flags_os2 = -D__OS2__
+extra_rc_flags_nt  = -D__NT__
+extra_rc_flags_osi = -D__OSI__
 
+!ifeq wgml_trmem 1
+extra_c_flags += -of+ -dTRMEM
+# extra_c_flags += -dTRMEM
+objs          += $(trmem_objs)
+inc_dirs      += -I"$(trmem_dir)"
+!endif
 
 libs     += $(wres_lib)
 gen_deps = $(objs) $(libs) $(__MAKEFILES__) wgml.lnk
@@ -60,11 +60,9 @@ gen_deps = $(objs) $(libs) $(__MAKEFILES__) wgml.lnk
 
 all : wgml.exe .SYMBOLIC
 
-wgml.exe: $(msg_deps) $(gen_deps)
+wgml.exe: $(res_depends) $(gen_deps)
     $(linker) name $^@ @wgml.lnk
-!ifneq incl_msgtext 1
     wstrip -q -a -r $@ . wgml.res
-!endif
     -rm wgml.lnk
 
 !else
@@ -72,6 +70,18 @@ wgml.exe: $(msg_deps) $(gen_deps)
 all : .SYMBOLIC
 
 !endif
+
+$(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlerr.rc ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
+
+rcmsg.gh : $(wrc_dir)/h/rc.msg
+        $(awk) -v rcbase=800 -f $(misc_dir)/msgtoh.awk $[@ > $^@
+
+wgmlmsgs.gh : ../h/wgmlerr.msg ../h/wgml.msg
+        $(awk) -v base=000 -f ../makemdef.awk $< > $^@
+
+wgmlmsge.gh : ../h/wgmlerr.msg ../h/wgml.msg
+        $(awk) -v rcbase=000 -f ../msgtoenm.awk $< > $^@
 
 wgml.lnk : $(__MAKEFILES__)
     %create wgml.lnk
