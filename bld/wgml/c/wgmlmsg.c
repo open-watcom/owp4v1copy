@@ -25,54 +25,63 @@
 *  ========================================================================
 *
 * Description:  WGML message definition.
-*               adapted from wrc file (bld\sdk\rc\rc\c\rcldstr.c)
+*               adapted from wlink file (bld\wl\c\wlnkmsg.c)
 *
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include <string.h>
+#include <stdarg.h>
 #include "wresall.h"
 #include "layer0.h"
-#include "errors.h"
 #include "global.h"
 #include "fcntl.h"
 #if !defined( __UNIX__ ) || defined( __WATCOMC__ )
 #include "process.h"
 #endif
 #include "iortns.h"
+
 #include "wgml.h"
 
-#if defined( INCL_MSGTEXT )
-
-#undef pick
-#define pick( id, en, jp )  en,
-
-static char *StringTable[] = {
-    #include "wgml.msg"
-};
-
-int init_msgs( void ) { return( 1 ); }
-
-int get_msg( msg_ids resid, char *buff, unsigned buff_len )
-{
-    strcpy( buff, StringTable[resid] );
-    return( 1 );
-}
-
-void fini_msgs( void ) {}
-
-#else
 
 #include "wreslang.h"
+#include "rcmem.h"
+#include <stdio.h>
+#include <io.h>
 
-static unsigned MsgShift;
+HANDLE_INFO Instance;
+static int WGMLItself;
+
+static unsigned MsgShift;               // 0 = english, 1000 for japanese
+
+
+/***************************************************************************/
+/*  Special seek routine, because resource file does not start at offset 0 */
+/*  of wgml.exe                                                            */
+/***************************************************************************/
+
+static off_t WGMLResSeek( int handle, off_t position, int where )
+/***********************************************************/
+/* Workaround wres bug */
+{
+    if( ( where == SEEK_SET ) && ( handle == WGMLItself ) ) {
+        return( lseek( handle, position + FileShift, where ) - FileShift );
+    } else {
+        return( lseek( handle, position, where ) );
+    }
+}
+
+
+
+/***************************************************************************/
+/*  initialize messages from resource file                                 */
+/***************************************************************************/
 
 int init_msgs( void )
 {
     int         error;
     char        fname[_MAX_PATH];
-    WResFileID  (*oldopen) (const char *, int, ...);
 
     error = FALSE;
     if( _cmdname( fname ) == NULL ) {
@@ -80,24 +89,21 @@ int init_msgs( void )
     } else {
         Instance.filename = fname;
 
-        /* swap open functions so this file handle is not buffered.
-         * This makes it easier for layer0 to fool WRES into thinking
-         * that the resource information starts at offset 0 */
-        oldopen = WResRtns.open;
-        WResRtns.open = open;
-        OpenResFile( &Instance );
-        WResRtns.open = oldopen;
+        WResRtns.seek = WGMLResSeek;
+        WResRtns.alloc = mem_alloc;
+        WResRtns.free = mem_free;
 
+        OpenResFile( &Instance );
+        WGMLItself = Instance.handle;
         if( Instance.handle == -1 ) error = TRUE;
         if( !error ) {
-            RegisterOpenFile( Instance.handle );
             error = FindResources( &Instance );
         }
         if( !error ) {
             error = InitResources( &Instance );
         }
         MsgShift = WResLanguage() * MSG_LANG_SPACING;
-        if( !error && !get_msg( USAGE_MSG_FIRST, fname, sizeof( fname ) ) ) {
+        if( !error && !get_msg( ERR_DUMMY, fname, sizeof( fname ) ) ) {
             error = TRUE;
         }
     }
@@ -109,6 +115,11 @@ int init_msgs( void )
     return( 1 );
 }
 
+
+/***************************************************************************/
+/*  get a msg text string                                                  */
+/***************************************************************************/
+
 int get_msg( msg_ids resid, char *buff, unsigned buff_len )
 {
     if( WResLoadString( &Instance, resid + MsgShift, buff, buff_len ) != 0 ) {
@@ -118,8 +129,11 @@ int get_msg( msg_ids resid, char *buff, unsigned buff_len )
     return( 1 );
 }
 
+/***************************************************************************/
+/*  end of msg processing                                                  */
+/***************************************************************************/
+
 void fini_msgs( void ) {
     CloseResFile( &Instance );
 }
 
-#endif

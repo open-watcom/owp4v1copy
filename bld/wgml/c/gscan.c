@@ -87,6 +87,7 @@ static void scan_gml( void )
     bool            processed;
     gtentry     *   ge;                 // GML user tag entry
     mac_entry   *   me;                // script macro for processing GML tag
+    char            linestr[ MAX_L_AS_STR ];
 
     cb = input_cbs;
 
@@ -103,13 +104,13 @@ static void scan_gml( void )
         err_count++;
         // SC--009 The tagname is too long
         if( cb->fmflags & II_macro ) {
-            out_msg( "ERR_TAG_NAME too long '%s'\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     tok_start + 1, cb->s.m->lineno, cb->s.m->mac->name );
+            utoa( cb->s.m->lineno, linestr, 10 );
+            g_err( ERR_TAG_NAME, tok_start + 1, linestr, "macro",
+                   cb->s.m->mac->name );
         } else {
-            out_msg( "ERR_TAG_NAME too long '%s'\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     tok_start + 1, cb->s.f->lineno, cb->s.f->filename );
+            utoa( cb->s.f->lineno, linestr, 10 );
+            g_err( ERR_TAG_NAME, tok_start + 1, linestr, "file",
+                   cb->s.f->filename );
         }
         if( inc_level > 0 ) {
             show_include_stack();
@@ -150,17 +151,15 @@ static void scan_gml( void )
             // SC--037: The macro 'xxxxxx' for the gml tag 'yyyyy'
             //          is not defined
             if( cb->fmflags & II_macro ) {
-                out_msg( "ERR_TAG_macro   The macro '%s' for the gml tag '%s'\n"
-                         "\t\tis not defined\n"
-                         "\t\t\tLine %d of macro '%s'\n",
+                utoa( cb->s.m->lineno, linestr, 10 );
+                g_err( ERR_TAG_MACRO,
                          ge->macname, ge->name,
-                         cb->s.m->lineno, cb->s.m->mac->name );
+                         linestr, "macro", cb->s.m->mac->name );
             } else {
-                out_msg( "ERR_TAG_macro   The macro '%s' for the gml tag '%s'\n"
-                         "\t\tis not defined\n"
-                         "\t\t\tLine %d of file '%s'\n",
+                utoa( cb->s.f->lineno, linestr, 10 );
+                g_err( ERR_TAG_MACRO,
                          ge->macname, ge->name,
-                         cb->s.f->lineno, cb->s.f->filename );
+                         linestr, "file", cb->s.f->filename );
             }
             if( inc_level > 0 ) {
                 show_include_stack();
@@ -372,6 +371,7 @@ static  condcode    mainif( void)
 {
     condcode    cc;
     ifcb    *   cb;
+    char        linestr[ MAX_L_AS_STR ];
 
     cb = input_cbs->if_cb;
     cc = no;
@@ -502,13 +502,12 @@ static  condcode    mainif( void)
     }
     if( cc == no ) {
         if( input_cbs->fmflags & II_macro ) {
-            out_msg( "ERR_IF internal logic error\n"
-                     "\t\t\tLine %d of macro '%s'\n",
-                     input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            g_err( ERR_IF_INTERN, linestr, "macro", input_cbs->s.m->mac->name );
         } else {
-            out_msg( "ERR_IF internal logic error\n"
-                     "\t\t\tLine %d of file '%s'\n",
-                     input_cbs->s.f->lineno, input_cbs->s.f->filename );
+            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            g_err( ERR_IF_INTERN,
+                     linestr, "file", input_cbs->s.f->filename );
         }
         if( inc_level > 1 ) {
             show_include_stack();
@@ -595,14 +594,14 @@ void    scan_line( void )
         }
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                out_msg(") )%s( (\n", scan_start);
+                g_info( INF_TEXT_LINE, scan_start );
             }
 
                            /* process text or unprocessed tag      TBD */
 
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        out_msg( "skip line\n" );
+        g_info( INF_SKIP_LINE );
     }
 }
 

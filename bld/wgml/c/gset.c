@@ -177,16 +177,18 @@ extern  void    gml_set( const gmltag * entry )
             }
         }
         if( c == '.' ) {                // end of tag found
+            char    linestr[ MAX_L_AS_STR ];
+
             err_count++;
             // AT-001 Required attribute not found
+
+            g_err( err_att_missing );
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_ATT_missing Required attribute not found\n"
-                         "\t\t\tLine %d of macro '%s'\n",
-                         input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_ATT_missing Required attribute not found\n"
-                         "\t\t\tLine %d of file '%s'\n",
-                         input_cbs->s.f->lineno, input_cbs->s.f->filename );
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             if( inc_level > 1 ) {
                 show_include_stack();

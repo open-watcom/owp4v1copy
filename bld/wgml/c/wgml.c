@@ -148,14 +148,14 @@ static  bool    free_inc_fp( void )
                     rc = fgetpos( cb->fp, &cb->pos );
                     if( rc != 0 ) {
                         strerror_s( buff2, buf_size, errno );
-                        g_err( ERR_FILE_IO, buff2, cb->filename );
+                        g_err( err_file_io, buff2, cb->filename );
                         err_count++;
                         g_suicide();
                     }
                     rc = fclose( cb->fp );
                     if( rc != 0 ) {
                         strerror_s( buff2, buf_size, errno );
-                        g_err( ERR_FILE_IO, buff2, cb->filename );
+                        g_err( err_file_io, buff2, cb->filename );
                         err_count++;
                         g_suicide();
                     }
@@ -187,14 +187,14 @@ static void reopen_inc_fp( filecb *cb )
             rc = fsetpos( cb->fp, &cb->pos );
             if( rc != 0 ) {
                 strerror_s( buff2, buf_size, errno );
-                g_err( ERR_FILE_IO, buff2, cb->filename );
+                g_err( err_file_io, buff2, cb->filename );
                 err_count++;
                 g_suicide();
             }
             cb->flags |= FF_open;
         } else {
             strerror_s( buff2, buf_size, erc2 );
-            g_err( ERR_FILE_IO, buff2, cb->filename );
+            g_err( err_file_io, buff2, cb->filename );
             err_count++;
             g_suicide();
         }
@@ -208,8 +208,8 @@ static void reopen_inc_fp( filecb *cb )
 
 bool    free_resources( errno_t in_errno )
 {
-    if( in_errno == ENOMEM) g_err( ERR_NO_MEMORY );
-    else g_err( ERR_NO_HANDLES );
+    if( in_errno == ENOMEM) g_err( err_no_memory );
+    else g_err( err_no_handles );
     err_count++;
     return( false );
 }
@@ -300,7 +300,7 @@ static  void    del_input_cb_entry( void )
 //      if( wk->if_cb->if_level > 0 ) {
 //          char linestr[ MAX_L_AS_STR ];
 //          utoa( wk->if_cb->if_level, linestr, 10 );
-//          g_err( ERR_IF_LEVEL, linestr );
+//          g_err( err_if_level, linestr );
 //          show_include_stack();
 //          err_count++;
 //      }
@@ -342,7 +342,7 @@ static  void    get_macro_line( void )
     macrocb *   cb;
 
     if( input_cbs->fmflags & II_file ) {
-        g_err( ERR_LOGIC_MAC );
+        g_err( err_logic_mac );
         show_include_stack();
         err_count++;
         g_suicide();
@@ -389,7 +389,7 @@ bool    get_line( void )
         } else {
             cb = input_cbs->s.f;        // input from file
             if( !(cb->flags & FF_open) ) {
-                g_info( ERR_INF_REOPEN );
+                g_info( err_inf_reopen );
                 show_include_stack();
                 reopen_inc_fp( cb );
             }
@@ -430,7 +430,7 @@ bool    get_line( void )
                         break;
                     } else {
                         strerror_s( buff2, buf_size, errno );
-                        g_err( ERR_FILE_IO, buff2, cb->filename );
+                        g_err( err_file_io, buff2, cb->filename );
 
                         err_count++;
                         g_suicide();
@@ -471,19 +471,19 @@ void    show_include_stack( void )
             switch( ip->fmflags ) {
             case    II_file:
                 utoa( ip->s.f->lineno, linestr, 10 );
-                g_info( ERR_INF_LINE_FILE, linestr, ip->s.f->filename );
+                g_info( err_inf_line_file, linestr, ip->s.f->filename );
                 break;
             case    II_tag :
-                g_info( ERR_INF_TAG, ip->s.m->tag->name );
+                g_info( err_inf_tag, ip->s.m->tag->name );
                 // fallthrough
             case    II_macro :
                 utoa( ip->s.m->lineno, linestr, 10 );
                 utoa( ip->s.m->mac->lineno, linemac, 10 );
-                g_info( ERR_INF_MAC_DEF, linestr, ip->s.m->mac->name,
+                g_info( err_inf_mac_def, linestr, ip->s.m->mac->name,
                         linemac, ip->s.m->mac->mac_file_name);
                 break;
             default:
-                g_info( ERR_INC_UNKNOWN );
+                g_info( err_inc_unknown );
                 break;
             }
             ip = ip->prev;
@@ -562,19 +562,19 @@ static  void    proc_GML( char * filename )
             split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
 
             if( attrwork[ 0 ] ) {
-                g_warn( WNG_FILEATTR_IGNORED, attrwork, token_buf );
+                g_warn( wng_fileattr_ignored, attrwork, token_buf );
                 wng_count++;
             }
             if( search_file_in_dirs( token_buf, def_ext, alt_ext, ds_doc_spec ) ) {
 
                 if( inc_level >= MAX_INC_DEPTH ) {
-                    g_err( ERR_MAX_INPUT_NESTING, token_buf );
+                    g_err( err_max_input_nesting, token_buf );
                     err_count++;
                     show_include_stack();
                     continue;           // don't start new include level
                 }
             } else {
-                g_err( ERR_INPUT_FILE_NOT_FOUND, token_buf );
+                g_err( err_input_file_not_found, token_buf );
                 err_count++;
                 if( inc_level > 0 ) {
                     show_include_stack();
@@ -594,7 +594,7 @@ static  void    proc_GML( char * filename )
                 cb->fileattr[ 0 ] = '\0';
             }
             if( GlobalFlags.inclist ) {
-                g_info( INF_CURR_INPUT, "file", cb->filename );
+                g_info( inf_curr_input, "file", cb->filename );
             }
         } // new include FILE processing
 
@@ -653,11 +653,11 @@ static  void    proc_GML( char * filename )
             err_count++;
             if( input_cbs->fmflags & II_macro ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
-                g_err( ERR_GOTO, gotarget, linestr,
+                g_err( err_goto, gotarget, linestr,
                        input_cbs->s.m->mac->name );
             } else {
                 utoa( input_cbs->s.f->lineno, linestr, 10 );
-                g_err( ERR_GOTO, gotarget, linestr,
+                g_err( err_goto, gotarget, linestr,
                        input_cbs->s.f->filename );
             }
             show_include_stack();
@@ -666,11 +666,11 @@ static  void    proc_GML( char * filename )
         if( ic->if_level > 0 ) {        // if .if active
             err_count++;
             if( input_cbs->fmflags & II_macro ) {
-                out_msg( "ERR_IF_Level nesting\n"
+                out_msg( "ERR_IF_LEVEL nesting\n"
                          "\t\t\tLine %d of macro '%s'\n",
                          input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
             } else {
-                out_msg( "ERR_IF_Level nesting\n"
+                out_msg( "ERR_IF_LEVEL nesting\n"
                          "\t\t\tLine %d of file '%s'\n",
                          input_cbs->s.f->lineno, input_cbs->s.f->filename );
             }
@@ -687,11 +687,11 @@ static  void    proc_GML( char * filename )
             cb = input_cbs->s.f;
             if( GlobalFlags.inclist ) {
                 utoa( cb->lineno, linestr, 10 );
-                g_info( INF_CURR_LINE, cb->filename, linestr );
+                g_info( inf_curr_line, cb->filename, linestr );
             }
         } else {
             if( GlobalFlags.inclist ) {
-                g_info( INF_CURR_INPUT, "macro", input_cbs->s.m->mac->name );
+                g_info( inf_curr_input, "macro", input_cbs->s.m->mac->name );
             }
         }
     }
@@ -706,19 +706,19 @@ static  void    print_stats( void )
 {
     char linestr[ MAX_L_AS_STR ];
 
-    g_info( INF_STAT_1 );
+    g_info( inf_stat_1 );
 
     utoa( max_inc_level, linestr, 10 );
-    g_info( INF_STAT_2, linestr );
+    g_info( inf_stat_2, linestr );
 
     utoa( err_count, linestr, 10 );
-    g_info( INF_STAT_2, linestr );
+    g_info( inf_stat_2, linestr );
 
     utoa( wng_count, linestr, 10 );
-    g_info( INF_STAT_3, linestr );
+    g_info( inf_stat_3, linestr );
 
     utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
-    g_info( INF_STAT_4, linestr );
+    g_info( inf_stat_4, linestr );
 
 }
 
@@ -800,9 +800,9 @@ int main( int argc, char * argv[] )
 
     token_buf = mem_alloc( buf_size );
 
-    init_msgs();                        // init msg resouces
+    // out_msg( "define enum %d %d\n", INF_CMDLINE, inf_cmdline );
 
-
+    init_msgs();                        // init msg resources
 
     ff_setup();                         // init findfile
 
@@ -845,7 +845,7 @@ int main( int argc, char * argv[] )
                     GlobalFlags.research ? "research" : "normal" );
         }
     } else {
-        g_err( ERR_MISSING_MAINFILENAME );
+        g_err( err_missing_mainfilename );
         err_count++;
         usage();
     }
@@ -908,13 +908,15 @@ int main( int argc, char * argv[] )
         mem_free( buff2 );
     }
 
-    ff_teardown();                  // free memory allocated in findfunc
-    cop_teardown();                 // free memory allocated in copfiles
-
-    g_trmem_prt_list();             // all memory freed if no output from call
-    g_trmem_close();
+    ff_teardown();                      // free memory allocated in findfunc
+    cop_teardown();                     // free memory allocated in copfiles
 
     fini_msgs();                        // end of msg resources
+                /* no more msgs built from resources after this point */
+
+    g_trmem_prt_list();            // all memory freed if no output from call
+    g_trmem_close();
+
 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy

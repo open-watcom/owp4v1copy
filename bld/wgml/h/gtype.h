@@ -531,11 +531,11 @@ typedef struct opt_font {
 /***************************************************************************/
 /*  message numbers  + severities                                          */
 /***************************************************************************/
-#undef pick
-#define pick( id, en, jp ) id,
 typedef enum msg_ids  {
-    #include "wgml.msg"
+    #include "wgmlmsge.gh"              // as lowercase enums
 } msg_ids;
+
+#include "wgmlmsgs.gh"                  // as uppercase defines
 
 typedef enum {
     SEV_BANNER,

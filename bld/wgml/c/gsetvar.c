@@ -47,8 +47,8 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 {
     size_t      k;
     char    *   sym_start;
-    inputcb *   cb = input_cbs;
     char        quote;
+    char        linestr[ MAX_L_AS_STR ];
 
     scan_err = false;
     sym->next = NULL;
@@ -91,16 +91,15 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                 if( !ProcFlags.suppress_msg ) {
                     // SC--074 For the symbol '%s'
                     //     The length of a symbol cannot exceed ten characters
-                    if( cb->fmflags & II_macro ) {
-                        out_msg( "ERR_SYM_NAME_too_long '%s'\n"
-                            "The length of a symbol cannot exceed 10 characters\n"
-                            "\t\t\tLine %d of macro '%s'\n",
-                            sym_start, cb->s.m->lineno, cb->s.m->mac->name );
+
+                    g_err( err_sym_long, sym_start );
+                    g_info( inf_sym_10 );
+                    if( input_cbs->fmflags & II_macro ) {
+                        utoa( input_cbs->s.m->lineno, linestr, 10 );
+                        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                     } else {
-                        out_msg( "ERR_SYM_NAME_too_long '%s'\n"
-                            "The length of a symbol cannot exceed 10 characters\n"
-                            "\t\t\tLine %d of file '%s'\n",
-                            sym_start, cb->s.f->lineno, cb->s.f->filename );
+                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     }
                     show_include_stack();
                     err_count++;
@@ -120,7 +119,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             } else {
                 scan_err = true;
                 if( !ProcFlags.suppress_msg ) {
-                    out_msg( "ERR_SYMBOL_NAME_missing %s\n", sym_start );
+                    g_err( err_missing_name, sym_start );
                     err_count++;
                     show_include_stack();
                 }
@@ -180,7 +179,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                 }
             } else {
                 if( !scan_err && !ProcFlags.suppress_msg ) {
-                    out_msg( "ERR_SUBSCRIPT_invalid %s\n", psave );
+                    g_err( err_sub_invalid, psave );
                     err_count++;
                     show_include_stack();
                 }
@@ -241,7 +240,7 @@ void    scr_se( void )
     }
     if( *p == '\0' ) {
         if( !ProcFlags.suppress_msg ) {
-            out_msg( "WNG_SYMBOL_VALUE_MISSING for %s\n", sym.name );
+            g_warn( err_missing_value, sym.name );
             show_include_stack();
             wng_count++;
         }
@@ -302,19 +301,18 @@ void    scr_se( void )
                 }
             } else {
                 if( !ProcFlags.suppress_msg ) {
+                     char    linestr[ MAX_L_AS_STR ];
+
                      wng_count++;
+                     g_err( wng_miss_inv_value, sym.name, p );
                      if( input_cbs->fmflags & II_macro ) {
-                         out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",
-                                  "\t\t\tLine %d of macro '%s'\n",
-                                  sym.name, p,
-                                  input_cbs->s.m->lineno,
-                                  input_cbs->s.m->mac->name );
+                         utoa( input_cbs->s.m->lineno, linestr, 10 );
+                         g_info( inf_mac_line, linestr,
+                                 input_cbs->s.m->mac->name );
                      } else {
-                         out_msg( "WNG_SYMBOL_VALUE_INVALID for %s (%s)\n",
-                                  "\t\t\tLine %d of file '%s'\n",
-                                  sym.name, p,
-                                  input_cbs->s.f->lineno,
-                                  input_cbs->s.f->filename );
+                         utoa( input_cbs->s.f->lineno, linestr, 10 );
+                         g_info( inf_file_line, linestr,
+                                 input_cbs->s.f->filename );
                      }
                      show_include_stack();
                 }

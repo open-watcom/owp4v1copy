@@ -93,12 +93,7 @@ void g_trmem_prt_list( void )
 void g_trmem_close( void )
 {
 #ifdef TRMEM
-    unsigned chunks;
-
-    chunks = _trmem_close( handle );
-    if( chunks > 0 ) {
-        out_msg("\ntrmem close() unfreed chunks: %d\n", chunks );
-    }
+    _trmem_close( handle );
 #endif
 }
 
@@ -116,7 +111,7 @@ void *mem_alloc( size_t size )
         p = malloc( size );
     #endif
     if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
+        g_err( err_nomem_avail );
         err_count++;
         g_suicide();
     }
@@ -137,7 +132,7 @@ void *mem_realloc( void * oldp, size_t size )
         p = realloc( oldp, size );
     #endif
     if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
+        g_err( err_nomem_avail );
         err_count++;
         g_suicide();
     }

@@ -193,7 +193,7 @@ static  bool    check_subscript( sub_index sub )
             char    linestr[ MAX_L_AS_STR ];
 
             ltoa( sub, linestr, 10 );
-            g_err( ERR_SUBSCRIPT_OUT_OF_RANGE, linestr );
+            g_err( ERR_SUB_OUT_OF_RANGE, linestr );
             show_include_stack();
             err_count++;
             return( false );

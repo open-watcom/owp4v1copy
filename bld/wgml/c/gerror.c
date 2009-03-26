@@ -34,10 +34,12 @@
 #include "gvars.h"
 #include <stdarg.h>
 
-#define MAX_ERR_LEN     1024
+#define MAX_ERR_LEN     1020
 
 static  char    err_buf[ MAX_ERR_LEN + 2 ]; // +2 for \n and \0
 static  char    str_buf[ MAX_ERR_LEN + 2 ];
+
+
 
 void g_suicide( void )
 {
@@ -48,6 +50,7 @@ void g_suicide( void )
     my_exit( 16 );
 }
 
+
 void out_msg( const char *msg, ... )
 {
     va_list args;
@@ -57,12 +60,20 @@ void out_msg( const char *msg, ... )
     va_end( args );
 }
 
+
+/***************************************************************************/
+/*  construct msg  inserting string variables optionally                   */
+/***************************************************************************/
+
 #define MAX_LINE_LEN            75
 static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
-/***************************************************************************/
+/*****************************************************************/
 {
-    int                         len;
-    const char                  *prefix;
+    int                 len;
+    const char      *   prefix;
+    int                 indent;
+    char            *   start;
+    char            *   end;
 
     switch( sev ) {
 #if 0
@@ -83,6 +94,7 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         prefix = "";
         break;
     }
+
     switch( errornum ) {
     case ERR_STR_NOT_FOUND:
         /* this message means the error strings cannot be obtained from
@@ -105,28 +117,26 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         break;
     }
 
-    {
-        int             indent;
-        char            *start;
-        char            *end;
-
-        indent = 0;
-        start = err_buf;
-        while( strlen( start ) > MAX_LINE_LEN - indent ) {
-            end = start + MAX_LINE_LEN - indent;
-            while( !isspace( *end ) && end > start ) end--;
-            if( end != start )  {
-                *end = '\0';
-            } else {
-                break;
-            }
-            out_msg( "%*s%s\n", indent, "", start );
-            start = end + 1;
-            indent = len;
+    indent = 0;
+    start = err_buf;
+    while( strlen( start ) > MAX_LINE_LEN - indent ) {
+        end = start + MAX_LINE_LEN - indent;
+        while( !isspace( *end ) && end > start ) end--;
+        if( end != start )  {
+            *end = '\0';
+        } else {
+            break;
         }
         out_msg( "%*s%s\n", indent, "", start );
+        start = end + 1;
+        indent = len;
     }
+    out_msg( "%*s%s\n", indent, "", start );
 }
+
+/***************************************************************************/
+/*  error msg                                                              */
+/***************************************************************************/
 
 void g_err( const msg_ids num, ... )
 {
@@ -137,6 +147,10 @@ void g_err( const msg_ids num, ... )
     va_end( args );
 }
 
+/***************************************************************************/
+/*  warning msg                                                            */
+/***************************************************************************/
+
 void g_warn( const msg_ids num, ... )
 {
     va_list args;
@@ -145,6 +159,10 @@ void g_warn( const msg_ids num, ... )
     g_msg_var( num, SEV_WARNING, args );
     va_end( args );
 }
+
+/***************************************************************************/
+/*  informational msg                                                      */
+/***************************************************************************/
 
 void g_info( const msg_ids num, ... )
 {

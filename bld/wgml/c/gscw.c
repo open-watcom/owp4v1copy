@@ -101,15 +101,16 @@
 
 static void CW_sep_err( void )
 {
+    char    linestr[ MAX_L_AS_STR ];
+
     err_count++;
+    g_err( err_inv_cw_sep );
     if( input_cbs->fmflags & II_macro ) {
-        out_msg( "ERR_CW_Sep Invalid separator specified\n"
-                 "\t\t\tLine %d of macro '%s'\n",
-                 input_cbs->s.m->lineno, input_cbs->s.m->mac->name );
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        out_msg( "ERR_CW_Sep Invalid separator specified\n"
-                 "\t\t\tLine %d of file '%s'\n",
-                 input_cbs->s.f->lineno, input_cbs->s.f->filename );
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     show_include_stack();
     return;
