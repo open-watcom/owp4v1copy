@@ -228,6 +228,9 @@ $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__
         @%append $^&.lnk $(mode_lflags)
         @%append $^&.lnk op map name $^@
         @%append $^&.lnk $(sys_$(cpu)_$(os))
+!ifeq which TRAP
+        @%append $^&.lnk op dosseg
+!endif
         @for %i in ($(objs)) do @%append $^&.lnk file %i
         @for %i in ($(libs_$(cpu)_$(os)) $(extra_libs)) do @%append $^&.lnk library %i
         @%append $^&.lnk $(extra_linker)

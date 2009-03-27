@@ -28,6 +28,7 @@ extra_objs = &
     $(dosx_serv_objs) &
     plsacc.obj &
     plsintr.obj &
+    dosxrmod.obj &
     x86cpu.obj &
     dilglue.obj &
     misc7386.obj

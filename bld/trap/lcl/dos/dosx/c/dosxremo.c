@@ -358,7 +358,7 @@ unsigned ReqProg_load( void )
     err = RemoteLink( LinkParm, 0 );
     if( err != NULL ) {
         _DBG_Writeln( "Can't RemoteLink" );
-        TinyWrite( 2, err, strlen( err ) );
+        TinyWrite( TINY_ERR, err, strlen( err ) );
         LoadError = err;
         ret->err = 1;
         len = 0;

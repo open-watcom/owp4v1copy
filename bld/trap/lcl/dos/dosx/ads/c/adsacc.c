@@ -552,6 +552,19 @@ unsigned ReqProg_load()
     return( sizeof( *ret ) );
 }
 
+void DumpRegs( trap_cpu_regs *regs )
+{
+    regs=regs;
+    _DBG0(("EAX=%8.8x EBX=%8.8x ECX=%8.8x EDX=%8.8x",
+    regs->EAX, regs->EBX, regs->ECX, regs->EDX ));
+    _DBG0(("ESI=%8.8x EDI=%8.8x ESP=%8.8x EBP=%8.8x",
+    regs->ESI, regs->EDI, regs->ESP, regs->EBP ));
+    _DBG0(("DS=%4.4x ES=%4.4x FS=%4.4x GS=%4.4x",
+    regs->DS, regs->ES, regs->FS, regs->GS ));
+    _DBG0(("CS=%4.4x EIP=%8.8x EFL=%8.8x SS=%4.4x",
+    regs->CS, regs->EIP, regs->EFL, regs->SS ));
+}
+
 static void MyRunProg()
 {
     _DBG0(( "RunProg - Regs" ));
@@ -694,19 +707,6 @@ static bool SetDebugRegs()
         }
     }
     return( TRUE );
-}
-
-void DumpRegs( trap_cpu_regs    *regs )
-{
-    regs=regs;
-    _DBG0(("EAX=%8.8x EBX=%8.8x ECX=%8.8x EDX=%8.8x",
-    regs->EAX, regs->EBX, regs->ECX, regs->EDX ));
-    _DBG0(("ESI=%8.8x EDI=%8.8x ESP=%8.8x EBP=%8.8x",
-    regs->ESI, regs->EDI, regs->ESP, regs->EBP ));
-    _DBG0(("DS=%4.4x ES=%4.4x FS=%4.4x GS=%4.4x",
-    regs->DS, regs->ES, regs->FS, regs->GS ));
-    _DBG0(("CS=%4.4x EIP=%8.8x EFL=%8.8x SS=%4.4x",
-    regs->CS, regs->EIP, regs->EFL, regs->SS ));
 }
 
 static unsigned ProgRun( bool step )

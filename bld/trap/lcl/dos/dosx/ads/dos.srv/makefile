@@ -8,7 +8,13 @@ cpu = x86
 name = adshelp
 which = SERVER
 
-extra_objs = $(dosx_serv_objs) adsacc.obj adsintr.obj x86cpu.obj misc7386.obj
+extra_objs = &
+    $(dosx_serv_objs) &
+    adsacc.obj &
+    adsintr.obj &
+    dosxrmod.obj &
+    x86cpu.obj &
+    misc7386.obj
 
 extra_c_flags = -DACAD
 

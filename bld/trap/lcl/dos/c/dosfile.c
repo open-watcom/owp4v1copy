@@ -139,7 +139,7 @@ unsigned ReqFile_write_console( void )
     file_write_console_ret  *ret;
 
     ret = GetOutPtr( 0 );
-    rc = TinyWrite( 2, GetInPtr( sizeof( file_write_console_req ) ),
+    rc = TinyWrite( TINY_ERR, GetInPtr( sizeof( file_write_console_req ) ),
                    ( GetTotalSize() - sizeof( file_write_console_req ) ) );
     ret->len = rc;
     ret->err = TINY_ERROR( rc ) ? TINY_LINFO( rc ) : 0;

@@ -106,8 +106,6 @@ dataseg         dw              0
 FirstTime       db              1
 extrn           IntNum          : dword
 extrn           Regs            : byte
-extrn           Meg1            : word
-extrn           XVersion        : byte
 _data ends
 
 
@@ -284,74 +282,6 @@ oldvect         macro   name,num
                 pop     ecx                     ; ...
                 ret                             ; return to caller
 ReleVects      endp
-
-public          GetDosLong
-GetDosLong      proc near
-                mov     eax,4[esp]
-                push    fs
-                mov     fs,Meg1
-                mov     eax,dword ptr fs:[eax]
-                pop     fs
-                ret
-GetDosLong      endp
-
-public          GetDosByte
-GetDosByte      proc near
-                mov     eax,4[esp]
-                push    fs
-                mov     fs,Meg1
-                movzx   eax,byte ptr fs:[eax]
-                pop     fs
-                ret
-GetDosByte      endp
-
-public          PutDosByte
-PutDosByte      proc near
-                push    edx
-                mov     eax,8[esp]
-                mov     edx,12[esp]
-                push    fs
-                mov     fs,Meg1
-                mov     byte ptr fs:[eax],dl
-                pop     fs
-                pop     edx
-                ret
-PutDosByte      endp
-
-public          PutDosLong
-PutDosLong      proc near
-                push    edx
-                mov     eax,8[esp]
-                mov     edx,12[esp]
-                push    fs
-                mov     fs,Meg1
-                mov     fs:[eax],edx
-                pop     fs
-                pop     edx
-                ret
-PutDosLong      endp
-
-public          CallRealMode
-CallRealMode    proc near
-                mov     eax,4[esp]
-                push    ebx
-                push    ecx
-                push    edx
-                push    esi
-                push    edi
-                push    ebp
-                mov     ebx,eax
-                xor     ecx,ecx
-                mov     ax,250eH
-                int     21H
-                pop     ebp
-                pop     edi
-                pop     esi
-                pop     edx
-                pop     ecx
-                pop     ebx
-                ret
-CallRealMode    endp
 
 public          GetDS
 GetDS           proc    near

@@ -58,7 +58,7 @@ extern int KeyGet_pragma( void );
 
 void Output( char *str )
 {
-    TinyWrite( 2, str, strlen( str ) );
+    TinyWrite( TINY_ERR, str, strlen( str ) );
 }
 
 void SayGNiteGracey( int return_code )

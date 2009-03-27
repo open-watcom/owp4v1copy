@@ -123,7 +123,6 @@ extrn           _AtEnd          : byte
 extrn           _FakeBreak      : byte
 extrn           _InitialSS      : word
 extrn           _InitialCS      : word
-extrn           _Meg1           : word
 sysregs dd      14 dup(0)       ; only need 12, but just in case
 _data ends
 
@@ -439,63 +438,6 @@ fixed_idt:                                      ; endif
                 pop     ecx                     ; ...
                 ret                             ; return to caller
 ReleVects_      endp
-
-public          GetDosLong_
-GetDosLong_     proc near
-                push    fs
-                mov     fs,_Meg1
-                mov     eax,dword ptr fs:[eax]
-                pop     fs
-                ret
-GetDosLong_     endp
-
-public          GetDosByte_
-GetDosByte_     proc near
-                push    fs
-                mov     fs,_Meg1
-                movzx   eax,byte ptr fs:[eax]
-                pop     fs
-                ret
-GetDosByte_     endp
-
-public          PutDosByte_
-PutDosByte_     proc near
-                push    fs
-                mov     fs,_Meg1
-                mov     byte ptr fs:[eax],dl
-                pop     fs
-                ret
-PutDosByte_     endp
-
-public          PutDosLong_
-PutDosLong_     proc near
-                push    fs
-                mov     fs,_Meg1
-                mov     fs:[eax],edx
-                pop     fs
-                ret
-PutDosLong_     endp
-
-public          CallRealMode_
-CallRealMode_   proc near
-                push    ebx
-                push    ecx
-                push    edx
-                push    esi
-                push    edi
-                push    ebp
-                mov     ebx,eax
-                xor     ecx,ecx
-                mov     ax,250eH
-                int     21H
-                pop     ebp
-                pop     edi
-                pop     esi
-                pop     edx
-                pop     ecx
-                pop     ebx
-                ret
-CallRealMode_   endp
 
 public          SetPSP_
 SetPSP_         proc near
