@@ -287,10 +287,15 @@ static void set_out_file_attr( void )
  * This function actually flushes the output buffer to the output device/file.
  *
  * Notes:
- *      This implementation uses '\n' for "newline". This is supposed to work
- *          for Linux, however, that depends in part on how the Linux programs
- *          processing PS files work and on how those printers which require
- *          a CRLF sequence are supported by Linux.
+ *      The output file is, and must be, opened in binary mode. This requires
+ *          the explicit emission of "\c\n" for non-Linux versions. For Linux,
+ *          "\n" is emitted, but, since I am not able to test the Linux version,
+ *          it is not possible to tell is this is correct.
+ *      Since PostScript is a printer language, it is possible that it will
+ *          require "\c\n" even under Linux, even in a software interpreter.
+ *          Then again, the Linux version of Ghostscript, for example, may
+ *          well expect "\n". It is possible, then, that the Linux code will
+ *          need to distinguish between PS and other devices.
  *      This implementation implicitly assumes that either a word will fit or
  *          it will be part of the next line. Handling over-long groups of
  *          letters is actually more complicated and may eventually require
@@ -304,10 +309,13 @@ static void set_out_file_attr( void )
  
 void ob_flush( void )
 {
-    fwrite( buffout->data, sizeof( uint8_t ), buffout->length, out_file_fb );
-    fprintf_s( out_file_fb, "\n" );
+    fwrite( buffout->data, sizeof( uint8_t ), buffout->current, out_file_fb );
     buffout->current = 0;
-
+#ifdef __UNIX__
+    fprintf_s( out_file_fb, "\n" );
+#else
+    fprintf_s( out_file_fb, "\r\n" );
+#endif
     return;
 }
 
@@ -369,6 +377,7 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
         difference = buffout->length - buffout->current;
         memcpy_s( &buffout->data[buffout->current], difference, \
                                             &text_block[current], difference );
+        buffout->current += difference;
         current+= difference;
         text_count -= difference;
         ob_flush();
@@ -380,7 +389,7 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
         memcpy_s( &buffout->data[buffout->current], text_count, \
                                             &text_block[current], text_count );
 
-        buffout->current += count;
+        buffout->current += text_count;
     }
 }
 

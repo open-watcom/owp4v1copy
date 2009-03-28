@@ -40,6 +40,7 @@
 *                   parameters
 *               some local variables:
 *                   current_df_data
+*                   current_function
 *                   current_function_table
 *                   date_val
 *                   device_function_table
@@ -88,6 +89,7 @@
 *                   df_ifnen()
 *                   df_ifeqs()
 *                   df_ifnes()
+*                   df_image_driver()
 *                   df_line_height()
 *                   df_line_space()
 *                   df_lower()
@@ -102,7 +104,6 @@
 *                   df_sleep()
 *                   df_subtract()
 *                   df_tab_width()
-*                   df_text_device()
 *                   df_text_driver()
 *                   df_textpass()
 *                   df_thickness()
@@ -175,10 +176,13 @@ typedef void * (*df_function) (void);
 
 /* Local data declarations. */
 
-/* These are used to hold values returned by device functions. */
+/* These are set by device functions and for use in outputting text. */
 
 static bool             textpass        = false;
 static bool             uline           = false;
+
+/* These are used to hold values returned by device functions. */
+
 static char         *   date_val        = NULL;
 static char         *   time_val        = NULL;
 static char             wgml_header[]   = "V4.0 PC/DOS";
@@ -196,15 +200,12 @@ static uint32_t         y_size          = 0;
 static df_data          current_df_data;
 static df_function      device_function_table[MAX_FUNC_INDEX + 1];
 static df_function      driver_function_table[MAX_FUNC_INDEX + 1];
-static df_function  *   current_function_table = NULL;
+static df_function  *   current_function_table  = NULL;
+static uint8_t      *   current_function        = NULL;
 
 /* This is used to create text for output when necessary. */
 
 static record_buffer    staging = { 0, 0, NULL };
-
-/* Local function declaration (used below before it is defined). */
-
-static void interpret_functions( uint8_t * in_function );
 
 /* Local function definitions. */
 
@@ -254,8 +255,8 @@ void format_error( void )
  *      count contains the minimum required size.
  *
  * Note:
- *      mem_realloc() exits the program if it fails. Thus, this function
- *      will either succeed or the program will end.
+ *      mem_alloc() and mem_realloc() exit the program if they fail. Thus,
+ *      this function will either succeed or the program will end.
  */
 
 static void resize_staging( size_t count )
@@ -264,7 +265,6 @@ static void resize_staging( size_t count )
         staging.data = (uint8_t *) mem_realloc( staging.data, count );
         staging.length = count;
     }
-
     return;
 }
 
@@ -332,12 +332,22 @@ static void * df_clearPC( void )
  
 static void * df_dotab( void )
 {
-    int i;
+            int         i;
+    static  int         instance = 0;
+
+    /* Recursion is an error. */
+
+    instance++;
+    if( instance > 1 ) {
+        out_msg( "Recursive use of %%dotab(), check device library." );
+        err_count++;
+        g_suicide();
+    }
 
     if( current_df_data.parameter_type != 0x00 ) format_error();
 
     if( bin_driver->absoluteaddress.text != NULL ) \
-        interpret_functions( bin_driver->absoluteaddress.text );
+        df_interpret_driver_functions( bin_driver->absoluteaddress.text );
     else {
         char    ps_suffix[] = ")|shwd|";
         size_t  count;
@@ -366,6 +376,7 @@ static void * df_dotab( void )
         ob_insert_block( staging.data, staging.current, true, true );
         staging.current = 0;
     }
+    instance--;
 
     return( NULL );
 }
@@ -388,22 +399,39 @@ static void * df_endif( void )
 static void * df_flushpage( void )
 {
     int i;
+    static  int         instance = 0;
 
-    /* Simply emits lines equal to the value of page_depth.
-     * This will need to be altered in at least two ways:
-     *   the number of lines should be enough to get to the end
-     *   the use of :NEWLINE can be improved to skip more than one line
-     *   this is not supposed to happen on the first page
-     * but much of these details may be incorporated into a function which
-     * uses :NEWLINE blocks to page down, which this function will then call.
-     */
-     
-    if( current_df_data.parameter_type != 0x00 ) format_error();
+    /* Recursion is an error. */
 
-    if( bin_driver->absoluteaddress.text == NULL ) {
-        for( i = 0; i < bin_device->page_depth; i++ ) \
-            interpret_functions( bin_driver->newlines.newlineblocks[0].text );
+    instance++;
+    if( instance > 1 ) {
+        out_msg( "Recursive use of %%flushpage(), check device library." );
+        err_count++;
+        g_suicide();
     }
+
+    if( bin_driver->absoluteaddress.text != NULL ) \
+        df_interpret_driver_functions( bin_driver->absoluteaddress.text );
+    else {
+
+        /* Simply emits lines equal to the value of page_depth.
+         * This will need to be altered in at least two ways:
+         *   the number of lines should be enough to get to the end
+         *   the use of :NEWLINE can be improved to skip more than one line
+         *   this is not supposed to happen on the first page
+         * but much of these details may be incorporated into a function which
+         * uses :NEWLINE blocks to page down, which this function will then call.
+         */
+     
+        if( current_df_data.parameter_type != 0x00 ) format_error();
+
+        if( bin_driver->absoluteaddress.text == NULL ) {
+            for( i = 0; i < bin_device->page_depth; i++ ) \
+                df_interpret_driver_functions( \
+                                bin_driver->newlines.newlineblocks[0].text );
+        }
+    }
+    instance--;
 
     return( NULL );
 }
@@ -797,6 +825,7 @@ static void * process_parameter( void )
  
 static void * df_out_text_device( void )
 {
+    char    *   first;
     int         i;
     parameters  my_parameters;
     uint16_t    count;
@@ -830,7 +859,12 @@ static void * df_out_text_device( void )
         /* Now get and emit the parameter. */
 
         current_df_data.current = current_df_data.base + my_parameters.first;
-        out_msg( (char *) process_parameter() );
+        first = (char *) process_parameter();
+        out_msg( first );
+
+        /* Free the memory allocated to the parameter. */
+
+        mem_free( first );
 
         break;
 
@@ -877,6 +911,10 @@ static void out_text_driver( bool out_trans, bool out_text )
         first = process_parameter();
         count = strlen( first );
         ob_insert_block( first, count, out_trans, out_text );
+
+        /* Free the memory allocated to the parameter. */
+
+        mem_free( first );
 
         break;
 
@@ -975,7 +1013,7 @@ static void * df_cancel( void )
 
     instance++;
     if( instance > 1 ) {
-        out_msg( "Recursive use of %cancel(), check device library." );
+        out_msg( "Recursive use of %%cancel(), check device library." );
         err_count++;
         g_suicide();
     }
@@ -998,16 +1036,16 @@ static void * df_cancel( void )
     if( wgml_fonts[font_number].font_style != NULL ) {
         if( !stricmp( first, wgml_fonts[font_number].font_style->type ) ) {
             if( wgml_fonts[font_number].font_style->startvalue != NULL ) {
-               interpret_functions( \
+                df_interpret_driver_functions( \
                     wgml_fonts[font_number].font_style->startvalue->text );
             }
         }
     }
 
-    if( wgml_fonts[font_number].font_style != NULL ) {
+    if( wgml_fonts[font_number].font_switch != NULL ) {
         if( !stricmp( first, wgml_fonts[font_number].font_switch->type ) ) {
             if( wgml_fonts[font_number].font_switch->startvalue != NULL ) {
-               interpret_functions( \
+                df_interpret_driver_functions( \
                     wgml_fonts[font_number].font_switch->startvalue->text );
             }
         }
@@ -1016,7 +1054,7 @@ static void * df_cancel( void )
     /* Free the buffer and reset the recursion check. */
 
     mem_free( first );
-    instance++;
+    instance--;
 
     return( NULL );
 }
@@ -1027,9 +1065,22 @@ static void * df_cancel( void )
  
 static void * df_enterfont( void )
 {
+    static  int         instance = 0;
+
+    /* Recursion is an error. */
+
+    instance++;
+    if( instance > 1 ) {
+        out_msg( "Recursive use of %%enterfont(), check device library." );
+        err_count++;
+        g_suicide();
+    }
+
     /* Device function %enterfont() ignores its parameter. */
 
     fb_enterfont();
+    instance--;
+
     return( NULL );
 }
 
@@ -1037,8 +1088,8 @@ static void * df_enterfont( void )
  * Implements device function %sleep().
  *
  * Note:
- *      Added for completeness. This device function causes gendev to hang
- *      if used with a literal, and wgml to hang if used with a non-literal.
+ *      Added for completeness. This device function causes gendev 4.1 to hang
+ *      if used with a literal, and wgml 4.0 to hang if used with a non-literal.
  *      It is used in device_function_table to keep the compiler happy.
  */
  
@@ -1059,14 +1110,14 @@ static void * df_sleep( void )
 
     /* Get the parameter. */
 
-    /* The problem with wgml appears to be related to the fact that gendev
-     * generates a ShortHeader but encodes the first parameter as if it were
-     * a LongHeader. Hence, the literal.
-     * The original line:
-     * current_df_data.current = current_df_data.base + my_parameters.first;
+    /* The existing gendev generates a ShortHeader but encodes the first
+     * parameter as if it were a LongHeader. Unfortunately, if that
+     * parameter takes a parameter, it's offset is also incorrect. This
+     * function will fail in process_parameter() since the next binary code
+     * will be read as 0xFF, which exceeds the maximum value for the code.
      */
 
-    current_df_data.current = current_df_data.base + 0x09;
+    current_df_data.current = current_df_data.base + my_parameters.first;
     first = (uintptr_t) process_parameter();
 
     sleep( (unsigned) first);
@@ -1108,6 +1159,11 @@ static void * df_setsymbol( void )
 
     add_symvar( &global_dict, first, second, no_subscript, 0 );
 
+    /* Free the memory allocated to the parameters. */
+
+    mem_free(first);
+    mem_free(second);
+
     return( NULL );
 }
 
@@ -1143,12 +1199,40 @@ static void * df_binary( void )
 
 /* Function skip_functions().
  * Skips all function sequences until %endif() is encountered or the block ends.
+ *
+ * Global Variables Used:
+ *      current_df_data is updated to reflect the current function.
+ *      current_function is used to point to the current function.
+ *
+ * Global Variables Modified:
+ *      current_df_data.current will point to the first byte after
+ *          the byte code for the function being processed when the handler
+ *          in function_table[] is invoked.
+ *      current_function will point to the %endif() or to the next-to-last
+ *          function if current_df_data.last_function_done is set to true.
+ *
+ * Note:
+ *      current_function is used to reset current_df_data.current
+ *      on each pass through the loop. It is global so that it will do so
+ *      when interpret_functions() resumes processing.
  */
 
 static void skip_functions( void )
 {
-    uint8_t *   current_function    = NULL;
     uint16_t    current_offset;
+
+    /* current_df_data.base points at the binary code for the conditional
+     * function. current_function needs to point to the next top-level
+     * function: the two-byte offset needed to do this starts three bytes
+     * bytes in front of the position pointed to by current_df_data.base but
+     * must be added to current_df_data.base.
+     */
+
+    current_function = current_df_data.base;
+    current_function -= 3;
+    memcpy_s( &current_offset, sizeof( current_offset ), current_function, \
+                                                sizeof( current_offset ) );
+    current_function = current_df_data.base + current_offset;
 
     for( ;; )
     {
@@ -1162,9 +1246,17 @@ static void skip_functions( void )
 
         /* Get the offset to the next element in the linked list. */
 
-        memcpy_s( &current_offset, sizeof( current_offset ),
-            current_df_data.current, sizeof( current_offset ) );
+        memcpy_s( &current_offset, sizeof( current_offset ), \
+                        current_df_data.current, sizeof( current_offset ) );
         current_df_data.current += sizeof( current_offset );
+
+        /* Get the parameter type for the current device function */
+
+        memcpy_s( &current_df_data.parameter_type, \
+                  sizeof( current_df_data.parameter_type ), \
+                  current_df_data.current, \
+                  sizeof( current_df_data.parameter_type ) );
+        current_df_data.current += sizeof( current_df_data.parameter_type );
 
         /* Either reset current_function to the next list element
          * or exit the loop. If this is the last function, it is either
@@ -1192,7 +1284,6 @@ static void skip_functions( void )
         /* If the function code is for %endif(), exit the loop. */
 
         if( current_df_data.df_code == 0x1C ) break;
-
     }
 
     return;
@@ -1393,7 +1484,7 @@ static void * df_add( void )
  
 static void * df_decimal( void )
 {
-    char        value[12];
+    char    *   value   = NULL;
     parameters  my_parameters;
     uintptr_t   first;
 
@@ -1408,6 +1499,7 @@ static void * df_decimal( void )
 
     /* Convert and return the value. */
 
+    value = (char *) mem_alloc( 12 );
     return( (void *) _ltoa( first, value, 10 ) );
 }
 
@@ -1444,6 +1536,38 @@ static void * df_divide( void )
     return( (void *) (first / second) );
 }
 
+/* Function df_getnumsymbol().
+ * Implements device function %getnumsymbol().
+ */
+ 
+static void * df_getnumsymbol( void )
+{
+    char        *   name    = NULL;
+    parameters  my_parameters;
+    symsub      *   sym_val = NULL;
+    uint32_t        ret_val = 0;
+
+    /* Extract parameter offset. */
+
+    get_parameters( &my_parameters );
+
+    /* Now get the parameter. */
+
+    current_df_data.current = current_df_data.base + my_parameters.first;
+    name = process_parameter();
+
+    /* Now get the symbol's value. */
+
+    find_symvar( &global_dict, name, no_subscript, &sym_val );
+    if( sym_val != NULL ) ret_val = atol( sym_val->value );
+
+    /* Free the memory allocated to the parameter. */
+
+    mem_free( name);
+
+    return( (void *) ret_val );
+}
+
 /* Function df_getstrsymbol().
  * Implements device function %getstrsymbol().
  */
@@ -1470,33 +1594,9 @@ static void * df_getstrsymbol( void )
     if( sym_val == NULL ) ret_val = char_convert( NULL );
     else ret_val = char_convert( sym_val->value );
 
-    return( (void *) ret_val );
-}
+    /* Free the memory allocated to the parameter. */
 
-/* Function df_getnumsymbol().
- * Implements device function %getnumsymbol().
- */
- 
-static void * df_getnumsymbol( void )
-{
-    char        *   name    = NULL;
-    parameters  my_parameters;
-    symsub      *   sym_val = NULL;
-    uint32_t        ret_val = 0;
-
-    /* Extract parameter offset. */
-
-    get_parameters( &my_parameters );
-
-    /* Now get the parameter. */
-
-    current_df_data.current = current_df_data.base + my_parameters.first;
-    name = process_parameter();
-
-    /* Now get the symbol's value. */
-
-    find_symvar( &global_dict, name, no_subscript, &sym_val );
-    if( sym_val != NULL ) ret_val = atol( sym_val->value );
+    mem_free( name);
 
     return( (void *) ret_val );
 }
@@ -1507,7 +1607,7 @@ static void * df_getnumsymbol( void )
  
 static void * df_hex( void )
 {
-    char        value[9];
+    char    *   value   = NULL;
     parameters  my_parameters;
     uintptr_t   first;
 
@@ -1522,6 +1622,7 @@ static void * df_hex( void )
 
     /* Convert and return a pointer to the parameter */
 
+    value = (char *) mem_alloc( 9 );
     return( (void *) _ltoa( first, value, 16 ) );
 }
 
@@ -1627,15 +1728,15 @@ static df_function device_function_table[0x3D] = {
     &df_do_nothing_num,     // 0x09 %binary() and %binary1()
     &df_do_nothing_num,     // 0x0A %binary2()
     &df_do_nothing_num,     // 0x0B %binary4()
-    &df_do_nothing_char,    // 0x0C %decimal()
-    &df_do_nothing_char,    // 0x0D %hex()
-    &df_do_nothing_num,     // 0x0E %add()
-    &df_do_nothing_num,     // 0x0F %subtract()
-    &df_do_nothing_num,     // 0x10 %divide()
-    &df_do_nothing_num,     // 0x11 %remainder()
+    &df_decimal,            // 0x0C %decimal()
+    &df_hex,                // 0x0D %hex()
+    &df_add,                // 0x0E %add()
+    &df_subtract,           // 0x0F %subtract()
+    &df_divide,             // 0x10 %divide()
+    &df_remainder,          // 0x11 %remainder()
     &df_getnumsymbol,       // 0x12 %getnumsymbol()
     &df_getstrsymbol,       // 0x13 %getstrsymbol()
-    &df_do_nothing_char,    // 0x14 %lower()
+    &df_lower,              // 0x14 %lower()
     &df_out_text_device,    // 0x15 %image()
     &df_out_text_device,    // 0x16 %text()
     &df_setsymbol,          // 0x17 %setsymbol()
@@ -1655,20 +1756,20 @@ static df_function device_function_table[0x3D] = {
     &df_wait,               // 0x25 %wait()
     &df_sleep,              // 0x26 %sleep()
     &df_do_nothing_num,     // 0x27 %default_width()
-    &df_do_nothing_num,     // 0x28 %font_number()
-    &df_do_nothing_num,     // 0x29 %tab_width()
+    &df_font_number,        // 0x28 %font_number()
+    &df_tab_width,          // 0x29 %tab_width()
     &df_do_nothing_num,     // 0x2A %page_depth()
     &df_do_nothing_num,     // 0x2B %page_width()
-    &df_do_nothing_num,     // 0x2C %x_address()
-    &df_do_nothing_num,     // 0x2D %y_address()
-    &df_do_nothing_num,     // 0x2E %x_size()
-    &df_do_nothing_num,     // 0x2F %y_size()
-    &df_do_nothing_num,     // 0x30 %thickness()
+    &df_x_address,          // 0x2C %x_address()
+    &df_y_address,          // 0x2D %y_address()
+    &df_x_size,             // 0x2E %x_size()
+    &df_y_size,             // 0x2F %y_size()
+    &df_thickness,          // 0x30 %thickness()
     &df_do_nothing_num,     // 0x31 %font_height()
     &df_do_nothing_num,     // 0x32 %font_space()
     &df_do_nothing_num,     // 0x33 %line_height()
     &df_do_nothing_num,     // 0x34 %line_space()
-    &df_do_nothing_num,     // 0x35 %pages()
+    &df_pages,              // 0x35 %pages()
     &df_do_nothing_char,    // 0x36 %wgml_header()
     &df_do_nothing_char,    // 0x37 %font_outname1()
     &df_do_nothing_char,    // 0x38 %font_outname2()
@@ -1759,34 +1860,46 @@ static df_function driver_function_table[0x3D] = {
  *
  * Global Variables Used:
  *      current_df_data is updated to reflect the current function.
+ *      current_function is used to record the start of the current function.
  *      current_function_table is used to invoke the handler for each device
  *          function.
  *
  * Global Variable Modified:
  *      current_df_data.current will point to the first byte after
- *      the byte code for the function being processed when the handler in
- *      function_table[] is invoked.
+ *          the byte code for the function being processed when the handler
+ *          in function_table[] is invoked.
+ *      current_function will point to the next-to-last function.
  *
- * Note:
+ * Notes:
  *      current_function is used to reset current_df_data.current
- *      on each pass through the loop. It is not necessary that the functions
- *      invoked through function_table[] leave current_df_data.current
- *      in any particular state.
+ *          on each pass through the loop. It is not necessary that the
+ *          functions invoked through function_table[] leave
+ *          current_df_data.current in any particular state.
+ *      This function is called recursively and so current_function must be
+ *          restored to its value on entry on exit.
 */
 
 static void interpret_functions( uint8_t * in_function )
 {
-    uint8_t *   current_function    = NULL;
-    uint16_t    current_offset;
+    bool                old_last_done   = false;
+    df_function     *   old_function_table  = NULL;
+    uint8_t         *   old_function    = NULL;
+    uint16_t            current_offset;
 
     /* An empty or missing block is not an error, but nothing happens. */
 
     if( in_function == NULL ) return;
 
+    /* Save the interpreter state. */
+    
+    old_function = current_function;
+    old_function_table = current_function_table;
+    old_last_done = current_df_data.last_function_done;
+
     /* Initialize the loop parameters. */
 
-    current_df_data.last_function_done = false;
     current_function = in_function;
+    current_df_data.last_function_done = false;
 
     while( !current_df_data.last_function_done )
     {
@@ -1818,8 +1931,7 @@ static void interpret_functions( uint8_t * in_function )
          */
 
         if( current_offset < 0xFFFF ) {
-            current_function = current_df_data.current + \
-                current_offset;
+            current_function = current_df_data.current + current_offset;
         } else {
             current_df_data.last_function_done = true;
         }
@@ -1837,6 +1949,13 @@ static void interpret_functions( uint8_t * in_function )
         current_function_table[current_df_data.df_code]();
 
     }
+
+    /* Restore interpreter state. */
+
+    current_function = old_function;
+    current_function_table = old_function_table;
+    current_df_data.last_function_done = old_last_done ;
+
     return;
 }
 
@@ -1891,28 +2010,13 @@ void df_interpret_driver_functions( uint8_t * in_function )
  
 void df_populate_device_table( void )
 {
-    device_function_table[0x0c] = &df_decimal;
-    device_function_table[0x0d] = &df_hex;
-    device_function_table[0x0e] = &df_add;
-    device_function_table[0x0f] = &df_subtract;
-    device_function_table[0x10] = &df_divide;
-    device_function_table[0x11] = &df_remainder;
-    device_function_table[0x14] = &df_lower;
     device_function_table[0x27] = &df_default_width;
-    device_function_table[0x28] = &df_font_number;
-    device_function_table[0x29] = &df_tab_width;
     device_function_table[0x2a] = &df_page_depth;
     device_function_table[0x2b] = &df_page_width;
-    device_function_table[0x2c] = &df_x_address;
-    device_function_table[0x2d] = &df_y_address;
-    device_function_table[0x2e] = &df_x_size;
-    device_function_table[0x2f] = &df_y_size;
-    device_function_table[0x30] = &df_thickness;
     device_function_table[0x31] = &df_font_height;
     device_function_table[0x32] = &df_font_space;
     device_function_table[0x33] = &df_line_height;
     device_function_table[0x34] = &df_line_space;
-    device_function_table[0x35] = &df_pages;
     device_function_table[0x36] = &df_wgml_header;
     device_function_table[0x37] = &df_font_outname1;
     device_function_table[0x38] = &df_font_outname2;
@@ -1948,7 +2052,9 @@ void df_setup( void )
 
     /* Initialize staging to hold 80 characters. */     
 
-    resize_staging( 80 );
+    staging.data = (uint8_t *) mem_alloc( 80 );
+    staging.length = 80;
+    staging.current = 0;
 
     return;
 }
@@ -1983,36 +2089,48 @@ void df_teardown( void )
  * Performs the action of device function %enterfont(0), whether the device
  * function was invoked explicitly or implicitly. Parts of this function may
  * eventually be refactored if needed in other functions.
+ *
+ * Global Variable Modified:
+ *      font_number is set to "0" to ensure that all function blocks will be
+ *      done in the context of the default font. It is restored to its initial
+ *      value on exit.
  */
 
 void fb_enterfont( void )
 {
+    uint32_t    old_font;
+
+    old_font = font_number;
+    font_number = 0;
 
     if( wgml_fonts[0].font_pause != NULL ) \
-                        interpret_functions( wgml_fonts[0].font_pause->text );
+        df_interpret_device_functions( wgml_fonts[0].font_pause->text );
 
     if( wgml_fonts[0].font_switch != NULL ) {
         if( wgml_fonts[0].font_switch->startvalue != NULL ) \
-            interpret_functions( wgml_fonts[0].font_switch->startvalue->text );
+            df_interpret_driver_functions( \
+                                wgml_fonts[0].font_switch->startvalue->text );
     }
 
     if( wgml_fonts[0].font_style != NULL ) {       
         if( wgml_fonts[0].font_style->startvalue != NULL ) \
-            interpret_functions( wgml_fonts[0].font_style->startvalue->text );
+            df_interpret_driver_functions( \
+                                wgml_fonts[0].font_style->startvalue->text );
         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[0].font_style->lineprocs[0].startvalue != NULL ) \
-                interpret_functions( \
+                df_interpret_driver_functions( \
                     wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
             if( wgml_fonts[0].font_style->lineprocs[0].firstword == NULL ) {
                 if( wgml_fonts[0].font_style->lineprocs[0].startword != NULL ) \
-                    interpret_functions( \
+                    df_interpret_driver_functions( \
                     wgml_fonts[0].font_style->lineprocs[0].startword->text );
             } else {
-                interpret_functions( \
+                df_interpret_driver_functions( \
                     wgml_fonts[0].font_style->lineprocs[0].firstword->text );
             }
         }
     }
+    font_number = old_font;
     return;
 }
 

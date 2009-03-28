@@ -9,6 +9,7 @@ wgml_autodepends = .AUTODEPEND
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
+!include wres.mif
 
 inc_dirs = -I"../h;../../h"
 
@@ -73,8 +74,8 @@ objs = &
             cfparse.obj       &
             cfputils.obj
 
-nwgml : cfcheck.exe cfparse.exe copparse.exe devldchk.exe findfunc.exe &
-	outcheck.exe .SYMBOLIC
+nwgml : wgmlmsgs.gh wgmlmsge.gh cfcheck.exe cfparse.exe copparse.exe &
+	devldchk.exe findfunc.exe outcheck.exe .SYMBOLIC
 
 !include exetarg.mif
 
@@ -118,4 +119,22 @@ outcheck.exe : $(outc_objs) $(libs)
         @$(cl) $(clflags) $< $(cl_libs)
 !endif
 
+rcmsg.gh : $(wrc_dir)/h/rc.msg
+        $(awk) -v rcbase=800 -f $(misc_dir)/msgtoh.awk $[@ > $^@
+
+wgmlmsgs.gh : ../../h/wgmlerr.msg ../../h/wgml.msg
+        $(awk) -v base=000 -f ../../makemdef.awk $< > $^@
+
+wgmlmsge.gh : ../../h/wgmlerr.msg ../../h/wgml.msg
+        $(awk) -v rcbase=000 -f ../../msgtoenm.awk $< > $^@
+
+extra_rc_flags_os2 = -D__OS2__
+extra_rc_flags_nt  = -D__NT__
+extra_rc_flags_osi = -D__OSI__
+
+.EXTENSIONS: .res
+
+#$(name).res : wgmlmsgs.gh ../../h/wgml.msg ../../h/wgmlmsg.h &
+#              ../../h/wgmlerr.msg ../../h/wgml.rc
+#        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 

@@ -218,6 +218,7 @@ start_heapcheck( "main" );
 
     /* Initialize the binary device library. */
 
+    get_systime();
     ff_setup();
     cop_setup();
 
@@ -232,6 +233,7 @@ start_heapcheck( "main" );
 
     cop_teardown();
     ff_teardown();
+    free_symtab();
 
     mem_free(tgt_path);
     tgt_path = NULL;

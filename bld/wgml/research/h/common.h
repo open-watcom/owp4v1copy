@@ -43,7 +43,9 @@
 *                   err_cnt
 *                   find_symvar()
 *                   free_resources()
+*                   free_symtab()
 *                   g_suicide()
+*                   get_systime()
 *                   global_dict
 *                   master_fname
 *                   mem_alloc()
@@ -103,13 +105,19 @@ typedef struct opt_font {
 } opt_font;
 
 typedef struct symsub {
-    char            *   value;
+    struct symsub   *   next;           // not used; needed for padding
+    struct symvar   *   base;           // not used; needed for padding
+    sub_index           subscript;      // not used; needed for padding
+    char            *   value;          // used & must be in this position
 } symsub;
 
 typedef struct symvar {
     struct symvar   *   next;
     char                name[SYM_NAME_LENGTH + 1];
-    symsub          *   sub_0;
+    long                last_auto_inc;  // not used; needed for padding
+    long                subscript_used; // not used; needed for padding
+    symsub          *   subscripts;     // not used; needed for padding
+    symsub          *   sub_0;          // used & must be in this position
 } symvar;
 
 /* Global variable declarations. */
@@ -157,10 +165,12 @@ extern  char    *   skip_spaces( char * start );
 
 /* These are part of the wgml context. */
 
-extern int          add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f );
-extern int          find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
+extern  int         add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, sym_flags f );
+extern  int         find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern  bool        free_resources( errno_t in_errno ); 
+extern  void        free_symtab( void );
 extern  void        g_suicide( void );
+extern  void        get_systime( void );
 extern  void        mem_free( void *p );
 extern  void    *   mem_alloc( size_t size );
 extern  void    *   mem_realloc( void *p, size_t size );

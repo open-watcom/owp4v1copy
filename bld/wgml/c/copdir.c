@@ -202,6 +202,9 @@ entry_found get_extended_entry( FILE * in_file, directory_entry * entry )
  * Returns:
  *      on success, the corresponding member name.
  *      on failure, a NULL pointer.
+ *
+ * Note:
+ *      the comparison is case-sensitive for compatability with wgml 4.0.
  */
 
 char * get_member_name( char const * in_name )

@@ -431,6 +431,9 @@ static cop_font * get_cop_font( char const * in_name )
  * Returns:
  *      a pointer to the cop_font instance on success.
  *      a NULL pointer on failure.
+ *
+ * Note:
+ *      the comparison is case-sensitive for compatability with wgml 4.0.
  */
 
 static cop_font * find_cop_font( char const * in_name )
@@ -440,7 +443,7 @@ static cop_font * find_cop_font( char const * in_name )
 
     current = bin_fonts;
     while( current != NULL ) {
-        if( !stricmp( in_name, current->defined_name ) ) {
+        if( !strcmp( in_name, current->defined_name ) ) {
             retval = current;
             break;
         }
@@ -470,6 +473,9 @@ static cop_font * find_cop_font( char const * in_name )
  * Returns:
  *      a pointer to the device_font instance on success.
  *      a NULL pointer on failure.
+ *
+ * Note:
+ *      the comparison is case-sensitive for compatability with wgml 4.0.
  */
 
 static device_font * find_dev_font( char const * in_name )
@@ -480,7 +486,7 @@ static device_font * find_dev_font( char const * in_name )
 
     current = &bin_device->devicefonts;
     for( i = 0; i < current->font_count; i++ ) {
-        if( !stricmp( in_name, current->fonts[i].font_name ) ) {
+        if( !strcmp( in_name, current->fonts[i].font_name ) ) {
             retval = &current->fonts[i];
             break;
         }
@@ -504,6 +510,9 @@ static device_font * find_dev_font( char const * in_name )
  * Returns:
  *      a pointer to the fonstyle_block instance on success.
  *      a NULL pointer on failure.
+ *
+ * Note:
+ *      the comparison is case-insensitive for compatability with wgml 4.0.
  */
 
 static fontstyle_block * find_style( char const * in_name )
@@ -538,6 +547,9 @@ static fontstyle_block * find_style( char const * in_name )
  * Returns:
  *      a pointer to the fontswitch_block instance on success.
  *      a NULL pointer on failure.
+ *
+ * Note:
+ *      the comparison is case-insensitive for compatability with wgml 4.0.
  */
 
 static fontswitch_block * find_switch( char const * in_name )
@@ -948,6 +960,7 @@ extern void cop_setup( void )
 
 extern void cop_teardown( void )
 {
+    cop_font    *   old;
 
     if( bin_device != NULL ) {
         mem_free( bin_device );
@@ -960,9 +973,6 @@ extern void cop_teardown( void )
     }
 
     if( bin_fonts != NULL) {
-
-        cop_font    *   old;
-
         while( bin_fonts != NULL) {
             old = bin_fonts;
             bin_fonts = bin_fonts->next_font;
@@ -995,6 +1005,7 @@ extern void fb_start( void )
 
     if( bin_device->pauses.start_pause != NULL ) \
             df_interpret_device_functions( bin_device->pauses.start_pause->text );
+
     df_populate_device_table();
 
     /* Interpret the START :INIT block. */

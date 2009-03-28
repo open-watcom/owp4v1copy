@@ -33,7 +33,9 @@
 *                   add_symvar()
 *                   find_symvar()
 *                   free_resources()
+*                   free_symtab()
 *                   g_suicide()
+*                   get_systime
 *                   global_dict
 *                   mem_alloc()
 *                   mem_free()
@@ -49,6 +51,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "swchar.h"
 
@@ -152,6 +155,7 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, \
                 sym_flags f )
 {
     symvar  *   new     = NULL;
+    symvar  *   wk;
     symsub  *   newsub  = NULL;
 
     find_symvar( dict, name, subscript, &newsub );
@@ -164,6 +168,16 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, \
         new->next = NULL;
         strcpy_s( new->name, SYM_NAME_LENGTH + 1, name );
         new->sub_0 = newsub;
+
+        if( *dict == NULL ) {
+            *dict = new;
+        } else {
+            wk = *dict;
+            while( wk->next != NULL) {
+                wk = wk->next;
+            }
+            wk->next = new;
+        }
     } else {
         if( strcmp( newsub->value, val ) ) {
             if( strlen( newsub->value ) < strlen( val ) ) {
@@ -199,6 +213,40 @@ bool free_resources( errno_t in_errno )
     if( in_errno == ENOMEM) out_msg( "ERR_NOMEM_AVAIL\n" );
     else out_msg( "Out of file handles!\n" );
     return( false );
+}
+
+void free_symtab( void )
+{
+    symvar  *   old;
+
+    if( global_dict != NULL) {
+        while( global_dict != NULL) {
+            old = global_dict;
+            global_dict = global_dict->next;
+            if( old->sub_0 != NULL ) {
+                if( old->sub_0->value != NULL ) mem_free( old->sub_0->value );
+                mem_free( old->sub_0 );
+            }
+            mem_free( old );
+        }
+    }
+    return;
+}
+
+void get_systime( void )
+{
+            char        date_str[80];
+            char        time_str[80];
+            time_t      gtime;
+    struct tm           doc_tm;
+
+    gtime = time( NULL );
+    localtime_s( &gtime, &doc_tm );
+    strftime( date_str, 80, "%B %d, %Y", &doc_tm );
+    strftime( time_str, 80, "%H:%M:%S", &doc_tm );
+    printf( "%s %s\n", date_str, time_str );
+    add_symvar( &global_dict, "date", date_str, no_subscript, 0 );
+    add_symvar( &global_dict, "time", time_str, no_subscript, 0 );
 }
 
 
