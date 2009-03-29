@@ -230,6 +230,17 @@ int DoFindBackwards( range *r, long count )
 
 } /* DoFindBackwards */
 
+static void defaultRange( range *r )
+{
+    range->start.line = CurrentLineNumber;
+    range->start.column = CurrentColumn;
+    range->end.line = CurrentLineNumber;
+    range->end.column = CurrentColumn;
+    range->line_based = FALSE;
+    range->highlight = FALSE;
+    range->fix_range = FALSE;
+}
+
 /*
  * FancyDoFindMisc - an EVENT_MISC version of below
  */
@@ -242,7 +253,7 @@ int FancyDoFindMisc( void )
         // you cant search if theres no file!
         return( ERR_NO_FILE );
     }
-
+    defaulRange( &r );
     rc = FancyDoFind( &r, 1L );
 
     if( CurrentLineNumber != r.start.line ) {
@@ -327,6 +338,7 @@ int DoNextFindForwardMisc( void )
         // you cant search if theres no file!
         return( ERR_NO_FILE );
     }
+    defaulRange( &r );
     rc = getFindString( &r, TRUE, TRUE, TRUE );
     jumpTo( &r );
 
@@ -346,6 +358,7 @@ int DoNextFindBackwardsMisc( void )
         // you cant search if theres no file!
         return( ERR_NO_FILE );
     }
+    defaulRange( &r );
     rc = getFindString( &r, FALSE, TRUE, TRUE );
     jumpTo( &r );
 
