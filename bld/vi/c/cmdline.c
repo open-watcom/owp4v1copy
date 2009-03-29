@@ -293,7 +293,7 @@ int RunCommandLine( char *cl )
     }
     if( !n2f ) {
         if( !n1f ) {
-            n1 = n2 = CurrentLineNumber;
+            n1 = n2 = CurrentPos.line;
         } else {
             n2 = n1;
         }
@@ -910,8 +910,8 @@ int RunCommandLine( char *cl )
                     if( RCSCheckout( r, full1, NULL, NULL ) ) {
                         strcpy( dataBuff, CurrentFile->name );
                         rc = ERR_NO_ERR;
-                        row = CurrentLineNumber;
-                        col = CurrentColumn;
+                        row = CurrentPos.line;
+                        col = CurrentPos.column;
                         EditFile( dataBuff, TRUE );
                         GoToLineNoRelCurs( row );
                         GoToColumnOnCurrentLine( col );
@@ -950,8 +950,8 @@ int RunCommandLine( char *cl )
             if( RCSCheckin( r, CurrentFile->name, NULL, NULL ) ) {
                 rc = ERR_NO_ERR;
                 strcpy( dataBuff, CurrentFile->name );
-                row = CurrentLineNumber;
-                col = CurrentColumn;
+                row = CurrentPos.line;
+                col = CurrentPos.column;
                 EditFile( dataBuff, TRUE );
                 GoToLineNoRelCurs( row );
                 GoToColumnOnCurrentLine( col );

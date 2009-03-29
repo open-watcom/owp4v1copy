@@ -206,8 +206,8 @@ bool CheckAbbrev( char *data, int *ccnt )
         return( FALSE );
     }
 
-    i = CurrentColumn - 1 - (*ccnt);
-    j = CurrentColumn - 2;
+    i = CurrentPos.column - 1 - (*ccnt);
+    j = CurrentPos.column - 2;
     *ccnt = 0;
 
     /*
@@ -216,7 +216,7 @@ bool CheckAbbrev( char *data, int *ccnt )
     owl = WorkLine->len;
     WorkLine->len = ReplaceSubString( WorkLine->data, WorkLine->len,
                       i, j, curr->expand, strlen( curr->expand ) );
-    col = CurrentColumn + WorkLine->len - owl;
+    col = CurrentPos.column + WorkLine->len - owl;
     GoToColumn( col, WorkLine->len + 1 );
     return( TRUE );
 

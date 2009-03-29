@@ -47,9 +47,9 @@ void CurrentLineReplaceUndoStart( void )
     if( !EditFlags.Undo || UndoStack == NULL ) {
         return;
     }
-    cLine = CurrentLineNumber;
-    pageTop = TopOfPage;
-    cCol = CurrentColumn;
+    cLine = CurrentPos.line;
+    cCol = CurrentPos.column;
+    pageTop = LeftTopPos.line;
     lineSave = LineAlloc( CurrentLine->data, CurrentLine->len );
     lineSave->inf.ld.mark = CurrentLine->inf.ld.mark;
 
@@ -115,12 +115,12 @@ void CurrentLineReplaceUndoEnd( int endgrp )
         if( top != NULL && top->type == END_UNDO_GROUP ) {
             top = top->next;
             if( top != NULL && top->type == UNDO_INSERT_LINES ) {
-                if( top->data.del_range.end == CurrentLineNumber - 1 ) {
+                if( top->data.del_range.end == CurrentPos.line - 1 ) {
                     delrec = top;
                     top = top->next;
                     if( top != NULL && top->type == UNDO_DELETE_FCBS ) {
                         cfcb = top->data.fcbs.fcb_tail;
-                        if( cfcb->end_line == CurrentLineNumber - 2 ) {
+                        if( cfcb->end_line == CurrentPos.line - 2 ) {
                             /*
                              * FINALLY, we can add it. either
                              * add to current fcb or add a new
@@ -160,8 +160,8 @@ void CurrentLineReplaceUndoEnd( int endgrp )
      * build undo action
      */
     StartUndoGroupWithPosition( UndoStack, cLine, pageTop, cCol );
-    UndoDeleteFcbs( CurrentLineNumber - 1, cfcb, cfcb, UndoStack );
-    UndoInsert( CurrentLineNumber, CurrentLineNumber, UndoStack );
+    UndoDeleteFcbs( CurrentPos.line - 1, cfcb, cfcb, UndoStack );
+    UndoInsert( CurrentPos.line, CurrentPos.line, UndoStack );
     if( endgrp ) {
         EndUndoGroup( UndoStack );
     }

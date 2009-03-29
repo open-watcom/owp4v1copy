@@ -88,7 +88,7 @@ int AppendAnother( char *data )
         dontmove = TRUE;
     }
 
-    cln = CurrentLineNumber;
+    cln = CurrentPos.line;
     if( !beforeFlag ) {
         cln++;
     }

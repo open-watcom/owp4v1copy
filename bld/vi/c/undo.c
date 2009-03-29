@@ -70,13 +70,13 @@ void StartUndoGroupWithPosition( undo_stack *stack, linenum lne,
         return;
     }
     cundo->data.sdata.depth = 1;
-    cundo->data.sdata.line = lne;
+    cundo->data.sdata.p.line = lne;
     cundo->data.sdata.top = top;
     cundo->data.sdata.time_stamp = ClockTicks;
     if( col == 0 ) {
         col = 1;
     }
-    cundo->data.sdata.col = col;
+    cundo->data.sdata.p.column = col;
     PushUndoStack( cundo, stack );
 
     /*
@@ -320,7 +320,7 @@ void PatchDeleteUndo( undo_stack *stack )
  */
 void StartUndoGroup( undo_stack *us  )
 {
-    StartUndoGroupWithPosition( us, CurrentLineNumber, TopOfPage, CurrentColumn );
+    StartUndoGroupWithPosition( us, CurrentPos.line, LeftTopPos.line, CurrentPos.column );
 
 } /* StartUndoGroup */
 

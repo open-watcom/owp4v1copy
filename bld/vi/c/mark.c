@@ -90,7 +90,7 @@ int SetMark( void )
             return( ERR_NO_ERR );
         }
     }
-    return( SetGenericMark( CurrentLineNumber, CurrentColumn, key ) );
+    return( SetGenericMark( CurrentPos.line, CurrentPos.column, key ) );
 
 } /* SetMark */
 
@@ -131,7 +131,7 @@ int RemoveMarkFromLine( int no )
 
     assert( no > 0 && no <= MAX_MARKS + 1 );
     mark = MARK_PTR( no );
-    i = CGimmeLinePtr( mark->lineno, &fcb, &line );
+    i = CGimmeLinePtr( mark->p.line, &fcb, &line );
     if( i ) {
         /* hmmmm.... we are in trouble here I believe */
         /* should try and find it somewhere else */
@@ -141,7 +141,7 @@ int RemoveMarkFromLine( int no )
         }
         /* this gimme should be guaranteed to work since we did it in
            tryToFindMark */
-        CGimmeLinePtr( mark->lineno, &fcb, &line );
+        CGimmeLinePtr( mark->p.line, &fcb, &line );
     }
     if( line->inf.ld.mark != NO_MARK ) {
         if( line->inf.ld.mark == no ) {
@@ -217,8 +217,8 @@ int SetGenericMark( linenum num, int col, char mlet )
      */
     cmark->next = mline->inf.ld.mark;
     mline->inf.ld.mark = no;
-    cmark->lineno = num;
-    cmark->col = col;
+    cmark->p.line = num;
+    cmark->p.column = col;
     cmark->inuse = TRUE;
 
     Message1( "Mark '%c' set", mlet );
@@ -274,9 +274,9 @@ static int getAMark( int lineonly, linenum *ln, int *cl )
         return( i );
     }
 
-    *ln = m->lineno;
+    *ln = m->p.line;
     if( !lineonly ) {
-        *cl = m->col;
+        *cl = m->p.column;
     }
 
     return( ERR_NO_ERR );
@@ -311,8 +311,7 @@ static int goToMark( range *r )
     no = KEY_TO_NO( key );
     m = MARK_PTR( no );
     rc = VerifyMark( no, r->line_based );
-    r->start.line = m->lineno;
-    r->start.column = m->col;
+    r->start = m->p;
     return( rc );
 
 } /* goToMark */
@@ -339,13 +338,13 @@ int VerifyMark( int no, int lineonly )
         Error( GetErrorMsg( ERR_MARK_NOT_SET ), no + 'a' - 1 );
         return( DO_NOT_CLEAR_MESSAGE_WINDOW );
     }
-    i = CGimmeLinePtr( cmark->lineno, &cfcb, &cline );
+    i = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
     if( i ) {
         if( i == ERR_NO_SUCH_LINE ) {
             if( tryToFindMark( cmark, no ) ) {
                 return( invalidMark( cmark, no ) );
             }
-            i = CGimmeLinePtr( cmark->lineno, &cfcb, &cline );
+            i = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
             if( i ) {
                 return( i );
             }
@@ -357,7 +356,7 @@ int VerifyMark( int no, int lineonly )
         if( tryToFindMark( cmark, no ) ) {
             return( invalidMark( cmark, no ) );
         }
-        i = CGimmeLinePtr( cmark->lineno, &cfcb, &cline );
+        i = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
         if( i ) {
             return( i );
         }
@@ -367,7 +366,7 @@ int VerifyMark( int no, int lineonly )
         if( len == 0 ) {
             len = 1;
         }
-        if( cmark->col > len ) {
+        if( cmark->p.column > len ) {
             return( invalidMark( cmark, no) );
         }
     }
@@ -419,8 +418,8 @@ void AllocateMarkList( void )
     MarkList = MemAlloc( MARK_SIZE * (MAX_MARKS + 1) );
     SetMarkContext();
     currContext->inuse = TRUE;
-    currContext->lineno = 1;
-    currContext->col = 1;
+    currContext->p.line = 1;
+    currContext->p.column = 1;
 
 } /* AllocateMarkList */
 
@@ -464,7 +463,7 @@ static int tryToFindMark( mark *cmark, int no )
     }
     while( TRUE ) {
         if( MarkOnLine( cline, no ) ) {
-            cmark->lineno = lineno;
+            cmark->p.line = lineno;
             return( ERR_NO_ERR );
         }
         lineno++;
@@ -482,8 +481,7 @@ static int tryToFindMark( mark *cmark, int no )
 void MemorizeCurrentContext( void )
 {
     if( currContext != NULL ) {
-        currContext->lineno = CurrentLineNumber;
-        currContext->col = CurrentColumn;
+        currContext->p = CurrentPos;
     }
 
 } /* MemorizeCurrentContext */

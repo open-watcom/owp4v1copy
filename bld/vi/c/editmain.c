@@ -52,20 +52,12 @@ static event *nextEvent( void )
 
 static void defaultRange( range *range )
 {
-    range->start.line = CurrentLineNumber;
-    range->start.column = CurrentColumn;
-    range->end.line = CurrentLineNumber;
-    range->end.column = CurrentColumn;
+    range->start = CurrentPos;
+    range->end = CurrentPos;
     range->line_based = FALSE;
-    /*
-     * we don't fill in hi_start and hi-end - assume that if a routine
-     * is going to modify range->highlight then it had better set those
-     * other values to something as well.
-     */
     range->highlight = FALSE;
     range->fix_range = FALSE;
-
-} /* defaultRange */
+}
 
 /*
  * doOperator - process an operator event
@@ -113,7 +105,7 @@ static int doOperator( event *ev )
     if( next_type == EVENT_OP ) {
         // op/op only valid when ops are equal
         if( next == ev ) {
-            rc = GetLineRange( &range, count, CurrentLineNumber );
+            rc = GetLineRange( &range, count, CurrentPos.line );
         }
     } else {
         // it had better be a move operation
@@ -128,7 +120,7 @@ static int doOperator( event *ev )
                         LastEvent == 'w' ) {
                 EditFlags.IsChangeWord = TRUE;
                 if( CurrentLine != NULL ) {
-                    if( !isspace( CurrentLine->data[CurrentColumn - 1] ) ) {
+                    if( !isspace( CurrentLine->data[CurrentPos.column - 1] ) ) {
                         next = &EventList['e'];
                         range.fix_range = FALSE;
                     }
@@ -190,8 +182,8 @@ int DoMove( event *ev )
         type = ev->b.type;
     }
     if( rc == ERR_NO_ERR ) {
-        curcol = CurrentColumn;
-        if( range.start.line != CurrentLineNumber ) {
+        curcol = CurrentPos.column;
+        if( range.start.line != CurrentPos.line ) {
             if( type == EVENT_REL_MOVE ) {
                 GoToLineRelCurs( range.start.line );
             } else {
@@ -223,14 +215,14 @@ static void ensureCursorDisplayed( void )
 
     if( ( EditFlags.Modeless == TRUE ) && ( CurrentFile != NULL ) ) {
         len = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-        if( CurrentLineNumber < TopOfPage ||
-            CurrentLineNumber > TopOfPage + len - 1 ) {
-            SetCurrentLine( CurrentLineNumber );
+        if( CurrentPos.line < LeftTopPos.line ||
+            CurrentPos.line > LeftTopPos.line + len - 1 ) {
+            SetCurrentLine( CurrentPos.line );
         }
 
-        wc = VirtualCursorPosition() - LeftColumn;
+        wc = VirtualCursorPosition() - LeftTopPos.column;
         if( !ColumnInWindow( wc, &diff ) ) {
-            SetCurrentColumn( CurrentColumn );
+            SetCurrentColumn( CurrentPos.column );
         }
     }
 }
@@ -538,7 +530,7 @@ int DoDigit( void )
     int i;
 
     if( LastEvent == '0' && RepeatDigits == 0 ) {
-        LeftColumn = 0;
+        LeftTopPos.column = 0;
         GoToColumnOK( 1 );
         DCDisplayAllLines();
         return( ERR_NO_ERR );

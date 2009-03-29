@@ -258,15 +258,15 @@ int ValidateCurrentLine( void )
 {
     int i;
 
-    if( CurrentLineNumber < 1 ) {
+    if( CurrentPos.line < 1 ) {
         return( SetCurrentLine( 1 ) );
     }
-    if( CurrentLineNumber > CurrentFile->fcb_tail->end_line ) {
-        i = CFindLastLine( &CurrentLineNumber );
+    if( CurrentPos.line > CurrentFile->fcb_tail->end_line ) {
+        i = CFindLastLine( &CurrentPos.line );
         if( i ) {
             return(i);
         }
     }
-    return( SetCurrentLine( CurrentLineNumber ) );
+    return( SetCurrentLine( CurrentPos.line ) );
 
 } /* ValidateCurrentLine */

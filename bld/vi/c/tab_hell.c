@@ -281,7 +281,7 @@ int GetVirtualCursorPosition( char *buff, int curs )
 
 int VirtualCursorPosition( void )
 {
-    return( VirtualCursorPosition2( CurrentColumn ) );
+    return( VirtualCursorPosition2( CurrentPos.column ) );
 
 } /* VirtualCursorPosition */
 

@@ -160,10 +160,10 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
          * run through each line, flipping globmatch flag on lines
          */
         CGimmeLinePtr( n1, &CurrentFcb, &CurrentLine );
-        CurrentLineNumber = n1;
+        CurrentPos.line = n1;
         while( TRUE ) {
             i = FALSE;
-            while( CurrentLine != NULL && CurrentLineNumber <= n2 ) {
+            while( CurrentLine != NULL && CurrentPos.line <= n2 ) {
                 if( CurrentLine->inf.ld.globmatch ) {
                     CurrentLine->inf.ld.globmatch = FALSE;
                 } else {
@@ -171,10 +171,10 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
                     CurrentLine->inf.ld.globmatch = TRUE;
                 }
                 CurrentLine = CurrentLine->next;
-                CurrentLineNumber++;
+                CurrentPos.line++;
             }
             CurrentFcb->globalmatch = i;
-            if( CurrentLineNumber > n2 ) {
+            if( CurrentPos.line > n2 ) {
                 break;
             }
             CurrentFcb = CurrentFcb->next;
@@ -204,14 +204,14 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
                  * find a line
                  */
                 FetchFcb( CurrentFcb );
-                CurrentLineNumber = CurrentFcb->start_line;
+                CurrentPos.line = CurrentFcb->start_line;
                 CurrentLine = CurrentFcb->line_head;
                 while( CurrentLine != NULL ) {
                     if( CurrentLine->inf.ld.globmatch ) {
                         todo = TRUE;
                         break;
                     }
-                    CurrentLineNumber++;
+                    CurrentPos.line++;
                     CurrentLine = CurrentLine->next;
                 }
 
@@ -235,14 +235,14 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
          */
         CurrentLine->inf.ld.globmatch = FALSE;
         cfcb = CurrentFcb;
-        CurrentColumn = 1;
+        CurrentPos.column = 1;
 
         /*
          * build command line
          */
         changecnt++;
         strcpy( cmd, sstr );
-        ProcessingMessage( CurrentLineNumber );
+        ProcessingMessage( CurrentPos.line );
 
         rc = RunCommandLine( cmd );
         if( rc > 0 ) {
@@ -279,7 +279,7 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
     EditFlags.DisplayHold = FALSE;
     EndUndoGroup( UndoStack );
     RestoreCurrentFilePos();
-    i = SetCurrentLine( CurrentLineNumber );
+    i = SetCurrentLine( CurrentPos.line );
     if( i ) {
         if( i == ERR_NO_SUCH_LINE ) {
             SetCurrentLine( 1 );

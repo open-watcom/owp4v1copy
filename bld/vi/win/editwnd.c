@@ -292,8 +292,8 @@ static bool isMouseButtonDown( void )
  */
 static bool jumpToCoord( int row, int col )
 {
-    GoToLineRelCurs( TopOfPage + row - 1 );
-    col = RealCursorPosition( col + LeftColumn );
+    GoToLineRelCurs( LeftTopPos.line + row - 1 );
+    col = RealCursorPosition( col + LeftTopPos.column );
     GoToColumnOnCurrentLine( col );
     return( TRUE );
 
@@ -590,9 +590,9 @@ void EditDrawScrollBars( HWND hwnd )
 
     wd = DATA_FROM_ID( hwnd );
     if( wd->info != NULL ) {
-        PositionVerticalScrollThumb( hwnd, wd->info->TopOfPage,
+        PositionVerticalScrollThumb( hwnd, wd->info->LeftTopPos.line,
                     wd->info->CurrentFile->fcb_tail->end_line );
-        PositionHorizontalScrollThumb( hwnd, wd->info->LeftColumn );
+        PositionHorizontalScrollThumb( hwnd, wd->info->LeftTopPos.column );
     }
 
 } /* EditDrawScrollBars */
@@ -611,22 +611,22 @@ static void doVScroll( HWND hwnd, UINT wparam, LONG lparam )
     lparam = lparam;            // Shut up the compiler for the NT version
     wd = DATA_FROM_ID( hwnd );
 
-    oldTopOfPage = TopOfPage;
+    oldTopOfPage = LeftTopPos.line;
     EditFlags.ScrollCommand = TRUE;
     switch( GET_WM_VSCROLL_CODE( wparam, lparam ) ) {
     case SB_LINEUP:
-        newTopOfPage = TopOfPage - 1;
+        newTopOfPage = LeftTopPos.line - 1;
         if( EditFlags.JumpyScroll ) {
-            newTopOfPage = TopOfPage - SCROLL_VLINE;
+            newTopOfPage = LeftTopPos.line - SCROLL_VLINE;
         }
         MoveScreenML( newTopOfPage );
         break;
     case SB_LINEDOWN:
-        newTopOfPage = TopOfPage + 1;
+        newTopOfPage = LeftTopPos.line + 1;
         if( EditFlags.JumpyScroll ) {
-            newTopOfPage = TopOfPage + SCROLL_VLINE;
+            newTopOfPage = LeftTopPos.line + SCROLL_VLINE;
         }
-        scrollAmount = newTopOfPage - TopOfPage;
+        scrollAmount = newTopOfPage - LeftTopPos.line;
         MoveScreenML( newTopOfPage );
         break;
     case SB_PAGEUP:
@@ -643,19 +643,19 @@ static void doVScroll( HWND hwnd, UINT wparam, LONG lparam )
     EditFlags.ScrollCommand = FALSE;
 
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-    diff = TopOfPage - oldTopOfPage;
+    diff = LeftTopPos.line - oldTopOfPage;
     if( diff != 0 ){
         if( abs( diff ) > text_lines / 2 ) {
             //  faster to redraw whole screen
             DCInvalidateAllLines();
-            GoToLineNoRelCurs( TopOfPage );
+            GoToLineNoRelCurs( LeftTopPos.line );
             DCDisplayAllLines();
             DCUpdate();
         } else {
             //  faster to shift screen up and redraw rest
             // but its difficult to figure out how!
             DCInvalidateAllLines();
-            GoToLineNoRelCurs( TopOfPage );
+            GoToLineNoRelCurs( LeftTopPos.line );
             DCDisplayAllLines();
             DCUpdate();
         }
@@ -677,16 +677,16 @@ static void doHScroll( HWND hwnd, UINT wparam, LONG lparam )
     EditFlags.ScrollCommand = TRUE;
     switch( GET_WM_HSCROLL_CODE( wparam, lparam ) ) {
     case SB_LINEUP:
-        newLeftColumn = LeftColumn - 1;
+        newLeftColumn = LeftTopPos.column - 1;
         if( EditFlags.JumpyScroll ) {
-            newLeftColumn = LeftColumn - SCROLL_HLINE;
+            newLeftColumn = LeftTopPos.column - SCROLL_HLINE;
         }
         MoveScreenLeftRightML( newLeftColumn );
         break;
     case SB_LINEDOWN:
-        newLeftColumn = LeftColumn + 1;
+        newLeftColumn = LeftTopPos.column + 1;
         if( EditFlags.JumpyScroll ) {
-            newLeftColumn = LeftColumn + SCROLL_HLINE;
+            newLeftColumn = LeftTopPos.column + SCROLL_HLINE;
         }
         MoveScreenLeftRightML( newLeftColumn );
         break;
@@ -708,7 +708,7 @@ static void doHScroll( HWND hwnd, UINT wparam, LONG lparam )
     SetWindowCursor();
     SetWindowCursorForReal();
 
-    PositionHorizontalScrollThumb( hwnd, LeftColumn );
+    PositionHorizontalScrollThumb( hwnd, LeftTopPos.column );
 } /* doHScroll */
 
 /*

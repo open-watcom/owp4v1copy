@@ -63,12 +63,12 @@ int ReplaceChar( void )
 
         buff = StaticAlloc();
         GetAutoIndentAmount( buff, 0, FALSE );
-        CurrentLine->data[CurrentColumn - 1] = (char) 1;
+        CurrentLine->data[CurrentPos.column - 1] = (char) 1;
         SaveCurrentFilePos();
-        SplitUpLine( CurrentLineNumber );
+        SplitUpLine( CurrentPos.line );
         RestoreCurrentFilePos();
         EndUndoGroup( UndoStack );
-        GoToLineNoRelCurs( CurrentLineNumber + 1 );
+        GoToLineNoRelCurs( CurrentPos.line + 1 );
         GoToColumnOnCurrentLine( 1 );
         if( EditFlags.AutoIndent ) {
             ai = strlen( buff );
@@ -97,7 +97,7 @@ int ReplaceChar( void )
             key = '\t';
         }
         GetCurrentLine();
-        start = CurrentColumn - 1;
+        start = CurrentPos.column - 1;
         end = start + (int) GetRepeatCount();
         if( end > WorkLine->len ) {
             end = WorkLine->len;
@@ -112,7 +112,7 @@ int ReplaceChar( void )
         redrawAll |= SSKillsFlags( key );
         DisplayWorkLine( redrawAll );
         ReplaceCurrentLine();
-        GoToColumnOK( CurrentColumn );
+        GoToColumnOK( CurrentPos.column );
 
     }
 

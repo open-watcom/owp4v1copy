@@ -71,8 +71,7 @@ int PushFileStack( void )
 
     fs = MemAlloc( sizeof( file_stack ) + len );
     memcpy( fs->fname, CurrentFile->name, len + 1 );
-    fs->lineno = CurrentLineNumber;
-    fs->col = CurrentColumn;
+    fs->p = CurrentPos;
 
     if( fDepth == MaxPush ) {
         for( i = 1; i < MaxPush; i++ ) {
@@ -122,8 +121,8 @@ int PopFileStack( void )
         MemFree( fs );
         return( rc );
     }
-    GoToLineNoRelCurs( fs->lineno );
-    GoToColumnOnCurrentLine( fs->col );
+    GoToLineNoRelCurs( fs->p.line );
+    GoToColumnOnCurrentLine( fs->p.column );
     MemFree( fs );
     Message2( "%d entries left on file stack", fDepth );
     return( ERR_NO_ERR );

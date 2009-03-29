@@ -216,7 +216,7 @@ int DCUpdate( void )
     hasMouse = DisplayMouse( FALSE );
 #endif
 
-    rc = CGimmeLinePtr( TopOfPage, &fcb, &line );
+    rc = CGimmeLinePtr( LeftTopPos.line, &fcb, &line );
     if( rc ) {
         return( rc );
     }
@@ -225,7 +225,7 @@ int DCUpdate( void )
     dc = CurrentInfo->dc;
     firstLine = TRUE;
     firstTilde = TRUE;
-    for( i = 0, line_no = TopOfPage; i < nlines; i++, line_no++ ) {
+    for( i = 0, line_no = LeftTopPos.line; i < nlines; i++, line_no++ ) {
         if( dc->display ) {
             if( line ) {
                 if( firstLine ) {
@@ -247,8 +247,8 @@ int DCUpdate( void )
                     }
                 }
                 displayOffset = RealLineLen( displayText );
-                if( displayOffset > LeftColumn ) {
-                    displayOffset = LeftColumn;
+                if( displayOffset > LeftTopPos.column ) {
+                    displayOffset = LeftTopPos.column;
                 }
             } else {
                 if( EditFlags.DrawTildes ) {
@@ -371,7 +371,7 @@ void DCDisplaySomeLines( int start, int end )
     shaveRange( &start, &end );
 
     cfcb = CurrentFcb;
-    line_no = TopOfPage + start;
+    line_no = LeftTopPos.line + start;
     rc = CGimmeLinePtr( line_no, &cfcb, &line );
     if( rc ) {
         if( rc != ERR_NO_SUCH_LINE ) {

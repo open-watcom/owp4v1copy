@@ -47,8 +47,8 @@ static bool     lastFindWasForward;
 static bool     lastFindWasWrap;
 #endif
 
-static linenum  lastLine = 0, cLineNumber = 0;
-static int      lastCol = 0, cColumn = 0;
+static i_mark   lastPos = { 0, 0 };
+static i_mark   currPos = { 0, 0 };
 
 static int  setLineCol( char *, linenum *, int *, int );
 static int  processFind( range *, char *, int (*)( char *, long *, int *, int * ) );
@@ -86,8 +86,8 @@ void HilightSearchString( linenum lineno, int col, int slen )
  */
 void ResetLastFind( void )
 {
-    lastLine = 0L;
-    lastCol = 0;
+    lastPos.line = 0;
+    lastPos.column = 0;
 
 } /* ResetLastFind */
 
@@ -232,13 +232,21 @@ int DoFindBackwards( range *r, long count )
 
 static void defaultRange( range *r )
 {
-    range->start.line = CurrentLineNumber;
-    range->start.column = CurrentColumn;
-    range->end.line = CurrentLineNumber;
-    range->end.column = CurrentColumn;
-    range->line_based = FALSE;
-    range->highlight = FALSE;
-    range->fix_range = FALSE;
+    r->start = CurrentPos;
+    r->end = CurrentPos;
+    r->line_based = FALSE;
+    r->highlight = FALSE;
+    r->fix_range = FALSE;
+}
+
+void jumpTo( range *r )
+{
+    if( CurrentPos.line != r->start.line ) {
+        GoToLineNoRelCurs( r->start.line );
+    }
+    if( CurrentPos.column != r->start.column ) {
+        GoToColumnOK( r->start.column );
+    }
 }
 
 /*
@@ -253,15 +261,10 @@ int FancyDoFindMisc( void )
         // you cant search if theres no file!
         return( ERR_NO_FILE );
     }
-    defaulRange( &r );
+    defaultRange( &r );
     rc = FancyDoFind( &r, 1L );
+    jumpTo( &r );
 
-    if( CurrentLineNumber != r.start.line ) {
-        GoToLineNoRelCurs( r.start.line );
-    }
-    if( CurrentColumn != r.start.column ) {
-        GoToColumnOK( r.start.column );
-    }
     return( rc );
 
 } /* FancyDoFindMisc */
@@ -316,16 +319,6 @@ int DoNextFindBackwards( range *r, long count )
 } /* DoNextFindBackwards */
 
 
-void jumpTo( range *r )
-{
-    if( CurrentLineNumber != r->start.line ) {
-        GoToLineNoRelCurs( r->start.line );
-    }
-    if( CurrentColumn != r->start.column ) {
-        GoToColumnOK( r->start.column );
-    }
-}
-
 /*
  * DoNextFindForwardMisc - search again, based on last string (EVENT_MISC)
  */
@@ -338,7 +331,7 @@ int DoNextFindForwardMisc( void )
         // you cant search if theres no file!
         return( ERR_NO_FILE );
     }
-    defaulRange( &r );
+    defaultRange( &r );
     rc = getFindString( &r, TRUE, TRUE, TRUE );
     jumpTo( &r );
 
@@ -358,7 +351,7 @@ int DoNextFindBackwardsMisc( void )
         // you cant search if theres no file!
         return( ERR_NO_FILE );
     }
-    defaulRange( &r );
+    defaultRange( &r );
     rc = getFindString( &r, FALSE, TRUE, TRUE );
     jumpTo( &r );
 
@@ -460,8 +453,8 @@ int GetFind( char *st, linenum *ln1, int *col1, int *len1, int flag )
             col--;
         }
         len = GetCurrRegExpLength();
-        lastLine = lineno;
-        lastCol = col;
+        lastPos.line = lineno;
+        lastPos.column = col;
         *ln1 = lineno;
         *col1 = col;
         *len1 = len;
@@ -475,11 +468,11 @@ int GetFind( char *st, linenum *ln1, int *col1, int *len1, int flag )
                 rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
             }
             if( flag & FINDFL_FORWARD ) {
-                lastCol -= 1;
+                lastPos.column -= 1;
             } else {
-                lastCol += 1;
+                lastPos.column += 1;
             }
-            lastLine = CurrentLineNumber;
+            lastPos.line = CurrentPos.line;
         }
 
     }
@@ -504,20 +497,20 @@ static int setLineCol( char *st, linenum *lineno, int *col, int flag )
         if( lastFind == NULL ) {
             return( ERR_NO_PREVIOUS_SEARCH_STRING );
         }
-        if( lastLine != 0 && cColumn == CurrentColumn &&
-            cLineNumber == CurrentLineNumber ) {
-            *lineno = lastLine;
+        if( lastPos.line != 0 && currPos.column == CurrentPos.column &&
+            currPos.line == CurrentPos.line ) {
+            *lineno = lastPos.line;
             if( flag & FINDFL_FORWARD ) {
-                *col = lastCol + 1;
+                *col = lastPos.column + 1;
             } else {
-                *col = lastCol - 2;
+                *col = lastPos.column - 2;
             }
         } else {
-            *lineno = CurrentLineNumber;
+            *lineno = CurrentPos.line;
             if( flag & FINDFL_FORWARD ) {
-                *col = CurrentColumn;
+                *col = CurrentPos.column;
             } else {
-                *col = CurrentColumn - 2;
+                *col = CurrentPos.column - 2;
             }
         }
         AddString2( &sStr, lastFind );
@@ -526,11 +519,11 @@ static int setLineCol( char *st, linenum *lineno, int *col, int flag )
             AddString2( &lastFind, st );
         }
         AddString2( &sStr, st );
-        *lineno = CurrentLineNumber;
+        *lineno = CurrentPos.line;
         if( flag & FINDFL_FORWARD ) {
-            *col = CurrentColumn;
+            *col = CurrentPos.column;
         } else {
-            *col = CurrentColumn - 2;
+            *col = CurrentPos.column - 2;
         }
     }
 
@@ -577,10 +570,8 @@ static int setLineCol( char *st, linenum *lineno, int *col, int flag )
  */
 void SaveFindRowColumn( void )
 {
-    cColumn = CurrentColumn;
-    cLineNumber = CurrentLineNumber;
-
-} /* SaveFindRowColumn */
+    currPos = CurrentPos;
+}
 
 /*
  * ColorFind - find string and color it

@@ -43,7 +43,7 @@ extern void Out43( unsigned char );
 extern void Out42( unsigned char );
 extern U_INT DosMaxAlloc( void );
 extern void (interrupt _FAR *DosGetVect( char ))( void );
-extern void DosSetVect( char, void (interrupt _FAR *)( void ));
+extern void DosSetVect( char, void (interrupt *)( void ));
 #endif
 
 extern long DosGetFullPath( char *, char * );

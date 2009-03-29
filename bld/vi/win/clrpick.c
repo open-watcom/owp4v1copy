@@ -105,7 +105,7 @@ static void sendNewColourCurrentWindow( NewColourOps op )
 
     // SStyle expect real not virtual columns!
     // Hmmm.
-    line_num = (linenum)(TopOfPage + row - 1);
+    line_num = (linenum)(LeftTopPos.line + row - 1);
     col = RealCursorPositionOnLine( line_num, col );
 
 

@@ -242,7 +242,7 @@ void MyTabbedTextOut( HDC hdc,
             GetCurrentPositionEx( hdc, p );
             new.left = p->x;
             new.right = (WinVirtualCursorPosition(otmp,tstring-otmp)
-                           -LeftColumn) * FontAverageWidth(thisFont);
+                           -LeftTopPos.column) * FontAverageWidth(thisFont);
             new.top = rect->top;
             new.bottom = rect->bottom;
             FillRect(hdc, &new, thisBrush );

@@ -44,10 +44,10 @@ char _NEAR      MEMORIZE_MODE[]="Memorize Mode ";
 char _NEAR      CONFIG_FILE[] = CFG_NAME;
 char _NEAR      SingleBlank[] = " ";
 char _NEAR      SingleSlash[] = "/";
-char * _NEAR    BoolStr[] = { "FALSE", "TRUE" };
+char _NEAR      * _NEAR BoolStr[] = { "FALSE", "TRUE" };
 
 /* edit options */
-char * _NEAR EditOpts[] =  {
+char _NEAR * _NEAR EditOpts[] =  {
     "<F1> Go To",
     "<F2> Edit",
     "<F3> Get All"
@@ -104,10 +104,8 @@ file            *CurrentFile;
 fcb             *CurrentFcb;
 line            *CurrentLine;
 line            *WorkLine;
-linenum         CurrentLineNumber = 1;
-linenum         TopOfPage = 1;
-int             CurrentColumn = 1;
-int             LeftColumn;
+i_mark          CurrentPos = { 1, 1 };
+i_mark          LeftTopPos = { 1, 0 };
 int             ColumnDesired = 1;
 window_id       CurrentWindow = (window_id)-1;
 window_id       MessageWindow = (window_id)-1;

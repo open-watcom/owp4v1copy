@@ -100,13 +100,17 @@ typedef struct alias_list {
  */
 typedef long linenum;
 
+typedef struct i_mark {
+    linenum     line;
+    int         column;
+} i_mark;
+
 /*
  * file stack
  */
 typedef struct file_stack {
-    linenum             lineno;
-    int                 col;
-    char                fname[1];
+    i_mark      p;
+    char        fname[1];
 } file_stack;
 
 /*
@@ -267,18 +271,12 @@ typedef struct file {
  * mark setting
  */
 typedef struct {
-    linenum     lineno;         // line number that mark is on
+    i_mark      p;              // line number and column number that mark is on
     char        next;           // pointer to next mark on the same line
-    vi_ushort   col     : 12;   // column that mark is on
     vi_ushort   inuse   : 1;    // mark is being used
     vi_ushort   spare   : 3;
 } mark;
 #define MARK_SIZE sizeof( mark )
-
-typedef struct i_mark {
-    linenum     line;
-    int         column;
-} i_mark;
 
 typedef struct range {
     i_mark              start;
@@ -374,8 +372,9 @@ typedef struct {
 } undo_delete;
 
 typedef struct {
-    linenum     line, top;
-    short       col, depth;
+    i_mark      p;
+    linenum     top;
+    short       depth;
     long        time_stamp;
 } undo_start;
 
@@ -402,15 +401,13 @@ typedef struct undo_stack {
 } undo_stack;
 
 typedef struct select_rgn {
+    i_mark      start;
+    i_mark      end;
+    int         start_col_v;
     vi_ushort   selected    : 1;
     vi_ushort   lines       : 1;
     vi_ushort   dragging    : 1;
     vi_ushort   empty       : 13;
-    linenum     start_line;
-    linenum     end_line;
-    int         start_col;
-    int         end_col;
-    int         start_col_v;
 } select_rgn;
 
 /*
@@ -419,8 +416,8 @@ typedef struct select_rgn {
 typedef struct info {
     struct info *next, *prev;
     file        *CurrentFile;
-    linenum     CurrentLineNumber, TopOfPage;
-    int         CurrentColumn, LeftColumn;
+    i_mark      CurrentPos;
+    i_mark      LeftTopPos;
     undo_stack  *UndoStack, *UndoUndoStack;
     int         CurrentUndoItem, CurrentUndoUndoItem;
     window_id   CurrNumWindow;

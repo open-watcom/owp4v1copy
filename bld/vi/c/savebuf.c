@@ -135,9 +135,9 @@ static int insertGenericSavebuf( int buf, int afterflag )
             break;
         }
         if( afterflag ) {
-            scol = CurrentColumn;
+            scol = CurrentPos.column;
         } else {
-            scol = CurrentColumn - 1;
+            scol = CurrentPos.column - 1;
         }
         CurrentLineReplaceUndoStart();
         GetCurrentLine();
@@ -180,9 +180,9 @@ static int insertGenericSavebuf( int buf, int afterflag )
             rc = InsertLinesAtCursor( head, tail, UndoStack );
         } else {
             if( afterflag) {
-                rc = InsertLines( CurrentLineNumber, head, tail, UndoStack );
+                rc = InsertLines( CurrentPos.line, head, tail, UndoStack );
             } else {
-                rc = InsertLines( CurrentLineNumber - 1, head, tail, UndoStack );
+                rc = InsertLines( CurrentPos.line - 1, head, tail, UndoStack );
             }
         }
         break;

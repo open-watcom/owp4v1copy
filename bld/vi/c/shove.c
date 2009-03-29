@@ -67,7 +67,7 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
     /*
      * process all lines
      */
-    for( CurrentLineNumber = s; CurrentLineNumber <= e; CurrentLineNumber++ ) {
+    for( CurrentPos.line = s; CurrentPos.line <= e; CurrentPos.line++ ) {
 
         /*
          * Add/Subtract leading tab space
@@ -80,7 +80,7 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
         fullcnt += AddLeadingTabSpace( &WorkLine->len, WorkLine->data, shv );
         ReplaceCurrentLine();
 
-        if( CurrentLineNumber != e ) {
+        if( CurrentPos.line != e ) {
             i = CGimmeNextLinePtr( &CurrentFcb, &CurrentLine );
             if( i ) {
                 RestoreCurrentFilePos();
@@ -100,7 +100,7 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
             Message2( "%l full lines not processed", fullcnt );
         }
     }
-    if( CurrentLineNumber >= s && CurrentLineNumber <= e ) {
+    if( CurrentPos.line >= s && CurrentPos.line <= e ) {
         CheckCurrentColumn();
     }
     DCDisplayAllLines();

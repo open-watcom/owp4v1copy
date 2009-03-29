@@ -80,8 +80,8 @@ int FindMatch( linenum *xln, int *xcol )
     /*
      * find start of match on this line
      */
-    ln = CurrentLineNumber;
-    cl = CurrentColumn - 1;
+    ln = CurrentPos.line;
+    cl = CurrentPos.column - 1;
 
     if( FindRegularExpression( matchd, &ln, cl, &linedata, ln, FALSE ) ) {
         return( ERR_NOTHING_TO_MATCH );

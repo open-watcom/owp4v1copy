@@ -475,7 +475,7 @@ bool GetTextForSpecialKey( int str_max, int event, char *tmp )
         tmp[str_max] = 0;
         break;
     case VI_KEY( ALT_L ):
-        i = CurrentColumn - 1;
+        i = CurrentPos.column - 1;
         i = ( i > 0 ) ? i : 0;
     case VI_KEY( CTRL_L ):
         if( CurrentLine == NULL ) {
@@ -492,16 +492,16 @@ bool GetTextForSpecialKey( int str_max, int event, char *tmp )
             break;
         }
         if( SelRgn.lines ) {
-            assert( SelRgn.start_line == SelRgn.end_line );
+            assert( SelRgn.start.line == SelRgn.end.line );
             i = 1;
             l = CurrentLine->len + 1;
         } else {
-            if( SelRgn.start_col < SelRgn.end_col ) {
-                i = SelRgn.start_col;
-                l = SelRgn.end_col - SelRgn.start_col + 1;
+            if( SelRgn.start.column < SelRgn.end.column ) {
+                i = SelRgn.start.column;
+                l = SelRgn.end.column - SelRgn.start.column + 1;
             } else {
-                i = SelRgn.end_col;
-                l = SelRgn.start_col - SelRgn.end_col + 1;
+                i = SelRgn.end.column;
+                l = SelRgn.start.column - SelRgn.end.column + 1;
             }
         }
         ExpandTabsInABuffer( &CurrentLine->data[i - 1], l, tmp, str_max );
@@ -525,7 +525,7 @@ void InsertTextForSpecialKey( int event, char *buff )
         return;
     }
 
-    line = CurrentLineNumber;
+    line = CurrentPos.line;
     type = INSERT_BEFORE;
     if( event == VI_KEY( CTRL_O ) ) {
         type = INSERT_AFTER;
@@ -553,7 +553,7 @@ static int specialKeyFilter( input_buffer *input, int event )
     case VI_KEY( CTRL_R ):
         if( !SelRgn.selected ||
             ( SelRgn.lines &&
-            ( SelRgn.start_line != SelRgn.end_line ) ) ) {
+            ( SelRgn.start.line != SelRgn.end.line ) ) ) {
             MyBeep();
             break;
         }

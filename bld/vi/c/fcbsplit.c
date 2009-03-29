@@ -182,7 +182,7 @@ int CheckCurrentFcbCapacity( void )
      * as well, new fcb had better have the same display status as the old
      */
     CurrentFcb->next->on_display = CurrentFcb->on_display;
-    if( CurrentLineNumber > CurrentFcb->end_line ) {
+    if( CurrentPos.line > CurrentFcb->end_line ) {
         CurrentFcb = CurrentFcb->next;
         FetchFcb( CurrentFcb );
     }

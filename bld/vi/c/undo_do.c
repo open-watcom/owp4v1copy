@@ -132,9 +132,9 @@ static int realUndo( undo_stack *stack, undo_stack *us )
                 done = TRUE;
             }
             if( cundo->data.sdata.depth == 1 ) {
-                lne = cundo->data.sdata.line;
+                lne = cundo->data.sdata.p.line;
                 top = cundo->data.sdata.top;
-                col = cundo->data.sdata.col;
+                col = cundo->data.sdata.p.column;
             }
             break;
 
@@ -172,9 +172,9 @@ static int realUndo( undo_stack *stack, undo_stack *us )
 
     CMergeAllFcbs();
     EditFlags.DisplayHold = FALSE;
-    TopOfPage = top;
+    LeftTopPos.line = top;
     SetCurrentLineNumber( lne );
-    CurrentColumn = 1;
+    CurrentPos.column = 1;
     CGimmeLinePtr( lne, &CurrentFcb, &CurrentLine );
     GoToColumnOK( col );
     UpdateStatusWindow();

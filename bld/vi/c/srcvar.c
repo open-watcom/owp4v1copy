@@ -62,7 +62,7 @@ void VarAddRandC( void )
         len = CurrentLine->len;
     }
 
-    VarAddGlobalLong( "R", CurrentLineNumber );
+    VarAddGlobalLong( "R", CurrentPos.line );
     VarAddGlobalLong( "Linelen", len );
     vc = VirtualCursorPosition();
     VarAddGlobalLong( "C", (long) vc );

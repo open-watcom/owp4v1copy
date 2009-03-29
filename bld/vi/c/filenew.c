@@ -164,10 +164,11 @@ static int createNewFile( char *name, bool same_file )
     /*
      * create info entry
      */
-    CurrentLineNumber = 0;
-    ColumnDesired = CurrentColumn = 1;
-    TopOfPage = 1;
-    LeftColumn = 0;
+    CurrentPos.line = 0;
+    CurrentPos.column = 1;
+    ColumnDesired = 1;
+    LeftTopPos.line = 1;
+    LeftTopPos.column = 0;
     if( !same_file ) {
         AllocateUndoStacks();
     }

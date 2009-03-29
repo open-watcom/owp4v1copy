@@ -80,7 +80,7 @@ static bool handleKey( HWND hwnd, int ch, bool process )
     }
     break;
     case VI_KEY( CTRL_R ):
-    if( !SelRgn.selected || ( SelRgn.lines && ( SelRgn.start_line != SelRgn.end_line ) ) ) {
+    if( !SelRgn.selected || ( SelRgn.lines && ( SelRgn.start.line != SelRgn.end.line ) ) ) {
         return( FALSE );
     }
     case VI_KEY( CTRL_W ):

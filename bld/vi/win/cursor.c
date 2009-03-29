@@ -135,7 +135,7 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
 
     assert( dc_line->valid );
 
-    if( dc_line->start_col != LeftColumn ) {
+    if( dc_line->start_col != LeftTopPos.column ) {
         // not in cache -> not on screen -> not displayed
         *x = -10;
         *width = 0;
@@ -153,7 +153,7 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
         // for any line but the current one!
 
         // if( thisLine == CurrentLine ){
-            int real_left = RealCursorPosition( LeftColumn+1 );
+            int real_left = RealCursorPosition( LeftTopPos.column + 1 );
             old_col = col;
             col = RealCursorPosition( col+1 ) - real_left;
 
@@ -234,7 +234,7 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
                 // the first tab. this should be the tab boundry.
                 int dist = (old_col+1) - (end_str-cur_pos);
                 // unless the end_str was also a tab, So we round down.
-                left = ( dist - (dist%HardTab) - LeftColumn ) *avg_width;
+                left = ( dist - (dist%HardTab) - LeftTopPos.column ) *avg_width;
 
                 cur_pos++;
             }
@@ -251,7 +251,7 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
         // ... and find the position and width of the cursor.
         if( *end_str == '\t' ){
             // in strange case, tab may start before end of prev string
-            end_tab = (old_col - LeftColumn + 1 )*avg_width;
+            end_tab = (old_col - LeftTopPos.column + 1 )*avg_width;
             *x = min( left + extent, end_tab );
             *width = max( end_tab - *x, 1 );
             funny = 0;
@@ -281,8 +281,8 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
 int PixelFromColumnOnCurrentLine( int col )
 {
     int         x, w;
-    getCursorInfo( CurrentWindow, CurrentLineNumber - TopOfPage + 1,
-                   col - LeftColumn, &x, &w );
+    getCursorInfo( CurrentWindow, CurrentPos.line - LeftTopPos.line + 1,
+                   col - LeftTopPos.column, &x, &w );
 
     return( x );
 }

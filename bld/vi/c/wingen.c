@@ -167,16 +167,16 @@ void SetWindowCursorForReal( void )
         return;
     }
 #ifndef __WIN__
-    SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber - TopOfPage + 1),
-                            VirtualCursorPosition() - LeftColumn );
+    SetGenericWindowCursor( CurrentWindow, (int) (CurrentPos.line - LeftTopPos.line + 1),
+                            VirtualCursorPosition() - LeftTopPos.column );
 #else
     // for windows assume tabs to be of lenght 1
     if( !EditFlags.RealTabs ){
-        SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber - TopOfPage + 1),
-                                VirtualCursorPosition() - LeftColumn );
+        SetGenericWindowCursor( CurrentWindow, (int) (CurrentPos.line - LeftTopPos.line + 1),
+                                VirtualCursorPosition() - LeftTopPos.column );
     } else {
 
-        SetGenericWindowCursor( CurrentWindow, (int) (CurrentLineNumber - TopOfPage + 1),
+        SetGenericWindowCursor( CurrentWindow, (int) (CurrentPos.line - LeftTopPos.line + 1),
                                 VirtualCursorPosition() );
     }
 #endif
@@ -292,8 +292,8 @@ int CurrentWindowResize( int x1, int y1, int x2, int y2 )
         return( i );
     }
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-    if( CurrentLineNumber >= TopOfPage + text_lines ) {
-        ln = TopOfPage + text_lines - 1;
+    if( CurrentPos.line >= LeftTopPos.line + text_lines ) {
+        ln = LeftTopPos.line + text_lines - 1;
         GoToLineNoRelCurs( ln );
     }
     CheckLeftColumn();
@@ -306,7 +306,7 @@ int CurrentWindowResize( int x1, int y1, int x2, int y2 )
             return( i );
         }
     }
-    PositionVerticalScrollThumb( CurrentWindow, TopOfPage,
+    PositionVerticalScrollThumb( CurrentWindow, LeftTopPos.line,
                                  CurrentFile->fcb_tail->end_line );
 
     return( ERR_NO_ERR );

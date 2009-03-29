@@ -115,7 +115,7 @@ int GenericJoinCurrentLineToNext( bool remsp )
     /*
      * delete next line
      */
-    i = DeleteLineRange( CurrentLineNumber + 1, CurrentLineNumber + 1, 0 );
+    i = DeleteLineRange( CurrentPos.line + 1, CurrentPos.line + 1, 0 );
     if( i ) {
         return( i );
     }
@@ -158,25 +158,21 @@ int JoinCurrentLineToNext( void )
 } /* JoinCurrentLineToNext */
 
 #define MAX_FILE_STACK  5
-static file *oldFile[MAX_FILE_STACK];
-static linenum oldLineNo[MAX_FILE_STACK];
-static linenum oldPageTop[MAX_FILE_STACK];
-static int oldCol[MAX_FILE_STACK];
-static int oldLeftCol[MAX_FILE_STACK];
-static int stackDepth = -1;
+static file     *oldFile[ MAX_FILE_STACK ];
+static i_mark   oldCurrentPos[ MAX_FILE_STACK ];
+static i_mark   oldLeftTopPos[ MAX_FILE_STACK ];
+static int      stackDepth = -1;
+
 /*
  * SaveCurrentFilePos
  */
 void SaveCurrentFilePos( void )
 {
     stackDepth++;
-    oldFile[stackDepth] = CurrentFile;
-    oldLineNo[stackDepth] = CurrentLineNumber;
-    oldPageTop[stackDepth] = TopOfPage;
-    oldCol[stackDepth] = CurrentColumn;
-    oldLeftCol[stackDepth] = LeftColumn;
-
-} /* SaveCurrentFilePos */
+    oldFile[ stackDepth ] = CurrentFile;
+    oldCurrentPos[stackDepth] = CurrentPos;
+    oldLeftTopPos[stackDepth] = LeftTopPos;
+}
 
 /*
  * RestoreCurrentFilePos
@@ -185,17 +181,16 @@ void RestoreCurrentFilePos( void )
 {
     int i;
 
-    CurrentFile = oldFile[stackDepth];
-    CurrentLineNumber = oldLineNo[stackDepth];
-    TopOfPage = oldPageTop[stackDepth];
+    CurrentFile = oldFile[ stackDepth ];
+    CurrentPos = oldCurrentPos[ stackDepth ];
+    LeftTopPos = oldLeftTopPos[ stackDepth ];
 
     if( CurrentFile != NULL ) {
-
-        i = CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+        i = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
         if(  i == ERR_NO_SUCH_LINE ) {
             if( CurrentFile->fcb_tail != NULL ) {
-                CurrentLineNumber = CurrentFile->fcb_tail->end_line;
-                CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+                CurrentPos.line = CurrentFile->fcb_tail->end_line;
+                CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
             }
         }
     } else {
@@ -203,8 +198,6 @@ void RestoreCurrentFilePos( void )
         CurrentLine = NULL;
     }
 
-    CurrentColumn = oldCol[stackDepth];
-    LeftColumn = oldLeftCol[stackDepth];
     ValidateCurrentColumn();
     VarAddRandC();
     stackDepth--;

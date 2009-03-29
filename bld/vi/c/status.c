@@ -167,7 +167,7 @@ void UpdateStatusWindow( void )
                 line++;
                 break;
             case 'L':
-                num = CurrentLineNumber;
+                num = CurrentPos.line;
                 use_num = TRUE;
                 break;
             case 'C':

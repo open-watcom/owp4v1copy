@@ -194,7 +194,7 @@ int SrcAssign( char *data, vlist *vl )
      * regular expression subs.
      */
     if( rxflag && CurrentRegularExpression != NULL ) {
-        RegSub( CurrentRegularExpression, v1, tmp, CurrentLineNumber );
+        RegSub( CurrentRegularExpression, v1, tmp, CurrentPos.line );
         strcpy( v1, tmp );
     }
 

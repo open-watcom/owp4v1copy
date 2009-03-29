@@ -89,7 +89,7 @@ void DisplayWorkLine( bool killsFlags )
         DCDisplayAllLines();
     } else {
         // could speed up a little by calling directly
-        i = (int)( CurrentLineNumber - TopOfPage );
+        i = (int)( CurrentPos.line - LeftTopPos.line );
         DCDisplaySomeLines( i, i );
     }
 

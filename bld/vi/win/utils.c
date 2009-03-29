@@ -206,7 +206,7 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
         return;
     }
     assert( dc_line->valid );
-    if( dc_line->start_col < LeftColumn ) {
+    if( dc_line->start_col < LeftTopPos.column ) {
         // entire line has been scrolled off to left - go to end of that line
         *col = 10000;
         return;
@@ -260,7 +260,7 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
     if( EditFlags.RealTabs ){
         char    *start_str, *end_str;
         int     cur_pixel;
-        linenum line_num = (linenum)(TopOfPage + *row - 1);
+        linenum line_num = (linenum)(LeftTopPos.line + *row - 1);
         line    *line;
         fcb     *fcb;
         int     i,v_pos;
@@ -281,7 +281,7 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
                 lenBlock -=( rp - startCols );
             }
             #else
-            if( LeftColumn > 1 ){
+            if( LeftTopPos.column > 1 ){
                  // this only works for fixed fonts but its better than
                  // being wrong in every case; It's also correct
                  // immediately after every tab stop. And it should be
@@ -295,7 +295,7 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
             while( end_str != start_str + lenBlock ){
                 if( *end_str == '\t' ){
                     cur_pixel = ( WinVirtualCursorPosition( text, end_str+1-text )
-                               -LeftColumn )*avg_width;
+                               - LeftTopPos.column )*avg_width;
 
                     if( cur_pixel > x ) {
                         // we've found the new boundries for the block.
@@ -311,10 +311,10 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
             v_pos = WinVirtualCursorPosition( text, start_str - text + 1 ) - 1;
             if(start_str == text+startCols ) {
                 if( startCols != v_pos ){
-                    startCols = v_pos - LeftColumn;
+                    startCols = v_pos - LeftTopPos.column;
                 }
             } else {
-                startCols = v_pos - LeftColumn;
+                startCols = v_pos - LeftTopPos.column;
             }
             lenBlock = end_str - start_str;
             str = start_str;

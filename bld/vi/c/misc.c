@@ -591,7 +591,7 @@ int PrintHexValue( void )
     int i;
 
     if( CurrentFile != NULL ) {
-        i = CurrentLine->data[CurrentColumn - 1];
+        i = CurrentLine->data[CurrentPos.column - 1];
         if( i == '\0' ) {
             // of not on data, pretend are 'on' newline
             i = '\n';
@@ -648,14 +648,14 @@ int EnterHexKey( void )
      * add the char
      */
     GetCurrentLine();
-    for( i = WorkLine->len; i >= CurrentColumn - 1; i-- ) {
+    for( i = WorkLine->len; i >= CurrentPos.column - 1; i-- ) {
         WorkLine->data[i + 1] = WorkLine->data[i];
     }
-    WorkLine->data[CurrentColumn - 1] = val;
+    WorkLine->data[CurrentPos.column - 1] = val;
     WorkLine->len++;
     DisplayWorkLine( TRUE );
-    if( CurrentColumn < WorkLine->len ) {
-        GoToColumn( CurrentColumn + 1, WorkLine->len + 1 );
+    if( CurrentPos.column < WorkLine->len ) {
+        GoToColumn( CurrentPos.column + 1, WorkLine->len + 1 );
     }
     ReplaceCurrentLine();
     EditFlags.Dotable = TRUE;

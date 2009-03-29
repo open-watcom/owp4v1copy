@@ -325,8 +325,7 @@ int GimmeCurrentWord( char *buffer, int buffer_size, bool big )
     line        *line;
     fcb         *fcb;
 
-    curr.line = CurrentLineNumber;
-    curr.column = CurrentColumn;
+    curr = CurrentPos;
     start = curr;
     rc = MarkEndOfNextWordForward( &end, &curr, big );
     if( rc == ERR_NO_ERR ) {
@@ -357,8 +356,7 @@ int GimmeCurrentEntireWordDim( int *sc, int *ec, bool big )
 
     noWrap = FALSE;
     rc = ERR_NO_WORD_TO_FIND;
-    curr.line = CurrentLineNumber;
-    curr.column = CurrentColumn;
+    curr = CurrentPos;
     s = ptrFromMark( &curr );
     if( s == NULL ) {
         return( rc );

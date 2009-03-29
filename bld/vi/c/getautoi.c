@@ -51,10 +51,10 @@ static int getBracketLoc( linenum *mline, int *mcol )
     tmp[0] = '\\';
     tmp[1] = ')';
     tmp[2] = 0;
-    lne = CurrentLineNumber;
+    lne = CurrentPos.line;
     rc = GetFind( tmp, mline, mcol, &len, FINDFL_BACKWARDS | FINDFL_NOERROR );
     EditFlags.NoReplaceSearchString = oldnrss;
-    if( *mline != CurrentLineNumber ) {
+    if( *mline != CurrentPos.line ) {
         EditFlags.Magic = oldmagic;
         return( ERR_FIND_NOT_FOUND );
     }
@@ -66,9 +66,9 @@ static int getBracketLoc( linenum *mline, int *mcol )
     /*
      * find the matching '('
      */
-    CurrentLineNumber = *mline;
-    CurrentColumn = *mcol;
-    CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+    CurrentPos.line = *mline;
+    CurrentPos.column = *mcol;
+    CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
     rc = FindMatch( mline, mcol );
     EditFlags.Magic = oldmagic;
     return( rc );
@@ -109,14 +109,14 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
                     }
                     extra += ShiftWidth;
                     SaveCurrentFilePos();
-                    CurrentColumn = k + 1;
+                    CurrentPos.column = k + 1;
                     /* add a { to keep matches even! */
                     if( ch == '}' ) {
                         rc = FindMatch( &sline, &col );
                         if( !rc ) {
-                            CurrentLineNumber = sline;
-                            CurrentColumn = col - 1;
-                            CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+                            CurrentPos.line = sline;
+                            CurrentPos.column = col - 1;
+                            CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
                         }
                     }
                     rc = getBracketLoc( &sline, &col );

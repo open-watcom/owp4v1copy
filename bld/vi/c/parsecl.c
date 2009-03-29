@@ -98,12 +98,12 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
             }
         }
         *n1flag = *n2flag = TRUE;
-        if( SelRgn.start_line > SelRgn.end_line ) {
-            *n1 = SelRgn.end_line;
-            *n2 = SelRgn.start_line;
+        if( SelRgn.start.line > SelRgn.end.line ) {
+            *n1 = SelRgn.end.line;
+            *n2 = SelRgn.start.line;
         } else {
-            *n1 = SelRgn.start_line;
-            *n2 = SelRgn.end_line;
+            *n1 = SelRgn.start.line;
+            *n2 = SelRgn.end.line;
         }
         EliminateFirstN( buff, 1 );
         RemoveLeadingSpaces( buff );
@@ -218,7 +218,7 @@ int GetAddress( char *buff, linenum *num  )
         return( NO_NUMBER );
     }
     if( c == '+' || c == '-' ) {
-        sum = CurrentLineNumber;
+        sum = CurrentPos.line;
     } else {
         sum = 0;
     }
@@ -270,7 +270,7 @@ int GetAddress( char *buff, linenum *num  )
                 if( i ) {
                     return( i );
                 }
-                numstack[nument] = MarkList[j].lineno;
+                numstack[nument] = MarkList[j].p.line;
                 stopnum = TRUE;
                 k++;
                 break;
@@ -295,7 +295,7 @@ int GetAddress( char *buff, linenum *num  )
                 if( numinprog ) {
                     return( NO_NUMBER );
                 }
-                numstack[nument] = CurrentLineNumber;
+                numstack[nument] = CurrentPos.line;
                 stopnum = TRUE;
                 break;
             case '$':

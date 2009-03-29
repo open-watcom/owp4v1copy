@@ -149,24 +149,24 @@ void addSelection( ss_block *ss_start, linenum line_no )
     i = 0;
 
     // get nicely ordered values from SelRgn
-    sel_end_col = VirtualCursorPosition2( SelRgn.end_col ) - 1;
+    sel_end_col = VirtualCursorPosition2( SelRgn.end.column ) - 1;
     sel_start_col = SelRgn.start_col_v - 1;
 #ifdef __WIN__
     if( EditFlags.RealTabs ) {
-        sel_end_col = SelRgn.end_col - 1;
-        sel_start_col = SelRgn.start_col - 1;
+        sel_end_col = SelRgn.end.column - 1;
+        sel_start_col = SelRgn.start.column - 1;
     }
 #endif
     swap_cols = FALSE;
-    if( SelRgn.start_line > SelRgn.end_line ) {
-        sel_start_line = SelRgn.end_line;
-        sel_end_line = SelRgn.start_line;
+    if( SelRgn.start.line > SelRgn.end.line ) {
+        sel_start_line = SelRgn.end.line;
+        sel_end_line = SelRgn.start.line;
         swap_cols = TRUE;
     } else {
-        sel_start_line = SelRgn.start_line;
-        sel_end_line = SelRgn.end_line;
+        sel_start_line = SelRgn.start.line;
+        sel_end_line = SelRgn.end.line;
     }
-    if( SelRgn.start_line == SelRgn.end_line && sel_start_col > sel_end_col ) {
+    if( SelRgn.start.line == SelRgn.end.line && sel_start_col > sel_end_col ) {
         swap_cols = TRUE;
     }
     if( swap_cols ) {
@@ -552,7 +552,7 @@ int SSGetStyle( int row, int col )
 
     c_line = DCFindLine( row - 1, CurrentWindow );
     assert( c_line->valid );
-    if( c_line->start_col != LeftColumn ) {
+    if( c_line->start_col != LeftTopPos.column ) {
         // text is scrolled off screen - ws remains
         return( SE_WHITESPACE );
     }

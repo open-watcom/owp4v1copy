@@ -44,7 +44,7 @@ int MoveScreenML( linenum ntop )
 {
     linenum     lastline;
 
-    if( ntop > TopOfPage ) {
+    if( ntop > LeftTopPos.line ) {
         CFindLastLine( &lastline );
         if( ntop > lastline ) {
             ntop = lastline;
@@ -54,7 +54,7 @@ int MoveScreenML( linenum ntop )
             ntop = 1;
         }
     }
-    TopOfPage = ntop;
+    LeftTopPos.line = ntop;
     return( ERR_NO_ERR );
 
 } /* MoveScreenML */
@@ -73,12 +73,12 @@ int MoveScreenDown( void )
         return( ERR_NO_ERR );
     }
     cnt = GetRepeatCount();
-    top = TopOfPage+cnt;
+    top = LeftTopPos.line + cnt;
     if( top > x ) {
         top = x;
     }
-    TopOfPage = top;
-    if( top >= CurrentLineNumber ) {
+    LeftTopPos.line = top;
+    if( top >= CurrentPos.line ) {
         GoToLineNoRelCurs( top );
     }
     DCDisplayAllLines();
@@ -97,12 +97,12 @@ int MoveScreenUp( void )
     lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
     CFindLastLine( &lne );
     cnt = GetRepeatCount();
-    top = TopOfPage - cnt;
+    top = LeftTopPos.line - cnt;
     if( top < 1 ) {
         top = 1;
     }
-    TopOfPage = top;
-    if( CurrentLineNumber >= top + lines ) {
+    LeftTopPos.line = top;
+    if( CurrentPos.line >= top + lines ) {
         nlne = top + lines - 1;
         if( nlne > lne ) {
             nlne = lne;
@@ -117,26 +117,26 @@ int MoveScreenUp( void )
 
 int MoveScreenDownPageML( void )
 {
-    return MoveScreenML( TopOfPage +
+    return MoveScreenML( LeftTopPos.line +
                          WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) );
 }
 
 int MoveScreenUpPageML( void )
 {
-    return MoveScreenML( TopOfPage -
+    return MoveScreenML( LeftTopPos.line -
                          WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) );
 }
 
 int MoveScreenLeftPageML( void )
 {
     return MoveScreenLeftRightML(
-        LeftColumn - WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) + 2 );
+        LeftTopPos.column - WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) + 2 );
 }
 
 int MoveScreenRightPageML( void )
 {
     return MoveScreenLeftRightML(
-        LeftColumn + WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) - 2 );
+        LeftTopPos.column + WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) - 2 );
 }
 
 /*
@@ -156,8 +156,8 @@ int MovePage( int dir, long repcnt, bool keepselect )
                 WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ))
                 - (dir * PageLinesExposed);
 #if 0
-    x = CurrentLineNumber + tmp;
-    top = TopOfPage + tmp;
+    x = CurrentPos.line + tmp;
+    top = LeftTopPos.line + tmp;
     CFindLastLine( &ll );
     if( top > ll ) {
         top = ll;
@@ -170,7 +170,7 @@ int MovePage( int dir, long repcnt, bool keepselect )
         x = 1;
     }
 #else
-    top = TopOfPage + tmp;
+    top = LeftTopPos.line + tmp;
     if( top < 1 ) {
         top = 1;
     }
@@ -182,7 +182,7 @@ int MovePage( int dir, long repcnt, bool keepselect )
     if( rc ) {
         return( rc );
     }
-    x = CurrentLineNumber + tmp;
+    x = CurrentPos.line + tmp;
     if( x < 1 ) {
         x = 1;
     }
@@ -195,9 +195,9 @@ int MovePage( int dir, long repcnt, bool keepselect )
         return( rc );
     }
 #endif
-    TopOfPage = top;
+    LeftTopPos.line = top;
     SetCurrentLineNumber( x );
-    rc = CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+    rc = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
     if( !rc ) {
         CheckCurrentColumn();
         UpdateStatusWindow();
@@ -229,7 +229,7 @@ int MovePosition( void )
     int         key, i;
 
     if( RepeatDigits == 0 ) {
-        lne = CurrentLineNumber;
+        lne = CurrentPos.line;
     } else {
         lne = GetRepeatCount();
         if( IsPastLastLine( lne ) ) {
@@ -240,23 +240,23 @@ int MovePosition( void )
     key = GetNextEvent( FALSE );
     switch( key ) {
     case '.':
-        TopOfPage = lne - lines / 2;
+        LeftTopPos.line = lne - lines / 2;
         break;
     case VI_KEY( ENTER ):
-        TopOfPage = lne;
+        LeftTopPos.line = lne;
         break;
     case '-':
-        TopOfPage = lne - lines + 1;
+        LeftTopPos.line = lne - lines + 1;
         break;
     default:
         return( ERR_INVALID_REDRAW );
     }
-    if( TopOfPage < 1 ) {
-        TopOfPage = 1;
+    if( LeftTopPos.line < 1 ) {
+        LeftTopPos.line = 1;
     }
     SetCurrentLineNumber( lne );
-    i = CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
-    CurrentColumn = 1;
+    i = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
+    CurrentPos.column = 1;
     DCInvalidateAllLines();
     DCDisplayAllLines();
     if( !i ) {
@@ -307,13 +307,13 @@ int MoveHalfPageUp( void )
 
 int MoveScreenLeftRightML( int newleft )
 {
-    LeftColumn = newleft;
+    LeftTopPos.column = newleft;
 
-    if( LeftColumn <= 0 ) {
-        LeftColumn = 0;
+    if( LeftTopPos.column <= 0 ) {
+        LeftTopPos.column = 0;
     } else {
-        if( LeftColumn >= MAX_INPUT_LINE - 1 ) {
-            LeftColumn = MAX_INPUT_LINE - 1;
+        if( LeftTopPos.column >= MAX_INPUT_LINE - 1 ) {
+            LeftTopPos.column = MAX_INPUT_LINE - 1;
         }
     }
     return( ERR_NO_ERR );

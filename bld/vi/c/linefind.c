@@ -271,7 +271,7 @@ int FindCharOnCurrentLine( int fwdflag, int mod, int *col, int cnt )
     int         i, c, j;
     char        lst[2];
 
-    c = CurrentColumn - 1;
+    c = CurrentPos.column - 1;
     *col = -1;
     LastEvent = GetNextEvent( FALSE );
     if( LastEvent == VI_KEY( ESC ) ) {

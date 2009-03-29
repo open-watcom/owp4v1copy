@@ -213,13 +213,13 @@ int InvokeColSelHook( int sc, int ec )
     x1 = WindowAuxInfo( CurrentWindow, WIND_INFO_X1 );
     if( LastEvent != VI_KEY( MOUSEEVENT ) ) {
         lne = WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) +
-            CurrentLineNumber - TopOfPage + has_bord;
+            CurrentPos.line - LeftTopPos.line + has_bord;
     } else {
         lne = MouseRow;
     }
 #else
     if( LastEvent != VI_KEY( FAKEMOUSE ) ) {
-        lne = (CurrentLineNumber - TopOfPage) * FontHeight( WIN_FONT( &EditWindow ) );
+        lne = (CurrentPos.line - LeftTopPos.line) * FontHeight( WIN_FONT( &EditWindow ) );
     } else {
         lne = MouseY;
     }
@@ -234,8 +234,8 @@ int InvokeColSelHook( int sc, int ec )
     }
     wordbuff[j] = 0;
 #ifndef __WIN__
-    sc = x1 + VirtualCursorPosition2( sc ) - LeftColumn;
-    ec = x1 + VirtualCursorPosition2( ec ) - LeftColumn;
+    sc = x1 + VirtualCursorPosition2( sc ) - LeftTopPos.column;
+    ec = x1 + VirtualCursorPosition2( ec ) - LeftTopPos.column;
     if( !has_bord ) {
         sc--;
         ec--;
@@ -267,9 +267,9 @@ int InvokeLineSelHook( linenum s, linenum e )
     if( LastEvent != VI_KEY( MOUSEEVENT ) ) {
         has_bord = WindowAuxInfo( CurrentWindow, WIND_INFO_HAS_BORDER );
         lne = WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) +
-              CurrentLineNumber - TopOfPage + has_bord;
+              CurrentPos.line - LeftTopPos.line + has_bord;
         col = WindowAuxInfo( CurrentWindow, WIND_INFO_X1 ) +
-              VirtualCursorPosition() - LeftColumn - 1 + has_bord;
+              VirtualCursorPosition() - LeftTopPos.column - 1 + has_bord;
         if( col < 0 ) {
             col = 0;
         }
@@ -280,8 +280,8 @@ int InvokeLineSelHook( linenum s, linenum e )
 #else
     if( LastEvent != VI_KEY( FAKEMOUSE ) ) {
         /* assume we're not in insert mode *ouch* */
-        col = PixelFromColumnOnCurrentLine( CurrentColumn );
-        lne = (CurrentLineNumber - TopOfPage) * FontHeight( WIN_FONT( &EditWindow ) );
+        col = PixelFromColumnOnCurrentLine( CurrentPos.column );
+        lne = (CurrentPos.line - LeftTopPos.line) * FontHeight( WIN_FONT( &EditWindow ) );
     } else {
         col = MouseX;
         lne = MouseY;

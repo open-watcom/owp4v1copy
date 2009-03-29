@@ -90,10 +90,10 @@ int HandleMouseEvent( void )
     if( LastMouseEvent == MOUSE_RELEASE_R || LastMouseEvent == MOUSE_DCLICK ) {
         if( id == CurrentWindow && InsideWindow( id, win_x, win_y ) ) {
             diff_word = (LastMouseEvent == MOUSE_DCLICK);
-            if( GoToLineRelCurs( TopOfPage + win_y - 1 ) ) {
+            if( GoToLineRelCurs( LeftTopPos.line + win_y - 1 ) ) {
                 return( ERR_NO_ERR );
             }
-            win_x += LeftColumn;
+            win_x += LeftTopPos.column;
             win_x = RealCursorPosition( win_x );
             GoToColumnOnCurrentLine( win_x );
             if( diff_word ) {
@@ -158,10 +158,10 @@ int HandleMouseEvent( void )
                 if( ShiftDown() ) {
                     EditFlags.Dragging = TRUE;
                 }
-                if( GoToLineRelCurs( TopOfPage + win_y - 1 ) ) {
+                if( GoToLineRelCurs( LeftTopPos.line + win_y - 1 ) ) {
                     return( ERR_NO_ERR );
                 }
-                win_x += LeftColumn;
+                win_x += LeftTopPos.column;
                 win_x = RealCursorPosition( win_x );
                 GoToColumnOnCurrentLine( win_x );
                 if( ShiftDown() ) {

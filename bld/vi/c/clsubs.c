@@ -63,14 +63,14 @@ int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap )
     sprintf( cmd, "/%s/%s/g%c", find, replace, ( prompt == TRUE ) ? 'i' : '\0' );
 
     end_line = CurrentFile->fcb_tail->end_line;
-    rc = Substitute( CurrentLineNumber, end_line, cmd );
+    rc = Substitute( CurrentPos.line, end_line, cmd );
     changecnt = LastChangeCount;
     linecnt = LastLineCount;
-    if( wrap && !LastSubstituteCancelled && CurrentLineNumber != 1 &&
+    if( wrap && !LastSubstituteCancelled && CurrentPos.line != 1 &&
         rc == ERR_NO_ERR ) {
         // search from beginning of do to here
         sprintf( cmd, "/%s/%s/g%c", find, replace, (prompt == TRUE) ? 'i' : '\0' );
-        rc = Substitute( 1, CurrentLineNumber - 1, cmd );
+        rc = Substitute( 1, CurrentPos.line - 1, cmd );
         linecnt += LastLineCount;
         changecnt += LastChangeCount;
     }
@@ -283,7 +283,7 @@ int Substitute( linenum n1, linenum n2, char *data )
         /*
          * get copy of line, and verify that new stuff fits
          */
-        CurrentLineNumber = clineno;
+        CurrentPos.line = clineno;
         i = CGimmeLinePtr( clineno, &CurrentFcb, &CurrentLine );
         if( i ) {
             RestoreCurrentFilePos();
@@ -361,8 +361,8 @@ DONEALLREPLACEMENTS:
     RestoreCurrentFilePos();
     EditFlags.AllowRegSubNewline = FALSE;
     if( restline ) {
-        SetCurrentLine( CurrentLineNumber );
-        GoToColumnOK( CurrentColumn );
+        SetCurrentLine( CurrentPos.line );
+        GoToColumnOK( CurrentPos.column );
     }
     if( undoflag ) {
         EndUndoGroup( UndoStack );
@@ -397,8 +397,8 @@ linenum SplitUpLine( linenum cl )
         /*
          * get current line
          */
-        CurrentLineNumber = cl + extra;
-        CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+        CurrentPos.line = cl + extra;
+        CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
         GetCurrentLine();
 
         for( i = 0; i <= WorkLine->len; i++ ) {

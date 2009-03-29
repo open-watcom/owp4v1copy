@@ -506,8 +506,8 @@ void HiliteAColumnRange( linenum line, int scol, int ecol )
     if( scol == 0 ) {
         s = 0;
     }
-    changeColorOfDisplayLine( (int) (line-TopOfPage+1),
-            s - LeftColumn, e - LeftColumn, &editw_info.hilight );
+    changeColorOfDisplayLine( (int) (line - LeftTopPos.line + 1),
+            s - LeftTopPos.column, e - LeftTopPos.column, &editw_info.hilight );
 
 } /* HiliteAColumnRange */
 
@@ -528,7 +528,7 @@ void ColorAColumnRange( int row, int scol, int ecol, type_style *style )
 
     s--;
     e--;
-    changeColorOfDisplayLine( row, s - LeftColumn, e - LeftColumn, style );
+    changeColorOfDisplayLine( row, s - LeftTopPos.column, e - LeftTopPos.column, style );
 
 } /* ColorAColumnRange */
 

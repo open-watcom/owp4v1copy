@@ -114,7 +114,7 @@ void DoneCurrentInsert( bool trim )
         if( trim ) {
             trimWorkLine();
         }
-        if( CurrentColumn > WorkLine->len ) {
+        if( CurrentPos.column > WorkLine->len ) {
             if( EditFlags.Modeless ) {
                 GoToColumnOK( WorkLine->len + 1 );
             } else {
@@ -167,18 +167,18 @@ static void addChar( char ch )
         return;
     }
 
-    overChar = WorkLine->data[CurrentColumn - 1];
+    overChar = WorkLine->data[CurrentPos.column - 1];
     DisplayWorkLine( SSKillsFlags( ch ) || SSKillsFlags( overChar ) );
 
     if( !overStrike ) {
-        for( i = WorkLine->len; i >= CurrentColumn - 1; i-- ) {
+        for( i = WorkLine->len; i >= CurrentPos.column - 1; i-- ) {
             WorkLine->data[i + 1] = WorkLine->data[i];
         }
-        WorkLine->data[CurrentColumn - 1] = ch;
+        WorkLine->data[CurrentPos.column - 1] = ch;
         WorkLine->len++;
     } else {
-        WorkLine->data[CurrentColumn - 1] = ch;
-        if( CurrentColumn - 1 == WorkLine->len ) {
+        WorkLine->data[CurrentPos.column - 1] = ch;
+        if( CurrentPos.column - 1 == WorkLine->len ) {
             WorkLine->len++;
             WorkLine->data[WorkLine->len] = 0;
         }
@@ -202,11 +202,11 @@ static void checkWrapMargin( void )
         } else {
             width = WindowAuxInfo( CurrentWindow, WIND_INFO_WIDTH ) - WrapMargin;
         }
-        if( CurrentColumn > width ) {
-            for( i = CurrentColumn - 1; i >= 0; i-- ) {
+        if( CurrentPos.column > width ) {
+            for( i = CurrentPos.column - 1; i >= 0; i-- ) {
                 if( isspace( WorkLine->data[i] ) ) {
-                    pos = CurrentColumn - 1 - i;
-                    CurrentColumn = i + 2;
+                    pos = CurrentPos.column - 1 - i;
+                    CurrentPos.column = i + 2;
                     old_ai = EditFlags.AutoIndent;
                     EditFlags.AutoIndent = FALSE;
                     IMEnter();
@@ -230,7 +230,7 @@ static int insertChar( bool add_to_abbrev, bool move_to_new_col )
     }
     addChar( LastEvent );
     if( move_to_new_col ) {
-        GoToColumn( CurrentColumn + 1, WorkLine->len + 1 );
+        GoToColumn( CurrentPos.column + 1, WorkLine->len + 1 );
     }
     if( abbrevCnt < sizeof( abbrevBuff ) && add_to_abbrev ) {
         abbrevBuff[abbrevCnt++] = LastEvent;
@@ -253,9 +253,9 @@ int IMChar( void )
     startNewLineUndo();
     if( EditFlags.EscapedInsertChar ) {
         DisplayWorkLine( SSKillsFlags( LastEvent ) ||
-                         SSKillsFlags( WorkLine->data[CurrentColumn - 1] ) );
-        WorkLine->data[CurrentColumn - 1] = LastEvent;
-        GoToColumn( CurrentColumn + 1, WorkLine->len + 1 );
+                         SSKillsFlags( WorkLine->data[CurrentPos.column - 1] ) );
+        WorkLine->data[CurrentPos.column - 1] = LastEvent;
+        GoToColumn( CurrentPos.column + 1, WorkLine->len + 1 );
         EditFlags.EscapedInsertChar = FALSE;
         return( ERR_NO_ERR );
     }
@@ -296,11 +296,11 @@ int IMEnter( void )
      */
     buff = StaticAlloc();
     buffx = StaticAlloc();
-    el = WorkLine->len - CurrentColumn + 1;
+    el = WorkLine->len - CurrentPos.column + 1;
     if( el > 0 && WorkLine->len > 0 ) {
-        memcpy( buff, &WorkLine->data[CurrentColumn - 1], el + 1 );
+        memcpy( buff, &WorkLine->data[CurrentPos.column - 1], el + 1 );
         WorkLine->len -= el;
-        WorkLine->data[CurrentColumn - 1] = 0;
+        WorkLine->data[CurrentPos.column - 1] = 0;
     } else {
         el = 0;
         buff[0] = 0;
@@ -331,13 +331,13 @@ int IMEnter( void )
         AddNewLineAroundCurrent( buff, el, INSERT_AFTER );
         col = 1;
     }
-    UndoInsert( CurrentLineNumber + 1, CurrentLineNumber + 1, UndoStack );
+    UndoInsert( CurrentPos.line + 1, CurrentPos.line + 1, UndoStack );
 
     /*
      * display the result
      */
     DCDisplayAllLines();
-    GoToLineRelCurs( CurrentLineNumber + 1 );
+    GoToLineRelCurs( CurrentPos.line + 1 );
     GoToColumnOK( col );
     GetCurrentLine();
     StaticFree( buff );
@@ -364,12 +364,12 @@ int IMBackSpace( void )
     if( abbrevCnt > 0 ) {
         abbrevCnt--;
     }
-    if( CurrentColumn == 1 ) {
+    if( CurrentPos.column == 1 ) {
 
         if( !EditFlags.WrapBackSpace ) {
             return( ERR_NO_ERR );
         }
-        if( CurrentLineNumber ==1 ) {
+        if( CurrentPos.line ==1 ) {
             return( ERR_NO_ERR );
         }
         stay_at_end = FALSE;
@@ -378,7 +378,7 @@ int IMBackSpace( void )
         }
         doneWithCurrentLine();
         abbrevCnt = 0;
-        GoToLineRelCurs( CurrentLineNumber - 1 );
+        GoToLineRelCurs( CurrentPos.line - 1 );
         GoToColumnOnCurrentLine( CurrentLine->len );
         mv_right = TRUE;
         if( CurrentLine->len == 0 ) {
@@ -386,7 +386,7 @@ int IMBackSpace( void )
         }
         GenericJoinCurrentLineToNext( FALSE );
         if( mv_right && !stay_at_end ) {
-            GoToColumnOnCurrentLine( CurrentColumn + 1 );
+            GoToColumnOnCurrentLine( CurrentPos.column + 1 );
         }
         if( stay_at_end ) {
             GoToColumnOK( CurrentLine->len + 1 );
@@ -396,13 +396,13 @@ int IMBackSpace( void )
         GetCurrentLine();
         return( ERR_NO_ERR );
     }
-    killedChar = WorkLine->data[CurrentColumn - 2];
-    overChar = WorkLine->data[CurrentColumn - 1];
-    for( i = CurrentColumn - 1; i <= WorkLine->len + 1; i++ ) {
+    killedChar = WorkLine->data[CurrentPos.column - 2];
+    overChar = WorkLine->data[CurrentPos.column - 1];
+    for( i = CurrentPos.column - 1; i <= WorkLine->len + 1; i++ ) {
         WorkLine->data[i - 1] = WorkLine->data[i];
     }
     WorkLine->len--;
-    GoToColumn( CurrentColumn - 1, WorkLine->len + 1 );
+    GoToColumn( CurrentPos.column - 1, WorkLine->len + 1 );
     DisplayWorkLine( SSKillsFlags( killedChar ) || SSKillsFlags( overChar ) );
     return( ERR_NO_ERR );
 
@@ -424,14 +424,14 @@ int IMDelete( void )
     if( wlen == 0 ) {
         wlen = CurrentLine->len + 1;
     }
-    if( EditFlags.Modeless && CurrentColumn == wlen && CurrentLine->next ) {
+    if( EditFlags.Modeless && CurrentPos.column == wlen && CurrentLine->next ) {
         /* go to beginning of next line */
-        GoToLineRelCurs( CurrentLineNumber + 1 );
+        GoToLineRelCurs( CurrentPos.line + 1 );
         GoToColumnOK( 1 );
         GetCurrentLine();
     } else {
-        GoToColumn( CurrentColumn + 1, wlen );
-        if( CurrentColumn != wlen - 1 || abbrevCnt == 0 ) {
+        GoToColumn( CurrentPos.column + 1, wlen );
+        if( CurrentPos.column != wlen - 1 || abbrevCnt == 0 ) {
             abbrevCnt++;        /* gets subtracted by IMBackSpace */
         }
     }
@@ -509,11 +509,11 @@ int IMCursorKey( void )
         abbrevCnt = 0;
         return( ERR_NO_ERR );
     case VI_KEY( LEFT ):
-        GoToColumn( CurrentColumn - 1, wlen );
+        GoToColumn( CurrentPos.column - 1, wlen );
         abbrevCnt = 0;
         return( ERR_NO_ERR );
     case VI_KEY( RIGHT ):
-        GoToColumn( CurrentColumn + 1, wlen );
+        GoToColumn( CurrentPos.column + 1, wlen );
         abbrevCnt = 0;
         return( ERR_NO_ERR );
     }
@@ -540,7 +540,7 @@ int IMCursorKey( void )
         }
         return( ERR_NO_ERR );
     }
-    if( CurrentColumn > WorkLine->len ) {
+    if( CurrentPos.column > WorkLine->len ) {
         GoToColumnOK( WorkLine->len + 1 );
     }
     doneWithCurrentLine();
@@ -606,7 +606,7 @@ int IMTabs( void )
                 break;
             }
             addChar( '\t' );
-            GoToColumn( CurrentColumn + 1, WorkLine->len + 1 );
+            GoToColumn( CurrentPos.column + 1, WorkLine->len + 1 );
             checkWrapMargin();
             break;
         }
@@ -618,7 +618,7 @@ int IMTabs( void )
          * get position of cursor on virtual line
          */
         vc = VirtualCursorPosition();
-        if( CurrentColumn - 1 == WorkLine->len && !EditFlags.Modeless ) {
+        if( CurrentPos.column - 1 == WorkLine->len && !EditFlags.Modeless ) {
             add = 1;
         } else {
             add = 0;
@@ -651,7 +651,7 @@ int IMTabs( void )
          * create a real version of the line
          */
         buff = StaticAlloc();
-        ExpandTabsInABufferUpToColumn( CurrentColumn - 1, WorkLine->data,
+        ExpandTabsInABufferUpToColumn( CurrentPos.column - 1, WorkLine->data,
                                        WorkLine->len, buff, MaxLine );
         len = strlen( buff );
 
@@ -774,7 +774,7 @@ int IMCloseBracket( void )
         GetCurrentLine();
 
     }
-    GoToColumn( CurrentColumn + 1, WorkLine->len + 1 );
+    GoToColumn( CurrentPos.column + 1, WorkLine->len + 1 );
     return( ERR_NO_ERR );
 
 } /* IMCloseBracket */
@@ -794,9 +794,9 @@ static int getBracketLoc( linenum *mline, int *mcol )
     tmp[0] = '\\';
     tmp[1] = ')';
     tmp[2] = 0;
-    lne = CurrentLineNumber;
+    lne = CurrentPos.line;
     rc = GetFind( tmp, mline, mcol, &len, FINDFL_BACKWARDS | FINDFL_NOERROR);
-    if( *mline != CurrentLineNumber ) {
+    if( *mline != CurrentPos.line ) {
         EditFlags.Magic = oldmagic;
         return( ERR_FIND_NOT_FOUND );
     }
@@ -808,9 +808,9 @@ static int getBracketLoc( linenum *mline, int *mcol )
     /*
      * find the matching '('
      */
-    CurrentLineNumber = *mline;
-    CurrentColumn = *mcol;
-    CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+    CurrentPos.line = *mline;
+    CurrentPos.column = *mcol;
+    CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
     rc = FindMatch( mline, mcol );
     EditFlags.Magic = oldmagic;
     return( rc );
@@ -831,9 +831,9 @@ static int findMatchingBrace( linenum *mline, int *mcol )
         return( rc );
     }
     SaveCurrentFilePos();
-    CurrentLineNumber = *mline;
-    CurrentColumn = *mcol;
-    CGimmeLinePtr( CurrentLineNumber, &CurrentFcb, &CurrentLine );
+    CurrentPos.line = *mline;
+    CurrentPos.column = *mcol;
+    CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
 
     rc = getBracketLoc( &sline, &col );
     RestoreCurrentFilePos();
@@ -861,7 +861,7 @@ int IMCloseBrace( void )
 
     startNewLineUndo();
     insertChar( TRUE, FALSE );
-    newcol = CurrentColumn + 1;
+    newcol = CurrentPos.column + 1;
     if( EditFlags.ShowMatch ) {
         ReplaceCurrentLine();
         rc = FindMatch( &mline, &mcol );
@@ -891,14 +891,14 @@ int IMCloseBrace( void )
                 CGimmeLinePtr( mline, &cfcb, &cline );
                 i = FindStartOfALine( cline );
                 i = GetVirtualCursorPosition( cline->data, i );
-                j = i - VirtualCursorPosition2( CurrentColumn );
+                j = i - VirtualCursorPosition2( CurrentPos.column );
                 ts = ShiftWidth;
                 if( j > 0 ) {
                     ShiftWidth = j;
-                    Shift( CurrentLineNumber, CurrentLineNumber, '>', FALSE );
+                    Shift( CurrentPos.line, CurrentPos.line, '>', FALSE );
                 } else if( j < 0 ) {
                     ShiftWidth = -j;
-                    Shift( CurrentLineNumber, CurrentLineNumber, '<', FALSE );
+                    Shift( CurrentPos.line, CurrentPos.line, '<', FALSE );
                 }
                 ShiftWidth = ts;
                 newcol = 1 + RealCursorPosition( j + newcol );
@@ -964,7 +964,7 @@ int DeleteAndInsertText( int scol, int ecol )
         if( CurrentLine->len > 0 ) {
             rc = DeleteBlockFromCurrentLine( scol, ecol, FALSE );
             if( !rc ) {
-                startcol = CurrentColumn;
+                startcol = CurrentPos.column;
                 if( scol > ecol ) {
                     startcol = ecol + 1;
                 }
@@ -984,7 +984,7 @@ int DeleteAndInsertText( int scol, int ecol )
             ReplaceCurrentLine();
         }
     }
-    continueInsertText( CurrentColumn, FALSE );
+    continueInsertText( CurrentPos.column, FALSE );
     return( ERR_NO_ERR );
 
 } /* DeleteAndInsertText */
@@ -1012,7 +1012,7 @@ static int insertTextOnOtherLine( insert_dir type )
     /*
      * get line deletion and undo crap
      */
-    a = b = CurrentLineNumber + 1;
+    a = b = CurrentPos.line + 1;
     if( type == INSERT_BEFORE ) {
         a--;
         b--;
@@ -1044,7 +1044,7 @@ static int insertTextOnOtherLine( insert_dir type )
     GoToLineRelCurs( b );
     GoToColumn( j, CurrentLine->len + 1 );
     DCDisplayAllLines();
-    continueInsertText( CurrentColumn, FALSE );
+    continueInsertText( CurrentPos.column, FALSE );
     return( ERR_NO_ERR );
 
 } /* insertTextOnOtherLine */
@@ -1061,12 +1061,12 @@ int InsertTextOnPreviousLine( void )
 
 int InsertTextAtCursor( void )
 {
-    return( stdInsert( CurrentColumn, FALSE ) );
+    return( stdInsert( CurrentPos.column, FALSE ) );
 }
 
 int InsertTextAfterCursor( void )
 {
-    return( stdInsert( CurrentColumn + 1, FALSE ) );
+    return( stdInsert( CurrentPos.column + 1, FALSE ) );
 }
 
 int InsertTextAtLineStart( void )
@@ -1092,7 +1092,7 @@ int DoReplaceText( void )
 {
     int         rc;
 
-    rc = stdInsert( CurrentColumn, TRUE );
+    rc = stdInsert( CurrentPos.column, TRUE );
     return( rc );
 
 } /* DoReplaceText */
@@ -1110,7 +1110,7 @@ int InsertLikeLast( void )
     } else {
         overstrike = FALSE;
     }
-    rc = stdInsert( CurrentColumn, overstrike );
+    rc = stdInsert( CurrentPos.column, overstrike );
     return( rc );
 
 } /* InsertLikeLast */
@@ -1157,7 +1157,7 @@ int PopMode( void )
 
     DoneCurrentInsert( TRUE );
     if( cmode->wasinsert ) {
-        rc = stdInsert( CurrentColumn, cmode->wasoverstrike );
+        rc = stdInsert( CurrentPos.column, cmode->wasoverstrike );
     }
     MemFree( cmode );
     return( rc );

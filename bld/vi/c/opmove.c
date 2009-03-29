@@ -129,7 +129,7 @@ static int verifyMoveFromPageTop( range *r, linenum ln )
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
     }
-    ln += TopOfPage;
+    ln += LeftTopPos.line;
     if( IsPastLastLine( ln ) ) {
         CFindLastLine( &ln );
     }
@@ -152,7 +152,7 @@ int MovePageMiddle( range *r, long count )
     count = count;
     ln = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) - 1;
     CFindLastLine( &lne );
-    lne = lne - TopOfPage + 1;
+    lne = lne - LeftTopPos.line + 1;
     if( ln > lne ) {
         ln = lne;
     }
@@ -176,9 +176,9 @@ int MovePageBottom( range *r, long count )
         return( ERR_NO_FILE );
     }
     lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-    if( IsPastLastLine( TopOfPage + lines ) ) {
+    if( IsPastLastLine( LeftTopPos.line + lines ) ) {
         CFindLastLine( &ln );
-        amt = ln - TopOfPage - count + 1;
+        amt = ln - LeftTopPos.line - count + 1;
     } else {
         amt = lines - count;
     }
@@ -196,19 +196,19 @@ static int doVerticalMove( range *r, linenum new )
     }
     rc = checkLine( &new );
     r->start.line = new;
-    r->start.column = CurrentColumn;
+    r->start.column = CurrentPos.column;
     r->line_based = TRUE;
     return( rc );
 }
 
 int MoveUp( range *r, long count )
 {
-    return( doVerticalMove( r, CurrentLineNumber - count ) );
+    return( doVerticalMove( r, CurrentPos.line - count ) );
 }
 
 int MoveDown( range *r, long count )
 {
-    return( doVerticalMove( r, CurrentLineNumber + count ) );
+    return( doVerticalMove( r, CurrentPos.line + count ) );
 }
 
 
@@ -220,12 +220,12 @@ static int newColumnOnCurrentLine( range *r, int new_col )
         return( ERR_NO_FILE );
     }
     rc = ERR_NO_ERR;
-    r->start.line = CurrentLineNumber;
+    r->start.line = CurrentPos.line;
     r->line_based = FALSE;
-    if( new_col < CurrentColumn ) {
-        rc = checkLeftMove( CurrentLineNumber, &new_col, r );
+    if( new_col < CurrentPos.column ) {
+        rc = checkLeftMove( CurrentPos.line, &new_col, r );
     } else {
-        rc = checkRightMove( CurrentLineNumber, &new_col, r );
+        rc = checkRightMove( CurrentPos.line, &new_col, r );
     }
     r->start.column = new_col;
     return( rc );
@@ -260,19 +260,19 @@ int MoveLineBegin( range *r, long count )
     rc = newColumnOnCurrentLine( r, 1 );
 
     // Make "Home" behave like "0"
-    LeftColumn = 0;
+    LeftTopPos.column = 0;
     DCDisplayAllLines();
     return( rc );
 }
 
 int MoveLeft( range *r, long count )
 {
-    return( newColumnOnCurrentLine( r, CurrentColumn - (int)count ) );
+    return( newColumnOnCurrentLine( r, CurrentPos.column - (int)count ) );
 }
 
 int MoveRight( range *r, long count )
 {
-    return( newColumnOnCurrentLine( r, CurrentColumn + (int)count ) );
+    return( newColumnOnCurrentLine( r, CurrentPos.column + (int)count ) );
 }
 
 int MoveToColumn( range *r, long count )
@@ -291,7 +291,7 @@ int MoveTab( range *r, long count )
         return( ERR_NO_FILE );
     }
 
-    r->start.line = CurrentLineNumber;
+    r->start.line = CurrentPos.line;
     r->line_based = FALSE;
     len = RealLineLen( CurrentLine->data );
     vc = VirtualCursorPosition();
@@ -319,7 +319,7 @@ int MoveShiftTab( range *r, long count )
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
     }
-    r->start.line = CurrentLineNumber;
+    r->start.line = CurrentPos.line;
     r->line_based = FALSE;
     vc = VirtualCursorPosition();
     while( count ) {
@@ -346,7 +346,7 @@ static int doMoveToStartEndOfLine( range *r, long count, bool start )
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
     }
-    new = CurrentLineNumber + count;
+    new = CurrentPos.line + count;
     rc = checkLine( &new );
     r->start.line = new;
     if( rc == ERR_NO_ERR ) {
@@ -616,14 +616,14 @@ int MoveEndOfFile( range *r, long count )
 int MoveTopOfPage( range *r, long count )
 {
     count = count;
-    return( doMoveToStartEndOfLine( r, TopOfPage-CurrentLineNumber, TRUE ) );
+    return( doMoveToStartEndOfLine( r, LeftTopPos.line-CurrentPos.line, TRUE ) );
 }
 
 int MoveBottomOfPage( range *r, long count )
 {
-    int bottom = TopOfPage +
+    int bottom = LeftTopPos.line +
                  WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) - 1;
     count = count;
-    return( doMoveToStartEndOfLine( r, bottom - CurrentLineNumber, FALSE ) );
+    return( doMoveToStartEndOfLine( r, bottom - CurrentPos.line, FALSE ) );
 }
 

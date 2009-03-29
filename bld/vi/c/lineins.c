@@ -62,11 +62,11 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     }
 
     // add chars from right of cursor to end of last line of buffer
-    source = CurrentLine->data + CurrentColumn - 1;
+    source = CurrentLine->data + CurrentPos.column - 1;
     lastLineLen = fcbtail->line_tail->len;
-    fcbtail->line_tail->len += CurrentLine->len - CurrentColumn + 1;
+    fcbtail->line_tail->len += CurrentLine->len - CurrentPos.column + 1;
 
-    fcbtail->byte_cnt += CurrentLine->len - CurrentColumn + 1;
+    fcbtail->byte_cnt += CurrentLine->len - CurrentPos.column + 1;
 
     tLine = fcbtail->line_tail->prev;
     fcbtail->line_tail = MemReAlloc( fcbtail->line_tail, LINE_SIZE +
@@ -81,8 +81,8 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
     // create new current line in work line
     CurrentLineReplaceUndoStart();
     GetCurrentLine();
-    WorkLine->len = CurrentColumn + fcbhead->line_head->len - 1;
-    strcpy( WorkLine->data + CurrentColumn - 1, fcbhead->line_head->data );
+    WorkLine->len = CurrentPos.column + fcbhead->line_head->len - 1;
+    strcpy( WorkLine->data + CurrentPos.column - 1, fcbhead->line_head->data );
 
     // replace current line
     ReplaceCurrentLine();
@@ -101,13 +101,13 @@ int InsertLinesAtCursor( fcb *fcbhead, fcb *fcbtail, undo_stack *us )
 
     // add rest of lines of buffer & done
     if( fcbhead->line_head) {
-        InsertLines( CurrentLineNumber, fcbhead, fcbtail, us );
+        InsertLines( CurrentPos.line, fcbhead, fcbtail, us );
     }
     EndUndoGroup( us );
 
     // if are indeed linebased, move cursor as well
     if( !EditFlags.LineBased ) {
-        GoToLineNoRelCurs( CurrentLineNumber + e - 1 );
+        GoToLineNoRelCurs( CurrentPos.line + e - 1 );
         GoToColumnOnCurrentLine( lastLineLen + 1 );
     }
 

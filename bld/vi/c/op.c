@@ -109,7 +109,7 @@ int DeleteLines( void )
 {
     range       r;
 
-    GetLineRange( &r, GetRepeatCount(), CurrentLineNumber );
+    GetLineRange( &r, GetRepeatCount(), CurrentPos.line );
     return( Delete( &r ) );
 
 } /* DeleteLines */
@@ -121,7 +121,7 @@ int Yank( range *r )
     if( r->line_based ) {
         rc = YankLineRange( r->start.line, r->end.line );
     } else if( r->start.line == r->end.line ) {
-        assert( CurrentLineNumber == r->start.line );
+        assert( CurrentPos.line == r->start.line );
         AddLineToSavebuf( CurrentLine->data, r->start.column, r->end.column );
 #ifdef __WIN__
         if( LastSavebuf == 0 ) {
@@ -151,7 +151,7 @@ int YankLines( void )
 {
     range       r;
 
-    GetLineRange( &r, GetRepeatCount(), CurrentLineNumber );
+    GetLineRange( &r, GetRepeatCount(), CurrentPos.line );
     return( Yank( &r ) );
 
 } /* YankLines */
@@ -174,7 +174,7 @@ int Change( range *r )
             scol = -1;
             ecol = -1;
         } else {
-            if( r->start.line == CurrentLineNumber ) {
+            if( r->start.line == CurrentPos.line ) {
                 r->start.line++;
             } else {
                 r->end.line--;
@@ -226,7 +226,7 @@ int Change( range *r )
     UnselectRegion();
     DCUpdate();
 #ifndef __WIN__
-    HiliteAColumnRange( CurrentLineNumber, scol, ecol );
+    HiliteAColumnRange( CurrentPos.line, scol, ecol );
 #endif
 
     /*

@@ -68,7 +68,7 @@ static int goToLine( linenum lineno, int relcurs )
 #if 0
     if( cline->inf.ld.hidden ) {
         GetHiddenRange( lineno, &s, &e );
-        if( lineno > CurrentLineNumber ) {
+        if( lineno > CurrentPos.line ) {
             lineno = e + 1;
         } else {
             lineno = s - 1;
@@ -85,11 +85,11 @@ static int goToLine( linenum lineno, int relcurs )
      */
     CurrentFcb = cfcb;
     CurrentLine = cline;
-    diff = lineno - CurrentLineNumber;
+    diff = lineno - CurrentPos.line;
     if( diff == 0 && !EditFlags.GlobalInProgress ) {
         return( ERR_NO_ERR );
     }
-    cwl = CurrentLineNumber - TopOfPage + 1;
+    cwl = CurrentPos.line - LeftTopPos.line + 1;
     nwl = cwl + diff;
 
     /*
@@ -102,36 +102,36 @@ static int goToLine( linenum lineno, int relcurs )
     if( nwl < 1 || nwl > text_lines ) {
         tl = text_lines / 2;
         if( !relcurs ) {
-            TopOfPage = lineno - tl;
+            LeftTopPos.line = lineno - tl;
         } else {
-            TopOfPage = lineno + 1 - cwl;
+            LeftTopPos.line = lineno + 1 - cwl;
             pad = ( EditFlags.JumpyScroll == TRUE ) ? 1 : 0;
             if( diff > 0 ) {
-                TopOfPage += pad;
+                LeftTopPos.line += pad;
                 diff += pad;
             } else {
-                TopOfPage -= pad;
+                LeftTopPos.line -= pad;
                 diff -= pad;
             }
             if( diff > -tl && diff < tl && !dispall ) {
                 pageshift = TRUE;
             }
         }
-        if( TopOfPage < 1 ) {
+        if( LeftTopPos.line < 1 ) {
             assert( diff <= 0 ); // < -> <= W.Briscoe 20031003 to avoid debug build failure of
             // C:\watcom\source\docs\nt) wmake -h -f ..\mif\master.mif hbook=wccerrs dotarget=nt
-            diff += ( 1 - TopOfPage );
-            TopOfPage = 1;
+            diff += ( 1 - LeftTopPos.line );
+            LeftTopPos.line = 1;
         }
-        if( TopOfPage > lineno ) {
+        if( LeftTopPos.line > lineno ) {
             assert( diff > 0 );
-            diff = TopOfPage - lineno;
-            TopOfPage = lineno;
+            diff = LeftTopPos.line - lineno;
+            LeftTopPos.line = lineno;
         }
         dispall = TRUE;
     }
 #if 0
-    hiddcnt = GetHiddenLineCount( TopOfPage, lineno );
+    hiddcnt = GetHiddenLineCount( LeftTopPos.line, lineno );
     if( hiddcnt > 0 ) {
         pageshift = FALSE;
         dispall = TRUE;
@@ -147,7 +147,7 @@ static int goToLine( linenum lineno, int relcurs )
     }
 
 
-    /* call SetCurrentLineNumber AFTER TopOfPage set & CurrentColumn checked
+    /* call SetCurrentLineNumber AFTER LeftTopPos.line set & CurrentColumn checked
     */
     SetCurrentLineNumber( lineno );
 
@@ -188,20 +188,20 @@ void SetCurrentLineNumber( linenum l )
     long        last;
     long        height;
 
-    CurrentLineNumber = l;
+    CurrentPos.line = l;
     UpdateCursorDrag();
     VarAddRandC();
 
     if( CurrentFile != NULL ) {
         height = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
         last = CurrentFile->fcb_tail->end_line - height + 1;
-        if ( TopOfPage > last ){
-             last = TopOfPage;
+        if ( LeftTopPos.line > last ){
+             last = LeftTopPos.line;
         }
     } else {
         last = 1;
     }
-    PositionVerticalScrollThumb( CurrentWindow, TopOfPage, last );
+    PositionVerticalScrollThumb( CurrentWindow, LeftTopPos.line, last );
 }
 
 /*
@@ -257,10 +257,10 @@ int GoToColumn( int colno, int maxcol )
      * compute new location, and re-display text if needed
      */
     ColumnDesired = VirtualCursorPosition2( colno );
-    CurrentColumn = colno;
+    CurrentPos.column = colno;
     if( !CheckLeftColumn() ) {
         DCDisplayAllLines();
-        PositionHorizontalScrollThumb( CurrentWindow, LeftColumn );
+        PositionHorizontalScrollThumb( CurrentWindow, LeftTopPos.column );
     }
 
     SetWindowCursor();
@@ -293,11 +293,11 @@ int SetCurrentLine( linenum lineno )
     CurrentFcb = cfcb;
 
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
-    if( lineno < TopOfPage || lineno > (TopOfPage + text_lines - 1) ) {
-        TopOfPage = lineno - text_lines / 2;
+    if( lineno < LeftTopPos.line || lineno > (LeftTopPos.line + text_lines - 1) ) {
+        LeftTopPos.line = lineno - text_lines / 2;
     }
-    if( TopOfPage < 1 ) {
-        TopOfPage = 1;
+    if( LeftTopPos.line < 1 ) {
+        LeftTopPos.line = 1;
     }
 
     CheckCurrentColumn();
@@ -310,26 +310,26 @@ int SetCurrentLine( linenum lineno )
 } /* SetCurrentLine */
 
 /*
- * CheckLeftColumn - check if CurrentColumn and LeftColumn give a position
- *                   in the window; if not, LeftColumn is changed appropriatly
+ * CheckLeftColumn - check if CurrentPos.column and LeftTopPos.column give a position
+ *                   in the window; if not, LeftTopPos.column is changed appropriatly
  */
 int CheckLeftColumn( void )
 {
     int diff, wc, rc = TRUE, pad;
 
-    wc = VirtualCursorPosition() - LeftColumn;
+    wc = VirtualCursorPosition() - LeftTopPos.column;
 
     rc = ColumnInWindow( wc, &diff );
     if( !rc ) {
         // |diff| is already at least 1
         pad = ( EditFlags.JumpyScroll == TRUE ) ? SCROLL_HLINE - 1 : 0;
         if( diff < 0 ) {
-            LeftColumn += diff - pad;
+            LeftTopPos.column += diff - pad;
         } else {
-            LeftColumn += diff + pad;
+            LeftTopPos.column += diff + pad;
         }
-        if( LeftColumn < 0 ) {
-            LeftColumn = 0;
+        if( LeftTopPos.column < 0 ) {
+            LeftTopPos.column = 0;
         }
     }
     return( rc );
@@ -337,7 +337,7 @@ int CheckLeftColumn( void )
 } /* CheckLeftColumn */
 
 /*
- * ValidateCurrentColumn - give CurrentColumn an acceptable value
+ * ValidateCurrentColumn - give CurrentPos.column an acceptable value
  */
 void ValidateCurrentColumn( void )
 {
@@ -352,16 +352,16 @@ void ValidateCurrentColumn( void )
         cline = CurrentLine;
     }
 
-    if( CurrentColumn >= cline->len ) {
+    if( CurrentPos.column >= cline->len ) {
         if( (EditFlags.InsertModeActive || EditFlags.Modeless) &&
-            CurrentColumn > cline->len ) {
-            CurrentColumn = cline->len + 1;
+            CurrentPos.column > cline->len ) {
+            CurrentPos.column = cline->len + 1;
         } else {
-            CurrentColumn = cline->len;
+            CurrentPos.column = cline->len;
         }
     }
-    if( CurrentColumn <= 0  ) {
-        CurrentColumn = 1;
+    if( CurrentPos.column <= 0  ) {
+        CurrentPos.column = 1;
     }
 
 } /* ValidateCurrentColumn */
@@ -384,21 +384,21 @@ int CheckCurrentColumn( void )
 
     if( vcp != ColumnDesired ) {
         if( clen >= ColumnDesired ) {
-            CurrentColumn = RealCursorPosition( ColumnDesired );
+            CurrentPos.column = RealCursorPosition( ColumnDesired );
         } else {
             if( EditFlags.InsertModeActive || EditFlags.Modeless ) {
-                CurrentColumn = CurrentLine->len + 1;
+                CurrentPos.column = CurrentLine->len + 1;
             } else {
-                CurrentColumn = CurrentLine->len;
+                CurrentPos.column = CurrentLine->len;
             }
         }
         ValidateCurrentColumn();
         dispall = !CheckLeftColumn();
-        /* changed CurrentColumn - update horiz scrollbar
+        /* changed CurrentPos.column - update horiz scrollbar
         */
-        PositionHorizontalScrollThumb( CurrentWindow, LeftColumn );
+        PositionHorizontalScrollThumb( CurrentWindow, LeftTopPos.column );
     }
-    VarAddGlobalLong( "C", (long) CurrentColumn );
+    VarAddGlobalLong( "C", (long) CurrentPos.column );
     return( dispall );
 
 } /* CheckCurrentColumn */
@@ -421,35 +421,35 @@ int ShiftTab( int col, int ta )
 } /* ShiftTab */
 
 /*
- * SetCurrentColumn - set CurrentColumn, positioning LeftColumn nicely
+ * SetCurrentColumn - set CurrentPos.column, positioning LeftTopPos.column nicely
  */
 int SetCurrentColumn( int newcol )
 {
     long        oldpos;
     int         text_cols;
 
-    oldpos = CurrentColumn - LeftColumn;
+    oldpos = CurrentPos.column - LeftTopPos.column;
     if( newcol <= 0 ) {
         newcol = 1;
     }
 
     text_cols = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS );
     if( oldpos < 0 || oldpos >= text_cols ) {
-        LeftColumn = newcol - SCROLL_HLINE - 1;
+        LeftTopPos.column = newcol - SCROLL_HLINE - 1;
     } else {
-        LeftColumn = newcol - oldpos - 1;
+        LeftTopPos.column = newcol - oldpos - 1;
     }
-    if( LeftColumn < 0 ) {
-        LeftColumn = 0;
+    if( LeftTopPos.column < 0 ) {
+        LeftTopPos.column = 0;
     }
 
-    CurrentColumn = newcol;
+    CurrentPos.column = newcol;
 
     CheckCurrentColumn();
     UpdateCursorDrag();
     VarAddRandC();
 
-    PositionHorizontalScrollThumb( CurrentWindow, LeftColumn );
+    PositionHorizontalScrollThumb( CurrentWindow, LeftTopPos.column );
     UpdateStatusWindow();
     SetWindowCursor();
     DCDisplayAllLines();
@@ -511,7 +511,7 @@ int LocateCmd( char *data )
 #endif
 
     if( len > 0 ) {
-        SetSelRegionCols( CurrentLineNumber, c, c + len - 1 );
+        SetSelRegionCols( CurrentPos.line, c, c + len - 1 );
     }
     return( ERR_NO_ERR );
 

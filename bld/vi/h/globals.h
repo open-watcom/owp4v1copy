@@ -46,8 +46,8 @@ extern char _NEAR   CONFIG_FILE[];
 extern char _NEAR   MEMORIZE_MODE[];
 extern char _NEAR   SingleBlank[];
 extern char _NEAR   SingleSlash[];
-extern char * _NEAR EditOpts[];
-extern char * _NEAR BoolStr[];
+extern char _NEAR   * _NEAR EditOpts[];
+extern char _NEAR   * _NEAR BoolStr[];
 extern int          NumEditOpts;
 
 /* mouse data */
@@ -98,8 +98,8 @@ extern file         *CurrentFile;
 extern fcb          *CurrentFcb;
 extern line         *WorkLine;
 extern line         *CurrentLine;
-extern linenum      CurrentLineNumber, TopOfPage;
-extern int          CurrentColumn, LeftColumn;
+extern i_mark       CurrentPos;
+extern i_mark       LeftTopPos;
 extern int          ColumnDesired;
 extern window_id    CurrentWindow, MessageWindow, StatusWindow, CurrNumWindow;
 extern window_id    MenuWindow;

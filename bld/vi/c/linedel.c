@@ -197,8 +197,8 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
         us = UndoStack;
     }
     StartUndoGroup( us );
-    if( CurrentLineNumber >= s ) {
-        if( CurrentLineNumber <= e ) {
+    if( CurrentPos.line >= s ) {
+        if( CurrentPos.line <= e ) {
             i = SetCurrentLine( s );
             if( i ) {
                 if( i == ERR_NO_SUCH_LINE ) {
@@ -209,7 +209,7 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
                 }
             }
         } else {
-            i = SetCurrentLine( s + CurrentLineNumber - e - 1 );
+            i = SetCurrentLine( s + CurrentPos.line - e - 1 );
             if( i ) {
                 return( i );
             }
