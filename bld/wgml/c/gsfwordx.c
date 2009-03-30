@@ -32,11 +32,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <io.h>
-#include <fcntl.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -449,5 +444,3 @@ condcode    scr_wordpos( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * *
 
     return( pos );
 }
-
-

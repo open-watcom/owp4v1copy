@@ -31,15 +31,10 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <string.h>
-#include <stdarg.h>
+#include <unistd.h>
 #include "wresall.h"
 #include "layer0.h"
 #include "global.h"
-#include "fcntl.h"
-#if !defined( __UNIX__ ) || defined( __WATCOMC__ )
-#include "process.h"
-#endif
 #include "iortns.h"
 
 #include "wgml.h"
@@ -47,8 +42,6 @@
 
 #include "wreslang.h"
 #include "rcmem.h"
-#include <stdio.h>
-#include <io.h>
 
 HANDLE_INFO Instance;
 static int WGMLItself;
@@ -133,7 +126,7 @@ int get_msg( msg_ids resid, char *buff, unsigned buff_len )
 /*  end of msg processing                                                  */
 /***************************************************************************/
 
-void fini_msgs( void ) {
+void fini_msgs( void )
+{
     CloseResFile( &Instance );
 }
-

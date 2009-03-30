@@ -34,11 +34,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <io.h>
-#include <fcntl.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -206,4 +201,3 @@ condcode    scr_veclastpos( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char 
     vec_pos = false;
     return( scr_veclp( parms, parmcount, result ) );
 }
-

@@ -32,11 +32,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <stdarg.h>
-#include <io.h>
-#include <fcntl.h>
-#include <errno.h>
-
 #include "wgml.h"
 #include "gvars.h"
 
@@ -252,4 +247,3 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
     ProcFlags.substituted = true;
     return( pw );
 }
-

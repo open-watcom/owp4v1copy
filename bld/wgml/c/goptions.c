@@ -32,7 +32,7 @@
 #include "findfile.h"
 #include "gvars.h"
 
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 
 #define str( a ) # a
