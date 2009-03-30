@@ -172,7 +172,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/cvpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/wic/lang.ctl ]
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]
-[ INCLUDE <DEVDIR>/wgml/lang.ctl ]
+#[ INCLUDE <DEVDIR>/wgml/lang.ctl ]
 [ INCLUDE <DEVDIR>/parsedlg/lang.ctl ]
 [ INCLUDE <DEVDIR>/helpcomp/lang.ctl ]
 [ INCLUDE <DEVDIR>/wipfc/lang.ctl ]
