@@ -77,7 +77,7 @@ void    close_all_pu_files( void )
 
 static  errno_t open_pu_file( int n )
 {
-    errno_t         erc = EZERO;
+    errno_t         erc = 0;
     static  char    filename[ 20 ] = "SYSUSR0x.GML";
 
     if( n > 0 && n < 10 ) {
