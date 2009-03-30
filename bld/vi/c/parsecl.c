@@ -206,8 +206,8 @@ int GetAddress( char *buff, linenum *num  )
     bool        numinprog, stopnum, endparse;
     char        c;
     char        *tmp, st[2];
-    int         rc, col, len, fl;
-    linenum     s;
+    int         rc, len, fl;
+    i_mark      pos;
 
     /*
      * check if we have a numeric type thingy here
@@ -248,8 +248,8 @@ int GetAddress( char *buff, linenum *num  )
                     } else {
                         fl = FINDFL_FORWARD | FINDFL_NEXTLINE;
                     }
-                    rc = GetFind( tmp, &s, &col, &len, fl );
-                    numstack[nument] = s;
+                    rc = GetFind( tmp, &pos, &len, fl );
+                    numstack[nument] = pos.line;
                     stopnum = TRUE;
                     StaticFree( tmp );
                     if( rc ) {

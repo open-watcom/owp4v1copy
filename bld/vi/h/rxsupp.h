@@ -48,8 +48,8 @@
 extern regexp *CurrentRegularExpression;
 
 /* findrx.c */
-int FindRegularExpression( char *, linenum *, int, char **, linenum, int );
-int FindRegularExpressionBackwards( char *, linenum *, int, char **, linenum, int );
+int FindRegularExpression( char *, i_mark *, char **, linenum, int );
+int FindRegularExpressionBackwards( char *, i_mark *, char **, linenum, int );
 
 /* rxsupp.c */
 extern int  CurrentRegComp( char * );

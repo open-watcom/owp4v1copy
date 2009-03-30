@@ -49,11 +49,11 @@
 void WriteText( HWND hwnd, int x, int y, type_style *style, char * text, int len )
 {
     HDC         hdc;
-    #ifdef __WINDOWS_386__
-        short   tab;
-    #else
-        int     tab;
-    #endif
+#ifdef __WINDOWS_386__
+    short   tab;
+#else
+    int     tab;
+#endif
 
     if( len > 0 ){
         hdc = TextGetDC( hwnd, style );
@@ -138,11 +138,11 @@ int MyTextExtent( HWND hwnd, type_style *style, char *text, unsigned length )
     int         extent;
     unsigned    text_len, extra;
     int         font_width;
-    #ifdef __WINDOWS_386__
-        short   tab;
-    #else
-        int     tab;
-    #endif
+#ifdef __WINDOWS_386__
+    short   tab;
+#else
+    int     tab;
+#endif
 
     hdc = TextGetDC( hwnd, style );
     font_width = FontAverageWidth( style->font );
@@ -211,7 +211,7 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
         *col = 10000;
         return;
     }
-    assert( dc_line->start_col == LeftColumn );
+    assert( dc_line->start_col == LeftTopPos.column );
     ss_start = ss = dc_line->ss;
 
     // find which block x lies on
@@ -269,18 +269,17 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
         if( i == ERR_NO_ERR ) {
             char *text = line->data;
             // get the tab boundries in this block
-
-            #if 0
+#if 0
             v_pos = WinVirtualCursorPosition( text, startCols );
-            if( v_pos < LeftColumn ){
-                // block begins off left edge, advance forward to leftColumn
-                int rp = WinRealCursorPosition( text, LeftColumn );
+            if( v_pos < LeftTopPos.column ){
+                // block begins off left edge, advance forward to LeftTopPos.column
+                int rp = WinRealCursorPosition( text, LeftTopPos.column );
                 start_str = text + rp;
-                v_pos = LeftColumn;
+                v_pos = LeftTopPos.column;
                 startPixel = 0;
                 lenBlock -=( rp - startCols );
             }
-            #else
+#else
             if( LeftTopPos.column > 1 ){
                  // this only works for fixed fonts but its better than
                  // being wrong in every case; It's also correct
@@ -289,7 +288,7 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
                  *col = x/avg_width + 1;
                  return;
             }
-            #endif
+#endif
             end_str = start_str = text + startCols;
 
             while( end_str != start_str + lenBlock ){
@@ -559,17 +558,17 @@ HWND GetOwnedWindow( POINT pt )
         if( !strcmp( textBuffer, windowName [ i ] ) ) {
             /* a recognized window - return handle to it
             */
-            #ifdef __WINDOWS__
+#ifdef __WINDOWS__
             if( GetWindowWord( hwndElement, GWW_HINSTANCE ) ==
                 GetWindowWord( Root, GWW_HINSTANCE ) ) {
                 return( hwndElement );
             }
-            #else
+#else
             if( GetWindowLong( hwndElement, GWL_HINSTANCE ) ==
                 GetWindowLong( Root, GWL_HINSTANCE ) ) {
                 return( hwndElement );
             }
-            #endif
+#endif
             return( (HWND)NULL );
         }
     }

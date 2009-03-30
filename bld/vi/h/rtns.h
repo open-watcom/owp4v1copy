@@ -368,15 +368,16 @@ void    FiniFileStack( void );
 int DoGenericFilter( linenum, linenum, char * );
 
 /* findcmd.c */
-void    HilightSearchString( linenum, int, int );
+void    HilightSearchString( i_mark *, int );
 void    ResetLastFind( void );
 int     FindForwardWithString( char * );
-int     GetFind( char *, linenum *, int *, int *, int );
+int     GetFind( char *, i_mark *, int *, int );
 int     FindBackwardsWithString( char * );
 void    SaveFindRowColumn( void );
 int     ColorFind( char *, int );
 void    SetLastFind( char * );
 void    FindCmdFini( void );
+void    JumpTo( i_mark * );
 
 int DoFindBackwards( range *, long );
 int DoNextFindBackwards( range *, long );
@@ -582,7 +583,7 @@ void    SetMarkContext( void );
 
 /* match.c */
 int     DoMatching( range *, long count );
-int     FindMatch( linenum *, int * );
+int     FindMatch( i_mark * );
 int     AddMatchString( char * );
 void    MatchFini( void );
 

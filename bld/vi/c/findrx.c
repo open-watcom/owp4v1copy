@@ -42,15 +42,17 @@ static bool wrapMsgPrinted;
 /*
  * FindRegularExpression - do a forward search for a regular expression
  */
-int FindRegularExpression( char *pat, linenum *clineno, int ccol,
-                           char **linedata, linenum termline, int sw )
+int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
+                                                    linenum termline, int sw )
 {
-    int         i, scol, rc = FALSE;
+    int         rc;
+    int         found;
     linenum     ilineno;
     bool        wrapped = FALSE;
     char        *data;
     line        *cline;
     fcb         *cfcb;
+    int         scol;
 
     /*
      * initialize for search
@@ -60,17 +62,17 @@ int FindRegularExpression( char *pat, linenum *clineno, int ccol,
         ClearWindow( MessageWindow );
     }
     if( sw ) {
-        ilineno = *clineno;
+        ilineno = pos1->line;
     }
-    i = CGimmeLinePtr( *clineno, &cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
+    if( rc ) {
+        return( rc );
     }
-    scol = ccol;
+    scol = pos1->column;
     if( pat != NULL ) {
-        i = CurrentRegComp( pat );
-        if( i ) {
-            return( i );
+        rc = CurrentRegComp( pat );
+        if( rc ) {
+            return( rc );
         }
     }
 
@@ -79,23 +81,24 @@ int FindRegularExpression( char *pat, linenum *clineno, int ccol,
      */
     while( TRUE ) {
 
-        data = &cline->data[scol];
-        rc = RegExec( CurrentRegularExpression, data, (scol == 0) );
+        data = &cline->data[ scol ];
+        found = RegExec( CurrentRegularExpression, data, (data == cline->data) );
         if( RegExpError != ERR_NO_ERR ) {
             return( RegExpError );
         }
 
-        if( rc ) {
+        if( found ) {
             *linedata = cline->data;
+            pos1->column = GetCurrRegExpColumn( cline->data );
             return( ERR_NO_ERR );
         }
 
         /*
          * get next line
          */
-        i = CGimmeNextLinePtr( &cfcb, &cline );
-        if( i ) {
-            if( i == ERR_NO_MORE_LINES ) {
+        rc = CGimmeNextLinePtr( &cfcb, &cline );
+        if( rc ) {
+            if( rc == ERR_NO_MORE_LINES ) {
                 if( !sw ) {
                     return( ERR_FIND_END_OF_FILE );
                 } else {
@@ -106,61 +109,61 @@ int FindRegularExpression( char *pat, linenum *clineno, int ccol,
                 if( wrapped ) {
                     return( ERR_FIND_NOT_FOUND );
                 }
-                *clineno = 1;
-                i = CGimmeLinePtr( *clineno, &cfcb, &cline );
-                if( i ) {
-                    return( i );
+                pos1->line = 1;
+                rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
+                if( rc ) {
+                    return( rc );
                 }
-                *clineno = 0;
+                pos1->line = 0;
                 wrapped = TRUE;
             } else {
-                return( i );
+                return( rc );
             }
         }
         scol = 0;
-        (*clineno) += 1;
-        if( *clineno > termline ) {
+        pos1->line += 1;
+        if( pos1->line > termline ) {
             return( ERR_FIND_PAST_TERM_LINE );
         }
         if( wrapped ) {
-            if( *clineno > ilineno ) {
+            if( pos1->line > ilineno ) {
                 return( ERR_FIND_NOT_FOUND );
             }
         }
-
     }
-
 } /* FindRegularExpression */
 
 /*
  * FindRegularExpressionBackwards - do a reverse search for a regular expression
  */
-int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
-                                    char **linedata, linenum termline, int sw )
+int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
+                                                    linenum termline, int sw )
 {
-    int         i, scol, rc, col, len;
+    int         rc;
     char        *data;
-    bool        wrapped = FALSE, found;
+    bool        wrapped = FALSE;
+    bool        found;
     linenum     ilineno;
     line        *cline;
     fcb         *cfcb;
     regexp      rcpy;
+    int         scol;
 
     /*
      * initialize for search
      */
-    i = CGimmeLinePtr( *clineno, &cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
+    if( rc ) {
+        return( rc );
     }
     if( sw ) {
-        ilineno = *clineno;
+        ilineno = pos1->line;
     }
-    scol = ccol;
+    scol = pos1->column;
     if( pat != NULL ) {
-        i = CurrentRegComp( pat );
-        if( i ) {
-            return( i );
+        rc = CurrentRegComp( pat );
+        if( rc ) {
+            return( rc );
         }
     }
 
@@ -181,6 +184,7 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
                 return( RegExpError );
             }
             if( rc ) {
+                int     col, len;
                 col = GetCurrRegExpColumn( cline->data );
                 len = GetCurrRegExpLength();
                 if( col + len - 1 > scol ) {
@@ -188,7 +192,7 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
                 }
                 found = TRUE;
                 memcpy( &rcpy, CurrentRegularExpression, sizeof( regexp ) );
-                data = &(cline->data[col + 1]);
+                data = &(cline->data[ col + 1 ]);
                 if( *data == 0 ) {
                     break;
                 }
@@ -200,15 +204,16 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
         if( found ) {
             *linedata = cline->data;
             memcpy( CurrentRegularExpression, &rcpy, sizeof( regexp ) );
+            pos1->column = GetCurrRegExpColumn( cline->data );
             return( ERR_NO_ERR );
         }
 
         /*
          * get next line
          */
-        i = GimmePrevLinePtr( &cfcb, &cline );
-        if( i ) {
-            if( i == ERR_NO_MORE_LINES ) {
+        rc = GimmePrevLinePtr( &cfcb, &cline );
+        if( rc ) {
+            if( rc == ERR_NO_MORE_LINES ) {
                 if( !sw ) {
                     return( ERR_FIND_TOP_OF_FILE );
                 } else {
@@ -219,31 +224,29 @@ int FindRegularExpressionBackwards( char *pat, linenum *clineno, int ccol,
                 if( wrapped ) {
                     return( ERR_FIND_NOT_FOUND );
                 }
-                i = CFindLastLine( clineno );
-                if( i ) {
-                    return( i );
+                rc = CFindLastLine( &pos1->line );
+                if( rc ) {
+                    return( rc );
                 }
-                i = CGimmeLinePtr( *clineno, &cfcb, &cline );
-                if( i ) {
-                    return( i );
+                rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
+                if( rc ) {
+                    return( rc );
                 }
-                (*clineno) += 1;
+                pos1->line += 1;
                 wrapped = TRUE;
             } else {
-                return( i );
+                return( rc );
             }
         }
         scol = cline->len - 1;
-        (*clineno) -= 1;
-        if( *clineno < termline ) {
+        pos1->line -= 1;
+        if( pos1->line < termline ) {
             return( ERR_FIND_PAST_TERM_LINE );
         }
         if( wrapped ) {
-            if( *clineno < ilineno ) {
+            if( pos1->line < ilineno ) {
                 return( ERR_FIND_NOT_FOUND );
             }
         }
-
     }
-
 } /* FindRegularExpressionBackwards */

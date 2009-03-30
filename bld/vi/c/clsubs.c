@@ -94,9 +94,10 @@ int Substitute( linenum n1, linenum n2, char *data )
     bool        iflag = FALSE, gflag = FALSE, undoflag = FALSE, restline = FALSE;
     bool        splitpending = FALSE, undoline = FALSE;
     int         i, rlen, slen, key;
-    int         ccol, rc, splitme, k;
+    int         rc, splitme, k;
     long        changecnt = 0, linecnt = 0;
-    linenum     clineno, llineno, ll, lastline = 0, extra;
+    linenum     llineno, ll, lastline = 0, extra;
+    i_mark      pos;
 
     LastSubstituteCancelled = 0;
     LastChangeCount = 0;
@@ -160,8 +161,8 @@ int Substitute( linenum n1, linenum n2, char *data )
     }
     SaveCurrentFilePos();
     llineno = n1 - 1;
-    clineno = n1;
-    ccol = 0;
+    pos.line = n1;
+    pos.column = 0;
 
     EditFlags.AllowRegSubNewline = TRUE;
     newr = StaticAlloc();
@@ -170,9 +171,8 @@ int Substitute( linenum n1, linenum n2, char *data )
         /*
          * get regular expression, and build replacement string
          */
-        i = FindRegularExpression( NULL, &clineno, ccol, &linedata, n2, FALSE );
+        i = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE );
         if( !i ) {
-            ccol = GetCurrRegExpColumn( linedata );
             slen = GetCurrRegExpLength();
         } else {
             if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND ||
@@ -184,21 +184,21 @@ int Substitute( linenum n1, linenum n2, char *data )
             return( i );
         }
 
-        if( clineno > n2 ) {
+        if( pos.line > n2 ) {
             break;
         }
 
-        splitme = RegSub( CurrentRegularExpression, rstr, newr, clineno );
+        splitme = RegSub( CurrentRegularExpression, rstr, newr, pos.line );
         rlen = strlen( newr );
 
-        ProcessingMessage( clineno );
+        ProcessingMessage( pos.line );
 
         /*
          * if in global mode, see if we already have an undo for
          * this line
          */
         if( gflag ) {
-            if( lastline != clineno ) {
+            if( lastline != pos.line ) {
                 undoline = FALSE;
             }
         }
@@ -211,13 +211,13 @@ int Substitute( linenum n1, linenum n2, char *data )
                 ClearWindow( MessageWindow );
             }
             restline = TRUE;
-            GoToLineNoRelCurs( clineno );
+            GoToLineNoRelCurs( pos.line );
             if( EditFlags.GlobalInProgress ) {
                 EditFlags.DisplayHold = FALSE;
                 DCDisplayAllLines();
                 EditFlags.DisplayHold = TRUE;
             }
-            HilightSearchString( clineno, ccol, slen );
+            HilightSearchString( &pos, slen );
 #ifdef __WIN__
             key = MessageBox( Root, "Change this occurence?", "Replace Text",
                               MB_ICONQUESTION | MB_YESNOCANCEL );
@@ -269,22 +269,22 @@ int Substitute( linenum n1, linenum n2, char *data )
          * bump change counts
          */
         changecnt++;
-        if( llineno != clineno ) {
+        if( llineno != pos.line ) {
             if( splitpending ) {
                 splitpending = FALSE;
                 extra = SplitUpLine( llineno );
                 n2 += extra;
-                clineno += extra;
+                pos.line += extra;
             }
             linecnt++;
-            llineno = clineno;
+            llineno = pos.line;
         }
 
         /*
          * get copy of line, and verify that new stuff fits
          */
-        CurrentPos.line = clineno;
-        i = CGimmeLinePtr( clineno, &CurrentFcb, &CurrentLine );
+        CurrentPos.line = pos.line;
+        i = CGimmeLinePtr( pos.line, &CurrentFcb, &CurrentLine );
         if( i ) {
             RestoreCurrentFilePos();
             EditFlags.AllowRegSubNewline = FALSE;
@@ -305,7 +305,7 @@ int Substitute( linenum n1, linenum n2, char *data )
             CurrentLineReplaceUndoEnd( TRUE );
             if( gflag ) {
                 undoline = TRUE;
-                lastline = clineno;
+                lastline = pos.line;
             }
         }
 
@@ -314,7 +314,7 @@ int Substitute( linenum n1, linenum n2, char *data )
          */
         GetCurrentLine();
         WorkLine->len = ReplaceSubString( WorkLine->data, WorkLine->len,
-                                          ccol, ccol + slen - 1, newr, rlen );
+                                          pos.column, pos.column + slen - 1, newr, rlen );
         if( iflag ) {
             DisplayWorkLine( TRUE );
         }
@@ -329,20 +329,20 @@ int Substitute( linenum n1, linenum n2, char *data )
         CurrentFcb->non_swappable = FALSE;
 TRYNEXTMATCH:
         if( gflag ) {
-            ccol += rlen;
-            if( (slen == 0 && rlen == 0) || CurrentLine->data[ccol] == 0 ) {
-                clineno++;
-                if( clineno > n2 ) {
+            pos.column += rlen;
+            if( (slen == 0 && rlen == 0) || CurrentLine->data[pos.column] == 0 ) {
+                pos.line++;
+                if( pos.line > n2 ) {
                     break;
                 }
-                ccol = 0;
+                pos.column = 0;
             }
         } else {
-            clineno++;
-            if( clineno > n2 ) {
+            pos.line++;
+            if( pos.line > n2 ) {
                 break;
             }
-            ccol = 0;
+            pos.column = 0;
         }
 
     }
@@ -368,7 +368,7 @@ DONEALLREPLACEMENTS:
         EndUndoGroup( UndoStack );
     }
     if( rc == ERR_LINE_FULL ) {
-        Message1( "Stopped at line %l - line full", clineno );
+        Message1( "Stopped at line %l - line full", pos.line );
     } else {
         Message1( "%l changes on %l lines", changecnt, linecnt );
         LastLineCount = linecnt;

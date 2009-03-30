@@ -40,14 +40,13 @@
  */
 int DoMatching( range *r, long count )
 {
-    linenum     line;
-    int         column, rc;
+    int         rc;
+    i_mark      pos;
 
     count = count;
-    rc = FindMatch( &line, &column );
+    rc = FindMatch( &pos );
     r->line_based = FALSE;
-    r->start.line = line;
-    r->start.column = column;
+    r->start = pos;
     return( rc );
 
 } /* DoMatching */
@@ -55,14 +54,13 @@ int DoMatching( range *r, long count )
 /*
  * FindMatch - do matching braces command
  */
-int FindMatch( linenum *xln, int *xcol )
+int FindMatch( i_mark *pos1 )
 {
     char        *match[2];
     int         matchcnt, which, m1, m2, i;
-    linenum     ln;
-    int         cl;
     char        matchd[MAX_STR], tmp[MAX_STR];
     char        *linedata;
+    i_mark      pos2;
 
     /*
      * build match command
@@ -80,10 +78,10 @@ int FindMatch( linenum *xln, int *xcol )
     /*
      * find start of match on this line
      */
-    ln = CurrentPos.line;
-    cl = CurrentPos.column - 1;
+    pos2 = CurrentPos;
+    pos2.column -= 1;
 
-    if( FindRegularExpression( matchd, &ln, cl, &linedata, ln, FALSE ) ) {
+    if( FindRegularExpression( matchd, &pos2, &linedata, pos2.line, FALSE ) ) {
         return( ERR_NOTHING_TO_MATCH );
     }
 
@@ -96,8 +94,6 @@ int FindMatch( linenum *xln, int *xcol )
             break;
         }
     }
-
-    cl = GetCurrRegExpColumn( linedata );
 
     /*
      * get appropriate array entry
@@ -118,24 +114,23 @@ int FindMatch( linenum *xln, int *xcol )
      */
     while( TRUE ) {
         if( m2 ) {
-            cl--;
-            if( FindRegularExpressionBackwards( NULL, &ln, cl, &linedata, -1L, FALSE ) ) {
+            pos2.column--;
+            if( FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, FALSE ) ) {
                 break;
             }
         } else {
-            cl++;
-            if( FindRegularExpression( NULL, &ln, cl, &linedata, MAX_LONG, FALSE ) ) {
+            pos2.column++;
+            if( FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, FALSE ) ) {
                 break;
             }
         }
-        cl = GetCurrRegExpColumn( linedata );
         if( CurrentRegularExpression->startp[m2 + 1] != NULL ) {
             matchcnt++;
         } else {
             matchcnt--;
             if( matchcnt == 0 ) {
-                *xln = ln;
-                *xcol = 1 + cl;
+                *pos1 = pos2;
+                pos1->column += 1;
                 return( ERR_NO_ERR );
             }
         }

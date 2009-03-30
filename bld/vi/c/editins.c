@@ -731,11 +731,11 @@ int IMInsert( void )
 /*
  * tempMatch - show a temporary match
  */
-static void tempMatch( linenum mline, int mcol )
+static void tempMatch( i_mark *pos )
 {
     SaveCurrentFilePos();
-    GoToLineNoRelCurs( mline );
-    GoToColumnOK( mcol );
+    GoToLineNoRelCurs( pos->line );
+    GoToColumnOK( pos->column );
 #ifdef __WIN__
     DCDisplayAllLines();
     DCUpdate();
@@ -759,17 +759,17 @@ static void tempMatch( linenum mline, int mcol )
  */
 int IMCloseBracket( void )
 {
-    int         rc, mcol;
-    linenum     mline;
+    int         rc;
+    i_mark      pos;
 
     startNewLineUndo();
     insertChar( TRUE, FALSE );
     if( EditFlags.ShowMatch ) {
 
         ReplaceCurrentLine();
-        rc = FindMatch( &mline, &mcol );
+        rc = FindMatch( &pos );
         if( !rc ) {
-            tempMatch( mline, mcol );
+            tempMatch( &pos );
         }
         GetCurrentLine();
 
@@ -782,7 +782,7 @@ int IMCloseBracket( void )
 /*
  * getBracketLoc - find a matching '(' for a ')'
  */
-static int getBracketLoc( linenum *mline, int *mcol )
+static int getBracketLoc( i_mark *pos )
 {
     int         rc;
     char        tmp[3];
@@ -795,8 +795,8 @@ static int getBracketLoc( linenum *mline, int *mcol )
     tmp[1] = ')';
     tmp[2] = 0;
     lne = CurrentPos.line;
-    rc = GetFind( tmp, mline, mcol, &len, FINDFL_BACKWARDS | FINDFL_NOERROR);
-    if( *mline != CurrentPos.line ) {
+    rc = GetFind( tmp, pos, &len, FINDFL_BACKWARDS | FINDFL_NOERROR);
+    if( pos->line != CurrentPos.line ) {
         EditFlags.Magic = oldmagic;
         return( ERR_FIND_NOT_FOUND );
     }
@@ -808,10 +808,9 @@ static int getBracketLoc( linenum *mline, int *mcol )
     /*
      * find the matching '('
      */
-    CurrentPos.line = *mline;
-    CurrentPos.column = *mcol;
+    CurrentPos = *pos;
     CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
-    rc = FindMatch( mline, mcol );
+    rc = FindMatch( pos );
     EditFlags.Magic = oldmagic;
     return( rc );
 
@@ -820,26 +819,23 @@ static int getBracketLoc( linenum *mline, int *mcol )
 /*
  * findMatchingBrace find '{' for a '}'
  */
-static int findMatchingBrace( linenum *mline, int *mcol )
+static int findMatchingBrace( i_mark *pos1 )
 {
     int         rc;
-    int         col;
-    linenum     sline;
+    i_mark      pos2;
 
-    rc = FindMatch( mline, mcol );
+    rc = FindMatch( pos1 );
     if( rc ) {
         return( rc );
     }
     SaveCurrentFilePos();
-    CurrentPos.line = *mline;
-    CurrentPos.column = *mcol;
+    CurrentPos = *pos1;
     CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
 
-    rc = getBracketLoc( &sline, &col );
+    rc = getBracketLoc( &pos2 );
     RestoreCurrentFilePos();
     if( !rc ) {
-        *mline = sline;
-        *mcol = col;
+        *pos1 = pos2;
     }
     return( ERR_NO_ERR );
 
@@ -856,17 +852,16 @@ int IMCloseBrace( void )
     line        *cline;
     int         rc;
     int         newcol;
-    linenum     mline;
-    int         mcol;
+    i_mark      pos;
 
     startNewLineUndo();
     insertChar( TRUE, FALSE );
     newcol = CurrentPos.column + 1;
     if( EditFlags.ShowMatch ) {
         ReplaceCurrentLine();
-        rc = FindMatch( &mline, &mcol );
+        rc = FindMatch( &pos );
         if( !rc ) {
-            tempMatch( mline, mcol );
+            tempMatch( &pos );
         }
         GetCurrentLine();
     }
@@ -885,10 +880,10 @@ int IMCloseBrace( void )
              */
 
             ReplaceCurrentLine();
-            rc = findMatchingBrace( &mline, &mcol );
+            rc = findMatchingBrace( &pos );
             if( !rc ) {
                 newcol = VirtualCursorPosition();
-                CGimmeLinePtr( mline, &cfcb, &cline );
+                CGimmeLinePtr( pos.line, &cfcb, &cline );
                 i = FindStartOfALine( cline );
                 i = GetVirtualCursorPosition( cline->data, i );
                 j = i - VirtualCursorPosition2( CurrentPos.column );

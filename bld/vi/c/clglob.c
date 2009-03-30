@@ -43,12 +43,13 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
 {
     char        *sstr, *cmd, *linedata;
     int         i, todo;
-    int         ccol, rc;
+    int         rc;
     long        changecnt = 0;
-    linenum     clineno, llineno, ll;
+    linenum     llineno, ll;
     fcb         *cfcb;
     line        *cline;
     regexp      crx;
+    i_mark      pos;
 
     /*
      * get search string and command
@@ -93,8 +94,8 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
     }
     SaveCurrentFilePos();
     llineno = n1 - 1;
-    clineno = n1;
-    ccol = 0;
+    pos.line = n1;
+    pos.column = 0;
     StartUndoGroup( UndoStack );
     EditFlags.DisplayHold = TRUE;
     strcpy( sstr, data );
@@ -107,10 +108,8 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
         /*
          * go thorugh file, marking global lines
          */
-        i = FindRegularExpression( NULL, &clineno, ccol, &linedata, n2, FALSE );
-        if( !i ) {
-            ccol = GetCurrRegExpColumn( linedata );
-        } else {
+        i = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE );
+        if( i ) {
             if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND ||
                 i == ERR_FIND_END_OF_FILE ) {
                 break;
@@ -119,14 +118,14 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
             EditFlags.DisplayHold = FALSE;
             return( i );
         }
-        if( clineno > n2 ) {
+        if( pos.line > n2 ) {
             break;
         }
 
         /*
          * go to appropriate spot in file
          */
-        i = GoToLineNoRelCurs( clineno );
+        i = GoToLineNoRelCurs( pos.line );
         if( i ) {
             RestoreCurrentFilePos();
             EditFlags.DisplayHold = FALSE;
@@ -140,14 +139,14 @@ int Global( linenum n1, linenum n2, char *data, int dmt )
         CurrentLine->inf.ld.globmatch = TRUE;
         if( EditFlags.Verbose && EditFlags.EchoOn ) {
             // WPrintfLine( MessageWindow,1,"Match on line %l",clineno );
-            Message1( "Match on line %l", clineno );
+            Message1( "Match on line %l", pos.line );
         }
 
-        clineno++;
-        if( clineno > n2 ) {
+        pos.line++;
+        if( pos.line > n2 ) {
             break;
         }
-        ccol = 0;
+        pos.column = 0;
 
     }
 
