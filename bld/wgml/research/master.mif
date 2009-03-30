@@ -3,7 +3,6 @@
 # =======================================
 #
 
-proj_name = cfparse
 wgml_autodepends = .AUTODEPEND
 
 !include cproj.mif
@@ -13,7 +12,7 @@ wgml_autodepends = .AUTODEPEND
 
 inc_dirs = -I"../h;../../h"
 
-.c: ../c;../../c;../../../watcom/c
+.c: ../c;../../c;$(watcom_dir)/c
 
 common_objs = &
             common.obj    &
@@ -36,6 +35,11 @@ cf_common_objs = &
 cfc_objs = &
             cfcheck.obj   &
             cfcutils.obj
+
+cfp_objs = &
+            $(cf_common_objs) &
+            cfparse.obj       &
+            cfputils.obj
 
 cop_common_objs = &
 	    $(common_objs) &
@@ -69,17 +73,18 @@ outc_objs = &
             $(cop_common_objs) &
 	    outcheck.obj
 
-objs = &
-            $(cf_common_objs) &
-            cfparse.obj       &
-            cfputils.obj
-
-nwgml : wgmlmsgs.gh wgmlmsge.gh cfcheck.exe cfparse.exe copparse.exe &
+nwgml : wgmlmsge.gh wgmlmsgs.gh cfcheck.exe cfparse.exe copparse.exe &
 	devldchk.exe findfunc.exe outcheck.exe .SYMBOLIC
 
-!include exetarg.mif
-
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
+!ifeq verbose 1
+        $(cl) $(clflags) $< $(cl_libs)
+!else
+        @echo cl $@
+        @$(cl) $(clflags) $< $(cl_libs)
+!endif
+
+cfparse.exe : $(cfp_objs) $(libs)
 !ifeq verbose 1
         $(cl) $(clflags) $< $(cl_libs)
 !else
@@ -111,16 +116,18 @@ findfunc.exe : $(ff_objs) $(libs)
         @$(cl) $(clflags) $< $(cl_libs)
 !endif
 
-outcheck.exe : $(outc_objs) $(libs)
+outcheck.exe : wgml.res $(outc_objs) $(libs)
+    %create wgml.lnk
+    @%append wgml.lnk $(lflags)
+    @%append wgml.lnk option map
 !ifeq verbose 1
-        $(cl) $(clflags) $< $(cl_libs)
-!else
-        @echo cl $@
-        @$(cl) $(clflags) $< $(cl_libs)
+    @%append wgml.lnk option verbose
 !endif
-
-rcmsg.gh : $(wrc_dir)/h/rc.msg
-        $(awk) -v rcbase=800 -f $(misc_dir)/msgtoh.awk $[@ > $^@
+    @for %i in ( $(outc_objs) ) do @%append wgml.lnk file %i
+    @for %i in ( $(libs) ) do @%append wgml.lnk lib %i
+    $(linker) name $^@ @wgml.lnk
+    wstrip -q -a -r $@ . wgml.res
+    -rm wgml.lnk
 
 wgmlmsgs.gh : ../../h/wgmlerr.msg ../../h/wgml.msg
         $(awk) -v base=000 -f ../../makemdef.awk $< > $^@
@@ -128,13 +135,8 @@ wgmlmsgs.gh : ../../h/wgmlerr.msg ../../h/wgml.msg
 wgmlmsge.gh : ../../h/wgmlerr.msg ../../h/wgml.msg
         $(awk) -v rcbase=000 -f ../../msgtoenm.awk $< > $^@
 
-extra_rc_flags_os2 = -D__OS2__
-extra_rc_flags_nt  = -D__NT__
-extra_rc_flags_osi = -D__OSI__
+wgml.res : wgmlmsgs.gh ../../h/wgml.msg ../../h/wgmlmsg.h &
+                       ../../h/wgmlerr.msg ../../h/wgml.rc
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 
-.EXTENSIONS: .res
-
-#$(name).res : wgmlmsgs.gh ../../h/wgml.msg ../../h/wgmlmsg.h &
-#              ../../h/wgmlerr.msg ../../h/wgml.rc
-#        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 
