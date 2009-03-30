@@ -48,27 +48,11 @@ inc_dirs      += -I"$(trmem_dir)"
 !endif
 
 libs     += $(wres_lib)
-gen_deps = $(objs) $(libs) $(__MAKEFILES__) wgml.lnk
 
 
-#
-# don't build wgml.exe for linux
-#
-
-!ifneq host_os linux
-
-all : wgml.exe .SYMBOLIC
-
-wgml.exe: $(res_depends) $(gen_deps)
-    $(linker) name $^@ @wgml.lnk
+wgml.exe: $(res_depends) $(objs) $(libs) $(__MAKEFILES__)
+    $(linker) name $^@ $(lflags) op map file { $(objs) } lib { $(libs) }
     wstrip -q -a -r $@ . wgml.res
-    -rm wgml.lnk
-
-!else
-
-all : .SYMBOLIC
-
-!endif
 
 ##$(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlerr.rc ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
 $(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
@@ -82,14 +66,3 @@ wgmlmsgs.gh : ../h/wgmlerr.msg ../h/wgml.msg
 
 wgmlmsge.gh : ../h/wgmlerr.msg ../h/wgml.msg
         $(awk) -v rcbase=000 -f ../msgtoenm.awk $< > $^@
-
-wgml.lnk : $(__MAKEFILES__)
-    %create wgml.lnk
-    @%append wgml.lnk $(lflags)
-    @%append wgml.lnk option map
-!ifeq verbose 1
-    @%append wgml.lnk option verbose
-!endif
-    @for %i in ( $(objs) ) do @%append wgml.lnk file %i
-    @for %i in ( $(libs) ) do @%append wgml.lnk lib %i
-
