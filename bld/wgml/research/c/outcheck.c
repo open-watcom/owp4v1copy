@@ -108,6 +108,8 @@ static void emulate_wgml( void )
 
     /* DOCUMENT processing.*/
 
+    fb_document();
+
     /* First page. */
 
     /* :NEWPAGE block. */
@@ -115,6 +117,8 @@ static void emulate_wgml( void )
     /* Second page. */
 
     /* :FINISH block. */
+
+    fb_finish();
 
     return;
 }

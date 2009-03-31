@@ -73,6 +73,8 @@
 *               the functions:
 *                   cop_setup()
 *                   cop_teardown()
+*                   fb_document()
+*                   fb_finish()
 *                   fb_start()
 *
 * Note:         The field names are intended to correspond to the field names 
@@ -516,6 +518,8 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 
 extern void             cop_setup( void );
 extern void             cop_teardown( void );
+extern void             fb_document( void );
+extern void             fb_finish( void );
 extern void             fb_start( void );
 
 #ifdef  __cplusplus

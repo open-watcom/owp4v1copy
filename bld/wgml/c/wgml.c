@@ -822,9 +822,13 @@ int main( int argc, char * argv[] )
         utoa( passes, linestr2, 10 );
         set_default_extension( master_fname );// make this extension first choice
 
+        fb_start(); // START :PAUSE & :INIT processing.
+
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
+
+            if( GlobalFlags.firstpass == 1) fb_document(); // DOCUMENT :PAUSE & :INIT processing.
 
 //            g_trmem_prt_list();  // all memory freed if no output from call
             utoa( pass, linestr1, 10 );
@@ -841,6 +845,9 @@ int main( int argc, char * argv[] )
             g_info( INF_PASS_2, linestr1, linestr2,
                     GlobalFlags.research ? "research" : "normal" );
         }
+
+        fb_finish(); // :FINISH block processing.
+
     } else {
         g_err( err_missing_mainfilename );
         err_count++;

@@ -27,6 +27,8 @@
 * Description:  Implements the functions used to parse .COP files:
 *                   cop_setup()
 *                   cop_teardown()
+*                   fb_document()
+*                   fb_finish()
 *                   fb_start()
 *               plus these local functions:
 *                   compute_metrics()
@@ -40,7 +42,8 @@
 *                   get_cop_font()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
-*               not apparent. This should help in most cases.
+*               not apparent and for how the various function blocks are used.
+*               This should help in most cases.
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
@@ -993,6 +996,48 @@ extern void cop_teardown( void )
     return;
 }
 
+/* Function fb_document().
+ * Performs the processing which occurs when document processing begins.
+ */
+
+extern void fb_document( void )
+{
+    /* Interpret the DOCUMENT :PAUSE block. */
+
+    if( bin_device->pauses.document_pause != NULL ) \
+        df_interpret_device_functions( bin_device->pauses.document_pause->text );
+
+    /* Interpret the DOCUMENT :INIT block. */
+
+    if( bin_driver->inits.document != NULL ) \
+                                            fb_init( bin_driver->inits.document );
+
+    /* Perform the virtual %enterfont(0). */
+
+    fb_enterfont();
+
+    return;
+}
+
+/* Function fb_finish().
+ * Performs the processing which occurs after document processing ends. 
+ */
+
+extern void fb_finish( void )
+{
+    /* If the END :FINISH block is present, interpret it. If the END
+     * :FINISH block is not present, then, if the DOCUMENT :FINISH block
+     * is present, interpret it.
+     */
+
+    if( bin_driver->finishes.end != NULL ) \
+        df_interpret_driver_functions( bin_driver->finishes.end->text );
+    else if( bin_driver->finishes.document != NULL ) \
+        df_interpret_driver_functions( bin_driver->finishes.document->text );
+
+    return;
+}
+
 /* Function fb_start().
  * Performs the processing which occurs before document processing starts. Indeed,
  * wgml 4.0 does not even look for the document specification file until the
@@ -1014,3 +1059,4 @@ extern void fb_start( void )
 
     return;
 }
+
