@@ -63,7 +63,7 @@ event _NEAR EventList[] = {
 /*  ^P */ { InvalidKey, InvalidKey, MoveUp, {EVENT_REL_MOVE, 0, 0, 0, 0, 0, 0}, {EVENT_REL_MOVE, 0, 0, 0, 0, 0, 0} },
 /*  ^Q */ { InvalidKey, IMEscapeNextChar, InvalidKey, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_MISC, 0, 0, 0, 0, 0, 0} },
 /*  ^R */ { FancyDoReplace, IMCursorKey, ReselectRegion, {EVENT_MISC, 1, 0, 0, 0, 0, 0}, {EVENT_MISC, 0, 0, 0, 0, 0, 0} },
-/*  ^S */ { FancyFileSave, IMMenuKey, FancyFileSave, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_MISC, 0, 0, 0, 0, 0, 0} },
+/*  ^S */ { DoKeyboardSave, IMMenuKey, DoKeyboardSave, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_MISC, 0, 0, 0, 0, 0, 0} },
 /*  ^T */ { InvalidKey, IMTabs, InvalidKey, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_MISC, 0, 0, 0, 0, 0, 0} },
 /*  ^U */ { DoNextFindBackwardsMisc, InvalidKey, MoveHalfPageUp, {EVENT_MISC, 0, 0, 0, 0, 1, 0}, {EVENT_MISC, 0, 0, 0, 0, 0, 0} },
 /*  ^V */ { InsertSavebufBefore2, IMEscapeNextChar, DoVersion, {EVENT_MISC, 0, 0, 0, 0, 0, 0}, {EVENT_MISC, 1, 0, 0, 0, 0, 0} },

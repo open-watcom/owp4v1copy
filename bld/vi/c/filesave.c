@@ -511,3 +511,31 @@ int FancyFileSave( void )
     return( rc );
 
 } /* FancyFileSave */
+
+/*
+ * DoKeyboardSave - handle the CTRL+S keyboard shortcut
+ */
+int DoKeyboardSave( void )
+{
+#ifdef __WIN__
+    int     rc;
+    char    fname[_MAX_FNAME];
+
+    if( CurrentFile != NULL ) {
+        _splitpath( CurrentFile->name, NULL, NULL, fname, NULL );
+    } else {
+        fname[0] = 0;
+    }
+
+    if( strcmp( fname, "untitled" ) == 0 ) {
+        rc = SaveFileAs();
+    } else {
+        rc = FancyFileSave();
+    }
+    return( rc );
+#else
+    return( FancyFileSave() );
+#endif
+
+} /* DoKeyboardSave */
+
