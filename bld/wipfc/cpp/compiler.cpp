@@ -36,7 +36,7 @@
 #include "compiler.hpp"
 #include "document.hpp"
 #include "errors.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 #include "ipffile.hpp"
 #include "lexer.hpp"
 

@@ -36,7 +36,7 @@
 #include "cell.hpp"
 #include "document.hpp"
 #include "errors.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 #include "lexer.hpp"
 #include "page.hpp"
 #include "util.hpp"

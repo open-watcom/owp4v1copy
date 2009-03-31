@@ -33,7 +33,7 @@
 #include "word.hpp"
 #include "document.hpp"
 #include "gdword.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 
 Lexer::Token Word::parse( Lexer* lexer )
 {

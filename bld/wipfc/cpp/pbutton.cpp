@@ -34,7 +34,7 @@
 
 #include "pbutton.hpp"
 #include "controls.hpp"
-#include "document->hpp"
+#include "document.hpp"
 #include "util.hpp"
 
 Lexer::Token PButton::parse( Lexer* lexer )

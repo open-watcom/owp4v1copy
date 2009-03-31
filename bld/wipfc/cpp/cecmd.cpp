@@ -33,7 +33,7 @@
 #include "brcmd.hpp"
 #include "entity.hpp"
 #include "document.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 #include "punct.hpp"
 #include "whtspc.hpp"
 #include "word.hpp"

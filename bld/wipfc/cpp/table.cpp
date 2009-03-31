@@ -46,7 +46,7 @@
 #include "entity.hpp"
 #include "font.hpp"
 #include "hpn.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 #include "link.hpp"
 #include "punct.hpp"
 #include "util.hpp"

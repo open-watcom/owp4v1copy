@@ -32,7 +32,7 @@
 #include <cwctype>
 #include "entity.hpp"
 #include "document.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 #include "lexer.hpp"
 
 Lexer::Token Entity::parse( Lexer* lexer )

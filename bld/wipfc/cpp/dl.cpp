@@ -43,7 +43,7 @@
 #include "cell.hpp"
 #include "document.hpp"
 #include "errors.hpp"
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 #include "lexer.hpp"
 #include "lm.hpp"
 #include "ol.hpp"

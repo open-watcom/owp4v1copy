@@ -17,7 +17,7 @@ inc_dirs = -I"../cpp"
 
 .cpp : ../cpp
 
-objs =  main.obj compiler.obj document.obj env.obj ipfbuffer.obj ipffile.obj lexer.obj
+objs =  main.obj compiler.obj document.obj env.obj ipfbuff.obj ipffile.obj lexer.obj
 
 objobjs=bitmap.obj btmpblk.obj cecmd.obj cell.obj ctrlbtn.obj ctrlgrp.obj controls.obj&
         errors.obj extfiles.obj fnt.obj fntcol.obj fts.obj gdword.obj gdict.obj gnames.obj&

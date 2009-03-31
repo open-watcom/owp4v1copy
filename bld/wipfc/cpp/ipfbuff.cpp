@@ -28,7 +28,7 @@
 *
 ****************************************************************************/
 
-#include "ipfbuffer.hpp"
+#include "ipfbuff.hpp"
 
 IpfBuffer::IpfBuffer( const std::wstring* fname,    //originiating file
     unsigned int line,                              //line in that file
