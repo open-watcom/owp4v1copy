@@ -73,7 +73,7 @@ STATIC bint initCurrSIO( void )
     fh = open( SamplePath, O_RDONLY | O_BINARY, S_IREAD );
     if( fh == (file_handle) -1 ) {
         ErrorMsg( LIT( Cannot_Open_Smp_File ), SamplePath );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     CurrSIOData = ProfCAlloc( sizeof(sio_data) );
     CurrSIOData->fh = fh;
@@ -85,19 +85,19 @@ STATIC bint initCurrSIO( void )
     name_len = strlen( LIT( Unknown_Image ) ) + 1;
     new_image->name = ProfAlloc( name_len );
     memcpy( new_image->name, LIT( Unknown_Image ), name_len );
-    new_image->unknown_image = B_TRUE;
+    new_image->unknown_image = P_TRUE;
     CurrSIOData->images[0] = new_image;
     CurrSIOData->curr_image = new_image;
     new_image = ProfCAlloc( sizeof(image_info) );
     name_len = strlen( LIT( Gathered_Images ) ) + 1;
     new_image->name = ProfAlloc( name_len );
     memcpy( new_image->name, LIT( Gathered_Images ), name_len );
-    new_image->ignore_gather = B_TRUE;
-    new_image->gather_image = B_TRUE;
+    new_image->ignore_gather = P_TRUE;
+    new_image->gather_image = P_TRUE;
     CurrSIOData->images[1] = new_image;
     CurrSIOData->image_count = 2;
     CurrSIOData->curr_display_row = -WND_MAX_ROW;
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -113,27 +113,27 @@ STATIC bint verifyHeader( void )
     header_position = lseek( fh, - ( (off_t)SIZE_HEADER ), SEEK_END );
     if( header_position == (off_t)-1 ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( read( fh, &CurrSIOData->header, SIZE_HEADER ) != SIZE_HEADER ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( CurrSIOData->header.signature != SAMP_SIGNATURE ) {
         ErrorMsg( LIT( Invalid_Smp_File ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( CurrSIOData->header.major_ver != SAMP_MAJOR_VER
      || CurrSIOData->header.minor_ver > SAMP_MINOR_VER ) {
         ErrorMsg( LIT( Incompat_Smp_File ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     tmp_position = lseek( fh, CurrSIOData->header.sample_start, SEEK_SET );
     if( tmp_position == (off_t) -1 ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -144,9 +144,9 @@ STATIC void procInfoBlock( clicks_t ticks, samp_data *data )
     /* is this for backward compatability */
 //    if( pref->length >= SIZE_INFO + SIZE_PREFIX &&
 //                               data->info.count[ SAMP_CALLGRAPH ].number ) {
-//        CallGraph = B_TRUE;     /* sample file includes callgraph records */
+//        CallGraph = P_TRUE;     /* sample file includes callgraph records */
 //    } else {
-//        CallGraph = B_FALSE;    /* sample file doesn't have callgraph info */
+//        CallGraph = P_FALSE;    /* sample file doesn't have callgraph info */
 //    }
     if( ticks == 0 ) {
         ticks = 1;
@@ -202,10 +202,10 @@ STATIC void procOverlayBlock( clicks_t tick, samp_data * data )
     new_ovl->tick = tick;
     new_ovl->section = data->ovl.req_section;
     if( new_ovl->section & OVL_RETURN ) {
-        new_ovl->overlay_return = B_TRUE;
+        new_ovl->overlay_return = P_TRUE;
         new_ovl->section &= ~OVL_RETURN;
     } else {
-        new_ovl->overlay_return = B_FALSE;
+        new_ovl->overlay_return = P_FALSE;
     }
     /* make sure to handle overlay resolution */
     new_ovl->req_addr.mach.segment = data->ovl.addr.segment;
@@ -378,7 +378,7 @@ STATIC bint procSampleBlock( clicks_t tick, uint_16 total_len,
         ++data_index;
         --count;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -404,15 +404,15 @@ STATIC bint readSampleFile( void )
     start_position = lseek( fh, CurrSIOData->header.sample_start, SEEK_SET );
     if( start_position == (off_t) -1 ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( read( fh, &prefix, SIZE_PREFIX ) != SIZE_PREFIX ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     buff = ProfAlloc( SIZE_DATA );
     buff_len = SIZE_DATA;
-    main_exe = B_FALSE;
+    main_exe = P_FALSE;
     while( prefix.kind != SAMP_LAST ) {
         size = prefix.length;
         if( buff_len < size ) {
@@ -423,7 +423,7 @@ STATIC bint readSampleFile( void )
         if( BigRead( fh, buff, size ) != size ) {
             ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
             ProfFree( buff );
-            return( B_FALSE );
+            return( P_FALSE );
         }
         next_prefix = (void *)( ((char *) buff) + ( size - SIZE_PREFIX ));
 
@@ -440,7 +440,7 @@ STATIC bint readSampleFile( void )
 //                errorIO();
 //                ProfFree( buff );
 //                ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
-//                return( B_FALSE );
+//                return( P_FALSE );
 //            }
 //            next_prefix = (void *)( ((char *) next_prefix) + ( size - SIZE_PREFIX ));
 //        }
@@ -451,7 +451,7 @@ STATIC bint readSampleFile( void )
             break;
         case SAMP_SAMPLES:
             if( !procSampleBlock( prefix.tick, prefix.length, buff ) ) {
-                return( B_FALSE );
+                return( P_FALSE );
             }
             break;
         case SAMP_MARK:
@@ -464,11 +464,11 @@ STATIC bint readSampleFile( void )
             procAddrBlock( prefix.length, buff );
             break;
         case SAMP_MAIN_LOAD:
-            main_exe = B_TRUE;
+            main_exe = P_TRUE;
             /* fall through */
         case SAMP_CODE_LOAD:
             procImageBlock( buff, main_exe );
-            main_exe = B_FALSE;
+            main_exe = P_FALSE;
             break;
         case SAMP_REMAP_SECTION:
             procRemapBlock( prefix.tick, prefix.length, buff );
@@ -480,7 +480,7 @@ STATIC bint readSampleFile( void )
         prefix = *next_prefix;
     }
     ProfFree( buff );
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -489,21 +489,21 @@ extern bint GetSampleInfo( void )
 /*******************************/
 {
     if( !initCurrSIO() ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( !verifyHeader() ) {
         ClearSample( CurrSIOData );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( !readSampleFile() ) {
         ClearSample( CurrSIOData );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     /* there must be at least one address map for the first module, or */
     /* we cannot resolve overlays and do mapping.  Should generate an error*/
     if( !LoadImageOverlays() ) {
         ClearSample( CurrSIOData );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     close( CurrSIOData->fh );
     /* do the SIOData sets near the end to make it easier to de-link */
@@ -517,5 +517,5 @@ extern bint GetSampleInfo( void )
     SIOData = CurrSIOData;
     SetSampleInfo( CurrSIOData );
     SamplePath[0] = 0;
-    return( B_TRUE );
+    return( P_TRUE );
 }

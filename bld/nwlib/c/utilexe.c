@@ -95,6 +95,7 @@ void Usage( void )
 
     for( str = USAGE_FIRST; str <= USAGE_LAST; ++str ) {
         MsgGet( str, buff );
+#ifndef __UNIX__
         if( (count>20 && (!buff || buff[ 0 ]=='\0')) || count==24 ) {
             fprintf( stderr, "    (Press Return to continue)" );
             fflush( stderr );
@@ -102,6 +103,7 @@ void Usage( void )
             count=0;
             fprintf( stderr, "\r                               \r");
         }
+#endif
         fprintf( stderr, "%s\n", buff );
         count++;
     }

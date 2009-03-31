@@ -36,19 +36,16 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "banner.h"
-#define FAR _far
-typedef unsigned short WORD;
-typedef unsigned long DWORD;
-typedef WORD HINSTANCE;
-typedef char FAR *LPSTR;
-#include "winext.h"
 #include "watcom.h"
 #include "exedos.h"
 #include "exeos2.h"
+#include "exephar.h"
 
 #undef _WBIND_VERSION_
 #define _WBIND_VERSION_ "2.3"
@@ -132,7 +129,7 @@ static void doUsage( char *str )
     quietFlag = FALSE;
     doBanner();
     if( str != NULL ) {
-        printf("Error - %s\n\n", str );
+        printf( "Error - %s\n\n", str );
     }
 
     printf("Usage:  wbind [file] [-udnq] [-D \"<desc>\"] [-s <supervisor>] [-R <rc options>]\n" );
@@ -229,29 +226,50 @@ void FindExtender( char *extname, char *winext )
     }
 }
 
+#ifndef __WATCOMC__
+#define P_WAIT 0
+int spawnvp( int mode, const char *cmd, const char * const *args )
+{
+    pid_t       pid;
+    int         status;
+
+    pid = fork();
+    if( pid == -1 )
+        return( -1 );
+    if( pid == 0 ) {
+        execvp( cmd, (char * const *)args );
+        _exit( 127 );
+    }
+    if( waitpid( pid, &status, 0 ) == -1 ) {
+        status = -1;
+    }
+    return( status );
+}
+#endif
+
 int main( int argc, char *argv[] )
 {
-    int         in,out,i,rcparm=0,pcnt;
-    int         Rflag=FALSE,nflag=FALSE;
-    int         uflag=FALSE;
-    int         dllflag=FALSE;
-    char        *wext=NULL;
-    long        tsize=0;
-    char        drive[_MAX_DRIVE],dir[_MAX_DIR],fname[_MAX_FNAME];
-    char        ext[_MAX_EXT];
-    char        rex[_MAX_PATH];
-    char        exe[_MAX_PATH];
-    char        dll[_MAX_PATH];
-    char        res[_MAX_PATH];
-    char        winext[_MAX_PATH];
-    char        rc[256];
-    long        totalsize;
-    const char  **arglist;
-    char        *path = NULL;
-    int         currarg,len;
-    rex_exe     re;
-    long        exelen;
-    char        *desc=NULL;
+    int             in, out, i, rcparm = 0, pcnt;
+    int             Rflag = FALSE, nflag = FALSE;
+    int             uflag = FALSE;
+    int             dllflag = FALSE;
+    char            *wext = NULL;
+    long            tsize = 0;
+    char            drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME];
+    char            ext[_MAX_EXT];
+    char            rex[_MAX_PATH];
+    char            exe[_MAX_PATH];
+    char            dll[_MAX_PATH];
+    char            res[_MAX_PATH];
+    char            winext[_MAX_PATH];
+    char            rc[256];
+    long            totalsize;
+    const char      **arglist;
+    char            *path = NULL;
+    int             currarg,len;
+    simple_header   re;
+    long            exelen;
+    char            *desc = NULL;
 
     /*
      * get parms
@@ -342,10 +360,10 @@ int main( int argc, char *argv[] )
             doError( "Could not open %s", rex );
         }
         lseek( in, MAGIC_OFFSET, SEEK_SET );
-        read( in, &exelen, sizeof( DWORD ) );
+        read( in, &exelen, sizeof( unsigned_32 ) );
         lseek( in, exelen, SEEK_SET );
-        read( in, &re, sizeof( rex_exe ) );
-        if( !(re.sig[0] == 'M' && re.sig[1] == 'Q') ) {
+        read( in, &re, sizeof( re ) );
+        if( re.signature != ('M' & ('Q' << 8)) ) {
             doError( "Not a bound Open Watcom 32-bit Windows application" );
         }
         lseek( in, exelen, SEEK_SET );
@@ -394,7 +412,7 @@ int main( int argc, char *argv[] )
      * run the resource compiler
      */
     if( !nflag ) {
-        myPrintf("Invoking the resource compiler...\n");
+        myPrintf( "Invoking the resource compiler...\n" );
         if( Rflag ) {
             strcpy( rc, RC_STR );
             arglist = myAlloc( sizeof(char *) *(argc-rcparm +3) );

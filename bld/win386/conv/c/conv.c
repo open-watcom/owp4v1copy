@@ -34,14 +34,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <strings.h>
 #include <ctype.h>
 
 #define MAX_BUFF 256
+
+/* Might be better to use stream I/O instead... */
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
+/* Local strupr() implementation */
+char *strupr( char *string )
+{
+      char    *s;
+
+      if( string ) {
+            for( s = string; *s; ++s )
+                  *s = toupper( *s );
+      }
+      return( string );
+} 
 
 /*
  * depth into stack from which to get parms: 3 dwords pushed
@@ -161,13 +178,13 @@ void *_fmyrealloc( void *ptr, size_t size )
 
 int IsWord( char *str )
 {
-    if( !stricmp( str,"int" ) ||
-        !stricmp( str,"char" ) ||
-        !stricmp( str,"unsigned char" ) ||
-        !stricmp( str,"short" ) ||
-        !stricmp( str,"unsigned" ) ||
-        !stricmp( str,"unsigned short" ) ||
-        !stricmp( str,"unsigned int" ) ) {
+    if( !strcasecmp( str,"int" ) ||
+        !strcasecmp( str,"char" ) ||
+        !strcasecmp( str,"unsigned char" ) ||
+        !strcasecmp( str,"short" ) ||
+        !strcasecmp( str,"unsigned" ) ||
+        !strcasecmp( str,"unsigned short" ) ||
+        !strcasecmp( str,"unsigned int" ) ) {
         return( 1 );
     }
     return( 0 );
@@ -200,7 +217,7 @@ parm_types ClassifyParm( char *buff )
         return( PARM_WORD );
     } else if( strchr( buff, '*' ) != NULL ) {
         return( PARM_PTR );
-    } else if( stricmp( buff, "void" ) == 0 ) {
+    } else if( strcasecmp( buff, "void" ) == 0 ) {
         return( PARM_VOID );
     } else {
         return( PARM_DWORD );
@@ -214,11 +231,11 @@ parm_types ClassifyParm( char *buff )
 return_types ClassifyReturnType( char *buff )
 {
     buff = StripSpaces( buff );
-    if( stricmp( buff, "int" ) == 0  ||  stricmp( buff, "short" ) == 0 ) {
+    if( strcasecmp( buff, "int" ) == 0  ||  strcasecmp( buff, "short" ) == 0 ) {
         return( RETURN_INT );
-    } else if( stricmp( buff, "void" ) == 0 ) {
+    } else if( strcasecmp( buff, "void" ) == 0 ) {
         return( RETURN_VOID );
-    } else if( stricmp( buff, "char" ) == 0 ) {
+    } else if( strcasecmp( buff, "char" ) == 0 ) {
         return( RETURN_CHAR );
     } else if( strchr( buff, '*' ) != NULL ) {
         return( RETURN_PTR );
@@ -331,8 +348,8 @@ void ProcessDefFile( FILE *f )
         if( buff[0] == '!' ) {
             ThunkStrs = _fmyrealloc( ThunkStrs, sizeof( char *) *
                                     (ThunkIndex + 1) );
-            ThunkStrs[ThunkIndex] = _fmyalloc( i );
-            _fstrcpy( ThunkStrs[ThunkIndex], &buff[1] );
+            ThunkStrs[ThunkIndex] = _fmyalloc( i + 1 );
+            strcpy( ThunkStrs[ThunkIndex], &buff[1] );
             ThunkIndex++;
             continue;
         }
@@ -571,8 +588,8 @@ static void writeObj( void *p, int len )
 {
     int         n;
 
-    for(;;) {
-        n = min( OBJBUF_SIZE - objBufIndex, len );
+    for( ;; ) {
+        n = OBJBUF_SIZE - objBufIndex < len ? OBJBUF_SIZE - objBufIndex : len;
         memcpy( &objBuf[objBufIndex], p, n );
         objBufIndex += n;
         if( objBufIndex == OBJBUF_SIZE ) {
@@ -1730,7 +1747,9 @@ int main( int argc, char *argv[] )
     char        fname[50];
     int         i,j;
 
+#ifdef __WATCOMC__
     _nheapgrow();
+#endif
     j=argc-1;
     while( j > 0 ) {
         if( argv[j][0] == '-' ) {

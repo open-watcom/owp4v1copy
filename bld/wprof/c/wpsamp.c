@@ -280,7 +280,7 @@ STATIC void *sampleCreateWin( void )
 
 #define TITLE_LEN       255
 
-    title = __alloca( TITLE_LEN );
+    title = alloca( TITLE_LEN );
     if( title == NULL ) return( NULL );
     WndInitCreateStruct( &info );
     snprintf( title, TITLE_LEN, LIT( Sample_Data ), CurrSIOData->samp_file_name );
@@ -293,7 +293,7 @@ STATIC void *sampleCreateWin( void )
     wnd = WndCreateWithStruct( &info );
     if( wnd == NULL ) return( wnd );
 //    WndSetFontInfo( wnd, GetWndFont( wnd ) );
-//-//    WndSetSysFont( wnd, B_TRUE );
+//-//    WndSetSysFont( wnd, P_TRUE );
     WndClrSwitches( wnd, WSW_MUST_CLICK_ON_PIECE|WSW_ONLY_MODIFY_TABSTOP );
     WndSetSwitches( wnd, WSW_RBUTTON_CHANGE_CURR );
     return( wnd );
@@ -339,7 +339,7 @@ STATIC bool sampleEventProc( a_window *wnd, gui_event gui_ev, void *parm )
         WPSetRowHeight( wnd );
         return( TRUE );
     case GUI_RESIZE:
-        WPAdjustRowHeight( wnd, B_FALSE );
+        WPAdjustRowHeight( wnd, P_FALSE );
         return( TRUE );
     case GUI_NOW_ACTIVE:
         curr_sio = WndExtra( wnd );
@@ -351,15 +351,15 @@ STATIC bool sampleEventProc( a_window *wnd, gui_event gui_ev, void *parm )
         return( TRUE );
     case WND_CURRENT_CHANGED:
         sampFixDirtyCurr( wnd );
-        return( B_TRUE );
+        return( P_TRUE );
     case GUI_DESTROY:
         curr_sio = WndExtra( wnd );
         if( curr_sio != NULL ) {
             ClearSample( curr_sio );
         }
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_FALSE );
+    return( P_FALSE );
 }
 
 
@@ -383,7 +383,7 @@ STATIC bool sampleGetLine( a_window *wnd, wnd_row row, int piece,
         return( sampleProcBotStatus( wnd, row, piece, line ) );
     }
     curr_sio = WndExtra( wnd );
-    if( !sampleGetRtns[curr_sio->level_open]( wnd, row ) ) return( B_FALSE );
+    if( !sampleGetRtns[curr_sio->level_open]( wnd, row ) ) return( P_FALSE );
     return( sampleSetLine( wnd, row, piece, line ) );
 }
 
@@ -404,14 +404,14 @@ STATIC bint sampleProcTopStatus( a_window *wnd, int row, int piece,
     row=row;
     piece=piece;
     line=line;
-    if( piece > PIECE_DRAW_LINE ) return( B_FALSE );
+    if( piece > PIECE_DRAW_LINE ) return( P_FALSE );
     if( piece == PIECE_MOUSE_CATCHER ) {
         line->indent = 0;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         line->attr = WPA_PLAIN;
         line->text = LIT( Empty_Str );
         line->extent = WndWidth( wnd );
-        return( B_TRUE );
+        return( P_TRUE );
     }
     max_y = WndMaxCharY( wnd );
     max_x = WndAvgCharX( wnd );
@@ -428,7 +428,7 @@ STATIC bint sampleProcTopStatus( a_window *wnd, int row, int piece,
     start.y = 0;
     end.y = cross_y;
     GUIDrawLine( WndGui( wnd ), &start, &end, GUI_PEN_SOLID, 0, WPA_PLAIN );
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -449,14 +449,14 @@ STATIC bint sampleProcBotStatus( a_window *wnd, int row, int piece,
     row=row;
     piece=piece;
     line=line;
-    if( piece > PIECE_DRAW_LINE ) return( B_FALSE );
+    if( piece > PIECE_DRAW_LINE ) return( P_FALSE );
     if( piece == PIECE_MOUSE_CATCHER ) {
         line->indent = 0;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         line->attr = WPA_PLAIN;
         line->text = LIT( Empty_Str );
         line->extent = WndWidth( wnd );
-        return( B_TRUE );
+        return( P_TRUE );
     }
     max_y = WndMaxCharY( wnd );
     max_x = WndAvgCharX( wnd );
@@ -474,7 +474,7 @@ STATIC bint sampleProcBotStatus( a_window *wnd, int row, int piece,
     start.y = cross_y;
     end.y = client_height;
     GUIDrawLine( WndGui( wnd ), &start, &end, GUI_PEN_SOLID, 0, WPA_PLAIN );
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -490,12 +490,12 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
 
     row=row;
     if( piece >= PIECE_HEADER_LAST ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     curr_sio = WndExtra( wnd );
     if( piece == PIECE_MOUSE_CATCHER ) {
         line->indent = 0;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         line->attr = WPA_PLAIN;
         line->text = LIT( Empty_Str );
         abs_count = curr_sio->abs_count;
@@ -528,7 +528,7 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
         } else {
             line->text = LIT( Empty_Str );
         }
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         if( relGraphBar ) {
             line->attr = WPA_REL_BAR;
         } else {
@@ -537,7 +537,7 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
     } else if( piece == PIECE_REL_PERCENT ) {
         line->text = relData;
         line->indent = relPctStatusIndent;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         if( curr_sio->rel_on_screen ) {
             line->attr = WPA_REL_BAR;
         } else {
@@ -552,7 +552,7 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
             line->text = LIT( Empty_Str );
         }
         line->indent = indentPiece;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         if( curr_sio->abs_on_screen ) {
             line->attr = WPA_ABS_BAR;
         } else {
@@ -561,7 +561,7 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
     } else if( piece == PIECE_ABS_PERCENT ) {
         line->text = absData;
         line->indent = absPctStatusIndent;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         if( curr_sio->abs_on_screen ) {
             line->attr = WPA_ABS_BAR;
         } else {
@@ -569,12 +569,12 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
         }
     } else if( piece == PIECE_PERCENT_SEPARATOR ) {
         if( !GUIIsGUI() ) {
-            line->vertical_line = B_TRUE;
+            line->vertical_line = P_TRUE;
         }
         line->indent = SEPARATOR_POINT;
         line->text = LIT( Empty_Str );
         line->attr = WPA_PLAIN;
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
     } else if( piece == PIECE_DETAIL_TITLE ) {
         line->indent = SEPARATOR_POINT + WndMaxCharX( wnd );
         curr_sio = WndExtra( wnd );
@@ -586,10 +586,10 @@ STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
         } else {
             line->text = statusHeaders[curr_sio->level_open];
         }
-        line->tabstop = B_FALSE;
+        line->tabstop = P_FALSE;
         line->attr = WPA_PLAIN;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -604,7 +604,7 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
     char *          text;
 
     if( piece >= PIECE_LAST ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     curr_sio = WndExtra( wnd );
     row += STATUS_ROW + 1;
@@ -630,8 +630,8 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
     }
     if( piece == PIECE_MOUSE_CATCHER ) {
         line->indent = 0;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
         line->attr = WPA_PLAIN;
         line->text = LIT( Empty_Str );
         if( row <= curr_sio->level_open ) {
@@ -644,16 +644,16 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
         }
         total_ticks = curr_sio->total_samples;
         line->attr = WPA_PLAIN;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
         if( row > curr_sio->level_open ) {
             line->text = LIT( Empty_Str );
         } else {
-            line->draw_bar = B_TRUE;
+            line->draw_bar = P_TRUE;
             barData.bar_style = GUI_BAR_SHADOW;
             barData.bar_colour = WPA_ABS_BAR;
-            barData.bar_group = B_FALSE;
-            barData.bar_selected = B_FALSE;
+            barData.bar_group = P_FALSE;
+            barData.bar_selected = P_FALSE;
             tick_count *= BAR_TAIL_POINT - (WndMaxCharX( wnd ) / 2);
             line->extent = tick_count / total_ticks;
             if( line->extent == 0 && tick_count != 0 ) {
@@ -665,17 +665,17 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
     } else if( piece == PIECE_SEPARATOR ) {
         indentPiece = SEPARATOR_POINT;
         line->indent = indentPiece;
-        line->vertical_line = B_TRUE;
+        line->vertical_line = P_TRUE;
         line->text = LIT( Empty_Str );
         line->attr = WPA_PLAIN;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
     } else if( piece == PIECE_HOOK ) {
         if( row > curr_sio->level_open ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
         line->text = LIT( Empty_Str );
         if( row == 0 ) {
             indentPiece += WndMaxCharX( wnd );
@@ -683,7 +683,7 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
             indentPiece += (row*2 - 1) * WndMaxCharX( wnd );
             line->indent = indentPiece;
             indentPiece += 2 * WndMaxCharX( wnd );
-            line->draw_hook = B_TRUE;
+            line->draw_hook = P_TRUE;
             line->attr = WPA_PLAIN;
         }
     } else if( piece == PIECE_NAME_TITLE ) {
@@ -691,8 +691,8 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
         nameBuff = ProfRealloc( nameBuff, strlen( overviewHeaders[row] ) + 1 );
         strcpy( nameBuff, overviewHeaders[row] );
         line->text = nameBuff;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
         if( curr_sio->level_open == row ) {
             line->attr = WPA_OVERVIEW_NAME;
         } else {
@@ -704,15 +704,15 @@ STATIC bint sampleProcOverview( a_window * wnd, int row, int piece,
         nameBuff = ProfRealloc( nameBuff, strlen( text ) + 1 );
         strcpy( nameBuff, text );
         line->text = nameBuff;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
         if( curr_sio->level_open == row ) {
             line->attr = WPA_OVERVIEW_NAME;
         } else {
             line->attr = WPA_PLAIN;
         }
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -729,7 +729,7 @@ STATIC bint simageGetLine( a_window * wnd, int row )
         curr_sio->curr_proc_row = row;
         image = SImageGetImage( wnd, row );
         if( image == NULL ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
         curr_sio->curr_image = image;
         dispHighLight = image->main_load;
@@ -741,7 +741,7 @@ STATIC bint simageGetLine( a_window * wnd, int row )
         absGraphBar = curr_sio->abs_bar;
         relGraphBar = curr_sio->rel_bar;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -758,10 +758,10 @@ STATIC bint smodGetLine( a_window *wnd, int row )
         curr_sio->curr_proc_row = row;
         mod = SModGetModule( wnd, row );
         if( mod == NULL ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
         curr_sio->curr_mod = mod;
-        dispHighLight = B_FALSE;
+        dispHighLight = P_FALSE;
         dispName = mod->name;
         dispCount = mod->agg_count;
         localTicks = curr_sio->curr_image->agg_count;
@@ -770,7 +770,7 @@ STATIC bint smodGetLine( a_window *wnd, int row )
         absGraphBar = curr_sio->curr_image->abs_bar;
         relGraphBar = curr_sio->curr_image->rel_bar;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -787,9 +787,9 @@ STATIC bint sfileGetLine( a_window *wnd, int row )
         curr_sio->curr_proc_row = row;
         curr_file = SFileGetFile( wnd, row );
         if( curr_file == NULL ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
-        dispHighLight = B_FALSE;
+        dispHighLight = P_FALSE;
         dispName = curr_file->name;
         dispCount = curr_file->agg_count;
         localTicks = curr_sio->curr_mod->agg_count;
@@ -798,7 +798,7 @@ STATIC bint sfileGetLine( a_window *wnd, int row )
         absGraphBar = curr_sio->curr_mod->abs_bar;
         relGraphBar = curr_sio->curr_mod->rel_bar;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -815,9 +815,9 @@ STATIC bint srtnGetLine( a_window *wnd, int row )
         curr_sio->curr_proc_row = row;
         curr_rtn = SRtnGetRoutine( wnd, row );
         if( curr_rtn == NULL ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
-        dispHighLight = B_FALSE;
+        dispHighLight = P_FALSE;
         dispName = curr_rtn->name;
         dispCount = curr_rtn->tick_count;
         localTicks = curr_sio->curr_file->agg_count;
@@ -826,7 +826,7 @@ STATIC bint srtnGetLine( a_window *wnd, int row )
         absGraphBar = curr_sio->curr_file->abs_bar;
         relGraphBar = curr_sio->curr_file->rel_bar;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -842,7 +842,7 @@ STATIC bint ssrcGetLine( a_window *wnd, int row )
 
     curr_sio = WndExtra( wnd );
     if( curr_sio->src_file == NULL ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     adjusted_row = row + 1;
     sampNewRow = row != curr_sio->curr_proc_row;
@@ -850,9 +850,9 @@ STATIC bint ssrcGetLine( a_window *wnd, int row )
         curr_sio->curr_proc_row = row;
         dispName = WPSourceGetLine( wnd, adjusted_row );
         if( dispName == NULL ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
-        dispHighLight = B_FALSE;
+        dispHighLight = P_FALSE;
         wp_src = curr_sio->src_file;
         lines = wp_src->src_lines;
         dispCount = 0;
@@ -870,7 +870,7 @@ STATIC bint ssrcGetLine( a_window *wnd, int row )
         absGraphBar = curr_sio->asm_src_info.abs_bar;
         relGraphBar = curr_sio->asm_src_info.rel_bar;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -886,14 +886,14 @@ STATIC bint sasmGetLine( a_window *wnd, int row )
 
     curr_sio = WndExtra( wnd );
     if( curr_sio->asm_file == NULL ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     sampNewRow = row != curr_sio->curr_proc_row;
     if( sampNewRow ) {
         curr_sio->curr_proc_row = row;
         dispName = WPAsmGetLine( wnd, row );
         if( dispName == NULL ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
         wpasm_file = curr_sio->asm_file;
         asm_line = WPGetAsmLoc( wpasm_file, row, &asm_group, &asm_row );
@@ -909,9 +909,9 @@ STATIC bint sasmGetLine( a_window *wnd, int row )
         absGraphBar = curr_sio->asm_src_info.abs_bar;
         relGraphBar = curr_sio->asm_src_info.rel_bar;
     } else if( dispName == NULL ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -927,13 +927,13 @@ STATIC bint sampleSetLine( a_window *wnd, int row, int piece,
     int             wnd_rows;
 
     if( piece >= PIECE_LAST ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     curr_sio = WndExtra( wnd );
     wnd_rows = SampleNumRows( wnd );
     if( row > wnd_rows-1 ) {
         Ring();
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( sampNewRow ) {
         catcher_extent = BAR_TAIL_POINT - (WndMaxCharX( wnd ) / 2);
@@ -983,8 +983,8 @@ STATIC bint sampleSetLine( a_window *wnd, int row, int piece,
         line->indent = 0;
         line->text = LIT( Empty_Str );
         line->extent = catcher_extent - barExtent;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
     } else if( piece == PIECE_BAR ) {
         line->extent = barExtent;
         line->indent = BAR_TAIL_POINT - barExtent;
@@ -996,22 +996,22 @@ STATIC bint sampleSetLine( a_window *wnd, int row, int piece,
             barData.bar_colour = WPA_REL_BAR;
             barData.bar_colour2 = WPA_ABS_BAR;
             barData.bar_size2 = bar2Extent;
-            barData.bar_group = B_TRUE;
-            barData.bar_selected = B_FALSE;
-            line->draw_bar = B_TRUE;
+            barData.bar_group = P_TRUE;
+            barData.bar_selected = P_FALSE;
+            line->draw_bar = P_TRUE;
             line->text = (char *)&barData;
         } else {
             line->text = LIT( Empty_Str );
         }
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
     } else if( piece == PIECE_SEPARATOR ) {
         line->indent = SEPARATOR_POINT;
-        line->vertical_line = B_TRUE;
+        line->vertical_line = P_TRUE;
         line->text = LIT( Empty_Str );
         line->attr = WPA_PLAIN;
-        line->tabstop = B_FALSE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_FALSE;
+        line->master_tabstop = P_TRUE;
     } else if( piece == PIECE_DETAIL_NAME ) {
         line->indent = SEPARATOR_POINT + WndMaxCharX( wnd );
         line->text = dispName;
@@ -1020,12 +1020,12 @@ STATIC bint sampleSetLine( a_window *wnd, int row, int piece,
         } else {
             line->attr = WPA_PLAIN;
         }
-        line->tabstop = B_TRUE;
-        line->master_tabstop = B_TRUE;
+        line->tabstop = P_TRUE;
+        line->master_tabstop = P_TRUE;
     } else {
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -1042,13 +1042,13 @@ STATIC void findRtnFromRow( sio_data *curr_sio, int row )
     address             addr;
 
     index = 0;
-    ch = __alloca( DIPHandleSize( HK_CUE ) );
+    ch = alloca( DIPHandleSize( HK_CUE ) );
     curr_file = curr_sio->curr_file;
     mh = curr_sio->curr_mod->mh;
     if( LineCue( mh, curr_sio->curr_file->fid, row, 0, ch ) == SR_NONE ) {
         if( LineCue( mh, curr_sio->curr_file->fid, 0, 0, ch ) == SR_NONE ) return;
     }
-    sh = __alloca( DIPHandleSize( HK_SYM ) );
+    sh = alloca( DIPHandleSize( HK_SYM ) );
     addr = CueAddr( ch );
     if( AddrSym( mh, addr, sh ) == SR_NONE ) return;
     while( index < curr_file->rtn_count ) {
@@ -1160,7 +1160,7 @@ STATIC int simageDetailLine( a_window *wnd, int row, bint multi_level )
     if( image->exe_changed ) {
         if( !multi_level ) {
             ErrorMsg( LIT( Exe_Has_Changed ), image->name );
-            image->exe_changed = B_FALSE;
+            image->exe_changed = P_FALSE;
         }
     }
     curr_sio->level_open++;
@@ -1226,7 +1226,7 @@ STATIC int srtnDetailLine( a_window *wnd, int row, bint multi_level )
     curr_sio = WndExtra( wnd );
     curr_rtn = SRtnGetRoutine( wnd, row );
     curr_sio->curr_rtn = curr_rtn;
-    line = srtnOpenDetail( curr_sio, B_TRUE );
+    line = srtnOpenDetail( curr_sio, P_TRUE );
     return( line );
 }
 
@@ -1243,11 +1243,11 @@ STATIC int srtnOpenDetail( sio_data *curr_sio, bint go_down )
     wnd = curr_sio->sample_window;
     src_file = curr_sio->src_file;
     if( src_file == NULL ) {
-        src_file = WPSourceOpen( curr_sio, B_TRUE );
+        src_file = WPSourceOpen( curr_sio, P_TRUE );
         if( src_file == NULL ) {
             if( go_down ) {
                 curr_sio->level_open = LEVEL_ROUTINE;
-                line = ssrcDetailLine( wnd, 0, B_TRUE );
+                line = ssrcDetailLine( wnd, 0, P_TRUE );
                 if( curr_sio->level_open == LEVEL_ROUTINE ) {
                     curr_sio->level_open = LEVEL_FILE;
                 }
@@ -1333,7 +1333,7 @@ extern void WPZoomIn( a_window *wnd, int row )
         WndSetTop( wnd, 0 );
         gatherSort( curr_sio );
         if( curr_sio->level_open == LEVEL_ROUTINE ) {
-            curr_line = srtnOpenDetail( curr_sio, B_FALSE );
+            curr_line = srtnOpenDetail( curr_sio, P_FALSE );
         } else {
             curr_line = WPGetRow( curr_sio );
         }
@@ -1345,7 +1345,7 @@ extern void WPZoomIn( a_window *wnd, int row )
             Ring();
             return;
         }
-        multi_level = B_FALSE;
+        multi_level = P_FALSE;
         for( ;; ) {
             old_level = curr_sio->level_open;
             curr_line = overviewDetailRtns[curr_sio->level_open](
@@ -1354,7 +1354,7 @@ extern void WPZoomIn( a_window *wnd, int row )
             detail_rows = SampleNumRows( wnd );
             if( detail_rows != 1 ) break;
             row = 0;
-            multi_level = B_TRUE;
+            multi_level = P_TRUE;
         }
     }
     curr_sio->curr_proc_row = -WND_MAX_ROW;
@@ -1473,7 +1473,7 @@ STATIC void sampleMenuItem( a_window * wnd, unsigned id, int row, int piece )
         if( row <= STATUS_ROW ) {
             WndMenuGrayAll( wnd );
             if( row < 0 || row-1 >= curr_sio->level_open ) break;
-            WndMenuEnable( wnd, MENU_SAMP_ZOOM_IN, B_TRUE );
+            WndMenuEnable( wnd, MENU_SAMP_ZOOM_IN, P_TRUE );
             break;
         }
         WndMenuEnableAll( wnd );
@@ -1485,14 +1485,14 @@ STATIC void sampleMenuItem( a_window * wnd, unsigned id, int row, int piece )
         WndMenuCheck( wnd, MENU_SORT_COUNT, sort_type==SORT_COUNT );
         WndMenuCheck( wnd, MENU_SORT_NAME, sort_type==SORT_NAME );
         if( row <= STATUS_ROW || curr_sio->level_open >= LEVEL_ROUTINE ) {
-            WndMenuEnable( wnd, MENU_SAMP_GATHER, B_FALSE );
-            WndMenuEnable( wnd, MENU_SAMP_SORT, B_FALSE );
-            WndMenuEnable( wnd, MENU_SORT_COUNT, B_FALSE );
-            WndMenuEnable( wnd, MENU_SORT_NAME, B_FALSE );
+            WndMenuEnable( wnd, MENU_SAMP_GATHER, P_FALSE );
+            WndMenuEnable( wnd, MENU_SAMP_SORT, P_FALSE );
+            WndMenuEnable( wnd, MENU_SORT_COUNT, P_FALSE );
+            WndMenuEnable( wnd, MENU_SORT_NAME, P_FALSE );
             if( row <= STATUS_ROW ) {
-                WndMenuEnable( wnd, MENU_SAMP_BAR_MAX_TIME, B_FALSE );
-                WndMenuEnable( wnd, MENU_SAMP_ABS, B_FALSE );
-                WndMenuEnable( wnd, MENU_SAMP_REL, B_FALSE );
+                WndMenuEnable( wnd, MENU_SAMP_BAR_MAX_TIME, P_FALSE );
+                WndMenuEnable( wnd, MENU_SAMP_ABS, P_FALSE );
+                WndMenuEnable( wnd, MENU_SAMP_REL, P_FALSE );
             }
         }
         break;
@@ -1509,22 +1509,22 @@ STATIC void sampleMenuItem( a_window * wnd, unsigned id, int row, int piece )
         FlipCurrentGather( curr_sio );
         WndMenuCheck( wnd, MENU_SAMP_GATHER, GetCurrentGather( curr_sio ) );
         gatherSort( curr_sio );
-        setDisplay( wnd, curr_sio, B_TRUE );
+        setDisplay( wnd, curr_sio, P_TRUE );
         break;
     case MENU_SAMP_BAR_MAX_TIME:
         FlipCurrentMaxBar( curr_sio );
         WndMenuCheck( wnd, MENU_SAMP_BAR_MAX_TIME, GetCurrentMaxBar( curr_sio ) );
-        setDisplay( wnd, curr_sio, B_FALSE );
+        setDisplay( wnd, curr_sio, P_FALSE );
         break;
     case MENU_SAMP_ABS:
         FlipCurrentAbsBar( curr_sio );
         WndMenuCheck( wnd, MENU_SAMP_ABS, GetCurrentAbsBar( curr_sio ) );
-        setDisplay( wnd, curr_sio, B_FALSE );
+        setDisplay( wnd, curr_sio, P_FALSE );
         break;
     case MENU_SAMP_REL:
         FlipCurrentRelBar( curr_sio );
         WndMenuCheck( wnd, MENU_SAMP_ABS, GetCurrentRelBar( curr_sio ) );
-        setDisplay( wnd, curr_sio, B_FALSE );
+        setDisplay( wnd, curr_sio, P_FALSE );
         break;
     case MENU_SORT_COUNT:
     case MENU_SORT_NAME:
@@ -1536,7 +1536,7 @@ STATIC void sampleMenuItem( a_window * wnd, unsigned id, int row, int piece )
             SetCurrentSort( curr_sio, SORT_NAME );
         }
         SortCurrent( curr_sio );
-        setDisplay( wnd, curr_sio, B_TRUE );
+        setDisplay( wnd, curr_sio, P_TRUE );
         break;
     }
 }

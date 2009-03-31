@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Entry points for ORL routines.
 *
 ****************************************************************************/
 
@@ -339,7 +338,7 @@ orl_file_size ORLENTRY ORLFileGetSize( orl_file_handle orl_file_hnd )
     return( 0 );
 }
 
-orl_file_flags ORLENTRY ORLFileGetType( orl_file_handle orl_file_hnd )
+orl_file_type ORLENTRY ORLFileGetType( orl_file_handle orl_file_hnd )
 {
     switch( orl_file_hnd->type ) {
     case( ORL_ELF ):

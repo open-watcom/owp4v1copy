@@ -220,7 +220,7 @@ static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_fil
 #ifdef IMP_MODULENAME_DLL
             fname = sfile->import->DLLName;
 #else
-            fname = sfile->import->symName;
+            fname = sfile->import->u.sym.symName;
 #endif
         }
         str_len = strlen( fname );
@@ -301,7 +301,7 @@ void WriteOmfFile( sym_file *sfile )
 #ifdef IMP_MODULENAME_DLL
         charCount += ( strlen( sfile->import->DLLName ) + 1 ) | 1;
 #else
-        charCount += ( strlen( sfile->import->symName ) + 1 ) | 1;
+        charCount += ( strlen( sfile->import->u.sym.symName ) + 1 ) | 1;
 #endif
     }
     WriteFile( sfile );

@@ -24,17 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MAD (Machine Architecture Description) types.
 *
 ****************************************************************************/
 
 
-#ifndef MADTYPES_H
-#define MADTYPES_H
-#include "digpck.h"
+#ifndef MADTYPES_H_INCLUDED
+#define MADTYPES_H_INCLUDED
+
 #include "madstr.h"
 #include "digtypes.h"
+#include "digpck.h"
 
 struct mad_reg_set_data;
 struct mad_state_data;

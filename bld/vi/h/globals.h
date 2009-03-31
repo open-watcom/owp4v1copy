@@ -197,7 +197,7 @@ extern char ScrollBarChar;
 extern int  ScrollBarCharColor;
 extern int  ClockX, ClockY;
 extern int  SpinX, SpinY;
-extern char WindMaxWidth, WindMaxHeight;
+extern short WindMaxWidth, WindMaxHeight;
 extern int  CurrentStatusColumn;
 extern char EndOfLineChar;
 extern int  GreyedMenuColour;

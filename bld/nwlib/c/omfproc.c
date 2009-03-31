@@ -576,7 +576,7 @@ int OmfImportSize( import_sym *import )
     int             sym_len;
 
     dll_len = strlen( import->DLLName ) + 1;
-    sym_len = strlen( import->symName ) + 1;
+    sym_len = strlen( import->u.sym.symName ) + 1;
     // THEADR
 #ifdef IMP_MODULENAME_DLL
     len = 3 + dll_len + 1;
@@ -587,10 +587,10 @@ int OmfImportSize( import_sym *import )
     len += 3 + 2 + 2 + dll_len + sym_len + 1;
     if( import->type == ORDINAL ) {
         len += 2;
-    } else if( import->exportedName == NULL ) {
+    } else if( import->u.sym.exportedName == NULL ) {
         len += 1;
     } else {
-        len += strlen( import->exportedName ) + 1;
+        len += strlen( import->u.sym.exportedName ) + 1;
     }
     // Comment timestamp
     len += 3 + 8;
@@ -609,7 +609,7 @@ void OmfWriteImport( sym_file *sfile )
     unsigned_8  *contents;
 
     file_len = strlen( sfile->import->DLLName );
-    sym_len = strlen( sfile->import->symName );
+    sym_len = strlen( sfile->import->u.sym.symName );
 #ifdef IMP_MODULENAME_DLL
     contents = SetOmfRecBuffer( CMD_THEADR, file_len + 2 );
     contents[ 0 ] = file_len;
@@ -617,16 +617,16 @@ void OmfWriteImport( sym_file *sfile )
 #else
     contents = SetOmfRecBuffer( CMD_THEADR, sym_len + 2 );
     contents[ 0 ] = sym_len;
-    memcpy( contents + 1, sfile->import->symName, sym_len );
+    memcpy( contents + 1, sfile->import->u.sym.symName, sym_len );
 #endif
     WriteOmfRecord( omfRec );
     len = 2 + 2 + ( 1 + file_len ) + ( 1 + sym_len ) + 1;
     if( sfile->import->type == ORDINAL ) {
         len += 2;
-    } else if( sfile->import->exportedName == NULL ) {
+    } else if( sfile->import->u.sym.exportedName == NULL ) {
         len += 1;
     } else {
-        exp_len = strlen( sfile->import->exportedName );
+        exp_len = strlen( sfile->import->u.sym.exportedName );
         len += exp_len + 1;
     }
     contents = SetOmfRecBuffer( CMD_COMENT, len );
@@ -639,17 +639,17 @@ void OmfWriteImport( sym_file *sfile )
         contents[ 3 ] = 0;
     }
     contents[ 4 ] = sym_len;
-    memcpy( contents + 5, sfile->import->symName, sym_len );
+    memcpy( contents + 5, sfile->import->u.sym.symName, sym_len );
     contents[ 5 + sym_len ] = file_len;
     memcpy( contents + 6 + sym_len, sfile->import->DLLName, file_len );
     file_len += sym_len + 6;
     if( sfile->import->type == ORDINAL ) {
-        *(unsigned_16 *)( contents + file_len ) = (unsigned_16)sfile->import->ordinal;
-    } else if( sfile->import->exportedName == NULL ) {
+        *(unsigned_16 *)( contents + file_len ) = (unsigned_16)sfile->import->u.sym.ordinal;
+    } else if( sfile->import->u.sym.exportedName == NULL ) {
         contents[ file_len ] = 0;
     } else {
         contents[ file_len ] = exp_len;
-        memcpy( contents + file_len + 1, sfile->import->exportedName, exp_len );
+        memcpy( contents + file_len + 1, sfile->import->u.sym.exportedName, exp_len );
     }
     WriteOmfRecord( omfRec );
     WriteTimeStamp( sfile );

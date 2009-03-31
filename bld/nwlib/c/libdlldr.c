@@ -60,6 +60,9 @@ int main                        // MAIN-LINE FOR DLL DRIVER
     char *cmd_line;
 #endif
 
+#ifndef __WATCOMC__
+    _argv = args;
+#endif
 #ifdef IDE_PGM
 #ifdef __UNIX__
     static char buffer[ PATH_MAX ];

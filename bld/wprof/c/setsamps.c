@@ -128,14 +128,14 @@ STATIC void initRoutineInfo( file_info *curr_file )
     name_len = strlen( LIT( Unknown_Routine ) ) + 1;
     new_rtn = ProfCAlloc( sizeof( rtn_info ) + name_len );
     memcpy( new_rtn->name, LIT( Unknown_Routine ), name_len );
-    new_rtn->unknown_routine = B_TRUE;
+    new_rtn->unknown_routine = P_TRUE;
     curr_file->routine = ProfCAlloc( 2 * sizeof( pointer ) );
     curr_file->routine[0] = new_rtn;
     name_len = strlen( LIT( Gathered_Routines ) ) + 1;
     new_rtn = ProfCAlloc( sizeof( rtn_info ) + name_len );
     memcpy( new_rtn->name, LIT( Gathered_Routines ), name_len );
-    new_rtn->ignore_gather = B_TRUE;
-    new_rtn->gather_routine = B_TRUE;
+    new_rtn->ignore_gather = P_TRUE;
+    new_rtn->gather_routine = P_TRUE;
     curr_file->routine[1] = new_rtn;
     curr_file->rtn_count = 2;
 }
@@ -152,15 +152,15 @@ STATIC void initFileInfo( mod_info *curr_mod )
     file_len = strlen( LIT( Unknown_File ) ) + 1;
     new_file = ProfCAlloc( sizeof( file_info ) + file_len );
     memcpy( new_file->name, LIT( Unknown_File ), file_len );
-    new_file->unknown_file = B_TRUE;
+    new_file->unknown_file = P_TRUE;
     initRoutineInfo( new_file );
     curr_mod->mod_file = ProfCAlloc( 2 * sizeof( pointer ) );
     curr_mod->mod_file[0] = new_file;
     file_len = strlen( LIT( Gathered_Files ) ) + 1;
     new_file = ProfCAlloc( sizeof( file_info )+file_len );
     memcpy( new_file->name, LIT( Gathered_Files ), file_len );
-    new_file->ignore_gather = B_TRUE;
-    new_file->gather_file = B_TRUE;
+    new_file->ignore_gather = P_TRUE;
+    new_file->gather_file = P_TRUE;
     initRoutineInfo( new_file );
     curr_mod->mod_file[1] = new_file;
     curr_mod->file_count = 2;
@@ -178,15 +178,15 @@ STATIC void initModuleInfo( image_info *curr_image )
     name_len = strlen( LIT( Unknown_Module ) ) + 1;
     new_mod = ProfCAlloc( sizeof( mod_info ) + name_len );
     memcpy( new_mod->name, LIT( Unknown_Module ), name_len );
-    new_mod->unknown_module = B_TRUE;
+    new_mod->unknown_module = P_TRUE;
     initFileInfo( new_mod );
     curr_image->module = ProfCAlloc( 2 * sizeof( pointer ) );
     curr_image->module[0] = new_mod;
     name_len = strlen( LIT( Gathered_Modules ) ) + 1;
     new_mod = ProfCAlloc( sizeof( mod_info ) + name_len );
     memcpy( new_mod->name, LIT( Gathered_Modules ), name_len );
-    new_mod->ignore_gather = B_TRUE;
-    new_mod->gather_module = B_TRUE;
+    new_mod->ignore_gather = P_TRUE;
+    new_mod->gather_module = P_TRUE;
     initFileInfo( new_mod );
     curr_image->module[1] = new_mod;
     curr_image->mod_count = 2;
@@ -274,7 +274,7 @@ STATIC file_info  *loadFileInfo( mod_info *curr_mod, sym_handle *sym )
     if( SymLocation( sym, NULL, &ll ) != DS_OK ) {
         return( curr_mod->mod_file[0] );
     }
-    ch = __alloca( DIPHandleSize( HK_CUE ) );
+    ch = alloca( DIPHandleSize( HK_CUE ) );
     switch( AddrCue( curr_mod->mh, ll.e[0].u.addr, ch ) ) {
     case    SR_NONE:
     case    SR_FAIL:
@@ -500,19 +500,19 @@ extern void SortSetAll( sio_data *curr_sio, int sort_type )
             while( count3 < curr_mod->file_count ) {
                 curr_file = curr_mod->mod_file[count3];
                 curr_file->sort_type = sort_type;
-                curr_file->sort_needed = B_TRUE;
+                curr_file->sort_needed = P_TRUE;
                 count3++;
             }
             curr_mod->sort_type = sort_type;
-            curr_mod->sort_needed = B_TRUE;
+            curr_mod->sort_needed = P_TRUE;
             count2++;
         }
         curr_image->sort_type = sort_type;
-        curr_image->sort_needed = B_TRUE;
+        curr_image->sort_needed = P_TRUE;
         count++;
     }
     curr_sio->sort_type = sort_type;
-    curr_sio->sort_needed = B_TRUE;
+    curr_sio->sort_needed = P_TRUE;
 }
 
 
@@ -536,7 +536,7 @@ STATIC void resolveImageSamples( void )
     int                 index;
     int                 index2;
 
-    sh = __alloca( DIPHandleSize( HK_SYM ) );
+    sh = alloca( DIPHandleSize( HK_SYM ) );
     massgd_data = CurrSIOData->massaged_sample;
     tick_index = 1;
     index = 0;
@@ -591,8 +591,8 @@ STATIC void resolveImageSamples( void )
                 curr_file = curr_mod->mod_file[count3];
                 curr_rtn = curr_file->routine[0];
                 if( curr_rtn->unknown_routine && curr_rtn->tick_count == 0 ) {
-                    curr_rtn->ignore_unknown_rtn = B_TRUE;
-                    curr_file->ignore_unknown_rtn = B_TRUE;
+                    curr_rtn->ignore_unknown_rtn = P_TRUE;
+                    curr_file->ignore_unknown_rtn = P_TRUE;
                 }
                 curr_file->max_time = 0;
                 count4 = 0;
@@ -612,8 +612,8 @@ STATIC void resolveImageSamples( void )
             }
             curr_file = curr_mod->mod_file[0];
             if( curr_file->unknown_file && curr_file->agg_count == 0 ) {
-                curr_file->ignore_unknown_file = B_TRUE;
-                curr_mod->ignore_unknown_file = B_TRUE;
+                curr_file->ignore_unknown_file = P_TRUE;
+                curr_mod->ignore_unknown_file = P_TRUE;
             }
             curr_image->agg_count += curr_mod->agg_count;
             if( curr_mod->agg_count > curr_image->max_time ) {
@@ -623,8 +623,8 @@ STATIC void resolveImageSamples( void )
         }
         curr_mod = curr_image->module[0];
         if( curr_mod->unknown_module && curr_mod->agg_count == 0 ) {
-            curr_mod->ignore_unknown_mod = B_TRUE;
-            curr_image->ignore_unknown_mod = B_TRUE;
+            curr_mod->ignore_unknown_mod = P_TRUE;
+            curr_image->ignore_unknown_mod = P_TRUE;
         }
         if( curr_image->agg_count > CurrSIOData->max_time ) {
             CurrSIOData->max_time = curr_image->agg_count;
@@ -633,7 +633,7 @@ STATIC void resolveImageSamples( void )
     }
     curr_image = CurrSIOData->images[0];
     if( curr_image->unknown_image && curr_image->agg_count == 0 ) {
-        curr_image->ignore_unknown_image = B_TRUE;
+        curr_image->ignore_unknown_image = P_TRUE;
     }
 }
 
@@ -678,7 +678,7 @@ STATIC void loadImageInfo( image_info * curr_image )
     }
     object_file = open( curr_image->name, O_RDONLY|O_BINARY );
     if( object_file == -1 ) {
-        curr_image->exe_not_found = B_TRUE;
+        curr_image->exe_not_found = P_TRUE;
         if( curr_image->main_load ) {
             ErrorMsg( LIT( Exe_Not_Found ), curr_image->name );
         }
@@ -691,7 +691,7 @@ STATIC void loadImageInfo( image_info * curr_image )
         /* QNX creation dates and time stamps tend to be 1 */
         /* unit different, so do not test for equality */
         if( file_status.st_mtime - curr_image->time_stamp > 1 ) {
-            curr_image->exe_changed = B_TRUE;
+            curr_image->exe_changed = P_TRUE;
             if( curr_image->main_load ) {
                 ErrorMsg( LIT( Exe_Has_Changed ), curr_image->name );
             }
@@ -835,7 +835,7 @@ STATIC void calcAggregates( void )
     CurrSIOData->massaged_sample = massgd_data;
     CurrSIOData->number_massaged = 1 + curr_midx
                 + (curr_mbucket * (unsigned long)MAX_MASSGD_BUCKET_INDEX);
-    CurrSIOData->massaged_mapped = B_TRUE;
+    CurrSIOData->massaged_mapped = P_TRUE;
     for( index = 0; index < buckets; ++index ) {
         ProfFree( sorted_vect[index] );
     }
@@ -864,9 +864,9 @@ extern void SetSampleInfo( sio_data *curr_sio )
     }
     loadSampleImages();
     resolveImageSamples();
-    GatherSetAll( curr_sio, B_FALSE );
-    AbsSetAll( curr_sio, B_TRUE );
-    RelSetAll( curr_sio, B_TRUE );
+    GatherSetAll( curr_sio, P_FALSE );
+    AbsSetAll( curr_sio, P_TRUE );
+    RelSetAll( curr_sio, P_TRUE );
     SortSetAll( curr_sio, SORT_COUNT );
     WndHourGlass( cursor_type );
 }

@@ -137,7 +137,7 @@ STATIC char * cmdUsage[] = {
 };
 
 
-bint        WPWndInitDone = B_FALSE;
+bint        WPWndInitDone = P_FALSE;
 char        SamplePath[ _MAX_PATH ];
 char        *WProfDips = NULL;
 
@@ -165,7 +165,7 @@ extern void WPInit( void )
     getcmd( buff );
     do_report = procCmd( buff );
     WndInit( "Open Watcom Profiler" );
-    WPWndInitDone = B_TRUE;
+    WPWndInitDone = P_TRUE;
     InitMADInfo();
     WPDipInit();
     if( do_report ) {
@@ -206,7 +206,7 @@ STATIC bint procCmd( char * cmd )
     bint    do_report;
     bint    do_option;
 
-    do_report = B_FALSE;
+    do_report = P_FALSE;
     for( ;; ) {
         cmd = eatBlanks( cmd );
         if( *cmd == NULLCHAR ) break;
@@ -215,14 +215,14 @@ STATIC bint procCmd( char * cmd )
 #else
         if( *cmd == '-' || *cmd == '/' ) {
 #endif
-            do_option = B_TRUE;
+            do_option = P_TRUE;
             ++cmd;
             cmd_type = minLook( &cmd );
         } else if( *cmd == '?' ) {
-            do_option = B_TRUE;
+            do_option = P_TRUE;
             cmd_type = HELP_OPT;
         } else {
-            do_option = B_FALSE;
+            do_option = P_FALSE;
             rover = cmd;
             cmd = eatAllChars( cmd );
             name_len = cmd - rover;
@@ -284,7 +284,7 @@ STATIC bint procCmd( char * cmd )
 #endif
 #ifndef NDEBUG
             case R_OPT:
-                do_report = B_TRUE;
+                do_report = P_TRUE;
                 break;
 #endif
             }

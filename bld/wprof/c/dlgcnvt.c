@@ -57,8 +57,8 @@ static char * cnvtFilterList = {
 
 STATIC char     convertPath[_MAX_PATH];
 
-bint            OptDIFFormat = B_TRUE;
-bint            OptCommaFormat = B_FALSE;
+bint            OptDIFFormat = P_TRUE;
+bint            OptCommaFormat = P_FALSE;
 FILE            *ConvertFile;
 
 STATIC bool     progEvent( gui_window *, gui_event, void * );
@@ -114,8 +114,8 @@ STATIC void setDlgValues( gui_window *gui )
 STATIC void setDlgDefaults( gui_window *gui )
 /*******************************************/
 {
-    OptDIFFormat = B_TRUE;
-    OptCommaFormat = B_FALSE;
+    OptDIFFormat = P_TRUE;
+    OptCommaFormat = P_FALSE;
     strcpy( convertPath, CurrSIOData->samp_file_name );
     setDlgValues( gui );
 }
@@ -128,9 +128,9 @@ STATIC bint dlgOpenFmtFile( void )
     ConvertFile = fopen( convertPath, "w" );
     if( ConvertFile == NULL ) {
         ErrorMsg( "Cannot open the convert file %s", convertPath );
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -162,29 +162,29 @@ STATIC bool progEvent( gui_window * gui, gui_event gui_ev, void * param )
     case GUI_INIT_DIALOG:
         setDlgValues( gui );
         GUISetFocus( gui, CTL_NAME );
-        return( B_TRUE );
+        return( P_TRUE );
     case GUI_CONTROL_CLICKED :
         GUI_GETID( param, id );
         switch( id ) {
         case CTL_BROWSE:
             dlgBrowseFmtFile( gui );
-            return( B_TRUE );
+            return( P_TRUE );
         case CTL_OK:
             getDlgValues( gui );
             if( dlgOpenFmtFile() ) {
                 GUICloseDialog( gui );
             }
-            return( B_TRUE );
+            return( P_TRUE );
         case CTL_DEFAULTS:
             setDlgDefaults( gui );
-            return( B_TRUE );
+            return( P_TRUE );
         case CTL_CANCEL:
             GUICloseDialog( gui );
-            return( B_TRUE );
+            return( P_TRUE );
         }
-        return( B_FALSE );
+        return( P_FALSE );
     case GUI_DESTROY:
-        return( B_TRUE );
+        return( P_TRUE );
     }
-    return( B_FALSE );
+    return( P_FALSE );
 }

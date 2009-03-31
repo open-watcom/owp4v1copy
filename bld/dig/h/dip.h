@@ -29,8 +29,9 @@
 ****************************************************************************/
 
 
-#ifndef DIP_H
-#include "digpck.h"
+#ifndef DIP_H_INCLUDED
+#define DIP_H_INCLUDED
+
 #include "diptypes.h"
 
 /*
@@ -152,7 +153,4 @@ search_result   LineCue( mod_handle, cue_file_id, unsigned long line,
 search_result   AddrCue( mod_handle, address, cue_handle * );
 int             CueCmp( cue_handle *, cue_handle * );
 
-#define DIP_H
-
-#include "digunpck.h"
 #endif

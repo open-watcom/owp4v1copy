@@ -74,7 +74,7 @@ static uint_16          cacheSegment;
 static off_t            cacheExeOffset;
 static uint_32          cacheLo;
 static uint_32          cacheHi;
-static bint             isHole = B_FALSE;
+static bint             isHole = P_FALSE;
 static address          currAddr;
 static uint_16          segmentShift;
 static file_handle      exeFH;
@@ -148,17 +148,17 @@ STATIC bint exeSeek( off_t posn )
 {
     if(( posn >= exePosition )&&( posn < ( exePosition + exeAmount ))) {
         exeCurrent = posn - exePosition;
-        return( B_TRUE );
+        return( P_TRUE );
     }
     if( lseek( exeFH, posn, SEEK_SET ) == posn ) {
         exePosition = posn;
         exeAmount = 0;
         exeCurrent = 0;
-        exeFlags.end_of_file = B_FALSE;
-        return( B_TRUE );
+        exeFlags.end_of_file = P_FALSE;
+        return( P_TRUE );
     }
-    exeFlags.end_of_file = B_TRUE;
-    return( B_FALSE );
+    exeFlags.end_of_file = P_TRUE;
+    return( P_FALSE );
 }
 
 
@@ -172,7 +172,7 @@ STATIC void MapSetExeOffset( address a )
     if( pos != -1 ) {
         exeSeek( pos );
     } else {
-        exeFlags.end_of_file = B_TRUE;
+        exeFlags.end_of_file = P_TRUE;
     }
     currAddr = a;
     AdvanceCurrentOffset( 0 );
@@ -193,21 +193,21 @@ STATIC bint isWATCOM386Windows( file_handle fh )
     char        sig[2];
 
     if( lseek( fh, 0x38, SEEK_SET ) < 0 ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( read( fh, &MQ_offset, sizeof( MQ_offset ) ) != sizeof( MQ_offset ) ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( lseek( fh, MQ_offset, SEEK_SET ) < 0 ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( read( fh, &sig, sizeof( sig ) ) != sizeof( sig ) ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( sig[0] != 'M' || sig[1] != 'Q' ) {
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -225,8 +225,8 @@ STATIC int exeHeader( file_handle fh )
     char                copyrite[10];
     char                *sig;
 
-    exeFlags.is_32_bit = B_FALSE;
-    exeFlags.segment_split = B_FALSE;
+    exeFlags.is_32_bit = P_FALSE;
+    exeFlags.segment_split = P_FALSE;
     if( lseek( fh, 0, SEEK_SET ) != 0 ) {
         return( EXE_NOTYPE );
     }
@@ -237,13 +237,13 @@ STATIC int exeHeader( file_handle fh )
     switch( sig[0] ) {
     case 'M':
         if( sig[1] == 'P' || sig[1] == 'Q' ) {          /* MP & MQ */
-            exeFlags.is_32_bit = B_TRUE;
+            exeFlags.is_32_bit = P_TRUE;
             return( EXE_MP );
         }
         if( sig[1] == 'Z' ) {                           /* MZ */
             if( isWATCOM386Windows( fh ) ) {
                 /* C/386 for Windows bound executable */
-                exeFlags.is_32_bit = B_TRUE;
+                exeFlags.is_32_bit = P_TRUE;
                 return( EXE_MP_BOUND );
             }
             if( head.reloc_offset >= 0x40 ) {
@@ -263,20 +263,20 @@ STATIC int exeHeader( file_handle fh )
                     return( EXE_OS2 );
                 }
                 if( signature[0] == 'P' && signature[1] == 'E' ) {  /* PE */
-                    exeFlags.is_32_bit = B_TRUE;
+                    exeFlags.is_32_bit = P_TRUE;
                     return( EXE_PE );
                 }
                 if( signature[0] == 'P' && signature[1] == 'L' ) {  /* PL */
-                    exeFlags.is_32_bit = B_TRUE;
+                    exeFlags.is_32_bit = P_TRUE;
                     return( EXE_PL );
                 }
                 if( signature[0] == 'L' ) {
                     if( signature[1] == 'E' ) {         /* LE */
-                        exeFlags.is_32_bit = B_TRUE;
+                        exeFlags.is_32_bit = P_TRUE;
                         return( EXE_OS2_FLAT );
                     }
                     if( signature[1] == 'X' ) {         /* LX */
-                        exeFlags.is_32_bit = B_TRUE;
+                        exeFlags.is_32_bit = P_TRUE;
                         return( EXE_OS2_LX );
                     }
                 }
@@ -333,7 +333,7 @@ STATIC int exeHeader( file_handle fh )
             if( format_level != 1 ) {
                 return( EXE_MZ );
             }
-            exeFlags.is_32_bit = B_TRUE;
+            exeFlags.is_32_bit = P_TRUE;
             return( EXE_P3_BOUND );
         }
         break;
@@ -344,7 +344,7 @@ STATIC int exeHeader( file_handle fh )
             if( format_level != 1 ) {
                 return( EXE_UNKNOWN );
             }
-            exeFlags.is_32_bit = B_TRUE;
+            exeFlags.is_32_bit = P_TRUE;
             return( EXE_P3 );
         }
         if( sig[1] == '2' ) {                           /* P2 */
@@ -354,7 +354,7 @@ STATIC int exeHeader( file_handle fh )
         break;
     case 'N':
         if( sig[1] == 'e' ) {                           /* Ne */
-            exeFlags.is_32_bit = B_TRUE;
+            exeFlags.is_32_bit = P_TRUE;
             return( EXE_NW );
         }
         break;
@@ -365,12 +365,12 @@ STATIC int exeHeader( file_handle fh )
             dummy_16 = 0;
             read( fh, &dummy_16, sizeof( dummy_16 ) );
             if( dummy_16 >= QNX_VERSION ) {
-                exeFlags.segment_split = B_TRUE;
+                exeFlags.segment_split = P_TRUE;
                 lseek( fh, sizeof( lmf_record ) + offsetof( lmf_header, cflags ),
                        SEEK_SET );
                 read( fh, &dummy_16, sizeof( dummy_16 ) );
                 if( dummy_16 & _TCF_32BIT ) {
-                    exeFlags.is_32_bit = B_TRUE;
+                    exeFlags.is_32_bit = P_TRUE;
                     if( dummy_16 & _TCF_FLAT ) {
                         return( EXE_QNX_386_FLAT );
                     }
@@ -382,7 +382,7 @@ STATIC int exeHeader( file_handle fh )
         break;
     case ELFMAG0:
         if( memcmp( sig, ELF_SIGNATURE, ELF_SIGNATURE_LEN ) == 0 ) {
-            exeFlags.is_32_bit = B_TRUE;
+            exeFlags.is_32_bit = P_TRUE;
             return( EXE_ELF );
         }
         break;
@@ -415,7 +415,7 @@ extern bint SetExeFile( file_handle fh, bint overlay )
     exeType = exeHeader( exeFH );
     if( exeType != EXE_MZ && overlay ) {        /* 16-may-90 AFS */
         exeType = EXE_OVL;
-        exeFlags.is_32_bit = B_FALSE;
+        exeFlags.is_32_bit = P_FALSE;
     }
     header_base = 0;
     switch( exeType ) {
@@ -534,14 +534,14 @@ extern bint SetExeFile( file_handle fh, bint overlay )
         cacheSegment = dummy_16;        /* number of entries */
         break;
     default:
-        return( B_FALSE );
+        return( P_FALSE );
     }
     exePosition = 0;
     exeCurrent = 0;
     exeAmount = 0;
     currAddr.mach.segment = 0;
     currAddr.mach.offset = 0;
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -573,7 +573,7 @@ STATIC void searchQNX( uint_16 seg, uint_32 off )
     cacheHi = ULONG_MAX;
     hole_lo = 0;
     hole_hi = ULONG_MAX;
-    isHole = B_FALSE;
+    isHole = P_FALSE;
     lseek( exeFH, 0, SEEK_SET );
     for( ;; ) {
         st = read( exeFH, &rec_head, sizeof( rec_head ) );
@@ -605,10 +605,10 @@ STATIC void searchQNX( uint_16 seg, uint_32 off )
         }
         lseek( exeFH, rec_head.data_nbytes, SEEK_CUR );
     }
-    isHole = B_TRUE;
+    isHole = P_TRUE;
     cacheLo = hole_lo;
     cacheHi = hole_hi;
-    exeFlags.end_of_segment = B_TRUE;
+    exeFlags.end_of_segment = P_TRUE;
 }
 
 
@@ -860,7 +860,7 @@ extern void MapAddressToMap( addr_ptr *addr )
     bint            first_save;
     addr_ptr        save_addr;
 
-    first_save = B_TRUE;
+    first_save = P_TRUE;
     map = CurrSIOData->curr_image->map_data;
     count = CurrSIOData->curr_image->map_count;
     for( index = 0; index < count; ++index, ++map ) {
@@ -871,7 +871,7 @@ extern void MapAddressToMap( addr_ptr *addr )
                  && addr->offset >= save_addr.offset) ) {
                 save_addr.segment = map->map.mach.segment;
                 save_addr.offset = map->actual.mach.offset - map->map.mach.offset;
-                first_save = B_FALSE;
+                first_save = P_FALSE;
             }
         }
     }
@@ -1015,25 +1015,25 @@ STATIC bint LoadOverlayInfo( void )
     fh = ExeOpen( image->name );
     if( fh == -1 ) {
         ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    SetExeFile( fh, B_FALSE );
+    SetExeFile( fh, P_FALSE );
     map_addr = image->overlay_table;
     MapAddressToMap( &map_addr.mach );
     fileoffset = TransformExeOffset( map_addr.mach.segment,
                                      map_addr.mach.offset, ROOT_SECTION );
     if( lseek( fh, fileoffset, SEEK_SET ) != fileoffset ) {
         ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( read( fh, &prolog, sizeof(prolog) ) != sizeof(prolog) ) {
         ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     if( prolog.major != OVL_MAJOR_VERSION
      || prolog.minor > OVL_MINOR_VERSION ) {
         ErrorMsg( LIT( Incompat_Ver_Ovly ), image->name );
-        return( B_FALSE );
+        return( P_FALSE );
     }
     base_segment = image->map_data[0].actual.mach.segment;
     count = 0;
@@ -1042,7 +1042,7 @@ STATIC bint LoadOverlayInfo( void )
         if( read( fh, &formal_entry, sizeof(formal_entry) )
          != sizeof(formal_entry) ) {
             ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-            return( B_FALSE );
+            return( P_FALSE );
         }
         if( formal_entry.flags_anc == OVLTAB_TERMINATOR ) break;
         ++count;
@@ -1063,7 +1063,7 @@ STATIC bint LoadOverlayInfo( void )
         entry->disk_addr  = formal_entry.disk_addr;
         if( formal_entry.fname & OVE_EXE_FILENAME ) {
             ovl_name = image->name;
-            entry->separate_overlay = B_FALSE;
+            entry->separate_overlay = P_FALSE;
         } else {
             fileoffset = lseek( fh, 0, SEEK_CUR );  /* save current posn */
             map_addr = image->overlay_table;
@@ -1074,11 +1074,11 @@ STATIC bint LoadOverlayInfo( void )
                                                  ROOT_SECTION );
             if( lseek( fh, filenameoffset, SEEK_SET ) != filenameoffset ) {
                 ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-                return( B_FALSE );
+                return( P_FALSE );
             }
             if( read( fh, buffer, _MAX_PATH ) != _MAX_PATH ) {
                 ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-                return( B_FALSE );
+                return( P_FALSE );
             }
             /* find overlay file */
             if( access( buffer, 0 ) != 0 ) {
@@ -1091,11 +1091,11 @@ STATIC bint LoadOverlayInfo( void )
                 }
             }
             ovl_name = buffer;
-            entry->separate_overlay = B_TRUE;
+            entry->separate_overlay = P_TRUE;
             /* restore current posn */
             if( lseek( fh, fileoffset, SEEK_SET ) != fileoffset ) {
                 ErrorMsg( LIT( Cannot_Process_Ovly ), image->name );
-                return( B_FALSE );
+                return( P_FALSE );
             }
         }
         len = strlen( ovl_name ) + 1;
@@ -1103,7 +1103,7 @@ STATIC bint LoadOverlayInfo( void )
         memcpy( entry->fname, ovl_name, len );
     }
     ExeClose( fh );
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -1123,7 +1123,7 @@ extern bint LoadImageOverlays( void )
         if( curr_image->overlay_table.mach.segment != 0 ) {
             CurrSIOData->curr_image = curr_image;
             if( !LoadOverlayInfo() ) {
-                return( B_FALSE );
+                return( P_FALSE );
             }
             if( CurrSIOData->remaps != NULL ) {
                 ResolveOverlays( curr_image );
@@ -1131,7 +1131,7 @@ extern bint LoadImageOverlays( void )
         }
         image_index++;
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 
@@ -1141,11 +1141,11 @@ STATIC void AdvanceCurrentOffset( uint_32 advance )
 {
     addr_off     old_offset;
 
-    exeFlags.end_of_segment = B_FALSE;
+    exeFlags.end_of_segment = P_FALSE;
     old_offset = currAddr.mach.offset;
     MADAddrAdd( &currAddr, advance, MAF_OFFSET );
     if( currAddr.mach.offset < old_offset ) {
-        exeFlags.end_of_segment = B_TRUE;
+        exeFlags.end_of_segment = P_TRUE;
         return;
     }
     if( exeFlags.segment_split ) {
@@ -1201,7 +1201,7 @@ STATIC unsigned char exeGetChar( void )
             exeAmount = read( exeFH, exeBuff, BUFF_SIZE );
         }
         if( exeAmount == 0 || exeAmount == (uint_16)-1 ) {
-            exeFlags.end_of_file = B_TRUE;
+            exeFlags.end_of_file = P_TRUE;
             return( 0 );
         }
         exeCurrent = 0;
@@ -1275,7 +1275,7 @@ bool CnvAddr( address addr, char *buff, unsigned max )
     search_result   sr;
     int             name_len;
 
-    sym = __alloca( DIPHandleSize( HK_SYM ) );
+    sym = alloca( DIPHandleSize( HK_SYM ) );
 //    MapAddressToActual( exeImage, &addr.mach );
     sr = AddrSym( NO_MOD, addr, sym );
     switch( sr ) {
@@ -1303,9 +1303,9 @@ bool IsX86RealAddr( address a )
     switch( exeType ) {
     case EXE_MZ:
     case EXE_OVL:
-        return( B_TRUE );
+        return( P_TRUE );
     }
-    return( B_FALSE );
+    return( P_FALSE );
 }
 
 
@@ -1324,10 +1324,10 @@ char EndOfSegment( void )
 /***********************/
 {
     if( exeFlags.end_of_segment ) {
-        return( B_TRUE );
+        return( P_TRUE );
     }
     if( exeFlags.end_of_file ) {
-        return( B_TRUE );
+        return( P_TRUE );
     }
-    return( B_FALSE );
+    return( P_FALSE );
 }

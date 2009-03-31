@@ -70,12 +70,12 @@ struct import_sym_struct{
             long        ordinal;
             char        *symName;
             char        *exportedName;
-        };
+        } sym;
         struct {
             elf_import_sym  *symlist;
             long            numsyms;
-        };
-    };
+        } elf;
+    } u;
 };
 
 struct sym_file_struct {

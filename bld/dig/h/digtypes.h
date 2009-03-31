@@ -29,9 +29,10 @@
 ****************************************************************************/
 
 
-#ifndef DIGTYPES_H
-#include <machtype.h>
+#ifndef DIGTYPES_H_INCLUDED
+#define DIGTYPES_H_INCLUDED
 
+#include <machtype.h>
 #include "digpck.h"
 
 typedef unsigned_8 search_result; enum {
@@ -427,8 +428,6 @@ enum {
 #if !defined(DIGCLIENT)
 #define DIGCLIENT
 #endif
-
-#define DIGTYPES_H
 
 #include "digunpck.h"
 #endif

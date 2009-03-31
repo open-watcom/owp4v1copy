@@ -29,8 +29,8 @@
 *
 ****************************************************************************/
 
-#include "wlib.h"
 
+#include "wlib.h"
 #include "trmemcvr.h"
 
 static MemPtr   *memPtr;

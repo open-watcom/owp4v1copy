@@ -301,7 +301,7 @@ extern void ReportSampleInfo( void )
             curr_sio = curr_sio->next;
             dumpSampleInfo();
             fprintf( df, "\n" );
-            dumpSampleImages( B_TRUE, curr_sio );
+            dumpSampleImages( P_TRUE, curr_sio );
             if( curr_sio == SIOData ) break;
         }
         fclose( df );

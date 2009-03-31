@@ -210,6 +210,7 @@ void Usage( void )
         }
         for( str = str_first; str <= str_last; ++str ) {
             MsgGet( str, buff );
+#ifndef __UNIX__
             if( ideInfo && ideInfo->ver > 2 && ideInfo->console_output &&
                 ( count > 20 && buff[ 0 ] == '\0' || count == 24 ) ) {
                 msg_info.msg = "    (Press Return to continue)" ;
@@ -218,6 +219,7 @@ void Usage( void )
                 count = 0;
                 msg_info.msg = buff;
             }
+#endif
             ++count;
             if( buff[ 0 ] == '\0' ) {
                 continue;

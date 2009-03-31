@@ -175,7 +175,7 @@ extern void WPDipInit( void )
         dip_name = WProfDips;
     }
     while( *dip_name != NULLCHAR ) {
-        if( loadDIP( dip_name, B_TRUE, B_TRUE ) ) {
+        if( loadDIP( dip_name, P_TRUE, P_TRUE ) ) {
             dip_count++;
         }
         dip_name += strlen( dip_name ) + 1;
@@ -258,15 +258,15 @@ STATIC bint loadDIP( char * dip, bint defaults, bint fail_big )
     ret = DIPLoad( dip );
     if( ret != DS_OK ) {
         if( defaults && (ret == (DS_ERR|DS_FOPEN_FAILED)) ) {
-            return( B_FALSE );
+            return( P_FALSE );
         }
         if( fail_big ) {
             fatal( LIT( Dip_Load_Failed ), dip, errMsgText( ret ) );
         }
         ErrorMsg( LIT( Dip_Load_Failed ), dip, errMsgText( ret ) );
-        return( B_FALSE );
+        return( P_FALSE );
     }
-    return( B_TRUE );
+    return( P_TRUE );
 }
 
 

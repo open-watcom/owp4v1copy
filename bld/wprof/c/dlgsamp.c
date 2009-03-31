@@ -63,13 +63,13 @@ extern bint WPSampFound( void )
     char            buffer[_MAX_PATH2];
     char            *ext;
 
-    if( stat( SamplePath, &file_stat ) != -1 ) return( B_TRUE );
-    if( SamplePath[0] == NULLCHAR ) return( B_FALSE );
+    if( stat( SamplePath, &file_stat ) != -1 ) return( P_TRUE );
+    if( SamplePath[0] == NULLCHAR ) return( P_FALSE );
     _splitpath2( SamplePath, buffer, NULL, NULL, NULL, &ext );
-    if( *ext != NULLCHAR ) return( B_FALSE );
+    if( *ext != NULLCHAR ) return( P_FALSE );
     ReplaceExt( SamplePath, ".smp" );
-    if( stat( SamplePath, &file_stat ) != -1 ) return( B_TRUE );
-    return( B_FALSE );
+    if( stat( SamplePath, &file_stat ) != -1 ) return( P_TRUE );
+    return( P_FALSE );
 }
 
 

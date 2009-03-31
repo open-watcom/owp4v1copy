@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
-#ifndef MADREGS_H
-#define MADREGS_H
-#include "digpck.h"
+#ifndef MADREGS_H_INCLUDED
+#define MADREGS_H_INCLUDED
+
 #include "madtypes.h"
 
 #ifdef MD_x86
@@ -54,6 +54,8 @@
 #include "madjvm.h"
 #endif
 
+#include "digpck.h"
+
 union mad_registers {
     unsigned_8                  nul;
 #ifdef MD_x86
@@ -74,4 +76,5 @@ union mad_registers {
 };
 
 #include "digunpck.h"
+
 #endif

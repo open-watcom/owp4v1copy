@@ -106,7 +106,7 @@ extern void WPAdjustRowHeight( a_window * wnd, bint initial_set )
 extern void WPSetRowHeight( a_window * wnd )
 /******************************************/
 {
-    WPAdjustRowHeight( wnd, B_TRUE );
+    WPAdjustRowHeight( wnd, P_TRUE );
 }
 
 
