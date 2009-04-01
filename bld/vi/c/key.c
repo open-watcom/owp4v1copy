@@ -304,7 +304,7 @@ int GetKey( bool usemouse )
             TurnOffCapsLock();
         }
         LastMouseEvent = GetMouseEvent();
-        if( LastMouseEvent >= 0 ) {
+        if( LastMouseEvent != MOUSE_NONE ) {
             RedrawMouse( MouseRow, MouseCol );
             DisplayMouse( TRUE );
             if( TestMouseEvent( usemouse ) ) {

@@ -64,7 +64,7 @@ int             MouseSpeed = 4;
 int             MouseDoubleClickSpeed = 3;
 int             MouseRepeatStartDelay = 5;
 int             MouseRepeatDelay;
-int             LastMouseEvent = -1;
+vi_mouse_event  LastMouseEvent = MOUSE_NONE;
 
 /* generic editing data */
 char            *FileEndString = NULL;

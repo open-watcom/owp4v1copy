@@ -311,9 +311,9 @@ int GetKeyboard( int *scan )
 
 } /* GetKeyboard */
 
-int GetMouseEvent( void )
+vi_mouse_event GetMouseEvent( void )
 {
-    return( FALSE );
+    return( MOUSE_NONE );
 }
 
 bool TestMouseEvent( bool mouse )

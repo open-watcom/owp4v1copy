@@ -62,7 +62,7 @@ extern int              MouseStatus;
 #endif
 extern int              MouseSpeed;
 extern int              MouseDoubleClickSpeed;
-extern int              LastMouseEvent;
+extern vi_mouse_event   LastMouseEvent;
 extern int              MouseRepeatStartDelay;
 extern int              MouseRepeatDelay;
 

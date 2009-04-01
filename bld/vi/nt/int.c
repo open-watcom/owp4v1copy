@@ -47,7 +47,7 @@ void TimerThread( void )
     char_info   *clk;
 
     while( !exit_thread ) {
-        Sleep( 1000 );
+        Sleep( 55 );
         ClockTicks++;
         if( EditFlags.ClockActive && EditFlags.SpinningOurWheels && EditFlags.Spinning ) {
             (*(char_info *)SpinLoc).ch = SpinData[ SpinCount ];
@@ -57,7 +57,7 @@ void TimerThread( void )
                 SpinCount = 0;
             }
         }
-        if( (ClockTicks % 10) != 0 ) {
+        if( (ClockTicks % 9) != 0 ) {
             continue;
         }
         GetDateTimeString( date );

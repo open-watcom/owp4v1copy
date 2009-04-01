@@ -71,10 +71,10 @@ void            *_inline_memset( void *__s, int __c, unsigned int __n );
 #include "struct.h"
 #include "pragmas.h"
 #include "errs.h"
+#include "mouse.h"
 #include "globals.h"
 #include "rtns.h"
 #include "rtns2.h"
-#include "mouse.h"
 #include "dc.h"
 
 #endif
