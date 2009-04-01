@@ -1326,7 +1326,7 @@ static TOKEN CharConst( int char_type )
     }
     Buffer[ TokenLen ] = '\0';
     ConstType = char_type;
-    if( CompFlags.signed_char ) {
+    if( char_type == TYPE_CHAR && CompFlags.signed_char ) {
         if( (value & 0xFFFFFF80) == 0x80 ) {    /* if sign bit is on */
             value |= 0xFFFFFF00;                /* - sign extend it */
         }
