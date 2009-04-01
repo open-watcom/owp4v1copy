@@ -534,17 +534,19 @@ static int charConst( int char_type, int expanding )
     }
     Buffer[TokenLen] = '\0';
     ConstType = char_type;
-    if(( value & 0xFFFFFF00 ) == 0 ) {
-        if( CompFlags.signed_char ) {
-            if( value & 0x80 ) {            /* if sign bit is on */
-                value |= 0xFFFFFF00;        /* - sign extend it */
+    if( char_type == TYP_CHAR ) {
+        if(( value & 0xFFFFFF00 ) == 0 ) {
+            if( CompFlags.signed_char ) {
+                if( value & 0x80 ) {            /* if sign bit is on */
+                    value |= 0xFFFFFF00;        /* - sign extend it */
+                }
             }
-        }
-    } else {
-        // value has more than 8 bits
-        if( char_type == TYP_CHAR && ! flag.double_byte_char ) {
-            if( diagnose_lex_error( expanding ) ) {
-                CErr2( WARN_CHAR_VALUE_LARGE, value );
+        } else {
+            // value has more than 8 bits
+            if( char_type == TYP_CHAR && ! flag.double_byte_char ) {
+                if( diagnose_lex_error( expanding ) ) {
+                    CErr2( WARN_CHAR_VALUE_LARGE, value );
+                }
             }
         }
     }
