@@ -92,11 +92,22 @@ void g_banner( void )
 static void usage( void )
 {
     int     k;
+    int     kscreen;
 
     g_banner();
 
-    for( k = inf_use_01; k <= inf_use_end; k++ ) {
+    kscreen = 0;
+    for( k = inf_use_start; k <= inf_use_end; k++ ) {
         g_info( k );
+        if( isatty( fileno( stdin ) ) ) {
+            if( kscreen == 22 ) {
+                kscreen = 0;
+                g_info( inf_pause );
+                getchar();
+            } else {
+                kscreen++;
+            }
+        }
     }
     my_exit( 4 );
 }
@@ -783,6 +794,7 @@ int main( int argc, char * argv[] )
     char    *   cmdline;
     int         cmdlen;
     jmp_buf     env;
+    int         tok_count;
 
     environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
@@ -809,8 +821,11 @@ int main( int argc, char * argv[] )
 
     g_info( INF_CMDLINE, cmdline );
 
-    proc_options( cmdline );
+    tok_count = proc_options( cmdline );
     g_banner();
+    if( tok_count < 4 ) {               // file ( device xyz   is minimum
+        usage();                        // display usage and exit
+    }
     cop_setup();                        // init copfiles
 
 
@@ -822,13 +837,13 @@ int main( int argc, char * argv[] )
         utoa( passes, linestr2, 10 );
         set_default_extension( master_fname );// make this extension first choice
 
-        fb_start(); // START :PAUSE & :INIT processing.
+        fb_start();                     // START :PAUSE & :INIT processing.
 
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
 
-            if( GlobalFlags.firstpass == 1) fb_document(); // DOCUMENT :PAUSE & :INIT processing.
+            if( GlobalFlags.firstpass == 1) fb_document();// DOCUMENT :PAUSE & :INIT processing.
 
 //            g_trmem_prt_list();  // all memory freed if no output from call
             utoa( pass, linestr1, 10 );
@@ -846,7 +861,7 @@ int main( int argc, char * argv[] )
                     GlobalFlags.research ? "research" : "normal" );
         }
 
-        fb_finish(); // :FINISH block processing.
+        fb_finish();                    // :FINISH block processing.
 
     } else {
         g_err( err_missing_mainfilename );

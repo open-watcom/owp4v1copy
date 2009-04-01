@@ -1068,7 +1068,7 @@ static option GML_old_Options[] =
     { "format",        5,  4,       0,       ign_option,     1 },
     { "from",          3,  4,       1,       set_from,       1 },
     { "inclist",       6,  4,       1,       set_inclist,    0 },
-    { "index",         4,  4,       0,       ign_option,     0 },
+    { "index",         4,  3,       0,       ign_option,     0 },
     { "layout",        5,  3,       0,       ign_option,     1 },
     { "linemode",      7,  4,       0,       ign_option,     0 },
     { "llength",       6,  2,       130,     ign_option,     1 },
@@ -1079,7 +1079,7 @@ static option GML_old_Options[] =
     { "noinclist",     8,  6,       0,       set_inclist,    0 },
     { "noindex",       6,  5,       0,       ign_option,     0 },
     { "nopause",       6,  3,       0,       ign_option,     0 },
-    { "noquiet",       6,  3,       0,       ign_option,     0 },
+    { "noquiet",       6,  3,       0,       set_quiet,      0 },
     { "noscript",      7,  5,       0,       ign_option,     0 },
     { "nostatistics",  11, 6,       0,       set_stats,      0 },
     { "nowait",        5,  6,       0,       ign_option,     0 },
@@ -1088,7 +1088,7 @@ static option GML_old_Options[] =
     { "passes",        5,  4,       1,       set_passes,     1 },
     { "pause",         4,  5,       1,       ign_option,     0 },
     { "process",       6,  4,       0,       ign_option,     1 },
-    { "quiet",         4,  5,       1,       ign_option,     0 },
+    { "quiet",         4,  5,       1,       set_quiet,      0 },
     { "resetscreen",   10, 5,       1,       ign_option,     0 },
     { "script",        5,  3,       1,       ign_option,     0 },// always set
     { "setsymbol",     8,  3,       0,       set_symbol,     2 },
@@ -1489,7 +1489,7 @@ static cmd_tok  *process_master_filename( cmd_tok * tok )
 /*  process command line and option files                                  */
 /***************************************************************************/
 
-void proc_options( char * string )
+int proc_options( char * string )
 {
     int         tokcount;
     cmd_tok *   tok;
@@ -1561,5 +1561,5 @@ void proc_options( char * string )
         utoa( print_to, linestr2, 10 );
         g_err( err_inv_page_range, linestr, linestr2 );
     }
-    return;
+    return( tokcount );
 }

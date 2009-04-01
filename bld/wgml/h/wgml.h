@@ -114,7 +114,7 @@ extern  void        g_trmem_close( void );
 
 
 /* goptions.c                         */
-extern  void    proc_options( char * cmdline );
+extern  int     proc_options( char * cmdline );
 extern  void    split_attr_file( char * filename, char * attr, size_t attrlen );
 
 /* gprocess.c                         */

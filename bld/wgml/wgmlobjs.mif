@@ -1,4 +1,4 @@
-
+# WGML object files
 #
 # common objects
 #
@@ -18,7 +18,6 @@ common_objs =  &
         gsymvar.obj  &
         gutil.obj    &
         wgmlmsg.obj  &
-#        sharedio.obj &
         swchar.obj
 
 #
@@ -74,8 +73,8 @@ scr_objs =  &
         gsifdoel.obj &
         gsimbed.obj  &
         gsmacro.obj  &
-        gsty.obj     &
         gspu.obj     &
+        gsty.obj
 
 objs = $(common_objs) $(scr_objs) $(gml_objs) $(dev_objs)
 
