@@ -90,7 +90,7 @@ MAINOBJECT( VpeMain, COORD_USER, 10240, 10240 )
 #define _pModel ((MProject*)model())
 
 Define( VpeMain )
-static char pFilter[] = { "Project Files(*.wpj)\0*.wpj\0All files(*.*)\0*.*\0\0" };
+static char pFilter[] = { "Project Files (*.wpj)\0*.wpj\0All Files (*.*)\0*.*\0\0" };
 
 static WHotSpots _hotSpotList( 4 );
 
@@ -836,7 +836,7 @@ void VpeMain::onPopup3a( WPopupMenu* pop )
                     pop->insertSeparator( base );
                     ii++;
                 }
-                WString n( action->name() ); n.concat( " switches..." );
+                WString n( action->name() ); n.concat( " Switches..." );
                 WString h( "Setup switches for '" );
                 action->text( h );
                 h.concat( "' action on selected source file" );
@@ -962,7 +962,7 @@ int VpeMain::addComponentActionSetups( WPopupMenu* pop, int base )
                         pop->insertSeparator( base );
                         ii++;
                     }
-                    WString n( action->name() ); n.concat( " switches..." );
+                    WString n( action->name() ); n.concat( " Switches..." );
                     WString h( "Setup switches for '" );
                     action->text( h );
                     h.concat( "' action on selected target" );
@@ -995,7 +995,7 @@ int VpeMain::addComponentMaskSetups( WPopupMenu* pop, int base )
                 }
                 WString n;
                 tool->name( n );
-                n.concat( " switches..." );
+                n.concat( " Switches..." );
                 WString h( "Setup switches for '" );
                 tool->name( h );
                 h.concat( "' in selected target" );
@@ -1493,7 +1493,7 @@ WStyle VpeMain::vCompStyle()
 
 bool VpeMain::addComponent( WMenuItem* )
 {
-static char cFilter[] = { "Target Files(*.tgt)\0*.tgt\0Executables(*.exe)\0*.exe\0Static Libraries(*.lib)\0*.lib\0Dynamic Libraries(*.dll)\0*.dll\0All files(*.*)\0*.*\0\0" };
+static char cFilter[] = { "Target Files (*.tgt)\0*.tgt\0Executables (*.exe)\0*.exe\0Static Libraries (*.lib)\0*.lib\0Dynamic Libraries (*.dll)\0*.dll\0All Files (*.*)\0*.*\0\0" };
     bool ok = FALSE;
     HelpStack.push( HLP_ADDING_A_TARGET );
     VCompDialog dlg( this, "New Target", _project, cFilter );
@@ -1558,8 +1558,8 @@ void VpeMain::renameComponent( WMenuItem* )
     HelpStack.push( HLP_RENAMING_A_TARGET );
     _activeVComp->setFocus();
     VComponent* vcomp = _activeVComp;
-//static char cFilter[] = { "Executables(*.exe)\0*.exe\0Static Libraries(*.lib)\0*.lib\0Dynamic Libraries(*.dll)\0*.dll\0All files(*.*)\0*.*\0\0" };
-static char cFilter[] = { "Target Files(*.tgt)\0*.tgt\0Executables(*.exe)\0*.exe\0Static Libraries(*.lib)\0*.lib\0Dynamic Libraries(*.dll)\0*.dll\0All files(*.*)\0*.*\0\0" };
+//static char cFilter[] = { "Executables (*.exe)\0*.exe\0Static Libraries (*.lib)\0*.lib\0Dynamic Libraries (*.dll)\0*.dll\0All Files (*.*)\0*.*\0\0" };
+static char cFilter[] = { "Target Files (*.tgt)\0*.tgt\0Executables (*.exe)\0*.exe\0Static Libraries (*.lib)\0*.lib\0Dynamic Libraries (*.dll)\0*.dll\0All Files(*.*)\0*.*\0\0" };
     VCompDialog dlg( this, "Rename Target", _project, cFilter );
     MComponent* comp = vcomp->component();
     WFileName fn( comp->relFilename() );

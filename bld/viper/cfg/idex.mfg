@@ -52,32 +52,32 @@ Project
   Browse wbrg "$(%watcom)\\binw\\wbrw"
   Action &Zoom...
     Command "$(%watcom)\\binw\\wzoom"
-    Hint "Invoke WZOOM Utility"
-  Action "&Heap walker..."
+    Hint "Invoke WZOOM utility"
+  Action "&Heap Walker..."
     Command "$(%watcom)\\binw\\wheapwlk"
-    Hint "Invoke WHEAPWLK Utility"
+    Hint "Invoke WHEAPWLK utility"
   Action &Spy...
     Command "$(%watcom)\\binw\\wspy"
-    Hint "Invoke WSPY Utility"
+    Hint "Invoke WSPY utility"
   Action "&DDE Spy..."
     Command "$(%watcom)\\binw\\wddespy"
-    Hint "Invoke WDDESPY Utility"
+    Hint "Invoke WDDESPY utility"
   Help ide.hlp
 :elsesegment FOR_NT
   Editor "weditviw" DLL
   Browse wbrg wbrw
   Action &Zoom...
     Command "wzoom"
-    Hint "Invoke WZOOM Utility"
-  Action "&Heap walker..."
+    Hint "Invoke WZOOM utility"
+  Action "&Heap Walker..."
     Command "wheapwlk"
-    Hint "Invoke WHEAPWLK Utility"
+    Hint "Invoke WHEAPWLK utility"
   Action &Spy...
     Command "wspy"
-    Hint "Invoke WSPY Utility"
+    Hint "Invoke WSPY utility"
   Action "&DDE Spy..."
     Command "wddespy"
-    Hint "Invoke WDDESPY Utility"
+    Hint "Invoke WDDESPY utility"
   Help ide.hlp
 :endsegment
 
