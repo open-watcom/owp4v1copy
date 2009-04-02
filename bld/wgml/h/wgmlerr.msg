@@ -351,3 +351,6 @@ pick( WNG_ATT_NAME,             "'%s' is not a valid attribute name",
 pick( ERR_ATT_REQ,              "For the tag '%s', the required attribute(s) %s have not been specified",
                                 "For the tag '%s', the required attribute(s) %s have not been specified" )
 
+pick( ERR_CW_UNRECOGNIZED,      "Unrecognized control word %s line %s of %s '%s'",
+                                "Unrecognized control word %s line %s of %s '%s'" )
+

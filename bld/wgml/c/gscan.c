@@ -35,6 +35,7 @@
 
 #include "wgml.h"
 #include "gvars.h"
+#include "outbuff.h"
 
 
 /***************************************************************************/
@@ -71,6 +72,32 @@ static  const   scrtag  scr_tags[] = {
 #define SCR_TAGMAX  (sizeof( scr_tags ) / sizeof( scr_tags[ 0 ] ) - 1)
 
 #undef pick
+
+
+
+
+/***************************************************************************/
+/*  some errror msgs                                                       */
+/***************************************************************************/
+
+static void cw_err( void )
+{
+    char    linestr[ MAX_L_AS_STR ];
+
+    // SC--006: Unrecognized control word
+    err_count++;
+    if( input_cbs->fmflags & II_macro ) {
+        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        g_err( ERR_CW_UNRECOGNIZED, token_buf, linestr, "macro",
+               input_cbs->s.m->mac->name );
+    } else {
+        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        g_err( ERR_CW_UNRECOGNIZED, token_buf, linestr, "file",
+               input_cbs->s.f->filename );
+    }
+    show_include_stack();
+    return;
+}
 
 
 /***************************************************************************/
@@ -243,6 +270,7 @@ static void     scan_script( void)
     char        *   pt;
     int             toklen;
     int             k;
+    bool            cwfound;
 
     cb = input_cbs;
     p = scan_start + 1;
@@ -300,11 +328,9 @@ static void     scan_script( void)
 
         if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
 
-           scan_start = p;
-
-//         copy_buff2_to_output();    TBD
-
-           return;
+            cw_err();
+            scan_start = p;
+            return;
         }
 
         if( toklen >= MAC_NAME_LENGTH ) {
@@ -334,6 +360,7 @@ static void     scan_script( void)
         inc_inc_level();
         add_macro_parms( p );
     } else {                            // try script controlword
+        cwfound = false;
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_macro ) {
                 printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
@@ -352,9 +379,13 @@ static void     scan_script( void)
                 if( !stricmp( scr_tags[ k ].tagname, token_buf ) ) {
                     scan_start = p; // script controlword found, process
                     scr_tags[ k ].tagproc();
+                    cwfound = true;
                     break;
                 }
             }
+        }
+        if( !cwfound ) {
+            cw_err();                   // unrecognized control word
         }
     }
 }
@@ -597,6 +628,7 @@ void    scan_line( void )
                 g_info( INF_TEXT_LINE, scan_start );
             }
 
+            ob_insert_block( scan_start, scan_stop -scan_start +1, false, false );
                            /* process text or unprocessed tag      TBD */
 
         }

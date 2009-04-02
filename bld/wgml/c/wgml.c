@@ -859,6 +859,10 @@ int main( int argc, char * argv[] )
             }
             g_info( INF_PASS_2, linestr1, linestr2,
                     GlobalFlags.research ? "research" : "normal" );
+
+            if( err_count > 0 ) {
+                break;                  // error found stop now
+            }
         }
 
         fb_finish();                    // :FINISH block processing.
