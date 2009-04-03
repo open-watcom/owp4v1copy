@@ -112,7 +112,11 @@ exever.rc: ./genverrc.exe ../nt/exever.rc $(fe_misc_dir)/c/genverrc.c
 !ifdef prereq_ide_h
 $(prereq_ide_h): .ALWAYS
 curr_dir=$+$(%cwd)$-
+!ifeq %BUILD_PLATFORM dos386
+        @cd $(docs_root)\$(host_os)
+!else
         @cd $(docs_root)/$(host_os)
+!endif
         @wmake -h hbook=ide header=1
         @cd $(curr_dir)
 !endif
