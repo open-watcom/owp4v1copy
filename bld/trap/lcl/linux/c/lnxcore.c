@@ -37,7 +37,7 @@
 #include <sys/types.h>
 #include "trpimp.h"
 #include "exeelf.h"
-//#include "linuxcomm.h"
+//#include "lnxcomm.h"
 //#include "misc7386.h"
 #include "mad.h"
 #include "madregs.h"
