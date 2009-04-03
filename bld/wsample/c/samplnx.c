@@ -54,7 +54,7 @@
     #error Unsupported CPU architecture
 #endif
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 
 #if 0
     #define dbg_printf( ... ) printf( __VA_ARGS__ )

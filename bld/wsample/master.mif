@@ -46,8 +46,8 @@ objs_dos_i86    = sampdos.obj sampexe.obj realmode.obj rmhooks.obj timasm.obj in
 objs_rsi_i86    = samprsi.obj sysinit.obj sampexe.obj sbrk.obj settime.obj dbglib.obj segs_16m.obj dbgliba.obj rmhdlr.obj magicstr.obj $(lang_root)/lib286/dos/dos16m.obj
 objs_pls_386    = samppls.obj sysinit.obj sampexe.obj timer.obj settime.obj
 objs_nov_386    = sampnlm.obj realmode.obj nwhooks.obj settime.obj cpuspeed.obj pitstuff.obj
-objs_linux_386  = samplnx.obj sysinit.obj sampexe.obj linuxutl.obj
-objs_linux_ppc  = samplnx.obj sysinit.obj sampexe.obj linuxutl.obj
+objs_linux_386  = samplnx.obj sysinit.obj sampexe.obj lnxutl.obj
+objs_linux_ppc  = samplnx.obj sysinit.obj sampexe.obj lnxutl.obj
 
 objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj wmsg.obj
 
