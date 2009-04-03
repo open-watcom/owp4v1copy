@@ -31,7 +31,7 @@
 
 #include "madimp.h"
 #include "madmips.h"
-#include "mipsregs.h"
+#include "mpsregs.h"
 #include "dis.h"
 
 enum toggle_states {

@@ -33,7 +33,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "mips.h"
-#include "mipstypes.h"
+#include "mpstypes.h"
 #include "madregs.h"
 
 #define BIT_OFF( who ) (offsetof( mad_registers, mips.who ) * BITS_PER_BYTE)
@@ -153,7 +153,7 @@ static const mips_reg_info      *SubList[] =
 
 /* to avoid relocations to R/W data segments */
 #define regpick( name, type, s ) REG_NAME( name );
-#include "mipsregs.h"
+#include "mpsregs.h"
 #undef regpick
 
 #define regpick( name, type, reg_set )  \
@@ -165,7 +165,7 @@ static const mips_reg_info      *SubList[] =
             reg_set##_REG_SET, RS_##type },
 
 const mips_reg_info RegList[] = {
-    #include "mipsregs.h"
+    #include "mpsregs.h"
 };
 
 // For 64-bit registers displayed as 32-bit - 32GPRs + pc

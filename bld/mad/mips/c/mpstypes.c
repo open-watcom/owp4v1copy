@@ -31,7 +31,7 @@
 
 #include <string.h>
 #include "mips.h"
-#include "mipstypes.h"
+#include "mpstypes.h"
 #include "madregs.h"
 
 #define D       MAD_DEFAULT_HANDLING
@@ -81,7 +81,7 @@ static const mad_type_info_float F8 =
         { MSTR_##n, h, (mad_type_info_basic *)&info },
 
 const mad_type_data TypeArray[] = {
-#include "mipstypes.h"
+#include "mpstypes.h"
 };
 
 walk_result     DIGENTRY MITypeWalk( mad_type_kind tk, MI_TYPE_WALKER *wk, void *data )

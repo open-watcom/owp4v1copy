@@ -1,12 +1,12 @@
 target_cpu = mips
 
 imp_objs = &
-        mipsaddr.obj &
-        mipsctrl.obj &
-        mipstypes.obj &
-        mipsreg.obj &
-        mipscall.obj &
-        mipsdisas.obj &
-        mipstrace.obj
+        mpsaddr.obj &
+        mpsctrl.obj &
+        mpstypes.obj &
+        mpsreg.obj &
+        mpscall.obj &
+        mpsdisas.obj &
+        mpstrace.obj
 
 !include ../../master.mif

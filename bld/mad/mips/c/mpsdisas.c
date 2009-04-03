@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include "walloca.h"
 #include "mips.h"
-#include "mipstypes.h"
+#include "mpstypes.h"
 #include "madregs.h"
 
 static dis_handle DH;
