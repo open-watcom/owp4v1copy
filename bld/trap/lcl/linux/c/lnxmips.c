@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Linux debugger trap file PowerPC specific functions.
+* Description:  Linux debugger trap file MIPS specific functions.
 *
 ****************************************************************************/
 
@@ -34,23 +34,19 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ptrace.h>
-#include <asm/ptrace.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "mad.h"
 #include "madregs.h"
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 
 /* Implementation notes:
  *
- * - This code is big endian, for 32-bit PowerPC systems. It could be extended
- *   to support 64-bit machines relatively easily.
+ * - This code is little endian, for 32-bit MIPS systems. It could be extended
+ *   to support 64-bit machines relatively easily, as well as big endian
+ *   systems.
  *
- * - Some PowerPC systems/CPUs/kernels appear to have problems setting/clearing
- *   breakpoints. This could very well be caused by cache coherency problems;
- *   the I-cache and D-cache are not guaranteed to be consistent. We should
- *   be able to manually force the caches to be synced.
  */
 
 /* Macros to get at GP/FP registers based on their index; useful in loops */
@@ -58,35 +54,32 @@
 #define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[I64LO32])) + (2 * idx)))
 #define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[I64HI32])) + (2 * idx)))
 
-static void ReadCPU( struct ppc_mad_registers *r )
+static void ReadCPU( struct mips_mad_registers *r )
 {
     int         i;
 
     memset( r, 0, sizeof( *r ) );
     /* Read GPRs */
     for( i = 0; i < 32; ++i ) {
-        TRANS_GPREG_32( r, i ) = ptrace( PTRACE_PEEKUSER, pid, i * REGSIZE, 0 );
+        TRANS_GPREG_32( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (void *)i, NULL );
     }
     /* Read FPRs */
-    for( i = 0; i < 32; ++i ) {
-        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i * 2) * REGSIZE, 0 );
-        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i * 2 + 1) * REGSIZE, 0 );
+    for( i = 0; i < 16; ++i ) {
+        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (void *)(FPR_BASE + i * 2), NULL );
+        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (void *)(FPR_BASE + i * 2 + 1), NULL );
     }
-    /* Read SPRs */
-    r->iar.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
-    r->msr.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_MSR * REGSIZE, 0 );
-    r->ctr.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_CTR * REGSIZE, 0 );
-    r->lr.u._32[I64LO32]  = ptrace( PTRACE_PEEKUSER, pid, PT_LNK * REGSIZE, 0 );
-    r->xer                = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
-    r->cr                 = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
-    r->fpscr              = ptrace( PTRACE_PEEKUSER, pid, PT_FPSCR * REGSIZE, 0 );
-    last_eip = r->iar.u._32[I64LO32];
+    /* Read special registers */
+    r->pc.u._32[I64LO32]  = ptrace( PTRACE_PEEKUSER, pid, (void *)PC, NULL );
+    r->lo                 = ptrace( PTRACE_PEEKUSER, pid, (void *)MMLO, NULL );
+    r->hi                 = ptrace( PTRACE_PEEKUSER, pid, (void *)MMHI, NULL );
+    r->fpcsr              = ptrace( PTRACE_PEEKUSER, pid, (void *)FPC_CSR, NULL );
+    r->fpivr              = ptrace( PTRACE_PEEKUSER, pid, (void *)FPC_EIR, NULL );
+
+    last_eip = r->pc.u._32[I64LO32];
 }
 
 unsigned ReqRead_cpu( void )
 {
-//    ReadCPU( GetOutPtr( 0 ) );
-//    return( sizeof( mr->ppc ) );
     return( 0 );
 }
 
@@ -100,36 +93,31 @@ unsigned ReqRead_regs( void )
     mad_registers   *mr;
 
     mr = GetOutPtr( 0 );
-    ReadCPU( &mr->ppc );
-    return( sizeof( mr->ppc ) );
+    ReadCPU( &mr->mips );
+    return( sizeof( mr->mips ) );
 }
 
-static void WriteCPU( struct ppc_mad_registers *r )
+static void WriteCPU( struct mips_mad_registers *r )
 {
     int         i;
 
-    /* Write SPRs */
-    ptrace( PTRACE_POKEUSER, pid, PT_NIP * REGSIZE, (void *)(r->iar.u._32[I64LO32]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_MSR * REGSIZE, (void *)(r->msr.u._32[I64LO32]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_CTR * REGSIZE, (void *)(r->ctr.u._32[I64LO32]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_LNK * REGSIZE, (void *)(r->lr.u._32[I64LO32]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_CCR * REGSIZE, (void *)r->cr );
-    ptrace( PTRACE_POKEUSER, pid, PT_XER * REGSIZE, (void *)r->xer );
+    /* Write special registers */
+    ptrace( PTRACE_POKEUSER, pid, (void *)PC, (void *)(r->pc.u._32[I64LO32]) );
+    ptrace( PTRACE_POKEUSER, pid, (void *)MMLO, (void *)r->lo );
+    ptrace( PTRACE_POKEUSER, pid, (void *)MMHI, (void *)r->hi );
     /* Write GPRs */
     for( i = 0; i < 32; ++i ) {
-        ptrace( PTRACE_POKEUSER, pid, i * REGSIZE, (void *)TRANS_GPREG_32( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (void *)i, (void *)TRANS_GPREG_32( r, i ) );
     }
     /* Write FPRs */
-    for( i = 0; i < 32; ++i ) {
-        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i * 2) * REGSIZE, TRANS_FPREG_HI( r, i ) );
-        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i * 2 + 1) * REGSIZE, TRANS_FPREG_LO( r, i ) );
+    for( i = 0; i < 16; ++i ) {
+        ptrace( PTRACE_POKEUSER, pid, (void *)(FPR_BASE + i * 2), (void *)TRANS_FPREG_LO( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (void *)(FPR_BASE + i * 2 + 1), (void *)TRANS_FPREG_HI( r, i ) );
     }
-    ptrace( PTRACE_POKEUSER, pid, PT_FPSCR * REGSIZE, (void *)(r->fpscr) );
 }
 
 unsigned ReqWrite_cpu( void )
 {
-//    WriteCPU( GetInPtr( sizeof( write_cpu_req ) ) );
     return( 0 );
 }
 
@@ -143,7 +131,7 @@ unsigned ReqWrite_regs( void )
     mad_registers   *mr;
 
     mr = GetInPtr( sizeof( write_regs_req ) );
-    WriteCPU( &mr->ppc );
+    WriteCPU( &mr->mips );
     return( 0 );
 }
 
@@ -167,7 +155,7 @@ unsigned ReqClear_watch( void )
     return( 0 );
 }
 
-/* We do not support I/O port access on PowerPC, although if we really
+/* We do not support I/O port access on MIPS, although if we really
  * wanted to, we could access memory mapped ISA/PCI I/O ports on systems
  * where those are provided. Would require root privileges.
  */
@@ -205,10 +193,10 @@ unsigned ReqGet_sys_config( void )
     ret->sys.osmajor = 1;
     ret->sys.osminor = 0;
 
-    ret->sys.cpu = PPC_604;
+    ret->sys.cpu = MIPS_R3000;
     ret->sys.fpu = 0;
     ret->sys.huge_shift = 3;
-    ret->sys.mad = MAD_PPC;
+    ret->sys.mad = MAD_MIPS;
     CONV_LE_16( ret->sys.mad );
     return( sizeof( *ret ) );
 }
@@ -228,7 +216,6 @@ unsigned ReqMachine_data( void )
     return( sizeof( *ret ) + sizeof( *data ) );
 }
 
-// TODO: fix up ordering/contents
 const char *const ExceptionMsgs[33] = {
     "",
     TRP_QNX_hangup,
@@ -237,30 +224,30 @@ const char *const ExceptionMsgs[33] = {
     TRP_EXC_illegal_instruction,
     TRP_QNX_trap,
     TRP_QNX_abort,
-    TRP_QNX_bus_error,
+    TRP_EXC_access_violation "(SIGEMT)",
     TRP_QNX_floating_point_error,
     TRP_QNX_process_killed,
-    TRP_QNX_user_signal_1,
+    TRP_QNX_bus_error,
     TRP_EXC_access_violation "(SIGSEGV)",
-    TRP_QNX_user_signal_2,
+    TRP_QNX_sys,
     TRP_QNX_broken_pipe,
     TRP_QNX_alarm,
     TRP_QNX_process_termination,
-    TRP_EXC_floating_point_stack_check,
+    TRP_QNX_user_signal_1,
+    TRP_QNX_user_signal_2,
     TRP_QNX_child_stopped,
-    TRP_QNX_process_continued,
-    TRP_QNX_process_stopped,
-    "", /* sigtstp */
-    "", /* sigttin */
-    "", /* sigttou */
-    TRP_QNX_urgent,
-    "", /* sigxcpu */
-    "", /* sigxfsz */
-    "", /* sigvtalarm */
-    "", /* sigprof */
-    TRP_QNX_winch,
-    TRP_QNX_poll,
     TRP_QNX_power_fail,
-    TRP_QNX_sys,
+    TRP_QNX_winch,
+    TRP_QNX_urgent,
+    TRP_QNX_poll,
+    TRP_QNX_process_stopped,
+    "", /* SIGTSTP */
+    TRP_QNX_process_continued,
+    "", /* SIGTTIN */
+    "", /* SIGTTOU */
+    "", /* SIGVTALRM */
+    "", /* SIGPROF */
+    "", /* SIGXCPU */
+    "", /* SIGXFSZ */
     ""
 };

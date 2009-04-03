@@ -37,7 +37,7 @@
 #include "trpimp.h"
 #include "mad.h"
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 
 typedef struct lli {
     addr_off    offset;

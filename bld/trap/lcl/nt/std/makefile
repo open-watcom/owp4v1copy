@@ -32,7 +32,7 @@ extra_objs = &
         peread.obj &
         supp.obj &
         dbgthrd.obj &
-        supphandler.obj &
+        supphdlr.obj &
         core.obj
 
 inc_dirs += -I"$(trap_dir)/lcl/dos/h"

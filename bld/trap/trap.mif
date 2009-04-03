@@ -136,7 +136,13 @@ targ_ppc_nt     = $(name).dll
 targ_ppc_linux  = $(name).so
 targ_mips_linux = $(name).so
 
+!ifeq os linux
+TRAP_objs   = lnxstrt.obj
+!else ifeq os os2v2
+TRAP_objs   = os2strt2.obj
+!else
 TRAP_objs   = $(os)strt.obj
+!endif
 TRAP_remote_objs = remote.obj
 !endif
 

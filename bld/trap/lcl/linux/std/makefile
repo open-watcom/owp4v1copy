@@ -11,12 +11,12 @@ cpu     = x86
 which   = TRAP
 
 extra_objs = &
-        linuxacc.obj &
-        linuxx86.obj &
-        linuxmap.obj &
-        linuxcomm.obj &
-        linuxfile.obj &
-        linuxutl.obj &
+        lnxacc.obj &
+        lnxx86.obj &
+        lnxmap.obj &
+        lnxcomm.obj &
+        lnxfile.obj &
+        lnxutl.obj &
         supp.obj &
         core.obj &
         x86cpu.obj

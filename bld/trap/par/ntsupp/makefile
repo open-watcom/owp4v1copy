@@ -58,4 +58,4 @@ debug_linker=-debug:none
 inc_dirs = -I"$(lang_root)/h/nt"
 
 dbginst.exe : ../c/dbginst.c
-        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 $(inc_path) $<
+        $(cl) -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 $(inc_path) $<

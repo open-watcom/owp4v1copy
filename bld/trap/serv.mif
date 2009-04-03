@@ -108,7 +108,13 @@ SERVER_remote_objs = testserv.obj servname.obj
 SERVER_remote_objs = wserver.obj options.obj
 resource_file = wserver.res
 !else
+!ifeq os linux
+SERVER_remote_objs += serv.obj lnxtrio.obj
+!else ifeq os os2v2
+SERVER_remote_objs += serv.obj os2trio2.obj
+!else
 SERVER_remote_objs += serv.obj $(os)trio.obj
+!endif
 !endif
 SERVER_remote_objs += servacc.obj servcmd.obj servname.obj $(trap_objs)
 extra_srcs +=;$(dig_srcs)

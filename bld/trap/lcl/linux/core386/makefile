@@ -12,9 +12,9 @@ name    = core
 which   = TRAP
 
 extra_objs = &
-        linuxcore.obj &
-        linuxcomm.obj &
-        linuxfile.obj &
+        lnxcore.obj &
+        lnxcomm.obj &
+        lnxfile.obj &
         supp.obj &
         core.obj
 	

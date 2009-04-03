@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 #include "trpimp.h"
 
 void print_msg( const char *format, ... )

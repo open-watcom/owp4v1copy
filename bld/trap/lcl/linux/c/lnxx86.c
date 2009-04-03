@@ -40,7 +40,7 @@
 #include "madregs.h"
 #include "dbg386.h"
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 #include "x86cpu.h"
 #include "misc7386.h"
 

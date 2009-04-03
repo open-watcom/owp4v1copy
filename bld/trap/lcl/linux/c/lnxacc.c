@@ -51,7 +51,7 @@
 #include "mad.h"
 #include "madregs.h"
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 
 u_short                 flatCS;
 u_short                 flatDS;

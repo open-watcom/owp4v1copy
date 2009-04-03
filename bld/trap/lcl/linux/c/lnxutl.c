@@ -37,7 +37,7 @@
 #include <sys/ptrace.h>
 #include "bool.h"
 #include "exeelf.h"
-#include "linuxcomm.h"
+#include "lnxcomm.h"
 
 #ifdef DEBUG_OUT
 void Out( const char *str )
