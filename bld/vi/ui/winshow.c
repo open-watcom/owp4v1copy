@@ -244,29 +244,6 @@ void ClearWindow( window_id wn )
 } /* ClearWindow */
 
 /*
- * SetGenericWindowCursor - put cursor in any window at (l,c)
- */
-void SetGenericWindowCursor( window_id wn, int l, int c )
-{
-    wind        *w;
-    int         row,col;
-
-    w = Windows[ wn ];
-
-    row = w->y1;
-    col = w->x1;
-
-    row += l;
-    col += c;
-    if( !w->has_border ) {
-        row--;
-        col--;
-    }
-    SetCursorOnScreen( row, col );
-
-} /* SetGenericWindowCursor */
-
-/*
  * InsideWindow - test if coordinates are in window or on border
  */
 bool InsideWindow( window_id id, int x, int y )

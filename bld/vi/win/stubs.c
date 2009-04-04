@@ -70,3 +70,6 @@ int GetNewValueDialog( char *value ) { return( 0 ); }
 void DisplayCrossLineInWindow( window_id id, int line ) {}
 int SetCharInWindowWithColor( window_id wn, int line, int col, char text, type_style *style ) { return( ERR_NO_ERR ); }
 void DisplayLineWithHilite( window_id id, int line, char *text, int start, int end, int ignore ) {}
+void SetPosToMessageLine( void ) {}
+void HideCursor( void ) {}
+

@@ -230,7 +230,7 @@ void QuitEditor( int rc )
 #ifndef __WIN__
     ScreenPage( -1000 );
     EditFlags.NoSetCursor = FALSE;
-    SetCursorOnScreen( (int) WindMaxHeight -1, 0 );
+    SetPosToMessageLine();
 #endif
     ExitEditor( rc );
 

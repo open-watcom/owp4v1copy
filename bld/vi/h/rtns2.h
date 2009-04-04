@@ -94,6 +94,8 @@ void        TurnOffCapsLock( void );
 drive_type  DoGetDriveType( int );
 //void FreeReserved( void );
 //void GrabMinMem( void );
+void        SetPosToMessageLine( void );
+void        HideCursor( void );
 
 /* xmem.c */
 void ExtendedMemoryInit( void );

@@ -56,7 +56,7 @@ int EnterExMode( void )
     i = WindMaxHeight - 1;
     exwInfo.y1 = exwInfo.y2 = i;
     exwInfo.x2 = WindMaxWidth - 1;
-    SetCursorOnScreen( i, 0 );
+    SetPosToMessageLine();
     EditFlags.ExMode = TRUE;
     EditFlags.LineDisplay = TRUE;
     EditFlags.ClockActive = FALSE;

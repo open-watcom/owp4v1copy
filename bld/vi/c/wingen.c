@@ -163,7 +163,7 @@ void SetWindowCursorForReal( void )
         return;
     }
     if( CurrentFile == NULL ) {
-        SetCursorOnScreen( -1, -1 );
+        HideCursor();
         return;
     }
 #ifndef __WIN__

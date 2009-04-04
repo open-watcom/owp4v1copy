@@ -60,13 +60,10 @@ static void getCursor( int *row, int *col )
 } /* getCursor */
 
 /*
- * SetCursorOnScreen - set cursor position
+ * setCursor - set cursor position
  */
-void SetCursorOnScreen( int row, int col )
+static void setCursor( int row, int col )
 {
-    if( EditFlags.Quiet || EditFlags.NoSetCursor ) {
-        return;
-    }
     BIOSSetCursor( VideoPage, row, col );
 } /* SetCursorOnScreen */
 
@@ -76,7 +73,7 @@ void SetCursorOnScreen( int row, int col )
 void KillCursor( void )
 {
     getCursor( &saveRow,&saveCol );
-    SetCursorOnScreen( WindMaxHeight,0 );
+    setCursor( WindMaxHeight, 0 );
 
 } /* KillCursor */
 
@@ -96,7 +93,7 @@ void TurnOffCursor( void )
  */
 void RestoreCursor( void )
 {
-    SetCursorOnScreen( saveRow,saveCol );
+    setCursor( saveRow, saveCol );
 
 } /* RestoreCursor */
 
@@ -331,7 +328,7 @@ void ClearScreen( void )
     MyVioShowBuf( 0, WindMaxWidth*WindMaxHeight );
 #endif
 #endif
-    SetCursorOnScreen( 0,0 );
+    setCursor( 0, 0 );
 } /* ClearScreen */
 
 /*
@@ -351,3 +348,40 @@ void GetSpinStart( void )
     SpinLoc = &Scrn[ sizeof(char_info)*(SpinX+SpinY*WindMaxWidth)];
 
 } /* GetSpinStart */
+
+/*
+ * SetPosToMessageLine - set cursor position
+ */
+void SetPosToMessageLine( void )
+{
+    setCursor( WindMaxHeight - 1, 0 );
+
+} /* SetPosToMessageLine */
+
+/*
+ * SetGenericWindowCursor - put cursor in any window at (l,c)
+ */
+void SetGenericWindowCursor( window_id wn, int l, int c )
+{
+    wind        *w;
+    int         row,col;
+
+    w = Windows[ wn ];
+
+    row = w->y1;
+    col = w->x1;
+
+    row += l;
+    col += c;
+    if( !w->has_border ) {
+        row--;
+        col--;
+    }
+    setCursor( row, col );
+
+} /* SetGenericWindowCursor */
+
+void HideCursor( void )
+{
+    setCursor( -1, -1 );
+}

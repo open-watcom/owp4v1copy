@@ -263,7 +263,7 @@ bool LostFileCheck( void )
                 ShowStartupDialog();
                 return( TRUE );
 #else
-                SetCursorOnScreen( (int) WindMaxHeight - 1, 0 );
+                SetPosToMessageLine();
                 MyPrintf( "Files have been lost since your last session, do you wish to:\n" );
                 MyPrintf( "\ti)gnore\n\tr)ecover\n\tq)uit\n" );
                 while( 1 ) {

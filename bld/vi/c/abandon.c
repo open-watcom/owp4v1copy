@@ -42,7 +42,7 @@ void AbandonHopeAllYeWhoEnterHere( int rc )
 
     AutoSaveInterval = 0;
     ClearScreen();
-    SetCursorOnScreen( (int)WindMaxHeight - 1, 0 );
+    SetPosToMessageLine();
     if( rc == ERR_NO_MEMORY )  {
         MyPrintf( "Out of memory\n" );
     } else {

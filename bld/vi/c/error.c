@@ -47,7 +47,7 @@ void FatalError( int err )
 {
     char *str;
 
-    SetCursorOnScreen( (int)WindMaxHeight - 1, 0 );
+    SetPosToMessageLine();
     if( err == ERR_NO_MEMORY ) {
         str = "Out of memory";
     } else {
@@ -65,7 +65,7 @@ void Die( const char *str, ... )
 {
     va_list     al;
 
-    SetCursorOnScreen(  (int) WindMaxHeight - 1, 0 );
+    SetPosToMessageLine();
     MyPrintf( "Failure: " );
     va_start( al, str );
     MyVPrintf( str, al );
