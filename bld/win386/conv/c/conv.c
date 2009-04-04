@@ -1747,9 +1747,6 @@ int main( int argc, char *argv[] )
     char        fname[50];
     int         i,j;
 
-#ifdef __WATCOMC__
-    _nheapgrow();
-#endif
     j=argc-1;
     while( j > 0 ) {
         if( argv[j][0] == '-' ) {
