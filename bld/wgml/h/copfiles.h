@@ -67,15 +67,20 @@
 *                   bin_device
 *                   bin_driver
 *                   bin_fonts
+*                   pages
 *                   ps_device
 *                   wgml_font_cnt
 *                   wgml_fonts
 *               the functions:
 *                   cop_setup()
 *                   cop_teardown()
+*                   fb_dbox()
 *                   fb_document()
 *                   fb_finish()
+*                   fb_hline()
+*                   fb_newpage()
 *                   fb_start()
+*                   fb_vline()
 *
 * Note:         The field names are intended to correspond to the field names 
 *               shown in the Wiki. The Wiki structs are named when the structs
@@ -504,6 +509,7 @@ global cop_device   *   bin_device;     // binary device being used
 global cop_driver   *   bin_driver;     // binary driver being used
 global cop_font     *   bin_fonts;      // binary fonts being used (linked list)
 global int              wgml_font_cnt;  // number of available fonts
+global uint32_t         pages;          // current page number
 global wgml_font    *   wgml_fonts;     // the available fonts
 
 /* Reset so can be reused with other headers. */
@@ -518,9 +524,13 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 
 extern void             cop_setup( void );
 extern void             cop_teardown( void );
+extern void             fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
 extern void             fb_document( void );
 extern void             fb_finish( void );
+extern void             fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
+extern void             fb_newpage( void );
 extern void             fb_start( void );
+extern void             fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */

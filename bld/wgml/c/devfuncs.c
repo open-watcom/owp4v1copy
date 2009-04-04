@@ -32,6 +32,7 @@
 *                   df_teardown()
 *                   fb_enterfont()
 *                   fb_init()
+*                   fb_thickness()
 *               as well as a macro
 *                   MAX_FUNC_INDEX
 *               some local typedefs and structs:
@@ -46,7 +47,6 @@
 *                   device_function_table
 *                   driver_function_table
 *                   font_number
-*                   pages
 *                   staging
 *                   tab_width
 *                   textpass
@@ -187,7 +187,6 @@ static char         *   date_val        = NULL;
 static char         *   time_val        = NULL;
 static char             wgml_header[]   = "V4.0 PC/DOS";
 static uint32_t         font_number     = 0;
-static uint32_t         pages           = 0;
 static uint32_t         tab_width       = 0;
 static uint32_t         thickness       = 0;
 static uint32_t         x_address       = 0;
@@ -349,7 +348,7 @@ static void * df_dotab( void )
     if( bin_driver->absoluteaddress.text != NULL ) \
         df_interpret_driver_functions( bin_driver->absoluteaddress.text );
     else {
-        char    ps_suffix[] = ")|shwd|";
+        char    ps_suffix[] = ") shwd ";
         size_t  count;
         size_t  ps_suffix_size;
 
@@ -2131,6 +2130,7 @@ void fb_enterfont( void )
         }
     }
     font_number = old_font;
+
     return;
 }
 
@@ -2173,6 +2173,48 @@ void fb_init( init_block * in_block )
     /* Restore the original font number, which should be zero. */
 
     font_number = old_font_number;
+
+    return;
+}
+
+/* Function fb_thickness().
+ * Interprets any of the :HLINE, :VLINE, or :DBOX blocks, which define
+ * attribute "thickness". Sets x_size, y_size, and thickness to match the
+ * parameters. 
+ *
+ * Parameters:
+ *      in_block points to either the START :INIT block or the DOCUMENT :INIT
+ *          block.
+ *      h_start contains the horizontal start position.
+ *      v_start contains the vertical start position.
+ *      h_len contains the horizontal extent for a :HLINE or :DBOX block.
+ *      v_len contains the vertical extent for a :VLINE or :DBOX block.
+ *      in_thickness contains the value of the thickness attribute.
+ */
+
+void fb_thickness( uint8_t * in_function, uint32_t h_start, uint32_t v_start, \
+                   uint32_t h_len, uint32_t v_len, uint32_t in_thickness )
+{
+    /* An empty block is not an error. */
+
+    if( in_function == NULL ) return;
+
+    x_address = h_start;
+    y_address = v_start;
+    x_size = h_len;
+    y_size = v_len;
+    thickness = in_thickness;
+
+    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
+    df_interpret_driver_functions( in_function );
+
+    /* This presumes that x_address and y_address should retain the values
+     * designating the point-of-origin for the line or box.
+     */
+
+    x_size = 0;
+    y_size = 0;
+    thickness = 0;
 
     return;
 }

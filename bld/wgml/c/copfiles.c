@@ -27,9 +27,13 @@
 * Description:  Implements the functions used to parse .COP files:
 *                   cop_setup()
 *                   cop_teardown()
+*                   fb_dbox()
 *                   fb_document()
+*                   fb_hline()
+*                   fb_newpage()
 *                   fb_finish()
 *                   fb_start()
+*                   fb_vline()
 *               plus these local functions:
 *                   compute_metrics()
 *                   find_cop_font()
@@ -628,6 +632,7 @@ extern void cop_setup( void )
     bin_device = NULL;
     bin_driver = NULL;
     bin_fonts = NULL;
+    pages = 0;
     ps_device = false;
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
@@ -687,9 +692,16 @@ extern void cop_setup( void )
 
     if( !_strnicmp( bin_device->driver_name, "ps", 2 ) ) ps_device = true;
 
-    /* Get the highest font_number. */
+    /* Get the highest font_number and reduce it by one so it contains the
+     * highest valid array index.
+     */
 
     wgml_font_cnt = bin_device->defaultfonts.font_count;
+    wgml_font_cnt--;
+
+    /* Adjust the highest valid array index as needed to accomodate the font
+     * numbers given with the FONT command-line option.
+     */
 
     cur_opt = opt_fonts;
     while( cur_opt != NULL ) {
@@ -700,7 +712,7 @@ extern void cop_setup( void )
     }
 
     /* The value needed for the upper bound of the zero-based array is the
-     * highest font number plus 1, as stated in the Wiki.
+     * highest valid array index plus 1.
      */
 
      wgml_font_cnt++;
@@ -708,23 +720,27 @@ extern void cop_setup( void )
     /* If either :BOX or :UNDERSCORE provided a font name, increment the count.
      * If both :BOX and :UNDERSCORE provided a font name, increment the count
      * once if the font names were identical, twice if they were different.
+     * But not if the device is PS: for PS, such fonts are never used.
      */
 
-    if( bin_device->box.font_name == NULL ) {
-        if( bin_device->underscore.specified_font && \
+    if( !ps_device ) {
+        if( bin_device->box.font_name == NULL ) {
+            if( bin_device->underscore.specified_font && \
                                 (bin_device->underscore.font_name != NULL) ) {
-            gen_cnt++;
-        }
-    } else {
-        gen_cnt++;
-        if( bin_device->underscore.specified_font && \
-                                (bin_device->underscore.font_name != NULL) ) {
-            if( strcmp( bin_device->box.font_name, \
-                                        bin_device->underscore.font_name ) ) {
                 gen_cnt++;
+            }
+        } else {
+            gen_cnt++;
+            if( bin_device->underscore.specified_font && \
+                                (bin_device->underscore.font_name != NULL) ) {
+                if( strcmp( bin_device->box.font_name, \
+                                        bin_device->underscore.font_name ) ) {
+                    gen_cnt++;
+                }
             }
         }
     }
+
     font_base = wgml_font_cnt;
     wgml_font_cnt += gen_cnt;
 
@@ -802,7 +818,8 @@ extern void cop_setup( void )
 
     /* Generate any entries required by the :BOX and/or :UNDERSCORE blocks.
      * Note that the font_number will become non-zero and will be used in
-     * document processing instead of the font name.
+     * document processing instead of the font name. If the device is PS,
+     * then gen_cnt will be "0" and no fonts will be generated.
      */
 
     switch( gen_cnt ) {
@@ -998,6 +1015,9 @@ extern void cop_teardown( void )
 
 /* Function fb_document().
  * Performs the processing which occurs when document processing begins.
+ *
+ * Note: The setting of pages may need to be removed so that it can be
+ * done on each pass, since this function can only run on the last pass.
  */
 
 extern void fb_document( void )
@@ -1016,6 +1036,21 @@ extern void fb_document( void )
 
     fb_enterfont();
 
+    /* Set pages correctly. */
+
+    pages = 1;
+
+    return;
+}
+
+/* Function fb_dbox().
+ * Interprets the :DBOX block. 
+ */
+
+extern void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len )
+{
+    fb_thickness( bin_driver->dbox.text, h_start, v_start, h_len, v_len, \
+                                                bin_driver->dbox.thickness );
     return;
 }
 
@@ -1038,6 +1073,30 @@ extern void fb_finish( void )
     return;
 }
 
+/* Function fb_hline().
+ * Interprets the :HLINE block. 
+ */
+
+extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
+{
+    fb_thickness( bin_driver->hline.text, h_start, v_start, h_len, 0, \
+                                                bin_driver->hline.thickness );
+}
+
+/* Function fb_newpage().
+ * Interprets the :NEWPAGE block and increments the page number variable. 
+ *
+ * Note: The incrementing of pages may need to be removed so that it can be
+ * done on each pass, since this function can only run on the last pass.
+ */
+
+extern void fb_newpage( void )
+{
+    df_interpret_driver_functions( bin_driver->newpage.text );
+    pages++;
+    return;
+}
+
 /* Function fb_start().
  * Performs the processing which occurs before document processing starts. Indeed,
  * wgml 4.0 does not even look for the document specification file until the
@@ -1049,7 +1108,7 @@ extern void fb_start( void )
     /* Interpret the START :PAUSE block and reset the function table. */
 
     if( bin_device->pauses.start_pause != NULL ) \
-            df_interpret_device_functions( bin_device->pauses.start_pause->text );
+        df_interpret_device_functions( bin_device->pauses.start_pause->text );
 
     df_populate_device_table();
 
@@ -1059,4 +1118,16 @@ extern void fb_start( void )
 
     return;
 }
+
+/* Function fb_vline().
+ * Interprets the :VLINE block. 
+ */
+
+extern void fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len )
+{
+    fb_thickness( bin_driver->vline.text, h_start, v_start, 0, v_len, \
+                                                bin_driver->vline.thickness );
+    return;
+}
+
 

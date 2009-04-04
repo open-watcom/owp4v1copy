@@ -112,9 +112,31 @@ static void emulate_wgml( void )
 
     /* First page. */
 
+    /* First box. */
+
+    /* This is based on a figures observed in an actual PS file, which were
+     * then tweaked. 1500 is the left margin. One line appears to be 501-668,
+     * starting at 10633.
+     */
+
+    if( bin_driver->hline.text != NULL ) fb_hline( 1500, 10633, 1500 );
+    if( bin_driver->hline.text != NULL ) fb_hline( 1500,  8633, 1500 );
+    if( bin_driver->vline.text != NULL ) fb_vline( 1500,  8633, 2000 );
+    if( bin_driver->vline.text != NULL ) fb_vline( 3000,  8633, 2000 );
+
     /* :NEWPAGE block. */
 
+    fb_newpage();
+
     /* Second page. */
+
+    /* Second box. */
+
+    /* This is based on a figures observed in an actual PS file, which were
+     * then tweaked. 1500 is the left margin. One line appears to be 501-668.
+     */
+
+    if( bin_driver->dbox.text != NULL ) fb_dbox( 1500, 8633, 1500, 2000 );
 
     /* :FINISH block. */
 

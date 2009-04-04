@@ -843,6 +843,12 @@ int main( int argc, char * argv[] )
 
             init_pass();
 
+            /* fb_document() needs to be done on the first pass only, but
+             * also needs to be done immediately after the :ELAYOUT. tag.
+             * This means that it may need to be relocated when layout
+             * processing is implemented.
+             */
+
             if( GlobalFlags.firstpass == 1) fb_document();// DOCUMENT :PAUSE & :INIT processing.
 
 //            g_trmem_prt_list();  // all memory freed if no output from call
