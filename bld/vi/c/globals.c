@@ -81,7 +81,7 @@ char            *GrepDefault;
 int             LastEvent;
 int             StackK = MIN_STACK_K;
 int             SpinCount;
-char            _NEAR SpinData[] = "Ä\\|/";
+char            _NEAR SpinData[] = "\xC4" "\\|/";
 char            ExitAttr = 7;
 char            VideoPage;
 char            *EXEName;

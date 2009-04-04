@@ -48,12 +48,12 @@ void MyTabbedTextOut( HDC hdc, char **display, int len,
                       int funny_italic, POINT *p, type_style *ts, RECT *rect,
                       window_id id, char *otmp, int y );
 
-BOOL            AllowDisplay = TRUE;
-static int      pageCnt;
-static int      lastFont, thisFont;
-static int      lastFore, thisFore;
-static int      lastBack, thisBack;
-static HBRUSH   thisBrush;
+BOOL                AllowDisplay = TRUE;
+static int          pageCnt;
+static font_type    lastFont, thisFont;
+static int          lastFore, thisFore;
+static int          lastBack, thisBack;
+static HBRUSH       thisBrush;
 
 
 
@@ -466,7 +466,7 @@ int DisplayLineInWindowWithSyntaxStyle( window_id id, int c_line_no,
     int         ssDifIndex;
     ss_block    *ss_cache, *ss_step;
     int         lastPos;
-    int         lastFont, thisFont;
+    font_type   lastFont, thisFont;
     int         lastFore, thisFore;
     int         lastBack, thisBack;
     type_style  *ts;

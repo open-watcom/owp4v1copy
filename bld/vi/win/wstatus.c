@@ -253,7 +253,7 @@ window_id NewStatWindow( void )
 void StatusLine( int line, char *str, int format )
 {
     HDC         hdc;
-    UINT        font;
+    font_type   font;
     HFONT       hfont;
 
     format = format;

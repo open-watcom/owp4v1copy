@@ -545,7 +545,7 @@ void SSGetLanguageFlags( ss_flags *flags )
 }
 
 #ifdef __WIN__
-int SSGetStyle( int row, int col )
+syntax_element SSGetStyle( int row, int col )
 {
     dc          c_line;
     ss_block    *ss;
@@ -570,7 +570,7 @@ int SSGetStyle( int row, int col )
  */
 void SSInitBeforeConfig( void )
 {
-    int i;
+    syntax_element  i;
 
     for( i = 0; i < SE_NUMTYPES; i++ ) {
         SEType[i].foreground = -1;
@@ -584,7 +584,7 @@ void SSInitBeforeConfig( void )
  */
 void SSInitAfterConfig( void )
 {
-    int i;
+    syntax_element  i;
 
     // text must have some color
     if( SEType[SE_TEXT].foreground == -1 ) {

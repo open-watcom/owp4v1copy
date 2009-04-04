@@ -150,52 +150,50 @@ LOGFONT CourierBold = {
     "Courier New"
 };
 
-#define MAX_FONTS   25
-
 font Fonts[ MAX_FONTS ];
 
-UINT FontFixed( UINT f )
+UINT FontFixed( font_type f )
 {
     return( Fonts[ f ].fixed );
 }
 
-HFONT FontHandle( UINT f )
+HFONT FontHandle( font_type f )
 {
     return( Fonts[ f ].handle );
 }
 
-UINT FontHeight( UINT f )
+UINT FontHeight( font_type f )
 {
     return( Fonts[ f ].height );
 }
 
-int FontlfHeight( UINT f )
+int FontlfHeight( font_type f )
 {
     return( Fonts[ f ].lf.lfHeight );
 }
 
-char *FontlfFaceName( UINT f )
+char *FontlfFaceName( font_type f )
 {
     return( Fonts[ f ].lf.lfFaceName );
 }
 
-char FontIsFunnyItalic( UINT f )
+char FontIsFunnyItalic( font_type f )
 {
     return( !(Fonts[ f ].lf.lfPitchAndFamily & TMPF_TRUETYPE) && Fonts[ f ].lf.lfItalic );
 }
 
 
-UINT FontMaxWidth( UINT f )
+UINT FontMaxWidth( font_type f )
 {
     return( Fonts[ f ].max_width );
 }
 
-UINT FontAverageWidth( UINT f )
+UINT FontAverageWidth( font_type f )
 {
     return( Fonts[ f ].avg_width );
 }
 
-UINT FontTabWidth( UINT f )
+UINT FontTabWidth( font_type f )
 {
     // return( Fonts[ f ].space_width * HardTab );
     return( Fonts[ f ].avg_width * HardTab );
@@ -241,11 +239,11 @@ static void customFont( font *f, LOGFONT *lf )
 /*
  * EnsureUniformFonts - fonts between start & end get similar characteristics
  */
-void EnsureUniformFonts( int start, int end, LOGFONT *givenLF, BOOL totally )
+void EnsureUniformFonts( font_type start, font_type end, LOGFONT *givenLF, BOOL totally )
 {
-    LOGFONT newLF;
-    font    *f;
-    int     i;
+    LOGFONT     newLF;
+    font        *f;
+    font_type   i;
 
     for( i = start; i <= end; i++ ) {
         f = &Fonts[ i ];
@@ -263,7 +261,7 @@ void EnsureUniformFonts( int start, int end, LOGFONT *givenLF, BOOL totally )
 
 void InitFonts( void )
 {
-    int         i;
+    font_type   i;
     font        *f;
 
     f = &Fonts[ 0 ];
@@ -340,7 +338,7 @@ static int userPickFont( LOGFONT *l, HWND parent )
 /*
  * SetUpFont - set up a font, once it has been selected
  */
-void SetUpFont( LOGFONT *l, int index )
+void SetUpFont( LOGFONT *l, font_type index )
 {
     info        *cinfo;
     font        *f;
@@ -364,7 +362,7 @@ void SetUpFont( LOGFONT *l, int index )
 /*
  * initFont - init for font selection
  */
-static void initFont( int index, LOGFONT *l )
+static void initFont( font_type index, LOGFONT *l )
 {
     if( Fonts[ index ].used ) {
         memcpy( l, &Fonts[index].lf, sizeof( LOGFONT ) );
@@ -376,7 +374,7 @@ static void initFont( int index, LOGFONT *l )
 /*
  * PickFont - pick a new font with the font dialog
  */
-void PickFont( int index, HWND parent )
+void PickFont( font_type index, HWND parent )
 {
     LOGFONT     l;
 
@@ -427,7 +425,7 @@ int SetFont( char *data )
 
 void BarfFontData( FILE *file )
 {
-    int         i;
+    font_type   i;
     font        *f;
     LOGFONT     *l;
 
@@ -447,7 +445,7 @@ void BarfFontData( FILE *file )
 
 void FiniFonts( void )
 {
-    int         i;
+    font_type   i;
     font        *f;
 
     f = &Fonts[ 0 ];

@@ -32,6 +32,20 @@
 #ifndef _STRUCT_INCLUDED
 #define _STRUCT_INCLUDED
 
+typedef enum font_type {
+    FONT_COURIER = 0,
+    FONT_COURIERBOLD,
+    FONT_HELV,
+    FONT_ARIAL,
+    FONT_ARIALBOLD,
+    FONT_FIXED,
+    FONT_SANSSERIF,
+    MAX_FONTS = 25
+} font_type;
+
+#define FONT_DEFAULT        FONT_COURIER
+#define FONT_DEFAULTBOLD    FONT_COURIERBOLD
+
 typedef unsigned short  vi_ushort;
 typedef unsigned short  vi_key;
 
@@ -346,7 +360,7 @@ typedef struct {
 typedef struct {
     short       foreground;
     short       background;
-    short       font;
+    font_type   font;
 } type_style;
 
 /*

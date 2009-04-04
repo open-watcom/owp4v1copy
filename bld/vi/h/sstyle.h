@@ -42,7 +42,7 @@
 #define BEYOND_TEXT     SHRT_MAX
 #define MAX_SS_BLOCKS   200
 
-enum syntax_elements {
+typedef enum syntax_element {
     SE_UNPARSED = -2,   // basically used to flag problems
     SE_UNUSED = -1,     // use to temporarily setup a style
     SE_TEXT = 0,        // always first
@@ -63,17 +63,17 @@ enum syntax_elements {
     SE_FLOAT,
     SE_STRING,
     SE_NUMTYPES,        // always last
-};
+} syntax_element;
 
 
 /*----- STRUCTURES -----*/
 typedef struct ss_block {
-    signed char type;
-    short       end;
-    short       len;
+    syntax_element  type;
+    short           end;
+    short           len;
 #ifdef __WIN__
     // offset of start of following block
-    int         offset;
+    int             offset;
 #endif
 } ss_block;
 
@@ -126,16 +126,16 @@ extern type_style   SEType[SE_NUMTYPES];
 
 
 /*----- PROTOTYPES -----*/
-void        SSInitLanguageFlags( linenum );
-void        SSInitLanguageFlagsGivenValues( ss_flags * );
-void        SSGetLanguageFlags( ss_flags * );
-bool        SSKillsFlags( char );
-void        SSDifBlock( ss_block *, char *, int, line *, linenum, int * );
-ss_block    *SSNewBlock( void );
-void        SSKillBlock( ss_block * );
-int         SSGetStyle( int, int );
-void        SSInitBeforeConfig( void );
-void        SSInitAfterConfig( void );
-void        SSFini( void );
+void            SSInitLanguageFlags( linenum );
+void            SSInitLanguageFlagsGivenValues( ss_flags * );
+void            SSGetLanguageFlags( ss_flags * );
+bool            SSKillsFlags( char );
+void            SSDifBlock( ss_block *, char *, int, line *, linenum, int * );
+ss_block        *SSNewBlock( void );
+void            SSKillBlock( ss_block * );
+syntax_element  SSGetStyle( int, int );
+void            SSInitBeforeConfig( void );
+void            SSInitAfterConfig( void );
+void            SSFini( void );
 
 #endif

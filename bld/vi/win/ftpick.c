@@ -46,10 +46,10 @@ static  POINT       m_pt;
 
 static void sendNewFontCurrentWindow( void )
 {
-    int     row, col;
-    int     style;
-    BOOL    totally;
-    linenum     line_num;
+    int             row, col;
+    syntax_element  style;
+    BOOL            totally;
+    linenum         line_num;
 
     ScreenToClient( mod_hwnd, &m_pt );
     ClientToRowCol( mod_hwnd, m_pt.x, m_pt.y, &row, &col, DIVIDE_BETWEEN );
@@ -76,8 +76,8 @@ static void sendNewFontCurrentWindow( void )
         if( CtrlDown() ) {
             totally = TRUE;
         }
-        EnsureUniformFonts( SE_TEXT, SE_NUMTYPES - 1, &CurLogfont, totally );
-        SetUpFont( &CurLogfont, style );
+        EnsureUniformFonts( 0, SE_NUMTYPES - 1, &CurLogfont, totally );
+        SetUpFont( &CurLogfont, SEType[ style ].font );
     }
 }
 

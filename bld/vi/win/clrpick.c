@@ -89,10 +89,11 @@ static void sendNewColourCurrentWindow( NewColourOps op )
     /* the edit window has various components in the form of syntax
        elements - figure which we are on & mod SETypes
     */
-    int     row, col;
-    int     style, color;
-    int     i;
-    linenum     line_num;
+    int             row, col;
+    syntax_element  style;
+    int             color;
+    syntax_element  i;
+    linenum         line_num;
 
     ScreenToClient( mod_hwnd, &m_pt );
     ClientToRowCol( mod_hwnd, m_pt.x, m_pt.y, &row, &col, DIVIDE_BETWEEN );
@@ -118,7 +119,7 @@ static void sendNewColourCurrentWindow( NewColourOps op )
     color = INDEX_FROM_XY( cursx, cursy );
     if( CtrlDown() ) {
         // affect all foregrounds/backgrounds
-        for( i = SE_TEXT; i < SE_NUMTYPES; i++ ) {
+        for( i = 0; i < SE_NUMTYPES; i++ ) {
             // doesn't make sense to change selection
             if( i == SE_SELECTION ) {
                 continue;
