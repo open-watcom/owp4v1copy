@@ -206,12 +206,32 @@ typedef enum {
 } status_type;
 
 /*
- * find constants
+ * find types
  */
-#define FINDFL_FORWARD          0x01
-#define FINDFL_BACKWARDS        0x02
-#define FINDFL_NEXTLINE         0x04
-#define FINDFL_NOERROR          0x08
+typedef enum {
+    FINDFL_FORWARD   = 1,
+    FINDFL_BACKWARDS = 2,
+    FINDFL_NEXTLINE  = 4,
+    FINDFL_NOERROR   = 8
+} find_type;
+
+/*
+ * Font types
+ */
+typedef enum font_type {
+    FONT_COURIER = 0,
+    FONT_COURIERBOLD,
+    FONT_HELV,
+    FONT_ARIAL,
+    FONT_ARIALBOLD,
+    FONT_FIXED,
+    FONT_SANSSERIF,
+
+    MAX_FONTS = 25
+} font_type;
+
+#define FONT_DEFAULT        FONT_COURIER
+#define FONT_DEFAULTBOLD    FONT_COURIERBOLD
 
 /*
  * word constants
@@ -263,5 +283,20 @@ typedef enum {
 #endif
 
 #define MAX_COLOR_REGISTERS     16
+
+/*
+ * Color type
+ */
+#undef vi_pick
+#define vi_pick(a) a,
+typedef enum {
+#include "colors.h"
+#undef vi_pick
+#ifdef __WIN__
+    MAX_COLORS = 64
+#else
+    MAX_COLORS = MAX_COLOR_REGISTERS
+#endif
+} vi_color;
 
 #endif

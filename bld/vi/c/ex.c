@@ -35,7 +35,6 @@
 #include "vi.h"
 #include "ex.h"
 #include "win.h"
-#include "colors.h"
 
 static window_info      exwInfo =
     { 0, BLACK, WHITE, { BRIGHT_WHITE, BLACK, 0 }, { WHITE, BLACK, 0 }, 0, 24, 79, 24 };

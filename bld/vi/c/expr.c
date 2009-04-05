@@ -63,23 +63,12 @@ static char     *exprData;
 static jmp_buf  abortAddr;
 static int      tokenBuffCnt;
 
+#define str(a) #a
+#undef vi_pick
+#define vi_pick(a) str(a\0)
 static char     colorTokens[] = {
-    "BLACK\0"
-    "BLUE\0"
-    "GREEN\0"
-    "CYAN\0"
-    "RED\0"
-    "MAGENTA\0"
-    "BROWN\0"
-    "WHITE\0"
-    "DARK_GRAY\0"
-    "LIGHT_BLUE\0"
-    "LIGHT_GREEN\0"
-    "LIGHT_CYAN\0"
-    "LIGHT_RED\0"
-    "LIGHT_MAGENTA\0"
-    "YELLOW\0"
-    "BRIGHT_WHITE\0"
+#include "colors.h"
+#undef vi_pick
 };
 
 #ifdef __WIN__

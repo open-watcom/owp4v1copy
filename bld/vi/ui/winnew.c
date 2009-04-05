@@ -113,7 +113,7 @@ window_id GimmeWindow( void )
  * AllocWindow - allocate a new window
  */
 wind *AllocWindow( int x1, int y1, int x2, int y2, bool has_border,
-                        int bc1, int bc2, int tc, int bgc )
+            vi_color bc1, vi_color bc2, vi_color tc, vi_color bgc )
 {
     wind        *tmp;
     int         width,height,size;
@@ -153,7 +153,7 @@ wind *AllocWindow( int x1, int y1, int x2, int y2, bool has_border,
  * NewWindow - build a new window
  */
 int NewWindow( window_id *wn, int x1, int y1, int x2, int y2, bool has_border,
-    int bc1, int bc2, type_style *s )
+    vi_color bc1, vi_color bc2, type_style *s )
 {
     wind        *w;
     window_id   i;

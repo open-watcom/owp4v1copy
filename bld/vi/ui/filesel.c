@@ -38,7 +38,6 @@
 #include "vi.h"
 #include "keys.h"
 #include "win.h"
-#include "colors.h"
 #include "menu.h"
 #include "source.h"
 

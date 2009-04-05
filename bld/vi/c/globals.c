@@ -31,7 +31,6 @@
 
 #include <stdio.h>
 #include "vi.h"
-#include "colors.h"
 #include "keys.h"
 #include "rxsupp.h"
 
@@ -81,7 +80,7 @@ char            *GrepDefault;
 int             LastEvent;
 int             StackK = MIN_STACK_K;
 int             SpinCount;
-char            _NEAR SpinData[] = "\xC4" "\\|/";
+char            _NEAR SpinData[] = { '\xC4', '\\', '|', '/' };
 char            ExitAttr = 7;
 char            VideoPage;
 char            *EXEName;
@@ -328,20 +327,20 @@ char            _NEAR SpawnPrompt[MAX_STR];
  * windowing data
  */
 int             CurrentStatusColumn = 56;
-int             ClockX = 74, ClockY;
-int             SpinX = 68, SpinY;
+int             ClockX = 74, ClockY = 0;
+int             SpinX = 68, SpinY = 0;
 char            *TileColors;
 int             MaxTileColors = 10;
 int             MaxWindowTileX = 3;
 int             MaxWindowTileY = 1;
-int             MoveColor = CYAN;
-int             ResizeColor = YELLOW;
-int             InactiveWindowColor = WHITE;
+vi_color        MoveColor = CYAN;
+vi_color        ResizeColor = YELLOW;
+vi_color        InactiveWindowColor = WHITE;
 short           WindMaxWidth = 80;
 short           WindMaxHeight = 25;
 int             ToolBarButtonHeight = 24;
 int             ToolBarButtonWidth = 24;
-int             ToolBarColor = 1;
+vi_color        ToolBarColor = BLUE;
 char            EndOfLineChar = 0;
 
 /*

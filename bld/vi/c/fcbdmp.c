@@ -109,7 +109,7 @@ int FcbDump( void )
     window_id   fw;
     fcb         *cfcb;
 
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, 10, 0, &errStyle )) ) {
+    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
         return( i );
     }
     WPrintfLine( fw, 1, "File name: %s", CurrentFile->name );
@@ -157,7 +157,7 @@ int FcbThreadDump( void )
     fcb         *cfcb;
     file        *cfile;
 
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, 10, 0, &errStyle )) ) {
+    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
         return( i );
     }
     lc = 1;
@@ -207,7 +207,7 @@ int SanityCheck( void )
     linenum     cl, lcnt;
 
     EditFlags.WatchForBreak = TRUE;
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, 10, 0, &errStyle )) ) {
+    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
         return( i );
     }
     lc = 1;
@@ -318,7 +318,7 @@ int WalkUndo( void )
     if( UndoStack->current < 0 ) {
         return( ERR_NO_ERR );
     }
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, 10, 0, &errStyle )) ) {
+    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
         return( ERR_NO_ERR );
     }
 

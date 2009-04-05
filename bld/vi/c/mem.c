@@ -33,7 +33,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "vi.h"
-#include "colors.h"
 #include "fcbmem.h"
 #include "win.h"
 #ifdef __WATCOMC__

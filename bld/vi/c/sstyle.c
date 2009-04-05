@@ -35,7 +35,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include "vi.h"
-#include "colors.h"
 #include "sstyle.h"
 #include "lang.h"
 #include "sstyle_c.h"

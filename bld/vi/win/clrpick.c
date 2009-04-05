@@ -91,7 +91,7 @@ static void sendNewColourCurrentWindow( NewColourOps op )
     */
     int             row, col;
     syntax_element  style;
-    int             color;
+    vi_color        color;
     syntax_element  i;
     linenum         line_num;
 

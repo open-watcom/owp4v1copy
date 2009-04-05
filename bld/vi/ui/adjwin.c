@@ -34,7 +34,6 @@
 #include "vi.h"
 #include "win.h"
 #include "keys.h"
-#include "colors.h"
 #include "dosx.h"
 
 static char *tmpImage;

@@ -34,8 +34,6 @@
 #define INCLUDE_COMMDLG_H
 #include "winvi.h"
 
-#define MAX_COLORS      64
-
 typedef struct color {
     long        rgb;
     HBRUSH      brush;
@@ -44,22 +42,22 @@ typedef struct color {
 
 static color colorData[ MAX_COLORS ];
 
-long ColorRGB( UINT color )
+long ColorRGB( vi_color color )
 {
     return( colorData[ color ].rgb );
 }
 
-HBRUSH ColorBrush( UINT color )
+HBRUSH ColorBrush( vi_color color )
 {
     return( colorData[ color ].brush );
 }
 
-HPEN ColorPen( UINT color )
+HPEN ColorPen( vi_color color )
 {
     return( colorData[ color ].pen );
 }
 
-void NewColor( int index, long rgb )
+static void NewColor( vi_color index, long rgb )
 {
     color       *c;
     LOGBRUSH    brush;
@@ -86,7 +84,7 @@ void NewColor( int index, long rgb )
 
 void InitColors( void )
 {
-    int             i;
+    vi_color        i;
     PALETTEENTRY    palette[ MAX_COLORS ], *p;
     HDC             hdc;
 
@@ -103,10 +101,10 @@ void InitColors( void )
 
 int GetNumColors( void )
 {
-    return MAX_COLORS;
+    return( MAX_COLORS );
 }
 
-bool GetColorSetting( int index, rgb *value )
+bool GetColorSetting( vi_color index, rgb *value )
 {
     color       *c;
 
@@ -120,7 +118,7 @@ bool GetColorSetting( int index, rgb *value )
     return( FALSE );
 }
 
-COLORREF GetRGB( int index )
+COLORREF GetRGB( vi_color index )
 {
     color       *c;
 
@@ -133,11 +131,11 @@ COLORREF GetRGB( int index )
     return( RGB( 0, 0, 0 ) );
 }
 
-static BOOL chooseColor( int index, COLORREF *rgb, HWND parent )
+static BOOL chooseColor( vi_color index, COLORREF *rgb, HWND parent )
 {
     CHOOSECOLOR cc;
     COLORREF    color_table[ MAX_COLORS ];
-    int         i;
+    vi_color    i;
 
     for( i = 0; i < MAX_COLORS; i++ ) {
         color_table[ i ] = colorData[ i ].rgb;

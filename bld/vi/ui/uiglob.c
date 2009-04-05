@@ -34,35 +34,42 @@
 #include "vi.h"
 #include "win.h"
 #include "dosx.h"
-#include "colors.h"
 #include "regexp.h"
 
-char MinSlots[ MAX_MIN_SLOTS ];
+char        MinSlots[ MAX_MIN_SLOTS ];
 #ifdef __CURSES__
-char_info WindowNormalAttribute = { ' ',0 };
+char_info   WindowNormalAttribute = { ' ',0 };
 #else
-char_info WindowNormalAttribute = { ' ',7 };
+char_info   WindowNormalAttribute = { ' ',7 };
 #endif
-wind *Windows[ MAX_WINDS ];
+wind        *Windows[ MAX_WINDS ];
 #ifndef __UNIX__
 /* for UNIX these are defined in biosunix.c */
-char WindowBordersNG[] = { 'Ú','¿','À','Ù','³','Ä','´','Ã','','','³','Û'};
-char WindowBordersG[] =  { 'ð','¿','À','','³','Ä','´','Ã','','','°','Û'};
+char        WindowBordersNG[] = {
+    '\xDA', '\xBF', '\xC0', '\xD9', '\xB3', '\xC4', '\xB4', '\xC3', '\x1E', '\x1F', '\xB3', '\xDB'
+};
+char        WindowBordersG[] =  {
+    '\xF0', '\xBF', '\xC0', '\x12', '\xB3', '\xC4', '\xB4', '\xC3', '\x1E', '\x1F', '\xB0', '\xDB'
+};
 #endif
-char *GadgetString;
+char        *GadgetString;
 
-char _FAR *Scrn;
-char _FAR *ClockStart;
-char _FAR *SpinLoc;
-char *ScreenImage;
+char        _FAR *Scrn;
+char        _FAR *ClockStart;
+char        _FAR *SpinLoc;
+char        *ScreenImage;
 
 #ifndef NOXTD
-int XMemBlockArraySize;
-char *XMemBlocks=NULL;
+int         XMemBlockArraySize;
+char        *XMemBlocks = NULL;
 #endif
 #ifndef NOEMS
-int MaxEMSBlocks=2048,TotalEMSBlocks=0,EMSBlocksInUse=0;
+int         MaxEMSBlocks   = 2048;
+int         TotalEMSBlocks = 0;
+int         EMSBlocksInUse = 0;
 #endif
 #ifndef NOXMS
-int MaxXMSBlocks=2048,TotalXMSBlocks=0,XMSBlocksInUse=0;
+int         MaxXMSBlocks   = 2048;
+int         TotalXMSBlocks = 0;
+int         XMSBlocksInUse = 0;
 #endif

@@ -188,19 +188,20 @@ extern int  TotalEMSBlocks, MaxEMSBlocks, EMSBlocksInUse;
 extern int  TotalXMSBlocks, MaxXMSBlocks, XMSBlocksInUse;
 
 /* windowing globals */
-extern char *TileColors;
-extern int  MaxTileColors;
-extern int  MoveColor, ResizeColor, MaxWindowTileX, MaxWindowTileY;
-extern int  SelectColor;
-extern int  InactiveWindowColor;
-extern char ScrollBarChar;
-extern int  ScrollBarCharColor;
-extern int  ClockX, ClockY;
-extern int  SpinX, SpinY;
-extern short WindMaxWidth, WindMaxHeight;
-extern int  CurrentStatusColumn;
-extern char EndOfLineChar;
-extern int  GreyedMenuColour;
+extern char     *TileColors;
+extern int      MaxTileColors;
+extern int      MaxWindowTileX, MaxWindowTileY;
+extern vi_color MoveColor, ResizeColor;
+extern vi_color SelectColor;
+extern vi_color InactiveWindowColor;
+extern char     ScrollBarChar;
+extern int      ScrollBarCharColor;
+extern int      ClockX, ClockY;
+extern int      SpinX, SpinY;
+extern short    WindMaxWidth, WindMaxHeight;
+extern int      CurrentStatusColumn;
+extern char     EndOfLineChar;
+extern int      GreyedMenuColour;
 
 /* parse constants */
 extern int          MaxColorTokens, ColorTokensSize;
@@ -210,8 +211,8 @@ extern char _NEAR   SetTokens2[];
 extern char _NEAR   SetTokens2a[];
 
 /* Toolbar constants */
-extern int  ToolBarButtonHeight;
-extern int  ToolBarButtonWidth;
-extern int  ToolBarColor;
+extern int      ToolBarButtonHeight;
+extern int      ToolBarButtonWidth;
+extern vi_color ToolBarColor;
 
 #endif

@@ -32,20 +32,6 @@
 #ifndef _STRUCT_INCLUDED
 #define _STRUCT_INCLUDED
 
-typedef enum font_type {
-    FONT_COURIER = 0,
-    FONT_COURIERBOLD,
-    FONT_HELV,
-    FONT_ARIAL,
-    FONT_ARIALBOLD,
-    FONT_FIXED,
-    FONT_SANSSERIF,
-    MAX_FONTS = 25
-} font_type;
-
-#define FONT_DEFAULT        FONT_COURIER
-#define FONT_DEFAULTBOLD    FONT_COURIERBOLD
-
 typedef unsigned short  vi_ushort;
 typedef unsigned short  vi_key;
 
@@ -358,8 +344,8 @@ typedef struct {
  * structure to define all the goop needed to display text
  */
 typedef struct {
-    short       foreground;
-    short       background;
+    vi_color    foreground;
+    vi_color    background;
     font_type   font;
 } type_style;
 
@@ -368,7 +354,7 @@ typedef struct {
  */
 typedef struct {
     bool        has_border;
-    short       border_color1, border_color2;
+    vi_color    border_color1, border_color2;
     type_style  text;
     type_style  hilight;
     short       x1, y1, x2, y2;

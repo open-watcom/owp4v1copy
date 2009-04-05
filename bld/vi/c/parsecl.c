@@ -206,7 +206,8 @@ int GetAddress( char *buff, linenum *num  )
     bool        numinprog, stopnum, endparse;
     char        c;
     char        *tmp, st[2];
-    int         rc, len, fl;
+    int         rc, len;
+    find_type   fl;
     i_mark      pos;
 
     /*

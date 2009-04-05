@@ -118,7 +118,7 @@ typedef unsigned long cinfo_type;
     #define MAKE_ATTR( w, a, b )        (unsigned short) ((a) + (b) * 16)
 #else
     #ifdef __CURSES__
-        extern unsigned short WindowAttr( wind *, short, short );
+        extern unsigned short WindowAttr( wind *, vi_color, vi_color );
         #define MAKE_ATTR( w, a, b )    ((unsigned short) WindowAttr( w, a, b ))
     #else
         #define MAKE_ATTR( w, a, b )    (unsigned short) ((a) + ((b) & 7) * 16)
@@ -171,8 +171,8 @@ extern void FinishWindows( void );
 extern int          ResetWindow( window_id * );
 extern bool         ValidDimension( int, int, int, int, bool );
 extern window_id    GimmeWindow( void );
-extern wind         *AllocWindow( int, int, int, int, bool, int, int, int, int );
-extern int          NewWindow( window_id *, int, int, int, int, bool, int, int, type_style * );
+extern wind         *AllocWindow( int, int, int, int, bool, vi_color, vi_color, vi_color, vi_color );
+extern int          NewWindow( window_id *, int, int, int, int, bool, vi_color, vi_color, type_style * );
 extern void         FreeWindow( wind * );
 extern void         CloseAWindow( window_id );
 

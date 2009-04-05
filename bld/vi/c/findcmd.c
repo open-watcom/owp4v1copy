@@ -50,7 +50,7 @@ static bool     lastFindWasWrap;
 static i_mark   lastPos = { 0, 0 };
 static i_mark   currPos = { 0, 0 };
 
-static int  setLineCol( char *, i_mark *, int );
+static int  setLineCol( char *, i_mark *, find_type );
 static int  processFind( range *, char *, int (*)( char *, i_mark *, int * ) );
 
 void FindCmdFini( void ){
@@ -415,7 +415,7 @@ static int processFind( range *r, char *st, int (*rtn)( char *, i_mark *, int * 
 /*
  * GetFind - get a find location
  */
-int GetFind( char *st, i_mark *pos1, int *len1, int flag )
+int GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
 {
     int         rc, len;
     char        *linedata;
@@ -475,7 +475,7 @@ int GetFind( char *st, i_mark *pos1, int *len1, int flag )
 /*
  * setLineCol - set up line and column to start search at
  */
-static int setLineCol( char *st, i_mark *pos, int flag )
+static int setLineCol( char *st, i_mark *pos, find_type flag )
 {
     fcb         *cfcb;
     line        *cline;
@@ -567,7 +567,7 @@ void SaveFindRowColumn( void )
 /*
  * ColorFind - find string and color it
  */
-int ColorFind( char *data, int findfl )
+int ColorFind( char *data, find_type findfl )
 {
     int         rc = ERR_NO_ERR;
     int         len;

@@ -1131,13 +1131,13 @@ int ProcessWindow( int tkn, char *data )
 } /* ProcessWindow */
 
 /*
- * setSyntaxStyle2 - from setSyntaxStyle & setWText
+ * setStyle - set style parameters
  */
-void setSyntaxStyle2( int style, int tc1, int tc2, int tc3 )
+static void setStyle( type_style *style, vi_color tc1, vi_color tc2, font_type tc3 )
 {
-    SEType[style].foreground = tc1;
-    SEType[style].background = tc2;
-    SEType[style].font = tc3;
+    style->foreground = tc1;
+    style->background = tc2;
+    style->font = tc3;
 }
 
 /*
@@ -1200,18 +1200,15 @@ static int setWText( char *data )
         return( ERR_INVALID_WINDOW_SETUP );
     }
     tc2 = atoi( token );
-    tc3 = 0;
+    tc3 = FONT_DEFAULT;
     if( NextWord1( data, token ) > 0 ) {
         tc3 = atoi( token );
     }
 
-    wInfo->text.foreground = tc1;
-    wInfo->text.background = tc2;
-    wInfo->text.font = tc3;
-
+    setStyle( &wInfo->text, tc1, tc2, tc3 );
     /* want an SE_TEXT entry when SS turned off - steal it from here */
     if( wInfo == &editw_info ) {
-        setSyntaxStyle2( SE_TEXT, tc1, tc2, tc3 );
+        setStyle( &SEType[ SE_TEXT ], tc1, tc2, tc3 );
     }
     return( ERR_NO_ERR );
 
@@ -1236,14 +1233,12 @@ static int setWHilite( char *data )
         return( ERR_INVALID_WINDOW_SETUP );
     }
     tc2 = atoi( token );
-    tc3 = 1;
+    tc3 = FONT_DEFAULTBOLD;
     if( NextWord1( data, token ) > 0 ) {
         tc3 = atoi( token );
     }
 
-    wInfo->hilight.foreground = tc1;
-    wInfo->hilight.background = tc2;
-    wInfo->hilight.font = tc3;
+    setStyle( &wInfo->hilight, tc1, tc2, tc3 );
     return( ERR_NO_ERR );
 
 } /* setWHilite */
@@ -1329,13 +1324,12 @@ static int setSyntaxStyle( int style, char *data )
         return( ERR_INVALID_WINDOW_SETUP );
     }
     tc2 = atoi( token );
-    tc3 = 1;
+    tc3 = FONT_DEFAULTBOLD;
     if( NextWord1( data, token ) > 0 ) {
         tc3 = atoi( token );
     }
 
-    setSyntaxStyle2( style, tc1, tc2, tc3 );
-
+    setStyle( &SEType[ style ], tc1, tc2, tc3 );
     return( ERR_NO_ERR );
 }
 

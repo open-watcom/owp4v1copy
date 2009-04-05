@@ -35,7 +35,6 @@
 #include <time.h>
 #include <ctype.h>
 #include "vi.h"
-#include "colors.h"
 #include "keys.h"
 #include "menu.h"
 #include "win.h"
