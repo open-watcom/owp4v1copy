@@ -371,6 +371,7 @@ static BOOL ctl_check_modified( ctl_elt *elt, UINT wparam, LONG lparam )
 static WORD ctl_combo_add_msg( HWND, int );
 static WORD ctl_combo_sel_msg( HWND, int );
 static WORD ctl_combo_get_msg( HWND, int );
+static WORD ctl_combo_clr_msg( HWND, int );
 
 static BOOL ctl_combo_start( ctl_elt *elt, WPI_INST inst, HWND dlg, void *ptr, BOOL ___b )
 /****************************************************************************************/
@@ -392,6 +393,8 @@ static BOOL ctl_combo_start( ctl_elt *elt, WPI_INST inst, HWND dlg, void *ptr, B
         }
     }
 
+    SendDlgItemMessage( dlg, elt->control,
+                        ctl_combo_clr_msg( dlg, elt->control ), 0, 0L );
     for( id = elt->info.combo.start_id; id <= elt->info.combo.end_id; ++id ) {
 
         LoadString( inst, id, value, 50 );
@@ -476,6 +479,16 @@ static WORD ctl_combo_get_msg( HWND dlg, int ctl )
         return( LB_GETCURSEL );
     } else {
         return( CB_GETCURSEL );
+    }
+}
+
+static WORD ctl_combo_clr_msg( HWND dlg, int ctl )
+/************************************************/
+{
+    if( is_listbox( dlg, ctl ) ) {
+        return( LB_RESETCONTENT );
+    } else {
+        return( CB_RESETCONTENT );
     }
 }
 

@@ -38,6 +38,7 @@
 #include "dyntpl.h"
 #include "fts.h"
 #include "lang.h"
+#include "rcstr.gh"
 
 #define TAGFILENAMEWIDTH        129
 #define GREPDEFAULTWIDTH        20
@@ -72,36 +73,14 @@ static dlg_data     dlg_dataArray[ MAX_FT_ENTRIES ];
 
 static dlg_data     cancelData;
 
-static dyn_dim_type dynGetLanguage( HWND hwndDlg, BOOL initial )
-{
-    initial = initial;
-    if( IsDlgButtonChecked( hwndDlg, SETFS_LANGUAGE ) ) {
-        return( DYN_VISIBLE );
-    }
-    return( DYN_DIM );
-}
-
-static BOOL dynIsLanguage( UINT wParam, LONG lParam, HWND hwndDlg )
-{
-    WORD        id;
-    WORD        cmd;
-
-    hwndDlg = hwndDlg;
-    lParam = lParam;
-    id = LOWORD( wParam );
-    cmd = GET_WM_COMMAND_CMD( wParam, lParam );
-    if( id == SETFS_LANGUAGE && cmd == BN_CLICKED ) {
-        return( TRUE );
-    }
-    return( FALSE );
-}
-
 static dyn_dim_type dynGetLanguageButton( HWND hwndDlg, BOOL initial )
 {
+    int sel;
+    
     initial = initial;
+    sel = (int)SendDlgItemMessage( hwndDlg, SETFS_LANGUAGESELECT, CB_GETCURSEL, 0, 0L );
     if( IsDlgButtonChecked( hwndDlg, SETFS_LANGUAGE ) &&
-        ( IsDlgButtonChecked( hwndDlg, SETFS_LANGUAGEC ) ||
-          IsDlgButtonChecked( hwndDlg, SETFS_LANGUAGECPP ) ) ) {
+        (sel + 1 == LANG_C || sel + 1 == LANG_CPP) ) {
         return( DYN_VISIBLE );
     }
     return( DYN_DIM );
@@ -116,9 +95,8 @@ static BOOL dynIsLanguageButton( UINT wParam, LONG lParam, HWND hwndDlg )
     lParam = lParam;
     id = LOWORD( wParam );
     cmd = GET_WM_COMMAND_CMD( wParam, lParam );
-    if( ( id == SETFS_LANGUAGE ||
-         ( id >= SETFS_LANGUAGEC && id <= SETFS_LANGUAGEFORTRAN ) ) &&
-        cmd == BN_CLICKED ) {
+    if( (id == SETFS_LANGUAGE && cmd == BN_CLICKED) ||
+        (id == SETFS_LANGUAGESELECT && cmd == CBN_SELCHANGE) ) {
         return( TRUE );
     }
     return( FALSE );
@@ -226,6 +204,19 @@ void fillFileType( HWND hwndDlg )
     SendMessage( hwndCB, CB_SETCURSEL, 0, 0L );
 
     CurrentInfo = oldCurrentInfo;
+}
+
+void fillLanguage( HWND hwndDlg )
+{
+    HWND    hwndCB;
+    char    str[_MAX_PATH];
+    int     i;
+
+    hwndCB = GetDlgItem( hwndDlg, SETFS_LANGUAGESELECT );
+    for( i = VI_LANG_FIRST; i <= VI_LANG_LAST; i++ ) {
+        LoadString( GET_HINSTANCE( hwndDlg ), i, str, _MAX_PATH );
+        SendMessage( hwndCB, CB_INSERTSTRING, -1, (LPARAM)str );
+    }
 }
 
 void updateDialogSettings( HWND hwndDlg, BOOL title )
@@ -458,6 +449,7 @@ BOOL WINEXP SetFSProc( HWND hwndDlg, unsigned msg,
         globalTodlg_data( &cancelData, CurrentInfo );
         CenterWindowInRoot( hwndDlg );
         fillFileType( hwndDlg );
+        if(!msg) fillLanguage( hwndDlg );
         updateDialogSettings( hwndDlg, TRUE );
         return( TRUE );
 
