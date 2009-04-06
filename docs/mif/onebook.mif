@@ -345,6 +345,11 @@ prepare_wgml_opts : .PROCEDURE
     %make $(dosemu_wgml_batch)
 !endif
     @%create $(optfile_wgml)
+!ifeq hbook cpplib
+    @%append $(optfile_wgml) ( setsymbol target DOS
+!else ifeq hbook guitool
+    @%append $(optfile_wgml) ( setsymbol allinone 1
+!endif
 #---------------------------------------
 # settings for Post Script documentation
 #---------------------------------------
@@ -421,11 +426,6 @@ prepare_wgml_opts : .PROCEDURE
 # add default windowing for OS/2
 #    @%append $(optfile_wgml) ( setsymbol defwinos2 1
     @%append $(optfile_wgml) ( setsymbol book $(hbook)
-!endif
-!ifeq hbook cpplib
-    @%append $(optfile_wgml) ( setsymbol target DOS
-!else ifeq hbook guitool
-    @%append $(optfile_wgml) ( setsymbol allinone 1
 !endif
 #
 # details about wgml processing
