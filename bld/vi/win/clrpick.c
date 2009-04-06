@@ -255,8 +255,8 @@ static void paintBlocks( HWND hwnd )
 
 static void initRGBValues( void )
 {
-    int i;
-    rgb tcol;
+    vi_color    i;
+    rgb         tcol;
 
 
     for( i = 0; i < NUM_COLOURS; i++ ) {

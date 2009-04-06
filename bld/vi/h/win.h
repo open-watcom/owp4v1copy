@@ -55,8 +55,8 @@
  * window structure
  */
 typedef struct wind {
-    short       border_color1, border_color2;
-    short       text_color, background_color;
+    vi_color    border_color1, border_color2;
+    vi_color    text_color, background_color;
     short       x1, y1, x2, y2, width, height;
     char        *text;
     char        *overlap;

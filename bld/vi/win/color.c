@@ -161,7 +161,7 @@ static BOOL chooseColor( vi_color index, COLORREF *rgb, HWND parent )
 /*
  * setUpColor - set up a selected color
  */
-static void setUpColor( int index, COLORREF *rgb )
+static void setUpColor( vi_color index, COLORREF *rgb )
 {
     NewColor( index, *rgb );
     if( EditFlags.WindowsStarted ) {

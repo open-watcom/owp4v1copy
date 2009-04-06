@@ -290,7 +290,7 @@ int PixelFromColumnOnCurrentLine( int col )
 /*
  * SetCursorOnScreen - set cursor at specified row and column in edit window
  */
-void SetCursorOnScreen( int row, int col )
+static void SetCursorOnScreen( int row, int col )
 {
     window      *w;
     int         x, y;

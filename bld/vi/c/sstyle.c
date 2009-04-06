@@ -574,7 +574,7 @@ void SSInitBeforeConfig( void )
     for( i = 0; i < SE_NUMTYPES; i++ ) {
         SEType[i].foreground = -1;
         SEType[i].background = -1;
-        SEType[i].font = 0;
+        SEType[i].font = FONT_DEFAULT;
     }
 }
 

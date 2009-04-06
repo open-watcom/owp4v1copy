@@ -79,7 +79,7 @@ static int setWDimension( char * );
 static int setWHilite( char * );
 static int setWText( char * );
 static int setWBorder( char * );
-static int setSyntaxStyle( int, char * );
+static int setSyntaxStyle( syntax_element, char * );
 
 static char strLoad[] = "loaded";
 static char strCompile[] = "compiled";
@@ -1308,7 +1308,7 @@ static int setWDimension( char *data )
 /*
  * setSyntaxStyle - set syntax style color
  */
-static int setSyntaxStyle( int style, char *data )
+static int setSyntaxStyle( syntax_element style, char *data )
 {
     int         tc1, tc2, tc3;
     char        token[MAX_STR];

@@ -236,7 +236,7 @@ int DisplayLineInWindowWithColor( window_id wn, int c_line_no,
 
     SEType[ SE_UNUSED ].foreground = ts->foreground;
     SEType[ SE_UNUSED ].background = ts->background;
-    SEType[ SE_UNUSED ].font = 0;
+    SEType[ SE_UNUSED ].font = FONT_DEFAULT;
     ss.type = SE_UNUSED;
     ss.end = BEYOND_TEXT;
 
@@ -611,7 +611,7 @@ int DisplayLineInWindow( window_id wn, int c_line_no, char *text )
     ss_block    ss;
     SEType[ SE_UNUSED ].foreground = Windows[ wn ]->text_color;
     SEType[ SE_UNUSED ].background = Windows[ wn ]->background_color;
-    SEType[ SE_UNUSED ].font = 0;
+    SEType[ SE_UNUSED ].font = FONT_DEFAULT;
     ss.type = SE_UNUSED;
     ss.end = BEYOND_TEXT;
     return( displayLineInWindowGeneric( wn, c_line_no, text, 0, &ss ) );

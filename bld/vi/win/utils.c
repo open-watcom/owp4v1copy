@@ -104,7 +104,7 @@ void TextReleaseDC( HWND hwnd, HDC hdc )
 /*
  * BlankRectIndirect - blank out a rectangle given a pointer to the rectangle
  */
-void BlankRectIndirect( HWND hwnd, UINT color, RECT *rect )
+void BlankRectIndirect( HWND hwnd, vi_color color, RECT *rect )
 {
     HDC     hdc;
 
@@ -117,7 +117,7 @@ void BlankRectIndirect( HWND hwnd, UINT color, RECT *rect )
 /*
  * BlankRect - blank out a rectangle given its coordinates
  */
-void BlankRect( HWND hwnd, UINT color, int x1, int x2, int y1, int y2 )
+void BlankRect( HWND hwnd, vi_color color, int x1, int x2, int y1, int y2 )
 {
     RECT    rect;
 

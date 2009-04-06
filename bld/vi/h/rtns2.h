@@ -62,7 +62,6 @@ void        TurnOffCursor( void );
 void        RestoreCursor( void );
 void        NewCursor( window_id, cursor_type );
 void        SetCursorBlinkRate( int );
-void        SetCursorOnScreen( int, int );
 int         PixelFromColumnOnCurrentLine( int );
 int         GetNumColors( void );
 bool        GetColorSetting( vi_color clr, rgb *c  );

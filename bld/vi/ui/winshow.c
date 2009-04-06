@@ -121,7 +121,7 @@ void MoveWindowToFrontDammit( window_id wn, bool scrflag )
 void InactiveWindow( window_id wn )
 {
     wind        *w;
-    int         c;
+    vi_color    c;
 
     if( wn == NO_WINDOW ) {
         return;

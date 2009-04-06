@@ -65,7 +65,7 @@ static void getCursor( int *row, int *col )
 static void setCursor( int row, int col )
 {
     BIOSSetCursor( VideoPage, row, col );
-} /* SetCursorOnScreen */
+} /* SetCursor */
 
 /*
  * KillCursor - do just that, get rid of it
@@ -83,7 +83,7 @@ void KillCursor( void )
  */
 void TurnOffCursor( void )
 {
-    SetCursorOnScreen( WindMaxHeight,0 );
+    SetCursor( WindMaxHeight,0 );
 
 } /* TurnOffCursor */
 #endif
