@@ -39,8 +39,10 @@
     #include "winvi.h"
 #endif
 
-static char     *lastFind = NULL, *sStr = NULL;
+static char     *lastFind = NULL;
+static char     *sStr = NULL;
 #ifdef __WIN__
+static char     *lastFindStr = NULL;
 static bool     lastFindWasRegExp;
 static bool     lastFindWasCaseIgnore;
 static bool     lastFindWasForward;
@@ -56,6 +58,9 @@ static int  processFind( range *, char *, int (*)( char *, i_mark *, int * ) );
 void FindCmdFini( void ){
     MemFree( lastFind );
     MemFree( sStr );
+#ifdef __WIN__
+    MemFree( lastFindStr );
+#endif
 }
 
 
@@ -134,8 +139,8 @@ static int getFindString( range *r, bool is_forward, bool is_fancy, bool search_
     old_sw = EditFlags.SearchWrap;
     old_no = EditFlags.NoReplaceSearchString;
     if( is_fancy ) {
-        if( lastFind != NULL ) {
-            strcpy( st, lastFind );
+        if( lastFindStr != NULL ) {
+            strcpy( st, lastFindStr );
             ff.use_regexp = lastFindWasRegExp;
             ff.case_ignore = lastFindWasCaseIgnore;
             ff.search_forward = is_forward;
@@ -150,6 +155,7 @@ static int getFindString( range *r, bool is_forward, bool is_fancy, bool search_
                 return( ERR_NO_ERR );
             }
         } else {
+            st[0] = 0;
             EditFlags.NoReplaceSearchString = TRUE;
         }
         is_forward = ff.search_forward;
@@ -158,11 +164,10 @@ static int getFindString( range *r, bool is_forward, bool is_fancy, bool search_
         if( !ff.use_regexp ) {
             /* we need to add the string without any changes */
             if( !EditFlags.NoReplaceSearchString ) {
-                AddString2( &lastFind, st );
+                AddString2( &lastFindStr, st );
                 lastFindWasRegExp = FALSE;
             }
             MakeExpressionNonRegular( st );
-            EditFlags.NoReplaceSearchString = TRUE;
         }
         res = st;
     } else {

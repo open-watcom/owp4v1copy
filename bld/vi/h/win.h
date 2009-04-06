@@ -101,18 +101,12 @@ typedef unsigned long cinfo_type;
 #define WIND_TOP_BORDER     0
 #define WIND_BOTTOM_BORDER  1
 
-#define WB_TOPLEFT      0
-#define WB_TOPRIGHT     1
-#define WB_BOTTOMLEFT   2
-#define WB_BOTTOMRIGHT  3
-#define WB_LEFTSIDE     4
-#define WB_TOPBOTTOM    5
-#define WB_RIGHTT       6
-#define WB_LEFTT        7
-#define WB_UPTRIANGLE   8
-#define WB_DOWNTRIANGLE 9
-#define WB_RIGHTSIDE    10
-#define WB_THUMB        11
+enum border_char {
+#undef vi_pick
+#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) enum,
+#include "borders.h"
+#undef vi_pick
+};
 
 #ifndef __VIO__
     #define MAKE_ATTR( w, a, b )        (unsigned short) ((a) + (b) * 16)
@@ -125,14 +119,16 @@ typedef unsigned long cinfo_type;
     #endif
 #endif
 
-extern wind         *Windows[MAX_WINDS];
+extern wind         *Windows[ MAX_WINDS ];
 extern char_info    WindowNormalAttribute;
 extern char         *GadgetString;
 extern char         WindowBordersNG[];
 extern char         WindowBordersG[];
-extern char _FAR    *Scrn, _FAR *ClockStart, _FAR *SpinLoc;
+extern char         _FAR *Scrn;
+extern char         _FAR *ClockStart;
+extern char         _FAR *SpinLoc;
 extern char         *ScreenImage;
-extern char         MinSlots[MAX_MIN_SLOTS];
+extern char         MinSlots[ MAX_MIN_SLOTS ];
 
 #include "winaux.h"
 

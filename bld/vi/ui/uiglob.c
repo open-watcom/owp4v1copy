@@ -35,6 +35,9 @@
 #include "win.h"
 #include "dosx.h"
 #include "regexp.h"
+#if defined( __UNIX__ )
+#include "stdui.h"
+#endif
 
 char        MinSlots[ MAX_MIN_SLOTS ];
 #ifdef __CURSES__
@@ -43,15 +46,26 @@ char_info   WindowNormalAttribute = { ' ',0 };
 char_info   WindowNormalAttribute = { ' ',7 };
 #endif
 wind        *Windows[ MAX_WINDS ];
-#ifndef __UNIX__
-/* for UNIX these are defined in biosunix.c */
+
 char        WindowBordersNG[] = {
-    '\xDA', '\xBF', '\xC0', '\xD9', '\xB3', '\xC4', '\xB4', '\xC3', '\x1E', '\x1F', '\xB3', '\xDB'
+#undef vi_pick
+#if defined( __UNIX__ )
+#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) UnixNG,
+#else
+#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) DosNG,
+#endif
+#include "borders.h"
 };
 char        WindowBordersG[] =  {
-    '\xF0', '\xBF', '\xC0', '\x12', '\xB3', '\xC4', '\xB4', '\xC3', '\x1E', '\x1F', '\xB0', '\xDB'
-};
+#undef vi_pick
+#if defined( __UNIX__ )
+#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) UnixG,
+#else
+#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) DosG,
 #endif
+#include "borders.h"
+#undef vi_pick
+};
 char        *GadgetString;
 
 char        _FAR *Scrn;

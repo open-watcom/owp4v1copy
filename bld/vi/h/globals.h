@@ -201,7 +201,6 @@ extern int      SpinX, SpinY;
 extern short    WindMaxWidth, WindMaxHeight;
 extern int      CurrentStatusColumn;
 extern char     EndOfLineChar;
-extern int      GreyedMenuColour;
 
 /* parse constants */
 extern int          MaxColorTokens, ColorTokensSize;

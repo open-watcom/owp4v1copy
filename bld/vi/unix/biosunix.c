@@ -216,36 +216,6 @@ short BIOSKeyboardHit( char a )
     return (short) kb_wait(0, 0);
 }
 
-char WindowBordersNG[] = {
-    UI_ULCORNER,
-    UI_URCORNER,
-    UI_LLCORNER,
-    UI_LRCORNER,
-    UI_VLINE,
-    UI_HLINE,
-    UI_RTEE,
-    UI_LTEE,
-    UI_UPOINT,
-    UI_DPOINT,
-    UI_VLINE,
-    UI_BLOCK
-};
-
-char WindowBordersG[] = {
-    UI_EQUIVALENT,
-    UI_URCORNER,
-    UI_LLCORNER,
-    UI_UDARROW,
-    UI_VLINE,
-    UI_HLINE,
-    UI_RTEE,
-    UI_LTEE,
-    UI_UPOINT,
-    UI_DPOINT,
-    UI_CKBOARD,
-    UI_BLOCK
-};
-
 void MyVioShowBuf( unsigned offset, int length )
 {
     extern int  PageCnt;

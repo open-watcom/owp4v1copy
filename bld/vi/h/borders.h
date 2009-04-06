@@ -24,23 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  BIOS-style functions for *nix
+* Description:  Window border characters data pick file
 *
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include "vi.h"
-#include "win.h"
-#include "keys.h"
-
-long BIOSGetColorRegister( short a ) { return( 0 ); }
-void BIOSSetNoBlinkAttr() {}
-void BIOSSetBlinkAttr() {}
-void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
-void BIOSSetCursor( char page, char row, char col ) {}
-short BIOSGetCursor( char page ) { return 0; }
-int KeyboardInit( void ) { return 0; }
-short BIOSGetKeyboard( char extended ) { return 0; }
-short BIOSKeyboardHit( char a ) { return 0; }
-void MyVioShowBuf( unsigned offset, int length ) {}
+/*       enum             UnixNG        UnixG            DosNG    DosG  */
+vi_pick( WB_TOPLEFT,      UI_ULCORNER,  UI_EQUIVALENT,  '\xDA',  '\xF0' )
+vi_pick( WB_TOPRIGHT,     UI_URCORNER,  UI_URCORNER,    '\xBF',  '\xBF' )
+vi_pick( WB_BOTTOMLEFT,   UI_LLCORNER,  UI_LLCORNER,    '\xC0',  '\xC0' )
+vi_pick( WB_BOTTOMRIGHT,  UI_LRCORNER,  UI_UDARROW,     '\xD9',  '\x12' )
+vi_pick( WB_LEFTSIDE,     UI_VLINE,     UI_VLINE,       '\xB3',  '\xB3' )
+vi_pick( WB_TOPBOTTOM,    UI_HLINE,     UI_HLINE,       '\xC4',  '\xC4' )
+vi_pick( WB_RIGHTT,       UI_RTEE,      UI_RTEE,        '\xB4',  '\xB4' )
+vi_pick( WB_LEFTT,        UI_LTEE,      UI_LTEE,        '\xC3',  '\xC3' )
+vi_pick( WB_UPTRIANGLE,   UI_UPOINT,    UI_UPOINT,      '\x1E',  '\x1E' )
+vi_pick( WB_DOWNTRIANGLE, UI_DPOINT,    UI_DPOINT,      '\x1F',  '\x1F' )
+vi_pick( WB_RIGHTSIDE,    UI_VLINE,     UI_CKBOARD,     '\xB3',  '\xB0' )
+vi_pick( WB_THUMB,        UI_BLOCK,     UI_BLOCK,       '\xDB',  '\xDB' )

@@ -58,9 +58,9 @@ void GetFileInfo( direct_ent *tmp, struct dirent *nd, char *path )
     tmpname = malloc( strlen( path ) + strlen( nd->d_name ) + 3 );
     strcpy( tmpname, path );
     len = strlen( tmpname );
-    if( tmpname[ len-1 ] != FILE_SEP ) {
+    if( tmpname[ len - 1 ] != FILE_SEP ) {
             tmpname[ len ] = FILE_SEP;
-            tmpname[ len+1 ] = 0;
+            tmpname[ len + 1 ] = 0;
     }
     strcat( tmpname, nd->d_name );
     stat( tmpname, &st );
@@ -113,7 +113,7 @@ int IsDirectory( char *name )
 void FormatFileEntry( direct_ent *file, char *res )
 {
     char        *tmp;
-    char        buff[11];
+    char        buff[ 11 ];
     long        size;
     struct tm   *tm;
     time_t      tt;
@@ -125,7 +125,7 @@ void FormatFileEntry( direct_ent *file, char *res )
     size = file->fsize;
     if( file->attr & _A_SUBDIR ) {
         MySprintf(tmp," " FILE_SEP_STR "%S", file->name);
-        buff[0] = 'd';
+        buff[ 0 ] = 'd';
         size = 0;
     } else {
         if( !IsTextFile( file->name ) ) {
@@ -139,37 +139,43 @@ void FormatFileEntry( direct_ent *file, char *res )
      * build attributeibutes
      */
     if( file->st_mode & S_IWUSR ) {
-        buff[1] = 'r';
+        buff[ 1 ] = 'r';
     }
     if( file->st_mode & S_IRUSR ) {
-        buff[2] = 'w';
+        buff[ 2 ] = 'w';
     }
     if( file->st_mode & S_IXUSR ) {
-        tmp[1] = '*';
-        buff[3] = 'x';
+        if( (file->attr & _A_SUBDIR) == 0 ) {
+            tmp[ 1 ] = '*';
+        }
+        buff[ 3 ] = 'x';
     }
     if( file->st_mode & S_IWGRP ) {
-        buff[4] = 'r';
+        buff[ 4 ] = 'r';
     }
     if( file->st_mode & S_IRGRP ) {
-        buff[5] = 'w';
+        buff[ 5 ] = 'w';
     }
     if( file->st_mode & S_IXGRP ) {
-        tmp[1] = '*';
-        buff[6] = 'x';
+        if( (file->attr & _A_SUBDIR) == 0 ) {
+            tmp[ 1 ] = '*';
+        }
+        buff[ 6 ] = 'x';
     }
     if( file->st_mode & S_IWOTH ) {
-        buff[7] = 'r';
+        buff[ 7 ] = 'r';
     }
     if( file->st_mode & S_IROTH ) {
-        buff[8] = 'w';
+        buff[ 8 ] = 'w';
     }
     if( file->st_mode & S_IXOTH ) {
-        tmp[1] = '*';
-        buff[9] = 'x';
+        if( (file->attr & _A_SUBDIR) == 0 ) {
+            tmp[ 1 ] = '*';
+        }
+        buff[ 9 ] = 'x';
     }
 
-    tmp[NAMEWIDTH]=0;
+    tmp[ NAMEWIDTH ] = 0;
 
     tt = file->time;
     tm = localtime( &tt );

@@ -288,9 +288,9 @@ int PixelFromColumnOnCurrentLine( int col )
 }
 
 /*
- * SetCursorOnScreen - set cursor at specified row and column in edit window
+ * setCursorOnScreen - set cursor at specified row and column in edit window
  */
-static void SetCursorOnScreen( int row, int col )
+static void setCursorOnScreen( int row, int col )
 {
     window      *w;
     int         x, y;
@@ -318,7 +318,7 @@ static void SetCursorOnScreen( int row, int col )
     // adjust position for italic sillyness
     SetCaretPos( x - funny , y );
     MyShowCaret( CurrentWindow );
-} /* SetCursorOnScreen */
+} /* setCursorOnScreen */
 
 /*
  * SetCursorOnLine - set cursor at specified column in single line text string
@@ -356,12 +356,12 @@ void SetCursorOnLine( window_id id, int col, char *str , type_style *style)
 
 void SetGenericWindowCursor( window_id id, int row, int col )
 {
-    // SetCursorOnScreen calls functions which are not generic
+    // setCursorOnScreen calls functions which are not generic
     // ie) they only work on the current window! Therefore
     // this routine does not do what the name implies!!!
     id=id;
 
-    SetCursorOnScreen( row, col );
+    setCursorOnScreen( row, col );
 } /* SetGenericWindowCursor */
 
 /*

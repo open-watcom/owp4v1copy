@@ -111,7 +111,6 @@ window_id       MessageWindow = (window_id)-1;
 window_id       StatusWindow = (window_id)-1;
 window_id       MenuWindow = (window_id)-1;
 window_id       CurrNumWindow = (window_id)-1;
-int             LastEvent;
 select_rgn      SelRgn;
 int             CursorBlinkRate = -1;
 
