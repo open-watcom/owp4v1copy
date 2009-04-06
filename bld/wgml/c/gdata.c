@@ -98,6 +98,7 @@ void init_global_vars( void )
     init_dict( &global_dict );
     init_macro_dict( &macro_dict );
     init_tag_dict( &tag_dict );
+    init_predefined_symbols();
 
     tagname[ 0 ]        = '*';          // last defined GML tag name none
     tag_entry           = NULL;         // ... entry in tag_dict

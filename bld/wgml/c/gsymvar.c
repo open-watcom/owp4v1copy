@@ -426,10 +426,12 @@ void    print_sym_dict( symvar * dict )
     while( wk != NULL ) {
         len = strlen( wk->name );
 
-        out_msg( "Variable='%s'%s flags=%s%s%s subscript_used=%d", wk->name,
+        out_msg( "Variable='%s'%s flags=%s%s%s%s%s subscript_used=%d", wk->name,
                  &fill[ len ], wk->flags & deleted ? "deleted " : "",
                  wk->flags & local_var ? "local " : "",
                  wk->flags & auto_inc ? "auto_inc " : "",
+                 wk->flags & predefined ? "predefined " : "",
+                 wk->flags & late_subst ? "late_subst " : "",
                  wk->subscript_used );
         ws = wk->subscripts;
         if( wk->flags & subscripted ) {

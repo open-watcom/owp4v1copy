@@ -28,11 +28,11 @@
 *               for includes, ...
 *
 ****************************************************************************/
-
+ 
 #ifndef GTYPE_H_INCLUDED
 #define GTYPE_H_INCLUDED
-
-
+ 
+ 
 #if defined(__QNX__) || defined(__LINUX__) // try to be nice to linux
     #define PATH_SEP        '/'
     #define INCLUDE_SEP     ':'
@@ -42,9 +42,9 @@
 #else
     #error gtype.h not configured for system
 #endif
-
+ 
 #define ulong           unsigned long
-
+ 
 //================= Some global defines ========================
 #define MAX_NESTING     32              // max nesting of option files
 #define MAX_PASSES      10              // max no of passes
@@ -53,35 +53,35 @@
 #define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
 #define SCR_KW_LENGTH   2               // script control word length
 #define FUN_NAME_LENGTH 11              // &'function name max length
-
+ 
 #define TAG_NAME_LENGTH 15              // :tag name length
 #define ATT_NAME_LENGTH 9               // :tag attr name length
 #define VAL_LENGTH      10              // max length for attribute value
                                         // longer strings will be allocated
-
+ 
 #define SYM_NAME_LENGTH 10              // symbol name length
 #define MAC_NAME_LENGTH 8               // macro name length
 #define MAX_MAC_PARMS   32              // maximum macro parm count
                                         // arbitrary value, not found in docu!!!
 #define MAC_STAR_NAME   "_"             // local variable name for &*
-
+ 
 #define MAX_FUN_PARMS   7             // max parmcount found in documentation
-
+ 
 #define MAX_IF_LEVEL    10              // maximum nested .if s
 #define MAX_L_AS_STR    16              // long as string
-
+ 
 /* default filename extensions */
 #define DEF_EXT         ".def"
 #define ERR_EXT         ".err"
 #define GML_EXT         ".gml"
 #define LAY_EXT         ".lay"
 #define OPT_EXT         ".opt"
-
+ 
 #define GML_CHAR_DEFAULT    ':'         // start of GML tag
 #define SCR_CHAR_DEFAULT    '.'         // start of Script keyword
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
-
-
+ 
+ 
 /* string start / end characters Possible incomplete list*/
 #define d_q     '\"'                    // change also is_quote_char()
 #define s_q     '\''                    // in gargutil.c
@@ -91,12 +91,12 @@
 #define slash   '/'
 #define vbar1   '|'
 #define vbar2   0xdd
-
-
+ 
+ 
 /***************************************************************************/
 /*  Space units Horiz + Vert              to be redesigned                 */
 /***************************************************************************/
-
+ 
 typedef enum space_units {
     SU_undefined,                       // don't care = value zero
     SU_chars_lines = 10,                // undimensioned value
@@ -111,9 +111,9 @@ typedef enum space_units {
     SU_pica,                            // pica
     SU_absolute                         // absolute mm with 4 decimals
 } space_units;
-
+ 
 #define MAX_SU_CHAR     12            // length of space units in char format
-
+ 
 typedef struct {
     char        su_txt[ MAX_SU_CHAR ];
     long        su_whole;               // integer part
@@ -122,26 +122,28 @@ typedef struct {
     space_units su_u;                   // unit
     bool        su_relative;            // + - sign found
 } su;
-
+ 
 /***************************************************************************/
 /*  Symbolic variables related                                             */
 /***************************************************************************/
-
+ 
 typedef enum {
     min_subscript = -1000000L,          // smallest valid subscript
     max_subscript =  1000000L,          // largest  valid subscript
     no_subscript  = 0x11223344          // value if not subscripted
                 // must be outside of range min_subscript,max_subscript
 } sub_index;
-
+ 
 typedef enum {
-    local_var   = 1,
+    local_var   = 1,                   
     subscripted = 2,
     auto_inc    = 4,
+    predefined  = 8,                   // predefined at startup 
+    late_subst  = 16,                  // substituted not too early
     deleted     = 0x100
 } symbol_flags;
-
-
+ 
+ 
 /***************************************************************************/
 /*  entry for a subscripted symbolic variable                              */
 /***************************************************************************/
@@ -151,8 +153,8 @@ typedef struct symsub {
     sub_index           subscript;      // the subscript
     char            *   value;          // the value
 } symsub;
-
-
+ 
+ 
 /***************************************************************************/
 /*  Symbolic variable base entry                                           */
 /***************************************************************************/
@@ -165,12 +167,12 @@ typedef struct symvar {
     symsub          *   sub_0;          // special subscript 0 entry
     symbol_flags        flags;
 } symvar;
-
-
+ 
+ 
 /***************************************************************************/
 /*  Flags for filecb and macrocb                                           */
 /***************************************************************************/
-
+ 
 typedef enum {
     FF_clear        = 0x0000,           // clear all flags
     FF_startofline  = 0x0001,           // at start of physical line
@@ -181,7 +183,7 @@ typedef enum {
     FF_tag          = 0x0030,           // entry is macro via tag
     FF_open         = 0x8000            // file is open
 } fflags;
-
+ 
 /***************************************************************************/
 /*  List of (defined macro / input) lines                                  */
 /***************************************************************************/
@@ -189,8 +191,8 @@ typedef struct inp_line {
     struct inp_line *   next;           // next line
     char                value[ 1 ];     // line content variable length
 } inp_line;
-
-
+ 
+ 
 /***************************************************************************/
 /*  label control block                                                    */
 /***************************************************************************/
@@ -200,8 +202,8 @@ typedef struct labelcb {
     ulong               lineno;         // lineno of label
     char                label_name[ MAC_NAME_LENGTH + 1 ];
 } labelcb;
-
-
+ 
+ 
 /***************************************************************************/
 /*  macro definition entry  for macro dictionary                           */
 /***************************************************************************/
@@ -214,12 +216,12 @@ typedef struct mac_entry {
     char                    mac_file_name[ 1 ]; // file name macro definition
                                             // var length
 } mac_entry;
-
-
+ 
+ 
 /***************************************************************************/
 /*  entry for an included file                                             */
 /***************************************************************************/
-
+ 
 typedef struct filecb {
     fflags          flags;
     FILE        *   fp;                 // FILE ptr
@@ -232,7 +234,7 @@ typedef struct filecb {
     char            fileattr[ MAX_FILE_ATTR + 1];  // T:xxxx
     char            filename[ 1 ];      // full filename var length
 } filecb;
-
+ 
 /***************************************************************************/
 /*  parameter structure for macro call                                     */
 /***************************************************************************/
@@ -240,14 +242,14 @@ typedef struct mac_parms {
     char        *   star;               // &*  complete parmline
     int             star0;              // &*0 parmcount
     inp_line    *   starx;              // &*1 - &*x parms
-
+ 
 } mac_parms;
-
-
+ 
+ 
 /***************************************************************************/
 /*  Entry for an included macro                                            */
 /***************************************************************************/
-
+ 
 typedef struct  macrocb {
     fflags              flags;
     ulong               lineno;         // current macro line number
@@ -255,46 +257,46 @@ typedef struct  macrocb {
     mac_entry       *   mac;            // macro definition entry
     struct gtentry  *   tag;            // tag entry if macro called via tag
 } macrocb;
-
-
+ 
+ 
 /***************************************************************************/
 /*  Stack for .if .th .el .do processing                                   */
 /***************************************************************************/
-
+ 
 typedef struct ifflags {
-
+ 
     unsigned    iflast  : 1;            // .if was last line
     unsigned    iftrue  : 1;            // last .if was true
     unsigned    iffalse : 1;            // last .if was false
-
+ 
     unsigned    ifthen  : 1;            // processing object of then
     unsigned    ifelse  : 1;            // processing object of else
     unsigned    ifdo    : 1;            // processing object of do group
-
+ 
     unsigned    ifcwte  : 1;            // .th or .el control word
     unsigned    ifcwdo  : 1;            // .do control word
     unsigned    ifcwif  : 1;            // .if control word
-
+ 
 } ifflags;
-
-
+ 
+ 
 typedef struct ifcb {
     int             if_level;           // nesting level
     ifflags         if_flags[ MAX_IF_LEVEL + 1];// index 0 not used
 } ifcb;
-
-
+ 
+ 
 /***************************************************************************/
 /*  Flags for input                                                        */
 /***************************************************************************/
-
+ 
 typedef enum {
     II_file     = 0x01,                 // inputcb is file
     II_macro    = 0x02,                 // inputcb is macro
     II_tag      = 0x06,                 // inputcb is macro via tag
     II_eof      = 0x08                  // end of file (input)
 } i_flags;
-
+ 
 /***************************************************************************/
 /*  input stack for files and macros                                       */
 /***************************************************************************/
@@ -310,22 +312,22 @@ typedef struct  inputcb {
         macrocb     *   m;              // used if input is from macro/tag
     } s;
 } inputcb;
-
-
+ 
+ 
 /***************************************************************************/
 /*  scr keywords                                                           */
 /***************************************************************************/
-
+ 
 typedef struct scrtag {
     char            tagname[ SCR_KW_LENGTH + 1 ];
     void            (*tagproc)( void );
 } scrtag;
-
-
+ 
+ 
 /***************************************************************************/
 /*  GML tags    predefined                                                 */
 /***************************************************************************/
-
+ 
 typedef enum {
     tag_only     = 1,                   // tag without any attribute
     tag_basic    = 2,                   // basic elements possible on tag line.
@@ -334,22 +336,22 @@ typedef enum {
     etag_opt     = 16,                  // eTAG optional
     tag_is_basic = 32                   // basic tag
 } gmlflags;
-
-
+ 
+ 
 typedef struct gmltag {
    char             tagname[ TAG_NAME_LENGTH + 1 ];
    size_t           taglen;
    void             (*gmlproc)( const struct gmltag * entry );
    gmlflags         tagflags;
 } gmltag;
-
-
+ 
+ 
 /***************************************************************************/
 /*  GML tags   user defined                                                */
 /*  i.e.  via .gt and .ga script control words                             */
 /*  enum values have to be single bits 2**x                                */
 /***************************************************************************/
-
+ 
 typedef enum gavalflags {
     val_def     = 1,                    // value is default
     val_any     = 2,                    // any value allowed
@@ -360,12 +362,12 @@ typedef enum gavalflags {
     val_auto    = 64,                   // automatic (not used / implemented)
     val_reset   = 128                   // reset (not used / implemented)
 } gavalflags;
-
-
+ 
+ 
 /***************************************************************************/
 /*  options B   from .ga control word                                      */
 /***************************************************************************/
-
+ 
 typedef struct gavalentry {
     struct gavalentry   *   next;
     gavalflags              valflags;
@@ -376,14 +378,14 @@ typedef struct gavalentry {
        char *   valptr;                 // ... else allocated
     } a;
 } gavalentry;
-
-
+ 
+ 
 /***************************************************************************/
 /*  options A   from .ga control word                                      */
 /*  enum values have to be single bits 2**x                                */
 /*  exception are the att_proc_xxx values                                  */
 /***************************************************************************/
-
+ 
 typedef enum {
     att_def         = 0x0001,           // attribute has default value
     att_range       = 0x0002,           // attribute has range
@@ -392,33 +394,33 @@ typedef enum {
     att_req         = 0x0010,           // attribute required
     att_upper       = 0x0020,           // translate to upper
     att_off         = 0x0040,           // attribute is inactive
-
+ 
     att_proc_all    = 0x0f00,           // mask for processing flags
-
+ 
     att_proc_req    = 0x0100,           // req attr not yet seen
     att_proc_auto   = 0x0200,           // auto attr cannot be specified
     att_proc_seen   = 0x0400,           // attr specified
     att_proc_val    = 0x0800            // ... with value specified
 } gaflags;
-
-
+ 
+ 
 /***************************************************************************/
 /*  entry from .ga control word                                            */
 /***************************************************************************/
-
+ 
 typedef struct gaentry {
     struct gaentry  *   next;
     gavalentry      *   vals;
     char                name[ ATT_NAME_LENGTH + 1 ];
     gaflags             attflags;
 } gaentry;
-
-
+ 
+ 
 /***************************************************************************/
 /*  GML tag options from the .gt Control word                              */
 /*  enum values have to be single bits 2**x                                */
 /***************************************************************************/
-
+ 
 typedef enum {
     tag_attr     = 1,                   // tag has attributes
     tag_cont     = 2,                   // CONTinue specified
@@ -431,12 +433,12 @@ typedef enum {
     tag_textreq  = 256,                 // TEXTRequired specified
     tag_off      = 512                  // tag OFF specified
 } gtflags;
-
-
+ 
+ 
 /***************************************************************************/
 /*  Tag entry  from .gt control word                                       */
 /***************************************************************************/
-
+ 
 typedef struct gtentry {
     struct gtentry  *   next;
     gaentry         *   attribs;        // list of attributes
@@ -446,13 +448,13 @@ typedef struct gtentry {
     char                macname[ MAC_NAME_LENGTH + 1];  // macro to call
     gtflags             tagflags;
 } gtentry;
-
-
+ 
+ 
 /***************************************************************************/
 /*  condcode  returncode for several conditions during parameterchecking   */
 /*            loosely adapted from wgml 88.1 IBM S/360 ASM code            */
 /***************************************************************************/
-
+ 
 typedef enum condcode {            // return code for some scanning functions
     zero            = 0,
     omit            = 1,                // argument omitted
@@ -463,18 +465,18 @@ typedef enum condcode {            // return code for some scanning functions
     no              = 32,               // argument undefined
     notnum          = 32                 // value not numeric / overflow
 }  condcode;
-
-
+ 
+ 
 /***************************************************************************/
 /*  scr string functions                                                   */
 /***************************************************************************/
-
+ 
 typedef struct parm {
     char    *       a;                  // start of parm ptr
     char    *       e;                  // end of parm ptr
 } parm;
-
-
+ 
+ 
 typedef struct scrfunc {
     const   char    fname[ FUN_NAME_LENGTH + 1 ];   // function name
     const   size_t  length;             // actual length of fname
@@ -483,13 +485,13 @@ typedef struct scrfunc {
     condcode        (*fun)( parm parms[ MAX_FUN_PARMS ], size_t parm_count,
                             char * * ppval );
 } scrfunc;
-
-
+ 
+ 
 /***************************************************************************/
 /*  definitions for getnum routine  to be reworked  TBD                    */
 /***************************************************************************/
-
-
+ 
+ 
 typedef enum {
     selfdef     = 4,
     aritherr    = 8,
@@ -500,7 +502,7 @@ typedef enum {
     parerr      = 28,
     enderr      = 32
 } getnumrc;
-
+ 
 typedef struct getnum_block {
     condcode    cc;
     int         ignore_blanks;          // 1 if blanks are ignored
@@ -514,11 +516,11 @@ typedef struct getnum_block {
     getnumrc    error;
     char        num_sign;              // remember absolute or relative value
 } getnum_block;
-
+ 
 /***************************************************************************/
 /*  struct used to hold parameters of option FONT                          */
 /***************************************************************************/
-
+ 
 typedef struct opt_font {
     struct opt_font *   nxt;
     uint8_t             font;
@@ -527,16 +529,16 @@ typedef struct opt_font {
     uint32_t            space;
     uint32_t            height;
 } opt_font;
-
+ 
 /***************************************************************************/
 /*  message numbers  + severities                                          */
 /***************************************************************************/
 typedef enum msg_ids  {
     #include "wgmlmsge.gh"              // as lowercase enums
 } msg_ids;
-
+ 
 #include "wgmlmsgs.gh"                  // as uppercase defines
-
+ 
 typedef enum {
     SEV_BANNER,
     SEV_DEBUG,
@@ -545,6 +547,6 @@ typedef enum {
     SEV_ERROR,
     SEV_FATAL_ERR
 } severity;
-
-
+ 
+ 
 #endif                                  // GTYPE_H_INCLUDED

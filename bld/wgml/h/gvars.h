@@ -131,7 +131,7 @@ global struct ProcFlags {
 
     unsigned        substituted     : 1;// & found in current input line
     unsigned        unresolved      : 1;// variable not (yet) resolved
-    unsigned        freea           : 1;
+    unsigned        late_subst      : 1;// special var found &gml, &amp,
     unsigned        freeb           : 1;
     unsigned        freec           : 1;
     unsigned        freed           : 1;

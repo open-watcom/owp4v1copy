@@ -720,13 +720,13 @@ static  void    print_stats( void )
     g_info( inf_stat_2, linestr );
 
     utoa( err_count, linestr, 10 );
-    g_info( inf_stat_2, linestr );
-
-    utoa( wng_count, linestr, 10 );
     g_info( inf_stat_3, linestr );
 
-    utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
+    utoa( wng_count, linestr, 10 );
     g_info( inf_stat_4, linestr );
+
+    utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
+    g_info( inf_stat_5, linestr );
 
 }
 

@@ -92,6 +92,7 @@ extern  void    gml_include( const gmltag * entry )
         *p = '\0';
         strcpy_s( token_buf, buf_size, fnstart );
         ProcFlags.newLevelFile = 1;     // start new include level
+        scan_start = scan_stop + 1;     // .. and ignore remaining line
     }
     return;
 }

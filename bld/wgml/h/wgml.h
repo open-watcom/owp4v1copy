@@ -118,6 +118,7 @@ extern  int     proc_options( char * cmdline );
 extern  void    split_attr_file( char * filename, char * attr, size_t attrlen );
 
 /* gprocess.c                         */
+extern  void    process_late_subst( void );
 extern  void    process_line( void );
 extern  void    split_input( char * buf, char * split_pos );
 extern  void    split_input_LIFO( char * buf, char * split_pos );
@@ -178,6 +179,10 @@ extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, 
 extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f );
 extern void     print_sym_dict( symvar * dict );
 extern void     reset_auto_inc_dict( symvar * dict );
+
+/* gsyssym.c                          */
+extern  void    init_predefined_symbols( void );
+
 
 /* gtagdict.c                         */
 extern  gtentry *   add_tag( gtentry * * dict, char const * name, char const * macro, const int flags );

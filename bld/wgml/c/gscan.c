@@ -152,11 +152,11 @@ static void scan_gml( void )
         if(  stricmp( tok_start + 1, "cmt" ) ) {   // quiet for :cmt.
 
             if( cb->fmflags & II_macro ) {
-                printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                printf_research( "L%d    %c%s tag found in macro %s(%d)\n\n",
                                  inc_level, GML_char, tok_start + 1,
                                  cb->s.m->mac->name, cb->s.m->lineno );
             } else {
-                printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                printf_research( "L%d    %c%s tag found in file %s(%d)\n\n",
                                  inc_level, GML_char, tok_start + 1,
                                  cb->s.f->filename, cb->s.f->lineno );
             }
@@ -346,11 +346,11 @@ static void     scan_script( void)
     if( me != NULL ) {                  // macro found
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_macro ) {
-                printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                printf_research( "L%d    %c%s macro found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
                                  cb->s.m->mac->name, cb->s.m->lineno );
             } else {
-                printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                printf_research( "L%d    %c%s macro found in file %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
                                  cb->s.f->filename, cb->s.f->lineno );
             }
@@ -363,11 +363,11 @@ static void     scan_script( void)
         cwfound = false;
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_macro ) {
-                printf_research( "L%d    %c%s found in macro %s(%d)\n\n",
+                printf_research( "L%d    %c%s CW found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
                                  cb->s.m->mac->name, cb->s.m->lineno );
             } else {
-                printf_research( "L%d    %c%s found in file %s(%d)\n\n",
+                printf_research( "L%d    %c%s CW found in file %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
                                  cb->s.f->filename, cb->s.f->lineno );
             }
@@ -618,10 +618,18 @@ void    scan_line( void )
     cc = mainif();
     if( cc == pos ) {
         if( *scan_start == SCR_char ) {
+            if( ProcFlags.late_subst ) {
+                process_late_subst();   // substitute &gml, &amp, ...
+            }
             scan_script();              // script control line
             scan_start = scan_stop + 1; // cannot have unprocessed text
         } else if( *scan_start == GML_char ) {
+            if( ProcFlags.late_subst ) {
+                process_late_subst();   // substitute &gml, &amp, ...
+            }
             scan_gml();                 // gml tags
+        } else if( ProcFlags.late_subst ) {
+                process_late_subst();   // substitute &gml, &amp, ...
         }
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
