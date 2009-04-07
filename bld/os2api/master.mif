@@ -1,4 +1,4 @@
-proj_name =  os2api
+proj_name = os2api
 
 os2api_distrib_lib = 1
 
@@ -129,15 +129,6 @@ headers386 =                 &
         sys/uio.h            &
         sys/un.h
 
-dirs386 =            &
-        arpa         &
-        GL           &
-        machine      &
-        net          &
-        netinet      &
-        protocol     &
-        sys
-
 libs286 =            &
         os2.lib
 
@@ -222,7 +213,7 @@ libdir = lib386
 
 extra_lib_flags = -io -ii
 
-all : $(dirs) $(headers) $(libs) .SYMBOLIC
+all : $(headers) $(libs) .SYMBOLIC
 
 .def .asm: ../$(libdir)
 .mh: ../$(incldir)
@@ -294,11 +285,6 @@ libuls.lib: libuni.lbc
 libconv.lib: uconv.lbc
         $(librarian) $(libflags) @$<
 
-!ifeq host_cpu 386
-$(dirs386):
-        if not exist $@ mkdir $@
-!endif
-
 clean : .SYMBOLIC
         rm -f *.h
         rm -f *.lbc
@@ -311,11 +297,3 @@ clean : .SYMBOLIC
         rm -f netinet/*.h
         rm -f protocol/*.h
         rm -f sys/*.h
-        if exist arpa rmdir arpa
-        if exist GL rmdir GL
-        if exist machine rmdir machine
-        if exist net rmdir net
-        if exist netinet rmdir netinet
-        if exist protocol rmdir protocol
-        if exist sys rmdir sys
-
