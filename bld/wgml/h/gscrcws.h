@@ -47,7 +47,7 @@
 //pick( "cs",    scr_cs,       0           )
 //pick( "ct",    scr_ct,       0           )
   pick( "cw",    scr_cw,       0           )
-//pick( "dc",    scr_dc,       0           )
+  pick( "dc",    scr_dc,       0           )
 //pick( "df",    scr_df,       0           )
   pick( "dm",    scr_dm,       0           )
   pick( "do",    scr_do,       0           )

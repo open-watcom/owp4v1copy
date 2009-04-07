@@ -37,6 +37,8 @@
 #include "gvars.h"
 
 
+#define  mystr(x)           # x
+#define  xmystr(s)          mystr(s)
 
 /***************************************************************************/
 /*  init_predefined_symbols              incomplete TDB                    */
@@ -44,9 +46,15 @@
 
 void    init_predefined_symbols( void )
 {
+    char    string[ 2 ] = { 0, 0 };
 
     add_symvar( &global_dict, "amp", "&", no_subscript, predefined + late_subst);
-//  add_symvar( &global_dict, "gml", GML_CHAR_DEFAULT, no_subscript, predefined + late_subst);
-    add_symvar( &global_dict, "gml", ":", no_subscript, predefined + late_subst);
+
+    string[ 0 ] = CW_SEP_CHAR_DEFAULT;
+    add_symvar( &global_dict, "$cw", string, no_subscript, predefined);
+
+    string[ 0 ] = GML_CHAR_DEFAULT;
+    add_symvar( &global_dict, "gml", string, no_subscript, predefined + late_subst);
+    add_symvar( &global_dict, "$gml", string, no_subscript, predefined + late_subst);
 }
 

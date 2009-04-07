@@ -354,3 +354,6 @@ pick( ERR_ATT_REQ,              "For the tag '%s', the required attribute(s) %s 
 pick( ERR_CW_UNRECOGNIZED,      "Unrecognized control word %s line %s of %s '%s'",
                                 "Unrecognized control word %s line %s of %s '%s'" )
 
+pick( ERR_DC_OPT,               "Invalid .dc option %s",
+                                "Invalid .dc option %s" )
+
