@@ -156,7 +156,7 @@ static offset CalcIDataSize( void )
     unsigned_32 iatsize;
     unsigned_32 size;
 
-    iatsize = (NumImports+NumMods) * sizeof( pe_va );
+    iatsize = ( NumImports + NumMods ) * sizeof( pe_va );
     if( 0 == iatsize ) {
         return( 0 );
     }
@@ -275,45 +275,45 @@ static void GenPETransferTable( void )
     local_import    *loc_imp;
     pe_va           addr;
 
-    if( IDataGroup == NULL )
-        return;
     if( XFerSegData == NULL )
         return;
     group = XFerSegData->u.leader->group;
     base = XFerSegData->u.leader->seg_addr.off + XFerSegData->a.delta;
-    datalen = GetTransferGlueSize( LinkState );
-    data = GetTransferGlueCode( LinkState );
-    WALK_IMPORT_SYMBOLS(sym) {
-        if( LinkState & HAVE_ALPHA_CODE ) {
-            offset dest = FindIATSymAbsOff( sym );
-            AlphaJump.high = dest >> 16;
-            AlphaJump.low = dest;
-            if( LinkState & MAKE_RELOCS ) {
-                if( !(FmtData.objalign & 0xFFFF) ) {
-                    XFerReloc( sym->addr.off+offsetof(alpha_transfer, high),
-                               group, PE_FIX_HIGH );
-                } else {
-                    XFerReloc( sym->addr.off+offsetof(alpha_transfer, low),
-                               group, PE_FIX_LOW );
-                    XFerReloc( sym->addr.off+offsetof(alpha_transfer, high),
-                                group, PE_FIX_HIGHADJ );
+    if( IDataGroup != NULL ) {
+        datalen = GetTransferGlueSize( LinkState );
+        data = GetTransferGlueCode( LinkState );
+        WALK_IMPORT_SYMBOLS(sym) {
+            if( LinkState & HAVE_ALPHA_CODE ) {
+                offset dest = FindIATSymAbsOff( sym );
+                AlphaJump.high = dest >> 16;
+                AlphaJump.low = dest;
+                if( LinkState & MAKE_RELOCS ) {
+                    if( !(FmtData.objalign & 0xFFFF) ) {
+                        XFerReloc( sym->addr.off+offsetof(alpha_transfer, high),
+                                   group, PE_FIX_HIGH );
+                    } else {
+                        XFerReloc( sym->addr.off+offsetof(alpha_transfer, low),
+                                   group, PE_FIX_LOW );
+                        XFerReloc( sym->addr.off+offsetof(alpha_transfer, high),
+                                    group, PE_FIX_HIGHADJ );
+                    }
                 }
+            } else if( LinkState & HAVE_I86_CODE ) {
+                offset dest = FindIATSymAbsOff( sym );
+                I386Jump.dest = dest;
+                if( LinkState & MAKE_RELOCS ) {
+                    XFerReloc( sym->addr.off + offsetof(i386_transfer,dest),
+                                group, PE_FIX_HIGHLOW );
+                }
+            } else {
+                int_16 pos;
+                pos = FindSymPosInTocv(sym);
+                PPCJump[0] &= 0xffff0000;
+                PPCJump[0] |= 0x0000ffff & pos;
             }
-        } else if( LinkState & HAVE_I86_CODE ) {
-            offset dest = FindIATSymAbsOff( sym );
-            I386Jump.dest = dest;
-            if( LinkState & MAKE_RELOCS ) {
-                XFerReloc( sym->addr.off + offsetof(i386_transfer,dest),
-                            group, PE_FIX_HIGHLOW );
-            }
-        } else {
-            int_16 pos;
-            pos = FindSymPosInTocv(sym);
-            PPCJump[0] &= 0xffff0000;
-            PPCJump[0] |= 0x0000ffff & pos;
+            off = sym->addr.off - base;
+            PutInfo( XFerSegData->data + off, data, datalen );
         }
-        off = sym->addr.off - base;
-        PutInfo( XFerSegData->data + off, data, datalen );
     }
     /* dump the local addresses table */
     for( loc_imp = PELocalImpList; loc_imp != NULL; loc_imp = loc_imp->next ) {
@@ -1408,35 +1408,23 @@ static void RegisterImport( dll_sym_info *sym )
     ++NumImports;
 }
 
-void ChkPEData( void )
-/***************************/
+static void CreateTransferSegment( class_entry *class )
 {
-    symbol      *sym;
-    class_entry *class;
-    class_entry *code = NULL;
-    segdata     *sdata;
-    int         glue_size;
     offset      size;
+    int         glue_size;
+    symbol      *sym;
+    segdata     *sdata;
 
-    ChkOS2Data();
-    /* find the last code class in the program */
-    for( class = Root->classlist; class != NULL; class = class->next_class ) {
-        if( class->flags & CLASS_CODE ) code = class;
-    }
-    if( code == NULL ) { // No code -- no need to do transfer stuff
-        return;
-    }
-    CurrMod = FakeModule;
     size = 0;
-    glue_size = GetTransferGlueSize(LinkState);
-    WALK_IMPORT_SYMBOLS(sym) {
+    glue_size = GetTransferGlueSize( LinkState );
+    WALK_IMPORT_SYMBOLS( sym ) {
         size += glue_size;
         RegisterImport( sym->p.import );
         DBIAddGlobal( sym );
     }
     size += NumLocalImports * sizeof( pe_va );
     if( size != 0 ) {
-        code->flags |= CLASS_TRANSFER;
+        class->flags |= CLASS_TRANSFER;
         sdata = AllocSegData();
         sdata->length = size;
         sdata->u.name = TRANSFER_SEGNAME;
@@ -1444,10 +1432,29 @@ void ChkPEData( void )
         sdata->combine = COMBINE_ADD;
         sdata->is32bit = TRUE;
         sdata->isabs = FALSE;
-        AddSegment( sdata, code );
+        AddSegment( sdata, class );
         sdata->data = AllocStg( sdata->length );
         XFerSegData = sdata;
     }
+}
+
+void ChkPEData( void )
+/***************************/
+{
+    class_entry *class;
+
+    ChkOS2Data();
+    /* find the last code class in the program */
+    for( class = Root->classlist; class != NULL; class = class->next_class ) {
+        if( class->flags & CLASS_CODE ) {
+            break;
+        }
+    }
+    if( class == NULL ) { // No code -- no need to do transfer stuff
+        return;
+    }
+    CurrMod = FakeModule;
+    CreateTransferSegment( class );
     CreateIDataSection();
     CurrMod = NULL;
 }
@@ -1470,17 +1477,16 @@ void AllocPETransferTable( void )
      *  Moved export check here as otherwise flags don't get propagated
      */
     ChkOS2Exports();
-    if( IDataGroup == NULL ) {
+    if( XFerSegData == NULL ) {
         return;
     }
-    class = Root->classlist;
-    for( ;; ) {
-        if( class == NULL ) {
-            XFerSegData = NULL;
-            return;
+    for( class = Root->classlist; class != NULL; class = class->next_class ) {
+        if( class->flags & CLASS_TRANSFER ) {
+            break;
         }
-        if( class->flags & CLASS_TRANSFER ) break;
-        class = class->next_class;
+    }
+    if( class == NULL ) {
+        return;
     }
     lead = RingLast( class->segs );
     piece = RingLast( lead->pieces );
@@ -1493,24 +1499,22 @@ void AllocPETransferTable( void )
         off -= sizeof( pe_va );
         loc_imp->iatsym->addr.off = off;
         loc_imp->iatsym->addr.seg = seg;
-        save = loc_imp->locsym->p.seg;
-        loc_imp->locsym->p.seg = piece;
-        DBIGenGlobal( loc_imp->locsym, Root );
-        loc_imp->locsym->p.seg = save;
     }
-    glue_size = GetTransferGlueSize( LinkState );
-    WALK_IMPORT_SYMBOLS( sym ) {
-        off -= glue_size;
-        sym->addr.seg = seg;
-        sym->addr.off = off;
-        save = sym->p.seg;
-        sym->p.seg = piece;
-        DBIGenGlobal( sym, Root );
-        sym->p.seg = save;
+    if( IDataGroup != NULL ) {
+        glue_size = GetTransferGlueSize( LinkState );
+        WALK_IMPORT_SYMBOLS( sym ) {
+            off -= glue_size;
+            sym->addr.seg = seg;
+            sym->addr.off = off;
+            save = sym->p.seg;
+            sym->p.seg = piece;
+            DBIGenGlobal( sym, Root );
+            sym->p.seg = save;
+        }
+        off = CalcIATAbsOffset();   // now calc addresses for IAT symbols
+        WalkImportsMods( CalcImpOff, &off );
+        SetTocAddr( IData.eof_ilt_off, IDataGroup ); // Set toc's address.
     }
-    off = CalcIATAbsOffset();   // now calc addresses for IAT symbols
-    WalkImportsMods( CalcImpOff, &off );
-    SetTocAddr( IData.eof_ilt_off, IDataGroup ); // Set toc's address.
     CurrMod = NULL;
 }
 
