@@ -30,11 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <setjmp.h>
 #include "vi.h"
+#include <setjmp.h>
 #include "source.h"
 #include "parsecl.h"
 #include "ex.h"

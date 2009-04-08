@@ -30,9 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <setjmp.h>
 #include "vi.h"
+#include <setjmp.h>
 #include "source.h"
 static  cs_entry      *TOS;
 

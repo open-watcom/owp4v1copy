@@ -30,16 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <assert.h>
 #include "vi.h"
 #include "source.h"
 #include "win.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
+#include <assert.h>
 
 /*
  * goToLine - go to a specified line number

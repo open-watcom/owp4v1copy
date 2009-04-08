@@ -30,10 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
 #include "vi.h"
+#include <stddef.h>
 
 #ifndef NOXMS
 

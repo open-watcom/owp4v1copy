@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
-#include <ctype.h>
+#include "vi.h"
 #include "keys.h"
 
 static WNDPROC      oldEditProc;

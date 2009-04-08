@@ -30,10 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <malloc.h>
 #include "vi.h"
+#include <malloc.h>
 #include "source.h"
 #include "stack.h"
 

@@ -29,10 +29,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "curses.h"
 #include "vi.h"
+#include "curses.h"
 #include "win.h"
 #include "stdui.h"
 

@@ -29,15 +29,13 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include "ftbar.h"
 #include "utils.h"
 #include "sstyle.h"
 #include "font.h"
-#include "hotkey.h"
 #include "subclass.h"
+#include "hotkey.h"
 
 
 /* NB: In Win386 mode, the FAR pointers passed to callback procs are

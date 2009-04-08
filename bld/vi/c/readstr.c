@@ -30,20 +30,16 @@
 ****************************************************************************/
 
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include "walloca.h"
 #include "vi.h"
+#include "walloca.h"
 #include "keys.h"
 #include "win.h"
 #include "source.h"
 #include "mouse.h"
 #ifdef __WIN__
-    #include "winvi.h"
     #include "utils.h"
 #endif
+#include <assert.h>
 
 #define HANDLED     0
 

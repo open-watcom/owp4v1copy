@@ -38,11 +38,8 @@
                                 (Like the Start Menu key on my keyboard :-) ).
 */
 
-#include "winvi.h"
+#include "vi.h"
 #include "keys.h"
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 #define KEY_BUFFER_SIZE 64
 

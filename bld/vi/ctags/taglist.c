@@ -51,11 +51,11 @@ static void addToTagList( char *res )
     len = strlen( res )+1;
     tagList = realloc( tagList, (TagCount+1)* sizeof( char * ));
     if( tagList == NULL ) {
-        Die( "Out of memory!\n" );
+        ErrorMsgExit( "Out of memory!\n" );
     }
     tagList[ TagCount ] = malloc( len );
     if( tagList[ TagCount ] == NULL ) {
-        Die( "Out of memory!\n" );
+        ErrorMsgExit( "Out of memory!\n" );
     }
     memcpy( tagList[ TagCount ], res, len );
     TagCount++;
@@ -141,7 +141,7 @@ void GenerateTagsFile( char *fname )
            (int(*)(const void*, const void*))CompareStrings );
     f = fopen( fname,"w" );
     if( f == NULL ) {
-        Die( "Could not open tags file \"%s\"\n", fname );
+        ErrorMsgExit( "Could not open tags file \"%s\"\n", fname );
     }
     if( tagList == NULL ) {
         total = 0;

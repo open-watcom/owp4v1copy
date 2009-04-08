@@ -30,13 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
 #include "vi.h"
-#include "myprtf.h"
 #include "win.h"
+#include "myprtf.h"
 
 static void readErrorMsgData( void );
 

@@ -29,15 +29,12 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include <time.h>
 #include <setjmp.h>
 #ifdef _M_I86
     #include <i86.h>
 #endif
-#include "vi.h"
 #include "parsecl.h"
 #include "source.h"
 #include "rxsupp.h"
@@ -46,10 +43,6 @@
 #include "expr.h"
 #include "menu.h"
 #include "source.h"
-#ifdef __WIN__
-    #include "winvi.h"
-    #include "winrtns.h"
-#endif
 #include "sstyle.h"
 #include "fts.h"
 #include "rcscli.h"

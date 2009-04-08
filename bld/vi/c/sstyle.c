@@ -29,11 +29,6 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <ctype.h>
 #include "vi.h"
 #include "sstyle.h"
 #include "lang.h"
@@ -42,6 +37,7 @@
 #include "sstyle_h.h"
 #include "sstyle_g.h"
 #include "sstyle_m.h"
+#include <assert.h>
 
 
 /*----- EXPORTS -----*/

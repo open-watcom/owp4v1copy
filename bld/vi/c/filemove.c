@@ -30,18 +30,13 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "vi.h"
 #include "keys.h"
 #include "source.h"
 #include "win.h"
 #include "lang.h"
 #include "fts.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
+#include <assert.h>
 
 /*
  * NextFileDammit - done with current file, get next one

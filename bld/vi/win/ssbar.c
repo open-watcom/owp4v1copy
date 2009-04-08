@@ -30,15 +30,14 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include "ssbar.h"
 #include "ssbardef.h"
 #include "utils.h"
 #include "subclass.h"
 #include "wstatus.h"
 #include "statwnd.h"
+#include <assert.h>
 
 #define NARRAY( a )             ( sizeof( a ) / sizeof( a[ 0 ] ) )
 

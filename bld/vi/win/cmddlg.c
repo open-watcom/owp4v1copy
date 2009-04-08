@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
+#include "vi.h"
 #include "cmd.h"
 
 static char     *cmdStr;

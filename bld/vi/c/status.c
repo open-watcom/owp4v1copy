@@ -30,15 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
 #include "vi.h"
 #include "win.h"
 #ifdef __WIN__
-    #include "winvi.h"
     #include "statwnd.h"
 #endif
 

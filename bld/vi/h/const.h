@@ -91,27 +91,7 @@ typedef enum {
 
 #define Tab( col, ta )  ((ta == 0) ? 0 : ((((col - 1) / ta) + 1) * ta - (col - 1)))
 
-#ifndef __UNIX__
-#ifndef __WIN__
-    typedef enum {
-        FALSE = 0,
-        TRUE
-    } bool;
-    #ifdef __cplusplus
-        inline bool operator ! ( bool x ) { return (bool) ((int)x ^ 1); }
-    #endif
-#else
-    typedef char bool;
-    #define FALSE       0
-    #define TRUE        1
-#endif
-#else
-#ifndef FALSE
-    typedef char bool;
-    #define FALSE       0
-    #define TRUE        1
-#endif
-#endif
+#include "bool.h"
 
 #define INITIAL_MATCH_COUNT     4
 #define MIN_LINE_LEN            128

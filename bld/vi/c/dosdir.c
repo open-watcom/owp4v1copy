@@ -29,15 +29,11 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "vi.h"
 #include <fcntl.h>
 #include <direct.h>
 #include <io.h>
 #include <dos.h>
-#include "vi.h"
 
 /*
  * MyGetFileSize - do just that

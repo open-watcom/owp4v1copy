@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include "winvi.h"
+#include "vi.h"
 #include "source.h"
 #include "setscr.h"
 #include "stddef.h"

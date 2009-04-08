@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <assert.h>
-#include "winvi.h"
+#include "vi.h"
 #include "filelist.h"
 
 static info *findInfo( char *file_name )

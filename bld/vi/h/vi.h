@@ -77,4 +77,15 @@ void            *_inline_memset( void *__s, int __c, unsigned int __n );
 #include "rtns2.h"
 #include "dc.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#ifdef __WIN__
+  #include "winvi.h"
+#elif defined( __NT__ )
+  #define _WINSOCKAPI_
+  #include <windows.h>
+#endif
+
 #endif

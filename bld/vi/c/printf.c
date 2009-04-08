@@ -29,14 +29,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
+#include "vi.h"
 #include "const.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
+#include "myprtf.h"
 
 void Lead( char c, int num, char *buff )
 // With "c", to "num" bytes, put leading bytes in "buff"
@@ -205,26 +200,17 @@ copyloop2:
 }
 
 void MyPrintf( const char *str, ... )
-// printf++ functionality; MessageBox() rather than stdout in windows programs.
 {
     va_list     al;
 
 #ifdef __WIN__
     char        tmp[MAX_STR];
-#ifdef MB_TOPMOST
-    // MB_TOPMOST to overlay HWND_TOPMOST window on screen. (else hangs)
-    static const UINT MessageType = MB_OK | MB_TASKMODAL | MB_TOPMOST;
-#else
-    // MB_TOPMOST not in 16 bit Windows. Nor does that hang! W.Briscoe 20041113
-    // MB_SETFOREGROUND is both 16/32 bit but ineffective with seizure.
-    static const UINT MessageType = MB_OK | MB_TASKMODAL | MB_SETFOREGROUND;
-#endif
 
     va_start( al, str );
     cFile = NULL;
     cStr = tmp;
     basePrintf( str, al );
-    MessageBox( NULL, tmp, EditorName, MessageType );
+    MessageBox( NULL, tmp, EditorName, MB_OK | MB_TASKMODAL );
 #else
     va_start( al, str );
     cFile = stdout;

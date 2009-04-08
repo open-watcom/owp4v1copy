@@ -30,13 +30,10 @@
 ****************************************************************************/
 
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include "vi.h"
 #include "keys.h"
 #include "win.h"
+#include <assert.h>
 
 static int lastChar[2];
 

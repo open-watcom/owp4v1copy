@@ -30,11 +30,9 @@
 ****************************************************************************/
 
 
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
 #include "vi.h"
 #include "keys.h"
+#include <assert.h>
 
 static int  unMark( mark * );
 static int  invalidMark( mark *, int );

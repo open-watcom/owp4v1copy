@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
+#include "vi.h"
 #include "rcscli.h"
 #include "rcs.h"
 

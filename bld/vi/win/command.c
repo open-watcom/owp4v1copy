@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include <assert.h>
-#include "winvi.h"
+#include "vi.h"
 #include "color.h"
 #include "font.h"
 #include "keys.h"

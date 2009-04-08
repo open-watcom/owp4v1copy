@@ -30,18 +30,15 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include <dos.h>
-#include <assert.h>
-#include <ctype.h>
-#include "winvi.h"
 #include "color.h"
 #include "font.h"
 #include "utils.h"
 #include "banner.h"
 #include "aboutdlg.h"
 #include "win.h"
+#include <assert.h>
 
 /*
  * WriteText - write a length specified string to a window

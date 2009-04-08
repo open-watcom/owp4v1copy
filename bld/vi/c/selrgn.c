@@ -30,19 +30,14 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "vi.h"
 #include "mouse.h"
 #include "win.h"
 #include "source.h"
 #include "keys.h"
 #ifdef __WIN__
-#include "winvi.h"
 #include "font.h"
 #include "utils.h"
-
 
 extern int  MouseX, MouseY;
 static int  last_start_line = 1, last_end_line = 1;

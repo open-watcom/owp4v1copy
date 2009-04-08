@@ -30,15 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "vi.h"
 #include "win.h"
 #include "pragmas.h"
 #include "keys.h"
-#define _WINSOCKAPI_
-#include <windows.h>
 
 /*
  * DosGetFullPath - expand file name to full path

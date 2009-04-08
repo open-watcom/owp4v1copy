@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <stdlib.h>
+#include "vi.h"
 #include "utils.h"
 #include "ftbar.h"
 #include "font.h"

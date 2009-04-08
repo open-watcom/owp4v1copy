@@ -29,9 +29,6 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
 #include "vi.h"
 #include "win.h"
 #include "dosx.h"

@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "vi.h"
 #include "mouse.h"
 #include "win.h"

@@ -29,15 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include "walloca.h"
 #include "vi.h"
+#include "walloca.h"
 #include "rxsupp.h"
 #include "win.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
 
 // LastSubstituteCancelled is a global used to perform an interactive
 // search and replace in 2 parts

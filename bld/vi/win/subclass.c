@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
+#include "vi.h"
 #include "subclass.h"
 #include "keys.h"
+#include <assert.h>
 
 proc_entry  *procHead;
 proc_entry  *procTail;

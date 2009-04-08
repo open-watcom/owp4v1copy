@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
+#include "vi.h"
 #include "iconids.h"
 
 typedef struct filetype {

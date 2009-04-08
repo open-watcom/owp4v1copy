@@ -29,9 +29,7 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/seginfo.h>
@@ -45,7 +43,6 @@
 #include <sys/sendmx.h>
 #include <sys/proxy.h>
 #include <sys/vc.h>
-#include "vi.h"
 #include "dosx.h"
 #include "pragmas.h"
 #include "win.h"

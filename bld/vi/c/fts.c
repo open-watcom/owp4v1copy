@@ -30,12 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "vi.h"
 #include "fts.h"
 #include "source.h"
+#include <assert.h>
 
 static  ft_src  *ftsHead;
 static  ft_src  *ftsTail;

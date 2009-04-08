@@ -29,9 +29,6 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "vi.h"
 #include "fcbmem.h"
 #include "win.h"

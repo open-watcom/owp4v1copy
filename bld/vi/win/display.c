@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <assert.h>
-#include "winvi.h"
+#include "vi.h"
 #include "winaux.h"
 #include "win.h"
 #include "color.h"

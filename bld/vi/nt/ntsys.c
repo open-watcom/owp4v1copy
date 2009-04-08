@@ -29,14 +29,11 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <dos.h>
 #include "vi.h"
+#include <dos.h>
 #include "win.h"
 #include "dosx.h"
-#include <windows.h>
+//#include <windows.h>
 
 HANDLE  InputHandle, OutputHandle;
 COORD   BSize;

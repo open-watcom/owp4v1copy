@@ -30,13 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #if defined( _M_IX86 ) && defined( __WATCOMC__ )
     #include <i86.h>
 #endif
-#include "vi.h"
 #include "pragmas.h"
 
 #if FSYS_CASE_SENSITIVE
@@ -88,7 +85,6 @@ int SameFile( char *f1, char *f2 )
 // WILL NOT WORK FOR NT !!!
 
 #include "dpmi.h"
-#include "winvi.h"
 
 /*
  * WinGetFullPath - use undoccumented dos int 21 60h

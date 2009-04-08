@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
+#include "vi.h"
 #include <dos.h>
 #include <sys/stat.h>
 #include <io.h>

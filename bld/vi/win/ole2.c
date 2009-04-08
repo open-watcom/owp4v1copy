@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
+#include "vi.h"
 #ifdef __386__
 bool OLE2Init( void ) { return( FALSE ); }
 void OLE2Fini( void ) {};

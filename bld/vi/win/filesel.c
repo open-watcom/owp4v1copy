@@ -29,12 +29,12 @@
 ****************************************************************************/
 
 
-#include <string.h>
 #define INCLUDE_COMMDLG_H
-#include "winvi.h"
+#include "vi.h"
 #include <commdlg.h>
 #include <dlgs.h>
 #include <cderr.h>
+#include <assert.h>
 
 static char *filterList = "C Files (*.c;*.h)\0*.c;*.h\0"
                           "C++ Files (*.cpp;*.hpp)\0*.cpp;*.hpp\0"

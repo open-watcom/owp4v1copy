@@ -30,10 +30,9 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <malloc.h>
 #define INCLUDE_SHELLAPI_H
-#include "winvi.h"
+#include "vi.h"
+#include <malloc.h>
 #include "window.h"
 #include "keys.h"
 #include "win.h"

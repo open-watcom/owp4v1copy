@@ -29,12 +29,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "vi.h"
 #include "posix.h"
 #include <fcntl.h>
-#include <ctype.h>
-#include <string.h>
 #ifdef __WATCOMC__
   #include <share.h>
   #define sopen3 sopen
@@ -43,7 +40,6 @@
   #define sopen3( a, b, c )     open( a, b )
   #define sopen4( a, b, c, d )  open( a, b, d )
 #endif
-#include "vi.h"
 
 #define isWSorCtrlZ( x )    (isspace( x ) || (x == 0x1A))
 

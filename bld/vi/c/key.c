@@ -30,19 +30,13 @@
 ****************************************************************************/
 
 
-#if defined( __WIN__ )
-    #include "winvi.h"
-#else
-    #include <stdio.h>
-    #include "vi.h"
-    #include "win.h"
-#endif
+#include "vi.h"
+#include "win.h"
 #ifdef _M_IX86
     #ifdef __WATCOMC__
         #include <i86.h>
     #endif
 #endif
-#include <string.h>
 #include "keys.h"
 #if defined( __OS2__ )
     #define INCL_BASE

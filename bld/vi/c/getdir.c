@@ -30,23 +30,19 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "vi.h"
 #include <fcntl.h>
 #include "posix.h"
-#include "vi.h"
 
 /*
- * Compare - quicksort comparison
+ * compare - quicksort comparison
  */
-int Compare( const void *p1, const void *p2 )
+static int compare( const void *p1, const void *p2 )
 {
     return( strcmp( (*(direct_ent * const *)p1)->name,
                     (*(direct_ent * const *)p2)->name ) );
 
-} /* Compare */
+} /* compare */
 
 /*
  * getDir - get current directory list (no sorting)
@@ -170,7 +166,7 @@ int GetSortDir( char *name, bool want_all_dirs )
         return( i );
     }
     if( DirFileCount ) {
-        qsort( DirFiles, DirFileCount, sizeof( direct_ent * ), Compare );
+        qsort( DirFiles, DirFileCount, sizeof( direct_ent * ), compare );
     }
     return( ERR_NO_ERR );
 

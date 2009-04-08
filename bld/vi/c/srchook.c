@@ -30,16 +30,12 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "vi.h"
 #include "source.h"
 #include "parsecl.h"
 #include "keys.h"
 #include "win.h"
 #ifdef __WIN__
-#include "winvi.h"
 #include "utils.h"
 #include "font.h"
 

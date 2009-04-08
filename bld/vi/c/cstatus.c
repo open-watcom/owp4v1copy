@@ -30,11 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "vi.h"
+#include <time.h>
 #include "win.h"
 
 #define MAX_CSTATUS_STRLEN      10

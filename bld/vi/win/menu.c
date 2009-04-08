@@ -30,14 +30,12 @@
 ****************************************************************************/
 
 
-#include <ctype.h>
-#include <string.h>
-#include <malloc.h>
-#include <assert.h>
 #define INCLUDE_SHELLAPI_H
-#include "winvi.h"
+#include "vi.h"
+#include <malloc.h>
 #include "keys.h"
 #include "source.h"
+#include <assert.h>
 
 /* The following value comes from Petzold - page 344 */
 /* we don't want to interfere with any system id's   */

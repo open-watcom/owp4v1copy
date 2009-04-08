@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "vi.h"
 #include "source.h"
 

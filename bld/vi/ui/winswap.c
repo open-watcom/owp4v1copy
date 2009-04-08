@@ -29,10 +29,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
+#include "vi.h"
 #include <fcntl.h>
 #include "posix.h"
-#include "vi.h"
 #include "win.h"
 
 static char swapName[L_tmpnam];

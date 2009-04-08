@@ -29,13 +29,10 @@
 ****************************************************************************/
 
 
-#include <ctype.h>
-#include <string.h>
-#include <assert.h>
-#include <stdio.h>
 #include "vi.h"
 #include "sstyle.h"
 #include "lang.h"
+#include <assert.h>
 
 static lang_info    langInfo[ LANG_MAX ] = {
     //table,  entries , ref_count ,read_buf

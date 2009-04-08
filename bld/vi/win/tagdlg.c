@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <assert.h>
-#include "winvi.h"
+#include "vi.h"
 #include "tagdlg.h"
 
 static int      tagCnt;

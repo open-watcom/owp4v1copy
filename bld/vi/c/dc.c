@@ -30,18 +30,14 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
 #include "vi.h"
 #include "winaux.h"
 #include "win.h"
 #ifdef __WIN__
-    #include "winvi.h"
     #include "font.h"
     #include "color.h"
 #endif
+#include <assert.h>
 
 static void initDCLine( dc dc )
 {

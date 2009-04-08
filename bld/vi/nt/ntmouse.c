@@ -30,10 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
 #include "vi.h"
 #include "mouse.h"
-#define _WINSOCKAPI_
 
 int CurrMouseStatus;
 int CurrMouseCol;

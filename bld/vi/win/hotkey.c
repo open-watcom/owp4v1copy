@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include "hotkey.h"
+#include "vi.h"
 #include "keys.h"
 #include "subclass.h"
+#include "hotkey.h"
 
 /*
  * HotkeyProc - pass hotkeys on to root for various modeless 'bars'

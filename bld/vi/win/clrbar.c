@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include "clrbar.h"
 #include "utils.h"
 

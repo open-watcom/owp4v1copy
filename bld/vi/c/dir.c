@@ -29,16 +29,12 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include "vi.h"
 #ifdef __WATCOMC__
     #include <conio.h>
 #endif
 #include <sys/types.h>
 #include "posix.h"
-#include "vi.h"
 
 /*
  * GetCWD1 - get current working directory, then allocate space for it

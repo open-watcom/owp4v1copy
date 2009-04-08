@@ -30,12 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <malloc.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dos.h>
 #include "vi.h"
+#include <malloc.h>
+#include <dos.h>
 #include "fcbmem.h"
 
 void ResetSpawnScreen( void )

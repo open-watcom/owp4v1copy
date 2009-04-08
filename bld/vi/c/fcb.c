@@ -30,13 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include "posix.h"
 #include <fcntl.h>
 #include <errno.h>
-#include "vi.h"
 
 static int      extraDataSize;
 static void     *extraData;

@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include "winvi.h"
+#include "vi.h"
 #include "usage.h"
 
 static char     **usageList;

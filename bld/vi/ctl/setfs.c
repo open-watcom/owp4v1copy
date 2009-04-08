@@ -29,8 +29,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include "winvi.h"
+#include "vi.h"
 #include "source.h"
 #include "setfs.h"
 #include "stddef.h"
@@ -39,6 +38,7 @@
 #include "fts.h"
 #include "lang.h"
 #include "rcstr.gh"
+#include <assert.h>
 
 #define TAGFILENAMEWIDTH        129
 #define GREPDEFAULTWIDTH        20

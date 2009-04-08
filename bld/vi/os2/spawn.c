@@ -29,11 +29,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <malloc.h>
-#include <stdlib.h>
-#include <string.h>
 #include "vi.h"
+#include <malloc.h>
 #include "fcbmem.h"
 #define INCL_DOSPROCESS
 #define INCL_DOSERRORS

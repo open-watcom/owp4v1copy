@@ -30,9 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stddef.h>
 #include "vi.h"
+#include <stddef.h>
 
 #ifndef NOXTD
 

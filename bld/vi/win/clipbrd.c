@@ -40,8 +40,7 @@
                                  end copied from another application)
 */
 
-#include "winvi.h"
-#include <string.h>
+#include "vi.h"
 #include <dos.h>
 
 #if defined(__NT__)

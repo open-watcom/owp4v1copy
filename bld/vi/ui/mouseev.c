@@ -30,11 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
+#include "vi.h"
 #ifdef __WATCOMC__
 #include <conio.h>
 #endif
-#include "vi.h"
 #include "mouse.h"
 #include "win.h"
 

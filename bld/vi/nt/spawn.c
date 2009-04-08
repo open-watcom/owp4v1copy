@@ -30,16 +30,11 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
+#include "vi.h"
 #include <malloc.h>
-#include <stdlib.h>
-#include <string.h>
 #include <process.h>
 #include <dos.h>
-#include "vi.h"
 #include "fcbmem.h"
-#define _WINSOCKAPI_
-#include <windows.h>
 
 extern HANDLE   OutputHandle,InputHandle;
 

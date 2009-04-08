@@ -31,8 +31,7 @@
 
 
 #define INCLUDE_DDEML_H
-#include "winvi.h"
-#include <string.h>
+#include "vi.h"
 #include "source.h"
 #include "ddedef.h"
 

@@ -30,15 +30,14 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include "winvi.h"
+#include "vi.h"
 #include "color.h"
 #include "font.h"
 #include "utils.h"
 #include "statwnd.h"
 #include "wstatus.h"
-#include "windows.h"
 #include "watcom.h"
+#include <assert.h>
 
 static BOOL Init( window *, void * );
 static BOOL Fini( window *, void * );

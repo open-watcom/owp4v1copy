@@ -30,20 +30,16 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include "posix.h"
 #include "vi.h"
+#include "posix.h"
 #include "keys.h"
 #include "win.h"
 #ifdef __WIN__
-    #include "winvi.h"
     #include "utils.h"
     #include "color.h"
     #include "font.h"
 #endif
+#include <assert.h>
 
 static window_id    dirWin = NO_WINDOW;
 static int          oldFilec, lastFilec;

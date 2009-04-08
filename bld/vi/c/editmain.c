@@ -30,19 +30,15 @@
 ****************************************************************************/
 
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <setjmp.h>
-#include <ctype.h>
 #include "vi.h"
+#include <setjmp.h>
 #include "keys.h"
 #include "source.h"
 #include "win.h"
 #ifdef __WIN__
     #include "winrtns.h"
 #endif
+#include <assert.h>
 
 static event *nextEvent( void )
 {

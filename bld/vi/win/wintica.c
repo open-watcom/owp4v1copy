@@ -30,11 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 // #include <malloc.h>
-#include "winvi.h"
 
 /*
  * WindowTile - tile all edit windows

@@ -29,10 +29,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include "walloca.h"
 #include "vi.h"
+#include "walloca.h"
 #include "rxsupp.h"
 
 static regexp  *cRx;

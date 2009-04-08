@@ -21,14 +21,12 @@ lnk = $(name).lnk
 !include deftarg.mif
 !include defrule.mif
 
-.c : ..;$(lang_root)/src/startup;$(posix_dir)/misc
-
-inc_dirs = -I"$(posix_dir)/h"
+.c : ..;$(lang_root)/src/startup
 
 extra_c_flags = -s $(def_flags)
 
 objs = ctags.obj scanc.obj file.obj globals.obj taglist.obj scanfor.obj &
-        scanasm.obj getopt.obj quit.obj die.obj
+        scanasm.obj
 
 extra_l_flags = op map name $(name)
 lflags_dos_386 = system dos4g

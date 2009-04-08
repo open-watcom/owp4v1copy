@@ -30,12 +30,8 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <i86.h>
 #define INCLUDE_TOOLHELP_H
-#include "winvi.h"
-//#include <windowsx.h>
-// #include <malloc.h>
+#include "vi.h"
 #include <dos.h>
 
 static BOOL     doneExec;

@@ -29,18 +29,12 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 #include "vi.h"
-#include "myprtf.h"
 #include "keys.h"
 #include "win.h"
 #include "mouse.h"
 #include "source.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
+#include "myprtf.h"
 
 static  bool    cursorNeedsDisplay = FALSE;
 

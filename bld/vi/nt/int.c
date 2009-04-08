@@ -30,14 +30,11 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
+#include "vi.h"
 #include <dos.h>
 #include <signal.h>
 #include <setjmp.h>
-#include "vi.h"
 #include "win.h"
-#define _WINSOCKAPI_
-#include <windows.h>
 
 static volatile int     exit_thread;
 

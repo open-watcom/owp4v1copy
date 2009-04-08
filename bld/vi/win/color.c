@@ -30,9 +30,8 @@
 ****************************************************************************/
 
 
-#include <string.h>
 #define INCLUDE_COMMDLG_H
-#include "winvi.h"
+#include "vi.h"
 
 typedef struct color {
     long        rgb;

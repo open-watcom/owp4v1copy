@@ -32,6 +32,8 @@
 #ifndef _STRUCT_INCLUDED
 #define _STRUCT_INCLUDED
 
+#include <stdio.h>
+
 typedef unsigned short  vi_ushort;
 typedef unsigned short  vi_key;
 
@@ -155,13 +157,11 @@ typedef struct {
     #include "winhdr.h"
     #ifdef HAS_HWND
         typedef HWND window_id;
-    #else
-    #ifdef __WINDOWS_386__
+    #elif defined( __WINDOWS_386__ )
         typedef unsigned short window_id;
     #else
         typedef const void _NEAR * window_id;
     #endif
-#endif
 #else
     typedef int window_id;
 #endif

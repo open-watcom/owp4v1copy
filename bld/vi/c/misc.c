@@ -29,11 +29,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include <stdarg.h>
-#include <ctype.h>
 
 #ifdef _M_I86
   #include <i86.h>
@@ -45,16 +42,11 @@
 #endif
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <assert.h>
-#include "vi.h"
-#ifdef __WIN__
-  #include "winvi.h"
-#endif
 #include "source.h"
 #include "posix.h"
 #include "win.h"
+
 #ifdef __NT__
-  #include <windows.h>
   extern HANDLE       OutputHandle;
 #endif
 

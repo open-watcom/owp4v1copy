@@ -33,16 +33,6 @@
 #ifndef RXSUPP_INCLUDED
 #define RXSUPP_INCLUDED
 
-#ifdef REGEXP
-    #include <stdio.h>
-    #include "vi.h"
-    #define CASEIGNORE      EditFlags.CaseIgnore
-    #define MAGICFLAG       EditFlags.Magic
-    #define MAGICSTR        Majick
-    #define REALTABS        EditFlags.RealTabs
-    #define ALLOC           MemAlloc
-    #define WANT_EXCLAMATION
-#endif
 #include "regexp.h"
 
 extern regexp *CurrentRegularExpression;

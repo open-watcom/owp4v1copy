@@ -30,9 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <dos.h>
 #include "vi.h"
+#include <dos.h>
 #include "mouse.h"
 #include "dosmouse.h"
 

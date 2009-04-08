@@ -30,25 +30,21 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include "posix.h"
 #include <fcntl.h>
-#include <assert.h>
 #include "walloca.h"
-#include "vi.h"
 #include "keys.h"
 #include "rxsupp.h"
 #include "win.h"
 #ifdef __WIN__
-    #include "winvi.h"
     #include "filelist.h"
     #include "font.h"
     #ifdef __NT__
         #include <commctrl.h>
     #endif
 #endif
+#include <assert.h>
 
 #define isEOL(x)        ((x == CR) || (x == LF) || (x == CTLZ))
 

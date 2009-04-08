@@ -30,13 +30,11 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <stdarg.h>
-#include "winvi.h"
-#include "myprtf.h"
+#include "vi.h"
 #include "color.h"
 #include "font.h"
 #include "utils.h"
+#include "myprtf.h"
 
 static BOOL Init( window *, void * );
 static BOOL Fini( window *, void * );

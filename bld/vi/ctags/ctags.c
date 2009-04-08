@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <ctype.h>
 
 #if defined(__UNIX__)
@@ -94,6 +95,42 @@ static void displayBanner( void )
 
 } /* displayBanner */
 
+void ErrorMsgExit( const char *str, ... )
+{
+    va_list     al;
+    int         len;
+
+    va_start( al, str );
+    len = vfprintf( stderr, str, al );
+    va_end( al );
+    exit( 1 );
+}
+
+/*
+ * Quit - print usage messages
+ */
+static void Quit( const char **usage_msg, const char *str, ... )
+{
+    va_list     al;
+    int         i;
+    int         cnt;
+
+    if( str != NULL ) {
+        va_start( al, str );
+        vfprintf( stderr, str, al );
+        va_end( al );
+        cnt = 1;
+    } else {
+        cnt = sizeof( usageMsg ) / sizeof( char * );
+    }
+
+    for( i = 0; i < cnt; i++ ) {
+        fprintf( stderr, "%s\n", usageMsg[i] );
+    }
+    exit( EXIT_FAILURE );
+
+} /* Quit */
+
 /*
  * doOption - handle a single option
  */
@@ -114,7 +151,7 @@ static void doOption( int ch )
         WantEnums = TRUE;
         break;
     case 'f':
-        fileName = OptArg;
+        fileName = optarg;
         break;
     case 'm':
         WantMacros = TRUE;
@@ -144,7 +181,7 @@ static void doOption( int ch )
         VerboseFlag = TRUE;
         break;
     case 'z':
-        switch( OptArg[0] ) {
+        switch( optarg[0] ) {
         case 'a':
             fileType = TYPE_ASM;
             break;
@@ -356,7 +393,7 @@ static void processOptionFile( char *fname )
                         ptr++;
                     }
                     *ptr = 0;
-                    OptArg = tmpFileName;
+                    optarg = tmpFileName;
                     doOption( 'f' );
                     break;
                 }
@@ -375,10 +412,9 @@ int main( int argc , char *argv[] )
 {
     int         ch,i;
 
-    while( 1 ) {
-        ch = GetOpt( &argc, argv, optStr, usageMsg );
-        if( ch == -1 ) {
-            break;
+    while( (ch = getopt( argc, argv, optStr )) != -1 ) {
+        if( ch == '?' ) {
+            Quit( usageMsg, NULL );
         }
         doOption( ch );
     }

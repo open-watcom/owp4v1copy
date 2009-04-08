@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
+#include "vi.h"
 #include <unistd.h>
 #include <sys/seginfo.h>
 #include <sys/console.h>
@@ -45,7 +45,6 @@
 #include <sys/vc.h>
 #include <sys/mouse.h>
 #include <sys/timers.h>
-#include "vi.h"
 #include "mouse.h"
 
 static int                      lastStatus;

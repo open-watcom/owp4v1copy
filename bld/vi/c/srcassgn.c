@@ -30,12 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include <setjmp.h>
 #include <time.h>
-#include "vi.h"
 #include "source.h"
 #include "expr.h"
 #include "rxsupp.h"

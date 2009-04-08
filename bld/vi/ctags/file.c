@@ -32,7 +32,7 @@
 
 #include <stdio.h>
 #include "ctags.h"
-#include "misc.h"
+//#include "misc.h"
 
 #define VBUFF_SIZE      4096
 
@@ -50,7 +50,7 @@ void StartFile( char *fname )
 {
     inputFile = fopen( fname, "r" );
     if( inputFile == NULL ) {
-        Die( "Could not open file %s\n", fname );
+        ErrorMsgExit( "Could not open file %s\n", fname );
     }
     setvbuf( inputFile, vBuff, _IOFBF, VBUFF_SIZE );
     currentLineNumber = 1L;

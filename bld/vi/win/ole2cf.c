@@ -31,7 +31,7 @@
 
 
 #ifndef __386__
-#include "winvi.h"
+#include "vi.h"
 #include "ole2def.h"
 
 typedef struct {

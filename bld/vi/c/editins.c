@@ -30,14 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "vi.h"
 #ifdef _M_I86
     #include <i86.h>
 #endif
-#include "vi.h"
 #include "keys.h"
 #include "source.h"
 #include "menu.h"

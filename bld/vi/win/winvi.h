@@ -32,11 +32,8 @@
 
 #ifndef WINVI_INCLUDED
 #define WINVI_INCLUDED
+
 #include "winhdr.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include "vi.h"
 #include "winrtns.h"
 
 #if defined(__WINDOWS_386__)
@@ -130,4 +127,5 @@ extern RECT             RootRect;
 extern int              RootState;
 extern char             near EditorName[];
 extern window_id        CommandId;
+
 #endif

@@ -30,16 +30,13 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
+#include "vi.h"
 #include <errno.h>
 #include "posix.h"
-#include "vi.h"
 #include "source.h"
 #include "win.h"
-#ifdef __WIN__
-#include "winvi.h"
 
+#ifdef __WIN__
 extern long VScrollBarScale;
 extern int  HScrollBarScale;
 #endif

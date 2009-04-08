@@ -30,11 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <setjmp.h>
 #include "vi.h"
+#include <setjmp.h>
 #include "parsecl.h"
 #include "expr.h"
 #include "rxsupp.h"
@@ -43,9 +40,6 @@
 #include "keys.h"
 #include "menu.h"
 #include "source.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
 #include "lang.h"
 
 static bool msgFlag;
@@ -1025,16 +1019,16 @@ typedef struct {
 
 #ifndef __WIN__
 /*
- * CompareString - quicksort comparison
+ * compareString - quicksort comparison
  */
-int CompareString( void const *_p1, void const *_p2 )
+static int compareString( void const *_p1, void const *_p2 )
 {
     set_data * const *p1 = _p1;
     set_data * const *p2 = _p2;
 
     return( stricmp( (*p1)->setting,(*p2)->setting ) );
 
-} /* CompareString */
+} /* compareString */
 
 /*
  * getSetInfo - build string of values
@@ -1063,7 +1057,7 @@ static int getSetInfo( char ***vals, char ***list, int *longest )
         AddString( &(sdata[tc1 + i]->setting), GetTokenString( SetTokens2, i ) );
         AddString( &(sdata[tc1 + i]->val), getOneSetVal( i, FALSE, tmpstr, TRUE ) );
     }
-    qsort( sdata, tc, sizeof( set_data * ), CompareString );
+    qsort( sdata, tc, sizeof( set_data * ), compareString );
     for( i = 0; i < tc; i++ ) {
         (*list)[i] = sdata[i]->setting;
         (*vals)[i] = sdata[i]->val;

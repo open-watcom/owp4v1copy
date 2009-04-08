@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <stdlib.h>
+#include "vi.h"
 #include "linedlg.h"
 
 static char     lineStr[ 20 ];

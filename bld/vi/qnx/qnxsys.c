@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
+#include "vi.h"
 #include <i86.h>
 #include <fcntl.h>
 #include <stddef.h>
@@ -42,7 +40,6 @@
 #include <sys/name.h>
 #include <sys/vc.h>
 
-#include "vi.h"
 #include "win.h"
 #include "dosx.h"
 

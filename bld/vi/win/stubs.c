@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
+#include "vi.h"
 #include <dos.h>
 
 #pragma off( unreferenced);

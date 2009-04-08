@@ -30,12 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include <dos.h>
 #include <fcntl.h>
-#include "winvi.h"
 
 #ifndef __NT__
 static int lockFileRegion( int handle )

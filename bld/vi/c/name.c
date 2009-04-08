@@ -29,31 +29,34 @@
 ****************************************************************************/
 
 
-#include "control.h"
+#include "vi.h"
+
 #if defined( __WINDOWS_386__ )
-char    TITLE[] = "vi/win386";
+  #define TT "vi/win386"
 #elif defined( __WINDOWS__ )
-char    TITLE[] = "vi/win";
+  #define TT "vi/win"
 #elif defined( __OS2V2__ )
-char    TITLE[] = "vi/os2v2";
+  #define TT "vi/os2v2"
 #elif defined( __OS2__ )
-char    TITLE[] = "vi/os2";
+  #define TT "vi/os2"
 #elif defined( __NT__ )
-#if defined( __WIN__ )
-char    TITLE[] = "vi/ntwin";
-#else
-char    TITLE[] = "vi/nt";
-#endif
+  #if defined( __WIN__ )
+    #define TT "vi/ntwin"
+  #else
+    #define TT "vi/nt"
+  #endif
 #elif defined( __PHAR__ ) || defined( __4G__ )
-char    TITLE[] = "vi/386";
+  #define TT "vi/386"
 #elif defined( __QNX__ )
-char    TITLE[] = "vi/qnx";
+  #define TT "vi/qnx"
 #elif defined( __LINUX__ )
-char    TITLE[] = "vi/linux";
+  #define TT "vi/linux"
 #elif defined( __UNIX__ )
-char    TITLE[] = "vi/unix";
+  #define TT "vi/unix"
 #elif defined( __286__ )
-char    TITLE[] = "vi/286";
+  #define TT "vi/286"
 #else
-char    TITLE[] = "vi/86";
+  #define TT "vi/86"
 #endif
+
+char _NEAR TITLE[] = TT;

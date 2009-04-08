@@ -30,10 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
+#include "vi.h"
 #include <signal.h>
 #include <setjmp.h>
-#include "vi.h"
 #include "win.h"
 #define INCL_DOSSIGNALS
 #define INCL_DOSPROCESS

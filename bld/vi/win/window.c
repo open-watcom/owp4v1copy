@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
+#include "vi.h"
 #include "winaux.h"
 #include "font.h"
 #include "wstatus.h"

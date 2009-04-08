@@ -30,11 +30,8 @@
 ****************************************************************************/
 
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 #define INCLUDE_COMMDLG_H
-#include "winvi.h"
+#include "vi.h"
 #include "font.h"
 
 #ifdef __NT__

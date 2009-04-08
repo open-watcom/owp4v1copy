@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include "winvi.h"
+#include "vi.h"
 // #include "ole2def.h"
 #include "font.h"
 #include "color.h"

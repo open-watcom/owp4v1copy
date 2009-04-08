@@ -29,12 +29,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include "posix.h"
 #include "vi.h"
+#include "posix.h"
 #include "keys.h"
 #include "rxsupp.h"
 #ifdef __WIN__

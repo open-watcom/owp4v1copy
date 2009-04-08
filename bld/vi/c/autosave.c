@@ -29,10 +29,7 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "vi.h"
 #include <time.h>
 #include <errno.h>
 #ifdef __WATCOMC__
@@ -47,7 +44,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "posix.h"
-#include "vi.h"
 #include "win.h"
 #include "source.h"
 #include "fts.h"

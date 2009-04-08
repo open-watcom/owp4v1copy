@@ -30,14 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "vi.h"
 #include <unistd.h>
 #include <dirent.h>
 #include <time.h>
-#include "vi.h"
 
 /*
  * GetFileInfo - get info from a directory entry

@@ -30,16 +30,13 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include "utils.h"
 #include "clrbar.h"
 #include "color.h"
 #include "statwnd.h"
 #include "toolbr.h"
 #include "sstyle.h"
-#include "hotkey.h"
 #include "subclass.h"
 #include "watcom.h"
 

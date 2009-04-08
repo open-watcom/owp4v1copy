@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include "getopt.h"
-#include "misc.h"
+#include <unistd.h>
 
 typedef enum {
     FALSE = 0,
@@ -68,6 +67,7 @@ extern unsigned TagCount;
 /* ctags.c */
 bool IsTokenChar( char ch );
 int MyStricmp( char **buf, char *literal );
+void ErrorMsgExit( const char *, ... );
 
 /* file.c */
 void StartFile( char *fname );
@@ -94,3 +94,4 @@ void AddTag( char *id );
 void GenerateTagsFile( char *fname );
 int CompareStrings( char **p1, char **p2 );
 void ReadExtraTags( char *fname );
+

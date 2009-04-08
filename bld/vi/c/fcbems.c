@@ -30,10 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stddef.h>
-#include <string.h>
 #include "vi.h"
+#include <stddef.h>
 
 #ifndef NOEMS
 #include "dosx.h"

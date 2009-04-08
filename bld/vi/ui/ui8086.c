@@ -29,14 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include "vi.h"
 #ifdef __WATCOMC__
 #include <conio.h>
 #endif
-#include "vi.h"
 #include "win.h"
 #include "dosx.h"
 #include "pragmas.h"

@@ -30,13 +30,12 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <assert.h>
-#include "winvi.h"
+#include "vi.h"
 #include "color.h"
 #include "font.h"
 #include "utils.h"
 #include "win.h"
+#include <assert.h>
 
 static int              cursorHeight;
 static int              cursorWidth;

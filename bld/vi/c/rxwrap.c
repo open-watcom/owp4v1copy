@@ -29,6 +29,14 @@
 ****************************************************************************/
 
 
-#define REGEXP 1
+#include "vi.h"
+
+#define CASEIGNORE      EditFlags.CaseIgnore
+#define MAGICFLAG       EditFlags.Magic
+#define MAGICSTR        Majick
+#define REALTABS        EditFlags.RealTabs
+#define ALLOC           MemAlloc
+#define WANT_EXCLAMATION
+
 #include "rxsupp.h"
 #include "../../posix/misc/regexp.c"

@@ -29,12 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "vi.h"
 #include <dos.h>
 #include <signal.h>
 #include <setjmp.h>
-#include "vi.h"
 #include "win.h"
 #if defined( __4G__ )
 #define _FAR_   far

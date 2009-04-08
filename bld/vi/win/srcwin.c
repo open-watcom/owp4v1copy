@@ -30,12 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "vi.h"
 #include <malloc.h>
 #include <setjmp.h>
-#include "winvi.h"
 #include "source.h"
 #include "expr.h"
 #include "srcwin.h"

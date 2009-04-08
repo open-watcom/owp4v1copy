@@ -29,11 +29,8 @@
 ****************************************************************************/
 
 
-#include <ctype.h>
-#include <string.h>
+#include "vi.h"
 #include <malloc.h>
-#include <stdio.h>
-#include "winvi.h"
 #include <shellapi.h>
 #include "toolbr.h"
 #include "keys.h"

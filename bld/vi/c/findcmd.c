@@ -30,14 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
 #include "vi.h"
 #include "rxsupp.h"
 #include "win.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
 
 static char     *lastFind = NULL;
 static char     *sStr = NULL;

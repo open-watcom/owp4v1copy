@@ -30,10 +30,8 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <stdlib.h>
+#include "vi.h"
 #include <limits.h>
-#include "winvi.h"
 #include "winaux.h"
 #include "win.h"
 #include "font.h"

@@ -30,14 +30,8 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "vi.h"
 #include "win.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
 
 /*
  * ReDisplayScreen - reset all windows, redraw lines (used by ^L)

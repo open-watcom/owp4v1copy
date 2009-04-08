@@ -30,15 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include "posix.h"
 #include "vi.h"
+#include "posix.h"
 #include "source.h"
 #include "win.h"
-#ifdef __WIN__
-    #include "winvi.h"
-#endif
 #include "lang.h"
 #include "fts.h"
 

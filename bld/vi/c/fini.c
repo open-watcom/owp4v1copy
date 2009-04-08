@@ -29,11 +29,7 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include "vi.h"
-#include "myprtf.h"
 #ifdef __WIN__
     #include "winrtns.h"
     #include "subclass.h"
@@ -47,6 +43,7 @@
 #include "fts.h"
 #include "rxsupp.h"
 #include "rcs.h"
+#include "myprtf.h"
 
 #ifdef __WIN__
     #define T1      ""

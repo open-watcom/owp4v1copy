@@ -30,8 +30,7 @@
 ****************************************************************************/
 
 
-#include "winvi.h"
-#include <string.h>
+#include "vi.h"
 #include "snoop.h"
 #include "rcstr.gh"
 #ifdef __NT__

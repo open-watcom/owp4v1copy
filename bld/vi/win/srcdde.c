@@ -30,13 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#define INCLUDE_DDEML_H
+#include "vi.h"
 #include <malloc.h>
 #include <setjmp.h>
-#define INCLUDE_DDEML_H
-#include "winvi.h"
 #include "source.h"
 #include "ddedef.h"
 #include "expr.h"
