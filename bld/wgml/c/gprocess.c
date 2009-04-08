@@ -369,7 +369,8 @@ void        process_line( void )
                     pw = pchar;
                 }
             } else {
-                if( symvar_entry.flags & local_var ) { // local var not found
+                if( (symvar_entry.flags & local_var )  // local var not found
+                    && (input_cbs->fmflags & II_macro) ) {// .. and inside macro
                     if( (symvar_entry.name[ 0 ] == '\0') &&
                         (*pchar == ampchar) ) { // only &* as var name
                                                 // followed by another var
@@ -398,7 +399,7 @@ void        process_line( void )
                         pw = pchar;
                     }
                 } else {                // global var not found
-
+                                        // .. or local var outside of macro
                     /*******************************************************/
                     /*  keep trying for constructs such as                 */
                     /*                                                     */
