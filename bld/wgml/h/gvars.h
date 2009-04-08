@@ -119,6 +119,18 @@ global  struct GlobalFlags {
     unsigned        research      : 1;  // research mode, minimal formatting
 } GlobalFlags;                          // Global flags
 
+
+typedef enum ju_enum {                  // for .ju(stify)
+    ju_off,
+    ju_half,
+    ju_on,
+    ju_left,
+    ju_right,
+    ju_centre,
+    ju_inside,
+    ju_outside
+} ju_enum;
+
 global struct ProcFlags {
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -137,6 +149,17 @@ global struct ProcFlags {
     unsigned        freed           : 1;
     unsigned        freee           : 1;
     unsigned        freef           : 1;
+
+    ju_enum         justify         : 8;// .ju on half off ...
+
+    unsigned        concat          : 1;// .co ON if set
+    unsigned        free19          : 1;
+    unsigned        free1a          : 1;
+    unsigned        free1b          : 1;
+    unsigned        free1c          : 1;
+    unsigned        free1d          : 1;
+    unsigned        free1e          : 1;
+    unsigned        free1f          : 1;
 
 } ProcFlags;                            // processing flags
 

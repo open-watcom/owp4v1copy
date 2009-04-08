@@ -50,6 +50,9 @@ void init_global_vars( void )
     ProcFlags.blanks_allowed = 1;       // blanks during scanning
                                         // i.e. .se var  =    7
                                         // .se var=7  without
+    ProcFlags.concat    = true;         // .co on default
+    ProcFlags.justify   = ju_on;        // .ju on default
+
     try_file_name       = NULL;
 
     master_fname        = NULL;         // Master input file name

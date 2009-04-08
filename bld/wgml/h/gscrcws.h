@@ -28,13 +28,13 @@
 *               only uncommented control words are processed so far
 *
 ****************************************************************************/
-
+ 
 #ifndef pick
     #error macro pick not defined
 #endif
 //     control  routinename  flags
 //     word
-
+ 
   pick( "ap",    scr_ap,       0           )
 //pick( "bd",    scr_bd,       0           )
 //pick( "bi",    scr_bi,       0           )
@@ -42,7 +42,7 @@
 //pick( "bx",    scr_bx,       0           )
 //pick( "cc",    scr_cc,       0           )
 //pick( "cd",    scr_cd,       0           )
-//pick( "co",    scr_co,       0           )
+  pick( "co",    scr_co,       0           )
 //pick( "cp",    scr_cp,       0           )
 //pick( "cs",    scr_cs,       0           )
 //pick( "ct",    scr_ct,       0           )
@@ -57,7 +57,7 @@
 //pick( "fi",    scr_fi,       0           )
 //pick( "fk",    scr_fk,       0           )
 //pick( "fn",    scr_fn,       0           )
-//pick( "fo",    scr_fo,       0           )
+  pick( "fo",    scr_fo,       0           )
   pick( "ga",    scr_ga,       0           )
   pick( "go",    scr_go,       0           )
   pick( "gt",    scr_gt,       0           )
@@ -67,7 +67,7 @@
   pick( "im",    scr_im,       0           )
 //pick( "in",    scr_in,       0           )
 //pick( "ix",    scr_ix,       0           )
-//pick( "ju",    scr_ju,       0           )
+  pick( "ju",    scr_ju,       0           )
 //pick( "le",    scr_le,       0           )
 //pick( "li",    scr_li,       0           )
 //pick( "ll",    scr_ll,       0           )
@@ -95,5 +95,5 @@
 //pick( "ul",    scr_ul,       0           )
 //pick( "us",    scr_us,       0           )
   pick( "..",    scr_label,    0           )
-
+ 
 #undef pick
