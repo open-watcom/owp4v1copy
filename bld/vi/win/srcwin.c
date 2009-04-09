@@ -101,7 +101,7 @@ bool RunWindowsCommand( char *cmd, long *result, vlist *vl )
     char        *tmp;
     int         token;
     bool        rc;
-    DWORD       left,top,width,height;
+    DWORD       left, top, width, height;
 
     tmp = alloca( MAX_INPUT_LINE );
     str = alloca( MAX_INPUT_LINE );
@@ -141,11 +141,11 @@ bool RunWindowsCommand( char *cmd, long *result, vlist *vl )
         return( TRUE );
 
     case T_TAKEFOCUS:
-        #ifdef __NT__
+#ifdef __NT__
         SetForegroundWindow( Root );
-        #else
+#else
         SetActiveWindow( Root );
-        #endif
+#endif
         SetFocus( Root );
         *result = ERR_NO_ERR;
         return( TRUE );
@@ -198,15 +198,15 @@ bool RunWindowsCommand( char *cmd, long *result, vlist *vl )
         if( vl != NULL ) {
             Expand( str, vl );
         }
-        SetWindowPos( Root, HWND_TOPMOST, 0,0,0,0,SWP_NOMOVE|SWP_NOSIZE );
+        SetWindowPos( Root, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         if( MessageBox( Root, str, EditorName, MB_OKCANCEL ) == IDOK ) {
             *result = ERR_NO_ERR;
-            SetWindowPos( Root, HWND_NOTOPMOST, 0,0,0,0,SWP_NOMOVE|SWP_NOSIZE );
-            SetWindowPos( Root, HWND_BOTTOM, 0,0,0,0,SWP_NOMOVE|SWP_NOSIZE );
+            SetWindowPos( Root, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+            SetWindowPos( Root, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
             return( TRUE );
         }
-        SetWindowPos( Root, HWND_NOTOPMOST, 0,0,0,0,SWP_NOMOVE|SWP_NOSIZE );
-        SetWindowPos( Root, HWND_BOTTOM, 0,0,0,0,SWP_NOMOVE|SWP_NOSIZE );
+        SetWindowPos( Root, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+        SetWindowPos( Root, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
         *result = ERR_FILE_MODIFIED;
         return( TRUE );
     case T_QUERY_FILE:
@@ -223,21 +223,21 @@ bool RunWindowsCommand( char *cmd, long *result, vlist *vl )
     case T_EDITFILE:
         *result = 1;
         rc = EditFile( str, FALSE ) == ERR_NO_ERR;
-        #ifdef __NT__
+#ifdef __NT__
         SetForegroundWindow( Root );
-        #else
+#else
         SetActiveWindow( Root );
-        #endif
+#endif
         SetFocus( Root );
         return( rc );
     case T_LOCATE:
         *result = 1;
         rc = LocateCmd( str ) == ERR_NO_ERR;
-        #ifdef __NT__
+#ifdef __NT__
         SetForegroundWindow( Root );
-        #else
+#else
         SetActiveWindow( Root );
-        #endif
+#endif
         SetFocus( Root );
         return( rc );
     case T_WINHELP:

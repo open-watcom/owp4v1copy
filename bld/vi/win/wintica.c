@@ -58,8 +58,7 @@ int WindowTile( int maxx, int maxy )
                 ShowWindow( cinfo->CurrentWindow, SW_RESTORE );
             }
             BringUpFile( cinfo, FALSE );
-            MoveWindow( cinfo->CurrentWindow, 0, 0, width,
-                                height, TRUE );
+            MoveWindow( cinfo->CurrentWindow, 0, 0, width, height, TRUE );
             cinfo = cinfo->next;
         }
         BringUpFile( cwinfo, FALSE );
@@ -67,7 +66,7 @@ int WindowTile( int maxx, int maxy )
     }
     // else
 
-    SendMessage( EditContainer, WM_MDITILE, 0, 0L);
+    SendMessage( EditContainer, WM_MDITILE, 0, 0L );
     return( ERR_NO_ERR );
 
 } /* WindowTile */
@@ -80,7 +79,7 @@ int WindowCascade( int x, int y )
     x = x;
     y = y;
 
-    SendMessage( EditContainer, WM_MDICASCADE, 0, 0L);
+    SendMessage( EditContainer, WM_MDICASCADE, 0, 0L );
     return( ERR_NO_ERR );
 
 } /* WindowCascade */

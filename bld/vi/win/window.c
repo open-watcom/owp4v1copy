@@ -44,7 +44,7 @@ window *Windows[] = {
     &RepeatCountWindow
 };
 
-#define NUM_WINDOWS ( sizeof( Windows ) / sizeof( window  * ) )
+#define NUM_WINDOWS (sizeof( Windows ) / sizeof( window  * ))
 
 extern void FiniInstance( void );
 
@@ -130,8 +130,8 @@ void DefaultWindows( RECT *world, RECT *workspace )
     r->left += BORDER;
     r->right -= BORDER;
     r->top += BORDER;
-    if( (r->bottom - r->top) > screeny/3 ) {
-        diff = r->bottom - r->top - screeny/3;
+    if( (r->bottom - r->top) > screeny / 3 ) {
+        diff = r->bottom - r->top - screeny / 3;
         r->top += diff;
     }
 
@@ -146,7 +146,7 @@ void InitWindows( void )
     window      *w;
 
     for( i = 0; i < NUM_WINDOWS; i++ ) {
-        w = Windows[ i ];
+        w = Windows[i];
         (*w->init)( w, NULL );
     }
     EditFlags.WindowsStarted = TRUE;
@@ -158,7 +158,7 @@ void FiniWindows( void )
     window      *w;
 
     for( i = 0; i < NUM_WINDOWS; i++ ) {
-        w = Windows[ i ];
+        w = Windows[i];
         (*w->fini)( w, NULL );
     }
 }
@@ -313,7 +313,7 @@ void MoveWindowToFrontDammit( window_id id )
 int MaximizeCurrentWindow( void )
 {
     if( !BAD_ID( CurrentWindow ) ) {
-        SendMessage( EditContainer, WM_MDIMAXIMIZE, ( UINT )CurrentWindow, 0L );
+        SendMessage( EditContainer, WM_MDIMAXIMIZE, (UINT)CurrentWindow, 0L );
     }
     return( ERR_NO_ERR );
 }
@@ -331,7 +331,7 @@ void FinishWindows( void )
     if( IsWindow( hColorbar ) ) {
         SendMessage( hColorbar, WM_CLOSE, 0, 0L );
     }
-    if( IsWindow( hFontbar) ) {
+    if( IsWindow( hFontbar ) ) {
         SendMessage( hFontbar, WM_CLOSE, 0, 0L );
     }
     if( IsWindow( hSSbar ) ) {

@@ -38,11 +38,11 @@
 #include "win.h"
 
 #ifdef __NT__
-#pragma library("shell32")
+    #pragma library( "shell32" )
 #endif
 
-extern LONG WINEXP MainWindowProc( HWND, unsigned, UINT, LONG );
-extern void DefaultWindows( RECT *, RECT * );
+extern LONG WINEXP  MainWindowProc( HWND, unsigned, UINT, LONG );
+extern void         DefaultWindows( RECT *, RECT * );
 
 RECT    RootRect;
 int     RootState;
@@ -91,9 +91,9 @@ static void setDefault( void )
 window_id CreateMainWindow( HANDLE inst )
 {
     window_id   root;
-    int         maxx,maxy;
+    int         maxx, maxy;
 
-    if( initHeight <=0 || initWidth <= 0 ) {
+    if( initHeight <= 0 || initWidth <= 0 ) {
         setDefault();
     } else {
         maxx = GetSystemMetrics( SM_CXSCREEN );
@@ -117,9 +117,9 @@ window_id CreateMainWindow( HANDLE inst )
     }
 
     root = CreateWindow( EditorName, EditorName,
-                WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                initX, initY, initWidth, initHeight,
-                (HWND) NULL, (HMENU) NULL, inst, NULL );
+                         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                         initX, initY, initWidth, initHeight,
+                         (HWND) NULL, (HMENU) NULL, inst, NULL );
     return( root );
 
 } /* CreateMainWindow */
@@ -203,7 +203,7 @@ void ResizeRoot( void )
     }
     height = rect.bottom - rect.top;
     MoveWindow( EditContainer, rect.left, rect.top, rect.right - rect.left,
-        height, TRUE );
+                height, TRUE );
     if( CurrentInfo ) {
         bufHwnd = CurrentInfo->CurrentWindow;
         if( IsWindow( bufHwnd ) && IsZoomed( bufHwnd ) ) {
@@ -225,7 +225,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
     RECT        rect;
     int         rc;
     HANDLE      hfileinfo;
-    int         cnt,i;
+    int         cnt, i;
     char        *buff;
 
     switch( msg ) {
@@ -235,16 +235,16 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         EditContainer = CreateContainerWindow( &rect );
         InitWindows();
         DragAcceptFiles( hwnd, TRUE );
-        timerID = SetTimer( hwnd, TIMER_ID, 60L*1000L, NULL );
+        timerID = SetTimer( hwnd, TIMER_ID, 60L * 1000L, NULL );
         break;
     case WM_DROPFILES:
         hfileinfo = (HANDLE) wparam;
         cnt = DragQueryFile( hfileinfo, (UINT)-1, NULL, 0 );
-        buff = alloca( FILENAME_MAX+2 );   /* we add a " at the beginning and at the end so we can handle path- and filenames with spaces */
+        buff = alloca( FILENAME_MAX + 2 );   /* we add a " at the beginning and at the end so we can handle path- and filenames with spaces */
         if( buff != NULL ) {
             buff[0] = '"';      /* one " at the beginning of the filename */
-            for( i=0;i<cnt;i++ ) {
-                if( DragQueryFile( hfileinfo, i, buff+1, FILENAME_MAX ) == (UINT)-1 ) {
+            for( i = 0; i < cnt; i++ ) {
+                if( DragQueryFile( hfileinfo, i, buff + 1, FILENAME_MAX ) == (UINT)-1 ) {
                     break;
                 }
                 strcat( buff, "\"" );
@@ -286,13 +286,13 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             break;
         }
         SetFocus( Root );
-        #if 0
+#if 0
         if( !wparam ) {
             InactiveWindow( CurrentWindow );
         } else {
             SendMessage( EditContainer, WM_MDIACTIVATE, (UINT)CurrentWindow, 0L );
         }
-        #endif
+#endif
         ResetEditWindowCursor( CurrentWindow );
         break;
     case WM_MOUSEACTIVATE:
@@ -357,24 +357,28 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
 #ifdef __NT__        
     case WM_MOUSEWHEEL:
         {
-            int i, increment;
-            ULONG linesPerNotch;
-            HWND activeWnd;
+            int     i, increment;
+            ULONG   linesPerNotch;
+            HWND    activeWnd;
             
             activeWnd = (HWND)SendMessage( EditContainer, (UINT) WM_MDIGETACTIVE, 0, 0 );
-            SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &linesPerNotch, 0);
+            SystemParametersInfo( SPI_GETWHEELSCROLLLINES, 0, &linesPerNotch, 0 );
             
-            increment = GET_WHEEL_DELTA_WPARAM( wparam ) / 120;         // see WM_MOUSEWHEEL-documentation for information about the "120"
+            increment = GET_WHEEL_DELTA_WPARAM( wparam ) / 120;
+                // see WM_MOUSEWHEEL-documentation for information about the "120"
 
-            if( increment > 0 )
-                for( i = 0; i < increment*(int)linesPerNotch; i++ )
+            if( increment > 0 ) {
+                for( i = 0; i < increment * (int)linesPerNotch; i++ ) {
                     SendMessage( activeWnd, WM_VSCROLL, SB_LINEUP, 0 );
-            else
-                for( i = 0; i < (-increment)*(int)linesPerNotch; i++ )
+                }
+            } else {
+                for( i = 0; i < (-increment) * (int)linesPerNotch; i++ ) {
                     SendMessage( activeWnd, WM_VSCROLL, SB_LINEDOWN, 0 );
+                }
+            }
         }
         return( 0 );
-    break;
+        break;
 #endif
     case WM_DESTROY:
         DestroyToolBar();

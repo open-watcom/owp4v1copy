@@ -95,5 +95,6 @@ void RefreshColorbar( void )
         SetMenuHelpString( "" );
     }
     UpdateStatusWindow();
+
 } /* RefreshColorbar */
 

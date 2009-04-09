@@ -49,8 +49,8 @@ window MessageBar = {
 LONG WINEXP MessageWindowProc( HWND, unsigned, UINT, LONG );
 
 static char *ClassName = "MessageWindow";
-static char msgString1[ MAX_STR ];
-static char msgString2[ MAX_STR ];
+static char msgString1[MAX_STR];
+static char msgString2[MAX_STR];
 static void msgString( int, char * );
 
 static BOOL Init( window *w, void *parm )
@@ -60,8 +60,8 @@ static BOOL Init( window *w, void *parm )
     w = w;
     parm = parm;
 
-    msgString1[ 0 ] = 0;
-    msgString2[ 0 ] = 0;
+    msgString1[0] = 0;
+    msgString2[0] = 0;
 
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = (WNDPROC)MessageWindowProc;
@@ -114,17 +114,17 @@ window_id NewMsgWindow( void )
     int         height;
 
     size = &MessageBar.area;
-    msgString1[ 0 ] = 0;
-    msgString2[ 0 ] = 0;
+    msgString1[0] = 0;
+    msgString2[0] = 0;
     height = size->bottom - size->top;
     if( !EditFlags.StatusInfo ) {
         height += 1;
     }
     msg = CreateWindow( ClassName, "Message",
-        WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
-        size->left-1, size->top,
-        size->right - size->left+2, height,
-        Root, (HMENU) NULL, InstanceHandle, NULL );
+                        WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+                        size->left - 1, size->top,
+                        size->right - size->left + 2, height,
+                        Root, (HMENU) NULL, InstanceHandle, NULL );
     ShowWindow( msg, SW_SHOWNORMAL );
     UpdateWindow( msg );
     return( msg );
@@ -136,10 +136,12 @@ static void msgString( int line_no, char *str )
     RECT    rect;
     HDC     hdc;
 
-    if( !AllowDisplay || BAD_ID( MessageWindow ) ) return;
+    if( !AllowDisplay || BAD_ID( MessageWindow ) ) {
+        return;
+    }
     GetClientRect( MessageWindow, &rect );
     height = FontHeight( WIN_FONT( &MessageBar ) );
-    rect.top += (line_no-1) * height;
+    rect.top += (line_no - 1) * height;
     rect.bottom = rect.top + height;
     hdc = TextGetDC( MessageWindow, WIN_STYLE( &MessageBar ) );
     FillRect( hdc, &rect, ColorBrush( WIN_BACKCOLOR( &MessageBar ) ) );
@@ -150,7 +152,7 @@ static void msgString( int line_no, char *str )
 void Message1( char *fmt, ... )
 {
     va_list     args;
-    char        tmp[ MAX_STR ];
+    char        tmp[MAX_STR];
 
     ClearWindow( MessageWindow );
     va_start( args, fmt );
@@ -163,7 +165,7 @@ void Message1( char *fmt, ... )
 void Message2( char *fmt, ... )
 {
     va_list     args;
-    char        tmp[ MAX_STR ];
+    char        tmp[MAX_STR];
 
     va_start( args, fmt );
     MyVSprintf( tmp, fmt, args );

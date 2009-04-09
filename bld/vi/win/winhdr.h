@@ -33,7 +33,7 @@
 #ifndef WINHDR_INCLUDED
 #define WINHDR_INCLUDED
 
-#if defined(__NT__)
+#if defined( __NT__ )
     #define _WINSOCKAPI_
 #endif
 

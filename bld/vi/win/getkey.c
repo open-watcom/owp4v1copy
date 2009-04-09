@@ -48,7 +48,7 @@ typedef struct vi_key_scancode {
     int ch;
 } vi_key_scancode;
 
-static vi_key_scancode  keyBuffer[ KEY_BUFFER_SIZE ];
+static vi_key_scancode  keyBuffer[KEY_BUFFER_SIZE];
 static volatile int     bufferTop = 0;
 static volatile int     bufferBottom = 0;
 
@@ -63,10 +63,14 @@ typedef struct {
 
 int find_key_in_table( const void *pkey, const void *pbase )
 {
-    int vk = *(WORD*)pkey;
-    keytable *base = (keytable*)pbase;
-    if( vk > base->value ) return( 1 );
-    if( vk < base->value ) return( -1 );
+    int vk = *(WORD *)pkey;
+    keytable *base = (keytable *)pbase;
+    if( vk > base->value ) {
+        return( 1 );
+    }
+    if( vk < base->value ) {
+        return( -1 );
+    }
     return( 0 );
 }
 
@@ -78,36 +82,50 @@ static const keytable keyTable[] = {
 
     /* new table */
     /* value;   regular; shifted; ctrl; alt; cs; */
-    { VK_LBUTTON, -1,-1,-1,-1,-1 },
-    { VK_RBUTTON, -1,-1,-1,-1,-1 },
-    { VK_CANCEL, VI_KEY( CTRL_C ), VI_KEY( CTRL_C ), VI_KEY( CTRL_C ), VI_KEY( CTRL_C ), VI_KEY( CTRL_C ) },
-    { VK_MBUTTON, -1,-1,-1,-1,-1 },
+    { VK_LBUTTON, -1, -1, -1, -1, -1 },
+    { VK_RBUTTON, -1, -1, -1, -1, -1 },
+    { VK_CANCEL, VI_KEY( CTRL_C ), VI_KEY( CTRL_C ), VI_KEY( CTRL_C ),
+        VI_KEY( CTRL_C ), VI_KEY( CTRL_C ) },
+    { VK_MBUTTON, -1, -1, -1, -1, -1 },
     { VK_BACK, VI_KEY( BS ), VI_KEY( BS ), VI_KEY( CTRL_BS ), VI_KEY( ALT_BS ), 0 },
-    { VK_TAB, VI_KEY( TAB ), VI_KEY( SHIFT_TAB ), VI_KEY( CTRL_TAB ), VI_KEY( ALT_TAB ), 0 },
-    { VK_CLEAR, -1,-1,-1,-1,-1 },
-    { VK_RETURN, VI_KEY( ENTER ), VI_KEY( ENTER ), VI_KEY( ENTER ), VI_KEY( ENTER ), VI_KEY( ENTER ) },
-    { VK_SHIFT, -1,-1,-1,-1,-1 },
-    { VK_CONTROL, -1,-1,-1,-1,-1 },
-    { VK_MENU, -1,-1,-1,-1,-1 },
-    { VK_PAUSE, -1,-1,-1,-1,-1 },
-    { VK_CAPITAL, -1,-1,-1,-1,-1 },
-    { VK_ESCAPE, VI_KEY( ESC ), VI_KEY( ESC ), VI_KEY( ESC ), VI_KEY( ESC ), VI_KEY( ESC ) },
+    { VK_TAB, VI_KEY( TAB ), VI_KEY( SHIFT_TAB ), VI_KEY( CTRL_TAB ),
+        VI_KEY( ALT_TAB ), 0 },
+    { VK_CLEAR, -1, -1, -1, -1, -1 },
+    { VK_RETURN, VI_KEY( ENTER ), VI_KEY( ENTER ), VI_KEY( ENTER ),
+        VI_KEY( ENTER ), VI_KEY( ENTER ) },
+    { VK_SHIFT, -1, -1, -1, -1, -1 },
+    { VK_CONTROL, -1, -1, -1, -1, -1 },
+    { VK_MENU, -1, -1, -1, -1, -1 },
+    { VK_PAUSE, -1, -1, -1, -1, -1 },
+    { VK_CAPITAL, -1, -1, -1, -1, -1 },
+    { VK_ESCAPE, VI_KEY( ESC ), VI_KEY( ESC ), VI_KEY( ESC ), VI_KEY( ESC ),
+        VI_KEY( ESC ) },
     { VK_SPACE, ' ', ' ', ' ', ' ', ' ' },
-    { VK_PRIOR, VI_KEY( PAGEUP ), VI_KEY( SHIFT_PAGEUP ), VI_KEY( CTRL_PAGEUP ), VI_KEY( ALT_PAGEUP ), VI_KEY( CS_PAGEUP ) },
-    { VK_NEXT, VI_KEY( PAGEDOWN ), VI_KEY( SHIFT_PAGEDOWN ), VI_KEY( CTRL_PAGEDOWN ), VI_KEY( ALT_PAGEDOWN ), VI_KEY( CS_PAGEDOWN ) },
-    { VK_END, VI_KEY( END ), VI_KEY( SHIFT_END ), VI_KEY( CTRL_END ), VI_KEY( ALT_END ), VI_KEY( CS_END ) },
-    { VK_HOME, VI_KEY( HOME ), VI_KEY( SHIFT_HOME ), VI_KEY( CTRL_HOME ), VI_KEY( ALT_HOME ), VI_KEY( CS_HOME ) },
-    { VK_LEFT, VI_KEY( LEFT ), VI_KEY( SHIFT_LEFT ), VI_KEY( CTRL_LEFT ), VI_KEY( ALT_LEFT ), VI_KEY( CS_LEFT ) },
-    { VK_UP, VI_KEY( UP ), VI_KEY( SHIFT_UP ), VI_KEY( CTRL_UP ), VI_KEY( ALT_UP ), VI_KEY( CS_UP ) },
-    { VK_RIGHT, VI_KEY( RIGHT ), VI_KEY( SHIFT_RIGHT ), VI_KEY( CTRL_RIGHT ), VI_KEY( ALT_RIGHT ), VI_KEY( CS_RIGHT ) },
-    { VK_DOWN, VI_KEY( DOWN ), VI_KEY( SHIFT_DOWN ), VI_KEY( CTRL_DOWN ), VI_KEY( ALT_DOWN ), VI_KEY( CS_DOWN ) },
-    { VK_SELECT, -1,-1,-1,-1,-1 },
-    { VK_PRINT, -1,-1,-1,-1,-1 },
-    { VK_EXECUTE, -1,-1,-1,-1,-1 },
-    { VK_SNAPSHOT, -1,-1,-1,-1,-1 },
-    { VK_INSERT, VI_KEY( INS ), VI_KEY( SHIFT_INS ), VI_KEY( CTRL_INS ), VI_KEY( ALT_INS ), 0 },
-    { VK_DELETE, VI_KEY( DEL ), VI_KEY( SHIFT_DEL ), VI_KEY( CTRL_DEL ), VI_KEY( ALT_DEL ), 0 },
-    { VK_HELP, -1,-1,-1,-1,-1 },
+    { VK_PRIOR, VI_KEY( PAGEUP ), VI_KEY( SHIFT_PAGEUP ), VI_KEY( CTRL_PAGEUP ),
+        VI_KEY( ALT_PAGEUP ), VI_KEY( CS_PAGEUP ) },
+    { VK_NEXT, VI_KEY( PAGEDOWN ), VI_KEY( SHIFT_PAGEDOWN ), VI_KEY( CTRL_PAGEDOWN ),
+        VI_KEY( ALT_PAGEDOWN ), VI_KEY( CS_PAGEDOWN ) },
+    { VK_END, VI_KEY( END ), VI_KEY( SHIFT_END ), VI_KEY( CTRL_END ), VI_KEY( ALT_END ),
+        VI_KEY( CS_END ) },
+    { VK_HOME, VI_KEY( HOME ), VI_KEY( SHIFT_HOME ), VI_KEY( CTRL_HOME ),
+        VI_KEY( ALT_HOME ), VI_KEY( CS_HOME ) },
+    { VK_LEFT, VI_KEY( LEFT ), VI_KEY( SHIFT_LEFT ), VI_KEY( CTRL_LEFT ),
+        VI_KEY( ALT_LEFT ), VI_KEY( CS_LEFT ) },
+    { VK_UP, VI_KEY( UP ), VI_KEY( SHIFT_UP ), VI_KEY( CTRL_UP ), VI_KEY( ALT_UP ),
+        VI_KEY( CS_UP ) },
+    { VK_RIGHT, VI_KEY( RIGHT ), VI_KEY( SHIFT_RIGHT ), VI_KEY( CTRL_RIGHT ),
+        VI_KEY( ALT_RIGHT ), VI_KEY( CS_RIGHT ) },
+    { VK_DOWN, VI_KEY( DOWN ), VI_KEY( SHIFT_DOWN ), VI_KEY( CTRL_DOWN ),
+        VI_KEY( ALT_DOWN ), VI_KEY( CS_DOWN ) },
+    { VK_SELECT, -1, -1, -1, -1, -1 },
+    { VK_PRINT, -1, -1, -1, -1, -1 },
+    { VK_EXECUTE, -1, -1, -1, -1, -1 },
+    { VK_SNAPSHOT, -1, -1, -1, -1, -1 },
+    { VK_INSERT, VI_KEY( INS ), VI_KEY( SHIFT_INS ), VI_KEY( CTRL_INS ),
+        VI_KEY( ALT_INS ), 0 },
+    { VK_DELETE, VI_KEY( DEL ), VI_KEY( SHIFT_DEL ), VI_KEY( CTRL_DEL ),
+        VI_KEY( ALT_DEL ), 0 },
+    { VK_HELP, -1, -1, -1, -1, -1 },
     { VK_NUMPAD0, '0', '0', '0', '0', '0' },
     { VK_NUMPAD1, '1', '1', '1', '1', '1' },
     { VK_NUMPAD2, '2', '2', '2', '2', '2' },
@@ -118,55 +136,56 @@ static const keytable keyTable[] = {
     { VK_NUMPAD7, '7', '7', '7', '7', '7' },
     { VK_NUMPAD8, '8', '8', '8', '8', '8' },
     { VK_NUMPAD9, '9', '9', '9', '9', '9' },
-    { VK_MULTIPLY,'*', '*', '*', '*', '*' },
-    { VK_ADD    ,'+', '+', '+', '+', '+' },
-    { VK_SEPARATOR, -1,-1,-1,-1,-1 },
-    { VK_SUBTRACT,'-', '-', '-', '-', '-' },
-    { VK_DECIMAL,'.', '.', '.', '.', '.' },
-    { VK_DIVIDE,'/', '/', '/', '/', '/' },
-    { VK_F1     , VI_KEY( F1 ), VI_KEY( SHIFT_F1 ), VI_KEY( CTRL_F1 ), 0, 0 },
-    { VK_F2     , VI_KEY( F2 ), VI_KEY( SHIFT_F2 ), VI_KEY( CTRL_F2 ), 0, 0 },
-    { VK_F3     , VI_KEY( F3 ), VI_KEY( SHIFT_F3 ), VI_KEY( CTRL_F3 ), 0, 0 },
-    { VK_F4     , VI_KEY( F4 ), VI_KEY( SHIFT_F4 ), VI_KEY( CTRL_F4 ), 0, 0 },
-    { VK_F5     , VI_KEY( F5 ), VI_KEY( SHIFT_F5 ), VI_KEY( CTRL_F5 ), 0, 0 },
-    { VK_F6     , VI_KEY( F6 ), VI_KEY( SHIFT_F6 ), VI_KEY( CTRL_F6 ), 0, 0 },
-    { VK_F7     , VI_KEY( F7 ), VI_KEY( SHIFT_F7 ), VI_KEY( CTRL_F7 ), 0, 0 },
-    { VK_F8     , VI_KEY( F8 ), VI_KEY( SHIFT_F8 ), VI_KEY( CTRL_F8 ), 0, 0 },
-    { VK_F9     , VI_KEY( F9 ), VI_KEY( SHIFT_F9 ), VI_KEY( CTRL_F9 ), 0, 0 },
-    { VK_F10    , VI_KEY( F10 ), VI_KEY( SHIFT_F10 ), VI_KEY( CTRL_F10 ), 0, 0 },
-    { VK_F11    ,-1,-1,-1,-1,-1},
-    { VK_F12    ,-1,-1,-1,-1,-1},
-    { VK_F13    ,-1,-1,-1,-1,-1},
-    { VK_F14    ,-1,-1,-1,-1,-1},
-    { VK_F15    ,-1,-1,-1,-1,-1},
-    { VK_F16    ,-1,-1,-1,-1,-1},
-    { VK_F17    ,-1,-1,-1,-1,-1},
-    { VK_F18    ,-1,-1,-1,-1,-1},
-    { VK_F19    ,-1,-1,-1,-1,-1},
-    { VK_F20    ,-1,-1,-1,-1,-1},
-    { VK_F21    ,-1,-1,-1,-1,-1},
-    { VK_F22    ,-1,-1,-1,-1,-1},
-    { VK_F23    ,-1,-1,-1,-1,-1},
-    { VK_F24    ,-1,-1,-1,-1,-1},
-    { VK_NUMLOCK,-1,-1,-1,-1,-1},
-    { VK_SCROLL, -1,-1,-1,-1,-1},
+    { VK_MULTIPLY, '*', '*', '*', '*', '*' },
+    { VK_ADD, '+', '+', '+', '+', '+' },
+    { VK_SEPARATOR, -1, -1, -1, -1, -1 },
+    { VK_SUBTRACT, '-', '-', '-', '-', '-' },
+    { VK_DECIMAL, '.', '.', '.', '.', '.' },
+    { VK_DIVIDE, '/', '/', '/', '/', '/' },
+    { VK_F1, VI_KEY( F1 ), VI_KEY( SHIFT_F1 ), VI_KEY( CTRL_F1 ), 0, 0 },
+    { VK_F2, VI_KEY( F2 ), VI_KEY( SHIFT_F2 ), VI_KEY( CTRL_F2 ), 0, 0 },
+    { VK_F3, VI_KEY( F3 ), VI_KEY( SHIFT_F3 ), VI_KEY( CTRL_F3 ), 0, 0 },
+    { VK_F4, VI_KEY( F4 ), VI_KEY( SHIFT_F4 ), VI_KEY( CTRL_F4 ), 0, 0 },
+    { VK_F5, VI_KEY( F5 ), VI_KEY( SHIFT_F5 ), VI_KEY( CTRL_F5 ), 0, 0 },
+    { VK_F6, VI_KEY( F6 ), VI_KEY( SHIFT_F6 ), VI_KEY( CTRL_F6 ), 0, 0 },
+    { VK_F7, VI_KEY( F7 ), VI_KEY( SHIFT_F7 ), VI_KEY( CTRL_F7 ), 0, 0 },
+    { VK_F8, VI_KEY( F8 ), VI_KEY( SHIFT_F8 ), VI_KEY( CTRL_F8 ), 0, 0 },
+    { VK_F9, VI_KEY( F9 ), VI_KEY( SHIFT_F9 ), VI_KEY( CTRL_F9 ), 0, 0 },
+    { VK_F10, VI_KEY( F10 ), VI_KEY( SHIFT_F10 ), VI_KEY( CTRL_F10 ), 0, 0 },
+    { VK_F11, -1, -1, -1, -1, -1 },
+    { VK_F12, -1, -1, -1, -1, -1 },
+    { VK_F13, -1, -1, -1, -1, -1 },
+    { VK_F14, -1, -1, -1, -1, -1 },
+    { VK_F15, -1, -1, -1, -1, -1 },
+    { VK_F16, -1, -1, -1, -1, -1 },
+    { VK_F17, -1, -1, -1, -1, -1 },
+    { VK_F18, -1, -1, -1, -1, -1 },
+    { VK_F19, -1, -1, -1, -1, -1 },
+    { VK_F20, -1, -1, -1, -1, -1 },
+    { VK_F21, -1, -1, -1, -1, -1 },
+    { VK_F22, -1, -1, -1, -1, -1 },
+    { VK_F23, -1, -1, -1, -1, -1 },
+    { VK_F24, -1, -1, -1, -1, -1 },
+    { VK_NUMLOCK, -1, -1, -1, -1, -1 },
+    { VK_SCROLL, -1, -1, -1, -1, -1 },
     /* new table */
 };
-#define KEYTABLE_LENGTH  ( sizeof( keyTable ) / sizeof( keytable ) )
-#define KEYTABLE_WIDTH   ( sizeof( keytable ) )
+#define KEYTABLE_LENGTH  (sizeof( keyTable ) / sizeof( keytable ))
+#define KEYTABLE_WIDTH   sizeof( keytable )
 
 bool ShiftDown( void )
 {
-    return( ( GetKeyState( VK_SHIFT ) & ~0x01 ) != 0 );
+    return( (GetKeyState( VK_SHIFT ) & ~0x01) != 0 );
 }
 
-bool CapsDown( void ){
-    return( ( GetKeyState( VK_CAPITAL ) & 0x01 ) != 0  );
+bool CapsDown( void )
+{
+    return( (GetKeyState( VK_CAPITAL ) & 0x01) != 0  );
 }
 
 bool CtrlDown( void )
 {
-    return( ( GetKeyState( VK_CONTROL ) & ~0x01 ) != 0 );
+    return( (GetKeyState( VK_CONTROL ) & ~0x01) != 0 );
 }
 
 /*
@@ -176,35 +195,37 @@ bool CtrlDown( void )
  */
 bool AltDown( void )
 {
-    return( ( GetKeyState( VK_MENU ) & ~0x01 ) != 0 );
+    return( (GetKeyState( VK_MENU ) & ~0x01) != 0 );
 }
 
 int ConvertWierdCharacter( WORD vk, WORD data )
 {
-    unsigned char keyboard_state[256];
-    unsigned int scancode = LOBYTE( data );
-    #if defined(__NT__)
-        WORD    newkey;
-    #else
-        DWORD   newkey;
-    #endif
+    unsigned char   keyboard_state[256];
+    unsigned int    scancode = LOBYTE( data );
+#if defined( __NT__ )
+    WORD            newkey;
+#else
+    DWORD           newkey;
+#endif
 
     GetKeyboardState( keyboard_state );
-    if (ToAscii( vk, scancode, keyboard_state, &newkey, FALSE ) == 0) return 0;
+    if( ToAscii( vk, scancode, keyboard_state, &newkey, FALSE ) == 0 ) {
+        return( 0 );
+    }
 
     return( (char)newkey );
 }
 
 int MapVirtualKeyToVIKey( WORD vk, WORD data )
 {
-    int     t, ch;
+    int         t, ch;
     bool        altdown, shiftdown, ctrldown, capsdown;
-    keytable *key;
+    keytable    *key;
 
-    shiftdown = ( GetKeyState( VK_SHIFT ) & ~0x01 ) != 0;
-    capsdown  = ( GetKeyState( VK_CAPITAL ) & 0x01 );
-    ctrldown  = ( GetKeyState( VK_CONTROL ) & ~0x01 ) != 0;
-    altdown   = ( GetKeyState( VK_MENU ) & ~0x01 ) != 0;
+    shiftdown = (GetKeyState( VK_SHIFT ) & ~0x01) != 0;
+    capsdown  = (GetKeyState( VK_CAPITAL ) & 0x01);
+    ctrldown  = (GetKeyState( VK_CONTROL ) & ~0x01) != 0;
+    altdown   = (GetKeyState( VK_MENU ) & ~0x01) != 0;
 
     // don't touch anything when alt down because we'll screw up
     // menu accelerators etc.
@@ -220,7 +241,9 @@ int MapVirtualKeyToVIKey( WORD vk, WORD data )
         if( ctrldown && altdown ) {
             ch = ConvertWierdCharacter( vk, data );
             // check if found no translation:
-            if (ch == 0) return( -1 );
+            if( ch == 0 ) {
+                return( -1 );
+            }
         } else if( ctrldown ) {
             ch = VI_KEY( CTRL_A ) + t;
         } else if( shiftdown && capsdown ) {
@@ -267,9 +290,9 @@ bool WindowsKeyPush( WORD vk, WORD data )
     }
     ch = MapVirtualKeyToVIKey( vk, data );
     if( ch != -1 ) {
-        keyBuffer[ bufferTop ].ch = ch;
-        keyBuffer[ bufferTop ].scan = LOBYTE( data );
-        bufferTop = ( bufferTop + 1 ) % KEY_BUFFER_SIZE;
+        keyBuffer[bufferTop].ch = ch;
+        keyBuffer[bufferTop].scan = LOBYTE( data );
+        bufferTop = (bufferTop + 1) % KEY_BUFFER_SIZE;
         return( TRUE );
     }
     return( FALSE );
@@ -299,11 +322,11 @@ int GetKeyboard( int *scan )
 {
     int     ch;
 
-    ch = keyBuffer[ bufferBottom ].ch;
+    ch = keyBuffer[bufferBottom].ch;
     if( scan ) {
-        *scan = keyBuffer[ bufferBottom ].scan;
+        *scan = keyBuffer[bufferBottom].scan;
     }
-    bufferBottom = ( bufferBottom + 1 ) % KEY_BUFFER_SIZE;
+    bufferBottom = (bufferBottom + 1) % KEY_BUFFER_SIZE;
     return( ch );
 
 } /* GetKeyboard */

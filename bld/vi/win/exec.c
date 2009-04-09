@@ -38,8 +38,8 @@ static BOOL     doneExec;
 static HMODULE  moduleHandle;
 static HMODULE  instanceHandle;
 
-#define MODULE_FROM_TASK( t )  (*( (WORD far *) MK_FP( (t), 0x1e ) ))
-#define INSTANCE_FROM_TASK( t ) (*( (WORD far *) MK_FP( (t), 0x1c ) ))
+#define MODULE_FROM_TASK( t )   (*((WORD far *) MK_FP( (t), 0x1e )))
+#define INSTANCE_FROM_TASK( t ) (*((WORD far *) MK_FP( (t), 0x1c )))
 
 BOOL WINEXP NotifyHandler( WORD id, DWORD data )
 {
@@ -67,14 +67,14 @@ int MySpawn( char *cmd )
     FARPROC             proc;
     HANDLE              inst;
     cmd_struct          cmds;
-    char                path[ FILENAME_MAX ];
+    char                path[FILENAME_MAX];
 #ifndef __WINDOWS_386__
-    char                buffer[ FILENAME_MAX ];
+    char                buffer[FILENAME_MAX];
 #endif
     int                 rc;
 
     GetSpawnCommandLine( path, cmd, &cmds );
-    cmds.cmd[ cmds.len ] = 0;
+    cmds.cmd[cmds.len] = 0;
     proc = MakeProcInstance( (FARPROC)NotifyHandler, InstanceHandle );
     if( !NotifyRegister( (HANDLE)NULL, (LPFNNOTIFYCALLBACK)proc, NF_NORMAL ) ) {
         FreeProcInstance( proc );
@@ -87,16 +87,16 @@ int MySpawn( char *cmd )
         union REGS in_regs, out_regs;
 
         doneExec = FALSE;
-        #ifdef __WINDOWS_386__
-            moduleHandle = GetModuleHandle( PASS_WORD_AS_POINTER( inst ) );
-        #else
-            GetModuleFileName( inst, buffer, FILENAME_MAX -1 );
-            moduleHandle = GetModuleHandle( buffer );
-        #endif
+#ifdef __WINDOWS_386__
+        moduleHandle = GetModuleHandle( PASS_WORD_AS_POINTER( inst ) );
+#else
+        GetModuleFileName( inst, buffer, FILENAME_MAX - 1 );
+        moduleHandle = GetModuleHandle( buffer );
+#endif
 
         // waiting doesn't work under win-os2 so don't wait!
-        in_regs.h.ah=0x30;
-        in_regs.h.al=0x0;
+        in_regs.h.ah = 0x30;
+        in_regs.h.al = 0x0;
         intdos( &in_regs, &out_regs );
         if( out_regs.h.al == 20 ) {
             doneExec = TRUE;

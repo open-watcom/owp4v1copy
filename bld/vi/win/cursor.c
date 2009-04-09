@@ -154,20 +154,20 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
         // if( thisLine == CurrentLine ){
             int real_left = RealCursorPosition( LeftTopPos.column + 1 );
             old_col = col;
-            col = RealCursorPosition( col+1 ) - real_left;
+            col = RealCursorPosition( col + 1 ) - real_left;
 
             // kludge! - Real Cursor position refuses to say cursor is to right
             //           of last character like it ought to when Modeless
-            if( CursorPositionOffRight( old_col+1 ) &&
-                (EditFlags.Modeless==FALSE) ){
+            if( CursorPositionOffRight( old_col + 1 ) &&
+                (EditFlags.Modeless == FALSE) ) {
                  col++;
             }
 
-        //} else {
-            // int real_left = RealCursorPositionOnLine(thisLine, LeftColumn+1 );
+        // } else {
+            // int real_left = RealCursorPositionOnLine( thisLine, LeftColumn + 1 );
             // old_col = col;
-            // col = RealCursorPositionOnLine(thisLine, col+1 ) - real_left;
-        //}
+            // col = RealCursorPositionOnLine( thisLine, col + 1 ) - real_left;
+        // }
     }
 
 
@@ -178,12 +178,12 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
 
     // handle cursor being off the right of text
     if( ss->end == BEYOND_TEXT ) {
-        *width = FontAverageWidth( SEType[ ss->type ].font );
+        *width = FontAverageWidth( SEType[ss->type].font );
         if( ss == ss_start ) {
             *x = (*width) * col;
         } else {
             ss_prev = ss - 1;
-            *x = ( (*width) * ( col - ss_prev->end - 1 ) ) + ss_prev->offset;
+            *x = ((*width) * (col - ss_prev->end - 1)) + ss_prev->offset;
         }
         return( 0 );
     }
@@ -218,22 +218,22 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
             // but niether will the drawing routines, so not to worry (yet)
 
             // Is there a tab in the current block ?
-            end_str = cur_pos = str+len;
+            end_str = cur_pos = str + len;
             while( *(--cur_pos) != '\t' ){
                 if(cur_pos == str){
-                    no_tab=TRUE;
+                    no_tab = TRUE;
                     break;
                 }
             }
 
             // if so, figure out where the last tab stop is.
-            if( no_tab == FALSE ){
+            if( no_tab == FALSE ) {
 
                 // dist is the virtual curpos - the number of chars before
                 // the first tab. this should be the tab boundry.
-                int dist = (old_col+1) - (end_str-cur_pos);
+                int dist = (old_col + 1) - (end_str - cur_pos);
                 // unless the end_str was also a tab, So we round down.
-                left = ( dist - (dist%HardTab) - LeftTopPos.column ) *avg_width;
+                left = (dist - (dist % HardTab) - LeftTopPos.column) * avg_width;
 
                 cur_pos++;
             }
@@ -250,7 +250,7 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
         // ... and find the position and width of the cursor.
         if( *end_str == '\t' ){
             // in strange case, tab may start before end of prev string
-            end_tab = (old_col - LeftTopPos.column + 1 )*avg_width;
+            end_tab = (old_col - LeftTopPos.column + 1) * avg_width;
             *x = min( left + extent, end_tab );
             *width = max( end_tab - *x, 1 );
             funny = 0;
@@ -258,7 +258,7 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
             *x = left + extent;
             *width = MyTextExtent( hwnd, this_style, cur_pos,
                                    end_str - cur_pos + 1 ) - extent;
-            funny = (*width)/2;
+            funny = (*width) / 2;
         }
     } else {
         type_style *this_style = &SEType[ss->type];
@@ -268,9 +268,9 @@ static int getCursorInfo( HWND hwnd, int row, int col, int *x, int *width )
         if( ss != ss_start ) {
             *x += ss_prev->offset;
         }
-        funny = (*width)/2;
+        funny = (*width) / 2;
     }
-    if( FontIsFunnyItalic( SEType[ ss->type ].font ) ){
+    if( FontIsFunnyItalic( SEType[ss->type].font ) ) {
         return( funny );
     } else {
         return( 0 );
@@ -307,7 +307,7 @@ static void setCursorOnScreen( int row, int col )
     funny = getCursorInfo( CurrentWindow, row, col, &x, &width );
     w = WINDOW_FROM_ID( CurrentWindow );
     y = row * FontHeight( WIN_FONT( w ) ) - cursorHeight;
-    width = (long) width * cursorType.width /100L;
+    width = (long) width * cursorType.width / 100L;
     if( cursorWidth != width ) {
         MyHideCaret( CurrentWindow );
         DestroyCaret();
@@ -315,14 +315,15 @@ static void setCursorOnScreen( int row, int col )
         cursorWidth = width;
     }
     // adjust position for italic sillyness
-    SetCaretPos( x - funny , y );
+    SetCaretPos( x - funny, y );
     MyShowCaret( CurrentWindow );
+
 } /* setCursorOnScreen */
 
 /*
  * SetCursorOnLine - set cursor at specified column in single line text string
  */
-void SetCursorOnLine( window_id id, int col, char *str , type_style *style)
+void SetCursorOnLine( window_id id, int col, char *str, type_style *style )
 {
     window      *w;
     int         x, y;
@@ -334,7 +335,7 @@ void SetCursorOnLine( window_id id, int col, char *str , type_style *style)
     w = WINDOW_FROM_ID( id );
     // y = FontHeight( WIN_FONT( w ) ) - cursorHeight;
 
-    x = MyTextExtent( id, style, str, col-1 );
+    x = MyTextExtent( id, style, str, col - 1 );
     width = MyTextExtent( id, style, str, col ) - x;
 
     /* adjust so that Insert cursor is 0 width
@@ -358,9 +359,10 @@ void SetGenericWindowCursor( window_id id, int row, int col )
     // setCursorOnScreen calls functions which are not generic
     // ie) they only work on the current window! Therefore
     // this routine does not do what the name implies!!!
-    id=id;
+    id = id;
 
     setCursorOnScreen( row, col );
+
 } /* SetGenericWindowCursor */
 
 /*
@@ -380,7 +382,8 @@ void ResetEditWindowCursor( window_id id )
 
     // position cursor in edit window
     SetWindowCursor();
-}
+
+} /* ResetEditWindowCursor */
 
 /*
  * MyShowCaret - ShowCaret w/o additive effects
@@ -391,7 +394,8 @@ void MyShowCaret( window_id id )
         ShowCaret( id );
         caretDisplayed = TRUE;
     }
-}
+
+} /* MyShowCaret */
 
 /*
  * MyHideCaret - HideCaret w/o additive effects
@@ -402,7 +406,8 @@ void MyHideCaret( window_id id )
         HideCaret( id );
         caretDisplayed = FALSE;
     }
-}
+
+} /* MyHideCaret */
 
 void MyKillCaret( window_id id )
 {

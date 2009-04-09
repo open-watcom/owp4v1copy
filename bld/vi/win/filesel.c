@@ -78,7 +78,8 @@ BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
             len = SendDlgItemMessage( hwnd, edt1, WM_GETTEXTLENGTH, 0, 0 );
             if( len >= of->nMaxFile ) {
                 FileNameList = MemAlloc( len + 1 );
-                len = SendDlgItemMessage( hwnd, edt1, WM_GETTEXT, len+1, (LPARAM)FileNameList );
+                len = SendDlgItemMessage( hwnd, edt1, WM_GETTEXT, len + 1,
+                                          (LPARAM)FileNameList );
             }
         }
         break;
@@ -89,7 +90,7 @@ BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 /*
  * SelectFileOpen - use common dialog file open to pick a file to edit
  */
-int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
+int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs )
 {
     OPENFILENAME        of;
     BOOL                rc;
@@ -102,7 +103,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     bool is_chicago = FALSE;
 
     ver = GetVersion();
-    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+    if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
         is_chicago = TRUE;
     }
     /* -------------------------------------------------------- */
@@ -110,7 +111,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
 
     mask = mask;
     want_all_dirs = want_all_dirs;
-    *result[ 0 ] = 0;
+    *result[0] = 0;
     memset( &of, 0, sizeof( OPENFILENAME ) );
     of.lStructSize = sizeof( OPENFILENAME );
     of.hwndOwner = Root;
@@ -133,7 +134,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
                    OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY;
 #endif
         of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
-                          InstanceHandle );
+                                                        InstanceHandle );
 #ifdef __NT__
     }
 #endif
@@ -173,7 +174,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
 int SelectFileSave( char *result )
 {
     OPENFILENAME        of;
-    int doit;
+    int                 doit;
 
     assert( CurrentFile != NULL );
 
@@ -189,19 +190,19 @@ int SelectFileSave( char *result )
     of.lpstrTitle = NULL;
     of.lpstrInitialDir = CurrentFile->home;
 #ifdef __NT__
-    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+    if( LOBYTE( LOWORD( GetVersion() ) ) >= 4 ) {
         of.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT |
-               OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
+                   OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
     } else {
         of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
-               OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
+                   OFN_HIDEREADONLY | OFN_NOREADONLYRETURN | OFN_EXPLORER;
     }
 #else
     of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK | OFN_OVERWRITEPROMPT |
                OFN_HIDEREADONLY | OFN_NOREADONLYRETURN;
 #endif
     of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
-                      InstanceHandle );
+                                                    InstanceHandle );
     doit = GetSaveFileName( &of );
 #ifndef __NT__
     FreeProcInstance( (FARPROC) of.lpfnHook );

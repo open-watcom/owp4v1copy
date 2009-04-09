@@ -43,23 +43,23 @@
 #include "vi.h"
 #include <dos.h>
 
-#if defined(__NT__)
+#if defined( __NT__ )
 
 #define _HUGE_
 #define GET_POINTER( a, b ) (&a[b])
-#define INC_POINTER( a ) (a++)
+#define INC_POINTER( a )    (a++)
 
-#elif defined(__WINDOWS_386__)
+#elif defined( __WINDOWS_386__ )
 
-#define _HUGE_  __far
-#define GET_POINTER( a, b ) getHugePointer( a,b )
-#define INC_POINTER( a ) (a = getHugePointer( a, 1 ))
+#define _HUGE_              __far
+#define GET_POINTER( a, b ) getHugePointer( a, b )
+#define INC_POINTER( a )    (a = getHugePointer( a, 1 ))
 
 #else
 
-#define _HUGE_  __huge
+#define _HUGE_              __huge
 #define GET_POINTER( a, b ) (&a[b])
-#define INC_POINTER( a ) (a++)
+#define INC_POINTER( a )    (a++)
 
 #endif
 
@@ -130,7 +130,7 @@ int AddLineToClipboard( char *data, int scol, int ecol )
     /*
      * get memory for line
      */
-    len = ecol - scol+2;
+    len = ecol - scol + 2;
     hglob = GlobalAlloc( GMEM_MOVEABLE, len );
     if( hglob == NULL ) {
         CloseClipboard();
@@ -146,8 +146,8 @@ int AddLineToClipboard( char *data, int scol, int ecol )
     /*
      * copy line data and put to clipboard
      */
-    MEMCPY( ptr, &data[scol], len-1 );
-    ptr[len-1] = 0;
+    MEMCPY( ptr, &data[scol], len - 1 );
+    ptr[len - 1] = 0;
     GlobalUnlock( hglob );
     SetClipboardData( CF_TEXT, hglob );
     CloseClipboard();
@@ -167,7 +167,7 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
     long                size;
     int                 i;
     GLOBALHANDLE        hglob;
-    BOOL crlf_left_to_write = 0;
+    BOOL                crlf_left_to_write = 0;
 
     if( !openClipboardForWrite() ) {
         return( ERR_CLIPBOARD );
@@ -211,7 +211,7 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
         cline = cfcb->line_head;
         while( cline != NULL ) {
             // one CRLF left to write?
-            if (crlf_left_to_write)
+            if( crlf_left_to_write )
             {
                 // yes: write it
                 crlf_left_to_write = 0;
@@ -220,7 +220,7 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
                 *ptr = LF;
                 INC_POINTER( ptr );
             }
-            for( i=0;i<cline->len;i++ ) {
+            for( i = 0; i < cline->len; i++ ) {
                 *ptr = cline->data[i];
                 INC_POINTER( ptr );
             }
@@ -253,7 +253,7 @@ static int addAnFcb( fcb **head, fcb **tail, int numbytes )
     int         used;
 
     cfcb = FcbAlloc( NULL );
-    AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)cfcb );
+    AddLLItemAtEnd( (ss **)head, (ss **)tail, (ss *)cfcb );
     CreateLinesFromBuffer( numbytes, &(cfcb->line_head),
             &(cfcb->line_tail), &used, &linecnt,
             &(cfcb->byte_cnt) );
@@ -262,7 +262,7 @@ static int addAnFcb( fcb **head, fcb **tail, int numbytes )
     } else {
         cfcb->start_line = (*tail)->prev->end_line + 1;
     }
-    cfcb->end_line = cfcb->start_line + linecnt-1;
+    cfcb->end_line = cfcb->start_line + linecnt - 1;
     return( used );
 
 } /* addAnFcb */
@@ -276,7 +276,7 @@ int GetClipboardSavebuf( savebuf *clip )
     GLOBALHANDLE        hglob;
     char                _HUGE_ *ptr;
     char                _HUGE_ *cpos;
-    fcb                 *head,*tail;
+    fcb                 *head, *tail;
     int                 i;
     bool                is_flushed;
     bool                has_lf;
@@ -333,7 +333,7 @@ int GetClipboardSavebuf( savebuf *clip )
         if( !is_flushed && !has_lf ) {
             clip->type = SAVEBUF_LINE;
             ReadBuffer[i] = 0;
-            clip->first.data = MemAlloc( i+1 );
+            clip->first.data = MemAlloc( i + 1 );
             strcpy( clip->first.data, ReadBuffer );
             record_done = TRUE;
         } else {

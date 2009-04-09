@@ -42,18 +42,18 @@
 
 #define NUM_ACROSS      8
 #define NUM_DOWN        8
-#define NUM_COLOURS     ( NUM_ACROSS * NUM_DOWN )
+#define NUM_COLOURS     (NUM_ACROSS * NUM_DOWN)
 
 #define WIDTH           15
 #define HEIGHT          15
 
 #define SPC             2
-#define INDEX_FROM_XY( x, y )   ( (y) * NUM_ACROSS + (x) )
-#define COLOUR_FROM_XY( x, y )  ( RGBValues[ INDEX_FROM_XY( x, y ) ] )
+#define INDEX_FROM_XY( x, y )   ((y) * NUM_ACROSS + (x))
+#define COLOUR_FROM_XY( x, y )  (RGBValues[INDEX_FROM_XY( x, y )])
 
-extern  HWND hColorbar;
-int     Width;
-int     Height;
+extern HWND hColorbar;
+int         Width;
+int         Height;
 
 
 typedef enum NewColourOps {
@@ -62,7 +62,7 @@ typedef enum NewColourOps {
 } NewColourOps;
 
 static int              cursx = 0, cursy = 0;
-static COLORREF         RGBValues[ NUM_COLOURS ];
+static COLORREF         RGBValues[NUM_COLOURS];
 static bool             haveCapture = FALSE;
 static HWND             mod_hwnd;
 static POINT            m_pt;
@@ -72,7 +72,7 @@ static void sendNewColourToolbar( void )
     /* toolbar has no text_style data in w_info format - change directly
     */
     ToolBarColor = INDEX_FROM_XY( cursx, cursy );
-    ToolBarChangeSysColors( RGBValues[ ToolBarColor ],
+    ToolBarChangeSysColors( RGBValues[ToolBarColor],
                             GetSysColor( COLOR_BTNHIGHLIGHT ),
                             GetSysColor( COLOR_BTNSHADOW ) );
     /* also redraw seperately
@@ -98,7 +98,9 @@ static void sendNewColourCurrentWindow( NewColourOps op )
     /* someone is base 0, someone else isn't.  bummer.
      * also col may not be valid, check this
     */
-    if( col < 1 ) return;
+    if( col < 1 ) {
+        return;
+    }
     col--;
 
     // SStyle expect real not virtual columns!
@@ -122,16 +124,16 @@ static void sendNewColourCurrentWindow( NewColourOps op )
                 continue;
             }
             if( op == NC_FORE ) {
-                SEType[ i ].foreground = color;
+                SEType[i].foreground = color;
             } else {
-                SEType[ i ].background = color;
+                SEType[i].background = color;
             }
         }
     } else {
         if( op == NC_FORE ) {
-            SEType[ style ].foreground = color;
+            SEType[style].foreground = color;
         } else {
-            SEType[ style ].background = color;
+            SEType[style].background = color;
         }
     }
     ReDisplayScreen();
@@ -150,14 +152,14 @@ static void sendNewColour( NewColourOps op )
     } else if( mod_hwnd == CurrentWindow ) {
         sendNewColourCurrentWindow( op );
     } else {
-        mod_style = ( &( WINDOW_FROM_ID( mod_hwnd )->info->text ) );
+        mod_style = ( &(WINDOW_FROM_ID( mod_hwnd )->info->text) );
         if( op == NC_FORE ) {
             mod_style->foreground = INDEX_FROM_XY( cursx, cursy );
         } else {
             mod_style->background = INDEX_FROM_XY( cursx, cursy );
         }
-        StatusWndChangeSysColors( RGBValues[ statusw_info.text.background ],
-                                  RGBValues[ statusw_info.text.foreground ],
+        StatusWndChangeSysColors( RGBValues[statusw_info.text.background],
+                                  RGBValues[statusw_info.text.foreground],
                                   GetSysColor( COLOR_BTNHIGHLIGHT ),
                                   GetSysColor( COLOR_BTNSHADOW ) );
         ReDisplayScreen();
@@ -200,21 +202,21 @@ static void drawUnselected( HDC hdc, int x, int y )
 
     rect.left = 0;
     rect.top = 0;
-    rect.right = WIDTH*NUM_ACROSS;
-    rect.bottom = HEIGHT*NUM_DOWN;
+    rect.right = WIDTH * NUM_ACROSS;
+    rect.bottom = HEIGHT * NUM_DOWN;
     MapDialogRect( hColorbar, &rect );
 
-    Width = (rect.right - rect.left)/ NUM_ACROSS;
-    Height = (rect.bottom - rect.top)/ NUM_DOWN;
+    Width = (rect.right - rect.left) / NUM_ACROSS;
+    Height = (rect.bottom - rect.top) / NUM_DOWN;
 
 
     rect.left = x * Width + SPC;
     rect.top = y * Height + SPC;
-    rect.right = ( x + 1 ) * Width - SPC;
-    rect.bottom = ( y + 1 ) * Height - SPC;
+    rect.right = (x + 1) * Width - SPC;
+    rect.bottom = (y + 1) * Height - SPC;
     // MapDialogRect( hColorbar, &rect );
 
-    nearest = GetNearestColor( hdc, RGBValues[ y * NUM_ACROSS + x ] );
+    nearest = GetNearestColor( hdc, RGBValues[y * NUM_ACROSS + x] );
     hColourBrush = CreateSolidBrush( nearest );
     FillRect( hdc, &rect, hColourBrush );
     drawFocus( hdc, &rect, FALSE );
@@ -228,8 +230,8 @@ static void drawSelected( HDC hdc, int x, int y )
 
     rect.left = x * Width + SPC;
     rect.top = y * Height + SPC;
-    rect.right = ( x + 1 ) * Width - SPC;
-    rect.bottom = ( y + 1 ) * Height - SPC;
+    rect.right = (x + 1) * Width - SPC;
+    rect.bottom = (y + 1) * Height - SPC;
 
     drawFocus( hdc, &rect, TRUE );
 }
@@ -258,7 +260,7 @@ static void initRGBValues( void )
 
     for( i = 0; i < NUM_COLOURS; i++ ) {
         GetColorSetting( i, &tcol );
-        RGBValues[ i ] = RGB( tcol.red, tcol.green, tcol.blue );
+        RGBValues[i] = RGB( tcol.red, tcol.green, tcol.blue );
     }
 }
 
@@ -272,8 +274,8 @@ static long gotoNewBlock( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     hdc = GetDC( hwnd );
     drawUnselected( hdc, cursx, cursy );
 
-    cursx = min( (signed_16)( LOWORD( lparam ) / Width ), NUM_ACROSS - 1);
-    cursy = min( (signed_16)( HIWORD( lparam ) / Height ), NUM_DOWN - 1 );
+    cursx = min( (signed_16)(LOWORD( lparam ) / Width), NUM_ACROSS - 1 );
+    cursy = min( (signed_16)(HIWORD( lparam ) / Height), NUM_DOWN - 1 );
 
     drawSelected( hdc, cursx, cursy );
     ReleaseDC( hwnd, hdc );
@@ -289,7 +291,7 @@ static long gotoNewBlock( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 
 static int eitherButtonDown( UINT w )
 {
-    return( (w&MK_RBUTTON)||(w&MK_LBUTTON) );
+    return( (w & MK_RBUTTON) || (w & MK_LBUTTON) );
 }
 
 
@@ -304,7 +306,7 @@ static long selectedNewColour( HWND hwnd, NewColourOps op, UINT wparam )
     CursorOp( COP_ARROW );
     ReleaseCapture();
     haveCapture = FALSE;
-    if( !eitherButtonDown( wparam ) ){
+    if( !eitherButtonDown( wparam ) ) {
         sendNewColour( op );
     }
     return( 0 );
@@ -331,8 +333,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         return( 0 );
     }
 
-    /* otherwise, figure out what we're over & change element display
-    */
+    // otherwise, figure out what we're over & change element display
     mod_hwnd = GetOwnedWindow( m_pt );
     if( mod_hwnd != NULL ) {
         CursorOp( COP_DROPCLR );
@@ -386,7 +387,7 @@ void InitClrPick( void )
     wndclass.hInstance          = InstanceHandle;
     wndclass.hIcon              = (HICON)NULL;
     wndclass.hCursor            = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
-    wndclass.hbrBackground      = (HBRUSH) ( COLOR_APPWORKSPACE );
+    wndclass.hbrBackground      = (HBRUSH) COLOR_APPWORKSPACE;
     wndclass.lpszMenuName       = NULL;
     wndclass.lpszClassName      = "ClrPick";
 

@@ -119,10 +119,10 @@ window_id NewFileCompleteWindow( void )
     p.y = size->top;
     ClientToScreen( Root, &p );
     dir = CreateWindow( ClassName, "File Complete",
-        WS_POPUPWINDOW | WS_CLIPSIBLINGS | WS_BORDER,
-        p.x, p.y,
-        size->right - size->left, size->bottom - size->top, Root,
-        (HMENU)NULL, InstanceHandle, NULL );
+                        WS_POPUPWINDOW | WS_CLIPSIBLINGS | WS_BORDER,
+                        p.x, p.y,
+                        size->right - size->left, size->bottom - size->top, Root,
+                        (HMENU)NULL, InstanceHandle, NULL );
     ShowWindow( dir, SW_SHOWNORMAL );
     UpdateWindow( dir );
     return( dir );

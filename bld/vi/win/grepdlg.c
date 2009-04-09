@@ -35,8 +35,8 @@
 #include "keys.h"
 
 static DLGPROC  grepProc;
-static HWND grepHwnd;
-static bool cancelPressed;
+static HWND     grepHwnd;
+static bool     cancelPressed;
 
 /*
  * GrepDlgProc - callback routine for grep dialog
@@ -46,19 +46,19 @@ BOOL WINEXP GrepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     lparam = lparam;
     switch( msg ) {
     case WM_INITDIALOG:
-    return( TRUE );
+        return( TRUE );
     case WM_CLOSE:
         PostMessage( hwnd, WM_COMMAND, GET_WM_COMMAND_MPS( IDCANCEL, 0, 0 ) );
-    return( TRUE );
+        return( TRUE );
     case WM_COMMAND:
-    switch( LOWORD( wparam ) ) {
-    case IDCANCEL:
-        cancelPressed = TRUE;
-        break;
-    default:
-        return( FALSE );
-    }
-    return( TRUE );
+        switch( LOWORD( wparam ) ) {
+        case IDCANCEL:
+            cancelPressed = TRUE;
+            break;
+        default:
+            return( FALSE );
+        }
+        return( TRUE );
     }
     return( FALSE );
 
@@ -83,7 +83,7 @@ void FiniGrepDialog( void )
     BringWindowToTop( Root );
     SetFocus( Root );
     if( grepHwnd != NULL ) {
-    DestroyWindow( grepHwnd );
+        DestroyWindow( grepHwnd );
     }
 #ifndef __NT__
     (void)FreeProcInstance( (FARPROC) grepProc );
@@ -99,8 +99,8 @@ void FiniGrepDialog( void )
 bool SetGrepDialogFile( char *str )
 {
     if( grepHwnd != NULL ) {
-    SetDlgItemText( grepHwnd, GREP_CURRENT_FILE, str );
-    MessageLoop( FALSE );
+        SetDlgItemText( grepHwnd, GREP_CURRENT_FILE, str );
+        MessageLoop( FALSE );
     }
     return( cancelPressed );
 

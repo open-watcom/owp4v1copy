@@ -39,21 +39,21 @@ typedef struct color {
     HPEN        pen;
 } color;
 
-static color colorData[ MAX_COLORS ];
+static color colorData[MAX_COLORS];
 
 long ColorRGB( vi_color color )
 {
-    return( colorData[ color ].rgb );
+    return( colorData[color].rgb );
 }
 
 HBRUSH ColorBrush( vi_color color )
 {
-    return( colorData[ color ].brush );
+    return( colorData[color].brush );
 }
 
 HPEN ColorPen( vi_color color )
 {
-    return( colorData[ color ].pen );
+    return( colorData[color].pen );
 }
 
 static void NewColor( vi_color index, long rgb )
@@ -64,7 +64,7 @@ static void NewColor( vi_color index, long rgb )
     HDC         hdc;
 
     hdc = GetDC( (HWND) NULL );
-    c = &colorData[ index ];
+    c = &colorData[index];
     if( c->pen ) {
         DeleteObject( c->pen );
     }
@@ -84,14 +84,14 @@ static void NewColor( vi_color index, long rgb )
 void InitColors( void )
 {
     vi_color        i;
-    PALETTEENTRY    palette[ MAX_COLORS ], *p;
+    PALETTEENTRY    palette[MAX_COLORS], *p;
     HDC             hdc;
 
     hdc = GetDC( (HWND) NULL );
-    GetSystemPaletteEntries( hdc, 0, MAX_COLORS, &palette[ 0 ] );
+    GetSystemPaletteEntries( hdc, 0, MAX_COLORS, &palette[0] );
     ReleaseDC( (HWND) NULL, hdc );
-    p = &palette[ 0 ];
-    memset( &colorData[ 0 ], 0, sizeof( color ) * MAX_COLORS );
+    p = &palette[0];
+    memset( &colorData[0], 0, sizeof( color ) * MAX_COLORS );
     for( i = 0; i < MAX_COLORS; i++, p++ ) {
         NewColor( i, RGB( p->peRed, p->peGreen, p->peBlue ) );
     }
@@ -108,7 +108,7 @@ bool GetColorSetting( vi_color index, rgb *value )
     color       *c;
 
     if( index < MAX_COLORS && index >= 0 ) {
-        c = &colorData[ index ];
+        c = &colorData[index];
         value->red = GetRValue( c->rgb );
         value->blue = GetBValue( c->rgb );
         value->green = GetGValue( c->rgb );
@@ -122,7 +122,7 @@ COLORREF GetRGB( vi_color index )
     color       *c;
 
     if( index < MAX_COLORS && index >= 0 ) {
-        c = &colorData[ index ];
+        c = &colorData[index];
         return( RGB( GetRValue( c->rgb ),
                      GetGValue( c->rgb ),
                      GetBValue( c->rgb ) ) );
@@ -133,22 +133,22 @@ COLORREF GetRGB( vi_color index )
 static BOOL chooseColor( vi_color index, COLORREF *rgb, HWND parent )
 {
     CHOOSECOLOR cc;
-    COLORREF    color_table[ MAX_COLORS ];
+    COLORREF    color_table[MAX_COLORS];
     vi_color    i;
 
     for( i = 0; i < MAX_COLORS; i++ ) {
-        color_table[ i ] = colorData[ i ].rgb;
+        color_table[i] = colorData[i].rgb;
     }
     memset( &cc, 0, sizeof( CHOOSECOLOR ) );
     cc.lStructSize = sizeof( CHOOSECOLOR );
     cc.hwndOwner = parent;
-    cc.rgbResult = colorData[ index ].rgb;
+    cc.rgbResult = colorData[index].rgb;
     cc.lpCustColors = color_table;
     cc.Flags = CC_PREVENTFULLOPEN | CC_RGBINIT;
 
     if( ChooseColor( &cc ) ) {
         for( i = 0; i < MAX_COLORS; i++ ) {
-            colorData[ i ].rgb = color_table[ i ];
+            colorData[i].rgb = color_table[i];
         }
         *rgb = cc.rgbResult;
         return( TRUE );
@@ -179,21 +179,21 @@ int SetAColor( char *data )
     int         red, blue, green;
     COLORREF    rgb;
 
-    if( NextWord1( data,token ) <= 0 ) {
+    if( NextWord1( data, token ) <= 0 ) {
         return( ERR_INVALID_SETCOLOR );
     }
     index = atoi( token );
-    if( NextWord1( data,token ) <= 0 ) {
+    if( NextWord1( data, token ) <= 0 ) {
         if( !chooseColor( index, &rgb, Root ) ) {
             return( ERR_NO_ERR );
         }
     } else {
         red = atoi( token );
-        if( NextWord1( data,token ) <= 0 ) {
+        if( NextWord1( data, token ) <= 0 ) {
             return( ERR_INVALID_SETCOLOR );
         }
         green = atoi( token );
-        if( NextWord1( data,token ) <= 0 ) {
+        if( NextWord1( data, token ) <= 0 ) {
             return( ERR_INVALID_SETCOLOR );
         }
         blue = atoi( token );
@@ -215,7 +215,7 @@ void FiniColors( void )
     int         i;
     color       *c;
 
-    c = &colorData[ 0 ];
+    c = &colorData[0];
     for( i = 0; i < MAX_COLORS; i++, c++ ) {
         DeleteObject( c->brush );
         DeleteObject( c->pen );

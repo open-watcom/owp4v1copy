@@ -30,11 +30,11 @@
 ****************************************************************************/
 
 
-extern long ColorRGB( vi_color );
-extern HBRUSH ColorBrush( vi_color );
-extern HPEN ColorPen( vi_color );
-extern void InitColors( void );
-extern void FiniColors( void );
-extern int SetAColor( char * );
-extern void PickColor( vi_color, HWND );
+extern long     ColorRGB( vi_color );
+extern HBRUSH   ColorBrush( vi_color );
+extern HPEN     ColorPen( vi_color );
+extern void     InitColors( void );
+extern void     FiniColors( void );
+extern int      SetAColor( char * );
+extern void     PickColor( vi_color, HWND );
 extern COLORREF GetRGB( vi_color );

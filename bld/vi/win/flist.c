@@ -92,8 +92,7 @@ static int fillBox( HWND list_box )
     count = 0;
     SendMessage( list_box, LB_RESETCONTENT, 0, 0L );
     for( i = InfoHead; i != NULL; i = i->next ) {
-        SendMessage( list_box, LB_ADDSTRING, 0,
-                        (LONG)(LPVOID) i->CurrentFile->name );
+        SendMessage( list_box, LB_ADDSTRING, 0, (LONG)(LPVOID) i->CurrentFile->name );
         count++;
     }
     SendMessage( list_box, LB_SETSEL, TRUE, 0L );
@@ -127,7 +126,7 @@ BOOL WINEXP FileListProc( HWND dlg, UINT msg, UINT w, LONG l )
             EndDialog( dlg, ERR_NO_ERR );
             break;
         case ID_FILE_LIST:
-            if( GET_WM_COMMAND_CMD( w, l )== LBN_DBLCLK ) {
+            if( GET_WM_COMMAND_CMD( w, l ) == LBN_DBLCLK ) {
                 func = doGoto;
             }
             break;

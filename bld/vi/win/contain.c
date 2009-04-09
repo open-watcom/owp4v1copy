@@ -58,7 +58,9 @@ window_id CreateContainerWindow( RECT *size )
                 Root, (HMENU)NULL, InstanceHandle, (LPVOID)&client );
     SetWindowLong( container, 0, 0 );
     oldContainerProc =(WNDPROC)GetWindowLong( container, GWL_WNDPROC );
-    SetWindowLong( container, GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)ContainerWindowProc, InstanceHandle));
+    SetWindowLong( container, GWL_WNDPROC,
+                   (LONG)MakeProcInstance( (FARPROC)ContainerWindowProc,
+                                           InstanceHandle ) );
     SetScrollRange( container, SB_VERT, 1, 1, FALSE );
     SetScrollRange( container, SB_HORZ, 1, 1, FALSE );
     return( container );
@@ -75,6 +77,6 @@ LONG WINEXP ContainerWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lpar
         return( SendMessage( Root, msg, wparam, lparam ) );
         break;
     }
-    return( CallWindowProc( (WNDPROC)oldContainerProc, hwnd, msg, wparam, lparam ));
+    return( CallWindowProc( (WNDPROC)oldContainerProc, hwnd, msg, wparam, lparam ) );
 
 } /* ContainerWindowProc */

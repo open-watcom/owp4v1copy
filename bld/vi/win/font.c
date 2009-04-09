@@ -35,20 +35,20 @@
 #include "font.h"
 
 #ifdef __NT__
-#define STUPIDNTINT     long
+    #define STUPIDNTINT     long
 #else
-#ifdef __WINDOWS_386__
-#define STUPIDNTINT     short
-#else
-#define STUPIDNTINT     int
-#endif
+    #ifdef __WINDOWS_386__
+        #define STUPIDNTINT short
+    #else
+        #define STUPIDNTINT int
+    #endif
 #endif
 
 typedef struct font {
     HFONT       handle;
     LOGFONT     lf;
-    unsigned    used:1;
-    unsigned    fixed:1;
+    unsigned    used    : 1;
+    unsigned    fixed   : 1;
     UINT        height;
     UINT        avg_width;
     UINT        max_width;
@@ -147,53 +147,53 @@ LOGFONT CourierBold = {
     "Courier New"
 };
 
-font Fonts[ MAX_FONTS ];
+font Fonts[MAX_FONTS];
 
 UINT FontFixed( font_type f )
 {
-    return( Fonts[ f ].fixed );
+    return( Fonts[f].fixed );
 }
 
 HFONT FontHandle( font_type f )
 {
-    return( Fonts[ f ].handle );
+    return( Fonts[f].handle );
 }
 
 UINT FontHeight( font_type f )
 {
-    return( Fonts[ f ].height );
+    return( Fonts[f].height );
 }
 
 int FontlfHeight( font_type f )
 {
-    return( Fonts[ f ].lf.lfHeight );
+    return( Fonts[f].lf.lfHeight );
 }
 
 char *FontlfFaceName( font_type f )
 {
-    return( Fonts[ f ].lf.lfFaceName );
+    return( Fonts[f].lf.lfFaceName );
 }
 
 char FontIsFunnyItalic( font_type f )
 {
-    return( !(Fonts[ f ].lf.lfPitchAndFamily & TMPF_TRUETYPE) && Fonts[ f ].lf.lfItalic );
+    return( !(Fonts[f].lf.lfPitchAndFamily & TMPF_TRUETYPE) && Fonts[f].lf.lfItalic );
 }
 
 
 UINT FontMaxWidth( font_type f )
 {
-    return( Fonts[ f ].max_width );
+    return( Fonts[f].max_width );
 }
 
 UINT FontAverageWidth( font_type f )
 {
-    return( Fonts[ f ].avg_width );
+    return( Fonts[f].avg_width );
 }
 
 UINT FontTabWidth( font_type f )
 {
-    // return( Fonts[ f ].space_width * HardTab );
-    return( Fonts[ f ].avg_width * HardTab );
+    // return( Fonts[f].space_width * HardTab );
+    return( Fonts[f].avg_width * HardTab );
 }
 
 UINT GetTextExtentX( HDC hdc, char *str, int cnt )
@@ -243,7 +243,7 @@ void EnsureUniformFonts( font_type start, font_type end, LOGFONT *givenLF, BOOL 
     font_type   i;
 
     for( i = start; i <= end; i++ ) {
-        f = &Fonts[ i ];
+        f = &Fonts[i];
         memcpy( &newLF, givenLF, sizeof( LOGFONT ) );
 
         if( !totally ) {
@@ -261,23 +261,23 @@ void InitFonts( void )
     font_type   i;
     font        *f;
 
-    f = &Fonts[ 0 ];
+    f = &Fonts[0];
     for( i = 0; i < MAX_FONTS; i++, f++ ) {
         f->used = FALSE;
         f->handle = (HFONT)NULL;
     }
-    customFont( &Fonts[ FONT_HELV ], &Helvetica6 );
-    customFont( &Fonts[ FONT_ARIAL ], &Arial10 );
-    customFont( &Fonts[ FONT_ARIALBOLD ], &ArialBold10 );
-    customFont( &Fonts[ FONT_FIXED ], &Fixed10 );
-    customFont( &Fonts[ FONT_SANSSERIF ], &SansSerif );
-    customFont( &Fonts[ FONT_COURIER ], &Courier );
-    customFont( &Fonts[ FONT_COURIERBOLD ], &CourierBold );
+    customFont( &Fonts[FONT_HELV], &Helvetica6 );
+    customFont( &Fonts[FONT_ARIAL], &Arial10 );
+    customFont( &Fonts[FONT_ARIALBOLD], &ArialBold10 );
+    customFont( &Fonts[FONT_FIXED], &Fixed10 );
+    customFont( &Fonts[FONT_SANSSERIF], &SansSerif );
+    customFont( &Fonts[FONT_COURIER], &Courier );
+    customFont( &Fonts[FONT_COURIERBOLD], &CourierBold );
 }
 
 static int getInt( STUPIDNTINT *dest, char *data )
 {
-    char        tmp[ MAX_STR ];
+    char        tmp[MAX_STR];
 
     if( NextWord1( data, tmp ) <= 0 ) {
         return( FALSE );
@@ -288,7 +288,7 @@ static int getInt( STUPIDNTINT *dest, char *data )
 
 static int getByte( BYTE *dest, char *data )
 {
-    char        tmp[ MAX_STR ];
+    char        tmp[MAX_STR];
 
     if( NextWord1( data, tmp ) <= 0 ) {
         return( FALSE );
@@ -300,19 +300,19 @@ static int getByte( BYTE *dest, char *data )
 static int getLogFont( LOGFONT *l, char *data )
 {
     return( getInt( &l->lfHeight, data ) &&
-        getInt( &l->lfWidth, data ) &&
-        getInt( &l->lfEscapement, data ) &&
-        getInt( &l->lfOrientation, data ) &&
-        getInt( &l->lfWeight, data ) &&
-        getByte( &l->lfItalic, data ) &&
-        getByte( &l->lfUnderline, data ) &&
-        getByte( &l->lfStrikeOut, data ) &&
-        getByte( &l->lfCharSet, data ) &&
-        getByte( &l->lfOutPrecision, data ) &&
-        getByte( &l->lfClipPrecision, data ) &&
-        getByte( &l->lfQuality, data ) &&
-        getByte( &l->lfPitchAndFamily, data ) &&
-        !GetStringWithPossibleQuote( data, &l->lfFaceName[0] ) );
+            getInt( &l->lfWidth, data ) &&
+            getInt( &l->lfEscapement, data ) &&
+            getInt( &l->lfOrientation, data ) &&
+            getInt( &l->lfWeight, data ) &&
+            getByte( &l->lfItalic, data ) &&
+            getByte( &l->lfUnderline, data ) &&
+            getByte( &l->lfStrikeOut, data ) &&
+            getByte( &l->lfCharSet, data ) &&
+            getByte( &l->lfOutPrecision, data ) &&
+            getByte( &l->lfClipPrecision, data ) &&
+            getByte( &l->lfQuality, data ) &&
+            getByte( &l->lfPitchAndFamily, data ) &&
+            !GetStringWithPossibleQuote( data, &l->lfFaceName[0] ) );
 }
 
 static int userPickFont( LOGFONT *l, HWND parent )
@@ -321,7 +321,7 @@ static int userPickFont( LOGFONT *l, HWND parent )
 
     memset( &cf, 0, sizeof( CHOOSEFONT ) );
 
-    cf.lStructSize = sizeof(CHOOSEFONT);
+    cf.lStructSize = sizeof( CHOOSEFONT );
     cf.hwndOwner = parent;
     cf.lpLogFont = l;
     cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
@@ -340,7 +340,7 @@ void SetUpFont( LOGFONT *l, font_type index )
     info        *cinfo;
     font        *f;
 
-    f = &Fonts[ index ];
+    f = &Fonts[index];
 
     customFont( f, l );
     cinfo = InfoHead;
@@ -361,11 +361,12 @@ void SetUpFont( LOGFONT *l, font_type index )
  */
 static void initFont( font_type index, LOGFONT *l )
 {
-    if( Fonts[ index ].used ) {
+    if( Fonts[index].used ) {
         memcpy( l, &Fonts[index].lf, sizeof( LOGFONT ) );
     } else {
         memset( l, 0, sizeof( LOGFONT ) );
     }
+
 } /* initFont */
 
 /*
@@ -426,16 +427,18 @@ void BarfFontData( FILE *file )
     font        *f;
     LOGFONT     *l;
 
-    f = &Fonts[ 0 ];
+    f = &Fonts[0];
     for( i = 0; i < MAX_FONTS; i++, f++ ) {
         if( f->used ) {
             l = &f->lf;
             /* ick... */
-            MyFprintf( file, "setfont %d %d %d %d %d %d %d %d %d %d %d %d %d %d \"%s\"\n", i,
-                l->lfHeight, l->lfWidth, l->lfEscapement, l->lfOrientation,
-                l->lfWeight, (int)l->lfItalic, (int)l->lfUnderline, (int)l->lfStrikeOut,
-                (int)l->lfCharSet, (int)l->lfOutPrecision, (int)l->lfClipPrecision,
-                (int)l->lfQuality, (int)l->lfPitchAndFamily, &l->lfFaceName[0] );
+            MyFprintf( file,
+                       "setfont %d %d %d %d %d %d %d %d %d %d %d %d %d %d \"%s\"\n", i,
+                       l->lfHeight, l->lfWidth, l->lfEscapement, l->lfOrientation,
+                       l->lfWeight, (int)l->lfItalic, (int)l->lfUnderline,
+                       (int)l->lfStrikeOut, (int)l->lfCharSet, (int)l->lfOutPrecision,
+                       (int)l->lfClipPrecision, (int)l->lfQuality,
+                       (int)l->lfPitchAndFamily, &l->lfFaceName[0] );
         }
     }
 }
@@ -445,7 +448,7 @@ void FiniFonts( void )
     font_type   i;
     font        *f;
 
-    f = &Fonts[ 0 ];
+    f = &Fonts[0];
     for( i = 0; i < MAX_FONTS; i++, f++ ) {
         if( f->used ) {
             DeleteObject( f->handle );

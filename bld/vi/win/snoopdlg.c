@@ -33,7 +33,8 @@
 #include "vi.h"
 #include "snoopdlg.h"
 
-static fancy_snoop      snoopData = {TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,0,NULL,0,NULL,0};
+static fancy_snoop      snoopData =
+    { TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, 0, NULL, 0, NULL, 0 };
 
 /*
  * snoopDlgProc - callback routine for snoop dialog
@@ -62,9 +63,9 @@ BOOL WINEXP SeekDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 
         // this isn't quite right. but it's close.
         /*
-        for( i=0; i<extension.max; i++ ) {
+        for( i = 0; i < extension.max; i++ ) {
             SendDlgItemMessage( hwnd, SNOOP_LISTBOX, LB_ADDSTRING, 0,
-                (LONG)extension[i] );
+                                (LONG)extension[i] );
         }
         */
 
@@ -77,13 +78,12 @@ BOOL WINEXP SeekDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         case SNOOP_LISTBOX:
             cmd = GET_WM_COMMAND_CMD( wparam, lparam );
             if( cmd == LBN_SELCHANGE || cmd == LBN_DBLCLK ) {
-                index = SendDlgItemMessage( hwnd, SNOOP_LISTBOX, LB_GETCURSEL,
-                                                        0, 0L );
+                index = SendDlgItemMessage( hwnd, SNOOP_LISTBOX, LB_GETCURSEL, 0, 0L );
                 if( index == LB_ERR ) {
                     break;
                 }
                 SendDlgItemMessage( hwnd, SNOOP_LISTBOX, LB_GETTEXT, index,
-                                        (LONG) snoop );
+                                    (LONG) snoop );
                 SetDlgItemText( hwnd, SNOOP_STRING, snoop );
             }
             break;
@@ -111,7 +111,7 @@ BOOL WINEXP SeekDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 } /* snoopDlgProc */
 
 /*
- * GetsnoopStringDialog - create dialog settings
+ * GetSnoopStringDialog - create dialog settings
  */
 bool GetSnoopStringDialog( fancy_snoop *ff )
 {
@@ -132,4 +132,4 @@ bool GetSnoopStringDialog( fancy_snoop *ff )
     }
     return( rc );
 
-} /* GetsnoopStringDialog */
+} /* GetSnoopStringDialog */
