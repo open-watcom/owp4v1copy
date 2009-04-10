@@ -83,7 +83,7 @@ void ClearWindow( window_id id )
         return;
     }
     w = WINDOW_FROM_ID( id );
-    GetWindowRect( id, &rect );
+    GetClientRect( id, &rect );
     hdc = TextGetDC( id, WIN_STYLE( w ) );
     // should clear with SEType[SE_WHITESPACE].background for edit windows
     FillRect( hdc, &rect, ColorBrush( WIN_BACKCOLOR( w ) ) );
