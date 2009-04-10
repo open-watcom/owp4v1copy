@@ -35,9 +35,9 @@
 
 void main( int argc, char *argv[] )
 {
-    #ifdef TRMEM
-        InitTRMEM();
-    #endif
+#ifdef TRMEM
+    InitTRMEM();
+#endif
 
     argc = argc;
     EXEName = argv[0];
@@ -47,8 +47,8 @@ void main( int argc, char *argv[] )
     InitializeEditor();
     EditMain();
 
-    #ifdef TRMEM
-        DumpTRMEM();
-    #endif
+#ifdef TRMEM
+    DumpTRMEM();
+#endif
 
 } /* main */

@@ -46,8 +46,9 @@ void TimerThread( void )
     while( !exit_thread ) {
         Sleep( 55 );
         ClockTicks++;
-        if( EditFlags.ClockActive && EditFlags.SpinningOurWheels && EditFlags.Spinning ) {
-            (*(char_info *)SpinLoc).ch = SpinData[ SpinCount ];
+        if( EditFlags.ClockActive && EditFlags.SpinningOurWheels &&
+            EditFlags.Spinning ) {
+            (*(char_info *)SpinLoc).ch = SpinData[SpinCount];
             MyVioShowBuf( SpinLoc-Scrn, 1 );
             SpinCount++;
             if( SpinCount >= 4 ) {
@@ -62,17 +63,17 @@ void TimerThread( void )
             int bytes = 5;
             clk = (char_info *) ClockStart;
             if( EditFlags.DisplaySeconds ) {
-                clk[ 7 ].ch = date[DATE_LEN-1];
-                clk[ 6 ].ch = date[DATE_LEN-2];
-                clk[ 5 ].ch = ':';
+                clk[7].ch = date[DATE_LEN - 1];
+                clk[6].ch = date[DATE_LEN - 2];
+                clk[5].ch = ':';
                 bytes = 8;
             }
-            clk[ 4 ].ch = date[DATE_LEN-4];
-            clk[ 3 ].ch = date[DATE_LEN-5];
-            clk[ 2 ].ch = ':';
-            clk[ 1 ].ch = date[DATE_LEN-7];
-            clk[ 0 ].ch = date[DATE_LEN-8];
-            MyVioShowBuf( ClockStart-Scrn, bytes );
+            clk[4].ch = date[DATE_LEN - 4];
+            clk[3].ch = date[DATE_LEN - 5];
+            clk[2].ch = ':';
+            clk[1].ch = date[DATE_LEN - 7];
+            clk[0].ch = date[DATE_LEN - 8];
+            MyVioShowBuf( ClockStart - Scrn, bytes );
         }
     }
     ExitThread( 0 );

@@ -43,6 +43,7 @@ int CurrMouseRow;
 void SetMouseSpeed( int speed )
 {
     speed = speed;
+
 } /* SetMouseSpeed */
 
 /*
@@ -60,7 +61,6 @@ void SetMousePosition( int row, int col )
  */
 void PollMouse( int *status, int *row, int *col )
 {
-
     *status = CurrMouseStatus;
     *col = CurrMouseCol;
     *row = CurrMouseRow;
@@ -72,16 +72,15 @@ void PollMouse( int *status, int *row, int *col )
  */
 void InitMouse( void )
 {
-
     if( !EditFlags.UseMouse ) {
         return;
     }
 
-    SetMousePosition( WindMaxWidth/2-1, WindMaxHeight/2-1 );
+    SetMousePosition( WindMaxWidth / 2 - 1, WindMaxHeight / 2 - 1 );
     SetMouseSpeed( MouseSpeed );
     PollMouse( &MouseStatus, &MouseRow, &MouseCol );
 
-}
+} /* InitMouse */
 
 /*
  * FiniMouse - done with the mouse
