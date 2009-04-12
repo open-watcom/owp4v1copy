@@ -61,10 +61,10 @@ void intern stopmouse( void )
     _stopmouse();
 }
 
-bool global initmouse( bool install )
-/******************************/
+bool global initmouse( int install )
+/**********************************/
 {
-    return _initmouse(install);
+    return _initmouse( install );
 }
 
 void global finimouse( void )

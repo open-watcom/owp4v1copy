@@ -188,11 +188,11 @@ void uimousespeed( unsigned speed )
     }
 }
 
-bool global initmouse( bool install )
+bool global initmouse( int install )
 {
     DWORD       tmp;
 
-    if( !install ) {
+    if( install == 0 ) {
         return( FALSE );
     }
     UIData->mouse_xscale = 1;  /* Craig -- do not delete or else! */

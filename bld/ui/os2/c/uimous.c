@@ -190,8 +190,8 @@ static bool mouse_installed( void )
     return( ( intrtn != NULL ) && ( *intrtn != IRET ) );
 }
 
-static void DOS_initmouse( bool install )
-/***************************************/
+static void DOS_initmouse( int install )
+/**************************************/
 {
     int             cx,dx;
     unsigned long   time;
@@ -225,8 +225,8 @@ static void DOS_initmouse( bool install )
     }
 }
 
-static void OS2_initmouse( bool install )
-/***************************************/
+static void OS2_initmouse( int install )
+/**************************************/
 {
     USHORT          mouevents;
     USHORT          num_buttons;
@@ -272,8 +272,8 @@ static void OS2_initmouse( bool install )
 }
 
 
-bool global initmouse( bool install )
-/***********************************/
+bool global initmouse( int install )
+/**********************************/
 {
     MouseInstalled = FALSE;
     if( _osmode == DOS_MODE ) {

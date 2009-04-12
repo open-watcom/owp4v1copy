@@ -314,7 +314,7 @@ void global uiopenpopup( DESCMENU *desc, UI_WINDOW *window )
     openwindow( window );
 }
 
-static int process_char( int ch, DESCMENU **desc, int *menu, int *select )
+static int process_char( int ch, DESCMENU **desc, int *menu, bool *select )
 {
     register    int                     index;
     register    MENUITEM*               itemptr;

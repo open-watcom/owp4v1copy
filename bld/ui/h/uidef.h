@@ -32,6 +32,7 @@
 #ifndef _UIDEF_H_
 #define _UIDEF_H_
 #include <stddef.h>
+#include "bool.h"
 
 #if defined( __WATCOMC__ )
   #define cdecl __cdecl
@@ -44,18 +45,12 @@
         #define         MAXINT                  0x7fff
     #endif
 #endif
-#ifndef TRUE
-    #define         TRUE                    1
-    #define         FALSE                   0
-#endif
 
 #define         P_UNBUFFERED            0
 #define         P_DIALOGUE              1
 #define         P_MENU                  2
 #define         P_VSCREEN               3
 #define         P_BACKGROUND            4
-
-#define         bool                    int
 
 #ifndef min
     #define         min( a,b )              ( a < b ? a : b )
@@ -103,7 +98,7 @@
     extern "C" {
 #endif
 
-int             intern          balloc( BUFFER *, ORD, ORD );
+bool            intern          balloc( BUFFER *, ORD, ORD );
 void            intern          battrflip( BUFFER *, int, int, int, int );
 void            intern          battribute( BUFFER *, int, int, int, int, ATTR );
 void            intern          uibcopy( BUFFER *, int, int, BUFFER *, int, int, int );
@@ -135,12 +130,12 @@ void            intern          flushkey( void );
 void            intern          frontwindow( UI_WINDOW * );
 unsigned int    intern          getkey( void );
 int             intern          initbios( void );
-int             intern          initkeyboard( void );
-int             intern          initmonitor( void );
-int             intern          installed( int );
-int             intern          isdialogue( VSCREEN * );
-int             intern          isscreen( BUFFER * );
-int             intern          issnow( BUFFER * );
+bool            intern          initkeyboard( void );
+bool            intern          initmonitor( void );
+bool            intern          installed( int );
+bool            intern          isdialogue( VSCREEN * );
+bool            intern          isscreen( BUFFER * );
+bool            intern          issnow( BUFFER * );
 void            intern          kbdspawnstart( void );
 void            intern          kbdspawnend( void );
 EVENT           intern          keyboardevent( void );
@@ -155,7 +150,7 @@ void            intern          okline( ORD, ORD, int, SAREA );
 void            intern          okopen( VSCREEN * );
 void            intern          oksubarea( SAREA, SAREA );
 void            intern          openbackground( void );
-int             intern          openwindow( UI_WINDOW * );
+bool            intern          openwindow( UI_WINDOW * );
 void            intern          movewindow( UI_WINDOW *, ORD, ORD );
 void            intern          physupdate( SAREA * );
 #if defined( __UNIX__ )

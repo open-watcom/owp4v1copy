@@ -32,6 +32,8 @@
 #ifndef _STDUI_H_INCLUDED_
 #define _STDUI_H_INCLUDED_
 
+#include "bool.h"
+
 #ifndef         _FAR
 #define         _FAR
 #endif
@@ -573,14 +575,14 @@ enum {
 extern          MONITOR _FARD*  UIData;
 
 extern          void            finimouse( void );
-extern          int             initmouse( int );
+extern          bool            initmouse( int );
 extern          void            uiactivatemenus( void );
 extern          void           *uialloc( unsigned );
-extern          int             uiattrs( void );
-extern          int             uivgaattrs( void );
+extern          bool            uiattrs( void );
+extern          bool            uivgaattrs( void );
 extern          void            uisetblinkattr( int );
 extern          char            uigetblinkattr( void );
-extern          int             uibackground( char * );
+extern          bool            uibackground( char * );
 extern          BUFFER    _FARD *uibackgroundbuffer( void );
 extern          void            uibandinit( SAREA, ATTR );
 extern          void            uibandmove( SAREA );
@@ -591,11 +593,11 @@ extern          void            uiblankarea( SAREA );
 extern          void            uiblankscreen( void );
 extern          void            uiblankattr( ATTR );
 extern          void           *uicalloc( unsigned , unsigned );
-extern          int             uichecklist( EVENT, EVENT _FARD * );
+extern          bool            uichecklist( EVENT, EVENT _FARD * );
 extern          void            uiclose( VSCREEN _FARD * );
 extern          void            uicntrtext( VSCREEN _FARD *, SAREA *, ATTR,
                                             unsigned int, const char * );
-extern          int             uiconfig( char *, char ** );
+extern          bool            uiconfig( char *, char ** );
 extern          void            uicursor( VSCREEN _FARD *, unsigned char,
                                           unsigned char, int );
 extern          int             uidialogevent( VSCREEN _FARD * );
@@ -618,12 +620,12 @@ extern          EVENTLIST _FARD *uigetlist( void );
 extern          void            uigetmouse( ORD _FARD*, ORD _FARD*, int _FARD* );
 extern          void            uiignorealt( void );
 extern          unsigned int    uiextkeyboard( void );
-extern          int             uiinit( int );
+extern          bool            uiinit( int );
 extern          void            uiinitcursor( void );
-extern          int             uiinitgmouse( int );
-extern          int             uiinlist( EVENT );
-extern          int             uiintoplist( EVENT );
-extern          int             uikeepbackground( void );
+extern          bool            uiinitgmouse( int );
+extern          bool            uiinlist( EVENT );
+extern          bool            uiintoplist( EVENT );
+extern          bool            uikeepbackground( void );
 extern          void           *uimalloc( unsigned );
 extern          void            uimouse( int );
 extern          void            uimouseforceoff( void );
@@ -638,23 +640,23 @@ extern          void            uihidemouse( void );
 extern          unsigned        uiclockdelay( unsigned milli );
 extern          EVENT   _FARD  *uipoplist( void );
 extern          void            uiposition( SAREA *, unsigned char,
-                                    unsigned char ,int ,int , int );
+                                    unsigned char ,int ,int , bool );
 extern          void            uiprotect( VSCREEN _FARD* );
 extern          void            uipushlist( EVENT _FARD* );
 extern          void            uiputlist( EVENTLIST _FARD* );
 extern          void           *uirealloc( void *, unsigned );
 extern          void            uirefresh( void );
-extern          int             uiremovebackground( void );
-extern          int             uiset80col( void );
+extern          bool            uiremovebackground( void );
+extern          bool            uiset80col( void );
 extern          SAREA          *uisetarea( SAREA *,  VSCREEN _FARD * );
 extern          void            uisetcursor( ORD, ORD, int, int );
 extern          void            uisetmouse( MOUSEORD, MOUSEORD );
 extern          void            uisetmouseposn( ORD, ORD );
-extern          SAREA          *uisetscreenarea( SAREA *, int, int );
-extern          void            uisetsnow( int );
+extern          SAREA          *uisetscreenarea( SAREA *, bool, bool );
+extern          void            uisetsnow( bool );
 extern          void            uispawnend( void );
 extern          void            uispawnstart( void );
-extern          int             uistart( void );
+extern          bool            uistart( void );
 extern          void            uistop( void );
 extern          void            uiswap( void );
 extern          void            uiswapcursor( void );
@@ -693,11 +695,11 @@ extern          unsigned char   uicheckshift( void );
 extern          EVENT           uikeyboardevent( void );
 extern          int             uimouseinstalled( void );
 
-extern          int             FlipCharacterMap( void );
-extern          int             UIMapCharacters( unsigned char mapchar[], unsigned char mapdata[][16] );
+extern          bool            FlipCharacterMap( void );
+extern          bool            UIMapCharacters( unsigned char mapchar[], unsigned char mapdata[][16] );
 
 extern          void            uiyield( void );
-extern          int             uiforceevadd( EVENT );  // int is a bool
+extern          bool            uiforceevadd( EVENT );  // int is a bool
 extern          void            uiforceevflush( void );
 extern          int             uiisdbcs( void ); // bool
 extern          int             uionnec( void );  // bool

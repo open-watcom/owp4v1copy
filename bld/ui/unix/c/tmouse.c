@@ -304,8 +304,8 @@ static int gpm_tm_init( void )
 }
 #endif
 
-static int tm_init( bool install )
-/******************************/
+static int tm_init( int install )
+/*******************************/
 {
     char        *term;
     bool        kmous;                          // Does key_mouse exist?
@@ -314,7 +314,8 @@ static int tm_init( bool install )
     MouseType           = M_NONE;
     kmous               = ( key_mouse != NULL );
 
-    if( !install ) return( FALSE );
+    if( install == 0 )
+        return( FALSE );
 
     term = GetTermType();
     if( term != NULL && strstr( term, "xterm" ) != NULL ) {

@@ -862,8 +862,8 @@ static bool intern ti_initconsole( void )
     return( TRUE );
 }
 
-int intern initmonitor( void )
-/****************************/
+bool intern initmonitor( void )
+/*****************************/
 {
     struct sigaction sa;
 
