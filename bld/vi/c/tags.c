@@ -31,7 +31,6 @@
 
 #include "vi.h"
 #include "posix.h"
-#include "keys.h"
 #include "rxsupp.h"
 #ifdef __WIN__
     #include "winrtns.h"

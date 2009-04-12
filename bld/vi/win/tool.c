@@ -33,7 +33,6 @@
 #include <malloc.h>
 #include <shellapi.h>
 #include "toolbr.h"
-#include "keys.h"
 #include "color.h"
 #include "bitmap.h"
 #include "rcstr.gh"

@@ -34,6 +34,7 @@
 #include <malloc.h>
 #include "source.h"
 #include "stack.h"
+#include "pragmas.h"
 
 #ifdef __V__
 extern void ResetBPChain( void );

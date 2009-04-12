@@ -308,11 +308,10 @@ int RunCommandLine( char *cl )
         break;
     case PCL_T_EXECUTE:
         RemoveLeadingSpaces( dataBuff );
-        i = strlen( dataBuff );
-        if( i > 0 ) {
+        if( *dataBuff != '\0' ) {
             key_map     scr;
 
-            rc = AddKeyMap( &scr, dataBuff, i );
+            rc = AddKeyMap( &scr, dataBuff );
             if( rc ) {
                 break;
             }
@@ -892,13 +891,9 @@ int RunCommandLine( char *cl )
 #endif
             if( RCSQuerySystem( r ) != 0 ) {
                 if( GenericQueryBool( "File is read only, check out?" ) ) {
-                    char full1[FILENAME_MAX];
-#ifdef __WINDOWS__
-                    void WinGetFullPath( char *filename, char *full );
-                    WinGetFullPath( CurrentFile->name, full1 );
-#else
-                    DosGetFullPath( CurrentFile->name, full1 );
-#endif
+                    char full1[ FILENAME_MAX ];
+
+                    _fullpath( full1, CurrentFile->name, FILENAME_MAX );
                     RCSSetPause( r, TRUE );
                     if( RCSCheckout( r, full1, NULL, NULL ) ) {
                         strcpy( dataBuff, CurrentFile->name );

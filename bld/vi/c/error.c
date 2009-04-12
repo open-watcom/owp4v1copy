@@ -141,25 +141,31 @@ void Error( char *str, ... )
 
 } /* Error */
 
+
+static bool errmsg_alloc( int cnt )
+{
+    errCnt = cnt;
+    return( FALSE );
+}
+
+static bool errmsg_save( int i, char *buff )
+{
+    return( TRUE );
+}
+
+
 /*
  * readErrorMsgData - do just that
  */
 static void readErrorMsgData( void )
 {
-    int         *vals;
-    int         rc, cnt;
-    char        *buff;
+    int         rc;
 
-    rc = ReadDataFile( "errmsg.dat", &cnt, &buff, &vals, FALSE );
+    rc = ReadDataFile( "errmsg.dat", &errorList, errmsg_alloc, errmsg_save );
     if( rc ) {
         return;
     }
-    errCnt = cnt;
-    errorList = buff;
     readMsgData = TRUE;
-
-    // we dont really need the values
-    MemFree( vals );
 
 } /* readErrorMsgData */
 

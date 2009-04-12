@@ -34,7 +34,6 @@
 #include "vi.h"
 #include <malloc.h>
 #include "window.h"
-#include "keys.h"
 #include "win.h"
 
 #ifdef __NT__

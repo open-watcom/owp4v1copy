@@ -35,7 +35,7 @@
 #include <stdio.h>
 
 typedef unsigned short  vi_ushort;
-typedef unsigned short  vi_key;
+//typedef unsigned short  vi_key;
 
 typedef struct ss {
     struct ss   *next, *prev;

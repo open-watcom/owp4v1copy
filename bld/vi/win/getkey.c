@@ -39,16 +39,15 @@
 */
 
 #include "vi.h"
-#include "keys.h"
 
 #define KEY_BUFFER_SIZE 64
 
 typedef struct vi_key_scancode {
-    int scan;
-    int ch;
+    int     scan;
+    vi_key  key;
 } vi_key_scancode;
 
-static vi_key_scancode  keyBuffer[KEY_BUFFER_SIZE];
+static vi_key_scancode  keyBuffer[ KEY_BUFFER_SIZE ];
 static volatile int     bufferTop = 0;
 static volatile int     bufferBottom = 0;
 
@@ -198,9 +197,9 @@ bool AltDown( void )
     return( (GetKeyState( VK_MENU ) & ~0x01) != 0 );
 }
 
-int ConvertWierdCharacter( WORD vk, WORD data )
+static vi_key ConvertWierdCharacter( WORD vk, WORD data )
 {
-    unsigned char   keyboard_state[256];
+    unsigned char   keyboard_state[ 256 ];
     unsigned int    scancode = LOBYTE( data );
 #if defined( __NT__ )
     WORD            newkey;
@@ -213,14 +212,15 @@ int ConvertWierdCharacter( WORD vk, WORD data )
         return( 0 );
     }
 
-    return( (char)newkey );
+    return( (vi_key)newkey );
 }
 
-int MapVirtualKeyToVIKey( WORD vk, WORD data )
+vi_key MapVirtualKeyToVIKey( WORD vk, WORD data )
 {
-    int         t, ch;
+    int         t;
+    vi_key      key;
     bool        altdown, shiftdown, ctrldown, capsdown;
-    keytable    *key;
+    keytable    *keytbl;
 
     shiftdown = (GetKeyState( VK_SHIFT ) & ~0x01) != 0;
     capsdown  = (GetKeyState( VK_CAPITAL ) & 0x01);
@@ -239,42 +239,42 @@ int MapVirtualKeyToVIKey( WORD vk, WORD data )
     if( vk >= 'A' && vk <= 'Z' ) {
         t = vk - 'A';
         if( ctrldown && altdown ) {
-            ch = ConvertWierdCharacter( vk, data );
+            key = ConvertWierdCharacter( vk, data );
             // check if found no translation:
-            if( ch == 0 ) {
+            if( key == 0 ) {
                 return( -1 );
             }
         } else if( ctrldown ) {
-            ch = VI_KEY( CTRL_A ) + t;
+            key = VI_KEY( CTRL_A ) + t;
         } else if( shiftdown && capsdown ) {
-            ch = 'a' + t;
+            key = 'a' + t;
         } else if( shiftdown || capsdown ) {
-            ch = 'A' + t;
+            key = 'A' + t;
         } else {
-            ch = 'a' + t;
+            key = 'a' + t;
         }
     } else {
-        key = (keytable *)bsearch( (const void *)(&vk), keyTable,
+        keytbl = (keytable *)bsearch( (const void *)(&vk), keyTable,
                  KEYTABLE_LENGTH, KEYTABLE_WIDTH, find_key_in_table );
-        if( key != NULL && vk == key->value ) {
+        if( keytbl != NULL && vk == keytbl->value ) {
             if( ctrldown && shiftdown ) {
-                ch = key->cs;
+                key = keytbl->cs;
             } else if( ctrldown ) {
-                ch = key->ctrl;
+                key = keytbl->ctrl;
             } else if( shiftdown ) {
-                ch = key->shifted;
+                key = keytbl->shifted;
             } else if( altdown ) {
-                ch = key->alt;
+                key = keytbl->alt;
             } else {
-                ch = key->regular;
+                key = keytbl->regular;
             }
-            return( ch );
+            return( key );
         }
 
         /* we didn't find it in any place we looked */
-        ch = ConvertWierdCharacter( vk, data );
+        key = ConvertWierdCharacter( vk, data );
     }
-    return( ch );
+    return( key );
 }
 
 /*
@@ -282,17 +282,17 @@ int MapVirtualKeyToVIKey( WORD vk, WORD data )
 */
 bool WindowsKeyPush( WORD vk, WORD data )
 {
-    int         ch;
+    vi_key      key;
 
     // if we're holding everything just eat the key quietly
     if( EditFlags.HoldEverything ) {
         return( TRUE );
     }
-    ch = MapVirtualKeyToVIKey( vk, data );
-    if( ch != -1 ) {
-        keyBuffer[bufferTop].ch = ch;
-        keyBuffer[bufferTop].scan = LOBYTE( data );
-        bufferTop = (bufferTop + 1) % KEY_BUFFER_SIZE;
+    key = MapVirtualKeyToVIKey( vk, data );
+    if( key != -1 ) {
+        keyBuffer[ bufferTop ].key = key;
+        keyBuffer[ bufferTop ].scan = LOBYTE( data );
+        bufferTop = ( bufferTop + 1 ) % KEY_BUFFER_SIZE;
         return( TRUE );
     }
     return( FALSE );
@@ -318,16 +318,16 @@ bool KeyboardHit( void )
 /*
  * GetKeyboard - get a keyboard result
 */
-int GetKeyboard( int *scan )
+vi_key GetKeyboard( int *scan )
 {
-    int     ch;
+    vi_key  key;
 
-    ch = keyBuffer[bufferBottom].ch;
+    key = keyBuffer[ bufferBottom ].key;
     if( scan ) {
-        *scan = keyBuffer[bufferBottom].scan;
+        *scan = keyBuffer[ bufferBottom ].scan;
     }
-    bufferBottom = (bufferBottom + 1) % KEY_BUFFER_SIZE;
-    return( ch );
+    bufferBottom = ( bufferBottom + 1 ) % KEY_BUFFER_SIZE;
+    return( key );
 
 } /* GetKeyboard */
 

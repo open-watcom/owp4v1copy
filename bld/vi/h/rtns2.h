@@ -69,7 +69,7 @@ void        ScreenInit( void );
 void        ScreenFini( void );
 void        ChkExtendedKbd( void );
 bool        KeyboardHit( void );
-int         GetKeyboard( int * );
+vi_key      GetKeyboard( int * );
 int         SetAColor( char * );
 int         SetFont( char * );
 void        InitColors( void );
@@ -93,5 +93,5 @@ void        SetPosToMessageLine( void );
 void        HideCursor( void );
 
 /* xmem.c */
-void ExtendedMemoryInit( void );
-void ExtendedMemoryFini( void );
+void        ExtendedMemoryInit( void );
+void        ExtendedMemoryFini( void );

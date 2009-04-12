@@ -24,7 +24,7 @@ objinit = init.obj getopt.obj autoenv.obj
 
 objsizeroot = name.obj key.obj &
         globals.obj pdata.obj &
-        bind.obj exdata.obj srcdata.obj
+        exdata.obj srcdata.obj
 
 objsize = xmem.obj fcbswap.obj clset.obj hist.obj samefile.obj &
         dirdisp.obj expandfn.obj getdir.obj &

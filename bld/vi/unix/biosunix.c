@@ -31,7 +31,6 @@
 
 #include "vi.h"
 #include "win.h"
-#include "keys.h"
 #include "ctkeyb.h"
 
 void BIOSGetColorPalette( void *a ) {}
@@ -63,8 +62,8 @@ short BIOSGetCursor( char page )
 static unsigned short vi_keys[ EV_FIRST_UNUSED ];
 
 struct map {
-    EVENT      ev;
-    short      key;
+    EVENT       ev;
+    vi_key      key;
 };
 
 static struct map events[] = {
@@ -163,36 +162,36 @@ static struct map events[] = {
     { EV_MOUSE_MOVE,            VI_KEY( MOUSEEVENT )    }
 };
 
-static short get_vi_key( EVENT ev )
+static vi_key get_vi_key( EVENT ev )
 {
     if ( iseditchar( ev ) )
-        return (short)ev;
-    if (ev >= EV_FUNC(1) && ev <= EV_FUNC(10))
-        return VI_KEY( F1 ) + ev - EV_FUNC(1);
-    if (ev >= EV_SHIFT_FUNC(1) && ev <= EV_SHIFT_FUNC(10))
-        return VI_KEY( SHIFT_F1 ) + ev - EV_SHIFT_FUNC(1);
-    if (ev >= EV_CTRL_FUNC(1) && ev <= EV_CTRL_FUNC(10))
-        return VI_KEY( CTRL_F1 ) + ev - EV_CTRL_FUNC(1);
-    if (ev >= EV_ALT_FUNC(1) && ev <= EV_ALT_FUNC(10))
-        return VI_KEY( ALT_F1 ) + ev - EV_FUNC(1);
-    return -1;
+        return( (vi_key)ev );
+    if( ev >= EV_FUNC(1) && ev <= EV_FUNC(10))
+        return( VI_KEY( F1 ) + ev - EV_FUNC(1) );
+    if( ev >= EV_SHIFT_FUNC(1) && ev <= EV_SHIFT_FUNC(10))
+        return( VI_KEY( SHIFT_F1 ) + ev - EV_SHIFT_FUNC(1) );
+    if( ev >= EV_CTRL_FUNC(1) && ev <= EV_CTRL_FUNC(10))
+        return( VI_KEY( CTRL_F1 ) + ev - EV_CTRL_FUNC(1) );
+    if( ev >= EV_ALT_FUNC(1) && ev <= EV_ALT_FUNC(10))
+        return( VI_KEY( ALT_F1 ) + ev - EV_FUNC(1) );
+    return( -1 );
 }
 
 int KeyboardInit( void )
 {
     int i;
     
-    for ( i = 0; i < EV_FIRST_UNUSED; i++ )
+    for( i = 0; i < EV_FIRST_UNUSED; i++ )
         vi_keys[i] = get_vi_key( i );
-    for ( i = 0; i < sizeof( events ) / sizeof( struct map ); i++ )
+    for( i = 0; i < sizeof( events ) / sizeof( struct map ); i++ )
         vi_keys[ events[i].ev ] = events[i].key;
-    return 0;
+    return( 0 );
 }
 
-short BIOSGetKeyboard( char extended )
+unsigned short BIOSGetKeyboard( char extended )
 {
-    short key;
-    EVENT ev;
+    vi_key  key;
+    EVENT   ev;
 
     key = -1;
     do {
@@ -200,19 +199,19 @@ short BIOSGetKeyboard( char extended )
         if ( ev < EV_FIRST_UNUSED )
             key = vi_keys[ ev ];
     } while ( key == -1 );
-    return key;
+    return( key );
 }
 
-short BIOSKeyboardHit( char a )
+unsigned short BIOSKeyboardHit( char a )
 {
-    int type, attr;
-    unsigned char row, col;
+    int             type, attr;
+    unsigned char   row, col;
 
     a = a;
     _uigetcursor( &row, &col, &type, &attr );
     _uisetcursor( row, col, C_NORMAL, attr );
     _ui_refresh( 0 );
-    return (short) kb_wait(0, 0);
+    return( (unsigned short)kb_wait( 0, 0 ) );
 }
 
 void MyVioShowBuf( unsigned offset, int length )
@@ -241,3 +240,30 @@ void MyVioShowBuf( unsigned offset, int length )
     _physupdate(&area);
 
 } /* MyVioShowBuf */
+
+/*
+ * KeyboardHit - test for keyboard hit
+ */
+bool KeyboardHit( void )
+{
+    bool        rc;
+
+    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
+    return( rc );
+
+} /* KeyboardHit */
+
+/*
+ * GetKeyboard - get a keyboard char
+ */
+vi_key GetKeyboard( int *scan )
+{
+    vi_key      key;
+
+    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
+    if( scan != NULL ) {
+        *scan = 0;
+    }
+    return( key );
+
+} /* GetKeyboard */

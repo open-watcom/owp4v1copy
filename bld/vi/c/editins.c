@@ -34,7 +34,6 @@
 #ifdef _M_I86
     #include <i86.h>
 #endif
-#include "keys.h"
 #include "source.h"
 #include "menu.h"
 #include "win.h"
@@ -560,7 +559,7 @@ int IMCursorKey( void )
  */
 int IMMenuKey( void )
 {
-    if( IsMenuHotKey( LastEvent - VI_KEY( ALT_A ) + 'A' ) ) {
+    if( IsMenuHotKey( LastEvent ) ) {
         DoneCurrentInsert( TRUE );
         KeyAdd( LastEvent );
         EditFlags.ReturnToInsertMode = TRUE;

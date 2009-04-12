@@ -34,7 +34,6 @@
 #include "posix.h"
 #include <fcntl.h>
 #include "walloca.h"
-#include "keys.h"
 #include "rxsupp.h"
 #include "win.h"
 #ifdef __WIN__
@@ -716,14 +715,10 @@ static int fSearch( char *fn, char *r )
     if( i ) {
         return( i );
     }
-#if !defined( __NT__ ) && defined( __WATCOMC__ )
-    bytecnt = 3 * stackavail() / 4;
-#else
-    bytecnt = 2048;
-#endif
-    buff = alloca( bytecnt + 2 );
+    bytecnt = 4096;
+    buff = MemAlloc( bytecnt );
     if( buff == NULL ) {
-        return( ERR_NO_STACK );
+        return( ERR_NO_MEMORY );
     }
 
     /*
@@ -788,6 +783,7 @@ static int fSearch( char *fn, char *r )
                         r[j++] = *res;
                         res++;
                     }
+                    MemFree( buff );
                     return( FGREP_FOUND_STRING );
                 }
             } else {
@@ -810,6 +806,7 @@ static int fSearch( char *fn, char *r )
 
     }
     close( handle );
+    MemFree( buff );
     return( ERR_NO_ERR );
 
 } /* fSearch */

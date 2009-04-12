@@ -108,7 +108,7 @@ bool    GetFindStringDialog( fancy_find *ff );
 bool    GetReplaceStringDialog( fancy_find *ff );
 void    EditSubClass( HWND hwnd, int id, history_data *h );
 void    RemoveEditSubClass( HWND hwnd, int id );
-int     MapVirtualKeyToVIKey( WORD vk, WORD data );
+vi_key  MapVirtualKeyToVIKey( WORD vk, WORD data );
 void    InitGrepDialog( void );
 void    FiniGrepDialog( void );
 bool    SetGrepDialogFile( char *str );

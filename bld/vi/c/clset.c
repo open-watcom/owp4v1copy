@@ -37,7 +37,6 @@
 #include "rxsupp.h"
 #include "fcbmem.h"
 #include "win.h"
-#include "keys.h"
 #include "menu.h"
 #include "source.h"
 #include "lang.h"
@@ -422,7 +421,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
         case SET2_T_MODELESS:
             if( (newset && !EditFlags.Modeless) ||
                 (!newset && EditFlags.Modeless) ) {
-                for( k = 0; k < EventCount; k++ ) {
+                for( k = 0; k < MAX_EVENTS; k++ ) {
                     fptr = EventList[k].rtn.ptr;
                     eb = EventList[k].b;
                     EventList[k].rtn.ptr = EventList[k].alt_rtn.ptr;

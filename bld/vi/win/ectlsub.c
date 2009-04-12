@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 
 static WNDPROC      oldEditProc;
 static FARPROC      editProc;

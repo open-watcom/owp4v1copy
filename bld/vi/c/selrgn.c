@@ -34,7 +34,6 @@
 #include "mouse.h"
 #include "win.h"
 #include "source.h"
-#include "keys.h"
 #ifdef __WIN__
 #include "font.h"
 #include "utils.h"

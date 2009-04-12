@@ -106,7 +106,7 @@ int     UpdateCurrentStatus( status_type st );
 int     Cut( linenum, int, linenum, int, int );
 
 /* dat.c */
-int     ReadDataFile( char *, int *, char **, int **, bool );
+int     ReadDataFile( char *file, char **buffer, bool (*)(int), bool (*)(int,char*) );
 
 /* delete.c */
 int     DoDeleteRegion( event **, event ** );
@@ -469,12 +469,12 @@ void    VerifyTmpDir( void );
 void    MakeTmpPath( char *out, char *in );
 
 /* key.c */
-int     GetVIKey( int ch, int scan, int shift );
-int     GetNextEvent( bool );
-int     GetKey( bool );
+vi_key  GetVIKey( vi_key ch, int scan, int shift );
+vi_key  GetNextEvent( bool );
+vi_key  GetKey( bool );
 void    ClearBreak( void );
 int     NonKeyboardEventsPending( void );
-void    KeyAdd( int ch );
+void    KeyAdd( vi_key ch );
 void    KeyAddString( char *str );
 void    AddCurrentMouseEvent( void );
 
@@ -563,10 +563,10 @@ int     DoKeyMap( int );
 void    DoneInputKeyMap( void );
 int     StartInputKeyMap( int );
 int     RunKeyMap( key_map *, long );
-int     AddKeyMap( key_map *, char *, int );
+int     AddKeyMap( key_map *, char * );
 void    InitKeyMaps( void );
 int     ExecuteBuffer( void );
-char    *LookUpCharToken( int ch, bool want_single );
+char    *LookUpCharToken( vi_key ch, bool want_single );
 void    FiniKeyMaps( void );
 
 /* mark.c */

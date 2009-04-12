@@ -33,7 +33,6 @@
 #define INCLUDE_SHELLAPI_H
 #include "vi.h"
 #include <malloc.h>
-#include "keys.h"
 #include "source.h"
 #include <assert.h>
 
@@ -45,36 +44,34 @@
 #define HOT_KEY_CHAR    '&'
 
 typedef struct item {
-    struct item *next, *prev;
-    UINT        id;
-    char        in_menu     : 1;
-    char        is_active   : 1;
-    char        is_checked  : 1;
-    char        unused      : 5;
-    char        *name;
-    char        *help;
-    char        cmd[1];
+    struct item     *next, *prev;
+    UINT            id;
+    unsigned char   in_menu     : 1;
+    unsigned char   is_active   : 1;
+    unsigned char   is_checked  : 1;
+    unsigned char   unused      : 5;
+    char            *name;
+    char            *help;
+    char            cmd[1];
 } item;
 
 typedef struct menu {
-    struct menu *next, *prev;
-    void        *item_head, *item_tail;
-    char        has_file_list   : 1;
-    char        need_hook       : 1;
-    char        has_last_files  : 1;
-    char        spare           : 5;
-    int         num_items;
-    int         orig_num_items;
-    HMENU       menu_handle;
-    char        *help;
-    char        name[1];
+    struct menu     *next, *prev;
+    void            *item_head, *item_tail;
+    unsigned char   has_file_list   : 1;
+    unsigned char   need_hook       : 1;
+    unsigned char   has_last_files  : 1;
+    unsigned char   spare           : 5;
+    int             num_items;
+    int             orig_num_items;
+    HMENU           menu_handle;
+    char            *help;
+    char            name[ 1 ];
 } menu;
 
 static menu     mainMenu = { NULL, NULL, NULL, NULL, 0, 0, 0 };
 static menu     *rootMenu = &mainMenu;
 static menu     *currMenu = NULL;
-
-static int      selectedItem;
 
 /* Forward declarations */
 int InitMenu( void );
@@ -101,7 +98,7 @@ static int compareName( char *dst, char *src )
 /*
  * getHotKey - get the hot key specified in a string
  */
-static int getHotKey( char *str )
+static vi_key getHotKey( char *str )
 {
     if( str == NULL ) {
         return( 0 );
@@ -583,7 +580,7 @@ int AddMenuItem( char *data )
  */
 int DoMenuChar( void )
 {
-    int         key;
+    vi_key      key;
     menu        *m;
     item        *citem;
     char        *str;
@@ -592,12 +589,7 @@ int DoMenuChar( void )
     key = LastEvent;
     for( m = rootMenu->item_head; m != NULL; m = m->next ) {
         if( getHotKey( m->name ) == key ) {
-            if( selectedItem > 0 ) {
-                key = selectedItem;
-                selectedItem = 0;
-            } else {
-                key = GetNextEvent( TRUE );
-            }
+            key = GetNextEvent( TRUE );
             for( citem = m->item_head; citem != NULL; citem = citem->next ) {
                 if( getHotKey( citem->name ) == key ) {
                     len = strlen( citem->cmd ) + 1;
@@ -617,17 +609,17 @@ int DoMenuChar( void )
  */
 int ViEndMenu( void )
 {
-    int ch;
+    vi_key  key;
 
     if( currMenu == NULL ) {
         return( ERR_INVALID_MENU );
     }
-    ch = getHotKey( currMenu->name );
-    if( ch >= VI_KEY( ALT_A )&& ch <= VI_KEY( ALT_Z ) ) {
-        EventList[ch].rtn.old = DoMenuChar;
-        EventList[ch].alt_rtn.old = DoMenuChar;
-        EventList[ch].ins = IMMenuKey;
-        EventList[ch].b.keep_selection = TRUE;
+    key = getHotKey( currMenu->name );
+    if( key >= VI_KEY( ALT_A ) && key <= VI_KEY( ALT_Z ) ) {
+        EventList[ key ].rtn.old = DoMenuChar;
+        EventList[ key ].alt_rtn.old = DoMenuChar;
+        EventList[ key ].ins = IMMenuKey;
+        EventList[ key ].b.keep_selection = TRUE;
     }
     if( !isSpecialMenuPtr( currMenu ) ) {
         InitMenu();
@@ -742,13 +734,12 @@ int FiniMenu( void )
 /*
  * IsMenuHotKey - decide if a specific alt key is a menu hot key
  */
-int IsMenuHotKey( int ch )
+bool IsMenuHotKey( vi_key key )
 {
     menu    *m;
 
-    ch = ch - 'A' + VI_KEY( ALT_A );
     for( m = rootMenu->item_head; m != NULL; m = m->next ) {
-        if( getHotKey( m->name ) == ch ) {
+        if( getHotKey( m->name ) == key ) {
             return( TRUE );
         }
     }

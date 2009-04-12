@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 #include "source.h"
 #include "win.h"
 #include "lang.h"

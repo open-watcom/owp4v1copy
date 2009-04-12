@@ -31,7 +31,6 @@
 
 #include "vi.h"
 #include "win.h"
-#include "keys.h"
 
 long BIOSGetColorRegister( short a ) { return( 0 ); }
 void BIOSSetNoBlinkAttr() {}

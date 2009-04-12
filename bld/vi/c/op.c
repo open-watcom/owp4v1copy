@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 #include "winaux.h"
 #include "win.h"
 #include <assert.h>

@@ -53,7 +53,7 @@ static volatile int     exitThread;
 
 #ifndef __OS2V2__
 #define TSTACK_SIZE     1024
-static char             thread_stack[TSTACK_SIZE];
+static unsigned char    __far thread_stack[TSTACK_SIZE];
 #else
 #define TSTACK_SIZE     10240
 #endif

@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 
 /*
  * ReplaceChar - replace an individual character

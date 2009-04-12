@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 #include "subclass.h"
 #include "hotkey.h"
 

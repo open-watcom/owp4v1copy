@@ -279,4 +279,18 @@ typedef enum {
 #endif
 } vi_color;
 
+/*
+ * Event type
+ */
+#define VI_KEY( a )     __VIKEY__##a
+#define BITS(a,b,c,d,e,f,g) {a,b,c,d,e,f,g}
+
+#undef vi_pick
+#define vi_pick(enum,modeless,insert,command,nm_bits,bits) enum,
+typedef enum vi_key {
+#include "events.h"
+    MAX_EVENTS
+#undef vi_pick
+} vi_key;
+
 #endif

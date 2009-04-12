@@ -33,7 +33,6 @@
 #include "vi.h"
 #include "source.h"
 #include "parsecl.h"
-#include "keys.h"
 #include "win.h"
 #ifdef __WIN__
 #include "utils.h"
@@ -100,7 +99,8 @@ vars *GetHookVar( hooktype num )
 static int srcHook( hooktype num, int lastrc )
 {
     vars        *v;
-    int         ln, rc;
+    int         ln;
+    int         rc;
 
     if( hookRun & num ) {
         return( lastrc );
@@ -157,9 +157,9 @@ static int srcHook( hooktype num, int lastrc )
  */
 int SourceHook( hooktype num, int lastrc )
 {
-    char        data[1];
+    char        data[ 1 ];
 
-    data[0] = 0;
+    data[ 0 ] = 0;
     srcHookData = data;
     return( srcHook( num, lastrc ) );
 

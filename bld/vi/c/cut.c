@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 
 /*
  * Cut - cut out a block of text

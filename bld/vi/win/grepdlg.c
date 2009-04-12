@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include "grep.h"
-#include "keys.h"
 
 static DLGPROC  grepProc;
 static HWND     grepHwnd;

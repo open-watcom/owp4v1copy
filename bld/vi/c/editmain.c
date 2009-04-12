@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include <setjmp.h>
-#include "keys.h"
 #include "source.h"
 #include "win.h"
 #ifdef __WIN__
@@ -43,7 +42,7 @@
 static event *nextEvent( void )
 {
     LastEvent = GetNextEvent( TRUE );
-    return( &EventList[LastEvent] );
+    return( &EventList[ LastEvent ] );
 }
 
 static void defaultRange( range *range )
@@ -112,12 +111,12 @@ static int doOperator( event *ev )
              * - even better kludge: if we are currently on white
              *   space, then treat 'cw' as 'cw'. arrrrr. cge.
              */
-            if( (ev == &EventList['c'] || ev == &EventList[VI_KEY( ALT_F1 )]) &&
+            if( ( ev == &EventList[ 'c' ] || ev == &EventList[ VI_KEY( ALT_F1 ) ] ) &&
                         LastEvent == 'w' ) {
                 EditFlags.IsChangeWord = TRUE;
                 if( CurrentLine != NULL ) {
-                    if( !isspace( CurrentLine->data[CurrentPos.column - 1] ) ) {
-                        next = &EventList['e'];
+                    if( !isspace( CurrentLine->data[ CurrentPos.column - 1 ] ) ) {
+                        next = &EventList[ 'e' ];
                         range.fix_range = FALSE;
                     }
                 }
@@ -232,16 +231,16 @@ int DoLastEvent( void )
     int         rc;
     bool        keep_sel;
 
-    if( LastEvent >= EventCount ) {
+    if( LastEvent >= MAX_EVENTS ) {
         return( InvalidKey() );
     } else {
         if( !EditFlags.InsertModeActive || EditFlags.Modeless ) {
-            if( !EditFlags.Modeless && KeyMaps[LastEvent].data != NULL ) {
-                if( !KeyMaps[LastEvent].inuse ) {
+            if( !EditFlags.Modeless && KeyMaps[ LastEvent ].data != NULL ) {
+                if( !KeyMaps[ LastEvent ].inuse ) {
                     return( DoKeyMap( LastEvent ) );
                 }
             }
-            event = &EventList[LastEvent];
+            event = &EventList[ LastEvent ];
             keep_sel = event->b.keep_selection;
             if( event->b.keep_selection_maybe ) {
                 if( SelRgn.selected ) {
@@ -293,12 +292,12 @@ int DoLastEvent( void )
             if( EditFlags.EscapedInsertChar ) {
                 return( IMChar() );
             } else {
-                if( InputKeyMaps[LastEvent].data != NULL ) {
-                    if( !InputKeyMaps[LastEvent].inuse ) {
+                if( InputKeyMaps[ LastEvent ].data != NULL ) {
+                    if( !InputKeyMaps[ LastEvent ].inuse ) {
                         return( StartInputKeyMap( LastEvent ) );
                     }
                 }
-                return( (EventList[LastEvent].ins)() );
+                return( (EventList[ LastEvent ].ins)() );
             }
         }
     }
@@ -486,7 +485,7 @@ void DoneRepeat( void )
  */
 void SetRepeatCount( long num )
 {
-    char        str[MAX_NUM_STR];
+    char        str[ MAX_NUM_STR ];
 
     ltoa( num, str, 10 );
     strcpy( RepeatString, str );
@@ -546,8 +545,8 @@ int DoDigit( void )
         WindowTitle( repeatWindow, "Repeat Count" );
     }
 
-    RepeatString[RepeatDigits++] = LastEvent;
-    RepeatString[RepeatDigits] = 0;
+    RepeatString[ RepeatDigits++ ] = LastEvent;
+    RepeatString[ RepeatDigits ] = 0;
     if( repeatWindow != (window_id)-1 ) {
         UpdateRepeatString( RepeatString );
     }

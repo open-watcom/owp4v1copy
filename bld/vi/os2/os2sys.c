@@ -32,6 +32,7 @@
 #include "vi.h"
 #include "win.h"
 #include "dosx.h"
+#include "pragmas.h"
 
 #ifdef __OS2V2__
 #define SEG16   _Seg16

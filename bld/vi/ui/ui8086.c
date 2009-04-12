@@ -93,52 +93,6 @@ void RestoreCursor( void )
 
 } /* RestoreCursor */
 
-#if !defined(__UNIX__) && !defined(__OS2__) && !defined(__NT__)
-    extern void JustAnInt28( void );
-    #pragma aux JustAnInt28 = 0xcd 0x28;
-#endif
-
-/*
- * KeyboardHit - test for keyboard hit
- */
-bool KeyboardHit( void )
-{
-    bool        rc;
-
-    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
-#if !defined(__UNIX__) && !defined(__OS2__) && !defined(__NT__)
-    if( !rc ) {
-        #if defined(__386__)  && !defined(__4G__)
-            extern void UpdateDOSClock( void );
-            UpdateDOSClock();
-        #endif
-        JustAnInt28();
-    }
-#endif
-    return( rc );
-} /* KeyboardHit */
-
-/*
- * GetKeyboard - get a keyboard char
- */
-int GetKeyboard( int *scan )
-{
-    U_INT       key;
-
-    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
-    if( scan != NULL ) {
-        *scan = (key>>8);
-    }
-#ifndef __NT__  /* NT already returns cooked key codes, not scan/key combos */
-    key &= 0xff;
-    if( key == 0xe0 ) {
-        return( 0 );
-    }
-#endif
-    return( key );
-
-} /* GetKeyboard */
-
 int SetFont( char *data )
 {
     data = data;

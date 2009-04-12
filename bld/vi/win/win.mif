@@ -32,7 +32,7 @@ rc_deps = ../win/viw.ico ../win/filelist.dlg ../win/fgrep.dlg &
 !ifdef sys_windowed
 other = vi.res
 ! ifeq host_os nt
-extraobjs += spawn.obj getfpath.obj ntcmds.obj
+extraobjs += spawn.obj ntcmds.obj
 ! else
 extraobjs += exec.obj doscmds.obj
 ! endif

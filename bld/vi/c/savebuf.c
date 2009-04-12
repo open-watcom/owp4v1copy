@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 
 #ifdef __WIN__
 extern int  AddLineToClipboard( char *data, int scol, int ecol );

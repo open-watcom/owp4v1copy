@@ -31,10 +31,6 @@
 
 
 #include "vi.h"
-#if defined( _M_IX86 ) && defined( __WATCOMC__ )
-    #include <i86.h>
-#endif
-#include "pragmas.h"
 
 #if FSYS_CASE_SENSITIVE
     #define file_cmp    strcmp
@@ -42,105 +38,26 @@
     #define file_cmp    stricmp
 #endif
 
-#ifdef __WINDOWS__
-/* Forward declarations */
-void WinGetFullPath( char *filename, char *full );
-#endif
-
-
 /*
  * SameFile - check if two files are the same
  */
 int SameFile( char *f1, char *f2 )
 {
+    char        full1[ FILENAME_MAX ];
+    char        full2[ FILENAME_MAX ];
+
     if( !file_cmp( f1, f2 ) ) {
         return( TRUE );
     }
-
-    {
-        char        full1[FILENAME_MAX];
-        char        full2[FILENAME_MAX];
-
-#ifndef __WINDOWS__
-        DosGetFullPath( f1, full1 );
-        DosGetFullPath( f2, full2 );
-#else
-// this is not to be used under NT
-        WinGetFullPath( f1, full1 );
-        WinGetFullPath( f2, full2 );
-#endif
-        if( !file_cmp( full1, full2 ) ) {
-            if( EditFlags.SameFileCheck ) {
-                return( TRUE );
-            }
-            EditFlags.DuplicateFile = TRUE;
+    _fullpath( full1, f1, FILENAME_MAX );
+    _fullpath( full2, f2, FILENAME_MAX );
+    if( !file_cmp( full1, full2 ) ) {
+        if( EditFlags.SameFileCheck ) {
+            return( TRUE );
         }
+        EditFlags.DuplicateFile = TRUE;
     }
-
     return( FALSE );
 
 } /* SameFile */
 
-#ifdef __WINDOWS__
-// WILL NOT WORK FOR NT !!!
-
-#include "dpmi.h"
-
-/*
- * WinGetFullPath - use undoccumented dos int 21 60h
- *                  to resolve full file name from protected mode windows.
- *                  ( Ref. UnDocumented DOS pg. 149 )
- */
-void WinGetFullPath( char *filename, char *full ) {
-
-    rm_call_struct r;
-
-    char far *str;
-    char far *str2;
-
-    unsigned long  handle;
-    unsigned short para;
-    unsigned short sel;
-
-    // Allocate a chunk of Real mode memory
-
-    // handle  = DPMIAllocateDOSMemoryBlock( FILENAME_MAX >>3 );
-    handle  = GlobalDosAlloc( FILENAME_MAX * 2 );
-
-    // if( (handle == 8) || (handle == 7) ){
-    if( handle ) {
-        // corrupt or insufficient memory
-        full = NULL;
-        return;
-    }
-
-    // find the paragraph and selector portions
-    para = handle >> 16;
-    sel = handle & 0xFFFF;
-
-    // copy the filename to be expanded into the first half of block
-    str = MK_FP( sel, 0 );
-    _fstrcpy( str, filename );
-
-
-    // Call int21 function AH 60h (Truename)
-    memset( &r,  0 , sizeof( r ) );
-    r.eax = 0x6000;
-    r.es = para;
-    r.esi = 0;
-    r.ds = para;
-    r.edi = FILENAME_MAX;
-
-    DPMISimulateRealModeInterrupt( 0x21, 0, 0, &r );
-
-    // copy the return value from the second half of the block
-
-    str2 = MK_FP( sel, FILENAME_MAX );
-    _fstrcpy( full, str2 );
-
-    // Free the allocated Real mode memory
-
-    GlobalDosFree( sel );
-    // DPMIFreeDOSMemoryBlock( sel );
-}
-#endif

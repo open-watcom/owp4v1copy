@@ -31,6 +31,7 @@
 
 
 #include "vi.h"
+#include "pragmas.h"
 
 #if defined( __386__ ) /* && !defined( __4G__ ) */
 static char     colorPalette[ MAX_COLOR_REGISTERS + 1 ] = {

@@ -148,10 +148,10 @@ void BIOSNewCursor( char ch, char notused )
 
 } /* BIOSNewCursor */
 
-extern short BIOSGetKeyboard( char x)
+extern unsigned short BIOSGetKeyboard( char x)
 {
-    KBDKEYINFO  info;
-    short       res;
+    KBDKEYINFO      info;
+    unsigned short  res;
 
     x = x;
     KbdCharIn( &info, 0, 0 );
@@ -160,7 +160,7 @@ extern short BIOSGetKeyboard( char x)
 
 } /* BIOSGetKeyboard */
 
-extern short BIOSKeyboardHit( char x )
+extern unsigned short BIOSKeyboardHit( char x )
 {
     KBDKEYINFO  info;
 
@@ -181,12 +181,34 @@ void MyVioShowBuf( unsigned offset, int length )
 
 } /* MyVioShowBuf */
 
-extern long DosGetFullPath( char *old, char *full )
+/*
+ * KeyboardHit - test for keyboard hit
+ */
+bool KeyboardHit( void )
 {
-#ifdef __386__
-    DosQueryPathInfo( old, FIL_QUERYFULLNAME, full, _MAX_PATH );
-#else
-    strcpy( full, old );
-#endif
-    return( 0L );
-} /* DosGetFullPath */
+    bool        rc;
+
+    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
+    return( rc );
+
+} /* KeyboardHit */
+
+/*
+ * GetKeyboard - get a keyboard char
+ */
+vi_key GetKeyboard( int *scan )
+{
+    unsigned short  key;
+
+    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
+    if( scan != NULL ) {
+        *scan = key >> 8;
+    }
+    key &= 0xff;
+    if( key == 0xe0 ) {
+        return( 0 );
+    }
+    return( key );
+
+} /* GetKeyboard */
+

@@ -31,7 +31,6 @@
 
 #include "vi.h"
 #include <time.h>
-#include "keys.h"
 #include "menu.h"
 #include "win.h"
 
@@ -845,8 +844,8 @@ static int processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
 int DoMenu( void )
 {
     int         i;
-    int         sel= -1;
-    char        key;
+    int         sel = -1;
+    char        ch;
     menu        *cmenu;
 
     /*
@@ -855,11 +854,11 @@ int DoMenu( void )
     if( !EditFlags.Menus ) {
         return( ERR_NO_ERR );
     }
-    key = LastEvent - (char) VI_KEY( ALT_A ) + (char) 'A';
+    ch = LastEvent - VI_KEY( ALT_A ) + 'A';
     i = 0;
     for( cmenu=menuHead; cmenu != NULL; cmenu=cmenu->next ) {
-        if( key == cmenu->hi ) {
-            sel=i;
+        if( ch == cmenu->hi ) {
+            sel = i;
             break;
         }
         i++;
@@ -987,16 +986,16 @@ int GetMenuIdFromCoord( int x )
 /*
  * IsMenuHotKey - test if a specified character is a main menu hot key
  */
-int IsMenuHotKey( int ch )
+bool IsMenuHotKey( vi_key key )
 {
     menu        *curr;
+    char        ch;
 
-    curr = menuHead;
-    while( curr != NULL ) {
+    ch = key - VI_KEY(ALT_A ) + 'A';
+    for( curr = menuHead; curr != NULL; curr = curr->next ) {
         if( curr->hi == ch ) {
             return( TRUE );
         }
-        curr = curr->next;
     }
     return( FALSE );
 

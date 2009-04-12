@@ -32,14 +32,13 @@
 #include "vi.h"
 #include "win.h"
 #include "pragmas.h"
-#include "keys.h"
 
 typedef struct {
-    vi_key vk;
-    vi_key reg;
-    vi_key shift;
-    vi_key ctrl;
-    vi_key alt;
+    WORD    vk;
+    vi_key  reg;
+    vi_key  shift;
+    vi_key  ctrl;
+    vi_key  alt;
 } map;
 
 static const map events[] = {
@@ -227,7 +226,7 @@ static BOOL eventWeWant( INPUT_RECORD *ir )
 /*
  * BIOSKeyboardHit - read the keyboard
  */
-short BIOSGetKeyboard( char x )
+unsigned short BIOSGetKeyboard( char x )
 {
     INPUT_RECORD        ir;
     DWORD               rd, ss;
@@ -245,7 +244,7 @@ short BIOSGetKeyboard( char x )
         return( VI_KEY( MOUSEEVENT ) );
     }
     vk = ir.Event.KeyEvent.wVirtualKeyCode;
-    ascii = ir.Event.KeyEvent.uChar.AsciiChar;
+    ascii = (unsigned char)ir.Event.KeyEvent.uChar.AsciiChar;
     ss = ir.Event.KeyEvent.dwControlKeyState;
 
     has_shift = ((ss & SHIFT_PRESSED) ? TRUE : FALSE);
@@ -276,7 +275,7 @@ short BIOSGetKeyboard( char x )
 /*
  * BIOSKeyboardHit - test if a key is waiting
  */
-short BIOSKeyboardHit( char x )
+unsigned short BIOSKeyboardHit( char x )
 {
     DWORD               rd;
     INPUT_RECORD        ir;
@@ -320,3 +319,30 @@ void MyVioShowBuf( unsigned offset, int nbytes )
     WriteConsoleOutput( OutputHandle, (PCHAR_INFO) Scrn, BSize, bcoord, &sr );
 
 } /* MyVioShowBuf */
+
+/*
+ * KeyboardHit - test for keyboard hit
+ */
+bool KeyboardHit( void )
+{
+    bool        rc;
+
+    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
+    return( rc );
+
+} /* KeyboardHit */
+
+/*
+ * GetKeyboard - get a keyboard char
+ */
+vi_key GetKeyboard( int *scan )
+{
+    vi_key       key;
+
+    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
+    if( scan != NULL ) {
+        *scan = 0;
+    }
+    return( key );
+
+} /* GetKeyboard */

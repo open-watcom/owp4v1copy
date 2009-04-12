@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include "subclass.h"
-#include "keys.h"
 #include <assert.h>
 
 proc_entry  *procHead;

@@ -35,7 +35,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include "source.h"
-#include "keys.h"
 #ifdef __WIN__
     #include "utils.h"
 #endif
@@ -329,7 +328,8 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
  */
 int StartSaveExit( void )
 {
-    int key, levent;
+    vi_key  key;
+    vi_key  levent;
 
     /*
      * get the next key

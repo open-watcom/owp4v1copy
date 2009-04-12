@@ -35,14 +35,13 @@
 /*
  * ReadDataFile - do just that
  */
-int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
-                  bool hasvals )
+int ReadDataFile( char *file, char **buffer, bool (*fn_alloc)(int), bool (*fn_save)(int,char*) )
 {
     GENERIC_FILE        gf;
     int                 i, dcnt, len, size;
     char                token[MAX_STR], buff[MAX_STR];
     char                *buffdata;
-    int                 *valdata;
+    bool                hasvals;
 
     /*
      * get file and buffer
@@ -59,11 +58,7 @@ int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
         return( ERR_INVALID_DATA_FILE );
     }
     dcnt = atoi( buff );
-    if( hasvals ) {
-        valdata = MemAlloc( dcnt * sizeof( int ) );
-    } else {
-        valdata = NULL;
-    }
+    hasvals = fn_alloc( dcnt );
     buffdata = NULL;
     size = 0;
 
@@ -96,17 +91,11 @@ int ReadDataFile( char *file, int *cnt, char **buffer, int **vallist,
                 SpecialFclose( &gf );
                 return( ERR_INVALID_DATA_FILE );
             }
-            valdata[i] = atoi( token );
+            fn_save( i, token );
         }
-
     }
-
     SpecialFclose( &gf );
-
     *buffer = buffdata;
-    *vallist = valdata;
-    *cnt = dcnt;
-
     return( ERR_NO_ERR );
 
 } /* ReadDataFile */

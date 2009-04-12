@@ -35,13 +35,6 @@
 #include <time.h>
 #include <sys/stat.h>
 
-extern long DosGetFullPath( char *old, char *full )
-{
-    strcpy( full, old );        /* for now */
-    return( 0L );
-
-} /* DosGetFullPath */
-
 /*
  * GetFileInfo - get info from a directory entry
  */

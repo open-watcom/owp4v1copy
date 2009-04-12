@@ -2,8 +2,7 @@ objnttimeroot = &
         int.obj
 
 objntsizeroot = &
-        biosnt.obj &
-        getfpath.obj
+        biosnt.obj
 
 objntsize = &
         ntcmds.obj &

@@ -33,6 +33,7 @@
 #include <dos.h>
 #include "win.h"
 #include "dosx.h"
+#include "pragmas.h"
 
 #define PHAR_SCRN_SEL   0x34
 extern int PageCnt;
@@ -429,3 +430,47 @@ void SetCursorBlinkRate( int cbr )
     CursorBlinkRate = cbr;
 
 } /* SetCursorBlinkRate */
+
+#if defined( __386__ ) && !defined( __4G__ )
+extern void UpdateDOSClock( void );
+#endif
+
+extern void JustAnInt28( void );
+#pragma aux JustAnInt28 = 0xcd 0x28;
+
+
+/*
+ * KeyboardHit - test for keyboard hit
+ */
+bool KeyboardHit( void )
+{
+    bool        rc;
+
+    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
+    if( !rc ) {
+#if defined( __386__ ) && !defined( __4G__ )
+        UpdateDOSClock();
+#endif
+        JustAnInt28();
+    }
+    return( rc );
+} /* KeyboardHit */
+
+/*
+ * GetKeyboard - get a keyboard char
+ */
+vi_key GetKeyboard( int *scan )
+{
+    unsigned short  key;
+
+    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
+    if( scan != NULL ) {
+        *scan = key >> 8;
+    }
+    key &= 0xff;
+    if( key == 0xe0 ) {
+        return( 0 );
+    }
+    return( key );
+
+} /* GetKeyboard */

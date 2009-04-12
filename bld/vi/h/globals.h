@@ -79,7 +79,7 @@ extern long         NextAutoSave;
 extern int          HalfPageLines;
 extern int          PageLinesExposed;
 extern char         *GrepDefault;
-extern int          LastEvent;
+extern vi_key       LastEvent;
 extern int          StackK;
 extern int          SpinCount;
 extern char _NEAR   SpinData[];
@@ -103,7 +103,6 @@ extern i_mark       LeftTopPos;
 extern int          ColumnDesired;
 extern window_id    CurrentWindow, MessageWindow, StatusWindow, CurrNumWindow;
 extern window_id    MenuWindow;
-extern int          LastEvent;
 extern char         *Comspec;
 extern select_rgn   SelRgn;
 extern int          CursorBlinkRate;
@@ -133,7 +132,6 @@ extern undo_stack   *UndoStack, *UndoUndoStack;
 
 /* bound key data */
 extern event _NEAR  EventList[];
-extern int          EventCount;
 extern int          MaxKeysBound;
 extern int _NEAR    SavebufBound[];
 extern char         *ScriptBound;

@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include "posix.h"
-#include "keys.h"
 #include "win.h"
 #include "menu.h"
 #include "source.h"

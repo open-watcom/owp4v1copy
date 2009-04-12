@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 #ifdef __WIN__
     #include "winrtns.h"
 #endif

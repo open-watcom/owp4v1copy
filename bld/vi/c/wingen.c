@@ -30,7 +30,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 #include "win.h"
 #include "mouse.h"
 #include "source.h"

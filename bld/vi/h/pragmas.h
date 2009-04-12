@@ -46,14 +46,13 @@ extern void (interrupt _FAR *DosGetVect( char ))( void );
 extern void DosSetVect( char, void (interrupt *)( void ));
 #endif
 
-extern long DosGetFullPath( char *, char * );
 extern void BIOSSetColorRegister( short, char, char, char );
 extern void BIOSGetColorPalette( void _FAR * );
 extern void BIOSSetBlinkAttr( void );
 extern void BIOSSetNoBlinkAttr( void );
 extern short BIOSTestKeyboard( void );
-extern short BIOSGetKeyboard( char );
-extern short BIOSKeyboardHit( char );
+extern unsigned short BIOSGetKeyboard( char );
+extern unsigned short BIOSKeyboardHit( char );
 extern char BIOSGetRowCount( void );
 extern unsigned long BIOSGetVideoMode( void );
 extern short BIOSGetCursor( char );
@@ -150,26 +149,6 @@ extern char IsWindows( void );
         0x8c 0xc2     /* mov     dx,es */ \
         parm [al] modify [es bx];
 
-#ifndef __WINDOWS__
-#pragma aux DosGetFullPath = \
-        0xb4 0x60     /* mov    ah, 60h */ \
-        0xcd 0x21     /* int    21h */ \
-        0x1b 0xd2     /* sbb    dx,dx */ \
-        parm [ds si] [es di] value [dx ax];
-#else
-#pragma aux DosGetFullPath = \
-        "push   ds" \
-        "push   si" \
-        "mov    ds,dx" \
-        "mov    si,ax" \
-        "mov    ah,060h" \
-        "int    21h" \
-        "sbb    dx,dx" \
-        "pop    si" \
-        "pop    ds" \
-        parm [dx ax] [es di] value [dx ax];
-#endif
-
 #pragma aux DosMaxAlloc = \
         0x31 0xdb       /* xor bx,bx */ \
         0x4b            /* dec bx */ \
@@ -256,11 +235,6 @@ extern void DosSetVect( char, void (interrupt _FAR *)( void ) );
         0x8c 0xc2     /* mov    dx,es */ \
         0x07          /* pop    es */ \
         parm [al] value[dx eax] modify [ebx];
-
-#pragma aux DosGetFullPath = \
-        0xb4 0x60           /* mov      ah, 60h */ \
-        0xcd 0x21     /* int    21h */ \
-        parm [esi] [edi];
 
 #pragma aux BIOSSetColorRegister = \
         0x66 0xB8 0x10 0x10     /* mov     ax,01010h */ \

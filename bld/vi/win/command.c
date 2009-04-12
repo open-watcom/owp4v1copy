@@ -33,7 +33,6 @@
 #include "vi.h"
 #include "color.h"
 #include "font.h"
-#include "keys.h"
 #include "utils.h"
 #include "win.h"
 

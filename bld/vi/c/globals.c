@@ -30,7 +30,8 @@
 
 
 #include "vi.h"
-#include "keys.h"
+#include "menu.h"
+#include "ex.h"
 #include "rxsupp.h"
 
 /* strings */
@@ -51,6 +52,14 @@ char _NEAR * _NEAR EditOpts[] =  {
     "<F3> Get All"
 };
 int NumEditOpts = sizeof( EditOpts ) / sizeof( char _NEAR * );
+
+/* event data */
+#undef vi_pick
+#define vi_pick(enum,modeless,insert,command,nm_bits,bits) modeless,insert,command,nm_bits,bits,
+event _NEAR EventList[] = {
+#include "events.h"
+#undef vi_pick
+};
 
 /* mouse data */
 #if !defined( __UNIX__ )
@@ -76,7 +85,7 @@ long            NextAutoSave;
 int             PageLinesExposed = 1;
 int             HalfPageLines;
 char            *GrepDefault;
-int             LastEvent;
+vi_key          LastEvent;
 int             StackK = MIN_STACK_K;
 int             SpinCount;
 char            _NEAR SpinData[] = { '\xC4', '\\', '|', '/' };

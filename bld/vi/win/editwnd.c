@@ -37,7 +37,6 @@
 #include "font.h"
 #include "color.h"
 #include "utils.h"
-#include "keys.h"
 // #include "mdisim.h"
 #include "watcom.h"
 
@@ -305,7 +304,7 @@ static bool jumpToCoord( int row, int col )
 static void regionSelected( HWND id, int x, int y, BOOL dclick, bool popMenu )
 {
     int         row, col;
-    int         tmp;
+    vi_key      tmp;
 
     MyKillCaret( id );
     ClientToRowCol( id, x, y, &row, &col, DIVIDE_MIDDLE );

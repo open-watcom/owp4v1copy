@@ -82,29 +82,38 @@ int GetErrorTokenValue( int *value, char *str )
 
 } /* GetErrorTokenValue */
 
+
+static bool err_alloc( int cnt )
+{
+    ErrorValues = MemAlloc( cnt * sizeof( int ) );
+    return( TRUE );
+}
+
+static bool err_save( int i, char *buff )
+{
+    ErrorValues[ i ] = atoi( buff );
+    return( TRUE );
+}
+
 static bool errorRead = FALSE;
 /*
  * ReadErrorTokens - do just that
  */
 int ReadErrorTokens( void )
 {
-    int         *vals;
-    int         rc, cnt;
-    char        *buff;
+    int         rc;
 
     if( errorRead ) {
         return( ERR_NO_ERR );
     }
 
-    rc = ReadDataFile( "error.dat", &cnt, &buff, &vals, TRUE );
+    rc = ReadDataFile( "error.dat", &ErrorTokens, err_alloc, err_save );
     if( rc ) {
         if( rc == ERR_FILE_NOT_FOUND ) {
             return( ERR_SRC_NO_ERROR_DATA );
         }
         return( rc );
     }
-    ErrorTokens = buff;
-    ErrorValues = vals;
     errorRead = TRUE;
 
     return( ERR_NO_ERR );

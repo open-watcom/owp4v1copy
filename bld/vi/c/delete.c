@@ -31,7 +31,6 @@
 
 
 #include "vi.h"
-#include "keys.h"
 
 /*
  * DoDeleteRegion - delete currently selected region

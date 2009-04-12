@@ -53,6 +53,6 @@ int     SetToMenuId( int id );
 int     DoFloatMenu( int id, int slen, int x1, int y1 );
 int     ActivateFloatMenu( char * );
 int     DoWindowGadgetMenu( void );
-int     IsMenuHotKey( int );
+bool    IsMenuHotKey( vi_key );
 
 #endif

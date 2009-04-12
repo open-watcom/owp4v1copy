@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include "win.h"
-#include "keys.h"
 
 
 /*
