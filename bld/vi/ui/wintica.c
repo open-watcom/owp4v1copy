@@ -38,13 +38,13 @@
  */
 int WindowTile( int maxx, int maxy )
 {
-    int         cnt=0,max=maxx*maxy,xdiv,ydiv,tc=0,tcc;
+    int         cnt = 0, max = maxx * maxy, xdiv, ydiv, tc = 0, tcc;
     int         xstart = editw_info.x1;
     int         xend = editw_info.x2;
     int         ystart = editw_info.y1;
     int         yend = editw_info.y2;
-    int         ystep,xstep,x,i,y,xextra,yextra,xx,yy,sxextra;
-    info        *cinfo,*cwinfo;
+    int         ystep, xstep, x, i, y, xextra, yextra, xx, yy, sxextra;
+    info        *cinfo, *cwinfo;
 
     /*
      * "untile" cmd
@@ -59,15 +59,15 @@ int WindowTile( int maxx, int maxy )
         while( cinfo != NULL ) {
             BringUpFile( cinfo, FALSE );
             WindowAuxUpdate( CurrentWindow, WIND_INFO_TEXT_COLOR,
-                                editw_info.text.foreground);
+                             editw_info.text.foreground );
             WindowAuxUpdate( CurrentWindow, WIND_INFO_BACKGROUND_COLOR,
-                                editw_info.text.background );
+                             editw_info.text.background );
             WindowAuxUpdate( CurrentWindow, WIND_INFO_TEXT_FONT,
-                                editw_info.text.font );
+                             editw_info.text.font );
             WindowAuxUpdate( CurrentWindow, WIND_INFO_BORDER_COLOR2,
-                                editw_info.border_color2 );
+                             editw_info.border_color2 );
             CurrentWindowResize( editw_info.x1, editw_info.y1, editw_info.x2,
-                                editw_info.y2 );
+                                 editw_info.y2 );
             cinfo = cinfo->next;
         }
         BringUpFile( cwinfo, FALSE );
@@ -79,22 +79,22 @@ int WindowTile( int maxx, int maxy )
      */
     cnt = GimmeFileCount();
     if( cnt > max ) {
-        cnt=max;
+        cnt = max;
     }
     if( cnt > maxx ) {
         xdiv = maxx;
     } else {
         xdiv = cnt;
     }
-    ydiv = (cnt-1)/maxx+1;
+    ydiv = (cnt - 1) / maxx + 1;
 
     /*
      * figure out positions
      */
-    ystep = (yend-ystart+1)/ydiv;
-    yextra = (yend-ystart+1) % ydiv;
-    xstep = (xend-xstart+1)/xdiv;
-    sxextra = xextra = (xend-xstart+1) % xdiv;
+    ystep = (yend - ystart + 1) / ydiv;
+    yextra = (yend - ystart + 1) % ydiv;
+    xstep = (xend - xstart + 1) / xdiv;
+    sxextra = xextra = (xend - xstart + 1) % xdiv;
 
     /*
      * save current file
@@ -105,7 +105,7 @@ int WindowTile( int maxx, int maxy )
     /*
      * do retiling
      */
-    for( y=0;y<ydiv;y++ ) {
+    for( y = 0; y < ydiv; y++ ) {
         /*
          * y-direction round off allowance
          */
@@ -113,10 +113,10 @@ int WindowTile( int maxx, int maxy )
             yextra--;
             yy = 1;
         } else {
-            yy =0;
+            yy = 0;
         }
 
-        for( x=0;x<xdiv;x++ ) {
+        for( x = 0; x < xdiv; x++ ) {
 
             /*
              * x-direction round off allowance
@@ -125,7 +125,7 @@ int WindowTile( int maxx, int maxy )
                 xextra--;
                 xx = 1;
             } else {
-                xx =0;
+                xx = 0;
             }
 
             /*
@@ -140,14 +140,15 @@ int WindowTile( int maxx, int maxy )
                 }
                 if( tcc != 0 ) {
                     WindowAuxUpdate( CurrentWindow, WIND_INFO_TEXT_COLOR, tcc & 0x0f );
-                    WindowAuxUpdate( CurrentWindow, WIND_INFO_BACKGROUND_COLOR, tcc >> 4 );
+                    WindowAuxUpdate( CurrentWindow, WIND_INFO_BACKGROUND_COLOR,
+                                     tcc >> 4 );
                     /* tile fonts? Nah... sounds real stupid... */
                     WindowAuxUpdate( CurrentWindow, WIND_INFO_BORDER_COLOR2, tcc >> 4 );
                 }
             }
 
-            i = CurrentWindowResize( xstart, ystart, xstart+ xx+xstep-1,
-                            ystart+yy+ystep-1 );
+            i = CurrentWindowResize( xstart, ystart, xstart + xx + xstep - 1,
+                                     ystart + yy + ystep - 1 );
             if( i ) {
                 return( i );
             }
@@ -160,7 +161,7 @@ int WindowTile( int maxx, int maxy )
             if( cnt == 0 ) {
                 break;
             }
-            xstart += xstep+xx;
+            xstart += xstep + xx;
             cinfo = cinfo->next;
             if( cinfo == NULL ) {
                 cinfo = InfoHead;
@@ -169,7 +170,7 @@ int WindowTile( int maxx, int maxy )
         }
         xstart = editw_info.x1;
         xextra = sxextra;
-        ystart += ystep+yy;
+        ystart += ystep + yy;
 
     }
     BringUpFile( cwinfo, FALSE );
@@ -183,20 +184,20 @@ int WindowTile( int maxx, int maxy )
  */
 int WindowCascade( void )
 {
-    int         cnt,i,j;
+    int         cnt, i, j;
     int         xstart = editw_info.x1;
     int         xend = editw_info.x2;
     int         ystart = editw_info.y1;
     int         yend = editw_info.y2;
-    info        *cinfo,*cwinfo;
+    info        *cinfo, *cwinfo;
 
     /*
      * get number of files to cascade
      */
     cnt = GimmeFileCount();
-    j  = xend-xstart+2;
-    if( j < yend-ystart+2 ) {
-        j = yend-ystart+2;
+    j  = xend - xstart + 2;
+    if( j < yend - ystart + 2 ) {
+        j = yend - ystart + 2;
     }
     if( cnt > j ) {
         cnt = j;
@@ -208,15 +209,15 @@ int WindowCascade( void )
     /*
      * init for cascade
      */
-    xend -= cnt-1;
-    yend -= cnt-1;
+    xend -= cnt - 1;
+    yend -= cnt - 1;
     SaveCurrentInfo();
     cwinfo = cinfo = CurrentInfo;
 
     /*
      * resize all the files
      */
-    for( i=0;i<cnt;i++ ) {
+    for( i = 0; i < cnt; i++ ) {
 
         BringUpFile( cinfo, FALSE );
         j = CurrentWindowResize( xstart, ystart, xend, yend );

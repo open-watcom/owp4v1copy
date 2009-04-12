@@ -32,7 +32,7 @@
 
 #include "vi.h"
 #ifdef __WATCOMC__
-#include <conio.h>
+    #include <conio.h>
 #endif
 #include "mouse.h"
 #include "win.h"
@@ -55,9 +55,9 @@ window_id GetMousePosInfo( int *win_x, int *win_y )
  */
 bool TestMouseEvent( bool usemouse )
 {
-    int         win_x,win_y;
+    int         win_x, win_y;
     window_id   id;
-    bool                rc;
+    bool        rc;
 
     if( hookHead == NULL ) {
         return( usemouse );

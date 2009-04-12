@@ -38,11 +38,11 @@
  */
 static void allocImage( void )
 {
-    int i,j;
+    int i, j;
 
-    i = WindMaxWidth*WindMaxHeight;
+    i = WindMaxWidth * WindMaxHeight;
     ScreenImage = MemAlloc( i );
-    for( j=0;j<i;j++ ) {
+    for( j = 0; j < i; j++ ) {
         ScreenImage[j] = NO_CHAR;
     }
 
@@ -65,11 +65,11 @@ void StartWindows( void )
 void FinishWindows( void )
 {
     cursor_type ct;
-    int i;
+    int         i;
 
     // Close Down All Straggling Windows
-    for( i=0; i<MAX_WINDS; i++ ){
-        if( Windows[i] != NULL ){
+    for( i = 0; i < MAX_WINDS; i++ ) {
+        if( Windows[i] != NULL ) {
             // CloseAWindow( i );
         }
     }
@@ -77,21 +77,21 @@ void FinishWindows( void )
     // Close down the windowing system.
 
     if( EditFlags.ZapColors ) {
-        int             i,total;
-        char_info       _FAR *scr,what;
+        int             i, total;
+        char_info       _FAR *scr, what;
 
         what.attr = ExitAttr;
         if( !EditFlags.Quiet && Scrn != NULL ) {
-            total = WindMaxWidth*WindMaxHeight;
+            total = WindMaxWidth * WindMaxHeight;
             scr = (char_info _FAR *) Scrn;
-            for( i=0;i<total;i ++ ) {
+            for( i = 0; i < total; i++ ) {
                 what.ch = (*scr).ch;
                 WRITE_SCREEN( *scr, what );
                 scr++;
             }
-    #ifdef __VIO__
-            MyVioShowBuf( 0, WindMaxWidth*WindMaxHeight );
-    #endif
+#ifdef __VIO__
+            MyVioShowBuf( 0, WindMaxWidth * WindMaxHeight );
+#endif
         }
     }
     FiniColors();
@@ -99,4 +99,5 @@ void FinishWindows( void )
     ct.width = 100;
     NewCursor( (window_id) 0, ct );
     MemFree( ScreenImage );
+
 } /* FinishWindows */

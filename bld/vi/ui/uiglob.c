@@ -35,32 +35,32 @@
 #include "dosx.h"
 #include "regexp.h"
 #if defined( __UNIX__ )
-#include "stdui.h"
+    #include "stdui.h"
 #endif
 
-char        MinSlots[ MAX_MIN_SLOTS ];
+char        MinSlots[MAX_MIN_SLOTS];
 #ifdef __CURSES__
-char_info   WindowNormalAttribute = { ' ',0 };
+char_info   WindowNormalAttribute = { ' ', 0 };
 #else
-char_info   WindowNormalAttribute = { ' ',7 };
+char_info   WindowNormalAttribute = { ' ', 7 };
 #endif
-wind        *Windows[ MAX_WINDS ];
+wind        *Windows[MAX_WINDS];
 
 char        WindowBordersNG[] = {
 #undef vi_pick
 #if defined( __UNIX__ )
-#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) UnixNG,
+    #define vi_pick( enum, UnixNG, UnixG, DosNG, DosG ) UnixNG,
 #else
-#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) DosNG,
+    #define vi_pick( enum, UnixNG, UnixG, DosNG, DosG ) DosNG,
 #endif
 #include "borders.h"
 };
 char        WindowBordersG[] =  {
 #undef vi_pick
 #if defined( __UNIX__ )
-#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) UnixG,
+    #define vi_pick( enum, UnixNG, UnixG, DosNG, DosG ) UnixG,
 #else
-#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) DosG,
+    #define vi_pick( enum, UnixNG, UnixG, DosNG, DosG ) DosG,
 #endif
 #include "borders.h"
 #undef vi_pick

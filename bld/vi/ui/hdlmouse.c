@@ -43,7 +43,7 @@ static bool dragThumb;
  */
 int HandleMouseEvent( void )
 {
-    int         win_x,win_y;
+    int         win_x, win_y;
     window_id   id;
     info        *cinfo;
     wind        *w;
@@ -54,7 +54,7 @@ int HandleMouseEvent( void )
     if( id == NO_CHAR ) {
         return( ERR_NO_ERR );
     }
-    w = Windows[ id ];
+    w = Windows[id];
     if( !w->has_border ) {
         win_x += 1;
         win_y += 1;
@@ -67,7 +67,7 @@ int HandleMouseEvent( void )
         if( id != CurrentWindow ) {
             return( ERR_NO_ERR );
         }
-        if( win_x == w->width-1 ) {
+        if( win_x == w->width - 1 ) {
             return( PositionToNewThumbPosition( w, win_y ) );
         }
         return( ERR_NO_ERR );
@@ -138,7 +138,7 @@ int HandleMouseEvent( void )
                 /*
                  * check for resize request
                  */
-                if( win_x == w->width-1 && win_y == w->height-1 ) {
+                if( win_x == w->width - 1 && win_y == w->height - 1 ) {
                     return( ResizeCurrentWindowWithMouse() );
                 }
 
@@ -172,8 +172,8 @@ int HandleMouseEvent( void )
             }
         }
         if( EditFlags.Menus && id == MenuWindow ) {
-            i = GetMenuIdFromCoord( win_x-1 );
-            if( i >=0 ) {
+            i = GetMenuIdFromCoord( win_x - 1 );
+            if( i >= 0 ) {
                 return( SetToMenuId( i ) );
             }
         }
@@ -192,9 +192,9 @@ int HandleMouseEvent( void )
      * try to scroll screen
      */
     if( (LastMouseEvent == MOUSE_REPEAT || LastMouseEvent == MOUSE_DCLICK ||
-                LastMouseEvent == MOUSE_PRESS ) && w->has_border &&
-                id == CurrentWindow && win_x == w->width-1 ) {
-        if( win_y == w->height-2 ) {
+         LastMouseEvent == MOUSE_PRESS) && w->has_border &&
+        id == CurrentWindow && win_x == w->width - 1 ) {
+        if( win_y == w->height - 2 ) {
             return( MoveScreenDown() );
         }
         if( win_y == 1 ) {
@@ -215,7 +215,7 @@ int HandleMouseEvent( void )
                 return( MovePageDown() );
             }
         } else {
-            if( win_y < w->height/2 ) {
+            if( win_y < w->height / 2 ) {
                 return( MovePageUp() );
             } else {
                 return( MovePageDown() );
@@ -227,8 +227,8 @@ int HandleMouseEvent( void )
      * start dragging
      */
     if( id == CurrentWindow && (LastMouseEvent == MOUSE_DRAG ||
-                LastMouseEvent == MOUSE_DRAG_R ) &&
-                InsideWindow( id, win_x, win_y ) ) {
+                                LastMouseEvent == MOUSE_DRAG_R ) &&
+        InsideWindow( id, win_x, win_y ) ) {
         EditFlags.Dragging = TRUE;
         UpdateDrag( id, win_x, win_y );
     }

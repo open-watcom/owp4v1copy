@@ -39,9 +39,9 @@
 #define MOUSE_MIDDLE_BUTTON        2
 
 static long mouseTime;
-static int lastButton;
-static int oldRow=-1;
-static int oldCol=-1;
+static int  lastButton;
+static int  oldRow = -1;
+static int  oldCol = -1;
 static char oldAttr;
 static bool mouseOn;
 static bool mouseRepeat;
@@ -73,17 +73,17 @@ static vi_mouse_event mapButtonEvents( vi_mouse_event me, int button )
     }
     if( button != MOUSE_LEFT_BUTTON ) {
         if( me == MOUSE_PRESS ) {
-            me = ( button == MOUSE_RIGHT_BUTTON ) ? MOUSE_PRESS_R : MOUSE_PRESS_M;
+            me = (button == MOUSE_RIGHT_BUTTON) ? MOUSE_PRESS_R : MOUSE_PRESS_M;
         } else if( me == MOUSE_RELEASE ) {
-            me = ( button == MOUSE_RIGHT_BUTTON ) ? MOUSE_RELEASE_R : MOUSE_RELEASE_M;
+            me = (button == MOUSE_RIGHT_BUTTON) ? MOUSE_RELEASE_R : MOUSE_RELEASE_M;
         } else if( me == MOUSE_DCLICK ) {
-            me = ( button == MOUSE_RIGHT_BUTTON ) ? MOUSE_DCLICK_R : MOUSE_DCLICK_M;
+            me = (button == MOUSE_RIGHT_BUTTON) ? MOUSE_DCLICK_R : MOUSE_DCLICK_M;
         } else if( me == MOUSE_HOLD ) {
-            me = ( button == MOUSE_RIGHT_BUTTON ) ? MOUSE_HOLD_R : MOUSE_HOLD_M;
+            me = (button == MOUSE_RIGHT_BUTTON) ? MOUSE_HOLD_R : MOUSE_HOLD_M;
         } else if( me == MOUSE_DRAG ) {
-            me = ( button == MOUSE_RIGHT_BUTTON ) ? MOUSE_DRAG_R : MOUSE_DRAG_M;
+            me = (button == MOUSE_RIGHT_BUTTON) ? MOUSE_DRAG_R : MOUSE_DRAG_M;
         } else if( me == MOUSE_REPEAT ) {
-            me = ( button == MOUSE_RIGHT_BUTTON ) ? MOUSE_REPEAT_R : MOUSE_REPEAT_M;
+            me = (button == MOUSE_RIGHT_BUTTON) ? MOUSE_REPEAT_R : MOUSE_REPEAT_M;
         }
     }
     return( me );
@@ -98,7 +98,7 @@ vi_mouse_event GetMouseEvent( void )
     return( MOUSE_NONE );
 #else
     int             status;
-    int             row,col;
+    int             row, col;
     bool            moved;
     vi_mouse_event  me;
     int             button;
@@ -117,7 +117,7 @@ vi_mouse_event GetMouseEvent( void )
     row = min( row, WindMaxHeight - 1 );
     col = min( col, WindMaxWidth - 1 );
 
-    moved = ( row != MouseRow || col != MouseCol );
+    moved = (row != MouseRow || col != MouseCol);
     diff = (status ^ MouseStatus) & MOUSE_ANY_BUTTON_DOWN;
 
     me = MOUSE_NONE;
@@ -145,7 +145,7 @@ vi_mouse_event GetMouseEvent( void )
         button = getButton( diff );
         MouseStatus = status;
         mouseRepeat = FALSE;
-        mouseTime  = ClockTicks;
+        mouseTime = ClockTicks;
         mouseOn = TRUE;
     } else if( status & MOUSE_ANY_BUTTON_DOWN ) {
         button = getButton( status );
@@ -176,7 +176,7 @@ static void drawMouseCursor( int row, int col )
     char_info   _FAR *ptr;
 
     if( mouseOn ) {
-        ptr = (char_info _FAR *) &Scrn[ sizeof( char_info ) *((row)*WindMaxWidth + col) ];
+        ptr = (char_info _FAR *) &Scrn[sizeof( char_info ) * (row * WindMaxWidth + col)];
         oldAttr = ptr->attr;
         if( EditFlags.Monocolor ) {
             ptr->attr = (oldAttr & 0x79) ^ 0x71;
@@ -200,7 +200,8 @@ static void eraseMouseCursor( void )
     char_info   _FAR *ptr;
 
     if( mouseOn && oldRow >= 0 ) {
-        ptr = (char_info _FAR *) &Scrn[ sizeof( char_info ) *((oldRow)*WindMaxWidth + oldCol) ];
+        ptr = (char_info _FAR *) &Scrn[sizeof( char_info ) *
+                                       (oldRow * WindMaxWidth + oldCol)];
         ptr->attr = oldAttr;
 #ifdef __VIO__
         MyVioShowBuf( (char _FAR *) ptr - Scrn, 1 );
@@ -214,7 +215,6 @@ static void eraseMouseCursor( void )
  */
 void RedrawMouse( int row, int col )
 {
-
     if( oldRow == row && oldCol == col || EditFlags.HasSystemMouse ) {
         return;
     }

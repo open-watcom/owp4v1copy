@@ -31,17 +31,17 @@
 
 #include "vi.h"
 #ifdef __WATCOMC__
-#include <conio.h>
+    #include <conio.h>
 #endif
 #include "win.h"
 #include "dosx.h"
 #include "pragmas.h"
 #ifdef __CURSES__
-#include "curses.h"
+    #include "curses.h"
 #endif
 
-static int saveRow,saveCol;
-int PageCnt=0;
+static int  saveRow, saveCol;
+int         PageCnt = 0;
 
 /*
  * getCursor - get cursor position
@@ -53,6 +53,7 @@ static void getCursor( int *row, int *col )
     x = BIOSGetCursor( VideoPage );
     *row = (x >> 8);
     *col = x & 0xff;
+
 } /* getCursor */
 
 /*
@@ -61,6 +62,7 @@ static void getCursor( int *row, int *col )
 static void setCursor( int row, int col )
 {
     BIOSSetCursor( VideoPage, row, col );
+
 } /* setCursor */
 
 /*
@@ -68,7 +70,7 @@ static void setCursor( int row, int col )
  */
 void KillCursor( void )
 {
-    getCursor( &saveRow,&saveCol );
+    getCursor( &saveRow, &saveCol );
     setCursor( WindMaxHeight, 0 );
 
 } /* KillCursor */
@@ -79,7 +81,7 @@ void KillCursor( void )
  */
 void TurnOffCursor( void )
 {
-    setCursor( WindMaxHeight,0 );
+    setCursor( WindMaxHeight, 0 );
 
 } /* TurnOffCursor */
 #endif
@@ -117,15 +119,16 @@ void ClearScreen( void )
     foo = (char_info _FAR *) Scrn;
     what.ch = ' ';
     what.attr = ExitAttr;
-    for( i=WindMaxWidth*WindMaxHeight-1;i>=0;i-- ) {
+    for( i = WindMaxWidth * WindMaxHeight - 1; i >= 0; i-- ) {
         WRITE_SCREEN( *foo, what );
         foo++;
     }
 #ifdef __VIO__
-    MyVioShowBuf( 0, WindMaxWidth*WindMaxHeight );
+    MyVioShowBuf( 0, WindMaxWidth * WindMaxHeight );
 #endif
 #endif
     setCursor( 0, 0 );
+
 } /* ClearScreen */
 
 /*
@@ -133,7 +136,7 @@ void ClearScreen( void )
  */
 void GetClockStart( void )
 {
-    ClockStart = &Scrn[ sizeof(char_info)*(ClockX+ClockY*WindMaxWidth)];
+    ClockStart = &Scrn[sizeof( char_info ) * (ClockX + ClockY * WindMaxWidth)];
 
 } /* GetClockStart */
 
@@ -142,7 +145,7 @@ void GetClockStart( void )
  */
 void GetSpinStart( void )
 {
-    SpinLoc = &Scrn[ sizeof(char_info)*(SpinX+SpinY*WindMaxWidth)];
+    SpinLoc = &Scrn[sizeof( char_info ) * (SpinX + SpinY * WindMaxWidth)];
 
 } /* GetSpinStart */
 
@@ -161,9 +164,9 @@ void SetPosToMessageLine( void )
 void SetGenericWindowCursor( window_id wn, int l, int c )
 {
     wind        *w;
-    int         row,col;
+    int         row, col;
 
-    w = Windows[ wn ];
+    w = Windows[wn];
 
     row = w->y1;
     col = w->x1;

@@ -34,17 +34,17 @@
 #include "pragmas.h"
 
 #if defined( __386__ ) /* && !defined( __4G__ ) */
-static char     colorPalette[ MAX_COLOR_REGISTERS + 1 ] = {
+static char     colorPalette[MAX_COLOR_REGISTERS + 1] = {
     0, 1, 2, 3, 4, 5, 0x14, 7,
     0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
     0x00
 };
 #else
-static char     colorPalette[ MAX_COLOR_REGISTERS + 1 ];
+static char     colorPalette[MAX_COLOR_REGISTERS + 1];
 #endif
-static rgb      oldColors[ MAX_COLOR_REGISTERS ];
-static rgb      newColors[ MAX_COLOR_REGISTERS ];
-static bool     colorChanged[ MAX_COLOR_REGISTERS ];
+static rgb      oldColors[MAX_COLOR_REGISTERS];
+static rgb      newColors[MAX_COLOR_REGISTERS];
+static bool     colorChanged[MAX_COLOR_REGISTERS];
 
 /*
  * getColorRegister - as it sounds
@@ -53,10 +53,10 @@ static void getColorRegister( vi_color reg, rgb *c )
 {
     long        res;
 
-    res = BIOSGetColorRegister( colorPalette[ reg ] );
-    c->red = ((char *)(&res))[ 1 ] << 2;
-    c->blue = ((char *)(&res))[ 2 ] << 2;
-    c->green = ((char *)(&res))[ 3 ] << 2;
+    res = BIOSGetColorRegister( colorPalette[reg] );
+    c->red = ((char *)(&res))[1] << 2;
+    c->blue = ((char *)(&res))[2] << 2;
+    c->green = ((char *)(&res))[3] << 2;
 
 } /* getColorRegister */
 
@@ -65,7 +65,7 @@ static void getColorRegister( vi_color reg, rgb *c )
  */
 static void setColorRegister( vi_color reg, rgb *c )
 {
-    BIOSSetColorRegister( colorPalette[ reg ], c->red >> 2, c->green >> 2, c->blue >> 2 );
+    BIOSSetColorRegister( colorPalette[reg], c->red >> 2, c->green >> 2, c->blue >> 2 );
 
 } /* setColorRegister */
 
@@ -106,8 +106,8 @@ void ResetColors( void )
     if( EditFlags.Color && !EditFlags.Quiet ) {
         BIOSSetNoBlinkAttr();
         for( i = 0; i < MAX_COLOR_REGISTERS; i++ ) {
-            if( colorChanged[ i ] ) {
-                setColorRegister( i, &newColors[ i ] );
+            if( colorChanged[i] ) {
+                setColorRegister( i, &newColors[i] );
             }
         }
     }
@@ -122,8 +122,8 @@ void FiniColors( void )
 
     if( EditFlags.Color && !EditFlags.Quiet ) {
         for( i = 0; i < MAX_COLOR_REGISTERS; i++ ) {
-            if( colorChanged[ i ] ) {
-                setColorRegister( i, &oldColors[ i ] );
+            if( colorChanged[i] ) {
+                setColorRegister( i, &oldColors[i] );
             }
         }
         BIOSSetBlinkAttr();
@@ -138,31 +138,31 @@ int SetAColor( char *data )
 {
     rgb         c;
     int         clr;
-    char        token[ MAX_STR ];
+    char        token[MAX_STR];
 
-    if( NextWord1( data,token ) <= 0 ) {
+    if( NextWord1( data, token ) <= 0 ) {
         return( ERR_INVALID_SETCOLOR );
     }
     clr = atoi( token );
-    if( NextWord1( data,token ) <= 0 ) {
+    if( NextWord1( data, token ) <= 0 ) {
         return( ERR_INVALID_SETCOLOR );
     }
     c.red = atoi( token );
-    if( NextWord1( data,token ) <= 0 ) {
+    if( NextWord1( data, token ) <= 0 ) {
         return( ERR_INVALID_SETCOLOR );
     }
     c.green = atoi( token );
-    if( NextWord1( data,token ) <= 0 ) {
+    if( NextWord1( data, token ) <= 0 ) {
         return( ERR_INVALID_SETCOLOR );
     }
     c.blue = atoi( token );
     if( !EditFlags.Quiet ) {
-        if( !colorChanged[ clr ] ) {
-            getColorRegister( clr, &oldColors[ clr ] );
-            colorChanged[ clr ] = TRUE;
+        if( !colorChanged[clr] ) {
+            getColorRegister( clr, &oldColors[clr] );
+            colorChanged[clr] = TRUE;
         }
         setColorRegister( clr, &c );
-        newColors[ clr ] = c;
+        newColors[clr] = c;
     }
     return( ERR_NO_ERR );
 
@@ -179,12 +179,12 @@ int GetNumColors( void )
 /*
  * GetColorSetting - get a specific color setting
  */
-bool GetColorSetting( vi_color clr, rgb *c  )
+bool GetColorSetting( vi_color clr, rgb *c )
 {
-    if( !colorChanged[ clr ] ) {
+    if( !colorChanged[clr] ) {
         return( FALSE );
     }
-    *c = newColors[ clr ];
+    *c = newColors[clr];
     return( TRUE );
 
 } /* GetColorSetting */
