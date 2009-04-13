@@ -67,5 +67,5 @@ char * near InternalCommands[] = {
 };
 int InternalCommandCount = sizeof( InternalCommands ) / sizeof( char near * );
 
-char * near ExeExtensions[] = {".bat", ".com",".exe" };
+char * near ExeExtensions[] = {".bat", ".com", ".exe" };
 int ExeExtensionCount = sizeof( ExeExtensions ) / sizeof( char near * );

@@ -40,9 +40,9 @@
 extern void ResetBPChain( void );
 
 #pragma aux ResetBPChain = \
-        "mov    bp,0" \
+        "mov    bp, 0" \
         "push   bp" \
-        "mov    bp,sp";
+        "mov    bp, sp";
 
 #else
 #define ResetBPChain()
@@ -50,9 +50,9 @@ extern void ResetBPChain( void );
 
 void main( int argc, char *argv[] )
 {
-    #ifdef TRMEM
-        InitTRMEM();
-    #endif
+#ifdef TRMEM
+    InitTRMEM();
+#endif
 
     argc = argc;
     EXEName = argv[0];
@@ -64,8 +64,8 @@ void main( int argc, char *argv[] )
     FinalStack();
     ResetBPChain();
     EditMain();
-    #ifdef TRMEM
-        DumpTRMEM();
-    #endif
+#ifdef TRMEM
+    DumpTRMEM();
+#endif
 
 } /* main */
