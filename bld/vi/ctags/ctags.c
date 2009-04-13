@@ -35,7 +35,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#if defined(__UNIX__)
+#if defined( __UNIX__ )
     #include <dirent.h>
     #include <sys/stat.h>
 #else
@@ -81,14 +81,14 @@ static bool             quietFlag;
 static bool             appendFlag;
 static char             *fileName = "tags";
 static char             tmpFileName[_MAX_PATH];
-static file_type        fileType=TYPE_NONE;
+static file_type        fileType = TYPE_NONE;
 
 static void displayBanner( void )
 {
     if( quietFlag ) {
         return;
     }
-    printf( "%s\n", banner1w( "CTAGS Utility", "1.0") );
+    printf( "%s\n", banner1w( "CTAGS Utility", "1.0" ) );
     printf( "%s\n", banner2a() );
     printf( "%s\n", banner3 );
     printf( "%s\n", banner3a );
@@ -136,7 +136,6 @@ static void Quit( const char **usage_msg, const char *str, ... )
  */
 static void doOption( int ch )
 {
-
     switch( ch ) {
     case 'a':
         appendFlag = TRUE;
@@ -204,7 +203,7 @@ static void doOption( int ch )
  */
 static void processFile( char *arg )
 {
-    char        buff[_MAX_EXT+5];
+    char        buff[_MAX_EXT + 5];
     char        *ext;
     file_type   ftype;
     unsigned    tagcnt;
@@ -213,15 +212,15 @@ static void processFile( char *arg )
     _splitpath2( arg, buff, NULL, NULL, NULL, &ext );
     if( fileType == TYPE_NONE ) {
         ftype = TYPE_C;
-        if( !stricmp( ext,".for" ) ) {
+        if( !stricmp( ext, ".for" ) ) {
             ftype = TYPE_FORTRAN;
-        } else if( !stricmp( ext,".fi" ) ) {
+        } else if( !stricmp( ext, ".fi" ) ) {
             ftype = TYPE_FORTRAN;
-        } else if( !stricmp( ext,".pas" ) ) {
+        } else if( !stricmp( ext, ".pas" ) ) {
             ftype = TYPE_PASCAL;
-        } else if( !stricmp( ext,".cpp" ) ) {
+        } else if( !stricmp( ext, ".cpp" ) ) {
             ftype = TYPE_CPLUSPLUS;
-        } else if( !stricmp( ext,".asm" ) ) {
+        } else if( !stricmp( ext, ".asm" ) ) {
             ftype = TYPE_ASM;
         }
     } else {
@@ -250,7 +249,7 @@ static void processFile( char *arg )
         break;
     }
     if( VerboseFlag ) {
-        printf( ", %u tags.\n", TagCount-tagcnt );
+        printf( ", %u tags.\n", TagCount - tagcnt );
     }
     EndFile();
 
@@ -264,7 +263,7 @@ static void processFileList( char *ptr )
     DIR                 *dirp;
     struct dirent       *dirent;
     char                *tmp;
-    bool                has_wild=FALSE;
+    bool                has_wild = FALSE;
     char                buff1[_MAX_PATH2];
     char                buff2[_MAX_PATH2];
     char                *drive;
@@ -302,8 +301,9 @@ static void processFileList( char *ptr )
                 continue;
         }
 #else
-        if( dirent->d_attr & (_A_SUBDIR|_A_VOLID ) )
+        if( dirent->d_attr & (_A_SUBDIR | _A_VOLID) ) {
             continue;
+        }
 #endif
 
         _splitpath2( dirent->d_name, buff2, NULL, NULL, &fname, &ext );
@@ -322,7 +322,7 @@ static void processOptionFile( char *fname )
 {
     FILE        *optfile;
     char        option[MAX_STR];
-    char        *ptr,*cmd,*arg;
+    char        *ptr, *cmd, *arg;
     int         ch;
 
     optfile = fopen( fname, "r" );
@@ -408,9 +408,9 @@ static void processOptionFile( char *fname )
 } /* processOptionFile */
 
 
-int main( int argc , char *argv[] )
+int main( int argc, char *argv[] )
 {
-    int         ch,i;
+    int         ch, i;
 
     while( (ch = getopt( argc, argv, optStr )) != -1 ) {
         if( ch == '?' ) {
@@ -428,7 +428,7 @@ int main( int argc , char *argv[] )
         VerboseFlag = FALSE;
     }
 
-    for( i=1;i<argc;i++ ) {
+    for( i = 1; i < argc; i++ ) {
         if( argv[i][0] == '@' ) {
             processOptionFile( &argv[i][1] );
         } else {
@@ -466,10 +466,10 @@ bool IsTokenChar( char ch )
  */
 int MyStricmp( char **buf, char *literal )
 {
-    int ret;
-    int len;
-    char *bufptr;
-    char save_ch;
+    int     ret;
+    int     len;
+    char    *bufptr;
+    char    save_ch;
 
     len = strlen( literal );
     bufptr = *buf;
@@ -477,8 +477,9 @@ int MyStricmp( char **buf, char *literal )
     bufptr[len] = 0;
     ret = stricmp( *buf, literal );
     bufptr[len] = save_ch;
-    if( ret==0 ) {
+    if( ret == 0 ) {
         (*buf) += len;
     }
     return( ret );
-}
+
+} /* MyStricmp */
