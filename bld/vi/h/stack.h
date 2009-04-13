@@ -35,6 +35,37 @@
     #define _nheapshrink()
 #endif
 
+#ifdef _M_IX86
+extern char _NEAR *GetSP( void );
+extern void SetSP( char _NEAR * );
+#ifdef __386__
+#pragma aux GetSP = \
+    "mov eax,esp" \
+    value [eax];
+#pragma aux SetSP = \
+    "mov esp,eax" \
+    parm [eax] modify[esp];
+#else
+#pragma aux GetSP = \
+    "mov ax,sp" \
+    value [ax];
+#pragma aux SetSP = \
+    "mov sp,ax" \
+    parm [ax] modify[sp];
+#endif
+#endif
+
+#if defined( __V__ ) && defined( _M_I86 )
+extern void ResetBPChain( void );
+#pragma aux ResetBPChain = \
+        "mov    bp, 0" \
+        "push   bp" \
+        "mov    bp, sp";
+
+#else
+#define ResetBPChain()
+#endif
+
 #define InitialStack() \
     { \
         _nheapgrow(); \

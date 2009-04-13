@@ -34,7 +34,7 @@
 void    PositionScrollThumb( void );
 
 /* biosos2.c */
-void    MyVioShowBuf( unsigned, int );
+void    MyVioShowBuf( unsigned, unsigned );
 
 /* biosqnx.c */
 int     KeyboardInit( void );
