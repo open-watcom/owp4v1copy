@@ -39,9 +39,9 @@
 extern void ResetBPChain( void );
 
 #pragma aux ResetBPChain = \
-        "xor    bp,bp" \
+        "xor    bp, bp" \
         "push   bp" \
-        "mov    bp,sp";
+        "mov    bp, sp";
 
 #else
 #define ResetBPChain()
@@ -49,7 +49,6 @@ extern void ResetBPChain( void );
 
 void main( int argc, char *argv[] )
 {
-
     argc = argc;
     EXEName = argv[0];
     InitialStack();

@@ -55,6 +55,7 @@ void SetMousePosition( int row, int col )
 void PollMouse( int *status, int *row, int *col )
 {
     *status = 0;
+
 } /* PollMouse */
 
 
