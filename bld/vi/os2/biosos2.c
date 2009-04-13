@@ -61,7 +61,7 @@ long BIOSGetColorRegister( short reg )
     vcr.numcolorregs = 1;
     vcr.colorregaddr = (ptr_16)&data;
     VioGetState( &vcr, 0 );
-    return( ( (long)data.r << 8 ) | ( (long)data.g << 24 ) | ( (long)data.b << 16 ) );
+    return( ((long)data.r << 8) | ((long)data.g << 24) | ((long)data.b << 16) );
 }
 
 void BIOSSetColorRegister( short reg, char r, char g, char b )
@@ -86,14 +86,14 @@ void BIOSGetColorPalette( void _FAR *palette )
     USHORT              size, i;
     char _FAR           *pal = palette;
 
-    size = sizeof( VIOPALSTATE ) + sizeof( USHORT )*(MAX_COLOR_REGISTERS - 1);
+    size = sizeof( VIOPALSTATE ) + sizeof( USHORT ) * (MAX_COLOR_REGISTERS - 1);
     pal_state = MemAlloc( size );
     pal_state->cb = size;
     pal_state->type = 0;
     pal_state->iFirst = 0;
     VioGetState( pal_state, 0 );
     for( i = 0; i <= MAX_COLOR_REGISTERS; i++ ) {
-        pal[ i ] = pal_state->acolor[ i ];
+        pal[i] = pal_state->acolor[i];
     }
     MemFree( pal_state );
 }
@@ -127,7 +127,7 @@ void BIOSSetCursor( char page, char row, char col )
 
 short BIOSGetCursor( char page )
 {
-    USHORT      r,c;
+    USHORT      r, c;
     short       res;
 
     page = page;
@@ -148,7 +148,7 @@ void BIOSNewCursor( char ch, char notused )
 
 } /* BIOSNewCursor */
 
-extern unsigned short BIOSGetKeyboard( char x)
+extern unsigned short BIOSGetKeyboard( char x )
 {
     KBDKEYINFO      info;
     unsigned short  res;
@@ -166,7 +166,7 @@ extern unsigned short BIOSKeyboardHit( char x )
 
     x = x;
     KbdPeek( &info, 0 );
-    return( ( info.fbStatus & 0xe0 ) != 0 );
+    return( (info.fbStatus & 0xe0) != 0 );
 
 } /* BIOSKeyboardHit */
 
@@ -177,7 +177,7 @@ void MyVioShowBuf( unsigned offset, int length )
     if( PageCnt > 0 ) {
         return;
     }
-    VioShowBuf( (unsigned short)offset, (unsigned short)(length*2), 0 );
+    VioShowBuf( (unsigned short)offset, (unsigned short)(length * 2), 0 );
 
 } /* MyVioShowBuf */
 

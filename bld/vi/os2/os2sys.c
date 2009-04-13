@@ -35,15 +35,16 @@
 #include "pragmas.h"
 
 #ifdef __OS2V2__
-#define SEG16   _Seg16
-#define STUPID_UINT     unsigned long
+    #define SEG16   _Seg16
+    #define STUPID_UINT     unsigned long
 #else
-#define SEG16
-#define STUPID_UINT     unsigned short
+    #define SEG16
+    #define STUPID_UINT     unsigned short
 #endif
 
 static char     oldPath[_MAX_PATH];
 static char     oldDisk;
+
 /*
  * PushDirectory - save the current directory
  */
@@ -67,7 +68,6 @@ void PushDirectory( char *orig )
  */
 void PopDirectory( void )
 {
-
     if( oldPath[0] != 0 ) {
         ChangeDirectory( oldPath );
     }
@@ -87,8 +87,8 @@ void NewCursor( window_id id, cursor_type ct )
     id = id;
     VioGetCurType( &vioCursor, 0 );
     base = vioCursor.cEnd;
-    nbase = (base*(int)(100-ct.height))/100;
-    BIOSNewCursor( (char) nbase, base-1 );
+    nbase = (base * (int)(100 - ct.height)) / 100;
+    BIOSNewCursor( (char) nbase, base - 1 );
 
 } /* NewCursor */
 
@@ -97,7 +97,6 @@ void NewCursor( window_id id, cursor_type ct )
  */
 void MyBeep( void )
 {
-
     if( EditFlags.BeepFlag ) {
     }
 
@@ -113,14 +112,14 @@ void ScreenInit( void )
     struct _VIOMODEINFO         vioMode;
     void * SEG16                ptr;
 
-    vioMode.cb = sizeof(vioMode);
+    vioMode.cb = sizeof( vioMode );
     if( VioGetMode( &vioMode, 0 ) != 0 ) {
         FatalError( ERR_WIND_INVALID );
     }
     WindMaxWidth = vioMode.col;
     WindMaxHeight = vioMode.row;
 
-    config.cb = sizeof(config);
+    config.cb = sizeof( config );
     if( VioGetConfig( 0, &config, 0 ) != 0 ) {
         FatalError( ERR_WIND_INVALID );
     }
@@ -183,8 +182,8 @@ int ChangeDrive( int drive )
 {
     char        a;
     unsigned    b;
-    a = (char) tolower(drive) - (char) 'a';
-    b = a+1;
+    a = (char) tolower( drive ) - (char) 'a';
+    b = a + 1;
     if( DosSelectDisk( b ) ) {
         return( ERR_NO_SUCH_DRIVE );
     }
@@ -240,7 +239,7 @@ drive_type DoGetDriveType( int drv )
     int         i;
 
     DosQCurDisk( &disk, &map );
-    for( i='A';i<='Z';i++ ) {
+    for( i = 'A'; i <= 'Z'; i++ ) {
         if( drv == i ) {
             if( map & 1 ) {
                 return( DRIVE_IS_FIXED );

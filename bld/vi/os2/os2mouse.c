@@ -36,9 +36,9 @@
 
 static bool mouseHasTwoButtons = FALSE;
 static HMOU mouseHandle;
-static int lastStatus;
-static int lastRow;
-static int lastCol;
+static int  lastStatus;
+static int  lastRow;
+static int  lastCol;
 
 /*
  * SetMouseSpeed - set mouse movement speed
@@ -46,6 +46,7 @@ static int lastCol;
 void SetMouseSpeed( int speed )
 {
     speed = speed;
+
 } /* SetMouseSpeed */
 
 /*
@@ -121,7 +122,7 @@ void InitMouse( void )
         }
     }
 
-    SetMousePosition( WindMaxWidth/2-1, WindMaxHeight/2-1 );
+    SetMousePosition( WindMaxWidth / 2 - 1, WindMaxHeight / 2 - 1 );
     SetMouseSpeed( MouseSpeed );
     PollMouse( &MouseStatus, &MouseRow, &MouseCol );
 
