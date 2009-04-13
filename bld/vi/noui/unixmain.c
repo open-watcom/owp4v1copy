@@ -47,7 +47,7 @@ void main( int argc, char *argv[] )
     _argc = argc;
     _argv = argv;
 #endif
-    EXEName = _cmdname(buffer);
+    EXEName = _cmdname( buffer );
 #ifdef __WATCOMC__
     InitialStack();
 #endif

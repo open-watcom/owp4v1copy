@@ -33,6 +33,7 @@
 #include "win.h"
 
 static char oldPath[_MAX_PATH];
+
 /*
  * PushDirectory
  */
@@ -99,6 +100,7 @@ void ChkExtendedKbd( void )
 long MemSize( void )
 {
     return ( 0 );
+
 } /* MemSize */
 
 /*
@@ -119,6 +121,7 @@ int ChangeDrive( int drive )
 {
     drive = drive;
     return( ERR_NO_ERR );
+
 }/* ChangeDrive */
 
 /*
