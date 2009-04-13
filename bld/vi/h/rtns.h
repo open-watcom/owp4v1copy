@@ -559,9 +559,9 @@ bool    ValidateLL( ss *, ss * );
 
 /* mapkey.c */
 int     MapKey( int flag, char *data );
-int     DoKeyMap( int );
+int     DoKeyMap( vi_key );
 void    DoneInputKeyMap( void );
-int     StartInputKeyMap( int );
+int     StartInputKeyMap( vi_key );
 int     RunKeyMap( key_map *, long );
 int     AddKeyMap( key_map *, char * );
 void    InitKeyMaps( void );
@@ -690,8 +690,8 @@ void    MyFprintf( FILE *,const char *, ... );
 /* readstr.c */
 bool    ReadStringInWindow( window_id, int, char *, char *, int, history_data * );
 int     PromptForString( char *prompt, char *buff, int maxbuff, history_data *hist );
-bool    GetTextForSpecialKey( int str_max, int event, char *tmp );
-void    InsertTextForSpecialKey( int event, char *buff );
+bool    GetTextForSpecialKey( int str_max, vi_key event, char *tmp );
+void    InsertTextForSpecialKey( vi_key event, char *buff );
 
 /* replace.c */
 int ReplaceChar( void );

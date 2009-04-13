@@ -288,6 +288,8 @@ typedef struct range {
  * to begin and end highlighting, as well as a flag to decide whether to
  * actually do the highlighting. Puke.
  */
+    i_mark          hi_start;
+    i_mark          hi_end;
     unsigned char   highlight   : 1;
     unsigned char   line_based  : 1;
 /*

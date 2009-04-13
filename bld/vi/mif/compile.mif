@@ -23,7 +23,6 @@ c_dirs = $(vi_dir)/c;$(c_dirs_root);$(vi_dir)/ui;$(watcom_dir)/c
 !ifeq vi_trmem 1
 extra_c_flags_trmem = -dTRMEM
 !endif
-#extra_c_flags_dosmain = -pcl -fo=.i
 
 
 !ifdef is286
@@ -52,7 +51,7 @@ extra_c_flags_386_win = -zw -s
 
 extra_c_flags_386 = $(extra_c_flags_386_$(host_os))
 
-extra_c_flags = $(extra_c_flags_trmem) $(extra_c_flags_debug) -DNOUSE3D=1 -fh -j
+extra_c_flags = $(extra_c_flags_trmem) $(extra_c_flags_debug) -DNOUSE3D=1 -fh
 
 !ifndef bootstrap
 extra_c_flags += -ai
