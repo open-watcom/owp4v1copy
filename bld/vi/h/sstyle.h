@@ -78,39 +78,39 @@ typedef struct ss_block {
 } ss_block;
 
 typedef struct ss_flags_c {
-    char    inCComment      : 1;
-    char    inCPPComment    : 1;
-    char    inString        : 1;
-    char    inPreprocessor  : 1;
-    char    spare           : 4;
+    unsigned char   inCComment      : 1;
+    unsigned char   inCPPComment    : 1;
+    unsigned char   inString        : 1;
+    unsigned char   inPreprocessor  : 1;
+    unsigned char   spare           : 4;
 } ss_flags_c;
 
 typedef struct ss_flags_f {
-    char    inString    : 1;
-    char    spare       : 7;
+    unsigned char   inString    : 1;
+    unsigned char   spare       : 7;
 } ss_flags_f;
 
 typedef struct ss_flags_h {
-    char    inHTMLComment       : 1;
-    char    inHTMLKeyword       : 1;
-    char    inAltHTMLKeyword    : 1;
-    char    inString            : 1;
-    char    spare               : 4;
+    unsigned char   inHTMLComment       : 1;
+    unsigned char   inHTMLKeyword       : 1;
+    unsigned char   inAltHTMLKeyword    : 1;
+    unsigned char   inString            : 1;
+    unsigned char   spare               : 4;
 } ss_flags_h;
 
 typedef struct ss_flags_g {
-    char    inGMLComment    : 1;
-    char    inGMLKeyword    : 1;
-    char    inAltGMLKeyword : 1;
-    char    inString        : 1;
-    char    spare           : 4;
+    unsigned char   inGMLComment    : 1;
+    unsigned char   inGMLKeyword    : 1;
+    unsigned char   inAltGMLKeyword : 1;
+    unsigned char   inString        : 1;
+    unsigned char   spare           : 4;
 } ss_flags_g;
 
 typedef struct ss_flags_m {
-    char    inPreproc       : 1;
-    char    inInlineFile    : 1;
-    char    inMacro         : 1;
-    char    spare           : 5;
+    unsigned char   inPreproc       : 1;
+    unsigned char   inInlineFile    : 1;
+    unsigned char   inMacro         : 1;
+    unsigned char   spare           : 5;
 } ss_flags_m;
 
 typedef union ss_flags {

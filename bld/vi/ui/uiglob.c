@@ -73,16 +73,16 @@ char        _FAR *SpinLoc;
 char        *ScreenImage;
 
 #ifndef NOXTD
-int         XMemBlockArraySize;
-char        *XMemBlocks = NULL;
+int             XMemBlockArraySize;
+unsigned char   *XMemBlocks = NULL;
 #endif
 #ifndef NOEMS
-int         MaxEMSBlocks   = 2048;
-int         TotalEMSBlocks = 0;
-int         EMSBlocksInUse = 0;
+int             MaxEMSBlocks   = 2048;
+int             TotalEMSBlocks = 0;
+int             EMSBlocksInUse = 0;
 #endif
 #ifndef NOXMS
-int         MaxXMSBlocks   = 2048;
-int         TotalXMSBlocks = 0;
-int         XMSBlocksInUse = 0;
+int             MaxXMSBlocks   = 2048;
+int             TotalXMSBlocks = 0;
+int             XMSBlocksInUse = 0;
 #endif

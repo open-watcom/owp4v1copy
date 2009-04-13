@@ -76,6 +76,7 @@ void main( int argc, char *argv[] )
     FinalStack();
 #endif
     EditMain();
+
 #ifdef TRMEM
     DumpTRMEM();
 #endif

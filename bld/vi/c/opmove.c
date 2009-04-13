@@ -34,7 +34,7 @@
 #include "win.h"
 #include <assert.h>
 
-static int lastChar[2];
+static vi_key   lastChar[ 2 ];
 
 static int checkLine( linenum *ln )
 {
@@ -238,6 +238,19 @@ int MoveLineEnd( range *r, long count )
     } else {
         return( newColumnOnCurrentLine( r, CurrentLine->len ) );
     }
+}
+
+int LineEndRange( range *r, long count )
+{
+    if( CurrentLine == NULL ) {
+        return( ERR_NO_FILE );
+    }
+    count = count;
+    r->start.line = CurrentPos.line;
+    r->line_based = FALSE;
+    r->end = r->start;
+    r->end.column = CurrentLine->len + 1;
+    return( ERR_NO_ERR );
 }
 
 int MoveStartOfLine( range *r, long count )
@@ -460,10 +473,10 @@ int MoveBackwardsBigWord( range *r, long count )
 /*
  * doACharFind - find a character on a line
  */
-static int doACharFind( range *r, int forward, int num, long count )
+static int doACharFind( range *r, bool forward, int num, long count )
 {
     int         i, c;
-    char        lc;
+    vi_key      lc;
 
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
@@ -472,8 +485,8 @@ static int doACharFind( range *r, int forward, int num, long count )
     lc = LastEvent;
     i = FindCharOnCurrentLine( forward, num, &c, count );
     if( !i && c >= 0 ) {
-        lastChar[0] = lc;
-        lastChar[1] = LastEvent;
+        lastChar[ 0 ] = lc;
+        lastChar[ 1 ] = LastEvent;
         r->start.column = c;
         return( ERR_NO_ERR );
     }
@@ -536,17 +549,20 @@ int DoGo( range *r, long count )
  */
 static int moveToLastCFind( range *r, bool reverse, long count )
 {
-    int         rc, tmp, lastc;
+    int         rc;
+    vi_key      tmp[ 2 ];
+    vi_key      lastc;
 
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
     }
-    if( lastChar[0] == 0 ) {
+    if( lastChar[ 0 ] == 0 ) {
         return( ERR_NO_PREVIOUS_COMMAND );
     }
-    tmp = *(int *)lastChar;
-    KeyAdd( lastChar[1] );
-    lastc = lastChar[0];
+    tmp[ 0 ] = lastChar[ 0 ];
+    tmp[ 1 ] = lastChar[ 1 ];
+    KeyAdd( lastChar[ 1 ] );
+    lastc = lastChar[ 0 ];
     if( reverse ) {
         if( islower( lastc ) ) {
             lastc = toupper( lastc );
@@ -554,8 +570,9 @@ static int moveToLastCFind( range *r, bool reverse, long count )
             lastc = tolower( lastc );
         }
     }
-    rc = (EventList[lastc].rtn.move)( r, count );
-    *(int *)lastChar = tmp;
+    rc = (EventList[ lastc ].rtn.move)( r, count );
+    lastChar[ 0 ] = tmp[ 0 ];
+    lastChar[ 1 ] = tmp[ 1 ];
     return( rc );
 
 } /* moveToLastCFind */

@@ -41,9 +41,9 @@ typedef struct tool_item {
     ss                  tool_head;
     UINT                id;
     HBITMAP             bmp;
-    char                is_blank    : 1;
-    char                dont_save   : 1;
-    char                spare       : 6;
+    unsigned char       is_blank    : 1;
+    unsigned char       dont_save   : 1;
+    unsigned char       spare       : 6;
     char                *name;
     char                *help;
     char                cmd[1];

@@ -38,8 +38,8 @@
 #define MAX_HEAPS   10
 
 typedef struct overlay {
-    char                active  : 1;
-    char                exp     : 5;
+    unsigned char       active  : 1;
+    unsigned char       exp     : 5;
     struct overlay near *next, near *prev;
 } overlay;
 

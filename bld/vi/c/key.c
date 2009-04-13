@@ -271,7 +271,7 @@ vi_key GetVIKey( vi_key ch, int scan, int shift )
             return( VI_KEY( CTRL_END ) + i );
         }
     }
-    return( 128 );
+    return( VI_KEY( DUMMY ) );
 #else
     /* avoid warning about unused arguments */
     ( void ) scan;

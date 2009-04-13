@@ -360,10 +360,10 @@ void DCDisplaySomeLines( int start, int end )
 
     assert( CurrentInfo );
 
-    CurrentFile->needs_display = TRUE;
     if( CurrentInfo->dc_size == 0 ) {
         return;
     }
+    CurrentFile->needs_display = TRUE;
     shaveRange( &start, &end );
 
     cfcb = CurrentFcb;

@@ -47,16 +47,11 @@ static int findFirstCharInListForward( line *l, char *clist, int scol )
     char        c, *lst;
 
     for( i = scol; i < l->len; i++ ) {
-        c = l->data[i];
-        lst = clist;
-        while( TRUE ) {
-            if( *lst == 0 ) {
-                break;
-            }
+        c = l->data[ i ];
+        for( lst = clist; *lst != '\0'; ++lst ) {
             if( *lst == c ) {
                 return( i );
             }
-            lst++;
         }
     }
     return( -1 );
@@ -76,16 +71,11 @@ static int findFirstCharInListBackwards( line *l, char *clist, int scol )
         return( -1 );
     }
     for( i = scol; i >= 0; i-- ) {
-        c = l->data[i];
-        lst = clist;
-        while( TRUE ) {
-            if( *lst == 0 ) {
-                break;
-            }
+        c = l->data[ i ];
+        for( lst = clist; *lst != '\0'; ++lst ) {
             if( *lst == c ) {
                 return( i );
             }
-            lst++;
         }
     }
     return( -1 );
@@ -102,16 +92,14 @@ int FindFirstCharNotInListForward( line *l, char *clist, int scol )
     char        c, *lst;
 
     for( i = scol; i < l->len; i++ ) {
-        c = l->data[i];
-        lst = clist;
-        while( TRUE ) {
-            if( *lst == 0 ) {
-                return( i );
-            }
+        c = l->data[ i ];
+        for( lst = clist; *lst != 0; lst++ ) {
             if( *lst == c ) {
                 break;
             }
-            lst++;
+        }
+        if( *lst == 0 ) {
+            return( i );
         }
     }
     return( -1 );
@@ -131,16 +119,14 @@ int FindFirstCharNotInListBackwards( line *l, char *clist, int scol )
         return( -1 );
     }
     for( i = scol; i >= 0; i-- ) {
-        c = l->data[i];
-        lst = clist;
-        while( TRUE ) {
-            if( *lst == 0 ) {
-                return( i );
-            }
+        c = l->data[ i ];
+        for( lst = clist; *lst != 0; lst++ ) {
             if( *lst == c ) {
                 break;
             }
-            lst++;
+        }
+        if( *lst == 0 ) {
+            return( i );
         }
     }
     return( -1 );
@@ -156,7 +142,7 @@ int FindFirstCharInRangeForward( line *l, char *clist, int scol )
     int i;
 
     for( i = scol; i < l->len; i++ ) {
-        if( TestIfCharInRange( l->data[i], clist ) ) {
+        if( TestIfCharInRange( l->data[ i ], clist ) ) {
             return( i );
         }
     }
@@ -173,7 +159,7 @@ int FindFirstCharNotInRangeForward( line *l, char *clist, int scol )
     int i;
 
     for( i = scol; i < l->len; i++ ) {
-        if( testIfCharNotInRange( l->data[i], clist ) ) {
+        if( testIfCharNotInRange( l->data[ i ], clist ) ) {
             return( i );
         }
     }
@@ -193,7 +179,7 @@ int FindFirstCharInRangeBackwards( line *l, char *clist, int scol )
         return( -1 );
     }
     for( i = scol; i >= 0; i-- ) {
-        if( TestIfCharInRange( l->data[i], clist ) ) {
+        if( TestIfCharInRange( l->data[ i ], clist ) ) {
             return( i );
         }
     }
@@ -213,7 +199,7 @@ int FindFirstCharNotInRangeBackward( line *l, char *clist, int scol )
         return( -1 );
     }
     for( i = scol; i >= 0; i-- ) {
-        if( testIfCharNotInRange( l->data[i], clist ) ) {
+        if( testIfCharNotInRange( l->data[ i ], clist ) ) {
             return( i );
         }
     }
@@ -228,16 +214,13 @@ bool TestIfCharInRange( char c, char *clist )
 {
     char        *lst;
 
-    lst = clist;
-    while( TRUE ) {
-        if( *lst == 0 ) {
-            return( FALSE );
-        }
+    
+    for( lst = clist; *lst != 0; lst += 2 ) {
         if( c >= *lst && c <= *(lst + 1)  ) {
             return( TRUE );
         }
-        lst += 2;
     }
+    return( FALSE );
 
 } /* TestIfCharInRange */
 
@@ -248,16 +231,12 @@ static bool testIfCharNotInRange( char c, char *clist )
 {
     char        *lst;
 
-    lst = clist;
-    while( TRUE ) {
-        if( *lst == 0 ) {
-            return( TRUE );
-        }
+    for( lst = clist; *lst != 0; lst += 2 ) {
         if( c >= *lst && c <= *(lst + 1) ) {
             return( FALSE );
         }
-        lst += 2;
     }
+    return( TRUE );
 
 } /* testIfCharNotInRange */
 
@@ -267,7 +246,7 @@ static bool testIfCharNotInRange( char c, char *clist )
 int FindCharOnCurrentLine( int fwdflag, int mod, int *col, int cnt )
 {
     int         i, c, j;
-    char        lst[2];
+    char        lst[ 2 ];
 
     c = CurrentPos.column - 1;
     *col = -1;
@@ -275,8 +254,8 @@ int FindCharOnCurrentLine( int fwdflag, int mod, int *col, int cnt )
     if( LastEvent == VI_KEY( ESC ) ) {
         return( ERR_NO_ERR );
     }
-    lst[0] = (char) LastEvent;
-    lst[1] = 0;
+    lst[ 0 ] = (char)LastEvent;
+    lst[ 1 ] = 0;
 
     for( j = 0; j < cnt; j++ ) {
         i = -1;

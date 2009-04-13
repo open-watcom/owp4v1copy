@@ -47,13 +47,13 @@ typedef struct {
 } cursor_type;
 
 typedef struct {
-    char        case_ignore     : 1;
-    char        use_regexp      : 1;
-    char        search_forward  : 1;
-    char        search_wrap     : 1;
-    char        prompt          : 1;
-    char        selection       : 1;
-    char        spare           : 2;
+    unsigned char   case_ignore     : 1;
+    unsigned char   use_regexp      : 1;
+    unsigned char   search_forward  : 1;
+    unsigned char   search_wrap     : 1;
+    unsigned char   prompt          : 1;
+    unsigned char   selection       : 1;
+    unsigned char   spare           : 2;
     char        *find;
     int         findlen;
     char        *replace;
@@ -71,15 +71,15 @@ typedef struct {
 } history_data;
 
 typedef struct {
-    char        inuse           : 1;
-    char        is_base         : 1;
-    char        was_inuse       : 1;
-    char        no_input_window : 1;
-    char        fill5           : 1;
-    char        fill6           : 1;
-    char        fill7           : 1;
-    char        fill8           : 1;
-    vi_key      *data;
+    unsigned char   inuse           : 1;
+    unsigned char   is_base         : 1;
+    unsigned char   was_inuse       : 1;
+    unsigned char   no_input_window : 1;
+    unsigned char   fill5           : 1;
+    unsigned char   fill6           : 1;
+    unsigned char   fill7           : 1;
+    unsigned char   fill8           : 1;
+    vi_key          *data;
 } key_map;
 
 /* command structure */
@@ -288,17 +288,16 @@ typedef struct range {
  * to begin and end highlighting, as well as a flag to decide whether to
  * actually do the highlighting. Puke.
  */
-    i_mark      hi_start;
-    i_mark      hi_end;
-    char        highlight   : 1;
-    char        line_based  : 1;
+    unsigned char   highlight   : 1;
+    unsigned char   line_based  : 1;
 /*
  * Double ACK! Some times we need to treat a range differently depending
  * on whether an operator or a move is using it. This tells us if we should
  * include the last character or not (compare "d/foo" to "/foo"). Puke.
  */
-    char        fix_range   : 1;
-    char        spare       : 5;
+    unsigned char   fix_range   : 1;
+    unsigned char   selected    : 1;
+    unsigned char   spare       : 4;
 } range;
 
 typedef int (*insert_rtn)( void );

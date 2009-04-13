@@ -65,16 +65,16 @@ static void insertEditText( HWND hwnd, char *tmp )
 /*
  * handleKey - handle a key press
  */
-static bool handleKey( HWND hwnd, int ch, bool process )
+static bool handleKey( HWND hwnd, vi_key key, bool process )
 {
     char    tmp[MAX_INPUT_LINE];
 
-    switch( ch ) {
+    switch( key ) {
     case VI_KEY( ALT_O ):
     case VI_KEY( CTRL_O ):
         if( process ) {
             GetWindowText( hwnd, tmp, sizeof( tmp ) );
-            InsertTextForSpecialKey( ch, tmp );
+            InsertTextForSpecialKey( key, tmp );
         }
         break;
     case VI_KEY( CTRL_R ):
@@ -86,9 +86,8 @@ static bool handleKey( HWND hwnd, int ch, bool process )
     case VI_KEY( CTRL_E ):
     case VI_KEY( ALT_L ):
     case VI_KEY( CTRL_L ):
-    case VI_KEY( CTRL_D ):
         if( process ) {
-            if( GetTextForSpecialKey( sizeof( tmp ), ch, tmp ) ) {
+            if( GetTextForSpecialKey( sizeof( tmp ), key, tmp ) ) {
                 insertEditText( hwnd, tmp );
             }
         }
@@ -136,12 +135,12 @@ static bool handleKey( HWND hwnd, int ch, bool process )
  */
 long WINEXP EditSubClassProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 {
-    int     ch;
+    vi_key      key;
 
     switch( msg ) {
     case WM_KEYDOWN:
-        ch = MapVirtualKeyToVIKey( wparam, HIWORD( lparam ) );
-        if( handleKey( hwnd, ch, TRUE ) ) {
+        key = MapVirtualKeyToVIKey( wparam, HIWORD( lparam ) );
+        if( handleKey( hwnd, key, TRUE ) ) {
             return( 0L );
         }
         break;

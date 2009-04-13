@@ -45,17 +45,6 @@
 :DT.ALT_O
 :DD.Insert the current input string before current line in the edit buffer.
 
-:DT.CTRL_D
-:DD.Add the current "dot buffer" to the input string;
-this is useful in conjunction with
-.keyword memorize mode
-("m.").
-Once a sequence has been memorized, then this can be 
-used to make a map command
-.millust begin
-map F1 &lt.press CTRL_D&gt.
-.millust end
-
 :DT.ALT_L
 :DD.Adds the current line in the current edit buffer, from the current
 column to the end of the line, to the input string.

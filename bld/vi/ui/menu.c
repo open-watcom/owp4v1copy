@@ -49,22 +49,22 @@ typedef struct {
 } hilst;
 
 typedef struct menu {
-    struct menu *next, *prev;
-    menu_item   *itemhead, *itemtail;
-    int         itemcnt;
-    int         orig_itemcnt;
-    char        **list;
-    hilst       *hilist;
-    char        has_file_list   : 1;
-    char        need_hook       : 1;
-    char        has_last_files  : 1;
-    char        spare           : 5;
-    char        maxwidth;
-    char        orig_maxwidth;
-    char        hi;
-    char        hioff;
-    char        slen;
-    char        str[1];
+    struct menu     *next,*prev;
+    menu_item       *itemhead,*itemtail;
+    int             itemcnt;
+    int             orig_itemcnt;
+    char            **list;
+    hilst           *hilist;
+    unsigned char   has_file_list   : 1;
+    unsigned char   need_hook       : 1;
+    unsigned char   has_last_files  : 1;
+    unsigned char   spare           : 5;
+    char            maxwidth;
+    char            orig_maxwidth;
+    char            hi;
+    char            hioff;
+    char            slen;
+    char            str[1];
 } menu;
 
 int CurrentMenuNumber;
@@ -327,7 +327,8 @@ static void initMenuList( menu *cmenu )
  */
 int ViEndMenu( void )
 {
-    int         ch;
+    char        ch;
+    vi_key      key;
 
     if( currMenu == NULL ) {
         return( ERR_INVALID_MENU );
@@ -337,11 +338,11 @@ int ViEndMenu( void )
     }
     ch = toupper( currMenu->hi );
     if( ch >= 'A' && ch <='Z' ) {
-        ch = ch - 'A' + VI_KEY( ALT_A );
-        EventList[ch].rtn.old = DoMenu;
-        EventList[ch].b.keep_selection = TRUE;
-        EventList[ch].alt_rtn.old = DoMenu;
-        EventList[ch].alt_b.keep_selection = TRUE;
+        key = ch - 'A' + VI_KEY( ALT_A );
+        EventList[ key ].rtn.old = DoMenu;
+        EventList[ key ].b.keep_selection = TRUE;
+        EventList[ key ].alt_rtn.old = DoMenu;
+        EventList[ key ].alt_b.keep_selection = TRUE;
     }
 
     initMenuList( currMenu );
