@@ -43,7 +43,7 @@ typedef struct {
     BOOL        JumpyScroll;
     BOOL        LineBased;
     int         PageLinesExposed;
-    char        FileEndString[ FILEENDSTRINGWIDTH ];
+    char        FileEndString[FILEENDSTRINGWIDTH];
     BOOL        SavePosition;
     BOOL        AutoMessageClear;
 } dlg_data;
@@ -67,7 +67,8 @@ static void dlgDataToGlobal( void )
     UtilUpdateBoolean( EditFlags.JumpyScroll, dlgData.JumpyScroll, "jumpyscroll" );
     UtilUpdateBoolean( EditFlags.LineBased, dlgData.LineBased, "linebased" );
     UtilUpdateBoolean( EditFlags.SavePosition, dlgData.SavePosition, "saveposition" );
-    UtilUpdateBoolean( EditFlags.AutoMessageClear, dlgData.AutoMessageClear, "automessageclear" );
+    UtilUpdateBoolean( EditFlags.AutoMessageClear, dlgData.AutoMessageClear,
+                       "automessageclear" );
     UtilUpdateInt( PageLinesExposed, dlgData.PageLinesExposed, "pagelinesexposed" );
     UtilUpdateStr( FileEndString, dlgData.FileEndString, "fileendstring" );
 }
@@ -78,7 +79,7 @@ static void setdlgDataDefaults( void )
     dlgData.JumpyScroll = TRUE;
     dlgData.LineBased = FALSE;
     dlgData.PageLinesExposed = 1;
-    dlgData.FileEndString[ 0 ] = '\0';
+    dlgData.FileEndString[0] = '\0';
     dlgData.SavePosition = TRUE;
     dlgData.AutoMessageClear = TRUE;
 }
@@ -86,8 +87,7 @@ static void setdlgDataDefaults( void )
 /*
  * SetScrProc - processes messages for the Data Control Dialog
  */
-BOOL WINEXP SetScrProc( HWND hwndDlg, unsigned msg,
-                        WORD wParam, LONG lParam )
+BOOL WINEXP SetScrProc( HWND hwndDlg, unsigned msg, WORD wParam, LONG lParam )
 {
     switch( msg ) {
     case WM_INITDIALOG:
@@ -138,4 +138,5 @@ bool GetSetScrDialog( void )
     // redisplay all files to ensure screen completely correct
     ReDisplayBuffers( FALSE );
     return( rc );
+
 } /* GetSetScrDialog */

@@ -35,9 +35,9 @@
 
 #define MAX_LINE_LEN    200
 
-#define isWSorCtrlZ(x)    (isspace(x) || (x==0x1A))
+#define isWSorCtrlZ(x)    (isspace( x ) || (x == 0x1A))
 
-static char White_space[]=" \t";
+static char White_space[] = " \t";
 
 static int Line = 1;
 
@@ -49,8 +49,8 @@ static char *get_line( char *buf, FILE *file )
 
     for( ; (ret = fgets( buf, MAX_LINE_LEN, file )) != NULL; ) {
 
-        for( i = strlen( buf ); i && isWSorCtrlZ( buf[ i - 1] ); --i ) {
-            buf[ i - 1 ] = '\0';
+        for( i = strlen( buf ); i && isWSorCtrlZ( buf[i - 1] ); --i ) {
+            buf[i - 1] = '\0';
         }
         ++Line;
 
@@ -69,7 +69,7 @@ int empty_data( char *ret )
     char                *end;
 
     if( *ret == '*' ) {
-        for( end = ret+1;; ++end ) {
+        for( end = ret + 1;; ++end ) {
             if( *end == '\0' ) {
                 return( 1 );
             } else if( *end != ' ' && *end != '\t' ) {
@@ -85,15 +85,14 @@ int main( int argc, char *argv[] )
 {
     FILE                *in;
     FILE                *out;
-    char                buf[ MAX_LINE_LEN ];
+    char                buf[MAX_LINE_LEN];
     int                 elt;
     char                *end;
     char                *line;
     char                type[50];
 
     if( argc != 4 ) {
-        printf(
-          "FORMAT: parsectl [input file] [output file] [Ctl data name]\n" );
+        printf( "FORMAT: parsectl [input file] [output file] [Ctl data name]\n" );
         return( -1 );
     }
 
@@ -110,9 +109,9 @@ int main( int argc, char *argv[] )
         return( -1 );
     }
 
-    fputs(
-     "/**** DO NOT MODIFY THIS FILE BY HAND. CREATED BY PARSECTL ****/\n\n\n",
-                                                                        out );
+    fputs( "/**** DO NOT MODIFY THIS FILE BY HAND. CREATED BY PARSECTL ****/\n\n\n",
+           out );
+
     /* Create Data struct definition */
     fputs( "struct {\n", out );
     fputs( "    int            num_ctls;\n", out );

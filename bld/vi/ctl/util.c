@@ -36,7 +36,7 @@
 
 int UtilUpdateBoolean( BOOL old, BOOL val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ] = "set ";
+    char    cmd[MAX_SRC_LINE] = "set ";
     if( old == val ) {
         return( ERR_NO_ERR );
     }
@@ -49,7 +49,7 @@ int UtilUpdateBoolean( BOOL old, BOOL val, char *name )
 
 int UtilUpdateInt( int old, int val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ];
+    char    cmd[MAX_SRC_LINE];
     if( old == val ) {
         return( ERR_NO_ERR );
     }
@@ -59,7 +59,7 @@ int UtilUpdateInt( int old, int val, char *name )
 
 int UtilUpdateChar( char old, char val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ];
+    char    cmd[MAX_SRC_LINE];
     if( old == val ) {
         return( ERR_NO_ERR );
     }
@@ -69,7 +69,7 @@ int UtilUpdateChar( char old, char val, char *name )
 
 int UtilUpdateStr( char *old, char *val, char *name )
 {
-    char    cmd[ MAX_SRC_LINE ];
+    char    cmd[MAX_SRC_LINE];
     if( !strcmp( old, val ) ) {
         return( ERR_NO_ERR );
     }

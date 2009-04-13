@@ -35,9 +35,9 @@
 
 #define MAX_LINE_LEN    200
 
-#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
+#define isWSorCtrlZ(x)  (isspace( x ) || (x == 0x1A))
 
-static char White_space[]=" \t";
+static char White_space[] = " \t";
 
 static int Line = 1;
 
@@ -49,8 +49,8 @@ static char *get_line( char *buf, FILE *file )
 
     for( ; (ret = fgets( buf, MAX_LINE_LEN, file )) != NULL; ) {
 
-        for( i = strlen( buf ); i && isWSorCtrlZ( buf[ i - 1] ); --i ) {
-            buf[ i - 1 ] = '\0';
+        for( i = strlen( buf ); i && isWSorCtrlZ( buf[i - 1] ); --i ) {
+            buf[i - 1] = '\0';
         }
         ++Line;
 
@@ -70,7 +70,7 @@ int empty_data( char *ret )
     char    *end;
 
     if( *ret == '*' ) {
-        for( end = ret+1;; ++end ) {
+        for( end = ret + 1;; ++end ) {
             if( *end == '\0' ) {
                 return( 1 );
             } else if( *end != ' ' && *end != '\t' ) {
@@ -87,7 +87,7 @@ int main( int argc, char *argv[] )
 {
     FILE                *in;
     FILE                *out;
-    char                buf[ MAX_LINE_LEN ];
+    char                buf[MAX_LINE_LEN];
     int                 elt;
     int                 items;
     char                *start;
@@ -96,8 +96,7 @@ int main( int argc, char *argv[] )
     char                type[50];
 
     if( argc != 4 ) {
-        printf(
-            "FORMAT: parsedyn [input file] [output file] [dyn tpl name]\n" );
+        printf( "FORMAT: parsedyn [input file] [output file] [dyn tpl name]\n" );
         return( -1 );
     }
 
@@ -114,9 +113,9 @@ int main( int argc, char *argv[] )
         return( -1 );
     }
 
-    fputs(
-     "/**** DO NOT MODIFY THIS FILE BY HAND. CREATED BY PARSEDYN ****/\n\n\n",
-                                                                        out );
+    fputs( "/**** DO NOT MODIFY THIS FILE BY HAND. CREATED BY PARSEDYN ****/\n\n\n",
+           out );
+
     /* Create Data struct definition */
     fputs( "struct {\n", out );
     fputs( "    int                num_tpls;\n", out );
@@ -151,13 +150,12 @@ int main( int argc, char *argv[] )
         }
 
         items = 2;
-        while( ( line = strchr( line, ',' ) ) != NULL ) {
+        while( (line = strchr( line, ',' )) != NULL ) {
             items++;
             line++;
         }
 
-        fprintf( out, "    int                tpl_%-d[%d];\n",
-            elt + 1, items );
+        fprintf( out, "    int                tpl_%-d[%d];\n", elt + 1, items );
     }
 
     fclose( in );
@@ -177,18 +175,20 @@ int main( int argc, char *argv[] )
         *start++ = '\0';
         strcpy( type, line );
 
-        if( !strcmp( type, "DYN_TPL_DIM" ) )
+        if( !strcmp( type, "DYN_TPL_DIM" ) ) {
             fputs( "DYN_TPL_DIM, TRUE, 0, ", out );
-        else
+        } else {
             fputs( "DYN_TPL_STATIC, TRUE, 0, ", out );
+        }
 
         do {
             end = strpbrk( start, White_space );
-            if( end )
+            if( end ) {
                 *end++ = '\0';
+            }
             fprintf( out, "%s, ", start );
             start = end;
-        } while (end);
+        } while( end );
 
         line = get_line( buf, in );
         fprintf( out, "\n    %s,\n    -1,\n", line );

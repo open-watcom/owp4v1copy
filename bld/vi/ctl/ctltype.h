@@ -86,7 +86,7 @@ typedef enum {
     CTL_RINT,           // int field with range (with error checking)
     CTL_RFLOAT,         // float field with range (with error checking)
     CTL_ESCOMBO,        // editable string combo box (drop down) (implementation MISSING!!!)
-    CTL_DHCOMBO,        // dynamic combo box, with HWND parm (implementation MISSING!!!)
+    CTL_DHCOMBO         // dynamic combo box, with HWND parm (implementation MISSING!!!)
 };
 typedef signed char ctl_type;
 
@@ -94,22 +94,22 @@ typedef signed char ctl_type;
 // The ctl_dlg_ functions
 
 // Initialize a dialog by the control
-BOOL ctl_dlg_init( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr);
+BOOL ctl_dlg_init( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr );
 
 // Reset a dialog by the control
-BOOL ctl_dlg_reset( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr, BOOL);
+BOOL ctl_dlg_reset( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr, BOOL );
 
 // (MISSING!!!)
-BOOL ctl_dlg_init_no_proc( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr);
+BOOL ctl_dlg_init_no_proc( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr );
 
 // (MISSING!!!)
-BOOL ctl_dlg_reset_no_proc( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr, BOOL);
+BOOL ctl_dlg_reset_no_proc( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr, BOOL );
 
 // Get the data ...
-BOOL ctl_dlg_done( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr);
+BOOL ctl_dlg_done( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr );
 
 // (MISSING!!!)
-BOOL ctl_dlg_validate( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr, BOOL);
+BOOL ctl_dlg_validate( WPI_INST, HWND dlg, void *ptr, void *ctl_ptr, BOOL );
 
 // (MISSING!!!)
 BOOL ctl_dlg_check( WPI_INST, HWND dlg, void * ptr, void * ctl_ptr );
@@ -159,12 +159,12 @@ typedef struct {
                         set 'done' to TRUE when 'one past end' elt is
                         asked for */
 typedef struct {
-    signed              char    origin;         // special meaning: see above
+    signed char         origin;         // special meaning: see above
     char                *(*fetch)( int elt );
 } ctl_dcombo;
 
 typedef struct {
-    signed              char    origin;         // special meaning: see above
+    signed char         origin;         // special meaning: see above
     char                *(*fetch)( HWND dlg, int elt );
 } ctl_dhcombo;
 
@@ -232,15 +232,15 @@ typedef int finish_type;
 
 typedef struct {
     BOOL                (*setup)( ctl_elt *, WPI_INST, HWND, void *, BOOL );
-    BOOL                (*finish)( ctl_elt *, WPI_INST, HWND, void *,finish_type);
+    BOOL                (*finish)( ctl_elt *, WPI_INST, HWND, void *, finish_type );
     BOOL                (*modified)( ctl_elt *, WPI_PARAM1, WPI_PARAM2 );
 } ctl_action;
 
 // extract information
-#define _value_bool( ptr, elt ) *((BOOL*)((char *)(ptr) + elt->data_offset))
-#define _value_int( ptr, elt ) *((int*)((char *)(ptr) + elt->data_offset))
-#define _value_float( ptr, elt ) *((float*)((char *)(ptr) + elt->data_offset))
-#define _str_ptr( ptr, elt ) (char *)((char *)(ptr) + elt->data_offset)
-#define _str_ptr_ptr( ptr, elt ) (char **)((char *)(ptr) + elt->data_offset)
+#define _value_bool( ptr, elt )     *((BOOL *)((char *)(ptr) + elt->data_offset))
+#define _value_int( ptr, elt )      *((int *)((char *)(ptr) + elt->data_offset))
+#define _value_float( ptr, elt )    *((float *)((char *)(ptr) + elt->data_offset))
+#define _str_ptr( ptr, elt )        (char *)((char *)(ptr) + elt->data_offset)
+#define _str_ptr_ptr( ptr, elt )    (char **)((char *)(ptr) + elt->data_offset)
 
 #endif

@@ -47,11 +47,12 @@
 
 typedef enum {
     DYN_TPL_STATIC, // a static template
-    DYN_TPL_DIM // a dim template
+    DYN_TPL_DIM     // a dim template
 } dyn_tpl_type;
 
 /////////////////////////////////////////////////////////////////////////////////
 // A static template. What does this do? (MISSING!!!)
+
 typedef struct {
     dyn_tpl_type        type;           // type of dynamic template
     BOOL                use;            // dyn tpls can be turned off
@@ -65,10 +66,11 @@ typedef struct {
 
 /////////////////////////////////////////////////////////////////////////////////
 // A dim template
+
 typedef enum {
-    DYN_VISIBLE, // show the control, make it useable
-    DYN_DIM, // show the control, make it unuseable
-    DYN_INVISIBLE // hide the control          // return on check to permamently disable tpl
+    DYN_VISIBLE,    // show the control, make it useable
+    DYN_DIM,        // show the control, make it unuseable
+    DYN_INVISIBLE   // hide the control          // return on check to permamently disable tpl
 } dyn_dim_type;
 
 typedef struct {
@@ -86,6 +88,7 @@ typedef struct {
 
 /////////////////////////////////////////////////////////////////////////////////
 // The dynamic template dialog struct
+
 typedef struct {
     int                 num_tpls;       // how many dyn tpls for this dialog
     dyn_tpl_dim         tpls[1];        // array of 'dim' and 'static' tpls.
