@@ -259,10 +259,12 @@ static  void    add_file_cb_entry( void )
     nip = mem_alloc( sizeof( inputcb ) );
     nip->hidden_head = NULL;
     nip->hidden_tail = NULL;
-    nip->if_cb       = mem_alloc( sizeof( ifcb) );
+    nip->if_cb       = mem_alloc( sizeof( ifcb ) );
     memset( nip->if_cb, '\0', sizeof( ifcb ) );
+    nip->pe_cb.line = NULL;
+    nip->pe_cb.count = 0;
     nip->fmflags = II_file;
-    nip->s.f    = new;
+    nip->s.f     = new;
     init_dict( &nip->local_dict );
 
     new->lineno   = 0;
@@ -313,6 +315,9 @@ static  void    del_input_cb_entry( void )
 //          err_count++;
 //      }
         mem_free( wk->if_cb );
+    }
+    if( wk->pe_cb.line != NULL ) {
+        mem_free( wk->pe_cb.line );
     }
 
     if( wk->fmflags & II_macro ) {
@@ -392,59 +397,67 @@ bool    get_line( void )
             input_cbs->hidden_tail = NULL;
         }
     } else {
-        if( input_cbs->fmflags & II_macro ) {
-            get_macro_line();           // input from macro line
-        } else {
-            cb = input_cbs->s.f;        // input from file
-            if( !(cb->flags & FF_open) ) {
-                g_info( err_inf_reopen );
-                show_include_stack();
-                reopen_inc_fp( cb );
+        if( input_cbs->pe_cb.count > 0 ) {  // .pe perform active
+            strcpy( buff2, input_cbs->pe_cb.line );
+            input_cbs->pe_cb.count--;
+            if( input_cbs->pe_cb.count <= 0 ) {
+                reset_pe_cb();
             }
-            do {
-                fgetpos( cb->fp, &cb->pos );// remember position for label
-                p = fgets( buff2, buf_size, cb->fp );
-                if( p != NULL ) {
-                    if( cb->lineno >= cb->linemax ) {
-                        input_cbs->fmflags |= II_eof;
-                        cb->flags |= FF_eof;
-                        cb->flags &= ~FF_startofline;
-                        *buff2 = '\0';
-                        break;
-                    }
-                    cb->lineno++;
-                    cb->flags |= FF_startofline;
+        } else {
+            if( input_cbs->fmflags & II_macro ) {
+                get_macro_line();       // input from macro line
+            } else {
+                cb = input_cbs->s.f;    // input from file
+                if( !(cb->flags & FF_open) ) {
+                    g_info( err_inf_reopen );
+                    show_include_stack();
+                    reopen_inc_fp( cb );
+                }
+                do {
+                    fgetpos( cb->fp, &cb->pos );// remember position for label
+                    p = fgets( buff2, buf_size, cb->fp );
+                    if( p != NULL ) {
+                        if( cb->lineno >= cb->linemax ) {
+                            input_cbs->fmflags |= II_eof;
+                            cb->flags |= FF_eof;
+                            cb->flags &= ~FF_startofline;
+                            *buff2 = '\0';
+                            break;
+                        }
+                        cb->lineno++;
+                        cb->flags |= FF_startofline;
 
-                    if( cb->flags & FF_crlf ) { // try to delete CRLF at end
-                        p += strlen( p ) - 1;
-                        if( *p == '\r' ) {
-                            *p-- = '\0';
-                            if( *p == '\n' ) {
-                                *p-- = '\0';
-                            }
-                        } else if( *p == '\n' ) {
-                            *p-- = '\0';
+                        if( cb->flags & FF_crlf ) {// try to delete CRLF at end
+                            p += strlen( p ) - 1;
                             if( *p == '\r' ) {
                                 *p-- = '\0';
+                                if( *p == '\n' ) {
+                                    *p-- = '\0';
+                                }
+                            } else if( *p == '\n' ) {
+                                *p-- = '\0';
+                                if( *p == '\r' ) {
+                                    *p-- = '\0';
+                                }
                             }
                         }
-                    }
-                } else {
-                    if( feof( cb->fp ) ) {
-                        input_cbs->fmflags |= II_eof;
-                        cb->flags |= FF_eof;
-                        cb->flags &= ~FF_startofline;
-                        *buff2 = '\0';
-                        break;
                     } else {
-                        strerror_s( buff2, buf_size, errno );
-                        g_err( err_file_io, buff2, cb->filename );
+                        if( feof( cb->fp ) ) {
+                            input_cbs->fmflags |= II_eof;
+                            cb->flags |= FF_eof;
+                            cb->flags &= ~FF_startofline;
+                            *buff2 = '\0';
+                            break;
+                        } else {
+                            strerror_s( buff2, buf_size, errno );
+                            g_err( err_file_io, buff2, cb->filename );
 
-                        err_count++;
-                        g_suicide();
+                            err_count++;
+                            g_suicide();
+                        }
                     }
-                }
-            } while( cb->lineno < cb->linemin );
+                } while( cb->lineno < cb->linemin );
+            }
         }
     }
 
@@ -750,6 +763,7 @@ static  void    init_pass( void )
 //      free_dict( &global_dict );      // free dictionaries
 //      free_macro_dict( &macro_dict );
         free_tag_dict( &tag_dict );
+
     } else {
         GlobalFlags.firstpass = 1;
     }
@@ -867,7 +881,8 @@ int main( int argc, char * argv[] )
                     GlobalFlags.research ? "research" : "normal" );
 
             if( err_count > 0 ) {
-                break;                  // error found stop now
+                g_info( inf_error_stop );
+                break;                  // errors found stop now
             }
         }
 

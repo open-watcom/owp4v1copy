@@ -192,11 +192,11 @@ pick( ERR_INV_PAGE_RANGE,       "Page range invalid %s - %s",
 pick( ERR_INV_CW_SEP,           "Invalid controlword separator",
                                 "Invalid controlword separator" )
 
-pick( INF_MAC_LINE,             "\t\t\tLine %s of macro '%s'",
-                                "\t\t\tLine %s of macro '%s'" )
+pick( INF_MAC_LINE,             "\tLine %s of macro '%s'",
+                                "\tLine %s of macro '%s'" )
 
-pick( INF_FILE_LINE,            "\t\t\tLine %s of file '%s'",
-                                "\t\t\tLine %s of file '%s'" )
+pick( INF_FILE_LINE,            "\tLine %s of file '%s'",
+                                "\tLine %s of file '%s'" )
 
 pick( ERR_ATT_MISSING,          "Required attribute not found",
                                 "Required attribute not found" )
@@ -351,12 +351,18 @@ pick( WNG_ATT_NAME,             "'%s' is not a valid attribute name",
 pick( ERR_ATT_REQ,              "For the tag '%s', the required attribute(s) %s have not been specified",
                                 "For the tag '%s', the required attribute(s) %s have not been specified" )
 
-pick( ERR_CW_UNRECOGNIZED,      "Unrecognized control word %s line %s of %s '%s'",
-                                "Unrecognized control word %s line %s of %s '%s'" )
+pick( ERR_CW_UNRECOGNIZED,      "Unrecognized control word .%s",
+                                "Unrecognized control word .%s" )
 
 pick( ERR_DC_OPT,               "Invalid .dc option %s",
                                 "Invalid .dc option %s" )
 
 pick( ERR_XX_OPT,               "Invalid %s option %s",
                                 "Invalid %s option %s" )
+
+pick( ERR_NESTED_PE,            "Nested .pe not supported",
+                                "Nested .pe not supported" )
+
+pick( INF_ERROR_STOP,           "  Remaining pass(es) skipped due to error count",
+                                "  Remaining pass(es) skipped due to error count" )
 

@@ -91,6 +91,21 @@ extern  void    g_warn( const msg_ids err, ... );
 extern  void    g_info( const msg_ids err, ... );
 extern  void    g_suicide( void );
 
+
+/* gerrorxx.c                           */
+extern  void    att_val_err( char * attname );
+extern  void    auto_att_err( void );
+extern  void    cw_err( void );
+extern  void    dc_opt_err( char * pa );
+extern  void    file_mac_info( void );
+extern  void    nottag_err( void );
+extern  void    numb_err( void );
+extern  void    tag_name_missing_err( void );
+extern  void    tag_text_err( char * tagname );
+extern  void    tag_text_req_err( char * tagname );
+extern  void    xx_err( const msg_ids errid );
+extern  void    xx_opt_err( char *cw, char *pa );
+
 /* getnum.c                             */
 extern condcode     getnum( getnum_block * gn );
 
@@ -165,6 +180,10 @@ extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
 extern  void        add_macro_cb_entry( mac_entry * me, gtentry * ge );
 extern  void        add_macro_parms( char * p );
 extern  void        free_lines( inp_line * line );
+
+
+/* gspe.c                             */
+extern  void    reset_pe_cb( void );
 
 
 /* gspu.c                             */

@@ -249,103 +249,7 @@ void    init_tag_att( void )
 /* values within a macro that has been invoked as the APF macro for a GML  */
 /* tag,  nor  will the  values of  the global  symbols "0",   "1",...  be  */
 /* altered.                                                                */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
-/*                                                                         */
 /***************************************************************************/
-
-
-/* Some error msg routines
- */
-
-static void tagname_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_missing_name, "" );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void tagmac_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_tag_mac_name );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void tagfunc_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_tag_func_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void tagopt_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_tag_opt_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void toomany_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_tag_toomany );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
 
 
 /***************************************************************************/
@@ -373,7 +277,7 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
 
                 *tag_flags |= tag_attr;
             } else {
-                cc = neg;           // invalid option
+                cc = neg;               // invalid option
             }
             break;
         case   'c' :
@@ -477,7 +381,7 @@ void    scr_gt( void )
 
     if( cc == omit || (*tok_start == '*' && tag_entry == NULL) ) {
         // no operands or tagname * and no previous definition
-        tagname_err();
+        tag_name_missing_err();
         return;
     }
 
@@ -485,7 +389,7 @@ void    scr_gt( void )
 
     if( *p == '*' ) {                   // single * as tagname
         if( arg_flen > 1 ) {
-            tagname_err();
+            xx_err( err_tag_name_inv );
             return;
         }
         savetag = '*';         // remember for possible global delete / print
@@ -516,7 +420,7 @@ void    scr_gt( void )
         tagname[ TAG_NAME_LENGTH ] = '\0';
 
         if( len < arg_flen ) {
-            tagname_err();
+            xx_err( err_tag_name_inv );
             return;
         }
     }
@@ -529,7 +433,7 @@ void    scr_gt( void )
     cc = getarg();
 
     if( cc == omit ) {
-        tagfunc_err();
+        xx_err( err_tag_func_inv );
         return;
     }
 
@@ -579,7 +483,7 @@ void    scr_gt( void )
         break;
     }
     if( function == 0 ) {               // no valid function specified
-        tagfunc_err();
+        xx_err( err_tag_func_inv );
         return;
     }
 
@@ -591,7 +495,7 @@ void    scr_gt( void )
 
     if( function == f_add || function == f_change ) {   // need macroname
         if( cc == omit ) {
-            tagmac_err();
+            xx_err( err_tag_mac_name );
             return;
         }
         p = tok_start;
@@ -618,7 +522,7 @@ void    scr_gt( void )
         if( function == f_add ) {          // collect tag options
             cc = scan_tag_options( &tag_flags );
             if( cc != omit ) {          // not all processed error
-                tagopt_err();
+               xx_err( err_tag_opt_inv );
             }
             tag_entry = add_tag( &tag_dict, tagname, macname, tag_flags );  // add to dictionary
         } else {                        // is function change
@@ -631,7 +535,7 @@ void    scr_gt( void )
     /***********************************************************************/
 
         if( cc != omit ) {
-            toomany_err();              // nothing more allowed
+            xx_err( err_tag_toomany );  // nothing more allowed
         }
 
         switch( function ) {

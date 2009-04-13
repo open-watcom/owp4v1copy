@@ -196,133 +196,6 @@ static  char    *   valptr;
 static  long        ranges[ 4 ];
 
 
-/* Some error msg routines
- */
-
-static void tagname_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_tag_name_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void attname_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_att_name_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-static void attval_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_att_val_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-static void attrange_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_att_range_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-static void attdef_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_att_default );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-static void nottag_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_user_tag, tagname );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-static void toomany_err( void )
-{
-    char        linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_tag_toomany );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
 
 /***************************************************************************/
 /*  process .ga xxx xxx optionsA optionsB                                  */
@@ -423,7 +296,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                 *val_flags |= val_auto;
                 *att_flags |= att_auto;
             } else {
-                attval_err();
+                xx_err( err_att_val_inv );
                 cc = neg;
             }
         }
@@ -466,7 +339,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                     break;
                 }
                 if( cc == notnum ) {
-                    attval_err();
+                    xx_err( err_att_val_inv );
                     cc = neg;
                     return( cc );
                 }
@@ -474,7 +347,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
             }
             scan_start = gn.argstart;
             if( (k < 2) || (ranges[ 0 ] > ranges[ 1 ]) ) {// need 2 or more values
-                attrange_err();         // ... second >= first
+                xx_err( err_att_range_inv );// ... second <= first
                 cc = neg;
                 return( cc );
             }
@@ -486,7 +359,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                     || (ranges[ 1 ] < ranges[ 2 ])  // default gt max
                     || (ranges[ 0 ] > ranges[ 3 ])  // default less min
                     || (ranges[ 1 ] < ranges[ 3 ]) ) {   // default gt max
-                    attdef_err();
+                    xx_err( err_att_default );
                     cc = neg;
                     return( cc );
                 }
@@ -516,7 +389,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
             gn.ignore_blanks = false;
             cc = getnum( &gn );
             if( cc == notnum || cc == omit ) {
-                attval_err();
+                xx_err( err_att_val_inv );
                 cc = neg;
                 return( cc );
             } else {
@@ -541,7 +414,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                         strupr( stringval );
                     }
                  } else {
-                    attval_err();       // only short string allowed
+                    xx_err( err_att_val_inv );  // only short string allowed
                     cc = neg;           // this is restriction from wgml 4.0
                     break;
 #if 0
@@ -554,7 +427,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
 #endif
                  }
             } else {
-                attval_err();
+                xx_err( err_att_val_inv );
                 cc = neg;
                 break;
             }
@@ -568,7 +441,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
                 *val_flags |= val_def;
                 *att_flags |= att_def;
             } else {
-                attval_err();
+                xx_err( err_att_val_inv );
                 cc = neg;
                 break;
             }
@@ -618,7 +491,7 @@ void    scr_ga( void )
 
     if( cc == omit || (*tok_start == '*' && tag_entry == NULL) ) {
         // no operands or tagname * and no previous definition
-        tagname_err();
+        tag_name_missing_err();
     }
 
     /***********************************************************************/
@@ -629,7 +502,7 @@ void    scr_ga( void )
 
     if( *p == '*' ) {                   // single * as tagname
         if( arg_flen > 1 ) {
-            tagname_err();
+            xx_err( err_tag_name_inv );
             return;
         }
         savetag = '*';                  // remember for possible quick access
@@ -659,7 +532,7 @@ void    scr_ga( void )
         tagname[ TAG_NAME_LENGTH ] = '\0';
 
         if( len < arg_flen ) {
-            tagname_err();         // name contains invalid or too many chars
+            xx_err( err_tag_name_inv );// name contains invalid or too many chars
             return;
         }
         tag_entry = find_tag( &tag_dict, tagname );
@@ -677,7 +550,7 @@ void    scr_ga( void )
 
     if( cc == omit || (*tok_start == '*' && att_entry == NULL) ) {
         // no operands or attname * and no previous definition
-        attname_err();
+        xx_err( err_att_name_inv );
         return;
     }
 
@@ -685,7 +558,7 @@ void    scr_ga( void )
 
     if( *p == '*' ) {                   // single * as attname
         if( arg_flen > 1 ) {
-            attname_err();
+            xx_err( err_att_name_inv );
             return;
         }
         saveatt = '*';                  // remember for possible quick access
@@ -714,7 +587,7 @@ void    scr_ga( void )
         attname[ TAG_NAME_LENGTH ] = '\0';
 
         if( len < arg_flen ) {
-            attname_err();          // attname with invalid or too many chars
+            xx_err( err_att_name_inv );// attname with invalid or too many chars
             cc = neg;
             return;
         }
@@ -745,7 +618,7 @@ void    scr_ga( void )
 
             cc = scan_att_optionsB( &val_flags, cc, &att_flags );// process option B
             if( cc != omit ) {
-                toomany_err();          // excess parameters
+                xx_err( err_tag_toomany );  // excess parameters
                 return;
             }
         }
@@ -805,6 +678,5 @@ void    scr_ga( void )
     } else if( val_flags & val_valptr ) {
         gaval->a.valptr = valptr;
     }
-
     return;
 }

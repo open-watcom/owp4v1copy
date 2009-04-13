@@ -74,32 +74,6 @@ static  const   scrtag  scr_tags[] = {
 #undef pick
 
 
-
-
-/***************************************************************************/
-/*  some errror msgs                                                       */
-/***************************************************************************/
-
-static void cw_err( void )
-{
-    char    linestr[ MAX_L_AS_STR ];
-
-    // SC--006: Unrecognized control word
-    err_count++;
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_err( ERR_CW_UNRECOGNIZED, token_buf, linestr, "macro",
-               input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_err( ERR_CW_UNRECOGNIZED, token_buf, linestr, "file",
-               input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
 /***************************************************************************/
 /*  scan for gml tags                                                      */
 /***************************************************************************/
@@ -132,11 +106,11 @@ static void scan_gml( void )
         // SC--009 The tagname is too long
         if( cb->fmflags & II_macro ) {
             utoa( cb->s.m->lineno, linestr, 10 );
-            g_err( ERR_TAG_NAME, tok_start + 1, linestr, "macro",
+            g_err( err_tag_name, tok_start + 1, linestr, "macro",
                    cb->s.m->mac->name );
         } else {
             utoa( cb->s.f->lineno, linestr, 10 );
-            g_err( ERR_TAG_NAME, tok_start + 1, linestr, "file",
+            g_err( err_tag_name, tok_start + 1, linestr, "file",
                    cb->s.f->filename );
         }
         if( inc_level > 0 ) {
@@ -179,12 +153,12 @@ static void scan_gml( void )
             //          is not defined
             if( cb->fmflags & II_macro ) {
                 utoa( cb->s.m->lineno, linestr, 10 );
-                g_err( ERR_TAG_MACRO,
+                g_err( err_tag_macro,
                          ge->macname, ge->name,
                          linestr, "macro", cb->s.m->mac->name );
             } else {
                 utoa( cb->s.f->lineno, linestr, 10 );
-                g_err( ERR_TAG_MACRO,
+                g_err( err_tag_macro,
                          ge->macname, ge->name,
                          linestr, "file", cb->s.f->filename );
             }
@@ -534,10 +508,10 @@ static  condcode    mainif( void)
     if( cc == no ) {
         if( input_cbs->fmflags & II_macro ) {
             utoa( input_cbs->s.m->lineno, linestr, 10 );
-            g_err( ERR_IF_INTERN, linestr, "macro", input_cbs->s.m->mac->name );
+            g_err( err_if_intern, linestr, "macro", input_cbs->s.m->mac->name );
         } else {
             utoa( input_cbs->s.f->lineno, linestr, 10 );
-            g_err( ERR_IF_INTERN,
+            g_err( err_if_intern,
                      linestr, "file", input_cbs->s.f->filename );
         }
         if( inc_level > 1 ) {
@@ -633,7 +607,7 @@ void    scan_line( void )
         }
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                g_info( INF_TEXT_LINE, scan_start );
+                g_info( inf_text_line, scan_start );
             }
 
             ob_insert_block( scan_start, scan_stop -scan_start +1, false, false );
@@ -641,7 +615,7 @@ void    scan_line( void )
 
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
-        g_info( INF_SKIP_LINE );
+        g_info( inf_skip_line );
     }
 }
 

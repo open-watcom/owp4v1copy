@@ -163,6 +163,7 @@ global struct ProcFlags {
 
 } ProcFlags;                            // processing flags
 
+
 global  size_t          buf_size;       // default buffer size
 global  char        *   token_buf;
 

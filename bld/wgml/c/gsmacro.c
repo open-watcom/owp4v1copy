@@ -48,7 +48,7 @@
 
 /***************************************************************************/
 /*  add info about macro   to LIFO input list                              */
-/*  if second parm is not null, macro is called via GML tag                */
+/*  if second parm is not null, macro is called via GML tag processing     */
 /***************************************************************************/
 
 void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
@@ -63,6 +63,8 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
     nip->hidden_tail = NULL;
     nip->if_cb       = mem_alloc( sizeof( ifcb ) );
     memset( nip->if_cb, '\0', sizeof( ifcb ) );
+    nip->pe_cb.count = -1;
+    nip->pe_cb.line = NULL;
 
     init_dict( &nip->local_dict );
 
@@ -591,55 +593,55 @@ static void macro_missing( void )
 }
 
 
-/**************************************************************************/
-/* ! EMPTY PAGE  is not implemeted ( not used in OW documentation )        */
-/*                                                                        */
-/* EMPTY PAGE,  EXECUTE MACRO:   EMPTY PAGE controls suppression of empty */
-/* pages (pages  that contain nothing in  the text area);   EXECUTE MACRO */
-/* treats the operand line as a  macro,  even if Macro Substitution (.MS) */
-/* is OFF.                                                                */
-/*                                                                        */
-/*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커      */
-/*      |       |                                                  |      */
-/*      |  .EM  |    <YES|NO|OFFNO>  !not implemented              |      */
-/*      |       |                                                  |      */
-/*      |컴컴컴�|컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴|      */
-/*      |       |                                                  |      */
-/*      |  .EM  |    .macro <args>                                 |      */
-/*      |       |                                                  |      */
-/*      읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸      */
-/*                                                                        */
-/* Neither form of this control word causes a break.                      */
-/*                                                                        */
-/* .EM <YES|NO|OFFNO>:  The  situation can often arise in  which an empty */
-/*    page  is created  (a  page that  contains  only  top and/or  bottom */
-/*    running titles).    By default,   SCRIPT does  output these  pages. */
-/*    Specifying .EM YES allows  SCRIPT to print them,   .EM NO specifies */
-/*    that they are not to be printed,  and .EM OFFNO specifies that they */
-/*    are not to be printed and that the  page number is not to be incre- */
-/*    mented.   ".EM YES"  is the  initial value.    Empty pages  will be */
-/*    printed unless ".em no" is encountered.   If the operand is omitted */
-/*    then "YES" is assumed.                                              */
-/* .EM .macro <parameters>:  If the operands are missing it is treated as */
-/*    EMPTY PAGE (See above).   If the first operand of the ".EM" control */
-/*    word begins with a control word indicator,  then that first operand */
-/*    is  treated as  a  Macro or  Remote  name.    Optional keyword  and */
-/*    positional parameters  may follow the  macro name.   The  local set */
-/*    symbol &*0  is set to the  count of positional parameters  and &*1, */
-/*    &*2, etc. contain their values.   The symbol &* contains the entire */
-/*    parameter list.   Keyword parameters are accessed as set symbols by */
-/*    the keyword name.                                                   */
-/*                                                                        */
-/* EXAMPLES                                                               */
-/* (1) .EM .TEST parm1 KW1=parm2                                          */
-/*     A macro named  TEST is invoked;  &*0 is  set to 1,  &*1  is set to */
-/*     "parm1",   &KW1   is  set   to  "parm2",    and  &*   is  set   to */
-/*     "parm1 KW1=parm2".                                                 */
-/* (2) .EM .SK 1                                                          */
-/*     A macro named "SK" is invoked.    A native control word will never */
-/*     be assumed.   If the specified macro has not already been defined, */
-/*     an error will result.                                              */
-/**************************************************************************/
+/***************************************************************************/
+/* ! EMPTY PAGE  is not implemented ( not used in OW documentation )       */
+/*                                                                         */
+/* EMPTY PAGE,  EXECUTE MACRO:   EMPTY PAGE controls suppression of empty  */
+/* pages (pages  that contain nothing in  the text area);   EXECUTE MACRO  */
+/* treats the operand line as a  macro,  even if Macro Substitution (.MS)  */
+/* is OFF.                                                                 */
+/*                                                                         */
+/*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커       */
+/*      |       |                                                  |       */
+/*      |  .EM  |    <YES|NO|OFFNO>  !not implemented              |       */
+/*      |       |                                                  |       */
+/*      |컴컴컴�|컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴|       */
+/*      |       |                                                  |       */
+/*      |  .EM  |    .macro <args>                                 |       */
+/*      |       |                                                  |       */
+/*      읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸       */
+/*                                                                         */
+/* Neither form of this control word causes a break.                       */
+/*                                                                         */
+/* .EM <YES|NO|OFFNO>:  The  situation can often arise in  which an empty  */
+/*    page  is created  (a  page that  contains  only  top and/or  bottom  */
+/*    running titles).    By default,   SCRIPT does  output these  pages.  */
+/*    Specifying .EM YES allows  SCRIPT to print them,   .EM NO specifies  */
+/*    that they are not to be printed,  and .EM OFFNO specifies that they  */
+/*    are not to be printed and that the  page number is not to be incre-  */
+/*    mented.   ".EM YES"  is the  initial value.    Empty pages  will be  */
+/*    printed unless ".em no" is encountered.   If the operand is omitted  */
+/*    then "YES" is assumed.                                               */
+/* .EM .macro <parameters>:  If the operands are missing it is treated as  */
+/*    EMPTY PAGE (See above).   If the first operand of the ".EM" control  */
+/*    word begins with a control word indicator,  then that first operand  */
+/*    is  treated as  a  Macro or  Remote  name.    Optional keyword  and  */
+/*    positional parameters  may follow the  macro name.   The  local set  */
+/*    symbol &*0  is set to the  count of positional parameters  and &*1,  */
+/*    &*2, etc. contain their values.   The symbol &* contains the entire  */
+/*    parameter list.   Keyword parameters are accessed as set symbols by  */
+/*    the keyword name.                                                    */
+/*                                                                         */
+/* EXAMPLES                                                                */
+/* (1) .EM .TEST parm1 KW1=parm2                                           */
+/*     A macro named  TEST is invoked;  &*0 is  set to 1,  &*1  is set to  */
+/*     "parm1",   &KW1   is  set   to  "parm2",    and  &*   is  set   to  */
+/*     "parm1 KW1=parm2".                                                  */
+/* (2) .EM .SK 1                                                           */
+/*     A macro named "SK" is invoked.    A native control word will never  */
+/*     be assumed.   If the specified macro has not already been defined,  */
+/*     an error will result.                                               */
+/***************************************************************************/
 
 void    scr_em( void )
 {

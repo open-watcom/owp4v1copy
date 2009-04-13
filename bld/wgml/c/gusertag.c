@@ -39,117 +39,6 @@
 
 static  symvar  *   loc_dict;           // for preparing local vars
 
-/***************************************************************************/
-/*  some error msgs                                                        */
-/*                                                                         */
-/***************************************************************************/
-static void auto_att_err( void )
-{
-    char            linestr[ MAX_L_AS_STR ];
-
-    //****ERROR**** SC--041: Cannot specify the automatic attribute 'xxx'
-    err_count++;
-
-    g_err( err_auto_att, token_buf );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void att_range_err( void )
-{
-    char            linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_att_range_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void att_len_err( void )
-{
-    char            linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_att_len_inv );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void att_val_err( char * attname )
-{
-    char            linestr[ MAX_L_AS_STR ];
-
-//****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
-    err_count++;
-    g_err( err_att_val, token_buf, attname );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-static void tag_text_err( char * tagname )
-{
-    char            linestr[ MAX_L_AS_STR ];
-
-//****ERROR**** SC--038: Tag text may not be specified for the 'xxx' tag
-    err_count++;
-    g_err( err_att_text, tagname );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void tag_text_req_err( char * tagname )
-{
-    char            linestr[ MAX_L_AS_STR ];
-
-//****ERROR**** SC--039: Tag text must be specified with the 'xxx' tag
-    err_count++;
-    g_err( err_att_text_req, tagname );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
 
 /***************************************************************************/
 /*  clear and set the relevant attribute parametercheck flags              */
@@ -250,14 +139,14 @@ static bool check_att_value( gaentry * ga )
                 attval = strtol( token_buf, NULL, 10 );
                 if( attval < gaval->a.range[ 0 ] ||
                     attval > gaval->a.range[ 1 ]  ) {
-                    att_range_err();    // value outside range
+                    xx_err( ERR_ATT_RANGE_INV );// value outside range
                     msg_done = true;
                     break;
                 }
             } else {
                 if( gaval->valflags & val_length ) {
                     if( strlen( token_buf ) > gaval->a.length ) {
-                        att_len_err();  // value too long
+                        xx_err( err_att_len_inv );  // value too long
                         msg_done = true;
                     } else {
                         scan_err = false;

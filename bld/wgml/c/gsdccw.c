@@ -286,42 +286,6 @@
 /*                                                                         */
 /***************************************************************************/
 
-
-static void CW_sep_err( void )
-{
-    char    linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_inv_cw_sep );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-static void dc_opt_err( char *pa )
-{
-    char    linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    g_err( err_dc_opt, pa );
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
 /***************************************************************************/
 /*  scr_cw    implement .cw control word                                   */
 /***************************************************************************/
@@ -348,7 +312,7 @@ void    scr_cw( void )
     }
     len = p - pa;
     if( len > 2 ) {
-        CW_sep_err();
+        xx_err( err_inv_cw_sep );
         return;
     } else if( len == 2 ) {             // 2 hex characters
         if( isxdigit( *pa ) && isxdigit( *(pa + 1) ) ) {
@@ -364,7 +328,7 @@ void    scr_cw( void )
             }
             CW_sep_char = c;
         } else {
-            CW_sep_err();
+            xx_err( err_inv_cw_sep );
         }
     } else if( len == 1 ) {
         CW_sep_char = *pa;
@@ -405,16 +369,18 @@ void    scr_dc( void )
     }
     len = p - pa;
     opt = 0;
-    if( len <= 0 ) {                    // option is omitted
+    if( len > 0 ) {
+        for( k = 0; k < max_opt; k++ ) {
+            if( !strnicmp( pa, options[ k ], len ) ) {
+                opt = k + 1;
+                break;
+            }
+        }
+    }
+    if( opt == 0 ) {                   // omitted / unknown / not implemented
         *p = '\0';
         dc_opt_err( pa );
         return;
-    }
-    for( k = 0; k < max_opt; k++ ) {
-        if( !strnicmp( pa, options[ k ], len ) ) {
-            opt = k + 1;
-            break;
-        }
     }
     while( *p && *p == ' ' ) {          // next word start = option value
         p++;

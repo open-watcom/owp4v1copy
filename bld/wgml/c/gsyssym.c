@@ -48,13 +48,16 @@ void    init_predefined_symbols( void )
 {
     char    string[ 2 ] = { 0, 0 };
 
-    add_symvar( &global_dict, "amp", "&", no_subscript, predefined + late_subst);
+    add_symvar( &global_dict, "amp", "&", no_subscript, predefined + late_subst );
 
     string[ 0 ] = CW_SEP_CHAR_DEFAULT;
-    add_symvar( &global_dict, "$cw", string, no_subscript, predefined);
+    add_symvar( &global_dict, "$cw", string, no_subscript, predefined );
 
     string[ 0 ] = GML_CHAR_DEFAULT;
-    add_symvar( &global_dict, "gml", string, no_subscript, predefined + late_subst);
-    add_symvar( &global_dict, "$gml", string, no_subscript, predefined + late_subst);
+    add_symvar( &global_dict, "gml", string, no_subscript, predefined + late_subst );
+    add_symvar( &global_dict, "$gml", string, no_subscript, predefined + late_subst );
+
+    string[ 0 ] = '.';
+    add_symvar( &global_dict, "$per", string, no_subscript, predefined );
 }
 

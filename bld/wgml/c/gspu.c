@@ -126,27 +126,6 @@ static  errno_t open_pu_file( int n )
 /***************************************************************************/
 
 
-/* Some error msg routines
- */
-
-static void numb_err( void )
-{
-    char    linestr[ MAX_L_AS_STR ];
-
-    err_count++;
-    if( input_cbs->fmflags & II_macro ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
-        g_err( ERR_PU_NUM, linestr, "macro", input_cbs->s.m->mac->name );
-    } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
-        g_err( ERR_PU_NUM, linestr, "file", input_cbs->s.f->filename );
-    }
-    show_include_stack();
-    return;
-}
-
-
-
 /***************************************************************************/
 /*  scr_pu    implement .pu control word                                   */
 /***************************************************************************/
