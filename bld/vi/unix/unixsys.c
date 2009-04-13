@@ -33,6 +33,7 @@
 #include "curses.h"
 #include "win.h"
 #include "stdui.h"
+#include "vibios.h"
 
 static char oldPath[FILENAME_MAX];
 /*
@@ -83,7 +84,7 @@ void MyBeep( void )
 void ScreenInit( void )
 {
     uistart();
-    KeyboardInit();
+    BIOSKeyboardInit();
 
     WindMaxHeight = LINES;
     WindMaxWidth = COLS;
@@ -186,3 +187,19 @@ void SetCursorBlinkRate( int cbr )
     CursorBlinkRate = cbr;
 
 } /* SetCursorBlinkRate */
+
+vi_key GetKeyboard( int *scan )
+{
+    return( BIOSGetKeyboard( scan ) );
+}
+
+bool KeyboardHit( void )
+{
+    return( BIOSKeyboardHit() );
+}
+
+void MyVioShowBuf( unsigned offset, unsigned length )
+{
+    BIOSUpdateScreen( offset, length );
+}
+

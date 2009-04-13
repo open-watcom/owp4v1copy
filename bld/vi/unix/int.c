@@ -35,7 +35,6 @@
 #include <signal.h>
 #include <setjmp.h>
 #include "win.h"
-#include "pragmas.h"
 #if defined( __4G__ )
 #define _FAR_   far
 #else

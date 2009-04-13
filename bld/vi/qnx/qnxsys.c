@@ -139,7 +139,7 @@ void ScreenInit( void )
         console_close( QNXCon );
         FatalError( ERR_WIND_NO_MORE_WINDOWS );
     }
-    rc = KeyboardInit();
+    rc = BIOSKeyboardInit();
     if( rc ) {
         console_close( QNXCon );
         FatalError( rc );

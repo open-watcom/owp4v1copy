@@ -32,7 +32,7 @@
 #include "vi.h"
 #include "win.h"
 #include "dosx.h"
-#include "pragmas.h"
+#include "vibios.h"
 
 #ifdef __OS2V2__
     #define SEG16   _Seg16
@@ -270,3 +270,19 @@ void SetCursorBlinkRate( int cbr )
     CursorBlinkRate = cbr;
 
 } /* SetCursorBlinkRate */
+
+vi_key GetKeyboard( int *scan )
+{
+    return( BIOSGetKeyboard( scan ) );
+}
+
+bool KeyboardHit( void )
+{
+    return( BIOSKeyboardHit() );
+}
+
+void MyVioShowBuf( unsigned offset, unsigned length )
+{
+    BIOSUpdateScreen( offset, length );
+}
+

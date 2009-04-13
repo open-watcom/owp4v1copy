@@ -24,38 +24,29 @@
 *
 *  ========================================================================
 *
-* Description:  Mainline for Unix systems.
+* Description:  BIOS Low-level function prototypes for vi.
 *
 ****************************************************************************/
 
 
-#include "vi.h"
-#if defined( __WATCOMC__ )
-  #include <process.h>
-#endif
+// screen color/attrib functions
+extern void             BIOSSetColorRegister( short, char, char, char );
+extern long             BIOSGetColorRegister( short );
+extern void             BIOSGetColorPalette( void _FAR * );
+extern void             BIOSSetBlinkAttr( void );
+extern void             BIOSSetNoBlinkAttr( void );
+// screen cursor functions
+extern short            BIOSGetCursor( char );
+extern void             BIOSSetCursor( char, char, char );
+extern void             BIOSNewCursor( char, char );
+// screen info functions
+extern char             BIOSGetRowCount( void );
+extern unsigned long    BIOSGetVideoMode( void );
+// screen update functions
+extern void             BIOSUpdateScreen( unsigned, unsigned );
+// keyboard functions
+extern int              BIOSKeyboardInit( void );
+extern unsigned short   BIOSTestKeyboard( void );
+extern vi_key           BIOSGetKeyboard( int * );
+extern bool             BIOSKeyboardHit( void );
 
-int main( int argc, char *argv[] )
-{
-    static char buffer[ FILENAME_MAX ];
-
-#ifdef TRMEM
-    InitTRMEM();
-#endif
-
-    argc = argc;
-#ifndef __WATCOMC__
-    _argc = argc;
-    _argv = argv;
-#endif
-    EXEName = _cmdname(buffer);
-    VarAddGlobalStr( "OS", "unix" );
-    Comspec = getenv( "SHELL" );
-    InitializeEditor();
-    EditMain();
-
-#ifdef TRMEM
-    DumpTRMEM();
-#endif
-    return( 0 );
-
-} /* main */

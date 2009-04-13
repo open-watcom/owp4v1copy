@@ -33,7 +33,10 @@
 #include <dos.h>
 #include "win.h"
 #include "dosx.h"
+#include "vibios.h"
 #include "pragmas.h"
+
+extern void UpdateDOSClock( void );
 
 #define PHAR_SCRN_SEL   0x34
 extern int PageCnt;
@@ -437,14 +440,6 @@ void SetCursorBlinkRate( int cbr )
 
 } /* SetCursorBlinkRate */
 
-#if defined( __386__ ) && !defined( __4G__ )
-extern void UpdateDOSClock( void );
-#endif
-
-extern void JustAnInt28( void );
-#pragma aux JustAnInt28 = 0xcd 0x28;
-
-
 /*
  * KeyboardHit - test for keyboard hit
  */
@@ -452,7 +447,7 @@ bool KeyboardHit( void )
 {
     bool        rc;
 
-    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
+    rc = _BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
     if( !rc ) {
 #if defined( __386__ ) && !defined( __4G__ )
         UpdateDOSClock();
@@ -470,7 +465,7 @@ vi_key GetKeyboard( int *scan )
 {
     unsigned short  key;
 
-    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
+    key = _BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
     if( scan != NULL ) {
         *scan = key >> 8;
     }

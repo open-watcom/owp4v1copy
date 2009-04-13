@@ -32,93 +32,42 @@
 #ifndef _PRAGMAS_INCLUDED
 #define _PRAGMAS_INCLUDED
 
-#if defined(__OS2__) || defined(__UNIX__) || defined(__NT__)
-#define NO_INLINE
-#endif
+#if defined( __DOS__ ) && defined( __X86__ ) && defined( __WATCOMC__ )
 
-#if defined(__DOS__)
 extern unsigned char In61( void );
 extern void Out61( unsigned char );
 extern void Out43( unsigned char );
 extern void Out42( unsigned char );
-extern U_INT DosMaxAlloc( void );
+
 extern void (interrupt _FAR *DosGetVect( char ))( void );
 extern void DosSetVect( char, void (interrupt *)( void ));
-#endif
 
-extern void BIOSSetColorRegister( short, char, char, char );
-extern void BIOSGetColorPalette( void _FAR * );
-extern void BIOSSetBlinkAttr( void );
-extern void BIOSSetNoBlinkAttr( void );
-extern short BIOSTestKeyboard( void );
-extern unsigned short BIOSGetKeyboard( char );
-extern unsigned short BIOSKeyboardHit( char );
-extern char BIOSGetRowCount( void );
-extern unsigned long BIOSGetVideoMode( void );
-extern short BIOSGetCursor( char );
-extern void BIOSSetCursor( char, char, char );
-extern void BIOSNewCursor( char, char );
-extern long BIOSGetColorRegister( short );
-extern char _NEAR *GetSP( void );
-extern char _NEAR *GetBP( void );
-extern void SetBP( char _NEAR * );
-extern void SetSP( char _NEAR * );
-extern char IsWindows( void );
-
-#if defined(__WATCOMC__) && defined(__X86__)
-#pragma aux IsWindows = \
-        "mov    ax,1600h" \
-        "int    2fh" \
-        "cmp    al,0" \
-        "je     notok" \
-        "cmp    al,080h" \
-        "je     notok" \
-        "mov    al,1" \
-        "jmp    done" \
-        "notok:" \
-        "mov    al,0" \
-        "done:" \
-        value [al];
-
-#ifdef __386__
-#pragma aux GetSP = \
-    "mov eax,esp" \
-    value [eax];
-#pragma aux GetBP = \
-    "mov eax,ebp" \
-    value [eax];
-#pragma aux SetSP = \
-    "mov esp,eax" \
-    parm [eax] modify[esp];
-#pragma aux SetBP = \
-    "mov ebp,eax" \
-    parm [eax];
-#else
-#pragma aux GetSP = \
-    "mov ax,sp" \
-    value [ax];
-#pragma aux GetBP = \
-    "mov ax,bp" \
-    value [ax];
-#pragma aux SetSP = \
-    "mov sp,ax" \
-    parm [ax] modify[sp];
-#pragma aux SetBP = \
-    "mov bp,ax" \
-    parm [ax];
-#endif
-
-#if !defined(NO_INLINE)
+extern unsigned short _BIOSGetKeyboard( char );
+extern unsigned short _BIOSKeyboardHit( char );
 
 #pragma aux In61 = 0xe4 0x61 value [al];
 #pragma aux Out61 = 0xe6 0x61 parm [al];
 #pragma aux Out43 = 0xe6 0x43 parm [al];
 #pragma aux Out42 = 0xe6 0x42 parm [al];
 
+extern void JustAnInt28( void );
+#pragma aux JustAnInt28 = "int 28h";
+
+extern unsigned DosMaxAlloc( void );
+
 #ifndef __CURSES__
-#pragma aux BIOSGetKeyboard = \
-         0xCD 0x16          /* int     016h */ \
-         parm[ah] value[ax];
+#pragma aux _BIOSGetKeyboard = \
+        "int  16h" \
+        parm[ah] value[ax];
+
+#pragma aux _BIOSKeyboardHit = \
+        "int  16h" \
+        "jz   L1" \
+        "mov  ax,1" \
+        "jmp short L2" \
+    "L1: mov  ax,0" \
+    "L2:" \
+        parm[ah] value[ax];
 
 #pragma aux BIOSGetCursor = \
          0xB4 0x03          /* mov     ah,03h */\
@@ -138,22 +87,22 @@ extern char IsWindows( void );
 
 #if !defined(__386__)
 #pragma aux DosSetVect = \
-        0xb4 0x25     /* mov    ah, 25h */ \
-        0xcd 0x21     /* int    21h */ \
+        "mov  ah,25h" \
+        "int  21h" \
         parm [al] [ds dx];
 
 #pragma aux DosGetVect = \
-        0xb4 0x35     /* mov    ah, 35h */ \
-        0xcd 0x21     /* int    21h */ \
-        0x89 0xd8     /* mov     ax,bx */ \
-        0x8c 0xc2     /* mov     dx,es */ \
+        "mov  ah,35h" \
+        "int  21h" \
+        "mov  ax,bx" \
+        "mov  dx,es" \
         parm [al] modify [es bx];
 
 #pragma aux DosMaxAlloc = \
-        0x31 0xdb       /* xor bx,bx */ \
-        0x4b            /* dec bx */ \
-        0xb4 0x48       /* mov ah, 0x48 */ \
-        0xcd 0x21       /* int    21h */ \
+        "xor bx,bx" \
+        "dec bx" \
+        "mov ah,48h" \
+        "int 21h" \
         value [bx] modify [ax];
 
 #pragma aux BIOSSetColorRegister = \
@@ -183,14 +132,6 @@ extern char IsWindows( void );
         0xCD 0x16          /* int     016h */ \
         value[ax];
 
-#pragma aux BIOSKeyboardHit = \
-        0xCD 0x16          /* int     016h */ \
-        0x74 0x05          /* jz     foo1 */ \
-        0xB8 0x01 0x00     /* mov     ax,1 */ \
-        0xEB 0x03          /* jmp    short foo2 */ \
-        0xB8 0x00 0x00     /* foo1:   mov     ax,0 */ \
-        parm[ah] value[ax];
-
 #pragma aux BIOSGetRowCount = \
         0xB8 0x30 0x11     /* mov     ax,01130h */ \
         0xB7 0x00          /* mov     bh,0 */ \
@@ -211,29 +152,28 @@ extern char IsWindows( void );
         parm[bx] value[cx dx] modify [ax cx dx];
 #else
 #pragma aux DosMaxAlloc = \
-        0x31 0xdb       /* xor ebx,ebx */ \
-        0x4b            /* dec ebx */ \
-        0xb4 0x48       /* mov ah, 0x48 */ \
-        0xcd 0x21       /* int    21h */ \
+        "xor ebx,ebx" \
+        "dec ebx" \
+        "mov ah,48h" \
+        "int 21h" \
         value [ebx] modify [eax];
 
-extern void DosSetVect( char, void (interrupt _FAR *)( void ) );
 #pragma aux DosSetVect = \
-        0x1e            /* push ds */ \
-        0x0f 0xa0       /* push fs */ \
-        0x1f            /* pop  ds */ \
-        0xb4 0x25           /* mov      ah, 25h */ \
-        0xcd 0x21       /* int    21h */ \
-        0x1f            /* pop  ds */ \
+        "push ds" \
+        "push fs" \
+        "pop  ds" \
+        "mov  ah,25h" \
+        "int  21h" \
+        "pop  ds" \
         parm [al] [fs edx];
 
 #pragma aux DosGetVect = \
-        0x06          /* push   es */ \
-        0xb4 0x35           /* mov      ah, 35h */ \
-        0xcd 0x21     /* int    21h */ \
-        0x89 0xd8     /* mov    eax,ebx */ \
-        0x8c 0xc2     /* mov    dx,es */ \
-        0x07          /* pop    es */ \
+        "push es" \
+        "mov  ah,35h" \
+        "int  21h" \
+        "mov  eax,ebx" \
+        "mov  edx,es" \
+        "pop  es" \
         parm [al] value[dx eax] modify [ebx];
 
 #pragma aux BIOSSetColorRegister = \
@@ -266,14 +206,6 @@ extern void DosSetVect( char, void (interrupt _FAR *)( void ) );
         0xCD 0x16               /* int     016h */ \
         value[ax];
 
-#pragma aux BIOSKeyboardHit = \
-        0xCD 0x16               /* int     016h */ \
-        0x74 0x06               /* jz     foo1 */ \
-        0x66 0xB8 0x01 0x00     /* mov     ax,1 */ \
-        0xEB 0x04               /* jmp    short foo2 */ \
-        0x66 0xB8 0x00 0x00     /* foo1:   mov     ax,0 */ \
-        parm[ah] value[ax];
-
 #pragma aux BIOSGetRowCount = \
         0x66 0xB8 0x30 0x11     /* mov     ax,01130h */ \
         0xB7 0x00               /* mov     bh,0 */ \
@@ -301,6 +233,7 @@ extern void DosSetVect( char, void (interrupt _FAR *)( void ) );
         parm[bx] value[eax] modify [ax cx dx];
 
 #endif
+
 #endif
-#endif
+
 #endif

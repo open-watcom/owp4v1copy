@@ -30,10 +30,10 @@
 
 
 #include "vi.h"
-#include "pragmas.h"
 #define INCL_BASE
 #define INCL_VIO
 #include "os2.h"
+#include "vibios.h"
 
 #ifdef __386__
     #define SEG16 _Seg16
@@ -148,67 +148,49 @@ void BIOSNewCursor( char ch, char notused )
 
 } /* BIOSNewCursor */
 
-extern unsigned short BIOSGetKeyboard( char x )
+/*
+ * BIOSGetKeyboard - get a keyboard char
+ */
+extern vi_key BIOSGetKeyboard( int *scan )
 {
     KBDKEYINFO      info;
-    unsigned short  res;
+    vi_key          key;
 
-    x = x;
     KbdCharIn( &info, 0, 0 );
-    res = (info.chScan << 8) + info.chChar;
-    return( res );
+    key = info.chChar;
+    if( scan != NULL ) {
+        *scan = info.chScan;
+    }
+    if( key == 0xe0 ) {
+        return( 0 );
+    }
+    return( key );
 
 } /* BIOSGetKeyboard */
 
-extern unsigned short BIOSKeyboardHit( char x )
+/*
+ * BIOSKeyboardHit - test for keyboard hit
+ */
+extern bool BIOSKeyboardHit( void )
 {
     KBDKEYINFO  info;
 
-    x = x;
     KbdPeek( &info, 0 );
     return( (info.fbStatus & 0xe0) != 0 );
 
 } /* BIOSKeyboardHit */
 
-void MyVioShowBuf( unsigned offset, int length )
+/*
+ * BIOSUpdateScreen - update the screen
+ */
+void  BIOSUpdateScreen( unsigned offset, unsigned length )
 {
     extern int  PageCnt;
 
     if( PageCnt > 0 ) {
         return;
     }
-    VioShowBuf( (unsigned short)offset, (unsigned short)(length * 2), 0 );
+    VioShowBuf( (unsigned short)offset, (unsigned short)( length * 2 ), 0 );
 
-} /* MyVioShowBuf */
-
-/*
- * KeyboardHit - test for keyboard hit
- */
-bool KeyboardHit( void )
-{
-    bool        rc;
-
-    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
-    return( rc );
-
-} /* KeyboardHit */
-
-/*
- * GetKeyboard - get a keyboard char
- */
-vi_key GetKeyboard( int *scan )
-{
-    unsigned short  key;
-
-    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
-    if( scan != NULL ) {
-        *scan = key >> 8;
-    }
-    key &= 0xff;
-    if( key == 0xe0 ) {
-        return( 0 );
-    }
-    return( key );
-
-} /* GetKeyboard */
+} /* BIOSUpdateScreen */
 

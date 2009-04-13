@@ -32,6 +32,7 @@
 #include "vi.h"
 #include "win.h"
 #include "ctkeyb.h"
+#include "vibios.h"
 
 void BIOSGetColorPalette( void *a ) {}
 long BIOSGetColorRegister( short a ) { return( 0 ); }
@@ -177,7 +178,7 @@ static vi_key get_vi_key( EVENT ev )
     return( -1 );
 }
 
-int KeyboardInit( void )
+int BIOSKeyboardInit( void )
 {
     int i;
     
@@ -188,7 +189,10 @@ int KeyboardInit( void )
     return( 0 );
 }
 
-unsigned short BIOSGetKeyboard( char extended )
+/*
+ * BIOSGetKeyboard - get a keyboard char
+ */
+vi_key BIOSGetKeyboard( int *scan )
 {
     vi_key  key;
     EVENT   ev;
@@ -196,25 +200,36 @@ unsigned short BIOSGetKeyboard( char extended )
     key = -1;
     do {
         ev = uieventsource( 0 );
-        if ( ev < EV_FIRST_UNUSED )
+        if ( ev < EV_FIRST_UNUSED ) {
             key = vi_keys[ ev ];
+        }
     } while ( key == -1 );
+    if( scan != NULL ) {
+        *scan = 0;
+    }
     return( key );
-}
 
-unsigned short BIOSKeyboardHit( char a )
+} /* BIOSGetKeyboard */
+
+/*
+ * BIOSKeyboardHit - test for keyboard hit
+ */
+bool BIOSKeyboardHit( void )
 {
     int             type, attr;
     unsigned char   row, col;
 
-    a = a;
     _uigetcursor( &row, &col, &type, &attr );
     _uisetcursor( row, col, C_NORMAL, attr );
     _ui_refresh( 0 );
-    return( (unsigned short)kb_wait( 0, 0 ) );
-}
+    return( ( kb_wait( 0, 0 ) != 0 ) );
+    
+} /* BIOSKeyboardHit */
 
-void MyVioShowBuf( unsigned offset, int length )
+/*
+ * BIOSUpdateScreen - update the screen
+ */
+void  BIOSUpdateScreen( unsigned offset, unsigned length )
 {
     extern int  PageCnt;
     SAREA       area;
@@ -239,31 +254,4 @@ void MyVioShowBuf( unsigned offset, int length )
 
     _physupdate(&area);
 
-} /* MyVioShowBuf */
-
-/*
- * KeyboardHit - test for keyboard hit
- */
-bool KeyboardHit( void )
-{
-    bool        rc;
-
-    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
-    return( rc );
-
-} /* KeyboardHit */
-
-/*
- * GetKeyboard - get a keyboard char
- */
-vi_key GetKeyboard( int *scan )
-{
-    vi_key      key;
-
-    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
-    if( scan != NULL ) {
-        *scan = 0;
-    }
-    return( key );
-
-} /* GetKeyboard */
+} /* BIOSUpdateScreen */

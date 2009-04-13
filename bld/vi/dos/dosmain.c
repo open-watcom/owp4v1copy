@@ -34,19 +34,6 @@
 #include <malloc.h>
 #include "source.h"
 #include "stack.h"
-#include "pragmas.h"
-
-#ifdef __V__
-extern void ResetBPChain( void );
-
-#pragma aux ResetBPChain = \
-        "mov    bp, 0" \
-        "push   bp" \
-        "mov    bp, sp";
-
-#else
-#define ResetBPChain()
-#endif
 
 void main( int argc, char *argv[] )
 {
@@ -64,6 +51,7 @@ void main( int argc, char *argv[] )
     FinalStack();
     ResetBPChain();
     EditMain();
+    
 #ifdef TRMEM
     DumpTRMEM();
 #endif

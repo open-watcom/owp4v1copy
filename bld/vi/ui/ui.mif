@@ -11,8 +11,7 @@ objuisizeroot = &
         winover.obj &
         winshow.obj &
         winswap.obj &
-        mouse.obj &
-        color.obj
+        mouse.obj
 
 objuisize = &
         adjwin.obj &

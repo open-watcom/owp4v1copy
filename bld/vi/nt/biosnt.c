@@ -31,7 +31,7 @@
 
 #include "vi.h"
 #include "win.h"
-#include "pragmas.h"
+#include "vibios.h"
 
 typedef struct {
     WORD    vk;
@@ -97,12 +97,6 @@ static const map events[] = {
     { VK_F12, VI_KEY( F12 ), VI_KEY( SHIFT_F12 ), VI_KEY( CTRL_F12 ), VI_KEY( ALT_F12 ) }
 };
 
-int CompareEvents( map *p1, map *p2 )
-{
-    return( p1->vk - p2->vk );
-}
-
-
 extern HANDLE   InputHandle, OutputHandle;
 extern COORD    BSize;
 
@@ -116,12 +110,16 @@ void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
 
 static COORD    _cpos;
 
+static int CompareEvents( map *p1, map *p2 )
+{
+    return( p1->vk - p2->vk );
+}
+
 /*
  * BIOSGetCursor - set current cursor postion
  */
 void BIOSSetCursor( char page, char row, char col )
 {
-
     page = page;
     _cpos.X = col;
     _cpos.Y = row;
@@ -226,16 +224,14 @@ static BOOL eventWeWant( INPUT_RECORD *ir )
 /*
  * BIOSKeyboardHit - read the keyboard
  */
-unsigned short BIOSGetKeyboard( char x )
+vi_key BIOSGetKeyboard( int *scan )
 {
     INPUT_RECORD        ir;
     DWORD               rd, ss;
     WORD                vk;
-    short               ascii;
     BOOL                has_alt, has_shift, has_ctrl;
     map                 *ev, what;
-
-    x = x;
+    vi_key              key;
 
     do {
         ReadConsoleInput( InputHandle, &ir, 1, &rd );
@@ -244,7 +240,7 @@ unsigned short BIOSGetKeyboard( char x )
         return( VI_KEY( MOUSEEVENT ) );
     }
     vk = ir.Event.KeyEvent.wVirtualKeyCode;
-    ascii = (unsigned char)ir.Event.KeyEvent.uChar.AsciiChar;
+    key = (unsigned char)ir.Event.KeyEvent.uChar.AsciiChar;
     ss = ir.Event.KeyEvent.dwControlKeyState;
 
     has_shift = ((ss & SHIFT_PRESSED) ? TRUE : FALSE);
@@ -257,47 +253,53 @@ unsigned short BIOSGetKeyboard( char x )
                   sizeof( what ), (int (*)( const void*, const void* ))CompareEvents );
     if( ev != NULL ) {
         if( has_shift ) {
-            ascii = ev->shift;
+            key = ev->shift;
         } else if( has_ctrl ) {
-            ascii = ev->ctrl;
+            key = ev->ctrl;
         } else if( has_alt ) {
-            ascii = ev->alt;
+            key = ev->alt;
         } else {
-            ascii = ev->reg;
+            key = ev->reg;
         }
-    } else if( ascii == 0 ) {
-        ascii = 128; /* why ? */
+    } else if( key == 0 ) {
+        key = VI_KEY( DUMMY ); /* why ? */
     }
-    return( ascii );
+    if( scan != NULL ) {
+        *scan = 0;
+    }
+    return( key );
 
 } /* BIOSGetKeyboard */
 
 /*
  * BIOSKeyboardHit - test if a key is waiting
  */
-unsigned short BIOSKeyboardHit( char x )
+bool BIOSKeyboardHit( void )
 {
     DWORD               rd;
     INPUT_RECORD        ir;
+    bool                rc;
 
-    x = x;
     while( 1 ) {
         PeekConsoleInput( InputHandle, &ir, 1, &rd );
         if( rd == 0 ) {
-            return( FALSE );
+            rc = FALSE;
+            break;
         }
         if( eventWeWant( &ir ) ) {
-            return( TRUE );
+            rc = TRUE;
+            break;
         }
         ReadConsoleInput( InputHandle, &ir, 1, &rd );
     }
+    return( rc );
 
 } /* BIOSKeyboardHit */
 
 /*
- * MyVioShowBuf - update the screen
+ * BIOSUpdateScreen - update the screen
  */
-void MyVioShowBuf( unsigned offset, int nbytes )
+void  BIOSUpdateScreen( unsigned offset, unsigned nbytes )
 {
     SMALL_RECT  sr;
     COORD       bcoord;
@@ -316,33 +318,7 @@ void MyVioShowBuf( unsigned offset, int nbytes )
     sr.Bottom = oend / WindMaxWidth;
     sr.Right = oend - sr.Bottom * WindMaxWidth;
 
-    WriteConsoleOutput( OutputHandle, (PCHAR_INFO) Scrn, BSize, bcoord, &sr );
+    WriteConsoleOutput( OutputHandle, (PCHAR_INFO)Scrn, BSize, bcoord, &sr );
 
-} /* MyVioShowBuf */
+} /* BIOSUpdateScreen */
 
-/*
- * KeyboardHit - test for keyboard hit
- */
-bool KeyboardHit( void )
-{
-    bool        rc;
-
-    rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
-    return( rc );
-
-} /* KeyboardHit */
-
-/*
- * GetKeyboard - get a keyboard char
- */
-vi_key GetKeyboard( int *scan )
-{
-    vi_key       key;
-
-    key = BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
-    if( scan != NULL ) {
-        *scan = 0;
-    }
-    return( key );
-
-} /* GetKeyboard */

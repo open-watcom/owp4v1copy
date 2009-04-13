@@ -34,6 +34,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include "win.h"
+#include "pragmas.h"
 #if defined( __4G__ )
     #define _FAR_   far
     #undef _FAR
@@ -41,9 +42,9 @@
 #else
     #define _FAR_
 #endif
-#include "pragmas.h"
 
 #if !defined( __386__ ) || defined( __4G__ )
+
 static void (interrupt _FAR_ *oldInt1c)( void );
 static void (interrupt _FAR_ *oldInt1b)( void );
 static void (interrupt _FAR_ *oldInt23)( void );

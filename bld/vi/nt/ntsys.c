@@ -33,7 +33,7 @@
 #include <dos.h>
 #include "win.h"
 #include "dosx.h"
-//#include <windows.h>
+#include "vibios.h"
 
 HANDLE  InputHandle, OutputHandle;
 COORD   BSize;
@@ -262,3 +262,19 @@ void SetCursorBlinkRate( int cbr )
     CursorBlinkRate = cbr;
 
 } /* SetCursorBlinkRate */
+
+vi_key GetKeyboard( int *scan )
+{
+    return( BIOSGetKeyboard( scan ) );
+}
+
+bool KeyboardHit( void )
+{
+    return( BIOSKeyboardHit() );
+}
+
+void MyVioShowBuf( unsigned offset, unsigned length )
+{
+    BIOSUpdateScreen( offset, length );
+}
+
