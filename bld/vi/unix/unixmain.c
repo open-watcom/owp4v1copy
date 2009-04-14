@@ -36,7 +36,7 @@
 
 int main( int argc, char *argv[] )
 {
-    static char buffer[ FILENAME_MAX ];
+    static char buffer[FILENAME_MAX];
 
 #ifdef TRMEM
     InitTRMEM();
@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
     _argc = argc;
     _argv = argv;
 #endif
-    EXEName = _cmdname(buffer);
+    EXEName = _cmdname( buffer );
     VarAddGlobalStr( "OS", "unix" );
     Comspec = getenv( "SHELL" );
     InitializeEditor();

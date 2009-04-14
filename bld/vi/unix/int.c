@@ -36,9 +36,9 @@
 #include <setjmp.h>
 #include "win.h"
 #if defined( __4G__ )
-#define _FAR_   far
+    #define _FAR_   far
 #else
-#define _FAR_
+    #define _FAR_
 #endif
 
 #if !defined( __386__ ) || defined( __4G__ )
@@ -56,11 +56,10 @@ static int_vect_32      old1c;
 static int_vect_32      old1b;
 static int_vect_32      old23;
 static int_vect_32      old24;
-
-
 #endif
-static char tSec1,tSec2,tMin1,tMin2,tHour1,tHour2;
-static char cTick1=18,cTick2=5;
+
+static char tSec1, tSec2, tMin1, tMin2, tHour1, tHour2;
+static char cTick1 = 18, cTick2 = 5;
 
 extern void HandleInt24( void );
 
@@ -71,14 +70,14 @@ extern void HandleInt24( void );
 static void drawClock( void )
 {
     if( EditFlags.ClockActive && EditFlags.Clock ) {
-        ClockStart[ 7*2 ] = tSec2;
-        ClockStart[ 6*2 ] = tSec1;
-        ClockStart[ 5*2 ] = ':';
-        ClockStart[ 4*2 ] = tMin2;
-        ClockStart[ 3*2 ] = tMin1;
-        ClockStart[ 2*2 ] = ':';
-        ClockStart[ 1*2 ] = tHour2;
-        ClockStart[ 0*2 ] = tHour1;
+        ClockStart[7 * 2] = tSec2;
+        ClockStart[6 * 2] = tSec1;
+        ClockStart[5 * 2] = ':';
+        ClockStart[4 * 2] = tMin2;
+        ClockStart[3 * 2] = tMin1;
+        ClockStart[2 * 2] = ':';
+        ClockStart[1 * 2] = tHour2;
+        ClockStart[0 * 2] = tHour1;
     }
 
 } /* drawClock */
@@ -95,7 +94,9 @@ static void interrupt handleInt1c()
         if( cTick2 == 0 ) {
             cTick2 = 5;
             cTick1 = 19;
-        } else cTick1 = 18;
+        } else {
+            cTick1 = 18;
+        }
         tSec2++;
         if( tSec2 > '9' ) {
             tSec2 = '0';
@@ -122,7 +123,7 @@ static void interrupt handleInt1c()
         drawClock();
     }
     if( EditFlags.ClockActive && EditFlags.SpinningOurWheels && EditFlags.Spinning ) {
-        *SpinLoc = SpinData[ SpinCount ];
+        *SpinLoc = SpinData[SpinCount];
         SpinCount++;
         if( SpinCount >= 4 ) {
             SpinCount = 0;
@@ -155,17 +156,18 @@ static void setClockTime( void )
     char        date[128];
 
     GetDateString( date );
-    tSec1 = date[ DATE_LEN-2 ];
-    tSec2 = date[ DATE_LEN-1 ];
-    tMin1 = date[ DATE_LEN-5 ];
-    tMin2 = date[ DATE_LEN-4 ];
-    tHour1 = date[ DATE_LEN-8 ];
-    tHour2 = date[ DATE_LEN-7 ];
+    tSec1 = date[DATE_LEN - 2];
+    tSec2 = date[DATE_LEN - 1];
+    tMin1 = date[DATE_LEN - 5];
+    tMin2 = date[DATE_LEN - 4];
+    tHour1 = date[DATE_LEN - 8];
+    tHour2 = date[DATE_LEN - 7];
 
 } /* setClockTime */
 
 #if defined( __386__ ) && !defined( __4G__ )
 static bool     noTimer;
+
 /*
  * UpdateDOSClock - update the clock, if we couldn't hook timer interrupts
  */
@@ -186,7 +188,7 @@ void UpdateDOSClock( void )
  */
 static void resetIntVect( int vect, int_vect_32 *vinfo )
 {
-    union REGS          inregs,outregs;
+    union REGS          inregs, outregs;
     struct SREGS        segregs;
 
     segread( &segregs );
@@ -205,7 +207,7 @@ static void resetIntVect( int vect, int_vect_32 *vinfo )
  */
 static void getIntVect( int vect, int_vect_32 *vinfo )
 {
-    union REGS          inregs,outregs;
+    union REGS          inregs, outregs;
     struct SREGS        segregs;
 
     segread( &segregs );
@@ -227,7 +229,7 @@ static void getIntVect( int vect, int_vect_32 *vinfo )
  */
 static void newIntVect( int vect, void far *rtn )
 {
-    union REGS          inregs,outregs;
+    union REGS          inregs, outregs;
     struct SREGS        segregs;
 
     segread( &segregs );
@@ -236,21 +238,21 @@ static void newIntVect( int vect, void far *rtn )
     inregs.h.cl = vect;
     segregs.ds = FP_SEG( rtn );
     inregs.x.edx = FP_OFF( rtn );
-    intdosx( &inregs,&outregs, &segregs );
+    intdosx( &inregs, &outregs, &segregs );
 
 } /* newIntVect */
 
 extern void LockMemory( void far *, long size );
 #pragma aux LockMemory = \
         "push   es" \
-        "mov    ax,gs" \
-        "mov    es,ax" \
-        "mov    ax,0252bh" \
-        "mov    bh,5" \
-        "mov    bl,1" \
+        "mov    ax, gs" \
+        "mov    es, ax" \
+        "mov    ax, 0252bh" \
+        "mov    bh, 5" \
+        "mov    bl, 1" \
         "int    21h" \
         "pop    es" \
-        parm[gs ecx] [edx];
+    parm [gs ecx] [edx];
 
 /*
  * setStupid1c - don't set timer tick interrupt in DOS boxes!!?!?!
@@ -266,6 +268,7 @@ static void setStupid1c( void )
 } /* setStupid1c */
 
 #endif
+
 /*
  * SetInterrupts - set all interrupt handlers
  */
@@ -303,7 +306,6 @@ void SetInterrupts( void )
  */
 void RestoreInterrupts( void )
 {
-
     _disable();
 #if !defined( __386__ ) || defined( __4G__ )
     DosSetVect( 0x1c, oldInt1c );

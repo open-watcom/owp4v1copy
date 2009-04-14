@@ -36,6 +36,7 @@
 #include "vibios.h"
 
 static char oldPath[FILENAME_MAX];
+
 /*
  * PushDirectory
  */
@@ -65,6 +66,7 @@ void PopDirectory( void )
 void NewCursor( window_id id, cursor_type ct )
 {
     // could do a curs_set() here
+
 } /* NewCursor */
 
 /*
@@ -75,6 +77,7 @@ void MyBeep( void )
     if( EditFlags.BeepFlag ) {
         beep();
     }
+
 } /* MyBeep */
 
 
@@ -119,6 +122,7 @@ void ChkExtendedKbd( void )
 long MemSize( void )
 {
     return ( 0 );
+
 } /* MemSize */
 
 /*
@@ -139,6 +143,7 @@ int ChangeDrive( int drive )
 {
     drive = drive;
     return( ERR_NO_ERR );
+
 }/* ChangeDrive */
 
 /*
@@ -177,6 +182,7 @@ drive_type DoGetDriveType( int drv )
 void MyDelay( int ms )
 {
     napms( ms );
+
 } /* MyDelay */
 
 /*

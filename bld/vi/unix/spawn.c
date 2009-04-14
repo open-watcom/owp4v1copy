@@ -32,7 +32,7 @@
 #include "stdui.h"
 #include "ctkeyb.h"
 
-char *ExeExtensions[] = {""};
+char *ExeExtensions[] = { "" };
 int ExeExtensionCount = sizeof( ExeExtensions ) / sizeof( char * );
 
 char *InternalCommands[] = {

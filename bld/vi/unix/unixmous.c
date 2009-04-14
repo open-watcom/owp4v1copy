@@ -36,7 +36,8 @@
 #include <term.h>
 
 extern FILE *UIConFile;
-#define putp( str )   {tputs( str, 1, con_putchar );}
+#define putp( str )   { tputs( str, 1, con_putchar ); }
+
 static int con_putchar( int ch )
 {
     fputc( ch, UIConFile );
@@ -53,6 +54,7 @@ static int lastCol;
 void SetMouseSpeed( int speed )
 {
     speed = speed;
+
 } /* SetMouseSpeed */
 
 /*
@@ -61,7 +63,8 @@ void SetMouseSpeed( int speed )
 void SetMousePosition( int row, int col )
 {
     lastRow = MouseRow = row;
-    lastCol = MouseCol = col;    
+    lastCol = MouseCol = col;
+
 } /* SetMousePosition */
 
 /*
@@ -78,6 +81,7 @@ void PollMouse( int *status, int *row, int *col )
     lastStatus = *status;
     lastRow = *row;
     lastCol = *col;
+
 } /* PollMouse */
 
 /*
@@ -88,12 +92,13 @@ void InitMouse( void )
     if ( key_mouse ) {
 #if 0 /* doesn't seem to work here, leave it for now (bart) */
         /* save current xterm mouse state */
-        putp("\033[?1001s");
+        putp( "\033[?1001s" );
 #endif
         _initmouse( 1 );
         /* set xterm into full mouse tracking mode */
-        putp("\033[?1003h");
+        putp( "\033[?1003h" );
     }
+
 } /* InitMouse */
 
 /*
@@ -103,11 +108,12 @@ void FiniMouse( void )
 {
     if ( key_mouse ) {
         /* disable mouse tracking */
-        putp("\033[?1003l");
+        putp( "\033[?1003l" );
         _finimouse();
 #if 0 /* doesn't seem to work here, leave it for now */
         /* restore old xterm mouse state */
-        putp("\033[?1001r");
+        putp( "\033[?1001r" );
 #endif
-    }   
+    }
+
 } /* FiniMouse */

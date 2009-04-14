@@ -42,8 +42,8 @@ void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
 
 void BIOSSetCursor( char page, char row, char col )
 {
-    int type, attr;
-    unsigned char oldrow, oldcol;
+    int             type, attr;
+    unsigned char   oldrow, oldcol;
 
     page = page;
     _uigetcursor( &oldrow, &oldcol, &type, &attr );
@@ -52,15 +52,15 @@ void BIOSSetCursor( char page, char row, char col )
 
 short BIOSGetCursor( char page )
 {
-    unsigned char row, col;
-    int type, attr;
+    unsigned char   row, col;
+    int             type, attr;
 
     page = page;
     _uigetcursor( &row, &col, &type, &attr );
     return( (row << 8) | col );
 }
 
-static unsigned short vi_keys[ EV_FIRST_UNUSED ];
+static unsigned short vi_keys[EV_FIRST_UNUSED];
 
 struct map {
     EVENT       ev;
@@ -165,16 +165,21 @@ static struct map events[] = {
 
 static vi_key get_vi_key( EVENT ev )
 {
-    if ( iseditchar( ev ) )
+    if( iseditchar( ev ) ) {
         return( (vi_key)ev );
-    if( ev >= EV_FUNC(1) && ev <= EV_FUNC(10))
-        return( VI_KEY( F1 ) + ev - EV_FUNC(1) );
-    if( ev >= EV_SHIFT_FUNC(1) && ev <= EV_SHIFT_FUNC(10))
-        return( VI_KEY( SHIFT_F1 ) + ev - EV_SHIFT_FUNC(1) );
-    if( ev >= EV_CTRL_FUNC(1) && ev <= EV_CTRL_FUNC(10))
-        return( VI_KEY( CTRL_F1 ) + ev - EV_CTRL_FUNC(1) );
-    if( ev >= EV_ALT_FUNC(1) && ev <= EV_ALT_FUNC(10))
-        return( VI_KEY( ALT_F1 ) + ev - EV_FUNC(1) );
+    }
+    if( ev >= EV_FUNC( 1 ) && ev <= EV_FUNC( 10 ) ) {
+        return( VI_KEY( F1 ) + ev - EV_FUNC( 1 ) );
+    }
+    if( ev >= EV_SHIFT_FUNC( 1 ) && ev <= EV_SHIFT_FUNC( 10 ) ) {
+        return( VI_KEY( SHIFT_F1 ) + ev - EV_SHIFT_FUNC( 1 ) );
+    }
+    if( ev >= EV_CTRL_FUNC( 1 ) && ev <= EV_CTRL_FUNC( 10 ) ) {
+        return( VI_KEY( CTRL_F1 ) + ev - EV_CTRL_FUNC( 1 ) );
+    }
+    if( ev >= EV_ALT_FUNC( 1 ) && ev <= EV_ALT_FUNC( 10 ) ) {
+        return( VI_KEY( ALT_F1 ) + ev - EV_FUNC( 1 ) );
+    }
     return( -1 );
 }
 
@@ -182,10 +187,12 @@ int BIOSKeyboardInit( void )
 {
     int i;
     
-    for( i = 0; i < EV_FIRST_UNUSED; i++ )
+    for( i = 0; i < EV_FIRST_UNUSED; i++ ) {
         vi_keys[i] = get_vi_key( i );
-    for( i = 0; i < sizeof( events ) / sizeof( struct map ); i++ )
+    }
+    for( i = 0; i < sizeof( events ) / sizeof( struct map ); i++ ) {
         vi_keys[ events[i].ev ] = events[i].key;
+    }
     return( 0 );
 }
 
@@ -201,7 +208,7 @@ vi_key BIOSGetKeyboard( int *scan )
     do {
         ev = uieventsource( 0 );
         if ( ev < EV_FIRST_UNUSED ) {
-            key = vi_keys[ ev ];
+            key = vi_keys[ev];
         }
     } while ( key == -1 );
     if( scan != NULL ) {
