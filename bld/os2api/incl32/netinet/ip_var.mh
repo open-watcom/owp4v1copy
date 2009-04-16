@@ -79,7 +79,7 @@ struct ipq {
 };
 
 struct  ipasfrag {
-    unsigned ip_hl:4,
+    u_char   ip_hl:4,
              ip_v:4;
     u_char   ipf_mff;
     u_short  ip_len;

@@ -93,8 +93,8 @@ struct tcphdr {
     u_short th_dport;
     tcp_seq th_seq;
     tcp_seq th_ack;
-    unsigned th_x2:4,
-             th_off:4;
+    u_char  th_x2:4,
+            th_off:4;
     u_char  th_flags;
     u_short th_win;
     u_short th_sum;
