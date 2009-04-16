@@ -947,7 +947,7 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
             dlg->max_width = max( dlg->max_width, dlg->col_num + len );
         } else {
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1,
-                    "", VarGetId( var_handle ), dlg->col_num, dlg->row_num, dlg->col_num + 0 );
+                "", VarGetId( var_handle ), dlg->col_num, dlg->row_num, dlg->col_num + 0 );
         }
     } else {
         rc = FALSE;
@@ -1073,8 +1073,8 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
             // dummy_var allows control to have an id - used by dynamic visibility feature
             var_handle = MakeDummyVar();
             set_dlg_textwindow( dlg->curr_dialog->controls, dlg->array.num - 1,
-                    text, VarGetId( var_handle ), C0, dlg->row_num, dlg->max_width + 2,
-                                rows, GUI_VSCROLL );
+                text, VarGetId( var_handle ), C0, dlg->row_num, dlg->max_width + 2,
+                rows, GUI_VSCROLL );
             dlg->curr_dialog->rows += rows;
             dlg->row_num += rows;
 #if defined( __DOS__ )
@@ -1271,7 +1271,8 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
             // dummy_var allows control to have an id - used by dynamic visibility feature
             var_handle = MakeDummyVar();
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
-                            VarGetId( var_handle ), C0, dlg->row_num, C0 + strlen( buff ) );
+                                 VarGetId( var_handle ), C0, dlg->row_num,
+                                 C0 + strlen( buff ) );
         }
         dlg->max_width = max( dlg->max_width, 2 * strlen( buff ) );
     } else {
@@ -1573,7 +1574,8 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
             // dummy_var allows control to have an id - used by dynamic visibility feature
             var_handle = MakeDummyVar();
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num - 1, buff,
-                        VarGetId( var_handle ), C0, dlg->row_num, C0 + strlen( buff ) );
+                                 VarGetId( var_handle ), C0, dlg->row_num,
+                                 C0 + strlen( buff ) );
         }
         dlg->max_width = max( dlg->max_width, 2 * strlen( buff ) );
     } else {
@@ -3126,8 +3128,8 @@ extern bool SimCheckProfCondition( int parm )
  */
 
 static append_mode SimGetConfigStringsFrom( struct config_info *array, int i, 
-                                        const char **new_var, char *new_val )
-/***************************************************************************/
+                                            const char **new_var, char *new_val )
+/*******************************************************************************/
 {
     append_mode append;
     char        *p;
@@ -3447,7 +3449,7 @@ extern void SimCalcAddRemove()
             DirInfo[dir_index].num_files += FileInfo[i].num_files;
         }
         TargetInfo[targ_index].num_files += FileInfo[i].num_files;
-        cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
+        cs = GetClusterSize( *TargetInfo[targ_index].temp_disk );
         FileInfo[i].remove = remove;
         FileInfo[i].add = add;
         for( k = 0; k < FileInfo[i].num_files; ++k ) {
@@ -3517,7 +3519,7 @@ extern void SimCalcAddRemove()
     /* Estimate space used for directories. Be generous. */
     if( !uninstall ) {
         for( i = 0; i < SetupInfo.target.num; ++i ) {
-            cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
+            cs = GetClusterSize( *TargetInfo[targ_index].temp_disk );
             for( j = 0; j < SetupInfo.dirs.num; ++j ) {
                 if( DirInfo[j].target != i )
                     continue;
@@ -3552,7 +3554,7 @@ extern bool SimCalcTargetSpaceNeeded()
         temp = SimGetTargetDriveLetter( i );
         if( temp == NULL )
             return( FALSE );
-        strcpy( TargetInfo[ i ].temp_disk, temp );
+        strcpy( TargetInfo[i].temp_disk, temp );
         GUIMemFree( temp );
         TargetInfo[i].space_needed = 0;
         TargetInfo[i].max_tmp_file = 0;

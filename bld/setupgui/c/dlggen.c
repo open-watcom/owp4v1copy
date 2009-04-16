@@ -447,7 +447,7 @@ static void UpdateControlVisibility( gui_window *gui, a_dialog_header *curr_dial
                 checked_radio_id = var_handle;
             }
             for( j = 0; curr_dialog->pVariables[j] != NO_VAR; j++ ) {
-                if( curr_dialog->pVariables[ j ] == var_handle &&
+                if( curr_dialog->pVariables[j] == var_handle &&
                     GUIIsChecked( gui, VarGetId( var_handle ) ) ) {
                     SetVariableByHandle( var_handle, "1" );
                 }
@@ -720,7 +720,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
             but_pos = WIN_BUTTON_POS( 1, MAX_CTRL_PER_LINE, width, WIN_BW );
             control->rect.x = DLG_COL( but_pos );
 #endif
-            control->rect.width = DLG_COL( width-C0-1 );
+            control->rect.width = DLG_COL( width - C0 - 1 );
             break;
 
         case GUI_CHECK_BOX:
@@ -730,7 +730,7 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
             control->rect.x = DLG_COL( but_pos );
 #endif
             // look for another control on this row
-            control->rect.width = DLG_COL( width-C0-1 );
+            control->rect.width = DLG_COL( width - C0 - 1 );
             if( i + 1 >= curr_dialog->num_controls )
                 break;
 
@@ -848,10 +848,10 @@ static void AdjustDialogControls( a_dialog_header *curr_dialog )
             break;
 
         case GUI_STATIC:
-            if( control->id != -1 && curr_dialog->pVisibilityConds[ i ] == NULL &&
-                ( i <= 0 || ( curr_dialog->controls[ i - 1 ].control_class != GUI_EDIT &&
-                curr_dialog->controls[ i - 1 ].control_class != GUI_PUSH_BUTTON ) ||
-                curr_dialog->controls[ i - 1 ].rect.y != curr_dialog->controls[ i ].rect.y ) ) {
+            if( control->id != -1 && curr_dialog->pVisibilityConds[i] == NULL &&
+                (i <= 0 || (curr_dialog->controls[i - 1].control_class != GUI_EDIT &&
+                curr_dialog->controls[i - 1].control_class != GUI_PUSH_BUTTON) ||
+                curr_dialog->controls[i - 1].rect.y != curr_dialog->controls[i].rect.y) ) {
 #if !defined( _UI )
                 /* Align left edge of control with left of leftmost Button */
                 but_pos = WIN_BUTTON_POS( 1, MAX_CTRL_PER_LINE, width, WIN_BW );

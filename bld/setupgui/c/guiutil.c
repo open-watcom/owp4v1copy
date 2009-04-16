@@ -76,7 +76,7 @@ char *Bolt[] = {
 
 #define WND_APPROX_SIZE 10000
 
-static char         cpy1[ sizeof( banner4gui() ) + 5 ];
+static char         cpy1[sizeof( banner4gui() ) + 5];
 static char         *cpy2 = banner2agui();
 
 gui_resource WndGadgetArray[] = {
@@ -126,7 +126,9 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
             if( BitMapSize.y ) {
                 row_count = BitMapSize.y / metrics.max.y;
             } else {
-                row_count = 3;  /* If there is no bitmap attached - such as virgin.exe - then just copyright to upper screen */
+                /* If there is no bitmap attached - such as virgin.exe - then just
+                 * copyright to upper screen */
+                row_count = 3;
                 indent = 16;
             }
 
@@ -178,8 +180,9 @@ extern bool SetupPreInit( void )
     /*
      *  Create copyright information 
      *
-     *  If the compile fails at this line, then the date is not in the 'MMM DD YYYY' format that I was expecting
-     *  so we should check what it is as the code below [adj_date onwards] may fail horribly
+     *  If the compile fails at this line, then the date is not in the 'MMM DD YYYY'
+     *  format that I was expecting so we should check what it is as the code below
+     *  [adj_date onwards] may fail horribly
      *
      *  see curr_date above
      */
@@ -189,7 +192,7 @@ extern bool SetupPreInit( void )
     }
 
     adj_date = strlen( curr_date ) - 4; /* subtract YYYY */
-    sprintf( cpy1, banner4gui(), &curr_date[ adj_date ] );
+    sprintf( cpy1, banner4gui(), &curr_date[adj_date] );
 
     return( TRUE );
 }
