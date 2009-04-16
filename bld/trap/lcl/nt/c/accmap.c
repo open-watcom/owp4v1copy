@@ -374,7 +374,8 @@ BOOL NameFromHandle( HANDLE hFile, char *name )
                 UINT    uNameLen = strlen( szName );
 
                 if( uNameLen < MAX_PATH ) {
-                    bFound = strnicmp( pszFilename, szName, uNameLen ) == 0;
+                    bFound = ( strnicmp( pszFilename, szName, uNameLen ) == 0
+                               && pszFilename[ uNameLen ] == '\\' );
 
                     if( bFound ) {
                         // Reconstruct pszFilename using szTemp
