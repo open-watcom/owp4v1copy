@@ -39,7 +39,7 @@ char _NEAR      MSG_CHARACTERS[] = "characters";
 char _NEAR      MSG_LINES[] = "lines";
 char _NEAR      MSG_PRESSANYKEY[] = "Press any key";
 char _NEAR      MSG_DELETEDINTOBUFFER[] = " deleted into buffer ";
-char _NEAR      MEMORIZE_MODE[]="Memorize Mode ";
+char _NEAR      MEMORIZE_MODE[] = "Memorize Mode ";
 char _NEAR      CONFIG_FILE[] = CFG_NAME;
 char _NEAR      SingleBlank[] = " ";
 char _NEAR      SingleSlash[] = "/";
@@ -55,7 +55,8 @@ int NumEditOpts = sizeof( EditOpts ) / sizeof( char _NEAR * );
 
 /* event data */
 #undef vi_pick
-#define vi_pick(enum,modeless,insert,command,nm_bits,bits) modeless,insert,command,nm_bits,bits,
+#define vi_pick( enum, modeless, insert, command, nm_bits, bits ) \
+    modeless, insert, command, nm_bits, bits,
 event _NEAR EventList[] = {
 #include "events.h"
 #undef vi_pick

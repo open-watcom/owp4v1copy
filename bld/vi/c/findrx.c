@@ -79,7 +79,7 @@ int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
      */
     while( TRUE ) {
 
-        data = &cline->data[ scol ];
+        data = &cline->data[scol];
         found = RegExec( CurrentRegularExpression, data, (data == cline->data) );
         if( RegExpError != ERR_NO_ERR ) {
             return( RegExpError );
@@ -135,7 +135,7 @@ int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
  * FindRegularExpressionBackwards - do a reverse search for a regular expression
  */
 int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
-                                                    linenum termline, int sw )
+                                                             linenum termline, int sw )
 {
     int         rc;
     char        *data;
@@ -190,7 +190,7 @@ int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
                 }
                 found = TRUE;
                 memcpy( &rcpy, CurrentRegularExpression, sizeof( regexp ) );
-                data = &(cline->data[ col + 1 ]);
+                data = &(cline->data[col + 1]);
                 if( *data == 0 ) {
                     break;
                 }

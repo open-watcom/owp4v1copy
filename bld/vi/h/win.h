@@ -41,7 +41,7 @@
             0x26 0x89 0x1D  /*          mov  word ptr es:[di], bx */ \
         parm [es di] [bx] modify [ax dx];
 
-    #define WRITE_SCREEN( a,b ) DoTheWrite( &(a), b )
+    #define WRITE_SCREEN( a, b ) DoTheWrite( &(a), b )
 #else
     #ifdef __CURSES__
         #define __VIO__
@@ -103,7 +103,7 @@ typedef unsigned long cinfo_type;
 
 enum border_char {
 #undef vi_pick
-#define vi_pick(enum,UnixNG,UnixG,DosNG,DosG) enum,
+#define vi_pick( enum, UnixNG, UnixG, DosNG, DosG ) enum,
 #include "borders.h"
 #undef vi_pick
 };
@@ -119,7 +119,7 @@ enum border_char {
     #endif
 #endif
 
-extern wind         *Windows[ MAX_WINDS ];
+extern wind         *Windows[MAX_WINDS];
 extern char_info    WindowNormalAttribute;
 extern char         *GadgetString;
 extern char         WindowBordersNG[];
@@ -128,7 +128,7 @@ extern char         _FAR *Scrn;
 extern char         _FAR *ClockStart;
 extern char         _FAR *SpinLoc;
 extern char         *ScreenImage;
-extern char         MinSlots[ MAX_MIN_SLOTS ];
+extern char         MinSlots[MAX_MIN_SLOTS];
 
 #include "winaux.h"
 

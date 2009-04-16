@@ -43,8 +43,8 @@
  */
 int SameFile( char *f1, char *f2 )
 {
-    char        full1[ FILENAME_MAX ];
-    char        full2[ FILENAME_MAX ];
+    char        full1[FILENAME_MAX];
+    char        full2[FILENAME_MAX];
 
     if( !file_cmp( f1, f2 ) ) {
         return( TRUE );

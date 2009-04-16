@@ -49,8 +49,8 @@ typedef struct {
 } hilst;
 
 typedef struct menu {
-    struct menu     *next,*prev;
-    menu_item       *itemhead,*itemtail;
+    struct menu     *next, *prev;
+    menu_item       *itemhead, *itemtail;
     int             itemcnt;
     int             orig_itemcnt;
     char            **list;
@@ -308,7 +308,7 @@ static void initMenuList( menu *cmenu )
     MemFree( cmenu->list );
     MemFree( cmenu->hilist );
     cmenu->list = MemAlloc( sizeof( char * ) * cmenu->itemcnt );
-    cmenu->hilist = MemAlloc( sizeof( hilst) * (cmenu->itemcnt + 1) );
+    cmenu->hilist = MemAlloc( sizeof( hilst ) * (cmenu->itemcnt + 1) );
 
     cmi = cmenu->itemhead;
     for( i = 0; i < cmenu->itemcnt; i++ ) {
@@ -339,10 +339,10 @@ int ViEndMenu( void )
     ch = toupper( currMenu->hi );
     if( ch >= 'A' && ch <='Z' ) {
         key = ch - 'A' + VI_KEY( ALT_A );
-        EventList[ key ].rtn.old = DoMenu;
-        EventList[ key ].b.keep_selection = TRUE;
-        EventList[ key ].alt_rtn.old = DoMenu;
-        EventList[ key ].alt_b.keep_selection = TRUE;
+        EventList[key].rtn.old = DoMenu;
+        EventList[key].b.keep_selection = TRUE;
+        EventList[key].alt_rtn.old = DoMenu;
+        EventList[key].alt_b.keep_selection = TRUE;
     }
 
     initMenuList( currMenu );
@@ -885,7 +885,7 @@ int DoWindowGadgetMenu( void )
     }
     rc = processMenu( -1, windowGadgetMenu,
                       WindowAuxInfo( CurrentWindow, WIND_INFO_X1 ),
-                      WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) +1, -1 );
+                      WindowAuxInfo( CurrentWindow, WIND_INFO_Y1 ) + 1, -1 );
     return( rc );
 
 } /* DoWindowGadgetMenu */

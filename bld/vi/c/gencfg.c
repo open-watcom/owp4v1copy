@@ -64,7 +64,7 @@ static void doMaps( FILE *f, key_map *maps, char *extra_str )
     int         len;
 
     for( i = 0; i < MAX_EVENTS; i++ ) {
-        if( maps[ i ].data != NULL ) {
+        if( maps[i].data != NULL ) {
             MyFprintf( f, "map%s ", extra_str );
             map = LookUpCharToken( i, FALSE );
             if( map == NULL ) {
@@ -72,18 +72,18 @@ static void doMaps( FILE *f, key_map *maps, char *extra_str )
             } else {
                 MyFprintf( f, "%s ", map );
             }
-            if( maps[ i ].no_input_window ) {
+            if( maps[i].no_input_window ) {
                 MyFprintf( f, "\\x" );
             }
-            str = maps[ i ].data;
+            str = maps[i].data;
             // len = strlen( str );
-            for( len = 0; str[ len ] != 0; len++ );
+            for( len = 0; str[len] != 0; len++ );
             len--;
 
             for( j = 0; j < len; j++ ) {
-                map = LookUpCharToken( str[ j ], TRUE );
+                map = LookUpCharToken( str[j], TRUE );
                 if( map == NULL ) {
-                    MyFprintf( f, "%c", str[ j ] );
+                    MyFprintf( f, "%c", str[j] );
                 } else {
                     if( map[1] == 0 ) {
                         MyFprintf( f, "\\%s", map );

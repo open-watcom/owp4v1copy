@@ -106,7 +106,7 @@ int     UpdateCurrentStatus( status_type st );
 int     Cut( linenum, int, linenum, int, int );
 
 /* dat.c */
-int     ReadDataFile( char *file, char **buffer, bool (*)(int), bool (*)(int,char*) );
+int     ReadDataFile( char *file, char **buffer, bool (*)( int ), bool (*)( int, char * ) );
 
 /* delete.c */
 int     DoDeleteRegion( event **, event ** );
@@ -167,7 +167,7 @@ int     InsertTextAtLineEnd( void );
 int     InsertTextAtLineStart( void );
 int     InsertTextOnNextLine( void );
 int     DeleteAndInsertText( int, int );
-int     DeleteAndInsertTextString( int, int, char *);
+int     DeleteAndInsertTextString( int, int, char * );
 int     InsertTextOnPreviousLine( void );
 int     DoReplaceText( void );
 int     InsertLikeLast( void );
@@ -605,7 +605,12 @@ void    InitTRMEM( void );
 void    DumpTRMEM( void );
 #endif
 
-#define MemFree2(pp) do { MemFree( *(pp) ); *(pp) = NULL; } while( 0 )
+#define MemFree2( pp ) \
+    do {                    \
+        MemFree( *(pp) );   \
+        *(pp) = NULL;       \
+    } while( 0 )
+
 #define MemFreeList(s, pp)                                                  \
     do {                                                                    \
         if( pp ) {                                                          \

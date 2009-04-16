@@ -91,7 +91,7 @@ static bool err_alloc( int cnt )
 
 static bool err_save( int i, char *buff )
 {
-    ErrorValues[ i ] = atoi( buff );
+    ErrorValues[i] = atoi( buff );
     return( TRUE );
 }
 

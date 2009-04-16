@@ -74,22 +74,22 @@ typedef struct mouse_hook {
 int HandleMouseEvent( void );
 
 /* mouse.c */
-vi_mouse_event GetMouseEvent( void );
-void RedrawMouse( int row, int col );
-int DisplayMouse( int flag );
+vi_mouse_event  GetMouseEvent( void );
+void            RedrawMouse( int row, int col );
+int             DisplayMouse( int flag );
 
 /* mouseev.c */
-window_id GetMousePosInfo( int *win_x, int *win_y );
-bool TestMouseEvent( bool );
-void PushMouseEventHandler( mouse_callback cb );
-void PopMouseEventHandler( void );
+window_id   GetMousePosInfo( int *win_x, int *win_y );
+bool        TestMouseEvent( bool );
+void        PushMouseEventHandler( mouse_callback cb );
+void        PopMouseEventHandler( void );
 
 /* system dependant, <sys>mouse.c */
-void SetMouseSpeed( int speed );
-void SetMousePosition( int row, int col );
-void ShowMouse( int on );
-void PollMouse( int *status, int *row, int *col );
-void InitMouse( void );
-void FiniMouse( void );
+void    SetMouseSpeed( int speed );
+void    SetMousePosition( int row, int col );
+void    ShowMouse( int on );
+void    PollMouse( int *status, int *row, int *col );
+void    InitMouse( void );
+void    FiniMouse( void );
 
 #endif

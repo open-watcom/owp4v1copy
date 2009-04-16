@@ -442,7 +442,7 @@ int GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
      * process results
      */
     if( rc == ERR_NO_ERR ) {
-        if( linedata[ pos2.column ] == 0 ) {
+        if( linedata[pos2.column] == 0 ) {
             pos2.column--;
         }
         len = GetCurrRegExpLength();
@@ -484,7 +484,7 @@ static int setLineCol( char *st, i_mark *pos, find_type flag )
     /*
      * get next position
      */
-    if( st[ 0 ] == 0 ) {
+    if( st[0] == 0 ) {
         if( lastFind == NULL ) {
             return( ERR_NO_PREVIOUS_SEARCH_STRING );
         }
@@ -521,8 +521,8 @@ static int setLineCol( char *st, i_mark *pos, find_type flag )
     /*
      * wrap if needed
      */
-    if( (flag & FINDFL_NEXTLINE) || ( pos->column < 0 ) ||
-        ( CurrentLine->data[ pos->column ] == 0 ) ) {
+    if( (flag & FINDFL_NEXTLINE) || (pos->column < 0) ||
+        (CurrentLine->data[pos->column] == 0) ) {
         wrapped = FALSE;
         if( flag & FINDFL_FORWARD ) {
             pos->column = 0;

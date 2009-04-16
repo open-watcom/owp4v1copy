@@ -190,7 +190,7 @@ void  BIOSUpdateScreen( unsigned offset, unsigned length )
     if( PageCnt > 0 ) {
         return;
     }
-    VioShowBuf( (unsigned short)offset, (unsigned short)( length * 2 ), 0 );
+    VioShowBuf( (unsigned short)offset, (unsigned short)(length * 2), 0 );
 
 } /* BIOSUpdateScreen */
 

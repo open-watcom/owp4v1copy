@@ -42,7 +42,7 @@
     #include <os2.h>
 #endif
 
-static vi_key   overrideKeyBuff[ MAX_OVERRIDE_KEY_BUFF ];
+static vi_key   overrideKeyBuff[MAX_OVERRIDE_KEY_BUFF];
 static int      overrideKeyPos, overrideKeyEnd;
 
 #if !defined( __UNIX__ ) && !defined( __NT__ ) || defined( __WIN__ )
@@ -55,11 +55,11 @@ static int      overrideKeyPos, overrideKeyEnd;
 
 #if !defined( NO_TRANSLATE )
 static unsigned char altLookup[] = { 30, 48, 46, 32, 18, 33, 34, 35, 23, 36, 37,
-                            38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47,
-                            17, 45, 21, 44  };
+                                     38, 50, 49, 24, 25, 16, 19, 31, 20, 22, 47,
+                                     17, 45, 21, 44  };
 static unsigned char altLookup2[] = { 117, 147, 146, 119, 132, 118, 115, 116, 141, 145,
-                             159, 163, 162, 151, 153, 161, 155, 158, 152, 160,
-                             148, 165 };
+                                      159, 163, 162, 151, 153, 161, 155, 158, 152, 160,
+                                      148, 165 };
 #endif
 /*
  * clearSpin - clear spin area
@@ -88,7 +88,7 @@ static vi_key getOverrideKey( void )
     int         mcnt = 0;
 
     while( 1 ) {
-        c = overrideKeyBuff[ overrideKeyPos ];
+        c = overrideKeyBuff[overrideKeyPos];
         if( overrideKeyPos == MAX_OVERRIDE_KEY_BUFF - 1 ) {
             overrideKeyPos = 0;
         } else {
@@ -262,20 +262,20 @@ vi_key GetVIKey( vi_key ch, int scan, int shift )
         return( scan - 133 + VI_KEY( F11 ) );
     }
     for( i = 0; i < sizeof( altLookup ); i++ ) {
-        if( altLookup[ i ] == scan ) {
+        if( altLookup[i] == scan ) {
             return( VI_KEY( ALT_A ) + i );
         }
     }
     for( i = 0; i < sizeof( altLookup2 ); i++ ) {
-        if( altLookup2[ i ] == scan ) {
+        if( altLookup2[i] == scan ) {
             return( VI_KEY( CTRL_END ) + i );
         }
     }
     return( VI_KEY( DUMMY ) );
 #else
     /* avoid warning about unused arguments */
-    ( void ) scan;
-    ( void ) shift;
+    (void) scan;
+    (void) shift;
     return( ch );
 #endif
 
@@ -411,7 +411,7 @@ vi_key GetNextEvent( bool usemouse )
 
     if( EditFlags.InputKeyMapMode || EditFlags.KeyMapMode ) {
 
-        key = CurrentKeyMap[ CurrentKeyMapCount++ ];
+        key = CurrentKeyMap[CurrentKeyMapCount++];
 
         if( key == 0 ) {
             EditFlags.NoInputWindow = FALSE;
@@ -428,14 +428,14 @@ vi_key GetNextEvent( bool usemouse )
     }
 
     if( EditFlags.DotMode ) {
-        LastEvent = DotCmd[ DotCount++ ];
+        LastEvent = DotCmd[DotCount++];
         return( LastEvent );
     }
     if( EditFlags.AltDotMode ) {
         if( AltDotCount > AltDotDigits ) {
             return( VI_KEY( ESC ) );
         }
-        key = AltDotBuffer[ AltDotCount++ ];
+        key = AltDotBuffer[AltDotCount++];
     } else {
         key = GetKey( usemouse );
     }
@@ -444,15 +444,15 @@ vi_key GetNextEvent( bool usemouse )
         if( key != VI_KEY( MOUSEEVENT ) ) {
             if( EditFlags.AltMemorizeMode ) {
                 if( AltDotDigits < maxdotbuffer ) {
-                    AltDotBuffer[ AltDotDigits++ ] = key;
+                    AltDotBuffer[AltDotDigits++] = key;
                 } else {
-                    AltDotBuffer[ AltDotDigits - 1 ] = VI_KEY( ESC );
+                    AltDotBuffer[AltDotDigits - 1] = VI_KEY( ESC );
                 }
             }
             if( DotDigits < maxdotbuffer ) {
-                DotBuffer[ DotDigits++ ] = key;
+                DotBuffer[DotDigits++] = key;
             } else {
-                DotBuffer[ DotDigits - 1 ] = VI_KEY( ESC );
+                DotBuffer[DotDigits - 1] = VI_KEY( ESC );
             }
         }
     }
@@ -478,7 +478,7 @@ void ClearBreak( void )
  */
 void KeyAdd( vi_key key )
 {
-    overrideKeyBuff[ overrideKeyEnd ] = key;
+    overrideKeyBuff[overrideKeyEnd] = key;
     if( overrideKeyEnd == MAX_OVERRIDE_KEY_BUFF - 1 ) {
         overrideKeyEnd = 0;
     } else {

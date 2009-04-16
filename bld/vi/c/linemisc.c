@@ -155,9 +155,9 @@ int JoinCurrentLineToNext( void )
 } /* JoinCurrentLineToNext */
 
 #define MAX_FILE_STACK  5
-static file     *oldFile[ MAX_FILE_STACK ];
-static i_mark   oldCurrentPos[ MAX_FILE_STACK ];
-static i_mark   oldLeftTopPos[ MAX_FILE_STACK ];
+static file     *oldFile[MAX_FILE_STACK];
+static i_mark   oldCurrentPos[MAX_FILE_STACK];
+static i_mark   oldLeftTopPos[MAX_FILE_STACK];
 static int      stackDepth = -1;
 
 /*
@@ -166,7 +166,7 @@ static int      stackDepth = -1;
 void SaveCurrentFilePos( void )
 {
     stackDepth++;
-    oldFile[ stackDepth ] = CurrentFile;
+    oldFile[stackDepth] = CurrentFile;
     oldCurrentPos[stackDepth] = CurrentPos;
     oldLeftTopPos[stackDepth] = LeftTopPos;
 }
@@ -178,9 +178,9 @@ void RestoreCurrentFilePos( void )
 {
     int i;
 
-    CurrentFile = oldFile[ stackDepth ];
-    CurrentPos = oldCurrentPos[ stackDepth ];
-    LeftTopPos = oldLeftTopPos[ stackDepth ];
+    CurrentFile = oldFile[stackDepth];
+    CurrentPos = oldCurrentPos[stackDepth];
+    LeftTopPos = oldLeftTopPos[stackDepth];
 
     if( CurrentFile != NULL ) {
         i = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );

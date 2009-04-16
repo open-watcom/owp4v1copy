@@ -34,8 +34,8 @@
 #include "lang.h"
 #include <assert.h>
 
-static lang_info    langInfo[ LANG_MAX ] = {
-    //table,  entries , ref_count ,read_buf
+static lang_info    langInfo[LANG_MAX] = {
+    //table,  entries, ref_count, read_buf
     { NULL,        0,          0,    NULL },  // C            1
     { NULL,        0,          0,    NULL },  // C++          2
     { NULL,        0,          0,    NULL },  // Fortran      3
@@ -68,16 +68,16 @@ int hashpjw( char *s )
         }
         s++;
     }
-    return( h % langInfo[ CurrentInfo->Language ].table_entries );
+    return( h % langInfo[CurrentInfo->Language].table_entries );
 }
 
 bool IsKeyword( char *keyword, bool case_ignore )
 {
     hash_entry  *entry;
 
-    assert( langInfo[ CurrentInfo->Language ].ref_count > 0 );
+    assert( langInfo[CurrentInfo->Language].ref_count > 0 );
 
-    entry = langInfo[ CurrentInfo->Language ].keyword_table + hashpjw( keyword );
+    entry = langInfo[CurrentInfo->Language].keyword_table + hashpjw( keyword );
     if( entry->real == FALSE ) {
         return( FALSE );
     }
@@ -133,7 +133,7 @@ void addTable( hash_entry *table, char *Keyword, int NumKeyword )
     for( i = 0; i < NumKeyword; i++ ) {
         tmpIndex->hashValue = hashpjw( keyword );
         tmpIndex->keyword = keyword;
-        table[ tmpIndex->hashValue ].real = TRUE;
+        table[tmpIndex->hashValue].real = TRUE;
         keyword = nextKeyword( keyword );
         tmpIndex++;
     }
@@ -141,7 +141,7 @@ void addTable( hash_entry *table, char *Keyword, int NumKeyword )
     empty = table;
     tmpIndex = tmpValue;
     for( i = 0; i < NumKeyword; i++ ) {
-        assert( table[ tmpIndex->hashValue ].real == TRUE );
+        assert( table[tmpIndex->hashValue].real == TRUE );
 
         entry = table + tmpIndex->hashValue;
         if( entry->keyword != NULL ) {
@@ -194,21 +194,21 @@ void LangInit( int newLanguage )
         return;
     }
 
-    if( langInfo[ newLanguage ].ref_count == 0 ) {
-        rc = ReadDataFile( fname[ newLanguage ], &buff, lang_alloc, lang_save );
+    if( langInfo[newLanguage].ref_count == 0 ) {
+        rc = ReadDataFile( fname[newLanguage], &buff, lang_alloc, lang_save );
         if( rc ) {
             Error( GetErrorMsg( rc ) );
             CurrentInfo->Language = LANG_NONE;
             return;
         }
         // build new langInfo entry
-        langInfo[ newLanguage ].table_entries = nkeywords;
-        langInfo[ newLanguage ].keyword_table =
+        langInfo[newLanguage].table_entries = nkeywords;
+        langInfo[newLanguage].keyword_table =
             createTable( NextBiggestPrime( nkeywords ) );
-        addTable( langInfo[ newLanguage ].keyword_table, buff, nkeywords );
-        langInfo[ newLanguage ].read_buf = buff;
+        addTable( langInfo[newLanguage].keyword_table, buff, nkeywords );
+        langInfo[newLanguage].read_buf = buff;
     }
-    langInfo[ newLanguage ].ref_count++;
+    langInfo[newLanguage].ref_count++;
 
     return;
 
@@ -219,15 +219,15 @@ void LangInit( int newLanguage )
  */
 void LangFini( int language )
 {
-    if( language == LANG_NONE || langInfo[ language ].ref_count == 0 ) {
+    if( language == LANG_NONE || langInfo[language].ref_count == 0 ) {
         return;
     }
-    langInfo[ language ].ref_count--;
-    if( langInfo[ language ].ref_count == 0 ) {
-        MemFree( langInfo[ language ].keyword_table );
-        MemFree( langInfo[ language ].read_buf );
-        langInfo[ language ].keyword_table = NULL;
-        langInfo[ language ].table_entries = 0;
+    langInfo[language].ref_count--;
+    if( langInfo[language].ref_count == 0 ) {
+        MemFree( langInfo[language].keyword_table );
+        MemFree( langInfo[language].read_buf );
+        langInfo[language].keyword_table = NULL;
+        langInfo[language].table_entries = 0;
     }
 
 } /* LangFini */
@@ -239,7 +239,7 @@ void LangFiniAll( void )
 {
     int i;
     for( i = LANG_NONE; i < LANG_MAX; i++ ) {
-        while( langInfo[ i ].ref_count ) {
+        while( langInfo[i].ref_count ) {
             LangFini( i );
         }
     }

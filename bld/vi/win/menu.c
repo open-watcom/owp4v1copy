@@ -66,7 +66,7 @@ typedef struct menu {
     int             orig_num_items;
     HMENU           menu_handle;
     char            *help;
-    char            name[ 1 ];
+    char            name[1];
 } menu;
 
 static menu     mainMenu = { NULL, NULL, NULL, NULL, 0, 0, 0 };
@@ -85,8 +85,12 @@ int InitMenu( void );
 static int compareName( char *dst, char *src )
 {
     do {
-        while( *src == HOT_KEY_CHAR ) src++;
-        while( *dst == HOT_KEY_CHAR ) dst++;
+        while( *src == HOT_KEY_CHAR ) {
+            src++;
+        }
+        while( *dst == HOT_KEY_CHAR ) {
+            dst++;
+        }
         if( tolower( *dst ) != tolower( *src++ ) ) {
             return( FALSE );
         }
@@ -113,10 +117,11 @@ static vi_key getHotKey( char *str )
 
 } /* getHotKey */
 
+static UINT nextAvail;
+
 /*
  * NextMenuId - returns the next available unique idea for a menu item
  */
-static UINT nextAvail;
 UINT NextMenuId( void )
 {
     if( ++nextAvail == MAX_ID ) {
@@ -163,7 +168,7 @@ static int handleMenuCommand( menu *m, UINT id )
 
 #define MAX_FLOAT_MENUS     4
 
-static menu floatMenus[ MAX_FLOAT_MENUS ] = {
+static menu floatMenus[MAX_FLOAT_MENUS] = {
     { NULL, NULL, NULL, NULL, 0, 0, 0 },
     { NULL, NULL, NULL, NULL, 0, 0, 0 },
     { NULL, NULL, NULL, NULL, 0, 0, 0 },
@@ -616,10 +621,10 @@ int ViEndMenu( void )
     }
     key = getHotKey( currMenu->name );
     if( key >= VI_KEY( ALT_A ) && key <= VI_KEY( ALT_Z ) ) {
-        EventList[ key ].rtn.old = DoMenuChar;
-        EventList[ key ].alt_rtn.old = DoMenuChar;
-        EventList[ key ].ins = IMMenuKey;
-        EventList[ key ].b.keep_selection = TRUE;
+        EventList[key].rtn.old = DoMenuChar;
+        EventList[key].alt_rtn.old = DoMenuChar;
+        EventList[key].ins = IMMenuKey;
+        EventList[key].b.keep_selection = TRUE;
     }
     if( !isSpecialMenuPtr( currMenu ) ) {
         InitMenu();
@@ -1083,7 +1088,7 @@ void HandleInitMenu( HMENU hmenu )
             j = 1;
             citem = cmenu->item_head;
             while( citem != NULL ) {
-                result = InvokeMenuHook( i,j );
+                result = InvokeMenuHook( i, j );
                 need_gray = (result == -1);
                 need_check = (result == -2);
                 if( need_gray ) {

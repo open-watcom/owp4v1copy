@@ -46,7 +46,7 @@ static bool key_alloc( int cnt )
 
 static bool key_save( int i, char *buff )
 {
-    keyVals[ i ] = atoi( buff );
+    keyVals[i] = atoi( buff );
     return( TRUE );
 }
 
@@ -78,7 +78,7 @@ static int readKeyData( void )
  */
 int MapKey( int flag, char *data )
 {
-    char        keystr[ MAX_STR ];
+    char        keystr[MAX_STR];
     key_map     *maps;
     int         rc, j;
     vi_key      key;
@@ -110,9 +110,9 @@ int MapKey( int flag, char *data )
     if( !EditFlags.ScriptIsCompiled || (flag & MAPFLAG_UNMAP) ) {
         j = Tokenize( charTokens, keystr, TRUE );
         if( j < 0 ) {
-            key = (unsigned char)keystr[ 0 ];
+            key = (unsigned char)keystr[0];
         } else {
-            key = keyVals[ j ];
+            key = keyVals[j];
         }
     } else {
         key = atoi( keystr );
@@ -142,15 +142,15 @@ int MapKey( int flag, char *data )
     if( key < 0 || key >= MAX_EVENTS ) {
         return( ERR_INVALID_KEY );
     }
-    maps[ key ].inuse = FALSE;
-    maps[ key ].is_base = FALSE;
-    MemFree( maps[ key ].data );
-    maps[ key ].data = NULL;
+    maps[key].inuse = FALSE;
+    maps[key].is_base = FALSE;
+    MemFree( maps[key].data );
+    maps[key].data = NULL;
     if( !(flag & MAPFLAG_UNMAP ) ) {
         if( flag & MAPFLAG_BASE ) {
-            maps[ key ].is_base = TRUE;
+            maps[key].is_base = TRUE;
         }
-        return( AddKeyMap( &maps[ key ], data ) );
+        return( AddKeyMap( &maps[key], data ) );
     }
     return( ERR_NO_ERR );
 
@@ -166,24 +166,24 @@ int DoKeyMap( vi_key key )
     int         i;
     bool        was_base = FALSE;
 
-    KeyMaps[ key ].inuse = TRUE;
-    if( KeyMaps[ key ].is_base ) {
+    KeyMaps[key].inuse = TRUE;
+    if( KeyMaps[key].is_base ) {
         was_base = TRUE;
         for( i = 0; i < MAX_EVENTS; i++ ) {
-            KeyMaps[ i ].was_inuse = KeyMaps[ i ].inuse;
-            KeyMaps[ i ].inuse = TRUE;
+            KeyMaps[i].was_inuse = KeyMaps[i].inuse;
+            KeyMaps[i].inuse = TRUE;
         }
     }
     total = GetRepeatCount();
 
-    rc = RunKeyMap( &KeyMaps[ key ], total );
+    rc = RunKeyMap( &KeyMaps[key], total );
 
     if( was_base ) {
         for( i = 0; i < MAX_EVENTS; i++ ) {
-            KeyMaps[ i ].inuse = KeyMaps[ i ].was_inuse;
+            KeyMaps[i].inuse = KeyMaps[i].was_inuse;
         }
     }
-    KeyMaps[ key ].inuse = FALSE;
+    KeyMaps[key].inuse = FALSE;
 
     return( rc );
 
@@ -212,9 +212,8 @@ static int doRunKeyMap( key_map *scr, long total )
             EditFlags.NoInputWindow = TRUE;
         }
         // max = strlen( CurrentKeyMap );
-        for( max = 0; CurrentKeyMap[ max ] != 0; max++ );
+        for( max = 0; CurrentKeyMap[max] != 0; max++ );
 
-        
         EditFlags.KeyMapInProgress = TRUE;
         EditFlags.KeyMapMode = TRUE;
         LastError = ERR_NO_ERR;
@@ -280,6 +279,7 @@ int RunKeyMap( key_map *scr, long total )
 } /* RunKeyMap */
 
 undo_stack *currUndoStack;
+
 /*
  * StartInputKeyMap - start up input key map
  */
@@ -288,12 +288,12 @@ int StartInputKeyMap( vi_key key )
     if( EditFlags.InputKeyMapMode || EditFlags.KeyMapMode ) {
         return( ERR_INPUT_KEYMAP_RUNNING );
     }
-    CurrentKeyMap = InputKeyMaps[ key ].data;
+    CurrentKeyMap = InputKeyMaps[key].data;
     CurrentKeyMapCount = 0;
     EditFlags.InputKeyMapMode = TRUE;
     currUndoStack = UndoStack;
     StartUndoGroup( currUndoStack );
-    if( InputKeyMaps[ key ].no_input_window ) {
+    if( InputKeyMaps[key].no_input_window ) {
         EditFlags.NoInputWindow = TRUE;
     }
     return( ERR_NO_ERR );
@@ -316,7 +316,7 @@ void DoneInputKeyMap( void )
  */
 vi_key extractViKeyToken( unsigned char **p )
 {
-    char            str[ MAX_STR ];
+    char            str[MAX_STR];
     int             j;
     int             rc;
     int             c;
@@ -326,18 +326,18 @@ vi_key extractViKeyToken( unsigned char **p )
         (*p)++;
         if( c == '>' )
             break;
-        str[ j ] = c;
+        str[j] = c;
     }
-    str[ j ] = '\0';
+    str[j] = '\0';
     rc = readKeyData();
     if( rc ) {
         return( VI_KEY( ESC ) );
     }
     j = Tokenize( charTokens, str, TRUE );
     if( j < 0 ) {
-        return( (unsigned char)str[ 0 ] );
+        return( (unsigned char)str[0] );
     } else {
-        return( keyVals[ j ] );
+        return( keyVals[j] );
     }
 
 } /* extractViKeyToken */
@@ -432,11 +432,11 @@ void FiniKeyMaps( void )
     // assuming Keymaps and InputKeymaps are inited to 0
     // this should be OK
     for( i = 0; i < MAX_EVENTS; i++){
-        if( KeyMaps[ i ].data != NULL ) {
-            MemFree( KeyMaps[ i ].data );
+        if( KeyMaps[i].data != NULL ) {
+            MemFree( KeyMaps[i].data );
         }
-        if( InputKeyMaps[ i ].data != NULL ) {
-            MemFree( InputKeyMaps[ i ].data );
+        if( InputKeyMaps[i].data != NULL ) {
+            MemFree( InputKeyMaps[i].data );
         }
     }
     MemFree( KeyMaps );
@@ -499,7 +499,7 @@ char *LookUpCharToken( vi_key key, bool want_single )
         }
     }
     for( i = 0; i < num; i++ ) {
-        if( key == keyVals[ i ] ) {
+        if( key == keyVals[i] ) {
             return( GetTokenString( charTokens, i ) );
         }
     }

@@ -47,7 +47,7 @@ typedef struct vi_key_scancode {
     vi_key  key;
 } vi_key_scancode;
 
-static vi_key_scancode  keyBuffer[ KEY_BUFFER_SIZE ];
+static vi_key_scancode  keyBuffer[KEY_BUFFER_SIZE];
 static volatile int     bufferTop = 0;
 static volatile int     bufferBottom = 0;
 
@@ -199,7 +199,7 @@ bool AltDown( void )
 
 static vi_key ConvertWierdCharacter( WORD vk, WORD data )
 {
-    unsigned char   keyboard_state[ 256 ];
+    unsigned char   keyboard_state[256];
     unsigned int    scancode = LOBYTE( data );
 #if defined( __NT__ )
     WORD            newkey;
@@ -290,9 +290,9 @@ bool WindowsKeyPush( WORD vk, WORD data )
     }
     key = MapVirtualKeyToVIKey( vk, data );
     if( key != -1 ) {
-        keyBuffer[ bufferTop ].key = key;
-        keyBuffer[ bufferTop ].scan = LOBYTE( data );
-        bufferTop = ( bufferTop + 1 ) % KEY_BUFFER_SIZE;
+        keyBuffer[bufferTop].key = key;
+        keyBuffer[bufferTop].scan = LOBYTE( data );
+        bufferTop = (bufferTop + 1) % KEY_BUFFER_SIZE;
         return( TRUE );
     }
     return( FALSE );
@@ -322,11 +322,11 @@ vi_key GetKeyboard( int *scan )
 {
     vi_key  key;
 
-    key = keyBuffer[ bufferBottom ].key;
+    key = keyBuffer[bufferBottom].key;
     if( scan ) {
-        *scan = keyBuffer[ bufferBottom ].scan;
+        *scan = keyBuffer[bufferBottom].scan;
     }
-    bufferBottom = ( bufferBottom + 1 ) % KEY_BUFFER_SIZE;
+    bufferBottom = (bufferBottom + 1) % KEY_BUFFER_SIZE;
     return( key );
 
 } /* GetKeyboard */

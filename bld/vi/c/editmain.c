@@ -42,7 +42,7 @@
 static event *nextEvent( void )
 {
     LastEvent = GetNextEvent( TRUE );
-    return( &EventList[ LastEvent ] );
+    return( &EventList[LastEvent] );
 }
 
 static void defaultRange( range *range )
@@ -111,12 +111,12 @@ static int doOperator( event *ev )
              * - even better kludge: if we are currently on white
              *   space, then treat 'cw' as 'cw'. arrrrr. cge.
              */
-            if( ( ev == &EventList[ 'c' ] || ev == &EventList[ VI_KEY( ALT_F1 ) ] ) &&
+            if( ( ev == &EventList['c'] || ev == &EventList[VI_KEY( ALT_F1 )] ) &&
                         LastEvent == 'w' ) {
                 EditFlags.IsChangeWord = TRUE;
                 if( CurrentLine != NULL ) {
                     if( !isspace( CurrentLine->data[ CurrentPos.column - 1 ] ) ) {
-                        next = &EventList[ 'e' ];
+                        next = &EventList['e'];
                         range.fix_range = FALSE;
                     }
                 }

@@ -157,9 +157,9 @@ static int srcHook( hooktype num, int lastrc )
  */
 int SourceHook( hooktype num, int lastrc )
 {
-    char        data[ 1 ];
+    char        data[1];
 
-    data[ 0 ] = 0;
+    data[0] = 0;
     srcHookData = data;
     return( srcHook( num, lastrc ) );
 

@@ -891,7 +891,7 @@ int RunCommandLine( char *cl )
 #endif
             if( RCSQuerySystem( r ) != 0 ) {
                 if( GenericQueryBool( "File is read only, check out?" ) ) {
-                    char full1[ FILENAME_MAX ];
+                    char full1[FILENAME_MAX];
 
                     _fullpath( full1, CurrentFile->name, FILENAME_MAX );
                     RCSSetPause( r, TRUE );
@@ -1196,7 +1196,7 @@ static int setWText( char *data )
     setStyle( &wInfo->text, tc1, tc2, tc3 );
     /* want an SE_TEXT entry when SS turned off - steal it from here */
     if( wInfo == &editw_info ) {
-        setStyle( &SEType[ SE_TEXT ], tc1, tc2, tc3 );
+        setStyle( &SEType[SE_TEXT], tc1, tc2, tc3 );
     }
     return( ERR_NO_ERR );
 
@@ -1317,7 +1317,7 @@ static int setSyntaxStyle( syntax_element style, char *data )
         tc3 = atoi( token );
     }
 
-    setStyle( &SEType[ style ], tc1, tc2, tc3 );
+    setStyle( &SEType[style], tc1, tc2, tc3 );
     return( ERR_NO_ERR );
 }
 

@@ -176,15 +176,16 @@ extern int              SourceErrCount;
 extern char _NEAR       SpawnPrompt[];
 
 /* file io globals */
-extern int  SwapBlocksInUse;
-extern int  MaxLine, MaxLinem1;
-extern int  SwapFileHandle, MaxSwapBlocks, SwapBlockArraySize, XMemBlockArraySize;
-extern char *ReadBuffer, *WriteBuffer;
-extern unsigned char *XMemBlocks;
-extern unsigned char *SwapBlocks;
-extern char *HomeDirectory, *CurrentDirectory, *TmpDir;
-extern int  TotalEMSBlocks, MaxEMSBlocks, EMSBlocksInUse;
-extern int  TotalXMSBlocks, MaxXMSBlocks, XMSBlocksInUse;
+extern int              SwapBlocksInUse;
+extern int              MaxLine, MaxLinem1;
+extern int              SwapFileHandle, MaxSwapBlocks;
+extern int              SwapBlockArraySize, XMemBlockArraySize;
+extern char             *ReadBuffer, *WriteBuffer;
+extern unsigned char    *XMemBlocks;
+extern unsigned char    *SwapBlocks;
+extern char             *HomeDirectory, *CurrentDirectory, *TmpDir;
+extern int              TotalEMSBlocks, MaxEMSBlocks, EMSBlocksInUse;
+extern int              TotalXMSBlocks, MaxXMSBlocks, XMSBlocksInUse;
 
 /* windowing globals */
 extern char     *TileColors;

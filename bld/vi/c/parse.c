@@ -258,7 +258,7 @@ extern char toUpper( char );
         "jg     LL34" \
         "sub    al, 0020H" \
         "LL34:" \
-        parm[al] value[al];
+    parm [al] value[al];
 
 extern char toLower( char );
 #pragma aux toLower = \
@@ -268,7 +268,7 @@ extern char toLower( char );
         "jg     LL35" \
         "add    al, 0020H" \
         "LL35:" \
-        parm[al] value[al];
+    parm [al] value[al];
 #endif
 
 /*
@@ -418,7 +418,7 @@ char **BuildTokenList( int num, char *list )
  */
 char *GetTokenString( char *list, int num )
 {
-    int         off  =0, i = 0, k;
+    int         off = 0, i = 0, k;
     char        *t;
 
     while( TRUE ) {

@@ -34,7 +34,7 @@
 #include "win.h"
 #include <assert.h>
 
-static vi_key   lastChar[ 2 ];
+static vi_key   lastChar[2];
 
 static int checkLine( linenum *ln )
 {
@@ -55,7 +55,7 @@ static int checkLine( linenum *ln )
             rc = ERR_NO_SUCH_LINE;
         }
     }
-    if( ( EditFlags.Modeless == TRUE ) && ( rc == ERR_NO_SUCH_LINE ) ) {
+    if( (EditFlags.Modeless == TRUE) && (rc == ERR_NO_SUCH_LINE) ) {
         rc = ERR_NO_ERR;
     }
     return( rc );
@@ -96,7 +96,7 @@ static int checkRightMove( linenum line, int *col, range *r )
     }
     if( (*col) > len ) {
         if( EditFlags.Modeless ) {
-            if ( !IsPastLastLine( line + 1 ) ) {
+            if( !IsPastLastLine( line + 1 ) ) {
                 r->start.line = line + 1;
                 r->line_based = TRUE;
                 *col = 1;
@@ -485,8 +485,8 @@ static int doACharFind( range *r, bool forward, int num, long count )
     lc = LastEvent;
     i = FindCharOnCurrentLine( forward, num, &c, count );
     if( !i && c >= 0 ) {
-        lastChar[ 0 ] = lc;
-        lastChar[ 1 ] = LastEvent;
+        lastChar[0] = lc;
+        lastChar[1] = LastEvent;
         r->start.column = c;
         return( ERR_NO_ERR );
     }
@@ -550,19 +550,19 @@ int DoGo( range *r, long count )
 static int moveToLastCFind( range *r, bool reverse, long count )
 {
     int         rc;
-    vi_key      tmp[ 2 ];
+    vi_key      tmp[2];
     vi_key      lastc;
 
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
     }
-    if( lastChar[ 0 ] == 0 ) {
+    if( lastChar[0] == 0 ) {
         return( ERR_NO_PREVIOUS_COMMAND );
     }
-    tmp[ 0 ] = lastChar[ 0 ];
-    tmp[ 1 ] = lastChar[ 1 ];
-    KeyAdd( lastChar[ 1 ] );
-    lastc = lastChar[ 0 ];
+    tmp[0] = lastChar[0];
+    tmp[1] = lastChar[1];
+    KeyAdd( lastChar[1] );
+    lastc = lastChar[0];
     if( reverse ) {
         if( islower( lastc ) ) {
             lastc = toupper( lastc );
@@ -570,9 +570,9 @@ static int moveToLastCFind( range *r, bool reverse, long count )
             lastc = tolower( lastc );
         }
     }
-    rc = (EventList[ lastc ].rtn.move)( r, count );
-    lastChar[ 0 ] = tmp[ 0 ];
-    lastChar[ 1 ] = tmp[ 1 ];
+    rc = (EventList[lastc].rtn.move)( r, count );
+    lastChar[0] = tmp[0];
+    lastChar[1] = tmp[1];
     return( rc );
 
 } /* moveToLastCFind */

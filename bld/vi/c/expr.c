@@ -59,9 +59,9 @@ static char     *exprData;
 static jmp_buf  abortAddr;
 static int      tokenBuffCnt;
 
-#define str(a) #a
+#define str( a ) #a
 #undef vi_pick
-#define vi_pick(a) str(a\0)
+#define vi_pick( a ) str( a\0 )
 static char     colorTokens[] = {
 #include "colors.h"
 #undef vi_pick

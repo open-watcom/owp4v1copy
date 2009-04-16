@@ -34,13 +34,13 @@
 
 #if defined( __DOS__ ) && defined( __X86__ ) && defined( __WATCOMC__ )
 
-extern unsigned char In61( void );
-extern void Out61( unsigned char );
-extern void Out43( unsigned char );
-extern void Out42( unsigned char );
+extern unsigned char    In61( void );
+extern void             Out61( unsigned char );
+extern void             Out43( unsigned char );
+extern void             Out42( unsigned char );
 
 extern void (interrupt _FAR *DosGetVect( char ))( void );
-extern void DosSetVect( char, void (interrupt *)( void ));
+extern void DosSetVect( char, void (interrupt *)( void ) );
 
 extern unsigned short _BIOSGetKeyboard( char );
 extern unsigned short _BIOSKeyboardHit( char );
@@ -58,179 +58,179 @@ extern unsigned DosMaxAlloc( void );
 #ifndef __CURSES__
 #pragma aux _BIOSGetKeyboard = \
         "int  16h" \
-        parm[ah] value[ax];
+    parm [ah] value [ax];
 
 #pragma aux _BIOSKeyboardHit = \
         "int  16h" \
         "jz   L1" \
-        "mov  ax,1" \
-        "jmp short L2" \
-    "L1: mov  ax,0" \
-    "L2:" \
-        parm[ah] value[ax];
+        "mov  ax, 1" \
+        "jmp  short L2" \
+        "L1: mov ax, 0" \
+        "L2:" \
+    parm [ah] value [ax];
 
 #pragma aux BIOSGetCursor = \
-         0xB4 0x03          /* mov     ah,03h */\
-         0xCD 0x10          /* int     010h */ \
-         parm[bh] value [dx] modify[ax cx];
+        0xB4 0x03          /* mov     ah, 03h */\
+        0xCD 0x10          /* int     010h */ \
+    parm [bh] value [dx] modify [ax cx];
 
 #pragma aux BIOSSetCursor = \
-        0xB4 0x02          /* mov     ah,02h */\
+        0xB4 0x02          /* mov     ah, 02h */\
         0xCD 0x10          /* int     010h */ \
-        parm [bh] [dh] [dl] modify[ax];
+    parm [bh] [dh] [dl] modify [ax];
 
 #pragma aux BIOSNewCursor = \
         0xB4 0x01          /* mov     ah,01h */ \
         0xCD 0x10          /* int     010h */ \
-        parm [ch] [cl] modify[ax cx];
+    parm [ch] [cl] modify [ax cx];
 #endif
 
-#if !defined(__386__)
+#if !defined( __386__ )
 #pragma aux DosSetVect = \
-        "mov  ah,25h" \
+        "mov  ah, 25h" \
         "int  21h" \
-        parm [al] [ds dx];
+    parm [al] [ds dx];
 
 #pragma aux DosGetVect = \
-        "mov  ah,35h" \
+        "mov  ah, 35h" \
         "int  21h" \
-        "mov  ax,bx" \
-        "mov  dx,es" \
-        parm [al] modify [es bx];
+        "mov  ax, bx" \
+        "mov  dx, es" \
+    parm [al] modify [es bx];
 
 #pragma aux DosMaxAlloc = \
-        "xor bx,bx" \
+        "xor bx, bx" \
         "dec bx" \
-        "mov ah,48h" \
+        "mov ah, 48h" \
         "int 21h" \
-        value [bx] modify [ax];
+    value [bx] modify [ax];
 
 #pragma aux BIOSSetColorRegister = \
-        0xB8 0x10 0x10     /* mov     ax,01010h */ \
+        0xB8 0x10 0x10     /* mov     ax, 01010h */ \
         0xCD 0x10          /* int     010h */ \
-        parm [bx] [dh] [ch] [cl] modify[ax];
+    parm [bx] [dh] [ch] [cl] modify [ax];
 
 #pragma aux BIOSGetColorPalette = \
-        0xB8 0x09 0x10     /* mov     ax,01009h */ \
+        0xB8 0x09 0x10     /* mov     ax, 01009h */ \
         0xCD 0x10          /* int     010h */ \
-        parm [es dx] modify[ax];
+    parm [es dx] modify [ax];
 
 #pragma aux BIOSSetBlinkAttr = \
-        0xB8 0x03 0x10    /* mov ax,01003h */ \
-        0xB3 0x01         /* mov bl,1 */ \
-        0xCD 0x10         /* int  010h */ \
-        modify [ax bx];
+        0xB8 0x03 0x10    /* mov    ax, 01003h */ \
+        0xB3 0x01         /* mov    bl, 1 */ \
+        0xCD 0x10         /* int    010h */ \
+    modify [ax bx];
 
 #pragma aux BIOSSetNoBlinkAttr = \
-        0xB8 0x03 0x10    /* mov ax,01003h */ \
-        0xB3 0x00         /* mov bl,0 */ \
-        0xCD 0x10         /* int  010h */ \
-        modify [ax bx];
+        0xB8 0x03 0x10    /* mov    ax, 01003h */ \
+        0xB3 0x00         /* mov    bl, 0 */ \
+        0xCD 0x10         /* int    010h */ \
+    modify [ax bx];
 
 #pragma aux BIOSTestKeyboard = \
-        0xB8 0xff 0x12     /* mov     ax,012ffh */ \
+        0xB8 0xff 0x12     /* mov     ax, 012ffh */ \
         0xCD 0x16          /* int     016h */ \
-        value[ax];
+    value[ax];
 
 #pragma aux BIOSGetRowCount = \
-        0xB8 0x30 0x11     /* mov     ax,01130h */ \
-        0xB7 0x00          /* mov     bh,0 */ \
-        0xB2 0x18          /* mov     dl,24 */ \
+        0xB8 0x30 0x11     /* mov     ax, 01130h */ \
+        0xB7 0x00          /* mov     bh, 0 */ \
+        0xB2 0x18          /* mov     dl, 24 */ \
         0x55               /* push    bp - Bloodly BIOS scrams bp */ \
         0xCD 0x10          /* int     010h */ \
         0x5D               /* pop     bp */ \
-        value [dl] modify[ax bx cx dx es];
+    value [dl] modify [ax bx cx dx es];
 
 #pragma aux BIOSGetVideoMode = \
-        0xB4 0x0F          /* mov     ah,0fh */\
+        0xB4 0x0F          /* mov     ah, 0fh */\
         0xCD 0x10          /* int     010h */ \
-        value [bx ax] modify[bx];
+    value [bx ax] modify [bx];
 
 #pragma aux BIOSGetColorRegister = \
-        0xB8 0x15 0x10    /* mov ax,01015h */ \
-        0xCD 0x10         /* int  010h */ \
-        parm[bx] value[cx dx] modify [ax cx dx];
+        0xB8 0x15 0x10    /* mov    ax, 01015h */ \
+        0xCD 0x10         /* int    010h */ \
+    parm [bx] value [cx dx] modify [ax cx dx];
 #else
 #pragma aux DosMaxAlloc = \
-        "xor ebx,ebx" \
+        "xor ebx, ebx" \
         "dec ebx" \
-        "mov ah,48h" \
+        "mov ah, 48h" \
         "int 21h" \
-        value [ebx] modify [eax];
+    value [ebx] modify [eax];
 
 #pragma aux DosSetVect = \
         "push ds" \
         "push fs" \
         "pop  ds" \
-        "mov  ah,25h" \
+        "mov  ah, 25h" \
         "int  21h" \
         "pop  ds" \
-        parm [al] [fs edx];
+    parm [al] [fs edx];
 
 #pragma aux DosGetVect = \
         "push es" \
-        "mov  ah,35h" \
+        "mov  ah, 35h" \
         "int  21h" \
-        "mov  eax,ebx" \
-        "mov  edx,es" \
+        "mov  eax, ebx" \
+        "mov  edx, es" \
         "pop  es" \
-        parm [al] value[dx eax] modify [ebx];
+    parm [al] value [dx eax] modify [ebx];
 
 #pragma aux BIOSSetColorRegister = \
-        0x66 0xB8 0x10 0x10     /* mov     ax,01010h */ \
+        0x66 0xB8 0x10 0x10     /* mov     ax, 01010h */ \
         0xCD 0x10               /* int     010h */ \
-        parm [bx] [dh] [ch] [cl] modify[ax];
+    parm [bx] [dh] [ch] [cl] modify [ax];
 
 #pragma aux BIOSGetColorPalette = \
-        0x06          /* push   es */ \
-        0x8e 0xc0     /* mov    es,ax */ \
-        0x66 0xB8 0x09 0x10     /* mov     ax,01009h */ \
-        0xCD 0x10          /* int     010h */ \
-        0x07          /* pop    es */ \
-        parm [ax dx] modify [ax];
+        0x06                    /* push es */ \
+        0x8e 0xc0               /* mov  es, ax */ \
+        0x66 0xB8 0x09 0x10     /* mov  ax, 01009h */ \
+        0xCD 0x10               /* int  010h */ \
+        0x07                    /* pop  es */ \
+    parm [ax dx] modify [ax];
 
 #pragma aux BIOSSetBlinkAttr = \
-        0x66 0xB8 0x03 0x10    /* mov ax,01003h */ \
-        0xB3 0x01         /* mov bl,1 */ \
-        0xCD 0x10         /* int  010h */ \
-        modify [ax bx];
+        0x66 0xB8 0x03 0x10     /* mov ax, 01003h */ \
+        0xB3 0x01               /* mov bl, 1 */ \
+        0xCD 0x10               /* int 010h */ \
+    modify [ax bx];
 
 #pragma aux BIOSSetNoBlinkAttr = \
-        0x66 0xB8 0x03 0x10    /* mov ax,01003h */ \
-        0xB3 0x00         /* mov bl,0 */ \
-        0xCD 0x10         /* int  010h */ \
-        modify [ax bx];
+        0x66 0xB8 0x03 0x10     /* mov ax, 01003h */ \
+        0xB3 0x00               /* mov bl, 0 */ \
+        0xCD 0x10               /* int 010h */ \
+    modify [ax bx];
 
 #pragma aux BIOSTestKeyboard = \
-        0x66 0xB8 0xff 0x12     /* mov     ax,012ffh */ \
-        0xCD 0x16               /* int     016h */ \
-        value[ax];
+        0x66 0xB8 0xff 0x12     /* mov ax, 012ffh */ \
+        0xCD 0x16               /* int 016h */ \
+    value[ax];
 
 #pragma aux BIOSGetRowCount = \
-        0x66 0xB8 0x30 0x11     /* mov     ax,01130h */ \
-        0xB7 0x00               /* mov     bh,0 */ \
-        0xB2 0x18               /* mov     dl,24 */ \
-        0x55                    /* push    bp - Bloodly BIOS scrams bp */ \
-        0x06                    /* push    es - Bloodly BIOS scrams es */ \
-        0xCD 0x10               /* int     010h */ \
-        0x07                    /* pop     es */ \
-        0x5D                    /* pop     bp */ \
-        value [dl] modify[ax bx cx dx];
+        0x66 0xB8 0x30 0x11     /* mov  ax, 01130h */ \
+        0xB7 0x00               /* mov  bh, 0 */ \
+        0xB2 0x18               /* mov  dl, 24 */ \
+        0x55                    /* push bp - Bloodly BIOS scrams bp */ \
+        0x06                    /* push es - Bloodly BIOS scrams es */ \
+        0xCD 0x10               /* int  010h */ \
+        0x07                    /* pop  es */ \
+        0x5D                    /* pop  bp */ \
+    value [dl] modify [ax bx cx dx];
 
 #pragma aux BIOSGetVideoMode = \
-        0xB4 0x0F          /* mov     ah,0fh */\
+        0xB4 0x0F          /* mov     ah, 0fh */\
         0xCD 0x10          /* int     010h */ \
-        0xC1 0xE3 0x10     /* shl     ebx,16 */ \
-        0x66 0x8B 0xD8     /* mov     bx,ax */ \
-        value [ebx] modify[ax];
+        0xC1 0xE3 0x10     /* shl     ebx, 16 */ \
+        0x66 0x8B 0xD8     /* mov     bx, ax */ \
+    value [ebx] modify [ax];
 
 #pragma aux BIOSGetColorRegister = \
-        0x66 0xB8 0x15 0x10    /* mov ax,01015h */ \
-        0xCD 0x10         /* int  010h */ \
-        0x66 0x8B 0xC1    /* mov     ax,cx */ \
-        0xC1 0xE0 0x10    /* shr     eax,16 */ \
-        0x66 0x8B 0xC2    /* mov     ax,dx */ \
-        parm[bx] value[eax] modify [ax cx dx];
+        0x66 0xB8 0x15 0x10     /* mov  ax, 01015h */ \
+        0xCD 0x10               /* int  010h */ \
+        0x66 0x8B 0xC1          /* mov  ax, cx */ \
+        0xC1 0xE0 0x10          /* shr  eax, 16 */ \
+        0x66 0x8B 0xC2          /* mov  ax, dx */ \
+    parm [bx] value [eax] modify [ax cx dx];
 
 #endif
 

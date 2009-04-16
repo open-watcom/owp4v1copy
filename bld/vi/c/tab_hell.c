@@ -46,7 +46,7 @@ static bool getNextPos( int ch, int *opos )
         if( ch == '\t' ) {
 #ifndef __WIN__
             if( EditFlags.RealTabs ) {
-                pos += Tab( pos+1, HardTab );
+                pos += Tab( pos + 1, HardTab );
             } else {
                 pos++;
             }
@@ -88,7 +88,7 @@ int InsertTabSpace( int j, char *buff, bool *tabme )
             TabCnt += m;
             *tabme = TRUE;
             for( i = 0; i < m; i++ ) {
-                buff[ k++ ] = '\t';
+                buff[k++] = '\t';
             }
         } else {
             n = j;
@@ -101,7 +101,7 @@ int InsertTabSpace( int j, char *buff, bool *tabme )
      * put in extra spaces
      */
     for( i = 0; i < n; i++ ) {
-        buff[ k++ ] = ' ';
+        buff[k++] = ' ';
     }
     return( k );
 
@@ -124,9 +124,9 @@ bool ExpandTabsInABufferUpToColumn( int endcol, char *in, int inlen, char *out,
         inlen = outlen - i + endcol;
     }
     for( j = endcol; j < inlen; j++ ) {
-        out[ i++ ] = in[ j ];
+        out[i++] = in[j];
     }
-    out[ i ] = '\0';
+    out[i] = '\0';
     return( res );
 
 } /* ExpandTabsInABufferUpToColumn */
@@ -150,16 +150,16 @@ bool ExpandTabsInABuffer( char *in, int inlen, char *out, int outlen )
         /*
          * if we have a tab, insert some spaces
          */
-        c = (unsigned char)in[ j ];
+        c = (unsigned char)in[j];
         if( c < ' ' || c > 127 ) {
             if( c == '\t' ) {
                 TabCnt++;
                 tb = Tab( k + 1, HardTab );
                 for( l = k; l < k + tb; l++ ) {
                     if( l < outlen ) {
-                        out[ l ] = ' ';
+                        out[l] = ' ';
                     } else {
-                        out[ outlen ] = '\0';
+                        out[outlen] = '\0';
                         return( TRUE );
                     }
                 }
@@ -172,26 +172,26 @@ bool ExpandTabsInABuffer( char *in, int inlen, char *out, int outlen )
                     ch = c + 'A' - 1;
                 }
                 if( k + 1 < outlen ) {
-                    out[ k++ ] = '^';
-                    out[ k++ ] = ch;
+                    out[k++] = '^';
+                    out[k++] = ch;
                 } else {
-                    out[ outlen ] = '\0';
+                    out[outlen] = '\0';
                     return( TRUE );
                 }
                 tabme = TRUE;
             } else {
-                out[ k++ ] = c;
+                out[k++] = c;
             }
         } else {
             if( k + 1 >= outlen ) {
                 break;
             } else {
-                out[ k++ ] = c;
+                out[k++] = c;
             }
         }
 
     }
-    out[ k ] = '\0';
+    out[k] = '\0';
     return( tabme );
 
 } /* ExpandTabsInABuffer */
@@ -212,7 +212,7 @@ int WinVirtualCursorPosition( char *buff, int curs )
     int pos = 0;
 
     for( j = 0; j < curs; j++ ) {
-        if( !getNextPos( (unsigned char)buff[ j ], &pos ) ) {
+        if( !getNextPos( (unsigned char)buff[j], &pos ) ) {
             break;
         }
     }
@@ -235,7 +235,7 @@ int WinRealCursorPosition( char *buff, int vc )
     len = strlen( buff );
     pos = 0;
     for( i = 0; i < len; i++ ) {
-        if( !getNextPos( (unsigned char)buff[ i ], &pos ) ) {
+        if( !getNextPos( (unsigned char)buff[i], &pos ) ) {
             break;
         }
         if( pos >= vc ) {
@@ -262,7 +262,7 @@ int GetVirtualCursorPosition( char *buff, int curs )
         curs--;
     }
     for( j = 0; j < curs; j++ ) {
-        if( !getNextPos( (unsigned char)buff[ j ], &pos ) ) {
+        if( !getNextPos( (unsigned char)buff[j], &pos ) ) {
             break;
         }
     }
@@ -320,7 +320,7 @@ static int realPosition( int virt_pos, char *buff, int len )
     }
 
     for( j = 0; j < len; j++ ) {
-        if( !getNextPos( (unsigned char)buff[ j ], &pos ) ) {
+        if( !getNextPos( (unsigned char)buff[j], &pos ) ) {
             break;
         }
         if( pos >= virt_pos ) {
@@ -377,7 +377,7 @@ int CursorPositionOffRight( int vc )
     }
 
     for(j = 0; j < cl; j++ ) {
-        if( !getNextPos( (unsigned char)buff[ j ], &pos ) ) {
+        if( !getNextPos( (unsigned char)buff[j], &pos ) ) {
             break;
         }
         if( pos >= vc ) {
@@ -419,7 +419,7 @@ int RealLineLen( char *buff )
 
     cl = strlen( buff );
     for( j = 0; j < cl; j++ ) {
-        if( !getNextPos( (unsigned char)buff[ j ], &pos ) ) {
+        if( !getNextPos( (unsigned char)buff[j], &pos ) ) {
             break;
         }
     }
@@ -442,12 +442,12 @@ int AddLeadingTabSpace( short *len, char *buff, int amount )
      * expand leading stuff into spaces
      */
     j = *len;
-    while( isspace( buff[ start ] ) ) {
+    while( isspace( buff[start] ) ) {
         start++;
     }
     tmp = StaticAlloc();
     ExpandTabsInABuffer( buff, j,  tmp, MaxLine );
-    while( tmp[ i ] == ' ' ) {
+    while( tmp[i] == ' ' ) {
         i++;
     }
 
@@ -465,11 +465,11 @@ int AddLeadingTabSpace( short *len, char *buff, int amount )
             k = i;
         } else {
             for( k = i; k < i + amount; k++ ) {
-                tmp[ k ] = ' ';
+                tmp[k] = ' ';
             }
         }
     }
-    tmp[ k ] = '\0';
+    tmp[k] = '\0';
 
     /*
      * change spaces to tabs, and add the rest of the line back
@@ -479,7 +479,7 @@ int AddLeadingTabSpace( short *len, char *buff, int amount )
         k = InsertTabSpace( k, tmp, &tabme );
     }
     for( l = start; l <= j; l++ ) {
-        tmp[ k++ ] = buff[ l ];
+        tmp[k++] = buff[l];
     }
     memcpy( buff, tmp, k );
     StaticFree( tmp );
@@ -517,11 +517,11 @@ bool ConvertSpacesToTabsUpToColumn( int endcol, char *in, int inlen, char *out,
     /*
      * run through each character
      */
-    oc = in[ endcol ];
-    in[ endcol ] = '\0';
+    oc = in[endcol];
+    in[endcol] = '\0';
     for( j = 0; j <= endcol; j++ ) {
 
-        c = in[ j ];
+        c = in[j];
         if( c != ' ' || in_quotes || in_single_quotes ) {
 
             /*
@@ -552,7 +552,7 @@ bool ConvertSpacesToTabsUpToColumn( int endcol, char *in, int inlen, char *out,
                             m = outlen - k;
                         }
                         for( i = 0; i < m; i++ ) {
-                            out[ k++ ] = '\t';
+                            out[k++] = '\t';
                         }
                     } else {
                         n = l;
@@ -561,11 +561,11 @@ bool ConvertSpacesToTabsUpToColumn( int endcol, char *in, int inlen, char *out,
                         n = outlen - k;
                     }
                     for( i = 0; i < n; i++ ) {
-                        out[ k++ ] = ' ';
+                        out[k++] = ' ';
                     }
                 } else {
                     if( k + 1 < outlen ) {
-                        out[ k++ ] = ' ';
+                        out[k++] = ' ';
                     }
                 }
             }
@@ -585,7 +585,7 @@ bool ConvertSpacesToTabsUpToColumn( int endcol, char *in, int inlen, char *out,
             } else {
                 esc = FALSE;
             }
-            out[ k++ ] = c;
+            out[k++] = c;
             if( c == '\0' ) {
                 break;
             }
@@ -607,14 +607,14 @@ bool ConvertSpacesToTabsUpToColumn( int endcol, char *in, int inlen, char *out,
      * copy the rest
      */
     k--;
-    in[ endcol ] = oc;
+    in[endcol] = oc;
     if( k + inlen >= outlen ) {
         inlen = outlen - k;
     }
     for( j = endcol; j < inlen; j++ ) {
-        out[ k++ ] = in[ j ];
+        out[k++] = in[j];
     }
-    out[ k++ ] = '\0';
+    out[k++] = '\0';
     return( tabme );
 
 } /* ConvertSpacesToTabsUpToColumn */

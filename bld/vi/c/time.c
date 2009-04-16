@@ -32,7 +32,6 @@
 
 #include "vi.h"
 #include <time.h>
-#include <time.h>
 
 /*
  * GetTimeString - get string for current time/date

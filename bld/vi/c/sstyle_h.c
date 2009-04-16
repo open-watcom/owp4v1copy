@@ -173,7 +173,7 @@ void GetHTMLBlock( ss_block *ss_new, char *start, int line )
 {
     line = line;
 
-    if( start[ 0 ] == '\0' ) {
+    if( start[0] == '\0' ) {
         if( firstNonWS == start ) {
             // line is empty -
             // do not flag following line as having anything to do
