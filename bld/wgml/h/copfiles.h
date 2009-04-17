@@ -67,7 +67,6 @@
 *                   bin_device
 *                   bin_driver
 *                   bin_fonts
-*                   pages
 *                   ps_device
 *                   wgml_font_cnt
 *                   wgml_fonts
@@ -76,9 +75,10 @@
 *                   cop_teardown()
 *                   fb_dbox()
 *                   fb_document()
+*                   fb_document_page()
 *                   fb_finish()
 *                   fb_hline()
-*                   fb_newpage()
+*                   fb_position()
 *                   fb_start()
 *                   fb_vline()
 *
@@ -498,7 +498,21 @@ typedef struct {
     uint16_t                line_space;
 } wgml_font;
 
-/* Global variable declarations. */
+/* Variable declarations. */
+
+/* suppress and oldglobal: when one header using global includes a second
+ * using global, then, if global is defined, then the variables in the
+ * second header will be defined twice and linker warnings will result. The
+ * first header file should #define suppress and rely on this admittedly-
+ * messy code to correctly solve the problem. devfuncs.h provides an example.
+ */
+
+#ifdef suppress
+    #ifdef global
+        #define oldglobal
+    #endif
+    #undef global
+#endif
 
 #ifndef global
     #define global  extern
@@ -508,13 +522,16 @@ global bool             ps_device;      // true if device is PostScript
 global cop_device   *   bin_device;     // binary device being used
 global cop_driver   *   bin_driver;     // binary driver being used
 global cop_font     *   bin_fonts;      // binary fonts being used (linked list)
-global int              wgml_font_cnt;  // number of available fonts
-global uint32_t         pages;          // current page number
+global uint32_t         wgml_font_cnt;  // number of available fonts
 global wgml_font    *   wgml_fonts;     // the available fonts
 
 /* Reset so can be reused with other headers. */
 
 #undef global
+#ifdef oldglobal
+    #define global
+#endif
+#undef suppress
 
 /* Function declarations. */
 
@@ -526,9 +543,10 @@ extern void             cop_setup( void );
 extern void             cop_teardown( void );
 extern void             fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
 extern void             fb_document( void );
+extern void             fb_document_page( void );
 extern void             fb_finish( void );
 extern void             fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
-extern void             fb_newpage( void );
+extern void             fb_position( uint32_t h_start, uint32_t v_start );
 extern void             fb_start( void );
 extern void             fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 

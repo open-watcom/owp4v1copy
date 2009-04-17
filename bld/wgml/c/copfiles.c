@@ -29,9 +29,10 @@
 *                   cop_teardown()
 *                   fb_dbox()
 *                   fb_document()
-*                   fb_hline()
-*                   fb_newpage()
+*                   fb_document_page()
 *                   fb_finish()
+*                   fb_hline()
+*                   fb_position()
 *                   fb_start()
 *                   fb_vline()
 *               plus these local functions:
@@ -632,7 +633,6 @@ extern void cop_setup( void )
     bin_device = NULL;
     bin_driver = NULL;
     bin_fonts = NULL;
-    pages = 0;
     ps_device = false;
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
@@ -1013,11 +1013,37 @@ extern void cop_teardown( void )
     return;
 }
 
-/* Function fb_document().
- * Performs the processing which occurs when document processing begins.
+/* Function fb_dbox().
+ * Interprets the :DBOX block. 
  *
- * Note: The setting of pages may need to be removed so that it can be
- * done on each pass, since this function can only run on the last pass.
+ * Parameters:
+ *      h_start contains the horizontal position.
+ *      v_start contains the vertical position.
+ *      h_len contains the horizontal extent.
+ *      v_len contains the vertical extent.
+ *
+ * Prerequisites:
+ *      The :DBOX block must exist.
+ *      The :ABSOLUTEADDRESS block must exist.
+ *
+ * Notes:
+ *      The :ABSOLUTEADDRESS block is required to position the print to the
+ *          start of the line or box.
+ *      The :DBOX block must exist because the box-drawing code should be 
+ *          checking this and drawing the box using either :HLINE and :VLINE
+ *          or the :BOX block characters instead.
+ */
+
+extern void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len )
+{
+    fb_thickness( bin_driver->dbox.text, h_start, v_start, h_len, v_len, \
+                                        bin_driver->dbox.thickness, "DBOX" );
+    return;
+}
+
+/* Function fb_document().
+ * Performs the processing which occurs on the first pass when document
+ * processing begins.
  */
 
 extern void fb_document( void )
@@ -1030,27 +1056,37 @@ extern void fb_document( void )
     /* Interpret the DOCUMENT :INIT block. */
 
     if( bin_driver->inits.document != NULL ) \
-                                            fb_init( bin_driver->inits.document );
+                                        fb_init( bin_driver->inits.document );
 
     /* Perform the virtual %enterfont(0). */
 
     fb_enterfont();
 
-    /* Set pages correctly. */
+    /* Perform the other actions needed at this point. */
 
+    df_populate_driver_table();
     pages = 1;
 
     return;
 }
 
-/* Function fb_dbox().
- * Interprets the :DBOX block. 
+/* Function fb_document_page().
+ * Interprets the :NEWPAGE block and increments the page number variable. 
  */
 
-extern void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len )
+extern void fb_document_page( void )
 {
-    fb_thickness( bin_driver->dbox.text, h_start, v_start, h_len, v_len, \
-                                                bin_driver->dbox.thickness );
+    /* Interpret the DOCUMENT_PAGE :PAUSE block. */
+
+    if( bin_device->pauses.docpage_pause != NULL ) \
+        df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
+
+    /* Interpret the :NEWPAGE block. */
+
+    df_interpret_driver_functions( bin_driver->newpage.text );
+    
+    pages++;
+
     return;
 }
 
@@ -1060,6 +1096,10 @@ extern void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_
 
 extern void fb_finish( void )
 {
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
     /* If the END :FINISH block is present, interpret it. If the END
      * :FINISH block is not present, then, if the DOCUMENT :FINISH block
      * is present, interpret it.
@@ -1075,25 +1115,85 @@ extern void fb_finish( void )
 
 /* Function fb_hline().
  * Interprets the :HLINE block. 
+ *
+ * Parameters:
+ *      h_start contains the horizontal position.
+ *      v_start contains the vertical position.
+ *      h_len contains the horizontal extent.
+ *
+ * Prerequisites:
+ *      The :HLINE block must exist.
+ *      The :ABSOLUTEADDRESS block must exist.
+ *
+ * Notes:
+ *      The :ABSOLUTEADDRESS block is required to position the print to the
+ *          start of the line or box.
+ *      The :HLINE block must exist because the box-drawing code should be
+ *          checking this and, in some cases, drawing the line using the :BOX
+ *          block characters instead.
  */
 
 extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
 {
     fb_thickness( bin_driver->hline.text, h_start, v_start, h_len, 0, \
-                                                bin_driver->hline.thickness );
+                                        bin_driver->hline.thickness, "HLINE" );
 }
 
-/* Function fb_newpage().
- * Interprets the :NEWPAGE block and increments the page number variable. 
+/* Function fb_position().
+ * Sets the print head position, in the sense of setting the fields of
+ * desired_state, x_address, and y_address. In some cases, takes additional
+ * actions. This function is extremely specialized. 
  *
- * Note: The incrementing of pages may need to be removed so that it can be
- * done on each pass, since this function can only run on the last pass.
+ * Parameters:
+ *      h_start contains the horizontal position.
+ *      v_start contains the vertical position.
+ *
+ * Notes:
+ *      This is called at most twice: once to set the left margin at the
+ *          start of document processing, and once if the first element is a
+ *          paragraph (:P.) which has an indent.
+ *      The initial vertical positioning should only be done the first time:
+ *          v_start should have the same value on the second invocation as it
+ *          did on the first.
+ *      The :LINEPROC block :ENDVALUE block should only be interpreted the
+ *          second time; the first time through, it will appear as part of the
+ *          initial horizontal positioning.
  */
 
-extern void fb_newpage( void )
+extern void fb_position( uint32_t h_start, uint32_t v_start )
 {
-    df_interpret_driver_functions( bin_driver->newpage.text );
-    pages++;
+    bool    fontstyle = false;
+
+    /* First do the normal vertical positioning. */
+
+    df_set_vertical( v_start );
+    fb_normal_vertical_positioning();
+
+    /* Determine whether a :FONTSTYLE block for pass 1 for font 0 exists. */
+
+    if( wgml_fonts[0].font_style != NULL ) {
+        if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
+            fontstyle = true;
+        }
+    }
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* The :FONTSTYLE block can only be used if it exists.
+     * df_set_horizontal() is always needed.
+     */
+
+    df_set_horizontal( h_start );
+
+    if( fontstyle ) {
+        if( wgml_fonts[0].font_style->lineprocs[0].startvalue == NULL ) \
+            df_interpret_driver_functions( \
+                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+        fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
+    }
+    
     return;
 }
 
@@ -1121,12 +1221,28 @@ extern void fb_start( void )
 
 /* Function fb_vline().
  * Interprets the :VLINE block. 
+ *
+ * Parameters:
+ *      h_start contains the horizontal position.
+ *      v_start contains the vertical position.
+ *      v_len contains the vertical extent.
+ *
+ * Prerequisites:
+ *      The :VLINE block must exist.
+ *      The :ABSOLUTEADDRESS block must exist.
+ *
+ * Notes:
+ *      The :ABSOLUTEADDRESS block is required to position the print to the
+ *          start of the line or box.
+ *      The :VLINE block must exist because the box-drawing code should be
+ *          checking this and, in some cases, drawing the line using the :BOX
+ *          block characters instead.
  */
 
 extern void fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len )
 {
     fb_thickness( bin_driver->vline.text, h_start, v_start, 0, v_len, \
-                                                bin_driver->vline.thickness );
+                                        bin_driver->vline.thickness, "VLINE" );
     return;
 }
 

@@ -28,27 +28,39 @@
 *                   df_interpret_device_functions()
 *                   df_interpret_driver_functions()
 *                   df_populate_device_table()
+*                   df_populate_driver_table()
+*                   df_set_horizontal()
+*                   df_set_vertical()
 *                   df_setup()
 *                   df_teardown()
 *                   fb_enterfont()
+*                   fb_firstword()
 *                   fb_init()
+*                   fb_lineproc_endvalue()
+*                   fb_normal_vertical_positioning()
 *                   fb_thickness()
 *               as well as a macro
 *                   MAX_FUNC_INDEX
 *               some local typedefs and structs:
 *                   df_data
 *                   df_function
+*                   page_state
 *                   parameters
 *               some local variables:
+*                   at_start
 *                   current_df_data
 *                   current_function
 *                   current_function_table
+*                   current_state
 *                   date_val
+*                   desired_state
 *                   device_function_table
 *                   driver_function_table
 *                   font_number
+*                   pass_number
 *                   staging
 *                   tab_width
+*                   text_output
 *                   textpass
 *                   thickness
 *                   time_val
@@ -116,6 +128,8 @@
 *                   df_x_size()
 *                   df_y_address()
 *                   df_y_size()
+*                   fb_absoluteaddress()
+*                   fb_newline()
 *                   format_error()
 *                   get_parameters()
 *                   interpret_functions()
@@ -138,7 +152,12 @@
 #include <stdbool.h>
 #include <string.h>
 
+/* Allocate storage for global variables. */
+
+#define global
 #include "devfuncs.h"
+#undef  global
+
 #include "outbuff.h"
 #include "wgml.h"
 #include "gvars.h"
@@ -161,6 +180,14 @@ typedef struct {
     uint8_t     df_code;
 } df_data;
 
+/* This is used to record the state of the current page. */
+
+typedef struct {
+    uint32_t         font_number;
+    uint32_t         x_address;
+    uint32_t         y_address;
+} page_state;
+
 /* Holds the offsets to the parameter(s). */
 
 typedef struct {
@@ -180,6 +207,14 @@ typedef void * (*df_function) (void);
 
 static bool             textpass        = false;
 static bool             uline           = false;
+
+/* These are used to control some aspects of device function operation. */
+
+static bool             at_start        = true;
+static bool             text_output     = false;
+static page_state       current_state   = { 0, 0, 0 };
+static page_state       desired_state   = { 0, 0, 0 };
+static uint32_t         pass_number     = 0;
 
 /* These are used to hold values returned by device functions. */
 
@@ -207,6 +242,86 @@ static uint8_t      *   current_function        = NULL;
 static record_buffer    staging = { 0, 0, NULL };
 
 /* Local function definitions. */
+
+/* Function fb_newline().
+ * Uses the various :NEWLINE blocks to actually position the device to the
+ * desired vertical position. 
+ *
+ * Prerequisite:
+ *      The :ABSOLUTEADDRESS block must not be defined.
+ */
+
+static void fb_newline( void )
+{
+    int             i;
+    newline_block * cur_block   = NULL;
+    int16_t         lines;
+    uint16_t        max_advance;
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    if( bin_driver->y_positive == 0x00 ) {
+
+        /* desired_state.y_address was formed by subtraction. */
+
+        lines = current_state.y_address - desired_state.y_address;
+    } else {
+
+        /* desired_state.y_address was formed by addition. */
+
+        lines = desired_state.y_address - current_state.y_address;
+    }
+
+    /* Devices using :ABSOLUTEADDRESS may be able to move backwards, but
+     * :NEWLINE blocks with negative values for advance are not accepted
+     * by gendev and so negative values of lines must be an error.
+     */
+
+    if( lines < 0 ) {
+        out_msg( "wgml internal error: negative carriage movement\n" );
+        err_count++;
+        g_suicide();
+    }
+
+    /* lines might equal 0, in which case no action is needed. */
+
+    max_advance = 0;
+    while( lines > 0 ) {
+        for( i = 0; i < bin_driver->newlines.count; i++ ) {
+            if( bin_driver->newlines.newlineblocks[i].advance < lines ) {
+                if( max_advance < \
+                            bin_driver->newlines.newlineblocks[i].advance ) {
+                    max_advance = bin_driver->newlines.newlineblocks[i].advance;
+                    cur_block = &bin_driver->newlines.newlineblocks[i];
+                }
+            }
+        }
+        df_interpret_driver_functions( cur_block->text );
+        lines -= max_advance;
+
+        /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
+         * :ENDVALUE block for Pass 1 of available font 0, unless it has already
+         * been done.
+         */
+
+        if( at_start ) {
+            if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
+                if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
+                    df_interpret_driver_functions( \
+                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+            }
+        at_start = false;
+    }
+
+
+    }
+
+    current_state.y_address = desired_state.y_address;
+
+    return;
+}
 
 /* Function char_convert().
  * This function returns a dynamically-allocated copy of the parameter. If the
@@ -254,8 +369,8 @@ void format_error( void )
  *      count contains the minimum required size.
  *
  * Note:
- *      mem_alloc() and mem_realloc() exit the program if they fail. Thus,
- *      this function will either succeed or the program will end.
+ *      mem_realloc() exits the program if it fails. Thus, this function
+ *      will either succeed or the program will end.
  */
 
 static void resize_staging( size_t count )
@@ -290,13 +405,17 @@ static void * df_do_nothing_num( void )
 }
 
 /* Function df_bad_code().
- * Reports byte codes not known to exist; should never be called.
+ * Reports byte codes not known to exist but nonetheless found. It never
+ * returns to the caller. It should never actually run. Since it is used
+ * in the function tables, it must conform to the function typedef.
  */
 
 static void * df_bad_code( void )
 {
     out_msg( "\nUnknown byte code: 0x%02x -- parameter type: 0x%02x\n", \
                     current_df_data.df_code, current_df_data.parameter_type);
+    err_count++;
+    g_suicide();
     return( NULL );
 }
 
@@ -325,6 +444,25 @@ static void * df_clearPC( void )
     return( NULL );
 }
 
+/* Function fb_absoluteaddress().
+ * Uses the :ABSOLUTEADDRESS block to actually position the print head to the
+ * desired position. 
+ *
+ * Prerequisite:
+ *      The :ABSOLUTEADDRESS block must be defined.
+ */
+
+static void fb_absoluteaddress( void )
+{
+    fb_lineproc_endvalue();
+
+    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
+
+    current_state.x_address = desired_state.x_address;
+    current_state.y_address = desired_state.y_address;    
+    return;
+}
+
 /* Function df_dotab().
  * Implements device function %dotab().
  */
@@ -346,7 +484,7 @@ static void * df_dotab( void )
     if( current_df_data.parameter_type != 0x00 ) format_error();
 
     if( bin_driver->absoluteaddress.text != NULL ) \
-        df_interpret_driver_functions( bin_driver->absoluteaddress.text );
+        fb_absoluteaddress();
     else {
         char    ps_suffix[] = ") shwd ";
         size_t  count;
@@ -397,8 +535,8 @@ static void * df_endif( void )
  
 static void * df_flushpage( void )
 {
-    int i;
-    static  int         instance = 0;
+    static  int         instance    = 0;
+            uint16_t    pages;
 
     /* Recursion is an error. */
 
@@ -409,27 +547,56 @@ static void * df_flushpage( void )
         g_suicide();
     }
 
-    if( bin_driver->absoluteaddress.text != NULL ) \
-        df_interpret_driver_functions( bin_driver->absoluteaddress.text );
-    else {
+    if( current_df_data.parameter_type != 0x00 ) format_error();
 
-        /* Simply emits lines equal to the value of page_depth.
-         * This will need to be altered in at least two ways:
-         *   the number of lines should be enough to get to the end
-         *   the use of :NEWLINE can be improved to skip more than one line
-         *   this is not supposed to happen on the first page
-         * but much of these details may be incorporated into a function which
-         * uses :NEWLINE blocks to page down, which this function will then call.
-         */
-     
-        if( current_df_data.parameter_type != 0x00 ) format_error();
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
 
-        if( bin_driver->absoluteaddress.text == NULL ) {
-            for( i = 0; i < bin_device->page_depth; i++ ) \
-                df_interpret_driver_functions( \
-                                bin_driver->newlines.newlineblocks[0].text );
-        }
+    fb_lineproc_endvalue();
+
+    /* pages contains the number of device pages needed to reach
+     * current_state.y_address.
+     */
+
+    pages = current_state.y_address / bin_device->page_depth;
+
+    /* The value needed in desired_state.y_address must reflect the
+     * number of device pages included in currrent_state.y_address so
+     * that fb_newlines() will have comparable values to work with.
+     */
+
+    if( bin_driver->y_positive == 0x00 ) {
+
+        /* desired_state.y_address is to be formed by subtraction. */
+
+        desired_state.y_address = pages * bin_device->page_depth;
+    } else {
+
+        /* desired_state.y_address is to be formed by addition. */
+
+        desired_state.y_address = (pages + 1) * bin_device->page_depth;
     }
+
+    x_address = 0;
+    y_address = bin_device->page_depth;
+
+    /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
+
+    if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
+
+    /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
+     * :ENDVALUE block for Pass 1 of available font 0, unless it has already
+     * been done.
+     */
+
+    if( at_start ) {
+        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
+                df_interpret_driver_functions( \
+                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+        }
+        at_start = false;
+    }
+
     instance--;
 
     return( NULL );
@@ -721,7 +888,7 @@ static void * df_y_size( void )
  * Parameter:
  *      in_parameters points to the parameters instance to be initialized.
  *
- * Global Variable Used:
+ * Global Variable Prerequisite:
  *      current_df_data.current must point to the first byte of 
  *      offset1 on entry.
  *
@@ -767,7 +934,7 @@ static void * get_parameters ( parameters * in_parameters )
  * current_df_data.current, and invokes the function which handles
  * that byte code.
  *
- * Global Variable Used:
+ * Global Variable Prerequisite:
  *      current_df_data.current must point to the first byte in the
  *      Directive instance. 
  *
@@ -798,19 +965,14 @@ static void * process_parameter( void )
  * These functions all take parameters and so have common effects on the global
  * current_df_data. 
  *
- * Global Variables Used:
- *      current_df_data is updated to reflect the current function.
- *      function_table[] is used to invoke the handler for each device function.
- *
- * Global Variable Modified:
+ * Notes:
  *      current_df_data.current will point to the first byte after
- *      the byte code for the function being processed when the handler in
- *      function_table[] is invoked. This occurs when a parameter block is
- *      present.
- *
+ *          the byte code for the function being processed when the handler in
+ *          function_table[] is invoked. This occurs when a parameter block is
+ *          present.
  *      current_df_data.current will point to the first byte after
- *      the character data found by %image() and %text() when they have a
- *      parameter which is not in a parameter block.
+ *          the character data found by %image() and %text() when they have a
+ *          parameter which is not in a parameter block.
  */
 
 /* Device functions %image() and %text() have an associated parameter type byte
@@ -1201,7 +1363,7 @@ static void * df_binary( void )
  *
  * Global Variables Used:
  *      current_df_data is updated to reflect the current function.
- *      current_function is used to point to the current function.
+ *      current_function is used to record the start of the current function.
  *
  * Global Variables Modified:
  *      current_df_data.current will point to the first byte after
@@ -1813,7 +1975,7 @@ static df_function driver_function_table[0x3D] = {
     &df_ifeqn,              // 0x1A %ifeqn()
     &df_ifnen,              // 0x1B %ifnen()
     &df_endif,              // 0x1C %endif()
-    &df_flushpage,          // 0x1D %flushpage()
+    &df_do_nothing_num,     // 0x1D %flushpage()
     &df_do_nothing_num,     // 0x1E %clearPC()
     &df_do_nothing_num,     // 0x1F %clear3270()
     &df_textpass,           // 0x20 %textpass()
@@ -1874,8 +2036,8 @@ static df_function driver_function_table[0x3D] = {
  *          on each pass through the loop. It is not necessary that the
  *          functions invoked through function_table[] leave
  *          current_df_data.current in any particular state.
- *      This function is called recursively and so current_function must be
- *          restored to its value on entry on exit.
+ *      This function is called recursively and so several globals must be
+ *          restored to their value on entry on exit.
 */
 
 static void interpret_functions( uint8_t * in_function )
@@ -1958,7 +2120,7 @@ static void interpret_functions( uint8_t * in_function )
     return;
 }
 
-/*  Global function definition. */
+/*  Global function definitions. */
 
 /* Function df_interpret_device_functions().
  * Interprets device functions for function blocks in the :DEVICE block.
@@ -2025,6 +2187,49 @@ void df_populate_device_table( void )
     return;
 }
 
+/* Function df_populate_driver_table().
+ * Modifies the entry for %flushpage() in driver_function_table so that this
+ * device function will now, in fact work. This should be called after the
+ * virtual %enterfont(0) is performed and before the initial vertical
+ * positioning. 
+ */
+ 
+void df_populate_driver_table( void )
+{
+    device_function_table[0x1D] = &df_flushpage;
+    return;
+}
+
+/* Function df_set_horizontal().
+ * Performs actions needed by fb_position which require access to
+ * current_state and x_address.
+ *
+ * Parameter:
+ *      h_start contains the new value for current_state.x_address
+ *      and x_address.
+ */
+
+void df_set_horizontal( uint32_t h_start )
+{
+    desired_state.x_address = h_start;
+    x_address = h_start;
+    return;
+}
+
+/* Function df_set_vertical().
+ * Performs actions needed by fb_position which require access to
+ * current_state.
+ *
+ * Parameter:
+ *      v_start contains the new value for current_state.y_address.
+ */
+
+void df_set_vertical( uint32_t v_start )
+{
+    current_state.y_address = v_start;
+    return;
+}
+
 /* Function df_setup().
  * Initializes those local variables that need more than a simple assignment
  * statement.
@@ -2033,6 +2238,10 @@ void df_populate_device_table( void )
 void df_setup( void )
 {
     symsub  *   sym_val = NULL;
+
+    /* Initialize the global. */
+
+    pages = 0;
 
     /* When called, each of symbols "date" and "time" contains either of
      * -- the value set from the system clock; or
@@ -2089,7 +2298,7 @@ void df_teardown( void )
  * function was invoked explicitly or implicitly. Parts of this function may
  * eventually be refactored if needed in other functions.
  *
- * Global Variable Modified:
+ * Note:
  *      font_number is set to "0" to ensure that all function blocks will be
  *      done in the context of the default font. It is restored to its initial
  *      value on exit.
@@ -2119,17 +2328,31 @@ void fb_enterfont( void )
             if( wgml_fonts[0].font_style->lineprocs[0].startvalue != NULL ) \
                 df_interpret_driver_functions( \
                     wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
-            if( wgml_fonts[0].font_style->lineprocs[0].firstword == NULL ) {
-                if( wgml_fonts[0].font_style->lineprocs[0].startword != NULL ) \
-                    df_interpret_driver_functions( \
-                    wgml_fonts[0].font_style->lineprocs[0].startword->text );
-            } else {
-                df_interpret_driver_functions( \
-                    wgml_fonts[0].font_style->lineprocs[0].firstword->text );
-            }
+            fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
         }
     }
     font_number = old_font;
+
+    return;
+}
+
+/* Function fb_firstword().
+ * Interprets the :FIRSTWORD block of the given :LINEPROC block. The "trick"
+ * here is that, if the :FIRSTWORD block does not exist but the :STARTWORD
+ * block does, then the :STARTWORD block is interpreted instead. 
+ *
+ * Parameter:
+ *      in_block points to the :LINEPROC block. 
+ */
+ 
+void fb_firstword( line_proc * in_block )
+{
+    if( in_block->firstword == NULL ) {
+        if( in_block->startword != NULL ) \
+            df_interpret_driver_functions( in_block->startword->text );
+    } else {
+        df_interpret_driver_functions( in_block->firstword->text );
+    }
 
     return;
 }
@@ -2177,40 +2400,135 @@ void fb_init( init_block * in_block )
     return;
 }
 
+/* Function fb_lineproc_endvalue()
+ * Checks the value of the text_output flag and interprets the :LINEPROC
+ * :ENDVALUE block for the current font if appropriate.
+ */
+
+void fb_lineproc_endvalue( void )
+{
+    if( text_output ) {
+        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[font_number].font_style->lineprocs[pass_number].\
+                                                        endvalue != NULL ) \
+                df_interpret_driver_functions( \
+                    wgml_fonts[font_number].font_style->lineprocs[pass_number].\
+                                                            endvalue->text );
+        }
+        text_output = false;
+    }
+
+    return;
+}
+
+/* Function fb_normal_vertical_positioning().
+ * Performs the normal vertical positioning as described in the Wiki. 
+ */
+
+void fb_normal_vertical_positioning( void )
+{
+    uint32_t    device_pages;
+    int         i;
+
+    if( current_state.y_address != desired_state.y_address ) {
+        /* Detect and process device pages. */
+
+        device_pages = desired_state.y_address / bin_device->page_depth;
+
+        /* device_pages contains the number of :NEWPAGE blocks needed. */
+
+        for( i=0; i < device_pages; i++ ) \
+
+            /* Interpret the DOCUMENT_PAGE :PAUSE block. */
+
+            if( bin_device->pauses.devpage_pause != NULL ) \
+                                df_interpret_device_functions( \
+                                    bin_device->pauses.devpage_pause->text );
+
+            /* Interpret the :NEWPAGE block. */
+
+            df_interpret_driver_functions( bin_driver->newpage.text );
+
+        /* Set up the values returned by %x_address() and y_address(). */
+
+        x_address = 0;
+        y_address = desired_state.y_address % bin_device->page_depth;
+
+        /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
+
+        if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
+    }
+
+    return;
+}
+
 /* Function fb_thickness().
  * Interprets any of the :HLINE, :VLINE, or :DBOX blocks, which define
  * attribute "thickness". Sets x_size, y_size, and thickness to match the
  * parameters. 
  *
  * Parameters:
- *      in_block points to either the START :INIT block or the DOCUMENT :INIT
- *          block.
+ *      in_function points to the function block to be interpreted.
  *      h_start contains the horizontal start position.
  *      v_start contains the vertical start position.
  *      h_len contains the horizontal extent for a :HLINE or :DBOX block.
  *      v_len contains the vertical extent for a :VLINE or :DBOX block.
- *      in_thickness contains the value of the thickness attribute.
+ *      thickness contains the thickness for this block.
+ *      name contains the name (:HLINE, :VLINE, or :DBOX) of the block.
+ *
+ * Prerequisites:
+ *      The block to be interpreted must exist.
+ *      The :ABSOLUTEADDRESS block must exist.
+ *
+ * Notes:
+ *      The :ABSOLUTEADDRESS block is required to position the print to the
+ *          start of the line or box.
+ *      The block must exist because the box-drawing code should be checking
+ *          this and, in some cases, drawing the line or box using the :BOX
+ *          block characters instead.
  */
 
 void fb_thickness( uint8_t * in_function, uint32_t h_start, uint32_t v_start, \
-                   uint32_t h_len, uint32_t v_len, uint32_t in_thickness )
+                   uint32_t h_len, uint32_t v_len, uint32_t in_thickness, \
+                   char * name )
 {
-    /* An empty block is not an error. */
+    /* An empty block is definitely an error. */
 
-    if( in_function == NULL ) return;
+    if( in_function == NULL ) {
+        out_msg("wgml internal error: The %s block must be defined if used\n", \
+                                                                        name );
+        err_count++;
+        g_suicide;
+    }
 
+    /* As is a missing :ABSOLUTEADDRESS block. */
+    
+    if( bin_driver->absoluteaddress.text == NULL ) {
+        out_msg("The :ABSOLUTEADDRESS must be defined if the %s is defined\n", \
+                                                                        name );
+        err_count++;
+        g_suicide;
+    }
+
+    /* Set up for fb_absoluteaddress(). */
+
+    desired_state.x_address = h_start;
+    desired_state.y_address = v_start;
     x_address = h_start;
-    y_address = v_start;
+    y_address = v_start % bin_device->page_depth;
+
+    fb_absoluteaddress();
+
+    /* Set up for in_function; current_state has been updated by
+     * fb_absoluteaddress().
+     */
+
     x_size = h_len;
     y_size = v_len;
     thickness = in_thickness;
-
-    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
     df_interpret_driver_functions( in_function );
 
-    /* This presumes that x_address and y_address should retain the values
-     * designating the point-of-origin for the line or box.
-     */
+    /* Clear the values not needed outside this block. */
 
     x_size = 0;
     y_size = 0;
