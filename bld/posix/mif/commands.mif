@@ -29,6 +29,7 @@ COMMANDS = &
     pwd &
     rev &
     sed &
+    sort &
     split &
     strings &
     tail &
