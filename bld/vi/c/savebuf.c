@@ -433,26 +433,29 @@ void AddLineToSavebuf( char *data, int scol, int ecol )
 /*
  * AddSelRgnToSavebuf - copy selected text to savebuf
  */
-void AddSelRgnToSavebuf( void )
+int AddSelRgnToSavebuf( void )
 {
-    char buf[] = "0";
-    range r;
+    char    buf[] = "0";
+    range   r;
+    int     rc;
 
-    if( GetSelectedRegion( &r ) != ERR_NO_ERR ) {
-        return;
+    rc = GetSelectedRegion( &r );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     NormalizeRange( &r );
     SetSavebufNumber( buf );
-    Yank( &r );
+    return( Yank( &r ) );
 }
 
 /*
  * AddSelRgnToSavebufAndDelete - copy selected text to savebuf, then kill it
  */
-void AddSelRgnToSavebufAndDelete( void )
+int AddSelRgnToSavebufAndDelete( void )
 {
     AddSelRgnToSavebuf();
     DeleteSelectedRegion();
+    return( ERR_NO_ERR );
 }
 
 /*

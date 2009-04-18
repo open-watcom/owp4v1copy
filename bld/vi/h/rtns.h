@@ -502,7 +502,7 @@ int     FindFirstCharInRangeBackwards( line *, char *, int );
 int     FindFirstCharNotInRangeForward( line *, char *, int );
 int     FindFirstCharNotInRangeBackward( line *, char *, int );
 bool    TestIfCharInRange( char, char * );
-int     FindCharOnCurrentLine( int, int, int *, int );
+int     FindCharOnCurrentLine( bool, int, int *, int );
 int     FancyGotoLine( void );
 
 /* lineins.c */
@@ -709,8 +709,8 @@ int     InsertSavebufAfter2( void );
 int     InsertGenericSavebuf( int, int );
 void    InitSavebufs( void );
 void    AddLineToSavebuf( char *, int, int );
-void    AddSelRgnToSavebuf( void );
-void    AddSelRgnToSavebufAndDelete( void );
+int     AddSelRgnToSavebuf( void );
+int     AddSelRgnToSavebufAndDelete( void );
 void    AddFcbsToSavebuf( fcb *, fcb *, int );
 int     SwitchSavebuf( void );
 int     DoSavebufNumber( void );

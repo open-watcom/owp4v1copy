@@ -43,10 +43,10 @@ char _NEAR      MEMORIZE_MODE[] = "Memorize Mode ";
 char _NEAR      CONFIG_FILE[] = CFG_NAME;
 char _NEAR      SingleBlank[] = " ";
 char _NEAR      SingleSlash[] = "/";
-char _NEAR      * _NEAR BoolStr[] = { "FALSE", "TRUE" };
+char            * _NEAR BoolStr[] = { "FALSE", "TRUE" };
 
 /* edit options */
-char _NEAR * _NEAR EditOpts[] =  {
+char * _NEAR EditOpts[] =  {
     "<F1> Go To",
     "<F2> Edit",
     "<F3> Get All"

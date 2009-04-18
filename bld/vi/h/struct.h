@@ -54,14 +54,14 @@ typedef struct {
     unsigned char   prompt          : 1;
     unsigned char   selection       : 1;
     unsigned char   spare           : 2;
-    char        *find;
-    int         findlen;
-    char        *replace;
-    int         replacelen;
-    char        *ext;
-    int         extlen;
-    char        *path;
-    int         pathlen;
+    char            *find;
+    int             findlen;
+    char            *replace;
+    int             replacelen;
+    char            *ext;
+    int             extlen;
+    char            *path;
+    int             pathlen;
 } fancy_find;
 
 typedef struct {
@@ -310,7 +310,7 @@ typedef int (*old_rtn)( void );
 typedef int (*alias_rtn)( void *, void * );
 
 typedef union command_rtn {
-    void        *ptr;   /* Must go first to avoid type mismatches */
+    int         (*ptr)();   /* Must go first to avoid type mismatches */
     insert_rtn  ins;
     move_rtn    move;
     op_rtn      op;

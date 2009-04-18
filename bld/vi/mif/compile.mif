@@ -53,10 +53,6 @@ extra_c_flags_386 = $(extra_c_flags_386_$(host_os))
 
 extra_c_flags = $(extra_c_flags_trmem) $(extra_c_flags_debug) -DNOUSE3D=1 -fh
 
-!ifndef bootstrap
-extra_c_flags += -ai
-!endif
-
 .ctl.ch:
         $(parsectl) $[@ $[&.ch Ctl_$^&
 .dyn.dh:

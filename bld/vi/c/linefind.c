@@ -243,7 +243,7 @@ static bool testIfCharNotInRange( char c, char *clist )
 /*
  * FindCharOnCurrentLine - look for c char on a line ('f','F','t','T' cmds)
  */
-int FindCharOnCurrentLine( int fwdflag, int mod, int *col, int cnt )
+int FindCharOnCurrentLine( bool fwdflag, int mod, int *col, int cnt )
 {
     int         i, c, j;
     char        lst[2];
