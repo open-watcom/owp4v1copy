@@ -68,8 +68,8 @@ void            *_inline_memset( void *__s, int __c, unsigned int __n );
 #endif
 
 #include "const.h"
-#include "struct.h"
 #include "errs.h"
+#include "struct.h"
 #include "mouse.h"
 #include "globals.h"
 #include "rtns.h"

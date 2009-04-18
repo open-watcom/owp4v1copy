@@ -33,7 +33,7 @@
 #ifndef _ERRS_INCLUDED
 #define _ERRS_INCLUDED
 
-enum {
+typedef enum vi_rc {
     GOT_RESPONSE = -100,
     ALIAS_NOT_FOUND,
     RANGE_REQUEST_CANCELLED,
@@ -52,10 +52,8 @@ enum {
     END_OF_FILE,
     FILE_COMPLETE_ENTER,
     NOT_COMPILEABLE_TOKEN,
-    MENU_COMMAND_NOT_HANDLED
-};
+    MENU_COMMAND_NOT_HANDLED,
 
-enum {
     ERR_NO_ERR = 0,
     ERR_NO_MEMORY,
     ERR_FILE_NOT_FOUND,
@@ -195,6 +193,6 @@ enum {
     ERR_INVALID_LOCATE,
     ERR_NO_MORE_REDOS,
     ERR_SAVE_CANCELED,
-};
+} vi_rc;
 
 #endif

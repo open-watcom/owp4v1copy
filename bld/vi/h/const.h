@@ -247,11 +247,13 @@ typedef enum font_type {
 /*
  * Event type constants for the event list
  */
-#define EVENT_OP                0x00
-#define EVENT_REL_MOVE          0x01
-#define EVENT_ABS_MOVE          0x02
-#define EVENT_MISC              0x03
-#define EVENT_INS               0x04
+typedef enum event_type {
+    EVENT_OP       = 0,
+    EVENT_REL_MOVE = 1,
+    EVENT_ABS_MOVE = 2,
+    EVENT_MISC     = 3,
+    EVENT_INS      = 4
+} event_type;
 
 /*
  * Name of environment variable to set the prompt.
