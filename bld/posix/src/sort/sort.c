@@ -155,6 +155,7 @@ void main( int argc, char **argv )
     
     for( i = 0; i < line_count; i++ ) {
         fputs( lines[i], outfile );
+        free( lines[i] );
     }
 
     if( own_infile ) {
