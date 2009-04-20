@@ -250,7 +250,7 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
  */
 
 #define pick( name, length, mand_parms, opt_parms, routine ) \
-    extern condcode routine( parm parms[ MAX_FUN_PARMS ], size_t parm_count, char * * ppval );
+    extern condcode routine( parm parms[MAX_FUN_PARMS], size_t parm_count, char * * ppval );
 
 #include "gsfuncs.h"
 

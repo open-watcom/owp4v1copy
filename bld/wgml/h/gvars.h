@@ -70,7 +70,7 @@ global  ulong           line_to;        // ending lineno to process
 #define LINEFROM_DEFAULT    1
 #define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
 
-global  char            gotarget[ MAC_NAME_LENGTH +1 ]; // .go to target name
+global  char            gotarget[MAC_NAME_LENGTH +1];   // .go to target name
 global  ulong           gotargetno;     // .go to line no
 
 global  int             err_count;      // Overall Errorcount
@@ -173,13 +173,13 @@ global char         *   open_paren;     // ( in input
 global char         *   clos_paren;     // ) in input
 global char         *   var_unresolved; // first unresolved var in input
 
-global char             srnm[ SYM_NAME_LENGTH + 1 ];// symbol name for getsym()
+global char             srnm[SYM_NAME_LENGTH + 1];// symbol name for getsym()
 global sub_index        srnmsub;        // subscript
 
 // the following to manage .gt * and .ga * * syntax
-global char        tagname[ TAG_NAME_LENGTH + 1 ];// last defined GML tag name
+global char        tagname[TAG_NAME_LENGTH + 1];// last defined GML tag name
 global gtentry  *  tag_entry;           // ... entry in tag_dict
-global char        attname[ ATT_NAME_LENGTH + 1 ];// last defined GML attribute
+global char        attname[ATT_NAME_LENGTH + 1];// last defined GML attribute
 global gaentry  *  att_entry;           // ... entry in tag_dict
 
 
