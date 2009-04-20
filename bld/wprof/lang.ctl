@@ -30,6 +30,7 @@ cdsay .
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/wprof/nt386/wprof.exe      <RELROOT>/binnt/wprof.exe
+    <CPCMD> <DEVDIR>/wprof/nt386c/wprof.exe     <RELROOT>/binnt/wprofc.exe
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/wprof/ntaxp/wprof.exe      <RELROOT>/axpnt/wprof.exe

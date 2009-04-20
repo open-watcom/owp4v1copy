@@ -23,11 +23,12 @@ aui_lib = $(aui_dir)/$(aui_dir_$(host_os))/aui.lib
 
 gui_dir_nt_axp  = $(gui_dir)/win/ntaxp/gui.lib
 gui_dir_nt_386  = $(gui_dir)/win/nt386/gui.lib
-gui_dir_nt      = $(gui_dir_nt_$(host_cpu))
 gui_dir_dos     = $(gui_dir)/ui/dos386/gui.lib
 !ifeq sys_windowed 1
+gui_dir_nt      = $(gui_dir_nt_$(host_cpu))
 gui_dir_os2     = $(gui_dir)/win/os2386/gui.lib
 !else
+gui_dir_nt      = $(gui_dir)/ui/nt$(host_cpu)/gui.lib
 gui_dir_os2     = $(gui_dir)/ui/os2386/gui.lib
 !endif
 gui_dir_qnx     = $(gui_dir)/ui/qnx386/gui.lib
@@ -46,6 +47,7 @@ extra_lib_dos   = $(ui_dir)/dos/dos386/ui.lib
 !ifeq sys_windowed 1
 extra_lib_os2   = $(os2386)
 !else
+extra_lib_nt    = $(ui_dir)/nt/nt$(host_cpu)/ui.lib
 extra_lib_os2   = $(ui_dir)/os2/os2386/ui.lib $(os2386)
 !endif
 extra_lib_qnx   = $(ui_dir)/qnx/qnx386/ui.lib
