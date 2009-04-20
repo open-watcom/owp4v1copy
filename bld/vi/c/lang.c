@@ -181,7 +181,7 @@ static bool lang_save( int i, char *buff )
  */
 void LangInit( int newLanguage )
 {
-    int         rc;
+    vi_rc       rc;
     char        *buff;
     char        *fname[] = { NULL, "c.dat", "cpp.dat", "fortran.dat", "java.dat", "sql.dat",
                              "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
@@ -196,7 +196,7 @@ void LangInit( int newLanguage )
 
     if( langInfo[newLanguage].ref_count == 0 ) {
         rc = ReadDataFile( fname[newLanguage], &buff, lang_alloc, lang_save );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             Error( GetErrorMsg( rc ) );
             CurrentInfo->Language = LANG_NONE;
             return;

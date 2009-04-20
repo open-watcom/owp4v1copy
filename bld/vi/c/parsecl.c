@@ -40,12 +40,13 @@ static char pDelims[] = " /!";
 /*
  * ParseCommandLine - parse a command line
  */
-int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2flag,
+vi_rc ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2flag,
                       int *token, char *data, int *dammit )
 {
     char        *tres, *tmp;
-    int         i, rc, j, k;
+    int         i, j, k;
     linenum     l;
+    vi_rc       rc;
 
     /*
      * set up for parse
@@ -74,9 +75,9 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
     if( buff[0] == '%' ) {
         *n1flag = *n2flag = TRUE;
         *n1 = 1;
-        i = CFindLastLine( n2 );
-        if( i ) {
-            return( i );
+        rc = CFindLastLine( n2 );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
         EliminateFirstN( buff, 1 );
         RemoveLeadingSpaces( buff );
@@ -111,7 +112,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
         if( rc > 0 || rc == DO_NOT_CLEAR_MESSAGE_WINDOW ) {
             return( rc );
         }
-        if( !rc ) {
+        if( rc == ERR_NO_ERR ) {
             *n1flag = TRUE;
             *n1 = l;
             RemoveLeadingSpaces( buff );
@@ -122,7 +123,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
                 if( rc > 0 ) {
                     return( rc );
                 }
-                if( rc ) {
+                if( rc != ERR_NO_ERR ) {
                     return( ERR_INVALID_COMMAND );
                 }
                 *n2flag = TRUE;
@@ -191,7 +192,7 @@ int ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *n2
 /*
  * GetAddress - parse to obtain line number
  */
-int GetAddress( char *buff, linenum *num  )
+vi_rc GetAddress( char *buff, linenum *num  )
 {
     linenum     numstack[NUM_STACK_SIZE];
     char        currnum[NUM_STACK_SIZE];
@@ -202,9 +203,10 @@ int GetAddress( char *buff, linenum *num  )
     bool        numinprog, stopnum, endparse;
     char        c;
     char        *tmp, st[2];
-    int         rc, len;
+    int         len;
     find_type   fl;
     i_mark      pos;
+    vi_rc       rc;
 
     /*
      * check if we have a numeric type thingy here
@@ -249,7 +251,7 @@ int GetAddress( char *buff, linenum *num  )
                     numstack[nument] = pos.line;
                     stopnum = TRUE;
                     StaticFree( tmp );
-                    if( rc ) {
+                    if( rc != ERR_NO_ERR ) {
                         return( rc );
                     }
                     if( buff[k] == 0 ) {
@@ -263,9 +265,9 @@ int GetAddress( char *buff, linenum *num  )
                     return( NO_NUMBER );
                 }
                 j = buff[k + 1] - 'a';
-                i = VerifyMark( j + 1, TRUE );
-                if( i ) {
-                    return( i );
+                rc = VerifyMark( j + 1, TRUE );
+                if( rc != ERR_NO_ERR ) {
+                    return( rc );
                 }
                 numstack[nument] = MarkList[j].p.line;
                 stopnum = TRUE;
@@ -299,9 +301,9 @@ int GetAddress( char *buff, linenum *num  )
                 if( numinprog ) {
                     return( NO_NUMBER );
                 }
-                i = CFindLastLine( &numstack[nument] );
-                if( i ) {
-                    return( i );
+                rc = CFindLastLine( &numstack[nument] );
+                if( rc != ERR_NO_ERR ) {
+                    return( rc );
                 }
                 stopnum = TRUE;
                 break;

@@ -398,11 +398,12 @@ int RealCursorPositionOnLine( linenum line_num, int virt_pos )
 {
     line        *line;
     fcb         *fcb;
-    int         i, real_pos;
+    int         real_pos;
+    vi_rc       rc;
 
     real_pos = -1;
-    i = CGimmeLinePtr( line_num, &fcb, &line );
-    if( i == ERR_NO_ERR ) {
+    rc = CGimmeLinePtr( line_num, &fcb, &line );
+    if( rc == ERR_NO_ERR ) {
         real_pos = realPosition( virt_pos, line->data, line->len );
     }
     return( real_pos );

@@ -47,7 +47,7 @@ static int compare( const void *p1, const void *p2 )
 /*
  * getDir - get current directory list (no sorting)
  */
-static int getDir( char *dname, bool want_all_dirs )
+static vi_rc getDir( char *dname, bool want_all_dirs )
 {
     DIR                 *d;
     struct dirent       *nd;
@@ -57,6 +57,7 @@ static int getDir( char *dname, bool want_all_dirs )
     char                path[FILENAME_MAX];
     char                ch;
     bool                is_subdir;
+    vi_rc               rc;
 
     /*
      * initialize for file scan
@@ -79,9 +80,9 @@ static int getDir( char *dname, bool want_all_dirs )
     for( j = i + 1; j <= len; j++ ) {
         wild[j - i - 1] = dname[j];
     }
-    i = FileMatchInit( wild );
-    if( i ) {
-        return( i );
+    rc = FileMatchInit( wild );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 #ifndef __UNIX__
     if( ch != '\\' && ch != '/' && ch != ':' && ch != 0 ) {
@@ -157,13 +158,13 @@ static int getDir( char *dname, bool want_all_dirs )
 /*
  * GetSortDir - get a directory and sort it
  */
-int GetSortDir( char *name, bool want_all_dirs )
+vi_rc GetSortDir( char *name, bool want_all_dirs )
 {
-    int         i;
+    vi_rc       rc;
 
-    i = getDir( name, want_all_dirs );
-    if( i ) {
-        return( i );
+    rc = getDir( name, want_all_dirs );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     if( DirFileCount ) {
         qsort( DirFiles, DirFileCount, sizeof( direct_ent * ), compare );

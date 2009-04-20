@@ -387,7 +387,7 @@ void PickFont( font_type index, HWND parent )
 /*
  * SetFont - process a set font command
  */
-int SetFont( char *data )
+vi_rc SetFont( char *data )
 {
     LOGFONT     l;
     STUPIDNTINT index;

@@ -195,7 +195,7 @@ static void doHookAssign( FILE *f, hooktype num )
 /*
  * GenerateConfiguration - write out a config file
  */
-int GenerateConfiguration( char *fname, bool is_cmdline )
+vi_rc GenerateConfiguration( char *fname, bool is_cmdline )
 {
     FILE        *f;
     int         i;

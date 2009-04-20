@@ -36,15 +36,16 @@
 /*
  * WindowTile - tile windows given maximum in each direction
  */
-int WindowTile( int maxx, int maxy )
+vi_rc WindowTile( int maxx, int maxy )
 {
     int         cnt = 0, max = maxx * maxy, xdiv, ydiv, tc = 0, tcc;
     int         xstart = editw_info.x1;
     int         xend = editw_info.x2;
     int         ystart = editw_info.y1;
     int         yend = editw_info.y2;
-    int         ystep, xstep, x, i, y, xextra, yextra, xx, yy, sxextra;
+    int         ystep, xstep, x, y, xextra, yextra, xx, yy, sxextra;
     info        *cinfo, *cwinfo;
+    vi_rc       rc;
 
     /*
      * "untile" cmd
@@ -147,10 +148,10 @@ int WindowTile( int maxx, int maxy )
                 }
             }
 
-            i = CurrentWindowResize( xstart, ystart, xstart + xx + xstep - 1,
+            rc = CurrentWindowResize( xstart, ystart, xstart + xx + xstep - 1,
                                      ystart + yy + ystep - 1 );
-            if( i ) {
-                return( i );
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
             }
             SaveInfo( cinfo );
 
@@ -182,7 +183,7 @@ int WindowTile( int maxx, int maxy )
 /*
  * WindowCascade - cascade windows
  */
-int WindowCascade( void )
+vi_rc WindowCascade( void )
 {
     int         cnt, i, j;
     int         xstart = editw_info.x1;
@@ -190,6 +191,7 @@ int WindowCascade( void )
     int         ystart = editw_info.y1;
     int         yend = editw_info.y2;
     info        *cinfo, *cwinfo;
+    vi_rc       rc;
 
     /*
      * get number of files to cascade
@@ -220,9 +222,9 @@ int WindowCascade( void )
     for( i = 0; i < cnt; i++ ) {
 
         BringUpFile( cinfo, FALSE );
-        j = CurrentWindowResize( xstart, ystart, xend, yend );
-        if( j ) {
-            return( j );
+        rc = CurrentWindowResize( xstart, ystart, xend, yend );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
         SaveInfo( cinfo );
         xstart++;

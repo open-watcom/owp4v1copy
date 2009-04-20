@@ -95,7 +95,7 @@ bool GetDWORD( char *str, LPVOID res )
 /*
  * RunWindowsCommand - try to run a Windows specific command
  */
-bool RunWindowsCommand( char *cmd, long *result, vlist *vl )
+bool RunWindowsCommand( char *cmd, vi_rc *result, vlist *vl )
 {
     char        *str;
     char        *tmp;

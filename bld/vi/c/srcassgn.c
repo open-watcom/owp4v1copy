@@ -40,9 +40,9 @@
 /*
  * SrcAssign - assign a value to a variable
  */
-int SrcAssign( char *data, vlist *vl )
+vi_rc SrcAssign( char *data, vlist *vl )
 {
-    int         i, j, k, l, rc;
+    int         i, j, k, l;
     long        val;
     bool        rxflag = FALSE, envflag = FALSE, setflag = FALSE, expflag = FALSE;
     bool        timeflag = FALSE, lnumflag = FALSE;
@@ -213,18 +213,19 @@ int SrcAssign( char *data, vlist *vl )
         strcpy( v1, tmp );
     } else if( expflag || lnumflag ) {
 
-        rc = setjmp( jmpaddr );
-        if( rc == 0 ) {
+        i = setjmp( jmpaddr );
+        if( i == 0 ) {
             StartExprParse( v1, jmpaddr );
             val = GetConstExpr();
         } else {
-            return( rc );
+            return( i );
         }
         if( lnumflag ) {
             fcb         *cfcb;
             line        *cline;
+            vi_rc       rc;
             rc = CGimmeLinePtr( val, &cfcb, &cline );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 VarAddStr( name, "", vl );
             } else {
                 VarAddStr( name, cline->data, vl );

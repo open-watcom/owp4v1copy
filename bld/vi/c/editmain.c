@@ -57,10 +57,10 @@ static void defaultRange( range *range )
 /*
  * doOperator - process an operator event
  */
-static int doOperator( event *ev )
+static vi_rc doOperator( event *ev )
 {
     event       *next;
-    int         rc;
+    vi_rc       rc;
     long        count;
     range       range;
     int         next_type;
@@ -115,7 +115,7 @@ static int doOperator( event *ev )
                         LastEvent == 'w' ) {
                 EditFlags.IsChangeWord = TRUE;
                 if( CurrentLine != NULL ) {
-                    if( !isspace( CurrentLine->data[ CurrentPos.column - 1 ] ) ) {
+                    if( !isspace( CurrentLine->data[CurrentPos.column - 1] ) ) {
                         next = &EventList['e'];
                         range.fix_range = FALSE;
                     }
@@ -161,10 +161,10 @@ static int doOperator( event *ev )
 /*
  * DoMove - handle a movement command
  */
-int DoMove( event *ev )
+vi_rc DoMove( event *ev )
 {
     range       range;
-    int         rc;
+    vi_rc       rc;
     int         curcol;
     int         type;
 
@@ -225,22 +225,22 @@ static void ensureCursorDisplayed( void )
 /*
  * DoLastEvent - process the last keystroke event
  */
-int DoLastEvent( void )
+vi_rc DoLastEvent( void )
 {
     event       *event;
-    int         rc;
+    vi_rc       rc;
     bool        keep_sel;
 
     if( LastEvent >= MAX_EVENTS ) {
         return( InvalidKey() );
     } else {
         if( !EditFlags.InsertModeActive || EditFlags.Modeless ) {
-            if( !EditFlags.Modeless && KeyMaps[ LastEvent ].data != NULL ) {
-                if( !KeyMaps[ LastEvent ].inuse ) {
+            if( !EditFlags.Modeless && KeyMaps[LastEvent].data != NULL ) {
+                if( !KeyMaps[LastEvent].inuse ) {
                     return( DoKeyMap( LastEvent ) );
                 }
             }
-            event = &EventList[ LastEvent ];
+            event = &EventList[LastEvent];
             keep_sel = event->b.keep_selection;
             if( event->b.keep_selection_maybe ) {
                 if( SelRgn.selected ) {
@@ -292,12 +292,12 @@ int DoLastEvent( void )
             if( EditFlags.EscapedInsertChar ) {
                 return( IMChar() );
             } else {
-                if( InputKeyMaps[ LastEvent ].data != NULL ) {
-                    if( !InputKeyMaps[ LastEvent ].inuse ) {
+                if( InputKeyMaps[LastEvent].data != NULL ) {
+                    if( !InputKeyMaps[LastEvent].inuse ) {
                         return( StartInputKeyMap( LastEvent ) );
                     }
                 }
-                return( (EventList[ LastEvent ].ins)() );
+                return( (EventList[LastEvent].ins)() );
             }
         }
     }
@@ -307,7 +307,7 @@ int DoLastEvent( void )
 /*
  * DoneLastEvent - finished with the last event
  */
-void DoneLastEvent( int rc, bool is_dotmode )
+void DoneLastEvent( vi_rc rc, bool is_dotmode )
 {
     if( !EditFlags.InsertModeActive ) {
         /*
@@ -344,7 +344,7 @@ void DoneLastEvent( int rc, bool is_dotmode )
  */
 void EditMain( void )
 {
-    int         rc;
+    vi_rc       rc;
     char        *msg;
     bool        doclear;
 
@@ -434,7 +434,7 @@ void EditMain( void )
 /*
  * AbsoluteNullResponse - give no response
  */
-int AbsoluteNullResponse( void )
+vi_rc AbsoluteNullResponse( void )
 {
     return( ERR_NO_ERR );
 }
@@ -442,7 +442,7 @@ int AbsoluteNullResponse( void )
 /*
  * NullResponse - give null response for keystroke
  */
-int NullResponse( void )
+vi_rc NullResponse( void )
 {
     if( !EditFlags.EscapeMessage ) {
         ClearWindow( MessageWindow );
@@ -485,7 +485,7 @@ void DoneRepeat( void )
  */
 void SetRepeatCount( long num )
 {
-    char        str[ MAX_NUM_STR ];
+    char        str[MAX_NUM_STR];
 
     ltoa( num, str, 10 );
     strcpy( RepeatString, str );
@@ -520,9 +520,9 @@ extern void UpdateRepeatString( char *str );
 /*
  * DoDigit - process a digit typed in
  */
-int DoDigit( void )
+vi_rc DoDigit( void )
 {
-    int i;
+    vi_rc   rc;
 
     if( LastEvent == '0' && RepeatDigits == 0 ) {
         LeftTopPos.column = 0;
@@ -537,16 +537,16 @@ int DoDigit( void )
     }
 
     if( repeatWindow == (window_id)-1 && EditFlags.RepeatInfo ) {
-        i = NewWindow2( &repeatWindow, &repcntw_info );
-        if( i ) {
+        rc = NewWindow2( &repeatWindow, &repcntw_info );
+        if( rc != ERR_NO_ERR ) {
             DoneRepeat();
-            return( i );
+            return( rc );
         }
         WindowTitle( repeatWindow, "Repeat Count" );
     }
 
-    RepeatString[ RepeatDigits++ ] = LastEvent;
-    RepeatString[ RepeatDigits ] = 0;
+    RepeatString[RepeatDigits++] = LastEvent;
+    RepeatString[RepeatDigits] = 0;
     if( repeatWindow != (window_id)-1 ) {
         UpdateRepeatString( RepeatString );
     }
@@ -557,7 +557,7 @@ int DoDigit( void )
 /*
  * InvalidKey - process invalid keystroke
  */
-int InvalidKey( void )
+vi_rc InvalidKey( void )
 {
     Error( GetErrorMsg( ERR_INVALID_KEY ), LastEvent );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );

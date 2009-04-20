@@ -39,9 +39,9 @@
 /*
  * NewStatusWindow - create a new status window
  */
-int NewStatusWindow( void )
+vi_rc NewStatusWindow( void )
 {
-    int rc = ERR_NO_ERR;
+    vi_rc   rc = ERR_NO_ERR;
 
     if( !EditFlags.WindowsStarted ) {
         return( ERR_NO_ERR );

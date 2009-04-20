@@ -38,7 +38,7 @@
 /*
  * SrcOpen - open a file
  */
-int SrcOpen( sfile *curr, vlist *vl, files *fi, char *data )
+vi_rc SrcOpen( sfile *curr, vlist *vl, files *fi, char *data )
 {
     int         i;
     char        name[MAX_SRC_LINE], id[MAX_SRC_LINE], type[MAX_SRC_LINE], t;
@@ -119,7 +119,7 @@ int SrcOpen( sfile *curr, vlist *vl, files *fi, char *data )
 /*
  * SrcRead - read file
  */
-int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
+vi_rc SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
 {
     int         i;
     int         j;
@@ -162,11 +162,11 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
     } else {
         fcb     *cfcb;
         line    *cline;
-        int     rc;
+        vi_rc   rc;
 
         rc = GimmeLinePtr( fi->u.buffer[i].line, fi->u.buffer[i].cinfo->CurrentFile,
                            &cfcb, &cline );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             fi->ft[i] = SRCFILE_NONE;
             return( END_OF_FILE );
         }
@@ -180,7 +180,7 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
 /*
  * SrcWrite - write file
  */
-int SrcWrite( sfile *curr, files *fi, char *data, vlist *vl )
+vi_rc SrcWrite( sfile *curr, files *fi, char *data, vlist *vl )
 {
     int         i;
     char        id[MAX_SRC_LINE], v1[MAX_SRC_LINE];
@@ -218,7 +218,7 @@ int SrcWrite( sfile *curr, files *fi, char *data, vlist *vl )
 /*
  * SrcClose - close a work file
  */
-int SrcClose( sfile *curr, vlist *vl, files *fi, char *data )
+vi_rc SrcClose( sfile *curr, vlist *vl, files *fi, char *data )
 {
     int         i;
     char        id[MAX_SRC_LINE];

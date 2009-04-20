@@ -40,15 +40,15 @@
  */
 void GetFileInfo( direct_ent *tmp, struct dirent *nd, char *path )
 {
-    char        tmpname[ _MAX_PATH ];
+    char        tmpname[_MAX_PATH];
     int         len;
 
     if( !(nd->d_stat.st_status & _FILE_USED ) ) {
         strcpy( tmpname, path );
         len = strlen( tmpname );
-        if( tmpname[ len-1 ] != FILE_SEP ) {
-            tmpname[ len ] = FILE_SEP;
-            tmpname[ len+1 ] = 0;
+        if( tmpname[len - 1] != FILE_SEP ) {
+            tmpname[len] = FILE_SEP;
+            tmpname[len + 1] = 0;
         }
         strcat( tmpname, nd->d_name );
         stat( tmpname, &nd->d_stat );
@@ -100,7 +100,8 @@ int IsDirectory( char *name )
  */
 void FormatFileEntry( direct_ent *file, char *res )
 {
-    char        buff[80],tmp[50];
+    char        buff[80];
+    char        tmp[50];
     long        size;
     struct tm   *tm;
     time_t      tt;

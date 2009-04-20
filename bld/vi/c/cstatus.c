@@ -67,9 +67,9 @@ void GetModeString( char *st )
 /*
  * UpdateCurrentStatus - maintain current status info
  */
-int UpdateCurrentStatus( status_type st )
+status_type UpdateCurrentStatus( status_type st )
 {
-    int         ost;
+    status_type ost;
 
     ost = lastStatus;
     lastStatus = st;

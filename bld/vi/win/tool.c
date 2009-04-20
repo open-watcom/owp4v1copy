@@ -81,11 +81,12 @@ static HBITMAP          buttonPattern;
 
 RECT                    ToolBarFloatRect;
 
-int HandleToolCommand( UINT id )
+vi_rc HandleToolCommand( UINT id )
 {
     ss          *p;
     tool_item   *item;
-    int         len, rc;
+    int         len;
+    vi_rc       rc;
     char        *str;
 
     for( p = toolBarHead; p != NULL; p = p->next ) {

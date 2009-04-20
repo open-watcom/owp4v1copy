@@ -37,15 +37,15 @@ static bool beforeFlag;
 /*
  * Append - start appending
  */
-int Append( linenum n1, bool startundo )
+vi_rc Append( linenum n1, bool startundo )
 {
-    int i;
+    vi_rc   rc;
 
     /*
      * initialize
      */
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
     if( n1 == 0 || CurrentFcb->nullfcb ) {
         beforeFlag = TRUE;
@@ -53,9 +53,9 @@ int Append( linenum n1, bool startundo )
     } else {
         beforeFlag = FALSE;
     }
-    i = SetCurrentLine( n1 );
-    if( i ) {
-        return( i );
+    rc = SetCurrentLine( n1 );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     Modified( TRUE );
     if( startundo ) {
@@ -69,10 +69,11 @@ int Append( linenum n1, bool startundo )
 /*
  * AppendAnother
  */
-int AppendAnother( char *data )
+vi_rc AppendAnother( char *data )
 {
     bool        dontmove = FALSE;
     int         i;
+    vi_rc       rc;
     linenum     cln;
 
     i = strlen( data );
@@ -102,9 +103,9 @@ int AppendAnother( char *data )
 
 
     if( !dontmove ) {
-        i = SetCurrentLine( cln );
-        if( i ) {
-            return( i );
+        rc = SetCurrentLine( cln );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
     return( ERR_NO_ERR );

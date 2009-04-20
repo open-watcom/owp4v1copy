@@ -71,25 +71,25 @@ typedef struct mouse_hook {
 } mouse_hook;
 
 /* hdlmouse.c */
-int HandleMouseEvent( void );
+extern vi_rc        HandleMouseEvent( void );
 
 /* mouse.c */
-vi_mouse_event  GetMouseEvent( void );
-void            RedrawMouse( int row, int col );
-int             DisplayMouse( int flag );
+extern vi_mouse_event GetMouseEvent( void );
+extern void         RedrawMouse( int row, int col );
+extern bool         DisplayMouse( bool flag );
 
 /* mouseev.c */
-window_id   GetMousePosInfo( int *win_x, int *win_y );
-bool        TestMouseEvent( bool );
-void        PushMouseEventHandler( mouse_callback cb );
-void        PopMouseEventHandler( void );
+extern window_id    GetMousePosInfo( int *win_x, int *win_y );
+extern bool         TestMouseEvent( bool );
+extern void         PushMouseEventHandler( mouse_callback cb );
+extern void         PopMouseEventHandler( void );
 
 /* system dependant, <sys>mouse.c */
-void    SetMouseSpeed( int speed );
-void    SetMousePosition( int row, int col );
-void    ShowMouse( int on );
-void    PollMouse( int *status, int *row, int *col );
-void    InitMouse( void );
-void    FiniMouse( void );
+extern void         SetMouseSpeed( int speed );
+extern void         SetMousePosition( int row, int col );
+extern void         ShowMouse( int on );
+extern void         PollMouse( int *status, int *row, int *col );
+extern void         InitMouse( void );
+extern void         FiniMouse( void );
 
 #endif

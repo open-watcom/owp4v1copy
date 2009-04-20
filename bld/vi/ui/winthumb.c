@@ -104,10 +104,10 @@ void PositionVerticalScrollThumb( window_id wn, linenum curr, linenum last )
 /*
  * PositionToNewThumbPosition - set new position in file based on thumb
  */
-int PositionToNewThumbPosition( wind *w, int win_y )
+vi_rc PositionToNewThumbPosition( wind *w, int win_y )
 {
     int         height;
-    int         rc;
+    vi_rc       rc;
     linenum     lne, clne;
 
     if( win_y == w->vert_scroll_pos ) {

@@ -302,7 +302,7 @@ void UpdateCursorDrag( void )
  */
 void SetSelRegionCols( linenum sl, int sc, int ec )
 {
-    int     rc;
+    vi_rc   rc;
     line    *line;
     fcb     *fcb;
     char    *data;
@@ -327,7 +327,7 @@ void SetSelRegionCols( linenum sl, int sc, int ec )
 /*
  * ReselectRegion - restore the previous selection.
  */
-int ReselectRegion( void )
+vi_rc ReselectRegion( void )
 {
     if( SelRgn.start.line != 0 && SelRgn.end.line != 0 ) {
         SelRgn.selected = TRUE;
@@ -365,7 +365,7 @@ int startSelectedRegion( bool line_based )
 /*
  * SelectLeft - update selected region, moving left
  */
-int SelectLeft( range *r, long count )
+vi_rc SelectLeft( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -377,7 +377,7 @@ int SelectLeft( range *r, long count )
 /*
  * SelectRight - update selected region, moving right
  */
-int SelectRight( range *r, long count )
+vi_rc SelectRight( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -389,7 +389,7 @@ int SelectRight( range *r, long count )
 /*
  * SelectUp - update selected region, moving up
  */
-int SelectUp( void )
+vi_rc SelectUp( void )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( EditFlags.LineBased );
@@ -404,7 +404,7 @@ int SelectUp( void )
 /*
  * SelectDown - update selected region, moving down
  */
-int SelectDown( void )
+vi_rc SelectDown( void )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( EditFlags.LineBased );
@@ -419,7 +419,7 @@ int SelectDown( void )
 /*
  * SelectHome - update selected region, moving to beginning of line
  */
-int SelectHome( void )
+vi_rc SelectHome( void )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -431,7 +431,7 @@ int SelectHome( void )
 /*
  * SelectEnd - update selected region, moving to end of line
  */
-int SelectEnd( void )
+vi_rc SelectEnd( void )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -445,7 +445,7 @@ int SelectEnd( void )
 /*
  * SelectPageUp - update selected region, moving one page up
  */
-int SelectPageUp( void )
+vi_rc SelectPageUp( void )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( EditFlags.LineBased );
@@ -460,7 +460,7 @@ int SelectPageUp( void )
 /*
  * SelectPageDown - update selected region, moving one page down
  */
-int SelectPageDown( void )
+vi_rc SelectPageDown( void )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( EditFlags.LineBased );
@@ -472,7 +472,7 @@ int SelectPageDown( void )
 
 } /* SelectPageDown */
 
-int SelectBackwardsWord( range *r, long count )
+vi_rc SelectBackwardsWord( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -480,7 +480,7 @@ int SelectBackwardsWord( range *r, long count )
     return( MoveBackwardsWord( r, count ) );
 }
 
-int SelectForwardWord( range *r, long count )
+vi_rc SelectForwardWord( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -488,7 +488,7 @@ int SelectForwardWord( range *r, long count )
     return( MoveForwardWord( r, count ) );
 }
 
-int SelectStartOfFile( range *r, long count )
+vi_rc SelectStartOfFile( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -496,7 +496,7 @@ int SelectStartOfFile( range *r, long count )
     return( MoveStartOfFile( r, count ) );
 }
 
-int SelectEndOfFile( range *r, long count )
+vi_rc SelectEndOfFile( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -504,7 +504,7 @@ int SelectEndOfFile( range *r, long count )
     return( MoveEndOfFile( r, count ) );
 }
 
-int SelectTopOfPage( range *r, long count )
+vi_rc SelectTopOfPage( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -512,7 +512,7 @@ int SelectTopOfPage( range *r, long count )
     return( MoveTopOfPage( r, count ) );
 }
 
-int SelectBottomOfPage( range *r, long count )
+vi_rc SelectBottomOfPage( range *r, long count )
 {
     if( !EditFlags.Dragging ) {
         startSelectedRegion( FALSE );
@@ -523,11 +523,11 @@ int SelectBottomOfPage( range *r, long count )
 /*
  * DoSelectSelection - selected region was selected, invoke aprops script
  */
-int DoSelectSelection( bool doMenu )
+vi_rc DoSelectSelection( bool doMenu )
 {
     linenum     sl, el, tl;
     int         sc, ec, tc;
-    int         rc = ERR_NO_ERR;
+    vi_rc       rc = ERR_NO_ERR;
 
     if( SelRgn.selected && doMenu ) {
         sl = SelRgn.start.line;
@@ -570,7 +570,7 @@ int DoSelectSelection( bool doMenu )
         }
     } else {
         rc = GimmeCurrentEntireWordDim( &sc, &ec, FALSE );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( ERR_NO_ERR );
         }
         SetSelRegionCols( CurrentPos.line, sc, ec );
@@ -588,7 +588,7 @@ int DoSelectSelection( bool doMenu )
 /*
  * DoSelectSelectionPopMenu - $%!@ DoSelectSelection that always pops
  */
-int DoSelectSelectionPopMenu( void )
+vi_rc DoSelectSelectionPopMenu( void )
 {
     return( DoSelectSelection( TRUE ) );
 }
@@ -596,9 +596,9 @@ int DoSelectSelectionPopMenu( void )
 /*
  * GetSelectedRegion - get the current selected region
  */
-int GetSelectedRegion( range *r )
+vi_rc GetSelectedRegion( range *r )
 {
-    int         rc;
+    vi_rc       rc;
 
     rc = ERR_NO_SELECTION;
     if( SelRgn.selected ) {
@@ -626,9 +626,9 @@ int GetSelectedRegion( range *r )
 /*
  * SetSelectedRegion - set the selected region to a specific area
  */
-int SetSelectedRegion( range *r )
+vi_rc SetSelectedRegion( range *r )
 {
-    int     rc;
+    vi_rc   rc;
     line    *line;
     fcb     *fcb;
 
@@ -665,9 +665,9 @@ int SetSelectedRegion( range *r )
 /*
  * SetSelectedRegionFromLine - set the SelRgn w/ start_v
  */
-int SetSelectedRegionFromLine( range *r, linenum lineno )
+vi_rc SetSelectedRegionFromLine( range *r, linenum lineno )
 {
-    int     rc;
+    vi_rc   rc;
     fcb     *fcb;
     line    *line;
     char    *data;

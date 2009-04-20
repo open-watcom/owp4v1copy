@@ -43,6 +43,7 @@ int ExpandFileNames( char *p, char ***argv )
     char        extin[_MAX_EXT], pathin[FILENAME_MAX];
     char        *start, *new;
     bool        wildcard;
+    vi_rc       rc;
 
     argc = 0;
     wildcard = FALSE;
@@ -73,8 +74,8 @@ int ExpandFileNames( char *p, char ***argv )
     /*
      * get all matches
      */
-    i = GetSortDir( start, FALSE );
-    if( i ) {
+    rc = GetSortDir( start, FALSE );
+    if( rc != ERR_NO_ERR ) {
         return( 0 );
     }
     _splitpath( start, drive, directory, name, extin );

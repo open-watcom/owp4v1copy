@@ -85,15 +85,16 @@ static void rotateSavebufs( int start )
 /*
  * insertGenericSavebuf - insert contents of a savebuf before/after current pos
  */
-static int insertGenericSavebuf( int buf, int afterflag )
+static vi_rc insertGenericSavebuf( int buf, int afterflag )
 {
 #ifdef __WIN__
     savebuf     clip;
 #endif
     savebuf     *tmp;
     fcb         *head = NULL, *tail = NULL, *end;
-    int         rc, i, scol, len;
+    int         i, scol, len;
     int         maxCursor;
+    vi_rc       rc;
 
     if( rc = ModificationTest() ) {
         return( rc );
@@ -107,7 +108,7 @@ static int insertGenericSavebuf( int buf, int afterflag )
 #ifdef __WIN__
     if( buf == CLIPBOARD_SAVEBUF ) {
         rc = GetClipboardSavebuf( &clip );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( rc );
         }
         tmp = &clip;
@@ -199,7 +200,7 @@ static int insertGenericSavebuf( int buf, int afterflag )
 /*
  * InsertSavebufBefore - insert contents of current savebuf before current pos
  */
-int InsertSavebufBefore( void )
+vi_rc InsertSavebufBefore( void )
 {
     if( SavebufNumber == NO_SAVEBUF ) {
         return( insertGenericSavebuf( CurrentSavebuf, FALSE ) );
@@ -212,7 +213,7 @@ int InsertSavebufBefore( void )
 /*
  * InsertSavebufBefore2 - alternate insert savebuf (cuz of windows)
  */
-int InsertSavebufBefore2( void )
+vi_rc InsertSavebufBefore2( void )
 {
     if( SavebufNumber == NO_SAVEBUF ) {
 #ifdef __WIN__
@@ -229,7 +230,7 @@ int InsertSavebufBefore2( void )
 /*
  * InsertSavebufAfter - insert contents of current savebuf after current pos
  */
-int InsertSavebufAfter( void )
+vi_rc InsertSavebufAfter( void )
 {
     if( SavebufNumber == NO_SAVEBUF ) {
         return( insertGenericSavebuf( CurrentSavebuf, TRUE  ) );
@@ -242,7 +243,7 @@ int InsertSavebufAfter( void )
 /*
  * InsertSavebufAfter2 - alternate insert savebuf (cuz of windows)
  */
-int InsertSavebufAfter2( void )
+vi_rc InsertSavebufAfter2( void )
 {
     if( SavebufNumber == NO_SAVEBUF ) {
 #ifdef __WIN__
@@ -259,7 +260,7 @@ int InsertSavebufAfter2( void )
 /*
  * GetSavebufString - get a string made up of stuff in a savebuf
  */
-int GetSavebufString( char **data )
+vi_rc GetSavebufString( char **data )
 {
 #ifdef __WIN__
     savebuf     clip;
@@ -267,7 +268,7 @@ int GetSavebufString( char **data )
     savebuf     *tmp;
     fcb         *cfcb;
     line        *cline;
-    int         rc;
+    vi_rc       rc;
     long        len;
 
     /*
@@ -283,7 +284,7 @@ int GetSavebufString( char **data )
 #ifdef __WIN__
     if( SavebufNumber == CLIPBOARD_SAVEBUF ) {
         rc = GetClipboardSavebuf( &clip );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( rc );
         }
         tmp = &clip;
@@ -433,11 +434,11 @@ void AddLineToSavebuf( char *data, int scol, int ecol )
 /*
  * AddSelRgnToSavebuf - copy selected text to savebuf
  */
-int AddSelRgnToSavebuf( void )
+vi_rc AddSelRgnToSavebuf( void )
 {
     char    buf[] = "0";
     range   r;
-    int     rc;
+    vi_rc   rc;
 
     rc = GetSelectedRegion( &r );
     if( rc != ERR_NO_ERR ) {
@@ -451,7 +452,7 @@ int AddSelRgnToSavebuf( void )
 /*
  * AddSelRgnToSavebufAndDelete - copy selected text to savebuf, then kill it
  */
-int AddSelRgnToSavebufAndDelete( void )
+vi_rc AddSelRgnToSavebufAndDelete( void )
 {
     AddSelRgnToSavebuf();
     DeleteSelectedRegion();
@@ -512,7 +513,7 @@ void AddFcbsToSavebuf( fcb *head, fcb *tail, int duplflag )
 /*
  * SwitchSavebuf - switch current save buffer
  */
-int SwitchSavebuf( void )
+vi_rc SwitchSavebuf( void )
 {
     int         buf, i;
     linenum     lcnt;
@@ -565,10 +566,11 @@ int SwitchSavebuf( void )
 /*
  * DoSavebufNumber - get a savebuf number
  */
-int DoSavebufNumber( void )
+vi_rc DoSavebufNumber( void )
 {
-    int         i, rc;
+    int         i;
     char        buff[2];
+    vi_rc       rc;
 
     /*
      * get savebuf to use
@@ -580,7 +582,7 @@ int DoSavebufNumber( void )
     buff[0] = i;
     buff[1] = 0;
     rc = SetSavebufNumber( buff );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         rc = GOT_A_SAVEBUF;
     }
     return( rc );
@@ -590,7 +592,7 @@ int DoSavebufNumber( void )
 /*
  * SetSavebufNumber - set savebuf number from a string
  */
-int SetSavebufNumber( char *data )
+vi_rc SetSavebufNumber( char *data )
 {
     char        st[MAX_STR];
 

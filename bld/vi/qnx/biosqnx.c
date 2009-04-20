@@ -349,7 +349,7 @@ int BIOSKeyboardInit( void )
     }
     qnx_vc_detach( proc );
 
-    ptr = &sidinfo.tty_name[ strlen( sidinfo.tty_name ) ];
+    ptr = &sidinfo.tty_name[strlen( sidinfo.tty_name )];
     while( 1 ) {
         if( ptr[-1] < '0' || ptr[-1] > '9' ) {
             break;

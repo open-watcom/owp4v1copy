@@ -41,7 +41,7 @@ static  ft_src  *ftsTail;
 /*
  * FTSStart - start a new fts; EditFlags.FileTypeSource will suck in commands
  */
-int FTSStart( char *data )
+vi_rc FTSStart( char *data )
 {
     char        template_data[MAX_STR];
     template_ll *templatePtr;
@@ -72,7 +72,7 @@ int FTSStart( char *data )
 /*
  * FTSAddCmd - add a 1-line command to the current (tail) fts
  */
-int FTSAddCmd( char *data, int setkilled )
+vi_rc FTSAddCmd( char *data, int setkilled )
 {
     char    cmd_data[MAX_STR];
     cmd_ll  *cmd;
@@ -100,7 +100,7 @@ int FTSAddCmd( char *data, int setkilled )
 /*
  * FTSAddBoolean - add a boolean set to the current (tail) fts
  */
-int FTSAddBoolean( bool val, char *name )
+vi_rc FTSAddBoolean( bool val, char *name )
 {
     char    cmd[MAX_SRC_LINE] = "set ";
     if( !val ) {
@@ -114,7 +114,7 @@ int FTSAddBoolean( bool val, char *name )
 /*
  * FTSAddInt - add an integral set to the current (tail) fts
  */
-int FTSAddInt( int val, char *name )
+vi_rc FTSAddInt( int val, char *name )
 {
     char    cmd[MAX_SRC_LINE];
     sprintf( cmd, "set %s %d", name, val );
@@ -125,7 +125,7 @@ int FTSAddInt( int val, char *name )
 /*
  * FTSAddChar - add a character set to the current (tail) fts
  */
-int FTSAddChar( char val, char *name )
+vi_rc FTSAddChar( char val, char *name )
 {
     char    cmd[MAX_SRC_LINE];
     sprintf( cmd, "set %s %c", name, val );
@@ -136,7 +136,7 @@ int FTSAddChar( char val, char *name )
 /*
  * FTSAddStr - add a string set to the current (tail) fts
  */
-int FTSAddStr( char *val, char *name )
+vi_rc FTSAddStr( char *val, char *name )
 {
     char    cmd[MAX_SRC_LINE];
     sprintf( cmd, "set %s %s", name, val );
@@ -147,17 +147,17 @@ int FTSAddStr( char *val, char *name )
 /*
  * FTSEnd - done with this filetypesource entry
  */
-int FTSEnd( void )
+vi_rc FTSEnd( void )
 {
     EditFlags.FileTypeSource = FALSE;
     return( ERR_NO_ERR );
 
 } /* FTSEnd */
 
-int runCmds( ft_src *fts )
+vi_rc runCmds( ft_src *fts )
 {
     char    cmd_data[MAX_STR];
-    int     rc;
+    vi_rc   rc;
     cmd_ll  *cmd;
 
     cmd = fts->cmd_head;
@@ -177,7 +177,7 @@ int runCmds( ft_src *fts )
 /*
  * FTSRunCmds - run commands if 'name' has a registered file type
  */
-int FTSRunCmds( char *name )
+vi_rc FTSRunCmds( char *name )
 {
     template_ll *template;
     ft_src      *fts;

@@ -39,30 +39,31 @@
 /*
  * GetCurrentTag - get current tag word and hunt for it
  */
-int GetCurrentTag( void )
+vi_rc GetCurrentTag( void )
 {
-    int         i;
+    vi_rc       rc;
     char        tag[MAX_STR];
 
-    i = GimmeCurrentWord( tag, sizeof( tag ) - 1, FALSE );
-    if( i ) {
-        return( i );
+    rc = GimmeCurrentWord( tag, sizeof( tag ) - 1, FALSE );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
-    i = TagHunt( tag );
-    return( i );
+    rc = TagHunt( tag );
+    return( rc );
 
 } /* GetCurrentTag */
 
 /*
  * TagHunt - hunt for a specified tag
  */
-int TagHunt( char *str )
+vi_rc TagHunt( char *str )
 {
     char        buff[MAX_STR], file[FILENAME_MAX];
-    int         num, rc = ERR_NO_ERR;
+    int         num;
+    vi_rc       rc;
 
     rc = LocateTag( str, file, buff );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
 
         PushFileStack();
         rc = EditFile( file, FALSE );
@@ -95,11 +96,12 @@ int TagHunt( char *str )
 /*
  * FindTag - locate a given tag
  */
-int FindTag( char *tag )
+vi_rc FindTag( char *tag )
 {
     extern char _NEAR   META[];
-    int                 rc, omag;
+    int                 omag;
     char                *oldms;
+    vi_rc               rc;
 
     omag = EditFlags.Magic;
     EditFlags.Magic = FALSE;
@@ -124,7 +126,7 @@ int PickATag( int clist, char **list, char *tagname )
     int         i;
     bool        show_lineno;
     selectitem  si;
-    int         rc;
+    vi_rc       rc;
     char        title[MAX_STR];
 
     memcpy( &tw, &dirw_info, sizeof( window_info ) );
@@ -157,7 +159,7 @@ int PickATag( int clist, char **list, char *tagname )
     si.eiw = NO_WINDOW;
 
     rc = SelectItem( &si );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( -1 );
     }
     return( si.num );
@@ -280,7 +282,7 @@ FILE *SearchForTags( void )
 /*
  * LocateTag - locate a tag in the tag file
  */
-int LocateTag( char *str, char *fname, char *buff )
+vi_rc LocateTag( char *str, char *fname, char *buff )
 {
     char        tag[MAX_STR];
     int         i;
@@ -296,7 +298,7 @@ int LocateTag( char *str, char *fname, char *buff )
         }
 
         if( !f ) {
-            return ERR_FILE_NOT_FOUND;
+            return( ERR_FILE_NOT_FOUND );
         }
     }
 

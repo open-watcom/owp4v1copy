@@ -41,12 +41,13 @@ static void     *extraData;
 /*
  * ReadFcbData - read fcb data
  */
-int ReadFcbData( file *f )
+vi_rc ReadFcbData( file *f )
 {
     int         handle;
-    int         cnt, used, linecnt, i;
+    int         cnt, used, linecnt;
     bool        eofflag = FALSE;
     fcb         *cfcb;
+    vi_rc       rc;
 
     /*
      * get new fcb
@@ -63,8 +64,8 @@ int ReadFcbData( file *f )
         if( f->is_stdio ) {
             handle = fileno( stdin );
         } else {
-            i = FileOpen( f->name, FALSE, O_BINARY | O_RDONLY, 0, &handle );
-            if( i ) {
+            rc = FileOpen( f->name, FALSE, O_BINARY | O_RDONLY, 0, &handle );
+            if( rc != ERR_NO_ERR ) {
                 return( ERR_FILE_OPEN );
             }
         }
@@ -87,9 +88,9 @@ int ReadFcbData( file *f )
      * go to appropriate location in file
      */
     if( !f->is_stdio ) {
-        i = FileSeek( handle, f->curr_pos );
-        if( i ) {
-            return( i );
+        rc = FileSeek( handle, f->curr_pos );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     } else {
         if( extraData != NULL ) {
@@ -170,10 +171,11 @@ int ReadFcbData( file *f )
 /*
  * FindFcbWithLine - find the fcb with the specified line
  */
-int FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
+vi_rc FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
 {
-    int lastflag = FALSE, i;
-    fcb *tfcb, *ofcb;
+    int     lastflag = FALSE;
+    fcb     *tfcb, *ofcb;
+    vi_rc   rc;
 
     /*
      * are we looking for the last line?
@@ -217,8 +219,8 @@ int FindFcbWithLine( linenum lineno, file *cfile, fcb **fb )
             if( EditFlags.Verbose ) {
                 Message1( "At line %l", ofcb->end_line );
             }
-            if( (i = ReadFcbData( cfile )) > 0 ) {
-                return( i );
+            if( (rc = ReadFcbData( cfile )) > 0 ) {
+                return( rc );
             }
             tfcb = cfile->fcb_tail;
         }

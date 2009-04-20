@@ -57,7 +57,7 @@ HDDEDATA WINEXP DDECallback( UINT type, UINT fmt, HCONV hconv,
                              DWORD data2 )
 {
     char        tmp[64];
-    int         rc;
+    vi_rc       rc;
 
     fmt = fmt;
     data1 = data1;

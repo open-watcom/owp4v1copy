@@ -40,7 +40,7 @@ static  bool    cursorNeedsDisplay = FALSE;
 /*
  * NewMessageWindow - create a new Message window
  */
-int NewMessageWindow( void )
+vi_rc NewMessageWindow( void )
 {
     if( !EditFlags.WindowsStarted ) {
         return( ERR_NO_ERR );
@@ -57,7 +57,7 @@ int NewMessageWindow( void )
 /*
  * NewWindow2 - build a new window, using window_info struct
  */
-int NewWindow2( window_id *wn, window_info *wi )
+vi_rc NewWindow2( window_id *wn, window_info *wi )
 {
     return( NewWindow( wn, wi->x1, wi->y1, wi->x2, wi->y2,
                        wi->has_border, wi->border_color1,
@@ -121,7 +121,7 @@ void Message2( char *str, ... )
 /*
  * WPrintfLine - printf text on a window line
  */
-int WPrintfLine( window_id w, int line, char *str, ... )
+vi_rc WPrintfLine( window_id w, int line, char *str, ... )
 {
     va_list     al;
     char        tmp[MAX_STR];
@@ -181,16 +181,17 @@ void SetWindowCursorForReal( void )
 /*
  * DisplayExtraInfo - display info in extra window
  */
-int DisplayExtraInfo( window_info *wi, window_id *wn, char _NEAR * _NEAR *data,
+vi_rc DisplayExtraInfo( window_info *wi, window_id *wn, char _NEAR * _NEAR *data,
                       int numopts )
 {
-    int i, j;
+    int     j;
+    vi_rc   rc;
 
     wi->y2 = wi->y1 + numopts + 1;
 
-    i = NewWindow2( wn, wi );
-    if( i ) {
-        return( i );
+    rc = NewWindow2( wn, wi );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     WindowTitle( *wn, "Special Keys" );
     for( j = 0; j < numopts; j++ ) {
@@ -267,22 +268,23 @@ void SetWindowSizes( void )
 /*
  * CurrentWindowResize - as it sounds
  */
-int CurrentWindowResize( int x1, int y1, int x2, int y2 )
+vi_rc CurrentWindowResize( int x1, int y1, int x2, int y2 )
 {
-    int         i, text_lines;
+    int         text_lines;
     linenum     ln;
+    vi_rc       rc;
 
     if( EditFlags.LineNumbers ) {
         if( EditFlags.LineNumsOnRight ) {
-            i = ResizeWindow( CurrentWindow, x1, y1, x2 + LineNumWinWidth, y2, TRUE );
+            rc = ResizeWindow( CurrentWindow, x1, y1, x2 + LineNumWinWidth, y2, TRUE );
         } else {
-            i = ResizeWindow( CurrentWindow, x1 - LineNumWinWidth, y1, x2, y2, TRUE );
+            rc = ResizeWindow( CurrentWindow, x1 - LineNumWinWidth, y1, x2, y2, TRUE );
         }
     } else {
-        i = ResizeWindow( CurrentWindow, x1, y1, x2, y2, TRUE );
+        rc = ResizeWindow( CurrentWindow, x1, y1, x2, y2, TRUE );
     }
-    if( i ) {
-        return( i );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     text_lines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES );
     if( CurrentPos.line >= LeftTopPos.line + text_lines ) {
@@ -294,9 +296,9 @@ int CurrentWindowResize( int x1, int y1, int x2, int y2 )
     SetWindowCursor();
     if( EditFlags.LineNumbers ) {
         CloseAWindow( CurrNumWindow );
-        i = LineNumbersSetup();
-        if( i ) {
-            return( i );
+        rc = LineNumbersSetup();
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
     PositionVerticalScrollThumb( CurrentWindow, LeftTopPos.line,

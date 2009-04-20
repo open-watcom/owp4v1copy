@@ -41,16 +41,17 @@ extern int      CurrentMenuNumber;
 /*
  * SelectFileOpen - select file from specified directory
  */
-int SelectFileOpen( char *dir, char **result_ptr, char *mask, bool want_all_dirs )
+vi_rc SelectFileOpen( char *dir, char **result_ptr, char *mask, bool want_all_dirs )
 {
     char                dd[FILENAME_MAX], cdir[FILENAME_MAX];
-    int                 i, j, rc = ERR_NO_ERR;
+    int                 j;
     file                *cfile;
     fcb                 *cfcb;
     line                *cline;
     selflinedata        sfd;
     bool                need_entire_path;
     char                *result = *result_ptr;
+    vi_rc               rc;
 
     /*
      * get current directory
@@ -69,9 +70,9 @@ int SelectFileOpen( char *dir, char **result_ptr, char *mask, bool want_all_dirs
             strcat( dd, FILE_SEP_STR );
         }
         strcat( dd, mask );
-        i = GetSortDir( dd, want_all_dirs );
-        if( i ) {
-            return( i );
+        rc = GetSortDir( dd, want_all_dirs );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
 
         /*
@@ -92,7 +93,7 @@ int SelectFileOpen( char *dir, char **result_ptr, char *mask, bool want_all_dirs
         sfd.cln = 1;
         sfd.eiw = -1;
         rc = SelectLineInFile( &sfd );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         if( sfd.sl == -1 ) {
@@ -114,9 +115,9 @@ int SelectFileOpen( char *dir, char **result_ptr, char *mask, bool want_all_dirs
                 strcat( dd, DirFiles[j]->name );
             }
             FreeEntireFile( cfile );
-            i = SetCWD( dd );
-            if( i ) {
-                return( i );
+            rc = SetCWD( dd );
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
             }
             need_entire_path = TRUE;
             strcpy( cdir, CurrentDirectory );
@@ -151,7 +152,7 @@ static bool             isMenu;
 /*
  * displayGenericLines - display all lines in a window
  */
-static int displayGenericLines( file *f, linenum pagetop, int leftcol,
+static vi_rc displayGenericLines( file *f, linenum pagetop, int leftcol,
                                 linenum hilite, type_style *style, char **hichars,
                                 char **vals, int valoff )
 {
@@ -165,13 +166,14 @@ static int displayGenericLines( file *f, linenum pagetop, int leftcol,
     type_style  base;
     char        tmp[MAX_STR];
     bool        disabled;
+    vi_rc       rc;
 
     /*
      * get pointer to first line on page, and window info
      */
-    i = GimmeLinePtr( pagetop, f, &cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = GimmeLinePtr( pagetop, f, &cfcb, &cline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     base.foreground = WindowAuxInfo( cWin, WIND_INFO_TEXT_COLOR );
     base.background = WindowAuxInfo( cWin, WIND_INFO_BACKGROUND_COLOR );
@@ -251,12 +253,12 @@ static int displayGenericLines( file *f, linenum pagetop, int leftcol,
 evil_goto:  if( ptr != NULL ) {
                 ptr += 2;
             }
-            i = GimmeNextLinePtr( f, &cfcb, &cline );
-            if( i ) {
-                if( i == ERR_NO_MORE_LINES ) {
+            rc = GimmeNextLinePtr( f, &cfcb, &cline );
+            if( rc != ERR_NO_ERR ) {
+                if( rc == ERR_NO_MORE_LINES ) {
                     continue;
                 }
-                return( i );
+                return( rc );
             }
             cl++;
             cfcb->on_display = TRUE;
@@ -436,9 +438,9 @@ static bool adjustCLN( linenum *cln, linenum *pagetop, int amt,
 /*
  * SelectLineInFile - select a line in a given file
  */
-int SelectLineInFile( selflinedata *sfd )
+vi_rc SelectLineInFile( selflinedata *sfd )
 {
-    int         i, key = -1, rc = ERR_NO_ERR, winflag;
+    int         i, key = -1, winflag;
     int         leftcol = 0, key2;
     bool        done = FALSE, redraw = TRUE;
     bool        hiflag = FALSE, drawbord = FALSE;
@@ -447,6 +449,7 @@ int SelectLineInFile( selflinedata *sfd )
     char        tmp[MAX_STR], *ptr;
     linenum     cln;
     linenum     endline;
+    vi_rc       rc;
 
     /*
      * create the window
@@ -460,9 +463,9 @@ int SelectLineInFile( selflinedata *sfd )
     if( sfd->hilite != NULL ) {
         hiflag = TRUE;
     }
-    i = NewWindow2( &cWin, sfd->wi );
-    if( i ) {
-        return( i );
+    rc = NewWindow2( &cWin, sfd->wi );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     if( !sfd->is_menu ) {
         WindowAuxUpdate( cWin, WIND_INFO_HAS_SCROLL_GADGETS, TRUE );
@@ -688,7 +691,7 @@ int SelectLineInFile( selflinedata *sfd )
                 if( winflag ) {
                     MoveWindowToFront( cWin );
                 }
-                if( !rc ) {
+                if( rc == ERR_NO_ERR ) {
                     AddString2( &(sfd->vals[i]), tmp );
                     redraw = TRUE;
                 }

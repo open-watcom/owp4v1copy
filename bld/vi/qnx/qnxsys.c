@@ -126,7 +126,7 @@ void ScreenInit( void )
     int                         rows, cols;
     unsigned                    size;
     unsigned                    seg;
-    int                         rc;
+    vi_rc                       rc;
 
 
     QNXCon = console_open( QNXConHandle, O_WRONLY );
@@ -140,7 +140,7 @@ void ScreenInit( void )
         FatalError( ERR_WIND_NO_MORE_WINDOWS );
     }
     rc = BIOSKeyboardInit();
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         console_close( QNXCon );
         FatalError( rc );
     }

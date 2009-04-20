@@ -49,19 +49,21 @@ void UpdateLineNumbers( linenum amt, fcb *cfcb  )
 /*
  * DeleteLineRange - delete a specified line range in current file
  */
-int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
+vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
 {
-    int         i, j, k;
     linenum     diff, ll;
     fcb         *s1fcb, *sfcb, *e1fcb, *efcb, *cfcb;
     undo_stack  *us;
+    vi_rc       rc;
+    vi_rc       rc1;
+    vi_rc       rc2;
 
     /*
      * check line range
      */
     UnselectRegion();
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
     if( s > e ) {
         ll = s;
@@ -71,9 +73,9 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
     if( s < 1 ) {
         return( ERR_NO_SUCH_LINE );
     }
-    i = CFindLastLine( &ll );
-    if( i ) {
-        return( i );
+    rc = CFindLastLine( &ll );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     if( e > ll ) {
         return( ERR_NO_SUCH_LINE );
@@ -82,45 +84,45 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
     /*
      * split fcb with start
      */
-    i = FindFcbWithLine( s, CurrentFile, &sfcb );
-    if( i ) {
-        return( i );
+    rc = FindFcbWithLine( s, CurrentFile, &sfcb );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
-    k = SplitFcbAtLine( s, CurrentFile, sfcb );
-    if( k > 0 ) {
-        return( k );
+    rc1 = SplitFcbAtLine( s, CurrentFile, sfcb );
+    if( rc1 > 0 ) {
+        return( rc1 );
     }
 
     /*
      * split fcb with end line
      */
-    i = FindFcbWithLine( e + 1, CurrentFile, &efcb );
-    if( i ) {
-        if( i != ERR_NO_SUCH_LINE ) {
-            return( i );
+    rc = FindFcbWithLine( e + 1, CurrentFile, &efcb );
+    if( rc != ERR_NO_ERR ) {
+        if( rc != ERR_NO_SUCH_LINE ) {
+            return( rc );
         }
         if( e > ll ) {
             return( ERR_NO_SUCH_LINE );
         }
-        i = FindFcbWithLine( e, CurrentFile, &efcb );
-        if( i ) {
-            return( i );
+        rc = FindFcbWithLine( e, CurrentFile, &efcb );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
-    if( (j = SplitFcbAtLine( e + 1, CurrentFile, efcb )) > 0 ) {
-        return( j );
+    if( (rc2 = SplitFcbAtLine( e + 1, CurrentFile, efcb )) > 0 ) {
+        return( rc2 );
     }
 
     /*
      * get pointers to middle fcbs (will use these for save buffers
      * and undos).
      */
-    if( k == NO_SPLIT_CREATED_AT_START_LINE ) {
+    if( rc1 == NO_SPLIT_CREATED_AT_START_LINE ) {
         s1fcb = sfcb;
     } else {
         s1fcb = sfcb->next;
     }
-    if( j != NO_SPLIT_CREATED_AT_START_LINE ) {
+    if( rc2 != NO_SPLIT_CREATED_AT_START_LINE ) {
         e1fcb = efcb;
     } else {
         e1fcb = efcb->prev;
@@ -131,10 +133,10 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
      * deleted, and point efcb to the fcb containing the line after the last
      * line deleted; then chain sfcb and efcb together
      */
-    if( k == NO_SPLIT_CREATED_AT_START_LINE ) {
+    if( rc1 == NO_SPLIT_CREATED_AT_START_LINE ) {
         sfcb = sfcb->prev;
     }
-    if( j != NO_SPLIT_CREATED_AT_START_LINE ) {
+    if( rc2 != NO_SPLIT_CREATED_AT_START_LINE ) {
         efcb = efcb->next;
     }
     if( sfcb != NULL ) {
@@ -174,9 +176,9 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
      */
     } else {
         UpdateLineNumbers( diff, efcb );
-        i = CMergeFcbs( sfcb,efcb );
-        if( i > 0 ) {
-            return( i );
+        rc = CMergeFcbs( sfcb,efcb );
+        if( rc > 0 ) {
+            return( rc );
         }
     }
 
@@ -198,19 +200,19 @@ int DeleteLineRange( linenum s, linenum e, linedel_flags flags )
     StartUndoGroup( us );
     if( CurrentPos.line >= s ) {
         if( CurrentPos.line <= e ) {
-            i = SetCurrentLine( s );
-            if( i ) {
-                if( i == ERR_NO_SUCH_LINE ) {
-                    i = SetCurrentLine( s - 1 );
+            rc = SetCurrentLine( s );
+            if( rc != ERR_NO_ERR ) {
+                if( rc == ERR_NO_SUCH_LINE ) {
+                    rc = SetCurrentLine( s - 1 );
                 }
-                if( i ) {
-                    return( i );
+                if( rc != ERR_NO_ERR ) {
+                    return( rc );
                 }
             }
         } else {
-            i = SetCurrentLine( s + CurrentPos.line - e - 1 );
-            if( i ) {
-                return( i );
+            rc = SetCurrentLine( s + CurrentPos.line - e - 1 );
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
             }
         }
     }

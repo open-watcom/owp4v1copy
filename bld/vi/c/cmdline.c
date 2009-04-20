@@ -99,9 +99,9 @@ void FiniCommandLine( void )
 /*
  * doProcessCommandLine - handle getting and processing a command line
  */
-static int doProcessCommandLine( bool is_fancy )
+static vi_rc doProcessCommandLine( bool is_fancy )
 {
-    int         rc;
+    vi_rc       rc;
     char        *st;
 
     /*
@@ -121,7 +121,7 @@ static int doProcessCommandLine( bool is_fancy )
     } else {
 #endif
         rc = PromptForString( ":", st, MaxLine, &CLHist );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             MemFree( st );
             if( rc == NO_VALUE_ENTERED ) {
                 return( ERR_NO_ERR );
@@ -133,7 +133,7 @@ static int doProcessCommandLine( bool is_fancy )
 #endif
     CommandBuffer = st;
     rc = SourceHook( SRC_HOOK_COMMAND, ERR_NO_ERR );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         rc = RunCommandLine( st );
     }
     CommandBuffer = NULL;
@@ -145,7 +145,7 @@ static int doProcessCommandLine( bool is_fancy )
 /*
  * ProcessCommandLine - do just that
  */
-int ProcessCommandLine( void )
+vi_rc ProcessCommandLine( void )
 {
     return( doProcessCommandLine( FALSE ) );
 
@@ -154,7 +154,7 @@ int ProcessCommandLine( void )
 /*
  * FancyProcessCommandLine - do just that
  */
-int FancyProcessCommandLine( void )
+vi_rc FancyProcessCommandLine( void )
 {
     return( doProcessCommandLine( TRUE ) );
 
@@ -163,10 +163,10 @@ int FancyProcessCommandLine( void )
 /*
  * TryCompileableToken - process token that can also be compiled
  */
-int TryCompileableToken( int token, char *data, bool iscmdline,
+vi_rc TryCompileableToken( int token, char *data, bool iscmdline,
                          bool dmt )
 {
-    int         rc = ERR_INVALID_COMMAND;
+    vi_rc       rc = ERR_INVALID_COMMAND;
     bool        mflag;
     char        *tmp;
 
@@ -266,9 +266,9 @@ int TryCompileableToken( int token, char *data, bool iscmdline,
 /*
  * RunCommandLine - run a command line command
  */
-int RunCommandLine( char *cl )
+vi_rc RunCommandLine( char *cl )
 {
-    int         i, rc = ERR_INVALID_COMMAND, x, y, x2, y2;
+    int         i, x, y, x2, y2;
     int         n2f, n1f, dmt, tkn, flag;
     bool        test1;
     linenum     n1, n2;
@@ -276,13 +276,14 @@ int RunCommandLine( char *cl )
     info        *cinfo;
     long        val;
     jmp_buf     jmpaddr;
+    vi_rc       rc;
 
     /*
      * parse command string
      */
-    i = ParseCommandLine( cl, &n1, &n1f, &n2, &n2f, &tkn, dataBuff, &dmt );
-    if( i ) {
-        return( i );
+    rc = ParseCommandLine( cl, &n1, &n1f, &n2, &n2f, &tkn, dataBuff, &dmt );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     if( !n2f ) {
         if( !n1f ) {
@@ -295,6 +296,7 @@ int RunCommandLine( char *cl )
     /*
      * process tokens
      */
+    rc = ERR_INVALID_COMMAND;
     test1 = n1f || n2f;
     switch( tkn ) {
     case PCL_T_ABOUT:
@@ -312,7 +314,7 @@ int RunCommandLine( char *cl )
             key_map     scr;
 
             rc = AddKeyMap( &scr, dataBuff );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 break;
             }
             rc = RunKeyMap( &scr, 1L );
@@ -514,7 +516,7 @@ int RunCommandLine( char *cl )
 
     case PCL_T_DELETE:
         rc = SetSavebufNumber( dataBuff );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         if( SelRgn.selected && !EditFlags.LineBased ) {
@@ -525,7 +527,7 @@ int RunCommandLine( char *cl )
         } else {
             rc = DeleteLineRange( n1, n2, SAVEBUF_FLAG );
         }
-        if( !rc ) {
+        if( rc == ERR_NO_ERR ) {
             DCDisplayAllLines();
             LineDeleteMessage( n1, n2 );
         }
@@ -541,7 +543,7 @@ int RunCommandLine( char *cl )
 
     case PCL_T_PUT:
         rc = SetSavebufNumber( dataBuff );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         rc = SaveAndResetFilePos( n1 );
@@ -557,7 +559,7 @@ int RunCommandLine( char *cl )
 
     case PCL_T_YANK:
         rc = SetSavebufNumber( dataBuff );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         if( SelRgn.selected && !EditFlags.LineBased ) {
@@ -578,7 +580,7 @@ int RunCommandLine( char *cl )
         if( !test1 ) {
             n1 = 1;
             rc = CFindLastLine( &n2 );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 break;
             }
         }
@@ -619,7 +621,7 @@ int RunCommandLine( char *cl )
 #endif
             } else {
                 rc = SaveFile( NULL, -1, -1, dmt );
-                if( !rc ) {
+                if( rc == ERR_NO_ERR ) {
                     Modified( FALSE );
                 }
             }
@@ -654,7 +656,7 @@ int RunCommandLine( char *cl )
         } else {
             rc = ERR_NO_ERR;
         }
-        if( !rc ) {
+        if( rc == ERR_NO_ERR ) {
             Message1( "Current directory is %s",CurrentDirectory );
         }
         break;
@@ -992,9 +994,9 @@ int RunCommandLine( char *cl )
 /*
  * ProcessWindow - process window commands.
  */
-int ProcessWindow( int tkn, char *data )
+vi_rc ProcessWindow( int tkn, char *data )
 {
-    int         rc;
+    vi_rc       rc;
 
     rc = ERR_NO_ERR;
     switch( tkn ) {
@@ -1239,15 +1241,15 @@ static int setWDimension( char *data )
     int         x1, y1, x2, y2;
     char        token[MAX_STR];
     jmp_buf     jmpaddr;
-    int         rc;
+    int         i;
     int         x, y;
 
     if( wInfo == NULL ) {
         return( ERR_WIND_INVALID );
     }
-    rc = setjmp( jmpaddr );
-    if( rc != 0 ) {
-        return( rc );
+    i = setjmp( jmpaddr );
+    if( i != 0 ) {
+        return( i );
     }
 
     if( NextWord1( data, token ) <= 0 ) {

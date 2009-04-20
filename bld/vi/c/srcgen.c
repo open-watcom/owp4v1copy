@@ -39,11 +39,11 @@
 static sfile    *tmpTail;
 static bool     freeSrcData, hasVar;
 static labels   *cLab;
-jmp_buf         GenExit;
+static jmp_buf  GenExit;
 
-static void abortGen( int err )
+void AbortGen( vi_rc rc )
 {
-    longjmp( GenExit, err );
+    longjmp( GenExit, (int)rc );
 }
 
 /*
@@ -96,11 +96,11 @@ void GenJmp( label where )
  */
 void GenLabel( label where )
 {
-    int i;
+    vi_rc   rc;
 
     genItem( SRC_T_LABEL, where );
-    if( i = AddLabel( tmpTail, cLab, where ) ) {
-        abortGen( i );
+    if( rc = AddLabel( tmpTail, cLab, where ) ) {
+        AbortGen( rc );
     }
     tmpTail->hasvar = FALSE;
     strcpy( where, cLab->name[cLab->cnt - 1] );
@@ -121,7 +121,7 @@ void GenTestCond( void )
     strcpy( v1, CurrentSrcData );
     RemoveLeadingSpaces( v1 );
     if( v1[0] == 0 ) {
-        abortGen( ERR_SRC_INVALID_IF );
+        AbortGen( ERR_SRC_INVALID_IF );
     }
 
     /*
@@ -149,10 +149,10 @@ static void genExpr( void )
      * EXPR %v = v1
      */
     if( NextWord1( CurrentSrcData, v1 ) <= 0 ) {
-        abortGen( ERR_SRC_INVALID_EXPR );
+        AbortGen( ERR_SRC_INVALID_EXPR );
     }
     if( NextWord1( CurrentSrcData, tmp ) <= 0 ) {
-        abortGen( ERR_SRC_INVALID_EXPR );
+        AbortGen( ERR_SRC_INVALID_EXPR );
     }
     oper = EXPR_EQ;
     if( tmp[1] == '=' && tmp[2] == 0 ) {
@@ -165,17 +165,17 @@ static void genExpr( void )
         } else if( tmp[0] == '/' ) {
             oper = EXPR_DIVIDEEQ;
         } else {
-            abortGen( ERR_SRC_INVALID_EXPR );
+            AbortGen( ERR_SRC_INVALID_EXPR );
         }
     } else {
         if( tmp[0] != '=' || tmp[1] != 0 ) {
-            abortGen( ERR_SRC_INVALID_EXPR );
+            AbortGen( ERR_SRC_INVALID_EXPR );
         }
     }
     strcpy( v2, CurrentSrcData );
     RemoveLeadingSpaces( v2 );
     if( v2[0] == 0 ) {
-        abortGen( ERR_SRC_INVALID_EXPR );
+        AbortGen( ERR_SRC_INVALID_EXPR );
     }
     if( EditFlags.CompileScript ) {
 
@@ -210,13 +210,14 @@ label NewLabel( void )
 /*
  * PreProcess - pre-process source file
  */
-int PreProcess( char *fn, sfile **sf, labels *lab )
+vi_rc PreProcess( char *fn, sfile **sf, labels *lab )
 {
     GENERIC_FILE        gf;
     int                 i, token, k, len, dammit, rec;
     sfile               *tsf;
     char                tmp[MAX_SRC_LINE], tmp2[MAX_SRC_LINE];
     char                tmp3[MAX_SRC_LINE];
+    vi_rc               rc;
 
     /*
      * get source file
@@ -466,9 +467,9 @@ int PreProcess( char *fn, sfile **sf, labels *lab )
                 token += SRC_T_NULL + 1;
                 if( EditFlags.CompileScript ) {
                     WorkLine->data[0] = 0;
-                    i = Set( tmp );
-                    if( i ) {
-                        Error( GetErrorMsg( i ) );
+                    rc = Set( tmp );
+                    if( rc != ERR_NO_ERR ) {
+                        Error( GetErrorMsg( rc ) );
                     }
                     genItem( token, WorkLine->data );
                 } else {

@@ -37,7 +37,7 @@
 /*
  * ResizeWindow - give a window a new size
  */
-int ResizeWindow( window_id wn, int x1, int y1, int x2, int y2, int scrflag )
+vi_rc ResizeWindow( window_id wn, int x1, int y1, int x2, int y2, int scrflag )
 {
     wind        *tmp, *w;
     int         bt, k;
@@ -104,10 +104,10 @@ int ResizeWindow( window_id wn, int x1, int y1, int x2, int y2, int scrflag )
 /*
  * ResizeWindowRelative - resize current window with relative shifts
  */
-int ResizeWindowRelative( window_id wn, int x1, int y1, int x2, int y2, int scrflag )
+vi_rc ResizeWindowRelative( window_id wn, int x1, int y1, int x2, int y2, int scrflag )
 {
     wind        *w;
-    int         rc;
+    vi_rc       rc;
 
     w = Windows[wn];
     rc = ResizeWindow( wn, w->x1 + x1, w->y1 + y1, w->x2 + x2, w->y2 + y2, scrflag );
@@ -137,11 +137,11 @@ static int getMinSlot( void )
 /*
  * MinimizeCurrentWindow - put next window into next minimize slot
  */
-int MinimizeCurrentWindow( void )
+vi_rc MinimizeCurrentWindow( void )
 {
-    int i, j;
-    int minx1, miny1;
-    int rc;
+    int     i, j;
+    int     minx1, miny1;
+    vi_rc   rc;
 
     i = getMinSlot();
     if( !i ) {
@@ -168,9 +168,9 @@ int MinimizeCurrentWindow( void )
 /*
  * MaximizeCurrentWindow - make current window full screen
  */
-int MaximizeCurrentWindow( void )
+vi_rc MaximizeCurrentWindow( void )
 {
-    int rc;
+    vi_rc   rc;
 
     if( EditFlags.LineNumbers ) {
         if( EditFlags.LineNumsOnRight ) {

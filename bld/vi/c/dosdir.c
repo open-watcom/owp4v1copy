@@ -38,7 +38,7 @@
 /*
  * MyGetFileSize - do just that
  */
-int MyGetFileSize( char *name, long *size )
+vi_rc MyGetFileSize( char *name, long *size )
 {
     DIR         *d;
 
@@ -55,7 +55,7 @@ int MyGetFileSize( char *name, long *size )
 /*
  * IsDirectory - check if a specified path is a directory
  */
-int IsDirectory( char *name )
+bool IsDirectory( char *name )
 {
     struct find_t       dta;
     unsigned            rc;

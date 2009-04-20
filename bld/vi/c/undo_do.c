@@ -78,11 +78,11 @@ static int validateUndo( undo *cundo )
 /*
  * realUndo - perform an undo
  */
-static int realUndo( undo_stack *stack, undo_stack *us )
+static vi_rc realUndo( undo_stack *stack, undo_stack *us )
 {
     undo                *cundo, *tundo;
     bool                done = FALSE;
-    int                 rc = ERR_NO_ERR;
+    vi_rc               rc = ERR_NO_ERR;
     int                 col, depth = 0;
     linenum             lne, top;
     char                *name;
@@ -177,7 +177,7 @@ static int realUndo( undo_stack *stack, undo_stack *us )
     GoToColumnOK( col );
     UpdateStatusWindow();
     DCDisplayAllLines();
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         if( stack == UndoStack ) {
             name = usName;
         } else {
@@ -202,7 +202,7 @@ static int realUndo( undo_stack *stack, undo_stack *us )
 /*
  * DoUndo - do an undo
  */
-int DoUndo( void )
+vi_rc DoUndo( void )
 {
     return( realUndo( UndoStack, UndoUndoStack ) );
 
@@ -211,9 +211,9 @@ int DoUndo( void )
 /*
  * DoUndoUndo - do an undo
  */
-int DoUndoUndo( void )
+vi_rc DoUndoUndo( void )
 {
-    int rc;
+    vi_rc   rc;
 
     EditFlags.UndoInProg = TRUE;
     rc = realUndo( UndoUndoStack, UndoStack );

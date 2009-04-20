@@ -64,9 +64,9 @@ void GetCWD2( char *str, int maxlen )
 /*
  * ChangeDirectory - change to given drive/directory
  */
-int ChangeDirectory( char *dir )
+vi_rc ChangeDirectory( char *dir )
 {
-    int         rc;
+    vi_rc       rc;
     int         shift;
     char        *tmp;
 
@@ -90,7 +90,7 @@ int ChangeDirectory( char *dir )
 /*
  * ConditionalChangeDirectory - change dir only if needed
  */
-int ConditionalChangeDirectory( char *where )
+vi_rc ConditionalChangeDirectory( char *where )
 {
     if( CurrentDirectory != NULL ) {
         if( !stricmp( CurrentDirectory, where ) ) {
@@ -104,13 +104,13 @@ int ConditionalChangeDirectory( char *where )
 /*
  * SetCWD - set current working directory
  */
-int SetCWD( char *str )
+vi_rc SetCWD( char *str )
 {
-    int i;
+    vi_rc   rc;
 
-    i = ChangeDirectory( str );
-    if( i ) {
-        return( i );
+    rc = ChangeDirectory( str );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     MemFree2( &CurrentDirectory );
     GetCWD1( &CurrentDirectory );

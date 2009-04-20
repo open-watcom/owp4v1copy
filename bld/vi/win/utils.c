@@ -259,10 +259,11 @@ void ClientToRowCol( HWND hwnd, int x, int y, int *row, int *col, int divide )
         linenum line_num = (linenum)(LeftTopPos.line + *row - 1);
         line    *line;
         fcb     *fcb;
-        int     i, v_pos;
+        int     v_pos;
+        vi_rc   rc;
 
-        i = CGimmeLinePtr( line_num, &fcb, &line );
-        if( i == ERR_NO_ERR ) {
+        rc = CGimmeLinePtr( line_num, &fcb, &line );
+        if( rc == ERR_NO_ERR ) {
             char *text = line->data;
             // get the tab boundries in this block
 #if 0
@@ -446,7 +447,7 @@ void PopDirectory( void )
 /*
  * DoAboutBox - do an about box
  */
-int DoAboutBox( void )
+vi_rc DoAboutBox( void )
 {
     about_info  ai;
 
@@ -785,7 +786,7 @@ static void dumpSSBlocks( ss_block *ss_start, dc dc_line ) {
 /*
  * ChangeDrive - change the working drive
  */
-int ChangeDrive( int drive )
+vi_rc ChangeDrive( int drive )
 {
     char        a;
     unsigned    b;

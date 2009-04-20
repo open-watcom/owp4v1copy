@@ -45,7 +45,7 @@ static info *findInfo( char *file_name )
     return( i );
 }
 
-static int applyToSelectedList( HWND list_box, int (*func)( info * ) )
+static bool applyToSelectedList( HWND list_box, bool (*func)( info * ) )
 {
     int     count, i;
     info    *info;
@@ -66,15 +66,15 @@ static int applyToSelectedList( HWND list_box, int (*func)( info * ) )
     return( TRUE );
 }
 
-static int doGoto( info *i )
+static bool doGoto( info *i )
 {
     BringUpFile( i, TRUE );
     return( TRUE );
 }
 
-static int doClose( info *i )
+static bool doClose( info *i )
 {
-    int     rc;
+    vi_rc   rc;
 
     BringUpFile( i, TRUE );
     rc = CurFileExitOptionSaveChanges();
@@ -102,7 +102,7 @@ static int fillBox( HWND list_box )
 BOOL WINEXP FileListProc( HWND dlg, UINT msg, UINT w, LONG l )
 {
     HWND    list_box;
-    int     (*func)( info * );
+    bool    (*func)( info * );
 
     l = l;
     switch( msg ) {
@@ -143,10 +143,10 @@ BOOL WINEXP FileListProc( HWND dlg, UINT msg, UINT w, LONG l )
     return( FALSE );
 }
 
-int EditFileFromList( void )
+vi_rc EditFileFromList( void )
 {
     DLGPROC     proc;
-    int         rc;
+    vi_rc       rc;
 
     proc = (DLGPROC) MakeProcInstance( (FARPROC) FileListProc, InstanceHandle );
     rc = DialogBox( InstanceHandle, "FILELIST", Root, proc );

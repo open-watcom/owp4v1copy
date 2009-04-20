@@ -35,7 +35,7 @@
 /*
  * AbandonHopeAllYeWhoEnterHere - death for the masses
  */
-void AbandonHopeAllYeWhoEnterHere( int rc )
+void AbandonHopeAllYeWhoEnterHere( vi_rc rc )
 {
 
     AutoSaveInterval = 0;

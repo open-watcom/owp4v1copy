@@ -95,7 +95,7 @@ BOOL WINEXP RepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             break;
         case IDCANCEL:
             RemoveEditSubClass( hwnd, REP_FIND );
-            EndDialog( hwnd, 0 );
+            EndDialog( hwnd, FALSE );
             break;
         case IDOK:
             GetDlgItemText( hwnd, REP_FIND, findData.find, findData.findlen );
@@ -117,7 +117,7 @@ BOOL WINEXP RepDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
                 h->curr += 1;
             }
             RemoveEditSubClass( hwnd, REP_FIND );
-            EndDialog( hwnd, 1 );
+            EndDialog( hwnd, TRUE );
             break;
         default:
             return( FALSE );
@@ -147,7 +147,7 @@ bool GetReplaceStringDialog( fancy_find *ff )
 
     if( strlen( findData.find ) == 0 ) {
         // no find string so pretend user cancelled
-        rc = 0;
+        rc = FALSE;
     }
 
     if( rc ) {

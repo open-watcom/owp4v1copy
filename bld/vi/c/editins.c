@@ -218,7 +218,7 @@ static void checkWrapMargin( void )
 /*
  * insertChar - insert a char into the working line
  */
-static int insertChar( bool add_to_abbrev, bool move_to_new_col )
+static vi_rc insertChar( bool add_to_abbrev, bool move_to_new_col )
 {
     if( WorkLine->len == MaxLine ) {
         return( ERR_NO_ERR );
@@ -238,7 +238,7 @@ static int insertChar( bool add_to_abbrev, bool move_to_new_col )
 /*
  * IMChar - insert a character in insert mode
  */
-int IMChar( void )
+vi_rc IMChar( void )
 {
     if( CurrentFile == NULL ) {
         return( ERR_NO_ERR );
@@ -262,7 +262,7 @@ int IMChar( void )
 /*
  * IMEsc - handle ESC from insert mode
  */
-int IMEsc( void )
+vi_rc IMEsc( void )
 {
     DoneCurrentInsert( TRUE );
     return( ERR_NO_ERR );
@@ -272,7 +272,7 @@ int IMEsc( void )
 /*
  * IMEnter - process the enter key in insert mode
  */
-int IMEnter( void )
+vi_rc IMEnter( void )
 {
     char        *buff, *buffx;
     int         len, col, el;
@@ -344,7 +344,7 @@ int IMEnter( void )
 /*
  * IMBackSpace - process the backspace key in insert mode
  */
-int IMBackSpace( void )
+vi_rc IMBackSpace( void )
 {
     char        killedChar, overChar;
     bool        mv_right;
@@ -406,7 +406,7 @@ int IMBackSpace( void )
 /*
  * IMDelete - handle DEL key pressed in insert mode
  */
-int IMDelete( void )
+vi_rc IMDelete( void )
 {
     int wlen;
 
@@ -437,7 +437,7 @@ int IMDelete( void )
 /*
  * IMDeleteML - delete char iff no selection
  */
-int IMDeleteML( void )
+vi_rc IMDeleteML( void )
 {
     if( !SelRgn.selected ) {
         return( IMDelete() );
@@ -450,7 +450,7 @@ int IMDeleteML( void )
 /*
  * IMBackSpaceML - backspace iff no selection
  */
-int IMBackSpaceML( void )
+vi_rc IMBackSpaceML( void )
 {
     if( !SelRgn.selected ) {
         return( IMBackSpace() );
@@ -463,7 +463,7 @@ int IMBackSpaceML( void )
 /*
  * IMMouseEvent - handle a mouse event in insert mode
  */
-int IMMouseEvent( void )
+vi_rc IMMouseEvent( void )
 {
     if( LastMouseEvent == MOUSE_MOVE
         || LastMouseEvent == MOUSE_RELEASE
@@ -480,7 +480,7 @@ int IMMouseEvent( void )
 /*
  * IMCursorKey - handle cursor keys in insert mode
  */
-int IMCursorKey( void )
+vi_rc IMCursorKey( void )
 {
     int         wlen;
     event       *ev;
@@ -557,7 +557,7 @@ int IMCursorKey( void )
 /*
  * IMMenuKey - process menu keys from insert mode
  */
-int IMMenuKey( void )
+vi_rc IMMenuKey( void )
 {
     if( IsMenuHotKey( LastEvent ) ) {
         DoneCurrentInsert( TRUE );
@@ -571,7 +571,7 @@ int IMMenuKey( void )
 /*
  * IMSpace - handle a space in insert mode
  */
-int IMSpace( void )
+vi_rc IMSpace( void )
 {
     startNewLineUndo();
     CheckAbbrev( abbrevBuff, &abbrevCnt );
@@ -583,7 +583,7 @@ int IMSpace( void )
 /*
  * IMTabs - handle tabs in insert mode
  */
-int IMTabs( void )
+vi_rc IMTabs( void )
 {
     char        *buff;
     bool        back;
@@ -696,9 +696,9 @@ int IMTabs( void )
 /*
  * IMEscapeNextChar - handle ^Q and ^V in insert mode
  */
-int IMEscapeNextChar( void )
+vi_rc IMEscapeNextChar( void )
 {
-    int rc;
+    vi_rc   rc;
 
     startNewLineUndo();
     LastEvent = '^';
@@ -711,7 +711,7 @@ int IMEscapeNextChar( void )
 /*
  * IMInsert - handle INS key pressed in insert mode
  */
-int IMInsert( void )
+vi_rc IMInsert( void )
 {
     if( overStrike ) {
         overStrike = FALSE;
@@ -752,9 +752,9 @@ static void tempMatch( i_mark *pos )
 /*
  * IMCloseBracket - handle a ')' being entered in insert mode
  */
-int IMCloseBracket( void )
+vi_rc IMCloseBracket( void )
 {
-    int         rc;
+    vi_rc       rc;
     i_mark      pos;
 
     startNewLineUndo();
@@ -763,7 +763,7 @@ int IMCloseBracket( void )
 
         ReplaceCurrentLine();
         rc = FindMatch( &pos );
-        if( !rc ) {
+        if( rc == ERR_NO_ERR ) {
             tempMatch( &pos );
         }
         GetCurrentLine();
@@ -777,9 +777,9 @@ int IMCloseBracket( void )
 /*
  * getBracketLoc - find a matching '(' for a ')'
  */
-static int getBracketLoc( i_mark *pos )
+static vi_rc getBracketLoc( i_mark *pos )
 {
-    int         rc;
+    vi_rc       rc;
     char        tmp[3];
     int         len;
     linenum     lne;
@@ -795,7 +795,7 @@ static int getBracketLoc( i_mark *pos )
         EditFlags.Magic = oldmagic;
         return( ERR_FIND_NOT_FOUND );
     }
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         EditFlags.Magic = oldmagic;
         return( rc );
     }
@@ -814,13 +814,13 @@ static int getBracketLoc( i_mark *pos )
 /*
  * findMatchingBrace find '{' for a '}'
  */
-static int findMatchingBrace( i_mark *pos1 )
+static vi_rc findMatchingBrace( i_mark *pos1 )
 {
-    int         rc;
+    vi_rc       rc;
     i_mark      pos2;
 
     rc = FindMatch( pos1 );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     SaveCurrentFilePos();
@@ -829,7 +829,7 @@ static int findMatchingBrace( i_mark *pos1 )
 
     rc = getBracketLoc( &pos2 );
     RestoreCurrentFilePos();
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         *pos1 = pos2;
     }
     return( ERR_NO_ERR );
@@ -839,13 +839,13 @@ static int findMatchingBrace( i_mark *pos1 )
 /*
  * IMCloseBrace - handle '}' in insert mode
  */
-int IMCloseBrace( void )
+vi_rc IMCloseBrace( void )
 {
     int         i, j;
     int         ts;
     fcb         *cfcb;
     line        *cline;
-    int         rc;
+    vi_rc       rc;
     int         newcol;
     i_mark      pos;
 
@@ -855,7 +855,7 @@ int IMCloseBrace( void )
     if( EditFlags.ShowMatch ) {
         ReplaceCurrentLine();
         rc = FindMatch( &pos );
-        if( !rc ) {
+        if( rc == ERR_NO_ERR ) {
             tempMatch( &pos );
         }
         GetCurrentLine();
@@ -876,7 +876,7 @@ int IMCloseBrace( void )
 
             ReplaceCurrentLine();
             rc = findMatchingBrace( &pos );
-            if( !rc ) {
+            if( rc == ERR_NO_ERR ) {
                 newcol = VirtualCursorPosition();
                 CGimmeLinePtr( pos.line, &cfcb, &cline );
                 i = FindStartOfALine( cline );
@@ -925,9 +925,9 @@ static void continueInsertText( int col, bool overstrike )
 /*
  * stdInsert - standard insert on a line
  */
-static int stdInsert( int col, bool overstrike )
+static vi_rc stdInsert( int col, bool overstrike )
 {
-    int rc;
+    vi_rc   rc;
 
     if( rc = ModificationTest() ) {
         return( rc );
@@ -943,9 +943,10 @@ static int stdInsert( int col, bool overstrike )
 /*
  * DeleteAndInsertText - delete text range, then insert at beginning
  */
-int DeleteAndInsertText( int scol, int ecol )
+vi_rc DeleteAndInsertText( int scol, int ecol )
 {
-    int rc, startcol;
+    int     startcol;
+    vi_rc   rc;
 
     StartUndoGroup( UndoStack );
     CurrentLineReplaceUndoStart();
@@ -953,7 +954,7 @@ int DeleteAndInsertText( int scol, int ecol )
     if( ecol >= 0 ) {
         if( CurrentLine->len > 0 ) {
             rc = DeleteBlockFromCurrentLine( scol, ecol, FALSE );
-            if( !rc ) {
+            if( rc == ERR_NO_ERR ) {
                 startcol = CurrentPos.column;
                 if( scol > ecol ) {
                     startcol = ecol + 1;
@@ -965,7 +966,7 @@ int DeleteAndInsertText( int scol, int ecol )
                 ReplaceCurrentLine();
                 rc = GoToColumnOK( startcol );
             }
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 CurrentLineReplaceUndoCancel();
                 EndUndoGroup( UndoStack );
                 return( rc );
@@ -982,15 +983,16 @@ int DeleteAndInsertText( int scol, int ecol )
 /*
  * insertTextOnOtherLine - open up a different line
  */
-static int insertTextOnOtherLine( insert_dir type )
+static vi_rc insertTextOnOtherLine( insert_dir type )
 {
     char        *buffx;
     int         i, j;
     linenum     a, b;
     bool        above_line = FALSE;
+    vi_rc       rc;
 
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
     /*
      * special case: no data in file
@@ -1039,27 +1041,27 @@ static int insertTextOnOtherLine( insert_dir type )
 
 } /* insertTextOnOtherLine */
 
-int InsertTextOnNextLine( void )
+vi_rc InsertTextOnNextLine( void )
 {
     return( insertTextOnOtherLine( INSERT_AFTER ) );
 }
 
-int InsertTextOnPreviousLine( void )
+vi_rc InsertTextOnPreviousLine( void )
 {
     return( insertTextOnOtherLine( INSERT_BEFORE ) );
 }
 
-int InsertTextAtCursor( void )
+vi_rc InsertTextAtCursor( void )
 {
     return( stdInsert( CurrentPos.column, FALSE ) );
 }
 
-int InsertTextAfterCursor( void )
+vi_rc InsertTextAfterCursor( void )
 {
     return( stdInsert( CurrentPos.column + 1, FALSE ) );
 }
 
-int InsertTextAtLineStart( void )
+vi_rc InsertTextAtLineStart( void )
 {
     if( CurrentFile != NULL ) {
         return( stdInsert( FindStartOfCurrentLine(), FALSE ) );
@@ -1067,7 +1069,7 @@ int InsertTextAtLineStart( void )
     return( ERR_NO_ERR );
 }
 
-int InsertTextAtLineEnd( void )
+vi_rc InsertTextAtLineEnd( void )
 {
     if( CurrentFile != NULL ) {
         return( stdInsert( CurrentLine->len + 1, FALSE ) );
@@ -1078,9 +1080,9 @@ int InsertTextAtLineEnd( void )
 /*
  * DoReplaceText - go into overstrike mode
  */
-int DoReplaceText( void )
+vi_rc DoReplaceText( void )
 {
-    int         rc;
+    vi_rc       rc;
 
     rc = stdInsert( CurrentPos.column, TRUE );
     return( rc );
@@ -1090,10 +1092,10 @@ int DoReplaceText( void )
 /*
  * InsertLikeLast - go into insert mode, the same mode as last time
  */
-int InsertLikeLast( void )
+vi_rc InsertLikeLast( void )
 {
     bool        overstrike;
-    int         rc;
+    vi_rc       rc;
 
     if( EditFlags.WasOverstrike ) {
         overstrike = TRUE;
@@ -1133,10 +1135,10 @@ void PushMode( void )
 /*
  * PopMode - restore to previous mode
  */
-int PopMode( void )
+vi_rc PopMode( void )
 {
     mode        *cmode;
-    int         rc;
+    vi_rc       rc;
 
     rc = ERR_NO_ERR;
     if( modeTail == NULL ) {

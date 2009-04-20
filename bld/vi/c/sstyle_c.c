@@ -475,7 +475,7 @@ void InitCFlags( linenum line_no )
     line    *thisline;
     line    *topline;
     char    topChar;
-    int     rc;
+    vi_rc   rc;
     int     withinQuotes = 0;
     line    *line;
     bool    inBlock = FALSE;

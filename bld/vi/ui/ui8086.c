@@ -109,7 +109,7 @@ void RestoreCursor( void )
 
 } /* RestoreCursor */
 
-int SetFont( char *data )
+vi_rc SetFont( char *data )
 {
     data = data;
     return( ERR_NO_ERR );
@@ -288,7 +288,7 @@ void FiniColors( void )
 /*
  * SetAColor - perform a setcolor command
  */
-int SetAColor( char *data )
+vi_rc SetAColor( char *data )
 {
     rgb         c;
     int         clr;

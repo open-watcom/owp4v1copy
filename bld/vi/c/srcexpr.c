@@ -38,11 +38,11 @@
 /*
  * SrcExpr - add a value to a variable
  */
-int SrcExpr( sfile *sf, vlist *vl )
+vi_rc SrcExpr( sfile *sf, vlist *vl )
 {
     char        tmp[MAX_SRC_LINE], v1[MAX_SRC_LINE];
     long        val, oval;
-    int         rc;
+    vi_rc       rc;
     jmp_buf     jmpaddr;
     vars        *v;
 

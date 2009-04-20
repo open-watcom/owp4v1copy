@@ -91,17 +91,17 @@ void StartUndoGroupWithPosition( undo_stack *stack, linenum lne,
 /*
  * UndoReplaceLines - undo the replacement of a group of lines
  */
-int UndoReplaceLines( linenum sline, linenum eline  )
+vi_rc UndoReplaceLines( linenum sline, linenum eline  )
 {
-    int i;
-    fcb *head, *tail;
+    vi_rc   rc;
+    fcb     *head, *tail;
 
     if( !EditFlags.Undo || UndoStack == NULL ) {
         return( ERR_NO_ERR );
     }
-    i = GetCopyOfLineRange( sline, eline, &head, &tail );
-    if( i ) {
-        return( i );
+    rc = GetCopyOfLineRange( sline, eline, &head, &tail );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     StartUndoGroup( UndoStack );
     UndoDeleteFcbs( sline - 1, head, tail, UndoStack );
@@ -211,8 +211,8 @@ void PatchDeleteUndo( undo_stack *stack )
 {
     undo        *top, *next, *del, *topdel, *after, *tmp;
     bool        merge;
-    int         i;
     fcb         *cfcb, *nfcb;
+    vi_rc       rc;
 
     /*
      * see if we can merge this with the last undo record
@@ -299,8 +299,8 @@ void PatchDeleteUndo( undo_stack *stack )
                     cfcb = nfcb;
                     continue;
             }
-            i = JoinFcbs( cfcb, nfcb );
-            if( i == COULD_NOT_MERGE_FCBS ) {
+            rc = JoinFcbs( cfcb, nfcb );
+            if( rc == COULD_NOT_MERGE_FCBS ) {
                 cfcb = nfcb;
             } else {
                 DeleteLLItem( (ss **)&(topdel->data.fcbs.fcb_head),

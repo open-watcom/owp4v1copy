@@ -47,7 +47,7 @@ void GetCurrentLine( void )
 /*
  * ReplaceCurrentLine - replace current line with work line
  */
-int ReplaceCurrentLine( void )
+vi_rc ReplaceCurrentLine( void )
 {
     int         extra;
     line        *tmp;

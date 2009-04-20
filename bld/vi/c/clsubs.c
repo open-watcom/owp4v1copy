@@ -44,10 +44,10 @@ int LastLineCount;
  *                     doing substitute in 2 parts if it has to, that
  *                     appear as 1
  */
-int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap )
+vi_rc TwoPartSubstitute( char *find, char *replace, int prompt, int wrap )
 {
-    int rc;
-    long changecnt, linecnt;
+    vi_rc   rc;
+    long    changecnt, linecnt;
     linenum end_line;
 
     char *cmd = MemAlloc( MAX_INPUT_LINE );
@@ -82,17 +82,18 @@ int TwoPartSubstitute( char *find, char *replace, int prompt, int wrap )
 /*
  * Substitute - perform substitution
  */
-int Substitute( linenum n1, linenum n2, char *data )
+vi_rc Substitute( linenum n1, linenum n2, char *data )
 {
     char        *sstr, *rstr, *newr;
     char        flag[20], *linedata;
     bool        iflag = FALSE, gflag = FALSE, undoflag = FALSE, restline = FALSE;
     bool        splitpending = FALSE, undoline = FALSE;
     int         i, rlen, slen, key;
-    int         rc, splitme, k;
+    int         splitme, k;
     long        changecnt = 0, linecnt = 0;
     linenum     llineno, ll, lastline = 0, extra;
     i_mark      pos;
+    vi_rc       rc;
 
     LastSubstituteCancelled = 0;
     LastChangeCount = 0;
@@ -130,18 +131,18 @@ int Substitute( linenum n1, linenum n2, char *data )
             }
         }
     }
-    i = CurrentRegComp( sstr );
-    if( i ) {
-        return( i );
+    rc = CurrentRegComp( sstr );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*
      * verify last line
      */
     if( n2 > CurrentFile->fcb_tail->end_line ) {
-        i = CFindLastLine( &ll );
-        if( i ) {
-            return( i );
+        rc = CFindLastLine( &ll );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
         if( n2 > ll ) {
             return( ERR_INVALID_LINE_RANGE );
@@ -166,17 +167,17 @@ int Substitute( linenum n1, linenum n2, char *data )
         /*
          * get regular expression, and build replacement string
          */
-        i = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE );
-        if( !i ) {
+        rc = FindRegularExpression( NULL, &pos, &linedata, n2, FALSE );
+        if( rc == ERR_NO_ERR ) {
             slen = GetCurrRegExpLength();
         } else {
-            if( i == ERR_FIND_PAST_TERM_LINE || i == ERR_FIND_NOT_FOUND ||
-                i == ERR_FIND_END_OF_FILE ) {
+            if( rc == ERR_FIND_PAST_TERM_LINE || rc == ERR_FIND_NOT_FOUND ||
+                rc == ERR_FIND_END_OF_FILE ) {
                 break;
             }
             RestoreCurrentFilePos();
             EditFlags.AllowRegSubNewline = FALSE;
-            return( i );
+            return( rc );
         }
 
         if( pos.line > n2 ) {
@@ -279,12 +280,12 @@ int Substitute( linenum n1, linenum n2, char *data )
          * get copy of line, and verify that new stuff fits
          */
         CurrentPos.line = pos.line;
-        i = CGimmeLinePtr( pos.line, &CurrentFcb, &CurrentLine );
-        if( i ) {
+        rc = CGimmeLinePtr( pos.line, &CurrentFcb, &CurrentLine );
+        if( rc != ERR_NO_ERR ) {
             RestoreCurrentFilePos();
             EditFlags.AllowRegSubNewline = FALSE;
             StaticFree( newr );
-            return( i );
+            return( rc );
         }
         if( CurrentLine->len + rlen - slen >= MaxLine ) {
             rc = ERR_LINE_FULL;

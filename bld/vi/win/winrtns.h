@@ -48,7 +48,7 @@ window_id   NewMsgWindow( void );
 window_id   NewStatWindow( void );
 void        RecalcStatusBarSize( window_id );
 bool        WindowsKeyPush( WORD, WORD );
-int         MenuCommand( UINT );
+vi_rc       MenuCommand( UINT );
 void        StatusLine( int, char *, int );
 
 // display.c
@@ -81,13 +81,13 @@ BOOL        AddIconToToolBar( char * );
 int         AddBitmapToToolBar( char * );
 int         DeleteFromToolBar( char * );
 UINT        NextMenuId( void );
-int         HandleToolCommand( UINT );
+vi_rc       HandleToolCommand( UINT );
 void        Draw3DBox( window_id, RECT *, RECT * );
 void        ResetExtraRects( void );
 void        HandleInitMenu( HMENU hmenu );
 void        ResetMenuBits( void );
 HWND        GetToolbarWindow( void );
-char        GetAutosaveResponse( void );
+vi_key      GetAutosaveResponse( void );
 void        ReadProfile( void );
 void        WriteProfile( void );
 void        FiniProfile( void );

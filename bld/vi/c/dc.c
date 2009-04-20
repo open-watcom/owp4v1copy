@@ -169,9 +169,9 @@ void DCDestroy( void )
     CurrentInfo->dc_size = 0;
 }
 
-int DCUpdate( void )
+vi_rc DCUpdate( void )
 {
-    int             rc;
+    vi_rc           rc;
     int             i, nlines;
     fcb             *fcb;
     line            *line;
@@ -213,7 +213,7 @@ int DCUpdate( void )
 #endif
 
     rc = CGimmeLinePtr( LeftTopPos.line, &fcb, &line );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
 
@@ -276,7 +276,7 @@ int DCUpdate( void )
         if( line ) {
             rc = CGimmeNextLinePtr( &fcb, &line );
         }
-        if( rc && rc != ERR_NO_MORE_LINES ) {
+        if( rc != ERR_NO_ERR && rc != ERR_NO_MORE_LINES ) {
             return( rc );
         }
         dc++;
@@ -352,7 +352,7 @@ void DCDisplaySomeLines( int start, int end )
     linenum     line_no;
     line        *line;
     fcb         *cfcb;
-    int         rc;
+    vi_rc       rc;
 
     if( EditFlags.DisplayHold || CurrentFile == NULL || CurrentInfo == NULL ) {
         return;
@@ -369,10 +369,8 @@ void DCDisplaySomeLines( int start, int end )
     cfcb = CurrentFcb;
     line_no = LeftTopPos.line + start;
     rc = CGimmeLinePtr( line_no, &cfcb, &line );
-    if( rc ) {
-        if( rc != ERR_NO_SUCH_LINE ) {
-            return;
-        }
+    if( rc != ERR_NO_ERR && rc != ERR_NO_SUCH_LINE ) {
+        return;
     }
     CTurnOffFileDisplayBits();
     cfcb->on_display = TRUE;

@@ -57,7 +57,7 @@ size_t strlen( const char *__s );
 /*
  * displayLineInWindowGeneric - takes an ss_block directly
  */
-int displayLineInWindowGeneric( window_id wn, int c_line_no,
+vi_rc displayLineInWindowGeneric( window_id wn, int c_line_no,
                                 char *text, int start_col, ss_block *ss )
 {
     wind                *w;
@@ -229,7 +229,7 @@ int displayLineInWindowGeneric( window_id wn, int c_line_no,
 /*
  * DisplayLineInWindowWithColor - do just that
  */
-int DisplayLineInWindowWithColor( window_id wn, int c_line_no,
+vi_rc DisplayLineInWindowWithColor( window_id wn, int c_line_no,
                                   char *text, type_style *ts, int start_col )
 {
     ss_block    ss;
@@ -246,14 +246,15 @@ int DisplayLineInWindowWithColor( window_id wn, int c_line_no,
 /*
  * DisplayLineInWindowWithSyntaxStyle - display wrt syntax lang. settings
  */
-int DisplayLineInWindowWithSyntaxStyle( window_id wn, int c_line_no, line *line,
+vi_rc DisplayLineInWindowWithSyntaxStyle( window_id wn, int c_line_no, line *line,
                                         linenum line_no, char *text, int start_col,
                                         unsigned int junk )
 {
     static ss_block     ss[MAX_SS_BLOCKS];
     int                 dummy;
     bool                saveRealTabs;
-    int                 a, rc;
+    int                 a;
+    vi_rc               rc;
     char                *tmp;
     // dc               c_line;
 
@@ -535,7 +536,7 @@ void ColorAColumnRange( int row, int scol, int ecol, type_style *style )
 /*
  * SetCharInWindowWithColor - do just that, using given colors
  */
-int SetCharInWindowWithColor( window_id wn, int line, int col, char text,
+vi_rc SetCharInWindowWithColor( window_id wn, int line, int col, char text,
                               type_style *style )
 {
     wind                *w;
@@ -607,7 +608,7 @@ int SetCharInWindowWithColor( window_id wn, int line, int col, char text,
 /*
  * DisplayLineInWindow - do as it sounds, use default colors
  */
-int DisplayLineInWindow( window_id wn, int c_line_no, char *text )
+vi_rc DisplayLineInWindow( window_id wn, int c_line_no, char *text )
 {
     ss_block    ss;
     SEType[SE_UNUSED].foreground = Windows[wn]->text_color;

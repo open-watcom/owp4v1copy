@@ -36,9 +36,9 @@
 /*
  * DoMatching - do matching braces command
  */
-int DoMatching( range *r, long count )
+vi_rc DoMatching( range *r, long count )
 {
-    int         rc;
+    vi_rc       rc;
     i_mark      pos;
 
     count = count;
@@ -52,13 +52,14 @@ int DoMatching( range *r, long count )
 /*
  * FindMatch - do matching braces command
  */
-int FindMatch( i_mark *pos1 )
+vi_rc FindMatch( i_mark *pos1 )
 {
     char        *match[2];
     int         matchcnt, which, m1, m2, i;
     char        matchd[MAX_STR], tmp[MAX_STR];
     char        *linedata;
     i_mark      pos2;
+    vi_rc       rc;
 
     /*
      * build match command
@@ -102,9 +103,9 @@ int FindMatch( i_mark *pos1 )
     match[1] = MatchData[m1 + 1];
     matchcnt = 1;
     MySprintf( matchd, "!(%s)|(%s)", match[0], match[1] );
-    i = CurrentRegComp( matchd );
-    if( i ) {
-        return( i );
+    rc = CurrentRegComp( matchd );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*
@@ -142,7 +143,7 @@ int FindMatch( i_mark *pos1 )
 /*
  * AddMatchString - add another match string
  */
-int AddMatchString( char *data )
+vi_rc AddMatchString( char *data )
 {
     char        st[MAX_STR], st2[MAX_STR];
 

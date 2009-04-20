@@ -321,11 +321,11 @@ static void dickWithAWindow( int wn, bool topcorner, bool move, int *doresize,
 /*
  * dickWithCurrentWindow - set up to play with current window
  */
-static int dickWithCurrentWindow( bool topcorner, bool move, bool mouse )
+static vi_rc dickWithCurrentWindow( bool topcorner, bool move, bool mouse )
 {
     int         resize;
     windim      w;
-    int         rc;
+    vi_rc       rc;
 
     dickWithAWindow( CurrentWindow, topcorner, move, &resize, &w, mouse );
     if( resize ) {
@@ -342,7 +342,7 @@ static int dickWithCurrentWindow( bool topcorner, bool move, bool mouse )
 /*
  * routines to resize/move current window
  */
-int ResizeCurrentWindowWithKeys( void ) { return( dickWithCurrentWindow( FALSE, FALSE, FALSE ) ); }
-int MoveCurrentWindowWithKeys( void ) { return( dickWithCurrentWindow( FALSE, TRUE, FALSE ) ); }
-int ResizeCurrentWindowWithMouse( void ) { return( dickWithCurrentWindow( FALSE, FALSE, TRUE ) ); }
-int MoveCurrentWindowWithMouse( void ) { return( dickWithCurrentWindow( FALSE, TRUE, TRUE ) ); }
+vi_rc ResizeCurrentWindowWithKeys( void ) { return( dickWithCurrentWindow( FALSE, FALSE, FALSE ) ); }
+vi_rc MoveCurrentWindowWithKeys( void ) { return( dickWithCurrentWindow( FALSE, TRUE, FALSE ) ); }
+vi_rc ResizeCurrentWindowWithMouse( void ) { return( dickWithCurrentWindow( FALSE, FALSE, TRUE ) ); }
+vi_rc MoveCurrentWindowWithMouse( void ) { return( dickWithCurrentWindow( FALSE, TRUE, TRUE ) ); }

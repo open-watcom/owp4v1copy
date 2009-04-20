@@ -49,23 +49,23 @@ typedef struct ft_src {
     cmd_ll              *cmd_head, *cmd_tail;
 } ft_src;
 
-void        FTSInit( void );
-void        FTSFini( void );
-int         FTSStart( char * );
-int         FTSAddCmd( char *, int );
-int         FTSAddBoolean( bool, char * );
-int         FTSAddChar( char, char * );
-int         FTSAddInt( int, char * );
-int         FTSAddStr( char *, char * );
-int         FTSRunCmds( char * );
-int         FTSEnd( void );
-void        FTSBarfData( FILE * );
-ft_src      *FTSGetFirst( void );
-ft_src      *FTSGetNext( ft_src * );
-template_ll *FTSGetFirstTemplate( ft_src * );
-template_ll *FTSGetNextTemplate( template_ll * );
-ft_src      *FTSMatchTemplate( template_ll * );
-ft_src      *FTSMatchTemplateData( char * );
-void        FTSKill( ft_src * );
+extern void         FTSInit( void );
+extern void         FTSFini( void );
+extern vi_rc        FTSStart( char * );
+extern vi_rc        FTSAddCmd( char *, int );
+extern vi_rc        FTSAddBoolean( bool, char * );
+extern vi_rc        FTSAddChar( char, char * );
+extern vi_rc        FTSAddInt( int, char * );
+extern vi_rc        FTSAddStr( char *, char * );
+extern vi_rc        FTSRunCmds( char * );
+extern vi_rc        FTSEnd( void );
+extern void         FTSBarfData( FILE * );
+extern ft_src       *FTSGetFirst( void );
+extern ft_src       *FTSGetNext( ft_src * );
+extern template_ll  *FTSGetFirstTemplate( ft_src * );
+extern template_ll  *FTSGetNextTemplate( template_ll * );
+extern ft_src       *FTSMatchTemplate( template_ll * );
+extern ft_src       *FTSMatchTemplateData( char * );
+extern void         FTSKill( ft_src * );
 
 #endif

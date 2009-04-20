@@ -35,7 +35,7 @@
 /*
  * ReadDataFile - do just that
  */
-int ReadDataFile( char *file, char **buffer, bool (*fn_alloc)( int ),
+vi_rc ReadDataFile( char *file, char **buffer, bool (*fn_alloc)( int ),
                   bool (*fn_save)( int, char* ) )
 {
     GENERIC_FILE        gf;

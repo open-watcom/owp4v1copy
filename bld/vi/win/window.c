@@ -226,7 +226,7 @@ int WindowAuxInfo( window_id id, int type )
     return( value );
 }
 
-int NewWindow2( window_id *id, window_info *info )
+vi_rc NewWindow2( window_id *id, window_info *info )
 {
     if( info == &editw_info ) {
         *id = NewEditWindow();

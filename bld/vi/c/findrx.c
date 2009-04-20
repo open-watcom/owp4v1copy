@@ -40,10 +40,10 @@ static bool wrapMsgPrinted;
 /*
  * FindRegularExpression - do a forward search for a regular expression
  */
-int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
+vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
                                                     linenum termline, int sw )
 {
-    int         rc;
+    vi_rc       rc;
     int         found;
     linenum     ilineno;
     bool        wrapped = FALSE;
@@ -63,13 +63,13 @@ int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
         ilineno = pos1->line;
     }
     rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     scol = pos1->column;
     if( pat != NULL ) {
         rc = CurrentRegComp( pat );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( rc );
         }
     }
@@ -95,7 +95,7 @@ int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
          * get next line
          */
         rc = CGimmeNextLinePtr( &cfcb, &cline );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             if( rc == ERR_NO_MORE_LINES ) {
                 if( !sw ) {
                     return( ERR_FIND_END_OF_FILE );
@@ -109,7 +109,7 @@ int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
                 }
                 pos1->line = 1;
                 rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
-                if( rc ) {
+                if( rc != ERR_NO_ERR ) {
                     return( rc );
                 }
                 pos1->line = 0;
@@ -134,10 +134,10 @@ int FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
 /*
  * FindRegularExpressionBackwards - do a reverse search for a regular expression
  */
-int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
+vi_rc FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
                                                              linenum termline, int sw )
 {
-    int         rc;
+    vi_rc       rc;
     char        *data;
     bool        wrapped = FALSE;
     bool        found;
@@ -151,7 +151,7 @@ int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
      * initialize for search
      */
     rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     if( sw ) {
@@ -160,7 +160,7 @@ int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
     scol = pos1->column;
     if( pat != NULL ) {
         rc = CurrentRegComp( pat );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( rc );
         }
     }
@@ -181,7 +181,7 @@ int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
             if( RegExpError != ERR_NO_ERR ) {
                 return( RegExpError );
             }
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 int     col, len;
                 col = GetCurrRegExpColumn( cline->data );
                 len = GetCurrRegExpLength();
@@ -210,7 +210,7 @@ int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
          * get next line
          */
         rc = GimmePrevLinePtr( &cfcb, &cline );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             if( rc == ERR_NO_MORE_LINES ) {
                 if( !sw ) {
                     return( ERR_FIND_TOP_OF_FILE );
@@ -223,11 +223,11 @@ int FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
                     return( ERR_FIND_NOT_FOUND );
                 }
                 rc = CFindLastLine( &pos1->line );
-                if( rc ) {
+                if( rc != ERR_NO_ERR ) {
                     return( rc );
                 }
                 rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
-                if( rc ) {
+                if( rc != ERR_NO_ERR ) {
                     return( rc );
                 }
                 pos1->line += 1;

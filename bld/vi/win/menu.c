@@ -140,11 +140,12 @@ UINT NextMenuId( void )
  *                     command associated with the menu item if there is an
  *                     item with that id.
  */
-static int handleMenuCommand( menu *m, UINT id )
+static vi_rc handleMenuCommand( menu *m, UINT id )
 {
     item        *citem;
     char        *str;
-    int         len, rc;
+    int         len;
+    vi_rc       rc;
 
     for( citem = m->item_head; citem != NULL; citem = citem->next ) {
         if( citem->id == id ) {
@@ -232,9 +233,10 @@ static menu *specialMenu( char *name )
 /*
  * specialMenuCommand - run a command from a specific menu
  */
-static int specialMenuCommand( UINT w )
+static vi_rc specialMenuCommand( UINT w )
 {
-    int             i, rc;
+    int             i;
+    vi_rc           rc;
     special_menu    *s;
 
     s = &specialMenus[0];
@@ -583,7 +585,7 @@ int AddMenuItem( char *data )
 /*
  * DoMenuChar - handle a menu activated by the keyboard
  */
-int DoMenuChar( void )
+vi_rc DoMenuChar( void )
 {
     vi_key      key;
     menu        *m;
@@ -820,10 +822,10 @@ int ActivateFloatMenu( char *data )
  * FALSE otherwise. Looks for a menu item with id identical to
  * the one passed in.
  */
-int MenuCommand( UINT w )
+vi_rc MenuCommand( UINT w )
 {
     menu    *m;
-    int     rc;
+    vi_rc   rc;
 
     if( !w || EditFlags.HoldEverything ) {
         return( ERR_NO_ERR );
@@ -1077,7 +1079,7 @@ void HandleInitMenu( HMENU hmenu )
     menu        *cmenu;
     int         i, j;
     item        *citem;
-    int         result;
+    vi_rc       result;
     bool        need_gray;
     bool        need_check;
 

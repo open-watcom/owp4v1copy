@@ -38,15 +38,16 @@
 /*
  * goToLine - go to a specified line number
  */
-static int goToLine( linenum lineno, int relcurs )
+static vi_rc goToLine( linenum lineno, int relcurs )
 {
-    int         i, text_lines, tl;
+    int         text_lines, tl;
     linenum     diff, cwl, nwl;
 //    linenum   s, e, hiddcnt;
     bool        dispall, pageshift;
     fcb         *cfcb;
     line        *cline;
     int         pad;
+    vi_rc       rc;
 
     if( lineno < 1 ) {
         return( ERR_NO_SUCH_LINE );
@@ -55,9 +56,9 @@ static int goToLine( linenum lineno, int relcurs )
     /*
      * get pointer to requested line
      */
-    i = CGimmeLinePtr( lineno, &cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = CGimmeLinePtr( lineno, &cfcb, &cline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 #if 0
     if( cline->inf.ld.hidden ) {
@@ -167,12 +168,12 @@ static int goToLine( linenum lineno, int relcurs )
 
 } /* goToLine */
 
-int GoToLineRelCurs( linenum lineno )
+vi_rc GoToLineRelCurs( linenum lineno )
 {
     return( goToLine( lineno, TRUE ) );
 }
 
-int GoToLineNoRelCurs( linenum lineno )
+vi_rc GoToLineNoRelCurs( linenum lineno )
 {
     return( goToLine( lineno, FALSE ) );
 }
@@ -201,7 +202,7 @@ void SetCurrentLineNumber( linenum l )
 /*
  * GoToColumnOK - go to a specified column that does not need a max check
  */
-int GoToColumnOK( int colno )
+vi_rc GoToColumnOK( int colno )
 {
     return( GoToColumn( colno, colno ) );
 
@@ -210,7 +211,7 @@ int GoToColumnOK( int colno )
 /*
  * GoToColumnOnCurrentLine - go to a specified column on the current line
  */
-int GoToColumnOnCurrentLine( int colno )
+vi_rc GoToColumnOnCurrentLine( int colno )
 {
     if( CurrentLine == NULL ) {
         return( ERR_NO_FILE );
@@ -229,7 +230,7 @@ int GoToColumnOnCurrentLine( int colno )
 /*
  * GoToColumn - go to a specified column
  */
-int GoToColumn( int colno, int maxcol )
+vi_rc GoToColumn( int colno, int maxcol )
 {
     int vc;
 
@@ -269,18 +270,19 @@ int GoToColumn( int colno, int maxcol )
 /*
  * SetCurrentLine - reset current line after changes in current file structure
  */
-int SetCurrentLine( linenum lineno )
+vi_rc SetCurrentLine( linenum lineno )
 {
-    int         i, text_lines;
+    int         text_lines;
     fcb         *cfcb;
     line        *cline;
+    vi_rc       rc;
 
     if( lineno <= 0 ) {
         lineno = 1;
     }
-    i = CGimmeLinePtr( lineno, &cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = CGimmeLinePtr( lineno, &cfcb, &cline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     CurrentLine = cline;
@@ -307,9 +309,10 @@ int SetCurrentLine( linenum lineno )
  * CheckLeftColumn - check if CurrentPos.column and LeftTopPos.column give a position
  *                   in the window; if not, LeftTopPos.column is changed appropriatly
  */
-int CheckLeftColumn( void )
+bool CheckLeftColumn( void )
 {
-    int diff, wc, rc = TRUE, pad;
+    int     diff, wc, pad;
+    bool    rc;
 
     wc = VirtualCursorPosition() - LeftTopPos.column;
 
@@ -364,9 +367,10 @@ void ValidateCurrentColumn( void )
  * CheckCurrentColumn - check state of current column, return TRUE if need to
  *                      redisplay page
  */
-int CheckCurrentColumn( void )
+bool CheckCurrentColumn( void )
 {
-    int clen, vcp, dispall = FALSE;
+    int     clen, vcp;
+    bool    dispall = FALSE;
 
     clen = RealLineLen( CurrentLine->data );
     if( clen == 0 ) {
@@ -417,7 +421,7 @@ int ShiftTab( int col, int ta )
 /*
  * SetCurrentColumn - set CurrentPos.column, positioning LeftTopPos.column nicely
  */
-int SetCurrentColumn( int newcol )
+vi_rc SetCurrentColumn( int newcol )
 {
     long        oldpos;
     int         text_cols;
@@ -454,7 +458,7 @@ int SetCurrentColumn( int newcol )
 /*
  * LocateCmd - parse a locate command (format: locate r,c[,len])
  */
-int LocateCmd( char *data )
+vi_rc LocateCmd( char *data )
 {
     char        tmp[MAX_STR];
     linenum     r;

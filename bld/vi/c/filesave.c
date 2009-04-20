@@ -44,19 +44,20 @@ static int fileHandle;
 /*
  * writeRange - write a range of lines in an fcb to current file
  */
-static int writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
+static vi_rc writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
 {
     line        *cline;
     int         i, len = 0;
     char        *buff, *data;
+    vi_rc       rc;
 
     if( s > e ) {
         return( ERR_NO_ERR );
     }
 
-    i = GimmeLinePtrFromFcb( s, cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = GimmeLinePtrFromFcb( s, cfcb, &cline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     buff = WriteBuffer;
 
@@ -105,7 +106,6 @@ static int writeRange( linenum s, linenum e, fcb *cfcb, long *bytecnt )
  */
 static int readOnlyCheck( void )
 {
-    int         i;
     char        tmp[MAX_STR];
 #ifndef __WIN__
     char        st[MAX_STR];
@@ -113,14 +113,12 @@ static int readOnlyCheck( void )
 
     MySprintf( tmp, "\"%s\" is read-only, overwrite?", CurrentFile->name );
 #ifdef __WIN__
-    i = MessageBox( Root, tmp, EditorName, MB_YESNO | MB_TASKMODAL );
-    if( i == IDYES ) {
+    if( MessageBox( Root, tmp, EditorName, MB_YESNO | MB_TASKMODAL ) == IDYES ) {
         return( ERR_NO_ERR );
     }
     return( ERR_READ_ONLY_FILE );
 #else
-    i = GetResponse( tmp, st );
-    if( i == GOT_RESPONSE && st[0] == 'y' ) {
+    if( GetResponse( tmp, st ) == GOT_RESPONSE && st[0] == 'y' ) {
         return( ERR_NO_ERR );
     }
     return( ERR_READ_ONLY_FILE );
@@ -132,14 +130,14 @@ static int readOnlyCheck( void )
 /*
  * SaveFileAs - save data from current file
  */
-int SaveFileAs( void )
+vi_rc SaveFileAs( void )
 {
     char    fn[FILENAME_MAX];
     char    cmd[14 + FILENAME_MAX];
-    int     rc;
+    vi_rc   rc;
 
     rc = SelectFileSave( fn );
-    if( rc || fn[0] == '\0' ) {
+    if( rc != ERR_NO_ERR || fn[0] == '\0' ) {
         return( rc );
     }
     // rename current file
@@ -159,15 +157,16 @@ int SaveFileAs( void )
 /*
  * SaveFile - save data from current file
  */
-int SaveFile( char *name, linenum start, linenum end, int dammit )
+vi_rc SaveFile( char *name, linenum start, linenum end, int dammit )
 {
-    int         i, rc;
+    int         i;
     bool        existflag = FALSE, restpath = FALSE, makerw = FALSE;
     char        *fn;
     fcb         *cfcb, *sfcb, *efcb;
     linenum     s, e, lc;
     long        bc = 0;
-    int         lastst;
+    status_type lastst;
+    vi_rc       rc;
 
     if( CurrentFile == NULL ) {
         return( ERR_NO_FILE );
@@ -182,7 +181,7 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
         }
         if( CFileReadOnly() ) {
             rc = readOnlyCheck();
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 return( ERR_READ_ONLY_FILE );
             }
             makerw = TRUE;
@@ -210,39 +209,39 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
      */
     if( start == -1L && end == -1L ) {
         s = 1L;
-        i = CFindLastLine( &e );
-        if( i ) {
-            return( i );
+        rc = CFindLastLine( &e );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     } else {
         s = start;
         e = end;
     }
     lc = e - s + 1;
-    i = FindFcbWithLine( s, CurrentFile, &sfcb );
-    if( i ) {
-        return( i );
+    rc = FindFcbWithLine( s, CurrentFile, &sfcb );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
-    i = FindFcbWithLine( e, CurrentFile, &efcb );
-    if( i ) {
-        return( i );
+    rc = FindFcbWithLine( e, CurrentFile, &efcb );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     if( restpath ) {
-        i = ChangeDirectory( CurrentFile->home );
-        if( i ) {
-            return( i );
+        rc = ChangeDirectory( CurrentFile->home );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
     if( !CurrentFile->is_stdio ) {
         if( makerw ) {
             chmod( fn, S_IWRITE | S_IREAD );
         }
-        i = FileOpen( fn, existflag, O_TRUNC | O_WRONLY | O_BINARY | O_CREAT,
+        rc = FileOpen( fn, existflag, O_TRUNC | O_WRONLY | O_BINARY | O_CREAT,
                       WRITEATTRS, &fileHandle);
-        if( i ) {
+        if( rc != ERR_NO_ERR ) {
             Message1( strerror( errno ) );
-            return( i );
+            return( rc );
         }
     } else {
         fileHandle = 0;
@@ -277,13 +276,13 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
     cfcb = sfcb;
     while( cfcb != efcb ) {
 
-        i = writeRange( s, cfcb->end_line, cfcb, &bc );
-        if( i ) {
+        rc = writeRange( s, cfcb->end_line, cfcb, &bc );
+        if( rc != ERR_NO_ERR ) {
 #ifdef __WIN__
             ToggleHourglass( FALSE );
 #endif
             UpdateCurrentStatus( lastst );
-            return( i );
+            return( rc );
         }
         s = cfcb->end_line + 1;
         cfcb = cfcb->next;
@@ -293,13 +292,13 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
     /*
      * last bit
      */
-    i = writeRange( s, e, efcb, &bc );
+    rc = writeRange( s, e, efcb, &bc );
 #ifdef __WIN__
     ToggleHourglass( FALSE );
 #endif
     UpdateCurrentStatus( lastst );
-    if( i ) {
-        return( i );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     if( !CurrentFile->is_stdio ) {
         i = close( fileHandle );
@@ -312,9 +311,9 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
         }
     }
     if( restpath ) {
-        i = ChangeDirectory( CurrentDirectory );
-        if( i ) {
-            return( i );
+        rc = ChangeDirectory( CurrentDirectory );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
 
@@ -326,7 +325,7 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
 /*
  * StartSaveExit - prepare to do save & exit of file
  */
-int StartSaveExit( void )
+vi_rc StartSaveExit( void )
 {
     vi_key  key;
     vi_key  levent;
@@ -349,9 +348,9 @@ int StartSaveExit( void )
 /*
  * SaveAndExit - save and exit a file
  */
-int SaveAndExit( char *fname )
+vi_rc SaveAndExit( char *fname )
 {
-    int rc;
+    vi_rc   rc;
 
     /*
      * save file and get next one
@@ -359,11 +358,11 @@ int SaveAndExit( char *fname )
     if( CurrentFile != NULL ){
         if( CurrentFile->modified ) {
             rc = SourceHook( SRC_HOOK_WRITE, ERR_NO_ERR );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 return( rc );
             }
             rc = SaveFile( fname, -1, -1, FALSE );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 return( rc );
             }
             Modified( FALSE );
@@ -378,17 +377,15 @@ int SaveAndExit( char *fname )
  */
 bool FilePromptForSaveChanges( file *f )
 {
-    int     rc;
     char    buffer[MAX_STR];
+    vi_rc   rc;
 
 #ifdef __WIN__
     MySprintf( buffer, "\"%s\" has been modified - save changes?",
         f->name );
     BringWindowToTop( Root );
     SetWindowPos( Root, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
-    rc = MessageBox( Root, buffer, EditorName, MB_YESNO | MB_TASKMODAL );
-
-    if( rc == IDYES ) {
+    if( MessageBox( Root, buffer, EditorName, MB_YESNO | MB_TASKMODAL ) == IDYES ) {
         rc = SaveFile( NULL, -1, -1, FALSE );
         if( rc != ERR_NO_ERR ) {
             MySprintf( buffer, "Error saving \"%s\"", f->name );
@@ -400,13 +397,12 @@ bool FilePromptForSaveChanges( file *f )
     SetWindowPos( Root, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
     SetWindowPos( Root, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 #else
-    char response[MAX_SRC_LINE];
+    char    response[MAX_SRC_LINE];
 
 //  MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no|cancel)?",
     MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no)?",
         f->name );
-    rc = GetResponse( buffer, response );
-    if( rc == GOT_RESPONSE ) {
+    if( GetResponse( buffer, response ) == GOT_RESPONSE ) {
         switch( response[0] ) {
         case 0:
             // if the user hit ENTER then the buffer will be
@@ -436,13 +432,14 @@ bool FilePromptForSaveChanges( file *f )
 bool FileExitOptionSaveChanges( file *f )
 {
     bool        aborted = FALSE;
-    int         rc;
     char        buffer[MAX_STR];
-
 #ifdef __WIN__
+    int         resp;
+    vi_rc       rc;
+
     MySprintf( buffer, "\"%s\" has been modified - save changes?", f->name );
-    rc = MessageBox( Root, buffer, EditorName, MB_YESNOCANCEL | MB_TASKMODAL );
-    if( rc == IDYES ) {
+    resp = MessageBox( Root, buffer, EditorName, MB_YESNOCANCEL | MB_TASKMODAL );
+    if( resp == IDYES ) {
         rc = SaveFile( NULL, -1, -1, FALSE );
         if( rc != ERR_NO_ERR ) {
             MySprintf( buffer, "Error saving \"%s\"", f->name );
@@ -451,7 +448,7 @@ bool FileExitOptionSaveChanges( file *f )
         } else {
             NextFileDammit();
         }
-    } else if( rc == IDCANCEL ) {
+    } else if( resp == IDCANCEL ) {
         aborted = TRUE;
     } else {
         NextFileDammit();
@@ -461,8 +458,7 @@ bool FileExitOptionSaveChanges( file *f )
 
     MySprintf( buffer, "\"%s\" has been modified - save changes (yes|no|cancel)?",
         f->name );
-    rc = GetResponse( buffer, response );
-    if( rc == GOT_RESPONSE ) {
+    if( GetResponse( buffer, response ) == GOT_RESPONSE ) {
         switch( response[0] ) {
         case 0:
             // if the user hit ENTER then the buffer will be
@@ -493,9 +489,9 @@ bool FileExitOptionSaveChanges( file *f )
 /*
  * FancyFileSave
  */
-int FancyFileSave( void )
+vi_rc FancyFileSave( void )
 {
-    int         rc;
+    vi_rc       rc;
 
     if( CurrentFile == NULL ) {
         return( ERR_NO_FILE );
@@ -512,10 +508,10 @@ int FancyFileSave( void )
 /*
  * DoKeyboardSave - handle the CTRL+S keyboard shortcut
  */
-int DoKeyboardSave( void )
+vi_rc DoKeyboardSave( void )
 {
 #ifdef __WIN__
-    int     rc;
+    vi_rc   rc;
     char    fname[_MAX_FNAME];
 
     if( CurrentFile != NULL ) {

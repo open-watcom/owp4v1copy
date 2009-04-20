@@ -558,7 +558,7 @@ static vi_key specialKeyFilter( input_buffer *input, vi_key event )
 static bool fileComplete( input_buffer *input, vi_key first_event )
 {
     bool        exit, done;
-    int         ret;
+    vi_rc       rc;
     vi_key      event;
     int         old_len;
 
@@ -568,12 +568,12 @@ static bool fileComplete( input_buffer *input, vi_key first_event )
     } else {
         saveStr( input );
         old_len = strlen( input->buffer ) - 1;
-        ret = StartFileComplete( input->buffer, old_len,
+        rc = StartFileComplete( input->buffer, old_len,
                                  input->buffer_length, first_event );
-        if( ret > 0 ) {
+        if( rc > 0 ) {
             MyBeep();
         } else {
-            if( ret != FILE_COMPLETE ) {
+            if( rc != FILE_COMPLETE ) {
                 done = FALSE;
                 do {
                     endColumn( input );
@@ -591,11 +591,11 @@ static bool fileComplete( input_buffer *input, vi_key first_event )
                     case VI_KEY( PAGEDOWN ):
                     case VI_KEY( PAGEUP ):
                     case VI_KEY( ALT_END ):
-                        ret = ContinueFileComplete( input->buffer, old_len,
+                        rc = ContinueFileComplete( input->buffer, old_len,
                                                     input->buffer_length, event );
-                        if( ret ) {
+                        if( rc != ERR_NO_ERR ) {
                             FinishFileComplete();
-                            if( ret == FILE_COMPLETE_ENTER ) {
+                            if( rc == FILE_COMPLETE_ENTER ) {
                                 exit = TRUE;
                             }
                             done = TRUE;
@@ -778,7 +778,7 @@ bool ReadStringInWindow( window_id id, int line, char *prompt, char *str,
                          int max_len, history_data *history )
 {
     input_buffer        input;
-    int                 rc;
+    bool                rc;
 
     input.prompt = prompt;
     input.buffer = str;
@@ -798,16 +798,16 @@ bool ReadStringInWindow( window_id id, int line, char *prompt, char *str,
 
 } /* ReadStringInWindow */
 
-int PromptForString( char *prompt, char *buffer,
+vi_rc PromptForString( char *prompt, char *buffer,
                         int buffer_length, history_data *history )
 {
-    int                 err;
     window_id           id;
+    vi_rc               rc;
 
     if( !EditFlags.NoInputWindow ) {
-        err = NewWindow2( &id, &cmdlinew_info );
-        if( err ) {
-            return( err );
+        rc = NewWindow2( &id, &cmdlinew_info );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     } else {
         id = NO_WINDOW;
@@ -815,11 +815,11 @@ int PromptForString( char *prompt, char *buffer,
 
     if( !EditFlags.NoInputWindow &&
         strlen( prompt ) >= WindowAuxInfo( id, WIND_INFO_TEXT_COLS ) ) {
-        err = ERR_PROMPT_TOO_LONG;
+        rc = ERR_PROMPT_TOO_LONG;
     } else {
-        err = NO_VALUE_ENTERED;
+        rc = NO_VALUE_ENTERED;
         if( ReadStringInWindow( id, 1, prompt, buffer, buffer_length, history ) ) {
-            err = ERR_NO_ERR;
+            rc = ERR_NO_ERR;
         }
     }
 
@@ -829,6 +829,6 @@ int PromptForString( char *prompt, char *buffer,
     } else {
         EditFlags.NoInputWindow = FALSE;
     }
-    return( err );
+    return( rc );
 
 } /* PromptForString */

@@ -222,7 +222,7 @@ static int      timerID;
 LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
 {
     RECT        rect;
-    int         rc;
+    vi_rc       rc;
     HANDLE      hfileinfo;
     int         cnt, i;
     char        *buff;
@@ -344,10 +344,14 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         }
         return( 0 );
     case WM_QUERYENDSESSION:
-        PushMode();
-        rc = ExitWithPrompt( FALSE );
-        PopMode();
-        return( rc );
+        {
+            bool    ret;
+
+            PushMode();
+            ret = ExitWithPrompt( FALSE );
+            PopMode();
+            return( ret );
+        }
     case WM_CLOSE:
         PushMode();
         ExitWithPrompt( TRUE );

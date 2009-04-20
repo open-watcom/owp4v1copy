@@ -378,7 +378,7 @@ vi_key GetKey( bool usemouse )
 /*
  * NonKeyboardEventsPending - check if anything is buffered and waiting
  */
-int NonKeyboardEventsPending( void )
+bool NonKeyboardEventsPending( void )
 {
     if( EditFlags.KeyOverride ) {
         return( TRUE );
@@ -494,11 +494,11 @@ void KeyAdd( vi_key key )
 void KeyAddString( char *str )
 {
     key_map     scr;
-    int         rc;
+    vi_rc       rc;
     vi_key      *s;
 
     rc = AddKeyMap( &scr, str );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         s = scr.data;
         while( *s != 0 ) {
             KeyAdd( *s );

@@ -36,8 +36,8 @@ bool    GetNewBlock( long *, unsigned char *, int );
 int     MakeWriteBlock( fcb * );
 
 /* fcbdisk.c */
-int     SwapToMemoryFromDisk( fcb * );
-int     SwapToDisk( fcb * );
+vi_rc   SwapToMemoryFromDisk( fcb * );
+vi_rc   SwapToDisk( fcb * );
 void    GiveBackSwapBlock( long );
 void    SwapFileClose( void );
 void    SwapBlockInit( int );
@@ -56,7 +56,7 @@ void    EMSBlockInit( int );
 
 /* fcbswap.c */
 void    SwapFcb( fcb * );
-int     RestoreToNormalMemory( fcb *, int );
+vi_rc   RestoreToNormalMemory( fcb *, int );
 
 /* fcbxmem.c */
 int     SwapToExtendedMemory( fcb * );

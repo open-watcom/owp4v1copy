@@ -37,23 +37,24 @@ extern long TabCnt;
 /*
  * doCompressExpand - convert tabs to spaces, and spaces to tabs
  */
-static int doCompressExpand( bool compress )
+static vi_rc doCompressExpand( bool compress )
 {
-    int         i, k;
+    int         k;
     long        bytes_saved = 0;
     long        bytes_added = 0;
     long        otabcnt;
     linenum     linecnt = 0;
     char        *tmp;
+    vi_rc       rc;
 
     /*
      * init
      */
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
-    if( i = SaveAndResetFilePos( 1 ) ) {
-        return( i );
+    if( rc = SaveAndResetFilePos( 1 ) ) {
+        return( rc );
     }
     tmp = StaticAlloc();
 
@@ -84,14 +85,14 @@ static int doCompressExpand( bool compress )
          * get next line
          */
         linecnt++;
-        i = CGimmeNextLinePtr( &CurrentFcb, &CurrentLine );
-        if( i ) {
-            if( i == ERR_NO_MORE_LINES ) {
+        rc = CGimmeNextLinePtr( &CurrentFcb, &CurrentLine );
+        if( rc != ERR_NO_ERR ) {
+            if( rc == ERR_NO_MORE_LINES ) {
                 break;
             }
             RestoreCurrentFilePos();
             StaticFree( tmp );
-            return( i );
+            return( rc );
         }
 
     }
@@ -114,7 +115,7 @@ static int doCompressExpand( bool compress )
 /*
  * ExpandWhiteSpace - replace tabs with white space
  */
-int ExpandWhiteSpace( void )
+vi_rc ExpandWhiteSpace( void )
 {
     return( doCompressExpand( FALSE ) );
 
@@ -123,7 +124,7 @@ int ExpandWhiteSpace( void )
 /*
  * CompressWhiteSpace - replace white space with tabs
  */
-int CompressWhiteSpace( void )
+vi_rc CompressWhiteSpace( void )
 {
     return( doCompressExpand( TRUE ) );
 

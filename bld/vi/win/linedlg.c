@@ -53,15 +53,15 @@ BOOL WINEXP GotoLineDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     case WM_COMMAND:
         switch( LOWORD( wparam ) ) {
         case IDCANCEL:
-            EndDialog( hwnd, 0 );
+            EndDialog( hwnd, FALSE );
             break;
         case IDOK:
             GetDlgItemText( hwnd, GOTOLINE_EDIT, lineStr, lineLen );
             *lineVal = atol( lineStr );
             if( *lineVal > 0 ) {
-                EndDialog( hwnd, 1 );
+                EndDialog( hwnd, TRUE );
             } else {
-                EndDialog( hwnd, 0 );
+                EndDialog( hwnd, FALSE );
             }
             break;
         default:

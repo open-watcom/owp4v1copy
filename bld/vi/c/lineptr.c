@@ -35,7 +35,7 @@
 /*
  * CGimmeLinePtr - give a pointer to a line in the current file
  */
-int CGimmeLinePtr( linenum lineno, fcb **cfcb, line **cline )
+vi_rc CGimmeLinePtr( linenum lineno, fcb **cfcb, line **cline )
 {
     return( GimmeLinePtr( lineno, CurrentFile, cfcb, cline ) );
 
@@ -44,18 +44,18 @@ int CGimmeLinePtr( linenum lineno, fcb **cfcb, line **cline )
 /*
  * GimmeLinePtr - give a pointer to line data
  */
-int GimmeLinePtr( linenum lineno, file *cfile, fcb **cfcb, line **cline )
+vi_rc GimmeLinePtr( linenum lineno, file *cfile, fcb **cfcb, line **cline )
 {
-    int         i;
+    vi_rc       rc;
     fcb         *tfcb;
 
-    i = FindFcbWithLine( lineno, cfile, &tfcb );
-    if( i ) {
-        return( i );
+    rc = FindFcbWithLine( lineno, cfile, &tfcb );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
-    i = GimmeLinePtrFromFcb( lineno, tfcb, cline );
-    if( i ) {
-        return( i );
+    rc = GimmeLinePtrFromFcb( lineno, tfcb, cline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     *cfcb = tfcb;
     return( ERR_NO_ERR );
@@ -65,7 +65,7 @@ int GimmeLinePtr( linenum lineno, file *cfile, fcb **cfcb, line **cline )
 /*
  * CGimmeNextLinePtr - get pointer to next line in current file
  */
-int CGimmeNextLinePtr( fcb **cfcb, line **cline )
+vi_rc CGimmeNextLinePtr( fcb **cfcb, line **cline )
 {
     return( GimmeNextLinePtr( CurrentFile, cfcb, cline ) );
 
@@ -74,11 +74,11 @@ int CGimmeNextLinePtr( fcb **cfcb, line **cline )
 /*
  * CAdvanceToLine - advance to given line in file
  */
-int CAdvanceToLine( linenum l )
+vi_rc CAdvanceToLine( linenum l )
 {
     fcb         *cfcb;
     line        *cline;
-    int         rc;
+    vi_rc       rc;
 
     rc = CGimmeLinePtr( l, &cfcb, &cline );
     return( rc );
@@ -88,10 +88,10 @@ int CAdvanceToLine( linenum l )
 /*
  * GimmeNextLinePtr - get pointer to next line
  */
-int GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
+vi_rc GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
 {
-    int i;
-    fcb *ofcb;
+    vi_rc   rc;
+    fcb     *ofcb;
 
     /*
      * get next line pointer; if not null, go back
@@ -116,9 +116,9 @@ int GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
      */
     if( cfile->bytes_pending ) {
         ofcb = cfile->fcb_tail;
-        i = ReadFcbData( cfile );
-        if( i > 0 ) {
-            return( i );
+        rc = ReadFcbData( cfile );
+        if( rc > 0 ) {
+            return( rc );
         }
         *cfcb = cfile->fcb_tail;
         if( *cfcb != ofcb ) {
@@ -143,7 +143,7 @@ int GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
 /*
  * GimmePrevLinePtr - get pointer to previous line
  */
-int GimmePrevLinePtr( fcb **cfcb, line **cline )
+vi_rc GimmePrevLinePtr( fcb **cfcb, line **cline )
 {
 
     /*
@@ -176,7 +176,7 @@ int GimmePrevLinePtr( fcb **cfcb, line **cline )
 /*
  * GimmeLinePtrFromFcb - get a line pointer from a specified fcb
  */
-int GimmeLinePtrFromFcb( linenum lineno, fcb *cfcb , line **res )
+vi_rc GimmeLinePtrFromFcb( linenum lineno, fcb *cfcb , line **res )
 {
     linenum     linecnt;
     line        *tmp;
@@ -202,10 +202,10 @@ int GimmeLinePtrFromFcb( linenum lineno, fcb *cfcb , line **res )
 /*
  * CFindLastLine - find last line in file
  */
-int CFindLastLine( linenum *ll )
+vi_rc CFindLastLine( linenum *ll )
 {
-    int i;
-    fcb *cfcb;
+    vi_rc   rc;
+    fcb     *cfcb;
 
     if( CurrentFile == NULL ) {
         return( ERR_NO_FILE );
@@ -216,9 +216,9 @@ int CFindLastLine( linenum *ll )
         return( ERR_NO_ERR );
     }
 
-    i = FindFcbWithLine( -1, CurrentFile, &cfcb );
-    if( i ) {
-        return( i );
+    rc = FindFcbWithLine( -1, CurrentFile, &cfcb );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     *ll = cfcb->end_line;
     return( ERR_NO_ERR );
@@ -228,7 +228,7 @@ int CFindLastLine( linenum *ll )
 /*
  * IsPastLastLine - test if something is past the last line
  */
-int IsPastLastLine( linenum l )
+bool IsPastLastLine( linenum l )
 {
     linenum     ll;
 
@@ -251,17 +251,17 @@ int IsPastLastLine( linenum l )
 /*
  * ValidateCurrentLine - make sure current line is valid
  */
-int ValidateCurrentLine( void )
+vi_rc ValidateCurrentLine( void )
 {
-    int i;
+    vi_rc   rc;
 
     if( CurrentPos.line < 1 ) {
         return( SetCurrentLine( 1 ) );
     }
     if( CurrentPos.line > CurrentFile->fcb_tail->end_line ) {
-        i = CFindLastLine( &CurrentPos.line );
-        if( i ) {
-            return(i);
+        rc = CFindLastLine( &CurrentPos.line );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
     return( SetCurrentLine( CurrentPos.line ) );

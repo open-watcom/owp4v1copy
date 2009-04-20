@@ -53,9 +53,9 @@ static bool key_save( int i, char *buff )
 /*
  * readKeyData - do just that
  */
-static int readKeyData( void )
+static vi_rc readKeyData( void )
 {
-    int         rc;
+    vi_rc       rc;
 
     if( keysRead ) {
         return( ERR_NO_ERR );
@@ -65,7 +65,7 @@ static int readKeyData( void )
 #else
     rc = ReadDataFile( "keys.dat", &charTokens, key_alloc, key_save );
 #endif
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     keysRead = TRUE;
@@ -76,16 +76,17 @@ static int readKeyData( void )
 /*
  * MapKey - set up a key mapping
  */
-int MapKey( int flag, char *data )
+vi_rc MapKey( int flag, char *data )
 {
     char        keystr[MAX_STR];
     key_map     *maps;
-    int         rc, j;
+    int         j;
     vi_key      key;
+    vi_rc       rc;
 
     if( !EditFlags.ScriptIsCompiled || (flag & MAPFLAG_UNMAP) ) {
         rc = readKeyData();
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( rc );
         }
     }
@@ -159,9 +160,9 @@ int MapKey( int flag, char *data )
 /*
  * DoKeyMap - process a key mapping
  */
-int DoKeyMap( vi_key key )
+vi_rc DoKeyMap( vi_key key )
 {
-    int         rc;
+    vi_rc       rc;
     long        total;
     int         i;
     bool        was_base = FALSE;
@@ -192,10 +193,10 @@ int DoKeyMap( vi_key key )
 /*
  * doRunKeyMap - execute a key map a specified number of times
  */
-static int doRunKeyMap( key_map *scr, long total )
+static vi_rc doRunKeyMap( key_map *scr, long total )
 {
     int         max;
-    int         rc = ERR_NO_ERR;
+    vi_rc       rc = ERR_NO_ERR;
     undo_stack  *cstack;
 
     if( EditFlags.InputKeyMapMode ) {
@@ -248,11 +249,12 @@ static int doRunKeyMap( key_map *scr, long total )
 /*
  * RunKeyMap - run a key mapping
  */
-int RunKeyMap( key_map *scr, long total )
+vi_rc RunKeyMap( key_map *scr, long total )
 {
-    int         oldcount, rc;
+    int         oldcount;
     bool        restore = FALSE;
     vi_key      *oldmap;
+    vi_rc       rc;
 
     /*
      * check if we are already running a key mapping; if so, save it
@@ -283,7 +285,7 @@ undo_stack *currUndoStack;
 /*
  * StartInputKeyMap - start up input key map
  */
-int StartInputKeyMap( vi_key key )
+vi_rc StartInputKeyMap( vi_key key )
 {
     if( EditFlags.InputKeyMapMode || EditFlags.KeyMapMode ) {
         return( ERR_INPUT_KEYMAP_RUNNING );
@@ -318,7 +320,7 @@ vi_key extractViKeyToken( unsigned char **p )
 {
     char            str[MAX_STR];
     int             j;
-    int             rc;
+    vi_rc           rc;
     int             c;
 
     
@@ -330,7 +332,7 @@ vi_key extractViKeyToken( unsigned char **p )
     }
     str[j] = '\0';
     rc = readKeyData();
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( VI_KEY( ESC ) );
     }
     j = Tokenize( charTokens, str, TRUE );
@@ -345,7 +347,7 @@ vi_key extractViKeyToken( unsigned char **p )
 /*
  * AddKeyMap - add a specified key mapping
  */
-int AddKeyMap( key_map *scr, char *data )
+vi_rc AddKeyMap( key_map *scr, char *data )
 {
     int             c;
     vi_key          *sdata;
@@ -447,9 +449,9 @@ void FiniKeyMaps( void )
 /*
  * ExecuteBuffer - run a key mapping from a named buffer
  */
-int ExecuteBuffer( void )
+vi_rc ExecuteBuffer( void )
 {
-    int         rc;
+    vi_rc       rc;
     char        *data;
     key_map     scr;
 

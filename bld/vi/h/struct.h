@@ -35,7 +35,6 @@
 #include <stdio.h>
 
 typedef unsigned short  vi_ushort;
-//typedef unsigned short  vi_key;
 
 typedef struct ss {
     struct ss   *next, *prev;
@@ -302,15 +301,15 @@ typedef struct range {
     unsigned char   spare       : 4;
 } range;
 
-typedef int (*insert_rtn)( void );
-typedef int (*move_rtn)( range *, long count );
-typedef int (*op_rtn)( range * );
-typedef int (*misc_rtn)( long count );
-typedef int (*old_rtn)( void );
-typedef int (*alias_rtn)( void *, void * );
+typedef vi_rc (*insert_rtn)( void );
+typedef vi_rc (*move_rtn)( range *, long count );
+typedef vi_rc (*op_rtn)( range * );
+typedef vi_rc (*misc_rtn)( long count );
+typedef vi_rc (*old_rtn)( void );
+typedef vi_rc (*alias_rtn)( void *, void * );
 
 typedef union command_rtn {
-    int         (*ptr)();   /* Must go first to avoid type mismatches */
+    vi_rc       (*dummy)(); /* Must go first to avoid parameter type mismatches */
     insert_rtn  ins;
     move_rtn    move;
     op_rtn      op;
@@ -501,7 +500,7 @@ typedef struct {
     window_info *wi;                // info describing window to create
     linenum     sl;                 // selected line
     char        *title;             // title of window
-    int         (*checkres)(char *, char *, int * ); // check if selected
+    vi_rc       (*checkres)(char *, char *, int * ); // check if selected
                                     // change is valid
     int         *allow_rl;          // allow cursor right/left (for menu bar)
     char        **hilite;           // chars to highlight

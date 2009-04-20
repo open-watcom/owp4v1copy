@@ -99,7 +99,7 @@ static alias_list *checkGenericAlias( char *str, alias_list *head )
 /*
  * removeGenericAlias
  */
-static int removeGenericAlias( char *which, alias_list **head, alias_list **tail )
+static vi_rc removeGenericAlias( char *which, alias_list **head, alias_list **tail )
 {
     alias_list  *curr;
 
@@ -118,7 +118,7 @@ static int removeGenericAlias( char *which, alias_list **head, alias_list **tail
 /*
  * SetAlias - set an alias
  */
-int SetAlias( char *what )
+vi_rc SetAlias( char *what )
 {
     return( setGenericAlias( what, &alHead, &alTail ) );
 
@@ -127,7 +127,7 @@ int SetAlias( char *what )
 /*
  * UnAlias
  */
-int UnAlias( char *what )
+vi_rc UnAlias( char *what )
 {
     return( removeGenericAlias( what, &alHead, &alTail ) );
 
@@ -136,7 +136,7 @@ int UnAlias( char *what )
 /*
  * CheckAlias - check for an alias
  */
-int CheckAlias( char *str, char *what )
+vi_rc CheckAlias( char *str, char *what )
 {
     alias_list  *al;
 
@@ -152,9 +152,9 @@ int CheckAlias( char *str, char *what )
 /*
  * Abbrev - set an abbreviation
  */
-int Abbrev( char *what )
+vi_rc Abbrev( char *what )
 {
-    int rc;
+    vi_rc   rc;
 
     rc = setGenericAlias( what, &abHead, &abTail );
     if( rc > 0 ) {
@@ -167,12 +167,12 @@ int Abbrev( char *what )
 /*
  * UnAbbrev - remove an abbreviation
  */
-int UnAbbrev( char *abbrev )
+vi_rc UnAbbrev( char *abbrev )
 {
-    int rc;
+    vi_rc   rc;
 
     rc = removeGenericAlias( abbrev, &abHead, &abTail );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( ERR_NO_SUCH_ABBREV );
     }
     return( ERR_NO_ERR );

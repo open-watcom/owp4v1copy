@@ -145,8 +145,8 @@ void DoAutoSave( void )
     char        tmp[FILENAME_MAX];
     bool        quiet;
     FILE        *f;
-    int         rc;
-    int         lastst;
+    vi_rc       rc;
+    status_type lastst;
 
     if( !AutoSaveInterval ) {
         return;
@@ -202,14 +202,14 @@ void DoAutoSave( void )
 /*
  * handleKey - handle a lost file recover check keystroke
  */
-static bool handleKey( char ch )
+static bool handleKey( vi_key key )
 {
-    if( ch == 'i' ) {
+    if( key == 'i' ) {
         EditFlags.IgnoreLostFiles = TRUE;
-    } else if( ch == 'r' ) {
+    } else if( key == 'r' ) {
         EditFlags.RecoverLostFiles = TRUE;
         EditFlags.NoInitialFileLoad = TRUE;
-    } else if( ch == 'q' ) {
+    } else if( key == 'q' ) {
         noEraseFileList = TRUE;
         ExitEditor( -1 );
     } else {
@@ -225,7 +225,8 @@ static bool handleKey( char ch )
 bool LostFileCheck( void )
 {
     char        path[FILENAME_MAX];
-    int         ch;
+    vi_key      key;
+    char        ch;
     int         off;
     int         handle;
 
@@ -254,8 +255,8 @@ bool LostFileCheck( void )
             if( !EditFlags.IgnoreLostFiles ) {
 #ifdef __WIN__
                 CloseStartupDialog();
-                ch = GetAutosaveResponse();
-                handleKey( ch );
+                key = GetAutosaveResponse();
+                handleKey( key );
                 ShowStartupDialog();
                 return( TRUE );
 #else
@@ -263,8 +264,8 @@ bool LostFileCheck( void )
                 MyPrintf( "Files have been lost since your last session, do you wish to:\n" );
                 MyPrintf( "\ti)gnore\n\tr)ecover\n\tq)uit\n" );
                 while( 1 ) {
-                    ch = GetKeyboard( NULL );
-                    if( handleKey( ch ) ) {
+                    key = GetKeyboard( NULL );
+                    if( handleKey( key ) ) {
                         return( TRUE );
                     }
                 }

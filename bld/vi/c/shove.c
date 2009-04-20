@@ -36,28 +36,29 @@
 /*
  * Shift - shove a tab in/out over a line range
  */
-int Shift( linenum s, linenum e, char dir, bool msgflag )
+vi_rc Shift( linenum s, linenum e, char dir, bool msgflag )
 {
-    int         i, shv;
+    int         shv;
     linenum     fullcnt = 0;
+    vi_rc       rc;
 
     /*
      * set up undo
      */
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
-    i = UndoReplaceLines( s, e );
-    if( i ) {
-        return( i );
+    rc = UndoReplaceLines( s, e );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*
      * now, point to start line
      */
-    i = SaveAndResetFilePos( s );
-    if( i ) {
-        return( i );
+    rc = SaveAndResetFilePos( s );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*
@@ -77,10 +78,10 @@ int Shift( linenum s, linenum e, char dir, bool msgflag )
         ReplaceCurrentLine();
 
         if( CurrentPos.line != e ) {
-            i = CGimmeNextLinePtr( &CurrentFcb, &CurrentLine );
-            if( i ) {
+            rc = CGimmeNextLinePtr( &CurrentFcb, &CurrentLine );
+            if( rc != ERR_NO_ERR ) {
                 RestoreCurrentFilePos();
-                return( i );
+                return( rc );
             }
         }
 

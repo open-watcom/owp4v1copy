@@ -45,10 +45,8 @@ static  cs_entry      *TOS;
 #endif
 static void oopsBob( char *current, char *start )
 {
-    extern jmp_buf GenExit;
-
     Error( "'%s' has no %s", current, start );
-    longjmp( GenExit, DO_NOT_CLEAR_MESSAGE_WINDOW );
+    AbortGen( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
 } /* oopsBob */
 
@@ -103,7 +101,7 @@ void CSInit( void )
 /*
  * Purge control stack
  */
-int CSFini( void )
+vi_rc CSFini( void )
 {
     bool        iserr = FALSE;
 

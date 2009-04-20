@@ -62,7 +62,7 @@ int nHelpFiles = sizeof( helpFiles ) / sizeof( char * );
  * DoHelp - do help on specified topic
  */
 #ifdef __WIN__
-int DoHelpOnContext( void )
+vi_rc DoHelpOnContext( void )
 {
     //Until we have a global context string, use thi local
     char *context_str = "Contents";
@@ -70,7 +70,7 @@ int DoHelpOnContext( void )
     return( ERR_NO_ERR );
 }
 
-int DoHelp( char *data )
+vi_rc DoHelp( char *data )
 {
     // Use the windows help till we get one of our own
     LPSTR vi_helpfile = "editor.hlp";
@@ -96,17 +96,17 @@ int DoHelp( char *data )
 
 #else
 
-int DoHelpOnContext( void )
+vi_rc DoHelpOnContext( void )
 {
     return( ERR_NO_ERR );
 }
 
-int DoHelp( char *data )
+vi_rc DoHelp( char *data )
 {
     char        *hfile;
     char        *tstr;
     int         token;
-    int         rc;
+    vi_rc       rc;
     char        path[FILENAME_MAX];
     char        tmp[MAX_STR];
     int         i;
@@ -137,7 +137,7 @@ int DoHelp( char *data )
     EditFlags.ViewOnly = TRUE;
     rc = EditFile( path, FALSE );
     EditFlags.ViewOnly = FALSE;
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     tstr = GetTokenString( helpCmds, token );

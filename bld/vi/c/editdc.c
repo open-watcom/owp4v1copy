@@ -35,9 +35,10 @@
 /*
  * DeleteRangeOnCurrentLine - perform the deletion
  */
-int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag )
+vi_rc DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag )
 {
-    int i;
+    int     i;
+    vi_rc   rc;
 
     /*
      * verify range
@@ -52,10 +53,10 @@ int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag )
      * go delete block and set up undo
      */
     CurrentLineReplaceUndoStart();
-    i = DeleteBlockFromCurrentLine( scol, ecol, savebuf_flag );
-    if( i ) {
+    rc = DeleteBlockFromCurrentLine( scol, ecol, savebuf_flag );
+    if( rc != ERR_NO_ERR ) {
         CurrentLineReplaceUndoCancel();
-        return( i );
+        return( rc );
     }
     DisplayWorkLine( TRUE );
     ReplaceCurrentLine();
@@ -80,7 +81,7 @@ int DeleteRangeOnCurrentLine( int scol, int ecol, int savebuf_flag )
 /*
  * DeleteBlockFromCurrentLine - remove chars from line, leave result in work line
  */
-int DeleteBlockFromCurrentLine( int scol, int ecol, int saveb_flag )
+vi_rc DeleteBlockFromCurrentLine( int scol, int ecol, int saveb_flag )
 {
     int i;
 

@@ -39,7 +39,7 @@ static void readErrorMsgData( void );
 /*
  * FatalError - process fatal error
  */
-void FatalError( int err )
+void FatalError( vi_rc err )
 {
     char *str;
 
@@ -79,7 +79,7 @@ static char *errorList;
 /*
  * GetErrorMsg - return pointer to message
  */
-char *GetErrorMsg( int err )
+char *GetErrorMsg( vi_rc err )
 {
     char        *msg;
 
@@ -96,7 +96,7 @@ char *GetErrorMsg( int err )
         MySprintf( strBuff, "Err no. %d (no msg)", err );
         return( strBuff );
     }
-    msg = GetTokenString( errorList, err );
+    msg = GetTokenString( errorList, (int)err );
     if( msg == NULL ) {
         MySprintf( strBuff, "Err no. %d (no msg)", err );
         return( strBuff );
@@ -159,10 +159,10 @@ static bool errmsg_save( int i, char *buff )
  */
 static void readErrorMsgData( void )
 {
-    int         rc;
+    vi_rc       rc;
 
     rc = ReadDataFile( "errmsg.dat", &errorList, errmsg_alloc, errmsg_save );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return;
     }
     readMsgData = TRUE;

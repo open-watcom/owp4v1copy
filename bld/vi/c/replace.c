@@ -35,14 +35,15 @@
 /*
  * ReplaceChar - replace an individual character
  */
-int ReplaceChar( void )
+vi_rc ReplaceChar( void )
 {
-    int         key, start, end, i, ai, rc;
+    int         key, start, end, i, ai;
     char        *buff;
     bool        redrawAll;
+    vi_rc       rc;
 
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
     UpdateCurrentStatus( CSTATUS_REPLACECHAR );
     key = GetNextEvent( FALSE );

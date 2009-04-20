@@ -78,10 +78,11 @@ bool FileCompleteMouseHandler( window_id id, int win_x, int win_y )
 /*
  * appendExtra - add extra to end
  */
-static int appendExtra( char *data, int start, int max, direct_ent *fi,
+static vi_rc appendExtra( char *data, int start, int max, direct_ent *fi,
                         int len )
 {
-    int i, rc;
+    int     i;
+    vi_rc   rc;
 
     for( i = start; i <start + len; i++ ) {
         if( i >= max ) {
@@ -102,11 +103,12 @@ static int appendExtra( char *data, int start, int max, direct_ent *fi,
 /*
  * doFileComplete - complete file name
  */
-static int doFileComplete( char *data, int start, int max, bool getnew,
+static vi_rc doFileComplete( char *data, int start, int max, bool getnew,
                            int key )
 {
     int         i, j, k = 0, newstart = -1;
     char        buff[MAX_STR * 2];
+    vi_rc       rc;
 
     i = start;
     while( !isspace( data[i] ) && i >= 0 ) {
@@ -126,9 +128,9 @@ static int doFileComplete( char *data, int start, int max, bool getnew,
         lastFilec = -1;
         buff[k++] = '*';
         buff[k] = 0;
-        i = GetSortDir( buff, FALSE );
-        if( i ) {
-            return( i );
+        rc = GetSortDir( buff, FALSE );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
         /*
          * remove any crap from the list
@@ -421,10 +423,10 @@ static void displayFiles( void )
 /*
  * StartFileComplete - handle file completion
  */
-int StartFileComplete( char *data, int start, int max, int what )
+vi_rc StartFileComplete( char *data, int start, int max, int what )
 {
-    int rc;
-    int maxl;
+    vi_rc   rc;
+    int     maxl;
 
     isDone = FALSE;
     rc = doFileComplete( data, start, max, TRUE, what );
@@ -438,7 +440,7 @@ int StartFileComplete( char *data, int start, int max, int what )
             filecw_info.hilight.font = filecw_info.text.font;
 
         rc = NewWindow2( &dirWin, &filecw_info );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             return( rc );
         }
     }
@@ -463,9 +465,9 @@ int StartFileComplete( char *data, int start, int max, int what )
 /*
  * ContinueFileComplete
  */
-int ContinueFileComplete( char *data, int start, int max, int what )
+vi_rc ContinueFileComplete( char *data, int start, int max, int what )
 {
-    int rc;
+    vi_rc   rc;
 
     rc = doFileComplete( data, start, max, FALSE, what );
     if( rc > 0 || rc == FILE_COMPLETE ) {

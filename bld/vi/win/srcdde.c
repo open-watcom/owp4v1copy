@@ -60,9 +60,9 @@ static bool getVarName( char *str, char *tmp1, vlist *vl )
 /*
  * RunDDECommand - try to run a Windows specific command
  */
-bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
+bool RunDDECommand( int token, char *str, char *tmp1, vi_rc *result, vlist *vl )
 {
-    int         rc;
+    vi_rc       rc;
     char        *tmp2;
     HSZ         hdl;
     HSZ         serverhdl, topichdl;

@@ -172,7 +172,7 @@ static void setUpColor( vi_color index, COLORREF *rgb )
 /*
  * SetAColor - set a new color
  */
-int SetAColor( char *data )
+vi_rc SetAColor( char *data )
 {
     char        token[MAX_STR];
     int         index;

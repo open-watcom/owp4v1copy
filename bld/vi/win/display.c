@@ -90,12 +90,12 @@ void ClearWindow( window_id id )
     TextReleaseDC( id, hdc );
 }
 
-int DisplayLineInWindow( window_id id, int line, char *text )
+vi_rc DisplayLineInWindow( window_id id, int line, char *text )
 {
     text = text;
     id = id;
     DCDisplaySomeLines( line - 1, line - 1 );
-    return( 0 ); /* probably never checked */
+    return( ERR_NO_ERR );
 }
 
 void ShiftWindowUpDown( window_id id, int lines )

@@ -243,7 +243,7 @@ static bool testIfCharNotInRange( char c, char *clist )
 /*
  * FindCharOnCurrentLine - look for c char on a line ('f','F','t','T' cmds)
  */
-int FindCharOnCurrentLine( bool fwdflag, int mod, int *col, int cnt )
+vi_rc FindCharOnCurrentLine( bool fwdflag, int mod, int *col, int cnt )
 {
     int         i, c, j;
     char        lst[2];
@@ -282,7 +282,7 @@ int FindCharOnCurrentLine( bool fwdflag, int mod, int *col, int cnt )
 /*
  * FancyGotoLine - goto line through dialog box
  */
-int FancyGotoLine( void )
+vi_rc FancyGotoLine( void )
 {
 #ifdef __WIN__
     linenum     newline;

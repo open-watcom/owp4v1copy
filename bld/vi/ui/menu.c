@@ -243,7 +243,7 @@ static menu *findMenu( char *str, menu ***predef_menu )
 /*
  * StartMenu - start a new top level menu
  */
-int StartMenu( char *data )
+vi_rc StartMenu( char *data )
 {
     char        str[MAX_STR];
     menu        *tmp;
@@ -325,7 +325,7 @@ static void initMenuList( menu *cmenu )
 /*
  * ViEndMenu - terminate new menu
  */
-int ViEndMenu( void )
+vi_rc ViEndMenu( void )
 {
     char        ch;
     vi_key      key;
@@ -356,7 +356,7 @@ int ViEndMenu( void )
 /*
  * MenuItem - add new item current menu
  */
-int MenuItem( char *data )
+vi_rc MenuItem( char *data )
 {
     char        str[MAX_STR];
     int         len;
@@ -394,7 +394,7 @@ int MenuItem( char *data )
 /*
  * DoItemDelete - delete an item from a menu
  */
-int DoItemDelete( char *data )
+vi_rc DoItemDelete( char *data )
 {
     menu        *cmenu, **predef_menu;
     char        mname[MAX_STR];
@@ -447,11 +447,11 @@ int DoItemDelete( char *data )
 /*
  * AddMenuItem - add a menu item to an already created menu
  */
-int AddMenuItem( char *data )
+vi_rc AddMenuItem( char *data )
 {
     menu        *cmenu, **predef_menu;
     char        mname[MAX_STR];
-    int         rc;
+    vi_rc       rc;
 
     if( currMenu != NULL ) {
         return( ERR_INVALID_MENU );
@@ -472,7 +472,7 @@ int AddMenuItem( char *data )
 /*
  * DoMenuDelete - delete an existing menu
  */
-int DoMenuDelete( char *data )
+vi_rc DoMenuDelete( char *data )
 {
     menu        *cmenu, **predef_menu;
     char        mname[MAX_STR];
@@ -563,12 +563,13 @@ static void removeFileList( menu *cmenu )
 /*
  * InitMenu - initialize control bar window
  */
-int InitMenu( void )
+vi_rc InitMenu( void )
 {
-    int         i, ws;
+    int         ws;
     char        disp[MAX_STR];
     char        tmp[MAX_STR];
     menu        *cmenu;
+    vi_rc       rc;
 
     if( !EditFlags.WindowsStarted ) {
         return( ERR_NO_ERR );
@@ -584,10 +585,10 @@ int InitMenu( void )
     menubarw_info.y2 = 0;
     menubarw_info.x1 = 0;
     menubarw_info.x2 = WindMaxWidth - 1;
-    i = NewWindow2( &MenuWindow, &menubarw_info );
-    if( i ) {
+    rc = NewWindow2( &MenuWindow, &menubarw_info );
+    if( rc != ERR_NO_ERR ) {
         EditFlags.Menus = FALSE;
-        return( i );
+        return( rc );
     }
 
     memset( disp, ' ', sizeof( disp ) - 1 );
@@ -693,7 +694,7 @@ static int currentID;
 /*
  * processMenu - process selected menu
  */
-static int processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
+static vi_rc processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
 {
     int         i, ws;
     char        result[80];
@@ -705,7 +706,7 @@ static int processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
     int         x1, y1, x2, y2;
     int         diff;
     int         xwid;
-    int         rc;
+    vi_rc       rc;
 
     xwid = rxwid;
     if( xwid < 0 ) {
@@ -792,15 +793,15 @@ static int processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
             lightMenu( sel, ws, TRUE );
         }
         CurrentMenuNumber = sel + 1;
-        i = SelectItem( &si );
+        rc = SelectItem( &si );
         if( xpos < 0 ) {
             lightMenu( sel, ws, FALSE );
         }
-        if( i ) {
+        if( rc != ERR_NO_ERR ) {
             if( cmenu->has_file_list ) {
                 removeFileList( cmenu );
             }
-            return( i );
+            return( rc );
         }
         if( !allowrl ) {
             break;
@@ -844,7 +845,7 @@ static int processMenu( int sel, menu *cmenu, int xpos, int ypos, int rxwid )
 /*
  * DoMenu - process some kind of control request
  */
-int DoMenu( void )
+vi_rc DoMenu( void )
 {
     int         i;
     int         sel = -1;
@@ -876,9 +877,9 @@ int DoMenu( void )
 /*
  * DoWindowGadgetMenu - handle menu for each file
  */
-int DoWindowGadgetMenu( void )
+vi_rc DoWindowGadgetMenu( void )
 {
-    int         rc;
+    vi_rc       rc;
 
     if( windowGadgetMenu == NULL ) {
         return( ERR_NO_ERR );
@@ -893,9 +894,9 @@ int DoWindowGadgetMenu( void )
 /*
  * DoFloatMenu - handle floating menus
  */
-int DoFloatMenu( int id, int slen, int x1, int y1 )
+vi_rc DoFloatMenu( int id, int slen, int x1, int y1 )
 {
-    int         rc;
+    vi_rc       rc;
 
     if( id < 0 || id >= MAX_FLOAT_MENUS ) {
         return( ERR_INVALID_MENU );
@@ -911,7 +912,7 @@ int DoFloatMenu( int id, int slen, int x1, int y1 )
 /*
  * ActivateFloatMenu - activate floating menu
  */
-int ActivateFloatMenu( char *data )
+vi_rc ActivateFloatMenu( char *data )
 {
     char        str[MAX_STR];
     int         id, slen, x1, y1;
@@ -952,7 +953,7 @@ int GetCurrentMenuId( void )
 /*
  * SetToMenuId - set to specified menu id (mouse did it)
  */
-int SetToMenuId( int id )
+vi_rc SetToMenuId( int id )
 {
     menu        *cmenu;
 
@@ -1007,7 +1008,7 @@ bool IsMenuHotKey( vi_key key )
 /*
  * MenuItemFileList - add the Window List menu item
  */
-int MenuItemFileList( void )
+vi_rc MenuItemFileList( void )
 {
     if( currMenu == NULL ) {
         return( ERR_INVALID_MENU );
@@ -1020,7 +1021,7 @@ int MenuItemFileList( void )
 /*
  * MenuItemLastFiles - add the Last File List menu item
  */
-int MenuItemLastFiles( void )
+vi_rc MenuItemLastFiles( void )
 {
     if( currMenu == NULL ) {
         return( ERR_INVALID_MENU );

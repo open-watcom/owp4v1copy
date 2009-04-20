@@ -52,7 +52,7 @@ static char *ptrFromMark( i_mark *curr )
 {
     line        *line;
     fcb         *fcb;
-    int         rc;
+    vi_rc       rc;
     char        *ptr;
 
     ptr = NULL;
@@ -179,7 +179,7 @@ static char *eatSpace( i_mark *mark, bool reverse )
  * the result mark, or ERR_NOT_THAT_MANY_WORDS if there are no more logical
  * words in the file. Note that this will span lines.
  */
-int MarkStartOfNextWordForward( i_mark *result, i_mark *curr, bool big )
+vi_rc MarkStartOfNextWordForward( i_mark *result, i_mark *curr, bool big )
 {
     char        *s;
     btype       block_type;
@@ -221,7 +221,7 @@ int MarkStartOfNextWordForward( i_mark *result, i_mark *curr, bool big )
  * MarkEndOfNextWordForward - find a pointer to the end of the next
  *                            word (in the forwards direction)
  */
-int MarkEndOfNextWordForward( i_mark *result, i_mark *curr, bool big )
+vi_rc MarkEndOfNextWordForward( i_mark *result, i_mark *curr, bool big )
 {
     char        *s;
     btype       block_type;
@@ -272,7 +272,7 @@ int MarkEndOfNextWordForward( i_mark *result, i_mark *curr, bool big )
  * MarkEndOfNextWordForward - find a pointer to the start of the next
  *                            word (in the backwards direction)
  */
-int MarkStartOfNextWordBackward( i_mark *result, i_mark *curr, bool big )
+vi_rc MarkStartOfNextWordBackward( i_mark *result, i_mark *curr, bool big )
 {
     char        *s;
     btype       block_type;
@@ -315,12 +315,13 @@ int MarkStartOfNextWordBackward( i_mark *result, i_mark *curr, bool big )
 /*
  * GimmeCurrentWord - fetch word at cursor position
  */
-int GimmeCurrentWord( char *buffer, int buffer_size, bool big )
+vi_rc GimmeCurrentWord( char *buffer, int buffer_size, bool big )
 {
     i_mark      curr, end, start;
-    int         i, j, rc;
+    int         i, j;
     line        *line;
     fcb         *fcb;
+    vi_rc       rc;
 
     curr = CurrentPos;
     start = curr;
@@ -344,12 +345,13 @@ int GimmeCurrentWord( char *buffer, int buffer_size, bool big )
 /*
  * GimmeCurrentEntireWordDim - fetch forward & backward to get the entire word
  */
-int GimmeCurrentEntireWordDim( int *sc, int *ec, bool big )
+vi_rc GimmeCurrentEntireWordDim( int *sc, int *ec, bool big )
 {
     i_mark      curr, start, end;
     char        *s;
-    int         rc, last_col;
+    int         last_col;
     btype       block_type;
+    vi_rc       rc;
 
     noWrap = FALSE;
     rc = ERR_NO_WORD_TO_FIND;

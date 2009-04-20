@@ -58,18 +58,19 @@ int FindStartOfCurrentLine( void )
 /*
  * GenericJoinCurrentLineToNext
  */
-int GenericJoinCurrentLineToNext( bool remsp )
+vi_rc GenericJoinCurrentLineToNext( bool remsp )
 {
     line        *nline = CurrentLine;
     fcb         *nfcb = CurrentFcb;
     int         i, j, k;
+    vi_rc       rc;
 
     /*
      * get next line data
      */
-    i = CGimmeNextLinePtr( &nfcb, &nline );
-    if( i ) {
-        return( i );
+    rc = CGimmeNextLinePtr( &nfcb, &nline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     if( CurrentLine->len + nline->len + 1 >= MaxLine ) {
         return( ERR_LINE_FULL );
@@ -112,18 +113,18 @@ int GenericJoinCurrentLineToNext( bool remsp )
     /*
      * delete next line
      */
-    i = DeleteLineRange( CurrentPos.line + 1, CurrentPos.line + 1, 0 );
-    if( i ) {
-        return( i );
+    rc = DeleteLineRange( CurrentPos.line + 1, CurrentPos.line + 1, 0 );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     EndUndoGroup( UndoStack );
     if( remsp ) {
         if( k < 2 ) {
             k = 2;
         }
-        i = GoToColumn( k - 1, CurrentLine->len );
-        if( i ) {
-            return( i );
+        rc = GoToColumn( k - 1, CurrentLine->len );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
     DCDisplayAllLines();
@@ -134,18 +135,19 @@ int GenericJoinCurrentLineToNext( bool remsp )
 /*
  * JoinCurrentLineToNext
  */
-int JoinCurrentLineToNext( void )
+vi_rc JoinCurrentLineToNext( void )
 {
-    int rc, i, j;
+    int     i, j;
+    vi_rc   rc;
 
-    if( i = ModificationTest() ) {
-        return( i );
+    if( rc = ModificationTest() ) {
+        return( rc );
     }
     i = (int) GetRepeatCount();
     StartUndoGroup( UndoStack );
     for( j = 0; j < i; j++ ) {
         rc = GenericJoinCurrentLineToNext( TRUE );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
     }
@@ -176,15 +178,15 @@ void SaveCurrentFilePos( void )
  */
 void RestoreCurrentFilePos( void )
 {
-    int i;
+    vi_rc   rc;
 
     CurrentFile = oldFile[stackDepth];
     CurrentPos = oldCurrentPos[stackDepth];
     LeftTopPos = oldLeftTopPos[stackDepth];
 
     if( CurrentFile != NULL ) {
-        i = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
-        if(  i == ERR_NO_SUCH_LINE ) {
+        rc = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
+        if( rc == ERR_NO_SUCH_LINE ) {
             if( CurrentFile->fcb_tail != NULL ) {
                 CurrentPos.line = CurrentFile->fcb_tail->end_line;
                 CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
@@ -204,16 +206,16 @@ void RestoreCurrentFilePos( void )
 /*
  * SaveAndResetFilePos - as it sounds
  */
-int SaveAndResetFilePos( linenum n1 )
+vi_rc SaveAndResetFilePos( linenum n1 )
 {
-    int i;
+    vi_rc   rc;
 
     SaveCurrentFilePos();
     SetCurrentLineNumber( n1 );
-    i = CGimmeLinePtr( n1, &CurrentFcb, &CurrentLine );
-    if( i ) {
+    rc = CGimmeLinePtr( n1, &CurrentFcb, &CurrentLine );
+    if( rc != ERR_NO_ERR ) {
         RestoreCurrentFilePos();
     }
-    return( i );
+    return( rc );
 
 } /* SaveAndResetFilePos */

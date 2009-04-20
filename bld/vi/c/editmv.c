@@ -36,7 +36,7 @@
 /*
  * MoveScreenML - screen shifting (mainly for scrolling - used only for mdles)
  */
-int MoveScreenML( linenum ntop )
+vi_rc MoveScreenML( linenum ntop )
 {
     linenum     lastline;
 
@@ -58,7 +58,7 @@ int MoveScreenML( linenum ntop )
 /*
  * MoveScreenDown - expose bottom line
  */
-int MoveScreenDown( void )
+vi_rc MoveScreenDown( void )
 {
     linenum     lne, cnt, lines, top, x;
 
@@ -86,7 +86,7 @@ int MoveScreenDown( void )
 /*
  * MoveScreenUp - expose top line
  */
-int MoveScreenUp( void )
+vi_rc MoveScreenUp( void )
 {
     linenum     lne, cnt, lines, top, nlne;
 
@@ -111,25 +111,25 @@ int MoveScreenUp( void )
 
 } /* MoveScreenUp */
 
-int MoveScreenDownPageML( void )
+vi_rc MoveScreenDownPageML( void )
 {
     return MoveScreenML( LeftTopPos.line +
                          WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) );
 }
 
-int MoveScreenUpPageML( void )
+vi_rc MoveScreenUpPageML( void )
 {
     return MoveScreenML( LeftTopPos.line -
                          WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES ) );
 }
 
-int MoveScreenLeftPageML( void )
+vi_rc MoveScreenLeftPageML( void )
 {
     return MoveScreenLeftRightML(
         LeftTopPos.column - WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) + 2 );
 }
 
-int MoveScreenRightPageML( void )
+vi_rc MoveScreenRightPageML( void )
 {
     return MoveScreenLeftRightML(
         LeftTopPos.column + WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS ) - 2 );
@@ -138,9 +138,9 @@ int MoveScreenRightPageML( void )
 /*
  * MovePage - move by a number of pages
  */
-int MovePage( int dir, long repcnt, bool keepselect )
+vi_rc MovePage( int dir, long repcnt, bool keepselect )
 {
-    int         rc;
+    vi_rc       rc;
     linenum     x, top, ll;
     linenum     tmp;
 
@@ -175,7 +175,7 @@ int MovePage( int dir, long repcnt, bool keepselect )
         rc = CFindLastLine( &ll );
         top = ll;
     }
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     x = CurrentPos.line + tmp;
@@ -187,14 +187,14 @@ int MovePage( int dir, long repcnt, bool keepselect )
         rc = CFindLastLine( &ll );
         x = ll;
     }
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
 #endif
     LeftTopPos.line = top;
     SetCurrentLineNumber( x );
     rc = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         CheckCurrentColumn();
         UpdateStatusWindow();
         SetWindowCursor();
@@ -205,12 +205,12 @@ int MovePage( int dir, long repcnt, bool keepselect )
 
 } /* MovePage */
 
-int MovePageDown( void )
+vi_rc MovePageDown( void )
 {
     return( MovePage( 1, GetRepeatCount(), FALSE ) );
 }
 
-int MovePageUp( void )
+vi_rc MovePageUp( void )
 {
     return( MovePage( -1, GetRepeatCount(), FALSE ) );
 }
@@ -219,10 +219,11 @@ int MovePageUp( void )
 /*
  * MovePosition - move to a screen position
  */
-int MovePosition( void )
+vi_rc MovePosition( void )
 {
     linenum     lne, lines;
-    int         key, i;
+    int         key;
+    vi_rc       rc;
 
     if( RepeatDigits == 0 ) {
         lne = CurrentPos.line;
@@ -251,14 +252,14 @@ int MovePosition( void )
         LeftTopPos.line = 1;
     }
     SetCurrentLineNumber( lne );
-    i = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
+    rc = CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
     CurrentPos.column = 1;
     DCInvalidateAllLines();
     DCDisplayAllLines();
-    if( !i ) {
-        i = GoToColumnOnCurrentLine( FindStartOfCurrentLine() );
+    if( rc == ERR_NO_ERR ) {
+        rc = GoToColumnOnCurrentLine( FindStartOfCurrentLine() );
     }
-    return( i );
+    return( rc );
 
 } /* MovePosition */
 
@@ -266,9 +267,10 @@ int MovePosition( void )
 /*
  * moveHalfPage - display half a page
  */
-static int moveHalfPage( int dir )
+static vi_rc moveHalfPage( int dir )
 {
-    int         ople, rc;
+    int         ople;
+    vi_rc       rc;
     long        repcnt;
     int         ln;
 
@@ -289,19 +291,19 @@ static int moveHalfPage( int dir )
 
 } /* moveHalfPage */
 
-int MoveHalfPageDown( void )
+vi_rc MoveHalfPageDown( void )
 {
     return( moveHalfPage( 1 ) );
 
 } /* MoveHalfPageDown */
 
-int MoveHalfPageUp( void )
+vi_rc MoveHalfPageUp( void )
 {
     return( moveHalfPage( -1 ) );
 
 } /* MoveHalfPageUp */
 
-int MoveScreenLeftRightML( int newleft )
+vi_rc MoveScreenLeftRightML( int newleft )
 {
     LeftTopPos.column = newleft;
 

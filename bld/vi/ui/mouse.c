@@ -226,9 +226,9 @@ void RedrawMouse( int row, int col )
 /*
  * DisplayMouse - control whether mouse is visible or not
  */
-int DisplayMouse( int flag )
+bool DisplayMouse( bool flag )
 {
-    int lastmouse;
+    bool    lastmouse;
 
     lastmouse = mouseOn;
     if( EditFlags.HasSystemMouse ) {

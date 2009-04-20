@@ -176,7 +176,7 @@ key_map         *InputKeyMaps;
 /*
  * savebuf data
  */
-int             _NEAR SavebufBound[ MAX_SAVEBUFS ] =
+int             _NEAR SavebufBound[MAX_SAVEBUFS] =
                         { VI_KEY( CTRL_F1 ), VI_KEY( CTRL_F2 ),
                           VI_KEY( CTRL_F3 ), VI_KEY( CTRL_F4 ),
                           VI_KEY( CTRL_F5 ), VI_KEY( CTRL_F6 ),
@@ -298,8 +298,8 @@ char            *Comspec;
 int             WrapMargin;
 short           *StatusSections;
 int             NumStatusSections;
-int             LastRetCode;
-long            LastRC;
+vi_rc           LastRetCode;
+vi_rc           LastRC;
 long            MaxMemFree;
 long            MaxMemFreeAfterInit;
 int             RegExpError;
@@ -310,7 +310,7 @@ cursor_type     InsertCursorType = { 50, 0 };
 cursor_type     NormalCursorType = { 7, 0 };
 char            * _NEAR MatchData[MAX_SEARCH_STRINGS * 2];
 int             MatchCount = INITIAL_MATCH_COUNT;
-int             LastError;
+vi_rc           LastError;
 int             LineNumWinWidth = 8;
 int             TabAmount = 8;
 int             ShiftWidth = 4;

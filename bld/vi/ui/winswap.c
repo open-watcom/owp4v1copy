@@ -42,14 +42,14 @@ static int swapHandle = -1;
  */
 static void windowSwapFileOpen( void )
 {
-    int i;
+    vi_rc   rc;
 
     if( swapHandle >= 0 ) {
         return;
     }
 
-    i = TmpFileOpen( swapName, &swapHandle );
-    if( i ) {
+    rc = TmpFileOpen( swapName, &swapHandle );
+    if( rc != ERR_NO_ERR ) {
         swapHandle = -1;
     }
 

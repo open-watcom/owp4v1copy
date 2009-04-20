@@ -60,11 +60,11 @@ extern char _NEAR ExTokens[];
  * function prototypes
  */
 /* ex.c */
-int EnterExMode( void );
-int ProcessEx( linenum, linenum, bool, int, int, char * );
+extern vi_rc    EnterExMode( void );
+extern vi_rc    ProcessEx( linenum, linenum, bool, int, int, char * );
 
 /* exappend.c */
-int Append( linenum, bool );
-int AppendAnother( char * );
+extern vi_rc    Append( linenum, bool );
+extern vi_rc    AppendAnother( char * );
 
 #endif

@@ -303,23 +303,24 @@ static char *getOneSetVal( int token, bool isnonbool, char *tmpstr,
  * GetNewValueDialog - get a new value from the user
  */
 #ifndef __WIN__
-int GetNewValueDialog( char *value )
+vi_rc GetNewValueDialog( char *value )
 {
-    int         rc;
+    bool        ret;
+    vi_rc       rc;
     char        st[MAX_STR];
     window_id   clw;
     static char prompt[] = "New:";
 
     rc = NewWindow2( &clw, &setvalw_info );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     WPrintfLine( clw, 1, "Old: %s", value );
-    rc = ReadStringInWindow( clw, 2, prompt, st, MAX_STR - 1, NULL );
+    ret = ReadStringInWindow( clw, 2, prompt, st, MAX_STR - 1, NULL );
     CloseAWindow( clw );
     SetWindowCursor();
     KillCursor();
-    if( !rc ) {
+    if( !ret ) {
         return( NO_VALUE_ENTERED );
     }
     if( st[0] == 0 ) {
@@ -331,7 +332,7 @@ int GetNewValueDialog( char *value )
 
 } /* GetNewValueDialog */
 #else
-extern int GetNewValueDialog( char * );
+extern vi_rc GetNewValueDialog( char * );
 #endif
 
 /*
@@ -358,19 +359,19 @@ static int getAColor( char *name, int *cval )
 /*
  * processSetToken - set value for set token
  */
-static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
+static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
 {
     char        fn[MAX_STR], str[MAX_STR], tmp[3];
     char        tokstr[MAX_STR];
     char        save[MAX_STR];
-    int         rc = ERR_NO_ERR;
+    vi_rc       rc = ERR_NO_ERR;
     int         i, clr, cval, k;
     bool        newset;
     bool        set1, toggle, *ptr;
     jmp_buf     jmpaddr;
     cursor_type ct;
     char        *name;
-    void        *fptr;
+    command_rtn fptr;
     event_bits  eb;
     bool        redisplay = FALSE;
 
@@ -422,10 +423,10 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
             if( (newset && !EditFlags.Modeless) ||
                 (!newset && EditFlags.Modeless) ) {
                 for( k = 0; k < MAX_EVENTS; k++ ) {
-                    fptr = EventList[k].rtn.ptr;
+                    fptr = EventList[k].rtn;
                     eb = EventList[k].b;
-                    EventList[k].rtn.ptr = EventList[k].alt_rtn.ptr;
-                    EventList[k].alt_rtn.ptr = fptr;
+                    EventList[k].rtn = EventList[k].alt_rtn;
+                    EventList[k].alt_rtn = fptr;
                     EventList[k].b = EventList[k].alt_b;
                     EventList[k].alt_b = eb;
                 }
@@ -666,7 +667,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
                 return( ERR_INVALID_SET_COMMAND );
             }
             rc = getAColor( value, &cval );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 return( rc );
             }
             TileColors[clr] = (char) cval;
@@ -991,7 +992,7 @@ static int processSetToken( int j, char *value, int *winflag, bool isnonbool )
 /*
  * SettingSelected - a setting was selected from the dialog
  */
-int SettingSelected( char *item, char *value, int *winflag )
+vi_rc SettingSelected( char *item, char *value, int *winflag )
 {
     int         id;
     bool        isnonbool;
@@ -1078,10 +1079,10 @@ static int getSetInfo( char ***vals, char ***list, int *longest )
 /*
  * Set - set editor control variable
  */
-int Set( char *name )
+vi_rc Set( char *name )
 {
     char        fn[MAX_STR];
-    int         rc = ERR_NO_ERR;
+    vi_rc       rc = ERR_NO_ERR;
     int         j, i;
 #ifndef __WIN__
     int         tmp, tc;

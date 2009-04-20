@@ -40,9 +40,10 @@ static int closeAFile( void );
 /*
  * FileExists - test if a file exists
  */
-int FileExists( char *name )
+vi_rc FileExists( char *name )
 {
-    int i, rc, en;
+    int     i, en;
+    vi_rc   rc;
 
     while( TRUE ) {
         i = open( name, O_RDWR | O_BINARY, 0 );
@@ -81,9 +82,9 @@ int FileExists( char *name )
             if( en != EMFILE ) {
                 return( ERR_FILE_OPEN );
             }
-            i = closeAFile();
-            if( i ) {
-                return( i );
+            rc = closeAFile();
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
             }
         } else {
             if( isatty( i ) ) {
@@ -101,17 +102,18 @@ int FileExists( char *name )
 /*
  * FileOpen - open a file, conditional on exist flag
  */
-int FileOpen( char *name, int existflag, int stat, int attr, int *_handle )
+vi_rc FileOpen( char *name, int existflag, int stat, int attr, int *_handle )
 {
-    int         i, handle, en;
+    int         handle, en;
+    vi_rc       rc;
 
     /*
      * test if file exists
      */
     if( existflag ) {
-        i = FileExists( name );
-        if( i ) {
-            return( i );
+        rc = FileExists( name );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
 
@@ -126,9 +128,9 @@ int FileOpen( char *name, int existflag, int stat, int attr, int *_handle )
             if( en != EMFILE ) {
                 return( ERR_FILE_OPEN );
             }
-            i = closeAFile();
-            if( i ) {
-                return( i );
+            rc = closeAFile();
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
             }
         } else {
             if( handle >= 0 && isatty( handle ) ) {
@@ -147,7 +149,7 @@ int FileOpen( char *name, int existflag, int stat, int attr, int *_handle )
 /*
  * FileSeek - seek location in swap file
  */
-int FileSeek( int handle, long where )
+vi_rc FileSeek( int handle, long where )
 {
     long        i, relo, lastpos;
 
@@ -284,7 +286,7 @@ void MakeTmpPath( char *out, char *in )
 /*
  * TmpFileOpen - open a tmp file
  */
-int TmpFileOpen( char *inname, int *_handle )
+vi_rc TmpFileOpen( char *inname, int *_handle )
 {
     char        file[FILENAME_MAX];
 

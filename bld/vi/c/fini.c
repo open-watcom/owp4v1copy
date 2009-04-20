@@ -222,13 +222,13 @@ void ExitEditor( int rc )
 /*
  * QuitEditor - quit the editor
  */
-void QuitEditor( int rc )
+void QuitEditor( vi_rc rc )
 {
 #ifndef __WIN__
     ScreenPage( -1000 );
     EditFlags.NoSetCursor = FALSE;
     SetPosToMessageLine();
 #endif
-    ExitEditor( rc );
+    ExitEditor( ( rc == ERR_NO_ERR ) ? 0 : -1 );
 
 } /* QuitEditor */

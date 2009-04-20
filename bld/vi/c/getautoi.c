@@ -35,9 +35,9 @@
 /*
  * getBracketLoc - find a matching '(' for a ')'
  */
-static int getBracketLoc( i_mark *pos )
+static vi_rc getBracketLoc( i_mark *pos )
 {
-    int         rc;
+    vi_rc       rc;
     char        tmp[3];
     int         len;
     linenum     lne;
@@ -56,7 +56,7 @@ static int getBracketLoc( i_mark *pos )
         EditFlags.Magic = oldmagic;
         return( ERR_FIND_NOT_FOUND );
     }
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         EditFlags.Magic = oldmagic;
         return( rc );
     }
@@ -79,7 +79,7 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
 {
     int         i, j = 0, k;
     bool        tabme;
-    int         rc;
+    vi_rc       rc;
     line        *cline;
     fcb         *cfcb;
     char        ch;
@@ -110,7 +110,7 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
                     /* add a { to keep matches even! */
                     if( ch == '}' ) {
                         rc = FindMatch( &pos );
-                        if( !rc ) {
+                        if( rc == ERR_NO_ERR ) {
                             CurrentPos = pos;
                             CurrentPos.column -= 1;
                             CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
@@ -118,7 +118,7 @@ int GetAutoIndentAmount( char *buff, int extra, bool above_line )
                     }
                     rc = getBracketLoc( &pos );
                     RestoreCurrentFilePos();
-                    if( !rc ) {
+                    if( rc == ERR_NO_ERR ) {
                         CGimmeLinePtr( pos.line, &cfcb, &cline );
                         i = FindStartOfALine( cline );
                     }

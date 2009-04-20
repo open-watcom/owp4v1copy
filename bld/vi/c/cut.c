@@ -35,11 +35,12 @@
 /*
  * Cut - cut out a block of text
  */
-int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
+vi_rc Cut( linenum s, int scol, linenum e, int ecol, int delflag )
 {
     fcb         *sfcb, *efcb;
     line        *cline;
-    int         i, rc, j;
+    int         i, j;
+    vi_rc       rc;
 
     // bloody computers!
     ecol++;
@@ -48,7 +49,7 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
      * get entire range
      */
     rc = GetCopyOfLineRange( s, e, &sfcb, &efcb );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
 
@@ -102,7 +103,7 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
      * set to first line
      */
     rc = SaveAndResetFilePos( s );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         EndUndoGroup( UndoStack );
         return( rc );
     }
@@ -120,7 +121,7 @@ int Cut( linenum s, int scol, linenum e, int ecol, int delflag )
      * delete all lines but first
      */
     rc = DeleteLineRange( s + 1, e, 0 );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
 

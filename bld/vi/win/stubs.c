@@ -36,9 +36,9 @@
 #pragma off( unreferenced );
 
 void RedrawMouse( int p1, int p2 ) {}
-int DisplayMouse( int p1 ) { return( FALSE ); }
+bool DisplayMouse( bool p1 ) { return( FALSE ); }
 void TurnOffCapsLock( void ) {}
-int HandleMouseEvent( void ) { return( ERR_NO_ERR ); }
+vi_rc HandleMouseEvent( void ) { return( ERR_NO_ERR ); }
 void SwapAllWindows( void ) {}
 void SetMouseSpeed( int i ) {}
 void GetClockStart( void ) {}
@@ -54,11 +54,11 @@ void RestoreInterrupts( void ) {}
 void WindowSwapFileClose( void ) {}
 void FiniMouse( void ) {}
 void ScreenFini( void ) {}
-int ResizeCurrentWindowWithKeys( void ) { return( ERR_NO_ERR ); }
-int MoveCurrentWindowWithKeys( void ) { return( ERR_NO_ERR ); }
+vi_rc ResizeCurrentWindowWithKeys( void ) { return( ERR_NO_ERR ); }
+vi_rc MoveCurrentWindowWithKeys( void ) { return( ERR_NO_ERR ); }
 drive_type DoGetDriveType( int i ) { return( DRIVE_NONE ); }
 void ClearScreen( void ) {}
-int ResetWindow( window_id *id ) { return( ERR_NO_ERR ); }
+vi_rc ResetWindow( window_id *id ) { return( ERR_NO_ERR ); }
 bool WindowIsVisible( window_id id ) { return( TRUE ); }
 void ScreenInit( void ) {}
 void SetInterrupts( void ) {}

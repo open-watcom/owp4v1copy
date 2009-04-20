@@ -60,7 +60,7 @@ extern RCSFiniFn                *RCSFini = NULL;
 static HINSTANCE LibHandle;
 static void getFunctionPtrs( void );
 
-int ViRCSInit( void )
+bool ViRCSInit( void )
 {
     LibHandle = LoadLibrary( RCS_DLLNAME );
     if( LibHandle < (HINSTANCE)32 ) {
@@ -69,7 +69,8 @@ int ViRCSInit( void )
     getFunctionPtrs();
     return( TRUE );
 }
-int ViRCSFini( void )
+
+bool ViRCSFini( void )
 {
     FreeLibrary( LibHandle );
     return( TRUE );
@@ -84,20 +85,22 @@ APIRET APIENTRY  DosQueryProcAddr( HMODULE hmod, ULONG ordinal, PSZ pszName, PFN
 #define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN *)(&proc) )
 static void getFunctionPtrs( void );
 
-int ViRCSInit( void )
+bool ViRCSInit( void )
 {
     #define BUFF_LEN 128
     char    fail_name[BUFF_LEN];
     int     rc;
+
     rc = DosLoadModule( fail_name, BUFF_LEN, RCS_DLLNAME, &LibHandle );
     if( rc != 0 ) {
         return( FALSE );
     } else {
         getFunctionPtrs();
-        return( LibHandle );
+        return( ( LibHandle != 0 ) );
     }
 }
-int ViRCSFini( void )
+
+bool ViRCSFini( void )
 {
     DosFreeModule( LibHandle );
     return( TRUE );
@@ -105,12 +108,12 @@ int ViRCSFini( void )
 
 #else
 
-int ViRCSInit( void )
+bool ViRCSInit( void )
 {
     return( TRUE );
 }
 
-int ViRCSFini( void )
+bool ViRCSFini( void )
 {
     return( TRUE );
 }

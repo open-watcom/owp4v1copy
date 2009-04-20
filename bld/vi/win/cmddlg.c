@@ -88,7 +88,7 @@ BOOL WINEXP CmdDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             break;
         case IDCANCEL:
             RemoveEditSubClass( hwnd, CMD_EDIT );
-            EndDialog( hwnd, 0 );
+            EndDialog( hwnd, FALSE );
             break;
         case IDOK:
             GetDlgItemText( hwnd, CMD_EDIT, cmdStr, cmdLen );
@@ -103,7 +103,7 @@ BOOL WINEXP CmdDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
                 h->curr += 1;
             }
             RemoveEditSubClass( hwnd, CMD_EDIT );
-            EndDialog( hwnd, 1 );
+            EndDialog( hwnd, TRUE );
             break;
         default:
             return( FALSE );

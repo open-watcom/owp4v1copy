@@ -79,7 +79,7 @@ void TranslateTabs( char *buff )
 /*
  * GetStringWithPossibleQuote
  */
-int GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
+vi_rc GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
 {
     RemoveLeadingSpaces( data );
     if( allow_slash && data[0] == '/' ) {
@@ -101,7 +101,7 @@ int GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
 
 } /* GetStringWithPossibleQuote2 */
 
-int GetStringWithPossibleQuote( char *data, char *st )
+vi_rc GetStringWithPossibleQuote( char *data, char *st )
 {
     return GetStringWithPossibleQuote2( data, st, TRUE );
 

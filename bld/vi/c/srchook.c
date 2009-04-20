@@ -96,11 +96,11 @@ vars *GetHookVar( hooktype num )
 /*
  * srcHook - run a specified source hook
  */
-static int srcHook( hooktype num, int lastrc )
+static vi_rc srcHook( hooktype num, vi_rc lastrc )
 {
     vars        *v;
     int         ln;
-    int         rc;
+    vi_rc       rc;
 
     if( hookRun & num ) {
         return( lastrc );
@@ -155,7 +155,7 @@ static int srcHook( hooktype num, int lastrc )
 /*
  * SourceHook - activate source hook, no data
  */
-int SourceHook( hooktype num, int lastrc )
+vi_rc SourceHook( hooktype num, vi_rc lastrc )
 {
     char        data[1];
 
@@ -168,9 +168,9 @@ int SourceHook( hooktype num, int lastrc )
 /*
  * SourceHookData - activate source hook with data
  */
-int SourceHookData( hooktype num, char *data )
+vi_rc SourceHookData( hooktype num, char *data )
 {
-    int         rc;
+    vi_rc       rc;
 
     srcHookData = data;
     rc = srcHook( num, ERR_NO_ERR );
@@ -193,7 +193,7 @@ void HookScriptCheck( void )
 /*
  * InvokeColSelHook - invoke column hook with specified data
  */
-int InvokeColSelHook( int sc, int ec )
+vi_rc InvokeColSelHook( int sc, int ec )
 {
     int         j, i;
     char        wordbuff[MAX_STR];
@@ -251,7 +251,7 @@ int InvokeColSelHook( int sc, int ec )
 /*
  * InvokeLineSelHook - invoke the mouse selection
  */
-int InvokeLineSelHook( linenum s, linenum e )
+vi_rc InvokeLineSelHook( linenum s, linenum e )
 {
     char        tmp[32];
     int         lne, col;
@@ -291,10 +291,10 @@ int InvokeLineSelHook( linenum s, linenum e )
 /*
  * InvokeMenuHook - invoke the menu hook
  */
-int InvokeMenuHook( int menunum, int line )
+vi_rc InvokeMenuHook( int menunum, int line )
 {
     char        tmp[16];
-    int         rc;
+    vi_rc       rc;
 
     MySprintf( tmp, "%d %d", menunum, line );
     rc = SourceHookData( SRC_HOOK_MENU, tmp );

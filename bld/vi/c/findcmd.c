@@ -47,8 +47,8 @@ static bool     lastFindWasWrap;
 static i_mark   lastPos = { 0, 0 };
 static i_mark   currPos = { 0, 0 };
 
-static int  setLineCol( char *, i_mark *, find_type );
-static int  processFind( range *, char *, int (*)( char *, i_mark *, int * ) );
+static vi_rc    setLineCol( char *, i_mark *, find_type );
+static vi_rc    processFind( range *, char *, vi_rc (*)( char *, i_mark *, int * ) );
 
 void FindCmdFini( void ){
     MemFree( lastFind );
@@ -84,7 +84,7 @@ void HilightSearchString( i_mark *pos, int slen )
 /*
  * ResetLastFind - set so it is as if no last find was entered
  */
-void ResetLastFind( void )
+void ResetLastFind( info *ci )
 {
     lastPos.line = 0;
     lastPos.column = 0;
@@ -95,7 +95,7 @@ void ResetLastFind( void )
 /*
  * GetFindForward - get position of forward find string
  */
-int GetFindForward( char *st, i_mark *pos1, int *len1 )
+vi_rc GetFindForward( char *st, i_mark *pos1, int *len1 )
 {
     return( GetFind( st, pos1, len1, FINDFL_FORWARD ) );
 
@@ -104,7 +104,7 @@ int GetFindForward( char *st, i_mark *pos1, int *len1 )
 /*
  * GetFindBackwards - get backwards find position
  */
-int GetFindBackwards( char *st, i_mark *pos1, int *len1 )
+vi_rc GetFindBackwards( char *st, i_mark *pos1, int *len1 )
 {
     return( GetFind( st, pos1, len1, FINDFL_BACKWARDS ) );
 
@@ -113,9 +113,9 @@ int GetFindBackwards( char *st, i_mark *pos1, int *len1 )
 /*
  * getFindString - get string and search for it
  */
-static int getFindString( range *r, bool is_forward, bool is_fancy, bool search_again )
+static vi_rc getFindString( range *r, bool is_forward, bool is_fancy, bool search_again )
 {
-    int         rc;
+    vi_rc       rc;
     char        st[MAX_INPUT_LINE + 1];
     char        *res;
     char        *prompt;
@@ -207,9 +207,9 @@ static int getFindString( range *r, bool is_forward, bool is_fancy, bool search_
 /*
  * DoFindForward - get string and search for it
  */
-int DoFindForward( range *r, long count )
+vi_rc DoFindForward( range *r, long count )
 {
-    int rc;
+    vi_rc   rc;
 
     count = count;
     rc = getFindString( r, TRUE, FALSE, FALSE );
@@ -220,9 +220,9 @@ int DoFindForward( range *r, long count )
 /*
  * DoFindBackwards - get string and search for it
  */
-int DoFindBackwards( range *r, long count )
+vi_rc DoFindBackwards( range *r, long count )
 {
-    int rc;
+    vi_rc   rc;
 
     count = count;
     rc = getFindString( r, FALSE, FALSE, FALSE );
@@ -252,10 +252,10 @@ void JumpTo( i_mark *pos )
 /*
  * FancyDoFindMisc - an EVENT_MISC version of below
  */
-int FancyDoFindMisc( void )
+vi_rc FancyDoFindMisc( void )
 {
     range   r;
-    int     rc;
+    vi_rc   rc;
 
     if( CurrentFile == NULL ) {
         // you cant search if theres no file!
@@ -272,9 +272,9 @@ int FancyDoFindMisc( void )
 /*
  * FancyDoFind - get string and search for it
  */
-int FancyDoFind( range *r, long count )
+vi_rc FancyDoFind( range *r, long count )
 {
-    int rc;
+    vi_rc   rc;
 
     count = count;
     if( CurrentFile == NULL ) {
@@ -289,7 +289,7 @@ int FancyDoFind( range *r, long count )
 /*
  * DoNextFindForward - search again, based on last string
  */
-int DoNextFindForward( range *r, long count )
+vi_rc DoNextFindForward( range *r, long count )
 {
     char        st = 0;
 
@@ -305,7 +305,7 @@ int DoNextFindForward( range *r, long count )
 /*
  * DoNextFindBackwards - search again, based on last string
  */
-int DoNextFindBackwards( range *r, long count )
+vi_rc DoNextFindBackwards( range *r, long count )
 {
     char        st = 0;
 
@@ -322,10 +322,10 @@ int DoNextFindBackwards( range *r, long count )
 /*
  * DoNextFindForwardMisc - search again, based on last string (EVENT_MISC)
  */
-int DoNextFindForwardMisc( void )
+vi_rc DoNextFindForwardMisc( void )
 {
     range       r;
-    int         rc;
+    vi_rc       rc;
 
     if( CurrentFile == NULL ) {
         // you cant search if theres no file!
@@ -342,10 +342,10 @@ int DoNextFindForwardMisc( void )
 /*
  * DoNextFindBackwardsMisc - search again, based on last string (EVENT_MISC)
  */
-int DoNextFindBackwardsMisc( void )
+vi_rc DoNextFindBackwardsMisc( void )
 {
     range       r;
-    int         rc;
+    vi_rc       rc;
 
     if( CurrentFile == NULL ) {
         // you cant search if theres no file!
@@ -362,10 +362,11 @@ int DoNextFindBackwardsMisc( void )
 /*
  * processFind - set up and do forward find
  */
-static int processFind( range *r, char *st, int (*rtn)( char *, i_mark *, int * ) )
+static vi_rc processFind( range *r, char *st, vi_rc (*rtn)( char *, i_mark *, int * ) )
 {
-    int         rc, len;
+    int         len;
     i_mark      pos;
+    vi_rc       rc;
 
     rc = rtn( st, &pos, &len );
     if( rc == ERR_NO_ERR ) {
@@ -415,11 +416,12 @@ static int processFind( range *r, char *st, int (*rtn)( char *, i_mark *, int * 
 /*
  * GetFind - get a find location
  */
-int GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
+vi_rc GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
 {
-    int         rc, len;
+    int         len;
     char        *linedata;
     i_mark      pos2;
+    vi_rc       rc;
 
     /*
      * do find
@@ -428,7 +430,7 @@ int GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
         return( ERR_NO_FILE );
     }
     rc = setLineCol( st, &pos2, flag );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         if( flag & FINDFL_FORWARD ) {
             rc = FindRegularExpression( sStr, &pos2,
                 &linedata, MAX_LONG, EditFlags.SearchWrap );
@@ -475,7 +477,7 @@ int GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
 /*
  * setLineCol - set up line and column to start search at
  */
-static int setLineCol( char *st, i_mark *pos, find_type flag )
+static vi_rc setLineCol( char *st, i_mark *pos, find_type flag )
 {
     fcb         *cfcb;
     line        *cline;
@@ -567,9 +569,9 @@ void SaveFindRowColumn( void )
 /*
  * ColorFind - find string and color it
  */
-int ColorFind( char *data, find_type findfl )
+vi_rc ColorFind( char *data, find_type findfl )
 {
-    int         rc = ERR_NO_ERR;
+    vi_rc       rc;
     int         len;
     char        *buff;
     i_mark      pos;
@@ -589,7 +591,7 @@ int ColorFind( char *data, find_type findfl )
     EditFlags.LastSearchWasForward = TRUE;
     GoToLineNoRelCurs( 1 );
     rc = GetFind( buff, &pos, &len, FINDFL_FORWARD | findfl );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         pos.column += 1;
         JumpTo( &pos );
         DCUpdate();
@@ -616,11 +618,11 @@ void SetLastFind( char* newLastFind )
 /*
  * FancyDoReplace - get strings, search for one, replace with other
  */
-int FancyDoReplace( void )
+vi_rc FancyDoReplace( void )
 {
 #ifdef __WIN__
     static char *lastReplace;
-    int         rc;
+    vi_rc       rc;
     char        find[MAX_INPUT_LINE + 1], replace[MAX_INPUT_LINE + 1];
     fancy_find  ff;
     bool        is_forward = TRUE;

@@ -41,7 +41,7 @@
 /*
  * SameFile - check if two files are the same
  */
-int SameFile( char *f1, char *f2 )
+bool SameFile( char *f1, char *f2 )
 {
     char        full1[FILENAME_MAX];
     char        full2[FILENAME_MAX];

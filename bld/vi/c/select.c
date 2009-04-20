@@ -87,11 +87,12 @@ static void tempFileSetup( file **cfile, char *list[], int maxlist, int indent,
 /*
  * SelectItem - select item to set from a menu
  */
-int SelectItem( selectitem *si )
+vi_rc SelectItem( selectitem *si )
 {
-    int                 j, rc;
+    int                 j;
     file                *cfile;
     selflinedata        sfd;
+    vi_rc               rc;
 
     tempFileSetup( &cfile, si->list, si->maxlist, 0, FALSE );
 
@@ -112,7 +113,7 @@ int SelectItem( selectitem *si )
     sfd.is_menu = si->is_menu;
     rc = SelectLineInFile( &sfd );
     si->event = sfd.event;
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         if( sfd.sl == -1 || sfd.sl == 0 ) {
             if( si->result != NULL ) {
                 si->result[0] = 0;
@@ -141,13 +142,14 @@ int SelectItem( selectitem *si )
 /*
  * SelectItemAndValue - select item from list and give it a value
  */
-int SelectItemAndValue( window_info *wi, char *title, char **list,
-                        int maxlist, int (*updatertn)( char *, char *, int * ),
+vi_rc SelectItemAndValue( window_info *wi, char *title, char **list,
+                        int maxlist, vi_rc (*updatertn)( char *, char *, int * ),
                         int indent, char **vals, int valoff )
 {
-    int                 j, rc;
+    int                 j;
     file                *cfile;
     selflinedata        sfd;
+    vi_rc               rc;
 
     tempFileSetup( &cfile, list, maxlist, indent, TRUE );
 
@@ -166,7 +168,7 @@ int SelectItemAndValue( window_info *wi, char *title, char **list,
         sfd.vals = vals;
         sfd.valoff = valoff;
         rc = SelectLineInFile( &sfd );
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         if( sfd.sl == -1 ) {

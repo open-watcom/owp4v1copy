@@ -37,11 +37,11 @@
 /*
  * ResetWindow - close a window an re-create it
  */
-int ResetWindow( window_id *wn )
+vi_rc ResetWindow( window_id *wn )
 {
     wind        *w;
     char        *tmp;
-    int         rc;
+    vi_rc       rc;
 
     w = Windows[*wn];
     if( w->title != NULL ) {
@@ -52,7 +52,7 @@ int ResetWindow( window_id *wn )
     }
     CloseAWindow( *wn );
     rc = NewWindow2( wn, &editw_info );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     SetBorderGadgets( *wn, EditFlags.WindowGadgets );
@@ -149,7 +149,7 @@ wind *AllocWindow( int x1, int y1, int x2, int y2, bool has_border,
 /*
  * NewWindow - build a new window
  */
-int NewWindow( window_id *wn, int x1, int y1, int x2, int y2, bool has_border,
+vi_rc NewWindow( window_id *wn, int x1, int y1, int x2, int y2, bool has_border,
                vi_color bc1, vi_color bc2, type_style *s )
 {
     wind        *w;

@@ -40,7 +40,7 @@
 /*
  * NextFileDammit - done with current file, get next one
  */
-int NextFileDammit( void )
+vi_rc NextFileDammit( void )
 {
     info        *cinfo, *tinfo;
     vi_ushort   lastid;
@@ -112,7 +112,7 @@ int NextFileDammit( void )
             if( CommandBuffer ) {
                 MemFree( CommandBuffer );
             }
-            QuitEditor( 0 );
+            QuitEditor( ERR_NO_ERR );
         }
     }
 #ifndef __WIN__
@@ -137,7 +137,7 @@ int NextFileDammit( void )
 /*
  * NextFile - go to next file, checking modified flag
  */
-int NextFile( void )
+vi_rc NextFile( void )
 {
     if( CurrentFile != NULL ) {
         if( CurrentFile->dup_count == 0 ) {
@@ -154,7 +154,7 @@ int NextFile( void )
 /*
  * nextFile - go to next file
  */
-static int nextFile( info *cinfo )
+static vi_rc nextFile( info *cinfo )
 {
     SaveCurrentInfo();
     BringUpFile( cinfo, FALSE );
@@ -168,7 +168,7 @@ static int nextFile( info *cinfo )
 /*
  * RotateFileForward - rotate forward through current file list
  */
-int RotateFileForward( void )
+vi_rc RotateFileForward( void )
 {
     info        *cinfo;
 
@@ -186,7 +186,7 @@ int RotateFileForward( void )
 /*
  * RotateFileBackwards - rotate forward through current file list
  */
-int RotateFileBackwards( void )
+vi_rc RotateFileBackwards( void )
 {
     info        *cinfo;
 
@@ -204,7 +204,7 @@ int RotateFileBackwards( void )
 /*
  * GotoFile - bring up file in filelist with given window id
  */
-int GotoFile( window_id id )
+vi_rc GotoFile( window_id id )
 {
     info        *cinfo;
 

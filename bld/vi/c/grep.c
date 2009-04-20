@@ -50,9 +50,9 @@
 #define MAX_DISP 60
 
 static void fileGrep( char *, char **, int *, window_id );
-static int fSearch( char *, char * );
-static int eSearch( char *, char * );
-static int doGREP( char * );
+static vi_rc fSearch( char *, char * );
+static vi_rc eSearch( char *, char * );
+static vi_rc doGREP( char * );
 
 static regexp   *cRx;
 static char     *sString;
@@ -70,11 +70,11 @@ static PFNICC       pfnInitCommonControls = NULL;
 /*
  * DoFGREP - do a fast grep
  */
-int DoFGREP( char *dirlist, char *string, bool ci )
+vi_rc DoFGREP( char *dirlist, char *string, bool ci )
 {
     char        table[256];
     int         i;
-    int         rc;
+    vi_rc       rc;
 
     origString = string;
     AddString( &sString, string );
@@ -99,9 +99,9 @@ int DoFGREP( char *dirlist, char *string, bool ci )
 /*
  * DoEGREP - do an extended grep
  */
-int DoEGREP( char *dirlist, char *string )
+vi_rc DoEGREP( char *dirlist, char *string )
 {
-    int rc;
+    vi_rc   rc;
 
     cRx = RegComp( string );
     if( RegExpError ) {
@@ -116,11 +116,11 @@ int DoEGREP( char *dirlist, char *string )
 
 } /* DoEGREP */
 
-static int getFile( char *fname )
+static vi_rc getFile( char *fname )
 {
     char        dir[MAX_STR];
     char        *dirptr, ch;
-    int         rc;
+    vi_rc       rc;
 
     NextWord1( fname, dir );
     rc = EditFile( dir, FALSE );
@@ -393,10 +393,10 @@ BOOL WINEXP GrepListProc95( HWND dlg, UINT msg, WPARAM wparam, LPARAM lparam )
 } /* GrepListProc95 */
 #endif
 
-static int doGREP( char *dirlist )
+static vi_rc doGREP( char *dirlist )
 {
     DLGPROC     grep_proc;
-    int         rc;
+    vi_rc       rc;
 
 #ifdef __NT__
     if( hInstCommCtrl == NULL ) {
@@ -424,9 +424,9 @@ static int doGREP( char *dirlist )
 /*
  * doGREP - perform GREP on a specified file
  */
-static int doGREP( char *dirlist )
+static vi_rc doGREP( char *dirlist )
 {
-    int         i, clist, rc, n = 0;
+    int         i, clist, n = 0;
     window_id   wn, optwin;
     char        **list;
     window_info tw, wi;
@@ -434,6 +434,7 @@ static int doGREP( char *dirlist )
     int         s, e, cnt;
     bool        show_lineno;
     selectitem  si;
+    vi_rc       rc;
 
     /*
      * prepare list array
@@ -443,12 +444,12 @@ static int doGREP( char *dirlist )
     /*
      * create info. window
      */
-    i = NewWindow( &wn, dirw_info.x1, dirw_info.y1 + 4, dirw_info.x2,
+    rc = NewWindow( &wn, dirw_info.x1, dirw_info.y1 + 4, dirw_info.x2,
         dirw_info.y1 + 6, 1, dirw_info.border_color1, dirw_info.border_color2,
         &dirw_info.text );
-    if( i ) {
+    if( rc != ERR_NO_ERR ) {
         MemFree( list );
-        return( i );
+        return( rc );
     }
     WindowTitle( wn, "File Being Searched" );
 
@@ -486,9 +487,9 @@ static int doGREP( char *dirlist )
         memcpy( &wi, &extraw_info, sizeof( window_info ) );
         wi.x1 = 0;
         wi.x2 = 13;
-        i = DisplayExtraInfo( &wi, &optwin, EditOpts, NumEditOpts );
-        if( i ) {
-            return( i );
+        rc = DisplayExtraInfo( &wi, &optwin, EditOpts, NumEditOpts );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
 
         /*
@@ -514,7 +515,7 @@ static int doGREP( char *dirlist )
             rc = SelectItem( &si );
             n = si.num;
 
-            if( rc || n < 0 ) {
+            if( rc != ERR_NO_ERR || n < 0 ) {
                 break;
             }
             if( si.event == VI_KEY( F3 ) ) {
@@ -546,7 +547,7 @@ static int doGREP( char *dirlist )
         }
         CloseAWindow( optwin );
 
-    } else if( !rc ) {
+    } else if( rc == ERR_NO_ERR ) {
         Message1( "String \"%s\" not found", sString );
         rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
     }
@@ -569,10 +570,11 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
     char        path[FILENAME_MAX];
     char        drive[_MAX_DRIVE], directory[_MAX_DIR], name[_MAX_FNAME];
     char        ext[_MAX_EXT];
-    int         i, j;
+    int         i;
 #if defined( __WIN__ ) && defined( __NT__ )
     LVITEM      lvi;
 #endif
+    vi_rc       rc;
 
     /*
      * get file path prefix
@@ -585,8 +587,8 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
     /*
      * run through each entry and search it; building a list of matches
      */
-    i = GetSortDir( dir, FALSE );
-    if( i ) {
+    rc = GetSortDir( dir, FALSE );
+    if( rc != ERR_NO_ERR ) {
         return;
     }
     for( i = 0; i < DirFileCount; i++ ) {
@@ -603,11 +605,11 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
                 return;
             }
             if( isFgrep ) {
-                j = fSearch( fn, ts );
+                rc = fSearch( fn, ts );
             } else {
-                j = eSearch( fn, ts );
+                rc = eSearch( fn, ts );
             }
-            if( j == FGREP_FOUND_STRING ) {
+            if( rc == FGREP_FOUND_STRING ) {
 
                 ExpandTabsInABuffer( ts, strlen( ts ), data, MAX_DISP );
                 strcpy( ts, data );
@@ -639,7 +641,7 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
                 AddString( &(list[*clist]), data );
                 (*clist)++;
 
-            } else if( j ) {
+            } else if( rc != ERR_NO_ERR ) {
                 return;
             }
         }
@@ -650,7 +652,7 @@ static void fileGrep( char *dir, char **list, int *clist, window_id wn )
 /*
  * eSearch - scan a file for a search string (extended)
  */
-static int eSearch( char *fn, char *res )
+static vi_rc eSearch( char *fn, char *res )
 {
     int         i;
     char        *buff;
@@ -700,20 +702,21 @@ static int eSearch( char *fn, char *res )
 /*
  * fSearch - scan a file for a search string (fast)
  */
-static int fSearch( char *fn, char *r )
+static vi_rc fSearch( char *fn, char *r )
 {
-    int         i, handle, j;
+    int         handle, j;
     int         bytes, bcnt;
     char        *buffloc, *strloc, *buff, *res;
     int         bytecnt;
     char        context_display[MAX_DISP];
+    vi_rc       rc;
 
     /*
      * init for file i/o
      */
-    i = FileOpen( fn, FALSE, O_BINARY | O_RDONLY, 0, &handle );
-    if( i ) {
-        return( i );
+    rc = FileOpen( fn, FALSE, O_BINARY | O_RDONLY, 0, &handle );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     bytecnt = 4096;
     buff = MemAlloc( bytecnt );

@@ -38,17 +38,17 @@
 extern regexp *CurrentRegularExpression;
 
 /* findrx.c */
-int FindRegularExpression( char *, i_mark *, char **, linenum, int );
-int FindRegularExpressionBackwards( char *, i_mark *, char **, linenum, int );
+extern vi_rc    FindRegularExpression( char *, i_mark *, char **, linenum, int );
+extern vi_rc    FindRegularExpressionBackwards( char *, i_mark *, char **, linenum, int );
 
 /* rxsupp.c */
-extern int  CurrentRegComp( char * );
-extern int  GetCurrRegExpColumn( char * );
-extern int  GetCurrRegExpLength( void );
-extern void MakeExpressionNonRegular( char * );
-extern void SetMajickString( char * );
+extern int      CurrentRegComp( char * );
+extern int      GetCurrRegExpColumn( char * );
+extern int      GetCurrRegExpLength( void );
+extern void     MakeExpressionNonRegular( char * );
+extern void     SetMajickString( char * );
 
 /* regsub.c */
-extern int RegSub( regexp *, char *, char *, linenum );
+extern int      RegSub( regexp *, char *, char *, linenum );
 
 #endif

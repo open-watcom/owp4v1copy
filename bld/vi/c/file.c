@@ -168,7 +168,7 @@ bool RestoreInfo( info *ci  )
 
     CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
     ValidateCurrentColumn();
-    ResetLastFind();
+    ResetLastFind( ci );
 
     VarAddRandC();
     if( CurrentFile == NULL ) {
@@ -287,7 +287,7 @@ static void make_short_name( char *name, int len, char *buffer )
 /*
  * DisplayFileStatus - print file status
  */
-int DisplayFileStatus( void )
+vi_rc DisplayFileStatus( void )
 {
     char        st[MAX_STR], data[MAX_STR];
     int         free_len;

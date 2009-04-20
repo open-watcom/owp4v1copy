@@ -37,12 +37,12 @@
 /*
  * DoGenericFilter - filter some crap
  */
-int DoGenericFilter( linenum s, linenum e, char *cmd )
+vi_rc DoGenericFilter( linenum s, linenum e, char *cmd )
 {
     fcb         *cfcb, *s1fcb, *e1fcb, *tfcb;
     line        *cline;
     FILE        *f;
-    int         rc;
+    vi_rc       rc;
     char        realcmd[MAX_STR];
     char        filtin[L_tmpnam], filtout[L_tmpnam];
 
@@ -65,7 +65,7 @@ int DoGenericFilter( linenum s, linenum e, char *cmd )
      * filter on a line
      */
     rc = GetCopyOfLineRange( s, e, &s1fcb, &e1fcb );
-    if( rc ) {
+    if( rc != ERR_NO_ERR ) {
         fclose( f );
         return( rc );
     }
@@ -93,7 +93,7 @@ int DoGenericFilter( linenum s, linenum e, char *cmd )
     rc = ExecCmd( filtin, filtout, cmd );
     StartUndoGroup( UndoStack );
     rc = DeleteLineRange( s, e, 0 );
-    if( !rc ) {
+    if( rc == ERR_NO_ERR ) {
         strcpy( realcmd, filtout );
         ReadAFile( s - 1, realcmd );
         Message1( "%l lines filtered through %s", e - s + 1, cmd );

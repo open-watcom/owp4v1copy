@@ -66,7 +66,7 @@ void HeapMsg( int msg )
 } /* HeapMsg */
 #endif
 
-int HeapCheck( void )
+vi_rc HeapCheck( void )
 {
 #ifdef DBG
     int                 i;
@@ -75,8 +75,7 @@ int HeapCheck( void )
     i = _heapchk();
     Message1( "_heapchk has returned" );
     HeapMsg( i );
-    i = GetKeyboard( NULL );
-    if( i == 'q' ) {
+    if( GetKeyboard( NULL ) == 'q' ) {
         return( ERR_NO_ERR );
     }
     hinfo._pentry = NULL;
@@ -99,15 +98,17 @@ int HeapCheck( void )
 
 } /* HeapCheck */
 
-int FcbDump( void )
+vi_rc FcbDump( void )
 {
 #ifdef DBG
-    int         i, lc, fcbcnt = 0;
+    int         lc, fcbcnt = 0;
     window_id   fw;
     fcb         *cfcb;
+    vi_rc       rc;
 
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
-        return( i );
+    rc = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     WPrintfLine( fw, 1, "File name: %s", CurrentFile->name );
     WPrintfLine( fw, 2, "File home: %s", CurrentFile->home );
@@ -145,17 +146,19 @@ int FcbDump( void )
 
 }
 
-int FcbThreadDump( void )
+vi_rc FcbThreadDump( void )
 {
 #ifdef DBG
-    int         i, lc, fcbcnt = 0;
+    int         lc, fcbcnt = 0;
     window_id   fw;
     char        msg[80];
     fcb         *cfcb;
     file        *cfile;
+    vi_rc       rc;
 
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
-        return( i );
+    rc = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     lc = 1;
     cfcb = FcbThreadHead;
@@ -194,18 +197,19 @@ int FcbThreadDump( void )
     return( ERR_NO_ERR );
 }
 
-int SanityCheck( void )
+vi_rc SanityCheck( void )
 {
 #ifdef DBG
-    int         i, lc, tfcbcnt = 0, fcbcnt, sum;
+    int         lc, tfcbcnt = 0, fcbcnt, sum;
     window_id   fw;
     fcb         *cfcb;
     info        *inf;
     linenum     cl, lcnt;
+    vi_rc       rc;
 
     EditFlags.WatchForBreak = TRUE;
-    if( (i = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
-        return( i );
+    if( (rc = NewWindow( &fw, 0, 0, 79, 24, 1, LIGHT_GREEN, BLACK, &errStyle )) ) {
+        return( rc );
     }
     lc = 1;
     inf = InfoHead;
@@ -278,7 +282,7 @@ int SanityCheck( void )
     return( ERR_NO_ERR );
 }
 
-int LineInfo( void )
+vi_rc LineInfo( void )
 {
 #ifdef DBG
     fcb         *cfcb;
@@ -303,7 +307,7 @@ int LineInfo( void )
 /*
  * WalkUndo
  */
-int WalkUndo( void )
+vi_rc WalkUndo( void )
 {
 #ifdef DBG
     int         ln = 1, i, col, fcbcnt, depth = 0;
@@ -414,9 +418,9 @@ extern int maxStatic;
 /*
  * DumpMemory - dump memory avaliable
  */
-int DumpMemory( void )
+vi_rc DumpMemory( void )
 {
-    int         i, ln = 1;
+    int         ln = 1;
     window_id   wn;
     window_info *wi;
     char        tmp[128], tmp2[128];
@@ -425,9 +429,10 @@ int DumpMemory( void )
     long        mem1;
 #endif
     long        mem2;
+    vi_rc       rc;
 
     wi = &filecw_info;
-    i = NewWindow2( &wn, wi );
+    rc = NewWindow2( &wn, wi );
 #if defined(__OS2__ )
     WPrintfLine( wn, ln++, "Mem:  (unlimited) (maxStatic=%d)", maxStatic );
 #else

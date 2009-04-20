@@ -133,42 +133,42 @@ extern char         MinSlots[MAX_MIN_SLOTS];
 #include "winaux.h"
 
 /* adjwin.c */
-extern int  ResizeCurrentWindowWithKeys( void );
-extern int  MoveCurrentWindowWithKeys( void );
-extern int  ResizeCurrentWindowWithMouse( void );
-extern int  MoveCurrentWindowWithMouse( void );
+extern vi_rc    ResizeCurrentWindowWithKeys( void );
+extern vi_rc    MoveCurrentWindowWithKeys( void );
+extern vi_rc    ResizeCurrentWindowWithMouse( void );
+extern vi_rc    MoveCurrentWindowWithMouse( void );
 
 /* winaux.c */
-extern int  WindowAuxInfo( window_id, int );
-extern void WindowAuxUpdate( window_id, int, int );
+extern int      WindowAuxInfo( window_id, int );
+extern void     WindowAuxUpdate( window_id, int, int );
 
 /* winbrdr.c */
-extern void DrawBorder( window_id );
-extern void SetBorderGadgets( window_id, bool );
-extern void WindowBorderData( window_id, char *, int );
-extern void SetGadgetString( char *str );
+extern void     DrawBorder( window_id );
+extern void     SetBorderGadgets( window_id, bool );
+extern void     WindowBorderData( window_id, char *, int );
+extern void     SetGadgetString( char *str );
 
 /* windisp.c */
-extern int  DisplayLineInWindowWithColor( window_id, int, char *, type_style *, int );
+extern vi_rc    DisplayLineInWindowWithColor( window_id, int, char *, type_style *, int );
 #ifndef __WIN__
-    int     DisplayLineInWindowWithSyntaxStyle( window_id, int, line *, linenum, char *, int, unsigned int );
+extern vi_rc    DisplayLineInWindowWithSyntaxStyle( window_id, int, line *, linenum, char *, int, unsigned int );
 #endif
-extern void DisplayCrossLineInWindow( window_id, int );
-extern void HiliteAColumnRange( linenum, int, int );
-extern void ColorAColumnRange( int, int, int, type_style * );
-extern int  SetCharInWindowWithColor( window_id, int, int, char, type_style * );
-extern int  DisplayLineInWindow( window_id, int, char * );
+extern void     DisplayCrossLineInWindow( window_id, int );
+extern void     HiliteAColumnRange( linenum, int, int );
+extern void     ColorAColumnRange( int, int, int, type_style * );
+extern vi_rc    SetCharInWindowWithColor( window_id, int, int, char, type_style * );
+extern vi_rc    DisplayLineInWindow( window_id, int, char * );
 
 /* wininit.c */
-extern void StartWindows( void );
-extern void FinishWindows( void );
+extern void     StartWindows( void );
+extern void     FinishWindows( void );
 
 /* winnew.c */
-extern int          ResetWindow( window_id * );
+extern vi_rc        ResetWindow( window_id * );
 extern bool         ValidDimension( int, int, int, int, bool );
 extern window_id    GimmeWindow( void );
 extern wind         *AllocWindow( int, int, int, int, bool, vi_color, vi_color, vi_color, vi_color );
-extern int          NewWindow( window_id *, int, int, int, int, bool, vi_color, vi_color, type_style * );
+extern vi_rc        NewWindow( window_id *, int, int, int, int, bool, vi_color, vi_color, type_style * );
 extern void         FreeWindow( wind * );
 extern void         CloseAWindow( window_id );
 
@@ -206,10 +206,10 @@ extern void MyKillCaret( window_id );
 extern void MyRaiseCaret( window_id );
 
 /* winsize.c */
-extern int  ResizeWindow( window_id, int, int, int, int, int );
-extern int  ResizeWindowRelative( window_id, int, int, int, int, int );
-extern int  MinimizeCurrentWindow( void );
-extern int  MaximizeCurrentWindow( void );
+extern vi_rc    ResizeWindow( window_id, int, int, int, int, int );
+extern vi_rc    ResizeWindowRelative( window_id, int, int, int, int, int );
+extern vi_rc    MinimizeCurrentWindow( void );
+extern vi_rc    MaximizeCurrentWindow( void );
 
 /* winswap.c */
 extern void SwapAllWindows( void );
@@ -218,14 +218,14 @@ extern void ReleaseWindow( wind *);
 extern void WindowSwapFileClose( void );
 
 /* winthumb.c */
-void    PositionVerticalScrollThumb( window_id wn, linenum curr, linenum last );
-void    PositionHorizontalScrollThumb( window_id, int );
-void    DrawVerticalThumb( wind *w, char ch );
-int     PositionToNewThumbPosition( wind *w, int thumb );
+extern void     PositionVerticalScrollThumb( window_id wn, linenum curr, linenum last );
+extern void     PositionHorizontalScrollThumb( window_id, int );
+extern void     DrawVerticalThumb( wind *w, char ch );
+extern vi_rc    PositionToNewThumbPosition( wind *w, int thumb );
 
 /* wintica.c */
-extern int  WindowTile( int, int );
-extern int  WindowCascade( void );
+extern vi_rc    WindowTile( int, int );
+extern vi_rc    WindowCascade( void );
 
 /* filesel.c (Windows only functions) */
-int SelectFileSave( char * );
+extern vi_rc     SelectFileSave( char * );

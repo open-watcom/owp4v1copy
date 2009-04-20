@@ -41,7 +41,7 @@ static bool dragThumb;
 /*
  * HandleMouseEvent - handle main editor mouse events
  */
-int HandleMouseEvent( void )
+vi_rc HandleMouseEvent( void )
 {
     int         win_x, win_y;
     window_id   id;
@@ -49,6 +49,7 @@ int HandleMouseEvent( void )
     wind        *w;
     int         i;
     bool        diff_word;
+    vi_rc       rc;
 
     id = GetMousePosInfo( &win_x, &win_y );
     if( id == NO_CHAR ) {
@@ -98,11 +99,11 @@ int HandleMouseEvent( void )
             if( diff_word ) {
                 InitWordSearch( WordAltDefn );
             }
-            i = DoSelectSelection( TRUE );
+            rc = DoSelectSelection( TRUE );
             if( diff_word ) {
                 InitWordSearch( WordDefn );
             }
-            return( i );
+            return( rc );
         }
     }
 

@@ -191,7 +191,7 @@ int BIOSKeyboardInit( void )
         vi_keys[i] = get_vi_key( i );
     }
     for( i = 0; i < sizeof( events ) / sizeof( struct map ); i++ ) {
-        vi_keys[ events[i].ev ] = events[i].key;
+        vi_keys[events[i].ev] = events[i].key;
     }
     return( 0 );
 }

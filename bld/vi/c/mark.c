@@ -34,10 +34,10 @@
 #include <assert.h>
 
 static int  unMark( mark * );
-static int  invalidMark( mark *, int );
-static int  goToMark( range * );
-static int  getAMark( int, linenum *, int * );
-static int  tryToFindMark( mark *, int );
+static vi_rc invalidMark( mark *, int );
+static vi_rc goToMark( range * );
+static vi_rc getAMark( int, linenum *, int * );
+static vi_rc tryToFindMark( mark *, int );
 
 /*
  * Mark numbers etc: everywhere you see a "no" used to indicate a
@@ -48,7 +48,7 @@ static int  tryToFindMark( mark *, int );
  * the no for a given key press and get a pointer for a given number.
  */
 #define NO_MARK         0
-#define MARK_PTR( x )   (&MarkList[ (x) - 1 ])
+#define MARK_PTR( x )   (&MarkList[(x) - 1])
 #define KEY_TO_NO( c )  (((c) == '`' || (c) == '\'') ? MAX_MARKS + 1 : (c) - 'a' + 1)
 
 static mark *currContext;
@@ -56,7 +56,7 @@ static mark *currContext;
 /*
  * SetMark - set a mark at current position
  */
-int SetMark( void )
+vi_rc SetMark( void )
 {
     int key;
 
@@ -119,22 +119,22 @@ int MarkOnLine( line *line, int no )
  *                      happen to find it on. After this the mark is no
  *                      longer in use.
  */
-int RemoveMarkFromLine( int no )
+vi_rc RemoveMarkFromLine( int no )
 {
     mark        *mark, *curr;
-    int         i;
     fcb         *fcb;
     line        *line;
+    vi_rc       rc;
 
     assert( no > 0 && no <= MAX_MARKS + 1 );
     mark = MARK_PTR( no );
-    i = CGimmeLinePtr( mark->p.line, &fcb, &line );
-    if( i ) {
+    rc = CGimmeLinePtr( mark->p.line, &fcb, &line );
+    if( rc != ERR_NO_ERR ) {
         /* hmmmm.... we are in trouble here I believe */
         /* should try and find it somewhere else */
-        i = tryToFindMark( mark, no - 1 );
-        if( i ) {
-            return( i );
+        rc = tryToFindMark( mark, no - 1 );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
         /* this gimme should be guaranteed to work since we did it in
            tryToFindMark */
@@ -166,16 +166,17 @@ int RemoveMarkFromLine( int no )
 /*
  * SetGenericMark - set a mark at a generic line
  */
-int SetGenericMark( linenum num, int col, char mlet )
+vi_rc SetGenericMark( linenum num, int col, char mlet )
 {
-    int         i, no;
+    int         no;
     mark        *cmark;
     line        *mline;
     fcb         *mfcb;
+    vi_rc       rc;
 
-    i = CGimmeLinePtr( num, &mfcb, &mline );
-    if( i ) {
-        return( i );
+    rc = CGimmeLinePtr( num, &mfcb, &mline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*
@@ -224,26 +225,26 @@ int SetGenericMark( linenum num, int col, char mlet )
 
 } /* SetMark */
 
-int GoMark( range *r, long count )
+vi_rc GoMark( range *r, long count )
 {
     count = count;
     r->line_based = FALSE;
     return( goToMark( r ) );
 }
 
-int GoMarkLine( range *r, long count )
+vi_rc GoMarkLine( range *r, long count )
 {
     count = count;
     r->line_based = TRUE;
     return( goToMark( r ) );
 }
 
-int GetMarkLine( linenum *ln )
+vi_rc GetMarkLine( linenum *ln )
 {
     return( getAMark( TRUE, ln, NULL ) );
 }
 
-int GetMark( linenum *ln, int *cl )
+vi_rc GetMark( linenum *ln, int *cl )
 {
     return( getAMark( FALSE, ln, cl ) );
 }
@@ -251,10 +252,11 @@ int GetMark( linenum *ln, int *cl )
 /*
  * getAMark - get a specified mark
  */
-static int getAMark( int lineonly, linenum *ln, int *cl )
+static vi_rc getAMark( int lineonly, linenum *ln, int *cl )
 {
-    int         i, no, key;
+    int         no, key;
     mark        *m;
+    vi_rc       rc;
 
     /*
      * get mark to go to
@@ -266,9 +268,9 @@ static int getAMark( int lineonly, linenum *ln, int *cl )
 
     no = KEY_TO_NO( key );
     m = MARK_PTR( no );
-    i = VerifyMark( no, lineonly );
-    if( i ) {
-        return( i );
+    rc = VerifyMark( no, lineonly );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     *ln = m->p.line;
@@ -283,10 +285,11 @@ static int getAMark( int lineonly, linenum *ln, int *cl )
 /*
  * goToMark - go to a specified mark
  */
-static int goToMark( range *r )
+static vi_rc goToMark( range *r )
 {
-    int         rc, no, key;
+    int         no, key;
     mark        *m;
+    vi_rc       rc;
 
     if( CurrentFile == NULL ) {
         return( ERR_NO_FILE );
@@ -316,13 +319,13 @@ static int goToMark( range *r )
 /*
  * VerifyMark - check that a mark is okay
  */
-int VerifyMark( int no, int lineonly )
+vi_rc VerifyMark( int no, int lineonly )
 {
-    int         i;
     fcb         *cfcb;
     line        *cline;
     mark        *cmark;
     int         len;
+    vi_rc       rc;
 
     if( no <= 0 || no > MAX_MARKS + 1 ) {
         return( ERR_INVALID_MARK_RANGE );
@@ -335,27 +338,27 @@ int VerifyMark( int no, int lineonly )
         Error( GetErrorMsg( ERR_MARK_NOT_SET ), no + 'a' - 1 );
         return( DO_NOT_CLEAR_MESSAGE_WINDOW );
     }
-    i = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
-    if( i ) {
-        if( i == ERR_NO_SUCH_LINE ) {
+    rc = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
+    if( rc != ERR_NO_ERR ) {
+        if( rc == ERR_NO_SUCH_LINE ) {
             if( tryToFindMark( cmark, no ) ) {
                 return( invalidMark( cmark, no ) );
             }
-            i = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
-            if( i ) {
-                return( i );
+            rc = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
             }
         } else {
-            return( i );
+            return( rc );
         }
     }
     if( !MarkOnLine( cline, no ) ) {
         if( tryToFindMark( cmark, no ) ) {
             return( invalidMark( cmark, no ) );
         }
-        i = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
-        if( i ) {
-            return( i );
+        rc = CGimmeLinePtr( cmark->p.line, &cfcb, &cline );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
     if( !lineonly ) {
@@ -388,7 +391,7 @@ static int unMark( mark *cmark )
 /*
  * invalidMark - set a mark as no longer vaid
  */
-static int invalidMark( mark *cmark, int no )
+static vi_rc invalidMark( mark *cmark, int no )
 {
     int         i;
     mark        *m;
@@ -447,16 +450,16 @@ void FreeMarkList( void )
 /*
  * tryToFindMark - try to find a moved mark
  */
-static int tryToFindMark( mark *cmark, int no )
+static vi_rc tryToFindMark( mark *cmark, int no )
 {
     fcb         *cfcb;
     line        *cline;
     linenum     lineno = 1;
-    int         i;
+    vi_rc       rc;
 
-    i = CGimmeLinePtr( 1, &cfcb, &cline );
-    if( i ) {
-        return( i );
+    rc = CGimmeLinePtr( 1, &cfcb, &cline );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
     while( TRUE ) {
         if( MarkOnLine( cline, no ) ) {
@@ -464,9 +467,9 @@ static int tryToFindMark( mark *cmark, int no )
             return( ERR_NO_ERR );
         }
         lineno++;
-        i = CGimmeNextLinePtr( &cfcb, &cline );
-        if( i ) {
-            return( i );
+        rc = CGimmeNextLinePtr( &cfcb, &cline );
+        if( rc != ERR_NO_ERR ) {
+            return( rc );
         }
     }
 

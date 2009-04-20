@@ -39,8 +39,8 @@
 #include "fts.h"
 
 static void     finiSource( labels *, vlist *, sfile *, undo_stack * );
-static int      initSource( vlist *, char *);
-static int      barfScript( char *, sfile *, vlist *,int *, char *);
+static vi_rc    initSource( vlist *, char *);
+static vi_rc    barfScript( char *, sfile *, vlist *,int *, char *);
 static void     addResidentScript( char *, sfile *, labels * );
 static resident *residentScript( char * );
 static void     finiSourceErrFile( char * );
@@ -48,7 +48,7 @@ static void     finiSourceErrFile( char * );
 /*
  * Source - main driver
  */
-int Source( char *fn, char *data, int *ln )
+vi_rc Source( char *fn, char *data, int *ln )
 {
     undo_stack  *atomic = NULL;
     labels      *lab, lb;
@@ -57,7 +57,7 @@ int Source( char *fn, char *data, int *ln )
     sfile       *sf, *curr;
     char        tmp[MAX_SRC_LINE];
     char        sname[FILENAME_MAX];
-    int         i, rc;
+    vi_rc       rc;
     bool        sicmp, wfb, ssa, exm;
     resident    *res;
     int         cTokenID;
@@ -89,9 +89,9 @@ int Source( char *fn, char *data, int *ln )
      * initialize variables
      */
     memset( &fi, 0, sizeof( fi ) );
-    i = initSource( &vl, data );
-    if( i ) {
-        return( i );
+    rc = initSource( &vl, data );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*
@@ -101,11 +101,11 @@ int Source( char *fn, char *data, int *ln )
     SourceErrCount = 0;
     if( EditFlags.CompileScript || res == NULL ) {
         EditFlags.ScriptIsCompiled = FALSE;
-        i = PreProcess( fn, &sf, lab );
+        rc = PreProcess( fn, &sf, lab );
         finiSourceErrFile( fn );
-        if( i ||  SourceErrCount > 0 ) {
+        if( rc != ERR_NO_ERR || SourceErrCount > 0 ) {
             EditFlags.ScriptIsCompiled = sicmp;
-            return( i );
+            return( rc );
         }
     } else {
         EditFlags.ScriptIsCompiled = res->scriptcomp;
@@ -211,7 +211,9 @@ int Source( char *fn, char *data, int *ln )
 
         case SRC_T_RETURN:
             if( curr->data != NULL ) {
-                GetErrorTokenValue( &rc, curr->data );
+                int     ret;
+                GetErrorTokenValue( &ret, curr->data );
+                rc = ret;
             } else {
                 rc = ERR_NO_ERR;
             }
@@ -266,7 +268,6 @@ int Source( char *fn, char *data, int *ln )
         default:
 #ifdef __WIN__
             {
-                extern bool RunWindowsCommand( char *, long *, vlist * );
                 if( RunWindowsCommand( tmp, &LastRC, &vl ) ) {
                     rc = LastRC;
                     break;
@@ -284,7 +285,7 @@ int Source( char *fn, char *data, int *ln )
         }
 
 evil_continue:
-        if( rc ) {
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         curr = curr->next;
@@ -317,10 +318,11 @@ evil_exit:
 /*
  * initSource - initialize language variables
  */
-static int initSource( vlist *vl, char *data )
+static vi_rc initSource( vlist *vl, char *data )
 {
-    int         i, j;
+    int         j;
     char        tmp[MAX_SRC_LINE], name[MAX_NUM_STR], all[MAX_SRC_LINE];
+    vi_rc       rc;
 
     all[0] = 0;
 
@@ -330,8 +332,8 @@ static int initSource( vlist *vl, char *data )
     j = 1;
     while( TRUE ) {
 
-        i = GetStringWithPossibleQuote( data, tmp );
-        if( i ) {
+        rc = GetStringWithPossibleQuote( data, tmp );
+        if( rc != ERR_NO_ERR ) {
             break;
         }
         VarAddStr( itoa( j, name, 10 ), tmp, vl );
@@ -490,14 +492,15 @@ static void finiSourceErrFile( char *fn )
 /*
  * barfScript - write a compiled script
  */
-static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
+static vi_rc barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
 {
     sfile       *curr;
     FILE        *foo;
     char        drive[_MAX_DRIVE], directory[_MAX_DIR], name[_MAX_FNAME];
     char        path[FILENAME_MAX];
     char        tmp[MAX_SRC_LINE], *tmp2;
-    int         i, k, rc;
+    int         i, k;
+    vi_rc       rc;
 
     /*
      * get compiled file name, and make error file
@@ -541,7 +544,7 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
              */
             if( curr->token == SRC_T_ASSIGN ) {
                 rc = SrcAssign( tmp, vl );
-                if( rc ) {
+                if( rc != ERR_NO_ERR ) {
                     fclose( foo );
                     return( rc );
                 }
@@ -584,7 +587,7 @@ static int barfScript( char *fn, sfile *sf, vlist *vl, int *ln, char *vn )
                 tmp2 = tmp;
             }
             rc = MapKey( k, tmp2 );
-            if( rc ) {
+            if( rc != ERR_NO_ERR ) {
                 fclose( foo );
                 return( rc );
             }

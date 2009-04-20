@@ -130,9 +130,9 @@ void StartExprParse( char *data, jmp_buf abort_addr )
 
 } /* StartExprParse */
 
-static void Abort( int err )
+static void abortExpr( vi_rc err )
 {
-    longjmp( abortAddr, err );
+    longjmp( abortAddr, (int)err );
 }
 
 /*
@@ -325,7 +325,6 @@ static token _nextToken( void )
 static token nextToken( void )
 {
     int         j;
-    extern long LastRC;
     char        *endptr;
 
     currToken = _nextToken();
@@ -336,7 +335,7 @@ static token nextToken( void )
             if( (endptr - tokenBuff) != tokenBuffCnt ) {
                 constantVal = strtol( tokenBuff, &endptr, 16 );
                 if( (endptr - tokenBuff) != tokenBuffCnt ) {
-                    Abort( ERR_INVALID_VALUE );
+                    abortExpr( ERR_INVALID_VALUE );
                 }
             }
         } else {
@@ -357,7 +356,7 @@ static token nextToken( void )
             } else if( !strcmp( tokenBuff, "rdonly" ) ) {
                 constantVal = CFileReadOnly();
             } else if( !strcmp( tokenBuff, "lastrc" ) ) {
-                constantVal = LastRC;
+                constantVal = (long)LastRC;
             } else if( !strcmp( tokenBuff, "pagelen" ) ) {
                 constantVal = WindMaxHeight;
             } else if( !strcmp( tokenBuff, "endcolumn" ) ) {
@@ -406,10 +405,10 @@ static void mustRecog( token t )
 {
     if( currToken != t ) {
         if( t == T_RIGHT_PAREN ) {
-            Abort( ERR_RE_UNMATCHED_ROUND_BRACKETS );
+            abortExpr( ERR_RE_UNMATCHED_ROUND_BRACKETS );
         }
         if( t == T_COLON ) {
-            Abort( ERR_EXPECTING_COLON );
+            abortExpr( ERR_EXPECTING_COLON );
         }
     }
     nextToken();

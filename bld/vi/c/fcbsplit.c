@@ -36,7 +36,7 @@
  * SplitFcbAtLine - split a fcb at specified line (specified line goes in
  *                  new one) - line 1 causes new fcb to be created at start
  */
-int SplitFcbAtLine( linenum lne, file *f, fcb *fb )
+vi_rc SplitFcbAtLine( linenum lne, file *f, fcb *fb )
 {
     linenum     sline;
     int         bytecnt = 0;
@@ -145,11 +145,12 @@ int SplitFcbAtLine( linenum lne, file *f, fcb *fb )
  * CheckCurrentFcbCapacity - check if fcb has exceeded its capacity; if so,
  *                           split it
  */
-int CheckCurrentFcbCapacity( void )
+vi_rc CheckCurrentFcbCapacity( void )
 {
-    int         i, bc, bl;
+    int         bc, bl;
     line        *cl;
     linenum     l;
+    vi_rc       rc;
 
     /*
      * check if fcb is full
@@ -171,9 +172,9 @@ int CheckCurrentFcbCapacity( void )
         l++;
         bc += cl->len + 1;
     }
-    i = SplitFcbAtLine( l, CurrentFile, CurrentFcb );
-    if( i ) {
-        return( i );
+    rc = SplitFcbAtLine( l, CurrentFile, CurrentFcb );
+    if( rc != ERR_NO_ERR ) {
+        return( rc );
     }
 
     /*

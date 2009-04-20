@@ -90,7 +90,7 @@ BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 /*
  * SelectFileOpen - use common dialog file open to pick a file to edit
  */
-int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs )
+vi_rc SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs )
 {
     OPENFILENAME        of;
     BOOL                rc;
@@ -171,7 +171,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs )
 /*
  * SelectFileSave - use common dialog file open to pickname to save under
  */
-int SelectFileSave( char *result )
+vi_rc SelectFileSave( char *result )
 {
     OPENFILENAME        of;
     int                 doit;
@@ -224,7 +224,7 @@ char *GetInitialFileName( void )
 {
     char        *path = MemAlloc( FILENAME_MAX );
     char        *ptr;
-    int         rc;
+    vi_rc       rc;
 
     CloseStartupDialog();
     path[0] = 0;
@@ -240,8 +240,8 @@ char *GetInitialFileName( void )
 
 } /* GetInitialFileName */
 
-int SelectLineInFile( selflinedata *sfd )
+vi_rc SelectLineInFile( selflinedata *sfd )
 {
     sfd = sfd;
-    return( 1 );
+    return( ERR_NO_ERR );
 }
