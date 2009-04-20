@@ -33,42 +33,42 @@
 *   as found on www.cbttape.org files 280 - 288
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "copfiles.h"
 #include "findfile.h"
 #include "gvars.h"
 #include "banner.h"
-
-
+ 
+ 
 #define mystr(x)            # x
 #define xmystr(s)           mystr(s)
-
+ 
 #define CRLF            "\n"
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*  Program end                                                            */
 /***************************************************************************/
-
+ 
 void my_exit( int rc )
 {
     exit( rc );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Output Banner if wanted and not yet done                               */
 /***************************************************************************/
-
+ 
 void g_banner( void )
 {
     if( !(GlobalFlags.bannerprinted | GlobalFlags.quiet) ) {
@@ -84,18 +84,18 @@ void g_banner( void )
         GlobalFlags.bannerprinted = 1;
     }
 }
-
+ 
 /***************************************************************************/
 /*  Usage info TBD                                                         */
 /***************************************************************************/
-
+ 
 static void usage( void )
 {
     int     k;
     int     kscreen;
-
+ 
     g_banner();
-
+ 
     kscreen = 0;
     for( k = inf_use_start; k <= inf_use_end; k++ ) {
         g_info( k );
@@ -111,17 +111,17 @@ static void usage( void )
     }
     my_exit( 4 );
 }
-
+ 
 #if 0                                   // not used for the moment
 char *get_filename_full_path( char *buff, char const * name, size_t max )
 {
     char    *   p;
-
+ 
     p = _fullpath( buff, name, max );
     if( p == NULL ) {
         p = (char *)name;
     }
-
+ 
 #ifdef __UNIX__
     if( (p[0] == '/' && p[1] == '/') && (name[0] != '/' || name[1] != '/') ) {
         //
@@ -136,18 +136,18 @@ char *get_filename_full_path( char *buff, char const * name, size_t max )
     return( p );
 }
 #endif
-
-
+ 
+ 
 /***************************************************************************/
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
-
+ 
 static  bool    free_inc_fp( void )
 {
     inputcb *   ip;
     filecb  *   cb;
     int         rc;
-
+ 
     ip = input_cbs;
     while( ip != NULL ) {              // as long as input stack is not empty
         if( ip->fmflags & II_file ) {   // if file (not macro)
@@ -176,13 +176,13 @@ static  bool    free_inc_fp( void )
     }
     return( false );                    // nothing to close
 }
-
+ 
 static void reopen_inc_fp( filecb *cb )
 {
     int         rc;
     errno_t     erc;
     errno_t     erc2;
-
+ 
     if( ! cb->flags & FF_open ) {
         for( ;; ) {
             erc = fopen_s( &cb->fp, cb->filename, "rb" );
@@ -209,11 +209,11 @@ static void reopen_inc_fp( filecb *cb )
     }
     return;
 }
-
+ 
 /***************************************************************************/
 /*  Report resource exhaustion: may eventually try to correct the problem  */
 /***************************************************************************/
-
+ 
 bool    free_resources( errno_t in_errno )
 {
     if( in_errno == ENOMEM) g_err( err_no_memory );
@@ -221,16 +221,16 @@ bool    free_resources( errno_t in_errno )
     err_count++;
     return( false );
 }
-
+ 
 /***************************************************************************/
 /*  Set the extension of the Master input file as default extension        */
 /***************************************************************************/
-
+ 
 static  void    set_default_extension( const char * masterfname )
 {
-    char        buff[ FILENAME_MAX ];
+    char        buff[FILENAME_MAX];
     char    *   ext;
-
+ 
     _splitpath2( masterfname, buff, NULL, NULL, NULL, &ext );
     if( strlen( ext ) > 0) {
         if( strlen( ext ) > strlen( def_ext ) ) {
@@ -241,18 +241,18 @@ static  void    set_default_extension( const char * masterfname )
     }
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  add info about file  to LIFO list                                      */
 /***************************************************************************/
-
+ 
 static  void    add_file_cb_entry( void )
 {
     filecb  *   new;
     inputcb *   nip;
     size_t      fnlen;
-
+ 
     fnlen = strlen( try_file_name );
     new = mem_alloc( sizeof( filecb ) + fnlen );// count for terminating \0
                                                 //  is in filecb structure
@@ -266,7 +266,7 @@ static  void    add_file_cb_entry( void )
     nip->fmflags = II_file;
     nip->s.f     = new;
     init_dict( &nip->local_dict );
-
+ 
     new->lineno   = 0;
     new->linemin  = line_from;
     new->linemax  = line_to;
@@ -274,7 +274,7 @@ static  void    add_file_cb_entry( void )
     strcpy_s( new->filename, fnlen + 1, try_file_name );
     mem_free( try_file_name );
     try_file_name = NULL;
-
+ 
     if( try_fp ) {
         new->flags = FF_open;
         new->fp    = try_fp;
@@ -283,32 +283,32 @@ static  void    add_file_cb_entry( void )
         new->flags = FF_clear;
         new->fp    = NULL;
     }
-
+ 
     nip->prev = input_cbs;
     input_cbs = nip;
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  remove info about file or macro  from LIFO list                        */
 /***************************************************************************/
-
+ 
 static  void    del_input_cb_entry( void )
 {
     inputcb     *   wk;
     labelcb     *   lw;
-
+ 
     wk = input_cbs;
     if( wk == NULL ) {
         return;
     }
     free_lines( wk->hidden_head );
-
+ 
     free_dict( &wk->local_dict );
     if( wk->if_cb != NULL ) {
 //      if( wk->if_cb->if_level > 0 ) {
-//          char linestr[ MAX_L_AS_STR ];
+//          char linestr[MAX_L_AS_STR];
 //          utoa( wk->if_cb->if_level, linestr, 10 );
 //          g_err( err_if_level, linestr );
 //          show_include_stack();
@@ -319,7 +319,7 @@ static  void    del_input_cb_entry( void )
     if( wk->pe_cb.line != NULL ) {
         mem_free( wk->pe_cb.line );
     }
-
+ 
     if( wk->fmflags & II_macro ) {
 /*
  *  The macrolines in s.m don't need to be freed, as these point to
@@ -345,15 +345,15 @@ static  void    del_input_cb_entry( void )
     mem_free( wk );
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  get line from current macro                                            */
 /***************************************************************************/
 static  void    get_macro_line( void )
 {
     macrocb *   cb;
-
+ 
     if( input_cbs->fmflags & II_file ) {
         g_err( err_logic_mac );
         show_include_stack();
@@ -361,7 +361,7 @@ static  void    get_macro_line( void )
         g_suicide();
     }
     cb = input_cbs->s.m;
-
+ 
     if( cb->macline == NULL ) {         // no more macrolines
         input_cbs->fmflags |= II_eof;
         cb->flags          |= FF_eof;
@@ -376,8 +376,8 @@ static  void    get_macro_line( void )
         cb->macline         = cb->macline->next;
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  get line from current input ( file )                                   */
 /*  skipping lines before the first one to process if neccessary           */
@@ -387,7 +387,7 @@ bool    get_line( void )
     filecb      *   cb;
     char        *   p;
     inp_line    *   pline;
-
+ 
     if( input_cbs->hidden_head != NULL ) {  // line was previously split,
         strcpy( buff2, input_cbs->hidden_head->value ); // take 2nd part
         pline = input_cbs->hidden_head;
@@ -426,7 +426,7 @@ bool    get_line( void )
                         }
                         cb->lineno++;
                         cb->flags |= FF_startofline;
-
+ 
                         if( cb->flags & FF_crlf ) {// try to delete CRLF at end
                             p += strlen( p ) - 1;
                             if( *p == '\r' ) {
@@ -451,7 +451,7 @@ bool    get_line( void )
                         } else {
                             strerror_s( buff2, buf_size, errno );
                             g_err( err_file_io, buff2, cb->filename );
-
+ 
                             err_count++;
                             g_suicide();
                         }
@@ -460,32 +460,32 @@ bool    get_line( void )
             }
         }
     }
-
+ 
     buff2_lg = strnlen_s( buff2, buf_size );
     *(buff2 + buff2_lg) = '\0';
     *(buff2 + buff2_lg + 1) = '\0';
     if( input_cbs->fmflags & II_file ) {
         input_cbs->s.f->usedlen = buff2_lg;
     }
-
+ 
     if( !(input_cbs->fmflags & II_eof) && GlobalFlags.research &&
         GlobalFlags.firstpass ) {
         printf( "%s\n", buff2 );
     }
     return( !(input_cbs->fmflags & II_eof) );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  output the filenames + lines which were included                       */
 /***************************************************************************/
-
+ 
 void    show_include_stack( void )
 {
     inputcb *   ip;
-    char        linestr[ MAX_L_AS_STR ];
-    char        linemac[ MAX_L_AS_STR ];
-
+    char        linestr[MAX_L_AS_STR];
+    char        linemac[MAX_L_AS_STR];
+ 
     if( inc_level > 1 ) {
         ip = input_cbs;
         while( ip != NULL ) {
@@ -512,12 +512,12 @@ void    show_include_stack( void )
     }
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  increment include level                                                */
 /***************************************************************************/
-
+ 
 void    inc_inc_level( void )
 {
     inc_level++;                        // start new level
@@ -525,24 +525,24 @@ void    inc_inc_level( void )
         max_inc_level = inc_level;      // record highest level
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* remove leading  .  from input                                           */
 /***************************************************************************/
-
+ 
 static void remove_indentation( void )
 {
     char    *   p;
     char    *   pb;
     int         offset;
-
+ 
     p = buff2;
     while( *p == SCR_char && *(p+1) == ' ' ) {
         while( *++p == ' ' ) /* empty */ ;  // skip blanks
     }
     if( p != buff2 ) {                  // found some blanks now copy buffer
-
+ 
         offset = p - buff2;
         pb = buff2;
         while( *p ) {
@@ -557,37 +557,37 @@ static void remove_indentation( void )
 //        }
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  process the input file                                                 */
 /***************************************************************************/
-
+ 
 static  void    proc_GML( char * filename )
 {
     ifcb    *   ic;
     filecb  *   cb;
-
-    char        attrwork[ 32 ];
-
+ 
+    char        attrwork[32];
+ 
     ProcFlags.newLevelFile = 1;
     strcpy_s( token_buf, buf_size, filename );
-
+ 
     for( ; ; ) {                        // as long as there is input
         if( ProcFlags.newLevelFile ) {
             ProcFlags.newLevelFile = 0; // start a new include FILE level
-
+ 
             /***************************************************************/
             /*  split off attribute  (f:xxxx)                              */
             /***************************************************************/
             split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
-
-            if( attrwork[ 0 ] ) {
+ 
+            if( attrwork[0] ) {
                 g_warn( wng_fileattr_ignored, attrwork, token_buf );
                 wng_count++;
             }
             if( search_file_in_dirs( token_buf, def_ext, alt_ext, ds_doc_spec ) ) {
-
+ 
                 if( inc_level >= MAX_INC_DEPTH ) {
                     g_err( err_max_input_nesting, token_buf );
                     err_count++;
@@ -612,47 +612,47 @@ static  void    proc_GML( char * filename )
             if( attrwork[0] ) {
                 strcpy_s( cb->fileattr, sizeof( cb->fileattr ), attrwork );
             } else {
-                cb->fileattr[ 0 ] = '\0';
+                cb->fileattr[0] = '\0';
             }
             if( GlobalFlags.inclist ) {
                 g_info( inf_curr_input, "file", cb->filename );
             }
         } // new include FILE processing
-
+ 
         if( inc_level == 0 ) {
             break;                 // we are done (master document not found)
         }
-
+ 
         /*******************************************************************/
         /*  process an input file / macro                                  */
         /*******************************************************************/
-
+ 
         while( !(input_cbs->fmflags & II_eof) ) {
             ic = input_cbs->if_cb;      // .if .th .el controlblock
-
+ 
             if( !ProcFlags.keep_ifstate ) {
                 if( ic->if_level > 0 ) {// if .if active
-                    if( ic->if_flags[ ic->if_level ].ifelse // after else
-                        && !ic->if_flags[ ic->if_level ].ifdo ) {// no do group
+                    if( ic->if_flags[ic->if_level].ifelse // after else
+                        && !ic->if_flags[ic->if_level].ifdo ) {// no do group
                         ic->if_level--; // pop .if stack one level
                     }
                 }
             }
-
+ 
             if( !get_line() ) {
                 break;                  // eof
             }
             if( !ProcFlags.keep_ifstate ) {
-                if( !ic->if_flags[ ic->if_level ].ifdo ) {  // no do group
-                    ic->if_flags[ ic->if_level ].ifthen = false;// not in then
-                    ic->if_flags[ ic->if_level ].ifelse = false;// not in else
+                if( !ic->if_flags[ic->if_level].ifdo ) {  // no do group
+                    ic->if_flags[ic->if_level].ifthen = false;// not in then
+                    ic->if_flags[ic->if_level].ifelse = false;// not in else
                 }
             } else {
                 ProcFlags.keep_ifstate = false;
             }
-
+ 
             remove_indentation();       // ".  .  .  .cw"  becomes ".cw"
-
+ 
             if( ProcFlags.goto_active ) {
                 if( !gotarget_reached() ) {
                     continue;           // skip processing
@@ -661,7 +661,7 @@ static  void    proc_GML( char * filename )
             }
             process_line();             // substitute variables + functions
             scan_line();
-
+ 
             if( ProcFlags.newLevelFile ) {
                 break;            // imbed and friends found, start new level
             }
@@ -670,7 +670,7 @@ static  void    proc_GML( char * filename )
             continue;
         }
         if( ProcFlags.goto_active ) {
-            char    linestr[ MAX_L_AS_STR ];
+            char    linestr[MAX_L_AS_STR];
             err_count++;
             if( input_cbs->fmflags & II_macro ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
@@ -704,7 +704,7 @@ static  void    proc_GML( char * filename )
             break;
         }
         if( input_cbs->fmflags & II_file ) {
-            char    linestr[ MAX_L_AS_STR ];
+            char    linestr[MAX_L_AS_STR];
             cb = input_cbs->s.f;
             if( GlobalFlags.inclist ) {
                 utoa( cb->lineno, linestr, 10 );
@@ -717,53 +717,53 @@ static  void    proc_GML( char * filename )
         }
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  printStats show statistics at program end                              */
 /***************************************************************************/
-
+ 
 static  void    print_stats( void )
 {
-    char linestr[ MAX_L_AS_STR ];
-
+    char linestr[MAX_L_AS_STR];
+ 
     g_info( inf_stat_1 );
-
+ 
     utoa( max_inc_level, linestr, 10 );
     g_info( inf_stat_2, linestr );
-
+ 
     utoa( err_count, linestr, 10 );
     g_info( inf_stat_3, linestr );
-
+ 
     utoa( wng_count, linestr, 10 );
     g_info( inf_stat_4, linestr );
-
+ 
     utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
     g_info( inf_stat_5, linestr );
-
+ 
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  initPass                                                               */
 /***************************************************************************/
 static  void    init_pass( void )
 {
-
+ 
     if( pass > 1 ) {
         GlobalFlags.firstpass = 0;
-
+ 
 /*
  * design question: free dictionaries or not                            TBD
  *                  setsymbol defines from cmdline must not be deleted
  */
-
+ 
     reset_auto_inc_dict( global_dict ); // let auto inc start with 1 again
-
+ 
 //      free_dict( &global_dict );      // free dictionaries
 //      free_macro_dict( &macro_dict );
         free_tag_dict( &tag_dict );
-
+ 
     } else {
         GlobalFlags.firstpass = 1;
     }
@@ -772,24 +772,24 @@ static  void    init_pass( void )
     } else {
         GlobalFlags.lastpass = 1;
     }
-
+ 
     line_from   = 1;                  // processing line range Masterdocument
     line_to     = ULONG_MAX - 1;
-
+ 
     init_tag_att();                     // reset last defined GML tag
-
+ 
 }
-
+ 
 /***************************************************************************/
 /*  get_systime   gets system time and initializes symbols date and time   */
 /***************************************************************************/
-
+ 
 static void get_systime( void )
 {
     char        date_str[80];
     char        time_str[80];
     time_t      gtime;
-
+ 
     gtime = time( NULL );
     localtime_s( &gtime, &doc_tm );
     strftime( date_str, 80, "%B %d, %Y", &doc_tm );
@@ -798,96 +798,96 @@ static void get_systime( void )
     add_symvar( &global_dict, "date", date_str, no_subscript, 0 );
     add_symvar( &global_dict, "time", time_str, no_subscript, 0 );
 }
-
+ 
 /***************************************************************************/
 /*  main WGML                                                              */
 /***************************************************************************/
-
+ 
 int main( int argc, char * argv[] )
 {
     char    *   cmdline;
     int         cmdlen;
     jmp_buf     env;
     int         tok_count;
-
+ 
     environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
         my_exit( 16 );
     }
-
+ 
     g_trmem_init();                     // init memory tracker if necessary
-
+ 
     init_global_vars();
-
+ 
     get_systime();                      // initialize symbols date and time
-
+ 
     token_buf = mem_alloc( buf_size );
-
+ 
     // out_msg( "define enum %d %d\n", INF_CMDLINE, inf_cmdline );
-
+ 
     init_msgs();                        // init msg resources
-
+ 
     ff_setup();                         // init findfile
-
+ 
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
     cmdline = mem_alloc( cmdlen );
     _bgetcmd( cmdline, cmdlen );
-
+ 
     g_info( INF_CMDLINE, cmdline );
-
+ 
     tok_count = proc_options( cmdline );
     g_banner();
     if( tok_count < 4 ) {               // file ( device xyz   is minimum
         usage();                        // display usage and exit
     }
     cop_setup();                        // init copfiles
-
-
-
+ 
+ 
+ 
     if( master_fname != NULL ) {        // filename specified
-        char    linestr1[ MAX_L_AS_STR ];
-        char    linestr2[ MAX_L_AS_STR ];
-
+        char    linestr1[MAX_L_AS_STR];
+        char    linestr2[MAX_L_AS_STR];
+ 
         utoa( passes, linestr2, 10 );
         set_default_extension( master_fname );// make this extension first choice
-
+ 
         fb_start();                     // START :PAUSE & :INIT processing.
-
+ 
         for( pass = 1; pass <= passes; pass++ ) {
-
+ 
             init_pass();
-
+ 
             /* fb_document() needs to be done on the first pass only, but
              * also needs to be done immediately after the :ELAYOUT. tag.
              * This means that it may need to be relocated when layout
              * processing is implemented.
              */
-
+ 
             if( GlobalFlags.firstpass == 1) fb_document();// DOCUMENT :PAUSE & :INIT processing.
-
+ 
 //            g_trmem_prt_list();  // all memory freed if no output from call
             utoa( pass, linestr1, 10 );
             g_info( INF_PASS_1, linestr1, linestr2,
                     GlobalFlags.research ? "research" : "normal" );
-
+ 
             proc_GML( master_fname );
-
+ 
 //            g_trmem_prt_list();       // show allocated memory at pass end
-
+ 
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }
             g_info( INF_PASS_2, linestr1, linestr2,
                     GlobalFlags.research ? "research" : "normal" );
-
+ 
             if( err_count > 0 ) {
                 g_info( inf_error_stop );
                 break;                  // errors found stop now
             }
         }
-
+ 
         fb_finish();                    // :FINISH block processing.
-
+ 
     } else {
         g_err( err_missing_mainfilename );
         err_count++;
@@ -896,12 +896,12 @@ int main( int argc, char * argv[] )
     if( GlobalFlags.research ) {
         print_GML_tags_research();
         free_GML_tags_research();
-
+ 
         print_SCR_tags_research();
         free_SCR_tags_research();
-
+ 
         print_macro_dict( macro_dict, true );
-
+ 
         if( global_dict != NULL ) {
             print_sym_dict( global_dict );
         }
@@ -909,11 +909,11 @@ int main( int argc, char * argv[] )
             print_tag_dict( tag_dict );
         }
     }
-
+ 
     print_stats();
-
+ 
     close_all_pu_files();
-
+ 
     mem_free( cmdline );
     if( token_buf != NULL ) {
         mem_free( token_buf );
@@ -951,18 +951,18 @@ int main( int argc, char * argv[] )
     if( buff2 != NULL ) {
         mem_free( buff2 );
     }
-
+ 
     ff_teardown();                      // free memory allocated in findfunc
     cop_teardown();                     // free memory allocated in copfiles
-
+ 
     fini_msgs();                        // end of msg resources
                 /* no more msgs built from resources after this point */
-
+ 
     g_trmem_prt_list();            // all memory freed if no output from call
     g_trmem_close();
-
-
+ 
+ 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy
 }
-
+ 

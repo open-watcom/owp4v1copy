@@ -30,15 +30,15 @@
 *                                             incomplete TBD
 *  comments are from script-tso.txt
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /****************************************************************************/
 /* FORMAT combines the effect of Concatenate and Justify.                   */
 /*                                                                          */
@@ -56,8 +56,8 @@
 /* ON.  The other possible operands specify Concatenate ON and the appro-   */
 /* priate mode of Justify.  See the .CO and .JU descriptions for details.   */
 /****************************************************************************/
-
-
+ 
+ 
 /***************************************************************************/
 /* CONCATENATE  enables  or cancels  the  formation  of output  lines  by  */
 /* concatenating input lines and truncating  at the nearest word boundary  */
@@ -89,11 +89,11 @@
 /* concatenation  process "breaks"  the  input line  at  that point  when  */
 /* adding words to the output line.                                        */
 /***************************************************************************/
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 /****************************************************************************/
 /* JUSTIFY causes output lines to be padded with inter-word blanks to the   */
 /* right margin.                                                            */
@@ -135,18 +135,18 @@
 /* The  Format control  word combines  the functions  of Concatenate  and   */
 /* Justify.                                                                 */
 /****************************************************************************/
-
-
+ 
+ 
 /***************************************************************************/
 /*  process .ju setting, .co too if both set                               */
 /***************************************************************************/
-
+ 
 static void process_co_ju( bool both , char *cwcurr )
 {
     char        *   pa;
     char        *   p;
     int             len;
-
+ 
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -155,7 +155,7 @@ static void process_co_ju( bool both , char *cwcurr )
         p++;
     }
     pa = p;
-
+ 
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
@@ -247,22 +247,22 @@ static void process_co_ju( bool both , char *cwcurr )
     }
     return;
 }
-
+ 
 /***************************************************************************/
 /*  scr_co    implement .co concatenate control word                       */
 /***************************************************************************/
-
+ 
 void    scr_co( void )
 {
     char        *   pa;
     char        *   p;
     int             len;
-    char            cwcurr[ 4 ];
-
-    cwcurr[ 0 ] = SCR_char;
-    cwcurr[ 1 ] = 'c';
-    cwcurr[ 2 ] = 'o';
-    cwcurr[ 3 ] = '\0';
+    char            cwcurr[4 ];
+ 
+    cwcurr[0] = SCR_char;
+    cwcurr[1] = 'c';
+    cwcurr[2] = 'o';
+    cwcurr[3] = '\0';
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -271,7 +271,7 @@ void    scr_co( void )
         p++;
     }
     pa = p;
-
+ 
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
@@ -300,36 +300,36 @@ void    scr_co( void )
     }
     return;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  scr_fo    implement .fo format control                                 */
 /***************************************************************************/
-
+ 
 void    scr_fo( void )
 {
-    char            cwcurr[ 4 ];
-
-    cwcurr[ 0 ] = SCR_char;
-    cwcurr[ 1 ] = 'f';
-    cwcurr[ 2 ] = 'o';
-    cwcurr[ 3 ] = '\0';
+    char            cwcurr[4];
+ 
+    cwcurr[0] = SCR_char;
+    cwcurr[1] = 'f';
+    cwcurr[2] = 'o';
+    cwcurr[3] = '\0';
     process_co_ju( true, cwcurr );      // .ju and .co processing
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  scr_ju    implement .ju justify control                                */
 /***************************************************************************/
-
+ 
 void    scr_ju( void )
 {
-    char            cwcurr[ 4 ];
-
-    cwcurr[ 0 ] = SCR_char;
-    cwcurr[ 1 ] = 'j';
-    cwcurr[ 2 ] = 'u';
-    cwcurr[ 3 ] = '\0';
+    char            cwcurr[4];
+ 
+    cwcurr[0] = SCR_char;
+    cwcurr[1] = 'j';
+    cwcurr[2] = 'u';
+    cwcurr[3] = '\0';
     process_co_ju( false, cwcurr );     // only .ju processing
-
+ 
 }

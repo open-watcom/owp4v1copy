@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'translate( )
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /***************************************************************************/
 /*  script string function &'translate(                                    */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 /***************************************************************************/
 /*                                                                         */
 /* &'translate(string<,<tableo><,<tablei><,pad>>>):      To     Translate  */
@@ -53,8 +53,8 @@
 /*      &'translate('123abc',,,'$') ==> $$$$$$                             */
 /*                                                                         */
 /***************************************************************************/
-
-condcode    scr_translate( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * result )
+ 
+condcode    scr_translate( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
 {
     char            *   pval;
     char            *   pend;
@@ -69,42 +69,42 @@ condcode    scr_translate( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char *
     bool                ifound;
     int                 offset;
     bool                padchar_set;
-
+ 
     if( (parmcount < 1) || (parmcount > 4) ) {
         return( neg );
     }
-
-    pval = parms[ 0 ].a;
-    pend = parms[ 0 ].e;
+ 
+    pval = parms[0].a;
+    pend = parms[0].e;
     unquote_if_quoted( &pval, &pend );
-
+ 
     if( pend - pval + 1 <= 0 ) {        // null string nothing to do
         **result = '\0';
         return( pos );
     }
-
-    ptaboa = parms[ 1 ].a;
-    ptaboe = parms[ 1 ].e;
+ 
+    ptaboa = parms[1].a;
+    ptaboe = parms[1].e;
     if( (parmcount > 1) && (ptaboe >= ptaboa) ) {   // tableo is not empty
         unquote_if_quoted( &ptaboa, &ptaboe );
     } else {
         ptaboa = NULL;
         ptaboe = NULL;
     }
-
-    ptabia = parms[ 2 ].a;
-    ptabie = parms[ 2 ].e;
+ 
+    ptabia = parms[2].a;
+    ptabie = parms[2].e;
     if( (parmcount > 2) && (ptabie >= ptabia) ) {   // tablei is not empty
         unquote_if_quoted( &ptabia, &ptabie );
     } else {
         ptabia = NULL;
         ptabie = NULL;
     }
-
+ 
     if( parmcount > 3 ) {               // padchar specified
-        char    * pa = parms[ 3 ].a;
-        char    * pe = parms[ 3 ].e;
-
+        char    * pa = parms[3].a;
+        char    * pe = parms[3].e;
+ 
         unquote_if_quoted( &pa, &pe );
         padchar = *pa;
         padchar_set = true;
@@ -112,7 +112,7 @@ condcode    scr_translate( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char *
         padchar = ' ';                  // padchar default is blank
         padchar_set = false;
     }
-
+ 
     if( (ptabia == NULL) && (ptaboa == NULL) && !padchar_set ) {
         while( pval <= pend ) {         // translate to upper
             **result = toupper( *pval++ );
@@ -145,8 +145,8 @@ condcode    scr_translate( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char *
             *result += 1;
         }
     }
-
+ 
     **result = '\0';
-
+ 
     return( pos );
 }

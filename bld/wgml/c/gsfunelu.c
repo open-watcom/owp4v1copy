@@ -29,18 +29,18 @@
 *               Dummy for   &s'        &S'                         TBD
 *                            subscript, Superscript
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
+ 
+ 
 /***************************************************************************/
 /*  script single letter function &e'         exist                        */
 /*              returns   0 or 1 in result                                 */
 /***************************************************************************/
-
+ 
 char    *scr_single_func_e( char * in, char * end, char * * result )
 {
     char            *   pchar;
@@ -48,11 +48,11 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
     symvar              symvar_entry;
     symsub          *   symsubval;
     int                 rc;
-
+ 
     end   = end;
-
+ 
     pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
-
+ 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
                           var_ind, &symsubval );
@@ -67,20 +67,20 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
     }
     *result  += 1;
     **result = '\0';
-
+ 
     if( *pchar == '.' ) {
         pchar++;                        // skip optional terminating dot
     }
     ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  script single letter function &l'         length                       */
 /*              returns   length of value or length of name in result      */
 /***************************************************************************/
-
+ 
 char    *scr_single_func_l( char * in, char * end, char * * result )
 {
     char            *   pchar;
@@ -88,11 +88,11 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
     symvar              symvar_entry;
     symsub          *   symsubval;
     int                 rc;
-
+ 
     end  = end;
-
+ 
     pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
-
+ 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
                           var_ind, &symsubval );
@@ -113,13 +113,13 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
     ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  script single letter function &u'         upper                        */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 char    *scr_single_func_u( char * in, char * end, char * * result )
 {
     char            *   pchar;
@@ -128,12 +128,12 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
     symsub          *   symsubval;
     int                 rc;
     char            *   pval;
-
+ 
     end   = end;
-
-
+ 
+ 
     pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
-
+ 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar( &input_cbs->local_dict, symvar_entry.name,
                           var_ind, &symsubval );
@@ -151,27 +151,27 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
         *result += 1;
     }
     **result = '\0';
-
+ 
     if( *pchar == '.' ) {
         pchar++;                        // skip optional terminating dot
     }
     ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  script single letter functions unsupported   process to comsume        */
 /*                                               variable for scanning     */
 /***************************************************************************/
-
+ 
 static  char    *scr_single_func_unsupport( char * in, char * * result )
 {
-    char        linestr[ MAX_L_AS_STR ];
-    char        charstr[ 2 ];
-
-    charstr[ 0 ] = *(in + 1);
-    charstr[ 1 ] = '\0';
+    char        linestr[MAX_L_AS_STR];
+    char        charstr[2];
+ 
+    charstr[0] = *(in + 1);
+    charstr[1] = '\0';
     g_warn( wng_func_unsupport, charstr );
     if( input_cbs->fmflags & II_macro ) {
         utoa( input_cbs->s.m->lineno, linestr, 10 );
@@ -180,12 +180,12 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
         utoa( input_cbs->s.f->lineno, linestr, 10 );
         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
-
+ 
     // do nothing
     return( in + 3 );
 }
-
-
+ 
+ 
 /***********************************************************************/
 /*  Some single letter functions are implemeted here                   */
 /*                                                                     */
@@ -200,13 +200,13 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
 /*   other single letter functions are not used AFAIK                  */
 /*                                                                     */
 /***********************************************************************/
-
+ 
 char    *scr_single_funcs( char * in, char * end, char * * result )
 {
     char            *   pw;
-    char                linestr[ MAX_L_AS_STR ];
-    char                charstr[ 2 ];
-
+    char                linestr[MAX_L_AS_STR];
+    char                charstr[2];
+ 
     if( *(in + 2) == '\'' ) {
         switch( *(in + 1) ) {
         case  'e' :             // exist function
@@ -217,8 +217,8 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
             break;
         case  's' :             // subscript
         case  'S' :             // superscript
-            charstr[ 0 ] = *(in + 1);
-            charstr[ 1 ] = '\0';
+            charstr[0] = *(in + 1);
+            charstr[1] = '\0';
             g_warn( wng_func_unimpl, charstr );
             if( input_cbs->fmflags & II_macro ) {
                 utoa( input_cbs->s.m->lineno, linestr, 10 );
@@ -228,9 +228,9 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             wng_count++;
-
+ 
             // fallthrough treat as upper for now       TDB
-
+ 
         case  'u' :             // upper function
             pw = scr_single_func_u( in, end, result );
             break;

@@ -30,66 +30,66 @@
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-static FILE * workfile[ 9 ] =           // support for 9 workfiles SYSUSR0x.GML
+ 
+static FILE * workfile[9] =           // support for 9 workfiles SYSUSR0x.GML
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
-
+ 
 /***************************************************************************/
 /*  close workfile n if open                                               */
 /***************************************************************************/
-
+ 
 void    close_pu_file( int n )
 {
     if( n > 0 && n < 10 ) {
-        if( workfile[ n - 1 ] != NULL ) {
-            fclose( workfile[ n - 1 ] );
-            workfile[ n - 1 ] = NULL;
+        if( workfile[n - 1] != NULL ) {
+            fclose( workfile[n - 1] );
+            workfile[n - 1] = NULL;
         }
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  close all open workfiles                                               */
 /***************************************************************************/
-
+ 
 void    close_all_pu_files( void )
 {
     int k;
-
+ 
     for( k = 1; k < 10; k++ ) {
         close_pu_file( k );
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  open  workfile n if not yet done                                       */
 /***************************************************************************/
-
+ 
 static  errno_t open_pu_file( int n )
 {
     errno_t         erc = 0;
-    static  char    filename[ 20 ] = "SYSUSR0x.GML";
-
+    static  char    filename[20] = "SYSUSR0x.GML";
+ 
     if( n > 0 && n < 10 ) {
-        if( workfile[ n - 1 ] == NULL ) {   // not yet open
-            filename[ 7 ] = '0' + n;
-            erc = fopen_s( &workfile[ n - 1 ], filename, "uwt" );
+        if( workfile[n - 1] == NULL ) {   // not yet open
+            filename[7] = '0' + n;
+            erc = fopen_s( &workfile[n - 1], filename, "uwt" );
         }
     }
     return( erc );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* PUT WORKFILE writes a line of  information (control or text)  into the  */
 /* specified file.                                                         */
@@ -124,46 +124,46 @@ static  errno_t open_pu_file( int n )
 /*     the file.                                                           */
 /*                                                                         */
 /***************************************************************************/
-
-
+ 
+ 
 /***************************************************************************/
 /*  scr_pu    implement .pu control word                                   */
 /***************************************************************************/
-
+ 
 void    scr_pu( void )
 {
     int             workn;
     condcode        cc;
     char        *   p;
-
+ 
     garginit();                         // find end of CW
-
+ 
     cc = getarg();                      // workfile number
-
+ 
     if( cc == omit ) {
         numb_err();                     // we need workfile number
         return;
     }
-
+ 
     p = tok_start;
-
+ 
     if( (arg_flen > 1) || (*p < '1') || (*p > '9') ) {
         numb_err();
         return;
     }
     workn = *p - '0';
-
-
+ 
+ 
     cc = getarg();                      // text follows
-
+ 
     if( cc == omit ) {                  // no then close workfile
         close_pu_file( workn );
         return;
     }
-
+ 
     open_pu_file( workn );              // open if not already done
-    fputs( tok_start, workfile[ workn - 1 ] );
-    fputc( '\n', workfile[ workn - 1 ] );
-
+    fputs( tok_start, workfile[workn - 1] );
+    fputc( '\n', workfile[workn - 1] );
+ 
     return;
 }

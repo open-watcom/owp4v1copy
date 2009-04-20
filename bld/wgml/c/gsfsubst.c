@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'substr( )
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /***************************************************************************/
 /*  script string function &'substr(                                       */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 /***************************************************************************/
 /*                                                                         */
 /* &'substr(string,n<,length<,pad>>):  The Substring function returns the  */
@@ -61,8 +61,8 @@
 /*      "&'substr(abcde,1,-1)" ==> length too small                        */
 /*                                                                         */
 /***************************************************************************/
-
-condcode    scr_substr( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * result )
+ 
+condcode    scr_substr( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
 {
     char            *   pval;
     char            *   pend;
@@ -73,28 +73,28 @@ condcode    scr_substr( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * 
     int                 len;
     getnum_block        gn;
     char                padchar;
-    char                linestr[ MAX_L_AS_STR ];
-
+    char                linestr[MAX_L_AS_STR];
+ 
     if( (parmcount < 2) || (parmcount > 4) ) {
         return( neg );
     }
-
-    pval = parms[ 0 ].a;
-    pend = parms[ 0 ].e;
-
+ 
+    pval = parms[0].a;
+    pend = parms[0].e;
+ 
     unquote_if_quoted( &pval, &pend );
-
+ 
     stringlen = pend - pval + 1;        // length of string
     padchar = ' ';                      // default padchar
     len = 0;
-
+ 
     n = 0;                              // default start pos
     gn.ignore_blanks = false;
-
+ 
     if( parmcount > 1 ) {               // evalute start pos
-        if( parms[ 1 ].e >= parms[ 1 ].a ) {// start pos specified
-            gn.argstart = parms[ 1 ].a;
-            gn.argstop  = parms[ 1 ].e;
+        if( parms[1].e >= parms[1].a ) {// start pos specified
+            gn.argstart = parms[1].a;
+            gn.argstop  = parms[1].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
                 if( !ProcFlags.suppress_msg ) {
@@ -114,11 +114,11 @@ condcode    scr_substr( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * 
             n = gn.result - 1;
         }
     }
-
+ 
     if( parmcount > 2 ) {               // evalute length
-        if( parms[ 2 ].e >= parms[ 2 ].a ) {// length specified
-            gn.argstart = parms[ 2 ].a;
-            gn.argstop  = parms[ 2 ].e;
+        if( parms[2].e >= parms[2].a ) {// length specified
+            gn.argstart = parms[2].a;
+            gn.argstop  = parms[2].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
                 if( !ProcFlags.suppress_msg ) {
@@ -138,17 +138,17 @@ condcode    scr_substr( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * 
             len = gn.result;
         }
     }
-
+ 
     if( parmcount > 3 ) {               // isolate padchar
-        if( parms[ 3 ].e >= parms[ 3 ].a ) {
-            char *  pa = parms[ 3 ].a;
-            char *  pe = parms[ 3 ].e;
-
+        if( parms[3].e >= parms[3].a ) {
+            char *  pa = parms[3].a;
+            char *  pe = parms[3].e;
+ 
             unquote_if_quoted( &pa, &pe );
             padchar = *pa;
         }
     }
-
+ 
     pval += n;                          // position to startpos
     if( len == 0 ) {                    // no length specified
         len = pend - pval + 1;          // take rest of string
@@ -167,8 +167,8 @@ condcode    scr_substr( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * 
         **result = padchar;
         *result += 1;
     }
-
+ 
     **result = '\0';
-
+ 
     return( pos );
 }

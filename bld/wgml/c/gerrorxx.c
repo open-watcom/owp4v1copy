@@ -27,21 +27,21 @@
 * Description:  wgml misc error messages
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
+ 
+ 
 /***************************************************************************/
 /*  display lineno of file/macro and include stack                         */
 /***************************************************************************/
-
+ 
 void    file_mac_info( void )
 {
-    char        linestr[ MAX_L_AS_STR ];
-
+    char        linestr[MAX_L_AS_STR];
+ 
     if( input_cbs->fmflags & II_macro ) {
 //        utoa( input_cbs->s.m->lineno, linestr, 10 );
 //        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
@@ -52,8 +52,8 @@ void    file_mac_info( void )
     show_include_stack();
     return;
 }
-
-
+ 
+ 
 void    att_val_err( char * attname )
 {
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
@@ -62,8 +62,8 @@ void    att_val_err( char * attname )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    auto_att_err( void )
 {
 //****ERROR**** SC--041: Cannot specify the automatic attribute 'xxx'
@@ -72,8 +72,8 @@ void    auto_att_err( void )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    cw_err( void )
 {
 // SC--006: Unrecognized control word
@@ -82,8 +82,8 @@ void    cw_err( void )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    dc_opt_err( char *pa )
 {
     err_count++;
@@ -91,12 +91,12 @@ void    dc_opt_err( char *pa )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    numb_err( void )
 {
-    char    linestr[ MAX_L_AS_STR ];
-
+    char    linestr[MAX_L_AS_STR];
+ 
     err_count++;
     if( input_cbs->fmflags & II_macro ) {
         utoa( input_cbs->s.m->lineno, linestr, 10 );
@@ -108,8 +108,8 @@ void    numb_err( void )
     show_include_stack();
     return;
 }
-
-
+ 
+ 
 void    nottag_err( void )
 {
     err_count++;
@@ -117,8 +117,8 @@ void    nottag_err( void )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    tag_name_missing_err( void )
 {
     err_count++;
@@ -126,8 +126,8 @@ void    tag_name_missing_err( void )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    tag_text_err( char * tagname )
 {
 //****ERROR**** SC--038: Tag text may not be specified for the 'xxx' tag
@@ -136,8 +136,8 @@ void    tag_text_err( char * tagname )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    tag_text_req_err( char * tagname )
 {
 //****ERROR**** SC--039: Tag text must be specified with the 'xxx' tag
@@ -146,8 +146,8 @@ void    tag_text_req_err( char * tagname )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    xx_opt_err( char *cw, char *pa )
 {
     err_count++;
@@ -155,8 +155,8 @@ void    xx_opt_err( char *cw, char *pa )
     file_mac_info();
     return;
 }
-
-
+ 
+ 
 void    xx_err( const msg_ids errid )
 {
     err_count++;
@@ -164,4 +164,4 @@ void    xx_err( const msg_ids errid )
     file_mac_info();
     return;
 }
-
+ 

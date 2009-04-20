@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'d2c( )
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /***************************************************************************/
 /*  script string function &'d2c(                                          */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 /***************************************************************************/
 /* &'d2c(number<,n>):  To  convert a  decimal 'number'  to its  character  */
 /*    representation of length 'n'.  The 'number' can be negative only if  */
@@ -52,9 +52,9 @@
 /*  ! The optional second parm is NOT implemented                          */
 /*                                                                         */
 /***************************************************************************/
-
-
-condcode    scr_d2c( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * result )
+ 
+ 
+condcode    scr_d2c( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
 {
     char            *   pval;
     char            *   pend;
@@ -62,29 +62,29 @@ condcode    scr_d2c( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * res
     int                 n;
     int                 len;
     getnum_block        gn;
-    char                linestr[ MAX_L_AS_STR ];
-
+    char                linestr[MAX_L_AS_STR];
+ 
     if( parmcount != 1 ) {
         cc = neg;
         return( cc );
     }
-
-    pval = parms[ 0 ].a;
-    pend = parms[ 0 ].e;
-
+ 
+    pval = parms[0].a;
+    pend = parms[0].e;
+ 
     unquote_if_quoted( &pval, &pend );
-
+ 
     len = pend - pval + 1;              // default length
-
+ 
     if( len <= 0 ) {                    // null string nothing to do
         **result = '\0';
         return( pos );
     }
-
+ 
     n   = 0;
     gn.ignore_blanks = false;
-
-    if( parms[ 1 ].e >= parms[ 1 ].a ) {
+ 
+    if( parms[1].e >= parms[1].a ) {
         gn.argstart = pval;
         gn.argstop  = pend;
         cc = getnum( &gn );
@@ -105,10 +105,10 @@ condcode    scr_d2c( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * res
         }
         n = gn.result;
     }
-
+ 
     **result = gn.result;
     *result += 1;
     **result = '\0';
-
+ 
     return( pos );
 }

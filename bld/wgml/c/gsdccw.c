@@ -29,15 +29,15 @@
 *                        .cw script control word  separator
 *  comments are from script-tso.txt
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /***************************************************************************/
 /* DEFINE CHARACTER defines  characters of special meaning  when found in  */
 /* input and produced as output.                                           */
@@ -225,7 +225,7 @@
 /*     Special terms  in " your text " may require  special S P A C I N G  */
 /*     and must always be kept together on a single output line.           */
 /***************************************************************************/
-
+ 
 /***************************************************************************/
 /* CONTROL WORD SEPARATOR defines the character  that SCRIPT is to recog-  */
 /* nize as  a "logical line  end" so that  multiple control words  may be  */
@@ -285,19 +285,19 @@
 /*                                                                         */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 /***************************************************************************/
 /*  scr_cw    implement .cw control word                                   */
 /***************************************************************************/
-
+ 
 void    scr_cw( void )
 {
     char        *   pa;
     char        *   p;
     char            c;
     int             len;
-
-
+ 
+ 
     p = scan_start;
     while( *p && *p != ' ' ) {          // over cw
         p++;
@@ -306,7 +306,7 @@ void    scr_cw( void )
         p++;
     }
     pa = p;
-
+ 
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
@@ -337,12 +337,12 @@ void    scr_cw( void )
     }
     return;
 }
-
+ 
 /***************************************************************************/
 /*  scr_dc    implement .dc define character control word                  */
 /*              not all options are implemented                            */
 /***************************************************************************/
-
+ 
 void    scr_dc( void )
 {
     char        *   pa;
@@ -350,12 +350,12 @@ void    scr_dc( void )
     char            c;
     int             len;
     int             k;
-    char    string[ 2 ] = { 0, 0 };
+    char    string[2] = { 0, 0 };
     int             opt;
-    static const char   options[ 3 ] [ 5 ] = { "cw", "gml" };
+    static const char   options[3] [5] = { "cw", "gml" };
                                         // please add new options at end
-    int             max_opt = sizeof( options) / sizeof( options[ 0 ] );
-
+    int             max_opt = sizeof( options) / sizeof( options[0] );
+ 
     p = scan_start;
     while( *p && *p != ' ' ) {          // over dc
         p++;
@@ -371,7 +371,7 @@ void    scr_dc( void )
     opt = 0;
     if( len > 0 ) {
         for( k = 0; k < max_opt; k++ ) {
-            if( !strnicmp( pa, options[ k ], len ) ) {
+            if( !strnicmp( pa, options[k], len ) ) {
                 opt = k + 1;
                 break;
             }
@@ -410,7 +410,7 @@ void    scr_dc( void )
             }
         }
         CW_sep_char = c;
-        string[ 0 ] = c;
+        string[0] = c;
         add_symvar( &global_dict, "$cw", string, no_subscript, predefined);
         break;
     case 2 :                            // GML option
@@ -429,7 +429,7 @@ void    scr_dc( void )
             }
         }
         GML_char = c;
-        string[ 0 ] = c;
+        string[0] = c;
         add_symvar( &global_dict, "gml", string, no_subscript,
                     predefined + late_subst);
         add_symvar( &global_dict, "$gml", string, no_subscript,

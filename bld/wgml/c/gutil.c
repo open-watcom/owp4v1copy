@@ -27,15 +27,15 @@
 * Description:  wgml utility functions
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
+ 
+ 
 char    *skip_to_quote( char * p, char quote )
 {
     while( *p && quote != *p ) {
@@ -43,7 +43,7 @@ char    *skip_to_quote( char * p, char quote )
     }
     return( p+1 );
 }
-
+ 
 /***************************************************************************/
 /*  conversion routines for Horizontal / Vertical space units              */
 /*  Accepted formats:                                                      */
@@ -66,7 +66,7 @@ char    *skip_to_quote( char * p, char quote )
 /*    returns  filled structure su, returncode TRUE                        */
 /*               or  returncode FALSE in case of error                     */
 /***************************************************************************/
-
+ 
 bool    to_internal_SU( char * * scanp, su * converted )
 {
     bool        converterror = true;
@@ -80,14 +80,14 @@ bool    to_internal_SU( char * * scanp, su * converted )
     char    *   pu;                     // ptr to trailing unit
     char    *   pd1;                    // ptr to 0.1 decimal
     char    *   pdn;                    // ptr to last digit +1
-    char        unit[ 4 ];
+    char        unit[4];
     char        quote;
     int         k;
     char        sign;
-
-    unit[ 3 ] = '\0';
-    unit[ 2 ] = '\0';
-    unit[ 1 ] = '\0';
+ 
+    unit[3] = '\0';
+    unit[2] = '\0';
+    unit[1] = '\0';
     s = converted;
     p = *scanp;
     ps = s->su_txt;
@@ -96,7 +96,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     wd = 0;
     pp = NULL;
     quote = '\0';
-
+ 
     s->su_u = SU_undefined;
     if( *p == '\'' || *p == '"' ) {     // ignore but remember quote
         quote = *p++;
@@ -123,7 +123,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     pp = p;
     k = 0;
     while( *p && isalpha( *p ) ) {
-        unit[ k++ ] = tolower( *p );    // save Unit
+        unit[k++] = tolower( *p );    // save Unit
         *ps++ = *p++;
         if( ps >= s->su_txt + sizeof( s->su_txt ) || k > 2 ) {
             if( quote ) {
@@ -142,7 +142,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     }
     pd1 = NULL;
     pdn = NULL;
-
+ 
     if( p == pp && *p == '.' ) {        // no unit found, try dec point
         *ps++ = *p++;
         pd1 = p;                        // remember start of decimals
@@ -207,7 +207,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     pu = p;
     if( *p ) {                          // not yet at end
         while( *p && isalpha( *p ) ) {  // try trailing unit
-            unit[ k++ ] = tolower( *p );
+            unit[k++] = tolower( *p );
             *ps++ = *p++;
             if( ps >= s->su_txt + sizeof( s->su_txt ) || k > 2 ) {
                 if( quote ) {
@@ -218,12 +218,12 @@ bool    to_internal_SU( char * * scanp, su * converted )
             }
         }
     }
-
+ 
     *ps = '\0';
-
+ 
     s->su_whole = wh;
     s->su_dec   = wd;
-
+ 
     if( (quote && *p != quote ) || (!quote && *p == '\'') ) {
         if( quote ) {
             p = skip_to_quote( p, quote );
@@ -234,9 +234,9 @@ bool    to_internal_SU( char * * scanp, su * converted )
     if( quote ) {
         p++;                            // over quote
     }
-
+ 
     *scanp = p;                         // report back scan position
-
+ 
     if( k == 0 ) {                      // no trailing unit
         pu = NULL;
     } else {
@@ -253,12 +253,12 @@ bool    to_internal_SU( char * * scanp, su * converted )
             return( converterror );
         }
     }
-
+ 
     /***********************************************************************/
     /*  check for valid unit                                               */
     /***********************************************************************/
-    if( unit[ 1 ] == '\0' ) {           // single letter unit
-        switch( unit[ 0 ] ) {
+    if( unit[1] == '\0' ) {           // single letter unit
+        switch( unit[0] ) {
         case 'i' :
             s->su_u = SU_inch;
             break;
@@ -282,10 +282,10 @@ bool    to_internal_SU( char * * scanp, su * converted )
             break;
         }
     } else {                            // two letter unit
-        if( unit[ 1 ] == 'm' ) {        // cm, mm ?
-            if( unit[ 0 ] == 'c' ) {
+        if( unit[1] == 'm' ) {        // cm, mm ?
+            if( unit[0] == 'c' ) {
                 s->su_u = SU_cm;
-            } else if( unit[ 0 ] == 'm' ) {
+            } else if( unit[0] == 'm' ) {
                 s->su_u = SU_mm;
             } else {                    // invalid unit
                 return( converterror );
@@ -294,7 +294,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
             return( converterror );
         }
     }
-
+ 
     s->su_conv = 0;
     k = 1;
     switch( s->su_u ) {
@@ -363,11 +363,11 @@ int main( int argc, char *cargv[] )
 //    char    ein1[] = "1.2I";
     char    *ein1 = "'6p11'";
     char   *p = ein1;
-
+ 
     error = to_internal_SU( &p, &aus );
-
-
+ 
+ 
     return(0);
 }
 #endif
-
+ 

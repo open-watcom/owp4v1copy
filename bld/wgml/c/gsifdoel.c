@@ -28,47 +28,47 @@
 *
 *               comments taken from script-tso.txt
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
+ 
+ 
 /***************************************************************************/
 /*  for evaluation term in .if control word                                */
 /***************************************************************************/
-
+ 
 typedef struct termcb {
     bool        numeric;                // term  is numeric
     long        term_number;            // value only if numeric
     char    *   term_string;            // value as string
     size_t      term_length;            // length of string
 } termcb;
-
-
+ 
+ 
 /***************************************************************************/
 /*  relational operators                                                   */
 /***************************************************************************/
-
+ 
 typedef enum relop {
     EQ, NE, LT, GT, LE, GE
 } relop;
-
-
+ 
+ 
 /***************************************************************************/
 /*  logical operators                                                      */
 /***************************************************************************/
-
+ 
 typedef enum logop {
     AND, OR
 } logop;
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /* gargrelop   scan for relation operator in .if statement                 */
 /*                                                                         */
@@ -83,21 +83,21 @@ typedef enum logop {
 /*                 >= or GE  -  greater than or equal                      */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 static condcode gargrelop( relop * r )
 {
     condcode        cc;
-
+ 
     cc = getarg();                      // try unquoted string
     if( cc != pos ) {
         return( cc );                   // scan error
     }
     if(  ! ((*(tok_start + 1) == ' ')
         || (*(tok_start + 2) == ' ')) ) { // operator is max 2 chars long
-
+ 
         return( no );                   // scan error
     }
-
+ 
     if( *(tok_start + 1) == ' ' ) {     // relop is single char
         switch( *tok_start ) {
         case '='  :
@@ -115,7 +115,7 @@ static condcode gargrelop( relop * r )
         }
     } else {
         char    c2 = tolower( *(tok_start + 1) );// second char of relation operator
-
+ 
         switch( tolower( *tok_start ) ) {   // relop is 2 chars
         case '^'  :
             if( c2 == '=' ) {
@@ -176,17 +176,17 @@ static condcode gargrelop( relop * r )
                 }
             }
             break;
-
+ 
         default:
             return( no );
             break;
         }
     }
-
+ 
     return( cc );
 }
-
-
+ 
+ 
 /* gargterm  try to evaluate value
  *           first try numeric integers
  *           then  quoted strings
@@ -196,19 +196,19 @@ static condcode gargterm( termcb * t )
 {
     getnum_block    gn;
     condcode        cc;
-
+ 
     gn.argstart = scan_start;
     gn.argstop  = scan_stop;
     gn.ignore_blanks = 0;
-
+ 
     cc = getnum ( &gn );                // try to get numeric value
     if( cc == notnum ) {
         t->numeric = false;
-
+ 
         cc = getqst();                  // try quoted string
         if( cc == no ) {                // not quoted
             scan_start = tok_start;     // reset start for next try
-
+ 
             cc = getarg();              // try unquoted string
             if( cc == notnum ) {
                 return( cc );           // scan error
@@ -228,8 +228,8 @@ static condcode gargterm( termcb * t )
     }
     return( cc );
 }
-
-
+ 
+ 
 /* ifcompare compare if condition as numeric integer or string
  *           depending whether both terms are integers
  *
@@ -239,15 +239,15 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
     bool        result;
     long        term1;
     long        term2;
-
+ 
     term1 = t1->term_number;            // assume integers
     term2 = t2->term_number;
-
+ 
     if( !t1->numeric || !t2->numeric ) { // string compare
         char    *   p1 = t1->term_string;
         char    *   p2 = t2->term_string;
         size_t      length;
-
+ 
         length = min( t1->term_length, t2->term_length );
         while( length > 0 ) {           // try to find a difference
             if( *p1 != *p2 ) {
@@ -258,10 +258,10 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
             }
             --length;
         }
-
+ 
         term1 = *p1;                    // unequal chars or
         term2 = *p2;                    // corresponding chars of shorter string
-
+ 
         if( length == 0 ) {             // compared parts are equal
             if( t1->term_length == t2->term_length ) {
                 term1 = term2;              // make compare equal true
@@ -274,7 +274,7 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
             }
         }
     }
-
+ 
     switch( r ) {                       // now set compare result
     case  EQ :
         result = (term1 == term2);
@@ -294,7 +294,7 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
     case  GE :
         result = (term1 >= term2);
         break;
-
+ 
     default:
         result = false;
         if( input_cbs->fmflags & II_macro ) {
@@ -312,8 +312,8 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
     }
     return( result );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /* IF  causes conditional processing of an object "line" depending on the  */
 /* relationship of two numeric or character-string quantities.             */
@@ -365,11 +365,11 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
 /*  .if condition1 and condition2 <line>                                   */
 /*  Evaluation of multiple conditions is done left to right.               */
 /***************************************************************************/
-
+ 
 void    scr_if( void )
 {
     ifcb            *   cb;             // if stack ptr
-
+ 
     condcode        cct1;
     condcode        cct2;
     condcode        ccrelop;
@@ -380,24 +380,24 @@ void    scr_if( void )
     bool            ifcond;             // current condition
     bool            totalcondition;     // resultant condition
     bool            firstcondition;     // first comparison .if
-    char            linestr[ MAX_L_AS_STR ];
-
+    char            linestr[MAX_L_AS_STR];
+ 
     scan_err = false;
-
+ 
     firstcondition = true;              // first 2 terms to compare
     garginit();                         // find end of control word
-
+ 
     cb = input_cbs->if_cb;              // get .if control block
-
-    cb->if_flags[ cb->if_level ].ifcwte = false;// no .th .el yet
-
-
+ 
+    cb->if_flags[cb->if_level].ifcwte = false;// no .th .el yet
+ 
+ 
     for( ;; ) {                         // evaluate if conditions
-
+ 
         cct1    = gargterm( &t1 );      // get term 1
         ccrelop = gargrelop( &relation );   // get relation operator
         cct2    = gargterm( &t2 );      // get term 2
-
+ 
         if( (cct1 == no) || (cct2 == no) ) {
             scan_err = true;
             err_count++;
@@ -426,7 +426,7 @@ void    scr_if( void )
             show_include_stack();
             return;
         }
-
+ 
         // terms and operator ok now compare
         ifcond = ifcompare( &t1, relation, &t2 );
         mem_free( t1.term_string );     // don't need the strings anymore
@@ -435,9 +435,9 @@ void    scr_if( void )
             firstcondition = false;
             if( cb->if_level < MAX_IF_LEVEL ) {
                 cb->if_level++;
-                memset( &cb->if_flags[ cb->if_level ], '\0',
-                        sizeof( cb->if_flags[ cb->if_level ] ) );
-                cb->if_flags[ cb->if_level ].iflast = true;
+                memset( &cb->if_flags[cb->if_level], '\0',
+                        sizeof( cb->if_flags[cb->if_level] ) );
+                cb->if_flags[cb->if_level].iflast = true;
             } else {
                 scan_err = true;
                 g_err( err_if_nesting );
@@ -461,19 +461,19 @@ void    scr_if( void )
                 totalcondition |= ifcond;
             }
         }
-
+ 
         if( totalcondition ) {          // set if true / false flags
-            cb->if_flags[ cb->if_level ].iftrue = true;
-            cb->if_flags[ cb->if_level ].iffalse = false;
+            cb->if_flags[cb->if_level].iftrue = true;
+            cb->if_flags[cb->if_level].iffalse = false;
         } else {
-            cb->if_flags[ cb->if_level ].iffalse = true;
-            cb->if_flags[ cb->if_level ].iftrue = false;
+            cb->if_flags[cb->if_level].iffalse = true;
+            cb->if_flags[cb->if_level].iftrue = false;
         }
-
+ 
         while( *scan_start == ' ' ) {
             scan_start++;
         }
-
+ 
 /*
  * test logical condition if not line end
  *         .if a = b or c GT d
@@ -504,25 +504,25 @@ void    scr_if( void )
                         continue;       // do next conditions
                 }
             }
-
+ 
         }
         break;                          // no more operators / conditions
     }
-
-
+ 
+ 
     if( cb->if_level > 1 ) {            // nested if
-        if( cb->if_flags[ cb->if_level - 1 ].ifthen ) { // object of .th
-            if( cb->if_flags[ cb->if_level - 1 ].iffalse ) {// last .if false
-
-                cb->if_flags[ cb->if_level ].iftrue = true;// process nothing
-                cb->if_flags[ cb->if_level ].iffalse = true;
+        if( cb->if_flags[cb->if_level - 1].ifthen ) { // object of .th
+            if( cb->if_flags[cb->if_level - 1].iffalse ) {// last .if false
+ 
+                cb->if_flags[cb->if_level].iftrue = true;// process nothing
+                cb->if_flags[cb->if_level].iffalse = true;
             }
         } else {
-            if( cb->if_flags[ cb->if_level - 1 ].ifelse // object of .el
-                && cb->if_flags[ cb->if_level - 1 ].iftrue ) {// last .if true
-
-                cb->if_flags[ cb->if_level ].iftrue = true;// process nothing
-                cb->if_flags[ cb->if_level ].iffalse = true;
+            if( cb->if_flags[cb->if_level - 1].ifelse // object of .el
+                && cb->if_flags[cb->if_level - 1].iftrue ) {// last .if true
+ 
+                cb->if_flags[cb->if_level].iftrue = true;// process nothing
+                cb->if_flags[cb->if_level].iffalse = true;
             }
         }
     }
@@ -531,20 +531,20 @@ void    scr_if( void )
                  "\t.ifcb iftrue %d, iffalse %d\n",
                  totalcondition ? "true " : "false",
                  cb->if_level,
-                 cb->if_flags[ cb->if_level ].iftrue,
-                 cb->if_flags[ cb->if_level ].iffalse );
+                 cb->if_flags[cb->if_level].iftrue,
+                 cb->if_flags[cb->if_level].iffalse );
     }
-
+ 
     if( *scan_start ) {                 // rest of line is not empty
         split_input_LIFO(  buff2, scan_start );  // split and process next
     }
     return;
 }
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 /****************************************************************************/
 /* THEN causes an input line to be conditionally included depending on the  */
 /* truth value of a previous IF control word.                               */
@@ -576,22 +576,22 @@ void    scr_if( void )
 /*        .if &i le 1                                                       */
 /*        .im afile                                                         */
 /****************************************************************************/
-
+ 
 void    scr_th( void )
 {
     ifcb    *   cb = input_cbs->if_cb;
-    char        linestr[ MAX_L_AS_STR ];
-
+    char        linestr[MAX_L_AS_STR];
+ 
     scan_err = false;
-    if( !cb->if_flags[ cb->if_level ].iflast
-
-        || !(cb->if_flags[ cb->if_level ].iftrue
-             || cb->if_flags[ cb->if_level ].iffalse)
-
-        || cb->if_flags[ cb->if_level ].ifthen
-        || cb->if_flags[ cb->if_level ].ifelse
-        || cb->if_flags[ cb->if_level ].ifdo ) {
-
+    if( !cb->if_flags[cb->if_level].iflast
+ 
+        || !(cb->if_flags[cb->if_level].iftrue
+             || cb->if_flags[cb->if_level].iffalse)
+ 
+        || cb->if_flags[cb->if_level].ifthen
+        || cb->if_flags[cb->if_level].ifelse
+        || cb->if_flags[cb->if_level].ifdo ) {
+ 
         scan_err = true;
         g_err( err_if_then );
         if( input_cbs->fmflags & II_macro ) {
@@ -605,24 +605,24 @@ void    scr_th( void )
         err_count++;
         return;
     }
-    cb->if_flags[ cb->if_level ].iflast = false;
-    cb->if_flags[ cb->if_level ].ifthen = true;
+    cb->if_flags[cb->if_level].iflast = false;
+    cb->if_flags[cb->if_level].ifthen = true;
     ProcFlags.keep_ifstate = true;
-
+ 
     garginit();                         // find end of control word
-
+ 
     while( *scan_start == ' ' ) {
         scan_start++;
     }
-
+ 
     if( *scan_start ) {                 // rest of line is not empty split
         split_input_LIFO( buff2, scan_start );  // and process next
     }
     return;
 }
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /* ELSE causes conditional processing of an input line, depending on the   */
 /* truth value of a previous IF control word.                              */
@@ -646,22 +646,22 @@ void    scr_th( void )
 /* effect.                                                                 */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    scr_el( void )
 {
     ifcb    *   cb = input_cbs->if_cb;
-    char        linestr[ MAX_L_AS_STR ];
-
+    char        linestr[MAX_L_AS_STR];
+ 
     scan_err = false;
-    cb->if_flags[ cb->if_level ].iflast = false;
-
-    if( !(cb->if_flags[ cb->if_level ].iftrue
-          || cb->if_flags[ cb->if_level ].iffalse)
-
-        || cb->if_flags[ cb->if_level ].ifthen
-        || cb->if_flags[ cb->if_level ].ifelse
-        || cb->if_flags[ cb->if_level ].ifdo ) {
-
+    cb->if_flags[cb->if_level].iflast = false;
+ 
+    if( !(cb->if_flags[cb->if_level].iftrue
+          || cb->if_flags[cb->if_level].iffalse)
+ 
+        || cb->if_flags[cb->if_level].ifthen
+        || cb->if_flags[cb->if_level].ifelse
+        || cb->if_flags[cb->if_level].ifdo ) {
+ 
         scan_err = true;
         g_err( err_if_else );
         if( input_cbs->fmflags & II_macro ) {
@@ -675,24 +675,24 @@ void    scr_el( void )
         err_count++;
         return;
     }
-    cb->if_flags[ cb->if_level ].ifelse = true;
+    cb->if_flags[cb->if_level].ifelse = true;
     ProcFlags.keep_ifstate = true;
-
+ 
     garginit();                         // find end of control word
-
+ 
     while( *scan_start == ' ' ) {
         scan_start++;
     }
-
+ 
     if( *scan_start ) {                 // rest of line is not empty split
         split_input_LIFO( buff2, scan_start );  // and process next
     }
     return;
 }
-
-
-
-
+ 
+ 
+ 
+ 
 /***************************************************************************/
 /* DO may be used following a Then or Else control word to allow multiple  */
 /* input lines to be conditionally processed.                              */
@@ -710,23 +710,23 @@ void    scr_el( void )
 /* operand is specified then BEGIN is assumed.                             */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 void    scr_do( void )
 {
     ifcb    *   cb = input_cbs->if_cb;
     condcode    cc;
-    char        linestr[ MAX_L_AS_STR ];
-
+    char        linestr[MAX_L_AS_STR];
+ 
     scan_err = false;
     garginit();                         // find end of control word
     cc = getarg();
-
+ 
     if( cc == omit || !strnicmp( tok_start, "begin", 5 )) {
-
-        if( !(cb->if_flags[ cb->if_level ].ifthen
-              || cb->if_flags[ cb->if_level ].ifelse)
-            || cb->if_flags[ cb->if_level ].ifdo ) {
-
+ 
+        if( !(cb->if_flags[cb->if_level].ifthen
+              || cb->if_flags[cb->if_level].ifelse)
+            || cb->if_flags[cb->if_level].ifdo ) {
+ 
             scan_err = true;
             g_err( err_if_do );
             if( input_cbs->fmflags & II_macro ) {
@@ -740,7 +740,7 @@ void    scr_do( void )
             err_count++;
             return;
         }
-        cb->if_flags[ cb->if_level ].ifdo = true;
+        cb->if_flags[cb->if_level].ifdo = true;
         return;
     } else {
         if( !strnicmp( tok_start, "end", 3 )) {
@@ -748,21 +748,21 @@ void    scr_do( void )
                 out_msg( "\t.do end Level %d\n"
                          "\t.ifcb iftrue %d, iffalse %d\n",
                          cb->if_level,
-                         cb->if_flags[ cb->if_level ].iftrue,
-                         cb->if_flags[ cb->if_level ].iffalse );
+                         cb->if_flags[cb->if_level].iftrue,
+                         cb->if_flags[cb->if_level].iffalse );
             }
             do {
-
-                if( cb->if_flags[ cb->if_level ].ifdo ) {
-
-                    cb->if_flags[ cb->if_level ].ifdo = false;
+ 
+                if( cb->if_flags[cb->if_level].ifdo ) {
+ 
+                    cb->if_flags[cb->if_level].ifdo = false;
                     return;
                 }
-                if( cb->if_flags[ cb->if_level ].ifthen
-                    || cb->if_flags[ cb->if_level ].ifelse
-                    || !(cb->if_flags[ cb->if_level ].iftrue
-                         || cb->if_flags[ cb->if_level ].iffalse) ) {
-
+                if( cb->if_flags[cb->if_level].ifthen
+                    || cb->if_flags[cb->if_level].ifelse
+                    || !(cb->if_flags[cb->if_level].iftrue
+                         || cb->if_flags[cb->if_level].iffalse) ) {
+ 
                     scan_err = true;
                     g_err( err_if_do_end );
                     if( input_cbs->fmflags & II_macro ) {
@@ -776,14 +776,14 @@ void    scr_do( void )
                     err_count++;
                     return;
                 }
-
+ 
             } while( cb->if_level-- > 0 );
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
                 out_msg( "\t.do end Level %d\n"
                          "\t.ifcb iftrue %d, iffalse %d\n",
                          cb->if_level,
-                         cb->if_flags[ cb->if_level ].iftrue,
-                         cb->if_flags[ cb->if_level ].iffalse );
+                         cb->if_flags[cb->if_level].iftrue,
+                         cb->if_flags[cb->if_level].iffalse );
             }
         } else {
             scan_err = true;
@@ -802,4 +802,4 @@ void    scr_do( void )
     }
     return;
 }
-
+ 

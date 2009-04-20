@@ -27,17 +27,17 @@
 * Description:  WGML implement multi letter function &'upper( )
 *
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
+ 
 /***************************************************************************/
 /*  script string function &'upper(                                        */
 /*                                                                         */
 /***************************************************************************/
-
+ 
 /***************************************************************************/
 /*                                                                         */
 /* &'upper(string<,n<,length>>):   The  Uppercase  function  returns  the  */
@@ -54,8 +54,8 @@
 /*      &'upper(one,two,three) ==> invalid operands                        */
 /*                                                                         */
 /***************************************************************************/
-
-condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * result )
+ 
+condcode    scr_upper( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * result )
 {
     char            *   pval;
     char            *   pend;
@@ -64,32 +64,32 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
     int                 n;
     int                 len;
     getnum_block        gn;
-    char                linestr[ MAX_L_AS_STR ];
-
+    char                linestr[MAX_L_AS_STR];
+ 
     if( (parmcount < 1) || (parmcount > 3) ) {
         cc = neg;
         return( cc );
     }
-
-    pval = parms[ 0 ].a;
-    pend = parms[ 0 ].e;
-
+ 
+    pval = parms[0].a;
+    pend = parms[0].e;
+ 
     unquote_if_quoted( &pval, &pend );
-
+ 
     len = pend - pval + 1;              // default length
-
+ 
     if( len <= 0 ) {                    // null string nothing to do
         **result = '\0';
         return( pos );
     }
-
+ 
     n   = 0;                            // default start pos
     gn.ignore_blanks = false;
-
+ 
     if( parmcount > 1 ) {               // evalute start pos
-        if( parms[ 1 ].e >= parms[ 1 ].a ) {// start pos specified
-            gn.argstart = parms[ 1 ].a;
-            gn.argstop  = parms[ 1 ].e;
+        if( parms[1].e >= parms[1].a ) {// start pos specified
+            gn.argstart = parms[1].a;
+            gn.argstop  = parms[1].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result > len) ) {
                 if( !ProcFlags.suppress_msg ) {
@@ -109,11 +109,11 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
             n = gn.result - 1;
         }
     }
-
+ 
     if( parmcount > 2 ) {               // evalute length for upper
-        if( parms[ 2 ].e >= parms[ 2 ].a ) {// length specified
-            gn.argstart = parms[ 2 ].a;
-            gn.argstop  = parms[ 2 ].e;
+        if( parms[2].e >= parms[2].a ) {// length specified
+            gn.argstart = parms[2].a;
+            gn.argstop  = parms[2].e;
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
                 if( !ProcFlags.suppress_msg ) {
@@ -133,7 +133,7 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
             len = gn.result;
         }
     }
-
+ 
     for( k = 0; k < n; k++ ) {          // copy unchanged before startpos
         if( pval > pend ) {
             break;
@@ -141,7 +141,7 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
         **result = *pval++;
         *result += 1;
     }
-
+ 
     for( k = 0; k < len; k++ ) {        // translate
         if( pval > pend ) {
             break;
@@ -149,13 +149,13 @@ condcode    scr_upper( parm parms[ MAX_FUN_PARMS ], size_t parmcount, char * * r
         **result = toupper( *pval++ );
         *result += 1;
     }
-
+ 
     for( ; pval <= pend; pval++ ) {     // copy unchanged
         **result = *pval;
         *result += 1;
     }
-
+ 
     **result = '\0';
-
+ 
     return( pos );
 }
