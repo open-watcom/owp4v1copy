@@ -480,8 +480,8 @@ typedef struct {
     int         num;            // number of the picked line
     int         *allowrl;       // allow cursor right/left (for menu bar)
     char        **hilite;       // chars to highlight
-    int         *retevents;     // events that simulate pressing enter
-    int         event;          // event that caused a return
+    vi_key      *retevents;     // events that simulate pressing enter
+    vi_key      event;          // event that caused a return
     bool        show_lineno;    // show lines in top-right corner
     linenum     cln;            // current line to display
     window_id   eiw;            // alternate window to accept events in (like
@@ -505,8 +505,8 @@ typedef struct {
     int         *allow_rl;          // allow cursor right/left (for menu bar)
     char        **hilite;           // chars to highlight
     bool        show_lineno;        // show lines in top-right corner
-    int         *retevents;         // events that simulate pressing enter
-    int         event;              // event that caused a return
+    vi_key      *retevents;         // events that simulate pressing enter
+    vi_key      event;              // event that caused a return
     linenum     cln;                // current line to display
     window_id   eiw;                // alternate window to accept events in (like
                                     // the options window after fgrep...)

@@ -440,7 +440,7 @@ static bool adjustCLN( linenum *cln, linenum *pagetop, int amt,
  */
 vi_rc SelectLineInFile( selflinedata *sfd )
 {
-    int         i, key = -1, winflag;
+    int         i, winflag;
     int         leftcol = 0, key2;
     bool        done = FALSE, redraw = TRUE;
     bool        hiflag = FALSE, drawbord = FALSE;
@@ -450,6 +450,7 @@ vi_rc SelectLineInFile( selflinedata *sfd )
     linenum     cln;
     linenum     endline;
     vi_rc       rc;
+    vi_key      key;
 
     /*
      * create the window
@@ -541,7 +542,7 @@ vi_rc SelectLineInFile( selflinedata *sfd )
             }
             ptr = (char *) sfd->hilite;
             while( ptr[0] != 0 ) {
-                if( toupper( ptr[0] ) == (char) key2 ) {
+                if( toupper( ptr[0] ) == key2 ) {
                     cln = i + 1;
                     key = VI_KEY( ENTER );
                     break;
@@ -563,7 +564,7 @@ vi_rc SelectLineInFile( selflinedata *sfd )
                     key = VI_KEY( ENTER );
                 }
             } else {
-                while( sfd->retevents[i] >= 0 ) {
+                while( sfd->retevents[i] != 0 ) {
                     if( key == sfd->retevents[i] ) {
                         sfd->event = key;
                         key = VI_KEY( ENTER );

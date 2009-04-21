@@ -37,10 +37,11 @@
  */
 vi_rc ReplaceChar( void )
 {
-    int         key, start, end, i, ai;
+    int         start, end, i, ai;
     char        *buff;
     bool        redrawAll;
     vi_rc       rc;
+    vi_key      key;
 
     if( rc = ModificationTest() ) {
         return( rc );

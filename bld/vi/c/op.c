@@ -151,8 +151,9 @@ vi_rc YankLines( void )
 vi_rc Change( range *r )
 {
     int         scol, ecol;
-    int         tmp, key, vecol;
+    int         tmp, vecol;
     vi_rc       rc;
+    vi_key      key;
 
     /*
      * change line ranges

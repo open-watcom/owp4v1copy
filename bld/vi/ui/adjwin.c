@@ -148,7 +148,7 @@ static void swapTmp( char_info _FAR *src, char_info _FAR *dest, int x1, int y1,
 static void dickWithAWindow( int wn, bool topcorner, bool move, int *doresize,
                              windim *wd, bool mouse )
 {
-    int         key;
+    vi_key      key;
     bool        done = FALSE;
     int         x1, x2, y1, y2, nx1, nx2, ny1, ny2;
     int         mrow, mcol;

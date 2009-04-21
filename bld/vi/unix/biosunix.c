@@ -180,7 +180,7 @@ static vi_key get_vi_key( EVENT ev )
     if( ev >= EV_ALT_FUNC( 1 ) && ev <= EV_ALT_FUNC( 10 ) ) {
         return( VI_KEY( ALT_F1 ) + ev - EV_FUNC( 1 ) );
     }
-    return( -1 );
+    return( VI_KEY( DUMMY ) );
 }
 
 int BIOSKeyboardInit( void )
@@ -204,13 +204,13 @@ vi_key BIOSGetKeyboard( int *scan )
     vi_key  key;
     EVENT   ev;
 
-    key = -1;
+    key = VI_KEY( DUMMY );
     do {
         ev = uieventsource( 0 );
         if ( ev < EV_FIRST_UNUSED ) {
             key = vi_keys[ev];
         }
-    } while ( key == -1 );
+    } while ( key == VI_KEY( DUMMY ) );
     if( scan != NULL ) {
         *scan = 0;
     }

@@ -568,18 +568,18 @@ vi_rc SwitchSavebuf( void )
  */
 vi_rc DoSavebufNumber( void )
 {
-    int         i;
+    vi_key      key;
     char        buff[2];
     vi_rc       rc;
 
     /*
      * get savebuf to use
      */
-    i = GetNextEvent( FALSE );
-    if( i == VI_KEY( ESC ) ) {
+    key = GetNextEvent( FALSE );
+    if( key == VI_KEY( ESC ) ) {
         return( ERR_NO_ERR );
     }
-    buff[0] = i;
+    buff[0] = key;
     buff[1] = 0;
     rc = SetSavebufNumber( buff );
     if( rc == ERR_NO_ERR ) {

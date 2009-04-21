@@ -152,7 +152,7 @@ int PickATag( int clist, char **list, char *tagname )
     si.maxlist = clist;
     si.num = 0;
     si.retevents = NULL;
-    si.event = -1;
+    si.event = VI_KEY( DUMMY );
     si.show_lineno = show_lineno;
     si.cln = 1;
     si.eiw = NO_WINDOW;

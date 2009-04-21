@@ -222,7 +222,7 @@ vi_rc MovePageUp( void )
 vi_rc MovePosition( void )
 {
     linenum     lne, lines;
-    int         key;
+    vi_key      key;
     vi_rc       rc;
 
     if( RepeatDigits == 0 ) {

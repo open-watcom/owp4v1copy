@@ -430,7 +430,7 @@ static vi_rc doGREP( char *dirlist )
     window_id   wn, optwin;
     char        **list;
     window_info tw, wi;
-    int         evlist[4] = { VI_KEY( F1 ), VI_KEY( F2 ), VI_KEY( F3 ), -1 };
+    vi_key      evlist[4] = { VI_KEY( F1 ), VI_KEY( F2 ), VI_KEY( F3 ), VI_KEY( DUMMY ) };
     int         s, e, cnt;
     bool        show_lineno;
     selectitem  si;
@@ -507,7 +507,7 @@ static vi_rc doGREP( char *dirlist )
             si.maxlist = clist;
             si.num = n;
             si.retevents = evlist;
-            si.event = -1;
+            si.event = VI_KEY( DUMMY );
             si.show_lineno = show_lineno;
             si.cln = n + 1;
             si.eiw = optwin;
@@ -530,7 +530,7 @@ static vi_rc doGREP( char *dirlist )
                     break;
                 }
             }
-            if( rc != ERR_NO_ERR || si.event == -1 ||
+            if( rc != ERR_NO_ERR || si.event == VI_KEY( DUMMY ) ||
                 si.event == VI_KEY( F1 ) || si.event == VI_KEY( F3 ) ) {
                 break;
             }

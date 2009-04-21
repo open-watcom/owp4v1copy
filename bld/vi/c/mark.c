@@ -58,7 +58,7 @@ static mark *currContext;
  */
 vi_rc SetMark( void )
 {
-    int key;
+    vi_key      key;
 
     /*
      * get mark to set
@@ -254,9 +254,10 @@ vi_rc GetMark( linenum *ln, int *cl )
  */
 static vi_rc getAMark( int lineonly, linenum *ln, int *cl )
 {
-    int         no, key;
+    int         no;
     mark        *m;
     vi_rc       rc;
+    vi_key      key;
 
     /*
      * get mark to go to
@@ -287,9 +288,10 @@ static vi_rc getAMark( int lineonly, linenum *ln, int *cl )
  */
 static vi_rc goToMark( range *r )
 {
-    int         no, key;
+    int         no;
     mark        *m;
     vi_rc       rc;
+    vi_key      key;
 
     if( CurrentFile == NULL ) {
         return( ERR_NO_FILE );

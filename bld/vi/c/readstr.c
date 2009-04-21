@@ -40,8 +40,6 @@
 #endif
 #include <assert.h>
 
-#define HANDLED     0
-
 typedef struct input_win_info {
     window_id       id;
     type_style      style;
@@ -237,7 +235,7 @@ static vi_key cursorKeyFilter( input_buffer *input, vi_key event )
 
     max_pos = strlen( input->buffer );
     switch( event ) {
-    case HANDLED:
+    case VI_KEY_HANDLED:
         break;
     case VI_KEY( HOME ):
         input->curr_pos = 0;
@@ -275,7 +273,7 @@ static vi_key cursorKeyFilter( input_buffer *input, vi_key event )
     default:
         return( event );
     }
-    return( HANDLED );
+    return( VI_KEY_HANDLED );
 
 } /* cursorKeyFilter */
 
@@ -404,7 +402,7 @@ static vi_key historyFilter( input_buffer *input, vi_key event )
     default:
         return( event );
     }
-    return( HANDLED );
+    return( VI_KEY_HANDLED );
 
 } /* historyFilter */
 
@@ -543,7 +541,7 @@ static vi_key specialKeyFilter( input_buffer *input, vi_key event )
         return( event );
         break;
     }
-    return( HANDLED );
+    return( VI_KEY_HANDLED );
 
 } /* specialKeyFilter */
 
@@ -697,7 +695,7 @@ static bool getStringInWindow( input_buffer *input )
         event = historyFilter( input, event );
         event = specialKeyFilter( input, event );
         switch( event ) {
-        case HANDLED:
+        case VI_KEY_HANDLED:
             break;
         case VI_KEY( SHIFT_TAB ):
         case VI_KEY( TAB ):

@@ -384,7 +384,7 @@ vi_rc EditFileFromList( void )
     bool        repeat = TRUE;
     info        *cinfo;
     char        **list, modchar;
-    int         evlist[4] = { VI_KEY( F1 ), VI_KEY( F2 ), VI_KEY( F3 ), -1 };
+    vi_key      evlist[4] = { VI_KEY( F1 ), VI_KEY( F2 ), VI_KEY( F3 ), VI_KEY( DUMMY ) };
     bool        show_lineno;
     window_info wi;
     selectitem  si;
@@ -450,7 +450,7 @@ vi_rc EditFileFromList( void )
         si.maxlist = j;
         si.num = n;
         si.retevents = evlist;
-        si.event = -1;
+        si.event = VI_KEY( DUMMY );
         si.show_lineno = show_lineno;
         si.cln = n + 1;
         si.eiw = optwin;
@@ -466,7 +466,7 @@ vi_rc EditFileFromList( void )
                 }
                 BringUpFile( cinfo, TRUE );
                 switch( si.event ) {
-                case -1:
+                case VI_KEY( DUMMY ):
                 case VI_KEY( F1 ):
                     break;
                 case VI_KEY( F2 ):
