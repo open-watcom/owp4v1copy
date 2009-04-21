@@ -37,6 +37,7 @@
 #include "source.h"
 #include "menu.h"
 #include "win.h"
+#include "rxsupp.h"
 
 static bool     currLineRepUndo;
 static bool     overStrike;
@@ -783,20 +784,19 @@ static vi_rc getBracketLoc( i_mark *pos )
     char        tmp[3];
     int         len;
     linenum     lne;
-    bool        oldmagic = EditFlags.Magic;
+    bool        oldmagic;
 
-    EditFlags.Magic = TRUE;
     tmp[0] = '\\';
     tmp[1] = ')';
     tmp[2] = 0;
     lne = CurrentPos.line;
+    oldmagic = SetMagicFlag( TRUE );
     rc = GetFind( tmp, pos, &len, FINDFL_BACKWARDS | FINDFL_NOERROR);
+    SetMagicFlag( oldmagic );
     if( pos->line != CurrentPos.line ) {
-        EditFlags.Magic = oldmagic;
         return( ERR_FIND_NOT_FOUND );
     }
     if( rc != ERR_NO_ERR ) {
-        EditFlags.Magic = oldmagic;
         return( rc );
     }
 
@@ -806,7 +806,6 @@ static vi_rc getBracketLoc( i_mark *pos )
     CurrentPos = *pos;
     CGimmeLinePtr( CurrentPos.line, &CurrentFcb, &CurrentLine );
     rc = FindMatch( pos );
-    EditFlags.Magic = oldmagic;
     return( rc );
 
 } /* getBracketLoc */

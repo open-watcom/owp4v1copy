@@ -60,18 +60,17 @@ vi_rc FindMatch( i_mark *pos1 )
     char        *linedata;
     i_mark      pos2;
     vi_rc       rc;
+    bool        oldmagic;
 
     /*
      * build match command
      */
-    matchd[0] = '!';
-    matchd[1] = 0;
     for( i = 0; i < MatchCount; i++ ) {
-        MySprintf( tmp, "(%s)", MatchData[i] );
-        strcat( matchd, tmp );
-        if( i != MatchCount - 1 ) {
+        if( i > 0 ) {
             strcat( matchd, "|" );
         }
+        MySprintf( tmp, "(%s)", MatchData[i] );
+        strcat( matchd, tmp );
     }
 
     /*
@@ -80,7 +79,10 @@ vi_rc FindMatch( i_mark *pos1 )
     pos2 = CurrentPos;
     pos2.column -= 1;
 
-    if( FindRegularExpression( matchd, &pos2, &linedata, pos2.line, FALSE ) ) {
+    oldmagic = SetMagicFlag( FALSE );
+    rc = FindRegularExpression( matchd, &pos2, &linedata, pos2.line, FALSE );
+    if( rc != ERR_NO_ERR ) {
+        SetMagicFlag( oldmagic );
         return( ERR_NOTHING_TO_MATCH );
     }
 
@@ -102,8 +104,9 @@ vi_rc FindMatch( i_mark *pos1 )
     match[0] = MatchData[m1];
     match[1] = MatchData[m1 + 1];
     matchcnt = 1;
-    MySprintf( matchd, "!(%s)|(%s)", match[0], match[1] );
+    MySprintf( matchd, "(%s)|(%s)", match[0], match[1] );
     rc = CurrentRegComp( matchd );
+    SetMagicFlag( oldmagic );
     if( rc != ERR_NO_ERR ) {
         return( rc );
     }

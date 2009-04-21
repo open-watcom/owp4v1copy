@@ -37,7 +37,7 @@ static alias_list *abHead, *abTail;
 /*
  * setGenericAlias - define an alias/abbreviation
  */
-static int setGenericAlias( char *what, alias_list **head, alias_list **tail )
+static vi_rc setGenericAlias( char *what, alias_list **head, alias_list **tail )
 {
     alias_list  *curr;
     char        str[MAX_STR];

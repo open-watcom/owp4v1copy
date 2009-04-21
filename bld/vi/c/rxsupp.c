@@ -113,3 +113,17 @@ void MakeExpressionNonRegular( char *str )
     StaticFree( foo );
 
 } /* MakeExpressionNonRegular */
+
+/*
+ * SetMagicFlag - set up the Magic flag
+ */
+bool SetMagicFlag( bool new )
+{
+    bool    old;
+
+    old = EditFlags.Magic;
+    EditFlags.Magic = new;
+    return( old );
+
+} /* SetMagicFlag */
+

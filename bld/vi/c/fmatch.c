@@ -64,10 +64,9 @@ vi_rc FileMatchInit( char *wild )
     char        *tomatch;
     int         i, j, len;
 
-    magicFlag = EditFlags.Magic;
+    magicFlag = SetMagicFlag( FALSE );
     caseignFlag = EditFlags.CaseIgnore;
     EditFlags.CaseIgnore = TRUE;
-    EditFlags.Magic = FALSE;
     majickStr = Majick;
     Majick = ".";
 
@@ -122,7 +121,7 @@ vi_rc FileMatchInit( char *wild )
  */
 void FileMatchFini( void )
 {
-    EditFlags.Magic = magicFlag;
+    SetMagicFlag( magicFlag );
     EditFlags.CaseIgnore = caseignFlag;
     Majick = majickStr;
     MemFree( cRx );

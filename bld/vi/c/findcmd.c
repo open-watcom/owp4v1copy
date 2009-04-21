@@ -46,6 +46,7 @@ static bool     lastFindWasWrap;
 
 static i_mark   lastPos = { 0, 0 };
 static i_mark   currPos = { 0, 0 };
+static info     *lastPosInfo = NULL;
 
 static vi_rc    setLineCol( char *, i_mark *, find_type );
 static vi_rc    processFind( range *, char *, vi_rc (*)( char *, i_mark *, int * ) );
@@ -84,10 +85,13 @@ void HilightSearchString( i_mark *pos, int slen )
 /*
  * ResetLastFind - set so it is as if no last find was entered
  */
-void ResetLastFind( info *ci )
+void ResetLastFind( info *inf )
 {
-    lastPos.line = 0;
-    lastPos.column = 0;
+    if( lastPosInfo != inf ) {
+        lastPos.line = 0;
+        lastPos.column = 0;
+        lastPosInfo = NULL;
+    }
 
 } /* ResetLastFind */
 
@@ -439,7 +443,8 @@ vi_rc GetFind( char *st, i_mark *pos1, int *len1, find_type flag )
                 &linedata, -1, EditFlags.SearchWrap );
         }
     }
-
+    lastPosInfo = CurrentInfo;
+    
     /*
      * process results
      */

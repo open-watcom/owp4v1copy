@@ -338,7 +338,7 @@ extern vi_rc GetNewValueDialog( char * );
 /*
  * getAColor - get an fg/bg color
  */
-static int getAColor( char *name, int *cval )
+static vi_rc getAColor( char *name, int *cval )
 {
     char        fn[MAX_STR];
     int         fg, bg;
@@ -582,13 +582,10 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
         }
         RemoveLeadingSpaces( value );
         if( value[0] == '"' ) {
-            k = NextWord( value, fn, "\"" );
+            NextWord( value, fn, "\"" );
             EliminateFirstN( value, 1 );
         } else {
-            k = NextWord1( value, fn );
-        }
-        if( k <= 0 ) {
-            fn[0] = 0;
+            NextWord1( value, fn );
         }
         if( EditFlags.CompileScript ) {
             itoa( j, str, 10 );

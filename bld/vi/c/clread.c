@@ -42,7 +42,7 @@ vi_rc ReadAFile( linenum afterwhich, char *name )
 {
     file        *cfile;
     char        *dir;
-    int         i;
+    int         len;
     long        bytecnt = 0;
     linenum     lnecnt = 0;
     status_type lastst;
@@ -55,8 +55,9 @@ vi_rc ReadAFile( linenum afterwhich, char *name )
     if( rc = ModificationTest() ) {
         return( rc );
     }
-    if( (i = NextWord1( name, fn )) <= 0 || IsDirectory( fn ) ) {
-        if( i > 0 ) {
+    len = NextWord1( name, fn );
+    if( len <= 0 || IsDirectory( fn ) ) {
+        if( len > 0 ) {
             dir = fn;
         } else {
             dir = CurrentDirectory;

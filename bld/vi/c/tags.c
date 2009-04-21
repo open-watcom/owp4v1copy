@@ -99,19 +99,18 @@ vi_rc TagHunt( char *str )
 vi_rc FindTag( char *tag )
 {
     extern char _NEAR   META[];
-    int                 omag;
+    bool                oldmagic;
     char                *oldms;
     vi_rc               rc;
 
-    omag = EditFlags.Magic;
-    EditFlags.Magic = FALSE;
     oldms = Majick;
     Majick = &META[3];
 
+    oldmagic = SetMagicFlag( FALSE );
     rc = ColorFind( tag, 0 );
+    SetMagicFlag( oldmagic );
 
     Majick = oldms;
-    EditFlags.Magic = omag;
     return( rc );
 
 } /* FindTag */

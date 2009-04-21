@@ -89,7 +89,7 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
     bool        iflag = FALSE, gflag = FALSE, undoflag = FALSE, restline = FALSE;
     bool        splitpending = FALSE, undoline = FALSE;
     int         i, rlen, slen, key;
-    int         splitme, k;
+    int         splitme;
     long        changecnt = 0, linecnt = 0;
     linenum     llineno, ll, lastline = 0, extra;
     i_mark      pos;
@@ -118,17 +118,16 @@ vi_rc Substitute( linenum n1, linenum n2, char *data )
     if( NextWordSlash( data, rstr ) < 0 ) {
         return( ERR_INVALID_SUBS_CMD );
     }
-    if( (k = NextWord1( data, flag )) >= 0 ) {
-        for( i = 0; i < k; i++ ) {
-            switch( flag[i] ) {
-            case 'g':
-                gflag = TRUE;
-                break;
-            case 'i':
-            case 'c':
-                iflag = TRUE;
-                break;
-            }
+    slen = NextWord1( data, flag );
+    for( i = 0; i < slen; i++ ) {
+        switch( flag[i] ) {
+        case 'g':
+            gflag = TRUE;
+            break;
+        case 'i':
+        case 'c':
+            iflag = TRUE;
+            break;
         }
     }
     rc = CurrentRegComp( sstr );

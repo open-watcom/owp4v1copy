@@ -67,16 +67,16 @@ static bool isOS2( void )
 }
 #endif
 
-static window_info *wInfo = NULL;
-static int setWDimension( char * );
-static int setWHilite( char * );
-static int setWText( char * );
-static int setWBorder( char * );
-static int setSyntaxStyle( syntax_element, char * );
+static window_info  *wInfo = NULL;
+static char         strLoad[] = "loaded";
+static char         strCompile[] = "compiled";
+static char         *dataBuff;
 
-static char strLoad[] = "loaded";
-static char strCompile[] = "compiled";
-static char *dataBuff;
+static vi_rc        setWDimension( char * );
+static vi_rc        setWHilite( char * );
+static vi_rc        setWText( char * );
+static vi_rc        setWBorder( char * );
+static vi_rc        setSyntaxStyle( syntax_element, char * );
 
 /*
  * InitCommandLine - initialize command line processing
@@ -1133,7 +1133,7 @@ static void setStyle( type_style *style, vi_color tc1, vi_color tc2, font_type t
 /*
  * setWBorder - set window border
  */
-static int setWBorder( char *data )
+static vi_rc setWBorder( char *data )
 {
     int         btype, bc1, bc2;
     bool        has_border;
@@ -1174,7 +1174,7 @@ static int setWBorder( char *data )
 /*
  * setWText - set window text color
  */
-static int setWText( char *data )
+static vi_rc setWText( char *data )
 {
     int         tc1, tc2, tc3;
     char        token[MAX_STR];
@@ -1207,7 +1207,7 @@ static int setWText( char *data )
 /*
  * setWHilite - set window hilighting color
  */
-static int setWHilite( char *data )
+static vi_rc setWHilite( char *data )
 {
     int         tc1, tc2, tc3;
     char        token[MAX_STR];
@@ -1236,7 +1236,7 @@ static int setWHilite( char *data )
 /*
  * setWDimension - set window dimension
  */
-static int setWDimension( char *data )
+static vi_rc setWDimension( char *data )
 {
     int         x1, y1, x2, y2;
     char        token[MAX_STR];
@@ -1298,7 +1298,7 @@ static int setWDimension( char *data )
 /*
  * setSyntaxStyle - set syntax style color
  */
-static int setSyntaxStyle( syntax_element style, char *data )
+static vi_rc setSyntaxStyle( syntax_element style, char *data )
 {
     int         tc1, tc2, tc3;
     char        token[MAX_STR];
