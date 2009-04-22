@@ -48,14 +48,12 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <errno.h>
-#include <setjmp.h> // Required (but not included) by gvars.h.
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "copdir.h"
 #include "copfiles.h"
-#include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
 #include "wgml.h"
 

@@ -45,7 +45,6 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <ctype.h>
 #include <errno.h>
-#include <setjmp.h> // Required (but not included) by gvars.h.
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -53,7 +52,6 @@
 #include <string.h>
 
 #include "copfiles.h"
-#include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
 #include "outbuff.h"
 #include "wgml.h"
@@ -105,7 +103,7 @@ static void set_out_file( void )
         _splitpath2( master_fname, doc_spec, &doc_drive, &doc_dir, &doc_fname, \
                                                                     &doc_ext );
     }
-    
+
     if( out_file == NULL ) {
         cmd_outfile[0] = '\0';
         cmd_drive = &cmd_outfile[0];
@@ -119,7 +117,7 @@ static void set_out_file( void )
         _splitpath2( out_file, cmd_outfile, &cmd_drive, &cmd_dir, &cmd_fname, \
                                                                     &cmd_ext );
     }
-    
+
     if( bin_device->output_name == NULL ) {
         dev_outfile[0] = '\0';
         dev_drive = &dev_outfile[0];
@@ -228,7 +226,7 @@ static void set_out_file( void )
 }
 
 /* Function set_out_file_attr().
- * Sets the global out_file_attr to the correct value. This will be either the 
+ * Sets the global out_file_attr to the correct value. This will be either the
  * record type entered on the command line, the spec_rec field in the :DRIVER
  * block, or the default record type "t:132".
  */
@@ -236,9 +234,9 @@ static void set_out_file( void )
 static void set_out_file_attr( void )
 {
     size_t      len;
-    
+
     /* Construct the output file record type if necessary. If the command-line
-     * option OUTput was used and a record type was given, then out_file_attr 
+     * option OUTput was used and a record type was given, then out_file_attr
      * will be used as-is. Otherwise, the rec_spec will be used if it is
      * properly formatted. If all else fails, the default will be used.
      */
@@ -257,7 +255,7 @@ static void set_out_file_attr( void )
 
             } else {
 
-                /* Copy the record type itself, without parentheses, into 
+                /* Copy the record type itself, without parentheses, into
                  * out_file_attr.
                  */
 
@@ -306,7 +304,7 @@ static void set_out_file_attr( void )
  *          buffer flushes. It appears that it is not, so a second function that
  *          handles output translation will be needed eventually.
  */
- 
+
 void ob_flush( void )
 {
     fwrite( buffout->data, sizeof( uint8_t ), buffout->current, out_file_fb );
@@ -334,7 +332,7 @@ void ob_flush( void )
  *          out_trans is set to "true".
  *      This implementation does not actually do anything special when out_text
  *          is set to "true"; it does not even check to see if the device is
- *          PS. 
+ *          PS.
  */
 
 extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
@@ -351,7 +349,7 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 
         /***then continue on with translated text!***/
         /*text_block & text_count must be initialized!*/
-        
+
         text_block = in_block;
         text_count = count;
 
@@ -362,7 +360,7 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
         text_block = in_block;
         text_count = count;
     }
-    
+
     /* Start at the beginning of text_block. */
 
     /* Note: ignores any PS-specific actions. */
@@ -425,7 +423,7 @@ extern void ob_setup( void )
     size_t  count;
 
     /* Finalize out_file and out_file_attr. */
-    
+
     set_out_file();
     set_out_file_attr();
 
@@ -434,7 +432,7 @@ extern void ob_setup( void )
     buffout = NULL;
 
     /* Only record type "t" is currently supported. */
-    
+
     if( tolower( out_file_attr[0] ) != 't' ) {
         out_msg( "File type %c is not currently supported\n", out_file_attr[0] );
         err_count++;
@@ -464,7 +462,7 @@ extern void ob_setup( void )
     }
 
     /* Initialize record_length and buffout */
-    
+
     buffout = (record_buffer *) mem_alloc( sizeof( record_buffer ) );
     buffout->current = 0;
     buffout->length = strtoul( &out_file_attr[2], NULL, 0 );
@@ -477,7 +475,7 @@ extern void ob_setup( void )
 
     /* Create (truncate) the output file. */
 
-    fopen_s( &out_file_fb, out_file, "uwb" ); 
+    fopen_s( &out_file_fb, out_file, "uwb" );
 
     if( out_file_fb == NULL ) {
         out_msg( "Unable to open out-file %s\n", out_file );

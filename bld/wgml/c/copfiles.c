@@ -53,7 +53,6 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <math.h>
-#include <setjmp.h> // Required (but not included) by gvars.h.
 #include <stdlib.h>
 #include <time.h>
 
@@ -73,7 +72,6 @@
 #include "cophdr.h"
 #include "devfuncs.h"
 #include "findfile.h"
-#include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
 #include "outbuff.h"
 #include "wgml.h"
@@ -150,13 +148,13 @@ static void compute_metrics( wgml_font * in_font )
          * tweaked when side-by-side comparisons of wgml 4.0 and our wgml
          * become possible.
          */
-         
+
         in_font->line_height = height / factor;
         if( (height % factor) > 0 ) in_font->line_height++;
 
         in_font->line_space = 0;
         if( in_font->font_space > 0) {
-        
+
             /* line_space is set initially to the number of vertical_base_units
              * corresponding to the value of font_space.
              */
@@ -230,7 +228,7 @@ static cop_device * get_cop_device( char const * in_name )
     }
 
     /* Determine if the file encodes a :DEVICE block. */
-    
+
     file_type = parse_header( try_fp );
 
     switch( file_type ) {
@@ -245,7 +243,7 @@ static cop_device * get_cop_device( char const * in_name )
     case not_bin_dev:
     case not_se_v4_1:
     case dir_v4_1_se:
-    
+
         /* Wrong type of file: something is wrong with the device library. */
 
         out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
@@ -305,7 +303,7 @@ static cop_driver * get_cop_driver( char const * in_name )
     }
 
     /* Determine if the file encodes a :DRIVER block. */
-    
+
     file_type = parse_header( try_fp );
 
     switch( file_type ) {
@@ -320,7 +318,7 @@ static cop_driver * get_cop_driver( char const * in_name )
     case not_bin_dev:
     case not_se_v4_1:
     case dir_v4_1_se:
-    
+
         /* Wrong type of file: something is wrong with the device library. */
 
         out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
@@ -380,7 +378,7 @@ static cop_font * get_cop_font( char const * in_name )
     }
 
     /* Determine if the file encodes a :FONT block. */
-    
+
     file_type = parse_header( try_fp );
 
     switch( file_type ) {
@@ -395,7 +393,7 @@ static cop_font * get_cop_font( char const * in_name )
     case not_bin_dev:
     case not_se_v4_1:
     case dir_v4_1_se:
-    
+
         /* Wrong type of file: something is wrong with the device library. */
 
         out_msg( "Device library corrupt or wrong version: %s\n", try_file_name );
@@ -469,7 +467,7 @@ static cop_font * find_cop_font( char const * in_name )
         bin_fonts = retval;
     }
 
-    return( retval );    
+    return( retval );
 }
 
 /* Function find_dev_font().
@@ -506,11 +504,11 @@ static device_font * find_dev_font( char const * in_name )
         g_suicide();
     }
 
-    return( retval );    
+    return( retval );
 }
 
 /* Function find_style().
- * Finds the fonstyle_block instance for the requested font style. 
+ * Finds the fonstyle_block instance for the requested font style.
  *
  * Parameter:
  *      in_name is the defined name of the desired binary :FONTSTYLE block.
@@ -543,7 +541,7 @@ static fontstyle_block * find_style( char const * in_name )
         g_suicide();
     }
 
-    return( retval );    
+    return( retval );
 }
 
 /* Function find_switch().
@@ -814,7 +812,7 @@ extern void cop_setup( void )
         compute_metrics( &wgml_fonts[i] );
         cur_opt = cur_opt->nxt;
     }
-    free_opt_fonts();    
+    free_opt_fonts();
 
     /* Generate any entries required by the :BOX and/or :UNDERSCORE blocks.
      * Note that the font_number will become non-zero and will be used in
@@ -926,7 +924,7 @@ extern void cop_setup( void )
         out_msg( "Device Library Error: Font 0 not defined\n" );
         err_count++;
         g_suicide;
-    }        
+    }
 
     /* Fill in any skipped entries with the values used for wgml_font 0 */
 
@@ -986,7 +984,7 @@ extern void cop_teardown( void )
         mem_free( bin_device );
         bin_device = NULL;
     }
-    
+
     if( bin_driver  != NULL ) {
         mem_free( bin_driver );
         bin_driver = NULL;
@@ -1014,7 +1012,7 @@ extern void cop_teardown( void )
 }
 
 /* Function fb_dbox().
- * Interprets the :DBOX block. 
+ * Interprets the :DBOX block.
  *
  * Parameters:
  *      h_start contains the horizontal position.
@@ -1029,7 +1027,7 @@ extern void cop_teardown( void )
  * Notes:
  *      The :ABSOLUTEADDRESS block is required to position the print to the
  *          start of the line or box.
- *      The :DBOX block must exist because the box-drawing code should be 
+ *      The :DBOX block must exist because the box-drawing code should be
  *          checking this and drawing the box using either :HLINE and :VLINE
  *          or the :BOX block characters instead.
  */
@@ -1071,7 +1069,7 @@ extern void fb_document( void )
 }
 
 /* Function fb_document_page().
- * Interprets the :NEWPAGE block and increments the page number variable. 
+ * Interprets the :NEWPAGE block and increments the page number variable.
  */
 
 extern void fb_document_page( void )
@@ -1084,14 +1082,14 @@ extern void fb_document_page( void )
     /* Interpret the :NEWPAGE block. */
 
     df_interpret_driver_functions( bin_driver->newpage.text );
-    
+
     pages++;
 
     return;
 }
 
 /* Function fb_finish().
- * Performs the processing which occurs after document processing ends. 
+ * Performs the processing which occurs after document processing ends.
  */
 
 extern void fb_finish( void )
@@ -1114,7 +1112,7 @@ extern void fb_finish( void )
 }
 
 /* Function fb_hline().
- * Interprets the :HLINE block. 
+ * Interprets the :HLINE block.
  *
  * Parameters:
  *      h_start contains the horizontal position.
@@ -1142,7 +1140,7 @@ extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
 /* Function fb_position().
  * Sets the print head position, in the sense of setting the fields of
  * desired_state, x_address, and y_address. In some cases, takes additional
- * actions. This function is extremely specialized. 
+ * actions. This function is extremely specialized.
  *
  * Parameters:
  *      h_start contains the horizontal position.
@@ -1193,7 +1191,7 @@ extern void fb_position( uint32_t h_start, uint32_t v_start )
                     wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
         fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
     }
-    
+
     return;
 }
 
@@ -1220,7 +1218,7 @@ extern void fb_start( void )
 }
 
 /* Function fb_vline().
- * Interprets the :VLINE block. 
+ * Interprets the :VLINE block.
  *
  * Parameters:
  *      h_start contains the horizontal position.

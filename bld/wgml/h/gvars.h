@@ -32,11 +32,14 @@
 #ifndef GVARS_H_INCLUDED
 #define GVARS_H_INCLUDED
 
+#include <setjmp.h>
 #include <time.h>
 
 #ifndef global
     #define global  extern
 #endif
+
+#include "gtype.h"
 
 global struct tm        doc_tm;         // document time/date
 

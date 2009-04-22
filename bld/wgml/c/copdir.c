@@ -34,13 +34,11 @@
 *
 ****************************************************************************/
 
-#include <setjmp.h> // Required (but not included) by gvars.h.
 
 #include "copdir.h"
 #include "copfiles.h"
 #include "cophdr.h"
 #include "findfile.h"
-#include "gtype.h" // Required (but not included) by gvars.h.
 #include "gvars.h"
 #include "wgml.h"
 
@@ -62,7 +60,7 @@
  *          of entry was updated.
  *
  * Notes:
- *      The defined_name and the embedded_name fields will be terminated 
+ *      The defined_name and the embedded_name fields will be terminated
  *          with '\0' if updated.
  *      A file error may have occurred if not_valid_entry is returned.
  */
@@ -72,7 +70,7 @@ entry_found get_compact_entry( FILE * in_file, directory_entry * entry )
     uint8_t count;
 
     /* Get the defined_name_length. */
-    
+
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( not_valid_entry );
 
@@ -93,7 +91,7 @@ entry_found get_compact_entry( FILE * in_file, directory_entry * entry )
     }
 
     /* Get the member_name_length. */
-    
+
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( not_valid_entry );
 
@@ -128,7 +126,7 @@ entry_found get_compact_entry( FILE * in_file, directory_entry * entry )
  *          of entry was updated.
  *
  * Notes:
- *      The defined_name and the embedded_name fields will be terminated 
+ *      The defined_name and the embedded_name fields will be terminated
  *          with '\0' if updated.
  *      A file error may have occurred even if valid_entry is returned.
  */
@@ -138,7 +136,7 @@ entry_found get_extended_entry( FILE * in_file, directory_entry * entry )
     uint8_t count;
 
     /* Get the defined_name_length. */
-    
+
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( not_valid_entry );
 
@@ -157,14 +155,14 @@ entry_found get_extended_entry( FILE * in_file, directory_entry * entry )
         if( ferror( in_file ) || feof( in_file ) ) return( not_valid_entry );
         entry->defined_name[count] = '\0';
     }
-    
+
     /* Skip the marker. */
 
     fseek( in_file, sizeof( uint16_t ), SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( not_valid_entry );
 
     /* Get the the member_name_length. */
-    
+
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( not_valid_entry );
 
