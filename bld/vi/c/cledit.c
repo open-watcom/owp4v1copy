@@ -252,7 +252,11 @@ vi_rc EditFile( char *name, int dammit )
                     ci = ci->next;
                 }
                 RemoveFromAutoSaveList();
+#ifdef __WIN__
+                CloseAChildWindow( CurrentWindow );
+#else
                 CloseAWindow( CurrentWindow );
+#endif
                 FreeUndoStacks();
                 FreeMarkList();
                 FreeEntireFile( CurrentFile );
