@@ -34,10 +34,8 @@
 *                   df_setup()
 *                   df_teardown()
 *                   fb_enterfont()
-*                   fb_firstword()
 *                   fb_init()
 *                   fb_lineproc_endvalue()
-*                   fb_normal_vertical_positioning()
 *                   fb_thickness()
 *               as well as a macro
 *                   MAX_FUNC_INDEX
@@ -58,6 +56,7 @@
 *                   driver_function_table
 *                   font_number
 *                   pass_number
+*                   set_margin
 *                   staging
 *                   tab_width
 *                   text_output
@@ -129,7 +128,9 @@
 *                   df_y_address()
 *                   df_y_size()
 *                   fb_absoluteaddress()
+*                   fb_firstword()
 *                   fb_newline()
+*                   fb_normal_vertical_positioning()
 *                   format_error()
 *                   get_parameters()
 *                   interpret_functions()
@@ -159,8 +160,8 @@
 #undef  global
 
 #include "outbuff.h"
-#include "wgml.h"
 #include "gvars.h"
+#include "wgml.h"
 
 /* Macros. */
 
@@ -211,6 +212,7 @@ static bool             uline           = false;
 /* These are used to control some aspects of device function operation. */
 
 static bool             at_start        = true;
+static bool             set_margin      = false;
 static bool             text_output     = false;
 static page_state       current_state   = { 0, 0, 0 };
 static page_state       desired_state   = { 0, 0, 0 };
@@ -243,6 +245,25 @@ static record_buffer    staging = { 0, 0, NULL };
 
 /* Local function definitions. */
 
+/* Function fb_absoluteaddress().
+ * Uses the :ABSOLUTEADDRESS block to actually position the print head to the
+ * desired position. 
+ *
+ * Prerequisite:
+ *      The :ABSOLUTEADDRESS block must be defined.
+ */
+
+static void fb_absoluteaddress( void )
+{
+    fb_lineproc_endvalue();
+
+    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
+
+    current_state.x_address = desired_state.x_address;
+    current_state.y_address = desired_state.y_address;    
+    return;
+}
+
 /* Function fb_newline().
  * Uses the various :NEWLINE blocks to actually position the device to the
  * desired vertical position. 
@@ -254,24 +275,28 @@ static record_buffer    staging = { 0, 0, NULL };
 static void fb_newline( void )
 {
     int             i;
-    newline_block * cur_block   = NULL;
-    int16_t         lines;
+    newline_block * current_block   = NULL;
+    int16_t         desired_units;
+    int16_t         desired_lines;
+    uint16_t        remainder;
     uint16_t        max_advance;
 
     /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
 
     fb_lineproc_endvalue();
 
+    /* desired_units holds the number of vertical base units to be moved. */
+
     if( bin_driver->y_positive == 0x00 ) {
 
         /* desired_state.y_address was formed by subtraction. */
 
-        lines = current_state.y_address - desired_state.y_address;
+        desired_units = current_state.y_address - desired_state.y_address;
     } else {
 
         /* desired_state.y_address was formed by addition. */
 
-        lines = desired_state.y_address - current_state.y_address;
+        desired_units = desired_state.y_address - current_state.y_address;
     }
 
     /* Devices using :ABSOLUTEADDRESS may be able to move backwards, but
@@ -279,8 +304,30 @@ static void fb_newline( void )
      * by gendev and so negative values of lines must be an error.
      */
 
-    if( lines < 0 ) {
+    if( desired_units < 0 ) {
         out_msg( "wgml internal error: negative carriage movement\n" );
+        err_count++;
+        g_suicide();
+    }
+
+    /* desired_lines contains the number of lines, rounded up. Note: the
+     * actual rounding algorithm used by wgml 4.0 has yet to be determined;
+     * the rounding used here may require adjustment in the future.
+     */
+
+    desired_lines = desired_units / wgml_fonts[font_number].line_height;
+    remainder = desired_lines % wgml_fonts[font_number].line_height;
+    if ( 2 * remainder >= wgml_fonts[font_number].line_height ) desired_lines++;
+
+    /* Devices using :ABSOLUTEADDRESS may be able to use partial line heights,
+     * but devices using :NEWLINE blocks must advance at least one whole line
+     * if any advance was called for. This is treated as an error because the
+     * page layout code should not be cutting things this close for devices
+     * which rely on :NEWLINE blocks.
+     */
+
+    if( (desired_units > 0 ) && (desired_lines == 0) ) {
+        out_msg( "wgml internal error: vertical movement to small for device\n" );
         err_count++;
         g_suicide();
     }
@@ -288,35 +335,36 @@ static void fb_newline( void )
     /* lines might equal 0, in which case no action is needed. */
 
     max_advance = 0;
-    while( lines > 0 ) {
+    while( desired_lines > 0 ) {
         for( i = 0; i < bin_driver->newlines.count; i++ ) {
-            if( bin_driver->newlines.newlineblocks[i].advance < lines ) {
+            if( bin_driver->newlines.newlineblocks[i].advance <= desired_lines ) {
                 if( max_advance < \
                             bin_driver->newlines.newlineblocks[i].advance ) {
                     max_advance = bin_driver->newlines.newlineblocks[i].advance;
-                    cur_block = &bin_driver->newlines.newlineblocks[i];
+                    current_block = &bin_driver->newlines.newlineblocks[i];
                 }
             }
         }
-        df_interpret_driver_functions( cur_block->text );
-        lines -= max_advance;
+        df_interpret_driver_functions( current_block->text );
+        desired_lines -= max_advance;
+    }
 
-        /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
-         * :ENDVALUE block for Pass 1 of available font 0, unless it has already
-         * been done.
-         */
+    /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
+     * :ENDVALUE block for Pass 1 of available font 0, unless it has already
+     * been done. Note: this places the block at the proper location when 
+     * one or more :LINEPROC blocks have been interpreted.
+     */
 
-        if( at_start ) {
-            if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-                if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
-                    df_interpret_driver_functions( \
-                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
-            }
+    if( at_start ) {
+        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
+                df_interpret_driver_functions( \
+                    wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+        }
         at_start = false;
     }
 
-
-    }
+    /* Update the state to reflect the new position. */
 
     current_state.y_address = desired_state.y_address;
 
@@ -444,25 +492,6 @@ static void * df_clearPC( void )
     return( NULL );
 }
 
-/* Function fb_absoluteaddress().
- * Uses the :ABSOLUTEADDRESS block to actually position the print head to the
- * desired position. 
- *
- * Prerequisite:
- *      The :ABSOLUTEADDRESS block must be defined.
- */
-
-static void fb_absoluteaddress( void )
-{
-    fb_lineproc_endvalue();
-
-    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
-
-    current_state.x_address = desired_state.x_address;
-    current_state.y_address = desired_state.y_address;    
-    return;
-}
-
 /* Function df_dotab().
  * Implements device function %dotab().
  */
@@ -536,7 +565,7 @@ static void * df_endif( void )
 static void * df_flushpage( void )
 {
     static  int         instance    = 0;
-            uint16_t    pages;
+            uint16_t    current_pages;
 
     /* Recursion is an error. */
 
@@ -553,11 +582,13 @@ static void * df_flushpage( void )
 
     fb_lineproc_endvalue();
 
-    /* pages contains the number of device pages needed to reach
-     * current_state.y_address.
+    /* current_pages pages contains the number of device pages needed to reach
+     * current_state.y_address; however, it is 0-based and must be 1-based for
+     * the correct value to be obtained if it designates the last line of the
+     * page.
      */
 
-    pages = current_state.y_address / bin_device->page_depth;
+    current_pages = (current_state.y_address + 1) / bin_device->page_depth;
 
     /* The value needed in desired_state.y_address must reflect the
      * number of device pages included in currrent_state.y_address so
@@ -568,13 +599,15 @@ static void * df_flushpage( void )
 
         /* desired_state.y_address is to be formed by subtraction. */
 
-        desired_state.y_address = pages * bin_device->page_depth;
+        desired_state.y_address = current_pages * bin_device->page_depth;
     } else {
 
         /* desired_state.y_address is to be formed by addition. */
 
-        desired_state.y_address = (pages + 1) * bin_device->page_depth;
+        desired_state.y_address = (current_pages + 1) * bin_device->page_depth;
     }
+
+    /* The print head position is the start of the bottom line. */
 
     x_address = 0;
     y_address = bin_device->page_depth;
@@ -585,7 +618,8 @@ static void * df_flushpage( void )
 
     /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
      * :ENDVALUE block for Pass 1 of available font 0, unless it has already
-     * been done.
+     * been done. Note: this places the block at the proper location when
+     * the :ABSOLUTEADDRESS block is defined and %flushpage() is invoked.
      */
 
     if( at_start ) {
@@ -596,6 +630,10 @@ static void * df_flushpage( void )
         }
         at_start = false;
     }
+
+    /* The print head position is now the start of the line before the first. */
+
+    y_address = 0;
 
     instance--;
 
@@ -2120,6 +2158,159 @@ static void interpret_functions( uint8_t * in_function )
     return;
 }
 
+/* Function fb_firstword().
+ * Interprets the :FIRSTWORD block of the given :LINEPROC block. The "trick"
+ * here is that, if the :FIRSTWORD block does not exist but the :STARTWORD
+ * block does, then the :STARTWORD block is interpreted instead. 
+ *
+ * Parameter:
+ *      in_block points to the :LINEPROC block. 
+ */
+ 
+static void fb_firstword( line_proc * in_block )
+{
+    if( in_block->firstword == NULL ) {
+        if( in_block->startword != NULL ) \
+            df_interpret_driver_functions( in_block->startword->text );
+    } else {
+        df_interpret_driver_functions( in_block->firstword->text );
+    }
+
+    return;
+}
+
+/* Function fb_normal_vertical_positioning().
+ * Performs the normal vertical positioning as described in the Wiki. 
+ */
+
+static void fb_normal_vertical_positioning( void )
+{
+    uint32_t    current_lines;
+    uint32_t    desired_lines;
+    uint32_t    current_pages;
+    uint32_t    desired_pages;
+    uint32_t    device_pages;
+    int         i;
+
+    /* A device using :ABSOLUTEADDRESS may be able to move upwards on a given
+     * device page, but it cannot go back to a prior device page. A device
+     * using :NEWLINE blocks, of course, cannot move upwards at all.
+     */
+
+    if( current_state.y_address > desired_state.y_address ) {
+        out_msg( "wgml internal error: cannot move to prior device page\n" );
+        err_count++;
+        g_suicide();
+    }
+
+    /* If there is no difference, there is nothing to do. */
+
+    if( current_state.y_address != desired_state.y_address ) {
+
+        /* Detect and process device pages. This is complicated by the fact
+         * that line and page numbers start at "1" but integer division treats
+         * them as starting at "0". The initial adjustments ensure that the
+         * last line on the page produces the correct value when the division
+         * is done, even if it equals a multiple of the divisor.
+         */
+
+        current_lines = current_state.y_address + 1;
+        desired_lines = desired_state.y_address + 1;
+        current_pages = current_lines / bin_device->page_depth;
+        desired_pages = desired_lines / bin_device->page_depth;
+        device_pages = desired_pages - current_pages;
+
+        /* Ensure that (current_pages + i) will contain the number of
+         * device pages prior to the current device page.
+         */
+
+        current_pages++;
+
+        /* device_pages contains the number of :NEWPAGE blocks needed. */
+
+        if( device_pages > 0 ) {
+
+            for( i=0; i < device_pages; i++ ) {
+
+                /* Interpret the DOCUMENT_PAGE :PAUSE block. */
+
+                if( bin_device->pauses.devpage_pause != NULL ) \
+        df_interpret_device_functions( bin_device->pauses.devpage_pause->text );
+
+                /* Interpret the :NEWPAGE block. */
+
+                df_interpret_driver_functions( bin_driver->newpage.text );
+
+                /* If the :ABSOLUTEADDRESS block is defined and this is the
+                 * Initial Vertical Positioning, interpret the :LINEPROC
+                 * :ENDVALUE block for Pass 1 of available font 0, unless it
+                 * has already been done. Note: this places the block at the
+                 * proper location when the :ABSOLUTEADDRESS block is defined
+                 * but does not include %flushpage() and device paging has
+                 * occurred.
+                 */
+
+                if( bin_driver->absoluteaddress.text != NULL ) {
+                    if( at_start ) {
+                        if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
+
+                            /* Set the value of current_state.y_address and the
+                             * value returned by %y_address() to the last line
+                             * of the previous device page.
+                             */
+
+                            current_state.y_address = \
+                                (current_pages + i) * bin_device->page_depth;
+                            y_address = current_state.y_address;
+
+                            if( wgml_fonts[0].font_style->lineprocs[0].endvalue \
+                                != NULL ) df_interpret_driver_functions( \
+                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+                        }
+                        at_start = false;
+                    }
+                }
+            }
+        }
+
+        /* Set the values returned by %x_address() and %y_address() to the
+         * current desired position and the value of current_state.y_address
+         * to the last line of the previous device page.
+         */
+
+        x_address = 0;
+        current_state.y_address = desired_pages * bin_device->page_depth;
+        y_address = desired_state.y_address % bin_device->page_depth;
+
+        /* If at_start is still "true", then no device paging occurred. */
+
+        if( at_start ) set_margin = true;
+
+        /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
+
+        if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
+
+        /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
+         * :ENDVALUE block for Pass 1 of available font 0, unless it has already
+         * been done. Note: this places the block at the proper location when 
+         * no device pages have been skipped and the :ABSOLUTEADDRESS block is
+         * defined.
+         */
+
+        if( at_start ) {
+            if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
+                if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
+                    df_interpret_driver_functions( \
+                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
+            }
+            at_start = false;
+        }
+
+    }
+
+    return;
+}
+
 /*  Global function definitions. */
 
 /* Function df_interpret_device_functions().
@@ -2196,13 +2387,14 @@ void df_populate_device_table( void )
  
 void df_populate_driver_table( void )
 {
-    device_function_table[0x1D] = &df_flushpage;
+    driver_function_table[0x1D] = &df_flushpage;
     return;
 }
 
 /* Function df_set_horizontal().
- * Performs actions needed by fb_position which require access to
- * current_state and x_address.
+ * Does the vertical positioning for fb_position(). This function is extremely
+ * specialized and should not be called by any function other than
+ * fb_position(). 
  *
  * Parameter:
  *      h_start contains the new value for current_state.x_address
@@ -2211,14 +2403,46 @@ void df_populate_driver_table( void )
 
 void df_set_horizontal( uint32_t h_start )
 {
+    bool    fontstyle = false;
+
+    /* If set_margin is set to "true", then determine whether a :FONTSTYLE
+     * block for pass 1 for font 0 exists.
+     */
+
+    if( set_margin ) {
+        if( wgml_fonts[0].font_style != NULL ) {
+            if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
+                fontstyle = true;
+            }
+        }
+    }
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* Set the variables. */
+
     desired_state.x_address = h_start;
     x_address = h_start;
+
+    /* The :FONTSTYLE block is only be used if it exists and set_margin had
+     * the value "true".
+     */
+
+    if( fontstyle ) {
+        df_interpret_driver_functions( \
+                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
+        fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
+    }
+
     return;
 }
 
 /* Function df_set_vertical().
- * Performs actions needed by fb_position which require access to
- * current_state.
+ * Does the vertical positioning for fb_position(). This function is extremely
+ * specialized and should not be called by any function other than
+ * fb_position(). 
  *
  * Parameter:
  *      v_start contains the new value for current_state.y_address.
@@ -2226,7 +2450,8 @@ void df_set_horizontal( uint32_t h_start )
 
 void df_set_vertical( uint32_t v_start )
 {
-    current_state.y_address = v_start;
+    desired_state.y_address = v_start;
+    fb_normal_vertical_positioning();
     return;
 }
 
@@ -2336,27 +2561,6 @@ void fb_enterfont( void )
     return;
 }
 
-/* Function fb_firstword().
- * Interprets the :FIRSTWORD block of the given :LINEPROC block. The "trick"
- * here is that, if the :FIRSTWORD block does not exist but the :STARTWORD
- * block does, then the :STARTWORD block is interpreted instead. 
- *
- * Parameter:
- *      in_block points to the :LINEPROC block. 
- */
- 
-void fb_firstword( line_proc * in_block )
-{
-    if( in_block->firstword == NULL ) {
-        if( in_block->startword != NULL ) \
-            df_interpret_driver_functions( in_block->startword->text );
-    } else {
-        df_interpret_driver_functions( in_block->firstword->text );
-    }
-
-    return;
-}
-
 /* Function fb_init().
  * Interprets the :INIT block, which can contain multiple function blocks of two
  * types, one of which is interpreted for each available font.
@@ -2416,47 +2620,6 @@ void fb_lineproc_endvalue( void )
                                                             endvalue->text );
         }
         text_output = false;
-    }
-
-    return;
-}
-
-/* Function fb_normal_vertical_positioning().
- * Performs the normal vertical positioning as described in the Wiki. 
- */
-
-void fb_normal_vertical_positioning( void )
-{
-    uint32_t    device_pages;
-    int         i;
-
-    if( current_state.y_address != desired_state.y_address ) {
-        /* Detect and process device pages. */
-
-        device_pages = desired_state.y_address / bin_device->page_depth;
-
-        /* device_pages contains the number of :NEWPAGE blocks needed. */
-
-        for( i=0; i < device_pages; i++ ) \
-
-            /* Interpret the DOCUMENT_PAGE :PAUSE block. */
-
-            if( bin_device->pauses.devpage_pause != NULL ) \
-                                df_interpret_device_functions( \
-                                    bin_device->pauses.devpage_pause->text );
-
-            /* Interpret the :NEWPAGE block. */
-
-            df_interpret_driver_functions( bin_driver->newpage.text );
-
-        /* Set up the values returned by %x_address() and y_address(). */
-
-        x_address = 0;
-        y_address = desired_state.y_address % bin_device->page_depth;
-
-        /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
-
-        if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
     }
 
     return;

@@ -37,10 +37,8 @@
 *                   df_setup()
 *                   df_teardown()
 *                   fb_enterfont()
-*                   fb_firstword()
 *                   fb_init()
 *                   fb_lineproc_endvalue()
-*                   fb_normal_vertical_positioning()
 *                   fb_thickness()
 *
 ****************************************************************************/
@@ -85,10 +83,8 @@ extern void df_set_vertical( uint32_t v_start );
 extern void df_setup( void );
 extern void df_teardown( void );
 extern void fb_enterfont( void );
-extern void fb_firstword( line_proc * in_block );
 extern void fb_init( init_block * in_block );
 extern void fb_lineproc_endvalue( void );
-extern void fb_normal_vertical_positioning( void );
 extern void fb_thickness( uint8_t * in_function, uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len, uint32_t thickness, char * name );
 
 #ifdef  __cplusplus

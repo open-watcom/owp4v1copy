@@ -1138,9 +1138,9 @@ extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
 }
 
 /* Function fb_position().
- * Sets the print head position, in the sense of setting the fields of
- * desired_state, x_address, and y_address. In some cases, takes additional
- * actions. This function is extremely specialized.
+ * Initializes the print head position by calling two helper functions, which
+ * allows them to use the internals of the interpreter module. This function
+ * is extremely specialized.
  *
  * Parameters:
  *      h_start contains the horizontal position.
@@ -1153,45 +1153,16 @@ extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
  *      The initial vertical positioning should only be done the first time:
  *          v_start should have the same value on the second invocation as it
  *          did on the first.
- *      The :LINEPROC block :ENDVALUE block should only be interpreted the
- *          second time; the first time through, it will appear as part of the
- *          initial horizontal positioning.
+ *      The initial horizontal positioning will behave slightly differently
+ *          the first and second time this function is called.
+ *      The internal state is updated without regard to whether any function
+ *          blocks, or which function blocks, are interpreted.
  */
 
 extern void fb_position( uint32_t h_start, uint32_t v_start )
 {
-    bool    fontstyle = false;
-
-    /* First do the normal vertical positioning. */
-
     df_set_vertical( v_start );
-    fb_normal_vertical_positioning();
-
-    /* Determine whether a :FONTSTYLE block for pass 1 for font 0 exists. */
-
-    if( wgml_fonts[0].font_style != NULL ) {
-        if( wgml_fonts[0].font_style->lineprocs !=NULL ) {
-            fontstyle = true;
-        }
-    }
-
-    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
-
-    fb_lineproc_endvalue();
-
-    /* The :FONTSTYLE block can only be used if it exists.
-     * df_set_horizontal() is always needed.
-     */
-
     df_set_horizontal( h_start );
-
-    if( fontstyle ) {
-        if( wgml_fonts[0].font_style->lineprocs[0].startvalue == NULL ) \
-            df_interpret_driver_functions( \
-                    wgml_fonts[0].font_style->lineprocs[0].startvalue->text );
-        fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
-    }
-
     return;
 }
 

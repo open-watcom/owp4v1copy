@@ -128,8 +128,8 @@ static void emulate_wgml( void )
             max_line_height = wgml_fonts[i].line_height;
     }
 
-    net_page_height = bin_device->y_start;
-    net_page_width = bin_device->x_start;
+    net_page_height = bin_device->page_depth;
+    net_page_width = bin_device->page_width;
 
     /* First pass processing. */
     /* START processing.*/
@@ -142,21 +142,28 @@ static void emulate_wgml( void )
 
     /* Last pass processing. */
 
-    /* Title Page. */
+    /* First page. */
 
     /* Margin/indent setup. */
 
     /* The default is 10 characters per inch. */
 
+    /* One-inch margin on line 1. */
+
     cur_h_start = 10 * max_char_width;
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = 16 * max_line_height;
+        cur_v_start = net_page_height - (1 * max_line_height);
     } else {
-        cur_v_start = net_page_height - (16 * max_line_height);
+        cur_v_start = 1 * max_line_height;
     }
+
     fb_position( cur_h_start, cur_v_start );
 
-    /* First page. */
+    /* One-half inch paragraph indent. */
+
+    cur_h_start = 15 * max_char_width;
+
+    fb_position( cur_h_start, cur_v_start );
 
     /* First box. */
 
