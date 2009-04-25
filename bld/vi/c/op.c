@@ -257,7 +257,7 @@ static vi_rc doPush( range *r, bool shove )
         rc = ERR_INVALID_LINE_RANGE;
     } else {
         rc = Shift( r->start.line, r->end.line, shove ? '>' : '<', TRUE );
-        if( rc <= 0 ) {
+        if( rc <= ERR_NO_ERR ) {
 #if 0
             GoToLineNoRelCurs( r->start.line );
 #endif

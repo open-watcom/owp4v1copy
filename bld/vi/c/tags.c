@@ -73,7 +73,7 @@ vi_rc TagHunt( char *str )
                 rc = GoToLineNoRelCurs( num );
             } else {
                 rc = FindTag( buff );
-                if( rc < 0 ) {
+                if( rc < ERR_NO_ERR ) {
                     strcpy( buff, str );
                     ColorFind( buff, 0 );
                     rc = ERR_TAG_NOT_FOUND;

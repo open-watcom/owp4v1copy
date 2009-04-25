@@ -248,7 +248,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
                 }
                 strcat( buff, "\"" );
                 rc = EditFile( buff, FALSE );
-                if( rc > 0 ) {
+                if( rc > ERR_NO_ERR ) {
                     Error( GetErrorMsg( rc ) );
                 }
             }
@@ -318,7 +318,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             rc = MenuCommand( LOWORD( wparam ) );
             if( rc != MENU_COMMAND_NOT_HANDLED ) {
                 DCUpdateAll();
-                if( rc > 0 ) {
+                if( rc > ERR_NO_ERR ) {
                     char        *msg;
                     msg = GetErrorMsg( rc );
                     Error( msg );

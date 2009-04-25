@@ -78,7 +78,7 @@ static bool doClose( info *i )
 
     BringUpFile( i, TRUE );
     rc = CurFileExitOptionSaveChanges();
-    if( rc > 0 || InfoHead == NULL ) {
+    if( rc > ERR_NO_ERR || InfoHead == NULL ) {
         return( TRUE );
     }
     return( FALSE );

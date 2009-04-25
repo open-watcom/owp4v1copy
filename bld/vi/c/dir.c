@@ -69,18 +69,19 @@ vi_rc ChangeDirectory( char *dir )
     vi_rc       rc;
     int         shift;
     char        *tmp;
+    int         i;
 
     shift = 0;
     if( dir[1] == ':' ) {
         rc = ChangeDrive( dir[0] );
-        if( rc || dir[2] == 0 ) {
+        if( rc != ERR_NO_ERR || dir[2] == 0 ) {
             return( rc );
         }
         shift = 2;
     }
     tmp = &(dir[shift]);
-    rc = chdir( tmp );
-    if( rc != 0 ) {
+    i = chdir( tmp );
+    if( i != 0 ) {
         return( ERR_DIRECTORY_OP_FAILED );
     }
     return( ERR_NO_ERR );

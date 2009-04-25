@@ -379,12 +379,15 @@ vi_rc RunCommandLine( char *cl )
 
     case PCL_T_EVAL:
         Expand( dataBuff, NULL );
-        rc = setjmp( jmpaddr );
-        if( rc == 0 ) {
+        i = setjmp( jmpaddr );
+        if( i != 0 ) {
+            rc = (vi_rc)i;
+        } else {
             StartExprParse( dataBuff, jmpaddr );
             val = GetConstExpr();
             ltoa( val, st, Radix );
             Message1( "%s", st );
+            rc = ERR_NO_ERR;
         }
         break;
 
@@ -427,7 +430,7 @@ vi_rc RunCommandLine( char *cl )
             if( EditFlags.SourceScriptActive ) {
                 LastError = rc;
             }
-            if( rc > 0 ) {
+            if( rc > ERR_NO_ERR ) {
                 Error( "%s on line %d of \"%s\"", GetErrorMsg( rc ), i, st );
             } else {
                 if( rc != DO_NOT_CLEAR_MESSAGE_WINDOW ) {
@@ -963,7 +966,7 @@ vi_rc RunCommandLine( char *cl )
             break;
         }
         rc = ProcessWindow( tkn, dataBuff );
-        if( rc >= 0 ) {
+        if( rc >= ERR_NO_ERR ) {
             break;
         }
         if( n1f && !n2f ) {
@@ -1249,7 +1252,7 @@ static vi_rc setWDimension( char *data )
     }
     i = setjmp( jmpaddr );
     if( i != 0 ) {
-        return( i );
+        return( (vi_rc)i );
     }
 
     if( NextWord1( data, token ) <= 0 ) {

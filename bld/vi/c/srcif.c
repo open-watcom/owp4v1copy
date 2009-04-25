@@ -42,20 +42,19 @@ vi_rc SrcIf( sfile **sf, vlist *vl )
 {
     char        v1[MAX_SRC_LINE];
     long        val;
-    vi_rc       rc;
+    int         i;
     jmp_buf     jmpaddr;
 
     strcpy( v1, (*sf)->arg1 );
     if( (*sf)->hasvar ) {
         Expand( v1, vl );
     }
-    rc = setjmp( jmpaddr );
-    if( rc == 0 ) {
-        StartExprParse( v1, jmpaddr );
-        val = GetConstExpr();
-    } else {
-        return( rc );
+    i = setjmp( jmpaddr );
+    if( i != 0 ) {
+        return( (vi_rc)i );
     }
+    StartExprParse( v1, jmpaddr );
+    val = GetConstExpr();
     (*sf)->u.branchres = (val != 0);
     return( ERR_NO_ERR );
 

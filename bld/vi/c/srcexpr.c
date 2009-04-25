@@ -42,7 +42,7 @@ vi_rc SrcExpr( sfile *sf, vlist *vl )
 {
     char        tmp[MAX_SRC_LINE], v1[MAX_SRC_LINE];
     long        val, oval;
-    vi_rc       rc;
+    int         i;
     jmp_buf     jmpaddr;
     vars        *v;
 
@@ -54,13 +54,12 @@ vi_rc SrcExpr( sfile *sf, vlist *vl )
     if( sf->hasvar ) {
         Expand( v1, vl  );
     }
-    rc = setjmp( jmpaddr );
-    if( rc == 0 ) {
-        StartExprParse( v1, jmpaddr );
-        val = GetConstExpr();
-    } else {
-        return( rc );
+    i = setjmp( jmpaddr );
+    if( i != 0 ) {
+        return( (vi_rc)i );
     }
+    StartExprParse( v1, jmpaddr );
+    val = GetConstExpr();
 
     if( sf->u.oper != EXPR_EQ ) {
         v = VarFind( tmp, vl );

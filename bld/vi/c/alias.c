@@ -157,7 +157,7 @@ vi_rc Abbrev( char *what )
     vi_rc   rc;
 
     rc = setGenericAlias( what, &abHead, &abTail );
-    if( rc > 0 ) {
+    if( rc > ERR_NO_ERR ) {
         return( ERR_INVALID_ABBREV );
     }
     return( rc );

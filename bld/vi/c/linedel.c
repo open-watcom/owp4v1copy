@@ -177,7 +177,7 @@ vi_rc DeleteLineRange( linenum s, linenum e, linedel_flags flags )
     } else {
         UpdateLineNumbers( diff, efcb );
         rc = CMergeFcbs( sfcb,efcb );
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             return( rc );
         }
     }

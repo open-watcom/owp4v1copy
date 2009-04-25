@@ -87,7 +87,7 @@ vi_rc EnterExMode( void )
         if( !EditFlags.ExMode ) {
             break;
         }
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             Error( GetErrorMsg( rc ) );
         }
         ScreenPage( -1 );

@@ -90,7 +90,7 @@ vi_rc DoDotMode( void )
                 break;
             }
             rc = DoLastEvent();
-            if( rc > 0 || LastError ) {
+            if( rc > ERR_NO_ERR || LastError != ERR_NO_ERR ) {
                 break;
             }
             DoneLastEvent( rc, TRUE );
@@ -147,7 +147,7 @@ vi_rc DoAltDotMode( void )
                 break;
             }
             rc = DoLastEvent();
-            if( rc > 0 || LastError ) {
+            if( rc > ERR_NO_ERR || LastError != ERR_NO_ERR ) {
                 break;
             }
             DoneLastEvent( rc, FALSE );

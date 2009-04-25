@@ -432,7 +432,7 @@ bool ExitWithPrompt( bool do_quit )
     }
     BringUpFile( InfoHead, TRUE );
     for( i = 0; i < num; i++ ){
-        if( NextFile() > 0 ) {
+        if( NextFile() > ERR_NO_ERR ) {
             // file modified ask
             rc = FileExitOptionSaveChanges( CurrentFile );
             if( rc == TRUE ) {
@@ -724,7 +724,7 @@ vi_rc ModificationTest( void )
  */
 vi_rc CurFileExitOptionSaveChanges( void )
 {
-    if( NextFile() > 0 ) {
+    if( NextFile() > ERR_NO_ERR ) {
         FileExitOptionSaveChanges( CurrentFile );
     }
     return( ERR_NO_ERR );

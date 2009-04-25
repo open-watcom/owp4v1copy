@@ -244,7 +244,7 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
         ProcessingMessage( CurrentPos.line );
 
         rc = RunCommandLine( cmd );
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             break;
         }
 
@@ -253,7 +253,7 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
     /*
      * we have an error, so fix up fcbs
      */
-    if( rc > 0 ) {
+    if( rc > ERR_NO_ERR ) {
 
         cfcb = CurrentFile->fcb_head;
         while( cfcb != NULL ) {

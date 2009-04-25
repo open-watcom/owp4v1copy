@@ -186,7 +186,7 @@ vi_rc Source( char *fn, char *data, int *ln )
             if( rc == NOT_COMPILEABLE_TOKEN ) {
                 rc = ProcessWindow( cTokenID, tmp );
             }
-            if( rc < 0 ) {
+            if( rc < ERR_NO_ERR ) {
                 rc = ERR_NO_ERR;
             }
 

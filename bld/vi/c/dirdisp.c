@@ -430,7 +430,7 @@ vi_rc StartFileComplete( char *data, int start, int max, int what )
 
     isDone = FALSE;
     rc = doFileComplete( data, start, max, TRUE, what );
-    if( rc > 0 || rc == FILE_COMPLETE ) {
+    if( rc > ERR_NO_ERR || rc == FILE_COMPLETE ) {
         return( rc );
     }
 
@@ -470,7 +470,7 @@ vi_rc ContinueFileComplete( char *data, int start, int max, int what )
     vi_rc   rc;
 
     rc = doFileComplete( data, start, max, FALSE, what );
-    if( rc > 0 || rc == FILE_COMPLETE ) {
+    if( rc > ERR_NO_ERR || rc == FILE_COMPLETE ) {
         return( rc );
     }
     displayFiles();

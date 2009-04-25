@@ -842,7 +842,7 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         data = DATA_FROM_ID( hwnd );
         SendMessage( EditContainer, WM_MDIRESTORE, (UINT)hwnd, 0L );
         BringUpFile( data->info, TRUE );
-        if( NextFile() > 0 ) {
+        if( NextFile() > ERR_NO_ERR ) {
             FileExitOptionSaveChanges( CurrentFile );
         }
         PopMode();

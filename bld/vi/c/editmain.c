@@ -413,17 +413,17 @@ void EditMain( void )
 
         rc = DoLastEvent();
 
-        if( EditFlags.ReadOnlyError && rc <= 0 ) {
+        if( EditFlags.ReadOnlyError && rc <= ERR_NO_ERR ) {
             EditFlags.ReadOnlyError = FALSE;
             rc = ERR_READ_ONLY_FILE_MODIFIED;
         }
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             msg = GetErrorMsg( rc );
         }
 
         DoneLastEvent( rc, FALSE );
 
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             Error( msg );
         }
 

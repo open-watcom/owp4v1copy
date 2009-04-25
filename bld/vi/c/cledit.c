@@ -475,13 +475,13 @@ vi_rc EditFileFromList( void )
                     break;
                 case VI_KEY( F2 ):
                     rc = NextFile();
-                    if( rc <= 0 ) {
+                    if( rc <= ERR_NO_ERR ) {
                         repeat = TRUE;
                     }
                     break;
                 case VI_KEY( F3 ):
                     rc = SaveAndExit( NULL );
-                    if( rc <= 0 ) {
+                    if( rc <= ERR_NO_ERR ) {
                         repeat = TRUE;
                     }
                     break;

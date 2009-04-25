@@ -178,7 +178,7 @@ vi_rc InsertLines( linenum s, fcb *fcbhead, fcb *fcbtail, undo_stack *us )
          */
         } else {
             rc = SplitFcbAtLine( s + 1, CurrentFile, sfcb );
-            if( rc > 0 ) {
+            if( rc > ERR_NO_ERR ) {
                 return( rc );
             }
             /*

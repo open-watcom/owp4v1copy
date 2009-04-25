@@ -760,22 +760,20 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
         case SET1_T_OVERSTRIKECURSORTYPE:
         case SET1_T_INSERTCURSORTYPE:
             i = setjmp( jmpaddr );
-            if( i == 0 ) {
-                StartExprParse( fn, jmpaddr );
-                ct.height = GetConstExpr();
-            } else {
-                return( i );
+            if( i != 0 ) {
+                return( (vi_rc)i );
             }
+            StartExprParse( fn, jmpaddr );
+            ct.height = GetConstExpr();
             if( NextWord1( value, fn ) <= 0 ) {
                 ct.width = 100;
             } else {
                 i = setjmp( jmpaddr );
-                if( i == 0 ) {
-                    StartExprParse( fn, jmpaddr );
-                    ct.width = GetConstExpr();
-                } else {
-                    return( i );
+                if( i != 0 ) {
+                    return( (vi_rc)i );
                 }
+                StartExprParse( fn, jmpaddr );
+                ct.width = GetConstExpr();
             }
             if( j == SET1_T_COMMANDCURSORTYPE ) {
                 NormalCursorType = ct;
@@ -794,14 +792,13 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
             break;
         default:
             i = setjmp( jmpaddr );
-            if( i == 0 ) {
-                StartExprParse( fn, jmpaddr );
-                i = GetConstExpr();
-                if( i < 0 ) {
-                    i = 0;
-                }
-            } else {
-                return( i );
+            if( i != 0 ) {
+                return( (vi_rc)i );
+            }
+            StartExprParse( fn, jmpaddr );
+            i = GetConstExpr();
+            if( i < 0 ) {
+                i = 0;
             }
             switch( j ) {
             case SET1_T_WRAPMARGIN:
@@ -978,7 +975,7 @@ static vi_rc processSetToken( int j, char *value, int *winflag, bool isnonbool )
         setMessage( fn, redisplay );
         rc = DO_NOT_CLEAR_MESSAGE_WINDOW;
     }
-    if( !rc && toggle ) {
+    if( rc == ERR_NO_ERR && toggle ) {
         strcpy( value, save );
     }
 
@@ -1155,7 +1152,7 @@ vi_rc Set( char *name )
             }
             i = TRUE;
             rc = processSetToken( j, name, &i, FALSE );
-            if( rc > 0 ) {
+            if( rc > ERR_NO_ERR ) {
                 break;
             }
             RemoveLeadingSpaces( name );

@@ -212,14 +212,12 @@ vi_rc SrcAssign( char *data, vlist *vl )
         strftime( tmp, sizeof( tmp ), v1, localtime( &tod ) );
         strcpy( v1, tmp );
     } else if( expflag || lnumflag ) {
-
         i = setjmp( jmpaddr );
-        if( i == 0 ) {
-            StartExprParse( v1, jmpaddr );
-            val = GetConstExpr();
-        } else {
-            return( i );
+        if( i != 0 ) {
+            return( (vi_rc)i );
         }
+        StartExprParse( v1, jmpaddr );
+        val = GetConstExpr();
         if( lnumflag ) {
             fcb         *cfcb;
             line        *cline;

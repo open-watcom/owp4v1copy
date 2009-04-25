@@ -503,7 +503,7 @@ static void doInitializeEditor( int argc, char *argv[] )
             rc = Source( cfgFN, parm, &ln );
         }
     }
-    if( rc > 0 ) {
+    if( rc > ERR_NO_ERR ) {
         Error( "%s on line %d of \"%s\"", GetErrorMsg( rc ), ln, cfgFN );
     }
     if( argc == 1 ) {

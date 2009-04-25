@@ -150,7 +150,7 @@ static vi_rc realUndo( undo_stack *stack, undo_stack *us )
                               cundo->data.fcbs.fcb_head,cundo->data.fcbs.fcb_tail, us );
             break;
         }
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             break;
         }
         cundo = cundo->next;

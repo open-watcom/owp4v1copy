@@ -110,17 +110,16 @@ static vi_rc srcHook( hooktype num, vi_rc lastrc )
      * check script type
      */
     v = GetHookVar( num );
-    if( num == SRC_HOOK_COMMAND && v != NULL ) {
-        VarAddGlobalStr( "Com", CommandBuffer );
-    }
-    if( num == SRC_HOOK_MODIFIED && v != NULL ) {
-        lastrc = LastEvent;
-    }
-
     /*
      * run script, if we have one
      */
     if( v != NULL ) {
+        if( num == SRC_HOOK_COMMAND ) {
+            VarAddGlobalStr( "Com", CommandBuffer );
+        }
+//        if( num == SRC_HOOK_MODIFIED ) {
+//            lastrc = LastEvent;
+//        }
 
         /*
          * set up for and run script

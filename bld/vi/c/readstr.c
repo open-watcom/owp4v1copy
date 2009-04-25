@@ -568,7 +568,7 @@ static bool fileComplete( input_buffer *input, vi_key first_event )
         old_len = strlen( input->buffer ) - 1;
         rc = StartFileComplete( input->buffer, old_len,
                                  input->buffer_length, first_event );
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             MyBeep();
         } else {
             if( rc != FILE_COMPLETE ) {

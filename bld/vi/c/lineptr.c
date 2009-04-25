@@ -117,7 +117,7 @@ vi_rc GimmeNextLinePtr( file *cfile, fcb **cfcb, line **cline )
     if( cfile->bytes_pending ) {
         ofcb = cfile->fcb_tail;
         rc = ReadFcbData( cfile );
-        if( rc > 0 ) {
+        if( rc > ERR_NO_ERR ) {
             return( rc );
         }
         *cfcb = cfile->fcb_tail;

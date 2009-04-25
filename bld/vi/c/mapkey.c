@@ -225,7 +225,7 @@ static vi_rc doRunKeyMap( key_map *scr, long total )
         for( CurrentKeyMapCount = 0; CurrentKeyMapCount < max; ) {
             LastEvent = GetNextEvent( FALSE );
             rc = DoLastEvent();
-            if( rc > 0 || LastError ) {
+            if( rc > ERR_NO_ERR || LastError != ERR_NO_ERR ) {
                 break;
             }
             DoneLastEvent( rc, TRUE );
@@ -234,7 +234,7 @@ static vi_rc doRunKeyMap( key_map *scr, long total )
         EditFlags.KeyMapMode = FALSE;
         EditFlags.NoInputWindow = FALSE;
         EditFlags.KeyMapInProgress = FALSE;
-        if( rc > 0 || LastError ) {
+        if( rc > ERR_NO_ERR || LastError != ERR_NO_ERR ) {
             break;
         }
         total--;

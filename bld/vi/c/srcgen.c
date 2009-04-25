@@ -39,11 +39,11 @@
 static sfile    *tmpTail;
 static bool     freeSrcData, hasVar;
 static labels   *cLab;
-static jmp_buf  GenExit;
+static jmp_buf  genExit;
 
 void AbortGen( vi_rc rc )
 {
-    longjmp( GenExit, (int)rc );
+    longjmp( genExit, (int)rc );
 }
 
 /*
@@ -245,10 +245,10 @@ vi_rc PreProcess( char *fn, sfile **sf, labels *lab )
     /*
      * set up error handler
      */
-    i = setjmp( GenExit );
+    i = setjmp( genExit );
     if( i != 0 ) {
         SpecialFclose( &gf );
-        return( i );
+        return( (vi_rc)i );
     }
 
     /*

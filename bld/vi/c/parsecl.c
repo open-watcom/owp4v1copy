@@ -109,7 +109,7 @@ vi_rc ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *
      */
     } else {
         rc = GetAddress( buff, &l );
-        if( rc > 0 || rc == DO_NOT_CLEAR_MESSAGE_WINDOW ) {
+        if( rc > ERR_NO_ERR || rc == DO_NOT_CLEAR_MESSAGE_WINDOW ) {
             return( rc );
         }
         if( rc == ERR_NO_ERR ) {
@@ -120,7 +120,7 @@ vi_rc ParseCommandLine( char *buff, linenum *n1, int *n1flag, linenum *n2, int *
                 EliminateFirstN( buff, 1 );
                 RemoveLeadingSpaces( buff );
                 rc = GetAddress( buff, &l );
-                if( rc > 0 ) {
+                if( rc > ERR_NO_ERR ) {
                     return( rc );
                 }
                 if( rc != ERR_NO_ERR ) {
