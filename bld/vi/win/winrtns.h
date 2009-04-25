@@ -78,8 +78,8 @@ void        NewToolBar( RECT * );
 void        DestroyToolBar( void );
 void        CloseToolBar( void );
 BOOL        AddIconToToolBar( char * );
-int         AddBitmapToToolBar( char * );
-int         DeleteFromToolBar( char * );
+vi_rc       AddBitmapToToolBar( char * );
+vi_rc       DeleteFromToolBar( char * );
 UINT        NextMenuId( void );
 vi_rc       HandleToolCommand( UINT );
 void        Draw3DBox( window_id, RECT *, RECT * );
@@ -94,16 +94,16 @@ void        FiniProfile( void );
 void        StatusDisplay( char * );
 
 // Cursor.c
-void    GoodbyeCursor( HWND );
+void        GoodbyeCursor( HWND );
 
 // Tab_hell.c
-int     CursorPositionOffRight( int vc );
+bool        CursorPositionOffRight( int vc );
 
 // Snoop.c
-bool    GetSnoopStringDialog( fancy_find **ff );
+bool        GetSnoopStringDialog( fancy_find **ff );
 
 // Find.c
-bool    GetFindStringDialog( fancy_find *ff );
+bool        GetFindStringDialog( fancy_find *ff );
 
 bool    GetReplaceStringDialog( fancy_find *ff );
 void    EditSubClass( HWND hwnd, int id, history_data *h );

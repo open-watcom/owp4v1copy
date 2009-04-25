@@ -169,7 +169,7 @@ int PickATag( int clist, char **list, char *tagname )
 /*
  * selectTag - select a tag from a list of possible tags
  */
-static int selectTag( FILE *f, char *str, char *buff, char *fname )
+static vi_rc selectTag( FILE *f, char *str, char *buff, char *fname )
 {
     int         tagcnt;
     char        **taglist;

@@ -117,7 +117,7 @@ void ScreenPage( int page )
 /*
  * ChangeDrive - change the working drive
  */
-int ChangeDrive( int drive )
+vi_rc ChangeDrive( int drive )
 {
     drive = drive;
     return( ERR_NO_ERR );

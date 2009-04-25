@@ -67,7 +67,7 @@ void GetFileInfo( direct_ent *tmp, struct dirent *nd, char *path )
 /*
  * MyGetFileSize - do just that
  */
-int MyGetFileSize( char *inname, long *size )
+vi_rc MyGetFileSize( char *inname, long *size )
 {
     struct stat sb;
 
@@ -82,7 +82,7 @@ int MyGetFileSize( char *inname, long *size )
 /*
  * IsDirectory - check if a specified path is a directory
  */
-int IsDirectory( char *name )
+bool IsDirectory( char *name )
 {
     struct stat sb;
 

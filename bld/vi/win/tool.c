@@ -364,7 +364,7 @@ void NewToolBar( RECT *rect )
 /*
  * AddBitmapToToolBar - add a toolbar item ([temp], bitmap, help & command)
  */
-int AddBitmapToToolBar( char *data )
+vi_rc AddBitmapToToolBar( char *data )
 {
     char                file[FILENAME_MAX];
     char                help[MAX_STR];
@@ -423,7 +423,7 @@ int AddBitmapToToolBar( char *data )
 /*
  * DeleteFromToolBar - delete an item from the toolbar
  */
-int DeleteFromToolBar( char *data )
+vi_rc DeleteFromToolBar( char *data )
 {
     char    buffer[MAX_STR];
     int     index;

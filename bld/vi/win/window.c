@@ -310,7 +310,7 @@ void MoveWindowToFrontDammit( window_id id )
     MoveWindowToFront( id );
 }
 
-int MaximizeCurrentWindow( void )
+vi_rc MaximizeCurrentWindow( void )
 {
     if( !BAD_ID( CurrentWindow ) ) {
         SendMessage( EditContainer, WM_MDIMAXIMIZE, (UINT)CurrentWindow, 0L );
@@ -318,7 +318,7 @@ int MaximizeCurrentWindow( void )
     return( ERR_NO_ERR );
 }
 
-int MinimizeCurrentWindow( void )
+vi_rc MinimizeCurrentWindow( void )
 {
     if( !BAD_ID( CurrentWindow ) ) {
         SendMessage( CurrentWindow, WM_SYSCOMMAND, SC_MINIMIZE, 0L );

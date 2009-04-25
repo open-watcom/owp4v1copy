@@ -355,7 +355,7 @@ int RealCursorPosition( int vc )
 /*
  * CursorPositionOffRight - determine if cursor is beyond the end of text
  */
-int CursorPositionOffRight( int vc )
+bool CursorPositionOffRight( int vc )
 {
     int         cl, j, pos = 0;
     char        *buff;
@@ -431,7 +431,7 @@ int RealLineLen( char *buff )
 /*
  * AddLeadingTabSpace - make leading spaces tabs (if possible)
  */
-int AddLeadingTabSpace( short *len, char *buff, int amount )
+bool AddLeadingTabSpace( short *len, char *buff, int amount )
 {
     char        *tmp;
     int         start = 0, i = 0;
@@ -485,7 +485,7 @@ int AddLeadingTabSpace( short *len, char *buff, int amount )
     memcpy( buff, tmp, k );
     StaticFree( tmp );
     *len = k - 1;
-    return( (int) full );
+    return( full );
 
 } /* AddLeadingTabSpace */
 

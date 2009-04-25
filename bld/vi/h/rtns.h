@@ -788,7 +788,7 @@ int     RealCursorPositionOnLine( linenum, int );
 int     WinRealCursorPosition( char *, int );
 int     WinVirtualCursorPosition( char *, int );
 int     RealLineLen( char * );
-int     AddLeadingTabSpace( short *, char *, int );
+bool    AddLeadingTabSpace( short *, char *, int );
 bool    ConvertSpacesToTabsUpToColumn( int, char *, int, char *, int );
 
 /* tags.c */

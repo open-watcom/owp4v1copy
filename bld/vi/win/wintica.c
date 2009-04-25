@@ -36,7 +36,7 @@
 /*
  * WindowTile - tile all edit windows
  */
-int WindowTile( int maxx, int maxy )
+vi_rc WindowTile( int maxx, int maxy )
 {
     RECT        rect;
     info        *cinfo;
@@ -74,7 +74,7 @@ int WindowTile( int maxx, int maxy )
 /*
  * WindowCascade - cascade all edit windows
  */
-int WindowCascade( int x, int y )
+vi_rc WindowCascade( int x, int y )
 {
     x = x;
     y = y;

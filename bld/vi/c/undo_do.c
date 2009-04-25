@@ -38,7 +38,7 @@ static char     uusName[] = "undo-undo stack";
 /*
  * validateUndo - make sure an undo has the correct number of open/closes
  */
-static int validateUndo( undo *cundo )
+static vi_rc validateUndo( undo *cundo )
 {
     bool        done = FALSE;
     int         depth = 0;

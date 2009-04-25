@@ -423,8 +423,9 @@ bool QueryFile( const char *filename )
 bool ExitWithPrompt( bool do_quit )
 {
     info        *cinfo;
-    int         rc, i;
+    int         i;
     int         num = 0;
+    bool        rc;
 
     for( cinfo = InfoHead; cinfo != NULL; cinfo = cinfo->next ) {
         num++;

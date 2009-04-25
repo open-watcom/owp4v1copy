@@ -74,7 +74,9 @@ vi_rc Shift( linenum s, linenum e, char dir, bool msgflag )
         if( dir != '>' ) {
             shv *= -1;
         }
-        fullcnt += AddLeadingTabSpace( &WorkLine->len, WorkLine->data, shv );
+        if( AddLeadingTabSpace( &WorkLine->len, WorkLine->data, shv ) ) {
+            ++fullcnt;
+        }
         ReplaceCurrentLine();
 
         if( CurrentPos.line != e ) {
