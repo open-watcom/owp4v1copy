@@ -464,13 +464,15 @@ bool KeyboardHit( void )
 vi_key GetKeyboard( int *scan )
 {
     unsigned short  key;
+    int             scancode;
 
     key = _BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
-    if( scan != NULL ) {
-        *scan = key >> 8;
-    }
+    scancode = key >> 8;
     key &= 0xff;
-    if( key == 0xe0 ) {
+    if( scan != NULL ) {
+        *scan = scancode;
+    }
+    if( key == 0xe0 && scancode != 0 ) {
         return( 0 );
     }
     return( key );

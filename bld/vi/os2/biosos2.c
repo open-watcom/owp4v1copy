@@ -154,17 +154,15 @@ void BIOSNewCursor( char ch, char notused )
 extern vi_key BIOSGetKeyboard( int *scan )
 {
     KBDKEYINFO      info;
-    vi_key          key;
 
     KbdCharIn( &info, 0, 0 );
-    key = info.chChar;
     if( scan != NULL ) {
         *scan = info.chScan;
     }
-    if( key == 0xe0 ) {
+    if( info.chChar == 0xe0 && info.chScan != 0 ) {
         return( 0 );
     }
-    return( key );
+    return( info.chChar );
 
 } /* BIOSGetKeyboard */
 
