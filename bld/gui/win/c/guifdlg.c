@@ -263,7 +263,7 @@ int GUIGetFileName( gui_window *wnd, open_file_name *ofn )
     unsigned            drives;
     char                initial_path[_MAX_PATH];
     char                old_path[_MAX_PATH];
-    char                fname[_MAX_FNAME + _MAX_EXT ];
+    char                fname[_MAX_FNAME + _MAX_EXT];
     char                *cwd;
 
     old_path[0] = '\0';

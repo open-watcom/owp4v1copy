@@ -78,7 +78,7 @@ extern  int     StatusWndInit( HINSTANCE hinstance, statushook hook, int extra, 
 extern  void    StatusWndChangeSysColors( COLORREF btnFace, COLORREF btnText, COLORREF btnHighlight, COLORREF btnShadow );
 extern  HWND    StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, LPVOID lpvParam );
 extern  void    StatusWndDraw3DBox( HDC hdc );
-extern  void    StatusWndDrawLine( HDC hdc, HFONT hfont, char *str, UINT flags );
+extern  void    StatusWndDrawLine( HDC hdc, HFONT hfont, const char *str, UINT flags );
 extern  void    StatusWndSetSeparators( int num_items, status_block_desc *list );
 extern  void    StatusWndFini( void );
 

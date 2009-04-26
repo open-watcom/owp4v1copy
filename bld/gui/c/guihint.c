@@ -84,7 +84,7 @@ static bool GetStructNum( hintinfo *hint, hint_type type,
     }
 }
 
-static bool HintText( hintinfo *hint, int id, hint_type type, char **text, bool set )
+static bool HintTextSet( hintinfo *hint, int id, hint_type type, const char *text )
 {
     int                 i;
     gui_hint_struct     *hint_struct;
@@ -93,16 +93,28 @@ static bool HintText( hintinfo *hint, int id, hint_type type, char **text, bool 
     if( GetStructNum( hint, type, &hint_struct, &num ) ) {
         for( i = 0; i < num; i++ ) {
             if( hint_struct[i].id == id ) {
-                if( set ) {
-                    hint_struct[i].hinttext = *text;
-                } else {
-                    *text = hint_struct[i].hinttext;
-                }
+                hint_struct[i].hinttext = text;
                 return( TRUE );
             }
         }
     }
     return( FALSE );
+}
+
+static const char *HintTextGet( hintinfo *hint, int id, hint_type type )
+{
+    int                 i;
+    gui_hint_struct     *hint_struct;
+    int                 num;
+
+    if( GetStructNum( hint, type, &hint_struct, &num ) ) {
+        for( i = 0; i < num; i++ ) {
+            if( hint_struct[i].id == id ) {
+                return( hint_struct[i].hinttext );
+            }
+        }
+    }
+    return( NULL );
 }
 
 bool GUIHasHintType( gui_window *wnd, hint_type type )
@@ -119,17 +131,16 @@ bool GUIHasHintType( gui_window *wnd, hint_type type )
 bool GUIDisplayHintText( gui_window *wnd_with_status, gui_window *wnd,
                          int id, hint_type type, gui_menu_styles style )
 {
-    char        *text;
+    const char      *text;
 
     if( GUIHasStatus( wnd_with_status ) && GUIHasHintType( wnd, type ) ) {
         if( ( style & GUI_IGNORE ) || ( style & GUI_SEPARATOR ) ) {
             GUIClearStatusText( wnd_with_status );
         } else {
-            if( HintText( &wnd->hint, id, type, &text, FALSE ) ) {
-                if( text != NULL ) {
-                    GUIDrawStatusText( wnd_with_status, text );
-                    return( TRUE );
-                }
+            text = HintTextGet( &wnd->hint, id, type );
+            if( text != NULL ) {
+                GUIDrawStatusText( wnd_with_status, text );
+                return( TRUE );
             }
             GUIClearStatusText( wnd_with_status );
             return( TRUE );
@@ -139,16 +150,14 @@ bool GUIDisplayHintText( gui_window *wnd_with_status, gui_window *wnd,
     return( FALSE );
 }
 
-bool GUISetHintText( gui_window *wnd, int id, char *text )
+bool GUISetHintText( gui_window *wnd, int id, const char *text )
 {
-    return( HintText( &wnd->hint, id, MENU_HINT, &text, TRUE ) );
+    return( HintTextSet( &wnd->hint, id, MENU_HINT, text ) );
 }
 
 bool GUIHasHintText( gui_window *wnd, int id, hint_type type )
 {
-    char *text;
-
-    return( HintText( &wnd->hint, id, type, &text, FALSE ) );
+    return( HintTextGet( &wnd->hint, id, type ) != NULL );
 }
 
 bool GUIDeleteHintText( gui_window *wnd, int id )

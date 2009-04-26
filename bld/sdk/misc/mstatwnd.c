@@ -417,8 +417,8 @@ void outputText( statwnd *sw, HDC hdc, char *buff, RECT *r,
     int         ext;
     int         width;
 
-    if( sw->sectionData[ curr_block ] != NULL ) {
-        if( !strcmp( buff, sw->sectionData[ curr_block ] ) ) {
+    if( sw->sectionData[curr_block] != NULL ) {
+        if( !strcmp( buff, sw->sectionData[curr_block] ) ) {
             return;
         }
     }
@@ -427,10 +427,10 @@ void outputText( statwnd *sw, HDC hdc, char *buff, RECT *r,
     if( len == 0 ) {
         return;
     }
-    MemFree( sw->sectionData[ curr_block ] );
-    sw->sectionData[ curr_block ] = MemAlloc( len+1 );
-    memcpy( sw->sectionData[ curr_block ], buff, len+1 );
-    sw->sectionDataFlags[ curr_block ] = flags;
+    MemFree( sw->sectionData[curr_block] );
+    sw->sectionData[curr_block] = MemAlloc( len+1 );
+    memcpy( sw->sectionData[curr_block], buff, len+1 );
+    sw->sectionDataFlags[curr_block] = flags;
 
 #ifndef __NT__
     ext = LOWORD( GetTextExtent( hdc, buff, len ) );
@@ -476,7 +476,7 @@ void outputText( statwnd *sw, HDC hdc, char *buff, RECT *r,
  * StatusWndDrawLine - draws a line in the status bar
  */
 void StatusWndDrawLine( statwnd *sw, HDC hdc, HFONT hfont,
-                        char *str, UINT flags )
+                        const char *str, UINT flags )
 {
     RECT        rect;
     char        buff[256];
@@ -491,7 +491,7 @@ void StatusWndDrawLine( statwnd *sw, HDC hdc, HFONT hfont,
         initHDC( sw, hdc );
         getRect( sw, &rect, curr_block );
         makeInsideRect( &rect );
-        bptr = str;
+        bptr = (char *)str;
         if( flags == (UINT) -1  ) {
             flags = DT_VCENTER | DT_LEFT;
             bptr = buff;
@@ -533,7 +533,7 @@ void StatusWndDrawLine( statwnd *sw, HDC hdc, HFONT hfont,
         finiHDC( hdc );
 #ifdef __NT__
     } else {
-        bptr = str;
+        bptr = (char *)str;
         if( flags == (UINT)-1 ) {
             bptr = buff;
             while( *str ) {

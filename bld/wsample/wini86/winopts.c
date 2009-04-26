@@ -115,8 +115,8 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
     FARPROC     farproc;
     HWND        tmpw;
     int         len;
-    char        data[ _MAX_PATH ];
-    char        tmp[ 80 + _MAX_PATH ];
+    char        data[_MAX_PATH];
+    char        tmp[80 + _MAX_PATH];
     HINSTANCE   inst;
 
     switch( message ) {
@@ -138,10 +138,7 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
         case MSG_GETFILES:
             data[0] = 0;
             if( getFile( data ) ) {
-                len = GetWindowTextLength( editChild ) + 1;
-                if( len > sizeof( tmp ) )
-                    len = sizeof( tmp );
-                GetWindowText( editChild, tmp, len );
+                GetWindowText( editChild, tmp, sizeof( tmp ) );
                 strcat( tmp, data );
                 SetWindowText( editChild, tmp );
             }

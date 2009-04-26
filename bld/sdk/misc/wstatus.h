@@ -73,7 +73,7 @@ typedef struct {
 extern  int     StatusWndInit( WPI_INST hab, statushook hook, int extra );
 extern  HWND    StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hab, LPVOID lpvParam );
 extern  void    StatusWndDraw3DBox( WPI_PRES pres );
-extern  void    StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, char *str, UINT flags );
+extern  void    StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT flags );
 extern  void    StatusWndSetSeparators( int num_items, status_block_desc *list );
 extern  void    StatusWndFini( void );
 

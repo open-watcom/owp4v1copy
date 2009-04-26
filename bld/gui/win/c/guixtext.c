@@ -266,7 +266,7 @@ char *GUIGetText( gui_window *wnd, unsigned control )
 
 int GUIGetCurrSelect( gui_window *wnd, unsigned id )
 {
-    int               sel;
+    int             sel;
 
     sel = (int) GUIToComboList( wnd, id, LB_GETCURSEL, CB_GETCURSEL,
                                 (WPI_PARAM1)NULL, (WPI_PARAM2)NULL,

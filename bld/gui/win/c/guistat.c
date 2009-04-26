@@ -130,16 +130,16 @@ bool GUICreateStatusWindow( gui_window *wnd, gui_ord x, gui_ord height,
     return( TRUE );
 }
 
-bool GUIDrawStatusText( gui_window *wnd, char *text )
+bool GUIDrawStatusText( gui_window *wnd, const char *text )
 {
     WPI_PRES    pres;
-    char        *out_text;
+    const char  *out_text;
 
     if( !GUIHasStatus( wnd) ) {
         return( FALSE );
     }
     pres = _wpi_getpres( wnd->status );
-    if( ( text == NULL ) || ( *text == 0 ) ) {
+    if( ( text == NULL ) || ( *text == '\0' ) ) {
         out_text = LIT( Blank );
     } else {
         out_text = text;
@@ -147,7 +147,7 @@ bool GUIDrawStatusText( gui_window *wnd, char *text )
     StatusWndDrawLine( pres, wnd->font, out_text,
                        DT_SINGLELINE | DT_VCENTER | DT_LEFT );
     _wpi_releasepres( wnd->status, pres );
-    if( ( text == NULL ) || ( *text == 0 ) ) {
+    if( ( text == NULL ) || ( *text == '\0' ) ) {
         GUIEVENTWND( wnd, GUI_STATUS_CLEARED, NULL );
     }
     return( TRUE );

@@ -220,7 +220,7 @@ static bool convert_alpha( WORD ch, gui_key *key )
     if( isalpha( ch ) ) {
         t = toupper(ch) - 'A';
         if( ALT ) {
-            *key = AltFunc[ t ];
+            *key = AltFunc[t];
         } else if( CTRL ) {
             *key = EV_CTRL( t );
         } else if ( SHIFT ) {

@@ -32,7 +32,7 @@
 #ifndef draw_pick
     extern char DrawingChars[];
     extern void GUIInitDrawingChars( bool dbcs );
-    #define DRAW( x ) DrawingChars[ DRAW_##x ]
+    #define DRAW( x ) DrawingChars[DRAW_##x]
     #define DRAW_ENUM
     /* SEE NOTE BELOW IF YOU CHANGE THE NEXT LINE */
     #define draw_pick( a,b,c,d,e ) DRAW_##a,

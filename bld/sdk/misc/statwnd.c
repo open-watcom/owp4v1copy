@@ -484,7 +484,7 @@ void outputText( HDC hdc, char *buff, RECT *r, UINT flags, int curr_block )
 /*
  * StatusWndDrawLine - draws a line in the status bar
  */
-void StatusWndDrawLine( HDC hdc, HFONT hfont, char *str, UINT flags )
+void StatusWndDrawLine( HDC hdc, HFONT hfont, const char *str, UINT flags )
 {
     RECT    rect;
     char    buff[256];
@@ -503,7 +503,7 @@ void StatusWndDrawLine( HDC hdc, HFONT hfont, char *str, UINT flags )
         initHDC( hdc );
         getRect( &rect, curr_block );
         makeInsideRect( &rect );
-        bptr = str;
+        bptr = (char *)str;
         if( flags == (UINT) -1  ) {
             flags = DT_VCENTER | DT_LEFT;
             bptr = buff;
@@ -545,7 +545,7 @@ void StatusWndDrawLine( HDC hdc, HFONT hfont, char *str, UINT flags )
         finiHDC( hdc );
 #ifdef __NT__
     } else {
-        bptr = str;
+        bptr = (char *)str;
         if( flags == (UINT)-1 ) {
             bptr = buff;
             while( *str ) {

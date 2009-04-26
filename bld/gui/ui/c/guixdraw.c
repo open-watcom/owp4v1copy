@@ -110,9 +110,9 @@ static unsigned char DrawIndex[] =
     DRAW_BLOCK,                 // GUI_DIAL_SCROLL_SLIDER
 };
 
-char DrawingChars[ DRAW_LAST ];
+char DrawingChars[DRAW_LAST];
 
-#define GET_CHAR( val, inact ) ( DrawingChars[ DrawIndex[val+ GUI_INACTIVE_OFFSET * inact] ] )
+#define GET_CHAR( val, inact ) ( DrawingChars[DrawIndex[val+ GUI_INACTIVE_OFFSET * inact]] )
 
 #define TOP( inact )            GET_CHAR( GUI_FRAME_TOP, inact )
 #define UL_CORNER( inact )      GET_CHAR( GUI_FRAME_UL_CORNER, inact )
@@ -169,7 +169,7 @@ void GUIInitDrawingChars( bool dbcs )
 int GUIGetCharacter( gui_draw_char draw_char )
 {
     if( draw_char < GUI_NUM_DRAW_CHARS ) {
-        return( (unsigned char)DrawingChars[ DrawIndex[ draw_char ] ] );
+        return( (unsigned char)DrawingChars[DrawIndex[draw_char]] );
     }
     return( 0 );
 }
@@ -349,7 +349,7 @@ static void DrawFrame( gui_window *wnd )
         }
         len = ( width - str_length - title_extra ) / 2;
         if( title_extra != 0 ) {
-            buff[ len ] = LT_MARK( inact );
+            buff[len] = LT_MARK( inact );
             len++;
         }
         if( len > 0 ) {
@@ -360,13 +360,13 @@ static void DrawFrame( gui_window *wnd )
         buff += len;
         len = 0;
         if( title_extra != 0 ) {
-            buff[ len ] = TITLE_SP( inact );
+            buff[len] = TITLE_SP( inact );
             len++;
         }
         memcpy( buff+len, wnd->screen.name, str_length );
         len += str_length;
         if( title_extra != 0 ) {
-            buff[ len ] = TITLE_SP( inact );
+            buff[len] = TITLE_SP( inact );
             len++;
         }
         if( len > 0 ) {
@@ -377,7 +377,7 @@ static void DrawFrame( gui_window *wnd )
         buff += len;
         len = 0;
         if( title_extra != 0 ) {
-            buff[ len ] = RT_MARK( inact );
+            buff[len] = RT_MARK( inact );
             len++;
         }
         if( width - indent > 0 ) {
@@ -448,7 +448,7 @@ void GUIWndRfrshArea( gui_window *wnd, SAREA *area )
                                     wnd->dirty.row;
             }
         }
-        uivfill( &wnd->screen, wnd->dirty, wnd->colours[ GUI_BACKGROUND ],
+        uivfill( &wnd->screen, wnd->dirty, wnd->colours[GUI_BACKGROUND],
                     wnd->background );
 
         if( GUI_WND_VISIBLE( wnd ) && !( wnd->flags & DONT_SEND_PAINT ) ) {

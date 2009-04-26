@@ -298,7 +298,7 @@ void GUIMakeRelative( gui_window *wnd, gui_coord *point, gui_point *pt )
  * GUIJustSetWindowText - set the title text of a window, don't redraw
  */
 
-bool GUIJustSetWindowText( gui_window *wnd, char *data )
+bool GUIJustSetWindowText( gui_window *wnd, const char *data )
 {
     char        *name;
 

@@ -744,7 +744,7 @@ extern bool GUIDrawBarGroup( gui_window *wnd, gui_ord row, gui_ord start,
 
 /* Text Functions */
 
-extern bool GUISetWindowText( gui_window * wnd, char * data );
+extern bool GUISetWindowText( gui_window * wnd, const char * data );
 extern int GUIGetWindowTextLength( gui_window *wnd );
 extern int GUIGetWindowText( gui_window *wnd, char *data, int max_length );
 extern gui_ord GUIGetRow( gui_window * wnd, gui_point *pos );
@@ -769,8 +769,8 @@ extern bool GUITrackFloatingPopup( gui_window *wnd, gui_point *location,
                                gui_mouse_track track, int *curr_item );
 extern bool GUIEnableMenuItem( gui_window *wnd, int id, bool enabled, bool floating );
 extern bool GUICheckMenuItem( gui_window *wnd, int id, bool check, bool floating );
-extern bool GUISetMenuText( gui_window *wnd, int id, char *text, bool floating );
-extern bool GUISetHintText( gui_window *wnd, int id, char *hinttext );
+extern bool GUISetMenuText( gui_window *wnd, int id, const char *text, bool floating );
+extern bool GUISetHintText( gui_window *wnd, int id, const char *hinttext );
 
 extern bool GUIEnableMDIMenus( bool enable );
 extern bool GUIEnableMenus( gui_window *wnd, bool enable ); // NYI
@@ -813,7 +813,7 @@ extern bool GUICreateStatusWindow( gui_window *wnd, gui_ord x, gui_ord height,
                                    gui_colour_set *colour );
 extern bool GUICloseStatusWindow( gui_window *wnd );
 extern bool GUIHasStatus( gui_window *wnd );
-extern bool GUIDrawStatusText( gui_window *wnd, char *text );
+extern bool GUIDrawStatusText( gui_window *wnd, const char *text );
 extern bool GUIClearStatusText( gui_window *wnd );
 extern bool GUIResizeStatusWindow( gui_window *wnd, gui_ord x, gui_ord height );
 

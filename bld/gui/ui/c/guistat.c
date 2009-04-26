@@ -121,7 +121,7 @@ void GUIDrawStatus( gui_window *wnd )
     }
 }
 
-bool GUIDrawStatusText( gui_window *wnd, char *text )
+bool GUIDrawStatusText( gui_window *wnd, const char *text )
 {
     bool        ret;
 

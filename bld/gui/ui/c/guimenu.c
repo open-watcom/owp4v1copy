@@ -70,7 +70,7 @@ static bool IsChecked( MENUITEM *menu )
  *                and if checked or not
  */
 
-static bool MenuConvert( char *text, unsigned short *flags, char **new,
+static bool MenuConvert( const char *text, unsigned short *flags, char **new,
                          bool checked )
 {
     char        *end;
@@ -300,7 +300,7 @@ bool GUIEnableMenuItem( gui_window *wnd, int id, bool enable, bool floating )
     return( TRUE );
 }
 
-bool GUISetMenuText( gui_window *wnd, int id, char *text, bool floating )
+bool GUISetMenuText( gui_window *wnd, int id, const char *text, bool floating )
 {
     MENUITEM    *menu;
     bool        vbar;

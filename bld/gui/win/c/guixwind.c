@@ -142,8 +142,8 @@ static void GUISetWindowClassName( void )
     if( !class_name || !*class_name ) {
         class_name = GUIDefaultClassName;
     }
-    strncpy( GUIClass, class_name, GUI_CLASSNAME_MAX-1 );
-    GUIClass[ GUI_CLASSNAME_MAX-1 ] = '\0';
+    strncpy( GUIClass, class_name, GUI_CLASSNAME_MAX - 1 );
+    GUIClass[GUI_CLASSNAME_MAX - 1] = '\0';
 }
 
 void GUIWantPartialRows( gui_window *wnd, bool want )

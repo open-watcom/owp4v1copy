@@ -82,10 +82,10 @@ static gui_colour_set Normal = { NORMAL_FORE, NORMAL_BACK };
 #define GETFG( attr ) ( (attr) & 0x0f )  /* low 4 bits */
 #define GETBG( attr ) ( (attr) >> 4 )    /* high 4 bits */
 
-#define MAKEATTR( fore, back ) ( _fg( Colours[ (fore) ] | \
-                                 _bg( Colours[ (back) ] ) ) )
-#define MAKEDLGATTR( attr ) MakeAttr( DialColours[ attr ].fore, \
-                                      DialColours[ attr ].back )
+#define MAKEATTR( fore, back ) ( _fg( Colours[(fore)] | \
+                                 _bg( Colours[(back)] ) ) )
+#define MAKEDLGATTR( attr ) MakeAttr( DialColours[attr].fore, \
+                                      DialColours[attr].back )
 
 static ATTR Colours[GUI_NUM_COLOURS] = {
     C_BLACK,            /* GUI_BLACK          */

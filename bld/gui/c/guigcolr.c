@@ -40,22 +40,22 @@ static bool ColourNamesInitialized = FALSE;
 
 static void InitColourNames( void )
 {
-    ColourNames[ 0 ] = LIT( Black );
-    ColourNames[ 1 ] = LIT( Blue );
-    ColourNames[ 2 ] = LIT( Green );
-    ColourNames[ 3 ] = LIT( Cyan );
-    ColourNames[ 4 ] = LIT( Red );
-    ColourNames[ 5 ] = LIT( Magenta );
-    ColourNames[ 6 ] = LIT( Brown );
-    ColourNames[ 7 ] = LIT( White );
-    ColourNames[ 8 ] = LIT( Grey );
-    ColourNames[ 9 ] = LIT( BrightBlue );
-    ColourNames[ 10 ] = LIT( BrightGreen );
-    ColourNames[ 11 ] = LIT( BrightCyan );
-    ColourNames[ 12 ] = LIT( BrightRed );
-    ColourNames[ 13 ] = LIT( BrightMagenta );
-    ColourNames[ 14 ] = LIT( BrightYellow );
-    ColourNames[ 15 ] = LIT( BrightWhite );
+    ColourNames[0] = LIT( Black );
+    ColourNames[1] = LIT( Blue );
+    ColourNames[2] = LIT( Green );
+    ColourNames[3] = LIT( Cyan );
+    ColourNames[4] = LIT( Red );
+    ColourNames[5] = LIT( Magenta );
+    ColourNames[6] = LIT( Brown );
+    ColourNames[7] = LIT( White );
+    ColourNames[8] = LIT( Grey );
+    ColourNames[9] = LIT( BrightBlue );
+    ColourNames[10] = LIT( BrightGreen );
+    ColourNames[11] = LIT( BrightCyan );
+    ColourNames[12] = LIT( BrightRed );
+    ColourNames[13] = LIT( BrightMagenta );
+    ColourNames[14] = LIT( BrightYellow );
+    ColourNames[15] = LIT( BrightWhite );
 }
 
 static gui_colour InitColour;

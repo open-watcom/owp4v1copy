@@ -166,15 +166,15 @@ static bool     ControlsInitialized = FALSE;
 
 static void InitDlgControls( void )
 {
-/*  0 */ dlgControls[ 0 ].text = LIT( File_Name_Colon );
-/*  1 */ dlgControls[ 1 ].text = LIT( Directories_Colon );
-/*  2 */ dlgControls[ 2 ].text = LIT( Empty );
-/*  3 */ dlgControls[ 3 ].text = LIT( Empty );
-/*  6 */ dlgControls[ 6 ].text = LIT( OK );
-/*  7 */ dlgControls[ 7 ].text = LIT( Cancel );
-/*  8 */ dlgControls[ 8 ].text = LIT( List_Files_of_Type_Colon );
+/*  0 */ dlgControls[0].text = LIT( File_Name_Colon );
+/*  1 */ dlgControls[1].text = LIT( Directories_Colon );
+/*  2 */ dlgControls[2].text = LIT( Empty );
+/*  3 */ dlgControls[3].text = LIT( Empty );
+/*  6 */ dlgControls[6].text = LIT( OK );
+/*  7 */ dlgControls[7].text = LIT( Cancel );
+/*  8 */ dlgControls[8].text = LIT( List_Files_of_Type_Colon );
 #if !defined( __UNIX__ ) && !defined( __NETWARE__ )
-/* 10 */ dlgControls[ 10 ].text = LIT( Drives_Colon );
+/* 10 */ dlgControls[10].text = LIT( Drives_Colon );
 #endif
 }
 
@@ -185,7 +185,7 @@ static void copyPart( char *buff, char *p, int len, int maxlen )
             len = maxlen;
         }
         memcpy( buff, p, len );
-        buff[ len ] = 0;
+        buff[len] = 0;
     }
 }
 
@@ -902,7 +902,7 @@ static process_rc processFileName( gui_window *gui )
         if( !rc ) {
             if( S_ISDIR( buf.st_mode ) ) {
                 goToDir( gui, txt );
-                if( !initDialog( gui, dlg->fileExtensions[ dlg->currExtIndex ], NULL ) ) {
+                if( !initDialog( gui, dlg->fileExtensions[dlg->currExtIndex], NULL ) ) {
                     return( PROCESS_FAIL );
                 }
                 return( PROCESS_FALSE );
@@ -928,7 +928,7 @@ static process_rc processFileName( gui_window *gui )
                 len = dlg->currOFN->max_base_file_name-1;
             }
             memcpy( dlg->currOFN->base_file_name, txt, len );
-            dlg->currOFN->base_file_name[ len ] = 0;
+            dlg->currOFN->base_file_name[len] = 0;
         }
         if( dlg->currOFN->file_name != NULL ) {
             getcwd( path, sizeof( path ) );
@@ -944,7 +944,7 @@ static process_rc processFileName( gui_window *gui )
                 len = dlg->currOFN->max_file_name-1;
             }
             memcpy( dlg->currOFN->file_name, path, len );
-            dlg->currOFN->file_name[ len ] = 0;
+            dlg->currOFN->file_name[len] = 0;
         }
         return( PROCESS_TRUE );
     }
@@ -1082,7 +1082,7 @@ extern bool GetFileNameEvent( gui_window *gui, gui_event gui_ev, void *param )
 #if !defined( __UNIX__ ) && !defined( __NETWARE__ )
         InitList( gui, CTL_DRIVES, DRIVE_LIST_INDEX );
 #endif
-        if( !initDialog( gui, dlg->fileExtensions[ dlg->currExtIndex ], dlg->currOFN->file_name ) ) {
+        if( !initDialog( gui, dlg->fileExtensions[dlg->currExtIndex], dlg->currOFN->file_name ) ) {
             dlg->dialogRC = OFN_RC_FAILED_TO_INITIALIZE;
             return( FALSE );
         }

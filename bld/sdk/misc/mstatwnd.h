@@ -98,7 +98,7 @@ extern  int      StatusWndCreate( statwnd *, HWND parent, RECT *size,
                                   HINSTANCE hinstance, LPVOID lpvParam );
 extern  void     StatusWndDraw3DBox( statwnd *, HDC hdc );
 extern  void     StatusWndDrawLine( statwnd *, HDC hdc, HFONT hfont,
-                                    char *str, UINT flags );
+                                    const char *str, UINT flags );
 extern  void     StatusWndSetSeparators( statwnd *, int num_items,
                                          status_block_desc *list );
 extern  void     StatusWndDestroy( statwnd * );

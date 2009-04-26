@@ -531,7 +531,7 @@ bool GUIEnableMenuItem( gui_window *wnd, int id, bool enable, bool floating )
  * GUISetMenuText -- change the text of a menu item
  */
 
-extern bool GUISetMenuText( gui_window *wnd, int id, char *text, bool floating )
+extern bool GUISetMenuText( gui_window *wnd, int id, const char *text, bool floating )
 {
     HMENU       hmenu, popup, parent;
     int         offset;

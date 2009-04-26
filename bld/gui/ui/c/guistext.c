@@ -39,7 +39,7 @@
  * GUISetWindowText - set the title text of a window
  */
 
-bool GUISetWindowText( gui_window *wnd, char *data )
+bool GUISetWindowText( gui_window *wnd, const char *data )
 {
     if( GUIJustSetWindowText( wnd, data ) ) {
         GUIRedrawTitle( wnd );
@@ -82,6 +82,6 @@ int GUIGetWindowText( gui_window *wnd, char *data, int max_length )
             length = max_length;
         strncpy( data, wnd->screen.name, length );
     }
-    data[ length ] = '\0';
-    return( length );
-}
+    data[length] = '\0';
+            return( length );
+        }

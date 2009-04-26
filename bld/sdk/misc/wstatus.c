@@ -618,7 +618,7 @@ void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags, int curr_bl
 /*
  * StatusWndDrawLine - draws a line in the status bar
  */
-void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, char *str, UINT flags )
+void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, const char *str, UINT flags )
 {
     WPI_RECT    rect;
     char        buff[256];
@@ -635,7 +635,7 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, char *str, UINT flags )
         }
         getRect( &rect, curr_block );
         makeInsideRect( &rect );
-        bptr = str;
+        bptr = (char *)str;
         if( flags == (UINT) -1  ) {
             flags = DT_VCENTER | DT_LEFT;
             bptr = buff;
@@ -677,7 +677,7 @@ void StatusWndDrawLine( WPI_PRES pres, WPI_FONT hfont, char *str, UINT flags )
         finiPRES( pres );
 #ifdef __NT__
     } else {
-        bptr = str;
+        bptr = (char *)str;
         if( flags == (UINT)-1 ) {
             bptr = buff;
             while( *str ) {

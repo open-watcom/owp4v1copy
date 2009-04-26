@@ -147,8 +147,8 @@ void ProcAppl( HWND windhandle, unsigned message, WORD worddata,
 {
     char    name[80];
     char    *err;
-    int     i;
-    char    buff[80];
+    int i;
+    char buff[80];
 
     switch( worddata ) {
         case SELECT_1:
@@ -160,7 +160,7 @@ void ProcAppl( HWND windhandle, unsigned message, WORD worddata,
                 GetWindowText( EditChild, name, sizeof( name ) );
                 if( RemoteLinkObtained)
                     RemoteUnLink();
-                err = RemoteLink( (char *) name, 1 );
+            err = RemoteLink( name, 1 );
                 if( err != NULL ) {
                     StartupErr( err );
                     RemoteLinkObtained = FALSE;
@@ -172,7 +172,6 @@ void ProcAppl( HWND windhandle, unsigned message, WORD worddata,
                 } /* if */
             } /* if */
             break;
-
     } /* switch */
 
 } /* ProcAppl */

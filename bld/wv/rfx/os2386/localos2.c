@@ -99,7 +99,7 @@ void LocalGetBuff( char *buff, unsigned size )
         buff[1] = '\0';
         return;
     }
-    buff[ length.cchIn ] = '\0';
+    buff[length.cchIn] = '\0';
 }
 
 unsigned LocalRename( char *from, char *to )
@@ -198,7 +198,7 @@ unsigned LocalGetCwd( int drive, char *where )
     ULONG len;
 
     len = 256;
-    return( StashErrCode( DosQueryCurrentDir( drive, where, &len ), OP_LOCAL ) );
+    return( StashErrCode( DosQueryCurrentDir( drive, (PBYTE)where, &len ), OP_LOCAL ) );
 }
 
 static void makeDOSDTA( struct _FILEFINDBUF3 *os2, trap_dta *dos )
