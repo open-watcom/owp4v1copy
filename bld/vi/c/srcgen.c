@@ -218,6 +218,7 @@ vi_rc PreProcess( char *fn, sfile **sf, labels *lab )
     char                tmp[MAX_SRC_LINE], tmp2[MAX_SRC_LINE];
     char                tmp3[MAX_SRC_LINE];
     vi_rc               rc;
+    bool                ret;
 
     /*
      * get source file
@@ -225,9 +226,9 @@ vi_rc PreProcess( char *fn, sfile **sf, labels *lab )
     if( EditFlags.CompileScript ) {
         EditFlags.OpeningFileToCompile = TRUE;
     }
-    i = SpecialOpen( fn, &gf );
+    ret = SpecialOpen( fn, &gf );
     EditFlags.OpeningFileToCompile = FALSE;
-    if( !i ) {
+    if( !ret ) {
         return( ERR_FILE_NOT_FOUND );
     }
 

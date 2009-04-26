@@ -153,7 +153,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, vi_rc *result, vlist *vl )
             rc = ERR_INVALID_DDE;
             break;
         }
-        if( GetStringWithPossibleQuote( str, tmp2 ) ) {
+        if( GetStringWithPossibleQuote( str, tmp2 ) != ERR_NO_ERR ) {
             rc = ERR_INVALID_DDE;
             break;
         }
@@ -212,7 +212,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, vi_rc *result, vlist *vl )
             rc = ERR_INVALID_DDE;
             break;
         }
-        if( GetStringWithPossibleQuote( str, tmp2 ) ) {
+        if( GetStringWithPossibleQuote( str, tmp2 ) != ERR_NO_ERR ) {
             rc = ERR_INVALID_DDE;
             break;
         }
@@ -297,7 +297,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, vi_rc *result, vlist *vl )
          * syntax: ddepoke "<data>" <conv> <strhandle>
          */
         Expand( str, vl );
-        if( GetStringWithPossibleQuote( str, tmp1 ) ) {
+        if( GetStringWithPossibleQuote( str, tmp1 ) != ERR_NO_ERR ) {
             rc = ERR_INVALID_DDE;
             break;
         }

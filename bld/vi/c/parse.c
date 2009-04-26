@@ -81,21 +81,24 @@ void TranslateTabs( char *buff )
  */
 vi_rc GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
 {
+    int     len;
+    
     RemoveLeadingSpaces( data );
     if( allow_slash && data[0] == '/' ) {
-        if( NextWord( data, st, SingleSlash ) <= 0 ) {
-            return( ERR_NO_STRING );
+        len = NextWord( data, st, SingleSlash );
+        if( len >= 0 ) {
+            EliminateFirstN( data, 1 );
         }
-        EliminateFirstN( data, 1 );
     } else if( data[0] == '"' ) {
-        if( NextWord( data, st, "\"" ) <= 0 ) {
-            return( ERR_NO_STRING );
+        len = NextWord( data, st, "\"" );
+        if( len >= 0 ) {
+            EliminateFirstN( data, 1 );
         }
-        EliminateFirstN( data, 1 );
     } else {
-        if( NextWord1( data, st ) <= 0 ) {
-            return( ERR_NO_STRING );
-        }
+        len = NextWord1( data, st );
+    }
+    if( len <= 0 ) {
+        return( ERR_NO_STRING );
     }
     return( ERR_NO_ERR );
 
@@ -103,7 +106,7 @@ vi_rc GetStringWithPossibleQuote2( char *data, char *st, bool allow_slash )
 
 vi_rc GetStringWithPossibleQuote( char *data, char *st )
 {
-    return GetStringWithPossibleQuote2( data, st, TRUE );
+    return( GetStringWithPossibleQuote2( data, st, TRUE ) );
 
 } /* GetStringWithPossibleQuote */
 
@@ -219,7 +222,7 @@ static bool isIgnorable( char c, char *ign )
     while( *ign != 0 ) {
         if( *ign == ' ' ) {
             if( isspace( c ) ) {
-                return ( TRUE );
+                return( TRUE );
             }
         } else if( c == *ign ) {
             return( TRUE );

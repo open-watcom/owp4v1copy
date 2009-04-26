@@ -96,7 +96,7 @@ vi_rc SetMark( void )
  *              given line. It simply follows the trail through the mark
  *              list until it finds a NO_MARK or the mark it is searching for.
  */
-int MarkOnLine( line *line, int no )
+bool MarkOnLine( line *line, int no )
 {
     mark        *m;
 

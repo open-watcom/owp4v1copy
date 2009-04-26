@@ -61,7 +61,7 @@ LOGFONT Helvetica6 = {
     0, 0,       /* Escapement and Orientation - who cares? */
     350,        /* we want a slightly lighter font - 400 is average */
     0, 0, 0,    /* nothing special */
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -74,7 +74,7 @@ LOGFONT Arial10 = {
     0, 0,       /* Escapement and Orientation - who cares? */
     FW_NORMAL,        /* strictly average */
     0, 0, 0,    /* nothing special */
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -87,7 +87,7 @@ LOGFONT ArialBold10 = {
     0, 0,       /* Escapement and Orientation - who cares? */
     FW_BOLD,    /* bold */
     0, 0, 0,    /* nothing special */
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -100,7 +100,7 @@ LOGFONT Fixed10 = {
     0, 0,
     400,
     0, 0, 0,
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -113,7 +113,7 @@ LOGFONT SansSerif = {
     0, 0,
     400,
     0, 0, 0,
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -126,7 +126,7 @@ LOGFONT Courier = {
     0, 0,
     FW_NORMAL,
     0, 0, 0,
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -139,7 +139,7 @@ LOGFONT CourierBold = {
     0, 0,
     FW_BOLD,
     0, 0, 0,
-    ANSI_CHARSET,
+    DEFAULT_CHARSET,
     OUT_DEFAULT_PRECIS,
     CLIP_DEFAULT_PRECIS,
     PROOF_QUALITY,
@@ -275,7 +275,7 @@ void InitFonts( void )
     customFont( &Fonts[FONT_COURIERBOLD], &CourierBold );
 }
 
-static int getInt( STUPIDNTINT *dest, char *data )
+static bool getInt( STUPIDNTINT *dest, char *data )
 {
     char        tmp[MAX_STR];
 
@@ -286,7 +286,7 @@ static int getInt( STUPIDNTINT *dest, char *data )
     return( TRUE );
 }
 
-static int getByte( BYTE *dest, char *data )
+static bool getByte( BYTE *dest, char *data )
 {
     char        tmp[MAX_STR];
 
@@ -297,7 +297,7 @@ static int getByte( BYTE *dest, char *data )
     return( TRUE );
 }
 
-static int getLogFont( LOGFONT *l, char *data )
+static bool getLogFont( LOGFONT *l, char *data )
 {
     return( getInt( &l->lfHeight, data ) &&
             getInt( &l->lfWidth, data ) &&
@@ -312,10 +312,10 @@ static int getLogFont( LOGFONT *l, char *data )
             getByte( &l->lfClipPrecision, data ) &&
             getByte( &l->lfQuality, data ) &&
             getByte( &l->lfPitchAndFamily, data ) &&
-            !GetStringWithPossibleQuote( data, &l->lfFaceName[0] ) );
+            GetStringWithPossibleQuote( data, &l->lfFaceName[0] ) == ERR_NO_ERR );
 }
 
-static int userPickFont( LOGFONT *l, HWND parent )
+static bool userPickFont( LOGFONT *l, HWND parent )
 {
     CHOOSEFONT  cf;
 

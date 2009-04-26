@@ -198,7 +198,7 @@ static vi_key ConvertWierdCharacter( WORD vk, WORD data )
         return( 0 );
     }
 
-    return( (vi_key)newkey );
+    return( (vi_key)( newkey & 0xFF ) );
 }
 
 vi_key MapVirtualKeyToVIKey( WORD vk, WORD data )

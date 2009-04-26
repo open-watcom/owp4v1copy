@@ -192,7 +192,7 @@ vi_rc SrcWrite( sfile *curr, files *fi, char *data, vlist *vl )
     if( NextWord1( data, id ) <= 0 ) {
         return( ERR_SRC_INVALID_WRITE );
     }
-    if( GetStringWithPossibleQuote( data, v1 ) ) {
+    if( GetStringWithPossibleQuote( data, v1 ) != ERR_NO_ERR ) {
         return( ERR_SRC_INVALID_WRITE );
     }
     if( curr->hasvar ) {
