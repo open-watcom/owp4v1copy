@@ -52,7 +52,7 @@ static volatile int     bufferTop = 0;
 static volatile int     bufferBottom = 0;
 
 typedef struct {
-    int     value;
+    WORD    value;
     vi_key  regular;
     vi_key  shifted;
     vi_key  ctrl;
@@ -62,8 +62,8 @@ typedef struct {
 
 int find_key_in_table( const void *pkey, const void *pbase )
 {
-    int vk = *(WORD *)pkey;
-    keytable *base = (keytable *)pbase;
+    WORD        vk = *(WORD *)pkey;
+    keytable    *base = (keytable *)pbase;
     if( vk > base->value ) {
         return( 1 );
     }

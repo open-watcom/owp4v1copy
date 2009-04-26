@@ -176,7 +176,7 @@ key_map         *InputKeyMaps;
 /*
  * savebuf data
  */
-int             _NEAR SavebufBound[MAX_SAVEBUFS] =
+vi_key          _NEAR SavebufBound[MAX_SAVEBUFS] =
                         { VI_KEY( CTRL_F1 ), VI_KEY( CTRL_F2 ),
                           VI_KEY( CTRL_F3 ), VI_KEY( CTRL_F4 ),
                           VI_KEY( CTRL_F5 ), VI_KEY( CTRL_F6 ),

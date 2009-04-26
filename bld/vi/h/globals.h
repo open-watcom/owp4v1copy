@@ -133,7 +133,7 @@ extern undo_stack   *UndoStack, *UndoUndoStack;
 /* bound key data */
 extern event _NEAR  EventList[];
 extern int          MaxKeysBound;
-extern int _NEAR    SavebufBound[];
+extern vi_key _NEAR SavebufBound[];
 extern char         *ScriptBound;
 extern char         *InputScriptBound;
 
