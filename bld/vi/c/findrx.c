@@ -51,6 +51,7 @@ vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
     line        *cline;
     fcb         *cfcb;
     int         scol;
+    linenum     sline;
 
     /*
      * initialize for search
@@ -59,10 +60,11 @@ vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
         wrapMsgPrinted = FALSE;
         ClearWindow( MessageWindow );
     }
+    sline = pos1->line;
     if( sw ) {
-        ilineno = pos1->line;
+        ilineno = sline;
     }
-    rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
+    rc = CGimmeLinePtr( sline, &cfcb, &cline );
     if( rc != ERR_NO_ERR ) {
         return( rc );
     }
@@ -77,58 +79,53 @@ vi_rc FindRegularExpression( char *pat, i_mark *pos1, char **linedata,
     /*
      * loop until string found
      */
-    while( TRUE ) {
-
-        data = &cline->data[scol];
-        found = RegExec( CurrentRegularExpression, data, (data == cline->data) );
+    data = &cline->data[scol];
+    while( (found = RegExec( CurrentRegularExpression, data, (data == cline->data) )) == FALSE ) {
         if( RegExpError != ERR_NO_ERR ) {
             return( RegExpError );
         }
-
-        if( found ) {
-            *linedata = cline->data;
-            pos1->column = GetCurrRegExpColumn( cline->data );
-            return( ERR_NO_ERR );
-        }
-
         /*
          * get next line
          */
         rc = CGimmeNextLinePtr( &cfcb, &cline );
-        if( rc != ERR_NO_ERR ) {
-            if( rc == ERR_NO_MORE_LINES ) {
-                if( !sw ) {
-                    return( ERR_FIND_END_OF_FILE );
-                } else {
-                    Message1( wrapMsg, "bottom" );
-                    MyBeep();
-                    wrapMsgPrinted = TRUE;
-                }
-                if( wrapped ) {
-                    return( ERR_FIND_NOT_FOUND );
-                }
-                pos1->line = 1;
-                rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
-                if( rc != ERR_NO_ERR ) {
-                    return( rc );
-                }
-                pos1->line = 0;
-                wrapped = TRUE;
+        if( rc == ERR_NO_ERR ) {
+            ++sline;
+        } else if( rc == ERR_NO_MORE_LINES ) {
+            if( !sw ) {
+                return( ERR_FIND_END_OF_FILE );
             } else {
+                Message1( wrapMsg, "bottom" );
+                MyBeep();
+                wrapMsgPrinted = TRUE;
+            }
+            if( wrapped ) {
+                return( ERR_FIND_NOT_FOUND );
+            }
+            sline = 1;
+            rc = CGimmeLinePtr( sline, &cfcb, &cline );
+            if( rc != ERR_NO_ERR ) {
                 return( rc );
             }
+            wrapped = TRUE;
+        } else {
+            return( rc );
         }
-        scol = 0;
-        pos1->line += 1;
-        if( pos1->line > termline ) {
+        if( sline > termline ) {
             return( ERR_FIND_PAST_TERM_LINE );
         }
         if( wrapped ) {
-            if( pos1->line > ilineno ) {
+            if( sline > ilineno ) {
                 return( ERR_FIND_NOT_FOUND );
             }
         }
+        scol = 0;
+        data = cline->data;
     }
+    *linedata = cline->data;
+    pos1->column = GetCurrRegExpColumn( cline->data );
+    pos1->line = sline;
+    return( ERR_NO_ERR );
+
 } /* FindRegularExpression */
 
 /*
@@ -146,16 +143,23 @@ vi_rc FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
     fcb         *cfcb;
     regexp      rcpy;
     int         scol;
+    linenum     sline;
+    bool        ret;
 
     /*
      * initialize for search
      */
-    rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
+    if( wrapMsgPrinted ) {
+        wrapMsgPrinted = FALSE;
+        ClearWindow( MessageWindow );
+    }
+    sline = pos1->line;
+    rc = CGimmeLinePtr( sline, &cfcb, &cline );
     if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     if( sw ) {
-        ilineno = pos1->line;
+        ilineno = sline;
     }
     scol = pos1->column;
     if( pat != NULL ) {
@@ -169,82 +173,76 @@ vi_rc FindRegularExpressionBackwards( char *pat, i_mark *pos1, char **linedata,
      * loop until string found
      */
     while( TRUE ) {
-
         data = cline->data;
         found = FALSE;
         /*
          * run through all possible matches on the line, accepting
          * only the last one
          */
-        while( TRUE ) {
-            rc = RegExec( CurrentRegularExpression, data, (data == cline->data) );
-            if( RegExpError != ERR_NO_ERR ) {
-                return( RegExpError );
-            }
-            if( rc != ERR_NO_ERR ) {
+        if( scol >= 0 ) {
+            while( *data != '\0' && (ret = RegExec( CurrentRegularExpression, data, (data == cline->data) )) == TRUE ) {
                 int     col, len;
+
+                if( RegExpError != ERR_NO_ERR ) {
+                    return( RegExpError );
+                }
                 col = GetCurrRegExpColumn( cline->data );
                 len = GetCurrRegExpLength();
-                if( col + len - 1 > scol ) {
+                if( col + len > scol ) {
                     break;
                 }
                 found = TRUE;
                 memcpy( &rcpy, CurrentRegularExpression, sizeof( regexp ) );
                 data = &(cline->data[col + 1]);
-                if( *data == 0 ) {
-                    break;
-                }
-            } else {
+            }
+            if( found ) {
                 break;
             }
-        }
-
-        if( found ) {
-            *linedata = cline->data;
-            memcpy( CurrentRegularExpression, &rcpy, sizeof( regexp ) );
-            pos1->column = GetCurrRegExpColumn( cline->data );
-            return( ERR_NO_ERR );
         }
 
         /*
          * get next line
          */
         rc = GimmePrevLinePtr( &cfcb, &cline );
-        if( rc != ERR_NO_ERR ) {
-            if( rc == ERR_NO_MORE_LINES ) {
-                if( !sw ) {
-                    return( ERR_FIND_TOP_OF_FILE );
-                } else {
-                    Message1( wrapMsg, "top" );
-                    MyBeep();
-                    wrapMsgPrinted = TRUE;
-                }
-                if( wrapped ) {
-                    return( ERR_FIND_NOT_FOUND );
-                }
-                rc = CFindLastLine( &pos1->line );
-                if( rc != ERR_NO_ERR ) {
-                    return( rc );
-                }
-                rc = CGimmeLinePtr( pos1->line, &cfcb, &cline );
-                if( rc != ERR_NO_ERR ) {
-                    return( rc );
-                }
-                pos1->line += 1;
-                wrapped = TRUE;
+        if( rc == ERR_NO_ERR ) {
+            --sline;
+        } else if( rc == ERR_NO_MORE_LINES ) {
+            if( !sw ) {
+                return( ERR_FIND_TOP_OF_FILE );
             } else {
+                Message1( wrapMsg, "top" );
+                MyBeep();
+                wrapMsgPrinted = TRUE;
+            }
+            if( wrapped ) {
+                return( ERR_FIND_NOT_FOUND );
+            }
+            rc = CFindLastLine( &sline );
+            if( rc != ERR_NO_ERR ) {
                 return( rc );
             }
+            rc = CGimmeLinePtr( sline, &cfcb, &cline );
+            if( rc != ERR_NO_ERR ) {
+                return( rc );
+            }
+            wrapped = TRUE;
+        } else {
+            return( rc );
         }
-        scol = cline->len - 1;
-        pos1->line -= 1;
-        if( pos1->line < termline ) {
+        if( sline < termline ) {
             return( ERR_FIND_PAST_TERM_LINE );
         }
         if( wrapped ) {
-            if( pos1->line < ilineno ) {
+            if( sline < ilineno ) {
                 return( ERR_FIND_NOT_FOUND );
             }
         }
+        scol = cline->len;
     }
+    *linedata = cline->data;
+    memcpy( CurrentRegularExpression, &rcpy, sizeof( regexp ) );
+    pos1->column = GetCurrRegExpColumn( cline->data );
+    pos1->line = sline;
+    return( ERR_NO_ERR );
+
 } /* FindRegularExpressionBackwards */

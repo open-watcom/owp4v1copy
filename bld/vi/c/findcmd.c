@@ -528,8 +528,7 @@ static vi_rc setLineCol( char *st, i_mark *pos, find_type flag )
     /*
      * wrap if needed
      */
-    if( (flag & FINDFL_NEXTLINE) || (pos->column < 0) ||
-        (CurrentLine->data[pos->column] == 0) ) {
+    if( flag & FINDFL_NEXTLINE ) {
         wrapped = FALSE;
         if( flag & FINDFL_FORWARD ) {
             pos->column = 0;
