@@ -20,8 +20,8 @@ wdpick( WARN_No_Nxt_Src_Ln,
        "jNo next source line can be found" )//dbgtrace
 
 wdpick( WARN_ONLY_MAX_EXPAND_ARRAY_ELEMENTS,
-       "Only 100 000 array elements can be displayed at a time",
-       "jOnly 100 000 array elements can be displayed at a time" )
+       "Only %U array elements can be displayed at a time",
+       "jOnly %U array elements can be displayed at a time" )
 
 // Startup Errors
 
