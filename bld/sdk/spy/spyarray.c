@@ -47,7 +47,7 @@ message near MessageArray[] =  {
     #include "spyarray.h"
 };
 
-WORD MessageArraySize = sizeof( MessageArray ) / sizeof( message );
+#define MESSAGEARRAYSIZE            (sizeof( MessageArray )/sizeof( message ))
 
 static message near EditMessageArray[] = {
     msgpick( 1, 0, EM_GETSEL,               "EM_GETSEL",                MC_CONTROL, 0L ),
@@ -100,7 +100,7 @@ static message near EditMessageArray[] = {
 #endif
 };
 
-static WORD EditMessageArraySize = sizeof( EditMessageArray ) / sizeof( message );
+#define EDITMESSAGEARRAYSIZE        (sizeof( EditMessageArray )/sizeof( message ))
 
 static message near ButtonMessageArray[] = {
     msgpick( 1, 0, BM_GETCHECK,     "BM_GETCHECK",      MC_CONTROL, 0L ),
@@ -118,7 +118,7 @@ static message near ButtonMessageArray[] = {
 #endif
 };
 
-static WORD ButtonMessageArraySize = sizeof( ButtonMessageArray ) / sizeof( message );
+#define BUTTONMESSAGEARRAYSIZE      (sizeof( ButtonMessageArray )/sizeof( message ))
 
 static message near StaticMessageArray[] = {
     msgpick( 1, 0, STM_SETICON,     "STM_SETICON",  MC_CONTROL, 0L ),
@@ -131,7 +131,7 @@ static message near StaticMessageArray[] = {
 #endif
 };
 
-static WORD StaticMessageArraySize = sizeof( StaticMessageArray ) / sizeof( message );
+#define STATICMESSAGEARRAYSIZE      (sizeof( StaticMessageArray )/sizeof( message ))
 
 static message near ListBoxMessageArray[] = {
     msgpick( 1, 0, LB_ADDSTRING,            "LB_ADDSTRING",             MC_CONTROL, 0L ),
@@ -187,7 +187,7 @@ static message near ListBoxMessageArray[] = {
 #endif
 };
 
-static WORD ListBoxMessageArraySize = sizeof( ListBoxMessageArray ) / sizeof( message );
+#define LISTBOXMESSAGEARRAYSIZE     (sizeof( ListBoxMessageArray )/sizeof( message ))
 
 #define combobox_messages_old() \
     msgpick( 1, 0, CB_GETEDITSEL,       "CB_GETEDITSEL",            MC_CONTROL, 0L ), \
@@ -243,8 +243,7 @@ static message near ComboBoxMessageArray[] = {
     combobox_messages()
 };
 
-static WORD ComboBoxMessageArraySize = sizeof( ComboBoxMessageArray ) /
-                                       sizeof( message );
+#define COMBOBOXMESSAGEARRAYSIZE    (sizeof( ComboBoxMessageArray )/sizeof( message ))
 
 #ifdef NT_MSGS
 static message near ScrollBarMessageArray[] = {
@@ -259,8 +258,7 @@ static message near ScrollBarMessageArray[] = {
     msgpick( 1, 0, SBM_GETSCROLLBARINFO,    "SBM_GETSCROLLBARINFO", MC_CONTROL, 0L )
 };
 
-static WORD ScrollBarMessageArraySize = sizeof( ScrollBarMessageArray ) /
-                                        sizeof( message );
+#define SCROLLBARMESSAGEARRAYSIZE   (sizeof( ScrollBarMessageArray )/sizeof( message ))
 
 static message near HeaderMessageArray[] = {
     msgpick( 1, 0, HDM_GETITEMCOUNT,        "HDM_GETITEMCOUNT",         MC_CONTROL, 0L ),
@@ -293,7 +291,7 @@ static message near HeaderMessageArray[] = {
     msgpick( 1, 0, HDM_SETFOCUSEDITEM,      "HDM_SETFOCUSEDITEM",       MC_CONTROL, 0L ),
 };
 
-static WORD HeaderMessageArraySize = sizeof( HeaderMessageArray ) / sizeof( message );
+#define HEADERMESSAGEARRAYSIZE      (sizeof( HeaderMessageArray )/sizeof( message ))
 
 static message near ToolbarMessageArray[] = {
     msgpick( 1, 0, TB_ENABLEBUTTON,         "TB_ENABLEBUTTON",          MC_CONTROL, 0L ),
@@ -389,7 +387,7 @@ static message near ToolbarMessageArray[] = {
     msgpick( 1, 0, TB_GETPRESSEDIMAGELIST,  "TB_GETPRESSEDIMAGELIST",   MC_CONTROL, 0L ),
 };
 
-static WORD ToolbarMessageArraySize = sizeof( ToolbarMessageArray ) / sizeof( message );
+#define TOOLBARMESSAGEARRAYSIZE     (sizeof( ToolbarMessageArray )/sizeof( message ))
 
 static message near RebarMessageArray[] = {
     msgpick( 1, 0, RB_INSERTBANDA,      "RB_INSERTBAND",        MC_CONTROL, 0L ),
@@ -434,7 +432,7 @@ static message near RebarMessageArray[] = {
     msgpick( 1, 0, RB_SETBANDWIDTH,     "RB_SETBANDWIDTH",      MC_CONTROL, 0L ),
 };
 
-static WORD RebarMessageArraySize = sizeof( RebarMessageArray ) / sizeof( message );
+#define REBARMESSAGEARRAYSIZE       (sizeof( RebarMessageArray )/sizeof( message ))
 
 static message near ToolTipsMessageArray[] = {
     msgpick( 1, 0, TTM_ACTIVATE,        "TTM_ACTIVATE",         MC_CONTROL, 0L ),
@@ -483,8 +481,7 @@ static message near ToolTipsMessageArray[] = {
     msgpick( 1, 0, TTM_GETCURRENTTOOLW, "TTM_GETCURRENTTOOL",   MC_CONTROL, 0L ),
 };
 
-static WORD ToolTipsMessageArraySize = sizeof( ToolTipsMessageArray ) /
-                                       sizeof( message );
+#define TOOLTIPSMESSAGEARRAYSIZE    (sizeof( ToolTipsMessageArray )/sizeof( message ))
 
 static message near StatusBarMessageArray[] = {
     msgpick( 1, 0, SB_SETTEXTA,         "SB_SETTEXT",       MC_CONTROL, 0L ),
@@ -508,8 +505,7 @@ static message near StatusBarMessageArray[] = {
     msgpick( 1, 0, SB_GETICON,          "SB_GETICON",       MC_CONTROL, 0L ),
 };
 
-static WORD StatusBarMessageArraySize = sizeof( StatusBarMessageArray ) /
-                                        sizeof( message );
+#define STATUSBARMESSAGEARRAYSIZE   (sizeof( StatusBarMessageArray )/sizeof( message ))
 
 static message near TrackBarMessageArray[] = {
     msgpick( 1, 0, TBM_GETPOS,          "TBM_GETPOS",           MC_CONTROL, 0L ),
@@ -547,8 +543,7 @@ static message near TrackBarMessageArray[] = {
     msgpick( 1, 0, TBM_GETBUDDY,        "TBM_GETBUDDY",         MC_CONTROL, 0L )
 };
 
-static WORD TrackBarMessageArraySize = sizeof( TrackBarMessageArray ) /
-                                       sizeof( message );
+#define TRACKBARMESSAGEARRAYSIZE    (sizeof( TrackBarMessageArray )/sizeof( message ))
 
 static message near UpDownMessageArray[] = {
     msgpick( 1, 0, UDM_SETRANGE,    "UDM_SETRANGE",     MC_CONTROL, 0L ),
@@ -567,7 +562,7 @@ static message near UpDownMessageArray[] = {
     msgpick( 1, 0, UDM_GETPOS32,    "UDM_GETPOS32",     MC_CONTROL, 0L ),
 };
 
-static WORD UpDownMessageArraySize = sizeof( UpDownMessageArray ) / sizeof( message );
+#define UPDOWNMESSAGEARRAYSIZE      (sizeof( UpDownMessageArray )/sizeof( message ))
 
 static message near ProgressBarMessageArray[] = {
     msgpick( 1, 0, PBM_SETRANGE,    "PBM_SETRANGE",     MC_CONTROL, 0L ),
@@ -587,8 +582,7 @@ static message near ProgressBarMessageArray[] = {
     msgpick( 1, 0, PBM_GETSTATE,    "PBM_GETSTATE",     MC_CONTROL, 0L )
 };
 
-static WORD ProgressBarMessageArraySize = sizeof( ProgressBarMessageArray ) /
-                                          sizeof( message );
+#define PROGRESSBARMESSAGEARRAYSIZE (sizeof( ProgressBarMessageArray )/sizeof( message ))
 
 static message near HotKeyMessageArray[] = {
     msgpick( 1, 0, HKM_SETHOTKEY,   "HKM_SETHOTKEY",    MC_CONTROL, 0L ),
@@ -596,7 +590,7 @@ static message near HotKeyMessageArray[] = {
     msgpick( 1, 0, HKM_SETRULES,    "HKM_SETRULES",     MC_CONTROL, 0L )
 };
 
-static WORD HotKeyMessageArraySize = sizeof( HotKeyMessageArray ) / sizeof( message );
+#define HOTKEYMESSAGEARRAYSIZE      (sizeof( HotKeyMessageArray )/sizeof( message ))
 
 static message near ListViewMessageArray[] = {
     msgpick( 1, 0, LVM_GETBKCOLOR,          "LVM_GETBKCOLOR",           MC_CONTROL, 0L ),
@@ -742,7 +736,7 @@ static message near ListViewMessageArray[] = {
     msgpick( 1, 0, LVM_GETNEXTITEMINDEX,    "LVM_GETNEXTITEMINDEX",     MC_CONTROL, 0L ),
 };
 
-static WORD ListViewMessageArraySize = sizeof( ListViewMessageArray ) / sizeof( message );
+#define LISTVIEWMESSAGEARRAYSIZE    (sizeof( ListViewMessageArray )/sizeof( message ))
 
 static message near TreeViewMessageArray[] = {
     msgpick( 1, 0, TVM_INSERTITEMA,         "TVM_INSERTITEM",           MC_CONTROL, 0L ),
@@ -799,8 +793,7 @@ static message near TreeViewMessageArray[] = {
     msgpick( 1, 0, TVM_GETITEMPARTRECT,     "TVM_GETITEMPARTRECT",      MC_CONTROL, 0L )
 };
 
-static WORD TreeViewMessageArraySize = sizeof( TreeViewMessageArray ) /
-                                       sizeof( message );
+#define TREEVIEWMESSAGEARRAYSIZE    (sizeof( TreeViewMessageArray )/sizeof( message ))
 
 static message near ComboBoxExMessageArray[] = {
     combobox_messages(),
@@ -820,8 +813,7 @@ static message near ComboBoxExMessageArray[] = {
     msgpick( 1, 0, CBEM_SETEXTENDEDSTYLE,   "CBEM_SETEXTENDEDSTYLE",    MC_CONTROL, 0L )
 };
 
-static WORD ComboBoxExMessageArraySize = sizeof( ComboBoxExMessageArray ) /
-                                         sizeof( message );
+#define COMBOBOXEXMESSAGEARRAYSIZE  (sizeof( ComboBoxExMessageArray )/sizeof( message ))
 
 static message near TabControlMessageArray[] = {
     msgpick( 1, 0, TCM_GETIMAGELIST,        "TCM_GETIMAGELIST",     MC_CONTROL, 0L ),
@@ -856,8 +848,7 @@ static message near TabControlMessageArray[] = {
     msgpick( 1, 0, TCM_INSERTITEMW,         "TCM_INSERTITEM",       MC_CONTROL, 0L )
 };
 
-static WORD TabControlMessageArraySize = sizeof( TabControlMessageArray ) /
-                                         sizeof( message );
+#define TABCONTROLMESSAGEARRAYSIZE  (sizeof( TabControlMessageArray )/sizeof( message ))
 
 static message near AnimateMessageArray[] = {
     msgpick( 1, 0, ACM_OPENA,       "ACM_OPEN",         MC_CONTROL, 0L ),
@@ -867,7 +858,7 @@ static message near AnimateMessageArray[] = {
     msgpick( 1, 0, ACM_ISPLAYING,   "ACM_ISPLAYING",    MC_CONTROL, 0L )
 };
 
-static WORD AnimateMessageArraySize = sizeof( AnimateMessageArray ) / sizeof( message );
+#define ANIMATEMESSAGEARRAYSIZE     (sizeof( AnimateMessageArray )/sizeof( message ))
 
 static message near MonthCalMessageArray[] = {
     msgpick( 1, 0, MCM_GETCURSEL,           "MCM_GETCURSEL",            MC_CONTROL, 0L ),
@@ -902,8 +893,7 @@ static message near MonthCalMessageArray[] = {
     msgpick( 1, 0, MCM_SETCURRENTVIEW,      "MCM_SETCURRENTVIEW",       MC_CONTROL, 0L )
 };
 
-static WORD MonthCalMessageArraySize = sizeof( MonthCalMessageArray ) /
-                                       sizeof( message );
+#define MONTHCALMESSAGEARRAYSIZE    (sizeof( MonthCalMessageArray )/sizeof( message ))
 
 static message near DateTimeMessageArray[] = {
     msgpick( 1, 0, DTM_GETSYSTEMTIME,   "DTM_GETSYSTEMTIME",    MC_CONTROL, 0L ),
@@ -925,39 +915,72 @@ static message near DateTimeMessageArray[] = {
     msgpick( 1, 0, DTM_SETFORMATW,      "DTM_SETFORMAT",        MC_CONTROL, 0L ),
 };
 
-static WORD DateTimeMessageArraySize = sizeof( DateTimeMessageArray ) /
-                                       sizeof( message );
+#define DATETIMEMESSAGEARRAYSIZE    (sizeof( DateTimeMessageArray )/sizeof( message ))
 
 #endif
 
 class_messages near ClassMessages[] = {
-    { "edit",               EditMessageArray,           &EditMessageArraySize           },
-    { "button",             ButtonMessageArray,         &ButtonMessageArraySize         },
-    { "static",             StaticMessageArray,         &StaticMessageArraySize         },
-    { "listbox",            ListBoxMessageArray,        &ListBoxMessageArraySize        },
-#ifndef NT_MSGS
-    { "combobox",           ComboBoxMessageArray,       &ComboBoxMessageArraySize       }
-#else
-    { "combobox",           ComboBoxMessageArray,       &ComboBoxMessageArraySize       },
-    { "scrollbar",          ScrollBarMessageArray,      &ScrollBarMessageArraySize      },
-    { WC_HEADER,            HeaderMessageArray,         &HeaderMessageArraySize         },
-    { TOOLBARCLASSNAME,     ToolbarMessageArray,        &ToolbarMessageArraySize        },
-    { REBARCLASSNAME,       RebarMessageArray,          &RebarMessageArraySize          },
-    { TOOLTIPS_CLASS,       ToolTipsMessageArray,       &ToolTipsMessageArraySize       },
-    { STATUSCLASSNAME,      StatusBarMessageArray,      &StatusBarMessageArraySize      },
-    { TRACKBAR_CLASS,       TrackBarMessageArray,       &TrackBarMessageArraySize       },
-    { UPDOWN_CLASS,         UpDownMessageArray,         &UpDownMessageArraySize         },
-    { PROGRESS_CLASS,       ProgressBarMessageArray,    &ProgressBarMessageArraySize    },
-    { HOTKEY_CLASS,         HotKeyMessageArray,         &HotKeyMessageArraySize         },
-    { WC_LISTVIEW,          ListViewMessageArray,       &ListViewMessageArraySize       },
-    { WC_TREEVIEW,          TreeViewMessageArray,       &TreeViewMessageArraySize       },
-    { WC_COMBOBOXEX,        ComboBoxExMessageArray,     &ComboBoxExMessageArraySize     },
-    { WC_TABCONTROL,        TabControlMessageArray,     &TabControlMessageArraySize     },
-    { ANIMATE_CLASS,        AnimateMessageArray,        &AnimateMessageArraySize        },
-    { MONTHCAL_CLASS,       MonthCalMessageArray,       &MonthCalMessageArraySize       },
-    { DATETIMEPICK_CLASS,   DateTimeMessageArray,       &DateTimeMessageArraySize       }
+    { "",                   MessageArray,               MESSAGEARRAYSIZE               },
+    { "edit",               EditMessageArray,           EDITMESSAGEARRAYSIZE           },
+    { "button",             ButtonMessageArray,         BUTTONMESSAGEARRAYSIZE         },
+    { "static",             StaticMessageArray,         STATICMESSAGEARRAYSIZE         },
+    { "listbox",            ListBoxMessageArray,        LISTBOXMESSAGEARRAYSIZE        },
+    { "combobox",           ComboBoxMessageArray,       COMBOBOXMESSAGEARRAYSIZE       },
+#ifdef NT_MSGS
+    { "scrollbar",          ScrollBarMessageArray,      SCROLLBARMESSAGEARRAYSIZE      },
+    { WC_HEADER,            HeaderMessageArray,         HEADERMESSAGEARRAYSIZE         },
+    { TOOLBARCLASSNAME,     ToolbarMessageArray,        TOOLBARMESSAGEARRAYSIZE        },
+    { REBARCLASSNAME,       RebarMessageArray,          REBARMESSAGEARRAYSIZE          },
+    { TOOLTIPS_CLASS,       ToolTipsMessageArray,       TOOLTIPSMESSAGEARRAYSIZE       },
+    { STATUSCLASSNAME,      StatusBarMessageArray,      STATUSBARMESSAGEARRAYSIZE      },
+    { TRACKBAR_CLASS,       TrackBarMessageArray,       TRACKBARMESSAGEARRAYSIZE       },
+    { UPDOWN_CLASS,         UpDownMessageArray,         UPDOWNMESSAGEARRAYSIZE         },
+    { PROGRESS_CLASS,       ProgressBarMessageArray,    PROGRESSBARMESSAGEARRAYSIZE    },
+    { HOTKEY_CLASS,         HotKeyMessageArray,         HOTKEYMESSAGEARRAYSIZE         },
+    { WC_LISTVIEW,          ListViewMessageArray,       LISTVIEWMESSAGEARRAYSIZE       },
+    { WC_TREEVIEW,          TreeViewMessageArray,       TREEVIEWMESSAGEARRAYSIZE       },
+    { WC_COMBOBOXEX,        ComboBoxExMessageArray,     COMBOBOXEXMESSAGEARRAYSIZE     },
+    { WC_TABCONTROL,        TabControlMessageArray,     TABCONTROLMESSAGEARRAYSIZE     },
+    { ANIMATE_CLASS,        AnimateMessageArray,        ANIMATEMESSAGEARRAYSIZE        },
+    { MONTHCAL_CLASS,       MonthCalMessageArray,       MONTHCALMESSAGEARRAYSIZE       },
+    { DATETIMEPICK_CLASS,   DateTimeMessageArray,       DATETIMEMESSAGEARRAYSIZE       }
 #endif
 };
 
 WORD ClassMessagesSize = sizeof( ClassMessages ) / sizeof( class_messages );
+
+#ifndef NT_MSGS
+unsigned TotalMessageArraySize = \
+    + MESSAGEARRAYSIZE \
+    + EDITMESSAGEARRAYSIZE \
+    + BUTTONMESSAGEARRAYSIZE \
+    + STATICMESSAGEARRAYSIZE \
+    + LISTBOXMESSAGEARRAYSIZE \
+    + COMBOBOXMESSAGEARRAYSIZE;
+#else
+unsigned TotalMessageArraySize = \
+    + MESSAGEARRAYSIZE \
+    + EDITMESSAGEARRAYSIZE \
+    + BUTTONMESSAGEARRAYSIZE \
+    + STATICMESSAGEARRAYSIZE \
+    + LISTBOXMESSAGEARRAYSIZE \
+    + COMBOBOXMESSAGEARRAYSIZE \
+    + SCROLLBARMESSAGEARRAYSIZE \
+    + HEADERMESSAGEARRAYSIZE \
+    + TOOLBARMESSAGEARRAYSIZE \
+    + REBARMESSAGEARRAYSIZE \
+    + TOOLTIPSMESSAGEARRAYSIZE \
+    + STATUSBARMESSAGEARRAYSIZE \
+    + TRACKBARMESSAGEARRAYSIZE \
+    + UPDOWNMESSAGEARRAYSIZE \
+    + PROGRESSBARMESSAGEARRAYSIZE \
+    + HOTKEYMESSAGEARRAYSIZE \
+    + LISTVIEWMESSAGEARRAYSIZE \
+    + TREEVIEWMESSAGEARRAYSIZE \
+    + COMBOBOXEXMESSAGEARRAYSIZE \
+    + TABCONTROLMESSAGEARRAYSIZE \
+    + ANIMATEMESSAGEARRAYSIZE \
+    + MONTHCALMESSAGEARRAYSIZE \
+    + DATETIMEMESSAGEARRAYSIZE;
+#endif
 

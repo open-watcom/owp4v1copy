@@ -120,7 +120,6 @@ typedef enum {
 
 
 typedef enum {
-    MC_NULL,
     MC_CLIPBRD,
     MC_DDE,
     MC_IME,
@@ -135,36 +134,14 @@ typedef enum {
     MC_UNKNOWN,
     MC_USER,
     MC_WINDOW,
-    MC_CONTROL
+    MC_CONTROL,
+    FILTER_ENTRIES
 } MsgClass;
 
 typedef struct {
     char        flag[2];
-    MsgClass    type;
 } filter;
 
-typedef struct {
-    filter clipboard;
-    filter dde;
-    filter ime;
-    filter init;
-    filter input;
-    filter mdi;
-    filter mouse;
-    filter ncmisc;
-    filter ncmouse;
-    filter other;
-    filter system;
-    filter unknown;
-    filter user;
-    filter window;
-} _filters;
-
-#define FILTER_ENTRIES  13
-typedef union {
-    _filters    filts;
-    filter      array[FILTER_ENTRIES];
-} filters;
 #define M_WATCH         0
 #define M_STOPON        1
 typedef struct {
@@ -176,9 +153,9 @@ typedef struct {
 } message;
 
 typedef struct {
-    char    *class_name;
-    message *message_array;
-    WORD    *message_array_size;
+    char        *class_name;
+    message     *message_array;
+    unsigned    message_array_size;
 } class_messages;
 
 typedef struct {
@@ -209,7 +186,6 @@ extern HWND             SpyMainWindow;
 extern HANDLE           MyTask;
 extern HANDLE           Instance;
 extern HANDLE           ResInstance;
-extern filters          Filters;
 extern WORD             MessageArraySize;
 extern message          near MessageArray[];
 extern WORD             ClassMessagesSize;
@@ -222,6 +198,9 @@ extern LPVOID           HandleMessageInst;
 extern WndConfigInfo    SpyMainWndInfo;
 extern HMENU            SpyMenu;
 extern statwnd          *StatusHdl;
+extern filter           Filters[FILTER_ENTRIES];
+extern unsigned         TotalMessageArraySize;
+
 
 /*
  * function prototypes

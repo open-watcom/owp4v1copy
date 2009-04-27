@@ -47,14 +47,9 @@ message *GetMessageDataFromID( int msgid, char *class_name )
     int i;
     int j;
 
-    for( i = 0;i < MessageArraySize; i++ ) {
-        if( msgid == MessageArray[i].id ) {
-            return( &MessageArray[i] );
-        }
-    }
     for( i = 0; i < ClassMessagesSize; i++ ) {
-        if( !stricmp( class_name, ClassMessages[i].class_name ) ) {
-            for( j = 0; j < *ClassMessages[i].message_array_size; j++ ) {
+        if( i == 0 || !stricmp( class_name, ClassMessages[i].class_name ) ) {
+            for( j = 0; j < ClassMessages[i].message_array_size; j++ ) {
                 if( msgid == ClassMessages[i].message_array[j].id ) {
                     return( &ClassMessages[i].message_array[j] );
                 }
@@ -102,11 +97,11 @@ void ProcessIncomingMessage( int msgid, char *class_name, char *res )
                         MB_OK | MB_ICONINFORMATION );
         }
     } else {
-        if( Filters.filts.unknown.flag[M_WATCH] ) {
+        if( Filters[MC_UNKNOWN].flag[M_WATCH] ) {
             fmtstr = GetRCString( STR_UNKNOWN_MSG );
             sprintf( res, fmtstr, msgid );
         }
-        if( Filters.filts.unknown.flag[M_STOPON] ) {
+        if( Filters[MC_UNKNOWN].flag[M_STOPON] ) {
             SetSpyState( OFF );
             fmtstr = GetRCString( STR_UNKNOWN_MSG );
             RCsprintf( buf, STR_SPYING_STOPPED, res );
@@ -123,11 +118,13 @@ void ProcessIncomingMessage( int msgid, char *class_name, char *res )
  */
 void SetFilterMsgs( MsgClass type, BOOL val, int bit )
 {
-    int i;
+    int i, j;
 
-    for( i = 0; i < MessageArraySize; i++ ) {
-        if( MessageArray[i].type == type ) {
-            MessageArray[i].bits[bit] = val;
+    for( i = 0; i < ClassMessagesSize; i++ ) {
+        for( j = 0; j < ClassMessages[i].message_array_size; j++ ) {
+            if( ClassMessages[i].message_array[j].type == type ) {
+                ClassMessages[i].message_array[j].bits[bit] = val;
+            }
         }
     }
 
@@ -138,11 +135,14 @@ void SetFilterMsgs( MsgClass type, BOOL val, int bit )
  */
 void SetFilterSaveBitsMsgs( MsgClass type, BOOL val, char *bits )
 {
-    int i;
+    int i, j, k;
 
-    for( i = 0; i < MessageArraySize; i++ ) {
-        if( MessageArray[i].type == type ) {
-            bits[i] = val;
+    for( i = 0, k = 0; i < ClassMessagesSize; i++ ) {
+        for( j = 0; j < ClassMessages[i].message_array_size; j++ ) {
+            if( ClassMessages[i].message_array[j].type == type ) {
+                bits[k] = val;
+            }
+            ++k;
         }
     }
 
@@ -163,14 +163,16 @@ void InitMessages( void )
 char *SaveBitState( int x )
 {
     char        *data;
-    int         i;
+    int         i, j, k;
 
-    data = MemAlloc( MessageArraySize );
+    data = MemAlloc( TotalMessageArraySize );
     if( data == NULL ) {
         return( NULL );
     }
-    for( i = 0; i < MessageArraySize; i++) {
-        data[i] = MessageArray[i].bits[x];
+    for( i = 0, k = 0; i < ClassMessagesSize; i++ ) {
+        for( j = 0; j < ClassMessages[i].message_array_size; j++ ) {
+            data[k++] = ClassMessages[i].message_array[j].bits[x];
+        }
     }
     return( data );
 
@@ -182,11 +184,11 @@ char *SaveBitState( int x )
 char *CloneBitState( char *old ) {
     char        *data;
 
-    data = MemAlloc( MessageArraySize );
+    data = MemAlloc( TotalMessageArraySize );
     if( data == NULL ) {
         return( NULL );
     }
-    memcpy( data, old, MessageArraySize );
+    memcpy( data, old, TotalMessageArraySize );
     return( data );
 
 } /* CloneBitState */
@@ -196,13 +198,15 @@ char *CloneBitState( char *old ) {
  */
 void RestoreBitState( char *data, int x )
 {
-    int         i;
+    int         i, j, k;
 
     if( data == NULL ) {
         return;
     }
-    for( i = 0; i < MessageArraySize; i++) {
-        MessageArray[i].bits[x] = data[i];
+    for( i = 0, k = 0; i < ClassMessagesSize; i++ ) {
+        for( j = 0; j < ClassMessages[i].message_array_size; j++ ) {
+            ClassMessages[i].message_array[j].bits[x] = data[k++];
+        }
     }
     MemFree( data );
 
@@ -224,7 +228,7 @@ void FreeBitState( char *data )
  */
 void CopyBitState( char *dst, char *src )
 {
-    memcpy( dst, src, MessageArraySize );
+    memcpy( dst, src, TotalMessageArraySize );
 
 } /* CopyBitState */
 
@@ -233,10 +237,12 @@ void CopyBitState( char *dst, char *src )
  */
 void ClearMessageCount( void )
 {
-    int i;
+    int     i, j;
 
-    for( i = 0; i < MessageArraySize; i++) {
-        MessageArray[i].count = 0L;
+    for( i = 0; i < ClassMessagesSize; i++ ) {
+        for( j = 0; j < ClassMessages[i].message_array_size; j++ ) {
+            ClassMessages[i].message_array[j].count = 0L;
+        }
     }
 
 } /* ClearMessageCount */

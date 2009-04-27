@@ -48,12 +48,16 @@ void LoadSpyConfig( char *fname )
 {
     char        *str, *vals;
     char        c;
-    int         i;
+    int         i, j, k;
     int         x, y;
     int         check;
 
-    str = alloca( MessageArraySize + 1 );
-    vals = alloca( MessageArraySize + 1 );
+    str = alloca( TotalMessageArraySize + 1 );
+    vals = alloca( TotalMessageArraySize + 1 );
+    for( i = 0; i < FILTER_ENTRIES; i++ ) {
+        Filters[i].flag[M_WATCH] = 1;
+        Filters[i].flag[M_STOPON] = 0;
+    }
     if( fname == NULL ) {
         GetConfigFilePath( iniPath, sizeof( iniPath ) );
         strcat( iniPath, "\\" WATCOM_INI );
@@ -91,32 +95,37 @@ void LoadSpyConfig( char *fname )
     /*
      * what specific messages to watch
      */
-    memset( vals, '1', MessageArraySize );
-    vals[MessageArraySize] = 0;
+    memset( vals, '1', TotalMessageArraySize );
+    vals[TotalMessageArraySize] = 0;
     GetPrivateProfileString( spyApp, "watch", vals, str,
-                             MessageArraySize + 1, fname );
-    for( i = 0; i < MessageArraySize; i++ ) {
-        if( str[i] == '1' ) {
-            c = 1;
-        } else {
-            c = 0;
+                             TotalMessageArraySize + 1, fname );
+
+    for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
+        for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
+            if( str[i++] == '1' ) {
+                c = 1;
+            } else {
+                c = 0;
+            }
+            ClassMessages[j].message_array[k].bits[M_WATCH] = c;
         }
-        MessageArray[i].bits[M_WATCH] = c;
     }
 
     /*
      * what specific messages to stop on
      */
-    memset( vals, '0', MessageArraySize );
+    memset( vals, '0', TotalMessageArraySize );
     GetPrivateProfileString( spyApp, "stopon", vals, str,
-                             MessageArraySize + 1, fname );
-    for( i = 0; i < MessageArraySize; i++ ) {
-        if( str[i] == '1' ) {
-            c = 1;
-        } else {
-            c = 0;
+                             TotalMessageArraySize + 1, fname );
+    for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
+        for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
+            if( str[i++] == '1' ) {
+                c = 1;
+            } else {
+                c = 0;
+            }
+            ClassMessages[j].message_array[k].bits[M_STOPON] = c;
         }
-        MessageArray[i].bits[M_STOPON] = c;
     }
 
     /*
@@ -132,7 +141,7 @@ void LoadSpyConfig( char *fname )
         } else {
             c = 0;
         }
-        Filters.array[i].flag[M_WATCH] = c;
+        Filters[i].flag[M_WATCH] = c;
     }
 
     /*
@@ -147,7 +156,7 @@ void LoadSpyConfig( char *fname )
         } else {
             c = 0;
         }
-        Filters.array[i].flag[M_STOPON] = c;
+        Filters[i].flag[M_STOPON] = c;
     }
 
     /*
@@ -177,10 +186,10 @@ void SaveSpyConfig( char *fname )
 {
     char        *str;
     char        c;
-    int         i;
+    int         i, j, k;
     char        buf[10];
 
-    str = alloca( MessageArraySize + 1 );
+    str = alloca( TotalMessageArraySize + 1 );
     if( fname == NULL ) {
         fname = iniPath;
         SaveLogConfig( fname, spyApp );
@@ -203,35 +212,40 @@ void SaveSpyConfig( char *fname )
         /*
          * what specific messages to watch
          */
-        for( i = 0; i < MessageArraySize; i++ ) {
-            if( MessageArray[i].bits[M_WATCH] ) {
-                c = '1';
-            } else {
-                c = '0';
+        for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
+            for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
+                if( ClassMessages[j].message_array[k].bits[M_WATCH] ) {
+                    c = 1;
+                } else {
+                    c = 0;
+                }
+                str[i++] = c;
             }
-            str[i] = c;
         }
-        str[MessageArraySize] = 0;
+        str[TotalMessageArraySize] = 0;
         WritePrivateProfileString( spyApp, "watch", str, fname );
 
         /*
          * what specific messages to stop on
          */
-        for( i = 0; i < MessageArraySize; i++ ) {
-            if( MessageArray[i].bits[M_STOPON] ) {
-                c = '1';
+        for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
+            for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
+                if( ClassMessages[j].message_array[k].bits[M_STOPON] ) {
+                    c = 1;
+                } else {
+                    c = 0;
+                }
+                str[i++] = c;
             }
-            else c = '0';
-            str[i] = c;
         }
-        str[MessageArraySize] = 0;
+        str[TotalMessageArraySize] = 0;
         WritePrivateProfileString( spyApp, "stopon", str, fname );
 
         /*
          * what message classes to watch
          */
         for( i = 0; i < FILTER_ENTRIES; i++ ) {
-            if( Filters.array[i].flag[M_WATCH] ) {
+            if( Filters[i].flag[M_WATCH] ) {
                 c = '1';
             } else {
                 c = '0';
@@ -245,7 +259,7 @@ void SaveSpyConfig( char *fname )
          * what message classes to stopon
          */
         for( i = 0; i < FILTER_ENTRIES; i++ ) {
-            if( Filters.array[i].flag[M_STOPON] ) {
+            if( Filters[i].flag[M_STOPON] ) {
                 c = '1';
             } else {
                 c = '0';

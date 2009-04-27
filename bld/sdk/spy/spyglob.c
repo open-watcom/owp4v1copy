@@ -53,20 +53,6 @@ HANDLE          ResInstance;
 LPVOID          HandleMessageInst;
 HMENU           SpyMenu;
 statwnd         *StatusHdl;
-filters         Filters = { {
-    { 1, 0, MC_CLIPBRD },
-    { 1, 0, MC_DDE },
-    { 1, 0, MC_IME },
-    { 1, 0, MC_INIT },
-    { 1, 0, MC_INPUT },
-    { 1, 0, MC_MDI },
-    { 1, 0, MC_MOUSE },
-    { 1, 0, MC_NC_MISC },
-    { 1, 0, MC_NC_MOUSE },
-    { 1, 0, MC_OTHER },
-    { 1, 0, MC_SYSTEM },
-    { 1, 0, MC_UNKNOWN },
-    { 1, 0, MC_USER },
-    { 1, 0, MC_WINDOW }
-} };
+
+filter          Filters[FILTER_ENTRIES];
 
