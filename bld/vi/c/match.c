@@ -65,6 +65,7 @@ vi_rc FindMatch( i_mark *pos1 )
     /*
      * build match command
      */
+    matchd[0] = '\0';
     for( i = 0; i < MatchCount; i++ ) {
         if( i > 0 ) {
             strcat( matchd, "|" );
@@ -79,7 +80,7 @@ vi_rc FindMatch( i_mark *pos1 )
     pos2 = CurrentPos;
     pos2.column -= 1;
 
-    oldmagic = SetMagicFlag( FALSE );
+    oldmagic = SetMagicFlag( TRUE );
     rc = FindRegularExpression( matchd, &pos2, &linedata, pos2.line, FALSE );
     if( rc != ERR_NO_ERR ) {
         SetMagicFlag( oldmagic );
@@ -117,14 +118,13 @@ vi_rc FindMatch( i_mark *pos1 )
     while( TRUE ) {
         if( m2 ) {
             pos2.column--;
-            if( FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, FALSE ) ) {
-                break;
-            }
+            rc = FindRegularExpressionBackwards( NULL, &pos2, &linedata, -1L, FALSE );
         } else {
             pos2.column++;
-            if( FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, FALSE ) ) {
-                break;
-            }
+            rc = FindRegularExpression( NULL, &pos2, &linedata, MAX_LONG, FALSE );
+        }
+        if( rc != ERR_NO_ERR ) {
+            break;
         }
         if( CurrentRegularExpression->startp[m2 + 1] != NULL ) {
             matchcnt++;
