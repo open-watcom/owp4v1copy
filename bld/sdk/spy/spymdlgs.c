@@ -210,6 +210,7 @@ BOOL CALLBACK MessageDialog( HWND hwnd, int msg, UINT wparam, DWORD lparam )
             fl = (Filters[i].flag[currBit]) ? FALSE : TRUE;
             CheckDlgButton( hwnd, cmdid, fl );
             Filters[i].flag[currBit] = fl;
+            SetFilterSaveBitsMsgs( i, fl, savedBits );
             break;
         }
         switch( cmdid ) {
