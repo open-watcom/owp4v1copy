@@ -36,6 +36,7 @@
 #endif
 
 #include <windows.h>
+#include "bool.h"
 #define MSG_RC_BASE     0
 #include "rcstr.gh"
 #include "ldstr.h"
@@ -139,13 +140,13 @@ typedef enum {
 } MsgClass;
 
 typedef struct {
-    char        flag[2];
+    bool        flag[2];
 } filter;
 
 #define M_WATCH         0
 #define M_STOPON        1
 typedef struct {
-    char        bits[2];
+    bool        bits[2];
     WORD        id;
     char        *str;
     MsgClass    type;
@@ -246,14 +247,14 @@ message *GetMessageDataFromID( int msgid, char *class_name );
 void ProcessIncomingMessage( int msgid, char *class_name, char *res );
 LPSTR GetMessageStructAddr( int msgid );
 void InitMessages( void );
-void SetFilterMsgs( MsgClass type, BOOL val, int bit );
-char *SaveBitState( int x );
-void RestoreBitState( char *data, int x );
+void SetFilterMsgs( MsgClass type, bool val, int bit );
+bool *SaveBitState( int x );
+void RestoreBitState( bool *data, int x );
 void ClearMessageCount( void );
-char *CloneBitState( char *old );
-void FreeBitState( char *data );
-void CopyBitState( char *dst, char *src );
-void SetFilterSaveBitsMsgs( MsgClass type, BOOL val, char *bits );
+bool *CloneBitState( bool *old );
+void FreeBitState( bool *data );
+void CopyBitState( bool *dst, bool *src );
+void SetFilterSaveBitsMsgs( MsgClass type, bool val, bool *bits );
 
 /* spypick.c */
 void FrameAWindow( HWND hwnd );

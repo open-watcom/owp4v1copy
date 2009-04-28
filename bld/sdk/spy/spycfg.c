@@ -47,7 +47,6 @@ static char iniPath[_MAX_PATH] = WATCOM_INI;
 void LoadSpyConfig( char *fname )
 {
     char        *str, *vals;
-    char        c;
     int         i, j, k;
     int         x, y;
     int         check;
@@ -55,8 +54,8 @@ void LoadSpyConfig( char *fname )
     str = alloca( TotalMessageArraySize + 1 );
     vals = alloca( TotalMessageArraySize + 1 );
     for( i = 0; i < FILTER_ENTRIES; i++ ) {
-        Filters[i].flag[M_WATCH] = 1;
-        Filters[i].flag[M_STOPON] = 0;
+        Filters[i].flag[M_WATCH] = TRUE;
+        Filters[i].flag[M_STOPON] = FALSE;
     }
     if( fname == NULL ) {
         GetConfigFilePath( iniPath, sizeof( iniPath ) );
@@ -102,12 +101,7 @@ void LoadSpyConfig( char *fname )
 
     for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
         for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
-            if( str[i++] == '1' ) {
-                c = 1;
-            } else {
-                c = 0;
-            }
-            ClassMessages[j].message_array[k].bits[M_WATCH] = c;
+            ClassMessages[j].message_array[k].bits[M_WATCH] = ( str[i++]  != '0');
         }
     }
 
@@ -119,12 +113,7 @@ void LoadSpyConfig( char *fname )
                              TotalMessageArraySize + 1, fname );
     for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
         for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
-            if( str[i++] == '1' ) {
-                c = 1;
-            } else {
-                c = 0;
-            }
-            ClassMessages[j].message_array[k].bits[M_STOPON] = c;
+            ClassMessages[j].message_array[k].bits[M_STOPON] = ( str[i++]  != '0');
         }
     }
 
@@ -136,12 +125,7 @@ void LoadSpyConfig( char *fname )
     GetPrivateProfileString( spyApp, "watchclasses", vals, str,
                              FILTER_ENTRIES + 1, fname );
     for( i = 0; i < FILTER_ENTRIES; i++ ) {
-        if( str[i] == '1' ) {
-            c = 1;
-        } else {
-            c = 0;
-        }
-        Filters[i].flag[M_WATCH] = c;
+        Filters[i].flag[M_WATCH] = ( str[i]  != '0');
     }
 
     /*
@@ -151,12 +135,7 @@ void LoadSpyConfig( char *fname )
     GetPrivateProfileString( spyApp, "stoponclasses", vals, str,
                              FILTER_ENTRIES + 1, fname );
     for( i = 0; i < FILTER_ENTRIES; i++ ) {
-        if( str[i] == '1' ) {
-            c = 1;
-        } else {
-            c = 0;
-        }
-        Filters[i].flag[M_STOPON] = c;
+        Filters[i].flag[M_STOPON] = ( str[i] != '0' );
     }
 
     /*
@@ -165,11 +144,7 @@ void LoadSpyConfig( char *fname )
     vals[0] = '1';
     vals[1] = 0;
     GetPrivateProfileString( spyApp, "autosavecfg", vals, str, 2, fname );
-    if( str[0] == '1' ) {
-        AutoSaveConfig = TRUE;
-    } else {
-        AutoSaveConfig = FALSE;
-    }
+    AutoSaveConfig = ( str[0]  != '0');
     if( AutoSaveConfig ) {
         check = MF_CHECKED;
     } else {
@@ -215,9 +190,9 @@ void SaveSpyConfig( char *fname )
         for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
             for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
                 if( ClassMessages[j].message_array[k].bits[M_WATCH] ) {
-                    c = 1;
+                    c = '1';
                 } else {
-                    c = 0;
+                    c = '0';
                 }
                 str[i++] = c;
             }
@@ -231,9 +206,9 @@ void SaveSpyConfig( char *fname )
         for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
             for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
                 if( ClassMessages[j].message_array[k].bits[M_STOPON] ) {
-                    c = 1;
+                    c = '1';
                 } else {
-                    c = 0;
+                    c = '0';
                 }
                 str[i++] = c;
             }
@@ -274,10 +249,11 @@ void SaveSpyConfig( char *fname )
      * save misc info
      */
     if( AutoSaveConfig ) {
-        str[0] = '1';
+        c = '1';
     } else {
-        str[0] = '0';
+        c = '0';
     }
+    str[0] = c;
     str[1] = 0;
     WritePrivateProfileString( spyApp, "autosavecfg", str, fname );
 

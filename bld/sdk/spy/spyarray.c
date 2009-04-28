@@ -86,10 +86,8 @@ static message near EditMessageArray[] = {
     msgpick( 1, 0, EM_SETREADONLY,          "EM_SETREADONLY",           MC_CONTROL, 0L ),
     msgpick( 1, 0, EM_SETWORDBREAKPROC,     "EM_SETWORDBREAKPROC",      MC_CONTROL, 0L ),
     msgpick( 1, 0, EM_GETWORDBREAKPROC,     "EM_GETWORDBREAKPROC",      MC_CONTROL, 0L ),
-#ifndef NT_MSGS
-    msgpick( 1, 0, EM_GETPASSWORDCHAR,      "EM_GETPASSWORDCHAR",       MC_CONTROL, 0L )
-#else
     msgpick( 1, 0, EM_GETPASSWORDCHAR,      "EM_GETPASSWORDCHAR",       MC_CONTROL, 0L ),
+#ifdef NT_MSGS
     msgpick( 1, 0, EM_SETMARGINS,           "EM_SETMARGINS",            MC_CONTROL, 0L ),
     msgpick( 1, 0, EM_GETMARGINS,           "EM_GETMARGINS",            MC_CONTROL, 0L ),
     msgpick( 1, 0, EM_GETLIMITTEXT,         "EM_GETLIMITTEXT",          MC_CONTROL, 0L ),
@@ -107,10 +105,8 @@ static message near ButtonMessageArray[] = {
     msgpick( 1, 0, BM_SETCHECK,     "BM_SETCHECK",      MC_CONTROL, 0L ),
     msgpick( 1, 0, BM_GETSTATE,     "BM_GETSTATE",      MC_CONTROL, 0L ),
     msgpick( 1, 0, BM_SETSTATE,     "BM_SETSTATE",      MC_CONTROL, 0L ),
-#ifndef NT_MSGS
-    msgpick( 1, 0, BM_SETSTYLE,     "BM_SETSTYLE",      MC_CONTROL, 0L )
-#else
     msgpick( 1, 0, BM_SETSTYLE,     "BM_SETSTYLE",      MC_CONTROL, 0L ),
+#ifdef NT_MSGS
     msgpick( 1, 0, BM_CLICK,        "BM_CLICK",         MC_CONTROL, 0L ),
     msgpick( 1, 0, BM_GETIMAGE,     "BM_GETIMAGE",      MC_CONTROL, 0L ),
     msgpick( 1, 0, BM_SETIMAGE,     "BM_SETIMAGE",      MC_CONTROL, 0L ),
@@ -122,9 +118,8 @@ static message near ButtonMessageArray[] = {
 
 static message near StaticMessageArray[] = {
     msgpick( 1, 0, STM_SETICON,     "STM_SETICON",  MC_CONTROL, 0L ),
-#ifndef NT_MSGS
-    msgpick( 1, 0, STM_GETICON,     "STM_GETICON",  MC_CONTROL, 0L )
-#else
+    msgpick( 1, 0, STM_GETICON,     "STM_GETICON",  MC_CONTROL, 0L ),
+#ifdef NT_MSGS
     msgpick( 1, 0, STM_GETICON,     "STM_GETICON",  MC_CONTROL, 0L ),
     msgpick( 1, 0, STM_SETIMAGE,    "STM_SETIMAGE", MC_CONTROL, 0L ),
     msgpick( 1, 0, STM_GETIMAGE,    "STM_GETIMAGE", MC_CONTROL, 0L )
@@ -174,10 +169,8 @@ static message near ListBoxMessageArray[] = {
     msgpick( 1, 0, LB_GETCARETINDEX,        "LB_GETCARETINDEX",         MC_CONTROL, 0L ),
     msgpick( 1, 0, LB_SETITEMHEIGHT,        "LB_SETITEMHEIGHT",         MC_CONTROL, 0L ),
     msgpick( 1, 0, LB_GETITEMHEIGHT,        "LB_GETITEMHEIGHT",         MC_CONTROL, 0L ),
-#ifndef NT_MSGS
-    msgpick( 1, 0, LB_FINDSTRINGEXACT,      "LB_FINDSTRINGEXACT",       MC_CONTROL, 0L )
-#else
     msgpick( 1, 0, LB_FINDSTRINGEXACT,      "LB_FINDSTRINGEXACT",       MC_CONTROL, 0L ),
+#ifdef NT_MSGS
     msgpick( 1, 0, LB_SETLOCALE,            "LB_SETLOCALE",             MC_CONTROL, 0L ),
     msgpick( 1, 0, LB_GETLOCALE,            "LB_GETLOCALE",             MC_CONTROL, 0L ),
     msgpick( 1, 0, LB_SETCOUNT,             "LB_SETCOUNT",              MC_CONTROL, 0L ),
@@ -190,57 +183,49 @@ static message near ListBoxMessageArray[] = {
 #define LISTBOXMESSAGEARRAYSIZE     (sizeof( ListBoxMessageArray )/sizeof( message ))
 
 #define combobox_messages_old() \
-    msgpick( 1, 0, CB_GETEDITSEL,       "CB_GETEDITSEL",            MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_LIMITTEXT,        "CB_LIMITTEXT",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETEDITSEL,       "CB_SETEDITSEL",            MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_ADDSTRING,        "CB_ADDSTRING",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_DELETESTRING,     "CB_DELETESTRING",          MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_DIR,              "CB_DIR",                   MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETCOUNT,         "CB_GETCOUNT",              MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETCURSEL,        "CB_GETCURSEL",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETLBTEXT,        "CB_GETLBTEXT",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETLBTEXTLEN,     "CB_GETLBTEXTLEN",          MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_INSERTSTRING,     "CB_INSERTSTRING",          MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_RESETCONTENT,     "CB_RESETCONTENT",          MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_FINDSTRING,       "CB_FINDSTRING",            MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SELECTSTRING,     "CB_SELECTSTRING",          MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETCURSEL,        "CB_SETCURSEL",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SHOWDROPDOWN,     "CB_SHOWDROPDOWN",          MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETITEMDATA,      "CB_GETITEMDATA",           MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETITEMDATA,      "CB_SETITEMDATA",           MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETDROPPEDCONTROLRECT, "CB_GETDROPPEDCONTROLRECT", \
-             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETITEMHEIGHT,    "CB_SETITEMHEIGHT",         MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETITEMHEIGHT,    "CB_GETITEMHEIGHT",         MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETEXTENDEDUI,    "CB_SETEXTENDEDUI",         MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETEXTENDEDUI,    "CB_GETEXTENDEDUI",         MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETDROPPEDSTATE,  "CB_GETDROPPEDSTATE",       MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_FINDSTRINGEXACT,  "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L )
-
+    msgpick( 1, 0, CB_GETEDITSEL,           "CB_GETEDITSEL",            MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_LIMITTEXT,            "CB_LIMITTEXT",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETEDITSEL,           "CB_SETEDITSEL",            MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_ADDSTRING,            "CB_ADDSTRING",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_DELETESTRING,         "CB_DELETESTRING",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_DIR,                  "CB_DIR",                   MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETCOUNT,             "CB_GETCOUNT",              MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETCURSEL,            "CB_GETCURSEL",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETLBTEXT,            "CB_GETLBTEXT",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETLBTEXTLEN,         "CB_GETLBTEXTLEN",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_INSERTSTRING,         "CB_INSERTSTRING",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_RESETCONTENT,         "CB_RESETCONTENT",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_FINDSTRING,           "CB_FINDSTRING",            MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SELECTSTRING,         "CB_SELECTSTRING",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETCURSEL,            "CB_SETCURSEL",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SHOWDROPDOWN,         "CB_SHOWDROPDOWN",          MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETITEMDATA,          "CB_GETITEMDATA",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETITEMDATA,          "CB_SETITEMDATA",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETDROPPEDCONTROLRECT,"CB_GETDROPPEDCONTROLRECT", MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETITEMHEIGHT,        "CB_SETITEMHEIGHT",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETITEMHEIGHT,        "CB_GETITEMHEIGHT",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETEXTENDEDUI,        "CB_SETEXTENDEDUI",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETEXTENDEDUI,        "CB_GETEXTENDEDUI",         MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETDROPPEDSTATE,      "CB_GETDROPPEDSTATE",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_FINDSTRINGEXACT,      "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L ),
+    
 #define combobox_messages_new() \
-    msgpick( 1, 0, CB_FINDSTRINGEXACT,  "CB_FINDSTRINGEXACT",       MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETLOCALE,        "CB_SETLOCALE",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETLOCALE,        "CB_GETLOCALE",             MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETTOPINDEX,      "CB_GETTOPINDEX",           MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETTOPINDEX,      "CB_SETTOPINDEX",           MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETHORIZONTALEXTENT, "CB_GETHORIZONTALEXTENT", MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETHORIZONTALEXTENT, "CB_SETHORIZONTALEXTENT", MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETDROPPEDWIDTH,  "CB_GETDROPPEDWIDTH",       MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_SETDROPPEDWIDTH,  "CB_SETDROPPEDWIDTH",       MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_INITSTORAGE,      "CB_INITSTORAGE",           MC_CONTROL, 0L ), \
-    msgpick( 1, 0, CB_GETCOMBOBOXINFO,  "CB_GETCOMBOBOXINFO",       MC_CONTROL, 0L )
-
-#ifdef NT_MSGS
-    #define combobox_messages() \
-        combobox_messages_old(), \
-        combobox_messages_new()
-#else
-    #define combobox_messages() \
-        combobox_messages_old()
-#endif
+    msgpick( 1, 0, CB_SETLOCALE,            "CB_SETLOCALE",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETLOCALE,            "CB_GETLOCALE",             MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETTOPINDEX,          "CB_GETTOPINDEX",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETTOPINDEX,          "CB_SETTOPINDEX",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETHORIZONTALEXTENT,  "CB_GETHORIZONTALEXTENT",   MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETHORIZONTALEXTENT,  "CB_SETHORIZONTALEXTENT",   MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETDROPPEDWIDTH,      "CB_GETDROPPEDWIDTH",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_SETDROPPEDWIDTH,      "CB_SETDROPPEDWIDTH",       MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_INITSTORAGE,          "CB_INITSTORAGE",           MC_CONTROL, 0L ), \
+    msgpick( 1, 0, CB_GETCOMBOBOXINFO,      "CB_GETCOMBOBOXINFO",       MC_CONTROL, 0L ),
 
 static message near ComboBoxMessageArray[] = {
-    combobox_messages()
+    combobox_messages_old()
+#ifdef NT_MSGS
+    combobox_messages_new()
+#endif
 };
 
 #define COMBOBOXMESSAGEARRAYSIZE    (sizeof( ComboBoxMessageArray )/sizeof( message ))
@@ -281,8 +266,7 @@ static message near HeaderMessageArray[] = {
     msgpick( 1, 0, HDM_SETHOTDIVIDER,       "HDM_SETHOTDIVIDER",        MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_SETBITMAPMARGIN,     "HDM_SETBITMAPMARGIN",      MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_GETBITMAPMARGIN,     "HDM_GETBITMAPMARGIN",      MC_CONTROL, 0L ),
-    msgpick( 1, 0, HDM_SETFILTERCHANGETIMEOUT, "HDM_SETFILTERCHANGETIMEOUT",
-             MC_CONTROL, 0L ),
+    msgpick( 1, 0, HDM_SETFILTERCHANGETIMEOUT,"HDM_SETFILTERCHANGETIMEOUT",MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_EDITFILTER,          "HDM_EDITFILTER",           MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_CLEARFILTER,         "HDM_CLEARFILTER",          MC_CONTROL, 0L ),
     msgpick( 1, 0, HDM_GETITEMDROPDOWNRECT, "HDM_GETITEMDROPDOWNRECT",  MC_CONTROL, 0L ),
@@ -304,8 +288,7 @@ static message near ToolbarMessageArray[] = {
     msgpick( 1, 0, TB_ISBUTTONCHECKED,      "TB_ISBUTTONCHECKED",       MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_ISBUTTONPRESSED,      "TB_ISBUTTONPRESSED",       MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_ISBUTTONHIDDEN,       "TB_ISBUTTONHIDEEN",        MC_CONTROL, 0L ),
-    msgpick( 1, 0, TB_ISBUTTONINDETERMINATE, "TB_ISBUTTONINDETERMINATE",
-             MC_CONTROL, 0L ),
+    msgpick( 1, 0, TB_ISBUTTONINDETERMINATE,"TB_ISBUTTONINDETERMINATE", MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_ISBUTTONHIGHLIGHTED,  "TB_ISBUTTONHIGHLIGHTED",   MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_SETSTATE,             "TB_SETSTATE",              MC_CONTROL, 0L ),
     msgpick( 1, 0, TB_GETSTATE,             "TB_GETSTATE",              MC_CONTROL, 0L ),
@@ -646,10 +629,8 @@ static message near ListViewMessageArray[] = {
     msgpick( 1, 0, LVM_GETITEMSPACING,      "LVM_GETITEMSPACING",       MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_GETISEARCHSTRINGA,   "LVM_GETISEARCHSTRING",     MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SETICONSPACING,      "LVM_SETICONSPACING",       MC_CONTROL, 0L ),
-    msgpick( 1, 0, LVM_SETEXTENDEDLISTVIEWSTYLE, "LVM_SETEXTENDEDLISTVIEWSTYLE",
-             MC_CONTROL, 0L ),
-    msgpick( 1, 0, LVM_GETEXTENDEDLISTVIEWSTYLE, "LVM_GETEXTENDEDLISTVIEWSTYLE",
-             MC_CONTROL, 0L ),
+    msgpick( 1, 0, LVM_SETEXTENDEDLISTVIEWSTYLE,"LVM_SETEXTENDEDLISTVIEWSTYLE",MC_CONTROL, 0L ),
+    msgpick( 1, 0, LVM_GETEXTENDEDLISTVIEWSTYLE,"LVM_GETEXTENDEDLISTVIEWSTYLE",MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_GETSUBITEMRECT,      "LVM_GETSUBITEMRECT",       MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SUBITEMHITTEST,      "LVM_SUBITEMHITTEST",       MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SETCOLUMNORDERARRAY, "LVM_SETCOLUMNORDERARRAY",  MC_CONTROL, 0L ),
@@ -667,8 +648,7 @@ static message near ListViewMessageArray[] = {
     msgpick( 1, 0, LVM_GETWORKAREAS,        "LVM_GETWORKAREAS",         MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SETHOVERTIME,        "LVM_SETHOVERTIME",         MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_GETHOVERTIME,        "LVM_GETHOVERTIME",         MC_CONTROL, 0L ),
-    msgpick( 1, 0, LVM_GETNUMBEROFWORKAREAS, "LVM_GETNUMBEROFWORKAREAS",
-             MC_CONTROL, 0L ),
+    msgpick( 1, 0, LVM_GETNUMBEROFWORKAREAS,"LVM_GETNUMBEROFWORKAREAS", MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SETTOOLTIPS,         "LVM_SETTOOLTIPS",          MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_GETITEMW,            "LVM_GETITEM",              MC_CONTROL, 0L ),
     msgpick( 1, 0, LVM_SETITEMW,            "LVM_SETITEM",              MC_CONTROL, 0L ),
@@ -796,7 +776,8 @@ static message near TreeViewMessageArray[] = {
 #define TREEVIEWMESSAGEARRAYSIZE    (sizeof( TreeViewMessageArray )/sizeof( message ))
 
 static message near ComboBoxExMessageArray[] = {
-    combobox_messages(),
+    combobox_messages_old()
+    combobox_messages_new()
     msgpick( 1, 0, CBEM_INSERTITEMA,        "CBEM_INSERTITEM",          MC_CONTROL, 0L ),
     msgpick( 1, 0, CBEM_SETIMAGELIST,       "CBEM_SETIMAGELIST",        MC_CONTROL, 0L ),
     msgpick( 1, 0, CBEM_GETIMAGELIST,       "CBEM_GETIMAGELIST",        MC_CONTROL, 0L ),
@@ -909,8 +890,7 @@ static message near DateTimeMessageArray[] = {
     msgpick( 1, 0, DTM_SETMCSTYLE,      "DTM_SETMCSTYLE",       MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_GETMCSTYLE,      "DTM_GETMCSTYLE",       MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_CLOSEMONTHCAL,   "DTM_CLOSEMONTHCAL",    MC_CONTROL, 0L ),
-    msgpick( 1, 0, DTM_GETDATETIMEPICKERINFO, "DTM_GETDATETIMEPICKERINFO",
-             MC_CONTROL, 0L ),
+    msgpick( 1, 0, DTM_GETDATETIMEPICKERINFO,"DTM_GETDATETIMEPICKERINFO",MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_GETIDEALSIZE,    "DTM_GETIDEALSIZE",     MC_CONTROL, 0L ),
     msgpick( 1, 0, DTM_SETFORMATW,      "DTM_SETFORMAT",        MC_CONTROL, 0L ),
 };

@@ -116,7 +116,7 @@ void ProcessIncomingMessage( int msgid, char *class_name, char *res )
 /*
  * SetFilterMsgs
  */
-void SetFilterMsgs( MsgClass type, BOOL val, int bit )
+void SetFilterMsgs( MsgClass type, bool val, int bit )
 {
     int i, j;
 
@@ -133,7 +133,7 @@ void SetFilterMsgs( MsgClass type, BOOL val, int bit )
 /*
  * SetFilterSaveBitsMsgs
  */
-void SetFilterSaveBitsMsgs( MsgClass type, BOOL val, char *bits )
+void SetFilterSaveBitsMsgs( MsgClass type, bool val, bool *bits )
 {
     int i, j, k;
 
@@ -160,9 +160,9 @@ void InitMessages( void )
 /*
  * SaveBitState - save current watch/stopon state
  */
-char *SaveBitState( int x )
+bool *SaveBitState( int x )
 {
-    char        *data;
+    bool        *data;
     int         i, j, k;
 
     data = MemAlloc( TotalMessageArraySize );
@@ -181,8 +181,8 @@ char *SaveBitState( int x )
 /*
  * CloneBitState - make a copy of a saved bitstate
  */
-char *CloneBitState( char *old ) {
-    char        *data;
+bool *CloneBitState( bool *old ) {
+    bool        *data;
 
     data = MemAlloc( TotalMessageArraySize );
     if( data == NULL ) {
@@ -196,7 +196,7 @@ char *CloneBitState( char *old ) {
 /*
  * RestoreBitState - put back watch/stopon state
  */
-void RestoreBitState( char *data, int x )
+void RestoreBitState( bool *data, int x )
 {
     int         i, j, k;
 
@@ -217,7 +217,7 @@ void RestoreBitState( char *data, int x )
  *              - should not be called for states for which RestoreBitState
  *                has been called
  */
-void FreeBitState( char *data )
+void FreeBitState( bool *data )
 {
     MemFree( data );
 
@@ -226,7 +226,7 @@ void FreeBitState( char *data )
 /*
  * CopyBitState
  */
-void CopyBitState( char *dst, char *src )
+void CopyBitState( bool *dst, bool *src )
 {
     memcpy( dst, src, TotalMessageArraySize );
 
