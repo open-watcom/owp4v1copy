@@ -363,12 +363,12 @@ button.
 Close the current dialog and ignore all changes made in it
 and in previous dialog that were exited using the Next or
 Prev button.
+.endnote
 .step Select OK on the Message Class dialog.
 .result
 The message class dialog closes and your message selections take effect.
 If you choose Cancel on the Message Class dialog your message selections
 will be discarded.
-.endnote
 .endstep
 .*
 .section *refid=selmscl Selecting Message Classes
