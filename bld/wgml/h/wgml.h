@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -32,7 +32,7 @@
 #define WGML_H_INCLUDED
 
 #ifndef __STDC_WANT_LIB_EXT1__
-    #define __STDC_WANT_LIB_EXT1__  1  /* use safer C library              */
+    #define __STDC_WANT_LIB_EXT1__  1   /* use safer C library             */
 #endif
 
 #include <stdio.h>
@@ -201,6 +201,7 @@ extern void     reset_auto_inc_dict( symvar * dict );
 
 /* gsyssym.c                          */
 extern  void    init_predefined_symbols( void );
+extern  void    init_sysparm( char * cmdline );
 
 
 /* gtagdict.c                         */

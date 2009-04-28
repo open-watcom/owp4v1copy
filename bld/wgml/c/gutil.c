@@ -27,15 +27,15 @@
 * Description:  wgml utility functions
 *
 ****************************************************************************/
- 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
+#define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
+
 #include <stdarg.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
- 
+
+
 char    *skip_to_quote( char * p, char quote )
 {
     while( *p && quote != *p ) {
@@ -43,7 +43,7 @@ char    *skip_to_quote( char * p, char quote )
     }
     return( p+1 );
 }
- 
+
 /***************************************************************************/
 /*  conversion routines for Horizontal / Vertical space units              */
 /*  Accepted formats:                                                      */
@@ -53,20 +53,20 @@ char    *skip_to_quote( char * p, char quote )
 /*                                                                         */
 /*       12.34i      inch             (1 inch = 2.54cm)                    */
 /*       5C11        Cicero  + points (12 points = 1C = 1/6 inch)          */
+/*                                     1C  4.51 mm                         */
 /*       6p10        Pica    + points (12 points = 1P = 1/6 inch)          */
-/*                                     1C  0.035277... mm                  */
-/*                                     1p  0,002939814814... mm            */
+/*                                     1P  4.216 mm                        */
 /*       5.23cm      centimeter                                            */
 /*       6.75mm      millimeter                                            */
 /*                                                                         */
-/*    the absolute units (the last 5) will be stored as millimeter         */
-/*    in 1/10000 millimeter units,                                         */
-/*    the relative ones will be stored as is.                              */
+/*    the absolute units (the last 5) will be stored                       */
+/*    in 0.0001 millimeter units and 0.0001 inch units,                    */
+/*    the relative ones will not be converted.                             */
 /*                                                                         */
 /*    returns  filled structure su, returncode TRUE                        */
 /*               or  returncode FALSE in case of error                     */
 /***************************************************************************/
- 
+
 bool    to_internal_SU( char * * scanp, su * converted )
 {
     bool        converterror = true;
@@ -84,7 +84,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     char        quote;
     int         k;
     char        sign;
- 
+
     unit[3] = '\0';
     unit[2] = '\0';
     unit[1] = '\0';
@@ -96,7 +96,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     wd = 0;
     pp = NULL;
     quote = '\0';
- 
+
     s->su_u = SU_undefined;
     if( *p == '\'' || *p == '"' ) {     // ignore but remember quote
         quote = *p++;
@@ -123,7 +123,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     pp = p;
     k = 0;
     while( *p && isalpha( *p ) ) {
-        unit[k++] = tolower( *p );    // save Unit
+        unit[k++] = tolower( *p );      // save Unit
         *ps++ = *p++;
         if( ps >= s->su_txt + sizeof( s->su_txt ) || k > 2 ) {
             if( quote ) {
@@ -142,7 +142,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     }
     pd1 = NULL;
     pdn = NULL;
- 
+
     if( p == pp && *p == '.' ) {        // no unit found, try dec point
         *ps++ = *p++;
         pd1 = p;                        // remember start of decimals
@@ -163,7 +163,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
                 *scanp = p;
                 return( converterror );
             }
-            if( wd > 99 ) {             // more than two digits
+            if( p > pd1 + 2 ) {         // more than two digits
                 if( quote ) {
                     p = skip_to_quote( p, quote );
                 }
@@ -192,7 +192,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
                     *scanp = p;
                     return( converterror );
                 }
-                if( wd > 99 ) {         // more than two digits
+                if( p > pd1 + 2 ) {     // more than two digits
                     if( quote ) {
                         p = skip_to_quote( p, quote );
                     }
@@ -218,12 +218,12 @@ bool    to_internal_SU( char * * scanp, su * converted )
             }
         }
     }
- 
+
     *ps = '\0';
- 
+
     s->su_whole = wh;
     s->su_dec   = wd;
- 
+
     if( (quote && *p != quote ) || (!quote && *p == '\'') ) {
         if( quote ) {
             p = skip_to_quote( p, quote );
@@ -234,9 +234,9 @@ bool    to_internal_SU( char * * scanp, su * converted )
     if( quote ) {
         p++;                            // over quote
     }
- 
+
     *scanp = p;                         // report back scan position
- 
+
     if( k == 0 ) {                      // no trailing unit
         pu = NULL;
     } else {
@@ -253,7 +253,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
             return( converterror );
         }
     }
- 
+
     /***********************************************************************/
     /*  check for valid unit                                               */
     /***********************************************************************/
@@ -282,7 +282,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
             break;
         }
     } else {                            // two letter unit
-        if( unit[1] == 'm' ) {        // cm, mm ?
+        if( unit[1] == 'm' ) {          // cm, mm ?
             if( unit[0] == 'c' ) {
                 s->su_u = SU_cm;
             } else if( unit[0] == 'm' ) {
@@ -294,10 +294,17 @@ bool    to_internal_SU( char * * scanp, su * converted )
             return( converterror );
         }
     }
- 
-    s->su_conv = 0;
+
+    s->su_inch = 0;
+    s->su_mm   = 0;
     k = 1;
+    if( pd1 != NULL ) {
+        if( pdn - pd1 == 1 ) {
+            k = 10;                 // only 0.1 digit
+        }
+    }
     switch( s->su_u ) {
+    // the relative units are only stored, not converted
     case SU_chars_lines :
     case SU_dv :
     case SU_ems :
@@ -306,50 +313,41 @@ bool    to_internal_SU( char * * scanp, su * converted )
         }
         break;
     case SU_inch :                      // inch, cm, mm valid with decimals
-        if( pd1 != NULL ) {
-            if( pdn - pd1 == 1 ) {
-                k = 10;                // only 0.1 digit
-            }
-        }
-        s->su_conv = (wh * 100 + wd * k) * 25400L;
+        s->su_mm = (wh * 100 + wd * k) * 2540L;
+        s->su_inch = (wh * 100 + wd * k) * 100L;
         break;
     case SU_cm :
-        if( pd1 != NULL ) {
-            if( pdn - pd1 == 1 ) {
-                k = 10;                // only 0.1 digit
-            }
-        }
-        s->su_conv = (wh * 100 + wd * k) * 10000L;
+        s->su_mm = (wh * 100 + wd * k) * 1000L;
+        s->su_inch = s->su_mm * 10L / 254L;
         break;
     case SU_mm :
-        if( pd1 != NULL ) {
-            if( pdn - pd1 == 1 ) {
-                k = 10;                // only 0.1 digit
-            }
-        }
-        s->su_conv = (wh * 100 + wd * k) * 1000L;
+        s->su_mm = (wh * 100 + wd * k) * 100L;
+        s->su_inch = s->su_mm * 10L / 254L;
         break;
     case SU_cicero :
-        if( wd > 12 ) {
+        if( wd > 11 ) {
             div = ldiv( wd, 12 );
             wh += div.quot;
             wd = div.rem;
         }
-        s->su_conv = wh * 2540000L / 5L + wd * 2540000L / 60L;
+        s->su_mm = wh * 45120L + wd * 3760L;
+        s->su_inch = s->su_mm * 10L / 254L;
         break;
-   case SU_pica :                      // pica / Cicero
-        if( wd > 12 ) {
+   case SU_pica :                       // pica / Cicero
+        if( wd > 11 ) {
             div = ldiv( wd, 12 );
             wh += div.quot;
             wd = div.rem;
         }
-        s->su_conv = wh * 2540000L / 6L + wd * 2540000L / 72L;
+        s->su_mm = wh * 42160L + wd * 3514L;
+        s->su_inch = s->su_mm * 10L / 254L;
         break;
     default:
         break;
     }
     if( sign == '-' ) {
-        s->su_conv  = -s->su_conv;
+        s->su_inch  = -s->su_inch;
+        s->su_mm    = -s->su_mm;
         s->su_whole = -s->su_whole;
     }
     converterror = false;
@@ -360,14 +358,20 @@ int main( int argc, char *cargv[] )
 {
     bool    error;
     su      aus;
-//    char    ein1[] = "1.2I";
-    char    *ein1 = "'6p11'";
+//  char    ein1[] = "1.5I";
+//  char    ein1[] = "3.81cm";
+//  char    ein1[] = "38.1mm";
+//  char    *ein1 = "'6p11'";
+    char    *ein1 = "'1C'";
+    char    *ein2 = "'1C12'";
     char   *p = ein1;
- 
+
     error = to_internal_SU( &p, &aus );
- 
- 
+
+    p = ein2;
+    error = to_internal_SU( &p, &aus );
+
     return(0);
 }
 #endif
- 
+

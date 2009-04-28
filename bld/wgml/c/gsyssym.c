@@ -27,37 +27,49 @@
 * Description:  Implements predefined system symbols &gml, &amp, ...
 *
 ****************************************************************************/
- 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
+#define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
- 
+
+
 #define  mystr(x)           # x
 #define  xmystr(s)          mystr(s)
- 
+
 /***************************************************************************/
 /*  init_predefined_symbols              incomplete TDB                    */
 /***************************************************************************/
- 
+
 void    init_predefined_symbols( void )
 {
     char    string[2] = { 0, 0 };
- 
+
     add_symvar( &global_dict, "amp", "&", no_subscript, predefined + late_subst );
- 
+    add_symvar( &global_dict, "$amp", "&", no_subscript, predefined + late_subst );
+
     string[0] = CW_SEP_CHAR_DEFAULT;
-    add_symvar( &global_dict, "$cw", string, no_subscript, predefined );
- 
+    add_symvar( &global_dict, "$cw", string, no_subscript, predefined + late_subst );
+
     string[0] = GML_CHAR_DEFAULT;
     add_symvar( &global_dict, "gml", string, no_subscript, predefined + late_subst );
     add_symvar( &global_dict, "$gml", string, no_subscript, predefined + late_subst );
- 
+
     string[0] = '.';
     add_symvar( &global_dict, "$per", string, no_subscript, predefined );
+
+    add_symvar( &global_dict, "$quiet", "OFF", no_subscript, predefined );
 }
- 
+
+/***************************************************************************/
+/*  init_sysparm     this is separate as only known later                  */
+/***************************************************************************/
+
+void    init_sysparm( char * cmdline )
+{
+    add_symvar( &global_dict, "$parm", cmdline, no_subscript, predefined );
+}
+

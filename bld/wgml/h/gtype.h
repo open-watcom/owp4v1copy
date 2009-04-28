@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2009 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -94,33 +94,33 @@
 
 
 /***************************************************************************/
-/*  Space units Horiz + Vert              to be redesigned                 */
+/*  Space units Horiz + Vert              to be redesigned      TBD        */
 /***************************************************************************/
 
 typedef enum space_units {
-    SU_undefined,                       // don't care = value zero
+    SU_undefined   = 0,                 // don't care = value zero
     SU_chars_lines = 10,                // undimensioned value
-    SU_chars = 1,                       // chars horizontal
-    SU_lines = 1,                       // lines vertical
-    SU_cicero,                          // Cicero
-    SU_cm,                              // centimeter
-    SU_dv,                              // device units
-    SU_ems,                             // Ems
-    SU_inch,                            // inch
-    SU_mm,                              // millimeter
-    SU_pica,                            // pica
-    SU_absolute                         // absolute mm with 4 decimals
+    SU_chars       = 1,                 // chars horizontal
+    SU_lines       = 1,                 // lines vertical
+    SU_cicero,                          // C   Cicero
+    SU_cm,                              // cm  centimeter
+    SU_dv,                              // dv  device units
+    SU_ems,                             // M   Ems
+    SU_inch,                            // i   inch
+    SU_mm,                              // mm  millimeter
+    SU_pica                             // p   pica
 } space_units;
 
 #define MAX_SU_CHAR     12            // length of space units in char format
 
 typedef struct {
-    char        su_txt[MAX_SU_CHAR];
-    long        su_whole;               // integer part
-    long        su_dec;                 // decimal part (if any)
-    long        su_conv;                // abs. value in mm with 4 decimals
-    space_units su_u;                   // unit
+    char        su_txt[MAX_SU_CHAR];    // space unit as entered in chars
+    int32_t     su_whole;               // integer part
+    int32_t     su_dec;                 // decimal part (if any)
+    int32_t     su_inch;                // value in inch with 4 decimals
+    int32_t     su_mm;                  // value in mm with 4 decimals
     bool        su_relative;            // + - sign found
+    space_units su_u;                   // unit
 } su;
 
 /***************************************************************************/
