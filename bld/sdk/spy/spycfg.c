@@ -113,7 +113,7 @@ void LoadSpyConfig( char *fname )
                              TotalMessageArraySize + 1, fname );
     for( j = 0, i = 0; j < ClassMessagesSize; j++ ) {
         for( k = 0; k < ClassMessages[j].message_array_size; k++ ) {
-            ClassMessages[j].message_array[k].bits[M_STOPON] = ( str[i++]  != '0');
+            ClassMessages[j].message_array[k].bits[M_STOPON] = ( str[i++]  == '1');
         }
     }
 
@@ -135,7 +135,7 @@ void LoadSpyConfig( char *fname )
     GetPrivateProfileString( spyApp, "stoponclasses", vals, str,
                              FILTER_ENTRIES + 1, fname );
     for( i = 0; i < FILTER_ENTRIES; i++ ) {
-        Filters[i].flag[M_STOPON] = ( str[i] != '0' );
+        Filters[i].flag[M_STOPON] = ( str[i] == '1' );
     }
 
     /*
