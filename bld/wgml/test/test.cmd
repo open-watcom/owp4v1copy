@@ -27,17 +27,12 @@ rem NT/XP? or OS/2 or eCS?
    if [%OS2_SHELL%] == [] goto noOS2
    if [%OS%] == [] goto noWIN
    if [%OS%] == [ecs] goto noWIN
+:UNKNOWN
    echo Operating System not recognized, sorry
    goto eof
 
 :NOOS2
-:CONT2
-rem only works if system is on c:
-   if [%Systemroot%] == [C:\WINNT] goto noXP
-   set wgml_dir=nt386
-   goto bld1
-
-:NOXP
+   if [%Systemroot%] == [] goto unknown
    set wgml_dir=nt386
    set wg4_dir=dos
    goto bld1
