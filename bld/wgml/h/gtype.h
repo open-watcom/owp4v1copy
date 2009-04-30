@@ -303,6 +303,7 @@ typedef enum {
     II_file     = 0x01,                 // inputcb is file
     II_macro    = 0x02,                 // inputcb is macro
     II_tag      = 0x06,                 // inputcb is macro via tag
+    II_input    = II_file | II_macro | II_tag, // all input types
     II_eof      = 0x08                  // end of file (input)
 } i_flags;
 

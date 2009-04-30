@@ -25,29 +25,30 @@
 *  ========================================================================
 *
 * Description: implement ...label and .go script control words
+*               not all options are used / implemented
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
- 
- 
- 
+
+
+
+
 /***************************************************************************/
 /*  search for  label name in current input label control block            */
 /***************************************************************************/
- 
+
 static  labelcb *   find_label( char    *   name )
 {
     labelcb *   lb;
- 
+
     if( input_cbs->fmflags & II_macro ) {
         lb = input_cbs->s.m->mac->label_cb;
     } else {
@@ -60,18 +61,18 @@ static  labelcb *   find_label( char    *   name )
     }
     return( NULL );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  check whether current input line is the active go to target            */
 /***************************************************************************/
- 
+
 bool        gotarget_reached( void )
 {
     bool        reached;
     char    *   p;
     int         k;
- 
+
     reached = false;
     if( gotargetno > 0 ) {              // lineno search
         if( input_cbs->fmflags & II_macro ) {
@@ -99,16 +100,16 @@ bool        gotarget_reached( void )
     }
     return( reached );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  check whether new label is duplicate                                   */
 /***************************************************************************/
- 
+
 static  condcode    test_duplicate( char * name, ulong lineno )
 {
     labelcb     *   lb;
- 
+
     lb = find_label( name );
     if( lb == NULL ) {
         return( omit );                 // really new label
@@ -119,8 +120,8 @@ static  condcode    test_duplicate( char * name, ulong lineno )
         return( neg);                   // name matches, different lineno
     }
 }
- 
- 
+
+
 /**************************************************************************/
 /* ... (SET LABEL) defines an input line that has a "label".              */
 /*                                                                        */
@@ -154,16 +155,16 @@ static  condcode    test_duplicate( char * name, ulong lineno )
 /*     This verifies that the line of text occurs in input line 99 of the */
 /*     current input file, or results in an error message if not.         */
 /**************************************************************************/
- 
+
 void    scr_label( void )
 {
     condcode        cc;
     getnum_block    gn;
     labelcb     *   lb;
     char            linestr[MAX_L_AS_STR];
- 
+
     scan_start += 2;                    // over dots
- 
+
     while( *scan_start == ' ' ) {       // may be ...LABEL or ...      LABEL
         scan_start++;                   // over blanks
     }
@@ -181,26 +182,18 @@ void    scr_label( void )
         show_include_stack();
         return;
     } else {
- 
+
         gn.argstart      = scan_start;
         gn.argstop       = scan_stop;
         gn.ignore_blanks = 0;
- 
+
         cc = getnum( &gn );             // try numeric expression evaluation
         if( cc == pos ) {               // numeric linenumber
- 
+
             scan_start = gn.argstart;   // start for next token
- 
+
             // check if lineno from label matches actual lineno
- 
-            g_err( err_missing_name, "" );
-            if( input_cbs->fmflags & II_macro ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
-                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-            } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
-                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-            }
+
             if( input_cbs->fmflags & II_macro ) {
                 if( gn.result != input_cbs->s.m->lineno ) {
                     scan_err = true;
@@ -222,7 +215,7 @@ void    scr_label( void )
                     return;
                 }
             }
- 
+
             if( input_cbs->fmflags & II_macro ) {
                   // numeric macro label no need to store
             } else {
@@ -232,14 +225,14 @@ void    scr_label( void )
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                 show_include_stack();
             }
- 
+
         } else {                        // no numeric label
             cc = getarg();
-            if( cc == pos ) {           // label name found
+            if( cc == pos ) {           // label name specefied
                 char    *   p;
                 char    *   pt;
                 int         len;
- 
+
                 p   = tok_start;
                 pt  = token_buf;
                 len = 0;
@@ -256,9 +249,9 @@ void    scr_label( void )
                     show_include_stack();
                     token_buf[MAC_NAME_LENGTH] = '\0';
                 }
- 
+
                 if( input_cbs->fmflags & II_macro ) {
- 
+
                     cc = test_duplicate( token_buf, input_cbs->s.m->lineno );
                     if( cc == pos ) {   // ok name and lineno match
                         // nothing to do
@@ -297,7 +290,7 @@ void    scr_label( void )
                             show_include_stack();
                             return;
                         } else {        // new label
- 
+
                             lb              = mem_alloc( sizeof( labelcb ) );
                             lb->prev        = input_cbs->s.f->label_cb;
                             input_cbs->s.f->label_cb = lb;
@@ -323,10 +316,10 @@ void    scr_label( void )
                 return;
             }
         }
- 
+
         if( *scan_start == ' ' ) {
-            scan_start++;       // skip one blank;
- 
+            scan_start++;               // skip one blank
+
             if( *scan_start ) {         // rest of line is not empty
                 split_input( buff2, scan_start );   // split and process next
             }
@@ -334,9 +327,9 @@ void    scr_label( void )
         return;
     }
 }
- 
- 
- 
+
+
+
 /***************************************************************************/
 /* GOTO transfers processing  to the specified input line  in the current  */
 /* file or macro.                                                          */
@@ -374,8 +367,13 @@ void    scr_label( void )
 /*     ...loop .sr i = &i + 1                                              */
 /*     &i                                                                  */
 /*     .if &i lt 50 .go loop                                               */
+/*                                                                         */
+/*                                                                         */
+/* ! goto linenumber is not implemented for FILE, only for MACRO           */
+/*                                                                         */
+/*                                                                         */
 /***************************************************************************/
- 
+
 void    scr_go( void )
 {
     condcode        cc;
@@ -383,12 +381,12 @@ void    scr_go( void )
     labelcb     *   golb;
     int             k;
     char            linestr[MAX_L_AS_STR];
- 
+
     input_cbs->if_cb->if_level = 0;     // .go terminates
     ProcFlags.keep_ifstate = false;     // ... all .if controls
- 
+
     garginit();
- 
+
     cc = getarg();
     if( cc != pos ) {
         scan_err = true;
@@ -404,25 +402,26 @@ void    scr_go( void )
         show_include_stack();
         return;
     }
- 
+
     gn.argstart      = tok_start;
     gn.argstop       = scan_stop;
     gn.ignore_blanks = 0;
- 
+
     cc = getnum( &gn );             // try numeric expression evaluation
     if( cc == pos  || cc  == neg) {     // numeric linenumber
-        if( input_cbs->fmflags & II_macro ) {
-           gotargetno = input_cbs->s.m->lineno;
-        } else {
-           gotargetno = input_cbs->s.m->lineno;
-        }
+        gotarget[0] = '\0';             // no target label name
         if( gn.num_sign == ' '  ) {     // absolute number
             gotargetno = gn.result;
         } else {
+            if( input_cbs->fmflags & II_macro ) {
+                gotargetno = input_cbs->s.m->lineno;
+            } else {
+                gotargetno = input_cbs->s.m->lineno;
+            }
             gotargetno += gn.result;    // relative target line number
         }
- 
-        if( gotargetno == 0 ) {
+
+        if( gotargetno < 1 ) {
             scan_err = true;
             err_count++;
             g_err( err_label_zero );
@@ -436,10 +435,14 @@ void    scr_go( void )
             show_include_stack();
             return;
         }
-        gotarget[0] = '\0';           // no target label name
- 
+        if( input_cbs->fmflags & II_macro ) {
+            if( gotargetno <= input_cbs->s.m->lineno ) {
+                input_cbs->s.m->lineno = 0; // restart from beginning
+                input_cbs->s.m->macline = input_cbs->s.m->mac->macline;
+            }
+        }
     } else {                            // no numeric target label
- 
+
         gotargetno = 0;                 // no target lineno known
         if( arg_flen >  MAC_NAME_LENGTH ) {
             err_count++;
@@ -454,16 +457,16 @@ void    scr_go( void )
             show_include_stack();
             arg_flen = MAC_NAME_LENGTH;
         }
- 
+
         for( k = 0; k < MAC_NAME_LENGTH; k++ ) {// copy to work
             gotarget[k] = *tok_start++;
         }
         gotarget[k] = '\0';
- 
-        golb = find_label(  gotarget );
+
+        golb = find_label( gotarget );
         if( golb != NULL ) {            // label already known
             gotargetno = golb->lineno;
- 
+
             if( input_cbs->fmflags & II_macro ) {
                 if( golb->lineno <= input_cbs->s.m->lineno ) {
                     input_cbs->s.m->lineno = 0; // restart from beginning
@@ -481,20 +484,20 @@ void    scr_go( void )
     input_cbs->hidden_head = NULL;
     input_cbs->hidden_tail = NULL;
     ProcFlags.goto_active = true;       // special goto processing
- 
+
 }
- 
- 
+
+
 /***************************************************************************/
 /*  print list of defined label for current file                           */
 /***************************************************************************/
- 
+
 void        print_labels( labelcb * lcb )
 {
     static const char   fill[10] = "         ";
     size_t              len;
     labelcb         *   lb;
- 
+
     lb = lcb;
     if( lb != NULL ) {
         out_msg( "\nList of defined labels for current input:\n\n");
@@ -506,4 +509,4 @@ void        print_labels( labelcb * lcb )
         }
     }
 }
- 
+

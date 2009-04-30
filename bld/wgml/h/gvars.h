@@ -74,7 +74,7 @@ global  ulong           line_to;        // ending lineno to process
 #define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
 
 global  char            gotarget[MAC_NAME_LENGTH +1];   // .go to target name
-global  ulong           gotargetno;     // .go to line no
+global  int32_t         gotargetno;     // .go to line no
 
 global  int             err_count;      // Overall Errorcount
 global  int             wng_count;      // Overall warning count

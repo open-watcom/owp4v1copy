@@ -54,8 +54,8 @@ pick( INF_CURR_INPUT,           "Current %s is '%s'",
 pick( INF_CURR_LINE,            "Current file is '%s'(%s)",
                                 "Current file is '%s'(%s)" )
 
-pick( ERR_GOTO,                 "Goto label not found %s Line %s of macro '%s'",
-                                "Goto label not found %s Line %s of macro '%s'" )
+pick( ERR_GOTO,                 "Goto label '%s' not found",
+                                "Goto label '%s' not found" )
 
 pick( ERR_MISSING_MAINFILENAME, "Missing main file name",
                                 "Missing main file name" )

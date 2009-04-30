@@ -28,27 +28,27 @@
 *               macro call from the tag parameters
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
+
 static  symvar  *   loc_dict;           // for preparing local vars
- 
- 
+
+
 /***************************************************************************/
 /*  clear and set the relevant attribute parametercheck flags              */
 /*                                                                         */
 /***************************************************************************/
- 
+
 static  gaflags set_att_proc_flags( gaflags attflags )
 {
     gaflags fl = attflags & ~att_proc_all;
- 
+
     if( fl & att_auto ) {
         fl |= att_proc_auto;
     }
@@ -57,7 +57,7 @@ static  gaflags set_att_proc_flags( gaflags attflags )
     }
     return( fl );
 }
- 
+
 /***************************************************************************/
 /*  add attribute default values to dict                                   */
 /***************************************************************************/
@@ -67,9 +67,9 @@ static  void    add_defaults_to_dict( gtentry * ge, symvar * * dict )
     gavalentry  *   gaval;
     char        *   valp;
     int             rc;
- 
+
     for( ga = ge->attribs; ga != NULL; ga = ga->next ) {// for all attributes
- 
+
         ga->attflags = set_att_proc_flags( ga->attflags );
         if( ga->attflags & att_off ) {  // attribute inactive
             continue;
@@ -99,12 +99,12 @@ static  void    add_defaults_to_dict( gtentry * ge, symvar * * dict )
     }
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  check the attribute value against restrictions                         */
 /***************************************************************************/
- 
+
 static bool check_att_value( gaentry * ga )
 {
     gavalentry  *   gaval;
@@ -112,7 +112,7 @@ static bool check_att_value( gaentry * ga )
     long            attval;
     bool            msg_done;
     int             rc;
- 
+
     scan_err = true;
     msg_done = false;
     for( gaval = ga->vals; gaval != NULL; gaval = gaval->next ) {
@@ -120,7 +120,7 @@ static bool check_att_value( gaentry * ga )
             scan_err = false;           // any value is allowed
             break;
         }
- 
+
         valp = NULL;
         if( gaval->valflags & val_value ) {
             valp = gaval->a.value;
@@ -166,13 +166,13 @@ static bool check_att_value( gaentry * ga )
     }
     return( scan_err );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  process user defined GML tag                                           */
 /*  scan the line, prepare arguments and call processing macro             */
 /***************************************************************************/
- 
+
 bool        process_tag( gtentry * ge, mac_entry * me )
 {
     bool            processed;
@@ -183,20 +183,21 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     int             rc;
     char            quote;
     char            longwork[20];
- 
+    bool            tag_end_found = false;
+
     processed = false;
     init_dict( &loc_dict );
- 
+
     add_defaults_to_dict( ge, &loc_dict );
- 
+
     /***********************************************************************/
     /*  scan input for attributes and / or tagtext                         */
     /***********************************************************************/
- 
+
     p = tok_start + ge->namelen + 1;        // over tagname
- 
+
     while( *p == ' ' ) {            // not yet end of tag, process attributes
- 
+
         while( *p == ' ' ) {            // over WS to attribute
             p++;
         }
@@ -205,18 +206,18 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             *p2++ = *p++;
         }
         *p2 = '\0';
-        for( ga = ge->attribs; ga != NULL; ga = ga->next ) {// for all attrs
+        for( ga = ge->attribs; ga != NULL; ga = ga->next ) { // for all attrs
             if( !stricmp( ga->name, token_buf ) ) {
-                ga->attflags |= att_proc_seen;
+                ga->attflags |= att_proc_seen;  // attribute specified
                 if( ga->attflags & att_auto ) {
                     auto_att_err();
                     break;
                 }
- 
+
                 if( *p == '=' ) {       // value follows
                     ga->attflags |= att_proc_val;
- 
-                    p++;
+
+                    p++;                // over =
                     p2 = token_buf;
                     if( is_quote_char( *p ) ) {
                         quote = *p++;
@@ -239,9 +240,9 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                     if( ga->attflags & att_upper ) {// uppercase option
                         strupr( token_buf );
                     }
- 
+
                     scan_err = check_att_value( ga );
- 
+
                 } else {        // special for range set default2 if no value
                     if( ga->attflags & att_range ) {
                         for( gaval = ga->vals; gaval != NULL;
@@ -257,13 +258,13 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                         }
                     }
                 }
- 
+
                 break;
             }
         }
         if( ga == NULL ) {              // attribute not found
             char        linestr[MAX_L_AS_STR];
- 
+
             wng_count++;
             //***WARNING*** SC--040: 'abd' is not a valid attribute name
             g_warn( wng_att_name, token_buf );
@@ -276,8 +277,26 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             }
             show_include_stack();
         }
+
+        /*******************************************************************/
+        /*  check for tag end .                                            */
+        /*******************************************************************/
+        if( *p == ' ' ) {
+            continue;                   // not yet at buffer / tag end
+        }
+        if( *p != '.' ) {
+            if( get_line() ) {
+                p = buff2;
+            } else {
+                *p = '\0';
+            }
+        } else {
+            processed = true;
+            tag_end_found = true;
+        }
+
     }
- 
+
     /***********************************************************************/
     /*  check for missing reqrd attributes                                 */
     /***********************************************************************/
@@ -297,13 +316,13 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     }
     if( *token_buf != '\0' ) {          // some req attr missing
         char        linestr[MAX_L_AS_STR];
- 
+
         // the errmsg in wgml 4.0 is wrong, it shows the macroname, not tag.
 //****ERROR**** SC--047: For the tag '@willi', the required attribute(s)
 //                       'muss2'
 //                       'muss'
 //                       have not been specified
- 
+
         err_count++;
         g_err( err_att_req, ge->name, token_buf );
         if( input_cbs->fmflags & II_macro ) {
@@ -315,7 +334,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         }
         show_include_stack();
     }
- 
+
     if( *p == '.' ) {               // does text follow tag end
         if( strlen( p + 1 ) > 0 ) {
             if( ge->tagflags & tag_texterr ) { // no text allowed
@@ -329,31 +348,31 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         strcpy( token_buf, p + 1 );
         rc = add_symvar( &loc_dict, "_", token_buf, no_subscript, local_var );
         p += strlen( token_buf );
+        processed = true;
     }
- 
+
     scan_start = p + 1;         // all processed
     /***********************************************************************/
     /*  add standard symbols to dict                                       */
     /***********************************************************************/
- 
+
     rc = add_symvar( &loc_dict, "_tag", ge->name, no_subscript, local_var );
     ge->usecount++;
-    sprintf( longwork, "%d", ge->usecount++ );
+    sprintf( longwork, "%d", ge->usecount );
     rc = add_symvar( &loc_dict, "_n", longwork, no_subscript, local_var );
- 
- 
-    add_macro_cb_entry( me, ge );       // prepare macro as input
+
+
+    add_macro_cb_entry( me, ge );       // prepare GML macro as input
     input_cbs->local_dict = loc_dict;
     inc_inc_level();                    // start new include level
- 
+
     if( GlobalFlags.research && GlobalFlags.firstpass ) {
         print_sym_dict( input_cbs->local_dict );
     }
- 
-    processed = true;
+
     return( processed );
 }
- 
- 
- 
- 
+
+
+
+

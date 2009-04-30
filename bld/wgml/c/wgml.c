@@ -489,7 +489,7 @@ void    show_include_stack( void )
     if( inc_level > 1 ) {
         ip = input_cbs;
         while( ip != NULL ) {
-            switch( ip->fmflags ) {
+            switch( ip->fmflags & II_input ) {
             case    II_file:
                 utoa( ip->s.f->lineno, linestr, 10 );
                 g_info( err_inf_line_file, linestr, ip->s.f->filename );
@@ -640,6 +640,25 @@ static  void    proc_GML( char * filename )
             }
 
             if( !get_line() ) {
+                if( ProcFlags.goto_active ) {
+                    char    linestr[MAX_L_AS_STR];
+
+                    ProcFlags.goto_active = false;
+                    err_count++;
+                    if( input_cbs->fmflags & II_macro ) {
+                        if( gotargetno > 0 ) {
+                            utoa( gotargetno, linestr, 10 );
+                            g_err( err_goto, linestr,
+                                   input_cbs->s.m->mac->name );
+                        } else {
+                            g_err( err_goto, gotarget,
+                                   input_cbs->s.m->mac->name );
+                        }
+                    } else {
+                        g_err( err_goto, gotarget, input_cbs->s.f->filename );
+                    }
+                    show_include_stack();
+                }
                 break;                  // eof
             }
             if( !ProcFlags.keep_ifstate ) {
@@ -668,20 +687,6 @@ static  void    proc_GML( char * filename )
         }
         if( ProcFlags.newLevelFile ) {
             continue;
-        }
-        if( ProcFlags.goto_active ) {
-            char    linestr[MAX_L_AS_STR];
-            err_count++;
-            if( input_cbs->fmflags & II_macro ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
-                g_err( err_goto, gotarget, linestr,
-                       input_cbs->s.m->mac->name );
-            } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
-                g_err( err_goto, gotarget, linestr,
-                       input_cbs->s.f->filename );
-            }
-            show_include_stack();
         }
 #if 0
         if( ic->if_level > 0 ) {        // if .if active
