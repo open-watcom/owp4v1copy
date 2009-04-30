@@ -454,7 +454,7 @@ vi_pick( VI_KEY( ALT_LEFT ),     InvalidKey,          InvalidKey,           Inva
 vi_pick( VI_KEY( ALT_RIGHT ),    InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( ALT_UP ),       InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( ALT_DOWN ),     InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
-vi_pick( VI_KEY( CTRL_TAB ),     InvalidKey,          InvalidKey,           RotateFileForward,       BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
+vi_pick( VI_KEY( CTRL_TAB ),     RotateFileForward,   InvalidKey,           RotateFileForward,       BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( ALT_TAB ),      InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( MOUSEEVENT ),   HandleMouseEvent,    IMMouseEvent,         HandleMouseEvent,        BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( SHIFT_UP ),     SelectUp,            IMCursorKey,          SelectUp,                BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0) )
