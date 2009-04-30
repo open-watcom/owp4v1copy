@@ -110,9 +110,9 @@ void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
 
 static COORD    _cpos;
 
-static int CompareEvents( map *p1, map *p2 )
+static int CompareEvents( const void *p1, const void *p2 )
 {
-    return( p1->vk - p2->vk );
+    return( ((const map *)p1)->vk - ((const map *)p2)->vk );
 }
 
 /*
@@ -189,7 +189,7 @@ static BOOL eventWeWant( INPUT_RECORD *ir )
         return( FALSE );
     }
     vk = ir->Event.KeyEvent.wVirtualKeyCode;
-    if( vk == VK_CONTROL || vk == VK_SHIFT || vk == VK_MENU ) {
+    if( vk == VK_CONTROL || vk == VK_SHIFT || vk == VK_MENU || vk == VK_CAPITAL ) {
         return( FALSE );
     }
     ss = ir->Event.KeyEvent.dwControlKeyState;
@@ -229,7 +229,7 @@ vi_key BIOSGetKeyboard( int *scan )
     INPUT_RECORD        ir;
     DWORD               rd, ss;
     WORD                vk;
-    BOOL                has_alt, has_shift, has_ctrl;
+    BOOL                has_alt, has_shift, has_ctrl, has_capsl;
     map                 *ev, what;
     vi_key              key;
 
@@ -244,25 +244,35 @@ vi_key BIOSGetKeyboard( int *scan )
     ss = ir.Event.KeyEvent.dwControlKeyState;
 
     has_shift = ((ss & SHIFT_PRESSED) ? TRUE : FALSE);
-    has_shift ^= ((ss & CAPSLOCK_ON) ? TRUE : FALSE);
     has_ctrl = ((ss & (RIGHT_CTRL_PRESSED | LEFT_CTRL_PRESSED)) ? TRUE : FALSE);
     has_alt = ((ss & (RIGHT_ALT_PRESSED | LEFT_ALT_PRESSED)) ? TRUE : FALSE);
+    has_capsl = ((ss & CAPSLOCK_ON) ? TRUE : FALSE);
     what.vk = vk;
 
-    ev = bsearch( &what, events, sizeof( events ) / sizeof( map ),
-                  sizeof( what ), (int (*)( const void*, const void* ))CompareEvents );
+    ev = bsearch( &what, events, sizeof( events ) / sizeof( events[0] ),
+        sizeof( what ), CompareEvents );
     if( ev != NULL ) {
-        if( has_shift ) {
-            key = ev->shift;
+        if( has_ctrl && has_alt ) {
+            // it handles AltGr + key
         } else if( has_ctrl ) {
             key = ev->ctrl;
         } else if( has_alt ) {
             key = ev->alt;
+        // Caps lock has efect to keys which generate character
+        // don't apply to extended keys as down, up, page down,
+        // page up, insert, end, delete, ....
+        } else if( has_shift ^ ( key && has_capsl ) ) {
+            if( key == 0 ) {
+                key = ev->shift;
+            }
         } else {
-            key = ev->reg;
+            if( key == 0 ) {
+                key = ev->reg;
+            }
         }
-    } else if( key == 0 ) {
-        key = VI_KEY( DUMMY ); /* why ? */
+    }
+    if( key == 0 ) {    // ignore unknown keys
+        key = VI_KEY( DUMMY );
     }
     if( scan != NULL ) {
         *scan = 0;
