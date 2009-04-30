@@ -36,6 +36,7 @@ rem NT/XP? or OS/2 or eCS?
    if [%OS2_SHELL%] == [] goto noOS2
    if [%OS%] == [] goto noWIN
    if [%OS%] == [ecs] goto noWIN
+:UNKNOWN
    echo Operating System not recognized, sorry
    goto eof
 
@@ -44,8 +45,7 @@ rem NT/XP? or OS/2 or eCS?
       call owconfig.bat %myow%.cmd
 
 :CONT2
-rem only works if system is on c:
-   if [%Systemroot%] == [C:\WINNT] goto noXP
+   if [%Systemroot%] == [] goto unknown
    set builderdir=nt386
    goto bld1
 
