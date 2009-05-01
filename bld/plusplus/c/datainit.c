@@ -1382,7 +1382,9 @@ static void dataInitStashExpr( PTREE expr )
         DbgAssert( expr->u.subtree[0] != NULL );
         if( currInit->auto_static ) {
             if( constant ) {
-                currInit->all_zero &= DgStoreScalar( cexpr, offset, type );
+                DgStoreScalar( cexpr, offset, type );
+                /* Do not place initialized variables to BSS */
+                currInit->all_zero = 0;
                 NodeFreeSearchResult( cexpr );
                 PTreeFreeSubtrees( expr );
             } else {
@@ -1413,7 +1415,9 @@ static void dataInitStashExpr( PTREE expr )
                 DbgAssert( expr->u.subtree[0] != NULL );
                 DgStoreConstScalar( cexpr, type, currInit->sym );
             }
-            currInit->all_zero &= DgStoreScalar( cexpr, offset, type );
+            DgStoreScalar( cexpr, offset, type );
+            /* Do not place initialized variables to BSS */
+            currInit->all_zero = 0;
             NodeFreeSearchResult( cexpr );
             PTreeFreeSubtrees( expr );
             dtorableObjectCtored( currInit->nest, NULL, FALSE );
