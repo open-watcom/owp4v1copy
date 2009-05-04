@@ -325,8 +325,8 @@ enum    conv_types {
     D2M,    /* double to long long  */
     D2F,    /* double to float      */
     P2P,    /* pointer to pointer   */
-    P2A,    /* arithmetic to pointer*/
-    A2P,    /* pointer to arithmetic*/
+    P2A,    /* pointer to arithmetic*/
+    A2P,    /* arithmetic to pointer*/
     S2B,    /* scalar to _Bool      */
     CER,    /* conversion error     */
 };
