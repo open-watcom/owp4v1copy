@@ -356,10 +356,8 @@ static void StopRunning( void )
     IDEStopRunning();
 #else
     StopRunFn   idestopdll;
-    int         retcode;
 
-    retcode = sysdepDLLgetProc( Inf, IDETOOL_STOPRUN, (P_FUN*)&idestopdll );
-    if( IDEDRV_SUCCESS == retcode ) {
+    if( sysdepDLLgetProc( Inf, IDETOOL_STOPRUN, (P_FUN*)&idestopdll ) == 0 ) {
        idestopdll();
     }
 #endif
@@ -410,9 +408,7 @@ static int ensureLoaded( IDEDRV *inf, int *p_runcode )
 
     if( !inf->loaded ) {
         if( NULL == inf->ent_name ) {
-            runcode = IDEInitDLL( NULL
-                                , CBPtr
-                                , &inf->ide_handle );
+            runcode = IDEInitDLL( NULL, CBPtr, &inf->ide_handle );
             if( 0 == runcode ) {
                 if( InfoPtr == NULL ) {
                     InfoPtr = &info;
@@ -441,21 +437,19 @@ static int ensureLoaded( IDEDRV *inf, int *p_runcode )
     int retcode = IDEDRV_SUCCESS;
 
     if( ! inf->loaded ) {
-        retcode = sysdepDLLLoad( inf );
-        if( IDEDRV_SUCCESS == retcode ) {
+        runcode = sysdepDLLLoad( inf );
+        if( 0 == runcode ) {
             if( NULL == inf->ent_name ) {
                 InitDllFn initdll;
-                retcode = sysdepDLLgetProc( inf
-                                          , IDETOOL_INITDLL
-                                          , (P_FUN *)&initdll );
-                if( IDEDRV_SUCCESS == retcode ) {
+                runcode = sysdepDLLgetProc( inf, IDETOOL_INITDLL, 
+                                                          (P_FUN *)&initdll );
+                if( 0 == runcode ) {
                     runcode = initdll( NULL , CBPtr, &inf->ide_handle );
                     if( 0 == runcode ) {
                         PassInitInfo initinfo;
-                        retcode = sysdepDLLgetProc( inf
-                                                  , IDETOOL_INITINFO
-                                                  , (P_FUN *)&initinfo );
-                        if( IDEDRV_SUCCESS == retcode ) {
+                        runcode = sysdepDLLgetProc( inf, IDETOOL_INITINFO, 
+                                                          (P_FUN *)&initinfo );
+                        if( 0 == runcode ) {
                             if( InfoPtr == NULL ) {
                                 InfoPtr = &info;
                                 info.console_output = isatty( fileno(stdout) );
@@ -560,8 +554,8 @@ int IdeDrvExecDLL               // EXECUTE THE DLL ONE TIME (LOAD IF REQ'D)
     if( retcode == IDEDRV_SUCCESS ) {
         if( NULL == inf->ent_name ) {
             RunSelfFn fun;
-            retcode = sysdepDLLgetProc( inf, IDETOOL_RUNSELF, (P_FUN *)&fun );
-            if( IDEDRV_SUCCESS == retcode ) {
+            runcode = sysdepDLLgetProc( inf, IDETOOL_RUNSELF, (P_FUN *)&fun );
+            if( 0 == runcode ) {
                 IDEBool fatal = FALSE;
                 initConsole();
                 runcode = fun( inf->ide_handle, cmd_line, &fatal );
@@ -576,8 +570,8 @@ int IdeDrvExecDLL               // EXECUTE THE DLL ONE TIME (LOAD IF REQ'D)
             }
         } else {
             USER_DLL_FUN fun;
-            retcode = sysdepDLLgetProc( inf, inf->ent_name, (P_FUN *)&fun );
-            if( IDEDRV_SUCCESS == retcode ) {
+            runcode = sysdepDLLgetProc( inf, inf->ent_name, (P_FUN *)&fun );
+            if( 0 == runcode ) {
                 initConsole();
                 runcode = fun( cmd_line );
                 finiConsole();
@@ -638,8 +632,8 @@ int IdeDrvExecDLLArgv           // EXECUTE THE DLL ONE TIME (LOAD IF REQ'D)
     if( retcode == IDEDRV_SUCCESS ) {
         if( NULL == inf->ent_name ) {
             RunSelfFnArgv fun;
-            retcode = sysdepDLLgetProc( inf, IDETOOL_RUNSELF_ARGV, (P_FUN *)&fun );
-            if( IDEDRV_SUCCESS == retcode ) {
+            runcode = sysdepDLLgetProc( inf, IDETOOL_RUNSELF_ARGV, (P_FUN *)&fun );
+            if( 0 == runcode ) {
                 IDEBool fatal = FALSE;
                 initConsole();
                 runcode = fun( inf->ide_handle, argc, argv, &fatal );
@@ -654,8 +648,8 @@ int IdeDrvExecDLLArgv           // EXECUTE THE DLL ONE TIME (LOAD IF REQ'D)
             }
         } else {
             USER_DLL_FUN_ARGV fun;
-            retcode = sysdepDLLgetProc( inf, inf->ent_name, (P_FUN *)&fun );
-            if( IDEDRV_SUCCESS == retcode ) {
+            runcode = sysdepDLLgetProc( inf, inf->ent_name, (P_FUN *)&fun );
+            if( 0 == runcode ) {
                 initConsole();
                 runcode = fun( argc, argv );
                 finiConsole();
@@ -691,12 +685,11 @@ int IdeDrvUnloadDLL             // UNLOAD THE DLL
     FiniDllFn   fini;
 
     if( inf->loaded ) {
-        retcode = sysdepDLLgetProc( inf, IDETOOL_FINIDLL, (P_FUN*)&fini );
-        if( IDEDRV_SUCCESS == retcode ) {
+        if( sysdepDLLgetProc( inf, IDETOOL_FINIDLL, (P_FUN*)&fini ) == 0 ) {
             fini( inf->ide_handle );
         }
         inf->loaded = FALSE;
-        if( 0 == sysdepDLLUnload( inf ) ) {
+        if( sysdepDLLUnload( inf ) == 0 ) {
             retcode = IDEDRV_SUCCESS;
         } else {
             retcode = IDEDRV_ERR_UNLOAD;
@@ -727,8 +720,7 @@ int IdeDrvStopRunning           // SIGNAL A BREAK
     StopRunFn   idestopdll;
 
     if( inf->loaded ) {
-        retcode = sysdepDLLgetProc( inf, IDETOOL_STOPRUN, (P_FUN*)&idestopdll );
-        if( IDEDRV_SUCCESS == retcode ) {
+        if( sysdepDLLgetProc( inf, IDETOOL_STOPRUN, (P_FUN*)&idestopdll ) == 0 ) {
            idestopdll();
         }
     } else {
