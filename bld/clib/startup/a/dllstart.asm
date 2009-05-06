@@ -79,6 +79,8 @@ len            dd 0
 flags          dd 0
 HeapInfo ends
 
+        .dosseg
+
 ; this guarantees that no function pointer will equal NULL
 ; (WLINK will keep segment 'BEGTEXT' in front)
 ; This segment must be at least 4 bytes in size to avoid confusing the
