@@ -46,7 +46,8 @@
 #      define NO_MO_COMPILING
 #   else
 #      define quoted( name ) # name
-#      define DLL_NAME_STR quoted(DLL_NAME)
+#      define _str(x) quoted(x)
+#      define DLL_NAME_STR _str(DLL_NAME)
 #   endif
 #else
 #   define DLL_NAME_STR "WPP"
