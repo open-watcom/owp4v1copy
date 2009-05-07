@@ -35,6 +35,7 @@
 #if defined( __DOS__ ) || defined( __OS2__ ) || defined( __NT__ )
   #include <process.h>
 #endif
+#include "errout.h"
 #ifdef __OSI__
   #include "ostype.h"
 #endif

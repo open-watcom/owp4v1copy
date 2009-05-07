@@ -58,7 +58,7 @@
 #include "cgback.h"
 #include "cusage.h"
 #include "brinfo.h"
-#include "idedrv.h"
+#include "errout.h"
 #include "autodep.h"
 #include "swchar.h"
 #include "ialias.h"

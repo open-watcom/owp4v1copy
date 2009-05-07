@@ -692,12 +692,6 @@ struct global_comp_flags {  // things that live across compiles
     unsigned cc_first_use           : 1;    /* first time thru           */
 };
 
-#if defined( __UNIX__ )
-    #define errout  stderr
-#else
-    #define errout  stdout
-#endif
-
 /* Target System types */
 enum {
     TS_OTHER,

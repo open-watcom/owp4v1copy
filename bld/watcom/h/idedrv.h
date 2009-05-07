@@ -32,12 +32,6 @@
 #ifndef __IDEDRV_H__
 #define __IDEDRV_H__
 
-#if defined(__UNIX__)
-#define errout  stderr
-#else
-#define errout  stdout
-#endif
-
 #define __IDEDRV \
   _IDEDRV( IDEDRV_SUCCESS       , 0 ) \
 , _IDEDRV( IDEDRV_ERR_LOAD      , "cannot load dll" ) \

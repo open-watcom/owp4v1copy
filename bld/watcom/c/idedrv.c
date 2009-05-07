@@ -38,6 +38,7 @@
 #include "idedll.h"
 #include "idedrv.h"
 #include "walloca.h"
+#include "errout.h"
 
 
 #ifndef USE_RUNYOURSELF_ARGV
