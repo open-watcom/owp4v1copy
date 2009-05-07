@@ -22,6 +22,21 @@ librarian = $(blib)
 rc = $(brc)
 rcaui = $(brc)
 
+# temporary fix for missing dosseg directive in OW 1.8 causeway DLL stuff
+!ifeq __VERSION__ 1280
+!ifdef sys_dll
+lflags_dos_386     += reference __DOSseg__
+!endif
+lflags_dll_dos_386 += reference __DOSseg__
+!endif
+
+# enable to switch to causeway extender
+!ifdef $(proj_name)_causeway
+clflags_dos_386 = -l=causeway
+lflags_dos_386  = sys causeway
+!endif
+
+
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
 !else

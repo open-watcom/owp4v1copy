@@ -141,6 +141,11 @@ cflags_all      =-w4 -we $(mode_cflags) -fo=.obj
 !else
 cflags_all      =-w4 -we $(mode_cflags)
 !endif
+!ifdef sys_dll
+!ifndef suppress_bd
+cflags_all     += -bd
+!endif
+!endif
 
 cflags_386      = $(model_switch_$(host_cpu))
 cflags_i86      = $(model_switch_$(host_cpu))
@@ -243,7 +248,6 @@ clflags_qnx_386    = -l=qnx
 clflags_osi_386    = -l=osi
 clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
-#clflags_dos_386    = -l=causeway
 clflags_nov_386    = -l=netware
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linuxppc
@@ -296,7 +300,6 @@ lflags_nt_386    = sys nt
 lflags_os2_386   = sys os2v2
 lflags_os2_i86   = sys os2 pmc
 lflags_dos_386   = sys dos4g
-#lflags_dos_386   = sys causeway
 lflags_qnx_386   = sys qnx386 flat
 lflags_qnx_i86   = sys qnx
 lflags_win_386   = sys win386
@@ -307,6 +310,7 @@ lflags_linux_386 = sys linux
 lflags_linux_ppc = sys linuxppc
 lflags_linux_mps = sys linuxmips
 
+lflags_dll_dos_386   = sys cwdllr
 lflags_dll_nt_axp    = sys ntaxp dll
 lflags_dll_nt_386    = sys nt dll
 lflags_dll_os2_386   = sys os2v2 dll
@@ -322,14 +326,12 @@ lflags_os2_i86  = sys os2_pm
 !endif
 !ifdef sys_dll
 #this is equally bad
+lflags_dos_386  = sys cwdllr
 lflags_nt_386   = sys nt_dll
 lflags_nt_axp   = sys ntaxp_dll
 lflags_win_i86  = sys windows_dll
 lflags_os2_386  = sys os2v2 dll
 lflags_os2_i86  = sys os2 dll
-!ifndef suppress_bd
-cflags_all     += -bd
-!endif
 !endif
 
 lflags          = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) $(extra_l_flags_$(host_os)) $(extra_l_flags)
