@@ -33,13 +33,17 @@ mvecstr.obj
 
 !ifeq host_os nt
 !   define DLLS_IMPLEMENTED
-!endif
-
-!ifeq host_os os2
+!else ifeq host_os os2
 !   ifeq host_cpu 386
 !       define DLLS_IMPLEMENTED
 !   else ifeq host_cpu ppc
 !       define DLLS_IMPLEMENTED
+!   endif
+!else ifeq host_os dos
+!   ifeq host_cpu 386
+!       ifdef wmake_causeway
+!           define DLLS_IMPLEMENTED
+!       endif
 !   endif
 !endif
 

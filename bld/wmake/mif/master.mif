@@ -44,6 +44,12 @@ inc_dirs = -I"$(wmake_dir)/h" -I"$(orl_dir)/h" -I$(trmem_dir)
 !ifdef cachestat
 extra_c_flags += -DCACHE_STATS
 !endif
+!ifdef wmake_causeway
+!ifeq host_cpu 386
+extra_c_flags_dos += -DCAUSEWAY
+!endif
+!endif
+
 
 extra_rc_flags_dos   = -D__DOS__
 extra_rc_flags_linux = -D__LINUX__
@@ -63,19 +69,26 @@ ext = exe
 
 # LINKER FLAGS
 
+extra_l_flags = NAME $(xname).$(ext) OPTION MAP,statics sort
+
 # large stacks are necessary for !loaddll support
 # os2 seems to crash with 128k stack and wccd386 - mjc
 extra_l_flags_os2 = option stack=96k
 extra_l_flags_nt = option stack=0x10000k commit stack=32k
 extra_l_flags_qnx = option stack=20k
 !ifdef LARGE
-extra_l_flags_dos = option stack=16k
+extra_l_flags_dos_i86 = option stack=16k
 !else ifdef COMPACT
-extra_l_flags_dos = option stack=16k
+extra_l_flags_dos_i86 = option stack=16k
 !else
-extra_l_flags_dos = option stack=4k
+extra_l_flags_dos_i86 = option stack=4k
 !endif
-extra_l_flags = NAME $(xname).$(ext) OPTION MAP,statics sort
+!ifdef wmake_causeway
+extra_l_flags_dos_386 = option stack=96k lib cwdll.lib
+!else
+extra_l_flags_dos_386 = option stack=4k
+!endif
+extra_l_flags_dos = $(extra_l_flags_dos_$(host_cpu))
 
 libs = $(wres_lib) $(orl_lib)
 
