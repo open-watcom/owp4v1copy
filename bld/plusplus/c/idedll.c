@@ -631,3 +631,11 @@ void CppStartFuncMessage( SYMBOL sym )
     sym = sym;
 #endif
 }
+
+#ifdef CAUSEWAY
+void main( void )
+{
+    // Causeway DLL initialization
+}
+#endif
+
