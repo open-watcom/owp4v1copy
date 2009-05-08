@@ -31,6 +31,7 @@
 
 #include <string.h>
 #include "gdefn.h"
+#include "fontsupp.h"
 #if !defined( _DEFAULT_WINDOWS )
 #include "dotfunc.h"
 
