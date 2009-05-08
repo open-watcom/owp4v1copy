@@ -63,13 +63,17 @@ extra_c_flags += -D_CGDLL
 
 extra_c_flags_386 = -3r
 
+!ifdef cc_dll
+idedlldriver_c_flags_dos = -DCAUSEWAY
+!endif
 !ifndef bootstrap
 !ifeq release 1
 extra_c_flags_cscan_386 = -5r
 extra_c_flags_cscan    = $(extra_c_flags_cscan_$(host_cpu))
 !endif
 !endif
-extra_c_flags_idedll   = -bd
+extra_c_flags_idedll   = -bd $(idedlldriver_c_flags_$(host_os))
+extra_c_flags_idedrv   = $(idedlldriver_c_flags_$(host_os))
 !ifdef __LINUX__
 extra_c_flags_intlload = -D__header=\"fesupp.h\"
 !else
@@ -186,6 +190,9 @@ drv.lnk : $(__MAKEFILES__)
         @%write $@ $(lflags)
         @for %i in ($(drv_objs)) do @%append $@ file %i
         @%append $@ lib $(dll_name).lib
+!ifeq host_os dos
+        @%append $@ lib cwdll.lib
+!endif
 
 exe.lnk : $(__MAKEFILES__)
         @%write $@ $(lflags)

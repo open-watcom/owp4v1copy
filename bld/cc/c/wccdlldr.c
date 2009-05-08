@@ -60,6 +60,7 @@ int main( int count, char* args[] ){
 
     count = count;
     _splitpath( args[0], NULL, NULL, fname, NULL );  // get fname
+    strlwr( fname );
     MakeDllName( dllname, fname );
     IdeDrvInit( &info, dllname, NULL );
     retcode = IDEDRV_ERR_RUN_FATAL;

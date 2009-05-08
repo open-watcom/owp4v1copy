@@ -49,12 +49,6 @@ static   IDECBHdl      Hdl;          // - handle for this instantiation
 static   IDECallBacks* Cbs;          // - call backs into IDE
 static   IDEInitInfo   Info;
 
-#pragma  aux xref "*"
-#pragma  aux (xref) __DLLstart_;
-extern void  __DLLstart_( void );
-void * Dll = &__DLLstart_;
-
-
 extern void ConsMsg( char const  *line ){
 // C compiler call back to do a  console print to stdout
 
@@ -351,3 +345,11 @@ IDEBool IDEDLL_EXPORT IDEPassInitInfo( IDEDllHdl hdl, IDEInitInfo *info )
     }
     return( FALSE );
 }
+
+#ifdef CAUSEWAY
+void main( void )
+{
+    // Causeway DLL initialization
+}
+#endif
+
