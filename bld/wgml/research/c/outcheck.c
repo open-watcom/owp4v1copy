@@ -146,11 +146,9 @@ static void emulate_wgml( void )
 
     /* Margin/indent setup. */
 
-    /* The default is 10 characters per inch. */
-
     /* One-inch margin on line 1. */
 
-    cur_h_start = 10 * max_char_width;
+    cur_h_start = bin_device->horizontal_base_units;
     if( bin_driver->y_positive == 0x00 ) {
         cur_v_start = net_page_height - (1 * max_line_height);
     } else {
@@ -161,20 +159,29 @@ static void emulate_wgml( void )
 
     /* One-half inch paragraph indent. */
 
-    cur_h_start = 15 * max_char_width;
+    cur_h_start += bin_device->horizontal_base_units / 2;
 
     fb_position( cur_h_start, cur_v_start );
 
     /* First box. */
 
-    cur_h_len = 10 * max_char_width;
-    cur_h_start = 10 * max_char_width;
+    cur_h_len = bin_device->horizontal_base_units;
+    cur_h_start = bin_device->horizontal_base_units;
     cur_v_len = 2 * max_char_width;
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = 16 * max_line_height;
+        cur_v_start = net_page_height - (1 * max_line_height);
     } else {
-        cur_v_start = net_page_height - (16 * max_line_height);
+        cur_v_start = 1 * max_line_height;
     }
+
+    out_msg( "cur_h_len = %i\n", cur_h_len );
+    out_msg( "cur_h_start = %i\n", cur_h_start );
+    out_msg( "cur_v_len = %i\n", cur_v_len );
+    out_msg( "cur_v_start = %i\n", cur_v_start );
+    out_msg( "max_char_width = %i\n", max_char_width );
+    out_msg( "max_line_height = %i\n", max_line_height );
+    out_msg( "net_page_height = %i\n", net_page_height );
+    out_msg( "net_page_width = %i\n", net_page_width );
 
     if( bin_driver->absoluteaddress.text != NULL ) {
         if( bin_driver->y_positive == 0x00 ) {
@@ -183,9 +190,10 @@ static void emulate_wgml( void )
                 fb_hline( cur_h_start, cur_v_start - cur_v_len, cur_h_len );
             }
             if( bin_driver->vline.text != NULL ) {
-                fb_vline( cur_h_start, cur_v_start, cur_h_len );
-                fb_vline( cur_h_start + cur_h_len, cur_v_start - cur_v_len, \
-                                                                cur_h_len );
+                cur_v_start -= cur_v_len;
+                fb_vline( cur_h_start, cur_v_start, cur_v_len );
+                fb_vline( cur_h_start + cur_h_len, cur_v_start, cur_v_len );
+                cur_v_start += cur_v_len;
             }
         } else {
             if( bin_driver->hline.text != NULL ) {
@@ -193,9 +201,10 @@ static void emulate_wgml( void )
                 fb_hline( cur_h_start, cur_v_start + cur_v_len, cur_h_len );
             }
             if( bin_driver->vline.text != NULL ) {
-                fb_vline( cur_h_start, cur_v_start, cur_h_len );
-                fb_vline( cur_h_start + cur_h_len, cur_v_start + cur_v_len, \
-                                                                cur_h_len );
+                cur_v_start += cur_v_len;
+                fb_vline( cur_h_start, cur_v_start, cur_v_len );
+                fb_vline( cur_h_start + cur_h_len, cur_v_start, cur_v_len );
+                cur_v_start -= cur_v_len;
             }
         }
     }
@@ -211,11 +220,13 @@ static void emulate_wgml( void )
     if( bin_driver->absoluteaddress.text != NULL ) {
         if( bin_driver->y_positive == 0x00 ) {
             if( bin_driver->dbox.text != NULL ) {
-                fb_dbox( 1500, 8633, 1500, 2000 );
+                fb_dbox( cur_h_start, cur_v_start - cur_v_len, cur_h_len, \
+                                                                cur_v_len );
             }
         } else {
             if( bin_driver->dbox.text != NULL ) {
-                fb_dbox( 1500, 8633, 1500, 2000 );
+                fb_dbox( cur_h_start, cur_v_start + cur_v_len, cur_h_len, \
+                                                                cur_v_len );
             }
         }
     }

@@ -73,6 +73,7 @@
 *               the functions:
 *                   cop_setup()
 *                   cop_teardown()
+*                   cop_text_width()
 *                   fb_dbox()
 *                   fb_document()
 *                   fb_document_page()
@@ -491,28 +492,17 @@ typedef struct {
     code_text           *   font_pause;
     fontstyle_block     *   font_style;
     uint8_t                 font_resident;
-    uint16_t                default_width;
-    uint16_t                font_height;
-    uint16_t                font_space;    
-    uint16_t                line_height;
-    uint16_t                line_space;
+    uint32_t                default_width;
+    uint32_t                dv_base;
+    uint32_t                em_base;
+    uint32_t                font_height;
+    uint32_t                font_space;    
+    uint32_t                line_height;
+    uint32_t                line_space;
+    uint32_t                spc_width;
 } wgml_font;
 
 /* Variable declarations. */
-
-/* suppress and oldglobal: when one header using global includes a second
- * using global, then, if global is defined, then the variables in the
- * second header will be defined twice and linker warnings will result. The
- * first header file should #define suppress and rely on this admittedly-
- * messy code to correctly solve the problem. devfuncs.h provides an example.
- */
-
-#ifdef suppress
-    #ifdef global
-        #define oldglobal
-    #endif
-    #undef global
-#endif
 
 #ifndef global
     #define global  extern
@@ -528,10 +518,6 @@ global wgml_font    *   wgml_fonts;     // the available fonts
 /* Reset so can be reused with other headers. */
 
 #undef global
-#ifdef oldglobal
-    #define global
-#endif
-#undef suppress
 
 /* Function declarations. */
 
@@ -541,6 +527,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 
 extern void             cop_setup( void );
 extern void             cop_teardown( void );
+extern uint32_t         cop_text_width( uint8_t * text, uint32_t length, uint32_t font );
 extern void             fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
 extern void             fb_document( void );
 extern void             fb_document_page( void );

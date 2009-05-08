@@ -102,10 +102,13 @@ static void display_binary_device_library( void )
         else out_msg( "Yes\n" );
         out_msg( "  Font resident:      %c\n", wgml_fonts[i].font_resident );
         out_msg( "  Default Width:      %i\n", wgml_fonts[i].default_width );
+        out_msg( "  'DV' base:          %i\n", wgml_fonts[i].dv_base );
+        out_msg( "  'Em' base:          %i\n", wgml_fonts[i].em_base );
         out_msg( "  Font height:        %i\n", wgml_fonts[i].font_height );
         out_msg( "  Font space:         %i\n", wgml_fonts[i].font_space );
         out_msg( "  Line height:        %i\n", wgml_fonts[i].line_height );
         out_msg( "  Line space:         %i\n", wgml_fonts[i].line_space );
+        out_msg( "  Space char width:   %i\n", wgml_fonts[i].spc_width );
     }
 }
 

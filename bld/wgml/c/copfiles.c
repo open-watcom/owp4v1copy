@@ -27,6 +27,7 @@
 * Description:  Implements the functions used to parse .COP files:
 *                   cop_setup()
 *                   cop_teardown()
+*                   cop_text_width()
 *                   fb_dbox()
 *                   fb_document()
 *                   fb_document_page()
@@ -45,6 +46,7 @@
 *                   get_cop_device()
 *                   get_cop_driver()
 *                   get_cop_font()
+*                   scale_basis_to_horizontal_base_units()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
 *               not apparent and for how the various function blocks are used.
@@ -78,6 +80,50 @@
 
 /* Local function definitions. */
 
+/* Function scale_basis_to_horizontal_base_units().
+ * Converts a length expressed in scale_basis units to the same length
+ * expressed in horizontal_base_units.
+ *
+ * Parameter:
+ *      in_units contains the length in scale_basis units.
+ *      in_font points to the font to use.
+ *
+ * Returns:
+ *      the same length in horizontal_base_units.
+ */
+ 
+static uint32_t scale_basis_to_horizontal_base_units( uint32_t in_units, \
+                                                       wgml_font * in_font )
+{
+    uint32_t    divisor;
+    uint32_t    units;
+    uint32_t    width;
+
+    /* The conversion is done using this formula: 
+     * horizontal_base_units * font_height/100 * in_units
+     * ------------------------------------------------
+     *                     scale_basis
+     * font_height is reduced from centipoints to points. This is done by
+     * adjusting the divisor to avoid loss-of-precision problems with
+     * integer arithmetic.
+     */
+
+    divisor = (in_font->bin_font->scale_basis * 100);
+    units = (bin_device->horizontal_base_units * in_font->font_height);
+    units *= in_units;
+    width = units / divisor;
+
+    /* This rounds width up if the division did not produce an integer.
+     * This produces correct results with the test values, but may need
+     * to be modified (or the entire algorithm reconsidered) when
+     * side-by-side comparisons of wgml 4.0 and our wgml become possible.
+     */
+
+    if( (units % divisor) > 0 ) width++;
+
+    return( width );
+}
+
 /* Function compute_metrics().
  * Computes and initializes the default_width, line_height and line_space values
  * for the given wgml_font instance.
@@ -88,11 +134,8 @@
 
 static void compute_metrics( wgml_font * in_font )
 {
-    uint16_t factor;
-    uint16_t height;
-    uint16_t overage;
-    uint16_t points;
-    uint16_t scaling;
+    uint32_t    glyph_height;
+    uint32_t    height;
 
     /* Compute the default character width. */
 
@@ -104,27 +147,8 @@ static void compute_metrics( wgml_font * in_font )
 
     } else {
 
-        /* The default_width is the char_width times a computed value:
-         * horizontal_base_units * font_height
-         * -----------------------------------
-         *             scale_basis
-         * which is placed in "points" because that is what it is measures.
-         * font_height is in centipoints, hence the conversion to points.
-         */
-
-        height = in_font->font_height / 100;
-        points = (bin_device->horizontal_base_units * height) \
-                 / in_font->bin_font->scale_basis;
-
-        /* This rounds points up if the division did not produce an integer.
-         * This produces correct results with the test values, but may need
-         * to be modified (or the entire algorithm reconsidered) when
-         * side-by-side comparisons of wgml 4.0 and our wgml become possible.
-         */
-
-        if( (bin_device->horizontal_base_units * height) \
-             / in_font->bin_font->scale_basis > 0 ) points++;
-        in_font->default_width = in_font->bin_font->char_width * points;
+        in_font->default_width = scale_basis_to_horizontal_base_units( \
+                                        in_font->bin_font->char_width, in_font );
     }
 
     /* Compute the line height and space values. */
@@ -134,63 +158,55 @@ static void compute_metrics( wgml_font * in_font )
         /* Use the line_height and line_space values from the :FONT block. */
 
         in_font->line_space = in_font->bin_font->line_space;
-        in_font->line_height = in_font->bin_font->line_height + \
+            in_font->line_height = in_font->bin_font->line_height + \
                                                             in_font->line_space;
     } else {
 
-        /* Use the font_height, font_space, and vertical_base_units values. */
-
-        factor = 7200 / bin_device->vertical_base_units;
-        height = in_font->font_height + in_font->font_space;
-
-        /* line_height is set to the number of vertical_base_units needed to
-         * ensure that sufficient height is provided. This may need to be
-         * tweaked when side-by-side comparisons of wgml 4.0 and our wgml
-         * become possible.
+        /* Use the font_height, font_space, and vertical_base_units values.
+         * The formula is:
+         *    (font_height + font_space) * vertical_base_units
+         *    ------------------------------------------------
+         *                         7200
+         * where the divisor is 72 points/inch times the correction of
+         * (font_height + font_space) from centipoints to points.
          */
 
-        in_font->line_height = height / factor;
-        if( (height % factor) > 0 ) in_font->line_height++;
+
+        height = (in_font->font_height + in_font->font_space) * \
+                                                bin_device->vertical_base_units;
+
+        in_font->line_height = height / 7200;
+
+        /* The rounding criteria may need to be tweaked when side-by-side
+         * comparisons of wgml 4.0 and our wgml become possible.
+         */
+
+        if( (height % 7200) > 0 ) in_font->line_height++;
+
+        /* If font_space is "0", then line_space will be "0". */
 
         in_font->line_space = 0;
         if( in_font->font_space > 0) {
 
-            /* line_space is set initially to the number of vertical_base_units
-             * corresponding to the value of font_space.
+            /* glyph_height is set to the number of vertical_base_units
+             * corresponding to the value of font_height (and so, presumably,
+             * to the amount of vertical space occupied by the glyphs).
              */
 
-            in_font->line_space = in_font->font_space / factor;
+            height = in_font->font_height * bin_device->vertical_base_units;
+            glyph_height = height / 7200;
 
-            /* points contains the height of the line in points. overage contains
-             * the size, in points, of the extra space, if any, added to the line
-             * when height is not an even multiple of factor. scaling contains
-             * the number of points relative to font_height corresponding to the
-             * number of points in points occupied by blank space. It solves the
-             * the equation:
-             *     scaling           font_space+overage
-             *     -----------   =   ------------------
-             *     font_height       points
+            /* The rounding criteria may need to be tweaked when side-by-side
+             * comparisons of wgml 4.0 and our wgml become possible.
              */
 
-            points = in_font->line_height * factor;
-            overage =  points - height;
-            scaling = ((in_font->font_space + overage) * \
-                                                in_font->font_height) / points;
+            if( (height % 7200) >= 3600 ) glyph_height++;
 
-            /* This increments line_space if scaling is more than 1/2 of the
-             * value of font_height. This produces correct results with the
-             * test values, but may need to be modified (or the entire
-             * algorithm reconsidered) when side-by-side comparisons of wgml 4.0
-             * and our wgml become possible.
+            /* The value of font_space is the difference between the computed
+             * value of font_height and the value of glyph_height. 
              */
 
-            if( (scaling * 2) > in_font->font_height ) in_font->line_space++;
-
-            /* If in_font->line_space is still 0, set it to 1, since it cannot
-             * be 0 if in_font->font_space is not 0.
-             */
-
-            if( in_font->line_space == 0) in_font->line_space = 1;
+            in_font->line_space = in_font->line_height - glyph_height;
         }
     }
 
@@ -614,7 +630,7 @@ static void free_opt_fonts( void )
  * Initializes the various globals specific to the binary device library subsystem.
  */
 
-extern void cop_setup( void )
+void cop_setup( void )
 {
     default_font    *   cur_def_fonts   = NULL;
     device_font     *   cur_dev_font    = NULL;
@@ -962,6 +978,19 @@ extern void cop_setup( void )
         g_suicide;
     }
 
+    /* Set the base values for the "Em" and "Device Unit" ("DV") Horizontal
+     * Space Units, and record the width of the space character for quick
+     * reference. This is done after wgml_fonts is otherwise-initialized
+     * because cop_text_width() is written to work with a wgml_font struct 
+     * which has the certain of the other fields initialized.
+     */
+
+    for( i = 0; i < wgml_font_cnt; i++ ) {
+        wgml_fonts[i].dv_base = cop_text_width( "0", 1, i );
+        wgml_fonts[i].em_base = cop_text_width( "M", 1, i );
+        wgml_fonts[i].spc_width = cop_text_width( " ", 1, i );
+    }
+
     /* Initialize the dependent modules. */
 
     df_setup();
@@ -976,7 +1005,7 @@ extern void cop_setup( void )
  * allocated memory pays off!
  */
 
-extern void cop_teardown( void )
+void cop_teardown( void )
 {
     cop_font    *   old;
 
@@ -1011,6 +1040,39 @@ extern void cop_teardown( void )
     return;
 }
 
+/* Function cop_text_width().
+ * Returns the width, in horizontal_base_units, of the text given.
+ *
+ * Parameters:
+ *      text is a pointer to the first character.
+ *      length is the number of characters.
+ *      font is the font number of the available font to use.
+ *
+ * Returns:
+ *      the sum of the widths of length characters, starting with *text.
+ */
+ 
+uint32_t cop_text_width( uint8_t * text, uint32_t length, uint32_t font )
+{
+    int             i;
+    uint32_t        units;
+    uint32_t    *   table;
+    uint32_t        width;
+
+    if( wgml_fonts[font].bin_font->width == NULL ) {
+        width = length * wgml_fonts[font].default_width;
+    } else {
+        table = wgml_fonts[font].bin_font->width->table;
+        units = 0;
+        for( i = 0; i < length; i++ ) {
+            units += table[text[i]];
+        }
+        width = scale_basis_to_horizontal_base_units( units, &wgml_fonts[font] );
+    }
+
+    return( width );
+}
+
 /* Function fb_dbox().
  * Interprets the :DBOX block.
  *
@@ -1032,10 +1094,9 @@ extern void cop_teardown( void )
  *          or the :BOX block characters instead.
  */
 
-extern void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len )
+void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len )
 {
-    fb_thickness( bin_driver->dbox.text, h_start, v_start, h_len, v_len, \
-                                        bin_driver->dbox.thickness, "DBOX" );
+    fb_line_block( &(bin_driver->dbox), h_start, v_start, h_len, v_len, "DBOX" );
     return;
 }
 
@@ -1044,8 +1105,10 @@ extern void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_
  * processing begins.
  */
 
-extern void fb_document( void )
+void fb_document( void )
 {
+    uint32_t    page_top;
+
     /* Interpret the DOCUMENT :PAUSE block. */
 
     if( bin_device->pauses.document_pause != NULL ) \
@@ -1063,7 +1126,31 @@ extern void fb_document( void )
     /* Perform the other actions needed at this point. */
 
     df_populate_driver_table();
-    pages = 1;
+
+    /* Initialize page_top.
+     * Eventually, page_top (or its functionality) will become a global
+     * variable initialized and used by the document layout code. The reason
+     * for this is that, if y_positive is "0", then the correct value is the
+     * top of the document page, which can only be determined from the page
+     * length given in the :LAYOUT section (:PAGE attribute depth). The value
+     * computed here is the top of the device page.
+     */
+
+    if( bin_driver->y_positive == 0x00 ) {
+
+        /* The :PAGEOFFSET applies to the bottom of the page. I think. */
+
+        page_top = bin_device->y_start;
+    } else {
+
+        /* The :PAGEOFFSET applies to the top of the page. I think. */
+
+        page_top = bin_device->y_start + bin_device->y_offset;
+    }
+
+    /* Set up for the first document page. */
+
+    df_initialize_pages( page_top );
 
     return;
 }
@@ -1072,7 +1159,7 @@ extern void fb_document( void )
  * Interprets the :NEWPAGE block and increments the page number variable.
  */
 
-extern void fb_document_page( void )
+void fb_document_page( void )
 {
     /* Interpret the DOCUMENT_PAGE :PAUSE block. */
 
@@ -1083,7 +1170,9 @@ extern void fb_document_page( void )
 
     df_interpret_driver_functions( bin_driver->newpage.text );
 
-    pages++;
+    /* Set up for a new document page. */
+
+    df_increment_pages();
 
     return;
 }
@@ -1092,7 +1181,7 @@ extern void fb_document_page( void )
  * Performs the processing which occurs after document processing ends.
  */
 
-extern void fb_finish( void )
+void fb_finish( void )
 {
     /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
 
@@ -1131,10 +1220,9 @@ extern void fb_finish( void )
  *          block characters instead.
  */
 
-extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
+void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
 {
-    fb_thickness( bin_driver->hline.text, h_start, v_start, h_len, 0, \
-                                        bin_driver->hline.thickness, "HLINE" );
+    fb_line_block( &(bin_driver->hline), h_start, v_start, h_len, 0, "HLINE" );
 }
 
 /* Function fb_position().
@@ -1159,7 +1247,7 @@ extern void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
  *          blocks, or which function blocks, are interpreted.
  */
 
-extern void fb_position( uint32_t h_start, uint32_t v_start )
+void fb_position( uint32_t h_start, uint32_t v_start )
 {
     df_set_vertical( v_start );
     df_set_horizontal( h_start );
@@ -1172,7 +1260,7 @@ extern void fb_position( uint32_t h_start, uint32_t v_start )
  * actions taken here have been completed!
  */
 
-extern void fb_start( void )
+void fb_start( void )
 {
     /* Interpret the START :PAUSE block and reset the function table. */
 
@@ -1208,10 +1296,9 @@ extern void fb_start( void )
  *          block characters instead.
  */
 
-extern void fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len )
+void fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len )
 {
-    fb_thickness( bin_driver->vline.text, h_start, v_start, 0, v_len, \
-                                        bin_driver->vline.thickness, "VLINE" );
+    fb_line_block( &(bin_driver->vline), h_start, v_start, 0, v_len, "VLINE" );
     return;
 }
 

@@ -25,6 +25,8 @@
 *  ========================================================================
 *
 * Description:  Implements the functions declared in dfinterp.h:
+*                   df_initialize_pages()
+*                   df_increment_pages()
 *                   df_interpret_device_functions()
 *                   df_interpret_driver_functions()
 *                   df_populate_device_table()
@@ -35,8 +37,8 @@
 *                   df_teardown()
 *                   fb_enterfont()
 *                   fb_init()
+*                   fb_line_block()
 *                   fb_lineproc_endvalue()
-*                   fb_thickness()
 *               as well as a macro
 *                   MAX_FUNC_INDEX
 *               some local typedefs and structs:
@@ -55,6 +57,8 @@
 *                   device_function_table
 *                   driver_function_table
 *                   font_number
+*                   page_top
+*                   pages
 *                   pass_number
 *                   set_margin
 *                   staging
@@ -153,14 +157,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-/* Allocate storage for global variables. */
-
-#define global
 #include "devfuncs.h"
-#undef  global
-
-#include "outbuff.h"
 #include "gvars.h"
+#include "outbuff.h"
 #include "wgml.h"
 
 /* Macros. */
@@ -216,6 +215,7 @@ static bool             set_margin      = false;
 static bool             text_output     = false;
 static page_state       current_state   = { 0, 0, 0 };
 static page_state       desired_state   = { 0, 0, 0 };
+static uint32_t         page_top        = 0;
 static uint32_t         pass_number     = 0;
 
 /* These are used to hold values returned by device functions. */
@@ -224,6 +224,7 @@ static char         *   date_val        = NULL;
 static char         *   time_val        = NULL;
 static char             wgml_header[]   = "V4.0 PC/DOS";
 static uint32_t         font_number     = 0;
+static uint32_t         pages           = 0;
 static uint32_t         tab_width       = 0;
 static uint32_t         thickness       = 0;
 static uint32_t         x_address       = 0;
@@ -582,7 +583,7 @@ static void * df_flushpage( void )
 
     fb_lineproc_endvalue();
 
-    /* current_pages pages contains the number of device pages needed to reach
+    /* current_pages contains the number of device pages needed to reach
      * current_state.y_address; however, it is 0-based and must be 1-based for
      * the correct value to be obtained if it designates the last line of the
      * page.
@@ -2197,10 +2198,24 @@ static void fb_normal_vertical_positioning( void )
      * using :NEWLINE blocks, of course, cannot move upwards at all.
      */
 
-    if( current_state.y_address > desired_state.y_address ) {
-        out_msg( "wgml internal error: cannot move to prior device page\n" );
-        err_count++;
-        g_suicide();
+    if( bin_driver->y_positive == 0x00 ) {
+
+        /* y_address is formed by subtraction. */
+
+        if( current_state.y_address < desired_state.y_address ) {
+            out_msg( "wgml internal error: cannot move to prior device page\n" );
+            err_count++;
+            g_suicide();
+        }
+    } else {
+
+        /* y_address is formed by addition. */
+
+        if( current_state.y_address > desired_state.y_address ) {
+            out_msg( "wgml internal error: cannot move to prior device page\n" );
+            err_count++;
+            g_suicide();
+        }
     }
 
     /* If there is no difference, there is nothing to do. */
@@ -2284,34 +2299,53 @@ static void fb_normal_vertical_positioning( void )
 
         /* If at_start is still "true", then no device paging occurred. */
 
-        if( at_start ) set_margin = true;
+        if( at_start ) {
+            at_start = false;
+            set_margin = true;
+        }
 
         /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
 
         if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
-
-        /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
-         * :ENDVALUE block for Pass 1 of available font 0, unless it has already
-         * been done. Note: this places the block at the proper location when 
-         * no device pages have been skipped and the :ABSOLUTEADDRESS block is
-         * defined.
-         */
-
-        if( at_start ) {
-            if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
-                if( wgml_fonts[0].font_style->lineprocs[0].endvalue != NULL ) \
-                    df_interpret_driver_functions( \
-                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
-            }
-            at_start = false;
-        }
-
     }
 
     return;
 }
 
 /*  Global function definitions. */
+
+/* Function df_initialize_pages().
+ * Ensures pages is 0, sets page_top to the parameter's value, and then
+ * uses df_increment_pages() to onitializes pages and set the state
+ * variables to the top of a new document page.
+ *
+ * Parameter:
+ *      page_top contains the vertical location of the top of a document page.
+ */
+
+void df_initialize_pages( uint32_t in_page_top )
+{
+    page_top = in_page_top;
+    pages = 0;
+    df_increment_pages();
+    return;
+}
+
+
+/* Function df_increment_pages().
+ * Increments pages and sets the state variables to the top of a new
+ * document page.
+ */
+
+void df_increment_pages( void )
+{
+    pages++;
+    desired_state.x_address = 0;
+    desired_state.y_address = page_top;
+    current_state.x_address = 0;
+    current_state.y_address = page_top;
+    return;
+}
 
 /* Function df_interpret_device_functions().
  * Interprets device functions for function blocks in the :DEVICE block.
@@ -2392,7 +2426,7 @@ void df_populate_driver_table( void )
 }
 
 /* Function df_set_horizontal().
- * Does the vertical positioning for fb_position(). This function is extremely
+ * Does the horizontal positioning for fb_position(). This function is extremely
  * specialized and should not be called by any function other than
  * fb_position(). 
  *
@@ -2406,7 +2440,9 @@ void df_set_horizontal( uint32_t h_start )
     bool    fontstyle = false;
 
     /* If set_margin is set to "true", then determine whether a :FONTSTYLE
-     * block for pass 1 for font 0 exists.
+     * block for pass 1 for font 0 exists. If set_margin is set to "false",
+     * then the :FONTSTYLE block will be treated as not existing whether it
+     * exists or not.
      */
 
     if( set_margin ) {
@@ -2417,17 +2453,18 @@ void df_set_horizontal( uint32_t h_start )
         }
     }
 
-    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+    /* If the :FONTSTYLE block exists, interpret the :ENDVALUE block. */
 
-    fb_lineproc_endvalue();
+    if( fontstyle ) df_interpret_driver_functions( \
+                        wgml_fonts[0].font_style->lineprocs[0].endvalue->text );
 
-    /* Set the variables. */
+    /* Set the variables whether the :FONTSTYLE block exists or not. */
 
     desired_state.x_address = h_start;
     x_address = h_start;
 
-    /* The :FONTSTYLE block is only be used if it exists and set_margin had
-     * the value "true".
+    /* If the :FONTSTYLE block exists, interpret the :STARTVALUE block and
+     * the :FIRSTVALUE block.
      */
 
     if( fontstyle ) {
@@ -2446,12 +2483,20 @@ void df_set_horizontal( uint32_t h_start )
  *
  * Parameter:
  *      v_start contains the new value for current_state.y_address.
+ *
+ * Note:
+ *      if the second call to fb_position() occurs, the value of v_start
+ *      should be the same as it was on the first call, in which case
+ *      nothing happens. This avoids resetting the value returned by
+ *      %x_address() to "0" on the second call.
  */
 
 void df_set_vertical( uint32_t v_start )
 {
-    desired_state.y_address = v_start;
-    fb_normal_vertical_positioning();
+    if( desired_state.y_address != v_start ) {
+        desired_state.y_address = v_start;
+        fb_normal_vertical_positioning();
+    }
     return;
 }
 
@@ -2463,10 +2508,6 @@ void df_set_vertical( uint32_t v_start )
 void df_setup( void )
 {
     symsub  *   sym_val = NULL;
-
-    /* Initialize the global. */
-
-    pages = 0;
 
     /* When called, each of symbols "date" and "time" contains either of
      * -- the value set from the system clock; or
@@ -2604,39 +2645,17 @@ void fb_init( init_block * in_block )
     return;
 }
 
-/* Function fb_lineproc_endvalue()
- * Checks the value of the text_output flag and interprets the :LINEPROC
- * :ENDVALUE block for the current font if appropriate.
- */
-
-void fb_lineproc_endvalue( void )
-{
-    if( text_output ) {
-        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[font_number].font_style->lineprocs[pass_number].\
-                                                        endvalue != NULL ) \
-                df_interpret_driver_functions( \
-                    wgml_fonts[font_number].font_style->lineprocs[pass_number].\
-                                                            endvalue->text );
-        }
-        text_output = false;
-    }
-
-    return;
-}
-
-/* Function fb_thickness().
+/* Function fb_line_block().
  * Interprets any of the :HLINE, :VLINE, or :DBOX blocks, which define
  * attribute "thickness". Sets x_size, y_size, and thickness to match the
  * parameters. 
  *
  * Parameters:
- *      in_function points to the function block to be interpreted.
+ *      in_line_block points to the :HLINE, :VLINE, or :DBOX block.
  *      h_start contains the horizontal start position.
  *      v_start contains the vertical start position.
  *      h_len contains the horizontal extent for a :HLINE or :DBOX block.
  *      v_len contains the vertical extent for a :VLINE or :DBOX block.
- *      thickness contains the thickness for this block.
  *      name contains the name (:HLINE, :VLINE, or :DBOX) of the block.
  *
  * Prerequisites:
@@ -2651,13 +2670,13 @@ void fb_lineproc_endvalue( void )
  *          block characters instead.
  */
 
-void fb_thickness( uint8_t * in_function, uint32_t h_start, uint32_t v_start, \
-                   uint32_t h_len, uint32_t v_len, uint32_t in_thickness, \
-                   char * name )
+void fb_line_block( line_block * in_line_block, uint32_t h_start, \
+                    uint32_t v_start, uint32_t h_len, uint32_t v_len, \
+                    char * name )
 {
     /* An empty block is definitely an error. */
 
-    if( in_function == NULL ) {
+    if( in_line_block->text == NULL ) {
         out_msg("wgml internal error: The %s block must be defined if used\n", \
                                                                         name );
         err_count++;
@@ -2688,14 +2707,35 @@ void fb_thickness( uint8_t * in_function, uint32_t h_start, uint32_t v_start, \
 
     x_size = h_len;
     y_size = v_len;
-    thickness = in_thickness;
-    df_interpret_driver_functions( in_function );
+    thickness = in_line_block->thickness;
+    df_interpret_driver_functions( in_line_block->text );
 
     /* Clear the values not needed outside this block. */
 
     x_size = 0;
     y_size = 0;
     thickness = 0;
+
+    return;
+}
+
+/* Function fb_lineproc_endvalue()
+ * Checks the value of the text_output flag and interprets the :LINEPROC
+ * :ENDVALUE block for the current font if appropriate.
+ */
+
+void fb_lineproc_endvalue( void )
+{
+    if( text_output ) {
+        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
+            if( wgml_fonts[font_number].font_style->lineprocs[pass_number].\
+                                                        endvalue != NULL ) \
+                df_interpret_driver_functions( \
+                    wgml_fonts[font_number].font_style->lineprocs[pass_number].\
+                                                            endvalue->text );
+        }
+        text_output = false;
+    }
 
     return;
 }
