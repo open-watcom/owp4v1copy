@@ -263,9 +263,9 @@ void SetCursorBlinkRate( int cbr )
 
 } /* SetCursorBlinkRate */
 
-vi_key GetKeyboard( int *scan )
+vi_key GetKeyboard( void )
 {
-    return( BIOSGetKeyboard( scan ) );
+    return( GetVIKey( BIOSGetKeyboard( NULL ), 0, FALSE ) );
 }
 
 bool KeyboardHit( void )

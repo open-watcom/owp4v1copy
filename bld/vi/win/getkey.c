@@ -42,12 +42,7 @@
 
 #define KEY_BUFFER_SIZE 64
 
-typedef struct vi_key_scancode {
-    int     scan;
-    vi_key  key;
-} vi_key_scancode;
-
-static vi_key_scancode  keyBuffer[KEY_BUFFER_SIZE];
+static vi_key           keyBuffer[KEY_BUFFER_SIZE];
 static volatile int     bufferTop = 0;
 static volatile int     bufferBottom = 0;
 
@@ -276,8 +271,7 @@ bool WindowsKeyPush( WORD vk, WORD data )
     }
     key = MapVirtualKeyToVIKey( vk, data );
     if( key != VI_KEY( DUMMY ) ) {
-        keyBuffer[bufferTop].key = key;
-        keyBuffer[bufferTop].scan = LOBYTE( data );
+        keyBuffer[bufferTop] = GetVIKey( key, 0, FALSE );
         bufferTop = (bufferTop + 1) % KEY_BUFFER_SIZE;
         return( TRUE );
     }
@@ -304,14 +298,11 @@ bool KeyboardHit( void )
 /*
  * GetKeyboard - get a keyboard result
 */
-vi_key GetKeyboard( int *scan )
+vi_key GetKeyboard( void )
 {
     vi_key  key;
 
-    key = keyBuffer[bufferBottom].key;
-    if( scan ) {
-        *scan = keyBuffer[bufferBottom].scan;
-    }
+    key = keyBuffer[bufferBottom];
     bufferBottom = (bufferBottom + 1) % KEY_BUFFER_SIZE;
     return( key );
 

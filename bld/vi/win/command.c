@@ -110,9 +110,9 @@ LONG WINEXP CommandWindowProc( HWND hwnd, UINT msg, WPARAM w, LPARAM l )
         break;
     case WM_KEYDOWN:
         if( WindowsKeyPush( w, HIWORD( l ) ) ) {
-            return( FALSE );
+            return( 0 );
         }
-        return( DefWindowProc( hwnd, msg, w, l ) );
+        break;
     case WM_PAINT:
         hdc = BeginPaint( hwnd, &ps );
         FillRect( hdc, &ps.rcPaint, ColorBrush( WIN_BACKCOLOR( &CommandWindow ) ) );

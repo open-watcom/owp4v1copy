@@ -53,7 +53,8 @@ vi_rc Global( linenum n1, linenum n2, char *data, int dmt )
     /*
      * get search string and command
      */
-    if( rc = ModificationTest() ) {
+    rc = ModificationTest();
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     sstr = alloca( MAX_INPUT_LINE );

@@ -84,7 +84,7 @@ LONG WINEXP FileCompleteWindowProc( HWND hwnd, unsigned msg, UINT w, LONG l )
         if( CommandId != NO_WINDOW ) {
             SetFocus( CommandId );
             SendMessage( CommandId, msg, w, l );
-            return( TRUE );
+            return( 0 );
         }
         break;
     case WM_ERASEBKGND:

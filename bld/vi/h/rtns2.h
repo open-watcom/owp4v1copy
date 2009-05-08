@@ -69,7 +69,7 @@ extern void         ScreenInit( void );
 extern void         ScreenFini( void );
 extern void         ChkExtendedKbd( void );
 extern bool         KeyboardHit( void );
-extern vi_key       GetKeyboard( int * );
+extern vi_key       GetKeyboard( void );
 extern vi_rc        SetAColor( char * );
 extern vi_rc        SetFont( char * );
 extern void         InitColors( void );

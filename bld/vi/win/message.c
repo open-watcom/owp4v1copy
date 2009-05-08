@@ -98,10 +98,10 @@ LONG WINEXP MessageWindowProc( HWND hwnd, unsigned msg, UINT w, LONG l )
             msgString( 2, msgString2 );
         }
         EndPaint( hwnd, &ps );
-        return( TRUE );
+        return( 0 );
     case WM_SETFOCUS:
         SetFocus( Root );
-        return( TRUE );
+        return( 0 );
     }
     return( DefWindowProc( hwnd, msg, w, l ) );
 }

@@ -260,9 +260,9 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         break;
     case WM_KEYDOWN:
         if( WindowsKeyPush( wparam, HIWORD( lparam ) ) ) {
-            return( FALSE );
+            return( 0 );
         }
-        return( DefFrameProc( hwnd, EditContainer, msg, wparam, lparam ) );
+        break;
     case WM_SIZE:
         DefFrameProc( hwnd, EditContainer, msg, wparam, lparam );
         RootState = wparam;
@@ -313,7 +313,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         break;
     case WM_COMMAND:
         if( LOWORD( wparam ) > 0xF000 ) {
-            return( DefFrameProc( hwnd, EditContainer, msg, wparam, lparam ) );
+            break;
         } else {
             rc = MenuCommand( LOWORD( wparam ) );
             if( rc != MENU_COMMAND_NOT_HANDLED ) {
@@ -336,7 +336,7 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         break;
     case WM_MENUSELECT:
         HandleMenuSelect( wparam, lparam );
-        return( DefFrameProc( hwnd, EditContainer, msg, wparam, lparam ) );
+        break;
     case WM_ENDSESSION:
         if( wparam ) {
             ExitEditor( 0 );
@@ -381,7 +381,6 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             }
         }
         return( 0 );
-        break;
 #endif
     case WM_DESTROY:
         DestroyToolBar();

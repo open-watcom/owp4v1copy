@@ -461,20 +461,19 @@ bool KeyboardHit( void )
 /*
  * GetKeyboard - get a keyboard char
  */
-vi_key GetKeyboard( int *scan )
+vi_key GetKeyboard( void )
 {
     unsigned short  key;
-    int             scancode;
+    int             scan;
+    bool            shift;
 
     key = _BIOSGetKeyboard( EditFlags.ExtendedKeyboard );
-    scancode = key >> 8;
+    shift = ShiftDown();
+    scan = key >> 8;
     key &= 0xff;
-    if( scan != NULL ) {
-        *scan = scancode;
+    if( key == 0xE0 && scan != 0 ) {
+        key = 0;
     }
-    if( key == 0xe0 && scancode != 0 ) {
-        return( 0 );
-    }
-    return( key );
+    return( GetVIKey( key, scan, shift ) );
 
 } /* GetKeyboard */

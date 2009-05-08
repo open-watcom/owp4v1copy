@@ -52,7 +52,8 @@ vi_rc ReadAFile( linenum afterwhich, char *name )
     /*
      * get file name
      */
-    if( rc = ModificationTest() ) {
+    rc = ModificationTest();
+    if( rc != ERR_NO_ERR ) {
         return( rc );
     }
     len = NextWord1( name, fn );

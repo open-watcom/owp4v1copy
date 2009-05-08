@@ -139,7 +139,7 @@ static vi_key getOverrideKey( void )
 /*
  * GetVIKey - return a VI equivalent of a given key/scan code
  */
-vi_key GetVIKey( vi_key ch, int scan, int shift )
+vi_key GetVIKey( vi_key ch, int scan, bool shift )
 {
 #if !defined NO_TRANSLATE
     int     i;
@@ -286,10 +286,8 @@ vi_key GetVIKey( vi_key ch, int scan, int shift )
  */
 vi_key GetKey( bool usemouse )
 {
-    bool        shift;
     bool        hit;
     vi_key      key;
-    int         scan;
 
     clearSpin();
     while( 1 ) {
@@ -310,7 +308,7 @@ vi_key GetKey( bool usemouse )
         if( EditFlags.KeyOverride ) {
             key = getOverrideKey();
 #ifndef __WIN__
-            if( key == 3 ) {
+            if( key == VI_KEY( CTRL_C ) ) {
                 ExitWithVerify();
                 clearSpin();
                 continue;
@@ -334,25 +332,24 @@ vi_key GetKey( bool usemouse )
 #if defined( BUSYWAIT )
         else {
 #endif
-            key = GetKeyboard( &scan );
+            key = GetKeyboard();
 #if defined( __NT__ )
             if( key == VI_KEY( MOUSEEVENT ) ) {
                 continue;
             }
 #endif
-            shift = ShiftDown();
             DisplayMouse( FALSE );
 #ifdef __WIN__
-            if( key == 0 && scan == 0 ) {
-                GetKeyboard( NULL );
+            if( key == 0 ) {
+                GetKeyboard();
                 ExitWithVerify();
                 clearSpin();
                 continue;
             }
 #else
-            if( !EditFlags.EscapedInsertChar && (key == 3 || (key == 0 && scan == 0)) ) {
-                if( key == 0 && scan == 0 ) {
-                    GetKeyboard( NULL );
+            if( !EditFlags.EscapedInsertChar && (key == VI_KEY( CTRL_C ) || key == 0) ) {
+                if( key == 0 ) {
+                    GetKeyboard();
                 }
                 ExitWithVerify();
                 clearSpin();
@@ -371,7 +368,7 @@ vi_key GetKey( bool usemouse )
     if( EditFlags.Spinning ) {
         EditFlags.SpinningOurWheels = TRUE;
     }
-    return( GetVIKey( key, scan, shift ) );
+    return( key );
 
 } /* GetKey */
 
@@ -467,7 +464,7 @@ vi_key GetNextEvent( bool usemouse )
 void ClearBreak( void )
 {
     while( KeyboardHit() ) {
-        GetKeyboard( NULL );
+        GetKeyboard();
     }
     EditFlags.BreakPressed = FALSE;
 

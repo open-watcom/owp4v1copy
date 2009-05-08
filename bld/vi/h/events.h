@@ -471,7 +471,5 @@ vi_pick( VI_KEY( FAKEMOUSE ),    InvalidKey,          InvalidKey,           Abso
 vi_pick( VI_KEY( IDLE ),         InvalidKey,          AbsoluteNullResponse, AbsoluteNullResponse,    BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     1, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( ALT_BS ),       DoUndo,              IMChar,               DoUndo,                  BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( CTRL_BS ),      InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
-//vi_pick( VI_KEY( ALT_HYPHEN ),   DoWindowGadgetMenu,  IMMenuKey,            InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
 vi_pick( VI_KEY( ALT_HYPHEN ),   DoWindowGadgetMenu,  IMMenuKey,            DoWindowGadgetMenu,      BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
-//vi_pick( VI_KEY( TERMINATE ),    InvalidKey,          InvalidKey,           InvalidKey,              BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )
-vi_pick( VI_KEY( DUMMY ),        AbsoluteNullResponse,AbsoluteNullResponse, AbsoluteNullResponse,    BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_INS,      1, 0, 0, 0, 0, 0) )
+vi_pick( VI_KEY( DUMMY ),        AbsoluteNullResponse,AbsoluteNullResponse, AbsoluteNullResponse,    BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0), BITS(EVENT_MISC,     0, 0, 0, 0, 0, 0) )

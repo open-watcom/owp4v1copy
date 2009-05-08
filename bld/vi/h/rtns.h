@@ -467,7 +467,7 @@ void    VerifyTmpDir( void );
 void    MakeTmpPath( char *out, char *in );
 
 /* key.c */
-vi_key  GetVIKey( vi_key ch, int scan, int shift );
+vi_key  GetVIKey( vi_key ch, int scan, bool shift );
 vi_key  GetNextEvent( bool );
 vi_key  GetKey( bool );
 void    ClearBreak( void );

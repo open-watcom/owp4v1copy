@@ -264,7 +264,7 @@ bool LostFileCheck( void )
                 MyPrintf( "Files have been lost since your last session, do you wish to:\n" );
                 MyPrintf( "\ti)gnore\n\tr)ecover\n\tq)uit\n" );
                 while( 1 ) {
-                    key = GetKeyboard( NULL );
+                    key = GetKeyboard();
                     if( handleKey( key ) ) {
                         return( TRUE );
                     }

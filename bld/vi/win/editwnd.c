@@ -737,7 +737,7 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         data = MemAlloc( sizeof( window_data ) );
         SetWindowLong( hwnd, WIN_WINDOW * MAGIC_SIZE, (LONG)(LPVOID)(&EditWindow) );
         SetWindowLong( hwnd, WIN_DATA * MAGIC_SIZE, (LONG)(LPVOID)data );
-        break;
+        return( 0 );
     case WM_PAINT:
         if( GetUpdateRect( hwnd, &rect, FALSE ) ) {
             data = DATA_FROM_ID( hwnd );
@@ -748,7 +748,7 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
                 BlankRectIndirect( hwnd, SEType[SE_WHITESPACE].background, &rect );
             }
         }
-        break;
+        return( 0 );
     case WM_MOUSEACTIVATE:
         if( hwnd != CurrentWindow ) {
             UnselectRegion();
@@ -787,19 +787,19 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
                 SetWindowCursorForReal();
             }
         }
-        break;
+        return( 0 );
     case WM_LBUTTONDBLCLK:
         doubleClickPending = TRUE;
-        break;
+        return( 0 );
     case WM_RBUTTONUP:
         mouseEvent( hwnd, lparam, FALSE, rightButtonUp );
-        break;
+        return( 0 );
     case WM_RBUTTONDOWN:
         mouseEvent( hwnd, lparam, wparam & MK_SHIFT, rightButtonDown );
-        break;
+        return( 0 );
     case WM_LBUTTONDOWN:
         mouseEvent( hwnd, lparam, wparam & MK_SHIFT, leftButtonDown );
-        break;
+        return( 0 );
     case WM_LBUTTONUP:
         if( doubleClickPending ) {
             mouseEvent( hwnd, lparam, wparam & MK_SHIFT, leftButtonUp );
@@ -808,55 +808,54 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         } else {
             mouseEvent( hwnd, lparam, wparam & MK_SHIFT, leftButtonUp );
         }
-        break;
+        return( 0 );
     case WM_MOUSEMOVE:
         mouseMove( hwnd, (int)(signed_16) LOWORD( lparam ),
                    (int)(signed_16) HIWORD( lparam ), FALSE );
-        break;
+        return( 0 );
     case WM_ERASEBKGND:
         return( TRUE );
     case WM_SYSCHAR:
     case WM_SYSKEYUP:
         return( SendMessage( Root, msg, wparam, lparam ) );
     case WM_SYSKEYDOWN:
+        if( WindowsKeyPush( wparam, HIWORD( lparam ) ) ) {
+            return( 0 );
+        }
+        return( SendMessage( Root, msg, wparam, lparam ) );
     case WM_KEYDOWN:
         if( WindowsKeyPush( wparam, HIWORD( lparam ) ) ) {
-            return( FALSE );
+            return( 0 );
         }
-        if( msg == WM_KEYDOWN ) {
-            return( DefMDIChildProc( hwnd, msg, wparam, lparam ) );
-        } else {
-            return( SendMessage( Root, msg, wparam, lparam ) );
-        }
+        break;
     case WM_VSCROLL:
         doVScroll( hwnd, wparam, lparam );
-        break;
+        return( 0 );
     case WM_HSCROLL:
         doHScroll( hwnd, wparam, lparam );
-        break;
+        return( 0 );
     case WM_CLOSE:
-        if( EditFlags.HoldEverything ) {
-            break;
+        if( !EditFlags.HoldEverything ) {
+            PushMode();
+            data = DATA_FROM_ID( hwnd );
+            SendMessage( EditContainer, WM_MDIRESTORE, (UINT)hwnd, 0L );
+            BringUpFile( data->info, TRUE );
+            if( NextFile() > ERR_NO_ERR ) {
+                FileExitOptionSaveChanges( CurrentFile );
+            }
+            PopMode();
         }
-        PushMode();
-        data = DATA_FROM_ID( hwnd );
-        SendMessage( EditContainer, WM_MDIRESTORE, (UINT)hwnd, 0L );
-        BringUpFile( data->info, TRUE );
-        if( NextFile() > ERR_NO_ERR ) {
-            FileExitOptionSaveChanges( CurrentFile );
-        }
-        PopMode();
-        break;
+        return( 0 );
     case WM_TIMER:
         sendDragMessage( hwnd );
-        break;
+        return( 0 );
     case WM_DESTROY:
         data = DATA_FROM_ID( hwnd );
         MemFree( data );
-        break;
+        return( 0 );
     case WM_KILLFOCUS:
         DoneCurrentInsert( TRUE );
-        return( DefMDIChildProc( hwnd, msg, wparam, lparam ) );
+        break;
     case WM_SIZE:
         data = DATA_FROM_ID( hwnd );
         DCResize( data->info );
@@ -869,14 +868,14 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
                 }
                 if( cinfo == sinfo ) {
                     SetFocus( Root );
-                    break;
+                    return( 0 );
                 }
                 if( IsIconic( cinfo->CurrentWindow ) ) {
                     cinfo = cinfo->next;
                 } else {
                     SaveInfo( sinfo );
                     BringUpFile( cinfo, FALSE );
-                    break;
+                    return( 0 );
                 }
             }
         }
@@ -884,11 +883,11 @@ LONG WINEXP EditWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
         GetClientRect( hwnd, &data->extra );
         data->extra.top = WindowAuxInfo( hwnd, WIND_INFO_TEXT_LINES ) *
                                          FontHeight( WIN_FONT( &EditWindow ) );
-        // explicit fall through
+        break;
     default:
-        return( DefMDIChildProc( hwnd, msg, wparam, lparam ) );
+        break;
     }
-    return( 0 );
+    return( DefMDIChildProc( hwnd, msg, wparam, lparam ) );
 
 } /* EditWindowProc */
 
