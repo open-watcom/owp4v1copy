@@ -46,22 +46,26 @@
 
 void    init_predefined_symbols( void )
 {
-    char    string[2] = { 0, 0 };
+    char    wkstring[MAX_L_AS_STR];
 
     add_symvar( &global_dict, "amp", "&", no_subscript, predefined + late_subst );
     add_symvar( &global_dict, "$amp", "&", no_subscript, predefined + late_subst );
 
-    string[0] = CW_SEP_CHAR_DEFAULT;
-    add_symvar( &global_dict, "$cw", string, no_subscript, predefined + late_subst );
+    wkstring[1] = '\0';
+    wkstring[0] = CW_SEP_CHAR_DEFAULT;
+    add_symvar( &global_dict, "$cw", wkstring, no_subscript, predefined + late_subst );
 
-    string[0] = GML_CHAR_DEFAULT;
-    add_symvar( &global_dict, "gml", string, no_subscript, predefined + late_subst );
-    add_symvar( &global_dict, "$gml", string, no_subscript, predefined + late_subst );
+    wkstring[0] = GML_CHAR_DEFAULT;
+    add_symvar( &global_dict, "gml", wkstring, no_subscript, predefined + late_subst );
+    add_symvar( &global_dict, "$gml", wkstring, no_subscript, predefined + late_subst );
 
-    string[0] = '.';
-    add_symvar( &global_dict, "$per", string, no_subscript, predefined );
+    wkstring[0] = '.';
+    add_symvar( &global_dict, "$per", wkstring, no_subscript, predefined );
 
     add_symvar( &global_dict, "$quiet", "OFF", no_subscript, predefined );
+
+    ltoa( CPI, wkstring, 10 );
+    add_symvar( &global_dict, "$cpi", wkstring, no_subscript, predefined );
 }
 
 /***************************************************************************/

@@ -70,6 +70,10 @@
 #define MAX_IF_LEVEL    10              // maximum nested .if s
 #define MAX_L_AS_STR    16              // long as string
 
+#define MAX_CPI         100             // not documented, assumed
+#define MAX_LPI         100             // not documented, assumed
+
+
 /* default filename extensions */
 #define DEF_EXT         ".def"
 #define ERR_EXT         ".err"

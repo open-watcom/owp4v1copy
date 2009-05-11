@@ -171,8 +171,8 @@ pick( INF_RECOGNIZED_XXX,       "Recognized %s %s",
 pick( ERR_PASSES_VALUE,         "Passes value out of range (1 - %s) %s",
                                 "Passes value out of range (1 - %s) %s" )
 
-pick( ERR_GT_NULL,              "The %s option value must be greater than_zero",
-                                "The %s option value must be greater than_zero" )
+pick( ERR_OUT_RANGE,            "The %s option value is out of range",
+                                "The %s option value is out of range" )
 
 pick( ERR_MISSING_NAME,         "Missing name %s",
                                 "Missing name %s" )

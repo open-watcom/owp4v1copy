@@ -52,10 +52,11 @@ char    *skip_to_quote( char * p, char quote )
 /*       22Dv        Device units                                          */
 /*                                                                         */
 /*       12.34i      inch             (1 inch = 2.54cm)                    */
+/*                      The exact definition of Cicero and Pica (points)   */
+/*                      differs between Europe and USA,                    */
+/*                      so until a better solution turns up:               */
 /*       5C11        Cicero  + points (12 points = 1C = 1/6 inch)          */
-/*                                     1C  4.51 mm                         */
 /*       6p10        Pica    + points (12 points = 1P = 1/6 inch)          */
-/*                                     1P  4.216 mm                        */
 /*       5.23cm      centimeter                                            */
 /*       6.75mm      millimeter                                            */
 /*                                                                         */
@@ -82,7 +83,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     char    *   pdn;                    // ptr to last digit +1
     char        unit[4];
     char        quote;
-    int         k;
+    long        k;
     char        sign;
 
     unit[3] = '\0';
@@ -313,34 +314,26 @@ bool    to_internal_SU( char * * scanp, su * converted )
         }
         break;
     case SU_inch :                      // inch, cm, mm valid with decimals
-        s->su_mm = (wh * 100 + wd * k) * 2540L;
-        s->su_inch = (wh * 100 + wd * k) * 100L;
+        s->su_mm   = (wh * 100L + wd * k) * 2540L;
+        s->su_inch = (wh * 100L + wd * k) *  100L;
         break;
     case SU_cm :
-        s->su_mm = (wh * 100 + wd * k) * 1000L;
+        s->su_mm   = (wh * 100L + wd * k) * 1000L;
         s->su_inch = s->su_mm * 10L / 254L;
         break;
     case SU_mm :
-        s->su_mm = (wh * 100 + wd * k) * 100L;
+        s->su_mm   = (wh * 100L + wd * k) *  100L;
         s->su_inch = s->su_mm * 10L / 254L;
         break;
     case SU_cicero :
+    case SU_pica :                      // pica / Cicero
         if( wd > 11 ) {
-            div = ldiv( wd, 12 );
+            div = ldiv( wd, 12L);
             wh += div.quot;
             wd = div.rem;
         }
-        s->su_mm = wh * 45120L + wd * 3760L;
-        s->su_inch = s->su_mm * 10L / 254L;
-        break;
-   case SU_pica :                       // pica / Cicero
-        if( wd > 11 ) {
-            div = ldiv( wd, 12 );
-            wh += div.quot;
-            wd = div.rem;
-        }
-        s->su_mm = wh * 42160L + wd * 3514L;
-        s->su_inch = s->su_mm * 10L / 254L;
+        s->su_inch = wh * 10000L / 6L + wd * 10000L / 72L;
+        s->su_mm = s->su_inch * 254L / 10L;
         break;
     default:
         break;
@@ -360,15 +353,24 @@ int main( int argc, char *cargv[] )
     su      aus;
 //  char    ein1[] = "1.5I";
 //  char    ein1[] = "3.81cm";
-//  char    ein1[] = "38.1mm";
+    char    ein1[] = "38.1mm";
 //  char    *ein1 = "'6p11'";
-    char    *ein1 = "'1C'";
-    char    *ein2 = "'1C12'";
+//  char    *ein1 = "'1C'";
+//  char    *ein2 = "'1C12'";
+    char    *ein2 = "'5C12'";
+    char    *ein3 = "'0P73'";
+    char    *ein4 = "'5P6'";
     char   *p = ein1;
 
     error = to_internal_SU( &p, &aus );
 
     p = ein2;
+    error = to_internal_SU( &p, &aus );
+
+    p = ein3;
+    error = to_internal_SU( &p, &aus );
+
+    p = ein4;
     error = to_internal_SU( &p, &aus );
 
     return(0);

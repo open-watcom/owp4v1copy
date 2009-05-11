@@ -232,6 +232,27 @@ static  char    *read_indirect_file( const char * filename )
 
 
 /***************************************************************************/
+/*  convert string to integer                                              */
+/***************************************************************************/
+static  long    get_num_value( char * p )
+{
+    char    c;
+    int     j;
+    long    value;
+
+    value = 0;
+    j = 0;
+    for( ;; ) {
+        c = p[j];
+        if( c < '0' || c > '9' ) break;
+        value = value * 10 + c - '0';
+        ++j;
+    }
+    return( value );
+}
+
+
+/***************************************************************************/
 /*  ignore option consuming option parms if neccessary                     */
 /***************************************************************************/
 
@@ -315,7 +336,7 @@ static void set_bind( option * opt )
             memcpy_s( &bind_odd, sizeof( bind_odd), &bindwork, sizeof( bindwork ) );
 
             out_msg( "\tbind odd  value %lii (%limm) '%s' %li %li \n",
-                     bind_odd.su_inch, bind_odd.su_mm,bind_odd.su_txt,
+                     bind_odd.su_inch, bind_odd.su_mm, bind_odd.su_txt,
                      bind_odd.su_whole, bind_odd.su_dec );
 
             tokennext = tokennext->nxt; // check for optional bind even val
@@ -342,6 +363,74 @@ static void set_bind( option * opt )
         }
     }
 }
+
+
+/***************************************************************************/
+/*  ( cpinch n   set chars per inch                                        */
+/*   WGML 4 accepts values up to _I32_MAX ???                              */
+/***************************************************************************/
+
+static void set_cpinch( option * opt )
+{
+    char    *   p;
+    char        wkstring[MAX_L_AS_STR];
+
+    if( tokennext == NULL || tokennext->bol ||
+        tokennext->token[0] == '(' || is_option() == true ) {
+
+        g_err( err_missing_opt_value, opt->option );
+        err_count++;
+        CPI = opt->value;               // set default value
+    } else {
+        p = tokennext->token;
+        opt_value = get_num_value( p );
+        if( opt_value < 1 || opt_value > MAX_CPI ) {
+            g_err( err_out_range, "cpinch" );
+            err_count++;
+            CPI = opt->value;           // set default value
+        } else {
+            CPI = opt_value;
+        }
+        ltoa( CPI, wkstring, 10 );
+        add_symvar( &global_dict, "$cpi", wkstring, no_subscript, 0 );
+        tokennext = tokennext->nxt;
+    }
+}
+
+
+/***************************************************************************/
+/*  ( lpinch n   set lines per inch                                        */
+/*   WGML 4 accepts values up to _I32_MAX ???                              */
+/***************************************************************************/
+
+static void set_lpinch( option * opt )
+{
+    char    *   p;
+
+    if( tokennext == NULL || tokennext->bol ||
+        tokennext->token[0] == '(' || is_option() == true ) {
+
+        g_err( err_missing_opt_value, opt->option );
+        err_count++;
+        LPI = opt->value;               // set default value
+    } else {
+        p = tokennext->token;
+        opt_value = get_num_value( p );
+        if( opt_value < 1 || opt_value > MAX_LPI ) {
+            g_err( err_out_range, "lpinch" );
+            err_count++;
+            LPI = opt->value;           // set default value
+        } else {
+            LPI = opt_value;
+        }
+    /*    LPI (in contrast to CPI) is not stored as global symbol
+     *  ltoa( LPI, wkstring, 10 );
+     *  add_symvar( &global_dict, "$lpi", wkstring, no_subscript, 0 );
+     */
+        tokennext = tokennext->nxt;
+    }
+}
+
 
 /***************************************************************************/
 /*  ( delim x     set GML delimiter                                        */
@@ -798,28 +887,6 @@ static void set_outfile( option * opt )
 
 
 /***************************************************************************/
-/*  convert string to integer                                              */
-/***************************************************************************/
-static  long    get_num_value( char * p )
-{
-    char    c;
-    int     j;
-    long    value;
-
-    value = 0;
-    j = 0;
-    for( ;; ) {
-        c = p[j];
-        if( c < '0' || c > '9' ) break;
-        value = value * 10 + c - '0';
-        ++j;
-    }
-    return( value );
-}
-
-
-
-/***************************************************************************/
 /*  ( passes n                                                             */
 /***************************************************************************/
 
@@ -866,7 +933,7 @@ static void set_from( option * opt )
         p = tokennext->token;
         opt_value = get_num_value( p );
         if( opt_value < 1 || opt_value >= LONG_MAX ) {
-            g_err( err_gt_null, "from" );
+            g_err( err_out_range, "from" );
             err_count++;
             print_from = opt->value;    // set default value
         } else {
@@ -929,7 +996,7 @@ static void set_to( option * opt )
         p = tokennext->token;
         opt_value = get_num_value( p );
         if( opt_value < 1 || opt_value >= LONG_MAX ) {
-            g_err( err_gt_null, "to" );
+            g_err( err_out_range, "to" );
             err_count++;
             print_to = opt->value;      // set default value
         } else {
@@ -1075,7 +1142,7 @@ static option GML_old_Options[] =
 /*     optionname          Abbrev   value    routine      Parmcount */
     { "altextension",  11, 6,       0,       set_altext,     1 },
     { "bind",          3,  1,       0,       set_bind,       1 },
-    { "cpinch",        5,  3,       10,      ign_option,     1 },
+    { "cpinch",        5,  3,       10,      set_cpinch,     1 },
     { "delim",         4,  3,       0,       set_delim,      1 },
     { "device",        5,  3,       0,       set_device,     1 },
     { "description",   10, 4,       0,       ign_option,     1 },
@@ -1091,7 +1158,7 @@ static option GML_old_Options[] =
     { "linemode",      7,  4,       0,       ign_option,     0 },
     { "llength",       6,  2,       130,     ign_option,     1 },
     { "logfile",       6,  3,       0,       ign_option,     1 },
-    { "lpinch",        5,  3,       6,       ign_option,     1 },
+    { "lpinch",        5,  3,       6,       set_lpinch,     1 },
     { "mailmerge",     8,  4,       0,       ign_option,     1 },
     { "noduplex",      7,  5,       0,       ign_option,     0 },
     { "noinclist",     8,  6,       0,       set_inclist,    0 },
