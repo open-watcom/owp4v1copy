@@ -121,7 +121,7 @@ static void macroInit(          // MACRO PROCESSING -- INITIALIZATION
     DirectiveInit();
     nestedMacros = NULL;
     scannerTokenList = NULL;
-    InitialMacroFlag = MACRO_DEFINED_BEFORE_FIRST_INCLUDE;
+    InitialMacroFlag = MFLAG_DEFINED_BEFORE_FIRST_INCLUDE;
     MacroStorageInit();
     for( mac = SpcMacros; mac->name != NULL; ++mac ) {
         MacroSpecialAdd( mac->name, mac->value, mac->flags );
@@ -510,7 +510,7 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
         htokenbuf = TokenBufInit( NULL );
         if( parm_cnt_reqd > 0 ) {
             macro_parms = CMemAlloc( parm_cnt_reqd * sizeof( MACRO_ARG ) );
-            if( fmentry->macro_flags & MACRO_HAS_VAR_ARGS )
+            if( fmentry->macro_flags & MFLAG_HAS_VAR_ARGS )
                 macro_parms[parm_cnt_reqd-1].arg = NULL;
         }
         curr_cnt = 0;
@@ -546,7 +546,7 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
                 if( bracket == 0 ) break;
                 --bracket;
             } else if( tok == T_COMMA && bracket == 0 &&
-                  ( !( ( fmentry->macro_flags & MACRO_HAS_VAR_ARGS ) &&
+                  ( !( ( fmentry->macro_flags & MFLAG_HAS_VAR_ARGS ) &&
                       curr_cnt == fmentry->parm_count - 2 ) ) ) {
                 TokenBufRemoveWhiteSpace( htokenbuf );
                 if( macro_parms != NULL ) {     // if expecting parms
@@ -594,9 +594,9 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
         } else if( TokenBufSize( htokenbuf ) + total != 0 ) {
             ++curr_cnt;
         }
-        if( ( ( fmentry->macro_flags & MACRO_HAS_VAR_ARGS ) &&
+        if( ( ( fmentry->macro_flags & MFLAG_HAS_VAR_ARGS ) &&
               ( curr_cnt < parm_cnt_reqd - 1 ) )
-            ||( !(fmentry->macro_flags & MACRO_HAS_VAR_ARGS ) &&
+            ||( !(fmentry->macro_flags & MFLAG_HAS_VAR_ARGS ) &&
               ( curr_cnt < parm_cnt_reqd ) ) ) {
             CErr( ERR_TOO_FEW_MACRO_PARMS, fmentry->macro_name );
             InfMacroDecl( fmentry );
@@ -606,7 +606,7 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
                 saveParm( fmentry, curr_cnt, macro_parms, NULL, 1, &htokenbuf );
                 ++curr_cnt;
             } while( curr_cnt < parm_cnt_reqd );
-        } else if( !( fmentry->macro_flags & MACRO_HAS_VAR_ARGS ) &&
+        } else if( !( fmentry->macro_flags & MFLAG_HAS_VAR_ARGS ) &&
                    ( curr_cnt > parm_cnt_reqd ) ) {
             CErr( ANSI_TOO_MANY_MACRO_PARMS, fmentry->macro_name );
             InfMacroDecl( fmentry );

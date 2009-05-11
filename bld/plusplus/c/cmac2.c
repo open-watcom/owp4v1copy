@@ -166,7 +166,7 @@ static void CInclude( void )
     auto char   buf[_MAX_PATH];
 
     SrcFileGuardStateSig();
-    InitialMacroFlag = 0;
+    InitialMacroFlag = MFLAG_NONE;
     flags.in_macro = 0;
     if( CompFlags.use_macro_tokens ) {
         flags.in_macro = 1;
@@ -208,7 +208,7 @@ static void CDefine( void )
 
     define_macro = MacroScan( MSCAN_DEFINE );
     if( define_macro != NULL ) {
-        define_macro->macro_flags |= MACRO_USER_DEFINED;
+        define_macro->macro_flags |= MFLAG_USER_DEFINED;
     }
 }
 
@@ -403,9 +403,9 @@ static MEPTR grabTokens(    // SAVE TOKENS IN A MACRO DEFINITION
     TokenLocnAssign( mentry->defn, *locn );
     mentry->macro_len = mlen;
     if( has_var_args )
-        InitialMacroFlag |= MACRO_HAS_VAR_ARGS;
+        InitialMacroFlag |= MFLAG_HAS_VAR_ARGS;
     mptr = MacroDefine( mentry, mlen, name_len );
-    InitialMacroFlag &= ~MACRO_HAS_VAR_ARGS;
+    InitialMacroFlag &= ~MFLAG_HAS_VAR_ARGS;
     BrinfDeclMacro( mptr );
     if( ! ( defn & MSCAN_MANY ) ) {
         while( CurToken == T_WHITE_SPACE ) {

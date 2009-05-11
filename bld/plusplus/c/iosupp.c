@@ -363,7 +363,7 @@ struct path_descr               // path description
 
 
 static void splitFileName(      // SPLIT APART PATH/FILENAME
-    char *name,                 // - name to be split
+    const char *name,           // - name to be split
     struct path_descr *descr )  // - descriptor
 {
     _splitpath2( name
@@ -665,7 +665,7 @@ file_was_found:
 
 
 boolean IoSuppOpenSrc(          // OPEN A SOURCE FILE (PRIMARY,HEADER)
-    char *file_name,            // - supplied file name
+    const char *file_name,      // - supplied file name
     enum file_type typ )        // - type of search path to use
 {
     struct path_descr   fd;     // - descriptor for file name

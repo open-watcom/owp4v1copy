@@ -34,8 +34,8 @@
 
 extern void IAliasInit( void );
 extern void IAliasFini( void );
-extern const char *IAliasLookup( const char *filename, int delimiter );
-extern void IAliasAdd( const char *alias_name, const char *real_name, int delimiter );
+extern const char *IAliasLookup( const char *filename, boolean delimiter );
+extern void IAliasAdd( const char *alias_name, const char *real_name, boolean delimiter );
 
 #endif
 

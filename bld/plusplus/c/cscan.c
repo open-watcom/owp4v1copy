@@ -799,7 +799,7 @@ static int doScanName( int c, int expanding )
         if( fmentry->macro_defn == 0 ) {
             return( SpecialMacro( fmentry ) );
         }
-        fmentry->macro_flags |= MACRO_REFERENCED;
+        fmentry->macro_flags |= MFLAG_REFERENCED;
         /* if macro requires parameters and next char is not a '('
         then this is not a macro */
         if( fmentry->parm_count != 0 ) {

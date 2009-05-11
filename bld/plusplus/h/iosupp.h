@@ -94,7 +94,7 @@ char *IoSuppFullPath(           // GET FULL PATH OF FILE NAME (ALWAYS USE RET VA
     unsigned size )             // - output buffer size
 ;
 boolean IoSuppOpenSrc(          // OPEN A SOURCE FILE (PRIMARY,HEADER)
-    char *file_name,            // - supplied file name
+    const char *file_name,      // - supplied file name
     enum file_type )            // - what type of file is it?
 ;
 char *IoSuppIncPathElement(     // GET ONE PATH ELEMENT FROM INCLUDE LIST

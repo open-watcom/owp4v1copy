@@ -145,7 +145,7 @@ static void OpenPgmFile(        // OPEN PROGRAM FILE
 
 
 int OpenSrcFile(                // OPEN A SOURCE FILE
-    char * filename,            // - file name
+    const char * filename,      // - file name
     boolean is_lib )            // - TRUE ==> is <file>
 {
     boolean     retn;           // - return: TRUE ==> opened ok
@@ -233,7 +233,7 @@ static void openForceIncludeFile( void )
     if( CompFlags.cpp_output ) {
         PrtChar( '\n' );
     }
-    InitialMacroFlag = 0;
+    InitialMacroFlag = MFLAG_NONE;
     OpenSrcFile( ForceInclude, FALSE );
     CMemFreePtr( &ForceInclude );
 }

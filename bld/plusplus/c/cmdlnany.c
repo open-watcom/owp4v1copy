@@ -116,7 +116,7 @@ static int scanDefine( OPT_STRING **p )
     p = p;
     cmdln_mac = DefineCmdLineMacro( CompFlags.extended_defines );
     if( cmdln_mac != NULL ) {
-        cmdln_mac->macro_flags |= MACRO_USER_DEFINED;
+        cmdln_mac->macro_flags |= MFLAG_USER_DEFINED;
     }
     return( 1 );
 }
@@ -131,7 +131,7 @@ static int scanDefinePlus( OPT_STRING **p )
     } else {
         cmdln_mac = DefineCmdLineMacro( TRUE );
         if( cmdln_mac != NULL ) {
-            cmdln_mac->macro_flags |= MACRO_USER_DEFINED;
+            cmdln_mac->macro_flags |= MFLAG_USER_DEFINED;
         }
     }
     return( 1 );

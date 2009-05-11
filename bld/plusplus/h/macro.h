@@ -56,6 +56,30 @@ typedef enum {                          // kind of macro scanning
     MSCAN_NULL          = 0x00
 } macro_scanning;
 
+typedef enum macro_flags {
+    MFLAG_NONE,
+    MFLAG_DEFINED_BEFORE_FIRST_INCLUDE  = 0x01,
+    MFLAG_CAN_BE_REDEFINED              = 0x02,
+    MFLAG_USER_DEFINED                  = 0x04,
+    MFLAG_REFERENCED                    = 0x08,
+    MFLAG_HAS_VAR_ARGS                  = 0x10,
+    MFLAG_PCH_CHECKED                   = 0x20,
+    MFLAG_PCH_OVERRIDE                  = 0x40,
+// a special macro won't appear as a macro to the program (e.g. ifdef
+// will return false)
+    MFLAG_SPECIAL                       = 0x80,
+// Following are used only in browsing, not in macro definitions
+    MFLAG_BRINFO_UNDEF                  = 0x100,
+} macro_flags;
+
+#define MFLAG_PCH_TEMPORARY_FLAGS       ( MFLAG_PCH_CHECKED \
+                                        | MFLAG_PCH_OVERRIDE )
+
+// Following are used only in browsing, not in macro definitions
+
+#define MFLAG_BRINFO_DEFN               ( MFLAG_USER_DEFINED \
+                                        | MFLAG_BRINFO_UNDEF )
+
 /* Actual macro definition is at (char *)mentry + mentry->macro_defn */
 
 typedef struct macro_entry MEDEFN, *MEPTR;
@@ -64,33 +88,11 @@ struct macro_entry {
     TOKEN_LOCN  defn;           /* where it was defined */
     uint_16     macro_defn;     /* offset to defn, 0 ==> special macro name*/
     uint_16     macro_len;      /* length of macro definition */
-    uint_16     macro_flags;    /* flags */
+    macro_flags macro_flags;    /* flags */
     uint_8      parm_count;     /* special macro indicator if defn == 0 */
     unsigned    : 0;            /* align macro_name to a DWORD boundary */
     char        macro_name[1];  /* name,parms, and macro definition */
 };
-
-#define MACRO_DEFINED_BEFORE_FIRST_INCLUDE      0x01
-#define MACRO_CAN_BE_REDEFINED                  0x02
-#define MACRO_USER_DEFINED                      0x04
-#define MACRO_REFERENCED                        0x08
-// See below                                    0x10
-#define MACRO_HAS_VAR_ARGS                      0x20
-#define MACRO_PCH_CHECKED                       0x40
-#define MACRO_PCH_OVERRIDE                      0x80
-// a special macro won't appear as a macro to the program (e.g. ifdef
-// will return false)
-#define MACRO_SPECIAL                           0x100
-
-#define MACRO_PCH_TEMPORARY_FLAGS               ( MACRO_PCH_CHECKED \
-                                                | MACRO_PCH_OVERRIDE )
-
-
-// Following are used only in browsing, not in macro definitions
-
-#define MACRO_BRINFO_UNDEF                      0x10
-#define MACRO_BRINFO_DEFN                       ( MACRO_USER_DEFINED \
-                                                | MACRO_BRINFO_UNDEF )
 
 #include <pushpck1.h>
 typedef struct macro_stack MSTACK, *MSTACKPTR;

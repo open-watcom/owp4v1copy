@@ -84,7 +84,7 @@ global  int         NestLevel;          // pre-processing level of #if
 global  int         SkipLevel;          // pre-processing level of #if to skip to
 global  char *      SavedId;            // saved id when doing look ahead
 global  enum TOKEN  LAToken;            // look ahead token
-global  char        InitialMacroFlag;   // current value to init macro flags to
+global  macro_flags InitialMacroFlag;   // current value to init macro flags to
 global  MACADDR_T   MacroOffset;        // first free byte in MacroSegment
 global  char        __Time[10];         // "HH:MM:SS" for __TIME__ macro
 global  char        __Date[12];         // "MMM DD YYYY" for __DATE__ macro
@@ -165,7 +165,7 @@ MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
     macro_scanning defn )       // - scanning definition
 ;
 int OpenSrcFile(                // OPEN A SOURCE FILE
-    char * filename,            // - file name
+    const char * filename,      // - file name
     boolean is_lib )            // - TRUE ==> is <file>
 ;
 void PpInit(                    // INITIALIZE PREPROCESSING
@@ -198,7 +198,7 @@ void FiniPPScan(                 // INIT SCANNER FOR PPNUMBER TOKENS
 int SpecialMacro(               // EXECUTE A SPECIAL MACRO
     MEPTR fmentry )             // - macro entry
 ;
-void DefineAlternativeTokens(	// DEFINE ALTERNATIVE TOKENS
+void DefineAlternativeTokens(   // DEFINE ALTERNATIVE TOKENS
     void )
 ;
 AUX_INFO * PragmaLookup(        // FIND A PRAGMA
@@ -268,7 +268,7 @@ void KwEnable(                  // ENABLE A KEYWORD TOKEN FROM T_ID
 MEPTR MacroSpecialAdd(          // ADD A SPECIAL MACRO
     char *name,                 // - macro name
     unsigned value,             // - value for special macro
-    unsigned flags )            // - macro flags
+    macro_flags flags )         // - macro flags
 ;
 MEPTR MacroDefine(              // DEFINE A NEW MACRO
     MEPTR mentry,               // - scanned macro
