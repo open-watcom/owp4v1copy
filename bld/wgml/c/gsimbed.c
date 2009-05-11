@@ -28,7 +28,7 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
+#define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
 
 #include <stdarg.h>
 #include <errno.h>
@@ -175,10 +175,9 @@ void    scr_im( void )
 
     cc = getnum( &gn );
 
-    if( (cc == pos) && (gn.result < 10) ) {  // include SYSUSR0x.GML
+    if( (cc == pos) && (gn.result < 10) ) { // include SYSUSR0x.GML
 
-        sprintf_s( token_buf, buf_size, "SYSUSR0%d.GML", gn.result );
-        close_pu_file( gn.result );   // if still open
+        close_pu_file( gn.result );     // if still open
 
     } else {
         p = gn.argstart;
