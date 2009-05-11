@@ -93,10 +93,10 @@ typedef struct special_macro_name SPECIAL_MACRO_NAME;
 static struct special_macro_name {
     char        *name;
     int         value;
-    unsigned    flags;
+    macro_flags flags;
 } SpcMacros[] = {
 #include "specmac.h"
-    { NULL, 0, 0 }
+    { NULL, 0, MFLAG_NONE }
 };
 
 
