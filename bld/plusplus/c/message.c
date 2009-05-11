@@ -902,7 +902,7 @@ void InfMacroDecl(              // GENERATE MACRO-DECLARATION NOTE
     MEPTR mdef;                 // - macro definition
 
     mdef = parm;
-    if( mdef->macro_flags & MACRO_USER_DEFINED ) {
+    if( mdef->macro_flags & MFLAG_USER_DEFINED ) {
         CErr( INF_MACRO_DECLARATION, mdef->macro_name, &mdef->defn );
     }
 }
