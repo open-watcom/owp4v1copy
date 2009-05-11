@@ -894,7 +894,7 @@ static void pragIncludeAlias( void )
             NextToken();
             MustRecog( T_COMMA );
             if( CurToken == T_STRING ) {
-                IAliasAdd( alias_name, Buffer, 0 );
+                IAliasAdd( alias_name, Buffer, FALSE );
                 NextToken();
             }
             CMemFree( alias_name );
@@ -923,7 +923,7 @@ static void pragIncludeAlias( void )
                     }
                     strncat( r_buf, Buffer, 80 );
                 }
-                IAliasAdd( a_buf, r_buf, '<' );
+                IAliasAdd( a_buf, r_buf, TRUE );
             }
         }
         PPState = PPS_EOL | PPS_NO_EXPAND;

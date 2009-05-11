@@ -152,7 +152,7 @@ int OpenSrcFile(                // OPEN A SOURCE FILE
     int         save;           // - saved pre-proc status
 
     // See if there's an alias for this file name
-    filename = (char *)IAliasLookup( filename, is_lib ? '<' : 0 );
+    filename = IAliasLookup( filename, is_lib );
 
     if( IoSuppOpenSrc( filename, is_lib ? FT_LIBRARY : FT_HEADER ) ) {
         PpStartFile();

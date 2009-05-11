@@ -43,7 +43,7 @@ typedef struct ialias_list {
         char                *real_name;
         int                 alias_name_len;
     };
-    int     delimiter;
+    boolean is_lib;
     char    alias_name[1];
 } *IALIASPTR;
 
@@ -60,49 +60,43 @@ void IAliasFini( void )
 {
     IALIASPTR   aliaslist;
     
-    while( (aliaslist = IAliasNames) ) {
+    while( (aliaslist = IAliasNames) != NULL ) {
         IAliasNames = aliaslist->next;
         CMemFree( aliaslist );
     }
 }
 
-const char *IAliasLookup( const char *filename, int delimiter )
+const char *IAliasLookup( const char *filename, boolean is_lib )
 /*************************************************************/
 {
     IALIASPTR   alias;
-    const char  *real_name = filename;
     
-    alias = IAliasNames;
-    while( alias ) {
-        if( !strcmp( filename, alias->alias_name ) && (alias->delimiter == delimiter) ) {
-            real_name = alias->real_name;
-            break;
+    for( alias = IAliasNames; alias != NULL; alias = alias->next ) {
+        if( (alias->is_lib == is_lib) && !strcmp( filename, alias->alias_name ) ) {
+            return( alias->real_name );
         }
-        alias = alias->next;
     }
-    return( real_name );
+    return( filename );
 }
 
-void IAliasAdd( const char *alias_name, const char *real_name, int delimiter )
+void IAliasAdd( const char *alias_name, const char *real_name, boolean is_lib )
 /****************************************************************************/
 {
     size_t      alias_size, alias_len;
     IALIASPTR   alias, old_alias;
     IALIASPTR   *lnk;
 
-    lnk = &IAliasNames;
-    while( (old_alias = *lnk) != NULL ) {
-        if( (old_alias->delimiter == delimiter) && !strcmp(alias_name, old_alias->alias_name ) ) {
+    for( lnk = &IAliasNames; (old_alias = *lnk) != NULL; lnk = &old_alias->next ) {
+        if( (old_alias->is_lib == is_lib) && !strcmp( alias_name, old_alias->alias_name ) ) {
             break;
         }
-        lnk = &old_alias->next;
     }
 
     alias_len = strlen( alias_name );
     alias_size = sizeof( struct ialias_list ) + alias_len + strlen( real_name ) + 1;
     alias = CMemAlloc( alias_size );
     alias->next = NULL;
-    alias->delimiter = delimiter;
+    alias->is_lib = is_lib;
     strcpy( alias->alias_name, alias_name );
     alias->real_name = alias->alias_name + alias_len + 1;
     strcpy( alias->real_name, real_name );
@@ -120,11 +114,7 @@ pch_status PCHReadIncAlias( void )
     size_t      alias_len, real_name_len, alias_size;
     IALIASPTR   alias;
 
-    for( ;; ) {
-        alias_len = PCHReadUInt();
-        if( alias_len == 0 ) {
-            break;
-        }
+    for( ; (alias_len = PCHReadUInt()) != 0; ) {
         real_name_len = PCHReadUInt();
         alias_size = sizeof( struct ialias_list ) + alias_len + real_name_len + 1;
         alias = CMemAlloc( alias_size );
@@ -134,7 +124,7 @@ pch_status PCHReadIncAlias( void )
         alias->real_name = alias->alias_name + alias_len + 1;
         PCHRead( alias->real_name, real_name_len );
         alias->real_name[real_name_len] = '\0';
-        alias->delimiter = PCHReadUInt();
+        alias->is_lib = PCHReadUInt();
         IAliasNames = alias;
     }
 
@@ -146,16 +136,14 @@ pch_status PCHWriteIncAlias( void )
     size_t      alias_len, real_name_len;
     IALIASPTR   alias;
     
-    alias = IAliasNames;
-    while( alias != NULL ) {
+    for( alias = IAliasNames; alias != NULL; alias = alias->next ) {
         alias_len = strlen( alias->alias_name );
         real_name_len = strlen( alias->real_name );
         PCHWriteUInt( alias_len );
         PCHWriteUInt( real_name_len );
         PCHWrite( alias->alias_name, alias_len );
         PCHWrite( alias->real_name, real_name_len );
-        PCHWriteUInt( alias->delimiter );
-        alias = alias->next;
+        PCHWriteUInt( alias->is_lib );
     }
     PCHWriteUInt( 0 );
 
