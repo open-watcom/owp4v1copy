@@ -1136,17 +1136,7 @@ void fb_document( void )
      * computed here is the top of the device page.
      */
 
-    if( bin_driver->y_positive == 0x00 ) {
-
-        /* The :PAGEOFFSET applies to the bottom of the page. I think. */
-
-        page_top = bin_device->y_start;
-    } else {
-
-        /* The :PAGEOFFSET applies to the top of the page. I think. */
-
-        page_top = bin_device->y_start + bin_device->y_offset;
-    }
+    page_top = bin_device->y_start;
 
     /* Set up for the first document page. */
 
