@@ -1101,8 +1101,7 @@ void fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len
 }
 
 /* Function fb_document().
- * Performs the processing which occurs on the first pass when document
- * processing begins.
+ * Performs the first document pass output seen when document processing begins.
  */
 
 void fb_document( void )
@@ -1245,9 +1244,9 @@ void fb_position( uint32_t h_start, uint32_t v_start )
 }
 
 /* Function fb_start().
- * Performs the processing which occurs before document processing starts. Indeed,
- * wgml 4.0 does not even look for the document specification file until the
- * actions taken here have been completed!
+ * Performs the processing which occurs before document processing starts.
+ * Indeed, wgml 4.0 does not even look for the document specification file
+ * until the actions taken here have been completed!
  */
 
 void fb_start( void )

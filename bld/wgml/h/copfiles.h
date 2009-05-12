@@ -332,11 +332,11 @@ typedef struct {
  * Only the first two fields are found in the Wiki struct. The next three take
  * advantage of the fact that a :FONTSTYLE block directly defines at most one of
  * each of two sub-blocks, plus any number of :LINEPROC blocks. The number of
- * line_proc instances is given by the value of the field "passes".
+ * line_proc instances is given by the value of the field "line_passes".
  */
 
 typedef struct {
-    uint16_t            passes;
+    uint16_t            line_passes;
     char *              type;
     code_text *         startvalue;
     code_text *         endvalue;

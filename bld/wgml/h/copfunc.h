@@ -64,7 +64,7 @@ typedef struct {
 
 typedef struct {
     uint8_t     designator;
-    uint16_t    pass;
+    uint16_t    line_pass;
     uint16_t    count;
     uint16_t    cumulative_index;
     uint8_t *   text;

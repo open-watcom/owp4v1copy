@@ -96,13 +96,13 @@ code_block * get_code_blocks( uint8_t * * current, uint16_t count, uint8_t * bas
 
         *current += 2;
 
-        /* Get the pass, shifting it if necessary. */
+        /* Get the line pass, shifting it if necessary. */
             
         if( position == 76 ) {
             *current += 1;
         }
             
-        memcpy_s( &out_block[i].pass, 2, *current, 2 );
+        memcpy_s( &out_block[i].line_pass, 2, *current, 2 );
         *current += 2;
 
         /* Get the count, shifting it if necessary */

@@ -57,9 +57,9 @@
 *                   device_function_table
 *                   driver_function_table
 *                   font_number
-*                   page_top
+*                   line_pass_number
+*                   page_to
 *                   pages
-*                   pass_number
 *                   set_margin
 *                   staging
 *                   tab_width
@@ -210,13 +210,13 @@ static bool             uline           = false;
 
 /* These are used to control some aspects of device function operation. */
 
-static bool             at_start        = true;
-static bool             set_margin      = false;
-static bool             text_output     = false;
-static page_state       current_state   = { 0, 0, 0 };
-static page_state       desired_state   = { 0, 0, 0 };
-static uint32_t         page_top        = 0;
-static uint32_t         pass_number     = 0;
+static bool             at_start            = true;
+static bool             set_margin          = false;
+static bool             text_output         = false;
+static page_state       current_state       = { 0, 0, 0 };
+static page_state       desired_state       = { 0, 0, 0 };
+static uint32_t         line_pass_number    = 0;
+static uint32_t         page_top            = 0;
 
 /* These are used to hold values returned by device functions. */
 
@@ -351,9 +351,9 @@ static void fb_newline( void )
     }
 
     /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
-     * :ENDVALUE block for Pass 1 of available font 0, unless it has already
-     * been done. Note: this places the block at the proper location when 
-     * one or more :LINEPROC blocks have been interpreted.
+     * :ENDVALUE block for line pass 1 of available font 0, unless it has
+     * already been done. Note: this places the block at the proper location
+     * when one or more :LINEPROC blocks have been interpreted.
      */
 
     if( at_start ) {
@@ -618,9 +618,9 @@ static void * df_flushpage( void )
     if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
 
     /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
-     * :ENDVALUE block for Pass 1 of available font 0, unless it has already
-     * been done. Note: this places the block at the proper location when
-     * the :ABSOLUTEADDRESS block is defined and %flushpage() is invoked.
+     * :ENDVALUE block for line pass 1 of available font 0, unless it has
+     * already been done. Note: this places the block at the proper location
+     * when the :ABSOLUTEADDRESS block is defined and %flushpage() is invoked.
      */
 
     if( at_start ) {
@@ -2258,8 +2258,8 @@ static void fb_normal_vertical_positioning( void )
 
                 /* If the :ABSOLUTEADDRESS block is defined and this is the
                  * Initial Vertical Positioning, interpret the :LINEPROC
-                 * :ENDVALUE block for Pass 1 of available font 0, unless it
-                 * has already been done. Note: this places the block at the
+                 * :ENDVALUE block for line pass 1 of available font 0, unless
+                 * it has already been done. Note: this places the block at the
                  * proper location when the :ABSOLUTEADDRESS block is defined
                  * but does not include %flushpage() and device paging has
                  * occurred.
@@ -2440,7 +2440,7 @@ void df_set_horizontal( uint32_t h_start )
     bool    fontstyle = false;
 
     /* If set_margin is set to "true", then determine whether a :FONTSTYLE
-     * block for pass 1 for font 0 exists. If set_margin is set to "false",
+     * block for line pass 1 for font 0 exists. If set_margin is set to "false",
      * then the :FONTSTYLE block will be treated as not existing whether it
      * exists or not.
      */
@@ -2728,10 +2728,10 @@ void fb_lineproc_endvalue( void )
 {
     if( text_output ) {
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
-            if( wgml_fonts[font_number].font_style->lineprocs[pass_number].\
-                                                        endvalue != NULL ) \
+            if( wgml_fonts[font_number].font_style->\
+                                    lineprocs[line_pass_number].endvalue != NULL ) \
                 df_interpret_driver_functions( \
-                    wgml_fonts[font_number].font_style->lineprocs[pass_number].\
+                    wgml_fonts[font_number].font_style->lineprocs[line_pass_number].\
                                                             endvalue->text );
         }
         text_output = false;

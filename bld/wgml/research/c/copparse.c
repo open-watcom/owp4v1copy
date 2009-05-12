@@ -368,7 +368,7 @@ static void display_driver( cop_driver * in_driver )
                 puts( "  No :LINEPROC Blocks");
             } else {
                 puts( "  :LINEPROC Block(s):");
-                for( j = 0; j < in_driver->fontstyles.fontstyleblocks[i].passes; \
+                for( j = 0; j < in_driver->fontstyles.fontstyleblocks[i].line_passes; \
                                                                         j++ ) { 
                     printf_s( "  Pass: %i\n", j+1 );
                     if( in_driver->fontstyles.fontstyleblocks[i].lineprocs[j].\
