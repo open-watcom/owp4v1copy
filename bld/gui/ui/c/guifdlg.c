@@ -83,10 +83,10 @@
     #define FILES_ALL   "*.*"
 #endif
 
-#define INDENT_STR      "\xa0"
-#define INDENT_CHAR     '\xa0'
-#define OPENED_DIR_CHAR '-'
-#define UNOPENED_DIR_CHAR '+'
+#define INDENT_STR          " "
+#define INDENT_CHAR         ' '
+#define OPENED_DIR_CHAR     '-'
+#define UNOPENED_DIR_CHAR   '+'
 
 typedef struct {
     open_file_name      *currOFN;
@@ -535,12 +535,27 @@ static bool goToDir( gui_window *gui, char *dir )
 } /* goToDir */
 
 /*
- * Compare - quicksort comparison
+ * Compare - quicksort comparison with special treatment of indent chars
  */
 /* int Compare( const char  **p1, const char  **p2 ) */
 int Compare( const void  *p1, const void *p2 )
 {
-    return( stricmp( *((char **)p1), *((char **)p2) ));
+    const char  *s1 = *(const char **)p1;
+    const char  *s2 = *(const char **)p2;
+
+    /* skip matching indents */
+    while( *s1 == INDENT_CHAR && *s2 == INDENT_CHAR ) {
+        ++s1;
+        ++s2;
+    }
+    /* indents compare as chars with infinitely high value */
+    if( *s1 == INDENT_CHAR )
+        return( 1 );
+    else if( *s2 == INDENT_CHAR )
+        return( -1 );
+
+    /* use regular string comparison for the rest */
+    return( strcasecmp( s1, s2 ) );
 
 } /* Compare */
 
@@ -924,6 +939,7 @@ static process_rc processFileName( gui_window *gui )
         _makepath( path, NULL, NULL, fname, ext );
 
         if( dlg->currOFN->base_file_name != NULL ) {
+            len = strlen( txt );
             if( len >= dlg->currOFN->max_base_file_name ) {
                 len = dlg->currOFN->max_base_file_name-1;
             }
