@@ -28,28 +28,28 @@ set ODIR=<PREOBJDIR>
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../systems/dos/makefile prebuild=1
-    <CPCMD> *.exe <OWROOT>\bld\build\bin\
-
+    <CPCMD> *.exe <OWBINDIR>/
+    
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../systems/os2386/makefile prebuild=1
-    <CPCMD> *.exe <OWROOT>\bld\build\binp\
+    <CPCMD> *.exe <OWBINDIR>/
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../systems/nt386/makefile prebuild=1
-    <CPCMD> *.exe <OWROOT>\bld\build\binnt\
+    <CPCMD> *.exe <OWBINDIR>/
 
 [ BLOCK <BUILD_PLATFORM> ntaxp ]
 #===============================
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../systems/ntaxp/makefile prebuild=1
-    <CPCMD> *.exe <OWROOT>\bld\build\axpnt\
+    <CPCMD> *.exe <OWBINDIR>/
 
 [ BLOCK . . ]
 #============
