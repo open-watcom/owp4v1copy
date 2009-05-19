@@ -375,23 +375,30 @@ void GetBSSSize( void )
     }
 }
 
+/* Stack size calculation:
+ * - DLLs have no stack
+ * - for executables, warn if stack size is tiny
+ * - if stack size was given, use it directly unless target is Novell
+ * - else use the actual stack segment size if it is > 512 bytes
+ * - otherwise use the default stack size
+ * The default stack size is 4096 bytes, but for DOS programs the
+ * stack segment size in the clib is smaller, hence the complex logic.
+ */
 void SetStkSize( void )
-/****************************/
+/*********************/
 {
     StackSegPtr = StackSegment();
     if( FmtData.dll ) {
         StackSize = 0;  // DLLs don't have their own stack
     } else if( StackSize < 0x200 ) {
-        StackSize = 0x200;
+        LnkMsg( WRN+MSG_STACK_SMALL, "d", 0x200 );
     }
     if( StackSegPtr != NULL ) {
-        if( FmtData.dll ) {
-            StackSegPtr->size = StackSize;
-        } else if( LinkFlags & STK_SIZE_FLAG ) {
+        if( LinkFlags & STK_SIZE_FLAG ) {
             if( !(FmtData.type & MK_NOVELL) ) {
                 StackSegPtr->size = StackSize;
             }
-        } else if( StackSegPtr->size >= 0x200 ) {
+        } else if( StackSegPtr->size >= 0x200 && !FmtData.dll ) {
             StackSize = StackSegPtr->size;
         } else {
             StackSegPtr->size = StackSize;

@@ -327,13 +327,15 @@ pick(    MSG_RESOURCE_TOO_BIG,      "resource file %s too big",
                     "リソースファイル %s は大きすぎます" )
 pick(    MSG_MULT_START_ADDRS_BY,   "both %1 and %2 marked as starting symbols" ,
                     "%1と%2の両方は開始シンボルとしてマークされています" )
-pick(    MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE,  "The NLM internal name (%s) has been truncated as it exceeds the maximum size." ,
-                    "The NLM internal name (%s) has been truncated as it exceeds the maximum size." )
-pick(    MSG_VXD_INCORRECT_EXPORT,      "One export must exist for the VxD format." ,
-                                        "One export must exist for the VxD format." )
-pick(    MSG_FIXED_LOC_BEFORE_CUR_LOC,  "Location counter is already beyond fixed Segment Address %a." ,
-                                        "Location counter is already beyond fixed Segment Address %a." )
-pick(    MSG_DUP_DIRECTIVE,      "Directive %s can only occur once." ,
-                                        "Directive %s can only occur once." )
-pick(    MSG_IMPORT_LOCAL, "Locally defined symbol %s is imported." ,
-                           "Locally defined symbol %s is imported." )
+pick(    MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE,  "NLM internal name (%s) truncated" ,
+                    "NLM internal name (%s) truncated" )
+pick(    MSG_VXD_INCORRECT_EXPORT,  "exactly one export must exist for VxD format" ,
+                    "exactly one export must exist for VxD format" )
+pick(    MSG_FIXED_LOC_BEFORE_CUR_LOC,  "location counter already beyond fixed Segment address %a" ,
+                     "location counter already beyond fixed segment address %a" )
+pick(    MSG_DUP_DIRECTIVE,         "directive %s can only occur once" ,
+                     "directive %s can only occur once" )
+pick(    MSG_IMPORT_LOCAL,          "locally defined symbol %s imported" ,
+                     "locally defined symbol %s imported" )
+pick(    MSG_STACK_SMALL,           "stack size is less than %d bytes" ,
+                     "stack size is less than %d bytes" )

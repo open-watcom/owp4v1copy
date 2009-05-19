@@ -203,7 +203,8 @@
 #define    MSG_FIXED_LOC_BEFORE_CUR_LOC         169 + MSG_BASE
 #define    MSG_DUP_DIRECTIVE                    170 + MSG_BASE
 #define    MSG_IMPORT_LOCAL                     171 + MSG_BASE
-#define    MSG_MAX_ERR_MSG_NUM                  171 + MSG_BASE
+#define    MSG_STACK_SMALL                      172 + MSG_BASE
+#define    MSG_MAX_ERR_MSG_NUM                  172 + MSG_BASE
 
 #define    MSG_FILE_REC_NAME_0                  227 + MSG_BASE
 #define    MSG_FILE_REC_NAME_1                  228 + MSG_BASE
