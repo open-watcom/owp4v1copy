@@ -46,6 +46,7 @@ machine_suffix_AT  =
 machine_suffix_N98 = .nec
 
 bin_dir_dos_386     = bin
+bin_dir_zdos_386    = binz
 bin_dir_dos_i86     = bin
 bin_dir_win_i86     = bin
 bin_dir_osi_386     = bin
@@ -61,6 +62,7 @@ bin_dir_nt_ppc      = ppcnt
 
 bin_ext_osi_exe     = .exe
 bin_ext_dos_exe     = .exe
+bin_ext_zdos_exe    = .exe
 bin_ext_win_exe     = .exe
 bin_ext_win_dll     = .dll
 bin_ext_os2_exe     = .exe
