@@ -230,6 +230,7 @@ def_fpu_flags_nov_386   = -fpc
   # I ignore Novell seting
   # I think Novell doesn't use any OSI objects
 def_fpu_flags_osi_386   = -fpi
+  ######
   # ZDOS doesn't have emulator support
 def_fpu_flags_zdos_386  = -fpc
   ######
@@ -369,6 +370,7 @@ inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 inc_dirs_sys_nto   =
+inc_dirs_sys_zdos  = -I$(hdr_dir)/dos/zdos
 
 inc_dirs_lang_osi     = -I$(hdr_dir)/dos
 inc_dirs_lang_qnx     = -I$(hdr_dir)/qnx
@@ -394,6 +396,7 @@ inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 inc_dirs_sys_nto   =
+inc_dirs_sys_zdos  = -I$(lang_root)/h/zdos
 
 inc_dirs_lang_qnx     = -I$(lang_root)/qh
 inc_dirs_lang_linux   = -I$(lang_root)/lh
