@@ -1629,6 +1629,12 @@ allowed.
 A directive was specified more than once on the &lnkname. command line and
 was ignored. Remove the redundant instances of the directive.
 .*
+.errnote 1171 locally defined symbol %s imported
+.np
+Imported symbol (from DLL) is defined as local.
+Linker will ignore symbol from DLL, local symbol will be used instead.
+Check if it is intended or not.
+.*
 .errnote 1172 stack size is less than %d bytes.
 .np
 The stack size for an executable specified through OPTION STACK is very small.
