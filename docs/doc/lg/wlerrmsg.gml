@@ -1631,9 +1631,9 @@ was ignored. Remove the redundant instances of the directive.
 .*
 .errnote 1171 locally defined symbol %s imported
 .np
-Imported symbol (from DLL) is defined as local.
-Linker will ignore symbol from DLL, local symbol will be used instead.
-Check if it is intended or not.
+An imported symbol (intended to be imported from a DLL) was resolved locally.
+The linker will ignore the symbol defined in a DLL, if provided, and the local
+reference will be used. Ensure that this is the intended behaviour.
 .*
 .errnote 1172 stack size is less than %d bytes.
 .np
