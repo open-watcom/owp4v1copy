@@ -179,8 +179,9 @@ set module name
 set name of text segment
 .note o
 allow C form of octal constants
-.note zcm
-set C name mangler to MASM compatible mode
+.note zcm=<mode>
+set compatibility mode - watcom, masm or tasm, if <mode> is not
+specified then masm is used, default mode is watcom
 .note zld
 remove file dependency information
 .note zq or q
@@ -305,9 +306,9 @@ There are a few specific features in &asmname.
                  Procedure   Variable
 Convention         Name        Name
 ---------------  ----------  ---------
-C                   '*'         '*'
-C (MASM)           '_*'        '_*'    see note 1
-WATCOM_C           '*_'        '_*'
+C (WATCOM)          '*'         '*'    see note 1
+C (MASM, TASM)     '_*'        '_*'    see note 1
+WATCOM_C         see section &company "C" name mangler
 SYSCALL             '*'         '*'
 STDCALL           '_*@nn'      '_*'
 STDCALL            '_*'        '_*'    see note 2
@@ -318,7 +319,7 @@ PASCAL              '^'         '^'
 .millust end
 .autonote Notes:
 .note
-WASM uses MASM compatible names when -zcm command line option is used.
+WASM -zcm command line option is used with appropriate compatibility mode.
 .note
 In STDCALL procedures name 'nn' is overall parametrs size in bytes.
 '@nn' is suppressed when -zz command line option is used (WATCOM 10.0 compatibility).
