@@ -32,14 +32,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
-#if defined (__WATCOMC__)
-    #include <curses.h>
-#elif !defined( HP )
-    #include <curses.h>
-#else
-    #include <stdarg.h>
-    #include <curses.h>
-#endif
+#include <stdarg.h>
+#include <curses.h>
 #include <term.h>
 #include <signal.h>
 #include <unistd.h>

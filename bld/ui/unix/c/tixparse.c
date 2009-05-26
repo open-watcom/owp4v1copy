@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #if defined(__WATCOMC__)
     #include <sys/ioctl.h>
@@ -59,15 +60,6 @@
 #include "qnxuiext.h"
 #include "tixparse.h"
 #include "trie.h"
-#ifndef __WATCOMC__
-#include "clibext.h"
-#endif
-#if 0
-#include "stdtypes.h"
-#include "unixmisc.h"
-
-#include "wlangfmt.h"
-#endif
 
 extern char ui_tix_path[];
 extern int ui_tix_missing( const char *name );
@@ -103,7 +95,7 @@ FILE *ti_fopen( char *fnam )
 {
     FILE        *res;
     char        *homeDir;
-    char        fpath[_MAX_PATH+1];
+    char        fpath[FILENAME_MAX+1];
 
     if( fnam==NULL || fnam[0]=='\0' ) {
         return( NULL );
@@ -127,14 +119,6 @@ FILE *ti_fopen( char *fnam )
             return( res );
         }
     }
-#if 0
-    if( LS_QualifySqlAnyFile( fnam, fpath, sizeof(fpath) ) ) {
-        res = fopen( fpath, "r" );
-        if( res != NULL ) {
-            return( res );
-        }
-    }
-#endif
 
     // finally, look in /usr/watcom/tix/<name>
 //    strcpy( fpath, TIX_PATH_NAME );
@@ -331,13 +315,13 @@ static int do_parse( void )
             tix_error( "expecting directive" );
             return( 0 );
         }
-        if( stricmp( buff, "display" ) == 0 ) {
+        if( strcasecmp( buff, "display" ) == 0 ) {
             code = get_tix_code( (unsigned char *)buff );
             if( code == ~0U ) return( 0 );
             tok = get_tix_token( buff );
             if( tok == TT_EOF ) break;
             if( tok == TT_STRING ) {
-                if( stricmp( buff, "alt" ) != 0 ) {
+                if( strcasecmp( buff, "alt" ) != 0 ) {
                     tix_error( "expecting alt" );
                     return( 0 );
                 }
@@ -361,7 +345,7 @@ static int do_parse( void )
             }
             ti_char_map[code][0] = buff[0];
             tok = get_tix_token( buff );
-        } else if( stricmp( buff, "key" ) == 0 ) {
+        } else if( strcasecmp( buff, "key" ) == 0 ) {
             code = get_tix_code( (unsigned char *)buff );
             if( code == ~0U ) return( 0 );
             input[0] = '\0';
@@ -384,7 +368,7 @@ struct charmap {
 };
 
 static struct charmap default_tix[] = {
-    /* keep zero to handle strings */
+    /* keep zero to handle casestrings */
     {0, 0},
 
     /* single line box drawing */

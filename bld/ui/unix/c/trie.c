@@ -41,9 +41,6 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <ctype.h>
-#ifndef __WATCOMC__
-#include "clibext.h"
-#endif
 #include "uidef.h"
 #include "uishift.h"
 

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Terminal keyboard definitions
+* Description:  Terminal keyboard definitions.
 *
 ****************************************************************************/
 
@@ -50,16 +50,6 @@
 
 #include "trie.h"
 #include "tixparse.h"
-
-/*
-#ifndef HP
-    #include <termio.h>
-#endif
-*/
-
-#ifndef __WATCOMC__
-#include "clibext.h"
-#endif
 
 extern unsigned short   ShftState;
 extern char *GetTermType( void );
