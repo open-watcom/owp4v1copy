@@ -35,6 +35,7 @@
 
 #include "wgml.h"
 #include "gvars.h"
+#include "copfiles.h"
 #include "outbuff.h"
 
 
@@ -60,13 +61,13 @@ static  const   gmltag  gml_tags[] = {
 /*    SCR control words                                                    */
 /***************************************************************************/
 
-#define pick(name, routine, flags) { name, routine },
+#define pick(name, routine, flags) { name, routine, flags },
 
 static  const   scrtag  scr_tags[] = {
 
 #include "gscrcws.h"
 
-    { "  ", NULL   }                    // end
+    { "  ", NULL, 0   }                 // end
 };
 
 #define SCR_TAGMAX  (sizeof( scr_tags ) / sizeof( scr_tags[0] ) - 1)
@@ -352,6 +353,9 @@ static void     scan_script( void)
             for( k = 0; k < SCR_TAGMAX; ++k ) {
                 if( !stricmp( scr_tags[k].tagname, token_buf ) ) {
                     scan_start = p; // script controlword found, process
+                    if( scr_tags[k].cwflags & cw_break ) {
+//                      scr_process_break();    TBD
+                    }
                     scr_tags[k].tagproc();
                     cwfound = true;
                     break;
@@ -549,7 +553,8 @@ static void set_if_then_do( void )
     char        cw[3];
     ifcb    *   cb = input_cbs->if_cb;
 
-    if( *(buff2 + 1) == SCR_char ) {    // ..CW
+    if( (*(buff2 + 1) == SCR_char)  ||  // ..CW
+        (*(buff2 + 1) == '\'') ) {      // .'CW
         cw[0] = tolower( *(buff2 + 2) );// copy possible controlword
         cw[1] = tolower( *(buff2 + 3) );
     } else {                            // .CW
@@ -611,6 +616,8 @@ void    scan_line( void )
             }
 
                            /* process text or unprocessed tag      TBD */
+            sprintf( token_buf, "%d %d moveto\n", bin_device->x_start,
+                bin_device->y_start );
             ob_insert_block( scan_start, scan_stop - scan_start, false, false );
             ob_insert_block( " ", 1, false, false );
                            /* process text or unprocessed tag      TBD */

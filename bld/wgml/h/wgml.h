@@ -199,9 +199,10 @@ extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index 
 extern void     print_sym_dict( symvar * dict );
 extern void     reset_auto_inc_dict( symvar * dict );
 
+
 /* gsyssym.c                          */
-extern  void    init_predefined_symbols( void );
-extern  void    init_sysparm( char * cmdline );
+extern  void    init_sys_dict( symvar * * dict );
+extern  void    init_sysparm( char * cmdline, char * banner );
 
 
 /* gtagdict.c                         */

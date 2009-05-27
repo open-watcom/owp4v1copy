@@ -47,7 +47,7 @@
 
 //================= Some global defines ========================
 #define MAX_NESTING     32              // max nesting of option files
-#define MAX_PASSES      10              // max no of passes
+#define MAX_PASSES      10              // max no of document passes
 #define MAX_INC_DEPTH   255             // max include level depth
 #define BUF_SIZE        512             // default buffersize for filecb e.a.
 #define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
@@ -89,7 +89,7 @@
 /* string start / end characters Possible incomplete list*/
 #define d_q     '\"'                    // change also is_quote_char()
 #define s_q     '\''                    // in gargutil.c
-#define cent    0x9b
+#define cent    0x9b                    // if list is extended
 #define excl    '!'
 #define not_c   '^'
 #define slash   '/'
@@ -139,23 +139,29 @@ typedef enum {
 } sub_index;
 
 typedef enum {
-    local_var   = 1,
-    subscripted = 2,
-    auto_inc    = 4,
-    predefined  = 8,                   // predefined at startup
-    late_subst  = 16,                  // substituted not too early
-    deleted     = 0x100
+    local_var   = 0x0001,
+    subscripted = 0x0002,
+    auto_inc    = 0x0004,
+    predefined  = 0x0008,               // predefined at startup
+    ro          = 0x0010,               // value not changable
+    no_free     = 0x0020,               // symbol is defined at compile time
+//    type_long   = 0x0040,
+//    type_str    = 0x0080,
+//    type_char   = 0x0100,
+    access_fun  = 0x0200,               // get value via function call
+    late_subst  = 0x0400,               // substituted not too early
+    deleted     = 0x0800
 } symbol_flags;
 
 
 /***************************************************************************/
-/*  entry for a subscripted symbolic variable                              */
+/*  entry for a (subscripted) symbolic variable                            */
 /***************************************************************************/
 typedef struct symsub {
     struct symsub   *   next;           // next subscript entry
     struct symvar   *   base;           // the base symvar
     sub_index           subscript;      // the subscript
-    char            *   value;          // the value
+    char            *   value;          // the value ptr
 } symsub;
 
 
@@ -169,6 +175,7 @@ typedef struct symvar {
     long                subscript_used; // count of used subscripts
     symsub          *   subscripts;     // subscript entries
     symsub          *   sub_0;          // special subscript 0 entry
+    void                (*varfunc)( struct symvar * e );// access function
     symbol_flags        flags;
 } symvar;
 
@@ -332,10 +339,14 @@ typedef struct  inputcb {
 /***************************************************************************/
 /*  scr keywords                                                           */
 /***************************************************************************/
+typedef enum {
+    cw_break    = 1            // control word causes break, ie. flush output
+} scrflags;
 
 typedef struct scrtag {
     char            tagname[SCR_KW_LENGTH + 1];
     void            (*tagproc)( void );
+    scrflags        cwflags;
 } scrtag;
 
 

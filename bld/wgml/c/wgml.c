@@ -622,6 +622,9 @@ static  void    proc_GML( char * filename )
         if( inc_level == 0 ) {
             break;                 // we are done (master document not found)
         }
+        //  test
+    /*        fb_position( bin_device->x_start, bin_device->y_start+100 ); */
+
 
         /*******************************************************************/
         /*  process an input file / macro                                  */
@@ -750,9 +753,9 @@ static  void    print_stats( clock_t duration_ticks )
 
     // convert duration from clock ticks to HH:MM:SS.hh
     hour_min = ldiv( duration_ticks / CLOCKS_PER_SEC / 60L, 60L );
-    sec_frac  = ldiv( duration_ticks * 100L / CLOCKS_PER_SEC, 100L );
+    sec_frac  = ldiv( duration_ticks, CLOCKS_PER_SEC );
     sprintf_s( linestr, sizeof( linestr ), "%02lu:%02lu:%02lu.%02lu\0",
-               hour_min.quot, hour_min.rem, sec_frac.quot, sec_frac.rem );
+               hour_min.quot, hour_min.rem, sec_frac.quot % 60, sec_frac.rem / 6 );
     g_info( inf_stat_6, linestr );
 
 }
@@ -794,24 +797,6 @@ static  void    init_pass( void )
 
 }
 
-/***************************************************************************/
-/*  get_systime   gets system time and initializes symbols date and time   */
-/***************************************************************************/
-
-static void get_systime( void )
-{
-    char        date_str[80];
-    char        time_str[80];
-    time_t      gtime;
-
-    gtime = time( NULL );
-    localtime_s( &gtime, &doc_tm );
-    strftime( date_str, 80, "%B %d, %Y", &doc_tm );
-    strftime( time_str, 80, "%H:%M:%S", &doc_tm );
-    printf( "%s %s\n", date_str, time_str );
-    add_symvar( &global_dict, "date", date_str, no_subscript, 0 );
-    add_symvar( &global_dict, "time", time_str, no_subscript, 0 );
-}
 
 /***************************************************************************/
 /*  main WGML                                                              */
@@ -837,8 +822,6 @@ int main( int argc, char * argv[] )
 
     init_global_vars();
 
-    get_systime();                      // initialize symbols date and time
-
     token_buf = mem_alloc( buf_size );
 
     // out_msg( "define enum %d %d\n", INF_CMDLINE, inf_cmdline );
@@ -852,9 +835,11 @@ int main( int argc, char * argv[] )
     _bgetcmd( cmdline, cmdlen );
 
     g_info( INF_CMDLINE, cmdline );
-    init_sysparm( cmdline );            // set sysparm
 
     tok_count = proc_options( cmdline );
+    init_sysparm( cmdline, banner1w( "WGML Script/GML", _WGML_VERSION_ )
+                  );            // set sysparm and version
+    /* don't mem_free cmdline it is used for sysparm variable */
     g_banner();
     if( tok_count < 4 ) {               // file ( device xyz   is minimum
         usage();                        // display usage and exit
@@ -864,10 +849,14 @@ int main( int argc, char * argv[] )
 
 
     if( master_fname != NULL ) {        // filename specified
-        char    linestr1[MAX_L_AS_STR];
-        char    linestr2[MAX_L_AS_STR];
+        int     rc;
+        symsub  * passnoval;
+        symsub  * passofval;
 
-        utoa( passes, linestr2, 10 );
+        rc = find_symvar( &sys_dict, "$passof", no_subscript, &passofval );
+        rc = find_symvar( &sys_dict, "$passno", no_subscript, &passnoval );
+        utoa( passes, passofval->value, 10 );
+
         set_default_extension( master_fname );// make this extension first choice
 
         fb_start();                     // START :PAUSE & :INIT processing.
@@ -875,6 +864,7 @@ int main( int argc, char * argv[] )
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
+            utoa( pass, passnoval->value, 10 );
 
             /* fb_document() needs to be done on the first pass only, but
              * also needs to be done immediately after the :ELAYOUT. tag.
@@ -885,8 +875,7 @@ int main( int argc, char * argv[] )
             if( GlobalFlags.firstpass == 1) fb_document();// DOCUMENT :PAUSE & :INIT processing.
 
 //            g_trmem_prt_list();  // all memory freed if no output from call
-            utoa( pass, linestr1, 10 );
-            g_info( INF_PASS_1, linestr1, linestr2,
+            g_info( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
             proc_GML( master_fname );
@@ -896,7 +885,7 @@ int main( int argc, char * argv[] )
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }
-            g_info( INF_PASS_2, linestr1, linestr2,
+            g_info( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
             if( err_count > 0 ) {
@@ -927,6 +916,7 @@ int main( int argc, char * argv[] )
         if( tag_dict != NULL ) {
             print_tag_dict( tag_dict );
         }
+        print_sym_dict( sys_dict );
     }
 
     end_time = clock();                 // get end time

@@ -1,4 +1,5 @@
 :cmt. .ty for some variable names
+.ty &systime
 :layout.
 :convert file='tlay.org'.
 :elayout.
@@ -150,7 +151,7 @@
 .ty sysct &sysct
 .ty syscu &syscu
 .ty syscv &syscv
-.ty syscw &syscw
+.'ty syscw &syscw
 .ty syscx &syscx
 .ty syscy &syscy
 .ty syscz &syscz
@@ -19004,3 +19005,5 @@
 .ty syszzx &syszzx
 .ty syszzy &syszzy
 .ty syszzz &syszzz
+
+.ty &systime

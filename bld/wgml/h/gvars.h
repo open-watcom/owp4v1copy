@@ -92,12 +92,13 @@ global  su              bind_odd;       // Bind value for odd pages
 
 global  su              bind_even;      // Bind value for even pages
 
-global  int             passes;         // Max no of passes
-global  int             pass;           // current pass no
+global  int             passes;         // Max no of document passes
+global  int             pass;           // current document pass no
 
 
 
 global  symvar      *   global_dict;    // global symbol dictionary
+global  symvar      *   sys_dict;       // global system symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
 global  gtentry     *   tag_dict;       // User tag dictionary
 
