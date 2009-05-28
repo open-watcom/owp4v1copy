@@ -998,7 +998,7 @@
     (int)(DWORD)SNDMSG( x, CB_SELECTSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
 #define ComboBox_Dir( x, p1, p2 ) \
     (int)(DWORD)SNDMSG( x, CB_DIR, (WPARAM)(UINT)(p1), (LPARAM)(LPCSTR)(p2) )
-#define ComboBox_ShowDropDown( x, p ) \
+#define ComboBox_ShowDropdown( x, p ) \
     (BOOL)(DWORD)SNDMSG( x, CB_SHOWDROPDOWN, (WPARAM)(BOOL)(p), 0L )
 #if (WINVER >= 0x030A)
     #define ComboBox_FindStringExact( x, p1, p2 ) \
