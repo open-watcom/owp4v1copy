@@ -35,16 +35,17 @@
 //     control  routinename  flags
 //     word
 
+//pick( "ad",    scr_ad,       cw_break    ) // adjust
   pick( "ap",    scr_ap,       0           ) // append
 //pick( "bd",    scr_bd,       0           ) // bold
 //pick( "bi",    scr_bi,       0           ) // bold italic
-//pick( "br",    scr_br,       0           ) // break
-//pick( "bx",    scr_bx,       0           ) // box
-//pick( "cc",    scr_cc,       0           ) // conditional column
-//pick( "cd",    scr_cd,       0           ) // column definition
-  pick( "co",    scr_co,       0           ) // concatenate
-//pick( "cp",    scr_cp,       0           ) // conditional page
-//pick( "cs",    scr_cs,       0           ) // condional section
+//pick( "br",    scr_br,       cw_break    ) // break
+//pick( "bx",    scr_bx,       cw_break    ) // box
+//pick( "cc",    scr_cc,       cw_break    ) // conditional column
+//pick( "cd",    scr_cd,       cw_break    ) // column definition
+  pick( "co",    scr_co,       cw_break    ) // concatenate
+//pick( "cp",    scr_cp,       cw_break    ) // conditional page
+//pick( "cs",    scr_cs,       0           ) // conditional section
 //pick( "ct",    scr_ct,       0           ) // continued text
   pick( "cw",    scr_cw,       0           ) // control word separator
   pick( "dc",    scr_dc,       0           ) // define character
@@ -63,39 +64,39 @@
 
 //pick( "fk",    scr_fk,       0           ) // floating keep
 //pick( "fn",    scr_fn,       0           ) // footnote
-  pick( "fo",    scr_fo,       0           ) // format
+  pick( "fo",    scr_fo,       cw_break    ) // format
   pick( "ga",    scr_ga,       0           ) // GML attribute
   pick( "go",    scr_go,       0           ) // go to
   pick( "gt",    scr_gt,       0           ) // GML tag
-//pick( "h1",    scr_h1,       0           ) // Heading level 1
-//pick( "h2",    scr_h2,       0           ) // heading level 2
+//pick( "h1",    scr_h1,       cw_break    ) // Heading level 1
+//pick( "h2",    scr_h2,       cw_break    ) // heading level 2
   pick( "if",    scr_if,       0           ) // if
   pick( "im",    scr_im,       0           ) // imbed
-//pick( "in",    scr_in,       0           ) // indent
+//pick( "in",    scr_in,       cw_break    ) // indent
 //pick( "ix",    scr_ix,       0           ) // index
-  pick( "ju",    scr_ju,       0           ) // justify
+  pick( "ju",    scr_ju,       cw_break    ) // justify
 //pick( "le",    scr_le,       0           ) // leading space
 //pick( "li",    scr_li,       0           ) // literal
-//pick( "ll",    scr_ll,       0           ) // line length
-//pick( "lt",    scr_lt,       0           ) // leading tab
+//pick( "ll",    scr_ll,       cw_break    ) // line length
+//pick( "lt",    scr_lt,       cw_break    ) // leading tab
   pick( "me",    scr_me,       0           ) // macro exit
 //pick( "oc",    scr_oc,       0           ) // output comment
-//pick( "pa",    scr_pa,       0           ) // page eject
+//pick( "pa",    scr_pa,       cw_break    ) // page eject
   pick( "pe",    scr_pe,       0           ) // perform
-//pick( "pl",    scr_pl,       0           ) // page length
-//pick( "pp",    scr_pp,       0           ) // paragraph
+//pick( "pl",    scr_pl,       cw_break    ) // page length
+//pick( "pp",    scr_pp,       cw_break    ) // paragraph
   pick( "pu",    scr_pu,       0           ) // put workfile
 //pick( "ra",    scr_ra,       0           ) // old CW use .ri
-//pick( "ri",    scr_ri,       0           ) // right adjust
+//pick( "ri",    scr_ri,       cw_break    ) // right adjust
   pick( "se",    scr_se,       0           ) // set symbol
-//pick( "sk",    scr_sk,       0           ) // skip (generate blank line(s)
-//pick( "sp",    scr_sp,       0           ) // space same as skip
+//pick( "sk",    scr_sk,       cw_break    ) // skip (generate blank line(s)
+//pick( "sp",    scr_sp,       cw_break    ) // space same as skip
   pick( "sr",    scr_se,       0           ) // treat as .se as substitute is always on
 //pick( "sy",    scr_sy,       0           ) // system command
-//pick( "tb",    scr_tb,       0           ) // define tab stops
+//pick( "tb",    scr_tb,       cw_break    ) // define tab stops
 //pick( "ti",    scr_ti,       0           ) // translate on input
   pick( "th",    scr_th,       0           ) // then
-//pick( "tm",    scr_tm,       0           ) // top margin
+//pick( "tm",    scr_tm,       cw_break    ) // top margin
 //pick( "tr",    scr_tr,       0           ) // translate table for output
   pick( "ty",    scr_ty,       0           ) // type
 //pick( "ul",    scr_ul,       0           ) // underline
