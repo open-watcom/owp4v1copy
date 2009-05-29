@@ -39,14 +39,6 @@
 #ifndef OUTBUFF_H_INCLUDED
 #define OUTBUFF_H_INCLUDED
 
-/* Struct definition. */
-
-typedef struct {
-    size_t          current;    // Next write position
-    size_t          length;     // Total length of data
-    uint8_t     *   data;       // The data itself
-} record_buffer;
-
 /* Function declarations. */
 
 #ifdef  __cplusplus
@@ -54,7 +46,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
 extern void ob_flush( void );
-extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, bool out_text );
+extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, bool out_text, uint32_t font );
 extern void ob_insert_byte( uint8_t in_char );
 extern void ob_setup( void );
 extern void ob_teardown( void );

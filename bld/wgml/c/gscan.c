@@ -618,8 +618,8 @@ void    scan_line( void )
                            /* process text or unprocessed tag      TBD */
             sprintf( token_buf, "%d %d moveto\n", bin_device->x_start,
                 bin_device->y_start );
-            ob_insert_block( scan_start, scan_stop - scan_start, false, false );
-            ob_insert_block( " ", 1, false, false );
+            ob_insert_block( scan_start, scan_stop - scan_start, false, false, 0 );
+            ob_insert_block( " ", 1, false, false, 0 );
                            /* process text or unprocessed tag      TBD */
 
         }

@@ -25,18 +25,27 @@
 *  ========================================================================
 *
 * Description:  Implements the functions used to parse .COP files:
+*                   cop_in_trans()
+*                   cop_out_trans()
 *                   cop_setup()
 *                   cop_teardown()
 *                   cop_text_width()
+*                   cop_ti_table()
+*                   cop_tr_table()
 *                   fb_dbox()
 *                   fb_document()
 *                   fb_document_page()
 *                   fb_finish()
 *                   fb_hline()
+*                   fb_new_section()
 *                   fb_position()
 *                   fb_start()
 *                   fb_vline()
-*               plus these local functions:
+*               plus these local variables:
+*                   bin_fonts
+*                   ti_table
+*                   tr_table
+*               and these local functions:
 *                   compute_metrics()
 *                   find_cop_font()
 *                   find_dev_font()
@@ -46,7 +55,9 @@
 *                   get_cop_device()
 *                   get_cop_driver()
 *                   get_cop_font()
+*                   hex_character()
 *                   scale_basis_to_horizontal_base_units()
+*                   update_translate_table()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
 *               not apparent and for how the various function blocks are used.
@@ -77,6 +88,12 @@
 #include "gvars.h"
 #include "outbuff.h"
 #include "wgml.h"
+
+/* Local data. */
+
+cop_font    *   bin_fonts;          // binary fonts being used (linked list)
+uint8_t         ti_table[0x100];    // .TI-controlled translation table
+uint8_t         tr_table[0x100];    // .TR-controlled translation table
 
 /* Local function definitions. */
 
@@ -624,10 +641,255 @@ static void free_opt_fonts( void )
     return;
 }
 
+/* Function hex_character().
+ * Ensures the parameter is a two-character hexadecimal value and converts it
+ * to the equivalent character value.
+ *
+ * Parameter:
+ *      value contains a pointer to the two-character hexadecimal value.
+ *
+ * Returns:
+ *      the equivalent character value.
+ *
+ * Note:
+ *      If either character in token is not a valid hexadecimal digit,
+ *      an error is reported and the program quits.
+ */
+
+static uint8_t hex_character( uint8_t * value )
+{
+    uint8_t retval[3];
+
+    if( !isxdigit( value[0] ) || !isxdigit( value[1] ) ) {
+        uint8_t token[3];
+        memcpy_s( token, 2, value, 2 );
+        token[2] = '\0';
+        out_msg( "A single character or a two character hexadecimal value "\
+                                        "must be specified: '%s'\n", token );
+        err_count++;
+        g_suicide();
+    }
+
+    retval[0] = value[0];
+    retval[1] = value[1];
+    retval[2] = '\0';
+
+    return( (uint8_t) strtol( retval, NULL, 16 ) );
+}
+
+/* Function update_translate_table().
+ * Use the given data to update the desired table.
+ *
+ * Parameters
+ *      is_ti_table is "true" if the ti_table is to be updated, "false"
+ *          if the tr_table is to be updated.
+ *      data contains any data associated with the .TI or .TR control word.
+ *      count contains the number of bytes to process.
+ *
+ * Notes:
+ *      This version does treats "set" as an error; however, is_ti_table
+ *          will eventually be used to process "set" for .TI only.
+ */
+
+static void update_translate_table( bool is_ti_table, uint8_t * data, \
+                                     uint32_t count )
+{
+    bool        first_found;
+    bool        no_data;
+    int         i;
+    int         j;
+    size_t      token_length;
+    uint8_t *   table;
+    uint8_t     token_char;
+    uint8_t     first_char;
+
+    /* Set up the variables. count must be "0" if there is no data. no_data
+     * will cause the table to be reset if it is still "true" after the loop.
+     */
+
+    if( is_ti_table ) table = ti_table;
+    else table = tr_table;
+    if( data == NULL ) count = 0;
+    no_data = true;
+    first_found = false;
+
+    for( i = 0; i < count; i++ ) {
+        if( isspace( data[i] ) ) continue;
+
+        /* A token! */
+
+        token_length = 0;
+        for( j = i; j < count; j++) {
+            if( isspace( data[j] ) ) break;
+            token_length += 1;
+        }
+
+        /* This is where "set" processing will go. */
+
+        if( is_ti_table ) {};
+
+        /* Apart from "set", the maximum allowed token length is 2. */
+
+        if( token_length > 2 ) {
+            uint8_t * token = mem_alloc( token_length + 1 );
+            memcpy_s( token, token_length, &data[i], token_length );
+            token[token_length] = '\0';
+            out_msg( "A single character or a two character hexadecimal value "\
+                                        "must be specified: '%s'\n", token );
+            mem_free( token );
+            err_count++;
+            g_suicide();
+        }
+
+        /* If the token length is 2, it must be a hexadecimal number. */
+
+        if( token_length == 2 ) {
+            token_char = hex_character( &data[i] );
+            i++;
+        } else {
+            token_char = data[i];
+        }
+
+        /* If we ever get this far, then valid data was found. */
+
+        no_data = false;
+
+        /* If we have an unused first_char, then we just found the char it
+         * is to be converted into. Otherwise, we found a new first char.
+         */
+
+        if( first_found ) {
+            table[first_char] = token_char;
+            first_found = false;
+        } else {
+            first_char = token_char;
+            first_found = true;
+        }
+    }
+
+    /* If first_found is true at this point, then a single character was
+     * found at the end of the data and the table must be updated to return
+     * the same character.
+     */
+
+    if( first_found ) table[first_char] = first_char;
+
+    /* If there was no data, reset the table. */
+
+    if( no_data ) for( i = 0; i < 0x100; i++ ) table[i] = i;
+
+    return;
+}
+
 /* Extern function definitions */
 
+/* Function cop_in_trans().
+ * Translates the given character per the tables associated with the .TI
+ * command word and the various :INTRANS blocks.
+ *
+ * Parameter:
+ *      in_char contains the character to be translated.
+ *
+ * Returns:
+ *      The appropriate character, which may be the same as in_char.
+ */
+
+uint8_t cop_in_trans( uint8_t in_char, uint32_t font )
+{
+    intrans_block   *   block   = NULL;
+    uint8_t             retval;
+
+    if( font > wgml_font_cnt ) font = 0;
+    retval = ti_table[in_char];
+
+    block = wgml_fonts[font].bin_font->intrans;
+    if( retval == in_char ) if( block != NULL ) retval = block->table[in_char];
+
+    block = bin_device->intrans;
+    if( retval == in_char ) if( block != NULL ) retval = block->table[in_char];
+
+    return( retval );
+}
+
+/* Function cop_out_trans().
+ * Copies text to in_out.text, translating each character per the tables
+ * associated with the .TR command word and any active :OUTTRANS block.
+ *
+ * Parameters:
+ *      text is a pointer to the text to be translated.
+ *      count contains the number of bytes pointed to by text.
+ *      in_out is the record_buffer to use to return the translated text.
+ *      font contains the font whose :OUTTRANS table, if any, is to be used. 
+ *
+ * Returns:
+ *      in_out, with in_out.text modified to contain the translated text.
+ *
+ * Note:
+ *      in_out.text may be reallocated; however, since mem_realloc() halts
+ *      program execution on error, in_out.text will be correct if this
+ *      function returns.
+ */
+
+record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
+                               record_buffer * in_out, uint32_t font )
+{
+    outtrans_block  *   block   = NULL;
+    uint8_t             byte;
+    uint32_t            i;
+    uint32_t            j;
+    uint32_t            k;
+
+    if( font > wgml_font_cnt ) font = 0;
+
+    k = 0;
+    for( i = 0; i < count; i++ ) {
+        byte = tr_table[text[i]];
+        if( byte == text[i] ) {
+            block = wgml_fonts[font].bin_font->outtrans;
+            if( block == NULL ) block = bin_device->outtrans;
+            if( block == NULL ) {
+                if( k >= in_out->length ) {
+                    in_out->text = realloc( in_out->text, 2 * in_out->length );
+                    in_out->length *= 2;
+                }
+                in_out->text[k] = byte;
+                k++;
+            } else {
+                if( block->table[text[i]] == NULL ) {
+                    if( k >= in_out->length ) {
+                        in_out->text = realloc( in_out->text, 2 * in_out->length );
+                        in_out->length *= 2;
+                    }
+                    in_out->text[k] = byte;
+                    k++;
+                } else {
+                    for( j = 0; j < block->table[text[i]]->count; j++ ) {
+                        if( k >= in_out->length ) {
+                            in_out->text = realloc( in_out->text, 2 * in_out->length );
+                            in_out->length *= 2;
+                        }
+                        in_out->text[k] = block->table[text[i]]->data[j];
+                        k++;
+                    }
+                }
+            }
+        } else {
+            if( k >= in_out->length ) {
+                in_out->text = realloc( in_out->text, 2 * in_out->length );
+                in_out->length *= 2;
+            }
+            in_out->text[k] = byte;
+            k++;
+        }
+    }
+    in_out->current = k;
+
+    return( in_out );
+}
+
 /* Function cop_setup().
- * Initializes the various globals specific to the binary device library subsystem.
+ * Initializes the various globals specific to the binary device library
+ * subsystem. And the local.
  */
 
 void cop_setup( void )
@@ -640,7 +902,15 @@ void cop_setup( void )
     opt_font        *   cur_opt         = NULL;
     wgml_font           def_font;
 
-    out_msg( "Processing device information\n" );
+    /* A "device" option must have been processed,
+     * and it must have provided a device name.
+     */
+
+    if( (dev_name == NULL) || !strcmp(dev_name, "''") ) {
+        out_msg( "A device name is required!\n" );
+        err_count++;
+        g_suicide();
+    }
 
     /* Set the globals to known values. */
 
@@ -651,15 +921,18 @@ void cop_setup( void )
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
 
-    /* A "device" option must have been processed,
-     * and it must have provided a device name.
-     */
+    /* Initialize the translation tables used with .TI and .TR. */
 
-    if( (dev_name == NULL) || !strcmp(dev_name, "''") ) {
-        out_msg( "A device name is required!\n" );
-        err_count++;
-        g_suicide();
+    for( i = 0; i < 0x100; i++) {
+        ti_table[i] = i;
+        tr_table[i] = i;
     }
+
+    /* Emit the expected message. */
+
+    out_msg( "Processing device information\n" );
+
+    /* Process the device. */
 
     bin_device = get_cop_device( dev_name );
 
@@ -700,6 +973,27 @@ void cop_setup( void )
         out_msg( "Designated driver not found: %s\n", bin_device->driver_name );
         err_count++;
         g_suicide();
+    }
+
+    /* Sanity check: if either attribute in :PAGEADDRESS was "no", the
+     * corresponding value in :PAGESTART must not be "0". This prevents the
+     * generation of negative values for horizontal or vertical positions.
+     */
+
+    if( bin_driver->x_positive == 0 ) {
+        if( bin_device->x_start == 0 ) {
+            out_msg( "Horizontal start position cannot be 0\n" );
+            err_count++;
+            g_suicide();
+        }
+    }
+
+    if( bin_driver->y_positive == 0 ) {
+        if( bin_device->y_start == 0 ) {
+            out_msg( "Vertical start position cannot be 0\n" );
+            err_count++;
+            g_suicide();
+        }
     }
 
     /* Set ps_device to "true" if the driver name begins with "ps" or "PS". */
@@ -1045,32 +1339,70 @@ void cop_teardown( void )
  *
  * Parameters:
  *      text is a pointer to the first character.
- *      length is the number of characters.
+ *      count is the number of characters.
  *      font is the font number of the available font to use.
  *
  * Returns:
- *      the sum of the widths of length characters, starting with *text.
+ *      the sum of the widths of the count characters starting with *text.
  */
  
-uint32_t cop_text_width( uint8_t * text, uint32_t length, uint32_t font )
+uint32_t cop_text_width( uint8_t * text, uint32_t count, uint32_t font )
 {
     int             i;
     uint32_t        units;
     uint32_t    *   table;
     uint32_t        width;
 
+    if( font > wgml_font_cnt ) font = 0;
+
     if( wgml_fonts[font].bin_font->width == NULL ) {
-        width = length * wgml_fonts[font].default_width;
+        width = count * wgml_fonts[font].default_width;
     } else {
         table = wgml_fonts[font].bin_font->width->table;
         units = 0;
-        for( i = 0; i < length; i++ ) {
+        for( i = 0; i < count; i++ ) {
             units += table[text[i]];
         }
         width = scale_basis_to_horizontal_base_units( units, &wgml_fonts[font] );
     }
 
     return( width );
+}
+
+
+/* Function cop_ti_table().
+ * Updates ti_table as specified by the data.
+ *
+ * Parameters:
+ *      data contains any data associated with the .TI control word.
+ *      count contains the number of bytes to process.
+ *
+ * Notes:
+ *      The SET operand will be treated as an error by this version.
+ *      Whatever terminated the .TI record must not be part of the data.
+ */
+
+void cop_ti_table( uint8_t * data, uint32_t count )
+{
+    update_translate_table( true, data, count );
+    return;
+}
+
+/* Function cop_tr_table().
+ * Updates tr_table as specified by the data.
+ *
+ * Parameters:
+ *      data contains any data associated with the .TR control word.
+ *      count contains the number of bytes to process.
+ *
+ * Note:
+ *      Whatever terminated the .TR record must not be part of the data.
+ */
+
+void cop_tr_table( uint8_t * data, uint32_t count )
+{
+    update_translate_table( false, data, count );
+    return;
 }
 
 /* Function fb_dbox().
@@ -1131,7 +1463,7 @@ void fb_document( void )
      * variable initialized and used by the document layout code. The reason
      * for this is that, if y_positive is "0", then the correct value is the
      * top of the document page, which can only be determined from the page
-     * length given in the :LAYOUT section (:PAGE attribute depth). The value
+     * depth given in the :LAYOUT section (:PAGE attribute depth). The value
      * computed here is the top of the device page.
      */
 
@@ -1146,10 +1478,20 @@ void fb_document( void )
 
 /* Function fb_document_page().
  * Interprets the :NEWPAGE block and increments the page number variable.
+ *
+ * Note:
+ *      This function should be used for new document pages within a section,
+ *      except as documented in the Wiki. The function fb_new_section() should
+ *      be used at the start of each new section, and elsewhere as documented
+ *      in the Wiki. 
  */
 
 void fb_document_page( void )
 {
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
     /* Interpret the DOCUMENT_PAGE :PAUSE block. */
 
     if( bin_device->pauses.docpage_pause != NULL ) \
@@ -1214,6 +1556,26 @@ void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
     fb_line_block( &(bin_driver->hline), h_start, v_start, h_len, 0, "HLINE" );
 }
 
+/* Function fb_new_section().
+ * Performs the subsequent initial vertical positioning, as described in the
+ * Wiki.
+ *
+ * Parameter:
+ *      v_start contains the desired starting vertical position.
+ *
+ * Note:
+ *      This function should not be invoked at the start of the file; instead,
+ *      fb_position() should be used as it will do the first initial vertical
+ *      positioning. This function should be used in place of fb_document_page()
+ *      when a new section or other event occurs where its action is needed.
+ */
+ 
+void fb_new_section( uint32_t v_start )
+{
+    df_new_section( v_start );
+    return;
+}
+
 /* Function fb_position().
  * Initializes the print head position by calling two helper functions, which
  * allows them to use the internals of the interpreter module. This function
@@ -1224,6 +1586,8 @@ void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
  *      v_start contains the vertical position.
  *
  * Notes:
+ *      This function performs the first initial vertical positioning, as
+ *          described in the Wiki.
  *      This is called at most twice: once to set the left margin at the
  *          start of document processing, and once if the first element is a
  *          paragraph (:P.) which has an indent.
@@ -1290,5 +1654,4 @@ void fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len )
     fb_line_block( &(bin_driver->vline), h_start, v_start, 0, v_len, "VLINE" );
     return;
 }
-
 

@@ -29,6 +29,7 @@
 *                   df_increment_pages()
 *                   df_interpret_device_functions()
 *                   df_interpret_driver_functions()
+*                   df_new_section()
 *                   df_populate_device_table()
 *                   df_populate_driver_table()
 *                   df_set_horizontal()
@@ -425,7 +426,7 @@ void format_error( void )
 static void resize_staging( size_t count )
 {
     if( staging.length < count ) {
-        staging.data = (uint8_t *) mem_realloc( staging.data, count );
+        staging.text = (uint8_t *) mem_realloc( staging.text, count );
         staging.length = count;
     }
     return;
@@ -525,22 +526,23 @@ static void * df_dotab( void )
 
         resize_staging( count );
         if( ps_device ) {
-            staging.data[staging.current] = '(';
+            staging.text[staging.current] = '(';
             staging.current++;
         }
 
         for( i = 0; i < count; i++) {
-            staging.data[staging.current] = ' ';
+            staging.text[staging.current] = ' ';
             staging.current++;
         }
 
         if( ps_device ) {
-            memcpy_s( &staging.data[staging.current], ps_suffix_size, \
+            memcpy_s( &staging.text[staging.current], ps_suffix_size, \
                                             ps_suffix, ps_suffix_size  );
             staging.current += ps_suffix_size;
         }
 
-        ob_insert_block( staging.data, staging.current, true, true );
+        ob_insert_block( staging.text, staging.current, true, true, \
+                                                    current_state.font_number );
         staging.current = 0;
     }
     instance--;
@@ -1092,7 +1094,8 @@ static void out_text_driver( bool out_trans, bool out_text )
         memcpy_s( &count, sizeof( count ), current_df_data.current, \
                                                                 sizeof( count ) );
         current_df_data.current += sizeof( count );
-        ob_insert_block( current_df_data.current, count, out_trans, out_text );
+        ob_insert_block( current_df_data.current, count, out_trans, out_text, \
+                                                    current_state.font_number );
         break;
 
     case 0x10:
@@ -1110,7 +1113,8 @@ static void out_text_driver( bool out_trans, bool out_text )
         current_df_data.current = current_df_data.base + my_parameters.first;
         first = process_parameter();
         count = strlen( first );
-        ob_insert_block( first, count, out_trans, out_text );
+        ob_insert_block( first, count, out_trans, out_text, \
+                                                    current_state.font_number );
 
         /* Free the memory allocated to the parameter. */
 
@@ -2387,6 +2391,56 @@ void df_interpret_driver_functions( uint8_t * in_function )
     return;
 }
 
+/* Function df_new_section().
+ * Performs the work of fb_new_section(). This function is very specialized.
+ *
+ * Parameter:
+ *      v_start contains the desired starting vertical position.
+ */
+ 
+void df_new_section( uint32_t v_start )
+{
+    uint32_t    save_font;
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* Save desired_state.font_number and set it to 0 for the :NEWPAGE and
+     * and :NEWLINE blocks.
+     */
+
+    save_font = desired_state.font_number;
+    desired_state.font_number = 0;
+
+    /* Interpret the DOCUMENT_PAGE :PAUSE block. */
+
+    if( bin_device->pauses.docpage_pause != NULL ) \
+        df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
+
+    /* Interpret the :NEWPAGE block. */
+
+    df_interpret_driver_functions( bin_driver->newpage.text );
+
+    /* Set up for a new document page. */
+
+    df_increment_pages();
+
+    /* Do the initial vertical positioning for the section. */
+
+    desired_state.y_address = v_start;
+    fb_normal_vertical_positioning();
+
+    /* Restore the value of desired_state.font_number. This ensures that the
+     * next font switch decision and font switch, if any, will be done using
+     * the correct fonts.
+     */
+
+    desired_state.font_number = save_font;
+
+    return;
+}
+
 /* Function df_populate_device_table().
  * Modifies the entries in device_function_table so that all the device
  * functions which are supposed to work for function blocks in :DEVICE blocks
@@ -2526,7 +2580,7 @@ void df_setup( void )
 
     /* Initialize staging to hold 80 characters. */     
 
-    staging.data = (uint8_t *) mem_alloc( 80 );
+    staging.text = (uint8_t *) mem_alloc( 80 );
     staging.length = 80;
     staging.current = 0;
 
@@ -2549,11 +2603,11 @@ void df_teardown( void )
         time_val = NULL;
     }
     
-    if( staging.data != NULL ) {
-        mem_free( staging.data);
+    if( staging.text != NULL ) {
+        mem_free( staging.text);
         staging.current = 0;
         staging.length = 0;
-        staging.data = NULL;
+        staging.text = NULL;
     }
 
     return;

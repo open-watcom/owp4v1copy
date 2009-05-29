@@ -131,6 +131,38 @@ static void emulate_wgml( void )
     net_page_height = bin_device->page_depth;
     net_page_width = bin_device->page_width;
 
+    /* Test the input translation. */
+
+    out_msg( "Using characters to set the translations\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    cop_ti_table( "i j t u", 7 );
+    out_msg( ".ti table set to translate 'i' to 'j' and 't' to 'u'\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    cop_ti_table( "i", 1 );
+    out_msg( ".ti table reset to translate 'i' to 'i'\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    cop_ti_table( "", 0 );
+    out_msg( ".ti table reset\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+
+    out_msg( "Using hexadecimals to set the translations\n" );
+    cop_ti_table( "69 6A 74 75", 11 );
+    out_msg( ".ti table set to translate 'i' to 'j' and 't' to 'u'\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    cop_ti_table( "69", 2 );
+    out_msg( ".ti table reset to translate 'i' to 'i'\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    cop_ti_table( "", 0 );
+    out_msg( ".ti table reset\n" );
+    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+
     /* First pass processing. */
     /* START processing.*/
 
@@ -141,6 +173,8 @@ static void emulate_wgml( void )
     fb_document();
 
     /* Last pass processing. */
+
+// May need third page to test fb_new_section().
 
     /* First page. */
 

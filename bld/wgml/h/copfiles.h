@@ -66,19 +66,23 @@
 *               the variables:
 *                   bin_device
 *                   bin_driver
-*                   bin_fonts
 *                   ps_device
 *                   wgml_font_cnt
 *                   wgml_fonts
 *               the functions:
+*                   cop_in_trans()
+*                   cop_out_trans()
 *                   cop_setup()
 *                   cop_teardown()
 *                   cop_text_width()
+*                   cop_ti_table()
+*                   cop_tr_table()
 *                   fb_dbox()
 *                   fb_document()
 *                   fb_document_page()
 *                   fb_finish()
 *                   fb_hline()
+*                   fb_new_section()
 *                   fb_position()
 *                   fb_start()
 *                   fb_vline()
@@ -120,7 +124,8 @@ typedef struct {
 } translation;
 
 /* To hold the data extracted from an OuttransBlock struct.
- * The entry for a given character will be NULL if no out-translation is needed.
+ * The entry for a given character will be NULL if no out-translation
+ * was specified.
  */
 
 typedef struct {
@@ -486,6 +491,8 @@ typedef struct cop_font {
     width_block *       width;
 } cop_font;
 
+/* This struct implements the wgml_font struct in the Wiki. */
+
 typedef struct {
     cop_font            *   bin_font;
     fontswitch_block    *   font_switch;
@@ -502,6 +509,17 @@ typedef struct {
     uint32_t                spc_width;
 } wgml_font;
 
+/* This struct is used with the output buffer. current records the current
+ * write position, length records the number of bytes pointed to by text,
+ * and text points to the bytes to be inserted into the output buffer.
+ */
+
+typedef struct {
+    size_t                  current;
+    size_t                  length;
+    uint8_t     *           text;
+} record_buffer;
+
 /* Variable declarations. */
 
 #ifndef global
@@ -511,7 +529,6 @@ typedef struct {
 global bool             ps_device;      // true if device is PostScript
 global cop_device   *   bin_device;     // binary device being used
 global cop_driver   *   bin_driver;     // binary driver being used
-global cop_font     *   bin_fonts;      // binary fonts being used (linked list)
 global uint16_t         wgml_font_cnt;  // number of available fonts
 global wgml_font    *   wgml_fonts;     // the available fonts
 
@@ -525,17 +542,22 @@ global wgml_font    *   wgml_fonts;     // the available fonts
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-extern void             cop_setup( void );
-extern void             cop_teardown( void );
-extern uint32_t         cop_text_width( uint8_t * text, uint32_t length, uint32_t font );
-extern void             fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
-extern void             fb_document( void );
-extern void             fb_document_page( void );
-extern void             fb_finish( void );
-extern void             fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
-extern void             fb_position( uint32_t h_start, uint32_t v_start );
-extern void             fb_start( void );
-extern void             fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
+extern uint8_t              cop_in_trans( uint8_t in_char, uint32_t font );
+extern record_buffer    *   cop_out_trans( uint8_t * text, uint32_t count, record_buffer * in_out, uint32_t font );
+extern void                 cop_setup( void );
+extern void                 cop_teardown( void );
+extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint32_t font );
+extern void                 cop_ti_table( uint8_t * data, uint32_t count );
+extern void                 cop_tr_table( uint8_t * data, uint32_t count );
+extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
+extern void                 fb_document( void );
+extern void                 fb_document_page( void );
+extern void                 fb_finish( void );
+extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
+extern void                 fb_new_section( uint32_t v_start );
+extern void                 fb_position( uint32_t h_start, uint32_t v_start );
+extern void                 fb_start( void );
+extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
