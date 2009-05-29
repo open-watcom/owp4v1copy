@@ -127,6 +127,7 @@ static  void    ReCalcAddrTaken( void )
         if( temp->v.usage & VAR_VOLATILE ) continue;
         if( temp->v.symbol != NULL &&
             ( FEAttr( temp->v.symbol ) & FE_ADDR_TAKEN ) ) continue;
+        if( temp->t.temp_flags & STACK_PARM ) continue; /* See DoParmDecl() */
         temp->v.usage &= ~USE_ADDRESS;
     }
     FindReferences();

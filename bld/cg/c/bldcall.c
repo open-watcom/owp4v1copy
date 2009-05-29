@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Build a subroutine call.
+* Description:  Build a subroutine or a subroutine call.
 *
 ****************************************************************************/
 
@@ -323,6 +323,7 @@ extern  name    *DoParmDecl( sym_handle sym, type_def *tipe, hw_reg_set reg ) {
     name                *parm_name;
     type_class_def      class;
     type_def            *ptipe;
+    bool                no_temp;
 
     ptipe = QParmType( AskForLblSym( CurrProc->label ), sym, tipe );
     class = TypeClass( ptipe );
@@ -333,13 +334,25 @@ extern  name    *DoParmDecl( sym_handle sym, type_def *tipe, hw_reg_set reg ) {
         BGDone( MakeAddrName( CG_FE, sym, tipe ) );
     }
     temp->v.usage |= USE_IN_ANOTHER_BLOCK;
+
+    no_temp = class == XX;
+#if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
+    // The arguments of an interrupt routine coming in on the stack are used
+    // for input and output; routine epilog pops them into registers. Handle
+    // them specially to stop the optimizer from eliminating the writes (don't
+    // create temps normally used with simple types).
+    if( _RoutineIsInterrupt( CurrProc->state.attr ) && HW_CEqual( reg, HW_EMPTY ) ) {
+        no_temp = TRUE;
+        temp->v.usage |= USE_ADDRESS;
+    }
+#endif
 #if _TARGET & _TARG_RISC
     if( class == XX ) {
         return( DoAlphaParmDecl( reg, sym, tipe, temp ) );
     }
 #endif
     if( HW_CEqual( reg, HW_EMPTY ) ) {
-        if( class == XX ) {
+        if( no_temp ) {
             parm_name = temp;
             parm_name->t.location = ParmMem( tipe->length, ParmAlignment( ptipe ), &CurrProc->state );
         } else {
