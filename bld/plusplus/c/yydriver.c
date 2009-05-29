@@ -2850,6 +2850,8 @@ DECL_INFO *ReparseFunctionDeclaration( REWRITE *defn )
 
     newExprStack( &decl_state, Y_FUNCTION_DECL_SPECIAL );
     syncLocation();
+    pushDefaultDeclSpec( &decl_state );
+
     /* do parse */
     for(;;) {
         do {
