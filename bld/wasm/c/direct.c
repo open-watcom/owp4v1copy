@@ -926,13 +926,13 @@ uint_32 GetCurrSegAlign( void )
     if( CurrSeg == NULL )
         return( 0 );
     switch( CurrSeg->seg->e.seginfo->align ) {
-    case ALIGN_ABS: // same as byte aligned ?
     case ALIGN_BYTE:
         return( 1 );
     case ALIGN_WORD:
         return( 2 );
     case ALIGN_DWORD:
         return( 4 );
+    case ALIGN_ABS: /* Paragraph aligned by definition. */
     case ALIGN_PARA:
         return( 16 );
     case ALIGN_PAGE:

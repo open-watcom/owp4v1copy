@@ -7,6 +7,7 @@ alias.dis &
 alignorg.dis &
 anon.dis &
 anthony.dis &
+atseg.dis &
 backquot.dis &
 bar.dis &
 beep.dis &
