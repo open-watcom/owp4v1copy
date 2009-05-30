@@ -45,7 +45,9 @@ Options:                    ( /option is also supported )
 -nm=<name>          set module name
 -nt=<name>          set name of text segment
 -o                  allow C form of octal constants
--zcm                set C name mangler to MASM compatible mode
+-zcm=<mode>         set compatibility mode - watcom, masm or tasm
+                    if <mode> is not specified then masm is used,
+                    default mode is watcom
 -zld                suppress generation of file dependency info in object file
 -zq or -q           operate quietly
 -zz                 remove '@size' from STDCALL function names

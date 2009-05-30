@@ -178,8 +178,10 @@ typedef struct label_list {
     struct label_list   *next;
     char                *label;         // name of parameter
     char                *replace;       // string that replaces the label
+    struct asm_sym      *sym;           // structure definition or local label symbol
     int                 size;           // size of parameter
     int                 factor;         // for local var only
+    int                 is_register;    // for arguments only
     union {
         unsigned        is_vararg   :1; // if it is a vararg
         int             count;          // number of element in this label
@@ -190,6 +192,7 @@ typedef struct {
     regs_list           *regslist;      // list of registers to be saved
     label_list          *paralist;      // list of parameters
     label_list          *locallist;     // list of local variables
+    label_list          *labellist;     // list of local labels
     int                 parasize;       // total no. of bytes used by parameters
     int                 localsize;      // total no. of bytes used by local variables
     memtype             mem_type;       // distance of procedure: near or far
@@ -234,6 +237,7 @@ typedef struct field_list {
     struct field_list   *next;
     char                *initializer;
     char                *value;
+    struct asm_sym      *sym;
 } field_list;
 
 typedef struct {
@@ -284,7 +288,9 @@ extern a_definition_struct      Definition;
 typedef struct {
     dist_type           distance;        // stack distance;
     mod_type            model;           // memory model;
+#if defined( _STANDALONE_ )
     lang_type           langtype;        // language;
+#endif
     os_type             ostype;          // operating system;
     unsigned            use32       :1;  // If 32-bit segment is used
     unsigned            cmdline     :1;
@@ -320,6 +326,7 @@ extern seg_list         *CurrSeg;       // points to stack of opened segments
 extern dir_node         *dir_insert( const char *, int );
 extern void             dir_to_sym( dir_node * );
 extern void             dir_change( dir_node *, int );
+extern void             dir_init( dir_node  *, int );
 
 extern uint_32          GetCurrAddr( void );    // Get offset from current segment
 
@@ -335,6 +342,9 @@ extern int              SetCurrSeg( int );      // open or close a segment in
                                                 // the second pass
 extern int              ProcDef( int, bool );   // define a procedure
 extern int              LocalDef( int );        // define local variables to procedure
+extern int              ArgDef( int );          // define arguments in procedure
+extern int              UsesDef( int );         // define used registers in procedure
+extern int              EnumDef( int );         // handles enumerated values
 extern int              ProcEnd( int );         // end a procedure
 extern int              Ret( int, int, int );   // emit return statement from procedure
 extern int              WritePrologue( void );  // emit prologue statement after the
@@ -346,6 +356,8 @@ extern int              SimSeg( int );          // handle simplified segment
 extern int              Include( int );         // handle an INCLUDE statement
 extern int              IncludeLib( int );      // handle an INCLUDELIB statement
 extern int              Model( int );           // handle .MODEL statement
+
+extern int              CheckForLang( int );
 
 extern void             ModuleInit( void );
 /* Initializes the information about the module, which are contained in

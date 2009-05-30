@@ -47,6 +47,10 @@ extern int              OrgDirective( int );
 extern int              AlignDirective( uint_16, int );
 extern int              ForDirective( int, enum irp_type );
 
+#if defined( _STANDALONE_ )
+extern global_options   Options;
+#endif
+
 int directive( int i, long direct )
 /* Handle all directives */
 {
@@ -54,6 +58,12 @@ int directive( int i, long direct )
 
     /* no expansion on the following */
     switch( direct ) {
+    case T_MASM:
+        Options.mode &= ~MODE_IDEAL;
+        return( NOT_ERROR );
+    case T_IDEAL:
+        Options.mode |= MODE_IDEAL;
+        return( NOT_ERROR );
     case T_DOT_286C:
         direct = T_DOT_286;
     case T_DOT_8086:
@@ -77,10 +87,46 @@ int directive( int i, long direct )
     case T_DOT_XMM:
     case T_DOT_XMM2:
     case T_DOT_XMM3:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        } else {
+            ret = cpu_directive(direct);
+            if( Parse_Pass != PASS_1 )
+                ret = NOT_ERROR;
+            return( ret );
+        }
+    case T_P286N:
+        direct = T_P286;
+    case T_P8086:
+    case T_P186:
+    case T_P286:
+    case T_P286P:
+    case T_P386:
+    case T_P386P:
+    case T_P486:
+    case T_P486P:
+    case T_P586:
+    case T_P586P:
+    case T_P686:
+    case T_P686P:
+    case T_P8087:
+    case T_P287:
+    case T_P387:
+    case T_PK3D:
+    case T_PMMX:
+    case T_PXMM:
+    case T_PXMM2:
+    case T_PXMM3:
         ret = cpu_directive(direct);
-        if( Parse_Pass != PASS_1 ) ret = NOT_ERROR;
+        if( Parse_Pass != PASS_1 )
+            ret = NOT_ERROR;
         return( ret );
     case T_DOT_DOSSEG:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
     case T_DOSSEG:
         Globals.dosseg = TRUE;
         return( NOT_ERROR );
@@ -114,20 +160,34 @@ int directive( int i, long direct )
     case T_DOT_ERRNB:
     case T_DOT_ERRNDEF:
     case T_DOT_ERRNZ:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
+    case T_ERR:
+    case T_ERRIFB:
+    case T_ERRIFDEF:
+    case T_ERRIFDIF:
+    case T_ERRIFDIFI:
+    case T_ERRIFE:
+    case T_ERRIFIDN:
+    case T_ERRIFIDNI:
+    case T_ERRIFNDEF:
         return( conditional_error_directive( i ) );
     case T_ENDS:
-        if( Definition.struct_depth != 0 ) {
-            return( StructDef( i-1 ) );
-        }
+        if( Definition.struct_depth != 0 )
+            return( StructDef( i ) );
         // else fall through to T_SEGMENT
     case T_SEGMENT:
-        return( Parse_Pass == PASS_1 ? SegDef(i-1) : SetCurrSeg(i-1) );
+        return( Parse_Pass == PASS_1 ? SegDef(i) : SetCurrSeg(i) );
     case T_GROUP:
-        return( Parse_Pass == PASS_1 ? GrpDef(i-1) : NOT_ERROR );
+        return( Parse_Pass == PASS_1 ? GrpDef(i) : NOT_ERROR );
     case T_PROC:
-        return( ProcDef( i-1, TRUE ) );
+        return( ProcDef( i, TRUE ) );
     case T_ENDP:
-        return( ProcEnd(i-1) );
+        return( ProcEnd(i) );
+    case T_ENUM:
+        return( EnumDef( i ) );
     case T_DOT_CODE:
     case T_DOT_STACK:
     case T_DOT_DATA:
@@ -135,7 +195,21 @@ int directive( int i, long direct )
     case T_DOT_FARDATA:
     case T_DOT_FARDATA_UN:
     case T_DOT_CONST:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
+    case T_CODESEG:
+    case T_STACK:
+    case T_DATASEG:
+    case T_UDATASEG:
+    case T_FARDATA:
+    case T_UFARDATA:
+    case T_CONST:
         return( SimSeg(i) );
+    case T_WARN:
+    case T_NOWARN:
+        return( NOT_ERROR ); /* Not implemented yet */
     case T_DOT_ALPHA:
     case T_DOT_SEQ:
     case T_DOT_LIST:
@@ -148,22 +222,20 @@ int directive( int i, long direct )
     case T_DOT_TFCOND:
     case T_DOT_SFCOND:
     case T_DOT_LFCOND:
-    case T_PAGE:
-    case T_TITLE:
-    case T_SUBTITLE:
-    case T_SUBTTL:
     case T_DOT_CREF:
     case T_DOT_XCREF:
     case T_DOT_NOCREF:
     case T_DOT_SALL:
+    case T_PAGE:
+    case T_TITLE:
+    case T_SUBTITLE:
+    case T_SUBTTL:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
         AsmWarn( 4, IGNORING_DIRECTIVE );
         return( NOT_ERROR );
-    case T_ECHO:
-    case T_HIGH:
-    case T_HIGHWORD:
-    case T_LOW:
-    case T_LOWWORD:
-        /* these could possibly be useful */
     case T_DOT_BREAK:
     case T_DOT_CONTINUE:
     case T_DOT_ELSE:
@@ -174,72 +246,92 @@ int directive( int i, long direct )
     case T_DOT_REPEAT:
     case T_DOT_UNTIL:
     case T_DOT_WHILE:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
+    case T_ECHO:
+    case T_HIGH:
+    case T_HIGHWORD:
+    case T_LOW:
+    case T_LOWWORD:
     case T_ADDR:
     case T_BOUND:
     case T_CASEMAP:
-    case T_CATSTR:
     case T_INVOKE:
     case T_LROFFSET:
-    case T_MASK:
     case T_OPATTR:
     case T_OPTION:
     case T_POPCONTEXT:
-    case T_PROTO:
-    case T_PURGE:
     case T_PUSHCONTEXT:
-    case T_RECORD:
+    case T_PROTO:
     case T_THIS:
+    case T_WIDTH:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
+    case T_CATSTR:
+    case T_MASK:
+    case T_PURGE:
+    case T_RECORD:
     case T_TYPEDEF:
     case T_UNION:
-    case T_WIDTH:
         AsmError( NOT_SUPPORTED );
         return( ERROR );
     case T_ORG:
         ExpandTheWorld( 0, FALSE, TRUE );
         break;
-    case T_EQU2:    // =
+    case T_TEXTEQU:     /* TEXTEQU */
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
+    case T_EQU2:        /* = */
+    case T_EQU:         /* EQU */
         /* expand any constants and simplify any expressions */
-//        if( Parse_Pass == PASS_1 ) {
-            ExpandTheConstant( 0, FALSE, TRUE );
-//        }
+        ExpandTheConstant( 0, FALSE, TRUE );
         break;
-    case T_EQU:     // EQU
-        /* expand any constants and simplify any expressions */
-//        if( Parse_Pass == PASS_1 ) {
-            ExpandTheConstant( 0, FALSE, TRUE );
-//        }
-        break;
-    case T_TEXTEQU: // TEXTEQU
-        /* expand any constants and simplify any expressions */
-//        if( Parse_Pass == PASS_1 ) {
-            ExpandTheConstant( 0, FALSE, TRUE );
-//        }
-        break;
-    case T_NAME:
-        // no expand parameters
+    case T_NAME:        /* no expand parameters */
         break;
     case T_DOT_STARTUP:
     case T_DOT_EXIT:
+        if( Options.mode & MODE_IDEAL ) {
+            AsmError( UNKNOWN_DIRECTIVE );
+            return( ERROR );
+        }
+    case T_STARTUPCODE:
+    case T_EXITCODE:
     default:
         /* expand any constants in all other directives */
-        //if( Parse_Pass == PASS_1 ) {
-            ExpandAllConsts( 0, FALSE );
-        //}
+        ExpandAllConsts( 0, FALSE );
         break;
     }
 
     switch( direct ) {
     case T_ALIAS:
-        return( Parse_Pass == PASS_1 ? AddAlias( i-1 ) : NOT_ERROR );
-    case T_GLOBAL:
-    case T_EXTERNDEF:
-        return( Parse_Pass == PASS_1 ? ExtDef( i+1, TRUE ) : NOT_ERROR );
+        if( Parse_Pass == PASS_1 )
+            return( AddAlias( i ) );
+        return( NOT_ERROR );
     case T_EXTERN:
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
     case T_EXTRN:
         return( Parse_Pass == PASS_1 ? ExtDef( i+1, FALSE ) : NOT_ERROR );
     case T_COMM:
         return( Parse_Pass == PASS_1 ? CommDef(i+1) : NOT_ERROR );
+    case T_EXTERNDEF:
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
+    case T_GLOBAL:
+        return( Parse_Pass == PASS_1 ? ExtDef( i+1, TRUE ) : NOT_ERROR );
     case T_DOT_MODEL:
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
+    case T_MODEL:
         return( Model(i) );
     case T_INCLUDE:
         return( Include(i+1) );
@@ -256,18 +348,27 @@ int directive( int i, long direct )
     case T_TEXTEQU:
         return( DefineConstant( i-1, TRUE, TRUE ) );
     case T_MACRO:
-        return( MacroDef(i-1, FALSE ) );
+        return( MacroDef(i, FALSE ) );
     case T_ENDM:
         return( MacroEnd( FALSE ) );
     case T_EXITM:
         return( MacroEnd( TRUE ) );
+    case T_ARG:
+        return( Parse_Pass == PASS_1 ? ArgDef(i) : NOT_ERROR );
+    case T_USES:
+        return( Parse_Pass == PASS_1 ? UsesDef(i) : NOT_ERROR );
     case T_LOCAL:
         return( Parse_Pass == PASS_1 ? LocalDef(i) : NOT_ERROR );
     case T_COMMENT:
+        if( Options.mode & MODE_IDEAL )
+            break;
         return( Comment( START_COMMENT, i ) );
-    case T_STRUC:
     case T_STRUCT:
-        return( StructDef( i-1 ) );
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
+    case T_STRUC:
+        return( StructDef( i ) );
     case T_NAME:
         return( Parse_Pass == PASS_1 ? NameDirective(i) : NOT_ERROR );
     case T_LABEL:
@@ -278,16 +379,27 @@ int directive( int i, long direct )
     case T_EVEN:
         return( AlignDirective( direct, i ) );
     case T_FOR:
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
     case T_IRP:
         return( ForDirective ( i+1, IRP_WORD ) );
     case T_FORC:
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
     case T_IRPC:
         return( ForDirective ( i+1, IRP_CHAR ) );
-    case T_REPT:
     case T_REPEAT:
+        if( Options.mode & MODE_IDEAL ) {
+            break;
+        }
+    case T_REPT:
         return( ForDirective ( i+1, IRP_REPEAT ) );
     case T_DOT_STARTUP:
     case T_DOT_EXIT:
+    case T_STARTUPCODE:
+    case T_EXITCODE:
         return( Startup ( i ) );
     }
     AsmError( UNKNOWN_DIRECTIVE );

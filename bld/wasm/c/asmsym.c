@@ -53,6 +53,9 @@ static char             dots[] = " . . . . . . . . . . . . . . . .";
 #ifdef DEBUG_OUT
 void    DumpASym( void );   /* Forward declaration */
 #endif
+extern asm_sym          *FindLocalLabel( const char *name );
+extern int              AddLocalLabel( asm_sym *sym );
+extern asm_sym          *FindStructureMember( asm_sym *symbol , const char *name );
 
 #else
 
@@ -147,9 +150,21 @@ static struct asm_sym **AsmFind( const char *name )
     sym = &AsmSymHead;
 #endif
     for( ; *sym; sym = &((*sym)->next) ) {
-        if( stricmp( name, (*sym)->name ) == 0 ) {
-            return( sym );
+#if defined( _STANDALONE_ )
+        if( Options.mode & MODE_IDEAL ) {
+            if( strcmp( name, (*sym)->name ) == 0 ) {
+                break;
+            }
+        } else {
+            if( stricmp( name, (*sym)->name ) == 0 ) {
+                break;
+            }
         }
+#else
+        if( stricmp( name, (*sym)->name ) == 0 ) {
+            break;
+        }
+#endif
     }
     return( sym );
 }
@@ -159,12 +174,39 @@ struct asm_sym *AsmLookup( const char *name )
 {
     struct asm_sym      **sym_ptr;
     struct asm_sym      *sym;
-
+#if defined( _STANDALONE_ )
+    struct asm_sym      *structure;
+#endif
     if( strlen( name ) > MAX_ID_LEN ) {
         AsmError( LABEL_TOO_LONG );
         return NULL;
     }
-
+#if defined( _STANDALONE_ )
+    if( Options.mode & MODE_IDEAL ) {
+        if( name[0] == '@' && name[1] == '@' ) {
+            if( CurrProc == NULL ) {
+                AsmError( LOCAL_LABEL_OUTSIDE_PROC );
+                return( NULL );
+            }
+            sym = FindLocalLabel( name );
+            if( sym == NULL ) {
+                sym = AllocASym( name );
+                if( sym != NULL) {
+                    if( AddLocalLabel( sym ) == ERROR )
+                    return( NULL );
+                }
+            }
+            return sym;
+        }
+        if( Definition.struct_depth != 0 ) {
+            structure = &Definition.curr_struct->sym;
+            sym = FindStructureMember( structure, name );
+            if( sym == NULL )
+                return( AllocASym( name ) );
+            return sym;
+        }
+    }
+#endif
     sym_ptr = AsmFind( name );
     sym = *sym_ptr;
     if( sym != NULL ) {
@@ -198,7 +240,7 @@ struct asm_sym *AsmLookup( const char *name )
     return( sym );
 }
 
-static void FreeASym( struct asm_sym *sym )
+void FreeASym( struct asm_sym *sym )
 /*****************************************/
 {
 #if defined( _STANDALONE_ )
@@ -301,8 +343,23 @@ struct asm_sym *AllocDSym( const char *name, int add_symbol )
 struct asm_sym *AsmGetSymbol( const char *name )
 /**********************************************/
 {
-    struct asm_sym  **sym_ptr;
+    struct asm_sym  **sym_ptr, *structure;
 
+#if defined( _STANDALONE_ )
+    if( Options.mode & MODE_IDEAL ) {
+        if( name[0] == '@' && name[1] == '@' ) {
+            if( CurrProc == NULL ) {
+                AsmError( LOCAL_LABEL_OUTSIDE_PROC );
+                return( NULL );
+            }
+            return( FindLocalLabel( name ) );
+        }
+        if( Definition.struct_depth != 0 ) {
+            structure = &Definition.curr_struct->sym;
+            return( FindStructureMember( structure, name ) );
+        }
+    }
+#endif
     sym_ptr = AsmFind( name );
 #if defined( _STANDALONE_ )
     if( ( *sym_ptr != NULL ) && IS_SYM_COUNTER( name ) )

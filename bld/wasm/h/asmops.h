@@ -120,7 +120,9 @@ enum state {
         T_MINUS         = '-',
         T_DOT           = '.',
         T_QUESTION_MARK = '?',
-        T_PERCENT       = '%'
+        T_PERCENT       = '%',
+        T_OP_BRACE      = '{',
+        T_CL_BRACE      = '}'
 };
 
 typedef struct asm_tok {

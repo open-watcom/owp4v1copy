@@ -85,19 +85,6 @@
 #define BYTE_10                 10
 #define BYTE_16                 16
 
-enum naming_conventions {
-    DO_NOTHING,
-    ADD_USCORES,            /*  put uscores on the front of labels
-                             *  & the back of procedures
-                             *  this is what the compiler does with /3r
-                             */
-    REMOVE_USCORES,         /*
-                             * assume that the user manually put uscores
-                             * as described above into the assembly file
-                             * and take them off
-                             */
-};
-
 #if defined( _STANDALONE_ )
 
 #define DELIM                   " ,\t\0"
@@ -151,6 +138,14 @@ enum fpe {
     NO_FP_ALLOWED
 };
 
+typedef enum smode {
+    MODE_MASM6  = 0,
+    MODE_MASM5  = 1,
+    MODE_WATCOM = 2,
+    MODE_TASM   = 4,
+    MODE_IDEAL  = 8
+} smode;
+
 typedef struct global_options {
     bool        sign_value;     /* TRUE -> WORD & DWORD are only unsigned
                                    signed #'s are SWORD & SDWORD instead. */
@@ -158,7 +153,6 @@ typedef struct global_options {
     bool        quiet;
     bool        banner_printed;
     bool        debug_flag;
-    char        naming_convention;
     enum fpe    floating_point;
     bool        output_comment_data_in_code_records;
 
@@ -179,13 +173,14 @@ typedef struct global_options {
   #ifdef DEBUG_OUT
     char        debug;
   #endif
-    char *      default_name_mangler;
+    char        *default_name_mangler;
     bool        allow_c_octals;
     bool        emit_dependencies;
-    bool        watcom_c_mangler;
     bool        use_stdcall_at_number;
     bool        mangle_stdcall;
     bool        write_listing;
+    bool        watcom_parms_passed_by_regs;
+    smode       mode;
 } global_options;
 
 extern global_options Options;

@@ -100,7 +100,7 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
         if( Modend ) {
             fixup->fixup_seg = NULL;
         } else {
-            fixup->fixup_seg = CurrSeg->seg;
+            fixup->fixup_seg = GetCurrSeg();
         }
         fixup->frame = Frame;                   // this is just a guess
         fixup->next = sym->fixup;

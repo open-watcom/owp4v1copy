@@ -199,6 +199,7 @@ enum operand3_type {
    differentiate between them */
 /* store OP_SPECIAL in operand slot, this const. somewhere else - RM_BYTE slot */
 #define OP_LABEL            0x1
+#define OP_IDEAL            0x1
 #define OP_REGISTER         0x2
 #define OP_RES_ID           0x4
 #define OP_DIRECTIVE        0x8

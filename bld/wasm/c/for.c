@@ -94,13 +94,17 @@ int ForDirective( int i, enum irp_type type )
     /* now make a macro */
     i = start;
     sprintf( buffer, "%s%d", macroname, Globals.for_counter );
-    AsmBuffer[i]->string_ptr = buffer;
-    AsmBuffer[i]->token = T_ID;
-    i++;
+    if( Options.mode & MODE_IDEAL ) {
+        AsmBuffer[i+1]->string_ptr = buffer;
+        AsmBuffer[i+1]->token = T_ID;
+    } else {
+        AsmBuffer[i]->string_ptr = buffer;
+        AsmBuffer[i++]->token = T_ID;
+    }
     AsmBuffer[i]->token = T_DIRECTIVE;
     AsmBuffer[i]->u.value = T_MACRO;
 
-    if( MacroDef( start, TRUE ) == ERROR ) return( ERROR );
+    if( MacroDef( i, TRUE ) == ERROR ) return( ERROR );
 
     /* now call the above macro with each of the given parms */
 

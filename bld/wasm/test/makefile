@@ -2,7 +2,7 @@
 
 wasmtest_name = result
 
-all_tests = test1 test2 test3 diag
+all_tests = test1 test2 test3 ideal diag
 
 !include environ.mif
 

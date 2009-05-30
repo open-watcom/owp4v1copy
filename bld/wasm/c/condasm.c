@@ -165,11 +165,17 @@ int conditional_error_directive( int i )
     case T_DOT_ERRDIFI:
     case T_DOT_ERRIDN:
     case T_DOT_ERRIDNI:
+    case T_ERRIFE:
+    case T_ERRIFDIF:
+    case T_ERRIFDIFI:
+    case T_ERRIFIDN:
+    case T_ERRIFIDNI:
         ExpandTheWorld( i+1, FALSE, TRUE );
     }
 
     switch( direct ) {
     case T_DOT_ERR:
+    case T_ERR:
         AsmErr( FORCED );
         return( ERROR );
     case T_DOT_ERRNZ:
@@ -179,24 +185,28 @@ int conditional_error_directive( int i )
         }
         break;
     case T_DOT_ERRE:
+    case T_ERRIFE:
         if( AsmBuffer[i+1]->token == T_NUM && !AsmBuffer[i+1]->u.value ) {
             AsmErr( FORCED_EQUAL, AsmBuffer[i+1]->u.value );
             return( ERROR );
         }
         break;
     case T_DOT_ERRDEF:
+    case T_ERRIFDEF:
         if( check_defd( AsmBuffer[i+1]->string_ptr ) ) {
             AsmErr( FORCED_DEF, AsmBuffer[i+1]->string_ptr );
             return( ERROR );
         }
         break;
     case T_DOT_ERRNDEF:
+    case T_ERRIFNDEF:
         if( !check_defd( AsmBuffer[i+1]->string_ptr ) ) {
             AsmErr( FORCED_NOT_DEF, AsmBuffer[i+1]->string_ptr );
             return( ERROR );
         }
         break;
     case T_DOT_ERRB:
+    case T_ERRIFB:
         if( AsmBuffer[i+1]->token == T_STRING &&
             check_blank( AsmBuffer[i+1]->string_ptr ) ) {
             AsmErr( FORCED_BLANK, AsmBuffer[i+1]->string_ptr );
@@ -204,6 +214,7 @@ int conditional_error_directive( int i )
         }
         break;
     case T_DOT_ERRNB:
+    case T_ERRIFNB:
         if( AsmBuffer[i+1]->token != T_STRING ||
             !check_blank( AsmBuffer[i+1]->string_ptr ) ) {
             AsmErr( FORCED_NOT_BLANK, AsmBuffer[i+1]->string_ptr );
@@ -211,24 +222,28 @@ int conditional_error_directive( int i )
         }
         break;
     case T_DOT_ERRDIF:
+    case T_ERRIFDIF:
         if( check_dif( TRUE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ) {
             AsmErr( FORCED_DIF, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr );
             return( ERROR );
         }
         break;
     case T_DOT_ERRDIFI:
+    case T_ERRIFDIFI:
         if( check_dif( FALSE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ) {
             AsmErr( FORCED_DIF, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr );
             return( ERROR );
         }
         break;
     case T_DOT_ERRIDN:
+    case T_ERRIFIDN:
         if( !check_dif( TRUE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ) {
             AsmErr( FORCED_IDN, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr );
             return( ERROR );
         }
         break;
     case T_DOT_ERRIDNI:
+    case T_ERRIFIDNI:
         if( !check_dif( FALSE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ) {
             AsmErr( FORCED_IDN, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr );
             return( ERROR );

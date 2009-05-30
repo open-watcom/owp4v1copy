@@ -117,12 +117,18 @@ static bool get_asmline( char *ptr, unsigned max, FILE *fp )
     /* blow away any comments -- look for ;'s */
     /* note that ;'s are ok in quoted strings */
 
-    skip = FALSE;
-    got_something = FALSE;
+    skip = got_something = FALSE;
     for( ;; ) {
         c = getc( fp );
         /* copy the line until we hit a NULL, newline, or ; not in a quote */
         switch( c ) {
+        case '\t':
+        case ' ':
+            if( quote != 0 )
+                break;
+            if( *(ptr - 1) == '\\' )
+                skip = TRUE;
+            break;
         case '\'':
         case '"':
         case '`':
@@ -156,6 +162,7 @@ static bool get_asmline( char *ptr, unsigned max, FILE *fp )
                 ptr--;
                 max++;
                 LineNumber++;
+                skip = FALSE;
                 continue; /* don't store character in string */
             }
             *ptr = '\0';
@@ -167,7 +174,7 @@ static bool get_asmline( char *ptr, unsigned max, FILE *fp )
             *ptr = '\0';
             return( got_something );
         }
-        if( !skip ) {
+        if( skip == FALSE ) {
             *ptr++ = c;
             if( --max <= 1 )
                 skip = TRUE;

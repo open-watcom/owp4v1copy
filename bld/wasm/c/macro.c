@@ -255,14 +255,18 @@ static int macro_exam( int i )
     uint                nesting_depth = 0;
     bool                store_data;
 
-    name = AsmBuffer[i++]->string_ptr;
+    if( Options.mode & MODE_IDEAL ) {
+        name = AsmBuffer[i+1]->string_ptr;
+    } else {
+        name = AsmBuffer[i]->string_ptr;
+    }
     dir = (dir_node *)AsmGetSymbol( name );
     info = dir->e.macroinfo;
 
     store_data = Parse_Pass == PASS_1 || info->data == NULL;
 
-    /* go past "MACRO" */
-    i++;
+    /* go past "MACRO" and name*/
+    i += 2;
 
     if( store_data ) {
         for( ; i < Token_Count ; ) {
@@ -470,12 +474,18 @@ int ExpandMacro( int tok_count)
         return( tok_count );
     }
     macro_name_loc = count;
-    if( AsmBuffer[count+1]->token == T_DIRECTIVE &&
-        AsmBuffer[count+1]->u.value == T_MACRO ) {
-        /* this is a macro DEFINITION! */
-        return( tok_count );
+    if( Options.mode & MODE_IDEAL ) {
+        count--;
+    } else {
+        count++;
     }
-
+    if( count >= 0 ) {
+        if( AsmBuffer[count]->token == T_DIRECTIVE &&
+            AsmBuffer[count]->u.value == T_MACRO ) {
+            /* this is a macro DEFINITION! */
+            return( tok_count );
+        }
+    }
     if( macro_name_loc != 0 ) {
         /* save the rest of the line from before the macro */
         PushLineQueue();
@@ -639,15 +649,21 @@ int ExpandMacro( int tok_count)
 int MacroDef( int i, bool hidden )
 /********************************/
 {
-    char                *name;
-    dir_node            *currproc;
+    char        *name;
+    int         n;
+    dir_node    *currproc;
 
-    if( i < 0 ) {
-        if( Parse_Pass == PASS_1 )
-            AsmError( PROC_MUST_HAVE_A_NAME );
+    if( Options.mode & MODE_IDEAL ) {
+        n = i + 1;
+    } else {
+        n = --i;
+    }
+    if( ( Parse_Pass == PASS_1 ) &&
+        ( ( n < 0 ) || ( AsmBuffer[n]->token != T_ID ) ) ) {
+        AsmError( PROC_MUST_HAVE_A_NAME );
         return( ERROR );
     }
-    name = AsmBuffer[i]->string_ptr;
+    name = AsmBuffer[n]->string_ptr;
     currproc = (dir_node *)AsmGetSymbol( name );
     if( currproc == NULL ) {
         currproc = dir_insert( name, TAB_MACRO );

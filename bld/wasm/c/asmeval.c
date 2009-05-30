@@ -30,10 +30,10 @@
 
 
 #include "asmglob.h"
-
 #include "asmeval.h"
 
 #if defined( _STANDALONE_ )
+#include "directiv.h"
 #include "myassert.h"
 #else
 //  FIXME!!
@@ -234,7 +234,16 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
     switch( AsmBuffer[i]->token ) {
     case T_NUM:
         new->empty = FALSE;
+#if defined( _STANDALONE_ )
+        if( (Options.mode & MODE_IDEAL) && ( op_sq_bracket_level ) ) {
+            new->type = EXPR_ADDR;
+            new->indirect = TRUE;
+        } else {
+            new->type = EXPR_CONST;
+        }
+#else
         new->type = EXPR_CONST;
+#endif
         new->value = AsmBuffer[i]->u.value;
         break;
     case T_STRING:
@@ -345,14 +354,30 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
         }
         if( new->sym != NULL ) {
             new->sym->referenced = TRUE;
-            if( new->sym->state == SYM_STRUCT ) {
+            if( ( new->sym->state == SYM_STRUCT  ) ||
+                (Options.mode & MODE_IDEAL) && ( new->sym->mem_type == MT_STRUCT ) ) {
                 new->empty = FALSE;
                 new->value = new->sym->offset;
                 new->mbr = new->sym;
                 new->sym = NULL;
                 new->type = EXPR_ADDR;
+                if( (Options.mode & MODE_IDEAL) && ( op_sq_bracket_level ) ) {
+                    Definition.struct_depth++;
+                    if( new->mbr->state == SYM_STRUCT ) {
+                        Definition.curr_struct = (dir_node *)new->mbr;
+                        (*start)++; /* Skip structure override and process next token */
+                        return( get_operand( new, start, end, is_expr ) );
+                    } else {
+                        new->indirect = TRUE;
+                        Definition.curr_struct = (dir_node *)new->mbr->structure;
+                    }
+                }
                 break;
             } else if( new->sym->state == SYM_STRUCT_FIELD ) {
+                if( (Options.mode & MODE_IDEAL) && ( Definition.struct_depth ) ) {
+                    Definition.struct_depth--;
+                    new->indirect = TRUE;
+                }
                 new->empty = FALSE;
                 new->mem_type = new->sym->mem_type;
                 new->value = new->sym->offset;
@@ -1051,9 +1076,13 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         case T_SBYTE:
         case T_SWORD:
         case T_SDWORD:
+            if( ( ( AsmBuffer[index + 1]->token != T_RES_ID ) ||
+                  ( AsmBuffer[index + 1]->u.value != T_PTR ) ) &&
+                  ( (Options.mode & MODE_IDEAL) == 0 ) ) {
+#else
+            if( ( AsmBuffer[index + 1]->token != T_RES_ID ) ||
+                ( AsmBuffer[index + 1]->u.value != T_PTR ) ) {
 #endif
-            if( ( AsmBuffer[index + 1]->token != T_RES_ID )
-                || ( AsmBuffer[index + 1]->u.value != T_PTR ) ) {
                 // Missing PTR operator
                 if( error_msg )
                     AsmError( MISSING_PTR_OPERATOR );
@@ -2154,12 +2183,19 @@ extern int EvalOperand( int *start_tok, int count, expr_list *result, bool flag_
         num++;
     }
     op_sq_bracket_level = 0;
-    error_msg = flag_msg;
-    if( evaluate( result, start_tok, *start_tok + num, PROC_BRACKET, is_expr2 ) == ERROR ) {
-        return( ERROR );
-    } else {
-        return( NOT_ERROR );
+#if defined( _STANDALONE_ )
+    if( Options.mode & MODE_IDEAL ) {
+        Definition.struct_depth = 0;
     }
+#endif
+    error_msg = flag_msg;
+    i = evaluate( result, start_tok, *start_tok + num, PROC_BRACKET, is_expr2 );
+#if defined( _STANDALONE_ )
+    if( Options.mode & MODE_IDEAL ) {
+        Definition.struct_depth = 0;
+    }
+#endif
+    return( i );
 }
 
 #if 0
@@ -2169,7 +2205,7 @@ static int is_expr_const( int i )
 {
     switch( AsmBuffer[i]->token ) {
     case T_INS:
-        switch( AsmBuffer[i]->value ) {
+        switch( AsmBuffer[i]->u.value ) {
 #if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
@@ -2192,7 +2228,7 @@ static int is_expr_const( int i )
             } else if( AsmBuffer[i-1]->token == T_COLON ) {
                 /* It is an instruction instead */
                 return( FALSE );
-            } else if( AsmBuffer[i-1]->value == T_LOCK ) {
+            } else if( AsmBuffer[i-1]->u.value == T_LOCK ) {
                 /* It is an instruction:
                          lock and dword ptr [ebx], 1
                 */

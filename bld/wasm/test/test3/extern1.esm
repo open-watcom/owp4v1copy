@@ -6,7 +6,7 @@ _TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
 		ASSUME CS:_TEXT, DS:DGROUP, SS:DGROUP
 proc1:
     ret         
-main:
+_main:
     call        near ptr proc1 
     call        near ptr proc2 
     ret         

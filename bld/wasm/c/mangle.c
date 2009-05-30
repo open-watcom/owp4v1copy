@@ -40,13 +40,12 @@
 enum changes {
     NORMAL           = 0,
     USCORE_FRONT     = 1,
-    USCORE_BACK      = 2,
-    REM_USCORE_FRONT = 4,
-    REM_USCORE_BACK  = 8,
-    UPPERCASE        = 16
+    USCORE_BACK      = 2
 };
 
 #define USCORE "_"
+
+extern int SymIs32( struct asm_sym *sym );
 
 typedef char *(*mangle_func)( struct asm_sym *, char * );
 
@@ -127,19 +126,22 @@ static char *WatcomCMangler( struct asm_sym *sym, char *buffer )
 {
     char                *name;
     char                *ptr = sym->name;
-    enum changes        changes = NORMAL;
+    enum changes        changes;
 
-    if( sym->state == SYM_PROC ) {
-        changes |= USCORE_BACK;
+    if( Options.watcom_parms_passed_by_regs == FALSE && SymIs32( sym ) ) {
+        changes = NORMAL;
+    } else if( sym->state == SYM_PROC ) {
+        changes = USCORE_BACK;
     } else {
         switch( sym->mem_type ) {
         case MT_NEAR:
         case MT_FAR:
         case MT_EMPTY:
-            changes |= USCORE_BACK;
+        case MT_PROC:
+            changes = USCORE_BACK;
             break;
         default:
-            changes |= USCORE_FRONT;
+            changes = USCORE_FRONT;
         }
     }
 
@@ -164,11 +166,7 @@ static char *WatcomCMangler( struct asm_sym *sym, char *buffer )
 static char *CMangler( struct asm_sym *sym, char *buffer )
 /********************************************************/
 {
-    if( Options.naming_convention == ADD_USCORES ) {
-        return( WatcomCMangler( sym, buffer ) );
-    } else {
-        return( AsmMangler( sym, buffer ) );
-    }
+    return( UScoreMangler( sym, buffer ) );
 }
 
 static mangle_func GetMangler( char *mangle_type )
@@ -179,7 +177,7 @@ static mangle_func GetMangler( char *mangle_type )
     mangler = NULL;
     if( mangle_type != NULL ) {
         if( stricmp( mangle_type, "C" ) == 0 ) {
-            mangler = CMangler;
+            mangler = WatcomCMangler;
         } else if( stricmp( mangle_type, "N" ) == 0 ) {
             mangler = AsmMangler;
         } else {
@@ -206,15 +204,11 @@ char *Mangle( struct asm_sym *sym, char *buffer )
     case LANG_PASCAL:
         mangler = UCaseMangler;
         break;
-    case LANG_WATCOM_C:          // registers passing parameters, only Open Watcom
+    case LANG_WATCOM_C:
         mangler = WatcomCMangler;
         break;
-    case LANG_C:                 // stack passing parameters
-        if( Options.watcom_c_mangler ) {
-            mangler = AsmMangler;
-        } else {
-            mangler = UScoreMangler;
-        }
+    case LANG_C:
+        mangler = CMangler;
         break;
     case LANG_NONE:
         mangler = sym->mangler;
