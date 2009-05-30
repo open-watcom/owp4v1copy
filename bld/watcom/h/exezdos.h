@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  ZDOS executable header.
 *
 ****************************************************************************/
 
 
 #ifndef _EXEZDOS_H
+#define _EXEZDOS_H
 
 #pragma pack(push,1)
 
@@ -54,5 +54,4 @@ typedef struct _zdos_exe_header {
 
 #pragma pack(pop)
 
-#define _EXEZDOS_H
 #endif
