@@ -643,9 +643,6 @@ static void dbg_output( void )
                 case T_OWORD:
                     DebugMsg(( " %s ", "OWord" ));
                     break;
-                case T_ABS:
-                    DebugMsg(( " %s ", "Abs" ));
-                    break;
                 default:
                     DebugMsg((" %s ", AsmBuffer[i]->string_ptr ));
                     break;

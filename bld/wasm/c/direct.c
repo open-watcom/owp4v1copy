@@ -2345,14 +2345,13 @@ int SetAssume( int i )
 
 
     for( i++; i < Token_Count; i++ ) {
-        if( ( AsmBuffer[i]->token == T_RES_ID )
-            && ( AsmBuffer[i]->u.value == T_NOTHING ) ) {
-            AssumeInit();
-            continue;
-        }
 
         token = AsmBuffer[i]->string_ptr;
         wipe_space( token );
+        if( token_cmp( &token, TOK_NOTHING, TOK_NOTHING ) != ERROR ) {
+            AssumeInit();
+            continue;
+        }
 
         i++;
 

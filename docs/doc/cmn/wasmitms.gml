@@ -15,112 +15,37 @@
 .ix '.686p'
 .ix '.8086'
 .ix '.8087'
-:cmt. .ix 'aaa'
-:cmt. .ix 'aad'
-:cmt. .ix 'aam'
-:cmt. .ix 'aas'
-:cmt. .ix 'abs'
-:cmt. .ix 'adc'
-:cmt. .ix 'add'
 :cmt. .ix 'addr'
-:cmt. .ix 'ah'
-:cmt. .ix 'al'
 :cmt. .ix 'alias'
 :cmt. .ix 'align'
 .ix '.alpha'
 :cmt. .ix 'and'
-:cmt. .ix 'arpl'
 :cmt. .ix 'assume'
-:cmt. .ix 'at'
-:cmt. .ix 'ax'
-:cmt. .ix 'basic'
-:cmt. .ix 'bh'
-:cmt. .ix 'bl'
 :cmt. .ix 'bound'
-:cmt. .ix 'bp'
 .ix '.break'
-:cmt. .ix 'bsf'
-:cmt. .ix 'bsr'
-:cmt. .ix 'bswap'
-:cmt. .ix 'bt'
-:cmt. .ix 'btc'
-:cmt. .ix 'btr'
-:cmt. .ix 'bts'
-:cmt. .ix 'bx'
 :cmt. .ix 'byte'
-:cmt. .ix 'c'
-:cmt. .ix 'call'
-:cmt. .ix 'callf'
 :cmt. .ix 'casemap'
 :cmt. .ix 'catstr'
-:cmt. .ix 'cbw'
-:cmt. .ix 'cdq'
-:cmt. .ix 'ch'
-:cmt. .ix 'cl'
-:cmt. .ix 'clc'
-:cmt. .ix 'cld'
-:cmt. .ix 'cli'
-:cmt. .ix 'clts'
-:cmt. .ix 'cmc'
-:cmt. .ix 'cmp'
-:cmt. .ix 'cmps'
-:cmt. .ix 'cmpsb'
-:cmt. .ix 'cmpsd'
-:cmt. .ix 'cmpsw'
-:cmt. .ix 'cmpxchg'
-:cmt. .ix 'cmpxchg8b'
 .ix '.code'
 :cmt. .ix 'comm'
 :cmt. .ix 'comment'
-:cmt. .ix 'common'
-:cmt. .ix 'compact'
 .ix '.const'
 .ix '.continue'
-:cmt. .ix 'cpuid'
-:cmt. .ix 'cr0'
-:cmt. .ix 'cr2'
-:cmt. .ix 'cr3'
-:cmt. .ix 'cr4'
 .ix '.cref'
-:cmt. .ix 'cs'
-:cmt. .ix 'cwd'
-:cmt. .ix 'cwde'
-:cmt. .ix 'cx'
-:cmt. .ix 'daa'
-:cmt. .ix 'das'
 .ix '.data'
 .ix '.data?'
 :cmt. .ix 'db'
 :cmt. .ix 'dd'
-:cmt. .ix 'dec'
 :cmt. .ix 'df'
-:cmt. .ix 'dh'
-:cmt. .ix 'di'
-:cmt. .ix 'div'
-:cmt. .ix 'dl'
 .ix '.dosseg'
 :cmt. .ix 'dosseg'
 :cmt. .ix 'dp'
 :cmt. .ix 'dq'
-:cmt. .ix 'dr0'
-:cmt. .ix 'dr1'
-:cmt. .ix 'dr2'
-:cmt. .ix 'dr3'
-:cmt. .ix 'dr6'
-:cmt. .ix 'dr7'
-:cmt. .ix 'ds'
 :cmt. .ix 'dt'
 :cmt. .ix 'dup'
 :cmt. .ix 'dw'
 :cmt. .ix 'dword'
-:cmt. .ix 'dx'
-:cmt. .ix 'eax'
-:cmt. .ix 'ebp'
-:cmt. .ix 'ebx'
 :cmt. .ix 'echo'
-:cmt. .ix 'ecx'
-:cmt. .ix 'edi'
-:cmt. .ix 'edx'
 :cmt. .ix '.else'
 :cmt. .ix 'else'
 :cmt. .ix 'elseif'
@@ -130,7 +55,6 @@
 :cmt. .ix 'endp'
 :cmt. .ix 'ends'
 .ix '.endw'
-:cmt. .ix 'enter'
 :cmt. .ix 'eq'
 :cmt. .ix 'equ'
 :cmt. .ix 'equ2'
@@ -145,24 +69,378 @@
 .ix '.errnb'
 .ix '.errndef'
 .ix '.errnz'
-:cmt. .ix 'error'
-:cmt. .ix 'es'
-:cmt. .ix 'esi'
-:cmt. .ix 'esp'
 :cmt. .ix 'even'
 .ix '.exit'
-:cmt. .ix 'export'
 :cmt. .ix 'extern'
 :cmt. .ix 'externdef'
 :cmt. .ix 'extrn'
+:cmt. .ix 'far'
+.ix '.fardata'
+.ix '.fardata?'
+:cmt. .ix 'flat'
+:cmt. .ix 'for'
+:cmt. .ix 'forc'
+:cmt. .ix 'fword'
+:cmt. .ix 'ge'
+:cmt. .ix 'global'
+:cmt. .ix 'group'
+:cmt. .ix 'gt'
+:cmt. .ix 'high'
+:cmt. .ix 'highword'
+:cmt. .ix '.if'
+:cmt. .ix 'if'
+:cmt. .ix 'if1'
+:cmt. .ix 'if2'
+:cmt. .ix 'ifb'
+:cmt. .ix 'ifdef'
+:cmt. .ix 'ifdif'
+:cmt. .ix 'ifdifi'
+:cmt. .ix 'ife'
+:cmt. .ix 'ifidn'
+:cmt. .ix 'ifidni'
+:cmt. .ix 'ifnb'
+:cmt. .ix 'ifndef'
+:cmt. .ix 'include'
+:cmt. .ix 'includelib'
+:cmt. .ix 'invoke'
+:cmt. .ix 'irp'
+:cmt. .ix 'irpc'
+:cmt. .ix 'label'
+:cmt. .ix 'le'
+:cmt. .ix 'length'
+:cmt. .ix 'lengthof'
+.ix '.lfcond'
+.ix '.list'
+.ix '.listall'
+.ix '.listif'
+.ix '.listmacro'
+.ix '.listmacroall'
+:cmt. .ix 'local'
+:cmt. .ix 'low'
+:cmt. .ix 'lowword'
+:cmt. .ix 'lroffset'
+:cmt. .ix 'lt'
+:cmt. .ix 'macro'
+:cmt. .ix 'mask'
+:cmt. .ix 'mod'
+.ix '.model'
+:cmt. .ix 'name'
+:cmt. .ix 'ne'
+:cmt. .ix 'near'
+:cmt. .ix '.no87'
+.ix '.nocref'
+.ix '.nolist'
+:cmt. .ix 'not'
+:cmt. .ix 'offset'
+:cmt. .ix 'opattr'
+:cmt. .ix 'option'
+:cmt. .ix 'or'
+:cmt. .ix 'org'
+:cmt. .ix 'popcontext'
+:cmt. .ix 'proc'
+:cmt. .ix 'proto'
+:cmt. .ix 'ptr'
+:cmt. .ix 'public'
+:cmt. .ix 'purge'
+:cmt. .ix 'pushcontext'
+:cmt. .ix 'pword'
+:cmt. .ix 'qword'
+.ix '.radix'
+:cmt. .ix 'record'
+.ix '.repeat'
+:cmt. .ix 'repeat'
+.ix '.sall'
+:cmt. .ix 'sbyte'
+:cmt. .ix 'sdword'
+:cmt. .ix 'seg'
+:cmt. .ix 'segment'
+.ix '.seq'
+.ix '.sfcond'
+:cmt. .ix 'size'
+:cmt. .ix 'sizeof'
+.ix '.stack'
+.ix '.startup'
+:cmt. .ix 'struc'
+:cmt. .ix 'struct'
+:cmt. .ix 'sword'
+:cmt. .ix 'tbyte'
+:cmt. .ix 'textequ'
+.ix '.tfcond'
+:cmt. .ix 'this'
+:cmt. .ix 'typedef'
+:cmt. .ix 'union'
+.ix '.until'
+:cmt. .ix 'uses'
+.ix '.while'
+:cmt. .ix 'width'
+:cmt. .ix 'word'
+.ix '.xcref'
+.ix '.xlist'
+.do end
+.contents
+~.186~b~b~b~b~b~b~b~b~b~b
+~.286~b~b~b~b~b~b~b~b~b~b
+~.286c~b~b~b~b~b~b~b~b~b
+~.286p~b~b~b~b~b~b~b~b~b
+~.287~b~b~b~b~b~b~b~b~b~b
+~.386~b~b~b~b~b~b~b~b~b~b
+~.386p~b~b~b~b~b~b~b~b~b
+~.387~b~b~b~b~b~b~b~b~b~b
+~.486~b~b~b~b~b~b~b~b~b~b
+~.486p~b~b~b~b~b~b~b~b~b
+~.586~b~b~b~b~b~b~b~b~b~b
+~.586p~b~b~b~b~b~b~b~b~b
+~.686~b~b~b~b~b~b~b~b~b~b
+~.686p~b~b~b~b~b~b~b~b~b
+~.8086~b~b~b~b~b~b~b~b~b
+~.8087~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+addr~b~b~b~b~b~b~b~b~b~b
+alias~b~b~b~b~b~b~b~b~b
+align~b~b~b~b~b~b~b~b~b
+~.alpha~b~b~b~b~b~b~b~b
+and~b~b~b~b~b~b~b~b~b~b~b
+assume~b~b~b~b~b~b~b~b
+~.break~b~b~b~b~b~b~b~b
+.do end
+byte~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+casemap~b~b~b~b~b~b~b
+catstr~b~b~b~b~b~b~b~b
+~.code~b~b~b~b~b~b~b~b~b
+comm~b~b~b~b~b~b~b~b~b~b
+comment~b~b~b~b~b~b~b
+~.const~b~b~b~b~b~b~b~b
+~.continue~b~b~b~b~b
+~.cref~b~b~b~b~b~b~b~b~b
+~.data~b~b~b~b~b~b~b~b~b
+~.data?~b~b~b~b~b~b~b~b
+.do end
+db~b~b~b~b~b~b~b~b~b~b~b~b
+dd~b~b~b~b~b~b~b~b~b~b~b~b
+df~b~b~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+~.dosseg~b~b~b~b~b~b~b
+dosseg~b~b~b~b~b~b~b~b
+.do end
+dp~b~b~b~b~b~b~b~b~b~b~b~b
+dq~b~b~b~b~b~b~b~b~b~b~b~b
+dt~b~b~b~b~b~b~b~b~b~b~b~b
+dup~b~b~b~b~b~b~b~b~b~b~b
+dw~b~b~b~b~b~b~b~b~b~b~b~b
+dword~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+echo~b~b~b~b~b~b~b~b~b~b
+~.else~b~b~b~b~b~b~b~b~b
+else~b~b~b~b~b~b~b~b~b~b
+elseif~b~b~b~b~b~b~b~b
+end~b~b~b~b~b~b~b~b~b~b~b
+~.endif~b~b~b~b~b~b~b~b
+endif~b~b~b~b~b~b~b~b~b
+endm~b~b~b~b~b~b~b~b~b~b
+endp~b~b~b~b~b~b~b~b~b~b
+ends~b~b~b~b~b~b~b~b~b~b
+~.endw~b~b~b~b~b~b~b~b~b
+eq~b~b~b~b~b~b~b~b~b~b~b~b
+equ~b~b~b~b~b~b~b~b~b~b~b
+equ2~b~b~b~b~b~b~b~b~b~b
+~.err~b~b~b~b~b~b~b~b~b~b
+~.errb~b~b~b~b~b~b~b~b~b
+~.errdef~b~b~b~b~b~b~b
+~.errdif~b~b~b~b~b~b~b
+~.errdifi~b~b~b~b~b~b
+~.erre~b~b~b~b~b~b~b~b~b
+~.erridn~b~b~b~b~b~b~b
+~.erridni~b~b~b~b~b~b
+~.errnb~b~b~b~b~b~b~b~b
+~.errndef~b~b~b~b~b~b
+~.errnz~b~b~b~b~b~b~b~b
+even~b~b~b~b~b~b~b~b~b~b
+~.exit~b~b~b~b~b~b~b~b~b
+exitm~b~b~b~b~b~b~b~b~b
+extern~b~b~b~b~b~b~b~b
+externdef~b~b~b~b~b
+extrn~b~b~b~b~b~b~b~b~b
+.do end
+far~b~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+~.fardata~b~b~b~b~b~b
+~.fardata?~b~b~b~b~b
+for~b~b~b~b~b~b~b~b~b~b~b
+forc~b~b~b~b~b~b~b~b~b~b
+fword~b~b~b~b~b~b~b~b~b
+ge~b~b~b~b~b~b~b~b~b~b~b~b
+global~b~b~b~b~b~b~b~b
+group~b~b~b~b~b~b~b~b~b
+gt~b~b~b~b~b~b~b~b~b~b~b~b
+high~b~b~b~b~b~b~b~b~b~b
+highword~b~b~b~b~b~b
+~.if~b~b~b~b~b~b~b~b~b~b~b
+if~b~b~b~b~b~b~b~b~b~b~b~b
+if1~b~b~b~b~b~b~b~b~b~b~b
+if2~b~b~b~b~b~b~b~b~b~b~b
+ifb~b~b~b~b~b~b~b~b~b~b~b
+ifdef~b~b~b~b~b~b~b~b~b
+ifdif~b~b~b~b~b~b~b~b~b
+ifdifi~b~b~b~b~b~b~b~b
+ife~b~b~b~b~b~b~b~b~b~b~b
+ifidn~b~b~b~b~b~b~b~b~b
+ifidni~b~b~b~b~b~b~b~b
+ifnb~b~b~b~b~b~b~b~b~b~b
+ifndef~b~b~b~b~b~b~b~b
+include~b~b~b~b~b~b~b
+includelib~b~b~b~b
+invoke~b~b~b~b~b~b~b~b
+irp~b~b~b~b~b~b~b~b~b~b~b
+irpc~b~b~b~b~b~b~b~b~b~b
+.do end
+~.k3d~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+label~b~b~b~b~b~b~b~b~b
+le~b~b~b~b~b~b~b~b~b~b~b~b
+length~b~b~b~b~b~b~b~b
+lengthof~b~b~b~b~b~b
+~.lfcond~b~b~b~b~b~b~b
+~.list~b~b~b~b~b~b~b~b~b
+~.listall~b~b~b~b~b~b
+~.listif~b~b~b~b~b~b~b
+~.listmacro~b~b~b~b
+~.listmacroall~b
+local~b~b~b~b~b~b~b~b~b
+low~b~b~b~b~b~b~b~b~b~b~b
+lowword~b~b~b~b~b~b~b
+lroffset~b~b~b~b~b~b
+lt~b~b~b~b~b~b~b~b~b~b~b~b
+macro~b~b~b~b~b~b~b~b~b
+mask~b~b~b~b~b~b~b~b~b~b
+.do end
+~.mmx~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+mod~b~b~b~b~b~b~b~b~b~b~b
+~.model~b~b~b~b~b~b~b~b
+name~b~b~b~b~b~b~b~b~b~b
+ne~b~b~b~b~b~b~b~b~b~b~b~b
+.do end
+near~b~b~b~b~b~b~b~b~b~b
+~.no87~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+~.nocref~b~b~b~b~b~b~b
+~.nolist~b~b~b~b~b~b~b
+.do end
+offset~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+opattr~b~b~b~b~b~b~b~b
+option~b~b~b~b~b~b~b~b
+org~b~b~b~b~b~b~b~b~b~b~b
+.do end
+oword~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+page~b~b~b~b~b~b~b~b~b~b
+popcontext~b~b~b~b
+proc~b~b~b~b~b~b~b~b~b~b
+proto~b~b~b~b~b~b~b~b~b
+.do end
+ptr~b~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+public~b~b~b~b~b~b~b~b
+purge~b~b~b~b~b~b~b~b~b
+pushcontext~b~b~b
+.do end
+pword~b~b~b~b~b~b~b~b~b
+qword~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+~.radix~b~b~b~b~b~b~b~b
+record~b~b~b~b~b~b~b~b
+~.repeat~b~b~b~b~b~b~b
+repeat~b~b~b~b~b~b~b~b
+~.sall~b~b~b~b~b~b~b~b~b
+sbyte~b~b~b~b~b~b~b~b~b
+sdword~b~b~b~b~b~b~b~b
+.do end
+seg~b~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+segment~b~b~b~b~b~b~b
+~.seq~b~b~b~b~b~b~b~b~b~b
+~.sfcond~b~b~b~b~b~b~b
+size~b~b~b~b~b~b~b~b~b~b
+sizeof~b~b~b~b~b~b~b~b
+~.stack~b~b~b~b~b~b~b~b
+~.startup~b~b~b~b~b~b
+.do end
+.if &wasmfull. eq 1 .do begin
+struc~b~b~b~b~b~b~b~b~b
+struct~b~b~b~b~b~b~b~b
+subtitle~b~b~b~b~b~b
+subttl~b~b~b~b~b~b~b~b
+sword~b~b~b~b~b~b~b~b~b
+.do end
+tbyte~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+textequ~b~b~b~b~b~b~b
+~.tfcond~b~b~b~b~b~b~b
+this~b~b~b~b~b~b~b~b~b~b
+title~b~b~b~b~b~b~b~b~b
+typedef~b~b~b~b~b~b~b
+union~b~b~b~b~b~b~b~b~b
+~.until~b~b~b~b~b~b~b~b
+uses~b~b~b~b~b~b~b~b~b~b
+~.while~b~b~b~b~b~b~b~b
+width~b~b~b~b~b~b~b~b~b
+.do end
+word~b~b~b~b~b~b~b~b~b~b
+.if &wasmfull. eq 1 .do begin
+~.xcref~b~b~b~b~b~b~b~b
+~.xlist~b~b~b~b~b~b~b~b
+.do end
+~.xmm~b~b~b~b~b~b~b~b~b~b
+~.xmm2~b~b~b~b~b~b~b~b~b
+~.xmm3~b~b~b~b~b~b~b~b~b
+.econtents
+.if &wasmfull. eq 0 .do begin
+:cmt. .ix 'aaa'
+:cmt. .ix 'aad'
+:cmt. .ix 'aam'
+:cmt. .ix 'aas'
+:cmt. .ix 'adc'
+:cmt. .ix 'add'
+:cmt. .ix 'and'
+:cmt. .ix 'arpl'
+:cmt. .ix 'bound'
+:cmt. .ix 'bsf'
+:cmt. .ix 'bsr'
+:cmt. .ix 'bswap'
+:cmt. .ix 'bt'
+:cmt. .ix 'btc'
+:cmt. .ix 'btr'
+:cmt. .ix 'bts'
+:cmt. .ix 'call'
+:cmt. .ix 'callf'
+:cmt. .ix 'cbw'
+:cmt. .ix 'cdq'
+:cmt. .ix 'clc'
+:cmt. .ix 'cld'
+:cmt. .ix 'cli'
+:cmt. .ix 'clts'
+:cmt. .ix 'cmc'
+:cmt. .ix 'cmp'
+:cmt. .ix 'cmps'
+:cmt. .ix 'cmpsb'
+:cmt. .ix 'cmpsd'
+:cmt. .ix 'cmpsw'
+:cmt. .ix 'cmpxchg'
+:cmt. .ix 'cmpxchg8b'
+:cmt. .ix 'cpuid'
+:cmt. .ix 'cwd'
+:cmt. .ix 'cwde'
+:cmt. .ix 'daa'
+:cmt. .ix 'das'
+:cmt. .ix 'dec'
+:cmt. .ix 'div'
+:cmt. .ix 'enter'
 :cmt. .ix 'f2xm1'
 :cmt. .ix 'fabs'
 :cmt. .ix 'fadd'
 :cmt. .ix 'faddp'
-:cmt. .ix 'far'
-.ix '.fardata'
-.ix '.fardata?'
-:cmt. .ix 'farstack'
 :cmt. .ix 'fbld'
 :cmt. .ix 'fbstp'
 :cmt. .ix 'fchs'
@@ -192,7 +470,6 @@
 :cmt. .ix 'fistp'
 :cmt. .ix 'fisub'
 :cmt. .ix 'fisubr'
-:cmt. .ix 'flat'
 :cmt. .ix 'fld'
 :cmt. .ix 'fld1'
 :cmt. .ix 'fldcw'
@@ -223,9 +500,6 @@
 :cmt. .ix 'fnstenvd'
 :cmt. .ix 'fnstenvw'
 :cmt. .ix 'fnstsw'
-:cmt. .ix 'for'
-:cmt. .ix 'forc'
-:cmt. .ix 'fortran'
 :cmt. .ix 'fpatan'
 :cmt. .ix 'fprem'
 :cmt. .ix 'fprem1'
@@ -234,7 +508,6 @@
 :cmt. .ix 'frstor'
 :cmt. .ix 'frstord'
 :cmt. .ix 'frstorw'
-:cmt. .ix 'fs'
 :cmt. .ix 'fsave'
 :cmt. .ix 'fsaved'
 :cmt. .ix 'fsavew'
@@ -259,41 +532,16 @@
 :cmt. .ix 'fucomp'
 :cmt. .ix 'fucompp'
 :cmt. .ix 'fwait'
-:cmt. .ix 'fword'
 :cmt. .ix 'fxam'
 :cmt. .ix 'fxch'
 :cmt. .ix 'fxtract'
 :cmt. .ix 'fyl2x'
 :cmt. .ix 'fyl2xp1'
-:cmt. .ix 'ge'
-:cmt. .ix 'global'
-:cmt. .ix 'group'
-:cmt. .ix 'gs'
-:cmt. .ix 'gt'
-:cmt. .ix 'high'
-:cmt. .ix 'highword'
 :cmt. .ix 'hlt'
-:cmt. .ix 'huge'
 :cmt. .ix 'idiv'
-:cmt. .ix '.if'
-:cmt. .ix 'if'
-:cmt. .ix 'if1'
-:cmt. .ix 'if2'
-:cmt. .ix 'ifb'
-:cmt. .ix 'ifdef'
-:cmt. .ix 'ifdif'
-:cmt. .ix 'ifdifi'
-:cmt. .ix 'ife'
-:cmt. .ix 'ifidn'
-:cmt. .ix 'ifidni'
-:cmt. .ix 'ifnb'
-:cmt. .ix 'ifndef'
-:cmt. .ix 'ignore'
 :cmt. .ix 'imul'
 :cmt. .ix 'in'
 :cmt. .ix 'inc'
-:cmt. .ix 'include'
-:cmt. .ix 'includelib'
 :cmt. .ix 'ins'
 :cmt. .ix 'insb'
 :cmt. .ix 'insd'
@@ -307,8 +555,6 @@
 :cmt. .ix 'iretd'
 :cmt. .ix 'iretdf'
 :cmt. .ix 'iretf'
-:cmt. .ix 'irp'
-:cmt. .ix 'irpc'
 :cmt. .ix 'ja'
 :cmt. .ix 'jae'
 :cmt. .ix 'jb'
@@ -343,30 +589,18 @@
 :cmt. .ix 'jpo'
 :cmt. .ix 'js'
 :cmt. .ix 'jz'
-:cmt. .ix 'label'
 :cmt. .ix 'lahf'
 :cmt. .ix 'lar'
-:cmt. .ix 'large'
 :cmt. .ix 'lds'
-:cmt. .ix 'le'
 :cmt. .ix 'lea'
 :cmt. .ix 'leave'
-:cmt. .ix 'length'
-:cmt. .ix 'lengthof'
 :cmt. .ix 'les'
-.ix '.lfcond'
 :cmt. .ix 'lfs'
 :cmt. .ix 'lgdt'
 :cmt. .ix 'lgs'
 :cmt. .ix 'lidt'
-.ix '.list'
-.ix '.listall'
-.ix '.listif'
-.ix '.listmacro'
-.ix '.listmacroall'
 :cmt. .ix 'lldt'
 :cmt. .ix 'lmsw'
-:cmt. .ix 'local'
 :cmt. .ix 'lock'
 :cmt. .ix 'lods'
 :cmt. .ix 'lodsb'
@@ -377,19 +611,9 @@
 :cmt. .ix 'loopne'
 :cmt. .ix 'loopnz'
 :cmt. .ix 'loopz'
-:cmt. .ix 'low'
-:cmt. .ix 'lowword'
-:cmt. .ix 'lroffset'
 :cmt. .ix 'lsl'
 :cmt. .ix 'lss'
-:cmt. .ix 'lt'
 :cmt. .ix 'ltr'
-:cmt. .ix 'macro'
-:cmt. .ix 'mask'
-:cmt. .ix 'medium'
-:cmt. .ix 'memory'
-:cmt. .ix 'mod'
-.ix '.model'
 :cmt. .ix 'mov'
 :cmt. .ix 'movs'
 :cmt. .ix 'movsb'
@@ -398,62 +622,32 @@
 :cmt. .ix 'movsx'
 :cmt. .ix 'movzx'
 :cmt. .ix 'mul'
-:cmt. .ix 'name'
-:cmt. .ix 'ne'
-:cmt. .ix 'near'
-:cmt. .ix 'nearstack'
 :cmt. .ix 'neg'
-:cmt. .ix '.no87'
-.ix '.nocref'
-.ix '.nolist'
 :cmt. .ix 'nop'
 :cmt. .ix 'not'
-:cmt. .ix 'nothing'
-:cmt. .ix 'offset'
-:cmt. .ix 'opattr'
-:cmt. .ix 'option'
 :cmt. .ix 'or'
-:cmt. .ix 'org'
-:cmt. .ix 'os_dos'
-:cmt. .ix 'os_os2'
 :cmt. .ix 'out'
 :cmt. .ix 'outs'
 :cmt. .ix 'outsb'
 :cmt. .ix 'outsd'
 :cmt. .ix 'outsw'
-:cmt. .ix 'para'
-:cmt. .ix 'pascal'
 :cmt. .ix 'pop'
 :cmt. .ix 'popa'
 :cmt. .ix 'popad'
-:cmt. .ix 'popcontext'
 :cmt. .ix 'popf'
 :cmt. .ix 'popfd'
-:cmt. .ix 'private'
-:cmt. .ix 'proc'
-:cmt. .ix 'proto'
-:cmt. .ix 'ptr'
-:cmt. .ix 'public'
 :cmt. .ix 'purge'
 :cmt. .ix 'push'
 :cmt. .ix 'pusha'
 :cmt. .ix 'pushad'
-:cmt. .ix 'pushcontext'
 :cmt. .ix 'pushf'
 :cmt. .ix 'pushfd'
-:cmt. .ix 'pword'
-:cmt. .ix 'qword'
-.ix '.radix'
 :cmt. .ix 'rcl'
 :cmt. .ix 'rcr'
 :cmt. .ix 'rdmsr'
 :cmt. .ix 'rdtsc'
-:cmt. .ix 'readonly'
-:cmt. .ix 'record'
 :cmt. .ix 'rep'
 :cmt. .ix 'repe'
-.ix '.repeat'
-:cmt. .ix 'repeat'
 :cmt. .ix 'repne'
 :cmt. .ix 'repnz'
 :cmt. .ix 'rept'
@@ -466,18 +660,12 @@
 :cmt. .ix 'rsm'
 :cmt. .ix 'sahf'
 :cmt. .ix 'sal'
-.ix '.sall'
 :cmt. .ix 'sar'
 :cmt. .ix 'sbb'
-:cmt. .ix 'sbyte'
 :cmt. .ix 'scas'
 :cmt. .ix 'scasb'
 :cmt. .ix 'scasd'
 :cmt. .ix 'scasw'
-:cmt. .ix 'sdword'
-:cmt. .ix 'seg'
-:cmt. .ix 'segment'
-.ix '.seq'
 :cmt. .ix 'seta'
 :cmt. .ix 'setae'
 :cmt. .ix 'setb'
@@ -508,136 +696,57 @@
 :cmt. .ix 'setpo'
 :cmt. .ix 'sets'
 :cmt. .ix 'setz'
-.ix '.sfcond'
 :cmt. .ix 'sgdt'
 :cmt. .ix 'shl'
 :cmt. .ix 'shld'
 :cmt. .ix 'short'
 :cmt. .ix 'shr'
 :cmt. .ix 'shrd'
-:cmt. .ix 'si'
 :cmt. .ix 'sidt'
-:cmt. .ix 'size'
-:cmt. .ix 'sizeof'
 :cmt. .ix 'sldt'
-:cmt. .ix 'small'
 :cmt. .ix 'smsw'
-:cmt. .ix 'sp'
-:cmt. .ix 'ss'
-:cmt. .ix 'st'
-.ix '.stack'
-.ix '.startup'
 :cmt. .ix 'stc'
 :cmt. .ix 'std'
-:cmt. .ix 'stdcall'
 :cmt. .ix 'sti'
 :cmt. .ix 'stos'
 :cmt. .ix 'stosb'
 :cmt. .ix 'stosd'
 :cmt. .ix 'stosw'
 :cmt. .ix 'str'
-:cmt. .ix 'struc'
-:cmt. .ix 'struct'
 :cmt. .ix 'sub'
-:cmt. .ix 'sword'
-:cmt. .ix 'syscall'
-:cmt. .ix 'tbyte'
 :cmt. .ix 'test'
-:cmt. .ix 'textequ'
-.ix '.tfcond'
-:cmt. .ix 'this'
-:cmt. .ix 'tiny'
-:cmt. .ix 'tr3'
-:cmt. .ix 'tr4'
-:cmt. .ix 'tr5'
-:cmt. .ix 'tr6'
-:cmt. .ix 'tr7'
-:cmt. .ix 'typedef'
-:cmt. .ix 'union'
-.ix '.until'
-:cmt. .ix 'use16'
-:cmt. .ix 'use32'
-:cmt. .ix 'uses'
-:cmt. .ix 'vararg'
 :cmt. .ix 'verr'
 :cmt. .ix 'verw'
 :cmt. .ix 'wait'
-:cmt. .ix 'watcom_c'
 :cmt. .ix 'wbinvd'
-.ix '.while'
-:cmt. .ix 'width'
-:cmt. .ix 'word'
 :cmt. .ix 'wrmsr'
 :cmt. .ix 'xadd'
 :cmt. .ix 'xchg'
-.ix '.xcref'
 :cmt. .ix 'xlat'
 :cmt. .ix 'xlatb'
-.ix '.xlist'
 :cmt. .ix 'xor'
 .do end
 .contents
-~.186~b~b~b~b~b~b~b~b~b~b
-~.286~b~b~b~b~b~b~b~b~b~b
-~.286c~b~b~b~b~b~b~b~b~b
-~.286p~b~b~b~b~b~b~b~b~b
-~.287~b~b~b~b~b~b~b~b~b~b
-~.386~b~b~b~b~b~b~b~b~b~b
-~.386p~b~b~b~b~b~b~b~b~b
-~.387~b~b~b~b~b~b~b~b~b~b
-~.486~b~b~b~b~b~b~b~b~b~b
-~.486p~b~b~b~b~b~b~b~b~b
-~.586~b~b~b~b~b~b~b~b~b~b
-~.586p~b~b~b~b~b~b~b~b~b
-~.686~b~b~b~b~b~b~b~b~b~b
-~.686p~b~b~b~b~b~b~b~b~b
-~.8086~b~b~b~b~b~b~b~b~b
-~.8087~b~b~b~b~b~b~b~b~b
 aaa~b~b~b~b~b~b~b~b~b~b~b
 aad~b~b~b~b~b~b~b~b~b~b~b
 aam~b~b~b~b~b~b~b~b~b~b~b
 aas~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-abs~b~b~b~b~b~b~b~b~b~b~b
-.do end
 adc~b~b~b~b~b~b~b~b~b~b~b
 add~b~b~b~b~b~b~b~b~b~b~b
 addpd~b~b~b~b~b~b~b~b~b
 addps~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-addr~b~b~b~b~b~b~b~b~b~b
-.do end
 addsd~b~b~b~b~b~b~b~b~b
 addss~b~b~b~b~b~b~b~b~b
 addsubpd~b~b~b~b~b~b
 addsubps~b~b~b~b~b~b
-ah~b~b~b~b~b~b~b~b~b~b~b~b
-al~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-alias~b~b~b~b~b~b~b~b~b
-align~b~b~b~b~b~b~b~b~b
-~.alpha~b~b~b~b~b~b~b~b
-.do end
 and~b~b~b~b~b~b~b~b~b~b~b
 andnpd~b~b~b~b~b~b~b~b
 andnps~b~b~b~b~b~b~b~b
 andpd~b~b~b~b~b~b~b~b~b
 andps~b~b~b~b~b~b~b~b~b
 arpl~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-assume~b~b~b~b~b~b~b~b
-.do end
-ax~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-basic~b~b~b~b~b~b~b~b~b
-.do end
-bh~b~b~b~b~b~b~b~b~b~b~b~b
-bl~b~b~b~b~b~b~b~b~b~b~b~b
 bound~b~b~b~b~b~b~b~b~b
 bp~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.break~b~b~b~b~b~b~b~b
-.do end
 bsf~b~b~b~b~b~b~b~b~b~b~b
 bsr~b~b~b~b~b~b~b~b~b~b~b
 bswap~b~b~b~b~b~b~b~b~b
@@ -645,19 +754,10 @@ bt~b~b~b~b~b~b~b~b~b~b~b~b
 btc~b~b~b~b~b~b~b~b~b~b~b
 btr~b~b~b~b~b~b~b~b~b~b~b
 bts~b~b~b~b~b~b~b~b~b~b~b
-bx~b~b~b~b~b~b~b~b~b~b~b~b
-byte~b~b~b~b~b~b~b~b~b~b
-c~b~b~b~b~b~b~b~b~b~b~b~b~b
 call~b~b~b~b~b~b~b~b~b~b
 callf~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-casemap~b~b~b~b~b~b~b
-catstr~b~b~b~b~b~b~b~b
-.do end
 cbw~b~b~b~b~b~b~b~b~b~b~b
 cdq~b~b~b~b~b~b~b~b~b~b~b
-ch~b~b~b~b~b~b~b~b~b~b~b~b
-cl~b~b~b~b~b~b~b~b~b~b~b~b
 clc~b~b~b~b~b~b~b~b~b~b~b
 cld~b~b~b~b~b~b~b~b~b~b~b
 clflush~b~b~b~b~b~b~b
@@ -736,28 +836,9 @@ cmpunordsd~b~b~b~b
 cmpunordss~b~b~b~b
 cmpxchg~b~b~b~b~b~b~b
 cmpxchg8b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.code~b~b~b~b~b~b~b~b~b
-.do end
 comisd~b~b~b~b~b~b~b~b
 comiss~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-comm~b~b~b~b~b~b~b~b~b~b
-comment~b~b~b~b~b~b~b
-common~b~b~b~b~b~b~b~b
-compact~b~b~b~b~b~b~b
-~.const~b~b~b~b~b~b~b~b
-~.continue~b~b~b~b~b
-.do end
 cpuid~b~b~b~b~b~b~b~b~b
-cr0~b~b~b~b~b~b~b~b~b~b~b
-cr2~b~b~b~b~b~b~b~b~b~b~b
-cr3~b~b~b~b~b~b~b~b~b~b~b
-cr4~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.cref~b~b~b~b~b~b~b~b~b
-.do end
-cs~b~b~b~b~b~b~b~b~b~b~b~b
 cvtdq2pd~b~b~b~b~b~b
 cvtdq2ps~b~b~b~b~b~b
 cvtpd2dq~b~b~b~b~b~b
@@ -782,107 +863,20 @@ cvttsd2si~b~b~b~b~b
 cvttss2si~b~b~b~b~b
 cwd~b~b~b~b~b~b~b~b~b~b~b
 cwde~b~b~b~b~b~b~b~b~b~b
-cx~b~b~b~b~b~b~b~b~b~b~b~b
 daa~b~b~b~b~b~b~b~b~b~b~b
 das~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.data~b~b~b~b~b~b~b~b~b
-~.data?~b~b~b~b~b~b~b~b
-.do end
-db~b~b~b~b~b~b~b~b~b~b~b~b
-dd~b~b~b~b~b~b~b~b~b~b~b~b
 dec~b~b~b~b~b~b~b~b~b~b~b
-df~b~b~b~b~b~b~b~b~b~b~b~b
-dh~b~b~b~b~b~b~b~b~b~b~b~b
-di~b~b~b~b~b~b~b~b~b~b~b~b
 div~b~b~b~b~b~b~b~b~b~b~b
 divpd~b~b~b~b~b~b~b~b~b
 divps~b~b~b~b~b~b~b~b~b
 divsd~b~b~b~b~b~b~b~b~b
 divss~b~b~b~b~b~b~b~b~b
-dl~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.dosseg~b~b~b~b~b~b~b
-dosseg~b~b~b~b~b~b~b~b
-.do end
-dp~b~b~b~b~b~b~b~b~b~b~b~b
-dq~b~b~b~b~b~b~b~b~b~b~b~b
-dr0~b~b~b~b~b~b~b~b~b~b~b
-dr1~b~b~b~b~b~b~b~b~b~b~b
-dr2~b~b~b~b~b~b~b~b~b~b~b
-dr3~b~b~b~b~b~b~b~b~b~b~b
-dr6~b~b~b~b~b~b~b~b~b~b~b
-dr7~b~b~b~b~b~b~b~b~b~b~b
-ds~b~b~b~b~b~b~b~b~b~b~b~b
-dt~b~b~b~b~b~b~b~b~b~b~b~b
-dup~b~b~b~b~b~b~b~b~b~b~b
-dw~b~b~b~b~b~b~b~b~b~b~b~b
-dword~b~b~b~b~b~b~b~b~b
-dx~b~b~b~b~b~b~b~b~b~b~b~b
-eax~b~b~b~b~b~b~b~b~b~b~b
-ebp~b~b~b~b~b~b~b~b~b~b~b
-ebx~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-echo~b~b~b~b~b~b~b~b~b~b
-.do end
-ecx~b~b~b~b~b~b~b~b~b~b~b
-edi~b~b~b~b~b~b~b~b~b~b~b
-edx~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.else~b~b~b~b~b~b~b~b~b
-else~b~b~b~b~b~b~b~b~b~b
-elseif~b~b~b~b~b~b~b~b
-.do end
 emms~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-end~b~b~b~b~b~b~b~b~b~b~b
-~.endif~b~b~b~b~b~b~b~b
-endif~b~b~b~b~b~b~b~b~b
-endm~b~b~b~b~b~b~b~b~b~b
-endp~b~b~b~b~b~b~b~b~b~b
-ends~b~b~b~b~b~b~b~b~b~b
-~.endw~b~b~b~b~b~b~b~b~b
-.do end
 enter~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-eq~b~b~b~b~b~b~b~b~b~b~b~b
-equ~b~b~b~b~b~b~b~b~b~b~b
-equ2~b~b~b~b~b~b~b~b~b~b
-~.err~b~b~b~b~b~b~b~b~b~b
-~.errb~b~b~b~b~b~b~b~b~b
-~.errdef~b~b~b~b~b~b~b
-~.errdif~b~b~b~b~b~b~b
-~.errdifi~b~b~b~b~b~b
-~.erre~b~b~b~b~b~b~b~b~b
-~.erridn~b~b~b~b~b~b~b
-~.erridni~b~b~b~b~b~b
-~.errnb~b~b~b~b~b~b~b~b
-~.errndef~b~b~b~b~b~b
-~.errnz~b~b~b~b~b~b~b~b
-error~b~b~b~b~b~b~b~b~b
-.do end
-es~b~b~b~b~b~b~b~b~b~b~b~b
-esi~b~b~b~b~b~b~b~b~b~b~b
-esp~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-even~b~b~b~b~b~b~b~b~b~b
-~.exit~b~b~b~b~b~b~b~b~b
-exitm~b~b~b~b~b~b~b~b~b
-export~b~b~b~b~b~b~b~b
-extern~b~b~b~b~b~b~b~b
-externdef~b~b~b~b~b
-extrn~b~b~b~b~b~b~b~b~b
-.do end
 f2xm1~b~b~b~b~b~b~b~b~b
 fabs~b~b~b~b~b~b~b~b~b~b
 fadd~b~b~b~b~b~b~b~b~b~b
 faddp~b~b~b~b~b~b~b~b~b
-far~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.fardata~b~b~b~b~b~b
-~.fardata?~b~b~b~b~b
-farstack~b~b~b~b~b~b
-.do end
 fbld~b~b~b~b~b~b~b~b~b~b
 fbstp~b~b~b~b~b~b~b~b~b
 fchs~b~b~b~b~b~b~b~b~b~b
@@ -955,11 +949,6 @@ fnstenv~b~b~b~b~b~b~b
 fnstenvd~b~b~b~b~b~b
 fnstenvw~b~b~b~b~b~b
 fnstsw~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-for~b~b~b~b~b~b~b~b~b~b~b
-forc~b~b~b~b~b~b~b~b~b~b
-fortran~b~b~b~b~b~b~b
-.do end
 fpatan~b~b~b~b~b~b~b~b
 fprem~b~b~b~b~b~b~b~b~b
 fprem1~b~b~b~b~b~b~b~b
@@ -968,7 +957,6 @@ frndint~b~b~b~b~b~b~b
 frstor~b~b~b~b~b~b~b~b
 frstord~b~b~b~b~b~b~b
 frstorw~b~b~b~b~b~b~b
-fs~b~b~b~b~b~b~b~b~b~b~b~b
 fsave~b~b~b~b~b~b~b~b~b
 fsaved~b~b~b~b~b~b~b~b
 fsavew~b~b~b~b~b~b~b~b
@@ -995,7 +983,6 @@ fucomip~b~b~b~b~b~b~b
 fucomp~b~b~b~b~b~b~b~b
 fucompp~b~b~b~b~b~b~b
 fwait~b~b~b~b~b~b~b~b~b
-fword~b~b~b~b~b~b~b~b~b
 fxam~b~b~b~b~b~b~b~b~b~b
 fxch~b~b~b~b~b~b~b~b~b~b
 fxrstor~b~b~b~b~b~b~b
@@ -1003,51 +990,15 @@ fxsave~b~b~b~b~b~b~b~b
 fxtract~b~b~b~b~b~b~b
 fyl2x~b~b~b~b~b~b~b~b~b
 fyl2xp1~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-ge~b~b~b~b~b~b~b~b~b~b~b~b
-global~b~b~b~b~b~b~b~b
-group~b~b~b~b~b~b~b~b~b
-.do end
-gs~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-gt~b~b~b~b~b~b~b~b~b~b~b~b
-.do end
 haddpd~b~b~b~b~b~b~b~b
 haddps~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-high~b~b~b~b~b~b~b~b~b~b
-highword~b~b~b~b~b~b
-.do end
 hlt~b~b~b~b~b~b~b~b~b~b~b
 hsubpd~b~b~b~b~b~b~b~b
 hsubps~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-huge~b~b~b~b~b~b~b~b~b~b
-.do end
 idiv~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.if~b~b~b~b~b~b~b~b~b~b~b
-if~b~b~b~b~b~b~b~b~b~b~b~b
-if1~b~b~b~b~b~b~b~b~b~b~b
-if2~b~b~b~b~b~b~b~b~b~b~b
-ifb~b~b~b~b~b~b~b~b~b~b~b
-ifdef~b~b~b~b~b~b~b~b~b
-ifdif~b~b~b~b~b~b~b~b~b
-ifdifi~b~b~b~b~b~b~b~b
-ife~b~b~b~b~b~b~b~b~b~b~b
-ifidn~b~b~b~b~b~b~b~b~b
-ifidni~b~b~b~b~b~b~b~b
-ifnb~b~b~b~b~b~b~b~b~b~b
-ifndef~b~b~b~b~b~b~b~b
-ignore~b~b~b~b~b~b~b~b
-.do end
 imul~b~b~b~b~b~b~b~b~b~b
 in~b~b~b~b~b~b~b~b~b~b~b~b
 inc~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-include~b~b~b~b~b~b~b
-includelib~b~b~b~b
-.do end
 ins~b~b~b~b~b~b~b~b~b~b~b
 insb~b~b~b~b~b~b~b~b~b~b
 insd~b~b~b~b~b~b~b~b~b~b
@@ -1056,17 +1007,10 @@ int~b~b~b~b~b~b~b~b~b~b~b
 into~b~b~b~b~b~b~b~b~b~b
 invd~b~b~b~b~b~b~b~b~b~b
 invlpg~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-invoke~b~b~b~b~b~b~b~b
-.do end
 iret~b~b~b~b~b~b~b~b~b~b
 iretd~b~b~b~b~b~b~b~b~b
 iretdf~b~b~b~b~b~b~b~b
 iretf~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-irp~b~b~b~b~b~b~b~b~b~b~b
-irpc~b~b~b~b~b~b~b~b~b~b
-.do end
 ja~b~b~b~b~b~b~b~b~b~b~b~b
 jae~b~b~b~b~b~b~b~b~b~b~b
 jb~b~b~b~b~b~b~b~b~b~b~b~b
@@ -1101,48 +1045,21 @@ jpe~b~b~b~b~b~b~b~b~b~b~b
 jpo~b~b~b~b~b~b~b~b~b~b~b
 js~b~b~b~b~b~b~b~b~b~b~b~b
 jz~b~b~b~b~b~b~b~b~b~b~b~b
-~.k3d~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-label~b~b~b~b~b~b~b~b~b
-.do end
 lahf~b~b~b~b~b~b~b~b~b~b
 lar~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-large~b~b~b~b~b~b~b~b~b
-.do end
 lddqu~b~b~b~b~b~b~b~b~b
 ldmxcsr~b~b~b~b~b~b~b
 lds~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-le~b~b~b~b~b~b~b~b~b~b~b~b
-.do end
 lea~b~b~b~b~b~b~b~b~b~b~b
 leave~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-length~b~b~b~b~b~b~b~b
-lengthof~b~b~b~b~b~b
-.do end
 les~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.lfcond~b~b~b~b~b~b~b
-.do end
 lfence~b~b~b~b~b~b~b~b
 lfs~b~b~b~b~b~b~b~b~b~b~b
 lgdt~b~b~b~b~b~b~b~b~b~b
 lgs~b~b~b~b~b~b~b~b~b~b~b
 lidt~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.list~b~b~b~b~b~b~b~b~b
-~.listall~b~b~b~b~b~b
-~.listif~b~b~b~b~b~b~b
-~.listmacro~b~b~b~b
-~.listmacroall~b
-.do end
 lldt~b~b~b~b~b~b~b~b~b~b
 lmsw~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-local~b~b~b~b~b~b~b~b~b
-.do end
 lock~b~b~b~b~b~b~b~b~b~b
 lods~b~b~b~b~b~b~b~b~b~b
 lodsb~b~b~b~b~b~b~b~b~b
@@ -1163,49 +1080,20 @@ loopw~b~b~b~b~b~b~b~b~b
 loopz~b~b~b~b~b~b~b~b~b
 loopzd~b~b~b~b~b~b~b~b
 loopzw~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-low~b~b~b~b~b~b~b~b~b~b~b
-lowword~b~b~b~b~b~b~b
-lroffset~b~b~b~b~b~b
-.do end
 lsl~b~b~b~b~b~b~b~b~b~b~b
 lss~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-lt~b~b~b~b~b~b~b~b~b~b~b~b
-.do end
 ltr~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-macro~b~b~b~b~b~b~b~b~b
-mask~b~b~b~b~b~b~b~b~b~b
-.do end
 maskmovdqu~b~b~b~b
 maskmovq~b~b~b~b~b~b
 maxpd~b~b~b~b~b~b~b~b~b
 maxps~b~b~b~b~b~b~b~b~b
 maxsd~b~b~b~b~b~b~b~b~b
 maxss~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-medium~b~b~b~b~b~b~b~b
-memory~b~b~b~b~b~b~b~b
-.do end
 mfence~b~b~b~b~b~b~b~b
 minpd~b~b~b~b~b~b~b~b~b
 minps~b~b~b~b~b~b~b~b~b
 minsd~b~b~b~b~b~b~b~b~b
 minss~b~b~b~b~b~b~b~b~b
-mm0~b~b~b~b~b~b~b~b~b~b~b
-mm1~b~b~b~b~b~b~b~b~b~b~b
-mm2~b~b~b~b~b~b~b~b~b~b~b
-mm3~b~b~b~b~b~b~b~b~b~b~b
-mm4~b~b~b~b~b~b~b~b~b~b~b
-mm5~b~b~b~b~b~b~b~b~b~b~b
-mm6~b~b~b~b~b~b~b~b~b~b~b
-mm7~b~b~b~b~b~b~b~b~b~b~b
-~.mmx~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-mod~b~b~b~b~b~b~b~b~b~b~b
-~.model~b~b~b~b~b~b~b~b
-.do end
 monitor~b~b~b~b~b~b~b
 mov~b~b~b~b~b~b~b~b~b~b~b
 movapd~b~b~b~b~b~b~b~b
@@ -1247,46 +1135,18 @@ mulps~b~b~b~b~b~b~b~b~b
 mulsd~b~b~b~b~b~b~b~b~b
 mulss~b~b~b~b~b~b~b~b~b
 mwait~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-name~b~b~b~b~b~b~b~b~b~b
-ne~b~b~b~b~b~b~b~b~b~b~b~b
-.do end
 near~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-nearstack~b~b~b~b~b
-.do end
 neg~b~b~b~b~b~b~b~b~b~b~b
-~.no87~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.nocref~b~b~b~b~b~b~b
-~.nolist~b~b~b~b~b~b~b
-.do end
 nop~b~b~b~b~b~b~b~b~b~b~b
 not~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-nothing~b~b~b~b~b~b~b
-.do end
-offset~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-opattr~b~b~b~b~b~b~b~b
-option~b~b~b~b~b~b~b~b
-.do end
 or~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-org~b~b~b~b~b~b~b~b~b~b~b
-.do end
 orpd~b~b~b~b~b~b~b~b~b~b
 orps~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-os_dos~b~b~b~b~b~b~b~b
-os_os2~b~b~b~b~b~b~b~b
-.do end
 out~b~b~b~b~b~b~b~b~b~b~b
 outs~b~b~b~b~b~b~b~b~b~b
 outsb~b~b~b~b~b~b~b~b~b
 outsd~b~b~b~b~b~b~b~b~b
 outsw~b~b~b~b~b~b~b~b~b
-oword~b~b~b~b~b~b~b~b~b
 packssdw~b~b~b~b~b~b
 packsswb~b~b~b~b~b~b
 packuswb~b~b~b~b~b~b
@@ -1298,15 +1158,8 @@ paddsw~b~b~b~b~b~b~b~b
 paddusb~b~b~b~b~b~b~b
 paddusw~b~b~b~b~b~b~b
 paddw~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-page~b~b~b~b~b~b~b~b~b~b
-.do end
 pand~b~b~b~b~b~b~b~b~b~b
 pandn~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-para~b~b~b~b~b~b~b~b~b~b
-pascal~b~b~b~b~b~b~b~b
-.do end
 pause~b~b~b~b~b~b~b~b~b
 pavgb~b~b~b~b~b~b~b~b~b
 pavgusb~b~b~b~b~b~b~b
@@ -1354,9 +1207,6 @@ pmuludq~b~b~b~b~b~b~b
 pop~b~b~b~b~b~b~b~b~b~b~b
 popa~b~b~b~b~b~b~b~b~b~b
 popad~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-popcontext~b~b~b~b
-.do end
 popf~b~b~b~b~b~b~b~b~b~b
 popfd~b~b~b~b~b~b~b~b~b
 por~b~b~b~b~b~b~b~b~b~b~b
@@ -1366,11 +1216,6 @@ prefetcht0~b~b~b~b
 prefetcht1~b~b~b~b
 prefetcht2~b~b~b~b
 prefetchw~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-private~b~b~b~b~b~b~b
-proc~b~b~b~b~b~b~b~b~b~b
-proto~b~b~b~b~b~b~b~b~b
-.do end
 psadbw~b~b~b~b~b~b~b~b
 pshufd~b~b~b~b~b~b~b~b
 pshufhw~b~b~b~b~b~b~b
@@ -1395,10 +1240,6 @@ psubusb~b~b~b~b~b~b~b
 psubusw~b~b~b~b~b~b~b
 psubw~b~b~b~b~b~b~b~b~b
 pswapd~b~b~b~b~b~b~b~b
-ptr~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-public~b~b~b~b~b~b~b~b
-.do end
 punpckhbw~b~b~b~b~b
 punpckhdq~b~b~b~b~b
 punpckhqdq~b~b~b~b
@@ -1407,25 +1248,14 @@ punpcklbw~b~b~b~b~b
 punpckldq~b~b~b~b~b
 punpcklqdq~b~b~b~b
 punpcklwd~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-purge~b~b~b~b~b~b~b~b~b
-.do end
 push~b~b~b~b~b~b~b~b~b~b
 pusha~b~b~b~b~b~b~b~b~b
 pushad~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-pushcontext~b~b~b
-.do end
 pushd~b~b~b~b~b~b~b~b~b
 pushf~b~b~b~b~b~b~b~b~b
 pushfd~b~b~b~b~b~b~b~b
 pushw~b~b~b~b~b~b~b~b~b
-pword~b~b~b~b~b~b~b~b~b
 pxor~b~b~b~b~b~b~b~b~b~b
-qword~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.radix~b~b~b~b~b~b~b~b
-.do end
 rcl~b~b~b~b~b~b~b~b~b~b~b
 rcpps~b~b~b~b~b~b~b~b~b
 rcpss~b~b~b~b~b~b~b~b~b
@@ -1433,16 +1263,8 @@ rcr~b~b~b~b~b~b~b~b~b~b~b
 rdmsr~b~b~b~b~b~b~b~b~b
 rdpmc~b~b~b~b~b~b~b~b~b
 rdtsc~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-readonly~b~b~b~b~b~b
-record~b~b~b~b~b~b~b~b
-.do end
 rep~b~b~b~b~b~b~b~b~b~b~b
 repe~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.repeat~b~b~b~b~b~b~b
-repeat~b~b~b~b~b~b~b~b
-.do end
 repne~b~b~b~b~b~b~b~b~b
 repnz~b~b~b~b~b~b~b~b~b
 rept~b~b~b~b~b~b~b~b~b~b
@@ -1459,26 +1281,12 @@ rsqrtps~b~b~b~b~b~b~b
 rsqrtss~b~b~b~b~b~b~b
 sahf~b~b~b~b~b~b~b~b~b~b
 sal~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.sall~b~b~b~b~b~b~b~b~b
-.do end
 sar~b~b~b~b~b~b~b~b~b~b~b
 sbb~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-sbyte~b~b~b~b~b~b~b~b~b
-.do end
 scas~b~b~b~b~b~b~b~b~b~b
 scasb~b~b~b~b~b~b~b~b~b
 scasd~b~b~b~b~b~b~b~b~b
 scasw~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-sdword~b~b~b~b~b~b~b~b
-.do end
-seg~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-segment~b~b~b~b~b~b~b
-~.seq~b~b~b~b~b~b~b~b~b~b
-.do end
 seta~b~b~b~b~b~b~b~b~b~b
 setae~b~b~b~b~b~b~b~b~b
 setb~b~b~b~b~b~b~b~b~b~b
@@ -1509,9 +1317,6 @@ setpe~b~b~b~b~b~b~b~b~b
 setpo~b~b~b~b~b~b~b~b~b
 sets~b~b~b~b~b~b~b~b~b~b
 setz~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.sfcond~b~b~b~b~b~b~b
-.do end
 sfence~b~b~b~b~b~b~b~b
 sgdt~b~b~b~b~b~b~b~b~b~b
 shl~b~b~b~b~b~b~b~b~b~b~b
@@ -1521,31 +1326,16 @@ shr~b~b~b~b~b~b~b~b~b~b~b
 shrd~b~b~b~b~b~b~b~b~b~b
 shufpd~b~b~b~b~b~b~b~b
 shufps~b~b~b~b~b~b~b~b
-si~b~b~b~b~b~b~b~b~b~b~b~b
 sidt~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-size~b~b~b~b~b~b~b~b~b~b
-sizeof~b~b~b~b~b~b~b~b
-.do end
 sldt~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-small~b~b~b~b~b~b~b~b~b
-.do end
 smsw~b~b~b~b~b~b~b~b~b~b
 sp~b~b~b~b~b~b~b~b~b~b~b~b
 sqrtpd~b~b~b~b~b~b~b~b
 sqrtps~b~b~b~b~b~b~b~b
 sqrtsd~b~b~b~b~b~b~b~b
 sqrtss~b~b~b~b~b~b~b~b
-ss~b~b~b~b~b~b~b~b~b~b~b~b
-st~b~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.stack~b~b~b~b~b~b~b~b
-~.startup~b~b~b~b~b~b
-.do end
 stc~b~b~b~b~b~b~b~b~b~b~b
 std~b~b~b~b~b~b~b~b~b~b~b
-stdcall~b~b~b~b~b~b~b
 sti~b~b~b~b~b~b~b~b~b~b~b
 stmxcsr~b~b~b~b~b~b~b
 stos~b~b~b~b~b~b~b~b~b~b
@@ -1553,91 +1343,165 @@ stosb~b~b~b~b~b~b~b~b~b
 stosd~b~b~b~b~b~b~b~b~b
 stosw~b~b~b~b~b~b~b~b~b
 str~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-struc~b~b~b~b~b~b~b~b~b
-struct~b~b~b~b~b~b~b~b
-.do end
 sub~b~b~b~b~b~b~b~b~b~b~b
 subpd~b~b~b~b~b~b~b~b~b
 subps~b~b~b~b~b~b~b~b~b
 subsd~b~b~b~b~b~b~b~b~b
 subss~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-subtitle~b~b~b~b~b~b
-subttl~b~b~b~b~b~b~b~b
-sword~b~b~b~b~b~b~b~b~b
-.do end
-syscall~b~b~b~b~b~b~b
 sysenter~b~b~b~b~b~b
 sysexit~b~b~b~b~b~b~b
-tbyte~b~b~b~b~b~b~b~b~b
 test~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-textequ~b~b~b~b~b~b~b
-~.tfcond~b~b~b~b~b~b~b
-this~b~b~b~b~b~b~b~b~b~b
-tiny~b~b~b~b~b~b~b~b~b~b
-title~b~b~b~b~b~b~b~b~b
+ucomisd~b~b~b~b~b~b~b
+ucomiss~b~b~b~b~b~b~b
+unpckhpd~b~b~b~b~b~b
+unpckhps~b~b~b~b~b~b
+unpcklpd~b~b~b~b~b~b
+unpcklps~b~b~b~b~b~b
+verr~b~b~b~b~b~b~b~b~b~b
+verw~b~b~b~b~b~b~b~b~b~b
+wait~b~b~b~b~b~b~b~b~b~b
+wbinvd~b~b~b~b~b~b~b~b
+wrmsr~b~b~b~b~b~b~b~b~b
+xadd~b~b~b~b~b~b~b~b~b~b
+xchg~b~b~b~b~b~b~b~b~b~b
+xlat~b~b~b~b~b~b~b~b~b~b
+xlatb~b~b~b~b~b~b~b~b~b
+xor~b~b~b~b~b~b~b~b~b~b~b
+xorpd~b~b~b~b~b~b~b~b~b
+xorps~b~b~b~b~b~b~b~b~b
+.econtents
+.if &wasmfull. eq 0 .do begin
+:cmt. .ix 'ah'
+:cmt. .ix 'al'
+:cmt. .ix 'ax'
+:cmt. .ix 'bh'
+:cmt. .ix 'bl'
+:cmt. .ix 'bp'
+:cmt. .ix 'bx'
+:cmt. .ix 'ch'
+:cmt. .ix 'cl'
+:cmt. .ix 'cr0'
+:cmt. .ix 'cr2'
+:cmt. .ix 'cr3'
+:cmt. .ix 'cr4'
+:cmt. .ix 'cs'
+:cmt. .ix 'cx'
+:cmt. .ix 'dh'
+:cmt. .ix 'di'
+:cmt. .ix 'dl'
+:cmt. .ix 'dr0'
+:cmt. .ix 'dr1'
+:cmt. .ix 'dr2'
+:cmt. .ix 'dr3'
+:cmt. .ix 'dr6'
+:cmt. .ix 'dr7'
+:cmt. .ix 'ds'
+:cmt. .ix 'dx'
+:cmt. .ix 'eax'
+:cmt. .ix 'ebp'
+:cmt. .ix 'ebx'
+:cmt. .ix 'ecx'
+:cmt. .ix 'edi'
+:cmt. .ix 'edx'
+:cmt. .ix 'es'
+:cmt. .ix 'esi'
+:cmt. .ix 'esp'
+:cmt. .ix 'fs'
+:cmt. .ix 'gs'
+:cmt. .ix 'mm0'
+:cmt. .ix 'mm1'
+:cmt. .ix 'mm2'
+:cmt. .ix 'mm3'
+:cmt. .ix 'mm4'
+:cmt. .ix 'mm5'
+:cmt. .ix 'mm6'
+:cmt. .ix 'mm7'
+:cmt. .ix 'si'
+:cmt. .ix 'sp'
+:cmt. .ix 'ss'
+:cmt. .ix 'st'
+:cmt. .ix 'tr3'
+:cmt. .ix 'tr4'
+:cmt. .ix 'tr5'
+:cmt. .ix 'tr6'
+:cmt. .ix 'tr7'
+:cmt. .ix 'xmm0'
+:cmt. .ix 'xmm1'
+:cmt. .ix 'xmm2'
+:cmt. .ix 'xmm3'
+:cmt. .ix 'xmm4'
+:cmt. .ix 'xmm5'
+:cmt. .ix 'xmm6'
+:cmt. .ix 'xmm7'
 .do end
+.contents
+ah~b~b~b~b~b~b~b~b~b~b~b~b
+al~b~b~b~b~b~b~b~b~b~b~b~b
+ax~b~b~b~b~b~b~b~b~b~b~b~b
+bh~b~b~b~b~b~b~b~b~b~b~b~b
+bl~b~b~b~b~b~b~b~b~b~b~b~b
+bx~b~b~b~b~b~b~b~b~b~b~b~b
+ch~b~b~b~b~b~b~b~b~b~b~b~b
+cl~b~b~b~b~b~b~b~b~b~b~b~b
+cr0~b~b~b~b~b~b~b~b~b~b~b
+cr2~b~b~b~b~b~b~b~b~b~b~b
+cr3~b~b~b~b~b~b~b~b~b~b~b
+cr4~b~b~b~b~b~b~b~b~b~b~b
+cs~b~b~b~b~b~b~b~b~b~b~b~b
+cx~b~b~b~b~b~b~b~b~b~b~b~b
+dh~b~b~b~b~b~b~b~b~b~b~b~b
+di~b~b~b~b~b~b~b~b~b~b~b~b
+dl~b~b~b~b~b~b~b~b~b~b~b~b
+dr0~b~b~b~b~b~b~b~b~b~b~b
+dr1~b~b~b~b~b~b~b~b~b~b~b
+dr2~b~b~b~b~b~b~b~b~b~b~b
+dr3~b~b~b~b~b~b~b~b~b~b~b
+dr6~b~b~b~b~b~b~b~b~b~b~b
+dr7~b~b~b~b~b~b~b~b~b~b~b
+ds~b~b~b~b~b~b~b~b~b~b~b~b
+dx~b~b~b~b~b~b~b~b~b~b~b~b
+eax~b~b~b~b~b~b~b~b~b~b~b
+ebp~b~b~b~b~b~b~b~b~b~b~b
+ebx~b~b~b~b~b~b~b~b~b~b~b
+ecx~b~b~b~b~b~b~b~b~b~b~b
+edi~b~b~b~b~b~b~b~b~b~b~b
+edx~b~b~b~b~b~b~b~b~b~b~b
+es~b~b~b~b~b~b~b~b~b~b~b~b
+esi~b~b~b~b~b~b~b~b~b~b~b
+esp~b~b~b~b~b~b~b~b~b~b~b
+fs~b~b~b~b~b~b~b~b~b~b~b~b
+gs~b~b~b~b~b~b~b~b~b~b~b~b
+mm0~b~b~b~b~b~b~b~b~b~b~b
+mm1~b~b~b~b~b~b~b~b~b~b~b
+mm2~b~b~b~b~b~b~b~b~b~b~b
+mm3~b~b~b~b~b~b~b~b~b~b~b
+mm4~b~b~b~b~b~b~b~b~b~b~b
+mm5~b~b~b~b~b~b~b~b~b~b~b
+mm6~b~b~b~b~b~b~b~b~b~b~b
+mm7~b~b~b~b~b~b~b~b~b~b~b
+si~b~b~b~b~b~b~b~b~b~b~b~b
+ss~b~b~b~b~b~b~b~b~b~b~b~b
+st~b~b~b~b~b~b~b~b~b~b~b~b
+st0~b~b~b~b~b~b~b~b~b~b~b
+st1~b~b~b~b~b~b~b~b~b~b~b
+st2~b~b~b~b~b~b~b~b~b~b~b
+st3~b~b~b~b~b~b~b~b~b~b~b
+st4~b~b~b~b~b~b~b~b~b~b~b
+st5~b~b~b~b~b~b~b~b~b~b~b
+st6~b~b~b~b~b~b~b~b~b~b~b
+st7~b~b~b~b~b~b~b~b~b~b~b
 tr3~b~b~b~b~b~b~b~b~b~b~b
 tr4~b~b~b~b~b~b~b~b~b~b~b
 tr5~b~b~b~b~b~b~b~b~b~b~b
 tr6~b~b~b~b~b~b~b~b~b~b~b
 tr7~b~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-typedef~b~b~b~b~b~b~b
-.do end
-ucomisd~b~b~b~b~b~b~b
-ucomiss~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-union~b~b~b~b~b~b~b~b~b
-.do end
-unpckhpd~b~b~b~b~b~b
-unpckhps~b~b~b~b~b~b
-unpcklpd~b~b~b~b~b~b
-unpcklps~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.until~b~b~b~b~b~b~b~b
-use16~b~b~b~b~b~b~b~b~b
-use32~b~b~b~b~b~b~b~b~b
-uses~b~b~b~b~b~b~b~b~b~b
-vararg~b~b~b~b~b~b~b~b
-.do end
-verr~b~b~b~b~b~b~b~b~b~b
-verw~b~b~b~b~b~b~b~b~b~b
-wait~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-watcom_c~b~b~b~b~b~b
-.do end
-wbinvd~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.while~b~b~b~b~b~b~b~b
-width~b~b~b~b~b~b~b~b~b
-.do end
-word~b~b~b~b~b~b~b~b~b~b
-wrmsr~b~b~b~b~b~b~b~b~b
-xadd~b~b~b~b~b~b~b~b~b~b
-xchg~b~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.xcref~b~b~b~b~b~b~b~b
-.do end
-xlat~b~b~b~b~b~b~b~b~b~b
-xlatb~b~b~b~b~b~b~b~b~b
-.if &wasmfull. eq 1 .do begin
-~.xlist~b~b~b~b~b~b~b~b
-.do end
-~.xmm~b~b~b~b~b~b~b~b~b~b
 xmm0~b~b~b~b~b~b~b~b~b~b
 xmm1~b~b~b~b~b~b~b~b~b~b
-~.xmm2~b~b~b~b~b~b~b~b~b
 xmm2~b~b~b~b~b~b~b~b~b~b
-~.xmm3~b~b~b~b~b~b~b~b~b
 xmm3~b~b~b~b~b~b~b~b~b~b
 xmm4~b~b~b~b~b~b~b~b~b~b
 xmm5~b~b~b~b~b~b~b~b~b~b
 xmm6~b~b~b~b~b~b~b~b~b~b
 xmm7~b~b~b~b~b~b~b~b~b~b
-xor~b~b~b~b~b~b~b~b~b~b~b
-xorpd~b~b~b~b~b~b~b~b~b
-xorps~b~b~b~b~b~b~b~b~b
 .econtents
+

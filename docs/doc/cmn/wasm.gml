@@ -200,7 +200,7 @@ treat all warnings as errors
 set warning level to maximum setting
 .endnote
 .*
-.section Assembly Directives and Opcodes
+.section Assembler Directives, Operators and Assembly Opcodes
 .*
 .np
 It is not the intention of this chapter to describe assembly-language
@@ -306,20 +306,17 @@ There are a few specific features in &asmname.
                  Procedure   Variable
 Convention         Name        Name
 ---------------  ----------  ---------
-C (WATCOM)          '*'         '*'    see note 1
-C (MASM, TASM)     '_*'        '_*'    see note 1
+C                  '_*'        '_*'
 WATCOM_C         see section &company "C" name mangler
 SYSCALL             '*'         '*'
 STDCALL           '_*@nn'      '_*'
-STDCALL            '_*'        '_*'    see note 2
-STDCALL             '*'         '*'    see note 3
+STDCALL            '_*'        '_*'    see note 1
+STDCALL             '*'         '*'    see note 2
 BASIC               '^'         '^'
 FORTRAN             '^'         '^'
 PASCAL              '^'         '^'
 .millust end
 .autonote Notes:
-.note
-WASM -zcm command line option is used with appropriate compatibility mode.
 .note
 In STDCALL procedures name 'nn' is overall parametrs size in bytes.
 '@nn' is suppressed when -zz command line option is used (WATCOM 10.0 compatibility).
@@ -329,8 +326,8 @@ STDCALL symbols mangling is suppressed by -zzo command line option (WASM backwar
 .np
 .section &company "C" name mangler
 .millust begin
-Command line     Procedure     Others
-  option           Name        Names
+Command line     Procedure   Variable
+  option           Name        Name
 ---------------  ----------  ---------
 0,1,2              '*_'        '_*'
 3,4,5,6 with r     '*_'        '_*'
@@ -343,14 +340,17 @@ Command line     Procedure     Others
 Convention   Vararg    passed by       order         stack
 -----------  ------  ------------  ------------- --------------
 C             yes      stack       right to left    no
-WATCOM_C      yes      registers   right to left    no
+WATCOM_C      yes      registers   right to left    see note 1
+              yes      stack       right to left    no
 SYSCALL       yes      stack       right to left    no
-STDCALL       yes      stack       right to left    yes see note 1
+STDCALL       yes      stack       right to left    yes see note 2
 BASIC         no       stack       left to right    yes
 FORTRAN       no       stack       left to right    yes
 PASCAL        no       stack       left to right    yes
 .millust end
 .autonote Notes:
+.note
+If any parameter is passed on the stack then WASM automaticaly cleanup caller stack.
 .note
 For STDCALL procedures WASM automaticaly cleanup caller stack,
 except case when vararg parameter is used.
