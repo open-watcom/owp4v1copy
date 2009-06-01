@@ -45,25 +45,6 @@ extern int              get_instruction_position( char *string );
 extern global_options   Options;
 bool                    EnumDirective;
 
-void GetInsString( enum asm_token token, char *string, int len )
-/**************************************************************/
-{
-    int index;
-
-    if( len > AsmOpcode[ token ].len ) {
-        len = AsmOpcode[ token ].len;
-        index = AsmOpcode[ token ].index;
-        if( AsmChars[index]== '.' ) {
-            index++;
-            len--;
-        }
-        strncpy( string, &(AsmChars[ index ]), len );
-        string[ len ] = '\0';
-    } else {
-        *string='\0';
-    }
-    return;
-}
 #endif
 
 typedef union {

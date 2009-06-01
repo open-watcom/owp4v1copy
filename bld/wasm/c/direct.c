@@ -2233,7 +2233,7 @@ int Model( int i )
                 }
             }
         }
-        MakeConstantUnderscored( AsmBuffer[i]->u.value );
+        MakeConstantUnderscored( token );
 
         if( initstate & TypeInfo[type].init ) {
             AsmError( MODEL_PARA_DEFINED ); // initialized already

@@ -97,12 +97,12 @@ int main( int argc, char *argv[] )
         printf( "Unable to open '%s'\n", out_name );
         exit( 1 );
     }
-    fprintf( out, "enum asm_token {\n" );
+    fprintf( out, "typedef enum asm_token {\n" );
     for( i = 0; i < count; i++ ) {
         fprintf( out, "\t%s,\n", get_enum_key( Words[ i ].word ) );
     }
     fprintf( out, "\tT_NULL\n" );
-    fprintf( out, "};\n\n" );
+    fprintf( out, "} asm_token;\n\n" );
     fclose( out );
     return( 0 );
 }

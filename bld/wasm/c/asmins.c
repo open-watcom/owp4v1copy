@@ -74,10 +74,11 @@ static int              segm_override_jumps( expr_list *opndx );
 extern global_options   Options;
 extern int              directive( int , long );
 extern int              SymIs32( struct asm_sym *sym );
-static void             check_assume( struct asm_sym *, enum prefix_reg );
 
 extern int_8            DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
+
+static void             check_assume( struct asm_sym *, enum prefix_reg );
 
 uint_8                  CheckSeg;       // if checking of opened segment is needed
 struct asm_sym          *Frame;         // Frame of current fixup
@@ -136,6 +137,26 @@ void find_frame( struct asm_sym *sym )
             break;
         }
     }
+}
+
+void GetInsString( asm_token token, char *string, int len )
+/**************************************************************/
+{
+    int index;
+
+    if( len > AsmOpcode[ token ].len ) {
+        len = AsmOpcode[ token ].len;
+        index = AsmOpcode[ token ].index;
+        if( AsmChars[index]== '.' ) {
+            index++;
+            len--;
+        }
+        strncpy( string, &(AsmChars[ index ]), len );
+        string[ len ] = '\0';
+    } else {
+        *string='\0';
+    }
+    return;
 }
 #endif
 
@@ -729,39 +750,43 @@ static int def_fpu( uint direct )
 }
 
 #if defined( _STANDALONE_ )
-static void MakeCPUConstant( int i )
-/**********************************/
+static void MakeCPUConstant( asm_token tok )
+/******************************************/
 {
-    MakeConstantUnderscored( i );
+    char    buffer[MAX_LINE_LEN];
 
-    switch( i ) {
+    GetInsString( tok, buffer, MAX_LINE_LEN );
+    MakeConstantUnderscored( buffer );
+
+    switch( tok ) {
     // fall right through
     case T_DOT_686P:
     case T_P686P:
     case T_DOT_686:
     case T_P686:
-        MakeConstantUnderscored( T_DOT_686 );
+        MakeConstantUnderscored( "686" );
     case T_DOT_586P:
     case T_P586P:
     case T_DOT_586:
     case T_P586:
-        MakeConstantUnderscored( T_DOT_586 );
+        MakeConstantUnderscored( "586" );
     case T_DOT_486P:
     case T_P486P:
     case T_DOT_486:
     case T_P486:
-        MakeConstantUnderscored( T_DOT_486 );
+        MakeConstantUnderscored( "486" );
     case T_DOT_386P:
     case T_P386P:
     case T_DOT_386:
     case T_P386:
-        MakeConstantUnderscored( T_DOT_386 );
+        MakeConstantUnderscored( "386" );
         break;
     case T_DOT_286P:
     case T_P286P:
     case T_DOT_286:
     case T_P286:
-        MakeConstantUnderscored( T_DOT_286 );
+        MakeConstantUnderscored( "286" );
+        break;
     }
     return;
 }

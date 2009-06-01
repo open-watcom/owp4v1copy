@@ -43,8 +43,6 @@
 
 #define    MAX_EQU_NESTING      20
 
-extern void             GetInsString( enum asm_token , char *, int );
-
 static int              createconstant( char *, bool, int, bool, bool );
 
 static label_list *label_cmp( char *name, label_list *head )
@@ -306,15 +304,14 @@ int StoreConstant( char *name, char *value, bool redefine )
     return( createconstant( name, FALSE, 0, redefine, FALSE ) );
 }
 
-void MakeConstantUnderscored( int token )
-/*****************************/
+void MakeConstantUnderscored( char const *name )
+/**********************************************/
 {
-    char buffer[23];
+    char    buffer[MAX_LINE_LEN];
 
     /* define a macro */
-    buffer[0]='\0';
-    strcat( buffer, "__" );
-    GetInsString( (enum asm_token)token, buffer+2, 18 );
+    strcpy( buffer, "__" );
+    strcpy( buffer + 2, name );
     strcat( buffer, "__" );
     strupr( buffer );
     createconstant( buffer, TRUE, 0, TRUE, FALSE );

@@ -45,57 +45,57 @@ int jmp( expr_list *opndx );
 
 #if defined( _STANDALONE_ )
 
-extern void             GetInsString( enum asm_token, char *, int );
 extern int              SymIs32( struct asm_sym *sym );
 extern void             check_assume( struct asm_sym *sym, enum prefix_reg default_reg );
 extern void             find_frame( struct asm_sym *sym );
 
-static enum asm_token getJumpNegation( enum asm_token instruction )
+static void getJumpNegation( asm_token tok, char *buffer, int len )
 /*****************************************************************/
 {
-    switch( instruction ) {
-    case T_JA:          return( T_JNA );
-    case T_JAE:         return( T_JNAE );
-    case T_JB:          return( T_JNB );
-    case T_JBE:         return( T_JNBE );
-    case T_JC:          return( T_JNC );
-    case T_JE:          return( T_JNE );
-    case T_JG:          return( T_JNG );
-    case T_JGE:         return( T_JNGE );
-    case T_JL:          return( T_JNL );
-    case T_JLE:         return( T_JNLE );
-    case T_JNA:         return( T_JA );
-    case T_JNAE:        return( T_JAE );
-    case T_JNB:         return( T_JB );
-    case T_JNBE:        return( T_JBE );
-    case T_JNC:         return( T_JC );
-    case T_JNE:         return( T_JE );
-    case T_JNG:         return( T_JG );
-    case T_JNGE:        return( T_JGE );
-    case T_JNL:         return( T_JL );
-    case T_JNLE:        return( T_JLE );
-    case T_JNO:         return( T_JO );
-    case T_JNP:         return( T_JP );
-    case T_JNS:         return( T_JS );
-    case T_JNZ:         return( T_JZ );
-    case T_JO:          return( T_JNO );
-    case T_JP:          return( T_JNP );
-    case T_JPE:         return( T_JPO );
-    case T_JPO:         return( T_JPE );
-    case T_JS:          return( T_JNS );
-    case T_JZ:          return( T_JNZ );
+    switch( tok ) {
+    case T_JA:      tok = T_JNA;    break;
+    case T_JAE:     tok = T_JNAE;   break;
+    case T_JB:      tok = T_JNB;    break;
+    case T_JBE:     tok = T_JNBE;   break;
+    case T_JC:      tok = T_JNC;    break;
+    case T_JE:      tok = T_JNE;    break;
+    case T_JG:      tok = T_JNG;    break;
+    case T_JGE:     tok = T_JNGE;   break;
+    case T_JL:      tok = T_JNL;    break;
+    case T_JLE:     tok = T_JNLE;   break;
+    case T_JNA:     tok = T_JA;     break;
+    case T_JNAE:    tok = T_JAE;    break;
+    case T_JNB:     tok = T_JB;     break;
+    case T_JNBE:    tok = T_JBE;    break;
+    case T_JNC:     tok = T_JC;     break;
+    case T_JNE:     tok = T_JE;     break;
+    case T_JNG:     tok = T_JG;     break;
+    case T_JNGE:    tok = T_JGE;    break;
+    case T_JNL:     tok = T_JL;     break;
+    case T_JNLE:    tok = T_JLE;    break;
+    case T_JNO:     tok = T_JO;     break;
+    case T_JNP:     tok = T_JP;     break;
+    case T_JNS:     tok = T_JS;     break;
+    case T_JNZ:     tok = T_JZ;     break;
+    case T_JO:      tok = T_JNO;    break;
+    case T_JP:      tok = T_JNP;    break;
+    case T_JPE:     tok = T_JPO;    break;
+    case T_JPO:     tok = T_JPE;    break;
+    case T_JS:      tok = T_JNS;    break;
+    case T_JZ:      tok = T_JNZ;    break;
     default:
-        return( (enum asm_token)ERROR );
+        *buffer = '\0';
+        return;
     }
+    GetInsString( tok, buffer, len );
 }
 
 static void jumpExtend( int far_flag )
 /*************************************/
 {
-    unsigned i;
-    unsigned next_ins_size;
-    enum asm_token negation;
-    char buffer[MAX_LINE_LEN];
+    unsigned    i;
+    unsigned    next_ins_size;
+    char        buffer[MAX_LINE_LEN];
 
     /* there MUST be a conditional jump instruction in asmbuffer */
     for( i = 0; ; i++ ) {
@@ -107,14 +107,13 @@ static void jumpExtend( int far_flag )
 
     AsmWarn( 4, EXTENDING_JUMP );
 
-    negation = getJumpNegation( AsmBuffer[i]->u.value );
-    GetInsString( negation, buffer, MAX_LINE_LEN );
+    getJumpNegation( AsmBuffer[i]->u.value, buffer, MAX_LINE_LEN );
     if( far_flag ) {
         next_ins_size = Code->use32 ? 7 : 5;
     } else {
         next_ins_size = Code->use32 ? 5 : 3;
     }
-    sprintf( buffer + strlen( buffer ), " SHORT $+%d ", next_ins_size+2 );
+    sprintf( buffer + strlen( buffer ), " SHORT $+%d ", next_ins_size + 2 );
     InputQueueLine( buffer );
     if( far_flag ) {
         strcpy( buffer, "jmpf " );
