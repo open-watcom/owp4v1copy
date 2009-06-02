@@ -26,6 +26,9 @@ struct B {
     template< class T >
     explicit B( T t );
 
+    ~B()
+    { }
+
     template< class T >
     void f( T t );
 };
@@ -37,6 +40,12 @@ B::B( T t )
 template< class T >
 void B::f( T t )
 { }
+
+
+void g( B &b )
+{
+    B bb = b;
+}
 
 
 int main(void)
