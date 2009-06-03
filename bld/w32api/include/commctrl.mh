@@ -2613,10 +2613,10 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #endif
 
 /* Tree view item handle special values */
-#define TVI_ROOT    ((HTREEITEM)(ULONG_PTR)0x00010000)
-#define TVI_FIRST   ((HTREEITEM)(ULONG_PTR)0x0000FFFF)
-#define TVI_LAST    ((HTREEITEM)(ULONG_PTR)0x0000FFFE)
-#define TVI_SORT    ((HTREEITEM)(ULONG_PTR)0x0000FFFD)
+#define TVI_ROOT    ((HTREEITEM)(ULONG_PTR)-0x00010000)
+#define TVI_FIRST   ((HTREEITEM)(ULONG_PTR)-0x0000FFFF)
+#define TVI_LAST    ((HTREEITEM)(ULONG_PTR)-0x0000FFFE)
+#define TVI_SORT    ((HTREEITEM)(ULONG_PTR)-0x0000FFFD)
 
 /* Tree view messages */
 #define TVM_INSERTITEMA             (TV_FIRST + 0)
