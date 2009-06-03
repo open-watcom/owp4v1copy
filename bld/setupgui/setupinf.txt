@@ -43,6 +43,8 @@ Variables
    IsWin32s
    IsWin95
    IsWinNT
+   IsLinux
+   IsAlpha
    HelpFiles
    SrcIsCD
 
@@ -96,18 +98,17 @@ Sections
 
 
 [Autoexec]
-   This section defines modifications to be made to autoexec.bat. The
-   format is variable name, followed by an '=', then the value terminated
+   This section defines modifications to be made to autoexec.bat file only.
+
+   The form is:
+
+   <varname>=<value>,<cond>
+
+   The format is variable name, followed by an '=', then the value terminated
    by a comma, then a condition. If the variable is preceded by a '+' sign,
-   the value is appended to any existing variable, else the variable is
-   simply set. Example:
-
-   +PATH=%DstDir%\BINNT,IsWin95
-
-   If 'IsWin95' is true, add '%DstDir%\BINNT' to 'PATH' environment variable,
-   or add 'PATH' if it didn't already exist. Note that '%DstDir% will be
-   replaced with the actual value of 'DstDir' script variable.
-
+   the value is appended to the end of any existing variable. 
+   If the variable is preceded by a '++' sign, the value is appended to 
+   the begin of any existing variable, else the variable is simply set.
 
 [AutoSet]
    Defines conditional variables, with a variable name and a condition.
@@ -117,10 +118,18 @@ Sections
 
 
 [Config]
-   This defines value to be added to config.sys. The format is variable name,
-   followed by an '=', then the value terminated by a comma, then a
-   condition. If the variable is preceded by a '+' sign, the value is
-   appended to any existing variable, else the variable is simply set.
+   This section defines modifications to be made to config.sys file only.
+
+   The form is:
+
+   <varname>=<value>,<cond>
+
+   The format is variable name, followed by an '=', then the value terminated
+   by a comma, then a condition. If the variable is preceded by a '+' sign,
+   the value is appended to the end of any existing variable. 
+   If the variable is preceded by a '++' sign, the value is appended to 
+   the begin of any existing variable, else the variable is simply set.
+   
    Example:
 
    FILES=20,IsDOS IsWin |
@@ -166,59 +175,67 @@ Sections
   width=<num>
      Set the dialog text wrap width to <num> characters
 
-  vis_condition
-     Set the visual condition ??
+  vis_condition=<cond>
+     Set the visibility condition. For explanation see "condition" above.
 
-  static_text=<text>
+  Dialog controls.
+
+    Most of controls have optional condition and visibility condition values
+      append to the end of each control specification.
+
+  static_text="<text>"[,<cond>[,<visib.cond>]]
      Add a static text control to the dialog. If no text is following the '='
      sign, and empty line is added, which is useful to add padding in
      dialogs. The character '@' in static text is replaced by the name of
      the installtion program (e.g. 'SETUP' or 'INSTALL'). Note that the text
      must be enclosed in quotes.
 
-  dynamic_text=FormattedDiskInfo,""
+  dialog_text="<text>"[,<cond>[,<visib.cond>]]
+  dialog_text="@filename"[,<cond>[,<visib.cond>]]
 
-  other_button="&Target...",Target,"Target operating systems:"
+  dynamic_text=FormattedDiskInfo,""[,<cond>[,<visib.cond>]]
+
+  other_button="&Target...",Target,"Target operating systems:"[,<cond>[,<visib.cond>]]
      Add a selection button. It needs 3 command separated values. The first
      is the button label, and an '&' before a letter indicates a keyboard
      shortcut (button will be activated if Alt+letter is pressed). The second
      value is the name of a dialog that will be invoked if the button is
      activated. The third value is the explanatory text.
 
-  edit_button
+  edit_button variable_name,..?..[,<cond>[,<visib.cond>]]
 
-  push_button=-"&Previous..."
-  push_button=.+"&OK"
-  push_button=?"&Help"
-  push_button=^"&Cancel"
+  push_button=-"&Previous..."[,<cond>[,<visib.cond>]]
+  push_button=.+"&OK"[,<cond>[,<visib.cond>]]
+  push_button=?"&Help"[,<cond>[,<visib.cond>]]
+  push_button=^"&Cancel"[,<cond>[,<visib.cond>]]
 
-  radio_button=ModNow,1,"&Make all the modifications for you"
+  radio_button=ModNow,1,"&Make all the modifications for you"[,<cond>[,<visib.cond>]]
      Define a radio button. It is followed by three values: a variable name,
      an initial value (1 or 0), and an explantory text. & in front of a letter
      of the text will activate the button (set the variable to 1) if
      Alt-letter is pressed. Of multiple radiobuttons, only 1 will be set to
      1, all other will be 0.
 
-  check_box=CfgFileCreate,1,"&Create the file"
+  check_box=CfgFileCreate,1,"&Create the file"[,<cond>[,<visib.cond>]]
      Define a check box. It is followed by three values: a variable name,
      an initial value (1 or 0), and an explantory text. & in front of a letter
      of the text will activate the button (toggle the variable between 0 and 1) if
      Alt-letter is pressed. A checkbox is not influenced by other checkboxes in
      the same dialog.
 
-  detail_check=dwin32sdk,"&Win32 SDK...",win32sdk,,"32-&bit Windows SDK"
-
   check_box_continue
      Like check_box, but placed after it on the same line rather than below
      the previous checkbox.
 
-  edit_control=SrcDir,,"Source Directory:"
+  detail_check=dwin32sdk,"&Win32 SDK...",win32sdk,,"32-&bit Windows SDK"[,<cond>[,<visib.cond>]]
+
+  edit_control=SrcDir,,"Source Directory:"[,<cond>[,<visib.cond>]]
      Get a value form the user. It is followed by 3 values: a variable name, an
      optional initial value, and a explanatory text.
 
-  text_window=<height>,<text>,<condition>
+  text_window=<height>,<text>[,<cond>[,<visib.cond>]]
      Define a multi-line text control, <height> lines tall, shown if
-     <condition> is true. The text will be word wrapped to fit. The
+     <cond> is true. The text will be word wrapped to fit. The
      text_window control will typically be very wide, unless the width is
      limited via the 'width' keyword. If <text> starts with an '@' sign
      followed by a file name, then text is read from the external file
@@ -237,11 +254,12 @@ Sections
    numers are referenced later in the Files section. Each line has three
    values. e.g. :
 
-  binp\dll,1,8
-     The first value is the directory name, the second is the target (??),
-     the third is the parent. This parent is the number of the directory
-     under which this particular directory resides. In the example, "binp"
-     would have been the 8th directory line. If the parent is "-1", then ??
+   binp\dll,1,8
+
+   The first value is the directory name, the second is the target (??),
+   the third is the parent. This parent is the number of the directory
+   under which this particular directory resides. In the example, "binp"
+   would have been the 8th directory line. If the parent is "-1", then ??
 
 
 [Disks]
@@ -255,16 +273,38 @@ Sections
 
 
 [Environment]
-   This section defines values to be added to the environment. The form is
+   This section defines modifications to be made to the environment. 
 
-   <envvar>=<value>,<condition>
+   Behaviour is host specific:
 
-   If the variable name is preceded by a '+' sign, the value is added to
-   any existing variable, otherwise the variable is simply set. Example:
+   DOS, WIN - modify Autoexec.bat file and create batch file for environment setup.
+   NT       - modify registry and create batch file for environment setup.
+   OS/2     - modify Config.sys file and create batch file for environment setup.
+   LINUX    - create batch file for environment setup.
 
-  EDPATH=%WDir%\EDDAT,IsWinNT
+   The form is:
 
-  [is this section intended for NT only?]
+   <varname>=<value>,<cond>
+
+   The format is variable name, followed by an '=', then the value terminated
+   by a comma, then a condition. If the variable is preceded by a '+' sign,
+   the value is appended to the end of any existing variable. 
+   If the variable is preceded by a '++' sign, the value is appended to 
+   the begin of any existing variable, else the variable is simply set.
+
+   Example:
+
+   +INCLUDE=%DstDir%\H,IsWin95
+   ++INCLUDE=%DstDir%\H,IsWin95
+   INCLUDE=%DstDir%\H,IsWin95
+
+   If 'IsWin95' is true, add '%DstDir%\H' to 'INCLUDE' environment variable,
+   or add 'INCLUDE' if it didn't already exist. Note that '%DstDir% will be
+   replaced with the actual value of 'DstDir' script variable.
+
+   First example add '%DstDir%\H' as last item to the INCLUDE.
+   Second example add '%DstDir%\H' as first item to the INCLUDE.
+   Third example replace INCLUDE by '%DstDir%\H'.
 
 
 [ErrorMessage]
@@ -290,7 +330,7 @@ Sections
    under which the archive should be processed. Example of a complete archive
    line:
 
-  pck00659,1,tools.ini!1!e6w01s!!s,6,-1,4,.,wnttarg
+   pck00659,1,tools.ini!1!e6w01s!!s,6,-1,4,.,wnttarg
 
    The first field (string) is the name of the archive, the second is the
    number of files in the archive in base-36 notation (symbols 0-9 and a-z).
@@ -301,7 +341,7 @@ Sections
    the values are separated by an exclamation mark '!'. Example of a file
    specification within an archive line:
 
-  tools.ini!1!e6w01s!!s
+   tools.ini!1!e6w01s!!s
 
    Detailed description of the file specification follows. The first field
    (string) is the file name (note - if the extension is '.nlm' the file is
@@ -316,7 +356,7 @@ Sections
 
    Following is the trailing part of an archive entry. Example:
 
-  6,-1,4,.,wnttarg
+   6,-1,4,.,wnttarg
 
    The first field is the base-36 index of the directory into which the
    file(s) should be placed. The second field is the base-36 "old directory"
