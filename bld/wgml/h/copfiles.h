@@ -62,6 +62,9 @@
 *                       outtrans_block
 *                           translation
 *                       width_block
+*                   record_buffer
+*                   text_chars
+*                   text_line
 *                   wgml_font
 *               the variables:
 *                   bin_device
@@ -83,6 +86,7 @@
 *                   fb_finish()
 *                   fb_hline()
 *                   fb_new_section()
+*                   fb_output_textline()
 *                   fb_position()
 *                   fb_start()
 *                   fb_vline()
@@ -491,6 +495,35 @@ typedef struct cop_font {
     width_block *       width;
 } cop_font;
 
+/* This struct is used with the output buffer. current records the current
+ * write position, length records the number of bytes pointed to by text,
+ * and text points to the bytes to be inserted into the output buffer.
+ */
+
+typedef struct {
+    size_t                  current;
+    size_t                  length;
+    uint8_t     *           text;
+} record_buffer;
+
+/* This struct implements the text_chars struct in the Wiki. */
+
+typedef struct tc_struct {
+    struct  tc_struct   *   next;
+    uint8_t                 font_number;
+    uint32_t                x_address;
+    uint32_t                width;
+    uint16_t                count;
+    uint8_t             *   text;
+} text_chars;
+
+/* This struct implements the text_line struct in the Wiki. */
+
+typedef struct {
+    uint32_t                y_address;
+    text_chars          *   first;
+} text_line;
+
 /* This struct implements the wgml_font struct in the Wiki. */
 
 typedef struct {
@@ -508,17 +541,6 @@ typedef struct {
     uint32_t                line_space;
     uint32_t                spc_width;
 } wgml_font;
-
-/* This struct is used with the output buffer. current records the current
- * write position, length records the number of bytes pointed to by text,
- * and text points to the bytes to be inserted into the output buffer.
- */
-
-typedef struct {
-    size_t                  current;
-    size_t                  length;
-    uint8_t     *           text;
-} record_buffer;
 
 /* Variable declarations. */
 
@@ -542,11 +564,11 @@ global wgml_font    *   wgml_fonts;     // the available fonts
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
-extern uint8_t              cop_in_trans( uint8_t in_char, uint32_t font );
-extern record_buffer    *   cop_out_trans( uint8_t * text, uint32_t count, record_buffer * in_out, uint32_t font );
+extern uint8_t              cop_in_trans( uint8_t in_char, uint8_t font );
+extern record_buffer    *   cop_out_trans( uint8_t * text, uint32_t count, record_buffer * in_out, uint8_t font );
 extern void                 cop_setup( void );
 extern void                 cop_teardown( void );
-extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint32_t font );
+extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
 extern void                 cop_ti_table( uint8_t * data, uint32_t count );
 extern void                 cop_tr_table( uint8_t * data, uint32_t count );
 extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
@@ -555,6 +577,7 @@ extern void                 fb_document_page( void );
 extern void                 fb_finish( void );
 extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
 extern void                 fb_new_section( uint32_t v_start );
+extern void                 fb_output_textline( text_line * out_line );
 extern void                 fb_position( uint32_t h_start, uint32_t v_start );
 extern void                 fb_start( void );
 extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );

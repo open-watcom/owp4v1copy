@@ -37,6 +37,7 @@
 *                   df_setup()
 *                   df_teardown()
 *                   fb_enterfont()
+*                   fb_first_text_pass()
 *                   fb_init()
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
@@ -47,7 +48,8 @@
 *                   df_function
 *                   page_state
 *                   parameters
-*               some local variables:
+*               quite a few local variables:
+*                   active_font
 *                   at_start
 *                   current_df_data
 *                   current_function
@@ -234,7 +236,7 @@ static uint32_t         y_address       = 0;
 static uint32_t         y_size          = 0;
 
 /* These are used by the interpreter. */
-
+static uint32_t         active_font     = 0;
 static df_data          current_df_data;
 static df_function      device_function_table[MAX_FUNC_INDEX + 1];
 static df_function      driver_function_table[MAX_FUNC_INDEX + 1];
@@ -317,9 +319,9 @@ static void fb_newline( void )
      * the rounding used here may require adjustment in the future.
      */
 
-    desired_lines = desired_units / wgml_fonts[font_number].line_height;
-    remainder = desired_lines % wgml_fonts[font_number].line_height;
-    if ( 2 * remainder >= wgml_fonts[font_number].line_height ) desired_lines++;
+    desired_lines = desired_units / wgml_fonts[active_font].line_height;
+    remainder = desired_lines % wgml_fonts[active_font].line_height;
+    if ( 2 * remainder >= wgml_fonts[active_font].line_height ) desired_lines++;
 
     /* Devices using :ABSOLUTEADDRESS may be able to use partial line heights,
      * but devices using :NEWLINE blocks must advance at least one whole line
@@ -542,7 +544,7 @@ static void * df_dotab( void )
         }
 
         ob_insert_block( staging.text, staging.current, true, true, \
-                                                    current_state.font_number );
+                                                                active_font );
         staging.current = 0;
     }
     instance--;
@@ -1095,7 +1097,7 @@ static void out_text_driver( bool out_trans, bool out_text )
                                                                 sizeof( count ) );
         current_df_data.current += sizeof( count );
         ob_insert_block( current_df_data.current, count, out_trans, out_text, \
-                                                    current_state.font_number );
+                                                                active_font );
         break;
 
     case 0x10:
@@ -1113,8 +1115,7 @@ static void out_text_driver( bool out_trans, bool out_text )
         current_df_data.current = current_df_data.base + my_parameters.first;
         first = process_parameter();
         count = strlen( first );
-        ob_insert_block( first, count, out_trans, out_text, \
-                                                    current_state.font_number );
+        ob_insert_block( first, count, out_trans, out_text, active_font );
 
         /* Free the memory allocated to the parameter. */
 
@@ -2406,12 +2407,10 @@ void df_new_section( uint32_t v_start )
 
     fb_lineproc_endvalue();
 
-    /* Save desired_state.font_number and set it to 0 for the :NEWPAGE and
-     * and :NEWLINE blocks.
-     */
+    /* Save active_font and set it to 0 for the :NEWPAGE and :NEWLINE blocks. */
 
-    save_font = desired_state.font_number;
-    desired_state.font_number = 0;
+    save_font = active_font;
+    active_font = 0;
 
     /* Interpret the DOCUMENT_PAGE :PAUSE block. */
 
@@ -2431,12 +2430,12 @@ void df_new_section( uint32_t v_start )
     desired_state.y_address = v_start;
     fb_normal_vertical_positioning();
 
-    /* Restore the value of desired_state.font_number. This ensures that the
-     * next font switch decision and font switch, if any, will be done using
-     * the correct fonts.
+    /* Restore the value of active_font. This ensures that the next font
+     * switch decision and font switch, if any, will be done using the
+     * correct fonts.
      */
 
-    desired_state.font_number = save_font;
+    active_font = save_font;
 
     return;
 }
@@ -2619,16 +2618,18 @@ void df_teardown( void )
  * eventually be refactored if needed in other functions.
  *
  * Note:
- *      font_number is set to "0" to ensure that all function blocks will be
- *      done in the context of the default font. It is restored to its initial
- *      value on exit.
+ *      active_font and font_number are set to "0" to ensure that all function
+ *      blocks will be done in the context of the default font. They are
+ *      restored to their initial value on exit.
  */
 
 void fb_enterfont( void )
 {
-    uint32_t    old_font;
+    uint32_t    old_active_font;
+    uint32_t    old_font_number;
 
-    old_font = font_number;
+    old_active_font = active_font;
+    old_font_number = font_number;
     font_number = 0;
 
     if( wgml_fonts[0].font_pause != NULL ) \
@@ -2651,7 +2652,49 @@ void fb_enterfont( void )
             fb_firstword( &wgml_fonts[0].font_style->lineprocs[0] );
         }
     }
-    font_number = old_font;
+    active_font = old_active_font;
+    font_number = old_font_number;
+
+    return;
+}
+
+/* Function fb_first_text_pass().
+ * Performs the first pass for outputting ordinary text.
+ *
+ * Parameter:
+ *      out_line points to a text_line instance specifying the text to be
+ *          sent to the device.
+ *
+ * Note:
+ *      This function is to be used only by fb_output_text(), which includes
+ *          a test ensuring that out_line contains at least one text_chars
+ *          instance (that is, that out_line->first is not NULL).
+ *      Other functions are expected to be created for outputting lines
+ *          created using :BOX characters.
+ */
+
+void fb_first_text_pass( text_line * out_line )
+{
+    /* Update the internal state for the new text_line. */
+
+    desired_state.font_number = out_line->first->font_number;
+    desired_state.x_address   = out_line->first->x_address;
+    desired_state.y_address   = out_line->y_address;
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* Perform the Normal Vertical Positioning. */
+
+    fb_normal_vertical_positioning();
+
+    /* Update the font number. */
+
+    font_number = desired_state.font_number;
+    active_font = desired_state.font_number;
+
+    /* now do the rest of the first line pass processing! */
 
     return;
 }
@@ -2669,14 +2712,16 @@ void fb_init( init_block * in_block )
 {
     int i;
     int j;
+    uint32_t         old_active_font;
     uint32_t         old_font_number;
 
     /* An empty init_block is not an error. */
 
     if( in_block == NULL ) return;
 
-    /* This should be zero, but save it just to be sure. */
+    /* These should be zero, but save them just to be sure. */
 
+    old_active_font = active_font;
     old_font_number = font_number;
 
     /* :VALUE blocks are done once, :FONTVALUE blocks are done once for
@@ -2692,8 +2737,9 @@ void fb_init( init_block * in_block )
         }
     }
 
-    /* Restore the original font number, which should be zero. */
+    /* Restore the original values, which should be zero. */
 
+    active_font = old_active_font;
     font_number = old_font_number;
 
     return;
