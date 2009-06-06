@@ -249,8 +249,10 @@ static void     scan_script( void)
 
     cb = input_cbs;
     p = scan_start + 1;
+    scan_restart = scan_start;
 
     if( *p == '*' ) {
+        scan_start = scan_stop + 1;
         return;                         // .*   +++ ignore comment up to EOL
     }
 
@@ -278,7 +280,10 @@ static void     scan_script( void)
                 ProcFlags.macro_ignore = 0;
             }
         }
-
+        if( ProcFlags.literal ) {
+            ProcFlags.CW_sep_ignore = 1;
+            ProcFlags.macro_ignore = 1;
+        }
         if( !ProcFlags.CW_sep_ignore ) { // scan line for CW_sep_char
             char    *   pchar;
 
@@ -302,9 +307,10 @@ static void     scan_script( void)
         toklen = pt - token_buf;
 
         if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
-
-            cw_err();
-            scan_start = p;
+            if( !ProcFlags.literal ) {
+               cw_err();
+            }
+            scan_start = scan_restart;  // treat as text
             return;
         }
 
@@ -334,6 +340,7 @@ static void     scan_script( void)
         add_macro_cb_entry( me, NULL );
         inc_inc_level();
         add_macro_parms( p );
+        scan_restart = scan_stop + 1;
     } else {                            // try script controlword
         cwfound = false;
         if( GlobalFlags.research && GlobalFlags.firstpass ) {
@@ -352,11 +359,18 @@ static void     scan_script( void)
         if( toklen == SCR_KW_LENGTH ) {
             for( k = 0; k < SCR_TAGMAX; ++k ) {
                 if( !stricmp( scr_tags[k].tagname, token_buf ) ) {
-                    scan_start = p; // script controlword found, process
-                    if( scr_tags[k].cwflags & cw_break ) {
-//                      scr_process_break();    TBD
+                    if( ProcFlags.literal  ) {  // .li active
+                        if( !stricmp( token_buf, "li" ) ) {// process only .li
+                            scan_start = p;// script controlword found, process
+                            scr_tags[k].tagproc();
+                        }
+                    } else {
+                        scan_start = p; // script controlword found, process
+                        if( scr_tags[k].cwflags & cw_break ) {
+//                          scr_process_break();    TBD
+                        }
+                        scr_tags[k].tagproc();
                     }
-                    scr_tags[k].tagproc();
                     cwfound = true;
                     break;
                 }
@@ -366,6 +380,7 @@ static void     scan_script( void)
             cw_err();                   // unrecognized control word
         }
     }
+    scan_start = scan_restart;
 }
 
 /***************************************************************************/
@@ -591,17 +606,20 @@ void    scan_line( void )
     cb->if_flags[cb->if_level].ifcwdo = false;  // .. current
     cb->if_flags[cb->if_level].ifcwif = false;  // .... if, then, else, do
 
-    if( *scan_start == SCR_char ) {
+    if( !ProcFlags.literal && (*scan_start == SCR_char) ) {
         set_if_then_do();
     }
-    cc = mainif();
+    if( !ProcFlags.literal ) {
+        cc = mainif();
+    } else {
+        cc = pos;
+    }
     if( cc == pos ) {
         if( *scan_start == SCR_char ) {
             if( ProcFlags.late_subst ) {
                 process_late_subst();   // substitute &gml, &amp, ...
             }
             scan_script();              // script control line
-            scan_start = scan_stop + 1; // cannot have unprocessed text
         } else if( *scan_start == GML_char ) {
             if( ProcFlags.late_subst ) {
                 process_late_subst();   // substitute &gml, &amp, ...
@@ -616,15 +634,24 @@ void    scan_line( void )
             }
 
                            /* process text or unprocessed tag      TBD */
-            sprintf( token_buf, "%d %d moveto\n", bin_device->x_start,
-                bin_device->y_start );
+            ob_insert_block( token_buf,
+                sprintf( token_buf, "%d %d am ", bin_device->x_start, bin_device->y_start ),
+                false, false, 0 );
             ob_insert_block( scan_start, scan_stop - scan_start, false, false, 0 );
             ob_insert_block( " ", 1, false, false, 0 );
+            ob_flush(); // simulate .fo off
                            /* process text or unprocessed tag      TBD */
 
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
         g_info( inf_skip_line );
+    }
+    if( ProcFlags.literal ) {
+        if( li_cnt < LONG_MAX ) {   // we decrement, do not wait for .li OFF
+            if( li_cnt-- <= 0 ) {
+                ProcFlags.literal = false;
+            }
+        }
     }
 }
 
