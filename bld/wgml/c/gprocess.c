@@ -33,8 +33,45 @@
 
 #include "wgml.h"
 #include "gvars.h"
+#include "copfiles.h"
 
 static  char    *   var_unresolved2;
+
+
+/***************************************************************************/
+/*  look for input escape char and translate the follwoing char,           */
+/*  delete the escape char                                                 */
+/*  do nothing if input translation is not active                          */
+/***************************************************************************/
+
+static  void    intrans( char * data, unsigned * len )
+{
+    char    *   ps;                     // source ptr
+    char    *   pt;                     // target ptr
+    unsigned    k;
+
+    if( !ProcFlags.in_trans ) {
+        return;                         // input translation not active
+    }
+    ps = data;
+    pt = data;
+    for( k = 0; k < *len; k++ ) {
+        if( *ps == in_esc ) {           // translate needed
+            ps++;                       // skip escape char
+            *pt = cop_in_trans( *ps, 0 );   // translate
+            ps++;
+            pt++;
+        } else {
+            *pt++ = *ps++;              // else copy
+        }
+    }
+    if( pt != ps ) {                    // something translated
+        *len -= (ps - pt);
+        *pt = '\0';
+        *(pt + 1) = '\0';
+    }
+}
+
 
 /*  split_input
  *  The (physical) line is split
@@ -557,6 +594,13 @@ void        process_line( void )
     }
     mem_free( workbuf );
 
+    if( !ProcFlags.late_subst && ProcFlags.in_trans ) {
+        intrans( buff2, &buff2_lg );    // translate some chars
+        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            g_info( inf_subst_line, buff2 );// show line with translation(s)
+        }
+    }
+
     scan_start = buff2;
     scan_stop  = buff2 + buff2_lg;
     return;
@@ -841,6 +885,12 @@ void        process_late_subst( void )
     }
     mem_free( workbuf );
 
+    if( ProcFlags.in_trans ) {
+        intrans( buff2, &buff2_lg );    // translate some chars
+        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            g_info( inf_subst_line, buff2 );// show line with translation(s)
+        }
+    }
     scan_start = buff2;
     scan_stop  = buff2 + buff2_lg;
     return;

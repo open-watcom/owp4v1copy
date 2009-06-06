@@ -94,10 +94,10 @@
   pick( "sr",    scr_se,       0           ) // treat as .se as substitute is always on
 //pick( "sy",    scr_sy,       0           ) // system command
 //pick( "tb",    scr_tb,       cw_break    ) // define tab stops
-//pick( "ti",    scr_ti,       0           ) // translate on input
+  pick( "ti",    scr_ti,       0           ) // translate on input
   pick( "th",    scr_th,       0           ) // then
 //pick( "tm",    scr_tm,       cw_break    ) // top margin
-//pick( "tr",    scr_tr,       0           ) // translate table for output
+  pick( "tr",    scr_tr,       0           ) // translate table for output
   pick( "ty",    scr_ty,       0           ) // type
 //pick( "ul",    scr_ul,       0           ) // underline
 //pick( "us",    scr_us,       0           ) // underscore

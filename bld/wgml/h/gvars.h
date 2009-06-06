@@ -150,7 +150,7 @@ global struct ProcFlags {
     unsigned        unresolved      : 1;// variable not (yet) resolved
     unsigned        late_subst      : 1;// special var found &gml, &amp,
     unsigned        literal         : 1;// .li is active
-    unsigned        freec           : 1;
+    unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        freed           : 1;
     unsigned        freee           : 1;
     unsigned        freef           : 1;
@@ -188,6 +188,8 @@ global char         attname[ATT_NAME_LENGTH + 1];// last defined GML attribute
 global gaentry  *   att_entry;          // ... entry in tag_dict
 
 global  long        li_cnt;             // remaining count for .li processing
+
+global  uint8_t     in_esc;             // input char for .ti processing
 
 /* Reset so can be reused with other headers. */
 

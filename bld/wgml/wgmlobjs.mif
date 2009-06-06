@@ -79,6 +79,7 @@ scr_objs =  &
         gsmacro.obj  &
         gspe.obj     &
         gspu.obj     &
+        gstitr.obj   &
         gsty.obj
 
 objs = $(common_objs) $(scr_objs) $(gml_objs) $(dev_objs)
