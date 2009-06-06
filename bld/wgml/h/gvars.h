@@ -48,6 +48,7 @@ global  jmp_buf     *   environment;    // var for GSuicide()
 global  char        *   scan_start;
 global  char        *   scan_stop;
 global  char        *   scan_char_ptr;  // used by character scanning routines
+global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
 global char         *   tok_start;      // start of scanned token
 global size_t           arg_flen;       // arg length
@@ -148,7 +149,7 @@ global struct ProcFlags {
     unsigned        substituted     : 1;// & found in current input line
     unsigned        unresolved      : 1;// variable not (yet) resolved
     unsigned        late_subst      : 1;// special var found &gml, &amp,
-    unsigned        freeb           : 1;
+    unsigned        literal         : 1;// .li is active
     unsigned        freec           : 1;
     unsigned        freed           : 1;
     unsigned        freee           : 1;
@@ -181,11 +182,12 @@ global char             srnm[SYM_NAME_LENGTH + 1];// symbol name for getsym()
 global sub_index        srnmsub;        // subscript
 
 // the following to manage .gt * and .ga * * syntax
-global char        tagname[TAG_NAME_LENGTH + 1];// last defined GML tag name
-global gtentry  *  tag_entry;           // ... entry in tag_dict
-global char        attname[ATT_NAME_LENGTH + 1];// last defined GML attribute
-global gaentry  *  att_entry;           // ... entry in tag_dict
+global char         tagname[TAG_NAME_LENGTH + 1];// last defined GML tag name
+global gtentry  *   tag_entry;          // ... entry in tag_dict
+global char         attname[ATT_NAME_LENGTH + 1];// last defined GML attribute
+global gaentry  *   att_entry;          // ... entry in tag_dict
 
+global  long        li_cnt;             // remaining count for .li processing
 
 /* Reset so can be reused with other headers. */
 

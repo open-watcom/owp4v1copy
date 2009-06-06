@@ -563,7 +563,7 @@ static void remove_indentation( void )
 /*  process the input file                                                 */
 /***************************************************************************/
 
-static  void    proc_GML( char * filename )
+static  void    proc_input( char * filename )
 {
     ifcb    *   ic;
     filecb  *   cb;
@@ -878,7 +878,7 @@ int main( int argc, char * argv[] )
             g_info( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
-            proc_GML( master_fname );
+            proc_input( master_fname );
 
 //            g_trmem_prt_list();       // show allocated memory at pass end
 

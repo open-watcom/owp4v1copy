@@ -75,6 +75,7 @@ scr_objs =  &
         gsgt.obj     &
         gsifdoel.obj &
         gsimbed.obj  &
+        gsli.obj     &
         gsmacro.obj  &
         gspe.obj     &
         gspu.obj     &

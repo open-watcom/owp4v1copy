@@ -76,7 +76,7 @@
 //pick( "ix",    scr_ix,       0           ) // index
   pick( "ju",    scr_ju,       cw_break    ) // justify
 //pick( "le",    scr_le,       0           ) // leading space
-//pick( "li",    scr_li,       0           ) // literal
+  pick( "li",    scr_li,       0           ) // literal
 //pick( "ll",    scr_ll,       cw_break    ) // line length
 //pick( "lt",    scr_lt,       cw_break    ) // leading tab
   pick( "me",    scr_me,       0           ) // macro exit

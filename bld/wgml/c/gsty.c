@@ -67,6 +67,7 @@ void    scr_ty( void )
 {
 
     out_msg( "%s\n", scan_start + 1 );
+    scan_restart = scan_stop + 1;
     return;
 }
 
