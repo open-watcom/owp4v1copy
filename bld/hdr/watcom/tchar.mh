@@ -73,6 +73,7 @@ typedef wchar_t TCHAR;
 
 #define _tprintf        wprintf
 #define _ftprintf       fwprintf
+#define _sntprintf      _snwprintf
 #define _vtprintf       vwprintf
 #define _vftprintf      vfwprintf
 #define _tscanf         wscanf
@@ -394,6 +395,7 @@ _WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
 #define _tprintf        printf
 #define _ftprintf       fprintf
 #define _stprintf       sprintf
+#define _sntprintf      snprintf
 #define _vtprintf       vprintf
 #define _vftprintf      vfprintf
 #define _vstprintf      vsprintf
