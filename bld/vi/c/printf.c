@@ -210,7 +210,7 @@ void MyPrintf( const char *str, ... )
     cFile = NULL;
     cStr = tmp;
     basePrintf( str, al );
-    MessageBox( NULL, tmp, EditorName, MB_OK | MB_TASKMODAL );
+    MessageBox( 0, tmp, EditorName, MB_OK | MB_TASKMODAL );
 #else
     va_start( al, str );
     cFile = stdout;

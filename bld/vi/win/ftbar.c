@@ -52,7 +52,7 @@ HWND    hwndTypeface, hwndStyle, hwndSize, hwndPick, hwndSizeEdit;
 LOGFONT CurLogfont;
 WNDPROC lpfnOldSize;
 
-HWND    hFontbar = NULL;
+HWND    hFontbar;
 
 enum {
     STYLE_REGULAR = 0,

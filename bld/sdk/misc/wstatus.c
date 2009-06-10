@@ -71,7 +71,7 @@ static BOOL                     hasGDIObjects;
 static BOOL                     classRegistered;
 static WPI_INST                 classHandle;
 static int                      wndHeight;
-static HWND                     stat = NULL;
+static HWND                     stat = NULLHANDLE;
 #ifdef __NT__
 static HINSTANCE                hInstCommCtrl;
 

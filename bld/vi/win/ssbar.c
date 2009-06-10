@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Status bar.
 *
 ****************************************************************************/
 
@@ -49,7 +48,7 @@ enum buttonType {
     BUTTON_ALIGNMENT,
 };
 
-HWND            hSSbar = NULL;
+HWND            hSSbar;
 static bool     haveCapture = FALSE;
 static int      curItemID = -1;
 static HWND     mod_hwnd;
@@ -421,4 +420,3 @@ void RefreshSSbar( void )
     UpdateStatusWindow();
 
 } /* RefreshSSbar */
-

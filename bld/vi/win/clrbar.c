@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Colour selection dialog.
 *
 ****************************************************************************/
 
@@ -34,7 +33,7 @@
 #include "clrbar.h"
 #include "utils.h"
 
-HWND        hColorbar = NULL;
+HWND        hColorbar;
 
 /*
  * ClrDlgProc - callback routine for colour drag & drop dialog
