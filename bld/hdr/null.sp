@@ -11,11 +11,7 @@
 ::
 #ifndef NULL
  #ifdef __cplusplus
-  #if !defined(_M_I86) || defined(__SMALL__) || defined(__MEDIUM__)
-   #define NULL 0
-  #else
-    #define NULL 0L
-  #endif
+  #define NULL 0
  #else
   #define NULL ((void *)0)
  #endif
