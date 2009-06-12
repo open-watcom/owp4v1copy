@@ -307,7 +307,7 @@ void    scr_co( void )
         }
         break;
     default:
-        xx_opt_err( "co", pa );
+        xx_opt_err( cwcurr, pa );
         break;
     }
     return;

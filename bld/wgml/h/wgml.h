@@ -47,6 +47,7 @@
 
 
 #include "gtype.h"
+#include "copfiles.h"                   // for text_line and text_vars
 
 
 #ifdef  __cplusplus
@@ -137,6 +138,11 @@ extern  void    process_late_subst( void );
 extern  void    process_line( void );
 extern  void    split_input( char * buf, char * split_pos );
 extern  void    split_input_LIFO( char * buf, char * split_pos );
+
+
+/* gproctxt.c                         */
+extern  void    process_text( void );
+
 
 /* gresrch.c                          */
 extern  void    add_GML_tag_research( char * tag );

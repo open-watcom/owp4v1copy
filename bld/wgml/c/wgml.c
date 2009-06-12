@@ -42,7 +42,6 @@
 #include <errno.h>
 
 #include "wgml.h"
-#include "copfiles.h"
 #include "findfile.h"
 #include "gvars.h"
 #include "banner.h"
@@ -797,6 +796,74 @@ static  void    init_pass( void )
 
 }
 
+/***************************************************************************/
+/*  free some buffers                                                      */
+/***************************************************************************/
+
+static  void    free_some_mem( void )
+{
+    int     k;
+
+    if( token_buf != NULL ) {
+        mem_free( token_buf );
+    }
+    if( alt_ext != NULL ) {
+        mem_free( alt_ext );
+    }
+    if( def_ext != NULL ) {
+        mem_free( def_ext );
+    }
+    if( master_fname != NULL ) {
+        mem_free( master_fname );
+    }
+    if( master_fname_attr != NULL ) {
+        mem_free( master_fname_attr );
+    }
+    if( dev_name != NULL ) {
+        mem_free( dev_name );
+    }
+    if( out_file != NULL ) {
+        mem_free( out_file );
+    }
+    if( out_file_attr != NULL ) {
+        mem_free( out_file_attr );
+    }
+    if( global_dict != NULL ) {
+        free_dict( &global_dict );
+    }
+    if( macro_dict != NULL ) {
+        free_macro_dict( &macro_dict );
+    }
+    if( tag_dict != NULL ) {
+        free_tag_dict( &tag_dict );
+    }
+    if( buff2 != NULL ) {
+        mem_free( buff2 );
+    }
+
+    for( k = 0; k < max_buflist; k++ ) {
+        if( buflist[k].buf == NULL )  break;
+        mem_free( buflist[k].buf );
+    }
+    {
+        text_chars  *wk;
+        text_chars  *w = text_list.next;
+
+        while( w != NULL ) {
+           wk = w->next;
+           mem_free( w );
+           w = wk;
+        }
+
+        w =  words.first;
+        while( w != NULL ) {
+           wk = w->next;
+           mem_free( w );
+           w = wk;
+        }
+    }
+
+}
 
 /***************************************************************************/
 /*  main WGML                                                              */
@@ -925,42 +992,7 @@ int main( int argc, char * argv[] )
     close_all_pu_files();
 
     mem_free( cmdline );
-    if( token_buf != NULL ) {
-        mem_free( token_buf );
-    }
-    if( alt_ext != NULL ) {
-        mem_free( alt_ext );
-    }
-    if( def_ext != NULL ) {
-        mem_free( def_ext );
-    }
-    if( master_fname != NULL ) {
-        mem_free( master_fname );
-    }
-    if( master_fname_attr != NULL ) {
-        mem_free( master_fname_attr );
-    }
-    if( dev_name != NULL ) {
-        mem_free( dev_name );
-    }
-    if( out_file != NULL ) {
-        mem_free( out_file );
-    }
-    if( out_file_attr != NULL ) {
-        mem_free( out_file_attr );
-    }
-    if( global_dict != NULL ) {
-        free_dict( &global_dict );
-    }
-    if( macro_dict != NULL ) {
-        free_macro_dict( &macro_dict );
-    }
-    if( tag_dict != NULL ) {
-        free_tag_dict( &tag_dict );
-    }
-    if( buff2 != NULL ) {
-        mem_free( buff2 );
-    }
+    free_some_mem();
 
     ff_teardown();                      // free memory allocated in findfunc
     cop_teardown();                     // free memory allocated in copfiles

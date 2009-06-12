@@ -75,6 +75,7 @@ static  const   scrtag  scr_tags[] = {
 #undef pick
 
 
+
 /***************************************************************************/
 /*  scan for gml tags                                                      */
 /***************************************************************************/
@@ -595,8 +596,8 @@ static void set_if_then_do( void )
 
 void    scan_line( void )
 {
-    condcode    cc;
-    ifcb    *   cb;
+    condcode        cc;
+    ifcb        *   cb;
 
     cb         = input_cbs->if_cb;
     scan_start = buff2;
@@ -632,16 +633,7 @@ void    scan_line( void )
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
                 g_info( inf_text_line, scan_start );
             }
-
-                           /* process text or unprocessed tag      TBD */
-            ob_insert_block( token_buf,
-                sprintf( token_buf, "%d %d am ", bin_device->x_start, bin_device->y_start ),
-                false, false, 0 );
-            ob_insert_block( scan_start, scan_stop - scan_start, false, false, 0 );
-            ob_insert_block( " ", 1, false, false, 0 );
-            ob_flush(); // simulate .fo off
-                           /* process text or unprocessed tag      TBD */
-
+            process_text();
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
         g_info( inf_skip_line );

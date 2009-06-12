@@ -191,6 +191,16 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input char for .ti processing
 
+global  text_line   words;              // for constructing output line
+#define max_buflist 100
+global  uint32_t    used_buflist;
+global  uint32_t    unused_buflist;
+global  buf_list    buflist[max_buflist];;
+global  text_chars  text_list;          // for reuse of text_chars
+
+global  uint8_t     curr_font_num;      // the font to use for current line
+
+
 /* Reset so can be reused with other headers. */
 
 #undef global

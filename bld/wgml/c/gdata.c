@@ -42,6 +42,7 @@
 
 void init_global_vars( void )
 {
+    int     k;
 
     memset( &GlobalFlags, 0, sizeof( GlobalFlags ) );
     GlobalFlags.wscript = 1;            // (w)script support + warnings
@@ -110,4 +111,14 @@ void init_global_vars( void )
 
     buf_size            = BUF_SIZE;
     buff2               = mem_alloc( buf_size );
+
+    used_buflist        = 0;
+    unused_buflist      = 0;
+    for( k = 0; k < max_buflist; k++ ){
+        buflist[0].buf      = NULL;
+    }
+    words.y_address     = 0;
+    words.first         = NULL;
+    text_list.next      = NULL;
+    curr_font_num       = 0;
 }

@@ -510,6 +510,7 @@ void    scr_dm( void )
         show_include_stack();
         return;
     }
+    scan_restart = scan_stop + 1;
     return;
 }
  
@@ -574,6 +575,7 @@ void    scr_me( void )
  
     input_cbs->if_cb->if_level = 0;     // terminate
     ProcFlags.keep_ifstate = false;     // ... all .if controls
+    scan_restart = scan_stop + 1;
     return;
 }
  
@@ -700,6 +702,7 @@ void    scr_em( void )
     } else {
         split_input( buff2, tok_start); // stack line operand in input
     }
+    scan_restart = scan_stop + 1;
     return;
 }
  
