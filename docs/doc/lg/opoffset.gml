@@ -3,6 +3,9 @@
 .option OFFSET
 .*
 .np
+For 32-bit RAW applications, the "OFFSET" option specifies the linear
+base address of the raw output image.
+.np
 For OS/2, Win32 and ELF applications, the "OFFSET" option specifies the
 preferred base linear address at which the executable or DLL will be
 loaded.
@@ -12,6 +15,28 @@ the offset in the program's segment in which the first byte of code or
 data is loaded.
 .*
 .beglevel
+.*
+.section OFFSET - RAW only
+.*
+.np
+The "OFFSET" option specifies the linear base address of the raw output image.
+The format of the "OFFSET" option (short form "OFF") is as follows.
+.mbigbox
+    OPTION OFFSET=n
+.embigbox
+.synote
+.im lnkvalue
+.esynote
+.np
+.sy n
+specifies the offset at which the output image will be located.
+The following describes a use of the "OFFSET" option.
+.np
+.exam begin
+option offset=0xc0000000
+.exam end
+.np
+The image will be virtually/physically located to the linear address 0xc0000000.
 .*
 .section OFFSET - OS/2, Win32, ELF only
 .*

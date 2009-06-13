@@ -6,6 +6,14 @@
 .if &*$$fnd. ne 0 .do begin
 .   .sr *$$sys=&*$$sys., DOS
 .do end
+.se *$$fnd=&'wordpos('zdos',&*,3)
+.if &*$$fnd. ne 0 .do begin
+.   .sr *$$sys=&*$$sys., ZDOS
+.do end
+.se *$$fnd=&'wordpos('raw',&*,3)
+.if &*$$fnd. ne 0 .do begin
+.   .sr *$$sys=&*$$sys., RAW
+.do end
 .se *$$fnd=&'wordpos('elf',&*,3)
 .if &*$$fnd. ne 0 .do begin
 .   .sr *$$sys=&*$$sys., ELF
@@ -183,7 +191,7 @@
 .do end
 .dir objalign           opobjali.gml    elf win32
 .dir oldlibrary         opoldlib.gml    os2 win16 win32
-.dir offset             opoffset.gml    elf os2 pharlap qnx win32
+.dir offset             opoffset.gml    elf os2 pharlap qnx win32 raw
 .dir oneautodata        oponeaut.gml    os2 win16
 .dir option             ldoption.gml    all
 .dir optlib             ldoptlib.gml    all

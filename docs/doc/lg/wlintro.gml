@@ -9,6 +9,12 @@ files.
 The DOS executable file format will only run under the DOS operating
 system.
 .do end
+.if '&exeformat' eq 'zdos' .do begin
+.ix 'ZDOS applications' 'creating'
+.ix 'applications' 'creating for ZDOS'
+The ZDOS executable file format will only run under the ZDOS operating
+system.
+.do end
 .if '&exeformat' eq 'elf' .do begin
 .ix 'ELF applications' 'creating'
 .ix 'applications' 'creating for ELF'
@@ -30,7 +36,7 @@ Windows 95, and Windows NT.
 .ix 'applications' 'creating for 32-bit Windows'
 .ix 'applications' 'creating for Windows NT'
 The Win32 executable file format will run under Windows 95,
-Windows NT, and Phar Lap's TNT DOS extender.
+Windows NT, Phar Lap's TNT DOS extender and RDOS.
 It may also run under Windows 3.x using the Win32S subsystem (you are
 restricted to a subset of the Win32 API).
 .do end
@@ -64,7 +70,7 @@ operating systems.
 .point
 OS/2 2.x and later (LX format only)
 .point
-CauseWay DOS extender, Tenberry Software's DOS/4G and DOS/4GW DOS 
+CauseWay DOS extender, Tenberry Software's DOS/4G and DOS/4GW DOS
 extenders, and compatible products (LE format only)
 .point
 FlashTek's DOS Extender (LX format only)

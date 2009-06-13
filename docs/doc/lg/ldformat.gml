@@ -10,14 +10,16 @@ The format of the "FORMAT" directive (short form "FORM") is as follows.
     FORMAT form
 
     form ::= DOS [COM]
-                 | WINDOWS [win_dll] [MEMORY] [FONT]
-                 | WINDOWS VXD [DYNAMIC]
-                 | WINDOWS NT [TNT] [dll_attrs]
-                 | OS2 [os2_type] [dll_attrs | os2_attrs]
-                 | PHARLAP [EXTENDED | REX | SEGMENTED]
-                 | NOVELL [NLM | LAN | DSK | NAM | 'number'] 'description'
-                 | QNX [FLAT]
-                 | ELF [DLL]
+                | ZDOS [SYS | HWD | FSD]
+                | RAW [BIN | HEX]
+                | WINDOWS [win_dll] [MEMORY] [FONT]
+                | WINDOWS VXD [DYNAMIC]
+                | WINDOWS NT [TNT | RDOS] [dll_attrs]
+                | OS2 [os2_type] [dll_attrs | os2_attrs]
+                | PHARLAP [EXTENDED | REX | SEGMENTED]
+                | NOVELL [NLM | LAN | DSK | NAM | 'number'] 'description'
+                | QNX [FLAT]
+                | ELF [DLL]
 
     win_dll ::= DLL [INITGLOBAL | INITINSTANCE]
 
@@ -60,6 +62,39 @@ a separate file.
 .np
 For more information on DOS executable file formats,
 see the chapter entitled :HDREF refid='doschap'..
+.do end
+.*
+.mnote ZDOS
+(short form "ZD") tells the &lnkname to generate a ZDOS "EXE" file.
+.np
+The name of the executable file will have extension "exe".
+If "SYS", "HWD" or "FSD" is specified, a ZDOS driver file
+will be generated in which case the name of the executable file will have
+the extension "sys", "hwd" or "fsd".
+Note that these default extensions can be overridden by using the
+"NAME" directive to name the executable file.
+.if '&target' ne 'QNX' .do begin
+.np
+For more information on ZDOS executable file formats,
+see the chapter entitled :HDREF refid='zdoschap'..
+.do end
+.*
+.mnote RAW
+(short form "R") tells the &lnkname to generate a RAW output file.
+.np
+If "HEX" is specified, a raw 32-bit output file in Intel Hex format with the extension
+"hex" will be created. When "BIN" is specified or RAW is given without further specification,
+a raw 32-bit image with the extension "bin" will be created.
+Note that these default extensions can be overridden by using the
+"NAME" directive to name the executable file.
+.np
+A raw output file cannot contain debugging information. If you wish to debug a
+raw file, you must use the "SYMFILE" option to instruct the &lnkname to place
+the debugging information in a separate file.
+.if '&target' ne 'QNX' .do begin
+.np
+For more information on RAW executable file formats,
+see the chapter entitled :HDREF refid='rawchap'..
 .do end
 .*
 .mnote WINDOWS
@@ -142,6 +177,10 @@ extender is created.
 A "PL" format (rather than "PE") executable is created so that
 the Phar Lap TNT DOS extender will always run the application
 (including under Windows NT).
+.np
+.ix 'RDOS'
+If "RDOS" is specified, an executable for the RDOS operating system
+is created.
 .np
 If "DLL" (short form "DL") is specified, a Dynamic Link Library will
 be generated in which case the name of the executable file will have

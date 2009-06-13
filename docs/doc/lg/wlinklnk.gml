@@ -4,7 +4,7 @@
 The file :FNAME.wlink.lnk:eFNAME. is a special linker directive file
 that is automatically processed by the &lnkname before processing any
 other directives.
-On a DOS, OS/2, or Windows-hosted system, this file must be located in
+On a DOS, ZDOS, OS/2, or Windows-hosted system, this file must be located in
 one of the paths specified in the
 .ev PATH
 environment variable.
@@ -35,7 +35,7 @@ installed your software.
 .np
 The default name of the linker directive file (:FNAME.wlink.lnk:eFNAME.) can
 be overridden by the
-.ev WLINK_LNK 
+.ev WLINK_LNK
 environment variable. If the specified file can't be opened, the default file
 name will be used.
 .nl

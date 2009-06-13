@@ -46,6 +46,10 @@ necessary to create each specific executable file format.
 .notehd2 Description
 .note causeway
 32-bit x86 CauseWay executable
+.note cwdllr
+32-bit x86 CauseWay Dynamic Link Library (register calling convention)
+.note cwdlls
+32-bit x86 CauseWay Dynamic Link Library (stack calling convention)
 .note com
 16-bit x86 DOS ".COM" executable
 .note dos
@@ -95,6 +99,10 @@ from the server libraries.
 32-bit x86 Phar Lap executable
 .note tnt
 32-bit x86 Phar Lap TNT executable
+.note rdos
+32-bit x86 RDOS executable
+.note rdos_dll
+32-bit x86 RDOS Dynamic Link Library
 .note qnx
 16-bit x86 QNX executable
 .note qnx386
@@ -312,6 +320,19 @@ system   causeway
 For more information,
 see the chapter entitled :HDREF refid='os2chap'..
 .*
+.section Linking 32-bit x86 CauseWay Dynamic Link Libraries
+.*
+.np
+.ix '32-bit CauseWay DLL'
+To create this type of file, use the following structure.
+.millust begin
+system   cwdllr or cwdlls
+.im tutsteps
+.millust end
+.np
+For more information,
+see the chapter entitled :HDREF refid='os2chap'..
+.*
 .section Linking 32-bit x86 DOS/4GW Executable Files
 .*
 .np
@@ -442,6 +463,32 @@ see the chapter entitled :HDREF refid='phrchap'..
 To create this type of file, use the following structure.
 .millust begin
 system   tnt
+.im tutsteps
+.millust end
+.np
+For more information,
+see the chapter entitled :HDREF refid='ntchap'..
+.*
+.section Linking 32-bit x86 RDOS Executable Files
+.*
+.np
+.ix '32-bit RDOS executables'
+To create this type of file, use the following structure.
+.millust begin
+system   rdos
+.im tutsteps
+.millust end
+.np
+For more information,
+see the chapter entitled :HDREF refid='ntchap'..
+.*
+.section Linking 32-bit x86 RDOS Dynamic Link Libraries
+.*
+.np
+.ix '32-bit RDOS DLLs'
+To create this type of file, use the following structure.
+.millust begin
+system   rdos_dll
 .im tutsteps
 .millust end
 .np

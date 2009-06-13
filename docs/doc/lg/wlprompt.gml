@@ -43,7 +43,7 @@ Press "Ctrl/D" to terminate the input of directive information.
 .do end
 .el .do begin
 Press "Ctrl/Z" followed by the "Enter" key to terminate the input of
-directive information if you are running a DOS, OS/2 or Windows
+directive information if you are running a DOS, ZDOS, OS/2 or Windows
 NT-hosted version of the &lnkname..
 Press "Ctrl/D" to terminate the input of directive information if you
 are running a UNIX-hosted version of the &lnkname..

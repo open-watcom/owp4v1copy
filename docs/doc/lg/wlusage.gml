@@ -30,7 +30,7 @@ The ELF object module format.
 The OMF library format.
 .bull
 .ix 'AR-format'
-The AR (Microsoft compatible) object library format.
+The AR object library format (Microsoft, GNU or BSD compatible).
 .endbull
 .np
 .ix 'executable formats'
@@ -41,9 +41,16 @@ The following lists these executable file formats.
 .bull
 DOS executable files
 .bull
+RDOS executable files including Dynamic Link Libraries
+.bull
+ZDOS executable files
+.bull
 ELF executable files
 .bull
-executable files that run under CauseWay DOS extender, Tenberry Software's
+executable files that run under CauseWay DOS extender
+including Dynamic Link Libraries
+.bull
+executable files that run under Tenberry Software's
 DOS/4G and DOS/4GW DOS extenders, and compatible products
 .bull
 executable files that run under FlashTek's DOS extender
@@ -73,6 +80,10 @@ Currently, the &lnkname runs under the following operating systems.
 .begbull
 .bull
 DOS
+.bull
+ZDOS
+.bull
+Linux
 .bull
 OS/2
 .bull
