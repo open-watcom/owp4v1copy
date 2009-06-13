@@ -43,6 +43,7 @@
 #include <process.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "banner.h"
 #include "common.h"
@@ -107,20 +108,27 @@ NULL
 
 static void emulate_wgml( void )
 {
-    int         i;
-    uint32_t    cur_h_len;
-    uint32_t    cur_h_start;
-    uint32_t    cur_v_len;
-    uint32_t    cur_v_start;
-    uint32_t    max_char_width;
-    uint32_t    max_line_height;
-    uint32_t    net_page_height;
-    uint32_t    net_page_width;
+    int                 i;
+    record_buffer   *   translated;
+    uint32_t            cur_h_len;
+    uint32_t            cur_h_start;
+    uint32_t            cur_v_len;
+    uint32_t            cur_v_start;
+    uint32_t            max_char_width;
+    uint32_t            max_line_height;
+    uint32_t            net_page_height;
+    uint32_t            net_page_width;
 
     /* Set the variables. */
 
+    translated = (record_buffer *) mem_alloc( sizeof( record_buffer ) );
+    translated->current = 0;
+    translated->length = 80;
+    translated->text = (uint8_t *) mem_alloc( translated->length );
+
     max_char_width = 0;
     max_line_height = 0;
+
     for( i = 0; i < wgml_font_cnt; i++ ) {
         if( max_char_width < wgml_fonts[i].default_width ) \
             max_char_width = wgml_fonts[i].default_width;
@@ -133,35 +141,91 @@ static void emulate_wgml( void )
 
     /* Test the input translation. */
 
+    out_msg( "The escape character is: '%c'\n", in_esc );
+    out_msg( "The in_trans flag is: %i\n", ProcFlags.in_trans );
+    out_msg( "Setting the input escape character to '~'\n" );
+    cop_ti_table( "set ~", 5 );
+    out_msg( "The escape character is: '%c'\n", in_esc );
+    out_msg( "The in_trans flag is: %i\n", ProcFlags.in_trans );
+    out_msg( "Clearing the input escape character\n" );
+    cop_ti_table( "set", 3 );
+    out_msg( "The escape character is: '%c'\n", in_esc );
+    out_msg( "The in_trans flag is: %i\n", ProcFlags.in_trans );
+
     out_msg( "Using characters to set the translations\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
     cop_ti_table( "i j t u", 7 );
     out_msg( ".ti table set to translate 'i' to 'j' and 't' to 'u'\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
     cop_ti_table( "i", 1 );
     out_msg( ".ti table reset to translate 'i' to 'i'\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
     cop_ti_table( "", 0 );
     out_msg( ".ti table reset\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
 
     out_msg( "Using hexadecimals to set the translations\n" );
     cop_ti_table( "69 6A 74 75", 11 );
     out_msg( ".ti table set to translate 'i' to 'j' and 't' to 'u'\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
     cop_ti_table( "69", 2 );
     out_msg( ".ti table reset to translate 'i' to 'i'\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
     cop_ti_table( "", 0 );
     out_msg( ".ti table reset\n" );
-    out_msg( "Original char: i; translated char: %c\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: t; translated char: %c\n", cop_in_trans( 't', 0 ));
+    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
+    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
+
+    out_msg( "Output translation test\n" );
+    out_msg( "Original text: 'Mary had a little lamb.'\n");
+    cop_out_trans( "Mary had a little lamb.", \
+                        strlen( "Mary had a little lamb." ), translated, 0 );
+    /* This is only safe because we know the length of the test string is
+     * less than the 80 bytes in translated->text. If done in general, the
+     * possibility of having to mem_realloc() translated->text would have
+     * to be taken into account.
+     */
+
+    translated->text[translated->current] = '\0';
+    out_msg( "Translated text: '%s'\n", translated->text );
+
+
+    out_msg( ".tr table set to translate space to '~'\n" );
+    cop_tr_table( "20 ~", 4 );
+    out_msg( "Original text: 'Mary had a little lamb.'\n");
+    cop_out_trans( "Mary had a little lamb.", \
+                        strlen( "Mary had a little lamb." ), translated, 0 );
+    
+    /* This is only safe because we know the length of the test string is
+     * less than the 80 bytes in translated->text. If done in general, the
+     * possibility of having to mem_realloc() translated->text would have
+     * to be taken into account.
+     */
+
+    translated->text[translated->current] = '\0';
+    out_msg( "Translated text: '%s'\n", translated->text );
+
+    out_msg( ".tr table cleared\n" );
+    cop_tr_table( "", 0 );
+    out_msg( "Original text: 'Mary had a little lamb.'\n");
+    cop_out_trans( "Mary had a little lamb.", \
+                        strlen( "Mary had a little lamb." ), translated, 0 );
+
+    /* This is only safe because we know the length of the test string is
+     * less than the 80 bytes in translated->text. If done in general, the
+     * possibility of having to mem_realloc() translated->text would have
+     * to be taken into account.
+     */
+
+    translated->text[translated->current] = '\0';
+    out_msg( "Translated text: '%s'\n", translated->text );
+
 
     /* First pass processing. */
     /* START processing.*/
@@ -268,6 +332,17 @@ static void emulate_wgml( void )
     /* :FINISH block. */
 
     fb_finish();
+
+    /* Free allocated memory. */
+
+    if( translated != NULL ) {
+        if( translated->text != NULL ) {
+            mem_free( translated->text );
+            translated->text = NULL;
+        }
+        mem_free( translated );
+        translated = NULL;
+    }
 
     return;
 }

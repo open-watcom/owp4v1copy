@@ -31,8 +31,6 @@
 *                   ob_insert_byte()
 *                   ob_setup()
 *                   ob_teardown()
-*               as well as this struct:
-*                   record_buffer
 *
 ****************************************************************************/
 

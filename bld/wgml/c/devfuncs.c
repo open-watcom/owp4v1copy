@@ -144,7 +144,6 @@
 *                   numeric_literal()
 *                   out_text_driver()
 *                   process_parameter()
-*                   resize_staging()
 *                   skip_functions()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
@@ -413,27 +412,6 @@ void format_error( void )
     g_suicide();
 }
 
-/* Function resize_staging().
- * This function resizes the buffer used to construct the output text
- * safely.
- *
- * Parameter:
- *      count contains the minimum required size.
- *
- * Note:
- *      mem_realloc() exits the program if it fails. Thus, this function
- *      will either succeed or the program will end.
- */
-
-static void resize_staging( size_t count )
-{
-    if( staging.length < count ) {
-        staging.text = (uint8_t *) mem_realloc( staging.text, count );
-        staging.length = count;
-    }
-    return;
-}
-
 /* Function df_do_nothing_char().
  * Returns an empty string. Used in the function tables for device functions
  * that are not allowed to do anything when used in the blocks with which that
@@ -498,6 +476,8 @@ static void * df_clearPC( void )
 
 /* Function df_dotab().
  * Implements device function %dotab().
+ *
+ * Note: mem_realloc() will not return unless it succeeds.
  */
  
 static void * df_dotab( void )
@@ -526,7 +506,11 @@ static void * df_dotab( void )
         count = (size_t) tab_width;
         ps_suffix_size = sizeof( ps_suffix );
 
-        resize_staging( count );
+        if( staging.length < count ) {
+            staging.text = (uint8_t *) mem_realloc( staging.text, count );
+            staging.length = count;
+        }
+
         if( ps_device ) {
             staging.text[staging.current] = '(';
             staging.current++;
@@ -2675,6 +2659,9 @@ void fb_enterfont( void )
 
 void fb_first_text_pass( text_line * out_line )
 {
+    bool            font_switch_needed  = true;
+    line_proc   *   cur_lineproc        = NULL;
+
     /* Update the internal state for the new text_line. */
 
     desired_state.font_number = out_line->first->font_number;
@@ -2694,7 +2681,45 @@ void fb_first_text_pass( text_line * out_line )
     font_number = desired_state.font_number;
     active_font = desired_state.font_number;
 
-    /* now do the rest of the first line pass processing! */
+    /* The First Line Pass Sequence. */ 
+
+    /* The "first text_chars instance" sequence. */
+
+    x_address = desired_state.x_address;
+
+    if( wgml_fonts[font_number].font_style != NULL ) \       
+        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
+            cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
+    if( current_state.font_number == desired_state.font_number ) \
+                                                    font_switch_needed = false;
+    if( font_switch_needed ) {
+
+        /* A font switch is needed. */
+
+/* the font switch goes here! */
+
+    } else {
+
+        /* No font switch is needed. */
+
+        if( wgml_fonts[font_number].font_style != NULL ) {       
+            if( wgml_fonts[font_number].font_style->startvalue != NULL ) \
+                df_interpret_driver_functions( \
+                        wgml_fonts[font_number].font_style->startvalue->text );
+        }
+    }
+
+    if( cur_lineproc != NULL ) {       
+        if( cur_lineproc->startvalue != NULL ) \
+            df_interpret_driver_functions( cur_lineproc->startvalue ->text );
+        fb_firstword( cur_lineproc );
+    }
+
+    if( !font_switch_needed ) {
+        if( cur_lineproc != NULL ) \
+            if( cur_lineproc->startword != NULL ) \
+                df_interpret_driver_functions( cur_lineproc->startword->text );
+    }
 
     return;
 }

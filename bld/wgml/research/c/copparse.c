@@ -60,8 +60,8 @@
 #include "copfiles.h"
 #include "copfon.h"
 #include "cophdr.h"
-#include "findfile.h"
 #include "dfinterp.h"
+#include "findfile.h"
 #include "research.h"
 
 /***************************************************************************/

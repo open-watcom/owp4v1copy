@@ -214,8 +214,8 @@ int main()
         strcpy_s( current->name,  sizeof( "tfon09" ) + 1, "tfon09" );
         current->style = (char *) mem_alloc( sizeof( "plain" ) + 1 );
         strcpy_s( current->style, sizeof( "plain" ) + 1, "plain" );
-        current->space = 900;
-        current->height = 900;
+        current->space = 0;
+        current->height = 0;
 
         opt_fonts = current;
 
@@ -228,8 +228,8 @@ int main()
         strcpy_s( current->name,  sizeof( "tfon10" ) + 1, "tfon10" );
         current->style = (char *) mem_alloc( sizeof( "bold" ) + 1 );
         strcpy_s( current->style, sizeof( "bold" ) + 1, "bold" );
-        current->space = 800;
-        current->height = 800;
+        current->space = 0;
+        current->height = 0;
     }
 
     /* Initialize the binary device library. */

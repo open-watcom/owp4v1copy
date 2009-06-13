@@ -47,6 +47,7 @@
 *                   g_suicide()
 *                   get_systime()
 *                   global_dict
+*                   in_esc
 *                   master_fname
 *                   mem_alloc()
 *                   mem_free()
@@ -54,8 +55,8 @@
 *                   out_file
 *                   out_file_attr
 *                   out_msg()
+*                   ProcFlags
 *                   wng_cnt
-*
 ****************************************************************************/
 
 #ifndef COMMON_H_INCLUDED
@@ -139,6 +140,27 @@ global int          err_count;      // Part of the wgml context.
 global int          wng_count;      // Part of the wgml context.
 global opt_font *   opt_fonts;      // Part of the wgml context.
 global symvar   *   global_dict;    // Part of the wgml context.
+
+/* Two more from gvars.h. These support .ti set. */
+
+global struct ProcFlags {
+    unsigned        newLevelFile    : 1;// start new include Level (file)
+    unsigned        macro_ignore    : 1;// .. in col 1-2
+    unsigned        CW_sep_ignore   : 1;// .' in col 1-2
+    unsigned        in_macro_define : 1;// macro definition active
+    unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
+    unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
+    unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
+    unsigned        goto_active     : 1;// processing .go label
+
+    unsigned        substituted     : 1;// & found in current input line
+    unsigned        unresolved      : 1;// variable not (yet) resolved
+    unsigned        late_subst      : 1;// special var found &gml, &amp,
+    unsigned        literal         : 1;// .li is active
+    unsigned        in_trans        : 1;// esc char is specified (.ti set x)
+} ProcFlags;                            // processing flags
+
+global  uint8_t     in_esc;             // input char for .ti processing
 
 /* Reset so can be reused with other headers. */
 

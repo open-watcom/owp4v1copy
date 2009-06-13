@@ -495,9 +495,10 @@ typedef struct cop_font {
     width_block *       width;
 } cop_font;
 
-/* This struct is used with the output buffer. current records the current
- * write position, length records the number of bytes pointed to by text,
- * and text points to the bytes to be inserted into the output buffer.
+/* This struct was originally developed for use with the output buffer. It's
+ * use has since expanded. current records the current write position, length
+ * records the number of bytes pointed to by text, and text points to the
+ * bytes to be inserted into the output buffer or otherwise processed.
  */
 
 typedef struct {

@@ -590,7 +590,10 @@ extern void ob_teardown( void )
     }
 
     if(translated != NULL ) { 
-        mem_free( translated->text );
+        if(translated->text != NULL ) { 
+            mem_free( translated->text );
+            translated->text = NULL;
+        }
         mem_free( translated );
         translated = NULL;
     }
