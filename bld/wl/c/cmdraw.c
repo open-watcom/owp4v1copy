@@ -24,48 +24,54 @@
 *
 *  ========================================================================
 *
-* Description:  Default file extension definitions
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
-/*       enum        text   */
+/*
+ *  CMDRAW : command line parsing for the RAW load file format.
+ *
+*/
 
-pick1(  E_COMMAND,  ".lnk"  )
-pick1(  E_MAP,      ".map"  )
-pick1(  E_LIBRARY,  ".lib"  )
-#if defined( __UNIX__ )
-pick1(  E_OBJECT,   ".o"    )
-#else
-pick1(  E_OBJECT,   ".obj"  )
-#endif
-pick1(  E_LOAD,     ".exe"  )
-pick1(  E_OVL,      ".ovl"  )
-pick1(  E_DLL,      ".dll"  )
-pick1(  E_PROTECT,  ".exp"  )
-pick1(  E_NLM,      ".nlm"  )   /* netware loadable module  */
-pick1(  E_LAN,      ".lan"  )   /* LAN driver               */
-pick1(  E_DSK,      ".dsk"  )   /* disk driver              */
-pick1(  E_NAM,      ".nam"  )   /* name space module        */
-pick1(  E_NOV_MSL,  ".msl"  )   /* mirrored server link     */
-pick1(  E_NOV_HAM,  ".ham"  )   /* host adapter module      */
-pick1(  E_NOV_CDM,  ".cdm"  )   /* custom device module     */
-pick1(  E_COM,      ".com"  )
-pick1(  E_REX,      ".rex"  )
-#if defined( __UNIX__ )
-pick1(  E_QNX,      ""      )
-#else
-pick1(  E_QNX,      ".qnx"  )
-#endif
-pick1(  E_SYM,      ".sym"  )
-pick1(  E_LBC,      ".lbc"  )
-#if defined( __UNIX__ )
-pick1(  E_ELF,      ""      )
-#else
-pick1(  E_ELF,      ".elf"  )
-#endif
-pick1(  E_ILK,      ".ilk"  )
-pick1(  E_HEX,      ".hex"  )
-pick1(  E_BIN,      ".bin"  )
-pick1(  E_SYS,      ".sys"  )   /* ZDOS device driver */
-pick1(  E_HWD,      ".hwd"  )   /* ZDOS hardware driver */
-pick1(  E_FSD,      ".fsd"  )   /* ZDOS file system driver */
+#include <string.h>
+#include "linkstd.h"
+#include "alloc.h"
+#include "command.h"
+#include "msg.h"
+#include "wlnkmsg.h"
+#include "dbgall.h"
+#include "cmdall.h"
+#include "overlays.h"
+#include "objcalc.h"
+#include "cmdline.h"
+#include "cmdraw.h"
+
+extern bool ProcRaw( void )
+/*************************/
+{
+    FmtData.base = 0;                           // Default offset
+    LinkState |= MAKE_RELOCS + FMT_DECIDED;     // Make relocations;
+    ProcOne( RawOptions, SEP_NO, TRUE );
+    return( TRUE );
+}
+
+extern bool ProcRawBIN( void )
+/*************************/
+{
+    Extension = E_BIN;
+    FmtData.raw_hex_output = 0;
+    if( FmtData.osname == NULL )
+        FmtData.osname = "RAW Binary Image";
+    return( TRUE );
+}
+
+extern bool ProcRawHEX( void )
+/*************************/
+{
+    Extension = E_HEX;
+    FmtData.raw_hex_output = 1;
+    if( FmtData.osname == NULL )
+        FmtData.osname = "RAW Intel Hex Image";
+    return( TRUE );
+}

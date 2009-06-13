@@ -53,6 +53,7 @@
 #include "loadqnx.h"
 #include "loadnov.h"
 #include "loadelf.h"
+#include "loadzdos.h"
 #include "symtrace.h"
 #include "objnode.h"
 #include "objio.h"
@@ -231,7 +232,11 @@ static void DoLink( char *cmdline )
 // cmdline is only used when we are running under watfor.
 {
 #ifndef __OSI__
-    signal( SIGINT, &TrapBreak ); /* so we can clean up */
+  #ifdef __ZDOS__
+    signal( SIGBREAK, &TrapBreak ); /* so we can clean up */
+  #else
+    signal( SIGINT, &TrapBreak );   /* so we can clean up */
+  #endif
 #endif
     StartTime();
     DoCmdFile( cmdline );
@@ -276,7 +281,11 @@ static void DoLink( char *cmdline )
     BuildImpLib();
     EndTime();
 #ifndef __OSI__
-    signal( SIGINT, SIG_IGN ); /* we're going to clean up anyway */
+  #ifdef __ZDOS__
+    signal( SIGBREAK, SIG_IGN );    /* we're going to clean up anyway */
+  #else
+    signal( SIGINT, SIG_IGN );      /* we're going to clean up anyway */
+  #endif
 #endif
 }
 

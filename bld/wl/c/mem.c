@@ -186,10 +186,14 @@ void *LnkExpand( void *src, size_t size )
 /***************************************/
 // try to expand a block of memory
 {
-#ifdef TRMEM
-    return( _trmem_expand( src, size, _trmem_guess_who(), TrHdl ) );
+#ifdef _ZDOS
+     return ( NULL );
 #else
-    return( _expand( src, size ) );
+    #ifdef TRMEM
+        return( _trmem_expand( src, size, _trmem_guess_who(), TrHdl ) );
+    #else
+        return( _expand( src, size ) );
+    #endif
 #endif
 }
 

@@ -46,6 +46,8 @@
 #include "cmdelf.h"
 #include "cmdphar.h"
 #include "cmddos.h"
+#include "cmdzdos.h"
+#include "cmdraw.h"
 #include "cmdline.h"
 #include "overlays.h"
 #include "fileio.h"
@@ -76,6 +78,8 @@ static bool             ProcELFHelp( void );
 static bool             ProcWindowsHelp( void );
 static bool             ProcWinVxdHelp( void );
 static bool             ProcNTHelp( void );
+static bool             ProcZdosHelp( void );
+static bool             ProcRawHelp( void );
 static void             WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt );
 static void             GetExtraCommands( void );
 
@@ -101,6 +105,12 @@ static  parse_entry   FormatHelp[] = {
 #endif
 #ifdef _ELF
     "ELF",          ProcELFHelp,            MK_ALL,     0,
+#endif
+#ifdef _ZDOS
+    "ZDos",         ProcZdosHelp,           MK_ALL,     0,
+#endif
+#ifdef _RAW
+    "Raw",          ProcRawHelp,            MK_ALL,     0,
 #endif
     NULL
 };
@@ -298,7 +308,7 @@ char *GetNextLink( void )
 
 struct extra_cmd_info {
     unsigned    type;
-    char        prefix[ PREFIX_SIZE + 1 ];
+    char        prefix[PREFIX_SIZE + 1];
     bool        retry;
 };
 
@@ -314,9 +324,9 @@ static void GetExtraCommands( void )
 /**********************************/
 {
     struct extra_cmd_info const        *cmd;
-    char                                buff[ _MAX_PATH + PREFIX_SIZE ];
+    char                                buff[_MAX_PATH + PREFIX_SIZE];
 
-    for( cmd = ExtraCmds; cmd->prefix[ 0 ] != '\0'; ++cmd ) {
+    for( cmd = ExtraCmds; cmd->prefix[0] != '\0'; ++cmd ) {
         for( ;; ) {
             memcpy( buff, cmd->prefix, PREFIX_SIZE );
             if( !GetAddtlCommand( cmd->type, buff + PREFIX_SIZE ) )
@@ -338,7 +348,7 @@ void Syntax( void )
     if( Token.this == NULL ) {
         LnkMsg( LOC+LINE+FTL+MSG_DIRECTIVE_ERR_BEGINNING, NULL );
     } else {
-        Token.this[ Token.len ] = '\0';
+        Token.this[Token.len] = '\0';
         LnkMsg( LOC+LINE+FTL+MSG_DIRECTIVE_ERR, "s", Token.this );
     }
 }
@@ -346,7 +356,7 @@ void Syntax( void )
 static void Crash( bool check_file )
 /**********************************/
 {
-    char        buff[ 81 ];
+    char        buff[81];
     unsigned    len;
     f_handle    fp;
 
@@ -355,7 +365,7 @@ static void Crash( bool check_file )
         if( fp != NIL_HANDLE ) {
             WLPrtBanner();
             for( ; (len = QRead( fp, buff, 80, "wlink.hlp" )) != 0; ) {
-                buff[ len ] = '\0';
+                buff[len] = '\0';
                 WriteStdOut( buff );
             }
             QClose( fp, "wlink.hlp" );
@@ -438,6 +448,12 @@ static void DisplayOptions( void )
 #endif
 #ifdef _ELF
     WriteHelp( MSG_ELF_HELP_0, MSG_ELF_HELP_15, isout );
+#endif
+#ifdef _ZDOS
+    WriteHelp( MSG_ZDOS_HELP_0, MSG_ZDOS_HELP_15, isout );
+#endif
+#ifdef _RAW
+    WriteHelp( MSG_RAW_HELP_0, MSG_RAW_HELP_15, isout );
 #endif
 }
 
@@ -533,13 +549,33 @@ static bool ProcELFHelp( void )
 }
 #endif
 
+#ifdef _ZDOS
+static bool ProcZdosHelp( void )
+/*****************************/
+{
+    WriteGenHelp();
+    WriteHelp( MSG_ZDOS_HELP_0, MSG_ZDOS_HELP_15, CmdFlags & CF_TO_STDOUT );
+    return( TRUE );
+}
+#endif
+
+#ifdef _RAW
+static bool ProcRawHelp( void )
+/*****************************/
+{
+    WriteGenHelp();
+    WriteHelp( MSG_RAW_HELP_0, MSG_RAW_HELP_15, CmdFlags & CF_TO_STDOUT );
+    return( TRUE );
+}
+#endif
+
 static void PressKey( void );
 static void WriteMsg( char msg_buffer[] );
 
 static void WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt )
 /***********************************************************************/
 {
-    char        msg_buffer[ RESOURCE_MAX_SIZE ];
+    char        msg_buffer[RESOURCE_MAX_SIZE];
     int         previous_null = 0;
 
     if( prompt ) {
@@ -548,14 +584,14 @@ static void WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt )
     for( ; first_ln <= last_ln; first_ln++ ) {
         Msg_Get( (int) first_ln, msg_buffer );
         if( previous_null ) {
-            if( msg_buffer[ 0 ] != '\0' ) {
+            if( msg_buffer[0] != '\0' ) {
                 PressKey();
                 WriteMsg( msg_buffer );
                 previous_null = 0;
             } else {
                 break;
             }
-        } else if( msg_buffer[ 0 ] == '\0' ) {
+        } else if( msg_buffer[0] == '\0' ) {
             previous_null = 1;
         } else {
             WriteMsg( msg_buffer );
@@ -566,7 +602,7 @@ static void WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt )
 static void PressKey( void )
 /**************************/
 {
-    char        msg_buffer[ RESOURCE_MAX_SIZE ];
+    char        msg_buffer[RESOURCE_MAX_SIZE];
     char        result;
 
     Msg_Get( MSG_PRESS_KEY, msg_buffer );
@@ -757,7 +793,7 @@ void DecideFormat( void )
 {
     exe_format  possible;
     exe_format  allowed;
-    char        rc_buff[ RESOURCE_MAX_SIZE ];
+    char        rc_buff[RESOURCE_MAX_SIZE];
 
     if( !(LinkState & FMT_DECIDED) ) {
         possible = FmtData.type;
@@ -815,7 +851,7 @@ void AddLibPaths( char *name, unsigned len, bool add_to_front )
 
     _ChkAlloc( newpath, sizeof( path_entry ) + len );
     memcpy( newpath->name, name, len );
-    newpath->name[ len ] = '\0';
+    newpath->name[len] = '\0';
     if( add_to_front ) {
         newpath->next = LibPath;
         LibPath = newpath;
@@ -1022,13 +1058,13 @@ bool ProcHeapSize( void )
     return( TRUE );
 }
 
-#if defined(_PHARLAP) || defined(_QNXLOAD) || defined(_OS2)
+#if defined(_PHARLAP) || defined(_QNXLOAD) || defined(_OS2) || defined(_RAW)
 bool ProcOffset( void )
 /****************************/
 {
     if( !GetLong( &FmtData.base ) )
         return( FALSE );
-    if( !(FmtData.type & (MK_PHAR_LAP|MK_QNX_FLAT)) ) {
+    if( !(FmtData.type & (MK_PHAR_LAP|MK_QNX_FLAT|MK_RAW)) ) {
         ChkBase( 64 * 1024 );
     } else if( !(FmtData.type & (MK_OS2_FLAT|MK_PE)) ) {
         ChkBase( 4 * 1024 );
@@ -1042,14 +1078,14 @@ bool ProcXDbg( void )
 /**************************/
 /* process DEBUG command */
 {
-    char        value[ 7 ];
+    char        value[7];
 
     if( GetToken( SEP_EQUALS, TOK_INCLUDE_DOT ) ) {
         if( Token.len > 6 ) {
             return( FALSE );
         } else {
             memcpy( value, Token.this, Token.len );
-            value[ Token.len ] = '\0';
+            value[Token.len] = '\0';
             Debug = strtoul( value, NULL, 0 );
             DEBUG(( DBG_BASE, "debugging info type = %x", Debug ));
         }

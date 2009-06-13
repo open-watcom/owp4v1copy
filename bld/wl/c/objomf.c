@@ -683,7 +683,7 @@ static void ProcSegDef( void )
         break;
     case ALIGN_LTRELOC:
 // in 32 bit object files, ALIGN_LTRELOC is actually ALIGN_4KPAGE
-        if( ObjFormat & FMT_32BIT_REC )
+        if( ( ObjFormat & FMT_32BIT_REC ) || ( FmtData.type & MK_RAW ) )
             break;
         sdata->align = OMFAlignTab[ALIGN_PARA];
         ObjBuff += 5;   /*  step over ltldat, max_seg_len, grp_offs fields */

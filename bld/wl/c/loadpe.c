@@ -605,7 +605,7 @@ static void WriteExportInfo( pe_header *header, pe_object *object )
     i = 0;
     next_ord = dir.ordinal_base;
     for( exp = FmtData.u.os2.exports; exp != NULL; exp = exp->next ) {
-        sort[ i++ ] = exp;
+        sort[i++] = exp;
         eat = exp->addr.off;
         if( next_ord < exp->ordinal ) {
             PadLoad( (exp->ordinal - next_ord) * sizeof( pe_va ) );
@@ -1165,7 +1165,7 @@ void FiniPELoadFile( void )
     WriteImportInfo();
     SetMiscTableEntries( &exe_head );
     WriteDataPages( &exe_head, object );
-    tbl_obj = &object[ NumGroups ];
+    tbl_obj = &object[NumGroups];
     if( FmtData.u.os2.exports != NULL ) {
         WriteExportInfo( &exe_head, tbl_obj );
         ++tbl_obj;

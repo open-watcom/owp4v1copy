@@ -440,11 +440,12 @@ void SetRelocSize( void )
         FmtRelocSize = sizeof( elf_reloc_item );
     } else if( FmtData.type & MK_PHAR_MULTISEG ) {
         FmtRelocSize = sizeof( pms_reloc_item );
+    } else if( FmtData.type & MK_ZDOS ) {
+        FmtRelocSize = sizeof( zdos_reloc_item );
     } else {
         FmtRelocSize = sizeof( dos_addr );
     }
 }
-
 
 static bool SpillRelocList( reloc_info *list )
 /*********************************************/

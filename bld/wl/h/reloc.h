@@ -102,6 +102,10 @@ typedef struct {
     unsigned_32 reloc_offset;
 } qnx_linear_item;
 
+typedef struct {
+    unsigned_32 reloc_offset;
+} zdos_reloc_item;
+
 typedef union {
     byte        buff[ 12 ];
     struct {
@@ -181,6 +185,7 @@ typedef union {
     old_pe_reloc_item   oldpe;
     high_pe_reloc_item  hpe;
     elf_reloc_item      elf;
+    zdos_reloc_item     zdos;
 } reloc_item;
 
 typedef struct base_reloc {

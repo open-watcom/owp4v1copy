@@ -34,6 +34,8 @@ common_objs = &
     cmdnov.obj &
     cmdos2.obj &
     cmdphar.obj &
+    cmdzdos.obj &
+    cmdraw.obj &
     cmdtable.obj &
     cmdutils.obj &
     cmdqnx.obj &
@@ -61,6 +63,7 @@ common_objs = &
     loadphar.obj &
     loadqnx.obj &
     loadraw.obj &
+    loadzdos.obj &
     lsymtab.obj &
     mapio.obj &
     mem.obj &
@@ -114,5 +117,6 @@ wlink_objs_osx   = posixio.obj
 wlink_objs_bsd   = posixio.obj
 wlink_objs_nt    = ntio.obj
 wlink_objs_os2   = ntio.obj
+wlink_objs_zdos  = zdosio.obj
 
 common_objs += $(wlink_objs_$(host_os))

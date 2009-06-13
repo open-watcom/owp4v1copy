@@ -72,7 +72,7 @@ static offset BumpUp( offset ptr, offset size )
 /*********************************************/
 {
     ptr += size;
-    if( CurrentSeg != NULL && !(CurrentSeg->info & USE_32) && ptr > 0x10000 ) {
+    if( CurrentSeg != NULL && !(CurrentSeg->info & USE_32) && !( FmtData.type & MK_RAW ) && ptr > 0x10000 ) {
         LnkMsg( ERR+MSG_SEG_TOO_BIG, "sl", CurrentSeg->segname,
                 (unsigned long)(ptr-0x10000) );
     }
@@ -153,7 +153,7 @@ void ChkLocated( targ_addr * segadr, bool fixed)
 /*******************************************************/
 // If segment has been given a fixed address, use it
 //  unless location counter is already past it
-// This should only be called from real mode 
+// This should only be called from real mode
 {
     if ( fixed ) {
         if( (CurrLoc.seg << FmtData.SegShift) + CurrLoc.off >

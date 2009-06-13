@@ -58,6 +58,7 @@
 #include "load16m.h"
 #include "loadqnx.h"
 #include "loadelf.h"
+#include "loadzdos.h"
 #include "loadraw.h"
 #include "loadfile.h"
 #include "objstrip.h"
@@ -166,6 +167,14 @@ void FiniLoadFile( void )
 #ifdef _ELF
     } else if( FmtData.type & MK_ELF ) {
         FiniELFLoadFile();
+#endif
+#ifdef _ZDOS
+    } else if( FmtData.type & MK_ZDOS ) {
+        FiniZdosLoadFile();
+#endif
+#ifdef _RAW
+    } else if( FmtData.type & MK_RAW ) {
+        FiniRawLoadFile();
 #endif
     }
     MapSizes();

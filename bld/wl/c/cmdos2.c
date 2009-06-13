@@ -1091,6 +1091,22 @@ bool ProcTNT( void )
     return( TRUE );
 }
 
+bool ProcRDOS( void )
+/*************************/
+{
+    FmtData.u.pe.subsystem = PE_SS_RDOS;
+
+    FmtData.u.pe.osmajor = 8;
+    FmtData.u.pe.osminor = 8;
+    FmtData.u.pe.osv_specd = TRUE;
+
+    FmtData.u.pe.submajor = 1;
+    FmtData.u.pe.subminor = 0;
+    FmtData.u.pe.sub_specd = TRUE;
+
+    return( TRUE );
+}
+
 static void ParseVersion( void )
 /******************************/
 {

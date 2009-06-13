@@ -30,6 +30,11 @@ cdsay .
     <CPCMD> <PROJDIR>/ovlldr/dosi86/wovl.lib            <RELROOT>/lib286/dos/wovl.lib
 #    <CPCMD> <PROJDIR>/ovlldr/dosi86/wmovl.lib           <RELROOT>/lib286/dos/wmovl.lib
 
+  [ IFDEF (os_zdos) <2*> ]
+    <CPCMD> <PROJDIR>/zdos386/wl.exe                    <RELROOT>/binz/wlink.exe
+    <CPCMD> <PROJDIR>/zdos386/wl.sym                    <RELROOT>/binz/sym/wlink.sym
+    <CPCMD> <PROJDIR>/wlbinz.lnk                        <RELROOT>/binz/wlink.lnk
+
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386.dll/wl.exe                 <RELROOT>/binp/wlink.exe
     <CPCMD> <PROJDIR>/os2386.dll/wl.sym                 <RELROOT>/binp/wlink.sym

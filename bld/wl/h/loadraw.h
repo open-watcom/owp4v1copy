@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
+extern void FiniRawLoadFile( void );
 extern void HexOutput( void );
 extern void BinOutput( void );
-

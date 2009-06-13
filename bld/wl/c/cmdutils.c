@@ -66,7 +66,7 @@ static void     StartNewFile( void );
 static bool WildCard( bool (*rtn)( void ), tokcontrol ctrl )
 /**********************************************************/
 {
-#if defined( __UNIX__ )
+#if defined( __UNIX__ ) || defined( __ZDOS__ )
     //opendir - readdir wildcarding not supported here.
     ctrl = ctrl;
     return( rtn() );
@@ -408,7 +408,7 @@ static void ExpandEnvVariable( void )
             _ChkAlloc( buff, envlen + Token.len + 1);
             memcpy( buff, env, envlen );
             memcpy( buff + envlen, Token.this, Token.len );
-            buff[ Token.len + envlen ] = '\0';
+            buff[Token.len + envlen] = '\0';
         } else {
             buff = ChkToString( env, envlen );
         }
@@ -1015,7 +1015,7 @@ char *FileName( char *buff, unsigned len, file_defext etype, bool force )
     if( cnt == 0 ) {
         ptr = alloca( len + 1 );
         memcpy( ptr, buff, len );
-        ptr[ len ] = '\0';
+        ptr[len] = '\0';
         LnkMsg( LOC+LINE+FTL+MSG_INV_FILENAME, "s", ptr );
     }
     namelen = cnt;
@@ -1031,9 +1031,9 @@ char *FileName( char *buff, unsigned len, file_defext etype, bool force )
         if( cnt != 0 ) {
             len = namptr - buff;
         }
-        _ChkAlloc( ptr, len + strlen( DefExt[ etype ] ) + 1 );
+        _ChkAlloc( ptr, len + strlen( DefExt[etype] ) + 1 );
         memcpy( ptr, buff, len );
-        strcpy( ptr + len, DefExt[ etype ] );
+        strcpy( ptr + len, DefExt[etype] );
     } else {
         ptr = ChkToString( buff, len );
     }
@@ -1187,7 +1187,7 @@ char *GetFileName( char **membname, bool setname )
     if( GetToken( SEP_PAREN, TOK_INCLUDE_DOT ) ) {   // got LIBNAME(LIB_MEMBER)
         fullmemb = alloca( Token.len + 1 );
         memcpy( fullmemb, Token.this, Token.len );
-        fullmemb[ Token.len ] = '\0';
+        fullmemb[Token.len] = '\0';
         fullmemb = RemovePath( fullmemb, &memblen );
         *membname = ChkToString( fullmemb, memblen );
         ptr = FileName( objname, namelen, E_LIBRARY, FALSE );

@@ -38,6 +38,8 @@
 #include "cmdelf.h"
 #include "cmdphar.h"
 #include "cmddos.h"
+#include "cmdzdos.h"
+#include "cmdraw.h"
 #include "cmd16m.h"
 #include "cmdline.h"
 
@@ -211,7 +213,7 @@ parse_entry     MainOptions[] = {
 //  "PACKExp",      &ProcPackExp,       MK_PHAR_FLAT, 0,
     "MINData",      &ProcMinData,       MK_PHAR_LAP, 0,
     "MAXData",      &ProcMaxData,       MK_PHAR_LAP, 0,
-    "OFFset",       &ProcOffset,        MK_PHAR_FLAT|MK_OS2_FLAT|MK_PE|MK_QNX_FLAT|MK_ELF, 0,
+    "OFFset",       &ProcOffset,        MK_PHAR_FLAT|MK_OS2_FLAT|MK_PE|MK_QNX_FLAT|MK_ELF|MK_RAW, 0,
     "SCReenname",   &ProcScreenName,    MK_NOVELL, 0,
     "CHeck",        &ProcCheck,         MK_NOVELL, 0,
     "MULTILoad",    &ProcMultiLoad,     MK_NOVELL, 0,
@@ -301,6 +303,12 @@ parse_entry    Models[] = {
 #endif
 #ifdef _ELF
     "ELF",          &ProcELF,           MK_ELF, 0,
+#endif
+#ifdef _ZDOS
+    "ZDos",         &ProcZdos,          MK_ZDOS, 0,
+#endif
+#ifdef _RAW
+    "Raw",          &ProcRaw,           MK_RAW, 0,
 #endif
     NULL
 };
@@ -503,6 +511,7 @@ parse_entry WindowsFormatKeywords[] = {
 
 parse_entry NTFormatKeywords[] = {
     "TNT",          &ProcTNT,           MK_PE, 0,
+    "RDOS",         &ProcRDOS,          MK_PE, 0,
     NULL
 };
 
@@ -586,6 +595,21 @@ parse_entry ELFFormatKeywords[] = {
 };
 #endif
 
+#ifdef _ZDOS
+parse_entry ZdosOptions[] = {
+    "SYS",          &ProcZdosSYS,           MK_ZDOS, 0,
+    "HWD",          &ProcZdosHWD,           MK_ZDOS, 0,
+    "FSD",          &ProcZdosFSD,           MK_ZDOS, 0,
+    NULL };
+#endif
+
+#ifdef _RAW
+parse_entry RawOptions[] = {
+    "BIN",          &ProcRawBIN,            MK_RAW, 0,
+    "HEX",          &ProcRawHEX,            MK_RAW, 0,
+    NULL };
+#endif
+
 parse_entry OrderOpts[] = {
     "CLName",       &ProcOrdClass,      MK_ALL, 0,
     NULL
@@ -615,4 +639,3 @@ parse_entry OutputOpts[] = {
     "STartrec",     &ProcOutputStart,   MK_ALL, 0,
     NULL
 };
-

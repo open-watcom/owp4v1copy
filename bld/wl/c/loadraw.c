@@ -79,7 +79,7 @@ static bool WriteBinSegGroup( group_entry *group )
             }
         }
     }
-    return repos;
+    return( repos );
 }
 
 
@@ -106,7 +106,7 @@ void BinOutput( void )
                 size = CalcGroupSize( group );
             }
             if( size ) {
-                diff = (FmtData.base + group->grp_addr.off + group->linear 
+                diff = (FmtData.base + group->grp_addr.off + group->linear
                        - FmtData.output_offset) - PosLoad();
                 if( diff < 0 ) {
                     LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", &(group->grp_addr));
@@ -296,7 +296,7 @@ static bool WriteHexCopyGroups( void *_seg, void *_info )
         Ring2Lookup( seg->group->leaders, DoHexDupLeader, &info->addr);
         info->addr += seg->group->totalsize;
     }
-    return FALSE;
+    return( FALSE );
 }
 
 
@@ -386,4 +386,63 @@ void HexOutput( void )
     }
     WriteLoad( ":00000001ff\r\n", 13 );
     DBIWrite();
+}
+
+unsigned long WriteGroupLoadHex( group_entry *group )
+{
+    grpwriteinfo    info;
+    class_entry     *class;
+
+    class = group->leaders->class;
+    info.addr = PosLoad();
+    // If group is a copy group, substitute source group(s) here
+    if( class->flags & CLASS_COPY  ) {
+        info.lastgrp = NULL; // so it will use the first group
+        RingLookup( class->DupClass->segs->group->leaders, WriteHexCopyGroups, &info );
+    } else {
+        Ring2Lookup( group->leaders, DoHexLeader, &(info.addr) );
+    }
+    return( PosLoad() - info.addr );
+}
+
+extern void FiniRawLoadFile( void )
+/*************************************/
+{
+    group_entry     *group;
+    outfilelist     *fnode;
+    unsigned long   loc;
+    section         *sect;
+    outfilelist     *finfo;
+
+    DEBUG(( DBG_BASE, "Writing data" ));
+    OrderGroups( CompareOffsets );
+    CurrSect = Root;    // needed for WriteInfo.
+    fnode = Root->outfile;
+    fnode->file_loc = 0;
+    Root->u.file_loc = 0;
+    Root->sect_addr = Groups->grp_addr;
+    group = Groups;
+    if( FmtData.raw_hex_output ) {
+        nextAddr = 0;   // Start at absolute linear address 0
+        linear   = 1;   // Linear mode
+        seg      = 0;
+        bufOfs   = 0;
+    }
+    while( group != NULL ) {
+        if( group->size ) {
+            sect = group->section;
+            CurrSect = sect;
+            finfo = sect->outfile;
+            loc = SUB_ADDR( group->grp_addr, sect->sect_addr ) + sect->u.file_loc;
+            if( FmtData.raw_hex_output )
+                loc += WriteGroupLoadHex( group );
+            else
+                loc += WriteGroupLoad( group );
+            if( loc > finfo->file_loc )
+                finfo->file_loc = loc;
+        }
+        group = group->next_group;
+    }
+    if( SymFileName != NULL )
+        DBIWrite();
 }
