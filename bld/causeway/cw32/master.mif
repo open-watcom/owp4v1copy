@@ -10,7 +10,7 @@ extra_a_flags = -DENGLISH=1 -I"../../inc"
 
 extra_l_flags = op map, verbose, statics
 
-.asm : ../../asm;../../asm/loadle
+.asm : ../../asm
 
 !ifeq host_cpu i86
 
