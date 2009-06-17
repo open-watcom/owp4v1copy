@@ -22,7 +22,6 @@ cdsay .
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <PROJDIR>/cwc.exe                 <RELROOT>/binw/
     <CPCMD> <PROJDIR>/cw32/dosi86/cwstub.exe  <RELROOT>/binw/
-    <CPCMD> <PROJDIR>/cw32/dosi86/cwdstub.exe <RELROOT>/binw/
     <CPCMD> <PROJDIR>/cw32/dos386/cwdll.lib   <RELROOT>/lib386/dos/
     <CPCMD> <PROJDIR>/inc/cwdllfnc.h          <RELROOT>/h/
 
