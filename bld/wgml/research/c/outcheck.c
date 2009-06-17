@@ -28,7 +28,7 @@
 *               In addition to main(), these global functions are implemented:
 *                   print_banner()
 *                   print_usage()
-*               and this local function:
+*               and these local functions:
 *                   emulate_wgml()
 *
 * Notes:        The Wiki should be consulted for any term whose meaning is
@@ -39,8 +39,10 @@
 *               those in "copfiles.h", not the research code.
 ****************************************************************************/
 
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <conio.h>
 #include <process.h>
+#include <stdbool.h>    // Required, but not included, by wgml.h.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,7 +51,9 @@
 #include "common.h"
 #include "copfiles.h"
 #include "findfile.h"
+#include "gvars.h"
 #include "research.h"
+#include "wgml.h"
 
 /* Local variables. */
 
@@ -389,12 +393,21 @@ extern void print_usage( void )
 
 int main()
 {
-    size_t  cmdlen          = 0;
-    char *  cmdline         = NULL;
-    int     retval;
+    char    *   cmdline = NULL;
+    int         k;
+    int         retval;
+    jmp_buf     env;
+    size_t      cmdlen  = 0;
 
 null_buffer();
 start_heapcheck( "main" );
+
+    /* For compatibility with wgml modules. */
+
+    environment = &env;
+    if( setjmp( env ) ) {               // if fatal error has occurred
+        my_exit( 16 );
+    }
 
     /* Display the banner. */
 
@@ -425,6 +438,7 @@ start_heapcheck( "main" );
 
     initialize_globals();
     res_initialize_globals();
+    init_global_vars();         // wgml globals
     
     /* Parse the command line: allocates and sets tgt_path. */
 
@@ -446,7 +460,6 @@ start_heapcheck( "main" );
 
     /* Initialize the binary device library. */
 
-    get_systime();
     ff_setup();
     cop_setup();
 
@@ -461,18 +474,69 @@ start_heapcheck( "main" );
 
     cop_teardown();
     ff_teardown();
-    free_symtab();
 
     mem_free(tgt_path);
     tgt_path = NULL;
 
+    /* These are from free_some_mem(), which is static in wgml.c. */
+
+    if( token_buf != NULL ) {
+        mem_free( token_buf );
+    }
+    if( alt_ext != NULL ) {
+        mem_free( alt_ext );
+    }
+    if( def_ext != NULL ) {
+        mem_free( def_ext );
+    }
+    if( master_fname != NULL ) {
+        mem_free( master_fname );
+    }
+    if( master_fname_attr != NULL ) {
+        mem_free( master_fname_attr );
+    }
+    if( dev_name != NULL ) {
+        mem_free( dev_name );
+    }
     if( out_file != NULL ) {
         mem_free( out_file );
-        out_file = NULL;
     }
     if( out_file_attr != NULL ) {
         mem_free( out_file_attr );
-        out_file_attr = NULL;
+    }
+    if( global_dict != NULL ) {
+        free_dict( &global_dict );
+    }
+    if( macro_dict != NULL ) {
+        free_macro_dict( &macro_dict );
+    }
+    if( tag_dict != NULL ) {
+        free_tag_dict( &tag_dict );
+    }
+    if( buff2 != NULL ) {
+        mem_free( buff2 );
+    }
+
+    for( k = 0; k < max_buflist; k++ ) {
+        if( buflist[k].buf == NULL )  break;
+        mem_free( buflist[k].buf );
+    }
+    {
+        text_chars  *wk;
+        text_chars  *w = text_list.next;
+
+        while( w != NULL ) {
+           wk = w->next;
+           mem_free( w );
+           w = wk;
+        }
+
+        w =  words.first;
+        while( w != NULL ) {
+           wk = w->next;
+           mem_free( w );
+           w = wk;
+        }
     }
 
 end_heapcheck( "main" );

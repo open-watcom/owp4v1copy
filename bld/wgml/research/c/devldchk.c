@@ -48,7 +48,9 @@
 #include "common.h"
 #include "copfiles.h"
 #include "findfile.h"
+#include "gvars.h"
 #include "research.h"
+#include "wgml.h"
 
 /*  Local variables. */
 
@@ -118,7 +120,7 @@ static void display_binary_device_library( void )
  * Print the banner to the screen.
  */
 
-extern void print_banner( void )
+void print_banner( void )
 {
     puts( banner1w( "Device Load Procedure Test Program", _RESEARCH_VERSION_ ) );
     puts( banner2( "1983" ) );
@@ -130,7 +132,7 @@ extern void print_banner( void )
  * Print the usage information to the screen.
  */
 
-extern void print_usage( void )
+void print_usage( void )
 {
     char const * *  list;
 
@@ -151,9 +153,17 @@ extern void print_usage( void )
 
 int main()
 {
-    size_t  cmdlen          = 0;
-    char *  cmdline         = NULL;
-    int     retval;
+    char    *   cmdline = NULL;
+    int         retval;
+    jmp_buf     env;
+    size_t      cmdlen  = 0;
+
+    /* For compatibility with wgml modules. */
+
+    environment = &env;
+    if( setjmp( env ) ) {               // if fatal error has occurred
+        my_exit( 16 );
+    }
 
     /* Display the banner. */
 
@@ -184,6 +194,7 @@ int main()
 
     initialize_globals();
     res_initialize_globals();
+    init_global_vars();         // wgml globals
 
     /* Parse the command line: allocates and sets tgt_path. */
 

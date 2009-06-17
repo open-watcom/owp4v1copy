@@ -441,13 +441,13 @@ int main()
 
     /* Initialize the statics, which should be globals in gendev. */
 
-    cur_file = (file_info *) mem_alloc( sizeof( file_info ) );
-    cur_file->filebuf = (char * ) mem_alloc( BUF_SIZE );
+    cur_file = (file_info *) malloc( sizeof( file_info ) );
+    cur_file->filebuf = (char * ) malloc( BUF_SIZE );
     cur_file->buflen = BUF_SIZE;
     cur_file->scanptr = NULL;
     cur_file->usedlen = 0;
 
-    cur_token = (token *) mem_alloc( sizeof( token ) );
+    cur_token = (token *) malloc( sizeof( token ) );
 
     /* Parse the command line: allocates and sets tgt_path. */
 
@@ -470,11 +470,11 @@ int main()
 
     free( tgt_path );
     tgt_path = NULL;
-    mem_free( cur_file->filebuf );
+    free( cur_file->filebuf );
     cur_file->filebuf = NULL;
-    mem_free( cur_file );
+    free( cur_file );
     cur_file = NULL;
-    mem_free( cur_token );
+    free( cur_token );
     cur_token = NULL;
 
     /* Print the useage if the process failed. */

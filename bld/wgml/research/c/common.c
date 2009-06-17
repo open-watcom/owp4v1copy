@@ -27,31 +27,11 @@
 * Description:  Implements the common functions for the research code:
 *                   initialize_globals()
 *                   skip_spaces()
-*
-*               and those needed to reproduce enough of the wgml context for
-*               research programs that use parts of wgml to work:               
-*                   add_symvar()
-*                   find_symvar()
-*                   free_resources()
-*                   free_symtab()
-*                   g_suicide()
-*                   get_systime
-*                   global_dict
-*                   mem_alloc()
-*                   mem_free()
-*                   mem_realloc()
-*                   out_msg()
-*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 #include "swchar.h"
 
@@ -61,21 +41,12 @@
 #include "common.h"
 
 /*
- *  Initialize the global variables.
+ *  Initialize the global variable.
  */
 
-void    initialize_globals( void )
+void initialize_globals( void )
 {
-    switch_char     = _dos_switch_char();
-    err_count       = 0;
-    wng_count       = 0;
-    
-    dev_name        = NULL;
-    global_dict     = NULL;
-    master_fname    = NULL;
-    opt_fonts       = NULL;
-    out_file        = NULL;
-    out_file_attr   = NULL;
+    dos_switch_char     = _dos_switch_char();
 }
 
 /*  Function skip_spaces().
@@ -95,158 +66,4 @@ char *  skip_spaces( char * start )
     }
     return start;
 }
-
-/* Borrowed from wgml. */
-
-/* Error message centralized output. */
-
-void out_msg( char * msg, ... )
-{
-    va_list args;
-
-    va_start( args, msg );
-    vprintf_s( msg, args );
-    va_end( args );
-}
-
-/* The memory allocation functions. These have been simplified. */
-
-void * mem_alloc( size_t size )
-{
-    void    *   p;
-
-    p = malloc( size );
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL\n" );
-        g_suicide();
-    }
-    return( p );
-}
-
-void * mem_realloc( void * p, size_t size )
-{
-    p = realloc( p, size );
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL\n" );
-        g_suicide();
-    }
-    return( p );
-}
-
-void mem_free( void * p )
-{
-
-    /* Not an error, but report for debugging purposes. */
-
-    if( p == NULL ) {
-        out_msg( "NULL pointer freed!\n" );
-    }
-
-    free( p );
-    p = NULL;
-}
-
-void g_suicide( void )
-{
-    exit( 16 );
-}
-
-int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, \
-                sym_flags f )
-{
-    symvar  *   new     = NULL;
-    symvar  *   wk;
-    symsub  *   newsub  = NULL;
-
-    find_symvar( dict, name, subscript, &newsub );
-    if( newsub == NULL ) {
-        newsub = (symsub *) mem_alloc( sizeof( symsub ) );
-        newsub->value = (char *) mem_alloc( strlen(val) + 1);
-        strcpy_s( newsub->value, strlen(val) + 1, val );
-
-        new = (symvar *) mem_alloc( sizeof( symvar ) );
-        new->next = NULL;
-        strcpy_s( new->name, SYM_NAME_LENGTH + 1, name );
-        new->sub_0 = newsub;
-
-        if( *dict == NULL ) {
-            *dict = new;
-        } else {
-            wk = *dict;
-            while( wk->next != NULL) {
-                wk = wk->next;
-            }
-            wk->next = new;
-        }
-    } else {
-        if( strcmp( newsub->value, val ) ) {
-            if( strlen( newsub->value ) < strlen( val ) ) {
-                newsub->value = mem_realloc( newsub->value, strlen( val ) + 1 );
-            }
-            strcpy_s( newsub->value, strlen( val ) + 1, val );
-        }
-    }
-    return( 0 );
-}
-
-int find_symvar( symvar * * dict, char * name, sub_index subscript, \
-                 symsub * * symsubval )
-{
-    symvar  *   wk;
-
-    *symsubval = NULL;
-    wk = *dict;
-    while( wk != NULL) {
-        if( !strcmp( wk->name, name ) ) {
-            *symsubval = wk->sub_0;
-            break;
-        }
-        wk = wk->next;
-    }
-
-    if( symsubval == NULL ) return( 0 );
-    return( 1 );
-}
-
-bool free_resources( errno_t in_errno )
-{
-    if( in_errno == ENOMEM) out_msg( "ERR_NOMEM_AVAIL\n" );
-    else out_msg( "Out of file handles!\n" );
-    return( false );
-}
-
-void free_symtab( void )
-{
-    symvar  *   old;
-
-    if( global_dict != NULL) {
-        while( global_dict != NULL) {
-            old = global_dict;
-            global_dict = global_dict->next;
-            if( old->sub_0 != NULL ) {
-                if( old->sub_0->value != NULL ) mem_free( old->sub_0->value );
-                mem_free( old->sub_0 );
-            }
-            mem_free( old );
-        }
-    }
-    return;
-}
-
-void get_systime( void )
-{
-            char        date_str[80];
-            char        time_str[80];
-            time_t      gtime;
-    struct tm           doc_tm;
-
-    gtime = time( NULL );
-    localtime_s( &gtime, &doc_tm );
-    strftime( date_str, 80, "%B %d, %Y", &doc_tm );
-    strftime( time_str, 80, "%H:%M:%S", &doc_tm );
-    printf( "%s %s\n", date_str, time_str );
-    add_symvar( &global_dict, "date", date_str, no_subscript, 0 );
-    add_symvar( &global_dict, "time", time_str, no_subscript, 0 );
-}
-
 

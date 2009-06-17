@@ -62,42 +62,9 @@
 #include "cophdr.h"
 #include "dfinterp.h"
 #include "findfile.h"
+#include "gvars.h"
 #include "research.h"
-
-/***************************************************************************/
-/*  Flags for filecb and macrocb                                           */
-/***************************************************************************/
-
-typedef enum {
-    FF_clear        = 0x0000,           // clear all flags
-    FF_startofline  = 0x0001,           // at start of physical line
-    FF_eof          = 0x0002,           // eof
-    FF_err          = 0x0004,           // file error
-    FF_crlf         = 0x0008,           // delete trailing CR and / or LF
-    FF_macro        = 0x0010,           // entry is macro not file
-    FF_open         = 0x8000            // file is open
-} fflags;
-
-/***************************************************************************/
-/*  entry for an included file                                             */
-/***************************************************************************/
-
-#define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
-#define ulong           unsigned long
-
-typedef struct filecb {
-    fflags          flags;
-    FILE        *   fp;                 // FILE ptr
-    ulong           lineno;             // current line number
-    ulong           linemin;            // first line number to process
-    ulong           linemax;            // last line number to process
-    size_t          usedlen;            // used data of filebuf
-    fpos_t          pos;                // position for reopen
-    char            fileattr[ MAX_FILE_ATTR + 1];  // T:xxxx
-    char            filename[ 1 ];      // full filename var length
-} filecb;
-
-filecb  *   input_cbs = NULL;
+#include "wgml.h"
 
 /*  Local variables. */
 
@@ -839,9 +806,17 @@ void print_usage( void )
 
 int main()
 {
-    size_t  cmdlen          = 0;
-    char *  cmdline         = NULL;
-    int     retval;
+    char    *   cmdline = NULL;
+    int         retval;
+    jmp_buf     env;
+    size_t      cmdlen  = 0;
+
+    /* For compatibility with wgml modules. */
+
+    environment = &env;
+    if( setjmp( env ) ) {               // if fatal error has occurred
+        my_exit( 16 );
+    }
 
     /* Display the banner. */
 
@@ -871,6 +846,7 @@ int main()
     /* Initialize the globals. */
 
     initialize_globals();
+    init_global_vars();         // wgml globals
     res_initialize_globals();
     ff_setup();
 
