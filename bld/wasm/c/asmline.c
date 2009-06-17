@@ -126,7 +126,7 @@ static bool get_asmline( char *ptr, unsigned max, FILE *fp )
         case ' ':
             if( quote != 0 )
                 break;
-            if( *(ptr - 1) == '\\' )
+            if( (got_something == TRUE) && (*(ptr - 1) == '\\') )
                 skip = TRUE;
             break;
         case '\'':
