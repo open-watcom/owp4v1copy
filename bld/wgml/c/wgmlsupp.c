@@ -24,11 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Defines functions required by research programs which must
-*               link to the wgml code but which cannot be linked to because
-*               they are in wgml.c and linking with wgml.obj would create
-*               an executable with two main() functions, which the debugger
-*               cannot handle reasonably. 
+* Description:  Defines functions moved out of wgml.c so they can be linked
+*               into the research programs without including main() from wgml.c
 *                   free_inc_fp()
 *                   free_resources()
 *                   get_line()
@@ -41,15 +38,24 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <errno.h>
-#include <stdbool.h>    // Needed, but not included by, "gtype.h".
-#include <stdint.h>     // Needed, but not included by, "gtype.h".
 
-#include "copfiles.h"   // Needed, but not included by, "gvars.h".
-#include "gtype.h"      // Needed, but not included by, "gvars.h".
-#include "gvars.h"
 #include "wgml.h"
+#include "gvars.h"
 
-/* Static functions from wgml.c. */
+
+/***************************************************************************/
+/*  Program end                                                            */
+/***************************************************************************/
+
+void my_exit( int rc )
+{
+    exit( rc );
+}
+
+
+/***************************************************************************/
+/*  Try to close an opened include file                                    */
+/***************************************************************************/
 
 static  bool    free_inc_fp( void )
 {
@@ -86,32 +92,11 @@ static  bool    free_inc_fp( void )
     return( false );                    // nothing to close
 }
 
-static  void    get_macro_line( void )
-{
-    macrocb *   cb;
 
-    if( input_cbs->fmflags & II_file ) {
-        g_err( err_logic_mac );
-        show_include_stack();
-        err_count++;
-        g_suicide();
-    }
-    cb = input_cbs->s.m;
-
-    if( cb->macline == NULL ) {         // no more macrolines
-        input_cbs->fmflags |= II_eof;
-        cb->flags          |= FF_eof;
-        cb->flags          &= ~FF_startofline;
-        *buff2              = '\0';
-    } else {
-        cb->lineno++;
-        cb->flags          |= FF_startofline;
-        cb->flags          &= ~FF_eof;
-        input_cbs->fmflags &= ~II_eof;
-        strcpy_s( buff2, buf_size, cb->macline->value );
-        cb->macline         = cb->macline->next;
-    }
-}
+/***************************************************************************/
+/* reopen a file which was closed due to resource shortage and perhaps     */
+/* close another one                                                       */
+/***************************************************************************/
 
 static void reopen_inc_fp( filecb *cb )
 {
@@ -146,16 +131,55 @@ static void reopen_inc_fp( filecb *cb )
     return;
 }
 
-/* Global functions from wgml.c. */
+/***************************************************************************/
+/*  Report resource exhaustion: may eventually try to correct the problem  */
+/***************************************************************************/
 
-bool free_resources( errno_t in_errno )
+bool    free_resources( errno_t in_errno )
 {
-    if( in_errno == ENOMEM) out_msg( "ERR_NOMEM_AVAIL\n" );
-    else out_msg( "Out of file handles!\n" );
+    if( in_errno == ENOMEM) g_err( err_no_memory );
+    else g_err( err_no_handles );
+    err_count++;
     return( false );
 }
 
-bool get_line( void )
+
+/***************************************************************************/
+/*  get line from current macro                                            */
+/***************************************************************************/
+static  void    get_macro_line( void )
+{
+    macrocb *   cb;
+
+    if( input_cbs->fmflags & II_file ) {
+        g_err( err_logic_mac );
+        show_include_stack();
+        err_count++;
+        g_suicide();
+    }
+    cb = input_cbs->s.m;
+
+    if( cb->macline == NULL ) {         // no more macrolines
+        input_cbs->fmflags |= II_eof;
+        cb->flags          |= FF_eof;
+        cb->flags          &= ~FF_startofline;
+        *buff2              = '\0';
+    } else {
+        cb->lineno++;
+        cb->flags          |= FF_startofline;
+        cb->flags          &= ~FF_eof;
+        input_cbs->fmflags &= ~II_eof;
+        strcpy_s( buff2, buf_size, cb->macline->value );
+        cb->macline         = cb->macline->next;
+    }
+}
+
+
+/***************************************************************************/
+/*  get line from current input ( file )                                   */
+/*  skipping lines before the first one to process if neccessary           */
+/***************************************************************************/
+bool    get_line( void )
 {
     filecb      *   cb;
     char        *   p;
@@ -248,12 +272,12 @@ bool get_line( void )
     return( !(input_cbs->fmflags & II_eof) );
 }
 
-void my_exit( int rc )
-{
-    exit( rc );
-}
 
-void show_include_stack( void )
+/***************************************************************************/
+/*  output the filenames + lines which were included                       */
+/***************************************************************************/
+
+void    show_include_stack( void )
 {
     inputcb *   ip;
     char        linestr[MAX_L_AS_STR];

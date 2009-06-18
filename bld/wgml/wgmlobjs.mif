@@ -4,6 +4,7 @@
 #
 common_objs =  &
         wgml.obj     &
+        wgmlsupp.obj &
         findfile.obj &
         gargutil.obj &
         gdata.obj    &
