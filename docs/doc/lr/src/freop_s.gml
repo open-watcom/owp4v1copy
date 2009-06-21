@@ -4,21 +4,21 @@
 .func gen
 #include <stdio.h>
 #define __STDC_WANT_LIB_EXT1__ 1
-FILE *freopen( const char *filename,
-               const char *mode,
-               FILE *fp );
+FILE *freopen_s( const char *filename,
+                 const char *mode,
+                 FILE *fp );
 .ixfunc2 '&StrIo' &func
 .if &'length(&wfunc.) ne 0 .do begin
-FILE *_wfreopen( const wchar_t *filename,
-                 const wchar_t *mode,
-                 FILE *fp );
+FILE *_wfreopen_s( const wchar_t *filename,
+                   const wchar_t *mode,
+                   FILE *fp );
 .ixfunc2 '&StrIo' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
-FILE *_ufreopen( const wchar_t *filename,
-                 const wchar_t *mode,
-                 FILE *fp );
+FILE *_ufreopen_s( const wchar_t *filename,
+                   const wchar_t *mode,
+                   FILE *fp );
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .func end
