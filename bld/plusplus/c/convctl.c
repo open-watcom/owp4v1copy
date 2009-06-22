@@ -1407,12 +1407,8 @@ CNV_RETN CastPtrToPtr           // IMPLICIT/EXPLICIT CAST PTR -> PTR
         if( ctl->req == CNV_CAST ) {
             retn = CNV_OK;
         } else {
-            PTreeErrorExpr( expr, ANSI_PTR_INTEGER_EXTENSION );
-            if( expr->op == PT_ERROR ) {
-                retn = CNV_ERR;
-            } else {
-                retn = CNV_OK;
-            }
+            PTreeErrorExpr( expr, ERR_PTR_INTEGER_EXTENSION );
+            retn = CNV_ERR;
         }
     } else {
         retn = CNV_IMPOSSIBLE;

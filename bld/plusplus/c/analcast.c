@@ -1436,7 +1436,7 @@ static CAST_RESULT analysePtrToPtr  // ANALYSE PTR --> PTR
                 break;
               case CNV_OK :
                 if( ( ctl->ptr_integral_ext && ! ctl->clscls_explicit )
-                 && ConvCtlWarning( ctl, ANSI_PTR_INTEGER_EXTENSION ) ) {
+                 && ConvCtlWarning( ctl, ERR_PTR_INTEGER_EXTENSION ) ) {
                     result = DIAG_ALREADY;
                 } else {
                     result = CAST_PTR_TO_PTR;
@@ -2335,7 +2335,11 @@ PTREE CastStatic                // STATIC_CASTE< TYPE >( EXPR )
                 } else if( ctl.from_void ) {
                     result = CAST_DO_CGCONV;
                 } else {
-                    result = CAST_TO_SAME_PTR;
+                    if( ctl.ptr_integral_ext ) {
+                        result = DIAG_STATIC_CAST_PTR_TYPE;
+                    } else {
+                        result = CAST_TO_SAME_PTR;
+                    }
                 }
             } else {
                 result = DIAG_STATIC_CAST_PTR_TYPE;
