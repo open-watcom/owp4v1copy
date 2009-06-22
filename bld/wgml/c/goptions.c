@@ -1016,6 +1016,15 @@ static void set_inclist( option * opt )
 }
 
 /***************************************************************************/
+/*  ( index     or   ( noindex                                             */
+/***************************************************************************/
+
+static void set_index( option * opt )
+{
+    GlobalFlags.index = opt->value;
+}
+
+/***************************************************************************/
 /*  ( statistics or  ( nostatistics                                        */
 /***************************************************************************/
 
@@ -1153,7 +1162,7 @@ static option GML_old_Options[] =
     { "format",        5,  4,       0,       ign_option,     1 },
     { "from",          3,  4,       1,       set_from,       1 },
     { "inclist",       6,  4,       1,       set_inclist,    0 },
-    { "index",         4,  3,       0,       ign_option,     0 },
+    { "index",         4,  3,       1,       set_index,      0 },
     { "layout",        5,  3,       0,       ign_option,     1 },
     { "linemode",      7,  4,       0,       ign_option,     0 },
     { "llength",       6,  2,       130,     ign_option,     1 },
@@ -1162,7 +1171,7 @@ static option GML_old_Options[] =
     { "mailmerge",     8,  4,       0,       ign_option,     1 },
     { "noduplex",      7,  5,       0,       ign_option,     0 },
     { "noinclist",     8,  6,       0,       set_inclist,    0 },
-    { "noindex",       6,  5,       0,       ign_option,     0 },
+    { "noindex",       6,  5,       0,       set_index,      0 },
     { "nopause",       6,  3,       0,       ign_option,     0 },
     { "noquiet",       6,  3,       0,       set_quiet,      0 },
     { "noscript",      7,  5,       0,       ign_option,     0 },

@@ -114,7 +114,7 @@ global  struct GlobalFlags {
     unsigned        warning       : 1;  // show warnings
     unsigned        statistics    : 1;  // output statistics at end
 
-    unsigned        free8         : 1;
+    unsigned        index         : 1;  // index option
     unsigned        free9         : 1;
     unsigned        freea         : 1;
     unsigned        freeb         : 1;
