@@ -91,7 +91,7 @@ void make_inst_hash_tables( unsigned int count, sword *Words )
         while ( AsmOpTable[ pos ] < i && pos < size )
             pos++;
         if( AsmOpTable[ pos ] != i || pos >= size ) {
-            printf( "Wrong data in asminsd.h\n" );
+            printf( "Wrong data in asminsd.h. position=%d, index=%d\n", pos, i );
             exit( 1 );
         }
         pos_table[ i ] = pos;

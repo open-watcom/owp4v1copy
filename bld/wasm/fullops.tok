@@ -107,6 +107,7 @@ lengthof
 .listmacro
 .listmacroall
 local
+locals
 low
 lowword
 lroffset
@@ -120,6 +121,7 @@ name
 ne
 .nocref
 .nolist
+nolocals
 nowarn
 opattr
 option

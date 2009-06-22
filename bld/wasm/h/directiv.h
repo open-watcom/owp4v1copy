@@ -365,6 +365,8 @@ extern void             ModuleInit( void );
 
 extern int              ModuleEnd( int );       // handle END statement
 
+extern int              Locals( int, int );     // handle LOCALS statement
+
 extern uint_32          GetCurrSegStart(void);
 /* Get offset of segment at the start of current LEDATA record */
 

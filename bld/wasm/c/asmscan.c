@@ -42,7 +42,6 @@ extern int              get_instruction_position( char *string );
 
 #if defined( _STANDALONE_ )
 
-extern global_options   Options;
 bool                    EnumDirective;
 
 #endif
@@ -479,8 +478,10 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             case T_EXITCODE:
             case T_FARDATA:
             case T_IDEAL:
+            case T_LOCALS:
             case T_MASM:
             case T_MODEL:
+            case T_NOLOCALS:
             case T_NOWARN:
             case T_P186:
             case T_P286:

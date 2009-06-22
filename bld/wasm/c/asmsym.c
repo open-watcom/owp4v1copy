@@ -53,8 +53,6 @@ static char             dots[] = " . . . . . . . . . . . . . . . .";
 #ifdef DEBUG_OUT
 void    DumpASym( void );   /* Forward declaration */
 #endif
-extern asm_sym          *FindLocalLabel( const char *name );
-extern int              AddLocalLabel( asm_sym *sym );
 extern asm_sym          *FindStructureMember( asm_sym *symbol , const char *name );
 
 #else
@@ -169,6 +167,57 @@ static struct asm_sym **AsmFind( const char *name )
     return( sym );
 }
 
+#if defined( _STANDALONE_ )
+static struct asm_sym *FindLocalLabel( const char *name )
+/*******************************************************/
+{
+    label_list  *curr;
+
+    for( curr = CurrProc->e.procinfo->labellist; curr != NULL; curr = curr->next ) {
+        if( strcmp( curr->sym->name, name ) == 0 ) {
+            return( curr->sym );
+        }
+    }
+    return( NULL );
+}
+
+static int AddLocalLabel( asm_sym *sym )
+/**************************************/
+{
+    label_list  *label;
+    label_list  *curr;
+    proc_info   *info;
+
+    if( ( sym->state != SYM_UNDEFINED ) && ( Parse_Pass == PASS_1 ) ) {
+        AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
+        return( ERROR );
+    } else {
+        sym->state = SYM_INTERNAL;
+        sym->mem_type = MT_SHORT;
+    }
+    info = CurrProc->e.procinfo;
+    label = AsmAlloc( sizeof( label_list ) );
+    label->label = NULL;
+    label->size = 0;
+    label->replace = NULL;
+    label->factor = 0;
+    label->next = NULL;
+    label->sym = sym;
+    label->is_register = 0;
+    if( info->labellist == NULL ) {
+        info->labellist = label;
+    } else {
+        for( curr = info->labellist;; curr = curr->next ) {
+            if( curr->next == NULL ) {
+                break;
+            }
+        }
+        curr->next = label;
+    }
+    return( NOT_ERROR );
+}
+#endif
+
 struct asm_sym *AsmLookup( const char *name )
 /*******************************************/
 {
@@ -183,20 +232,24 @@ struct asm_sym *AsmLookup( const char *name )
     }
 #if defined( _STANDALONE_ )
     if( Options.mode & MODE_IDEAL ) {
-        if( name[0] == '@' && name[1] == '@' ) {
-            if( CurrProc == NULL ) {
-                AsmError( LOCAL_LABEL_OUTSIDE_PROC );
-                return( NULL );
-            }
-            sym = FindLocalLabel( name );
-            if( sym == NULL ) {
-                sym = AllocASym( name );
-                if( sym != NULL) {
-                    if( AddLocalLabel( sym ) == ERROR )
+        if( Options.locals_len ) {
+            if( memcmp( name, Options.locals_prefix, Options.locals_len ) == 0
+                && name[Options.locals_len] != '\0' ) {
+                if( CurrProc == NULL ) {
+                    AsmError( LOCAL_LABEL_OUTSIDE_PROC );
                     return( NULL );
                 }
+                sym = FindLocalLabel( name );
+                if( sym == NULL ) {
+                    sym = AllocASym( name );
+                    if( sym != NULL) {
+                        if( AddLocalLabel( sym ) == ERROR ) {
+                            return( NULL );
+                        }
+                    }
+                }
+                return( sym );
             }
-            return sym;
         }
         if( Definition.struct_depth != 0 ) {
             structure = &Definition.curr_struct->sym;

@@ -4117,3 +4117,27 @@ int CommDef( int i )
     }
     return( NOT_ERROR );
 }
+
+int Locals( int i )
+/*******************/
+{
+    if( i + 1 == Token_Count ) {
+        Options.locals_len = ( AsmBuffer[i]->u.value == T_LOCALS ) ? 2 : 0;
+        return( NOT_ERROR );
+    }
+    if( AsmBuffer[i]->u.value == T_LOCALS ) {
+        ++i;
+        if( i < Token_Count && AsmBuffer[i]->token == T_ID
+            && strlen( AsmBuffer[i]->string_ptr ) >= 2 ) {
+            Options.locals_prefix[0] = AsmBuffer[i]->string_ptr[0];
+            Options.locals_prefix[1] = AsmBuffer[i]->string_ptr[1];
+            Options.locals_len = 2;
+            if( Token_Count - i == 1 && strlen( AsmBuffer[i]->string_ptr ) == 2 ) {
+                return( NOT_ERROR );
+            }
+        }
+    }
+    AsmError( SYNTAX_ERROR );
+    return( ERROR );
+}
+

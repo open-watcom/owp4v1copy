@@ -181,6 +181,8 @@ typedef struct global_options {
     bool        write_listing;
     bool        watcom_parms_passed_by_regs;
     smode       mode;
+    int         locals_len;
+    char        locals_prefix[3];
 } global_options;
 
 extern global_options Options;

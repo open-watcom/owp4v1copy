@@ -47,10 +47,6 @@ extern int              OrgDirective( int );
 extern int              AlignDirective( uint_16, int );
 extern int              ForDirective( int, enum irp_type );
 
-#if defined( _STANDALONE_ )
-extern global_options   Options;
-#endif
-
 int directive( int i, long direct )
 /* Handle all directives */
 {
@@ -401,6 +397,9 @@ int directive( int i, long direct )
     case T_STARTUPCODE:
     case T_EXITCODE:
         return( Startup ( i ) );
+    case T_LOCALS:
+    case T_NOLOCALS:
+        return( Locals( i ) );
     }
     AsmError( UNKNOWN_DIRECTIVE );
     return( ERROR );

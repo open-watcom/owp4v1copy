@@ -71,7 +71,6 @@ static int              segm_override_jumps( expr_list *opndx );
 
 
 #if defined( _STANDALONE_ )
-extern global_options   Options;
 extern int              directive( int , long );
 extern int              SymIs32( struct asm_sym *sym );
 

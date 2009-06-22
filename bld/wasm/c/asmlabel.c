@@ -42,51 +42,6 @@
 
 static unsigned   AnonymousCounter = 0;
 
-struct asm_sym *FindLocalLabel( const char *name )
-{
-    label_list  *curr;
-
-   for( curr = CurrProc->e.procinfo->labellist; ; curr = curr->next ) {
-        if( curr == NULL )
-            return( NULL );
-        if( strcmp( curr->sym->name, name ) == 0 )
-            return( curr->sym );
-    }
-}
-
-int AddLocalLabel( asm_sym *sym ) {
-    label_list  *label, *curr;
-    proc_info   *info;
-
-    if( ( sym->state != SYM_UNDEFINED ) && ( Parse_Pass == PASS_1 ) ) {
-        AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
-        return( ERROR );
-    } else {
-        sym->state = SYM_INTERNAL;
-        sym->mem_type = MT_SHORT;
-    }
-    info = CurrProc->e.procinfo;
-    label = AsmAlloc( sizeof( label_list ) );
-    label->label = NULL;
-    label->size = 0;
-    label->replace = NULL;
-    label->factor = 0;
-    label->next = NULL;
-    label->sym = sym;
-    label->is_register = 0;
-    if( info->labellist == NULL ) {
-        info->labellist = label;
-    } else {
-        for( curr = info->labellist;; curr = curr->next ) {
-            if( curr->next == NULL ) {
-                break;
-            }
-        }
-        curr->next = label;
-    }
-    return( NOT_ERROR );
-}
-
 void PrepAnonLabels( void )
 /*************************/
 {
@@ -126,9 +81,40 @@ int MakeLabel( char *symbol_name, memtype mem_type )
 
     if( CurrSeg == NULL )
         AsmError( LABEL_OUTSIDE_SEGMENT );
-    if( strncmp( symbol_name, "@@" , 2 ) == 0 ) {
-        if( Options.mode & MODE_IDEAL ) {
-            if( ( symbol_name[2] == 0 ) || ( CurrProc == NULL ) ) {
+    if( symbol_name[0] == '@' && symbol_name[1] == '@' && symbol_name[2] == '\0' ) {
+        /* anonymous label */
+        /* find any references to @F and mark them to here as @B */
+        /* find the old @B */
+        sym = AsmGetSymbol( "@B" );
+        if( sym != NULL ) {
+            /* change it to some magical name */
+            sprintf( buffer, "L&_%d", AnonymousCounter++ );
+            AsmChangeName( sym->name, buffer );
+        }
+        sym = AsmLookup( "@B" );
+        /* change all forward anon. references to this location */
+        newsym = AsmGetSymbol( "@F" );
+        if( newsym != NULL ) {
+            sym->fixup = newsym->fixup;
+            newsym->fixup = NULL;
+        }
+        AsmTakeOut( "@F" );
+        sym->state = SYM_INTERNAL;
+        sym->mem_type = mem_type;  // fixme ??
+        GetSymInfo( sym );
+        BackPatch( sym );
+        /* now point the @F marker at the next anon. label if we have one */
+        sprintf( buffer, "L&_%d", AnonymousCounter+1 );
+        sym = AsmGetSymbol( buffer );
+        if( sym != NULL ) {
+            AsmChangeName( sym->name, "@F" );
+        }
+        return( NOT_ERROR );
+    }
+    if( (Options.mode & MODE_IDEAL) && Options.locals_len ) {
+        if( memcmp( symbol_name, Options.locals_prefix, Options.locals_len ) == 0
+            && symbol_name[Options.locals_len] != '\0' ) {
+            if( CurrProc == NULL ) {
                 AsmError( SYNTAX_ERROR );
                 return( ERROR );
             }
@@ -139,40 +125,9 @@ int MakeLabel( char *symbol_name, memtype mem_type )
             GetSymInfo( sym );
             BackPatch( sym );
             return( NOT_ERROR );
-        } else {
-            if( symbol_name[2] == 0 ) {
-                /* anonymous label */
-                /* find any references to @F and mark them to here as @B */
-                /* find the old @B */
-                sym = AsmGetSymbol( "@B" );
-                if( sym != NULL ) {
-                    /* change it to some magical name */
-                    sprintf( buffer, "L&_%d", AnonymousCounter++ );
-                    AsmChangeName( sym->name, buffer );
-                }
-                sym = AsmLookup( "@B" );
-                /* change all forward anon. references to this location */
-                newsym = AsmGetSymbol( "@F" );
-                if( newsym != NULL ) {
-                    sym->fixup = newsym->fixup;
-                    newsym->fixup = NULL;
-                }
-                AsmTakeOut( "@F" );
-                sym->state = SYM_INTERNAL;
-                sym->mem_type = mem_type;  // fixme ??
-                GetSymInfo( sym );
-                BackPatch( sym );
-                /* now point the @F marker at the next anon. label if we have one */
-                sprintf( buffer, "L&_%d", AnonymousCounter+1 );
-                sym = AsmGetSymbol( buffer );
-                if( sym != NULL ) {
-                    AsmChangeName( sym->name, "@F" );
-                }
-                return( NOT_ERROR );
-            }
         }
     }
-    sym = AsmLookup( symbol_name );
+     sym = AsmLookup( symbol_name );
     if( sym == NULL )
         return( ERROR );
     if( Parse_Pass == PASS_1 ) {

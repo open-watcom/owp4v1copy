@@ -123,7 +123,9 @@ global_options Options = {
     TRUE,               // mangle stdcall
     FALSE,              // write listing
     TRUE,               // parameters passed by registers
-    MODE_WATCOM         // assembler mode
+    MODE_WATCOM,        // assembler mode
+    0,                  // locals prefix len
+    {'\0','\0','\0'}    // locals prefix
 };
 
 static char *CopyOfParm( void )
@@ -1306,4 +1308,11 @@ void CmdlParamsInit( void )
 
     set_cpu_parameters();
     set_fpu_parameters();
+    Options.locals_prefix[0] = '@'; // default LOCALS prefix is @@
+    Options.locals_prefix[1] = '@';
+    if( Options.mode & MODE_TASM ) {
+        Options.locals_len = 2;     // default LOCALS is on
+    } else {
+        Options.locals_len = 0;     // default LOCALS is off
+    }
 }
