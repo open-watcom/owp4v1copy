@@ -678,5 +678,6 @@ void    scr_ga( void )
     } else if( val_flags & val_valptr ) {
         gaval->a.valptr = valptr;
     }
+    scan_restart = scan_stop +1;
     return;
 }

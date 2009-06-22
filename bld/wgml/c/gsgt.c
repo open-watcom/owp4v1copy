@@ -30,20 +30,20 @@
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
- 
+
+
 /***************************************************************************/
 /*  reset last used  tag and att entries                                   */
 /***************************************************************************/
- 
+
 void    init_tag_att( void )
 {
     tag_entry = NULL;
@@ -51,8 +51,8 @@ void    init_tag_att( void )
     tagname[0] = '*';
     attname[0] = '*';
 }
- 
- 
+
+
 /***************************************************************************/
 /* GML TAG defines a GML tag.                                              */
 /*                                                                         */
@@ -250,21 +250,21 @@ void    init_tag_att( void )
 /* tag,  nor  will the  values of  the global  symbols "0",   "1",...  be  */
 /* altered.                                                                */
 /***************************************************************************/
- 
- 
+
+
 /***************************************************************************/
 /*  process .gt xxx ADD xxx options                                        */
 /*  Allowed options are shown in the strnicmp calls                        */
 /*  Minimum Abbreviation is the uppercase part of each option              */
 /***************************************************************************/
- 
+
 static  condcode    scan_tag_options( gtflags * tag_flags )
 {
     char        *   p;
     condcode        cc = pos;
- 
+
     while( cc == pos ) {
- 
+
         cc = getarg();
         if( cc == omit ) {              // nothing more
             break;
@@ -274,7 +274,7 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
         case   'a' :
             if( (arg_flen > 2) && (arg_flen < 12)
                 && !strnicmp( "ATTributes", p, arg_flen ) ) {
- 
+
                 *tag_flags |= tag_attr;
             } else {
                 cc = neg;               // invalid option
@@ -283,14 +283,14 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
         case   'c' :
             if( (arg_flen == 5)
                 && !strnicmp( "CSOFF", p, 5 ) ) {
- 
+
                 *tag_flags |= tag_csoff;
             } else {
                 if( (arg_flen > 3) && (arg_flen < 9)
                     && !strnicmp( "CONTinue", p, arg_flen ) ) {
- 
+
                     *tag_flags |= tag_cont;
- 
+
                 } else {
                     cc = neg;           // invalid option
                 }
@@ -299,7 +299,7 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
         case   'n' :
             if( (arg_flen > 5) && (arg_flen < 11)
                 && !strnicmp( "NOCONTinue", p, arg_flen ) ) {
- 
+
                 *tag_flags |= tag_nocont;
             } else {
                 cc = neg;               // invalid option
@@ -308,24 +308,24 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
         case   't' :
             if( (arg_flen > 3) && (arg_flen < 8)
                 && !strnicmp( "TAGNext", p, arg_flen ) ) {
- 
+
                 *tag_flags |= tag_next;
             } else {
                 if( (arg_flen > 4 && (arg_flen < 10) ) ) {
                     if( !strnicmp( "TEXTError", p, arg_flen ) ) {
- 
+
                         *tag_flags |= tag_texterr;
                     } else {
                         if( !strnicmp( "TEXTReqd", p, arg_flen ) ) {
- 
+
                             *tag_flags |= tag_textreq;
                         } else {
                             if( !strnicmp( "TEXTLine", p, arg_flen ) ) {
- 
+
                                 *tag_flags |= tag_textline;
                             } else {
                                 if( !strnicmp( "TEXTDef", p, arg_flen ) ) {
- 
+
                                     *tag_flags |= tag_textdef;
                                 } else {
                                     cc = neg;   // invalid option
@@ -345,12 +345,12 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
     }
     return( cc );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  scr_gt    implement .gt control word                                   */
 /***************************************************************************/
- 
+
 void    scr_gt( void )
 {
     char        *   p;
@@ -370,23 +370,23 @@ void    scr_gt( void )
         f_on,
         f_print
     } function;
- 
+
     garginit();                         // find end of CW
- 
+
     /***********************************************************************/
     /*  isolate tagname   or use previous if tagname *                     */
     /***********************************************************************/
- 
+
     cc = getarg();                      // Tagname
- 
+
     if( cc == omit || (*tok_start == '*' && tag_entry == NULL) ) {
         // no operands or tagname * and no previous definition
         tag_name_missing_err();
         return;
     }
- 
+
     p = tok_start;
- 
+
     if( *p == '*' ) {                   // single * as tagname
         if( arg_flen > 1 ) {
             xx_err( err_tag_name_inv );
@@ -398,13 +398,13 @@ void    scr_gt( void )
         }
     } else {
         savetag = ' ';               // no global function for delete / print
- 
+
         init_tag_att();            // forget previous values for quick access
         attname[0] = '*';
- 
+
         pn      = tagname;
         len     = 0;
- 
+
         while( *p && is_macro_char( *p ) ) {
             if( len < TAG_NAME_LENGTH ) {
                 *pn++ = tolower( *p++ );// copy lowercase tagname
@@ -418,48 +418,48 @@ void    scr_gt( void )
             tagname[k] = '\0';
         }
         tagname[TAG_NAME_LENGTH] = '\0';
- 
+
         if( len < arg_flen ) {
             xx_err( err_tag_name_inv );
             return;
         }
     }
- 
- 
+
+
     /***********************************************************************/
     /* get function operand  add, change, ...                              */
     /***********************************************************************/
- 
+
     cc = getarg();
- 
+
     if( cc == omit ) {
         xx_err( err_tag_func_inv );
         return;
     }
- 
+
     p = tok_start;
     function = 0;
     switch( tolower( *p ) ) {
     case   'a':
         if( !strnicmp( "ADD ", p, 4 ) ) {
- 
+
             function = f_add;
         }
         break;
     case 'c' :
         if( (arg_flen > 2) && (arg_flen < 7)
             && !strnicmp( "CHANGE", p, arg_flen ) ) {
- 
+
             function = f_change;
         }
         break;
     case 'o' :
         if( !strnicmp( "OFF", p, 3 ) ) {
- 
+
             function = f_off;
         } else {
             if( !strnicmp( "ON", p, 2 ) ) {
- 
+
                 function = f_on;
             }
         }
@@ -467,14 +467,14 @@ void    scr_gt( void )
     case 'd' :
         if( (arg_flen > 2) && (arg_flen < 7)
             && !strnicmp( "DELETE", p, arg_flen ) ) {
- 
+
             function = f_delete;
         }
         break;
     case 'p' :
         if( (arg_flen > 1) && (arg_flen < 6)
             && !strnicmp( "PRINT", p, arg_flen ) ) {
- 
+
             function = f_print;
         }
         break;
@@ -486,23 +486,23 @@ void    scr_gt( void )
         xx_err( err_tag_func_inv );
         return;
     }
- 
+
     cc = getarg();                      // get possible next parm
- 
+
     /***********************************************************************/
     /*  for add and change    get macroname                                */
     /***********************************************************************/
- 
+
     if( function == f_add || function == f_change ) {   // need macroname
         if( cc == omit ) {
             xx_err( err_tag_mac_name );
             return;
         }
         p = tok_start;
- 
+
         pn      = macname;
         len     = 0;
- 
+
         while( *p && is_macro_char( *p ) ) {
             if( len < MAC_NAME_LENGTH ) {
                 *pn++ = tolower( *p++ );    // copy lowercase macroname
@@ -516,9 +516,9 @@ void    scr_gt( void )
             macname[k] = '\0';
         }
         macname[MAC_NAME_LENGTH] = '\0';
- 
+
         tag_flags = 0;
- 
+
         if( function == f_add ) {          // collect tag options
             cc = scan_tag_options( &tag_flags );
             if( cc != omit ) {          // not all processed error
@@ -529,15 +529,15 @@ void    scr_gt( void )
             tag_entry = change_tag( &tag_dict, tagname, macname );
         }
     } else {
- 
+
     /***********************************************************************/
     /*  after delete, off, on, print nothing allowed                       */
     /***********************************************************************/
- 
+
         if( cc != omit ) {
             xx_err( err_tag_toomany );  // nothing more allowed
         }
- 
+
         switch( function ) {
         case f_print :
             if( savetag == '*' ) {
@@ -577,5 +577,6 @@ void    scr_gt( void )
             break;
         }
     }
+    scan_restart = scan_stop +1;
     return;
 }
