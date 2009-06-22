@@ -86,6 +86,9 @@ cd ..
 cd nih
 call testrun.cmd
 cd ..
+cd nullptr
+call testrun.cmd
+cd ..
 cd overload
 call testrun.cmd
 cd ..

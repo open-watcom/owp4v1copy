@@ -79,6 +79,9 @@ cd ..
 cd nih
 call onetest.cmd
 cd ..
+cd nullptr
+call onetest.cmd
+cd ..
 cd overload
 call onetest.cmd
 cd ..

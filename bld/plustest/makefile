@@ -24,6 +24,7 @@ test_grp_list = &
     inline &
     jam &
     nih &
+    nullptr &
     overload &
     owstl &
     perl &
@@ -89,6 +90,7 @@ gstring_tests        = $(gr2)
 inline_tests         = $(gr2)
 jam_tests            = $(gr2)
 nih_tests            = $(gr2)
+nullptr_tests        = $(gr2)
 overload_tests       = $(gr3)
 owstl_tests          = $(gr6)
 perl_tests           = $(gr2)
