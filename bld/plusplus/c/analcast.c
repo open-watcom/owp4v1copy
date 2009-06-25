@@ -1284,6 +1284,8 @@ static PTREE diagnoseCast       // DIAGNOSE CASTING ERROR
             msg = ERR_CAST_AWAY_CONSTVOL;
             break;
         }
+    } else if( ctl->ptr_integral_ext && ctl->clscls_implicit ) {
+        msg = ERR_PTR_INTEGER_EXTENSION;
     } else if( ctl->size_ptr_to_int ) {
         msg = ERR_REINT_INTEGRAL_PTR;
     }
@@ -1435,12 +1437,7 @@ static CAST_RESULT analysePtrToPtr  // ANALYSE PTR --> PTR
                 result = DIAG_ALREADY;
                 break;
               case CNV_OK :
-                if( ( ctl->ptr_integral_ext && ! ctl->clscls_explicit )
-                 && ConvCtlWarning( ctl, ERR_PTR_INTEGER_EXTENSION ) ) {
-                    result = DIAG_ALREADY;
-                } else {
-                    result = CAST_PTR_TO_PTR;
-                }
+                result = CAST_PTR_TO_PTR;
                 break;
             }
         }

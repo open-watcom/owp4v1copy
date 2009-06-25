@@ -745,8 +745,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
             break;
         } else if( src.id != tgt.id ) {
             if( info->to_void
-             || info->from_void
-             || info->ptr_integral_ext ) {
+             || info->from_void ) {
                 retn = TRUE;
                 break;
             }
@@ -828,8 +827,7 @@ boolean ConvCtlAnalysePoints    // ANALYSE CONVERSION INFORMATION FOR POINTS
                 info->const_cast_ok = FALSE;
             } else if( info->to_base
                     || ( info->to_void & ! info->from_void )
-                    || info->diff_mptr_class
-                    || info->ptr_integral_ext ) {
+                    || info->diff_mptr_class ) {
                 info->const_cast_ok = FALSE;
             }
             break;
@@ -1401,15 +1399,6 @@ CNV_RETN CastPtrToPtr           // IMPLICIT/EXPLICIT CAST PTR -> PTR
                                  , ctl->src.pc_ptr
                                  , TRUE
                                  , ctl->req );
-    } else if( ctl->ptr_integral_ext ) {
-        // allow conversions from/to integral
-        // when integers have same size
-        if( ctl->req == CNV_CAST ) {
-            retn = CNV_OK;
-        } else {
-            PTreeErrorExpr( expr, ERR_PTR_INTEGER_EXTENSION );
-            retn = CNV_ERR;
-        }
     } else {
         retn = CNV_IMPOSSIBLE;
     }
