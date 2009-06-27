@@ -310,9 +310,9 @@ void CoffWriteImport( libfile io, sym_file *sfile )
         AddCoffSymbol( &c_file, buffer, 0x0, 1, IMAGE_SYM_TYPE_NULL,
             IMAGE_SYM_CLASS_EXTERNAL, 0 );
         AddCoffSymbol( &c_file, ".idata$2", 0xC0000040, 1, IMAGE_SYM_TYPE_NULL,
-            IMAGE_SYM_CLASS_STATIC, 0 );
-        AddCoffSymbol( &c_file, ".idata$6", 0x0, 2, IMAGE_SYM_TYPE_NULL,
             IMAGE_SYM_CLASS_SECTION, 0 );
+        AddCoffSymbol( &c_file, ".idata$6", 0x0, 2, IMAGE_SYM_TYPE_NULL,
+            IMAGE_SYM_CLASS_STATIC, 0 );
         AddCoffSymbol( &c_file, ".idata$4", 0xC0000040, 0, IMAGE_SYM_TYPE_NULL,
             IMAGE_SYM_CLASS_SECTION, 0 );
         AddCoffSymbol( &c_file, ".idata$5", 0xC0000040, 0, IMAGE_SYM_TYPE_NULL,
