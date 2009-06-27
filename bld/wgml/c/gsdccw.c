@@ -48,8 +48,8 @@
 /*      |       |                                                  |       */
 /*      읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸       */
 /*                                                                         */
-/* ! only CW, GML and STOP are used in OW documentation and only these are */
-/* ! implemented                                                           */
+/* ! only CW, GML and (STOP) are used in OW documentation and only these   */
+/* ! are implemented                                                       */
 /*                                                                         */
 /*                                                                         */
 /* "Option" specifies  which special  character or  characters are  to be  */
@@ -286,6 +286,20 @@
 /*                                                                         */
 /***************************************************************************/
 
+
+/***************************************************************************/
+/*  make new single char value known in dictionary                         */
+/***************************************************************************/
+
+static  void    add_to_sysdir( char * name, char char_val )
+{
+    symsub  *   dictval;
+
+    find_symvar( &sys_dict, name, no_subscript, &dictval);
+    *(dictval->value) = char_val;
+}
+
+
 /***************************************************************************/
 /*  scr_cw    implement .cw control word                                   */
 /***************************************************************************/
@@ -336,6 +350,7 @@ void    scr_cw( void )
     } else {
         CW_sep_char = '\0';
     }
+    add_to_sysdir( "$cw", CW_sep_char );
     scan_restart = pa + len;
     return;
 }
@@ -405,16 +420,34 @@ void    scr_dc( void )
                 return;
             }
         } else {
-            if( len != 1 ) {
-                *p = '\0';
-                dc_opt_err( pa );       // only 1 char is valid
-                return;
+            if( len == 2 ) {             // 2 hex characters
+                if( isxdigit( *pa ) && isxdigit( *(pa + 1) ) ) {
+                    c = '\0';
+                    for( ; len > 0; len-- ) {
+                        c *= 16;
+                        if( isdigit( *pa ) ) {
+                            c += *pa - '0';
+                        } else {
+                            c += toupper( *pa ) - 'A' + 10;
+                        }
+                        pa++;
+                    }
+                } else {
+                    *p = '\0';
+                    dc_opt_err( pa );
+                    return;
+                }
+            } else {
+                if( len != 1 ) {
+                    *p = '\0';
+                    dc_opt_err( pa );
+                    return;
+                }
             }
         }
         scan_restart = pa + len;
         CW_sep_char = c;
-        string[0] = c;
-        add_symvar( &global_dict, "$cw", string, no_subscript, predefined);
+        add_to_sysdir( "$cw", CW_sep_char );
         break;
     case 2 :                            // GML option
         if( len == 3 ) {
@@ -436,8 +469,7 @@ void    scr_dc( void )
         string[0] = c;
         add_symvar( &global_dict, "gml", string, no_subscript,
                     predefined + late_subst);
-        add_symvar( &global_dict, "$gml", string, no_subscript,
-                    predefined + late_subst);
+        add_to_sysdir( "$gml", GML_char );
         break;
     default:                            // unknown / unimplemented option
         *p = '\0';

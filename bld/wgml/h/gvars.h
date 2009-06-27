@@ -96,7 +96,12 @@ global  su              bind_even;      // Bind value for even pages
 global  int             passes;         // Max no of document passes
 global  int             pass;           // current document pass no
 
+global  int             apage;          // current absolute pageno 1 - n
+global  int             page;           // current pageno (in body 1 - n)
+global  int             line;           // current output lineno on page
+global  int             lc;             // remaining lines on page
 
+global  ix_h_blk    *   index_dict;     // the index structure dict
 
 global  symvar      *   global_dict;    // global symbol dictionary
 global  symvar      *   sys_dict;       // global system symbol dictionary
@@ -146,9 +151,9 @@ global struct ProcFlags {
     unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
     unsigned        goto_active     : 1;// processing .go label
 
-    unsigned        substituted     : 1;// & found in current input line
-    unsigned        unresolved      : 1;// variable not (yet) resolved
-    unsigned        late_subst      : 1;// special var found &gml, &amp,
+    unsigned        substituted     : 1;// variabel substituted in current line
+    unsigned        unresolved      : 1;// variable found, but not yet resolved
+    unsigned        late_subst      : 1;// special variable found &gml, &amp,
     unsigned        literal         : 1;// .li is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        freed           : 1;

@@ -492,7 +492,7 @@ static  void    print_stats( clock_t duration_ticks )
     hour_min = ldiv( duration_ticks / CLOCKS_PER_SEC / 60L, 60L );
     sec_frac  = ldiv( duration_ticks, CLOCKS_PER_SEC );
     sprintf_s( linestr, sizeof( linestr ), "%02lu:%02lu:%02lu.%02lu\0",
-               hour_min.quot, hour_min.rem, sec_frac.quot % 60, sec_frac.rem / 6 );
+        hour_min.quot, hour_min.rem, sec_frac.quot % 60, sec_frac.rem / 10 );
     g_info( inf_stat_6, linestr );
 
 }
@@ -529,6 +529,12 @@ static  void    init_pass( void )
 
     line_from   = 1;                  // processing line range Masterdocument
     line_to     = ULONG_MAX - 1;
+
+    apage               = 0;            // absolute pageno 1 - n
+    page                = 0;            // current pageno (in body 1 - n)
+    line                = 0;            // current output lineno on page
+    lc                  = 0;            // remaining lines on page
+
 
     init_tag_att();                     // reset last defined GML tag
 
@@ -574,6 +580,9 @@ static  void    free_some_mem( void )
     }
     if( tag_dict != NULL ) {
         free_tag_dict( &tag_dict );
+    }
+    if( index_dict != NULL ) {
+        free_index_dict( &index_dict );
     }
     if( buff2 != NULL ) {
         mem_free( buff2 );
@@ -724,9 +733,6 @@ int main( int argc, char * argv[] )
         print_sym_dict( sys_dict );
     }
 
-    end_time = clock();                 // get end time
-    print_stats( end_time - start_time );
-
     close_all_pu_files();
 
     mem_free( cmdline );
@@ -734,6 +740,9 @@ int main( int argc, char * argv[] )
 
     ff_teardown();                      // free memory allocated in findfunc
     cop_teardown();                     // free memory allocated in copfiles
+
+    end_time = clock();                 // get end time
+    print_stats( end_time - start_time );
 
     fini_msgs();                        // end of msg resources
                 /* no more msgs built from resources after this point */

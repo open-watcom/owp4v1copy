@@ -101,6 +101,7 @@ extern  void    dc_opt_err( char * pa );
 extern  void    file_mac_info( void );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );
+extern  void    parm_miss_err( char *cw );
 extern  void    tag_name_missing_err( void );
 extern  void    tag_text_err( char * tagname );
 extern  void    tag_text_req_err( char * tagname );
@@ -176,6 +177,10 @@ extern  bool    gotarget_reached( void );
 
 /* gsgt.c                             */
 extern  void    init_tag_att( void );
+
+
+/* gsix.c                             */
+extern  void    free_index_dict( ix_h_blk ** dict );
 
 
 /* gsetvar.c                          */

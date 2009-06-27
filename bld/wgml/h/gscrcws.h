@@ -73,7 +73,7 @@
   pick( "if",    scr_if,       0           ) // if
   pick( "im",    scr_im,       0           ) // imbed
 //pick( "in",    scr_in,       cw_break    ) // indent
-//pick( "ix",    scr_ix,       0           ) // index
+  pick( "ix",    scr_ix,       0           ) // index
   pick( "ju",    scr_ju,       cw_break    ) // justify
 //pick( "le",    scr_le,       0           ) // leading space
   pick( "li",    scr_li,       0           ) // literal

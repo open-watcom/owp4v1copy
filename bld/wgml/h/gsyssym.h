@@ -98,7 +98,7 @@
   picl( inr,     ir,      no_free+ro+access_fun+predefined          )
   picl( ir,      ixj,     no_free+ro+access_fun+predefined          )
   picc( ixj,     ixref,   no_free+ro+access_fun+predefined          )
-  picc( ixref,   ju,      no_free+ro+access_fun+predefined          )
+  picl( ixref,   ju,      no_free+ro+access_fun+predefined          )
   pick( ju,      layout,  no_free+ro+access_fun+predefined          )
   pick( layout,  lc,      no_free+ro+access_fun+predefined          )
   picl( lc,      li,      no_free+ro+access_fun+predefined          )
