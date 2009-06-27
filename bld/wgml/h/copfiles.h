@@ -69,6 +69,7 @@
 *               the variables:
 *                   bin_device
 *                   bin_driver
+*                   has_aa_block
 *                   ps_device
 *                   wgml_font_cnt
 *                   wgml_fonts
@@ -104,7 +105,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/* Structure declarations. */
+/* struct declarations. */
 
 /* These structs are used by more than one of the top-level structs:
  *      intrans_block is used by both cop_device and cop_font
@@ -305,13 +306,24 @@ typedef struct {
 
 /* To hold the data from the FontswitchBlock struct.
  * There will be as many fontswitch_blocks as there are distinct values of
- * "type". The other field names do not correspond to the Wiki: they take
- * advantage of the fact that there are at most two CodeBlocks, one from a
- * :STARTVALUE block and the other from an :ENDVALUE block.
+ * "type". The bool fields are used to record information from some of the
+ * 21 flags, as discussed in the Wiki. The other field names do not
+ * correspond to the Wiki: they take advantage of the fact that there are
+ * at most two CodeBlocks, one from a :STARTVALUE block and the other from
+ * an :ENDVALUE block.
  */
 
 typedef struct {
     char *              type;
+    bool                do_always;
+    bool                default_width_flag;
+    bool                font_height_flag;
+    bool                font_outname1_flag;
+    bool                font_outname2_flag;
+    bool                font_resident_flag;
+    bool                font_space_flag;
+    bool                line_height_flag;
+    bool                line_space_flag;
     code_text *         startvalue;
     code_text *         endvalue;
 } fontswitch_block;
@@ -509,13 +521,13 @@ typedef struct {
 
 /* This struct implements the text_chars struct in the Wiki. */
 
-typedef struct tc_struct {
-    struct  tc_struct   *   next;
-    uint8_t                 font_number;
-    uint32_t                x_address;
-    uint32_t                width;
-    uint16_t                count;
-    uint8_t             *   text;
+typedef struct text_chars {
+    struct  text_chars  *   next;
+            uint8_t         font_number;
+            uint32_t        x_address;
+            uint32_t        width;
+            uint16_t        count;
+            uint8_t     *   text;
 } text_chars;
 
 /* This struct implements the text_line struct in the Wiki. */
@@ -549,6 +561,7 @@ typedef struct {
     #define global  extern
 #endif
 
+global bool             has_aa_block;   // true if device defined :ABSOLUTEADDRESS
 global bool             ps_device;      // true if device is PostScript
 global cop_device   *   bin_device;     // binary device being used
 global cop_driver   *   bin_driver;     // binary driver being used

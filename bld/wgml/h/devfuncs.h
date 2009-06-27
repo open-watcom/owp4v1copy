@@ -24,10 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Defines and declares items used to interpret function blocks:
-*               this variable:
-*                   pages
-*               and these functions:
+* Description:  Declares the functions used to interpret function blocks:
 *                   df_initialize_pages()
 *                   df_increment_pages()
 *                   df_interpret_device_functions()

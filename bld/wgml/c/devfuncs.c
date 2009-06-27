@@ -136,6 +136,7 @@
 *                   df_y_size()
 *                   fb_absoluteaddress()
 *                   fb_firstword()
+*                   fb_font_switch()
 *                   fb_newline()
 *                   fb_normal_vertical_positioning()
 *                   format_error()
@@ -264,6 +265,15 @@ static void fb_absoluteaddress( void )
 
     current_state.x_address = desired_state.x_address;
     current_state.y_address = desired_state.y_address;    
+    return;
+}
+
+/* Function fb_font_switch().
+ * Performs the font switch sequence as described in the Wiki.
+ */
+
+void fb_font_switch( void )
+{
     return;
 }
 
@@ -496,8 +506,7 @@ static void * df_dotab( void )
 
     if( current_df_data.parameter_type != 0x00 ) format_error();
 
-    if( bin_driver->absoluteaddress.text != NULL ) \
-        fb_absoluteaddress();
+    if( has_aa_block ) fb_absoluteaddress();
     else {
         char    ps_suffix[] = ") shwd ";
         size_t  count;
@@ -603,7 +612,7 @@ static void * df_flushpage( void )
 
     /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
 
-    if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
+    if( !has_aa_block ) fb_newline();
 
     /* If this is the Initial Vertical Positioning, interpret the :LINEPROC
      * :ENDVALUE block for line pass 1 of available font 0, unless it has
@@ -1732,7 +1741,7 @@ static void * df_divide( void )
 static void * df_getnumsymbol( void )
 {
     char        *   name    = NULL;
-    parameters  my_parameters;
+    parameters      my_parameters;
     symsub      *   sym_val = NULL;
     uint32_t        ret_val = 0;
 
@@ -1752,7 +1761,7 @@ static void * df_getnumsymbol( void )
 
     /* Free the memory allocated to the parameter. */
 
-    mem_free( name);
+    mem_free( name );
 
     return( (void *) ret_val );
 }
@@ -1785,7 +1794,7 @@ static void * df_getstrsymbol( void )
 
     /* Free the memory allocated to the parameter. */
 
-    mem_free( name);
+    mem_free( name );
 
     return( (void *) ret_val );
 }
@@ -1835,7 +1844,7 @@ static void * df_lower( void )
 
     /* Convert and return the parameter. */
 
-    return( (void *) _strlwr( first ) );
+    return( (void *) strlwr( first ) );
 }
 
 /* Function df_remainder().
@@ -2254,7 +2263,7 @@ static void fb_normal_vertical_positioning( void )
                  * occurred.
                  */
 
-                if( bin_driver->absoluteaddress.text != NULL ) {
+                if( has_aa_block ) {
                     if( at_start ) {
                         if( wgml_fonts[0].font_style->lineprocs != NULL ) {       
 
@@ -2279,11 +2288,26 @@ static void fb_normal_vertical_positioning( void )
 
         /* Set the values returned by %x_address() and %y_address() to the
          * current desired position and the value of current_state.y_address
-         * to the last line of the previous device page.
+         * to the last line of the previous device page. The latter is rather
+         * complicated and may need to be tweaked when direct comparisons with
+         * wgml 4.0 are possible.
          */
 
         x_address = bin_device->x_start;
-        current_state.y_address = desired_pages * bin_device->page_depth;
+
+        if( bin_driver->y_positive == 0x00 ) {
+
+            /* y_address is formed by subtraction. */
+
+            current_state.y_address = (page_top + 1) - (desired_pages * \
+                                                    bin_device->page_depth);
+        } else {
+
+            /* y_address is formed by addition. */
+
+            current_state.y_address = desired_pages * bin_device->page_depth;
+        }
+
         y_address = desired_state.y_address % bin_device->page_depth;
 
         /* If at_start is still "true", then no device paging occurred. */
@@ -2295,7 +2319,7 @@ static void fb_normal_vertical_positioning( void )
 
         /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
 
-        if( bin_driver->absoluteaddress.text == NULL ) fb_newline();
+        if( !has_aa_block ) fb_newline();
     }
 
     return;
@@ -2309,7 +2333,8 @@ static void fb_normal_vertical_positioning( void )
  * variables to the top of a new document page.
  *
  * Parameter:
- *      page_top contains the vertical location of the top of a document page.
+ *      in_page_top contains the vertical location of the top of a
+ *          document page.
  */
 
 void df_initialize_pages( uint32_t in_page_top )
@@ -2614,6 +2639,7 @@ void fb_enterfont( void )
 
     old_active_font = active_font;
     old_font_number = font_number;
+    active_font = 0;
     font_number = 0;
 
     if( wgml_fonts[0].font_pause != NULL ) \
@@ -2696,7 +2722,7 @@ void fb_first_text_pass( text_line * out_line )
 
         /* A font switch is needed. */
 
-/* the font switch goes here! */
+        fb_font_switch();
 
     } else {
 
@@ -2709,16 +2735,27 @@ void fb_first_text_pass( text_line * out_line )
         }
     }
 
-    if( cur_lineproc != NULL ) {       
+    if( cur_lineproc == NULL ) {
+
+        /* If there is no :LINEPROC block, then the flag textpass must be set
+         * to "true" or there will be no text output!
+         */
+
+        textpass = true;
+    } else {
+
+        /* If there is a :LINEPROC block, then the flag textpass is set 
+         * to "true" only if device function %textpass() is invoked.
+         */
+
         if( cur_lineproc->startvalue != NULL ) \
             df_interpret_driver_functions( cur_lineproc->startvalue ->text );
         fb_firstword( cur_lineproc );
-    }
 
-    if( !font_switch_needed ) {
-        if( cur_lineproc != NULL ) \
+        if( !font_switch_needed ) {
             if( cur_lineproc->startword != NULL ) \
                 df_interpret_driver_functions( cur_lineproc->startword->text );
+        }
     }
 
     return;
@@ -2805,16 +2842,16 @@ void fb_line_block( line_block * in_line_block, uint32_t h_start, \
         out_msg("wgml internal error: The %s block must be defined if used\n", \
                                                                         name );
         err_count++;
-        g_suicide;
+        g_suicide();
     }
 
     /* As is a missing :ABSOLUTEADDRESS block. */
     
-    if( bin_driver->absoluteaddress.text == NULL ) {
+    if( !has_aa_block ) {
         out_msg("The :ABSOLUTEADDRESS must be defined if the %s is defined\n", \
                                                                         name );
         err_count++;
-        g_suicide;
+        g_suicide();
     }
 
     /* Set up for fb_absoluteaddress(). */

@@ -129,7 +129,7 @@ findfunc.exe : $(ff_objs) $(__MAKEFILES__)
     $(linker) name $^@ $(lflags) op map file { $(ff_objs) }
 
 outcheck.exe : wgml.res $(outc_objs) $(wgml_libs) $(__MAKEFILES__)
-    $(linker) name $^@ $(lflags) op map lib { $(wgml_libs) }file { $(outc_objs) } 
+    $(linker) name $^@ $(lflags) op map lib { $(wgml_libs) } file { $(outc_objs) } 
     wstrip -q -a -r $@ . wgml.res
 
 wgmlmsgs.gh : ../../h/wgmlerr.msg ../../h/wgml.msg $(__MAKEFILES__)

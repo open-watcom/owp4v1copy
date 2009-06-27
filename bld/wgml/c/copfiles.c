@@ -1041,6 +1041,7 @@ void cop_setup( void )
 
     bin_device = NULL;
     bin_driver = NULL;
+    has_aa_block = false;
     ps_device = false;
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
@@ -1129,6 +1130,12 @@ void cop_setup( void )
             g_suicide();
         }
     }
+
+    /* Set has_aa_block to "true" if the driver defines the
+     * :ABSOLUTEADDRESS block.
+     */
+
+    if( bin_driver->absoluteaddress.text != NULL ) has_aa_block = true;
 
     /* Set ps_device to "true" if the driver name begins with "ps" or "PS". */
 
@@ -1468,7 +1475,7 @@ void cop_setup( void )
         g_suicide;
     }
 
-    if( bin_driver->absoluteaddress.text == NULL ) {
+    if( !has_aa_block ) {
         uint32_t    test_height;
 
         /* Verify that all line_height fields have the same value. */
@@ -1847,10 +1854,12 @@ void fb_output_textline( text_line * out_line )
 
     line_passes = 0;
     while( current != NULL ) {
-        if( wgml_fonts[current->font_number].font_style->line_passes > line_passes ) {
-            line_passes = wgml_fonts[current->font_number].font_style->line_passes;
-            current = current->next;
+        if( wgml_fonts[current->font_number].font_style->line_passes > \
+                                                                line_passes ) {
+                line_passes = \
+                    wgml_fonts[current->font_number].font_style->line_passes;
         }
+        current = current->next;
     }
 
     /* Do the first pass. */

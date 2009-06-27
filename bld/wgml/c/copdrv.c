@@ -1155,6 +1155,7 @@ cop_driver * parse_driver( FILE * in_file )
     uint8_t *           byte_ptr                = NULL;
     uint8_t *           current                 = NULL;
     uint8_t *           text_ptr                = NULL;
+    uint8_t             the_flags[21];
 
     /* Used for counts and related values. */
 
@@ -1698,9 +1699,34 @@ cop_driver * parse_driver( FILE * in_file )
                 fontswitch_block_ptr[i].type = NULL;
             }                
 
-            /* Skip the flags. */
+            /* Process some of the 21 flags. */
 
-            current += 21;
+            memcpy_s( &the_flags, sizeof( the_flags ), current, \
+                                                        sizeof( the_flags ) );
+            current += sizeof( the_flags );
+
+            /* Set do_always to true or false per the Wiki. The device
+             * functions in the order checked are: %wgml_header(), %time(),
+             * %date(), %font_number(), and %pages().
+             */
+
+            fontswitch_block_ptr[i].do_always = false;
+            if( the_flags[0] == 0x01 ) fontswitch_block_ptr[i].do_always = true;
+            if( the_flags[4] == 0x01 ) fontswitch_block_ptr[i].do_always = true;
+            if( the_flags[5] == 0x01 ) fontswitch_block_ptr[i].do_always = true;
+            if( the_flags[7] == 0x01 ) fontswitch_block_ptr[i].do_always = true;
+            if( the_flags[20] == 0x01 ) fontswitch_block_ptr[i].do_always = true;
+
+            /* Set the _flag members to true or false. */
+
+            fontswitch_block_ptr[i].font_outname1_flag = (the_flags[1] == 0x01);
+            fontswitch_block_ptr[i].font_outname2_flag = (the_flags[2] == 0x01);
+            fontswitch_block_ptr[i].font_resident_flag = (the_flags[3] == 0x01);
+            fontswitch_block_ptr[i].default_width_flag = (the_flags[6] == 0x01);
+            fontswitch_block_ptr[i].font_height_flag = (the_flags[16] == 0x01);
+            fontswitch_block_ptr[i].font_space_flag = (the_flags[17] == 0x01);
+            fontswitch_block_ptr[i].line_height_flag = (the_flags[18] == 0x01);
+            fontswitch_block_ptr[i].line_space_flag = (the_flags[19] == 0x01);
 
             /* Get the number of CodeBlocks; only 1 or 2 is valid. */
 

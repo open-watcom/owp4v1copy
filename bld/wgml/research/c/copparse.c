@@ -296,7 +296,25 @@ static void display_driver( cop_driver * in_driver )
             if( in_driver->fontswitches.fontswitchblocks[i].type == NULL ) \
                                                     puts( "  Type:");
             else printf_s( "  Type: %s\n", \
-                                in_driver->fontswitches.fontswitchblocks[i].type );
+                            in_driver->fontswitches.fontswitchblocks[i].type );
+            printf_s( "  do_always: %x\n", \
+                        in_driver->fontswitches.fontswitchblocks[i].do_always );
+            printf_s( "  default_width_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].default_width_flag );
+            printf_s( "  font_height_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].font_height_flag );
+            printf_s( "  font_outname1_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].font_outname1_flag );
+            printf_s( "  font_outname2_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].font_outname2_flag );
+            printf_s( "  font_resident_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].font_resident_flag );
+            printf_s( "  font_space_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].font_space_flag );
+            printf_s( "  line_height_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].line_height_flag );
+            printf_s( "  line_space_flag: %x\n", \
+                in_driver->fontswitches.fontswitchblocks[i].line_space_flag );
             if( in_driver->fontswitches.fontswitchblocks[i].startvalue != NULL ) {
                 puts( "  :STARTVALUE Block:");
                 interpret_function( \
