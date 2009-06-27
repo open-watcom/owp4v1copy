@@ -151,7 +151,7 @@ static vi_rc getFindString( range *r, bool is_forward, bool is_fancy, bool searc
         ff.findlen = sizeof( st );
         if( !search_again ) {
             if( !GetFindStringDialog( &ff ) ) {
-                return( ERR_NO_ERR );
+                return( RANGE_REQUEST_CANCELLED );
             }
         } else {
             st[0] = 0;
@@ -267,7 +267,9 @@ vi_rc FancyDoFindMisc( void )
     }
     defaultRange( &r );
     rc = FancyDoFind( &r, 1L );
-    JumpTo( &r.start );
+    if( rc != RANGE_REQUEST_CANCELLED ) {
+        JumpTo( &r.start );
+    }
 
     return( rc );
 
