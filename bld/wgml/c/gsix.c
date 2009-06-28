@@ -265,9 +265,9 @@ void    scr_ix( void )
 
 
     scan_restart = scan_stop + 1;
-    if( !GlobalFlags.index ) {          // no index option specified
+    if( !(GlobalFlags.index & GlobalFlags.lastpass) ) {
         return;                         // no need to process .ix
-    }
+    }                                   // no index wanted or not lastpass
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'i';
     cwcurr[2] = 'x';
@@ -284,6 +284,7 @@ void    scr_ix( void )
         if( cc == omit || cc == quotes0 ) { // no (more) arguments
             if( lvl == 0 ) {
                 parm_miss_err( cwcurr );
+                return;
             } else {
                 break;
             }
@@ -291,7 +292,7 @@ void    scr_ix( void )
             if( *tok_start == '.' && arg_flen == 1  ) {
                 if( lvl > 0 ) {
                     xx_opt_err( cwcurr, tok_start );
-                    break;
+                    break;              // . ref format not supprted
                 }
                 cc = getarg();
                 if( cc == pos || cc == quotes ) {   // .ix . dump ???
@@ -306,6 +307,7 @@ void    scr_ix( void )
                     xx_opt_err( cwcurr, tok_start );
                 } else {
                     parm_miss_err( cwcurr );
+                    return;
                 }
                 break;                  // no index entry text
             }
@@ -314,6 +316,11 @@ void    scr_ix( void )
             ixlen[lvl] = arg_flen;
             lvl++;
         }
+    }
+    cc = getarg();
+    if( cc != omit ) {
+        parm_extra_err( cwcurr, tok_start - (cc == quotes) );
+//      return;                         // no return ignore excess data
     }
 
     if( lvl > 0 ) {
@@ -328,11 +335,11 @@ void    scr_ix( void )
             while( *ixhprev != NULL ) { // find alfabetic point to insert
                 comp_len = min( ixlen[k], (*ixhprev)->len ) + 1;
                 comp_res = strnicmp( ix[k], (*ixhprev)->text, comp_len );
-                if( comp_res > 0 ) {
+                if( comp_res > 0 ) {    // new is later in alfabet
                     ixhprev = &((*ixhprev)->next);
                     continue;
                 }
-                if( comp_res == 0 ) {
+                if( comp_res == 0 ) {   // equal
                     if( ixlen[k] == (*ixhprev)->len ) {
                         do_nothing = true;
                         break;          // entry already there
@@ -342,7 +349,7 @@ void    scr_ix( void )
                         continue;       // new is longer
                     }
                 }
-                break;
+                break;                  // insert point reached
             }
             if( !do_nothing ) {
                 // insert point reached
@@ -352,11 +359,7 @@ void    scr_ix( void )
                 ixhwk->entry = NULL;
                 ixhwk->len   = ixlen[k];
                 strcpy_s( ixhwk->text, ixlen[k] + 1, ix[k] );
-                if( *ixhprev == NULL ) {
-                    *ixhprev = ixhwk;
-                } else {
-                    *ixhprev    = ixhwk;
-                }
+                *ixhprev = ixhwk;
                 if( k < lvl ) {
                     ixhprev =&(ixhwk->lower);
                 }
@@ -368,7 +371,7 @@ void    scr_ix( void )
             }
         }
 
-
+        // now add the pageno to index entry
         currlen = strlen( pageval->value ) + strlen( ixrefval->value );
         if( ixhwk->entry == NULL ) {
             ixewk = mem_alloc( sizeof( ix_e_blk ) );

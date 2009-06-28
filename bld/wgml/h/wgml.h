@@ -101,6 +101,7 @@ extern  void    dc_opt_err( char * pa );
 extern  void    file_mac_info( void );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );
+extern  void    parm_extra_err( char *cw, char *pa );
 extern  void    parm_miss_err( char *cw );
 extern  void    tag_name_missing_err( void );
 extern  void    tag_text_err( char * tagname );

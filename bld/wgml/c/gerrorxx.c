@@ -102,6 +102,15 @@ void    parm_miss_err( char *pa )
 }
 
 
+void    parm_extra_err( char * cw, char * pa )
+{
+    err_count++;
+    g_err( err_extra_ignored, cw, pa );
+    file_mac_info();
+    return;
+}
+
+
 void    numb_err( void )
 {
     char    linestr[MAX_L_AS_STR];
