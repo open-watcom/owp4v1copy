@@ -8,6 +8,7 @@ common_objs =  &
         findfile.obj &
         gargutil.obj &
         gdata.obj    &
+        gdummy.obj   &
         gerror.obj   &
         gerrorxx.obj &
         getnum.obj   &
@@ -23,7 +24,7 @@ common_objs =  &
         gutil.obj    &
         wgmlmsg.obj  &
         swchar.obj
- 
+
 #
 # output device related
 #
@@ -37,7 +38,7 @@ dev_objs =  &
         cophdr.obj   &
         devfuncs.obj &
         outbuff.obj
- 
+
 #
 # gml tag related
 #
@@ -47,7 +48,7 @@ gml_objs =  &
         gset.obj     &
         gtagdict.obj &
         gusertag.obj
- 
+
 #
 # script control word or function related
 #
@@ -84,7 +85,7 @@ scr_objs =  &
         gspu.obj     &
         gstitr.obj   &
         gsty.obj
- 
+
 objs = $(common_objs) $(scr_objs) $(gml_objs) $(dev_objs)
- 
- 
+
+

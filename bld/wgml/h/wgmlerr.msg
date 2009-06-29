@@ -375,3 +375,9 @@ pick( ERR_PARM_MISSING,         "A control word parameter is required for %s",
 pick( ERR_EXTRA_IGNORED,        "Extra operand(s) for '%s' ignored: '%s'",
                                 "Extra operand(s) for '%s' ignored: '%s'" )
 
+pick( WNG_UNSUPP_CW,            "Unsupported SCRIPT control word: '%s'",
+                                "Unsupported SCRIPT control word: '%s'" )
+
+pick( WNG_UNSUPP_TAG,           "Unsupported GML tag: ':%s'",
+                                "Unsupported GML tag: ':%s'" )
+

@@ -702,7 +702,7 @@ int main( int argc, char * argv[] )
             g_info( INF_PASS_2, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
 
-            if( err_count > 0 ) {
+            if( !GlobalFlags.lastpass && (err_count > 0) ) {
                 g_info( inf_error_stop );
                 break;                  // errors found stop now
             }

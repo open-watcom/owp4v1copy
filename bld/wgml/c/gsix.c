@@ -192,12 +192,12 @@ static  void    ixdump( ix_h_blk * dict )
     ix_h_blk    *   ixh3;
     char            letter[2];
 
+    if( dict == NULL ) {                // empty dict quit
+        return;
+    }
     letter[0]  = 0;
     letter[1]  = 0;
     ixh = dict;
-    if( ixh == NULL ) {                 // empty dict quit
-        return;
-    }
     out_msg( ".IX . DUMP print the index structure --- still nearly dummy!\n" );
     while( ixh != NULL ) {              // level 1
         if( letter[0] != toupper( ixh->text[0] ) ) {
@@ -239,6 +239,25 @@ static  void    ixdump( ix_h_blk * dict )
 }
 
 
+/***************************************************************************/
+/*  allocate and fill a new index entry                                    */
+/***************************************************************************/
+
+static void fill_ix_e_blk( ix_e_blk * * anchor, char * ref, char * page,
+                           int currlen )
+{
+    ix_e_blk    * ixewk;
+
+    ixewk = mem_alloc( sizeof( ix_e_blk ) );
+
+    ixewk->next    = NULL;
+    ixewk->freelen = reflen - currlen;
+    strcpy_s( ixewk->refs, reflen, ref );
+    strcat_s( ixewk->refs, reflen, page );
+
+    *anchor = ixewk;
+    return;
+}
 
 /***************************************************************************/
 /*  .ix control word processing                                            */
@@ -246,25 +265,25 @@ static  void    ixdump( ix_h_blk * dict )
 
 void    scr_ix( void )
 {
-    condcode        cc;
-    char            cwcurr[4];
-    int             lvl;
+    condcode        cc;                 // resultcode from getarg()
+    char            cwcurr[4];          // control word string for errmsg
+    int             lvl;              // max index level in control word data
     int             k;
-    int             comp_len;
-    int             comp_res;
-    char        *   ix[3];
-    uint32_t        ixlen[3];
-    symsub      *   pageval;
-    symsub      *   ixrefval;
-    ix_h_blk    * * ixhprev;
-    ix_h_blk    *   ixhwk;
-    ix_e_blk    *   ixewk;
-    ix_e_blk    *   ixewkprev;
-    bool            do_nothing;
-    int             currlen;
+    int             comp_len;// compare length for searching existing entries
+    int             comp_res;           // compare result
+    char        *   ix[3];              // index string(s) to add
+    uint32_t        ixlen[3];           // corresponding lengths
+    symsub      *   pageval;            // current pageno as string
+    symsub      *   ixrefval;           // ', ' page separator string
+    ix_h_blk    * * ixhprev;            // anchor point for insert
+    ix_h_blk    *   ixhwk;              // index block
+    ix_e_blk    *   ixewk;              // index entry block
+    bool            do_nothing;         // true if index string duplicate
+    int             currlen;            // length of index + separator
 
 
     scan_restart = scan_stop + 1;
+
     if( !(GlobalFlags.index & GlobalFlags.lastpass) ) {
         return;                         // no need to process .ix
     }                                   // no index wanted or not lastpass
@@ -273,7 +292,6 @@ void    scr_ix( void )
     cwcurr[2] = 'x';
     cwcurr[3] = '\0';
     lvl = 0;                            // index level
-
 
     garginit();                         // over control word
 
@@ -292,7 +310,7 @@ void    scr_ix( void )
             if( *tok_start == '.' && arg_flen == 1  ) {
                 if( lvl > 0 ) {
                     xx_opt_err( cwcurr, tok_start );
-                    break;              // . ref format not supprted
+                    break;             // .ix s1 s2 . ref format not supprted
                 }
                 cc = getarg();
                 if( cc == pos || cc == quotes ) {   // .ix . dump ???
@@ -304,7 +322,7 @@ void    scr_ix( void )
                             break;
                         }
                     }
-                    xx_opt_err( cwcurr, tok_start );
+                    xx_opt_err( cwcurr, tok_start );// unknown option
                 } else {
                     parm_miss_err( cwcurr );
                     return;
@@ -323,12 +341,11 @@ void    scr_ix( void )
 //      return;                         // no return ignore excess data
     }
 
-    if( lvl > 0 ) {
+    if( lvl > 0 ) {                     // we have at least one index string
                                 // get pageno and ixref string from dictionary
         find_symvar( &sys_dict, "$page", no_subscript, &pageval);
         find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
 
-        k = 0;
         ixhprev = &index_dict;
         for( k = 0; k < lvl; ++k ) {
             do_nothing = false;
@@ -360,56 +377,31 @@ void    scr_ix( void )
                 ixhwk->len   = ixlen[k];
                 strcpy_s( ixhwk->text, ixlen[k] + 1, ix[k] );
                 *ixhprev = ixhwk;
-                if( k < lvl ) {
-                    ixhprev =&(ixhwk->lower);
-                }
-            } else {
+            } else {            // string already in dictionary at this level
                 ixhwk = *ixhprev;
-                if( k < lvl ) {
-                    ixhprev = &((*ixhprev)->lower); // next lower level
-                }
+            }
+            if( k < lvl ) {
+                ixhprev = &(ixhwk->lower); // next lower level
             }
         }
 
         // now add the pageno to index entry
         currlen = strlen( pageval->value ) + strlen( ixrefval->value );
-        if( ixhwk->entry == NULL ) {
-            ixewk = mem_alloc( sizeof( ix_e_blk ) );
-
-            ixewk->next    = NULL;
-            ixewk->freelen = reflen - currlen;
-            strcpy_s( ixewk->refs, reflen, ixrefval->value );
-            strcat_s( ixewk->refs, reflen, pageval->value );
-
-            ixhwk->entry   = ixewk;
+        if( ixhwk->entry == NULL ) {    // first pageno for entry
+            fill_ix_e_blk( &(ixhwk->entry), ixrefval->value, pageval->value,
+                           currlen );
         } else {
             ixewk = ixhwk->entry;
-            if( currlen < ixewk->freelen ) {
+            while( ixewk->next != NULL ) {  // find last used block
+                ixewk = ixewk->next;
+            }
+            if( currlen < ixewk->freelen ) {// enough space in block
                 strcat_s( ixewk->refs, reflen, ixrefval->value );
                 strcat_s( ixewk->refs, reflen, pageval->value );
                 ixewk->freelen -= currlen;
-            } else {
-                ixewkprev = ixewk;
-                while( (ixewk = ixewk->next) != NULL ) {
-                    ixewkprev = ixewk;
-                    if( currlen < ixewk->freelen ) {
-                        strcat_s( ixewk->refs, reflen, ixrefval->value );
-                        strcat_s( ixewk->refs, reflen, pageval->value );
-                        ixewk->freelen -= currlen;
-                        currlen = 0;    // complete
-                        break;
-                    }
-                }
-                if( currlen > 0 ) {     // no space need new block
-                   ixewk = mem_alloc( sizeof( ix_e_blk ) );
-
-                   ixewk->next = NULL;
-                   ixewk->freelen = reflen - currlen;
-                   strcpy_s( ixewk->refs, reflen, ixrefval->value );
-                   strcat_s( ixewk->refs, reflen, pageval->value );
-
-                   ixewkprev->next = ixewk;
-                }
+            } else {                    // need new block
+                fill_ix_e_blk( &(ixewk->next), ixrefval->value, pageval->value,
+                               currlen );
             }
         }
     }
@@ -418,7 +410,7 @@ void    scr_ix( void )
 
 
 /***************************************************************************/
-/*  free all ix_e_blk s belonging to one ix_h_blk                          */
+/*  free ix_e_blk chain                                                    */
 /***************************************************************************/
 
 static  void    free_ix_entries( ix_e_blk * e )
@@ -446,7 +438,6 @@ void    free_index_dict( ix_h_blk * * dict )
     ix_h_blk    *   ixhw;
 
     ixh = * dict;
-    *dict = NULL;
     while( ixh != NULL ) {              // level 1
 
         free_ix_entries( ixh->entry );
@@ -470,6 +461,8 @@ void    free_index_dict( ix_h_blk * * dict )
         mem_free( ixh );
         ixh = ixhw;
     }
+    *dict = NULL;                       // dict is now empty
+
 }
 
 
