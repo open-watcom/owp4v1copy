@@ -112,8 +112,7 @@ void            intern          braw( BUFFER *, int, int, PIXEL *, int );
 void            intern          bstring( BUFFER *, int, int, ATTR, const char __FAR *, int );
 void            intern          bunframe(struct buffer *);
 int             intern          checkkey( void );
-void            intern          checkmouse(unsigned short *,unsigned short *,
-                                           unsigned short *,unsigned long *);
+void            intern          checkmouse( unsigned short *, MOUSEORD *, MOUSEORD *, unsigned long * );
 unsigned char   intern          checkshift( void );
 void            intern          closebackground( void );
 void            intern          closewindow( UI_WINDOW * );

@@ -72,8 +72,8 @@ typedef struct Mouse {
         int     (*fini)( void );
         int     (*set_speed)( int speed );
         int     (*stop)( void );      /* clear input, disable events */
-        int     (*check)( unsigned short *status, unsigned short *row,
-                         unsigned short *col, unsigned long *time );
+        int     (*check)( unsigned short *status, MOUSEORD *row,
+                         MOUSEORD *col, unsigned long *time );
 } Mouse;
 
 typedef struct {

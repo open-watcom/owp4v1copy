@@ -483,7 +483,7 @@ void intern physupdate( SAREA *area )
             union       REGPACK                 regs;
 #else
             #pragma aux desqview_update = 0xcd 0x10 parm [ah] [es] [di] [cx];
-            extern void desqview_update( char, unsigned, unsigned, unsigned );
+            extern void desqview_update( unsigned char, unsigned, unsigned, unsigned );
 #endif
 
         if( UIData->desqview ) {

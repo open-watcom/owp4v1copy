@@ -45,9 +45,9 @@ typedef struct a_ui_edit {
     extern "C" {
 #endif
 
-extern a_ui_edit *uibegedit(struct vscreen *,unsigned char ,
-            unsigned char,unsigned char,unsigned char,char *, unsigned,
-            unsigned int ,unsigned int, bool, unsigned int, bool);
+extern a_ui_edit *uibegedit( struct vscreen *, ORD,
+            ORD, ORD, ATTR, char *, unsigned,
+            unsigned int, unsigned int, bool, unsigned int, bool );
 extern void uieditpushlist(void);
 extern void uieditpoplist(void);
 /* temp kludge - modify client source to use uiledit() instead */

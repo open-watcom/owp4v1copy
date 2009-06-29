@@ -119,8 +119,8 @@ static void XT_parse( void )
     }
 }
 
-static int tm_check( unsigned short *status, unsigned short *row,
-                     unsigned short *col, unsigned long *the_time )
+static int tm_check( unsigned short *status, MOUSEORD *row,
+                     MOUSEORD *col, unsigned long *the_time )
 /**********************************************/
 {
 
@@ -160,8 +160,8 @@ static int tm_stop( void )
 
 static void TryOne( int type, char *test, char *init, char *input )
 {
-    unsigned short      row;
-    unsigned short      col;
+    MOUSEORD    row;
+    MOUSEORD    col;
 
     MouseType = type;
     uimouseforceoff();

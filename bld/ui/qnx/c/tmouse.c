@@ -209,8 +209,8 @@ static int tm_stop( void )
 static void DoMouseInit( int type, char *init, char *input )
 {
     struct _osinfo      osinfo;
-    unsigned short      row;
-    unsigned short      col;
+    MOUSEORD            row;
+    MOUSEORD            col;
 
     MouseType = type;
     uimouseforceoff();

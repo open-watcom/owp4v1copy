@@ -158,8 +158,8 @@ static int cm_init( bool install )
 {
     struct itimercb     timercb;
     struct _osinfo      osinfo;
-    unsigned short      row;
-    unsigned short      col;
+    MOUSEORD            row;
+    MOUSEORD            col;
     extern void stopmouse(void);
 
     MouseInstalled = FALSE;
