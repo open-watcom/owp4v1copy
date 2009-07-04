@@ -32,7 +32,7 @@
 
 include mdef.inc
 
-        modstart        sqrt87
+        modstart        sqrt087
 .8087
         xdefp   __sqrt87        ; calc sqrt(fac1)
 

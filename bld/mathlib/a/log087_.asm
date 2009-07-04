@@ -32,7 +32,7 @@
 
 include mdef.inc
 
-        modstart        log87
+        modstart        log087
 .8087
         xdefp   __log87         ; calc log(fac1)
 

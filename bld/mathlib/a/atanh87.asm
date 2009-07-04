@@ -37,12 +37,12 @@ else
 endif
 include mdef.inc
 include struct.inc
-include math387.inc
+include math87.inc
 
         extern_chipbug
         xref    __8087  ; indicate that NDP instructions are present
 
-        modstart    atanh387
+        modstart    atanh87
 
         xref    "C",__log87_err
 

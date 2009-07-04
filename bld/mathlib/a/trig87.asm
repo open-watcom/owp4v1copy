@@ -36,12 +36,12 @@
 .387
 include mdef.inc
 include struct.inc
-include math387.inc
+include math87.inc
 
         extern_chipbug
         xref            __8087  ; indicate that NDP instructions are present
 
-        modstart        trig387
+        modstart        trig87
 
         ;datasegment
         ;enddata

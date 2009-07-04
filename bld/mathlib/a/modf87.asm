@@ -36,11 +36,11 @@ else
  .8087
 endif
 include mdef.inc
-include math387.inc
+include math87.inc
 
         xref            __8087  ; indicate that NDP instructions are present
 
-        modstart        modf387
+        modstart        modf87
 
         xref            __CHP
 

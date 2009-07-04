@@ -33,7 +33,7 @@
 include mdef.inc
 include struct.inc
 
-        modstart        exp87
+        modstart        exp087
 
 .8087
 

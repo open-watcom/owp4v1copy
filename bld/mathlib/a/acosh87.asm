@@ -37,11 +37,11 @@ else
 endif
 include mdef.inc
 include struct.inc
-include math387.inc
+include math87.inc
 
         xref    __8087  ; indicate that NDP instructions are present
 
-        modstart    acosh387
+        modstart    acosh87
 
         xref    "C",__log87_err
 

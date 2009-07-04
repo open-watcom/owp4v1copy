@@ -32,11 +32,11 @@
 
 include mdef.inc
 include struct.inc
-include math387.inc
+include math87.inc
 
         extern_chipbug
 
-        modstart        sin87
+        modstart        sin087
 .8087
         xdefp   __sin87         ; calc sin(fac1)
         xdefp   __cos87         ; calc cos(fac1)
