@@ -78,8 +78,8 @@ typedef struct {
 
 /* These are used by more than one function. */
 
-static  record_buffer   *   final;
-static  text_chars      *   text_chars_pool;
+static  record_buffer   *   final           = NULL;
+static  text_chars      *   text_chars_pool = NULL;
 static  uint32_t            cur_h_start;
 static  uint32_t            cur_v_start;
 static  uint32_t            page_bottom;
@@ -99,7 +99,7 @@ NULL
 /* Load the document text arrays. */
 
 static  text_phrase  title[] = {
-    { 3, "OUTCHECK Document" },
+    { 3, "OUTCHECK~ Document" },
     { 0, NULL}
 };
 
@@ -197,6 +197,10 @@ static  char const *    page2_box[] = {
  *          "enhancement" would include processing the various tags specifying
  *          the desired font for a given phrase, rather than getting the
  *          information from the text_phrase.
+ *      The first text_line will be output starting at the location given by
+ *          cur_h_start on entry. Subsequent lines will be output at the
+ *          location given by page_left. This may or may not be acceptable
+ *          in production code, depending on the tag being implemented.
  */
 
 void emulate_text_output( text_phrase * text )
@@ -217,23 +221,23 @@ void emulate_text_output( text_phrase * text )
 
     if( text == NULL) return;
 
-    /* Set up the_line. */
+    /* Set up the_line and for the outer loop. */
 
     the_line.y_address = cur_v_start;
     the_line.first = NULL;
-
-    /* The outer loop processes all the text_phrases in text. */
-
     cur_chars = NULL;
     if( text_chars_pool == NULL ) {
         next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) );
     } else {
         next_chars = text_chars_pool;
         text_chars_pool = text_chars_pool->next;
-        next_chars->next = NULL;
     }
+    next_chars->next = NULL;
     cur_phrase = text;
     k = 0;
+
+    /* The outer loop processes all the text_phrases in text. */
+
     while( cur_phrase->text != NULL ) {
         count = strlen( cur_phrase->text );
         next_chars->font_number = cur_phrase->font_number;
@@ -245,24 +249,24 @@ void emulate_text_output( text_phrase * text )
         /* This loop processes a single text_phrase. */
 
         for( i = 0; i < count; i++ ) {
-            the_char = cur_phrase->text[i];
-            if( isspace( the_char ) ) continue;
+            if( isspace( cur_phrase->text[i] ) ) continue;
 
             /* This loop processes a single text_chars. */
 
             for( j = i; j < count; j++ ) {
+                the_char = cur_phrase->text[j];
                 if( isspace( the_char ) ) break;
 
-                if( ProcFlags.in_trans ) \
+                if( ProcFlags.in_trans ) {
                     if( in_esc == the_char ) {
-                        j++;
-                        the_char = cop_in_trans( cur_phrase->text[j], \
+                        the_char = cop_in_trans( cur_phrase->text[j + 1], \
                                                     cur_phrase->font_number );
+                        j++;
                     }
+                }
                 final->text[k] = the_char;
                 next_chars->count++;
                 k++;
-                the_char = cur_phrase->text[j];
             }
             i = j;
 
@@ -278,20 +282,25 @@ void emulate_text_output( text_phrase * text )
 
             /* Finalize the the text_line. */
 
-            if( cur_h_start + next_chars->width > page_right ) {
+            if( cur_h_start > page_right ) {
 
                 /* The text_line is ready for output and reinitialization. */
 
                 save_chars = next_chars;
                 fb_output_textline( &the_line );
 
-                pool_ptr = text_chars_pool;
-                while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
-                pool_ptr->next = the_line.first;
+                if( text_chars_pool == NULL ) {
+                    text_chars_pool = the_line.first;
+                } else {
+                    pool_ptr = text_chars_pool;
+                    while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
+                    pool_ptr->next = the_line.first;
+                }
                 the_line.first = save_chars;
                 cur_chars = save_chars;
                 cur_chars->x_address = page_left;
                 cur_chars->count = 0;
+                cur_h_start = page_left;
                 next_chars->text = final->text;
                 final->current = 0;
                 
@@ -314,8 +323,8 @@ void emulate_text_output( text_phrase * text )
             } else {
                 next_chars = text_chars_pool;
                 text_chars_pool = text_chars_pool->next;
-                next_chars->next = NULL;
             }
+            next_chars->next = NULL;
             next_chars->font_number = cur_phrase->font_number;
             next_chars->count = 0;
             next_chars->text = final->text + cur_chars->count;
@@ -330,15 +339,20 @@ void emulate_text_output( text_phrase * text )
 
     fb_output_textline( &the_line );
 
-    /* Tear down the line. This is based on the belief that, in general,
-     * the_line will have more text_chars instances than text_chars_pool,
-     * and so adding to the end of the text_chars_pool list will be faster.
-     */
-
-    pool_ptr = text_chars_pool;
-    while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
-    pool_ptr->next = the_line.first;
+    if( text_chars_pool == NULL ) {
+        text_chars_pool = the_line.first;
+    } else {
+        pool_ptr = text_chars_pool;
+        while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
+        pool_ptr->next = the_line.first;
+    }
     the_line.first = NULL;
+
+    if( next_chars != NULL ) {
+        next_chars->next = text_chars_pool;
+        text_chars_pool = next_chars;
+    }
+
     return;
 }
 
@@ -484,7 +498,6 @@ static void emulate_wgml( void )
     translated->text[translated->current] = '\0';
     out_msg( "Translated text: '%s'\n", translated->text );
 
-
     out_msg( ".tr table set to translate space to '~'\n" );
     cop_tr_table( "20 ~", 4 );
     out_msg( "Original text: 'Mary had a little lamb.'\n");
@@ -514,6 +527,12 @@ static void emulate_wgml( void )
 
     translated->text[translated->current] = '\0';
     out_msg( "Translated text: '%s'\n", translated->text );
+
+    /* The OUTCHECK Test Document. */
+
+    /* Allow input translation tests. */
+
+    cop_ti_table( "set ~", 5 );
 
     /* First pass processing. */
     /* START processing.*/
@@ -664,6 +683,9 @@ static void emulate_wgml( void )
             text_chars_pool = text_chars_pool->next;
             mem_free( current );
         }
+        current = text_chars_pool;
+        text_chars_pool = text_chars_pool->next;
+        mem_free( current );
     }
 
     return;
