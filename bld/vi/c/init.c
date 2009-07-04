@@ -43,7 +43,9 @@
     #include "utils.h"
 #endif
 #ifdef __NT__
-    #include "windows.h"
+    #include <windows.h>
+    #include <fcntl.h>
+    #include <io.h>
 #endif
 #include "rcs.h"
 #include "autoenv.h"
@@ -416,6 +418,48 @@ static void doInitializeEditor( int argc, char *argv[] )
         if( cFN == nullFN && !EditFlags.UseNoName ) {
             break;
         }
+
+#ifdef __NT__
+        {
+            int     k2 = k;
+            int     arg2 = arg;
+            char    path[_MAX_PATH];
+            int     found = 0;
+            int     fd;
+
+            /*
+             * check for the existence of a file name containing spaces, and open it if
+             * there is one
+             */
+            memset( path, 0, _MAX_PATH );
+            while( argv[k2] != NULL && strlen( path ) +
+                                       strlen( argv[k2] ) < _MAX_PATH ) {
+                strcat( path, argv[k2] );
+                fd = open( path, O_RDONLY );
+                if( fd != -1 ) {
+                    close( fd );
+                    found = 1;
+                    break;
+                }
+                k2++;
+                arg2--;
+                strcat( path, " " );
+            }
+            if( found ) {
+                rc1 = NewFile( path, FALSE );
+                if( rc1 != ERR_NO_ERR ) {
+                    FatalError( rc1 );
+                }
+                k = k2 + 1;
+                arg = arg2 - 1;
+                cFN = argv[k];
+                if( arg < 1 ) {
+                    break;
+                }
+                continue;
+            }
+        }
+#endif
 
         strcat( cmd, SingleBlank );
         strcat( cmd, cFN );
