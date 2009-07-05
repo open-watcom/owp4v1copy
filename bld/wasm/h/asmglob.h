@@ -183,6 +183,7 @@ typedef struct global_options {
     smode       mode;
     int         locals_len;
     char        locals_prefix[3];
+    char        trace_stack;
 } global_options;
 
 extern global_options Options;

@@ -125,7 +125,8 @@ global_options Options = {
     TRUE,               // parameters passed by registers
     MODE_WATCOM,        // assembler mode
     0,                  // locals prefix len
-    {'\0','\0','\0'}    // locals prefix
+    {'\0','\0','\0'},   // locals prefix
+    0                   // trace stack
 };
 
 static char *CopyOfParm( void )
@@ -567,6 +568,8 @@ static void Set_N( void ) { set_some_kinda_name( OptValue, CopyOfParm() ); }
 
 static void Set_O( void ) { Options.allow_c_octals = TRUE; }
 
+static void Set_OF( void ) { Options.trace_stack = OptValue; }
+
 static void Set_WE( void ) { Options.warning_error = TRUE; }
 
 static void Set_WX( void ) { Options.warning_level = 4; }
@@ -658,6 +661,8 @@ static struct option const cmdl_options[] = {
     { "nm=$",   'm',      Set_N },
     { "nt=$",   't',      Set_N },
     { "o",      0,        Set_O },
+    { "of",     1,        Set_OF },
+    { "of+",    2,        Set_OF },
     { "q",      0,        Set_ZQ },
     { "s",      0,        Set_S },
     { "u",      0,        Ignore },

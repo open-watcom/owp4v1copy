@@ -3603,7 +3603,8 @@ int WritePrologue( void )
     label_list          *curr;
     long                offset;
     unsigned long       size;
-    int                 register_count = 0, parameter_on_stack = TRUE;
+    int                 register_count = 0;
+    int                 parameter_on_stack = TRUE;
     int                 align = Use32 ? 4 : 2;
 
     /**/myassert( CurrProc != NULL );
@@ -3706,7 +3707,7 @@ int WritePrologue( void )
     in_prologue = TRUE;
     PushLineQueue();
     if( ( info->localsize != 0 ) || ( info->parasize != 0 ) ||
-        ( info->is_vararg ) ) {
+        ( info->is_vararg ) || Options.trace_stack == 2 ) {
         //
         // prolog code timmings
         //
@@ -3727,6 +3728,14 @@ int WritePrologue( void )
         // enter imm,0   4     -   11   10   14   11
         //
         // write prolog code
+        if( Options.trace_stack && info->mem_type == MT_FAR ) {
+            if( Use32 ) {
+                strcpy( buffer, "inc ebp" );
+            } else {
+                strcpy( buffer, "inc bp" );
+            }
+            InputQueueLine( buffer );
+        }
         if( Use32 ) {
             // write 80386 prolog code
             // PUSH EBP
@@ -3799,8 +3808,9 @@ static void write_epilogue( void )
     pop_register( CurrProc->e.procinfo->regslist );
 
     if( ( info->localsize == 0 ) && ( info->parasize == 0 ) &&
-        ( !info->is_vararg ) )
+        ( !info->is_vararg ) && Options.trace_stack != 2 ) {
         return;
+    }
     // epilog code timmings
     //
     //                                                  best result
@@ -3881,6 +3891,14 @@ static void write_epilogue( void )
         strcpy( buffer, "pop bp" );
     }
     InputQueueLine( buffer );
+    if( Options.trace_stack && info->mem_type == MT_FAR ) {
+        if( Use32 ) {
+            strcpy( buffer, "dec ebp" );
+        } else {
+            strcpy( buffer, "dec bp" );
+        }
+        InputQueueLine( buffer );
+    }
 }
 
 int Ret( int i, int count, int flag_iret )
