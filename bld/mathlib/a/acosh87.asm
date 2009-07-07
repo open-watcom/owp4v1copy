@@ -53,43 +53,48 @@ include math87.inc
         public  IF@ACOSH        ; double acosh( double x )
         defp    IF@DACOSH
         defp    IF@ACOSH
-        prolog
-        fld1                    ; get 1.0
-        fcomp                   ; compare against 1.0
-        sub     _SP,16          ; allocate space
-        fstsw   word ptr -16[_BP] ; get status word
-        fwait                   ; ...
-        mov     AH,-16+1[_BP]   ; ...
-        sahf                    ; set flags
-        _if     a               ; if 1.0 > x
-          mov   AL,FUNC_ACOSH   ; - indicate "acosh"
-          mov   -16+8[_BP],_AX  ; - push code
-          fstp  qword ptr -16[_BP]; - push argument on stack
-          mov   -16+12[_BP],_DX ; - save DX (-3s) clobbers EDX 17-mar-92
-          call  __log87_err     ; - log error
-ifdef __386__
- ifdef __STACK__
-          push  EDX             ; - load result into 8087
-          push  EAX             ; - ...
-          fld   qword ptr 0[ESP]; - ...
-          mov   EDX,-16+12[EBP] ; - restore EDX 17-mar-92
-          fwait                 ; - ...
- endif
+ifndef __386__
+        local   func:WORD,data:QWORD
+elseifdef __STACK__
+        local   sedx:DWORD,secx:DWORD,func:DWORD,data:QWORD
+else
+        local   func:DWORD,data:QWORD
 endif
-        _else                   ; else
-          fld   st(0)           ; - duplicate x
-          fmul  st(0),st        ; - calc. x*x
-          fld1                  ; - 1.0
-          fsubp st(1),st        ; - x*x - 1.0
-          fsqrt                 ; - sqrt( x*x - 1.0 )
-          faddp st(1),st        ; - x + sqrt( x*x - 1.0 )
-          fldln2                ; - load ln(2)
-          fxch  st(1)           ; - get arguments in right order
-          fyl2x                 ; - calc. log( x + sqrt( x*x - 1.0 ) )
-        _endif                  ; endif
-        mov     _SP,_BP         ; reset SP
-        epilog
-        ret                     ; return
+        fld1                        ; get 1.0
+        fcomp                       ; compare against 1.0
+        fstsw   word ptr func       ; get status word
+        fwait                       ; ...
+        mov     AH,byte ptr func+1  ; ...
+        sahf                        ; set flags
+        _if     a                   ; if 1.0 > x
+          fstp  qword ptr data      ; - push argument on stack
+          mov   AL,FUNC_ACOSH       ; - indicate "acosh"
+          mov   func,_AX            ; - push code
+ifdef __STACK__
+          mov   sedx,EDX            ; - save EDX (-3s)
+          mov   secx,ECX            ; - save ECX (-3s)
+          call  __log87_err         ; - log error
+          push  EDX                 ; - load result into 8087
+          push  EAX                 ; - ...
+          fld   qword ptr 0[ESP]    ; - ...
+          mov   ECX,secx            ; - restore ECX (-3s)
+          mov   EDX,sedx            ; - restore EDX (-3s)
+          fwait                     ; - ...
+else
+          call  __log87_err         ; - log error
+endif
+        _else                       ; else
+          fld   st(0)               ; - duplicate x
+          fmul  st(0),st            ; - calc. x*x
+          fld1                      ; - 1.0
+          fsubp st(1),st            ; - x*x - 1.0
+          fsqrt                     ; - sqrt( x*x - 1.0 )
+          faddp st(1),st            ; - x + sqrt( x*x - 1.0 )
+          fldln2                    ; - load ln(2)
+          fxch  st(1)               ; - get arguments in right order
+          fyl2x                     ; - calc. log( x + sqrt( x*x - 1.0 ) )
+        _endif                      ; endif
+        ret                         ; return
         endproc IF@ACOSH
         endproc IF@DACOSH
 

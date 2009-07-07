@@ -62,30 +62,35 @@ endif
         public  IF@DLOG
         defp    IF@DLOG
         defp    IF@LOG
-
+ifndef __386__
+        local   func:WORD,data:QWORD
+elseifdef __STACK__
+        local   sedx:DWORD,secx:DWORD,func:DWORD,data:QWORD
+else
+        local   func:DWORD,data:QWORD
+endif
         mov     AL,FUNC_LOG             ; indicate log
-
 do_log:
         ftst                            ; test sign of argument
-        prolog
-        sub     _SP,16                  ; allocate space
-        fstsw   word ptr -16[_BP]       ; get status word
+        fstsw   word ptr func           ; get status word
         fwait                           ; ...
-        mov     AH,-16+1[_BP]           ; ...
+        mov     AH,byte ptr func+1      ; ...
         sahf                            ; set flags
         _if     be                      ; if number is <= 0.0
-          mov   -16+8[_BP],_AX          ; - push code
-          fstp  qword ptr -16[_BP]      ; - push argument on stack
-          mov   -16+12[_BP],_DX         ; - save DX (-3s) clobbers EDX 17-mar-92
+          fstp  qword ptr data          ; - push argument on stack
+          mov   func,_AX                ; - push code
+ifdef __STACK__
+          mov   sedx,EDX                ; - save EDX (-3s)
+          mov   secx,ECX                ; - save ECX (-3s)
           call  __log87_err             ; - log error
-ifdef __386__
- ifdef __STACK__
           push  EDX                     ; - load result into 8087
           push  EAX                     ; - ...
           fld   qword ptr 0[ESP]        ; - ...
-          mov   EDX,-16+12[EBP]         ; - restore EDX 17-mar-92
+          mov   ECX,secx                ; - restore ECX (-3s)
+          mov   EDX,sedx                ; - restore EDX (-3s)
           fwait                         ; - ...
- endif
+else
+          call  __log87_err             ; - log error
 endif
           mov   AL,1                    ; - indicate error
         _else                           ; else
@@ -104,8 +109,6 @@ endif
           fyl2x                         ; - ln(x) = ln(2) * log2(x)
           mov   AL,0                    ; - indicate success
         _endif                          ; endif
-        mov     _SP,_BP                 ; reset SP
-        epilog
         ret                             ; return
         endproc IF@LOG
         endproc IF@DLOG
@@ -115,6 +118,13 @@ endif
         public  IF@DLOG2
         defp    IF@DLOG2
         defp    IF@LOG2
+ifndef __386__
+        local   func:WORD,data:QWORD
+elseifdef __STACK__
+        local   sedx:DWORD,secx:DWORD,func:DWORD,data:QWORD
+else
+        local   func:DWORD,data:QWORD
+endif
         mov     AL,FUNC_LOG2            ; indicate log2
         jmp     do_log                  ; calculate log2
         endproc IF@LOG2
@@ -125,6 +135,13 @@ endif
         public  IF@DLOG10
         defp    IF@DLOG10
         defp    IF@LOG10
+ifndef __386__
+        local   func:WORD,data:QWORD
+elseifdef __STACK__
+        local   sedx:DWORD,secx:DWORD,func:DWORD,data:QWORD
+else
+        local   func:DWORD,data:QWORD
+endif
         mov     AL,FUNC_LOG10           ; indicate log10
         jmp     do_log                  ; calculate log10
         endproc IF@LOG10

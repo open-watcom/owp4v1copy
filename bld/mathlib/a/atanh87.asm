@@ -62,45 +62,50 @@ endif
         public  IF@ATANH        ; double atanh( double x )
         defp    IF@DATANH
         defp    IF@ATANH
-        prolog
-        fld1                    ; get 1.0
-        fld     st(1)           ; duplicate the number
-        fabs                    ; get absolute value of number
-        fcompp                  ; compare against 1.0
-        sub     _SP,16          ; allocate space
-        fstsw   word ptr -16[_BP] ; get status word
-        fwait                   ; ...
-        mov     AH,-16+1[_BP]   ; ...
-        sahf                    ; set flags
-        _if     ae              ; if number is >= 1.0
-          mov   -16+12[_BP],_DX ; - save DX (-3s) clobbers EDX 17-mar-92
-          mov   AL,FUNC_ATANH   ; - indicate "atanh"
-          mov   -16+8[_BP],_AX  ; - push code
-          fstp  qword ptr -16[_BP]; - push argument on stack
-          call  __log87_err     ; - log error
-ifdef __386__
- ifdef __STACK__
-          push  EDX             ; - load result into 8087
-          push  EAX             ; - ...
-          fld   qword ptr 0[ESP]; - ...
-          mov   EDX,-16+12[EBP] ; - restore EDX 17-mar-92
-          fwait                 ; - ...
- endif
+ifndef __386__
+        local   func:WORD,data:QWORD
+elseifdef __STACK__
+        local   sedx:DWORD,secx:DWORD,func:DWORD,data:QWORD
+else
+        local   func:DWORD,data:QWORD
 endif
-        _else                   ; else
-          fld1                  ; - 1.0
-          fsub    st,st(1)      ; - 1.0 - x
-          fld1                  ; - 1.0
-          faddp   st(2),st      ; - 1.0 + x
-          do_fdivp 1,0          ; - (1.0 + x) / (1.0 - x)
-          fldln2                ; - load ln(2)
-          fxch  st(1)           ; - get arguments in right order
-          fyl2x                 ; - calc. log( (1.0 + x) / (1.0 - x) )
-          fidiv two             ; - divide result by 2.0
-        _endif                  ; endif
-        mov     _SP,_BP         ; reset SP
-        epilog
-        ret                     ; return
+        fld1                        ; get 1.0
+        fld     st(1)               ; duplicate the number
+        fabs                        ; get absolute value of number
+        fcompp                      ; compare against 1.0
+        fstsw   word ptr func       ; get status word
+        fwait                       ; ...
+        mov     AH,byte ptr func+1  ; ...
+        sahf                        ; set flags
+        _if     ae                  ; if number is >= 1.0
+          fstp  qword ptr data      ; - push argument on stack
+          mov   AL,FUNC_ATANH       ; - indicate "atanh"
+          mov   func,_AX            ; - push code
+ifdef __STACK__
+          mov   sedx,EDX            ; - save EDX (-3s)
+          mov   secx,ECX            ; - save ECX (-3s)
+          call  __log87_err         ; - log error
+          push  EDX                 ; - load result into 8087
+          push  EAX                 ; - ...
+          fld   qword ptr 0[ESP]    ; - ...
+          mov   ECX,secx            ; - restore ECX (-3s)
+          mov   EDX,sedx            ; - restore EDX (-3s)
+          fwait                     ; - ...
+else
+          call  __log87_err         ; - log error
+endif
+        _else                       ; else
+          fld1                      ; - 1.0
+          fsub    st,st(1)          ; - 1.0 - x
+          fld1                      ; - 1.0
+          faddp   st(2),st          ; - 1.0 + x
+          do_fdivp 1,0              ; - (1.0 + x) / (1.0 - x)
+          fldln2                    ; - load ln(2)
+          fxch  st(1)               ; - get arguments in right order
+          fyl2x                     ; - calc. log( (1.0 + x) / (1.0 - x) )
+          fidiv two                 ; - divide result by 2.0
+        _endif                      ; endif
+        ret                         ; return
         endproc IF@ATANH
         endproc IF@DATANH
 
@@ -110,9 +115,9 @@ endif
 ;
         defp    atanh
 ifdef __386__
-        fld     qword ptr 4[ESP]; load argument x
-        call    IF@DATANH       ; calculate atanh(x)
-        loadres                 ; load result
+        fld     qword ptr 4[ESP]    ; load argument x
+        call    IF@DATANH           ; calculate atanh(x)
+        loadres                     ; load result
 else
 if _MODEL and _BIG_CODE
 argx    equ     6
@@ -120,11 +125,11 @@ else
 argx    equ     4
 endif
         prolog
-        fld     qword ptr argx[BP]; load argument x
-        lcall   IF@DATANH       ; calculate atanh(x)
+        fld     qword ptr argx[BP]  ; load argument x
+        lcall   IF@DATANH           ; calculate atanh(x)
         epilog
 endif
-        ret_pop 8               ; return
+        ret_pop 8                   ; return
         endproc atanh
 
         endmod

@@ -49,6 +49,11 @@ include math87.inc
 
         defp    sqrt
 ifdef __386__
+ ifdef __STACK__
+        argx    equ     4+8+4
+ else
+        argx    equ     8+4
+ endif
         _guess                          ; guess: number is negative
           test  byte ptr 4+7[ESP],80h   ; - quit if argument is positive
           _quif e                       ; - ...
@@ -56,12 +61,16 @@ ifdef __386__
           and   EAX,7FFFFFFFh           ; - get rid of sign bit
           or    EAX,4[ESP]              ; - or in lower word
           _quif e                       ; - quit if -0.0
+ ifdef __STACK__
+          push  ECX
+ endif
           push  FUNC_SQRT               ; - indicate "sqrt"
-          push  8+4[ESP]                ; - push argument
-          push  8+4[ESP]                ; - ...
-          call  __math87_err            ; - error
+          push  argx[ESP]               ; - push argument
+          push  argx[ESP]               ; - ...
+          call  __math87_err            ; - math error
  ifdef __STACK__
           add   ESP,8+4                 ; - remove arguments
+          pop   ECX
  endif
         _admit                          ; admit: number is +ve or -0.0
           fld   qword ptr 4[ESP]        ; - load argument x
@@ -69,12 +78,11 @@ ifdef __386__
           loadres                       ; - load result
         _endguess                       ; endguess
 else
-        if _MODEL and _BIG_CODE
-         argx    equ     6
-        else
-         argx    equ     4
-        endif
-
+ if _MODEL and _BIG_CODE
+        argx    equ     6
+ else
+        argx    equ     4
+ endif
         prolog
         _guess                          ; guess: number is negative
           test  byte ptr argx+7[BP],80h ; - quit if argument is positive
@@ -91,7 +99,7 @@ else
           push  argx+4[BP]              ; - ...
           push  argx+2[BP]              ; - ...
           push  argx+0[BP]              ; - ...
-          call  __math87_err            ; - error
+          call  __math87_err            ; - math error
         _admit                          ; admit: +ve or -0.0
           fld   qword ptr argx[BP]      ; - load argument
           fsqrt                         ; - calculate sqrt root
@@ -110,44 +118,48 @@ endif
 
         public  __@DSQRT
         defp    __@DSQRT
-        prolog
+ifndef __386__
+        local   func:WORD,data:QWORD
+elseifdef __STACK__
+        local   sedx:DWORD,secx:DWORD,func:DWORD,data:QWORD
+else
+        local   func:DWORD,data:QWORD
+endif
         ftst                            ; test sign of argument
-        sub     _SP,16                  ; allocate space
-        fstsw   word ptr -16+8[_BP]     ; get status
+        fstsw   word ptr func           ; get status
         fwait                           ; wait for it
-        xchg    AX,-16+8[_BP]           ; save func code and get status word
+        mov     AH,byte ptr func+1      ; save func code and get status word
         sahf                            ; set flags
         _if     b                       ; if number is negative
-          fstp  qword ptr -16+0[_BP]    ; - push argument on stack
-          mov   _AX,-16+8[_BP]          ; - load function code
+          fstp  qword ptr data          ; - push argument on stack
           cmp   AL,FUNC_SQRT            ; - if not "sqrt"
           _if   ne                      ; - then
-            fstp  qword ptr -16+0[_BP]  ; - - get the argument for "asin","acos"
+            fstp  qword ptr data        ; - - get the argument for "asin","acos"
                                         ; - - 8087 stack now in proper state
           _endif                        ; - endif
-          mov   -16+12[_BP],_DX         ; - save DX (-3s) clobbers EDX 17-mar-92
-          call  __math87_err            ; - error (func code in AL)
-ifdef __386__
- ifdef __STACK__
+          mov   func,_AX                ; - load function code
+ifdef __STACK__
+          mov   sedx,EDX                ; - save EDX (-3s)
+          mov   secx,ECX                ; - save ECX (-3s)
+          call  __math87_err            ; - math error
           push  EDX                     ; - load result into 8087
           push  EAX                     ; - ...
           fld   qword ptr 0[ESP]        ; - ...
-          mov   EDX,-16+12[EBP]         ; - restore EDX 17-mar-92
+          mov   ECX,secx                ; - restore ECX (-3s)
+          mov   EDX,sedx                ; - restore EDX (-3s)
           fwait                         ; - ...
- endif
+else
+          call  __math87_err            ; - math error
 endif
           mov   AL,1                    ; - indicate error
         _admit                          ; admit: +ve or -0.0
           fsqrt                         ; - calculate sqrt using 8087
           mov   AL,0                    ; - indicate no error
         _endguess                       ; endguess
-        mov     _SP,_BP                 ; reset stack pointer
-        epilog
         ret                             ; return
         endproc __@DSQRT
         endproc IF@SQRT
         endproc IF@DSQRT
-
 
         endmod
         end

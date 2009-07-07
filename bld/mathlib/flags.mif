@@ -74,7 +74,7 @@ sw_c_linux    =
 sw_c_netware  =
 sw_c_qnx      =
 
-sw_a_intel   = -w4 -e -DPDIV
+sw_a_intel   = -w4 -e -DPDIV -of
 sw_a_static  =
 sw_a_dynamic = -D__MAKE_DLL_MATHLIB -D_EXPORT
 sw_a_alias   = -D__MAKE_DLL_MATHLIB -D_EXPORT
