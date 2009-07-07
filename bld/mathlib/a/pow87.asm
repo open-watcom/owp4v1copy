@@ -65,30 +65,36 @@ endif
         public  IF@POW
         defp    IF@DPOW
         defp    IF@POW
-        prolog
+ifndef __386__
+        local   tmp:QWORD,func:WORD,datay:QWORD,datax:QWORD
+elseifdef __STACK__
+        local   tmp:QWORD,sedx:DWORD,secx:DWORD,func:DWORD,datay:QWORD,datax:QWORD
+else
+        local   tmp:QWORD,func:DWORD,datay:QWORD,datax:QWORD
+endif
         ftst                            ; test sign of x
-        sub     _SP,24                  ; allocate space
-        fstsw   word ptr -24+16[_BP]    ; get status word
-        fst     qword ptr -24[_BP]      ; save x
-        mov     AH,-24+16+1[_BP]        ; ...
+        fstsw   word ptr func           ; get status word
+        fst     qword ptr datax         ; save x
+        mov     AH,byte ptr func+1      ; ...
         sahf                            ; set flags
         _guess                          ; guess: x is 0.0
           _quif ne                      ; - quit if not 0.0
           mov   AL,0                    ; - indicate x==0.0 error
 pow_err1: fstp  st(0)                   ; - clean up 80x87 stack
-pow_err:  fstp  qword ptr -24+8[_BP]    ; - store y
-          mov   -24+16[_BP],_AX         ; - push code
-          mov   -24+20[_BP],_DX         ; - save DX (-3s) clobbers EDX 17-mar-92
+pow_err:  fstp  qword ptr datay         ; - store y
+          mov   func,_AX                ; - push code
+ifdef __STACK__
+          mov   sedx,EDX                ; - save EDX (-3s)
+          mov   secx,ECX                ; - save ECX (-3s)
           call  __pow87_err             ; - pow error
-          sub   _SP,8                   ; - reallocate space 06-nov-92
-ifdef __386__
- ifdef __STACK__
           push  EDX                     ; - load result into 80x87
           push  EAX                     ; - ...
           fld   qword ptr 0[ESP]        ; - ...
-          mov   EDX,-24+20[EBP]         ; - restore EDX 17-mar-92
+          mov   ECX,secx                ; - restore ECX (-3s)
+          mov   EDX,sedx                ; - restore EDX (-3s)
           fwait                         ; - ...
- endif
+else
+          call  __pow87_err             ; - pow error
 endif
           jmp   pow_end                 ; - done
         _endguess                       ; endguess
@@ -96,9 +102,9 @@ endif
           fld   st(1)                   ; - get exponent y
           frndint                       ; - determine if it is integral
           fcomp st(2)                   ; - if int(y) != y
-          fstsw word ptr -24+18[_BP]    ; - get status word
+          fstsw word ptr tmp            ; - get status word
           fwait                         ; - ...
-          mov   AH,-24+18+1[_BP]        ; - ...
+          mov   AH,byte ptr tmp+1       ; - ...
           _if   c                       ; - if base is negative
             mov   AL,1                  ; - - indicate negative ** fraction
             sahf                        ; - - set flags
@@ -107,27 +113,27 @@ endif
 ;           need to determine if y is even or odd
 
             mov   AX,2                  ; - - load 2.0
-            mov   -24+20[_BP],AX        ; - - ...
-            fild  word ptr -24+20[_BP]  ; - - ...
+            mov   word ptr tmp,AX       ; - - ...
+            fild  word ptr tmp          ; - - ...
             fld   st(2)                 ; - - load y
             fprem                       ; - - calc fprem(y,2)
-            fstsw word ptr -24+20[_BP]  ; - - get status word
+            fstsw word ptr tmp          ; - - get status word
             fwait                       ; - - ...
-            mov   AH,-24+20+1[_BP]      ; - - see if exponent > 64
+            mov   AH,byte ptr tmp+1     ; - - see if exponent > 64
             sahf                        ; - - set flags
             mov   AH,0                  ; - - assume exponent even
             _if   np                    ; - - if exponent < 64
               ftst                      ; - - - test remainder to see if 0
-              fstsw word ptr -24+20[_BP]; - - - get status word
+              fstsw word ptr tmp        ; - - - get status word
               fwait                     ; - - - ...
-              mov   AH,-24+20+1[_BP]    ; - - - see if rem is 0
+              mov   AH,byte ptr tmp+1   ; - - - see if rem is 0
               sahf                      ; - - - set flags
               mov   AH,0                ; - - - assume even
               _if   ne                  ; - - - if remainder not 0
                 mov   AH,1              ; - - - - indicate exponent was odd
               _endif                    ; - - - endif
             _endif                      ; - - endif
-            mov   -24+16+1[_BP],AH      ; - - save as flags (carry = low bit)
+            mov   byte ptr func+1,AH    ; - - save as flags (carry = low bit)
             fstp  st(0)                 ; - - clean up stack
             fstp  st(0)                 ; - - clean up stack
           _else                         ; - else base is positive
@@ -137,38 +143,38 @@ endif
             _endif
           _endif                        ; - endif
           fld   st(1)                   ; - get y
-          fstp  qword ptr -24+8[_BP]    ; - store in memory
+          fstp  qword ptr datay         ; - store in memory
           fwait                         ; - wait
-          mov   AX,-24+8+6[_BP]         ; - get exponent
+          mov   AX,word ptr datay+6     ; - get exponent
           and   AX,7FF0h                ; - get rid of sign bit
           sub   AX,3FF0h                ; - get rid of bias
           cmp   AX,16 shl 4             ; - quit if number too large
           _quif ae                      ; - ...
           fld   st(1)                   ; - get y
-          fistp dword ptr -24+20[_BP]   ; - store exponent as an integer
+          fistp dword ptr tmp           ; - store exponent as an integer
           fwait                         ; - wait for fistp to complete
-          mov   AX,-24+20+2[_BP]        ; - get high order word of exponent
+          mov   AX,word ptr tmp+2       ; - get high order word of exponent
           or    AX,AX                   ; - if 0
           _if   e                       ; - then
-            mov   AX,-24+20[_BP]        ; - - get low order word of exponent
+            mov   AX,word ptr tmp       ; - - get low order word of exponent
             call  pow_ri                ; - - calculate power
           _else                         ; - else
             inc   AX                    ; - - see if high order word is -1
             jne   exp_log               ; - - quit if not -1
-            or    AX,-24+20[_BP]        ; - - get low order word
+            or    AX,word ptr tmp       ; - - get low order word
             je    exp_log               ; - - quit if 0
             neg   AX                    ; - - negate the exponent
             call  pow_ri                ; - - calculate power
             fld1                        ; - - take reciprical
             do_fdivrp 1,0               ; - - take reciprical
           _endif                        ; - endif
-          fst   qword ptr -24+16[_BP]   ; - store result
+          fst   qword ptr tmp           ; - store result
           fwait                         ; - wait
-          mov   AX,-24+16+0[_BP]        ; - check for infinity
-          or    AX,-24+16+2[_BP]        ; - ...
-          or    AX,-24+16+4[_BP]        ; - ...
+          mov   AX,word ptr tmp         ; - check for infinity
+          or    AX,word ptr tmp+2       ; - ...
+          or    AX,word ptr tmp+4       ; - ...
           _if   e                       ; - if fraction is 0
-            mov   AX,-24+16+6[_BP]      ; - - get exponent
+            mov   AX,word ptr tmp+6     ; - - get exponent
             shl   AX,1                  ; - - get rid of sign bit
             cmp   AX,0FFE0h             ; - - if infinity
             _if   e                     ; - - then
@@ -187,7 +193,7 @@ exp_log:  fldln2                        ; - load ln(2)
           call    __@DEXP               ; - calc. exp( log(x) * y )
           cmp     AL,0                  ; - check for error
           jne     pow_err2              ; - if argument to exp was too large
-          mov     AH,-24+16+1[_BP]      ; - get flags
+          mov     AH,byte ptr func+1    ; - get flags
           sahf                          ; - set flags
           _if     c                     ; - if x was negative
             fchs                        ; - - negate the answer
@@ -195,11 +201,9 @@ exp_log:  fldln2                        ; - load ln(2)
           fstp  st(1)                   ; - copy answer over top of y
         _endguess                       ; endguess
 pow_end:
-        fstp    qword ptr -8[_BP]       ; force value to be double 30-jul-92
-        fld     qword ptr -8[_BP]       ; reload value
+        fstp    qword ptr tmp           ; force value to be double 30-jul-92
+        fld     qword ptr tmp           ; reload value
         fwait                           ; wait for load to complete
-        mov     _SP,_BP                 ; reset SP
-        epilog
         ret                             ; return
 
 pow_err2:

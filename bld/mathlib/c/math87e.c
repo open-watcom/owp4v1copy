@@ -42,21 +42,21 @@ double __math87_err( double x, unsigned char code )
 {
     unsigned int  err_code;
 
+    err_code = code | M_OVERFLOW | V_HUGEVAL;
     switch( code ) {
     case FUNC_ACOS:
     case FUNC_ASIN:
     case FUNC_SQRT:
-        return( __math1err( code | M_DOMAIN | V_ZERO, &x ) );
+        err_code = code | M_DOMAIN | V_ZERO;
+        break;
     case FUNC_EXP:
-        if( x < 0.0 ) {
+        if( x < 0.0 )
             return( 0.0 );
-        }
-    }
-    err_code = code | M_OVERFLOW | V_HUGEVAL;
-    if( code == FUNC_SINH ) {
-        if( x < 0.0 ) {
+        break;
+    case FUNC_SINH:
+        if( x < 0.0 )
             err_code = code | M_OVERFLOW | V_NEG_HUGEVAL;
-        }
+        break;
     }
     return( __math1err( err_code, &x ) );
 }

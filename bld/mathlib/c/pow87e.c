@@ -50,7 +50,7 @@ double __pow87_err( double x, double y, unsigned char code )
         } else {
             err_code = FUNC_POW | M_DOMAIN | V_ONE;     /* 0.0 ** 0.0 */
         }
-    } else if( code <= 1 ) {    /* negative ** fraction  */
+    } else if( code == 1 ) {    /* negative ** fraction  */
         err_code = FUNC_POW | M_DOMAIN | V_ZERO;        /* -ve ** frac*/
     } else {                    /* code == 2 */
         if( y <= 0.0 )
