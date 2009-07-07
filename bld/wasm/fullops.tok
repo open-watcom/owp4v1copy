@@ -26,6 +26,17 @@ echo
 .else
 else
 elseif
+elseif1
+elseif2
+elseifb
+elseifdef
+elseifdif
+elseifdifi
+elseife
+elseifidn
+elseifidni
+elseifnb
+elseifndef
 end
 .endif
 endif

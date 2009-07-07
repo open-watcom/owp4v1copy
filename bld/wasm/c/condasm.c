@@ -34,17 +34,45 @@
 
 #include "directiv.h"
 #include "asmexpnd.h"
+#include "condasm.h"
 
 #include "myassert.h"
 
-extern int              get_instruction_position( char *string );
+#define    MAX_NESTING  20
 
-extern int              MacroExitState;
+typedef enum if_state {
+    ACTIVE,                 /* current IF cond is true */
+    LOOKING_FOR_TRUE_COND,  /* current IF cond is false, looking for elseif */
+    DONE                    /* done TRUE section of current if, just nuke
+                               everything until we see an endif */
+} if_state;
 
-static enum if_state CurState = ACTIVE;
+extern int          get_instruction_position( char *string );
+
+extern int          MacroExitState;
+
+static if_state     CurState = ACTIVE;
+static int_8        NestLevel = 0;
+static int_8        falseblocknestlevel = 0;
+
 
 // fixme char *IfSymbol;        /* save symbols in IFDEF's so they don't get expanded */
-#define    MAX_NESTING  20
+
+void IfCondInit( void )
+/*********************/
+{
+    CurState = ACTIVE;
+    NestLevel = 0;
+    falseblocknestlevel = 0;
+}
+
+void IfCondFini( void )
+/*********************/
+{
+    if( NestLevel > 0 ) {
+        AsmErr( UNCLOSED_CONDITIONALS, NestLevel );
+    }
+}
 
 void prep_line_for_conditional_assembly( char *line )
 /***************************************************/
@@ -84,9 +112,7 @@ void prep_line_for_conditional_assembly( char *line )
     *end = fix;
     if( count == EMPTY ) {
         /* if it is not in the table */
-        if(( CurState == LOOKING_FOR_TRUE_COND )
-            || ( CurState == DONE )
-            || MacroExitState ) {
+        if( CurState == LOOKING_FOR_TRUE_COND || CurState == DONE || MacroExitState ) {
             *line = '\0';
         }
         return;
@@ -95,26 +121,35 @@ void prep_line_for_conditional_assembly( char *line )
     /* otherwise, see if it is a conditional assembly directive */
 
     switch( AsmOpTable[count].token) {
-    case T_IFDEF:
-    case T_IFNDEF:
-    case T_IFB:
-    case T_IFNB:
+    case T_ELSE:
+    case T_ELSEIF:
+    case T_ELSEIF1:
+    case T_ELSEIF2:
+    case T_ELSEIFB:
+    case T_ELSEIFDEF:
+    case T_ELSEIFE:
+    case T_ELSEIFDIF:
+    case T_ELSEIFDIFI:
+    case T_ELSEIFIDN:
+    case T_ELSEIFIDNI:
+    case T_ELSEIFNB:
+    case T_ELSEIFNDEF:
+    case T_ENDIF:
     case T_IF:
     case T_IF1:
     case T_IF2:
+    case T_IFB:
+    case T_IFDEF:
     case T_IFE:
-    case T_ELSEIF:
-    case T_ELSE:
-    case T_ENDIF:
     case T_IFDIF:
     case T_IFDIFI:
     case T_IFIDN:
     case T_IFIDNI:
+    case T_IFNB:
+    case T_IFNDEF:
         break;
     default:
-        if(( CurState == LOOKING_FOR_TRUE_COND )
-            || ( CurState == DONE )
-            || MacroExitState ) {
+        if( CurState == LOOKING_FOR_TRUE_COND || CurState == DONE || MacroExitState ) {
             *line = '\0';
         }
     }
@@ -253,161 +288,168 @@ int conditional_error_directive( int i )
     return( NOT_ERROR );
 }
 
-static int_8    NestLevel = 0;
+static if_state get_cond_state( int i )
+{
+    uint_16     direct;
+    if_state    cond_state;
+
+    direct = AsmBuffer[i]->u.value;
+
+    /* expand any constants if necessary */
+    switch( direct ) {
+    case T_IF:
+    case T_IFDIF:
+    case T_IFDIFI:
+    case T_IFE:
+    case T_IFIDN:
+    case T_IFIDNI:
+    case T_ELSEIF:
+    case T_ELSEIFDIF:
+    case T_ELSEIFDIFI:
+    case T_ELSEIFE:
+    case T_ELSEIFIDN:
+    case T_ELSEIFIDNI:
+        ExpandTheWorld( i+1, FALSE, TRUE );
+    }
+
+    switch( direct ) {
+    case T_IF:
+    case T_ELSEIF:
+        cond_state = ( AsmBuffer[i+1]->token == T_NUM && AsmBuffer[i+1]->u.value )
+                   ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IF1:
+    case T_ELSEIF1:
+        cond_state = Parse_Pass == PASS_1 ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IF2:
+    case T_ELSEIF2:
+        cond_state = Parse_Pass == PASS_1 ? LOOKING_FOR_TRUE_COND : ACTIVE;
+        break;
+    case T_IFB:
+    case T_ELSEIFB:
+        cond_state = check_blank( AsmBuffer[i+1]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFDEF:
+    case T_ELSEIFDEF:
+        cond_state = check_defd( AsmBuffer[i+1]->string_ptr )  ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFE:
+    case T_ELSEIFE:
+        cond_state = ( AsmBuffer[i+1]->token == T_NUM && !AsmBuffer[i+1]->u.value )
+                   ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFDIF:
+    case T_ELSEIFDIF:
+        cond_state = check_dif( TRUE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFDIFI:
+    case T_ELSEIFDIFI:
+        cond_state = check_dif( FALSE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFIDN:
+    case T_ELSEIFIDN:
+        cond_state = !check_dif( TRUE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFIDNI:
+    case T_ELSEIFIDNI:
+        cond_state = !check_dif( FALSE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFNB:
+    case T_ELSEIFNB:
+        cond_state = !check_blank( AsmBuffer[i+1]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    case T_IFNDEF:
+    case T_ELSEIFNDEF:
+        cond_state = !check_defd( AsmBuffer[i+1]->string_ptr )  ? ACTIVE : LOOKING_FOR_TRUE_COND;
+        break;
+    default:
+        cond_state = DONE;
+        break;
+    }
+    return( cond_state );
+}
 
 int conditional_assembly_directive( int i )
 /*****************************************/
 {
-    uint_16         direct;
-    static int_8    falseblocknestlevel = 0;
+    uint_16     direct;
+    if_state    cond_state;
 
     direct = AsmBuffer[i]->u.value;
 
-    switch( CurState ) {
-    case ACTIVE:
-        switch( direct ) {
-        case T_IF:
-        case T_IF1:
-        case T_IF2:
-        case T_IFE:
-        case T_IFDEF:
-        case T_IFNDEF:
-        case T_IFB:
-        case T_IFNB:
-        case T_IFDIF:
-        case T_IFDIFI:
-        case T_IFIDN:
-        case T_IFIDNI:
+    switch( direct ) {
+    case T_IF:
+    case T_IF1:
+    case T_IF2:
+    case T_IFB:
+    case T_IFDEF:
+    case T_IFDIF:
+    case T_IFDIFI:
+    case T_IFE:
+    case T_IFIDN:
+    case T_IFIDNI:
+    case T_IFNB:
+    case T_IFNDEF:
+        cond_state = get_cond_state( i );
+        if( CurState == ACTIVE ) {
             NestLevel++;
             if( NestLevel > MAX_NESTING ) {
                 /*fixme */
                 AsmError( NESTING_LEVEL_TOO_DEEP );
                 return( ERROR );
             }
-        }
-        break;
-    case LOOKING_FOR_TRUE_COND:
-        if( direct == T_ELSE || direct == T_ELSEIF ) {
-            if( falseblocknestlevel == 0 ) {
-                break;
-            }
-        }
-        /* fall through for other cases */
-    case DONE:
-        switch( direct ) {
-        case T_IF:
-        case T_IF1:
-        case T_IF2:
-        case T_IFE:
-        case T_IFDEF:
-        case T_IFNDEF:
-        case T_IFB:
-        case T_IFNB:
-        case T_IFDIF:
-        case T_IFDIFI:
-        case T_IFIDN:
-        case T_IFIDNI:
+            CurState = cond_state;
+        } else {
             falseblocknestlevel++;
-            return( NOT_ERROR );
-            break;
-        case T_ENDIF:
-            if( falseblocknestlevel > 0 ) {
-                falseblocknestlevel--;
-                return( NOT_ERROR );
-            }
-            break;
-        case T_ELSE:
-        case T_ELSEIF:
-            return( NOT_ERROR );
-        default:
-            /**/myassert( 0 );
-            return( ERROR );
         }
-    }
-
-    /* expand any constants if necessary */
-    switch( direct ) {
-    case T_IF:
-    case T_IFE:
+        break;
     case T_ELSEIF:
-    case T_IFDIF:
-    case T_IFDIFI:
-    case T_IFIDN:
-    case T_IFIDNI:
-        ExpandTheWorld( i+1, FALSE, TRUE );
-    }
-
-    switch( direct ) {
-    case T_IF1:
-        CurState = Parse_Pass == PASS_1 ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IF2:
-        CurState = Parse_Pass == PASS_1 ? LOOKING_FOR_TRUE_COND : ACTIVE;
-        break;
-    case T_IF:
-        CurState = ( AsmBuffer[i+1]->token == T_NUM && AsmBuffer[i+1]->u.value )
-                   ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFE:
-        CurState = ( AsmBuffer[i+1]->token == T_NUM && !AsmBuffer[i+1]->u.value )
-                   ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFDEF:
-        CurState = check_defd( AsmBuffer[i+1]->string_ptr )  ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFNDEF:
-        CurState = !check_defd( AsmBuffer[i+1]->string_ptr )  ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFB:
-        CurState = check_blank( AsmBuffer[i+1]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFNB:
-        CurState = !check_blank( AsmBuffer[i+1]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFDIF:
-        CurState = check_dif( TRUE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFDIFI:
-        CurState = check_dif( FALSE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFIDN:
-        CurState = !check_dif( TRUE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
-        break;
-    case T_IFIDNI:
-        CurState = !check_dif( FALSE, AsmBuffer[i+1]->string_ptr, AsmBuffer[i+3]->string_ptr ) ? ACTIVE : LOOKING_FOR_TRUE_COND;
+    case T_ELSEIF1:
+    case T_ELSEIF2:
+    case T_ELSEIFB:
+    case T_ELSEIFDEF:
+    case T_ELSEIFDIF:
+    case T_ELSEIFDIFI:
+    case T_ELSEIFE:
+    case T_ELSEIFIDN:
+    case T_ELSEIFIDNI:
+    case T_ELSEIFNB:
+    case T_ELSEIFNDEF:
+        cond_state = get_cond_state( i );
+        if( CurState == ACTIVE ) {
+            CurState = DONE;
+        } else if( CurState == LOOKING_FOR_TRUE_COND ) {
+            if( falseblocknestlevel == 0 ) {
+                CurState = cond_state;
+            }
+        }
         break;
     case T_ELSE:
-    case T_ELSEIF:
-        switch( CurState ) {
-        case ACTIVE:
+        if( CurState == ACTIVE ) {
             CurState = DONE;
-            break;
-        case LOOKING_FOR_TRUE_COND:
-            if( direct == T_ELSE ) {
+        } else if( CurState == LOOKING_FOR_TRUE_COND ) {
+            if( falseblocknestlevel == 0 ) {
                 CurState = ACTIVE;
-            } else {
-                CurState = ( AsmBuffer[i+1]->token == T_NUM &&
-                             AsmBuffer[i+1]->u.value )
-                           ? ACTIVE : LOOKING_FOR_TRUE_COND;
             }
-            break;
         }
         break;
     case T_ENDIF:
-        NestLevel--;
-        if( NestLevel < 0 ) {
-            NestLevel = 0;
-            AsmError( BLOCK_NESTING_ERROR );
-            return( ERROR );
+        if( CurState == ACTIVE || falseblocknestlevel == 0 ) {
+            NestLevel--;
+            if( NestLevel < 0 ) {
+                NestLevel = 0;
+                AsmError( BLOCK_NESTING_ERROR );
+                return( ERROR );
+            }
+            CurState = ACTIVE;
+        } else {
+            falseblocknestlevel--;
         }
-        CurState = ACTIVE;
+        break;
+    default:
+        /**/myassert( 0 );
+        return( ERROR );
     }
     return( NOT_ERROR );
-}
-
-void CheckForOpenConditionals( void )
-{
-    if( NestLevel > 0 ) {
-        AsmErr( UNCLOSED_CONDITIONALS, NestLevel );
-    }
 }

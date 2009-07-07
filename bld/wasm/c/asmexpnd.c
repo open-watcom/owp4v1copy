@@ -201,8 +201,11 @@ int ExpandProcString( int index )
                 switch( AsmBuffer[index-1]->u.value ) {
                 case T_IFDEF:
                 case T_IFNDEF:
-                    /* do NOT expand strings in IFDEF and IFNDEF ins.
-                     * we want to know if they are defined, NOT their value
+                case T_ELSEIFDEF:
+                case T_ELSEIFNDEF:
+                    /* do NOT expand strings in IFDEF,IFNDEF,ELSEIFDEF and
+                     * ELSEIFNDEF directive.
+                     * We want to know if they are defined, NOT their value
                      */
                     return( NOT_ERROR );
                 }

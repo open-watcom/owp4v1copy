@@ -120,18 +120,6 @@ extern File_Info        AsmFiles;   // files information
 #define OBJ_EXT "obj"
 #endif
 
-/* stuff used by condasm.c,
- * here since we need it so we can tell asmeval where to go if
- * we are in the middle of a false ifdef
- */
-
-enum if_state {
-    ACTIVE,                 /* current IF cond is true */
-    LOOKING_FOR_TRUE_COND,  /* current IF cond is false, looking for elseif */
-    DONE                    /* done TRUE section of current if, just nuke
-                               everything until we see an endif */
-};
-
 enum fpe {
     DO_FP_EMULATION,
     NO_FP_EMULATION,

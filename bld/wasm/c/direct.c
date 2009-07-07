@@ -3583,7 +3583,13 @@ int ProcEnd( int i )
     }
 }
 
-void CheckProcOpen( void )
+void ProcStackInit( void )
+/************************/
+{
+    ProcStack = NULL;
+}
+
+void ProcStackFini( void )
 /************************/
 {
     while( CurrProc != NULL ) {

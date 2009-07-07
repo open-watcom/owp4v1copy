@@ -47,6 +47,7 @@
 #include "asmlabel.h"
 #include "asminput.h"
 #include "asmfixup.h"
+#include "condasm.h"
 
 #include "myassert.h"
 
@@ -62,10 +63,8 @@
 
 #define MAX_REC_LENGTH 0xFFFEL
 
-extern void             CheckForOpenConditionals( void );
 extern void             set_cpu_parameters( void );
 extern void             set_fpu_parameters( void );
-extern void             CheckProcOpen( void );
 extern void             CmdlParamsInit( void );
 extern void             PrintStats( void );
 
@@ -1135,6 +1134,8 @@ static unsigned long OnePass( char *string )
 {
     CmdlParamsInit();
 
+    IfCondInit();
+    ProcStackInit();
     AssumeInit();
 
     EndDirectiveFound = FALSE;
@@ -1153,7 +1154,8 @@ static unsigned long OnePass( char *string )
             break;
         }
     }
-    CheckProcOpen();
+    ProcStackFini();
+    IfCondFini();
     return( PassTotal );
 }
 
@@ -1196,7 +1198,6 @@ void WriteObjModule( void )
     }
     while( PopLineQueue() ) {
     }
-    CheckForOpenConditionals();
 #ifdef PRIVATE_PROC_INFO
     put_private_proc_in_public_table();
 #else
