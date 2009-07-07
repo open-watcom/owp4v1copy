@@ -80,7 +80,6 @@ _WMRTLINK double _IF_datan2( double y, double x )
     sgnx = __sgn( x );
     if( sgny == 0 ) {               /* case 1 */
         if( sgnx == 0 ) {
-//                x = _matherr( DOMAIN, "atan2", &y, &x, 0.0 );
             x = __math2err( FUNC_ATAN2 | M_DOMAIN | V_ZERO, &y, &x );
         } else if( sgnx < 0 ) {
             x = Pi;

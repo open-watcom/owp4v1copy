@@ -64,10 +64,8 @@ _WMRTLINK double _IF_dpow( double x, double y )
     sign = __sgn( x );
     if( sign == 0 ) {
         if( y < 0.0 ) {
-//            x = _matherr( DOMAIN, "pow", &x, &y, HUGE_VAL );
             x = __math2err( FUNC_POW | M_DOMAIN | V_HUGEVAL, &x, &y );
         } else if( y == 0.0 ) {
-//            x = _matherr( DOMAIN, "pow", &x, &y, 1.0 );
             x = __math2err( FUNC_POW | M_DOMAIN | V_ONE, &x, &y );
         }
     } else {
@@ -75,7 +73,6 @@ _WMRTLINK double _IF_dpow( double x, double y )
         exponent = z;
         if( sign < 0 ) {
             if( fraction != 0.0 ) {     /* negative ** fraction */
-//                return( _matherr( DOMAIN, "pow", &x, &y, 0.0 ) );
                 return( __math2err( FUNC_POW | M_DOMAIN | V_ZERO, &x, &y ) );
             }
             x = -x;
@@ -90,8 +87,6 @@ _WMRTLINK double _IF_dpow( double x, double y )
                 __set_ERANGE();
                 x = 0.0;                    /* - - set result to 0 */
             } else {                        /* - else */
-//                z = (sign > 0) ? HUGE_VAL : - HUGE_VAL;
-//                x = _matherr( OVERFLOW, "pow", &x, &y, z );
                 if( sign > 0 ) {
                     err_code = FUNC_POW | M_OVERFLOW | V_HUGEVAL;
                 } else {

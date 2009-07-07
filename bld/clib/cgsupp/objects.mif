@@ -6,10 +6,6 @@
 !inject 7fu8386.obj                  g32
 !inject 7u8f086.obj              g16                                        w16
 !inject 7u8f386.obj                  g32
-!inject amodf086.obj             g16                                        w16
-!inject amodf386.obj                 g32
-!inject bufld086.obj             g16                                        w16
-!inject bufld386.obj                 g32
 !inject div386.obj                   g32
 !inject fdc086.obj               g16                                        w16
 !inject fdc386.obj                   g32
@@ -24,8 +20,6 @@
 !inject fdmth386.obj                 g32
 !inject fdn086.obj               g16                                        w16
 !inject fdn386.obj                   g32
-!inject fprem086.obj             g16                                        w16
-!inject fprem386.obj                 g32
 !inject fsc086.obj               g16                                        w16
 !inject fsc386.obj                   g32
 !inject fsfd086.obj              g16                                        w16

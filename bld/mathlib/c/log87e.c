@@ -36,6 +36,7 @@
 #include "mathcode.h"
 #include "mathlib.h"
 
+
 double __log87_err( double x, unsigned char code )
 /************************************************/
 {

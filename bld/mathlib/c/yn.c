@@ -42,7 +42,6 @@ _WMRTLINK double yn( int n, double x )
     double  by, bym, byp, tox;
 
     if( x < 0.0 ) {
-//            return _matherr( DOMAIN, "yn", &x, &x, - HUGE_VAL );
         return __math1err( FUNC_YN | M_DOMAIN | V_NEG_HUGEVAL, &x );
     }
     bym = y0( x );

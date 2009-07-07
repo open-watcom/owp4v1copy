@@ -76,7 +76,6 @@ _WMRTLINK double y0( double x )         /* Bessel function y0(x) */
     double  xx, y, z;
 
     if( x < 0.0 ) {
-//            z = _matherr( DOMAIN, "y0", &x, &x, - HUGE_VAL );
         z = __math1err( FUNC_Y0 | M_DOMAIN | V_NEG_HUGEVAL, &x );
     } else if( x < 8.0 ) {
         y = x * x;

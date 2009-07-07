@@ -46,7 +46,6 @@ _WMRTLINK double log2( double x )
 /*******************************/
 {
     if( x <= 0.0 ) {
-//        x = _matherr( x == 0.0 ? SING : DOMAIN, "log2", &x, &x, -HUGE_VAL );
         x = __log87_err( x, FUNC_LOG2 );
     } else {
         x =  log(x) * log2_of_e;

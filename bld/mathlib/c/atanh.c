@@ -48,7 +48,6 @@ _WMRTLINK double atanh( double x )
     double  z;
 
     if( fabs(x) >= 1.0 ) {
-//            z = _matherr( DOMAIN, "atanh", &x, &x, -HUGE_VAL );
         z = __math1err( FUNC_ATANH | M_DOMAIN | V_NEG_HUGEVAL, &x );
     } else {
         z = log( PDIV( (1.0 + x), (1.0 - x) ) ) / 2.0;

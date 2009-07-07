@@ -81,13 +81,12 @@ _WMRTLINK double _IF_dexp( double x )
     if( fabs( x ) < 4.445e-16 ) {       /* if argument is too small */
         x = 1.0;
     } else if( fabs( x ) > 709.782712893384 ) {/* if argument is too large */
-        if( x < 0.0 ) {                 /* - if argument < 0 */
+        if( x < 0.0 ) {
             /* FPStatus = FPS_UNDERFLOW;   - - underflow */
             x = 0.0;                    /* - - set result to 0 */
-        } else {                        /* - else */
-//            x = _matherr( OVERFLOW, "exp", &x, &x, HUGE_VAL );
+        } else {
             x = __math1err( FUNC_EXP | M_OVERFLOW | V_HUGEVAL, &x );
-        }                               /* - endif */
+        }
 #if defined(_M_IX86)
     } else if( _RWD_real87 ) {
         x = _exp87( x );

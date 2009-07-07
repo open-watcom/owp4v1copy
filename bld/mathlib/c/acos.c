@@ -57,7 +57,6 @@ _WMRTLINK double _IF_dacos( double x )
 
     z =  1.0 - x * x;
     if( z < 0.0 ) {
-//            z = _matherr( DOMAIN, "acos", &x, &x, 0.0 );
         z = __math1err( FUNC_ACOS | M_DOMAIN | V_ZERO, &x );
     } else if( z == 0.0 ) {
         if( x < 0.0 ) {

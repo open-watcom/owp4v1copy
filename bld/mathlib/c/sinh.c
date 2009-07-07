@@ -57,8 +57,6 @@ _WMRTLINK double _IF_dsinh( double x )
 
     z = fabs( x );
     if( z > 709.782712893384 ) {            /* if argument is too large */
-//            z = ( x < 0.0 ) ? - HUGE_VAL : HUGE_VAL;
-//            z = _matherr( OVERFLOW, "sinh", &x, &x, z );
         if( x < 0.0 ) {
             err_code = FUNC_SINH | M_OVERFLOW | V_NEG_HUGEVAL;
         } else {
