@@ -32,11 +32,7 @@
 #include "variety.h"
 #include <math.h>
 #include <ifprag.h>
-
-extern  void __fprem( double x, double y, int *quot, double *rem );
-#if defined(_M_IX86)
-  #pragma aux  __fprem "*_" parm [];
-#endif
+#include "mathlib.h"
 
 /*  The fmod function computes the floating-point remainder of x/y.
     It returns x if y is 0, otherwise it returns the value f that has

@@ -35,6 +35,7 @@
 #include "ifprag.h"
 #include "mathcode.h"
 #include "rtdata.h"
+#include "mathlib.h"
 
 
 _WMRTLINK float _IF_log( float x )
@@ -48,15 +49,6 @@ _WMRTLINK double (log)( double x )
 {
     return( _IF_dlog( x ) );
 }
-
-#if defined(_M_IX86)
-  extern        double  _log87(double);
-  #if defined(__386__)
-    #pragma aux _log87  "_*" parm [edx eax] value [edx eax];
-  #else
-    #pragma aux _log87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
-  #endif
-#endif
 
 extern  double  _EvalPoly( double, const double *, int );
 

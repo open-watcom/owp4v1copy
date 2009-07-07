@@ -31,10 +31,11 @@
 
 #include "variety.h"
 #include <math.h>
+#include "mathlib.h"
 
 
-_WMRTLINK int __sgn( double x )
-/*****************************/
+int __sgn( double x )
+/*******************/
 {
     if( x == 0.0 )
         return( 0 );

@@ -37,26 +37,12 @@
 #include "ifprag.h"
 #include "mathcode.h"
 #include "rtdata.h"
+#include "mathlib.h"
 
 #define PI              3.14159265358979323846
 #define PIby2   (PI/2)
 #define PIby4   (PI/4)
 
-extern  double  _cos87(double);
-extern  double  _sin87(double);
-extern  double  _tan87(double);
-extern  void    __fprem( double, double, int *, double * );
-#if defined(__386__)
-#pragma aux     _cos87  "_*" parm [edx eax] value [edx eax];
-#pragma aux     _sin87  "_*" parm [edx eax] value [edx eax];
-#pragma aux     _tan87  "_*" parm [edx eax] value [edx eax];
-#pragma aux     __fprem "*_" parm [];
-#elif defined( _M_I86 )
-#pragma aux     _cos87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
-#pragma aux     _sin87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
-#pragma aux     _tan87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
-#pragma aux     __fprem "*_" parm [];
-#endif
 
 extern  double  _EvalPoly( double, const double *, int );
 extern  double  _OddPoly( double, const double *, int );
@@ -89,7 +75,7 @@ static const double _cospoly[] = {
 static const int Degree[]    = { 0, 1, 2, 3, 4, 4, 5, 5, 6 };
 
 
-double __sincos( double x, int flag )
+static double __sincos( double x, int flag )
 {
     int     i;
     int     exponent;
@@ -201,11 +187,11 @@ _WMRTLINK double _IF_dsin( double x )
 /************************/
 {
 #if defined(_M_IX86)
-    if( _RWD_real87 ) return( _sin87(x) );
+    if( _RWD_real87 )
+        return( _sin87(x) );
 #endif
     return( __sincos( x, 0 ) );
 }
-
 
 
 
@@ -225,11 +211,11 @@ _WMRTLINK double _IF_dcos( double x )
 /***********************************/
 {
 #if defined(_M_IX86)
-    if( _RWD_real87 ) return( _cos87(x) );
+    if( _RWD_real87 )
+        return( _cos87(x) );
 #endif
     return( __sincos( x, 2 ) );
 }
-
 
 
 
@@ -249,7 +235,8 @@ _WMRTLINK double _IF_dtan( double x )
 /***********************************/
 {
 #if defined(_M_IX86)
-    if( _RWD_real87 ) return( _tan87(x) );
+    if( _RWD_real87 )
+        return( _tan87(x) );
 #endif
     return( __sincos( x, 1 ) );
 }

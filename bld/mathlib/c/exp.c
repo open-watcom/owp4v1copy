@@ -35,17 +35,8 @@
 #include "ifprag.h"
 #include "mathcode.h"
 #include "rtdata.h"
+#include "mathlib.h"
 
-#if defined(_M_IX86)
-  extern        double  _exp87( double );
-  #if defined(__386__)
-    #pragma aux _exp87  "_*" parm [edx eax] value [edx eax];
-  #else
-    #pragma aux _exp87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
-  #endif
-#endif
-
-extern  int     __sgn( double );
 
 #define log2e           1.4426950408889633
 #define const0          20.813771196523035

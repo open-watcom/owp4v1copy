@@ -40,7 +40,6 @@
 
 _WMRTLINK extern double __math1err( unsigned int, double *arg1 );
 _WMRTLINK extern double __math2err( unsigned int, double *arg1, double *arg2 );
-_WMRTLINK extern double __log87_err( double, unsigned int );
 
 #ifndef __math_func__
  #define __math_func__(code,name)  code

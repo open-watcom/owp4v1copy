@@ -35,18 +35,7 @@
 #include "ifprag.h"
 #include "mathcode.h"
 #include "rtdata.h"
-
-#if defined(_M_IX86)
-  extern        double  __sqrt87(double);
-  extern        double  __sqrtd(double);
-  #if defined(__386__)
-    #pragma aux __sqrt87  "*" parm [edx eax] value [edx eax];
-    #pragma aux __sqrtd "*" parm [edx eax] value [edx eax];
-  #else
-    #pragma aux __sqrt87  "*" parm [ax bx cx dx] value [ax bx cx dx];
-    #pragma aux __sqrtd "*" parm [ax bx cx dx] value [ax bx cx dx];
-  #endif
-#endif
+#include "mathlib.h"
 
 
 _WMRTLINK float _IF_sqrt( float x )

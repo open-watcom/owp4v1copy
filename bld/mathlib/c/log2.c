@@ -33,6 +33,7 @@
 #include <math.h>
 #include "mathcode.h"
 #include "ifprag.h"
+#include "mathlib.h"
 
 #define log2_of_e    1.44269504888963407
 

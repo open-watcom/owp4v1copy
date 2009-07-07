@@ -37,8 +37,7 @@
 #include <limits.h>
 #include "ifprag.h"
 #include "mathcode.h"
-
-extern  int     __sgn(double);
+#include "mathlib.h"
 
 
 _WMRTLINK float _IF_pow( float x, float y )

@@ -97,7 +97,6 @@ _WMRTLINK double __log2( double x );
 _WMRTLINK long _IF_ipow( long base, long power );
 _WMRTLINK extern float _IF_powi( float, long );
 _WMRTLINK extern double _IF_dpowi( double, long );
-double __sincos( double x, int flag );
 //_WMRTLINK double _IF_PowRI( double base, intstar4 power );
 //_WMRTLINK intstar4 _IF_powii( intstar4 base, intstar4 power );
 

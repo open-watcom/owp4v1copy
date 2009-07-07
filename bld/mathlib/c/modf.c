@@ -31,13 +31,8 @@
 
 #include "variety.h"
 #include <math.h>
+#include "mathlib.h"
 
-extern  void    _ModF( double _WCNEAR *x, double _WCNEAR *ipart );
-#if defined(__386__)
-  #pragma aux     _ModF "_*" parm caller [eax] [edx];
-#elif defined( _M_I86 )
-  #pragma aux     _ModF "_*" parm caller [ax] [dx];
-#endif
 
 _WMRTLINK double modf( double x, double *iptr )
 /*********************************************/

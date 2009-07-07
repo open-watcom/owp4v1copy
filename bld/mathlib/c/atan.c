@@ -47,6 +47,7 @@
 #include <ifprag.h>
 #include "rtdata.h"
 #include "pdiv.h"
+#include "mathlib.h"
 
 #define FALSE           0
 #define TRUE            1
@@ -56,16 +57,6 @@
 #define sqrt3m1         0.73205080756887729353
 
 
-#if defined(_M_IX86)
-  extern        double  _atan87(double);
-  #if defined(__386__)
-    #pragma aux _atan87  "_*" parm [edx eax] value [edx eax];
-  #else
-    #pragma aux _atan87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
-  #endif
-#endif
-
-extern  int             __sgn(double);   /* get sign of x */
 extern  double          _OddPoly(double, const double *, int);
 
 
@@ -103,7 +94,8 @@ _WMRTLINK double _IF_datan( double x )
     double  tmp;
 
 #if defined(_M_IX86)
-    if( _RWD_real87 ) return( _atan87(x) );
+    if( _RWD_real87 )
+        return( _atan87(x) );
 #endif
     add_piby2 = FALSE;
     add_piby6 = FALSE;

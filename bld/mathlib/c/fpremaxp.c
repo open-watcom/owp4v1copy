@@ -35,6 +35,7 @@
 
 #include "variety.h"
 #include "xfloat.h"
+#include "mathlib.h"
 
 void __fprem( double x, double y, int *quot, double *rem )
 {

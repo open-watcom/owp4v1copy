@@ -34,15 +34,17 @@
 #include <stddef.h>
 #include <math.h>
 #include "mathcode.h"
+#include "mathlib.h"
 
-double __log87_err( double x, unsigned int code )
-/***********************************************/
+double __log87_err( double x, unsigned char code )
+/************************************************/
 {
-    code &= FUNC_MASK;
+    unsigned int    err_code;
+
     if( code != FUNC_ACOSH  &&  x == 0.0 ) {
-        code |= M_SING | V_NEG_HUGEVAL;
+        err_code = code | M_SING | V_NEG_HUGEVAL;
     } else {
-        code |= M_DOMAIN | V_NEG_HUGEVAL;
+        err_code = code | M_DOMAIN | V_NEG_HUGEVAL;
     }
-    return( __math1err( code, &x ) );
+    return( __math1err( err_code, &x ) );
 }

@@ -54,8 +54,7 @@ otherwise: compute z = atan( y/x )
 #include "ifprag.h"
 #include "mathcode.h"
 #include "pdiv.h"
-
-extern  int             __sgn(double);   /* determine sgn(x) */
+#include "mathlib.h"
 
 
 _WMRTLINK float _IF_atan2( float y, float x )

@@ -32,8 +32,7 @@
 #include "variety.h"
 #include <float.h>
 #include "xfloat.h"
-
-extern void __fprem( double x, double y, int *quot, double *rem );
+#include "mathlib.h"
 
 _WMRTLINK double modf( double x, double *iptr )
 {

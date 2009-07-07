@@ -34,10 +34,11 @@
 #include <stddef.h>
 #include <math.h>
 #include "mathcode.h"
+#include "mathlib.h"
 
 
-_WMRTLINK double __math87_err( double x, unsigned char code )
-/***********************************************************/
+double __math87_err( double x, unsigned char code )
+/*************************************************/
 {
     unsigned int  err_code;
 
@@ -47,11 +48,15 @@ _WMRTLINK double __math87_err( double x, unsigned char code )
     case FUNC_SQRT:
         return( __math1err( code | M_DOMAIN | V_ZERO, &x ) );
     case FUNC_EXP:
-        if( x < 0.0 ) return( 0.0 );
+        if( x < 0.0 ) {
+            return( 0.0 );
+        }
     }
     err_code = code | M_OVERFLOW | V_HUGEVAL;
     if( code == FUNC_SINH ) {
-        if( x < 0.0 )  err_code = code | M_OVERFLOW | V_NEG_HUGEVAL;
+        if( x < 0.0 ) {
+            err_code = code | M_OVERFLOW | V_NEG_HUGEVAL;
+        }
     }
     return( __math1err( err_code, &x ) );
 }
