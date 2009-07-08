@@ -3,6 +3,8 @@
 # the "real" symbol.
 
 # file  actual name     aliased name        systems
+#                                       d16c d16i d32c d32i n32c n32i wnc wni axp ntp op lpc lmp
+#===============================================================================================
 wtof__  _wtof           _watof          d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 _gcvt_  gcvt            _gcvt           d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 __gcvt  gcvt            __gcvt          d16c d16i d32c d32i n32c n32i wnc wni axp ntp op

@@ -18,8 +18,8 @@ $(libname).lib : $(objs) $(libs) $(__MAKEFILES__)
     @rm -f tmp4.def
 !endif
 !ifdef runtime_library_source
-    if exist 386sqrt.obj $(librarian) $(lib_flags) $^@ -+386sqrt.obj
-    if exist e86sqrt.obj $(librarian) $(lib_flags) $^@ -+e86sqrt.obj
+    if exist sqrt386.obj $(librarian) $(lib_flags) $^@ -+sqrt386.obj
+    if exist sqrt086.obj $(librarian) $(lib_flags) $^@ -+sqrt086.obj
 !endif
 
 .c.obj : .autodepend
