@@ -527,6 +527,7 @@ typedef struct text_chars {
             uint32_t        x_address;
             uint32_t        width;
             uint16_t        count;
+            uint16_t        length;
             uint8_t     *   text;
 } text_chars;
 

@@ -428,16 +428,20 @@ void format_error( void )
  * This function inserts the spaces, if any, needed to move the print head
  * from its current position to its desired position into the output buffer.
  *
+ * Parameter:
+ *      count contains the number of spaces to emit.
  * Global Modified:
  *      current_state.x_address is set equal to desired_state.x_address.
+ *
+ * Note:
+ *      The calling function is responsible for detecting and handling
+ *          cases in which the desired horizontal space cannot be treated
+ *          as an exact multiple of the width of a space character.
  */
 
-static void output_spaces( void )
+static void output_spaces( uint32_t count )
 {
     int     i;
-    size_t  count;
-
-    count = (size_t) (desired_state.x_address - current_state.x_address);
 
     if( staging.length < count ) {
         staging.text = (uint8_t *) mem_realloc( staging.text, count );
@@ -466,8 +470,8 @@ static void output_spaces( void )
 
 static void post_text_output( void )
 {
-    char    shwd_suffix[] = ") shwd ";
-    char    sd_suffix[] = ") sd ";
+    char    shwd_suffix[] = ") shwd";
+    char    sd_suffix[] = ") sd";
     size_t  ps_suffix_size;
 
     if( ps_device ) {
@@ -589,9 +593,20 @@ static void * df_dotab( void )
     if( has_aa_block ) {
         fb_absoluteaddress();
     } else {
+
+        /* Spaces cannot be emitted "backwards". */
+
+        if( current_state.x_address > desired_state.x_address) {
+            out_msg( "Cannot move backwards within a text line!\n" );
+            err_count++;
+            g_suicide();
+        }
+
+        tab_width = desired_state.x_address - current_state.x_address;
         if( !text_out_open ) pre_text_output();
-        output_spaces();
+        output_spaces( tab_width / wgml_fonts[active_font].spc_width );
         if( text_out_open ) post_text_output();
+        tab_width = 0;
     }
 
     instance--;
@@ -2260,7 +2275,7 @@ static void fb_font_switch( void )
     do_now = (from_font->font_switch != to_font->font_switch);
 
     /* font_switch will only be used if the "from" and "to" fonts both
-     * use the same :FONTSWITCH block.
+     * use the same :FONTSWITCH block (do_now is false here in that case).
      */
 
     if( do_now ) {
@@ -2270,17 +2285,17 @@ static void fb_font_switch( void )
     }
 
     /* The second test: given only one :FONTSWITCH block, is do_always true
-     * or false?
+     * or false? Note: that :FONTSWITCH block could be NULL.
      */
 
-    if( !do_now ) do_now = font_switch->do_always;
+    if( !do_now && (font_switch != NULL) ) do_now = font_switch->do_always;
 
-    /* The third test: evaluate the :FONTSWITCH block as described
-     * in the Wiki. The trick here, of course, is to ensure that, once
-     * set to "true", do_now is never reset to "false".
+    /* The third test: evaluate the :FONTSWITCH block (if it exits) as
+     * described in the Wiki. The trick here, of course, is to ensure that,
+     * once set to "true", do_now is never reset to "false".
      */
 
-    if( !do_now ) {
+    if( !do_now && (font_switch != NULL) ) {
         if( font_switch->default_width_flag ) {
 
             /* The default width is a numeric. */
@@ -2417,6 +2432,10 @@ static void fb_font_switch( void )
         }
     }
 
+    /* This ensures that switches from the new font will be detected. */
+
+    current_state.font_number = desired_state.font_number;
+
     return;
 }
 
@@ -2448,12 +2467,21 @@ static void fb_initial_horizontal_positioning( void )
     if( has_aa_block ) {
         fb_absoluteaddress();
     } else {
+
+        /* Spaces cannot be emitted and tabs cannot be done "backwards". */
+
+        if( current_state.x_address > desired_state.x_address) {
+            out_msg( "Cannot move backwards within a text line!\n" );
+            err_count++;
+            g_suicide();
+        }
+
         tab_width = desired_state.x_address - current_state.x_address;
         if( (bin_driver->htab.text != 0) && (tab_width > 8) ) {
             fb_htab();
         } else {
             if( !text_out_open ) pre_text_output();
-            output_spaces();
+            output_spaces( tab_width / wgml_fonts[active_font].spc_width );
             if( text_out_open ) post_text_output();
         }
         tab_width = 0;
@@ -2671,7 +2699,8 @@ static void fb_normal_vertical_positioning( void )
          * wgml 4.0 are possible.
          */
 
-        x_address = bin_device->x_start;
+        current_state.x_address = bin_device->x_start;
+        x_address = current_state.x_address;
 
         if( bin_driver->y_positive == 0x00 ) {
 
