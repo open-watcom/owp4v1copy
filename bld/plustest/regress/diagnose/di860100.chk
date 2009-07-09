@@ -1065,22 +1065,22 @@ File: source\diag0164.c
 (31,9): Error! E166: cannot convert right pointer to type of left operand
   source conversion type is 'E1 *'
   target conversion type is 'E2 *'
-(32,7): Warning! W737: implicit conversion of pointers to integral types of same size
+(32,7): Error! E737: implicit conversion of pointers to integral types of same size
   source conversion type is 'unsigned char *'
   target conversion type is 'char *'
-(33,7): Warning! W737: implicit conversion of pointers to integral types of same size
+(33,7): Error! E737: implicit conversion of pointers to integral types of same size
   source conversion type is 'char *'
   target conversion type is 'unsigned char *'
-(34,7): Warning! W737: implicit conversion of pointers to integral types of same size
+(34,7): Error! E737: implicit conversion of pointers to integral types of same size
   source conversion type is 'signed char *'
   target conversion type is 'char *'
-(35,7): Warning! W737: implicit conversion of pointers to integral types of same size
+(35,7): Error! E737: implicit conversion of pointers to integral types of same size
   source conversion type is 'signed char *'
   target conversion type is 'unsigned char *'
-(36,7): Warning! W737: implicit conversion of pointers to integral types of same size
+(36,7): Error! E737: implicit conversion of pointers to integral types of same size
   source conversion type is 'char *'
   target conversion type is 'signed char *'
-(37,7): Warning! W737: implicit conversion of pointers to integral types of same size
+(37,7): Error! E737: implicit conversion of pointers to integral types of same size
   source conversion type is 'unsigned char *'
   target conversion type is 'signed char *'
 (38,9): Error! E166: cannot convert right pointer to type of left operand
@@ -1126,6 +1126,24 @@ File: source\diag0164.c
   definition: 'int A::z( void )'
 (61,9): Error! E562: cannot take address of non-static member function
   definition: 'int A::z( void )'
+(77,9): Error! E797: static_cast cannot be used with the pointer type specified
+  source conversion type is 'unsigned char *'
+  target conversion type is 'char *'
+(78,9): Error! E797: static_cast cannot be used with the pointer type specified
+  source conversion type is 'char *'
+  target conversion type is 'unsigned char *'
+(79,9): Error! E797: static_cast cannot be used with the pointer type specified
+  source conversion type is 'signed char *'
+  target conversion type is 'char *'
+(80,9): Error! E797: static_cast cannot be used with the pointer type specified
+  source conversion type is 'signed char *'
+  target conversion type is 'unsigned char *'
+(81,9): Error! E797: static_cast cannot be used with the pointer type specified
+  source conversion type is 'char *'
+  target conversion type is 'signed char *'
+(82,9): Error! E797: static_cast cannot be used with the pointer type specified
+  source conversion type is 'unsigned char *'
+  target conversion type is 'signed char *'
 File: source\diag0165.c
 (41,19): Error! E340: cannot construct object from argument(s)
   source conversion type is 'T'
