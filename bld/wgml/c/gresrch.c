@@ -27,45 +27,46 @@
 * Description:  utility functions for wgml research related
 *                                          i.e. non production formatting
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
-#include "wgml.h"
+
 #include <stdarg.h>
- 
- 
+#include "wgml.h"
+#include "gvars.h"
+
+
 typedef struct taglist {
     struct  taglist *   nxt;
     long                count;
     char                tagname[16];
 } taglist;
- 
+
 static  taglist *   tags = NULL;        // list of found gml tags
 static  taglist *   scrkws = NULL;      // list of found scr keywords
- 
- 
- 
+
+
+
 void printf_research( char * msg, ... )
 {
     va_list args;
- 
+
     va_start( args, msg );
     vfprintf_s( stdout, msg, args );
     va_end( args );
 }
- 
- 
- 
- 
+
+
+
+
 /***************************************************************************/
 /*  Add and/or count GMLtag                                                */
 /***************************************************************************/
- 
+
 void add_GML_tag_research( char * tag )
 {
     taglist *   wk = tags;
     taglist *   new;
- 
+
     while( wk ) {
         if( !stricmp( tag, wk->tagname ) ) {
             wk->count++;
@@ -88,31 +89,31 @@ void add_GML_tag_research( char * tag )
     strupr( new->tagname );
     new->count = 1;
 }
- 
+
 /***************************************************************************/
 /*  print found GMLtags with usagecount                                    */
 /***************************************************************************/
- 
+
 void    print_GML_tags_research( void )
 {
     taglist *   wk = tags;
- 
+
     printf_research( "\nGML tag / macro list sorted by first occurrence\n\n" );
     while( wk ) {
         printf_research("%6ld  :%s\n", wk->count, wk->tagname );
         wk = wk->nxt;
     }
 }
- 
+
 /***************************************************************************/
 /*  free storage of GMLtaglist                                             */
 /***************************************************************************/
- 
+
 void    free_GML_tags_research( void )
 {
     taglist *   wk = tags;
     taglist *   wk1;
- 
+
     while( wk ) {
         wk1 = wk;
         wk = wk->nxt;
@@ -120,16 +121,16 @@ void    free_GML_tags_research( void )
     }
     tags = NULL;
 }
- 
+
 /***************************************************************************/
 /*  add and/or count SCR keyword                                           */
 /***************************************************************************/
- 
+
 void    add_SCR_tag_research( char * tag )
 {
     taglist *   wk = scrkws;
     taglist *   new;
- 
+
     while( wk ) {
         if( !stricmp( tag, wk->tagname ) ) {
             wk->count++;
@@ -152,15 +153,15 @@ void    add_SCR_tag_research( char * tag )
     strlwr( new->tagname );
     new->count = 1;
 }
- 
+
 /***************************************************************************/
 /*  print found SCR keywords and usage count                               */
 /***************************************************************************/
- 
+
 void    print_SCR_tags_research( void )
 {
     taglist *   wk = scrkws;
- 
+
     printf_research(
         "\nScript controlword / macro list sorted by first occurrence\n\n" );
     while( wk ) {
@@ -168,16 +169,16 @@ void    print_SCR_tags_research( void )
         wk= wk->nxt;
     }
 }
- 
+
 /***************************************************************************/
 /*  free SCR keyword list                                                  */
 /***************************************************************************/
- 
+
 void    free_SCR_tags_research( void )
 {
     taglist *   wk = scrkws;
     taglist *   wk1;
- 
+
     while( wk ) {
         wk1 = wk;
         wk = wk->nxt;
@@ -185,4 +186,27 @@ void    free_SCR_tags_research( void )
     }
     tags = NULL;
 }
- 
+
+#if 0
+// not used for now perhaps later                    TBD
+/***************************************************************************/
+/*  testoutput of words belonging to a line with positional info           */
+/***************************************************************************/
+
+void    test_out_w_line( word_line  * a_line )
+{
+    text_word   *   tw;
+    char            buf[BUF_SIZE];
+
+    tw = a_line->first;
+    out_msg( "\n   y_address:%d\n", a_line->y_address );
+    while( tw != NULL ) {
+        snprintf( buf, buf_size,
+                  "font:%d x:%d-%d width:%d count:%d text:'%.*s'\n",
+                  tw->font_number, tw->x_address, tw->x_address + tw->width,
+                  tw->width, tw->count, tw->count, tw->text );
+        out_msg( buf );
+        tw = tw->next;
+    }
+}
+#endif

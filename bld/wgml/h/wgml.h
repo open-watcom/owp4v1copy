@@ -59,6 +59,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 
 /* wgmlsupp.c                          */
 extern  bool    free_resources( errno_t in_errno );
+extern  void    free_some_mem( void );
 extern  void    g_banner( void );
 // extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( void );
@@ -83,6 +84,12 @@ extern  void        unquote_if_quoted( char * * a, char * * z );
 
 /* gdata.c                              */
 extern  void    init_global_vars( void );
+extern  void    init_proc_flags( void );
+
+
+/* gdeflay.c                            */
+extern  void    init_def_lay( void );
+extern  void    init_def_margins( void );
 
 
 /* gerror.c                             */
@@ -141,9 +148,12 @@ extern  void    process_line( void );
 extern  void    split_input( char * buf, char * split_pos );
 extern  void    split_input_LIFO( char * buf, char * split_pos );
 
-
-/* gproctxt.c                         */
-extern  void    process_text( void );
+#if 0
+/* gproctxt.c              TBD        */
+extern  void    add_text_word_to_pool( void );
+extern  void    do_justify( uint32_t left_margin, uint32_t right_margin );
+extern  void    process_text( char * text, uint8_t font_num );
+#endif
 
 
 /* gresrch.c                          */
@@ -154,6 +164,11 @@ extern  void    add_SCR_tag_research( char * tag );
 extern  void    free_SCR_tags_research( void );
 extern  void    print_SCR_tags_research( void );
 extern  void    printf_research( char * msg, ... );
+// extern  void    test_out_w_line( word_line  * a_line );   TBD
+
+
+/* gsbr.c                             */
+extern  void    scr_process_break( void );
 
 
 /* gscan.c                            */

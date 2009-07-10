@@ -368,7 +368,7 @@ static void     scan_script( void)
                     } else {
                         scan_start = p; // script controlword found, process
                         if( scr_tags[k].cwflags & cw_break ) {
-//                          scr_process_break();    TBD
+                            scr_process_break();
                         }
                         scr_tags[k].tagproc();
                     }
@@ -633,7 +633,7 @@ void    scan_line( void )
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
                 g_info( inf_text_line, scan_start );
             }
-            process_text();
+//          process_text( scan_start, cur_font_num );   TBD
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
         g_info( inf_skip_line );

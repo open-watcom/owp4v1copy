@@ -8,6 +8,7 @@ common_objs =  &
         findfile.obj &
         gargutil.obj &
         gdata.obj    &
+        gdeflay.obj  &
         gdummy.obj   &
         gerror.obj   &
         gerrorxx.obj &
@@ -16,7 +17,7 @@ common_objs =  &
         gmemory.obj  &
         goptions.obj &
         gprocess.obj &
-        gproctxt.obj &
+###     gproctxt.obj &
         gresrch.obj  &
         gscan.obj    &
         gsymvar.obj  &
@@ -53,6 +54,7 @@ gml_objs =  &
 # script control word or function related
 #
 scr_objs =  &
+        gsbr.obj     &
         gscofoju.obj &
         gsdccw.obj   &
         gsetvar.obj  &

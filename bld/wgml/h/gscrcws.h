@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  WGML script control words definition header.
-*               only control words with a riutinename other than scr_dummy
+*               only control words with a routinename other than scr_dummy
 *               are processed so far
 ****************************************************************************/
 
@@ -39,7 +39,7 @@
   pick( "ap",    scr_ap,       0           )// append
   pick( "bd",    scr_dummy,    0           )// bold
   pick( "bi",    scr_dummy,    0           )// bold italic
-  pick( "br",    scr_dummy,    cw_break    )// break
+  pick( "br",    scr_br,       cw_break    )// break
   pick( "bx",    scr_dummy,    cw_break    )// box
   pick( "cc",    scr_dummy,    cw_break    )// conditional column
   pick( "cd",    scr_dummy,    cw_break    )// column definition

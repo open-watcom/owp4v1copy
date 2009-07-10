@@ -220,8 +220,8 @@ static void process_co_ju( bool both , char *cwcurr )
             xx_opt_err( cwcurr, pa );
         }
         break;
-    case 6 :                            // centre or inside valid
-        if( !strnicmp( "CENTRE", pa, 6 ) ) {
+    case 6 :                            // center or inside valid
+        if( !strnicmp( "CENTER", pa, 6 ) || !strnicmp( "CENTRE", pa, 6 ) ) {
             if( both ) {
                 ProcFlags.concat = true;
             }

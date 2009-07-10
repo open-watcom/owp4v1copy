@@ -131,9 +131,9 @@ global  struct GlobalFlags {
 
 
 typedef enum ju_enum {                  // for .ju(stify)
-    ju_off,
+    ju_off,                             // ju_off must have lowest value
+    ju_on,                              // ju_on next
     ju_half,
-    ju_on,
     ju_left,
     ju_right,
     ju_centre,
@@ -196,14 +196,33 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input char for .ti processing
 
-global  text_line   words;              // for constructing output line
-#define max_buflist 100
-global  uint32_t    used_buflist;
-global  uint32_t    unused_buflist;
-global  buf_list    buflist[max_buflist];;
-global  text_chars  text_list;          // for reuse of text_chars
+#if 0
+global word_line    w_line;             // for constructing output line
+global text_word  * word_pool;          // for reuse of text_word  structs
+global word_line    w_line;
 
-global  uint8_t     curr_font_num;      // the font to use for current line
+global  uint8_t     cur_font_num;       // the font to use for current line
+#endif
+
+
+/***************************************************************************/
+/*  some globals which are to be redesigned when the :LAYOUT tag is coded. */
+/*  Defined here so some script control words can be prototyped            */
+/***************************************************************************/
+
+global  uint32_t    g_cur_h_start;
+global  uint32_t    g_cur_v_start;
+global  uint32_t    g_page_bottom;
+global  uint32_t    g_page_left;
+global  uint32_t    g_page_right;
+global  uint32_t    g_page_top;
+
+global  uint32_t    g_cl;               // column length
+global  uint32_t    g_ll;               // line length
+global  uint32_t    g_cd;               // no of columns
+global  uint32_t    g_gutter;           // space between columns
+global  uint32_t    g_offset[9];        // column start offset
+
 
 
 /* Reset so can be reused with other headers. */

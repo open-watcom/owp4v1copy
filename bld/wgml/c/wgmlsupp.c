@@ -28,6 +28,7 @@
 *               into the research programs without including main() from wgml.c
 *                   free_inc_fp()
 *                   free_resources()
+*                   free_some_mem()
 *                   get_line()
 *                   get_macro_line()
 *                   my_exit()
@@ -141,6 +142,73 @@ bool    free_resources( errno_t in_errno )
     else g_err( err_no_handles );
     err_count++;
     return( false );
+}
+
+/***************************************************************************/
+/*  free some buffers                                                      */
+/***************************************************************************/
+
+void    free_some_mem( void )
+{
+
+    if( token_buf != NULL ) {
+        mem_free( token_buf );
+    }
+    if( alt_ext != NULL ) {
+        mem_free( alt_ext );
+    }
+    if( def_ext != NULL ) {
+        mem_free( def_ext );
+    }
+    if( master_fname != NULL ) {
+        mem_free( master_fname );
+    }
+    if( master_fname_attr != NULL ) {
+        mem_free( master_fname_attr );
+    }
+    if( dev_name != NULL ) {
+        mem_free( dev_name );
+    }
+    if( out_file != NULL ) {
+        mem_free( out_file );
+    }
+    if( out_file_attr != NULL ) {
+        mem_free( out_file_attr );
+    }
+    if( global_dict != NULL ) {
+        free_dict( &global_dict );
+    }
+    if( macro_dict != NULL ) {
+        free_macro_dict( &macro_dict );
+    }
+    if( tag_dict != NULL ) {
+        free_tag_dict( &tag_dict );
+    }
+    if( index_dict != NULL ) {
+        free_index_dict( &index_dict );
+    }
+    if( buff2 != NULL ) {
+        mem_free( buff2 );
+    }
+#if 0
+    { // postpone  text_word structure     TBD
+        text_word  *wk;
+        text_word  *w = word_pool;
+
+        while( w != NULL ) {
+           wk = w->next;
+           mem_free( w );
+           w = wk;
+        }
+
+        w =  w_line.first;
+        while( w != NULL ) {
+           wk = w->next;
+           mem_free( w );
+           w = wk;
+        }
+    }
+#endif
 }
 
 

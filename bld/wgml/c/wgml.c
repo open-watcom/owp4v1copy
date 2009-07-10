@@ -359,8 +359,6 @@ static  void    proc_input( char * filename )
         if( inc_level == 0 ) {
             break;                 // we are done (master document not found)
         }
-        //  test
-    /*        fb_position( bin_device->x_start, bin_device->y_start+100 ); */
 
 
         /*******************************************************************/
@@ -461,6 +459,8 @@ static  void    proc_input( char * filename )
             }
         }
     }
+    scr_process_break();                // output last line if any
+
 }
 
 
@@ -504,6 +504,8 @@ static  void    print_stats( clock_t duration_ticks )
 static  void    init_pass( void )
 {
 
+    init_proc_flags();                  // (re)set processing flags
+
     if( pass > 1 ) {
         GlobalFlags.firstpass = 0;
 
@@ -537,78 +539,6 @@ static  void    init_pass( void )
 
 
     init_tag_att();                     // reset last defined GML tag
-
-}
-
-/***************************************************************************/
-/*  free some buffers                                                      */
-/***************************************************************************/
-
-static  void    free_some_mem( void )
-{
-    int     k;
-
-    if( token_buf != NULL ) {
-        mem_free( token_buf );
-    }
-    if( alt_ext != NULL ) {
-        mem_free( alt_ext );
-    }
-    if( def_ext != NULL ) {
-        mem_free( def_ext );
-    }
-    if( master_fname != NULL ) {
-        mem_free( master_fname );
-    }
-    if( master_fname_attr != NULL ) {
-        mem_free( master_fname_attr );
-    }
-    if( dev_name != NULL ) {
-        mem_free( dev_name );
-    }
-    if( out_file != NULL ) {
-        mem_free( out_file );
-    }
-    if( out_file_attr != NULL ) {
-        mem_free( out_file_attr );
-    }
-    if( global_dict != NULL ) {
-        free_dict( &global_dict );
-    }
-    if( macro_dict != NULL ) {
-        free_macro_dict( &macro_dict );
-    }
-    if( tag_dict != NULL ) {
-        free_tag_dict( &tag_dict );
-    }
-    if( index_dict != NULL ) {
-        free_index_dict( &index_dict );
-    }
-    if( buff2 != NULL ) {
-        mem_free( buff2 );
-    }
-
-    for( k = 0; k < max_buflist; k++ ) {
-        if( buflist[k].buf == NULL )  break;
-        mem_free( buflist[k].buf );
-    }
-    {
-        text_chars  *wk;
-        text_chars  *w = text_list.next;
-
-        while( w != NULL ) {
-           wk = w->next;
-           mem_free( w );
-           w = wk;
-        }
-
-        w =  words.first;
-        while( w != NULL ) {
-           wk = w->next;
-           mem_free( w );
-           w = wk;
-        }
-    }
 
 }
 
@@ -673,6 +603,8 @@ int main( int argc, char * argv[] )
 
         set_default_extension( master_fname );// make this extension first choice
 
+        init_def_lay();                 // prototype for default layout
+
         fb_start();                     // START :PAUSE & :INIT processing.
 
         for( pass = 1; pass <= passes; pass++ ) {
@@ -688,6 +620,11 @@ int main( int argc, char * argv[] )
 
             if( GlobalFlags.firstpass == 1) fb_document();// DOCUMENT :PAUSE & :INIT processing.
 
+            init_def_margins();         // every pass ??? TBD
+
+            fb_position( g_cur_h_start, g_cur_v_start );
+
+
 //            g_trmem_prt_list();  // all memory freed if no output from call
             g_info( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
@@ -695,7 +632,32 @@ int main( int argc, char * argv[] )
             proc_input( master_fname );
 
 //            g_trmem_prt_list();       // show allocated memory at pass end
+#if 0
 
+/***************************************************************************/
+/*  following code postponed for later                  TBD                */
+/***************************************************************************/
+
+            if( w_line.first != NULL ) {
+
+                if( GlobalFlags.lastpass && ProcFlags.justify > ju_off ) {
+                    if( GlobalFlags.research ) {
+                        test_out_w_line( &w_line );
+                    }
+                    do_justify( g_page_left, g_page_left + g_cl );
+                    if( GlobalFlags.research ) {
+                        test_out_w_line( &w_line );
+                    }
+                }
+
+                fb_output_textline( &w_line );
+
+                add_text_word_to_pool();
+                w_line.first = NULL;
+                g_cur_h_start = g_page_left;
+
+            }
+#endif
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }

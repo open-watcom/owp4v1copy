@@ -557,14 +557,6 @@ typedef struct opt_font {
 } opt_font;
 
 /***************************************************************************/
-/*  struct used to hold buffers to be reused                               */
-/***************************************************************************/
-typedef struct  buf_list {
-    struct buf_list *   next;           // ptr to next buf_list or NULL
-    char            *   buf;            // ptr to buffer
-} buf_list;
-
-/***************************************************************************/
 /*  message numbers  + severities                                          */
 /***************************************************************************/
 typedef enum msg_ids  {

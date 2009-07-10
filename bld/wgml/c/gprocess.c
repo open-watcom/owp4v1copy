@@ -127,9 +127,10 @@ static  void    split_input_var( char * buf, char * split_pos, char * part2 )
 }
 
 
-/***********************************************************************/
-/*  look for GML tag start character and split line if valid GML tag   */
-/***********************************************************************/
+/*****************************************************    ******************/
+/*  look for GML tag start character and split line if valid GML tag       */
+/*  don't split if blank follows gml_char                                  */
+/***************************************************************************/
 static void split_at_GML_tag( void )
 {
     char    *   p2;
@@ -141,7 +142,8 @@ static void split_at_GML_tag( void )
              && is_id_char( *p2 ); p2++ )
             ;                           // empty
 
-        if( (*p2 == '.') || (*p2 == ' ') ) {// 'good' tag end
+        if( (p2 > pchar + 1) &&
+            ((*p2 == '.') || (*p2 == ' ')) ) {// 'good' tag end
             split_input( buff2, pchar );// split line
             buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
         }

@@ -42,18 +42,10 @@
 
 void init_global_vars( void )
 {
-    int     k;
 
     memset( &GlobalFlags, 0, sizeof( GlobalFlags ) );
     GlobalFlags.wscript = 1;            // (w)script support + warnings
     GlobalFlags.warning = 1;
-    memset( &ProcFlags, 0, sizeof( ProcFlags ) );
-    ProcFlags.blanks_allowed = 1;       // blanks during scanning
-                                        // i.e. .se var  =    7
-                                        // .se var=7  without
-    ProcFlags.concat    = true;         // .co on default
-    ProcFlags.justify   = ju_on;        // .ju on default
-
     try_file_name       = NULL;
 
     master_fname        = NULL;         // Master input file name
@@ -119,13 +111,19 @@ void init_global_vars( void )
     buf_size            = BUF_SIZE;
     buff2               = mem_alloc( buf_size );
 
-    used_buflist        = 0;
-    unused_buflist      = 0;
-    for( k = 0; k < max_buflist; k++ ){
-        buflist[0].buf      = NULL;
-    }
-    words.y_address     = 0;
-    words.first         = NULL;
-    text_list.next      = NULL;
-    curr_font_num       = 0;
+
+}
+
+/***************************************************************************/
+/*  PorcFlags are initialized at each document pass start                  */
+/***************************************************************************/
+
+void init_proc_flags( void )
+{
+    memset( &ProcFlags, 0, sizeof( ProcFlags ) );
+    ProcFlags.blanks_allowed = 1;       // blanks during scanning
+                                        // i.e. .se var  =    7
+                                        // .se var=7  without
+    ProcFlags.concat    = true;         // .co on default
+    ProcFlags.justify   = ju_on;        // .ju on default
 }
