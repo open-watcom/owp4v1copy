@@ -172,7 +172,26 @@ static  char const page2_box[] = {
 #endif // #if 0
  
 /* Local function definitions. */
- 
+
+/* temp test function. */
+
+static uint32_t alt_width( uint8_t * in_text )
+{
+    int         i;
+    uint8_t     temp[2];
+    uint16_t    size;
+    uint32_t    width;
+
+    temp[1] = '\0';
+    width = 0;
+    size = strlen( in_text );
+    for( i = 0; i < size; i++ ) {
+        temp[0] = in_text[i];
+        width += cop_text_width( temp, 1, 0 );
+    }
+    return( width );
+}
+
 /* Function emulate_text_output()
  * This function does the final preparation of the text and outputs it.
  *
@@ -215,7 +234,8 @@ void emulate_text_output( text_phrase * text )
     text_chars  *   save_chars;
     text_line       the_line;
     text_phrase *   cur_phrase;
- 
+    uint8_t         font_number;
+
     /* This looks right, but may turn out to be wrong in wgml. */
  
     if( text == NULL) return;
@@ -226,16 +246,17 @@ void emulate_text_output( text_phrase * text )
     the_line.first = NULL;
     cur_chars = NULL;
     if( text_chars_pool == NULL ) {
-        next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) );
+        next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + 1 );
         next_chars->length = 1;
-        next_chars->text = (uint8_t *) mem_alloc( next_chars->length );
     } else {
         next_chars = text_chars_pool;
         text_chars_pool = text_chars_pool->next;
     }
     cur_phrase = text;
+    font_number = cur_phrase->font_number;
+    if( font_number > wgml_font_cnt ) font_number = 0;
     next_chars->next = NULL;
-    next_chars->font_number = cur_phrase->font_number;
+    next_chars->font_number = font_number;
     next_chars->x_address = cur_h_start;
     next_chars->width = 0;
     next_chars->count = 0;
@@ -265,8 +286,8 @@ void emulate_text_output( text_phrase * text )
                 }
                 if( next_chars->count >= next_chars->length ) {
                     next_chars->length *= 2;
-                    next_chars->text = (uint8_t *) mem_realloc( \
-                                        next_chars->text, next_chars->length );
+                    next_chars = (text_chars *) mem_realloc( next_chars, \
+                                sizeof( text_chars ) + next_chars->length );
                 }
                 next_chars->text[next_chars->count] = the_char;
                 next_chars->count++;
@@ -322,15 +343,14 @@ void emulate_text_output( text_phrase * text )
             /* Get the next text_chars instance. */
  
             if( text_chars_pool == NULL ) {
-                next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) );
+                next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + 1 );
                 next_chars->length = 1;
-                next_chars->text = (uint8_t *) mem_alloc( next_chars->length );
             } else {
                 next_chars = text_chars_pool;
                 text_chars_pool = text_chars_pool->next;
             }
             next_chars->next = NULL;
-            next_chars->font_number = cur_phrase->font_number;
+            next_chars->font_number = font_number;
             next_chars->x_address = cur_h_start;
             next_chars->width = 0;
             next_chars->count = 0;
@@ -339,6 +359,8 @@ void emulate_text_output( text_phrase * text )
         /* Go to the next text_phrase. */
  
         cur_phrase++;
+        font_number = cur_phrase->font_number;
+        if( font_number > wgml_font_cnt ) font_number = 0;
     }
  
     /* Output the final text_line and return the text_chars to the pool.*/
@@ -391,28 +413,26 @@ static void emulate_wgml( void )
  
     /* Initialize the text_chars pool. */
  
-    current = (text_chars *) mem_alloc( sizeof( text_chars ) );
+    current = (text_chars *) mem_alloc( sizeof( text_chars ) + 1);
     current->next = NULL;
     current->font_number = 0;
     current->x_address = 0;
     current->width = 0;
     current->count = 0;
     current->length = 1;
-    current->text = (uint8_t *) mem_alloc( current->length );
     text_chars_pool = current;
  
     /* Now bring the number of instances to 20. */
  
     pool_ptr = text_chars_pool;
     for( i = 0; i < 19; i++ ) {
-        current = (text_chars *) mem_alloc( sizeof( text_chars ) );
+        current = (text_chars *) mem_alloc( sizeof( text_chars ) + 1 );
         current->next = NULL;
         current->font_number = 0;
         current->x_address = 0;
         current->width = 0;
         current->count = 0;
         current->length = 1;
-        current->text = (uint8_t *) mem_alloc( current->length );
         pool_ptr->next = current;
         pool_ptr = current;
     }
@@ -539,7 +559,18 @@ static void emulate_wgml( void )
  
     translated->text[translated->current] = '\0';
     out_msg( "Translated text: '%s'\n", translated->text );
- 
+
+    /* Special test. */
+
+    out_msg( "Text: %s   Combined Width: %i   Composite Width: %i\n", "This", \
+                        cop_text_width( "This", 4, 0), alt_width( "This" ) );
+
+    out_msg( "Text: %s   Combined Width: %i   Composite Width: %i\n", " is", \
+                        cop_text_width( " is", 3, 0), alt_width( " is" ) );
+
+    out_msg( "Text: %s   Combined Width: %i   Composite Width: %i\n", " the", \
+                        cop_text_width( " the", 4, 0), alt_width( " the" ) );
+
     /* The OUTCHECK Test Document. */
  
     /* Allow input translation tests. */
@@ -699,23 +730,17 @@ static void emulate_wgml( void )
     }
  
     if( text_chars_pool != NULL ) {
+        i = 1;
         while( text_chars_pool->next != NULL ) {
             current = text_chars_pool;
             text_chars_pool = text_chars_pool->next;
-            if( current->text != NULL ) {
-                mem_free( current->text );
-                current->text = NULL;
-            }
-            out_msg( "text_chars buffer size: %i\n", current->length );
+            out_msg( "text_chars %i buffer size: %i\n", i, current->length );
             mem_free( current );
+            i++;
         }
         current = text_chars_pool;
         text_chars_pool = text_chars_pool->next;
-        if( current->text != NULL ) {
-            mem_free( current->text );
-            current->text = NULL;
-        }
-        out_msg( "text_chars buffer size: %i\n", current->length );
+        out_msg( "text_chars %i buffer size: %i\n", i, current->length );
         mem_free( current );
         current = NULL;
     }
@@ -848,7 +873,6 @@ start_heapcheck( "main" );
  
     mem_free(tgt_path);
     tgt_path = NULL;
- 
  
     free_some_mem();                    // free_some_mem() in wgmlsupp.c
  

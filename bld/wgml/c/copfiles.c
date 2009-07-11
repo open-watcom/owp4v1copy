@@ -974,24 +974,27 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
             if( block == NULL ) block = bin_device->outtrans;
             if( block == NULL ) {
                 if( k >= in_out->length ) {
-                    in_out->text = realloc( in_out->text, 2 * in_out->length );
                     in_out->length *= 2;
+                    in_out->text = (uint8_t *) realloc( in_out->text, \
+                                                        in_out->length );
                 }
                 in_out->text[k] = byte;
                 k++;
             } else {
                 if( block->table[text[i]] == NULL ) {
                     if( k >= in_out->length ) {
-                        in_out->text = realloc( in_out->text, 2 * in_out->length );
                         in_out->length *= 2;
+                        in_out->text = (uint8_t *) realloc( in_out->text, \
+                                                            in_out->length );
                     }
                     in_out->text[k] = byte;
                     k++;
                 } else {
                     for( j = 0; j < block->table[text[i]]->count; j++ ) {
                         if( k >= in_out->length ) {
-                            in_out->text = realloc( in_out->text, 2 * in_out->length );
                             in_out->length *= 2;
+                            in_out->text = (uint8_t *) realloc( in_out->text, \
+                                                                in_out->length );
                         }
                         in_out->text[k] = block->table[text[i]]->data[j];
                         k++;
@@ -1000,8 +1003,8 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
             }
         } else {
             if( k >= in_out->length ) {
-                in_out->text = realloc( in_out->text, 2 * in_out->length );
                 in_out->length *= 2;
+                in_out->text = (uint8_t *) realloc( in_out->text, in_out->length );
             }
             in_out->text[k] = byte;
             k++;

@@ -528,7 +528,7 @@ typedef struct text_chars {
             uint32_t        width;
             uint16_t        count;
             uint16_t        length;
-            uint8_t     *   text;
+            uint8_t         text[1];
 } text_chars;
 
 /* This struct implements the text_line struct in the Wiki. */
@@ -554,6 +554,7 @@ typedef struct {
     uint32_t                line_height;
     uint32_t                line_space;
     uint32_t                spc_width;
+    uint32_t                width_table[0x100];
 } wgml_font;
 
 /* Variable declarations. */
