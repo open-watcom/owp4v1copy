@@ -47,8 +47,8 @@
 #include "procfile.h"
 
 
-static bool ProcLibFile( file_list *lib, char *name )
-/***************************************************/
+static bool SearchAndProcLibFile( file_list *lib, char *name )
+/************************************************************/
 {
     mod_entry       *lp;
     mod_entry       **prev;
@@ -101,9 +101,9 @@ bool LibFind( char *name, bool old_sym )
             continue;
         if( old_sym && (lib->status & STAT_OLD_LIB) )
             continue;
-        if( ProcLibFile( lib, name ) )
+        if( SearchAndProcLibFile( lib, name ) )
             return( TRUE );
-        if( isimpsym && ProcLibFile( lib, name + PREFIX_LEN ) ) {
+        if( isimpsym && SearchAndProcLibFile( lib, name + PREFIX_LEN ) ) {
             return( TRUE );
         }
     }
