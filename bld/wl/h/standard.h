@@ -69,6 +69,7 @@
     #define IS_PATH_SEP( a ) ((a)=='/')
     #define CASE_PATH_SEP case'/'
     #define PATH_LIST_SEP ':'
+    #define IS_PATH_LIST_SEP(a) ((a)==':' || (a)==';')
 
     #define CASE_SENSITIVE
 
@@ -77,6 +78,7 @@
     #define IS_PATH_SEP( a ) ((a)=='\\' || (a)=='/' || (a)==':')
     #define CASE_PATH_SEP   case '\\': case '/': case ':'
     #define PATH_LIST_SEP ';'
+    #define IS_PATH_LIST_SEP(a) ((a)==';')
 
 //    #define CASE_SENSITIVE
 

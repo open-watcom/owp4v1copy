@@ -389,21 +389,19 @@ unsigned_16 blog_32( unsigned_32 value )
     return( log );
 }
 
-char *RemovePath( char *name, unsigned *len )
+char *RemovePath( char *namestart, unsigned *len )
 /**********************************************/
 /* parse name as a filename, "removing" the path and the extension */
 /* returns a pointer to the "base" of the filename, and a length without
  * the extension */
 {
     char    *dotpoint;
-    char    *namestart;
     char    *string;
     char    ch;
 
     dotpoint = NULL;
-    string = namestart = name;
-    while( *string != '\0' ) {    // ignore path & extension in module name.
-        ch = *string;
+    // ignore path & extension in module name.
+    for( string = namestart; (ch = *string) != '\0'; string++ ) {
         if( ch == '.' ) {
             dotpoint = string;
         }

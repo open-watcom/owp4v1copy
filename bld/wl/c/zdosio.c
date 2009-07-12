@@ -52,7 +52,7 @@ typedef enum {
 
 static bool         BreakCond;
 static break_status CaughtBreak = NOT_HIT;
-static int          OpenFiles   = 0;			// the number of open files
+static int          OpenFiles   = 0;                    // the number of open files
 static unsigned     LastResult;
 static char         Rc_Buffer[RESOURCE_MAX_SIZE];
 
@@ -347,11 +347,12 @@ extern int QMakeFileName( char **pos, char *name, char *fname )
     if( pathptr == NULL )
         return( 0 );
     while( *pathptr != '\0' ) {
-        if( *pathptr == PATH_LIST_SEP ) *pos = ++pathptr;
-        for(;;) {
+        if( IS_PATH_LIST_SEP( *pathptr ) )
+            *pos = ++pathptr;
+        for( ;; ) {
             if( *pathptr == '\0' )
                 break;
-            if( *pathptr == PATH_LIST_SEP )
+            if( IS_PATH_LIST_SEP( *pathptr ) )
                 break;
             pathptr++;
         }

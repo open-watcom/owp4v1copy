@@ -1180,15 +1180,16 @@ char *GetFileName( char **membname, bool setname )
     char        *objname;
     char        *fullmemb;
     unsigned    memblen;
+    char        ch;
 
     namelen = Token.len;
     objname = alloca( namelen );
     memcpy( objname, Token.this, namelen );
     if( GetToken( SEP_PAREN, TOK_INCLUDE_DOT ) ) {   // got LIBNAME(LIB_MEMBER)
-        fullmemb = alloca( Token.len + 1 );
-        memcpy( fullmemb, Token.this, Token.len );
-        fullmemb[Token.len] = '\0';
-        fullmemb = RemovePath( fullmemb, &memblen );
+        ch = Token.this[Token.len];
+        Token.this[Token.len] = 0;
+        fullmemb = RemovePath( Token.this, &memblen );
+        Token.this[Token.len] = ch;
         *membname = ChkToString( fullmemb, memblen );
         ptr = FileName( objname, namelen, E_LIBRARY, FALSE );
     } else {

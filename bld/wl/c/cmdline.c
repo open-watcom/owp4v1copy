@@ -862,10 +862,10 @@ void AddLibPaths( char *name, unsigned len, bool add_to_front )
         for( libfiles = ObjLibFiles; libfiles != NULL; libfiles = libfiles->next_file ) {
             libfiles->file->path_list = LibPath;
         }
-        for( libfiles = Root->files;
-            libfiles != NULL && (libfiles->file->flags & INSTAT_USE_LIBPATH);
-            libfiles = libfiles->next_file ) {
-            libfiles->file->path_list = LibPath;
+        for( libfiles = Root->files; libfiles != NULL; libfiles = libfiles->next_file ) {
+            if( libfiles->file->flags & INSTAT_USE_LIBPATH ) {
+                libfiles->file->path_list = LibPath;
+            }
         }
     }
 }

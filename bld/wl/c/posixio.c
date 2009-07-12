@@ -373,12 +373,16 @@ int QMakeFileName( char **pos, char *name, char *fname )
     char                *file_ptr;
 
     pathptr = *pos;
-    if( pathptr == NULL ) return( 0 );
+    if( pathptr == NULL )
+        return( 0 );
     while( *pathptr != '\0' ) {
-        if( *pathptr == PATH_LIST_SEP ) *pos = ++pathptr;
+        if( IS_PATH_LIST_SEP( *pathptr ) )
+            *pos = ++pathptr;
         for(;;) {
-            if( *pathptr == '\0' ) break;
-            if( *pathptr == PATH_LIST_SEP ) break;
+            if( *pathptr == '\0' )
+                break;
+            if( IS_PATH_LIST_SEP( *pathptr ) )
+                break;
             pathptr++;
         }
         path_len = pathptr - *pos;

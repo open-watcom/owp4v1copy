@@ -139,23 +139,14 @@ static f_handle PathObjOpen( char * path_ptr, char *name, char *new_name,
     fp = NIL_HANDLE;
     for(;;) {
         list->prefix = path_ptr;
-        if( !QMakeFileName( &path_ptr, name, new_name ) ) break;
+        if( !QMakeFileName( &path_ptr, name, new_name ) )
+            break;
         fp = QObjOpen( new_name );
-        if( fp != NIL_HANDLE ) break;
+        if( fp != NIL_HANDLE ) {
+            break;
+        }
     }
-    return fp;
-}
-
-static f_handle TrySearchingLib( char *name, char *new_name, infilelist *list )
-/*****************************************************************************/
-{
-    f_handle            fp;
-
-    fp = NIL_HANDLE;
-    if( list->flags & INSTAT_USE_LIBPATH ) {
-        fp = PathObjOpen( GetEnvString("LIB"), name, new_name, list );
-    }
-    return fp;
+    return( fp );
 }
 
 bool DoObjOpen( infilelist *list )
@@ -170,35 +161,32 @@ bool DoObjOpen( infilelist *list )
     bool        haspath;
 
     name = list->name;
-    if( list->handle != NIL_HANDLE ) return( TRUE );
+    if( list->handle != NIL_HANDLE )
+        return( TRUE );
     list->currpos = 0;
     haspath = QHavePath( name );
-    if( list->path_list == NULL || haspath ) {
+    if( haspath ) {                         // has path defined
         list->path_list = NULL;
         fp = QObjOpen( name );
-        if( fp == NIL_HANDLE && !haspath ) {
-            fp = TrySearchingLib( name, new_name, list );
-        }
-    } else if( list->prefix != NULL ) {
+    } else if( list->prefix != NULL ) {     // already searched path
         path_ptr = list->prefix;
         QMakeFileName( &path_ptr, name, new_name );
         fp = QObjOpen( new_name );
-    } else {
+    } else {                                // new, no searched path
         fp = NIL_HANDLE;
-        if( list->flags & LIB_SEARCH ) {
-            /* try libraries in current directory */
+        if( (list->flags & LIB_SEARCH) || list->path_list == NULL ) {
+            /* try in current directory */
             fp = QObjOpen( name );
         }
         if( fp == NIL_HANDLE ) {
-            searchpath = list->path_list;
-            for(;;) {
+            for( searchpath = list->path_list; searchpath != NULL; searchpath = searchpath->next ) {
                 fp = PathObjOpen( searchpath->name, name, new_name, list );
-                if( fp != NIL_HANDLE || !(list->flags & LIB_SEARCH) ) break;
-                searchpath = searchpath->next;
-                if( searchpath == NULL ) {
-                    fp = TrySearchingLib( name, new_name, list );
+                if( fp != NIL_HANDLE ) {
                     break;
                 }
+            }
+            if( fp == NIL_HANDLE && (list->flags & INSTAT_USE_LIBPATH) ) {
+                fp = PathObjOpen( GetEnvString("LIB"), name, new_name, list );
             }
         }
     }
@@ -207,7 +195,7 @@ bool DoObjOpen( infilelist *list )
             list->modtime = QFModTime( fp );
         }
         list->handle = fp;
-        return TRUE;
+        return( TRUE );
     } else if( !(list->flags & INSTAT_NO_WARNING) ) {
         err = ( list->flags & INSTAT_OPEN_WARNING ) ?
                                         WRN+MSG_CANT_OPEN : ERR+MSG_CANT_OPEN;
@@ -215,7 +203,7 @@ bool DoObjOpen( infilelist *list )
         list->prefix = NULL;
         list->handle = NIL_HANDLE;
     }
-    return FALSE;
+    return( FALSE );
 }
 
 unsigned_16 CalcAlign( unsigned_32 pos, unsigned_16 align )
