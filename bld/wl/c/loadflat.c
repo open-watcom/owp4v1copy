@@ -462,15 +462,15 @@ void FiniOS2FlatLoadFile( void )
     } else {
         exe_head.l.page_shift = FmtData.u.os2.segment_shift;
     }
-    exe_head.nonres_off = NullAlign( 1 ); /* cheap way of finding file pos */
+    exe_head.nonres_off = PosLoad();
     exe_head.nonres_size = ResNonResNameTable( FALSE );  // FALSE = do non-res.
     if( exe_head.nonres_size == 0 ) exe_head.nonres_off = 0;
-    curr_loc = NullAlign( 1 );
+    curr_loc = PosLoad();
     DBIWrite();
 /* If debug info was written, we want to mark it in the header so that
  * RC doesn't throw it away! */
     SeekEndLoad(0);
-    debug_size =  NullAlign( 1 )- curr_loc;
+    debug_size =  PosLoad() - curr_loc;
     if (debug_size) {
         exe_head.debug_off = curr_loc;
         exe_head.debug_len = debug_size;
