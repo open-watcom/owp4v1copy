@@ -34,12 +34,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
-#include "rtdata.h"
-
-#if defined(_M_IX86)
- extern int     __matherr( struct _exception * );
- #pragma aux    __matherr "*";
-#endif
+#include "mathlib.h"
 
 static const char * const Msgs[] = {
     0,
@@ -51,11 +46,11 @@ static const char * const Msgs[] = {
     "Partial loss of significance"
 };
 
-int   (*_RWD_matherr)( struct _exception * ) =
-#if defined(__AXP__) || defined(__PPC__)
-    matherr;
-#elif defined(_M_IX86)
+int (*__matherr_handler)( struct _exception * ) =
+#if defined(_M_IX86)
     __matherr;
+#else
+    matherr;
 #endif
 
 _WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) )
