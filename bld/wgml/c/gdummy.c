@@ -54,8 +54,9 @@ void    scr_dummy( void )
 
     scan_restart = scan_stop + 1;
 
-    g_warn( WNG_UNSUPP_CW, cwcurr );
+    g_warn( wng_unsupp_cw, cwcurr );
     wng_count++;
+    show_include_stack();
 }
 
 
@@ -68,9 +69,9 @@ void    gml_dummy( const gmltag * entry )
 
     scan_start = scan_stop + 1;
 
-    g_warn( WNG_UNSUPP_TAG, entry->tagname );
+    g_warn( wng_unsupp_tag, entry->tagname );
     wng_count++;
-
+    show_include_stack();
 }
 
 
