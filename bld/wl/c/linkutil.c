@@ -404,12 +404,12 @@ char *RemovePath( char *namestart, unsigned *len )
     for( string = namestart; (ch = *string) != '\0'; string++ ) {
         if( ch == '.' ) {
             dotpoint = string;
+            continue;
         }
         if( IS_PATH_SEP( ch ) ) {
             namestart = string + 1;
             dotpoint = NULL;
         }
-        string++;
     }
     if( dotpoint != NULL ) {
         *len = dotpoint - namestart;
