@@ -1057,8 +1057,8 @@ void FiniPELoadFile( void )
     num_objects = FindNumObjects();
     head_size = sizeof(pe_header);
     memset( &exe_head, 0, head_size ); /* zero all header fields */
-    if( FmtData.u.pe.tnt ) {
-        exe_head.signature = PL_SIGNATURE;
+    if( FmtData.u.pe.signature != 0 ) {
+        exe_head.signature = FmtData.u.pe.signature;
     } else {
         exe_head.signature = PE_SIGNATURE;
     }

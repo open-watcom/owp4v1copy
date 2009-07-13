@@ -306,7 +306,7 @@ void FiniDOSLoadFile( void )
                                                                  + hdr_size );
     DEBUG((DBG_LOADDOS, "root size %l, hdr size %l", root_size, hdr_size ));
     SeekLoad( 0 );
-    _HostU16toTarg( 0x5a4d, exe_head.signature );
+    _HostU16toTarg( DOS_SIGNATURE, exe_head.signature );
     temp = hdr_size / 16U;
     _HostU16toTarg( temp, exe_head.hdr_size );
     _HostU16toTarg( root_size % 512U, exe_head.mod_size );

@@ -137,7 +137,7 @@ struct fmt_pe_data {
     unsigned_16         osminor;    /*  OS minor version    */
     unsigned_8          linkmajor;  /*  link major version  */
     unsigned_8          linkminor;  /*  link minor version  */
-    unsigned            tnt : 1;
+    unsigned_16         signature;
     unsigned            sub_specd : 1;
     unsigned            no_stdcall : 1;
     unsigned            osv_specd : 1;      /* OS version specified? */

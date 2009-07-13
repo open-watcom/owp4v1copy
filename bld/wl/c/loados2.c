@@ -1061,7 +1061,7 @@ unsigned_32 GetStubSize( void )
         the_file = SearchPath( name );
         if( the_file != NIL_HANDLE ) {
             QRead( the_file, &dosheader, sizeof( dos_exe_header ), name );
-            if( dosheader.signature == 0x5A4D ) {
+            if( dosheader.signature == DOS_SIGNATURE ) {
                 if( dosheader.mod_size == 0 ) {
                     read_len = 512;
                 } else {
@@ -1127,7 +1127,7 @@ unsigned_32 Write_Stub_File( unsigned_32 stub_align )
             return( WriteDefStub( stub_align ) );   // NOTE: <== a return here.
         }
         QRead( the_file, &dosheader, sizeof( dos_exe_header ), name );
-        if( dosheader.signature != 0x5A4D ) {
+        if( dosheader.signature != DOS_SIGNATURE ) {
             LnkMsg( ERR + MSG_INV_STUB_FILE, NULL );
             stub_len = WriteDefStub( stub_align );
         } else {

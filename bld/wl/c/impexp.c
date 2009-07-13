@@ -386,7 +386,7 @@ static void ReadOldLib( void )
     fname = FmtData.u.os2.old_lib_name;
     the_file = QOpenR( fname );
     QRead( the_file, &head, sizeof(dos_exe_header), fname );
-    if( head.dos.signature != 0x5A4D || head.dos.reloc_offset != 0x40 ) {
+    if( head.dos.signature != DOS_SIGNATURE || head.dos.reloc_offset != 0x40 ) {
         LnkMsg( WRN + MSG_INV_OLD_DLL, NULL );
     } else {
         QSeek( the_file, 0x3c, fname );

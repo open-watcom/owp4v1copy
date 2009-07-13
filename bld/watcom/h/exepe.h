@@ -108,6 +108,7 @@ typedef struct {
 
 #define PE_SIGNATURE 0x4550
 #define PL_SIGNATURE 0x4c50
+#define PX_SIGNATURE 0x5850
 
 /* CPU type field values */
 enum {
