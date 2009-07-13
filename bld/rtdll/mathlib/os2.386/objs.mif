@@ -1,13 +1,13 @@
 pfx__ =$(mathlib_dir)
-__ifx__ =/library/$(system).$(processor)/$(subdir)
+__ifx__ =library/$(system).$(processor)/$(subdir)
 
 dll_libs = $+ &
-    $(pfx__)$(__ifx__).dll/math3$(dllname_$(convention)).lib &
+    $(pfx__)/$(__ifx__).dll/math3$(dllname_$(convention)).lib &
     ../../../clib/$(system).386/$(subdir)/clb$(dllname_$(convention))dll$(dllname_profile)$(dllname_debug).lib &
     $-
 
 dll_def = $+ &
-    $(pfx__)$(__ifx__).dll/export.def &
+    $(pfx__)/$(__ifx__).dll/export.def &
     $(pfx__)/export.$(processor) &
     $-
 

@@ -1,47 +1,38 @@
-BEGIN { FS = "'" }     # Split input lines on apostrophes
+# Munge a wlib function import script. If BR is set, apply special
+# treatment to functions which need '_br' appended. If OS is os2,
+# also strip the module name extension.
 
-$1 ~ /\+\+/ \
-&& $2 ~ /(^_|^)(\
-__iob|\
-__IsDBCS|\
-__MBCSIsTable|\
-_amblksiz|\
-_fileinfo|\
-_fmode|\
-_HugeValue|\
-_IsKTable|\
-_IsTable|\
-_osbuild|\
-_osmajor|\
-_osminor|\
-_pgmptr|\
-_osver|\
-_sys_errlist|\
-_sys_nerr|\
-_wenviron|\
-_winmajor|\
-_winminor|\
-_winver|\
-_wpgmptr|\
-daylight|\
-environ|\
-timezone|\
-tzname\
-)/ {
-  if( br ) {
-    if( os == "os2" ) {
-      split( $4, mod, /\./ )
-      $4 = mod[1]
+BEGIN {
+    # Basic sanity check on input
+    if( LSTFILE == "" ) {
+        printf( "LSTFILE variable must be set!\n" ) > "/dev/stderr"
+        exit 1
     }
-    printf( "++'%s_br'.'%s'..'%s'\n", $2, $4, $2 )
-    next
-  }
+    if( OS == "" ) {
+        printf( "OS variable must be set!\n" ) > "/dev/stderr"
+        exit 2
+    }
+    # Read a list of functions that need _br treatment
+    while( ( getline < LSTFILE ) > 0 ) {
+        br_funcs[$1] = 1        # Associative array!
+        br_funcs["_" $1] = 1    # Derive underscored version
+        ++num_fns
+    }
+    if( num_fns < 2 ) {
+        printf( "Failed to read input from file '%s'\n", LSTFILE ) > "/dev/stderr"
+        exit 3
+    }
+    FS = "'"    # Split input lines on apostrophes
 }
 
+# Process the input lines
 $1 ~ /\+\+/ {
-  if( os == "os2" ) {
-    split( $4, mod, /\./ )
-    $4 = mod[1]
-  }
-  printf( "++'%s'.'%s'\n", $2, $4 )
+    if( OS == "os2" ) {
+        split( $4, mod, /\./ )
+        $4 = mod[1]
+    }
+    if( BR && $2 in br_funcs )
+        printf( "++'%s_br'.'%s'..'%s'\n", $2, $4, $2 )
+    else
+        printf( "++'%s'.'%s'\n", $2, $4 )
 }
