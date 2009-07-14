@@ -37,19 +37,15 @@
 #include "ftnstd.h"
 #include "fthread.h"
 #include "thread.h"
+#include "rtdata.h"
 
 #include <stdlib.h>
 
 #if defined( _M_IX86 )
-  #pragma aux __ASTACKSIZ "*"
-  #pragma aux __ASTACKPTR "*"
   #pragma aux __SwitchStkLow "*"
 #endif
 
 #pragma off (check_stack)
-
-extern  unsigned        __ASTACKSIZ;    // alternate stack size
-extern  char            *__ASTACKPTR;   // alternate stack pointer
 
 static unsigned         OtherStackLow;
 static bool             Init = FALSE;   // have we initialized it to ASTACKLOW

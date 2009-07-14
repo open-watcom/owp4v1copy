@@ -47,6 +47,7 @@
 #include "stacklow.h"
 #include "widechar.h"
 #include "initarg.h"
+#include "rtdata.h"
 
 extern  unsigned            __hmodule;
 
@@ -61,8 +62,6 @@ extern  int                 __disallow_single_dgroup( unsigned );
 #else
     extern      char        *_Envptr;
     extern      unsigned    __MaxThreads;
-    extern      unsigned    __ASTACKSIZ;        /* alternate stack size */
-    extern      char        *__ASTACKPTR;       /* alternate stack pointer */
 
     extern      void        __OS2Init( int, void * );
     extern      void        __OS2Fini( void );
@@ -73,11 +72,6 @@ extern  int                 __disallow_single_dgroup( unsigned );
     extern      thread_data *__AllocInitThreadData( thread_data *tdata );
     extern      void        __FreeInitThreadData( thread_data * );
     extern      thread_data *__FirstThreadData;
-
-    #ifdef __386__
-        #pragma aux     __ASTACKPTR "*";
-        #pragma aux     __ASTACKSIZ "*";
-    #endif
 #endif
 
 #ifdef __386__

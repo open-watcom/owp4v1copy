@@ -40,12 +40,6 @@
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */
 
-extern  unsigned    __ASTACKSIZ;    /* alternate F77 stack size */
-extern  char        *__ASTACKPTR;   /* alternate F77 stack pointer */
-#if defined(_M_IX86)
- #pragma aux        __ASTACKPTR "*"
- #pragma aux        __ASTACKSIZ "*"
-#endif
 extern  char        *_LpPgmName;
 
 extern int main( int, char **, char ** );

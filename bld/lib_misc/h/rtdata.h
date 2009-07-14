@@ -99,9 +99,22 @@ extern      void            (*__FPE_handler_exit)( void );
     extern  unsigned        _curbrk;
     extern  int             _commode;
 #endif
+#if !defined(__SW_BM)
+    extern  unsigned        _STACKLOW;
+#endif
 #if !defined (_NETWARE_LIBC)
 extern      unsigned        _STACKTOP;
 #endif
+/* alternate stack for F77 compiler */
+#if !defined( _M_I86 )
+extern  unsigned            __ASTACKSIZ;
+extern  char                *__ASTACKPTR;
+#if defined( _M_IX86 ) && defined(__WATCOMC__)
+ #pragma aux                __ASTACKPTR "*"
+ #pragma aux                __ASTACKSIZ "*"
+#endif
+#endif
+
 #if !defined(__QNX__) && !defined(__LINUX__) && defined(_M_IX86)
     extern void         (*__Save8087)(_87state *);/* Ptr to FP state save rtn (spawn) */
     extern void         (*__Rest8087)(_87state *);/* Ptr to FP state restore rtn (spawn) */
@@ -115,9 +128,6 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
     #pragma aux             _no87 "_*";
     #pragma aux             _8087 "_*";
     #pragma aux             _real87 "_*";
-#endif
-#if !defined(__SW_BM)
-    extern  unsigned        _STACKLOW;
 #endif
 
 #define _RWD_ostream            __OpenStreams
@@ -144,6 +154,7 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
     #define _RWD_dynend         _dynend
     #define _RWD_psp            _psp
 #endif
+#define _RWD_stacklow           _STACKLOW
 #if !defined (_NETWARE_LIBC)
 #define _RWD_stacktop           _STACKTOP
 #endif
@@ -198,7 +209,6 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
     #define _RWD_tmpnambuf      _tmpname
     #define _RWD_randnextinit   THREAD_PTR.__randnextinit
 #endif
-#define _RWD_stacklow           _STACKLOW
 #define _RWD_randnext           _RANDNEXT
 #define _RWD_ThreadData         _ThreadData
 #define _RWD_StaticInitSema     _StaticInitSema

@@ -34,6 +34,7 @@
 #include "ftextvar.h"
 #include "fthread.h"
 #include "rmemmgr.h"
+#include "rtdata.h"
 
 static void NullTrapRtn( void ) {
 //=========================
@@ -56,14 +57,6 @@ unsigned        __FInitDLL( void ) {
     if( __InitFThreadProcessing() != 0 ) return( 0 );
 #if defined( __NT__ )
     {
-  #if defined( _M_IX86 )
-        #pragma aux __ASTACKSIZ "*"
-        #pragma aux __ASTACKPTR "*"
-  #endif
-
-        extern  unsigned        __ASTACKSIZ;    // alternate stack size
-        extern  char            *__ASTACKPTR;   // alternate stack pointer
-
         if( __ASTACKSIZ != 0 ) {
             __ASTACKPTR = RMemAlloc( __ASTACKSIZ );
             if( __ASTACKPTR == NULL ) return( 0 );
