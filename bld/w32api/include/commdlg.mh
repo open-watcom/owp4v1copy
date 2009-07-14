@@ -8,6 +8,8 @@
 #define _INC_COMMDLG
 
 :include readonly.sp
+#include <prsht.h>
+
 :include cpluspro.sp
 
 /* Macro to specify common dialog functions */
