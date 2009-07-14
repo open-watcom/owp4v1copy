@@ -173,25 +173,6 @@ static  char const page2_box[] = {
  
 /* Local function definitions. */
 
-/* temp test function. */
-
-static uint32_t alt_width( uint8_t * in_text )
-{
-    int         i;
-    uint8_t     temp[2];
-    uint16_t    size;
-    uint32_t    width;
-
-    temp[1] = '\0';
-    width = 0;
-    size = strlen( in_text );
-    for( i = 0; i < size; i++ ) {
-        temp[0] = in_text[i];
-        width += cop_text_width( temp, 1, 0 );
-    }
-    return( width );
-}
-
 /* Function emulate_text_output()
  * This function does the final preparation of the text and outputs it.
  *
@@ -559,17 +540,6 @@ static void emulate_wgml( void )
  
     translated->text[translated->current] = '\0';
     out_msg( "Translated text: '%s'\n", translated->text );
-
-    /* Special test. */
-
-    out_msg( "Text: %s   Combined Width: %i   Composite Width: %i\n", "This", \
-                        cop_text_width( "This", 4, 0), alt_width( "This" ) );
-
-    out_msg( "Text: %s   Combined Width: %i   Composite Width: %i\n", " is", \
-                        cop_text_width( " is", 3, 0), alt_width( " is" ) );
-
-    out_msg( "Text: %s   Combined Width: %i   Composite Width: %i\n", " the", \
-                        cop_text_width( " the", 4, 0), alt_width( " the" ) );
 
     /* The OUTCHECK Test Document. */
  
