@@ -77,8 +77,6 @@ extern char                 *_LpCmdLine;
 extern int                  _edata;
 extern int                  _end;
 #if !defined(_THIN_LIB)
-extern unsigned             __ASTACKSIZ;
-extern char                 *__ASTACKPTR;
 int                         __ReturnCode = 5; /* TERM_BY_UNLOAD */
 int                         _argc;
 char                        **_argv;
@@ -104,11 +102,6 @@ extern void Free( void *__address );
 extern long AllocateResourceTag( void *__NLMHandle,
                                  char *__descriptionString,
                                  long  __resourceType );
-
-#if !defined(_THIN_LIB)
-#pragma aux __ASTACKPTR "*"
-#pragma aux __ASTACKSIZ "*"
-#endif
 
 #if !defined(_THIN_LIB)
 extern unsigned __SP( void );

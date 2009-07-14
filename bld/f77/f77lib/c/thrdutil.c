@@ -41,10 +41,6 @@
 
 #include <stdlib.h>
 
-#if defined( _M_IX86 )
-  #pragma aux __SwitchStkLow "*"
-#endif
-
 #pragma off (check_stack)
 
 static unsigned         OtherStackLow;

@@ -41,6 +41,7 @@
 #include "initfini.h"
 #include "thread.h"
 #include "initarg.h"
+#include "rtdata.h"
 
 extern void __InitThreadData( thread_data * );
 
@@ -48,14 +49,7 @@ extern void __InitThreadData( thread_data * );
     _WCRTLINK extern    void    (*__process_fini)(unsigned,unsigned);
 #else
     extern void __NTMainInit( void *, void * );
-    extern      unsigned        __ASTACKSIZ;    /* alternate stack size */
-    extern      char            *__ASTACKPTR;   /* alternate stack pointer */
     extern      unsigned        __ThreadDataSize;
-
-    #ifdef _M_IX86
-        #pragma aux     __ASTACKPTR "*"
-        #pragma aux     __ASTACKSIZ "*"
-    #endif
 #endif
 
 extern void __CommonInit( void );

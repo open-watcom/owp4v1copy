@@ -37,11 +37,8 @@
 
 void            __FTermDLL( void ) {
 //==================================
-
 #if defined( __NT__ )
     {
-        extern  void            RMemFree(void *);
-
         if( __ASTACKPTR != NULL ) {
             RMemFree( __ASTACKPTR - __ASTACKSIZ );
         }

@@ -53,8 +53,6 @@ extern int              CloseLocalSemaphore( long );
 
 #include <windows.h>
 
-//extern  void            __InitFThreadData(fthread_data *);
-
 HANDLE                  __fio_sem;
 
 #elif defined( __LINUX__ )

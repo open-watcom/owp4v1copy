@@ -34,16 +34,9 @@
 #include <malloc.h>
 #include "widechar.h"
 #include "initarg.h"
+#include "rtdata.h"
 
 extern  void    __CommonInit( void );
-#if !defined(__OSI__)
-extern  unsigned        __ASTACKSIZ;    /* alternate stack size */
-extern  char            *__ASTACKPTR;   /* alternate stack pointer */
-#if defined(_M_IX86)
- #pragma        aux     __ASTACKPTR "*"
- #pragma        aux     __ASTACKSIZ "*"
-#endif
-#endif
 
 #ifdef __WIDECHAR__
     extern      int     wmain( int, wchar_t ** );

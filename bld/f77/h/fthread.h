@@ -31,6 +31,7 @@
 
 
 #ifndef _FTHREAD_H_INCLUDED
+#define _FTHREAD_H_INCLUDED
 
 struct thread_data;
 #include "thrdreg.h"
@@ -53,6 +54,8 @@ extern  unsigned        __FThreadDataOffset;
 #define __FTHREADDATAPTR ((fthread_data *)(((char *)(*__GetThreadPtr)()) + \
                           __FThreadDataOffset))
 
-#define _FTHREAD_H_INCLUDED
+extern  void            __FiniFThreadProcessing( void );
+extern  int             __InitFThreadProcessing( void );
+extern  void            __InitFThreadData( fthread_data * );
 
 #endif

@@ -45,9 +45,6 @@ extern  void            Suicide(void);
 extern  void            R_TrapInit(void);
 extern  void            R_TrapFini(void);
 extern  unsigned        RTSysInit(void);
-extern  void            __InitFThreadData(fthread_data *);
-extern  int             __InitFThreadProcessing(void);
-extern  void            __FiniFThreadProcessing(void);
 
 typedef struct {
     void        (*rtn)(void *);
@@ -67,8 +64,10 @@ static  bool            ThreadsInitialized;
 static  unsigned  InitFThreads( void ) {
 //================================
 
-    if( ThreadsInitialized ) return( 0 );
-    if( __InitFThreadProcessing() != 0 ) return( 1 );
+    if( ThreadsInitialized )
+        return( 0 );
+    if( __InitFThreadProcessing() != 0 )
+        return( 1 );
     ThreadsInitialized = TRUE;
     RTSysInit();
     return( 0 );
@@ -124,9 +123,11 @@ int FBeginThread( void (*rtn)(void *), void *stack, unsigned stk_size, void *arg
 
     thread_info *ti;
 
-    if( InitFThreads() != 0 ) return( -1 );
+    if( InitFThreads() != 0 )
+        return( -1 );
     ti = RMemAlloc( sizeof( thread_info ) );
-    if( ti == NULL ) return( -1 );
+    if( ti == NULL )
+        return( -1 );
     ti->rtn = rtn;
     ti->arglist = arglist;
 

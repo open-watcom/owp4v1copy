@@ -44,8 +44,6 @@ extern bool        __AllowCommaSep( void );
 extern bool        __DevicesCC( void );
 extern int         __EnableF77RTExceptionHandling( void );
 extern int         __EnterWVIDEO( char far * );
-extern void        __FiniFThreadProcessing( void );
-extern int         __InitFThreadProcessing( void );
 extern void        __InitMultiThreadIO( void );
 extern void        __InitResource( void );
 extern void        __PartialReleaseFIO( void );

@@ -46,12 +46,12 @@ include xinit.inc
 
         dataseg
 
-        xred    "C",IORslt,       word
-        xred    __ASTACKSIZ,      dword
-        xred    __ASTACKPTR,      dword
+        xred    "C",IORslt,         word
+        xred    __ASTACKSIZ,        dword
+        xred    __ASTACKPTR,        dword
 
 ifdef __MT__
-        xred    __SwitchStkLow,   dword
+        xred    "C",__SwitchStkLow, dword
 endif
 
 ALT_STACK_SIZE = 8*1024
