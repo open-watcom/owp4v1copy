@@ -26,16 +26,12 @@ inc_dirs = -I.. -I"$(sdk_dir)/misc"
 .h: ..;$(sdk_dir)/misc
 
 # systems where version resource must be added to .EXE
-build_rc_nt_386 = nt
+version_res_nt_386 = version.res
 
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = exever.res
-!endif
-
-$(name).exe : rcstr.gh $(objs) $(name).res $(res_objs)
+$(name).exe : rcstr.gh $(objs) $(name).res $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $(name).exe file { $(objs) }
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k $(name).res $^@ -fr=exever.res
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
         $(rc) -k $(name).res $^@
 !endif
@@ -51,13 +47,10 @@ rcstrmsg.gh : ../wzoom.msg $(sdk_dir)/misc/about.msg
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 
 $(name).res : ../wzoom.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 -I"../res" $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 -I"../res" $(inc_path) $[@ -fo=$^@
 
 $(name)j.res : ../wzoom.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 -I"../res/kanji" $(inc_path) -D_JAPANESE_ $[@ -fo=$^@
-
-exever.res: exever.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 -I"../res/kanji" $(inc_path) -D_JAPANESE_ $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
@@ -66,6 +59,6 @@ exever.res: exever.rc
 patch_level=0
 !endif
 
-exever.rc : ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../exever.rc exever.rc $$ $(name) $(patch_level)
-
+version.res: ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../exever.rc version.rc $$ $(name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@

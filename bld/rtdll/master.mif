@@ -26,6 +26,8 @@ host_OS=$(rtdll_host_os_$(system))
 !include $(rtdll_dir)/dllbase.mif
 !include ../objs.mif
 
+version_res_nt_386 = version.res
+
 !ifdef profile
 rtdll_nosymfile = 1
 !else ifeq release 0
@@ -67,7 +69,6 @@ $(dllname).lbc : $(dllname).imp $(rtdll_dir)/proclbc.awk $(static_objs)
     @for %i in ($(static_objs)) do @%append $@ +%i
 
 !ifeq system winnt
-res_objs = $(dllname).rc
 extra_libs = kernel32.lib user32.lib advapi32.lib
 !endif
 !ifeq component wrtlib
@@ -78,10 +79,10 @@ lnk_alias = alias __HugeValue_br=__HugeValue, __IsTable_br=__IsTable
 !endif
 !endif
 
-$(dllname).dll $(dllname).imp : $(res_objs) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
+$(dllname).dll $(dllname).imp : $(version_res_$(host_os)_$(host_cpu)) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
     $(linker) name $(dllname).dll @$(dllname).lnk
-!ifeq system winnt
-    $(rc) $(rc_flags) $(inc_dirs_sys_nt) $(dllname).rc $(dllname).dll
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
     sort < $(dllname).imp > $(dllname).tmp
     uniq $(dllname).tmp > $(dllname).imp
@@ -99,7 +100,8 @@ $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
     $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $[@
 
-$(dllname).rc : ./genverrc.exe
-    $[@ ../verinfo.rc $^@ $$ $(dllname) $(patch_level)
+version.res: ./genverrc.exe ../verinfo.rc
+    $[@ ../h/version.rc version.rc $$ $(dllname) $(patch_level)
+    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 
 !include $(rtdll_dir)/clean.mif

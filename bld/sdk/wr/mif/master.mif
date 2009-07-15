@@ -110,16 +110,12 @@ extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 #extra_l_flags_win += segment  CLASS 'CODE' PRELOAD
 
 # systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
+version_res_nt_386 = version.res
 
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = version.res
-!endif
-
-$(name).dll: $(__MAKEFILES__) ytab.gh wrcmsg.gh $(object) $(wres_lib) $(name).res $(res_objs)
+$(name).dll: $(__MAKEFILES__) ytab.gh wrcmsg.gh $(object) $(wres_lib) $(name).res $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ lib $(wres_lib) file {$(object)}
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k $(name).res $^@ -fr=version.res
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
         $(rc) -k $(name).res $^@
 !endif
@@ -149,10 +145,7 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         @rm -f ytab.c # ytab.c isn't used
 
 $(name).res: ../h/wr.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $(inc_path) -DWR_COMPILED $[@ -fo=$^@
-
-version.res: version.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(inc_path) -DWR_COMPILED $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
@@ -161,5 +154,7 @@ version.res: version.rc .AUTODEPEND
 patch_level=0
 !endif
 
-version.rc : ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
+version.res: ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
         $[@ ../h/version.rc version.rc $$ $(name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+

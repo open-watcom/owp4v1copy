@@ -50,31 +50,28 @@ resfile = appui.res
 
 aui_prereq = auistr.gh _guimsgs.gh
 
-#HBB UNUSED 20060428:
-#rcinc   = $(inc_dirs_sys_win);$(guidir)/$(gui_type)/$(host_os)$(host_cpu);$(inc_dirs)
-
 app.exe : $(aui_prereq) $(objs) $(auilib) $(guilib) $(uilib) $(wres_lib) $(resfile)
         $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(wres_lib)
-!ifneq sys_windowed 1
-        wstrip -q -a -r $^@ . $(resfile)
+!ifeq sys_windowed 1
+        $(rc) -k $(resfile) $^@
 !else
-        $(rc) $(rc_flags) $(inc_path) -k $(resfile) $^@
+        wstrip -q -a -r $^@ . $(resfile)
 !endif
 
 app.res : ../h/app.rc $(rcfiles)
-        $(rc) $(rc_flags) $(inc_path) -r $[@ -fo=$@
+        $(rc) $(rc_flags) $(inc_path) $[@ -fo=$@
 
 appj.res : ../h/app.rc $(rcfiles)
-        $(rc) $(rc_flags) -r -DJAPANESE_MESSAGES $[@ -fo=$@
+        $(rc) $(rc_flags) $(inc_path) -DJAPANESE_MESSAGES $[@ -fo=$@
 
 appui.res : ../h/appui.rc ../h/app.rc $(rcfiles)
         $(rc_aui) $(inc_path) $(inc_dirs_sys_win) $[@ -fo=$@
 
 appuij.res : ../h/appui.rc ../h/app.rc $(rcfiles)
-        $(rc_aui) $(inc_path) -DJAPANESE_MESSAGES $[@ -fo=$@
+        $(rc_aui) $(inc_path) $(inc_dirs_sys_win) -DJAPANESE_MESSAGES $[@ -fo=$@
 
 apppm.res apppmj.res : ../h/apppm.rc ../h/app.rc $(rcfiles)
-        $(rc) -bt=os2 -r $(inc_dirs_os2) $(inc_path) $[@ -fo=$@
+        $(rc) $(rc_flags) $(inc_dirs_os2) $(inc_path) $[@ -fo=$@
 
 .c: ../c
 

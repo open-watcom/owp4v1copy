@@ -78,34 +78,27 @@ extra_l_flags_win = library commdlg op stack=8k,rwr &
                     export WEP RESIDENT
 
 # systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = version.res
-!endif
+version_res_nt_386 = version.res
 
 xlibs = $(wres_lib) $(wr_lib)
 
 $(name).lib: $(name).dll
         $(librarian) $(libflags) +$[@
 
-$(name).dll: rcstr.gh $(object) $(name).res $(xlibs) $(res_objs)
+$(name).dll: rcstr.gh $(object) $(name).res $(xlibs) $(version_res_$(host_os)_$(host_cpu))
         @%create tmp.lnk
         @%append tmp.lnk $(lflags)
         @for %i in ($(object)) do @%append tmp.lnk file %i
         @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
         $(linker) name $^@ @tmp.lnk
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k $(name).res $^@ -fr=version.res
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
         $(rc) -k $(name).res $^@
 !endif
 
 $(name).res: ../h/$(name).rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
-
-version.res: version.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 rcstr.gh: rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
@@ -120,5 +113,7 @@ rcstrmsg.gh: ../h/master.msg $(msgfiles)
 patch_level=0
 !endif
 
-version.rc : ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
+version.res: ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
         $[@ ../h/version.rc version.rc $$ $(name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
+

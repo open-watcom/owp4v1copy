@@ -15,20 +15,17 @@ libs_win = $(gui_dir)/win/win$(host_cpu)/gui.lib
 
 libs = $(libs_$(host_os)) $(libs_$(host_os)$(host_cpu))
 
-gendeps = rcstr.gh $(objs) $(libs) appwiz.lnk
+gendeps = rcstr.gh $(objs) $(libs) appwiz.lnk appwiz.res
 
 .c : ../c
 
 inc_dirs = -I"../h" -I"$(gui_dir)/h"
 
-resfile = appwiz.res
-rcinclude = -I"../h"
-
 all : appwiz.exe .SYMBOLIC
 
-appwiz.exe: $(gendeps) $(resfile)
+appwiz.exe: $(gendeps)
     $(linker) name $^@ @appwiz.lnk
-    $(rc) -k $(resfile) $^@
+    $(rc) -k appwiz.res $^@
 
 appwiz.lnk : makefile ../master.mif
     %create appwiz.lnk
@@ -40,5 +37,5 @@ appwiz.lnk : makefile ../master.mif
 rcstr.gh : ../h/appwiz.msg
     $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-$(resfile) : ../h/appwiz.rc .AUTODEPEND
-    $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_$(host_os)) $]@ -fo=$^@
+appwiz.res : ../h/appwiz.rc .AUTODEPEND
+    $(rc) $(rc_flags) -ad -I"../h" $(inc_dirs_sys_$(host_os)) $]@ -fo=$^@

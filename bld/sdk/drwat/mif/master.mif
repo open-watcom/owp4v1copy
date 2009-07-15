@@ -87,19 +87,15 @@ proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
 inc_dirs = -I. -I.. -I"$(common_dir)" -I"$(dig_dir)/h" -I"$(sdk_misc)" $(dis_includes)
 
 # systems where version resource must be added to .EXE
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = exever.res
-!endif
+version_res_nt_386 = version.res
 
 #explicit rules
 ################
 
-$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj) $(res_objs)
+$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj) $(version_res_$(host_os)_$(host_cpu))
         $(linker) @$(link_name)
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k $(proj_name).res $^@ -fr=exever.res
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(proj_name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
         $(rc) -k $(proj_name).res $^@
 !endif
@@ -110,13 +106,13 @@ $(link_name) : $(__MAKEFILES__)
 
 !ifeq host_OS win
 $(proj_name).res : ../drwatcom.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk $(inc_path) $[@ -fo=$^@
 !else
 $(proj_name).res : ../drnt.rc .AUTODEPEND
 !ifeq drwatcom_95 1
-        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) -DCHICAGO $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 $(inc_path) -DCHICAGO $[@ -fo=$^@
 !else
-        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 !endif
 !endif
 
@@ -130,9 +126,6 @@ rcstrmsg.gh : ../drwatcom.msg $(msgfiles)
         $(cc) $(preproc_opts) $(inc_path) -fo=$^@
 !endif
 
-exever.res: exever.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
-
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
 
@@ -140,6 +133,7 @@ exever.res: exever.rc
 patch_level=0
 !endif
 
-exever.rc : ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../exever.rc exever.rc $$ $(proj_name) $(patch_level)
+version.res: ./genverrc.exe ../exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../exever.rc version.rc $$ $(proj_name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 

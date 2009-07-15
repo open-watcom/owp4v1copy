@@ -268,4 +268,4 @@ inc_dirs += -I"$(ow_nwoss_root)/nw$(nlm_ver)/src" -I"$(ow_nwoss_root)/common/h"
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -I"$(trap_dir)/common" $(inc_dirs_sys) $[@ -fo=$^@
+        $(rc) $(rc_flags) -I"$(trap_dir)/common" $(inc_dirs_sys) $[@ -fo=$^@

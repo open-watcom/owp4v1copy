@@ -1,6 +1,6 @@
 !ifdef sys_windowed
 $(proj_name).res : $(vi_dir)/win/viw.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 rcstr.gh : rcstrmsg.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@

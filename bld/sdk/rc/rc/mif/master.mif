@@ -109,11 +109,7 @@ extra_l_flags_nt += option offset=0x69800000
 !endif
 
 # systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = version.res
-!endif
+version_res_nt_386 = version.res
 
 extra_rc_flags_os2 = -D__OS2__
 extra_rc_flags_nt  = -D__NT__
@@ -155,10 +151,10 @@ $(name)e.exe : $(res_depends) $(objs) $(wres_lib)
 
 !endif
 
-$(name)e.dll : $(res_depends) $(objs) $(wres_lib) $(res_objs)
+$(name)e.dll : $(res_depends) $(objs) $(wres_lib) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k version.res $^@
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
         wstrip -q -a -r $@ . $(name).res
 
@@ -196,15 +192,12 @@ rcmsg1.gh : ../h/rcmsg.h ../h/rc.msg
 rcmsg.gh : rcmsg1.gh
         $(awk) -f $(misc_dir)/msgtoh.awk $[@ > $^@
 
-$(name).res : ../rc.rc rcmsg.gh $(__MAKEFILES__) .AUTODEPEND
+$(name).res : ../rc.rc rcmsg.gh .AUTODEPEND
         $(rc_aui) -ad $(extra_rc_flags_$(host_os)) $(extra_c_flags) -I../h $[@ -fo=$^@
 
 keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
 
 keyword2.obj : keyword2.c keyword2.gh weights2.gh .AUTODEPEND
-
-version.res: version.rc
-        $(rc) $(rc_flags) $(inc_path) -r $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
@@ -213,5 +206,6 @@ version.res: version.rc
 patch_level=0
 !endif
 
-version.rc : ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
+version.res: ./genverrc.exe ../h/version.rc
         $[@ ../h/version.rc version.rc $$ $(name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@

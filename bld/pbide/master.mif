@@ -13,4 +13,4 @@ dlldbg.exe : dlldbg.obj dlldbg.res
 extra_c_flags_win =-zW
 
 dlldbg.res : ../dlldbg.rc ../debugger.ico
-        $(rc) $(rc_flags) -r $[@ -fo=$@
+        $(rc) $(rc_flags) $[@ -fo=$@

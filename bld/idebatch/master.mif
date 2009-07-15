@@ -71,7 +71,7 @@ $(name)e.exe : $(OBJSE) $(LNK) $(name).res
     @del $(name)e.sym
 
 $(name).res : ../$(name).rc
-    $(rc) $(rc_flags) -r $[@ -fo=$^@
+    $(rc) $(rc_flags) $[@ -fo=$^@
 
 $(LNK) : makefile
     %create $(LNK)

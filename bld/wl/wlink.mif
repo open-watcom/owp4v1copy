@@ -99,18 +99,14 @@ xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
 ###########
 # rc stuff
 
-extra_rc_flags_qnx = -D_UNIX
+extra_rc_flags_qnx   = -D_UNIX
 extra_rc_flags_linux = -D_UNIX
-extra_rc_flags_osx = -D_UNIX
-extra_rc_flags_bsd = -D_UNIX
+extra_rc_flags_osx   = -D_UNIX
+extra_rc_flags_bsd   = -D_UNIX
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
 # systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-rc_objs = version.rc
-!endif
+version_res_nt_386 = version.res
 
 #################
 # explicit rules
@@ -131,10 +127,10 @@ wl.exe : wlink.res $(comp_objs_exe) $(xlibs) exe.lnk
     wstrip -q -a -r $@ . wlink.res
 !endif
 
-wld.dll : wlink.res $(comp_objs_dll) $(xlibs) $(rc_objs) dll.lnk
+wld.dll : wlink.res $(comp_objs_dll) $(xlibs) $(version_res_$(host_os)_$(host_cpu)) dll.lnk
     $(linker) name $@ @dll.lnk
-!ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_path) version.rc $@
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $@
 !endif
     wstrip -q -a -r $@ . wlink.res
 
@@ -172,11 +168,12 @@ dll.lnk: $(__MAKEFILES__)
 patch_level=0
 !endif
 
-version.rc : ./genverrc.exe ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
+version.res : ./genverrc.exe ../h/wlver.rc
         $[@ ../h/wlver.rc version.rc $$ wlink $(patch_level)
+	$(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
-        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$^@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
         $(awk) -v rcbase=800 -f $(misc_dir)/msgtoh.awk $[@ > $^@

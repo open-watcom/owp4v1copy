@@ -69,11 +69,7 @@ rcinclude= -I. -I"../h" -I"$(dig_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)" -I"$(gu
 inc_dirs = -I"../h" -I"$(wsample_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(trmem_dir)" -I"$(dig_dir)/h"
 
 # systems where version resource must be added to .EXE
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = exever.res
-!endif
+version_res_nt_386 = version.res
 
 # explicit rules
 #################
@@ -84,30 +80,28 @@ $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(ma
     $(cl) $(clflags) $(objs) $(sys_objs) $(dip_objs) $(mad_objs) finger.obj $(cl_objs) $(wprof_libs) $(sys_libs) $(cl_libs) $(wres_lib) -ldl
     wstrip -q -a -r  $^@ . $(resfile)
 !else
-$(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile) $(res_objs)
+$(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile) $(version_res_$(host_os)_$(host_cpu))
     @rm -f finger.obj
     @%make finger.obj
     $(linker) name $^@ $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifneq sys_windowed 1
     wstrip -q -a -r  $^@ . $(resfile)
-!else
-!ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) -k $(resfile) $^@ -fr=exever.res
+!else ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(resfile) $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
     $(rc) -k $(resfile) $^@
-!endif
 !endif
 !endif
 
 !ifeq host_os os2
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $]@ -fo=$^@
+        $(rc) $(rc_flags) -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $]@ -fo=$^@
 !else ifeq host_os nt
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@
 !else
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $]@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(rcinclude) $(inc_dirs_sys_win) $]@ -fo=$^@
 !endif
 
 msg.obj : msg.c msg.h
@@ -129,9 +123,6 @@ auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
-exever.res: exever.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
-
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
 
@@ -139,6 +130,7 @@ exever.res: exever.rc
 patch_level=0
 !endif
 
-exever.rc : ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/exever.rc exever.rc $$ $(proj_name) $(patch_level)
+version.res: ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../h/exever.rc version.rc $$ $(proj_name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 

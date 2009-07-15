@@ -69,12 +69,7 @@ cpp_386         += $(bld_incs)
 !loaddll wcc386 $(nlang_dll)\wccd386.dll
 !loaddll wccaxp $(nlang_dll)\wccdaxp.dll
 !loaddll wlib   $(nlang_dll)\wlibd.dll
-# should be removed after 1.8 will be released
-!if $(__VERSION__) >= 1280
 !loaddll wlink  $(nlang_dll)\wlinkd.dll
-!else
-!loaddll wlink  $(nlang_dll)\wlink.dll
-!endif
 !loaddll wpp    $(nlang_dll)\wppdi86.dll
 !loaddll wpp386 $(nlang_dll)\wppd386.dll
 !loaddll wppaxp $(nlang_dll)\wppdaxp.dll

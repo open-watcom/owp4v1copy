@@ -15,13 +15,6 @@ memory_model_i86 = l
 WINDOWS=1
 !include wres.mif
 
-# path names used in the script
-!ifndef fmedit_dir
-!ifdef build_root
-fmedit_dir      = $(build_root)/fmedit
-!endif
-!endif
-
 extra_c_flags     = -DWIN_GUI -s
 
 extra_c_flags_win = -zu-zw-zc
@@ -181,20 +174,16 @@ extra_l_flags_win += library commdlg, ddeml
 xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib)
 
 # systems where version resource must be added to .EXE
-build_rc_nt_386 = nt
+version_res_nt_386 = version.res
 
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = exever.res
-!endif
-
-$(name).exe: rcstr.gh $(OBJS) $(name).res $(xlibs) $(res_objs)
+$(name).exe: rcstr.gh $(OBJS) $(name).res $(xlibs) $(version_res_$(host_os)_$(host_cpu))
         @%create tmp.lnk
         @%append tmp.lnk $(lflags)
         @for %i in ($(OBJS)) do @%append tmp.lnk file %i
         @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
         $(linker) name $^@ @tmp.lnk
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k $(name).res $^@ -fr=exever.res
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(name).res $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
         $(rc) -k $(name).res $^@
 !endif
@@ -202,7 +191,7 @@ $(name).exe: rcstr.gh $(OBJS) $(name).res $(xlibs) $(res_objs)
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 # explicit rules
 #################
@@ -213,10 +202,7 @@ rcstrmsg.gh : ../h/wde.msg $(msgfiles)
         $(cc) $(preproc_opts) -I"$(sdk_dir)/misc" $(inc_path) -fo=$^@
 
 $(name).res: ../h/$(name).rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@
-
-exever.res: exever.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -zk0 $(inc_path) $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
@@ -225,6 +211,7 @@ exever.res: exever.rc
 patch_level=0
 !endif
 
-exever.rc : ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../h/exever.rc exever.rc $$ $(name) $(patch_level)
+version.res: ./genverrc.exe ../h/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ ../h/exever.rc version.rc $$ $(name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 

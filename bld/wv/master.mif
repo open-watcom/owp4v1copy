@@ -367,24 +367,20 @@ resname=$+$(resname)$-dll
 resfile = $(resname).res
 
 # systems where version resource must be added to .EXE
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = exever.res
-!endif
+version_res_nt_386 = version.res
 
 !ifdef bootstrap
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs)
         $(cl) $(clflags) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs) $(cl_libs) -ldl
         wstrip -q -a -r $^@ . $(resfile)
 !else
-$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk) $(res_objs)
+$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk) $(version_res_$(host_os)_$(host_cpu))
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
 !else
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -k $(resfile) $^@ -fr=exever.res
+!ifdef version_res_$(host_os)_$(host_cpu)
+        $(rc) -k $(resfile) $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
         $(rc) -k $(resfile) $^@
 !endif
@@ -557,22 +553,22 @@ wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) usage.rc usagej.rc .
         $(rc_aui) -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
-        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvpmdll.res : $(hdir)/strings.rc litdef.gh .autodepend
-        $(rc) $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad $(rcinclude) $(inc_dirs_sys_nt) $[@ -fo=$^@
 
 wvpm.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
 
 wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad -DJAPANESE_MESSAGES -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
+        $(rc) $(rc_flags) -ad -DJAPANESE_MESSAGES -I"$(aui_dir)/os2386.pm" $(rcinclude) $(inc_dirs_sys_os2) $[@ -fo=$^@
 
 !ifneq sys_windowed 1
 .dlg : $(hdir)
@@ -627,9 +623,6 @@ japhis.dlg : $(hdir)/japhis.dlg
         parsedlg $(pmfontj) $[@ japhis.dlg
 !endif
 
-exever.res: exever.rc
-        $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
-
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
 
@@ -637,8 +630,9 @@ exever.res: exever.rc
 patch_level=0
 !endif
 
-exever.rc : ./genverrc.exe $(hdir)/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ $(hdir)/exever.rc exever.rc $$ $(proj_name) $(patch_level)
+version.res: ./genverrc.exe $(hdir)/exever.rc $(fe_misc_dir)/c/genverrc.c
+        $[@ $(hdir)/exever.rc version.rc $$ $(proj_name) $(patch_level)
+        $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 
 ####################
 

@@ -83,14 +83,14 @@ mem_flag = -of+
 extra_c_flags_dmem = $(mem_flag) -I"$(trmem_dir)"
 !endif
 
-extra_rc_flags_win = -k
-extra_rc_flags_nt  = -k
-extra_rc_flags_os2 = -p
+rc2_flags_win = -k
+rc2_flags_nt  = -k
+rc2_flags_os2 = -p
 
-rc_file_nt  = wbrw.res
-rc_file_win = wbrw.res
-rc_file_os2 = wbrwpm.res
-rc_file     = $(rc_file_$(host_OS))
+res_file_nt  = wbrw.res
+res_file_win = wbrw.res
+res_file_os2 = wbrwpm.res
+res_file     = $(res_file_$(host_OS))
 
 #linker
 LIBS_win    = $(gui_dir)/win/wini86/gui.lib
@@ -130,20 +130,16 @@ prereq_os2 = $(docs_root)/os2/wbrw.h
 prereq_dos = $(docs_root)/os2/wbrw.h
 
 # systems where version resource must be added to .EXE
-build_rc_nt_386 = nt
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-res_objs = version.res
-!endif
+version_res_nt_386 = version.res
 
 all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
 
-$(name).exe : $(OBJECTS) $(LIBS) $(rc_file) $(res_objs)
+$(name).exe : $(OBJECTS) $(LIBS) $(res_file) $(version_res_$(host_os)_$(host_cpu))
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
-!ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) $(rc_flags) $(rc_file) $^@ -fr=$(res_objs)
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) $(rc2_flags_$(host_os)) $(res_file) $^@ -fr=$(version_res_$(host_os)_$(host_cpu))
 !else
-    $(rc) $(rc_flags) $(rc_file) $^@
+    $(rc) $(rc2_flags_$(host_os)) $(res_file) $^@
 !endif
 !ifdef gen_browse_file
     @%create browser.wbr
@@ -159,23 +155,24 @@ dmem.obj : mem.cpp
 $(prereq_$(host_os)): .ALWAYS
 curr_dir=$+$(%cwd)$-
 !ifeq %BUILD_PLATFORM dos386
-        @cd $(docs_root)\$(host_os)
+    @cd $(docs_root)\$(host_os)
 !else
-        @cd $(docs_root)/$(host_os)
+    @cd $(docs_root)/$(host_os)
 !endif
-        @wmake -h hbook=wbrw header=1
-        @cd $(curr_dir)
+    @wmake -h hbook=wbrw header=1
+    @cd $(curr_dir)
 !endif
 
 .rc.res:
-    $(rc) -r $(rc_flags) $(inc_dirs_sys) $< -fo=$@
+    $(rc) $(rc_flags) $(inc_dirs_sys) $< -fo=$@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+    $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
 
 !ifndef patch_level
 patch_level=0
 !endif
 
-version.rc : ./genverrc.exe ../res/exever.rc $(fe_misc_dir)/c/genverrc.c
-        $[@ ../res/exever.rc version.rc $$ $(name) $(patch_level)
+version.res : ./genverrc.exe ../res/exever.rc $(fe_misc_dir)/c/genverrc.c
+    $[@ ../res/exever.rc version.rc $$ $(name) $(patch_level)
+    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@

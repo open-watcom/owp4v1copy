@@ -68,5 +68,5 @@ $(name).dll: $(object) verimp.obj $(library_files) $(name).res
     $(linker) $(lflags) name $^@ file {$(object) verimp.obj}
     $(rc) -k $(name).res $(name).dll
 
-$(name).res: fmedit.rc .AUTODEPEND
-    $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+$(name).res: $(name).rc .AUTODEPEND
+    $(rc) $(rc_flags) $(inc_path) $[@ -fo=$^@

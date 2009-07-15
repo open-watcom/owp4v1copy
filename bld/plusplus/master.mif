@@ -193,12 +193,7 @@ depends_dll = $(pre_obj_deps) $(comp_objs_dll) $(external_dependencies)
 depends_drv = $(pre_obj_deps) $(drv_objs)
  
 # systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
- 
-!ifdef build_rc_$(host_os)_$(host_cpu)
-rc_objs = plusplus.rc
-!endif
- 
+version_res_nt_386 = version.res
  
 #
 # create standard compiler
@@ -247,10 +242,10 @@ $(exe_name).exe : $(depends_exe) exe.lnk
  
 !endif
  
-$(dll_name).dll : $(rc_objs) $(depends_dll) dll.lnk
+$(dll_name).dll : $(version_res_$(host_os)_$(host_cpu)) $(depends_dll) dll.lnk
     $(linker) name $@ @dll.lnk
-!ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) $(rc_flags) $(inc_dirs_sys) plusplus.rc $@
+!ifdef version_res_$(host_os)_$(host_cpu)
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
 !endif
  
 $(dll_name).lib : $(dll_name).dll
@@ -396,8 +391,9 @@ asmopsd.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
 patch_level=0
 !endif
  
-plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-    $[@ $]@ $@ $$ $(dll_name) $(patch_level)
+version.res : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
+    $[@ $]@ version.rc $$ $(dll_name) $(patch_level)
+    $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
  
 !ifeq target_cpu axp
  

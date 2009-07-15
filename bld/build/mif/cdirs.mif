@@ -308,6 +308,9 @@ debugger_dir    = $(dev_dir)/debugger
 !ifndef re2c_dir
 re2c_dir        = $(dev_dir)/re2c
 !endif
+!ifndef fmedit_dir
+fmedit_dir      = $(dev_dir)/fmedit
+!endif
 !ifndef libzip_dir
 libzip_dir      = $(contrib_dir)/libzip
 !endif
@@ -628,6 +631,9 @@ re2c_dir        = $(dev_dir)\re2c
 !endif
 !ifndef cw_dir
 cw_dir          = $(dev_dir)\causeway
+!endif
+!ifndef fmedit_dir
+fmedit_dir      = $(dev_dir)\fmedit
 !endif
 !ifndef libzip_dir
 libzip_dir      = $(contrib_dir)\libzip
