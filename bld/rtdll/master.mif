@@ -79,14 +79,11 @@ lnk_alias = alias __HugeValue_br=__HugeValue, __IsTable_br=__IsTable
 !endif
 !endif
 
-$(dllname).dll $(dllname).imp : $(version_res_$(host_os)_$(host_cpu)) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
+$(dllname).imp : $(version_res_$(host_os)_$(host_cpu)) $(dll_objs) $(dll_libs) $(dllname).lnk $(__MAKEFILE__)
     $(linker) name $(dllname).dll @$(dllname).lnk
 !ifdef version_res_$(host_os)_$(host_cpu)
-    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $^@
+    $(rc) -k $(version_res_$(host_os)_$(host_cpu)) $(dllname).dll
 !endif
-    sort < $(dllname).imp > $(dllname).tmp
-    uniq $(dllname).tmp > $(dllname).imp
-    @rm -f $(dllname).tmp
 
 $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
     %create $@
@@ -101,7 +98,7 @@ $(dllname).lnk : $(dll_def) $(__MAKEFILES__)
     $(bld_cl) $(wcl_util_opts) -d_VERSION=$(bld_ver) $[@
 
 version.res: ./genverrc.exe ../verinfo.rc
-    $[@ ../h/version.rc version.rc $$ $(dllname) $(patch_level)
+    $[@ ../verinfo.rc version.rc $$ $(dllname) $(patch_level)
     $(rc) $(rc_flags) $(inc_path) version.rc -fo=$^@
 
 !include $(rtdll_dir)/clean.mif
