@@ -239,9 +239,10 @@ int ExpandProcString( int index )
                     continue;   /*yes, skip it */
             }
             // if( expand_directive_string( buffer, i ) == ERROR ) return( ERROR );
-            if( AsmBuffer[i]->token == T_STRING &&
-                *AsmBuffer[i]->string_ptr == '\0' ) {
-                strcat( buffer, "<>" );
+            if( AsmBuffer[i]->token == T_STRING ) {
+                strcat( buffer, "<" );
+                strcat( buffer, AsmBuffer[i]->string_ptr );
+                strcat( buffer, ">" );
             } else {
                 strcat( buffer, AsmBuffer[i]->string_ptr );
             }
