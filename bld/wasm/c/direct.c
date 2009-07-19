@@ -2841,7 +2841,7 @@ int LocalDef( int i )
 
             type = token_cmp( &(AsmBuffer[i]->string_ptr), TOK_EXT_BYTE,
                               TOK_EXT_TBYTE );
-            if( ( type == ERROR ) && (Options.mode & MODE_IDEAL) ) {
+            if( type == ERROR ) {
                 tmp = AsmGetSymbol( AsmBuffer[i]->string_ptr );
                 if( tmp != NULL ) {
                     if( tmp->state == SYM_STRUCT ) {
@@ -2855,10 +2855,11 @@ int LocalDef( int i )
                 return( ERROR );
             }
             sym->mem_type = TypeInfo[type].value;
-            if( type == MT_STRUCT )
+            if( type == MT_STRUCT ) {
                 local->size = ( ( dir_node *)tmp)->e.structinfo->size;
-            else
+            } else {
                 local->size = find_size( type );
+            }
         }
 
         info->localsize += ( local->size * local->factor );
