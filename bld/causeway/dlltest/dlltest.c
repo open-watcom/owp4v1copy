@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 //
 //
 // A short and hopefully easy to understand demonstration of CauseWay DLL
@@ -7,10 +5,11 @@
 //
 //
 
-
-// Need function definitions
+#include <stdio.h>
+#include <stdlib.h>
 #include "cwdllfnc.h"
 
+extern char *_LpPgmName;
 
 // Name the module. DLLS for stack version and DLLR for register
 #ifdef __SW_3S
@@ -19,53 +18,39 @@ char ModuleName[]={"DLLS"};
 char ModuleName[]={"DLLR"};
 #endif
 
-
 //
 //The actual do something code.
 //
 int main( void )
 {
-unsigned char *DLL;
+    unsigned char *DLL;
 
-void _cdecl (*DLLFunction)(char *);
+    void _cdecl (*DLLFunction)(char *);
 
-	// Try and load the module.
-	DLL=LoadModule(ModuleName);
-	if (DLL) {
+    printf( "EXE File name: %s\n", GetModuleFileName( _psp ) );
+    printf( "Program name: %s\n", _LpPgmName );
+    // Try and load the module.
+    DLL = LoadModule( ModuleName );
+    if( DLL ) {
 
-		printf("Module ");
-		printf(ModuleName);
-		printf(" loaded sucessfully\n");
+        printf( "Module %s loaded sucessfully\n", ModuleName );
 
-		// Fetch the test function address
-		DLLFunction=GetProcAddress(DLL,"_SayHello");
+        // Fetch the test function address
+        DLLFunction = GetProcAddress( DLL, "_SayHello" );
 
-		if (DLLFunction) {
+        if( DLLFunction ) {
+            // Give the test function a shout
+            DLLFunction( "Hello World!" );
+        } else {
+            printf( "Failed to GetProcAddress\n" );
+        }
 
-			// Give the test function a shout
-			DLLFunction("Hello World!\n");
+        // Lose the module again
+        FreeModule( DLL );
+        printf( "Module %s discarded\n", ModuleName );
 
-		} else {
-
-			printf("Failed to GetProcAddress\n");
-
-		}
-
-			// Lose the module again
-			FreeModule(DLL);
-
-			printf("Module ");
-			printf(ModuleName);
-			printf(" discarded\n");
-
-	} else {
-
-		printf("Failed to load ");
-		printf(ModuleName);
-		printf(" module...\n");
-
-	}
-
-return(0);
+    } else {
+        printf( "Failed to load %s module...\n", ModuleName );
+    }
+    return( 0 );
 }
-

@@ -1,3 +1,7 @@
+#pragma library (cwdll)
+
+#define _CWCAPI     __declspec(__cdecl)
+
 /****************************************************************************
 ;Load a module by file name. If the module already exists in memory a new
 ;version will still be loaded.
@@ -6,14 +10,14 @@
 ;
 ;Returns:
 ;
-;EAX	zero on error else module handle.
+;EAX    zero on error else module handle.
 ;
-;file_name is a standard zero terminated string.
+;file_name is a standard null terminated string.
 ;
 ;Handles returned by this function should always be released via FreeLibrary()
 ;
 ;***************************************************************************/
-extern void* _cdecl LoadLibrary(void *);
+_CWCAPI extern void         *LoadLibrary( const char * );
 
 
 /****************************************************************************
@@ -28,7 +32,7 @@ extern void* _cdecl LoadLibrary(void *);
 ;module_handle is the value returned by LoadLibrary();
 ;
 ;***************************************************************************/
-extern void _cdecl FreeLibrary(void *);
+_CWCAPI extern void         FreeLibrary( void * );
 
 
 /******************************************************************************
@@ -39,14 +43,14 @@ extern void _cdecl FreeLibrary(void *);
 ;
 ;Returns:
 ;
-;EAX 	zero on error else module handle.
+;EAX    zero on error else module handle.
 ;
 ;module_name is a standard zero terminated string.
 ;
 ;Handles returned by this function should always be released via FreeModule()
 ;
 ******************************************************************************/
-extern void* _cdecl LoadModule(void *);
+_CWCAPI extern void         *LoadModule( const char * );
 
 
 /****************************************************************************
@@ -61,7 +65,7 @@ extern void* _cdecl LoadModule(void *);
 ;module_handle is the value returned by LoadModule();
 ;
 ;***************************************************************************/
-extern void _cdecl FreeModule(void *);
+_CWCAPI extern void         FreeModule( void * );
 
 
 /******************************************************************************
@@ -77,7 +81,20 @@ extern void _cdecl FreeModule(void *);
 ;module_name is a standard zero terminated string.
 ;
 ******************************************************************************/
-extern void* _cdecl GetProcAddress(void *,void *);
+_CWCAPI extern void         *GetProcAddress( void *, const char * );
 
 
+/******************************************************************************
+;Returns the address of a module file name.
+;
+;Usage: GetModuleFileName(module_PSP);
+;
+;Returns:
+;
+;EAX address of a module file name (standard null terminated string)
+;
+;module_PSP is the DOS PSP segment selector
+;
+******************************************************************************/
+_CWCAPI extern const char   *GetModuleFileName( unsigned );
 

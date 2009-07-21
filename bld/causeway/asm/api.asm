@@ -5516,7 +5516,7 @@ CreatePSP       proc    near
 ;
 ;Allocate PSP memory.
 ;
-        mov     ecx,(size PSP_Struc)+(size EPSP_Struc.EPSP_Struc)
+        mov     ecx,size EPSP_Struc
         sys     GetMemLinear32
         jc      api82_error             ;Not enough memory.
         push    ds
@@ -5532,7 +5532,7 @@ CreatePSP       proc    near
         jmp     api82_error
 api82_memOK:
         mov     edx,esi
-        mov     ecx,(size PSP_Struc)+(size EPSP_Struc.EPSP_Struc)
+        mov     ecx,size EPSP_Struc
         sys     SetSelDet32
         pop     ResourceTracking
         assume ds:_apiCode
@@ -5637,6 +5637,63 @@ api82_ChainPSP1:
         mov     es:EPSP_Struc.EPSP_NextPSP[edx],0
         pop     es
 ;
+;Save full file name into EPSP.
+;
+        push    ds
+        lds     esi,f[api82_Name]
+        mov     edi,EPSP_Struc.EPSP_FileName
+        mov     BYTE PTR es:[edi],0
+        cmp     b[esi],0
+        jz      api82_SkipCopy
+        mov     al,b[esi+1]
+        cmp     al,":"      ;drive specification?
+        jnz     api82_GetDrive
+        lodsb
+        stosb
+        mov     dl,al       ;dl - zero based drive number (0=A,...)
+        or      dl,20h
+        sub     dl,'a'
+        movsb
+        jmp     api82_CheckPath
+api82_GetDrive:
+        mov     ah,19h      ;get current disc
+        int     21h
+        mov     dl,al       ;dl - zero based drive number (0=A,...)
+        add     al,'A'      ;make it a character
+        stosb
+        mov     al,":"
+        stosb
+api82_CheckPath:
+        mov     al,b[esi]
+        cmp     al,"\"      ;path specification?
+        jz      api82_CopyName
+        mov     al,"\"      ;store leading \
+        stosb               ; ..
+        mov     BYTE PTR es:[edi],0
+        inc     dl          ;dl - drive number is 1 based (1=A,...)
+        xchg    esi,edi        
+        mov     ah,47h      ;get current directory without
+        push    ds          ;leading and trailing \
+        push    es
+        pop     ds
+        int     21h         ;get text
+api82_cp1:
+        lodsb
+        or      al,al
+        jnz     api82_cp1
+        dec     esi
+        xchg    esi,edi        
+        pop     ds
+        mov     al,"\"      ;store trailing \
+        stosb               ; ..
+api82_CopyName:
+        lodsb
+        stosb
+        or      al,al
+        jnz     api82_CopyName
+api82_SkipCopy:
+        pop     ds
+;
 ;Switch to this PSP.
 ;
         cmp     d[api82_Flags],2                ;cwLoad?
@@ -5699,8 +5756,9 @@ api82_CopyEnv:
         push    es
         mov     es,apiDSeg
         assume es:_cwMain
-        mov     ax,es:PSPSegment
+        mov     es,es:PSPSegment
         assume es:nothing
+        mov     ax,WORD PTR es:[PSP_Struc.PSP_Environment]      ;Get parents environment.
         mov     es,w[api82_PSP]
         mov     WORD PTR es:[PSP_Struc.PSP_Environment],ax
         pop     es
@@ -5756,82 +5814,27 @@ api82_GotEnv:
         mov     es,es:PSPSegment
         assume es:nothing
         mov     es,WORD PTR es:[PSP_Struc.PSP_Environment]
-        xor     esi,esi
+        xor     edi,edi
 api82_gp0:
-        mov     al,es:[esi]             ;Get a byte.
-        inc     esi             ;/
+        mov     al,es:[edi]             ;Get a byte.
+        inc     edi             ;/
         or      al,al           ;End of a string?
         jnz     api82_gp0               ;keep looking.
-        mov     al,es:[esi]             ;Double zero?
+        mov     al,es:[edi]             ;Double zero?
         or      al,al           ;/
         jnz     api82_gp0               ;keep looking.
-        add     esi,3           ;Skip last 0 and word count.
-        mov     ebp,esi
+        add     edi,3           ;Skip last 0 and word count.
 ;
-;Now build the file name.
+;Now copy the file name from EPSP to the environment.
 ;
         push    ds
-        lds     esi,f[api82_Name]
-        mov     al,b[esi+1]
-        pop     ds
-        mov     edi,ebp
-        cmp     al,":"          ;drive specification?
-        jz      api82_NoGetPath
-        push    edi
-        mov     ah,19h  ;get current disc
-        int     21h
-        mov     dl,al
-        add     al,'A'  ;make it a character
-        pop     esi
-        mov     es:[esi],al
-        inc     esi
-        mov     BYTE PTR es:[esi],":"
-        inc     esi
-        ;
-        push    ds
-        push    esi
-        lds     esi,f[api82_Name]
-        mov     al,b[esi]
-        pop     esi
-        pop     ds
-        mov     edi,esi
-        cmp     al,"\"
-        jz      api82_NoGetPath
-        ;
-        mov     BYTE PTR es:[esi],"\"
-        inc     esi
-        mov     BYTE PTR es:[esi],0
-        mov     ah,47h  ;get current directory
-        xor     dl,dl   ;default drive
-        push    ds
-        push    es
-        pop     ds
-        int     21h     ;get text
-        pop     ds
-        mov     esi,ebp
-        push    ds
-        push    es
-        pop     ds
-api82_gp1:
-        lodsb
-        or      al,al
-        jnz     api82_gp1
-        pop     ds
-        dec     esi
-        mov     edi,esi
-        mov     al,"\"
-        stosb
-;
-;Append EXE file name to EDI.
-;
-api82_NoGetPath:
-        push    ds
-        lds     esi,f[api82_Name]
-api82_gp3:
+        mov     ds,w[api82_PSP]
+        mov     esi,EPSP_Struc.EPSP_FileName
+api82_cp2:
         lodsb
         stosb
         or      al,al
-        jnz     api82_gp3
+        jnz     api82_cp2
         pop     ds
 ;
 ;Return to caller.

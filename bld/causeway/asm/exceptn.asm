@@ -941,7 +941,7 @@ DebugSegmentDPMI proc near
         mov     ax,fs
         movzx   eax,ax
         lsl     eax,eax
-        cmp     eax,(size PSP_Struc)+(size EPSP_Struc.EPSP_Struc)
+        cmp     eax,size EPSP_Struc
         pop     eax
         jc      exc21_9
         ;

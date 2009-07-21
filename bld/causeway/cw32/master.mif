@@ -25,7 +25,13 @@ cwdstub.exe : cwdstub.obj
 
 !else ifeq host_cpu 386
 
-cwdll.lib : dllfunc.obj ../../inc/cwapi.lbc
-    $(librarian) $(libflags) +$[@ @$]@
+objs = &
+    cwkrnl1.obj &
+    cwkrnl2.obj &
+    cwkrnl3.obj &
+    cwkrnl4.obj
+
+cwdll.lib : $(objs) ../../inc/cwapi.lbc
+    $(librarian) $(libflags) $(objs) @$]@
 
 !endif

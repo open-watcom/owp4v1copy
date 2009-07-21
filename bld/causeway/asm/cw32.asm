@@ -3275,7 +3275,7 @@ cw5_pe0:
 ;Get memory for new PSP.
 ;
         mov     IErrorNumber,5
-        mov     ecx,(size PSP_Struc)+(size EPSP_Struc)
+        mov     ecx,size EPSP_Struc
         sys     GetMem32
         jc      InitError
         push    ds

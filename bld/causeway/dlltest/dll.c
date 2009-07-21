@@ -1,34 +1,39 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "cwdllfnc.h"
 
-int main(int reason)
+extern char *_LpPgmName;
+
+int main( int reason, char **dummy )
 {
-int result;
+    int result;
 
-	if (!reason) {
+    if( !reason ) {
 
-		/*
-		** DLL initialisation.
-		*/
-		printf("DLL startup...\n");
+        /*
+        ** DLL initialisation.
+        */
+        printf( "DLL startup...\n" );
+        printf( "DLL File name: %s\n", GetModuleFileName( _psp ) );
+        printf( "Program name: %s\n", _LpPgmName );
 
-		/* return zero to let the load continue */
-		result=0;
+        /* return zero to let the load continue */
+        result = 0;
 
-	} else {
+    } else {
 
-		/*
-		** DLL clean up.
-		*/
-		printf("DLL shutdown...\n");
+        /*
+        ** DLL clean up.
+        */
+        printf( "DLL shutdown...\n" );
 
-		result=0;
-	}
-        return(result);
+        result = 0;
+    }
+    return( result );
 }
 
 
-void __export _cdecl SayHello( char * message)
+void __export _cdecl SayHello( char *message )
 {
-	printf("Recieved DLL Message: ");
-	printf(message);
+    printf( "Recieved DLL Message: %s\n", message );
 }
