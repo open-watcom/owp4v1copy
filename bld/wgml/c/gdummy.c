@@ -25,8 +25,9 @@
 *  ========================================================================
 *
 * Description: implement dummy support for not (yet) implemented
-*               script control words and gml tags
+*              control words and tags
 *                    gml_dummy()
+*                    lay_dummy()
 *                    scr_dummy()
 *
 ****************************************************************************/
@@ -72,6 +73,22 @@ void    gml_dummy( const gmltag * entry )
     g_warn( wng_unsupp_tag, entry->tagname );
     wng_count++;
     show_include_stack();
+}
+
+/***************************************************************************/
+/*  lay_dummy        processing                                            */
+/***************************************************************************/
+
+void    lay_dummy( const gmltag * entry )
+{
+
+    scan_start = scan_stop + 1;
+
+    if( GlobalFlags.firstpass ) {       // layout msg only in pass 1
+        g_warn( wng_unsupp_lay, entry->tagname );
+        wng_count++;
+        show_include_stack();
+    }
 }
 
 

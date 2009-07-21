@@ -384,3 +384,15 @@ pick( WNG_UNSUPP_CW_OPT,        "Unsupported SCRIPT control word option: '%s %s'
 pick( WNG_UNSUPP_TAG,           "Unsupported GML tag: ':%s'",
                                 "Unsupported GML tag: ':%s'" )
 
+pick( WNG_UNSUPP_LAY,           "Unsupported GML layout tag: ':%s'",
+                                "Unsupported GML layout tag: ':%s'" )
+
+pick( WNG_UNSUPP_LAY_ATT,       "Unsupported GML layout tag attribute: ':%s %s'",
+                                "Unsupported GML layout tag attribute: ':%s %s'" )
+
+pick( ERR_NESTED_LAY,           "Nested :LAYOUT not supported",
+                                "Nested :LAYOUT not supported" )
+
+pick( ERR_NO_LAY,               "No :LAYOUT active for '%s'",
+                                "No :LAYOUT active for '%s'" )
+

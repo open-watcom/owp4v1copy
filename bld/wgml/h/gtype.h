@@ -360,7 +360,8 @@ typedef enum {
     tag_text     = 4,                   // text line possible
     etag_req     = 8,                   // eTAG required
     etag_opt     = 16,                  // eTAG optional
-    tag_is_basic = 32                   // basic tag
+    tag_is_basic = 32,                  // basic tag
+    tag_layout   = 64                   // tag valid in layout
 } gmlflags;
 
 
@@ -444,7 +445,7 @@ typedef struct gaentry {
 
 /***************************************************************************/
 /*  GML tag options from the .gt Control word                              */
-/*  enum values have to be single bits 2**x                                */
+/*  enum values have to be single bits, powers of 2                        */
 /***************************************************************************/
 
 typedef enum {

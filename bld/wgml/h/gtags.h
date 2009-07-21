@@ -27,6 +27,11 @@
 * Description:  WGML GML tags definition header.
 *               only tags with a routinename other than gml_dummy
 *               are processed so far
+*
+*    layout tags are defined in gtagslay.h
+*
+*    :cmt :imbed :include   are defined here and in layout tags identically
+*    other tags for example :abstract are defined differently
 ****************************************************************************/
 
 #ifndef pick
@@ -63,7 +68,6 @@
   pick( "EHP1",     4,      gml_dummy,      0 )
   pick( "EHP2",     4,      gml_dummy,      0 )
   pick( "EHP3",     4,      gml_dummy,      0 )
-  pick( "ELAYOUT",  7,      gml_dummy,      0 )
   pick( "ELQ",      3,      gml_dummy,      0 )
   pick( "EOL",      3,      gml_dummy,      0 )
   pick( "EPSC",     4,      gml_dummy,      0 )
@@ -108,7 +112,7 @@
   pick( "INCLUDE",  7,      gml_include,    tag_is_basic    )
   pick( "INDEX",    5,      gml_dummy,      0 )
   pick( "IREF",     4,      gml_dummy,      0 )
-  pick( "LAYOUT",   6,      gml_dummy,      0 )
+  pick( "LAYOUT",   6,      gml_layout,     0 )
   pick( "LI",       2,      gml_dummy,      0 )
   pick( "LIREF",    5,      gml_dummy,      0 )
   pick( "LP",       2,      gml_dummy,      0 )

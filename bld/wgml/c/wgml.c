@@ -266,6 +266,7 @@ void    inc_inc_level( void )
 
 /***************************************************************************/
 /* remove leading  .  from input                                           */
+/* special processing for   .:tag  construct                               */
 /***************************************************************************/
 
 static void remove_indentation( void )
@@ -275,8 +276,11 @@ static void remove_indentation( void )
     int         offset;
 
     p = buff2;
-    while( *p == SCR_char && *(p+1) == ' ' ) {
+    while( *p == SCR_char && *(p + 1) == ' ' ) {
         while( *++p == ' ' ) /* empty */ ;  // skip blanks
+    }
+    if( *p == SCR_char && *(p + 1) == GML_char ) {
+        p++;                            // skip SCR_char
     }
     if( p != buff2 ) {                  // found some blanks now copy buffer
 

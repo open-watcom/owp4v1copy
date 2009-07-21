@@ -58,6 +58,24 @@ static  const   gmltag  gml_tags[] = {
 
 
 /***************************************************************************/
+/*    GML layout tags                                                      */
+/***************************************************************************/
+
+#define pick(name, length, routine, flags) { name, length, routine, flags },
+
+static  const   gmltag  lay_tags[] = {
+
+#include "gtagslay.h"
+    { "   ", 0, NULL, 0 }               // end
+
+};
+
+#define LAY_TAGMAX  (sizeof( lay_tags ) / sizeof( lay_tags[0] ) - 1)
+
+#undef pick
+
+
+/***************************************************************************/
 /*    SCR control words                                                    */
 /***************************************************************************/
 
@@ -140,11 +158,15 @@ static void scan_gml( void )
         add_GML_tag_research( tok_start + 1 );
     }
 
-    ge = find_tag( &tag_dict, tok_start + 1 );
+    if( ProcFlags.layout ) {            // no user tags for LAYOUT tags
+        ge = NULL;
+    } else {
+        ge = find_tag( &tag_dict, tok_start + 1 );
+    }
     processed = false;
     if( ge != NULL ) {                  // GML user defined Tag found
         *p = csave;
-        if( ge->tagflags & tag_off ) {  // tag off, treat as text
+        if( ge->tagflags & tag_off ) {  // inactive, treat as text
             scan_start = tok_start;
             return;
         }
@@ -176,21 +198,43 @@ static void scan_gml( void )
 
         }
     } else {
-        for( k = 0; k < GML_TAGMAX; ++k ) {
-            if( toklen == gml_tags[k].taglen ) {
-                if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
-                    *p = csave;
-                    gml_tags[k].gmlproc( &gml_tags[k] );
-                    processed = true;
-                    if( *scan_start == '.' ) {
-                        scan_start++;
+        if( ProcFlags.layout ) {        // different tags for layout
+            for( k = 0; k < LAY_TAGMAX; ++k ) {
+                if( toklen == lay_tags[k].taglen ) {
+                    if( !stricmp( lay_tags[k].tagname, tok_start + 1 ) ) {
+                        *p = csave;
+                        lay_ind = -1;   // process tag not attribute
+
+                        lay_tags[k].gmlproc( &lay_tags[k] );
+
+                        lay_ind = k;    // now process attributes
+                        processed = true;
+                        if( *scan_start == '.' ) {
+                            scan_start++;
+                        }
+                        break;
                     }
-                    break;
+                }
+            }
+        } else {
+            for( k = 0; k < GML_TAGMAX; ++k ) {
+                if( toklen == gml_tags[k].taglen ) {
+                    if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
+                        *p = csave;
+                        gml_tags[k].gmlproc( &gml_tags[k] );
+                        processed = true;
+                        if( *scan_start == '.' ) {
+                            scan_start++;
+                        }
+                        break;
+                    }
                 }
             }
         }
     }
-    *p = csave;
+    if( *p == '\0' ) {
+        *p = csave;
+    }
     if( !processed ) {
         scan_start = tok_start;
     }
@@ -591,7 +635,7 @@ static void set_if_then_do( void )
 
 /*
  *  scan_line look whether input is script / gml control line or text
- *
+ *  special for attributes during :LAYOUT processing
  */
 
 void    scan_line( void )
@@ -633,7 +677,11 @@ void    scan_line( void )
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
                 g_info( inf_text_line, scan_start );
             }
-//          process_text( scan_start, cur_font_num );   TBD
+            if( ProcFlags.layout ) {    // LAYOUT active process attributes
+                lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
+            } else {
+//              process_text( scan_start, cur_font_num );   TBD
+            }
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
         g_info( inf_skip_line );

@@ -30,7 +30,7 @@
 *         getarg               --- scan (quoted) blank delimited argument
 *         getqst               --- scan quoted string
 *         is_xxx_char          --- test for allowed char
-*         is_quote_char        --- test for different quote chars
+*         is_quote_char        --- test for several quote chars
 *         unquote_if_quoted    --- adjust ptrs for quoted string
 *
 ****************************************************************************/
@@ -239,7 +239,22 @@ condcode    getqst( void )
 
 
 /*
- * Test character as valid for an function name
+ * Test character as valid for an LAYOUT attribute name
+ */
+bool    is_lay_att_char( char c )
+{
+    bool    test;
+
+    test = isalpha( c );
+    if( !test ) {
+        test = ( c == '_' );
+    }
+    return( test );
+}
+
+
+/*
+ * Test character as valid for a function name
  */
 bool    is_function_char( char c )
 {

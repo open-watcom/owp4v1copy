@@ -64,8 +64,8 @@ char    *skip_to_quote( char * p, char quote )
 /*    in 0.0001 millimeter units and 0.0001 inch units,                    */
 /*    the relative ones will not be converted.                             */
 /*                                                                         */
-/*    returns  filled structure su, returncode TRUE                        */
-/*               or  returncode FALSE in case of error                     */
+/*    returns  filled structure su, returncode false                       */
+/*               or  returncode true in case of error                      */
 /***************************************************************************/
 
 bool    to_internal_SU( char * * scanp, su * converted )
@@ -89,6 +89,7 @@ bool    to_internal_SU( char * * scanp, su * converted )
     unit[3] = '\0';
     unit[2] = '\0';
     unit[1] = '\0';
+    unit[0] = '\0';
     s = converted;
     p = *scanp;
     ps = s->su_txt;

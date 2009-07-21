@@ -246,6 +246,8 @@ static  void    get_macro_line( void )
 /***************************************************************************/
 /*  get line from current input ( file )                                   */
 /*  skipping lines before the first one to process if neccessary           */
+/*                                                                         */
+/*  returns  false for EOF                                                 */
 /***************************************************************************/
 bool    get_line( void )
 {
@@ -253,6 +255,10 @@ bool    get_line( void )
     char        *   p;
     inp_line    *   pline;
 
+    if( ProcFlags.reprocess_line ) {    // there was an unget
+        ProcFlags.reprocess_line = false;
+        return( !(input_cbs->fmflags & II_eof) );
+    }
     if( input_cbs->hidden_head != NULL ) {  // line was previously split,
         strcpy( buff2, input_cbs->hidden_head->value ); // take 2nd part
         pline = input_cbs->hidden_head;

@@ -25,7 +25,7 @@ common_objs =  &
         gutil.obj    &
         wgmlmsg.obj  &
         swchar.obj
-
+ 
 #
 # output device related
 #
@@ -39,17 +39,26 @@ dev_objs =  &
         cophdr.obj   &
         devfuncs.obj &
         outbuff.obj
-
+ 
 #
 # gml tag related
 #
 gml_objs =  &
         gcmt.obj     &
         ginclude.obj &
+        glayout.obj  &
+        glayutil.obj &
+        glconvrt.obj &
+        gldeflt.obj  &
+        glfig.obj    &
+        glfn.obj     &
+        glpage.obj   &
+        glpc.obj     &
+        glwidow.obj  &
         gset.obj     &
         gtagdict.obj &
         gusertag.obj
-
+ 
 #
 # script control word or function related
 #
@@ -87,7 +96,7 @@ scr_objs =  &
         gspu.obj     &
         gstitr.obj   &
         gsty.obj
-
+ 
 objs = $(common_objs) $(scr_objs) $(gml_objs) $(dev_objs)
-
-
+ 
+ 

@@ -47,6 +47,7 @@
 
 
 #include "gtype.h"
+#include "gtypelay.h"
 #include "copfiles.h"                   // for text_line and text_vars
 
 
@@ -76,6 +77,7 @@ extern  condcode    getarg( void );
 extern  condcode    getqst( void );
 extern  bool        is_quote_char( char c );
 extern  bool        is_function_char( char c );
+extern  bool        is_lay_att_char( char c );
 extern  bool        is_id_char( char c );
 extern  bool        is_macro_char( char c );
 extern  bool        is_symbol_char( char c );
@@ -118,6 +120,12 @@ extern  void    xx_opt_err( char *cw, char *pa );
 
 /* getnum.c                             */
 extern condcode     getnum( getnum_block * gn );
+
+
+/* glayutil.c                           */
+extern void         eat_lay_sub_tag( void );
+extern condcode     get_lay_sub_and_value( struct att_args * l_args );
+
 
 /* gmacdict.c                         */
 extern  void        add_macro_entry( mac_entry * * dict, mac_entry * me );
@@ -256,7 +264,7 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
 //extern  void Msg_Put_Args( char message[], MSG_ARG_LIST *arg_info, char *types, va_list *args );
 
 /*
- * prototypes for the gml processing routines
+ * prototypes for the gml tag processing routines
  */
 
 #ifdef pick
@@ -265,6 +273,29 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
 #define pick( name, length, routine, flags )  extern void routine( const gmltag * entry );
 
 #include "gtags.h"
+
+/*
+ * prototypes for the layout tag processing routines
+ */
+
+#define pick( name, length, routine, flags )  extern void routine( const gmltag * entry );
+
+#include "gtagslay.h"
+
+/*
+ * prototypes for the layout tag attribute processing routines
+ */
+
+#define pick( name, funci, funco, restype ) \
+extern  bool    funci( char * buf, lay_att attr, restype * result );
+
+#include "glayutil.h"
+
+
+#define pick( name, funci, funco, restype ) \
+extern  void    funco( FILE * f, lay_att attr, restype * in );
+
+#include "glayutil.h"
 
 /*
  * prototypes for the script control word processing routines

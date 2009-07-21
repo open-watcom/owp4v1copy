@@ -25,8 +25,7 @@
 *  ========================================================================
 *
 * Description: WGML implement prototype support for default layout
-*                   incomplete to be redesigned when :LAYOUT tag is
-*                              processed
+*                   incomplete                                        TBD
 *
 ****************************************************************************/
 
@@ -38,19 +37,153 @@
 #include "wgml.h"
 #include "gvars.h"
 
+
 static    uint32_t    max_char_width;
 static    uint32_t    max_line_height;
 static    uint32_t    net_page_height;
 static    uint32_t    net_page_width;
 
 
+
 /***************************************************************************/
-/*  init_def_lay                                                           */
+/*  init_def_lay            construct the default layout                   */
 /***************************************************************************/
 
 void    init_def_lay( void )
 {
-    int         i;
+    static  char    z0[] = "0";
+    static  char    lm[] = "1i";
+    static  char    rm[] = "7i";
+    static  char    dp[] = "9.66i";
+    static  char    gt[] = "0.5i";
+    static  char    bd[] = "0";
+    static  char    i04[] = "0.4i";
+    static  char    n1[] = "1";
+    static  char    n2[] = "2";
+    char    *       p;
+    long    int     i;
+
+    /***********************************************************************/
+    /*  :PAGE  values                                                      */
+    /***********************************************************************/
+    p = &z0;
+    to_internal_SU( &p, &layout_work.page.top_margin );
+
+    p = &lm;
+    to_internal_SU( &p, &layout_work.page.left_margin );
+
+    p = &rm;
+    to_internal_SU( &p, &layout_work.page.right_margin );
+
+    p = &dp;
+    to_internal_SU( &p, &layout_work.page.depth );
+
+    /***********************************************************************/
+    /*  :DEFAULT values                                                    */
+    /***********************************************************************/
+    layout_work.defaults.spacing = 1;
+    layout_work.defaults.columns = 1;
+    layout_work.defaults.font = 0;
+    layout_work.defaults.justify = 1;
+    layout_work.defaults.input_esc = ' ';
+    p = &gt;
+    to_internal_SU( &p, &layout_work.defaults.gutter );
+
+    p = &bd;
+    to_internal_SU( &p, &layout_work.defaults.binding );
+
+    /***********************************************************************/
+    /* :WIDOW values                                                       */
+    /***********************************************************************/
+    layout_work.widow.threshold = 2;
+
+    /***********************************************************************/
+    /* :FN    values                                                       */
+    /***********************************************************************/
+    p = &z0;
+    to_internal_SU( &p, &layout_work.fn.line_indent );
+
+    p = &i04;
+    to_internal_SU( &p, &layout_work.fn.align );
+
+    p = &n2;
+    to_internal_SU( &p, &layout_work.fn.pre_lines );
+
+    p = &n2;
+    to_internal_SU( &p, &layout_work.fn.skip );
+
+    layout_work.fn.spacing = 1;
+
+    layout_work.fn.font = 0;
+
+    layout_work.fn.number_font = 0;
+
+    layout_work.fn.number_style = h_style;
+
+    layout_work.fn.frame = 0;
+
+    /***********************************************************************/
+    /* :FN    values                                                       */
+    /***********************************************************************/
+    layout_work.fnref.font = 0;
+
+    layout_work.fnref.number_style = h_style | xp_style;
+
+
+    /***********************************************************************/
+    /*  :P     values                                                      */
+    /***********************************************************************/
+    p = &z0;
+    to_internal_SU( &p, &layout_work.p.line_indent );
+
+    p = &n1;
+    to_internal_SU( &p, &layout_work.p.pre_skip );
+
+    p = &z0;
+    to_internal_SU( &p, &layout_work.p.post_skip );
+
+
+    /***********************************************************************/
+    /*  :PC    values                                                      */
+    /***********************************************************************/
+    p = &z0;
+    to_internal_SU( &p, &layout_work.pc.line_indent );
+
+    p = &n1;
+    to_internal_SU( &p, &layout_work.pc.pre_skip );
+
+    p = &z0;
+    to_internal_SU( &p, &layout_work.pc.post_skip );
+
+
+    /***********************************************************************/
+    /*  :FIG   values                                                      */
+    /***********************************************************************/
+    p = &z0;
+    to_internal_SU( &p, &layout_work.fig.left_adjust );
+
+    p = &z0;
+    to_internal_SU( &p, &layout_work.fig.right_adjust );
+
+    p = &n2;
+    to_internal_SU( &p, &layout_work.fig.pre_skip );
+
+    p = &z0;
+    to_internal_SU( &p, &layout_work.fig.post_skip );
+
+    layout_work.fig.spacing = 1;
+    layout_work.fig.spacing = 0;
+    layout_work.fig.default_place = top_place;
+
+    layout_work.fig.default_frame.type = char_frame;
+
+    strcpy( layout_work.fig.default_frame.string, "CHAR-frame" );
+
+
+    /***********************************************************************/
+    /*  remaining tags                           TBD                       */
+    /***********************************************************************/
+
 
     /* These would normally be set per the :LAYOUT. Here, half-inch
      * top, bottom and right margins and a one-inch left margin are
