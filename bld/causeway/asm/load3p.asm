@@ -163,12 +163,7 @@ api89_CheckNew:
         cmp     ExecMCount,0
         jz      api89_emc0
         dec     ExecMCount
-
-;       mov     edx,d[apiNewHeader+NewHeaderStruc.NewSize]
-TempAddress     =       NewHeaderStruc.NewSize
-TempAddress     =       TempAddress+api86_ID
-        mov     edx,d[TempAddress]
-
+        mov     edx,d[apiNewHeader.NewSize]
         sub     edx,size NewHeaderStruc
         mov     cx,dx
         shr     edx,16
