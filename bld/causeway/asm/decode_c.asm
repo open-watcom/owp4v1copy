@@ -91,24 +91,12 @@ GetCWCInfo      proc    near
         ;
         ;Check for main ID string.
         ;
-;       mov     eax,d[decode_c_head+DecC_ID]
-TempAddress     =       decode_c_struc.DecC_ID
-TempAddress     =       TempAddress+decode_c_head
-        mov     eax,d[TempAddress]
-
+        mov     eax,d[decode_c_head.DecC_ID]
         and     eax,0FFFFFFh
         cmp     eax,"CWC"
         jnz     dec1_error
-;       mov     ecx,d[decode_c_head+DecC_Len]
-TempAddress     =       decode_c_struc.DecC_Len
-TempAddress     =       TempAddress+decode_c_head
-        mov     ecx,d[TempAddress]
-
-;       mov     eax,d[decode_c_head+DecC_Size]
-TempAddress     =       decode_c_struc.DecC_Size
-TempAddress     =       TempAddress+decode_c_head
-        mov     eax,d[TempAddress]
-
+        mov     ecx,d[decode_c_head.DecC_Len]
+        mov     eax,d[decode_c_head.DecC_Size]
         add     eax,size decode_c_struc
         clc
         jmp     dec1_exit
@@ -206,29 +194,17 @@ DecodeCWC       proc    near
         ;
         ;Check for main ID string.
         ;
-;       mov     eax,d[decode_c_head+DecC_ID]
-TempAddress     =       decode_c_struc.DecC_ID
-TempAddress     =       TempAddress+decode_c_head
-        mov     eax,d[TempAddress]
-        
+        mov     eax,d[decode_c_head.DecC_ID]
         and     eax,0FFFFFFh
         cmp     eax,"CWC"
         jnz     dec2_cwc_error
-;       movzx   ecx,b[decode_c_head+DecC_Bits]
-TempAddress     =       decode_c_struc.DecC_Bits
-TempAddress     =       TempAddress+decode_c_head
-        movzx   ecx,b[TempAddress]
-
+        movzx   ecx,b[decode_c_head.DecC_Bits]
         mov     b[dec2_Shifter+2],cl
         mov     eax,1
         shl     eax,cl
         dec     eax
         mov     d[dec2_Masker+2],eax
-;       mov     ebx,d[decode_c_head+DecC_Len]
-TempAddress     =       decode_c_struc.DecC_Len
-TempAddress     =       TempAddress+decode_c_head
-        mov     ebx,d[TempAddress]
-
+        mov     ebx,d[decode_c_head.DecC_Len]
 ;
 ;Get on with decodeing the data.
 ;
@@ -424,11 +400,7 @@ dec2_4: assume ds:nothing
         or      ebx,ebx
         jnz     dec2_form_error
         ;
-;       mov     ecx,DWORD PTR cs:[decode_c_head+DecC_Len]       ;return length.
-TempAddress     =       decode_c_struc.DecC_Len
-TempAddress     =       TempAddress+decode_c_head
-        mov     ecx,DWORD PTR cs:[TempAddress]  ;return length.
-
+        mov     ecx,DWORD PTR cs:[decode_c_head.DecC_Len]       ;return length.
         xor     eax,eax
         clc
         jmp     dec2_exit
@@ -504,17 +476,9 @@ dec2_fb0:
         mov     edi,offset decode_c_buffer
         mov     eax,decode_c_count      ;get current count.
         add     eax,ecx
-;       cmp     eax,d[decode_c_head+DecC_Size]  ;check against total size.
-TempAddress     =       decode_c_struc.DecC_Size
-TempAddress     =       TempAddress+decode_c_head
-        cmp     eax,d[TempAddress]      ;check against total size.
-
+        cmp     eax,d[decode_c_head.DecC_Size]  ;check against total size.
         jc      dec2_FB_2
-;       sub     eax,d[decode_c_head+DecC_Size]
-TempAddress     =       decode_c_struc.DecC_Size
-TempAddress     =       TempAddress+decode_c_head
-        sub     eax,d[TempAddress]
-
+        sub     eax,d[decode_c_head.DecC_Size]
         sub     ecx,eax         ;reduce ECX as needed.
 dec2_FB_2:
         add     decode_c_count,ecx      ;update total count.

@@ -6630,38 +6630,22 @@ api86_3P:
         jc      api86_7
         cmp     ax,cx
         jnz     api86_7
-;       sub     d[NewHeaderStruc.NewSize+api86_ID],size NewHeaderStruc
-TempAddress     =       NewHeaderStruc.NewSize
-TempAddress     =       TempAddress+api86_ID
-        sub     DWORD PTR [TempAddress],size NewHeaderStruc
-
+        sub     d[api86_ID+NewHeaderStruc.NewSize],size NewHeaderStruc
         ;
         ;Check this file has exports.
         ;
-;       cmp     d[NewHeaderStruc.NewExports+api86_ID],0
-TempAddress     =       NewHeaderStruc.NewExports
-TempAddress     =       TempAddress+api86_ID
-        cmp     DWORD PTR [TempAddress],0
-
+        cmp     d[api86_ID+NewHeaderStruc.NewExports],0
         jz      api86_3p6
         ;
         ;Skip segment definitions.
         ;
-;       movzx   edx,w[NewHeaderStruc.NewSegments+api86_ID]
-TempAddress     =       NewHeaderStruc.NewSegments
-TempAddress     =       TempAddress+api86_ID
-        movzx   edx,WORD PTR [TempAddress]
-
+        movzx   edx,w[api86_ID+NewHeaderStruc.NewSegments]
         shl     edx,3
         sys     cwcInfo
         jc      api86_3p0
         mov     edx,eax
 api86_3p0:
-;       sub     DWORD PTR [NewHeaderStruc.NewSize+api86_ID],edx
-TempAddress     =       NewHeaderStruc.NewSize
-TempAddress     =       TempAddress+api86_ID
-        sub     DWORD PTR [TempAddress],edx
-
+        sub     DWORD PTR [api86_ID+NewHeaderStruc.NewSize],edx
         mov     cx,dx
         shr     edx,16
         xchg    cx,dx
@@ -6670,7 +6654,7 @@ TempAddress     =       TempAddress+api86_ID
         ;
         ;Skip relocations.
         ;
-        mov     edx,d[NewHeaderStruc.NewRelocs+api86_ID]
+        mov     edx,d[api86_ID+NewHeaderStruc.NewRelocs]
         shl     edx,2
         or      edx,edx
         jz      api86_3p1
@@ -6678,11 +6662,7 @@ TempAddress     =       TempAddress+api86_ID
         jc      api86_3p1
         mov     edx,eax
 api86_3p1:
-;       sub     d[NewHeaderStruc.NewSize+api86_ID],edx
-TempAddress     =       NewHeaderStruc.NewSize
-TempAddress     =       TempAddress+api86_ID
-        sub     DWORD PTR[TempAddress],edx
-
+        sub     d[api86_ID+NewHeaderStruc.NewSize],edx
         mov     cx,dx
         shr     edx,16
         xchg    cx,dx
@@ -6691,7 +6671,7 @@ TempAddress     =       TempAddress+api86_ID
         ;
         ;Load export details.
         ;
-        mov     ecx,d[NewHeaderStruc.NewExports+api86_ID]
+        mov     ecx,d[api86_ID+NewHeaderStruc.NewExports]
         sys     GetMemLinear32
         jc      api86_7         ;treat memory error as no file.
         mov     edx,ecx
@@ -6707,11 +6687,7 @@ TempAddress     =       TempAddress+api86_ID
         assume ds:nothing
         mov     ds,cs:apiDDSeg
         assume ds:_apiCode
-;       sub     d[NewHeaderStruc.NewSize+api86_ID],ecx
-TempAddress     =       NewHeaderStruc.NewSize
-TempAddress     =       TempAddress+api86_ID
-        sub     DWORD PTR[TempAddress],ecx
-
+        sub     d[api86_ID+NewHeaderStruc.NewSize],ecx
         pop     ds
 
         push    es
@@ -6728,11 +6704,7 @@ api86_3p2:
         assume ds:nothing
         mov     ds,cs:apiDDSeg
         assume ds:_apiCode
-;       sub     d[NewHeaderStruc.NewSize+api86_ID],edx
-TempAddress     =       NewHeaderStruc.NewSize
-TempAddress     =       TempAddress+api86_ID
-        sub     DWORD PTR [TempAddress],edx
-
+        sub     d[api86_ID+NewHeaderStruc.NewSize],edx
         pop     ds
 
         mov     ecx,edx
@@ -6787,7 +6759,7 @@ api86_3p7:
         pop     ds
         sys     RelMemLinear32
 api86_3p6:
-        mov     edx,d[NewHeaderStruc.NewSize+api86_ID]
+        mov     edx,d[api86_ID+NewHeaderStruc.NewSize]
         mov     cx,dx
         shr     edx,16
         xchg    cx,dx

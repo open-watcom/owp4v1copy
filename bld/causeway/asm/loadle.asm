@@ -215,11 +215,7 @@ medclose:
 ;
 ;Process any EXPORT entries that need pulling in.
 ;
-;       cmp     d[LE_Header.LE_ResidentNames+LEHeader],0
-TempAddress     =       LE_Header.LE_ResidentNames
-TempAddress     =       TempAddress+LEHeader
-        cmp     DWORD PTR [TempAddress],0
-
+        cmp     d[LEHeader.LE_ResidentNames],0
         jz      load1_NoExports
 
 IFDEF DEBUG4X
@@ -233,7 +229,7 @@ ENDIF
         ;
         ;Set file pointer to resident names.
         ;
-        mov     ecx,d[LE_Header.LE_ResidentNames+LEHeader]
+        mov     ecx,d[LEHeader.LE_ResidentNames]
         add     ecx,d[load1_LEOffset]
         mov     dx,cx
         shr     ecx,16
@@ -294,7 +290,7 @@ load1_ge1:
         ;
         push    ecx
         push    edx
-        mov     ecx,d[LE_Header.LE_ResidentNames+LEHeader]
+        mov     ecx,d[LEHeader.LE_ResidentNames]
         add     ecx,d[load1_LEOffset]
         mov     dx,cx
         shr     ecx,16
@@ -354,12 +350,7 @@ load1_ge3:
 ;
 load1_NoExports:
         mov     eax,size LE_OBJ ;length of an object entry.
-
-;       mul     d[LE_Header.LE_ObjNum+LEHeader] ;number of objects.
-TempAddress     =       LE_Header.LE_ObjNum
-TempAddress     =       TempAddress+LEHeader
-        mul     DWORD PTR [TempAddress] ;number of objects.
-
+        mul     d[LEHeader.LE_ObjNum] ;number of objects.
         mov     ecx,eax
         sys     GetMemLinear32  ;Get memory.
         jc      load1_mem_error         ;Not enough memory.
@@ -369,7 +360,7 @@ TempAddress     =       TempAddress+LEHeader
 ;
         push    ecx
         mov     bx,w[load1_Handle]
-        mov     ecx,d[LE_Header.LE_ObjOffset+LEHeader] ;Get object table offset.
+        mov     ecx,d[LEHeader.LE_ObjOffset] ;Get object table offset.
         add     ecx,d[load1_LEOffset]
         mov     dx,cx
         shr     ecx,16
@@ -395,7 +386,7 @@ TempAddress     =       TempAddress+LEHeader
         assume es:_cwMain
         mov     es,es:RealSegment
         assume es:nothing
-        mov     ecx,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
+        mov     ecx,d[LEHeader.LE_ObjNum]     ;number of objects.
         mov     esi,d[load1_ObjMem]
         xor     ebp,ebp         ;clear memory requirement.
 load1_objup0:
@@ -419,7 +410,7 @@ load1_objup0:
 ;Run through objects setting up load addresses.
 ;
         mov     edx,d[load1_ProgMem]    ;reset load offset.
-        mov     ecx,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
+        mov     ecx,d[LEHeader.LE_ObjNum]     ;number of objects.
         mov     esi,d[load1_ObjMem]
 load1_objup1:
         mov     es:LE_OBJ.LE_OBJ_Base[esi],edx  ;set load address.
@@ -430,7 +421,7 @@ load1_objup1:
 ;
 ;Get selectors.
 ;
-        mov     ecx,d[LE_Header.LE_ObjNum+LEHeader]
+        mov     ecx,d[LEHeader.LE_ObjNum]
         sys     GetSels
         jc      load1_mem_error
         mov     w[load1_Segs],bx                ;store base selector.
@@ -468,7 +459,7 @@ load1_objup1:
         ;
         ;Move file pointer to start of entry table.
         ;
-        mov     ecx,d[LE_Header.LE_EntryTable+LEHeader]
+        mov     ecx,d[LEHeader.LE_EntryTable]
         add     ecx,d[load1_LEOffset]
         mov     bx,w[load1_Handle]
         mov     dx,cx
@@ -478,18 +469,13 @@ load1_objup1:
         ;
         ;Work out how much work space we need.
         ;
-        mov     ecx,d[LE_Header.LE_EntryTable+LEHeader]
-
-;       cmp     d[LE_Header.LE_Directives+LEHeader],0
-TempAddress     =       LE_Header.LE_Directives
-TempAddress     =       TempAddress+LEHeader
-        cmp     DWORD PTR [TempAddress],0
-
+        mov     ecx,d[LEHeader.LE_EntryTable]
+        cmp     d[LEHeader.LE_Directives],0
         jz      load1_ge4
-        sub     ecx,d[LE_Header.LE_Directives+LEHeader]
+        sub     ecx,d[LEHeader.LE_Directives]
         jmp     load1_ge5
 load1_ge4:
-        sub     ecx,d[LE_Header.LE_Fixups+LEHeader]
+        sub     ecx,d[LEHeader.LE_Fixups]
 load1_ge5:
         neg     ecx
         sys     GetMemLinear32  ;get entry table memory.
@@ -672,7 +658,7 @@ load1_exp8:
 ;Read program objects.
 ;
 load1_NoEntries:
-        mov     ebp,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
+        mov     ebp,d[LEHeader.LE_ObjNum]     ;number of objects.
         mov     esi,d[load1_ObjMem]
 
 load1_load0:
@@ -698,13 +684,8 @@ load1_load1:
         ;
         mov     eax,es:LE_OBJ.LE_OBJ_PageIndex[esi] ;get first page index.
         dec     eax
-
-;       mul     d[LE_Header.LE_PageSize+LEHeader]       ;* page size.
-TempAddress     =       LE_Header.LE_PageSize
-TempAddress     =       TempAddress+LEHeader
-        mul     DWORD PTR [TempAddress] ;* page size.
-
-        add     eax,d[LE_Header.LE_Data+LEHeader]       ;data offset.
+        mul     d[LEHeader.LE_PageSize]       ;* page size.
+        add     eax,d[LEHeader.LE_Data]       ;data offset.
         mov     dx,ax
         shr     eax,16
         mov     cx,ax
@@ -716,12 +697,7 @@ TempAddress     =       TempAddress+LEHeader
         ;
         mov     eax,es:LE_OBJ.LE_OBJ_PageNum[esi] ;get number of pages.
         mov     ebx,eax
-
-;       mul     d[LE_Header.LE_PageSize+LEHeader]       ;* page size.
-TempAddress     =       LE_Header.LE_PageSize
-TempAddress     =       TempAddress+LEHeader
-        mul     DWORD PTR [TempAddress] ;* page size.
-
+        mul     d[LEHeader.LE_PageSize]       ;* page size.
         mov     edx,es:LE_OBJ.LE_OBJ_Base[esi]  ;get load address.
         xor     ecx,ecx
         or      eax,eax
@@ -730,10 +706,10 @@ TempAddress     =       TempAddress+LEHeader
 
         add     ebx,es:LE_OBJ.LE_OBJ_PageIndex[esi] ;get base page again.
         dec     ebx
-        cmp     ebx,d[LE_Header.LE_Pages+LEHeader]      ;we getting the last page?
+        cmp     ebx,d[LEHeader.LE_Pages]      ;we getting the last page?
         jnz     load1_load2
-        mov     ebx,d[LE_Header.LE_PageSize+LEHeader]
-        sub     ebx,d[LE_Header.LE_LastBytes+LEHeader]
+        mov     ebx,d[LEHeader.LE_PageSize]
+        sub     ebx,d[LEHeader.LE_LastBytes]
         sub     eax,ebx
 
 load1_load2:
@@ -790,12 +766,12 @@ load1_loadz:
 ;
 ;Get fixup table memory & load fixups.
 ;
-        mov     ecx,d[LE_Header.LE_FixupSize+LEHeader]
+        mov     ecx,d[LEHeader.LE_FixupSize]
         sys     GetMemLinear32  ;Get memory.
         jc      load1_mem_error         ;Not enough memory.
         mov     d[load1_FixupMem],esi
         push    ecx
-        mov     ecx,d[LE_Header.LE_Fixups+LEHeader]
+        mov     ecx,d[LEHeader.LE_Fixups]
         add     ecx,d[load1_LEOffset]
         mov     dx,cx
         shr     ecx,16
@@ -817,7 +793,7 @@ load1_loadz:
 ;
 ;Get IMPORT module name links.
 ;
-        mov     ecx,d[LE_Header.LE_ImportModNum+LEHeader]
+        mov     ecx,d[LEHeader.LE_ImportModNum]
         or      ecx,ecx
         jz      load1_GotImpMods
         shl     ecx,2
@@ -833,18 +809,14 @@ load1_loadz:
         ;
         ;Work out offset in fixup data.
         ;
-        mov     esi,d[LE_Header.LE_ImportModNames+LEHeader]
-        sub     esi,d[LE_Header.LE_Fixups+LEHeader]
+        mov     esi,d[LEHeader.LE_ImportModNames]
+        sub     esi,d[LEHeader.LE_Fixups]
         add     esi,d[load1_FixupMem]
         ;
         ;Work through each name getting the module link address.
         ;
 load1_NextModLnk:
-;       cmp     d[LE_ImportModNum+LEHeader],0
-TempAddress     =       LE_Header.LE_ImportModNum
-TempAddress     =       TempAddress+LEHeader
-        cmp     DWORD PTR [TempAddress],0
-
+        cmp     d[LEHeader.LE_ImportModNum],0
         jz      load1_GotImpMods
         ;
         ;Preserve current header state.
@@ -899,19 +871,14 @@ TempAddress     =       TempAddress+LEHeader
         movzx   ecx,BYTE PTR es:[esi]
         inc     ecx
         add     esi,ecx
-
-;       dec     d[LE_ImportModNum+LEHeader]
-TempAddress     =       LE_Header.LE_ImportModNum
-TempAddress     =       TempAddress+LEHeader
-        dec     DWORD PTR [TempAddress]
-
+        dec     d[LEHeader.LE_ImportModNum]
         jmp     load1_NextModLnk
 
 ;
 ;Apply the fixups.
 ;
 load1_GotImpMods:
-        mov     eax,d[LE_Header.LE_ObjNum+LEHeader]
+        mov     eax,d[LEHeader.LE_ObjNum]
         mov     d[load1_ObjCount],eax
         mov     eax,d[load1_ObjMem]
         mov     d[load1_ObjBase],eax
@@ -935,8 +902,8 @@ load1_fix1:
         jz      load1_fix4
 
         mov     esi,d[load1_FixupMem]
-        add     esi,d[LE_Header.LE_FixupsRec+LEHeader] ;Point to fixup data.
-        sub     esi,d[LE_Header.LE_Fixups+LEHeader]
+        add     esi,d[LEHeader.LE_FixupsRec] ;Point to fixup data.
+        sub     esi,d[LEHeader.LE_Fixups]
         add     esi,edx         ;Move to start of this pages fixups.
 load1_fix2:
 
@@ -1036,8 +1003,8 @@ ENDIF
         ;
         push    edi
         push    ebp
-        mov     ebp,d[LE_Header.LE_ImportNames+LEHeader]
-        sub     ebp,d[LE_Header.LE_Fixups+LEHeader]
+        mov     ebp,d[LEHeader.LE_ImportNames]
+        sub     ebp,d[LEHeader.LE_Fixups]
         movzx   eax,WORD PTR es:[esi+1]
         add     ebp,eax         ;point to function name.
         add     ebp,d[load1_FixupMem]
@@ -1496,14 +1463,14 @@ load1_fix400:
 ;
 ;Setup entry CS:EIP.
 ;
-        mov     ebx,d[LE_Header.LE_EntryCS+LEHeader]
+        mov     ebx,d[LEHeader.LE_EntryCS]
         or      ebx,ebx
         jz      load1_NoEntryCS
         dec     ebx
         mov     eax,size LE_OBJ
         mul     ebx
         shl     ebx,3
-        mov     esi,d[LE_Header.LE_EntryEIP+LEHeader]
+        mov     esi,d[LEHeader.LE_EntryEIP]
         mov     edi,d[load1_ObjMem]
         add     edi,eax
         add     esi,es:LE_OBJ.LE_OBJ_Base[edi]
@@ -1518,14 +1485,14 @@ load1_NoEntryCS:
 ;
 ;Setup entry SS:ESP
 ;
-        mov     ebx,d[LE_Header.LE_EntrySS+LEHeader]
+        mov     ebx,d[LEHeader.LE_EntrySS]
         or      ebx,ebx
         jz      load1_NoEntrySS
         dec     ebx
         mov     eax,size LE_OBJ
         mul     ebx
         shl     ebx,3
-        mov     esi,d[LE_Header.LE_EntryESP+LEHeader]
+        mov     esi,d[LEHeader.LE_EntryESP]
         mov     edi,d[load1_ObjMem]
         add     edi,eax
         add     esi,es:LE_OBJ.LE_OBJ_Base[edi]
@@ -1543,7 +1510,7 @@ load1_NoEntrySS:
         mov     ax,w[load1_PSP]
         mov     w[load1_EntryES],ax
         mov     w[load1_EntryDS],ax
-        mov     eax,d[LE_Header.LE_AutoDS+LEHeader]
+        mov     eax,d[LEHeader.LE_AutoDS]
         or      eax,eax
         jz      load1_NoAutoDS
         dec     eax
@@ -1554,7 +1521,7 @@ load1_NoEntrySS:
 ;Convert object definitions into 3P segment definitions for CWD.
 ;
 load1_NoAutoDS:
-        mov     ebp,d[LE_Header.LE_ObjNum+LEHeader]     ;number of objects.
+        mov     ebp,d[LEHeader.LE_ObjNum]     ;number of objects.
         mov     esi,d[load1_ObjMem]
         mov     edi,esi
 load1_makesegs0:
@@ -1595,12 +1562,7 @@ load1_makesegs4:
         ;Shrink OBJ memory to fit segment definitions.
         ;
         mov     eax,4+4
-
-;       mul     d[LE_Header.LE_ObjNum+LEHeader] ;number of objects.
-TempAddress     =       LE_Header.LE_ObjNum
-TempAddress     =       TempAddress+LEHeader
-        mul     DWORD PTR [TempAddress] ;number of objects.
-
+        mul     d[LEHeader.LE_ObjNum] ;number of objects.
         mov     ecx,eax
         mov     esi,d[load1_ObjMem]
         sys     ResMemLinear32
@@ -1609,7 +1571,7 @@ TempAddress     =       TempAddress+LEHeader
 ;
 ;Setup selectors.
 ;
-        mov     ecx,d[LE_Header.LE_ObjNum+LEHeader]
+        mov     ecx,d[LEHeader.LE_ObjNum]
         mov     esi,d[load1_ObjMem]
         mov     bx,w[load1_Segs]                ;base selector.
 load1_SegLoop:
