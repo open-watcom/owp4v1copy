@@ -16,6 +16,7 @@ int main( int reason, char **dummy )
         printf( "DLL startup...\n" );
         printf( "DLL File name: %s\n", GetModuleFileName( _psp ) );
         printf( "Program name: %s\n", _LpPgmName );
+        fflush( stdout );
 
         /* return zero to let the load continue */
         result = 0;
@@ -26,6 +27,7 @@ int main( int reason, char **dummy )
         ** DLL clean up.
         */
         printf( "DLL shutdown...\n" );
+        fflush( stdout );
 
         result = 0;
     }
@@ -36,4 +38,5 @@ int main( int reason, char **dummy )
 void __export _cdecl SayHello( char *message )
 {
     printf( "Recieved DLL Message: %s\n", message );
+    fflush( stdout );
 }
