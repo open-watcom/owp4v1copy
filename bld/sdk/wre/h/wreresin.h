@@ -50,7 +50,6 @@ typedef struct WREResInfoStruct {
     Bool        is32bit;
     Bool        modified;
     Bool        active;
-    int         window_num;
 } WREResInfo;
 
 /****************************************************************************/

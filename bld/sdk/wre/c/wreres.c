@@ -897,8 +897,6 @@ Bool WRESaveResource( WREResInfo *res_info, Bool get_name )
     char                *fn;
     WREGetFileStruct    gf;
     int                 fn_offset;
-    char                *win_title;
-    int                 win_title_len;
     Bool                got_name;
     Bool                ok;
 
@@ -972,19 +970,8 @@ Bool WRESaveResource( WREResInfo *res_info, Bool get_name )
 
     if( ok ) {
         //fn_offset = WRFindFnOffset( fn );
-        win_title_len = strlen( &(fn[fn_offset]) ) + 1;
-        win_title_len += 15;
-        win_title = (char *)WREMemAlloc( win_title_len );
-        if( win_title != NULL ) {
-            sprintf( win_title,"%s (%d)", &(fn[fn_offset]),
-                                          0xffff & res_info->window_num );
-            SendMessage( res_info->res_win, WM_SETTEXT, 0,
-                         (LPARAM) (LPCSTR) win_title );
-            WREMemFree( win_title );
-        } else {
-            SendMessage( res_info->res_win, WM_SETTEXT, 0,
-                         (LPARAM) (LPCSTR) &(fn[fn_offset]) );
-        }
+        SendMessage( res_info->res_win, WM_SETTEXT, 0,
+                     (LPARAM) (LPCSTR) &(fn[fn_offset]) );
     }
 
     return( ok );
@@ -1085,7 +1072,6 @@ Bool WRECreateResourceWindow( WREResInfo *res_info )
     Bool                ok;
     DWORD               style;
     int                 fn_offset;
-    char                *title;
     char                *win_title;
     int                 win_title_len;
 
@@ -1096,28 +1082,21 @@ Bool WRECreateResourceWindow( WREResInfo *res_info )
     ok = ( res_info != NULL );
 
     if( ok ) {
-        WREResCounter++;
-        res_info->window_num = WREResCounter;
         WREIncNumRes();
         if( res_info->info->file_name ) {
             //perhaps I should make this an option
             //fn_offset = WRFindFnOffset( res_info->info->file_name );
             //title = &( res_info->info->file_name[fn_offset] );
-            title = res_info->info->file_name;
+            mdics.szTitle = res_info->info->file_name;
         } else if( res_info->info->save_name ) {
-            title = res_info->info->save_name;
+            mdics.szTitle = res_info->info->save_name;
         } else {
-            title = WREResUntitled;
-        }
-        win_title_len = strlen( title ) + 1;
-        win_title_len += 15;
-        win_title = (char *)WREMemAlloc( win_title_len );
-        if( win_title != NULL ) {
-            sprintf( win_title, "%s.%d", title,
-                     0xffff & res_info->window_num );
+            WREResCounter++;
+            win_title_len = strlen( WREResUntitled ) + 7;
+            win_title = (char *)WREMemAlloc( win_title_len );
+            sprintf( win_title, "%s.%d", WREResUntitled,
+                     0xffff & WREResCounter );
             mdics.szTitle = win_title;
-        } else {
-            mdics.szTitle = title;
         }
         style = 0;
         if( ( WREGetNumRes() != 1 ) && WREIsCurrentMDIWindowZoomed() ) {
