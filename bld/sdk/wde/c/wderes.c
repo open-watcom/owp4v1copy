@@ -785,24 +785,19 @@ Bool WdeCreateResourceWindow( WdeResInfo *res_info, int fn_offset,
 
     mdics.szClass = "WdeResClass";
 
+    win_title = NULL;
     if( title == NULL ) {
         if( res_info->info->file_name ) {
             // perhaps make this an option
             //title = &( res_info->info->file_name[fn_offset] );
-            title = res_info->info->file_name;
+            mdics.szTitle = res_info->info->file_name;
         } else {
-            title = WdeResUntitled;
+            WdeResCounter++;
+            win_title_len = strlen( WdeResUntitled ) + 7;
+            win_title = (char *)WdeMemAlloc( win_title_len );
+            sprintf( win_title, "%s.%d", WdeResUntitled, 0xffff & WdeResCounter );
+            mdics.szTitle = win_title;
         }
-    }
-
-    WdeResCounter++;
-    res_info->window_num = WdeResCounter;
-    win_title_len = strlen( title ) + 1;
-    win_title_len += 15;
-    win_title = (char *)WdeMemAlloc( win_title_len );
-    if( win_title != NULL ) {
-        sprintf( win_title, "%s.%d", title, 0xffff & WdeResCounter );
-        mdics.szTitle = win_title;
     } else {
         mdics.szTitle = title;
     }
@@ -897,8 +892,6 @@ Bool WdeSaveResource( WdeResInfo *res_info, Bool get_name )
     WdeGetFileStruct    gf;
     char                *filter;
     char                *fn;
-    char                *win_title;
-    int                 win_title_len;
     int                 fn_offset;
     Bool                got_name;
     Bool                ok;
@@ -975,19 +968,8 @@ Bool WdeSaveResource( WdeResInfo *res_info, Bool get_name )
 
     if( ok ) {
         //fn_offset = WRFindFnOffset( fn );
-        win_title_len = strlen( &(fn[fn_offset]) ) + 1;
-        win_title_len += 15;
-        win_title = (char *)WdeMemAlloc( win_title_len );
-        if( win_title != NULL ) {
-            sprintf( win_title,"%s (%d)", &(fn[fn_offset]),
-                                          0xffff & res_info->window_num );
-            SendMessage( res_info->res_win, WM_SETTEXT, 0,
-                         (LPARAM) (LPCSTR) win_title );
-            WdeMemFree( win_title );
-        } else {
-            SendMessage( res_info->res_win, WM_SETTEXT, 0,
-                         (LPARAM) (LPCSTR) &(fn[fn_offset]) );
-        }
+        SendMessage( res_info->res_win, WM_SETTEXT, 0,
+                     (LPARAM) (LPCSTR) &(fn[fn_offset]) );
     }
 
     return( ok );

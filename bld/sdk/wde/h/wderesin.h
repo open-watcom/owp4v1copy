@@ -125,7 +125,6 @@ typedef struct WdeResInfoStruct {
     Bool          active;
     Bool          editting;
     Bool          is32bit;
-    int           window_num;
 } WdeResInfo;
 
 typedef struct WdeDialogBoxHeader {
