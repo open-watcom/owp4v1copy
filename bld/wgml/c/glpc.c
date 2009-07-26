@@ -137,37 +137,37 @@ void    lay_p( const gmltag * entry )
         out_msg( ":P nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get attribute and value
-    if( cc != pos ) {
-        scan_start = scan_stop + 1;
-        return;
-    }
-    cvterr = true;
-    for( k = 0, curr = p_att[k]; curr > 0; k++, curr = p_att[k] ) {
+    while( cc == pos ) {
+        cvterr = true;
+        for( k = 0, curr = p_att[k]; curr > 0; k++, curr = p_att[k] ) {
 
-        if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
-            p = l_args.start[1];
+            if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
+                p = l_args.start[1];
 
-            switch( curr ) {
-            case   e_line_indent:
-                cvterr = i_space_unit( p, curr, &layout_work.p.line_indent );
-                break;
-            case   e_pre_skip:
-                cvterr = i_space_unit( p, curr, &layout_work.p.pre_skip );
-                break;
-            case   e_post_skip:
-                cvterr = i_space_unit( p, curr, &layout_work.p.post_skip );
-                break;
-            default:
-                out_msg( "WGML logic error.\n");
-                break;
+                switch( curr ) {
+                case   e_line_indent:
+                    cvterr = i_space_unit( p, curr, &layout_work.p.line_indent );
+                    break;
+                case   e_pre_skip:
+                    cvterr = i_space_unit( p, curr, &layout_work.p.pre_skip );
+                    break;
+                case   e_post_skip:
+                    cvterr = i_space_unit( p, curr, &layout_work.p.post_skip );
+                    break;
+                default:
+                    out_msg( "WGML logic error.\n");
+                    cvterr = true;
+                    break;
+                }
+                if( cvterr ) {          // there was an error
+                    err_count++;
+                    g_err( err_att_val_inv );
+                    file_mac_info();
+                }
+                break;                  // break out of for loop
             }
-            break;                  // break out of for loop
         }
-    }
-    if( cvterr ) {                  // there was an error
-        err_count++;
-        g_err( err_att_val_inv );
-        show_include_stack();
+        cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     }
     scan_start = scan_stop + 1;
     return;
@@ -199,37 +199,38 @@ void    lay_pc( const gmltag * entry )
         out_msg( ":PC nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get attribute and value
-    if( cc != pos ) {
-        scan_start = scan_stop + 1;
-        return;
-    }
-    cvterr = true;
-    for( k = 0, curr = pc_att[k]; curr > 0; k++, curr = pc_att[k] ) {
+    while( cc == pos ) {
+        cvterr = true;
+        for( k = 0, curr = pc_att[k]; curr > 0; k++, curr = pc_att[k] ) {
 
-        if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
-            p = l_args.start[1];
+            if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
+                p = l_args.start[1];
 
-            switch( curr ) {
-            case   e_line_indent:
-                cvterr = i_space_unit( p, curr, &layout_work.pc.line_indent );
-                break;
-            case   e_pre_skip:
-                cvterr = i_space_unit( p, curr, &layout_work.pc.pre_skip );
-                break;
-            case   e_post_skip:
-                cvterr = i_space_unit( p, curr, &layout_work.pc.post_skip );
-                break;
-            default:
-                out_msg( "WGML logic error.\n");
-                break;
+                switch( curr ) {
+                case   e_line_indent:
+                    cvterr = i_space_unit( p, curr,
+                                           &layout_work.pc.line_indent );
+                    break;
+                case   e_pre_skip:
+                    cvterr = i_space_unit( p, curr, &layout_work.pc.pre_skip );
+                    break;
+                case   e_post_skip:
+                    cvterr = i_space_unit( p, curr, &layout_work.pc.post_skip );
+                    break;
+                default:
+                    out_msg( "WGML logic error.\n");
+                    cvterr = true;
+                    break;
+                }
+                if( cvterr ) {              // there was an error
+                    err_count++;
+                    g_err( err_att_val_inv );
+                    file_mac_info();
+                }
+                break;                      // break out of for loop
             }
-            break;                  // break out of for loop
         }
-    }
-    if( cvterr ) {                  // there was an error
-        err_count++;
-        g_err( err_att_val_inv );
-        show_include_stack();
+        cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     }
     scan_start = scan_stop + 1;
     return;

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement :FIG tag for LAYOUT processing
+* Description: WGML implement :TOCPGNUM tag for LAYOUT processing
 *
 ****************************************************************************/
 
@@ -37,26 +37,24 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*   :FIG   attributes                                                     */
+/*   :IXHEAD   attributes                                                    */
 /***************************************************************************/
-const   lay_att     fig_att[9] =
-    { e_left_adjust, e_right_adjust, e_pre_skip, e_post_skip, e_spacing,
-      e_font, e_default_place, e_default_frame, e_dummy_zero };
-
+const   lay_att     tocpgnum_att[3] =
+    { e_size, e_font, e_dummy_zero };
 
 
 /***************************************************************************/
-/*  lay_fig                                                                */
+/*  lay_tocpgnum                                                           */
 /***************************************************************************/
 
-void    lay_fig( const gmltag * entry )
+void    lay_tocpgnum( const gmltag * entry )
 {
-    char        *   p;
-    condcode        cc;
-    int             k;
-    lay_att         curr;
-    att_args        l_args;
-    bool            cvterr;
+    char            *   p;
+    condcode            cc;
+    int                 k;
+    lay_att             curr;
+    att_args            l_args;
+    bool                cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -66,46 +64,25 @@ void    lay_fig( const gmltag * entry )
         eat_lay_sub_tag();
         return;                         // process during first pass only
     }
-    if( ProcFlags.lay_xxx != el_fig ) {
-        ProcFlags.lay_xxx = el_fig;
-        out_msg( ":FIG nearly dummy\n" );
+    if( ProcFlags.lay_xxx != el_tocpgnum ) {
+        ProcFlags.lay_xxx = el_tocpgnum;
+        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
-    cc = get_lay_sub_and_value( &l_args );  // get one with value
+    cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         cvterr = true;
-        for( k = 0, curr = fig_att[k]; curr > 0; k++, curr = fig_att[k] ) {
+        for( k = 0, curr = tocpgnum_att[k]; curr > 0; k++, curr = tocpgnum_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
 
                 switch( curr ) {
-                case   e_left_adjust:
+                case   e_size:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.fig.left_adjust );
-                    break;
-                case   e_right_adjust:
-                    cvterr = i_space_unit( p, curr,
-                                           &layout_work.fig.right_adjust );
-                    break;
-                case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &layout_work.fig.pre_skip );
-                    break;
-                case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &layout_work.fig.post_skip );
-                    break;
-                case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.fig.spacing );
+                                           &layout_work.tocpgnum.size );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.fig.font );
-                    break;
-                case   e_default_place:
-                    cvterr = i_default_place( p, curr,
-                                              &layout_work.fig.default_place );
-                    break;
-                case   e_default_frame:
-                    cvterr = i_default_frame( p, curr,
-                                              &layout_work.fig.default_frame );
+                    cvterr = i_int8( p, curr, &layout_work.tocpgnum.font );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");
@@ -120,7 +97,7 @@ void    lay_fig( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
-        cc = get_lay_sub_and_value( &l_args );  // get one with value
+        cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
     return;

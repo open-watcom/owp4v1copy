@@ -156,6 +156,7 @@ void    lay_fn( const gmltag * entry )
     bool            cvterr;
 
     p = scan_start;
+    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -167,65 +168,65 @@ void    lay_fn( const gmltag * entry )
         out_msg( ":FN nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
-    if( cc != pos ) {
-        scan_start = scan_stop + 1;
-        return;
-    }
-    cvterr = true;
-    for( k = 0, curr = fn_att[k]; curr > 0; k++, curr = fn_att[k] ) {
+    while( cc == pos ) {
+        cvterr = true;
+        for( k = 0, curr = fn_att[k]; curr > 0; k++, curr = fn_att[k] ) {
 
-        if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
-            p = l_args.start[1];
+            if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
+                p = l_args.start[1];
 
-            switch( curr ) {
-            case   e_line_indent:
-                cvterr = i_space_unit( p, curr, &layout_work.fn.line_indent );
-                break;
-            case   e_align:
-                cvterr = i_space_unit( p, curr, &layout_work.fn.align );
-                break;
-            case   e_pre_lines:
-                cvterr = i_space_unit( p, curr, &layout_work.fn.pre_lines );
-                break;
-            case   e_skip:
-                cvterr = i_space_unit( p, curr, &layout_work.fn.skip );
-                break;
-            case   e_spacing:
-                cvterr = i_int8( p, curr, &layout_work.fn.spacing );
-                break;
-            case   e_font:
-                cvterr = i_int8( p, curr, &layout_work.fn.font );
-                break;
-            case   e_number_font:
-                cvterr = i_int8( p, curr, &layout_work.fn.number_font );
-                break;
-            case   e_number_style:
-                cvterr = i_number_style( p, curr, &layout_work.fn.number_style );
-                break;
-            case   e_frame:
-                cvterr = i_frame( p, curr, &layout_work.fn.frame );
-                break;
-            default:
-                out_msg( "WGML logic error.\n");
-                break;
+                switch( curr ) {
+                case   e_line_indent:
+                    cvterr = i_space_unit( p, curr,
+                                           &layout_work.fn.line_indent );
+                    break;
+                case   e_align:
+                    cvterr = i_space_unit( p, curr, &layout_work.fn.align );
+                    break;
+                case   e_pre_lines:
+                    cvterr = i_space_unit( p, curr, &layout_work.fn.pre_lines );
+                    break;
+                case   e_skip:
+                    cvterr = i_space_unit( p, curr, &layout_work.fn.skip );
+                    break;
+                case   e_spacing:
+                    cvterr = i_int8( p, curr, &layout_work.fn.spacing );
+                    break;
+                case   e_font:
+                    cvterr = i_int8( p, curr, &layout_work.fn.font );
+                    break;
+                case   e_number_font:
+                    cvterr = i_int8( p, curr, &layout_work.fn.number_font );
+                    break;
+                case   e_number_style:
+                    cvterr = i_number_style( p, curr,
+                                             &layout_work.fn.number_style );
+                    break;
+                case   e_frame:
+                    cvterr = i_frame( p, curr, &layout_work.fn.frame );
+                    break;
+                default:
+                    out_msg( "WGML logic error.\n");
+                    cvterr = true;
+                    break;
+                }
+                if( cvterr ) {                  // there was an error
+                    err_count++;
+                    g_err( err_att_val_inv );
+                    file_mac_info();
+                }
+                break;                  // break out of for loop
             }
-            break;                  // break out of for loop
         }
-    }
-    if( cvterr ) {                  // there was an error
-        err_count++;
-        g_err( err_att_val_inv );
-        show_include_stack();
+        cc = get_lay_sub_and_value( &l_args );  // get one with value
     }
     scan_start = scan_stop + 1;
     return;
 }
 
-
 /***************************************************************************/
-/*  lay_fnref                                                                 */
+/*  lay_fnref                                                              */
 /***************************************************************************/
-
 void    lay_fnref( const gmltag * entry )
 {
     char        *   p;
@@ -236,6 +237,7 @@ void    lay_fnref( const gmltag * entry )
     bool            cvterr;
 
     p = scan_start;
+    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -246,35 +248,36 @@ void    lay_fnref( const gmltag * entry )
         ProcFlags.lay_xxx = el_fnref;
         out_msg( ":FN nearly dummy\n" );
     }
-    cc = get_lay_sub_and_value( &l_args );  // get one with value
-    if( cc != pos ) {
-        scan_start = scan_stop + 1;
-        return;
-    }
-    cvterr = true;
-    for( k = 0, curr = fnref_att[k]; curr > 0; k++, curr = fnref_att[k] ) {
+    cc = get_lay_sub_and_value( &l_args );  // get att with value
+    while( cc == pos ) {
+        cvterr = true;
+        for( k = 0, curr = fnref_att[k]; curr > 0; k++, curr = fnref_att[k] ) {
 
-        if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
-            p = l_args.start[1];
+            if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
+                p = l_args.start[1];
 
-            switch( curr ) {
-            case   e_font:
-                cvterr = i_int8( p, curr, &layout_work.fnref.font );
-                break;
-            case   e_number_style:
-                cvterr = i_number_style( p, curr, &layout_work.fnref.number_style );
-                break;
-            default:
-                out_msg( "WGML logic error.\n");
-                break;
+                switch( curr ) {
+                case   e_font:
+                    cvterr = i_int8( p, curr, &layout_work.fnref.font );
+                    break;
+                case   e_number_style:
+                    cvterr = i_number_style( p, curr,
+                                             &layout_work.fnref.number_style );
+                    break;
+                default:
+                    out_msg( "WGML logic error.\n");
+                    cvterr = true;
+                    break;
+                }
+                if( cvterr ) {          // there was an error
+                    err_count++;
+                    g_err( err_att_val_inv );
+                    file_mac_info();
+                }
+                break;                  // break out of for loop
             }
-            break;                  // break out of for loop
         }
-    }
-    if( cvterr ) {                  // there was an error
-        err_count++;
-        g_err( err_att_val_inv );
-        show_include_stack();
+        cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
     return;

@@ -46,15 +46,34 @@ dev_objs =  &
 gml_objs =  &
         gcmt.obj     &
         ginclude.obj &
+        glabsprf.obj &
         glayout.obj  &
         glayutil.obj &
+        glbodbck.obj &
         glconvrt.obj &
+        gldd.obj     &
         gldeflt.obj  &
         glfig.obj    &
+        glfigcap.obj &
+        glfigdsc.obj &
+        glfiglst.obj &
         glfn.obj     &
+        glheadng.obj &
+        glhx.obj     &
+        glindex.obj  &
+        glix.obj     &
+        glixhead.obj &
+        gllp.obj     &
+        gllq.obj     &
+        glmisc.obj   &
+        glnote.obj   &
         glpage.obj   &
         glpc.obj     &
+        gltoc.obj    &
+        gltochx.obj  &
+        gltocpgn.obj &
         glwidow.obj  &
+        glxmp.obj    &
         gset.obj     &
         gtagdict.obj &
         gusertag.obj

@@ -76,31 +76,31 @@ void    lay_widow( const gmltag * entry )
         out_msg( ":WIDOW nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
-    if( cc != pos ) {
-        scan_start = scan_stop + 1;
-        return;
-    }
-    cvterr = true;
-    for( k = 0, curr = widow_att[k]; curr > 0; k++, curr = widow_att[k] ) {
+    while( cc == pos ) {
+        cvterr = true;
+        for( k = 0, curr = widow_att[k]; curr > 0; k++, curr = widow_att[k] ) {
 
-        if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
-            p = l_args.start[1];
+            if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
+                p = l_args.start[1];
 
-            switch( curr ) {
-            case   e_threshold:
-                cvterr = i_int8( p, curr, &layout_work.widow.threshold );
-                break;
-            default:
-                out_msg( "WGML logic error.\n");
-                break;
+                switch( curr ) {
+                case   e_threshold:
+                    cvterr = i_int8( p, curr, &layout_work.widow.threshold );
+                    break;
+                default:
+                    out_msg( "WGML logic error.\n");
+                    cvterr = true;
+                    break;
+                }
+                if( cvterr ) {          // there was an error
+                    err_count++;
+                    g_err( err_att_val_inv );
+                    file_mac_info();
+                }
+                break;                  // break out of for loop
             }
-            break;                  // break out of for loop
         }
-    }
-    if( cvterr ) {                  // there was an error
-        err_count++;
-        g_err( err_att_val_inv );
-        show_include_stack();
+        cc = get_lay_sub_and_value( &l_args );  // get one with value
     }
     scan_start = scan_stop + 1;
     return;

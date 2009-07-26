@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement :FIG tag for LAYOUT processing
+* Description: WGML implement :DD   tag for LAYOUT processing
 *
 ****************************************************************************/
 
@@ -37,19 +37,38 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*   :FIG   attributes                                                     */
+/*   :DD     attributes                                                    */
 /***************************************************************************/
-const   lay_att     fig_att[9] =
-    { e_left_adjust, e_right_adjust, e_pre_skip, e_post_skip, e_spacing,
-      e_font, e_default_place, e_default_frame, e_dummy_zero };
+const   lay_att     dd_att[3] =
+    { e_line_left, e_font, e_dummy_zero };
 
+/*****************************************************************************/
+/*Define the characteristics of the data description entity.                 */
+/*                                                                           */
+/*:DD                                                                        */
+/*        line_left = '0.5i'                                                 */
+/*        font = 0                                                           */
+/*                                                                           */
+/*line_left This attribute accepts any valid horizontal space unit. The      */
+/*specified amount of space must be available on the output line after the   */
+/*definition term which precedes the data description. If there is not       */
+/*enough space, the data description will be started on the next output line.*/
+/*                                                                           */
+/*font This attribute accepts a non-negative integer number. If a font       */
+/*number is used for which no font has been defined, WATCOM                  */
+/*Script/GML will use font zero. The font numbers from zero to three         */
+/*correspond directly to the highlighting levels specified by the            */
+/*highlighting phrase GML tags. The font attribute defines the font of       */
+/*the data description.                                                      */
+/*                                                                           */
+/*****************************************************************************/
 
 
 /***************************************************************************/
-/*  lay_fig                                                                */
+/*  lay_dd                                                                 */
 /***************************************************************************/
 
-void    lay_fig( const gmltag * entry )
+void    lay_dd( const gmltag * entry )
 {
     char        *   p;
     condcode        cc;
@@ -66,46 +85,25 @@ void    lay_fig( const gmltag * entry )
         eat_lay_sub_tag();
         return;                         // process during first pass only
     }
-    if( ProcFlags.lay_xxx != el_fig ) {
-        ProcFlags.lay_xxx = el_fig;
-        out_msg( ":FIG nearly dummy\n" );
+    if( ProcFlags.lay_xxx != el_dd ) {
+        ProcFlags.lay_xxx = el_dd;
+        out_msg( ":DD nearly dummy\n" );
     }
-    cc = get_lay_sub_and_value( &l_args );  // get one with value
+    cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         cvterr = true;
-        for( k = 0, curr = fig_att[k]; curr > 0; k++, curr = fig_att[k] ) {
+        for( k = 0, curr = dd_att[k]; curr > 0; k++, curr = dd_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
 
                 switch( curr ) {
-                case   e_left_adjust:
+                case   e_line_left:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.fig.left_adjust );
-                    break;
-                case   e_right_adjust:
-                    cvterr = i_space_unit( p, curr,
-                                           &layout_work.fig.right_adjust );
-                    break;
-                case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &layout_work.fig.pre_skip );
-                    break;
-                case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &layout_work.fig.post_skip );
-                    break;
-                case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.fig.spacing );
+                                           &layout_work.dd.line_left );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.fig.font );
-                    break;
-                case   e_default_place:
-                    cvterr = i_default_place( p, curr,
-                                              &layout_work.fig.default_place );
-                    break;
-                case   e_default_frame:
-                    cvterr = i_default_frame( p, curr,
-                                              &layout_work.fig.default_frame );
+                    cvterr = i_int8( p, curr, &layout_work.dd.font );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");
@@ -120,7 +118,7 @@ void    lay_fig( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
-        cc = get_lay_sub_and_value( &l_args );  // get one with value
+        cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
     return;
