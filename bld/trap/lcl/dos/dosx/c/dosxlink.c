@@ -209,13 +209,14 @@ static char *FindEnv( char *name )
         if( memcmp( env, name, len ) == 0 ) {
             return( env + len );
         }
-        while( *env ) ++env;
+        while( *env )
+            ++env;
         ++env;
     }
     return( NULL );
 }
 
-static char *SearchPath( char far *env, char *file, char *buff, char **pendname )
+static char *SearchPath( char far *env, char const *file, char *buff, char **pendname )
 {
     char        *endname;
     char        *name;
@@ -233,7 +234,8 @@ static char *SearchPath( char far *env, char *file, char *buff, char **pendname 
     len = strlen( file );
     while( *name ) {
         endname = name;
-        while( *endname != ';' ) ++endname;
+        while( *endname != ';' )
+            ++endname;
         memcpy( save, endname, len + 2 );
         ptr = endname;
         if( name != ptr && ptr[-1]!=':' && ptr[-1]!='/' && ptr[-1]!='\\' ) {
@@ -253,40 +255,35 @@ static char *SearchPath( char far *env, char *file, char *buff, char **pendname 
 }
 
 #if defined(ACAD)
-    #define NAME        "ACAD.EXE"
-    #define HELPNAME    ""
+    #define EXTENDER_NAMES  "ACAD.EXE\0"
+    #define HELPNAME        ""
 #elif defined(PHARLAP)
-    #define NAME        "TNT.EXE"
-    #define OTHER_NAMES "RUN386.EXE\0"
-    #define HELPNAME    "PLSHELP.EXP"
-    #define HELPNAME_DS "PEDHELP.EXP"
-    #define HELPNAME_NS "PENHELP.EXP"   /* not supported yet */
+    #define EXTENDER_NAMES  "TNT.EXE\0" "RUN386.EXE\0"
+    #define HELPNAME        "PLSHELP.EXP"
+    #define HELPNAME_DS     "PEDHELP.EXP"
+    #define HELPNAME_NS     "PENHELP.EXP"   /* not supported yet */
 #elif defined(DOS4G)
-    #define NAME        "DOS4GW.EXE"
-    #define OTHER_NAMES "4GWPRO.EXE\0DOS4G.EXE\0DOS4GX.EXE\0"
-    #define HELPNAME    "RSIHELP.EXP"
+    #define EXTENDER_NAMES  "DOS4GW.EXE\0" "4GWPRO.EXE\0" "DOS4G.EXE\0" "DOS4GX.EXE\0"
+    #define HELPNAME        "RSIHELP.EXP"
 #elif defined(CAUSEWAY)
-    #define NAME        "CWSTUB.EXE"
-    #define OTHER_NAMES "\0"
-    #define HELPNAME    "CWHELP.EXE"
+    #define EXTENDER_NAMES  "CWSTUB.EXE\0"
+    #define HELPNAME        "CWHELP.EXE"
 #else
     #error Extender and helper names not defined
 #endif
 
-#ifndef OTHER_NAMES
-    #define OTHER_NAMES
-#endif
-
 static char *CheckPath( char *path, char *fullpath, char **endname )
 {
-    char        *namep;
+    char const  *namep;
     char        *name;
 
-    namep = NAME "\0" OTHER_NAMES;
+    namep = EXTENDER_NAMES;
     for( ;; ) {
         name = SearchPath( path, namep, fullpath, endname );
-        if( *name != '\0' ) return( name );
-        if( *namep == '\0' ) return( NULL );
+        if( *name != '\0' )
+            return( name );
+        if( *namep == '\0' )
+            return( NULL );
         namep += strlen( namep ) + 1;
     }
 }
@@ -295,36 +292,36 @@ static char *CheckPath( char *path, char *fullpath, char **endname )
 
 static char *FindExtender( char *fullpath, char **endname )
 {
-    #if defined(DOS4G)
-        char    *name;
-        char    *d4gname;
-        unsigned len;
+#if defined(DOS4G)
+    char    *name;
+    char    *d4gname;
+    unsigned len;
 
-        d4gname = FindEnv( "DOS4GPATH=" );
-        if( d4gname != NULL ) {
+    d4gname = FindEnv( "DOS4GPATH=" );
+    if( d4gname != NULL ) {
 _DBG_Write("Got DOS4GPATH -<");
 _DBG_Write(d4gname);
 _DBG_Writeln(">");
-            len = strlen( d4gname );
-            if( len > 4 ) {
-                name = d4gname + len - 4;
-                if( name[0] == '.'
-                    && LOW(name[1]) == 'e'
-                    && LOW(name[2]) == 'x'
-                    && LOW(name[3]) == 'e' ) {
+        len = strlen( d4gname );
+        if( len > 4 ) {
+            name = d4gname + len - 4;
+            if( name[0] == '.'
+                && LOW(name[1]) == 'e'
+                && LOW(name[2]) == 'x'
+                && LOW(name[3]) == 'e' ) {
 _DBG_Writeln( "is exe\r\n" );
-                    CopyStr( d4gname, fullpath );
-                    *endname = &fullpath[strlen(fullpath)];
-                    return( fullpath );
-                }
-            }
-            name = CheckPath( d4gname, fullpath, endname );
-            if( name != NULL ) {
-_DBG_Writeln( "found in path\r\n" );
-                return( name );
+                CopyStr( d4gname, fullpath );
+                *endname = &fullpath[strlen(fullpath)];
+                return( fullpath );
             }
         }
-    #endif
+        name = CheckPath( d4gname, fullpath, endname );
+        if( name != NULL ) {
+_DBG_Writeln( "found in path\r\n" );
+            return( name );
+        }
+    }
+#endif
     return( CheckPath( FindEnv( "PATH=" ), fullpath, endname ) );
 }
 
@@ -334,7 +331,7 @@ _DBG_Writeln( "found in path\r\n" );
 #include "exeos2.h"
 #include "exepe.h"
 
-static char *GetHelpName( char *exe_name )
+static char const *GetHelpName( char *exe_name )
 {
     /*
       if executable is:
@@ -354,10 +351,12 @@ static char *GetHelpName( char *exe_name )
 
     handle = -1;
     ret = TinyOpen( exe_name, 0 );
-    if( TINY_ERROR( ret ) ) goto exp;
+    if( TINY_ERROR( ret ) )
+        goto exp;
     handle = TINY_INFO( ret );
     TinyRead( handle, &head.dos, sizeof( head.dos ) );
-    if( head.dos.signature != DOS_SIGNATURE ) goto exp;
+    if( head.dos.signature != DOS_SIGNATURE )
+        goto exp;
     TinySeek( handle, OS2_NE_OFFSET, SEEK_SET );
     TinyRead( handle, &off, sizeof( off ) );
     TinySeek( handle, off, SEEK_SET );
@@ -375,7 +374,8 @@ static char *GetHelpName( char *exe_name )
         return( HELPNAME_NS );
     }
 exp:
-    if( handle != -1 ) TinyClose( handle );
+    if( handle != -1 )
+        TinyClose( handle );
     _DBG_Writeln( "Want PLSHELP" );
     return( HELPNAME );
 }
@@ -391,7 +391,7 @@ exp:
 #endif
 
 #ifdef SERVER
-#if defined(ACAD)
+#if defined( ACAD )
 void InitMeg1( void )
 {
     extern short GetCS( void );
@@ -403,128 +403,134 @@ void InitMeg1( void )
         }
     }
 }
+#endif
+#endif
 
-#endif
-#endif
 char *RemoteLink( char *parm, char server )
 {
 
-    #ifdef SERVER
-                unsigned long           link;
-        #if defined(ACAD)
-            {
-                XVersion = 2;
-                InitMeg1();
-            }
-        #elif defined(PHARLAP)
-        {
-            CONFIG_INF                  config;
-            static char                 buff[256];
+#ifdef SERVER
+    unsigned long           link;
+  #if defined(ACAD)
+    {
+        XVersion = 2;
+        InitMeg1();
+    }
+  #elif defined(PHARLAP)
+    {
+        CONFIG_INF          config;
+        static char         buff[256];
 
-            _dx_config_inf(&config, buff );
-            XVersion = config.c_major;
-            if( XVersion >= 3 ) {
-                Meg1 = config.c_dos_sel;
-            } else {
-                Meg1 = 0x60;
-            }
+        _dx_config_inf(&config, buff );
+        XVersion = config.c_major;
+        if( XVersion >= 3 ) {
+            Meg1 = config.c_dos_sel;
+        } else {
+            Meg1 = 0x60;
         }
-        #endif
-        link = GetDosLong( LINK_VECTOR*4 );
-        if( link >= (1024UL*1024UL) || GetDosLong(link) != LINK_SIGNATURE ) {
-            return( TRP_ERR_not_from_command );
-        }
-        RMBuffPtr = GetDosLong( link + 4 );
-        RMProcAddr = GetDosLong( link + 8 );
-        PutDosLong( LINK_VECTOR*4, GetDosLong( link + 12 ) );
-        RMBuffLen = RMBuffPtr + sizeof( long );
-    #else
-        static char     fullpath[256];              /* static because ss != ds */
-        static char     buff[256];
-        static char     *endname;
-        char            *name;
-        char            *buffp;
-        char            *endparm;
-        void            far *link[4];
-        void            far * far * link_ptr;
+    }
+  #endif
+    link = GetDosLong( LINK_VECTOR*4 );
+    if( link >= (1024UL * 1024UL) || GetDosLong(link) != LINK_SIGNATURE ) {
+        return( TRP_ERR_not_from_command );
+    }
+    RMBuffPtr = GetDosLong( link + 4 );
+    RMProcAddr = GetDosLong( link + 8 );
+    PutDosLong( LINK_VECTOR*4, GetDosLong( link + 12 ) );
+    RMBuffLen = RMBuffPtr + sizeof( long );
+#else
+    static char     fullpath[256];              /* static because ss != ds */
+    static char     buff[256];
+    static char     *endname;
+    char            *name;
+    char            *buffp;
+    char            *endparm;
+    void            far *link[4];
+    void            far * far * link_ptr;
 
-        _DBG_EnterFunc( "RemoteLink()" );
-        BackFromFork = 0;
-        link_ptr = (void far *)(LINK_VECTOR*4);
-        link[ 3 ] = *link_ptr;
-        link[ 2 ] = MK_FP( MyCS(), (unsigned )BackFromProtMode );
-        link[ 1 ] = (void far *)MK_LINEAR( &Buff );
-        link[ 0 ] = (void far *)LINK_SIGNATURE;
-        *link_ptr = (void far *)MK_LINEAR( &link );
-        if( parm == NULL ) parm = "\0\0";
-        while( *parm == ' ' ) ++parm;
-        if( *parm == '`' ) {
-            buffp = buff;
+    _DBG_EnterFunc( "RemoteLink()" );
+    BackFromFork = 0;
+    link_ptr = (void far *)(LINK_VECTOR * 4);
+    link[ 3 ] = *link_ptr;
+    link[ 2 ] = MK_FP( MyCS(), (unsigned )BackFromProtMode );
+    link[ 1 ] = (void far *)MK_LINEAR( &Buff );
+    link[ 0 ] = (void far *)LINK_SIGNATURE;
+    *link_ptr = (void far *)MK_LINEAR( &link );
+    if( parm == NULL )
+        parm = "\0\0";
+    while( *parm == ' ' )
+        ++parm;
+    if( *parm == '`' ) {
+        buffp = buff;
+        ++parm;
+        for( ;; ) {
+            *buffp = *parm;
+            ++buffp;
+            if( *parm == '\0' )
+                break;
             ++parm;
-            for( ;; ) {
-                *buffp = *parm;
-                ++buffp;
-                if( *parm == '\0' ) break;
-                ++parm;
-                if( parm[-1] == '`' ) break;
+            if( parm[-1] == '`' ) {
+                break;
             }
-            *buffp = '\0';
         }
-        while( *parm == ' ' ) ++parm;
-        if( setjmp( RealModeState ) == 0 ) {
-            name = FindExtender( fullpath, &endname );
-            if( name == NULL ) {
-                _DBG_ExitFunc( "RemoteLink(), unable to find extender" );
+        *buffp = '\0';
+    }
+    while( *parm == ' ' )
+        ++parm;
+    if( setjmp( RealModeState ) == 0 ) {
+        name = FindExtender( fullpath, &endname );
+        if( name == NULL ) {
+            _DBG_ExitFunc( "RemoteLink(), unable to find extender" );
+            return( TRP_ERR_no_extender );
+        }
+        _DBG_Write( "Extender name: " );
+        _DBG_NoTabWriteln( name );
+        endname += strlen( endname )+1;
+  #if defined(ACAD)
+        buffp = buff;
+        buff[ 0 ] = '\0';
+  #else
+        {
+            static char     *endhelp;
+            char const      *help_name;
+
+    #if defined(PHARLAP)
+            help_name = GetHelpName( parm + strlen( parm ) + 1 );
+    #else
+            help_name = HELPNAME;
+    #endif
+            buffp = SearchPath( FindEnv( "PATH=" ), help_name, buff, &endhelp );
+            if( !*buffp ) {
+                _DBG_ExitFunc( "RemoteLink(), unable to find extender "
+                            "help file" );
                 return( TRP_ERR_no_extender );
             }
-            _DBG_Write( "Extender name: " );
-            _DBG_NoTabWriteln( name );
-            endname += strlen( endname )+1;
-            #if defined(ACAD)
-                buffp = buff;
-                buff[ 0 ] = '\0';
-            #else
-            {
-                static char     *endhelp;
-                char            *help_name;
-
-#if defined(PHARLAP)
-                help_name = GetHelpName( parm + strlen( parm ) + 1 );
-#else
-                help_name = HELPNAME;
-#endif
-                buffp = SearchPath( FindEnv( "PATH=" ), help_name, buff, &endhelp );
-                if( !*buffp ) {
-                    _DBG_ExitFunc( "RemoteLink(), unable to find extender "
-                                   "help file" );
-                    return( TRP_ERR_no_extender );
-                }
-            }
-            #endif
-            _DBG_Write( "Extender help name: " );
-            _DBG_NoTabWriteln( buffp );
-            endparm = CopyStr( parm, endname+1 );
-            endparm = CopyStr( buffp, CopyStr( " ", endparm ) );
-            #if defined(PHARLAP)
-                endparm = CopyStr( " ", endparm );
-                endparm = CopyStr( parm + strlen( parm ) + 1, endparm );
-            #endif
-            *endname = endparm - endname - 1;
-            *endparm = '\r';
-            endparm[ 1 ] = '\0';
-            _DBG_Write( "Extender Cmd line: " );
-            _DBG_NoTabWriteln( endname );
-            _DBG_Writeln( "calling _fork() to start extender/debugee" );
-            if( _fork( name, endname ) != 0 ) {
-                _DBG_ExitFunc( "RemoteLink(), unable to start extender" );
-                return( TRP_ERR_cant_start_extender );
-            }
-        } else if( BackFromFork || !BeenToProtMode ) {
-            _DBG_ExitFunc( "RemoteLink(), extender could not start extender "
-                           "help file" );
+        }
+  #endif
+        _DBG_Write( "Extender help name: " );
+        _DBG_NoTabWriteln( buffp );
+        endparm = CopyStr( parm, endname+1 );
+        endparm = CopyStr( buffp, CopyStr( " ", endparm ) );
+  #if defined(PHARLAP)
+        endparm = CopyStr( " ", endparm );
+        endparm = CopyStr( parm + strlen( parm ) + 1, endparm );
+  #endif
+        *endname = endparm - endname - 1;
+        *endparm = '\r';
+        endparm[ 1 ] = '\0';
+        _DBG_Write( "Extender Cmd line: " );
+        _DBG_NoTabWriteln( endname );
+        _DBG_Writeln( "calling _fork() to start extender/debugee" );
+        if( _fork( name, endname ) != 0 ) {
+            _DBG_ExitFunc( "RemoteLink(), unable to start extender" );
             return( TRP_ERR_cant_start_extender );
         }
-    #endif
+    } else if( BackFromFork || !BeenToProtMode ) {
+        _DBG_ExitFunc( "RemoteLink(), extender could not start extender "
+                    "help file" );
+        return( TRP_ERR_cant_start_extender );
+    }
+#endif
     parm = parm;
     server = server;
     _DBG_ExitFunc( "RemoteLink()" );
