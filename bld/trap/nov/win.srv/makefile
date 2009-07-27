@@ -7,8 +7,9 @@ os = win
 srv = nov
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) novdos.obj
+extra_objs = novdos.obj
 extra_flags_novdos = -zu
 
 !include $(trap_dir)/master.mif

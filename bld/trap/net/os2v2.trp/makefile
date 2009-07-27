@@ -6,8 +6,8 @@ os  = os2v2
 srv = net
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs)
 extra_libs = $(os2386)
 
 !include $(trap_dir)/master.mif

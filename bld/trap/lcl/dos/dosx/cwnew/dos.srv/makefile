@@ -19,6 +19,7 @@ inc_dirs = -I"$(cw_dir)/inc"
 extra_libs = ../lib/system.lib
 
 extra_objs = &
+    dosxrmod.obj &
     cwhelp.obj &
     cwchelp.obj &
     cwacc.obj &

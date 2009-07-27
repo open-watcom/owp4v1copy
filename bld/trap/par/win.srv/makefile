@@ -7,7 +7,8 @@ os = win
 srv = par
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) pardos.obj
+extra_objs = pardos.obj
 
 !include $(trap_dir)/master.mif

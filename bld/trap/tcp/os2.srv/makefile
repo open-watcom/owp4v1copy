@@ -7,8 +7,8 @@ os  = os2
 srv = tcp
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs)
 extra_libs = $(watcom_dir)/lib/tcpipdll.lib
 inc_dirs = -I"$(watcom_dir)/os220_h/tcpip"
 

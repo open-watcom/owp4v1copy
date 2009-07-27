@@ -6,9 +6,10 @@ os  = os2v2
 srv = vdm
 cpu = x86
 which = TRAP
+type  = remote_link
 
 extra_cflags = -d2
-extra_objs = $(remote_objs) vdmcli2.obj
+extra_objs = vdmcli2.obj
 extra_libs = $(os2386)
 
 !include $(trap_dir)/master.mif

@@ -6,8 +6,9 @@ os  = os2v2
 srv = par
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) paros22.obj
+extra_objs = paros22.obj
 
 !include ../os2v2.mif
 !include $(trap_dir)/master.mif

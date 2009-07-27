@@ -7,7 +7,8 @@ os = win
 srv = nmp
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) nmpdos.obj
+extra_objs = nmpdos.obj
 
 !include $(trap_dir)/master.mif

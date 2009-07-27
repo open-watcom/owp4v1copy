@@ -7,14 +7,14 @@ os    = linux
 srv   = tcp
 cpu   = mips
 which = SERVER
+type  = remote_link
 
 extra_srcs = $(trap_dir)/lcl/linux/c;$(trap_dir)/lcl/c
 inc_dirs   = -I"$(trap_dir)/lcl/linux/h"
 
 extra_cflags = -DBUILTIN_TRAP_FILE
 
-extra_objs = $(remote_objs) &
-             peloader.obj &
+extra_objs = peloader.obj &
              linuxstrt.obj &
              linuxacc.obj &
              linuxmap.obj &

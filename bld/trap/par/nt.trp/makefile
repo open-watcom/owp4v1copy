@@ -6,7 +6,8 @@ os = nt
 srv = par
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs) parnt.obj
+extra_objs = parnt.obj
 
 !include $(trap_dir)/master.mif

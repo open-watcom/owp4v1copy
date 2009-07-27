@@ -6,7 +6,6 @@ os  = os2v2
 srv = tcp
 cpu = x86
 which = SERVER
-
-extra_objs = $(remote_objs)
+type  = remote_link
 
 !include $(trap_dir)/master.mif

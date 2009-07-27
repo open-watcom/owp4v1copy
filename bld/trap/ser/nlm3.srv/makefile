@@ -9,8 +9,9 @@ os = nlm
 srv = ser
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) $(nlm_objs) sernlm.obj busywait.obj
+extra_objs = $(nlm_objs) sernlm.obj busywait.obj
 
 !include $(trap_dir)/lcl/nlm/nlm.mif
 !include $(trap_dir)/master.mif

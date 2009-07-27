@@ -7,7 +7,6 @@ os    = nt
 srv   = tcp
 cpu   = axp
 which = TRAP
-
-extra_objs = $(remote_objs)
+type  = remote_link
 
 !include $(trap_dir)/master.mif

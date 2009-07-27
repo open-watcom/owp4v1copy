@@ -10,8 +10,8 @@ os = dos
 srv = tcp
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs)
 inc_dirs = $(%OWROOT)/contrib/wattcp/inc
 extra_libs = $(%OWROOT)/contrib/wattcp/lib/wattcpwl.lib
 

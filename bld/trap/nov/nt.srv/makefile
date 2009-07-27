@@ -7,7 +7,8 @@ os = nt
 srv = nov
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) novnt.obj
+extra_objs = novnt.obj
 
 !include $(trap_dir)/master.mif

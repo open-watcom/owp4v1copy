@@ -7,7 +7,8 @@ os = win
 srv = vdm
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) vdmserv.obj
+extra_objs = vdmserv.obj
 
 !include $(trap_dir)/master.mif

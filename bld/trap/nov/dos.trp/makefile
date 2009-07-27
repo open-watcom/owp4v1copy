@@ -6,7 +6,8 @@ os = dos
 srv = nov
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs) novdos.obj spx.obj ipx.obj
+extra_objs = novdos.obj spx.obj ipx.obj
 
 !include $(trap_dir)/master.mif

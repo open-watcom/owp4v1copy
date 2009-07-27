@@ -6,7 +6,8 @@ os  = os2
 srv = ser
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs) seros2.obj
+extra_objs = seros2.obj
 
 !include $(trap_dir)/master.mif

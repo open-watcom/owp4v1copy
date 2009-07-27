@@ -6,7 +6,8 @@ os  = os2v2
 srv = nmp
 cpu = x86
 which = SERVER
+type  = remote_link
 
-extra_objs = $(remote_objs) nmpos22.obj
+extra_objs = nmpos22.obj
 
 !include $(trap_dir)/master.mif

@@ -6,8 +6,7 @@ os = dos
 srv = win
 cpu = x86
 which = SERVER
-
-extra_objs = $(remote_objs)
+type  = remote_link
 
 extra_c_flags_i86 = -3
 

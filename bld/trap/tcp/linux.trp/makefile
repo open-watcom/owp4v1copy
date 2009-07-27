@@ -6,7 +6,8 @@ os = linux
 srv = tcp
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs) qtcpsupp.obj
+extra_objs = qtcpsupp.obj
 
 !include $(trap_dir)/master.mif

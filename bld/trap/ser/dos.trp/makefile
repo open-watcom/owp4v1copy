@@ -6,7 +6,8 @@ os = dos
 srv = ser
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs) serint.obj serdos.obj busywait.obj
+extra_objs = serint.obj serdos.obj busywait.obj
 
 !include $(trap_dir)/master.mif

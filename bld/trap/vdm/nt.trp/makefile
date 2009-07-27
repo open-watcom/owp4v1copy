@@ -6,7 +6,8 @@ os = nt
 srv = vdm
 cpu = x86
 which = TRAP
+type  = remote_link
 
-extra_objs = $(remote_objs) vdmclint.obj
+extra_objs = vdmclint.obj
 
 !include $(trap_dir)/master.mif
