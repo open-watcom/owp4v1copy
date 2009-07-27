@@ -2,6 +2,7 @@
 extra_c_flags += -DDOSXHELP
 !else
 extra_c_flags += -DDOSXTRAP
+extra_objs    += $(dosx_trap_objs)
 !endif
 
 !include $(trap_dir)/lcl/dos/dos.mif

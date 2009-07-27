@@ -11,11 +11,11 @@ which = SERVER
 
 extra_objs = &
         $(dosx_serv_objs) &
+        dosxrmod.obj &
         dosredir.obj &
         x86cpu.obj &
         rsiacc.obj &
         misc7086.obj &
-        realmode.obj &
         dbglib.obj &
         dbgliba.obj &
         rmhdlr.obj &

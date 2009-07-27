@@ -33,12 +33,18 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <i86.h>
 #include "packet.h"
 #include "trperr.h"
 
 #if defined( ACAD )
     #undef PHARLAP /* just in case */
 #endif
+
+typedef struct RMBuff {
+    unsigned long   ptr;
+    unsigned long   len;
+} RMBuff;
 
 #ifdef SERVER
 
@@ -50,14 +56,18 @@
         #include "dxproto.h"
     #endif
 
-    extern long         GetDosLong( long linear_addr );
-    extern char         GetDosByte( long linear_addr );
-    extern void         PutDosByte( long linear_addr, char );
-    extern void         PutDosLong( long linear_addr, long );
-    extern void         CallRealMode( long dos_addr );
-    long                RMProcAddr;
-    long                RMBuffPtr;
-    long                RMBuffLen;
+    #if defined(DOS4G)
+        extern void far *RMLinToPM( unsigned long linear_addr, int pool );
+    #else
+        #define RMLinToPM(x,y) MK_FP(Meg1,x)
+    #endif
+    #define GetDosByte(x)   (*(char far *)RMLinToPM(x,1))
+    #define GetDosLong(x)   (*(unsigned long far *)RMLinToPM(x,1))
+    #define PutDosByte(x,d) (*(char far *)RMLinToPM(x,1)=d)
+    #define PutDosLong(x,d) (*(unsigned long far *)RMLinToPM(x,1)=d)
+    extern void         CallRealMode( unsigned long dos_addr );
+    unsigned long       RMProcAddr;
+    RMBuff              far *RMBuffPtr;
     char                XVersion;
     short               Meg1;
 
@@ -65,7 +75,6 @@
 
     #include "tinyio.h"
     #include "trapdbg.h"
-    #include <i86.h>
 
     extern unsigned short MyCS( void );
     void BackToProtMode( void );
@@ -77,10 +86,7 @@
     char                Server;
     jmp_buf             RealModeState;
     jmp_buf             ProtModeState;
-    struct {
-        long            ptr;
-        long            len;
-    }                   Buff;
+    RMBuff              Buff;
     char                BackFromFork;
     short               OldPSP;
     char                BeenToProtMode;
@@ -96,15 +102,15 @@
 
 unsigned RemoteGet( char *rec, unsigned len )
 {
-    unsigned received;
+    unsigned        received;
 #ifdef SERVER
-    long buff;
+    unsigned long   buff;
 
-    _DBG(("Remote Get Calling real mode - %8.8lx %8.8lx\n", RMProcAddr, RMBuffPtr));
+    _DBG(("Remote Get Calling real mode - %8.8lx %8.8lx\n", RMProcAddr, RMBuffPtr->ptr));
     CallRealMode( RMProcAddr );
     _DBG(("Remote Get Back from real mode\n"));
-    buff = GetDosLong( RMBuffPtr );
-    received = GetDosLong( RMBuffLen );
+    buff = RMBuffPtr->ptr;
+    received = RMBuffPtr->len;
     len = received;
     _DBG(("Remote Geting %d bytes\n",len));
     while( len != 0 ) {
@@ -129,12 +135,12 @@ unsigned RemoteGet( char *rec, unsigned len )
 unsigned RemotePut( char *snd, unsigned len )
 {
 #ifdef SERVER
-    long buff;
+    unsigned long   buff;
 
-    _DBG(("Remote Put - %8.8lx %8.8lx\n", RMProcAddr, RMBuffPtr));
-    PutDosLong( RMBuffLen, len );
+    _DBG(("Remote Put - %8.8lx %8.8lx\n", RMProcAddr, RMBuffPtr->ptr));
+    RMBuffPtr->len = len;
     _DBG(("Remote Put %d bytes\n",len));
-    buff = GetDosLong( RMBuffPtr );
+    buff = RMBuffPtr->ptr;
     while( len != 0 ) {
         PutDosByte( buff, *snd );
         ++buff;
@@ -410,7 +416,7 @@ char *RemoteLink( char *parm, char server )
 {
 
 #ifdef SERVER
-    unsigned long           link;
+    unsigned long       link;
   #if defined(ACAD)
     {
         XVersion = 2;
@@ -430,14 +436,13 @@ char *RemoteLink( char *parm, char server )
         }
     }
   #endif
-    link = GetDosLong( LINK_VECTOR*4 );
-    if( link >= (1024UL * 1024UL) || GetDosLong(link) != LINK_SIGNATURE ) {
+    link = GetDosLong( LINK_VECTOR * 4 );
+    if( link >= (1024UL * 1024UL) || GetDosLong( link ) != LINK_SIGNATURE ) {
         return( TRP_ERR_not_from_command );
     }
-    RMBuffPtr = GetDosLong( link + 4 );
+    RMBuffPtr = RMLinToPM( GetDosLong( link + 4 ), 0 );
     RMProcAddr = GetDosLong( link + 8 );
-    PutDosLong( LINK_VECTOR*4, GetDosLong( link + 12 ) );
-    RMBuffLen = RMBuffPtr + sizeof( long );
+    PutDosLong( LINK_VECTOR * 4, GetDosLong( link + 12 ) );
 #else
     static char     fullpath[256];              /* static because ss != ds */
     static char     buff[256];

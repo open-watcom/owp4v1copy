@@ -36,6 +36,8 @@
 #include "trpimp.h"
 #include "dpmi.h"
 
+#define LINK_VECTOR     0x06
+
 extern void ReadConfig( void );
 #pragma aux ReadConfig "*";
 extern void Int01Handler( void );
@@ -90,16 +92,6 @@ extern void __far *OldExc13;
 extern void __far *OldExc14;
 #pragma aux OldExc14 "*";
 
-int CW_FarCallReal( rm_call_struct __far *call_st );
-#pragma aux CW_FarCallReal =    \
-    "push   es"                 \
-    "mov    es,dx"              \
-    "mov    ax,0ff02h"          \
-    "int    0x31"               \
-    "pop    es"                 \
-    "sbb    eax,eax"            \
-    parm [dx edi] value [eax];
-
 void dos_print( char *s );
 #pragma aux dos_print =     \
     "mov    ah,9h"          \
@@ -134,6 +126,8 @@ struct req_header {
     unsigned_32     length;
 };
 
+extern void CallRealMode( unsigned long );
+
 /* C trap request handlers */
 extern unsigned (* const CoreRequests[])( void );
 
@@ -150,7 +144,7 @@ extern preq_fn   ReqTable[ 128 ];
 static struct req_header    *ReqAddress;
 static char                 ReqBuffer[ 1024 ];
 static unsigned_32          ReqLength;
-static rm_call_struct       RealModeRegs;
+static unsigned long       RMCallAddr;
 
 extern unsigned_32  DebugLevel;
 #pragma aux DebugLevel "*";
@@ -216,7 +210,7 @@ void Dispatcher( void )
     for( ;; ) {
         // Transfer back to real mode
         DBG( "Calling real mode..." );
-        CW_FarCallReal( &RealModeRegs );
+        CallRealMode( RMCallAddr );
         DBG( "...back from RM\r\n" );
 
         len = ReqAddress->length;
@@ -240,7 +234,7 @@ void Dispatcher( void )
         if( !(request & 0x80) ) {
             // Pass control back to real mode ready for result transfer
             DBG( "Calling real mode with results..." );
-            CW_FarCallReal( &RealModeRegs );
+            CallRealMode( RMCallAddr );
             DBG( "...back from RM\r\n" );
         }
 
@@ -321,7 +315,7 @@ int main( int argc, char **argv )
 
     // Look for trap file header off interrupt vector 6
     // (refer to LINK_SIGNATURE in dosxlink.c)
-    trap_ptr = (void *)(6 * sizeof( unsigned_32 ));
+    trap_ptr = (void *)(LINK_VECTOR * sizeof( unsigned_32 ));
     trap_header = *trap_ptr;
     if( trap_header->signature != 0xdeb0deb0 ) {
         dos_printf( "CauseWay trap file signature not found!\r\n" );
@@ -330,8 +324,7 @@ int main( int argc, char **argv )
 
     // Get the transfer buffer address and real mode callback address
     ReqAddress = trap_header->req_addr;
-    RealModeRegs.ip = trap_header->real_call & 0xFFFF;
-    RealModeRegs.cs = trap_header->real_call >> 16;
+    RMCallAddr = trap_header->real_call;
 
     // Process the configuration file
     ReadConfig();

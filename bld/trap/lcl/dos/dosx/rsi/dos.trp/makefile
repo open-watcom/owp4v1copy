@@ -10,7 +10,5 @@ which = TRAP
 
 extra_c_flags = -DDOS4G
 
-extra_objs = $(dosx_trap_objs)
-
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
 !include $(trap_dir)/master.mif

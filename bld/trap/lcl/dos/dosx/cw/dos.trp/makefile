@@ -8,8 +8,6 @@ srv = cw
 cpu = x86
 which = TRAP
 
-extra_objs = $(dosx_trap_objs)
-
 extra_c_flags = -DCAUSEWAY
 
 !include $(trap_dir)/lcl/dos/dosx/dosx.mif
