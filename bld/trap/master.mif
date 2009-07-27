@@ -67,6 +67,10 @@ additional_cleanup = *.d32 *.trp
 !include $(trap_dir)/trap.mif
 !endif
 
+!ifeq type remote_link
+!include $(trap_dir)/remote.mif
+!endif
+
 # cflags stuff
 ###############
 extra_c_flags += -D$(which) -DMD_$(cpu) $(extra_cflags)
@@ -125,18 +129,6 @@ name+=w
 name = $(srv)
 !endif
 !endif
-
-remote_objs = &
-        $($(which)_remote_objs) &
-        packet.obj &
-!ifeq os linux
-        lnxnoth.obj &
-!else ifeq os os2v2
-        os2noth2.obj &
-!else
-        $(os)noth.obj &
-!endif
-        $(srv)link.obj &
 
 !ifeq os win
 targ = windows
@@ -222,9 +214,9 @@ extra_dobjs = $(extra_objs)
 !endif
 
 !ifeq release 1
-objs = $($(which)_objs) mxutil.obj $(extra_objs)
+objs = $($(which)_objs) mxutil.obj $(remote_objs) $(extra_objs)
 !else
-objs = $($(which)_objs) mxutil.obj $(extra_dobjs)
+objs = $($(which)_objs) mxutil.obj $(remote_objs) $(extra_dobjs)
 !endif
 
 !ifndef substitute_linker
