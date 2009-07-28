@@ -3600,12 +3600,38 @@ void ProcStackFini( void )
     }
 }
 
+static void push_registers( regs_list *regist )
+/*********************************************/
+/* Push the registers list */
+{
+    char        buffer[20];
+
+    if( regist == NULL )
+        return;
+    strcpy( buffer, "push " );
+    strcpy( buffer + strlen( buffer ), regist->reg );
+    InputQueueLine( buffer );
+    push_registers( regist->next );
+}
+
+static void pop_registers( regs_list *regist )
+/********************************************/
+/* Pop the registers list */
+{
+    char        buffer[20];
+
+    if( regist == NULL )
+        return;
+    pop_registers( regist->next );
+    strcpy( buffer, "pop " );
+    strcpy( buffer + strlen( buffer ), regist->reg );
+    InputQueueLine( buffer );
+}
+
 int WritePrologue( void )
 /***********************/
 {
     char                buffer[80];
-    regs_list           *regist;
-    int                 len;
     proc_info           *info;
     label_list          *curr;
     long                offset;
@@ -3773,29 +3799,8 @@ int WritePrologue( void )
         InputQueueLine( buffer );
     }
     /* Push the registers */
-    if( info->regslist ) {
-        strcpy( buffer, "push " );
-        len = strlen( buffer );
-        for( regist = info->regslist; regist; regist = regist->next ) {
-            strcpy( buffer + len, regist->reg );
-            InputQueueLine( buffer );
-        }
-    }
+    push_registers( info->regslist );
     return( NOT_ERROR );
-}
-
-static void pop_register( regs_list *regist )
-/*******************************************/
-/* Pop the register when a procedure ends */
-{
-    char        buffer[20];
-
-    if( regist == NULL )
-        return;
-    pop_register( regist->next );
-    strcpy( buffer, "pop " );
-    strcpy( buffer + strlen( buffer ), regist->reg );
-    InputQueueLine( buffer );
 }
 
 static void write_epilogue( void )
@@ -3812,7 +3817,7 @@ static void write_epilogue( void )
     info = CurrProc->e.procinfo;
 
     /* Pop the registers */
-    pop_register( CurrProc->e.procinfo->regslist );
+    pop_registers( CurrProc->e.procinfo->regslist );
 
     if( ( info->localsize == 0 ) && ( info->parasize == 0 ) &&
         ( !info->is_vararg ) && Options.trace_stack != 2 ) {
