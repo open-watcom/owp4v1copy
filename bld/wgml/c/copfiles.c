@@ -691,7 +691,7 @@ static uint32_t get_next_token( uint8_t * buffer, uint32_t count, \
         }
 
         if( in_out->length < (token_length + 1) ) {
-            realloc( in_out->text, token_length + 1 );
+            mem_realloc( in_out->text, token_length + 1 );
             in_out->length = token_length + 1;
         }
         memcpy_s( in_out->text, token_length, &buffer[i], token_length );
@@ -976,8 +976,8 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
             if( block == NULL ) {
                 if( k >= in_out->length ) {
                     in_out->length *= 2;
-                    in_out->text = (uint8_t *) realloc( in_out->text, \
-                                                        in_out->length );
+                    in_out->text = (uint8_t *) mem_realloc( in_out->text, \
+                                                            in_out->length );
                 }
                 in_out->text[k] = byte;
                 k++;
@@ -985,8 +985,8 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
                 if( block->table[text[i]] == NULL ) {
                     if( k >= in_out->length ) {
                         in_out->length *= 2;
-                        in_out->text = (uint8_t *) realloc( in_out->text, \
-                                                            in_out->length );
+                        in_out->text = (uint8_t *) mem_realloc( in_out->text, \
+                                                                in_out->length );
                     }
                     in_out->text[k] = byte;
                     k++;
@@ -994,8 +994,8 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
                     for( j = 0; j < block->table[text[i]]->count; j++ ) {
                         if( k >= in_out->length ) {
                             in_out->length *= 2;
-                            in_out->text = (uint8_t *) realloc( in_out->text, \
-                                                                in_out->length );
+                            in_out->text = (uint8_t *) mem_realloc( \
+                                                in_out->text, in_out->length );
                         }
                         in_out->text[k] = block->table[text[i]]->data[j];
                         k++;
@@ -1005,7 +1005,8 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
         } else {
             if( k >= in_out->length ) {
                 in_out->length *= 2;
-                in_out->text = (uint8_t *) realloc( in_out->text, in_out->length );
+                in_out->text = (uint8_t *) mem_realloc( in_out->text, \
+                                                        in_out->length );
             }
             in_out->text[k] = byte;
             k++;

@@ -903,6 +903,8 @@ int main()
       return( EXIT_FAILURE );
     }
 
+    free_some_mem();            // wgml globals
+ 
     return( EXIT_SUCCESS );
 }
 

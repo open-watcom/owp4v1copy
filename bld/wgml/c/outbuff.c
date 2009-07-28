@@ -33,8 +33,10 @@
 *                   ob_teardown()
 *               as well as these local variables:
 *                   buffout
+*                   translated
 *                   out_file_fb
 *               and these local functions:
+*                   buffer_overflow()
 *                   set_out_file()
 *                   set_out_file_attr()
 *
@@ -58,11 +60,24 @@
 
 /* Local variable declaration. */
 
-static record_buffer    *   buffout;
-static record_buffer    *   translated;
-static FILE             *   out_file_fb;
+static record_buffer    buffout     = { 0, 0, NULL };
+static record_buffer    translated  = { 0, 0, NULL };
+static FILE         *   out_file_fb;
 
 /* Static function definitions. */
+
+/* Function buffer_overflow().
+ * Handles error processing for output buffer overflow.
+ */
+ 
+static void buffer_overflow( void )
+{
+    out_msg( "wgml internal error: output buffer overflow\n" );
+    err_count++;
+    g_suicide();
+
+    return;
+}
 
 /* Function set_out_file().
  * Sets the global out_file to the correct value. This can be anything from a
@@ -287,29 +302,20 @@ static void set_out_file_attr( void )
  *
  * Notes:
  *      The output file is, and must be, opened in binary mode. This requires
- *          the explicit emission of "\c\n" for non-Linux versions. For Linux,
+ *          the explicit emission of "\r\n" for non-Linux versions. For Linux,
  *          "\n" is emitted, but, since I am not able to test the Linux version,
  *          it is not possible to tell is this is correct.
  *      Since PostScript is a printer language, it is possible that it will
- *          require "\c\n" even under Linux, even in a software interpreter.
+ *          require "\r\n" even under Linux, even in a software interpreter.
  *          Then again, the Linux version of Ghostscript, for example, may
  *          well expect "\n". It is possible, then, that the Linux code will
  *          need to distinguish between PS and other devices.
- *      This implementation implicitly assumes that either a word will fit or
- *          it will be part of the next line. Handling over-long groups of
- *          letters is actually more complicated and may eventually require
- *          that a larger buffer be allocated than the record format calls for
- *          or that a second parameter be passed to suppress the "newline"
- *          when appropriate. This was discovered while attempting to discover
- *          whether a multicharacter output translation is split over two
- *          buffer flushes. It appears that it is not, so a second function that
- *          handles output translation will be needed eventually.
  */
 
 void ob_flush( void )
 {
-    fwrite( buffout->text, sizeof( uint8_t ), buffout->current, out_file_fb );
-    buffout->current = 0;
+    fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
+    buffout.current = 0;
 #ifdef __UNIX__
     fprintf_s( out_file_fb, "\n" );
 #else
@@ -329,8 +335,18 @@ void ob_flush( void )
  *      out_text is true is the bytes are to appear in the document itself.
  *
  * Notes:
- *      This implementation does not actually do anything special when out_text
- *          is set to "true".
+ *      Except for PS non-text output, where wgml 4.0 produces an error if
+ *          it will not fit in a single output record, this implementation
+ *          implicitly assumes that either a word will fit or that it will
+ *          be part of the next line. Handling over-long groups of letters
+ *          is actually more complicated and may eventually require that a
+ *          larger buffer be allocated than the record format calls for or
+ *          that a second parameter be passed to suppress the "newline"
+ *          when appropriate. This was discovered while attempting to discover
+ *          whether a multicharacter output translation is split over two
+ *          buffer flushes. It appears that it is not, something else that
+ *          this code currently ignores and which may require character-by-
+ *          character output translation to implement.
  */
 
 extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
@@ -345,10 +361,10 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 
         /* Do the output translation of in_block. */
 
-        translated = cop_out_trans( in_block, count, translated, font );
+        cop_out_trans( in_block, count, &translated, font );
 
-        text_block = translated->text;
-        text_count = translated->current;
+        text_block = translated.text;
+        text_count = translated.current;
 
     } else {
 
@@ -362,12 +378,21 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 
     current = 0;
 
+    /* If the buffer is full, flush it. */
+
+    if( buffout.current == buffout.length ) ob_flush();
+
     /* If the block won't fit, copy as much as possible into the buffer
      * and then flush it.
      */
 
-    while( (buffout->current + text_count) > buffout->length ) {
-        difference = buffout->length - buffout->current;
+    while( (buffout.current + text_count) > buffout.length ) {
+
+        difference = buffout.length - buffout.current;
+
+        /* If the entire text_block will now fit, exit the loop. */
+
+        if( text_count <= difference ) break;
 
         /* Distinguish PS devices from non-PS devices. */
 
@@ -377,25 +402,37 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 
             if( out_text ) {
 
-                /* Implement when text output is being implemented. */
+                /* PS text elements must completely fill the output record.
+                 * If the text element is not closed by the end of the
+                 * record, a '\' is used to terminate the record and the
+                 * next record starts with the next character. Notes:
+                 * -- if this is the start of the text element, then the last
+                 *    item was "(" and, if difference = 1, "(\" is correct
+                 *    for the end of the output record
+                 * -- if the text element ends on the last legal position,
+                 *    then inserting "\" and moving the last character in the
+                 *    text element is corrrect
+                 * -- if the text element ends one position before the last
+                 *    legal position, then the output record will correctly
+                 *    end with the ")" of ") sd" or ") shwd"
+                 */
+
+                if ( difference > 1 ) {
+                    memcpy_s( &buffout.text[buffout.current], difference - 1, \
+                                        &text_block[current], difference - 1 );
+                    current+= (difference - 1);
+                    text_count -= (difference - 1);
+                }
+                buffout.current += difference;
+                if( buffout.current > buffout.length ) buffer_overflow();
+                buffout.text[buffout.current] = '\\';
+                ob_flush();
 
             } else {
 
                 /* PS language statements must not be split in mid-word.
-                 * In fact, the out_buff must end with a space since the
+                 * In fact, the out_buff must end with a space when the
                  * out_buff cannot contain the entire remaining text_block.
-                 *
-                 * At this point, these invariants hold:
-                 *  buffout->current + text_count > buffout->length
-                 *  difference = buffout->length - buffout->current
-                 * Thus: buffout->current + difference = buffout->length
-                 *  current <= buffout->current
-                 *  text_block[current + difference] <=
-                 *      text_block[buffout->current + difference] =
-                 *      text_block[buffout->length] <=
-                 *      text_block[buffout->current + text_count]
-                 * Thus: text_block[current + difference] must access a
-                 *  valid location in text_block.
                  */
 
                 if( text_block[current + difference] != ' ' ) {
@@ -408,15 +445,16 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
                              * and exit this loop.
                              */
 
-                            if( buffout->current > 0 ) {
+                            if( buffout.current > 0 ) {
                                 ob_flush();
                                 if( text_block[current] == ' ' ) current++;
                                 break;
                             } else {
 
-                            /* It just won't fit. */
+                                /* It just won't fit. */
+
                                 out_msg( "Output file's record size is too "\
-                                     "small for the device '%s'\n", dev_name );
+                                    "small for the device '%s'\n", dev_name );
                                 err_count++;
                                 g_suicide();
                             }
@@ -429,12 +467,13 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 
                     if( difference == 0 ) continue;
                 } 
-                
+
                 /* Copy up to the space character found. */
 
-                memcpy_s( &buffout->text[buffout->current], difference, \
+                memcpy_s( &buffout.text[buffout.current], difference, \
                                             &text_block[current], difference );
-                buffout->current += difference;
+                buffout.current += difference;
+                if( buffout.current > buffout.length ) buffer_overflow();
                 current+= difference;
                 text_count -= difference;
 
@@ -443,38 +482,47 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
                  */
 
                 current++;
-                while( buffout->current < buffout->length ) {
+                while( buffout.current < buffout.length ) {
                     if( text_block[current] != ' ' ) break;
-                    buffout->text[buffout->current] = ' ';
-                    buffout->current++;
+                    buffout.text[buffout.current] = ' ';
+                    buffout.current++;
+                    if( buffout.current > buffout.length ) buffer_overflow();
                 }
 
                 /* If the buffer is full, flush it. */
 
-                if( buffout->current == buffout->length ) ob_flush();
+                if( buffout.current == buffout.length ) ob_flush();
+
             }
 
         } else {
 
             /* For non-PS devices, stuff the buffer. */
 
-            memcpy_s( &buffout->text[buffout->current], difference, \
+            memcpy_s( &buffout.text[buffout.current], difference, \
                                             &text_block[current], difference );
-            buffout->current += difference;
+            buffout.current += difference;
+            if( buffout.current > buffout.length ) buffer_overflow();
             current+= difference;
             text_count -= difference;
             ob_flush();
         }
     }
 
-    /* Insert any remaining text, but do not flush the buffer. */
+    /* Insert any remaining text. */
 
     if( text_count > 0 ) {
-        memcpy_s( &buffout->text[buffout->current], text_count, \
+        memcpy_s( &buffout.text[buffout.current], text_count, \
                                             &text_block[current], text_count );
-
-        buffout->current += text_count;
+        buffout.current += text_count;
+        if( buffout.current > buffout.length ) buffer_overflow();
     }
+
+    /* If the buffer is full, flush it. */
+
+    if( buffout.current == buffout.length ) ob_flush();
+
+    return;
 }
 
 /* Function ob_insert_byte().
@@ -488,12 +536,13 @@ void ob_insert_byte( uint8_t in_char )
 {
     /* Flush the buffer if it is full. */
 
-    if( buffout->current == buffout->length ) ob_flush();
+    if( buffout.current == buffout.length ) ob_flush();
 
     /* Insert the character and increment the current position pointer. */
 
-    buffout->text[buffout->current] = in_char;
-    buffout->current++;
+    buffout.text[buffout.current] = in_char;
+    buffout.current++;
+    if( buffout.current > buffout.length ) buffer_overflow();
 
     return;
 }
@@ -512,10 +561,6 @@ extern void ob_setup( void )
 
     set_out_file();
     set_out_file_attr();
-
-    /* Validate out_file_attr. */
-
-    buffout = NULL;
 
     /* Only record type "t" is currently supported. */
 
@@ -549,20 +594,18 @@ extern void ob_setup( void )
 
     /* Initialize the local variables. */
 
-    buffout = (record_buffer *) mem_alloc( sizeof( record_buffer ) );
-    buffout->current = 0;
-    buffout->length = strtoul( &out_file_attr[2], NULL, 0 );
+    buffout.current = 0;
+    buffout.length = strtoul( &out_file_attr[2], NULL, 0 );
     if( errno == ERANGE ) {
-        out_msg( "Output buffer length is too large, max is %i\n", ULONG_MAX );
+        out_msg( "Output record length is too large, max is %i\n", ULONG_MAX );
         err_count++;
         g_suicide();
     }
-    buffout->text = (uint8_t * ) mem_alloc( buffout->length );
+    buffout.text = (uint8_t *) mem_alloc( buffout.length );
 
-    translated = (record_buffer *) mem_alloc( sizeof( record_buffer ) );
-    translated->current = 0;
-    translated->length = 80;
-    translated->text = (uint8_t * ) mem_alloc( translated->length );
+    translated.current = 0;
+    translated.length = 80;
+    translated.text = (uint8_t *) mem_alloc( translated.length );
 
     /* Create (truncate) the output file. */
 
@@ -583,19 +626,14 @@ extern void ob_setup( void )
  */
 extern void ob_teardown( void )
 {
-    if( buffout != NULL ) {
-        mem_free( buffout->text );
-        mem_free( buffout );
-        buffout = NULL;
+    if( buffout.text != NULL ) {
+        mem_free( buffout.text );
+        buffout.text = NULL;
     }
 
-    if(translated != NULL ) { 
-        if(translated->text != NULL ) { 
-            mem_free( translated->text );
-            translated->text = NULL;
-        }
-        mem_free( translated );
-        translated = NULL;
+    if(translated.text != NULL ) { 
+        mem_free( translated.text );
+        translated.text = NULL;
     }
 
     if( out_file_fb != NULL ) {

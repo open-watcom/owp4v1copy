@@ -28,9 +28,11 @@
 *               In addition to main(), these global functions are implemented:
 *                   print_banner()
 *                   print_usage()
-*               as well as this struct:
+*               as well as this #define macro:
+*                   TEXT_START
+*               and this struct:
 *                   text_phrase
-*               as well as these variables (the text arrays are ignored):
+*               and these variables (the text arrays are ignored):
 *                   cur_h_start
 *                   cur_v_start
 *                   max_line_height
@@ -66,7 +68,11 @@
 #include "gvars.h"
 #include "research.h"
 #include "wgml.h"
- 
+
+/* This is used with the text_chars struct to set the initial value of length. */
+
+#define TEXT_START 32    
+
 /* Struct definition. */
  
 typedef struct {
@@ -89,7 +95,7 @@ static  uint32_t            page_top;
  
 /* Load the usage text array. */
  
-static  char const *    usage_text[] = {
+static  char    const   *   usage_text[] = {
 "Usage:  outcheck defined-name",
 "'defined-name' is the defined name for the device to use",
 "'defined-name' must be enclosed in quotes if it contains spaces",
@@ -98,20 +104,18 @@ NULL
  
 /* Load the document text arrays. */
  
-static  text_phrase  title[] = {
+static  text_phrase         title[] = {
     { 3, "OUTCHECK~ Document" },
     { 0, NULL}
 };
  
-static  text_phrase  page1_para1[] = {
+static  text_phrase         page1_para1[] = {
     {0, "This document is copied and modified from the Wiki. The reason for" },
     {0, "this is to make it less boring." },
     {0, NULL }
 };
  
-#if 0 // Needed until the arrays are used to avoid compiler complaints
- 
-static  text_phrase  page1_para2[] = {
+static  text_phrase         page1_para2[] = {
     {0, "Those function sequences involving literal parameters which are" },
     {0, "discussed here behave as expected all compiled function blocks." },
     {0, "The number of possible function sequences in this category is" },
@@ -119,7 +123,9 @@ static  text_phrase  page1_para2[] = {
     {0, NULL }
 };
  
-static  text_phrase  page1_box[] = {
+#if 0 // Needed until the boxes are ready for testing
+ 
+static  text_phrase         page1_box[] = {
     {0, "%binary(3)              the appropriate graphic appears" },
     {0, "%binary1(4)             the appropriate graphic appears" },
     {0, "%binary2(5)             the appropriate graphic appears" },
@@ -135,7 +141,9 @@ static  text_phrase  page1_box[] = {
     {0, NULL }
 };
  
-static  text_phrase  page2_para1[] = {
+#endif // #if 0
+ 
+static  text_phrase         page2_para1[] = {
     {0, "An interesting phenomenon became apparent during these tests: the" },
     {0, "XP VDM window (at least) behaves as if the null characters generated" },
     {0, "by %binary2(5) and %binary4(6) were CR+LF characters. Both the" },
@@ -146,19 +154,21 @@ static  text_phrase  page2_para1[] = {
     {0, NULL }
 };
  
-static  char const page2_para2[] = {
+static  text_phrase         page2_para2[] = {
     {0, "All other function sequences discussed which use literal parameters" },
-    {0, "output  function sequences in which the parameters are encoded using" },
+    {0, "output function sequences in which the parameters are encoded using" },
     {0, "parameter blocks." },
     {0, NULL }
 };
  
-static  char const page2_para3[] = {
+static  text_phrase         page2_para3[] = {
     {0, "These functions are presumed to work uniformly:" },
     {0, NULL }
 };
  
-static  char const page2_box[] = {
+#if 0 // Needed until the boxes are ready for testing
+ 
+static  text_phrase         page2_box[] = {
     {0, "%font_number()" },
     {0, "%pages()" },
     {0, "%tab_width()" },
@@ -209,6 +219,7 @@ void emulate_text_output( text_phrase * text )
     int             i;
     int             j;
     size_t          count;
+    size_t          increment;
     text_chars  *   cur_chars;
     text_chars  *   next_chars;
     text_chars  *   pool_ptr;
@@ -222,13 +233,14 @@ void emulate_text_output( text_phrase * text )
     if( text == NULL) return;
  
     /* Set up the_line and for the outer loop. */
- 
+
     the_line.y_address = cur_v_start;
     the_line.first = NULL;
     cur_chars = NULL;
     if( text_chars_pool == NULL ) {
-        next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + 1 );
-        next_chars->length = 1;
+        next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
+                                                                TEXT_START );
+        next_chars->length = TEXT_START;
     } else {
         next_chars = text_chars_pool;
         text_chars_pool = text_chars_pool->next;
@@ -255,14 +267,15 @@ void emulate_text_output( text_phrase * text )
             /* This loop processes a single text_chars. */
  
             for( j = i; j < count; j++ ) {
+
                 the_char = cur_phrase->text[j];
                 if( isspace( the_char ) ) break;
  
                 if( ProcFlags.in_trans ) {
                     if( in_esc == the_char ) {
-                        the_char = cop_in_trans( cur_phrase->text[j + 1], \
-                                                    cur_phrase->font_number );
                         j++;
+                        the_char = cop_in_trans( cur_phrase->text[j], \
+                                                    cur_phrase->font_number );
                     }
                 }
                 if( next_chars->count >= next_chars->length ) {
@@ -274,27 +287,31 @@ void emulate_text_output( text_phrase * text )
                 next_chars->count++;
             }
             i = j;
- 
-            /* Compute the width and update cur_h_start. */
+
+            /* Compute the width and initialize increment. */
  
             next_chars->width = cop_text_width( next_chars->text, \
                                 next_chars->count, next_chars->font_number );
-            cur_h_start += next_chars->width;
+            increment = next_chars->width;
  
             /* Allow one space between text_chars instances. */
  
-            cur_h_start += wgml_fonts[next_chars->font_number].spc_width;
+            increment += wgml_fonts[next_chars->font_number].spc_width;
  
             /* Finalize the the text_line. */
  
-            if( cur_h_start > page_right ) {
+            if( (cur_h_start + increment) > page_right ) {
  
                 /* The text_line is ready for output and reinitialization. */
  
                 save_chars = next_chars;
                 fb_output_textline( &the_line );
  
-                cur_v_start += max_line_height;
+                if( bin_driver->y_positive == 0x00 ) {
+                    cur_v_start -= max_line_height;
+                } else {
+                    cur_v_start += max_line_height;
+                }
                 the_line.y_address = cur_v_start;
  
                 if( text_chars_pool == NULL ) {
@@ -308,7 +325,7 @@ void emulate_text_output( text_phrase * text )
                 cur_chars = save_chars;
                 cur_h_start = page_left;
                 cur_chars->x_address = cur_h_start;
-                
+
             } else {
  
                 /* The text_chars belongs to this text_line. */
@@ -321,11 +338,13 @@ void emulate_text_output( text_phrase * text )
                 cur_chars = next_chars;
             }
  
-            /* Get the next text_chars instance. */
- 
+            /* Update cur_h_start and get the next text_chars instance. */
+
+            cur_h_start += increment;
             if( text_chars_pool == NULL ) {
-                next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + 1 );
-                next_chars->length = 1;
+                next_chars = (text_chars *) mem_alloc( sizeof( text_chars ) + \
+                                                                TEXT_START );
+                next_chars->length = TEXT_START;
             } else {
                 next_chars = text_chars_pool;
                 text_chars_pool = text_chars_pool->next;
@@ -336,14 +355,14 @@ void emulate_text_output( text_phrase * text )
             next_chars->width = 0;
             next_chars->count = 0;
         }
- 
+
         /* Go to the next text_phrase. */
  
         cur_phrase++;
         font_number = cur_phrase->font_number;
         if( font_number > wgml_font_cnt ) font_number = 0;
     }
- 
+
     /* Output the final text_line and return the text_chars to the pool.*/
  
     fb_output_textline( &the_line );
@@ -381,7 +400,6 @@ void emulate_text_output( text_phrase * text )
 static void emulate_wgml( void )
 {
     int                 i;
-    record_buffer   *   translated;
     text_chars      *   current;
     text_chars      *   pool_ptr;
     uint32_t            cur_h_len;
@@ -393,27 +411,27 @@ static void emulate_wgml( void )
     /* Set the file-level globals. */
  
     /* Initialize the text_chars pool. */
- 
-    current = (text_chars *) mem_alloc( sizeof( text_chars ) + 1);
+
+    current = (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
     current->next = NULL;
     current->font_number = 0;
     current->x_address = 0;
     current->width = 0;
     current->count = 0;
-    current->length = 1;
+    current->length = TEXT_START;
     text_chars_pool = current;
  
     /* Now bring the number of instances to 20. */
  
     pool_ptr = text_chars_pool;
     for( i = 0; i < 19; i++ ) {
-        current = (text_chars *) mem_alloc( sizeof( text_chars ) + 1 );
+        current = (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
         current->next = NULL;
         current->font_number = 0;
         current->x_address = 0;
         current->width = 0;
         current->count = 0;
-        current->length = 1;
+        current->length = TEXT_START;
         pool_ptr->next = current;
         pool_ptr = current;
     }
@@ -437,11 +455,6 @@ static void emulate_wgml( void )
  
     /* Set the variables. */
  
-    translated = (record_buffer *) mem_alloc( sizeof( record_buffer ) );
-    translated->current = 0;
-    translated->length = 80;
-    translated->text = (uint8_t *) mem_alloc( translated->length );
- 
     max_char_width = 0;
     max_line_height = 0;
  
@@ -455,92 +468,6 @@ static void emulate_wgml( void )
     net_page_height = bin_device->page_depth;
     net_page_width = bin_device->page_width;
  
-    /* Test the input translation. */
- 
-    out_msg( "The escape character is: '%c'\n", in_esc );
-    out_msg( "The in_trans flag is: %i\n", ProcFlags.in_trans );
-    out_msg( "Setting the input escape character to '~'\n" );
-    cop_ti_table( "set ~", 5 );
-    out_msg( "The escape character is: '%c'\n", in_esc );
-    out_msg( "The in_trans flag is: %i\n", ProcFlags.in_trans );
-    out_msg( "Clearing the input escape character\n" );
-    cop_ti_table( "set", 3 );
-    out_msg( "The escape character is: '%c'\n", in_esc );
-    out_msg( "The in_trans flag is: %i\n", ProcFlags.in_trans );
- 
-    out_msg( "Using characters to set the translations\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
-    cop_ti_table( "i j t u", 7 );
-    out_msg( ".ti table set to translate 'i' to 'j' and 't' to 'u'\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
-    cop_ti_table( "i", 1 );
-    out_msg( ".ti table reset to translate 'i' to 'i'\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
-    cop_ti_table( "", 0 );
-    out_msg( ".ti table reset\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
- 
-    out_msg( "Using hexadecimals to set the translations\n" );
-    cop_ti_table( "69 6A 74 75", 11 );
-    out_msg( ".ti table set to translate 'i' to 'j' and 't' to 'u'\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
-    cop_ti_table( "69", 2 );
-    out_msg( ".ti table reset to translate 'i' to 'i'\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
-    cop_ti_table( "", 0 );
-    out_msg( ".ti table reset\n" );
-    out_msg( "Original char: 'i'; translated char: '%c'\n", cop_in_trans( 'i', 0 ));
-    out_msg( "Original char: 't'; translated char: '%c'\n", cop_in_trans( 't', 0 ));
- 
-    out_msg( "Output translation test\n" );
-    out_msg( "Original text: 'Mary had a little lamb.'\n");
-    cop_out_trans( "Mary had a little lamb.", \
-                        strlen( "Mary had a little lamb." ), translated, 0 );
-    /* This is only safe because we know the length of the test string is
-     * less than the 80 bytes in translated->text. If done in general, the
-     * possibility of having to mem_realloc() translated->text would have
-     * to be taken into account.
-     */
- 
-    translated->text[translated->current] = '\0';
-    out_msg( "Translated text: '%s'\n", translated->text );
- 
-    out_msg( ".tr table set to translate space to '~'\n" );
-    cop_tr_table( "20 ~", 4 );
-    out_msg( "Original text: 'Mary had a little lamb.'\n");
-    cop_out_trans( "Mary had a little lamb.", \
-                        strlen( "Mary had a little lamb." ), translated, 0 );
-    
-    /* This is only safe because we know the length of the test string is
-     * less than the 80 bytes in translated->text. If done in general, the
-     * possibility of having to mem_realloc() translated->text would have
-     * to be taken into account.
-     */
- 
-    translated->text[translated->current] = '\0';
-    out_msg( "Translated text: '%s'\n", translated->text );
- 
-    out_msg( ".tr table cleared\n" );
-    cop_tr_table( "", 0 );
-    out_msg( "Original text: 'Mary had a little lamb.'\n");
-    cop_out_trans( "Mary had a little lamb.", \
-                        strlen( "Mary had a little lamb." ), translated, 0 );
- 
-    /* This is only safe because we know the length of the test string is
-     * less than the 80 bytes in translated->text. If done in general, the
-     * possibility of having to mem_realloc() translated->text would have
-     * to be taken into account.
-     */
- 
-    translated->text[translated->current] = '\0';
-    out_msg( "Translated text: '%s'\n", translated->text );
-
     /* The OUTCHECK Test Document. */
  
     /* Allow input translation tests. */
@@ -599,11 +526,11 @@ static void emulate_wgml( void )
  
     /* One-inch margin on line 1. */
  
-    cur_h_start = bin_device->horizontal_base_units;
+    cur_h_start = page_left;
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = net_page_height - (1 * max_line_height);
+        cur_v_start = page_top - max_line_height;
     } else {
-        cur_v_start = 1 * max_line_height;
+        cur_v_start = max_line_height;
     }
  
     fb_new_section( cur_v_start );
@@ -615,26 +542,29 @@ static void emulate_wgml( void )
     /* Output the first paragraph. */
  
     emulate_text_output( page1_para1 );
- 
+
+    /* A blank line is placed between paragraphs. */
+
+    /* Output the second paragraph. */
+
+    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
+    if( bin_driver->y_positive == 0x00 ) {
+        cur_v_start -= 2 * max_line_height;
+    } else {
+        cur_v_start += 2 * max_line_height;
+    }
+    emulate_text_output( page1_para2 );
+
     /* First box. */
  
     cur_h_len = bin_device->horizontal_base_units;
     cur_h_start = bin_device->horizontal_base_units;
     cur_v_len = 2 * max_char_width;
     if( bin_driver->y_positive == 0x00 ) {
-        cur_v_start = net_page_height - (15 * max_line_height);
+        cur_v_start -= 2 * max_line_height;
     } else {
-        cur_v_start = 15 * max_line_height;
+        cur_v_start += 2 * max_line_height;
     }
- 
-    out_msg( "cur_h_len = %i\n", cur_h_len );
-    out_msg( "cur_h_start = %i\n", cur_h_start );
-    out_msg( "cur_v_len = %i\n", cur_v_len );
-    out_msg( "cur_v_start = %i\n", cur_v_start );
-    out_msg( "max_char_width = %i\n", max_char_width );
-    out_msg( "max_line_height = %i\n", max_line_height );
-    out_msg( "net_page_height = %i\n", net_page_height );
-    out_msg( "net_page_width = %i\n", net_page_width );
  
     if( has_aa_block ) {
         if( bin_driver->y_positive == 0x00 ) {
@@ -668,8 +598,45 @@ static void emulate_wgml( void )
  
     /* Second page. */
  
+    /* Output the first paragraph. */
+
+    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
+    if( bin_driver->y_positive == 0x00 ) {
+        cur_v_start = net_page_height - max_line_height;
+    } else {
+        cur_v_start = max_line_height;
+    }
+    emulate_text_output( page2_para1 );
+ 
+    /* Output the second paragraph. */
+
+    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
+    if( bin_driver->y_positive == 0x00 ) {
+        cur_v_start -= 2 * max_line_height;
+    } else {
+        cur_v_start += 2 * max_line_height;
+    }
+    emulate_text_output( page2_para2 );
+ 
+    /* Output the third paragraph. */
+
+    cur_h_start = page_left + (bin_device->horizontal_base_units / 2);
+    if( bin_driver->y_positive == 0x00 ) {
+        cur_v_start -= 2 * max_line_height;
+    } else {
+        cur_v_start += 2 * max_line_height;
+    }
+    emulate_text_output( page2_para3 );
+ 
     /* Second box. */
  
+    if( bin_driver->y_positive == 0x00 ) {
+        cur_v_start -= 2 * max_line_height;
+    } else {
+        cur_v_start += 2 * max_line_height;
+    }
+
+    cur_h_start = bin_device->horizontal_base_units;
     if( has_aa_block != NULL ) {
         if( bin_driver->y_positive == 0x00 ) {
             if( bin_driver->dbox.text != NULL ) {
@@ -690,27 +657,14 @@ static void emulate_wgml( void )
  
     /* Free allocated memory. */
  
-    if( translated != NULL ) {
-        if( translated->text != NULL ) {
-            mem_free( translated->text );
-            translated->text = NULL;
-        }
-        mem_free( translated );
-        translated = NULL;
-    }
- 
     if( text_chars_pool != NULL ) {
-        i = 1;
         while( text_chars_pool->next != NULL ) {
             current = text_chars_pool;
             text_chars_pool = text_chars_pool->next;
-            out_msg( "text_chars %i buffer size: %i\n", i, current->length );
             mem_free( current );
-            i++;
         }
         current = text_chars_pool;
         text_chars_pool = text_chars_pool->next;
-        out_msg( "text_chars %i buffer size: %i\n", i, current->length );
         mem_free( current );
         current = NULL;
     }
@@ -833,9 +787,6 @@ start_heapcheck( "main" );
  
     emulate_wgml();
  
-    out_msg( "out_file name: %s\n", out_file);
-    out_msg( "out_file format: %s\n", out_file_attr);
-    
     /* Release the memory allocated. */
  
     cop_teardown();
@@ -844,7 +795,7 @@ start_heapcheck( "main" );
     mem_free(tgt_path);
     tgt_path = NULL;
  
-    free_some_mem();                    // free_some_mem() in wgmlsupp.c
+    free_some_mem();            // wgml globals
  
 end_heapcheck( "main" );
  

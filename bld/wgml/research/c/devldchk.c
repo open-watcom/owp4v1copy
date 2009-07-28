@@ -260,6 +260,8 @@ int main()
     mem_free(tgt_path);
     tgt_path = NULL;
 
+    free_some_mem();            // wgml globals
+ 
     return( EXIT_SUCCESS );
 }
 
