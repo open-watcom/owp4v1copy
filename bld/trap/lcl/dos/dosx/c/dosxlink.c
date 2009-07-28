@@ -36,9 +36,47 @@
 #include <i86.h>
 #include "packet.h"
 #include "trperr.h"
+#ifdef SERVER
+  #ifdef PHARLAP
+    #include "pharlap.h"
+    #include "dxproto.h"
+  #endif
+#else
+    #include "tinyio.h"
+    #include "trapdbg.h"
+  #if defined(PHARLAP)
+    #include "exedos.h"
+    #include "exeos2.h"
+    #include "exepe.h"
+  #endif
+#endif
 
-#if defined( ACAD )
-    #undef PHARLAP /* just in case */
+#if defined(ACAD)
+    #define EXTENDER_NAMES  "ACAD.EXE\0"
+    #define HELPNAME        ""
+#elif defined(PHARLAP)
+    #define EXTENDER_NAMES  "TNT.EXE\0" "RUN386.EXE\0"
+    #define HELPNAME        "PLSHELP.EXP"
+    #define HELPNAME_DS     "PEDHELP.EXP"
+    #define HELPNAME_NS     "PENHELP.EXP"   /* not supported yet */
+#elif defined(DOS4G)
+    #define EXTENDER_NAMES  "DOS4GW.EXE\0" "4GWPRO.EXE\0" "DOS4G.EXE\0" "DOS4GX.EXE\0"
+    #define HELPNAME        "RSIHELP.EXP"
+#elif defined(CAUSEWAY)
+    #define EXTENDER_NAMES  "CWSTUB.EXE\0"
+    #define HELPNAME        "CWHELP.EXE"
+#else
+    #error Extender and helper names not defined
+#endif
+
+#define LOW( c )        ((c)|0x20)      /*Quick and dirty lower casing*/
+
+#define LINK_SIGNATURE 0xdeb0deb0L
+
+#if defined(DOS4G) || defined(CAUSEWAY)
+    #define LINK_VECTOR     0x06
+#else
+    #define LINK_VECTOR     0x01
 #endif
 
 typedef struct RMBuff {
@@ -51,35 +89,31 @@ typedef struct RMBuff {
     #define _DBG( s )
     #define _DBG_ExitFunc( s )
 
-    #ifdef PHARLAP
-        #include "pharlap.h"
-        #include "dxproto.h"
-    #endif
-
-    #if defined(DOS4G)
-        extern void far *RMLinToPM( unsigned long linear_addr, int pool );
-    #else
-        #define RMLinToPM(x,y) MK_FP(Meg1,x)
-    #endif
+  #if defined(DOS4G)
+    extern void             far *RMLinToPM( unsigned long linear_addr, int pool );
+  #else
+    static unsigned short   Meg1;
+    #define RMLinToPM(x,y)  MK_FP(Meg1,x)
+  #endif
     #define GetDosByte(x)   (*(char far *)RMLinToPM(x,1))
     #define GetDosLong(x)   (*(unsigned long far *)RMLinToPM(x,1))
     #define PutDosByte(x,d) (*(char far *)RMLinToPM(x,1)=d)
     #define PutDosLong(x,d) (*(unsigned long far *)RMLinToPM(x,1)=d)
-    extern void         CallRealMode( unsigned long dos_addr );
-    unsigned long       RMProcAddr;
-    RMBuff              far *RMBuffPtr;
-    char                XVersion;
-    short               Meg1;
+    extern void             CallRealMode( unsigned long dos_addr );
+    unsigned long           RMProcAddr;
+    RMBuff                  far *RMBuffPtr;
+    char                    XVersion;
+  #if defined(CAUSEWAY)
+    extern unsigned short   GetZeroSel( void );
+    #pragma aux GetZeroSel = \
+        "mov ax,0ff00h" \
+        "int 31h" \
+        modify [bx ecx dx edi esi es] value [ax];
+  #endif
 
 #else
 
-    #include "tinyio.h"
-    #include "trapdbg.h"
-
-    extern unsigned short MyCS( void );
     void BackToProtMode( void );
-
-    #pragma aux MyCS   = 0x8c 0xc8 value [ ax ];
 
     #define MK_LINEAR( p )    ( ( (long)FP_SEG( (void far *)(p) ) << 4 ) + FP_OFF( (void far *)(p) ) )
 
@@ -96,8 +130,17 @@ typedef struct RMBuff {
     extern void         SetPSP( short );
     extern int          _fork(char *,char *);
 
+    extern void doskludge( void );
+    #pragma aux doskludge = \
+        "mov  ax,2a00h" \
+        "sub  sp,50h" \
+        "int  21h" \
+        parm caller [ ax ] modify [ sp cx dx ];
+
 #endif
 
+extern unsigned short   GetCS( void );
+#pragma aux GetCS = "mov ax,cs" value [ ax ];
 
 
 unsigned RemoteGet( char *rec, unsigned len )
@@ -161,7 +204,23 @@ unsigned RemotePut( char *snd, unsigned len )
     return( len );
 }
 
-#ifndef SERVER
+#ifdef SERVER
+
+char far *GetScreenPointer( void )
+{
+#if defined( ACAD )
+    return( MK_FP( Meg1, 0xB0000 ) );
+#elif defined(CAUSEWAY)
+    return( MK_FP( Meg1, 0xB0000 ) );
+#elif defined(PHARLAP)
+    return( MK_FP( 0x1C, 0 ) );
+#elif defined( DOS4G )
+    return( MK_FP( 0x50, 0 ) );
+#endif
+}
+
+#else
+
 void BackToProtMode( void )
 {
     if( setjmp( RealModeState ) == 0 ) {
@@ -170,7 +229,6 @@ void BackToProtMode( void )
     }
     _DBG_Writeln( "RETURNED FROM PROTECTED MODE" );
 }
-
 
 void far BackFromProtMode( void )
 {
@@ -182,19 +240,7 @@ void far BackFromProtMode( void )
     }
     SetPSP( OldPSP );
 }
-#endif
 
-char RemoteConnect( void )
-{
-    return( 1 );
-}
-
-void RemoteDisco( void )
-{
-}
-
-
-#ifndef SERVER
 char *CopyStr( char *src, char *dst )
 {
     while( *dst = *src ) {
@@ -260,24 +306,6 @@ static char *SearchPath( char far *env, char const *file, char *buff, char **pen
     return( name );
 }
 
-#if defined(ACAD)
-    #define EXTENDER_NAMES  "ACAD.EXE\0"
-    #define HELPNAME        ""
-#elif defined(PHARLAP)
-    #define EXTENDER_NAMES  "TNT.EXE\0" "RUN386.EXE\0"
-    #define HELPNAME        "PLSHELP.EXP"
-    #define HELPNAME_DS     "PEDHELP.EXP"
-    #define HELPNAME_NS     "PENHELP.EXP"   /* not supported yet */
-#elif defined(DOS4G)
-    #define EXTENDER_NAMES  "DOS4GW.EXE\0" "4GWPRO.EXE\0" "DOS4G.EXE\0" "DOS4GX.EXE\0"
-    #define HELPNAME        "RSIHELP.EXP"
-#elif defined(CAUSEWAY)
-    #define EXTENDER_NAMES  "CWSTUB.EXE\0"
-    #define HELPNAME        "CWHELP.EXE"
-#else
-    #error Extender and helper names not defined
-#endif
-
 static char *CheckPath( char *path, char *fullpath, char **endname )
 {
     char const  *namep;
@@ -293,8 +321,6 @@ static char *CheckPath( char *path, char *fullpath, char **endname )
         namep += strlen( namep ) + 1;
     }
 }
-
-#define LOW( c )        ((c)|0x20)      /*Quick and dirty lower casing*/
 
 static char *FindExtender( char *fullpath, char **endname )
 {
@@ -332,10 +358,6 @@ _DBG_Writeln( "found in path\r\n" );
 }
 
 #if defined(PHARLAP)
-
-#include "exedos.h"
-#include "exeos2.h"
-#include "exepe.h"
 
 static char const *GetHelpName( char *exe_name )
 {
@@ -388,39 +410,18 @@ exp:
 #endif
 #endif
 
-#define LINK_SIGNATURE 0xdeb0deb0L
-
-#if defined(DOS4G) || defined(CAUSEWAY)
-#define LINK_VECTOR     0x06
-#else
-#define LINK_VECTOR     0x01
-#endif
-
-#ifdef SERVER
-#if defined( ACAD )
-void InitMeg1( void )
-{
-    extern short GetCS( void );
-    if( Meg1 == 0 ) {
-        if( GetCS() & 3 ) {
-            Meg1 = 0x37;
-        } else {
-            Meg1 = 0x60;
-        }
-    }
-}
-#endif
-#endif
-
 char *RemoteLink( char *parm, char server )
 {
-
 #ifdef SERVER
     unsigned long       link;
   #if defined(ACAD)
     {
         XVersion = 2;
-        InitMeg1();
+        if( GetCS() & 3 ) {
+            Meg1 = 0x37;
+        } else {
+            Meg1 = 0x60;
+        }
     }
   #elif defined(PHARLAP)
     {
@@ -435,6 +436,8 @@ char *RemoteLink( char *parm, char server )
             Meg1 = 0x60;
         }
     }
+  #elif defined(CAUSEWAY)
+    Meg1 = GetZeroSel();
   #endif
     link = GetDosLong( LINK_VECTOR * 4 );
     if( link >= (1024UL * 1024UL) || GetDosLong( link ) != LINK_SIGNATURE ) {
@@ -457,7 +460,7 @@ char *RemoteLink( char *parm, char server )
     BackFromFork = 0;
     link_ptr = (void far *)(LINK_VECTOR * 4);
     link[ 3 ] = *link_ptr;
-    link[ 2 ] = MK_FP( MyCS(), (unsigned )BackFromProtMode );
+    link[ 2 ] = MK_FP( GetCS(), (unsigned )BackFromProtMode );
     link[ 1 ] = (void far *)MK_LINEAR( &Buff );
     link[ 0 ] = (void far *)LINK_SIGNATURE;
     *link_ptr = (void far *)MK_LINEAR( &link );
@@ -542,14 +545,6 @@ char *RemoteLink( char *parm, char server )
     return( NULL );
 }
 
-#pragma aux doskludge = 0xB8 0x00 0x2a  /* mov  ax,2a00H */ \
-                        0x83 0xec 0x50 /* sub   sp,50H */ \
-                        0xcd 0x21      /* int   21H */ \
-                        parm caller [ ax ] \
-                        modify [ sp cx dx ] \
-                        ;
-extern void doskludge( void );
-
 void RemoteUnLink( void )
 {
 #ifdef SERVER
@@ -564,3 +559,13 @@ void RemoteUnLink( void )
     _DBG_ExitFunc( "RemoteUnLink()" );
 #endif
 }
+
+char RemoteConnect( void )
+{
+    return( 1 );
+}
+
+void RemoteDisco( void )
+{
+}
+
