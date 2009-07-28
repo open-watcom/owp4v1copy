@@ -267,6 +267,10 @@ extern  void    MemChanged( score *p, bool statics_too )
                                 changed = TRUE;
                             }
                         }
+                    } else {
+                        if( !statics_too ) {
+                            changed = TRUE;
+                        }
                     }
                     break;
                 }
