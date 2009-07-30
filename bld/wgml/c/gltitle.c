@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement :TOCPGNUM tag for LAYOUT processing
+* Description: WGML implement :TITLE  tag for LAYOUT processing
 *
 ****************************************************************************/
 
@@ -37,17 +37,18 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*   :TOCPGNUM attributes                                                  */
+/*   :TITLE    attributes                                                  */
 /***************************************************************************/
-const   lay_att     tocpgnum_att[3] =
-    { e_size, e_font, e_dummy_zero };
+const   lay_att     title_att[7] =
+    { e_left_adjust, e_right_adjust, e_page_position, e_font, e_pre_top_skip,
+      e_skip, e_dummy_zero };
 
 
 /***************************************************************************/
-/*  lay_tocpgnum                                                           */
+/*  lay_title                                                              */
 /***************************************************************************/
 
-void    lay_tocpgnum( const gmltag * entry )
+void    lay_title( const gmltag * entry )
 {
     char            *   p;
     condcode            cc;
@@ -64,25 +65,41 @@ void    lay_tocpgnum( const gmltag * entry )
         eat_lay_sub_tag();
         return;                         // process during first pass only
     }
-    if( ProcFlags.lay_xxx != el_tocpgnum ) {
-        ProcFlags.lay_xxx = el_tocpgnum;
+    if( ProcFlags.lay_xxx != el_title ) {
+        ProcFlags.lay_xxx = el_title;
         out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         cvterr = true;
-        for( k = 0, curr = tocpgnum_att[k]; curr > 0; k++, curr = tocpgnum_att[k] ) {
+        for( k = 0, curr = title_att[k]; curr > 0; k++, curr = title_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
 
                 switch( curr ) {
-                case   e_size:
+                case   e_left_adjust:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.tocpgnum.size );
+                                           &layout_work.title.left_adjust );
+                    break;
+                case   e_right_adjust:
+                    cvterr = i_space_unit( p, curr,
+                                           &layout_work.title.right_adjust );
+                    break;
+                case   e_page_position:
+                    cvterr = i_page_position( p, curr,
+                                         &layout_work.title.page_position );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.tocpgnum.font );
+                    cvterr = i_int8( p, curr, &layout_work.title.font );
+                    break;
+                case   e_pre_top_skip:
+                    cvterr = i_space_unit( p, curr,
+                                           &layout_work.title.pre_top_skip );
+                    break;
+                case   e_skip:
+                    cvterr = i_space_unit( p, curr,
+                                           &layout_work.title.skip );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

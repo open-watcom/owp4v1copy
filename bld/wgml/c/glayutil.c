@@ -204,7 +204,6 @@ void    o_char( FILE * f, lay_att curr, char * tm )
     return;
 }
 
-
 /***************************************************************************/
 /*  default frame                                                          */
 /***************************************************************************/
@@ -666,7 +665,7 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
         cvterr = true;                  // string not terminated
     } else {
         if( str_size > len - 2 ) {
-            *(p + len - 1 ) = '\0';
+            *(p + len - 1) = '\0';
             strcpy_s( tm, str_size, p + 1 );
         } else {
             cvterr = true;              // string too long;
@@ -678,7 +677,6 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
         file_mac_info();
     }
     return( cvterr );
-
 }
 
 void    o_xx_string( FILE * f, lay_att curr, xx_str * tm )
@@ -688,7 +686,18 @@ void    o_xx_string( FILE * f, lay_att curr, xx_str * tm )
     return;
 }
 
+/***************************************************************************/
+/*  date_form      stored as string perhaps better other type    TBD       */
+/***************************************************************************/
+bool    i_date_form( char * p, lay_att curr, xx_str * tm )
+{
+    return( i_xx_string( p, curr, tm ) );
+}
 
+void    o_date_form( FILE * f, lay_att curr, xx_str * tm )
+{
+    o_xx_string( f, curr, tm );
+}
 
 /***************************************************************************/
 /*  Yes or No  as bool result                                              */

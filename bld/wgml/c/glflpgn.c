@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement :TOCPGNUM tag for LAYOUT processing
+* Description: WGML implement :FLPGNUM tag for LAYOUT processing
 *
 ****************************************************************************/
 
@@ -37,17 +37,17 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*   :TOCPGNUM attributes                                                  */
+/*   :FLPGNUM  attributes                                                  */
 /***************************************************************************/
-const   lay_att     tocpgnum_att[3] =
+const   lay_att     flpgnum_att[3] =
     { e_size, e_font, e_dummy_zero };
 
 
 /***************************************************************************/
-/*  lay_tocpgnum                                                           */
+/*  lay_flpgnum                                                            */
 /***************************************************************************/
 
-void    lay_tocpgnum( const gmltag * entry )
+void    lay_flpgnum( const gmltag * entry )
 {
     char            *   p;
     condcode            cc;
@@ -64,14 +64,14 @@ void    lay_tocpgnum( const gmltag * entry )
         eat_lay_sub_tag();
         return;                         // process during first pass only
     }
-    if( ProcFlags.lay_xxx != el_tocpgnum ) {
-        ProcFlags.lay_xxx = el_tocpgnum;
+    if( ProcFlags.lay_xxx != el_flpgnum ) {
+        ProcFlags.lay_xxx = el_flpgnum;
         out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         cvterr = true;
-        for( k = 0, curr = tocpgnum_att[k]; curr > 0; k++, curr = tocpgnum_att[k] ) {
+        for( k = 0, curr = flpgnum_att[k]; curr > 0; k++, curr = flpgnum_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
@@ -79,10 +79,10 @@ void    lay_tocpgnum( const gmltag * entry )
                 switch( curr ) {
                 case   e_size:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.tocpgnum.size );
+                                           &layout_work.flpgnum.size );
                     break;
                 case   e_font:
-                    cvterr = i_int8( p, curr, &layout_work.tocpgnum.font );
+                    cvterr = i_int8( p, curr, &layout_work.flpgnum.font );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

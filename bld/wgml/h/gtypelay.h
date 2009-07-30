@@ -125,6 +125,38 @@ typedef enum case_t {
 
 
 /***************************************************************************/
+/*  :ADDRESS  Layout tag data                                               */
+/***************************************************************************/
+typedef struct address_lay_tag {
+    su              left_adjust;        // horizontal space unit
+    su              right_adjust;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    page_pos        page_position;      // enum
+    int8_t          font;               // non negative integer
+} address_lay_tag;
+
+/***************************************************************************/
+/*  :ALINE    Layout tag data                                               */
+/***************************************************************************/
+typedef struct aline_lay_tag {
+    su              skip;           // vertical space unit
+} aline_lay_tag;
+
+
+/***************************************************************************/
+/*  :AUTHOR  Layout tag data                                               */
+/***************************************************************************/
+typedef struct author_lay_tag {
+    su              left_adjust;        // horizontal space unit
+    su              right_adjust;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    su              skip;               // vertical space unit
+    page_pos        page_position;      // enum
+    int8_t          font;               // non negative integer
+} author_lay_tag;
+
+
+/***************************************************************************/
 /*  :PAGE    layout tag data                                               */
 /***************************************************************************/
 typedef struct page_lay_tag {
@@ -148,7 +180,6 @@ typedef struct default_lay_tag {
     su              gutter;             // horizontal space unit
     su              binding;            // horizontal space unit
 } default_lay_tag;
-
 
 /***************************************************************************/
 /*  :WIDOW   layout tag data                                               */
@@ -252,6 +283,36 @@ typedef struct note_lay_tag {
     int8_t          spacing;            // positive integer
     xx_str          string[str_size];   // special string
 } note_lay_tag;
+
+
+/***************************************************************************/
+/*  :APPENDIX Layout tag data                                              */
+/***************************************************************************/
+
+typedef struct appendix_lay_tag {
+    su              indent;             // horizontal space unit
+    su              pre_top_skip;       // vertical space unit
+    su              pre_skip;           // vertical space unit
+    su              post_skip;          // vertical space unit
+    su              align;              // horizontal space unit
+    int8_t          spacing;            // positive integer
+    int8_t          font;               // non-negative integer
+    int8_t          number_font;        // non-negative integer
+    num_form        number_form;        // special enum ( none, prop, new )
+    page_pos        page_position;      // special enum (left, right, center)
+    num_style       number_style;       // special enum
+    page_ej         page_eject;         // enum for yes, no, odd, even
+    bool            line_break;         // yes, no -> bool
+    bool            display_heading;    // yes, no -> bool
+    bool            number_reset;       // yes, no -> bool
+    case_t          cases;              // lower, upper, mixed
+    bool            header;             // yes, no -> bool
+    xx_str          string[str_size];   // special string
+    bool            page_reset;         // yes, no -> bool
+    page_ej         section_eject;      // enum for yes, no, odd, even
+    int8_t          columns;            // non-negative integer
+} appendix_lay_tag;
+
 
 /***************************************************************************/
 /*  :H0 - :H6 Layout tag data                                              */
@@ -367,6 +428,31 @@ typedef struct dd_lay_tag {
 } dd_lay_tag;
 
 /***************************************************************************/
+/*  :DATE    Layout tag data                                               */
+/***************************************************************************/
+typedef struct date_lay_tag {
+    xx_str          date_form[str_size];// special string
+    su              left_adjust;        // horizontal space unit
+    su              right_adjust;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    page_pos        page_position;      // enum
+    int8_t          font;               // non negative integer
+} date_lay_tag;
+
+/***************************************************************************/
+/*  :DOCNUM  Layout tag data                                               */
+/***************************************************************************/
+
+typedef struct docnum_lay_tag {
+    su              left_adjust;        // horizontal space unit
+    su              right_adjust;       // horizontal space unit
+    page_pos        page_position;      // special enum (left, right, center)
+    su              pre_skip;           // vertical space unit
+    int8_t          font;               // non-negative integer
+    xx_str          string[str_size];   // special string
+} docnum_lay_tag;
+
+/***************************************************************************/
 /*  :ABSTRACT and :PREFACE  Layout tag data                                */
 /***************************************************************************/
 
@@ -460,6 +546,28 @@ typedef struct ix_lay_tag {
 } ix_lay_tag;
 
 /***************************************************************************/
+/*  :TITLE   Layout tag data                                               */
+/***************************************************************************/
+
+typedef struct title_lay_tag {
+    su              left_adjust;        // horizontal space unit
+    su              right_adjust;       // horizontal space unit
+    su              pre_top_skip;       // vertical space unit
+    su              skip;               // vertical space unit
+    page_pos        page_position;      // special enum (left, right, center)
+    int8_t          font;               // non-negative integer
+} title_lay_tag;
+
+/***************************************************************************/
+/*  :TITLEP  Layout tag data                                               */
+/***************************************************************************/
+
+typedef struct titlep_lay_tag {
+    int8_t          spacing;            // positive integer
+    int8_t          columns;            // positive integer
+} titlep_lay_tag;
+
+/***************************************************************************/
 /*  :TOC            Layout tag data                                        */
 /***************************************************************************/
 
@@ -473,7 +581,7 @@ typedef struct toc_lay_tag {
 } toc_lay_tag;
 
 /***************************************************************************/
-/*  :TOCPGNUM       Layout tag data                                        */
+/*  :TOCPGNUM       Layout tag data also for :FLPGNUM                      */
 /***************************************************************************/
 
 typedef struct tocpgnum_lay_tag {
@@ -496,13 +604,97 @@ typedef struct tochx_lay_tag {
     bool            display_in_toc;     // yes, no -> bool
 } tochx_lay_tag;
 
+/***************************************************************************/
+/*  :SL             Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct sl_lay_tag {
+    su              left_indent;        // horizontal space unit
+    su              right_indent;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    su              skip;               // vertical space unit
+    su              post_skip;          // vertical space unit
+    int8_t          spacing;            // positive integer
+    int8_t          font;               // non-negative integer
+    int8_t          level;              // only level 1 supported
+} sl_lay_tag;
+
+/***************************************************************************/
+/*  :OL             Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct ol_lay_tag {
+    su              left_indent;        // horizontal space unit
+    su              right_indent;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    su              skip;               // vertical space unit
+    su              post_skip;          // vertical space unit
+    su              align;              // horizontal space unit
+    int8_t          spacing;            // positive integer
+    int8_t          font;               // non-negative integer
+    num_style       number_style;       // enum special
+    int8_t          number_font;        // non-negative integer
+    int8_t          level;              // only level 1 supported
+} ol_lay_tag;
+
+/***************************************************************************/
+/*  :UL             Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct ul_lay_tag {
+    su              left_indent;        // horizontal space unit
+    su              right_indent;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    su              skip;               // vertical space unit
+    su              post_skip;          // vertical space unit
+    su              align;              // horizontal space unit
+    int8_t          spacing;            // positive integer
+    int8_t          font;               // non-negative integer
+    char            bullet;             // char
+    bool            bullet_translate;   // yes, no -> bool
+    int8_t          bullet_font;        // non-negative integer
+    int8_t          level;              // only level 1 supported
+} ul_lay_tag;
+
+/***************************************************************************/
+/*  :DL             Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct dl_lay_tag {
+    su              left_indent;        // horizontal space unit
+    su              right_indent;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    su              skip;               // vertical space unit
+    su              post_skip;          // vertical space unit
+    su              align;              // horizontal space unit
+    int8_t          spacing;            // positive integer
+    bool            line_break;         // yes, no -> bool
+    int8_t          level;              // only level 1 supported
+} dl_lay_tag;
+
+/***************************************************************************/
+/*  :GL             Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct gl_lay_tag {
+    su              left_indent;        // horizontal space unit
+    su              right_indent;       // horizontal space unit
+    su              pre_skip;           // vertical space unit
+    su              skip;               // vertical space unit
+    su              post_skip;          // vertical space unit
+    su              align;              // horizontal space unit
+    int8_t          spacing;            // positive integer
+    char            delim;              // yes, no -> bool
+    int8_t          level;              // only level 1 supported
+} gl_lay_tag;
+
 
 
 
 
 /***************************************************************************/
-/*  Layout data stored as default or overriden by input     TBD            */
-/*                                                                         */
+/*  Layout data                                             TBD            */
+/*  sequence of definitions as seen by :CONVERT outpu                      */
 /***************************************************************************/
 
 typedef struct layout_data {
@@ -542,7 +734,40 @@ typedef struct layout_data {
     tocpgnum_lay_tag    tocpgnum;
     tochx_lay_tag       tochx[7];
     figlist_lay_tag     figlist;
+    tocpgnum_lay_tag    flpgnum;
+    titlep_lay_tag      titlep;
+    title_lay_tag       title;
+    docnum_lay_tag      docnum;
+    date_lay_tag        date;
+    author_lay_tag      author;
+    address_lay_tag     address;
+    aline_lay_tag       aline;
+
+    /***********************************************************************/
+    /*  The following letter format only layout tags are not supported     */
+    /*  and not implemented as the letter format is not used               */
+    /***********************************************************************/
+
+//  from_lay_tag        from;
+//  to_lay_tag          to;
+//  attn_lay_tag        attn;
+//  subject_lay_tag     subject;
+//  letdate_lay_tag     letdate;
+//  open_lay_tag        open;
+//  close_lay_tag       close;
+//  eclose_lay_tag      eclose;
+//  distrib_tag         distrib;
+
+    appendix_lay_tag    appendix;
+    sl_lay_tag          sl;
+    ol_lay_tag          ol;
+    ul_lay_tag          ul;
+    dl_lay_tag          dl;
+    gl_lay_tag          gl;
+
 } layout_data;
+
+
 
 
 /***************************************************************************/
