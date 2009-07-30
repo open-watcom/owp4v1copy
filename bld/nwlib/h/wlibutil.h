@@ -33,7 +33,7 @@ extern void GetFileContents( char *name, libfile io, arch_header *arch, char **c
 extern void Copy( libfile source, libfile dest, file_offset size );
 extern char *MakeObjOutputName( char *src, char *new );
 extern char *MakeListName( void );
-extern char *MakeFName( char *a );
+extern char *MakeFName( const char *a );
 extern char *MakeBakName( void );
 extern bool SameName( char *a, char *b );
 extern int  SymbolNameCmp( const char *s1, const char *s2);

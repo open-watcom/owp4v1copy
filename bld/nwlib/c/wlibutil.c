@@ -126,7 +126,7 @@ bool SameName( char *a, char *b )
     return( FNCMP( path, fname ) == 0 );
 }
 
-char *MakeFName( char *a )
+char *MakeFName( const char *a )
 {
     _splitpath( a, NULL, NULL, fname, fext );
     return( fname );

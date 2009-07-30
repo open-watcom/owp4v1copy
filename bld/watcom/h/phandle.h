@@ -35,7 +35,7 @@
 
 typedef struct handle_info {
     int         handle;
-    char *      filename;
+    const char  *filename;
 #ifdef WIN_GUI
     HINSTANCE   inst;
 #endif

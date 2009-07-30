@@ -39,7 +39,8 @@
 #ifdef IDE_PGM
 #include <stdlib.h>
 #include <limits.h>
-char *ImageName;
+#include "main.h"
+const char  *ImageName;
 #endif
 #include "idedrv.h"
 

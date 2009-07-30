@@ -32,8 +32,9 @@
 
 #include <windows.h>
 #include "clibint.h"
+#include "main.h"
 
-char *ImageName;
+const char  *ImageName;
 
 BOOL __export __stdcall LibMain( HINSTANCE hinst, DWORD dw, LPVOID *ptr )
 {

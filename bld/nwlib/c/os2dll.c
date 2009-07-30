@@ -32,8 +32,9 @@
 
 #include <os2.h>
 #include "clibint.h"
+#include "main.h"
 
-char *ImageName;
+const char  *ImageName;
 
 unsigned __dll_initialize()
 {

@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-extern char *ImageName;
-int InitSubSystems( void );
-int WlibMainLine( char *argv[] );
-void FiniSubSystems( void );
+extern const char   *ImageName;
+extern int          InitSubSystems( void );
+extern int          WlibMainLine( char *argv[] );
+extern void         FiniSubSystems( void );
