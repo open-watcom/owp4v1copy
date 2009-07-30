@@ -34,15 +34,7 @@
 #ifdef WIN_GUI
 #include "windows.h"
 #endif
-
-typedef struct handle_info {
-        int     handle;
-        char    *filename;
-#ifdef WIN_GUI
-    HINSTANCE   inst;
-#endif
-} HANDLE_INFO;
-typedef struct handle_info * PHANDLE_INFO;
+#include "phandle.h"
 
 #ifndef WIN_GUI
 #define LoadString2( Dir, hInstance, idResource, lpszBuffer, nBufferMax ) \
@@ -57,7 +49,6 @@ typedef unsigned int UINT;
     #define _WCI86FAR   // Is there a cleaner way?
 #endif
 typedef char _WCI86FAR * LPSTR;
-typedef PHANDLE_INFO HINSTANCE;
 #endif
 
 #if defined( __cplusplus )
