@@ -146,8 +146,8 @@ _Un( ANY,  ANY,  NONE ),   V_NO,         G_UNKNOWN,      RG_WORD_DBL_NEED_DBL,FU
 static  opcode_entry    S4to8[] = {
 /*********************************/
 /*    from  to    eq       verify        gen             reg        fu*/
-_Un( R,    R,    NONE ),   V_SIZE,       G_SIGNEX,       RG_CDQ,    FU_ALUX,
-_Un( ANY,  R,    NONE ),   V_SIZE,       R_MOVOP1REG,    RG_CDQ,    FU_NO,
+_Un( R,    R,    NONE ),   V_CDQ,        G_SIGNEX,       RG_CDQ,    FU_ALUX,
+_Un( ANY,  ANY,  NONE ),   V_CDQ,        R_OP1RESREG,    RG_CDQ,    FU_NO,
 _Un( ANY,  ANY,  NONE ),   V_NO,         R_CDQ,          RG_,       FU_NO,
 };
 

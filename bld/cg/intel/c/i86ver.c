@@ -229,6 +229,15 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
             if( HW_Ovlap( result->r.reg, HW_BP ) ) break;
         }
         return( TRUE );
+    case V_CDQ:
+        /* On a Pentium, a MOV/SAR sequence is faster because it pairs while
+         * CDQ does not. However, on Pentium Pro CDQ is no slower yet smaller.
+         * Therefore, generate CDQ except when optimizing for time and the
+         * CPU is 586 (on 386/486, CDQ is always better).
+         */
+        if( _CPULevel( CPU_686 ) || !_CPULevel( CPU_586 ) ) return( TRUE );
+        if( OptForSize >= 50 ) return( TRUE );
+        break;
     case V_P5_FXCH:
         if( !_CPULevel( CPU_586 ) ) return( FALSE );
         if( OptForSize <= 50 ) return( TRUE );

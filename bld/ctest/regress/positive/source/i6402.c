@@ -15,9 +15,16 @@ __int64 baz( void )
     return( ll >> 33 );
 }
 
+__int64 bat( long x )
+{
+    return( x );    /* Generates CDQ with most settings. */
+}
+
 int main() {
-    if( foo( 2 ) != 4 ) _fail;
-    if( bar( 9 ) != 3 ) _fail;
-    if( baz(   ) != 2 ) _fail;
+    if( foo(  2 ) !=  4 ) _fail;
+    if( bar(  9 ) !=  3 ) _fail;
+    if( baz(    ) !=  2 ) _fail;
+    if( bat(  7 ) !=  7 ) _fail;
+    if( bat( -8 ) != -8 ) _fail;
     _PASS;
 }
