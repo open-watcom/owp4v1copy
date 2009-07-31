@@ -43,7 +43,7 @@ FILE *popen( const char *s, const char *m )
 int pclose( FILE *f )
 {
 #ifdef __DOS__
-    return( NULL );
+    return( 0 );
 #else
     return( _pclose( f ) );
 #endif
