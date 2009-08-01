@@ -51,10 +51,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifndef __LINUX__
-#define socklen_t int
-#endif
-
 #if defined(__NT__) || defined(__WINDOWS__)
     #include <winsock.h>
 #else
@@ -117,6 +113,14 @@
 
 #ifndef IPPROTO_TCP
     #define IPPROTO_TCP 6
+#endif
+
+#ifndef socklen_t
+  #ifdef __LINUX__
+    #define socklen_t unsigned int
+  #else
+    #define socklen_t int
+  #endif
 #endif
 
 int data_socket;
