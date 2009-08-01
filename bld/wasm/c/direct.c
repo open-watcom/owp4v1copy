@@ -261,15 +261,20 @@ enum regsize {
     A_DWORD,
 };
 
+static char         code_segment_name[ MAX_LINE_LEN ];
 static asm_tok      const_CodeSize = { T_NUM, NULL, 0 };
 static asm_tok      const_DataSize = { T_NUM, NULL, 0 };
 static asm_tok      const_Model = { T_NUM, NULL, 0 };
 static asm_tok      const_Interface = { T_NUM, NULL, 0 };
+static asm_tok      const_data = { T_ID, NULL, 0 };
+static asm_tok      const_code = { T_ID, code_segment_name, 0 };
 
 static const_info   info_CodeSize = { TRUE, 0, 0, TRUE, &const_CodeSize };
 static const_info   info_DataSize = { TRUE, 0, 0, TRUE, &const_DataSize };
 static const_info   info_Model = { TRUE, 0, 0, TRUE, &const_Model };
 static const_info   info_Interface = { TRUE, 0, 0, TRUE, &const_Interface };
+static const_info   info_data = { TRUE, 0, 0, TRUE, &const_data };
+static const_info   info_code = { TRUE, 0, 0, TRUE, &const_code };
 
 
 #define ROUND_UP( i, r ) (((i)+((r)-1)) & ~((r)-1))
@@ -1902,6 +1907,7 @@ int SimSeg( int i )
     case T_CODESEG:
         if( string == NULL )
             string = Options.text_seg;
+        strcpy( code_segment_name, string );
         InputQueueLine( get_sim_code_beg( buffer, string, bit ) );
         get_sim_code_end( lastseg.close, string );
         lastseg.seg = SIM_CODE;
@@ -2022,6 +2028,15 @@ static void module_prologue( int type )
 {
     int         bit, ideal;
     char        buffer[ MAX_LINE_LEN ];
+
+    if( type == MOD_FLAT ) {
+        const_data.string_ptr = "FLAT";
+    } else {
+        const_data.string_ptr = "DGROUP";
+    }
+    AddPredefinedConstant( "@data", &info_data );
+    strcpy( code_segment_name, Options.text_seg );
+    AddPredefinedConstant( "@code", &info_code );
 
     bit = ( ModuleInfo.defUse32 ) ? BIT32 : BIT16;
     ideal = ( Options.mode & MODE_IDEAL ) ? 1 : 0;
