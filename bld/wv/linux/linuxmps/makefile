@@ -8,12 +8,12 @@ host_cpu = mps
 
 syshdir =
 
-sysobjs = linuxcmd.obj &
-          linuxio.obj &
-          lnxinit.obj &
-          lnxscrn.obj &
-          lnxlkup.obj &
-          lnxchk.obj &
-          peloader.obj
+sysobjs = &
+    linuxcmd.obj &
+    linuxio.obj &
+    lnxinit.obj &
+    lnxscrn.obj &
+    lnxlkup.obj &
+    lnxchk.obj
 
 !include ../../master.mif

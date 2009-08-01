@@ -8,7 +8,7 @@ cpu = x86
 which = SERVER
 type  = remote_link
 
-extra_objs = parlinux.obj peloader.obj
+extra_objs = parlinux.obj
 
 !include $(trap_dir)/master.mif
 

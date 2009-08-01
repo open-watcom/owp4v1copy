@@ -17,13 +17,13 @@ extra_cflags = -DELFCORE -bd
 
 extra_srcs = $(trap_dir)/lcl/linux/c
 
-extra_objs =          &
-        linuxcore.obj &
-	coremisc.obj  &
-#        accmisc.obj   &
-        x86cpu.obj    &
-        supp.obj      &
-        core.obj
+extra_objs = &
+    lnxcore.obj &
+    coremisc.obj &
+#    accmisc.obj &
+    x86cpu.obj &
+    supp.obj &
+    core.obj
 
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif

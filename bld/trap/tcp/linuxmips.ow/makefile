@@ -14,16 +14,16 @@ inc_dirs   = -I"$(trap_dir)/lcl/linux/h"
 
 extra_cflags = -DBUILTIN_TRAP_FILE
 
-extra_objs = peloader.obj &
-             linuxstrt.obj &
-             linuxacc.obj &
-             linuxmap.obj &
-             linuxcomm.obj &
-             linux$(cpu).obj &
-             linuxfile.obj &
-             linuxutl.obj &
-             supp.obj &
-             core.obj
+extra_objs = &
+    lnxstrt.obj &
+    lnxacc.obj &
+    lnxmap.obj &
+    lnxcomm.obj &
+    lnx$(cpu).obj &
+    lnxfile.obj &
+    lnxutl.obj &
+    supp.obj &
+    core.obj
 
 !define substitute_linker
 
