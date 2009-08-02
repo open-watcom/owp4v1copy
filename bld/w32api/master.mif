@@ -6,7 +6,6 @@ w32api_autodepends  = .autodepend
 w32api_distrib_lib  = 1
 
 !include cproj.mif
-!include deftarg.mif
 !include defrule.mif
 
 !ifndef root_dir
@@ -560,8 +559,6 @@ extra_lib_flags_386 = -io -ii
 extra_lib_flags_axp = -ic -ia
 extra_lib_flags_ppc = -ic -ip
 
-additional_cleanup = *.h *.rh
-
 all : $($(what_to_build)) .SYMBOLIC
     @%null
 
@@ -660,3 +657,18 @@ directx/dxguid.obj: directx/dxguid.c
     @echo cc $@
     @$(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[@
 !endif
+
+all_subdirs = ./ddk ./directx ./gl ./.
+
+clean: $(all_subdirs) .SYMBOLIC
+
+$(all_subdirs): .PROCEDURE
+    @set cd_path = cd $@
+    @if exist $@ @%make clean_dir
+
+clean_dir: .PROCEDURE
+    @set pop_path = @cd $(%cwd)
+    $(%cd_path)
+    rm -f *.h *.rh *.obj *.lbc *.lib *.lnk *.tmp *.exe *.rc *.res
+    rm -f *.lst *.err *.pch *.map *.sym *.tmp *.gh
+    $(%pop_path)
