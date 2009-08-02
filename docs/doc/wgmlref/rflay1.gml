@@ -255,6 +255,10 @@ attributes and before the :HP2.&gml.ebanner:eHP2. tag.
     output page the banner is to be placed.
     The following values may be specified for this attribute&gml.
     :DL compact.
+    :DT.top
+    :DD.The top of pages.
+    :DT.bottom
+    :DD.The bottom of pages.
     :DT.topodd
     :DD.The top of odd pages.
     :DT.topeven
