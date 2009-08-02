@@ -7512,7 +7512,6 @@ boolean TypeBasesEqual( type_flag flags, void *base1, void *base2 )
 static boolean compareClassTypes( TYPE b_type, TYPE u_type,
     type_bind_info *data )
 {
-    unsigned pass;
     CLASSINFO *b_info;
     CLASSINFO *u_info;
     SCOPE b_parm_scope;
@@ -7549,35 +7548,40 @@ static boolean compareClassTypes( TYPE b_type, TYPE u_type,
     if( b_parm_scope == NULL || u_parm_scope == NULL ) {
         return( TRUE );
     }
-    for( pass = 1; pass <= 2; ++pass ) {
-        b_curr = NULL;
-        u_curr = NULL;
-        b_stop = ScopeOrderedStart( b_parm_scope );
-        u_stop = ScopeOrderedStart( u_parm_scope );
-        for(;;) {
-            b_curr = ScopeOrderedNext( b_stop, b_curr );
-            u_curr = ScopeOrderedNext( u_stop, u_curr );
-            if( b_curr == NULL ) break;
-            if( u_curr == NULL ) break;
-            DbgAssert( b_curr->id == u_curr->id );
-            if( pass == 1 ) {
-                if( b_curr->id != SC_TYPEDEF ) {
-                    if( ! TemplateParmEqual( b_curr, u_curr ) ) {
-                        return( TRUE );
-                    }
+    b_curr = NULL;
+    u_curr = NULL;
+    b_stop = ScopeOrderedStart( b_parm_scope );
+    u_stop = ScopeOrderedStart( u_parm_scope );
+    for(;;) {
+        b_curr = ScopeOrderedNext( b_stop, b_curr );
+        u_curr = ScopeOrderedNext( u_stop, u_curr );
+        if( b_curr == NULL ) break;
+        if( u_curr == NULL ) break;
+        if( b_curr->id == SC_TYPEDEF ) {
+            PstkPush( &(data->without_generic),
+                      PTreeType( b_curr->sym_type ) );
+            u_tree = PTreeType( u_curr->sym_type );
+            u_tree->filler = 0;
+            PstkPush( &(data->with_generic), u_tree );
+        } else if( b_curr->id == SC_STATIC ) {
+            if( u_curr->id == SC_ADDRESS_ALIAS ) {
+                PstkPush( &(data->without_generic),
+                          PTreeIntConstant( b_curr->u.sval,
+                                            b_curr->sym_type->id ) );
+                PstkPush( &(data->with_generic),
+                          PTreeIdSym( u_curr->u.alias ) );
+            } else if( u_curr->id == SC_STATIC ) {
+                if( b_curr->u.sval != u_curr->u.sval ) {
+                    return( TRUE );
                 }
             } else {
-                if( b_curr->id == SC_TYPEDEF ) {
-                    PstkPush( &(data->without_generic),
-                              PTreeType( b_curr->sym_type ) );
-                    u_tree = PTreeType( u_curr->sym_type );
-                    u_tree->filler = 0;
-                    PstkPush( &(data->with_generic), u_tree );
-                }
+                return( TRUE );
             }
+        } else if( b_curr->id != u_curr->id ) {
+            DbgAssert( b_curr == NULL && u_curr == NULL );
         }
-        DbgAssert( b_curr == NULL && u_curr == NULL );
     }
+    DbgAssert( b_curr == NULL && u_curr == NULL );
     return( FALSE );
 }
 
