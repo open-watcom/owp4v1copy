@@ -100,9 +100,12 @@ typedef struct RMBuff {
     #define PutDosByte(x,d) (*(char far *)RMLinToPM(x,1)=d)
     #define PutDosLong(x,d) (*(unsigned long far *)RMLinToPM(x,1)=d)
     extern void             CallRealMode( unsigned long dos_addr );
-    unsigned long           RMProcAddr;
-    RMBuff                  far *RMBuffPtr;
+
+    static unsigned long    RMProcAddr;
+    static RMBuff           far *RMBuffPtr;
+
     char                    XVersion;
+
   #if defined(CAUSEWAY)
     extern unsigned short   GetZeroSel( void );
     #pragma aux GetZeroSel = \
@@ -113,16 +116,15 @@ typedef struct RMBuff {
 
 #else
 
-    void BackToProtMode( void );
+    static void BackToProtMode( void );
 
     #define MK_LINEAR( p )    ( ( (long)FP_SEG( (void far *)(p) ) << 4 ) + FP_OFF( (void far *)(p) ) )
 
-    char                Server;
-    jmp_buf             RealModeState;
-    jmp_buf             ProtModeState;
-    RMBuff              Buff;
+    static jmp_buf      RealModeState;
+    static jmp_buf      ProtModeState;
+    static RMBuff       Buff;
     char                BackFromFork;
-    short               OldPSP;
+    static short        OldPSP;
     char                BeenToProtMode;
 
     extern short        DbgPSP( void );
@@ -568,4 +570,3 @@ char RemoteConnect( void )
 void RemoteDisco( void )
 {
 }
-

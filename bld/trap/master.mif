@@ -47,6 +47,17 @@ suppress_zc = 1
 memory_model_i86 = c
 !endif
 
+!ifdef test
+!ifeq type remote_link
+test_remote_link = 1
+!ifdef builtin_trap
+!undef builtin_trap
+!endif
+!else
+!error test version can be build only for remote link
+!endif
+!endif
+
 fpu_flags_dos_i86   = -fpc
 fpu_flags_dos_386   = -fpc
 fpu_flags_os2_i86   = -fpc
@@ -57,9 +68,36 @@ fpu_flags_linux_386 = -fpc
 
 additional_cleanup = *.d32 *.trp
 
+!ifndef name
+!ifeq srv lcl
+name = std
+!else ifeq which SERVER
+name = $(srv)serv
+!ifeq os win
+name+=w
+!endif
+!else
+name = $(srv)
+!endif
+!endif
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
+
+!ifeq release 1
+!ifdef test_remote_link
+xname=z$(name)
+!else
+xname=$(name)
+!endif
+!else
+!ifdef test_remote_link
+xname=t$(name)
+!else
+xname=d$(name)
+!endif
+!endif
 
 !ifeq which SERVER
 !include $(trap_dir)/serv.mif
@@ -99,8 +137,11 @@ extra_c_flags_386 += -3s
 !ifeq which TRAP
 !ifeq host_cpu i86
 extra_c_flags_os2 += -zu
-extra_c_flags_win += -zu-bd
+extra_c_flags_win += -zu
 extra_c_flags_dos += -zu
+!ifndef test_remote_link
+extra_c_flags_win += -bd
+!endif
 !endif
 !endif
 
@@ -121,35 +162,6 @@ extra_libs += dbgstr.lib
 mknver_c = $(trap_dir)/c/mknver.c
 !endif
 
-!ifndef name
-!ifeq srv lcl
-name = std
-!else ifeq which SERVER
-name = $(srv)serv
-!ifeq os win
-name+=w
-!endif
-!else
-name = $(srv)
-!endif
-!endif
-
-!ifeq os win
-targ = windows
-!else ifeq os nlm
-targ = netware
-!else ifeq os pls
-targ = dos
-!else ifeq os ads
-targ = dos
-!else ifeq os rsi
-targ = dos
-!else ifeq os os2v2
-targ = os2
-!else
-targ = $(os)
-!endif
-
 !ifeq release 0
 default_targ    = d
 !else
@@ -159,21 +171,6 @@ default_targ    = w
 first : $(default_targ) .SYMBOLIC
         @%null
 
-save_name =$+$(name)$-
-name = $(name_debug)$(save_name)
-!ifeq release 1
-!ifdef test
-name_debug=z
-!else
-name_debug=
-!endif
-!else
-!ifdef test
-name_debug=t
-!else
-name_debug=d
-!endif
-!endif
 target = $+$(targ_$(cpu)_$(os))$-
 
 trperr_h = _err.gh

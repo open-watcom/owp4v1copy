@@ -2,70 +2,65 @@
 #
 # Create WDPMHELP.EXE, WDPMHOOK.DLL
 #
-
 host_os  = os2
 host_cpu = i86
 
+proj_name = wvpmhelp
+
 !include cproj.mif
 !include deftarg.mif
-
-.EXTENSIONS
-.EXTENSIONS : .dll .lbj .obj .c .asm .res .rc
+!include defrule.mif
 
 w d : wdpmhook.dll wdpmhelp.exe .SYMBOLIC
         @%null
 
-tmplnk = tmp.lnk
-
 wdpmhook.dll: pmhook.obj loadstd.obj
-    @%write  $(tmplnk) name $^@ sys os2 dll initglobal
-    @%append $(tmplnk) debug all op symfile
-    @%append $(tmplnk) option dosseg,quiet
-    @%append $(tmplnk) option map
-    @%append $(tmplnk) file loadstd,pmhook
-    @%append $(tmplnk) library os2.lib
-    @%append $(tmplnk) export SENDMSGHOOKPROC.1,SETHMQDEBUGEE.2
-    @%append $(tmplnk) segment class 'DATA' shared
-    @%append $(tmplnk) segment class 'BSS' shared
-    $(linker) @$(tmplnk)
+    @%write  $^&.lnk name $^@ sys os2 dll initglobal
+    @%append $^&.lnk debug all op symfile
+    @%append $^&.lnk option dosseg,quiet
+    @%append $^&.lnk option map
+    @%append $^&.lnk file loadstd.obj,pmhook.obj
+    @%append $^&.lnk library os2.lib
+    @%append $^&.lnk export SENDMSGHOOKPROC.1,SETHMQDEBUGEE.2
+    @%append $^&.lnk segment class 'DATA' shared
+    @%append $^&.lnk segment class 'BSS' shared
+    $(linker) @$^&.lnk
 
-wdpmhelp.exe: pmhelp.lbj pmhelp.res
-    @%write  $(tmplnk) name $^@ system os2 pm
-    @%append $(tmplnk) debug all op symfile
-    @%append $(tmplnk) file pmhelp.lbj
-    @%append $(tmplnk) library clibl.lib
-    @%append $(tmplnk) library os2.lib
-    @%append $(tmplnk) option alignment=16
-    @%append $(tmplnk) option nodefaultlibs,quiet
-    @%append $(tmplnk) option modname=wdpmhelp
-    @%append $(tmplnk) option description 'OS/2 Presentation Manager Sample'
-    @%append $(tmplnk) option manyautodata
-    @%append $(tmplnk) option stack=4096
-    @%append $(tmplnk) option heapsize=1024
-    @%append $(tmplnk) option protmode
-    $(linker) @$(tmplnk)
-    $(lang_root)\binp\rc pmhelp.res wdpmhelp.exe
+wdpmhelp.exe: _err.gh pmhelp.res pmhelp.obj
+    @%write  $^&.lnk name $^@ system os2 pm
+    @%append $^&.lnk debug all op symfile
+    @%append $^&.lnk file pmhelp.obj
+    @%append $^&.lnk library clibl.lib
+    @%append $^&.lnk library os2.lib
+    @%append $^&.lnk option alignment=16
+    @%append $^&.lnk option nodefaultlibs,quiet
+    @%append $^&.lnk option modname=wdpmhelp
+    @%append $^&.lnk option description 'OS/2 Presentation Manager Sample'
+    @%append $^&.lnk option manyautodata
+    @%append $^&.lnk option stack=4096
+    @%append $^&.lnk option heapsize=1024
+    @%append $^&.lnk option protmode
+    $(linker) @$^&.lnk
+    $(rc) pmhelp.res wdpmhelp.exe
 
 .c: ../c
-
-.c.obj:
-        $(comp286) $[* -bt=os2 -zq-fpc-d1-oais-s-w3-mc-zu-i"$(watcom_dir)/h;$(lang_root)/h/os21x;$(lang_root)/h/os2;$(trap_dir)/h"
-
-.c.lbj
-        $(comp286) $[* -bt=os2 -zq-fpc-d1-ml-zu-w3-s-i"$(lang_root)/h/os21x;$(trap_dir)/h" -fo=.lbj
-
 .asm: ../asm
 
-.asm.obj:
-        $(as) -2 -bt=os2 $[*
+extra_c_flags = -s -zu -fpc
 
-pmlock.obj : pmlock.c ../h/wdpmhelp.h
+extra_c_flags_pmhook = -mc -oais
+extra_c_flags_pmhelp = -ml
+
+inc_dirs = -i"$(watcom_dir)/h;$(lang_root)/h/os21x;$(lang_root)/h/os2;$(trap_dir)/h"
+
+extra_a_flags = -2 -bt=os2 -fo=.obj -mc
 
 pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
-        @set oinc=$(%include)
-        @set include=$(lang_root)/h/os21x;../h;$(%include)
-        @set opath=$(%path)
-        @set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -r ..\h\pmhelp.rc .\pmhelp.res
-        @set path=$(%opath)
-        @set include=$(%oinc)
+    $(rc) $(rc_flags) $(inc_path) $[@ -fo=$@
+
+./mkstr.exe: $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
+    $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" $[@
+
+_err.gh : ./mkstr.exe
+    $[@ $^@
+

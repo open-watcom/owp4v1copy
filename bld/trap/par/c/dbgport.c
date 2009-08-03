@@ -188,12 +188,13 @@
  */
 
 #include <ntddk.h>
+#pragma disable_message ( 202 )
 #include "parallel.h"
 #include "dbgioctl.h"
 
 #if defined( __WATCOMC__ )
 typedef __int64 _int64;
-#define PORTSTDCALL STDCALL
+#define PORTSTDCALL __stdcall
 #endif
 
 #ifdef TRUE

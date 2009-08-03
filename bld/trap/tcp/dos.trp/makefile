@@ -12,7 +12,7 @@ cpu = x86
 which = TRAP
 type  = remote_link
 
-inc_dirs = $(%OWROOT)/contrib/wattcp/inc
+inc_dirs = -I"$(%OWROOT)/contrib/wattcp/inc"
 extra_libs = $(%OWROOT)/contrib/wattcp/lib/wattcpwl.lib
 
 !include $(trap_dir)/master.mif

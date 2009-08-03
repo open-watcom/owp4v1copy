@@ -16,7 +16,7 @@ extra_objs = &
     x86cpu.obj &
     misc7386.obj
 
-extra_c_flags = -DACAD
+extra_c_flags = -DACAD -I$(adsdir)
 
 extra_a_flags = -ms -3s -DACAD
 

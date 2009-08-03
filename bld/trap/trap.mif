@@ -4,7 +4,8 @@
 
 description = 'Open Watcom Debugger Trap File'
 
-!ifdef test
+!ifdef test_remote_link
+
 sys_x86_os2   = sys os2
 sys_x86_os2v2 = sys os2v2
 sys_x86_win   = sys windows
@@ -15,19 +16,19 @@ sys_x86_linux = sys linux
 
 sys_axp_nt    = sys ntaxp
 
-targ_x86_os2   = $(name)cli1.exe
-targ_x86_os2v2 = $(name)cli.exe
-targ_x86_qnx   = $(name)cli.qnx
-targ_x86_linux = $(name)cli.exe
-targ_x86_win   = $(name)cliw.exe
-targ_x86_dos   = $(name)cli.exe
-targ_x86_nt    = $(name)cli.exe
-targ_x86_nto   = $(name)cli.exe
+targ_x86_os2   = $(xname)cli1.exe
+targ_x86_os2v2 = $(xname)cli.exe
+targ_x86_qnx   = $(xname)cli.qnx
+targ_x86_linux = $(xname)cli.exe
+targ_x86_win   = $(xname)cliw.exe
+targ_x86_dos   = $(xname)cli.exe
+targ_x86_nt    = $(xname)cli.exe
+targ_x86_nto   = $(xname)cli.exe
 
-targ_axp_nt    = $(name)cli.exe
+targ_axp_nt    = $(xname)cli.exe
 
-targ_ppc_linux = $(name)cli.exe
-targ_mips_linux = $(name)cli.exe
+targ_ppc_linux = $(xname)cli.exe
+targ_mips_linux = $(xname)cli.exe
 
 TRAP_common_objs = testcli.obj
 TRAP_remote_objs =
@@ -112,29 +113,29 @@ sys_ppc_nt   = sys ntppc_dll initinstance &
             option description $(description) &
             op modname=$^&
 
-targ_x86_os2    = $(name).dll
-targ_x86_os2v2  = $(name).d32
-targ_x86_qnx    = $(name).trp
+targ_x86_os2    = $(xname).dll
+targ_x86_os2v2  = $(xname).d32
+targ_x86_qnx    = $(xname).trp
 !ifdef bootstrap
-targ_x86_linux  = $(name).so
+targ_x86_linux  = $(xname).so
 !else
-targ_x86_linux  = $(name).trp
+targ_x86_linux  = $(xname).trp
 !endif
-targ_x86_win    = $(name).dll
-targ_x86_dos    = $(name).trp
-targ_x86_nt     = $(name).dll
+targ_x86_win    = $(xname).dll
+targ_x86_dos    = $(xname).trp
+targ_x86_nt     = $(xname).dll
 !ifdef bootstrap
-targ_x86_nto    = $(name).so
+targ_x86_nto    = $(xname).so
 !else
-targ_x86_nto    = $(name).trp
+targ_x86_nto    = $(xname).trp
 !endif
 
-targ_axp_nt     = $(name).dll
+targ_axp_nt     = $(xname).dll
 
-targ_ppc_nt     = $(name).dll
+targ_ppc_nt     = $(xname).dll
 
-targ_ppc_linux  = $(name).so
-targ_mips_linux = $(name).so
+targ_ppc_linux  = $(xname).so
+targ_mips_linux = $(xname).so
 
 !ifeq os linux
 TRAP_common_objs = lnxstrt.obj
@@ -143,11 +144,12 @@ TRAP_common_objs = os2strt2.obj
 !else
 TRAP_common_objs = $(os)strt.obj
 !endif
-TRAP_remote_objs = remote.obj
-!endif
 
+TRAP_remote_objs = remote.obj
 !ifeq os win
 TRAP_remote_objs += winstub.obj
 !else ifeq os nt
 TRAP_remote_objs += ntstub.obj
+!endif
+
 !endif

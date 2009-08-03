@@ -9,6 +9,6 @@ which = TRAP
 type  = remote_link
 
 extra_libs = $(watcom_dir)/lib/tcpipdll.lib
-inc_dirs = $(watcom_dir)/os220_h/tcpip
+inc_dirs = -I"$(watcom_dir)/os220_h/tcpip"
 
 !include $(trap_dir)/master.mif
