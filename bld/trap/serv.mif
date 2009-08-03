@@ -99,7 +99,7 @@ objs_nlm        = nlmstrt.obj
 dig_os = $(os)
 !include $(dig_dir)/mif/trpcli.mif
 
-SERVER_objs = $(objs_$(os))
+SERVER_common_objs = $(objs_$(os))
 
 !ifdef test
 SERVER_remote_objs = testserv.obj servname.obj

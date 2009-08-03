@@ -29,7 +29,7 @@ targ_axp_nt    = $(name)cli.exe
 targ_ppc_linux = $(name)cli.exe
 targ_mips_linux = $(name)cli.exe
 
-TRAP_objs     = testcli.obj
+TRAP_common_objs = testcli.obj
 TRAP_remote_objs =
 
 !else
@@ -137,11 +137,11 @@ targ_ppc_linux  = $(name).so
 targ_mips_linux = $(name).so
 
 !ifeq os linux
-TRAP_objs   = lnxstrt.obj
+TRAP_common_objs = lnxstrt.obj
 !else ifeq os os2v2
-TRAP_objs   = os2strt2.obj
+TRAP_common_objs = os2strt2.obj
 !else
-TRAP_objs   = $(os)strt.obj
+TRAP_common_objs = $(os)strt.obj
 !endif
 TRAP_remote_objs = remote.obj
 !endif

@@ -214,9 +214,9 @@ extra_dobjs = $(extra_objs)
 !endif
 
 !ifeq release 1
-objs = $($(which)_objs) mxutil.obj $(remote_objs) $(extra_objs)
+objs = $($(which)_common_objs) mxutil.obj $(remote_objs) $(extra_objs)
 !else
-objs = $($(which)_objs) mxutil.obj $(remote_objs) $(extra_dobjs)
+objs = $($(which)_common_objs) mxutil.obj $(remote_objs) $(extra_dobjs)
 !endif
 
 !ifndef substitute_linker
