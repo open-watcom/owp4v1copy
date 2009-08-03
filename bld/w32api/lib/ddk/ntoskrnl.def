@@ -559,6 +559,10 @@ KdChangeOption@24
 KdDisableDebugger@0
 KdEnableDebugger@0
 KdRefreshDebuggerNotPresent@0
+Ke386CallBios@8
+Ke386IoSetAccessProcess@8
+Ke386QueryIoAccessMap@8
+Ke386SetIoAccessMap@8
 KeAcquireInterruptSpinLock@4
 KeAreAllApcsDisabled@0
 KeAreApcsDisabled@0
@@ -647,6 +651,7 @@ KeSetTimerEx@20
 KeStackAttachProcess@8
 KeStartDynamicProcessor@12
 KeSynchronizeExecution@12
+KeTickCount
 KeUnstackDetachProcess@4
 KeWaitForMultipleObjects@32
 KeWaitForSingleObject@20
@@ -1260,5 +1265,6 @@ ZwUnloadDriver@4
 ZwUnmapViewOfSection@8
 ZwWaitForSingleObject@12
 ZwWriteFile@36
+ZwYieldExecution@0
 vDbgPrintEx@16
 vDbgPrintExWithPrefix@20

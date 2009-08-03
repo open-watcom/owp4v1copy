@@ -417,5 +417,6 @@ ZwUnlockFile@20
 ZwUnmapViewOfSection@8
 ZwWaitForSingleObject@12
 ZwWriteFile@36
+ZwYieldExecution@0
 vDbgPrintEx@16
 vDbgPrintExWithPrefix@20
