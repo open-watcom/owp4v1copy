@@ -11,10 +11,10 @@ cpu   = ppc
 which = SERVER
 type  = remote_link
 
+builtin_trap = 1
+
 extra_srcs = $(trap_dir)/lcl/linux/c;$(trap_dir)/lcl/c
 inc_dirs   = -I"$(trap_dir)/lcl/linux/h"
-
-extra_cflags = -DBUILTIN_TRAP_FILE
 
 extra_objs = &
     lnxstrt.obj &

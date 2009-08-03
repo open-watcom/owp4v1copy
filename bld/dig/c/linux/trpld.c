@@ -35,6 +35,9 @@
  * not the final solution (should be real ELF shared lib).
  */
 #include "trpld_pe.c"
+#ifndef BUILTIN_TRAP_FILE
+#include "peloader.c"
+#endif
 
 #else
 

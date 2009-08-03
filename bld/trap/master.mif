@@ -82,6 +82,10 @@ extra_c_flags += -s
 extra_c_flags += -zlf
 !endif
 
+!ifdef builtin_trap
+extra_c_flags += -DBUILTIN_TRAP_FILE
+!endif
+
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES
 !endif

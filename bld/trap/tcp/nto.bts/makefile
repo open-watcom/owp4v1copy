@@ -11,10 +11,10 @@ cpu   = x86
 which = SERVER
 type  = remote_link
 
+builtin_trap = 1
+
 extra_srcs = $(trap_dir)/lcl/nto/c;$(trap_dir)/lcl/c;$(clib_dir)/environ/c
 inc_dirs   = -I"$(trap_dir)/lcl/nto/h" -I"$(trap_dir)/lcl/h" -I"$(lib_misc_dir)/h"
-
-extra_cflags = -DBUILTIN_TRAP_FILE #-DDEBUG_OUT
 
 extra_objs = gtcmdunx.obj &
              x86cpu.obj &

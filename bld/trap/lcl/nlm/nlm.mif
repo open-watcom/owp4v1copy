@@ -1,3 +1,5 @@
+builtin_trap = 1
+
 nlm_objs = &
     nlmfile.obj &
     nlmclib.obj &
