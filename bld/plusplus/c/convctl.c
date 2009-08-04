@@ -546,6 +546,15 @@ void ConvCtlInitCast            // INITIALIZE CONVCTL FOR CAST EXPRESSION
     , CNV_DIAG* diag )          // - diagnosis
 {
     ConvCtlInit( ctl, expr, CNV_CAST, diag );
+    if( ( ctl->tgt.modflags & TF1_CV_MASK ) &&
+        ( ctl->tgt.unmod->id != TYP_CLASS ) ) {
+        type_flag flag;         // - accumulated flags
+
+        flag = TypeExplicitModFlags( ctl->tgt.orig );
+        if( flag & TF1_CV_MASK ) {
+            CErr2p( WARN_MEANINGLESS_QUALIFIER_IN_CAST, ctl->tgt.orig );
+        }
+    }
 }
 
 

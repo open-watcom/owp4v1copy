@@ -12136,3 +12136,36 @@ struct S {
     int S;   // Error!
 };
 :eerrbad.
+
+:MSGSYM. WARN_MEANINGLESS_QUALIFIER_IN_CAST
+:MSGTXT. cv-qualifier in cast to '%T' is meaningless
+:MSGJTXT.
+:WARNING. 10
+A top-level cv-qualifier for a non-class rvalue is meaningless.
+:errbad.
+const int i = (const int) 0;
+:eerrbad.
+
+:MSGSYM. WARN_MEANINGLESS_QUALIFIER_IN_RETURN_TYPE
+:MSGTXT. cv-qualifier in return type '%T' is meaningless
+:MSGJTXT.
+:WARNING. 10
+A top-level cv-qualifier for a non-class rvalue is meaningless.
+:errbad.
+const int f() {
+    return 0;
+}
+:eerrbad.
+
+:MSGSYM. WARN_C_STYLE_CAST
+:MSGTXT. use of C-style cast to '%T' is discouraged
+:MSGJTXT.
+:WARNING. 10
+Use of C-style casts "(type) (expr)" is discouraged in favour of
+explicit C++ casts like static_cast, const_cast, dynamic_cast and
+reinterpret_cast.
+:errbad.
+const signed int *f( unsigned int *psi ) {
+    return ( signed int * ) psi;
+}
+:eerrbad.

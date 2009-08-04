@@ -155,3 +155,7 @@ File: source\diag0311.c
   cannot convert argument 1 defined at: (44,9)
   source conversion type is 'int (const * )[2] (lvalue)'
   target conversion type is 'int (* )[2]'
+File: source\diag0312.c
+(14,1): Warning! W932: cv-qualifier in return type 'int const' is meaningless
+(21,55): Warning! W931: cv-qualifier in cast to 'short const' is meaningless
+(22,41): Warning! W933: use of C-style cast to 'short *' is discouraged

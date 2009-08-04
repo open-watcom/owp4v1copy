@@ -5160,6 +5160,18 @@ TYPE TypeModFlags(              // GET MODIFIER FLAGS, UNMODIFIED TYPE
     return( type );
 }
 
+type_flag TypeExplicitModFlags( TYPE type )
+/*****************************************/
+{
+    type_flag flag = TF1_NULL;
+    for( ; ( type != NULL ) && ( type->id == TYP_MODIFIER );
+         type = type->of ) {
+        flag |= type->flag;
+    }
+
+    return flag;
+}
+
 
 type_flag BaseTypeClassFlags( TYPE type )
 /***************************************/

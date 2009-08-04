@@ -990,9 +990,21 @@ SYMBOL DeclCheck( SYMBOL_NAME sym_name, SYMBOL sym, decl_check *control )
             BrinfDeclSymbol( sym );
             _AddSymToRing( &(sym_name->name_syms), sym );
             if( new_sym_is_function ) {
+                TYPE retn_type = FunctionDeclarationType( sym->sym_type )->of;
+                type_flag flag; // - accumulated flags
+
+                flag = TypeExplicitModFlags( retn_type );
+                if( flag & TF1_CV_MASK ) {
+                    TYPE type = TypedefedType( retn_type );
+                    if( ( type == NULL ) || ( type->id != TYP_CLASS ) ) {
+                        CErr2p( WARN_MEANINGLESS_QUALIFIER_IN_RETURN_TYPE,
+                                retn_type );
+                    }
+                }
+
                 if( MainProcedure( sym ) ) {
                     verifyMainFunction( sym );
-                } else if( DefaultIntType( FunctionDeclarationType( sym->sym_type )->of ) ) {
+                } else if( DefaultIntType( retn_type ) ) {
                     CErr2p( ERR_FUNCTION_BAD_RETURN, sym_name->name );
                 }
             } else if ( ( sym_name->name != CppSpecialName( SPECIAL_RETURN_VALUE ) )

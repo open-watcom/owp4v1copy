@@ -1722,6 +1722,9 @@ TYPE TypeModFlagsBaseEC(        // GET MODIFIER FLAGS & BASE, UNMODIFIED TYPE
     type_flag *pflag,           // - ptr( flag )
     void **base )               // - ptr( base )
 ;
+type_flag TypeExplicitModFlags( // GET EXPLICIT MODIFIER FLAGS
+    TYPE type )                 // - type
+;
 TYPE CgStripType(               // STRIP ONE LEVEL OF TYPE INFORMATION
     TYPE type )                 // - type
 ;

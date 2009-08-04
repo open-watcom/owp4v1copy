@@ -2526,6 +2526,7 @@ PTREE CastExplicit              // EXPLICIT CASTE: ( TYPE )( EXPR )
     uint_8 jump;                // - jump code
 
     ConvCtlInitCast( &ctl, expr, &diagExplicit );
+    CErr2p( WARN_C_STYLE_CAST, ctl.tgt.orig );
     ctl.clscls_explicit = TRUE;
     ctl.clscls_derived = TRUE;
     ctl.clscls_refundef = TRUE;
