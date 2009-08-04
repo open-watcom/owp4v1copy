@@ -227,6 +227,28 @@ static const char   *WDB_SHORT_CMD_HELP = "h";
 static const char   *WDB_HELP_HELP = "h,help - Shows this info\n";
 static const char   *WDB_HELP_PARAM = "/?";
 
+
+void ShowDebuggerPrompt( void )
+{
+    fflush( stdout );
+    printf( "\nwdb > " );
+    fflush( stdout );
+}
+
+void ShowDebuggerError( const char *error_str )
+{
+    fflush( stdout );
+    printf( "\n%s", error_str );
+    fflush( stdout );
+}
+
+void ShowDebuggerMsg( const char *msg_str )
+{
+    fflush( stdout );
+    printf( "\n%s", msg_str );
+    fflush( stdout );
+}
+
 char *StrLTrim( char *s )
 {
     if( s != NULL ) {
@@ -359,6 +381,7 @@ bool IsCmdEqualCmd( char *cmd, const char *e_cmd, const char *e_short_cmd )
     return( FALSE );
 }
 
+
 bool IsCmdEqualCmd2( char *cmd, const char *e_cmd )
 {
     /* if the length of the command does not match then we'll ignore the command */
@@ -443,58 +466,6 @@ void ShowModuleList( void )
     ModListFree( &list );
 }
 
-/*Display a variable's value we are interested in*/
-bool InspectDebuggerVar( char *item )
-{
-    var_info        InspectVars;
-    address         addr;
-    inspect_type    t;
-    var_node        *v;
-
-    VarInitInfo( &InspectVars );
-    if( WndEvalInspectExpr( item, FALSE ) ) {
-        t = WndGetExprSPInspectType( &addr );
-        switch( t ) {
-            //case INSP_CODE:
-            //    WndSrcOrAsmInspect( addr );
-            //    return( TRUE );
-            case INSP_DATA:
-                {
-                    v = VarAdd1( &InspectVars, item, strlen( item ), TRUE, FALSE );
-                    if( v != NULL ) {
-                        DisplayDebuggerVarValue( &InspectVars );
-                    }                    
-                    return( v != NULL );
-                }
-            case INSP_RAW_DATA:
-                //WndAddrInspect( addr );
-                return( TRUE );
-        }
-    }
-    return( FALSE );
-}
-
-/*display the local values
-*/
-static void DumpLocals( void )
-{
-    address     addr;
-    var_info    Locals;
-
-    VarInitInfo( &Locals );
-    if( !_IsOn( SW_TASK_RUNNING ) ) {
-        VarErrState();
-        VarInfoRefresh( VAR_LOCALS, &Locals, &addr, NULL );
-        VarOkToCache( &Locals, TRUE );
-    }
-    
-    DisplayDebuggerVarValue( &Locals );
-
-    if( !_IsOn( SW_TASK_RUNNING ) ) {
-        VarOkToCache( &Locals, FALSE );
-        VarOldErrState();
-    }
-}
 /*recursively expand and show the */
     //fixme : The class and structure values need to be displayed
 static void DisplayDebuggerVarRecursively( var_info *pVarInfoList, var_node *v )
@@ -564,6 +535,133 @@ void DisplayDebuggerVarValue( var_info *pVarInfoList )
         
         fflush( stdout );
     }
+}
+
+/*Display a variable's value we are interested in*/
+bool InspectDebuggerVar( char *item )
+{
+    var_info        InspectVars;
+    address         addr;
+    inspect_type    t;
+    var_node        *v;
+
+    VarInitInfo( &InspectVars );
+    if( WndEvalInspectExpr( item, FALSE ) ) {
+        t = WndGetExprSPInspectType( &addr );
+        switch( t ) {
+            //case INSP_CODE:
+            //    WndSrcOrAsmInspect( addr );
+            //    return( TRUE );
+            case INSP_DATA:
+                {
+                    v = VarAdd1( &InspectVars, item, strlen( item ), TRUE, FALSE );
+                    if( v != NULL ) {
+                        DisplayDebuggerVarValue( &InspectVars );
+                    }                    
+                    return( v != NULL );
+                }
+            case INSP_RAW_DATA:
+                //WndAddrInspect( addr );
+                return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+/*display the local values
+*/
+static void DumpLocals( void )
+{
+    address     addr;
+    var_info    Locals;
+
+    VarInitInfo( &Locals );
+    if( !_IsOn( SW_TASK_RUNNING ) ) {
+        VarErrState();
+        VarInfoRefresh( VAR_LOCALS, &Locals, &addr, NULL );
+        VarOkToCache( &Locals, TRUE );
+    }
+    
+    DisplayDebuggerVarValue( &Locals );
+
+    if( !_IsOn( SW_TASK_RUNNING ) ) {
+        VarOkToCache( &Locals, FALSE );
+        VarOldErrState();
+    }
+}
+
+/*navigate through the global src path variable
+and display the path one at a time*/
+void ShowSourceDirectories( void )
+{
+    char_ring *p = SrcSpec;
+    for( ;; ) {
+        if( p == NULL ) break;
+        ShowDebuggerMsg( p->name );
+        p = p->next;
+    }
+}
+
+/*trims and adds a given source path to
+the global src path variable*/
+void AddSourcePathsToDebugger( char *srcpath )
+{
+    // if possible replace strtok with other 
+    // efficient tokenizer
+    char    delims[] = ";";
+    char    *path = NULL;
+
+    path = strtok( srcpath, delims );
+    while( path != NULL ) {
+        MyStrTrim( path );
+        AddSourceSpec( path );
+        path = strtok( NULL, delims );
+    }
+}
+
+/* Clear the global variable the hold the
+Src path and add default path */
+void RemoveSourcePathsFromDebugger( void )
+{
+    FiniSource();
+    AddSourcePathsToDebugger( "." );
+}
+
+/*source copied from the engnt code.
+this displays the code at which the current execution
+is broken
+*/
+void DumpSource( void )
+{
+    char        buff[256];
+    DIPHDL( cue, ch );
+
+    if( _IsOn( SW_TASK_RUNNING ) ) {
+        ShowDebuggerMsg( "I don't know where the task is.  It's running\n" );
+    }
+    if( DeAliasAddrCue( NO_MOD, GetCodeDot(), ch ) == SR_NONE ||
+        !DUIGetSourceLine( ch, buff, sizeof( buff ) ) ) {
+        UnAsm( GetCodeDot(), sizeof( buff ), buff );
+    }
+    printf( "%s\n", buff );
+    fflush(stdout);
+}
+
+/*for debug trace step next and step into*/
+void PerformDebuggerTrace( int _trace_type )
+{
+    ExecTrace( _trace_type, DbgLevel );
+    PerformTrace();
+    DumpSource();
+}
+
+/*make the debugger to finish until the return of the
+current function*/
+void PerformDebuggerFinish( void )
+{
+    GoToReturn();
+    PerformTrace();
+    DumpSource();
 }
 
 /*parse the bp numbers (bps should be  seperated by a space)
@@ -1219,27 +1317,6 @@ bool ProcessCmdTest( char *param )
 }
 
 
-void ShowDebuggerPrompt( void )
-{
-    fflush( stdout );
-    printf( "\nwdb > " );
-    fflush( stdout );
-}
-
-void ShowDebuggerError( const char *error_str )
-{
-    fflush( stdout );
-    printf( "\n%s", error_str );
-    fflush( stdout );
-}
-
-void ShowDebuggerMsg( const char *msg_str )
-{
-    fflush( stdout );
-    printf( "\n%s", msg_str );
-    fflush( stdout );
-}
-
 bool ProcessDebuggerCmd( char *cmd )
 {
     char    *cmd_part;
@@ -1403,37 +1480,6 @@ void RunRequest( int req )
     Req = req;
     _SwitchOn( SW_TASK_RUNNING );
     ReleaseSemaphore( Requestsem, 1, NULL ); // tell worker to go
-}
-
-int main( int argc, char **argv )
-{
-    char        buff[256];
-    DWORD       tid;
-    HANDLE      hThread;
-
-    MemInit();
-    SetErrorMode( SEM_FAILCRITICALERRORS );
-    getcmd( buff );
-    CmdData = buff;
-    DebugMain();
-    _SwitchOff( SW_ERROR_STARTUP );
-    Requestsem = CreateSemaphore( NULL, 0, 1, NULL );
-    Requestdonesem = CreateSemaphore( NULL, 0, 1, NULL );
-    ReleaseSemaphore( Requestdonesem, 1, NULL ); // signal req done
-    hThread = CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)ControlFunc, NULL, 0, &tid );
-    if( hThread == NULL) {
-        //MessageBox( NULL, "Error creating thread!", "Stubugger", MB_APPLMODAL+MB_OK );
-        ShowDebuggerError( "Error creating thread!" );
-    }
-    
-    DlgCmd();
-    
-    CloseHandle( Requestsem );
-    CloseHandle( Requestdonesem );
-    DebugFini();
-    RunRequest( REQ_BYE );
-    MemFini();
-    return( 0 );
 }
 
 void DlgCmd( void )
@@ -1975,76 +2021,34 @@ bool DUICopyCancelled( void * cookie )
     cookie = cookie;
     return( FALSE );
 }
-/*for debug trace step next and step into*/
-void PerformDebuggerTrace( int _trace_type )
-{
-    ExecTrace( _trace_type, DbgLevel );
-    PerformTrace();
-    DumpSource();
-}
 
-/*make the debugger to finish until the return of the
-current function*/
-void PerformDebuggerFinish( void )
-{
-    GoToReturn();
-    PerformTrace();
-    DumpSource();
-}
-
-/*source copied from the engnt code.
-this displays the code at which the current execution
-is broken
-*/
-void DumpSource( void )
+int main( int argc, char **argv )
 {
     char        buff[256];
-    DIPHDL( cue, ch );
+    DWORD       tid;
+    HANDLE      hThread;
 
-    if( _IsOn( SW_TASK_RUNNING ) ) {
-        ShowDebuggerMsg( "I don't know where the task is.  It's running\n" );
+    MemInit();
+    SetErrorMode( SEM_FAILCRITICALERRORS );
+    getcmd( buff );
+    CmdData = buff;
+    DebugMain();
+    _SwitchOff( SW_ERROR_STARTUP );
+    Requestsem = CreateSemaphore( NULL, 0, 1, NULL );
+    Requestdonesem = CreateSemaphore( NULL, 0, 1, NULL );
+    ReleaseSemaphore( Requestdonesem, 1, NULL ); // signal req done
+    hThread = CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)ControlFunc, NULL, 0, &tid );
+    if( hThread == NULL) {
+        //MessageBox( NULL, "Error creating thread!", "Stubugger", MB_APPLMODAL+MB_OK );
+        ShowDebuggerError( "Error creating thread!" );
     }
-    if( DeAliasAddrCue( NO_MOD, GetCodeDot(), ch ) == SR_NONE ||
-        !DUIGetSourceLine( ch, buff, sizeof( buff ) ) ) {
-        UnAsm( GetCodeDot(), sizeof( buff ), buff );
-    }
-    printf( "%s\n", buff );
-    fflush(stdout);
-}
-
-/*navigate through the global src path variable
-and display the path one at a time*/
-void ShowSourceDirectories( void )
-{
-    char_ring *p = SrcSpec;
-    for( ;; ) {
-        if( p == NULL ) break;
-        ShowDebuggerMsg( p->name );
-        p = p->next;
-    }
-}
-
-/*trims and adds a given source path to
-the global src path variable*/
-void AddSourcePathsToDebugger( char *srcpath )
-{
-    // if possible replace strtok with other 
-    // efficient tokenizer
-    char    delims[] = ";";
-    char    *path = NULL;
-
-    path = strtok( srcpath, delims );
-    while( path != NULL ) {
-        MyStrTrim( path );
-        AddSourceSpec( path );
-        path = strtok( NULL, delims );
-    }
-}
-
-/* Clear the global variable the hold the
-Src path and add default path */
-void RemoveSourcePathsFromDebugger( void )
-{
-    FiniSource();
-    AddSourcePathsToDebugger( "." );
+    
+    DlgCmd();
+    
+    CloseHandle( Requestsem );
+    CloseHandle( Requestdonesem );
+    DebugFini();
+    RunRequest( REQ_BYE );
+    MemFini();
+    return( 0 );
 }
