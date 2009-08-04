@@ -162,7 +162,7 @@ void CreateDummyWindow( void )
     WinRegisterClass( HabDebugger, "Dummy", WinDefWindowProc, CS_SIZEREDRAW, 0 );
     flCreate = FCF_TITLEBAR | FCF_SYSMENU | FCF_SIZEBORDER | FCF_MINMAX;
     frame = WinCreateStdWindow( HWND_DESKTOP, 0L, &flCreate, "Dummy",
-                                    "", 0L, NULL, 99, &HwndDummy );
+                                    "", 0L, 0, 99, &HwndDummy );
     if( frame == NULL ) {
         HwndDummy = HwndDebugger;
     }

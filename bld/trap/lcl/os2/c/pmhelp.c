@@ -260,7 +260,7 @@ INT main( int argc, char **argv )
         InStream = *argv[1] - ADJUST_HFILE;
         OutStream = *argv[2] - ADJUST_HFILE;
     }
-    AbortIf( ( Hab = WinInitialize(NULL)) == 0L );
+    AbortIf( ( Hab = WinInitialize( 0 )) == 0L );
     AbortIf( ( Hmq = WinCreateMsgQueue( Hab, 0 ) ) == 0L );
 
     AbortIf( !WinRegisterClass( Hab, (PSZ)"MyWindow", (PFNWP)MyWindowProc,
@@ -273,7 +273,7 @@ INT main( int argc, char **argv )
            + WinQuerySysValue( HWND_DESKTOP, SV_CYTITLEBAR );
     AbortIf( ( hwndFrame = WinCreateStdWindow( HWND_DESKTOP, 0L,
                &flCreate, "MyWindow", "", 0L,
-               NULL, ID_WINDOW, &hwndClient ) ) == 0L );
+               0, ID_WINDOW, &hwndClient ) ) == 0L );
     WinSetWindowText( hwndFrame, TRP_The_WATCOM_Debugger );
 
     width = WinQuerySysValue( HWND_DESKTOP, SV_CXSCREEN );
