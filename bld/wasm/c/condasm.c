@@ -374,7 +374,6 @@ int conditional_assembly_directive( int i )
 /*****************************************/
 {
     uint_16     direct;
-    if_state    cond_state;
 
     direct = AsmBuffer[i]->u.value;
 
@@ -391,7 +390,6 @@ int conditional_assembly_directive( int i )
     case T_IFIDNI:
     case T_IFNB:
     case T_IFNDEF:
-        cond_state = get_cond_state( i );
         if( CurState == ACTIVE ) {
             NestLevel++;
             if( NestLevel > MAX_NESTING ) {
@@ -399,7 +397,7 @@ int conditional_assembly_directive( int i )
                 AsmError( NESTING_LEVEL_TOO_DEEP );
                 return( ERROR );
             }
-            CurState = cond_state;
+            CurState = get_cond_state( i );
         } else {
             falseblocknestlevel++;
         }
@@ -416,12 +414,11 @@ int conditional_assembly_directive( int i )
     case T_ELSEIFIDNI:
     case T_ELSEIFNB:
     case T_ELSEIFNDEF:
-        cond_state = get_cond_state( i );
         if( CurState == ACTIVE ) {
             CurState = DONE;
         } else if( CurState == LOOKING_FOR_TRUE_COND ) {
             if( falseblocknestlevel == 0 ) {
-                CurState = cond_state;
+                CurState = get_cond_state( i );
             }
         }
         break;
