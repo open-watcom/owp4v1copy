@@ -11,8 +11,8 @@ cpu = x86
 which = SERVER
 type  = remote_link
 
-inc_dirs   = -I"$(%OWROOT)/contrib/wattcp/inc"
-extra_libs = $(%OWROOT)/contrib/wattcp/lib/wattcpwl.lib
+inc_dirs   = -I"$(contrib_dir)/wattcp/inc"
+extra_libs = $(contrib_dir)/wattcp/lib/wattcpwl.lib
 
 !include $(trap_dir)/master.mif
 

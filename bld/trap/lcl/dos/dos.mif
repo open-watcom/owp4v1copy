@@ -1,7 +1,5 @@
 dos_objs = dossplit.obj &
         dosenv.obj &
-        dosexc.obj &
-        dosredir.obj &
         dosrfx.obj &
         dosfile.obj &
         doschk.obj &

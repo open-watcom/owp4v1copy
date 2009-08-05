@@ -45,7 +45,7 @@ struct ifi_info {
 #define IFI_ALIAS   1           /* ifi_addr is an alias */
 #define IFI_LOOP    2           /* corresponds to IFF_LOOPBACK */
 
-struct ifi_info *get_ifi_info( int, int );
-void             free_ifi_info( struct ifi_info * );
+//struct ifi_info *get_ifi_info( int, int );
+//void             free_ifi_info( struct ifi_info * );
 
 #endif

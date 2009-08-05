@@ -48,12 +48,7 @@ memory_model_i86 = c
 !endif
 
 !ifdef test
-!ifeq type remote_link
-test_remote_link = 1
-!ifdef builtin_trap
-!undef builtin_trap
-!endif
-!else
+!ifneq type remote_link
 !error test version can be build only for remote link
 !endif
 !endif
@@ -86,13 +81,13 @@ name = $(srv)
 !include defrule.mif
 
 !ifeq release 1
-!ifdef test_remote_link
+!ifdef test
 xname=z$(name)
 !else
 xname=$(name)
 !endif
 !else
-!ifdef test_remote_link
+!ifdef test
 xname=t$(name)
 !else
 xname=d$(name)
@@ -121,7 +116,9 @@ extra_c_flags += -zlf
 !endif
 
 !ifdef builtin_trap
+!ifndef test
 extra_c_flags += -DBUILTIN_TRAP_FILE
+!endif
 !endif
 
 !ifdef japanese
@@ -139,7 +136,7 @@ extra_c_flags_386 += -3s
 extra_c_flags_os2 += -zu
 extra_c_flags_win += -zu
 extra_c_flags_dos += -zu
-!ifndef test_remote_link
+!ifndef test
 extra_c_flags_win += -bd
 !endif
 !endif

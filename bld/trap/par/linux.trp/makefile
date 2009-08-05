@@ -8,6 +8,6 @@ cpu = x86
 which = TRAP
 type  = remote_link
 
-extra_objs = parlinux.obj
+extra_objs = parlinux.obj lnxnoth.obj
 
 !include $(trap_dir)/master.mif

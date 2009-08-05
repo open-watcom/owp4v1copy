@@ -4,7 +4,7 @@
 
 description = 'Open Watcom Debugger Trap File'
 
-!ifdef test_remote_link
+!ifdef test
 
 sys_x86_os2   = sys os2
 sys_x86_os2v2 = sys os2v2

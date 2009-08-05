@@ -11,7 +11,7 @@ cpu = x86
 which = SERVER
 type  = remote_link
 
-extra_objs = $(nlm_objs) novnlm.obj
+extra_objs = novnlm.obj
 
 !include $(trap_dir)/lcl/nlm/trap.mif
 !include $(trap_dir)/master.mif

@@ -12,9 +12,7 @@ extra_objs = &
     $(dosx_serv_objs) &
     adsacc.obj &
     adsintr.obj &
-    dosxrmod.obj &
-    x86cpu.obj &
-    misc7386.obj
+    dosxrmod.obj
 
 extra_c_flags = -DACAD -I$(adsdir)
 

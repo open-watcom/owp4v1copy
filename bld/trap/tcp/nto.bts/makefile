@@ -13,22 +13,9 @@ type  = remote_link
 
 builtin_trap = 1
 
-extra_srcs = $(trap_dir)/lcl/nto/c;$(trap_dir)/lcl/c;$(clib_dir)/environ/c
-inc_dirs   = -I"$(trap_dir)/lcl/nto/h" -I"$(trap_dir)/lcl/h" -I"$(lib_misc_dir)/h"
-
-extra_objs = gtcmdunx.obj &
-             x86cpu.obj &
-             ntostrt.obj &
-             ntoacc.obj &
-			 ntomap.obj &
-			 ntoutl.obj &
-             ntocomm.obj &
-             ntofile.obj &
-             supp.obj &
-             core.obj
-
 !define substitute_linker
 
+!include $(trap_dir)/lcl/nto/trap.mif
 !include $(trap_dir)/master.mif
 
 $(target) : $(libs) $(objs) $(__MAKEFILES__)

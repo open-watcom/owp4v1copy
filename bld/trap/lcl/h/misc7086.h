@@ -40,24 +40,6 @@ extern void Write8087( void far * );
 extern void Read387( void far * );
 extern void Write387( void far * );
 
-#ifdef __WATCOMC__
-
-#pragma aux GetMSW = \
-        ".286p"       \
-        "smsw ax"    \
-        value [ax];
-extern unsigned short GetMSW( void );
-
-#define MSW_EM       0x04
-
-#define HAVE_EMU (GetMSW() & MSW_EM)
-
-#else
-
-#define HAVE_EMU     0
-
-#endif
-
 extern unsigned_8 NPXType( void );
 
 #endif

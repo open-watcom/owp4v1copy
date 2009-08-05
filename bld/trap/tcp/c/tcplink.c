@@ -123,12 +123,16 @@
   #endif
 #endif
 
-int data_socket;
-struct sockaddr_in socket_address;
-struct hostent *hp;
+#if !defined( __LINUX__ )
+static struct ifi_info  *get_ifi_info(int family, int doaliases);
+static void             free_ifi_info(struct ifi_info *ifihead);
+#endif
+
+static int                  data_socket;
+static struct sockaddr_in   socket_address;
 static bool die = FALSE;
 #ifdef SERVER
-int control_socket;
+static int                  control_socket;
 #endif
 
 #if  defined(SERVER)
@@ -242,7 +246,7 @@ char RemoteConnect( void )
     timeout.tv_sec = 0;
     timeout.tv_usec = 10000;
     if( select( control_socket+1, &ready, 0, 0, &timeout ) > 0 ) {
-        data_socket = accept( control_socket, &dummy, &dummy_len );
+        data_socket = accept( control_socket, &dummy, (socklen_t *)&dummy_len );
         if( data_socket != -1 ) {
             nodelay();
             _DBG_NET(("Found a connection\r\n"));
@@ -323,7 +327,7 @@ char *RemoteLink( char *name, char server )
     /* Find out assigned port number and print it out */
     length = sizeof( socket_address );
     if( getsockname( control_socket, (struct sockaddr *)&socket_address,
-                     &length ) ) {
+                     (socklen_t *)&length ) ) {
         return( TRP_ERR_unable_to_get_socket_name );
     }
     sprintf( buff2, "%s%d", TRP_TCP_socket_number, ntohs( socket_address.sin_port ) );
@@ -399,6 +403,8 @@ char *RemoteLink( char *name, char server )
     /* OS/2's TCP/IP gethostbyname doesn't handle numeric addresses */
     socket_address.sin_addr.s_addr = inet_addr( name );
     if( socket_address.sin_addr.s_addr == -1UL ) {
+        struct hostent  *hp;
+
         hp = gethostbyname( name );
         if( hp != 0 ) {
             memcpy( &socket_address.sin_addr, hp->h_addr, hp->h_length );
@@ -439,7 +445,7 @@ void RemoteUnLink( void )
 #include <sys/ioctl.h>
 #include <net/if.h>
 
-struct ifi_info * get_ifi_info(int family, int doaliases)
+static struct ifi_info * get_ifi_info(int family, int doaliases)
 {
     struct ifi_info     *ifi, *ifihead, **ifipnext;
     int                 sockfd, len, lastlen, flags, myflags;
@@ -522,7 +528,7 @@ struct ifi_info * get_ifi_info(int family, int doaliases)
     return( ifihead );    /* pointer to first structure in linked list */
 }
 
-void free_ifi_info(struct ifi_info *ifihead)
+static void free_ifi_info(struct ifi_info *ifihead)
 {
     struct ifi_info *ifi, *ifinext;
 
@@ -534,15 +540,15 @@ void free_ifi_info(struct ifi_info *ifihead)
     }
 }
 
-#else
+#elif !defined( __LINUX__ )
 
 /* Stubbed out */
-struct ifi_info * get_ifi_info(int family, int doaliases)
+static struct ifi_info * get_ifi_info(int family, int doaliases)
 {
     return NULL;
 }
 
-void free_ifi_info(struct ifi_info *ifihead)
+static void free_ifi_info(struct ifi_info *ifihead)
 {
 }
 

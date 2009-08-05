@@ -8,6 +8,6 @@ cpu = x86
 which = TRAP
 type  = remote_link
 
-extra_objs = sernt.obj busywait.obj
+extra_objs = sernt.obj busywait.obj ntnoth.obj
 
 !include $(trap_dir)/master.mif

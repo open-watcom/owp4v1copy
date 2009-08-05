@@ -42,7 +42,6 @@
 #include "exeelf.h"
 #include "lnxcomm.h"
 #include "x86cpu.h"
-#include "misc7386.h"
 
 static watch_point      wpList[ MAX_WP ];
 static int              wpCount = 0;

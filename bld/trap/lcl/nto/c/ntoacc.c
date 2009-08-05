@@ -45,7 +45,6 @@
 #include "madregs.h"
 #include "ntocomm.h"
 #include "x86cpu.h"
-#include "misc7386.h"
 
 
 typedef unsigned short  USHORT;

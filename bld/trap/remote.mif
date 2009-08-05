@@ -2,11 +2,3 @@ remote_objs = &
         $($(which)_remote_objs) &
         packet.obj &
         $(srv)link.obj &
-!ifeq os linux
-        lnxnoth.obj
-!else ifeq os os2v2
-        os2noth2.obj
-!else
-        $(os)noth.obj
-!endif
-

@@ -12,9 +12,8 @@ host_OS = os2
 w : .symbolic os2v2hlp.exe
         @%null
 
-os2v2hlp.exe : os2v2hlp.obj
-        $(linker) system os2v2 lx op dosseg name $^@ f os2v2hlp &
-                imp DOS32WRITE DOSCALLS.282,DOS32DEBUG DOSCALLS.317
+.asm : ../asm
 
-os2v2hlp.obj: ../asm/os2v2hlp.asm
-        $(as) -3r $[@
+os2v2hlp.exe : os2v2hlp.obj
+        $(linker) system os2v2 lx op dosseg, map name $^@ f os2v2hlp.obj &
+                imp DOS32WRITE DOSCALLS.282,DOS32DEBUG DOSCALLS.317

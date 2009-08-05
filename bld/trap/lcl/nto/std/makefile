@@ -10,15 +10,5 @@ srv   = lcl
 cpu   = x86
 which = TRAP
 
-extra_objs = &
-        ntoacc.obj &
-	ntomap.obj &
-        ntocomm.obj &
-        ntofile.obj &
-        misc7386.obj &
-        supp.obj &
-        core.obj
-
-inc_dirs = -I"$(trap_dir)/lcl/h"
-
+!include $(trap_dir)/lcl/nto/trap.mif
 !include $(trap_dir)/master.mif

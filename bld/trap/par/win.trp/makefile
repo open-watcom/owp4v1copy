@@ -8,6 +8,6 @@ cpu = x86
 which = TRAP
 type  = remote_link
 
-extra_objs = pardos.obj
+extra_objs = pardos.obj winnoth.obj
 
 !include $(trap_dir)/master.mif

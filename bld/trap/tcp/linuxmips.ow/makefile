@@ -11,22 +11,9 @@ type  = remote_link
 
 builtin_trap = 1
 
-extra_srcs = $(trap_dir)/lcl/linux/c;$(trap_dir)/lcl/c
-inc_dirs   = -I"$(trap_dir)/lcl/linux/h"
-
-extra_objs = &
-    lnxstrt.obj &
-    lnxacc.obj &
-    lnxmap.obj &
-    lnxcomm.obj &
-    lnx$(cpu).obj &
-    lnxfile.obj &
-    lnxutl.obj &
-    supp.obj &
-    core.obj
-
 !define substitute_linker
 
+!include $(trap_dir)/lcl/linux/trap.mif
 !include $(trap_dir)/master.mif
 
 $(target) : $(libs) $(objs) $(__MAKEFILES__)

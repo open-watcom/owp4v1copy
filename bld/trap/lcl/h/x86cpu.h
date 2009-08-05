@@ -31,6 +31,24 @@
 #ifndef _X86CPU_H_INCLUDED
 #define _X86CPU_H_INCLUDED
 
+#ifdef __WATCOMC__
+
+#pragma aux GetMSW = \
+        ".286p"       \
+        "smsw ax"    \
+        value [ax];
+extern unsigned short GetMSW( void );
+
+#define MSW_EM       0x04
+
+#define HAVE_EMU (GetMSW() & MSW_EM)
+
+#else
+
+#define HAVE_EMU     0
+
+#endif
+
 extern unsigned_8 X86CPUType( void );
 
 #endif

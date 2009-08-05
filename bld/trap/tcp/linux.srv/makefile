@@ -9,4 +9,5 @@ cpu   = x86
 which = SERVER
 type  = remote_link
 
+!include $(trap_dir)/lcl/linux/trap.mif
 !include $(trap_dir)/master.mif

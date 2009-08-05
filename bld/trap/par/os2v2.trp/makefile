@@ -8,7 +8,7 @@ cpu = x86
 which = TRAP
 type  = remote_link
 
-extra_objs = paros22.obj
+extra_objs = paros22.obj os2noth2.obj
 
 !include ../os2v2.mif
 !include $(trap_dir)/master.mif

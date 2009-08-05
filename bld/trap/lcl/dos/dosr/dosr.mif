@@ -5,6 +5,8 @@ which = TRAP
 
 std_objs = &
         $(dos_objs) &
+        dosexc.obj &
+        dosredir.obj &
         dosovl.obj &
         dosacc.obj &
         dbgtrap.obj &
