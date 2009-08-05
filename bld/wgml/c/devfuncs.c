@@ -272,7 +272,7 @@ static record_buffer    staging = { 0, 0, NULL };
 
 static void fb_absoluteaddress( void )
 {
-    fb_lineproc_endvalue();
+    fb_lineproc_endvalue();    
 
     df_interpret_driver_functions( bin_driver->absoluteaddress.text );
 
@@ -504,7 +504,7 @@ static void post_text_output( void )
 
 static void pre_text_output( void )
 {
-    if( ps_device ) ob_insert_byte( '(' );
+    if( ps_device ) ob_insert_ps_text_start();
     text_out_open = true;
 
     return;
@@ -2256,9 +2256,11 @@ static void fb_firstword( line_proc * in_block )
 {
     if( in_block->firstword == NULL ) {
         if( in_block->startword != NULL ) {
+            if( text_out_open ) post_text_output();
             df_interpret_driver_functions( in_block->startword->text );
         }
     } else {
+        if( text_out_open ) post_text_output();
         df_interpret_driver_functions( in_block->firstword->text );
     }
 
@@ -2514,7 +2516,6 @@ static void fb_initial_horizontal_positioning( void )
         } else {
             if( !text_out_open ) pre_text_output();
             output_spaces( spaces );
-            if( text_out_open ) post_text_output();
         }
         tab_width = 0;
     }
@@ -2556,7 +2557,6 @@ static void fb_internal_horizontal_positioning( void )
     } else {
         if( !text_out_open ) pre_text_output();
         output_spaces( spaces );
-        if( text_out_open ) post_text_output();
     }
     tab_width = 0;
 
@@ -2593,19 +2593,17 @@ static void fb_first_text_chars( text_chars * in_chars )
     if( current_state.font_number == desired_state.font_number ) \
                                                     font_switch_needed = false;
 
-    /* Interpret the pre-font switch function blocks. */
-
-    if( text_out_open ) post_text_output();
-
     /* Do the font switch, if needed. If a font switch is not needed,
      * interpret the :FONTSTYLE block :STARTVALUE block.
      */
 
     if( font_switch_needed ) {
+        if( text_out_open ) post_text_output();
         fb_font_switch();
     } else {
         if( wgml_fonts[font_number].font_style != NULL ) {
             if( wgml_fonts[font_number].font_style->startvalue != NULL ) {
+                if( text_out_open ) post_text_output();
                 df_interpret_driver_functions( \
                         wgml_fonts[font_number].font_style->startvalue->text );
             }
@@ -2621,13 +2619,16 @@ static void fb_first_text_chars( text_chars * in_chars )
         textpass = true;
     } else {
 
-        if( cur_lineproc->startvalue != NULL ) \
-            df_interpret_driver_functions( cur_lineproc->startvalue ->text );
+        if( cur_lineproc->startvalue != NULL ) {
+            if( text_out_open ) post_text_output();
+            df_interpret_driver_functions( cur_lineproc->startvalue->text );
+        }
 
         fb_firstword( cur_lineproc );
 
         if( !font_switch_needed ) {
             if( cur_lineproc->startword != NULL ) \
+                if( text_out_open ) post_text_output();
                 df_interpret_driver_functions( cur_lineproc->startword->text );
         }
     }
@@ -2691,9 +2692,8 @@ static void fb_new_font_text_chars( text_chars * in_chars )
     font_number = desired_state.font_number;
     active_font = desired_state.font_number;
     
-    /* Interpret the pre-font switch function blocks. */
+    /* Interpret the pre-font switch function block. */
 
-    if( text_out_open ) post_text_output();
     fb_lineproc_endvalue();
 
     /* Do the font switch, which is needed by definition. */
@@ -2708,9 +2708,10 @@ static void fb_new_font_text_chars( text_chars * in_chars )
     if( cur_lineproc == NULL ) {
         textpass = true;
     } else {
-        if( cur_lineproc->startvalue != NULL ) \
+        if( cur_lineproc->startvalue != NULL ) {
+            if( text_out_open ) post_text_output();
             df_interpret_driver_functions( cur_lineproc->startvalue ->text );
-
+        }
         fb_firstword( cur_lineproc );
     }
 
@@ -2753,8 +2754,6 @@ static void fb_new_font_text_chars( text_chars * in_chars )
 
 static void fb_normal_vertical_positioning( void )
 {
-    uint32_t    current_lines;
-    uint32_t    desired_lines;
     uint32_t    current_pages;
     uint32_t    desired_pages;
     uint32_t    device_pages;
@@ -2791,10 +2790,8 @@ static void fb_normal_vertical_positioning( void )
 
         /* Detect and process device pages. */
 
-        current_lines = current_state.y_address;
-        desired_lines = desired_state.y_address;
-        current_pages = current_lines / bin_device->page_depth;
-        desired_pages = desired_lines / bin_device->page_depth;
+        current_pages = current_state.y_address / bin_device->page_depth;
+        desired_pages = desired_state.y_address / bin_device->page_depth;
         device_pages = desired_pages - current_pages;
 
         /* Ensure that (current_pages + i) will contain the number of
@@ -2809,14 +2806,14 @@ static void fb_normal_vertical_positioning( void )
 
             for( i=0; i < device_pages; i++ ) {
 
-                /* Interpret the DOCUMENT_PAGE :PAUSE block. */
-
-                if( bin_device->pauses.devpage_pause != NULL ) \
-        df_interpret_device_functions( bin_device->pauses.devpage_pause->text );
-
                 /* Interpret the :NEWPAGE block. */
 
                 df_interpret_driver_functions( bin_driver->newpage.text );
+
+                /* Interpret the DEVICE_PAGE :PAUSE block. */
+
+                if( bin_device->pauses.devpage_pause != NULL ) \
+        df_interpret_device_functions( bin_device->pauses.devpage_pause->text );
 
                 /* If the :ABSOLUTEADDRESS block is defined and this is the
                  * Initial Vertical Positioning, interpret the :LINEPROC
@@ -2857,9 +2854,13 @@ static void fb_normal_vertical_positioning( void )
         current_state.x_address = bin_device->x_start;
         x_address = current_state.x_address;
 
-        /* Only reset y_address if one or more device pages was emitted. */
+        /* Only reset current_state.y_address if one or more device pages
+         * was emitted. Set y_address in either case.
+         */
 
-        if( device_pages > 0 ) {
+        if( device_pages == 0 ) {
+            y_address = desired_state.y_address;
+        } else {
 
             /* Set the value of current_state.y_address to the last line of the
              * previous device page and the value returned by device function
@@ -2917,10 +2918,6 @@ static void fb_subsequent_text_chars( text_chars * in_chars )
     }
     desired_state.x_address = in_chars->x_address;
     
-    /* Interpret the pre-font switch function blocks. */
-
-    if( text_out_open ) post_text_output();
-
     /* Since only the :STARTWORD (if present) is interpreted, and since device
      * funtion %textpass() is not allowed in a :STARTWORD block, it cannot be
      * set here. Instead, it retains its setting from the last time a new line
@@ -2929,6 +2926,7 @@ static void fb_subsequent_text_chars( text_chars * in_chars )
 
     if( cur_lineproc != NULL ) {
         if( cur_lineproc->startword != NULL ) {
+            if( text_out_open ) post_text_output();
             df_interpret_driver_functions( cur_lineproc->startword->text );
         }
     }
@@ -3061,14 +3059,14 @@ void df_new_section( uint32_t v_start )
     save_font = active_font;
     active_font = 0;
 
+    /* Interpret the :NEWPAGE block. */
+
+    df_interpret_driver_functions( bin_driver->newpage.text );
+
     /* Interpret the DOCUMENT_PAGE :PAUSE block. */
 
     if( bin_device->pauses.docpage_pause != NULL ) \
         df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
-
-    /* Interpret the :NEWPAGE block. */
-
-    df_interpret_driver_functions( bin_driver->newpage.text );
 
     /* Set up for a new document page. */
 
@@ -3330,6 +3328,7 @@ void fb_first_text_pass( text_line * out_line )
     /* Update the internal state for the new text_line. */
 
     current = out_line->first;
+    if( current->font_number > wgml_font_cnt ) current->font_number = 0;
     desired_state.font_number = current->font_number;
     desired_state.x_address   = current->x_address;
     desired_state.y_address   = out_line->y_address;
@@ -3359,6 +3358,7 @@ void fb_first_text_pass( text_line * out_line )
     current = current->next;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
+        if( current->font_number > wgml_font_cnt ) current->font_number = 0;
         if( current_state.font_number != current->font_number ) {
             fb_new_font_text_chars( current );
         } else {

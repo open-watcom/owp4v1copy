@@ -29,6 +29,7 @@
 *                   ob_flush()
 *                   ob_insert_block()
 *                   ob_insert_byte()
+*                   ob_insert_ps_text_start()
 *                   ob_setup()
 *                   ob_teardown()
 *
@@ -46,6 +47,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode. */
 extern void ob_flush( void );
 extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, bool out_text, uint32_t font );
 extern void ob_insert_byte( uint8_t in_char );
+extern void ob_insert_ps_text_start( void );
 extern void ob_setup( void );
 extern void ob_teardown( void );
 

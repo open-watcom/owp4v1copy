@@ -4,7 +4,7 @@
 *
 *    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
 *
-*  ========================================================================
+*  ======================================================================
 *
 *    This file contains Original Code and/or Modifications of Original
 *    Code as defined in and that are subject to the Sybase Open Watcom
@@ -29,6 +29,7 @@
 *                   ob_flush()
 *                   ob_insert_block()
 *                   ob_insert_byte()
+*                   ob_insert_ps_text_start()
 *                   ob_setup()
 *                   ob_teardown()
 *               as well as these local variables:
@@ -294,7 +295,6 @@ static void set_out_file_attr( void )
     return;
 }
 
-
 /* Global function definitions. */
 
 /* Function ob_flush().
@@ -314,6 +314,7 @@ static void set_out_file_attr( void )
 
 void ob_flush( void )
 {
+    
     fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fb );
     buffout.current = 0;
 #ifdef __UNIX__
@@ -382,39 +383,43 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
 
     if( buffout.current == buffout.length ) ob_flush();
 
-    /* If the block won't fit, copy as much as possible into the buffer
-     * and then flush it.
+    /* If the block won't fit, copy as much as possible into the buffer, 
+     * flush it and try again. The exact processing depends on the device
+     * and (for PS) whether this is text or not.
      */
 
-    while( (buffout.current + text_count) > buffout.length ) {
+    if( ps_device )  {
+        if( out_text ) {
 
-        difference = buffout.length - buffout.current;
+            /* PS text elements must completely fill the output record.
+             * If the text element is not closed by the end of the
+             * record, a '\' is used to terminate the record and the
+             * next record starts with the next character. Notes:
+             * -- if this is the start of the text element, then the last
+             *    item was "(" and, if difference = 1, "(\" is correct
+             *    for the end of the output record
+             * -- if the text element ends on the last legal position,
+             *    then inserting "\" and moving the last character in the
+             *    text element is corrrect
+             * -- if the text element ends one position before the last
+             *    legal position, then the output record will correctly
+             *    end with the ")" of ") sd" or ") shwd"
+             * -- adjusting text_count as shown avoids a problem where a
+             *    word was added without a final '\', which is not how
+             *    wgml 4.0 does it and which produces and extra space
+             *    when the PS interpreter processes the text.
+             */
 
-        /* If the entire text_block will now fit, exit the loop. */
+            while( (buffout.current + text_count + 1) > buffout.length ) {
 
-        if( text_count <= difference ) break;
+                difference = buffout.length - buffout.current;
 
-        /* Distinguish PS devices from non-PS devices. */
+                /* If the entire text_block will now fit, exit the loop. */
 
-        if( ps_device )  {
+                if( (text_count + 1) <= difference ) break;
 
-            /* For PS devices, out_text matters. */
-
-            if( out_text ) {
-
-                /* PS text elements must completely fill the output record.
-                 * If the text element is not closed by the end of the
-                 * record, a '\' is used to terminate the record and the
-                 * next record starts with the next character. Notes:
-                 * -- if this is the start of the text element, then the last
-                 *    item was "(" and, if difference = 1, "(\" is correct
-                 *    for the end of the output record
-                 * -- if the text element ends on the last legal position,
-                 *    then inserting "\" and moving the last character in the
-                 *    text element is corrrect
-                 * -- if the text element ends one position before the last
-                 *    legal position, then the output record will correctly
-                 *    end with the ")" of ") sd" or ") shwd"
+                /* If difference is "0", then difference - 1 is a very large
+                 * number, and memcpy_s produces a run-time error.
                  */
 
                 if ( difference > 1 ) {
@@ -422,51 +427,85 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
                                         &text_block[current], difference - 1 );
                     current+= (difference - 1);
                     text_count -= (difference - 1);
+                    buffout.current += (difference - 1);
+                    if( buffout.current > buffout.length ) buffer_overflow();
                 }
-                buffout.current += difference;
-                if( buffout.current > buffout.length ) buffer_overflow();
                 buffout.text[buffout.current] = '\\';
+                buffout.current++;
+                if( buffout.current > buffout.length ) buffer_overflow();
                 ob_flush();
+            }
 
-            } else {
+        } else {
 
-                /* PS language statements must not be split in mid-word.
-                 * In fact, the out_buff must end with a space when the
-                 * out_buff cannot contain the entire remaining text_block.
+            /* PS language statements must not be split in mid-word.
+             * In fact, the out_buff must end with a space when the
+             * out_buff cannot contain the entire remaining text_block.
+             */
+
+            while( (buffout.current + text_count) > buffout.length ) {
+
+                difference = buffout.length - buffout.current;
+
+                /* If the entire text_block will now fit, exit the loop. */
+
+                if( text_count <= difference ) break;
+
+                /* Insert any initial spaces. */
+
+                while( text_block[current] == ' ' ) {
+                    if( difference == 0 ) break;
+                    buffout.text[buffout.current] = ' ';
+                    buffout.current++;
+                    if( buffout.current > buffout.length ) buffer_overflow();
+                    current++;
+                    text_count--;
+                    difference--;
+                } 
+
+                /* If difference is "0", the buffer is full. */
+
+                if( difference == 0 ) {
+                    ob_flush();
+                    continue;
+                }
+
+                /* Since text_block[current] now points at a non-space
+                 * character, an initial space will not cause the program
+                 * to loop endlessly.
                  */
 
-                if( text_block[current + difference] != ' ' ) {
-                    while( text_block[current + difference] != ' ' ) {
-                        difference--;
-                        if( difference == 0 ) {
+                while( text_block[current + difference] != ' ' ) {
+                    if( difference == 0 ) {
 
-                            /* No spaces found. If buffout is not empty, then
-                             * flush it, skip any initial space in text_block,
-                             * and exit this loop.
-                             */
+                        /* No spaces found. If buffout is not empty, then
+                         * flush it, skip any space at text_block[current],
+                         * and exit this loop.
+                         */
 
-                            if( buffout.current > 0 ) {
-                                ob_flush();
-                                if( text_block[current] == ' ' ) current++;
-                                break;
-                            } else {
+                        if( buffout.current > 0 ) {
+                            ob_flush();
+                            if( text_block[current] == ' ' ) current++;
+                            break;
+                        } else {
 
-                                /* It just won't fit. */
+                            /* It just won't fit. */
 
-                                out_msg( "Output file's record size is too "\
+                            out_msg( "Output file's record size is too "\
                                     "small for the device '%s'\n", dev_name );
-                                err_count++;
-                                g_suicide();
-                            }
+                            err_count++;
+                            g_suicide();
                         }
                     }
 
-                    /* If difference is "0", and we reach this point, then
-                     * the buffer was flushed: go to the top of the loop.
-                     */
-
-                    if( difference == 0 ) continue;
+                    difference--;
                 } 
+
+                /* If difference is "0", and we reach this point, then
+                 * the buffer was flushed: go to the top of the loop.
+                 */
+
+                if( difference == 0 ) continue;
 
                 /* Copy up to the space character found. */
 
@@ -482,22 +521,34 @@ extern void ob_insert_block( uint8_t * in_block, size_t count, bool out_trans, \
                  */
 
                 current++;
+                text_count--;
                 while( buffout.current < buffout.length ) {
                     if( text_block[current] != ' ' ) break;
-                    buffout.text[buffout.current] = ' ';
+                    buffout.text[buffout.current] = text_block[current];
                     buffout.current++;
                     if( buffout.current > buffout.length ) buffer_overflow();
+                    current++;
+                    text_count--;
                 }
 
-                /* If the buffer is full, flush it. */
+                /* Flush the buffer: full or not, it cannot hold the
+                 * rest of text_block.
+                 */
 
-                if( buffout.current == buffout.length ) ob_flush();
-
+                ob_flush();
             }
+        }
+    } else {
 
-        } else {
+        /* For non-PS devices, stuff the buffer. */
 
-            /* For non-PS devices, stuff the buffer. */
+        while( (buffout.current + text_count) > buffout.length ) {
+
+            difference = buffout.length - buffout.current;
+
+            /* If the entire text_block will now fit, exit the loop. */
+
+            if( text_count <= difference ) break;
 
             memcpy_s( &buffout.text[buffout.current], difference, \
                                             &text_block[current], difference );
@@ -541,6 +592,31 @@ void ob_insert_byte( uint8_t in_char )
     /* Insert the character and increment the current position pointer. */
 
     buffout.text[buffout.current] = in_char;
+    buffout.current++;
+    if( buffout.current > buffout.length ) buffer_overflow();
+
+    return;
+}
+
+/* Function ob_insert_ps_text_start().
+ * This function inserts the text start character for the PS device.
+ *
+ * Note:
+ *      This is only called by pre_text_output() for the PS device, to insert
+ *      the "(" before text. It turns out that ending the record with "("
+ *      results in the newline produced by ob_flush() appearing as an extra
+ *      space in the document, and that this is not how it is done by wgml 4.0.
+ */
+
+void ob_insert_ps_text_start( void )
+{
+    /* Flush the buffer if it is full or has only one character position left. */
+
+    if( buffout.current >= (buffout.length - 1) ) ob_flush();
+
+    /* Insert '(' and increment the current position pointer. */
+
+    buffout.text[buffout.current] = '(';
     buffout.current++;
     if( buffout.current > buffout.length ) buffer_overflow();
 

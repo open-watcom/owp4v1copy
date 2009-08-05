@@ -1752,14 +1752,14 @@ void fb_document_page( void )
 
     fb_lineproc_endvalue();
 
+    /* Interpret the :NEWPAGE block. */
+
+    df_interpret_driver_functions( bin_driver->newpage.text );
+
     /* Interpret the DOCUMENT_PAGE :PAUSE block. */
 
     if( bin_device->pauses.docpage_pause != NULL ) \
         df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
-
-    /* Interpret the :NEWPAGE block. */
-
-    df_interpret_driver_functions( bin_driver->newpage.text );
 
     /* Set up for a new document page. */
 

@@ -117,7 +117,7 @@ static  text_phrase         page1_para1[] = {
  
 static  text_phrase         page1_para2[] = {
     {0, "Those function sequences involving literal parameters which are" },
-    {0, "discussed here behave as expected all compiled function blocks." },
+    {0, "discussed here behave as expected in all compiled function blocks." },
     {0, "The number of possible function sequences in this category is" },
     {0, "infinite; these examples were tested:" },
     {0, NULL }
@@ -196,7 +196,8 @@ static  text_phrase         page2_box[] = {
  * Globals Changed:
  *      cur_h_start contains the horizontal location of the next character after
  *          the last character displayed.
- *      cur_v_start is not altered.
+ *      cur_v_start contains the vertical location of the last text_line
+ *          output.
  *
  * Notes:
  *      This function is intended to provide some idea of what might be
@@ -530,7 +531,7 @@ static void emulate_wgml( void )
     if( bin_driver->y_positive == 0x00 ) {
         cur_v_start = page_top - max_line_height;
     } else {
-        cur_v_start = max_line_height;
+        cur_v_start = page_top + max_line_height;
     }
  
     fb_new_section( cur_v_start );
