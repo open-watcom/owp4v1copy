@@ -12,7 +12,7 @@ type  = remote_link
 
 extra_objs = $(nlm_objs)
 
-!include $(trap_dir)/lcl/nlm/nlm.mif
+!include $(trap_dir)/lcl/nlm/trap.mif
 !include $(trap_dir)/master.mif
 
 extra_c_flags += -d_USE_NEW_KERNEL
