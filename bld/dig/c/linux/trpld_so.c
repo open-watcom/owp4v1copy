@@ -50,8 +50,10 @@ extern  int          FullPathOpen( char const *name, char *ext, char *result, un
 extern  int          GetSystemHandle(int);
 
 static const trap_requests   *TrapFuncs;
-static void                  *TrapFile;
 static void                  (TRAPENTRY *FiniFunc)(void);
+#if !defined( BUILTIN_TRAP_FILE )
+static void                  *TrapFile;
+#endif
 
 const static trap_callbacks TrapCallbacks = {
     sizeof( trap_callbacks ),
@@ -72,9 +74,11 @@ void KillTrap( void )
     if( FiniFunc != NULL )
         FiniFunc();
     FiniFunc = NULL;
+#if !defined( BUILTIN_TRAP_FILE )
     if( TrapFile != 0 )
         dlclose( TrapFile );
     TrapFile = NULL;
+#endif
 }
 
 int PathOpenTrap( char const *name, unsigned len, char *ext, char *trap_name, int trap_name_len )
@@ -108,7 +112,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 #if !defined( BUILTIN_TRAP_FILE )
     TrapFile = dlopen( trap_name, RTLD_NOW );
     if( TrapFile == NULL ) {
-	puts( dlerror() );
+        puts( dlerror() );
         sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }

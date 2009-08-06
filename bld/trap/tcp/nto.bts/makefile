@@ -13,10 +13,13 @@ type  = remote_link
 
 builtin_trap = 1
 
+extra_objs = clibext.obj
+cl_libs = -lsocket
+
 !define substitute_linker
 
 !include $(trap_dir)/lcl/nto/trap.mif
 !include $(trap_dir)/master.mif
 
 $(target) : $(libs) $(objs) $(__MAKEFILES__)
-    $(cl) $(clflags) $(objs) -lsocket #$(cl_libs)
+    $(cl) $(clflags) $(objs) $(cl_libs)

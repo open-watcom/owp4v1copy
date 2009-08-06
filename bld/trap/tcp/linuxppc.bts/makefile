@@ -13,6 +13,8 @@ type  = remote_link
 
 builtin_trap = 1
 
+extra_objs = clibext.obj
+
 !define substitute_linker
 
 !include $(trap_dir)/lcl/linux/trap.mif

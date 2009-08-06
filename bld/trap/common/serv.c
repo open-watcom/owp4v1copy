@@ -35,6 +35,8 @@
 #include <ctype.h>
 #if defined(__WATCOMC__)
     #include <process.h>
+#else
+    #include "clibext.h"
 #endif
 #if defined(__AXP__) && defined(__NT__)
     #include <windows.h>
@@ -49,8 +51,8 @@
 extern trap_version     TrapVersion;
 static bool             OneShot;
 
-extern char  RWBuff[ 0x400 ];
-extern  char ServName[];
+extern char             RWBuff[ 0x400 ];
+extern char             ServName[];
 
 extern void             Output( char * );
 extern void             SayGNiteGracey( int );
@@ -101,11 +103,6 @@ void OpeningStatement( void )
     Output( banner3 "\r\n" );
     Output( banner3a "\r\n" );
 }
-
-#ifndef __WATCOMC__
-int  _argc;
-char **_argv;
-#endif
 
 int main( int argc, char **argv )
 {
