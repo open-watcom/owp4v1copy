@@ -11,8 +11,8 @@ which = SERVER
 
 extra_objs = &
         $(dosx_serv_objs) &
-        dosxrmod.obj &
         dosredir.obj &
+        dosxrmod.obj &
         rsiacc.obj &
         dbglib.obj &
         dbgliba.obj &

@@ -36,7 +36,6 @@
 #include "tinyio.h"
 #include "dbg386.h"
 #include "drset.h"
-#include "doshdl.h"
 #include "exedos.h"
 #include "exeos2.h"
 #include "exephar.h"
@@ -50,6 +49,7 @@
 #include "madregs.h"
 #include "x86cpu.h"
 #include "misc7086.h"
+#include "dosredir.h"
 
 typedef enum {
     EXE_UNKNOWN,
@@ -121,7 +121,6 @@ typedef enum {
 #define USR_FLAGS (FLG_C | FLG_P | FLG_A | FLG_Z | FLG_S | \
             FLG_I | FLG_D | FLG_O)
 
-extern void             InitRedirect(void);
 extern addr_seg         DbgPSP(void);
 extern long             DOSLoadProg(char far *, pblock far *);
 extern addr_seg         DOSTaskPSP(void);
@@ -144,7 +143,6 @@ extern void             Null87Emu( void );
 extern void             Read87EmuState( void far * );
 extern void             Write87EmuState( void far * );
 extern tiny_ret_t       FindFilePath( char *, char *, char * );
-extern unsigned         Redirect( bool );
 extern unsigned         ExceptionText( unsigned, char * );
 extern unsigned         StringToFullPath( char * );
 extern int              far NoOvlsHdlr( int, void * );
@@ -716,7 +714,7 @@ unsigned ReqProg_kill( void )
 
 out( "in AccKillProg\r\n" );
     ret = GetOutPtr( 0 );
-    InitRedirect();
+    RedirectFini();
     if( DOSTaskPSP() != NULL ) {
 out( "enduser\r\n" );
         EndUser();
@@ -1089,7 +1087,7 @@ out( "    done checking environment\r\n" );
     Null87Emu();
     NullOvlHdlr();
     TrapTypeInit();
-    InitRedirect();
+    RedirectInit();
     ExceptNum = -1;
     WatchCount = 0;
     ver.major = TRAP_MAJOR_VERSION;

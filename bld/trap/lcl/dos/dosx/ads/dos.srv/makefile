@@ -10,6 +10,7 @@ which = SERVER
 
 extra_objs = &
     $(dosx_serv_objs) &
+    dosredir.obj &
     adsacc.obj &
     adsintr.obj &
     dosxrmod.obj

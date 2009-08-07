@@ -59,12 +59,12 @@
 
 #include "x86cpu.h"
 #include "misc7086.h"
+#include "dosredir.h"
 
 TSF32   Proc;
 char    Break;
 
 extern  unsigned        ExceptionText( unsigned, char * );
-extern  void            InitRedirect(void);
 
 bool                    FakeBreak;
 bool                    AtEnd;
@@ -77,7 +77,6 @@ struct {
 static unsigned_8       RealNPXType;
 #define BUFF_SIZE       256
 char                    UtilBuff[BUFF_SIZE];
-#define NIL_DOS_HANDLE  ((short)0xFFFF)
 #define IsDPMI          (_d16info.swmode == 0)
 
 typedef struct watch {
@@ -105,8 +104,14 @@ int     WatchCount;
 #define _DBG( x )
 #endif
 
-extern void SetUsrTask() {}
-extern void SetDbgTask() {}
+int SetUsrTask( void )
+{
+    return( 1 );
+}
+
+void SetDbgTask( void )
+{
+}
 
 static unsigned short ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsigned short), addr48_ptr *addr, byte far *data, unsigned short req ) {
 
@@ -585,7 +590,7 @@ unsigned ReqProg_kill()
 
     _DBG1(( "AccKillProg\n" ));
     ret = GetOutPtr( 0 );
-    InitRedirect();
+    RedirectFini();
     AtEnd = TRUE;
     ret->err = 0;
     return( sizeof( *ret ) );
@@ -961,7 +966,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
     ver.remote = FALSE;
-    InitRedirect();
+    RedirectInit();
     RealNPXType = NPXType();
     WatchCount = 0;
     FakeBreak = FALSE;

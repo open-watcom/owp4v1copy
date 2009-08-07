@@ -48,6 +48,7 @@
 
 #include "x86cpu.h"
 #include "misc7386.h"
+#include "dosredir.h"
 
 extern bool     GrabVects( void );
 extern void     ReleVects( void );
@@ -122,8 +123,6 @@ char                    SavedByte;
 short                   InitialSS;
 short                   InitialCS;
 
-static int              SaveStdIn;
-static int              SaveStdOut;
 static unsigned         SaveMSW;
 static unsigned_8       RealNPXType;
 #define BUFF_SIZE       256
@@ -134,7 +133,6 @@ static bool             HavePSP;
 #define MAX_OBJECTS     128
 static unsigned long    ObjOffReloc[MAX_OBJECTS];
 
-#define NIL_DOS_HANDLE  ((short)0xFFFF)
 #define DBE_BASE        1000
 
 typedef struct watch {
@@ -173,6 +171,20 @@ typedef struct {
         long    vmflags;
         long    reserved[4];
 } memory_stats;
+
+int SetUsrTask( void )
+{
+    if( HavePSP ) {
+        SetPSP( _dil_global._chpsp );
+        return( 1 );
+    }
+    return( 0 );
+}
+
+void SetDbgTask( void )
+{
+    SetPSP( _dil_global._psp );
+}
 
 unsigned ReqGet_sys_config()
 {
@@ -715,8 +727,7 @@ unsigned ReqProg_kill()
 
     _DBG(("AccKillProg\r\n"));
     ret = GetOutPtr( 0 );
-    SaveStdIn = NIL_DOS_HANDLE;
-    SaveStdOut = NIL_DOS_HANDLE;
+    RedirectFini();
     AtEnd = TRUE;
     if( RealNPXType != X86_NO ) {
         /* mask ALL floating point exception bits */
@@ -984,70 +995,6 @@ unsigned ReqGet_next_alias()
     return( sizeof( *ret ) );
 }
 
-static unsigned Redirect( bool input )
-{
-    int             std_hndl;
-    int             *var;
-    int             handle;
-    char            *name;
-    redirect_stdout_ret *ret;
-
-    ret = GetOutPtr( 0 );
-    if( !HavePSP ) {
-        ret->err = 1;
-        return( sizeof( *ret ) );
-    }
-    SetPSP( _dil_global._chpsp );
-    name = GetInPtr( sizeof( redirect_stdout_req ) );
-    ret->err = 0;
-    if( input ) {
-        std_hndl = 0;
-        var = &SaveStdIn;
-    } else {
-        std_hndl = 1;
-        var = &SaveStdOut;
-    }
-    if( *name == '\0' ) {
-        if( *var != NIL_DOS_HANDLE ) {
-            if( dup2( *var, std_hndl ) == -1 ) {
-                ret->err = 1;
-            } else {
-                close( *var );
-                *var = NIL_DOS_HANDLE;
-            }
-        }
-    } else {
-        if( *var == NIL_DOS_HANDLE ) {
-            *var = dup( std_hndl );
-        }
-        if( input ) {
-            handle = open( name, O_BINARY | O_RDWR, 0 );
-        } else {
-            handle = open( name, O_BINARY | O_RDWR | O_TRUNC | O_CREAT, 0 );
-        }
-        if( handle == -1 ) {
-            ret->err = 1;
-        } else {
-            dup2( handle, std_hndl );
-            close( handle );
-        }
-    }
-    SetPSP( _dil_global._psp );
-    return( sizeof( *ret ) );
-}
-
-unsigned ReqRedirect_stdin()
-{
-    _DBG(("AccRedirectStdin\r\n"));
-    return( Redirect( TRUE ) );
-}
-
-unsigned ReqRedirect_stdout()
-{
-    _DBG(("AccRedirectStdOut\r\n"));
-    return( Redirect( FALSE ) );
-}
-
 unsigned ReqGet_err_text()
 {
     static char *DosErrMsgs[] = {
@@ -1120,8 +1067,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     ver.minor = TRAP_MINOR_VERSION;
     ver.remote = FALSE;
     //ver.is_32 = TRUE;
-    SaveStdIn = NIL_DOS_HANDLE;
-    SaveStdOut = NIL_DOS_HANDLE;
+    RedirectInit();
     SaveMSW = GetMSW();
     RealNPXType = NPXType();
     _8087 = 0;

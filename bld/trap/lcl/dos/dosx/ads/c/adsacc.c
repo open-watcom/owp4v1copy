@@ -46,10 +46,10 @@
 #include "dbg386.h"
 #include "ioports.h"
 #include "adslib.h"
-#include "doshdl.h"
 #include "madregs.h"
 #include "x86cpu.h"
 #include "misc7386.h"
+#include "dosredir.h"
 
 trap_cpu_regs   Regs;
 int             IntNum;
@@ -78,8 +78,6 @@ bool                    AtEnd;
 bool                    DoneAutoCAD;
 
 static unsigned_8       RealNPXType;
-static int              SaveStdIn;
-static int              SaveStdOut;
 #define BUFF_SIZE       256
 char                    UtilBuff[BUFF_SIZE];
 #define ADSSTACK_SIZE      4096
@@ -188,6 +186,15 @@ void MyOut( char *str, ... )
 }
 
 #endif
+
+int SetUsrTask( void )
+{
+    return( 1 );
+}
+
+void SetDbgTask( void )
+{
+}
 
 static  word    LookUp( word sdtseg, word seg, word global )
 {
@@ -584,8 +591,7 @@ unsigned ReqProg_kill()
     prog_kill_ret       *ret;
                                                                           _DBG1(( "AccKillProg" ));
     ret = GetOutPtr( 0 );
-    SaveStdIn = NIL_DOS_HANDLE;
-    SaveStdOut = NIL_DOS_HANDLE;
+    RedirectFini();
     AtEnd = TRUE;
     if( !DoneAutoCAD ) {
         AtEnd = TRUE;
@@ -787,62 +793,6 @@ unsigned ReqProg_step()
     return( ProgRun( TRUE ) );
 }
 
-static unsigned Redirect( bool input )
-{
-    int             std_hndl;
-    int             *var;
-    int             handle;
-    char            *name;
-    redirect_stdin_ret  *ret;
-
-    ret = GetOutPtr( 0 );
-    name = GetInPtr( sizeof( redirect_stdin_req ) );
-    ret->err = 0;
-    if( input ) {
-        std_hndl = 0;
-        var = &SaveStdIn;
-    } else {
-        std_hndl = 1;
-        var = &SaveStdOut;
-    }
-    if( *name == '\0' ) {
-        if( *var != NIL_DOS_HANDLE ) {
-            if( dup2( *var, std_hndl ) == -1 ) {
-                ret->err = 1;  // error!
-            } else {
-                close( *var );
-                *var = NIL_DOS_HANDLE;
-            }
-        }
-    } else {
-        if( *var == NIL_DOS_HANDLE ) {
-            *var = dup( std_hndl );
-        }
-        if( input ) {
-            handle = open( name, O_BINARY | O_RDWR, 0 );
-        } else {
-            handle = open( name, O_BINARY | O_RDWR | O_TRUNC | O_CREAT, 0 );
-        }
-        if( handle == -1 ) {
-            ret->err = 1;  // error!
-        } else {
-            dup2( handle, std_hndl );
-            close( handle );
-        }
-    }
-    return( sizeof( *ret ) );
-}
-
-unsigned ReqRedirect_stdin()
-{
-    return( Redirect( TRUE ) );
-}
-
-unsigned ReqRedirect_stdout()
-{
-    return( Redirect( FALSE ) );
-}
-
 #if 0
 static void DOSEnvLkup( char *src, char *dst )
 {
@@ -957,8 +907,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
     ver.remote = FALSE;
-    SaveStdIn = NIL_DOS_HANDLE;
-    SaveStdOut = NIL_DOS_HANDLE;
+    RedirectInit();
     RealNPXType = NPXType();
     WatchCount = 0;
     FakeBreak = FALSE;

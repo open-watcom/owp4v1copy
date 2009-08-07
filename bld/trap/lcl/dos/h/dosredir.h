@@ -30,4 +30,5 @@
 ****************************************************************************/
 
 
-#define         NIL_DOS_HANDLE  ((tiny_handle_t)-1)
+extern void RedirectInit( void );
+extern void RedirectFini( void );
