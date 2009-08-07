@@ -475,7 +475,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
                 AsmBuffer[start+i]->string_ptr = buff;
                 if( AsmGetSymbol( buff ) == NULL ) {
                     new_constant = TRUE;
-                    MakeLabel( buff, T_NEAR );
+                    MakeLabel( buff, MT_NEAR );
                 }
                 break;
             }
