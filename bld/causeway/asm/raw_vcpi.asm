@@ -8,7 +8,7 @@
 ;Main (Kernal) section for RAW/VCPI stuff. This holds the mode switch, interrupt
 ;simulator and low level memory managers etc.
 ;
-_cwRaw  segment para public 'raw kernal' use16
+_cwRaw  segment para public 'raw kernal code' use16
         assume cs:_cwRaw, ds:_cwRaw
 ;
 InWindows       db 0
@@ -892,7 +892,7 @@ notzeroth:
 ;       mov     ax,0DE05h               ;free 4k page.
 ;       call    VCPICall
 
-;       if      0
+;if 0
         push    edi
         push    es
         push    ds
@@ -913,7 +913,7 @@ notzeroth:
 
         pop     es
         pop     edi
-;       endif
+;endif
 
         pop     es
         pop     ds
@@ -946,7 +946,7 @@ rv12_3:
 ;       mov     ax,0DE05h               ;free 4k page.
 ;       call    VCPICall
 
-;       if      0
+;if 0
         push    edi
         push    es
         push    ds
@@ -967,7 +967,7 @@ rv12_3:
 
         pop     es
         pop     edi
-;       endif
+;endif
 
         pop     es
         pop     ds
@@ -985,7 +985,7 @@ rv12_9: ret
 VCPIRelExtended endp
 
 
-        if      0
+if 0
 ;-------------------------------------------------------------------------------
 ;
 ;Call VCPI entry point directly rather than via INT 67h.
@@ -1018,7 +1018,7 @@ VCPICall        proc    near
         pop     ebx
         ret
 VCPICall        endp
-        endif
+endif
 
 
 ;-------------------------------------------------------------------------------
@@ -1469,7 +1469,7 @@ rv23_ret:
         jmp     DWORD PTR cs:[OldInt2F]
         assume ds:_cwRaw
 
-        if      0
+if 0
         push    ax
         push    dx
         push    ds
@@ -1485,12 +1485,10 @@ rv23_ret:
 rv23_Old:
         jmp     DWORD PTR cs:[OldInt2F]
         assume ds:_cwRaw
-        endif
 
-        if      0
 WinMessage      db 'Cannot run Windows in enhanced mode while a CauseWay application is active.',13,10
         db 'Run Windows in standard mode or remove the CauseWay application.',13,10,'$'
-        endif
+endif
 
 OldInt2F        dd 0
 Int2FPatch      endp
@@ -2670,7 +2668,7 @@ _cwRaw  ends
 ;This gets moved into extended memory during initialisation to keep conventional
 ;memory foot print down.
 ;
-_cwDPMIEMU      segment para public 'DPMI emulator' use32
+_cwDPMIEMU      segment para public 'DPMI emulator code' use32
         assume cs:_cwDPMIEMU, ds:_cwDPMIEMU
 cwDPMIEMUStart  label byte
 

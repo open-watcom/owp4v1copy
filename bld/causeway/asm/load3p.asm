@@ -1205,7 +1205,7 @@ api89_NoSegMemRel:
         mov     fs,w[api89_PSP]
         mov     bx,WORD PTR fs:[EPSP_Struc.EPSP_Parent]
         pop     fs
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h
         mov     ebp,d[api89_SegMem]
 ;

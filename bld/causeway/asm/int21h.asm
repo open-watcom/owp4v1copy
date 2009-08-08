@@ -867,7 +867,7 @@ int2121_Ef4:
         ;
         ;Copy the FCB's
         ;
-        if      0
+if 0
         push    ecx
         push    esi
         push    edi
@@ -951,7 +951,7 @@ int2121_Ef9:
         pop     edi
         pop     esi
         pop     ecx
-        endif
+endif
 
         ;
         ;Sort out the environment.
@@ -1421,10 +1421,7 @@ int2129_1:
         jnz     int2129_1
         ret
 
-
-
-
-        if      0
+if 0
         mov     bx,[ebp+Int_BX]
         cmp     bx,WORD PTR fs:[PSP_Struc.PSP_Handles]  ;more or less?
         jz      int2129_sh0
@@ -1610,7 +1607,7 @@ int2129_sh0:
         and     al,1
         call    Int21hAL2Carry  ;Set carry.
         ret
-        endif
+endif
 Int21hSetHandles endp
 
 

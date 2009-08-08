@@ -1,6 +1,6 @@
         .386P
 
-_apiCode        segment para 'API CODE' use32
+_apiCode        segment para 'API code' use32
         assume cs:_apiCode, ds:_apiCode
 _apiCodeStart   label byte
 
@@ -4835,7 +4835,7 @@ api78_ChainPSP0:
 api78_ChainPSP1:
         popad
         ;
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h             ;set new PSP.
         ;
         ;Search for PSP's and release them first.
@@ -5080,7 +5080,7 @@ api78_psp_9:
         ;Switch back to the old PSP
         ;
         pop     bx
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h             ;go back to old PSP.
         ;
 api78_9:
@@ -5682,7 +5682,7 @@ api82_SkipCopy:
 ;
         cmp     d[api82_Flags],2                ;cwLoad?
         jz      api82_NoPSwitch0
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h             ;set new PSP.
 ;
 ;Set new DTA address.
@@ -5889,7 +5889,7 @@ api83_YesRelRes:
         mov     bx,WORD PTR es:[EPSP_Struc.EPSP_Parent]
         cmp     d[api83_Flags],2
         jz      api83_NoPRel
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h             ;restore old PSP.
 api83_NoPRel:
         mov     bx,es
@@ -6130,11 +6130,11 @@ api84_8:
         mov     ds,apiDSeg
         assume ds:_cwMain
         push    PSPSegment
-        mov     ah,51h
+        mov     ah,51h          ;get PSP
         int     21h
         push    bx
         mov     bx,BasePSP
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h
 ;
         assume ds:nothing
@@ -6149,7 +6149,7 @@ api84_8:
         mov     ds,cs:apiDSeg
         assume ds:_cwMain
         pop     bx
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h
         pop     PSPSegment
         assume ds:nothing
@@ -6295,7 +6295,7 @@ api85_imp5:
         assume ds:_cwMain
         push    PSPSegment
         mov     bx,BasePSP
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h
 ;
 ;Release module.
@@ -7627,7 +7627,7 @@ Bin2HexA        endp
 ;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 LosefileHandles proc near
 
-        if      0
+if 0
         push    ds
         push    es
         push    fs
@@ -7640,7 +7640,7 @@ LosefileHandles proc near
         les     di,DWORD PTR fs:[PSP_HandlePtr]
         mov     cx,WORD PTR fs:[PSP_Handles]
 
-        if      0
+  if 0
 api92_RelHandles:
         cmp     BYTE PTR es:[di],255
         jz      api92_NoRelHandle
@@ -7651,7 +7651,7 @@ api92_NoRelHandle:
         inc     di
         dec     cx
         jnz     api92_RelHandles
-        endif
+  endif
 
         mov     ax,fs
         mov     bx,es
@@ -7659,7 +7659,7 @@ api92_NoRelHandle:
         jz      api92_donehandles
         sys     RelMem
 
-        if      0
+  if 0
 ;
 ;Reduce real mode handle count.
 ;
@@ -7674,14 +7674,14 @@ api92_NoRelHandle:
         pop     es
         sys     IntXX
         sub     TotalHandles,20 ;update total handle count.
-        endif
+  endif
 
 api92_donehandles:
 
         pop     fs
         pop     es
         pop     ds
-        endif
+endif
 
         ret
         assume ds:_apiCode

@@ -1673,7 +1673,7 @@ load1_SegDone:
         mov     fs,w[load1_PSP]
         mov     bx,WORD PTR fs:[EPSP_Struc.EPSP_Parent]
         pop     fs
-        mov     ah,50h
+        mov     ah,50h          ;set PSP
         int     21h
         mov     ebp,d[load1_ObjMem]
 ;
@@ -1920,14 +1920,14 @@ ENDIF
         assume ds:nothing
         mov     ds,cs:apiDSeg
         assume ds:_cwMain
-        if      0
+if 0
         mov     b[ErrorM11_0+0]," "
         mov     b[ErrorM11_0+1]," "
         mov     b[ErrorM11_0+2]," "
         mov     ecx,8
         mov     edi,offset ErrorM11_1
         call    Bin2HexA
-        endif
+endif
         assume ds:_apiCode
         pop     ds
         mov     ax,2

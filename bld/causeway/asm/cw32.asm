@@ -43,7 +43,7 @@ f       equ     fword ptr
 ;Main code segment. This takes care of calling the right initialisation routines
 ;and generaly getting everything rolling.
 ;
-_cwMain segment para public 'Main thread' use16
+_cwMain segment para public 'Main code' use16
         assume cs:_cwMain, ds:_cwMain, ss:_cwStack
 ;
 ;Want a copyright message embedded first.
@@ -565,7 +565,7 @@ cw2_DPMI:
         mov     ds,cs:DataSegment
         assume ds:_cwMain
 
-        if      0
+if 0
         cmp     d[OldInt21hExec],0
         jz      cw2_d0
         mov     bl,21h
@@ -574,7 +574,7 @@ cw2_DPMI:
         mov     ax,201h
         int     31h
 cw2_d0: movzx   edx,dx
-        endif
+endif
 
         jmp     cw2_InRealMode
 ;
@@ -589,7 +589,7 @@ cw2_RealMode:
 ;
 cw2_InRealMode:
 
-        if      0
+if 0
         cmp     ErrorNumber,0
         jz      cw2_NoError
 
@@ -626,7 +626,7 @@ cw2_InRealMode:
 ;Now exit with the error number as the DOS "errorlevel".
 ;
 cw2_NoError:
-        endif
+endif
 
 ; MED, 12/24/99, coalesce free memory by attempting to allocate largest possible
 ;  with upper memory in the chain
@@ -3043,7 +3043,7 @@ cw5_DpmiInProtected:
 ;
 ;Patch INT 21h exec function to preserve the stack.
 ;
-        if      0
+if 0
         mov     bl,21h
         mov     ax,200h
         int     31h
@@ -3054,7 +3054,7 @@ cw5_DpmiInProtected:
         mov     bl,21h
         mov     ax,201h
         int     31h
-        endif
+endif
 ;
 ;Make right stuff addresable again.
 ;
@@ -3330,6 +3330,7 @@ cw5_pe0:
         mov     DWORD PTR es:[EPSP_Struc.EPSP_Links],80000000h
         mov     DWORD PTR es:[EPSP_Struc.EPSP_EntryCSEIP+4],0
         mov     WORD PTR es:[EPSP_Struc.EPSP_PSPSel],es
+        mov     BYTE PTR es:[EPSP_Struc.EPSP_FileName],0
         mov     BasePSP,es
         mov     bx,es
         sys     GetSelDet32
@@ -3754,7 +3755,7 @@ cw6_6:  jmp     cw6_RealMode
         .386
 cw6_DPMI:
 
-        if      0
+if 0
         assume ds:nothing
         mov     ds,cs:iDataSegment
         assume ds:_cwInit
@@ -3768,7 +3769,7 @@ cw6_DPMI:
         mov     ax,201h
         int     31h
 cw6_d0:
-        endif
+endif
 
         assume ds:nothing
         mov     ds,cs:iDataSegment

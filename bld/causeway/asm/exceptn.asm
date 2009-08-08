@@ -1,6 +1,6 @@
         .386P
 
-_Excep  segment para public 'code' use16
+_Excep  segment para public 'Exception code' use16
         assume cs:_Excep, ds:_Excep, es:nothing
 ExcepStart      label byte
 
