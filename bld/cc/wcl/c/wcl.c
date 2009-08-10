@@ -137,6 +137,7 @@ static const char *EnglishHelp[] = {
 NULL
 };
 
+
 typedef enum tool_type {
     TYPE_ASM,
     TYPE_C,
@@ -963,17 +964,16 @@ static  int  CompLink( void )
         end = FindNextWS( p );
         if( *end != '\0' ) {
             *(end++) = 0;
-            if( *end == ' ' ) end++;
+            if( *end == ' ' ) {
+                end++;
+            }
         }
         UnquoteFName( Word, MAX_CMD, p ); /* Word has MAX_CMD characters allocated */
-
         utl = SrcName( Word );          /* if no extension, assume .c */
-
         file = GetName( Word );         /* get first matching filename */
         path = MakePath( Word );        /* isolate path portion of filespec */
         while( file != NULL ) {         /* while more filenames: */
             BuildQuotedFName( Word, MAX_CMD, path, file, "\"" );
-
             if( !FileExtension( Word, OBJ_EXT ) &&  /* if not .obj or .o, compile */
                 !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                 rc = tool_exec( utl, Word, CC_Opts );
@@ -981,13 +981,15 @@ static  int  CompLink( void )
                     errors_found = 1;
                 }
                 p = strrchr( file, '.' );
-                if( p != NULL )  *p = NULLCHAR;
+                if( p != NULL )
+                    *p = NULLCHAR;
                 strcpy( Word, file );
             }
             AddName( Word, Fp );
             if( Exe_Name[0] == '\0' ) {
                 p = strrchr( Word, '.' );
-                if( p != NULL )  *p = NULLCHAR;
+                if( p != NULL )
+                    *p = NULLCHAR;
                 strcpy( Exe_Name, Word );
             }
             file = GetName( NULL );     /* get next filename */
@@ -1001,7 +1003,7 @@ static  int  CompLink( void )
     } else {
         rc = 0;
         BuildLinkFile();
-        if( ( Obj_List != NULL || Flags.do_link ) && Flags.no_link == FALSE ) {
+        if(( Obj_List != NULL || Flags.do_link ) && Flags.no_link == FALSE ) {
             rc = tool_exec( TYPE_LINK, Temp_Link, NULL );
             if( rc == 0 && Flags.do_cvpack ) {
                 rc = tool_exec( TYPE_PACK, Exe_Name, NULL );
@@ -1063,39 +1065,39 @@ int  main( void )
     p = SkipSpaces( p );
     if( *p == NULLCHAR || strncmp( p, "? ", 2 ) == NULL ) {
         Usage();
-        return( 1 );
-    }
-
-    Temp_Link = TEMPFILE;
-    errno = 0; /* Standard C does not require fopen failure to set errno */
-    if( (Fp = fopen( &Temp_Link[ 1 ], "w" )) == NULL ) {
-        /* Message before banner decision as '@' option uses Fp in Parse() */
-        PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], Temp_Link + 1,
-            strerror( errno ) );
-        return( 1 );
-    }
-    Map_Name = NULL;
-    Obj_Name = NULL;
-    Directive_List = NULL;
-    initialize_Flags();
-    rc = Parse( Cmd );
-
-    if( rc == 0 ) {
-        if( !Flags.be_quiet ) {
-            print_banner();
-        }
-        rc = CompLink();
-    }
-    if( rc == 1 ) {
-        fclose( Fp );
-    }
-    if( Link_Name != NULL ) {
-        if( stricmp( Link_Name, &Temp_Link[ 1 ] ) != 0 ) {
-            remove( Link_Name );
-            rename( &Temp_Link[ 1 ], Link_Name );
-        }
+        rc = 1;
     } else {
-        remove( &Temp_Link[ 1 ] );
+        Temp_Link = TEMPFILE;
+        errno = 0; /* Standard C does not require fopen failure to set errno */
+        if( (Fp = fopen( &Temp_Link[ 1 ], "w" )) == NULL ) {
+            /* Message before banner decision as '@' option uses Fp in Parse() */
+            PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], Temp_Link + 1,
+                strerror( errno ) );
+            rc = 1;
+        } else {
+            Map_Name = NULL;
+            Obj_Name = NULL;
+            Directive_List = NULL;
+            initialize_Flags();
+            rc = Parse( Cmd );
+            if( rc == 0 ) {
+                if( !Flags.be_quiet ) {
+                    print_banner();
+                }
+                rc = CompLink();
+            }
+            if( rc == 1 ) {
+                fclose( Fp );
+            }
+            if( Link_Name != NULL ) {
+                if( stricmp( Link_Name, &Temp_Link[ 1 ] ) != 0 ) {
+                    remove( Link_Name );
+                    rename( &Temp_Link[ 1 ], Link_Name );
+                }
+            } else {
+                remove( &Temp_Link[ 1 ] );
+            }
+        }
     }
     return( rc == 0 ? 0 : 1 );
 }

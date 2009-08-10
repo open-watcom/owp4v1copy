@@ -274,9 +274,9 @@ static char *xlate_fname( char *name )
     char    *run = name;
 
     while( *run ) {
-    if( *run == '/' )
-        *run = '\\';
-    run++;
+        if( *run == '/' )
+            *run = '\\';
+        run++;
     }
 #endif
     return( name );
@@ -896,7 +896,7 @@ static int tool_exec( tool_type utl, char *p1, char *p2 )
 /*******************************************************/
 {
     int     rc;
-    
+
     FindToolPath( utl );
     if( !Flags.be_quiet ) {
         if( utl == TYPE_DIS ) {
@@ -1006,7 +1006,6 @@ static  int  CompLink( void )
     for( d_list = Directive_List; d_list; d_list = d_list->next ) {
         Fputnl( d_list->directive, Fp );
     }
-
     Word = MemAlloc( MAX_CMD );
     errors_found = 0;                   /* 21-jan-92 */
     p = Files;
@@ -1024,7 +1023,6 @@ static  int  CompLink( void )
         }
         strcpy( Word, p );
         utl = SrcName( Word );      /* if no extension, assume .c */
-
         file = GetName( Word );         /* get first matching filename */
         path = MakePath( Word );        /* isolate path portion of filespec */
         while( file != NULL ) {         /* while more filenames: */
@@ -1094,7 +1092,7 @@ static  int  CompLink( void )
     } else {
         rc = 0;
         BuildLinkFile();
-        if( ( Obj_List != NULL || Flags.do_link ) && Flags.no_link == FALSE ) {
+        if(( Obj_List != NULL || Flags.do_link ) && Flags.no_link == FALSE ) {
             rc = tool_exec( TYPE_LINK, Temp_Link, NULL );
             if( rc == 0 && Flags.do_cvpack ) {
                 rc = tool_exec( TYPE_PACK, Exe_Name, NULL );
@@ -1104,7 +1102,7 @@ static  int  CompLink( void )
             }
         }
     }
-    if( Word ) {
+    if( Word != NULL ) {
         free( Word );
         Word = NULL;
     }
