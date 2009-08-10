@@ -42,11 +42,23 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#ifndef __UNIX__
+#ifdef __UNIX__
+  #include <dirent.h>
+#else
   #include <direct.h>
 #endif
 #include <process.h>
 #include <malloc.h>
+#include <fnmatch.h>
+#include "pathgrp.h"
+
+#if defined( __UNIX__ )
+  #define OBJ_EXT       ".o"          // object file extension
+  #define EXE_EXT       ""            // executable file extension
+#else
+  #define OBJ_EXT       ".obj"        // object file extension
+  #define EXE_EXT       ".exe"        // executable file extension
+#endif
 
 /* forward declarations */
 static  void    Usage( void );
@@ -60,45 +72,35 @@ static  void    AddName( char *name, FILE *link_fp );
 
 
 #if _CPU == 386
-  #define _CmpName        "wfc386"        // compiler name
-  #define _CmpExeName     "wfc386.exe"    // compiler executable file name
-  #define _LnkTmpFile     "@_WFL386_.LNK" // temporary linker directive file
-  #define _WCLEnv         "WFL386"        // "wcl" environment variable
+  #define WFC           "wfc386"        // compiler name
+  #define WCLENV        "WFL386"        // "wcl" environment variable
 #elif _CPU == 8086
-  #define _CmpName        "wfc"           // copmiler name
-  #define _CmpExeName     "wfc.exe"       // compiler exe file name
-  #define _LnkTmpFile     "@__WFL__.LNK"  // temporary linker directive file
-  #define _WCLEnv         "WFL"           // "wcl" environment variable
+  #define WFC           "wfc"           // copmiler name
+  #define WCLENV        "WFL"           // "wcl" environment variable
 #elif _CPU == _AXP
-  #define _CmpName        "wfcaxp"         // copmiler name
-  #define _CmpExeName     "wfcaxp.exe"     // compiler exe file name
-  #define _LnkTmpFile     "@_WFLAXP_.LNK"// temporary linker directive file
-  #define _WCLEnv         "WFLAXP"         // "wcl" environment variable
+  #define WFC           "wfcaxp"        // copmiler name
+  #define WCLENV        "WFLAXP"        // "wcl" environment variable
 #elif _CPU == _PPC
-  #define _CmpName        "wfcppc"         // copmiler name
-  #define _CmpExeName     "wfcppc.exe"     // compiler exe file name
-  #define _LnkTmpFile     "@_WFLPPC_.LNK"// temporary linker directive file
-  #define _WCLEnv         "WFLPPC"         // "wcl" environment variable
+  #define WFC           "wfcppc"        // copmiler name
+  #define WCLENV        "WFLPPC"        // "wcl" environment variable
 #else
   #error Unknown OS/CPU
 #endif
 
-#if defined( __QNX__ )
-  #define _ObjExtn        ".o"          // object file extension
-#else
-  #define _ObjExtn        ".obj"        // object file extension
-#endif
-
-#define _LnkName        "wlink"         // linker name
-#define _LnkExeName     "wlink.exe"     // linker executable file name
-
-#define _CVPName        "cvpack"        // Codeview pack name
-#define _CVPExeName     "cvpack.exe"    // Codeview pack executable file name
+#define LINK            "wlink"         // linker name
+#define TEMPFILE        "__wfl__.lnk"   // temporary linker directive file
 
 #define NULL_STR        ""
 #define NULLCHAR        '\0'
 #define ATTR_MASK       _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
                                         // mask for illegal file types
+
+#ifdef __UNIX__
+#define ISVALIDENTRY(x) (1)
+#else
+#define ISVALIDENTRY(x) ((x->d_attr & (ATTR_MASK)) == 0 )
+#endif
+
 #define TRUE            1
 #define FALSE           0
 
@@ -117,11 +119,9 @@ static  char    *Word;                  // one parameter
 static  char    Files[MAX_CMD];         // list of filenames from Cmd
 static  char    Libs[MAX_CMD];          // list of libraries from Cmd
 static  char    CmpOpts[MAX_CMD];       // list of compiler options from Cmd
-static  char    CmpPath[_MAX_PATH];     // path for compiler executable file
-static  char    LinkPath[_MAX_PATH];    // path for linker executable file
+static  char    PathBuffer[_MAX_PATH];  // path for compiler or linker executable file
 static  FILE    *Fp;                    // file pointer for TempFile
 static  char    *LinkName;              // name for TempFile if /fd specified
-static  char    *TempFile;              // temporary linker directive file
 static  list    *ObjList;               // linked list of object filenames
 static  char    SwitchChars[3];         // valid switch characters
 static  char    ExeName[_MAX_PATH];     // name of executable
@@ -163,6 +163,23 @@ static  struct flags {
 #else
     #error Unknown System
 #endif
+
+typedef enum tool_type {
+    TYPE_FOR,
+    TYPE_LINK,
+    TYPE_PACK,
+    TYPE_MAX
+} tool_type;
+
+static struct {
+    char *name;
+    char *exename;
+    char *path;
+} tools[ TYPE_MAX ] = {
+    { WFC,      WFC EXE_EXT,        NULL },
+    { LINK,     LINK EXE_EXT,       NULL },
+    { "cvpack", "cvpack" EXE_EXT,   NULL }
+};
 
 
 static  void    wfl_exit( int rc ) {
@@ -233,7 +250,11 @@ void    main( int argc, char *argv[] ) {
 
     CmpOpts[0] = '\0';
 
+#ifdef __UNIX__
+    SwitchChars[0] = '-';
+#else
     SwitchChars[0] = '/';
+#endif
     SwitchChars[1] = '-';
     SwitchChars[2] = '\0';
 
@@ -243,7 +264,7 @@ void    main( int argc, char *argv[] ) {
     // add "wcl" environment variable to "Cmd" unless "/y" is specified
     // in "Cmd" or the "wcl" environment string
 
-    wcl_env = getenv( _WCLEnv );
+    wcl_env = getenv( WCLENV );
     if( wcl_env != NULL ) {
         strcpy( Cmd, wcl_env );
         strcat( Cmd, " " );
@@ -269,29 +290,28 @@ void    main( int argc, char *argv[] ) {
         Usage();
         wfl_exit( 1 );
     }
-    TempFile = _LnkTmpFile;
-    Fp = fopen( &TempFile[1], "w" );
+    Fp = fopen( TEMPFILE, "w" );
     if( Fp == NULL ) {
         PrintMsg( CL_ERROR_OPENING_TMP_FILE );
         wfl_exit( 1 );
     }
     ObjName = NULL;
     rc = Parse();
-    FindPath( _CmpExeName, CmpPath );
     if( rc == 0 ) {
         if( !Flags.quiet ) {
             PrtBanner();
         }
         rc = CompLink();
     }
-    if( rc == 1 ) fclose( Fp );
+    if( rc == 1 )
+        fclose( Fp );
     if( LinkName != NULL ) {
-        if( stricmp( LinkName, &TempFile[1] ) != 0 ) {
+        if( stricmp( LinkName, TEMPFILE ) != 0 ) {
             remove( LinkName );
-            rename( &TempFile[1], LinkName );
+            rename( TEMPFILE, LinkName );
         }
     } else {
-        remove( &TempFile[1] );
+        remove( TEMPFILE );
     }
     wfl_exit( rc == 0 ? 0 : 1 );
 }
@@ -386,8 +406,7 @@ static  int     Parse( void ) {
                     switch( tolower( Word[0] ) ) {
                     case 'd':   // name of linker directive file
                         if( Word[1] == '\0' ) {
-                            LinkName = _LnkTmpFile;
-                            ++LinkName;     // skip over '@'
+                            LinkName = TEMPFILE;
                             cmp_option = 0;
                         } else if( (Word[1] == '=') || (Word[1] == '#') ) {
                             MakeName( Word, ".lnk" );    // add extension
@@ -565,75 +584,157 @@ static int     IsOption( char *cmd, int cmd_len, char *opt ) {
 }
 
 
-static  char    *MakePath( char *path ) {
-//=======================================
+/*
+ * THIS FUNCTION IS NOT RE-ENTRANT!
+ *
+ * It returns a pointer to a character string, after doing wildcard
+ * substitutions. It returns NULL when there are no more substitutions
+ * possible.
+ *
+ * DoWildCard behaves similarly to strtok.  You first pass it a pointer
+ * to a substitution string. It checks if the string contains wildcards,
+ * and if not it simply returns this string. If the string contains
+ * wildcards, it attempts an opendir with the string path.
+ *
+ * If you pass DoWildCard a NULL pointer, it reads the next normal file
+ * from the directory, and returns the filename.
+ *
+ * If there are no more files in the directory, or no directory is open,
+ * DoWildCard returns NULL.
+ *
+ */
 
-    char    *p;
+static DIR  *parent = NULL;  /* we need this across invocations */
+static char *path = NULL;
+static char *pattern = NULL;
 
-    p = strrchr( path ,'\\' );
-    if( p != NULL ) {
-        p[1] = NULLCHAR;
-    } else {
-        p = strchr( path, ':' );
-        if( p != NULL ) {
-            p[1] = NULLCHAR;
-        } else {
-            *path = NULLCHAR;
-        }
+void DoWildCardClose( void )
+/*********************************/
+{
+    if( path != NULL ) {
+        free( path );
+        path = NULL;
     }
-    return( strdup( path ) );
+    if( pattern != NULL ) {
+        free( pattern );
+        pattern = NULL;
+    }
+    if( parent != NULL ) {
+        closedir( parent );
+        parent = NULL;
+    }
 }
 
+const char *DoWildCard( const char *base )
+/***********************************************/
+{
+    PGROUP          pg;
+    struct dirent   *entry;
 
-static  char    *GetName( char *path ) {
-//======================================
-
-#ifndef __UNIX__
-    static      DIR     *dirp;
-    struct      dirent  *direntp;
-
-    if( path != NULL ) {                /* if given a filespec to open,  */
-        if( *path == NULLCHAR ) {       /*   but filespec is empty, then */
-            closedir( dirp );           /*   close directory and return  */
-            return( NULL );             /*   (for clean up after error)  */
+    if( base != NULL ) {
+        /* clean up from previous invocation */
+        DoWildCardClose();
+        if( strpbrk( base, "*?" ) == NULL ) {
+            return( base );
         }
-        dirp = opendir( path );         /* try to find matching filenames */
-        if( dirp == NULL ) {
-            PrintMsg( CL_UNABLE_TO_OPEN, path );
+        // create directory name and pattern
+        path = MemAlloc( _MAX_PATH );
+        pattern = MemAlloc( _MAX_PATH );
+        strcpy( path, base );
+        _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+        _makepath( path, pg.drive, pg.dir, ".", NULL );
+        // create file name pattern
+        _makepath( pattern, NULL, NULL, pg.fname, pg.ext );
+        parent = opendir( path );
+        if( parent == NULL ) {
+            DoWildCardClose();
             return( NULL );
         }
     }
-
-    while( ( direntp = readdir( dirp ) ) != NULL ) {
-        if( ( direntp->d_attr & ATTR_MASK ) == 0 ) {    /* valid file? */
-            return( direntp->d_name );
+    if( parent == NULL ) {
+        return( NULL );
+    }
+    while( (entry = readdir( parent )) != NULL ) {
+        if( ISVALIDENTRY( entry ) ) {
+            if( fnmatch( pattern, entry->d_name, FNM_PATHNAME | FNM_PERIOD | FNM_NOESCAPE ) == 0 ) {
+                break;
+            }
         }
     }
-    closedir( dirp );
-    return( NULL );
-#else
-    char *name;
-    if ( path == NULL )
-            return NULL;
-    name = strrchr(path, '/');
-    if ( name == NULL )
-        name = path;
-    else
-        name++;
-    return ( strdup(name) );
-#endif
+    if( entry == NULL ) {
+        DoWildCardClose();
+        return( NULL );
+    }
+    _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+    _makepath( path, pg.drive, pg.dir, entry->d_name, NULL );
+    return( path );
 }
 
+static char *FindToolPath( tool_type utl )
+/****************************************/
+{
+    if( tools[utl].path == NULL ) {
+        FindPath( tools[utl].exename, PathBuffer );
+        tools[utl].path = MemAlloc( strlen( PathBuffer ) + 1 );
+        strcpy( tools[utl].path, PathBuffer );
+    }
+    return( tools[utl].path );
+}
+
+static int tool_exec( tool_type utl, char *p1, char *p2 )
+/*******************************************************/
+{
+    int     rc;
+    
+    FindToolPath( utl );
+    if( !Flags.quiet ) {
+        fputs( "\t", stdout );
+        fputs( tools[utl].name, stdout );
+        fputs( " ", stdout );
+        fputs( p1, stdout );
+        if( p2 != NULL ) {
+            fputs( " ", stdout );
+            fputs( p2, stdout );
+        }
+        fputs( "\n", stdout );
+    }
+    fflush( NULL );
+    if( p2 == NULL ) {
+        rc = spawnlp( P_WAIT, tools[utl].path, tools[utl].name, p1, NULL );
+    } else {
+        rc = spawnlp( P_WAIT, tools[utl].path, tools[utl].name, p1, p2, NULL );
+    }
+    if( rc != 0 ) {
+        if( (rc == -1) || (rc == 255) ) {
+            if( utl == TYPE_LINK ) {
+                PrintMsg( CL_UNABLE_TO_INVOKE_LINKER );
+            } else if( utl == TYPE_PACK ) {
+                PrintMsg( CL_UNABLE_TO_INVOKE_CVPACK );
+            } else {
+                PrintMsg( CL_UNABLE_TO_INVOKE_COMPILER );
+            }
+        } else {
+            if( utl == TYPE_LINK ) {
+                PrintMsg( CL_BAD_LINK );
+            } else if( utl == TYPE_PACK ) {
+                PrintMsg( CL_BAD_LINK );
+            } else {
+                PrintMsg( CL_BAD_COMPILE, p1 );
+            }
+        }
+    }
+    return( rc );
+}
 
 static  int     CompLink( void ) {
 //================================
 
     int         rc;
     char        *p;
-    char        *file;
-    char        *path;
+    const char  *file;
     int         comp_err;
-
+    PGROUP      pg;
+    
     if( Flags.quiet ) {
         Fputnl( "option quiet", Fp );
     }
@@ -644,6 +745,8 @@ static  int     CompLink( void ) {
     } else {
 #if defined( __QNX__ )
         Fputnl( "system qnx", Fp );
+#elif defined( __LINUX__ )
+        Fputnl( "system linux", Fp );
 #elif _CPU == 386
     #if defined( __OS2__ )
         Fputnl( "system os2v2", Fp );
@@ -679,48 +782,36 @@ static  int     CompLink( void ) {
     while( p != NULL ) {
         strcpy( Word, p );
         MakeName( Word, ".for" );   // if no extension, assume ".for"
-
-        file = GetName( Word );     // get first matching filename
-        path = MakePath( Word );    // isolate path portion of filespec
+        file = DoWildCard( Word );
         while( file != NULL ) {     // while more filenames:
-            strcpy( Word, path );
-            strcat( Word, file );
+            strcpy( Word, file );
+#ifndef __UNIX__
             strlwr( Word );
-            if( strstr( Word, _ObjExtn ) == NULL ) {  // if not object, compile
-                if( !Flags.quiet ) {
-                    fputs( "        " _CmpName " ", stdout );
-                    fputs( Word, stdout );
-                    fputs( " ", stdout );
-                    puts( CmpOpts );
-                    fflush( stdout );
-                }
-                rc = spawnlp( P_WAIT, CmpPath, _CmpName, Word, CmpOpts, NULL );
+#endif
+            _splitpath2( Word, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+            if( strcmp( pg.ext, OBJ_EXT ) != 0 ) {  // if not object, compile
+                rc = tool_exec( TYPE_FOR, Word, CmpOpts );
                 if( rc != 0 ) {
                     comp_err = TRUE;
                     if( ( rc == -1 ) || ( rc == 255 ) ) {
-                        PrintMsg( CL_UNABLE_TO_INVOKE_COMPILER );
-                        GetName( NULL_STR );
-                        return( 1 );
-                    } else {
-                        PrintMsg( CL_BAD_COMPILE, Word );
+                        rc = 1;
+                        break;
                     }
                 }
-                strcpy( Word, file );
-                strlwr( Word );
             }
-            p = strrchr( Word, '.' );
-            if( p != NULL ) *p = NULLCHAR;
-
+            _makepath( Word, NULL, NULL, pg.fname, NULL );
             if( ExeName[0] == '\0' ) {
                 fputs( "name ", Fp );
                 Fputnl( Word, Fp );
                 strcpy( ExeName, Word );
             }
-            AddName( Word, Fp );
+            _makepath( Word, NULL, NULL, pg.fname, OBJ_EXT );
+            AddName( Word, Fp );        // add obj filename
 
-            file = GetName( NULL );     // get next filename
+            file = DoWildCard( NULL );  // get next filename
         }
-        p = strtok( NULL, " " );    // get next filespec
+        DoWildCardClose();
+        p = strtok( NULL, " " );        // get next filespec
     }
     if( Libs[0] != '\0' ) {
         fputs( "library", Fp );
@@ -728,35 +819,21 @@ static  int     CompLink( void ) {
     }
     fclose( Fp );   // close TempFile
 
-    if( ( ObjList != NULL ) && !Flags.no_link && !comp_err ) {
-        FindPath( _LnkExeName, LinkPath );
-        if( !Flags.quiet ) {
-            puts( NULL_STR );
-        }
-        fflush( stdout );
-        rc = spawnlp( P_WAIT, LinkPath, _LnkName, TempFile, NULL );
-        if( rc != 0 ) {
-            if( ( rc == -1 ) || ( rc == 255 ) ) {
-                PrintMsg( CL_UNABLE_TO_INVOKE_LINKER );
-            } else {
-                PrintMsg( CL_BAD_LINK );
+    if( comp_err ) {
+        rc = 1;
+    } else {
+        rc = 0;
+        if( ( ObjList != NULL ) && !Flags.no_link ) {
+            rc = tool_exec( TYPE_LINK, "@" TEMPFILE, NULL );
+            if( rc == 0 && Flags.do_cvpack ) {
+                rc = tool_exec( TYPE_PACK, ExeName, NULL );
             }
-            return( 2 );    // return 2 to show Temp_File already closed
-        }
-        if( Flags.do_cvpack ){
-            FindPath( _CVPExeName, LinkPath );
-            rc = spawnlp( P_WAIT, LinkPath, _CVPName, ExeName, NULL );
             if( rc != 0 ) {
-                if( rc == -1  ||  rc == 255 ) {
-                    PrintMsg( CL_UNABLE_TO_INVOKE_CVPACK );
-                } else {
-                    PrintMsg( CL_BAD_CVPACK );
-                }
-                return( 2 );  /* return 2 to show Temp_File already closed */
+                rc = 2;    // return 2 to show Temp_File already closed
             }
         }
     }
-    return( 0 );
+    return( rc );
 }
 
 
@@ -771,9 +848,12 @@ static  void    Fputnl( char *text, FILE *fptr ) {
 static  void    MakeName( char *name, char *ext ) {
 //=================================================
 
-    if( strrchr( name, '.' ) <= strstr( name, "\\" ) ) {
-        strcat( name, ext );
-    }
+    PGROUP  pg;
+    
+    _splitpath2( name, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+    if( pg.ext == '\0' )
+        pg.ext = ext;
+    _makepath( name, pg.drive, pg.dir, pg.fname, pg.ext );
 }
 
 
@@ -784,14 +864,8 @@ static  void    AddName( char *name, FILE *link_fp ) {
     list        *last_name;
     list        *new_name;
     char        path[_MAX_PATH];
-    char        buff1[_MAX_PATH2];
-    char        buff2[_MAX_PATH2];
-    char        *drive;
-    char        *dir;
-    char        *fname;
-    char        *ext1;
-    char        *ext2;
-    char        *extension;
+    PGROUP      pg1;
+    PGROUP      pg2;
 
     curr_name = ObjList;
     while( curr_name != NULL ) {
@@ -810,15 +884,17 @@ static  void    AddName( char *name, FILE *link_fp ) {
     fputs( "file ", link_fp );
     if( ObjName != NULL ) {
         // construct full name of object file from ObjName information
-        _splitpath2( ObjName, buff1, &drive, &dir, &fname, &ext1 );
-        extension = ext1;
-        if( ext1[0] == '\0' ) extension = _ObjExtn;
-        if( ( fname[0] == '\0' ) ||
-            ( ( fname[0] == '*' ) && ( fname[1] == '\0' ) ) ) {
-            _splitpath2( name, buff2, NULL, NULL, &fname, &ext2 );
-            if( ext2[0] != '\0' ) extension = ext2;
+        _splitpath2( ObjName, pg1.buffer, &pg1.drive, &pg1.dir, &pg1.fname, &pg1.ext );
+        if( pg1.ext[0] == '\0' )
+            pg1.ext = OBJ_EXT;
+        if( ( pg1.fname[0] == '\0' ) ||
+            ( ( pg1.fname[0] == '*' ) && ( pg1.fname[1] == '\0' ) ) ) {
+            _splitpath2( name, pg2.buffer, NULL, NULL, &pg1.fname, &pg2.ext );
+            if( pg2.ext[0] != '\0' ) {
+                pg1.ext = pg2.ext;
+            }
         }
-        _makepath( path, drive, dir, fname, extension );
+        _makepath( path, pg1.drive, pg1.dir, pg1.fname, pg1.ext );
         name = path;
     }
     Fputnl( name, link_fp );

@@ -12,7 +12,9 @@ wfl_autodepends = .AUTODEPEND
 
 inc_dirs=-I"../h" -I"../../wfc/h" -I"../../h" -I"$(comp_cfg_dir)/h"
 
-extra_c_flags = -d__WFL__
+extra_c_flags = -D__WFL__
+
+extra_l_flags = op map
 
 .c: ../c;../../wfc/c;../../c
 
