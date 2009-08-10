@@ -51,9 +51,7 @@
 #elif defined( __LINUX__ )
     #include <dirent.h>
     #include <unistd.h>
-    #if !defined( __WATCOMC__ ) // Remove when OW clib implements fnmatch
-        #include <fnmatch.h>
-    #endif
+    #include <fnmatch.h>
 #elif defined( __UNIX__ )
     #include <dirent.h>
     #include <unistd.h>
@@ -684,8 +682,7 @@ static bool setFileList( gui_window *gui, char *ext )
                         isrdonly( dent, path ) ) {
                         continue;
                     }
-#if defined(__QNX__) || (defined( __UNIX__ ) && !defined( __WATCOMC__))
-                    // FIXME: implement fnmatch() for Linux.
+#if defined( __UNIX__ ) || defined( __NETWARE__ )
                     if( fnmatch( ptr, dent->d_name, FNM_PATHNAME ) != 0 ) {
                         continue;
                     }
