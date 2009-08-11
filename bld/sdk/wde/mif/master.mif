@@ -4,6 +4,8 @@ name = wde
 .EXTENSIONS: .res
 .EXTENSIONS: .rc
 
+wde_winver =
+
 sys_windowed = 1
 
 memory_model_i86 = l

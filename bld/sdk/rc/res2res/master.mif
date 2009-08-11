@@ -17,7 +17,6 @@ objs =             &
         m2wres.obj &
         param.obj &
         res2res.obj &
-        swchar.obj &
         w2mres.obj
 
 objs += trmemcvr.obj trmem.obj

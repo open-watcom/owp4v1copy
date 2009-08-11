@@ -29,7 +29,7 @@ TRMEM = -dTRMEM -of+
 .h : ..\h;$(TRMEM_DIR)
 
 OBJS = bincmp.obj cmpcont.obj cmpfiles.obj cmpres.obj global.obj &
-       layer0.obj param.obj rescmp.obj swchar.obj &
+       layer0.obj param.obj rescmp.obj &
        trmem.obj trmemcvr.obj
 
 .BEFORE

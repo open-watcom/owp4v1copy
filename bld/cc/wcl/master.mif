@@ -9,9 +9,6 @@ wcl_autodepends = .AUTODEPEND
 !include defrule.mif
 
 objs = wcl.obj clcommon.obj cmdlhelp.obj
-!ifeq host_os dos
-objs += swchar.obj
-!endif
 
 extra_c_flags = -s
 
@@ -39,7 +36,6 @@ name = owcc.elf
 name = owcc.exe
 !endif
 !endif
-extra_c_flags_swchar = -I"../../h;../../dos386.i86" -I"$(comp_cfg_dir)/h"
 extra_c_flags_owcc   = -I"$(posix_dir)/h"
 extra_c_flags_getopt = -I"$(posix_dir)/h"
 extra_c_flags_quit   = -I"$(posix_dir)/h"

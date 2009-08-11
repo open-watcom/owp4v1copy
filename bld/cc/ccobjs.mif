@@ -61,7 +61,6 @@ common_objs = &
     cutil.obj &
     ftoa.obj &
     strsave.obj &
-    swchar.obj &
     watcom.obj &
     cgetch.obj &
     cmacadd.obj &

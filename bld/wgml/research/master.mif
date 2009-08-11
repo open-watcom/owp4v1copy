@@ -22,8 +22,7 @@ common_objs = &
             common.obj    &
             dfinterp.obj  &
             heapchk.obj   &
-            research.obj  &
-            swchar.obj
+            research.obj
  
 cf_common_objs = &
             $(common_objs) &

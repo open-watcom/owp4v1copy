@@ -23,7 +23,6 @@ objs =               &
          global.obj &
          layer0.obj &
          param.obj &
-         swchar.obj &
          wresdmp.obj
 
 objs += trmemcvr.obj trmem.obj

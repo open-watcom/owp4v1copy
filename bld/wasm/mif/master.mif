@@ -84,8 +84,7 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     asmjump.obj         &
     autodept.obj        &
     queues.obj          &
-    finger.obj          &
-    swchar.obj
+    finger.obj
 
 proj_obj += $(trmem_objs)
 

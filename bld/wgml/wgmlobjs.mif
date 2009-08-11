@@ -23,8 +23,7 @@ common_objs =  &
         gsymvar.obj  &
         gsyssym.obj  &
         gutil.obj    &
-        wgmlmsg.obj  &
-        swchar.obj
+        wgmlmsg.obj
 
 #
 # output device related

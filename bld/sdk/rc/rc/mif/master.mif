@@ -54,7 +54,7 @@ objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj errors.obj         &
         semantic.obj semdiag.obj semmenu.obj semver.obj semtbar.obj     &
         semantc2.obj  sem2diag.obj sem2menu.obj sem2sngl.obj            &
         sem2str.obj sem2accl.obj sem2help.obj                           &
-        semraw.obj semsingl.obj semstr.obj swchar.obj dbtable.obj       &
+        semraw.obj semsingl.obj semstr.obj dbtable.obj                  &
         preproc.obj ppexpr.obj ppmacro.obj tmpctl.obj autodep.obj       &
         rcldstr.obj rcalloc1.obj rcalloc0.obj sharedio.obj semresfl.obj &
         semutil.obj leadbyte.obj

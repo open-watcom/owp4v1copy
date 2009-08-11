@@ -3,7 +3,6 @@
 # =======================================
 #
 # wgml depends on
-#                 bld\watcom\c\swchar  DOS switch Char
 #                 bld\trmem            memory tracker
 #                 bld\sdk\rc           WRES resource file access routines
 #

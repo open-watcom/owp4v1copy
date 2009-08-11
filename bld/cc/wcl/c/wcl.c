@@ -44,6 +44,7 @@
 #include <malloc.h>
 #include <conio.h>
 
+#include "swchar.h"
 #include "cmdlhelp.h"
 #include "clcommon.h"
 #include "banner.h"
@@ -107,22 +108,13 @@ static  struct directives *Directive_List; /* linked list of directives   */
 static  char    *StackSize = NULL;  /* size of stack                      */
 static  int     DebugFlag = 0;      /* debug info wanted                  */
 static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
-static  char    Switch_Chars[4];    /* valid switch characters            */
+static  char    Switch_Chars[3];    /* valid switch characters            */
 static  int     via_environment = FALSE;
 
 /*
  *  Static function prototypes
  */
 static int     Parse( char *Cmd );
-
-
-#if defined( __UNIX__ )
-    #define _dos_switch_char() '-'
-#elif defined( __OS2__ ) || defined( __NT__ )
-    #define _dos_switch_char() '/'
-#else
-    extern  int     _dos_switch_char( void );
-#endif
 
 
 #undef pick

@@ -194,7 +194,6 @@ common_objs += specfuns.obj
 common_objs += stack.obj
 common_objs += stats.obj
 common_objs += stringl.obj
-common_objs += swchar.obj
 common_objs += symbol.obj
 common_objs += symdbg.obj
 common_objs += symlocn.obj
