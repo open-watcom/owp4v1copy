@@ -58,7 +58,7 @@ private:
         CYAN,
         YELLOW,
         NEUTRAL,
-        BROWN,
+        BROWN = NEUTRAL,
         DARKGRAY,
         DARKBLUE,
         DARKRED,

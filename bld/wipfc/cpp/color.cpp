@@ -93,21 +93,23 @@ Color::ColorName Color::parseColor( std::wstring& name )
         return Color::YELLOW;
     else if( name == L"neutral" )
         return Color::NEUTRAL;
-    else if( name == L"dark gray" )
+    else if( name == L"brown" )
+        return Color::BROWN;
+    else if( name == L"darkgray" )
         return Color::DARKGRAY;
-    else if( name == L"dark blue" )
+    else if( name == L"darkblue" )
         return Color::DARKBLUE;
-    else if( name == L"dark red" )
+    else if( name == L"darkred" )
         return Color::DARKRED;
-    else if( name == L"dark pink" )
+    else if( name == L"darkpink" )
         return Color::DARKPINK;
-    else if( name == L"dark green" )
+    else if( name == L"darkgreen" )
         return Color::DARKGREEN;
-    else if( name == L"dark cyan" )
+    else if( name == L"darkcyan" )
         return Color::DARKCYAN;
     else if( name == L"black" )
         return Color::BLACK;
-    else if( name == L"pale gray" )
+    else if( name == L"palegray" )
         return Color::PALEGRAY;
     else
         document->printError( ERR2_VALUE );
