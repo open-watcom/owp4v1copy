@@ -48,7 +48,7 @@ cdsay .
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/specs.owc                 <RELROOT>/binl/specs.owc
-    <CPCMD> <PROJDIR>/linux386/owcc.elf         <RELROOT>/binl/owcc
+    <CPCMD> <PROJDIR>/linux386/owcc.exe         <RELROOT>/binl/owcc
     <CPCMD> <PROJDIR>/linux386.i86/wcl.exe      <RELROOT>/binl/wcl
     <CPCMD> <PROJDIR>/linux386.i86/wcl.sym      <RELROOT>/binl/wcl.sym
     <CPCMD> <PROJDIR>/linux386.386/wcl386.exe   <RELROOT>/binl/wcl386

@@ -4,38 +4,34 @@ proj_name = wcl
 wcl_autodepends = .AUTODEPEND
 !endif
 
+name_target_i86 = wcl.exe
+name_target_386 = wcl386.exe
+name_target_axp = wclaxp.exe
+name_target_ppc = wclppc.exe
+name_target_mps = wclmps.exe
+name_target_    = owcc.exe
+
+name = $(name_target_$(target_cpu))
+
+!ifdef target_cpu
+objs = clcommon.obj cmdlhelp.obj wcl.obj
+!else
+objs = clcommon.obj cmdlhelp.obj owcc.obj getopt.obj quit.obj
+extra_deps = owcchelp.gh
+!endif
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-objs = wcl.obj clcommon.obj cmdlhelp.obj
+extra_c_flags_target_i86 = -DWCLI86
+extra_c_flags_target_386 = -DWCL386
+extra_c_flags_target_axp = -DWCLAXP
+extra_c_flags_target_ppc = -DWCLPPC
+extra_c_flags_target_mps = -DWCLMPS
 
-extra_c_flags = -s
+extra_c_flags = -s $(extra_c_flags_target_$(target_cpu))
 
-!ifeq target_cpu i86
-name = wcl.exe
-extra_c_flags += -DWCLI86
-!else ifeq target_cpu 386
-name = wcl386.exe
-extra_c_flags += -DWCL386
-!else ifeq target_cpu axp
-name = wclaxp.exe
-extra_c_flags += -DWCLAXP
-!else ifeq target_cpu ppc
-name = wclppc.exe
-extra_c_flags += -DWCLPPC
-!else ifeq target_cpu mps
-name = wclmps.exe
-extra_c_flags += -DWCLMPS
-!else
-extra_deps = owcchelp.gh
-objs = owcc.obj clcommon.obj getopt.obj quit.obj cmdlhelp.obj
-!ifeq host_os linux
-name = owcc.elf
-!else
-name = owcc.exe
-!endif
-!endif
 extra_c_flags_owcc   = -I"$(posix_dir)/h"
 extra_c_flags_getopt = -I"$(posix_dir)/h"
 extra_c_flags_quit   = -I"$(posix_dir)/h"

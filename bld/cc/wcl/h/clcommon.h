@@ -40,25 +40,19 @@
 #define OBJ_EXT             ".o"
 #define OBJ_EXT_SECONDARY   ".obj"
 #define EXE_EXT             ""
-#define PATH_SEP            '/'
 #else
 #define OBJ_EXT             ".obj"
 #define OBJ_EXT_SECONDARY   ".o"
 #define EXE_EXT             ".exe"
-#define PATH_SEP            '\\'
 #endif
 
 #define TRUE        1
 #define FALSE       0
 
-struct  list {
-    char        *filename;
+typedef struct  list {
+    char        *item;
     struct list *next;
-};
-struct  directives {
-    struct directives   *next;
-    char                *directive;
-};
+} list;
 
 extern  FILE    *Fp;                /* file pointer for Temp_Link         */
 extern  char    Exe_Name[_MAX_PATH];/* name of executable                 */
@@ -66,7 +60,7 @@ extern  char    *Map_Name;          /* name of map file                   */
 extern  char    *Obj_Name;          /* object file name pattern           */
 extern  char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
 extern  const char    *WclMsgs[];
-extern  struct  list *Obj_List;     /* linked list of object filenames    */
+extern  list        *Obj_List;          /* linked list of object filenames    */
 
 struct  flags {
     unsigned math_8087    : 1;  /* 0 ==> no 8087, otherwise /7 option */

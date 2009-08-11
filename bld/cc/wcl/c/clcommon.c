@@ -41,6 +41,8 @@
 #include <dirent.h>
 #endif
 
+#include "diskos.h"
+#include "pathgrp.h"
 #include "cmdlhelp.h"
 #include "clcommon.h"
 
@@ -52,7 +54,7 @@ struct  flags   Flags;
 FILE    *Fp;                /* file pointer for Temp_Link         */
 char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
 char    *Map_Name;          /* name of map file                   */
-struct  list *Obj_List;     /* linked list of object filenames    */
+list    *Obj_List;     /* linked list of object filenames    */
 char    *Obj_Name;          /* object file name pattern           */
 char    Exe_Name[_MAX_PATH];/* name of executable                 */
 
@@ -116,7 +118,7 @@ void  Fputnl( char *text, FILE *fptr )
 void BuildLinkFile( void )
 /************************/
 {
-    char    quoted[_MAX_PATH];
+    char    quoted[_MAX_PATH ];
 
     fputs( "name ", Fp );
     BuildQuotedFName( quoted, sizeof( quoted ), "", Exe_Name, "'" );
@@ -150,7 +152,7 @@ void  *MemAlloc( int size )
     void        *ptr;
 
     if( (ptr = malloc( size )) == NULL ) {
-        PrintMsg( WclMsgs[OUT_OF_MEMORY] );
+        PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
         exit( 1 );
     }
     return( ptr );
@@ -160,57 +162,51 @@ void  *MemAlloc( int size )
 void  AddName( char *name, FILE *link_fp )
 /****************************************/
 {
-    struct list *curr_name, *last_name, *new_name;
-    char        path  [_MAX_PATH];
-    char        quoted[_MAX_PATH];
-    char        buff1 [_MAX_PATH2];
-    char        buff2 [_MAX_PATH2];
-    char        *fname;
+    list        *curr_name;
+    list        *last_name;
+    list        *new_name;
+    char        path  [_MAX_PATH ];
+    char        quoted[_MAX_PATH ];
+    PGROUP      pg1;
+    PGROUP      pg2;
 
     curr_name = Obj_List;
     while( curr_name != NULL ) {
-        if( strcmp( name, curr_name->filename ) == 0 )
+        if( strcmp( name, curr_name->item ) == 0 )
             return;
         last_name = curr_name;
         curr_name = curr_name->next;
     }
-    new_name = MemAlloc( sizeof( struct list ) );
+    new_name = MemAlloc( sizeof( list ) );
     if( Obj_List == NULL ) {
         Obj_List = new_name;
     } else {
         last_name->next = new_name;
     }
-    new_name->filename = strdup( name );
+    new_name->item = strdup( name );
     new_name->next = NULL;
     fputs( "file ", link_fp );
     if( Obj_Name != NULL ) {
-        char        *drive;
-        char        *drive2;
-        char        *dir;
-        char        *dir2;
-        char        *extension;
-        char        *ext2;
-
         /* construct full name of object file from Obj_Name information */
-        _splitpath2( Obj_Name, buff1, &drive, &dir, &fname, &extension );
-        if( extension[0] == '\0' )
-            extension = OBJ_EXT;
-
-        if( fname[0] == '\0' || fname[0] == '*' ) {
+        _splitpath2( Obj_Name, pg1.buffer, &pg1.drive, &pg1.dir, &pg1.fname, &pg1.ext );
+        if( pg1.ext[0] == '\0' )
+            pg1.ext = OBJ_EXT;
+        if( pg1.fname[0] == '\0' || pg1.fname[0] == '*' ) {
             /* there's no usable basename in the -fo= pattern, but there drive and directory
              * and extension should still be applied.
              * OTOH the input name may have its own, explicitly given
              * drive, directory and extension, so let those take precedence */
-            _splitpath2( name, buff2, &drive2, &dir2, &fname, &ext2 );
-            if( ext2[0] != '\0' )
-                extension = ext2;
-            if( drive2[0] != '\0' )
-                drive = drive2;
-            if( dir2[0] != '\0' ) {
-                dir = dir2;
+            _splitpath2( name, pg2.buffer, &pg2.drive, &pg2.dir, &pg2.fname, &pg2.ext );
+            pg1.fname = pg2.fname;
+            if( pg2.ext[0] != '\0' )
+                pg1.ext = pg2.ext;
+            if( pg2.drive[0] != '\0' )
+                pg1.drive = pg2.drive;
+            if( pg2.dir[0] != '\0' ) {
+                pg1.dir = pg2.dir;
             }
         }
-        _makepath( path, drive, dir, fname, extension );
+        _makepath( path, pg1.drive, pg1.dir, pg1.fname, pg1.ext );
         name = path;
     }
     BuildQuotedFName( quoted, sizeof( quoted ), "", name, "'" );
@@ -223,7 +219,7 @@ char  *MakePath( char *path )
 {
     char        *p;
 
-    p = strrchr( path ,PATH_SEP );
+    p = strrchr( path, SYS_DIR_SEP_CHAR );
     if( p != NULL ) {
         p[1] = '\0';
     } else {
@@ -255,13 +251,13 @@ char  *GetName( char *path )
         }
         dirp = opendir( path );         /* try to find matching filenames */
         if( dirp == NULL ) {
-            PrintMsg( WclMsgs[UNABLE_TO_OPEN], path );
+            PrintMsg( WclMsgs[ UNABLE_TO_OPEN ], path );
             return( NULL );
         }
     }
 
-    while( ( direntp = readdir( dirp ) ) != NULL ) {
-        if( (direntp->d_attr & ATTR_MASK) == 0 ) {    /* valid file? */
+    while( (direntp = readdir( dirp )) != NULL ) {
+        if( ( direntp->d_attr & ATTR_MASK ) == 0 ) {    /* valid file? */
             return( direntp->d_name );
         }
     }
@@ -271,8 +267,8 @@ char  *GetName( char *path )
     char    *name;
 
     if( path == NULL )
-        return( NULL );
-    name = strrchr(path, '/');
+            return( NULL );
+    name = strrchr( path, '/' );
     if( name == NULL ) {
         name = path;
     } else {
@@ -287,7 +283,7 @@ void FindPath( char *name, char *buf )
 {
     _searchenv( name, "PATH", buf );
     if( buf[0] == '\0' ) {
-        PrintMsg( WclMsgs[UNABLE_TO_FIND], name );
+        PrintMsg( WclMsgs[ UNABLE_TO_FIND ], name );
         exit( 1 );
     }
 }
