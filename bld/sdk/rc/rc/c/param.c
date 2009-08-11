@@ -43,7 +43,6 @@
  #include "ostype.h"
 #endif
 #include "leadbyte.h"
-#include "swchar.h"
 
 #if defined(__UNIX__)
 # define PATH_SPLIT_S       ":"     /* path seperator in string form        */
