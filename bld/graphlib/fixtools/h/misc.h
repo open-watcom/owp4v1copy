@@ -33,10 +33,6 @@
 #define __MISC_H
 
 extern char         *FixName( char *name );
-extern int          FNameCmp( const char *a, const char *b );
-#ifdef USE_FAR
-extern int          _fFNameCmp( const char FAR *a, const char FAR *b );
-#endif
 extern char         *DoWildCard( char *base );
 extern void         DoWildCardClose( void );
 

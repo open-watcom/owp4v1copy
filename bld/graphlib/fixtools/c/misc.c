@@ -34,31 +34,20 @@
 #else
   #include <direct.h>
 #endif
+#include <fnmatch.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <ctype.h>
 #include <assert.h>
+#include "pathgrp.h"
 #include "misc.h"
 
-#define NULLCHAR '\0'
-
-#define WILD_METAS "*?"
-
 #ifdef __UNIX__
-  #define IGNORE_MASK        ( 0 )
+  #define ISVALIDENTRY(x)   ( 1 )
+  #define CMP_MODE          (FNM_PATHNAME | FNM_NOESCAPE)
 #else
-  #define IGNORE_MASK        ( _A_VOLID )
+  #define ISVALIDENTRY(x)   ( (x->d_attr & _A_VOLID) == 0 )
+  #define CMP_MODE          (FNM_PATHNAME | FNM_NOESCAPE | FNM_IGNORECASE)
 #endif
-
-typedef struct PathGroup {
-    char    *drive;
-    char    *dir;
-    char    *fname;
-    char    *ext;
-    char    buffer[PATH_MAX + 4];
-} PGROUP;
 
 extern char *FixName( char *name )
 {
@@ -71,30 +60,13 @@ extern char *FixName( char *name )
 
     assert( name != NULL );
 
-    ptr = name;
-    hold = *ptr;
-    for( ;; ) {
-        if( hold == NULLCHAR ) {
-            break;
-        }
+    for( ptr = name; (hold = *ptr) != '\0'; ++ptr ) {
         if( hold == '/' ) {
             *ptr = '\\';
         } else if( ( hold -= 'A' ) < 26 ) {     /* SIDE EFFECT!!! */
             *ptr = hold + 'a';
         }
-        hold = *++ptr;
-        if( hold == NULLCHAR ) {
-            break;
-        }
-        if( hold == '/' ) {
-            *ptr = '\\';
-        } else if( ( hold -= 'A' ) < 26 ) {     /* SIDE EFFECT!!! */
-            *ptr = hold + 'a';
-        }
-        hold = *++ptr;
     }
-
-    return( name );
 #elif defined( __OS2__ ) || defined( __NT__ )
 /*********************************
  * convert fwd-slash to back-slash
@@ -104,151 +76,17 @@ extern char *FixName( char *name )
 
     assert( name != NULL );
 
-    ptr = name;
-    hold = *ptr;
-    for( ;; ) {
-        if( hold == NULLCHAR ) {
-            break;
-        }
+    for( ptr = name; (hold = *ptr) != '\0'; ++ptr ) {
         if( hold == '/' ) {
             *ptr = '\\';
         }
-        hold = *++ptr;
-        if( hold == NULLCHAR ) {
-            break;
-        }
-        if( hold == '/' ) {
-            *ptr = '\\';
-        }
-        hold = *++ptr;
     }
-
-    return( name );
 #else
-    return( name );
-#endif
-}
-
-
-extern int FNameCmp( const char *a, const char *b )
-/*************************************************/
-{
-#if defined( __OS2__ ) || defined( __NT__ )
-    return( stricmp( a, b ) );
-#else
-    return( strcmp( a, b ) );
-#endif
-}
-
-
-static int FNameCmpChr( char a, char b )
-/**************************************/
-{
-#if defined( __OS2__ ) || defined( __NT__ )
-    return( tolower( a ) - tolower( b ) );
-#else
-    return( a - b );
-#endif
-}
-
-
-#ifdef USE_FAR
-extern int _fFNameCmp( const char FAR *a, const char FAR *b )
-/***********************************************************/
-{
-#if defined( __OS2__ ) || defined( __NT__ )
-    return( _fstricmp( a, b ) );
-#else
-    return( _fstrcmp( a, b ) );
-#endif
-}
-#endif
-
-
-#define IS_WILDCARD_CHAR( x ) ((*x == '*') || (*x == '?'))
-
-static int __fnmatch( char *pattern, char *string )
-/**************************************************
- * OS specific compare function FNameCmpChr
- * must be used for file names
+/*********************************
+ * no conversion
  */
-{
-    char    *p;
-    int     len;
-    int     star_char;
-    int     i;
-
-    /*
-     * check pattern section with wildcard characters
-     */
-    star_char = 0;
-    while( IS_WILDCARD_CHAR( pattern ) ) {
-        if( *pattern == '?' ) {
-            if( *string == 0 ) {
-                return( 0 );
-            }
-            string++;
-        } else {
-            star_char = 1;
-        }
-        pattern++;
-    }
-    if( *pattern == 0 ) {
-        if( (*string == 0) || star_char ) {
-            return( 1 );
-        } else {
-            return( 0 );
-        }
-    }
-    /*
-     * check pattern section with exact match
-     * ( all characters except wildcards )
-     */
-    p = pattern;
-    len = 0;
-    do {
-        if( star_char ) {
-            if( string[len] == 0 ) {
-                return( 0 );
-            }
-            len++;
-        } else {
-            if( FNameCmpChr( *pattern, *string ) != 0 ) {
-                return( 0 );
-            }
-            string++;
-        }
-        pattern++;
-    } while( *pattern && !IS_WILDCARD_CHAR( pattern ) );
-    if( star_char == 0 ) {
-        /*
-         * match is OK, try next pattern section
-         */
-        return( __fnmatch( pattern, string ) );
-    } else {
-        /*
-         * star pattern section, try locate exact match
-         */
-        while( *string ) {
-            if( FNameCmpChr( *p, *string ) == 0 ) {
-                for( i = 1; i < len; i++ ) {
-                    if( FNameCmpChr( *(p + i), *(string + i) ) != 0 ) {
-                        break;
-                    }
-                }
-                if( i == len ) {
-                    /*
-                     * if rest doesn't match, find next occurence
-                     */
-                    if( __fnmatch( pattern, string + len ) ) {
-                        return( 1 );
-                    }
-                }
-            }
-            string++;
-        }
-        return( 0 );
-    }
+#endif
+    return( name );
 }
 
 /*
@@ -295,8 +133,7 @@ extern char *DoWildCard( char *base )
             closedir( parent );
             parent = NULL;          /* 1-jun-90 AFS */
         }
-
-        if( strpbrk( base, WILD_METAS ) == NULL ) {
+        if( strpbrk( base, "*?" ) == NULL ) {
             return( base );
         }
         // create directory name and pattern
@@ -319,42 +156,32 @@ extern char *DoWildCard( char *base )
             return( base );
         }
     }
-
     if( parent == NULL ) {
         return( NULL );
     }
-
     assert( path != NULL && parent != NULL );
-
     entry = readdir( parent );
     while( entry != NULL ) {
-#ifndef __UNIX__
-        if( ( entry->d_attr & IGNORE_MASK ) == 0 ) {
-#endif
-            if( __fnmatch( pattern, entry->d_name ) ) {
+        if( ISVALIDENTRY( entry ) ) {
+            if( fnmatch( pattern, entry->d_name, CMP_MODE ) == 0 ) {
                 break;
             }
-#ifndef __UNIX__
         }
-#endif
         entry = readdir( parent );
     }
     if( entry == NULL ) {
         closedir( parent );
         parent = NULL;
         free( path );
-        path = NULL;                    /* 1-jun-90 AFS */
+        path = NULL;
         free( pattern );
         pattern = NULL;
         return( base );
     }
-
     _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
     _makepath( path, pg.drive, pg.dir, entry->d_name, NULL );
-
     return( path );
 }
-
 
 extern void DoWildCardClose( void )
 /*********************************/
