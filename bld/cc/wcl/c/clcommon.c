@@ -81,20 +81,24 @@ void PrintMsg( const char *fmt, ... )
     len = 0;
     for( ;; ) {
         c = *fmt++;
-        if( c == '\0' ) break;
+        if( c == '\0' )
+            break;
         if( c == '%' ) {
             c = *fmt++;
             if( c == 's' ) {
                 p = va_arg( args, char * );
                 for( ;; ) {
                     c = *p++;
-                    if( c == '\0' ) break;
+                    if( c == '\0' )
+                        break;
                     putchar(c);
                 }
             } else if( c == 'd' ) {
                 i = va_arg( args, int );
                 itoa( i, buf, 10 );
-                for( len = 0; buf[len] != '\0'; ++len ) putchar(buf[len]);
+                for( len = 0; buf[len] != '\0'; ++len ) {
+                    putchar(buf[len]);
+                }
             }
         } else {
             putchar(c);
@@ -112,7 +116,7 @@ void  Fputnl( char *text, FILE *fptr )
 void BuildLinkFile( void )
 /************************/
 {
-    char    quoted[_MAX_PATH ];
+    char    quoted[_MAX_PATH];
 
     fputs( "name ", Fp );
     BuildQuotedFName( quoted, sizeof( quoted ), "", Exe_Name, "'" );
@@ -145,8 +149,8 @@ void  *MemAlloc( int size )
 {
     void        *ptr;
 
-    if( ( ptr = malloc( size ) ) == NULL ) {
-        PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
+    if( (ptr = malloc( size )) == NULL ) {
+        PrintMsg( WclMsgs[OUT_OF_MEMORY] );
         exit( 1 );
     }
     return( ptr );
@@ -157,15 +161,16 @@ void  AddName( char *name, FILE *link_fp )
 /****************************************/
 {
     struct list *curr_name, *last_name, *new_name;
-    char        path  [_MAX_PATH ];
-    char        quoted[_MAX_PATH ];
+    char        path  [_MAX_PATH];
+    char        quoted[_MAX_PATH];
     char        buff1 [_MAX_PATH2];
     char        buff2 [_MAX_PATH2];
     char        *fname;
 
     curr_name = Obj_List;
     while( curr_name != NULL ) {
-        if( strcmp( name, curr_name->filename ) == 0 ) return;
+        if( strcmp( name, curr_name->filename ) == 0 )
+            return;
         last_name = curr_name;
         curr_name = curr_name->next;
     }
@@ -185,21 +190,25 @@ void  AddName( char *name, FILE *link_fp )
         char        *dir2;
         char        *extension;
         char        *ext2;
-        
+
         /* construct full name of object file from Obj_Name information */
         _splitpath2( Obj_Name, buff1, &drive, &dir, &fname, &extension );
-        if( extension[0] == '\0' )  extension = OBJ_EXT;
-        
+        if( extension[0] == '\0' )
+            extension = OBJ_EXT;
+
         if( fname[0] == '\0' || fname[0] == '*' ) {
             /* there's no usable basename in the -fo= pattern, but there drive and directory
              * and extension should still be applied.
              * OTOH the input name may have its own, explicitly given
              * drive, directory and extension, so let those take precedence */
             _splitpath2( name, buff2, &drive2, &dir2, &fname, &ext2 );
-            if( ext2[0] != '\0' )  extension = ext2;
-            if( drive2[0] != '\0' ) drive = drive2;
-            if( dir2[0] != '\0' ) dir = dir2;
-           
+            if( ext2[0] != '\0' )
+                extension = ext2;
+            if( drive2[0] != '\0' )
+                drive = drive2;
+            if( dir2[0] != '\0' ) {
+                dir = dir2;
+            }
         }
         _makepath( path, drive, dir, fname, extension );
         name = path;
@@ -216,16 +225,16 @@ char  *MakePath( char *path )
 
     p = strrchr( path ,PATH_SEP );
     if( p != NULL ) {
-        p[ 1 ] = NULLCHAR;
+        p[1] = '\0';
     } else {
 #ifdef __UNIX__
-        *path = NULLCHAR;
+        *path = '\0';
 #else
         p = strchr( path, ':' );
         if( p != NULL ) {
-            p[ 1 ] = NULLCHAR;
+            p[1] = '\0';
         } else {
-            *path = NULLCHAR;
+            *path = '\0';
         }
 #endif
     }
@@ -240,19 +249,19 @@ char  *GetName( char *path )
     struct      dirent  *direntp;
 
     if( path != NULL ) {                /* if given a filespec to open,  */
-        if( *path == NULLCHAR ) {       /*   but filespec is empty, then */
+        if( *path == '\0' ) {       /*   but filespec is empty, then */
             closedir( dirp );           /*   close directory and return  */
             return( NULL );             /*   (for clean up after error)  */
         }
         dirp = opendir( path );         /* try to find matching filenames */
         if( dirp == NULL ) {
-            PrintMsg( WclMsgs[ UNABLE_TO_OPEN ], path );
+            PrintMsg( WclMsgs[UNABLE_TO_OPEN], path );
             return( NULL );
         }
     }
 
     while( ( direntp = readdir( dirp ) ) != NULL ) {
-        if( ( direntp->d_attr & ATTR_MASK ) == 0 ) {    /* valid file? */
+        if( (direntp->d_attr & ATTR_MASK) == 0 ) {    /* valid file? */
             return( direntp->d_name );
         }
     }
@@ -262,12 +271,13 @@ char  *GetName( char *path )
     char    *name;
 
     if( path == NULL )
-            return( NULL );
+        return( NULL );
     name = strrchr(path, '/');
-    if( name == NULL )
+    if( name == NULL ) {
         name = path;
-    else
+    } else {
         name++;
+    }
     return( strdup(name) );
 #endif
 }
@@ -277,20 +287,24 @@ void FindPath( char *name, char *buf )
 {
     _searchenv( name, "PATH", buf );
     if( buf[0] == '\0' ) {
-        PrintMsg( WclMsgs[ UNABLE_TO_FIND ], name );
+        PrintMsg( WclMsgs[UNABLE_TO_FIND], name );
         exit( 1 );
     }
 }
 
 int iswsOrOpt( char ch, char opt, char *Switch_Chars )
 {
-    if( isblank( ch ) ) return( 1 );
+    if( isblank( ch ) )
+        return( 1 );
 
     if( opt == '-'  ||  opt == Switch_Chars[1] ) {
         /* if we are processing a switch, stop at a '-' */
-        if( ch == '-' ) return( 1 );
+        if( ch == '-' )
+            return( 1 );
 #ifndef __UNIX__
-        if( ch == Switch_Chars[1] ) return( 1 );
+        if( ch == Switch_Chars[1] ) {
+            return( 1 );
+        }
 #endif
     }
     return( 0 );
@@ -321,7 +335,8 @@ char *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars )
                 if( string_open ) {
                     str++;
                 } else {
-                    if( iswsOrOpt( *str, opt, Switch_Chars ) ) break;
+                    if( iswsOrOpt( *str, opt, Switch_Chars ) )
+                        break;
                     str++;
                 }
             }

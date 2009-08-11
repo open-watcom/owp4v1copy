@@ -37,18 +37,16 @@
 #endif
 
 #ifdef __UNIX__
-#define OBJ_EXT                 ".o"
-#define OBJ_EXT_SECONDARY       ".obj"
-#define PATH_SEP    '/'
-#define EXE_EXT ""
+#define OBJ_EXT             ".o"
+#define OBJ_EXT_SECONDARY   ".obj"
+#define EXE_EXT             ""
+#define PATH_SEP            '/'
 #else
-#define OBJ_EXT                 ".obj"
-#define OBJ_EXT_SECONDARY       ".o"
-#define PATH_SEP    '\\'
-#define EXE_EXT ".exe"
+#define OBJ_EXT             ".obj"
+#define OBJ_EXT_SECONDARY   ".o"
+#define EXE_EXT             ".exe"
+#define PATH_SEP            '\\'
 #endif
-
-#define NULLCHAR    '\0'
 
 #define TRUE        1
 #define FALSE       0

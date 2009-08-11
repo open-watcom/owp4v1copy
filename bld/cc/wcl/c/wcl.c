@@ -143,7 +143,7 @@ static struct {
     char *name;
     char *exename;
     char *path;
-} tools[ TYPE_MAX ] = {
+} tools[TYPE_MAX] = {
     { "wasm",   "wasm" EXE_EXT,   NULL },
     { CC,       CC EXE_EXT,       NULL },
     { CCXX,     CCXX EXE_EXT,     NULL },
@@ -245,7 +245,7 @@ static void killTmpEnv( char *env )
 {
     char const * const  equals = strchr( env, '=' );
 
-    if( equals ) {
+    if( equals != NULL ) {
         size_t const    chars = 1 + (size_t)(equals - env);
         char * const    never_free = MemAlloc( 1 + chars );
 
@@ -266,7 +266,8 @@ void print_banner( void )
 {
     static int done;
 
-    if( done ) return;
+    if( done )
+        return;
     puts( banner1w( _NAME_ "Compile and Link Utility", _WCL_VERSION_ ) );
     puts( banner2( "1988" ) );
     puts( banner3 );
@@ -318,12 +319,14 @@ static void  Usage( void )
             strcpy( &buf[38 - i / 2], *list );
             ++list;
             for( n = 0; list[n]; ++n ) {        /* count number in list */
-                if( *list[n] == '[' ) break;
+                if( *list[n] == '[' ) {
+                    break;
+                }
             }
             n = (n + 1) / 2;                    /* half way through list */
 #ifndef __UNIX__
             if( paging && lines_printed != 0 && lines_printed >= height ) {
-                fputs( WclMsgs[ PRESS_ANY_KEY_TO_CONTINUE ], stdout );
+                fputs( WclMsgs[PRESS_ANY_KEY_TO_CONTINUE], stdout );
                 fflush( stdout );
                 getch();
                 puts( "" );
@@ -335,18 +338,22 @@ static void  Usage( void )
             for( ;; ) {
                 memset( buf, ' ', 80 );
                 p = *list;
-                if( p == NULL ) break;
-                for( i = 0; *p; )  buf[i++] = *p++;
+                if( p == NULL )
+                    break;
+                for( i = 0; *p; )
+                    buf[i++] = *p++;
                 p = list[n];
                 if( p != NULL  &&  *p != '[' ) {
-                    for( i = 38; *p; )  buf[i++] = *p++;
+                    for( i = 38; *p; ) {
+                        buf[i++] = *p++;
+                    }
                 }
                 buf[i] = '\0';
                 puts( buf );
                 lines_printed++;
 #ifndef __UNIX__
                 if( paging && lines_printed != 0 && lines_printed >= height ) {
-                    fputs( WclMsgs[ PRESS_ANY_KEY_TO_CONTINUE ], stdout );
+                    fputs( WclMsgs[PRESS_ANY_KEY_TO_CONTINUE], stdout );
                     fflush( stdout );
                     getch();
                     puts( "" );
@@ -354,8 +361,10 @@ static void  Usage( void )
                 }
 #endif
                 p = list[n];
-                if( p == NULL ) break;
-                if( *p == '[' ) break;
+                if( p == NULL )
+                    break;
+                if( *p == '[' )
+                    break;
                 list[n] = NULL; /* indicate already printed */
                 ++list;
             }
@@ -373,14 +382,17 @@ static char *ScanFName( char *end, int len )
 /******************************************/
 {
     for( ;; ) { /* 15-jan-89: Allow switch char in filenames */
-        if( *end == '\0' ) break;
-        if( *end == ' '  ) break;
-        if( *end == '\t'  ) break;                  /* 16-mar-91 */
-        Word[ len ] = *end;
+        if( *end == '\0' )
+            break;
+        if( *end == ' '  )
+            break;
+        if( *end == '\t'  )
+            break;
+        Word[len] = *end;
         ++len;
         ++end;
     }
-    Word[ len ] = NULLCHAR;
+    Word[len] = '\0';
     return( end );
 }
 
@@ -453,7 +465,8 @@ static int Parse( char *Cmd )
 
     for( ;; ) {
         Cmd = SkipSpaces( Cmd );
-        if( *Cmd == NULLCHAR ) break;
+        if( *Cmd == '\0' )
+            break;
         opt = *Cmd;
         if( opt == '-'  ||  opt == Switch_Chars[1] ) {
             Cmd++;
@@ -471,7 +484,7 @@ static int Parse( char *Cmd )
         if( len != 0 ) {
             if( opt == ' ' ) {          /* if filename, add to list */
                 strncpy( Word, Cmd, len );
-                Word[ len ] = NULLCHAR;
+                Word[len] = '\0';
                 end = ScanFName( end, len );
                 if( FileExtension( Word, ".lib" ) ) {
                     strcat( Libs, Libs[0] != '\0' ? "," : " " );
@@ -491,7 +504,7 @@ static int Parse( char *Cmd )
             } else {                    /* otherwise, do option */
                 --len;
                 strncpy( Word, Cmd + 1, len );
-                Word[ len ] = NULLCHAR;
+                Word[len] = '\0';
                 wcc_option = 1;         /* assume it's a wcc option */
 
                 switch( tolower( *Cmd ) ) {
@@ -551,7 +564,8 @@ static int Parse( char *Cmd )
                         /* parse off argument, so we get right filename
                             in linker command file */
                         p = &Word[1];
-                        if( Word[1] == '='  ||  Word[1] == '#' ) ++p;
+                        if( Word[1] == '='  ||  Word[1] == '#' )
+                            ++p;
 
                         /* remove quotes from object name */
                         UnquoteFName( unquoted, sizeof( unquoted ), p );
@@ -591,7 +605,8 @@ static int Parse( char *Cmd )
                     default:                    /* 10-jun-91 */
                         Flags.link_for_sys = TRUE;
                         p = &Word[0];
-                        if( Word[0] == '='  ||  Word[0] == '#' ) ++p;
+                        if( Word[0] == '='  ||  Word[0] == '#' )
+                            ++p;
                         SystemName = strdup( p );
                         break;
                     }
@@ -624,7 +639,7 @@ static int Parse( char *Cmd )
 
                         MakeName( Word, ".lnk" );
                         errno = 0;
-                        if( ( atfp = fopen( Word, "r" ) ) == NULL ) {
+                        if( (atfp = fopen( Word, "r" )) == NULL ) {
                             PrintMsg( WclMsgs[UNABLE_TO_OPEN_DIRECTIVE_FILE], Word, strerror(  errno ) );
                             return( 1 );
                         }
@@ -633,7 +648,8 @@ static int Parse( char *Cmd )
 
                                 /* look for names separated by ','s */
                                 p = strchr( buffer, '\n' );
-                                if( p )  *p = NULLCHAR;
+                                if( p != NULL )
+                                    *p = '\0';
                                 AddName( &buffer[5], Fp );
                                 Flags.do_link = TRUE;
                             } else {
@@ -734,7 +750,7 @@ static int Parse( char *Cmd )
                      */
                     wcc_option = 0;
                     strncpy( Word, Cmd, ++len );
-                    Word[ len ] = NULLCHAR;
+                    Word[len] = '\0';
                     AddDirective( len );
                     break;
                 }
@@ -744,10 +760,10 @@ static int Parse( char *Cmd )
 
                 if( wcc_option ) {
                     len = strlen( CC_Opts );
-                    CC_Opts[ len++ ] = ' ';
-                    CC_Opts[ len++ ] = opt;
-                    CC_Opts[ len++ ] = *Cmd;    /* keep original case */
-                    CC_Opts[ len   ] = NULLCHAR;
+                    CC_Opts[len++] = ' ';
+                    CC_Opts[len++] = opt;
+                    CC_Opts[len++] = *Cmd;    /* keep original case */
+                    CC_Opts[len] = '\0';
                     strcat( CC_Opts, Word );
                 }
             }
@@ -802,15 +818,15 @@ static int tool_exec( tool_type utl, char *p1, char *p2 )
         rc = spawnlp( P_WAIT, tools[utl].path, tools[utl].name, p1, p2, NULL );
     }
     if( rc != 0 ) {
-        if( (rc == -1) || (rc == 255) ) {
-            PrintMsg( WclMsgs[ UNABLE_TO_INVOKE_EXE ], tools[utl].path );
+        if( ( rc == -1 ) || ( rc == 255 ) ) {
+            PrintMsg( WclMsgs[UNABLE_TO_INVOKE_EXE], tools[utl].path );
         } else {
             if( utl == TYPE_LINK ) {
-                PrintMsg( WclMsgs[ LINKER_RETURNED_A_BAD_STATUS ] );
+                PrintMsg( WclMsgs[LINKER_RETURNED_A_BAD_STATUS] );
             } else if( utl == TYPE_PACK ) {
-                PrintMsg( WclMsgs[ CVPACK_RETURNED_A_BAD_STATUS ] );
+                PrintMsg( WclMsgs[CVPACK_RETURNED_A_BAD_STATUS] );
             } else {
-                PrintMsg( WclMsgs[ COMPILER_RETURNED_A_BAD_STATUS ], p1 );
+                PrintMsg( WclMsgs[COMPILER_RETURNED_A_BAD_STATUS], p1 );
             }
         }
     }
@@ -875,7 +891,7 @@ static  int  CompLink( void )
         Fputnl( "option quiet", Fp );
     }
 
-    fputs( DebugOptions[ DebugFlag ], Fp );
+    fputs( DebugOptions[DebugFlag], Fp );
     if( StackSize != NULL ) {
         fputs( "option stack=", Fp );
         Fputnl( StackSize, Fp );
@@ -974,21 +990,21 @@ static  int  CompLink( void )
                 }
                 p = strrchr( file, '.' );
                 if( p != NULL )
-                    *p = NULLCHAR;
+                    *p = '\0';
                 strcpy( Word, file );
             }
             AddName( Word, Fp );
             if( Exe_Name[0] == '\0' ) {
                 p = strrchr( Word, '.' );
                 if( p != NULL )
-                    *p = NULLCHAR;
+                    *p = '\0';
                 strcpy( Exe_Name, Word );
             }
             file = GetName( NULL );     /* get next filename */
         }
         p = end;        /* get next filespec */
     }
-    if( tmp_env )
+    if( tmp_env != NULL )
         killTmpEnv( tmp_env );
     if( errors_found ) {
         rc = 1;
@@ -1043,7 +1059,7 @@ int  main( void )
         p = Cmd + strlen( Cmd );
         getcmd( p );
         q = Cmd;
-        while( ( q = strpbrk( q, Switch_Chars ) ) != NULL ) {
+        while( (q = strpbrk( q, Switch_Chars )) != NULL ) {
             if( tolower( *(++q) ) == 'y' ) {
                 getcmd( Cmd );
                 p = Cmd;
@@ -1055,15 +1071,15 @@ int  main( void )
         p = Cmd;
     }
     p = SkipSpaces( p );
-    if( *p == NULLCHAR || strncmp( p, "? ", 2 ) == NULL ) {
+    if( *p == '\0' || strncmp( p, "? ", 2 ) == 0 ) {
         Usage();
         rc = 1;
     } else {
         Temp_Link = TEMPFILE;
         errno = 0; /* Standard C does not require fopen failure to set errno */
-        if( (Fp = fopen( &Temp_Link[ 1 ], "w" )) == NULL ) {
+        if( (Fp = fopen( &Temp_Link[1], "w" )) == NULL ) {
             /* Message before banner decision as '@' option uses Fp in Parse() */
-            PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], Temp_Link + 1,
+            PrintMsg( WclMsgs[UNABLE_TO_OPEN_TEMPORARY_FILE], Temp_Link + 1,
                 strerror( errno ) );
             rc = 1;
         } else {
@@ -1082,12 +1098,12 @@ int  main( void )
                 fclose( Fp );
             }
             if( Link_Name != NULL ) {
-                if( stricmp( Link_Name, &Temp_Link[ 1 ] ) != 0 ) {
+                if( stricmp( Link_Name, &Temp_Link[1] ) != 0 ) {
                     remove( Link_Name );
-                    rename( &Temp_Link[ 1 ], Link_Name );
+                    rename( &Temp_Link[1], Link_Name );
                 }
             } else {
-                remove( &Temp_Link[ 1 ] );
+                remove( &Temp_Link[1] );
             }
         }
     }

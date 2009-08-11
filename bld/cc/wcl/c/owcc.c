@@ -243,7 +243,7 @@ static struct {
     char *name;
     char *exename;
     char *path;
-} tools[ TYPE_MAX ] = {
+} tools[TYPE_MAX] = {
     { "wasm",   "wasm" EXE_EXT,     NULL },
     { CC,       CC EXE_EXT,         NULL },
     { CCXX,     CCXX EXE_EXT,       NULL },
@@ -302,7 +302,7 @@ void addccopt( int option, char *opt )
     op[2] = option;
     op[3] = '\0';
     strcat( CC_Opts, op );
-    if( opt ) {
+    if( opt != NULL ) {
         strcat( CC_Opts, opt );
     }
 }
@@ -357,7 +357,7 @@ static  int  ConsultSpecsFile( const char *target )
 
     FindPath( "specs.owc", PathBuffer );
     specs = fopen( PathBuffer, "r" );
-    if( !specs ) {
+    if( specs == NULL ) {
         fprintf( stderr, "Could not open specs file '%s' for reading!\n",
                  PathBuffer );
         exit( EXIT_FAILURE );
@@ -367,7 +367,7 @@ static  int  ConsultSpecsFile( const char *target )
     strcat( start_line, target );
     while( fgets( line, MAX_CMD, specs ) ) {
         p = strchr( line, '\n' );
-        if( p ) {
+        if( p != NULL ) {
             *p = '\0';
         }
         if( !stricmp( line, start_line ) ) {
@@ -382,10 +382,10 @@ static  int  ConsultSpecsFile( const char *target )
                 continue;
             }
             blank = strchr( p, ' ' );
-            if( !blank ) {
+            if( blank == NULL ) {
                 blank = strchr( p, '\t' );
             }
-            if( blank ) {
+            if( blank != NULL ) {
                 *blank = '\0';
             }
             strcpy( target_CC, p );
@@ -393,7 +393,7 @@ static  int  ConsultSpecsFile( const char *target )
             /* this is a little nasty: transform 'wcc386' into 'wpp386', in-place */
             p[1] = p[2] = 'p';
             strcpy( target_CCXX, p );
-            if( blank ) {
+            if( blank != NULL ) {
                 /* if there are further options, copy them */
                 *blank = ' ';
                 strcat( CC_Opts, blank );
@@ -468,7 +468,7 @@ static  int  Parse( int argc, char **argv )
                 /* non-existant argument can't match other cases */
                 continue;
             }
-            if( tail ) {
+            if( tail != NULL ) {
                 if( !strncmp( OptArg, m->LongName + 1,
                               tail - m->LongName - 1 ) ) {
                     strcat( CC_Opts, " -" );
@@ -487,7 +487,7 @@ static  int  Parse( int argc, char **argv )
         if( found_mapping )
             continue;
 
-        if( OptArg ) {
+        if( OptArg != NULL ) {
             Word = malloc( strlen( OptArg ) + 6 );
             strcpy( Word, OptArg );
         }
@@ -503,7 +503,7 @@ static  int  Parse( int argc, char **argv )
                 break;
             }
             if( !strncmp( Word, "cpp-wrap=", 9 ) ) {
-                if( cpp_linewrap )
+                if( cpp_linewrap != NULL )
                     free( cpp_linewrap );
                 Word[7] = 'w';
                 cpp_linewrap = strdup( Word + 7 );
@@ -585,10 +585,11 @@ static  int  Parse( int argc, char **argv )
                 break;
             }
             if( !strncmp("regparm=", Word, 8 ) ) {
-                if( !strcmp( Word + 8, "0" ) )
+                if( !strcmp( Word + 8, "0" ) ) {
                     Conventions[0] =  's';
-                else
+                } else {
                     Conventions[0] = 'r';
+                }
                 wcc_option = 0;
                 break;
             }
@@ -646,7 +647,7 @@ static  int  Parse( int argc, char **argv )
             wcc_option = 0;
             break;
         case 'g':
-            if( !OptArg ) {
+            if( OptArg == NULL ) {
                 Word = "2";
             } else if( !isdigit( OptArg[0] ) ) {
                 c = 'h';
@@ -693,7 +694,7 @@ static  int  Parse( int argc, char **argv )
             wcc_option = 0;
             break;
         case 's':
-            if( OptArg ) {
+            if( OptArg != NULL ) {
                 /* leave -shared to mapping table */
                 wcc_option = 0;
                 break;
@@ -707,7 +708,7 @@ static  int  Parse( int argc, char **argv )
             wcc_option = 0;
             break;
         case 'W':
-            if( OptArg && strncmp( OptArg, "l,", 2 ) == 0 ) {
+            if( OptArg != NULL && strncmp( OptArg, "l,", 2 ) == 0 ) {
                 AddDirective( OptArg + 2 );
                 wcc_option = 0;
             }
@@ -742,7 +743,7 @@ static  int  Parse( int argc, char **argv )
             wcc_option = 0;
             break;
         case 'i':       /* -include <file> --> -fi=<file> */
-            if( !OptArg ) {
+            if( OptArg == NULL ) {
                 wcc_option = 0;
                 break;
             }
@@ -755,7 +756,7 @@ static  int  Parse( int argc, char **argv )
                 }
                 strcpy( Word, "i=" );
                 strfcat( Word, argv[OptInd] );
-                argv[OptInd++][0] = NULLCHAR;
+                argv[OptInd++][0] = '\0';
                 break;
             }
             /* avoid passing un unknown options */
@@ -763,7 +764,7 @@ static  int  Parse( int argc, char **argv )
             break;
 
         case 'M':               /* autodepend information for Unix makes */
-            if( !OptArg ) {
+            if( OptArg == NULL ) {
                 wcc_option = 0;
                 break;
             }
@@ -782,7 +783,7 @@ static  int  Parse( int argc, char **argv )
                 }
                 strcpy( Word, "d=" );
                 strfcat( Word, argv[OptInd] );
-                argv[OptInd++][0] = NULLCHAR;
+                argv[OptInd++][0] = '\0';
             } else if( !strcmp( OptArg, "T") ) {
                 Word = realloc( Word, strlen( argv[OptInd] ) + 6 );
                 if( OptInd >= argc - 1 ) {
@@ -791,7 +792,7 @@ static  int  Parse( int argc, char **argv )
                 }
                 strcpy( Word, "dt=" );
                 strcat( Word, argv[OptInd] );
-                argv[OptInd++][0] = NULLCHAR;
+                argv[OptInd++][0] = '\0';
             } else {
                 /* avoid passing on incompatible options */
                 wcc_option = 0;
@@ -804,7 +805,7 @@ static  int  Parse( int argc, char **argv )
         if( wcc_option ) {
             addccopt( c, Word );
         }
-        if( OptArg ) {
+        if( OptArg != NULL ) {
             free( Word );
             Word = NULL;
         }
@@ -812,7 +813,7 @@ static  int  Parse( int argc, char **argv )
 
     if( preprocess_only ) {
         Flags.no_link = TRUE;
-        if( !O_Name ) {
+        if( O_Name == NULL ) {
             free( Obj_Name );           /* preprocess to stdout by default */
             Obj_Name = NULL;
         }
@@ -823,7 +824,7 @@ static  int  Parse( int argc, char **argv )
             strcat( CC_Opts, "l" );
         if( cpp_keep_comments )
             strcat( CC_Opts, "c" );
-        if( cpp_linewrap ) {
+        if( cpp_linewrap != NULL ) {
             strcat( CC_Opts, cpp_linewrap );
         }
     }
@@ -831,7 +832,7 @@ static  int  Parse( int argc, char **argv )
         addccopt( CPU_Class, Conventions );
     if( Flags.be_quiet )
         addccopt( 'z', "q" );
-    if( O_Name ) {
+    if( O_Name != NULL ) {
         if( Flags.no_link && !Flags.do_disas ) {
             free( Obj_Name );
             Obj_Name = O_Name;
@@ -841,7 +842,7 @@ static  int  Parse( int argc, char **argv )
         }
         O_Name = NULL;
     }
-    if( Obj_Name ) {
+    if( Obj_Name != NULL ) {
         strcat( CC_Opts, " -fo=" );
         strcat( CC_Opts, Obj_Name );
     }
@@ -850,7 +851,7 @@ static  int  Parse( int argc, char **argv )
     }
     for( i = 1; i < argc ; i++ ) {
         Word = argv[i];
-        if( !Word || !Word[0] )
+        if( Word == NULL || Word[0] == '\0' )
             /* HBB 20060217: argument was used up */
             continue;
         if( FileExtension( Word, ".lib" ) || FileExtension( Word, ".a" ) ) {
@@ -917,14 +918,14 @@ static int tool_exec( tool_type utl, char *p1, char *p2 )
     }
     if( rc != 0 ) {
         if( (rc == -1) || (rc == 255) ) {
-            PrintMsg( WclMsgs[ UNABLE_TO_INVOKE_EXE ], tools[utl].path );
+            PrintMsg( WclMsgs[UNABLE_TO_INVOKE_EXE], tools[utl].path );
         } else {
             if( utl == TYPE_LINK ) {
-                PrintMsg( WclMsgs[ LINKER_RETURNED_A_BAD_STATUS ] );
+                PrintMsg( WclMsgs[LINKER_RETURNED_A_BAD_STATUS] );
             } else if( utl == TYPE_PACK ) {
-                PrintMsg( WclMsgs[ CVPACK_RETURNED_A_BAD_STATUS ] );
+                PrintMsg( WclMsgs[CVPACK_RETURNED_A_BAD_STATUS] );
             } else {
-                PrintMsg( WclMsgs[ COMPILER_RETURNED_A_BAD_STATUS ], p1 );
+                PrintMsg( WclMsgs[COMPILER_RETURNED_A_BAD_STATUS], p1 );
             }
         }
     }
@@ -970,7 +971,7 @@ static  int  CompLink( void )
         Fputnl( "option quiet", Fp );
     }
 
-    fputs( DebugOptions[ DebugFlag ], Fp );
+    fputs( DebugOptions[DebugFlag], Fp );
     if( StackSize != NULL ) {
         fputs( "option stack=", Fp );
         Fputnl( StackSize, Fp );
@@ -1036,7 +1037,7 @@ static  int  CompLink( void )
                 }
                 p = strrchr( file, '.' );
                 if( p != NULL )  {
-                    *p = NULLCHAR;
+                    *p = '\0';
                 }
                 strcpy( Word, file );
             }
@@ -1048,14 +1049,14 @@ static  int  CompLink( void )
                 ofile = malloc( strlen( file ) + 6 );
                 strcpy( ofile, file );
 
-                if( Exe_Name[0] ) {     /* have "-S -o output.name" */
+                if( Exe_Name[0] != '\0' ) {     /* have "-S -o output.name" */
                     sfile = Exe_Name;
                 } else {
                     if( FileExtension( Word, OBJ_EXT ) ||
                         FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                         p = strrchr( file, '.' );
                         if( p != NULL )  {
-                            *p = NULLCHAR;
+                            *p = '\0';
                         }
                         strcpy( Word, file );
                     } else {            /* wdis needs extension */
@@ -1071,14 +1072,14 @@ static  int  CompLink( void )
                 rc = tool_exec( TYPE_DIS, ofile, sfile );
                 free( ofile );
             }
-            if( Exe_Name[0] == NULLCHAR ) {
+            if( Exe_Name[0] == '\0' ) {
 #ifdef __UNIX__
                 strcpy( Exe_Name, OUTPUTFILE );
                 Flags.keep_exename = 1;
 #else
                 p = strrchr( Word, '.' );
                 if( p != NULL ) {
-                    *p = NULLCHAR;
+                    *p = '\0';
                 }
                 strcpy( Exe_Name, Word );
 #endif
@@ -1128,7 +1129,7 @@ static  void  MakeName( char *name, char *ext )
 static void ExitHandler( void )
 /*****************************/
 {
-    if( Fp )
+    if( Fp != NULL )
         fclose( Fp );
     remove( Temp_Link + 1 );
 }
@@ -1147,9 +1148,9 @@ int main( int argc, char **argv )
     }
 
     errno = 0; /* Standard C does not require fopen failure to set errno */
-    if( ( Fp = fopen( Temp_Link + 1, "w" ) ) == NULL ) {
+    if( (Fp = fopen( Temp_Link + 1, "w" )) == NULL ) {
         /* Message before banner decision as '@' option uses Fp in Parse() */
-        PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], Temp_Link + 1,
+        PrintMsg( WclMsgs[UNABLE_TO_OPEN_TEMPORARY_FILE], Temp_Link + 1,
             strerror( errno ) );
         exit( EXIT_FAILURE );
     }
