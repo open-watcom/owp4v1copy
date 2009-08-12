@@ -33,7 +33,8 @@
 #include "errors.hpp"
 #include <mbctype.h>
 
-IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname )
+IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname ),
+    ungotten( false ), ungottenChar( WEOF )
 {
     char buffer[ PATH_MAX ];
 
