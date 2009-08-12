@@ -50,11 +50,11 @@
 #define ATTR_MASK   _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
 #endif
 
-struct  flags   Flags;
+flags   Flags;
 FILE    *Fp;                /* file pointer for Temp_Link         */
-char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
+list    *Libs_List;         /* list of libraires from Cmd         */
 char    *Map_Name;          /* name of map file                   */
-list    *Obj_List;     /* linked list of object filenames    */
+list    *Obj_List;          /* linked list of object filenames    */
 char    *Obj_Name;          /* object file name pattern           */
 char    Exe_Name[_MAX_PATH];/* name of executable                 */
 
@@ -115,14 +115,26 @@ void  Fputnl( char *text, FILE *fptr )
     fputs( "\n", fptr );
 }
 
+void FputnlQuoted( char *text, FILE *fptr )
+/****************************************/
+{
+    if( strchr( text, ' ' ) != NULL ) {
+        fputs( "'", fptr );
+        fputs( text, fptr );
+        fputs( "'\n", fptr );
+    } else {
+        fputs( text, fptr );
+        fputs( "\n", fptr );
+    }
+}
+
 void BuildLinkFile( void )
 /************************/
 {
-    char    quoted[_MAX_PATH ];
+    list    *itm;
 
     fputs( "name ", Fp );
-    BuildQuotedFName( quoted, sizeof( quoted ), "", Exe_Name, "'" );
-    Fputnl( quoted, Fp );
+    FputnlQuoted( Exe_Name, Fp );
     if( Flags.keep_exename ) {
         Fputnl( "option noextension", Fp );
     }
@@ -131,13 +143,12 @@ void BuildLinkFile( void )
             Fputnl( "option map", Fp );
         } else {
             fputs( "option map=", Fp );
-            BuildQuotedFName( quoted, sizeof( quoted ), "", Map_Name, "'" );
-            Fputnl( quoted, Fp );
+            FputnlQuoted( Map_Name, Fp );
         }
     }
-    if( Libs[0] != '\0' ) {
+    for( itm = Libs_List; itm != NULL; itm = itm->next ) {
         fputs( "library ", Fp );
-        Fputnl( Libs, Fp );
+        FputnlQuoted( itm->item, Fp );
     }
     if( Flags.two_case ) {
         Fputnl( "option caseexact", Fp );
@@ -152,12 +163,52 @@ void  *MemAlloc( int size )
     void        *ptr;
 
     if( (ptr = malloc( size )) == NULL ) {
-        PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
+        PrintMsg( WclMsgs[OUT_OF_MEMORY] );
         exit( 1 );
     }
     return( ptr );
 }
 
+char *MemStrDup( const char *str )
+/********************************/
+{
+    char        *ptr;
+
+    if( (ptr = strdup( str )) == NULL ) {
+        PrintMsg( WclMsgs[OUT_OF_MEMORY] );
+        exit( 1 );
+    }
+    return( ptr );
+}
+
+void ListAppend( list **itm_list, list *new )
+/*********************************************/
+{
+    list    *itm;
+
+    if( *itm_list == NULL ) {
+        *itm_list = new;
+    } else {
+        itm = *itm_list;
+        while( itm->next != NULL ) {
+            itm = itm->next;
+        }
+        itm->next = new;
+    }
+}
+
+void ListFree( list *itm_list )
+/*****************************/
+{
+    list    *next;
+
+    while( itm_list != NULL ) {
+        next = itm_list->next;
+        free( itm_list->item );
+        free( itm_list );
+        itm_list = next;
+    }
+}
 
 void  AddName( char *name, FILE *link_fp )
 /****************************************/
@@ -166,7 +217,6 @@ void  AddName( char *name, FILE *link_fp )
     list        *last_name;
     list        *new_name;
     char        path  [_MAX_PATH ];
-    char        quoted[_MAX_PATH ];
     PGROUP      pg1;
     PGROUP      pg2;
 
@@ -183,9 +233,8 @@ void  AddName( char *name, FILE *link_fp )
     } else {
         last_name->next = new_name;
     }
-    new_name->item = strdup( name );
+    new_name->item = MemStrDup( name );
     new_name->next = NULL;
-    fputs( "file ", link_fp );
     if( Obj_Name != NULL ) {
         /* construct full name of object file from Obj_Name information */
         _splitpath2( Obj_Name, pg1.buffer, &pg1.drive, &pg1.dir, &pg1.fname, &pg1.ext );
@@ -209,8 +258,8 @@ void  AddName( char *name, FILE *link_fp )
         _makepath( path, pg1.drive, pg1.dir, pg1.fname, pg1.ext );
         name = path;
     }
-    BuildQuotedFName( quoted, sizeof( quoted ), "", name, "'" );
-    Fputnl( quoted, link_fp );
+    fputs( "file ", link_fp );
+    FputnlQuoted( name, link_fp );
 }
 
 
@@ -218,23 +267,23 @@ char  *MakePath( char *path )
 /***************************/
 {
     char        *p;
+    int         len;
 
     p = strrchr( path, SYS_DIR_SEP_CHAR );
-    if( p != NULL ) {
-        p[1] = '\0';
-    } else {
-#ifdef __UNIX__
-        *path = '\0';
-#else
+#ifndef __UNIX__
+    if( p == NULL ) {
         p = strchr( path, ':' );
-        if( p != NULL ) {
-            p[1] = '\0';
-        } else {
-            *path = '\0';
-        }
-#endif
     }
-    return( strdup( path ) );
+#endif
+    if( p == NULL ) {
+        return( MemStrDup( "" ) );
+    } else {
+        len = p + 1 - path;
+        p = MemAlloc( len + 1 );
+        strncpy( p, path, len );
+        p[len] = '\0';
+        return( p );
+    }
 }
 
 char  *GetName( char *path )
@@ -245,13 +294,13 @@ char  *GetName( char *path )
     struct      dirent  *direntp;
 
     if( path != NULL ) {                /* if given a filespec to open,  */
-        if( *path == '\0' ) {       /*   but filespec is empty, then */
+        if( *path == '\0' ) {           /*   but filespec is empty, then */
             closedir( dirp );           /*   close directory and return  */
             return( NULL );             /*   (for clean up after error)  */
         }
         dirp = opendir( path );         /* try to find matching filenames */
         if( dirp == NULL ) {
-            PrintMsg( WclMsgs[ UNABLE_TO_OPEN ], path );
+            PrintMsg( WclMsgs[UNABLE_TO_OPEN], path );
             return( NULL );
         }
     }
@@ -274,7 +323,7 @@ char  *GetName( char *path )
     } else {
         name++;
     }
-    return( strdup(name) );
+    return( MemStrDup(name) );
 #endif
 }
 
@@ -283,7 +332,7 @@ void FindPath( char *name, char *buf )
 {
     _searchenv( name, "PATH", buf );
     if( buf[0] == '\0' ) {
-        PrintMsg( WclMsgs[ UNABLE_TO_FIND ], name );
+        PrintMsg( WclMsgs[UNABLE_TO_FIND], name );
         exit( 1 );
     }
 }

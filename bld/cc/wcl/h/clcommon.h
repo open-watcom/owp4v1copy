@@ -54,15 +54,7 @@ typedef struct  list {
     struct list *next;
 } list;
 
-extern  FILE    *Fp;                /* file pointer for Temp_Link         */
-extern  char    Exe_Name[_MAX_PATH];/* name of executable                 */
-extern  char    *Map_Name;          /* name of map file                   */
-extern  char    *Obj_Name;          /* object file name pattern           */
-extern  char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
-extern  const char    *WclMsgs[];
-extern  list        *Obj_List;          /* linked list of object filenames    */
-
-struct  flags {
+typedef struct  flags {
     unsigned math_8087    : 1;  /* 0 ==> no 8087, otherwise /7 option */
     unsigned map_wanted   : 1;  /* -fm option specified               */
     unsigned two_case     : 1;  /* two case option                    */
@@ -82,21 +74,33 @@ struct  flags {
     unsigned strip_all    : 1;  /* -s option for owcc                 */
     unsigned want_errfile : 1;  /* -fr option in owcc                 */
     unsigned keep_exename : 1;  /* verbatim -o name from owcc         */
-};
+} flags;
 
-extern  struct flags Flags;
+extern FILE     *Fp;                /* file pointer for Temp_Link         */
+extern char     Exe_Name[_MAX_PATH];/* name of executable                 */
+extern char     *Map_Name;          /* name of map file                   */
+extern char     *Obj_Name;          /* object file name pattern           */
+extern list     *Libs_List;         /* list of libraires from Cmd         */
+extern const char *WclMsgs[];
+extern list     *Obj_List;          /* linked list of object filenames    */
 
-extern  char *DebugOptions[];
+extern flags 	Flags;
 
-void    PrintMsg( const char *fmt, ... );
-void    FindPath( char *name, char *buf );
-void    BuildLinkFile( void );
-void    AddName( char *, FILE * );
-void    Fputnl( char *, FILE * );
-void    *MemAlloc( int );
-char    *MakePath( char * );
-char    *GetName( char * );
-char    *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars );
+extern char     *DebugOptions[];
+
+extern void     PrintMsg( const char *fmt, ... );
+extern void     FindPath( char *name, char *buf );
+extern void     BuildLinkFile( void );
+extern void     AddName( char *, FILE * );
+extern void     ListAppend( list **, list * );
+extern void     ListFree( list * );
+extern void     Fputnl( char *, FILE * );
+extern void     FputnlQuoted( char *, FILE * );
+extern void     *MemAlloc( int );
+extern char     *MemStrDup( const char * );
+extern char     *MakePath( char * );
+extern char     *GetName( char * );
+extern char     *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars );
 
 enum {
 #undef E

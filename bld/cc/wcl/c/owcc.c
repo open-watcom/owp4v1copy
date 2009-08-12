@@ -87,9 +87,9 @@ char *OptEnvVar = WCLENV;           /* Data interface for GetOpt()        */
 
 static  char    *Word;              /* one parameter                      */
 static  char    *SystemName;        /* system to link for                 */
-static  char    Files[MAX_CMD];     /* list of filenames from Cmd         */
+static  list    *Files_List;        /* list of filenames from Cmd         */
 static  char    CC_Opts[MAX_CMD];   /* list of compiler options from Cmd  */
-static  char    target_CC[20] = CC;    /* name of the wcc variant to use     */
+static  char    target_CC[20] = CC; /* name of the wcc variant to use     */
 static  char    target_CCXX[20] = CCXX; /* name of the wpp variant to use     */
 static  char    PathBuffer[_MAX_PATH];/* buffer for path name of tool     */
 static  char    *Link_Name;         /* Temp_Link copy if /fd specified    */
@@ -244,7 +244,7 @@ static struct {
     char *name;
     char *exename;
     char *path;
-} tools[ TYPE_MAX ] = {
+} tools[TYPE_MAX] = {
     { ASM,  ASM EXE_EXT,    NULL },
     { CC,   CC EXE_EXT,     NULL },
     { CCXX, CCXX EXE_EXT,   NULL },
@@ -291,7 +291,7 @@ static char *strfcat( char *target, const char *source )
 
 static char *strfdup( const char *source )
 {
-    return( xlate_fname( strdup( source ) ) );
+    return( xlate_fname( MemStrDup( source ) ) );
 }
 
 void addccopt( int option, char *opt )
@@ -309,6 +309,7 @@ void addccopt( int option, char *opt )
 }
 
 static int FileExtension( char *p, char *ext )
+/********************************************/
 {
     char        *dot;
 
@@ -329,22 +330,13 @@ static int FileExtension( char *p, char *ext )
 static  void AddDirective( char *directive )
 /******************************************/
 {
-    list    *p;
-    list    *p2;
+    list    *itm;
 
-    p = MemAlloc( sizeof( list ) );
-    p->next = NULL;
-    p->item = MemAlloc( strlen( directive ) + 1 );
-    strcpy( p->item, directive );
-    if( Directive_List == NULL ) {
-        Directive_List = p;
-    } else {
-        p2 = Directive_List;
-        while( p2->next != NULL ) {
-            p2 = p2->next;
-        }
-        p2->next = p;
-    }
+    itm = MemAlloc( sizeof( list ) );
+    itm->next = NULL;
+    itm->item = MemAlloc( strlen( directive ) + 1 );
+    strcpy( itm->item, directive );
+    ListAppend( &Directive_List, itm );
 }
 
 static  int  ConsultSpecsFile( const char *target )
@@ -407,6 +399,35 @@ static  int  ConsultSpecsFile( const char *target )
     return( 0 );
 }
 
+static void initialize_Flags( void )
+/**********************************/
+{
+    Flags.math_8087    = 1;
+    Flags.map_wanted   = 0;
+    Flags.two_case     = 1;
+    Flags.tiny_model   = 0;
+    Flags.be_quiet     = 1;
+    Flags.no_link      = 0;
+    Flags.do_link      = 0;
+    Flags.do_disas     = 0;
+    Flags.do_cvpack    = 0;
+    Flags.link_for_dos = 0;
+    Flags.link_for_os2 = 0;
+    Flags.windows      = 0;
+    Flags.link_for_sys = 0;
+#if defined( _M_I86 )
+    Flags.is32bit      = 0;
+#else
+    Flags.is32bit      = 1;
+#endif
+    Flags.force_c      = 0;
+    Flags.force_c_plus = 0;
+    Flags.strip_all    = 0;
+    Flags.want_errfile = 0;
+    Flags.keep_exename = 0;
+}
+
+
 static  int  Parse( int argc, char **argv )
 /*****************************************/
 {
@@ -414,26 +435,9 @@ static  int  Parse( int argc, char **argv )
     int         wcc_option;
     int         c;
     int         i;
+    list        *new_item;
 
-    Flags.map_wanted   = 0;
-    Flags.two_case     = 1;
-    Flags.tiny_model   = 0;
-    Flags.be_quiet     = 1;
-    Flags.no_link      = 0;
-    Flags.do_link      = 0;
-    Flags.do_cvpack    = 0;
-    Flags.link_for_dos = 0;
-    Flags.link_for_os2 = 0;
-    Flags.windows      = 0;
-#if defined( _M_I86 )
-    Flags.is32bit      = 0;
-#else
-    Flags.is32bit      = 1;
-#endif
-    Flags.math_8087    = 1;
-    Flags.keep_exename = 0;
-    Flags.want_errfile = 0;
-    Flags.strip_all    = 0;
+    initialize_Flags();
     DebugFlag          = 1;
     StackSize = NULL;
     Conventions[0]     = 'r';
@@ -508,7 +512,7 @@ static  int  Parse( int argc, char **argv )
             if( !strncmp( Word, "cpp-wrap=", 9 ) ) {
                 free( cpp_linewrap );
                 Word[7] = 'w';
-                cpp_linewrap = strdup( Word + 7 );
+                cpp_linewrap = MemStrDup( Word + 7 );
                 wcc_option = 0;
                 break;
             }
@@ -525,7 +529,7 @@ static  int  Parse( int argc, char **argv )
                     Link_Name = strfdup( Word + 2 );
                 } else {
                     free( Link_Name );
-                    Link_Name = strdup( TEMPFILE );
+                    Link_Name = MemStrDup( TEMPFILE );
                 }
                 wcc_option = 0;
                 break;
@@ -558,7 +562,7 @@ static  int  Parse( int argc, char **argv )
         case 'k':               /* stack size option */
             if( Word[0] != '\0' ) {
                 free( StackSize );
-                StackSize = strdup( Word );
+                StackSize = MemStrDup( Word );
             }
             wcc_option = 0;
             break;
@@ -728,7 +732,7 @@ static  int  Parse( int argc, char **argv )
         case 'b':
             Flags.link_for_sys = TRUE;
             free( SystemName );
-            SystemName = strdup( Word );
+            SystemName = MemStrDup( Word );
             /* if Word found in specs.owc, add options from there: */
             if( ConsultSpecsFile( Word ) ) {
                 /* all set */
@@ -740,9 +744,12 @@ static  int  Parse( int argc, char **argv )
             }
             break;
         case 'l':
-            strcat( Libs, Libs[0] != '\0' ? ",lib" : " lib" );
-            strcat( Libs, OptArg );
-            strcat( Libs, ".a" );
+            new_item = MemAlloc( sizeof( list ) );
+            new_item->next = NULL;
+            new_item->item = MemAlloc( strlen( OptArg ) + 2 + 1 );
+            strcpy( new_item->item, OptArg );
+            strcat( new_item->item, ".a" );
+            ListAppend( &Libs_List, new_item );
             wcc_option = 0;
             break;
         case 'L':
@@ -867,12 +874,13 @@ static  int  Parse( int argc, char **argv )
         if( Word == NULL || Word[0] == '\0' )
             /* HBB 20060217: argument was used up */
             continue;
+        new_item = MemAlloc( sizeof( list ) );
+        new_item->next = NULL;
+        new_item->item = MemStrDup( Word );
         if( FileExtension( Word, ".lib" ) || FileExtension( Word, ".a" ) ) {
-            strcat( Libs, Libs[0] != '\0' ? "," : " " );
-            strfcat( Libs, Word );
+            ListAppend( &Libs_List, new_item );
         } else {
-            strfcat( Files, Word );
-            strcat( Files, " " );
+            ListAppend( &Files_List, new_item );
         }
     }
     free( cpp_linewrap );
@@ -932,14 +940,14 @@ static int tool_exec( tool_type utl, char *p1, char *p2 )
     }
     if( rc != 0 ) {
         if( (rc == -1) || (rc == 255) ) {
-            PrintMsg( WclMsgs[ UNABLE_TO_INVOKE_EXE ], tools[utl].path );
+            PrintMsg( WclMsgs[UNABLE_TO_INVOKE_EXE], tools[utl].path );
         } else {
             if( utl == TYPE_LINK ) {
-                PrintMsg( WclMsgs[ LINKER_RETURNED_A_BAD_STATUS ] );
+                PrintMsg( WclMsgs[LINKER_RETURNED_A_BAD_STATUS] );
             } else if( utl == TYPE_PACK ) {
-                PrintMsg( WclMsgs[ CVPACK_RETURNED_A_BAD_STATUS ] );
+                PrintMsg( WclMsgs[CVPACK_RETURNED_A_BAD_STATUS] );
             } else {
-                PrintMsg( WclMsgs[ COMPILER_RETURNED_A_BAD_STATUS ], p1 );
+                PrintMsg( WclMsgs[COMPILER_RETURNED_A_BAD_STATUS], p1 );
             }
         }
     }
@@ -973,10 +981,9 @@ static  int  CompLink( void )
 {
     int         rc;
     char        *p;
-    char        *end;
     char        *file;
     char        *path;
-    list        *d_list;
+    list        *itm;
     char        errors_found;
     tool_type   utl;
     int         i;
@@ -984,7 +991,7 @@ static  int  CompLink( void )
     if( Flags.be_quiet ) {
         Fputnl( "option quiet", Fp );
     }
-    fputs( DebugOptions[ DebugFlag ], Fp );
+    fputs( DebugOptions[DebugFlag], Fp );
     if( StackSize != NULL ) {
         fputs( "option stack=", Fp );
         Fputnl( StackSize, Fp );
@@ -1017,26 +1024,14 @@ static  int  CompLink( void )
 #endif
         }
     }
-    for( d_list = Directive_List; d_list; d_list = d_list->next ) {
-        Fputnl( d_list->item, Fp );
+    for( itm = Directive_List; itm != NULL; itm = itm->next ) {
+        Fputnl( itm->item, Fp );
     }
     Word = MemAlloc( MAX_CMD );
-    errors_found = 0;                   /* 21-jan-92 */
-    p = Files;
-    while( *p != '\0' ) {
-        if( *p == '"' ) {
-            end = strpbrk( ++p, "\"" ); /* get quoted filespec */
-        } else {
-            end = strpbrk( p, " " );    /* get filespec */
-        }
-        if( end != NULL ) {
-            *(end++) = 0;
-            if( *end == ' ' ) {
-                end++;
-            }
-        }
-        strcpy( Word, p );
-        utl = SrcName( Word );      /* if no extension, assume .c */
+    errors_found = 0;
+    for( itm = Files_List; itm != NULL; itm = itm->next ) {
+        strcpy( Word, itm->item );
+        utl = SrcName( Word );          /* if no extension, assume .c */
         file = GetName( Word );         /* get first matching filename */
         path = MakePath( Word );        /* isolate path portion of filespec */
         while( file != NULL ) {         /* while more filenames: */
@@ -1102,7 +1097,7 @@ static  int  CompLink( void )
 #endif
             file = GetName( NULL );     /* get next filename */
         }
-        p = end;        /* get next filespec */
+        free( path );
     }
     if( errors_found ) {
         rc = 1;
@@ -1153,30 +1148,23 @@ static void ExitHandler( void )
 static int ProcMemInit( void )
 {
     Map_Name = NULL;
-    Obj_Name = strdup( ".o" );
+    Obj_Name = MemStrDup( ".o" );
     Link_Name = NULL;
     SystemName = NULL;
     StackSize = NULL;
     Directive_List = NULL;
+    Files_List = NULL;
     Obj_List = NULL;
+    Libs_List = NULL;
     return( 0 );
 }
 
 static int ProcMemFini( void )
 {
-    list    *curr;
-    list    *next;
-
-    for( curr = Obj_List; curr != NULL; curr = next ) {
-        next = curr->next;
-        free( curr->item );
-        free( curr );
-    }
-    for( curr = Directive_List; curr != NULL; curr = next ) {
-        next = curr->next;
-        free( curr->item );
-        free( curr );
-    }
+    ListFree( Directive_List );
+    ListFree( Files_List );
+    ListFree( Obj_List );
+    ListFree( Libs_List );
     free( Map_Name );
     free( Obj_Name );
     free( Link_Name );
@@ -1199,7 +1187,7 @@ int main( int argc, char **argv )
     errno = 0; /* Standard C does not require fopen failure to set errno */
     if( (Fp = fopen( TEMPFILE, "w" )) == NULL ) {
         /* Message before banner decision as '@' option uses Fp in Parse() */
-        PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], TEMPFILE,
+        PrintMsg( WclMsgs[UNABLE_TO_OPEN_TEMPORARY_FILE], TEMPFILE,
             strerror( errno ) );
         exit( EXIT_FAILURE );
     }
