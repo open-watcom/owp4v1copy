@@ -848,9 +848,12 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         killQuotes( sym );
         sym.insert( sym.begin(), L'&' );
         sym += L'.';
-        idx1 = lexer->text().find( L"text=" );
-        idx2 = lexer->text().find( L' ', idx1 );
-        std::wstring txt( lexer->text().substr( idx1 + 5, idx2 - idx1 - 5 ) );
+        std::wstring::size_type idx3( lexer->text().find( L"text=" ) );
+        //check for single quotes
+        std::wstring::size_type idx4( lexer->text()[ idx3 + 5 ] == L'\'' ? \
+            lexer->text().find( L'\'', idx3  + 6 ) : \
+            lexer->text().find( L' ', idx3 + 5 ) );
+        std::wstring txt( lexer->text().substr( idx3 + 5, idx4 - idx3 - 5 ) );
         killQuotes( txt );
         if( !nls->isEntity( sym ) && nameIts.find( sym ) == nameIts.end() ) //add it to the list
             nameIts.insert( std::map< std::wstring, std::wstring >::value_type( sym, txt ) );
