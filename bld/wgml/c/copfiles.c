@@ -925,7 +925,7 @@ uint8_t cop_in_trans( uint8_t in_char, uint8_t font )
     intrans_block   *   block   = NULL;
     uint8_t             retval;
 
-    if( font > wgml_font_cnt ) font = 0;
+    if( font >= wgml_font_cnt ) font = 0;
     retval = ti_table[in_char];
 
     block = wgml_fonts[font].bin_font->intrans;
@@ -965,7 +965,7 @@ record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
     uint32_t            j;
     uint32_t            k;
 
-    if( font > wgml_font_cnt ) font = 0;
+    if( font >= wgml_font_cnt ) font = 0;
 
     k = 0;
     for( i = 0; i < count; i++ ) {
@@ -1617,7 +1617,7 @@ uint32_t cop_text_width( uint8_t * text, uint32_t count, uint8_t font )
     int             i;
     uint32_t        width;
 
-    if( font > wgml_font_cnt ) font = 0;
+    if( font >= wgml_font_cnt ) font = 0;
 
     /* Compute the width. */
 
@@ -1868,6 +1868,7 @@ void fb_output_textline( text_line * out_line )
 
     line_passes = 0;
     while( current != NULL ) {
+        if( current->font_number >= wgml_font_cnt ) current->font_number = 0;
         if( wgml_fonts[current->font_number].font_style->line_passes > \
                                                                 line_passes ) {
                 line_passes = \

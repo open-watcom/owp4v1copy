@@ -110,15 +110,29 @@ static  text_phrase         title[] = {
 };
  
 static  text_phrase         page1_para1[] = {
-    {0, "This document is copied and modified from the Wiki. The reason for" },
-    {0, "this is to make it less boring." },
+    {0, "This document is copied and modified from the Wiki. The reason for " },
+    {0, "this is to make it less boring. Let's start with some tests: the " },
+    {0, "title was in available font 3; most of the text is in available " },
+    {0, "font 0; here is a phrase in " },
+    {1, "available font 1" },
+    {0, " and here is a phrase in " },
+    {2, "available font 2" },
+    {0, ", neither including spaces before or behind (the usual situation). " },
+    {0, "The rarer cases have the highlighted phrase include" },
+    {1, " the space before" },
+    {0, " or " },
+    {2, "the space behind " },
+    {0, "(which can affect layout if the space widths vary by font) " },
+    {0, "and, very rarely, perhaps, to start in the mid" },
+    {3, "dle" },
+    {0, " of a word." },
     {0, NULL }
 };
  
 static  text_phrase         page1_para2[] = {
-    {0, "Those function sequences involving literal parameters which are" },
-    {0, "discussed here behave as expected in all compiled function blocks." },
-    {0, "The number of possible function sequences in this category is" },
+    {0, "Those function sequences involving literal parameters which are " },
+    {0, "discussed here behave as expected in all compiled function blocks. " },
+    {0, "The number of possible function sequences in this category is " },
     {0, "infinite; these examples were tested:" },
     {0, NULL }
 };
@@ -144,19 +158,19 @@ static  text_phrase         page1_box[] = {
 #endif // #if 0
  
 static  text_phrase         page2_para1[] = {
-    {0, "An interesting phenomenon became apparent during these tests: the" },
-    {0, "XP VDM window (at least) behaves as if the null characters generated" },
-    {0, "by %binary2(5) and %binary4(6) were CR+LF characters. Both the" },
-    {0, "binary file and a file containing the redirected screen output were" },
-    {0, "examined, and neither showed actual additional CR+LF characters," },
-    {0, "extra compiled %recordbreak() functions, or blank lines in the output" },
+    {0, "An interesting phenomenon became apparent during these tests: the " },
+    {0, "XP VDM window (at least) behaves as if the null characters generated " },
+    {0, "by %binary2(5) and %binary4(6) were CR+LF characters. Both the " },
+    {0, "binary file and a file containing the redirected screen output were " },
+    {0, "examined, and neither showed actual additional CR+LF characters, " },
+    {0, "extra compiled %recordbreak() functions, or blank lines in the output " },
     {0, "file, so this pretty much has to be something the VDM is doing." },
     {0, NULL }
 };
  
 static  text_phrase         page2_para2[] = {
-    {0, "All other function sequences discussed which use literal parameters" },
-    {0, "output function sequences in which the parameters are encoded using" },
+    {0, "All other function sequences discussed which use literal parameters " },
+    {0, "output function sequences in which the parameters are encoded using " },
     {0, "parameter blocks." },
     {0, NULL }
 };
@@ -203,15 +217,13 @@ static  text_phrase         page2_box[] = {
  *      This function is intended to provide some idea of what might be
  *          done between the point where the text is finalized except for
  *          input translation and the point where it is sent to be output.
- *      This function is the sort of thing that might, with a bit of
- *          enhancement, be used to output the text used with a :P. tag. The
- *          "enhancement" would include processing the various tags specifying
- *          the desired font for a given phrase, rather than getting the
- *          information from the text_phrase.
+ *      This function is the sort of thing that might be used to output the
+ *          text used with a :P. tag or in similar situations. It might need
+ *          some enhancement in order to work properly for wgml.
  *      The first text_line will be output starting at the location given by
  *          cur_h_start on entry. Subsequent lines will be output at the
  *          location given by page_left. This may or may not be acceptable
- *          in production code, depending on the tag being implemented.
+ *          in production code.
  */
  
 void emulate_text_output( text_phrase * text )
@@ -221,6 +233,8 @@ void emulate_text_output( text_phrase * text )
     int             j;
     size_t          count;
     size_t          increment;
+    size_t          spaces;
+    size_t          space_width;
     text_chars  *   cur_chars;
     text_chars  *   next_chars;
     text_chars  *   pool_ptr;
@@ -263,14 +277,43 @@ void emulate_text_output( text_phrase * text )
         /* This loop processes a single text_phrase. */
  
         for( i = 0; i < count; i++ ) {
-            if( isspace( cur_phrase->text[i] ) ) continue;
- 
+
+            /* Count any spaces. */
+
+            spaces = 0;
+            for( j = i; j < count; j++ ) {
+                if( !isspace( cur_phrase->text[j] ) ) break;
+                spaces++;
+            }
+            i = j;
+
+            /* Compute space_width and adjust x_address and cur_h_start. */
+
+            if( spaces == 0 ) {
+                space_width = 0;
+            } else {
+                space_width = spaces * \
+                                wgml_fonts[next_chars->font_number].spc_width;
+                cur_h_start += space_width;
+                next_chars->x_address = cur_h_start;
+            }
+
+            /* The remaining code in the loop has this effect:
+             *   When the end of the text_phrase has not been reached, then
+             * the next text_chars inserted into the_line will start at a
+             * position which includes the value of space_width.
+             *   When the end of the text_phrase has been reached, an empty
+             * text_chars, which includes the value of space_width, is
+             * inserted into the_line.
+             */
+
             /* This loop processes a single text_chars. */
  
             for( j = i; j < count; j++ ) {
 
+                if( isspace( cur_phrase->text[j] ) ) break;
+
                 the_char = cur_phrase->text[j];
-                if( isspace( the_char ) ) break;
  
                 if( ProcFlags.in_trans ) {
                     if( in_esc == the_char ) {
@@ -287,22 +330,25 @@ void emulate_text_output( text_phrase * text )
                 next_chars->text[next_chars->count] = the_char;
                 next_chars->count++;
             }
-            i = j;
 
-            /* Compute the width and initialize increment. */
- 
-            next_chars->width = cop_text_width( next_chars->text, \
+            /* Ensure that, when the top of the loop is reached, i will have
+             * the correct value after it is incremented.
+             */
+
+            i = j - 1;
+
+            if( next_chars->count == 0 ) {
+                next_chars->width = 0;
+            } else {
+                next_chars->width = cop_text_width( next_chars->text, \
                                 next_chars->count, next_chars->font_number );
+            }
             increment = next_chars->width;
- 
-            /* Allow one space between text_chars instances. */
- 
-            increment += wgml_fonts[next_chars->font_number].spc_width;
- 
-            /* Finalize the the text_line. */
- 
+
+            /* Update text_line. */
+
             if( (cur_h_start + increment) > page_right ) {
- 
+
                 /* The text_line is ready for output and reinitialization. */
  
                 save_chars = next_chars;
@@ -362,6 +408,7 @@ void emulate_text_output( text_phrase * text )
         cur_phrase++;
         font_number = cur_phrase->font_number;
         if( font_number > wgml_font_cnt ) font_number = 0;
+        next_chars->font_number = font_number;
     }
 
     /* Output the final text_line and return the text_chars to the pool.*/

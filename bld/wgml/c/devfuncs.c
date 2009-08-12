@@ -2698,6 +2698,7 @@ static void fb_new_font_text_chars( text_chars * in_chars )
 
     /* Do the font switch, which is needed by definition. */
 
+    if( text_out_open ) post_text_output();
     fb_font_switch();
 
     /* If there is no :LINEPROC block, then set textpass to "true"; if there
@@ -3328,7 +3329,6 @@ void fb_first_text_pass( text_line * out_line )
     /* Update the internal state for the new text_line. */
 
     current = out_line->first;
-    if( current->font_number > wgml_font_cnt ) current->font_number = 0;
     desired_state.font_number = current->font_number;
     desired_state.x_address   = current->x_address;
     desired_state.y_address   = out_line->y_address;
@@ -3358,7 +3358,6 @@ void fb_first_text_pass( text_line * out_line )
     current = current->next;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
-        if( current->font_number > wgml_font_cnt ) current->font_number = 0;
         if( current_state.font_number != current->font_number ) {
             fb_new_font_text_chars( current );
         } else {
