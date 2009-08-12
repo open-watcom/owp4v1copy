@@ -80,53 +80,21 @@ Lexer::Token Link::parse( Lexer* lexer )
     Lexer::Token tok( parseAttributes( lexer ) );
     if( !noElink ) {
         while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC) ) {
-            //may contain words, puctuation, whitespace, entities
-            if( tok == Lexer::WORD ) {
-                Word* word( new Word( document, this, document->dataName(),
-                    document->dataLine(), document->dataCol() ) );
-                appendChild( word );
-                tok = word->parse( lexer );
-            }
-            else if( tok == Lexer::ENTITY ) {
-                Entity* entity( new Entity( document, this, document->dataName(),
-                    document->dataLine(), document->dataCol() ) );
-                appendChild( entity );
-                tok = entity->parse( lexer );
-            }
-            else if( tok == Lexer::PUNCTUATION ) {
-                Punctuation* punct( new Punctuation( document, this, document->dataName(),
-                    document->dataLine(), document->dataCol() ) );
-                appendChild( punct );
-                tok = punct->parse( lexer );
-            }
-            else if( tok == Lexer::WHITESPACE ) {
-                if( lexer->text()[0] != L'\n' ) {
-                    WhiteSpace* ws( new WhiteSpace( document, this, document->dataName(),
-                        document->dataLine(), document->dataCol(), whiteSpace ) );
-                    appendChild( ws );
-                    tok = ws->parse( lexer );
-                }
-                else
-                    tok = document->getNextToken();
-            }
-            else if( tok == Lexer::TAG ) {
+            //inline except: elink, artlink, eartlink, artwork, hdref
+            if( tok == Lexer::TAG ) {
                 if( lexer->tagId() == Lexer::ELINK )
                     break;
-                else {
-                    document->printError( ERR1_TAGCONTEXT );
-                    tok = document->getNextToken();
+                else if( lexer->tagId() == Lexer::ARTLINK ||
+                         lexer->tagId() == Lexer::EARTLINK ||
+                         lexer->tagId() == Lexer::ARTWORK ||
+                         lexer->tagId() == Lexer::HDREF ) {
+                    parseCleanup( lexer, tok );
                 }
+                else if( parseInline( lexer, tok ) )
+                    parseCleanup( lexer, tok );
             }
-            else if( tok == Lexer::COMMAND )
-                tok = document->processCommand( lexer, this );
-            else if( tok == Lexer::ERROR_TAG ) {
-                document->printError( ERR1_TAGNOTDEF );
-                tok = document->getNextToken();
-            }
-            else if( tok == Lexer::ERROR_ENTITY ) {
-                document->printError( ERR1_TAGNOTDEF );
-                tok = document->getNextToken();
-            }
+            else if( parseInline( lexer, tok ) )
+                parseCleanup( lexer, tok );
         }
     }
     return tok;
