@@ -481,10 +481,25 @@ int ipf_trans_line(
             ptr = skip_blank( ptr + 1 );
         } else if( ch == CH_DLIST_TERM ) {
             /* definition list term */
-            line_len += trans_add_str( ":dt.:hp2.", section, &alloc_size );
-            term_fix = TRUE;
-            ptr = skip_blank( ptr + 1 );
-            Blank_line_sfx = FALSE;
+            ptr ++;
+            while( *ptr == ' ' ) {
+                /* kludge fix cuz of GML: GML thinks that keywords are
+                   are real words, so it puts a space after them.
+                   This should fix that */
+                ++ptr;
+            }
+	    if( *ptr == CH_FONTSTYLE_START ) { /*Check to avoid nesting formatting codes*/
+                --ptr;
+                line_len += trans_add_str( ":dt.", section, &alloc_size );
+	        ptr = skip_blank( ptr + 1 );
+                Blank_line_sfx = FALSE;
+            } else {
+                --ptr;
+                line_len += trans_add_str( ":dt.:hp2.", section, &alloc_size );
+                term_fix = TRUE;
+                ptr = skip_blank( ptr + 1 );
+                Blank_line_sfx = FALSE;
+            }
         } else if( ch == CH_CTX_KW ) {
             end = strchr( ptr + 1, CH_CTX_KW );
             memcpy( buf, ptr + 1, end - ptr - 1 );

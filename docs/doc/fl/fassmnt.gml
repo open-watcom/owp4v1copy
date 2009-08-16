@@ -280,11 +280,12 @@ padded on the right with blanks to the length of
 .ix 'extended assignment statement'
 .ix 'assignment statement' extended
 &product supports an extension to the FORTRAN 77 assignment
-statement, namely the
-.us extended assignment statement.
+statement, namely the 
+.us extended assignment statement
+shown here:
 .mext begin
       v  =  v  =  v  = ... =  v  = e
-       1     2     3           n
+      1    2    3          n
 .mext end
 .synote
 .mnote v'i
