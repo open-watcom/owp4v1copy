@@ -17,6 +17,9 @@ wmake_autodepends = .AUTODEPEND
 #!endif
 #!endif
 
+!ifndef bootstrap
+!include idedlls.mif
+!endif
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -41,6 +44,9 @@ extra_c_flags_i86 = -zt32
 
 inc_dirs = -I"$(wmake_dir)/h" -I"$(orl_dir)/h" -I$(trmem_dir)
 
+!ifdef DLLS_IMPLEMENTED
+extra_c_flags += -DDLLS_IMPLEMENTED
+!endif
 !ifdef cachestat
 extra_c_flags += -DCACHE_STATS
 !endif

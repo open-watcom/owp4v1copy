@@ -41,10 +41,8 @@
 #include "errout.h"
 
 
-#ifndef USE_RUNYOURSELF_ARGV
-    #if defined(__UNIX__)
-        #define USE_RUNYOURSELF_ARGV
-    #endif
+#ifdef DLLS_IMPLEMENTED
+#undef DLLS_IMPLEMENTED
 #endif
 
 

@@ -56,7 +56,8 @@
 
 static IDECBHdl         IdeHdl;
 
-static IDEInitInfo      InitInfo;
+IDEInitInfo     InitInfo;
+IDECallBacks    *IdeCB;
 
 #if defined( __OS2__ )
 //extern int InitMsg( void );
@@ -64,8 +65,6 @@ static IDEInitInfo      InitInfo;
 
 static bool     RunOnce;
 #endif
-
-IDECallBacks *  IdeCB;
 
 static IDEMsgSeverity SeverityMap[] = {
     IDEMSGSEV_NOTE_MSG, IDEMSGSEV_NOTE_MSG, IDEMSGSEV_WARNING, IDEMSGSEV_ERROR,
@@ -225,19 +224,3 @@ IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char * opts,
     *fatalerr = (LinkState & LINK_ERROR) != 0;
     return *fatalerr;
 }
-
-bool ExecWlibDLL( char *cmdline )
-/**************************************/
-// return TRUE if an error
-{
-    IDEDRV              inf;
-    IDEDRV_STATUS       status;
-
-    status = IDEDRV_ERR_LOAD;
-    IdeDrvInit( &inf, "wlibd.dll", NULL );
-    IdeDrvChainCallbacks( IdeCB, &InitInfo );
-    status = IdeDrvExecDLL( &inf, cmdline );
-    IdeDrvUnloadDLL( &inf );
-    return status != IDEDRV_SUCCESS;
-}
-

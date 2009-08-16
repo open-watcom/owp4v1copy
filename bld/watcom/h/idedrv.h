@@ -32,6 +32,18 @@
 #ifndef __IDEDRV_H__
 #define __IDEDRV_H__
 
+#if defined( CHAIN_CALLBACK )
+#define IdeDrvExecDLL           _IdeDrvExecDLL
+#define IdeDrvExecDLLArgv       _IdeDrvExecDLLArgv
+#define IdeDrvInit              _IdeDrvInit
+#define IdeDrvPrintError        _IdeDrvPrintError
+#define IdeDrvUnloadDLL         _IdeDrvUnloadDLL
+#define IdeDrvStopRunning       _IdeDrvStopRunning
+#define IdeDrvChainCallbacks    _IdeDrvChainCallbacks
+#define IdeDrvGetCallbacks      _IdeDrvGetCallbacks
+#define IdeDrvSetCallbacks      _IdeDrvSetCallbacks
+#endif
+
 #define __IDEDRV \
   _IDEDRV( IDEDRV_SUCCESS       , 0 ) \
 , _IDEDRV( IDEDRV_ERR_LOAD      , "cannot load dll" ) \

@@ -12,6 +12,9 @@ wlink_autodepends = .AUTODEPEND
 # get rid of the -zc
 suppress_zc = 1
 
+!ifndef bootstrap
+!include idedlls.mif
+!endif
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -48,6 +51,9 @@ comp_objs_exe += clibext.obj
 extra_c_flags = -I"$(lib_misc_dir)/h"
 !else
 extra_c_flags = -zp4
+!ifdef DLLS_IMPLEMENTED
+extra_c_flags += -DDLLS_IMPLEMENTED
+!endif
 !ifdef wlink_dll
 extra_c_flags += -D_DLLHOST
 !else ifdef wlink_rtdll
@@ -72,6 +78,7 @@ extra_c_flags_loados2    = -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
 extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
 extra_c_flags_dllentry   = -bd
 extra_c_flags_idedrv     = -DCHAIN_CALLBACK
+extra_c_flags_loadfile   = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
 extra_c_flags_rcstr      = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
 extra_c_flags_exerespe   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"

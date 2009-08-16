@@ -16,8 +16,7 @@ exe_objs =
 #
 dll_objs = &
     dllentry.obj &
-    idemsgpr.obj &
-    idedrv.obj
+    idemsgpr.obj
 
 #
 # common files
@@ -105,6 +104,10 @@ common_objs = &
 common_objs += virtmem.obj
 !else
 common_objs += virtpage.obj
+!endif
+
+!ifdef DLLS_IMPLEMENTED
+common_objs += idedrv.obj
 !endif
 
 #
