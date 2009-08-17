@@ -2,9 +2,8 @@
 
 host_os    = qnx
 host_cpu   = 386
-target_cpu = 386
 
 cmdline_cflags = -mf
 also_include = $(lang_root)\qh
 
-!include ../master.mif
+!include ../targ_386.mif

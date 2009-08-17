@@ -2,6 +2,5 @@
 
 host_os    = osi
 host_cpu   = 386
-target_cpu = i86
 
-!include ../master.mif
+!include ../targ_i86.mif

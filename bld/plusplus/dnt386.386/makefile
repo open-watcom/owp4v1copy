@@ -2,8 +2,8 @@
 
 host_os    = nt
 host_cpu   = 386
-target_cpu = 386
+
 plusplus_release = 0
 debug_cg   = 1
 
-!include ../master.mif
+!include ../targ_386.mif

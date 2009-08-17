@@ -40,7 +40,7 @@ pre_obj_deps += wpp$(target_cpu)01.int
 pre_obj_deps += usage.u
 !endif
  
-inc_dirs = -I.
+inc_dirs = -I"../h/$(target_cpu)"
 #!ifeq plusplus_trmem 1
 #inc_dirs += -I$(trmem_dir)
 #!endif

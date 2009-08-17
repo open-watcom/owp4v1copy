@@ -2,7 +2,7 @@
 
 host_os      = os2
 host_cpu     = 386
-target_cpu   = 386
+
 plusplus_dll = 1
 
-!include ../master.mif
+!include ../targ_386.mif
