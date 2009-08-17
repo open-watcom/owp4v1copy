@@ -2,6 +2,8 @@
 
 host_os    = dos
 host_cpu   = 386
-target_cpu = i86
 
-!include ../master.mif
+plusplus_causeway = 1
+plusplus_dll      = 1
+
+!include ../targ_i86.mif
