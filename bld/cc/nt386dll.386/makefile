@@ -2,9 +2,8 @@
 
 host_os    = nt
 host_cpu   = 386
-target_cpu = 386
 
 cc_dll     = 1
 cc_rtdll   = 1
 
-!include ../master.mif
+!include ../targ_386.mif

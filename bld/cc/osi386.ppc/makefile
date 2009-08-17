@@ -2,6 +2,5 @@
 
 host_os    = osi
 host_cpu   = 386
-target_cpu = ppc
 
-!include ../master.mif
+!include ../targ_ppc.mif

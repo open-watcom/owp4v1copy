@@ -2,8 +2,7 @@
 
 host_os    = nt
 host_cpu   = 386
-target_cpu = mps
 
 cc_dll     = 1
 
-!include ../master.mif
+!include ../targ_mps.mif

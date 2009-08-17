@@ -2,9 +2,9 @@
 
 host_os    = os2
 host_cpu   = 386
-target_cpu = mps
+
 cc_release = 0
 debug_cg   = 1
 debug      = 1
 
-!include ../master.mif
+!include ../targ_mps.mif

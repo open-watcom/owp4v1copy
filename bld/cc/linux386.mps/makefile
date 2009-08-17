@@ -2,6 +2,5 @@
 
 host_os    = linux
 host_cpu   = 386
-target_cpu = mps
 
-!include ../master.mif
+!include ../targ_mps.mif
