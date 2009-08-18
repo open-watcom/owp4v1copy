@@ -1712,12 +1712,12 @@ static size_t genOptionUsageStart( OPTION *o )
     return( len );
 }
 
-static void fillOutSpaces( unsigned n )
+static void fillOutSpaces( char *buff, int n )
 {
     char *p;
 
-    p = &tokbuff[ strlen( tokbuff ) ];
-    while( n ) {
+    p = &buff[ strlen( buff ) ];
+    while( n > 0 ) {
         *p++ = ' ';
         --n;
     }
@@ -1760,7 +1760,7 @@ static void emitUsageH( void )
     fprintf( ufp, "%s\",\n", s );
 }
 
-static void createChainHeader( OPTION **o, unsigned language )
+static void createChainHeader( OPTION **o, unsigned language, int max )
 {
     int c;
     char *usage;
@@ -1786,6 +1786,7 @@ static void createChainHeader( OPTION **o, unsigned language )
         }
     }
     strcat( hdrbuff, "} " );
+    fillOutSpaces( hdrbuff, max - strlen( hdrbuff ) );
     usage = chainUsage[ c ][ language ];
     if( usage == NULL || *usage == '\0' ) {
         usage = chainUsage[ c ][ LANG_English ];
@@ -1888,14 +1889,14 @@ static void processUsage( unsigned language, void (*process_line)( void ) )
             if(! ( chainOption[ (int)o->name[0] ] & CHAIN_USAGE )) {
                 if( !o->nochain ) {
                     chainOption[ (int)o->name[0] ] |= CHAIN_USAGE;
-                    createChainHeader( &t[i], language );
+                    createChainHeader( &t[i], language, max );
                     process_line();
                 }
             }
         }
         tokbuff[0] = '\0';
         len = genOptionUsageStart( o );
-        fillOutSpaces( max - len );
+        fillOutSpaces( tokbuff, max - len );
         if( chainOption[ (int)o->name[0] ] & CHAIN_YES ) {
             if( !o->nochain ) {
                 strcat( tokbuff, "-> " );
