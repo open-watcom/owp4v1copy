@@ -1110,18 +1110,9 @@ local void StoreFloat( DATA_TYPE dtype, unsigned long size )
     dq.u.double_value = 0.0;
     if( CurToken != T_RIGHT_BRACE ) {
         tree = SingleExpr();
-        switch( tree->op.opr ) {
-        case OPR_PUSHINT:
-            if( tree->op.const_type == TYPE_ULONG ) {
-                dq.u.double_value = tree->op.ulong_value;
-            } else {
-                dq.u.double_value = tree->op.long_value;
-            }
-            break;
-        case OPR_PUSHFLOAT:
-            if( tree->op.float_value->len != 0 ) {
-                dq.u.double_value = atof( tree->op.float_value->string );
-            } else {
+        if( tree->op.opr == OPR_PUSHINT || tree->op.opr == OPR_PUSHFLOAT ) {
+            CastConstValue( tree, dtype );
+            {
 #ifdef _LONG_DOUBLE_
                 long_double ld;
 
@@ -1131,10 +1122,8 @@ local void StoreFloat( DATA_TYPE dtype, unsigned long size )
                 dq.u.double_value = tree->op.float_value->ld.value;
 #endif
             }
-            break;
-        default:
+        } else {
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
-            break;
         }
         FreeExprTree( tree );
         if( dq.u.double_value != 0.0 ) CompFlags.non_zero_data = 1;
