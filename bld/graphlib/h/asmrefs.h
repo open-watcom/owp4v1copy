@@ -248,9 +248,9 @@ extern void             near _Pix1Copy( char far *, char far *, int, int, int );
 extern void             near _Pix2Copy( char far *, char far *, int, int, int );
 extern void             near _Pix1Read( char far *, char far *, int, int, int );
 extern void             near _Pix2Read( char far *, char far *, int, int, int );
-extern short pascal     near _CGAScanLeft( char far *, int, int, int, int, int );
-extern short pascal     near _CGAScan1Right( char far *, int, int, int, int, int );
-extern short pascal     near _CGAScan2Right( char far *, int, int, int, int, int );
+extern short            near _CGAScanLeft( char far *, int, int, int, int, int );
+extern short            near _CGAScan1Right( char far *, int, int, int, int, int );
+extern short            near _CGAScan2Right( char far *, int, int, int, int, int );
 
 // EGA
 extern void pascal      near _EGAMoveLeft( void );
@@ -275,12 +275,12 @@ extern void             near _EGAPixCopyMono( char far *, char far *, int, int, 
 extern void             near _EGAReadRow( char far *, char far *, int, int, int );
 extern void             near _EGAReadRowEO( char far *, char far *, int, int, int );
 extern void             near _EGAReadRowMono( char far *, char far *, int, int, int );
-extern short pascal     near _EGAScanLeft( char far *, int, int, int, int, int );
-extern short pascal     near _EGAScanLeftEO( char far *, int, int, int, int, int );
-extern short pascal     near _EGAScanLeftMono( char far *, int, int, int, int, int );
-extern short pascal     near _EGAScanRight( char far *, int, int, int, int, int );
-extern short pascal     near _EGAScanRightEO( char far *, int, int, int, int, int );
-extern short pascal     near _EGAScanRightMono( char far *, int, int, int, int, int );
+extern short            near _EGAScanLeft( char far *, int, int, int, int, int );
+extern short            near _EGAScanLeftEO( char far *, int, int, int, int, int );
+extern short            near _EGAScanLeftMono( char far *, int, int, int, int, int );
+extern short            near _EGAScanRight( char far *, int, int, int, int, int );
+extern short            near _EGAScanRightEO( char far *, int, int, int, int, int );
+extern short            near _EGAScanRightMono( char far *, int, int, int, int, int );
 
 // SVGA
 extern void pascal      near _MoveUp19( void );
@@ -310,10 +310,10 @@ extern void             near _PixCopy19( char far *, char far *, int, int, int )
 extern void             near _PixCopy256( char far *, char far *, int, int, int );
 extern void             near _PixRead19( char far *, char far *, int, int, int );
 extern void             near _PixRead256( char far *, char far *, int, int, int );
-extern short pascal     near _ScanLeft256( char far *, int, int, int, int, int );
-extern short pascal     near _ScanLeft19( char far *, int, int, int, int, int );
-extern short pascal     near _ScanRight19( char far *, int, int, int, int, int );
-extern short pascal     near _ScanRight256( char far *, int, int, int, int, int );
+extern short            near _ScanLeft256( char far *, int, int, int, int, int );
+extern short            near _ScanLeft19( char far *, int, int, int, int, int );
+extern short            near _ScanRight19( char far *, int, int, int, int, int );
+extern short            near _ScanRight256( char far *, int, int, int, int, int );
 #if 0 // This mode is untested
 extern void             near _MoveUp1280( void );
 extern void             near _MoveDown1280( void );

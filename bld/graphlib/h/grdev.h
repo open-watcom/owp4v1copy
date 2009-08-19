@@ -50,9 +50,9 @@ typedef struct graphics_device {
                                      int, int, int );           // copy pixels
     void            (near *readrow)( char far *, char far *,
                                      int, int, int );           // read a row of pixels
-    short pascal    (near *scanleft)( char far *, int, int,
+    short           (near *scanleft)( char far *, int, int,
                                       int, int, int );          // left scan in paint
-    short pascal    (near *scanright)( char far *, int, int,
+    short           (near *scanright)( char far *, int, int,
                                        int, int, int );         // right scan in paint
 } gr_device;
 #pragma pack (pop);
