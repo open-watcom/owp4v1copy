@@ -149,12 +149,13 @@ static uint_8 const langMaxChar[] = {
 };
 
 static char *usageMsg[] = {
-    "optencod [-i] [-q] [-u <usage-u>] <gml-file> <option-h> <parse-c> <usage-h> <target>*",
+    "optencod [-i] [-l <lang-n>] [-q] [-u <usage-u>] <gml-file> <option-h> <parse-c> <usage-h> <target>*",
     "where:",
     "    <gml-file> is the tagged input GML file",
     "    <parse-h> is the output file for the command line parser",
     "    <usage-h> is the output file for the usage message",
     "    <usage-u> is the output file for the QNX usage file",
+    "    <lang> is the language(number) used for output data",
     "    <target> can be chosen from:",
     NULL
 };
@@ -164,6 +165,7 @@ static struct {
     unsigned    quiet : 1;
     unsigned    no_equal : 1;
     unsigned    alternate_equal : 1;
+    unsigned    lang : 12;
 } optFlag;
 
 typedef struct target TARGET;
@@ -376,6 +378,11 @@ static void procCmdLine( int argc, char **argv )
         optFlag.international = 1;
         --argc;
         ++argv;
+    }
+    if( strcmp( argv[1], "-l" ) == 0 ) {
+        optFlag.lang = atoi( argv[2] );
+        argc -= 2;
+        argv += 2;
     }
     if( strcmp( argv[1], "-q" ) == 0 ) {
         optFlag.quiet = 1;
@@ -1912,7 +1919,7 @@ static void processUsage( unsigned language, void (*process_line)( void ) )
 
 static void outputUsageH( void )
 {
-    processUsage( LANG_English, emitUsageH );
+    processUsage( optFlag.lang, emitUsageH );
 }
 
 static void emitUsageB( void )
