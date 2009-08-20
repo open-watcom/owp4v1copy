@@ -28,6 +28,10 @@
 *
 ****************************************************************************/
 
+
+#ifndef _SWCHAR_H_INCLUDED
+#define _SWCHAR_H_INCLUDED
+
 extern unsigned char    _dos_switch_char( void );
 
 #if defined( __DOS__ ) && defined( __WATCOMC__ )
@@ -42,5 +46,7 @@ extern unsigned char    _dos_switch_char( void );
     #define _dos_switch_char() '-'
 #else
     #define _dos_switch_char() '/'
+#endif
+
 #endif
 
