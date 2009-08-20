@@ -178,7 +178,7 @@ trap_shandle GetSuppId( char *name )
     in[1].len = strlen( name ) + 1;
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
-    TrapAccess( 2, &in, 2, &out );
+    TrapAccess( 2, &in, 1, &out );
     if( ret.err != 0 ) return( 0 );
     return( ret.id );
 }
