@@ -36,6 +36,7 @@
 */
 
 /*      enum         cgtype          asmtype       name                     size */
+pick1( BOOL,        T_UINT_1,       SYM_INT1,    "_Bool",                  TARGET_BOOL        )
 pick1( CHAR,        T_INT_1,        SYM_INT1,    "signed char",            TARGET_CHAR        )
 pick1( UCHAR,       T_UINT_1,       SYM_INT1,    "unsigned char",          TARGET_CHAR        )
 pick1( SHORT,       T_INT_2,        SYM_INT2,    "short",                  TARGET_SHORT       )
@@ -52,7 +53,6 @@ pick1( LONG_DOUBLE, T_LONG_DOUBLE,  SYM_FLOAT10, "long double",            TARGE
 pick1( FIMAGINARY,  T_SINGLE,       SYM_FLOAT4,  "float _Imaginary",       TARGET_FIMAGINARY  )
 pick1( DIMAGINARY,  TY_DOUBLE,      SYM_FLOAT8,  "double _Imaginary",      TARGET_DIMAGINARY  )
 pick1( LDIMAGINARY, T_LONG_DOUBLE,  SYM_FLOAT10, "long double _Imaginary", TARGET_LDIMAGINARY )
-pick1( BOOL,        T_UINT_1,       SYM_INT1,    "_Bool",                  TARGET_BOOL        )
 pick1( POINTER,     T_POINTER,      0,           "pointer",                0                  )
 pick1( ARRAY,       T_POINTER,      0,           "array",                  0                  )
 pick1( STRUCT,      T_POINTER,      0,           "struct",                 0                  )
