@@ -249,3 +249,8 @@ source\diag0018.c(14): Note! I2004: target conversion type is 'char *'
 source\diag0018.c(16): Warning! W113: Pointer type mismatch
 source\diag0018.c(16): Note! I2003: source conversion type is 'enum foo_enum *'
 source\diag0018.c(16): Note! I2004: target conversion type is 'char *'
+source\diag0019.c(4): Warning! W124: Comparison result always 0
+source\diag0019.c(9): Warning! W124: Comparison result always 0
+source\diag0019.c(14): Warning! W124: Comparison result always 1
+source\diag0019.c(19): Warning! W124: Comparison result always 0
+source\diag0019.c(25): Warning! W126: Constant must be zero for pointer compare

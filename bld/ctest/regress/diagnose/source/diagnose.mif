@@ -3,6 +3,7 @@
 #
 opt_diag0007  = -za99
 opt_diag0011  = -za
+opt_diag0019  = -za99
 
 diags_0099_defn = &
     diag0001$(err_sin) &
@@ -23,6 +24,7 @@ diags_0099_defn = &
     diag0016$(err_sin) &
     diag0017$(err_sin) &
     diag0018$(err_sin) &
+    diag0019$(err_sin) &
 
     
 err_sin = .err

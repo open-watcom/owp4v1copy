@@ -508,6 +508,9 @@ static int NumSize( int op_type )
 
     size = 0;
     switch( op_type ) {
+    case TYPE_BOOL:
+        size = 1;
+        break;
     case TYPE_CHAR:
         size = SIGN_BIT;
     case TYPE_UCHAR:
@@ -719,6 +722,7 @@ static bool IsInt( DATA_TYPE op )
     bool        ret;
 
     switch( op ) {
+    case TYPE_BOOL:
     case TYPE_CHAR:
     case TYPE_UCHAR:
     case TYPE_SHORT:
