@@ -186,9 +186,11 @@ static struct ifnet *tok_ifnet (void)
  */
 static int iface_ioctrl (Socket *socket, long cmd, char *argp)
 {
-  struct ifreq  *ifr = (struct ifreq *) argp;
-  struct ifconf *ifc = (struct ifconf*) argp;
-  eth_address   *eth;
+  struct ifreq       *ifr = (struct ifreq *) argp;
+  struct ifconf      *ifc = (struct ifconf*) argp;
+  struct sockaddr_in *sin;
+  /*const*/ eth_address  *eth;
+  int   len;
  
   VERIFY_RW (argp, sizeof(*ifr));
 
@@ -325,10 +327,15 @@ static int iface_ioctrl (Socket *socket, long cmd, char *argp)
 
     case SIOCGIFCONF:                /* get interfaces config */
     case OSIOCGIFCONF:
-         ifc->ifc_len = min (ifc->ifc_len, NUM_IFACES*sizeof(*ifc));
+         len = ifc->ifc_len = min (ifc->ifc_len, NUM_IFACES*sizeof(*ifr));
          ifc = (struct ifconf*) ifc->ifc_buf; /* user's buffer */
+         VERIFY_RW (ifc, len);
+
          ifr = (struct ifreq*) ifc;
          get_ifname (ifr->ifr_name);
+         sin = (struct sockaddr_in*) &ifr->ifr_addr;
+         sin->sin_addr.s_addr = htonl (my_ip_addr);
+         sin->sin_family      = AF_INET;
          break;
 
     case SIOCGIFHWADDR:
