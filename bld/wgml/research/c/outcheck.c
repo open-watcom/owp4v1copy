@@ -239,6 +239,7 @@ void emulate_text_output( text_phrase * text )
     text_chars  *   next_chars;
     text_chars  *   pool_ptr;
     text_chars  *   save_chars;
+    text_chars  *   save_empty;
     text_line       the_line;
     text_phrase *   cur_phrase;
     uint8_t         font_number;
@@ -262,7 +263,7 @@ void emulate_text_output( text_phrase * text )
     }
     cur_phrase = text;
     font_number = cur_phrase->font_number;
-    if( font_number > wgml_font_cnt ) font_number = 0;
+    if( font_number >= wgml_font_cnt ) font_number = 0;
     next_chars->next = NULL;
     next_chars->font_number = font_number;
     next_chars->x_address = cur_h_start;
@@ -276,11 +277,11 @@ void emulate_text_output( text_phrase * text )
  
         /* This loop processes a single text_phrase. */
  
+        spaces = 0;
         for( i = 0; i < count; i++ ) {
 
             /* Count any spaces. */
 
-            spaces = 0;
             for( j = i; j < count; j++ ) {
                 if( !isspace( cur_phrase->text[j] ) ) break;
                 spaces++;
@@ -349,18 +350,46 @@ void emulate_text_output( text_phrase * text )
 
             if( (cur_h_start + increment) > page_right ) {
 
-                /* The text_line is ready for output and reinitialization. */
+                /* Find the last two text_chars in the_line. */
+
+                if( the_line.first != NULL ) {
+                    save_chars = NULL;
+                    save_empty = the_line.first;
+                    while( save_empty->next != NULL ) {
+                        save_chars = save_empty;
+                        save_empty = save_empty->next;
+                    }
+
+                    /* If save_empty is an empty text_chars, strip it out. */
+
+                    if( save_empty->count == 0 ) {
+                        if( save_chars->next == NULL ) {
+                            the_line.first = NULL;
+                        } else {
+                            save_chars->next = NULL;
+                        }
+                    } else {
+                        save_empty = NULL;
+                    }
+                }
+
+                /* The text_line is ready for output. */
  
                 save_chars = next_chars;
                 fb_output_textline( &the_line );
  
+                /* Reset cur_h_start and update the cur_v_start. */
+
+                cur_h_start = page_left;
                 if( bin_driver->y_positive == 0x00 ) {
                     cur_v_start -= max_line_height;
                 } else {
                     cur_v_start += max_line_height;
                 }
                 the_line.y_address = cur_v_start;
- 
+
+                /* Return the text_chars in the_line to text_chars_pool. */
+
                 if( text_chars_pool == NULL ) {
                     text_chars_pool = the_line.first;
                 } else {
@@ -368,15 +397,41 @@ void emulate_text_output( text_phrase * text )
                     while( pool_ptr->next != NULL) pool_ptr = pool_ptr->next;
                     pool_ptr->next = the_line.first;
                 }
-                the_line.first = save_chars;
+                the_line.first = NULL;
+
+                /* If save_empty is not NULL and does not have the same font
+                 * as save_chars, use it as the first text_chars in the_line.
+                 */
+
+                if( save_empty != NULL ) {
+                    if( save_empty->font_number == save_chars->font_number ) {
+                        the_line.first = save_empty;
+                        save_empty->x_address = cur_h_start;
+                    } else {
+                        save_empty->next = text_chars_pool;
+                        text_chars_pool = save_empty;
+                        save_empty = NULL;
+                    }
+                }
+
+                /* Now add save_chars. */
+
+                if( the_line.first == NULL ) {
+                    the_line.first = save_chars;
+                } else {
+                    save_empty->next = save_chars;
+                }
                 cur_chars = save_chars;
-                cur_h_start = page_left;
                 cur_chars->x_address = cur_h_start;
 
             } else {
- 
+
+                /* If next_chars is empty, exit the loop. */
+
+                if( next_chars->count == 0 ) break;
+
                 /* The text_chars belongs to this text_line. */
- 
+
                 if( the_line.first == NULL ) {
                     the_line.first = next_chars;
                 } else {
@@ -401,14 +456,76 @@ void emulate_text_output( text_phrase * text )
             next_chars->x_address = cur_h_start;
             next_chars->width = 0;
             next_chars->count = 0;
+
+            /* This ensures that spaces will be 0 if the loop is exited 
+             * because the current phrase ended without a space character.
+             * Genuinely-empty text_chars trigger a break above this and
+             * so will be processed properly.
+             */
+
+            spaces = 0;
         }
 
         /* Go to the next text_phrase. */
  
         cur_phrase++;
+
+        /* This avoids adding an empty text_chars to the end of the final
+         * text_line.
+         */
+
+        if( cur_phrase->text == NULL) break;
+
+        /* Ensure font_number is within the allowed range. It is not clear
+         * where wgml 4.0 does this, so some adjustments may be needed
+         * when side-by-side testing of wgml 4.0 and our wgml are possible.
+         */
+
         font_number = cur_phrase->font_number;
-        if( font_number > wgml_font_cnt ) font_number = 0;
+        if( font_number >= wgml_font_cnt ) font_number = 0;
+
+        /* If there were no spaces found at the end of the last cur_phrase,
+         * then this is not an empty text_chars.
+         */
+
+        if( spaces != 0 ) {
+            if( next_chars->count == 0 ) {
+                if( next_chars->font_number != font_number ) {
+
+                    /* next_chars is empty and the new text_phrase has a new
+                     * font_number: add next_chars to the_line.
+                     */
+
+                    if( the_line.first == NULL ) {
+                        the_line.first = next_chars;
+                    } else {
+                        cur_chars->next = next_chars;
+                    }
+                    cur_chars = next_chars;
+
+                    /* Update cur_h_start and get the next text_chars instance. */
+
+                    cur_h_start += increment;
+                    if( text_chars_pool == NULL ) {
+                        next_chars = (text_chars *) mem_alloc( \
+                                        sizeof( text_chars ) + TEXT_START );
+                        next_chars->length = TEXT_START;
+                    } else {
+                        next_chars = text_chars_pool;
+                        text_chars_pool = text_chars_pool->next;
+                    }
+                    next_chars->next = NULL;
+                    next_chars->x_address = cur_h_start;
+                    next_chars->width = 0;
+                    next_chars->count = 0;
+                }
+            }
+        }
+
+        /* Ensure that next_chars has the correct font number. */
+
         next_chars->font_number = font_number;
+
     }
 
     /* Output the final text_line and return the text_chars to the pool.*/

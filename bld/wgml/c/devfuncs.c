@@ -433,8 +433,6 @@ void format_error( void )
  *
  * Parameter:
  *      count contains the number of spaces to emit.
- * Global Modified:
- *      current_state.x_address is set equal to desired_state.x_address.
  *
  * Note:
  *      The calling function is responsible for detecting and handling
@@ -2474,6 +2472,7 @@ static void fb_htab( void )
 {
     df_interpret_driver_functions( bin_driver->htab.text );
     htab_done = true;
+    current_state.x_address = desired_state.x_address;
     return;
 }
 
@@ -2584,14 +2583,18 @@ static void fb_first_text_chars( text_chars * in_chars )
 
     textpass = false;
 
-    /* Initialize the locals. */
+    /* Set font_number and initialize the locals. */
+
+    font_number = desired_state.font_number;
+    active_font = desired_state.font_number;
+
+    if( current_state.font_number == desired_state.font_number ) \
+                                                    font_switch_needed = false;
 
     if( wgml_fonts[font_number].font_style != NULL ) {
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
             cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
     }
-    if( current_state.font_number == desired_state.font_number ) \
-                                                    font_switch_needed = false;
 
     /* Do the font switch, if needed. If a font switch is not needed,
      * interpret the :FONTSTYLE block :STARTVALUE block.
@@ -2681,16 +2684,17 @@ static void fb_new_font_text_chars( text_chars * in_chars )
 
     textpass = false;
 
-    /* Initialize cur_linproc and some globals. */
+    /* Set the appropriate globals and initialize cur_linproc. */
+
+    desired_state.font_number = in_chars->font_number;
+    desired_state.x_address = in_chars->x_address;
+    font_number = desired_state.font_number;
+    active_font = desired_state.font_number;
 
     if( wgml_fonts[font_number].font_style != NULL ) {
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
             cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
     }
-    desired_state.font_number = in_chars->font_number;
-    desired_state.x_address = in_chars->x_address;
-    font_number = desired_state.font_number;
-    active_font = desired_state.font_number;
     
     /* Interpret the pre-font switch function block. */
 
