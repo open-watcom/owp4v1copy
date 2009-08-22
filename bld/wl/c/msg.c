@@ -392,6 +392,7 @@ unsigned GetMsgPrefix( char *buff, unsigned max_len, unsigned num )
     char        rc_buff[RESOURCE_MAX_SIZE];
 
     prefixlen = 0;
+    *buff = '\0';
     class = num & CLASS_MSK;
     if( class >= (WRN & CLASS_MSK) ) {
         if( class == (WRN & CLASS_MSK) ) {
@@ -399,7 +400,7 @@ unsigned GetMsgPrefix( char *buff, unsigned max_len, unsigned num )
         } else {
             Msg_Get( MSG_ERROR, rc_buff );
         }
-        prefixlen = FmtStr( buff, max_len, rc_buff, CalcMsgNum( num ));
+        prefixlen = FmtStr( buff, max_len, rc_buff, CalcMsgNum( num ) );
     }
     return( prefixlen );
 }
