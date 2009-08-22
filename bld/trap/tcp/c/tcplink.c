@@ -124,8 +124,8 @@
 #endif
 
 #if !defined( __LINUX__ )
-static struct ifi_info  *get_ifi_info(int family, int doaliases);
-static void             free_ifi_info(struct ifi_info *ifihead);
+static struct ifi_info  *get_ifi_info( int family, int doaliases );
+static void             free_ifi_info( struct ifi_info *ifihead );
 #endif
 
 static int                  data_socket;
@@ -339,7 +339,7 @@ char *RemoteLink( char *name, char server )
 
 #if !defined(__LINUX__)   /* FIXME */
     /* Find and print TCP/IP interface addresses, ignore aliases */
-    ifihead = get_ifi_info(AF_INET, FALSE);
+    ifihead = get_ifi_info( AF_INET, FALSE );
     for( ifi = ifihead; ifi != NULL; ifi = ifi->ifi_next ) {
         /* Ignore loopback interfaces */
         if( ifi->flags & IFI_LOOP )
@@ -463,7 +463,7 @@ void RemoteUnLink( void )
     #define HAVE_SA_LEN     TRUE
 #endif
 
-static struct ifi_info * get_ifi_info(int family, int doaliases)
+static struct ifi_info * get_ifi_info( int family, int doaliases )
 {
     struct ifi_info     *ifi, *ifihead, **ifipnext;
     int                 sockfd, len, lastlen, flags, myflags;
@@ -509,7 +509,7 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
         if(( cptr = strchr( ifr->ifr_name, ':' )) != NULL )
             *cptr = 0;      /* replace colon will null */
         if( strncmp( lastname, ifr->ifr_name, IFNAMSIZ ) == 0 ) {
-            if ( doaliases == 0 )
+            if( doaliases == 0 )
                 continue;   /* already processed this interface */
             myflags = IFI_ALIAS;
         }
@@ -521,11 +521,11 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
         if( !( flags & IFF_UP ) )
             continue;   /* ignore if interface not up */
 
-        ifi = calloc( 1, sizeof( struct ifi_info ));
+        ifi = calloc( 1, sizeof( struct ifi_info ) );
         *ifipnext = ifi;            /* prev points to this new one */
         ifipnext  = &ifi->ifi_next; /* pointer to next one goes here */
 
-        if (flags & IFF_LOOPBACK )
+        if( flags & IFF_LOOPBACK )
             myflags |= IFI_LOOP;
 
         ifi->ifi_flags = flags;     /* IFF_xxx values */
@@ -533,11 +533,11 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
         memcpy( ifi->ifi_name, ifr->ifr_name, IFI_NAME );
         ifi->ifi_name[IFI_NAME-1] = '\0';
 
-        switch (ifr->ifr_addr.sa_family) {
+        switch( ifr->ifr_addr.sa_family ) {
         case AF_INET:
-            sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+            sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
             if( ifi->ifi_addr == NULL ) {
-                ifi->ifi_addr = calloc( 1, sizeof(struct sockaddr_in) );
+                ifi->ifi_addr = calloc( 1, sizeof( struct sockaddr_in ) );
                 memcpy( ifi->ifi_addr, sinptr, sizeof( struct sockaddr_in ) );
             }
             break;
@@ -550,7 +550,7 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
     return( ifihead );    /* pointer to first structure in linked list */
 }
 
-static void free_ifi_info(struct ifi_info *ifihead)
+static void free_ifi_info( struct ifi_info *ifihead )
 {
     struct ifi_info *ifi, *ifinext;
 
