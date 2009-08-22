@@ -404,9 +404,8 @@ void CVAddLocal( seg_leader *seg, offset length )
     if( IS_DBG_INFO( seg ) ) {
         if( length > 0xFFFF ) {
             LnkMsg( WRN+LOC+MSG_DEBUG_TOO_LARGE, "s", "Codeview" );
-        } else {
-            AddSubSection( FALSE );
         }
+        AddSubSection( FALSE );
     }
 }
 
