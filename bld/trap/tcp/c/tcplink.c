@@ -436,14 +436,32 @@ void RemoteUnLink( void )
 
 #ifdef SERVER
 
-/* Functions to manage IP interface information lists */
+/* Functions to manage IP interface information lists. On multi-homed hosts,
+ * determining the IP address the TCP debug link responds on is not entirely
+ * straightforward.
+ */
 
-#ifdef __OS2__
+#if defined( __OS2__ ) || defined( __DOS__ )
 
-/* Actual implementation - feel free to port to other OSes */
+/* Actual implementation - feel free to port to further OSes */
+
+#ifdef __DOS__
+    #define BSD /* To get the right macros from wattcp headers. */
+#endif
 
 #include <sys/ioctl.h>
 #include <net/if.h>
+
+/* Sort out implementation differences. */
+#ifdef __DOS__
+    #define w_ioctl         ioctlsocket
+    #define HAVE_SA_LEN     FALSE
+#endif
+
+#ifdef __OS2__
+    #define w_ioctl         ioctl
+    #define HAVE_SA_LEN     TRUE
+#endif
 
 static struct ifi_info * get_ifi_info(int family, int doaliases)
 {
@@ -461,8 +479,8 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
     for( ; ; ) {
         buf = malloc( len );
         ifc.ifc_len = len;
-        ifc.ifc_buf = buf;
-        if( ioctl( sockfd, SIOCGIFCONF, &ifc ) >= 0 ) {
+        ifc.ifc_buf = (caddr_t)buf;
+        if( w_ioctl( sockfd, SIOCGIFCONF, (char *)&ifc ) >= 0 ) {
             if( ifc.ifc_len == lastlen )
                 break;      /* success, len has not changed */
             lastlen = ifc.ifc_len;
@@ -477,7 +495,11 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
     for( ptr = buf; ptr < buf + ifc.ifc_len; ) {
         ifr = (struct ifreq *) ptr;
 
+#if HAVE_SA_LEN
         len = max( sizeof( struct sockaddr ), ifr->ifr_addr.sa_len );
+#else
+        len = sizeof( struct sockaddr );
+#endif
         ptr += sizeof( ifr->ifr_name ) + len; /* for next one in buffer */
 
         if( ifr->ifr_addr.sa_family != family )
@@ -494,7 +516,7 @@ static struct ifi_info * get_ifi_info(int family, int doaliases)
         memcpy( lastname, ifr->ifr_name, IFNAMSIZ );
 
         ifrcopy = *ifr;
-        ioctl( sockfd, SIOCGIFFLAGS, &ifrcopy );
+        w_ioctl( sockfd, SIOCGIFFLAGS, (char *)&ifrcopy );
         flags = ifrcopy.ifr_flags;
         if( !( flags & IFF_UP ) )
             continue;   /* ignore if interface not up */
