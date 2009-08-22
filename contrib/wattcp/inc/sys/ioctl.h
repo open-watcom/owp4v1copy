@@ -62,10 +62,10 @@
 #define	IOC_DIRMASK	0xe0000000	/* mask for IN/OUT/VOID */
 
 #define _IO(x,y)    (IOC_VOID|(x<<8)|y)
-#define _IOR(x,y,t) (IOC_OUT|((sizeof(t)&IOCPARM_MASK)<<16)|(x<<8)|y)
-#define _IOW(x,y,t) (IOC_IN|((sizeof(t)&IOCPARM_MASK)<<16)|(x<<8)|y)
+#define _IOR(x,y,t) (IOC_OUT|(((unsigned long)sizeof(t)&IOCPARM_MASK)<<16)|(x<<8)|y)
+#define _IOW(x,y,t) (IOC_IN|(((unsigned long)sizeof(t)&IOCPARM_MASK)<<16)|(x<<8)|y)
 /* this should be _IORW, but stdio got there first */
-#define _IOWR(x,y,t) (IOC_INOUT|((sizeof(t)&IOCPARM_MASK)<<16)|(x<<8)|y)
+#define _IOWR(x,y,t) (IOC_INOUT|(((unsigned long)sizeof(t)&IOCPARM_MASK)<<16)|(x<<8)|y)
 
 /* 
  * file i/o controls
