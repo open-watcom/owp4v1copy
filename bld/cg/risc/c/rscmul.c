@@ -55,8 +55,8 @@ extern  int     SubCost( void )
     return( AddCost() );
 }
 
-extern  int     ShiftCost( void )
-/*******************************/
+extern  int     ShiftCost( int count )
+/************************************/
 {
     return( 1 );
 }
