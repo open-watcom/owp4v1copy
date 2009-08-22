@@ -51,7 +51,7 @@ to the C compiler. This warning is triggered whenever the right operand of an
 integer division or modulo operation is a constant expression with the value
 of zero.
 .bull
-The handling of pragam aux is now correct in cases where code is emitted and a
+The handling of pragma aux is now correct in cases where code is emitted and a
 function body already exists for the corresponding symbolic name.
 .bull
 Various fixes to the handling of the include_alias pragma have been made.
