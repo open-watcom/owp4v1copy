@@ -412,6 +412,9 @@ trappick( TRP_ERR_modem_failed_connection,
 trappick( TRP_ERR_NetBIOS_is_not_running,
     "NetBIOS is not running",
     "jNetBIOS is not running" )
+trappick( TRP_ERR_NetBIOS_name_add_failed,
+    "NetBIOS name registration failed",
+    "jNetBIOS name registration failed" )
 trappick( TRP_ERR_can_not_start_server,
     "can not start server",
     "jcan not start server" )
