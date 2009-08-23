@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resolve operator overloading.
 *
 ****************************************************************************/
 
@@ -526,7 +525,11 @@ static PTREE transform_naked(   // TRANSFORM TO CALL TO NON-MEMBER FUNCTION
         if( cgop == CO_CALL ) {
             param->u.subtree[0] = olinf->right.operand;
         } else {
-            param = NodeArgument( param, olinf->right.operand );
+            if( olinf->right.operand != NULL ) {
+                param = NodeArgument( param, olinf->right.operand );
+            } else {
+                PTreeErrorNode( param );
+            }
         }
     } else if( cgop == CO_POST_PLUS_PLUS
             || cgop == CO_POST_MINUS_MINUS ) {
