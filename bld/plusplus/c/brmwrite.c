@@ -573,7 +573,7 @@ static void brinfWriteFileContents  // WRITE OUT BROWSE INFORMATION CONTENTS
                     case SCOPE_FUNCTION:
                         flags = BRI_ST_Function;
                         owner = (uint_32) scope->owner.sym;
-                        DbgAssert( owner != NULL );
+                        DbgAssert( owner != 0 );
                     break;
 
                     case SCOPE_BLOCK:
