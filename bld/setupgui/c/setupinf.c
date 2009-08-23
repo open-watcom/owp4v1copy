@@ -489,7 +489,7 @@ static int NewFileCond( char *str )
         }
     }
     num = SetupInfo.fileconds.num;
-    if( !BumpArray( &SetupInfo.fileconds ) ) return( NULL );
+    if( !BumpArray( &SetupInfo.fileconds ) ) return( 0 );
     FileCondInfo[num].cond = new;
     FileCondInfo[num].one_uptodate = FALSE;
     FileCondInfo[num].dont_touch = FALSE;
@@ -1861,7 +1861,7 @@ static bool ProcLine( char *line, pass_type pass )
         } else {
             FileInfo[num].files = GUIMemAlloc( tmp * sizeof( a_file_info ) );
             if( FileInfo[num].files == NULL )
-                return( NULL );
+                return( FALSE );
         }
         FileInfo[num].supplimental = FALSE;
         FileInfo[num].core_component = FALSE;

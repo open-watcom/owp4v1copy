@@ -1381,7 +1381,7 @@ extern bool ModifyConfiguration( void )
 
     rc = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
               "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment",
-              NULL, KEY_ALL_ACCESS, &RegLocation[LOCAL_MACHINE].key );
+              0, KEY_ALL_ACCESS, &RegLocation[LOCAL_MACHINE].key );
     if( rc == 0 ) {
         RegLocation[LOCAL_MACHINE].key_is_open = TRUE;
     } else {
