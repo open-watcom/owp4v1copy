@@ -48,6 +48,7 @@ enum commands {
     NET_SESSION_STATUS          = 0x34,
     NET_CANCEL                  = 0x35,
     NET_ADD_GROUP_NAME          = 0x36,
+    NET_ENUM                    = 0x37,
     NET_UNLINK                  = 0x70,
     NET_SEND_NOACK              = 0x71,
     NET_CHAIN_SEND_NOACK        = 0x72,
@@ -55,11 +56,29 @@ enum commands {
     NET_NOWAIT                  = 0x80
 };
 
+enum nbrc {
+    NET_RC_OK                   = 0x00,
+    NET_RC_BUFLEN               = 0x01,
+    NET_RC_ILLCMD               = 0x03,
+    NET_RC_CMDTMO               = 0x05,
+    NET_RC_INCOMP               = 0x06,
+    NET_RC_BADDR                = 0x07,
+    NET_RC_SNUMOUT              = 0x08,
+    NET_RC_NORES                = 0x09,
+    NET_RC_SCLOSED              = 0x0A,
+    NET_RC_CMDCAN               = 0x0B,
+    NET_RC_DUPNAME              = 0x0D,
+    NET_RC_INUSE                = 0x16,
+    NET_RC_SYSTEM               = 0x40,
+    NET_RC_PENDING              = 0xFF
+};
+
 #define ILLEGAL_NAME_NUM    0
 #define ILLEGAL_LSN         0
 #define MAX_NAME_LEN        16
+#define MAX_LANA            254
 
-typedef _Packed struct {
+typedef struct {
     unsigned char           cmd;
     unsigned char           ret_code;
     unsigned char           lsn;
@@ -75,3 +94,8 @@ typedef _Packed struct {
     volatile unsigned char  cmd_cmplt;
     char                    reserved[14];
 } NCB;
+
+typedef struct {
+    unsigned char           length;
+    unsigned char           lana[ MAX_LANA + 1 ];
+} LANA_ENUM;
