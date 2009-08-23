@@ -87,6 +87,8 @@ cdsay .
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/trap/lcl/nt/std/std.dll                        <RELROOT>/binnt/
+    <CPCMD> <DEVDIR>/trap/net/nt.trp/net.dll                        <RELROOT>/binnt/
+    <CPCMD> <DEVDIR>/trap/net/nt.srv/netserv.exe                    <RELROOT>/binnt/
 #    <CPCMD> <DEVDIR>/trap/nmp/nt.trp/nmp.dll                       <RELROOT>/binnt/
     <CPCMD> <DEVDIR>/trap/nov/nt.trp/nov.dll                        <RELROOT>/binnt/
     <CPCMD> <DEVDIR>/trap/nov/nt.srv/novserv.exe                    <RELROOT>/binnt/
