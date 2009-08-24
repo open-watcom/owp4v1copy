@@ -1603,7 +1603,8 @@ TYPEPTR GetIntTypeBySize( unsigned long size, bool sign, bool exact )
     unsigned                i;
 
     /* Make sure the types are laid out the way we expect */
-    assert( TYPE_CHAR == 0 );
+    assert( TYPE_BOOL == 0 );
+    assert( TYPE_CHAR == 1 );
     assert( TYPE_FLOAT == TYPE_ULONG64 + 1 );
 
     if( size ) {
