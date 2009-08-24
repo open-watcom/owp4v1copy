@@ -75,6 +75,27 @@ extern void             AsmNote( int msgnum, ... );
     #define MSG_WASM_RC_BASE    500
     #define MSG_USE_BASE        900
 
+    extern int MsgInit( void );
+    extern int MsgGet( int, char * );
+    extern void MsgFini( void );
+    extern void OpenLstFile( void );
+    extern void LstMsg( const char *format, ... );
+
+#if defined( USE_TEXT_MSGS )
+
+#define pick(num,etext,jtext) num,
+enum {
+    START_BASE1 = MSG_SHARE_RC_BASE - 1,
+#include "../h/asmshare.msg"
+    START_BASE2 = MSG_WOMP_RC_BASE - 1,
+#include "../h/womp.msg"
+    START_BASE3 = MSG_WASM_RC_BASE - 1,
+#include "../h/wasm.msg"
+};
+#undef pick
+
+#else
+
     #define MSG_LANG_SPACING    1000
 
     #define MSG_USE_E_BASE      (MSG_USE_BASE + RLE_ENGLISH*MSG_LANG_SPACING)
@@ -87,14 +108,11 @@ extern void             AsmNote( int msgnum, ... );
     #define MAX_RESOURCE_SIZE   128
 
 
-    extern int MsgInit( void );
-    extern int MsgGet( int, char * );
     extern void MsgPutUsage( void );
-    extern void MsgFini( void );
     extern void MsgSubStr( char *, char *, char );
     extern void MsgChgeSpec( char *strptr, char specifier );
-    extern void LstMsg( const char *format, ... );
-    extern void OpenLstFile( void );
+
+#endif
 
 #elif defined( _USE_RESOURCES_ )
 

@@ -5,15 +5,19 @@ name = wasm
 wasm_autodepends = .AUTODEPEND
 !endif
 
-additional_cleanup += *.u
+additional_cleanup += *.u *.msg
 
 wasm_trmem = 1
+
+!ifdef bootstrap
+use_text_msgs = 1
+!else ifdef prebuild
+use_text_msgs = 1
+!endif
 
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
-
-!include wres.mif
 
 !include trmem.mif
 
@@ -21,13 +25,19 @@ fpu_flags = -fpc
 
 inc_dirs  = -I. -I"../h" -I"$(womp_dir)/h"
 
+!ifndef use_text_msgs
+!include wres.mif
 libs = $(wres_dir)/$(%OBJDIR)/wres.lib
+!endif
 
 #cflags stuff
 #########
 extra_c_flags =-D_STANDALONE_
 !ifeq release 0
 extra_c_flags += -DDEBUG_OUT
+!endif
+!ifdef use_text_msgs
+extra_c_flags += -DUSE_TEXT_MSGS
 !endif
 
 extra_c_flags_genmsomf = -DMSG_WOMP_RC_BASE=200
@@ -37,7 +47,10 @@ extra_c_flags_trmem = $(trmem_cflags)
 
 #lflags stuff
 #########
-extra_l_flags = option map,symfile lib $(wres_lib)
+extra_l_flags = option map,symfile
+!ifndef use_text_msgs
+extra_l_flags += lib $(wres_lib)
+!endif
 extra_l_flags_qnx = option offset=16k, res=usage.u, stack=12k
 extra_l_flags_dos_i86 = option stack=6k
 extra_l_flags_dos_386 = option stack=12k
@@ -95,12 +108,12 @@ proj_obj += clibext.obj
 #explicit rules
 ######
 
-$(name).exe : asmops.gh asmopsd.gh $(name).res $(proj_obj) $(__MAKEFILES__)
-!ifeq  host_OS qnx
-        @%make usage.u
+!ifndef use_text_msgs
+res_objs = $(name).res
 !endif
+
+$(name).exe : usage.msg asmops.gh asmopsd.gh wmpmsg.gh $(res_objs) $(proj_obj) $(__MAKEFILES__)
 !ifdef bootstrap
-        @%make usage.u
         $(cl) -o $@ $(proj_obj) $(libs)
 !else
         @%write  $^&.lnk $(lflags)
@@ -115,33 +128,15 @@ $(name).exe : asmops.gh asmopsd.gh $(name).res $(proj_obj) $(__MAKEFILES__)
         $(linker) @$^&.lnk
 !endif
 !endif
-        wstrip -a -r -q $@ . $^&.res
+!ifdef res_objs
+        wstrip -a -r -q $@ . $(res_objs)
+!endif
 
 ###################################################################
 # resource stuff
 
-!ifeq release 0
-wsplice_keys = -kIS_RC -k$(host_OS) -kHIDDEN
-!else
-wsplice_keys = -kIS_RC -k$(host_OS)
-!endif
-
 $(name).res : ../h/$(proj_name).rc usage.rc usagej.rc msg.gh wasmmsg.gh wmpmsg.gh
         $(rc_aui) -D_STANDALONE_ $[@ -fo=$^@
-
-usage.rc : ../h/usage.sp
-        @%write usage.tmp -kENGLISH $(wsplice_keys) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@
-        wsplice @usage.tmp
-
-usagej.rc : ../h/usage.sp
-        @%write usagej.tmp -kJAPANESE $(wsplice_keys) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@
-        wsplice @usagej.tmp
-
-usage.u : ../h/usage.sp
-        wsplice -kENGLISH -k$(host_OS) -t8 -u $[@ $^@
-
-usagej.u : ../h/usage.sp
-        wsplice -kJAPANESE -k$(host_OS) -t8 -u $[@ $^@
 
 msg.gh : ../h/asmshare.msg
         $(awk) -v base=MSG_SHARE_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
@@ -152,16 +147,43 @@ wasmmsg.gh : ../h/wasm.msg
 wmpmsg.gh : ../h/womp.msg
         $(awk) -v base=MSG_WOMP_RC_BASE -f $(misc_dir)/makemsg.awk $[@ > $^@
 
+usage.rc : usage.u
+        @%write $^&.tmp -t8 -f "(MSG_USE_E_BASE+%$#%+), \"%s\"" $< $^@
+        wsplice @$^&.tmp
+
+usagej.rc : usagej.u
+        @%write $^&.tmp -t8 -f "(MSG_USE_J_BASE+%$#%+), \"%s\"" $< $^@
+        wsplice @$^&.tmp
+
+usage.msg : usage.u
+        @%write $^&.tmp -t8 -f "pick((MSG_USE_BASE+%$#%+), \"%s\")" $< $^@
+        wsplice @$^&.tmp
+
+usagej.msg : usagej.u
+        @%write $^&.tmp -t8 -f "pick((MSG_USE_BASE+%$#%+), \"%s\")" $< $^@
+        wsplice @$^&.tmp
+
+./optencod.exe: $(fe_misc_dir)/c/optencod.c
+        $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
+ 
+usage.u : ./optencod.exe ../h/options.gml
+        $[@ -q -u $@ $]@ $(nulldevice) $(nulldevice) $(nulldevice) any
+        %append $@ .
+
+usagej.u : ./optencod.exe ../h/options.gml
+        $[@ -l 1 -q -u $@ $]@ $(nulldevice) $(nulldevice) $(nulldevice) any
+        %append $@ .
+
 ###################################################################
 
 ./mkopcod1.exe: ../mkopcod1.c ../mkopcode.h $(cl_objs)
         $(bld_cl) $(inc_path) -D_STANDALONE_ $[@ $(wcl_util_opts) $(cl_objs) $(cl_libs) # order is important for gcc (linux bootstrap)
 
 asmops.gh: ./mkopcod1.exe ../fullops.tok ../inlnops.tok
-        $[@ ../fullops.tok ../inlnops.tok $@
+        $< $@
 
 ./mkopcode.exe: ../mkopcode.c ../mkopcode.h asmops.gh $(cl_objs)
         $(bld_cl) $(inc_path) -D_STANDALONE_ $[@ $(wcl_util_opts) $(cl_objs) $(cl_libs) # order is important for gcc (linux bootstrap)
 
 asmopsd.gh: ./mkopcode.exe ../fullops.tok ../inlnops.tok
-        $[@ ../fullops.tok ../inlnops.tok $@
+        $< $@

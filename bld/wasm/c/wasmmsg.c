@@ -40,30 +40,56 @@
   #include <process.h>
 #endif
 
+
+#if defined( USE_TEXT_MSGS )
+
+typedef struct msgtxt {
+    int     num;
+    char    *text;
+} msgtxt;
+
+msgtxt txtmsgs[] = {
+#define pick(num,etext,jtext) {num,etext},
+#include "../h/asmshare.msg"
+#undef pick
+#define pick(num,etext,jtext) {num,etext},
+#include "../h/womp.msg"
+#undef pick
+#define pick(num,etext,jtext) {num,etext},
+#include "../h/wasm.msg"
+#undef pick
+#define pick(num,text) {num,text},
+#include "usage.msg"
+#undef pick
+};
+
+#define MSG_NUM sizeof( txtmsgs ) / sizeof( txtmsgs[0] )
+#define MSG_SIZE sizeof( txtmsgs[0] )
+
+#else
+
 #include "wressetr.h"
 #include "wreslang.h"
-
 
 #define NIL_HANDLE      ((int)-1)
 #define STDOUT_HANDLE   ((int)1)
 
-static  HANDLE_INFO     hInstance = { 0 };
-static  unsigned        MsgShift;
-extern  long            FileShift;
-
-extern  int             trademark( void );
-
-#ifdef __OSI__
-
-extern char             *_Copyright;
-
-#endif
-
 #define NO_RES_MESSAGE "Error: could not open message resource file.\r\n"
 #define NO_RES_SIZE (sizeof(NO_RES_MESSAGE)-1)
 
-#ifndef __UNIX__
+extern  long            FileShift;
 
+static  HANDLE_INFO     hInstance = { 0 };
+static  unsigned        MsgShift;
+
+#endif
+
+extern  int             trademark( void );
+#ifdef __OSI__
+extern char             *_Copyright;
+#endif
+
+#ifndef __UNIX__
 static const unsigned char PressReturn[] = {
 "    (Press return to continue)"
 };
@@ -79,61 +105,16 @@ static void con_output( const unsigned char *text )
     } while( *text );
     putchar( '\n' );
 }
+
+static void Wait_for_return( void )
+{
+    if( isatty( fileno(stdout) ) ) {
+        con_output( PressReturn );
+        fflush( stdout );
+        getch();
+    }
+}
 #endif
-
-static off_t res_seek( int handle, off_t position, int where )
-/* fool the resource compiler into thinking that the resource information
- * starts at offset 0 */
-{
-    if( where == SEEK_SET ) {
-        return( lseek( handle, position + FileShift, where ) - FileShift );
-    } else {
-        return( lseek( handle, position, where ) );
-    }
-}
-
-WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
-
-int MsgInit( void )
-{
-    int         initerror;
-    char        name[_MAX_PATH];
-
-    hInstance.handle = NIL_HANDLE;
-    if( _cmdname( name ) == NULL ) {
-        initerror = 1;
-    } else {
-        hInstance.filename = name;
-        OpenResFile( &hInstance );
-        if( hInstance.handle == NIL_HANDLE ) {
-            initerror = 1;
-        } else {
-            initerror = FindResources( &hInstance );
-            if( !initerror ) {
-                initerror = InitResources( &hInstance );
-            }
-        }
-    }
-    MsgShift = WResLanguage() * MSG_LANG_SPACING;
-    if( !initerror && !MsgGet( MSG_USE_BASE, name ) ) {
-        initerror = 1;
-    }
-    if( initerror ) {
-        write( STDOUT_FILENO, NO_RES_MESSAGE, NO_RES_SIZE );
-        MsgFini();
-        return( 0 );
-    }
-    return( 1 );
-}
-
-int MsgGet( int resourceid, char *buffer )
-{
-    if( LoadString( &hInstance, resourceid+MsgShift, (LPSTR) buffer, 128 ) != 0 ) {
-        buffer[0] = '\0';
-        return( 0 );
-    }
-    return( 1 );
-}
 
 void MsgPrintf( int resourceid )
 {
@@ -158,17 +139,6 @@ void MsgPrintf1( int resourceid, char *token )
     MsgGet( resourceid, msgbuf );
     printf( msgbuf, token );
 }
-
-#ifndef __UNIX__
-static void Wait_for_return( void )
-{
-    if( isatty( fileno(stdout) ) ) {
-        con_output( PressReturn );
-        fflush( stdout );
-        getch();
-    }
-}
-#endif
 
 void PrintfUsage( int first_ln )
 {
@@ -196,10 +166,95 @@ void PrintfUsage( int first_ln )
     }
 }
 
+#if defined( USE_TEXT_MSGS )
+
+static int msg_cmp( const void *p1, const void *p2 )
+{
+    if( ((msgtxt *)p1)->num == ((msgtxt *)p2)->num )
+        return( 0 );
+    if( ((msgtxt *)p1)->num > ((msgtxt *)p2)->num )
+        return( 1 );
+    return( -1 );
+}
+
+#else
+
+static off_t res_seek( int handle, off_t position, int where )
+/* fool the resource compiler into thinking that the resource information
+ * starts at offset 0 */
+{
+    if( where == SEEK_SET ) {
+        return( lseek( handle, position + FileShift, where ) - FileShift );
+    } else {
+        return( lseek( handle, position, where ) );
+    }
+}
+
+WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
+
+#endif
+
+int MsgInit( void )
+{
+#if !defined( USE_TEXT_MSGS )
+    int         initerror;
+    char        name[_MAX_PATH];
+
+    hInstance.handle = NIL_HANDLE;
+    if( _cmdname( name ) == NULL ) {
+        initerror = 1;
+    } else {
+        hInstance.filename = name;
+        OpenResFile( &hInstance );
+        if( hInstance.handle == NIL_HANDLE ) {
+            initerror = 1;
+        } else {
+            initerror = FindResources( &hInstance );
+            if( !initerror ) {
+                initerror = InitResources( &hInstance );
+            }
+        }
+    }
+    MsgShift = WResLanguage() * MSG_LANG_SPACING;
+    if( !initerror && !MsgGet( MSG_USE_BASE, name ) ) {
+        initerror = 1;
+    }
+    if( initerror ) {
+        write( STDOUT_FILENO, NO_RES_MESSAGE, NO_RES_SIZE );
+        MsgFini();
+        return( 0 );
+    }
+#endif
+    return( 1 );
+}
+
 void MsgFini( void )
 {
+#if !defined( USE_TEXT_MSGS )
     if( hInstance.handle != NIL_HANDLE ) {
         CloseResFile( &hInstance );
         hInstance.handle = NIL_HANDLE;
     }
+#endif
+}
+
+int MsgGet( int id, char *buffer )
+{
+#if defined( USE_TEXT_MSGS )
+    msgtxt  keyx;
+    msgtxt  *result;
+
+    keyx.num = id;
+    result = bsearch( &keyx, txtmsgs, MSG_NUM, MSG_SIZE, msg_cmp );
+    if( result != NULL ) {
+        strcpy( buffer, result->text );
+        return( 1 );
+    }
+#else
+    if( LoadString( &hInstance, id+MsgShift, (LPSTR) buffer, 128 ) == 0 ) {
+        return( 1 );
+    }
+#endif
+    buffer[0] = '\0';
+    return( 0 );
 }
