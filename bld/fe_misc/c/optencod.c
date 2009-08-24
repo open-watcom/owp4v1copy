@@ -928,7 +928,7 @@ static void doTITLE( char *p )
     *i = t;
     t->target = 0;
     t->ntarget = 0;
-    t->lang_title[ LANG_English ] = strdup( p );
+    t->lang_title[ LANG_English ] = pickUpRest( p );
     targetTitle = t;
 }
 
@@ -941,7 +941,7 @@ static void doJTITLE( char *p )
     if( t == NULL ) {
         fail( ":jtitle. must follow a :title.\n" );
     }
-    t->lang_title[ LANG_Japanese ] = strdup( p );
+    t->lang_title[ LANG_Japanese ] = pickUpRest( p );
 }
 
 // :timestamp.
@@ -1828,8 +1828,6 @@ static void createUsageHeader( unsigned language, void (*process_line)( void ) )
                 *d++ = ' ';
                 *d++ = ' ';
                 *d++ = ' ';
-            } else if( ! isprint( *s ) ) {
-                // skip
             } else {
                 *d++ = *s;
             }
