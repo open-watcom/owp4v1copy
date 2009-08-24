@@ -665,6 +665,19 @@ void bar( void )
     func( 4, "s" );     /* possible argument mismatch */
 }
 .eerrbad
+:MSGSYM. ERR_CAST_POINTER_TRUNCATION
+:MSGTXT. Pointer truncated during cast
+:MSGJTXT. É|ÉCÉìÉ^ÇÕêÿÇËãlÇﬂÇÁÇÍÇ‹ÇµÇΩ
+:WARNING. 1
+.np
+A far pointer is being cast to a near pointer, losing segment information
+in the process.
+.errbad
+char __near *foo( char __far *fs )
+{
+    return( (char __near *)fs );
+}
+.eerrbad
 :eMSGGRP. Warn3
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn4

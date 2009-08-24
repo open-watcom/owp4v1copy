@@ -1567,6 +1567,7 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
         opnd = RValue( opnd );
     }
     typ = TypeOf( opnd );
+    SetDiagType2( typ, newtyp );
     if( newtyp->decl_type > TYPE_POINTER ) {
         if( newtyp->decl_type == TYPE_VOID ) {
             opnd = ExprNode( 0, OPR_CONVERT, opnd );
@@ -1583,9 +1584,11 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
         } else {
             if( cast_op ) {
                 CErr1( ERR_MUST_BE_SCALAR_TYPE );
+                SetDiagPop();
                 return( ErrorNode( opnd ) );
             } else if( typ != newtyp ) {        /* 16-aug-91, added cond */
                 CErr1( ERR_TYPE_MISMATCH );
+                SetDiagPop();
                 return( ErrorNode( opnd ) );
             }
         }
@@ -1595,22 +1598,29 @@ convert:                                /* moved here 30-aug-89 */
                       [ DataTypeOf( newtyp ) ];
         if( cnv == CER ) {
             CErr1( ERR_INVALID_CONVERSION );
+            SetDiagPop();
             return( ErrorNode( opnd ) );
         } else if( cnv != NIL ) {
             if( cnv == P2P ) {
                 if( ( typ->u.p.decl_flags & NEAR_FAR_HUGE )
                     != ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE )
                     || ( opnd_type == TYPE_ARRAY ) ) {
-                    if( cast_op == 0 ) {
-                        if( TypeSize( typ ) > TypeSize( newtyp ) ) {
+                    if( TypeSize( typ ) > TypeSize( newtyp ) ) {
+                        if( cast_op ) {
+                            CWarn1( WARN_CAST_POINTER_TRUNCATION,
+                                    ERR_CAST_POINTER_TRUNCATION );
+                        } else {
                             CWarn1( WARN_POINTER_TRUNCATION,
                                     ERR_POINTER_TRUNCATION );
                         }
+                    }
+                    if( cast_op == 0 ) {
                         if( (typ->u.p.decl_flags & FLAG_BASED) &&
                             (newtyp->u.p.decl_flags & FLAG_FAR) ) {
                             opnd = BasedPtrNode( typ, opnd );
                             opnd->expr_type = newtyp;
                             opnd->op.result_type = newtyp;
+                            SetDiagPop();
                             return( opnd );
                         }
                         cast_op = 1;        /* force a convert */
@@ -1627,6 +1637,7 @@ convert:                                /* moved here 30-aug-89 */
                 } else if( opr == OPR_PUSHADDR &&
                            opnd->op.opr == OPR_ADDROF ) {
                     opnd->expr_type = newtyp;
+                    SetDiagPop();
                     return( opnd );
                 } else if( cast_op && CompFlags.extensions_enabled ) {
                     /* 15-oct-92: We know the following: */
@@ -1647,6 +1658,7 @@ convert:                                /* moved here 30-aug-89 */
                             opnd->expr_type = newtyp;
                             opnd->op.opr = opr;
                             opnd->op.flags |= OPFLAG_LVALUE_CAST;
+                            SetDiagPop();
                             return( opnd );
                         }
                     }
@@ -1705,6 +1717,7 @@ convert:                                /* moved here 30-aug-89 */
             opnd->op.flags |= flags;
         }
     }
+    SetDiagPop();
     return( opnd );
 }
 

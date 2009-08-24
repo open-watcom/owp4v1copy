@@ -2188,6 +2188,11 @@ void GenCOptions( char **cmdline )
     /* Disabled at least until source tree is cleaned up. */
     EnableDisableMessage( 0, ERR_NONPROTO_FUNC_CALLED );
     EnableDisableMessage( 0, ERR_NONPROTO_FUNC_CALLED_INDIRECT );
+    /* Warning about pointer truncation during cast is disabled by
+     * default because it would cause too many build breaks right now
+     * by correctly diagnosing broken code.
+     */
+    EnableDisableMessage( 0, ERR_CAST_POINTER_TRUNCATION );
     InitModInfo();
     InitCPUModInfo();
 #if _CPU == 386
