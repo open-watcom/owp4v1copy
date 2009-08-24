@@ -59,15 +59,15 @@ extern WResDir    MainDir;
 
 static int GetResource( WResLangInfo    *res,
                         PHANDLE_INFO    hInstance,
-                        LPSTR           lpszBuffer )
-/**************************************************/
+                        char            *res_buffer )
+/***************************************************/
 {
     off_t               prevpos;
     unsigned            numread;
 
     prevpos = WRESSEEK( hInstance->handle, res->Offset, SEEK_SET );
     if ( prevpos == -1L ) return( -1 );
-    numread = WRESREAD( hInstance->handle, (void *)lpszBuffer, (int)res->Length );
+    numread = WRESREAD( hInstance->handle, res_buffer, (int)res->Length );
 
     return( 0 );
 }
@@ -86,6 +86,7 @@ extern int WINAPI WResLoadResource2( WResDir            dir,
     WResDirWindow       wind;
     WResLangInfo        *res;
     WResLangType        lang;
+    char                *res_buffer;
 
     if( ( lpszBuffer == NULL ) || ( bufferSize == NULL ) ) {
         return( -1 );
@@ -106,12 +107,13 @@ extern int WINAPI WResLoadResource2( WResDir            dir,
         if( res->Length >= INT_MAX ) {
             return( -1 );
         }
-        *lpszBuffer = (LPSTR)WRESALLOC( res->Length );
+	res_buffer  = WRESALLOC( res->Length );
+	*lpszBuffer = res_buffer;
         if( *lpszBuffer == NULL ) {
             return( -1 );
         }
         *bufferSize = (int)res->Length;
-        retcode = GetResource( res, hInstance, *lpszBuffer );
+        retcode = GetResource( res, hInstance, res_buffer );
     }
 
     return( retcode );
@@ -126,4 +128,3 @@ extern int WINAPI WResLoadResource( PHANDLE_INFO       hInstance,
 {
     return( WResLoadResource2( MainDir, hInstance, idType, idResource, lpszBuffer, bufferSize ) );
 }
-
