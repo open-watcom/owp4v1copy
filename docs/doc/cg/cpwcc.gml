@@ -2136,11 +2136,12 @@ where
 .id segment
 is the name of the segment in which the pointer or object is based.
 As shown above, the segment name is always specified as a string.
-There are three special segment names recognized by the compiler:
+There are four special segment names recognized by the compiler:
 .millust begin
 "_CODE"
 "_CONST"
 "_DATA"
+"_STACK"
 .millust end
 .pc
 The
@@ -2152,7 +2153,10 @@ segment is the segment containing constant values.
 The
 .mono "_DATA"
 segment is the default data segment.
-If the segment name is not one of the three recognized names, then a
+The
+.mono "_STACK"
+segment is the segment containing the stack.
+If the segment name is not one of the recognized names, then a
 segment will be created with that name.
 If a segment constant based object is being defined, then it will be
 placed in the named segment.
