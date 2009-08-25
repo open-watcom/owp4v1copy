@@ -110,8 +110,8 @@ void    lay_lp( const gmltag * entry )
         eat_lay_sub_tag();
         return;                         // process during first pass only
     }
-    if( ProcFlags.lay_xxx != el_lq ) {
-        ProcFlags.lay_xxx = el_lq;
+    if( ProcFlags.lay_xxx != el_lp ) {
+        ProcFlags.lay_xxx = el_lp;
         out_msg( ":LP nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );              // get att with value

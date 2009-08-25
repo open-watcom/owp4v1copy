@@ -44,6 +44,70 @@ const   lay_att     fig_att[9] =
       e_font, e_default_place, e_default_frame, e_dummy_zero };
 
 
+/**********************************************************************************/
+/*Define the characteristics of the figure entity.                                */
+/*                                                                                */
+/*:FIG                                                                            */
+/*        left_adjust = 0                                                         */
+/*        right_adjust = 0                                                        */
+/*        pre_skip = 2                                                            */
+/*        post_skip = 0                                                           */
+/*        spacing = 1                                                             */
+/*        font = 0                                                                */
+/*        default_place = top                                                     */
+/*        default_frame = rule                                                    */
+/*                                                                                */
+/*left_adjust The left_adjust attribute accepts any valid horizontal space unit.  */
+/*The left margin is set to the page left margin plus the specified left          */
+/*adjustment.                                                                     */
+/*                                                                                */
+/*right_adjust The right_adjust attribute accepts any valid horizontal space unit.*/
+/*The right margin is set to the page right margin minus the specified            */
+/*right adjustment.                                                               */
+/*                                                                                */
+/*pre_skip This attribute accepts vertical space units. A zero value means that   */
+/*no lines are skipped. If the skip value is a line unit, it is multiplied        */
+/*by the current line spacing (see "Vertical Space Unit" on page 77 for           */
+/*more information). The resulting amount of space is skipped before              */
+/*the figure. The pre-skip will be merged with the previous document              */
+/*entity's post-skip value. If a pre-skip occurs at the beginning of an           */
+/*output page, the pre-skip value has no effect.                                  */
+/*                                                                                */
+/*post_skip This attribute accepts vertical space units. A zero value means that  */
+/*no lines are skipped. If the skip value is a line unit, it is multiplied        */
+/*by the current line spacing (see "Vertical Space Unit" on page 77 for           */
+/*more information). The resulting amount of space is skipped after               */
+/*the figure. The post-skip will be merged with the next document                 */
+/*entity's pre-skip value. If a post-skip occurs at the end of an output          */
+/*page, any remaining part of the skip is not carried over to the next            */
+/*output page. figure.                                                            */
+/*                                                                                */
+/*spacing This attribute accepts a positive integer number. The spacing           */
+/*determines the number of blank lines that are output between text               */
+/*lines. If the line spacing is two, each text line will take two lines in        */
+/*the output. The number of blank lines between text lines will                   */
+/*therefore be the spacing value minus one. The spacing attribute                 */
+/*defines the line spacing within the figure.                                     */
+/*                                                                                */
+/*font This attribute accepts a non-negative integer number. If a font            */
+/*number is used for which no font has been defined, WATCOM                       */
+/*Script/GML will use font zero. The font numbers from zero to three              */
+/*correspond directly to the highlighting levels specified by the                 */
+/*highlighting phrase GML tags. The font attribute defines the font of            */
+/*the figure text. The font value is linked to the left_adjust,                   */
+/*right_adjust, pre_skip and post_skip attributes (see "Font Linkage"             */
+/*on page 77).                                                                    */
+/*                                                                                */
+/*default_place This attribute accepts the values top, bottom, and inline. The    */
+/*specified attribute value is used as the default value for the place            */
+/*attribute of the GML figure tag.                                                */
+/*                                                                                */
+/*default_frame This attribute accepts the values rule, box, none, and 'character */
+/*string'. The specified attribute value is used as the default value for         */
+/*the frame attribute of the GML figure tag. See the discussion about             */
+/*the frame attribute under "FIG" on page 92 for an explanation of the            */
+/*attribute values                                                                */
+/**********************************************************************************/
 
 /***************************************************************************/
 /*  lay_fig                                                                */
@@ -100,8 +164,8 @@ void    lay_fig( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.fig.font );
                     break;
                 case   e_default_place:
-                    cvterr = i_default_place( p, curr,
-                                              &layout_work.fig.default_place );
+                    cvterr = i_place( p, curr,
+                                      &layout_work.fig.default_place );
                     break;
                 case   e_default_frame:
                     cvterr = i_default_frame( p, curr,

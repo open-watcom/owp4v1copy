@@ -341,7 +341,7 @@ static  void    proc_input( char * filename )
                 if( inc_level > 0 ) {
                     show_include_stack();
                     continue;           // don't start new include level
-                } else {                // masterfile included from cmdline
+                } else {                // master file included from cmdline
                     g_info( INF_INCLUDED, "cmdline" );
                     break;              // no input file leave loop
                 }
@@ -357,6 +357,17 @@ static  void    proc_input( char * filename )
             }
             if( GlobalFlags.inclist ) {
                 g_info( inf_curr_input, "file", cb->filename );
+            }
+
+            /***************************************************************/
+            /*  If ( LAYOUT file option specified, then process            */
+            /*  layout file first ( before master file )                   */
+            /***************************************************************/
+
+            if( (lay_file != NULL) && (inc_level == 1) && (cb->lineno == 0) ) {
+                strcpy_s( token_buf, buf_size, lay_file );
+                ProcFlags.newLevelFile = 1; // start a new include FILE level
+                continue;               // with cmdline    layout option file
             }
         } // new include FILE processing
 
@@ -451,9 +462,10 @@ static  void    proc_input( char * filename )
             break;
         }
         if( input_cbs->fmflags & II_file ) {
-            char    linestr[MAX_L_AS_STR];
-            cb = input_cbs->s.f;
             if( GlobalFlags.inclist ) {
+                char    linestr[MAX_L_AS_STR];
+
+                cb = input_cbs->s.f;
                 utoa( cb->lineno, linestr, 10 );
                 g_info( inf_curr_line, cb->filename, linestr );
             }
@@ -607,7 +619,7 @@ int main( int argc, char * argv[] )
 
         set_default_extension( master_fname );// make this extension first choice
 
-        init_def_lay();                 // prototype for default layout
+        init_def_lay();                 // set default layout values
 
         fb_start();                     // START :PAUSE & :INIT processing.
 
@@ -616,19 +628,6 @@ int main( int argc, char * argv[] )
             init_pass();
             utoa( pass, passnoval->value, 10 );
 
-            /* fb_document() needs to be done on the first pass only, but
-             * also needs to be done immediately after the :ELAYOUT. tag.
-             * This means that it may need to be relocated when layout
-             * processing is implemented.
-             */
-
-            if( GlobalFlags.firstpass == 1) fb_document();// DOCUMENT :PAUSE & :INIT processing.
-
-            init_def_margins();         // every pass ??? TBD
-
-            fb_position( g_cur_h_start, g_cur_v_start );
-
-
 //            g_trmem_prt_list();  // all memory freed if no output from call
             g_info( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );
@@ -636,32 +635,13 @@ int main( int argc, char * argv[] )
             proc_input( master_fname );
 
 //            g_trmem_prt_list();       // show allocated memory at pass end
-#if 0
 
-/***************************************************************************/
-/*  following code postponed for later                  TBD                */
-/***************************************************************************/
 
-            if( w_line.first != NULL ) {
+            if( t_line.first != NULL ) {
 
-                if( GlobalFlags.lastpass && ProcFlags.justify > ju_off ) {
-                    if( GlobalFlags.research ) {
-                        test_out_w_line( &w_line );
-                    }
-                    do_justify( g_page_left, g_page_left + g_cl );
-                    if( GlobalFlags.research ) {
-                        test_out_w_line( &w_line );
-                    }
-                }
-
-                fb_output_textline( &w_line );
-
-                add_text_word_to_pool();
-                w_line.first = NULL;
-                g_cur_h_start = g_page_left;
+                process_line_full( &t_line );
 
             }
-#endif
             if( GlobalFlags.research && (pass < passes) ) {
                 print_sym_dict( global_dict );
             }

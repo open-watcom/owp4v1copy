@@ -61,16 +61,47 @@ typedef enum num_style {
     xpb_style   = 0x0400                // only right parenthesis
 } num_style;
 
-
 /***************************************************************************/
-/*  definitions for default place for :FIG tag                             */
+/*  definitions for place for :BANNER and :FIG tag                         */
 /***************************************************************************/
 
-typedef enum def_place {
-    top_place    = 1,
+typedef enum bf_place {
+    no_place        = 0,
+    inline_place,                       // only :FIG
+    top_place,
     bottom_place,
-    inline_place
-} def_place;
+    topodd_place,                       // topodd and following only :BANNER
+    topeven_place,
+    botodd_place,
+    boteven_place
+} bf_place;
+
+/***************************************************************************/
+/*  definitions for docsect for :BANNER tag                                */
+/***************************************************************************/
+
+typedef enum ban_docsect {
+    no_ban          = 0,
+    abstract_ban,
+    appendix_ban,
+    backm_ban,
+    body_ban,
+    figlist_ban,
+    head0_ban,
+    head1_ban,
+    head2_ban,
+    head3_ban,
+    head4_ban,
+    head5_ban,
+    head6_ban,
+    letfirst_ban,
+    letlast_ban,
+    letter_ban,
+    index_ban,
+    preface_ban,
+    toc_ban,
+    max_ban                             // has to be last defined value
+} ban_docsect;
 
 /***************************************************************************/
 /*  definitions for frame   :FIG tag and others                            */
@@ -107,7 +138,8 @@ typedef enum num_form {
 typedef enum page_pos {
     pos_left,
     pos_right,
-    pos_center
+    pos_center,
+    pos_centre = pos_center
 } page_pos;
 
 typedef enum page_ej {
@@ -250,7 +282,7 @@ typedef struct fig_lay_tag {
     su              post_skip;          // vertical space unit
     int8_t          spacing;            // positive integer
     int8_t          font;               // non-negative integer
-    def_place       default_place;      // special enum
+    bf_place        default_place;      // special enum
     def_frame       default_frame;      // special
 } fig_lay_tag;
 
@@ -688,13 +720,110 @@ typedef struct gl_lay_tag {
     int8_t          level;              // only level 1 supported
 } gl_lay_tag;
 
+/***************************************************************************/
+/*  :BANREGION attribute values                                            */
+/***************************************************************************/
 
+typedef enum reg_pour {
+    no_pour,
+    last_pour,
+    head0_pour,
+    head1_pour,
+    head2_pour,
+    head3_pour,
+    head4_pour,
+    head5_pour,
+    head6_pour
+} reg_pour;
+
+typedef enum content_enum {
+    no_content          =  0,
+    author_content,
+    bothead_content,
+    date_content,
+    docnum_content,
+    head0_content,
+    head1_content,
+    head2_content,
+    head3_content,
+    head4_content,
+    head5_content,
+    head6_content,
+    headnum0_content,
+    headnum1_content,
+    headnum2_content,
+    headnum3_content,
+    headnum4_content,
+    headnum5_content,
+    headnum6_content,
+    headtext0_content,
+    headtext1_content,
+    headtext2_content,
+    headtext3_content,
+    headtext4_content,
+    headtext5_content,
+    headtext6_content,
+    pgnuma_content,
+    pgnumad_content,
+    pgnumr_content,
+    pgnumrd_content,
+    pgnumc_content,
+    pgnumcd_content,
+    rule_content,
+    sec_content,
+    stitle_content,
+    title_content,
+    string_content,
+    time_content,
+    tophead_content,
+    max_content                         // keep as last entry
+} content_enum;
+
+typedef struct content {
+    content_enum    content_type;
+    xx_str          string[str_size];
+} content;
+
+/***************************************************************************/
+/*  :BANREGION      Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct region_lay_tag {
+    struct region_lay_tag       *   next;   // next banner region
+    su              indent;             // horizontal space unit or keywords
+    su              hoffset;            // horizontal space unit or keywords
+    su              width;              // horizontal space unit or extend
+    su              voffset;            // vertical space unit
+    su              depth;              // vertical space unit
+    int8_t          font;               // non negative integer
+    int8_t          refnum;             // positive integer
+    page_pos        region_position;    // special enum
+    reg_pour        pouring;            // special enum
+    bool            script_format;      // yes no -> bool
+    content         contents;           // what is in the region
+} region_lay_tag;
+
+/***************************************************************************/
+/*  :BANNER         Layout tag data                                        */
+/***************************************************************************/
+
+typedef struct banner_lay_tag {
+    struct banner_lay_tag   *   next;   // next banner
+    region_lay_tag          *   region; // banner region
+    su              left_adjust;        // horizontal space unit
+    su              right_adjust;       // horizontal space unit
+    su              depth;              // vertical space unit
+    bf_place        place;              // special enum
+    ban_docsect     docsect;            // special enum
+//  bf_place        refplace;           // special enum
+//  ban_docsect     refdoc;             // special enum
+} banner_lay_tag;
 
 
 
 /***************************************************************************/
 /*  Layout data                                             TBD            */
-/*  sequence of definitions as seen by :CONVERT outpu                      */
+/*  sequence of definitions as seen by :CONVERT output                     */
 /***************************************************************************/
 
 typedef struct layout_data {
@@ -764,6 +893,7 @@ typedef struct layout_data {
     ul_lay_tag          ul;
     dl_lay_tag          dl;
     gl_lay_tag          gl;
+    banner_lay_tag  *   banner;
 
 } layout_data;
 
@@ -777,6 +907,7 @@ typedef struct layout_data {
 typedef struct att_args {
     char    *   start[2];
     int         len[2];
+    bool        quoted;                 // only for value
 } att_args;
 
 

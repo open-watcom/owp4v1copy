@@ -89,6 +89,7 @@ void    lay_dummy( const gmltag * entry )
         wng_count++;
         show_include_stack();
     }
+    eat_lay_sub_tag();                  // ignore any attribute / value
 }
 
 

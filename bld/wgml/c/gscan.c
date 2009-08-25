@@ -216,10 +216,28 @@ static void scan_gml( void )
                     }
                 }
             }
+            if( !processed ) {          // check for gml tag in layout
+                for( k = 0; k < GML_TAGMAX; ++k ) {
+                    if( toklen == gml_tags[k].taglen ) {
+                        if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
+                            g_err( err_gml_in_lay, gml_tags[k].tagname );
+                            err_count++;
+                            file_mac_info();
+                            processed = true;
+                            scan_start = scan_stop +1;
+                            break;
+                        }
+                    }
+                }
+            }
         } else {
             for( k = 0; k < GML_TAGMAX; ++k ) {
                 if( toklen == gml_tags[k].taglen ) {
                     if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
+                        if( !ProcFlags.fb_document_done &&
+                              gml_tags[k].tagflags & tag_out_txt ) {
+                            do_layout_end_processing(); // tag with text output
+                        }
                         *p = csave;
                         gml_tags[k].gmlproc( &gml_tags[k] );
                         processed = true;
@@ -227,6 +245,20 @@ static void scan_gml( void )
                             scan_start++;
                         }
                         break;
+                    }
+                }
+            }
+            if( !processed ) {         // check for layout tag in normal text
+                for( k = 0; k < LAY_TAGMAX; ++k ) {
+                    if( toklen == lay_tags[k].taglen ) {
+                        if( !stricmp( lay_tags[k].tagname, tok_start + 1 ) ) {
+                            g_err( err_lay_in_gml, lay_tags[k].tagname );
+                            err_count++;
+                            file_mac_info();
+                            processed = true;
+                            scan_start = scan_stop +1;
+                            break;
+                        }
                     }
                 }
             }
@@ -325,7 +357,7 @@ static void     scan_script( void)
                 ProcFlags.macro_ignore = 0;
             }
         }
-        if( ProcFlags.literal ) {
+        if( ProcFlags.literal ) {       // no macro or split line if literal
             ProcFlags.CW_sep_ignore = 1;
             ProcFlags.macro_ignore = 1;
         }
@@ -404,6 +436,11 @@ static void     scan_script( void)
         if( toklen == SCR_KW_LENGTH ) {
             for( k = 0; k < SCR_TAGMAX; ++k ) {
                 if( !stricmp( scr_tags[k].tagname, token_buf ) ) {
+                    if( !ProcFlags.fb_document_done &&
+                          scr_tags[k].cwflags & cw_o_t// keyword with text output
+                      ) {
+                        do_layout_end_processing();
+                    }
                     if( ProcFlags.literal  ) {  // .li active
                         if( !stricmp( token_buf, "li" ) ) {// process only .li
                             scan_start = p;// script controlword found, process
@@ -657,6 +694,9 @@ void    scan_line( void )
     if( !ProcFlags.literal ) {
         cc = mainif();
     } else {
+        if( t_line.first != NULL ) {
+            scr_process_break();
+        }
         cc = pos;
     }
     if( cc == pos ) {
@@ -664,15 +704,26 @@ void    scan_line( void )
             if( ProcFlags.late_subst ) {
                 process_late_subst();   // substitute &gml, &amp, ...
             }
+
             scan_script();              // script control line
+
         } else if( *scan_start == GML_char ) {
             if( ProcFlags.late_subst ) {
                 process_late_subst();   // substitute &gml, &amp, ...
             }
-            scan_gml();                 // gml tags
+
+            scan_gml();                 // GML tags
+
         } else if( ProcFlags.late_subst ) {
                 process_late_subst();   // substitute &gml, &amp, ...
         }
+
+        /*******************************************************************/
+        /*  here we arrive if no script keyword / GML tag recognized       */
+        /*  or for unprocessed text in the input record                    */
+        /*  or for attributes of LAYOUT tags                               */
+        /*******************************************************************/
+
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
                 g_info( inf_text_line, scan_start );
@@ -680,7 +731,12 @@ void    scan_line( void )
             if( ProcFlags.layout ) {    // LAYOUT active process attributes
                 lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
             } else {
-//              process_text( scan_start, cur_font_num );   TBD
+                if( !ProcFlags.fb_document_done ) {
+                    // text starts without any tag
+                    do_layout_end_processing();
+                }
+                // processs (remaining) text
+                process_text( scan_start, g_curr_font_num );
             }
         }
     } else if( GlobalFlags.research && GlobalFlags.firstpass ) {

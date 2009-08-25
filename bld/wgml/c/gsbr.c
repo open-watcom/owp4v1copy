@@ -1,4 +1,4 @@
- 
+
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -30,18 +30,18 @@
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
 #include "copfiles.h"
- 
- 
- 
+
+
+
 /**************************************************************************/
 /* BREAK forces  the current partially-full output  line (if any)   to be */
 /* printed without  justification (if on),  and  a new output line  to be */
@@ -78,13 +78,13 @@
 /*     Without the Break, it would print as:                              */
 /*     This is a text line followed by a .BR control word.                */
 /**************************************************************************/
- 
+
 void    scr_br( void )
 {
     char        *   p;
 #if 0
     char            cwcurr[4];          // if errmsg is neccessary
- 
+
     cwcurr[0] = SCR_char;
     cwcurr[1] = 't';
     cwcurr[2] = 'i';
@@ -101,22 +101,24 @@ void    scr_br( void )
         }
     }
     scr_process_break();                // break processing
- 
+
     scan_restart = scan_stop + 1;
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  output incomplete line if any                                          */
 /***************************************************************************/
- 
+
 void  scr_process_break( void )
 {
+    if( t_line.first != NULL ) {
+        process_line_full( &t_line );
+    }
+    return;
 
-    return;                             // still dummy    TBD
- 
 }
- 
- 
- 
+
+
+

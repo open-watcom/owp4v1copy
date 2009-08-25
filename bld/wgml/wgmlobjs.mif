@@ -17,7 +17,7 @@ common_objs =  &
         gmemory.obj  &
         goptions.obj &
         gprocess.obj &
-###     gproctxt.obj &
+        gproctxt.obj &
         gresrch.obj  &
         gscan.obj    &
         gsymvar.obj  &
@@ -51,6 +51,9 @@ gml_objs =  &
         glauthor.obj &
         glayout.obj  &
         glayutil.obj &
+        glbandef.obj &
+        glbanner.obj &
+        glbanreg.obj &
         glbodbck.obj &
         glconvrt.obj &
         gldd.obj     &

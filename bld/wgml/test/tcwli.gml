@@ -2,8 +2,10 @@
 .* co off for one line in = one line out
 .co off
 .se var=outside li
-.li 1
-.se var=inside li
+.li 3
+.se var=inside li 1
+.se var=inside li 2
+.se var=inside li 3
 .li .ty &var.
 &var. not within li
 .li on

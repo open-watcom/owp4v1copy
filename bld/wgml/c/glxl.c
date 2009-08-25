@@ -26,6 +26,9 @@
 *
 * Description: WGML implement :DL :GL :OL :SL :UL tags for LAYOUT processing
 *
+*
+*                              only level 1 is supported
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */

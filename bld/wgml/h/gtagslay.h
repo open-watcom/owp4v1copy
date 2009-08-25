@@ -30,8 +30,8 @@
 *
 *    for normal GML tags see gtags.h
 *
-*    :cmt :imbed :include   are defined here and in gtags.h identically
-*    other tags for example :abstract are defined differently
+*    :cmt :imbed :include   are defined here and in gtags.h
+*    some tags for example :abstract are defined differently
 ****************************************************************************/
 
 #ifndef pick
@@ -44,12 +44,14 @@
   pick( "ADDRESS",     7,      lay_address,    0 )
   pick( "ALINE",       5,      lay_aline,      0 )
   pick( "APPENDIX",    8,      lay_appendix,   0 )
+  pick( "ATTN",        4,      lay_dummy,      0 )  // letter not supported
   pick( "AUTHOR",      6,      lay_author,     0 )
   pick( "BACKM",       5,      lay_backbod,    0 )
-  pick( "BANNER",      6,      lay_dummy,      0 )
-  pick( "BANREGION",   9,      lay_dummy,      0 )
+  pick( "BANNER",      6,      lay_banner,     0 )
+  pick( "BANREGION",   9,      lay_banregion,  0 )
   pick( "BODY",        4,      lay_backbod,    0 )
   pick( "CIT",         3,      lay_xx,         0 )
+  pick( "CLOSE",       5,      lay_dummy,      0 )  // letter not supported
   pick( "CMT",         3,      gml_cmt,        tag_only )
   pick( "CONVERT",     7,      lay_convert,    0 )
   pick( "DATE",        4,      lay_date,       0 )
@@ -57,11 +59,13 @@
   pick( "DDHD",        4,      lay_xx,         0 )
   pick( "DEFAULT",     7,      lay_default,    0 )
   pick( "DL",          2,      lay_dl,         0 )
+  pick( "DISTRIB",     7,      lay_dummy,      0 )  // letter not supported
   pick( "DOCNUM",      6,      lay_docnum,     0 )
   pick( "DT",          2,      lay_xx,         0 )
   pick( "DTHD",        4,      lay_xx,         0 )
-  pick( "EBANNER",     7,      lay_dummy,      0 )
-  pick( "EBANREGION", 10,      lay_dummy,      0 )
+  pick( "EBANNER",     7,      lay_ebanner,    0 )
+  pick( "EBANREGION", 10,      lay_ebanregion, 0 )
+  pick( "ECLOSE",      6,      lay_dummy,      0 )  // letter not supported
   pick( "ELAYOUT",     7,      lay_elayout,    0 )
   pick( "FIG",         3,      lay_fig,        0 )
   pick( "FIGCAP",      6,      lay_figcap,     0 )
@@ -70,6 +74,7 @@
   pick( "FLPGNUM",     7,      lay_flpgnum,    0 )
   pick( "FN",          2,      lay_fn,         0 )
   pick( "FNREF",       5,      lay_fnref,      0 )
+  pick( "FROM",        4,      lay_dummy,      0 )  // letter not supported
   pick( "GD",          2,      lay_xx,         0 )
   pick( "GL",          2,      lay_gl,         0 )
   pick( "GT",          2,      lay_xx,         0 )
@@ -90,10 +95,12 @@
   pick( "IXHEAD",      6,      lay_ixhead,     0 )
   pick( "IXMAJOR",     7,      lay_xx,         0 )
   pick( "IXPGNUM",     7,      lay_xx,         0 )
+  pick( "LETDATE",     7,      lay_dummy,      0 )  // letter not supported
   pick( "LP",          2,      lay_lp,         0 )
   pick( "LQ",          2,      lay_lq,         0 )
   pick( "NOTE",        4,      lay_note,       0 )
   pick( "OL",          2,      lay_ol,         0 )
+  pick( "OPEN",        4,      lay_dummy,      0 )  // letter not supported
   pick( "P",           1,      lay_p,          0 )
   pick( "PAGE",        4,      lay_page,       0 )
   pick( "PC",          2,      lay_pc,         0 )
@@ -101,8 +108,10 @@
   pick( "PSC",         3,      lay_dummy,      0 )
   pick( "SAVE",        4,      lay_dummy,      0 )
   pick( "SL",          2,      lay_sl,         0 )
+  pick( "SUBJECT",     7,      lay_dummy,      0 )  // letter not supported
   pick( "TITLE",       5,      lay_title,      0 )
   pick( "TITLEP",      6,      lay_titlep,     0 )
+  pick( "TO",          2,      lay_dummy,      0 )  // letter not supported
   pick( "TOC",         3,      lay_toc,        0 )
   pick( "TOCH0",       5,      lay_tochx,      0 )
   pick( "TOCH1",       5,      lay_tochx,      0 )

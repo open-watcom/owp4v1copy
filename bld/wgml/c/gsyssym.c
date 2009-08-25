@@ -132,7 +132,7 @@ static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 
 
 /***************************************************************************/
-/*  The sequence of the the following strings must match the enum ju_enum  */
+/*  The sequence of the following strings must match the enum ju_enum      */
 /***************************************************************************/
 
 static  char    str[][8] = { "OFF", "ON", "HALF", "LEFT", "RIGHT", "CENTER",
@@ -494,11 +494,15 @@ static void sysjufun( symvar * e )      // .ju status
 {
     sysju0.value = str[ProcFlags.justify];
     return;
-    return;
 };
 
-static void syslayoutfun( symvar * e )
+static void syslayoutfun( symvar * e ) // LAYOUT cmdline option or :LAYOUT tag seen
 {
+    if( ProcFlags.lay_specified ) {
+        syslayout0.value = str[ju_on];
+    } else {
+        syslayout0.value = str[ju_off];
+    }
     return;
 };
 

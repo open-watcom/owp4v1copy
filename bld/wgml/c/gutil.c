@@ -41,7 +41,59 @@ char    *skip_to_quote( char * p, char quote )
     while( *p && quote != *p ) {
         p++;
     }
-    return( p+1 );
+    return( p + 1 );
+}
+
+
+
+/***************************************************************************/
+/* extension for layout :BANREGION indent, hoffset and width attributes:   */
+/*      symbolic units without a numeric value                             */
+/***************************************************************************/
+bool    su_layout_special( char * * scanp, su * converted )
+{
+    bool        converterror = false;
+    char    *   p;
+    char    *   ps;
+    su      *   s;
+    long        wh;
+    long        wd;
+    char        quote;
+
+    s = converted;
+    p = *scanp;
+    ps = s->su_txt;
+    *ps = '\0';
+    wh = 0;
+    wd = 0;
+    quote = '\0';
+
+    if( *p == '\'' || *p == '"' ) {     // ignore but remember quote
+        quote = *p++;
+    }
+    if( !stricmp( "left", p ) ) {
+        s->su_u = SU_lay_left;
+        strcpy( ps, "left" );
+    } else if( !stricmp( "right", p ) ) {
+        s->su_u = SU_lay_right;
+        strcpy( ps, "right" );
+    } else if( !(stricmp( "center", p )) && (stricmp( "centre", p )) ) {
+        s->su_u = SU_lay_centre;
+        strcpy( ps, "centre" );
+    } else if( !stricmp( "extend", p ) ) {
+        s->su_u = SU_lay_extend;
+        strcpy( ps, "extend" );
+    } else {
+        converterror = true;
+    }
+    if( !converterror ) {
+        s->su_whole = 0;
+        s->su_dec   = 0;
+        s->su_inch  = 0;
+        s->su_mm    = 0;
+        s->su_relative = false;
+    }
+    return( converterror );
 }
 
 /***************************************************************************/
@@ -63,6 +115,11 @@ char    *skip_to_quote( char * p, char quote )
 /*    the absolute units (the last 5) will be stored                       */
 /*    in 0.0001 millimeter units and 0.0001 inch units,                    */
 /*    the relative ones will not be converted.                             */
+/*                                                                         */
+/* extension for layout :BANREGION indent, hoffset and width attributes:   */
+/*      symbolic units without a numeric value                             */
+/*                                                                         */
+/*                                                                         */
 /*                                                                         */
 /*    returns  filled structure su, returncode false                       */
 /*               or  returncode true in case of error                      */
@@ -110,6 +167,17 @@ bool    to_internal_SU( char * * scanp, su * converted )
     } else {
         sign = '+';
         s->su_relative = false;         // value replaces old value
+    }
+
+    /***********************************************************************/
+    /*  Special for layout :BANREGION                                      */
+    /***********************************************************************/
+
+    if( quote == '\0' && isalpha( *p ) ) {
+        converterror = su_layout_special( scanp, converted );
+        if( !converterror ) {
+            return( converterror );     // layout special ok
+        }
     }
     while( *p >= '0' && *p <= '9' ) {   // whole part
         wh = 10 * wh + *p - '0';
@@ -347,22 +415,77 @@ bool    to_internal_SU( char * * scanp, su * converted )
     converterror = false;
     return( converterror );
 }
+
+/***************************************************************************/
+/*  convert internal space units to device space units                     */
+/*   use font 0 or current font???                              TBD        */
+/***************************************************************************/
+
+uint32_t    conv_hor_unit( su * s )
+{
+    uint32_t    ds;
+
+    switch( s->su_u ) {
+    case SU_chars_lines :
+    case SU_dv :
+    case SU_ems :
+        ds = s->su_whole * wgml_fonts[g_curr_font_num].default_width;
+        break;
+    case SU_inch :
+    case SU_cm :
+    case SU_mm :
+    case SU_cicero :
+    case SU_pica :
+        ds = s->su_inch * bin_device->horizontal_base_units / 10000;
+        break;
+    default:
+        ds = 0;
+        break;
+    }
+
+    return( ds );
+}
+extern  uint32_t    conv_vert_unit( su * s )
+{
+    uint32_t    ds;
+
+    switch( s->su_u ) {
+    case SU_chars_lines :
+    case SU_dv :
+    case SU_ems :
+        ds = s->su_whole * wgml_fonts[g_curr_font_num].line_height;
+        break;
+    case SU_inch :
+    case SU_cm :
+    case SU_mm :
+    case SU_cicero :
+    case SU_pica :
+        ds = s->su_inch * bin_device->vertical_base_units / 10000;
+        break;
+    default:
+        ds = 0;
+        break;
+    }
+
+    return( ds );
+}
+
 #if 0
 int main( int argc, char *cargv[] )
 {
     bool    error;
     su      aus;
-//  char    ein1[] = "1.5I";
+    char    ein1[] = "1.5I";
 //  char    ein1[] = "3.81cm";
-    char    ein1[] = "38.1mm";
+//  char    ein1[] = "38.1mm";
 //  char    *ein1 = "'6p11'";
 //  char    *ein1 = "'1C'";
 //  char    *ein2 = "'1C12'";
     char    *ein2 = "'5C12'";
     char    *ein3 = "'0P73'";
     char    *ein4 = "'5P6'";
-    char   *p = ein1;
 
+    char   *p = ein1;
     error = to_internal_SU( &p, &aus );
 
     p = ein2;

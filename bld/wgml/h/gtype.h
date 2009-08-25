@@ -103,7 +103,7 @@
 
 typedef enum space_units {
     SU_undefined   = 0,                 // don't care = value zero
-    SU_chars_lines = 10,                // undimensioned value
+    SU_chars_lines = 16,                // undimensioned value
     SU_chars       = 1,                 // chars horizontal
     SU_lines       = 1,                 // lines vertical
     SU_cicero,                          // C   Cicero
@@ -112,7 +112,12 @@ typedef enum space_units {
     SU_ems,                             // M   Ems
     SU_inch,                            // i   inch
     SU_mm,                              // mm  millimeter
-    SU_pica                             // p   pica
+    SU_pica,                            // p   pica
+
+    SU_lay_left    = 100,    // special values used for layout definition
+    SU_lay_centre,           // ... :BANREGION indent, hoffset and width attr
+    SU_lay_right,
+    SU_lay_extend            // additions before SU_lay_left please
 } space_units;
 
 #define MAX_SU_CHAR     12            // length of space units in char format
@@ -340,7 +345,8 @@ typedef struct  inputcb {
 /*  scr keywords                                                           */
 /***************************************************************************/
 typedef enum {
-    cw_break    = 1            // control word causes break, ie. flush output
+    cw_break    = 1,           // control word causes break, ie. flush output
+    cw_o_t                              // control word produces output text
 } scrflags;
 
 typedef struct scrtag {
@@ -361,7 +367,8 @@ typedef enum {
     etag_req     = 8,                   // eTAG required
     etag_opt     = 16,                  // eTAG optional
     tag_is_basic = 32,                  // basic tag
-    tag_layout   = 64                   // tag valid in layout
+    tag_layout   = 64,                  // tag valid in layout
+    tag_out_txt  = 128                  // tag produces output text
 } gmlflags;
 
 

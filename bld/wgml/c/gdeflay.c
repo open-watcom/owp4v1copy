@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description: WGML implement prototype support for default layout
-*                   incomplete                                        TBD
+*                   and layout processing
 *
 ****************************************************************************/
 
@@ -36,13 +36,6 @@
 
 #include "wgml.h"
 #include "gvars.h"
-
-
-static    uint32_t    max_char_width;
-static    uint32_t    max_line_height;
-static    uint32_t    net_page_height;
-static    uint32_t    net_page_width;
-
 
 
 /***************************************************************************/
@@ -59,7 +52,8 @@ void    init_def_lay( void )
     static  char    i05[] = "0.5i";
     static  char    i04[] = "0.4i";
     static  char    i03[] = "0.3i";
-    static  char    i02[] = "0.25i";
+    static  char    i02[] = "0.2i";
+    static  char    i025[] = "0.25i";
     static  char    n1[] = "1";
     static  char    n2[] = "2";
     static  char    n3[] = "3";
@@ -67,7 +61,6 @@ void    init_def_lay( void )
     static  char    n15[] = "15";
     static  char    n25[] = "25";
     char    *       p;
-    long    int     i;
     int             k;
 
     /***********************************************************************/
@@ -190,7 +183,7 @@ void    init_def_lay( void )
     /***********************************************************************/
     /*  :XMP   values                                                      */
     /***********************************************************************/
-    p = &i02;
+    p = &i025;
     to_internal_SU( &p, &layout_work.xmp.left_indent );
 
     p = &z0;
@@ -323,10 +316,10 @@ void    init_def_lay( void )
     /***********************************************************************/
     /*  :LQ       values                                                   */
     /***********************************************************************/
-    p = &i02;
+    p = &i025;
     to_internal_SU( &p, &layout_work.lq.left_indent );
 
-    p = &i02;
+    p = &i025;
     to_internal_SU( &p, &layout_work.lq.right_indent );
 
     p = &n1;
@@ -407,7 +400,7 @@ void    init_def_lay( void )
     layout_work.preface.font = 1;
     layout_work.preface.spacing = 1;
     layout_work.preface.header = true;
-    strcpy( layout_work.preface.string, "preface" );
+    strcpy( layout_work.preface.string, "PREFACE" );
     layout_work.preface.page_eject = ej_yes;
     layout_work.preface.page_reset = false;
     layout_work.preface.columns = 1;
@@ -449,6 +442,9 @@ void    init_def_lay( void )
 
     p = &z0;
     to_internal_SU( &p, &layout_work.lp.right_indent );
+
+    p = &z0;
+    to_internal_SU( &p, &layout_work.lp.line_indent );
 
     p = &n1;
     to_internal_SU( &p, &layout_work.lp.pre_skip );
@@ -541,7 +537,7 @@ void    init_def_lay( void )
     to_internal_SU( &p, &layout_work.ix[k].indent );
 
     p = &i04;
-    to_internal_SU( &p, &layout_work.ix[0].wrap_indent );
+    to_internal_SU( &p, &layout_work.ix[k].wrap_indent );
 
     layout_work.ix[k].index_delim[0] = ' ';
     layout_work.ix[k].index_delim[1] = ' ';
@@ -563,7 +559,7 @@ void    init_def_lay( void )
     to_internal_SU( &p, &layout_work.ix[k].indent );
 
     p = &i04;
-    to_internal_SU( &p, &layout_work.ix[0].wrap_indent );
+    to_internal_SU( &p, &layout_work.ix[k].wrap_indent );
 
     layout_work.ix[k].index_delim[0] = ' ';
     layout_work.ix[k].index_delim[1] = ' ';
@@ -681,7 +677,7 @@ void    init_def_lay( void )
     p = &z0;
     to_internal_SU( &p, &layout_work.tochx[k].align );
 
-    layout_work.tochx[k].display_in_toc = no;
+    layout_work.tochx[k].display_in_toc = false;
 
     k = 5;                              // --------------
     layout_work.tochx[k].group = 0;
@@ -699,7 +695,7 @@ void    init_def_lay( void )
     p = &z0;
     to_internal_SU( &p, &layout_work.tochx[k].align );
 
-    layout_work.tochx[k].display_in_toc = no;
+    layout_work.tochx[k].display_in_toc = false;
 
 
     k = 6;                              // --------------
@@ -718,7 +714,7 @@ void    init_def_lay( void )
     p = &z0;
     to_internal_SU( &p, &layout_work.tochx[k].align );
 
-    layout_work.tochx[k].display_in_toc = no;
+    layout_work.tochx[k].display_in_toc = false;
 
     /***********************************************************************/
     /*  :FIGLIST    values                                                 */
@@ -953,46 +949,64 @@ void    init_def_lay( void )
     layout_work.gl.spacing = 1;
     layout_work.gl.delim = ':';
 
-
-
     /***********************************************************************/
-    /*  remaining tags                           TBD                       */
+    /*  :BANNER     values                                                 */
     /***********************************************************************/
 
+    banner_defaults();
 
-    /* These would normally be set per the :LAYOUT. Here, half-inch
-     * top, bottom and right margins and a one-inch left margin are
-     * applied to an 8-1/2" x 11" page.
-                test with one-inch right margin
+}
 
-     * A4 is 210 mm x 297 mm   8.26772 x 11.69291
 
-     */
+
+
+
+void    init_page_geometry( void )
+{
+    int         k;
+    uint32_t    tm;
+    uint32_t    lm;
+    uint32_t    rm;
+    uint32_t    depth;
+
+
+    g_max_char_width = 0;
+    g_max_line_height = 0;
+
+    for( k = 0; k < wgml_font_cnt; k++ ) {
+        if( g_max_char_width < wgml_fonts[k].default_width ) \
+            g_max_char_width = wgml_fonts[k].default_width;
+        if( g_max_line_height < wgml_fonts[k].line_height ) \
+            g_max_line_height = wgml_fonts[k].line_height;
+    }
+
+
+    tm = conv_vert_unit( &layout_work.page.top_margin );
+    lm = conv_hor_unit( &layout_work.page.left_margin );
+    rm = conv_hor_unit( &layout_work.page.right_margin );
+    depth = conv_vert_unit( &layout_work.page.depth );
+
+    if( GlobalFlags.firstpass && GlobalFlags.research ) {
+        out_msg( "\ntm:%d lm:%d rm:%d depth:%d\n", tm, lm, rm, depth );
+    }
+
+    g_page_left = max( lm, bin_device->x_start );
+    g_page_right = min( rm, bin_device->page_width - bin_device->x_offset );
 
     if( bin_driver->y_positive == 0 ) {
-        g_page_top = 10 * bin_device->vertical_base_units;
-        g_page_bottom = bin_device->vertical_base_units / 2;
+        g_page_top = min( bin_device->page_depth - tm,
+                          bin_device->y_start );
+        g_page_bottom = max( g_page_top - depth, bin_device->y_offset );
+        g_net_page_height = g_page_top - g_page_bottom;
+
     } else {
-        g_page_top = bin_device->vertical_base_units / 2;
-        g_page_bottom = 10 * bin_device->vertical_base_units;
+        g_page_top = max( tm, bin_device->y_start );
+        g_page_bottom = min( g_page_top + depth, bin_device->y_offset );
+        g_net_page_height = g_page_bottom - g_page_top;
     }
+    g_net_page_width = g_page_right - g_page_left;
 
-    g_page_left = bin_device->horizontal_base_units;
-    g_page_right = (8 * bin_device->horizontal_base_units) - \
-//                                    (bin_device->horizontal_base_units / 2);
-                                     bin_device->horizontal_base_units;
-    max_char_width = 0;
-    max_line_height = 0;
 
-    for( i = 0; i < wgml_font_cnt; i++ ) {
-        if( max_char_width < wgml_fonts[i].default_width ) \
-            max_char_width = wgml_fonts[i].default_width;
-        if( max_line_height < wgml_fonts[i].line_height ) \
-            max_line_height = wgml_fonts[i].line_height;
-    }
-
-    net_page_height = bin_device->page_depth;
-    net_page_width = bin_device->page_width;
 
 //    set single column mode
 
@@ -1002,15 +1016,16 @@ void    init_def_lay( void )
 }
 
 
-void  init_def_margins( void )
+
+void    init_def_margins( void )
 {
     char        buf[BUF_SIZE];
 
     g_cur_h_start = g_page_left;
     if( bin_driver->y_positive == 0x00 ) {
-        g_cur_v_start = g_page_top - (15 * max_line_height);
+        g_cur_v_start = g_page_top - (1 * g_max_line_height);
     } else {
-        g_cur_v_start = g_page_top + (1 * max_line_height);
+        g_cur_v_start = g_page_top + (1 * g_max_line_height);
     }
 
 
@@ -1040,13 +1055,48 @@ void  init_def_margins( void )
                );
 
         snprintf( buf, buf_size,
-                  "page top:%d bottom:%d left:%d right:%d'\n",
+                  "page top:%d bottom:%d left:%d right:%d\n",
                   g_page_top, g_page_bottom, g_page_left, g_page_right );
         out_msg( buf );
         snprintf( buf, buf_size,
-           "page net heigth:%d width:%d line height:%d char width:%d'\n\n",
-                  net_page_height, net_page_width, max_line_height,
-                  max_char_width );
+           "page net heigth:%d width:%d line height:%d char width:%d\n\n",
+                  g_net_page_height, g_net_page_width, g_max_line_height,
+                  g_max_char_width );
         out_msg( buf );
     }
+}
+
+
+/***************************************************************************/
+/*  Layout end processing / document start processing                      */
+/*  will be call either before a non LAYOUT tag is processed, or when the  */
+/*  first line without tags is found                                       */
+/***************************************************************************/
+
+void    do_layout_end_processing( void )
+{
+
+    if( !ProcFlags.fb_document_done ) {
+        out_msg( "Formatting document\n" );
+    }
+
+    init_page_geometry();
+
+
+    /* fb_document() needs to be done on the first pass only, but
+     * also needs to be done immediately after the :ELAYOUT. tag.
+     * This means that it may need to be relocated when layout
+     * processing is implemented.
+     */
+
+    if( GlobalFlags.firstpass == 1) {
+        fb_document();                 // DOCUMENT :PAUSE & :INIT processing.
+    }
+
+    ProcFlags.fb_document_done = true;
+
+    init_def_margins();
+
+    fb_position( g_cur_h_start, g_cur_v_start );
+
 }

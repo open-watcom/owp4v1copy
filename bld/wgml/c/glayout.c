@@ -84,10 +84,15 @@ void    gml_layout( const gmltag * entry )
         return;
     }
 
+    if( !ProcFlags.lay_specified ) {
+        ProcFlags.lay_specified = true;
+        out_msg( "Processing layout\n" );
+    }
+
     if( *p == '\0' || *p == '.' ) {
         if( ProcFlags.layout ) {        // nested layout
             err_count++;
-            g_err( err_nested_lay );
+            g_err( err_nested_lay, entry->tagname );
             file_mac_info();
             return;
         }
@@ -104,7 +109,7 @@ void    gml_layout( const gmltag * entry )
 
 
 /***************************************************************************/
-/*  gml_elayout     end of layout processing save layout for next pass     */
+/*  lay_elayout     end of layout processing save layout for next pass     */
 /***************************************************************************/
 
 void    lay_elayout( const gmltag * entry )
@@ -122,14 +127,15 @@ void    lay_elayout( const gmltag * entry )
     if( *p == '\0' || *p == '.' ) {
         if( !ProcFlags.layout ) {       // not in layout processing
             err_count++;
-            g_err( err_no_lay );
+            g_err( err_no_lay, &(entry->tagname[1]), entry->tagname );
             file_mac_info();
             return;
         } else {
             out_msg(" Dummy :eLAYOUT processing\n\n" );   // TBD
 
-            memcpy_s( &layout_save, sizeof( layout_save),
-                      &layout_work, sizeof( layout_work) );
+            // What to do with layout at pass end next pass start???       TBD
+//          memcpy_s( &layout_save, sizeof( layout_save),
+//                    &layout_work, sizeof( layout_work) );
         }
         ProcFlags.layout = false;
         ProcFlags.lay_xxx = el_zero;
@@ -142,3 +148,4 @@ void    lay_elayout( const gmltag * entry )
     }
     return;
 }
+

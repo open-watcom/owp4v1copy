@@ -851,6 +851,36 @@ static void set_font( option * opt )
 }
 
 /***************************************************************************/
+/*  ( layout      filename                                                 */
+/***************************************************************************/
+
+static void set_layout( option * opt )
+{
+    int     len;
+    char    attrwork[MAX_FILE_ATTR];
+
+    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+        g_err( err_miss_inv_opt_value, opt->option, "" );
+        err_count++;
+        lay_file = NULL;
+    } else {
+        len = tokennext->toklen;
+        lay_file = mem_alloc( len + 1 );
+
+        memcpy_s( lay_file, len + 1, tokennext->token, len );
+        *(lay_file + len) = '\0';
+
+        split_attr_file( lay_file, attrwork, sizeof( attrwork ) );
+        if( attrwork[0] ) {
+            g_warn( wng_fileattr_ignored, attrwork, out_file );
+            wng_count++;
+        }
+        ProcFlags.lay_specified = true;
+        tokennext = tokennext->nxt;
+    }
+}
+
+/***************************************************************************/
 /*  ( output      filename or (T:1234)filename                             */
 /***************************************************************************/
 
@@ -1163,7 +1193,7 @@ static option GML_old_Options[] =
     { "from",          3,  4,       1,       set_from,       1 },
     { "inclist",       6,  4,       1,       set_inclist,    0 },
     { "index",         4,  3,       1,       set_index,      0 },
-    { "layout",        5,  3,       0,       ign_option,     1 },
+    { "layout",        5,  3,       0,       set_layout,     1 },
     { "linemode",      7,  4,       0,       ign_option,     0 },
     { "llength",       6,  2,       130,     ign_option,     1 },
     { "logfile",       6,  3,       0,       ign_option,     1 },

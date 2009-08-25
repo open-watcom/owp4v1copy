@@ -390,9 +390,15 @@ pick( WNG_UNSUPP_LAY,           "Unsupported GML layout tag: ':%s'",
 pick( WNG_UNSUPP_LAY_ATT,       "Unsupported GML layout tag attribute: ':%s %s'",
                                 "Unsupported GML layout tag attribute: ':%s %s'" )
 
-pick( ERR_NESTED_LAY,           "Nested :LAYOUT not supported",
-                                "Nested :LAYOUT not supported" )
+pick( ERR_NESTED_LAY,           "Nested %s not supported",
+                                "Nested %s not supported" )
 
-pick( ERR_NO_LAY,               "No :LAYOUT active for '%s'",
-                                "No :LAYOUT active for '%s'" )
+pick( ERR_NO_LAY,               "No %s active for '%s'",
+                                "No %s active for '%s'" )
+
+pick( ERR_GML_IN_LAY,           "GML tag '%s' not allowed in LAYOUT",
+                                "GML tag '%s' not allowed in LAYOUT" )
+
+pick( ERR_LAY_IN_GML,           "LAYOUT tag '%s' not allowed outside LAYOUT",
+                                "LAYOUT tag '%s' not allowed outside LAYOUT" )
 

@@ -187,16 +187,18 @@ void    free_SCR_tags_research( void )
     tags = NULL;
 }
 
-#if 0
-// not used for now perhaps later                    TBD
 /***************************************************************************/
 /*  testoutput of words belonging to a line with positional info           */
 /***************************************************************************/
 
-void    test_out_w_line( word_line  * a_line )
+void    test_out_t_line( text_line  * a_line )
 {
-    text_word   *   tw;
+    text_chars  *   tw;
     char            buf[BUF_SIZE];
+
+    if( a_line == NULL ) {
+        return;
+    }
 
     tw = a_line->first;
     out_msg( "\n   y_address:%d\n", a_line->y_address );
@@ -209,4 +211,3 @@ void    test_out_w_line( word_line  * a_line )
         tw = tw->next;
     }
 }
-#endif

@@ -27,6 +27,7 @@
 * Description: WGML implement utility functions for :LAYOUT processing
 *                   eat_lay_sub_tag()
 *                   get_lay_sub_and_value()
+*                   free_layout_banner()
 *                   i_xxxx               input routines
 *                   o_xxxx               output routines
 *
@@ -42,6 +43,84 @@
 
 static char  const      stryes[] =  { "yes" };
 static char  const      strno[]  =  { "no" };
+
+/***************************************************************************/
+/*  document sections for banner definition                                */
+/***************************************************************************/
+
+typedef struct  ban_sections {
+    ban_docsect     type;
+    char            name[12];
+} ban_sections;
+
+static  const   ban_sections    doc_sections[max_ban] = {
+    { no_ban,       "???"      },
+    { abstract_ban, "abstract" },
+    { appendix_ban, "appendix" },
+    { backm_ban,    "backm"    },
+    { body_ban,     "body"     },
+    { figlist_ban,  "figlist"  },
+    { head0_ban,    "head0"    },
+    { head1_ban,    "head1"    },
+    { head2_ban,    "head2"    },
+    { head3_ban,    "head3"    },
+    { head4_ban,    "head4"    },
+    { head5_ban,    "head5"    },
+    { head6_ban,    "head6"    },
+    { letfirst_ban, "letfirst" },
+    { letlast_ban,  "letlast"  },
+    { letter_ban,   "letter"   },
+    { index_ban,    "index"    },
+    { preface_ban,  "preface"  },
+    { toc_ban,      "toc"      }
+};
+
+typedef struct  content_names {
+    content_enum        type;
+    char                name[12];
+} content_names;
+
+static  const   content_names   content_text[max_content] =  {
+    { no_content,         "none",      },
+    { author_content,     "author",    },
+    { bothead_content,    "bothead",   },
+    { date_content,       "date",      },
+    { docnum_content,     "docnum",    },
+    { head0_content,      "head0",     },
+    { head1_content,      "head1",     },
+    { head2_content,      "head2",     },
+    { head3_content,      "head3",     },
+    { head4_content,      "head4",     },
+    { head5_content,      "head5",     },
+    { head6_content,      "head6",     },
+    { headnum0_content,   "headnum0",  },
+    { headnum1_content,   "headnum1",  },
+    { headnum2_content,   "headnum2",  },
+    { headnum3_content,   "headnum3",  },
+    { headnum4_content,   "headnum4",  },
+    { headnum5_content,   "headnum5",  },
+    { headnum6_content,   "headnum6",  },
+    { headtext0_content,  "headtext0", },
+    { headtext1_content,  "headtext1", },
+    { headtext2_content,  "headtext2", },
+    { headtext3_content,  "headtext3", },
+    { headtext4_content,  "headtext4", },
+    { headtext5_content,  "headtext5", },
+    { headtext6_content,  "headtext6", },
+    { pgnuma_content,     "pgnuma",    },
+    { pgnumad_content,    "pgnumad",   },
+    { pgnumr_content,     "pgnumr",    },
+    { pgnumrd_content,    "pgnumrd",   },
+    { pgnumc_content,     "pgnumc",    },
+    { pgnumcd_content,    "pgnumcd",   },
+    { rule_content,       "rule",      },
+    { sec_content,        "sec",       },
+    { stitle_content,     "stitle",    },
+    { title_content,      "title",     },
+    { string_content,     "",          },   // special
+    { time_content,       "time",      },
+    { tophead_content,    "tophead"    }
+};
 
 
 /***************************************************************************/
@@ -121,14 +200,16 @@ condcode    get_lay_sub_and_value( att_args * args )
     if( is_quote_char( *p ) ) {
         quote = *p;
         ++p;
+        args->quoted = true;
     } else {
         quote = ' ';
+        args->quoted = false;
     }
     while( *p && *p != quote ) {
         ++p;
     }
     if( *p == quote ) {
-        p++;                            // over treminating quote
+        p++;                            // over terminating quote
     }
     args->len[1] = p - args->start[1];
 
@@ -204,6 +285,61 @@ void    o_char( FILE * f, lay_att curr, char * tm )
     return;
 }
 
+
+/***************************************************************************/
+/*  contents for banregion    only unquoted                                */
+/***************************************************************************/
+bool    i_content( char * p, lay_att curr, content * tm )
+{
+    bool        cvterr;
+    int         k;
+
+    cvterr = false;
+    tm->content_type = no_content;
+    for( k = no_content; k < max_content; ++k ) {
+        if( !stricmp( content_text[k].name, p ) ) {
+            tm->content_type = k;
+            strcpy( tm->string, content_text[k].name );
+            break;
+        }
+    }
+    if( k >= max_content ) {
+        err_count++;
+        g_err( err_att_val_inv );
+        file_mac_info();
+        cvterr = true;
+    }
+    return( cvterr );
+}
+
+void    o_content( FILE * f, lay_att curr, content * tm )
+{
+    const   char    * p;
+    char            c   = '\0';
+
+    if( tm->content_type >= no_content && tm->content_type < max_content) {
+        p = tm->string;
+        if( tm->content_type == string_content ) { // user string with quotes
+            fprintf_s( f, "        %s = '", att_names[curr] );
+            while( c = *p++ ) {
+                if( c == '&' ) {
+                    fprintf_s( f, "&$amp." );
+                } else {
+                    fputc( c, f );
+                }
+            }
+            fputc( '\'', f );
+            fputc( '\n', f );
+            return;
+        }
+    } else {
+        p = "???";
+    }
+    fprintf_s( f, "        %s = %s\n", att_names[curr], p );
+    return;
+}
+
+
 /***************************************************************************/
 /*  default frame                                                          */
 /***************************************************************************/
@@ -268,21 +404,25 @@ void    o_default_frame( FILE * f, lay_att curr, def_frame * tm )
 }
 
 
+
+
 /***************************************************************************/
-/*  default place                                                          */
+/*  docsect  refdoc                                                        */
 /***************************************************************************/
-bool    i_default_place( char * p, lay_att curr, def_place * tm )
+bool    i_docsect( char * p, lay_att curr, ban_docsect * tm )
 {
     bool        cvterr;
+    int         k;
 
     cvterr = false;
-    if( !stricmp( "top", p ) ) {
-        *tm = top_place;
-    } else if( !stricmp( "bottom", p ) ) {
-        *tm = bottom_place;
-    } else if( !stricmp( "inline", p ) ) {
-        *tm = bottom_place;
-    } else {
+    *tm = no_ban;
+    for( k = no_ban; k < max_ban; ++k ) {
+        if( !stricmp( doc_sections[k].name, p ) ) {
+            *tm = doc_sections[k].type;
+            break;
+        }
+    }
+    if( *tm == no_ban ) {
         err_count++;
         g_err( err_att_val_inv );
         file_mac_info();
@@ -291,16 +431,12 @@ bool    i_default_place( char * p, lay_att curr, def_place * tm )
     return( cvterr );
 }
 
-void    o_default_place( FILE * f, lay_att curr, def_place * tm )
+void    o_docsect( FILE * f, lay_att curr, ban_docsect * tm )
 {
-    char    * p;
+    const   char    * p;
 
-    if( *tm == top_place ) {
-        p = "top";
-    } else if( *tm == bottom_place ) {
-        p = "bottom";
-    } else if( *tm == inline_place ) {
-        p = "inline";
+    if( *tm >= no_ban && *tm < max_ban) {
+        p = doc_sections[*tm].name;
     } else {
         p = "???";
     }
@@ -620,8 +756,130 @@ void    o_page_position( FILE * f, lay_att curr, page_pos * tm )
         p = "left";
     } else if( *tm == pos_right ) {
         p = "right";
-    } else if( *tm == pos_center ) {
-        p = "center";
+    } else if( *tm == pos_centre ) {
+        p = "centre";
+    } else {
+        p = "???";
+    }
+    fprintf_s( f, "        %s = %s\n", att_names[curr], p );
+    return;
+}
+
+
+/***************************************************************************/
+/*  place                                                                  */
+/***************************************************************************/
+bool    i_place( char * p, lay_att curr, bf_place * tm )
+{
+    bool        cvterr;
+
+    cvterr = false;
+    if( !stricmp( "top", p ) ) {
+        *tm = top_place;
+    } else if( !stricmp( "bottom", p ) ) {
+        *tm = bottom_place;
+    } else if( !stricmp( "inline", p ) ) {
+        *tm = inline_place;
+    } else if( !stricmp( "topodd", p ) ) {
+        *tm = topodd_place;
+    } else if( !stricmp( "topeven", p ) ) {
+        *tm = topeven_place;
+    } else if( !stricmp( "botodd", p ) ) {
+        *tm = botodd_place;
+    } else if( !stricmp( "boteven", p ) ) {
+        *tm = boteven_place;
+    } else {
+        err_count++;
+        g_err( err_att_val_inv );
+        file_mac_info();
+        cvterr = true;
+    }
+    return( cvterr );
+}
+
+void    o_place( FILE * f, lay_att curr, bf_place * tm )
+{
+    char    * p;
+
+    if( *tm == top_place ) {
+        p = "top";
+    } else if( *tm == bottom_place ) {
+        p = "bottom";
+    } else if( *tm == inline_place ) {
+        p = "inline";
+    } else if( *tm == topodd_place ) {
+        p = "topodd";
+    } else if( *tm == topeven_place ) {
+        p = "topeven";
+    } else if( *tm == botodd_place ) {
+        p = "botodd";
+    } else if( *tm == boteven_place ) {
+        p = "boteven";
+    } else {
+        p = "???";
+    }
+    fprintf_s( f, "        %s = %s\n", att_names[curr], p );
+    return;
+}
+
+
+/***************************************************************************/
+/*  pouring                                                                */
+/***************************************************************************/
+bool    i_pouring( char * p, lay_att curr, reg_pour * tm )
+{
+    bool        cvterr;
+
+    cvterr = false;
+    if( !stricmp( "none", p ) ) {
+        *tm = no_pour;
+    } else if( !stricmp( "last", p ) ) {
+        *tm = last_pour;
+    } else if( !stricmp( "head0", p ) ) {
+        *tm = head0_pour;
+    } else if( !stricmp( "head1", p ) ) {
+        *tm = head1_pour;
+    } else if( !stricmp( "head2", p ) ) {
+        *tm = head2_pour;
+    } else if( !stricmp( "head3", p ) ) {
+        *tm = head3_pour;
+    } else if( !stricmp( "head4", p ) ) {
+        *tm = head4_pour;
+    } else if( !stricmp( "head5", p ) ) {
+        *tm = head5_pour;
+    } else if( !stricmp( "head6", p ) ) {
+        *tm = head6_pour;
+    } else {
+        err_count++;
+        g_err( err_att_val_inv );
+        file_mac_info();
+        cvterr = true;
+    }
+    return( cvterr );
+}
+
+void    o_pouring( FILE * f, lay_att curr, reg_pour * tm )
+{
+    char    * p;
+
+    if( *tm == no_pour ) {
+        p = "none";
+    } else if( *tm == last_pour ) {
+        p = "last";
+    } else if( *tm == head0_pour) {
+        p = "head0";
+    } else if( *tm == head1_pour) {
+        p = "head1";
+    } else if( *tm == head2_pour) {
+        p = "head2";
+    } else if( *tm == head3_pour) {
+        p = "head3";
+    } else if( *tm == head4_pour) {
+        p = "head4";
+    } else if( *tm == head5_pour) {
+        p = "head5";
+    } else if( *tm == head6_pour) {
+        p = "head6";
     } else {
         p = "???";
     }
@@ -642,7 +900,8 @@ bool    i_space_unit( char * p, lay_att curr, su * tm )
 void    o_space_unit( FILE * f, lay_att curr, su * tm )
 {
 
-    if( tm->su_u == SU_chars_lines || tm->su_u == SU_undefined ) {
+    if( tm->su_u == SU_chars_lines || tm->su_u == SU_undefined ||
+        tm->su_u >= SU_lay_left ) {
         fprintf_s( f, "        %s = %s\n", att_names[curr], tm->su_txt );
     } else {
         fprintf_s( f, "        %s = '%s'\n", att_names[curr], tm->su_txt );

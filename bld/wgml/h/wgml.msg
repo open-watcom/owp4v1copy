@@ -15,14 +15,14 @@ pick( INF_USE_OP,      "Newoptions:",
 pick( INF_USE_OPQ,     "-q\tQuiet, don't show product info.",
                        "-q\tQuiet, don't show product info." )
 
-pick( INF_USE_OPR,     "-r\tResearch, no formatting, only process some GML/SCR keywords,",
-                       "-r\tResearch, no formatting, only process some GML/SCR keywords," )
+pick( INF_USE_OPR,     "-r\tResearch produce additional output,",
+                       "-r\tResearch produce additional output," )
 
 pick( INF_USE_OPR1,    "\tfollow .im, .ap, :INCLUDE tags and show substituted lines.",
                        "\tfollow .im, .ap, :INCLUDE tags and show substituted lines." )
 
-pick( INF_USE_OPSUB,   "\t> >substituted line< <",
-                       "\t> >substituted line< <" )
+pick( INF_USE_OPSUB,   "\t> >line with variables substituted< <",
+                       "\t> >line with varibales substituted< <" )
 
 pick( INF_USE_OPRES,   "\t) )resulting text line after macro / tag processing( (",
                        "\t) )resulting text line after macro / tag processing( (" )
@@ -41,8 +41,8 @@ pick( INF_USE_BL2,     " ", " " )
 
 pick( INF_USE_OP_ALTEXT, "ALTEXTension xxx    alternate extension",
                          "ALTEXTension xxx    alternate extension" )
-pick( INF_USE_OP_BIND,   "bind  odd [even]    bind margin(s)",
-                         "bind  odd [even]    bind margin(s)" )
+pick( INF_USE_OP_BIND,   "Bind  odd [even]    bind margin(s)",
+                         "Bind  odd [even]    bind margin(s)" )
 pick( INF_USE_OP_CPINCH, "CPInch nn           character per inch",
                          "CPInch nn           character per inch" )
 pick( INF_USE_OP_DELIM,  "DELim c             GML tag start character",
@@ -145,8 +145,8 @@ pick( INF_USE_GMLINC,  "\tGMLINC for include directories for included files",
                        "\tGMLINC for include directories for included files" )
 pick( INF_USE_GMLLIB,  "\tGMLLIB for directories with device information files (*.cop)",
                        "\tGMLLIB for directories with device information files (*.cop)" )
-pick( INF_USE_BEF_END, "Sample call: WGML mydoc.gml -r ( device ps pass 2",
-                       "Sample call: WGML mydoc.gml -r ( device ps pass 2" )
+pick( INF_USE_BEF_END, "Sample call: WGML mydoc.gml -r ( device ps pass 2 incl",
+                       "Sample call: WGML mydoc.gml -r ( device ps pass 2 incl" )
 
 pick( INF_USE_END,     " ", " " )
 
