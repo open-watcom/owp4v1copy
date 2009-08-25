@@ -145,6 +145,45 @@ bool    free_resources( errno_t in_errno )
 }
 
 /***************************************************************************/
+/* free_layout_banner  free banner and banregion, the only parts of the    */
+/* layout dynamically allocated                                            */
+/***************************************************************************/
+void    free_layout_banner( void )
+{
+    banner_lay_tag  * ban;
+    banner_lay_tag  * ban1;
+    region_lay_tag  * reg;
+
+    ban = layout_work.banner;
+    while( ban != NULL ) {
+        reg = ban->region;
+        while( reg != NULL ) {
+            ban->region = reg->next;
+            mem_free( reg );
+            reg = ban->region;
+        }
+        ban1 = ban->next;
+        mem_free( ban );
+        ban = ban1;
+    }
+
+#if 0
+    ban = layout_save.banner;         // don't free layout_save for now TBD
+    while( ban != NULL ) {
+        reg = ban->region;
+        while( reg != NULL ) {
+            ban->region = reg->next;
+            mem_free( reg );
+            reg = ban->region;
+        }
+        ban1 = ban->next;
+        mem_free( ban );
+        ban = ban1;
+    }
+#endif
+}
+
+/***************************************************************************/
 /*  free some buffers                                                      */
 /***************************************************************************/
 
@@ -169,6 +208,9 @@ void    free_some_mem( void )
     if( dev_name != NULL ) {
         mem_free( dev_name );
     }
+    if( lay_file != NULL ) {
+        mem_free( lay_file );
+    }
     if( out_file != NULL ) {
         mem_free( out_file );
     }
@@ -190,10 +232,11 @@ void    free_some_mem( void )
     if( buff2 != NULL ) {
         mem_free( buff2 );
     }
-#if 0
-    { // postpone  text_word structure     TBD
-        text_word  *wk;
-        text_word  *w = word_pool;
+    free_layout_banner();
+
+    {
+        text_chars  *wk;
+        text_chars  *w = text_pool;
 
         while( w != NULL ) {
            wk = w->next;
@@ -201,14 +244,13 @@ void    free_some_mem( void )
            w = wk;
         }
 
-        w =  w_line.first;
+        w = t_line.first;
         while( w != NULL ) {
            wk = w->next;
            mem_free( w );
            w = wk;
         }
     }
-#endif
 }
 
 
