@@ -61,6 +61,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 /* wgmlsupp.c                          */
 extern  bool    free_resources( errno_t in_errno );
 extern  void    free_some_mem( void );
+extern  void    free_layout_banner( void );
 extern  void    g_banner( void );
 // extern  char  * get_filename_full_path( char * buff, char const * name, size_t max );
 extern  bool    get_line( void );
@@ -90,8 +91,10 @@ extern  void    init_proc_flags( void );
 
 
 /* gdeflay.c                            */
+extern  void    do_layout_end_processing( void );
 extern  void    init_def_lay( void );
 extern  void    init_def_margins( void );
+extern  void    init_page_geometry( void );
 
 
 /* gerror.c                             */
@@ -118,6 +121,7 @@ extern  void    tag_text_req_err( char * tagname );
 extern  void    xx_err( const msg_ids errid );
 extern  void    xx_opt_err( char *cw, char *pa );
 
+
 /* getnum.c                             */
 extern condcode     getnum( getnum_block * gn );
 
@@ -125,6 +129,14 @@ extern condcode     getnum( getnum_block * gn );
 /* glayutil.c                           */
 extern void         eat_lay_sub_tag( void );
 extern condcode     get_lay_sub_and_value( struct att_args * l_args );
+
+
+/* glbanner.c                           */
+extern void         lay_banner_end_prepare( void );
+
+
+/* glbandef.c                           */
+extern void         banner_defaults( void );
 
 
 /* gmacdict.c                         */
@@ -150,18 +162,19 @@ extern  void        g_trmem_close( void );
 extern  int     proc_options( char * cmdline );
 extern  void    split_attr_file( char * filename, char * attr, size_t attrlen );
 
+
 /* gprocess.c                         */
 extern  void    process_late_subst( void );
 extern  void    process_line( void );
 extern  void    split_input( char * buf, char * split_pos );
 extern  void    split_input_LIFO( char * buf, char * split_pos );
 
-#if 0
+
 /* gproctxt.c              TBD        */
-extern  void    add_text_word_to_pool( void );
+extern  void    add_text_chars_to_pool( text_line * a_line );
 extern  void    do_justify( uint32_t left_margin, uint32_t right_margin );
+extern  void    process_line_full( text_line * a_line );
 extern  void    process_text( char * text, uint8_t font_num );
-#endif
 
 
 /* gresrch.c                          */
@@ -172,7 +185,7 @@ extern  void    add_SCR_tag_research( char * tag );
 extern  void    free_SCR_tags_research( void );
 extern  void    print_SCR_tags_research( void );
 extern  void    printf_research( char * msg, ... );
-// extern  void    test_out_w_line( word_line  * a_line );   TBD
+extern  void    test_out_t_line( text_line  * a_line );
 
 
 /* gsbr.c                             */
@@ -250,11 +263,16 @@ extern  void        print_tag_dict( gtentry * dict );
 extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
 
+
 /* gusertag.c                         */
 extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
+
 /* gutils.c                           */
-extern  bool    to_internal_SU( char * * scaninput, su * spaceunit );
+extern  uint32_t    conv_hor_unit( su * spaceunit );
+extern  uint32_t    conv_vert_unit( su * spaceunit );
+extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
+
 
 /* wgmlmsg.c                          */
 extern  int     init_msgs( void );
@@ -262,6 +280,7 @@ extern  void    fini_msgs( void );
 extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
 //extern  void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info, char *types, ... );
 //extern  void Msg_Put_Args( char message[], MSG_ARG_LIST *arg_info, char *types, va_list *args );
+
 
 /*
  * prototypes for the gml tag processing routines
