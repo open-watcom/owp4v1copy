@@ -402,9 +402,6 @@ void CVAddLocal( seg_leader *seg, offset length )
 // called during pass 1 final segment processing.
 {
     if( IS_DBG_INFO( seg ) ) {
-        if( length > 0xFFFF ) {
-            LnkMsg( WRN+LOC+MSG_DEBUG_TOO_LARGE, "s", "Codeview" );
-        }
         AddSubSection( FALSE );
     }
 }

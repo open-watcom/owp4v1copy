@@ -52,6 +52,10 @@ dip_status SymFillIn( imp_image_handle *ii, imp_sym_handle *is,
     is->mfunc_idx = 0;
     ref = VMBlock( ii, h, sizeof( ref->procref ) );
     if( ref == NULL ) return( DS_ERR|DS_FAIL );
+    if( ref->common.code == S_ALIGN ) {
+        h += ref->common.length + sizeof( ref->common.length );
+        ref = VMBlock( ii, h, sizeof( ref->procref ) );
+    }
     switch( ref->common.code ) {
     case S_PROCREF:
     case S_DATAREF:
