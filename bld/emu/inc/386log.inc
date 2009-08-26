@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Logarithm calculation using polynomials.
 ;*
 ;*****************************************************************************
 
@@ -188,6 +187,9 @@ __fyl2x endp
         mov     EDX,4[EDI]                      ; ...
         mov     SI,8[EDI]                       ; ...
         dec     SI                              ; multiply by .5
+        _if     c                               ; but if overflowed (x was 0)
+         inc    SI                              ; - put the value back
+        _endif
         and     ESI,0000FFFFh                   ; load .5
         or      ESI,3FFE0000h                   ; ...
         mov     ECX,080000000h                  ; ...
