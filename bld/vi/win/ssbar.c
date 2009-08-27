@@ -289,7 +289,7 @@ static long processLButtonDown( HWND hwnd )
     SetCapture( hwnd );
     haveCapture = TRUE;
     curItemID = GetDlgCtrlID( hwnd );
-    mod_hwnd = (HWND)NULL;
+    mod_hwnd = (HWND)NULLHANDLE;
     return( 0L );
 }
 
@@ -311,7 +311,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     GetWindowRect( GetParent( hwnd ), &rect );
     if( PtInRect( &rect, m_pt ) ) {
         CursorOp( COP_DROPSS );
-        mod_hwnd = (HWND)NULL;
+        mod_hwnd = (HWND)NULLHANDLE;
         return( 0L );
     }
 
@@ -320,7 +320,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     if( mod_hwnd == StatusWindow ) {
         CursorOp( COP_DROPSS );
     } else {
-        mod_hwnd = (HWND)NULL;
+        mod_hwnd = (HWND)NULLHANDLE;
         CursorOp( COP_NODROP );
     }
     return( 0L );
@@ -387,7 +387,7 @@ BOOL WINEXP SSDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         return( TRUE );
     case WM_CLOSE:
         removeSubclasses( hwnd );
-        hSSbar = (HWND)NULL;
+        hSSbar = (HWND)NULLHANDLE;
         // update editflags (may have closed from system menu)
         EditFlags.SSbar = FALSE;
         DestroyWindow( hwnd );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows editor global include.
 *
 ****************************************************************************/
 
@@ -42,18 +41,21 @@
     #define MAKEPTR( a )        ((void far *)MK_FP32( (void *) a ))
     #define __FAR__             __far
     #define MEMCPY              _fmemcpy
+    #define NULLHANDLE          ((HANDLE)0)
 #elif defined( __WINDOWS__ )
     #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for Windows"
     #define WINEXP              __export FAR PASCAL
     #define MAKEPTR( a )        ((LPVOID) a)
     #define __FAR__
     #define MEMCPY              memcpy
+    #define NULLHANDLE          ((HANDLE)0)
 #elif defined( __NT__ )
     #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for Windows"
     #define WINEXP              __export __stdcall
     #define MAKEPTR( a )        ((LPVOID) a)
     #define __FAR__
     #define MEMCPY              memcpy
+    #define NULLHANDLE          ((HANDLE)0)
 #elif defined( __OS2__ )
     #define WATCOM_ABOUT_EDITOR "Open Watcom Text Editor for OS/2 PM"
     #define WINEXP              __export _System

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command window.
 *
 ****************************************************************************/
 
@@ -67,8 +66,8 @@ static BOOL Init( window *w, void *parm )
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID );
     wc.hInstance = InstanceHandle;
-    wc.hIcon = LoadIcon( (HINSTANCE)NULL, IDI_APPLICATION );
-    wc.hCursor = LoadCursor( (HINSTANCE)NULL, IDC_ARROW );
+    wc.hIcon = LoadIcon( (HINSTANCE)NULLHANDLE, IDI_APPLICATION );
+    wc.hCursor = LoadCursor( (HINSTANCE)NULLHANDLE, IDC_ARROW );
     wc.hbrBackground = (HBRUSH) COLOR_APPWORKSPACE;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = className;
@@ -145,7 +144,7 @@ window_id NewCommandWindow( void )
         WS_POPUPWINDOW | WS_CLIPSIBLINGS,
         p.x, p.y,
         size->right - size->left, bottom - size->top, Root,
-        (HMENU)NULL, InstanceHandle, NULL );
+        (HMENU)NULLHANDLE, InstanceHandle, NULL );
     ShowWindow( cmd, SW_SHOWNORMAL );
     UpdateWindow( cmd );
     return( cmd );

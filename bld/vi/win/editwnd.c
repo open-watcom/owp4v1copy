@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Edit window implementation.
 *
 ****************************************************************************/
 
@@ -75,8 +74,8 @@ static BOOL Init( window *w, void *parm )
     wc.cbWndExtra = sizeof( LPVOID ) * WIN_LAST;
     wc.hInstance = InstanceHandle;
     wc.hIcon = LoadIcon( InstanceHandle, "WATCOMICON" );
-    wc.hCursor = LoadCursor( (HINSTANCE)NULL, IDC_IBEAM );
-    wc.hbrBackground = (HBRUSH)NULL;
+    wc.hCursor = LoadCursor( (HINSTANCE)NULLHANDLE, IDC_IBEAM );
+    wc.hbrBackground = (HBRUSH)NULLHANDLE;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = EditWindowClassName;
     return( RegisterClass( &wc ) );

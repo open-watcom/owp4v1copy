@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Cursor (caret) support.
 *
 ****************************************************************************/
 
@@ -95,7 +94,7 @@ void NewCursor( window_id id, cursor_type ct )
         oldBlinkTime = GetCaretBlinkTime();
         haveOldBlinkTime = TRUE;
     }
-    CreateCaret( id, (HBITMAP) NULL, cursorWidth, cursorHeight );
+    CreateCaret( id, (HBITMAP)NULLHANDLE, cursorWidth, cursorHeight );
     SetCursorBlinkRate( CursorBlinkRate );
     MyShowCaret( id );
     cursorType = ct;
@@ -311,7 +310,7 @@ static void setCursorOnScreen( int row, int col )
     if( cursorWidth != width ) {
         MyHideCaret( CurrentWindow );
         DestroyCaret();
-        CreateCaret( CurrentWindow, (HBITMAP) NULL, width, cursorHeight );
+        CreateCaret( CurrentWindow, (HBITMAP)NULLHANDLE, width, cursorHeight );
         cursorWidth = width;
     }
     // adjust position for italic sillyness
@@ -347,8 +346,8 @@ void SetCursorOnLine( window_id id, int col, char *str, type_style *style )
 
     MyHideCaret( id );
     DestroyCaret();
-    // CreateCaret( id, (HBITMAP) NULL, width, cursorHeight );
-    CreateCaret( id, (HBITMAP) NULL, width, height );
+    // CreateCaret( id, (HBITMAP)NULLHANDLE, width, cursorHeight );
+    CreateCaret( id, (HBITMAP)NULLHANDLE, width, height );
     SetCaretPos( x, y );
     MyShowCaret( id );
 

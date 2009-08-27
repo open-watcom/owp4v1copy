@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spawn another application.
 *
 ****************************************************************************/
 
@@ -76,7 +75,7 @@ int MySpawn( char *cmd )
     GetSpawnCommandLine( path, cmd, &cmds );
     cmds.cmd[cmds.len] = 0;
     proc = MakeProcInstance( (FARPROC)NotifyHandler, InstanceHandle );
-    if( !NotifyRegister( (HANDLE)NULL, (LPFNNOTIFYCALLBACK)proc, NF_NORMAL ) ) {
+    if( !NotifyRegister( (HANDLE)NULLHANDLE, (LPFNNOTIFYCALLBACK)proc, NF_NORMAL ) ) {
         FreeProcInstance( proc );
         return( -1 );
     }
@@ -113,7 +112,7 @@ int MySpawn( char *cmd )
     } else {
         rc = -1;
     }
-    NotifyUnRegister( (HANDLE)NULL );
+    NotifyUnRegister( (HANDLE)NULLHANDLE );
     FreeProcInstance( proc );
     return( rc );
 

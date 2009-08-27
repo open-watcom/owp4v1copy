@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message window.
 *
 ****************************************************************************/
 
@@ -68,8 +67,8 @@ static BOOL Init( window *w, void *parm )
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID );
     wc.hInstance = InstanceHandle;
-    wc.hIcon = LoadIcon( (HINSTANCE) NULL, IDI_APPLICATION );
-    wc.hCursor = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
+    wc.hIcon = LoadIcon( (HINSTANCE)NULLHANDLE, IDI_APPLICATION );
+    wc.hCursor = LoadCursor( (HINSTANCE)NULLHANDLE, IDC_ARROW );
     wc.hbrBackground = (HBRUSH) COLOR_APPWORKSPACE;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = ClassName;
@@ -124,7 +123,7 @@ window_id NewMsgWindow( void )
                         WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
                         size->left - 1, size->top,
                         size->right - size->left + 2, height,
-                        Root, (HMENU) NULL, InstanceHandle, NULL );
+                        Root, (HMENU)NULLHANDLE, InstanceHandle, NULL );
     ShowWindow( msg, SW_SHOWNORMAL );
     UpdateWindow( msg );
     return( msg );

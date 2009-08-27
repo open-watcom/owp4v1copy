@@ -402,7 +402,7 @@ BOOL WINEXP FtDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     case WM_CLOSE:
         doneWithHwnds();
         DestroyWindow( hwnd );
-        hFontbar = (HWND)NULL;
+        hFontbar = (HWND)NULLHANDLE;
         // update editflags (may have closed from system menu)
         EditFlags.Fontbar = FALSE;
         break;

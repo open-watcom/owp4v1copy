@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Color support.
 *
 ****************************************************************************/
 
@@ -63,7 +62,7 @@ static void NewColor( vi_color index, long rgb )
     long        nearest;
     HDC         hdc;
 
-    hdc = GetDC( (HWND) NULL );
+    hdc = GetDC( (HWND)NULLHANDLE );
     c = &colorData[index];
     if( c->pen ) {
         DeleteObject( c->pen );
@@ -73,7 +72,7 @@ static void NewColor( vi_color index, long rgb )
     }
     c->rgb = rgb;
     nearest = GetNearestColor( hdc, rgb );
-    ReleaseDC( (HWND) NULL, hdc );
+    ReleaseDC( (HWND)NULLHANDLE, hdc );
     c->pen = CreatePen( PS_SOLID, 1, nearest );
     brush.lbStyle = BS_SOLID;
     brush.lbColor = nearest;
@@ -87,9 +86,9 @@ void InitColors( void )
     PALETTEENTRY    palette[MAX_COLORS], *p;
     HDC             hdc;
 
-    hdc = GetDC( (HWND) NULL );
+    hdc = GetDC( (HWND)NULLHANDLE );
     GetSystemPaletteEntries( hdc, 0, MAX_COLORS, &palette[0] );
-    ReleaseDC( (HWND) NULL, hdc );
+    ReleaseDC( (HWND)NULLHANDLE, hdc );
     p = &palette[0];
     memset( &colorData[0], 0, sizeof( color ) * MAX_COLORS );
     for( i = 0; i < MAX_COLORS; i++, p++ ) {

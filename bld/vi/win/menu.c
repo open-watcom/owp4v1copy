@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Menu support.
 *
 ****************************************************************************/
 
@@ -271,7 +270,7 @@ static menu *addMenuToMenu( menu *m, char *name, char *help )
     strcpy( new->help, help );
     // new->menu_handle = CreatePopupMenu();
     // AppendMenu( m->menu_handle, MF_ENABLED | MF_POPUP, new->menu_handle, name );
-    new->menu_handle = (HMENU)NULL;
+    new->menu_handle = (HMENU)NULLHANDLE;
     new->item_head = NULL;
     new->item_tail = NULL;
     m->num_items += 1;
@@ -436,7 +435,7 @@ static void burnMenu( menu *parent, menu *m )
                 break;
             }
         }
-        m->menu_handle = (HMENU)NULL;
+        m->menu_handle = (HMENU)NULLHANDLE;
     }
 
 } /* burnMenu */
@@ -704,7 +703,7 @@ int InitMenu( void )
         rootMenu->menu_handle = CreateMenu();
         if( EditFlags.Menus ) {
             for( m = (menu *)rootMenu->item_head; m != NULL; m = m->next ) {
-                m->menu_handle = (HMENU)NULL;
+                m->menu_handle = (HMENU)NULLHANDLE;
                 makeMenu( rootMenu, m );
             }
         }

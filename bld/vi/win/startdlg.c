@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Startup splash screen.
 *
 ****************************************************************************/
 
@@ -79,7 +78,7 @@ static FARPROC  startDlgProc;
 void ShowStartupDialog( void )
 {
     startDlgProc = MakeProcInstance( (FARPROC) StartupProc, InstanceHandle );
-    startDlgWindow = CreateDialog( InstanceHandle, "Startup", (HWND) NULL,
+    startDlgWindow = CreateDialog( InstanceHandle, "Startup", (HWND)NULLHANDLE,
                                    (DLGPROC) startDlgProc );
 
 } /* ShowStartupDialog */
@@ -94,7 +93,7 @@ void CloseStartupDialog( void )
         return;
     }
     DestroyWindow( startDlgWindow );
-    startDlgWindow = (HWND)NULL;
+    startDlgWindow = (HWND)NULLHANDLE;
 #ifndef __NT__
     (void)FreeProcInstance( (FARPROC) startDlgProc );
 #endif

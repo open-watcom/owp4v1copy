@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Color picker dialog.
 *
 ****************************************************************************/
 
@@ -283,7 +282,7 @@ static long gotoNewBlock( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     CursorOp( COP_DROPCLR );
     SetCapture( hwnd );
     haveCapture = TRUE;
-    mod_hwnd = (HWND)NULL;
+    mod_hwnd = (HWND)NULLHANDLE;
 
     return( 0 );
 }
@@ -329,7 +328,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     GetWindowRect( GetParent( hwnd ), &rect );
     if( PtInRect( &rect, m_pt ) ) {
         CursorOp( COP_DROPCLR );
-        mod_hwnd = (HWND)NULL;
+        mod_hwnd = (HWND)NULLHANDLE;
         return( 0 );
     }
 
@@ -380,16 +379,16 @@ void InitClrPick( void )
         return;
     }
 
-    wndclass.style              = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc        = (WNDPROC)ClrPickProc;
-    wndclass.cbClsExtra         = 0;
-    wndclass.cbWndExtra         = 0;
-    wndclass.hInstance          = InstanceHandle;
-    wndclass.hIcon              = (HICON)NULL;
-    wndclass.hCursor            = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
-    wndclass.hbrBackground      = (HBRUSH) COLOR_APPWORKSPACE;
-    wndclass.lpszMenuName       = NULL;
-    wndclass.lpszClassName      = "ClrPick";
+    wndclass.style          = CS_HREDRAW | CS_VREDRAW;
+    wndclass.lpfnWndProc    = (WNDPROC)ClrPickProc;
+    wndclass.cbClsExtra     = 0;
+    wndclass.cbWndExtra     = 0;
+    wndclass.hInstance      = InstanceHandle;
+    wndclass.hIcon          = (HICON)NULLHANDLE;
+    wndclass.hCursor        = LoadCursor( (HINSTANCE)NULLHANDLE, IDC_ARROW );
+    wndclass.hbrBackground  = (HBRUSH) COLOR_APPWORKSPACE;
+    wndclass.lpszMenuName   = NULL;
+    wndclass.lpszClassName  = "ClrPick";
 
     RegisterClass( &wndclass );
 }

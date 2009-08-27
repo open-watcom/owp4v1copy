@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Grep dialog.
 *
 ****************************************************************************/
 
@@ -88,7 +87,7 @@ void FiniGrepDialog( void )
     (void)FreeProcInstance( (FARPROC) grepProc );
 #endif
     grepProc = NULL;
-    grepHwnd = (HWND) NULL;
+    grepHwnd = (HWND)NULLHANDLE;
 
 } /* FiniGrepDialog */
 

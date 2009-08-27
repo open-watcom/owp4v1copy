@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Auto-save confirmation dialog.
 *
 ****************************************************************************/
 
@@ -75,7 +74,7 @@ vi_key GetAutosaveResponse( void )
     int         rc;
 
     proc = (DLGPROC) MakeProcInstance( (FARPROC) ASaveDlgProc, InstanceHandle );
-    rc = DialogBox( InstanceHandle, "ASaveDlg", (HWND) NULL, proc );
+    rc = DialogBox( InstanceHandle, "ASaveDlg", (HWND)NULLHANDLE, proc );
     FreeProcInstance( (FARPROC) proc );
 
     return( rc );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows editor mainline.
 *
 ****************************************************************************/
 
@@ -123,7 +122,7 @@ int PASCAL WinMain( HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show )
 
 #ifndef __NT__
     if( prev != NULL && !HasShare() ) {
-        MessageBox( (HWND) NULL, "SHARE.EXE must be loaded before starting Windows in order to run multiple instances of the editor",
+        MessageBox( NULLHANDLE, "SHARE.EXE must be loaded before starting Windows in order to run multiple instances of the editor",
                     EditorName, MB_OK );
         MyGetInstanceData( (unsigned short) prev, (void near *) &Root, sizeof( Root ) );
         SetFocus( Root );
@@ -172,9 +171,9 @@ void MessageLoop( bool block )
     UINT        rc;
 
     if( block ) {
-        if( !PeekMessage( &msg, (HWND)NULL, 0, 0, PM_NOYIELD | PM_NOREMOVE ) ) {
+        if( !PeekMessage( &msg, (HWND)NULLHANDLE, 0, 0, PM_NOYIELD | PM_NOREMOVE ) ) {
             CloseStartupDialog();
-            rc = GetMessage( &msg, (HWND)NULL, 0, 0 );
+            rc = GetMessage( &msg, (HWND)NULLHANDLE, 0, 0 );
             if( !rc ) {
                 exit( msg.wParam );
             }
@@ -183,8 +182,8 @@ void MessageLoop( bool block )
         }
     }
     if( !EditFlags.KeyOverride ) {
-        while( PeekMessage( &msg, (HWND)NULL, 0, 0, PM_NOYIELD | PM_NOREMOVE ) ) {
-            rc = GetMessage( &msg, (HWND)NULL, 0, 0 );
+        while( PeekMessage( &msg, (HWND)NULLHANDLE, 0, 0, PM_NOYIELD | PM_NOREMOVE ) ) {
+            rc = GetMessage( &msg, (HWND)NULLHANDLE, 0, 0 );
             if( !rc ) {
                 exit( msg.wParam );
             }

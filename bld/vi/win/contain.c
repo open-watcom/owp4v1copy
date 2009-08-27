@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MDI container window.
 *
 ****************************************************************************/
 
@@ -48,14 +47,14 @@ window_id CreateContainerWindow( RECT *size )
     HWND    container;
     CLIENTCREATESTRUCT client;
 
-    client.hWindowMenu = (HMENU)NULL;
+    client.hWindowMenu = (HMENU)NULLHANDLE;
     client.idFirstChild = 3000; // some arbitrary number that doesn't conflict
 
     container = CreateWindow( className, "Container",
                 WS_CHILD | WS_CLIPCHILDREN | WS_HSCROLL | WS_VSCROLL | WS_VISIBLE,
                 size->left, size->top,
                 size->right - size->left, size->bottom - size->top,
-                Root, (HMENU)NULL, InstanceHandle, (LPVOID)&client );
+                Root, (HMENU)NULLHANDLE, InstanceHandle, (LPVOID)&client );
     SetWindowLong( container, 0, 0 );
     oldContainerProc =(WNDPROC)GetWindowLong( container, GWL_WNDPROC );
     SetWindowLong( container, GWL_WNDPROC,

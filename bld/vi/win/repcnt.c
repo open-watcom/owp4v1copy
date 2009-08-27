@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Repeat count window.
 *
 ****************************************************************************/
 
@@ -65,8 +64,8 @@ static BOOL Init( window *w, void *parm )
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof( LPVOID );
     wc.hInstance = InstanceHandle;
-    wc.hIcon = LoadIcon( (HINSTANCE) NULL, IDI_APPLICATION );
-    wc.hCursor = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
+    wc.hIcon = LoadIcon( (HINSTANCE)NULLHANDLE, IDI_APPLICATION );
+    wc.hCursor = LoadCursor( (HINSTANCE)NULLHANDLE, IDC_ARROW );
     wc.hbrBackground = (HBRUSH) COLOR_APPWORKSPACE;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = className;
@@ -149,7 +148,7 @@ window_id NewRepeatCountWindow( void )
     repeatWindow = CreateWindow( className, "Repeat Count",
         WS_POPUPWINDOW | WS_BORDER | WS_CLIPSIBLINGS,
         p.x, p.y, size->right - size->left, size->bottom - size->top,
-        Root, (HMENU) NULL, InstanceHandle, NULL );
+        Root, (HMENU)NULLHANDLE, InstanceHandle, NULL );
     ShowWindow( repeatWindow, SW_SHOWNORMAL );
     UpdateWindow( repeatWindow );
     return( repeatWindow );

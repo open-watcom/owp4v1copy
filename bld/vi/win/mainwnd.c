@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Editor's main window.
 *
 ****************************************************************************/
 
@@ -59,7 +58,7 @@ BOOL RegisterMainWindow( HANDLE inst )
     wc.cbWndExtra = 0;
     wc.hInstance = inst;
     wc.hIcon = LoadIcon( inst, "APPLICON" );
-    wc.hCursor = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
+    wc.hCursor = LoadCursor( (HINSTANCE)NULLHANDLE, IDC_ARROW );
     wc.hbrBackground = 0;
     wc.lpszMenuName = NULL;
     wc.lpszClassName = EditorName;
@@ -118,7 +117,7 @@ window_id CreateMainWindow( HANDLE inst )
     root = CreateWindow( EditorName, EditorName,
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                          initX, initY, initWidth, initHeight,
-                         (HWND) NULL, (HMENU) NULL, inst, NULL );
+                         (HWND)NULLHANDLE, (HMENU)NULLHANDLE, inst, NULL );
     return( root );
 
 } /* CreateMainWindow */

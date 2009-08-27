@@ -756,7 +756,7 @@ typedef struct {
     #define KEY_ASYNC_PRESSED           0x0001
     #define WPI_VERT_MULT               1
     #define ULONG                       unsigned long
-    #define NULLHANDLE                  NULL
+    #define NULLHANDLE                  ((HANDLE)0)
     #define HFILE                       int
     #define HFILE_FORMAT                int
     #define HMQ                         HANDLE

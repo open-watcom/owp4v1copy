@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Font selection.
 *
 ****************************************************************************/
 
@@ -264,7 +263,7 @@ void InitFonts( void )
     f = &Fonts[0];
     for( i = 0; i < MAX_FONTS; i++, f++ ) {
         f->used = FALSE;
-        f->handle = (HFONT)NULL;
+        f->handle = (HFONT)NULLHANDLE;
     }
     customFont( &Fonts[FONT_HELV], &Helvetica6 );
     customFont( &Fonts[FONT_ARIAL], &Arial10 );

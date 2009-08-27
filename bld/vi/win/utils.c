@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous utility routines.
 *
 ****************************************************************************/
 
@@ -372,7 +371,7 @@ void ToggleHourglass( bool on )
         }
     } else {
         if( waitCursor == NULL ) {
-            waitCursor = LoadCursor( (HANDLE) NULL, IDC_WAIT );
+            waitCursor = LoadCursor( (HANDLE)NULLHANDLE, IDC_WAIT );
         }
         lastCursor = SetCursor( waitCursor );
         isOn++;
@@ -490,7 +489,7 @@ void CursorOp( CursorOps op )
             DestroyCursor( statMove );
             break;
         case COP_ARROW:
-            SetCursor( LoadCursor( (HINSTANCE) NULL, IDC_ARROW ) );
+            SetCursor( LoadCursor( (HINSTANCE)NULLHANDLE, IDC_ARROW ) );
             break;
         case COP_DROPFT:
             SetCursor( dropFt );
@@ -570,10 +569,10 @@ HWND GetOwnedWindow( POINT pt )
                 return( hwndElement );
             }
 #endif
-            return( (HWND)NULL );
+            return( (HWND)NULLHANDLE );
         }
     }
-    return( (HWND)NULL );
+    return( (HWND)NULLHANDLE );
 }
 
 int GetNumWindowTypes( void )
@@ -739,7 +738,7 @@ void CenterWindowInRoot( HWND hwnd )
     if( d < 0 ) {
         y += d;
     }
-    SetWindowPos( hwnd, (HWND)NULL, x, y, 0, 0,
+    SetWindowPos( hwnd, (HWND)NULLHANDLE, x, y, 0, 0,
                   SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOREDRAW | SWP_NOZORDER );
 }
 

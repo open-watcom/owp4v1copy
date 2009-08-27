@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Status line window.
 *
 ****************************************************************************/
 
@@ -77,7 +76,7 @@ static BOOL Init( window *w, void *parm )
     w = w;
 
     rc = StatusWndInit( InstanceHandle, StatusWindowProc, sizeof( LPVOID ),
-                        (HCURSOR)NULL );
+                        (HCURSOR)NULLHANDLE );
 #if defined( __NT__ )
     StatusWndChangeSysColors( GetSysColor( COLOR_BTNFACE ),
                               GetSysColor( COLOR_BTNTEXT ),
