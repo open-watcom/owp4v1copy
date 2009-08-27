@@ -1538,6 +1538,58 @@ int FuncPtr( TYPEPTR typ )
     return( 1 );
 }
 
+/* Note: If we can detect that the source is a null pointer, we might
+ * relax the checks. Currently I see no reason to do that.
+ */
+bool IsPtrConvSafe( TYPEPTR newtyp, TYPEPTR oldtyp )
+{
+    bool                is_safe = TRUE;
+    enum segments       new_seg;
+    enum segments       old_seg;
+    type_modifiers      new_flags;
+    type_modifiers      old_flags;
+
+    SKIP_TYPEDEFS( oldtyp );
+    SKIP_TYPEDEFS( newtyp );
+    assert( oldtyp->decl_type == TYPE_POINTER );
+    assert( newtyp->decl_type == TYPE_POINTER );
+
+    /* If new type isn't smaller than old, assume conversion is safe. */
+    if( TypeSize( newtyp ) < TypeSize( oldtyp ) ) {
+        /* Determine target pointer base. */
+        new_flags = newtyp->u.p.decl_flags;
+        if( new_flags & FLAG_BASED ) {
+            switch( newtyp->u.p.based_kind ) {
+            case BASED_SEGNAME:
+                new_seg = newtyp->u.p.segment;
+                break;
+            /* NYI: This could be smarter and check other based types. */
+            default:
+                new_seg = SEG_UNKNOWN;
+            }
+        } else if( FuncPtr( newtyp ) ) {
+            new_seg = SEG_CODE;
+        } else {
+            new_seg = SEG_DATA;
+        }
+        /* Determine source pointer base. */
+        old_flags = oldtyp->u.p.decl_flags;
+        if( old_flags & FLAG_BASED ) {
+            switch( oldtyp->u.p.based_kind ) {
+            case BASED_SEGNAME:
+                old_seg = oldtyp->u.p.segment;
+                break;
+            /* NYI: This could be smarter and check other based types. */
+            default:
+                old_seg = SEG_UNKNOWN;
+            }
+        } else {
+            old_seg = oldtyp->u.p.segment;
+        }
+        is_safe = ( old_seg == new_seg );
+    }
+    return( is_safe );
+}
 
 #define NEAR_FAR_HUGE   (FLAG_NEAR|FLAG_FAR|FLAG_HUGE|FLAG_FAR16)
 
@@ -1605,7 +1657,7 @@ convert:                                /* moved here 30-aug-89 */
                 if( ( typ->u.p.decl_flags & NEAR_FAR_HUGE )
                     != ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE )
                     || ( opnd_type == TYPE_ARRAY ) ) {
-                    if( TypeSize( typ ) > TypeSize( newtyp ) ) {
+                    if( !IsPtrConvSafe( newtyp, typ ) ) {
                         if( cast_op ) {
                             CWarn1( WARN_CAST_POINTER_TRUNCATION,
                                     ERR_CAST_POINTER_TRUNCATION );
