@@ -24,13 +24,12 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  387 emulator and instruction decoding. 
 ;*
 ;*****************************************************************************
 
 
-ifdef _DEBUG
+ifndef NDEBUG
     if _OS eq _NW
       extrn  puts_ : near
       NC = 0
@@ -47,7 +46,7 @@ else
 endif
 endif
 
-ifdef _DEBUG
+ifndef NDEBUG
   public  badop,prtnyi,my87,mrm,sib,memop,stkop,stkop1
 endif
 
@@ -77,7 +76,7 @@ endif
 ifdef __WIN387__
 precrtn dd              p_extended ; address of precision rtn
 endif
-ifdef _DEBUG
+ifndef NDEBUG
     nyimsg      db ": not yet implemented",0dH,0aH,NC
     illopmsg    db "Illegal instruction encountered by 8087 emulator",0dH,0aH,NC
 endif
@@ -1075,7 +1074,7 @@ dosib:  mov     bl,[esi]                ; get sib byte in bl           ssiiibbb
         xref    __f2xm1
         xref    __frndint                 ; 24-mar-90
 
-ifdef _DEBUG
+ifndef NDEBUG
 badop   proc    near
       if _OS eq _PLDT
         lea     edx,illopmsg
@@ -1090,12 +1089,12 @@ badop   endp
 endif
 
 illop   macro
-ifdef _DEBUG
+ifndef NDEBUG
         call    badop
 endif
         endm
 
-ifdef _DEBUG
+ifndef NDEBUG
 prtnyi  proc    near
       if _OS eq _PLDT
         mov     ah,9H

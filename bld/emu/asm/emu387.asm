@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  387 emulator code
+;* Description:  387 emulator top level source file.
 ;*               
 ;*
 ;*****************************************************************************
@@ -62,7 +62,7 @@ modstart        macro   modname
                 endm
 
 xdefp           macro   xsym
-                ifdef _DEBUG
+                ifndef NDEBUG
                 public  xsym
                 endif
                 endm
