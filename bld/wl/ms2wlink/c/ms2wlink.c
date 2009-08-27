@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Translate Microsoft LINK (16-bit) commands to wlink commands.
 *
 ****************************************************************************/
 
-
-/*
- *  MS2WLINK : translator between microsoft linker commmands and WATCOM
- *             linker commands.
-*/
 
 #include <string.h>
 #include "ms2wlink.h"
@@ -190,13 +184,21 @@ static void BuildWATCOM( void )
 
 #define NL "\r\n"
 static char TheHelp[] = {
-    banner1( "Microsoft to watcom linker command translation utility ",
+    banner1( "Microsoft to Watcom linker command translation utility ",
                 _MS2WLINK_VERSION_ ) NL
     banner2( "1990" ) NL
     banner3 NL
     "usage: pass this program the same arguments that would be passed to the" NL
-    "       Microsoft linker, and an equivalent set of WATCOM linker commands" NL
+    "       Microsoft linker, and an equivalent set of wlink commands" NL
     "       will be written to standard output." NL
+    NL
+    "Usage:" NL
+    NL
+    "ms2wlink" NL
+    "ms2wlink @<response file>" NL
+    "ms2wlink <objs>,<exefile>,<mapfile>,<libs>,<deffile>" NL
+    NL
+    "Recognized options are:" NL
 };
 
 extern void WriteHelp( void )

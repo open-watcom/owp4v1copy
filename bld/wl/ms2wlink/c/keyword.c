@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines for parsing Microsoft keywords.
 *
 ****************************************************************************/
 
-
-/*
- *  KEYWORD : Routines for parsing Microsoft keywords.
- *
-*/
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -60,6 +54,7 @@ extern void         ImplyFormat( format_type );
 extern void         StartNewFile( char * );
 extern void         ParseDefFile( void );
 extern char *       ToString( void );
+extern void         CommandOut( char *command );
 
 extern bool         MapOption;
 extern format_type  FmtType;
@@ -116,52 +111,51 @@ static void ProcPadData( void );
 static void ProcPause( void );
 static void ProcPMType( void );
 static void ProcQuickLibrary( void );
-static void ProcR( void );
 static void ProcSegments( void );
 static void ProcStack( void );
 static void ProcTiny( void );
 static void ProcWarnFixup( void );
 
 static  parse_entry     OptionsTable[] = {
-    "alignment",        ProcAlignment,      1,
-    "batch",            ProcBatch,          1,
-    "codeview",         ProcCodeview,       2,
-    "cparmaxalloc",     ProcCParMaxAlloc,   2,
-    "dynamic",          ProcDynamic,        2,
-    "dosseg",           ProcDosseg,         2,
-    "dsallocate",       ProcDSAllocate,     2,
-    "exepack",          ProcExePack,        1,
-    "farcalltranslation", ProcFarCallTranslation, 1,
-    "help",             ProcHelp,           2,
-    "high",             ProcHigh,           2,
-    "incremental",      ProcIncremental,    3,
-    "information",      ProcInformation,    1,
-    "linenumbers",      ProcLineNumbers,    2,
-    "map",              ProcMap,            1,
+    "?",                    ProcHelp,           1,
+    "alignment",            ProcAlignment,      1,
+    "batch",                ProcBatch,          1,
+    "codeview",             ProcCodeview,       2,
+    "cparmaxalloc",         ProcCParMaxAlloc,   2,
+    "dosseg",               ProcDosseg,         2,
+    "dsallocate",           ProcDSAllocate,     2,
+    "dynamic",              ProcDynamic,        2,
+    "exepack",              ProcExePack,        1,
+    "farcalltranslation",   ProcFarCallTranslation, 1,
+    "help",                 ProcHelp,           2,
+    "high",                 ProcHigh,           2,
+    "incremental",          ProcIncremental,    3,
+    "information",          ProcInformation,    1,
+    "linenumbers",          ProcLineNumbers,    2,
+    "map",                  ProcMap,            1,
     "nodefaultlibrarysearch", ProcNoDefaultLibrarySearch, 3,
-    "noextendeddictsearch", ProcNoExtendedDictSearch, 3,
+    "noextdictionary",      ProcNoExtendedDictSearch, 3,
     "nofarcalltranslation", ProcNoFarCallTranslation, 3,
-    "nogroupassociation", ProcNoGroupAssociation, 3,
-    "noignorecase",     ProcNoIgnoreCase,   3,
-    "nologo",           ProcNoLogo,         3,
-    "nonullsdosseg",    ProcNoNullsDosseg,  3,
-    "nopackcode",       ProcNoPackCode,     7,
-    "nopackfunctions",  ProcNoPackFunctions,7,
-    "oldoverlay",       ProcOldOverlay,     4,
-    "onerror",          ProcOnError,        3,
-    "overlayinterrupt", ProcOverlayInterrupt,1,
-    "packcode",         ProcPackCode,       5,
-    "packdata",         ProcPackData,       5,
-    "padcode",          ProcPadCode,        4,
-    "paddata",          ProcPadData,        4,
-    "pause",            ProcPause,          3,
-    "pmtype",           ProcPMType,         2,
-    "quicklibrary",     ProcQuickLibrary,   1,
-    "r",                ProcR,              1,
-    "segments",         ProcSegments,       2,
-    "stack",            ProcStack,          2,
-    "tiny",             ProcTiny,           1,
-    "warnfixup",        ProcWarnFixup,      1,
+    "nogroupassociation",   ProcNoGroupAssociation, 3,
+    "noignorecase",         ProcNoIgnoreCase,   3,
+    "nologo",               ProcNoLogo,         3,
+    "nonullsdosseg",        ProcNoNullsDosseg,  3,
+    "nopackcode",           ProcNoPackCode,     7,
+    "nopackfunctions",      ProcNoPackFunctions,7,
+    "oldoverlay",           ProcOldOverlay,     4,
+    "onerror",              ProcOnError,        3,
+    "overlayinterrupt",     ProcOverlayInterrupt,1,
+    "packcode",             ProcPackCode,       5,
+    "packdata",             ProcPackData,       5,
+    "padcode",              ProcPadCode,        4,
+    "paddata",              ProcPadData,        4,
+    "pause",                ProcPause,          3,
+    "pmtype",               ProcPMType,         2,
+    "quicklibrary",         ProcQuickLibrary,   1,
+    "segments",             ProcSegments,       2,
+    "stack",                ProcStack,          2,
+    "tiny",                 ProcTiny,           1,
+    "warnfixup",            ProcWarnFixup,      1,
     NULL
 };
 
@@ -1203,10 +1197,41 @@ static void ProcFarCallTranslation( void )
     Warning( "use FCENABLE for far call translation on non-WATCOM .obj files", OPTION_SLOT );
 }
 
+static void WriteOptions( parse_entry *entry )
+/********************************************/
+{
+    char        help_line[80];
+    int         i = 0;
+    const char  *kw;
+
+    while( entry->keyword ) {
+        help_line[i++] = ' ';
+        help_line[i++] = ' ';
+        help_line[i++] = '/';
+        kw = entry->keyword;
+        while( *kw )
+            help_line[i++] = *kw++;
+        if( i < 31 ) {  
+            while( i < 31 ) // pad to second column
+                help_line[i++] = ' ';
+        } else {
+            help_line[i] = '\0';
+            i = 0;
+            CommandOut( help_line );
+        }
+        ++entry;
+    }
+    if( i ) {
+        help_line[i] = '\0';
+        CommandOut( help_line );
+    }
+}
+
 static void ProcHelp( void )
 /**************************/
 {
     WriteHelp();
+    WriteOptions( OptionsTable );
     Suicide();
 }
 
@@ -1355,12 +1380,6 @@ static void ProcPause( void )
 /***************************/
 {
     NotSupported( "pause" );
-}
-
-static void ProcR( void )
-/**********************/
-{
-    NotSupported( "r" );
 }
 
 static void ProcNoVIO( void )
