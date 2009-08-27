@@ -197,13 +197,22 @@ local KW KwTable[] =                            // - key words table
     {   0,              NULL            }
 };
 
-typedef enum operator_t {
-    OP_OR     = '|',
-    OP_AND    = '&',
-    OP_NOT    = '!',
-    OP_LPAREN = '(',
-    OP_RPAREN = ')'
-} operator_t;
+enum {
+    OP_OR,
+    OP_AND,
+    OP_NOT,
+    OP_LPAREN,
+    OP_RPAREN
+};
+
+local char *Oper[] =
+{
+    "|",
+    "&",
+    "!",
+    "(",
+    ")",
+};
 
 
 // DATA (READ/WRITE)
@@ -224,8 +233,6 @@ local int       UnixStyle;              // - Unix style newlines?
 local int       TabStop;                // - tab spacing
 local IPATHLST  *IncPathList;           // - list of include paths
 local int       RestoreTime = FALSE;    // - set tgt-file timestamp to src-file
-local char      OutBuffer[1024];        // - output buffer
-local unsigned  OutBufferLen;           // - output buffer current len
 
 enum                    // PROCESSING MODES
 {
@@ -259,7 +266,6 @@ int main(               // MAIN-LINE
             FILE        *f;
             char        st[512], separator;
             int         i, j, k;
-            int         len;
 
             f = fopen( argv[count] + 1, "r" );
             if( f == NULL ) {
@@ -270,14 +276,11 @@ int main(               // MAIN-LINE
             fgets( st, 512, f );
             fclose( f );
 
-            len = strlen( st );
-            if( st[len - 1] == '\n' ) {
-                --len;
-                st[len] = 0;
-            }
+            if( st[strlen( st ) - 1] == '\n' )
+                st[strlen( st ) - 1] = 0;
 
             i = 0;
-            while( i < len ) {
+            while( i < strlen( st ) ) {
                 while( st[i] == ' ' )
                     i++;
                 if( st[i] == 0 )
@@ -334,7 +337,6 @@ int main(               // MAIN-LINE
             Error( "Unable to open output file" );
         } else {
 #define get_value() ( (src_file[2]=='\0') ? (++count,src_file) : &src_file[2])
-            OutBufferLen = 0;
             for( count = 1; count < arg_count - 1; ++count ) {
                 if( src_file[0] == '-' ) {
                     switch( src_file[1] ) {
@@ -346,13 +348,13 @@ int main(               // MAIN-LINE
                         p = get_value();
                         seg = SegmentLookUp( p );
                         if( seg != NULL )
-                            seg->seg_type = SEG_KEEP;
+			    seg->seg_type = SEG_KEEP;
                         break;
                     case 'r':
                         p = get_value();
                         seg = SegmentLookUp( p );
                         if( seg != NULL )
-                            seg->seg_type = SEG_REMOVE;
+			    seg->seg_type = SEG_REMOVE;
                         break;
                     case 'f':
                         OutFmt = get_value();
@@ -385,8 +387,6 @@ int main(               // MAIN-LINE
                     ProcessSource( src_file );
                 }
             }
-            if( OutBufferLen > 0 )
-                fwrite( OutBuffer, OutBufferLen, 1, OutputFile );
             fclose( OutputFile );
         }
     }
@@ -466,7 +466,7 @@ local void ProcessRecord( // PROCESS A RECORD OF INPUT
         case MODE_OUTPUT:
             seg = ScanSegment();
             if( seg != NULL )
-                seg->seg_type = SEG_KEEP;
+	        seg->seg_type = SEG_KEEP;
             break;
         }
         break;
@@ -475,7 +475,7 @@ local void ProcessRecord( // PROCESS A RECORD OF INPUT
         case MODE_OUTPUT:
             seg = ScanSegment();
             if( seg != NULL )
-                seg->seg_type = SEG_REMOVE;
+	        seg->seg_type = SEG_REMOVE;
             break;
         }
         break;
@@ -501,21 +501,12 @@ local void ProcessRecord( // PROCESS A RECORD OF INPUT
     }
 }
 
-local void OutputChar( char p )
-{
-    OutBuffer[OutBufferLen++] = p;
-    if( OutBufferLen >= sizeof( OutBuffer ) ) {
-        fwrite( OutBuffer, OutBufferLen, 1, OutputFile );
-        OutBufferLen = 0;
-    }
-}
 
 local void OutputString( char *p, char *record )
 {
     char        *r;
     unsigned    col;
     unsigned    space;
-    char        numstr[30];
 
     for( ; *p != '\0';++p ) {
         if( *p == '%' ) {
@@ -525,12 +516,12 @@ local void OutputString( char *p, char *record )
                 col = 0;
                 for( r = record; *r != '\0' && !( *r == '\r' && *( r + 1 ) == '\0' );++r ) {
                     if( *r != '\t' || TabStop == 0 ) {
-                        OutputChar( *r );
+                        fputc( *r, OutputFile );
                         ++col;
                     } else {
                         space = ( col + TabStop ) - ( ( col + TabStop ) % TabStop );
                         while( col < space ) {
-                            OutputChar( ' ' );
+                            fputc( ' ', OutputFile );
                             ++col;
                         }
                     }
@@ -540,10 +531,7 @@ local void OutputString( char *p, char *record )
                 PutNL();
                 break;
             case '#':
-                sprintf( numstr, "%u", OutNum );
-                for( col = 0; col < strlen( numstr ); ++col ) {
-                    OutputChar( numstr[col] );
-                }
+                fprintf( OutputFile, "%u", OutNum );
                 break;
             case '+':
                 ++OutNum;
@@ -552,11 +540,12 @@ local void OutputString( char *p, char *record )
                 --OutNum;
                 break;
             default:
-                OutputChar( *p );
+                fputc( *p, OutputFile );
                 break;
             }
-        } else {
-            OutputChar( *p );
+        } 
+        else {
+            fputc( *p, OutputFile );
         }
     }
 }
@@ -565,18 +554,20 @@ local void PutNL( void )
 {
 #if !defined( __UNIX__ )
     if( !UnixStyle )
-        OutputChar( '\r' );
+        fputc( '\r', OutputFile );
 #endif
-    OutputChar( '\n' );
+    fputc( '\n', OutputFile );
 }
 
-local int GetToken( operator_t op )
+local int GetToken( int op )
 {
-    if( *Token != op || *(Token + 1) != '\0' )
+    if( stricmp( Token, Oper[op] ) == 0 ) {
+        ScanString();
+        return( TRUE );
+    } else {
         return( FALSE );
-    ScanString();
-    return( TRUE );
-};
+    }
+}
 
 local int PrimaryExpr( void )
 {
@@ -701,9 +692,9 @@ local SEGMENT *SegmentLookUp( char *seg_name )
     sptr = Segments;
     for( ;; ) {
         if( sptr == NULL )
-            break;
+	    break;
         if( 0 == stricmp( seg_name, sptr->name ) )
-            return( sptr );
+	    return( sptr );
         sptr = sptr->next;
     }
 
@@ -765,12 +756,12 @@ local FILE *OpenFileTruncate(
         char    *dir;
         char    *fname;
         char    *ext;
-        
+	
         _splitpath2( file_name, buff, &drive, &dir, &fname, &ext );
         if( fname != NULL && strlen( fname ) > 8 )
-            fname[8] = '\0';
+	    fname[8] = '\0';
         if( ext != NULL && strlen( ext ) > 3 )
-            ext[3] = '\0';
+	    ext[3] = '\0';
         // this is ok, because file_name can only get shorter
         _makepath( file_name, drive, dir, fname, ext );
         new = fopen( file_name, mode );
@@ -796,7 +787,7 @@ local FILE *OpenFilePathList( //OPEN FILE, TRY EACH LOCATION IN PATH LIST
             strcat( buff, file_name );
             new = OpenFileTruncate( buff, mode );
             if( new != NULL )
-                break;
+	        break;
             list = list->next;
         }
     }
@@ -882,7 +873,7 @@ local unsigned RecordInitialize( char *record )
     pkw = KwTable;
     while( pkw->code != 0 ) {
         if( 0 == stricmp( pkw->name, &Token[1] ) )
-            return( pkw->code );
+	    return( pkw->code );
         ++pkw;
     }
     return( KW_TEXT );
@@ -898,16 +889,13 @@ local void EatWhite( void )
 
 local int IsOper( char ch )
 {
-    switch( ch ) {
-    case OP_OR:
-    case OP_AND:
-    case OP_NOT:
-    case OP_LPAREN:
-    case OP_RPAREN:
-        return( TRUE );
-    default:
-        return( FALSE );
+    int i;
+
+    for( i = 0; i < sizeof( Oper ) / sizeof( Oper[0] );++i ) {
+        if( Oper[i][0] == ch )
+	    return( TRUE );
     }
+    return( FALSE );
 }
 
 // SCAN A STRING
@@ -929,15 +917,15 @@ local int ScanString( void )
     eptr = cptr + sizeof( Token ) - 1;
     for( ;; ) {
         if( isspace( *rptr ) )
-            break;
+	    break;
         if( IsOper( *rptr ) )
-            break;
+	    break;
         if( *rptr == '\0' )
-            break;
+	    break;
         if( *rptr == '\n' )
-            break;
+	    break;
         if( *rptr == '\r' )
-            break;
+	    break;
         if( cptr >= eptr ) {
             cptr = Token;
             break;
