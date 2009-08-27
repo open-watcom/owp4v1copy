@@ -666,10 +666,23 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
                     translation_ptr = (translation *) ((char *) out_font + \
                                                 (size_t) outtrans_ptr->table[i] );
 
-                    translation_start = outtrans_data + \
-                                                        (uint16_array[i] & 0x00ff);
-                    translation_ptr->count = *translation_start;
-                    ++translation_start;
+                    /* If the first byte at uint16_array[i] is 00, then the
+                     * second byte is the one-byte translation. Otherwise, the
+                     * second byte is an offset. For little-endian computers,
+                     * at least!
+                     */
+
+                    /* Set the count correctly. */
+
+                    if( (uint16_array[i] & 0xff00) == 0x00 ) {
+                        translation_ptr->count = 1;
+                    } else {
+                        translation_start = outtrans_data + \
+                                                    (uint16_array[i] & 0x00ff);
+                        translation_ptr->count = *translation_start;
+                    }
+
+                    /* Allocate space and perform other common operations. */
 
                     if( out_font->allocated_size < (out_font->next_offset + \
                                                     translation_ptr->count ) ) {
@@ -685,9 +698,17 @@ cop_font * parse_font( FILE * in_file, char const * in_name )
                     out_font->next_offset += translation_ptr->count;
 
                     byte_ptr = (uint8_t *) out_font + (size_t) \
-                                                            translation_ptr->data;
-                    memcpy_s(byte_ptr, translation_ptr->count, \
+                                                        translation_ptr->data;
+
+                    /* Put the data into the buffer. */
+
+                    if( (uint16_array[i] & 0xff00) == 0x00 ) {
+                        *byte_ptr = (uint16_array[i] & 0x00ff);
+                    } else {
+                        ++translation_start;
+                        memcpy_s( byte_ptr, translation_ptr->count, \
                                     translation_start, translation_ptr->count );
+                    }
                 }
             }
             mem_free( outtrans_data );

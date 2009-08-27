@@ -1031,7 +1031,7 @@ cop_device * parse_device( FILE * in_file )
                     if( out_device->allocated_size < (out_device->next_offset + \
                                                     translation_ptr->count ) ) {
                         out_device = resize_cop_device( out_device, \
-                                                    translation_ptr->count  );
+                                                    translation_ptr->count );
                         if( out_device == NULL ) return( out_device );
                         outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device \
                                             + (size_t) out_device->outtrans);
@@ -1146,9 +1146,23 @@ cop_device * parse_device( FILE * in_file )
                     translation_ptr = (translation *) ((char *) out_device + \
                                             (size_t) outtrans_ptr->table[i] );
 
-                    translation_start = outtrans_data + (uint16_array[i] & 0x00ff);        
-                    translation_ptr->count = *translation_start;
-                    ++translation_start;
+                    /* If the first byte at uint16_array[i] is 00, then the
+                     * second byte is the one-byte translation. Otherwise, the
+                     * second byte is an offset. For little-endian computers,
+                     * at least!
+                     */
+
+                    /* Set the count correctly. */
+
+                    if( (uint16_array[i] & 0xff00) == 0x00 ) {
+                        translation_ptr->count = 1;
+                    } else {
+                        translation_start = outtrans_data + \
+                                                    (uint16_array[i] & 0x00ff);
+                        translation_ptr->count = *translation_start;
+                    }
+
+                    /* Allocate space and perform other common operations. */
 
                     if( out_device->allocated_size < (out_device->next_offset + \
                                                       translation_ptr->count) ) {
@@ -1170,8 +1184,16 @@ cop_device * parse_device( FILE * in_file )
 
                     byte_ptr = (uint8_t *) out_device + (size_t) \
                                                         translation_ptr->data;
-                    memcpy_s(byte_ptr, translation_ptr->count, translation_start, \
-                                                        translation_ptr->count );
+
+                    /* Put the data into the buffer. */
+
+                    if( (uint16_array[i] & 0xff00) == 0x00 ) {
+                        *byte_ptr = (uint16_array[i] & 0x00ff);
+                    } else {
+                        ++translation_start;
+                        memcpy_s( byte_ptr, translation_ptr->count, \
+                                    translation_start, translation_ptr->count );
+                    }
                 }
             }
             free( outtrans_data );
