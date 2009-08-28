@@ -62,7 +62,7 @@
 *                   font_number
 *                   htab_done
 *                   line_pass_number
-*                   page_to
+*                   page_top
 *                   pages
 *                   set_margin
 *                   staging
@@ -2470,6 +2470,7 @@ static void fb_font_switch( void )
 
 static void fb_htab( void )
 {
+    if( text_out_open ) post_text_output();
     df_interpret_driver_functions( bin_driver->htab.text );
     htab_done = true;
     current_state.x_address = desired_state.x_address;
@@ -2652,6 +2653,7 @@ static void fb_first_text_chars( text_chars * in_chars )
             ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
         }
+        if( htab_done ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2736,6 +2738,7 @@ static void fb_new_font_text_chars( text_chars * in_chars )
             ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
         }
+        if( htab_done ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2952,6 +2955,7 @@ static void fb_subsequent_text_chars( text_chars * in_chars )
             ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
         }
+        if( htab_done ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -3362,6 +3366,7 @@ void fb_first_text_pass( text_line * out_line )
     current = current->next;
     while( current != NULL ) {
         desired_state.x_address = current->x_address;
+        x_address = desired_state.x_address;
         if( current_state.font_number != current->font_number ) {
             fb_new_font_text_chars( current );
         } else {
