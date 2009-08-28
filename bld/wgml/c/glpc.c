@@ -37,16 +37,9 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*   :P     attributes                                                     */
+/*   :P and :PC    attributes                                                     */
 /***************************************************************************/
 const   lay_att     p_att[4] =
-    { e_line_indent, e_pre_skip, e_post_skip, e_dummy_zero };
-
-
-/***************************************************************************/
-/*   :PC    attributes                                                     */
-/***************************************************************************/
-const   lay_att     pc_att[4] =
     { e_line_indent, e_pre_skip, e_post_skip, e_dummy_zero };
 
 
@@ -110,49 +103,27 @@ const   lay_att     pc_att[4] =
 /*over to the next output page.                                                 */
 /********************************************************************************/
 
-
-
-/***************************************************************************/
-/*  lay_p                                                                  */
-/***************************************************************************/
-
-void    lay_p( const gmltag * entry )
+static  bool    process_arg( att_args * aa, p_lay_tag * p_or_pc )
 {
-    char        *   p;
-    condcode        cc;
     int             k;
+    char        *   p;
     lay_att         curr;
-    att_args        l_args;
-    bool            cvterr;
+    bool            cvterr = true;
 
-    p = scan_start;
-
-    if( !GlobalFlags.firstpass ) {
-        scan_start = scan_stop + 1;
-        eat_lay_sub_tag();
-        return;                         // process during first pass only
-    }
-    if( ProcFlags.lay_xxx != el_p ) {
-        ProcFlags.lay_xxx = el_p;
-        out_msg( ":P nearly dummy\n" );
-    }
-    cc = get_lay_sub_and_value( &l_args );  // get attribute and value
-    while( cc == pos ) {
-        cvterr = true;
         for( k = 0, curr = p_att[k]; curr > 0; k++, curr = p_att[k] ) {
 
-            if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
-                p = l_args.start[1];
+            if( !strnicmp( att_names[curr], aa->start[0], aa->len[0] ) ) {
+                p = aa->start[1];
 
                 switch( curr ) {
                 case   e_line_indent:
-                    cvterr = i_space_unit( p, curr, &layout_work.p.line_indent );
+                    cvterr = i_space_unit( p, curr, &p_or_pc->line_indent );
                     break;
                 case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &layout_work.p.pre_skip );
+                    cvterr = i_space_unit( p, curr, &p_or_pc->pre_skip );
                     break;
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &layout_work.p.post_skip );
+                    cvterr = i_space_unit( p, curr, &p_or_pc->post_skip );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");
@@ -167,6 +138,37 @@ void    lay_p( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
+        return( cvterr );
+}
+
+
+/***************************************************************************/
+/*  lay_p                                                                  */
+/***************************************************************************/
+
+void    lay_p( const gmltag * entry )
+{
+//    char        *   p;
+    condcode        cc;
+//    int             k;
+//    lay_att         curr;
+    att_args        l_args;
+    bool            cvterr;
+
+//    p = scan_start;
+
+    if( !GlobalFlags.firstpass ) {
+        scan_start = scan_stop + 1;
+        eat_lay_sub_tag();
+        return;                         // process during first pass only
+    }
+    if( ProcFlags.lay_xxx != el_p ) {
+        ProcFlags.lay_xxx = el_p;
+        out_msg( ":P nearly dummy\n" );
+    }
+    cc = get_lay_sub_and_value( &l_args );  // get attribute and value
+    while( cc == pos ) {
+        cvterr = process_arg( &l_args, &layout_work.p );
         cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     }
     scan_start = scan_stop + 1;
@@ -180,14 +182,14 @@ void    lay_p( const gmltag * entry )
 
 void    lay_pc( const gmltag * entry )
 {
-    char        *   p;
+//    char        *   p;
     condcode        cc;
-    int             k;
-    lay_att         curr;
+//    int             k;
+//    lay_att         curr;
     att_args        l_args;
     bool            cvterr;
 
-    p = scan_start;
+//    p = scan_start;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -200,6 +202,9 @@ void    lay_pc( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     while( cc == pos ) {
+        cvterr = process_arg( &l_args, &layout_work.pc );
+
+#if 0
         cvterr = true;
         for( k = 0, curr = pc_att[k]; curr > 0; k++, curr = pc_att[k] ) {
 
@@ -230,6 +235,7 @@ void    lay_pc( const gmltag * entry )
                 break;                      // break out of for loop
             }
         }
+#endif
         cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     }
     scan_start = scan_stop + 1;

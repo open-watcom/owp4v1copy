@@ -27,7 +27,7 @@
 * Description:  WGML Process text not tags / controlwords
 *
 *
-*               add_text_chars_to_pool  prepare reuse of a text_word instance
+*               add_text_chars_to_pool  prepare reuse of a text_chars instance
 *               alloc_text_chars        create a text_chars instance
 *               intrans                 perform input translation
 *               process_text
@@ -71,9 +71,10 @@ void    do_justify( uint32_t lm, uint32_t rm )
     tw = t_line.first;
     while( tw != NULL )  {              // calculate used width
         cnt++;                          // number of 'words'
-        dist += tw->width;              // sum of widths
+        dist += tw->width;              // sum of 'words' widths
         if( tw->next == NULL ) {        // last element
-            dist1 = tw->x_address + tw->width;
+            dist1 = tw->x_address + tw->width;  // hor end position
+            break;
         }
         tw = tw->next;
     }
@@ -84,12 +85,12 @@ void    do_justify( uint32_t lm, uint32_t rm )
     }
     delta0 = line_width + t_line.first->x_address - dist1;
     if( ProcFlags.justify == ju_on ) {
-        if( cnt < 2 ) {
+        if( cnt < 2 ) {      // one text_chars only, no full justify possible
             return;
         }
     }
     if( cnt < 2 ) {
-        delta = delta0;
+        delta = delta0;                 // one text_chars gets all space
     } else {
         delta = delta0 / (cnt - 1);
     }
@@ -152,7 +153,7 @@ void    do_justify( uint32_t lm, uint32_t rm )
         }
         tw = t_line.first;
         while( tw != NULL ) {
-               tw->x_address += delta;
+               tw->x_address -= delta;
                tw = tw->next;
         }
         break;
@@ -268,7 +269,7 @@ static text_chars    * alloc_text_chars( char * p, size_t cnt, uint8_t font_num 
 
 
 /***************************************************************************/
-/*  add text_chars instance to free pool                                   */
+/*  add text_chars instance(s) to free pool                                */
 /***************************************************************************/
 
 void    add_text_chars_to_pool( text_line * a_line )

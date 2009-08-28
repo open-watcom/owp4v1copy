@@ -250,7 +250,7 @@ typedef struct fnref_lay_tag {
 
 
 /***************************************************************************/
-/*  :P        Layout tag data                                              */
+/*  :P and :PC Layout tag data                                             */
 /***************************************************************************/
 
 typedef struct p_lay_tag {
@@ -258,17 +258,6 @@ typedef struct p_lay_tag {
     su              pre_skip;           // vertical space unit
     su              post_skip;          // vertical space unit
 } p_lay_tag;
-
-
-/***************************************************************************/
-/*  :PC       Layout tag data                                              */
-/***************************************************************************/
-
-typedef struct pc_lay_tag {
-    su              line_indent;        // horizontal space unit
-    su              pre_skip;           // vertical space unit
-    su              post_skip;          // vertical space unit
-} pc_lay_tag;
 
 
 /***************************************************************************/
@@ -833,7 +822,7 @@ typedef struct layout_data {
     fn_lay_tag          fn;
     fnref_lay_tag       fnref;
     p_lay_tag           p;
-    pc_lay_tag          pc;
+    p_lay_tag           pc;             // :PC same struct as :P
     fig_lay_tag         fig;
     xmp_lay_tag         xmp;
     note_lay_tag        note;

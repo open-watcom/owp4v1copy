@@ -45,10 +45,9 @@
 void    init_def_lay( void )
 {
     static  char    z0[] = "0";
-    static  char    lm[] = "1i";
-    static  char    rm[] = "7i";
-    static  char    dp[] = "9.66i";
-    static  char    bd[] = "0";
+    static  char    i966[] = "9.66i";
+    static  char    i7[] = "7i";
+    static  char    i1[] = "1i";
     static  char    i05[] = "0.5i";
     static  char    i04[] = "0.4i";
     static  char    i03[] = "0.3i";
@@ -69,13 +68,13 @@ void    init_def_lay( void )
     p = &z0;
     to_internal_SU( &p, &layout_work.page.top_margin );
 
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.page.left_margin );
 
-    p = &rm;
+    p = &i7;
     to_internal_SU( &p, &layout_work.page.right_margin );
 
-    p = &dp;
+    p = &i966;
     to_internal_SU( &p, &layout_work.page.depth );
 
     /***********************************************************************/
@@ -89,7 +88,7 @@ void    init_def_lay( void )
     p = &i05;
     to_internal_SU( &p, &layout_work.defaults.gutter );
 
-    p = &bd;
+    p = &z0;
     to_internal_SU( &p, &layout_work.defaults.binding );
 
     /***********************************************************************/
@@ -748,7 +747,7 @@ void    init_def_lay( void )
     /***********************************************************************/
     p = &z0;
     to_internal_SU( &p, &layout_work.title.left_adjust );
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.title.right_adjust );
     layout_work.title.page_position = pos_right;
     layout_work.title.font = 2;
@@ -762,7 +761,7 @@ void    init_def_lay( void )
     /***********************************************************************/
     p = &z0;
     to_internal_SU( &p, &layout_work.docnum.left_adjust );
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.docnum.right_adjust );
     layout_work.docnum.page_position = pos_right;
     layout_work.docnum.font = 0;
@@ -776,7 +775,7 @@ void    init_def_lay( void )
     strcpy( layout_work.date.date_form, "$ml $dsn, $yl" );
     p = &z0;
     to_internal_SU( &p, &layout_work.date.left_adjust );
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.date.right_adjust );
     layout_work.date.page_position = pos_right;
     layout_work.date.font = 0;
@@ -788,7 +787,7 @@ void    init_def_lay( void )
     /***********************************************************************/
     p = &z0;
     to_internal_SU( &p, &layout_work.author.left_adjust );
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.author.right_adjust );
     layout_work.author.page_position = pos_right;
     layout_work.author.font = 0;
@@ -802,7 +801,7 @@ void    init_def_lay( void )
     /***********************************************************************/
     p = &z0;
     to_internal_SU( &p, &layout_work.address.left_adjust );
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.address.right_adjust );
     layout_work.address.page_position = pos_right;
     layout_work.address.font = 0;
@@ -923,7 +922,7 @@ void    init_def_lay( void )
     to_internal_SU( &p, &layout_work.dl.skip );
     p = &n1;
     to_internal_SU( &p, &layout_work.dl.post_skip );
-    p = &lm;
+    p = &i1;
     to_internal_SU( &p, &layout_work.dl.align );
 
     layout_work.dl.spacing = 1;
@@ -968,6 +967,7 @@ void    init_page_geometry( void )
     uint32_t    lm;
     uint32_t    rm;
     uint32_t    depth;
+    uint32_t    offset;
 
 
     g_max_char_width = 0;
@@ -1006,13 +1006,26 @@ void    init_page_geometry( void )
     }
     g_net_page_width = g_page_right - g_page_left;
 
+    g_ll = g_page_right - g_page_left;  // line length
+    g_cd = layout_work.defaults.columns;// no of columns
+    g_gutter = conv_hor_unit( &layout_work.defaults.gutter );
 
-
-//    set single column mode
-
-    g_cl = g_page_right - g_page_left;  // column length
-    g_ll = g_cl;                        // line length
-    g_cd = 1;                           // no of columns
+    if( g_cd > 1 ) {                    // multi column layout
+        if( g_cd > 9 ) {
+                                        // no more than 9 columns
+            g_cd = 9;                   // this limit is found in script_tso.txt
+                                        // for .cd control word
+        }
+        g_cl = (g_page_right - g_page_left - (g_cd -1) * g_gutter )
+                / (g_cd - 1);           // column length
+        offset = g_page_left;
+        for( k = 0; k < 9; ++k ) {
+            g_offset[k] = offset;       // start of each column
+            offset += g_cl + g_gutter;
+        }
+    } else {
+        g_cl = g_ll;
+    }
 }
 
 

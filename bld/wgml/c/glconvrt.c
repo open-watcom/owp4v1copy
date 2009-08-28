@@ -1460,25 +1460,26 @@ static  void    put_lay_page( FILE * layfile, layout_data * lay )
 
 /***************************************************************************/
 /*   :P         output paragraph attribute values                          */
+/*   :PC        output paragraph continue attribute values                 */
 /***************************************************************************/
-static  void    put_lay_p( FILE * layfile, layout_data * lay )
+static  void    put_lay_p_pc( FILE * layfile, p_lay_tag * ap, char * name )
 {
     lay_att             curr;
     int                 k;
 
-    fprintf_s( layfile, ":P\n" );
+    fprintf_s( layfile, ":%s\n", name );
 
     for( k = 0, curr = p_att[k]; curr > 0; k++, curr = p_att[k] ) {
 
         switch( curr ) {
         case   e_line_indent:
-            o_space_unit( layfile, curr, &lay->p.line_indent );
+            o_space_unit( layfile, curr, &ap->line_indent );
             break;
         case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->p.pre_skip );
+            o_space_unit( layfile, curr, &ap->pre_skip );
             break;
         case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->p.post_skip );
+            o_space_unit( layfile, curr, &ap->post_skip );
             break;
         default:
             out_msg( "WGML logic error.\n");
@@ -1487,36 +1488,15 @@ static  void    put_lay_p( FILE * layfile, layout_data * lay )
     }
 }
 
+static  void    put_lay_p( FILE * layfile, layout_data * lay )
+{
+    put_lay_p_pc( layfile, &(lay->p), "P" );
+}
 
-/***************************************************************************/
-/*   :PC        output paragraph continue attribute values                 */
-/***************************************************************************/
 static  void    put_lay_pc( FILE * layfile, layout_data * lay )
 {
-    lay_att             curr;
-    int                 k;
-
-    fprintf_s( layfile, ":PC\n" );
-
-    for( k = 0, curr = pc_att[k]; curr > 0; k++, curr = pc_att[k] ) {
-
-        switch( curr ) {
-        case   e_line_indent:
-            o_space_unit( layfile, curr, &lay->pc.line_indent );
-            break;
-        case   e_pre_skip:
-            o_space_unit( layfile, curr, &lay->pc.pre_skip );
-            break;
-        case   e_post_skip:
-            o_space_unit( layfile, curr, &lay->pc.post_skip );
-            break;
-        default:
-            out_msg( "WGML logic error.\n");
-            break;
-        }
-    }
+    put_lay_p_pc( layfile, &(lay->pc), "PC" );
 }
-
 
 /***************************************************************************/
 /*   :SL        output attribute values                                    */
