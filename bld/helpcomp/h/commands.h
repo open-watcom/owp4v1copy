@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RTF commands that whc recognizes.
 *
 ****************************************************************************/
-
 
 
 // Keep these entries sorted alphabetically by their strings!
@@ -39,6 +37,7 @@ _COMMAND( RC_B,         "b"             ),
 _COMMAND( RC_BOX,       "box"           ),
 _COMMAND( RC_COLORTBL,  "colortbl"      ),
 _COMMAND( RC_DEFF,      "deff"          ),
+_COMMAND( RC_DN,        "dn"            ),
 _COMMAND( RC_ENDNHERE,  "endnhere"      ),
 _COMMAND( RC_F,         "f"             ),
 _COMMAND( RC_FALT,      "falt"          ),
@@ -89,6 +88,7 @@ _COMMAND( RC_TX,        "tx"            ),
 _COMMAND( RC_UL,        "ul"            ),
 _COMMAND( RC_ULDB,      "uldb"          ),
 _COMMAND( RC_ULW,       "ulw"           ),
+_COMMAND( RC_UP,        "up"            ),
 _COMMAND( RC_V,         "v"             ),
 _COMMAND( RC_WINDOWS,   "windows"       ),
 

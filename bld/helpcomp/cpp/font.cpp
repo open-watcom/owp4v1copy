@@ -78,6 +78,8 @@ FontDesc::FontDesc( uint_8 flgs, uint_8 psize,
       _family( fmily ),
       _index( ind ),
       _rgb( colour ),
+      _supPos( 6 ),
+      _subPos( 6 ),
       _nextDesc( NULL ),
       _prevDesc( NULL )
 {
@@ -94,6 +96,8 @@ FontDesc::FontDesc( FontDesc & other )
     _family = other._family;
     _index = other._index;
     _rgb = other._rgb;
+    _supPos = other._supPos;
+    _subPos = other._subPos;
     _nextDesc = NULL;
     _prevDesc = NULL;
 }
@@ -290,6 +294,8 @@ uint_16 HFFont::selectFont( short index, int lnum, char const fname[] )
         if( newdesc->_flags != _curDesc->_flags ) continue;
         if( newdesc->_halfPoints != _curDesc->_halfPoints ) continue;
         if( newdesc->_rgb != _curDesc->_rgb ) continue;
+        if( newdesc->_supPos != _curDesc->_supPos ) continue;
+        if( newdesc->_subPos != _curDesc->_subPos ) continue;
         break;
     }
     if( newdesc == NULL ){
@@ -343,6 +349,8 @@ uint_16 HFFont::findDesc( FontDesc * wanted )
     if( current->_halfPoints != wanted->_halfPoints ) continue;
     if( current->_family != wanted->_family ) continue;
     if( current->_rgb != wanted->_rgb ) continue;
+    if( current->_supPos != wanted->_supPos ) continue;
+    if( current->_subPos != wanted->_subPos ) continue;
     break;
     }
     if( current == NULL ){
@@ -405,6 +413,40 @@ uint_16 HFFont::newSize( uint_8 hpsize )
     return _curNum = result;
 }
 
+
+//  HFFont::newSupPos --Set a new superscript position.
+
+uint_16 HFFont::newSupPos( uint_8 pos )
+{
+    uint_16 result;
+
+    _curDesc->_supPos = pos;
+    result = findDesc( _curDesc );
+    if( result == FIND_DESC_ERROR ) {
+        result = _numDescs++;
+        _lastDesc->_nextDesc = new FontDesc( *_curDesc );
+        _lastDesc->_nextDesc->_prevDesc = _lastDesc;
+        _lastDesc = _lastDesc->_nextDesc;
+    }
+    return _curNum = result;
+}
+
+//  HFFont::newSupPos --Set a new subscript position.
+
+uint_16 HFFont::newSubPos( uint_8 pos )
+{
+    uint_16 result;
+
+    _curDesc->_supPos = pos;
+    result = findDesc( _curDesc );
+    if( result == FIND_DESC_ERROR ) {
+        result = _numDescs++;
+        _lastDesc->_nextDesc = new FontDesc( *_curDesc );
+        _lastDesc->_nextDesc->_prevDesc = _lastDesc;
+        _lastDesc = _lastDesc->_nextDesc;
+    }
+    return _curNum = result;
+}
 
 //  HFFont::push    --Store the current font state for later retrieval.
 

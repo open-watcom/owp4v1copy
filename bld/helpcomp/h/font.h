@@ -24,16 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Class to write the |FONT internal file in a .HLP file.
 *
 ****************************************************************************/
 
 
-//
-//  font.h  --Class to write the |FONT internal file in a .HLP file.
-//                For the Watcom .HLP compiler.
-//
 #ifndef FONT_H
 #define FONT_H
 
@@ -103,6 +98,8 @@ class FontDesc
     uint_8  _family;
     uint_16 _index;
     uint_32 _rgb;
+    uint_8  _supPos;
+    uint_8  _subPos;
     FontDesc    *_nextDesc;
     FontDesc    *_prevDesc;
 
@@ -173,6 +170,8 @@ public:
     uint_16 clearAttribs( uint_8 attrs );
 
     uint_16 newSize( uint_8 hpsize );
+    uint_16 newSupPos( uint_8 pos );
+    uint_16 newSubPos( uint_8 pos );
     void    push();
     uint_16 pop();
 

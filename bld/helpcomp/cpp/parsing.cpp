@@ -268,6 +268,27 @@ int RTFparser::isFontCommand( Token * tok, uint_16 *newfont )
         }
         break;
 
+        uint_8  pos;
+        case RC_UP:
+            if( tok->_hasValue ) {
+                pos = (uint_8)(tok->_value);
+            } else {
+                pos = 6;
+            }
+            *newfont = _fontFile->newSupPos( pos );
+            result = 1;
+            break;
+
+        case RC_DN:
+            if( tok->_hasValue ) {
+                pos = (uint_8)(tok->_value);
+            } else {
+                pos = 6;
+            }
+            *newfont = _fontFile->newSubPos( pos );
+            result = 1;
+            break;
+
         case RC_PLAIN:
         *newfont = _fontFile->clearAttribs( 0xFF );
         result = 1;
