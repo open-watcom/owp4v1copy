@@ -13,9 +13,9 @@ linkit : .PROCEDURE
     @%append $(LNK) option stack=8k
 
 bindit : .PROCEDURE
-    wbind $(name) -R $(name).res
+    wbind -q $(name) -R $(name).res
 
-..\helpex.hlp: ..\helpex.rtf
+../helpex.hlp: ../helpex.rtf
     cd ..
     hc helpex
     cd win386

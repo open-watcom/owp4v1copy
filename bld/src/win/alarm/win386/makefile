@@ -13,4 +13,4 @@ linkit : .PROCEDURE
     @%append $(LNK) option stack=8k
 
 bindit : .PROCEDURE
-    wbind $(name) -R $(name).res
+    wbind -q $(name) -R $(name).res

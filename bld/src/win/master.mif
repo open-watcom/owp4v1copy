@@ -29,21 +29,21 @@
 # that can be used to add commands to the linker command file
 
 !ifeq platform Win32
-CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\nt
-RCINCS += $(%WATCOM)\h\nt
+CFLAGS += -I$(%WATCOM)/h -I$(%WATCOM)/h/nt
+RCINCS += -I$(%WATCOM)/h/nt
 !else
-CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\win
-RCINCS += $(%WATCOM)/h/win
+CFLAGS += -I$(%WATCOM)/h -I$(%WATCOM)/h/win
+RCINCS += -I$(%WATCOM)/h/win
 !endif
 
-CFLAGS += -zq -oaxt -d2 -w4
+CFLAGS += -zq -oaxt -d2 -w4 -fo=.obj
 
 $(name).exe : $(OBJS) $(name).res $(LNK)
     wlink @$(LNK)
     @%make bindit
 
 $(name).res : $(name).rc $(resources)
-    wrc -q -r -i=.. -i=$(RCINCS) -fo=./$(name).res $(res1_flags) $[@
+    wrc -q -r -I.. $(RCINCS) -fo=./$(name).res $(res1_flags) $[@
 
 $(LNK) : $(lnk_dependencies)
     %create $(LNK)

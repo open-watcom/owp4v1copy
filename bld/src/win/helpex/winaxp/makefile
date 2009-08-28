@@ -13,7 +13,7 @@ linkit : .PROCEDURE
 bindit : .PROCEDURE
     wrc $(name).res
 
-..\helpex.hlp: ..\helpex.rtf
+../helpex.hlp: ../helpex.rtf
     cd ..
     hc helpex
     cd winaxp
