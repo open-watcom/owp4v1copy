@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Phrase replacement for compression purposes.
 *
 ****************************************************************************/
 
-
-/*
-PHRASE:  phrase-replacement for compression purposes
-*/
 
 #include <stdio.h>
 #include <ctype.h>
@@ -46,7 +41,7 @@ PHRASE:  phrase-replacement for compression purposes
 #define MAX_DATA_SIZE   0xFFFF
 
 
-char const  PhExt[] = ".PH";
+char const  PhExt[] = ".ph";
 
 
 struct Edge;    // Forward declaration.
@@ -1018,6 +1013,9 @@ void HFPhrases::createQueue( char const *path )
     _newPtable->start();
 
     OutFile ph_file( path );
+    if( ph_file.bad() ) {
+        HCError( FILE_ERR, path );
+    }
     for( i=0; (current = _newPtable->next()) != NULL; i++ ){
     _result[i] = new P_String( *current );
 
