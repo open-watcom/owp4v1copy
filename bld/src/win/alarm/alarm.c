@@ -64,7 +64,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
     }
     if( !AnyInstance( this_inst, cmdshow ) ) return( FALSE );
 
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, (HWND)0, 0, 0 ) ) {
 
         TranslateMessage( &msg );
         DispatchMessage( &msg );
@@ -92,8 +92,8 @@ static BOOL FirstInstance( HINSTANCE this_inst )
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = this_inst;
-    wc.hIcon = NULL;
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+    wc.hIcon = (HICON)0;
+    wc.hCursor = LoadCursor( (HINSTANCE)0, IDC_ARROW );
     wc.hbrBackground = GetStockObject( WHITE_BRUSH );
     wc.lpszMenuName = "AlarmMenu";
     wc.lpszClassName = AlarmClass;
@@ -116,12 +116,12 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
      * create main window
      */
 
-    dc = GetDC(NULL);
+    dc = GetDC( (HWND)0 );
     ScreenHeight = GetDeviceCaps( dc, VERTRES );
     ScreenWidth = GetDeviceCaps( dc, HORZRES );
     ScreenHeightInMM = GetDeviceCaps( dc, VERTSIZE );
     ScreenWidthInMM = GetDeviceCaps( dc, HORZSIZE );
-    ReleaseDC( NULL, dc );
+    ReleaseDC( (HWND)0, dc );
     CreateSupplies();
 
     win_handle = CreateWindow(
@@ -132,8 +132,8 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
         CW_USEDEFAULT,          /* init. y pos */
         CW_USEDEFAULT,          /* init. x size */
         CW_USEDEFAULT,          /* init. y size */
-        NULL,                   /* parent window */
-        NULL,                   /* menu handle */
+        (HWND)0,                /* parent window */
+        (HWND)0,                /* menu handle */
         this_inst,              /* program handle */
         NULL                    /* create parms */
         );
@@ -147,7 +147,7 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
     UpdateWindow( win_handle );
 
     if( !SetTimer( win_handle, TIMER_ID, ONE_SECOND/4, 0L ) ) {
-        MessageBox( NULL, "Too many timers in use", Buffer,
+        MessageBox( (HWND)0, "Too many timers in use", Buffer,
                    MB_ICONHAND+MB_OK+MB_SYSTEMMODAL );
         return( FALSE );
     }
@@ -237,7 +237,7 @@ static void CheckAlarm( void )
         if( AlarmDigits[i] != ClockDigits[i].value ) return;
     }
     AlarmIsRinging = TRUE;
-    MessageBox( NULL, "The alarm clock is ringing!", Buffer,
+    MessageBox( (HWND)0, "The alarm clock is ringing!", Buffer,
                MB_ICONEXCLAMATION | MB_OK | MB_TASKMODAL );
     AlarmIsRinging = FALSE;
 }

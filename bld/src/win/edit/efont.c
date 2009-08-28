@@ -218,8 +218,8 @@ void GetAllFonts( LPEDATA ed )
 
     fp = MakeProcInstance( (FARPROC)EnumFontsProc, ed->inst );
     hdc = GetDC( ed->hwnd );
-    EnumFonts( hdc, (LPSTR) 0, (FONTENUMPROC)fp,
-                (LPARAM) FONT_DATA );
+    EnumFontFamilies( hdc, (LPSTR) 0, (FONTENUMPROC)fp,
+                      (LPARAM) FONT_DATA );
 
     /*
      * get all sizes
@@ -227,8 +227,8 @@ void GetAllFonts( LPEDATA ed )
     CurrFont = FontHead;
     while( CurrFont != NULL ) {
         CurrFont->size_count = 0;
-        EnumFonts( hdc, CurrFont->name, (FONTENUMPROC)fp,
-                (LPARAM) FONT_SIZES );
+        EnumFontFamilies( hdc, CurrFont->name, (FONTENUMPROC)fp,
+                          (LPARAM) FONT_SIZES );
         CurrFont = CurrFont->next;
     }
 

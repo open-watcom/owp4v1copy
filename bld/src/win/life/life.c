@@ -14,7 +14,7 @@ extern void Error( char *str )
     Pop up an error message box
 */
 {
-    MessageBox( NULL, str, Buffer, MB_ICONHAND+MB_OK+MB_SYSTEMMODAL );
+    MessageBox( (HWND)0, str, Buffer, MB_ICONHAND+MB_OK+MB_SYSTEMMODAL );
 }
 
 
@@ -46,7 +46,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
     }
     if( !AnyInstance( this_inst, cmdshow ) ) return( FALSE );
 
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, (HWND)0, 0, 0 ) ) {
 
         TranslateMessage( &msg );
         DispatchMessage( &msg );
@@ -76,7 +76,7 @@ static BOOL FirstInstance( HINSTANCE this_inst )
     wc.cbWndExtra = 0;
     wc.hInstance = this_inst;
     wc.hIcon = 0;
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+    wc.hCursor = LoadCursor( (HINSTANCE)0, IDC_ARROW );
     wc.hbrBackground = GetStockObject( WHITE_BRUSH );
     wc.lpszMenuName = "LifeMenu";
     wc.lpszClassName = LifeClass;
@@ -113,8 +113,8 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
         screen_y / 8,           /* init. y pos */
         3 * screen_x / 4,       /* init. x size */
         3 * screen_y / 4,       /* init. y size */
-        NULL,                   /* parent window */
-        NULL,                   /* menu handle */
+        (HWND)0,                /* parent window */
+        (HMENU)0,               /* menu handle */
         this_inst,              /* program handle */
         NULL                    /* create parms */
         );

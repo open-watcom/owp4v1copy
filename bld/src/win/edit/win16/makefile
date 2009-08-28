@@ -1,7 +1,7 @@
 platform = Win16
 CC = wcc
-CFLAGS = -zW
-res1_flags = -bt=windows -30
+CFLAGS = -zW -DSTRICT -DWINVER=0x30A
+res1_flags = -bt=windows -31
 
 !include ../edit.mif
 !include ../../master.mif

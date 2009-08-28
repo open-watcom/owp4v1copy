@@ -6,8 +6,8 @@
 #include <sys/stat.h>
 #include "life.h"
 
-static HBITMAP          MenuBitMap = NULL;
-static HMENU            PatternMenu = NULL;
+static HBITMAP          MenuBitMap;
+static HMENU            PatternMenu;
 static HDC              MenuDC;
 static BITMAP           MenuBitInfo;
 static HBITMAP          *MenuPatterns;
@@ -117,7 +117,8 @@ extern void FreePatterns( void )
 {
     int         i;
 
-    if( MenuBitMap != NULL ) DeleteObject( MenuBitMap );
+    if( MenuBitMap != (HBITMAP)0 )
+        DeleteObject( MenuBitMap );
     for( i = 1; i < NumberPatterns; ++i ) {
         free( Patterns[i] );
     }
@@ -223,7 +224,7 @@ extern void WritePatternFile( void )
         char            buf[ _MAX_PATH + 100 ];
 
         sprintf( buf, "Overwrite file %s?", Buffer );
-        rc = MessageBox( NULL, buf, "Save A Pattern File",
+        rc = MessageBox( (HWND)0, buf, "Save A Pattern File",
                          MB_YESNO | MB_ICONEXCLAMATION );
         if( rc != IDYES ) return;
     }
@@ -321,7 +322,7 @@ extern void CreatePatternMenu( void )
     HMENU       menu;
     pixels      menu_height;
 
-    if( MenuBitMap == NULL ) {
+    if( MenuBitMap == (HBITMAP)0 ) {
         MenuBitMap = LoadBitmap( ThisInst, "MenuBitMap" );
         dc = GetDC( WinHandle );
         MenuDC = CreateCompatibleDC( dc );
@@ -330,7 +331,7 @@ extern void CreatePatternMenu( void )
         GetObject( MenuBitMap, sizeof( BITMAP ), (LPSTR)&MenuBitInfo );
     }
     menu = CreateMenu();
-    if( menu == NULL ) {
+    if( menu == (HMENU)0 ) {
         Error( "No room to create a new menu\n" );
         return;
     }

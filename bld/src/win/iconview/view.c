@@ -43,7 +43,7 @@ int PASCAL WinMain( HINSTANCE hinst, HINSTANCE prev_inst, LPSTR cmdline, int cmd
 
     DoCmdLine( cmdline );
 
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, (HWND)0, 0, 0 ) ) {
         TranslateMessage( &msg );
         DispatchMessage( &msg );
     }
@@ -134,7 +134,7 @@ static BOOL InitApplication( HINSTANCE inst )
     wc.cbWndExtra = 0;
     wc.hInstance = inst;
     wc.hIcon = LoadIcon( inst, IDI_APPLICATION );
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+    wc.hCursor = LoadCursor( (HINSTANCE)0, IDC_ARROW );
     wc.hbrBackground = (HBRUSH) ( COLOR_APPWORKSPACE + 1 );
     wc.lpszMenuName = "IconMenu";
     wc.lpszClassName = FrameClass;
@@ -174,8 +174,8 @@ static BOOL InitInstance( int cmdshow )
         CW_USEDEFAULT,          /* init. y pos */
         CW_USEDEFAULT,          /* init. x size */
         CW_USEDEFAULT,          /* init. y size */
-        NULL,                   /* parent window */
-        NULL,                   /* menu handle */
+        (HWND)0,                /* parent window */
+        (HMENU)0,               /* menu handle */
         Instance,               /* program handle */
         NULL                    /* create parms */
         );
