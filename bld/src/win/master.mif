@@ -29,11 +29,11 @@
 # that can be used to add commands to the linker command file
 
 !ifeq platform Win32
-CFLAGS += -I$(%WATCOM)/h -I$(%WATCOM)/h/nt
-RCINCS += -I$(%WATCOM)/h/nt
+CFLAGS += -I"$(%WATCOM)/h" -I"$(%WATCOM)/h/nt"
+RCINCS += -I"$(%WATCOM)/h/nt"
 !else
-CFLAGS += -I$(%WATCOM)/h -I$(%WATCOM)/h/win
-RCINCS += -I$(%WATCOM)/h/win
+CFLAGS += -I"$(%WATCOM)/h" -I"$(%WATCOM)/h/win"
+RCINCS += -I"$(%WATCOM)/h/win"
 !endif
 
 CFLAGS += -zq -oaxt -d2 -w4 -fo=.obj
