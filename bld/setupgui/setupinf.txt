@@ -8,15 +8,14 @@ Windows 3.x, Windows 9x, Windows NT and OS/2. A Unix (Linux) build of the
 installer is also available. Character mode (console) versions are available,
 as well as GUI versions for Windows and OS/2.
 
-The install script is named setup.inf and the setup executable is looking
-for it in the same directory where the executable is located (not necessarily
-where the executable is run from). The .inf file is divided in sections,
-each section preceded by a section name enclosed in square brackets, e.g.
-[Application]. Other than section headings, the script file must consist of
-empty lines or lines whose content is dependent on the section.
- Leading and trailing spaces are ignored. Lines starting with the hash
+The install script is by default named setup.inf. This .inf file is divided
+into sections, each section preceded by a section name enclosed in square
+brackets, e.g. [Application]. Other than section headings, the script file
+must consist of empty lines or lines whose content depends on the section.
+
+Leading and trailing spaces are ignored. Lines starting with the hash
 sign '#' are treated as comment lines. If a line ends in a backslash '\',
-then it is continued on the next line.
+it is continued on the next line.
 
 
 Variables
