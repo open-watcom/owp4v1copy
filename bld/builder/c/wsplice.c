@@ -348,13 +348,13 @@ int main(               // MAIN-LINE
                         p = get_value();
                         seg = SegmentLookUp( p );
                         if( seg != NULL )
-			    seg->seg_type = SEG_KEEP;
+                            seg->seg_type = SEG_KEEP;
                         break;
                     case 'r':
                         p = get_value();
                         seg = SegmentLookUp( p );
                         if( seg != NULL )
-			    seg->seg_type = SEG_REMOVE;
+                            seg->seg_type = SEG_REMOVE;
                         break;
                     case 'f':
                         OutFmt = get_value();
@@ -466,7 +466,7 @@ local void ProcessRecord( // PROCESS A RECORD OF INPUT
         case MODE_OUTPUT:
             seg = ScanSegment();
             if( seg != NULL )
-	        seg->seg_type = SEG_KEEP;
+                seg->seg_type = SEG_KEEP;
             break;
         }
         break;
@@ -475,7 +475,7 @@ local void ProcessRecord( // PROCESS A RECORD OF INPUT
         case MODE_OUTPUT:
             seg = ScanSegment();
             if( seg != NULL )
-	        seg->seg_type = SEG_REMOVE;
+                seg->seg_type = SEG_REMOVE;
             break;
         }
         break;
@@ -692,9 +692,9 @@ local SEGMENT *SegmentLookUp( char *seg_name )
     sptr = Segments;
     for( ;; ) {
         if( sptr == NULL )
-	    break;
+            break;
         if( 0 == stricmp( seg_name, sptr->name ) )
-	    return( sptr );
+            return( sptr );
         sptr = sptr->next;
     }
 
@@ -756,12 +756,12 @@ local FILE *OpenFileTruncate(
         char    *dir;
         char    *fname;
         char    *ext;
-	
+        
         _splitpath2( file_name, buff, &drive, &dir, &fname, &ext );
         if( fname != NULL && strlen( fname ) > 8 )
-	    fname[8] = '\0';
+            fname[8] = '\0';
         if( ext != NULL && strlen( ext ) > 3 )
-	    ext[3] = '\0';
+            ext[3] = '\0';
         // this is ok, because file_name can only get shorter
         _makepath( file_name, drive, dir, fname, ext );
         new = fopen( file_name, mode );
@@ -787,7 +787,7 @@ local FILE *OpenFilePathList( //OPEN FILE, TRY EACH LOCATION IN PATH LIST
             strcat( buff, file_name );
             new = OpenFileTruncate( buff, mode );
             if( new != NULL )
-	        break;
+                break;
             list = list->next;
         }
     }
@@ -873,7 +873,7 @@ local unsigned RecordInitialize( char *record )
     pkw = KwTable;
     while( pkw->code != 0 ) {
         if( 0 == stricmp( pkw->name, &Token[1] ) )
-	    return( pkw->code );
+            return( pkw->code );
         ++pkw;
     }
     return( KW_TEXT );
@@ -893,7 +893,7 @@ local int IsOper( char ch )
 
     for( i = 0; i < sizeof( Oper ) / sizeof( Oper[0] );++i ) {
         if( Oper[i][0] == ch )
-	    return( TRUE );
+            return( TRUE );
     }
     return( FALSE );
 }
@@ -917,15 +917,15 @@ local int ScanString( void )
     eptr = cptr + sizeof( Token ) - 1;
     for( ;; ) {
         if( isspace( *rptr ) )
-	    break;
+            break;
         if( IsOper( *rptr ) )
-	    break;
+            break;
         if( *rptr == '\0' )
-	    break;
+            break;
         if( *rptr == '\n' )
-	    break;
+            break;
         if( *rptr == '\r' )
-	    break;
+            break;
         if( cptr >= eptr ) {
             cptr = Token;
             break;
