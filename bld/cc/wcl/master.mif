@@ -4,6 +4,8 @@ proj_name = wcl
 wcl_autodepends = .AUTODEPEND
 !endif
 
+wcl_trmem = 1
+
 name_target_i86 = wcl.exe
 name_target_386 = wcl386.exe
 name_target_axp = wclaxp.exe
@@ -14,15 +16,17 @@ name_target_    = owcc.exe
 name = $(name_target_$(target_cpu))
 
 !ifdef target_cpu
-objs = clcommon.obj cmdlhelp.obj wcl.obj
+objs = clcommon.obj cmdlhelp.obj wcl.obj $(trmem_objs)
 !else
-objs = clcommon.obj cmdlhelp.obj owcc.obj getopt.obj quit.obj
+objs = clcommon.obj cmdlhelp.obj owcc.obj getopt.obj quit.obj $(trmem_objs)
 extra_deps = owcchelp.gh
 !endif
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
+
+!include trmem.mif
 
 extra_c_flags_target_i86 = -DWCLI86
 extra_c_flags_target_386 = -DWCL386
@@ -35,10 +39,12 @@ extra_c_flags = -s $(extra_c_flags_target_$(target_cpu))
 extra_c_flags_owcc   = -I"$(posix_dir)/h"
 extra_c_flags_getopt = -I"$(posix_dir)/h"
 extra_c_flags_quit   = -I"$(posix_dir)/h"
+extra_c_flags_clcommon = $(trmem_cover_cflags)
+extra_c_flags_trmem = $(trmem_cflags)
 
 extra_l_flags = op map
 
-.c: ../c;../../c;$(posix_dir)/misc;$(watcom_dir)/c
+.c: ../c;../../c;$(posix_dir)/misc;$(watcom_dir)/c;$(trmem_dir)
 
 $(name) : $(extra_deps) $(objs)
         $(linker) $(lflags) name $^@ file {$(objs)}

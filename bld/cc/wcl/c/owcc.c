@@ -44,7 +44,6 @@
 #include <unistd.h>
 #include "getopt.h"
 #include <process.h>
-#include <malloc.h>
 #include <conio.h>
 
 #include "diskos.h"
@@ -495,7 +494,7 @@ static  int  Parse( int argc, char **argv )
             continue;
 
         if( OptArg != NULL ) {
-            Word = malloc( strlen( OptArg ) + 6 );
+            Word = MemAlloc( strlen( OptArg ) + 6 );
             strcpy( Word, OptArg );
         }
 
@@ -510,7 +509,7 @@ static  int  Parse( int argc, char **argv )
                 break;
             }
             if( !strncmp( Word, "cpp-wrap=", 9 ) ) {
-                free( cpp_linewrap );
+                MemFree( cpp_linewrap );
                 Word[7] = 'w';
                 cpp_linewrap = MemStrDup( Word + 7 );
                 wcc_option = 0;
@@ -525,10 +524,10 @@ static  int  Parse( int argc, char **argv )
             case 'd':           /* name of linker directive file */
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
                     MakeName( Word, ".lnk" );    /* add extension */
-                    free( Link_Name );
+                    MemFree( Link_Name );
                     Link_Name = strfdup( Word + 2 );
                 } else {
-                    free( Link_Name );
+                    MemFree( Link_Name );
                     Link_Name = MemStrDup( TEMPFILE );
                 }
                 wcc_option = 0;
@@ -536,7 +535,7 @@ static  int  Parse( int argc, char **argv )
             case 'm':           /* name of map file */
                 Flags.map_wanted = TRUE;
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
-                    free( Map_Name );
+                    MemFree( Map_Name );
                     Map_Name = strfdup( Word + 2 );
                 }
                 wcc_option = 0;
@@ -548,7 +547,7 @@ static  int  Parse( int argc, char **argv )
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
                     ++p;
                 }
-                free( Obj_Name );
+                MemFree( Obj_Name );
                 Obj_Name = strfdup( p );        /* 08-mar-90 */
                 break;
             case 'r':           /* name of error report file */
@@ -561,7 +560,7 @@ static  int  Parse( int argc, char **argv )
 
         case 'k':               /* stack size option */
             if( Word[0] != '\0' ) {
-                free( StackSize );
+                MemFree( StackSize );
                 StackSize = MemStrDup( Word );
             }
             wcc_option = 0;
@@ -654,7 +653,7 @@ static  int  Parse( int argc, char **argv )
             wcc_option = 0;
             break;
         case 'o':
-            free( O_Name );
+            MemFree( O_Name );
             O_Name = strfdup( OptArg );
             wcc_option = 0;
             break;
@@ -731,7 +730,7 @@ static  int  Parse( int argc, char **argv )
             break;
         case 'b':
             Flags.link_for_sys = TRUE;
-            free( SystemName );
+            MemFree( SystemName );
             SystemName = MemStrDup( Word );
             /* if Word found in specs.owc, add options from there: */
             if( ConsultSpecsFile( Word ) ) {
@@ -765,9 +764,9 @@ static  int  Parse( int argc, char **argv )
             }
             if( !strcmp( OptArg, "nclude" ) ) {
                 c = 'f';
-                Word = realloc( Word, strlen( argv[OptInd] ) + 6 );
+                Word = MemReAlloc( Word, strlen( argv[OptInd] ) + 6 );
                 if( OptInd >= argc - 1 ) {
-                    free( cpp_linewrap );
+                    MemFree( cpp_linewrap );
                     PrintMsg( "Argument of -include missing\n", OptArg );
                     return( 1 );
                 }
@@ -793,9 +792,9 @@ static  int  Parse( int argc, char **argv )
                 /* translate to -adt=.o */
                 strcpy( Word, "dt=.o" );
             } else if( !strcmp( OptArg, "F" ) ) {
-                Word = realloc( Word, strlen( argv[OptInd] ) + 6 );
+                Word = MemReAlloc( Word, strlen( argv[OptInd] ) + 6 );
                 if( OptInd >= argc - 1 ) {
-                    free( cpp_linewrap );
+                    MemFree( cpp_linewrap );
                     PrintMsg( "Argument of -MF missing\n", OptArg );
                     return( 1 );
                 }
@@ -803,9 +802,9 @@ static  int  Parse( int argc, char **argv )
                 strfcat( Word, argv[OptInd] );
                 argv[OptInd++][0] = '\0';
             } else if( !strcmp( OptArg, "T") ) {
-                Word = realloc( Word, strlen( argv[OptInd] ) + 6 );
+                Word = MemReAlloc( Word, strlen( argv[OptInd] ) + 6 );
                 if( OptInd >= argc - 1 ) {
-                    free( cpp_linewrap );
+                    MemFree( cpp_linewrap );
                     PrintMsg( "Argument of -M%s missing\n", OptArg );
                     return( 1 );
                 }
@@ -825,7 +824,7 @@ static  int  Parse( int argc, char **argv )
             addccopt( c, Word );
         }
         if( OptArg != NULL ) {
-            free( Word );
+            MemFree( Word );
             Word = NULL;
         }
     }
@@ -833,7 +832,7 @@ static  int  Parse( int argc, char **argv )
     if( preprocess_only ) {
         Flags.no_link = TRUE;
         if( O_Name == NULL ) {
-            free( Obj_Name );           /* preprocess to stdout by default */
+            MemFree( Obj_Name );           /* preprocess to stdout by default */
             Obj_Name = NULL;
         }
         strcat( CC_Opts, " -p" );
@@ -853,12 +852,12 @@ static  int  Parse( int argc, char **argv )
         addccopt( 'z', "q" );
     if( O_Name != NULL ) {
         if( Flags.no_link && !Flags.do_disas ) {
-            free( Obj_Name );
+            MemFree( Obj_Name );
             Obj_Name = O_Name;
         } else {
             strcpy( Exe_Name, O_Name );
             Flags.keep_exename = 1;
-            free( O_Name );
+            MemFree( O_Name );
         }
         O_Name = NULL;
     }
@@ -883,7 +882,7 @@ static  int  Parse( int argc, char **argv )
             ListAppend( &Files_List, new_item );
         }
     }
-    free( cpp_linewrap );
+    MemFree( cpp_linewrap );
     return( 0 );
 }
 
@@ -1054,7 +1053,7 @@ static  int  CompLink( void )
                 char    *sfile;
                 char    *ofile;
 
-                ofile = malloc( strlen( file ) + 6 );
+                ofile = MemAlloc( strlen( file ) + 6 );
                 strcpy( ofile, file );
 
                 if( Exe_Name[0] != '\0' ) {     /* have "-S -o output.name" */
@@ -1078,7 +1077,7 @@ static  int  CompLink( void )
                 sfile[1] = 'l';
                 sfile[2] = '=';
                 rc = tool_exec( TYPE_DIS, ofile, sfile );
-                free( ofile );
+                MemFree( ofile );
             }
             if( Exe_Name[0] == '\0' ) {
 #ifdef __UNIX__
@@ -1093,11 +1092,11 @@ static  int  CompLink( void )
 #endif
             }
 #ifdef __UNIX__
-            free( file );
+            MemFree( file );
 #endif
             file = GetName( NULL );     /* get next filename */
         }
-        free( path );
+        MemFree( path );
     }
     if( errors_found ) {
         rc = 1;
@@ -1115,12 +1114,12 @@ static  int  CompLink( void )
         }
     }
     if( Word != NULL ) {
-        free( Word );
+        MemFree( Word );
         Word = NULL;
     }
     for( i = 0; i < TYPE_MAX; ++i ) {
         if( tools[i].path != NULL ) {
-            free( tools[i].path );
+            MemFree( tools[i].path );
             tools[i].path = NULL;
         }
     }
@@ -1165,11 +1164,11 @@ static int ProcMemFini( void )
     ListFree( Files_List );
     ListFree( Obj_List );
     ListFree( Libs_List );
-    free( Map_Name );
-    free( Obj_Name );
-    free( Link_Name );
-    free( SystemName );
-    free( StackSize );
+    MemFree( Map_Name );
+    MemFree( Obj_Name );
+    MemFree( Link_Name );
+    MemFree( SystemName );
+    MemFree( StackSize );
     return( 0 );
 }
 
@@ -1191,6 +1190,7 @@ int main( int argc, char **argv )
             strerror( errno ) );
         exit( EXIT_FAILURE );
     }
+    MemInit();
     ProcMemInit();
     /* destruct the temp. linker script in case of -? or parse errors */
     atexit( ExitHandler );
@@ -1213,5 +1213,6 @@ int main( int argc, char **argv )
         remove( TEMPFILE );
     }
     ProcMemFini();
+    MemFini();
     return( rc == 0 ? 0 : 1 );
 }

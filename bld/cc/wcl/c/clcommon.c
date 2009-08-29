@@ -40,11 +40,17 @@
 #else
 #include <dirent.h>
 #endif
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "diskos.h"
 #include "pathgrp.h"
 #include "cmdlhelp.h"
 #include "clcommon.h"
+#ifdef TRMEM
+#include "trmem.h"
+#endif
 
 #ifndef __UNIX__
 #define ATTR_MASK   _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
@@ -66,6 +72,15 @@ extern char *DebugOptions[] = {
     "debug codeview\n",
     "debug dwarf\n",
 };
+
+#ifdef TRMEM
+static _trmem_hdl   TRMemHandle;
+
+static void memLine( int *fh, const char *buf, size_t size )
+{
+    PrintMsg( buf );
+}
+#endif
 
 void PrintMsg( const char *fmt, ... )
 /***********************************/
@@ -156,13 +171,43 @@ void BuildLinkFile( void )
     fclose( Fp );       /* close Temp_Link */
 }
 
+void print_line( int * handle, const char * buff, size_t len )
+/*************************************************************/
+{
+    write( *handle, buff, len );
+}
+
+void  MemInit( void )
+/*******************/
+{
+#ifdef TRMEM
+    TRMemHandle = _trmem_open( malloc, free, realloc, NULL, NULL, memLine,
+            _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
+            _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
+#endif
+}
+
+void  MemFini( void )
+/*******************/
+{
+#ifdef TRMEM
+    _trmem_prt_usage( TRMemHandle );
+    _trmem_prt_list( TRMemHandle );
+    _trmem_close( TRMemHandle );
+#endif
+}
 
 void  *MemAlloc( int size )
 /*************************/
 {
     void        *ptr;
 
-    if( (ptr = malloc( size )) == NULL ) {
+#ifdef TRMEM
+    ptr = _trmem_alloc( size, _trmem_guess_who(), TRMemHandle );
+#else
+    ptr = malloc( size );
+#endif
+    if( ptr == NULL ) {
         PrintMsg( WclMsgs[OUT_OF_MEMORY] );
         exit( 1 );
     }
@@ -174,11 +219,43 @@ char *MemStrDup( const char *str )
 {
     char        *ptr;
 
-    if( (ptr = strdup( str )) == NULL ) {
+#ifdef TRMEM
+    ptr = _trmem_strdup( str, _trmem_guess_who(), TRMemHandle );
+#else
+    ptr = strdup( str );
+#endif
+    if( ptr == NULL ) {
         PrintMsg( WclMsgs[OUT_OF_MEMORY] );
         exit( 1 );
     }
     return( ptr );
+}
+
+void  *MemReAlloc( void *p, int size )
+/************************************/
+{
+    void        *ptr;
+
+#ifdef TRMEM
+    ptr = _trmem_realloc( p, size, _trmem_guess_who(), TRMemHandle );
+#else
+    ptr = realloc( p, size );
+#endif
+    if( ptr == NULL ) {
+        PrintMsg( WclMsgs[OUT_OF_MEMORY] );
+        exit( 1 );
+    }
+    return( ptr );
+}
+
+void  MemFree( void *ptr )
+/************************/
+{
+#ifdef TRMEM
+        _trmem_free( ptr, _trmem_guess_who(), TRMemHandle );;
+#else
+        free( ptr );
+#endif
 }
 
 void ListAppend( list **itm_list, list *new )
@@ -204,8 +281,8 @@ void ListFree( list *itm_list )
 
     while( itm_list != NULL ) {
         next = itm_list->next;
-        free( itm_list->item );
-        free( itm_list );
+        MemFree( itm_list->item );
+        MemFree( itm_list );
         itm_list = next;
     }
 }
@@ -222,7 +299,11 @@ void  AddName( char *name, FILE *link_fp )
 
     curr_name = Obj_List;
     while( curr_name != NULL ) {
-        if( strcmp( name, curr_name->item ) == 0 )
+#ifdef __UNIX__
+        if( strcmp( name, curr_name->item ) == 0 )  // Case-sensitive
+#else
+        if( stricmp( name, curr_name->item ) == 0 ) // Case-insensitive
+#endif
             return;
         last_name = curr_name;
         curr_name = curr_name->next;

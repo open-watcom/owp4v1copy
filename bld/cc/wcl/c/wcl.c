@@ -41,7 +41,6 @@
 #include <dirent.h>
 #endif
 #include <process.h>
-#include <malloc.h>
 #include <conio.h>
 
 #include "swchar.h"
@@ -96,8 +95,10 @@
 
 #ifdef __UNIX__
 #define PATH_SEPS_STR   SYS_DIR_SEP_STR
+#define fname_cmp       strcmp
 #else
 #define PATH_SEPS_STR   SYS_DIR_SEP_STR "/"
+#define fname_cmp       stricmp
 #endif
 
 static  char    *Word;              /* one parameter                      */
@@ -196,12 +197,7 @@ static int handle_environment_variable( const char *env )
     int                 result;     // Parse Result.
 
     for( info = stack; info != NULL; info = info->next ) {
-#if !defined( __UNIX__ )
-        if( stricmp( Word, info->varname ) == 0 ) // Case-insensitive
-#else
-        if( strcmp( Word, info->varname ) == 0 )  // Case-sensitive
-#endif
-        {
+        if( fname_cmp( Word, info->varname ) == 0 ) {
             PrintMsg( WclMsgs[RECURSIVE_ENVIRONMENT_VARIABLE], Word );
             return( 1 );
         }
@@ -215,7 +211,7 @@ static int handle_environment_variable( const char *env )
     strcpy( info->varname, Word );
     result = Parse( strcpy( info->varname + varlen, env ) );
     stack = info->next;                     // pop stack
-    free( info );
+    MemFree( info );
     return( result );
 }
 
@@ -250,7 +246,7 @@ static void *makeTmpEnv( char *arg )
     env = MemAlloc( len + buflen + 2 );
     sprintf( env, "%s=%s", buf, arg );
     if( putenv( env ) != 0 ) {
-        free( env );
+        MemFree( env );
         return( NULL );
     }
     if( !Flags.be_quiet )
@@ -274,8 +270,8 @@ static void killTmpEnv( char *env )
         if( !Flags.be_quiet )
             PrintMsg( "\tset %s\n", never_free );
         if( putenv( never_free ) == 0 )
-            free( env );
-        free( never_free ); /* Actually OK */
+            MemFree( env );
+        MemFree( never_free ); /* Actually OK */
     }
 
 }
@@ -430,7 +426,7 @@ static int FileExtension( char *p, char *ext )
         ++p;
     }
     if( dot != NULL ) {
-        if( stricmp( dot, ext ) == 0 ) {
+        if( fname_cmp( dot, ext ) == 0 ) {
             return( 1 );                // indicate file extension matches
         }
     }
@@ -513,7 +509,7 @@ static int Parse( char *Cmd )
                         strcat( CC_Opts, " -bt=" );
                         strcat( CC_Opts, Word+3 );
                         Flags.link_for_sys = TRUE;
-                        free( SystemName );
+                        MemFree( SystemName );
                         SystemName = MemStrDup( Word+3 );
                         wcc_option = 0;
                     }
@@ -530,10 +526,10 @@ static int Parse( char *Cmd )
 
                             MakeName( unquoted, ".lnk" );    /* add extension */
 
-                            free( Link_Name );
+                            MemFree( Link_Name );
                             Link_Name = MemStrDup( unquoted );
                         } else {
-                            free( Link_Name );
+                            MemFree( Link_Name );
                             Link_Name = MemStrDup( TEMPFILE );
                         }
                         wcc_option = 0;
@@ -557,7 +553,7 @@ static int Parse( char *Cmd )
                             /* remove quotes from target map filename */
                             UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
 
-                            free( Map_Name );
+                            MemFree( Map_Name );
                             Map_Name = MemStrDup( unquoted );
                         }
                         wcc_option = 0;
@@ -573,7 +569,7 @@ static int Parse( char *Cmd )
                         /* remove quotes from object name */
                         UnquoteFName( unquoted, sizeof( unquoted ), p );
 
-                        free( Obj_Name );
+                        MemFree( Obj_Name );
                         Obj_Name = MemStrDup( unquoted );
                         break;
 #if defined( WCLI86 ) || defined( WCL386 )
@@ -591,7 +587,7 @@ static int Parse( char *Cmd )
                     break;
                 case 'k':               /* stack size option */
                     if( Word[0] != '\0' ) {
-                        free( StackSize );
+                        MemFree( StackSize );
                         StackSize = MemStrDup( Word );
                     }
                     wcc_option = 0;
@@ -611,7 +607,7 @@ static int Parse( char *Cmd )
                         p = &Word[0];
                         if( Word[0] == '='  ||  Word[0] == '#' )
                             ++p;
-                        free( SystemName );
+                        MemFree( SystemName );
                         SystemName = MemStrDup( p );
                         break;
                     }
@@ -784,11 +780,11 @@ static int useCPlusPlus( char *p )
 /********************************/
 {
     return
-        stricmp( p, ".cpp" ) == 0 ||
-        stricmp( p, ".cxx" ) == 0 ||
-        stricmp( p, ".cc" )  == 0 ||
-        stricmp( p, ".hpp" ) == 0 ||
-        stricmp( p, ".hxx" ) == 0 ;
+        fname_cmp( p, ".cpp" ) == 0 ||
+        fname_cmp( p, ".cxx" ) == 0 ||
+        fname_cmp( p, ".cc" )  == 0 ||
+        fname_cmp( p, ".hpp" ) == 0 ||
+        fname_cmp( p, ".hxx" ) == 0 ;
 }
 
 
@@ -864,7 +860,7 @@ static tool_type SrcName( char *name )
             }
         }
     }
-    if( stricmp( p, ".asm" ) == 0 ) {
+    if( fname_cmp( p, ".asm" ) == 0 ) {
         utl = TYPE_ASM;
     } else {
         utl = TYPE_C;               // assume C compiler
@@ -984,11 +980,11 @@ static  int  CompLink( void )
                 strcpy( Exe_Name, Word );
             }
 #ifdef __UNIX__
-            free( file );
+            MemFree( file );
 #endif
             file = GetName( NULL );     /* get next filename */
         }
-        free( path );
+        MemFree( path );
     }
     if( tmp_env != NULL )
         killTmpEnv( tmp_env );
@@ -1009,7 +1005,7 @@ static  int  CompLink( void )
     }
     for( i = 0; i < TYPE_MAX; ++i ) {
         if( tools[i].path != NULL ) {
-            free( tools[i].path );
+            MemFree( tools[i].path );
             tools[i].path = NULL;
         }
     }
@@ -1035,11 +1031,11 @@ static int ProcMemInit( void )
 
 static int ProcMemFini( void )
 {
-    free( Map_Name );
-    free( Obj_Name );
-    free( Link_Name );
-    free( SystemName );
-    free( StackSize );
+    MemFree( Map_Name );
+    MemFree( Obj_Name );
+    MemFree( Link_Name );
+    MemFree( SystemName );
+    MemFree( StackSize );
     ListFree( Directive_List );
     ListFree( Obj_List );
     ListFree( Files_List );
@@ -1063,6 +1059,8 @@ int  main( void )
     Switch_Chars[1] = _dos_switch_char();
     Switch_Chars[2] = '\0';
 
+    MemInit();
+    ProcMemInit();
     Word = MemAlloc( MAX_CMD );
     Cmd = MemAlloc( MAX_CMD * 2 );  /* enough for cmd line & wcl variable */
 
@@ -1100,7 +1098,6 @@ int  main( void )
                 strerror( errno ) );
             rc = 1;
         } else {
-            ProcMemInit();
             initialize_Flags();
             rc = Parse( Cmd );
             if( rc == 0 ) {
@@ -1113,17 +1110,18 @@ int  main( void )
                 fclose( Fp );
             }
             if( Link_Name != NULL ) {
-                if( stricmp( Link_Name, TEMPFILE ) != 0 ) {
+                if( fname_cmp( Link_Name, TEMPFILE ) != 0 ) {
                     remove( Link_Name );
                     rename( TEMPFILE, Link_Name );
                 }
             } else {
                 remove( TEMPFILE );
             }
-            ProcMemFini();
         }
     }
-    free( Cmd );
-    free( Word );
+    ProcMemFini();
+    MemFree( Cmd );
+    MemFree( Word );
+    MemFini();
     return( rc == 0 ? 0 : 1 );
 }
