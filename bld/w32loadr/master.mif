@@ -12,9 +12,6 @@ additional_cleanup = mkdginfo.bat
 .c: ..
 .h: ..
 
-.asm.obj:
-  $(as_i86) -q -d1 -I.. $(inc_path) -fo=.obj $<
-
 !ifdef prebuild
 
 all : w32bind.exe
@@ -79,10 +76,6 @@ dginfo.gh : $(rsi_root)/bin/dos4g.exe
 
 dpmi.exe : dpmi.obj loader16.obj int21win.obj
         $(linker) system dos file dpmi.obj,loader16.obj,int21win.obj option map,stack=8k
-dpmi.obj : dpmi.asm
-        $(as_i86) -q -d2 $< -fo=$@
-dos16m.obj : dos16m.asm
-        $(as_i86) -q -d2 $< -fo=$@
 
 !else ifeq host_os nt
 
