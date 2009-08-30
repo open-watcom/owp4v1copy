@@ -45,11 +45,11 @@ static  char *  DefExt[] = {
 };
 
 extern char *   PromptText[] = {
-    "object modules ",
-    "run file ",
-    "list file ",
-    "libraries ",
-    "definitions file "
+    "Object Modules ",
+    "Run File ",
+    "List File ",
+    "Libraries ",
+    "Definitions File "
 };
 
 static bool     WritePrompt;
@@ -61,8 +61,8 @@ extern unsigned QWrite( f_handle, void *, unsigned, char * );
 extern bool     QIsConIn( f_handle );
 extern void     QSetBinary( f_handle );
 
-extern char *   Msg2Splice( char *, char * );
-extern char *   Msg3Splice( char *, char *, char * );
+extern char     *Msg2Splice( const char *, const char * );
+extern char     *Msg3Splice( const char *, const char *, const char * );
 
 extern format_type  FmtType;
 extern cmdentry *   Commands[];
@@ -183,28 +183,38 @@ extern void AddStringOption( char *msg, char *string, int len )
     AddOption( cmd );
 }
 
-extern void NotSupported( char *msg )
-/***********************************/
+extern void NotSupported( const char *msg )
+/*****************************************/
 {
-    char * msg2;
+    char    *msg2;
 
     msg2 = Msg2Splice( msg, " option is not supported by WLINK" );
     Warning( msg2, OPTION_SLOT );
     MemFree( msg2 );
 }
 
-extern void NotNecessary( char *msg )
-/***********************************/
+extern void NotNecessary( const char *msg )
+/*****************************************/
 {
-    char * msg2;
+    char    *msg2;
 
     msg2 = Msg2Splice( msg, " option is not necessary when using WLINK" );
     Warning( msg2, OPTION_SLOT );
     MemFree( msg2 );
 }
 
-extern char * Msg2Splice( char *msg1, char *msg2 )
-/************************************************/
+extern void NotRecognized( const char *msg )
+/******************************************/
+{
+    char    *msg2;
+
+    msg2 = Msg3Splice( "/", msg, " : unrecognized option name; ignored" );
+    Warning( msg2, OPTION_SLOT );
+    MemFree( msg2 );
+}
+
+extern char *Msg2Splice( const char *msg1, const char *msg2 )
+/***********************************************************/
 // splice 2 messages together
 {
     int     len1;
@@ -220,8 +230,8 @@ extern char * Msg2Splice( char *msg1, char *msg2 )
     return( both );
 }
 
-extern char * Msg3Splice( char *msg1, char *msg2, char *msg3 )
-/************************************************************/
+extern char *Msg3Splice( const char *msg1, const char *msg2, const char *msg3 )
+/*****************************************************************************/
 {
     int     len1;
     int     len2;
@@ -255,8 +265,8 @@ extern char * FindNotAsIs( int slot )
     return( NULL );
 }
 
-static char * FindObjectName( void )
-/**********************************/
+extern char *FindObjectName( void )
+/*********************************/
 {
     char *  msg;
 
@@ -314,7 +324,7 @@ extern void OutPutPrompt( int prompt )
         PromptStart( msg, prompt );
         QWrite( STDERR_HANDLE, DefExt[ prompt ], 4, "console" );
     }
-    QWrite( STDERR_HANDLE, "]:", 2, "console" );
+    QWrite( STDERR_HANDLE, "]: ", 3, "console" );
 }
 
 // spawn/suicide support.

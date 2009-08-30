@@ -55,7 +55,7 @@ enum {
     E_COMMAND
 };
 
-enum {
+typedef enum {
     OBJECT_SLOT = 0,
     RUN_SLOT,
     MAP_SLOT,
@@ -63,7 +63,7 @@ enum {
     DEF_SLOT,
     OPTION_SLOT,
     OVERLAY_SLOT
-};
+} prompt_slot;
 
 typedef enum {
     FMT_DEFAULT         = 0,
