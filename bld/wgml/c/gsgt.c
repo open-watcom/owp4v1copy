@@ -393,7 +393,7 @@ void    scr_gt( void )
             return;
         }
         savetag = '*';         // remember for possible global delete / print
-        if( GlobalFlags.firstpass && GlobalFlags.research ) {
+        if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
             out_msg("  using tagname %s %s\n", tagname, tag_entry->name );
         }
     } else {

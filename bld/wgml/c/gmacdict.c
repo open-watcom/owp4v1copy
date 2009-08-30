@@ -27,36 +27,36 @@
 * Description:  Implements script macros (tables and access routines)
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include <stdarg.h>
 #include <errno.h>
- 
+
 #include "wgml.h"
 #include "gvars.h"
- 
- 
- 
+
+
+
 /***************************************************************************/
 /*  init_macro_dict   initialize dictionary pointer                        */
 /***************************************************************************/
- 
+
 void    init_macro_dict( mac_entry * * dict )
 {
     *dict = NULL;
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  add_macro_entry   add macro entry to dictionary                        */
 /***************************************************************************/
- 
+
 void    add_macro_entry( mac_entry * * dict, mac_entry * me )
 {
     mac_entry   *   wk;
- 
+
     if( *dict == NULL ) {           // empty dictionary
         *dict = me;
     } else {
@@ -67,19 +67,19 @@ void    add_macro_entry( mac_entry * * dict, mac_entry * me )
         wk->next = me;
     }
 }
- 
- 
+
+
 /***************************************************************************/
 /*  free_macro_entry_short  free storage for a macro entry                 */
 /*  without chain update                                                   */
 /***************************************************************************/
- 
+
 static  void    free_macro_entry_short( mac_entry * me )
 {
     inp_line    *   ml;
     inp_line    *   mln;
     labelcb     *   cb;
- 
+
     if( me != NULL ) {
         cb = me->label_cb;
         if( GlobalFlags.research ) {
@@ -100,7 +100,7 @@ static  void    free_macro_entry_short( mac_entry * me )
     }
     return;
 }
- 
+
 /***************************************************************************/
 /*  free_macro_entry  delete single macroentry with chain update           */
 /***************************************************************************/
@@ -111,7 +111,7 @@ void    free_macro_entry( mac_entry * * dict, mac_entry * me )
     mac_entry   *   wk;
     mac_entry   *   wkn;
     labelcb     *   cb;
- 
+
     if( me != NULL ) {
         cb = me->label_cb;
         if( GlobalFlags.research ) {
@@ -145,16 +145,16 @@ void    free_macro_entry( mac_entry * * dict, mac_entry * me )
     }
     return;
 }
- 
+
 /***************************************************************************/
 /*  free_macro_dict   free all macro dictionary entries                    */
 /***************************************************************************/
- 
+
 void    free_macro_dict( mac_entry * * dict )
 {
     mac_entry   *   wk;
     mac_entry   *   wkn;
- 
+
     wk = *dict;
     while( wk != NULL ) {
         wkn = wk->next;
@@ -164,19 +164,19 @@ void    free_macro_dict( mac_entry * * dict )
     *dict = NULL;                       // dictionary is empty
     return;
 }
- 
- 
- 
+
+
+
 /***************************************************************************/
 /*  search macro entry in specified dictionary                             */
 /*  returns ptr to macro or NULL if not found                              */
 /***************************************************************************/
- 
+
 mac_entry   * find_macro( mac_entry * dict, const char * name )
 {
     mac_entry   *   wk;
     mac_entry   *   curr;
- 
+
     wk   = NULL;
     curr = dict;
     while( curr != NULL) {
@@ -188,12 +188,12 @@ mac_entry   * find_macro( mac_entry * dict, const char * name )
     }
     return( wk );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  print_macro_dict  output all of the macro dictionary                   */
 /***************************************************************************/
- 
+
 void    print_macro_dict( mac_entry * dict, bool with_mac_lines )
 {
     mac_entry           *   wk;
@@ -202,12 +202,12 @@ void    print_macro_dict( mac_entry * dict, bool with_mac_lines )
     inp_line            *   ml;
     int                     lc;
     static  const   char    fill[10] = "         ";
- 
+
     cnt = 0;
     wk = dict;
     out_msg( "\nList of defined macros:\n\n" );
     for( wk = dict; wk != NULL; wk = wk->next ) {
- 
+
         len =  strlen( wk->name );
         out_msg( "Macro='%s'%sdefined line %d file '%s'\n", wk->name,
                 &fill[len], wk->lineno, wk->mac_file_name );
@@ -221,4 +221,4 @@ void    print_macro_dict( mac_entry * dict, bool with_mac_lines )
     out_msg( "\nTotal macros defined: %d\n", cnt );
     return;
 }
- 
+

@@ -456,6 +456,9 @@ static  void    proc_input( char * filename )
             show_include_stack();
         }
 #endif
+        if( inc_level == 1 ) {         //master file end
+            scr_process_break();       // output last line if any
+        }
         del_input_cb_entry();           // one level finished
         inc_level--;
         if( inc_level == 0 ) {          // EOF for master document file
@@ -475,8 +478,6 @@ static  void    proc_input( char * filename )
             }
         }
     }
-    scr_process_break();                // output last line if any
-
 }
 
 
@@ -521,6 +522,14 @@ static  void    init_pass( void )
 {
 
     init_proc_flags();                  // (re)set processing flags
+
+    if( GlobalFlags.research && (research_to > 0) ) {
+        if( research_file_name[0] == '\0' ) {
+            strcpy_s( research_file_name, sizeof( research_file_name ),
+                      master_fname );
+        }
+        ProcFlags.researchfile = true;
+    }
 
     if( pass > 1 ) {
         GlobalFlags.firstpass = 0;

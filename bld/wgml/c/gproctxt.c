@@ -95,7 +95,7 @@ void    do_justify( uint32_t lm, uint32_t rm )
         delta = delta0 / (cnt - 1);
     }
 
-    if( GlobalFlags.research && GlobalFlags.lastpass ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
         find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);// .ju as string
         out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d dist:%d dist1:%d"
                  " delta:%d delta0:%d cnt:%d\n", symjusub->value,
@@ -298,13 +298,13 @@ void    process_line_full( text_line * a_line )
         return;
     }
     if( GlobalFlags.lastpass ) {
-        if( GlobalFlags.research ) {
+        if( input_cbs->fmflags & II_research ) {
             test_out_t_line( a_line );
         }
         if( !ProcFlags.literal && ProcFlags.justify > ju_off ) {
 
             do_justify( g_page_left, g_page_left + g_cl );
-            if( GlobalFlags.research ) {
+            if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( a_line );
             }
         }

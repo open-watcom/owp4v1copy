@@ -36,7 +36,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-
 /***************************************************************************/
 /*  :CMT.                                                                  */
 /*                                                                         */
@@ -48,7 +47,9 @@
 
 extern  void    gml_cmt( const gmltag * entry )
 {
+static uint32_t g_cur_v_start;
     scan_start = scan_stop + 1;
+    g_cur_v_start = 1;
     return;
 }
 

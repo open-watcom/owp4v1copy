@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  wgml cmdline option processing
-*               several options are still ignored
+*               several options are still ignored                 TBD
 ****************************************************************************/
 
 #include "wgml.h"
@@ -1158,10 +1158,81 @@ static void set_quiet( option * opt )
 
 };
 
+
+/***************************************************************************/
+/*  -r [filename] [from [to]]                                              */
+/*    if only from and to specified the filename will become the           */
+/*    masterfilename later (when it is known)                              */
+/***************************************************************************/
+
 static void set_research( option * opt )
 {
+    int         len;
+    char        str[256];
+
+
     GlobalFlags.research = opt->value;
-};
+
+    if( tokennext == NULL || tokennext->bol || is_option() == true
+            || tokennext->token[0] == '(' ) {
+        str[0] = '\0';
+    } else {
+        len = tokennext->toklen;
+        if( len < sizeof( str ) ) {
+            strcpy( str, tokennext->token );
+        } else {
+            strcpy( str, "too long " );
+        }
+        ProcFlags.researchfile = true;  // only one file
+        research_from = 1;
+        research_to = ULONG_MAX - 1;
+
+        research_file_name[0] = '\0';   // no filename
+        if( isalpha( *str ) ) {         // filename ?
+            if( len < sizeof( research_file_name ) ) {
+                strcpy_s( research_file_name, sizeof( research_file_name ), str );
+            }
+            tokennext = tokennext->nxt;
+            if( tokennext == NULL || tokennext->bol || is_option() == true
+                    || tokennext->token[0] == '(' ) {
+                /* nothing to do */
+            } else {                    // get from and to values
+                research_from = get_num_value( tokennext->token );
+                strcat( str, " " );
+                strcat( str, tokennext->token );
+                tokennext = tokennext->nxt;
+                if( tokennext == NULL || tokennext->bol || is_option() == true
+                        || tokennext->token[0] == '(' ) {
+                    /* nothing to do */
+                } else {
+                    research_to = get_num_value( tokennext->token );
+                    strcat( str, " " );
+                    strcat( str, tokennext->token );
+                    tokennext = tokennext->nxt;
+                }
+            }
+        } else {
+            if( tokennext == NULL || tokennext->bol || is_option() == true
+                    || tokennext->token[0] == '(' ) {
+                /* nothing to do */
+            } else {                    // get from and to values
+                research_from = get_num_value( tokennext->token );
+                tokennext = tokennext->nxt;
+                if( tokennext == NULL || tokennext->bol || is_option() == true
+                        || tokennext->token[0] == '(' ) {
+                    /* nothing to do */
+                } else {
+                    research_to = get_num_value( tokennext->token );
+                    strcat( str, " " );
+                    strcat( str, tokennext->token );
+                    tokennext = tokennext->nxt;
+                }
+            }
+
+        }
+    }
+    g_info( inf_recognized_xxx, "-r", str );
+}
 
 #if 0                  // always set (w)script option, don't allow to disable
 static void set_wscript( option * opt )
@@ -1231,7 +1302,7 @@ static option GML_old_Options[] =
 static option GML_new_Options[] =
 {
     { "q",            0,   1,       1,        set_quiet,     0 },
-    { "r",            0,   1,       1,        set_research,  0 },
+    { "r",            0,   1,       1,        set_research,  3 },
     { NULL, 0, 0, 0, ign_option, 0 }    // end marker
 };
 

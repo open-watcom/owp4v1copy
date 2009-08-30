@@ -379,11 +379,30 @@ bool    get_line( void )
     *(buff2 + buff2_lg + 1) = '\0';
     if( input_cbs->fmflags & II_file ) {
         input_cbs->s.f->usedlen = buff2_lg;
+        if( GlobalFlags.research ) {    // research mode
+            if( ProcFlags.researchfile ) {  // for single file
+                if( input_cbs->fmflags & II_research ) {// research active
+                    if( research_to < input_cbs->s.f->lineno ) {
+                        input_cbs->fmflags &= ~II_research;// end of research range
+                    }
+                } else {                // not (yet) active
+                    if( research_from == input_cbs->s.f->lineno ) {
+                        if( NULL != strstr( input_cbs->s.f->filename,
+                                            research_file_name) ) {
+                        input_cbs->fmflags |= II_research;// start of research range
+                        }
+                    }
+                }
+            } else {
+                input_cbs->fmflags |= II_research;
+            }
+        }
     }
 
-    if( !(input_cbs->fmflags & II_eof) && GlobalFlags.research &&
-        GlobalFlags.firstpass ) {
-        printf( "%s\n", buff2 );
+    if( !(input_cbs->fmflags & II_eof) ) {
+        if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+            printf( "%s\n", buff2 );
+        }
     }
     return( !(input_cbs->fmflags & II_eof) );
 }

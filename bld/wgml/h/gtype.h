@@ -320,7 +320,8 @@ typedef enum {
     II_macro    = 0x02,                 // inputcb is macro
     II_tag      = 0x06,                 // inputcb is macro via tag
     II_input    = II_file | II_macro | II_tag, // all input types
-    II_eof      = 0x08                  // end of file (input)
+    II_research = 0x08,                 // research mode (for file only)
+    II_eof      = 0x10                  // end of file (input)
 } i_flags;
 
 /***************************************************************************/
@@ -329,8 +330,8 @@ typedef enum {
 typedef struct  inputcb {
     struct inputcb  *   prev;
     i_flags             fmflags;
-    inp_line        *   hidden_head;    // manage split lines at ; or :
-    inp_line        *   hidden_tail;    // manage split lines at ; or :
+    inp_line        *   hidden_head;    // manage lines split at ; or :
+    inp_line        *   hidden_tail;    // manage lines split at ; or :
     symvar          *   local_dict;     // local symbol dictionary
     ifcb            *   if_cb;          // for controlling .if .th .el
     pecb                pe_cb;          // for controlling .pe perform

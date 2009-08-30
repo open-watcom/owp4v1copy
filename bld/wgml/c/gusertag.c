@@ -366,7 +366,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     input_cbs->local_dict = loc_dict;
     inc_inc_level();                    // start new include level
 
-    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
         print_sym_dict( input_cbs->local_dict );
     }
 

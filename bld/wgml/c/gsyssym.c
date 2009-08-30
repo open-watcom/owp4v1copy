@@ -232,8 +232,9 @@ static void syscccfun( symvar * e )
     return;
 };
 
-static void syscdfun( symvar * e )
+static void syscdfun( symvar * e )      // column count
 {
+    ultoa( g_cd, syscdstr, 10 );
     return;
 };
 
@@ -242,8 +243,9 @@ static void syscharsfun( symvar * e )
     return;
 };
 
-static void sysclfun( symvar * e )
+static void sysclfun( symvar * e )      // column length
 {
+    ultoa( g_cl, sysclstr, 10 );
     return;
 };
 
@@ -420,8 +422,9 @@ static void sysfsfun( symvar * e )
     return;
 };
 
-static void sysgutterfun( symvar * e )
+static void sysgutterfun( symvar * e )  // gutter
 {
+    ultoa( g_gutter, sysgutterstr, 10 );
     return;
 };
 
@@ -606,18 +609,21 @@ static void syspagefun( symvar * e )    // pageno in body
     return;
 };
 
-static void syspagedfun( symvar * e )
+static void syspagedfun( symvar * e )   // page depth
 {
+    ultoa( g_page_depth, syspagedstr, 10 );
     return;
 };
 
-static void syspagelmfun( symvar * e )
+static void syspagelmfun( symvar * e )  // page left margin
 {
+    ultoa( g_page_left, syspagelmstr, 10 );
     return;
 };
 
-static void syspagermfun( symvar * e )
+static void syspagermfun( symvar * e )  // page right margin
 {
+    ultoa( g_page_right, syspagermstr, 10 );
     return;
 };
 

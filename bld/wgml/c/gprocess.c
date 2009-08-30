@@ -556,7 +556,8 @@ void        process_line( void )
 
     buff2_lg = strnlen_s( buff2, buf_size );
 
-    if( GlobalFlags.research && GlobalFlags.firstpass && anything_substituted ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass &&
+        anything_substituted ) {
         g_info( inf_subst_line, buff2 );// show line with substitution(s)
     }
     mem_free( workbuf );
@@ -840,7 +841,8 @@ void        process_late_subst( void )
 
     buff2_lg = strnlen_s( buff2, buf_size );
 
-    if( GlobalFlags.research && GlobalFlags.firstpass && anything_substituted ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass &&
+        anything_substituted ) {
         g_info( inf_subst_line, buff2 );// show line with substitution(s)
     }
     mem_free( workbuf );

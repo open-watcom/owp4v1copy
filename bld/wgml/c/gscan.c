@@ -141,7 +141,7 @@ static void scan_gml( void )
         return;
     }
 
-    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+    if( GlobalFlags.firstpass && cb->fmflags & II_research ) {
 
         if(  stricmp( tok_start + 1, "cmt" ) ) {   // quiet for :cmt.
 
@@ -402,7 +402,7 @@ static void     scan_script( void)
     }
 
     if( me != NULL ) {                  // macro found
-        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        if( GlobalFlags.firstpass && cb->fmflags & II_research ) {
             if( cb->fmflags & II_macro ) {
                 printf_research( "L%d    %c%s macro found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
@@ -420,7 +420,7 @@ static void     scan_script( void)
         scan_restart = scan_stop + 1;
     } else {                            // try script controlword
         cwfound = false;
-        if( GlobalFlags.research && GlobalFlags.firstpass ) {
+        if( cb->fmflags & II_research && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_macro ) {
                 printf_research( "L%d    %c%s CW found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
@@ -725,7 +725,7 @@ void    scan_line( void )
         /*******************************************************************/
 
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 g_info( inf_text_line, scan_start );
             }
             if( ProcFlags.layout ) {    // LAYOUT active process attributes
@@ -739,7 +739,7 @@ void    scan_line( void )
                 process_text( scan_start, g_curr_font_num );
             }
         }
-    } else if( GlobalFlags.research && GlobalFlags.firstpass ) {
+    } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
         g_info( inf_skip_line );
     }
     if( ProcFlags.literal ) {

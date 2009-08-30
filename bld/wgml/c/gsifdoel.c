@@ -526,7 +526,7 @@ void    scr_if( void )
             }
         }
     }
-    if( GlobalFlags.research && GlobalFlags.firstpass ) {
+    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
         out_msg( "\t.if is %s Level %d\n"
                  "\t.ifcb iftrue %d, iffalse %d\n",
                  totalcondition ? "true " : "false",
@@ -748,7 +748,7 @@ void    scr_do( void )
         return;
     } else {
         if( !strnicmp( tok_start, "end", 3 )) {
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 out_msg( "\t.do end Level %d\n"
                          "\t.ifcb iftrue %d, iffalse %d\n",
                          cb->if_level,
@@ -783,7 +783,7 @@ void    scr_do( void )
                 }
 
             } while( cb->if_level-- > 0 );
-            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 out_msg( "\t.do end Level %d\n"
                          "\t.ifcb iftrue %d, iffalse %d\n",
                          cb->if_level,

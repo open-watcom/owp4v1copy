@@ -109,6 +109,9 @@ global  symvar      *   sys_dict;       // global system symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
 global  gtentry     *   tag_dict;       // User tag dictionary
 
+global  char            research_file_name[48]; // filename for research output
+global  ulong           research_from;  // line no start for research output
+global  ulong           research_to;    // line no end   for research output
 
 global  struct GlobalFlags {
     unsigned        quiet         : 1;  // show Productinfo?
@@ -127,7 +130,7 @@ global  struct GlobalFlags {
     unsigned        freec         : 1;
     unsigned        freed         : 1;
     unsigned        freee         : 1;
-    unsigned        research      : 1;  // research mode, minimal formatting
+    unsigned        research      : 1;  // -r option research mode output
 } GlobalFlags;                          // Global flags
 
 
@@ -255,7 +258,8 @@ global struct ProcFlags {
     unsigned        hx_level        : 3;// 0 - 6  active Hx :layout sub tag
     unsigned        banner          : 1;// within layout banner definition
     unsigned        banregion       : 1;// within layout banregion definition
-    unsigned        free_4f         : 1;
+    unsigned        researchfile    : 1;// research for one file ( -r option )
+
 } ProcFlags;                            // processing flags
 
 
@@ -299,6 +303,7 @@ global  uint32_t    g_page_bottom;
 global  uint32_t    g_page_left;
 global  uint32_t    g_page_right;
 global  uint32_t    g_page_top;
+global  uint32_t    g_page_depth;
 global  uint32_t    g_max_char_width;
 global  uint32_t    g_max_line_height;
 global  uint32_t    g_net_page_height;

@@ -966,7 +966,6 @@ void    init_page_geometry( void )
     uint32_t    tm;
     uint32_t    lm;
     uint32_t    rm;
-    uint32_t    depth;
     uint32_t    offset;
 
 
@@ -983,11 +982,16 @@ void    init_page_geometry( void )
 
     tm = conv_vert_unit( &layout_work.page.top_margin );
     lm = conv_hor_unit( &layout_work.page.left_margin );
-    rm = conv_hor_unit( &layout_work.page.right_margin );
-    depth = conv_vert_unit( &layout_work.page.depth );
+
+    rm = conv_hor_unit( &layout_work.page.right_margin )
+         - bin_device->x_offset;
+
+    g_page_depth = conv_vert_unit( &layout_work.page.depth )
+                   - bin_device->y_offset;
 
     if( GlobalFlags.firstpass && GlobalFlags.research ) {
-        out_msg( "\ntm:%d lm:%d rm:%d depth:%d\n", tm, lm, rm, depth );
+        out_msg( "\ntm:%d lm:%d rm:%d depth:%d\n", tm, lm, rm,
+                 g_page_depth );
     }
 
     g_page_left = max( lm, bin_device->x_start );
@@ -996,12 +1000,12 @@ void    init_page_geometry( void )
     if( bin_driver->y_positive == 0 ) {
         g_page_top = min( bin_device->page_depth - tm,
                           bin_device->y_start );
-        g_page_bottom = max( g_page_top - depth, bin_device->y_offset );
+        g_page_bottom = max( g_page_top - g_page_depth, bin_device->y_offset );
         g_net_page_height = g_page_top - g_page_bottom;
 
     } else {
         g_page_top = max( tm, bin_device->y_start );
-        g_page_bottom = min( g_page_top + depth, bin_device->y_offset );
+        g_page_bottom = min( g_page_top + g_page_depth, bin_device->y_offset );
         g_net_page_height = g_page_bottom - g_page_top;
     }
     g_net_page_width = g_page_right - g_page_left;

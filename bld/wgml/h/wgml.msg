@@ -6,8 +6,11 @@ pick( INF_PAUSE,       "(Press return to continue)",
 
 pick( INF_USE_START,   " ", " " )
 
-pick( INF_USE_USE,     "Usage: wgml [{-|/}Newoptions] srcfile [ ( option [option ...]]",
-                       "Usage: wgml [{-|/}Newoptions] srcfile [ ( option [option ...]]" )
+pick( INF_USE_USE,     "Usage: wgml srcfile [{-|/}Newoptions] [ ( option [option ...]]",
+                       "Usage: wgml srcfile [{-|/}Newoptions] [ ( option [option ...]]" )
+
+pick( INF_USE_SRC,     "srcfile has to come first.",
+                       "srcfile has to come first." )
 
 pick( INF_USE_OP,      "Newoptions:",
                        "Newoptions:" )
@@ -15,11 +18,20 @@ pick( INF_USE_OP,      "Newoptions:",
 pick( INF_USE_OPQ,     "-q\tQuiet, don't show product info.",
                        "-q\tQuiet, don't show product info." )
 
-pick( INF_USE_OPR,     "-r\tResearch produce additional output,",
-                       "-r\tResearch produce additional output," )
+pick( INF_USE_OPR,     "-r [filename] [from [to]]",
+                       "-r [filename] [from [to]]" )
 
-pick( INF_USE_OPR1,    "\tfollow .im, .ap, :INCLUDE tags and show substituted lines.",
-                       "\tfollow .im, .ap, :INCLUDE tags and show substituted lines." )
+pick( INF_USE_OPR1,    "\tResearch produce additional output,",
+                       "\tResearch produce additional output," )
+
+pick( INF_USE_OPR2,    "\tfilename and / or lineno range can limit the output,",
+                       "\tfilename and / or lineno range can limit the output," )
+
+pick( INF_USE_OPR3,    "\tdefault is srcfile with full line range.",
+                       "\tdefault is srcfile with full line range." )
+
+pick( INF_USE_OPR4,    "\tShow substituted lines:",
+                       "\tShow substituted lines:" )
 
 pick( INF_USE_OPSUB,   "\t> >line with variables substituted< <",
                        "\t> >line with varibales substituted< <" )
