@@ -499,6 +499,7 @@ void AddSegment( segdata *sd, class_entry *class )
             LnkMsg( ERR+MSG_CANT_COMBINE_32_AND_16, "12", segname_32, segname_16 );
         }
     }
+    leader->dbgtype = DBIColSeg( class );
     if( !IS_DBG_INFO( leader ) ) {
         if( sd->is32bit ) {
             Set32BitMode();
@@ -664,7 +665,6 @@ static seg_leader *MakeNewLeader( segdata *sdata, class_entry *class, unsigned_1
     leader->combine = sdata->combine;
     leader->class = class;
     leader->info = info;
-    leader->dbgtype = DBIColSeg( class );
     CheckForLast( leader, class );
     RingAppend( &class->segs, leader );
     RingAppend( &leader->pieces, sdata );
