@@ -488,10 +488,10 @@ int ipf_trans_line(
                    This should fix that */
                 ++ptr;
             }
-	    if( *ptr == CH_FONTSTYLE_START ) { /*Check to avoid nesting formatting codes*/
+            if( *ptr == CH_FONTSTYLE_START ) {  /* avoid nesting */
                 --ptr;
                 line_len += trans_add_str( ":dt.", section, &alloc_size );
-	        ptr = skip_blank( ptr + 1 );
+	            ptr = skip_blank( ptr + 1 );
                 Blank_line_sfx = FALSE;
             } else {
                 --ptr;
