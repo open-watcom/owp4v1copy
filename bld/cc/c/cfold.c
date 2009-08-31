@@ -981,7 +981,7 @@ static void FoldQuestionTree( TREEPTR tree )
 }
 
 
-static bool ConstantLeaf( TREEPTR opnd )
+static bool IsConstLeaf( TREEPTR opnd )
 {
     if( opnd->op.opr == OPR_PUSHINT  || opnd->op.opr == OPR_PUSHFLOAT ) {
         return( TRUE );
@@ -1011,14 +1011,14 @@ static bool FoldableTree( TREEPTR tree )
     case OPR_LSHIFT:
     case OPR_OR_OR:
     case OPR_AND_AND:
-        return( ConstantLeaf( tree->left ) && ConstantLeaf( tree->right ) );
+        return( IsConstLeaf( tree->left ) && IsConstLeaf( tree->right ) );
     case OPR_NEG:
     case OPR_COM:
     case OPR_NOT:
-        return( ConstantLeaf( tree->right ) );
+        return( IsConstLeaf( tree->right ) );
     case OPR_CONVERT:
         opnd = tree->right;
-        if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
+        if( IsConstLeaf( opnd ) ) {
             typ = tree->expr_type;
             CastConstNode( opnd, typ );
             *tree = *opnd;
@@ -1029,13 +1029,13 @@ static bool FoldableTree( TREEPTR tree )
         break;
     case OPR_RETURN:
         opnd = tree->right;
-        if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
+        if( IsConstLeaf( opnd ) ) {
             CastConstNode( opnd, tree->expr_type );
         }
         break;
     case OPR_COMMA:
         opnd = tree->left;
-        if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
+        if( IsConstLeaf( opnd ) ) {
             FreeExprNode( opnd );
             opnd = tree->right;
             *tree = *opnd;
@@ -1059,7 +1059,7 @@ static bool FoldableTree( TREEPTR tree )
                 opnd = tree->left;
             }
         }
-        if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
+        if( IsConstLeaf( opnd ) ) {
             FoldQuestionTree( tree );
         }
         break;
@@ -1144,7 +1144,7 @@ static void CheckOpndValues( TREEPTR tree )
     case OPR_RSHIFT:
     case OPR_LSHIFT_EQUAL:
     case OPR_RSHIFT_EQUAL:
-        if( ConstantLeaf( tree->right ) ) {
+        if( IsConstLeaf( tree->right ) ) {
             bool    shift_too_big = FALSE;
             bool    shift_negative = FALSE;
             int     max_shift;
@@ -1207,7 +1207,7 @@ static void CheckOpndValues( TREEPTR tree )
         break;
     case OPR_DIV:
     case OPR_MOD:
-        if( ConstantLeaf( tree->right ) ) {
+        if( IsConstLeaf( tree->right ) ) {
             bool    zero_divisor = FALSE;
 
             opnd = tree->right;
