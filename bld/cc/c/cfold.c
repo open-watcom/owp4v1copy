@@ -1085,6 +1085,25 @@ static bool FoldableTree( TREEPTR tree )
             }
         }
         break;
+    case OPR_FARPTR:
+        if( IsConstLeaf( tree->left ) && IsConstLeaf( tree->right ) ) {
+            uint64      seg_val;
+            uint64      off_val;
+            uint64      value;
+
+            seg_val = LongValue64( tree->left );
+            off_val = LongValue64( tree->right );
+            U64ShiftL( &seg_val, TARGET_NEAR_POINTER * 8, &value );
+            U64Or( &value, &off_val, &value );
+            tree->op.ulong64_value = value;
+            tree->op.opr = OPR_PUSHINT;
+            tree->op.const_type = TYPE_POINTER;
+            tree->left = NULL;
+            tree->right = NULL;
+            FreeExprNode( tree->left );
+            FreeExprNode( tree->right );
+        }
+        break;
     default:
         break;
     }
