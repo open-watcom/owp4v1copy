@@ -164,7 +164,6 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
             if( OptForSize > 50 ) return( FALSE );
             switch( op2->c.int_value ) {
             case 1:
-                return( TRUE );
             case 2:
             case 3:
                 /* If the shift is *not* followed by an add, we're going to

@@ -800,8 +800,8 @@ _Bin(   ANY,  C,    ANY,  NONE  ),V_SHIFT2BIG,R_FIXSHIFT,  RG_DBL_SHIFT,FU_NO,
 
 /* instructions we can generate*/
 
-_Bin(   R,    C,    R,    EQ_R1 ),V_LSHONE,  R_ADDRR,      RG_DBL,FU_NO,
 _BinPP( R,    C,    R,    NONE  ),V_LEA,     G_LEA,        RG_DBL,FU_ALUX,
+_Bin(   R,    C,    R,    EQ_R1 ),V_LSHONE,  R_ADDRR,      RG_DBL,FU_NO,
 _Bin(   R,    C,    R,    EQ_R1 ),V_OP2ONE,  G_R1SHIFT,    RG_DBL,FU_ALU1,
 _Bin(   M,    C,    M,    EQ_R1 ),V_OP2ONE,  G_1SHIFT,     RG_,FU_ALU1,
 _Bin(   R,    C,    R,    EQ_R1 ),V_NO,      G_RNSHIFT,    RG_DBL,FU_ALU1,
