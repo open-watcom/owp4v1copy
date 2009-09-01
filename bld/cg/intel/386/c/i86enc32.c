@@ -388,12 +388,12 @@ static  signed_32  GetNextAddConstant( instruction *ins )
            turn it into:
                 LEA     EAX, 3[ECX+EDX]
         */
-        disp = neg*next->operands[1]->c.int_value,
+        disp = neg * next->operands[1]->c.int_value,
         DoNothing( next );
         break;
     }
 
-    return disp;
+    return( disp );
 }
 
 extern  void    LayLeaRegOp( instruction *ins )
