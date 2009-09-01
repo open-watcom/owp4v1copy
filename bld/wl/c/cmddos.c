@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  command line parsing for the DOS load file format.
+* Description:  Command line parsing for the DOS load file format.
 *
 ****************************************************************************/
 
@@ -343,6 +343,13 @@ bool ProcNoIndirect( void )
 /********************************/
 {
     FmtData.u.dos.noindirect = TRUE;
+    return( TRUE );
+}
+
+bool ProcFullHeader( void )
+/*************************/
+{
+    FmtData.u.dos.full_mz_hdr = TRUE;
     return( TRUE );
 }
 

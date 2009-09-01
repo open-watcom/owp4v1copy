@@ -191,6 +191,7 @@ parse_entry     MainOptions[] = {
     "NOIndirect",   &ProcNoIndirect,    MK_OVERLAYS, 0,
     "ARea",         &ProcArea,          MK_OVERLAYS, 0,
     "PADSections",  &ProcPadSections,   MK_OVERLAYS, 0,
+    "FULLHeader",   &ProcFullHeader,    MK_DOS, 0,
     "PACKCode",     &ProcPackcode,      (MK_OS2_16BIT | MK_DOS | MK_QNX | MK_DOS16M), 0,
     "PACKData",     &ProcPackdata,      (MK_OS2_16BIT | MK_DOS | MK_QNX | MK_DOS16M), 0,
     "Alignment",    &ProcAlignment,     MK_OS2_16BIT | MK_OS2_LX | MK_PE | MK_ELF, 0,

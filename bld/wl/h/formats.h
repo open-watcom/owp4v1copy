@@ -89,6 +89,7 @@ struct fmt_dos_data {
     unsigned    dynamic         : 1;
     unsigned    ovl_short       : 1;
     unsigned    pad_sections    : 1;
+    unsigned    full_mz_hdr     : 1;
 };
 
 struct fmt_phar_data {

@@ -143,6 +143,7 @@
 .dir forcevector        ldforcev.gml    dos
 .do end
 .dir format             ldformat.gml    all
+.dir fullheader         opfullh.gml     dos
 .dir heapsize           opheap.gml      os2 qnx win16 win32
 .dir help               ophelp.gml      netware
 .dir hshift             ophshift.gml    dos os2 qnx win16

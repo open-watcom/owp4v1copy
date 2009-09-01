@@ -267,8 +267,8 @@ pick(    MSG_DOS_HELP_1,    "form      ::= \"Dos\" [\"COM\"]" ,
                 "form      ::= \"Dos\" [\"COM\"]" )
 pick(    MSG_DOS_HELP_2,    "directive ::= \"NEWsegment\"" ,
                 "directive ::+ \"NEWsegment\"" )                
-pick(    MSG_DOS_HELP_3,    "option    ::=  \"PACKCode=\"n | \"PACKData=\"n" ,
-                "option    ::=  \"PACKCode=\"n | \"PACKData=\"n" )
+pick(    MSG_DOS_HELP_3,    "option    ::= \"FULLHeader\" | \"PACKCode=\"n | \"PACKData=\"n" ,
+                "option    ::= \"FULLHeader\" | \"PACKCode=\"n | \"PACKData=\"n" )
 
 /*
  *  OS2 help screen: max 32 lines (from 0 to 31).
