@@ -648,7 +648,7 @@ int main( int argc, char * argv[] )
 
             if( t_line.first != NULL ) {
 
-                process_line_full( &t_line );
+                process_line_full( &t_line, false );
 
             }
             if( GlobalFlags.research && (pass < passes) ) {

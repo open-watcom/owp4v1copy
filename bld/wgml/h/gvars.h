@@ -148,6 +148,7 @@ typedef enum ju_enum {                  // for .ju(stify)
 
 /***************************************************************************/
 /*  enums for layout tags with attributes  (and ebanregion)                */
+/*  the order is as shown by :convert output                               */
 /***************************************************************************/
 
 typedef enum lay_sub {

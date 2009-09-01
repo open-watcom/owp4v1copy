@@ -178,6 +178,8 @@ void    scr_im( void )
     if( (cc == pos) && (gn.result < 10) ) { // include SYSUSR0x.GML
 
         close_pu_file( gn.result );     // if still open
+        strcpy_s( token_buf, buf_size, "SYSUSR0" );
+        strcat_s( token_buf, buf_size, gn.resultstr );
 
     } else {
         p = gn.argstart;
@@ -196,6 +198,7 @@ void    scr_im( void )
         strcpy_s( token_buf, buf_size, fnstart );
     }
 
+    scan_restart = scan_stop + 1;
     ProcFlags.newLevelFile = 1;
     line_from = LINEFROM_DEFAULT;
     line_to   = LINETO_DEFAULT;

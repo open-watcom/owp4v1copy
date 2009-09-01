@@ -230,10 +230,19 @@ static void scan_gml( void )
                     }
                 }
             }
-        } else {
+        } else {                        // not in layout
             for( k = 0; k < GML_TAGMAX; ++k ) {
                 if( toklen == gml_tags[k].taglen ) {
                     if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
+                        if( !stricmp(tok_start + 1, "LAYOUT" ) &&
+                            ProcFlags.fb_document_done  ) {
+                            g_err( err_lay_too_late );
+                            err_count++;
+                            file_mac_info();
+                            processed = true;
+                            scan_start = scan_stop +1;
+                            break;
+                        }
                         if( !ProcFlags.fb_document_done &&
                               gml_tags[k].tagflags & tag_out_txt ) {
                             do_layout_end_processing(); // tag with text output

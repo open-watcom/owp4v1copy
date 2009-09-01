@@ -195,7 +195,12 @@ static void process_co_ju( bool both , char *cwcurr )
             if( both ) {
                 ProcFlags.concat = true;
             }
-            ProcFlags.justify = ju_left;
+
+            /***************************************************************/
+            /*  .ju left is treated as .ju off by wgml4.0                  */
+            /*  system variable SYSJU is set to OFF                        */
+            /***************************************************************/
+            ProcFlags.justify = ju_off; // left is like off for wgml 4.0
             scan_restart = pa + len;
         } else {
             if( !strnicmp( "HALF", pa, 4 ) ) {

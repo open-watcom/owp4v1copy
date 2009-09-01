@@ -114,7 +114,7 @@ void    scr_br( void )
 void  scr_process_break( void )
 {
     if( t_line.first != NULL ) {
-        process_line_full( &t_line );
+        process_line_full( &t_line, false );
     }
     return;
 

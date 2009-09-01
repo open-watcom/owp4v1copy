@@ -292,7 +292,7 @@ void    add_text_chars_to_pool( text_line * a_line )
 /*                                                                         */
 /***************************************************************************/
 
-void    process_line_full( text_line * a_line )
+void    process_line_full( text_line * a_line, bool justify )
 {
     if( a_line->first == NULL ) {
         return;
@@ -301,7 +301,7 @@ void    process_line_full( text_line * a_line )
         if( input_cbs->fmflags & II_research ) {
             test_out_t_line( a_line );
         }
-        if( !ProcFlags.literal && ProcFlags.justify > ju_off ) {
+        if( justify && !ProcFlags.literal && ProcFlags.justify > ju_off ) {
 
             do_justify( g_page_left, g_page_left + g_cl );
             if( input_cbs->fmflags & II_research ) {
@@ -363,7 +363,7 @@ void    process_text( char * text, uint8_t font_num )
                                                 curr_t->count,
                                                 font_num );
                 if( g_cur_h_start + curr_t->width > g_page_right ) {
-                    process_line_full( &t_line );
+                    process_line_full( &t_line, true );
                     curr_t->x_address = g_page_left;
 
                 }
@@ -393,7 +393,7 @@ void    process_text( char * text, uint8_t font_num )
 
         if( g_cur_h_start + curr_t->width > g_page_right ) {
 
-            process_line_full( &t_line );
+            process_line_full( &t_line, true );
             curr_t->x_address = g_page_left;
         }
 
@@ -410,7 +410,7 @@ void    process_text( char * text, uint8_t font_num )
 
     if( !ProcFlags.concat && (t_line.first != NULL) && GlobalFlags.lastpass) {
 
-        process_line_full( &t_line );
+        process_line_full( &t_line, false );
 
 
     }

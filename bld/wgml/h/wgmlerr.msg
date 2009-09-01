@@ -402,3 +402,6 @@ pick( ERR_GML_IN_LAY,           "GML tag '%s' not allowed in LAYOUT",
 pick( ERR_LAY_IN_GML,           "LAYOUT tag '%s' not allowed outside LAYOUT",
                                 "LAYOUT tag '%s' not allowed outside LAYOUT" )
 
+pick( ERR_LAY_TOO_LATE,         "'LAYOUT' tag is specified too late (must come before text)",
+                                "'LAYOUT' tag is specified too late (must come before text)" )
+
