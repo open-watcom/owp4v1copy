@@ -159,13 +159,30 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
             }
             break;
         case OP_LSHIFT:
-            if( op1 == result && _CPULevel( CPU_586 ) ) return( FALSE );
-            if( OptForSize >= 50 ) return( FALSE );
+            if( op1 == result && (_CPULevel( CPU_586 ) && !_CPULevel( CPU_686 )) )
+                return( FALSE );
+            if( OptForSize > 50 ) return( FALSE );
             switch( op2->c.int_value ) {
             case 1:
+                return( TRUE );
             case 2:
             case 3:
-                return( TRUE );
+                /* If the shift is *not* followed by an add, we're going to
+                 * end up with a huge lea instruction which is unlikely to
+                 * be any faster. See also GetNextAddConstant() in i86enc32.c.
+                 */
+                switch( ins->head.next->head.opcode ) {
+                case OP_ADD:
+                case OP_SUB:
+                    if( ins->head.next->operands[0] != ins->result ) break;
+                    if( ins->head.next->result != ins->result ) break;
+                    if( ins->head.next->operands[1]->n.class != N_CONSTANT ) break;
+                    if( ins->head.next->operands[1]->c.const_type != CONS_ABSOLUTE ) break;
+                    if( ins->head.next->ins_flags & INS_CC_USED ) break;
+                    return( TRUE );
+                default:
+                    break;
+                }
             }
             break;
 #endif
