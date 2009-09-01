@@ -816,6 +816,11 @@ static PTREE foldUInt( CGOP op, PTREE left, target_ulong v2 )
     case CO_COMMA:
         v1 = v2;
         break;
+#if _CPU == 8086
+    case CO_SEG_OP:
+        v1 = (v2 << (TARGET_NEAR_POINTER * 8)) | v1;
+        break;
+#endif
     default:
         return( NULL );
     }
