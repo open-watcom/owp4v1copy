@@ -374,16 +374,16 @@ static void sysfnamfun( symvar * e )  // name of current input file not macro
     inputcb * wk;
 
     if( input_cbs == NULL ) {
-        sysfile0.value = NULL;
+        sysfnam0.value = NULL;
     } else {
         wk = input_cbs;
         while( (wk != NULL) && !(wk->fmflags & II_file) ) {
             wk = wk->prev;
         }
         if( wk == NULL ) {
-            sysfile0.value = NULL;
+            sysfnam0.value = NULL;
         } else {
-            sysfile0.value = input_cbs->s.f->filename;
+            sysfnam0.value = input_cbs->s.f->filename;
         }
     }
     return;
@@ -871,18 +871,30 @@ static  void    init_date_time( void )
 {
     time_t  now;
     struct  tm      tmbuf;
+    char    *   p;
 
     now = time( NULL );
     localtime_s( &now, &tmbuf );
 
     strftime( dateval, sizeof( dateval ), "%B %d, %Y", &tmbuf );
+
+    p = strstr( dateval, " 0" );        // search for leading zero
+    if( p != NULL ) {                   // 'September 02, 2009'
+        p++;
+        *p = ' ';
+        while( *p ) {                   // becomes
+            *p = *(p + 1);              // 'September 2, 2009'
+            p++;
+        }
+    }
     sysdate0.value = dateval;
     add_symvar( &global_dict, "date", dateval, no_subscript, 0 );
 
-    strftime( dayofmval, sizeof( dayofmval ), "%d", &tmbuf );
+    strftime( dayofmval, sizeof( dayofmval ), "%e", &tmbuf );
     sysdayofm0.value = dayofmval;
 
     strftime( dayofwval, sizeof( dayofwval ), "%w", &tmbuf );
+    dayofwval[0] += 1;                  // make 0-6 sun-sat 1-7
     sysdayofw0.value = dayofwval;
 
     strftime( dayofyval, sizeof( dayofyval ), "%j", &tmbuf );
