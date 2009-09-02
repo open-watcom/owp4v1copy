@@ -649,8 +649,11 @@ bool IsZero( TREEPTR tree )
 {
     bool    ret;
 
-    if( tree->op.opr == OPR_PUSHINT && tree->op.long_value == 0 ) {
-        ret = TRUE;
+    if( tree->op.opr == OPR_PUSHINT ) {
+        uint64      val64;
+        
+        val64 = LongValue64( tree );
+        ret = !U64Test( &val64 );
     } else {
         ret = FALSE;
     }
@@ -1538,10 +1541,14 @@ int FuncPtr( TYPEPTR typ )
     return( 1 );
 }
 
-/* Note: If we can detect that the source is a null pointer, we might
- * relax the checks. Currently I see no reason to do that.
+/* Check if pointer conversion is losing high (segment) bits.
+ * A special dispensation is made for null pointer conversions; if the
+ * source operand is a zero integer constant, chopping off high bits
+ * is not considered an error. This helps in Win16 programming where
+ * NULL (which may be a 32-bit quantity) is often converted to
+ * a 16-bit HANDLE type.
  */
-bool IsPtrConvSafe( TYPEPTR newtyp, TYPEPTR oldtyp )
+bool IsPtrConvSafe( TREEPTR src, TYPEPTR newtyp, TYPEPTR oldtyp )
 {
     bool                is_safe = TRUE;
     enum segments       new_seg;
@@ -1586,7 +1593,7 @@ bool IsPtrConvSafe( TYPEPTR newtyp, TYPEPTR oldtyp )
         } else {
             old_seg = oldtyp->u.p.segment;
         }
-        is_safe = ( old_seg == new_seg );
+        is_safe = ( old_seg == new_seg ) || IsZero( src );
     }
     return( is_safe );
 }
@@ -1657,7 +1664,7 @@ convert:                                /* moved here 30-aug-89 */
                 if( ( typ->u.p.decl_flags & NEAR_FAR_HUGE )
                     != ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE )
                     || ( opnd_type == TYPE_ARRAY ) ) {
-                    if( !IsPtrConvSafe( newtyp, typ ) ) {
+                    if( !IsPtrConvSafe( opnd, newtyp, typ ) ) {
                         if( cast_op ) {
                             CWarn1( WARN_CAST_POINTER_TRUNCATION,
                                     ERR_CAST_POINTER_TRUNCATION );

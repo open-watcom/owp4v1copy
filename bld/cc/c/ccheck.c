@@ -853,7 +853,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         }
         break;
     case PT:                                        /* 31-aug-89 */
-        if( !IsPtrConvSafe( typ1, typ2 ) ) {
+        if( !IsPtrConvSafe( opnd2, typ1, typ2 ) ) {
             CWarn1( WARN_POINTER_TRUNCATION, ERR_POINTER_TRUNCATION );
         }
         break;
