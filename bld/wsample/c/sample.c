@@ -546,7 +546,7 @@ int main( int argc, char **argv )
     char            *cmd_line;
     char            *arg;
     char            *cmd;
-    char FAR_PTR    *tmp;
+    char FAR_PTR    *tmp_cmd;
     char            *eoc;
     int             cmdlen;
 
@@ -581,11 +581,10 @@ int main( int argc, char **argv )
     }
     _fstrcpy( cmd_line, win_cmd );
 #endif
-    tmp = cmd_line;
-    cmd = (char near *) tmp;
-    while( *cmd ) ++cmd;
-    while( *--cmd == ' ' || *cmd == '\t' ) ;
-    *++cmd = '\0';
+    tmp_cmd = cmd_line;
+    while( *tmp_cmd ) ++tmp_cmd;
+    while( *--tmp_cmd == ' ' || *tmp_cmd == '\t' ) ;
+    *++tmp_cmd = '\0';
     cmd = Parse( cmd_line, arg, &eoc );    /*
           will set Ceiling, Margin, TimerMult, cmd, and arg
                                  */

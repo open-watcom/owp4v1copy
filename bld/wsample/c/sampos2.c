@@ -129,6 +129,14 @@ static int IsLX()
     return( sig == EXE_LX );
 }
 
+static void InternalError( char * str )
+{
+    Output( MsgArray[MSG_SAMPLE_2-ERR_FIRST_MESSAGE] );
+    Output( str );
+    Output( "\r\n" );
+    _exit( -1 );
+}
+
 #define OS22SAMPLER "WSMPOS22.EXE"
 
 /*
@@ -363,15 +371,6 @@ USHORT LibLoadPTrace( TRACEBUF FAR_PTR *buff )
         buff->segv = segv;
     }
 }
-
-static void InternalError( char * str )
-{
-    Output( MsgArray[MSG_SAMPLE_2-ERR_FIRST_MESSAGE] );
-    Output( str );
-    Output( "\r\n" );
-    _exit( -1 );
-}
-
 
 void __far Sleeper( void )
 {
