@@ -52,15 +52,15 @@ static bool SendCommand( DWORD ddeinst, HCONV hconv, char *buff )
     HDDEDATA    hData, hrc;
 
     // Note data handle is freed by call to DdeClientTransaction
-    hData = DdeCreateDataHandle( ddeinst, (PBYTE)buff, strlen( buff ) + 1,
-                                 0, NULL, 0L, 0L );
-    if( hData == NULL ) {
+    hData = DdeCreateDataHandle( ddeinst, (LPBYTE)buff, strlen( buff ) + 1,
+                                 0, (HSZ)NULL, 0L, 0L );
+    if( hData == (HDDEDATA)NULL ) {
         return( FALSE );
     }
 
-    hrc = DdeClientTransaction( (LPBYTE) hData, -1, hconv, NULL, 0L,
+    hrc = DdeClientTransaction( (LPBYTE) hData, -1, hconv, (HSZ)NULL, 0L,
                                 XTYP_EXECUTE, DDE_WAITTIME, NULL );
-    if( hrc == NULL ) {
+    if( hrc == (HDDEDATA)NULL ) {
         return( FALSE );
     }
 
@@ -102,7 +102,7 @@ static bool UseDDE( bool uninstall )
     htopic = DdeCreateStringHandle( ddeinst, progman, CP_WINANSI );
 
     hconv = DdeConnect( ddeinst, happ, htopic, NULL );
-    if( hconv == NULL ) {
+    if( hconv == (HCONV)NULL ) {
         return( FALSE );
     }
 
