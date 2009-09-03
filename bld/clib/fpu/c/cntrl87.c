@@ -34,7 +34,7 @@
 #include <float.h>
 #include "rtdata.h"
 
-typedef unsigned short _WCNEAR *cwp;
+typedef unsigned short __based(__segname("_STACK"))     *cwp;
 
 extern  void    __fstcw( cwp cw );
 extern  void    __fldcw( cwp cw );
@@ -68,13 +68,13 @@ extern unsigned char __dos87real;
 extern unsigned short __dos87emucall;
 #pragma aux __dos87emucall "*";
 
-void _WCI86NEAR __dos_emu_fldcw( unsigned short * );
+void _WCI86NEAR __dos_emu_fldcw( cwp );
 #pragma aux __dos_emu_fldcw "*" = \
         "mov    ax,3" \
         "call   __dos87emucall" \
         parm [bx];
 
-void _WCI86NEAR __dos_emu_fstcw( unsigned short * );
+void _WCI86NEAR __dos_emu_fstcw( cwp );
 #pragma aux __dos_emu_fstcw "*" = \
         "mov    ax,4" \
         "call   __dos87emucall" \
@@ -111,33 +111,33 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
     control_word = 0;
     if( _RWD_8087 ) {
 #if defined(__WINDOWS__) && !defined(__WINDOWS_386__)
-        __fstcw( (cwp)&control_word );
+        __fstcw( &control_word );
         control_word = __win87em_fstcw();
         if( mask != 0 ) {
             control_word = (control_word & ~mask) | (new & mask);
-            __fldcw( (cwp)&control_word );
+            __fldcw( &control_word );
             __win87em_fldcw(control_word);
         }
 #elif defined( __DOS_086__ )
         if( __dos87real ) {
-            __fstcw( (cwp)&control_word );
+            __fstcw( &control_word );
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
-                __fldcw( (cwp)&control_word );
+                __fldcw( &control_word );
             }
         }
         if( __dos87emucall ) {
-            __dos_emu_fstcw( (cwp)&control_word );
+            __dos_emu_fstcw( &control_word );
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
-                __dos_emu_fldcw( (cwp)&control_word );
+                __dos_emu_fldcw( &control_word );
             }
         }
 #else
-        __fstcw( (cwp)&control_word );
+        __fstcw( &control_word );
         if( mask != 0 ) {
             control_word = (control_word & ~mask) | (new & mask);
-            __fldcw( (cwp)&control_word );
+            __fldcw( &control_word );
         }
 #endif
     }
