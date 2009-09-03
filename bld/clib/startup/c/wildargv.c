@@ -78,13 +78,17 @@ extern  void    _Not_Enough_Memory( void );
 static void *_allocate( unsigned amount )
 {
     void *p;
+#if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
+    void near *np;
+#endif
 
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
     p = malloc( amount );
 #else
     p = _nmalloc( amount );
 #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
-    if( (void near *) p == NULL ) {
+    p = np = _nmalloc( amount );
+    if( np == NULL ) {
         p = malloc( amount );
     }
 #endif

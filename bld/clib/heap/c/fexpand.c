@@ -52,9 +52,9 @@ _WCRTLINK void _WCFAR *_fexpand( void _WCFAR *stg, size_t req_size )
 
     seg = FP_SEG( stg );
     if( seg == _DGroup() ) {
-        tmp = _nexpand( (void _WCNEAR *) stg, req_size );
+        tmp = _nexpand( (void _WCNEAR *)FP_OFF( stg ), req_size );
         if( tmp == NULL )  return( NULL );
-    } else if( _bexpand( seg,(void __based(void) *)FP_OFF(stg), req_size )
+    } else if( _bexpand( seg,(void __based(void) *)FP_OFF( stg ), req_size )
                                 == _NULLOFF ) {
         return( NULL );
     }

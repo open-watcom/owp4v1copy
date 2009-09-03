@@ -63,20 +63,21 @@ static char *_free_ep;
 #if defined(__REAL_MODE__) && defined(__BIG_DATA__)
 static void *(_WCI86NEAR allocate)( size_t amt )
 {
-    void    *ptr;
+    void                *ptr;
+    void _WCI86NEAR     *nptr;
 
     #if defined(__OS2_286__)
         if( _osmode == DOS_MODE ) {
-            ptr = lib_nmalloc( amt );
-            if( (void _WCI86NEAR *)ptr == NULL ) {
+            ptr = nptr = lib_nmalloc( amt );
+            if( nptr == NULL ) {
                 ptr = lib_malloc( amt );
             }
         } else {
             ptr = lib_malloc( amt );
         }
     #else
-        ptr = lib_nmalloc( amt );
-        if( (void _WCI86NEAR *)ptr == NULL ) {
+        ptr = nptr = lib_nmalloc( amt );
+        if( nptr == NULL ) {
             ptr = lib_malloc( amt );
         }
     #endif

@@ -57,7 +57,7 @@ _WCRTLINK void _ffree( void _WCFAR *stg )
         return;
     }
     if( seg == _DGroup() ) {
-        _nfree( (void _WCNEAR *) stg );
+        _nfree( (void _WCNEAR *)FP_OFF( stg ) );
         return;
     }
     _AccessFHeap();

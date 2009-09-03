@@ -76,6 +76,9 @@ _WCRTLINK void *__F_NAME( _getargv, _wgetargv )(
     CHAR_TYPE   *cmdline;       /* copy of command line */
     unsigned    size;           /* amount to allocate */
     unsigned    argv_offset;    /* offset of argv in storage */
+#if defined(__REAL_MODE__) && defined(__BIG_DATA__)
+    void _WCI86NEAR *ncmd;      /* near cmdline, if we can get it */
+#endif
 
     argc = _SplitParms( historical, cmd, NULL, &endptr ) + 1;
     len = (unsigned) ( endptr - cmd ) + 1;
@@ -87,16 +90,16 @@ _WCRTLINK void *__F_NAME( _getargv, _wgetargv )(
     #if defined(__REAL_MODE__) && defined(__BIG_DATA__)
         #if defined(__OS2_286__)
             if( _osmode == DOS_MODE ) {
-                cmdline = lib_nmalloc( size );
-                if( (void _WCI86NEAR *) cmdline == NULL ) {
+                cmdline = ncmd = lib_nmalloc( size );
+                if( ncmd == NULL ) {
                     cmdline = lib_malloc( size );
                 }
             } else {
                 cmdline = lib_malloc( size );
             }
         #else
-            cmdline = lib_nmalloc( size );
-            if( (void _WCI86NEAR *) cmdline == NULL ) {
+            cmdline = ncmd = lib_nmalloc( size );
+            if( ncmd == NULL ) {
                 cmdline = lib_malloc( size );
             }
         #endif

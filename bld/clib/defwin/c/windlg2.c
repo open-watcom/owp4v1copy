@@ -216,7 +216,7 @@ GLOBALHANDLE _AddControl( GLOBALHANDLE data, int dtilx, int dtily,
     _FARmemcpy( ditstr, class, classlen );
     ditstr += ROUND_CLASSLEN( classlen );
     ditstr = copyString( ditstr, text, textlen );
-    *((INFOTYPE *)ditstr) = infolen;
+    *((INFOTYPE _ISFAR *)ditstr) = infolen;
     ditstr += sizeof( INFOTYPE );
     _FARmemcpy( ditstr, infodata, infolen );
     ditstr += infolen;
