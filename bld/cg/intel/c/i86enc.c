@@ -28,7 +28,7 @@
 *               writes the instructions into the object file.
 *
 ****************************************************************************/
-#include <stdio.h>
+
 
 #include "standard.h"
 #include "cgdefs.h"
