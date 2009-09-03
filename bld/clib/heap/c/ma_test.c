@@ -34,6 +34,9 @@
 #include <malloc.h>
 #include <string.h>
 #include <conio.h>
+#ifdef _M_I86
+    #include <i86.h>
+#endif
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -90,9 +93,9 @@
             free( (void *) ptr_int );                                   \
             free( (void *) ptr_double );                                \
         } else if( type == TYPE_NEAR ) {                                \
-            _nfree( (void __near *) ptr_char );                         \
-            _nfree( (void __near *) ptr_int );                          \
-            _nfree( (void __near *) ptr_double );                       \
+            _nfree( (void __near *) FP_OFF( ptr_char ) );               \
+            _nfree( (void __near *) FP_OFF( ptr_int ) );                \
+            _nfree( (void __near *) FP_OFF( ptr_double ) );             \
         } else if( type == TYPE_FAR ) {                                 \
             _ffree( (void __far *) ptr_char );                          \
             _ffree( (void __far *) ptr_int );                           \
@@ -108,6 +111,21 @@
         memavail = _memavl();                                           \
         return;                                                         \
     }
+
+    #define _CRET_HUGE() {                                              \
+        if( doheapwlk ) AskHeapWlk( FREED_BEFORE, type, __LINE__ );     \
+        if( type == TYPE_HUGE ) {                                       \
+            hfree( (void __huge *) ptr_char );                          \
+            hfree( (void __huge *) ptr_int );                           \
+            hfree( (void __huge *) ptr_double );                        \
+        } else {                                                        \
+            printf( "INTERNAL ERROR - incorrect heap type\n" );         \
+        }                                                               \
+        if( doheapwlk ) AskHeapWlk( FREED_AFTER, type, __LINE__ );      \
+        memavail = _memavl();                                           \
+        return;                                                         \
+    }
+
 #else
     #define _CRET() {                                                   \
         if( doheapwlk ) AskHeapWlk( FREED_BEFORE, type, __LINE__ );     \
@@ -374,9 +392,9 @@ void Test_alloca_stackavail__memavl__memmax( test_result *result )
 
 void Test_calloc__msize( test_result *result, int type )
 {
-    long        ptr_char   = NULL;
-    long        ptr_int    = NULL;
-    long        ptr_double = NULL;
+    long        ptr_char   = (long)NULL;
+    long        ptr_int    = (long)NULL;
+    long        ptr_double = (long)NULL;
     size_t      ctr, size, retsize, chkmemavl;
 
     switch( type ) {
@@ -558,10 +576,10 @@ void Test_malloc_realloc__expand( test_result *result, int type )
 {
     size_t      ctr, size, chkmemavl;
     int         f_pass;
-    long        ptr_char    = NULL;
-    long        ptr_int     = NULL;
-    long        ptr_double  = NULL;
-    long        tmp_ptr = NULL;
+    long        ptr_char    = (long)NULL;
+    long        ptr_int     = (long)NULL;
+    long        ptr_double  = (long)NULL;
+    long        tmp_ptr     = (long)NULL;
 
     switch( type ) {
         case TYPE_DEFAULT:
@@ -846,23 +864,23 @@ void Test_halloc( test_result *result )
     if( ptr_char == NULL && ptr_int != NULL ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[2] );
-        _CRET();
+        _CRET_HUGE();
     }
     if( ptr_char == NULL ) {
         result->status = TEST_NOMEM ;
         if( more_debug ) nomem_lineno = __LINE__;
-        _CRET();
+        _CRET_HUGE();
     }
     ptr_double = (double __huge *)halloc( HUGE_NUM_EL, sizeof( double ) );
     if( ptr_int == NULL && ptr_double != NULL ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[3] );
-        _CRET();
+        _CRET_HUGE();
     }
     if( ptr_int == NULL || ptr_double == NULL) {
         result->status = TEST_NOMEM ;
         if( more_debug ) nomem_lineno = __LINE__;
-        _CRET();
+        _CRET_HUGE();
     }
     result->status = TEST_PASS;
     for( ctr = 0; ctr < HUGE_NUM_EL && result->status == TEST_PASS; ++ctr ) {
@@ -881,7 +899,7 @@ void Test_halloc( test_result *result )
         if( tracethisloop ) ShowDot( ctr );
     }   // Make sure that array is accessible.
     if( tracethisloop ) cprintf( "\r\nTrace done. No problems detected.\r\n");
-    _CRET();
+    _CRET_HUGE();
 }
 #endif
 
