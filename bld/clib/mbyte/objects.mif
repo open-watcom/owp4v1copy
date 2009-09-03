@@ -54,14 +54,14 @@
 !inject fmbstowc.obj d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fmbsupr.obj  d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fmbterm.obj  d16 d32             nt                 o16 o32         w16 w32 osi
-!inject fmbtowc.obj  d16 d32                                o16 o32         w16 w32 osi
+!inject fmbtowc.obj  d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fwcrtomb.obj d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fwcrto_s.obj d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fwcsrtom.obj d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fwcstomb.obj d16 d32             nt                 o16 o32         w16 w32 osi
 !inject fwcsto_s.obj d16 d32             nt                 o16 o32         w16 w32 osi
-!inject fwctomb.obj  d16 d32                                o16 o32         w16 w32 osi
-!inject fwctom_s.obj d16 d32                                o16 o32         w16 w32 osi
+!inject fwctomb.obj  d16 d32             nt                 o16 o32         w16 w32 osi
+!inject fwctom_s.obj d16 d32             nt                 o16 o32         w16 w32 osi
 !inject getmbcp.obj  d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject ismbbaln.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject ismbbalp.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
@@ -168,3 +168,8 @@
 
 !include ../../../../objlist.mif
 mbinit_postopts=-os
+
+# WORKAROUND: The _fxxx functions for flat model targets are essentially
+# useless, but they must be removed completely (not just some modules)
+fmbtowc_postopts = -wcd310
+fwctomb_postopts = -wcd310
