@@ -37,8 +37,10 @@
 
 extern const char __based(__segname("_CONST")) __Alphabet[];
 
+typedef unsigned __based(__segname("_STACK")) *uint_stk_ptr;
+
 #if defined( _M_IX86 )
-unsigned long long __ulldiv( unsigned long long, unsigned _WCNEAR *);
+unsigned long long __ulldiv( unsigned long long, uint_stk_ptr );
 #if defined(__386__)
     #pragma aux __ulldiv = \
         "xor ecx,ecx"     /* set high word of quotient to 0 */ \
@@ -181,7 +183,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(ulltoa,_ulltow)(
     do {
 #if defined( _M_IX86 )
         rem = radix;
-        value = __ulldiv( value, (unsigned _WCNEAR *) &rem );
+        value = __ulldiv( value, &rem );
 #else
         rem = value % radix;
         value = value / radix;

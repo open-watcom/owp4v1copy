@@ -35,8 +35,10 @@
 
 extern const char __based(__segname("_CONST")) __Alphabet[];
 
+typedef unsigned __based(__segname("_STACK")) *uint_stk_ptr;
+
 #if defined(__WATCOMC__)
-unsigned __udiv( unsigned, unsigned _WCNEAR * );
+unsigned __udiv( unsigned, uint_stk_ptr );
 #if defined(__386__)
     #pragma aux __udiv = \
         "xor edx,edx" \
@@ -77,7 +79,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(utoa,_utow)( unsigned value, CHAR_TYPE *buffer, in
     do {
 #if defined(_M_IX86) && defined(__WATCOMC__)
         quot = radix;
-        rem = __udiv( value, (unsigned _WCNEAR *) &quot );
+        rem = __udiv( value, &quot );
 #else
         rem = value % radix;
         quot = value / radix;
