@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Overlay test, part III.
 *
 ****************************************************************************/
 
@@ -49,7 +48,7 @@ void ovl3( void ) {
     puts( "overlay file closed" );
 }
 
-int cg24( unsigned short c ) {
+void cg24( unsigned short c ) {
 }
 
 int cg26( unsigned short c ) {
