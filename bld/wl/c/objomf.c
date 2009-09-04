@@ -492,11 +492,12 @@ static void Comment( void )
         switch( which ) {
         case MOMF_IMPDEF:
         case MOMF_EXPDEF:
-            SeenDLLRecord();
-            if( which == MOMF_EXPDEF ) {
-                ProcExportKeyword();
-            } else {
-                ProcImportKeyword();
+            if( SeenDLLRecord() ) {
+                if( which == MOMF_EXPDEF ) {
+                    ProcExportKeyword();
+                } else {
+                    ProcImportKeyword();
+                }
             }
             break;
         case MOMF_PROT_LIB:

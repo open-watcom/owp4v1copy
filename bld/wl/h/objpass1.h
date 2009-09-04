@@ -81,7 +81,7 @@ extern void             DefineComdat( segdata *, symbol *, offset, sym_info,
                                       unsigned_8 * );
 extern group_entry *    GetGroup( char * );
 extern group_entry *    SearchGroups( char * );
-extern void             SeenDLLRecord( void );
+extern bool             SeenDLLRecord( void );
 extern void             HandleImport( length_name *, length_name *,
                                       length_name *, unsigned long );
 extern void             HandleExport( length_name *, length_name *, unsigned,

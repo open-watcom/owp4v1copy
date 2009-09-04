@@ -1190,13 +1190,15 @@ void SetCurrSeg( segdata *seg, offset obj_offset, unsigned_8 *data )
     CurrRec.data = data;
 }
 
-void SeenDLLRecord( void )
+bool SeenDLLRecord( void )
 /*******************************/
 {
     LinkState |= FMT_SEEN_IMPORT_CMT;
     if( !HintFormat( (MK_OS2 | MK_PE | MK_ELF | MK_NOVELL) ) ) {
         LnkMsg( LOC+WRN+MSG_DLL_WITH_386, NULL );
-        return;
+        return( FALSE );    /* Not OK to process import/export records. */
+    } else {
+	return( TRUE );
     }
 }
 
