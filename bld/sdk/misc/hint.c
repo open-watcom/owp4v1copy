@@ -42,24 +42,34 @@ typedef struct {
     WORD                curmsg;
     WORD                hintlen;
     MenuItemHint        *hints;
-}HintWndInfo;
+} HintWndInfo;
+
+#define HINT_PROP_ID    "info"
 
 static WORD getItemMsg( statwnd *wnd, WORD menuid )
 {
     WORD                i;
     HWND                hint;
+    HLOCAL              hinfo;
     HintWndInfo         *info;
     MenuItemHint        *hinttable;
+    WORD                ret;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetProp( hint, "info" );
+    hinfo = GetProp( hint, HINT_PROP_ID );
+    info = LocalLock( hinfo );
     hinttable = info->hints;
+    ret = HINT_EMPTY;
     if( hinttable != NULL ) {
         for( i=0; i < info->hintlen; i++ ) {
-            if( hinttable[i].menuid == menuid ) return( hinttable[i].msgid );
+            if( hinttable[i].menuid == menuid ) {
+                ret = hinttable[i].msgid;
+                break;
+            }
         }
     }
-    return( HINT_EMPTY );
+    LocalUnlock( hinfo );
+    return( ret );
 }
 
 static void updateHintText( statwnd *wnd, WORD msgid )
@@ -68,6 +78,7 @@ static void updateHintText( statwnd *wnd, WORD msgid )
     HFONT       font;
     char        *str;
     HWND        hint;
+    HLOCAL      hinfo;
     HintWndInfo *info;
 
     hint = GetHintHwnd( wnd );
@@ -78,8 +89,10 @@ static void updateHintText( statwnd *wnd, WORD msgid )
                         DT_LEFT | DT_SINGLELINE | DT_VCENTER  );
     ReleaseDC( hint, dc );
     FreeRCString( str );
-    info = (HintWndInfo *)GetProp( hint, "info" );
+    hinfo = GetProp( hint, HINT_PROP_ID );
+    info = LocalLock( hinfo );
     info->curmsg = msgid;
+    LocalUnlock( hinfo );
 }
 
 void HintToolBar( statwnd *wnd, UINT menuid, BOOL select )
@@ -96,6 +109,7 @@ void HintToolBar( statwnd *wnd, UINT menuid, BOOL select )
 
 WORD SizeHintBar( statwnd *wnd )
 {
+    HLOCAL      hinfo;
     HintWndInfo *info;
     HFONT       font;
     HFONT       oldfont;
@@ -105,7 +119,8 @@ WORD SizeHintBar( statwnd *wnd )
     HWND        hint;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetProp( hint, "info" );
+    hinfo = GetProp( hint, HINT_PROP_ID );
+    info = LocalLock( hinfo );
     dc = GetDC( hint );
     font = GetMonoFont();
     oldfont = SelectObject( dc, font );
@@ -118,6 +133,7 @@ WORD SizeHintBar( statwnd *wnd )
                 area.bottom - area.top, TRUE );
     updateHintText( wnd, info->curmsg );
     GetWindowRect( hint, &area );
+    LocalUnlock( hinfo );
     return( area.bottom - area.top );
 }
 
@@ -148,13 +164,16 @@ MenuItemHint *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt )
 {
     HintWndInfo         *info;
     MenuItemHint        *ret;
+    HLOCAL              hinfo;
     HWND                hint;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetProp( hint, "info" );
+    hinfo = GetProp( hint, HINT_PROP_ID );
+    info = LocalLock( hinfo );
     ret = info->hints;
     info->hints = hints;
     info->hintlen = cnt;
+    LocalUnlock( hinfo );
     return( ret );
 }
 
@@ -162,26 +181,30 @@ statwnd *HintWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, LPVOID lpv
 {
     statwnd             *wnd;
     HintWndInfo         *info;
+    HLOCAL              hinfo;
 
     wnd = StatusWndStart();
     StatusWndCreate( wnd, parent, size, hinstance, lpvParam );
-    info = MemAlloc( sizeof( HintWndInfo ) );
+    hinfo = LocalAlloc( LHND, sizeof( HintWndInfo ) );
+    info = LocalLock( hinfo );
     info->curmsg = HINT_EMPTY;
     info->hints = NULL;
     info->hintlen = 0;
     info->parent = parent;
-    SetProp( GetHintHwnd( wnd ), "info", (HANDLE)info );
+    LocalUnlock( hinfo );
+
+    SetProp( GetHintHwnd( wnd ), HINT_PROP_ID, hinfo );
     return( wnd );
 }
 
 void HintWndDestroy( statwnd *wnd )
 {
-    HintWndInfo         *info;
+    HLOCAL              hinfo;
     HWND                hint;
 
     hint = GetHintHwnd( wnd );
-    info = (HintWndInfo *)GetProp( hint, "info" );
-    MemFree( info );
+    hinfo = GetProp( hint, HINT_PROP_ID );
+    LocalFree( hinfo );
     StatusWndDestroy( wnd );
 }
 
