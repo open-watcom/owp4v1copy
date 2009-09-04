@@ -68,11 +68,11 @@ static DDEToolBarInfo   ToolBar;
 
 #define TOOL_BUTTON_WIDTH       ( 23 + 4 )
 #define TOOL_BUTTON_HITE        ( 19 + 4 )
-#define TOOL_SPACE              ( 6 )
+#define TOOL_SPACE              ( TOOL_BUTTON_WIDTH / 2 )
 #define TOOL_OUTLINE_WIDTH      ( TOOL_BUTTON_WIDTH / 10 )
 #define TOOL_OUTLINE_HITE       ( TOOL_BUTTON_HITE / 10 )
 #define TOOLBAR_HITE            ( TOOL_BUTTON_HITE + \
-                                  2 * TOOL_OUTLINE_HITE )
+                                  2 * TOOL_OUTLINE_HITE + 3 )
 #define TOOLBAR_MIN_WIDTH       ( TOOL_BUTTON_WIDTH + \
                                   2 * TOOL_OUTLINE_WIDTH + 3 )
 
