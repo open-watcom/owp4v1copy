@@ -49,8 +49,8 @@
 
 unsigned_32             OvlTabOffset;
 
-static unsigned_32 WriteDOSRootRelocs( void )
-/*******************************************/
+static unsigned_32 WriteDOSRootRelocs( unsigned_32 mz_hdr_size )
+/**************************************************************/
 /* write all relocs to the file */
 {
     unsigned long       header_size;
@@ -58,7 +58,7 @@ static unsigned_32 WriteDOSRootRelocs( void )
     DumpRelocList( Root->reloclist );
     NullAlign( 0x10 );
     header_size = (unsigned long)Root->relocs * sizeof( dos_addr )
-                    + sizeof( dos_exe_header ) + sizeof( unsigned_32 );
+                    + mz_hdr_size;
     return( MAKE_PARA( header_size ) );
 }
 
@@ -104,8 +104,8 @@ static void AssignFileLocs( section *sect )
             sect->ovl_num, sect->u.file_loc, sect->outfile->fname ));
 }
 
-static unsigned long WriteDOSData( void )
-/***************************************/
+static unsigned long WriteDOSData( unsigned_32 mz_hdr_size )
+/**********************************************************/
 /* copy code from extra memory to loadfile */
 {
     group_entry         *group;
@@ -118,7 +118,7 @@ static unsigned long WriteDOSData( void )
     DEBUG(( DBG_BASE, "Writing data" ));
     OrderGroups( CompareDosSegments );
     CurrSect = Root;        // needed for WriteInfo.
-    header_size = WriteDOSRootRelocs();
+    header_size = WriteDOSRootRelocs( mz_hdr_size );
 
     Root->u.file_loc = header_size;
     if( Root->areas != NULL ) {
@@ -300,7 +300,7 @@ void FiniDOSLoadFile( void )
         mz_hdr_size = sizeof( dos_exe_header ) + sizeof( unsigned_32 );
     }
     SeekLoad( mz_hdr_size );
-    root_size = WriteDOSData();
+    root_size = WriteDOSData( mz_hdr_size );
     if( FmtData.type & MK_OVERLAYS ) {
         PadOvlFiles();
     }
