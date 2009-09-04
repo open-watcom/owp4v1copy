@@ -1098,6 +1098,7 @@ static bool FoldableTree( TREEPTR tree )
             tree->op.ulong64_value = value;
             tree->op.opr = OPR_PUSHINT;
             tree->op.const_type = TYPE_POINTER;
+            tree->op.flags |= OPFLAG_FARPTR;
             tree->left = NULL;
             tree->right = NULL;
             FreeExprNode( tree->left );

@@ -22,6 +22,7 @@ int __based(__segname("foo_TEXT")) main()
         fail( __LINE__ );
     }
     if( (unsigned long)lp != 0x12345678 ) fail( __LINE__ );
+    if( lp != MK_FP( 0x1234, 0x5678 ) ) fail( __LINE__ );
     _PASS;
 }
 
