@@ -43,3 +43,14 @@ alphabet_opts=-zc
 !endif
 !endif
 !endif
+
+# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
+!ifeq __VERSION__ 1280
+itoa_postopts   = -wcd112
+ltoa_postopts   = -wcd112
+lltoa_postopts  = -wcd112
+utoa_postopts   = -wcd112
+ultoa_postopts  = -wcd112
+uitoa_postopts  = -wcd112
+ulltoa_postopts = -wcd112
+!endif
