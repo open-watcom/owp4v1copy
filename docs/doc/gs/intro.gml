@@ -329,14 +329,14 @@ Ralf Brown and Jim Kyle; Addison-Wesley Publishing Company, 1994.
 .note Relocatable Object Module Format Specification, V1.1
 .br
 .ix 'OMF specification'
-The Intel OMF specification can be obtained from the Intel ftp site.
+The Tool Interface Standards (TIS) OMF specification can be obtained from
+the Open Watcom website.
 Here is the URL.
 .code begin
-ftp://ftp.intel.com/pub/tis/omf11g.zip
+http://www.openwatcom.org/ftp/devel/docs/omf.pdf
 .code end
 .np
-This ZIP file contains a Postscript version of the Intel OMF V1.1
-specification.
+This file contains a PDF version of the TIS OMF V1.1 specification.
 .endnote
 .* ----------------------------------------------------------------
 .*
@@ -351,14 +351,13 @@ Ray Duncan, et al; Addison-Wesley Publishing Company, 1992.
 .note DOS Protected-Mode Interface (DPMI) Specification
 .br
 .ix 'DPMI specification'
-The DPMI 1.0 specification can be obtained from the Intel ftp site.
+The DPMI 1.0 specification can be obtained from the Open Watcom website.
 Here is the URL.
 .code begin
-ftp://ftp.intel.com/pub/IAL/software_specs/dpmiv1.zip
+http://www.openwatcom.org/ftp/devel/docs/dpmi10.pdf
 .code end
 .np
-This ZIP file contains a Postscript version of the DPMI 1.0
-specification.
+This file contains a PDF version of the DPMI 1.0 specification.
 .endnote
 .* ----------------------------------------------------------------
 .*
