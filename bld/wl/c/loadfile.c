@@ -68,7 +68,7 @@
 #include "permdata.h"
 #include "idedll.h"
 #include "idedrv.h"
-#include "dllentry.h"
+#include "ideentry.h"
 #include "overlays.h"
 
 seg_leader      *StackSegPtr;

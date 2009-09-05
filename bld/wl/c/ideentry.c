@@ -38,7 +38,7 @@
 #include <fcntl.h>
 #include "idedll.h"
 #include "idedrv.h"
-#include "dllentry.h"
+#include "ideentry.h"
 /*
  *  Just a note. ntio.h is included for CheckBreak(). This function is also 
  *  defined as static in posixio and non-static in linkio

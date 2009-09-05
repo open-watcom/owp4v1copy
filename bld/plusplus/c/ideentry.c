@@ -36,7 +36,7 @@
 
 #include "memmgr.h"
 #include "idedll.h"
-#include "wcppdll.h"
+#include "ideentry.h"
 #include "cgmisc.h"
 #include "fmtsym.h"
 
