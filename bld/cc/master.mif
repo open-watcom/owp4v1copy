@@ -72,7 +72,7 @@ extra_c_flags_cscan_386 = -5r
 extra_c_flags_cscan    = $(extra_c_flags_cscan_$(host_cpu))
 !endif
 !endif
-extra_c_flags_idedll   = -bd $(idedlldriver_c_flags_$(host_os))
+extra_c_flags_ideentry = -bd $(idedlldriver_c_flags_$(host_os))
 extra_c_flags_idedrv   = $(idedlldriver_c_flags_$(host_os))
 !ifdef __LINUX__
 extra_c_flags_intlload = -D__header=\"fesupp.h\"

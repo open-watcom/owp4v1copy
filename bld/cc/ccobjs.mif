@@ -4,7 +4,7 @@
 drv_objs = &
     idedrv.obj &
     idemsgfm.obj &
-    wccdlldr.obj
+    maindrv.obj
 
 #
 # stand-alone executable
@@ -16,7 +16,7 @@ exe_objs = &
 # DLL stuff
 #
 dll_objs = &
-    idedll.obj &
+    ideentry.obj &
     idemsgpr.obj
 
 #

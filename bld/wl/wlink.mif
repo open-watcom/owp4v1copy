@@ -76,7 +76,7 @@ extra_c_flags_debug      = -DTRMEM
 extra_c_flags_loadpe     = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
 extra_c_flags_loados2    = -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
 extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
-extra_c_flags_dllentry   = -bd
+extra_c_flags_ideentry   = -bd
 extra_c_flags_idedrv     = -DCHAIN_CALLBACK
 extra_c_flags_loadfile   = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
@@ -97,8 +97,7 @@ extra_l_flags_qnx = op res=wlink.u, st=24k, off=32k
 # linker .DLL options
 
 extra_l_flags_dll     = op map, noredefs
-extra_l_flags_dll_nt  = initinstance terminstance op modname='wlinkd.dll'
-extra_l_flags_dll_nt  += reference __DLLstart_ op offset=0x69c00000
+extra_l_flags_dll_nt  = initinstance terminstance op modname='wlinkd.dll', offset=0x69c00000
 extra_l_flags_dll_os2 = initinstance terminstance op modname='wlinkd'
 
 xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)

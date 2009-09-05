@@ -3,23 +3,17 @@
 drv_objs =
 drv_objs += idedrv.obj
 drv_objs += idemsgfm.obj
-drv_objs += wppdlldd.obj
+drv_objs += maindrv.obj
 
 # stand-alone executable
 
 exe_objs =
 exe_objs += idedrv.obj
-exe_objs += idemsgfm.obj
-exe_objs += idemsgpr.obj
-exe_objs += wppdlldr.obj
-exe_objs += idedll.obj
+exe_objs += maindrv.obj
 
 # DLL stuff
 
 dll_objs =
-dll_objs += idedlld.obj
-dll_objs += idemsgfm.obj
-dll_objs += idemsgpr.obj
 
 
 # C Files
@@ -154,6 +148,9 @@ common_objs += hashtab.obj
 common_objs += i64supp.obj
 common_objs += ialias.obj
 common_objs += icemit.obj
+common_objs += ideentry.obj
+common_objs += idemsgfm.obj
+common_objs += idemsgpr.obj
 common_objs += initfini.obj
 common_objs += initref.obj
 common_objs += iosupp.obj

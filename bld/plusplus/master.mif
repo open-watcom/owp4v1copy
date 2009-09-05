@@ -83,17 +83,14 @@ extra_c_flags_axp = -si
 extra_c_flags += -db
 !endif
 
-extra_c_flags_osi   = -DIDE_PGM -D__OS2__
-extra_c_flags_qnx   = -DIDE_PGM
-extra_c_flags_linux = -DIDE_PGM
 !ifndef plusplus_dll
-extra_c_flags_dos   = -DIDE_PGM
-extra_c_flags_os2   = -DIDE_PGM
-extra_c_flags_nt    = -DIDE_PGM
+extra_c_flags   += -DIDE_PGM
 !endif
 
+extra_c_flags_osi   = -D__OS2__
+
 !ifdef plusplus_dll
-idedlldriver_c_flags_dos = -DCAUSEWAY
+extra_c_flags_dos   += -DCAUSEWAY
 !endif
 extra_c_flags_carve    = -Dheader=$(fesupp_hdr) -Dheader2=$(carvecpp_hdr)
 !ifneq host_os linux
@@ -107,8 +104,11 @@ extra_c_flags_cscan    = $(extra_c_flags_cscan_$(host_cpu))
 !ifeq release 0
 extra_c_flags_dbgzap   = -Dheader=$(fesupp_hdr)
 !endif
-extra_c_flags_idedlld  = -bd $(idedlldriver_c_flags_$(host_os))
-extra_c_flags_idedrv   = -DSTATIC_LINKAGE $(idedlldriver_c_flags_$(host_os))
+!ifdef plusplus_dll
+extra_c_flags_ideentry = -bd -Dwpp_dll
+extra_c_flags_maindrv  = -Dwpp_drv -DDLL_NAME=$(dll_name)
+!endif
+extra_c_flags_idedrv   = -DSTATIC_LINKAGE
 extra_c_flags_initfini = -Dheader=$(fesupp_hdr) -DSPLIT_REQD
 extra_c_flags_intlload = -D__header=$(fesupp_hdr)
 !ifeq plusplus_trmem 1
@@ -127,7 +127,6 @@ extra_c_flags_srcfile_386 = -4r
 extra_c_flags_srcfile  = $(extra_c_flags_srcfile_$(host_cpu))
 extra_c_flags_vbuf     = -Dheader=$(fesupp_hdr)
 extra_c_flags_vstk     = -Dheader=$(fesupp_hdr)
-extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_name)
  
 #
 # wlink .EXE options
