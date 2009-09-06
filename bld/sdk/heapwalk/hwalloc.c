@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Display memory allocations.
+* Description:  Display and stress memory allocation.
 *
 ****************************************************************************/
 
 
 #include <ctype.h>
 #include "heapwalk.h"
-#include "stress.h"
+#include <stress.h>
 #include "jdlg.h"
 
 static DWORD    FreeAmt;
