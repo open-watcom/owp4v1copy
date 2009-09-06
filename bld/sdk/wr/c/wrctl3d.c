@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Cover functions to avoid dependency on CTL3D DLL.
 *
 ****************************************************************************/
 
@@ -105,11 +104,16 @@ void WRCtl3DDLLFini( void )
 
 static int WRCtl3DDLLInit( void )
 {
-    #ifndef __NT__
-        wrDLLLib = LoadLibrary("CTL3DV2.DLL");
-    #else
-        wrDLLLib = LoadLibrary("CTL3D32.DLL");
-    #endif
+#ifdef __NT__
+    wrDLLLib = LoadLibrary( "CTL3D32.DLL" );
+#else
+    UINT    uErrMode;
+
+    /* Use SetErrorMode to prevent annoying error popups. */
+    uErrMode = SetErrorMode( SEM_NOOPENFILEERRORBOX );
+    wrDLLLib = LoadLibrary( "CTL3DV2.DLL" );
+    SetErrorMode( uErrMode );
+#endif
 
     if( wrDLLLib == (HINSTANCE)NULL ) {
         return( FALSE );
