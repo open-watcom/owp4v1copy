@@ -7,8 +7,8 @@ pick(   STR_ABOUT_VER,
         "",     //NOT USED
         "" )
 pick(   STR_ABOUT_YEAR,
-        "2002",
-        "2002" )
+        "1994",
+        "1994" )
 pick(   STR_ABOUT_TITLE,
         "About Open Watcom Zoom",
         "Open Watcom ズームのバージョン情報" )

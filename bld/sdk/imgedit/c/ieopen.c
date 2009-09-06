@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Open file dialog.
 *
 ****************************************************************************/
 
@@ -49,6 +48,8 @@
 
 #ifdef __NT__
 #pragma library("shell32")
+#else
+#pragma library("commdlg")
 #endif
 
 static signed short     imgType = BITMAP_IMG;

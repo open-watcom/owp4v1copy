@@ -195,7 +195,7 @@ BOOL CALLBACK ShowInfoProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_CLOSE:
@@ -258,7 +258,7 @@ BOOL CALLBACK ShowSelectedDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_SETFOCUS:

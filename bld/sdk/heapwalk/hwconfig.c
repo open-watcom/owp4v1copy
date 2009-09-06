@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap walker configuration.
 *
 ****************************************************************************/
 
@@ -303,7 +302,7 @@ BOOL __export FAR PASCAL ConfigDlgProc( HWND hwnd, WORD msg, WORD wparam,
         SetupConfigDlg( &Config, &info, hwnd );
         break;
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
     case WM_COMMAND:
         switch( wparam ) {

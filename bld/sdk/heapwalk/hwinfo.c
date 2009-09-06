@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap information dialogs.
 *
 ****************************************************************************/
 
@@ -159,7 +158,7 @@ BOOL __export FAR PASCAL SummaryInfoProc( HWND hwnd, WORD msg, WORD wparam,
         }
         break;
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
     case WM_COMMAND:
         switch( LOWORD( wparam ) ) {

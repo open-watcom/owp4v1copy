@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Filter DDE traffic.
 *
 ****************************************************************************/
 
@@ -205,7 +204,7 @@ BOOL __export FAR PASCAL FilterDlgProc( HWND hwnd, WORD msg,
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_COMMAND:

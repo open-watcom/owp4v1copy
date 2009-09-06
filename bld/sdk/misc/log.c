@@ -42,7 +42,7 @@
 #include "log.h"
 #include "mem.h"
 #ifndef NOUSE3D
-    #include "ctl3d.h"
+    #include "ctl3dcvr.h"
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
@@ -74,7 +74,7 @@ BOOL CALLBACK LogSaveHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
 #ifndef NOUSE3D
         // We must call this to subclass the directory listbox even
         // if the app calls Ctl3dAutoSubclass (commdlg bug)
-        Ctl3dSubclassDlg( hwnd, CTL3D_ALL );
+        CvrCtl3dSubclassDlg( hwnd, CTL3D_ALL );
 #endif
         return( TRUE );
         break;
@@ -109,15 +109,15 @@ static BOOL getLogName( char *buf, HWND hwnd )
     of.nMaxFile = LOG_MAX_FNAME;
     of.lpstrTitle = AllocRCString( LOG_CHOOSE_LOG_NAME );
     of.Flags = OFN_HIDEREADONLY;
-    #ifndef NOUSE3D
-        of.Flags |= OFN_ENABLEHOOK;
-        of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) LogSaveHook,
-                        LogCurInfo.instance );
-    #endif
+#ifndef NOUSE3D
+    of.Flags |= OFN_ENABLEHOOK;
+    of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) LogSaveHook,
+                                             LogCurInfo.instance );
+#endif
     rc = GetSaveFileName( &of );
-    #ifndef NOUSE3D
-        FreeProcInstance( (LPVOID) of.lpfnHook );
-    #endif
+#ifndef NOUSE3D
+    FreeProcInstance( (LPVOID) of.lpfnHook );
+#endif
     FreeRCString( (char *)of.lpstrTitle );
     if( !rc ) {
         return( FALSE );
@@ -206,7 +206,7 @@ BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, WORD msg,
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_COMMAND:

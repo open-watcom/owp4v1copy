@@ -190,7 +190,7 @@ BOOL CALLBACK PickDialog( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_COMMAND:

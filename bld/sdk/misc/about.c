@@ -33,22 +33,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #define INCLUDE_TOOLHELP_H
-#define INCLUDE_COMMDLG_H
 #include <windows.h>
 #include "about.h"
 #include "aboutdlg.h"
 #include "win1632.h"
-    #ifndef NOUSE3D
-    #include "ctl3d.h"
-    #if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-        #pragma library("ctl3dv2.lib")
-    #endif
+#ifndef NOUSE3D
+  #ifdef WRCTL3D
+    #include "wrctl3d.h"
+    #define CvrCtl3dColorChange     WRCtl3dColorChange
+  #else
+    #include "ctl3dcvr.h"
+  #endif
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
 #if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-    #pragma library("commdlg.lib")
-    #pragma library("toolhelp.lib")
+    #pragma library( "toolhelp.lib" )   /* For SystemHeapInfo */
 #endif
 
 /*
@@ -157,7 +157,7 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         return( TRUE );
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_CLOSE:

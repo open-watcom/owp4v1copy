@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Global object dialogs.
 *
 ****************************************************************************/
 
@@ -169,7 +168,7 @@ BOOL __export FAR PASCAL AddDlgProc( HWND hwnd, WORD msg, WORD wparam,
                       SWP_NOSIZE | SWP_NOZORDER );
         break;
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
     case WM_COMMAND:
         if( wparam == ADD_OK && HIWORD( lparam ) == BN_CLICKED ) {
@@ -294,7 +293,7 @@ BOOL __export FAR PASCAL SetCodeDlgProc( HWND hwnd, WORD msg, WORD wparam,
         SetStaticText( hwnd, CODE_MAX_SIZE, buf );
         break;
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
     case WM_COMMAND:
         if( HIWORD( lparam ) == BN_CLICKED ) {

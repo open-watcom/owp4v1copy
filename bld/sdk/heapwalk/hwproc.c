@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap walker window procedre.
 *
 ****************************************************************************/
 
@@ -314,7 +313,8 @@ BOOL __export FAR PASCAL HeapWalkProc( HWND hwnd, UINT msg, WPARAM wparam,
             MemFree( info );
         }
         DestroyMonoFonts();
-        Ctl3dUnregister( Instance );
+        CvrCtl3dUnregister( Instance );
+	CvrCtl3DFini( Instance );
         WWinHelp( hwnd, "heapwalk.hlp", HELP_QUIT, 0 );
         PostQuitMessage( 0 );
         break;

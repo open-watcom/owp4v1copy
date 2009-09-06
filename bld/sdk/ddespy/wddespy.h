@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DDE Spy master include.
 *
 ****************************************************************************/
 
@@ -45,7 +44,7 @@
 #include "toolbr.h"
 #include "mark.h"
 #ifndef NOUSE3D
- #include "ctl3d.h"
+ #include "ctl3dcvr.h"
 #endif
 #include "rcstr.gh"
 #include "ldstr.h"

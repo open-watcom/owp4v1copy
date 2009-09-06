@@ -68,7 +68,7 @@
 #include "peekmsg.h"
 #include "peekwin.h"
 #include "spymenu.h"
-#include "ctl3d.h"
+#include "ctl3dcvr.h"
 #ifdef USE_SNAP_WINDOW
     #include "desknt.h"
     #define SNAP_MODE   TRUE

@@ -34,7 +34,7 @@
 #include "mark.h"
 
 #ifndef NOUSE3D
-    #include "ctl3d.h"
+    #include "ctl3dcvr.h"
 #endif
 
 static void             (*WriteFn)(char *);
@@ -62,7 +62,7 @@ BOOL __export FAR PASCAL MarkDlgProc( HWND hwnd, WORD msg,
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_COMMAND:

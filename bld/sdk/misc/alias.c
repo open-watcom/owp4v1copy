@@ -37,7 +37,7 @@
 #include "mem.h"
 #include "alias.h"
 #ifndef NOUSE3D
-    #include "ctl3d.h"
+    #include "ctl3dcvr.h"
 #endif
 #include "win1632.h"
 #include "ldstr.h"
@@ -206,7 +206,7 @@ BOOL __export FAR PASCAL AliasDlgProc( HWND hwnd, UINT msg,
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_COMMAND:

@@ -80,8 +80,9 @@ static BOOL EveryInstInit( int cmdshow )
     JDialogInit();
     ReadConfig();
 #ifndef NOUSE3D
-    Ctl3dRegister( Instance );
-    Ctl3dAutoSubclass( Instance );
+    CvrCtl3DInit( Instance );
+    CvrCtl3dRegister( Instance );
+    CvrCtl3dAutoSubclass( Instance );
 #endif
     HintWndInit( Instance, NULL, 0 );
 
@@ -132,7 +133,8 @@ int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int c
     DdeUninitialize( DDEInstId );
     JDialogFini();
 #ifndef NOUSE3D
-    Ctl3dUnregister( Instance );
+    CvrCtl3dUnregister( Instance );
+    CvrCtl3DFini( Instance );
 #endif
     return( 1 );
 }

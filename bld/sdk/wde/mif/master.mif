@@ -148,7 +148,7 @@ extra_c_flags_statwnd= -fh
 extra_c_flags_ldstr= -fh
 extra_c_flags_wwinhelp= -fh
 extra_c_flags_jdlg= -fh
-extra_c_flags_about= -fh
+extra_c_flags_about= -DWRCTL3D -fh
 
 fmedit_lib = $(fmedit_dir)/$(host_os)$(host_cpu)/fmedit.lib
 wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib

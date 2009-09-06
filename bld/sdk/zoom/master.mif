@@ -12,7 +12,7 @@ sys_windowed = 1
 !include defrule.mif
 
 objs =  zoom.obj zmglob.obj zmproc.obj zmscreen.obj zmconfig.obj &
-        mem.obj about.obj ldstr.obj inipath.obj
+        mem.obj about.obj ldstr.obj inipath.obj ctl3dcvr.obj
 
 extra_c_flags_mem = -DNO_WPI
 

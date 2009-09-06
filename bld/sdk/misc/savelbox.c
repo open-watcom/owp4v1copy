@@ -41,7 +41,7 @@
 #include "savelbox.h"
 #include "win1632.h"
 #ifndef NOUSE3D
-    #include "ctl3d.h"
+    #include "ctl3dcvr.h"
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
@@ -90,7 +90,7 @@ BOOL CALLBACK LBSaveHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
     case WM_INITDIALOG:
         // We must call this to subclass the directory listbox even
         // if the app calls Ctl3dAutoSubclass (commdlg bug)
-        Ctl3dSubclassDlg( hwnd, CTL3D_ALL );
+        CvrCtl3dSubclassDlg( hwnd, CTL3D_ALL );
         return( TRUE );
         break;
     }

@@ -35,6 +35,8 @@ extra_c_flags     = -DWIN_GUI -s
 extra_c_flags_win = -zu-zw-zc
 extra_c_flags_nt  = -DNOUSE3D
 
+extra_c_flags_about = -DWRCTL3D
+
 # main dll object
 extra_c_flags_wmem= -fh
 extra_c_flags_wctl3d= -fh

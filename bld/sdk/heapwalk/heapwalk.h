@@ -45,7 +45,7 @@
 #include "memwnd.h"
 #include "srchmsg.h"
 #include "pushwin.h"
-#include "ctl3d.h"
+#include "ctl3dcvr.h"
 #include "memman.h"
 #include "heapinfo.h"
 #include "lclinfo.h"

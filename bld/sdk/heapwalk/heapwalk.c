@@ -55,8 +55,9 @@ static BOOL heapWalkInit( HANDLE currinst, HANDLE previnst, int cmdshow )
     if( !InitStringTable() ) {
         return( FALSE );
     }
-    Ctl3dRegister( Instance );
-    Ctl3dAutoSubclass( Instance );
+    CvrCtl3DInit( Instance );
+    CvrCtl3dRegister( Instance );
+    CvrCtl3dAutoSubclass( Instance );
     MemStart();
     JDialogInit();
     if( CheckWin386Debug() == WGOD_VERSION ) {

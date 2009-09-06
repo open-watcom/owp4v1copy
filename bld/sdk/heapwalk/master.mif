@@ -36,7 +36,7 @@ inc_dirs = -I.. -I"$(sdk_dir)/misc" $(dis_includes)
 objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
         hwbox.obj hwdisp.obj hwsave.obj hwobjec.obj hwlocal.obj&
         hwlsort.obj hwconfig.obj  hwinfo.obj hwalloc.obj hwutil.obj &
-        hwbiglb.obj hwmonit.obj hwtable.obj hwldstr.obj &
+        hwbiglb.obj hwmonit.obj hwtable.obj hwldstr.obj ctl3dcvr.obj &
         mythelp.obj mem.obj font.obj fontstr.obj segmem.obj segmem2.obj &
         dlgmod.obj savelbox.obj memwnd.obj memwndcd.obj srchmsg.obj &
         pushwin.obj sdkasm.obj about.obj ldstr.obj wwinhelp.obj jdlg.obj

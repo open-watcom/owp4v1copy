@@ -72,7 +72,7 @@ extra_proj_obj_win = globals.obj notify.obj winproc.obj debug.obj dump.obj &
             win32app.obj lddips.obj stack.obj &
             mythelp.obj intdata.obj inth.obj dbg386.obj sdkasm.obj &
             ismod32.obj segmem.obj segmem2.obj getsaddr.obj getcsip.obj &
-            $(dis_objs)
+            $(dis_objs) ctl3dcvr.obj
 
 proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
             drwatcom.obj sym.obj profile.obj fault.obj &

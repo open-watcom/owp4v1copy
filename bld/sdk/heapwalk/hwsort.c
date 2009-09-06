@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Sort table by specified column.
 *
 ****************************************************************************/
 
@@ -147,7 +146,7 @@ BOOL __export FAR PASCAL ExtendedSortProc( HWND hwnd, WORD msg, WORD wparam,
     case WM_INITDIALOG:
         break;
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
     case WM_COMMAND:
         break;

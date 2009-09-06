@@ -91,8 +91,9 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
     }
 
 #ifndef NOUSE3D
-    Ctl3dRegister( Instance );
-    Ctl3dAutoSubclass( Instance );
+    CvrCtl3DInit( Instance );
+    CvrCtl3dRegister( Instance );
+    CvrCtl3dAutoSubclass( Instance );
 #endif
 
     /*
@@ -131,7 +132,8 @@ static BOOL spyInit( HANDLE currinst, HANDLE previnst, int cmdshow )
 void SpyFini( void )
 {
 #ifndef NOUSE3D
-    Ctl3dUnregister( Instance );
+    CvrCtl3dUnregister( Instance );
+    CvrCtl3DFini( Instance );
 #endif
     ClearFilter();
     SpyLogClose();

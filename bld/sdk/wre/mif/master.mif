@@ -94,7 +94,7 @@ extra_c_flags_statwnd= -fh
 extra_c_flags_ldstr= -fh
 extra_c_flags_wwinhelp= -fh
 extra_c_flags_jdlg= -fh
-extra_c_flags_about= -fh
+extra_c_flags_about= -DWRCTL3D -fh
 
 !ifeq wre_trmem 1
 OBJS += trmem.tbj trmemcvr.tbj

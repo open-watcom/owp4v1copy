@@ -13,7 +13,7 @@ sys_windowed = 1
 
 objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
         pushwin.obj alias.obj toolbr.obj mark.obj ldstr.obj hint.obj &
-        mstatwnd.obj wwinhelp.obj jdlg.obj &
+        mstatwnd.obj wwinhelp.obj jdlg.obj ctl3dcvr.obj &
         dde.obj ddeproc.obj ddeglob.obj ddemsg.obj ddebox.obj ddetrack.obj &
         ddeflter.obj ddecfg.obj ddemisc.obj ddetool.obj about.obj inipath.obj
 

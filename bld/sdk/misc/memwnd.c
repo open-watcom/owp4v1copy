@@ -49,7 +49,9 @@
 #include "memwnd.h"
 #include "standard.h"
 #include "deasm.h"
-#include "ctl3d.h"
+#ifndef NOUSE3D
+    #include "ctl3dcvr.h"
+#endif
 #include "win1632.h"
 #include "ldstr.h"
 #include "rcstr.gh"
@@ -1082,7 +1084,7 @@ BOOL __export FAR PASCAL SegInfoProc( HWND hwnd, WORD msg, WORD wparam,
         break;
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:
-        Ctl3dColorChange();
+        CvrCtl3dColorChange();
         break;
 #endif
     case WM_CLOSE:
