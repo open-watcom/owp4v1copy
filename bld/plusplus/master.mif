@@ -8,7 +8,7 @@ suppress_zc = 1
 plusplus_nosymfile = 1
  
 # Extra files to delete on clean
-additional_cleanup = *.u *.int y.out ytab.c ../bin/$(ref_name).exe ../bin/$(ref_name).sym
+additional_cleanup = *.u *.int y.out ytab.c
  
 !include cproj.mif
 !include defrule.mif
@@ -92,6 +92,7 @@ extra_c_flags_osi   = -D__OS2__
 !ifdef plusplus_dll
 extra_c_flags_dos   += -DCAUSEWAY
 !endif
+
 extra_c_flags_carve    = -Dheader=$(fesupp_hdr) -Dheader2=$(carvecpp_hdr)
 !ifneq host_os linux
 # Using -os generates ENTER/LEAVE and Linux is too brain damaged
@@ -204,13 +205,7 @@ target : .symbolic $(exe_name).exe
 # create reference compiler
 #
 reference : .symbolic $(ref_name).exe
-!ifdef __UNIX__
-    cp $(ref_name).exe ../bin/$(ref_name)
-!else
-    cp $(ref_name).exe ../bin/$(ref_name).exe
-!endif
-    cp $(ref_name).sym ../bin/$(ref_name).sym
-    rm -f $(ref_name).*
+    @%null
  
 #
 # output executables build rules

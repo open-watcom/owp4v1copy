@@ -159,9 +159,9 @@ reference : .symbolic $(target_lib)
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm
 
 !ifdef __UNIX__
-comp_cpp = $(plusplus_dir)/bin/rpp$(host_cpu)
+comp_cpp = $(plusplus_dir)/rpp.$(host_cpu)/rpp$(host_cpu).exe
 !else
-comp_cpp = $(plusplus_dir:/=\)\bin\rpp$(host_cpu).exe
+comp_cpp = $(plusplus_dir:/=\)\rpp.$(host_cpu)\rpp$(host_cpu).exe
 !endif
 
 .cpp : $(cpp_dirs)
