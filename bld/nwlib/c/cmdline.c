@@ -493,8 +493,8 @@ static void ParseOneLine( char *c )
             ++c;
             c = GetString( c, buff, TRUE, FALSE );
             {
-                char *env = getenv(buff);
-                if( env ) {
+                char *env = WlibGetEnv( buff );
+                if( env != NULL ) {
                     ParseOneLine(env);
                 } else {
                     FILE    *io;
