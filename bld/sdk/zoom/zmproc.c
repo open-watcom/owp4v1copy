@@ -587,6 +587,16 @@ BOOL __export FAR PASCAL ZOOMMainWndProc( HWND hwnd, UINT msg, WPARAM wparam,
             DoMouseMove( info, lparam );
         }
         break;
+    case WM_KEYDOWN:
+        if( info->looking ) {
+            switch( wparam ) {
+            case VK_RETURN:
+            case VK_ESCAPE:
+                EndZooming( info );
+                break;
+            }
+        }
+        break;
     case WM_COMMAND:
         switch( LOWORD( wparam ) ) {
         case ZMMENU_BEGIN:
