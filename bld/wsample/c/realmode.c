@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PC style timer interrupt hook.
 *
 ****************************************************************************/
 
@@ -122,7 +121,7 @@ void interrupt far timer_handler( union INTPACK r )
             ++CurrTick;
             #ifdef __NETWARE__
                 /* avoid pointer truncation warning */
-                RecordSample( (union INTPACK *)&r );
+                RecordSample( (union INTPACK *)FP_OFF(&r) );
             #else
                 RecordSample( &r );
             #endif
