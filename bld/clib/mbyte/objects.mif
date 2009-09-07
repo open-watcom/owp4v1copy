@@ -173,3 +173,4 @@ mbinit_postopts=-os
 # useless, but they must be removed completely (not just some modules)
 fmbtowc_postopts = -wcd310
 fwctomb_postopts = -wcd310
+fwctom_s_postopts = -wcd310
