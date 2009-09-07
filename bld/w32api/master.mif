@@ -658,7 +658,7 @@ directx/dxguid.obj: directx/dxguid.c
     @$(cc) $(cflags) $(extra_c_flags_$[&) $(inc_path) -fo=$@ $[@
 !endif
 
-all_subdirs = ./ddk ./directx ./gl ./.
+all_subdirs = ./ddk ./directx ./gl $(%cwd)
 
 clean: $(all_subdirs) .SYMBOLIC
 
