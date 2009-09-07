@@ -62,7 +62,12 @@ static void getFunctionPtrs( void );
 
 bool ViRCSInit( void )
 {
+    UINT    uErrMode;
+
+    /* Use SetErrorMode to prevent annoying error popups. */
+    uErrMode = SetErrorMode( SEM_NOOPENFILEERRORBOX );
     LibHandle = LoadLibrary( RCS_DLLNAME );
+    SetErrorMode( uErrMode );
     if( LibHandle < (HINSTANCE)32 ) {
         return( FALSE );
     }
