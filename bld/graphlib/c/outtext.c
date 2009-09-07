@@ -153,7 +153,7 @@ _WCRTLINK void _WCI86FAR _CGRAPH _outmem( unsigned char _WCI86FAR * text, short 
 {
     _InitState();
     _CursorOff();
-    OutputString( (char *)text, length, FALSE );
+    OutputString( (char _WCI86FAR *)text, length, FALSE );
     _GrEpilog();
 }
 
