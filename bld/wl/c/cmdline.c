@@ -51,6 +51,7 @@
 #include "cmdline.h"
 #include "overlays.h"
 #include "fileio.h"
+#include "ideentry.h"
 #include "symtrace.h"
 #include "reloc.h"
 // #include "strtab.h"

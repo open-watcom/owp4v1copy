@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  DLL entry points for wlink.
+* Description:  IDE interface entry points for wlink.
 *
 ****************************************************************************/
 
@@ -39,11 +39,6 @@
 #include "idedll.h"
 #include "idedrv.h"
 #include "ideentry.h"
-/*
- *  Just a note. ntio.h is included for CheckBreak(). This function is also 
- *  defined as static in posixio and non-static in linkio
- */
-#include "ntio.h"
 #include "wlink.h"
 #include "wlnkmsg.h"
 
@@ -55,9 +50,8 @@
 #endif
 
 static IDECBHdl         IdeHdl;
-
-IDEInitInfo     InitInfo;
-IDECallBacks    *IdeCB;
+static IDEInitInfo      InitInfo;
+static IDECallBacks     *IdeCB;
 
 #if defined( __OS2__ )
 //extern int InitMsg( void );
@@ -71,25 +65,40 @@ static IDEMsgSeverity SeverityMap[] = {
     IDEMSGSEV_ERROR, IDEMSGSEV_ERROR, IDEMSGSEV_BANNER
 };
 
+#if defined( DLLS_IMPLEMENTED )
+bool ExecDLLPgm( char *pname, char *cmdline )
+/********************************************/
+// return TRUE if an error
+{
+    IDEDRV              inf;
+    IDEDRV_STATUS       status;
+
+    status = IDEDRV_ERR_LOAD;
+    IdeDrvInit( &inf, pname, NULL );
+    IdeDrvChainCallbacks( IdeCB, &InitInfo );
+    status = IdeDrvExecDLL( &inf, cmdline );
+    IdeDrvUnloadDLL( &inf );
+    return( status != IDEDRV_SUCCESS );
+}
+#endif
+
 /* routines which are called by the linker core */
 
 void WriteStdOut( char *str )
 /**********************************/
 {
     CheckBreak();
-    /* IdeCB->PrintWithCRLF( IdeHdl, str, 0 ); */
-    /* Above line had errors. According to idedll.h in bld\watcom\h
-       PrintWithCRLF only takes two args not three. */
-    IdeCB->PrintWithCRLF( IdeHdl, str );
+    if( IdeCB != NULL ) {
+        IdeCB->PrintWithCRLF( IdeHdl, str );
+    }
 }
 
 void WriteNLStdOut( void )
 /*******************************/
 {
-    /* IdeCB->PrintWithCRLF( IdeHdl, "\n", 0 ); */
-    /* Above line had errors. According to idedll.h in bld\watcom\h
-       PrintWithCRLF only takes two args not three. */
-    IdeCB->PrintWithCRLF( IdeHdl, "\n" );
+    if( IdeCB != NULL ) {
+        IdeCB->PrintWithCRLF( IdeHdl, "\n" );
+    }
 }
 
 void WriteInfoStdOut( char *str, unsigned level, char *symbol )
@@ -99,16 +108,18 @@ void WriteInfoStdOut( char *str, unsigned level, char *symbol )
     unsigned    msgclass;
 
     CheckBreak();
-    IdeMsgInit( &info, SeverityMap[(level & CLASS_MSK) >> NUM_SHIFT], str );
-    msgclass = level & CLASS_MSK;
-    if( msgclass != BANNER && msgclass >= (WRN & CLASS_MSK) ) {
-        IdeMsgSetMsgNo( &info, CalcMsgNum( level ) );
-        IdeMsgSetHelp( &info, "wlnkerrs.hlp", level & NUM_MSK );
+    if( IdeCB != NULL ) {
+        IdeMsgInit( &info, SeverityMap[(level & CLASS_MSK) >> NUM_SHIFT], str );
+        msgclass = level & CLASS_MSK;
+        if( msgclass != BANNER && msgclass >= (WRN & CLASS_MSK) ) {
+            IdeMsgSetMsgNo( &info, CalcMsgNum( level ) );
+            IdeMsgSetHelp( &info, "wlnkerrs.hlp", level & NUM_MSK );
+        }
+        if( symbol != NULL ) {
+            IdeMsgSetLnkSymbol( &info, symbol );
+        }
+        IdeCB->PrintWithInfo( IdeHdl, &info );
     }
-    if( symbol != NULL ) {
-        IdeMsgSetLnkSymbol( &info, symbol );
-    }
-    IdeCB->PrintWithInfo( IdeHdl, &info );
 }
 
 char * GetEnvString( char *envname )
@@ -116,10 +127,11 @@ char * GetEnvString( char *envname )
 {
     char *retval;
 
-    if( InitInfo.ignore_env ) return NULL;
+    if( IdeCB == NULL || InitInfo.ignore_env )
+        return( NULL );
     IdeCB->GetInfo( IdeHdl, IDE_GET_ENV_VAR,(IDEGetInfoWParam)envname,
                     (IDEGetInfoLParam) &retval );
-    return retval;
+    return( retval );
 }
 
 bool IsStdOutConsole( void )
@@ -199,9 +211,6 @@ IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char * opts,
                                              IDEBool *fatalerr )
 /****************************************************************************/
 {
-    int stdin_mode;
-    int stdout_mode;
-
     hdl = hdl;
 #if defined( __OS2__ )
     if( RunOnce ) {
@@ -209,18 +218,25 @@ IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char * opts,
     }
     RunOnce = TRUE;
 #endif
-    if( opts == NULL ) {
-        stdin_mode = setmode( STDIN_FILENO, O_BINARY ); // JBS 17-dec-99
-        stdout_mode = setmode( STDOUT_FILENO, O_BINARY );
-    }
     LinkMainLine( (char *) opts );
 #if defined( __OS2__ )
     FiniMsg();
 #endif
-    if( opts == NULL ) {
-        setmode( STDIN_FILENO, stdin_mode ); // JBS 17-dec-99
-        setmode( STDOUT_FILENO, stdout_mode );
-    }
     *fatalerr = (LinkState & LINK_ERROR) != 0;
-    return *fatalerr;
+    return( *fatalerr );
+}
+
+IDEBool IDEDLL_EXPORT IDERunYourSelfArgv( IDEDllHdl hdl, int argc, char **argv,
+                                             IDEBool *fatalerr )
+/******************************************************************************/
+{
+    argc = argc;        /* to avoid a warning */
+    argv = argv;
+#ifndef __WATCOMC__
+    _argv = argv;
+    _argc = argc;
+#endif
+    LinkMainLine( NULL );
+    *fatalerr = (LinkState & LINK_ERROR) != 0;
+    return( *fatalerr );
 }

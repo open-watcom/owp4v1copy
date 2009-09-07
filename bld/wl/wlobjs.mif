@@ -9,14 +9,15 @@ drv_objs = &
 #
 # stand-alone executable
 #
-exe_objs =
+exe_objs = &
+    stidedrv.obj &
+    idemsgfm.obj &
+    maindrv.obj
 
 #
 # DLL stuff
 #
-dll_objs = &
-    ideentry.obj &
-    idemsgpr.obj
+dll_objs =
 
 #
 # common files
@@ -46,6 +47,8 @@ common_objs = &
     distrib.obj &
     global.obj &
     hash.obj &
+    ideentry.obj &
+    idemsgpr.obj &
     impexp.obj &
     libr.obj &
     libsupp.obj &

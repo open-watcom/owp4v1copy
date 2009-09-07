@@ -58,14 +58,10 @@ static bool     CaughtBreak = FALSE;    // set to TRUE if break hit.
 
 #define TOOMANY EMFILE
 
-static void CheckBreak( void );
-
 void LnkFilesInit( void )
 /******************************/
 {
     OpenFiles = 0;
-//    setmode( STDIN_HANDLE, O_BINARY );      // PROBLEM ---- not POSIX!!!!!
-//    setmode( STDOUT_HANDLE, O_BINARY );
 }
 
 void PrintIOError( unsigned msg, char *types, char *name )
@@ -479,7 +475,7 @@ void TrapBreak( int sig_num )
     CaughtBreak = TRUE;
 }
 
-static void CheckBreak( void )
+void CheckBreak( void )
 /****************************/
 {
     if( CaughtBreak ) {

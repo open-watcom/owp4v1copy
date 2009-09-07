@@ -24,11 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  IDE interface functions used by linker core
 *
 ****************************************************************************/
 
 
-extern IDEInitInfo      InitInfo;
-extern IDECallBacks     *IdeCB;
+extern void     WriteStdOut( char * );
+extern void     WriteNLStdOut( void );
+extern void     WriteInfoStdOut( char *, unsigned, char * );
+extern char     *GetEnvString( char * );
+extern bool     GetAddtlCommand( unsigned, char * );
+extern bool     IsStdOutConsole( void );
+extern bool     ExecDLLPgm( char *, char * );

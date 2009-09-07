@@ -36,6 +36,7 @@
 #include "command.h"
 #include "wlnkmsg.h"
 #include "fileio.h"
+#include "ideentry.h"
 #include "mapio.h"
 #include "loadfile.h"
 #include "demangle.h"
@@ -405,17 +406,6 @@ unsigned GetMsgPrefix( char *buff, unsigned max_len, unsigned num )
     return( prefixlen );
 }
 
-/* Here's the deal with _DLLHOST: If linker is "DLL style", the
- * message output is different. It is tailored to the IDE, and
- * it helps the IDE to invoke online help for error messages and
- * link to symbols associated with the errors/warnings. In
- * non-DLL mode, a message will contain a prefix (a string such
- * as "Warning! W1014: " and the actual error message; in DLL mode,
- * this prefix is handled differently and in other code. For map
- * files however, we always want the prefix logged. Hence all the
- * hoops we jump through.
- */
-
 static void MessageFini( unsigned num, char *buff, unsigned len )
 /***************************************************************/
 {
@@ -431,16 +421,8 @@ static void MessageFini( unsigned num, char *buff, unsigned len )
     if( num & OUT_TERM ) {
         if( !(LinkFlags & QUIET_FLAG) ) {
             WLPrtBanner();
-#if !defined( _DLLHOST )
-            prefixlen = GetMsgPrefix( prefix, MAX_MSG_SIZE, num );
-            WriteStdOut( prefix );
-#endif
             WriteInfoStdOut( buff, num, CurrSymName );
         } else if( class != (INF & CLASS_MSK)) {
-#if !defined( _DLLHOST )
-            prefixlen = GetMsgPrefix( prefix, MAX_MSG_SIZE, num );
-            WriteStdOut( prefix );
-#endif
             WriteInfoStdOut( buff, num, CurrSymName );
         }
     }

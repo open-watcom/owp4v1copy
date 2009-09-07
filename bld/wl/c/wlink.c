@@ -63,7 +63,7 @@
 #include "carve.h"
 #include "permdata.h"
 #include "toc.h"
-#if defined( _DLLHOST )
+#if defined( __WATCOMC__ )
     #include <malloc.h>
 #endif
 #include "dbgall.h"
@@ -106,23 +106,6 @@ static char     *ArgSave;
 // Not sure what this is for - doesn't seem to be referenced
 //extern int              __nheapblk;
 
-#if !defined( _DLLHOST )           // it's the standalone linker
-int main( int argc, char ** argv )
-/***************************************/
-{
-    argc = argc;        /* to avoid a warning */
-    argv = argv;
-#ifndef __WATCOMC__
-    _argv = argv;
-    _argc = argc;
-#endif
-    InitSubSystems();
-    LinkMainLine( NULL );
-    FiniSubSystems();
-    return( (LinkState & LINK_ERROR) ? 1 : 0 );
-}
-#endif
-
 static void LinkMeBaby( void )
 /****************************/
 {
@@ -140,7 +123,7 @@ void LinkMainLine( char *cmds )
         cmds = GetNextLink();
         if( cmds == NULL ) break;
     }
-#if defined( _DLLHOST )
+#if defined( __WATCOMC__ )
     _heapshrink();
 #endif
 }

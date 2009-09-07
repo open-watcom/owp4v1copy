@@ -45,99 +45,14 @@
 #include "wlnkmsg.h"
 #include "linkutil.h"
 #include "fileio.h"
+#include "ideentry.h"
 #include "ring.h"
 #include "overlays.h"
 #include "strtab.h"
 #include "loadfile.h"
 #include "permdata.h"
 #include "mapio.h"
-#include "wressetr.h"   // from wres project
 
-
-static ssize_t ResWrite( int dummy, const void *buff, size_t size )
-/*****************************************************************/
-/* redirect wres write to writeload */
-{
-    dummy = dummy;
-    DbgAssert( dummy == Root->outfile->handle );
-    WriteLoad( (void *) buff, size );
-    return( size );
-}
-
-//extern int WLinkItself;
-static off_t ResSeek( int handle, off_t position, int where )
-/***********************************************************/
-/* Workaround wres bug */
-{
-    if( ( where == SEEK_SET ) && ( handle == WLinkItself ) ) {
-        return( QLSeek( handle, position + FileShift, where, NULL ) - FileShift );
-    } else {
-        return( QLSeek( handle, position, where, NULL ) );
-    }
-}
-
-static int ResClose( int handle )
-/*******************************/
-{
-    return( close( handle ) );
-}
-
-static ssize_t ResRead( int handle, void *buffer, size_t len )
-/************************************************************/
-{
-    return( QRead( handle, buffer, len, NULL ) );
-}
-
-static off_t ResPos( int handle )
-/*******************************/
-{
-    return( QPos( handle ) );
-}
-
-WResSetRtns( ResOpen, ResClose, ResRead, ResWrite, ResSeek, ResPos, ChkLAlloc, LFree );
-
-#if !defined( _DLLHOST )
-void WriteStdOut( char *str )
-/**********************************/
-{
-    QWrite( STDOUT_HANDLE, str, strlen( str ), NULL );
-}
-
-void WriteNLStdOut( void )
-/*******************************/
-{
-    QWriteNL( STDOUT_HANDLE, NULL );
-}
-
-void WriteInfoStdOut( char *str, unsigned level, char *sym )
-/*****************************************************************/
-{
-    level = level;
-    sym = sym;
-    WriteStdOut( str );
-    WriteNLStdOut();
-}
-
-char *GetEnvString( char *envname )
-/*****************************************/
-{
-    return( getenv( envname ) );
-}
-
-bool GetAddtlCommand( unsigned cmd, char *buf )
-/****************************************************/
-{
-    cmd = cmd;
-    buf = buf;
-    return( FALSE );
-}
-
-bool IsStdOutConsole( void )
-/*********************************/
-{
-    return( QIsDevice( STDOUT_HANDLE ) );
-}
-#endif
 
 void WriteNulls( f_handle file, unsigned_32 len, char *name )
 /*******************************************************************/

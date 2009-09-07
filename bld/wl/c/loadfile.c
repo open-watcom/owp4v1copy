@@ -66,8 +66,6 @@
 #include "objnode.h"
 #include "strtab.h"
 #include "permdata.h"
-#include "idedll.h"
-#include "idedrv.h"
 #include "ideentry.h"
 #include "overlays.h"
 
@@ -724,23 +722,6 @@ void BuildImpLib( void )
 #define WLIB_EXE "wlib.exe"
 #endif
 
-#if defined( DLLS_IMPLEMENTED )
-bool ExecWlibDLL( char *cmdline )
-/*******************************/
-// return TRUE if an error
-{
-    IDEDRV              inf;
-    IDEDRV_STATUS       status;
-
-    status = IDEDRV_ERR_LOAD;
-    IdeDrvInit( &inf, WLIB_EXE, NULL );
-    IdeDrvChainCallbacks( IdeCB, &InitInfo );
-    status = IdeDrvExecDLL( &inf, cmdline );
-    IdeDrvUnloadDLL( &inf );
-    return( status != IDEDRV_SUCCESS );
-}
-#endif
-
 static void ExecWlib( void )
 /**************************/
 {
@@ -753,7 +734,7 @@ static void ExecWlib( void )
     namelen = strlen(ImpLib.fname);
     impnamelen = strlen(FmtData.implibname);
 /*
- * in the following: +12 for options, +2 for spaces, +1 for @, +4 for quotes
+ * in the following: +15 for options, +2 for spaces, +1 for @, +4 for quotes
  *                  and +1 for nullchar
 */
     _ChkAlloc( cmdline, namelen + impnamelen +15 +2 +1 +4 +1 );
@@ -775,7 +756,7 @@ static void ExecWlib( void )
     temp += namelen;
     *temp++ = '"';
     *temp = '\0';
-    if( ExecWlibDLL( cmdline ) ) {
+    if( ExecDLLPgm( WLIB_EXE, cmdline ) ) {
         PrintIOError( ERR+MSG_CANT_EXECUTE, "12", WLIB_EXE );
     }
     _LnkFree( cmdline );

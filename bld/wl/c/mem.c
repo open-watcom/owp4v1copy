@@ -57,7 +57,7 @@
 #endif
 
 #ifdef TRMEM
-#include "fileio.h"
+#include "ideentry.h"
 
 void    *TrHdl;
 
@@ -139,7 +139,6 @@ void *LAlloc( size_t size )
  void *LAlloc( size_t size )
 /**************************/
 {
-//    extern void *DoLAlloc( unsigned, void (*)() );
     void        (*ra)( void );
 
     ra = _trmem_guess_who();

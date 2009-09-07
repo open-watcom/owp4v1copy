@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  linker spill file i/o  routines
 *
 ****************************************************************************/
 
-
-/*
-  SPILLIO -- linker spill file i/o  routines
-
-*/
 
 #include <stdio.h>
 #include <string.h>
@@ -44,6 +38,7 @@
 #include "alloc.h"
 #include "wlnkmsg.h"
 #include "fileio.h"
+#include "ideentry.h"
 #include "spillio.h"
 
 static char *           TFileName;

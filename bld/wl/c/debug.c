@@ -36,7 +36,7 @@
 #include <string.h>
 #include "linkstd.h"
 #include "msg.h"
-#include "fileio.h"
+#include "ideentry.h"
 #include "alloc.h"
 
 #ifdef _INT_DEBUG

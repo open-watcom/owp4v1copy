@@ -44,7 +44,6 @@
 #include "wlnkmsg.h"
 #include "objio.h"
 #include "fileio.h"
-#include "ntio.h"
 
 #ifdef __OSI__
 //If or when OSI builds are re-enabled, we need to find the header for this
@@ -95,10 +94,6 @@ void LnkFilesInit( void )
 {
     OpenFiles = 0;
     CaughtBreak = FALSE;
-#if !defined( _DLLHOST )
-    setmode( STDIN_HANDLE, O_BINARY );
-    setmode( STDOUT_HANDLE, O_BINARY );
-#endif
 }
 
 void PrintIOError( unsigned msg, char *types, char *name )

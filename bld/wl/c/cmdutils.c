@@ -40,6 +40,7 @@
 #include "msg.h"
 #include "wlnkmsg.h"
 #include "fileio.h"
+#include "ideentry.h"
 #include "cmdline.h"
 #if !defined( __UNIX__ )
 #include <direct.h>

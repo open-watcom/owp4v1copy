@@ -34,7 +34,7 @@
 
 #include "linkstd.h"
 #include "msg.h"
-#include "fileio.h"
+#include "ideentry.h"
 #include "alloc.h"
 #include "carve.h"
 

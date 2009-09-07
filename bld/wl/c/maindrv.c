@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Mainline for DLL-using build of linker.
+* Description:  Main procedure to call the linker IDE interface.
 *
 ****************************************************************************/
 
@@ -32,30 +32,39 @@
 #include <process.h>
 #include "walloca.h"
 #include "idedrv.h"
+#ifndef __WATCOMC__
+#include "clibext.h"
+#endif
 
-
-int main( void )
+int main( int argc, char **argv )
 {
     IDEDRV          inf;
+#ifndef __UNIX__
     char            *cmdline;
     int             cmdlen;
+#endif
     IDEDRV_STATUS   status;
 
     status = IDEDRV_ERR_LOAD;
     IdeDrvInit( &inf, "wlinkd.dll", NULL );
-
+#ifndef __UNIX__
     cmdline = NULL;
     cmdlen = _bgetcmd( NULL, 0 );
     if( cmdlen != 0 ) {
         cmdlen++;               // add 1 for null char
         cmdline = alloca( cmdlen );
-        if( cmdline != NULL ) _bgetcmd( cmdline, cmdlen );
+        if( cmdline != NULL ) {
+            _bgetcmd( cmdline, cmdlen );
+        }
     }
     status = IdeDrvExecDLL( &inf, cmdline );
+#else
+    status = IdeDrvExecDLLArgv( &inf, argc, argv );
+#endif
     if( status != IDEDRV_SUCCESS && status != IDEDRV_ERR_RUN_EXEC
                                  && status != IDEDRV_ERR_RUN_FATAL ) {
         IdeDrvPrintError( &inf );
     }
     IdeDrvUnloadDLL( &inf );
-    return status != IDEDRV_SUCCESS;
+    return( status != IDEDRV_SUCCESS );
 }

@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Object file i/o interface routines
 *
 ****************************************************************************/
 
-
-/*
-  OBJIO -- Object file i/o interface routines
-
-*/
 
 #include <stdio.h>
 #include <string.h>
@@ -45,6 +39,7 @@
 #include "alloc.h"
 #include "wlnkmsg.h"
 #include "fileio.h"
+#include "ideentry.h"
 #include "strtab.h"
 #include "carve.h"
 #include "permdata.h"

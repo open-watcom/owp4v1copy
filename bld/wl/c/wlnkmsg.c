@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Linker message output.
+* Description:  Linker message output and message resource low-level functions.
 *
 ****************************************************************************/
 
@@ -37,6 +37,7 @@
 #ifdef __WATCOMC__
 #include <process.h>
 #endif
+#include <unistd.h>
 
 #include "linkstd.h"
 #include "dbginfo.h"
@@ -45,27 +46,68 @@
 #include "mapio.h"
 #include "msg.h"
 #include "fileio.h"
-
+#include "ideentry.h"
+#include "loadfile.h"
 #include "wressetr.h"
 #include "wreslang.h"
+#include "clibint.h"
+
+#define NO_RES_MESSAGE "could not open message resource file"
 
 static  HANDLE_INFO     hInstance = { 0 };
 static  unsigned        MsgShift;
 static  int             Res_Flag;
 
-#include "clibint.h"
-
-int WLinkItself;   // file handle
-
-#define NO_RES_MESSAGE "could not open message resource file"
-
 static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args );
+
+
+static ssize_t ResWrite( int dummy, const void *buff, size_t size )
+/*****************************************************************/
+/* redirect wres write to writeload */
+{
+    dummy = dummy;
+    DbgAssert( dummy == Root->outfile->handle );
+    WriteLoad( (void *) buff, size );
+    return( size );
+}
+
+static off_t ResSeek( int handle, off_t position, int where )
+/***********************************************************/
+/* Workaround wres bug */
+{
+    if( ( where == SEEK_SET ) && ( handle == hInstance.handle ) ) {
+        return( QLSeek( handle, position + FileShift, where, NULL ) - FileShift );
+    } else {
+        return( QLSeek( handle, position, where, NULL ) );
+    }
+}
+
+static int ResClose( int handle )
+/*******************************/
+{
+    return( close( handle ) );
+}
+
+static ssize_t ResRead( int handle, void *buffer, size_t len )
+/************************************************************/
+{
+    return( QRead( handle, buffer, len, NULL ) );
+}
+
+static off_t ResPos( int handle )
+/*******************************/
+{
+    return( QPos( handle ) );
+}
+
+WResSetRtns( ResOpen, ResClose, ResRead, ResWrite, ResSeek, ResPos, ChkLAlloc, LFree );
+
 
 int InitMsg( void )
 {
     char        buff[_MAX_PATH];
     int         initerror;
-#if defined( _DLLHOST )
+#if !defined( IDE_PGM )
     char        *fname;
 
     fname = _LpDllName;
@@ -80,7 +122,6 @@ int InitMsg( void )
     if( !initerror ) {
         hInstance.filename = fname;
         OpenResFile( &hInstance );
-        WLinkItself = hInstance.handle;
         if( hInstance.handle == NIL_HANDLE ) {
             initerror = TRUE;
         } else {
