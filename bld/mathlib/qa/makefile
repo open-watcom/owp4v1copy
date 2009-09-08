@@ -4,8 +4,16 @@
 
 # code  platform            invocation
 # ====  ========            ==========
-# DOS   16-bit DOS          dos_fpi
-#                           dos_fpc
+# DOS   16-bit DOS          dos_fpic
+#                           dos_fpcc
+#                           dos_fpih
+#                           dos_fpch
+#                           dos_fpil
+#                           dos_fpcl
+#                           dos_fpim
+#                           dos_fpcm
+#                           dos_fpis
+#                           dos_fpcs
 # PLS   PharLap             run386 pls_fpir
 #                           run386 pls_fpcr
 #                           run386 pls_fpis
@@ -65,13 +73,17 @@
     @set PATH=$(%WATCOM)\binnt;$(%WATCOM)\binw;$(%PATH)
 !endif
 
-mathtest = $(new_mlib)/c/mathtest.c
+mathtest = ../c/mathtest.c
 
 comp_opts = -za99 -ox -d2 -zq -fo=$^*.obj
 link_opts = NAME $^* OPTION quiet, map DEBUG all
 
 exes = &
-    dos_fpi.exe dos_fpc.exe &
+    dos_fpis.exe dos_fpcs.exe &
+    dos_fpim.exe dos_fpcm.exe &
+    dos_fpic.exe dos_fpcc.exe &
+    dos_fpil.exe dos_fpcl.exe &
+    dos_fpih.exe dos_fpch.exe &
     pls_fpir.exp pls_fpcr.exp &
     pls_fpis.exp pls_fpcs.exp &
     rsi_fpir.exe rsi_fpcr.exe &
@@ -91,12 +103,44 @@ exes = &
 
 all : .symbolic $(exes)
 
-dos_fpi.exe : $(mathtest)
-    $(cc_i86) $[@ $(comp_opts) -fpi -bt=dos
+dos_fpis.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -ms -fpi -bt=dos
     wlink SYSTEM dos $(link_opts) FILE $^*.obj
 
-dos_fpc.exe : $(mathtest)
-    $(cc_i86) $[@ $(comp_opts) -fpc -bt=dos
+dos_fpcs.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -ms -fpc -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpim.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -mm -fpi -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpcm.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -mm -fpc -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpic.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -mc -fpi -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpcc.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -mc -fpc -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpil.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -ml -fpi -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpcl.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -ml -fpc -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpih.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -mh -fpi -bt=dos
+    wlink SYSTEM dos $(link_opts) FILE $^*.obj
+
+dos_fpch.exe : $(mathtest)
+    $(cc_i86) $[@ $(comp_opts) -mh -fpc -bt=dos
     wlink SYSTEM dos $(link_opts) FILE $^*.obj
 
 pls_fpir.exp : $(mathtest)
@@ -234,4 +278,3 @@ lnx_fpis.exe : $(mathtest)
 lnx_fpcs.exe : $(mathtest)
     $(cc_386) $[@ $(comp_opts) -fpc -bt=linux -3s
     wlink SYSTEM linux $(link_opts) FILE $^*.obj NAME $@
-
