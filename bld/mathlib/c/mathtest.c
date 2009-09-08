@@ -66,7 +66,7 @@ void my_handler( int sig, int fpe ) {
     } else {
         abort();
     }
-    signal( SIGFPE, (__sig_func)my_handler );
+    signal( SIGFPE, (void (*)(int))my_handler );
 }
 
 //#else
@@ -155,12 +155,14 @@ void test_trig( void )
     VERIFY( CompDbl( cosh( 0.0 ), 1.0 ) );
     VERIFY( CompDbl( tanh( 1.0 ), 0.7615941560 ) );
     VERIFY( CompDbl( tanh( 0.0 ), 0.0 ) );
+#ifdef __WATCOMC__      /* Not in Microsoft libs. */
     VERIFY( CompDbl( asinh( 1.1752011936 ), 1.0 ) );
     VERIFY( CompDbl( asinh( 0.0 ), 0.0 ) );
     VERIFY( CompDbl( acosh( 1.5430806348 ), 1.0 ) );
     VERIFY( CompDbl( acosh( 1.0 ), 0.0 ) );
     VERIFY( CompDbl( atanh( 0.7615941560 ), 1.0 ) );
     VERIFY( CompDbl( atanh( 0.0 ), 0.0 ) );
+#endif
     /*
         Note:
         sinh(1) = 1.175201193643802
@@ -216,9 +218,11 @@ void test_fp_and_80x87_math( void )
     VERIFY( CompDbl( log10( 10.0 ), 1.0 ) );
     VERIFY( CompDbl( log10( 1 ), 0.0 ) );
     VERIFY( CompDbl( log10( 0.1 ), -1.0 ) );
+#ifdef __WATCOMC__      /* Not in Microsoft libs. */
     VERIFY( CompDbl( log2( 65536.0 ), 16.0 ) );
     VERIFY( CompDbl( log2( 1 ), 0.0 ) );
     VERIFY( CompDbl( log2( 0.25 ), -2.0 ) );
+#endif
     VERIFY( CompDbl( sqrt( 99980001.0 ), 9999.0 ) );
     dnum = 1.0/DBL_MIN;
     VERIFY( CompDbl( 1.0 / dnum, DBL_MIN ) );
@@ -264,12 +268,12 @@ void test_fp_and_80x87_math( void )
     //
     _fpreset();
     fp_control = 0;
-    fp_mask = EM_PRECISION;
-    signal( SIGFPE, (__sig_func)my_handler );
+    fp_mask = _EM_INEXACT;
+    signal( SIGFPE, (void (*)(int))my_handler );
     (void)_control87( fp_control, fp_mask );
     q = a / b;
     VERIFY( sig_count > 0 );
-    fp_control = EM_PRECISION;
+    fp_control = _EM_INEXACT;
     (void)_control87( fp_control, fp_mask );
     sig_count = 0;
     q = a / b;
