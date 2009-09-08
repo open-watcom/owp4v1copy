@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include "ftnstd.h"
 #include "ftextfun.h"
 #include "errcod.h"
@@ -275,23 +276,23 @@ void    R_TrapInit( void ) {
         BreakVector = 0x06;
     }
     CBSave = _dos_getvect( BreakVector );
-    _dos_setvect( BreakVector, (void (interrupt far *)(void))(void (near *)(void))BreakHandler );
+    _dos_setvect( BreakVector, BreakHandler );
   #if defined( __386__ )
     if( _IsPharLap() ) {
         CBRealSave = _dos_getrealvect( BreakVector );
-        _dos_setvectp( BreakVector, (void (interrupt far *)(void))(void (near *)(void))BreakHandler );
+        _dos_setvectp( BreakVector, BreakHandler );
     }
   #endif
     ISave = _dos_getvect( IntOverFlow );
-    _dos_setvect( IntOverFlow, (void (interrupt far *)(void))(void (near *)(void))IOvFlHandler );
+    _dos_setvect( IntOverFlow, IOvFlHandler );
     ZSave = _dos_getvect( IntDivBy0 );
-    _dos_setvect( IntDivBy0, (void (interrupt far *)(void))(void (near *)(void))IDivZHandler );
+    _dos_setvect( IntDivBy0, IDivZHandler );
 #elif defined( __WINDOWS__ )
  #if !defined( __386__ )
     ISave = _dos_getvect( IntOverFlow );
-    _dos_setvect( IntOverFlow, (void (interrupt far *)(void))(void (near *)(void))IOvFlHandler );
+    _dos_setvect( IntOverFlow, IOvFlHandler );
     ZSave = _dos_getvect( IntDivBy0 );
-    _dos_setvect( IntDivBy0, (void (interrupt far *)(void))(void (near *)(void))IDivZHandler );
+    _dos_setvect( IntDivBy0, IDivZHandler );
  #endif
 #elif defined( __OS2_386__ ) || defined( __NT__ )
     signal( SIGBREAK, BreakSignal );
