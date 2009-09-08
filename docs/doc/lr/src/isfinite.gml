@@ -23,6 +23,7 @@ a finite value.
 .*
 .see begin
 .im seefpcls isfinite
+.seelist &function. _finite
 .see end
 .*
 .exmp begin
