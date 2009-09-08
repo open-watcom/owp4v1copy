@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Build environment and arguments for new process.
 *
 ****************************************************************************/
 
@@ -76,6 +75,7 @@ int __F_NAME(__cenvarg,__wcenvarg)(
     unsigned            length;
     unsigned            oamblksiz;
     CHAR_TYPE           *p;
+    CHAR_TYPE _WCNEAR   *np;
     unsigned            len;
     int                 i;
 
@@ -101,8 +101,8 @@ int __F_NAME(__cenvarg,__wcenvarg)(
 
     oamblksiz = _RWD_amblksiz;
     _RWD_amblksiz = 16; /* force allocation in 16 byte increments */
-    p = lib_nmalloc( length*sizeof(CHAR_TYPE) );
-    if( (void _WCNEAR *)FP_OFF( p ) == NULL ){  /* 03-aug-88 */
+    p = np = lib_nmalloc( length*sizeof(CHAR_TYPE) );
+    if( np == NULL ){   /* 03-aug-88 */
         p = lib_malloc( length*sizeof(CHAR_TYPE) );
         if( p == NULL ){
             __set_errno( ENOMEM );
