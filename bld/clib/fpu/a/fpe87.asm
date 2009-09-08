@@ -291,6 +291,8 @@ else
           mov   _STACKLOW,AX            ; - set new stack low
           mov   AX,CX                   ; - set floating point status
           call  __FPE_handler           ; - call user's handler
+          mov   AX,seg DGROUP           ; - get data segment again because
+          mov   DS,AX                   ; - __FPE_handler may have changed DS
           pop   _STACKLOW               ; - restore old stack low value
 endif
           mov   SS,SaveSS               ; - restore stack pointer
