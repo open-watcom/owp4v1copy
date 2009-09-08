@@ -842,39 +842,39 @@
 :target. any
 :file.
 :optional.
-:usage. generate makefile style auto depend file
-:jusage. generate makefile style auto depend file
+:usage. generate make style automatic dependency file
+:jusage. generate make style automatic dependency file
 
 :option. adbs
 :target. any
-:usage. force slashes to back-slashes in auto dep file
-:jusage. force slashes to back-slashes in auto dep file
+:usage. force path separators to '\\' in auto-depend file
+:jusage. force path separators to '\\' in auto-depend file
 
 :option. adfs
 :target. any
-:usage. force slashes to fore-slashes in auto dep file
-:jusage. force slashes to fore-slashes in auto dep file
+:usage. force path separators to '/' in auto-depend file
+:jusage. force path separators to '/' in auto-depend file
 
 :option. add
 :target. any
 :file.
 :optional.
-:usage. specify first dependancy in make-style auto depend file
-:jusage. specify first dependancy in make-style auto depend file
+:usage. specify first dependency in make style auto-depend file
+:jusage. specify first dependency in make style auto-depend file
 
 :option. adhp
 :target. any
 :file.
 :optional.
-:usage. specify path for headers with none.
-:jusage. specify path for headers with none.
+:usage. specify default path for headers without one
+:jusage. specify default path for headers without one
 
 :option. adt
 :target. any
 :file.
 :optional.
-:usage. specify target in make-style auto depend file
-:jusage. specify target in make-style auto depend file
+:usage. specify target in make style auto-depend file
+:jusage. specify target in make style auto-depend file
 
 :option. pil
 :target. any

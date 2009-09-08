@@ -112,27 +112,27 @@ timings and use stack-based argument passing conventions
 :optref refid='SW6RS'.
 .*
 .note ad[=<file_name>]
-generate makefile style auto depend file
+generate make style automatic dependency file
 :optref refid='SWad'.
 .*
 .note adbs
-force slashes generated in makefile style auto depend to backward
+force path separators generated in auto-dependency files to backslashes
 :optref refid='SWadbs'.
 .*
 .note add[=<file_name>]
-specify source dependancy name generated in make-style autodep file
+specify source dependency name generated in make style auto-dependency file
 :optref refid='SWadd'.
 .*
 .note adhp[=<file_name>]
-specify path to use for headers which result with no path, and are filename only.
+specify path to use for headers with no path given
 :optref refid='SWadhp'.
 .*
 .note adfs
-force slashes generated in makefile style auto depend to forward
+force path separators generated in auto-dependency files to forward slashes
 :optref refid='SWadfs'.
 .*
 .note adt[=<target_name>]
-specify target name generated in makefile style auto depend
+specify target name generated in make style auto-dependency file
 :optref refid='SWadt'.
 .*
 .if '&alpha' eq 'AXP' .do begin

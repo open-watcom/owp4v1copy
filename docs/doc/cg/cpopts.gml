@@ -421,32 +421,34 @@ syntax check only
 .notehd2 Description:
 .if &e'&$SWad eq 1 .do begin
 .note ad[=<file_name>]
-generate makefile style auto depend file
+generate make style auto-dependency file
 :optref refid='SWad'.
 .do end
 .if &e'&$SWadbs eq 1 .do begin
 .note adbs
-force slashes generated in makefile style auto depend to backward
+force path separators generated in make style auto-dependency file to
+backslashes
 :optref refid='SWadbs'.
 .do end
 .if &e'&$SWadd eq 1 .do begin
 .note add[=<file_name>]
-set source depend name for makefile style auto depend file
+set source name (the first dependency) for make style auto-dependency file
 :optref refid='SWadd'.
 .do end
 .if &e'&$SWadhp eq 1 .do begin
 .note adhp[=<path prefix>]
-set default path for header dependancies which result in name only.
+set default path for header dependencies which result in filename only
 :optref refid='SWadhp'.
 .do end
 .if &e'&$SWadfs eq 1 .do begin
 .note adfs
-force slashes generated in makefile style auto depend to forward
+force path separators generated in make style auto-dependency file to
+forward slashes
 :optref refid='SWadfs'.
 .do end
 .if &e'&$SWadt eq 1 .do begin
 .note adt[=<target_name>]
-specify target name generated in makefile style auto depend
+specify target name generated in make style auto-dependency file
 :optref refid='SWadt'.
 .do end
 .if &e'&$SWdb eq 1 .do begin
@@ -2780,9 +2782,10 @@ output files that the compiler processes and/or creates.
 .if &e'&$SWad eq 1 .do begin
 :OPT refid='SWad' name='ad[=<file_name>]'.
 .ix 'options' 'ad'
-This option enables generation of auto dependancy infomation in a makefile
-syntax generating a <target>:<depends...> list.  If the auto depend file is
-not specified, it is constructed from the source file name.  If the depend
+This option enables generation of automatic dependency infomation in
+makefile format, as a list of targets and their dependents.
+If the name of the automatic dependency file is not specified, it is
+constructed from the source file name.  If the dependency
 extension is not specified, it is ".d" by default.
 .exam begin 1
 &prompt.:SF font=1.compiler_name:eSF. report &sw.ad=&dr4.&pc.proj&pc.obj&pc
@@ -2790,7 +2793,7 @@ extension is not specified, it is ".d" by default.
 A trailing "&pc" must be specified for directory names.
 If, for example, the option was specified as
 .mono fo=&dr4.&pc.proj&pc.obj
-then the dependancy file would be called
+then the dependency file will be called
 .fi &dr4.&pc.proj&pc.obj.d
 .ct ~.
 .np
@@ -2798,94 +2801,78 @@ A default filename extension must be preceded by a period (".").
 .exam begin 1
 &prompt.:SF font=1.compiler_name:eSF. report &sw.ad=&dr4.&pc.proj&pc.obj&pc..dep
 .exam end
-The file generated has content
+The content of the generated file has the following format:
 .exam begin 1
 <targetname>:<input source file> <included header files...>
 .exam end
-included header files exclude those which come <watcom>/h.
+Note that the header files listed in the dependency file normally do not
+include the standard library headers.
 .do end
 .*
 .if &e'&$SWadbs eq 1 .do begin
 :OPT refid='SWadbs' name='adbs'.
 .ix 'options' 'adbs'
-When generating makefile style auto depend files, this option forces any slashes
-"/" or "\" to be "\".  Certain operations can cause mixed slashes, this forces the
-output to be appropriate for the make used.
+When generating make style automatic dependency files, this option forces all
+path separators ("/" or "\") to be a backslash ("\").  Certain usage may
+result in mixed path separators; this options helps generating
+automatic dependency information in a format appropriate for the
+make tool used.
 .do end
 .*
 .if &e'&$SWadd eq 1 .do begin
 :OPT refid='SWadd' name='add[=<file_name>]'.
 .ix 'options' 'add'
-Set the first dependancy name in a makefile style auto depend file.  The
-default for this is the source name specified to compile.  This file spec
-follows the rules specified for other files.
+Set the first dependency name in a make style automatic dependency file.
+By default, the name of the source file to be compiled is used.
 :optref refid='SWad'.
 .do end
 .*
 .if &e'&$SWadhp eq 1 .do begin
 :OPT refid='SWadhp' name='adhp[=<path_name>]'.
 .ix 'options' 'adhp'
-When including file with "" delimiters, the filename resulting in makefile
-type auto dependancy files will have no path.  This allows these files to 
-be given a path, and said path will may be relative.  This path_name is
-prepended to the filename exactly, so a trailing slash must be specified.
+When including a file with "" delimiters, the resulting filename in make
+style automatic dependency files will have no path.  This option allows such
+files to be given a path; said path may be relative.  The path_name
+argument is directly prepended to the filename, therefore a trailing
+path separator must be specified.
 .np
-This issue only affects headers found in the current directory.  If the header was found in the source's directory, it receives a path, which means there will be at least one [IS_]PATH_CHAR in the path, otherwise it is found in the current directory.
+This issue only affects headers found in the current directory, that is,
+the directory current at the time of compilation.
+If a header is located in an including file's directory, it will
+automatically receive a path.
 .np
-let me illustrate....
-.np
-.exam begin 1
-source.obj: source.c header.h
-.exam end
-This target rule will work when compiling within the source's directory ONLY, otherwise dependancy files source.c and header.h will not be found; no rule to make them; and make fails.
-.np
-.exam begin 1
-output/source.obj: sourcepath/source.c header.h
-.exam end
-(what is generated now, when compiling source.c within sourcepath)
-.np
-This will also fail if the make evaluates this rule from some place other than sourcepath.
-.np
-This will work, however, if the header was really found in the current directory. (no option required)
-.np
-(one possible intent... which will be generated now, if header.h is not in the current path, but is with the source, and the compile is done outside sourcepath)
-.exam begin 1
-output/output.obj: sourcepath/source.c sourcepath/header.h
-.exam end
-This rule can be consistantly generated by specifying -adhp=sourcepath/ . Then when the header file is found in the current directory, especially when it is sourcepath, will not have had a path, and will receive the default header path.  The rule may then be processed from outside that current directory. [ -ahdp=$(SOMEVAR)/ ] may be specified... this will result in output as $(SOMEVAR) which make may expand ]
-.np
-(another possible intent... which will result in referencing the same header file always, when running a make from outside the current path specified when the compile was originally invoked...)
-.exam begin 1
-output/output.obj: sourcepath/source.c current_path_at_compile/header.h
-.exam end
--adhp=currentpath/
-.np
-This says currentpath, because the rule is generated based on the state of when the compile is done, and should be viewed as past tense so that the rule specifies accurately what was compiled...
-
+This option is useful in situations where the current directory at the time
+when the automatic dependency information is evaluated is not the same as
+the current directory at the time of compilation (i.e., when the automatic
+dependency information was generated).
 .do end
 .*
 .if &e'&$SWadfs eq 1 .do begin
 :OPT refid='SWadfs' name='adfs'.
 .ix 'options' 'adfs'
-When generating makefile style auto depend files, this option forces any slashes
-"/" or "\" to be "/".  Certain operations can cause mixed slashes, this forces the
-output to be appropriate for the make used.
+When generating make style automatic dependency files, this option forces all
+path separators ("/" or "\") to be a forward slash ("/"). Certain usage may
+result in mixed path separators; this options helps generating
+automatic dependency information in a format appropriate for the
+make tool used.
 .do end
 .*
 .if &e'&$SWadt eq 1 .do begin
 :OPT refid='SWadt' name='adt[=<target_name>]'.
 .ix 'options' 'adt'
-This option enables generation of auto dependancy infomation in a makefile
-syntax.  The target name in the file can be specified.  If the auto depend target is
-not specified, it is constructed from the source file name.  If the target
-extension is not specified, it is "&obj" by default.
+This option enables generation of automatic dependency infomation in the
+form of a makefile.
+The target in the makefile can be specified.  If the automatic dependency
+target is not specified through this option, it is constructed from the
+source file name.
+If the target extension is not specified, it is "&obj" by default.
 .exam begin 1
 &prompt.:SF font=1.compiler_name:eSF. report &sw.adt=&dr4.&pc.proj&pc.obj&pc
 .exam end
 A trailing "&pc" must be specified for directory names.
 If, for example, the option was specified as
 .mono fo=&dr4.&pc.proj&pc.obj
-then the dependancy file would be called
+then the dependency file would be called
 .fi &dr4.&pc.proj&pc.obj&obj.
 .ct ~.
 .np
@@ -2893,11 +2880,12 @@ A default filename extension must be preceded by a period (".").
 .exam begin 1
 &prompt.:SF font=1.compiler_name:eSF. report &sw.adt=&dr4.&pc.proj&pc.obj&pc..dep
 .exam end
-The file generated has content
+The generated file has the following contents:
 .exam begin 1
 <targetname>:<input source file> <included header files...>
 .exam end
-included header files exclude those which come <watcom>/h.
+Note that the header files listed in the dependency file normally do not
+include the standard library headers.
 .do end
 .*
 .if &e'&$SWdb eq 1 .do begin

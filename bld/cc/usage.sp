@@ -36,12 +36,12 @@ Options:
 -6            optimize for Pentium Pro
 :endsegment
 -aa           allow non const initializers for local aggregates or unions
--ad[=<file>]  generate make style auto depend file
--add[=<file>] set source dependancy name in auto depend file
--adt[=<file>] set make style auto depend target name
--adhp[=<file>]set default for no header path
--adbs         force slashes to backward '\\' slashes (auto dep gen)
--adfs         force slashes to forward '/' slashes (auto dep gen)
+-ad[=<file>]  generate make style automatic dependency file
+-add[=<file>] specify first dependency in make style auto-depend file
+-adt[=<file>] specify target in make style auto-depend file
+-adhp[=<file>]specify default path for headers without one
+-adbs         force path separators to '\\' in auto-depend file
+-adfs         force path separators to '/' in auto-depend file
 -ai           turn off type checking on static initialization
 -aq           turn off qualifier mismatch warning for const/volatile
 :segment Taxp
