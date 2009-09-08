@@ -39,13 +39,13 @@ attempt to perform further input, and it is unspecified to what extent
 The &func function is equivalent to
 .kw fscanf
 except that the
-.kw c,
-.kw s,
+.mono c,
+.mono s,
 and
-.kw [
+.mono [
 conversion specifiers apply to a pair of arguments (unless assignment
 suppression is indicated by a
-.kw *
+.mono *
 .ct ).
 The first of these arguments is the same as for
 .kw fscanf.

@@ -75,13 +75,13 @@ the special character itself. When not quoted, such special characters have
 special meaning in the specification of patterns. The pattern-matching
 special characters and the contexts in which they have their special meaning
 are as follows:
-.begterm 7
-.term ?
+.begnote
+.note ?
 a ? is a pattern that matches any printable or nonprintable character
 except <newline>.
-.term *
+.note *
 the * matches any string, including the null string.
-.term [br_exp]
+.note [br_exp]
 a pattern that matches a single character as per Regular Expression Bracket
 Expressions (1003.2 2.9.1.2) except that
 .begbull $compact
@@ -91,7 +91,7 @@ in its role as a nonmatching list in the regular expression notation.
 .bull
 The backslash is used as an escape character within bracket expressions.
 .endbull
-.endterm
+.endnote
 The
 .mono ?,
 .mono *
