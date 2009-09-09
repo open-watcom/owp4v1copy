@@ -754,7 +754,7 @@
 
 :option. oh
 :target. any
-:usage. enable repeated optimizations (longer compiles)
+:usage. enable expensive optimizations (longer compiles)
 :jusage. 最適化を繰り返します(コンパイルが長くなります)
 
 :option. oi
@@ -769,7 +769,7 @@
 
 :option. ok
 :target. any
-:usage. enable control flow prologues and epilogues
+:usage. include prologue/epilogue in flow graph
 :jusage. プロローグとエピローグをフロー制御可能にします
 
 :option. ol

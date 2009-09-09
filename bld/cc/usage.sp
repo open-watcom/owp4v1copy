@@ -159,7 +159,7 @@ Options:
 -o{a,b,c,d,e,f[+],h,i,k,l,m,n,o,p,r,s,t,u,x,z} control optimization
 :endsegment
   a           -> relax aliasing constraints
-  b           -> branch prediction
+  b           -> enable branch prediction
 :segment T386 | Ti86
   c           -> disable <call followed by return> to <jump> optimization
 :endsegment
@@ -169,9 +169,9 @@ Options:
   f           -> generate traceable stack frames as needed
   f+          -> always generate traceable stack frames
 :endsegment
-  h           -> enable expensive optimizations
+  h           -> enable expensive optimizations (longer compiles)
   i           -> expand intrinsic functions inline
-  k           -> push register saves into flow graph
+  k           -> include prologue/epilogue in flow graph
   l           -> enable loop optimizations
   l+          -> enable loop unrolling optimizations
 :segment T386 | Ti86
