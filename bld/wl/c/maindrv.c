@@ -29,10 +29,11 @@
 ****************************************************************************/
 
 
-#include <process.h>
 #include "walloca.h"
 #include "idedrv.h"
-#ifndef __WATCOMC__
+#ifdef __WATCOMC__
+#include <process.h>
+#else
 #include "clibext.h"
 #endif
 

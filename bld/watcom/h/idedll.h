@@ -41,16 +41,16 @@ extern "C" {
 
 #pragma pack( 4 )
 
-#ifdef IDE_PGM
-#define IDEDLL_EXPORT
-#else
-#define IDEDLL_EXPORT           __export __stdcall
-#endif
-
 #if defined( __WATCOMC__ )
 #define IDECALL                 __stdcall
 #else
 #define IDECALL
+#endif
+
+#ifdef IDE_PGM
+#define IDEDLL_EXPORT
+#else
+#define IDEDLL_EXPORT           __export IDECALL
 #endif
 
 #define IDE_CUR_DLL_VER         3

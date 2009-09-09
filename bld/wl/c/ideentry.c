@@ -152,10 +152,6 @@ bool GetAddtlCommand( unsigned cmd, char *buf )
 #endif
 }
 
-typedef IDEBool __stdcall (*IDEGetInfoFn)( IDECBHdl hdl, IDEInfoType type,
-                                IDEGetInfoWParam wparam, IDEGetInfoLParam lparam );
-
-
 
 /* routines which are called by the DLL driver */
 
@@ -183,7 +179,9 @@ void IDEDLL_EXPORT IDEStopRunning( void )
 void IDEDLL_EXPORT IDEFreeHeap( void )
 /*******************************************/
 {
+#if defined( __WATCOMC__ )
     _heapshrink();
+#endif
 }
 
 IDEBool IDEDLL_EXPORT IDEInitDLL( IDECBHdl hdl, IDECallBacks *cb,
