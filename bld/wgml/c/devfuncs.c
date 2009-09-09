@@ -29,7 +29,6 @@
 *                   df_increment_pages()
 *                   df_interpret_device_functions()
 *                   df_interpret_driver_functions()
-*                   df_new_section()
 *                   df_populate_device_table()
 *                   df_populate_driver_table()
 *                   df_set_horizontal()
@@ -41,7 +40,9 @@
 *                   fb_init()
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
-*               as well as a macro
+*               and one function declared in copfiles.h:
+*                   fb_new_section()
+*               as well as a macro:
 *                   MAX_FUNC_INDEX
 *               some local typedefs and structs:
 *                   df_data
@@ -3048,54 +3049,6 @@ void df_interpret_driver_functions( uint8_t * in_function )
     return;
 }
 
-/* Function df_new_section().
- * Performs the work of fb_new_section(). This function is very specialized.
- *
- * Parameter:
- *      v_start contains the desired starting vertical position.
- */
- 
-void df_new_section( uint32_t v_start )
-{
-    uint32_t    save_font;
-
-    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
-
-    fb_lineproc_endvalue();
-
-    /* Save active_font and set it to 0 for the :NEWPAGE and :NEWLINE blocks. */
-
-    save_font = active_font;
-    active_font = 0;
-
-    /* Interpret the :NEWPAGE block. */
-
-    df_interpret_driver_functions( bin_driver->newpage.text );
-
-    /* Interpret the DOCUMENT_PAGE :PAUSE block. */
-
-    if( bin_device->pauses.docpage_pause != NULL ) \
-        df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
-
-    /* Set up for a new document page. */
-
-    df_increment_pages();
-
-    /* Do the initial vertical positioning for the section. */
-
-    desired_state.y_address = v_start;
-    fb_normal_vertical_positioning();
-
-    /* Restore the value of active_font. This ensures that the next font
-     * switch decision and font switch, if any, will be done using the
-     * correct fonts.
-     */
-
-    active_font = save_font;
-
-    return;
-}
-
 /* Function df_populate_device_table().
  * Modifies the entries in device_function_table so that all the device
  * functions which are supposed to work for function blocks in :DEVICE blocks
@@ -3519,6 +3472,62 @@ void fb_lineproc_endvalue( void )
                                                             endvalue->text );
         }
     }
+
+    return;
+}
+
+/* Function fb_new_section().
+ * Performs the Initial Vertical Positioning, except for the first instance,
+ * for which see fb_position(). This function is very specialized.
+ *
+ * Parameter:
+ *      v_start contains the desired starting vertical position.
+ *
+ * Note:
+ *      This function should not be invoked at the start of the file; instead,
+ *      fb_position() should be used as it will do the first initial vertical
+ *      positioning. This function should be used in place of fb_document_page()
+ *      when a new section or other event occurs where its action is needed, as
+ *      partially described in the Wiki.
+ */
+ 
+void fb_new_section( uint32_t v_start )
+{
+    uint32_t    save_font;
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* Save active_font and set it to 0 for the :NEWPAGE and :NEWLINE blocks. */
+
+    save_font = active_font;
+    active_font = 0;
+
+    /* Interpret the :NEWPAGE block. */
+
+    df_interpret_driver_functions( bin_driver->newpage.text );
+
+    /* Interpret the DOCUMENT_PAGE :PAUSE block. */
+
+    if( bin_device->pauses.docpage_pause != NULL ) \
+        df_interpret_device_functions( bin_device->pauses.docpage_pause->text );
+
+    /* Set up for a new document page. */
+
+    df_increment_pages();
+
+    /* Do the initial vertical positioning for the section. */
+
+    desired_state.y_address = v_start;
+    fb_normal_vertical_positioning();
+
+    /* Restore the value of active_font. This ensures that the next font
+     * switch decision and font switch, if any, will be done using the
+     * correct fonts.
+     */
+
+    active_font = save_font;
 
     return;
 }

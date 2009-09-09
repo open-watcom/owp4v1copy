@@ -26,12 +26,10 @@
 *
 * Description:  Implements the functions used to parse .COP files:
 *                   cop_in_trans()
-*                   cop_out_trans()
 *                   cop_setup()
 *                   cop_teardown()
 *                   cop_text_width()
 *                   cop_ti_table()
-*                   cop_tr_table()
 *                   fb_dbox()
 *                   fb_document()
 *                   fb_document_page()
@@ -46,7 +44,6 @@
 *                   bin_fonts
 *                   cur_token
 *                   ti_table
-*                   tr_table
 *               and these local functions:
 *                   compute_metrics()
 *                   find_cop_font()
@@ -59,7 +56,6 @@
 *                   get_cop_font()
 *                   get_next_token()
 *                   scale_basis_to_horizontal_base_units()
-*                   update_translate_table()
 *                   validate_token()
 *
 * Note:         The Wiki should be consulted for any term whose meaning is
@@ -97,7 +93,6 @@
 static cop_font        *   bin_fonts;       // binary fonts being used (linked list)
 static record_buffer   *   cur_token;       // Current token.
 static uint8_t             ti_table[0x100]; // .TI-controlled translation table
-static uint8_t             tr_table[0x100]; // .TR-controlled translation table
 
 /* Local function definitions. */
 
@@ -757,156 +752,6 @@ static uint8_t validate_token( record_buffer * token )
     return( retval );
 }
 
-/* Function update_translate_table().
- * Use the given data to update the desired table.
- *
- * Parameters
- *      is_ti_table is "true" if the ti_table is to be updated, "false"
- *          if the tr_table is to be updated.
- *      data contains any data associated with the .TI or .TR control word.
- *      count contains the number of bytes to process.
- */
-
-static void update_translate_table( bool is_ti_table, uint8_t * data, \
-                                     uint32_t count )
-{
-    bool        first_found = false;
-    bool        no_data     = true;
-    int         i           = 0;
-    uint8_t *   table       = NULL;
-    uint8_t     token_char;
-    uint8_t     first_char;
-
-    /* Set up the variables. count must be "0" if there is no data. no_data
-     * will cause the table to be reset if it is still "true" after the loop.
-     */
-
-    if( is_ti_table ) table = ti_table;
-    else table = tr_table;
-    if( data == NULL ) count = 0;
-
-    if( count != 0 ) {
-
-        /* Determine if this is a ".ti set" instance. */
-
-        if( is_ti_table ) {
-
-            /* Get the first token, if any. */
-
-            i = get_next_token( data, count, cur_token );
-
-            /* If the length of the token is "3", see if it is "set". */
-
-            if( cur_token->current == 3 ) {
-                if( !memicmp( cur_token->text, "set", 3 ) ) {
-
-                    /* Get the next token, if any. */            
-
-                    i += get_next_token( &data[i], count - i, cur_token );
-
-                    if( cur_token->current == 0 ) {
-
-                        /* If there was no token, clear the input escape. */
-
-                        ProcFlags.in_trans = false;
-                        in_esc = ' ';
-                    } else {
-
-                        /* Only a single character is valid; hex digits are
-                         * ignored by wgml 4.0.
-                         */
-
-                         if( cur_token->current > 1 ) {
-                            out_msg( ".ti set can only be used with a single "\
-                                     "character: '%s'\n", cur_token->text );
-                            err_count++;
-                            g_suicide();
-                        }
-
-                        /* Set the escape character. */
-
-                        ProcFlags.in_trans = true;
-                        in_esc = *cur_token->text;
-
-                        /* wgml 4.0 ignores any additional tokens. */
-
-                        get_next_token( &data[i], count - i, cur_token );
-                        if( cur_token->current != 0 ) {
-                            uint8_t * tail;
-
-                            tail = (uint8_t *) mem_alloc( count - i + 1);
-                            memcpy_s( tail, count - i, &data[i], count - i );
-                            tail[count - i] = '\0';
-                            out_msg( \
-    ".ti set cannot be used to set a translation: '%s'\n", tail );
-                            mem_free( tail );
-                            err_count++;
-                            g_suicide();
-                        }
-                    }
-
-                    /* Processing is done if this was ".ti set". */
-
-                    return; 
-                }
-            }
-
-            /* This was not ".ti set", and so, if not empty, the token found
-             * is either a first_char or invalid.
-             */
-
-            if( cur_token->current != 0 ) {
-                first_char = validate_token( cur_token );
-                first_found = true;
-                no_data = false;
-            }
-        }
-            
-        /* This loop only deals with the non-".ti set" forms. */
-
-        for( ; i < count; i++ ) {
-
-            /* Get the next token, if any. */
-
-            i += get_next_token( &data[i], count - i, cur_token );
-
-            /* If there was no token, then we are done. */
-
-            if( cur_token->current == 0 ) break;
-
-            /* Validate the token and note that valid data was found. */
-
-            token_char = validate_token( cur_token );
-            no_data = false;
-
-            /* If we have an unused first_char, then we just found the char it
-             * is to be converted into. Otherwise, we found a new first_char.
-             */
-
-            if( first_found ) {
-                table[first_char] = token_char;
-                first_found = false;
-            } else {
-                first_char = token_char;
-                first_found = true;
-            }
-        }
-    }
-
-    /* If first_found is true at this point, then a single character was
-     * found at the end of the data and the table must be updated to return
-     * the same character.
-     */
-
-    if( first_found ) table[first_char] = first_char;
-
-    /* If there was no data, reset the table. */
-
-    if( no_data ) for( i = 0; i < 0x100; i++ ) table[i] = i;
-
-    return;
-}
-
 /* Extern function definitions */
 
 /* Function cop_in_trans().
@@ -935,86 +780,6 @@ uint8_t cop_in_trans( uint8_t in_char, uint8_t font )
     if( retval == in_char ) if( block != NULL ) retval = block->table[in_char];
 
     return( retval );
-}
-
-/* Function cop_out_trans().
- * Copies text to in_out.text, translating each character per the tables
- * associated with the .TR command word and any active :OUTTRANS block.
- *
- * Parameters:
- *      text is a pointer to the text to be translated.
- *      count contains the number of bytes pointed to by text.
- *      in_out is the record_buffer to use to return the translated text.
- *      font contains the font whose :OUTTRANS table, if any, is to be used. 
- *
- * Returns:
- *      in_out, with in_out.text modified to contain the translated text.
- *
- * Note:
- *      in_out.text may be reallocated; however, since mem_realloc() halts
- *      program execution on error, in_out.text will be correct if this
- *      function returns.
- */
-
-record_buffer * cop_out_trans( uint8_t * text, uint32_t count, \
-                               record_buffer * in_out, uint8_t font )
-{
-    outtrans_block  *   block   = NULL;
-    uint8_t             byte;
-    uint32_t            i;
-    uint32_t            j;
-    uint32_t            k;
-
-    if( font >= wgml_font_cnt ) font = 0;
-
-    k = 0;
-    for( i = 0; i < count; i++ ) {
-        byte = tr_table[text[i]];
-        if( byte == text[i] ) {
-            block = wgml_fonts[font].bin_font->outtrans;
-            if( block == NULL ) block = bin_device->outtrans;
-            if( block == NULL ) {
-                if( k >= in_out->length ) {
-                    in_out->length *= 2;
-                    in_out->text = (uint8_t *) mem_realloc( in_out->text, \
-                                                            in_out->length );
-                }
-                in_out->text[k] = byte;
-                k++;
-            } else {
-                if( block->table[text[i]] == NULL ) {
-                    if( k >= in_out->length ) {
-                        in_out->length *= 2;
-                        in_out->text = (uint8_t *) mem_realloc( in_out->text, \
-                                                                in_out->length );
-                    }
-                    in_out->text[k] = byte;
-                    k++;
-                } else {
-                    for( j = 0; j < block->table[text[i]]->count; j++ ) {
-                        if( k >= in_out->length ) {
-                            in_out->length *= 2;
-                            in_out->text = (uint8_t *) mem_realloc( \
-                                                in_out->text, in_out->length );
-                        }
-                        in_out->text[k] = block->table[text[i]]->data[j];
-                        k++;
-                    }
-                }
-            }
-        } else {
-            if( k >= in_out->length ) {
-                in_out->length *= 2;
-                in_out->text = (uint8_t *) mem_realloc( in_out->text, \
-                                                        in_out->length );
-            }
-            in_out->text[k] = byte;
-            k++;
-        }
-    }
-    in_out->current = k;
-
-    return( in_out );
 }
 
 /* Function cop_setup().
@@ -1063,7 +828,6 @@ void cop_setup( void )
 
     for( i = 0; i < 0x100; i++) {
         ti_table[i] = i;
-        tr_table[i] = i;
     }
 
     /* Emit the expected message. */
@@ -1207,6 +971,7 @@ void cop_setup( void )
         wgml_fonts[i].font_switch = NULL;
         wgml_fonts[i].font_pause = NULL;
         wgml_fonts[i].font_style = NULL;
+        wgml_fonts[i].outtrans = NULL;
         wgml_fonts[i].font_height = 0;
         wgml_fonts[i].font_space = 0;
     }
@@ -1243,6 +1008,11 @@ void cop_setup( void )
         wgml_fonts[i].font_pause = cur_dev_font->font_pause;
         if( cur_dev_font->resident == 0x00 ) wgml_fonts[i].font_resident = 'n';
         else wgml_fonts[i].font_resident = 'y';
+        if( wgml_fonts[i].bin_font->outtrans == NULL ) {
+            wgml_fonts[i].outtrans = bin_device->outtrans;
+        } else {
+            wgml_fonts[i].outtrans = wgml_fonts[i].bin_font->outtrans;
+        }
 
         /* If scale_basis is not "0", then font_height must not be "0". */
 
@@ -1629,7 +1399,6 @@ uint32_t cop_text_width( uint8_t * text, uint32_t count, uint8_t font )
     return( width );
 }
 
-
 /* Function cop_ti_table().
  * Updates ti_table as specified by the data.
  *
@@ -1637,31 +1406,142 @@ uint32_t cop_text_width( uint8_t * text, uint32_t count, uint8_t font )
  *      data contains any data associated with the .TI control word.
  *      count contains the number of bytes to process.
  *
- * Notes:
- *      The SET operand will be treated as an error by this version.
+ * Note:
  *      Whatever terminated the .TI record must not be part of the data.
  */
 
 void cop_ti_table( uint8_t * data, uint32_t count )
 {
-    update_translate_table( true, data, count );
-    return;
-}
+    bool        first_found;
+    bool        no_data;
+    int         i           = 0;
+    uint8_t     token_char;
+    uint8_t     first_char;
 
-/* Function cop_tr_table().
- * Updates tr_table as specified by the data.
- *
- * Parameters:
- *      data contains any data associated with the .TR control word.
- *      count contains the number of bytes to process.
- *
- * Note:
- *      Whatever terminated the .TR record must not be part of the data.
- */
+    /* Set up the variables. count must be "0" if there is no data. no_data
+     * will cause the table to be reset if it is still "true" after the loop.
+     */
 
-void cop_tr_table( uint8_t * data, uint32_t count )
-{
-    update_translate_table( false, data, count );
+    if( data == NULL ) count = 0;
+    first_found = false;
+    no_data = true;
+
+    if( count != 0 ) {
+
+        /* Determine if this is a ".ti set" instance. */
+
+        /* Get the first token, if any. */
+
+        i = get_next_token( data, count, cur_token );
+
+        /* If the length of the token is "3", see if it is "set". */
+
+        if( cur_token->current == 3 ) {
+            if( !memicmp( cur_token->text, "set", 3 ) ) {
+
+                /* Get the next token, if any. */            
+
+                i += get_next_token( &data[i], count - i, cur_token );
+
+                if( cur_token->current == 0 ) {
+
+                    /* If there was no token, clear the input escape. */
+
+                    ProcFlags.in_trans = false;
+                    in_esc = ' ';
+                } else {
+
+                    /* Only a single character is valid; hex digits are
+                     * ignored by wgml 4.0.
+                     */
+
+                    if( cur_token->current > 1 ) {
+                        out_msg( ".ti set can only be used with a single "\
+                                     "character: '%s'\n", cur_token->text );
+                        err_count++;
+                        g_suicide();
+                    }
+
+                    /* Set the escape character. */
+
+                    ProcFlags.in_trans = true;
+                    in_esc = *cur_token->text;
+
+                    /* wgml 4.0 ignores any additional tokens. */
+
+                    get_next_token( &data[i], count - i, cur_token );
+                    if( cur_token->current != 0 ) {
+                        uint8_t * tail;
+
+                        tail = (uint8_t *) mem_alloc( count - i + 1);
+                        memcpy_s( tail, count - i, &data[i], count - i );
+                        tail[count - i] = '\0';
+                        out_msg( ".ti set cannot be used to set a translation:" \
+                                                            " '%s'\n", tail );
+                        mem_free( tail );
+                        err_count++;
+                        g_suicide();
+                    }
+                }
+
+                /* Processing is done if this was ".ti set". */
+
+                return; 
+            }
+        }
+
+        /* This was not ".ti set", and so, if not empty, the token found
+         * is either a first_char or invalid.
+         */
+
+        if( cur_token->current != 0 ) {
+            first_char = validate_token( cur_token );
+            first_found = true;
+            no_data = false;
+        }
+            
+        /* This loop only deals with the non-".ti set" forms. */
+
+        for( ; i < count; i++ ) {
+
+            /* Get the next token, if any. */
+
+            i += get_next_token( &data[i], count - i, cur_token );
+
+            /* If there was no token, then we are done. */
+
+            if( cur_token->current == 0 ) break;
+
+            /* Validate the token and note that valid data was found. */
+
+            token_char = validate_token( cur_token );
+            no_data = false;
+
+            /* If we have an unused first_char, then we just found the char it
+             * is to be converted into. Otherwise, we found a new first_char.
+             */
+
+            if( first_found ) {
+                ti_table[first_char] = token_char;
+                first_found = false;
+            } else {
+                first_char = token_char;
+                first_found = true;
+            }
+        }
+    }
+
+    /* If first_found is true at this point, then a single character was
+     * found at the end of the data and the table must be updated to return
+     * the same character.
+     */
+
+    if( first_found ) ti_table[first_char] = first_char;
+
+    /* If there was no data, reset the table. */
+
+    if( no_data ) for( i = 0; i < 0x100; i++ ) ti_table[i] = i;
+
     return;
 }
 
@@ -1814,26 +1694,6 @@ void fb_finish( void )
 void fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len )
 {
     fb_line_block( &(bin_driver->hline), h_start, v_start, h_len, 0, "HLINE" );
-}
-
-/* Function fb_new_section().
- * Performs the subsequent initial vertical positioning, as described in the
- * Wiki.
- *
- * Parameter:
- *      v_start contains the desired starting vertical position.
- *
- * Note:
- *      This function should not be invoked at the start of the file; instead,
- *      fb_position() should be used as it will do the first initial vertical
- *      positioning. This function should be used in place of fb_document_page()
- *      when a new section or other event occurs where its action is needed.
- */
- 
-void fb_new_section( uint32_t v_start )
-{
-    df_new_section( v_start );
-    return;
 }
 
 /* Function fb_output_textline.

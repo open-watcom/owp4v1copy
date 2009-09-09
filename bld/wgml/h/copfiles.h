@@ -75,7 +75,6 @@
 *                   wgml_fonts
 *               the functions:
 *                   cop_in_trans()
-*                   cop_out_trans()
 *                   cop_setup()
 *                   cop_teardown()
 *                   cop_text_width()
@@ -418,9 +417,9 @@ typedef struct {
     size_t              allocated_size;
     size_t              next_offset;
     /* The Attributes */
-    char *              driver_name;
-    char *              output_name;
-    char *              output_extension;
+    char            *   driver_name;
+    char            *   output_name;
+    char            *   output_extension;
     uint32_t            page_width;
     uint32_t            page_depth;
     uint32_t            horizontal_base_units;
@@ -435,8 +434,8 @@ typedef struct {
     /* UnderscoreBlock */
     underscore_block    underscore;
     /* TranslationBlock */
-    intrans_block  *    intrans;
-    outtrans_block *    outtrans;
+    intrans_block   *   intrans;
+    outtrans_block  *   outtrans;
     /* DefaultfontBlock */
     defaultfont_block   defaultfonts;
     /* PauseBlock */
@@ -454,7 +453,7 @@ typedef struct {
     size_t              allocated_size;
     size_t              next_offset;
     /* The Attributes */
-    char *              rec_spec;
+    char            *   rec_spec;
     char                fill_char;
     /* PageAddressBlock */
     uint8_t             x_positive;
@@ -491,10 +490,10 @@ typedef struct cop_font {
     size_t              allocated_size;
     size_t              next_offset;
     /* For matching by defined name. */
-    char *              defined_name;
+    char            *   defined_name;
     /* The Attributes */
-    char *              font_out_name1;
-    char *              font_out_name2;
+    char            *   font_out_name1;
+    char            *   font_out_name2;
     uint32_t            line_height;
     uint32_t            line_space;
     uint32_t            scale_basis;
@@ -502,9 +501,9 @@ typedef struct cop_font {
     uint32_t            scale_max;
     uint32_t            char_width;
     /* CharacterDescriptionBlock */
-    intrans_block *     intrans;
-    outtrans_block *    outtrans;
-    width_block *       width;
+    intrans_block   *   intrans;
+    outtrans_block  *   outtrans;
+    width_block     *   width;
 } cop_font;
 
 /* This struct was originally developed for use with the output buffer. It's
@@ -514,9 +513,9 @@ typedef struct cop_font {
  */
 
 typedef struct {
-    size_t                  current;
-    size_t                  length;
-    uint8_t     *           text;
+    size_t              current;
+    size_t              length;
+    uint8_t         *   text;
 } record_buffer;
 
 /* This struct implements the text_chars struct in the Wiki. */
@@ -545,6 +544,7 @@ typedef struct {
     fontswitch_block    *   font_switch;
     code_text           *   font_pause;
     fontstyle_block     *   font_style;
+    outtrans_block      *   outtrans;
     uint8_t                 font_resident;
     uint32_t                default_width;
     uint32_t                dv_base;
@@ -580,23 +580,28 @@ global wgml_font    *   wgml_fonts;     // the available fonts
 extern "C" {    /* Use "C" linkage when in C++ mode. */
 #endif
 
+/* copfiles.c                          */
+
 extern uint8_t              cop_in_trans( uint8_t in_char, uint8_t font );
-extern record_buffer    *   cop_out_trans( uint8_t * text, uint32_t count, record_buffer * in_out, uint8_t font );
 extern void                 cop_setup( void );
 extern void                 cop_teardown( void );
 extern uint32_t             cop_text_width( uint8_t * text, uint32_t count, uint8_t font );
 extern void                 cop_ti_table( uint8_t * data, uint32_t count );
-extern void                 cop_tr_table( uint8_t * data, uint32_t count );
 extern void                 fb_dbox( uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len );
 extern void                 fb_document( void );
 extern void                 fb_document_page( void );
 extern void                 fb_finish( void );
 extern void                 fb_hline( uint32_t h_start, uint32_t v_start, uint32_t h_len );
-extern void                 fb_new_section( uint32_t v_start );
 extern void                 fb_output_textline( text_line * out_line );
 extern void                 fb_position( uint32_t h_start, uint32_t v_start );
 extern void                 fb_start( void );
 extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
+
+/* devfuncs.c                          */
+extern void                 fb_new_section( uint32_t v_start );
+
+/* outbuff.c                           */
+extern void                 cop_tr_table( uint8_t * data, uint32_t count );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
