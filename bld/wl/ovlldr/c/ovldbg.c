@@ -232,7 +232,7 @@ static int CheckVecAddr( ovl_address far *data )
 
     if( data->mach.segment != FP_SEG( __OVLSTARTVEC__ ) )
         return( FALSE );
-    vect = (vector_ptr)MK_FP( data->mach.segment, data->mach.offset );
+    vect = (vector_ptr)data->mach.offset;
     if( FP_OFF( vect ) < FP_OFF( __OVLSTARTVEC__ ) )
         return( FALSE );
     if( !OVLVEC_OK( vect ) )
