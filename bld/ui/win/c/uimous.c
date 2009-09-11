@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows mouse input handling.
 *
 ****************************************************************************/
 
@@ -44,18 +43,27 @@ struct mouse_data {
     unsigned    bx,cx,dx;
 };
 
-#pragma aux MouseInt = 0xcd BIOS_MOUSE parm [ax] [bx] [cx] [dx];
+typedef struct mouse_data __based( __segname( "_STACK" ) ) *md_stk_ptr;
+
+/* Invoke the mouse interrupt (33h). */
 extern unsigned MouseInt( unsigned, unsigned, unsigned, unsigned );
+#pragma aux MouseInt =  \
+    "int 33h"           \
+    parm [ax] [bx] [cx] [dx];
 
-#pragma aux MouseInt2 = 0xcd BIOS_MOUSE parm [ax] [cx] [dx] [si] [di];
 extern void MouseInt2( unsigned, unsigned, unsigned, unsigned, unsigned );
+#pragma aux MouseInt2 = \
+    "int 33h"           \
+    parm [ax] [cx] [dx] [si] [di];
 
-#pragma aux MouseState = 0xcd BIOS_MOUSE \
-                        0x36 0x89 0x1c   \
-                        0x36 0x89 0x4c 0x02 \
-                        0x36 0x89 0x54 0x04 \
-                        parm [ax] [si] modify [bx cx dx];
-extern void MouseState( unsigned, struct mouse_data near * );
+//extern void MouseState( unsigned, struct mouse_data near * );
+extern void MouseState( unsigned, md_stk_ptr );
+#pragma aux MouseState =    \
+    "int 33h"               \
+    "mov ss:[si+0],bx"      \
+    "mov ss:[si+2],cx"      \
+    "mov ss:[si+4],dx"      \
+    parm [ax] [si] modify [bx cx dx];
 
 extern unsigned long uiclock( void );
 
@@ -77,7 +85,7 @@ void intern checkmouse( unsigned short *status, MOUSEORD *row,
 {
     struct  mouse_data state;
 
-    MouseState( 3, (void near *)&state );
+    MouseState( 3, (md_stk_ptr)&state );
     *status = MouseStatusBits;
     *col = MouseX;
     *row = MouseY;
