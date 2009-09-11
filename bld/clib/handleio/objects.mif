@@ -99,3 +99,8 @@ qread_opts=-I"$(clib_dir)/streamio/h"
 qreadunx_opts=-I"$(clib_dir)/streamio/h"
 qwrit_opts=-I"$(clib_dir)/streamio/h"
 qwritunx_opts=-I"$(clib_dir)/streamio/h"
+
+# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
+!ifeq __VERSION__ 1280
+lseekdos_postopts = -wcd112
+!endif

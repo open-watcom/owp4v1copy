@@ -40,12 +40,12 @@
 
 _WCRTLINK long __lseek( int handle, long offset, int origin )
 {
-    uint_32 __near  pos;
+    uint_32         pos;
     tiny_ret_t      rc;
     
     __handle_check( handle, -1 );
     
-    rc = TinyLSeek( handle, offset, origin, (void __near *)&pos );
+    rc = TinyLSeek( handle, offset, origin, &pos );
     if( TINY_ERROR(rc) ) {
         __set_errno_dos( TINY_INFO(rc) );
         return( -1L );

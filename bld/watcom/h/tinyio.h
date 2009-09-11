@@ -416,6 +416,11 @@ typedef int             tiny_handle_t;
 typedef int_32          tiny_ret_t;
 
 /*
+ * pointer to data on the stack, used with TinyLSeek
+ */
+typedef uint_32 __based( __segname( "_STACK" ) )    *u32_stk_ptr;
+
+/*
  * macro defintions
  */
 #define TINY_ERROR( h )         ((int_32)(h)<0)
@@ -610,7 +615,7 @@ tiny_ret_t  tiny_call   _nTinyWrite( tiny_handle_t, const void __near *, uint );
 tiny_ret_t              _fTinyRead( tiny_handle_t, void __far *, uint );
 tiny_ret_t  tiny_call   _nTinyRead( tiny_handle_t, void __near *, uint );
 tiny_ret_t  tiny_call   _TinySeek( tiny_handle_t, uint_32, uint_16 __ax );
-tiny_ret_t  tiny_call   _TinyLSeek( tiny_handle_t, uint_32, uint_16 __ax, uint_32 __near * );
+tiny_ret_t  tiny_call   _TinyLSeek( tiny_handle_t, uint_32, uint_16 __ax, u32_stk_ptr );
 tiny_ret_t              _fTinyDelete( const char __far * );
 tiny_ret_t  tiny_call   _nTinyDelete( const char __near * );
 tiny_ret_t              _fTinyRename( const char __far *__o,

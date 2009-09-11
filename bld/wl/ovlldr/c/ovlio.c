@@ -49,7 +49,7 @@ extern tiny_ret_t near __OvlSeek__( tiny_handle_t hdl, unsigned long pos )
 {
     unsigned long posx;
 
-    return( TinyLSeek( hdl, pos, TIO_SEEK_START, (void near *)&posx ) );
+    return( TinyLSeek( hdl, pos, TIO_SEEK_START, (u32_stk_ptr)&posx ) );
 }
 
 extern tiny_ret_t near __OvlRead__(tiny_handle_t hdl, void far *buff, unsigned len)

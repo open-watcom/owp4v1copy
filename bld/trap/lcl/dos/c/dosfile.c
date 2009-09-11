@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Low-level trap file I/O for DOS.
 *
 ****************************************************************************/
 
@@ -90,7 +89,7 @@ unsigned ReqFile_seek( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    rc = TinyLSeek( acc->handle, acc->pos, acc->mode, (void __near *)&pos );
+    rc = TinyLSeek( acc->handle, acc->pos, acc->mode, (u32_stk_ptr)&pos );
     ret->pos = pos;
     ret->err = TINY_ERROR( rc ) ? TINY_INFO( rc ) : 0;
     return( sizeof( *ret ) );

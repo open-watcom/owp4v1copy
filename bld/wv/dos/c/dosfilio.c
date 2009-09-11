@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Low-level DOS file I/O.
 *
 ****************************************************************************/
 
@@ -107,7 +106,7 @@ unsigned long LocalSeek( sys_handle hdl, unsigned long len, unsigned method )
     tiny_ret_t      ret;
     unsigned long   pos;
 
-    ret = TinyLSeek( hdl, len, method, (void __near *)&pos );
+    ret = TinyLSeek( hdl, len, method, &pos );
     if( TINY_ERROR( ret ) ) {
         StashErrCode( TINY_INFO( ret ), OP_LOCAL );
         return( -1UL );

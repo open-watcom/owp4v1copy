@@ -275,6 +275,12 @@ extra_c_flags_regexp = -fi=wndregx.h
 
 extra_c_flags_nt += -DENABLE_TRAP_LOGGING
 
+
+# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
+!ifeq __VERSION__ 1280
+extra_c_flags_winfilio = -wcd112
+!endif
+
 # inc_dirs
 ###########
 inc_dirs = -I. -I"$(wv_dir)/h" -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
