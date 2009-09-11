@@ -115,7 +115,7 @@ void __ZBuf2LD( char _WCNEAR *buf, long_double _WCNEAR *ld )
 }
 #endif
 
-static void __ZXBuf2LD( char _WCNEAR *buf, long_double _WCNEAR *ld, int *exponent )
+static void __ZXBuf2LD( char *buf, ld_arg ld, int *exponent )
 {
     int         i;
     int         n;
@@ -439,7 +439,7 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
     long_double         ld;
     flt_flags           flags;
     CHAR_TYPE           buffer[ MAX_SIG_DIG + 1 ];
-    char                *tmpbuf;
+    buf_arg             tmpbuf;
     int                 rc, neg = 0;
 
     cur_ptr = bufptr;
@@ -508,16 +508,16 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
 #ifdef __WIDECHAR__
         // convert wide string of digits to skinny string of digits
         wcstombs( tmp, buffer, sizeof( tmp ) );
-        tmpbuf = tmp;
+        tmpbuf = &tmp;
 #else
-        tmpbuf = buffer;
+        tmpbuf = &buffer;
 #endif
         if( flags & HEX_FOUND ) {
-            __ZXBuf2LD( (char _WCNEAR *)tmpbuf, (long_double _WCNEAR *)&ld, &exponent );
+            __ZXBuf2LD( tmpbuf, &ld, &exponent );
         } else {
-            __ZBuf2LD( (char _WCNEAR *)tmpbuf, (long_double _WCNEAR *)&ld );
+            __ZBuf2LD( tmpbuf, &ld );
             if( exponent != 0 ) {
-                _LDScale10x( (long_double _WCNEAR *)&ld, exponent );
+                _LDScale10x( &ld, exponent );
             }
         }
         if( flags & NEGATIVE_NUMBER ) {
@@ -591,7 +591,7 @@ _WMRTLINK double __F_NAME(strtod,wcstod)( const CHAR_TYPE *bufptr, CHAR_TYPE **e
                 } d;
 
                 // not sure if it's really going to give back zero
-                __iLDFD( (long_double _WCNEAR *)&ld, (double _WCNEAR *)&x );
+                __iLDFD( &ld, &x );
                 // retest for underflow given that we are really
                 // returning a double
                 d.value = x;
@@ -600,7 +600,7 @@ _WMRTLINK double __F_NAME(strtod,wcstod)( const CHAR_TYPE *bufptr, CHAR_TYPE **e
                 }
             }
         } else {
-            __iLDFD( (long_double _WCNEAR *)&ld, (double _WCNEAR *)&x );
+            __iLDFD( &ld, &x );
             // retest for overflow or underflow given that we are really
             // returning a double
             if( type == _OVERFLOW ) {

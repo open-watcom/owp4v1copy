@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Floating-point modulo and string to double conversion (8086).
 ;*
 ;*****************************************************************************
 

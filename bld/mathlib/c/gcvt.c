@@ -55,7 +55,7 @@ _WMRTLINK char *gcvt( double value, int digits, char *buf )
 
     /* convert this double into a long double */
     double_value = value;
-    __iFDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
+    __iFDLD( &double_value, &ld );
 #else
     ld.value = value;
 #endif

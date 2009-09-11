@@ -196,7 +196,7 @@ static long_double LDPowTable[] = {
     { 0x00000000, 0x80000000, 0x7FFF }, // infinity
 };
 
-static void CalcScaleFactor( long_double _WCNEAR *factor, int n )
+static void CalcScaleFactor( ld_arg factor, int n )
 {
     long_double *pow;
     long_double tmp;
@@ -209,7 +209,7 @@ static void CalcScaleFactor( long_double _WCNEAR *factor, int n )
             tmp.exponent  = pow->exponent;
             tmp.high_word = pow->high_word;
             tmp.low_word  = pow->low_word;
-            __FLDM( factor, (long_double _WCNEAR *)&tmp, factor );
+            __FLDM( factor, &tmp, factor );
         }
     }
 }
@@ -227,11 +227,11 @@ static void _do_LDScale10x( long_double _WCNEAR *ld, int scale )
         factor.high_word = 0x80000000;
         factor.low_word  = 0x00000000;
         if( scale < 0 ) {
-            CalcScaleFactor( (long_double _WCNEAR *)&factor, -scale );
-            __FLDD( ld, (long_double _WCNEAR *)&factor, ld );
+            CalcScaleFactor( &factor, -scale );
+            __FLDD( ld, &factor, ld );
         } else {
-            CalcScaleFactor( (long_double _WCNEAR *)&factor, scale );
-            __FLDM( ld, (long_double _WCNEAR *)&factor, ld );
+            CalcScaleFactor( &factor, scale );
+            __FLDM( ld, &factor, ld );
         }
 #if defined( _LONG_DOUBLE_ ) && defined( __FPI__ )
         __Set87CW( _8087cw );       // restore control word
@@ -239,7 +239,7 @@ static void _do_LDScale10x( long_double _WCNEAR *ld, int scale )
     }
 }
 
-void _LDScale10x( long_double _WCNEAR *ld, int scale )
+void _LDScale10x( ld_arg ld, int scale )
 {
     if( scale > LDBL_MAX_10_EXP ) {
         _do_LDScale10x( ld, LDBL_MAX_10_EXP );
@@ -584,7 +584,7 @@ nan_inf:
         if( xexp != 0 ) {
             if( xexp < 0 ) {                    // must scale up
                 xexp = - ((-xexp + (NDIG / 2 - 1)) & ~(NDIG / 2 - 1));
-                _LDScale10x( (long_double _WCNEAR *)&ld, -xexp );
+                _LDScale10x( &ld, -xexp );
             } else /*if( xexp > 0 )*/ {         // must scale down
 #ifdef _LONG_DOUBLE_
                 if( ld.exponent < E8_EXP ||
@@ -602,17 +602,11 @@ nan_inf:
                     tmp.exponent  = E8_EXP;             // tmp = 1e8L
                     tmp.high_word = E8_HIGH;
                     tmp.low_word  = E8_LOW;
-                    __FLDD( (long_double _WCNEAR *)&ld,
-                            (long_double _WCNEAR *)&tmp,
-                            (long_double _WCNEAR *)&tmp2 );
-                    value = __LDI4( (long_double _WCNEAR *)&tmp2 );
-                    __I4LD( value, (long_double _WCNEAR *)&tmp2 );
-                    __FLDM( (long_double _WCNEAR *)&tmp2,
-                            (long_double _WCNEAR *)&tmp,
-                            (long_double _WCNEAR *)&tmp );
-                    __FLDS( (long_double _WCNEAR *)&ld,
-                            (long_double _WCNEAR *)&tmp,
-                            (long_double _WCNEAR *)&ld );
+                    __FLDD( &ld, &tmp, &tmp2 );
+                    value = __LDI4( &tmp2 );
+                    __I4LD( value, &tmp2 );
+                    __FLDM( &tmp2, &tmp, &tmp );
+                    __FLDS( &ld, &tmp, &ld );
                     xexp = 8;
 #else
                 if( ld.value < 1e8 ) {
@@ -624,7 +618,7 @@ nan_inf:
 #endif
                 } else {                // scale number down
                     xexp &= ~(NDIG / 2 - 1);
-                    _LDScale10x( (long_double _WCNEAR *)&ld, -xexp );
+                    _LDScale10x( &ld, -xexp );
                 }
             }
         }
@@ -665,20 +659,16 @@ nan_inf:
 #ifdef _LONG_DOUBLE_
             if( (ld.exponent & 0x7FFF) == 0 )
                 break;
-            value = __LDI4( (long_double _WCNEAR *)&ld );
+            value = __LDI4( &ld );
             if( n > 0 ) {
                 long_double     tmp;
 
-                __I4LD( value, (long_double _WCNEAR *)&tmp );
-                __FLDS( (long_double _WCNEAR *)&ld,
-                        (long_double _WCNEAR *)&tmp,
-                        (long_double _WCNEAR *)&ld );
+                __I4LD( value, &tmp );
+                __FLDS( &ld, &tmp, &ld );
                 tmp.exponent  = E8_EXP;         // tmp = 1e8L
                 tmp.high_word = E8_HIGH;
                 tmp.low_word  = E8_LOW;
-                __FLDM( (long_double _WCNEAR *)&ld,
-                        (long_double _WCNEAR *)&tmp,
-                        (long_double _WCNEAR *)&ld );
+                __FLDM( &ld, &tmp, &ld );
             }
 #else
             if( (ld.word[1] & 0x7FF00000) == 0 )

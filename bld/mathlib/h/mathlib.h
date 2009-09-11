@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  math library internal functions and data prototypes
+* Description:  Math library internal functions and data declarations.
 *
 ****************************************************************************/
 
@@ -40,6 +40,16 @@ extern  int     __sgn( double );
 extern  int    (*__matherr_handler)( struct _exception * );
 
  #if defined(_M_IX86)
+
+  /* The _ModF routine takes near pointer arguments which for 16-bit targets
+   * must be pointing into the stack.
+   */
+  #if defined(_M_I86)
+    typedef double __based( __segname( "_STACK" ) )     *modf_arg;
+  #else
+    typedef double _WCNEAR                              *modf_arg;
+  #endif
+
     extern  double  _atan87( double );
     extern  double  _exp87( double );
     extern  double  _log87( double );
@@ -48,7 +58,7 @@ extern  int    (*__matherr_handler)( struct _exception * );
     extern  double  _tan87( double );
     extern  double  __sqrt87( double );
     extern  double  __sqrtd( double );
-    extern  void    _ModF( double _WCNEAR *, double _WCNEAR * );
+    extern  void    _ModF( modf_arg, modf_arg );
 
     extern  double  __pow87_err( double, double, unsigned char );
     extern  double  __math87_err( double, unsigned char );

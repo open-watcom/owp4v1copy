@@ -80,7 +80,7 @@ _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *
 
 #ifdef _LONG_DOUBLE_
         /* convert this double into a long double */
-        __iFDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
+        __iFDLD( &double_value, &ld );
 #else
         ld.value = double_value;
 #endif

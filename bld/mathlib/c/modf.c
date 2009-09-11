@@ -41,7 +41,7 @@ _WMRTLINK double modf( double x, double *iptr )
     double  ipart;
 
     value = x;
-    _ModF( (double _WCNEAR *)&value, (double _WCNEAR *)&ipart );
+    _ModF( &value, &ipart );
     *iptr = ipart;
     return( value );
 }

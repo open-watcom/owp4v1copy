@@ -179,3 +179,14 @@ sqrt087__flags=-fpi87
 sqrt387__flags=-fpi87
 tan087__flags=-fpi87
 tan387__flags=-fpi87
+
+# BUILD WORKAROUND because of insufficiently smart 1.8 compiler
+!ifeq __VERSION__ 1280
+strtod_flags   = -wcd112
+_ustrtod_flags = -wcd112
+cvt_flags      = -wcd112
+efgfmt_flags   = -wcd112
+gcvt_flags     = -wcd112
+ldcvt_flags    = -wcd112
+modf_flags     = -wcd112
+!endif

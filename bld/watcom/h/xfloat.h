@@ -109,6 +109,21 @@ typedef struct cvt_info {
       int       nz2;            // OUTPUT: followed by this many '0's
 } CVT_INFO;
 
+/* Depending on the target, some functions expect near pointer arguments
+ * to be pointing into the stack segment, while in other cases they must
+ * point into the data segment.
+ */
+
+#if defined( _M_I86 )
+typedef long_double __based( __segname( "_STACK" ) )    *ld_arg;
+typedef double      __based( __segname( "_STACK" ) )    *dbl_arg;
+typedef char        __based( __segname( "_STACK" ) )    *buf_arg;
+#else
+typedef long_double _WCNEAR                             *ld_arg;
+typedef double      _WCNEAR                             *dbl_arg;
+typedef char        _WCNEAR                             *buf_arg;
+#endif
+
 _WMRTLINK extern void __LDcvt(
                          long_double *pld,      // pointer to long_double
                          CVT_INFO  *cvt,        // conversion info
@@ -120,18 +135,18 @@ _WMRTLINK extern int __Strtold(
                         char **endptr );
 #endif
 extern  int     __LDClass( long_double * );
-extern  void    __ZBuf2LD(char _WCNEAR *, long_double _WCNEAR *);
-extern  void    _LDScale10x(long_double _WCNEAR *,int);
+extern  void    __ZBuf2LD( buf_arg, ld_arg );
+extern  void    _LDScale10x( ld_arg, int );
 _WMRTLINK extern void  __cnvd2ld( double _WCNEAR *src, long_double _WCNEAR *dst );
 _WMRTLINK extern void  __cnvs2d( char *buf, double *value );
 _WMRTLINK extern int   __cnvd2f( double *src, float *tgt );
 #ifdef _LONG_DOUBLE_
-extern  void    __iLDFD(long_double _WCNEAR *, double _WCNEAR *);
+extern  void    __iLDFD( ld_arg, dbl_arg );
 extern  void    __iLDFS(long_double _WCNEAR *, float _WCNEAR *);
-extern  void    __iFDLD(double _WCNEAR *,long_double _WCNEAR *);
+extern  void    __iFDLD( dbl_arg, ld_arg );
 extern  void    __iFSLD(float _WCNEAR *,long_double _WCNEAR *);
-extern  long    __LDI4(long_double _WCNEAR *);
-extern  void    __I4LD(long,long_double _WCNEAR *);
+extern  long    __LDI4( ld_arg );
+extern  void    __I4LD( long, ld_arg );
 extern  void    __U4LD(unsigned long,long_double _WCNEAR *);
 //The 64bit types change depending on what's being built.
 //(u)int64* (un)signed_64* don't seem suitable, and we use void* instead.
@@ -139,9 +154,9 @@ extern  void    __LDI8(long_double _WCNEAR *, void _WCNEAR *);
 extern  void    __I8LD(void _WCNEAR *, long_double _WCNEAR *);
 extern  void    __U8LD(void _WCNEAR *, long_double _WCNEAR *);
 extern void __FLDA(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
-extern void __FLDS(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
-extern void __FLDM(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
-extern void __FLDD(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
+extern void __FLDS( ld_arg, ld_arg, ld_arg );
+extern void __FLDM( ld_arg, ld_arg, ld_arg );
+extern void __FLDD( ld_arg, ld_arg, ld_arg );
 extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
 #endif
 
