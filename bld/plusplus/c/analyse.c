@@ -72,7 +72,6 @@ ANALYSE.C -- analyse parsed tree of tokens
 
 typedef enum            // OPAC -- operation actions
 {   REQD_INT_LEFT       // - required: integer on left
-,   REQD_INT_INTREF_LEFT// - required: integer or integer ref on left
 ,   REQD_INT_RIGHT      // - required: integer on right
 ,   REQD_LVALUE_LEFT    // - required: lvalue on left
 ,   REQD_NOT_ENUM_LEFT  // - required: left must not be enum variable
@@ -800,7 +799,7 @@ static OPAC opac_OPEQ_PTR[]     =   {   DIAG_FUNC_LEFT
                                     };
 
 static OPAC opac_OPEQ_INT[]     =   {   REQD_LVALUE_LEFT
-                                    ,   REQD_INT_INTREF_LEFT
+                                    ,   REQD_INT_LEFT
                                     ,   REQD_INT_RIGHT
                                     ,   REQD_NOT_ENUM_LEFT
                                     //,   REQD_NOT_BOOL_LEFT
@@ -2877,18 +2876,14 @@ start_opac_string:
                 break;
             }
             continue;
-          case REQD_INT_INTREF_LEFT :
-            // assumes REQD_LVALUE_LEFT has been done
-            if( IntegralType( TypeReferenced( type ) ) != NULL ) continue;
-            // fall thru (will fail next test also)
           case REQD_INT_LEFT :
-            if( IntegralType( type ) != NULL ) continue;
+            if( IntegralType( TypeReferenced( type ) ) != NULL ) continue;
             analyse_err_left( expr
                             , ERR_EXPR_MUST_BE_INTEGRAL
                             , ERR_LEFT_EXPR_MUST_BE_INTEGRAL );
             break;
           case REQD_INT_RIGHT :
-            if( IntegralType( right->type ) != NULL ) continue;
+            if( IntegralType( TypeReferenced( right->type ) ) != NULL ) continue;
             operandError( expr, ERR_RIGHT_EXPR_MUST_BE_INTEGRAL );
             break;
           case REQD_BOOL_LHS_ASSIGN :

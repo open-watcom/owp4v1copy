@@ -695,6 +695,7 @@ positive_tests = &
     over12.$(ext) &
     over13.$(ext) &
     over14.$(ext) &
+    over15.$(ext) &
     pack1.$(ext) &
     pack2.$(ext) &
     pack3.$(ext) &
