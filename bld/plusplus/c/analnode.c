@@ -521,8 +521,17 @@ PTREE NodeRemoveCasts(          // REMOVE CASTING FROM NODE
     PTREE node )                // - starting node
 {
     while( NodeIsBinaryOp( node, CO_CONVERT ) ) {
-        node = PTreeOpRight( node );
+
+        node = node->u.subtree[1];
+
+        while( ( node->op == PT_BINARY )
+            && ( node->cgop == CO_COMMA )
+            && !( node->u.subtree[0]->flags & PTF_SIDE_EFF ) ) {
+
+            node = node->u.subtree[1];
+        }
     }
+
     return node;
 }
 
