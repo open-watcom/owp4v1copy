@@ -269,12 +269,23 @@ extern void _DPMIResetWatch( short handle );
         "mov ax,1680h"  \
         "int 2fh";
 
+#if defined(__386__)
+#pragma aux _DPMISetWatch = \
+        "mov    ax,0b00h" \
+        "mov    cx,bx"  \
+        "shr    ebx,16"  \
+        _INT_31         \
+        "sbb    eax,eax" \
+        "mov    ax,bx"  \
+        parm[ ebx ] [ dl ] [ dh ] modify [ ecx ] value [ eax ];
+#else
 #pragma aux _DPMISetWatch = \
         "mov    ax,0b00h" \
         "xchg   bx,cx"  \
         _INT_31         \
         "sbb    cx,cx" \
         parm[bx cx] [ dl ] [ dh ] value [ cx bx ];
+#endif
 
 #pragma aux _DPMIResetWatch = \
         "mov ax,0b03h" \
