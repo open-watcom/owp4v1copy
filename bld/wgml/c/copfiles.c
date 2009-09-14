@@ -1744,7 +1744,7 @@ void fb_output_textline( text_line * out_line )
     /* Do the subsequent passes */
 
     for( i = 1; i < line_passes; i ++ ) {
-// still need to write this one!
+//        fb_subsequent_text_pass( out_line, i );
     }
 
     return;

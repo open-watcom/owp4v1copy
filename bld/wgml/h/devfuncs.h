@@ -41,6 +41,7 @@
 *                   fb_init()
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
+*                   fb_subsequent_text_pass()
 ****************************************************************************/
 
 #ifndef DEVFUNCS_H_INCLUDED
@@ -72,7 +73,7 @@ extern void fb_first_text_pass( text_line * out_line );
 extern void fb_init( init_block * in_block );
 extern void fb_line_block( line_block * in_line_block, uint32_t h_start, uint32_t v_start, uint32_t h_len, uint32_t v_len, char * name );
 extern void fb_lineproc_endvalue( void );
-
+extern void fb_subsequent_text_pass( text_line * out_line, uint16_t line_pass );
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++. */
 #endif

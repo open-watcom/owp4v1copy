@@ -40,6 +40,7 @@
 *                   fb_init()
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
+*                   fb_subsequent_text_pass()
 *               and one function declared in copfiles.h:
 *                   fb_new_section()
 *               as well as a macro:
@@ -61,19 +62,21 @@
 *                   device_function_table
 *                   driver_function_table
 *                   font_number
+*                   has_htab
 *                   htab_done
 *                   line_pass_number
 *                   page_top
 *                   pages
 *                   set_margin
-*                   staging
+*                   space_chars
 *                   tab_width
 *                   text_out_open
-*                   text_output
 *                   textpass
 *                   thickness
 *                   time_val
 *                   uline
+*                   uscore_char
+*                   uscore_chars
 *                   wgml_header
 *                   x_address
 *                   x_size
@@ -147,6 +150,7 @@
 *                   fb_new_font_text_chars()
 *                   fb_newline()
 *                   fb_normal_vertical_positioning()
+*                   fb_overprint_vertical_positioning()
 *                   fb_subsequent_text_chars()
 *                   format_error()
 *                   get_parameters()
@@ -154,6 +158,7 @@
 *                   numeric_literal()
 *                   out_text_driver()
 *                   output_spaces()
+*                   output_uscores()
 *                   post_text_output()
 *                   pre_text_output()
 *                   process_parameter()
@@ -228,7 +233,6 @@ static bool             uline                   = false;
 static bool             at_start                = true;
 static bool             htab_done               = false;
 static bool             set_margin              = false;
-static bool             text_output             = false;
 static page_state       current_state           = { 0, 0, 0 };
 static page_state       desired_state           = { 0, 0, 0 };
 static uint32_t         line_pass_number        = 0;
@@ -249,6 +253,7 @@ static uint32_t         y_address               = 0;
 static uint32_t         y_size                  = 0;
 
 /* These are used by the interpreter. */
+static bool             has_htab                = false;
 static bool             text_out_open           = false;
 static uint32_t         active_font             = 0;
 static df_data          current_df_data;
@@ -257,9 +262,11 @@ static df_function      driver_function_table[MAX_FUNC_INDEX + 1];
 static df_function  *   current_function_table  = NULL;
 static uint8_t      *   current_function        = NULL;
 
-/* This is used to create text for output when necessary. */
+/* These are used in outputting spaces and underscore characters. */
 
-static record_buffer    staging = { 0, 0, NULL };
+static uint8_t          uscore_char;
+static record_buffer    space_chars     = { 0, 0, NULL };
+static record_buffer    uscore_chars    = { 0, 0, NULL };
 
 /* Local function definitions. */
 
@@ -445,19 +452,60 @@ static void output_spaces( uint32_t count )
 {
     int     i;
 
-    if( staging.length < count ) {
-        staging.text = (uint8_t *) mem_realloc( staging.text, count );
-        staging.length = count;
+    if( space_chars.length < count ) {
+        space_chars.text = (uint8_t *) mem_realloc( space_chars.text, count );
+        space_chars.length = count;
+        for( i = 0; i < space_chars.length; i++ ) space_chars.text[i] = ' ';
     }
 
-    for( i = 0; i < count; i++) {
-        staging.text[staging.current] = ' ';
-        staging.current++;
-    }
-
-    ob_insert_block( staging.text, staging.current, true, true, active_font );
+    ob_insert_block( space_chars.text, count, true, true, active_font );
     current_state.x_address = desired_state.x_address;
-    staging.current = 0;
+
+    return;
+}
+
+/* Function output_uscores().
+ * This function inserts the underscore characters.
+ *
+ * Parameter:
+ *      in_chars points to the current text_chars instance
+ */
+
+static void output_uscores( text_chars * in_chars )
+{
+    int         i;
+    uint32_t    count;
+    uint32_t    uscore_width;
+
+    /* The width of the uscore character should depend on what font, if any,
+     * was specified in the :UNDERSCORE block; if no font was specified, then
+     * it depends on the current font. Since no known device specifies such a
+     * font, however, this is simplified to use the current font only.
+     */
+
+    uscore_width = wgml_fonts[in_chars->font_number].width_table[uscore_char];
+
+    /* The number of underscore characters is determined by the amount of
+     * space from the current position to the text start point plus the
+     * width of the text, divided by the width of the underscore character.
+     * The conditional is necessary, but it is not clear if it is correct.
+     */
+
+    count = 0;
+    if( desired_state.x_address > current_state.y_address ) \
+        count = desired_state.x_address - current_state.y_address;
+    count += in_chars->width;
+    count /= uscore_width;
+
+    if( uscore_chars.length < count ) {
+        uscore_chars.text = (uint8_t *) mem_realloc( uscore_chars.text, count );
+        uscore_chars.length = count;
+        for( i = 0; i < uscore_chars.length; i++ ) \
+                                            uscore_chars.text[i] = uscore_char;
+    }
+
+    ob_insert_block( uscore_chars.text, count, true, true, active_font );
+    current_state.x_address = desired_state.x_address;
 
     return;
 }
@@ -593,36 +641,36 @@ static void * df_dotab( void )
 
     if( current_df_data.parameter_type != 0x00 ) format_error();
 
-    if( has_aa_block ) {
-        fb_absoluteaddress();
-    } else {
+    /* desired_state.x_address must be greater than current_state.x_address
+     * or no horizontal positioning occurs. Note that a 0 or negative value
+     * is not an error: df_dotab() can be invoked at any time, but only
+     * produces output when positive horizontal spacing is needed.
+     */
 
-        /* Spaces cannot be emitted "backwards". */
+    if( desired_state.x_address > current_state.x_address ) {
+        if( has_aa_block ) {
+            fb_absoluteaddress();
+        } else {
 
-        if( current_state.x_address > desired_state.x_address) {
-            out_msg( "Cannot move backwards within a text line!\n" );
-            err_count++;
-            g_suicide();
+            /* Set tab_width spaces. */
+
+            tab_width = desired_state.x_address - current_state.x_address;
+            spaces = tab_width / wgml_fonts[active_font].spc_width;
+
+            /* Warn of apparent use of justification. */
+
+            if( (tab_width % wgml_fonts[active_font].spc_width) > 0 ) {
+                out_msg( "Warning: justification not supported (dotab).\n" );
+                wng_count++;
+            }
+
+            /* Perform the %dotab() horizontal positioning. */
+
+            if( !text_out_open ) pre_text_output();
+            output_spaces( spaces );
+            if( text_out_open ) post_text_output();
+            tab_width = 0;
         }
-
-        /* Set tab_width and spaces. */
-
-        tab_width = desired_state.x_address - current_state.x_address;
-        spaces = tab_width / wgml_fonts[active_font].spc_width;
-
-        /* Warn of apparent use of justification. */
-
-        if( (tab_width % wgml_fonts[active_font].spc_width) > 0 ) {
-            out_msg( "Warning: justification not supported (dotab).\n" );
-            wng_count++;
-        }
-
-        /* Perform the %dotab() horizontal positioning. */
-
-        if( !text_out_open ) pre_text_output();
-        output_spaces( spaces );
-        if( text_out_open ) post_text_output();
-        tab_width = 0;
     }
 
     instance--;
@@ -2498,25 +2546,24 @@ static void fb_initial_horizontal_positioning( void )
             g_suicide();
         }
 
-        /* Set tab_width and spaces. */
-
-        tab_width = desired_state.x_address - current_state.x_address;
-        spaces = tab_width / wgml_fonts[active_font].spc_width;
-
-        /* Warn of apparent use of justification. */
-
-        if( (tab_width % wgml_fonts[active_font].spc_width) > 0 ) {
-            out_msg( "Warning: justification not supported (initial).\n" );
-            wng_count++;
-        }
-
         /* Perform the initial horizontal positioning. */
 
-        if( (bin_driver->htab.text != 0) && (tab_width > 8) ) {
+        /* Use :HTAB if tab_width is not an integral number of spaces. */
+
+        tab_width = desired_state.x_address - current_state.x_address;
+        if( has_htab && (tab_width % wgml_fonts[active_font].spc_width > 0) ) {
             fb_htab();
         } else {
-            if( !text_out_open ) pre_text_output();
-            output_spaces( spaces );
+
+        /* Output the requested number of spaces. */
+
+            spaces = tab_width / wgml_fonts[active_font].spc_width;
+            if( has_htab && (tab_width > 8) ) {
+                fb_htab();
+            } else {
+                if( !text_out_open ) pre_text_output();
+                output_spaces( spaces );
+            }
         }
         tab_width = 0;
     }
@@ -2539,25 +2586,24 @@ static void fb_internal_horizontal_positioning( void )
         g_suicide();
     }
 
-    /* Set tab_width and spaces. */
-
-    tab_width = desired_state.x_address - current_state.x_address;
-    spaces = tab_width / wgml_fonts[active_font].spc_width;
-
-    /* Warn of apparent use of justification. */
-
-    if( (tab_width % wgml_fonts[active_font].spc_width) > 0 ) {
-        out_msg( "Warning: justification not supported (internal).\n" );
-        wng_count++;
-    }
-
     /* Perform the internal horizontal positioning. */
 
-    if( (bin_driver->htab.text != 0) && (spaces > 8) ) {
+    /* Use :HTAB if tab_width is not an integral number of spaces. */
+
+    tab_width = desired_state.x_address - current_state.x_address;
+    if( has_htab && (tab_width % wgml_fonts[active_font].spc_width > 0) ) {
         fb_htab();
     } else {
-        if( !text_out_open ) pre_text_output();
-        output_spaces( spaces );
+
+        /* Output the requested number of spaces. */
+
+        spaces = tab_width / wgml_fonts[active_font].spc_width;
+        if( has_htab && (spaces > 8) ) {
+            fb_htab();
+        } else {
+            if( !text_out_open ) pre_text_output();
+            output_spaces( spaces );
+        }
     }
     tab_width = 0;
 
@@ -2567,23 +2613,22 @@ static void fb_internal_horizontal_positioning( void )
 /* Function fb_first_text_chars().
  * Performs the "first text_chars instance" sequence per the Wiki.
  *
- * Parameter:
+ * Parameters:
  *      in_chars points to the text_chars instance to be processed.
+ *      in_lineproc points to the :LINEPROC to use
  *
- * Note:
+ * Notes:
+ *      If in_lineproc is NULL, then textpass is set to "true" and text
+ *          output will occur.
  *      The first step in the Wiki is omitted because that step is only
- *      done on the first line pass, and this function will be used on
- *      subsequent passes as well.
+ *          done on the first line pass, and this function is used on
+ *          subsequent passes as well.
  */
 
-static void fb_first_text_chars( text_chars * in_chars )
+static void fb_first_text_chars( text_chars * in_chars, \
+                                 line_proc * in_lineproc )
 {
     bool            font_switch_needed  = true;
-    line_proc   *   cur_lineproc        = NULL;
-
-    /* Ensure textpass starts the line pass with value "false". */
-
-    textpass = false;
 
     /* Set font_number and initialize the locals. */
 
@@ -2593,10 +2638,9 @@ static void fb_first_text_chars( text_chars * in_chars )
     if( current_state.font_number == desired_state.font_number ) \
                                                     font_switch_needed = false;
 
-    if( wgml_fonts[font_number].font_style != NULL ) {
-        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
-            cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
-    }
+    /* Ensure textpass has the value "false". */
+
+    textpass = false;
 
     /* Do the font switch, if needed. If a font switch is not needed,
      * interpret the :FONTSTYLE block :STARTVALUE block.
@@ -2620,21 +2664,21 @@ static void fb_first_text_chars( text_chars * in_chars )
      * %textpass() is processed.
      */
 
-    if( cur_lineproc == NULL ) {
+    if( in_lineproc == NULL ) {
         textpass = true;
     } else {
-
-        if( cur_lineproc->startvalue != NULL ) {
+        if( in_lineproc->startvalue != NULL ) {
             if( text_out_open ) post_text_output();
-            df_interpret_driver_functions( cur_lineproc->startvalue->text );
+            df_interpret_driver_functions( in_lineproc->startvalue->text );
         }
 
-        fb_firstword( cur_lineproc );
+        fb_firstword( in_lineproc );
 
         if( !font_switch_needed ) {
-            if( cur_lineproc->startword != NULL ) \
+            if( in_lineproc->startword != NULL ) {
                 if( text_out_open ) post_text_output();
-                df_interpret_driver_functions( cur_lineproc->startword->text );
+                df_interpret_driver_functions( in_lineproc->startword->text );
+            }
         }
     }
 
@@ -2645,16 +2689,15 @@ static void fb_first_text_chars( text_chars * in_chars )
      */
 
     if( textpass ) {
-        fb_initial_horizontal_positioning();
-
         if( uline ) {
-            /* underscore output will go here when implemented */
+            output_uscores( in_chars );
         } else {
+            fb_initial_horizontal_positioning();
             if( !text_out_open ) pre_text_output();
             ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
         }
-        if( htab_done ) post_text_output();
+        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2662,10 +2705,10 @@ static void fb_first_text_chars( text_chars * in_chars )
     current_state.x_address += in_chars->width;
     x_address = current_state.x_address;
 
-    if( cur_lineproc != NULL ) {
+    if( in_lineproc != NULL ) {
         if( text_out_open ) post_text_output();
-        if( cur_lineproc->endword != NULL ) {
-            df_interpret_driver_functions( cur_lineproc->endword->text );
+        if( in_lineproc->endword != NULL ) {
+            df_interpret_driver_functions( in_lineproc->endword->text );
         }
     }
 
@@ -2677,31 +2720,35 @@ static void fb_first_text_chars( text_chars * in_chars )
  *
  * Parameter:
  *      in_chars points to the text_chars instance to be processed.
+ *      in_lineproc points to the :LINEPROC to use
+ *
+ * Note:
+ *      If in_lineproc is NULL, then textpass is set to "true" and text
+ *          output will occur.
  */
 
-static void fb_new_font_text_chars( text_chars * in_chars )
+static void fb_new_font_text_chars( text_chars * in_chars, \
+                                    line_proc * in_lineproc )
 {
-    line_proc   *   cur_lineproc        = NULL;
-
     /* Ensure textpass has the value "false" at the start of a new font. */
 
     textpass = false;
 
-    /* Set the appropriate globals and initialize cur_linproc. */
+    /* Set the appropriate globals. */
 
     desired_state.font_number = in_chars->font_number;
     desired_state.x_address = in_chars->x_address;
     font_number = desired_state.font_number;
     active_font = desired_state.font_number;
 
-    if( wgml_fonts[font_number].font_style != NULL ) {
-        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
-            cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
-    }
-    
     /* Interpret the pre-font switch function block. */
 
+    textpass = false;
     fb_lineproc_endvalue();
+
+    /* Ensure textpass has the value "false". */
+
+    textpass = false;
 
     /* Do the font switch, which is needed by definition. */
 
@@ -2713,14 +2760,14 @@ static void fb_new_font_text_chars( text_chars * in_chars )
      * %textpass() is processed.
      */
 
-    if( cur_lineproc == NULL ) {
+    if( in_lineproc == NULL ) {
         textpass = true;
     } else {
-        if( cur_lineproc->startvalue != NULL ) {
+        if( in_lineproc->startvalue != NULL ) {
             if( text_out_open ) post_text_output();
-            df_interpret_driver_functions( cur_lineproc->startvalue ->text );
+            df_interpret_driver_functions( in_lineproc->startvalue ->text );
         }
-        fb_firstword( cur_lineproc );
+        fb_firstword( in_lineproc );
     }
 
     /* If textpass is "true", do the horizontal positioning and text or
@@ -2730,16 +2777,15 @@ static void fb_new_font_text_chars( text_chars * in_chars )
      */
 
     if( textpass ) {
-        fb_internal_horizontal_positioning();
-
         if( uline ) {
-            /* underscore output will go here when implemented */
+            output_uscores( in_chars );
         } else {
+            fb_internal_horizontal_positioning();
             if( !text_out_open ) pre_text_output();
             ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
         }
-        if( htab_done ) post_text_output();
+        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2747,10 +2793,10 @@ static void fb_new_font_text_chars( text_chars * in_chars )
     current_state.x_address += in_chars->width;
     x_address = current_state.x_address;
 
-    if( cur_lineproc != NULL ) {
+    if( in_lineproc != NULL ) {
         if( text_out_open ) post_text_output();
-        if( cur_lineproc->endword != NULL ) {
-            df_interpret_driver_functions( cur_lineproc->endword->text );
+        if( in_lineproc->endword != NULL ) {
+            df_interpret_driver_functions( in_lineproc->endword->text );
         }
     }
 
@@ -2908,23 +2954,80 @@ static void fb_normal_vertical_positioning( void )
     return;
 }
 
+/* Function fb_overprint_vertical_positioning().
+ * Performs the overprint vertical positioning as described in the Wiki. 
+ */
+
+static void fb_overprint_vertical_positioning( void )
+{
+    int                 i;
+    newline_block   *   current_block   = NULL;
+
+    /* If :ABSOLUTEADDRESS is not available, do the vertical positioning. */
+
+    if( !has_aa_block ) {
+
+        /* Use the :NEWLINE block with an advance of "0", if one exists. */
+
+        for( i = 0; i < bin_driver->newlines.count; i++ ) {
+            if( bin_driver->newlines.newlineblocks[i].advance == 0 ) {
+                current_block = &bin_driver->newlines.newlineblocks[i];
+                break;
+            }
+        }
+
+        /* If no :NEWLINE block with an advance of "0" exists, the use the
+         * required (since there is no :ABSOLUTEADDRESS block) :NEWLINE block
+         * with an advance of "1".
+         */
+
+        if( current_block == NULL ) {
+            for( i = 0; i < bin_driver->newlines.count; i++ ) {
+                if( bin_driver->newlines.newlineblocks[i].advance == 0 ) {
+                    current_block = &bin_driver->newlines.newlineblocks[i];
+                    break;
+                }
+            }
+        }
+
+        df_interpret_driver_functions( current_block->text );
+    }
+
+    /* Reset the appropriate values. */
+
+    current_state.x_address = bin_device->x_start;
+    x_address = current_state.x_address;
+
+    /* This is hypothetical and may need to be changed, if the condition
+     * is ever "true".
+     */
+
+    if( current_block->advance == 1 ) {
+        desired_state.y_address += wgml_fonts[font_number].line_height;
+        current_state.y_address = desired_state.y_address;
+        y_address = current_state.y_address;
+    }
+
+    return;
+}
+
 /* Function fb_subsequent_text_chars().
  * Performs the "subsequent text_chars instance" sequence per the Wiki.
  *
  * Parameter:
  *      in_chars points to the text_chars instance to be processed.
+ *      in_lineproc points to the :LINEPROC to use
+ *
+ * Note:
+ *      If in_lineproc is NULL, then textpass is set to "true" and text
+ *          output will occur.
  */
 
-static void fb_subsequent_text_chars( text_chars * in_chars )
+static void fb_subsequent_text_chars( text_chars * in_chars, \
+                                      line_proc * in_lineproc )
 {
-    line_proc   *   cur_lineproc        = NULL;
+    /* Initialize desired_state.x_address. */
 
-    /* Initialize cur_lineproc and desired_state.x_address. */
-
-    if( wgml_fonts[font_number].font_style != NULL ) {
-        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
-            cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
-    }
     desired_state.x_address = in_chars->x_address;
     
     /* Since only the :STARTWORD (if present) is interpreted, and since device
@@ -2933,10 +3036,10 @@ static void fb_subsequent_text_chars( text_chars * in_chars )
      * started or a new font was encountered. 
      */
 
-    if( cur_lineproc != NULL ) {
-        if( cur_lineproc->startword != NULL ) {
+    if( in_lineproc != NULL ) {
+        if( in_lineproc->startword != NULL ) {
             if( text_out_open ) post_text_output();
-            df_interpret_driver_functions( cur_lineproc->startword->text );
+            df_interpret_driver_functions( in_lineproc->startword->text );
         }
     }
 
@@ -2947,16 +3050,15 @@ static void fb_subsequent_text_chars( text_chars * in_chars )
      */
 
     if( textpass ) {
-        fb_internal_horizontal_positioning();
-
         if( uline ) {
-            /* underscore output will go here when implemented */
+            output_uscores( in_chars );
         } else {
+            fb_internal_horizontal_positioning();
             if( !text_out_open ) pre_text_output();
             ob_insert_block( in_chars->text, in_chars->count, true, true, \
                                                         in_chars->font_number);
         }
-        if( htab_done ) post_text_output();
+        if( htab_done && text_out_open ) post_text_output();
     }
 
     /* Update variables and interpret the post-output function block. */
@@ -2964,10 +3066,10 @@ static void fb_subsequent_text_chars( text_chars * in_chars )
     current_state.x_address += in_chars->width;
     x_address = current_state.x_address;
 
-    if( cur_lineproc != NULL ) {
+    if( in_lineproc != NULL ) {
         if( text_out_open ) post_text_output();
-        if( cur_lineproc->endword != NULL ) \
-            df_interpret_driver_functions( cur_lineproc->endword->text );
+        if( in_lineproc->endword != NULL ) \
+            df_interpret_driver_functions( in_lineproc->endword->text );
     }
 
     return;
@@ -3164,11 +3266,13 @@ void df_set_vertical( uint32_t v_start )
 
 /* Function df_setup().
  * Initializes those local variables that need more than a simple assignment
- * statement.
+ * statement, or whose value needs to set once only based on information
+ * not available when the local variable is created.
  */
 
 void df_setup( void )
 {
+    int         i;
     symsub  *   sym_val = NULL;
 
     /* When called, each of symbols "date" and "time" contains either of
@@ -3186,17 +3290,31 @@ void df_setup( void )
     if( sym_val == NULL ) time_val = char_convert( NULL );
     else time_val = char_convert( sym_val->value );
 
-    /* Initialize staging to hold 80 characters. */     
+    /* Set has_htab to true if the device defined the :HTAB block. */
 
-    staging.text = (uint8_t *) mem_alloc( 80 );
-    staging.length = 80;
-    staging.current = 0;
+    if( bin_driver->htab.text != NULL) has_htab = true;
+
+    /* Initialize space_chars to hold 80 space characters. */     
+
+    space_chars.text = (uint8_t *) mem_alloc( 80 );
+    space_chars.length = 80;
+    space_chars.current = 0;
+    for( i = 0; i < space_chars.length; i++ ) space_chars.text[i] = ' ';
+
+    /* Initialize uscore_chars to hold 80 :UNDERSCORE characters. */     
+
+    uscore_char = bin_device->underscore.underscore_char;
+    uscore_chars.text = (uint8_t *) mem_alloc( 80 );
+    uscore_chars.length = 80;
+    uscore_chars.current = 0;
+    for( i = 0; i < uscore_chars.length; i++ ) \
+                                            uscore_chars.text[i] = uscore_char;
 
     return;
 }
 
 /* Function df_teardown().
- * Releases the memory allocated by df_startup().
+ * Releases the memory allocated by df_setup().
  */
 
 void df_teardown( void )
@@ -3211,11 +3329,18 @@ void df_teardown( void )
         time_val = NULL;
     }
     
-    if( staging.text != NULL ) {
-        mem_free( staging.text);
-        staging.current = 0;
-        staging.length = 0;
-        staging.text = NULL;
+    if( space_chars.text != NULL ) {
+        mem_free( space_chars.text);
+        space_chars.current = 0;
+        space_chars.length = 0;
+        space_chars.text = NULL;
+    }
+
+    if( uscore_chars.text != NULL ) {
+        mem_free( uscore_chars.text);
+        uscore_chars.current = 0;
+        uscore_chars.length = 0;
+        uscore_chars.text = NULL;
     }
 
     return;
@@ -3285,10 +3410,12 @@ void fb_enterfont( void )
 
 void fb_first_text_pass( text_line * out_line )
 {
+    line_proc   *   cur_lineproc        = NULL;
     text_chars  *   current;
 
     /* Update the internal state for the new text_line. */
 
+    line_pass_number = 0;
     current = out_line->first;
     desired_state.font_number = current->font_number;
     desired_state.x_address   = current->x_address;
@@ -3311,8 +3438,12 @@ void fb_first_text_pass( text_line * out_line )
 
     /* The "first text_chars instance" sequence. */
 
+    if( wgml_fonts[font_number].font_style != NULL ) {
+        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
+            cur_lineproc = &wgml_fonts[font_number].font_style->lineprocs[0];
+    }
     x_address = desired_state.x_address;
-    fb_first_text_chars( current );
+    fb_first_text_chars( current, cur_lineproc );
 
     /* Now do the remaining text_chars instances. */
 
@@ -3321,9 +3452,15 @@ void fb_first_text_pass( text_line * out_line )
         desired_state.x_address = current->x_address;
         x_address = desired_state.x_address;
         if( current_state.font_number != current->font_number ) {
-            fb_new_font_text_chars( current );
+            if( wgml_fonts[current->font_number].font_style != NULL ) {
+                if( wgml_fonts[current->font_number].font_style->lineprocs \
+                                                                != NULL ) \       
+                    cur_lineproc = \
+                    &wgml_fonts[current->font_number].font_style->lineprocs[0];
+            }
+            fb_new_font_text_chars( current, cur_lineproc );
         } else {
-            fb_subsequent_text_chars( current );
+            fb_subsequent_text_chars( current, cur_lineproc );
         }
         current = current->next;
     }
@@ -3462,8 +3599,8 @@ void fb_line_block( line_block * in_line_block, uint32_t h_start, \
 
 void fb_lineproc_endvalue( void )
 {
-    if( text_output ) {
-        post_text_output();
+    if( textpass ) {
+        if( text_out_open ) post_text_output();
         if( wgml_fonts[font_number].font_style->lineprocs != NULL ) {       
             if( wgml_fonts[font_number].font_style->\
                                     lineprocs[line_pass_number].endvalue != NULL ) \
@@ -3528,6 +3665,87 @@ void fb_new_section( uint32_t v_start )
      */
 
     active_font = save_font;
+
+    return;
+}
+
+/* Function fb_subsequent_text_pass().
+ * Performs the subsequent pass for outputting ordinary text.
+ *
+ * Parameter:
+ *      out_line points to a text_line instance specifying the text to be
+ *          sent to the device.
+ *      line_pass contains the number of the current line_pass
+ *
+ * Note:
+ *      This function is to be used only by fb_output_text(), which includes
+ *          a test ensuring that out_line contains at least one text_chars
+ *          instance (that is, that out_line->first is not NULL).
+ *      Other functions are expected to be created for outputting lines
+ *          created using :BOX characters.
+ */
+
+void fb_subsequent_text_pass( text_line * out_line, uint16_t line_pass )
+{
+    line_proc   *   cur_lineproc        = NULL;
+    text_chars  *   current;
+
+    /* Update the internal state to the start of the text_line. */
+
+    line_pass_number = line_pass;
+    current = out_line->first;
+    desired_state.font_number = current->font_number;
+    desired_state.x_address = current->x_address;
+
+    /* Interpret a :LINEPROC :ENDVALUE block if appropriate. */
+
+    fb_lineproc_endvalue();
+
+    /* Perform the Overprint Vertical Positioning. */
+
+    fb_overprint_vertical_positioning();
+
+    /* Update the font number. */
+
+    font_number = desired_state.font_number;
+    active_font = desired_state.font_number;
+
+    /* The Subsequent Line Pass Sequence. */ 
+
+    /* The "first text_chars instance" sequence. */
+
+    if( wgml_fonts[font_number].font_style != NULL ) {
+        if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
+            cur_lineproc = \
+                    &wgml_fonts[font_number].font_style->lineprocs[line_pass];
+    }
+    x_address = desired_state.x_address;
+    if( cur_lineproc != NULL) fb_first_text_chars( current, cur_lineproc );
+
+    /* Now do the remaining text_chars instances. */
+
+    current = current->next;
+    while( current != NULL ) {
+        desired_state.x_address = current->x_address;
+        x_address = desired_state.x_address;
+        if( current_state.font_number != current->font_number ) {
+            if( wgml_fonts[font_number].font_style != NULL ) {
+                if( wgml_fonts[font_number].font_style->lineprocs != NULL ) \       
+                    cur_lineproc = \
+                    &wgml_fonts[font_number].font_style->lineprocs[line_pass];
+            }
+            if( cur_lineproc != NULL) \
+                            fb_new_font_text_chars( current, cur_lineproc );
+        } else {
+            if( cur_lineproc != NULL) \
+                            fb_subsequent_text_chars( current, cur_lineproc );
+        }
+        current = current->next;
+    }
+
+    /* Close text output if still open at end of line. */
+
+    if( text_out_open ) post_text_output();
 
     return;
 }
