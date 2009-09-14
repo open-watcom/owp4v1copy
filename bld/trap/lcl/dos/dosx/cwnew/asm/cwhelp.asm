@@ -453,7 +453,6 @@ cLockStart      label byte
         xor     cx,cx                   ; round up to next 64K
         sub     [edi],ecx               ; subtract off rounded up DGROUP offset
 addrsetb:
-
 ;
 ;Set the bounds.
 ;
@@ -470,11 +469,12 @@ addrsetb:
         cmp     eax,-1
         jz      @@NoDecLimaddr
         dec     eax
-@@NoDecLimaddr: mov     d[edi+6+4],eax  ;set high bound.
+@@NoDecLimaddr:
+        mov     d[edi+6+4],eax          ;set high bound.
+@@9addr:
 ;
 ;Return to caller.
 ;
-@@9addr:
         popad
         mov     ecx,@@incount
         mov     esi,@@inaddr
@@ -1220,7 +1220,8 @@ addrsetb:
         mov     d[edi],4
         mov     ErrorNumber,4
         call    SetErrorText
-@@0kill:        add     edi,4
+@@0kill:
+        add     edi,4
 ;
 ;Reset the timer if required.
 ;
@@ -1231,7 +1232,8 @@ addrsetb:
         call    LoadTimer
         popad
 ;
-@@1kill:        ret
+@@1kill:
+        ret
         endps
 
 
@@ -1348,7 +1350,8 @@ addrsetb:
         xor     edi,edi
         mov     esi,eax
         xor     eax,eax
-@@8watch:       mov     al,[edx]
+@@8watch:
+        mov     al,[edx]
         add     edi,eax
         inc     edx
         dec     esi
@@ -1370,7 +1373,8 @@ addrsetb:
 ;
 ;Return to caller.
 ;
-@@9watch:       ret
+@@9watch:
+        ret
         endps
 
 
@@ -1405,7 +1409,8 @@ addrsetb:
 ;
         mov     ebx,offset HBRKTable
         mov     ebp,4
-@@3cwatch:      test    HBRK_Flags[ebx],1       ;in use?
+@@3cwatch:
+        test    HBRK_Flags[ebx],1       ;in use?
         jz      @@4cwatch
         cmp     edx,HBRK_Address[ebx]   ;right address?
         jnz     @@4cwatch
@@ -1413,7 +1418,8 @@ addrsetb:
         jnz     @@4cwatch
         mov     HBRK_Flags[ebx],0       ;free this entry.
         jmp     @@2cwatch
-@@4cwatch:      add     ebx,size HBRK
+@@4cwatch:
+        add     ebx,size HBRK
         dec     ebp
         jnz     @@3cwatch
 ;
@@ -1433,11 +1439,13 @@ addrsetb:
         mov     WATCH_Flags[ebx],0      ;clear WATCH.
         dec     NumWatches              ;update number of WATCH's.
         jmp     @@2cwatch
-@@1cwatch:      add     ebx,size WATCH
+@@1cwatch:
+        add     ebx,size WATCH
         dec     ebp
         jnz     @@0cwatch
 ;
-@@2cwatch:      add     esi,1+6+1
+@@2cwatch:
+        add     esi,1+6+1
         sub     ecx,1+6+1
         ret
         endps
@@ -1642,7 +1650,8 @@ addrsetb:
         sub     ecx,1
         mov     b[edi],0                ;set flags.
         inc     edi
-@@0mtext:       mov     al,[edx]
+@@0mtext:
+        mov     al,[edx]
         mov     [edi],al
         inc     edx
         inc     edi
@@ -1746,7 +1755,8 @@ addrsetb:
 ;
         mov     esi,offset HBRKTable
         mov     ebp,4
-@@hbrk0:        test    HBRK_Flags[esi],1
+@@hbrk0:
+        test    HBRK_Flags[esi],1
         jz      @@hbrk1
         mov     ax,0b00h
         mov     ebx,HBRK_Address[esi]
@@ -1760,7 +1770,8 @@ addrsetb:
         or      HBRK_Flags[esi],2
         mov     ax,0b03h
         int     31h
-@@hbrk1:        add     esi,size HBRK
+@@hbrk1:
+        add     esi,size HBRK
         dec     ebp
         jnz     @@hbrk0
 ;
@@ -1778,7 +1789,8 @@ addrsetb:
         jz      @@0exec
         or      DebugEFL,256
         jmp     @@11exec
-@@0exec:        and     DebugEFL,not 256
+@@0exec:
+        and     DebugEFL,not 256
 ;
 ;Set flags ready for execution.
 ;
@@ -1837,7 +1849,8 @@ addrsetb:
 ;
         mov     esi,offset WatchTable
         mov     ebp,MaxWatches
-@@hbrk6:        test    WATCH_Flags[esi],1      ;in use?
+@@hbrk6:
+        test    WATCH_Flags[esi],1      ;in use?
         jz      @@hbrk7
         ;
         ;Check if this watch changed.
@@ -1846,14 +1859,16 @@ addrsetb:
         mov     ecx,WATCH_Length[esi]
         xor     eax,eax
         xor     ebx,ebx
-@@hbrk8:        mov     bl,[edi]
+@@hbrk8:
+        mov     bl,[edi]
         add     eax,ebx
         inc     edi
         dec     ecx
         jnz     @@hbrk8
         cmp     eax,WATCH_Check[esi]
         jnz     @@10exec                ;signal COND_WATCH
-@@hbrk7:        add     esi,size WATCH
+@@hbrk7:
+        add     esi,size WATCH
         dec     ebp
         jnz     @@hbrk6
 ;
@@ -1862,29 +1877,30 @@ addrsetb:
         test    ExecuteFlags,1  ;single steping anyway?
         jnz     @@8exec
         jmp     @@7exec
-
 ;
 ;Set vars to trigger COND_WATCH
 ;
-@@10exec:       mov     ExceptionFlag,1 ;force trace flag setting.
+@@10exec:
+        mov     ExceptionFlag,1 ;force trace flag setting.
         or      TraceFlag,-1
 ;
 ;Remove HBRK's
 ;
 @@8exec:
-
         mov     al,20h  ; MED 08/06/96, re-enable interrupts
         out     20h,al
-
+;
         mov     esi,offset HBRKTable
         mov     ebp,4
-@@hbrk4:        test    HBRK_Flags[esi],2
+@@hbrk4:
+        test    HBRK_Flags[esi],2
         jz      @@hbrk5
         and     HBRK_Flags[esi],not 2
         mov     bx,HBRK_Handle[esi]
         mov     ax,0b01h
         int     31h
-@@hbrk5:        add     esi,size HBRK
+@@hbrk5:
+        add     esi,size HBRK
         dec     ebp
         jnz     @@hbrk4
 ;
@@ -1907,15 +1923,18 @@ addrsetb:
         jz      @@1exec
         or      eax,1 shl 10            ;COND_TERMINATE
         jmp     @@9exec
-@@1exec:        cmp     BreakKeyFlag,0
+@@1exec:
+        cmp     BreakKeyFlag,0
         jz      @@20exec
         or      eax,1 shl 9             ;COND_USER
         jmp     @@9exec
-@@20exec:       cmp     BreakFlag,0             ;break point?
+@@20exec:
+        cmp     BreakFlag,0             ;break point?
         jz      @@2exec
         or      eax,1 shl 7             ;COND_BREAK
         jmp     @@9exec
-@@2exec:        cmp     TraceFlag,0             ;trace point?
+@@2exec:
+        cmp     TraceFlag,0             ;trace point?
         jz      @@3exec
         cmp     ExceptionFlag,1 ;hardware break point?
         jnz     @@5exec
@@ -1924,9 +1943,11 @@ addrsetb:
         mov     ErrorNumber,12
         call    SetErrorText
         jmp     @@9exec
-@@5exec:        or      eax,1 shl 6             ;COND_TRACE
+@@5exec:
+        or      eax,1 shl 6             ;COND_TRACE
         jmp     @@9exec
-@@3exec:        cmp     ExceptionFlag,-1        ;exception?
+@@3exec:
+        cmp     ExceptionFlag,-1        ;exception?
         jz      @@4exec
         or      eax,1 shl 11                    ;COND_EXCEPTION
         mov     ErrorNumber,7
@@ -1942,9 +1963,11 @@ addrsetb:
         cmp     ExceptionFlag,14        ;page?
         jz      @@12exec
         mov     ErrorNumber,11
-@@12exec:       call    SetErrorText
+@@12exec:
+        call    SetErrorText
         jmp     @@9exec
-@@4exec:        or      eax,1 shl 8             ;COND_WATCH = dunno!
+@@4exec:
+        or      eax,1 shl 8             ;COND_WATCH = dunno!
 ;
 ;Return to caller.
 ;
@@ -2199,8 +2222,8 @@ KernalSS                equ     68h+3                   ;Kernal SS
         mov     eax,es:[ebp+(4+4+4+4)+(0)+(4+4+4)]
         mov     DebugEIP,eax
         jmp     med2b
-med2a:
 
+med2a:
         mov     eax,es:[ebp+(4+4+4+4)+(4+4)]
         and     eax,not 256
         mov     DebugEFL,eax
@@ -2807,7 +2830,8 @@ BreakChecker    proc    near    public
 @@70bc: lss     esp,f[DebuggerESP]
         ret
 ;
-@@nopebc:       popad
+@@nopebc:
+        popad
 ;
 ;Pass control to the origional handler.
 ;
@@ -2863,7 +2887,8 @@ Int31Intercept  proc    near    public
         mov     cx,cs:w[OldInt09+4]
         assume ds:DGROUP
         ;
-@@reti31:       pushs   eax,ebp,ds
+@@reti31:
+        pushs   eax,ebp,ds
         mov     ax,DGROUP
         mov     ds,ax
         mov     ebp,esp
@@ -2872,7 +2897,8 @@ Int31Intercept  proc    near    public
         pops    eax,ebp,ds
         iretd
         ;
-@@oldi31:       assume ds:nothing
+@@oldi31:
+        assume ds:nothing
         jmp     cs:f[OldInt31]
         assume ds:DGROUP
 OldInt31        df 0
@@ -2902,7 +2928,6 @@ ReadConfig      proc    near    public
         push    eax
         call    CloseFile
         add     esp,4
-
         jmp     @@3rc
 ;
 ;Get the execution path and use it to find the configuration file.
@@ -2977,7 +3002,6 @@ ReadConfig      proc    near    public
         push    offset ConfigName
         call    cfgGetOnOff
         add     esp,16
-
 ;
 @@9rc:  ret
 ReadConfig      endp
