@@ -53,37 +53,38 @@ void    do_justify( uint32_t lm, uint32_t rm )
 {
 
     text_chars  *tw;
-    int32_t     dist;
-    int32_t     dist1;
+    int32_t     sum_w;
+    int32_t     hor_end;
     int32_t     cnt;
     int32_t     line_width;
     int32_t     delta;
     int32_t     delta0;
+    int32_t     rem;
     ju_enum     just;
     symsub  *   symjusub;
 
     if( ProcFlags.justify == ju_off || ProcFlags.literal  ) {
         return;
     }
-    dist = 0;
-    dist1 = 0;
+    sum_w = 0;
+    hor_end = 0;
     cnt = 0;
     tw = t_line.first;
     while( tw != NULL )  {              // calculate used width
         cnt++;                          // number of 'words'
-        dist += tw->width;              // sum of 'words' widths
+        sum_w += tw->width;             // sum of 'words' widths
         if( tw->next == NULL ) {        // last element
-            dist1 = tw->x_address + tw->width;  // hor end position
+            hor_end = tw->x_address + tw->width;// hor end position
             break;
         }
         tw = tw->next;
     }
     line_width = rm - lm;
 
-    if( (dist <= 0) || (dist1 > rm) || (line_width < 1) ) {
+    if( (sum_w <= 0) || (hor_end >= rm) || (line_width < 1) ) {
         return;                         // no justify needed / possible
     }
-    delta0 = line_width + t_line.first->x_address - dist1;
+    delta0 = line_width + t_line.first->x_address - hor_end;
     if( ProcFlags.justify == ju_on ) {
         if( cnt < 2 ) {      // one text_chars only, no full justify possible
             return;
@@ -91,17 +92,19 @@ void    do_justify( uint32_t lm, uint32_t rm )
     }
     if( cnt < 2 ) {
         delta = delta0;                 // one text_chars gets all space
+        rem   = 0;
     } else {
         delta = delta0 / (cnt - 1);
+        rem   = delta0 % (cnt - 1);
     }
 
     if( input_cbs->fmflags & II_research && GlobalFlags.lastpass ) {
         find_symvar( &sys_dict, "$ju", no_subscript, &symjusub);// .ju as string
-        out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d dist:%d dist1:%d"
-                 " delta:%d delta0:%d cnt:%d\n", symjusub->value,
-                 lm, rm, line_width, dist, dist1, delta, delta0, cnt );
+        out_msg( "\n  ju_%s lm:%d rm:%d line_width:%d sum_w:%d hor_end:%d"
+                 " delta:%d rem:%d delta0:%d cnt:%d\n", symjusub->value,
+                 lm, rm, line_width, sum_w, hor_end, delta, rem, delta0, cnt );
     }
-    if( delta < 1 ) {                   // nothing to distribute
+    if( delta < 1 && rem < 1 ) {        // nothing to distribute
         return;
     }
     switch( ProcFlags.justify ) { // convert inside / outside to left / right
@@ -127,7 +130,7 @@ void    do_justify( uint32_t lm, uint32_t rm )
     switch( just ) {
     case  ju_half :
         delta /= 2;
-        if( delta < 1 ) {
+        if( delta < 1 && rem < 1 ) {
             break;
         }
         // falltrough
@@ -138,9 +141,15 @@ void    do_justify( uint32_t lm, uint32_t rm )
         delta0 = delta;
         tw = t_line.first->next;
         while( tw != NULL ) {
-               tw->x_address += delta;
-               delta += delta0;
-               tw = tw->next;
+            if( rem > 0 ) {             // distribute remainder, too
+                tw->x_address += delta + 1;
+                delta += delta0 + 1;
+                rem--;
+            } else {
+                tw->x_address += delta;
+                delta += delta0;
+            }
+            tw = tw->next;
         }
         break;
     case  ju_left :
@@ -158,10 +167,10 @@ void    do_justify( uint32_t lm, uint32_t rm )
         }
         break;
     case  ju_right :
-        if( dist1 >= rm ) {
+        if( hor_end >= rm ) {
             break;                      // already at right margin
         }
-        delta = rm - dist1;             // shift right
+        delta = rm - hor_end;           // shift right
         if( delta < 1 ) {
             break;
         }
@@ -172,10 +181,10 @@ void    do_justify( uint32_t lm, uint32_t rm )
         }
         break;
     case  ju_centre :
-        if( dist1 >= rm ) {
+        if( hor_end >= rm ) {
             break;                      // too wide no centre possible
         }
-        delta = (rm - dist1) / 2;
+        delta = (rm - hor_end) / 2;
         if( delta < 1 ) {
             break;
         }
@@ -287,6 +296,22 @@ void    add_text_chars_to_pool( text_line * a_line )
     }
 }
 
+/***************************************************************************/
+/*  set position horizontal and vertical                                   */
+/***************************************************************************/
+static void set_v_start( int8_t spacing )
+{
+    if( bin_driver->y_positive == 0x00 ) {
+        g_cur_v_start -= (spacing * g_max_line_height);
+    } else {
+        g_cur_v_start += (spacing * g_max_line_height);
+    }
+}
+
+void set_h_start( void )
+{
+    g_cur_h_start = g_page_left + bin_device->x_offset;
+}
 
 /***************************************************************************/
 /*                                                                         */
@@ -294,7 +319,7 @@ void    add_text_chars_to_pool( text_line * a_line )
 
 void    process_line_full( text_line * a_line, bool justify )
 {
-    if( a_line->first == NULL ) {
+    if( a_line->first == NULL ) {       // why are we called?
         return;
     }
     if( GlobalFlags.lastpass ) {
@@ -303,7 +328,7 @@ void    process_line_full( text_line * a_line, bool justify )
         }
         if( justify && !ProcFlags.literal && ProcFlags.justify > ju_off ) {
 
-            do_justify( g_page_left, g_page_left + g_cl );
+            do_justify( g_page_left, g_page_right );
             if( input_cbs->fmflags & II_research ) {
                 test_out_t_line( a_line );
             }
@@ -313,14 +338,8 @@ void    process_line_full( text_line * a_line, bool justify )
 
     add_text_chars_to_pool( a_line );
     a_line->first = NULL;
-    g_cur_h_start = g_page_left;
 
-    if( bin_driver->y_positive == 0x00 ) {// single line spacing assumed for now
-        g_cur_v_start -= (1 * g_max_line_height);
-    } else {
-        g_cur_v_start += (1 * g_max_line_height);
-    }
-
+    set_v_start( layout_work.defaults.spacing );// not always OK TBD
 }
 
 
@@ -329,13 +348,13 @@ void    process_line_full( text_line * a_line, bool justify )
 /*      split into 'words'                                                 */
 /*      translate if input translation active                              */
 /*      calculate width with current font                                  */
-/*      add text to output line                                 TBD        */
+/*      add text to output line                                            */
 /***************************************************************************/
 
 void    process_text( char * text, uint8_t font_num )
 {
-    static  text_chars   *   text_wk;
-    text_chars           *   curr_t;
+    static  text_chars  *   text_wk;
+    text_chars          *   curr_t;
     size_t                  count;
     char                *   pb;
     char                *   p;
@@ -364,7 +383,8 @@ void    process_text( char * text, uint8_t font_num )
                                                 font_num );
                 if( g_cur_h_start + curr_t->width > g_page_right ) {
                     process_line_full( &t_line, true );
-                    curr_t->x_address = g_page_left;
+                    set_h_start();
+                    curr_t->x_address = g_cur_h_start;
 
                 }
 
@@ -394,7 +414,8 @@ void    process_text( char * text, uint8_t font_num )
         if( g_cur_h_start + curr_t->width > g_page_right ) {
 
             process_line_full( &t_line, true );
-            curr_t->x_address = g_page_left;
+            set_h_start();
+            curr_t->x_address = g_cur_h_start;
         }
 
         if( t_line.first == NULL ) {
@@ -409,10 +430,8 @@ void    process_text( char * text, uint8_t font_num )
     }
 
     if( !ProcFlags.concat && (t_line.first != NULL) && GlobalFlags.lastpass) {
-
         process_line_full( &t_line, false );
-
-
+        set_h_start();
     }
 }
 

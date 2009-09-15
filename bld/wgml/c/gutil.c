@@ -427,6 +427,8 @@ uint32_t    conv_hor_unit( su * s )
 
     switch( s->su_u ) {
     case SU_chars_lines :
+        ds = s->su_whole * bin_device->horizontal_base_units / CPI;
+        break;
     case SU_dv :
     case SU_ems :
         ds = s->su_whole * wgml_fonts[g_curr_font_num].default_width;

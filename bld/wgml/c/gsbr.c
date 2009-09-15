@@ -115,6 +115,7 @@ void  scr_process_break( void )
 {
     if( t_line.first != NULL ) {
         process_line_full( &t_line, false );
+        set_h_start();
     }
     return;
 

@@ -959,7 +959,9 @@ void    init_def_lay( void )
 
 
 
-
+/***************************************************************************/
+/*                     incomplete and wrong                     TBD        */
+/***************************************************************************/
 void    init_page_geometry( void )
 {
     int         k;
@@ -981,7 +983,8 @@ void    init_page_geometry( void )
 
 
     tm = conv_vert_unit( &layout_work.page.top_margin );
-    lm = conv_hor_unit( &layout_work.page.left_margin );
+    lm = conv_hor_unit( &layout_work.page.left_margin )
+         - bin_device->x_offset;
 
     rm = conv_hor_unit( &layout_work.page.right_margin )
          - bin_device->x_offset;
@@ -995,7 +998,7 @@ void    init_page_geometry( void )
     }
 
     g_page_left = max( lm, bin_device->x_start );
-    g_page_right = min( rm, bin_device->page_width - bin_device->x_offset );
+    g_page_right = min( rm, bin_device->page_width );
 
     if( bin_driver->y_positive == 0 ) {
         g_page_top = min( bin_device->page_depth - tm,
@@ -1008,9 +1011,9 @@ void    init_page_geometry( void )
         g_page_bottom = min( g_page_top + g_page_depth, bin_device->y_offset );
         g_net_page_height = g_page_bottom - g_page_top;
     }
-    g_net_page_width = g_page_right - g_page_left;
+    g_net_page_width = g_page_right - g_page_left + bin_device->x_offset;
 
-    g_ll = g_page_right - g_page_left;  // line length
+    g_ll = g_net_page_width;            // line length
     g_cd = layout_work.defaults.columns;// no of columns
     g_gutter = conv_hor_unit( &layout_work.defaults.gutter );
 
@@ -1020,7 +1023,7 @@ void    init_page_geometry( void )
             g_cd = 9;                   // this limit is found in script_tso.txt
                                         // for .cd control word
         }
-        g_cl = (g_page_right - g_page_left - (g_cd -1) * g_gutter )
+        g_cl = (g_net_page_width - (g_cd -1) * g_gutter )
                 / (g_cd - 1);           // column length
         offset = g_page_left;
         for( k = 0; k < 9; ++k ) {
@@ -1038,11 +1041,11 @@ void    init_def_margins( void )
 {
     char        buf[BUF_SIZE];
 
-    g_cur_h_start = g_page_left;
+    g_cur_h_start = g_page_left + bin_device->x_offset;
     if( bin_driver->y_positive == 0x00 ) {
         g_cur_v_start = g_page_top - (1 * g_max_line_height);
     } else {
-        g_cur_v_start = g_page_top + (1 * g_max_line_height);
+        g_cur_v_start = g_page_top + (0 * g_max_line_height);
     }
 
 

@@ -146,6 +146,11 @@ static void split_at_GML_tag( void )
             ((*p2 == '.') || (*p2 == ' ')) ) {// 'good' tag end
             split_input( buff2, pchar );// split line
             buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
+            if( ProcFlags.literal ) {   // if literal active
+                if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
+                    li_cnt++;
+                }
+            }
         }
 
     }
@@ -155,7 +160,7 @@ static void split_at_GML_tag( void )
 /*  take the contents of the input line in buff2 and try to make the best  */
 /*  of it                                                                  */
 /*  Processing as specified in wgmlref.pdf chapter 8.1 processing rules    */
-/*   incomplete                                                            */
+/*   incomplete                                                    TBD     */
 /*                                                                         */
 /***************************************************************************/
 
@@ -178,11 +183,12 @@ void        process_line( void )
     bool                anything_substituted;
 
     ProcFlags.late_subst = false;
-    /***********************************************************************/
-    /*  look for GML tag start character and split line at GML tag         */
-    /***********************************************************************/
 
-    split_at_GML_tag();
+        /*******************************************************************/
+        /*  look for GML tag start character and split line at GML tag     */
+        /*******************************************************************/
+
+        split_at_GML_tag();
 
     if( !ProcFlags.literal ) {
 
@@ -662,41 +668,6 @@ void        process_late_subst( void )
                 *p2++ = *pw++;
             }
             buff2_lg = strnlen_s( buff2, buf_size );
-#if 0
-            /***********************************************************/
-            /*  Some single letter functions are resolved here:        */
-            /*                                                         */
-            /*  functions used within the OW doc build system:         */
-            /*   &e'  existance of variable 0 or 1                     */
-            /*   &l'  length of variable content                       */
-            /*        or if undefined length of name                   */
-            /*   &u'  upper                                            */
-            /*                                                         */
-            /*   &s'  subscript    These are recognized,   TBD         */
-            /*   &S'  superscript  ... but processed as &u'            */
-            /*                                                         */
-            /*   other single letter functions are not used AFAIK      */
-            /*                                                         */
-            /***********************************************************/
-            if( isalpha( *(pchar + 1) ) && *(pchar + 2) == '\''
-                && *(pchar + 3) > ' ' ) {
-                // not for .if '&*' eq '' .th ...
-                // only    .if '&x'foo' eq '' .th
-
-                char * * ppval = &p2;
-
-                pw = scr_single_funcs( pchar, pwend, ppval );
-                pchar = strchr( pw, ampchar );// look for next & in buffer
-                continue;
-            }
-
-            if( *(pchar + 1) == '\'' ) {// multi letter function
-                *p2++ = *pw++;          // over & and copy
-                pchar = strchr( pw, ampchar );  // look for next & in buffer
-                functions_found = true; // remember there is a function
-                continue;               // and ignore function
-            }
-#endif
             varstart = pw;              // remember start of var
             pw++;                       // over &
             ProcFlags.suppress_msg = true;

@@ -606,4 +606,26 @@ typedef struct ix_h_blk {               // header with index text
 } ix_h_blk;
 
 
+/***************************************************************************/
+/* enum for document sections                                              */
+/***************************************************************************/
+
+typedef enum doc_section {
+    doc_sect_none,                      // nothing so far
+    doc_sect_gdoc,                      // gdoc
+    doc_sect_frontm,                    // front matter
+    doc_sect_titlep,                    // title page
+    doc_sect_etitlep,                   // end title page
+    doc_sect_abstract,                  // abstract
+    doc_sect_preface,                   // preface
+    doc_sect_toc,                       // table of contents
+    doc_sect_figlist,                   // figure list
+    doc_sect_body,                      // body
+    doc_sect_appendix,                  // appendix
+    doc_sect_backm,                     // back matter
+    doc_sect_index,                     // index
+    doc_sect_egdoc                      // egdoc
+} doc_section;
+
+
 #endif                                  // GTYPE_H_INCLUDED

@@ -236,6 +236,7 @@ static void scan_gml( void )
                     if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
                         if( !stricmp(tok_start + 1, "LAYOUT" ) &&
                             ProcFlags.fb_document_done  ) {
+
                             g_err( err_lay_too_late );
                             err_count++;
                             file_mac_info();
@@ -244,7 +245,8 @@ static void scan_gml( void )
                             break;
                         }
                         if( !ProcFlags.fb_document_done &&
-                              gml_tags[k].tagflags & tag_out_txt ) {
+                            gml_tags[k].tagflags & tag_out_txt ) {
+
                             do_layout_end_processing(); // tag with text output
                         }
                         *p = csave;
@@ -458,7 +460,7 @@ static void     scan_script( void)
                     } else {
                         scan_start = p; // script controlword found, process
                         if( scr_tags[k].cwflags & cw_break ) {
-                            scr_process_break();
+                            scr_process_break();// output incomplete line, if any
                         }
                         scr_tags[k].tagproc();
                     }

@@ -175,6 +175,7 @@ extern  void    add_text_chars_to_pool( text_line * a_line );
 extern  void    do_justify( uint32_t left_margin, uint32_t right_margin );
 extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
+extern  void    set_h_start( void );
 
 
 /* gresrch.c                          */

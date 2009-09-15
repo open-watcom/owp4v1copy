@@ -261,6 +261,8 @@ global struct ProcFlags {
     unsigned        banregion       : 1;// within layout banregion definition
     unsigned        researchfile    : 1;// research for one file ( -r option )
 
+    doc_section     doc_sect;           // Which part are we in (FRONTM, BODY, ...
+
 } ProcFlags;                            // processing flags
 
 
