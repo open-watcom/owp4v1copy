@@ -10,10 +10,104 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2008/12/20
+:cmt. Reflects main Perforce branch as of 2009/09/15
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
+.*
+.section Differences from Open Watcom version 1.8
+.*
+.*
+.np
+Following is a list of changes made in &product 1.9:
+.begbull
+.bull
+The NULL macro is now defined as ((void *)0) for C; for C++, NULL is still
+defined as 0 or 0L as previously. This change may require modifications
+to user code if NULL was incorrectly used as an integer constant.
+Note: The 16-bit windows.h header defines NULL as 0; for 16-bit Windows
+programming, the effective definition of NULL depends on whether windows.h
+or one of the standard C headers is included first.
+.bull
+The C compiler has improved handling of the _Bool type (C99 mode specific).
+The _Bool type can now generally be used in expressions wherever an integer
+may be used.
+.bull
+The C compiler now correctly handles initialization of static floating-point
+variables with 64-bit integer constants.
+.bull
+The 16-bit C and C++ compilers now allow the :> operator to be used in
+initializers of variables with static storage, as long as both operands are
+integer constants. This enables the use of MK_FP macro in initializers.
+.bull
+The C++ compiler now treats warning W737, implicit conversion of pointers to
+integral types of same size, as an error.
+.bull
+The C++ compiler now supports several new warnings: W931, warn about
+meaningless cv-qualifier in casts; W932, warn about meaningless cv-qualifier
+in function return types; and W933, warn about use of C-style casts in C++
+code. These warnings must be explicitly enabled through the -wce option.
+.bull
+The code generator correctly handles constant folding of signed 64-bit
+integer division and right shift operations.
+.bull
+The code generator now supports constant folding of 64-bit integer modulo
+operations.
+.bull
+The code generator now makes more accurate decision when choosing whether
+a multiplication by a constant should be replaced by a sequence of shifts
+and additions. Results depend on target CPU type.
+.bull
+The 386 code generator now produces a CDQ instruction except when targeting
+a Pentium and optimizing for speed, when a MOV/SAR sequence is emitted as
+previously when converting a signed 32-bit integer to 64-bit.
+.bull
+The code generator no longer emits rendundant CS segment overrides when
+creating calls to symbols imported from DLLs. 
+.bull
+The wasm assembler now implements support for Turbo Assembler compatible
+IDEAL mode. The -zcm option may be used to select emulation mode.
+.bull
+The assembler now supports built-in @code and @data symbols.
+.bull
+The assembler now supports ELSEIF directives for conditional assembly.
+.bull
+The assembler no longer incorrectly assumes that absolute segments are
+byte aligned; they are paragraph (16 byte) aligned.
+.bull
+The built-in cd command in wmake now supports quoted paths with spaces.
+.bull
+The floating-point exception handler for 16-bit DOS no longer crashes if the
+user signal handler modified DS.
+.bull
+The _floodfill() graphics library function now works correctly again.
+.bull
+Support for ZDOS and RDOS targets has been added to the linker.
+.bull
+The linker now supports libraries in BSD, COFF, and GNU ar format.
+.bull
+The linker now allows stack sizes smaller than 512 bytes
+to be specified and does not silently override them. However, a new
+warning (W1172) will be emitted in such case.
+.bull
+A FULLHEADER option specific to the DOS EXE format has been added to the
+linker. Please see the Linker Guide for further information.
+.bull
+The library manager (wlib) now supports BSD, COFF, and GNU variants of the
+ar library archive format. Extended -fab, -fag, -fag options select the
+variant. The -fa option now selects default format depending on host platform.
+.bull
+The vi editor now supports non-ASCII characters in the 0x80-0xFF range.
+.bull
+The console version of the vi editor for Windows now uses standard Windows
+keyboard processing; AltGr and dead keys now function correctly. 
+Additionally, Caps Lock is only effective for keys which generate characters.
+.bull
+The wcl and wcl386 utilities now work correctly on a Linux host.
+.bull
+The DOS NetBIOS trap file and debug server have been modified to work when
+running on Windows NT (through NTVDM).
+.endbull 
 .*
 .section Differences from Open Watcom Version 1.7
 .*
