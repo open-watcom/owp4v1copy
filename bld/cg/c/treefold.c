@@ -820,7 +820,11 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
 
                     li = CFGetInteger64Value( lv );
 
-                    U64ShiftR( &li, ri, &rsh );
+                    if( tipe->attr & TYPE_SIGNED ) {
+                        I64ShiftR( &li, ri, &rsh );
+                    } else {
+                        U64ShiftR( &li, ri, &rsh );
+                    }
                     fold = Int64ToType( rsh, tipe );
                 }
             }
