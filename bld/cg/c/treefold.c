@@ -910,23 +910,25 @@ extern  tn      FoldDiv( tn left, tn rite, type_def *tipe )
         if( HasBigConst( tipe ) ) {
             lv = left->u.name->c.value;
             if( CFTest( rv ) != 0 && left->class == TN_CONS ) {
-                if( CFIs64( lv ) && CFIs64( rv ) ) {
+                if( tipe->attr & TYPE_FLOAT ) {
+                    fold = CFToType( CFDiv( lv, rv ), tipe );
+                } else {    /* Must be a 64-bit integer. */
                     signed_64       div;
                     signed_64       rem;
                     signed_64       li;
                     signed_64       ri;
-    
+
+                    assert( CFIs64( lv ) );
+                    assert( CFIs64( rv ) );
                     li = CFGetInteger64Value( lv );
                     ri = CFGetInteger64Value( rv );
-    
+
                     if( tipe->attr & TYPE_SIGNED ) {
                         I64Div( &li, &ri, &div, &rem );
                     } else {
                         U64Div( &li, &ri, &div, &rem );
                     }
                     fold = Int64ToType( div, tipe );
-                } else {
-                    fold = CFToType( CFDiv( lv, rv ), tipe );
                 }
                 BurnTree( left );
                 BurnTree( rite );

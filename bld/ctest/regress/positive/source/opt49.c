@@ -32,6 +32,11 @@ long long __inline mod_i( long long arg )
     return( arg % (24 * 3600L) );
 }
 
+double __inline div_f( double arg )
+{
+    return( arg / 4 );
+}
+
 int main( void )
 {
     if( test_function( 0xffffffff ) ) fail( __LINE__ );
@@ -43,5 +48,7 @@ int main( void )
     if( div_i( 100000 ) != 1 ) fail( __LINE__ );
     if( mod_i( -1 ) != -1 ) fail( __LINE__ );
     if( mod_i( -100000 ) != -13600 ) fail( __LINE__ );
+    if( div_f( -1 ) != -0.25 ) fail( __LINE__ );
+    if( div_f( 10 ) != 2.5 ) fail( __LINE__ );
     _PASS;
 }
