@@ -2422,6 +2422,7 @@ environment variable should be set as follows (spaces are for clarity
 only):
 .begnote
 .note std offset dst offset , rule
+For an alternate format (used with OS/2) see below.
 .endnote
 .np
 The expanded format is as follows:
@@ -2600,4 +2601,5 @@ Central European Time is 2 hours later than Coordinated Universal Time
 Daylight saving time does not apply in this locale.
 .endnote
 .*
+.im tzos2
 .im cfunrems

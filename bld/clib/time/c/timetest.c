@@ -239,6 +239,85 @@ int main( int argc, char * const argv[] )
     strftime( buf, sizeof( buf ), "%Ou %OU %OV %Ow %OW %Oy", &tm1 );
     VERIFY( 0 == strcmp( buf, "7 23 22 0 22 06" ) );
 
+    /* test some TZ ENV changes first set OW format */
+    setenv( "TZ", "CET-1CED-2,M3.5.0/2:0:0,M10.5.0/3:0:0", 1 );
+
+/*  test now %z %Z timezone dependant codes */
+    strftime( buf, sizeof( buf ), "%z %Z", &tm1 );
+    VERIFY( 0 == strcmp( buf, "+0100 CET" ) );
+
+    VERIFY( daylight != 0 );
+    VERIFY( -3600 == timezone );
+    VERIFY( 0 == strcmp( tzname[0], "CET" ) );
+    VERIFY( 0 == strcmp( tzname[1], "CED" ) );
+
+    tm1.tm_sec   = 57;
+    tm1.tm_min   = 46;
+    tm1.tm_hour  = 11;
+    tm1.tm_mday  = 16;
+    tm1.tm_mon   = 8;
+    tm1.tm_year  = 109;
+    tm1.tm_isdst = -1;
+    tt1 = mktime( &tm1 );
+
+    strftime( buf, sizeof( buf ), "%a %A %b %B %c %C", &tm1 );
+    VERIFY( 0 == strcmp( buf,
+                 "Wed Wednesday Sep September Wed Sep 16 11:46:57 2009 20" ) );
+
+    VERIFY( 1 == tm1.tm_isdst );
+
+    tm1.tm_sec   = 0;                   /*  2009-10-25 02:00:00 end of dst */
+    tm1.tm_min   = 0;
+    tm1.tm_hour  = 2;
+    tm1.tm_mday  = 25;
+    tm1.tm_mon   = 9;
+    tm1.tm_year  = 109;
+    tm1.tm_isdst = -1;
+    tt1 = mktime( &tm1 );
+
+    VERIFY( 0 == tm1.tm_isdst );
+
+    /* test some TZ ENV changes now set OS/2 format */
+    setenv( "TZ", "CET-1CED,3,-1,0,7200,10,-1,0,10800,3600", 1 );
+
+/*  test now %z %Z timezone dependant codes */
+    strftime( buf, sizeof( buf ), "%z %Z", &tm1 );
+    VERIFY( 0 == strcmp( buf, "+0100 CET" ) );
+
+    VERIFY( daylight != 0 );
+    VERIFY( -3600 == timezone );
+    VERIFY( 0 == strcmp( tzname[0], "CET" ) );
+    VERIFY( 0 == strcmp( tzname[1], "CED" ) );
+
+    tm1.tm_sec   = 57;
+    tm1.tm_min   = 46;
+    tm1.tm_hour  = 11;
+    tm1.tm_mday  = 16;
+    tm1.tm_mon   = 8;
+    tm1.tm_year  = 109;
+    tm1.tm_isdst = -1;
+    tt1 = mktime( &tm1 );
+
+    strftime( buf, sizeof( buf ), "%a %A %b %B %c %C", &tm1 );
+    VERIFY( 0 == strcmp( buf,
+                 "Wed Wednesday Sep September Wed Sep 16 11:46:57 2009 20" ) );
+
+    VERIFY( 1 == tm1.tm_isdst );
+
+    tm1.tm_sec   = 0;                   /*  2009-10-25 02:00:00 end of dst */
+    tm1.tm_min   = 0;
+    tm1.tm_hour  = 2;
+    tm1.tm_mday  = 25;
+    tm1.tm_mon   = 9;
+    tm1.tm_year  = 109;
+    tm1.tm_isdst = -1;
+    tt1 = mktime( &tm1 );
+
+    VERIFY( 0 == tm1.tm_isdst );
+    VERIFY( daylight != 0 );
+    VERIFY( -3600 == timezone );
+    VERIFY( 0 == strcmp( tzname[0], "CET" ) );
+    VERIFY( 0 == strcmp( tzname[1], "CED" ) );
 
     /*** Print a pass/fail message and quit ***/
     if( NumErrors != 0 ) {
