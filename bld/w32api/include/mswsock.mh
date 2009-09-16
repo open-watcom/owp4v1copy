@@ -25,7 +25,7 @@
 #define SO_UPDATE_ACCEPT_CONTEXT        0x700B
 #define SO_CONNECT_TIME                 0x700C
 #if (_WIN32_WINNT >= 0x0501)
-    #define SO_UPDATE_CONNECT_CONTEXT   0x700D
+    #define SO_UPDATE_CONNECT_CONTEXT   0x7010
 #endif
 
 /* Socket open types */
