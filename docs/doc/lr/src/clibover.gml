@@ -2422,8 +2422,9 @@ environment variable should be set as follows (spaces are for clarity
 only):
 .begnote
 .note std offset dst offset , rule
-For an alternate format (used with OS/2) see below.
 .endnote
+On the OS/2 platform, an alternate format is also supported.
+Please refer to the following section for details.
 .np
 The expanded format is as follows:
 .begnote

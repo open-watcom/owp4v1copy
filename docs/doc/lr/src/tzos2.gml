@@ -3,22 +3,24 @@
 .np
 .ix 'time zone'
 .np
-This is an alternate format:
+On the OS/2 platform, an alternate format of the
+.kw TZ
+environment variable is supported, in addition to the standard format
+described in the preceding section.
 The value of the OS/2
 .kw TZ
 environment variable should be set as follows (spaces are for clarity
 only):
 .begnote
-.note std offset dst , rule
+.note std offset dst, rule
 .endnote
-It can be used instead of the standard format (see previous section).
-It will be used if after scanning the standard format there are additional
-fields and the format has not been identified as standard.
+This format will be used if after scanning the standard format there are
+additional fields or the format has not been identified as standard.
 .np
-Standard format is identified if an offset follows dst,
-characters J, M, /, or : are found in rule, not all fields have values
+The standard format is identified if an offset follows dst;
+characters J, M, /, or : are found in rule; or some fields are empty.
 .np
-The OS/2 expanded format is as follows:  All fields must be filled
+The alternate expanded format is as follows (fields may not be empty):
 .begnote
 .note stdoffsetdst,sm,sw,sd,st,em,ew,ed,et,shift
 .endnote
@@ -26,7 +28,7 @@ The OS/2 expanded format is as follows:  All fields must be filled
 .note std, dst
 three or more letters that are the designation for the standard
 .us (std)
-or summer
+and summer
 .us (dst)
 time zone.
 Upper- and lowercase letters are allowed.
@@ -95,13 +97,13 @@ or
 .us sd/ed
 Starting/ending day of dst,
 .np
-0 - 6 ( weekday sun to sat ) if
+0 - 6 ( weekday Sun to Sat ) if
 .us sw/ew
-!= 0,
+is not zero,
 .np
-1 - 31 ( day of month ) if
+1 - 31 ( day of the month ) if
 .us sw/ew
-= 0
+is zero
 .np
 .us st/et
 Starting/ending time (in seconds after midnight) of the summer time.
@@ -109,9 +111,9 @@ Starting/ending time (in seconds after midnight) of the summer time.
 .us shift
 Amount of time change (in seconds).
 .np
-
+.endnote
 .np
-One example for the default setting is:
+An example of the default setting is:
 .begnote $break
 .note TZ=EST5EDT,4,1,0,7200,10,-1,0,7200,3600
 This is the full specification for the default when the
