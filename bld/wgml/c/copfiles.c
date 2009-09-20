@@ -1739,12 +1739,12 @@ void fb_output_textline( text_line * out_line )
 
     /* Do the first pass. */
 
-    fb_first_text_pass( out_line );
+    fb_first_text_line_pass( out_line );
 
     /* Do the subsequent passes */
 
     for( i = 1; i < line_passes; i ++ ) {
-//        fb_subsequent_text_pass( out_line, i );
+        fb_subsequent_text_line_pass( out_line, i );
     }
 
     return;
