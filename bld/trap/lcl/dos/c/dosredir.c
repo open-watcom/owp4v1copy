@@ -74,19 +74,6 @@ extern void SetDbgTask(void);
 static t_handle SaveStdIn;
 static t_handle SaveStdOut;
 
-#if defined( CAUSEWAY )
-
-static unsigned Redirect( bool input )
-{
-    redirect_stdin_ret  *ret;
-
-    ret = GetOutPtr( 0 );
-    ret->err = 1;
-    return( sizeof( *ret ) );
-}
-
-#else
-
 static unsigned Redirect( bool input )
 {
     t_handle            std_hndl;
@@ -142,8 +129,6 @@ static unsigned Redirect( bool input )
     SetDbgTask();
     return( sizeof( *ret ) );
 }
-
-#endif
 
 unsigned ReqRedirect_stdin( void )
 {

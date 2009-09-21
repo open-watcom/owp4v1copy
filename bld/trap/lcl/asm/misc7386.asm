@@ -136,8 +136,6 @@ FPUContract  endp
 
 else
 
-ifndef CAUSEWAY
-
 Read387 PROC
         public  "C",Read387
 ifdef __STACK__
@@ -171,8 +169,6 @@ else
         ret
 endif
 Write387 endp
-
-endif
 
 endif
 
