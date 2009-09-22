@@ -161,9 +161,9 @@ extern int IsSel32bit( unsigned_16 );
     "and   eax,400000h" \
     parm [ax] value [eax];
 
-extern unsigned_32  MemoryCheck( unsigned_32, unsigned, unsigned );
-extern int          MemoryRead( unsigned_32, unsigned, void *, unsigned );
-extern int          MemoryWrite( unsigned_32, unsigned, void *, unsigned );
+extern unsigned     MemoryCheck( unsigned_32, unsigned, unsigned );
+extern unsigned     MemoryRead( unsigned_32, unsigned, void *, unsigned );
+extern unsigned     MemoryWrite( unsigned_32, unsigned, void *, unsigned );
 extern unsigned     Execute( bool );
 extern int          DebugLoad( char *prog_name, char *cmdl );
 extern unsigned     ExceptionText( unsigned, char * );
@@ -346,7 +346,7 @@ unsigned ReqMap_addr( void )
     _DBG1( "AccMapAddr\r\n" );
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
-    ret->out_addr.offset = acc->in_addr.offset;
+    ret->out_addr.offset = 0;
     ret->out_addr.segment = 0;
     ret->lo_bound = 0;
     ret->hi_bound = 0;
@@ -360,7 +360,7 @@ unsigned ReqMap_addr( void )
         // convert segment index to selector
         ret->out_addr.segment = ( EPSP->SegBase + segidx * 8 ) | 3;
         // convert offset
-        ret->out_addr.offset += DebugSegs[segidx].base + EPSP->MemBase;
+        ret->out_addr.offset = acc->in_addr.offset + DebugSegs[segidx].base + EPSP->MemBase;
         // horrible hackery to fix offset + code size passed for symbol offset in global vars
         if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ) {
             // 2nd segment(hopefully DGROUP) base offset round up to next 64K
@@ -398,16 +398,50 @@ unsigned ReqAddr_info( void )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqChecksum_mem( void )
-/******************************/
+static unsigned ReadMemory( addr48_ptr *addr, void *data, unsigned len )
 {
+    return( MemoryRead( addr->offset, addr->segment, data, len ) );
+}
+
+static unsigned WriteMemory( addr48_ptr *addr, void *data, unsigned len )
+{
+    return( MemoryWrite( addr->offset, addr->segment, data, len ) );
+}
+
+unsigned ReqChecksum_mem( void )
+{
+    unsigned            len;
+    int                 i;
+    unsigned            read;
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
+    _DBG1(( "AccChkSum\n" ));
+
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    ret->result = MemoryCheck( acc->in_addr.offset, acc->in_addr.segment, acc->len );
-    return( sizeof( *ret ) );
+    len = acc->len;
+    ret->result = 0;
+    while( len >= BUFF_SIZE ) {
+        read = ReadMemory( &acc->in_addr, &UtilBuff, BUFF_SIZE );
+        for( i = 0; i < read; ++i ) {
+            ret->result += UtilBuff[ i ];
+        }
+        if( read != BUFF_SIZE )
+            return( sizeof( *ret ) );
+        len -= BUFF_SIZE;
+        acc->in_addr.offset += read;
+    }
+    if( len != 0 ) {
+        read = ReadMemory( &acc->in_addr, &UtilBuff, len );
+        if( read == len ) {
+            for( i = 0; i < len; ++i ) {
+                ret->result += UtilBuff[ i ];
+            }
+        }
+        acc->in_addr.offset += read;
+    }
+    return( sizeof( ret ) );
 }
 
 unsigned ReqRead_mem( void )
@@ -416,8 +450,7 @@ unsigned ReqRead_mem( void )
     read_mem_req        *acc;
 
     acc = GetInPtr( 0 );
-    return( MemoryRead( acc->mem_addr.offset, acc->mem_addr.segment, 
-                                        GetOutPtr( 0 ), acc->len ) );
+    return( ReadMemory( &acc->mem_addr, GetOutPtr( 0 ), acc->len ) );
 }
 
 unsigned ReqWrite_mem( void )
@@ -428,8 +461,7 @@ unsigned ReqWrite_mem( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    ret->len = MemoryWrite( acc->mem_addr.offset, acc->mem_addr.segment,
-            GetInPtr( sizeof( *acc ) ), GetTotalSize() - sizeof( *acc ) );
+    ret->len = WriteMemory( &acc->mem_addr, GetInPtr( sizeof( *acc ) ), GetTotalSize() - sizeof( *acc ) );
     return( sizeof( *ret ) );
 }
 
@@ -708,10 +740,10 @@ unsigned ReqSet_break( void )
     _DBG( "AccSetBreak\r\n" );
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    MemoryRead( acc->break_addr.offset, acc->break_addr.segment, &ch, 1 );
+    ReadMemory( &acc->break_addr, &ch, 1 );
     ret->old = ch;
     ch = 0xCC;
-    MemoryWrite( acc->break_addr.offset, acc->break_addr.segment, &ch, 1 );
+    WriteMemory( &acc->break_addr, &ch, 1 );
     return( sizeof( *ret ) );
 }
 
@@ -724,7 +756,7 @@ unsigned ReqClear_break( void )
     _DBG( "AccClearBreak\r\n" );
     acc = GetInPtr( 0 );
     ch = acc->old;
-    MemoryWrite( acc->break_addr.offset, acc->break_addr.segment, &ch, 1 );
+    WriteMemory( &acc->break_addr, &ch, 1 );
     return( 0 );
 }
 

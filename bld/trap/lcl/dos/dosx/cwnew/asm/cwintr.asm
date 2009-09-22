@@ -515,8 +515,12 @@ Exc0EHandler    proc    near
         cmp     LinearAddressCheck,0
         jz      @@shite0E
         mov     LinearAddressCheck,0
-        xor     esi,esi
         pop     ds
+;
+; skip failing REP MOVSB instruction if memory access exception occures
+; see MemoryRead and MemoryWrite functions
+;
+        add     [esp+INTFRM.i_eip],2
         retf
 @@shite0E:
         pop     ds
@@ -1013,44 +1017,6 @@ CheckMemoryBlockInfo endp
 
 ;*******************************************************************************
 ;
-;Calculate the checksum of memory block.
-;
-;On Entry:
-;
-;EAX     - memory block offset
-;EDX     - memory block selector
-;EBX     - memory block length
-;
-;Returns:
-;
-;EAX     - checksum
-;
-;*******************************************************************************
-MemoryCheck proc    "C" public  uses ecx esi
-        mov     ecx,ebx
-        call    CheckMemoryBlockInfo
-        xor     ebx,ebx
-        or      ecx,ecx
-        jz      finished1
-        xor     eax,eax
-loop1:  cli
-        or      LinearAddressCheck,1
-        lodsb
-        cmp     LinearAddressCheck,0
-        mov     LinearAddressCheck,0
-        sti
-        jz      finished1
-        add     ebx,eax
-        dec     ecx
-        jnz     loop1
-finished1:
-        mov     eax,ebx
-        ret
-MemoryCheck endp
-
-
-;*******************************************************************************
-;
 ;Read memory block to buffer.
 ;
 ;On Entry:
@@ -1068,22 +1034,12 @@ MemoryCheck endp
 MemoryRead  proc    "C" public uses esi edi
         mov     edi,ebx
         call    CheckMemoryBlockInfo
-        xor     ebx,ebx
-        or      ecx,ecx
-        jz      finished2
-loop2:  cli
+        push    ecx
         or      LinearAddressCheck,1
-        lodsb
-        cmp     LinearAddressCheck,0
+        rep movsb
         mov     LinearAddressCheck,0
-        sti
-        jz      finished2
-        stosb
-        inc     ebx
-        dec     ecx
-        jnz     loop2
-finished2:
-        mov     eax,ebx
+        pop     eax
+        sub     eax,ecx
         ret
 MemoryRead  endp
 
@@ -1107,25 +1063,13 @@ MemoryRead  endp
 MemoryWrite proc    "C" public  uses esi edi
         mov     edi,ebx
         call    CheckMemoryBlockInfo
-        xor     ebx,ebx
-        or      ecx,ecx
-        jz      finished3
-loop3:  cli
+        xchg    edi,esi
+        push    ecx
         or      LinearAddressCheck,1
-        mov     al,[esi]
-        cmp     LinearAddressCheck,0
+        rep movsb
         mov     LinearAddressCheck,0
-        sti
-        jz      finished3
-        mov     al,[edi]
-        mov     [esi],al
-        inc     edi
-        inc     esi
-        inc     ebx
-        dec     ecx
-        jnz     loop3
-finished3:
-        mov     eax,ebx
+        pop     eax
+        sub     eax,ecx
         ret
 MemoryWrite endp
 
