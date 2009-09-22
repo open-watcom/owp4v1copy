@@ -107,6 +107,9 @@ The wcl and wcl386 utilities now work correctly on a Linux host.
 .bull
 The DOS NetBIOS trap file and debug server have been modified to work when
 running on Windows NT (through NTVDM).
+.bull
+The 16-bit Windows GUI tools no longer require CTL3DV2.DLL, but still use
+it if the library is present.
 .endbull 
 .*
 .section Differences from Open Watcom Version 1.7
