@@ -250,22 +250,22 @@ int main( int argc, char ** argv )
         
         if( type > 3 ) {
             time_valid = 1;
-    	    if( sizeof( WORD ) != fread( &st.wHour, 1, sizeof(WORD), fil ) ) {
+            if( sizeof( WORD ) != fread( &st.wHour, 1, sizeof(WORD), fil ) ) {
                 fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
                 break;
             }
             offset += sizeof( WORD );
-    	    if( sizeof( WORD ) != fread( &st.wMinute, 1, sizeof(WORD), fil ) ) {
+            if( sizeof( WORD ) != fread( &st.wMinute, 1, sizeof(WORD), fil ) ) {
                 fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
                 break;
             }
             offset += sizeof( WORD );
-    	    if( sizeof( WORD ) != fread( &st.wSecond, 1, sizeof(WORD), fil ) ) {
+            if( sizeof( WORD ) != fread( &st.wSecond, 1, sizeof(WORD), fil ) ) {
                 fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
                 break;
             }
             offset += sizeof( WORD );
-    	    if( sizeof( WORD ) != fread( &st.wMilliseconds, 1, sizeof(WORD), fil ) ) {
+            if( sizeof( WORD ) != fread( &st.wMilliseconds, 1, sizeof(WORD), fil ) ) {
                 fprintf( stderr, "Failed to read len ( uint16 ) at offset 0x%.08x\n", offset );
                 break;
             }
@@ -838,7 +838,7 @@ int handle_REQ_PROG_STEP_REPLY( unsigned char * pkt, unsigned short )
 {
     prog_step_ret * pr = ( prog_step_ret * ) pkt;
 
-    printf( "Trap reply: REQ_PROG_STEP_REPLY\n" );
+    printf( "Trap reply: REQ_PROG_STEP\n" );
     
     printf( "    Stack:  %.04x:%.08x\n", pr->stack_pointer.segment, pr->stack_pointer.offset );
     printf( "    PC:     %.04x:%.08x\n", pr->program_counter.segment, pr->program_counter.offset );
