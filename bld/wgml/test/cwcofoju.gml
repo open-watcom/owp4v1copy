@@ -1,5 +1,7 @@
-.* test for .co .fo .ju  control words
+.* test for .co .fo .ju  control word scanning
+.ty
 .ty         default settings: concat &$co, justify &$ju
+.ty
 .ju off
 .ty after '.ju OFF'     call: concat &$co, justify &$ju
 .ju

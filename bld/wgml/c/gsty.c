@@ -28,16 +28,16 @@
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
-
-
+ 
+ 
 /**************************************************************************/
 /* TYPE displays a line of information at the terminal.                   */
 /*                                                                        */
@@ -62,12 +62,19 @@
 /*       .rv ncols                                                        */
 /*       .cd set &ncols                                                   */
 /**************************************************************************/
-
+ 
 void    scr_ty( void )
 {
-
-    out_msg( "%s\n", scan_start + 1 );
+    char    *   p = scan_start + 1;
+ 
+    while( *p == ' ' ) {                // wgml 4.0 ignores leading blanks
+        p++;                            // let's do the same
+    }
+    if( *p == '\0' ) {
+        p--;
+    }
+    out_msg( "%s\n", p );        // no output translation, add if needed TBD
     scan_restart = scan_stop + 1;
     return;
 }
-
+ 
