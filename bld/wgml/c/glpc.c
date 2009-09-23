@@ -103,12 +103,12 @@ const   lay_att     p_att[4] =
 /*over to the next output page.                                                 */
 /********************************************************************************/
 
-static  bool    process_arg( att_args * aa, p_lay_tag * p_or_pc )
+static  int     process_arg( att_args * aa, p_lay_tag * p_or_pc )
 {
     int             k;
     char        *   p;
     lay_att         curr;
-    bool            cvterr = true;
+    int             cvterr = -1;
 
     for( k = 0, curr = p_att[k]; curr > 0; k++, curr = p_att[k] ) {
 
@@ -138,6 +138,11 @@ static  bool    process_arg( att_args * aa, p_lay_tag * p_or_pc )
             break;                      // break out of for loop
         }
     }
+    if( cvterr < 0 ) {
+        err_count++;
+        g_err( err_att_name_inv );
+        file_mac_info();
+    }
     return( cvterr );
 }
 
@@ -150,7 +155,7 @@ void    lay_p( const gmltag * entry )
 {
     condcode        cc;
     att_args        l_args;
-    bool            cvterr;
+    int             cvterr;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;

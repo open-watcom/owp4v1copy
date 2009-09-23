@@ -536,7 +536,7 @@ void    lay_dl( const gmltag * entry )
     int                 k;
     lay_att             curr;
     att_args            l_args;
-    bool                cvterr;
+    int                 cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -552,7 +552,7 @@ void    lay_dl( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = true;
+        cvterr = -1;
         for( k = 0, curr = dl_att[k]; curr > 0; k++, curr = dl_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -609,6 +609,11 @@ void    lay_dl( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
+        if( cvterr < 0 ) {
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
+        }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
@@ -626,7 +631,7 @@ void    lay_gl( const gmltag * entry )
     int                 k;
     lay_att             curr;
     att_args            l_args;
-    bool                cvterr;
+    int                 cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -642,7 +647,7 @@ void    lay_gl( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = true;
+        cvterr = -1;
         for( k = 0, curr = gl_att[k]; curr > 0; k++, curr = gl_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -695,6 +700,11 @@ void    lay_gl( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
+        if( cvterr < 0 ) {
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
+        }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
@@ -712,7 +722,7 @@ void    lay_ol( const gmltag * entry )
     int                 k;
     lay_att             curr;
     att_args            l_args;
-    bool                cvterr;
+    int                 cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -728,7 +738,7 @@ void    lay_ol( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = true;
+        cvterr = -1;
         for( k = 0, curr = ol_att[k]; curr > 0; k++, curr = ol_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -788,6 +798,11 @@ void    lay_ol( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
+        if( cvterr < 0 ) {
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
+        }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
@@ -805,7 +820,7 @@ void    lay_sl( const gmltag * entry )
     int                 k;
     lay_att             curr;
     att_args            l_args;
-    bool                cvterr;
+    int                 cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -821,7 +836,7 @@ void    lay_sl( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = true;
+        cvterr = -1;
         for( k = 0, curr = sl_att[k]; curr > 0; k++, curr = sl_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -871,6 +886,11 @@ void    lay_sl( const gmltag * entry )
                 break;                  // break out of for loop
             }
         }
+        if( cvterr < 0 ) {
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
+        }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
     scan_start = scan_stop + 1;
@@ -888,7 +908,7 @@ void    lay_ul( const gmltag * entry )
     int                 k;
     lay_att             curr;
     att_args            l_args;
-    bool                cvterr;
+    int                 cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -904,7 +924,7 @@ void    lay_ul( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = true;
+        cvterr = -1;
         for( k = 0, curr = ul_att[k]; curr > 0; k++, curr = ul_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -967,6 +987,11 @@ void    lay_ul( const gmltag * entry )
                 }
                 break;                  // break out of for loop
             }
+        }
+        if( cvterr < 0 ) {
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }

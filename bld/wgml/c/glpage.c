@@ -86,7 +86,7 @@ void    lay_page( const gmltag * entry )
     int             k;
     lay_att         curr;
     att_args        l_args;
-    bool            cvterr;
+    int             cvterr;
 
     p = scan_start;
     cvterr = false;
@@ -102,7 +102,7 @@ void    lay_page( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
     while( cc == pos ) {
-        cvterr = true;
+        cvterr = -1;
         for( k = 0, curr = page_att[k]; curr > 0; k++, curr = page_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -136,6 +136,11 @@ void    lay_page( const gmltag * entry )
                 }
                 break;                  // break out of for loop
             }
+        }
+        if( cvterr < 0 ) {
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get one with value
     }
