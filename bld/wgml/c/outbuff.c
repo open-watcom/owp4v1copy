@@ -193,7 +193,7 @@ static void ob_insert_ps_text( uint8_t * in_block, size_t count, uint8_t font )
                              * and flush the buffer.
                              */
 
-                            if( (buffout.current + cur_trans->count + 1) == \
+                            if( (buffout.current + cur_trans->count + 1) >= \
                                                             buffout.length ) {
                                 buffout.text[buffout.current] = '\\';
                                 buffout.current++;

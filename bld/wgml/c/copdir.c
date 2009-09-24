@@ -202,7 +202,7 @@ entry_found get_extended_entry( FILE * in_file, directory_entry * entry )
  *      on failure, a NULL pointer.
  *
  * Note:
- *      the comparison is case-sensitive for compatability with wgml 4.0.
+ *      the comparison is not case-sensitive for compatability with wgml 4.0.
  */
 
 char * get_member_name( char const * in_name )
@@ -313,7 +313,7 @@ char * get_member_name( char const * in_name )
 
                             /* Return the member name, if found. */
 
-                            if( !strcmp( in_name, current_entry.defined_name ) ) {
+                            if( !stricmp( in_name, current_entry.defined_name ) ) {
                                 member_length = \
                         strnlen_s( current_entry.member_name, FILENAME_MAX ) + 1;
                                 member_name = (char *) mem_alloc( member_length );
@@ -363,7 +363,7 @@ char * get_member_name( char const * in_name )
 
                     /* Return the member name, if found. */
 
-                    if( !strcmp( in_name, current_entry.defined_name) ) {
+                    if( !stricmp( in_name, current_entry.defined_name) ) {
                         member_length = \
                     strnlen_s( current_entry.member_name, FILENAME_MAX ) + 1;
                         member_name = (char *) mem_alloc( member_length );

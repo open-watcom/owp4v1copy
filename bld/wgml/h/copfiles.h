@@ -532,9 +532,11 @@ typedef struct text_chars {
 
 /* This struct implements the text_line struct in the Wiki. */
 
-typedef struct {
-    uint32_t                y_address;
-    text_chars          *   first;
+typedef struct text_line {
+    struct  text_line   *   next;
+            uint32_t        line_height;
+            uint32_t        y_address;
+            text_chars  *   first;
 } text_line;
 
 /* This struct implements the wgml_font struct in the Wiki. */
