@@ -244,24 +244,18 @@ static text_chars    * alloc_text_chars( char * p, size_t cnt, uint8_t font_num 
     text_chars   *   curr;
     text_chars   *   prev;
 
-    if( text_pool != NULL ) {
-        curr = text_pool;
-        prev = text_pool;
-        while( (curr != NULL) && (curr->length <= cnt) ) {
-            prev = curr;
-            curr = curr->next;
-        }
-        if( curr == prev ) {            // first is large enough
+    curr = text_pool;
+    while( (curr != NULL) && (curr->length <= cnt) ) {
+        prev = curr;
+        curr = curr->next;
+    }
+    if( curr != NULL ) {                // we found one large enough
+        if( curr == text_pool ) {       // first is large enough
             text_pool = curr->next;
         } else {
-            if( curr == NULL ) {        // no one large enough found
-                curr = mem_alloc( sizeof( *curr ) + cnt );
-                curr->length = cnt;     // set max text size
-            } else {
-                prev->next = curr->next;// unchain curr
-            }
+            prev->next = curr->next;    // unchain curr
         }
-    } else {                            // pool is empty
+    } else {                            // no one large enough found
         curr = mem_alloc( sizeof( *curr ) + cnt );
         curr->length = cnt;             // set max text size
     }

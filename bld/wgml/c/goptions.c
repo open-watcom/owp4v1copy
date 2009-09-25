@@ -112,7 +112,7 @@ static  int     split_tokens( char *str )
     }
 
     for( ;; ) {
-        while( *str == ' ' )  str++;    // skip leading blanks
+        while( (*str == ' ') || ( *str == '\t') )  str++;// skip blanks / tabs
         if( *str == '\0' ) {
             break;
         }
@@ -123,12 +123,11 @@ static  int     split_tokens( char *str )
         }
         tokstart = str;
         while( *str ) {
-
-            if( (*str == ' ' && quote == '\0') || *str == '\n' ) {
+            if( (quote == '\0' && ((*str == ' ') || (*str == '\t')))
+                || *str == '\n' ) {
                 break;
             }
             if( *str == quote ) {
-                str;
                 break;
             }
             str++;
