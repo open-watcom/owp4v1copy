@@ -473,7 +473,7 @@ static cop_font * get_cop_font( char const * in_name )
  *      a NULL pointer on failure.
  *
  * Note:
- *      the comparison is case-sensitive for compatability with wgml 4.0.
+ *      the comparison is not case-sensitive for compatability with wgml 4.0.
  */
 
 static cop_font * find_cop_font( char const * in_name )
@@ -483,7 +483,7 @@ static cop_font * find_cop_font( char const * in_name )
 
     current = bin_fonts;
     while( current != NULL ) {
-        if( !strcmp( in_name, current->defined_name ) ) {
+        if( !stricmp( in_name, current->defined_name ) ) {
             retval = current;
             break;
         }
@@ -515,7 +515,7 @@ static cop_font * find_cop_font( char const * in_name )
  *      a NULL pointer on failure.
  *
  * Note:
- *      the comparison is case-sensitive for compatability with wgml 4.0.
+ *      the comparison is not case-sensitive for compatability with wgml 4.0.
  */
 
 static device_font * find_dev_font( char const * in_name )
@@ -526,7 +526,7 @@ static device_font * find_dev_font( char const * in_name )
 
     current = &bin_device->devicefonts;
     for( i = 0; i < current->font_count; i++ ) {
-        if( !strcmp( in_name, current->fonts[i].font_name ) ) {
+        if( !stricmp( in_name, current->fonts[i].font_name ) ) {
             retval = &current->fonts[i];
             break;
         }
@@ -952,7 +952,7 @@ void cop_setup( void )
             gen_cnt++;
             if( bin_device->underscore.specified_font && \
                                 (bin_device->underscore.font_name != NULL) ) {
-                if( strcmp( bin_device->box.font_name, \
+                if( stricmp( bin_device->box.font_name, \
                                         bin_device->underscore.font_name ) ) {
                     gen_cnt++;
                 }
