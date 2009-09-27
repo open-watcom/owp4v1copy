@@ -480,7 +480,7 @@ mem2_NewBlock:
         call    RawRelMemory
         popad
         ;
-        ;Use new block in place of origional.
+        ;Use new block in place of original.
         ;
         mov     esi,ebx
         shr     esi,12
@@ -1291,7 +1291,7 @@ mem9_l5:
         ;
         mov     ebx,edx
         call    PhysicalGetPages        ;Get extra memory available.
-        mov     ecx,ebx         ;Save origional value.
+        mov     ecx,ebx         ;Save original value.
         add     ebx,edx         ;update extra memory value.
         ;
         ;See how many pages of real memory would be lost to page tables.

@@ -1559,7 +1559,7 @@ int2129_shb1:
         sys     ResMem32                ;try and get adjusted memory.
         jc      int2129_shb2
         sub     cx,WORD PTR fs:[PSP_Struc.PSP_Handles]  ;get number differance.
-        mov     di,WORD PTR fs:[PSP_Struc.PSP_Handles]  ;get origional value.
+        mov     di,WORD PTR fs:[PSP_Struc.PSP_Handles]  ;get original value.
         mov     al,-1
         push    ecx
         push    es
@@ -1581,7 +1581,7 @@ int2129_shb1:
         ;
 int2129_shb2:
         ;Couldn't get the memory at the protected mode end of things
-        ;so we need to put the DOS version back to its origional size.
+        ;so we need to put the DOS version back to its original size.
         ;
         mov     ds,cs:Int21hDSeg
         assume ds:_cwMain

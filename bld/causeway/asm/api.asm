@@ -182,7 +182,7 @@ api1_32Bit1:
         iretd                   ;Return to caller.
 ;
 ;Not an internal function or anything we want to interfere with so pass control
-;to origional handler.
+;to original handler.
 ;
 api1_Nope:
         popad                   ;Restore registers.
@@ -3611,7 +3611,7 @@ mRsML32_2:
         pop     ds
         pop     esi
 ;
-;Release origional block and return address of new block.
+;Release original block and return address of new block.
 ;
         call    mcbRelMemLinear32
         pop     esi
@@ -3806,7 +3806,7 @@ mRsML32_6:
         rep     movsb
         pop     ds
         pop     esi
-        call    mcbRelMemLinear32       ;release origional block.
+        call    mcbRelMemLinear32       ;release original block.
         pop     esi
         pop     ecx
         clc
@@ -3845,7 +3845,7 @@ mRsML32_11:
         call    mcbGetMemLinear32
         jc      mRsML32_9
 ;
-;Copy origional block contents.
+;Copy original block contents.
 ;
         push    esi
         push    edi
@@ -3860,7 +3860,7 @@ mRsML32_11:
         rep     movsb
         pop     ds
         pop     esi
-        call    _RelMemory              ;release origional block.
+        call    _RelMemory              ;release original block.
         pop     esi
 ;
 ;Return to caller.
@@ -6143,7 +6143,7 @@ api84_8:
         mov     edx,offset DLLNameSpace
         sys     cwLoad          ;call ourselves.
 ;
-;Go back to origional PSP
+;Go back to original PSP
 ;
         assume ds:nothing
         mov     ds,cs:apiDSeg
@@ -6303,7 +6303,7 @@ api85_imp5:
         mov     bx,fs
         sys     RelSel
 ;
-;Go back to origional PSP
+;Go back to original PSP
 ;
         pop     PSPSegment
         assume ds:_apiCode
@@ -7984,7 +7984,7 @@ Int1bHandler    proc    far
         pushad
         assume ds:nothing
         ;
-        ;Need to chain to origional real mode handler.
+        ;Need to chain to original real mode handler.
         ;
         mov     es,cs:apiDDSeg
         mov     edi,offset Int1bRegs

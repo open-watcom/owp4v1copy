@@ -415,7 +415,7 @@ inter9_Restoreing:
         mov     es,ax
         mov     CallBackStruc.CallBackFlags[bx],0       ;Mark this one as un-used.
         push    cx
-        mov     cx,w[CallBackStruc.CallBackReal+2+bx]   ;get origional real mode vector.
+        mov     cx,w[CallBackStruc.CallBackReal+2+bx]   ;get original real mode vector.
         mov     dx,w[CallBackStruc.CallBackReal+bx]
         pop     bx
         shl     bx,2
@@ -455,7 +455,7 @@ inter9_Setting:
         mov     es:[bx],si
         mov     WORD PTR es:[bx+2],seg _cwRaw
         pop     bx
-        mov     w[CallBackStruc.CallBackReal+2+bx],cx   ;store origional real mode vector.
+        mov     w[CallBackStruc.CallBackReal+2+bx],cx   ;store original real mode vector.
         mov     w[CallBackStruc.CallBackReal+bx],dx
         pop     es
         popf
@@ -977,7 +977,7 @@ IntHandler      endp
 ;-------------------------------------------------------------------------------
 ;
 ;It's a user stack and its not an exception or hardware interupt so switch back
-;to the origional stack via a system stack to allow re-entrancy if origional
+;to the original stack via a system stack to allow re-entrancy if original
 ;stack needs to be fetched from disk.
 ;
 IntStack        proc    near
@@ -1058,7 +1058,7 @@ inter15_iUse0:
         iretd
         ;
 inter15_Int:
-        ;Now switch back to origional stack.
+        ;Now switch back to original stack.
         ;
         assume ds:nothing
         push    cs:ExceptionIndex       ;need to know the INT number.
@@ -1072,7 +1072,7 @@ inter15_Int:
         mov     ax,ss
         mov     ds,ax
         mov     bx,sp
-        lss     sp,[ebx+(4+4+4+4+4)+(2+2+2)] ;get origional stack again.
+        lss     sp,[ebx+(4+4+4+4+4)+(2+2+2)] ;get original stack again.
         mov     ax,[ebx+(4+4+4+4+4)+(2+2)] ;get flags.
         push    ax
         mov     ax,[ebx+(4+4+4+4+4)+(2)]        ;get CS
@@ -1089,7 +1089,7 @@ inter15_i2Use32:
         mov     ax,ss
         mov     ds,ax
         mov     ebx,esp
-        lss     esp,[ebx+(4+4+4+4+4)+(4+4+4)] ;get origional stack again.
+        lss     esp,[ebx+(4+4+4+4+4)+(4+4+4)] ;get original stack again.
         mov     eax,[ebx+(4+4+4+4+4)+(4+4)] ;get flags.
         push    eax
         mov     eax,[ebx+(4+4+4+4+4)+(4)]       ;get CS

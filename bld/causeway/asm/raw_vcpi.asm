@@ -241,7 +241,7 @@ rv1_6:  test    CallBackStruc.CallBackFlags[bx],1       ;in use?
         mov     CallBackStruc.CallBackFlags[bx],0
         push    bx
         push    cx
-        mov     cx,w[CallBackStruc.CallBackReal+2+bx]   ;get origional vector value.
+        mov     cx,w[CallBackStruc.CallBackReal+2+bx]   ;get original vector value.
         mov     dx,w[CallBackStruc.CallBackReal+bx]
         mov     bl,CallBackStruc.CallBackNum[bx]        ;get vector number.
         xor     bh,bh
@@ -2402,7 +2402,7 @@ rv31_Use16Bit13:
         pop     ebx
         pop     eax
         assume ds:nothing
-        lss     sp,[esp]                ;restore origional stack.
+        lss     sp,[esp]                ;restore original stack.
         add     cs:RawStackPos,RawStackDif
         assume ds:_cwRaw
         iret
@@ -2973,7 +2973,7 @@ rv46_000A_0:
         mov     edi,offset RawSelBuffer
         mov     ax,KernalDS     ;DpmiEmuDS
         mov     es,ax
-        call    RawBGetDescriptor       ;copy origional details.
+        call    RawBGetDescriptor       ;copy original details.
         mov     BYTE PTR es:[edi+5],DescPresent+DescPL3+DescMemory+DescRWData
         pop     ebx
         call    RawBPutDescriptor       ;set new descriptor details.
@@ -3228,10 +3228,10 @@ rv46_0300_0a:
         assume ds:_cwDPMIEMU
         jz      rv46_0300_0
         mov     bx,sp
-        mov     bx,ss:[bx+(4+4+4+2)+(2+2)]      ;get origional flags.
+        mov     bx,ss:[bx+(4+4+4+2)+(2+2)]      ;get original flags.
         jmp     rv46_0300_1
 rv46_0300_0:
-        mov     bx,ss:[esp+(4+4+4+2)+(4+4)]     ;get origional flags.
+        mov     bx,ss:[esp+(4+4+4+2)+(4+4)]     ;get original flags.
         and     bx,0000111000000000b            ;retain IF.
 rv46_0300_1:
         and     es:RealRegsStruc.Real_Flags[edi],1111000111111111b      ;lose IF.
@@ -3286,10 +3286,10 @@ rv46_0301_0a:
         assume ds:_cwDPMIEMU
         jz      rv46_0301_0
         mov     bx,sp
-        mov     bx,ss:[bx+(4+4+4+2)+(2+2)]      ;get origional flags.
+        mov     bx,ss:[bx+(4+4+4+2)+(2+2)]      ;get original flags.
         jmp     rv46_0301_1
 rv46_0301_0:
-        mov     bx,ss:[esp+(4+4+4+2)+(4+4)]     ;get origional flags.
+        mov     bx,ss:[esp+(4+4+4+2)+(4+4)]     ;get original flags.
         and     bx,0000111000000000b            ;retain IF.
 rv46_0301_1:
         and     es:RealRegsStruc.Real_Flags[edi],1111000111111111b      ;lose IF.
@@ -3343,10 +3343,10 @@ rv46_0302_0a:
         assume ds:_cwDPMIEMU
         jz      rv46_0302_0
         mov     bx,sp
-        mov     bx,ss:[bx+(4+4+4+2)+(2+2)]      ;get origional flags.
+        mov     bx,ss:[bx+(4+4+4+2)+(2+2)]      ;get original flags.
         jmp     rv46_0302_1
 rv46_0302_0:
-        mov     bx,ss:[esp+(4+4+4+2)+(4+4)]     ;get origional flags.
+        mov     bx,ss:[esp+(4+4+4+2)+(4+4)]     ;get original flags.
         and     bx,0000111000000000b            ;retain IF.
 rv46_0302_1:
         and     es:RealRegsStruc.Real_Flags[edi],1111000111111111b      ;lose IF.
@@ -4248,10 +4248,10 @@ rv46_Done:
         assume ds:_cwDPMIEMU
         jz      rv46_Use32Bit8
         mov     bx,sp
-        mov     bx,ss:[bx+(4+4)+(2+2)]          ;get origional flags.
+        mov     bx,ss:[bx+(4+4)+(2+2)]          ;get original flags.
         jmp     rv46_Use16Bit8
 rv46_Use32Bit8:
-        mov     bx,[esp+(4+4)+(4+4)]            ;get origional flags.
+        mov     bx,[esp+(4+4)+(4+4)]            ;get original flags.
 rv46_Use16Bit8:
         and     bx,0000111000000000b            ;retain IF.
         and     ax,1111000111111111b            ;lose IF.
@@ -5601,7 +5601,7 @@ rv58_0: cmp     w[esi],0        ;This entry in use?
         pop     ecx
         jz      rv58_GotOne
         ;
-        ;Make sure block goes back to origional size.
+        ;Make sure block goes back to original size.
         ;
         push    ecx
         push    esi
@@ -6000,10 +6000,10 @@ rv64_Done:
         assume ds:_cwDPMIEMU
         jz      rv64_Use32Bit8
         mov     bx,sp
-        mov     bx,ss:[bx+(4+4)+(2+2)]          ;get origional flags.
+        mov     bx,ss:[bx+(4+4)+(2+2)]          ;get original flags.
         jmp     rv64_Use16Bit8
 rv64_Use32Bit8:
-        mov     ebx,[esp+(4+4)+(4+4)]           ;get origional flags.
+        mov     ebx,[esp+(4+4)+(4+4)]           ;get original flags.
 rv64_Use16Bit8:
         and     bx,0000111000000000b            ;retain IF.
         and     ax,1111000111111111b            ;lose IF.

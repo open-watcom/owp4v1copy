@@ -644,10 +644,10 @@ int333_Done:
         pop     ds
         jz      int333_Use32Bit8
         mov     bx,sp
-        mov     bx,ss:[bx+(4+4)+(2+2)]          ;get origional flags.
+        mov     bx,ss:[bx+(4+4)+(2+2)]          ;get original flags.
         jmp     int333_Use16Bit8
 int333_Use32Bit8:
-        mov     bx,ss:[esp+(4+4)+(4+4)]         ;get origional flags.
+        mov     bx,ss:[esp+(4+4)+(4+4)]         ;get original flags.
 int333_Use16Bit8:
         and     bx,0000011000000000b            ;retain IF.
         and     ax,1111100111111111b            ;lose IF.

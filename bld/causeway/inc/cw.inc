@@ -464,7 +464,7 @@ GetMem32        equ     0ff0ch
 ;If the memory block can't be re-sized in its current location, but a free block
 ;of memory of the new size exists, the memory will be copied to a new block and
 ;the old one released. This is transparent to the application as long as only
-;the selector origionaly allocated with GetMem is being used to access the
+;the selector originaly allocated with GetMem is being used to access the
 ;memory.
 ;
 ResMem  equ     0ff0dh
@@ -506,7 +506,7 @@ ResMemSO        equ     0ff2dh
 ;If the memory block can't be re-sized in its current location, but a free block
 ;of memory of the new size exists, the memory will be copied to a new block and
 ;the old one released. This is transparent to the application as long as only
-;the selector origionaly allocated with GetMem is being used to access the
+;the selector originaly allocated with GetMem is being used to access the
 ;memory.
 ;
 ResMem32        equ     0ff0eh
@@ -1038,7 +1038,7 @@ GetMCBSize      equ     0ff27h
 ;than the value set by this function. The default value is 16384.
 ;
 ;65536 is the maximum value this function will accept. Passing a value above
-;this will return with the carry set and the origional value still in force.
+;this will return with the carry set and the original value still in force.
 ;
 ;The CauseWay API memory allocation functions allocate memory from two sources.
 ;Allocation requests below the value returned by this function are allocated
@@ -1116,7 +1116,7 @@ cwExec  equ     0ff24h
 ;will be released, it is the programs responsability to release any additional
 ;memory etc allocated while the program is running. Alternatively, if you pass
 ;the PSP value to INT 21h, AH=50h before makeing additional memory requests
-;and then reset to the origional PSP the memory allocated will be released
+;and then reset to the original PSP the memory allocated will be released
 ;when the PSP is released.
 ;
 cwLoad  equ     0ff2ah
@@ -1206,7 +1206,7 @@ GetPatch equ    0fffah
 ;
 ;If error codes 1 or 2 are reported then the file pointer will be where ever it
 ;was last moved to by this function. For error code 3 the file pointer will be
-;back at its origional position on entry to this function. If no error occures
+;back at its original position on entry to this function. If no error occures
 ;then the file pointer will be moved to whatever comes after the compressed
 ;data.
 ;

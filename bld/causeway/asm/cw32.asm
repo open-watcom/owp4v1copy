@@ -2150,7 +2150,7 @@ cw5_1:  jnz     InitError
         mov     eax,1023
         mov     edx,LinearEntry+8       ;get physical address again.
         or      edx,111b
-        mov     ecx,es:[esi+eax*4]      ;get origional value.
+        mov     ecx,es:[esi+eax*4]      ;get original value.
         mov     PageALIASLinear+8,ecx
         mov     es:[esi+eax*4],edx      ;put new page into the map.
         mov     esi,PageALIASLinear
@@ -2210,7 +2210,7 @@ COMMENT !
         ;
         mov     esi,PageDIRLinear
         mov     eax,0
-        mov     ecx,es:[esi+eax*4]      ;get origional value.
+        mov     ecx,es:[esi+eax*4]      ;get original value.
         mov     Page1stLinear+8,ecx
         mov     es:[esi+eax*4],edx      ;put new page into the map.
         call    d[fCR3Flush]
@@ -3910,7 +3910,7 @@ cw7_0:  mov     ax,size CallBackStruc
         mov     es:[bx],si
         mov     WORD PTR es:[bx+2],seg _cwRaw
         pop     bx
-        mov     w[CallBackStruc.CallBackReal+2+bx],cx   ;store origional real mode vector.
+        mov     w[CallBackStruc.CallBackReal+2+bx],cx   ;store original real mode vector.
         mov     w[CallBackStruc.CallBackReal+bx],dx
         popf
         ret

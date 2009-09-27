@@ -879,7 +879,7 @@ exc20_Use16Bit678:
         ;
         mov     ebp,esp         ;make stack addresable.
         ;
-        ;Now modify origional CS:EIP,SS:ESP values and return control
+        ;Now modify original CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
         test    BYTE PTR SystemFlags,1
