@@ -1058,12 +1058,16 @@ int handle_REQ_GET_LIB_NAME_REPLY( unsigned char * pkt, unsigned short )
     char * name = ( char * ) &pr[1];
     
     printf( "Trap reply: REQ_GET_LIB_NAME\n" );
-    if( pr->handle && *name ) {
+    if( pr->handle ) {
         printf( "    MAD Handle: %u\n", pr->handle );
-        printf( "    Name:       %s\n", name );
-    }
-    else
+        if( *name ) {
+            printf( "    Name:       %s\n", name );
+        } else {
+            printf( "    *** DELETED ***\n" );
+        }
+    } else {
         printf( "    *** END OF LIST ***\n" );
+    }
     
     return 1;
 }
