@@ -1400,10 +1400,10 @@ OVL_EXTERN void MapAddrUser( image_entry *image, addr_ptr *addr,
     }
     for( ;; ) {
         switch( addr->segment ) {
-        case 0xFFFF:
+        case MAP_FLAT_CODE_SELECTOR:
             Format( TxtBuff, LIT( Map_Named_Selector ), "Flat Code", image->sym_name );
             break;
-        case 0xFFFE:
+        case MAP_FLAT_DATA_SELECTOR:
             Format( TxtBuff, LIT( Map_Named_Selector ), "Flat Data", image->sym_name );
             break;
         default:
