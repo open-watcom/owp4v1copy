@@ -203,6 +203,7 @@ extern int SSD_Overlays( int, unsigned char * , unsigned short );
 extern int SSD_Capabilities( int, unsigned char * , unsigned short );
 
 static char *mad_desc[] = {
+    "Unknown",
 #define pick_mad(enum,file,desc) desc,
 #include "madarch.h"
 #undef pick_mad
