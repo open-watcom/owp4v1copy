@@ -202,6 +202,18 @@ extern int SSD_Threads( int , unsigned char * , unsigned short );
 extern int SSD_Overlays( int, unsigned char * , unsigned short );
 extern int SSD_Capabilities( int, unsigned char * , unsigned short );
 
+static char *mad_desc[] = {
+#define pick_mad(enum,file,desc) desc,
+#include "madarch.h"
+#undef pick_mad
+};
+
+static char *mad_os_desc[] = {
+#define pick_mad(enum,desc) desc,
+#include "mados.h"
+#undef pick_mad
+};
+
 SVC_DECODE * get_supp_service_decoder( const char * service_name )
 {
     if( 0 == stricmp( service_name, "Files" ) )
@@ -563,9 +575,17 @@ int handle_REQ_GET_SYS_CONFIG_REPLY( unsigned char * pkt, unsigned short )
     printf( "    FPU:        %u\n", pr->fpu );
     printf( "    OS Major:   %u\n", pr->osmajor );
     printf( "    OS Minor:   %u\n", pr->osminor );
-    printf( "    OS:         %u\n", pr->os );
+    if( pr->os < MAD_OS_MAX ) {
+        printf( "    OS:         %s\n", mad_os_desc[pr->os] );
+    } else {
+        printf( "    OS:         %u\n", pr->os );
+    }
     printf( "    Huge Shift: %u\n", pr->huge_shift );
-    printf( "    MAD:        0x%.04x\n", pr->mad );
+    if( pr->mad < MAD_MAX ) {
+        printf( "    MAD:        %s\n", mad_desc[pr->mad] );
+    } else {
+        printf( "    MAD:        0x%.04x\n", pr->mad );
+    }
 
     /* Set so we can decode registers */
     read_mad_handle = pr->mad;

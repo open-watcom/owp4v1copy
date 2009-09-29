@@ -367,33 +367,20 @@ typedef         unsigned_8 dig_open; enum {
 
 #define DIG_NIL_HANDLE      ( (dig_fhandle) -1 )
 
-enum {
+enum archtypes {
     MAD_NIL,
-    MAD_X86,
-    MAD_AXP,
-    MAD_PPC,
-    MAD_MIPS,
-    MAD_MSJ,
+#define pick_mad(enum,file,desc) enum,
+#include "madarch.h"
+#undef pick_mad
     MAD_MAX
 };
 typedef unsigned_16             mad_handle;
 
 enum ostypes {                  //NYI: redo these for PIL
-        OS_IDUNNO,
-        OS_DOS,
-        OS_OS2,
-        OS_PHARLAP,
-        OS_ECLIPSE,
-        OS_NW386,
-        OS_QNX,
-        OS_RATIONAL,
-        OS_WINDOWS,
-        OS_PENPOINT,
-        OS_NT,
-        OS_AUTOCAD,
-        OS_NEUTRINO,
-        OS_LINUX,
-        OS_FREEBSD
+#define pick_mad(enum,desc) enum,
+#include "mados.h"
+#undef pick_mad
+    MAD_OS_MAX
 };
 
 typedef struct {                //NYI: redo this for PIL

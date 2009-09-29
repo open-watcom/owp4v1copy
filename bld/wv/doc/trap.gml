@@ -473,9 +473,11 @@ The :F.mad:eF. field specifies the MAD (Machine Architecture Description) in use
 and determines how the other fields will be interpreted. Currently the following
 MADs are used:
 :XMP.
-    MAD_X86 - Intel IA-32 compatible
-    MAD_AXP - Alpha AXP
-    MAD_PPC - PowerPC
+    MAD_X86  - Intel Architecture IA-32 compatible
+    MAD_AXP  - Alpha Architecture
+    MAD_PPC  - PowerPC Architecture
+    MAD_MIPS - MIPS Architecture
+    MAD_MSJ  - Java Virtual Machine (Microsoft)
 :eXMP.
 :PC.
 The :F.cpu:eF. fields returns the type of the remote CPU. The size of that field
@@ -528,6 +530,7 @@ system can be found in
     OS_AUTOCAD   = 11   - ADS/ADI development (obsolete)
     OS_NEUTRINO  = 12   - QNX 6.x
     OS_LINUX     = 13   - Linux
+    OS_FREEBSD   = 14   - Free BSD
 :eXMP.
 :PC.
 The :F.huge_shift:eF. field is used to determine the shift needed for huge

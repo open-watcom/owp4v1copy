@@ -1,5 +1,6 @@
 proj_name = trap2txt
-trap2_txt_autodepends = .autodepend
+
+trap2txt_autodepends = .autodepend
 
 !include cproj.mif
 !include deftarg.mif

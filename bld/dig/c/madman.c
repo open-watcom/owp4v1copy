@@ -186,11 +186,9 @@ mad_status      MADInit( void )
         const char      *file;
         const char      *desc;
     } list[] = {
-        { MAD_X86,      "madx86",       "Intel Architecture [80(x)86]" },
-        { MAD_AXP,      "madaxp",       "Alpha Architecture" },
-        { MAD_PPC,      "madppc",       "PowerPC Architecture" },
-        { MAD_MIPS,     "madmips",      "MIPS Architecture" },
-        { MAD_MSJ,      "msj",          "Java Virtual Machine (Microsoft)" }
+#define pick_mad(enum,file,desc) {enum,file,desc},
+#include "madarch.h"
+#undef pick_mad
     };
 
     mad_status  ms;
