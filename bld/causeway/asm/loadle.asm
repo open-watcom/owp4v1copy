@@ -1532,7 +1532,7 @@ load1_makesegs0:
         jz      load1_makesegs1
 ;       add     ebx,2                           ;Read only data.
 load1_makesegs1:
-        shl     ebx,24
+        shl     ebx,21
         test    eax,LE_OBJ_Flags_Big            ;Big bit set?
         jz      load1_makesegs2
         or      ebx,1 shl 26                    ;Force 32-bit.
