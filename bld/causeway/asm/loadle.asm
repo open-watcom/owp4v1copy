@@ -153,11 +153,11 @@ GetLEOff:
         mov     edx,offset LEHeader
         mov     ecx,4
         mov     ah,3fh
-        int     21h             ;Fetch LE offset.
+        int     21h                     ;Fetch LE offset.
         jc      load1_file_error
         cmp     ax,cx
         jnz     load1_file_error
-        cmp     d[LEHeader],0   ;any offset?
+        cmp     d[LEHeader],0           ;any offset?
         jz      load1_file_error
         mov     eax,d[LEHeader]
 
@@ -169,7 +169,7 @@ SaveLEOff:
         mov     dx,w[LEHeader]
         mov     cx,w[LEHeader+2]
         mov     ax,4200h
-        int     21h             ;Move to LE section.
+        int     21h                     ;Move to LE section.
         mov     edx,offset LEHeader
         mov     ecx,size LE_Header
         mov     ah,3fh
@@ -239,8 +239,8 @@ ENDIF
         ;
         ;Sit in a loop reading names.
         ;
-        xor     ebp,ebp         ;reset entry count.
-        mov     edi,4           ;reset bytes required.
+        xor     ebp,ebp                 ;reset entry count.
+        mov     edi,4                   ;reset bytes required.
 load1_ge0:
         mov     edx,offset LETemp
         mov     ecx,1
@@ -253,16 +253,16 @@ load1_ge0:
         mov     al,[edx]
         and     al,127
         jz      load1_ge1               ;end of the list?
-        add     eax,1           ;include count byte
-        add     eax,2           ;include ordinal/segment
-        inc     ebp             ;update name count.
+        add     eax,1                   ;include count byte
+        add     eax,2                   ;include ordinal/segment
+        inc     ebp                     ;update name count.
         add     edi,eax
-        add     edi,4           ;dword of value
-        add     edi,4           ;table entry memory required.
+        add     edi,4                   ;dword of value
+        add     edi,4                   ;table entry memory required.
         mov     ecx,eax
         dec     ecx
         mov     ah,3fh
-        int     21h             ;read rest of the entry to skip it.
+        int     21h                     ;read rest of the entry to skip it.
         jc      load1_file_error
         cmp     ax,cx
         jnz     load1_file_error
@@ -274,17 +274,17 @@ load1_ge1:
         mov     ecx,edi
         sys     GetMemLinear32
         jc      load1_mem_error
-        mov     DWORD PTR es:[esi],0            ;reset count.
+        mov     DWORD PTR es:[esi],0    ;reset count.
         push    es
         mov     es,w[load1_PSP]
         mov     DWORD PTR es:[EPSP_Struc.EPSP_Exports],esi
         pop     es
-        mov     edi,ebp         ;get number of entries.
-        shl     edi,2           ;dword per entry.
-        add     edi,4           ;allow for count dword.
-        add     edi,esi         ;point to target memory.
+        mov     edi,ebp                 ;get number of entries.
+        shl     edi,2                   ;dword per entry.
+        add     edi,4                   ;allow for count dword.
+        add     edi,esi                 ;point to target memory.
         mov     edx,esi
-        add     edx,4           ;point to table memory.
+        add     edx,4                   ;point to table memory.
         ;
         ;Move back to start of names again.
         ;
@@ -302,32 +302,32 @@ load1_ge1:
         ;Read all the names again.
         ;
 load1_ge2:
-        or      ebp,ebp         ;done all names?
+        or      ebp,ebp                 ;done all names?
         jz      load1_ge3
         push    edx
         mov     ecx,1
         mov     edx,offset LETemp
         mov     ah,3fh
-        int     21h             ;get name string length.
+        int     21h                     ;get name string length.
         pop     edx
         jc      load1_file_error
         cmp     ax,1
         jnz     load1_file_error
         movzx   ecx,b[LETemp]
-        and     cl,127          ;name length.
-        add     ecx,2           ;include ordinal.
+        and     cl,127                  ;name length.
+        add     ecx,2                   ;include ordinal.
         mov     ah,3fh
         push    edx
         mov     edx,offset LETemp+1
-        int     21h             ;read rest of this entry.
+        int     21h                     ;read rest of this entry.
         pop     edx
         jc      load1_file_error
         cmp     ax,cx
         jnz     load1_file_error
-        inc     DWORD PTR es:[esi]              ;update EXPORT count.
+        inc     DWORD PTR es:[esi]      ;update EXPORT count.
         mov     es:[edx],edi            ;set this entries address.
         add     edx,4
-        mov     DWORD PTR es:[edi],0            ;clear offset.
+        mov     DWORD PTR es:[edi],0    ;clear offset.
         add     edi,4
         movzx   eax,b[LETemp]
         and     eax,127
@@ -339,20 +339,20 @@ load1_ge2:
         add     edi,2
         push    esi
         mov     esi,offset LETemp
-        rep     movsb           ;copy EXPORT name.
+        rep     movsb                   ;copy EXPORT name.
         pop     esi
         dec     ebp
         jmp     load1_ge2
 load1_ge3:
-        dec     DWORD PTR es:[esi]              ;lose module name from the count.
+        dec     DWORD PTR es:[esi]      ;lose module name from the count.
 ;
 ;Get object definition memory.
 ;
 load1_NoExports:
-        mov     eax,size LE_OBJ ;length of an object entry.
-        mul     d[LEHeader.LE_ObjNum] ;number of objects.
+        mov     eax,size LE_OBJ         ;length of an object entry.
+        mul     d[LEHeader.LE_ObjNum]   ;number of objects.
         mov     ecx,eax
-        sys     GetMemLinear32  ;Get memory.
+        sys     GetMemLinear32          ;Get memory.
         jc      load1_mem_error         ;Not enough memory.
         mov     d[load1_ObjMem],esi
 ;
@@ -374,7 +374,7 @@ load1_NoExports:
         mov     ds,RealSegment
         assume ds:_apiCode
         mov     ah,3fh
-        int     21h             ;read definitions.
+        int     21h                     ;read definitions.
         pop     ds
         jc      load1_file_error
         cmp     ax,cx
@@ -386,15 +386,15 @@ load1_NoExports:
         assume es:_cwMain
         mov     es,es:RealSegment
         assume es:nothing
-        mov     ecx,d[LEHeader.LE_ObjNum]     ;number of objects.
+        mov     ecx,d[LEHeader.LE_ObjNum] ;number of objects.
         mov     esi,d[load1_ObjMem]
-        xor     ebp,ebp         ;clear memory requirement.
+        xor     ebp,ebp                 ;clear memory requirement.
 load1_objup0:
         mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
         add     eax,4095
         and     eax,not 4095            ;page align objects
         mov     es:LE_OBJ.LE_OBJ_Size[esi],eax
-        add     ebp,eax         ;update program memory length.
+        add     ebp,eax                 ;update program memory length.
         add     esi,size LE_OBJ
         dec     ecx
         jnz     load1_objup0
@@ -402,7 +402,7 @@ load1_objup0:
 ;Get programs memory block.
 ;
         mov     ecx,ebp
-        sys     GetMemLinear32  ;Get memory.
+        sys     GetMemLinear32          ;Get memory.
         jc      load1_mem_error         ;Not enough memory.
         mov     d[load1_ProgMem],esi
         mov     d[load1_ProgMem+4],ecx
@@ -410,7 +410,7 @@ load1_objup0:
 ;Run through objects setting up load addresses.
 ;
         mov     edx,d[load1_ProgMem]    ;reset load offset.
-        mov     ecx,d[LEHeader.LE_ObjNum]     ;number of objects.
+        mov     ecx,d[LEHeader.LE_ObjNum] ;number of objects.
         mov     esi,d[load1_ObjMem]
 load1_objup1:
         mov     es:LE_OBJ.LE_OBJ_Base[esi],edx  ;set load address.
@@ -424,22 +424,22 @@ load1_objup1:
         mov     ecx,d[LEHeader.LE_ObjNum]
         sys     GetSels
         jc      load1_mem_error
-        mov     w[load1_Segs],bx                ;store base selector.
+        mov     w[load1_Segs],bx        ;store base selector.
         mov     w[load1_Segs+2],cx      ;store number of selectors.
 ;
 ;Update programs memory and selector details in PSP and variables.
 ;
         push    es
         mov     es,w[load1_PSP]
-        mov     ax,w[load1_Segs]                ;get base selector.
+        mov     ax,w[load1_Segs]                        ;get base selector.
         mov     WORD PTR es:[EPSP_Struc.EPSP_SegBase],ax
-        mov     ax,w[load1_Segs+2]      ;get number of selectors.
+        mov     ax,w[load1_Segs+2]                      ;get number of selectors.
         shl     ax,3
         mov     WORD PTR es:[EPSP_Struc.EPSP_SegSize],ax
-        mov     eax,d[load1_ProgMem]    ;get memory address.
+        mov     eax,d[load1_ProgMem]                    ;get memory address.
         mov     DWORD PTR es:[EPSP_Struc.EPSP_MemBase],eax
         mov     DWORD PTR es:[EPSP_Struc.EPSP_NearBase],eax
-        mov     eax,d[load1_ProgMem+4]  ;get memory size.
+        mov     eax,d[load1_ProgMem+4]                  ;get memory size.
         mov     DWORD PTR es:[EPSP_Struc.EPSP_MemSize],eax
         pop     es
 ;
@@ -447,14 +447,14 @@ load1_objup1:
 ;
         push    es
         mov     es,w[load1_PSP]
-        cmp     DWORD PTR es:[EPSP_Struc.EPSP_Exports],0        ;any exports?
+        cmp     DWORD PTR es:[EPSP_Struc.EPSP_Exports],0 ;any exports?
         pop     es
         jz      load1_NoEntries
         push    es
         mov     es,w[load1_PSP]
         mov     eax,DWORD PTR es:[EPSP_Struc.EPSP_Exports]
         pop     es
-        cmp     DWORD PTR es:[eax],0            ;just a module name?
+        cmp     DWORD PTR es:[eax],0                    ;just a module name?
         jz      load1_NoEntries
         ;
         ;Move file pointer to start of entry table.
@@ -478,7 +478,7 @@ load1_ge4:
         sub     ecx,d[LEHeader.LE_Fixups]
 load1_ge5:
         neg     ecx
-        sys     GetMemLinear32  ;get entry table memory.
+        sys     GetMemLinear32          ;get entry table memory.
         jc      load1_mem_error
         mov     edx,esi
         push    ds
@@ -497,7 +497,7 @@ load1_ge5:
         mov     esi,DWORD PTR es:[EPSP_Struc.EPSP_Exports]
         pop     es
         mov     ecx,es:[esi]            ;get number of entries.
-        add     DWORD PTR es:[esi+4],4+2        ;correct module name pointer.
+        add     DWORD PTR es:[esi+4],4+2 ;correct module name pointer.
         add     esi,4+4
 load1_exp0:
         push    ecx
@@ -511,14 +511,14 @@ load1_exp1:
         mov     bh,es:[edx]             ;get bundle count.
         or      bh,bh
         jz      load1_bad_entry
-        mov     bl,es:[edx+1]   ;get bundle type.
+        mov     bl,es:[edx+1]           ;get bundle type.
         add     edx,2
-        mov     edi,edx         ;point to object number incase we need it.
+        mov     edi,edx                 ;point to object number incase we need it.
         xor     eax,eax
         mov     al,0
         cmp     bl,0
         jz      load1_exp2
-        add     edx,2           ;skip object number.
+        add     edx,2                   ;skip object number.
         mov     al,3
         cmp     bl,1
         jz      load1_exp2
@@ -536,9 +536,9 @@ load1_exp2:
 load1_exp3:
         or      bh,bh
         jz      load1_exp1              ;end of this bundle.
-        or      ebp,ebp         ;our ordinal?
+        or      ebp,ebp                 ;our ordinal?
         jz      load1_exp4
-        add     edx,eax         ;next entry.
+        add     edx,eax                 ;next entry.
         dec     ebp
         dec     bh
         jmp     load1_exp3
@@ -642,7 +642,6 @@ load1_exp_32bit:
         mov     eax,es:[edx+1]
         add     eax,ebx
         mov     es:[esi],eax
-;       jmp     load1_exp8      ; MED 02/03/2003, superfluous
         ;
 load1_exp8:
         pop     edx
@@ -658,13 +657,13 @@ load1_exp8:
 ;Read program objects.
 ;
 load1_NoEntries:
-        mov     ebp,d[LEHeader.LE_ObjNum]     ;number of objects.
+        mov     ebp,d[LEHeader.LE_ObjNum]       ;number of objects.
         mov     esi,d[load1_ObjMem]
 
 load1_load0:
         mov     eax,es:LE_OBJ.LE_OBJ_Flags[esi] ;get objects flags.
         and     eax,LE_OBJ_Flags_FillMsk        ;isolate fill type.
-        cmp     eax,LE_OBJ_Flags_Zero   ;zero filled?
+        cmp     eax,LE_OBJ_Flags_Zero           ;zero filled?
         jnz     load1_load1
         ;
         ;Zero this objects memory.
@@ -684,21 +683,21 @@ load1_load1:
         ;
         mov     eax,es:LE_OBJ.LE_OBJ_PageIndex[esi] ;get first page index.
         dec     eax
-        mul     d[LEHeader.LE_PageSize]       ;* page size.
-        add     eax,d[LEHeader.LE_Data]       ;data offset.
+        mul     d[LEHeader.LE_PageSize]             ;* page size.
+        add     eax,d[LEHeader.LE_Data]             ;data offset.
         mov     dx,ax
         shr     eax,16
         mov     cx,ax
         mov     ax,4200h
         mov     bx,w[load1_Handle]
-        int     21h             ;set the file pointer.
+        int     21h                                 ;set the file pointer.
         ;
         ;Work out how much data we're going to load.
         ;
-        mov     eax,es:LE_OBJ.LE_OBJ_PageNum[esi] ;get number of pages.
+        mov     eax,es:LE_OBJ.LE_OBJ_PageNum[esi]   ;get number of pages.
         mov     ebx,eax
-        mul     d[LEHeader.LE_PageSize]       ;* page size.
-        mov     edx,es:LE_OBJ.LE_OBJ_Base[esi]  ;get load address.
+        mul     d[LEHeader.LE_PageSize]             ;* page size.
+        mov     edx,es:LE_OBJ.LE_OBJ_Base[esi]      ;get load address.
         xor     ecx,ecx
         or      eax,eax
         jz      load1_loadz
@@ -706,7 +705,7 @@ load1_load1:
 
         add     ebx,es:LE_OBJ.LE_OBJ_PageIndex[esi] ;get base page again.
         dec     ebx
-        cmp     ebx,d[LEHeader.LE_Pages]      ;we getting the last page?
+        cmp     ebx,d[LEHeader.LE_Pages]            ;we getting the last page?
         jnz     load1_load2
         mov     ebx,d[LEHeader.LE_PageSize]
         sub     ebx,d[LEHeader.LE_LastBytes]
@@ -767,7 +766,7 @@ load1_loadz:
 ;Get fixup table memory & load fixups.
 ;
         mov     ecx,d[LEHeader.LE_FixupSize]
-        sys     GetMemLinear32  ;Get memory.
+        sys     GetMemLinear32          ;Get memory.
         jc      load1_mem_error         ;Not enough memory.
         mov     d[load1_FixupMem],esi
         push    ecx
@@ -777,7 +776,7 @@ load1_loadz:
         shr     ecx,16
         mov     bx,w[load1_Handle]
         mov     ax,4200h
-        int     21h             ;move to fixup data.
+        int     21h                     ;move to fixup data.
         pop     ecx
         mov     edx,esi
         push    ds
@@ -800,7 +799,7 @@ load1_loadz:
         add     ecx,4
         sys     GetMemLinear32
         jc      load1_mem_error
-        mov     DWORD PTR es:[esi],0            ;clear entry count for now.
+        mov     DWORD PTR es:[esi],0    ;clear entry count for now.
         push    es
         mov     es,w[load1_PSP]
         mov     DWORD PTR es:[EPSP_Struc.EPSP_Imports],esi
@@ -866,7 +865,7 @@ load1_NextModLnk:
         shl     eax,2
         add     eax,4
         mov     es:[edx+eax],edi        ;store link address.
-        inc     DWORD PTR es:[edx]              ;update link count.
+        inc     DWORD PTR es:[edx]      ;update link count.
         ;
         movzx   ecx,BYTE PTR es:[esi]
         inc     ecx
@@ -892,39 +891,39 @@ load1_fix0:
         mov     d[load1_PageCount+4],0
         mov     edx,es:LE_OBJ.LE_OBJ_PageIndex[esi]
         dec     edx
-        mov     ebp,edx         ;Set base page map entry.
+        mov     ebp,edx                 ;Set base page map entry.
 load1_fix1:
         mov     edx,ebp
         mov     esi,d[load1_FixupMem]
         mov     ecx,es:[esi+4+edx*4]    ;Get next offset.
         mov     edx,es:[esi+edx*4]      ;Get start offset.
-        sub     ecx,edx         ;Get number of bytes
+        sub     ecx,edx                 ;Get number of bytes
         jz      load1_fix4
 
         mov     esi,d[load1_FixupMem]
         add     esi,d[LEHeader.LE_FixupsRec] ;Point to fixup data.
         sub     esi,d[LEHeader.LE_Fixups]
-        add     esi,edx         ;Move to start of this pages fixups.
+        add     esi,edx                 ;Move to start of this pages fixups.
 load1_fix2:
 
         mov     al,es:[esi]             ;Get type byte.
         mov     bl,al
-        shr     bl,4            ;Get single/multiple flag.
+        shr     bl,4                    ;Get single/multiple flag.
         mov     bh,al
-        and     bh,15           ;Get type.
+        and     bh,15                   ;Get type.
         inc     esi
         dec     ecx
         mov     al,es:[esi]             ;Get second type byte.
         mov     dl,al
-        and     dl,3            ;Get internal/external specifier.
+        and     dl,3                    ;Get internal/external specifier.
         mov     dh,al
-        shr     dh,2            ;Get destination type.
+        shr     dh,2                    ;Get destination type.
         inc     esi
         dec     ecx
         ;
         push    ebx
         and     bl,not 1
-        or      bl,bl           ;Check it's a single entry.
+        or      bl,bl                   ;Check it's a single entry.
         pop     ebx
         jz      CheckUnknown
 
@@ -947,7 +946,7 @@ CheckUnknown:
         test    dh,011010b              ;Check for un-known bits.
         jnz     load1_bad_fixup
 
-        or      dl,dl           ;Check it's an internal target.
+        or      dl,dl                   ;Check it's an internal target.
         jnz     load1_fixup_import
 
         cmp     bh,0010b                ;Word segment?
@@ -989,9 +988,9 @@ load1_fixup_import:
         ;
         ;Check import type.
         ;
-        cmp     dl,01b          ;ordinal?
+        cmp     dl,01b                  ;ordinal?
         jz      load1_fiximp0
-        cmp     dl,10b          ;name?
+        cmp     dl,10b                  ;name?
 
 IFDEF DEBUG4X
         jnz     load1_bad_fixup5
@@ -1006,13 +1005,13 @@ ENDIF
         mov     ebp,d[LEHeader.LE_ImportNames]
         sub     ebp,d[LEHeader.LE_Fixups]
         movzx   eax,WORD PTR es:[esi+1]
-        add     ebp,eax         ;point to function name.
+        add     ebp,eax                 ;point to function name.
         add     ebp,d[load1_FixupMem]
         movzx   eax,BYTE PTR es:[esi]
         shl     eax,2
         add     eax,d[load1_ModLink]
         mov     edi,es:[eax]            ;point to module.
-        mov     edi,es:EPSP_Struc.EPSP_EXPORTS[edi]     ;point to export table.
+        mov     edi,es:EPSP_Struc.EPSP_EXPORTS[edi] ;point to export table.
 
         call    FindFunction
         mov     eax,edi
@@ -1031,7 +1030,7 @@ load1_fiximp0:
         shl     edi,2
         add     edi,d[load1_ModLink]
         mov     edi,es:[edi]
-        mov     edi,es:EPSP_Struc.EPSP_EXPORTS[edi]     ;point to export table.
+        mov     edi,es:EPSP_Struc.EPSP_EXPORTS[edi] ;point to export table.
         movzx   eax,WORD PTR es:[esi+1]
         add     esi,2
         sub     ecx,2
@@ -1083,15 +1082,15 @@ ENDIF
         mov     ebx,d[load1_ObjBase]
         mov     ebx,es:LE_OBJ.LE_OBJ_Base[ebx]
         add     edi,ebx
-        mov     ebx,d[load1_PageCount+4]        ;Get page number.
+        mov     ebx,d[load1_PageCount+4] ;Get page number.
         shl     ebx,12
-        add     edi,ebx         ;Point to the right page.
-        mov     ax,es:[eax+4]   ;Get the target segment.
+        add     edi,ebx                 ;Point to the right page.
+        mov     ax,es:[eax+4]           ;Get the target segment.
         mov     es:[edi],ax             ;Store target.
 
 ; MED 06/10/96
-        test    dh,1    ; see if additive value
-        jne     load1_bad_fixup ; yes, don't allow additives on segment fixups
+        test    dh,1                    ; see if additive value
+        jne     load1_bad_fixup         ; yes, don't allow additives on segment fixups
 
 load1_iNeg0:
         jmp     load1_fix3
@@ -1104,19 +1103,19 @@ load1_i32BitOff:
         mov     ebx,d[load1_ObjBase]
         mov     ebx,es:LE_OBJ.LE_OBJ_Base[ebx]
         add     edi,ebx
-        mov     ebx,d[load1_PageCount+4]        ;Get page number.
+        mov     ebx,d[load1_PageCount+4] ;Get page number.
         shl     ebx,12
-        add     edi,ebx         ;Point to the right page.
+        add     edi,ebx                 ;Point to the right page.
         mov     eax,es:[eax]
         mov     es:[edi],eax
 
 ; MED 06/10/96
-        test    dh,1    ; see if additive value
+        test    dh,1                    ; see if additive value
         je      load1_fix3              ; no
         movzx   eax,WORD PTR es:[esi]   ; get additive value
         add     esi,2
         sub     ecx,2
-        add     es:[edi],eax    ;Store target.
+        add     es:[edi],eax            ;Store target.
         jmp     load1_fix3
 
 load1_iNeg1:
@@ -1138,9 +1137,9 @@ load1_iSelf32Off:
         mov     ebx,d[load1_ObjBase]
         mov     ebx,es:LE_OBJ.LE_OBJ_Base[ebx]
         add     edi,ebx
-        mov     ebx,d[load1_PageCount+4]        ;Get page number.
+        mov     ebx,d[load1_PageCount+4] ;Get page number.
         shl     ebx,12
-        add     edi,ebx         ;Point to the right page.
+        add     edi,ebx                 ;Point to the right page.
         mov     ebx,edi
         add     ebx,4
         mov     eax,es:[eax]
@@ -1148,12 +1147,12 @@ load1_iSelf32Off:
         mov     es:[edi],eax
 
 ; MED 06/10/96
-        test    dh,1    ; see if additive value
+        test    dh,1                    ; see if additive value
         je      load1_fix3              ; no
         movzx   eax,WORD PTR es:[esi]   ; get additive value
         add     esi,2
         sub     ecx,2
-        add     es:[edi],eax    ;Store target.
+        add     es:[edi],eax            ;Store target.
 
 load1_isfNeg1:
         jmp     load1_fix3
@@ -1167,23 +1166,23 @@ load1_iSeg1632BitOff:
         mov     ebx,d[load1_ObjBase]
         mov     ebx,es:LE_OBJ.LE_OBJ_Base[ebx]
         add     edi,ebx
-        mov     ebx,d[load1_PageCount+4]        ;Get page number.
+        mov     ebx,d[load1_PageCount+4] ;Get page number.
         shl     ebx,12
-        add     edi,ebx         ;Point to the right page.
+        add     edi,ebx                 ;Point to the right page.
         push    eax
         movzx   eax,WORD PTR es:[eax+4]
-        mov     es:[edi+4],ax   ;Store target.
+        mov     es:[edi+4],ax           ;Store target.
         pop     eax
         mov     eax,es:[eax]
         mov     es:[edi],eax
 
 ; MED 06/10/96
-        test    dh,1    ; see if additive value
+        test    dh,1                    ; see if additive value
         je      load1_fix3              ; no
         movzx   eax,WORD PTR es:[esi]   ; get additive value
         add     esi,2
         sub     ecx,2
-        add     es:[edi],eax    ;Store target.
+        add     es:[edi],eax            ;Store target.
 
 load1_iNeg2:
         jmp     load1_fix3
@@ -1205,13 +1204,13 @@ ENDIF
         ;
         mov     edi,d[load1_ObjBase]
         mov     edi,es:LE_OBJ.LE_OBJ_Base[edi]
-        mov     eax,d[load1_PageCount+4]        ;Get page number.
+        mov     eax,d[load1_PageCount+4] ;Get page number.
         shl     eax,12
-        add     edi,eax         ;Point to the right page.
+        add     edi,eax                 ;Point to the right page.
         movsx   eax,WORD PTR es:[esi]
         or      eax,eax
         js      load1_Neg0
-        add     edi,eax         ;Point to the right offset.
+        add     edi,eax                 ;Point to the right offset.
         movzx   eax,BYTE PTR es:[esi+2] ;Get the target segment.
         dec     eax
         shl     eax,3
@@ -1233,13 +1232,13 @@ load1_16BitOff:
         ;
         mov     edi,d[load1_ObjBase]
         mov     edi,es:LE_OBJ.LE_OBJ_Base[edi]
-        mov     eax,d[load1_PageCount+4]        ;Get page number.
+        mov     eax,d[load1_PageCount+4] ;Get page number.
         shl     eax,12
-        add     edi,eax         ;Point to the right page.
+        add     edi,eax                 ;Point to the right page.
         movsx   eax,WORD PTR es:[esi]
         or      eax,eax
         js      load1_Neg3
-        add     edi,eax         ;Point to the right offset.
+        add     edi,eax                 ;Point to the right offset.
         mov     ax,WORD PTR es:[esi+3]  ;Get target offset.
         mov     es:[edi],ax
 load1_Neg3:
@@ -1265,13 +1264,13 @@ load1_32BitOff:
         ;
         mov     edi,d[load1_ObjBase]
         mov     edi,es:LE_OBJ.LE_OBJ_Base[edi]
-        mov     eax,d[load1_PageCount+4]        ;Get page number.
+        mov     eax,d[load1_PageCount+4] ;Get page number.
         shl     eax,12
-        add     edi,eax         ;Point to the right page.
+        add     edi,eax                 ;Point to the right page.
         movsx   eax,WORD PTR es:[esi]
         or      eax,eax
         js      load1_Neg1
-        add     edi,eax         ;Point to the right offset.
+        add     edi,eax                 ;Point to the right offset.
         movzx   eax,BYTE PTR es:[esi+2] ;Get the target segment.
         dec     eax
         push    edx
@@ -1279,13 +1278,13 @@ load1_32BitOff:
         mul     edx
         pop     edx
         add     eax,d[load1_ObjMem]     ;point to target segment details.
-        mov     eax,es:LE_OBJ.LE_OBJ_Base[eax]  ;Get target segments offset from start of image.
+        mov     eax,es:LE_OBJ.LE_OBJ_Base[eax] ;Get target segments offset from start of image.
 
 COMMENT !
         movzx   ebx,WORD PTR es:[esi+3] ;Get target offset.
         test    dh,4
         jz      load1_Big0
-        mov     ebx,es:[esi+3]  ;Get target offset.
+        mov     ebx,es:[esi+3]          ;Get target offset.
 load1_Big0:
         add     eax,ebx
         mov     es:[edi],eax
@@ -1294,23 +1293,23 @@ END COMMENT !
         test    dh,4
         jnz     load1_Big0
         movzx   ebx,WORD PTR es:[esi+3] ;Get 16-bit target offset.
-        add     esi,2+1+2       ; adjust offset, byte count
+        add     esi,2+1+2               ; adjust offset, byte count
         sub     ecx,2+1+2
 
 stuff1:
         add     eax,ebx
         mov     es:[edi],eax
-        test    dh,1    ; check for additive value
+        test    dh,1                    ; check for additive value
         je      load1_fix3              ; none
         movzx   eax,WORD PTR es:[esi]   ; get additive value
         add     esi,2
         sub     ecx,2
-        add     es:[edi],eax    ;Store target.
+        add     es:[edi],eax            ;Store target.
         jmp     load1_fix3
 
 load1_Big0:
-        mov     ebx,es:[esi+3]  ;Get 32-bit target offset.
-        add     esi,2+1+4       ; adjust offset, byte count
+        mov     ebx,es:[esi+3]          ;Get 32-bit target offset.
+        add     esi,2+1+4               ; adjust offset, byte count
         sub     ecx,2+1+4
         jmp     stuff1
 
@@ -1318,7 +1317,7 @@ load1_Neg1:
         add     esi,2+1+2
         sub     ecx,2+1+2
 
-        test    dh,1    ; MED 06/12/96
+        test    dh,1                    ; MED 06/12/96
         jz      load1_Neg1a
         add     esi,2
         sub     ecx,2
@@ -1341,13 +1340,13 @@ load1_Self32Off:
         mov     edi,d[load1_ObjBase]
         mov     ebx,es:LE_OBJ.LE_OBJ_Flags[edi]
         mov     edi,es:LE_OBJ.LE_OBJ_Base[edi]
-        mov     eax,d[load1_PageCount+4]        ;Get page number.
+        mov     eax,d[load1_PageCount+4] ;Get page number.
         shl     eax,12
-        add     edi,eax         ;Point to the right page.
+        add     edi,eax                 ;Point to the right page.
         movsx   eax,WORD PTR es:[esi]
         or      eax,eax
         js      load1_sfNeg1
-        add     edi,eax         ;Point to the right offset.
+        add     edi,eax                 ;Point to the right offset.
         mov     ebx,edi
         movzx   eax,BYTE PTR es:[esi+2] ;Get the target segment.
         dec     eax
@@ -1361,7 +1360,7 @@ load1_Self32Off:
         movzx   ebx,WORD PTR es:[esi+3] ;Get target offset.
         test    dh,4
         jz      load1_sfBig0
-        mov     ebx,es:[esi+3]  ;Get target offset.
+        mov     ebx,es:[esi+3]          ;Get target offset.
 load1_sfBig0:
         add     eax,ebx
         pop     ebx
@@ -1389,14 +1388,14 @@ load1_Seg1632BitOff:
         ;
         mov     edi,d[load1_ObjBase]
         mov     edi,es:LE_OBJ.LE_OBJ_Base[edi]
-        mov     eax,d[load1_PageCount+4]        ;Get page number.
+        mov     eax,d[load1_PageCount+4] ;Get page number.
         shl     eax,12
-        add     edi,eax         ;Point to the right page.
+        add     edi,eax                 ;Point to the right page.
         movsx   eax,WORD PTR es:[esi]
         or      eax,eax
         js      load1_Neg2
-        add     edi,eax         ;Point to the right offset.
-        add     edi,4           ;Point to the seg bit.
+        add     edi,eax                 ;Point to the right offset.
+        add     edi,4                   ;Point to the seg bit.
         movzx   eax,BYTE PTR es:[esi+2] ;Get the target segment.
         dec     eax
         shl     eax,3
@@ -1405,11 +1404,11 @@ load1_Seg1632BitOff:
         ;
         mov     edi,d[load1_ObjBase]
         mov     edi,es:LE_OBJ.LE_OBJ_Base[edi]
-        mov     eax,d[load1_PageCount+4]        ;Get page number.
+        mov     eax,d[load1_PageCount+4] ;Get page number.
         shl     eax,12
-        add     edi,eax         ;Point to the right page.
+        add     edi,eax                 ;Point to the right page.
         movzx   eax,WORD PTR es:[esi]
-        add     edi,eax         ;Point to the right offset.
+        add     edi,eax                 ;Point to the right offset.
         movzx   eax,BYTE PTR es:[esi+2] ;Get the target segment.
         dec     eax
         push    edx
@@ -1419,11 +1418,11 @@ load1_Seg1632BitOff:
         add     eax,d[load1_ObjMem]     ;point to target segment details.
         test    es:LE_OBJ.LE_OBJ_Flags[eax],LE_OBJ_Flags_Big
         pushf
-        mov     eax,es:LE_OBJ.LE_OBJ_Base[eax]  ;Get target segments offset from start of image.
+        mov     eax,es:LE_OBJ.LE_OBJ_Base[eax] ;Get target segments offset from start of image.
         movzx   ebx,WORD PTR es:[esi+3] ;Get target offset.
         test    dh,4
         jz      load1_Big1
-        mov     ebx,es:[esi+3]  ;Get target offset.
+        mov     ebx,es:[esi+3]          ;Get target offset.
 load1_Big1:
         popf
         jz      load1_NotFlat1
@@ -1438,7 +1437,6 @@ load1_Neg2:
         jz      load1_fix3
         add     esi,2
         sub     ecx,2
-;       jmp     load1_fix3      ; superfluous
         ;
 load1_fix3:
         inc     d[load1_EntryEIP]
@@ -1474,7 +1472,7 @@ load1_fix400:
         mov     edi,d[load1_ObjMem]
         add     edi,eax
         add     esi,es:LE_OBJ.LE_OBJ_Base[edi]
-        test    es:LE_OBJ.LE_OBJ_Flags[edi],LE_OBJ_Flags_Big    ;FLAT segment?
+        test    es:LE_OBJ.LE_OBJ_Flags[edi],LE_OBJ_Flags_Big ;FLAT segment?
         jnz     load1_FlatEIP
         sub     esi,d[load1_ProgMem]
 load1_FlatEIP:
@@ -1496,7 +1494,7 @@ load1_NoEntryCS:
         mov     edi,d[load1_ObjMem]
         add     edi,eax
         add     esi,es:LE_OBJ.LE_OBJ_Base[edi]
-        test    es:LE_OBJ.LE_OBJ_Flags[edi],LE_OBJ_Flags_Big    ;FLAT segment?
+        test    es:LE_OBJ.LE_OBJ_Flags[edi],LE_OBJ_Flags_Big ;FLAT segment?
         jnz     load1_FlatESP
         sub     esi,d[load1_ProgMem]
 load1_FlatESP:
@@ -1521,37 +1519,37 @@ load1_NoEntrySS:
 ;Convert object definitions into 3P segment definitions for CWD.
 ;
 load1_NoAutoDS:
-        mov     ebp,d[LEHeader.LE_ObjNum]     ;number of objects.
+        mov     ebp,d[LEHeader.LE_ObjNum]       ;number of objects.
         mov     esi,d[load1_ObjMem]
         mov     edi,esi
 load1_makesegs0:
         mov     eax,es:LE_OBJ.LE_OBJ_Flags[esi] ;Get objects flags.
         xor     ebx,ebx
-        test    eax,LE_OBJ_Flags_Exec   ;Executable?
+        test    eax,LE_OBJ_Flags_Exec           ;Executable?
         jnz     load1_makesegs1
-        inc     ebx             ;Make it Data.
-        test    eax,LE_OBJ_Flags_Write  ;Writeable?
+        inc     ebx                             ;Make it Data.
+        test    eax,LE_OBJ_Flags_Write          ;Writeable?
         jz      load1_makesegs1
-;       add     ebx,2           ;Read only data.
+;       add     ebx,2                           ;Read only data.
 load1_makesegs1:
         shl     ebx,24
-        test    eax,LE_OBJ_Flags_Big    ;Big bit set?
+        test    eax,LE_OBJ_Flags_Big            ;Big bit set?
         jz      load1_makesegs2
-        or      ebx,1 shl 26            ;Force 32-bit.
-        or      ebx,1 shl 27            ;assume 32-bit is FLAT.
+        or      ebx,1 shl 26                    ;Force 32-bit.
+        or      ebx,1 shl 27                    ;assume 32-bit is FLAT.
         jmp     load1_makesegs3
 load1_makesegs2:
-        or      ebx,1 shl 25            ;Force 16-bit.
+        or      ebx,1 shl 25                    ;Force 16-bit.
 load1_makesegs3:
         mov     eax,es:LE_OBJ.LE_OBJ_Size[esi]
-        cmp     eax,100000h             ;>1M?
+        cmp     eax,100000h                     ;>1M?
         jc      load1_makesegs4
         shr     eax,12
         or      eax,1 shl 20
 load1_makesegs4:
-        or      ebx,eax         ;Include length.
+        or      ebx,eax                         ;Include length.
         mov     eax,es:LE_OBJ.LE_OBJ_Base[esi]
-        sub     eax,d[load1_ProgMem]    ;lose load address.
+        sub     eax,d[load1_ProgMem]            ;lose load address.
         mov     DWORD PTR es:[edi+0],eax
         mov     DWORD PTR es:[edi+4],ebx
         add     esi,size LE_OBJ
@@ -1562,7 +1560,7 @@ load1_makesegs4:
         ;Shrink OBJ memory to fit segment definitions.
         ;
         mov     eax,4+4
-        mul     d[LEHeader.LE_ObjNum] ;number of objects.
+        mul     d[LEHeader.LE_ObjNum]   ;number of objects.
         mov     ecx,eax
         mov     esi,d[load1_ObjMem]
         sys     ResMemLinear32
@@ -1573,13 +1571,13 @@ load1_makesegs4:
 ;
         mov     ecx,d[LEHeader.LE_ObjNum]
         mov     esi,d[load1_ObjMem]
-        mov     bx,w[load1_Segs]                ;base selector.
+        mov     bx,w[load1_Segs]        ;base selector.
 load1_SegLoop:
         push    ebx
         push    ecx
         push    esi
         ;
-        mov     eax,es:[esi+4]  ;Get limit.
+        mov     eax,es:[esi+4]          ;Get limit.
         mov     ecx,eax
         and     ecx,0fffffh             ;mask to 20 bits.
         test    eax,1 shl 20            ;G bit set?
@@ -1600,11 +1598,11 @@ load1_NoDecLim:
         ;
         push    fs
         mov     fs,w[load1_PSP]
-        mov     DWORD PTR fs:[EPSP_Struc.EPSP_NearBase],0       ;Make sure NEAR functions work.
+        mov     DWORD PTR fs:[EPSP_Struc.EPSP_NearBase],0 ;Make sure NEAR functions work.
         pop     fs
         ;
         add     edx,d[load1_ProgMem]
-        or      ecx,-1          ;Update the limit.
+        or      ecx,-1                  ;Update the limit.
         xor     edx,edx
         jmp     load1_DoSegSet
         ;
@@ -1614,32 +1612,32 @@ load1_NotFLATSeg:
 load1_DoSegSet:
         sys     SetSelDet32
         ;
-        mov     eax,es:[esi+4]  ;Get class.
-        shr     eax,21          ;move type into useful place.
-        and     eax,0fh         ;isolate type.
+        mov     eax,es:[esi+4]          ;Get class.
+        shr     eax,21                  ;move type into useful place.
+        and     eax,0fh                 ;isolate type.
         or      eax,eax
         jz      load1_CodeSeg
-        mov     eax,es:[esi+4]  ;Get type bits.
-        mov     cx,0            ;Set 16 bit seg.
+        mov     eax,es:[esi+4]          ;Get type bits.
+        mov     cx,0                    ;Set 16 bit seg.
         test    eax,1 shl 25
         jnz     load1_gotBBit
         mov     cx,1
         test    eax,1 shl 26            ;32 bit seg?
         jnz     load1_gotBBit
-        mov     cx,0            ;Set 16 bit seg.
+        mov     cx,0                    ;Set 16 bit seg.
 load1_GotBBit:
         call    _DSizeSelector
         jmp     load1_SegDone
         ;
 load1_CodeSeg:
-        mov     eax,es:[esi+4]  ;Get type bits.
-        mov     cx,0            ;Set 16 bit seg.
+        mov     eax,es:[esi+4]          ;Get type bits.
+        mov     cx,0                    ;Set 16 bit seg.
         test    eax,1 shl 25
         jnz     load1_Default
         mov     cx,1
         test    eax,1 shl 26            ;32 bit seg?
         jnz     load1_Default
-        mov     cx,0            ;Set 16 bit seg.
+        mov     cx,0                    ;Set 16 bit seg.
 load1_Default:
         sys     CodeSel
         ;
@@ -1647,8 +1645,8 @@ load1_SegDone:
         pop     esi
         pop     ecx
         pop     ebx
-        add     esi,8           ;next definition.
-        add     ebx,8           ;next selector.
+        add     esi,8                   ;next definition.
+        add     ebx,8                   ;next selector.
         dec     ecx
         jnz     load1_SegLoop
 ;
@@ -1673,7 +1671,7 @@ load1_SegDone:
         mov     fs,w[load1_PSP]
         mov     bx,WORD PTR fs:[EPSP_Struc.EPSP_Parent]
         pop     fs
-        mov     ah,50h          ;set PSP
+        mov     ah,50h                  ;set PSP
         int     21h
         mov     ebp,d[load1_ObjMem]
 ;
