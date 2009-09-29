@@ -312,18 +312,7 @@ SwitchToDebuggerBreakKey:
         pushfd
         pop     eax
         mov     DebugEFL,eax
-;
-;Clean up the key table.
-;
-        mov     ebx,offset BreakKeyList
-@@60bc: cmp     d[ebx],0                ;End of the list?
-        jz      @@70bc
-        mov     eax,d[ebx]              ;Get scan code.
-        mov     b[KeyTable+eax],0
-        add     ebx,4
-        jmp     @@60bc
-        ;
-@@70bc: or      DebugState,ST_KEYBREAK
+        or      DebugState,ST_KEYBREAK
         dec     InInt09
 ;Fall down
 
@@ -520,7 +509,7 @@ Exc0EHandler    proc    near
 ; skip failing REP MOVSB instruction if memory access exception occures
 ; see MemoryRead and MemoryWrite functions
 ;
-        add     [esp+INTFRM.i_eip],2
+        add     [esp+EXCPFRM.e_eip],2
         retf
 @@shite0E:
         pop     ds
@@ -573,7 +562,7 @@ Int21Handler    endp
 ;Check if our break keys combination is set.
 ;
 ;*******************************************************************************
-CheckBreakKey   proc    near    uses ebx
+CheckBreakKey   proc    near
         mov     ebx,offset BreakKeyList
         xor     eax,eax
 @@6bc:  cmp     d[ebx],0                ;End of the list?
@@ -597,12 +586,12 @@ CheckBreakKey   endp
 BreakChecker    proc    near
         push    ds
         push    eax
+        push    ebx
         mov     ds,dgroup_seg
         inc     InInt09
 ;
 ;Update the key table.
 ;
-        push    ebx
         in      al,60h          ;get the scan code.
         mov     bl,al
         and     ebx,7Fh         ;isolate scan code.
@@ -610,7 +599,6 @@ BreakChecker    proc    near
         and     al,80h
         xor     al,80h
         mov     [ebx],al                ;set key state.
-        pop     ebx
 ;
 ;Check we havn't already been here.
 ;
@@ -636,7 +624,7 @@ BreakChecker    proc    near
         mov     ax,es:[EPSP_SegBase]
         pop     es
 
-STACK_DEPTH = 2*4
+STACK_DEPTH = 3 * 4
 
         cmp     [esp+STACK_DEPTH+INTFRM.i_cs],ax
         jc      @@oldbc
@@ -657,11 +645,23 @@ STACK_DEPTH = 2*4
         mov     al,20h
         out     20h,al          ;re-enable interupts.
 ;
+;Clean up the key table.
+;
+        mov     ebx,offset BreakKeyList
+@@60bc: cmp     d[ebx],0                ;End of the list?
+        jz      @@70bc
+        mov     eax,d[ebx]              ;Get scan code.
+        mov     b[KeyTable+eax],0
+        add     ebx,4
+        jmp     @@60bc
+@@70bc:
+;
 ;Swap the return address for our own.
 ;
         mov     [esp+STACK_DEPTH+INTFRM.i_cs],cs
         mov     [esp+STACK_DEPTH+INTFRM.i_eip],offset SwitchToDebuggerBreakKey
 ;
+        pop     ebx
         pop     eax
         pop     ds
         iretd
@@ -670,6 +670,7 @@ STACK_DEPTH = 2*4
 ;
 @@oldbc:
         dec     InInt09
+        pop     ebx
         pop     eax
         pop     ds
         jmp     f[OldInt09]

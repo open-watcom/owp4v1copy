@@ -72,15 +72,25 @@ extern void dos_printf( const char *format, ... );
 #define GetModuleHandle GetSelBase
 #define GetLinAddr(x)   GetSelBase(x.segment)+x.offset
 
-typedef struct seg_t {
-    unsigned_32 base;
-    unsigned_32 limit;
-} seg_t;
+#define IDX_TO_SEL(x) ((epsp->SegBase+segidx*8)|3)
 
 typedef unsigned_16 selector;
 typedef unsigned_16 segment;
 
 #include "pushpck1.h"
+typedef struct seg_t {
+    unsigned_32 base;
+    unsigned    limit   :20;
+    unsigned    granul  :1;
+    unsigned    class   :4;
+    unsigned    is16bit :1;
+    unsigned    is32bit :1;
+    unsigned    isFlat  :1;
+    unsigned    reserved:2;
+    unsigned    nospeed :1;
+    unsigned    compres :1;
+} seg_t;
+
 typedef struct epsp_t {
     char            PSP[256];
     selector        parent;
@@ -147,12 +157,6 @@ extern int RelSel( unsigned_16 );
     "int  31h" \
     "sbb  eax,eax" \
     parm [bx] value [eax];
-
-unsigned_16 dos_getver( void );
-#pragma aux dos_getver =    \
-    "mov    ah,30h"         \
-    "int    21h"            \
-    value [ax];
 
 extern int IsSel32bit( unsigned_16 );
 #pragma aux IsSel32bit = \
@@ -317,14 +321,12 @@ unsigned ReqGet_sys_config( void )
 /********************************/
 {
     get_sys_config_ret  *ret;
-    unsigned_16         dosver;
 
     _DBG( "AccGetConfig\r\n" );
     ret = GetOutPtr( 0 );
     ret->sys.os = OS_RATIONAL;      // Pretend we're DOS/4G
-    dosver = dos_getver();
-    ret->sys.osmajor = dosver >> 8;
-    ret->sys.osminor = dosver & 0xff;
+    ret->sys.osmajor = _osmajor;
+    ret->sys.osminor = _osminor;
     ret->sys.cpu = X86CPUType();
     ret->sys.huge_shift = 12;
     ret->sys.fpu = NPXType(); //RealNPXType;
@@ -339,7 +341,7 @@ unsigned ReqMap_addr( void )
 {
     map_addr_req    *acc;
     map_addr_ret    *ret;
-    epsp_t          *EPSP;
+    epsp_t          *epsp;
     unsigned_32     limit;
     signed_16       segidx;
 
@@ -350,25 +352,25 @@ unsigned ReqMap_addr( void )
     ret->out_addr.segment = 0;
     ret->lo_bound = 0;
     ret->hi_bound = 0;
-    EPSP = (epsp_t *)GetModuleHandle( DebugPSP );
-    if( (epsp_t *)acc->handle == EPSP ) {
+    epsp = (epsp_t *)GetModuleHandle( DebugPSP );
+    if( (epsp_t *)acc->handle == epsp ) {
         // get segment index
         segidx = acc->in_addr.segment;
         if( segidx < 0 )
             segidx = -segidx;
         --segidx;
         // convert segment index to selector
-        ret->out_addr.segment = ( EPSP->SegBase + segidx * 8 ) | 3;
+        ret->out_addr.segment = IDX_TO_SEL( segidx );
         // convert offset
-        ret->out_addr.offset = acc->in_addr.offset + DebugSegs[segidx].base + EPSP->MemBase;
+        ret->out_addr.offset = acc->in_addr.offset + DebugSegs[segidx].base + epsp->MemBase;
         // horrible hackery to fix offset + code size passed for symbol offset in global vars
         if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ) {
             // 2nd segment(hopefully DGROUP) base offset round up to next 64K
             ret->out_addr.offset -= ( DebugSegs[1].base + 0xFFFF ) & 0xFFFF0000;
         }
         // Set the bounds.
-        limit = DebugSegs[segidx].limit & 0xFFFFF;
-        if( DebugSegs[segidx].limit & 0x100000 ) {
+        limit = DebugSegs[segidx].limit;
+        if( DebugSegs[segidx].granul ) {
             limit <<= 12;
             limit |= 0xFFF;
         }
@@ -399,16 +401,19 @@ unsigned ReqAddr_info( void )
 }
 
 static unsigned ReadMemory( addr48_ptr *addr, void *data, unsigned len )
+/**********************************************************************/
 {
     return( MemoryRead( addr->offset, addr->segment, data, len ) );
 }
 
 static unsigned WriteMemory( addr48_ptr *addr, void *data, unsigned len )
+/***********************************************************************/
 {
     return( MemoryWrite( addr->offset, addr->segment, data, len ) );
 }
 
 unsigned ReqChecksum_mem( void )
+/******************************/
 {
     unsigned            len;
     int                 i;
@@ -430,16 +435,13 @@ unsigned ReqChecksum_mem( void )
         if( read != BUFF_SIZE )
             return( sizeof( *ret ) );
         len -= BUFF_SIZE;
-        acc->in_addr.offset += read;
+        acc->in_addr.offset += BUFF_SIZE;
     }
     if( len != 0 ) {
         read = ReadMemory( &acc->in_addr, &UtilBuff, len );
-        if( read == len ) {
-            for( i = 0; i < len; ++i ) {
-                ret->result += UtilBuff[ i ];
-            }
+        for( i = 0; i < read; ++i ) {
+            ret->result += UtilBuff[ i ];
         }
-        acc->in_addr.offset += read;
     }
     return( sizeof( ret ) );
 }
@@ -847,20 +849,28 @@ unsigned ReqMachine_data( void )
 {
     machine_data_req    *acc;
     machine_data_ret    *ret;
-    unsigned_8          *data;
+    union {
+        unsigned_8      charact;
+    } *data;
+    unsigned            len;
 
     _DBG( "AccMachineData\r\n" );
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    data = GetOutPtr( sizeof( *ret ) );
     ret->cache_start = 0;
-    ret->cache_end = ~(addr_off)0;
-    *data = 0;
-    if( IsSel32bit( acc->addr.segment ) ) {
-        *data = X86AC_BIG;
+    ret->cache_end = 0;
+    len = 0;
+    if( acc->info_type == X86MD_ADDR_CHARACTERISTICS ) {
+        ret->cache_end = ~(addr_off)0;
+        data = GetOutPtr( sizeof( *ret ) );
+        len = sizeof( data->charact );
+        data->charact = 0;
+        if( IsSel32bit( acc->addr.segment ) ) {
+            data->charact = X86AC_BIG;
+        }
     }
     _DBG( "address %x:%x is %s\r\n", acc->addr.segment, acc->addr.offset, *data ? "32-bit" : "16-bit" );
-    return( sizeof( *ret ) + sizeof( *data ) );
+    return( sizeof( *ret ) + len );
 }
 
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
