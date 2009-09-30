@@ -80,6 +80,7 @@
 *                   cop_text_width()
 *                   cop_ti_table()
 *                   cop_tr_table()
+*                   fb_absoluteaddress()
 *                   fb_dbox()
 *                   fb_document()
 *                   fb_document_page()
@@ -600,6 +601,7 @@ extern void                 fb_start( void );
 extern void                 fb_vline( uint32_t h_start, uint32_t v_start, uint32_t v_len );
 
 /* devfuncs.c                          */
+extern void                 fb_absoluteaddress( void );
 extern void                 fb_new_section( uint32_t v_start );
 
 /* outbuff.c                           */

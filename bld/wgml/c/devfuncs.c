@@ -41,7 +41,8 @@
 *                   fb_line_block()
 *                   fb_lineproc_endvalue()
 *                   fb_subsequent_text_line_pass()
-*               and one function declared in copfiles.h:
+*               and two functions declared in copfiles.h:
+*                   fb_absoluteaddress()
 *                   fb_new_section()
 *               as well as a macro:
 *                   MAX_FUNC_INDEX
@@ -140,7 +141,6 @@
 *                   df_x_size()
 *                   df_y_address()
 *                   df_y_size()
-*                   fb_absoluteaddress()
 *                   fb_first_text_chars()
 *                   fb_firstword()
 *                   fb_font_switch()
@@ -269,22 +269,6 @@ static record_buffer    space_chars     = { 0, 0, NULL };
 static record_buffer    uscore_chars    = { 0, 0, NULL };
 
 /* Local function definitions. */
-
-/* Function fb_absoluteaddress().
- * Uses the :ABSOLUTEADDRESS block to actually position the print head to the
- * desired position. 
- *
- * Prerequisite:
- *      The :ABSOLUTEADDRESS block must be defined.
- */
-
-static void fb_absoluteaddress( void )
-{
-    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
-    current_state.x_address = desired_state.x_address;
-    current_state.y_address = desired_state.y_address;    
-    return;
-}
 
 /* Function fb_newline().
  * Uses the various :NEWLINE blocks to actually position the device to the
@@ -2222,9 +2206,15 @@ static void interpret_functions( uint8_t * in_function )
     uint8_t         *   old_function    = NULL;
     uint16_t            current_offset;
 
-    /* An empty or missing block is not an error, but nothing happens. */
+    /* An empty or missing block is not an error, but a warning is issued
+     * in case the calling code needs adjustment.
+     */
 
-    if( in_function == NULL ) return;
+    if( in_function == NULL ) {
+        out_msg( "Warning: empty device function code block submitted\n" );
+        wng_count++;
+        return;
+    }
 
     /* Save the interpreter state. */
     
@@ -3363,6 +3353,22 @@ void df_teardown( void )
     return;
 }
 
+/* Function fb_absoluteaddress().
+ * Uses the :ABSOLUTEADDRESS block to actually position the print head to the
+ * desired position. 
+ *
+ * Prerequisite:
+ *      The :ABSOLUTEADDRESS block must be defined.
+ */
+
+void fb_absoluteaddress( void )
+{
+    df_interpret_driver_functions( bin_driver->absoluteaddress.text );
+    current_state.x_address = desired_state.x_address;
+    current_state.y_address = desired_state.y_address;    
+    return;
+}
+
 /* Function fb_enterfont().
  * Performs the action of device function %enterfont(0), whether the device
  * function was invoked explicitly or implicitly. Parts of this function may
@@ -3562,29 +3568,16 @@ void fb_init( init_block * in_block )
  *      The block must exist because the box-drawing code should be checking
  *          this and, in some cases, drawing the line or box using the :BOX
  *          block characters instead.
+ *      However, in both cases, no error is reported: instead, the function
+ *          interpreter will print a warning and nothing will happen. The
+ *          warning is intended as an alert that further work on the block
+ *          drawing code is needed.
  */
 
 void fb_line_block( line_block * in_line_block, uint32_t h_start, \
                     uint32_t v_start, uint32_t h_len, uint32_t v_len, \
                     char * name )
 {
-    /* An empty block is definitely an error. */
-
-    if( in_line_block->text == NULL ) {
-        out_msg("wgml internal error: The %s block must be defined if used\n", \
-                                                                        name );
-        err_count++;
-        g_suicide();
-    }
-
-    /* As is a missing :ABSOLUTEADDRESS block. */
-    
-    if( !has_aa_block ) {
-        out_msg("The :ABSOLUTEADDRESS must be defined if the %s is defined\n", \
-                                                                        name );
-        err_count++;
-        g_suicide();
-    }
 
     /* Set up for fb_absoluteaddress(). */
 
