@@ -40,19 +40,22 @@ w       equ     word ptr
 d       equ     dword ptr
 f       equ     fword ptr
 
-CPU_FLAG_SINGLE_STEP             equ 100h
+CPU_FLAG_SINGLE_STEP        equ 100h
 
 ;*******************************************************************************
 ;Execution status symbolic constants
 ;*******************************************************************************
-ST_EXECUTING                equ 01h
-ST_BREAK                    equ 02h
-ST_TRACE                    equ 04h
-ST_WATCH                    equ 08h
-ST_KEYBREAK                 equ 10h
-ST_TERMINATE                equ 20h
-ST_SINGLE_STEPPING          equ 40h
-ST_SINGLE_STEPPING_WATCH    equ 80h
+ST1_EXECUTING               equ 01h
+ST1_BREAK                   equ 02h
+ST1_TRACE                   equ 04h
+ST1_WATCH                   equ 08h
+ST1_KEYBREAK                equ 10h
+ST1_TERMINATE               equ 20h
+ST1_LOAD_MODULE             equ 40h
+ST1_UNLOAD_MODULE           equ 80h
+;
+ST2_SINGLE_STEPPING         equ 1h
+ST2_SINGLE_STEPPING_WATCH   equ 2h
 
 ;*******************************************************************************
 ;Add a memory region to the auto-lock list.
@@ -149,14 +152,12 @@ extern  "C", _psp:WORD
 extern  "C", WatchCount:dword
 
 public  "C", DebugPSP
-public  "C", DebugSegs
 public  "C", DebugRegs
 public  "C", Exception
 
 dLockStart      label byte
 
 DebugPSP        dw 0
-DebugSegs       dd 0
 
 DebugRegs       label byte
 
@@ -186,7 +187,9 @@ DebuggerESP     dd 0
 DebuggerSS      dw 0
 
 TerminateCode   db 0
-DebugState      db 0
+DebugState      label   word
+DebugState1     db 0
+DebugState2     db 0
 Exception       db 0
 
 LinearAddressCheck db 0
@@ -234,7 +237,7 @@ SwitchToDebuggerIntFrame:
 ;
         cmp     Exception,3
         jz      @@skip1
-        test    DebugState,ST_TERMINATE
+        test    DebugState1,ST1_TERMINATE
         jz      @@skip2
         dec     eax
 @@skip1:
@@ -312,7 +315,7 @@ SwitchToDebuggerBreakKey:
         pushfd
         pop     eax
         mov     DebugEFL,eax
-        or      DebugState,ST_KEYBREAK
+        or      DebugState1,ST1_KEYBREAK
         dec     InInt09
 ;Fall down
 
@@ -338,7 +341,7 @@ SwitchToDebugger:
 ;
 ;*******************************************************************************
 Int01Handler    proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Oldi01
         push    ds
         mov     ds,dgroup_seg
@@ -347,10 +350,10 @@ Int01Handler    proc    near
         or      eax,eax
         pop     eax
         jz      @@0i01
-        or      DebugState,ST_WATCH
+        or      DebugState1,ST1_WATCH
         jmp     @@0i02
 @@0i01: 
-        or      DebugState,ST_TRACE
+        or      DebugState1,ST1_TRACE
 @@0i02: 
         mov     Exception,1
         jmp     SwitchToDebuggerIntFrame
@@ -367,7 +370,7 @@ Int01Handler    endp
 ;
 ;*******************************************************************************
 EInt01Handler   proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Olde01
         push    ds
         mov     ds,dgroup_seg
@@ -376,10 +379,10 @@ EInt01Handler   proc    near
         or      eax,eax
         pop     eax
         jz      @@0e01
-        or      DebugState,ST_WATCH
+        or      DebugState1,ST1_WATCH
         jmp     @@0e02
 @@0e01:
-        or      DebugState,ST_TRACE
+        or      DebugState1,ST1_TRACE
 @@0e02:
         mov     Exception,1
         jmp     SwitchToDebuggerExcFrame
@@ -396,11 +399,11 @@ EInt01Handler   endp
 ;
 ;*******************************************************************************
 Int03Handler    proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Oldi03
         push    ds
         mov     ds,dgroup_seg
-        or      DebugState,ST_BREAK
+        or      DebugState1,ST1_BREAK
         mov     Exception,3
         jmp     SwitchToDebuggerIntFrame
 ;
@@ -416,11 +419,11 @@ Int03Handler    endp
 ;
 ;*******************************************************************************
 EInt03Handler   proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Olde03
         push    ds
         mov     ds,dgroup_seg
-        or      DebugState,ST_BREAK
+        or      DebugState1,ST1_BREAK
         mov     Exception,3
         jmp     SwitchToDebuggerExcFrame
 ;
@@ -436,7 +439,7 @@ EInt03Handler   endp
 ;
 ;*******************************************************************************
 Exc00Handler    proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Olde00
         push    ds
         mov     ds,dgroup_seg
@@ -455,7 +458,7 @@ Exc00Handler    endp
 ;
 ;*******************************************************************************
 Exc0CHandler    proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Olde0C
         push    ds
         mov     ds,dgroup_seg
@@ -474,7 +477,7 @@ Exc0CHandler    endp
 ;
 ;*******************************************************************************
 Exc0DHandler    proc    near
-        test    cs:DebugState,ST_EXECUTING
+        test    cs:DebugState1,ST1_EXECUTING
         jz      @@Olde0D
         push    ds
         mov     ds,dgroup_seg
@@ -495,7 +498,7 @@ Exc0DHandler    endp
 Exc0EHandler    proc    near
         push    ds
         mov     ds,dgroup_seg
-        test    DebugState,ST_EXECUTING
+        test    DebugState1,ST1_EXECUTING
         jz      @@Olde0E
         mov     Exception,0Eh
         jmp     SwitchToDebuggerExcFrame
@@ -546,7 +549,7 @@ Int21Handler    proc    near
         popfd
         push    ds
         mov     ds,dgroup_seg
-        or      DebugState,ST_TERMINATE
+        or      DebugState1,ST1_TERMINATE
         mov     TerminateCode,al
         jmp     SwitchToDebuggerIntFrame
 ;
@@ -608,7 +611,7 @@ BreakChecker    proc    near
 ;Check if anything is running.
 ;
 ;
-        test    DebugState,ST_EXECUTING
+        test    DebugState1,ST1_EXECUTING
         jz      @@oldbc
 ;
 ;Check if our break combination is set.
@@ -700,7 +703,7 @@ Int31Intercept  proc    near
         cmp     bl,9                    ;INT 9?
         jnz     @@oldi31
         push    ds
-        mov     ds,dgroup_seg        ;make our data addresable.
+        mov     ds,dgroup_seg           ;make our data addresable.
         assume ds:_TEXT
         mov     d[OldInt09],edx
         mov     w[OldInt09+4],cx
@@ -710,7 +713,7 @@ Int31Intercept  proc    near
 @@notseti31:
         assume ds:DGROUP
         cmp     ax,0204h                ;Get vector?
-        jnz     @@oldi31
+        jnz     @@notgeti31
         cmp     bl,9                    ;INT 9?
         jnz     @@oldi31
         mov     edx,d[OldInt09]
@@ -719,6 +722,24 @@ Int31Intercept  proc    near
 @@reti31:
         and     b[esp+INTFRM.i_flags],not 1 ;clear carry
         iretd
+        ;
+@@notgeti31:
+        test    cs:DebugState1,ST1_EXECUTING
+        jz      @@oldi31
+        cmp     ax,0FFF7h               ;Load module?
+        jnz     @@notloadmi31
+        push    ds
+        mov     ds,dgroup_seg
+        or      DebugState1,ST1_LOAD_MODULE
+        jmp     SwitchToDebuggerIntFrame
+        ;
+@@notloadmi31:
+        cmp     ax,0FFF8h               ;Unload module?
+        jnz     @@oldi31
+        push    ds
+        mov     ds,dgroup_seg
+        or      DebugState1,ST1_UNLOAD_MODULE
+        jmp     SwitchToDebuggerIntFrame
         ;
 @@oldi31:
         jmp     f[OldInt31]
@@ -743,16 +764,16 @@ Execute proc    "C" public  uses es fs gs ebx ecx edx esi edi ebp
 ;
         or      al,al
         jz      nostep
-        mov     al,ST_SINGLE_STEPPING
+        mov     al,ST2_SINGLE_STEPPING
 nostep: 
 ;
 ; Force watch point checking if watches are present.
 ;
         cmp     WatchCount,0
         jz      nowatch
-        or      al,ST_SINGLE_STEPPING_WATCH
+        or      al,ST2_SINGLE_STEPPING_WATCH
 nowatch:
-        mov     DebugState,al
+        mov     DebugState2,al
 ;
 ;Switch to debuggee's PSP.
 ;
@@ -765,7 +786,7 @@ nowatch:
 ;Set debuggee trap flag if it's a single instruction trace else clear it if not.
 ;
 @@7exec:
-        test    DebugState,ST_SINGLE_STEPPING or ST_SINGLE_STEPPING_WATCH
+        test    DebugState2,ST2_SINGLE_STEPPING or ST2_SINGLE_STEPPING_WATCH
         jz      @@0exec
         or      b[DebugEFL+1],CPU_FLAG_SINGLE_STEP shr 8
         jmp     @@11exec
@@ -775,8 +796,7 @@ nowatch:
 ;
 ;Set flags ready for execution.
 ;
-        and     DebugState,ST_SINGLE_STEPPING or ST_SINGLE_STEPPING_WATCH
-        or      DebugState,ST_EXECUTING
+        mov     DebugState1,ST1_EXECUTING
         mov     Exception,-1
 ;
 ;Put return address on the stack.
@@ -810,15 +830,15 @@ nowatch:
 ;Clear execution flag.
 ;
 @@backexec:
-        and     DebugState,not ST_EXECUTING
+        and     DebugState1,not ST1_EXECUTING
 ;
 ;Check if we're single stepping to allow for watches.
 ;
-        test    DebugState,ST_SINGLE_STEPPING_WATCH
+        test    DebugState2,ST2_SINGLE_STEPPING_WATCH
         jz      @@8exec
-        test    DebugState,(ST_TERMINATE or ST_KEYBREAK or ST_BREAK or ST_WATCH)
+        test    DebugState1,(ST1_TERMINATE or ST1_KEYBREAK or ST1_BREAK or ST1_WATCH or ST1_LOAD_MODULE or ST1_UNLOAD_MODULE)
         jnz     @@8exec
-        test    DebugState,ST_TRACE
+        test    DebugState1,ST1_TRACE
         jz      @@8exec
 ;
 ;Check state of all watches.
@@ -829,12 +849,12 @@ nowatch:
 ;
 ;Check it wasn't a single step anyway.
 ;
-        test    DebugState,ST_SINGLE_STEPPING       ;single steping anyway?
+        test    DebugState2,ST2_SINGLE_STEPPING ;single steping anyway?
         jnz     @@8exec
         jmp     @@7exec
 
 @@10exec:
-        or      DebugState,ST_WATCH
+        or      DebugState1,ST1_WATCH
 @@8exec:
 ;
 ;Re-enable interrupts
@@ -882,8 +902,9 @@ DebugLoad   proc    "C" public  uses ebx ecx edx esi edi
         mov     esi,edx
         mov     edx,eax
         xor     ecx,ecx
-        push    ebp             ; save critical register chewed by debug EXEC (fffdh) API
+        push    ebp
         sys     ExecDebug
+        pop     ebp
 ;!!!! TODO - Causeway bug, change ES !!!!
         push    ds
         pop     es
@@ -892,15 +913,12 @@ DebugLoad   proc    "C" public  uses ebx ecx edx esi edi
 ;
 ;Some sort of error occured so set status.
 ;
-        pop     ebp                     ; restore crit ebp value
         movsx   eax,ax
         jmp     @@9load
 ;
 ;Setup initial register values.
 ;
 @@3load:
-        mov     DebugSegs,ebp
-        pop     ebp                     ; restore crit ebp value
         mov     DebugCS,cx
         mov     DebugEIP,edx
         mov     DebugSS,bx
@@ -995,11 +1013,10 @@ SetDbgTask  endp
 ;*******************************************************************************
 CheckMemoryBlockInfo proc private uses ebx edi
         mov     esi,eax
-        movzx   edx,dx
-        or      eax,edx
+        movzx   ebx,dx
+        or      eax,ebx
         jz      @@calc2
         mov     edi,ecx
-        mov     ebx,edx
         sys     GetSelDet32
         sub     ecx,esi
         jbe     @@calc2

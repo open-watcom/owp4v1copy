@@ -267,9 +267,10 @@ APICallTable    dd cwAPI_Info       ;00
         ;
         dd 16*7 dup (0)             ;80-EF
         ;
-        dd 8 dup (0)                ;F0-F7
+        dd 7 dup (0)                ;F0-F6
+        dd cwAPI_DbgNtfModLoad      ;F7
         ;
-        dd 0                        ;F8
+        dd cwAPI_DbgNtfModUnload    ;F8
         dd cwAPI_ID                 ;F9
         dd cwAPI_GetPatch           ;FA
         dd cwAPI_cwcLoad            ;FB
@@ -629,6 +630,27 @@ udret:
         cwAPI_C2C
         ret
 cwAPI_UserDump  ENDP
+
+
+;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+;
+;Notify Debugger of new module loaded.
+;
+;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+cwAPI_DbgNtfModLoad proc    near
+        ret
+cwAPI_DbgNtfModLoad endp
+
+
+;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+;
+;Notify Debugger of module unloading.
+;
+;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+cwAPI_DbgNtfModUnload   proc    near
+        ret
+cwAPI_DbgNtfModUnload   endp
+
 
 ;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ;
@@ -6165,11 +6187,15 @@ api84_8:
         mov     edi,edx
         pop     edx
         pop     ecx
+        mov     WORD PTR es:[edi+EPSP_Struc.EPSP_EntryCSEIP+4],cx
+        mov     DWORD PTR es:[edi+EPSP_Struc.EPSP_EntryCSEIP],edx
+;
+;Notify debugger of new module loaded.
+;
+        sys DbgNtfModLoad
 ;
 ;Call DLL's initialisation code.
 ;
-        mov     WORD PTR es:[edi+EPSP_Struc.EPSP_EntryCSEIP+4],cx
-        mov     DWORD PTR es:[edi+EPSP_Struc.EPSP_EntryCSEIP],edx
         or      cx,cx
         jz      api84_imp5
         xor     eax,eax
@@ -6254,6 +6280,10 @@ UnFindModule    proc    near
 ;
         dec     es:EPSP_Struc.EPSP_Links[edi]
         jnz     api85_8
+;
+;Notify debugger of module unloading.
+;
+        sys DbgNtfModUnload
 ;
 ;Get this PSP's selector.
 ;

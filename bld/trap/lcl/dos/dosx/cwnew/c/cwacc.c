@@ -48,18 +48,27 @@
 #include "dosmsgs.h"
 #undef  ERR_CODES
 
-#define MAX_WATCHES     256
+#include "tinyio.h"
+#include "exeos2.h"
+#include "exeflat.h"
 
-#define ST_EXECUTING    0x01
-#define ST_BREAK        0x02
-#define ST_TRACE        0x04
-#define ST_WATCH        0x08
-#define ST_KEYBREAK     0x10
-#define ST_TERMINATE    0x20
+#define MAX_WATCHES         256
+
+#define ST_EXECUTING        0x01
+#define ST_BREAK            0x02
+#define ST_TRACE            0x04
+#define ST_WATCH            0x08
+#define ST_KEYBREAK         0x10
+#define ST_TERMINATE        0x20
+#define ST_LOAD_MODULE      0x40
+#define ST_UNLOAD_MODULE    0x80
+
+#define ALIGN4K(x)          (((x)+0x0fffL)&~0x0fffL)
+
+#define FLAT_SEL            0x73
 
 #ifdef DEBUG_TRAP
 extern void dos_printf( const char *format, ... );
-
 #define _DBG( ... )   dos_printf( __VA_ARGS__ )
 #define _DBG1( ... )   dos_printf( __VA_ARGS__ )
 #define _DBG2( ... )   dos_printf( __VA_ARGS__ )
@@ -72,25 +81,10 @@ extern void dos_printf( const char *format, ... );
 #define GetModuleHandle GetSelBase
 #define GetLinAddr(x)   GetSelBase(x.segment)+x.offset
 
-#define IDX_TO_SEL(x) ((epsp->SegBase+segidx*8)|3)
-
 typedef unsigned_16 selector;
 typedef unsigned_16 segment;
 
 #include "pushpck1.h"
-typedef struct seg_t {
-    unsigned_32 base;
-    unsigned    limit   :20;
-    unsigned    granul  :1;
-    unsigned    class   :4;
-    unsigned    is16bit :1;
-    unsigned    is32bit :1;
-    unsigned    isFlat  :1;
-    unsigned    reserved:2;
-    unsigned    nospeed :1;
-    unsigned    compres :1;
-} seg_t;
-
 typedef struct epsp_t {
     char            PSP[256];
     selector        parent;
@@ -116,12 +110,27 @@ typedef struct epsp_t {
     void            *Exports;
     void            *Imports;
     unsigned_32     Links;
-    void            *ExecCount;
-    void            far *EntryCSEIP;
+    unsigned_32     ExecCount;
+    void            *EntryEIP;
+    selector        EntryCS;
     selector        PSPSel;
     char            FileName[256];
 } epsp_t;
 #include "poppck.h"
+
+typedef struct seg_t {
+    unsigned_32 base;
+    unsigned_32 size;
+    unsigned_32 flags;
+    unsigned_32 new_base;
+} seg_t;
+
+typedef struct mod_t {
+    epsp_t          *epsp;
+    bool            loaded;
+    int             SegCount;
+    seg_t           *ObjInfo;
+} mod_t;
 
 typedef struct hbrk_t {
     unsigned_32     address;
@@ -165,6 +174,30 @@ extern int IsSel32bit( unsigned_16 );
     "and   eax,400000h" \
     parm [ax] value [eax];
 
+extern void *malloc( unsigned );
+#pragma aux malloc = \
+    "mov   ax,0ff11h" \
+    "int   31h" \
+    parm [ecx] value [esi];
+
+extern void *realloc( void *, unsigned );
+#pragma aux realloc = \
+    "mov   ax,0ff13h" \
+    "int   31h" \
+    parm [esi] [ecx] value [esi];
+
+extern void free( void * );
+#pragma aux free = \
+    "mov   ax,0ff11h" \
+    "int   31h" \
+    parm [esi];
+
+extern unsigned short GetPSP( void );
+#pragma aux GetPSP = \
+    "mov  ah,62h" \
+    "int  21h" \
+    modify [ax] value [bx];
+
 extern unsigned     MemoryCheck( unsigned_32, unsigned, unsigned );
 extern unsigned     MemoryRead( unsigned_32, unsigned, void *, unsigned );
 extern unsigned     MemoryWrite( unsigned_32, unsigned, void *, unsigned );
@@ -178,15 +211,18 @@ extern unsigned_8       Exception;
 extern int              XVersion;
 extern trap_cpu_regs    DebugRegs;
 extern unsigned_16      DebugPSP;
-extern seg_t            *DebugSegs;
 
-char                UtilBuff[BUFF_SIZE];
 int                 WatchCount = 0;
 bool                FakeBreak = FALSE;
 
 static unsigned_8   RealNPXType;
 static hbrk_t       HBRKTable[4];
 static watch_t      WatchPoints[MAX_WATCHES];
+static mod_t        *ModHandles = NULL;
+static int          NumModHandles = 0;
+
+static selector     flatCode = FLAT_SEL;
+static selector     flatData = FLAT_SEL;
 
 static char *DosErrMsgs[] = {
 #include "dosmsgs.h"
@@ -196,7 +232,7 @@ static char *DosErrMsgs[] = {
 #ifdef DEBUG_TRAP
 void dos_printf( const char *format, ... )
 {
-    static char     dbg_buf[ 256 ];
+    static char     dbg_buf[256];
     va_list         args;
 
     va_start( args, format );
@@ -299,8 +335,14 @@ static int MapStateToCond( unsigned state )
         _DBG( "Condition: TERMINATE\r\n" );
         rc = COND_TERMINATE;
     } else if( state & ST_KEYBREAK ) {
-        _DBG( "Condition: KEYBREAK\r\n" );
+        _DBG( "Condition: USER\r\n" );
         rc = COND_USER;
+    } else if( state & ST_LOAD_MODULE ) {
+        _DBG( "Condition: LIBRARIES\r\n" );
+        rc = COND_LIBRARIES;
+    } else if( state & ST_UNLOAD_MODULE ) {
+        _DBG( "Condition: LIBRARIES\r\n" );
+        rc = COND_LIBRARIES;
     } else if( state & ST_WATCH ) {
         _DBG( "Condition: WATCH\r\n" );
         rc = COND_WATCH;
@@ -317,6 +359,113 @@ static int MapStateToCond( unsigned state )
     return( rc );
 }
 
+static void AddModHandle( epsp_t *epsp )
+/***************************************/
+{
+    mod_t           *mod;
+    tiny_ret_t      rc;
+    int             handle;
+    object_record   obj;
+    unsigned_32     off;
+    os2_flat_header os2_hdr;
+    addr_off        new_base;
+    unsigned        i;
+
+    if( ModHandles == NULL ) {
+        ModHandles = malloc( sizeof( mod_t ) );
+    } else {
+        ModHandles = realloc( ModHandles, ( NumModHandles + 1 ) * sizeof( mod_t ) );
+    }
+    mod = &ModHandles[NumModHandles];
+    ++NumModHandles;
+    mod->epsp = epsp;
+    mod->loaded = TRUE;
+    mod->SegCount = 0;
+    mod->ObjInfo = NULL;
+    rc = TinyOpen( epsp->FileName, TIO_READ );
+    if( TINY_ERROR( rc ) ) {
+        return;
+    }
+    handle = TINY_INFO( rc );
+    TinySeek( handle, OS2_NE_OFFSET, SEEK_SET );
+    TinyRead( handle, &off, sizeof( off ) );
+    TinySeek( handle, off, SEEK_SET );
+    TinyRead( handle, &os2_hdr, sizeof( os2_hdr ) );
+    TinySeek( handle, os2_hdr.objtab_off + off, SEEK_SET );
+    mod->SegCount = os2_hdr.num_objects;
+    mod->ObjInfo = malloc( os2_hdr.num_objects * sizeof( seg_t ) );
+    new_base = 0;
+    for( i = 0; i < os2_hdr.num_objects; ++i ) {
+        TinyRead( handle, &obj, sizeof( obj ) );
+        mod->ObjInfo[i].flags = obj.flags;
+        mod->ObjInfo[i].base = obj.addr;
+        mod->ObjInfo[i].size = obj.size;
+        mod->ObjInfo[i].new_base = new_base;
+        new_base += ALIGN4K( obj.size );
+        if( NumModHandles == 1 ) {      // main executable
+            if( obj.flags & OBJ_BIG ) {
+                if( obj.flags & OBJ_EXECUTABLE ) {
+                    if( flatCode == FLAT_SEL ) {
+                        flatCode = ( mod->epsp->SegBase + i * 8 ) | 3;
+                    }
+                } else {
+                    if( flatData == FLAT_SEL ) {
+                        flatData = ( mod->epsp->SegBase + i * 8 ) | 3;
+                    }
+                }
+            }
+        }
+    }
+    TinyClose( handle );
+}
+
+static void RemoveModHandle( epsp_t *epsp )
+/******************************************/
+{
+    int     i;
+
+    for( i = 0; i < NumModHandles; ++i ) {
+        if( ModHandles[ i ].epsp == epsp ) {
+            ModHandles[ i ].loaded = FALSE;
+            if( ModHandles[ i ].SegCount ) {
+                free( ModHandles[ i ].ObjInfo );
+                ModHandles[ i ].ObjInfo = NULL;
+                ModHandles[ i ].SegCount = 0;
+            }
+            break;
+        }
+    }
+}
+
+static void FreeModsInfo( void )
+/******************************/
+{
+    int     i;
+
+    for( i = 0; i < NumModHandles; ++i ) {
+        if( ModHandles[ i ].loaded ) {
+            if( ModHandles[ i ].SegCount ) {
+                free( ModHandles[ i ].ObjInfo );
+                ModHandles[ i ].ObjInfo = NULL;
+                ModHandles[ i ].SegCount = 0;
+            }
+        }
+    }
+    free( ModHandles );
+    ModHandles = NULL;
+    NumModHandles = 0;
+}
+
+static void AddModsInfo( void )
+/*****************************/
+{
+    epsp_t          *epsp;
+
+    for( epsp = (epsp_t*)GetModuleHandle( DebugPSP ); epsp != NULL; epsp = epsp->NextPSP ) {
+        AddModHandle( epsp );
+    }
+}
+
 unsigned ReqGet_sys_config( void )
 /********************************/
 {
@@ -329,7 +478,7 @@ unsigned ReqGet_sys_config( void )
     ret->sys.osminor = _osminor;
     ret->sys.cpu = X86CPUType();
     ret->sys.huge_shift = 12;
-    ret->sys.fpu = NPXType(); //RealNPXType;
+    ret->sys.fpu = NPXType();       //RealNPXType;
     ret->sys.mad = MAD_X86;
     _DBG( "os = %d, cpu=%d, fpu=%d, osmajor=%d, osminor=%d\r\n",
         ret->sys.os, ret->sys.cpu, ret->sys.fpu, ret->sys.osmajor, ret->sys.osminor );
@@ -341,9 +490,11 @@ unsigned ReqMap_addr( void )
 {
     map_addr_req    *acc;
     map_addr_ret    *ret;
-    epsp_t          *epsp;
-    unsigned_32     limit;
-    signed_16       segidx;
+    unsigned_16     seg;
+    seg_t           *seginfo;
+    addr_off        off;
+    mod_t           *mod;
+    int             i;
 
     _DBG1( "AccMapAddr\r\n" );
     acc = GetInPtr(0);
@@ -352,33 +503,35 @@ unsigned ReqMap_addr( void )
     ret->out_addr.segment = 0;
     ret->lo_bound = 0;
     ret->hi_bound = 0;
-    epsp = (epsp_t *)GetModuleHandle( DebugPSP );
-    if( (epsp_t *)acc->handle == epsp ) {
-        // get segment index
-        segidx = acc->in_addr.segment;
-        if( segidx < 0 )
-            segidx = -segidx;
-        --segidx;
+    if( acc->handle < NumModHandles && ModHandles[acc->handle].loaded ) {
+        mod = &ModHandles[acc->handle];
+        seg = acc->in_addr.segment;
+        off = acc->in_addr.offset;
+        ret->hi_bound = ~0;
+        if( seg == MAP_FLAT_CODE_SELECTOR || seg == MAP_FLAT_DATA_SELECTOR ) {
+            seg = 1;
+            off += mod->ObjInfo[0].base;
+            for( i = 0; i < mod->SegCount; ++i ) {
+                seginfo = &mod->ObjInfo[i];
+                if( seginfo->base <= off && ( seginfo->base + seginfo->size ) > off ) {
+                    seg = i + 1;
+                    off -= seginfo->base;
+                    ret->lo_bound = seginfo->new_base + mod->epsp->MemBase;
+                    ret->hi_bound = ret->lo_bound + seginfo->size - 1;
+                    break;
+                }
+            }
+        }
+        --seg;
         // convert segment index to selector
-        ret->out_addr.segment = IDX_TO_SEL( segidx );
+        if( mod->ObjInfo[seg].flags & OBJ_BIG ) {
+            ret->out_addr.segment = ( mod->ObjInfo[seg].flags & OBJ_EXECUTABLE ) ? flatCode : flatData ;
+        } else {
+            ret->out_addr.segment = ( mod->epsp->SegBase + seg * 8 ) | 3;
+        }
         // convert offset
-        ret->out_addr.offset = acc->in_addr.offset + DebugSegs[segidx].base + epsp->MemBase;
-        // horrible hackery to fix offset + code size passed for symbol offset in global vars
-        if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ) {
-            // 2nd segment(hopefully DGROUP) base offset round up to next 64K
-            ret->out_addr.offset -= ( DebugSegs[1].base + 0xFFFF ) & 0xFFFF0000;
-        }
-        // Set the bounds.
-        limit = DebugSegs[segidx].limit;
-        if( DebugSegs[segidx].granul ) {
-            limit <<= 12;
-            limit |= 0xFFF;
-        }
-        if( limit != -1 && limit != 0 ) {
-            --limit;
-        }
-        ret->lo_bound = 0;
-        ret->hi_bound = limit;
+        ret->out_addr.offset = off + mod->ObjInfo[seg].new_base + mod->epsp->MemBase;
+        _DBG( "Map_addr: module=%d %X:%X -> %X:%X\n", acc->handle, acc->in_addr.segment, acc->in_addr.offset, ret->out_addr.segment, ret->out_addr.offset );
     }
     return( sizeof( *ret ) );
 }
@@ -420,6 +573,7 @@ unsigned ReqChecksum_mem( void )
     unsigned            read;
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
+    char                buffer[256];
 
     _DBG1(( "AccChkSum\n" ));
 
@@ -427,20 +581,20 @@ unsigned ReqChecksum_mem( void )
     ret = GetOutPtr( 0 );
     len = acc->len;
     ret->result = 0;
-    while( len >= BUFF_SIZE ) {
-        read = ReadMemory( &acc->in_addr, &UtilBuff, BUFF_SIZE );
+    while( len >= sizeof( buffer ) ) {
+        read = ReadMemory( &acc->in_addr, buffer, sizeof( buffer ) );
         for( i = 0; i < read; ++i ) {
-            ret->result += UtilBuff[ i ];
+            ret->result += buffer[ i ];
         }
-        if( read != BUFF_SIZE )
+        if( read != sizeof( buffer ) )
             return( sizeof( *ret ) );
-        len -= BUFF_SIZE;
-        acc->in_addr.offset += BUFF_SIZE;
+        len -= sizeof( buffer );
+        acc->in_addr.offset += sizeof( buffer );
     }
     if( len != 0 ) {
-        read = ReadMemory( &acc->in_addr, &UtilBuff, len );
+        read = ReadMemory( &acc->in_addr, buffer, len );
         for( i = 0; i < read; ++i ) {
-            ret->result += UtilBuff[ i ];
+            ret->result += buffer[ i ];
         }
     }
     return( sizeof( ret ) );
@@ -552,10 +706,23 @@ static unsigned ProgRun( bool step )
 /**********************************/
 {
     prog_go_ret *ret;
+    unsigned    status;
+    epsp_t      *epsp;
 
     _DBG1( "AccRunProg %X:%X\n", DebugRegs.CS, DebugRegs.EIP );
     ret = GetOutPtr( 0 );
-    ret->conditions = MapStateToCond( Execute( step ) );
+    status = Execute( step );
+    //handle module load/unload
+    if( status & ST_LOAD_MODULE ) {
+        epsp = (epsp_t *)DebugRegs.EDI;
+        if( epsp->EntryCS != 0 ) {
+            epsp->EntryCS = flatCode;   // set debugee flat selector for init routine
+        }
+        AddModHandle( epsp );
+    } else if( status & ST_UNLOAD_MODULE ) {
+        RemoveModHandle( (epsp_t *)DebugRegs.EDI );
+    }
+    ret->conditions = MapStateToCond( status );
     ret->conditions |= COND_CONFIG;
     // Now setup return value to reflect why we stopped execution.
     ret->program_counter.offset = DebugRegs.EIP;
@@ -587,6 +754,7 @@ unsigned ReqProg_load( void )
     prog_load_ret   *ret;
     unsigned        len;
     int             rc;
+    char            cmdl[129];
 
     _DBG1( "AccLoadProg\r\n" );
     ret = GetOutPtr( 0 );
@@ -596,29 +764,32 @@ unsigned ReqProg_load( void )
         ++src;
     ++src;
     len = GetTotalSize() - ( src - name ) - sizeof( prog_load_req );
-    dst = UtilBuff;
+    if( len > 127 )
+        len = 127;
+    dst = cmdl + 1;
     for( ; len > 0; --len ) {
         ch = *src;
-        if( ch == '\0' )
+        if( ch == '\0' ) {
+            if( len == 1 )
+                break;   
             ch = ' ';
+        }
         *dst = ch;
         ++src;
         ++dst;
     }
-    if( dst > UtilBuff )
-        --dst;
     *dst = '\0';
-    
-    rc = DebugLoad( name, UtilBuff );
+    *cmdl = dst - cmdl - 1;
+    rc = DebugLoad( name, cmdl );
     _DBG1( "back from debugload - %d\r\n", rc );
-    ret->flags = LD_FLAG_IS_32 | LD_FLAG_IS_PROT | LD_FLAG_DISPLAY_DAMAGED;
+    ret->flags = LD_FLAG_IS_32 | LD_FLAG_IS_PROT | LD_FLAG_DISPLAY_DAMAGED | LD_FLAG_HAVE_RUNTIME_DLLS;
+    ret->mod_handle = 0;
     if( rc == 0 ) {
         ret->err = 0;
         ret->task_id = DebugPSP;
-        ret->mod_handle = GetModuleHandle( DebugPSP );
+        AddModsInfo();
     } else {
         ret->task_id = 0;
-        ret->mod_handle = 0;
         if( rc == 1 ) {
             ret->err = ERR_ACCESS_DENIED;
         } else if( rc == 2 ) {
@@ -643,6 +814,7 @@ unsigned ReqProg_kill( void )
     acc = GetInPtr(0);
     ret = GetOutPtr( 0 );
     RedirectFini();
+    FreeModsInfo();
     ret->err = ( RelSel( acc->task_id ) ) ? ERR_INVALID_HANDLE : 0;
     return( sizeof( *ret ) );
 }
@@ -779,13 +951,22 @@ unsigned ReqGet_lib_name( void )
 /******************************/
 {
     char                *name;
+    get_lib_name_req    *acc;
     get_lib_name_ret    *ret;
+    int                 handle;
 
+    acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     ret->handle = 0;
     name = GetOutPtr( sizeof( *ret ) );
     *name = '\0';
-    return( sizeof( *ret ) + 1 );
+    handle = acc->handle + 1;
+    if( handle < NumModHandles ) {
+        if( ModHandles[ handle ].loaded )
+            strcpy( name, ModHandles[ handle ].epsp->FileName );
+        ret->handle = handle;
+    }
+    return( sizeof( *ret ) + strlen( name ) + 1 );
 }
 
 unsigned ReqGet_err_text( void )
@@ -869,7 +1050,7 @@ unsigned ReqMachine_data( void )
             data->charact = X86AC_BIG;
         }
     }
-    _DBG( "address %x:%x is %s\r\n", acc->addr.segment, acc->addr.offset, *data ? "32-bit" : "16-bit" );
+    _DBG( "address %x:%x is %s\r\n", acc->addr.segment, acc->addr.offset, data->charact ? "32-bit" : "16-bit" );
     return( sizeof( *ret ) + len );
 }
 

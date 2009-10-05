@@ -1145,6 +1145,38 @@ cwcInfo equ     0ff2bh
 
 ;-------------------------------------------------------------------------------
 ;
+;Notify Debugger of new module loaded
+;
+;On Entry:
+;
+;EDI    - module PSP linear address (FLAT).
+;
+;On Exit:
+;
+;NOTES:
+;
+;
+DbgNtfModLoad   equ     0fff7h
+
+
+;-------------------------------------------------------------------------------
+;
+;Notify Debugger of module unloading
+;
+;On Entry:
+;
+;EDI    - module PSP linear address (FLAT).
+;
+;On Exit:
+;
+;NOTES:
+;
+;
+DbgNtfModUnload equ     0fff8h
+
+
+;-------------------------------------------------------------------------------
+;
 ;Get CauseWay identifier, PageDIRLinear and Page1stLinear info.
 ;
 ;On Exit:
