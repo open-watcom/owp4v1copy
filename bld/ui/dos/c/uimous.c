@@ -94,7 +94,7 @@ void intern checkmouse( unsigned short *status, MOUSEORD *row,
     char    change;
 
     change = change;
-    MouseState( 3, &state );
+    MouseState( 3, (md_stk_ptr)&state );
 
     *status = state.bx;
 
