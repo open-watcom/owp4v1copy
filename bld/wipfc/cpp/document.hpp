@@ -124,7 +124,7 @@ public:
     std::uint16_t tocIndexById( GlobalDictionaryWord* id );
     //get a .nameit expansion
     const std::wstring* nameit( const std::wstring& key );
-    std::wstring* Document::prepNameitName( const std::wstring& key );
+    std::wstring* prepNameitName( const std::wstring& key );
 
     //Forwarding functions
 
