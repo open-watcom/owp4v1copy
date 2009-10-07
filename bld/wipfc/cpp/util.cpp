@@ -80,4 +80,28 @@ void splitAttribute( const std::wstring& text, std::wstring& key, std::wstring& 
     value = text.substr( index + 1 );
     killQuotes( value );
 }
+/*****************************************************************************/
+//Allow for files with non-native end-of-lines
+void killEOL( char * text )
+{
+    if( *text == '\n' || *text == '\r' ) {  //CR or LF
+        *text = '\0';
+        --text;
+    }
+    if( *text == '\n' || *text == '\r' ) {  //CRLF (or LFCR)
+        *text = '\0';
+    }
+}
+/*****************************************************************************/
+//Allow for files with non-native end-of-lines
+void killEOL( wchar_t * text )
+{
+    if( *text == L'\n' || *text == L'\r' ) {    //CR or LF
+        *text = L'\0';
+        --text;
+    }
+    if( *text == L'\n' || *text == L'\r' ) {    //CRLF (or LFCR)
+        *text = L'\0';
+    }
+}
 

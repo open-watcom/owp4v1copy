@@ -88,7 +88,8 @@ void Nls::readEntityFile( std::FILE *entty )
     wchar_t c;
     while( std::fgets( buffer, sizeof( buffer ) / sizeof( char ), entty ) ) {
         size_t len = std::strlen( buffer );
-        buffer[ len - 1 ] = '\0';         //kill '\n'
+        //buffer[ len - 1 ] = '\0';         //kill '\n'
+        killEOL( buffer + len - 1 );
         offset = std::mbtowc( &c, buffer, len );
         if( offset == -1 )
             throw FatalError( ERR_T_CONV );
@@ -135,7 +136,8 @@ void Nls::readNLS( std::FILE *nls )
             continue;               //skip blank lines
         if( buffer[0] == L'#' )
             continue;               //skip comments
-        buffer[ len - 1 ] = L'\0';  //kill '\n'
+        //buffer[ len - 1 ] = L'\0';  //kill '\n'
+        killEOL( buffer + len - 1 );
         if( ( value = std::wcschr( buffer, L'=' ) ) != 0 ) {
             *value = '\0';
             ++value;

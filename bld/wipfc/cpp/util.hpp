@@ -36,5 +36,7 @@ void killQuotes( wchar_t * text );
 void killQuotes( std::string& val );
 void killQuotes( std::wstring& val );
 void splitAttribute( const std::wstring& text, std::wstring& key, std::wstring& value);
+void killEOL( char * text );
+void killEOL( wchar_t * text );
 
 #endif //UTIL_INCLUDED
