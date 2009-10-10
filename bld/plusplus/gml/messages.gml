@@ -12169,3 +12169,19 @@ const signed int *f( unsigned int *psi ) {
     return ( signed int * ) psi;
 }
 :eerrbad.
+
+:MSGSYM. ERR_UNMATCHED_FUNCTION_TEMPLATE_DEFN
+:MSGTXT. unable to match function template definition '%S'
+:MSGJTXT.
+The function template definition cannot be matched to an earlier declaration.
+:errbad.
+template< class T >
+struct A
+{
+    A( );
+};
+
+template< class T >
+A< int >::A( )
+{ }
+:eerrbad.

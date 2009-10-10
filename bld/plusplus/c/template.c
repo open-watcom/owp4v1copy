@@ -1306,7 +1306,11 @@ void TemplateFunctionAttachDefn( DECL_INFO *dinfo )
     r = dinfo->body;
     dinfo->body = NULL;
     fn_templ = sym->u.defn;
-    DbgAssert( fn_templ != NULL );
+    if( fn_templ == NULL ) {
+        CErr2p( ERR_UNMATCHED_FUNCTION_TEMPLATE_DEFN, sym );
+        RewriteFree( r );
+        return;
+    }
     DbgAssert( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL ) );
 
     if( fn_templ->decl_scope != GetCurrScope() ) {

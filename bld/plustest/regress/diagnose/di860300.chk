@@ -159,3 +159,11 @@ File: source\diag0312.c
 (14,1): Warning! W932: cv-qualifier in return type 'int const' is meaningless
 (21,55): Warning! W931: cv-qualifier in cast to 'short const' is meaningless
 (22,41): Warning! W933: use of C-style cast to 'short *' is discouraged
+File: source\diag0313.c
+(8,12): Error! E197: type cannot be defined in this context
+(11,1): Error! E934: unable to match function template definition 'A::A'
+  definition: 'A<T>::A( void )'
+(15,1): Error! E934: unable to match function template definition 'A::A'
+  definition: 'A<int>::A( void )'
+(18,0): Error! E934: unable to match function template definition 'A::A'
+  definition: 'A<short>::A( void )'
