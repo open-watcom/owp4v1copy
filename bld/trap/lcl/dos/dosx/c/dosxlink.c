@@ -125,7 +125,7 @@ typedef struct RMBuff {
     static RMBuff       Buff;
     char                BackFromFork;
     static short        OldPSP;
-    char                BeenToProtMode;
+    static char         BeenToProtMode;
 
     extern short        DbgPSP( void );
     extern short        GetPSP( void );
@@ -138,6 +138,8 @@ typedef struct RMBuff {
         "sub  sp,50h" \
         "int  21h" \
         parm caller [ ax ] modify [ sp cx dx ];
+
+    extern char         *DOSEnvFind( char * );
 
 #endif
 
@@ -243,31 +245,13 @@ void far BackFromProtMode( void )
     SetPSP( OldPSP );
 }
 
-char *CopyStr( char *src, char *dst )
+static char *CopyStr( char *src, char *dst )
 {
     while( *dst = *src ) {
         dst++;
         src++;
     }
     return( dst );
-}
-
-static char *FindEnv( char *name )
-{
-    char        far *env;
-    unsigned    len;
-
-    len = strlen( name );
-    env = MK_FP( *((unsigned far *)MK_FP( DbgPSP(), 0x2c )), 0 );
-    while( *env ) {
-        if( memcmp( env, name, len ) == 0 ) {
-            return( env + len );
-        }
-        while( *env )
-            ++env;
-        ++env;
-    }
-    return( NULL );
 }
 
 static char *SearchPath( char far *env, char const *file, char *buff, char **pendname )
@@ -331,7 +315,7 @@ static char *FindExtender( char *fullpath, char **endname )
     char    *d4gname;
     unsigned len;
 
-    d4gname = FindEnv( "DOS4GPATH=" );
+    d4gname = DOSEnvFind( "DOS4GPATH=" );
     if( d4gname != NULL ) {
 _DBG_Write("Got DOS4GPATH -<");
 _DBG_Write(d4gname);
@@ -356,7 +340,7 @@ _DBG_Writeln( "found in path\r\n" );
         }
     }
 #endif
-    return( CheckPath( FindEnv( "PATH=" ), fullpath, endname ) );
+    return( CheckPath( DOSEnvFind( "PATH=" ), fullpath, endname ) );
 }
 
 #if defined(PHARLAP)
@@ -509,7 +493,7 @@ char *RemoteLink( char *parm, char server )
     #else
             help_name = HELPNAME;
     #endif
-            buffp = SearchPath( FindEnv( "PATH=" ), help_name, buff, &endhelp );
+            buffp = SearchPath( DOSEnvFind( "PATH=" ), help_name, buff, &endhelp );
             if( !*buffp ) {
                 _DBG_ExitFunc( "RemoteLink(), unable to find extender "
                             "help file" );

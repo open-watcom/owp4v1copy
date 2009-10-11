@@ -113,9 +113,9 @@ void SetDbgTask( void )
 {
 }
 
-static unsigned short ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsigned short), addr48_ptr *addr, byte far *data, unsigned short req ) {
+static unsigned short ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsigned int), addr48_ptr *addr, byte far *data, unsigned short req ) {
 
-    unsigned short    len;
+    unsigned short  len;
 
     _DBG(("checking %4.4x:%8.8lx for 0x%x bytes -- ",
             addr->segment, addr->offset, req ));
