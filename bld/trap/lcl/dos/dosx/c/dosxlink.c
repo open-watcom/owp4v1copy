@@ -315,7 +315,7 @@ static char *FindExtender( char *fullpath, char **endname )
     char    *d4gname;
     unsigned len;
 
-    d4gname = DOSEnvFind( "DOS4GPATH=" );
+    d4gname = DOSEnvFind( "DOS4GPATH" );
     if( d4gname != NULL ) {
 _DBG_Write("Got DOS4GPATH -<");
 _DBG_Write(d4gname);
@@ -340,7 +340,7 @@ _DBG_Writeln( "found in path\r\n" );
         }
     }
 #endif
-    return( CheckPath( DOSEnvFind( "PATH=" ), fullpath, endname ) );
+    return( CheckPath( DOSEnvFind( "PATH" ), fullpath, endname ) );
 }
 
 #if defined(PHARLAP)
@@ -493,7 +493,7 @@ char *RemoteLink( char *parm, char server )
     #else
             help_name = HELPNAME;
     #endif
-            buffp = SearchPath( DOSEnvFind( "PATH=" ), help_name, buff, &endhelp );
+            buffp = SearchPath( DOSEnvFind( "PATH" ), help_name, buff, &endhelp );
             if( !*buffp ) {
                 _DBG_ExitFunc( "RemoteLink(), unable to find extender "
                             "help file" );
