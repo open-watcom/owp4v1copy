@@ -1014,9 +1014,17 @@ int handle_REQ_GET_NEXT_ALIAS_REPLY( unsigned char * pkt, unsigned short )
     get_next_alias_ret * pr = ( get_next_alias_ret * ) pkt;
     
     printf( "Trap reply: REQ_GET_NEXT_ALIAS\n" );
-    printf( "    Segment:    %.04x\n", pr->seg );
-    printf( "    Alias:      %.04x\n", pr->alias );
-    
+    if( pr->seg ) {
+        printf( "    Segment:    %.04x\n", pr->seg );
+        if( pr->alias ) {
+            printf( "    Alias:      %.04x\n", pr->alias );
+        } else {
+            printf( "    *** DELETED ***\n" );
+        }
+    } else {
+        printf( "    *** END OF LIST ***\n" );
+    }
+
     return 1;
 }
 
