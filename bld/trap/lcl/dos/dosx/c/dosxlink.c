@@ -281,8 +281,8 @@ static char *SearchPath( char far *env, char const *file, char *buff, char **pen
         }
         memcpy( ptr, file, len + 1 );
         rc = TinyOpen( name, 0 );
-        if( rc > 0 ) {
-            TinyClose( (tiny_handle_t)rc );
+        if( TINY_OK( rc ) ) {
+            TinyClose( TINY_INFO( rc ) );
             break;
         }
         memcpy( endname, save, len + 2 );
@@ -355,8 +355,8 @@ static char const *GetHelpName( char *exe_name )
       otherwise:
           PLSHELP.EXP
     */
-    tiny_ret_t          ret;
-    int                 handle;
+    tiny_ret_t          rc;
+    tiny_handle_t       handle;
     unsigned_32         off;
     union {
         dos_exe_header  dos;
@@ -364,10 +364,10 @@ static char const *GetHelpName( char *exe_name )
     }   head;
 
     handle = -1;
-    ret = TinyOpen( exe_name, 0 );
-    if( TINY_ERROR( ret ) )
+    rc = TinyOpen( exe_name, 0 );
+    if( TINY_ERROR( rc ) )
         goto exp;
-    handle = TINY_INFO( ret );
+    handle = TINY_INFO( rc );
     TinyRead( handle, &head.dos, sizeof( head.dos ) );
     if( head.dos.signature != DOS_SIGNATURE )
         goto exp;

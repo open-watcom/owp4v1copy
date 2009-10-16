@@ -364,7 +364,7 @@ unsigned ReqProg_load( void )
         len = 0;
     } else {
         while( *src != '\0' ) ++src;
-        if( rc == 0 ) {
+        if( TINY_OK( rc ) ) {
             ++src;
             len = GetTotalSize() - (src - name) - sizeof( prog_load_req );
             dst = (char *)buffer;
