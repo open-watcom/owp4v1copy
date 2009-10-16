@@ -122,7 +122,7 @@ typedef enum {
             FLG_I | FLG_D | FLG_O)
 
 extern addr_seg         DbgPSP(void);
-extern long             DOSLoadProg(char far *, pblock far *);
+extern tiny_ret_t       DOSLoadProg(char far *, pblock far *);
 extern addr_seg         DOSTaskPSP(void);
 extern void             EndUser(void);
 extern unsigned_8       RunProg(trap_cpu_regs *, trap_cpu_regs *);
@@ -540,7 +540,7 @@ static EXE_TYPE CheckEXEType( char *name )
     rc = TinyOpen( name, TIO_READ_WRITE );
     if( TINY_ERROR( rc ) )
         return( EXE_UNKNOWN );
-    EXEhandle = rc;
+    EXEhandle = TINY_INFO( rc );
     exe_time.rc = TinyGetFileStamp( EXEhandle );
     EXETime = exe_time.stamp.time;
     EXEDate = exe_time.stamp.date;
@@ -591,7 +591,7 @@ unsigned ReqProg_load( void )
 {
     addr_seg        psp;
     pblock          parmblock;
-    long            rc;
+    tiny_ret_t      rc;
     char            far *parm;
     char            far *src;
     char            far *dst;
@@ -655,8 +655,7 @@ unsigned ReqProg_load( void )
     SegmentChain = 0;
     BoundAppLoading = FALSE;
     rc = DOSLoadProg( exe_name, &parmblock );
-    if( rc >= 0 ) {
-        rc = 0;
+    if( TINY_OK( rc ) ) {
         TaskRegs.SS = parmblock.startsssp.segment;
         /* for some insane reason DOS returns a starting SP two less then
            normal */
@@ -674,7 +673,7 @@ unsigned ReqProg_load( void )
     }
     TaskRegs.DS = psp;
     TaskRegs.ES = psp;
-    if( rc == 0 ) {
+    if( TINY_OK( rc ) ) {
         if( Flags.NoOvlMgr || !CheckOvl( parmblock.startcsip ) ) {
             if( exe == EXE_OS2 ) {
                 byte    far *pbyte;
@@ -688,19 +687,18 @@ unsigned ReqProg_load( void )
                 BoundAppLoading = FALSE;
                 rc = TinyOpen( exe_name, TIO_READ_WRITE );
                 if( TINY_OK( rc ) ) {
-                    EXEhandle = rc;
+                    EXEhandle = TINY_INFO( rc );
                     SeekEXEset( StartByte );
                     WriteEXE( SavedByte );
                     TinySetFileStamp( EXEhandle, EXETime, EXEDate );
                     TinyClose( EXEhandle );
                     EXEhandle = 0;
-                    rc = 0;
                     Flags.BoundApp = TRUE;
                 }
             }
         }
     }
-    ret->err = rc;
+    ret->err = TINY_ERROR( rc ) ? TINY_INFO( rc ) : 0;
     ret->task_id = psp;
     ret->flags = 0;
     ret->mod_handle = 0;
@@ -1013,10 +1011,10 @@ unsigned ReqGet_err_text( void )
 
     acc = GetInPtr( 0 );
     err_txt = GetOutPtr( 0 );
-    if( (unsigned_16)acc->err > ( (sizeof(DosErrMsgs)/sizeof(char *)-1) ) ) {
+    if( acc->err > ( (sizeof(DosErrMsgs)/sizeof(char *)-1) ) ) {
         strcpy( err_txt, TRP_ERR_unknown_system_error );
     } else {
-        strcpy( err_txt, DosErrMsgs[ (unsigned_16)acc->err ] );
+        strcpy( err_txt, DosErrMsgs[ acc->err ] );
     }
     return( strlen( err_txt ) + 1 );
 }
