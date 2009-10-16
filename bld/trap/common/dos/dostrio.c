@@ -91,7 +91,7 @@ tiny_handle_t PathOpen( char *name, unsigned name_len, char *exts )
     char        *ptr;
     char        *endptr;
     char        trpfile[256];
-    tiny_ret_t  filehndl;
+    tiny_ret_t  rc;
 
     has_ext = FALSE;
     has_path = FALSE;
@@ -118,12 +118,12 @@ tiny_handle_t PathOpen( char *name, unsigned name_len, char *exts )
         memcpy( trpfile + name_len, exts, strlen( exts ) + 1 );
     }
     if( has_path ) {
-        filehndl = TinyOpen( trpfile, TIO_READ );
+        rc = TinyOpen( trpfile, TIO_READ );
     } else {
         _searchenv( trpfile, "PATH", RWBuff );
-        filehndl = TinyOpen( RWBuff, TIO_READ );
+        rc = TinyOpen( RWBuff, TIO_READ );
     }
-    return( (filehndl < 0) ? (-1) : (tiny_handle_t)filehndl );
+    return( TINY_ERROR( rc ) ? (-1) : TINY_INFO( rc ) );
 }
 
 unsigned long GetSystemHandle( unsigned h )
