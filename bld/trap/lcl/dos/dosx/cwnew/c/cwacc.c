@@ -359,8 +359,8 @@ static int MapStateToCond( unsigned state )
     return( rc );
 }
 
-static void AddModHandle( epsp_t *epsp )
-/***************************************/
+static void AddModHandle( char *name, epsp_t *epsp )
+/**************************************************/
 {
     mod_t           *mod;
     tiny_ret_t      rc;
@@ -382,7 +382,10 @@ static void AddModHandle( epsp_t *epsp )
     mod->loaded = TRUE;
     mod->SegCount = 0;
     mod->ObjInfo = NULL;
-    rc = TinyOpen( epsp->FileName, TIO_READ );
+    if( XVersion >= 0x404 ) {
+        name = epsp->FileName;
+    }
+    rc = TinyOpen( name, TIO_READ );
     if( TINY_ERROR( rc ) ) {
         return;
     }
@@ -456,13 +459,15 @@ static void FreeModsInfo( void )
     NumModHandles = 0;
 }
 
-static void AddModsInfo( void )
-/*****************************/
+static void AddModsInfo( char *name, epsp_t *epsp )
+/*************************************************/
 {
-    epsp_t          *epsp;
-
-    for( epsp = (epsp_t*)GetModuleHandle( DebugPSP ); epsp != NULL; epsp = epsp->NextPSP ) {
-        AddModHandle( epsp );
+    if( XVersion >= 0x404 ) {
+        for( ; epsp != NULL; epsp = epsp->NextPSP ) {
+            AddModHandle( NULL, epsp );
+        }
+    } else {
+        AddModHandle( name, epsp );
     }
 }
 
@@ -718,7 +723,7 @@ static unsigned ProgRun( bool step )
         if( epsp->EntryCS != 0 ) {
             epsp->EntryCS = flatCode;   // set debugee flat selector for init routine
         }
-        AddModHandle( epsp );
+        AddModHandle( NULL, epsp );
     } else if( status & ST_UNLOAD_MODULE ) {
         RemoveModHandle( (epsp_t *)DebugRegs.EDI );
     }
@@ -787,7 +792,7 @@ unsigned ReqProg_load( void )
     if( rc == 0 ) {
         ret->err = 0;
         ret->task_id = DebugPSP;
-        AddModsInfo();
+        AddModsInfo( name, (epsp_t *)GetModuleHandle( DebugPSP ) );
     } else {
         ret->task_id = 0;
         if( rc == 1 ) {

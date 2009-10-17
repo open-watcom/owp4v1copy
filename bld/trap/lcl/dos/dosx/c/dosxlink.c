@@ -104,7 +104,11 @@ typedef struct RMBuff {
     static unsigned long    RMProcAddr;
     static RMBuff           far *RMBuffPtr;
 
+  #if defined(CAUSEWAY)
+    int                     XVersion;
+  #else
     char                    XVersion;
+  #endif
 
   #if defined(CAUSEWAY)
     extern unsigned short   GetZeroSel( void );
