@@ -946,13 +946,12 @@ DebugSegmentDPMI proc near
         jc      exc21_9
         ;
         mov     dx,ax
-        cmp     ax,WORD PTR fs:[EPSP_Struc.EPSP_SegBase]        ;inside application selector space?
+        cmp     ax,WORD PTR fs:[EPSP_Struc.EPSP_SegBase]    ;inside application selector space?
         jc      exc21_9
-        mov     cx,WORD PTR fs:[EPSP_Struc.EPSP_SegSize]
-;       shl     cx,3            ;8 bytes per selector.
-        add     cx,WORD PTR fs:[EPSP_Struc.EPSP_SegBase]        ;add in base selector.
+        mov     cx,WORD PTR fs:[EPSP_Struc.EPSP_SegSize]    ;8 bytes per selector.
+        add     cx,WORD PTR fs:[EPSP_Struc.EPSP_SegBase]    ;add in base selector.
         cmp     ax,cx
-        jnc     exc21_9         ;outside application startup selectors.
+        jnc     exc21_9                                     ;outside application startup selectors.
         mov     bx,dx
         push    cx
         push    dx
@@ -963,12 +962,12 @@ DebugSegmentDPMI proc near
         mov     ax,dx
         pop     dx
         pop     cx
-        sub     eax,DWORD PTR fs:[EPSP_Struc.EPSP_MemBase]      ;get offset within application.
+        sub     eax,DWORD PTR fs:[EPSP_Struc.EPSP_MemBase]  ;get offset within application.
         mov     ebx,eax
 exc21_9:
         pop     fs
         pop     ds
-        mov     [edi],ebx               ;store generated value.
+        mov     [edi],ebx                                   ;store generated value.
         assume ds:_Excep
         ret
 DebugSegmentDPMI endp
@@ -2018,7 +2017,7 @@ exc22_r5:
         mov     bx,WORD PTR fs:[EPSP_Struc.EPSP_SegBase]
         cmp     ax,bx
         jc      exc22_r2
-        mov     bx,WORD PTR fs:[EPSP_Struc.EPSP_SegSize]
+        mov     bx,WORD PTR fs:[EPSP_Struc.EPSP_SegSize]    ;8 bytes per selector.
         add     bx,WORD PTR fs:[EPSP_Struc.EPSP_SegBase]
         cmp     ax,bx
         jnc     exc22_r2

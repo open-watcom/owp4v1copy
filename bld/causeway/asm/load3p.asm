@@ -113,22 +113,22 @@ Load3P  proc    near
 ;
         push    ds
         lds     edx,f[api89_Name]
-        mov     ax,3d00h                ;open, read only.
+        mov     ax,3d00h                            ;open, read only.
         int     21h
         pop     ds
         jc      api89_no_file_error
-        mov     w[api89_Handle],ax      ;store the handle.
+        mov     w[api89_Handle],ax                  ;store the handle.
 ;
 ;Check for just a 3P file with no extender.
 ;
 api89_Look3P:
         mov     bx,w[api89_Handle]
-        mov     edx,offset apiNewHeader ;somewhere to put the info.
-        mov     ecx,size NewHeaderStruc ;size of it.
+        mov     edx,offset apiNewHeader             ;somewhere to put the info.
+        mov     ecx,size NewHeaderStruc             ;size of it.
         mov     ah,3fh
         int     21h
         jc      api89_file_error
-        cmp     ax,size NewHeaderStruc  ;did we read right amount?
+        cmp     ax,size NewHeaderStruc              ;did we read right amount?
         jnz     api89_file_error
         ;
         cmp     w[apiNewHeader],'ZM'
@@ -136,26 +136,26 @@ api89_Look3P:
         ;
         ;Move back to EXE details.
         ;
-        mov     ax,w[apiNewHeader+ExeHeaderStruc.apiExeLength+2]    ;get length in 512 byte blocks
+        mov     ax,w[apiNewHeader+ExeHeaderStruc.apiExeLength+2] ;get length in 512 byte blocks
         cmp     WORD PTR [apiNewHeader+ExeHeaderStruc.apiExeLength],0
-        je      medexe3         ; not rounded if no modulo
-        dec     ax              ;lose 1 cos its rounded up
+        je      medexe3                             ;not rounded if no modulo
+        dec     ax                                  ;lose 1 cos its rounded up
 medexe3:
-        add     ax,ax           ;mult by 2
+        add     ax,ax                               ;mult by 2
         mov     dh,0
         mov     dl,ah
         mov     ah,al
-        mov     al,dh           ;mult by 256=*512
-        add     ax,w[apiNewHeader+ExeHeaderStruc.apiExeLength]      ;add length mod 512
-        adc     dx,0            ;add any carry to dx
+        mov     al,dh                               ;mult by 256=*512
+        add     ax,w[apiNewHeader+ExeHeaderStruc.apiExeLength] ;add length mod 512
+        adc     dx,0                                ;add any carry to dx
         mov     cx,ax
-        xchg    cx,dx           ;swap round for DOS.
-        mov     ax,4200h                ;set absolute position.
+        xchg    cx,dx                               ;swap round for DOS.
+        mov     ax,4200h                            ;set absolute position.
         int     21h
         jmp     api89_Look3P
         ;
 api89_CheckNew:
-        cmp     w[apiNewHeader],'P3'    ;ID ok?
+        cmp     w[apiNewHeader],'P3'                ;ID ok?
         jnz     api89_file_error
 ;
 ;Check if this is the right module.
@@ -207,11 +207,11 @@ api89_emc0:
 ;
         push    ds
         lds     edx,f[api89_Name]
-        mov     ax,3d00h                ;open, read only.
+        mov     ax,3d00h                            ;open, read only.
         int     21h
         pop     ds
         jc      api89_file_error
-        mov     w[api89_Handle],ax      ;store the handle.
+        mov     w[api89_Handle],ax                  ;store the handle.
 ;
 ;Move past 3P header again.
 ;
@@ -228,9 +228,9 @@ api89_emc0:
         mov     esi,offset apiNewHeader
         mov     eax,NewHeaderStruc.NewFlags[esi]
         mov     d[api89_SystemFlags],eax
-        test    b[api89_SystemFlags+3],128      ;compressed?
+        test    b[api89_SystemFlags+3],128          ;compressed?
         jz      api89_noret
-        cmp     d[api89_Flags],1                ;debug load?
+        cmp     d[api89_Flags],1                    ;debug load?
         jnz     api89_noret
         jmp     api89_file_error
 ;
@@ -238,17 +238,17 @@ api89_emc0:
 ;
 api89_noret:
         mov     esi,offset apiNewHeader
-        cmp     NewHeaderStruc.NewEntryESP[esi],0       ;Need an automatic stack?
+        cmp     NewHeaderStruc.NewEntryESP[esi],0   ;Need an automatic stack?
         jnz     api89_NotAutoESP
-        mov     eax,NewHeaderStruc.NewAutoStack[esi]    ;Get auto stack size.
+        mov     eax,NewHeaderStruc.NewAutoStack[esi] ;Get auto stack size.
         or      eax,eax
         jnz     api89_GotAutoSize
         mov     eax,1024
 api89_GotAutoSize:
-        mov     NewHeaderStruc.NewEntryESP[esi],eax     ;Setup ESP value.
+        mov     NewHeaderStruc.NewEntryESP[esi],eax ;Setup ESP value.
         mov     ebx,NewHeaderStruc.NewAlloc[esi]
-        add     NewHeaderStruc.NewAlloc[esi],eax        ;update memory size needed.
-        mov     d[api89_AutoOffset],ebx ;store it for later.
+        add     NewHeaderStruc.NewAlloc[esi],eax    ;update memory size needed.
+        mov     d[api89_AutoOffset],ebx             ;store it for later.
 ;
 ;Get EXPORT memory.
 ;
@@ -268,8 +268,8 @@ api89_NoExports0:
         mov     ecx,NewHeaderStruc.NewImportModCnt[esi]
         or      ecx,ecx
         jz      api89_NoImports0
-        shl     ecx,2           ;dword per entry.
-        add     ecx,4           ;allow for count dword.
+        shl     ecx,2                               ;dword per entry.
+        add     ecx,4                               ;allow for count dword.
         sys     GetMemLinear32
         jc      api89_mem_error
         mov     d[api89_ModLink],esi
@@ -278,7 +278,7 @@ api89_NoExports0:
         assume es:_cwMain
         mov     es,RealSegment
         assume es:nothing
-        mov     DWORD PTR es:[esi],0            ;clear entry count for now.
+        mov     DWORD PTR es:[esi],0                ;clear entry count for now.
         mov     es,w[api89_PSP]
         mov     DWORD PTR es:[EPSP_Struc.EPSP_Imports],esi
         pop     es
@@ -287,50 +287,50 @@ api89_NoExports0:
 ;
 api89_NoImports0:
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewAlloc[esi]        ;get memory size required.
-        sys     GetMemLinear32  ;Get segment/selector.
-        jc      api89_mem_error         ;Not enough memory.
+        mov     ecx,NewHeaderStruc.NewAlloc[esi]    ;get memory size required.
+        sys     GetMemLinear32                      ;Get segment/selector.
+        jc      api89_mem_error                     ;Not enough memory.
         mov     d[api89_ProgBase],esi
 ;
 ;Get segment definition memory, selectors and details.
 ;
         mov     esi,offset apiNewHeader
-        movzx   ecx,NewHeaderStruc.NewSegments[esi]     ;get number of segments.
-        cmp     d[api89_AutoOffset],0   ;need auto SS?
+        movzx   ecx,NewHeaderStruc.NewSegments[esi] ;get number of segments.
+        cmp     d[api89_AutoOffset],0               ;need auto SS?
         jz      api89_NoAutoSeg
-        inc     cx              ;one more for the stack.
+        inc     cx                                  ;one more for the stack.
 api89_NoAutoSeg:
         push    cx
-        shl     ecx,3           ;8 bytes per entry.
+        shl     ecx,3                               ;8 bytes per entry.
         sys     GetMemLinear32
         pop     cx
         jc      api89_mem_error
         mov     d[api89_SegMem],esi
         sys     GetSels
         jc      api89_mem_error
-        mov     w[api89_Segs],bx                ;store base selector.
-        mov     w[api89_Segs+2],cx      ;store number of selectors.
+        mov     w[api89_Segs],bx                    ;store base selector.
+        mov     w[api89_Segs+2],cx                  ;store number of selectors.
 ;
 ;Update programs memory and selector details in PSP and variables.
 ;
         push    es
         mov     es,w[api89_PSP]
-        mov     ax,w[api89_Segs]                ;get base selector.
+        mov     ax,w[api89_Segs]                            ;get base selector.
         mov     WORD PTR es:[EPSP_Struc.EPSP_SegBase],ax
-        mov     ax,w[api89_Segs+2]      ;get number of selectors.
-        shl     ax,3
+        mov     ax,w[api89_Segs+2]                          ;get number of selectors.
+        shl     ax,3                                        ;8 bytes per selector.
         mov     WORD PTR es:[EPSP_Struc.EPSP_SegSize],ax
-        mov     eax,d[api89_ProgBase]   ;get memory address.
+        mov     eax,d[api89_ProgBase]                       ;get memory address.
         mov     DWORD PTR es:[EPSP_Struc.EPSP_MemBase],eax
         mov     DWORD PTR es:[EPSP_Struc.EPSP_NearBase],eax
         mov     edi,offset apiNewHeader
-        mov     eax,NewHeaderStruc.NewAlloc[edi]        ;get memory size.
+        mov     eax,NewHeaderStruc.NewAlloc[edi]            ;get memory size.
         mov     DWORD PTR es:[EPSP_Struc.EPSP_MemSize],eax
         pop     es
 ;
 ;Read segment definitions.
 ;
-        test    b[api89_SystemFlags+3],128      ;compressed?
+        test    b[api89_SystemFlags+3],128          ;compressed?
         jz      api89_ncp0
         mov     bx,w[api89_Handle]
         push    es
@@ -347,8 +347,8 @@ api89_NoAutoSeg:
         ;
 api89_ncp0:
         mov     esi,offset apiNewHeader
-        movzx   ecx,NewHeaderStruc.NewSegments[esi]     ;get number of segments.
-        shl     ecx,3           ;8 bytes per entry.
+        movzx   ecx,NewHeaderStruc.NewSegments[esi] ;get number of segments.
+        shl     ecx,3                               ;8 bytes per entry.
         mov     bx,w[api89_Handle]
         mov     edx,d[api89_SegMem]
         push    ecx
@@ -370,41 +370,41 @@ api89_ncp1:
         cmp     d[api89_AutoOffset],0
         jz      api89_NoAutoMake
         mov     esi,offset apiNewHeader
-        movzx   edi,NewHeaderStruc.NewSegments[esi]     ;get number of segments.
-        mov     NewHeaderStruc.NewEntrySS[esi],di       ;store SS number.
-        shl     edi,3           ;8 bytes per entry.
-        add     edi,d[api89_SegMem]     ;offset to space for new entry.
-        inc     NewHeaderStruc.NewSegments[esi] ;update number of segments.
+        movzx   edi,NewHeaderStruc.NewSegments[esi] ;get number of segments.
+        mov     NewHeaderStruc.NewEntrySS[esi],di   ;store SS number.
+        shl     edi,3                               ;8 bytes per entry.
+        add     edi,d[api89_SegMem]                 ;offset to space for new entry.
+        inc     NewHeaderStruc.NewSegments[esi]     ;update number of segments.
         mov     eax,d[api89_AutoOffset]
         mov     es,apiDSeg
         assume es:_cwMain
         mov     es,es:RealSegment
         assume es:nothing
-        mov     es:[edi],eax            ;setup base.
-        mov     eax,NewHeaderStruc.NewEntryESP[esi]     ;get limit.
+        mov     es:[edi],eax                        ;setup base.
+        mov     eax,NewHeaderStruc.NewEntryESP[esi] ;get limit.
         cmp     eax,100000h
         jc      api89_NoAutoGBit
         shr     eax,12
-        or      eax,1 shl 20            ;set G bit.
+        or      eax,1 shl 20                        ;set G bit.
 api89_NoAutoGBit:
-        or      eax,2 shl 21            ;set class 'stack'
-        mov     es:[edi+4],eax  ;setup limit entry.
+        or      eax,2 shl 21                        ;set class 'stack'
+        mov     es:[edi+4],eax                      ;setup limit entry.
 ;
 ;Get relocation table memory.
 ;
 api89_NoAutoMake:
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewRelocs[esi]       ;get number of relocation entries.
+        mov     ecx,NewHeaderStruc.NewRelocs[esi]   ;get number of relocation entries.
         or      ecx,ecx
         jz      api89_NoRelocsMem
-        shl     ecx,2           ;4 bytes per entry.
+        shl     ecx,2                               ;4 bytes per entry.
         sys     GetMemLinear32
         jc      api89_mem_error
         mov     d[api89_RelocMem],esi
 ;
 ;Read relocation entries.
 ;
-        test    b[api89_SystemFlags+3],128      ;compressed?
+        test    b[api89_SystemFlags+3],128          ;compressed?
         jz      api89_ncp2
         mov     bx,w[api89_Handle]
         push    es
@@ -421,8 +421,8 @@ api89_NoAutoMake:
         ;
 api89_ncp2:
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewRelocs[esi]       ;get number of relocation entries.
-        shl     ecx,2           ;4 bytes per entry.
+        mov     ecx,NewHeaderStruc.NewRelocs[esi]   ;get number of relocation entries.
+        shl     ecx,2                               ;4 bytes per entry.
         mov     bx,w[api89_Handle]
         mov     edx,d[api89_RelocMem]
         push    ecx
@@ -435,18 +435,18 @@ api89_ncp2:
         pop     ds
         pop     ecx
         jc      api89_file_error
-        cmp     eax,ecx         ;did we get enough?
+        cmp     eax,ecx                             ;did we get enough?
         jnz     api89_file_error
 ;
 ;Read export table.
 ;
 api89_NoRelocsMem:
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewExports[esi]      ;get length of export table.
+        mov     ecx,NewHeaderStruc.NewExports[esi]  ;get length of export table.
         or      ecx,ecx
         jz      api89_NoExpMem
         ;
-        test    b[api89_SystemFlags+3],128      ;compressed?
+        test    b[api89_SystemFlags+3],128          ;compressed?
         jz      api89_ncp3
         mov     bx,w[api89_Handle]
         push    es
@@ -474,24 +474,24 @@ api89_ncp3:
         pop     ds
         pop     ecx
         jc      api89_file_error
-        cmp     eax,ecx         ;did we get enough?
+        cmp     eax,ecx                             ;did we get enough?
         jnz     api89_file_error
 ;
 ;Get IMPORT memory.
 ;
 api89_NoExpMem:
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewImports[esi]      ;get size of IMPORT table.
+        mov     ecx,NewHeaderStruc.NewImports[esi]  ;get size of IMPORT table.
         or      ecx,ecx
         jz      api89_NoImpMem1
-        shl     ecx,2           ;4 bytes per entry.
+        shl     ecx,2                               ;4 bytes per entry.
         sys     GetMemLinear32
         jc      api89_mem_error
         mov     d[api89_ImpMem],esi
 ;
 ;Read IMPORT entries.
 ;
-        test    b[api89_SystemFlags+3],128      ;compressed?
+        test    b[api89_SystemFlags+3],128          ;compressed?
         jz      api89_ncp20
         mov     bx,w[api89_Handle]
         push    es
@@ -508,7 +508,7 @@ api89_NoExpMem:
         ;
 api89_ncp20:
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewImports[esi]      ;get size of IMPORT table.
+        mov     ecx,NewHeaderStruc.NewImports[esi]  ;get size of IMPORT table.
         mov     bx,w[api89_Handle]
         mov     edx,d[api89_ImpMem]
         push    ecx
@@ -521,14 +521,14 @@ api89_ncp20:
         pop     ds
         pop     ecx
         jc      api89_file_error
-        cmp     eax,ecx         ;did we get enough?
+        cmp     eax,ecx                             ;did we get enough?
         jnz     api89_file_error
 ;
 ;Read exe image.
 ;
 api89_NoImpMem1:
         mov     esi,offset apiNewHeader
-        test    NewHeaderStruc.NewFlags[esi],1 shl 31   ;compressed?
+        test    NewHeaderStruc.NewFlags[esi],1 shl 31 ;compressed?
         jz      api89_NotComp
         mov     bx,w[api89_Handle]
         push    es
@@ -551,19 +551,19 @@ api89_NotComp:
 
 api89_LoadAll:
         mov     edx,d[api89_ProgBase]
-        mov     ecx,NewHeaderStruc.NewLength[esi]       ;get image length.
+        mov     ecx,NewHeaderStruc.NewLength[esi]   ;get image length.
         mov     bx,w[api89_Handle]
         push    ecx
         push    ds
         mov     ds,apiDSeg
         assume ds:_cwMain
         mov     ds,RealSegment
-        call    ReadFile                ;read the file.
+        call    ReadFile                            ;read the file.
         assume ds:_apiCode
         pop     ds
         pop     ecx
-        jc      api89_file_error                ;problems problems.
-        cmp     eax,ecx         ;did we get right amount?
+        jc      api89_file_error                    ;problems problems.
+        cmp     eax,ecx                             ;did we get right amount?
         jnz     api89_file_error
         jmp     api89_ImageLoaded
 ;
@@ -571,7 +571,7 @@ api89_LoadAll:
 ;
 api89_LoadVMM:
         mov     eax,offset apiNewHeader
-        mov     eax,NewHeaderStruc.NewRelocs[eax]       ;get number of relocation entries.
+        mov     eax,NewHeaderStruc.NewRelocs[eax]   ;get number of relocation entries.
         mov     d[api89_SL_RelocLeft],eax
         mov     eax,d[api89_RelocMem]
         mov     d[api89_SL_RelocPnt],eax
@@ -598,14 +598,14 @@ api89_sl0:
         cmp     d[api89_SL_RelocLeft],0
         jz      api89_sl3
         mov     esi,d[api89_SL_RelocPnt]
-        mov     eax,es:[esi]            ;get fixup address.
+        mov     eax,es:[esi]                        ;get fixup address.
         and     eax,0FFFFFFFh
-        add     eax,4           ;allow for cross page fixup.
+        add     eax,4                               ;allow for cross page fixup.
         add     eax,8191
-        and     eax,not 8191            ;get terminal offset.
+        and     eax,not 8191                        ;get terminal offset.
         mov     ebx,d[api89_SL_LoadPnt]
         sub     ebx,d[api89_ProgBase]
-        sub     eax,ebx         ;get relative offset.
+        sub     eax,ebx                             ;get relative offset.
         cmp     eax,ecx
         jnc     api89_sl1
         mov     ecx,eax
@@ -629,12 +629,12 @@ api89_sl3:
         mov     ds,apiDSeg
         assume ds:_cwMain
         mov     ds,RealSegment
-        call    ReadFile                ;read the file.
+        call    ReadFile                            ;read the file.
         assume ds:_apiCode
         pop     ds
         pop     ecx
-        jc      api89_file_error                ;problems problems.
-        cmp     eax,ecx         ;did we get right amount?
+        jc      api89_file_error                    ;problems problems.
+        cmp     eax,ecx                             ;did we get right amount?
         jnz     api89_file_error
         ;
         ;Update variables.
@@ -654,13 +654,13 @@ api89_sl3:
         mov     dx,WORD PTR fs:[EPSP_Struc.EPSP_SegSize]
         shr     dx,3
 api89_SL_RelocLoop:
-        or ecx,ecx
+        or      ecx,ecx
         jz      api89_SL_DoneRelocs
-        mov     ebp,es:[esi]            ;get linear offset.
+        mov     ebp,es:[esi]                        ;get linear offset.
         mov     eax,ebp
-        and     ebp,0FFFFFFFh   ;Lose relocation type.
-        shr     eax,28          ;Get relocation type.
-        add     ebp,d[api89_ProgBase]   ;get linear address.
+        and     ebp,0FFFFFFFh                       ;Lose relocation type.
+        shr     eax,28                              ;Get relocation type.
+        add     ebp,d[api89_ProgBase]               ;get linear address.
         cmp     ebp,edi
         jnc     api89_file_error2
         or      al,al
@@ -672,30 +672,30 @@ api89_SL_RelocLoop:
 api89_SL_Offset32:
         mov     eax,ebp
         add     eax,4-1
-        cmp     eax,d[api89_SL_LoadPnt] ;beyond what we loaded?
+        cmp     eax,d[api89_SL_LoadPnt]             ;beyond what we loaded?
         jnc     api89_SL_DoneRelocs
-        mov     eax,es:[ebp]            ;Get offset.
+        mov     eax,es:[ebp]                        ;Get offset.
         add     eax,d[api89_ProgBase]
-        cmp     eax,edi         ;Beyond program?
+        cmp     eax,edi                             ;Beyond program?
         jnc     api89_file_error2
         mov     eax,d[api89_ProgBase]
-        add     DWORD PTR es:[ebp],eax  ;Do the relocation.
+        add     DWORD PTR es:[ebp],eax              ;Do the relocation.
         jmp     api89_SL_NextReloc
         ;
 api89_SL_Seg16:
         mov     eax,ebp
         add     eax,2-1
-        cmp     eax,d[api89_SL_LoadPnt] ;beyond what we loaded?
+        cmp     eax,d[api89_SL_LoadPnt]             ;beyond what we loaded?
         jnc     api89_SL_DoneRelocs
-        mov     ax,es:[ebp]             ;get selector number.
+        mov     ax,es:[ebp]                         ;get selector number.
         cmp     ax,dx
         jnc     api89_file_error2
-        shl     ax,3            ;*8 for selector value.
-        add     ax,bx           ;add base selector.
-        mov     es:[ebp],ax             ;set segment selector.
+        shl     ax,3                                ;*8 for selector value.
+        add     ax,bx                               ;add base selector.
+        mov     es:[ebp],ax                         ;set segment selector.
         ;
 api89_SL_NextReloc:
-        add     esi,4           ;next relocation entry.
+        add     esi,4                               ;next relocation entry.
         inc     d[api89_EntryEIP]
         dec     ecx
         jnz     api89_SL_RelocLoop
@@ -715,15 +715,15 @@ api89_ImageLoaded:
         pop     fs
         pop     es
         ;
-        mov     bx,w[api89_Handle]      ;grab handle again,
+        mov     bx,w[api89_Handle]                  ;grab handle again,
         mov     w[api89_Handle],0
-        mov     ah,3eh          ;and close it.
+        mov     ah,3eh                              ;and close it.
         int     21h
 ;
 ;Process relocations.
 ;
         mov     esi,offset apiNewHeader
-        mov     ecx,NewHeaderStruc.NewRelocs[esi]       ;get number of relocation entries.
+        mov     ecx,NewHeaderStruc.NewRelocs[esi]   ;get number of relocation entries.
         or      ecx,ecx
         jz      api89_DoneReloc
         mov     esi,d[api89_RelocMem]
@@ -740,11 +740,11 @@ api89_ImageLoaded:
         mov     dx,WORD PTR fs:[EPSP_Struc.EPSP_SegSize]
         shr     dx,3
 api89_RelocLoop:
-        mov     ebp,es:[esi]            ;get linear offset.
+        mov     ebp,es:[esi]                        ;get linear offset.
         mov     eax,ebp
-        and     ebp,0FFFFFFFh   ;Lose relocation type.
-        shr     eax,28          ;Get relocation type.
-        add     ebp,d[api89_ProgBase]   ;get linear address.
+        and     ebp,0FFFFFFFh                       ;Lose relocation type.
+        shr     eax,28                              ;Get relocation type.
+        add     ebp,d[api89_ProgBase]               ;get linear address.
         cmp     ebp,edi
         jnc     api89_file_error2
         or      al,al
@@ -754,24 +754,24 @@ api89_RelocLoop:
         jmp     api89_file_error2
         ;
 api89_Offset32:
-        mov     eax,es:[ebp]            ;Get offset.
+        mov     eax,es:[ebp]                        ;Get offset.
         add     eax,d[api89_ProgBase]
-        cmp     eax,edi         ;Beyond program?
+        cmp     eax,edi                             ;Beyond program?
         jnc     api89_file_error2
         mov     eax,d[api89_ProgBase]
-        add     DWORD PTR es:[ebp],eax  ;Do the relocation.
+        add     DWORD PTR es:[ebp],eax              ;Do the relocation.
         jmp     api89_NextReloc
         ;
 api89_Seg16:
-        mov     ax,es:[ebp]             ;get selector number.
+        mov     ax,es:[ebp]                         ;get selector number.
         cmp     ax,dx
         jnc     api89_file_error2
-        shl     ax,3            ;*8 for selector value.
-        add     ax,bx           ;add base selector.
-        mov     es:[ebp],ax             ;set segment selector.
+        shl     ax,3                                ;*8 for selector value.
+        add     ax,bx                               ;add base selector.
+        mov     es:[ebp],ax                         ;set segment selector.
         ;
 api89_NextReloc:
-        add     esi,4           ;next relocation entry.
+        add     esi,4                               ;next relocation entry.
         inc     d[api89_EntryEIP]
         dec     ecx
         jnz     api89_RelocLoop
@@ -784,22 +784,22 @@ api89_NextReloc:
 ;
 api89_DoneReloc:
         mov     esi,offset apiNewHeader
-        movzx   ecx,NewHeaderStruc.NewSegments[esi]     ;get number of segments.
+        movzx   ecx,NewHeaderStruc.NewSegments[esi] ;get number of segments.
         mov     esi,d[api89_SegMem]
         mov     es,apiDSeg
         assume es:_cwMain
         mov     es,es:RealSegment
         assume es:nothing
-        mov     bx,w[api89_Segs]                ;base selector.
+        mov     bx,w[api89_Segs]                    ;base selector.
 api89_SegLoop:
         push    ebx
         push    ecx
         push    esi
         ;
-        mov     eax,es:[esi+4]  ;Get limit.
+        mov     eax,es:[esi+4]                      ;Get limit.
         mov     ecx,eax
-        and     ecx,0fffffh             ;mask to 20 bits.
-        test    eax,1 shl 20            ;G bit set?
+        and     ecx,0fffffh                         ;mask to 20 bits.
+        test    eax,1 shl 20                        ;G bit set?
         jz      api89_NoGBit
         shl     ecx,12
         or      ecx,4095
@@ -810,52 +810,52 @@ api89_NoGBit:
         jz      api89_NoDecLim
         dec     ecx
 api89_NoDecLim:
-        mov     edx,es:[esi]            ;get base.
+        mov     edx,es:[esi]                        ;get base.
         ;
-        test    eax,1 shl 27            ;FLAT segment?
+        test    eax,1 shl 27                        ;FLAT segment?
         jz      api89_NotFLATSeg
         ;
         push    fs
         mov     fs,w[api89_PSP]
-        mov     DWORD PTR fs:[EPSP_Struc.EPSP_NearBase],0       ;Make sure NEAR functions work.
+        mov     DWORD PTR fs:[EPSP_Struc.EPSP_NearBase],0 ;Make sure NEAR functions work.
         pop     fs
         ;
         add     edx,d[api89_ProgBase]
-        or      ecx,-1          ;Update the limit.
+        or      ecx,-1                              ;Update the limit.
         xor     edx,edx
         jmp     api89_DoSegSet
         ;
 api89_NotFLATSeg:
-        add     edx,d[api89_ProgBase]   ;offset within real memory.
+        add     edx,d[api89_ProgBase]               ;offset within real memory.
         ;
 api89_DoSegSet:
         sys     SetSelDet32
-        mov     cx,w[api89_SystemFlags] ;use default setting.
+        mov     cx,w[api89_SystemFlags]             ;use default setting.
         shr     cx,14
         xor     cl,1
         or      cl,b[api89_SystemFlags+2]
         and     cl,1
         call    _DSizeSelector
         ;
-        mov     eax,es:[esi+4]  ;Get class.
-        shr     eax,21          ;move type into useful place.
-        and     eax,0fh         ;isolate type.
+        mov     eax,es:[esi+4]                      ;Get class.
+        shr     eax,21                              ;move type into useful place.
+        and     eax,0fh                             ;isolate type.
         or      eax,eax
         jz      api89_CodeSeg
         jmp     api89_SegDone
         ;
 api89_CodeSeg:
-        mov     eax,es:[esi+4]  ;Get type bits.
-        mov     cx,0            ;Set 16 bit seg.
+        mov     eax,es:[esi+4]                      ;Get type bits.
+        mov     cx,0                                ;Set 16 bit seg.
         test    eax,1 shl 25
         jnz     api89_Default
         mov     cx,1
-        test    eax,1 shl 26            ;32 bit seg?
+        test    eax,1 shl 26                        ;32 bit seg?
         jnz     api89_Default
-        mov     cx,w[api89_SystemFlags] ;use default setting.
+        mov     cx,w[api89_SystemFlags]             ;use default setting.
         shr     cx,14
-        and     cx,1            ;get code size
-        xor     cx,1            ;flip it for selector function.
+        and     cx,1                                ;get code size
+        xor     cx,1                                ;flip it for selector function.
 api89_Default:
         sys     CodeSel
         ;
@@ -863,8 +863,8 @@ api89_SegDone:
         pop     esi
         pop     ecx
         pop     ebx
-        add     esi,8           ;next definition.
-        add     ebx,8           ;next selector.
+        add     esi,8                               ;next definition.
+        add     ebx,8                               ;next selector.
         dec     ecx
         jnz     api89_SegLoop
 ;
@@ -888,22 +888,22 @@ api89_SegDone:
         ;
         ;Do module name entry.
         ;
-        add     es:[esi],ebp            ;turn offset into an address.
+        add     es:[esi],ebp                        ;turn offset into an address.
         add     esi,4
         ;
         ;Do all other entries.
         ;
 api89_exp0:
-        add     es:[esi],ebp            ;turn offset into an address.
-        mov     ebx,es:[esi]            ;get address of export entry.
-        movzx   eax,WORD PTR es:[ebx+4] ;get segment def.
-        add     WORD PTR es:[ebx+4],dx  ;update seg
+        add     es:[esi],ebp                        ;turn offset into an address.
+        mov     ebx,es:[esi]                        ;get address of export entry.
+        movzx   eax,WORD PTR es:[ebx+4]             ;get segment def.
+        add     WORD PTR es:[ebx+4],dx              ;update seg
         shl     eax,3
-        add     eax,edi         ;point into seg defs.
-        test    DWORD PTR es:[eax+4],1 shl 27   ;FLAT seg?
+        add     eax,edi                             ;point into seg defs.
+        test    DWORD PTR es:[eax+4],1 shl 27       ;FLAT seg?
         jz      api89_exp1
         mov     eax,d[api89_ProgBase]
-        add     DWORD PTR es:[ebx],eax  ;update to reflect FLAT
+        add     DWORD PTR es:[ebx],eax              ;update to reflect FLAT
 api89_exp1:
         add     esi,4
         dec     ecx
@@ -915,16 +915,16 @@ api89_exp9:
 ;
         mov     esi,offset apiNewHeader
         ;
-        mov     ebx,NewHeaderStruc.NewEntryEIP[esi]     ;get entry address.
+        mov     ebx,NewHeaderStruc.NewEntryEIP[esi] ;get entry address.
         movzx   eax,NewHeaderStruc.NewEntryCS[esi]
         shl     eax,3
         add     ax,w[api89_Segs]
         mov     w[api89_SegCS],ax
         sub     ax,w[api89_Segs]
-        add     eax,d[api89_SegMem]     ;point to this segments entry.
-        test    DWORD PTR es:[eax+4],1 shl 27   ;FLAT segment?
+        add     eax,d[api89_SegMem]                 ;point to this segments entry.
+        test    DWORD PTR es:[eax+4],1 shl 27       ;FLAT segment?
         jz      api89_NotFLATEIP
-        add     ebx,es:[eax]            ;include segments offset within image.
+        add     ebx,es:[eax]                        ;include segments offset within image.
         add     ebx,d[api89_ProgBase]
 api89_NotFLATEIP:
         mov     d[api89_EntryEIP],ebx
@@ -935,10 +935,10 @@ api89_NotFLATEIP:
         add     ax,w[api89_Segs]
         mov     w[api89_SegSS],ax
         sub     ax,w[api89_Segs]
-        add     eax,d[api89_SegMem]     ;point to this segments entry.
-        test    DWORD PTR es:[eax+4],1 shl 27   ;FLAT segment?
+        add     eax,d[api89_SegMem]                 ;point to this segments entry.
+        test    DWORD PTR es:[eax+4],1 shl 27       ;FLAT segment?
         jz      api89_NotFLATESP
-        add     ebx,es:[eax]            ;include segments offset within image.
+        add     ebx,es:[eax]                        ;include segments offset within image.
         add     ebx,d[api89_ProgBase]
 api89_NotFLATESP:
         mov     d[api89_EntryESP],ebx
@@ -958,20 +958,20 @@ api89_NotAUTODS:
 ;
 ;Convert import module names to pointers to export tables.
 ;
-        cmp     d[api89_ImpMem],0       ;any imports?
+        cmp     d[api89_ImpMem],0                   ;any imports?
         jz      api89_imp9
-        mov     d[api89_ImpCnt],0       ;Clear the counter.
+        mov     d[api89_ImpCnt],0                   ;Clear the counter.
         mov     es,apiDSeg
         assume es:_cwMain
         mov     es,es:RealSegment
         assume es:nothing
 api89_imp0:
         mov     esi,d[api89_ImpMem]
-        add     esi,DWORD PTR es:[esi]  ;move to module name list.
+        add     esi,DWORD PTR es:[esi]              ;move to module name list.
         mov     eax,d[api89_ImpCnt]
-        cmp     eax,DWORD PTR es:[esi]  ;Done all modules?
+        cmp     eax,DWORD PTR es:[esi]              ;Done all modules?
         jnc     api89_imp6
-        add     esi,es:[esi+4+eax*4]    ;Point to this module name.
+        add     esi,es:[esi+4+eax*4]                ;Point to this module name.
         ;
         ;Try and find the module.
         ;
@@ -1015,9 +1015,9 @@ api89_got_module:
         ;Update the module link table and usage count.
         ;
         mov     esi,d[api89_ModLink]
-        inc     DWORD PTR es:[esi]              ;update count.
+        inc     DWORD PTR es:[esi]                  ;update count.
         mov     eax,d[api89_ImpCnt]
-        mov     es:[esi+4+eax*4],edi    ;store EPSP link pointer.
+        mov     es:[esi+4+eax*4],edi                ;store EPSP link pointer.
         ;
         ;Move onto next module name.
         ;
@@ -1028,8 +1028,8 @@ api89_got_module:
 ;
 api89_imp6:
         mov     esi,d[api89_ImpMem]
-        add     esi,DWORD PTR es:[esi+8]        ;move to fixup list.
-        mov     eax,es:[esi]            ;get number of entries.
+        add     esi,DWORD PTR es:[esi+8]            ;move to fixup list.
+        mov     eax,es:[esi]                        ;get number of entries.
         or      eax,eax
         jz      api89_imp9
         mov     d[api89_ImpCnt],eax
@@ -1044,7 +1044,7 @@ api89_imp7:
         ;
         ;Point to the right modules export list.
         ;
-        mov     ecx,d[api89_ImpFlags]   ;get flags
+        mov     ecx,d[api89_ImpFlags]               ;get flags
         shr     ecx,30
         xor     eax,eax
 api89_imp8:
@@ -1072,17 +1072,17 @@ api89_imp10:
         ;
         ;Ordinal or string import?
         ;
-        test    d[api89_ImpType],128    ;ordinal?
+        test    d[api89_ImpType],128                ;ordinal?
         jz      api89_imp14
-        cmp     es:[edi],eax            ;check number of entries.
+        cmp     es:[edi],eax                        ;check number of entries.
         jc      api89_file_error
         mov     edi,es:[edi+4+eax*4]
         jmp     api89_imp11
         ;
 api89_imp14:
         mov     ebp,d[api89_ImpMem]
-        add     ebp,es:[ebp+4]  ;point to name list.
-        add     ebp,es:[ebp+4+eax*4]    ;point to name string.
+        add     ebp,es:[ebp+4]                      ;point to name list.
+        add     ebp,es:[ebp+4+eax*4]                ;point to name string.
         ;
         ;Try and find name string in export list.
         ;
@@ -1105,7 +1105,7 @@ api89_imp11:
         test    eax,64
         jz      api89_imp15
         and     eax,63
-        mov     edx,ebx         ;must be flat.
+        mov     edx,ebx                             ;must be flat.
         cmp     eax,1
         jz      api89_imp18
         mov     edx,d[api89_ImpFlags]
@@ -1171,12 +1171,12 @@ api89_imp9:
 ;Lose relocation memory.
 ;
         mov     esi,d[api89_RelocMem]
-        sys     RelMemLinear32  ;release relocation list memory.
+        sys     RelMemLinear32                      ;release relocation list memory.
         mov     d[api89_RelocMem],0
 ;
 ;Lose import memory.
 ;
-        mov     esi,d[api89_ImpMem]     ;release IMPORT memory.
+        mov     esi,d[api89_ImpMem]                 ;release IMPORT memory.
         or      esi,esi
         jz      api89_NoRelImp9
         sys     RelMemLinear32
@@ -1188,7 +1188,7 @@ api89_NoRelImp9:
         cmp     d[api89_Flags],1
         jz      api89_NoSegMemRel
         mov     esi,d[api89_SegMem]
-        sys     RelMemLinear32  ;release segment memory.
+        sys     RelMemLinear32                      ;release segment memory.
         mov     d[api89_SegMem],0
 ;
 ;Check if this is an exec or just a load.
@@ -1256,13 +1256,13 @@ api89_NoClose:
         mov     esi,d[api89_RelocMem]
         or      esi,esi
         jz      api89_NoRelRel
-        sys     RelMemLinear32  ;release relocation list memory.
+        sys     RelMemLinear32                      ;release relocation list memory.
         mov     d[api89_RelocMem],0
 api89_NoRelRel:
         mov     esi,d[api89_SegMem]
         or      esi,esi
         jz      api89_NoSegRel
-        sys     RelMemLinear32  ;release segment memory.
+        sys     RelMemLinear32                      ;release segment memory.
         mov     d[api89_SegMem],0
 api89_NoSegRel:
         mov     esi,d[api89_ImpMem]
@@ -1353,7 +1353,7 @@ api89_file_error:
 ;Corrupt file.
 ;
 api89_file_error2:
-        mov     eax,d[api89_EntryEIP]   ;Get the relocation number.
+        mov     eax,d[api89_EntryEIP]               ;Get the relocation number.
         push    ds
         assume ds:nothing
         mov     ds,cs:apiDSeg
