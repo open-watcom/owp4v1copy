@@ -868,13 +868,24 @@ int handle_REQ_PROG_STEP_REPLY( unsigned char * pkt, unsigned short )
     return 1;
 }
 
-int handle_REQ_PROG_LOAD( unsigned char * pkt, unsigned short )
+int handle_REQ_PROG_LOAD( unsigned char * pkt, unsigned short len )
 {
-    prog_load_req * prq = ( prog_load_req * ) pkt;
-    char * prog = ( char * ) &prq[1];
+    prog_load_req   *prq = (prog_load_req *)pkt;
+    char            *p = (char *)pkt;
+    unsigned        idx;
     
     printf( "Debugger request: REQ_PROG_LOAD\n" );
-    printf( "    Program:    %s\n", prog );
+    idx = sizeof( prog_load_req );
+    printf( "    Program:    %s\n", p + idx );
+    idx += strlen( p + idx ) + 1;
+    if( idx < len ) {
+        printf( "    Args:       %s\n", p + idx );
+        idx += strlen( p + idx ) + 1;
+        while( idx < len ) {
+            printf( "                %s\n", p + idx );
+            idx += strlen( p + idx ) + 1;
+        }
+    }
     printf( "    True argv:  %u\n", prq->true_argv );
     
     return 1;
