@@ -763,25 +763,20 @@ unsigned ReqProg_load( void )
 
     _DBG1( "AccLoadProg\r\n" );
     ret = GetOutPtr( 0 );
-    src = GetInPtr( sizeof( prog_load_req ) );
-    name = src;
-    while( *src != '\0' )
-        ++src;
-    ++src;
+    src = name = GetInPtr( sizeof( prog_load_req ) );
+    while( *src++ != '\0' ) {}
     len = GetTotalSize() - ( src - name ) - sizeof( prog_load_req );
     if( len > 127 )
         len = 127;
     dst = cmdl + 1;
     for( ; len > 0; --len ) {
-        ch = *src;
+        ch = *src++;
         if( ch == '\0' ) {
             if( len == 1 )
                 break;   
             ch = ' ';
         }
-        *dst = ch;
-        ++src;
-        ++dst;
+        *dst++ = ch;
     }
     *dst = '\0';
     *cmdl = dst - cmdl - 1;

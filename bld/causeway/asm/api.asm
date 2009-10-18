@@ -22,6 +22,8 @@ PatchTable      dd 16 dup (0)
 mcbLastChunk    dd 0
 ExecMCount      dd 0
 
+nullCmdl        db 0
+
 ;*******************************************************************************
 ;Put carry into return carry.
 ;*******************************************************************************
@@ -5518,6 +5520,11 @@ CreatePSP       proc    near
         mov     w[api82_Command+4],es
         mov     w[api82_Environment],cx
         ;
+        cmp     w[api82_Command+4],0
+        jnz     api82_CmdlOK
+        mov     w[api82_Command+4],cs
+        mov     d[api82_Command],offset nullCmdl
+api82_CmdlOK:
         mov     w[api82_PSP],0
 ;
 ;Allocate PSP memory.
@@ -5709,9 +5716,6 @@ api82_SkipCopy:
 ;
 ;Set new DTA address.
 ;
-api82_NoPSwitch0:
-        cmp     d[api82_Flags],2
-        jz      api82_NoDTA
         push    ds
         lds     edx,FWORD PTR es:[EPSP_Struc.EPSP_DTA]
         mov     ah,1ah
@@ -5720,17 +5724,12 @@ api82_NoPSwitch0:
 ;
 ;Preserve current state.
 ;
-api82_NoDTA:
-        cmp     d[api82_Flags],2
-        jz      api82_NoSave
         call    SaveExecState           ;do old state save.
         jc      api82_error             ;Not enough memory.
+api82_NoPSwitch0:
 ;
 ;Build command line.
 ;
-api82_NoSave:
-        cmp     w[api82_Command+4],0
-        jz      api82_NoCommand
         mov     es,w[api82_PSP]
         mov     edi,80h
         mov     DWORD PTR es:[edi],0
@@ -5745,7 +5744,6 @@ api82_NoSave:
 ;
 ;Check what's needed with the environment selector.
 ;
-api82_NoCommand:
         cmp     d[api82_Flags],2        ;cwLoad?
         jz      api82_CopyEnv           ;NoEnv
         mov     ax,w[api82_Environment]
