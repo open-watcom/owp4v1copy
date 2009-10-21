@@ -661,35 +661,33 @@ static void CheckForPE( char *name )
 
 unsigned ReqProg_load()
 {
-    char        ch;
-    char        *src;
-    char        *dst;
-    char        *name;
-    prog_load_ret       *ret;
-    unsigned            len;
+    char            ch;
+    char            *src;
+    char            *dst;
+    char            *name;
+    prog_load_ret   *ret;
+    unsigned        len;
 
     _DBG(("AccLoadProg\r\n"));
     memset( ObjOffReloc, 0, sizeof( ObjOffReloc ) );
     AtEnd = FALSE;
     ReportedAlias = FALSE;
     dst = UtilBuff + 1;
-    name = GetInPtr( sizeof( prog_load_req ) );
-    src = name;
+    src = name = GetInPtr( sizeof( prog_load_req ) );
     ret = GetOutPtr( 0 );
-    while( *src != '\0' ) ++src;
-    ++src;
-    len = GetTotalSize() - (src - name) - sizeof( prog_load_req );
-    for( ;; ) {
-        if( len == 0 ) break;
-        ch = *src;
-        if( ch == '\0' ) ch = ' ';
-        *dst = ch;
-        ++src;
-        ++dst;
-        --len;
+    while( *src++ != '\0' ) {}
+    len = GetTotalSize() - ( src - name ) - sizeof( prog_load_req );
+    if( len > 126 )
+        len = 126;
+    for( ; len > 0; -- len ) {
+        ch = *src++;
+        if( ch == '\0' ) {
+            if( len == 1 )
+                break;
+            ch = ' ';
+        }
+        *dst++ = ch;
     }
-    if( dst > UtilBuff ) --dst;
-
     *dst = '\r';
     UtilBuff[ 0 ] = dst - (UtilBuff + 1);
     ret->err = map_dbe( dbg_load( name, NULL, UtilBuff ) );

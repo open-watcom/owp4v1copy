@@ -547,20 +547,19 @@ unsigned ReqProg_load()
     dst = UtilBuff;
     src = name = GetInPtr( sizeof( prog_load_req ) );
     ret = GetOutPtr( 0 );
-    while( *src != '\0' ) ++src;
-    ++src;
+    while( *src++ != '\0' ) {};
     len = GetTotalSize() - (src - name) - sizeof( prog_load_req );
-    for( ;; ) {
-        if( len == 0 ) break;
-        ch = *src;
-        if( ch == '\0' ) ch = ' ';
-        *dst = ch;
-        ++src;
-        ++dst;
-        --len;
+    if( len > 126 )
+        len = 126;
+    for( ; len > 0; --len ) {
+        ch = *src++;
+        if( ch == '\0' ) {
+            if( len == 1 )
+                break;
+            ch = ' ';
+        }
+        *dst++ = ch;
     }
-    if( dst > UtilBuff ) --dst;
-
     *dst = '\0';
     _DBG1(( "about to debugload\r\n" ));
     _DBG1(( "Name :" ));

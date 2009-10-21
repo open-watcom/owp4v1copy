@@ -143,7 +143,7 @@ typedef struct RMBuff {
         "int  21h" \
         parm caller [ ax ] modify [ sp cx dx ];
 
-    extern char         *DOSEnvFind( char * );
+    extern const char   far *DOSEnvFind( char * );
 
 #endif
 
@@ -249,7 +249,7 @@ void far BackFromProtMode( void )
     SetPSP( OldPSP );
 }
 
-static char *CopyStr( char *src, char *dst )
+static char *CopyStr( const char far *src, char *dst )
 {
     while( *dst = *src ) {
         dst++;
@@ -258,7 +258,7 @@ static char *CopyStr( char *src, char *dst )
     return( dst );
 }
 
-static char *SearchPath( char far *env, char const *file, char *buff, char **pendname )
+static char *SearchPath( const char far *env, const char *file, char *buff, char **pendname )
 {
     char        *endname;
     char        *name;
@@ -296,9 +296,9 @@ static char *SearchPath( char far *env, char const *file, char *buff, char **pen
     return( name );
 }
 
-static char *CheckPath( char *path, char *fullpath, char **endname )
+static char *CheckPath( const char far *path, char *fullpath, char **endname )
 {
-    char const  *namep;
+    const char  *namep;
     char        *name;
 
     namep = EXTENDER_NAMES;
@@ -315,22 +315,22 @@ static char *CheckPath( char *path, char *fullpath, char **endname )
 static char *FindExtender( char *fullpath, char **endname )
 {
 #if defined(DOS4G)
-    char    *name;
-    char    *d4gname;
-    unsigned len;
+    char        *name;
+    const char  far *d4gname;
+    unsigned    len;
 
     d4gname = DOSEnvFind( "DOS4GPATH" );
     if( d4gname != NULL ) {
 _DBG_Write("Got DOS4GPATH -<");
 _DBG_Write(d4gname);
 _DBG_Writeln(">");
-        len = strlen( d4gname );
+        len = _fstrlen( d4gname );
         if( len > 4 ) {
-            name = d4gname + len - 4;
-            if( name[0] == '.'
-                && LOW(name[1]) == 'e'
-                && LOW(name[2]) == 'x'
-                && LOW(name[3]) == 'e' ) {
+            const char far *ext = d4gname + len - 4;
+            if( ext[0] == '.'
+                && LOW( ext[1] ) == 'e'
+                && LOW( ext[2] ) == 'x'
+                && LOW( ext[3] ) == 'e' ) {
 _DBG_Writeln( "is exe\r\n" );
                 CopyStr( d4gname, fullpath );
                 *endname = &fullpath[strlen(fullpath)];
@@ -349,7 +349,7 @@ _DBG_Writeln( "found in path\r\n" );
 
 #if defined(PHARLAP)
 
-static char const *GetHelpName( char *exe_name )
+static const char *GetHelpName( char *exe_name )
 {
     /*
       if executable is:
@@ -490,7 +490,7 @@ char *RemoteLink( char *parm, char server )
   #else
         {
             static char     *endhelp;
-            char const      *help_name;
+            const char      *help_name;
 
     #if defined(PHARLAP)
             help_name = GetHelpName( parm + strlen( parm ) + 1 );

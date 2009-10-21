@@ -149,8 +149,7 @@ extern int              far NoOvlsHdlr( int, void * );
 extern bool             CheckOvl( addr32_ptr );
 extern int              NullOvlHdlr(void);
 
-
-extern word             far SegmentChain;
+extern word             __based(__segname("_CODE")) SegmentChain;
 
 static tiny_handle_t    EXEhandle;
 static tiny_ftime_t     EXETime;
@@ -592,14 +591,14 @@ unsigned ReqProg_load( void )
     addr_seg        psp;
     pblock          parmblock;
     tiny_ret_t      rc;
-    char            far *parm;
-    char            far *src;
+    char            *parm;
+    char            *name;
     char            far *dst;
     char            exe_name[128];
     char            ch;
     EXE_TYPE        exe;
     prog_load_ret   *ret;
-    char            *end;
+    unsigned        len;
 
     ExceptNum = -1;
     ret = GetOutPtr( 0 );
@@ -608,37 +607,33 @@ unsigned ReqProg_load( void )
     /* build a DOS command line parameter in our PSP command area */
     Flags.BoundApp = FALSE;
     psp = DbgPSP();
-    parm = GetInPtr( sizeof( prog_load_req ) );
-    if( TINY_ERROR( FindFilePath( parm, exe_name, DosExtList ) ) ) {
+    parm = name = GetInPtr( sizeof( prog_load_req ) );
+    if( TINY_ERROR( FindFilePath( name, exe_name, DosExtList ) ) ) {
         exe_name[0] = '\0';
     }
-    while( *parm != '\0' )
-        ++parm;
-    src = ++parm;
-    dst = MK_FP( psp, CMD_OFFSET+1 );
-    end = (char *)GetInPtr( GetTotalSize()-1 );
-    for( ;; ) {
-        if( src > end )
-            break;
-        ch = *src;
-        if( ch == '\0' )
+    while( *parm++ != '\0' ) {}     // skip program name
+    len = GetTotalSize() - ( parm - name ) - sizeof( prog_load_req );
+    if( len > 126 )
+        len = 126;
+    dst = MK_FP( psp, CMD_OFFSET + 1 );
+    for( ; len > 0; --len ) {
+        ch = *parm++;
+        if( ch == '\0' ) {
+            if( len == 1 )
+                break;
             ch = ' ';
-        *dst = ch;
-        ++dst;
-        ++src;
+        }
+        *dst++ = ch;
     }
-    if( src > parm )
-        --dst;
     *dst = '\r';
-    parm = MK_FP( psp, CMD_OFFSET );
-    *parm = FP_OFF( dst ) - (CMD_OFFSET+1);
+    *(byte far *)MK_FP( psp, CMD_OFFSET ) = FP_OFF( dst ) - ( CMD_OFFSET + 1 );
     parmblock.envstring = 0;
     parmblock.commandln.segment = psp;
     parmblock.commandln.offset =  CMD_OFFSET;
     parmblock.fcb01.segment = psp;
     parmblock.fcb02.segment = psp;
-    parmblock.fcb01.offset  = 0X005C;
-    parmblock.fcb02.offset  = 0X006C;
+    parmblock.fcb01.offset  = 0x5C;
+    parmblock.fcb02.offset  = 0x6C;
     exe = CheckEXEType( exe_name );
     if( EXEhandle != 0 ) {
         TinyClose( EXEhandle );

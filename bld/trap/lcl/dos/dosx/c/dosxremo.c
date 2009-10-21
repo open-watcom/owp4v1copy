@@ -78,9 +78,7 @@ static unsigned DoAccess( void )
         _DBG_Writeln( "GetPacket" );
         len = GetPacket();
         left = len;
-        i = 0;
-        for( ;; ) {
-            if( i >= Out_Mx_Num ) break;
+        for( i = 0; i < Out_Mx_Num && left > 0; ++i ) {
             if( left > Out_Mx_Ptr[i].len ) {
                 piece = Out_Mx_Ptr[i].len;
             } else {
@@ -88,9 +86,7 @@ static unsigned DoAccess( void )
             }
             _DBG_Writeln( "RemovePacket" );
             RemovePacket( piece, Out_Mx_Ptr[i].ptr );
-            i++;
             left -= piece;
-            if( left == 0 ) break;
         }
     } else {
         len = 0;
@@ -107,7 +103,7 @@ unsigned ReqGet_sys_config( void )
 
     if( !TaskLoaded ) {
         ret = GetOutPtr(0);
-        ret->sys.os = OS_PHARLAP;
+        ret->sys.os = OS_IDUNNO;
         ret->sys.osmajor = 0;
         ret->sys.osminor = 0;
         ret->sys.fpu = X86_NO;
@@ -353,7 +349,8 @@ unsigned ReqProg_load( void )
     ret = GetOutPtr( 0 );
     src = name = GetInPtr( sizeof( prog_load_req ) );
     rc = FindFilePath( src, buffer, DosXExtList );
-    endparm = LinkParm + strlen( LinkParm ) + 1;
+    endparm = LinkParm;
+    while( *endparm++ != '\0' ) {}      // skip program name
     strcpy( endparm, buffer );
     err = RemoteLink( LinkParm, 0 );
     if( err != NULL ) {
@@ -363,13 +360,11 @@ unsigned ReqProg_load( void )
         ret->err = 1;
         len = 0;
     } else {
-        while( *src != '\0' ) ++src;
         if( TINY_OK( rc ) ) {
-            ++src;
-            len = GetTotalSize() - (src - name) - sizeof( prog_load_req );
+            while( *src++ != '\0' ) {}
+            len = GetTotalSize() - ( src - name ) - sizeof( prog_load_req );
             dst = (char *)buffer;
-            while( *dst != '\0' ) ++dst;
-            ++dst;
+            while( *dst++ != '\0' ) {};
             memcpy( dst, src, len );
             dst += len;
             _DBG_Writeln( "StartPacket" );

@@ -759,15 +759,15 @@ unsigned ReqProg_load( void )
     prog_load_ret   *ret;
     unsigned        len;
     int             rc;
-    char            cmdl[129];
+    char            cmdl[128];
 
     _DBG1( "AccLoadProg\r\n" );
     ret = GetOutPtr( 0 );
     src = name = GetInPtr( sizeof( prog_load_req ) );
     while( *src++ != '\0' ) {}
     len = GetTotalSize() - ( src - name ) - sizeof( prog_load_req );
-    if( len > 127 )
-        len = 127;
+    if( len > 126 )
+        len = 126;
     dst = cmdl + 1;
     for( ; len > 0; --len ) {
         ch = *src++;

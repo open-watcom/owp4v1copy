@@ -38,7 +38,7 @@
 extern bool             CheckPointMem( unsigned, char * );
 extern void             CheckPointRestore( void );
 extern tiny_ret_t       Fork(char *, unsigned);
-extern char             *DOSEnvFind( char * );
+extern const char       far *DOSEnvFind( char * );
 extern char             *GetExeExtensions(void);
 
 unsigned ReqFile_get_config( void )
@@ -194,7 +194,7 @@ static tiny_ret_t TryPath( char *name, char *end, char *ext_list )
 
 tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
 {
-    char        *p;
+    const char  far *path;
     char        *p2;
     char        *p3;
     tiny_ret_t  rc;
@@ -203,8 +203,8 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
 
     have_ext = 0;
     have_path = 0;
-    for( p = pgm, p2 = buffer; *p2 = *p; ++p, ++p2 ) {
-        switch( *p ) {
+    for( p3 = pgm, p2 = buffer; *p2 = *p3; ++p3, ++p2 ) {
+        switch( *p3 ) {
         case '\\':
         case '/':
         case ':':
@@ -221,17 +221,17 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
     rc = TryPath( buffer, p2, ext_list );
     if( TINY_OK( rc ) || have_path )
         return( rc );
-    p = DOSEnvFind( "PATH" );
-    if( p == NULL )
+    path = DOSEnvFind( "PATH" );
+    if( path == NULL )
         return( rc );
     for(;;) {
-        if( *p == '\0' )
+        if( *path == '\0' )
             break;
         p2 = buffer;
-        while( *p ) {
-            if( *p == ';' )
+        while( *path ) {
+            if( *path == ';' )
                 break;
-            *p2++ = *p++;
+            *p2++ = *path++;
         }
         if( p2[-1] != '\\' && p2[-1] != '/' ) {
             *p2++ = '\\';
@@ -241,9 +241,9 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
         rc = TryPath( buffer, p2, ext_list );
         if( TINY_OK( rc ) )
             break;
-        if( *p == '\0' )
+        if( *path == '\0' )
             break;
-        ++p;
+        ++path;
     }
     return( rc );
 }
