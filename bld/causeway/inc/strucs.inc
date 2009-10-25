@@ -37,15 +37,20 @@ Int_Flags16     equ     52
 Int_Flags32     equ     56
 
 
-ResSize equ     4096            ;Size of resource block.
-ResHead equ     16              ;Size of main header.
-ResNum  equ     ((((4096-ResHead)/5) shr 2) shl 2)      ;Number of entries.
-ResCount        equ     ResNum-4                ;count for free entry checking.
+ResHead struc
+ResHead_Prev    dd 0
+ResHead_Next    dd 0
+ResHead_Handle  dd 0
+ResHead ends
+
+ResSize         equ     4096                                        ;Size of resource block.
+ResNum          equ     ((((ResSize-size ResHead)/5) shr 2) shl 2)  ;Number of entries.
+ResCount        equ     ResNum-4                                    ;count for free entry checking.
 
 Res_NULL        equ     0       ;MUST be zero.
-Res_PSP equ     1       ;single entry.
-Res_SEL equ     2       ;single entry.
-Res_MEM equ     3       ;3 entries.
+Res_PSP         equ     1       ;single entry.
+Res_SEL         equ     2       ;single entry.
+Res_MEM         equ     3       ;3 entries.
 Res_LOCK        equ     4       ;2 entries.
 Res_DOSMEM      equ     5       ;?
 Res_CALLBACK    equ     6       ;3 entries.

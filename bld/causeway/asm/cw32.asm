@@ -3321,16 +3321,16 @@ cw5_pe0:
         mov     eax,16384-(mcbChunkLen+mcbLen)
         mov     DWORD PTR es:[EPSP_Struc.EPSP_mcbMaxAlloc],eax
         mov     DWORD PTR es:[EPSP_Struc.EPSP_mcbHead],edx
-        mov     WORD PTR es:[EPSP_Struc.EPSP_SegBase],0
-        mov     WORD PTR es:[EPSP_Struc.EPSP_SegSize],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_LastPSP],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_NextPSP],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_Exports],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_Imports],0
+        mov     WORD PTR es:[EPSP_Struc.EPSP_SegBase],dx
+        mov     WORD PTR es:[EPSP_Struc.EPSP_SegSize],dx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_LastPSP],edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_NextPSP],edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_Exports],edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_Imports],edx
         mov     DWORD PTR es:[EPSP_Struc.EPSP_Links],80000000h
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_EntryCSEIP+4],0
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_EntryCSEIP+4],edx
         mov     WORD PTR es:[EPSP_Struc.EPSP_PSPSel],es
-        mov     BYTE PTR es:[EPSP_Struc.EPSP_FileName],0
+        mov     BYTE PTR es:[EPSP_Struc.EPSP_FileName],dl
         mov     BasePSP,es
         mov     bx,es
         sys     GetSelDet32

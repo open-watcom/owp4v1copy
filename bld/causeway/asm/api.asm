@@ -4495,7 +4495,7 @@ api77_0:
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
 api77_FreeLoop:
         mov     edi,esi
-        add     edi,ResHead             ;point to types.
+        add     edi,size ResHead        ;point to types.
         mov     ecx,ResCount            ;get number of entries.
 api77_2:
         or      ecx,ecx
@@ -4505,9 +4505,9 @@ api77_2:
         repne   scasb                   ;Find NULL entry.
         jz      api77_3
 api77_2_0:
-        cmp     DWORD PTR es:[esi+8],0  ;link field setup?
+        cmp     DWORD PTR es:[esi+ResHead_Next],0   ;link field setup?
         jz      api77_Extend
-        mov     esi,es:[esi+8]          ;link to next block.
+        mov     esi,es:[esi+ResHead_Next]   ;link to next block.
         jmp     api77_FreeLoop
         ;
 api77_Extend:
@@ -4517,8 +4517,8 @@ api77_Extend:
         call    api77_GetAndInit
         pop     ecx
         jc      api77_90
-        mov     es:[esi+4],ecx          ;store back link address.
-        mov     es:[ecx+8],esi          ;store forward link address.
+        mov     es:[esi+ResHead_Prev],ecx   ;store back link address.
+        mov     es:[ecx+ResHead_Next],esi   ;store forward link address.
         jmp     api77_FreeLoop
 ;
 ;Check if enough entries are free.
@@ -4545,10 +4545,10 @@ api77_dosmem:
         jnz     api77_2
         dec     edi
         mov     ecx,edi
-        sub     ecx,ResHead             ;Get offset from list start.
+        sub     ecx,size ResHead        ;Get offset from list start.
         sub     ecx,esi
         shl     ecx,2
-        add     ecx,ResNum+ResHead
+        add     ecx,size ResHead + ResNum
         add     ecx,esi
         mov     BYTE PTR es:[edi],ah    ;Store type.
         mov     DWORD PTR es:[ecx],edx
@@ -4566,10 +4566,10 @@ api77_callback:
         jnz     api77_2
         dec     edi
         mov     ecx,edi
-        sub     ecx,ResHead             ;Get offset from list start.
+        sub     ecx,size ResHead        ;Get offset from list start.
         sub     ecx,esi
         shl     ecx,2
-        add     ecx,ResNum+ResHead
+        add     ecx,size ResHead + ResNum
         add     ecx,esi
         mov     BYTE PTR es:[edi],ah    ;Store type.
         mov     DWORD PTR es:[ecx],edx
@@ -4591,10 +4591,10 @@ api77_mem:
         jnz     api77_2
         dec     edi
         mov     ecx,edi
-        sub     ecx,ResHead             ;Get offset from list start.
+        sub     ecx,size ResHead        ;Get offset from list start.
         sub     ecx,esi
         shl     ecx,2
-        add     ecx,ResNum+ResHead
+        add     ecx,size ResHead + ResNum
         add     ecx,esi
         mov     BYTE PTR es:[edi],ah    ;Store type.
         mov     DWORD PTR es:[ecx],edx
@@ -4616,10 +4616,10 @@ api77_lock:
         jnz     api77_2
         dec     edi
         mov     ecx,edi
-        sub     ecx,ResHead             ;Get offset from list start.
+        sub     ecx,size ResHead        ;Get offset from list start.
         sub     ecx,esi
         shl     ecx,2
-        add     ecx,ResNum+ResHead
+        add     ecx,size ResHead + ResNum
         add     ecx,esi
         mov     BYTE PTR es:[edi],ah    ;Store type.
         mov     DWORD PTR es:[ecx],edx
@@ -4636,10 +4636,10 @@ api77_psp:
 api77_sel:
         dec     edi
         mov     ecx,edi
-        sub     ecx,ResHead             ;Get offset from list start.
+        sub     ecx,size ResHead        ;Get offset from list start.
         sub     ecx,esi
         shl     ecx,2
-        add     ecx,ResNum+ResHead
+        add     ecx,size ResHead + ResNum
         add     ecx,esi
         mov     BYTE PTR es:[edi],ah    ;Store type.
         mov     DWORD PTR es:[ecx],edx
@@ -4664,7 +4664,7 @@ api77_GetAndInit:
         push    ecx
         push    edx
         push    ebp
-        mov     cx,4096
+        mov     cx,ResSize
         xor     bx,bx
         mov     ax,0501h                ;Allocate memory block.
         cwAPI_CallOld
@@ -4679,7 +4679,7 @@ api77_GetAndInit:
         mov     ecx,ResSize/4
         cld
         rep     stosd                       ;init memory.
-        mov     DWORD PTR es:[esi+12],ebx   ;store the handle.
+        mov     DWORD PTR es:[esi+ResHead_Handle],ebx   ;store the handle.
         clc
 api77_GAIerror:
         pop     ebp
@@ -4720,23 +4720,23 @@ ReleaseResource proc near
         mov     esi,DWORD PTR fs:[EPSP_Struc.EPSP_Resource]
 api78_LookLoop:
         mov     edi,esi
-        add     edi,ResHead+ResNum
+        add     edi,size ResHead + ResNum
         mov     ecx,ResNum              ;get number of entries.
 api78_2:
         repne   scasd
         jz      api78_0
-        mov     esi,es:[esi+8]          ;link to next list.
+        mov     esi,es:[esi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jz      api78_9
         jmp     api78_LookLoop
         ;
 api78_0:
         mov     ebx,edi
-        sub     ebx,4+ResHead+ResNum
+        sub     ebx,size ResHead + ResNum + 4
         sub     ebx,esi
         shr     ebx,2
         add     ebx,esi
-        add     ebx,ResHead
+        add     ebx,size ResHead
         cmp     BYTE PTR es:[ebx],dl    ;Right type?
         jz      api78_1
         cmp     dl,Res_SEL              ;Selector?
@@ -4870,9 +4870,9 @@ api78_fPSP0:
         jz      api78_NoPSPSearch
         mov     ebp,ResNum
         mov     edi,esi
-        add     edi,16
+        add     edi,size ResHead
         mov     edx,esi
-        add     edx,ResHead+ResNum
+        add     edx,size ResHead + ResNum
 api78_fPSP1:
         cmp     BYTE PTR es:[edi],Res_PSP
         jnz     api78_fPSP2
@@ -4885,7 +4885,7 @@ api78_fPSP2:
         add     edx,4
         dec     ebp
         jnz     api78_fPSP1
-        mov     esi,es:[esi+8]          ;link to next list.
+        mov     esi,es:[esi+ResHead_Next]   ;link to next list.
         jmp     api78_fPSP0
         ;
 api78_NoPSPSearch:
@@ -4907,16 +4907,16 @@ api78_psp_1:
         or      esi,esi
         jz      api78_psp_9
 api78_psp_2:
-        cmp     DWORD PTR es:[esi+8],0  ;Found last entry in chain?
+        cmp     DWORD PTR es:[esi+ResHead_Next],0   ;Found last entry in chain?
         jz      api78_psp_3
-        mov     esi,DWORD PTR es:[esi+8]
+        mov     esi,DWORD PTR es:[esi+ResHead_Next]
         jmp     api78_psp_2
 api78_psp_3:
         mov     ebp,ResNum
         mov     edi,esi
-        add     edi,16
+        add     edi,size ResHead
         mov     edx,esi
-        add     edx,ResHead+ResNum
+        add     edx,size ResHead + ResNum
 api78_psp_4:
         cmp     BYTE PTR es:[edi],Res_NULL
         jz      api78_psp_5
@@ -5072,10 +5072,10 @@ api78_psp_5:
         add     edx,4
         dec     ebp
         jnz     api78_psp_4
-        mov     eax,DWORD PTR es:[esi+4]    ;get back link pointer.
+        mov     eax,DWORD PTR es:[esi+ResHead_Prev]    ;get back link pointer.
         push    eax
         push    esi
-        mov     esi,es:[esi+12]             ;get memory handle.
+        mov     esi,es:[esi+ResHead_Handle] ;get memory handle.
         mov     di,si
         shr     esi,16
         mov     ax,0502h                    ;release the block.
@@ -5088,7 +5088,7 @@ api78_psp_5:
         shr     esi,16
         mov     bx,si
         xor     si,si
-        mov     di,4096
+        mov     di,ResSize
         mov     ax,0703h                    ;discard the block.
         cwAPI_CallOld
         pop     edi
@@ -5097,7 +5097,7 @@ api78_psp_5:
         pop     esi
         or      esi,esi
         jz      api78_psp_9
-        mov     DWORD PTR es:[esi+8],0      ;make sure link pointer is clear
+        mov     DWORD PTR es:[esi+ResHead_Next],0   ;make sure link pointer is clear
         jmp     api78_psp_3
 api78_psp_9:
         ;
@@ -5162,22 +5162,22 @@ FindResource    proc    near
 api79_LookLoop:
         mov     ecx,ResNum              ;get number of entries.
         mov     edi,esi
-        add     edi,ResHead+ResNum
+        add     edi,size ResHead + ResNum
         cld
 api79_0:
         repne   scasd
         jz      api79_1
-        mov     esi,es:[esi+8]          ;link to next list.
+        mov     esi,es:[esi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jnz     api79_LookLoop
         stc
         jmp     api79_9
 api79_1:
         mov     ebp,edi
-        sub     ebp,4+ResHead+ResNum
+        sub     ebp,size ResHead + ResNum + 4
         sub     ebp,esi
         shr     ebp,2
-        add     ebp,ResHead
+        add     ebp,size ResHead
         add     ebp,esi
         cmp     es:[ebp],dl
         jnz     api79_0
@@ -5227,9 +5227,7 @@ FindResource    endp
 
 
 ;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-SaveExecState   proc    near
-        push    es
-        push    ds
+SaveExecState   proc    near    uses ds es eax ebx ecx edx edi esi
         assume ds:nothing
         mov     ds,cs:apiDSeg
         assume ds:_cwMain
@@ -5246,66 +5244,39 @@ SaveExecState   proc    near
 ;
 ;Get protected mode interrupt vectors.
 ;
-        mov     bl,0
-        mov     bp,256
+        xor     ebx,ebx
 api80_GetPVect:
-        push    bx
-        push    edi
-        push    bp
-        push    es
         sys     GetVect
-        pop     es
-        pop     bp
-        pop     edi
-        pop     bx
         mov     DWORD PTR es:[edi],edx
         mov     WORD PTR es:[edi+4],cx
         add     edi,6
-        inc     bl
-        dec     bp
-        jnz     api80_GetPVect
+        inc     ebx
+        cmp     ebx,256
+        jb      api80_GetPVect
 ;
 ;Get protected mode exception vectors.
 ;
-        mov     bp,32
-        mov     bl,0
+        xor     ebx,ebx
 api80_GetEVect:
-        push    bx
-        push    edi
-        push    bp
-        push    es
         sys     GetEVect
-        pop     es
-        pop     bp
-        pop     edi
-        pop     bx
         mov     DWORD PTR es:[edi],edx
         mov     WORD PTR es:[edi+4],cx
         add     edi,6
-        inc     bl
-        dec     bp
-        jnz     api80_GetEVect
+        inc     ebx
+        cmp     ebx,32
+        jb      api80_GetEVect
 ;
 ;Get real mode interrupt vectors.
 ;
-        mov     bp,256
-        mov     bl,0
+        xor     ebx,ebx
 api80_GetRVect:
-        push    bx
-        push    edi
-        push    bp
-        push    es
         sys     GetRVect
-        pop     es
-        pop     bp
-        pop     edi
-        pop     bx
         mov     WORD PTR es:[edi],dx
         mov     WORD PTR es:[edi+2],cx
         add     edi,4
-        inc     bl
-        dec     bp
-        jnz     api80_GetRVect
+        inc     ebx
+        cmp     ebx,256
+        jb      api80_GetRVect
 ;
 ;Get memory for DPMI state buffer.
 ;
@@ -5332,17 +5303,13 @@ api80_DPMISave32:
 api80_NoDPMISave:
         clc
 api80_9:
-        pop     ds
         assume ds:_apiCode
-        pop     es
         ret
 SaveExecState   endp
 
 
 ;=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-LoadExecState   proc    near
-        push    es
-        push    ds
+LoadExecState   proc    near    uses ds es eax ebx ecx edx edi
         assume ds:nothing
         mov     ds,cs:apiDSeg
         assume ds:_cwMain
@@ -5354,111 +5321,60 @@ LoadExecState   proc    near
         or      edi,edi
         jz      api81_NoIntRel
         mov     es,RealSegment
-        mov     bl,0
-        mov     bp,256
+        xor     ebx,ebx
 api81_SetPVect:
-        push    bx
-        push    edi
-        push    bp
-        push    es
         sys     GetVect
-        push    ecx
-        push    edx
-        mov     edx,DWORD PTR es:[edi]
-        mov     cx,WORD PTR es:[edi+4]
+        xchg    edx,DWORD PTR es:[edi]
+        xchg    cx,WORD PTR es:[edi+4]
         sys     SetVect
-        pop     edx
-        pop     ecx
         cmp     edx,DWORD PTR es:[edi]
-        jnz     api81_Pdiff
+        jnz     api81_Pdone
         cmp     cx,WORD PTR es:[edi+4]
-        jnz     api81_Pdiff
+        jnz     api81_Pdone
         mov     WORD PTR es:[edi+4],-1
-        jmp     api81_Pdone
-api81_Pdiff:
-        mov     DWORD PTR es:[edi],edx
-        mov     WORD PTR es:[edi+4],cx
 api81_Pdone:
-        pop     es
-        pop     bp
-        pop     edi
-        pop     bx
         add     edi,6
-        inc     bl
-        dec     bp
-        jnz     api81_SetPVect
+        inc     ebx
+        cmp     ebx,256
+        jb      api81_SetPVect
 ;
 ;Set protected mode exception vectors.
 ;
-        mov     bp,32
-        mov     bl,0
+        xor     ebx,ebx
 api81_SetEVect:
-        push    bx
-        push    edi
-        push    bp
-        push    es
         sys     GetEVect
-        push    ecx
-        push    edx
-        mov     edx,DWORD PTR es:[edi]
-        mov     cx,WORD PTR es:[edi+4]
+        xchg    edx,DWORD PTR es:[edi]
+        xchg    cx,WORD PTR es:[edi+4]
         sys     SetEVect
-        pop     edx
-        pop     ecx
         cmp     edx,es:[edi]
-        jnz     api81_Ediff
+        jnz     api81_Edone
         cmp     cx,es:[edi+4]
-        jnz     api81_Ediff
+        jnz     api81_Edone
         mov     WORD PTR es:[edi+4],-1
-        jmp     api81_Edone
-api81_Ediff:
-        mov     es:[edi],edx
-        mov     es:[edi+4],cx
 api81_Edone:
-        pop     es
-        pop     bp
-        pop     edi
-        pop     bx
         add     edi,6
-        inc     bl
-        dec     bp
-        jnz     api81_SetEVect
+        inc     ebx
+        cmp     ebx,32
+        jb      api81_SetEVect
 ;
 ;Set real mode interrupt vectors.
 ;
-        mov     bp,256
-        mov     bl,0
+        xor     ebx,ebx
 api81_SetRVect:
-        push    bx
-        push    edi
-        push    bp
-        push    es
         sys     GetRVect
-        push    cx
-        push    dx
-        mov     dx,WORD PTR es:[edi]
-        mov     cx,WORD PTR es:[edi+2]
+        xchg    dx,WORD PTR es:[edi]
+        xchg    cx,WORD PTR es:[edi+2]
         sys     SetRVect
-        pop     dx
-        pop     cx
         cmp     dx,es:[edi]
-        jnz     api81_Rdiff
+        jnz     api81_Rdone
         cmp     cx,es:[edi+2]
-        jnz     api81_Rdiff
+        jnz     api81_Rdone
         mov     WORD PTR es:[edi+2],-1
-        jmp     api81_Rdone
-api81_Rdiff:
-        mov     es:[edi],dx
-        mov     es:[edi+2],cx
 api81_Rdone:
-        pop     es
-        pop     bp
-        pop     edi
-        pop     bx
         add     edi,4
-        inc     bl
-        dec     bp
-        jnz     api81_SetRVect
+        inc     ebx
+        cmp     ebx,256
+        jb      api81_SetRVect
 ;
 ;Restore DPMI stack state.
 ;
@@ -5479,9 +5395,8 @@ api81_NoIntRel:
 api81_SaveDPMI32:
         call    f[DPMIStateAddr]
 api81_NoDPMIRel:
-        pop     ds
+        clc
         assume ds:_apiCode
-        pop     es
         ret
 LoadExecState   endp
 
@@ -5600,9 +5515,10 @@ api82_memOK2:
         mov     fs,fs:PSPSegment
         assume fs:nothing
         mov     es,bx
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_Resource],0   ;Clear memory fields.
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_INTMem],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_DPMIMem],0
+        xor     edx,edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_Resource],edx ;Clear memory fields.
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_INTMem],edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_DPMIMem],edx
         mov     WORD PTR es:[EPSP_Struc.EPSP_Parent],fs     ;set parent PSP.
         mov     DWORD PTR es:[EPSP_Struc.EPSP_DTA],80h      ;Use default PSP DTA.
         mov     WORD PTR es:[EPSP_Struc.EPSP_DTA+4],es
@@ -5614,19 +5530,19 @@ api82_memOK2:
         mov     DWORD PTR es:[EPSP_Struc.EPSP_TransSize],eax
         mov     eax,DWORD PTR fs:[EPSP_Struc.EPSP_mcbMaxAlloc]
         mov     DWORD PTR es:[EPSP_Struc.EPSP_mcbMaxAlloc],eax
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_mcbHead],0
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_mcbHead],edx
         cmp     d[api82_Flags],2                            ;cwLoad?
         jz      api82_NoNext
         mov     WORD PTR fs:[EPSP_Struc.EPSP_Next],es
 api82_NoNext:
-        mov     WORD PTR es:[EPSP_Struc.EPSP_Next],0
-        mov     WORD PTR es:[PSP_Struc.PSP_Environment],0
-        mov     WORD PTR es:[EPSP_Struc.EPSP_SegBase],0
-        mov     WORD PTR es:[EPSP_Struc.EPSP_SegSize],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_Exports],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_Imports],0
-        mov     DWORD PTR es:[EPSP_Struc.EPSP_Links],0
-        mov     WORD PTR es:[EPSP_Struc.EPSP_EntryCSEIP+4],0
+        mov     WORD PTR es:[EPSP_Struc.EPSP_Next],dx
+        mov     WORD PTR es:[PSP_Struc.PSP_Environment],dx
+        mov     WORD PTR es:[EPSP_Struc.EPSP_SegBase],dx
+        mov     WORD PTR es:[EPSP_Struc.EPSP_SegSize],dx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_Exports],edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_Imports],edx
+        mov     DWORD PTR es:[EPSP_Struc.EPSP_Links],edx
+        mov     WORD PTR es:[EPSP_Struc.EPSP_EntryCSEIP+4],dx
         mov     WORD PTR es:[EPSP_Struc.EPSP_PSPSel],es
         pop     fs
 ;

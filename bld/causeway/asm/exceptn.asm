@@ -1856,8 +1856,8 @@ exc22_LookLoop:
         push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
-        add     esi,ResHead+ResNum
-        add     edi,ResHead
+        add     esi,size ResHead + ResNum
+        add     edi,size ResHead
 exc22_r0:
         cmp     BYTE PTR es:[edi],Res_PSP
         jz      exc22_r1_0
@@ -1912,7 +1912,6 @@ exc22_Use32It:
         add     edi,2
         mov     b[edi],' '
         inc     edi
-
         inc     TotalSelectors
 
 
@@ -1929,8 +1928,8 @@ exc22_s2:
         push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
-        add     esi,ResHead+ResNum
-        add     edi,ResHead
+        add     esi,size ResHead + ResNum
+        add     edi,size ResHead
 exc22_s0:
         cmp     BYTE PTR es:[edi],Res_MEM       ;Anything here?
         jnz     exc22_s1
@@ -1960,11 +1959,9 @@ exc22_s1:
         dec     ebp
         jnz     exc22_s0
         pop     esi
-        mov     esi,es:[esi+8]  ;link to next list.
+        mov     esi,es:[esi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jnz     exc22_s2
-
-
         ;
         ;Have a look in the MCB list.
         ;
@@ -2054,12 +2051,10 @@ exc22_r1:
         dec     ebp
         jnz     exc22_r0
         pop     edi
-        mov     esi,es:[edi+8]  ;link to next list.
+        mov     esi,es:[edi+ResHead_Next]  ;link to next list.
         or      esi,esi
         jnz     exc22_LookLoop
         ;
-
-
         mov     edi,offset TotalSelsNum
         mov     eax,TotalSelectors
         mov     ecx,4
@@ -2069,11 +2064,6 @@ exc22_r1:
         mov     ah,40h
         mov     ebx,d[exc22_Handle]
         int     21h
-
-
-
-
-
         ;
         ;Now do memory blocks.
         ;
@@ -2092,8 +2082,8 @@ exc22_mLookLoop:
         push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
-        add     esi,ResHead+ResNum
-        add     edi,ResHead
+        add     esi,size ResHead + ResNum
+        add     edi,size ResHead
 exc22_m0:
         cmp     BYTE PTR es:[edi],Res_MEM
         jnz     exc22_m1
@@ -2179,7 +2169,6 @@ exc22_MEM:
         int     21h
         pop     es
         popad
-
         ;
 exc22_m1:
         add     esi,4
@@ -2187,13 +2176,9 @@ exc22_m1:
         dec     ebp
         jnz     exc22_m0
         pop     edi
-        mov     esi,es:[edi+8]  ;link to next list.
+        mov     esi,es:[edi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jnz     exc22_mLookLoop
-
-
-
-
         ;
         ;Now print MCB controlled blocks.
         ;
@@ -2299,12 +2284,6 @@ exc22_nomcbdis:
         mov     ah,40h
         mov     ebx,d[exc22_Handle]
         int     21h
-
-
-
-
-
-
         ;
         ;Now do lock details.
         ;
@@ -2319,8 +2298,8 @@ exc22_lLookLoop:
         push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
-        add     esi,ResHead+ResNum
-        add     edi,ResHead
+        add     esi,size ResHead + ResNum
+        add     edi,size ResHead
 exc22_l0:
         cmp     BYTE PTR es:[edi],Res_LOCK
         jnz     exc22_l1
@@ -2358,11 +2337,9 @@ exc22_l1:
         dec     ebp
         jnz     exc22_l0
         pop     edi
-        mov     esi,es:[edi+8]  ;link to next list.
+        mov     esi,es:[edi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jnz     exc22_lLookLoop
-
-
         ;
         ;Now do DOS memory details.
         ;
@@ -2377,8 +2354,8 @@ exc22_dmLookLoop:
         push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
-        add     esi,ResHead+ResNum
-        add     edi,ResHead
+        add     esi,size ResHead + ResNum
+        add     edi,size ResHead
 exc22_dm0:
         cmp     BYTE PTR es:[edi],Res_DOSMEM
         jnz     exc22_dm1
@@ -2428,16 +2405,12 @@ exc22_dm1:
         dec     ebp
         jnz     exc22_dm0
         pop     edi
-        mov     esi,es:[edi+8]  ;link to next list.
+        mov     esi,es:[edi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jnz     exc22_dmLookLoop
-
-
-
-
+        ;
         cmp     DWORD PTR fs:[EPSP_Struc.EPSP_INTMem],0
         jz      exc22_r8
-
         ;
         ;Now do protected mode int details.
         ;
@@ -2611,9 +2584,6 @@ exc22_ri1:
         add     esi,4
         inc     ebx
         loop    exc22_ri0
-
-
-
         ;
         ;Now do call-back details.
         ;
@@ -2628,8 +2598,8 @@ exc22_cbLookLoop:
         push    esi
         mov     ebp,ResNum              ;get number of entries.
         mov     edi,esi
-        add     esi,ResHead+ResNum
-        add     edi,ResHead
+        add     esi,size ResHead + ResNum
+        add     edi,size ResHead
 exc22_cb0:
         cmp     BYTE PTR es:[edi],Res_CALLBACK
         jnz     exc22_cb1
@@ -2675,10 +2645,9 @@ exc22_cb1:
         dec     ebp
         jnz     exc22_cb0
         pop     edi
-        mov     esi,es:[edi+8]  ;link to next list.
+        mov     esi,es:[edi+ResHead_Next]   ;link to next list.
         or      esi,esi
         jnz     exc22_cbLookLoop
-
         ;
         ;Print mouse event target details.
         ;
@@ -2692,7 +2661,6 @@ exc22_cb1:
         mov     ecx,eax
         or      ecx,ebx
         jz      exc22_r8
-
         push    eax
         push    ebx
         mov     edx,offset MouseEHeader
