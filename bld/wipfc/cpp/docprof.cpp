@@ -46,7 +46,7 @@ Lexer::Token DocProf::parse( Lexer* lexer )
                 wchar_t ch[ 2 ];
                 ch[ 0 ] = value[ value.size() - 1 ];    //last number is critical value
                 ch[ 1 ] = L'\0';
-                int tmp = ::_wtoi( ch );
+                int tmp( static_cast<int>( std::wcstol( ch, 0, 10 ) ) );
                 if( tmp < 1 || tmp > 6 )
                     document->printError( ERR2_VALUE );
                 else

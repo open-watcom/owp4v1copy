@@ -57,7 +57,7 @@ public:
     void setPos(long int offset) { if( head + offset < tail ) head += offset; };
     //Get the current position
     virtual
-    long int pos() { return reinterpret_cast< long int >(head); };
+    long int pos() { return reinterpret_cast< long int >(&(*head)); };
 private:
     IpfBuffer( const IpfBuffer& rhs );              //no copy
     IpfBuffer& operator=( const IpfBuffer& rhs );   //no assignment

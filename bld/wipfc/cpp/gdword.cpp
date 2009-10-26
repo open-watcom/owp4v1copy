@@ -34,6 +34,7 @@
 *
 ****************************************************************************/
 
+#include <cwctype>
 #include <cstdlib>
 #include "gdword.hpp"
 #include "errors.hpp"
@@ -54,6 +55,8 @@ size_t GlobalDictionaryWord::writeWord( std::FILE* out ) const
     size_t length( std::wcstombs( buffer, text.c_str(), sizeof( buffer ) / sizeof( char ) ) );
     if( length == -1 )
         throw FatalError( ERR_T_CONV );
+    if( length > 254 )
+        length = 254;
     if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out) == EOF ||
         ( written = std::fwrite( buffer, sizeof( char ), length, out ) ) != length )
         throw FatalError( ERR_WRITE );

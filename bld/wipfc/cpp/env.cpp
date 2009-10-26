@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+#include <cstdlib>
 #include "env.hpp"
 
 void Env::add( const std::string& key )

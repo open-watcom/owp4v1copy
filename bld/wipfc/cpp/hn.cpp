@@ -104,12 +104,9 @@ Lexer::Token Hn::parse( Lexer* lexer )
         tok = document->getNextToken();
     }
     //convert to mbs, max 255 char
-    char buffer[ 256 ];
-    size_t length( std::wcstombs( buffer, tmp.c_str(), sizeof( buffer ) / sizeof( char ) ) );
-    if( length == -1 )
-        throw FatalError( ERR_T_CONV );
-    buffer[ 255 ] = '\0';
-    title = buffer;
+    wtombstring( tmp, title );
+    if( title.size() > 255 )
+        title.erase( 255 );
     tok = document->getNextToken();
     while( tok != Lexer::END && !( tok == Lexer::TAG && lexer->tagId() == Lexer::EUSERDOC ) ) {
         if( parseInline( lexer, tok ) ) {
@@ -296,7 +293,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
             if( key == L"res" ) {
-                res = static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
+                res = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
                 if( res < 1 || res > 64000 )
                     document->printError( ERR2_VALUE );
                 if( Hide::hiding() )
@@ -445,7 +442,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             }
             else if( key == L"group" ) {
                 toc.extended = 1;
-                group.id = static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
+                group.id = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"titlebar" ) {
                 toc.extended = 1;
@@ -493,7 +490,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
                 wchar_t ch[2];
                 ch[0] = value[ value.size() - 1 ];//last number is critical value
                 ch[1] = L'\0';
-                int tmp( ::_wtoi( ch ) );
+                int tmp( static_cast< int >( std::wcstol( ch, 0, 10 ) ) );
                 if( tmp < 1 || tmp > 6 )
                     document->printError( ERR2_VALUE );
                 else
@@ -612,10 +609,13 @@ void Hn::buildTOC( Page* page )
 void Hn::buildText( Cell* cell )
 {
     if( etoc.setTutor ) {
-        char tmp[ 256 ];
-        size_t size( std::wcstombs( tmp, tutorial.c_str(), sizeof( tmp ) / sizeof( char ) ) );
-        if( size == -1 )
-            throw FatalError( ERR_T_CONV );
+        std::string tmp;
+        wtombstring( tutorial, tmp );
+        size_t size( tmp.size() );
+        if( size > 253 ) {
+            tmp.erase( 253 );
+            size = 253;
+        }
         std::vector< std::uint8_t > esc;
         esc.reserve( size + 3 );
         esc.push_back( 0xFF );  //esc

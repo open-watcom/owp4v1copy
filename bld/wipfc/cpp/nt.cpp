@@ -141,7 +141,7 @@ void NtLm::buildText( Cell* cell )
     cell->addByte( 0x1C );  //set left margin to current position (reset at end of paragraph)
 }
 /*****************************************************************************/
-static void Nt::prepBufferName( std::wstring* buffer, const std::wstring& fname )
+void Nt::prepBufferName( std::wstring* buffer, const std::wstring& fname )
 {
     buffer->assign( L"Nt text from " );
     buffer->append( fname );

@@ -31,6 +31,9 @@
 #ifndef IPFFILE_INCLUDED
 #define IPFFILE_INCLUDED
 
+#if defined( __unix__ ) && !defined( __UNIX__ )
+    #define __UNIX__ __unix__
+#endif
 #include <cstdio>
 #include "ipfdata.hpp"
 
@@ -63,7 +66,9 @@ private:
     std::FILE* stream;
     wchar_t ungottenChar;
     bool ungotten;
+#ifndef __UNIX__
     wchar_t readMBChar();
+#endif
 };
 
 #endif

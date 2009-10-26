@@ -103,7 +103,7 @@ Lexer::Token Note::parse( Lexer* lexer )
     return tok;
 }
 /*****************************************************************************/
-static void Note::prepBufferName( std::wstring* buffer, const std::wstring& fname )
+void Note::prepBufferName( std::wstring* buffer, const std::wstring& fname )
 {
     buffer->assign( L"Note text from " );
     buffer->append( fname );

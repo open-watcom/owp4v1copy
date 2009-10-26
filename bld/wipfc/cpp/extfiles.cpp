@@ -32,6 +32,7 @@
 #include <cstdlib>
 #include "extfiles.hpp"
 #include "errors.hpp"
+#include "util.hpp"
 
 void ExternalFiles::addFile( std::wstring& str )
 {
@@ -55,13 +56,16 @@ std::uint32_t ExternalFiles::write( std::FILE *out )
         return 0;
     std::uint32_t start( std::ftell( out ) );
     for( ConstTableIter itr = table.begin(); itr != table.end(); ++itr ) {
-        char buffer[ 256 ];
+        std::string buffer;
+        wtombstring( itr->first, buffer );
+        size_t length( buffer.size() );
+        if( length > 255 ) {
+            buffer.erase( 255 );
+            length = 255;
+        }
         size_t written;
-        size_t length( std::wcstombs( buffer, itr->first.c_str(), sizeof( buffer ) / sizeof(char) ) );
-        if( length == -1 )
-            throw FatalError( ERR_T_CONV );
         if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out) == EOF ||
-            ( written = std::fwrite( buffer, sizeof( char ), length, out ) ) != length )
+            ( written = std::fwrite( buffer.data(), sizeof( char ), length, out ) ) != length )
             throw FatalError( ERR_WRITE );
         bytes += written + 1;
     }

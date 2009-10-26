@@ -143,7 +143,7 @@ Lexer::Token Parml::parseAttributes( Lexer* lexer )
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
             if( key == L"tsize" ) {
-                tabSize = static_cast< unsigned char >( _wtoi( value.c_str() ) );
+                tabSize = static_cast< unsigned char >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"break" ) {
                 if( value == L"none" )

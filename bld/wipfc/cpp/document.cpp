@@ -156,6 +156,9 @@
 *
 ****************************************************************************/
 
+#if defined( __unix__ ) && !defined( __UNIX__ )
+    #define __UNIX__ __unix__
+#endif
 #include <algorithm>
 #include <functional>
 #include <cstdio>
@@ -440,6 +443,7 @@ void Document::write( std::FILE *out )
 /***************************************************************************/
 void Document::summary( std::FILE* out )
 {
+    //TODO: use ostream when streams and strings mature
     std::fprintf( out, "Number of pages:          %u\n", pages.size() );
     std::fprintf( out, "Pages defined by name:    %u\n", nameMap.size() );
     std::fprintf( out, "Pages defined by number:  %u\n", resMap.size() );
@@ -526,6 +530,7 @@ void Document::makeIndexes()
 void Document::makeBitmaps()
 {
     if( !bitmapNames.empty() ) {
+        //could use tmpfile...
         tmpName = Environment.value( "TMP" );
         tmpName += std::tmpnam( NULL );
         std::FILE* tmp( std::fopen( tmpName.c_str(), "wb" ) );
@@ -550,20 +555,24 @@ void Document::makeBitmaps()
             paths.push_back( env.substr( idx1, idx2 - idx1 ) );
         }
         try {
-            char fbuffer[ PATH_MAX ];
             for( BitmapNameIter itr = bitmapNames.begin(); itr != bitmapNames.end(); ++itr ) {
-                if( std::wcstombs( fbuffer, itr->first.c_str(), sizeof( fbuffer ) ) == -1 )
-                    throw FatalError( ERR_T_CONV );
+                std::string fname;
+                wtombstring( itr->first, fname );
                 for( size_t count = 0; count < paths.size(); ++count ) {
-                    std::string fname( paths[ count ] );
-                    if( !fname.empty() )
-                        fname += slash;
-                    fname += fbuffer;
+                    std::string fullname( paths[ count ] );
+                    if( !fullname.empty() )
+                        fullname += slash;
+                    fullname += fname;
+#ifndef __UNIX__
+                    if( fullname.size() > PATH_MAX ) {
+                        throw FatalError( ERR_PATH_MAX );
+                    }
+#endif
                     try {
 #ifdef CHECKCOMP
-                        std::printf( "Processing bitmap %s\n", fname.c_str() );
+                        std::printf( "Processing bitmap %s\n", fullname.c_str() );
 #endif
-                        Bitmap bm( fname );
+                        Bitmap bm( fullname );
                         itr->second = bm.write( tmp );
                         break;
                     }
@@ -805,24 +814,28 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
         char separator( ':' );
         wchar_t slash( L'/' );
 #endif
-        wchar_t fbuffer[ PATH_MAX ];
         std::string::size_type idx1( 0 );
         std::string::size_type idx2( env.find( separator, idx1 ) );
-        if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), sizeof( fbuffer ) / sizeof( wchar_t ) ) == -1 )
-            throw FatalError( ERR_T_CONV );
-        paths.push_back( std::wstring( fbuffer ) );
+        std::wstring fbuffer;
+        mbtowstring( env.substr( idx1, idx2 - idx1 ), fbuffer );
+        paths.push_back( fbuffer );
         while( idx2 != std::string::npos ) {
             idx1 = idx2 + 1;
             idx2 = env.find( separator, idx1 );
-            if( std::mbstowcs( fbuffer, env.substr( idx1, idx2 - idx1 ).c_str(), sizeof( fbuffer ) / sizeof( wchar_t ) ) == -1 )
-                throw FatalError( ERR_T_CONV );
-            paths.push_back( std::wstring( fbuffer ) );
+            fbuffer.clear();
+            mbtowstring( env.substr( idx1, idx2 - idx1 ), fbuffer );
+            paths.push_back( fbuffer );
         }
         for( size_t count = 0; count < paths.size(); ++count ) {
             std::wstring* fname( new std::wstring( paths[ count ] ) );
             if( !fname->empty() )
                 *fname += slash;
             *fname += lexer->text();
+#ifndef __UNIX__
+            if( fname->size() > PATH_MAX ) {
+                throw FatalError( ERR_PATH_MAX );
+            }
+#endif
             try {
                 IpfFile* ipff( new IpfFile( fname ) );
                 fname = addFileName( fname );

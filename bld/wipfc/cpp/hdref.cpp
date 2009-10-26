@@ -100,7 +100,7 @@ Lexer::Token Hdref::parse( Lexer* lexer )
     return document->getNextToken();    //next token from stream
 }
 /*****************************************************************************/
-static void Hdref::prepBufferName( std::wstring* buffer, const std::wstring& fname )
+void Hdref::prepBufferName( std::wstring* buffer, const std::wstring& fname )
 {
     buffer->assign( L"hdref text from " );
     buffer->append( fname );

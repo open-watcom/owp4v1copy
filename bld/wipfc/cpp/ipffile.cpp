@@ -27,19 +27,20 @@
 * Description:  IPF Input file reader
 *
 ****************************************************************************/
-
-
 #include "ipffile.hpp"
 #include "errors.hpp"
-#include <mbctype.h>
+#include "util.hpp"
+#include <cstdlib>
+#ifndef __UNIX__
+    #include <mbctype.h>
+#endif
 
 IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname ),
     ungotten( false ), ungottenChar( WEOF )
 {
-    char buffer[ PATH_MAX ];
-
-    std::wcstombs( buffer, fname->c_str(), sizeof( buffer ) );
-    if(( stream = std::fopen( buffer, "rb" ) ) == 0)
+    std::string buffer;
+    wtombstring( *fname, buffer );
+    if(( stream = std::fopen( buffer.c_str(), "rb" ) ) == 0)
         throw FatalIOError( ERR_OPEN, *fileName );
 }
 /*****************************************************************************/
@@ -47,10 +48,22 @@ IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname ),
 //Returns EOB if end-of-file reached
 std::wint_t IpfFile::get()
 {
-    //wchar_t ch( std::fgetwc( stream ) );
+#ifdef __UNIX__
+    wchar_t ch( 0 );
+    if( ungotten ) {
+        ch = ungottenChar;
+        ungotten = false;
+    }
+    else
+        ch = std::fgetwc( stream );
+    if( ch == L'\r' )
+        ch = std::fgetwc( stream );
+#else
+    //can't use OW's fgetwc because it always reads 2 bytes in binary mode
     wchar_t ch( readMBChar() );
     if( ch == L'\r' )
         ch = readMBChar();
+#endif
     incCol();
     if( ch == L'\n' ) {
         incLine();
@@ -74,6 +87,7 @@ void IpfFile::unget( wchar_t ch )
         decLine();
 }
 /*****************************************************************************/
+#ifndef __UNIX__
 wchar_t IpfFile::readMBChar()
 {
     wchar_t ch( 0 );
@@ -94,3 +108,4 @@ wchar_t IpfFile::readMBChar()
     }
     return ch;
 }
+#endif

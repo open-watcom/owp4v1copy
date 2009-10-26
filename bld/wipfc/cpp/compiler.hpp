@@ -55,11 +55,11 @@ public:
     ~Compiler();
     int compile();
     //set the inital source file name
-    void setInputFile( const char *name );
+    void setInputFile( std::string& name );
     //add a file name to the set of file names
     std::wstring* addFileName( std::wstring* name );
     //set the output file name
-    void setOutputFile( const char *name ) { outFileName = std::string( name ); };
+    void setOutputFile( std::string& name ) { outFileName = name; };
     //set the warning level
     void setWarningLevel( int wl ) { warningLevel = wl; };
     //set the current locale

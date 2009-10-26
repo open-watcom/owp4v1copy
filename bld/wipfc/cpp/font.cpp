@@ -79,7 +79,7 @@ Lexer::Token Font::parse( Lexer* lexer )
                 }
             }
             else if( key == L"codepage" )
-                fnt.codePage = static_cast< std::uint16_t >( _wtoi( value.c_str() ) );
+                fnt.codePage = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             else
                 document->printError( ERR1_ATTRNOTDEF );
         }

@@ -31,6 +31,8 @@
 #ifndef UTIL_INCLUDED
 #define UTIL_INCLUDED
 
+#include <string>
+
 void killQuotes( char * text );
 void killQuotes( wchar_t * text );
 void killQuotes( std::string& val );
@@ -38,5 +40,8 @@ void killQuotes( std::wstring& val );
 void splitAttribute( const std::wstring& text, std::wstring& key, std::wstring& value);
 void killEOL( char * text );
 void killEOL( wchar_t * text );
+std::string canonicalPath( char* arg );
+void wtombstring( const std::wstring& input, std::string& output );
+void mbtowstring( const std::string& input, std::wstring& output );
 
 #endif //UTIL_INCLUDED

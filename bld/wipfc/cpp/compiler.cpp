@@ -39,6 +39,7 @@
 #include "ipfbuff.hpp"
 #include "ipffile.hpp"
 #include "lexer.hpp"
+#include "util.hpp"
 
 Compiler::Compiler():
     warningLevel( 3 ),
@@ -59,13 +60,10 @@ Compiler::~Compiler()
         delete *iter;
 }
 /*****************************************************************************/
-void Compiler::setInputFile( const char *name )
+void Compiler::setInputFile( std::string& name )
 {
-    wchar_t fbuffer[ PATH_MAX ];
-
-    if( std::mbstowcs( fbuffer, name, sizeof( fbuffer ) / sizeof( wchar_t ) ) == -1)
-        throw FatalError( ERR_T_CONV );
-    std::wstring* wname( new std::wstring( fbuffer ) );
+    std::wstring* wname( new std::wstring() );
+    mbtowstring( name, *wname );
     wname = addFileName( wname );
     inFiles.push_back( new IpfFile( wname ) );
 }
@@ -101,6 +99,7 @@ int Compiler::compile()
     }
     std::fclose( out );
     if( xref ) {
+        //TODO: convert to ostream when streams and strings mature
         std::string fname( outFileName );
         fname.erase( fname.rfind( '.' ) );
         fname += ".log";

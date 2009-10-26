@@ -104,7 +104,7 @@ Lexer::Token Table::parseAttributes( Lexer* lexer )
                 while( idx1 != std::wstring::npos ) { //split value on ' '
                     colWidth.push_back(
                         static_cast< unsigned char >(
-                            _wtoi( value.substr( idx1, idx2 - idx1 ).c_str() ) ) );
+                            std::wcstoul( value.substr( idx1, idx2 - idx1 ).c_str(), 0, 10 ) ) );
                     idx1 = idx2 == std::wstring::npos ? std::wstring::npos : idx2 + 1;
                     idx2 = value.find( L' ', idx1 );
                 }

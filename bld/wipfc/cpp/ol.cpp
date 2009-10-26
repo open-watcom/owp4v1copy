@@ -32,6 +32,7 @@
 *
 ****************************************************************************/
 
+#include <limits>
 #include "ol.hpp"
 #include "brcmd.hpp"
 #include "dl.hpp"
@@ -195,7 +196,7 @@ Lexer::Token OlLi::parse( Lexer* lexer )
     }
     else {
         wchar_t tmp[ 4 ];
-        _utow( itemNumber + 1, tmp, 10 );
+        std::swprintf( tmp, 4, L"%u", itemNumber + 1 );
         std::wstring txt( tmp );
         if( itemNumber < 9 )
             appendChild( new LiteralWhiteSpace( document, this, document->dataName(),

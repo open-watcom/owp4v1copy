@@ -93,7 +93,7 @@ void CeCmd::buildText( Cell* cell )
         printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
-static void CeCmd::prepBufferName( std::wstring* buffer, const std::wstring& fname )
+void CeCmd::prepBufferName( std::wstring* buffer, const std::wstring& fname )
 {
     buffer->assign( L"Centered text from " );
     buffer->append( fname );

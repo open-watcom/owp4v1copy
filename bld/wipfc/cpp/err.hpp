@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 //Fatal Errors
+PICK( ERR_PATH_MAX, "The length of the file path is too long" )
 PICK( ERR_OPEN, "Cannot open file" )
 PICK( ERR_OPENIMG, "Cannot open image file" )
 PICK( ERR_READ, "Cannot read from file" )

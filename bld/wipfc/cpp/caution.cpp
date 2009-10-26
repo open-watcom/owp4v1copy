@@ -126,7 +126,7 @@ void ECaution::buildText( Cell* cell )
         printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
-static void Caution::prepBufferName( std::wstring* buffer, const std::wstring& fname )
+void Caution::prepBufferName( std::wstring* buffer, const std::wstring& fname )
 {
     buffer->assign( L"Caution text from " );
     buffer->append( fname );

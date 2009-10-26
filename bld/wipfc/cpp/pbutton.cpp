@@ -48,7 +48,7 @@ Lexer::Token PButton::parse( Lexer* lexer )
             if( key == L"id" )
                 id = value;
             else if( key == L"res" )
-                res = _wtoi( value.c_str() );
+                res = std::wcstoul( value.c_str(), 0, 10 );
             else if( key == L"text" )
                 text = value;
             else

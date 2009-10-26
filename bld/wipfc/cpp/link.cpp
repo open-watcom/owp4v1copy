@@ -132,7 +132,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                     document->printError( ERR2_VALUE );
             }
             else if( key == L"res" )
-                res = static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
+                res = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             else if( key == L"refid" ) {
                 refid = new GlobalDictionaryWord( value );
                 refid->toUpper();           //to uppercase
@@ -153,7 +153,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             else if( key == L"data" )
                 data = value;
             else if( key == L"group" ) {
-                group.id = static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
+                group.id = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
                 doGroup = true;
             }
             else if( key == L"vpx" ) {
@@ -282,19 +282,19 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             }
             else if( key == L"x" ) {
                 hypergraphic = true;
-                x = static_cast< std::uint16_t >( _wtoi( value.c_str() ) );
+                x = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"y" ) {
                 hypergraphic = true;
-                y = static_cast< std::uint16_t >( _wtoi( value.c_str() ) );
+                y = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"cx" ) {
                 hypergraphic = true;
-                cx = static_cast< std::uint16_t >( _wtoi( value.c_str() ) );
+                cx = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"cy" ) {
                 hypergraphic = true;
-                cy = static_cast< std::uint16_t >( _wtoi( value.c_str() ) );
+                cy = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"titlebar" ) {
                 doStyle = true;
@@ -507,10 +507,9 @@ void Link::doTopic( Cell* cell )
             std::uint16_t index( document->extFileIndex( database ) );
             esc.push_back( static_cast< std::uint8_t >( index ) );
             //esc.push_back( static_cast< std::uint8_t >( index >> 8 ) );
-            char tmp[ 256 ];
-            size_t size( std::wcstombs( tmp, refid->getText().c_str(), sizeof( tmp ) / sizeof( char ) ) );
-            if( size == -1 )
-                throw FatalError( ERR_T_CONV );
+            std::string tmp;
+            wtombstring( refid->getText(), tmp );
+            size_t size( tmp.size() );
             esc.push_back( static_cast< std::uint8_t >( size ) );
             if( hypergraphic && ( x || y || cx || cy ) ) {
                 esc.push_back( static_cast< std::uint8_t >( x ) );
@@ -521,6 +520,10 @@ void Link::doTopic( Cell* cell )
                 esc.push_back( static_cast< std::uint8_t >( cx >> 8 ) );
                 esc.push_back( static_cast< std::uint8_t >( cy ) );
                 esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
+            }
+            if( size > 255 - esc.size() + 1 ) {
+                size = 255 - esc.size() + 1;
+                tmp.erase( size );
             }
             for( size_t count1 = 0; count1 < size; count1++ )
                 esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
@@ -612,19 +615,18 @@ void Link::doLaunch( Cell* cell )
             esc.push_back( static_cast< std::uint8_t >( cy ) );
             esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
         }
-        char buffer[ 256 ];
-        size_t bytes( std::wcstombs( buffer, object.c_str(), sizeof( buffer ) ) );
-        if( bytes == -1 )
-            throw FatalError( ERR_T_CONV );
-        for( size_t count1 = 0; count1 < bytes; ++count1 )
+        std::string buffer;
+        wtombstring( object, buffer );
+        buffer += ' ';
+        wtombstring( data, buffer );
+        size_t size( buffer.size() );
+        if( size > 255 - esc.size() + 1 ) {
+            size = 255 - esc.size() + 1;
+            buffer.erase( size );
+        }
+        for( size_t count1 = 0; count1 < size; ++count1 )
             esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
-        esc.push_back( ' ' );
-        bytes = std::wcstombs( buffer, data.c_str(), sizeof( buffer ) );
-        if( bytes == -1 )
-            throw FatalError( ERR_T_CONV );
-        for( size_t count1 = 0; count1 < bytes; ++count1 )
-            esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
-            esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+        esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
         cell->addEsc( esc );
         if( cell->textFull() )
             printError( ERR1_LARGEPAGE );

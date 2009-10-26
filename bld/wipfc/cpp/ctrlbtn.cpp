@@ -30,6 +30,7 @@
 
 #include "ctrlbtn.hpp"
 #include "errors.hpp"
+#include "util.hpp"
 
 std::uint32_t ControlButton::write( std::FILE *out ) const
 {
@@ -39,12 +40,15 @@ std::uint32_t ControlButton::write( std::FILE *out ) const
         throw FatalError( ERR_WRITE );
     if( std::fwrite( &res, sizeof( std::uint16_t), 1, out) != 1 ) 
         throw FatalError( ERR_WRITE );
-    char buffer[ 256 ];
-    size_t length( std::wcstombs( buffer, txt.c_str(), sizeof(buffer) / sizeof(char) ) );
-    if( length == -1 )
-        throw FatalError( ERR_T_CONV );
+    std::string buffer;
+    wtombstring( txt, buffer );
+    size_t length( buffer.size() );
+    if( length > 255 ) {
+        buffer.erase( 255 );
+        length = 255;
+    }
     if( std::fputc( static_cast< std::uint8_t >( length ), out) == EOF ||
-        std::fwrite( buffer, sizeof( char ), length, out ) != length )
+        std::fwrite( buffer.data(), sizeof( char ), length, out ) != length )
         throw FatalError( ERR_WRITE );
     bytes += length + 1;
     return bytes;

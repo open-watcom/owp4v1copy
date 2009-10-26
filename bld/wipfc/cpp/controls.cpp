@@ -58,7 +58,7 @@ ControlButton* Controls::getButtonById( const std::wstring& i )
 {
     for( ControlIter itr = controls.begin(); itr != controls.end(); ++itr ) {
         if( itr->id() == i )
-            return itr;
+            return &(*itr);
     }
     return 0;
 }
@@ -67,7 +67,7 @@ ControlGroup* Controls::getGroupById( const std::wstring& i )
 {
     for( GroupIter itr = groups.begin(); itr != groups.end(); ++itr ) {
         if( itr->id() == i )
-            return itr;
+            return &(*itr);
     }
     return 0;
 }

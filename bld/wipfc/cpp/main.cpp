@@ -28,6 +28,9 @@
 *
 ****************************************************************************/
 
+#if defined(__unix__) && !defined(__UNIX__)
+    #define __UNIX__ __unix__
+#endif
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -35,6 +38,7 @@
 #include "compiler.hpp"
 #include "env.hpp"
 #include "errors.hpp"
+#include "util.hpp"
 
 static void processCommandLine(int argc, char **argv, Compiler& c);
 static void usage();
@@ -108,7 +112,11 @@ static void processCommandLine(int argc, char **argv, Compiler& c)
     int outIndex( 0 );
     bool info( false );
     for( int count = 1; count < argc; ++count ) {
+#ifdef __UNIX__
+        if( argv[count][0] == '-' ) {
+#else
         if( argv[count][0] == '-' || argv[count][0] == '/' ) {
+#endif
             switch( argv[count][1] ) {
                 case 'C':
                 case 'c':
@@ -168,21 +176,16 @@ static void processCommandLine(int argc, char **argv, Compiler& c)
             std::cout << "Warning: extra filename '" << argv[count] << "' will be ignored" << std::endl;
     }
     if( inIndex ) {
-        char fullpath[ _MAX_PATH ];
-        char drive[ _MAX_DRIVE ];
-        char dir[ _MAX_DIR ];
-        char fname[ _MAX_FNAME ];
-        char ext[ _MAX_EXT ];
-        _fullpath( fullpath, argv[ inIndex ], _MAX_PATH );
+        std::string fullpath( canonicalPath( argv[ inIndex ] ) );
         c.setInputFile( fullpath );
         if( !outIndex ) {
-            _splitpath(fullpath, drive, dir, fname, ext);
+            std::string outFile( fullpath );
+            outFile.erase( outFile.rfind( '.' ) );
             if( c.outputType() == Compiler::INF )
-                std::strncpy( ext, "inf", _MAX_EXT );
+                outFile += ".inf";
             else
-                std::strncpy( ext, "hlp", _MAX_EXT );
-            _makepath(fullpath, drive, dir, fname, ext);
-            c.setOutputFile( fullpath );
+                outFile += ".hlp";
+            c.setOutputFile( outFile );
         }
     }
     else {
@@ -190,8 +193,7 @@ static void processCommandLine(int argc, char **argv, Compiler& c)
         std::exit( EXIT_FAILURE );
     }
     if( outIndex ) {
-        char fullpath[ _MAX_PATH ];
-        _fullpath( fullpath, argv[ outIndex ], _MAX_PATH );
+        std::string fullpath( canonicalPath( argv[ outIndex ] ) );
         c.setOutputFile( fullpath );
     }
     if( info )

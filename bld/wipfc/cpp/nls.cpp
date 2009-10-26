@@ -28,6 +28,9 @@
 *
 ****************************************************************************/
 
+#if defined(__unix__) && !defined(__UNIX__)
+    #define __UNIX__ __unix__
+#endif
 #include <cstdlib>
 #include <cstring>
 #ifdef __UNIX__
@@ -68,7 +71,7 @@ void Nls::setCodePage( int cp )
         path += "y";
     else {
         char code[ 5 ];
-        std::snprintf( code, 4, "%04.4d", cp );
+        std::snprintf( code, 4, "%4.4d", cp );
         path.append( code, 4 );
     }
     path += ".txt";
@@ -88,7 +91,6 @@ void Nls::readEntityFile( std::FILE *entty )
     wchar_t c;
     while( std::fgets( buffer, sizeof( buffer ) / sizeof( char ), entty ) ) {
         size_t len = std::strlen( buffer );
-        //buffer[ len - 1 ] = '\0';         //kill '\n'
         killEOL( buffer + len - 1 );
         offset = std::mbtowc( &c, buffer, len );
         if( offset == -1 )
@@ -120,7 +122,7 @@ void Nls::setLocalization( const char *loc)
     readNLS( nls );
     std::fclose( nls );
 #ifdef __UNIX__
-    std::setlocale( LC_ALL, loc );  //this doesn't really do anything either
+    std::setlocale( LC_ALL, loc );  //this doesn't really do anything in OW either
 #endif
     setCodePage( country.codePage );
 }
@@ -132,12 +134,11 @@ void Nls::readNLS( std::FILE *nls )
     bool     doGrammer( false );
     while( std::fgetws( buffer, sizeof( buffer ) / sizeof( wchar_t ), nls )) {
         size_t len( std::wcslen( buffer ) );
+        killEOL( buffer + len - 1 );
         if( len == 1 )
             continue;               //skip blank lines
         if( buffer[0] == L'#' )
             continue;               //skip comments
-        //buffer[ len - 1 ] = L'\0';  //kill '\n'
-        killEOL( buffer + len - 1 );
         if( ( value = std::wcschr( buffer, L'=' ) ) != 0 ) {
             *value = '\0';
             ++value;
@@ -153,10 +154,10 @@ void Nls::readNLS( std::FILE *nls )
             }
         }
         else if( std::wcscmp( buffer, L"Country" ) == 0 ) {
-            country.country = static_cast< std::uint16_t >( std::wcstol( value, 0, 10 ) );
+            country.country = static_cast< std::uint16_t >( std::wcstoul( value, 0, 10 ) );
         }
         else if( std::wcscmp( buffer, L"CodePage" ) == 0 ) {
-            country.codePage = static_cast< std::uint16_t >( std::wcstol( value, 0, 10 ) );
+            country.codePage = static_cast< std::uint16_t >( std::wcstoul( value, 0, 10 ) );
         }
         else if( std::wcscmp( buffer, L"Note" ) == 0 ) {
             std::wstring text( value );
@@ -318,7 +319,7 @@ std::uint32_t Nls::DbcsGrammerDef::write( std::FILE *out )
     if( std::fwrite( &format, sizeof( std::uint8_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
     for( std::vector< std::uint16_t >::const_iterator itr = ranges.begin(); itr != ranges.end(); ++itr )
-        if( std::fwrite( itr, sizeof( std::uint16_t), 1, out) != 1 )
+        if( std::fwrite( &(*itr), sizeof( std::uint16_t), 1, out) != 1 )
             throw FatalError( ERR_WRITE );
     return start;
 }

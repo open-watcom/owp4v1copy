@@ -77,7 +77,7 @@ Lexer::Token AcViewport::parseAttributes( Lexer* lexer )
             else if( key == L"objectinfo" )
                 objectInfo = value;
             else if( key == L"objectid" )
-                objectId = static_cast< std::uint16_t >( _wtol( value.c_str() ) );
+                objectId = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             else if( key == L"vpx" ) {
                 doOrigin = true;
                 xorg = true;
@@ -233,28 +233,25 @@ void AcViewport::buildText( Cell* cell )
         esc.push_back( static_cast< std::uint8_t >( objectId >> 8 ) );
         esc.push_back( static_cast< std::uint8_t >( objectName.size() + 1 ) );
         if( !objectName.empty() ) {
-            char buffer[ 256 ];
-            size_t bytes( std::wcstombs( buffer, objectName.c_str(), sizeof( buffer ) ) );
-            if( bytes == -1 )
-                throw FatalError( ERR_T_CONV );
+            std::string buffer;
+            wtombstring( objectName, buffer );
+            size_t bytes( buffer.size() );
             for( size_t count1 = 0; count1 < bytes; ++count1 )
                 esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
         }
         esc.push_back( static_cast< std::uint8_t >( dll.size() + 1 ) );
         if( !dll.empty() ) {
-            char buffer[ 256 ];
-            size_t bytes( std::wcstombs( buffer, dll.c_str(), sizeof( buffer ) ) );
-            if( bytes == -1 )
-                throw FatalError( ERR_T_CONV );
+            std::string buffer;
+            wtombstring( dll, buffer );
+            size_t bytes( buffer.size() );
             for( size_t count1 = 0; count1 < bytes; ++count1 )
                 esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
         }
         esc.push_back( static_cast< std::uint8_t >( objectInfo.size() + 1 ) );
         if( !objectInfo.empty() ) {
-            char buffer[ 256 ];
-            size_t bytes( std::wcstombs( buffer, objectInfo.c_str(), sizeof( buffer ) ) );
-            if( bytes == -1 )
-                throw FatalError( ERR_T_CONV );
+            std::string buffer;
+            wtombstring( objectInfo, buffer );
+            size_t bytes( buffer.size() );
             for( size_t count1 = 0; count1 < bytes; ++count1 )
                 esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
         }
@@ -281,5 +278,4 @@ void AcViewport::buildText( Cell* cell )
         cell->addEsc( esc );
     }
 }
-
 

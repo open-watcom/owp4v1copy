@@ -55,7 +55,7 @@ Lexer::Token Ddf::parseAttributes( Lexer* lexer )
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
             if( key == L"res" ) {
-                res = static_cast< std::uint16_t >( ::_wtol( value.c_str() ) );
+                res = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
                 if( res < 1 || res > 64000 )
                     document->printError( ERR2_VALUE );
             }

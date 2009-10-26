@@ -130,7 +130,7 @@ void EWarning::buildText( Cell* cell )
         printError( ERR1_LARGEPAGE );
 }
 /*****************************************************************************/
-static void Warning::prepBufferName( std::wstring* buffer, const std::wstring& fname )
+void Warning::prepBufferName( std::wstring* buffer, const std::wstring& fname )
 {
     buffer->assign( L"Warning text from " );
     buffer->append( fname );

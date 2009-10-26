@@ -28,8 +28,10 @@
 *
 ****************************************************************************/
 
+#include <cwctype>
 #include "index.hpp"
 #include "errors.hpp"
+#include "util.hpp"
 
 IndexItem::IndexItem( Type t )
 {
@@ -102,18 +104,16 @@ int IndexItem::wstricmp( const wchar_t *s, const wchar_t *t ) const
 //unsigned long synonyms[synonymCount]; //32 bit file offsets to synonyms referencing this word
 size_t IndexItem::write( std::FILE* out )
 {
-    char buffer1[ 256 ];
-    char buffer2[ 256 ];
+    std::string buffer1;
+    std::string buffer2;
     size_t length1( 0 );
     size_t length2( 0 );
     if( hdr.sortKey ) {
-        length1 = std::wcstombs( buffer1, sortKey.c_str(), sizeof( buffer1 ) / sizeof( char ) );
-        if( length1 == -1 )
-            throw FatalError( ERR_T_CONV );
+        wtombstring( sortKey, buffer1 );
+        length1 = buffer1.size();
     }
-    length2 = std::wcstombs( buffer2, text.c_str(), sizeof( buffer2 ) / sizeof( char ) );
-    if( length2 == -1 )
-        throw FatalError( ERR_T_CONV );
+    wtombstring( text, buffer2 );
+    length2 = buffer2.size();
     if( length1 + length2 > 254 ) {
         length2 = length1 > 254 ? 0 : 254 - length1;
     }
@@ -127,11 +127,11 @@ size_t IndexItem::write( std::FILE* out )
     size_t written( sizeof( IndexHeader ) );
     if( hdr.sortKey ) {
         if( std::fputc( length1, out ) == EOF ||
-            std::fwrite( buffer1, sizeof( char ), length1, out ) != length1 )
+            std::fwrite( buffer1.data(), sizeof( char ), length1, out ) != length1 )
             throw FatalError( ERR_WRITE );
         written += length1 + 1;
     }
-    if( std::fwrite( buffer2, sizeof( char ), length2, out ) != length2 )
+    if( std::fwrite( buffer2.data(), sizeof( char ), length2, out ) != length2 )
         throw FatalError( ERR_WRITE );
     written += length2;
     if( !synonyms.empty() &&
