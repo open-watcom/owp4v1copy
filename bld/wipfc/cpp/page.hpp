@@ -45,7 +45,7 @@ class Cell;
 class Page {
 public:
     Page( Document* d, Element* head ) : document( d ), elements( 1, head ),
-        searchable( true ), idx( 0 ) { };
+        idx( 0 ), searchable( true ) { };
     ~Page() { };
     void addElement( Element* e ) { elements.push_back( e ); };
     //add a word to the local dictionary

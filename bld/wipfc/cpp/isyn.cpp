@@ -70,7 +70,7 @@ Lexer::Token ISyn::parse( Lexer* lexer )
         if( tok == Lexer::WORD ) {
             char buffer[ 256 ];
             size_t length( std::wcstombs( buffer, lexer->text().c_str(), sizeof(buffer) / sizeof(char) ) );
-            if( length == -1 )
+            if( length == static_cast< size_t >( -1 ) )
                 throw FatalError( ERR_T_CONV );
             std::string txt( buffer );
             syn->add( txt );

@@ -67,7 +67,7 @@ private:
     wchar_t ungottenChar;
     bool ungotten;
 #ifndef __UNIX__
-    wchar_t readMBChar();
+    std::wint_t readMBChar();
 #endif
 };
 

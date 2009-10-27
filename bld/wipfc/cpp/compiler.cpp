@@ -42,13 +42,13 @@
 #include "util.hpp"
 
 Compiler::Compiler():
+    lexer( new Lexer() ),
+    loc( "en_US" ),
     warningLevel( 3 ),
     parseContinuously( true ),
-    search( true ),
     printBanner( true ),
-    xref( false ),
-    lexer( new Lexer() ),
-    loc( "en_US" )
+    search( true ),
+    xref( false )
 {
 }
 /*****************************************************************************/

@@ -41,7 +41,7 @@ std::uint32_t StringTable::write( std::FILE *out )
         char buffer[ 256 ];
         size_t written;
         size_t length( std::wcstombs( buffer, itr->c_str(), sizeof( buffer ) / sizeof( char ) ) );
-        if( length == -1 )
+        if( length == static_cast< size_t >( -1 ) )
             throw FatalError( ERR_T_CONV );
         if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out ) == EOF ||
             ( written = std::fwrite( buffer, sizeof( char ), length, out ) ) != length)

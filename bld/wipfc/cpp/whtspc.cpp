@@ -35,7 +35,7 @@
 
 WhiteSpace::WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
     unsigned int c, const std::wstring& tx, Tag::WsHandling w, bool ts ) :
-    whiteSpace( w ), Text( d, p, f, r, c, ts )
+    Text( d, p, f, r, c, ts ), whiteSpace( w )
 {
     if( tx[0] != L'\n' )
         spaces = static_cast< unsigned char >( tx.size() );

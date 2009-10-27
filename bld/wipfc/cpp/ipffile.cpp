@@ -36,7 +36,7 @@
 #endif
 
 IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname ),
-    ungotten( false ), ungottenChar( WEOF )
+    ungottenChar( WEOF ), ungotten( false )
 {
     std::string buffer;
     wtombstring( *fname, buffer );
@@ -49,7 +49,7 @@ IpfFile::IpfFile( const std::wstring*  fname ) : IpfData(), fileName ( fname ),
 std::wint_t IpfFile::get()
 {
 #ifdef __UNIX__
-    wchar_t ch( 0 );
+    std::wint_t ch( 0 );
     if( ungotten ) {
         ch = ungottenChar;
         ungotten = false;
@@ -60,7 +60,7 @@ std::wint_t IpfFile::get()
         ch = std::fgetwc( stream );
 #else
     //can't use OW's fgetwc because it always reads 2 bytes in binary mode
-    wchar_t ch( readMBChar() );
+    std::wint_t ch( readMBChar() );
     if( ch == L'\r' )
         ch = readMBChar();
 #endif
@@ -88,9 +88,9 @@ void IpfFile::unget( wchar_t ch )
 }
 /*****************************************************************************/
 #ifndef __UNIX__
-wchar_t IpfFile::readMBChar()
+std::wint_t IpfFile::readMBChar()
 {
-    wchar_t ch( 0 );
+    std::wint_t ch( 0 );
     if( ungotten ) {
         ch = ungottenChar;
         ungotten = false;

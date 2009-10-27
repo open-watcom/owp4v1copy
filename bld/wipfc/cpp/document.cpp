@@ -185,27 +185,27 @@ extern Env Environment;
 
 Document::Document( Compiler& c, const char* loc ) :
     compiler( c ),
+    nls( new Nls( loc ) ),
+    hdr( new IpfHeader() ),
+    eHdr( new IpfExtHeader() ),
+    strings( new StringTable() ),
+    extfiles( new ExternalFiles() ),
+    controls( new Controls() ),
+    gnames( new GNames() ),
+    dict( new GlobalDictionary() ),
     lastPrintableItem( 0 ),
     maxHeaderLevel( 3 ),
     headerLevel( 1 ),
     currentLeftMargin( 1 ),
     lastPrintableToken( Lexer::END ),
     inDoc( false ),
-    spacing( true ),
-    hdr( new IpfHeader() ),
-    eHdr( new IpfExtHeader() ),
-    nls( new Nls( loc ) ),
-    strings( new StringTable() ),
-    extfiles( new ExternalFiles() ),
-    controls( new Controls() ),
-    gnames( new GNames() ),
-    dict( new GlobalDictionary() )
+    spacing( true )
 {
     fonts.reset( new FontCollection( codePage() ) );
     FontEntry fnt;
     char buffer[ sizeof( fnt.faceName ) ];
     size_t size( std::wcstombs( buffer, cgraphicFontFaceName().c_str(), sizeof( fnt.faceName ) ) );
-    if( size == -1 )
+    if( size == static_cast< size_t>( -1 ) )
         throw FatalError( ERR_T_CONV );
     std::strncpy( fnt.faceName, buffer, sizeof( fnt.faceName ) );
     fnt.height = cgraphicFontHeight();
@@ -444,13 +444,13 @@ void Document::write( std::FILE *out )
 void Document::summary( std::FILE* out )
 {
     //TODO: use ostream when streams and strings mature
-    std::fprintf( out, "Number of pages:          %u\n", pages.size() );
-    std::fprintf( out, "Pages defined by name:    %u\n", nameMap.size() );
-    std::fprintf( out, "Pages defined by number:  %u\n", resMap.size() );
+    std::fprintf( out, "Number of pages:          %u\n", static_cast< unsigned int >( pages.size() ) );
+    std::fprintf( out, "Pages defined by name:    %u\n", static_cast< unsigned int >( nameMap.size() ) );
+    std::fprintf( out, "Pages defined by number:  %u\n", static_cast< unsigned int >( resMap.size() ) );
     std::fprintf( out, "Words in dictionary:      %u\n", dict->size() );
-    std::fprintf( out, "Number of index entries:  %u\n", index.size() ); 
+    std::fprintf( out, "Number of index entries:  %u\n", static_cast< unsigned int >( index.size() ) ); 
     std::fprintf( out, "Global index entries:     %u\n", eHdr->gIndexCount );
-    std::fprintf( out, "Number of fonts used:     %u\n", fonts->size() );
+    std::fprintf( out, "Number of fonts used:     %u\n", static_cast< unsigned int >( fonts->size() ) );
     std::fprintf( out, "Number of External files: %u\n", extfiles->size() );
     std::fprintf( out, "\nIdentifier Cross-reference\n" );
     for( ConstResMapIter itr( resMap.begin() ); itr != resMap.end(); ++itr ) {

@@ -35,7 +35,7 @@
 #include "errors.hpp"
 #include "ipfdata.hpp"
 
-Lexer::Lexer() : inTag( false ), tagCode( BADTAG ), cmdCode( BADCMD )
+Lexer::Lexer() : tagCode( BADTAG ), cmdCode( BADCMD ), inTag( false )
 {
     buffer.reserve( 256 );
     #undef PICK

@@ -84,8 +84,8 @@ class Pt : public Tag {
 public:
     Pt( Document* d, Element *p, const std::wstring* f, unsigned int r,
         unsigned int c, unsigned char i, unsigned char t, Parml::Break brk, bool cp ) :
-        Tag( d, p, f, r, c ), indent( i ), tabSize( t ), breakage( brk ),
-        textLength( 0 ), compact( cp ) { };
+        Tag( d, p, f, r, c ), indent( i ), tabSize( t ), textLength( 0 ),
+        breakage( brk ), compact( cp ) { };
     ~Pt() { };
     Lexer::Token parse( Lexer* lexer );
     void linearize( Page* page ) { linearizeChildren( page ); };

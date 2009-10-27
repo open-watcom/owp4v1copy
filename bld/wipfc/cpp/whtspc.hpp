@@ -37,8 +37,8 @@
 class WhiteSpace : public Text {
 public:
     WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
-        unsigned int c, Tag::WsHandling w = Tag::NONE ) :
-        whiteSpace( w ), spaces( 0 ), Text( d, p, f, r, c ) { };
+        unsigned int c, Tag::WsHandling w = Tag::NONE ) : Text( d, p, f, r, c ),
+        spaces( 0 ), whiteSpace( w ) { };
     WhiteSpace( Document* d, Element* p, const std::wstring* f, unsigned int r,
         unsigned int c, const std::wstring& tx, Tag::WsHandling w = Tag::NONE,
         bool ts = false );

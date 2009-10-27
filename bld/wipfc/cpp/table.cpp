@@ -376,7 +376,7 @@ Lexer::Token TableCol::parse( Lexer* lexer )
             }
             if( spaces > 0 ) {
                 std::wstring txt( lexer->text() );
-                if( txt.size() > spaces ) {
+                if( txt.size() > static_cast< std::string::size_type >( spaces ) ) {
                     txt.erase( spaces );    //trim text
                     document->printError( ERR1_TABLECELLTEXTWIDTH );
                 }
@@ -454,7 +454,7 @@ Lexer::Token TableCol::parse( Lexer* lexer )
                     spaces = colWidth;
                 }
                 std::wstring txt( lexer->text() );
-                if( txt.size() > spaces ) {
+                if( txt.size() > static_cast< std::string::size_type >( spaces ) ) {
                     txt.erase( spaces );        //trim text
                     document->printError( ERR1_TABLECELLTEXTWIDTH );
                 }
