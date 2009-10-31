@@ -38,13 +38,12 @@ writes a Unicode character string to the output stream.
 The &func function returns
 .kw EOF
 if an error occurs; otherwise, it returns a non-negative value
-(the amount written including the new-line character).
+(the characters amount written).
 .if &'length(&wfunc.) ne 0 .do begin
 The &wfunc function returns
-.kw WEOF
+.kw EOF
 if a write or encoding error occurs; otherwise, it returns a
-non-negative value (the amount written including the new-line
-character).
+non-negative value (the characters amount written).
 .do end
 .im errnoref
 .return end

@@ -41,7 +41,7 @@
 _WCRTLINK int __F_NAME(fputs,fputws)( const CHAR_TYPE *s, FILE *fp )
 {
     const CHAR_TYPE     *start;
-    int                 c;
+    INTCHAR_TYPE        c;
     int                 not_buffered;
     int                 rc;
 
@@ -61,23 +61,16 @@ _WCRTLINK int __F_NAME(fputs,fputws)( const CHAR_TYPE *s, FILE *fp )
     start = s;
     while( c = *s ) {
         s++;
-#ifndef __WIDECHAR__
-        if( (fputc)( c, fp ) == EOF ) {         /* 23-oct-91 */
+        if( __F_NAME(fputc,fputwc)( c, fp ) == __F_NAME(EOF,WEOF) ) {
             rc = EOF;
             break;
         }
-#else
-        if( (fputwc)( c, fp ) == WEOF ) {       /* 23-oct-91 */
-            rc = -1;
-            break;
-        }
-#endif
     }
     if( not_buffered ) {
         fp->_flag &= ~_IOLBF;
         fp->_flag |= _IONBF;
         if( rc == 0 ) {
-            rc = __flush( fp );                 /* 23-oct-91 */
+            rc = __flush( fp );
         }
     }
     if( rc == 0 ) {

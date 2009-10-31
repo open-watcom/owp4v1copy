@@ -36,17 +36,14 @@
 
 _WCRTLINK int __F_NAME(puts,putws)( const CHAR_TYPE *s )
 {
-    INTCHAR_TYPE        rc;
-    wint_t              result;
+    int             rc;
 
     rc = __F_NAME(fputs,fputws)( s, stdout );
-    if( rc != __F_NAME(EOF,WEOF) ) {
-        /* don't use macro version of putc: multi-threading issues */
-        result = __F_NAME(fputc,fputwc)( __F_NAME('\n',L'\n'), stdout );
-        if( result == __F_NAME('\n',L'\n') ) {
-            rc++;
+    if( rc != EOF ) {
+        if( __F_NAME(fputc,fputwc)( __F_NAME('\n',L'\n'), stdout ) == __F_NAME(EOF,WEOF) ) {
+            rc = EOF;
         } else {
-            rc = result;
+            rc++;
         }
     }
     return( rc );
