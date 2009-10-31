@@ -29,8 +29,10 @@
 ****************************************************************************/
 
 
+#define INCL_LONGLONG
 #include "variety.h"
 #include "widechar.h"
+#include "int64.h"
 #undef __INLINE_FUNCTIONS__
 #include <stddef.h>
 #include <sys/types.h>
@@ -57,8 +59,13 @@
 
 #if defined(__WARP__)
   #define FF_ATTR       ULONG
-  #define FF_LEVEL      1
+ #ifdef __INT64__
+  #define FF_LEVEL      FIL_STANDARDL
+  #define FF_BUFFER     FILEFINDBUF3L
+ #else
+  #define FF_LEVEL      FIL_STANDARD
   #define FF_BUFFER     FILEFINDBUF3
+ #endif
 #else
   #define FF_ATTR       USHORT
   #define FF_LEVEL      0
@@ -68,10 +75,14 @@
 static  unsigned short          at2mode(FF_ATTR,char *);
 
 
-_WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_stat) *buf )
+#ifdef __INT64__
+ _WCRTLINK int __F_NAME(_stati64,_wstati64)( CHAR_TYPE const *path, struct _stati64 *buf )
+#else
+ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_stat) *buf )
+#endif
 {
     FF_BUFFER           dir_buff;
-    CHAR_TYPE const *   ptr;
+    CHAR_TYPE const     *ptr;
     HDIR                handle = 1;
     ULONG               drvmap;
     OS_UINT             drive;
@@ -81,43 +92,29 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     int                 isrootdir = 0;
 
     /* reject null string and names that has wildcard */
-    #ifdef __WIDECHAR__
-    if( *path == L'\0' || wcspbrk( path, L"*?" ) != NULL )
-    #else
-    if( *path == '\0' || _mbspbrk( path, "*?" ) != NULL )
-    #endif
-    {
+    if( *path == NULLCHAR || __F_NAME(_mbspbrk,wcspbrk)( path, STRING( "*?" ) ) != NULL ) {
         __set_errno( ENOENT );
         return( -1 );
     }
 
     /*** Determine if 'path' refers to a root directory ***/
     if( __F_NAME(_fullpath,_wfullpath)( fullpath, path, _MAX_PATH ) != NULL ) {
-        #ifdef __WIDECHAR__
-        if( iswalpha( fullpath[0] )  &&  fullpath[1] == L':'  &&
-            fullpath[2] == L'\\'  &&  fullpath[3] == L'\0' )
-        #else
-        if( isalpha( fullpath[0] )  &&  fullpath[1] == ':'  &&
-            fullpath[2] == '\\'  &&  fullpath[3] == '\0' )
-        #endif
+        if( __F_NAME(isalpha,iswalpha)( fullpath[0] )  &&  fullpath[1] == STRING( ':' ) &&
+            fullpath[2] == STRING( '\\' ) && fullpath[3] == NULLCHAR )
         {
             isrootdir = 1;
         }
     }
 
     ptr = path;
-    if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') )  ptr += 2;
-    #ifdef __WIDECHAR__
-    if( ( (ptr[0] == L'\\' || ptr[0] == L'/') && ptr[1] == L'\0' )  ||  isrootdir )
-    #else
-    if( ( (ptr[0] == '\\' || ptr[0] == '/') && ptr[1] == '\0' )  ||  isrootdir )
-    #endif
-    {
+    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) )
+        ptr += 2;
+    if( ( ptr[0] == STRING( '\\' ) || ptr[0] == STRING( '/' ) ) && ptr[1] == NULLCHAR || isrootdir ) {
         /* handle root directory */
         int             drv;
 
         /* check if drive letter is valid */
-        drv = __F_NAME(tolower,towlower)( *fullpath ) - __F_NAME('a',L'a');
+        drv = __F_NAME(tolower,towlower)( *fullpath ) - STRING( 'a' );
         DosQCurDisk( &drive, &drvmap );
         if( ( drvmap & ( 1UL << drv ) ) == 0 ) {
             __set_errno( ENOENT );
@@ -133,10 +130,10 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         *(USHORT *)(&dir_buff.fdateLastWrite) = 0;
         dir_buff.cbFile = 0;
     } else {    /* not a root directory */
-        #ifdef __WIDECHAR__
-            char        mbPath[MB_CUR_MAX*_MAX_PATH];
-            __filename_from_wide( mbPath, path );
-        #endif
+#ifdef __WIDECHAR__
+        char        mbPath[MB_CUR_MAX*_MAX_PATH];
+        __filename_from_wide( mbPath, path );
+#endif
         rc = DosFindFirst( (char*)__F_NAME(path,mbPath), &handle, 0x37,
                            &dir_buff, sizeof( dir_buff ),
                            &searchcount, FF_LEVEL );
@@ -148,7 +145,11 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
             if( handle < 0 ) {
                 __set_errno( ENOENT );
                 return( -1 );
+#ifdef __INT64__
+            } else if( __F_NAME(_fstati64,_wfstati64)( handle, buf ) == -1 ) {
+#else
             } else if( __F_NAME(fstat,_wfstat)( handle, buf ) == -1 ) {
+#endif
                 rc = errno;
             }
             close( handle );
@@ -164,15 +165,19 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     }
 
     /* process drive number */
-    if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') ) {
-        buf->st_dev = __F_NAME(tolower,towlower)( *path ) - __F_NAME('a',L'a');
+    if( __F_NAME(*_mbsinc(path),path[1]) == STRING( ':' ) ) {
+        buf->st_dev = __F_NAME(tolower,towlower)( *path ) - STRING( 'a' );
     } else {
         DosQCurDisk( &drive, &drvmap );
         buf->st_dev = drive - 1;
     }
     buf->st_rdev = buf->st_dev;
 
+#ifdef __INT64__
+    buf->st_size = GET_REALINT64( dir_buff.cbFile );
+#else
     buf->st_size = dir_buff.cbFile;
+#endif
     buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
 
     buf->st_ctime = _d2ttime( TODDATE( dir_buff.fdateCreation ),
@@ -200,9 +205,9 @@ static unsigned short at2mode( FF_ATTR attr, char *fname ) {
     register unsigned short mode;
     register char * ext;
 
-    if( attr & _A_SUBDIR )
+    if( attr & _A_SUBDIR ) {
         mode = S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-    else if( attr & 0x40 ) {
+    } else if( attr & 0x40 ) {
         mode = S_IFCHR;
     } else {
         mode = S_IFREG;

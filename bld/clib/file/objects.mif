@@ -2,7 +2,8 @@
 #==================================================================================================
 !inject 64findfi.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject 64findne.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject 64stat.obj   d16 d32                                o16 o32         w16 w32
+!inject 64stat.obj   d16 d32                                o16             w16 w32
+!inject 64staos2.obj                                            o32
 !inject 64stawnt.obj                     nt nta ntp
 !inject accss.obj    d16 d32                                                w16 w32 osi
 !inject accssos2.obj                                        o16 o32
@@ -29,7 +30,8 @@
 !inject tmpnm_s.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject u64findf.obj d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject u64findn.obj d16 d32             nt nta ntp         o16 o32         w16 w32
-!inject u64stat.obj  d16 d32                                o16 o32         w16 w32
+!inject u64stat.obj  d16 d32                                o16             w16 w32
+!inject u64stos2.obj                                            o32
 !inject u64stwnt.obj                     nt nta ntp
 !inject uaccs.obj    d16 d32                                                w16 w32
 !inject uaccsos2.obj                                        o16 o32
@@ -63,10 +65,12 @@
 stat_opts    =-I"$(clib_dir)/handleio/h"
 statos2_opts =-I"$(clib_dir)/handleio/h"
 statwnt_opts =-I"$(clib_dir)/handleio/h"
+64staos2_opts=-I"$(clib_dir)/handleio/h"
 64stawnt_opts=-I"$(clib_dir)/handleio/h"
 ustat_opts   =-I"$(clib_dir)/handleio/h"
 ustatos2_opts=-I"$(clib_dir)/handleio/h"
 ustatwnt_opts=-I"$(clib_dir)/handleio/h"
+u64stos2_opts=-I"$(clib_dir)/handleio/h"
 u64stwnt_opts=-I"$(clib_dir)/handleio/h"
 
 stat_postopts   =-os
