@@ -291,7 +291,11 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             SendMessage( EditContainer, WM_MDIACTIVATE, (UINT)CurrentWindow, 0L );
         }
 #endif
-        ResetEditWindowCursor( CurrentWindow );
+        if( wparam ) {
+            ResetEditWindowCursor( CurrentWindow );
+        } else {
+            GoodbyeCursor( CurrentWindow );
+        }
         break;
     case WM_MOUSEACTIVATE:
         SetFocus( hwnd );
