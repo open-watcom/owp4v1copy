@@ -367,7 +367,7 @@ void Document::parse( Lexer* lexer )
     }
     if( pages.size() > 65535 )
         throw FatalError( ERR_LARGETOC );
-    if( dict->size() > 16000 )
+    if( dict->size() > 65530 )
         throw FatalError( ERR_DOCLARGE );
     else if ( dict->size() == 0 )
         throw FatalError( ERR_DOCSMALL );
