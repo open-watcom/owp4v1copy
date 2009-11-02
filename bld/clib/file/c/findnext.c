@@ -31,17 +31,18 @@
 
 
 #include "variety.h"
-#include "int64.h"
 #include "widechar.h"
 #include <io.h>
-#include "find.h"
-#include "seterrno.h"
-#ifdef __NT__
+#if defined( __NT__ )
     #include <windows.h>
     #include "libwin32.h"
     #include "ntex.h"
-#else
+#elif defined( __OS2__ )
+    #include <os2.h>
 #endif
+#include "find.h"
+#include "seterrno.h"
+
 
 #ifdef __WIDECHAR__
  #ifdef __INT64__
@@ -62,11 +63,11 @@
     BOOL            rc;
 
     /*** Try to find another matching file ***/
- #ifdef __WIDECHAR__
+  #ifdef __WIDECHAR__
     rc = __lib_FindNextFileW( (HANDLE)handle, &ffb );
- #else
+  #else
     rc = FindNextFileA( (HANDLE)handle, &ffb );
- #endif
+  #endif
     if( rc == FALSE ) {
         __set_errno_nt();
         return( -1 );
@@ -75,31 +76,44 @@
         __set_errno_dos( ERROR_FILE_NOT_FOUND );
         return( -1 );
     }
-
     /*** Got one! ***/
- #ifdef __INT64__
+  #ifdef __INT64__
     __F_NAME(__nt_finddatai64_cvt,__nt_wfinddatai64_cvt)( &ffb, fileinfo );
- #else
+  #else
     __F_NAME(__nt_finddata_cvt,__nt_wfinddata_cvt)( &ffb, fileinfo );
- #endif
-    return( 0 );
-#else
-    DOSFINDTYPE *   findbuf = (DOSFINDTYPE*) handle;
-    unsigned        rc;
+  #endif
+#elif defined( __OS2__ )
+    unsigned       rc;
+    FF_BUFFER       ffb;
+    FF_UINT         searchcount = 1;
 
-#ifdef __WATCOM_LFN__
+    rc = DosFindNext( (HDIR)handle, &ffb, sizeof( ffb ), &searchcount );
+    if( rc != 0 ) {
+        __set_errno_dos( rc );
+        return( -1 );
+    }
+    /*** Got one! ***/
+  #ifdef __INT64__
+    __F_NAME(__os2_finddatai64_cvt,__os2_wfinddatai64_cvt)( &ffb, fileinfo );
+  #else
+    __F_NAME(__os2_finddata_cvt,__os2_wfinddata_cvt)( &ffb, fileinfo );
+  #endif
+#else   /* DOS */
+    DOSFINDTYPE     *findbuf = (DOSFINDTYPE *)handle;
+    unsigned       rc;
+
+  #ifdef __WATCOM_LFN__
     findbuf->lfnax = (int)handle;
-#endif
+  #endif
     rc = __F_NAME(_dos_findnext,_wdos_findnext)( findbuf );
     if( rc != 0 ) {
         return( -1 );
-    } else {
- #ifdef __INT64__
-        __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf, fileinfo );
- #else
-        __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf, fileinfo );
- #endif
-        return( 0 );
     }
+  #ifdef __INT64__
+    __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf, fileinfo );
+  #else
+    __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf, fileinfo );
+  #endif
 #endif
+    return( 0 );
 }

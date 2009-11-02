@@ -32,8 +32,10 @@
 
 #include "variety.h"
 #include <io.h>
-#ifdef __NT__
+#if defined( __NT__ )
     #include <windows.h>
+#elif defined( __OS2__ )
+    #include <os2.h>
 #else
     #include <dos.h>
     #include "liballoc.h"
@@ -42,28 +44,28 @@
 
 _WCRTLINK int _findclose( long handle )
 {
-    #ifdef __NT__
-        if( FindClose( (HANDLE)handle )  ==  TRUE ) {
-            return( 0 );
-        } else {
-            return( -1 );
-        }
-    #else
-        unsigned        rc;
-#ifdef USING_LFN
-        struct find_t * handlestuff = ( struct find_t * )handle;
+#if defined( __NT__ )
+    if( FindClose( (HANDLE)handle ) != TRUE ) {
+        return( -1 );
+    }
+#elif defined( __OS2__ )
+    if( DosFindClose( (HDIR)handle ) ) {
+        return( -1 );
+    }
+#else   /* DOS */
+    unsigned        rc;
+  #ifdef USING_LFN
+    struct find_t   *handlestuff = (struct find_t *)handle;
 
-        handlestuff->lfnax = (int)handle;
-        rc = _dos_findclose( handlestuff );
-#else
-
-        rc = _dos_findclose( (struct find_t*) handle );
+    handlestuff->lfnax = (int)handle;
+    rc = _dos_findclose( handlestuff );
+  #else
+    rc = _dos_findclose( (struct find_t *)handle );
+  #endif
+    lib_free( (void *)handle );
+    if( rc ) {
+        return( -1 );
+    }
 #endif
-        lib_free( (void*) handle );
-        if( rc == 0 ) {
-            return( 0 );
-        } else {
-            return( -1 );
-        }
-    #endif
+    return( 0 );
 }

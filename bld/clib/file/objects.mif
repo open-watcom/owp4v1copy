@@ -62,17 +62,6 @@
 
 !include ../../../../objlist.mif
 
-stat_opts    =-I"$(clib_dir)/handleio/h"
-statos2_opts =-I"$(clib_dir)/handleio/h"
-statwnt_opts =-I"$(clib_dir)/handleio/h"
-64staos2_opts=-I"$(clib_dir)/handleio/h"
-64stawnt_opts=-I"$(clib_dir)/handleio/h"
-ustat_opts   =-I"$(clib_dir)/handleio/h"
-ustatos2_opts=-I"$(clib_dir)/handleio/h"
-ustatwnt_opts=-I"$(clib_dir)/handleio/h"
-u64stos2_opts=-I"$(clib_dir)/handleio/h"
-u64stwnt_opts=-I"$(clib_dir)/handleio/h"
-
 stat_postopts   =-os
 statos2_postopts=-os
 statwnt_postopts=-os

@@ -32,14 +32,15 @@
 
 #include "variety.h"
 #include <time.h>
-#ifdef __NT__
+#if defined( __NT__ )
     #include <windows.h>
-#else
+#elif defined( __OS2__ )
+    #include <os2.h>
 #endif
 #include "find.h"
 
 
-#ifdef __NT__
+#if defined( __NT__ )
 
 
 time_t __nt_filetime_cvt( FILETIME *ft )
@@ -78,7 +79,10 @@ time_t __nt_filetime_cvt( FILETIME *ft )
 }
 
 
-#else   /* __NT__ */
+#elif defined( __OS2__ )
+
+
+#else   /* DOS */
 
 
 #define DATE_DAY(__d)       ( (__d) & 0x001F )              /* [1..31] */
@@ -112,4 +116,4 @@ time_t __dos_filetime_cvt( unsigned short ftime, unsigned short fdate )
 }
 
 
-#endif  /* __NT__ */
+#endif

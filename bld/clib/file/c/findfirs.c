@@ -31,29 +31,25 @@
 
 
 #include "variety.h"
-#include "int64.h"
+#include "i64.h"
 #include "widechar.h"
-#ifdef __NT__
-    #include <windows.h>
-#endif
-/* gross hack for building 11.0 libraries with 10.6 compiler */
-#ifndef __WATCOM_INT64__
-    #include <limits.h>         /* a gross hack to make a gross hack work */
-    #define __WATCOM_INT64__
-    #define __int64             double
-#endif
-/* most includes should go after this line */
 #include <io.h>
 #include <string.h>
-#include "find.h"
-#include "seterrno.h"
 #ifdef __NT__
+    #include <windows.h>
     #include "libwin32.h"
     #include "ntex.h"
+#elif defined( __OS2__ )
+    #include <os2.h>
+    #include <mbstring.h>
+    #include "d2ttime.h"
+    #include "mbwcconv.h"
 #else
     #include <dos.h>
     #include "liballoc.h"
 #endif
+#include "find.h"
+#include "seterrno.h"
 
 
 #ifdef __WIDECHAR__
@@ -70,60 +66,79 @@
  #endif
 #endif
 {
-    #ifdef __NT__
-        WIN32_FIND_DATA ffb;
-        HANDLE          h;
+#if defined( __NT__ )
+    WIN32_FIND_DATA ffb;
+    HANDLE          h;
 
-        /*** Initialize the find ***/
-        h = __F_NAME(FindFirstFileA,__lib_FindFirstFileW)( filespec, &ffb );
-        if( h == INVALID_HANDLE_VALUE ) {
-            __set_errno_nt();
-            return( -1 );
-        }
+    /*** Initialize the find ***/
+    h = __F_NAME(FindFirstFileA,__lib_FindFirstFileW)( filespec, &ffb );
+    if( h == INVALID_HANDLE_VALUE ) {
+        __set_errno_nt();
+        return( -1 );
+    }
 
-        /*** Look for the first file ***/
-        if( !__NTFindNextFileWithAttr( h, FIND_ATTR, &ffb ) ) {
-            FindClose( h );
-            __set_errno_dos( ERROR_FILE_NOT_FOUND );
-            return( -1 );
-        }
+    /*** Look for the first file ***/
+    if( !__NTFindNextFileWithAttr( h, FIND_ATTR, &ffb ) ) {
+        FindClose( h );
+        __set_errno_dos( ERROR_FILE_NOT_FOUND );
+        return( -1 );
+    }
 
-        /*** Got one! ***/
-        #ifdef __INT64__
-            __F_NAME(__nt_finddatai64_cvt,__nt_wfinddatai64_cvt)( &ffb, fileinfo );
-        #else
-            __F_NAME(__nt_finddata_cvt,__nt_wfinddata_cvt)( &ffb, fileinfo );
-        #endif
-        return( (long)h );
-    #else
-        DOSFINDTYPE *   findbuf;
-        unsigned        rc;
+    /*** Got one! ***/
+  #ifdef __INT64__
+    __F_NAME(__nt_finddatai64_cvt,__nt_wfinddatai64_cvt)( &ffb, fileinfo );
+  #else
+    __F_NAME(__nt_finddata_cvt,__nt_wfinddata_cvt)( &ffb, fileinfo );
+  #endif
+    return( (long)h );
+#elif defined( __OS2__ )
+    unsigned       rc;
+    HDIR            h = HDIR_SYSTEM;
+    FF_BUFFER       ffb;
+    FF_UINT         searchcount = 1;
+#ifdef __WIDECHAR__
+    char            mbFilespec[MB_CUR_MAX * _MAX_PATH];
 
-        /*** Start a new find using _dos_findfirst ***/
-        findbuf = (DOSFINDTYPE*) lib_malloc( sizeof( DOSFINDTYPE ) );
-        if( findbuf == NULL )  return( -1L );
-        rc = __F_NAME(_dos_findfirst,_wdos_findfirst)( filespec, FIND_ATTR,
-                                                       findbuf );
-        if( rc != 0 ) {
-            lib_free( findbuf );
-            return( -1L );
-        }
+    __filename_from_wide( mbFilespec, filespec );
+#endif
+    rc = DosFindFirst( (char*)__F_NAME(filespec,mbFilespec), &h, FIND_ATTR,
+                                &ffb, sizeof( ffb ), &searchcount, FF_LEVEL );
+    if( rc != 0 ) {
+        return( -1L );
+    }
+    /*** Got one! ***/
+  #ifdef __INT64__
+    __F_NAME(__os2_finddatai64_cvt,__os2_wfinddatai64_cvt)( &ffb, fileinfo );
+  #else
+    __F_NAME(__os2_finddata_cvt,__os2_wfinddata_cvt)( &ffb, fileinfo );
+  #endif
+    return( (long)h );
+#else   /* DOS */
+    DOSFINDTYPE     *findbuf;
+    unsigned       rc;
 
-        /*** Got one! ***/
-        #ifdef __INT64__
-            __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf,
-                                                                    fileinfo );
-        #else
-            __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf,
-                                                              fileinfo );
-        #endif
-        #ifdef __WATCOM_LFN__
-        if( findbuf->lfnsup ) {
-            return( (long)findbuf->lfnax );
-        } else
-        #endif
-        return( (long) findbuf );
-    #endif
+    /*** Start a new find using _dos_findfirst ***/
+    findbuf = (DOSFINDTYPE*) lib_malloc( sizeof( DOSFINDTYPE ) );
+    if( findbuf == NULL )  return( -1L );
+    rc = __F_NAME(_dos_findfirst,_wdos_findfirst)( filespec, FIND_ATTR, findbuf );
+    if( rc != 0 ) {
+        lib_free( findbuf );
+        return( -1L );
+    }
+
+    /*** Got one! ***/
+  #ifdef __INT64__
+    __F_NAME(__dos_finddatai64_cvt,__dos_wfinddatai64_cvt)( findbuf, fileinfo );
+  #else
+    __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf, fileinfo );
+  #endif
+  #ifdef __WATCOM_LFN__
+    if( findbuf->lfnsup ) {
+        return( (long)findbuf->lfnax );
+    }
+  #endif
+    return( (long)findbuf );
+#endif
 }
 
 
@@ -171,23 +186,62 @@
     fileinfo->time_write = __nt_filetime_cvt( &ffb->ftLastWriteTime );
 
     /*** Handle the file size ***/
-    #ifdef __INT64__
-    {
-        INT_TYPE        tmp;
-
-        MAKE_INT64(tmp,ffb->nFileSizeHigh,ffb->nFileSizeLow);
-        fileinfo->size = GET_REALINT64(tmp);
-    }
-    #else
-        fileinfo->size = ffb->nFileSizeLow;
-    #endif
+  #ifdef __INT64__
+    U64Set( (unsigned_64 *)&fileinfo->size, ffb->nFileSizeLow, ffb->nFileSizeHigh );
+  #else
+    fileinfo->size = ffb->nFileSizeLow;
+  #endif
 
     /*** Handle the file name ***/
     __F_NAME(strcpy,wcscpy)( fileinfo->name, ffb->cFileName );
 }
 
 
-#else   /* __NT__ */
+#elif defined( __OS2__ )
+
+
+#ifdef __WIDECHAR__
+ #ifdef __INT64__
+  void __os2_wfinddatai64_cvt( FF_BUFFER *ffb, struct _wfinddatai64_t *fileinfo )
+ #else
+  void __os2_wfinddata_cvt( FF_BUFFER *ffb, struct _wfinddata_t *fileinfo )
+ #endif
+#else
+ #ifdef __INT64__
+  void __os2_finddatai64_cvt( FF_BUFFER *ffb, struct _finddatai64_t *fileinfo )
+ #else
+  void __os2_finddata_cvt( FF_BUFFER *ffb, struct _finddata_t *fileinfo )
+ #endif
+#endif
+{
+    /*** Handle attributes ***/
+    fileinfo->attrib = ffb->attrFile;
+
+    /*** Handle the timestamps ***/
+    fileinfo->time_create = _d2ttime( TODDATE( ffb->fdateCreation ),
+                                        TODTIME( ffb->ftimeCreation ) );
+    fileinfo->time_access = _d2ttime( TODDATE( ffb->fdateLastAccess ),
+                                        TODTIME( ffb->ftimeLastAccess ) );
+    fileinfo->time_write  = _d2ttime( TODDATE( ffb->fdateLastWrite ),
+                                        TODTIME( ffb->ftimeLastWrite ) );
+
+    /*** Handle the file size ***/
+  #if defined( __INT64__ ) && defined( __WARP__ )
+    U64Set( (unsigned_64 *)&fileinfo->size, ffb->cbFile.ulLo, ffb->cbFile.ulHi );
+  #else
+    fileinfo->size = ffb->cbFile;
+  #endif
+
+    /*** Handle the file name ***/
+  #ifdef __WIDECHAR__
+    mbstowcs( fileinfo->name, ffb->achName, _mbslen( ffb->achName ) + 1 );
+  #else
+    strcpy( fileinfo->name, ffb->achName );
+  #endif
+}
+
+
+#else   /* DOS */
 
 
 #ifdef __WIDECHAR__
@@ -204,30 +258,31 @@
  #endif
 #endif
 {
+    /*** Handle attributes ***/
     fileinfo->attrib = findbuf->attrib;
-#ifdef __WATCOM_LFN__
+
+    /*** Handle the timestamps ***/
+  #ifdef __WATCOM_LFN__
     if( findbuf->cr_time ) {
         fileinfo->time_create = findbuf->cr_time | findbuf->cr_date;
         fileinfo->time_access = findbuf->ac_time | findbuf->ac_date;
     }
-#else
+  #else
     fileinfo->time_create = -1L;
     fileinfo->time_access = -1L;
-#endif
+  #endif
     fileinfo->time_write = __dos_filetime_cvt( findbuf->wr_time,
                                                findbuf->wr_date );
-    #ifdef __INT64__
-    {
-        INT_TYPE        tmp;
+    /*** Handle the file size ***/
+  #ifdef __INT64__
+    U64Set( (unsigned_64 *)&fileinfo->size, findbuf->size, 0 );
+  #else
+    fileinfo->size = findbuf->size;
+  #endif
 
-        _clib_U32ToU64(findbuf->size,tmp);
-        fileinfo->size = GET_REALINT64(tmp);
-    }
-    #else
-        fileinfo->size = (_fsize_t) findbuf->size;
-    #endif
+    /*** Handle the file name ***/
     __F_NAME(strcpy,wcscpy)( fileinfo->name, findbuf->name );
 }
 
 
-#endif  /* __NT__ */
+#endif
