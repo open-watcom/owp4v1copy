@@ -3,7 +3,8 @@
 !inject 64lseek.obj  d16 d32                                        o16 o32 q16 q32 w16 w32 osi l32 lpc
 !inject 64lskwnt.obj                     nt nta ntp
 !inject 64fillen.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc
-!inject 64fstat.obj  d16 d32                                        o16 o32         w16 w32 osi
+!inject 64fstat.obj  d16 d32                                                        w16 w32 osi
+!inject 64fstos2.obj                                                o16 o32
 !inject 64fstwnt.obj                     nt nta ntp
 !inject 64tell.obj   d16 d32                                        o16 o32 q16 q32 w16 w32 osi l32 lpc
 !inject 64telwnt.obj                     nt nta ntp
@@ -68,7 +69,8 @@
 !inject tellos2.obj                                                 o16 o32
 !inject tellunx.obj                                                         q16 q32             l32 lpc lmp
 !inject tellwnt.obj                      nt nta ntp
-!inject u64fstat.obj d16 d32                                        o16 o32         w16 w32 osi
+!inject u64fstat.obj d16 d32                                                        w16 w32 osi
+!inject u64fsos2.obj                                                o16 o32
 !inject u64fswnt.obj                     nt nta ntp
 !inject ucreat.obj   d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject ufsta.obj    d16 d32
@@ -95,9 +97,9 @@
 
 !include ../../../../objlist.mif
 
-qread_opts=-I"$(clib_dir)/streamio/h"
+qread_opts   =-I"$(clib_dir)/streamio/h"
 qreadunx_opts=-I"$(clib_dir)/streamio/h"
-qwrit_opts=-I"$(clib_dir)/streamio/h"
+qwrit_opts   =-I"$(clib_dir)/streamio/h"
 qwritunx_opts=-I"$(clib_dir)/streamio/h"
 
 # BUILD WORKAROUND because of insufficiently smart 1.8 compiler

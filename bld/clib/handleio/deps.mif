@@ -5,8 +5,11 @@
 ucreat.obj   : ../../../c/ucreat.c   ../../../c/creat.c
 
 ufsta.obj    : ../../../c/ufsta.c    ../../../c/fstat.c
-ufstaos2.obj : ../../../c/ufstaos2.c ../../../c/fstatos2.c
 u64fstat.obj : ../../../c/u64fstat.c ../../../c/64fstat.c
+
+ufstaos2.obj : ../../../c/ufstaos2.c ../../../c/fstatos2.c
+64fstos2.obj : ../../../c/64fstos2.c ../../../c/fstatos2.c
+u64fsos2.obj : ../../../c/u64fsos2.c ../../../c/ufstaos2.c ../../../c/fstatos2.c
 
 ufstawnt.obj : ../../../c/ufstawnt.c ../../../c/fstatwnt.c
 64fstwnt.obj : ../../../c/64fstwnt.c ../../../c/fstatwnt.c

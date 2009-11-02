@@ -29,10 +29,9 @@
 ****************************************************************************/
 
 
-#define INCL_LONGLONG
 #include "variety.h"
 #include "widechar.h"
-#include "int64.h"
+#include "i64.h"
 #undef __INLINE_FUNCTIONS__
 #include <stddef.h>
 #include <sys/types.h>
@@ -55,24 +54,10 @@
 #else
     #include <ctype.h>
 #endif
+#include "find.h"
 #include "d2ttime.h"
 
-#if defined(__WARP__)
-  #define FF_ATTR       ULONG
- #ifdef __INT64__
-  #define FF_LEVEL      FIL_STANDARDL
-  #define FF_BUFFER     FILEFINDBUF3L
- #else
-  #define FF_LEVEL      FIL_STANDARD
-  #define FF_BUFFER     FILEFINDBUF3
- #endif
-#else
-  #define FF_ATTR       USHORT
-  #define FF_LEVEL      0
-  #define FF_BUFFER     FILEFINDBUF
-#endif
-
-static  unsigned short          at2mode(FF_ATTR,char *);
+static  unsigned short      at2mode(FF_UINT,char *);
 
 
 #ifdef __INT64__
@@ -120,23 +105,28 @@ static  unsigned short          at2mode(FF_ATTR,char *);
             __set_errno( ENOENT );
             return( -1 );
         }
-
-        dir_buff.attrFile = _A_SUBDIR;           /* fill in DTA */
-        *(USHORT *)(&dir_buff.ftimeCreation) = 0;
-        *(USHORT *)(&dir_buff.fdateCreation) = 0;
-        *(USHORT *)(&dir_buff.ftimeLastAccess) = 0;
-        *(USHORT *)(&dir_buff.fdateLastAccess) = 0;
-        *(USHORT *)(&dir_buff.ftimeLastWrite) = 0;
-        *(USHORT *)(&dir_buff.fdateLastWrite) = 0;
-        dir_buff.cbFile = 0;
-    } else {    /* not a root directory */
+        /* set attributes */
+        buf->st_attr = _A_SUBDIR;
+        buf->st_mode = at2mode( _A_SUBDIR, "" );
+        /* set timestamps */
+        buf->st_ctime = 0;
+        buf->st_atime = 0;
+        buf->st_mtime = 0;
+        buf->st_btime = 0;
+        /* set size */
+#if defined( __INT64__ )
+        U64Set( (unsigned_64 *)&buf->st_size, 0, 0 );
+#else
+        buf->st_size = 0;
+#endif
+    } else {
+        /* handle non-root directory */
 #ifdef __WIDECHAR__
-        char        mbPath[MB_CUR_MAX*_MAX_PATH];
+        char        mbPath[MB_CUR_MAX * _MAX_PATH];
         __filename_from_wide( mbPath, path );
 #endif
-        rc = DosFindFirst( (char*)__F_NAME(path,mbPath), &handle, 0x37,
-                           &dir_buff, sizeof( dir_buff ),
-                           &searchcount, FF_LEVEL );
+        rc = DosFindFirst( (char*)__F_NAME(path,mbPath), &handle, FIND_ATTR,
+                    &dir_buff, sizeof( dir_buff ), &searchcount, FF_LEVEL );
         if( rc == ERROR_FILE_NOT_FOUND ) { // appply a bit more persistence
             int handle;
 
@@ -162,6 +152,23 @@ static  unsigned short          at2mode(FF_ATTR,char *);
             __set_errno( ENOENT );
             return( -1 );
         }
+        /* set attributes */
+        buf->st_attr = dir_buff.attrFile;
+        buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
+        /* set timestamps */
+        buf->st_ctime = _d2ttime( TODDATE( dir_buff.fdateCreation ),
+                                  TODTIME( dir_buff.ftimeCreation ) );
+        buf->st_atime = _d2ttime( TODDATE( dir_buff.fdateLastAccess ),
+                                  TODTIME( dir_buff.ftimeLastAccess ) );
+        buf->st_mtime = _d2ttime( TODDATE( dir_buff.fdateLastWrite ),
+                                  TODTIME( dir_buff.ftimeLastWrite ) );
+        buf->st_btime = buf->st_mtime;
+        /* set size */
+#if defined( __INT64__ ) && defined( __WARP__ )
+        U64Set( (unsigned_64 *)&buf->st_size, dir_buff.cbFile.ulLo, dir_buff.cbFile.ulHi );
+#else
+        buf->st_size = dir_buff.cbFile;
+#endif
     }
 
     /* process drive number */
@@ -173,24 +180,9 @@ static  unsigned short          at2mode(FF_ATTR,char *);
     }
     buf->st_rdev = buf->st_dev;
 
-#ifdef __INT64__
-    buf->st_size = GET_REALINT64( dir_buff.cbFile );
-#else
-    buf->st_size = dir_buff.cbFile;
-#endif
-    buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
-
-    buf->st_ctime = _d2ttime( TODDATE( dir_buff.fdateCreation ),
-                              TODTIME( dir_buff.ftimeCreation ) );
-    buf->st_atime = _d2ttime( TODDATE( dir_buff.fdateLastAccess ),
-                              TODTIME( dir_buff.ftimeLastAccess ) );
-    buf->st_mtime = _d2ttime( TODDATE( dir_buff.fdateLastWrite ),
-                              TODTIME( dir_buff.ftimeLastWrite ) );
-    buf->st_btime = buf->st_mtime;
     buf->st_nlink = 1;
     buf->st_ino = buf->st_uid = buf->st_gid = 0;
 
-    buf->st_attr = dir_buff.attrFile;
     buf->st_archivedID = 0;
     buf->st_updatedID = 0;
     buf->st_inheritedRightsMask = 0;
@@ -200,7 +192,7 @@ static  unsigned short          at2mode(FF_ATTR,char *);
 }
 
 
-static unsigned short at2mode( FF_ATTR attr, char *fname ) {
+static unsigned short at2mode( FF_UINT attr, char *fname ) {
 
     register unsigned short mode;
     register char * ext;
