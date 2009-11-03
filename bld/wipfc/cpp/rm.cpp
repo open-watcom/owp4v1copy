@@ -50,8 +50,14 @@ Lexer::Token Rm::parse( Lexer* lexer )
             std::wstring key;
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
-            if( key == L"margin" )
-                margin = static_cast< std::uint8_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+            if( key == L"margin" ) {
+                long int tmp( std::wcstol( value.c_str(), 0, 10 ) );
+                if( tmp < 1 )
+                    tmp = 1;
+                if( tmp > 255 )
+                    tmp = 255;
+                margin = static_cast< std::uint8_t >( tmp );
+            }
             else
                 document->printError( ERR1_ATTRNOTDEF );
         }
