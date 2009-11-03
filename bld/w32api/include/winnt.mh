@@ -237,6 +237,9 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
     #define MAX_UCSCHAR                 0x0010FFFFL
 #endif
 
+/* Processor group special value */
+#define ALL_PROCESSOR_GROUPS    0xFFFF
+
 /* Error severities */
 #define APPLICATION_ERROR_MASK          0x20000000
 #define ERROR_SEVERITY_SUCCES           0x00000000
@@ -1260,6 +1263,12 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define QUOTA_LIMITS_HARDWS_MAX_DISABLE 0x00000008L
 #define QUOTA_LIMITS_USE_DEFAULT_LIMITS 0x00000010L
 
+/* Maximum number of hardware counters */
+#define MAX_HW_COUNTERS 16
+
+/* Thread profiling flags */
+#define THREAD_PROFILING_FLAG_DISPATCH  0x00000001L
+
 /* Rate phrase constants */
 #define PS_RATE_PHASE_BITS  4
 #define PS_RATE_PHASE_MASK  ((1UL << PS_RATE_PHASE_BITS) - 1)
@@ -1401,6 +1410,19 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define PF_COMPARE_EXCHANGE128              14L
 #define PF_COMPARE64_EXCHANGE128            15L
 #define PF_CHANNELS_ENABLED                 16L
+
+/* Extended state features */
+#define XSTATE_LEGACY_FLOATING_POINT    0
+#define XSTATE_LEGACY_SSE               1
+#define XSTATE_GSSE                     2
+#define MAXIMUM_XSTATE_FEATURES         64
+
+/* Extended state feature masks */
+#define XSTATE_MASK_LEGACY_FLOATING_POINT   (1LL << XSTATE_LEGACY_FLOATING_POINT)
+#define XSTATE_MASK_LEGACY_SSE              (1LL << XSTATE_LEGACY_SSE)
+#define XSTATE_MASK_GSSE                    (1LL << XSTATE_GSSE)
+#define XSTATE_MASK_LEGACY \
+    (XSTATE_MASK_LEGACY_FLOATING_POINT | XSTATE_MASK_LEGACY_SSE)
 
 /* Section access rights */
 #define SECTION_QUERY                   0x0001L
@@ -1566,6 +1588,13 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ES_USER_PRESENT         0x00000004L
 #define ES_AWAYMODE_REQUIRED    0x00000040L
 #define ES_CONTINUOUS           0x80000000L
+
+/* Power request context version number */
+#define POWER_REQUEST_CONTEXT_VERSION   0L
+
+/* Power request context flags */
+#define POWER_REQUEST_CONTEXT_SIMPLE_STRING     0x00000001L
+#define POWER_REQUEST_CONTEXT_DETAILED_STRING   0x00000002L
 
 /* Device power capabilities */
 #if (NTDDI_VERSION >= 0x05010000)
@@ -2347,6 +2376,13 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ACTIVATION_CONTEXT_PATH_TYPE_URL            3L
 #define ACTIVATION_CONTEXT_PATH_TYPE_ASSEMBLYREF    4L
 
+/* Performance data version number */
+#define PERFORMANCE_DATA_VERSION    1
+
+/* ReadThreadProfilingData() flags */
+#define READ_THREAD_PROFILING_FLAG_DISPATCHING          0x00000001L
+#define READ_THREAD_PROFILING_FLAG_HARDWARE_COUNTERS    0x00000002L
+
 /* DllMain() call reasons */
 #define DLL_PROCESS_ATTACH  1L
 #define DLL_THREAD_ATTACH   2L
@@ -2586,6 +2622,22 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES               9L
 #define ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS         10L
 
+/* Processor number */
+typedef struct _PROCESSOR_NUMBER {
+    WORD    Group;
+    BYTE    Number;
+    BYTE    Reserved;
+} PROCESSOR_NUMBER;
+typedef PROCESSOR_NUMBER    *PPROCESSOR_NUMBER;
+
+/* Group affinity */
+typedef struct _GROUP_AFFINITY {
+    KAFFINITY   Mask;
+    WORD        Group;
+    WORD        Reserved[3];
+} GROUP_AFFINITY;
+typedef GROUP_AFFINITY  *PGROUP_AFFINITY;
+
 /* Large integer */
 typedef union _LARGE_INTEGER {
     struct {
@@ -2648,6 +2700,21 @@ typedef struct _LIST_ENTRY64 {
     ULONGLONG   Blink;
 } LIST_ENTRY64;
 typedef LIST_ENTRY64    *PLIST_ENTRY64;
+
+/* Context chunk */
+typedef struct _CONTEXT_CHUNK {
+    LONG    Offset;
+    DWORD   Length;
+} CONTEXT_CHUNK;
+typedef CONTEXT_CHUNK   *PCONTEXT_CHUNK;
+
+/* Extended context */
+typedef struct _CONTEXT_EX {
+    CONTEXT_CHUNK   All;
+    CONTEXT_CHUNK   Legacy;
+    CONTEXT_CHUNK   XState;
+} CONTEXT_EX;
+typedef CONTEXT_EX  *PCONTEXT_EX;
 
 /* Floating save area for the x86 context */
 #ifdef _X86_
@@ -2774,6 +2841,33 @@ typedef struct _CONTEXT {
 typedef CONTEXT *PCONTEXT;
 #endif
 
+/* Selector entry */
+typedef struct _LDT_ENTRY {
+    WORD    LimitLow;
+    WORD    BaseLow;
+    union {
+        struct {
+            BYTE    BaseMid;
+            BYTE    Flags1;
+            BYTE    Flags2;
+            BYTE    BaseHi;
+        } Bytes;
+        struct {
+            DWORD   BaseMid     : 8;
+            DWORD   Type        : 5;
+            DWORD   Dpl         : 2;
+            DWORD   Pres        : 1;
+            DWORD   LimitHi     : 4;
+            DWORD   Sys         : 1;
+            DWORD   Reserved_0  : 1;
+            DWORD   Default_Big : 1;
+            DWORD   Granularity : 1;
+            DWORD   BaseHi      : 8;
+        } Bits;
+    } HighWord;
+} LDT_ENTRY;
+typedef LDT_ENTRY   *PLDT_ENTRY;
+
 /* WOW64 floating point area */
 typedef struct _WOW64_FLOATING_SAVE_AREA {
     DWORD   ControlWord;
@@ -2818,8 +2912,8 @@ typedef struct _WOW64_CONTEXT {
 } WOW64_CONTEXT;
 typedef WOW64_CONTEXT   *PWOW64_CONTEXT;
 
-/* Selector entry */
-typedef struct _LDT_ENTRY {
+/* WOW64 selector entry */
+typedef struct _WOW64_LDT_ENTRY {
     WORD    LimitLow;
     WORD    BaseLow;
     union {
@@ -2842,8 +2936,8 @@ typedef struct _LDT_ENTRY {
             DWORD   BaseHi      : 8;
         } Bits;
     } HighWord;
-} LDT_ENTRY;
-typedef LDT_ENTRY   *PLDT_ENTRY;
+} WOW64_LDT_ENTRY;
+typedef WOW64_LDT_ENTRY *PWOW64_LDT_ENTRY;
 
 /* Exception record */
 typedef struct _EXCEPTION_RECORD {
@@ -3572,6 +3666,13 @@ typedef struct _IO_COUNTERS {
 } IO_COUNTERS;
 typedef IO_COUNTERS *PIO_COUNTERS;
 
+/* Hardware counter types */
+typedef enum _HARDWARE_COUNTER_TYPE {
+    PMCCounter              = 0,
+    MaxHardwareCounterType  = 1
+} HARDWARE_COUNTER_TYPE;
+typedef HARDWARE_COUNTER_TYPE   *PHARDWARE_COUNTER_TYPE;
+
 /* Job object basic accounting information */
 typedef struct _JOBOBJECT_BASIC_ACCOUNTING_INFORMATION {
     LARGE_INTEGER   TotalUserTime;
@@ -3677,10 +3778,12 @@ typedef enum _JOBOBJECTINFOCLASS {
 
 /* Logical processor relationships */
 typedef enum _LOGICAL_PROCESSOR_RELATIONSHIP {
-    RelationProcessorCore,
-    RelationNumaNode,
-    RelationCache,
-    RelationProcessorPackage
+    RelationProcessorCore       = 0,
+    RelationNumaNode            = 1,
+    RelationCache               = 2,
+    RelationProcessorPackage    = 3,
+    RelationGroup               = 4,
+    RelationAll                 = 0xFFFF
 } LOGICAL_PROCESSOR_RELATIONSHIP;
 
 /* Processor cache types */
@@ -3717,6 +3820,72 @@ typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
     };
 } SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
 typedef SYSTEM_LOGICAL_PROCESSOR_INFORMATION    *PSYSTEM_LOGICAL_PROCESSOR_INFORMATION;
+
+/* Processor relationship */
+typedef struct _PROCESSOR_RELATIONSHIP {
+    BYTE            Flags;
+    BYTE            Reserved[21];
+    WORD            GroupCount;
+    GROUP_AFFINITY  GroupMask[ANYSIZE_ARRAY];
+} PROCESSOR_RELATIONSHIP;
+typedef PROCESSOR_RELATIONSHIP  *PPROCESSOR_RELATIONSHIP;
+
+/* Numa node relationship */
+typedef struct _NUMA_NODE_RELATIONSHIP {
+    DWORD           NodeNumber;
+    BYTE            Reserved[20];
+    GROUP_AFFINITY  GroupMask;
+} NUMA_NODE_RELATIONSHIP;
+typedef NUMA_NODE_RELATIONSHIP  *PNUMA_NODE_RELATIONSHIP;
+
+/* Cache relationship */
+typedef struct _CACHE_RELATIONSHIP {
+    BYTE                    Level;
+    BYTE                    Associativity;
+    WORD                    LineSize;
+    DWORD                   CacheSize;
+    PROCESSOR_CACHE_TYPE    Type;
+    BYTE                    Reserved[20];
+    GROUP_AFFINITY          GroupMask;
+} CACHE_RELATIONSHIP;
+typedef CACHE_RELATIONSHIP  *PCACHE_RELATIONSHIP;
+
+/* Processor group information */
+typedef struct _PROCESSOR_GROUP_INFO {
+    BYTE        MaximumProcessorCount;
+    BYTE        ActiveProcessorCount;
+    BYTE        Reserved[38];
+    KAFFINITY   ActiveProcessorMask;
+} PROCESSOR_GROUP_INFO;
+typedef PROCESSOR_GROUP_INFO    *PPROCESSOR_GROUP_INFO;
+
+/* Group relationship */
+typedef struct _GROUP_RELATIONSHIP {
+    WORD                    MaximumGroupCount;
+    WORD                    ActiveGroupCount;
+    BYTE                    Reserved[20];
+    PROCESSOR_GROUP_INFO    GroupInfo[ANYSIZE_ARRAY];
+} GROUP_RELATIONSHIP;
+typedef GROUP_RELATIONSHIP  *PGROUP_RELATIONSHIP;
+
+/* System logical processor information (extended version) */
+typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+    LOGICAL_PROCESSOR_RELATIONSHIP  Relationship;
+    DWORD                           Size;
+    union {
+        PROCESSOR_RELATIONSHIP  Processor;
+        NUMA_NODE_RELATIONSHIP  NumaNode;
+        CACHE_RELATIONSHIP      Cache;
+        GROUP_RELATIONSHIP      Group;
+    };
+} SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
+typedef SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
+
+/* System processor cycle time information */
+typedef struct _SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION {
+    DWORD64 CycleTime;
+} SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION;
+typedef SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION *PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION;
 
 /* Memory basic information */
 typedef struct _MEMORY_BASIC_INFORMATION {
@@ -3826,6 +3995,14 @@ typedef enum {
     LT_DONT_CARE,
     LT_LOWEST_LATENCY
 } LATENCY_TIME;
+
+/* Power request types */
+typedef enum _POWER_REQUEST_TYPE {
+    PowerRequestDisplayRequired     = 0,
+    PowerRequestSystemRequired      = 1,
+    PowerRequestAwayModeRequired    = 2
+} POWER_REQUEST_TYPE;
+typedef POWER_REQUEST_TYPE  *PPOWER_REQUEST_TYPE;
 
 /* Power data */
 #if (NTDDI_VERSION >= 0x05010000)
@@ -5482,6 +5659,28 @@ typedef struct _ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION {
 typedef ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION        *PACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION;
 typedef const ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION  *PCACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION;
 
+/* Hardware counter data */
+typedef struct _HARDWARE_COUNTER_DATA {
+    HARDWARE_COUNTER_TYPE   Type;
+    DWORD                   Reserved;
+    DWORD64                 Value;
+} HARDWARE_COUNTER_DATA;
+typedef HARDWARE_COUNTER_DATA   *PHARDWARE_COUNTER_DATA;
+
+/* Performance data */
+typedef struct _PERFORMANCE_DATA {
+    WORD                    Size;
+    BYTE                    Version;
+    BYTE                    HwCountersCount;
+    DWORD                   ContextSwitchCount;
+    DWORD64                 WaitReasonBitMap;
+    DWORD64                 CycleTime;
+    DWORD                   RetryCount;
+    DWORD                   Reserved;
+    HARDWARE_COUNTER_DATA   HwCounters[MAX_HW_COUNTERS];
+} PERFORMANCE_DATA;
+typedef PERFORMANCE_DATA    *PPERFORMANCE_DATA;
+
 /* Event log record */
 typedef struct _EVENTLOGRECORD {
     DWORD   Length;
@@ -5652,9 +5851,11 @@ typedef enum _HEAP_INFORMATION_CLASS {
 } HEAP_INFORMATION_CLASS;
 
 /* Callback functions */
-typedef LONG (NTAPI *PVECTORED_EXCEPTION_HANDLER)( struct _EXCEPTION_POINTERS * );
-typedef VOID (NTAPI *WAITORTIMERCALLBACKFUNC)( PVOID, BOOLEAN );
-typedef VOID (NTAPI *PFLS_CALLBACK_FUNCTION)( PVOID );
+typedef VOID    (NTAPI *PAPCFUNC)( ULONG_PTR );
+typedef LONG    (NTAPI *PVECTORED_EXCEPTION_HANDLER)( struct _EXCEPTION_POINTERS * );
+typedef VOID    (NTAPI *WAITORTIMERCALLBACKFUNC)( PVOID, BOOLEAN );
+typedef VOID    (NTAPI *PFLS_CALLBACK_FUNCTION)( PVOID );
+typedef BOOLEAN (NTAPI *PSECURE_MEMORY_CACHE_CALLBACK)( PVOID, SIZE_T );
 
 /* Thread pool abstract data types */
 typedef struct _TP_CALLBACK_INSTANCE    TP_CALLBACK_INSTANCE;
@@ -5679,6 +5880,21 @@ typedef VOID (NTAPI *PTP_WORK_CALLBACK)( PTP_CALLBACK_INSTANCE, PVOID, PTP_WORK 
 typedef VOID (NTAPI *PTP_TIMER_CALLBACK)( PTP_CALLBACK_INSTANCE, PVOID, PTP_TIMER );
 typedef VOID (NTAPI *PTP_WAIT_CALLBACK)( PTP_CALLBACK_INSTANCE, PVOID, PTP_WAIT, TP_WAIT_RESULT );
 
+/* Thread pool callback priorities */
+typedef enum _TP_CALLBACK_PRIORITY {
+    TP_CALLBACK_PRIORITY_HIGH       = 0,
+    TP_CALLBACK_PRIORITY_NORMAL     = 1,
+    TP_CALLBACK_PRIORITY_LOW        = 2,
+    TP_CALLBACK_PRIORITY_INVALID    = 3
+} TP_CALLBACK_PRIORITY;
+
+/* Thread pool stack information */
+typedef struct _TP_POOL_STACK_INFORMATION {
+    SIZE_T  StackReserve;
+    SIZE_T  StackCommit;
+} TP_POOL_STACK_INFORMATION;
+typedef TP_POOL_STACK_INFORMATION   *PTP_POOL_STACK_INFORMATION;
+
 /* Thread pool callback environment */
 typedef struct _TP_CALLBACK_ENVIRON {
     TP_VERSION                          Version;
@@ -5692,9 +5908,14 @@ typedef struct _TP_CALLBACK_ENVIRON {
         DWORD   Flags;
         struct {
             DWORD   LongFunction    : 1;
-            DWORD   Private         : 31;
+            DWORD   Persistent      : 1;
+            DWORD   Private         : 30;
         } s;
     } u;
+#if (_WIN32_WINNT >= 0x0600)
+    TP_CALLBACK_PRIORITY                CallbackPriority;
+    DWORD                               Size;
+#endif
 } TP_CALLBACK_ENVIRON;
 typedef TP_CALLBACK_ENVIRON *PTP_CALLBACK_ENVIRON;
 
@@ -5765,8 +5986,14 @@ PVOID   GetFiberData( void );
     { (x)->RaceDll = p; }
 #define TpSetCallbackFinalizationCallback( x, p ) \
     { (x)->FinalizationCallback = p; }
+#define TpSetCallbackPersistent( x ) \
+    { (x)->u.s.Persistent = 1; }
 #define TpDestroyCallbackEnviron( x ) \
     { (x); }
+#if (_WIN32_WINNT >= 0x0601)
+    #define TpSetCallbackPriority( x, p ) \
+        { (x)->CallbackPriority = p; }
+#endif
 
 /* Other macros */
 #define VER_SET_CONDITION( p1, p2, p3 ) \

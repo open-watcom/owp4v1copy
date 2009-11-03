@@ -23,6 +23,7 @@ AddAce@20
 AddAuditAccessAce@24
 AddAuditAccessAceEx@28
 AddAuditAccessObjectAce@36
+AddConditionalAce@32
 AddMandatoryAce@20
 AddUsersToEncryptedFile@8
 AdjustTokenGroups@24
