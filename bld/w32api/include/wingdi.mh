@@ -869,6 +869,7 @@ typedef USHORT  COLOR16;
 #define HS_BDIAGONAL    3L
 #define HS_CROSS        4L
 #define HS_DIAGCROSS    5L
+#define HS_API_MAX      12L
 
 /* Pen styles */
 #define PS_SOLID            0x00000000L
@@ -1382,6 +1383,63 @@ typedef USHORT  COLOR16;
 #if (_WIN32_WINNT >= 0x0500)
     #define DISPLAY_DEVICE_ACTIVE   0x00000001L
     #define DISPLAY_DEVICE_ATTACHED 0x00000002L
+#endif
+
+/* Display configuration maximum path length */
+#if (WINVER >= 0x0601)
+    #define DISPLAYCONFIG_MAXPATH   1024
+#endif
+
+/* Display configuration path mode index special value */
+#if (WINVER >= 0x0601)
+    #define DISPLAYCONFIG_PATH_MODE_IDX_INVALID 0xFFFFFFFF
+#endif
+
+/* Display configuration path source status flags */
+#if (WINVER >= 0x0601)
+    #define DISPLAYCONFIG_SOURCE_IN_USE 0x00000001
+#endif
+
+/* Display configuration path target status flags */
+#if (WINVER >= 0x0601)
+    #define DISPLAYCONFIG_TARGET_IN_USE                     0x00000001
+    #define DISPLAYCONFIG_TARGET_FORCIBLE                   0x00000002
+    #define DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_BOOT   0x00000004
+    #define DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_PATH   0x00000008
+    #define DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_SYSTEM 0x00000010
+#endif
+
+/* Display configuration path flags */
+#if (WINVER >= 0x0601)
+    #define DISPLAYCONFIG_PATH_ACTIVE   0x00000001
+#endif
+
+/* QueryDisplayConfig() flags */
+#if (WINVER >= 0x0601)
+    #define QDC_ALL_PATHS               0x00000001
+    #define QDC_ONLY_ACTIVE_PATHS       0x00000002
+    #define QDC_DATABASE_CURRENT        0x00000004
+#endif
+
+/* SetDisplayConfig() flags */
+#if (WINVER >= 0x0601)
+    #define SDC_TOPOLOGY_INTERNAL           0x00000001
+    #define SDC_TOPOLOGY_CLONE              0x00000002
+    #define SDC_TOPOLOGY_EXTEND             0x00000004
+    #define SDC_TOPOLOGY_EXTERNAL           0x00000008
+    #define SDC_TOPOLOGY_SUPPLIED           0x00000010
+    #define SDC_USE_DATABASE_CURRENT \
+        (SDC_TOPOLOGY_INTERNAL | SDC_TOPOLOGY_CLONE | SDC_TOPOLOGY_EXTEND | \
+        SDC_TOPOLOGY_EXTERNAL)
+    #define SDC_USE_SUPPLIED_DISPLAY_CONFIG 0x00000020L
+    #define SDC_VALIDATE                    0x00000040L
+    #define SDC_APPLY                       0x00000080L
+    #define SDC_NO_OPTIMIZATION             0x00000100L
+    #define SDC_SAVE_TO_DATABASE            0x00000200L
+    #define SDC_ALLOW_CHANGES               0x00000400L
+    #define SDC_PATH_PERSIST_IF_REQUIRED    0x00000800L
+    #define SDC_FORCE_MODE_ENUMERATION      0x00001000L
+    #define SDC_ALLOW_PATH_ORDER_CHANGES    0x00002000L
 #endif
 
 /* Region data header type values */
@@ -2469,6 +2527,20 @@ typedef EXTLOGPEN   *PEXTLOGPEN;
 typedef EXTLOGPEN   *NPEXTLOGPEN;
 typedef EXTLOGPEN   *LPEXTLOGPEN;
 
+/* Extended logical pen (32-bit version) */
+typedef struct tagEXTLOGPEN32 {
+    DWORD       elpPenStyle;
+    DWORD       elpWidth;
+    UINT        elpBrushStyle;
+    COLORREF    elpColor;
+    ULONG       elpHatch;
+    DWORD       elpNumEntries;
+    DWORD       elpStyleEntry[1];
+} EXTLOGPEN32;
+typedef EXTLOGPEN32 *PEXTLOGPEN32;
+typedef EXTLOGPEN32 *NPEXTLOGPEN32;
+typedef EXTLOGPEN32 *LPEXTLOGPEN32;
+
 /* Palette entry */
 typedef struct tagPALETTEENTRY {
     BYTE    peRed;
@@ -2796,6 +2868,283 @@ typedef LPDISPLAY_DEVICEW   LPDISPLAY_DEVICE;
 typedef DISPLAY_DEVICEA     DISPLAY_DEVICE;
 typedef PDISPLAY_DEVICEA    PDISPLAY_DEVICE;
 typedef LPDISPLAY_DEVICEA   LPDISPLAY_DEVICE;
+#endif
+
+/* Display configuration rational number */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_RATIONAL {
+    UINT32  Numerator;
+    UINT32  Denominator;
+} DISPLAYCONFIG_RATIONAL;
+#endif
+
+/* Display configuration video output technologies */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER                   = -1,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15                    = 0,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO                  = 1,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO         = 2,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO         = 3,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI                     = 4,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI                    = 5,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS                    = 6,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN                   = 8,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI                     = 9,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EXTERNAL    = 10,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED    = 11,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL            = 12,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED            = 13,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE              = 14,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL                = 0x80000000,
+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32            = 0xFFFFFFFF
+} DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY;
+#endif
+
+/* Display configuration scanline orderings */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_SCANLINE_ORDERING_UNSPECIFIED                 = 0,
+    DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE                 = 1,
+    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED                  = 2,
+    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_UPPERFIELDFIRST
+        = DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED,
+    DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_LOWERFIELDFIRST  = 3,
+    DISPLAYCONFIG_SCANLINE_ORDERING_FORCE_UINT32                = 0xFFFFFFFF
+} DISPLAYCONFIG_SCANLINE_ORDERING;
+#endif
+
+/* Display configuration 2D region */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_2DREGION {
+    UINT32  cx;
+    UINT32  cy;
+} DISPLAYCONFIG_2DREGION;
+#endif
+
+/* Display configuration video configuration information */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_VIDEO_SIGNAL_INFO {
+    UINT64                          pixelRate;
+    DISPLAYCONFIG_RATIONAL          hSyncFreq;
+    DISPLAYCONFIG_RATIONAL          vSyncFreq;
+    DISPLAYCONFIG_2DREGION          activeSize;
+    DISPLAYCONFIG_2DREGION          totalSize;
+    UINT32                          videoStandard;
+    DISPLAYCONFIG_SCANLINE_ORDERING scanLineOrdering;
+} DISPLAYCONFIG_VIDEO_SIGNAL_INFO;
+#endif
+
+/* Display configuration scaling values */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_SCALING_IDENTITY                  = 1,
+    DISPLAYCONFIG_SCALING_CENTERED                  = 2,
+    DISPLAYCONFIG_SCALING_STRETCHED                 = 3,
+    DISPLAYCONFIG_SCALING_ASPECTRATIO_CENTEREDMAX   = 4,
+    DISPLAYCONFIG_SCALING_CUSTOM                    = 5,
+    DISPLAYCONFIG_SCALING_PREFERRED                 = 128,
+    DISPLAYCONFIG_SCALING_FORCE_UINT32              = 0xFFFFFFFF
+} DISPLAYCONFIG_SCALING;
+#endif
+
+/* Display configuration rotation values */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_ROTATION_IDENTITY     = 1,
+    DISPLAYCONFIG_ROTATION_ROTATE90     = 2,
+    DISPLAYCONFIG_ROTATION_ROTATE180    = 3,
+    DISPLAYCONFIG_ROTATION_ROTATE270    = 4,
+    DISPLAYCONFIG_ROTATION_FORCE_UINT32 = 0xFFFFFFFF
+} DISPLAYCONFIG_ROTATION;
+#endif
+
+/* Display configuration mode information types */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE         = 1,
+    DISPLAYCONFIG_MODE_INFO_TYPE_TARGET         = 2,
+    DISPLAYCONFIG_MODE_INFO_TYPE_FORCE_UINT32   = 0xFFFFFFFF
+} DISPLAYCONFIG_MODE_INFO_TYPE;
+#endif
+
+/* Display configuration pixel formats */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_PIXELFORMAT_8BPP          = 1,
+    DISPLAYCONFIG_PIXELFORMAT_16BPP         = 2,
+    DISPLAYCONFIG_PIXELFORMAT_24BPP         = 3,
+    DISPLAYCONFIG_PIXELFORMAT_32BPP         = 4,
+    DISPLAYCONFIG_PIXELFORMAT_NONGDI        = 5,
+    DISPLAYCONFIG_PIXELFORMAT_FORCE_UINT32  = 0xFFFFFFFF
+} DISPLAYCONFIG_PIXELFORMAT;
+#endif
+
+/* Display configuration source mode */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_SOURCE_MODE {
+    UINT32                      width;
+    UINT32                      height;
+    DISPLAYCONFIG_PIXELFORMAT   pixelFormat;
+    POINTL                      position;
+} DISPLAYCONFIG_SOURCE_MODE;
+#endif
+
+/* Display configuration target mode */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_TARGET_MODE {
+    DISPLAYCONFIG_VIDEO_SIGNAL_INFO targetVideoSignalInfo;
+} DISPLAYCONFIG_TARGET_MODE;
+#endif
+
+/* Display configuration mode information */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_MODE_INFO {
+    DISPLAYCONFIG_MODE_INFO_TYPE    infoType;
+    UINT32                          id;
+    LUID                            adapterId;
+    union {
+        DISPLAYCONFIG_TARGET_MODE   targetMode;
+        DISPLAYCONFIG_SOURCE_MODE   sourceMode;
+    };
+} DISPLAYCONFIG_MODE_INFO;
+#endif
+
+/* Display configuration path source information */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_PATH_SOURCE_INFO {
+    LUID    adapterId;
+    UINT32  id;
+    UINT32  modeInfoIdx;
+    UINT32  statusFlags;
+} DISPLAYCONFIG_PATH_SOURCE_INFO;
+#endif
+
+/* Display configuration path target information */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_PATH_TARGET_INFO {
+    LUID                                    adapterId;
+    UINT32                                  id;
+    UINT32                                  modeInfoIdx;
+    DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY   outputTechnology;
+    DISPLAYCONFIG_ROTATION                  rotation;
+    DISPLAYCONFIG_SCALING                   scaling;
+    DISPLAYCONFIG_RATIONAL                  refreshRate;
+    DISPLAYCONFIG_SCANLINE_ORDERING         scanlineOrdering;
+    BOOL                                    targetAvailable;
+    UINT32                                  statusFlags;
+} DISPLAYCONFIG_PATH_TARGET_INFO;
+#endif
+
+/* Display configuration path information */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_PATH_INFO {
+    DISPLAYCONFIG_PATH_SOURCE_INFO  sourceInfo;
+    DISPLAYCONFIG_PATH_TARGET_INFO  targetInfo;
+    UINT32                          flags;
+} DISPLAYCONFIG_PATH_INFO;
+#endif
+
+/* Display configuration topology identifiers */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_TOPOLOGY_INTERNAL     = 0x00000001,
+    DISPLAYCONFIG_TOPOLOGY_CLONE        = 0x00000002,
+    DISPLAYCONFIG_TOPOLOGY_EXTEND       = 0x00000004,
+    DISPLAYCONFIG_TOPOLOGY_EXTERNAL     = 0x00000008,
+    DISPLAYCONFIG_TOPOLOGY_FORCE_UINT32 = 0xFFFFFFFF
+} DISPLAYCONFIG_TOPOLOGY_ID;
+#endif
+
+/* Display configuration device information types */
+#if (WINVER >= 0x0601)
+typedef enum {
+    DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME           = 1,
+    DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME           = 2,
+    DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_PREFERRED_MODE = 3,
+    DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME          = 4,
+    DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE    = 5,
+    DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32              = 0xFFFFFFFF
+} DISPLAYCONFIG_DEVICE_INFO_TYPE;
+#endif
+
+/* Display configuration device information header */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_DEVICE_INFO_HEADER {
+    DISPLAYCONFIG_DEVICE_INFO_TYPE  type;
+    UINT32                          size;
+    LUID                            adapterId;
+    UINT32                          id;
+} DISPLAYCONFIG_DEVICE_INFO_HEADER;
+#endif
+
+/* Display configuration source device name */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_SOURCE_DEVICE_NAME {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER    header;
+    WCHAR                               viewGdiDeviceName[CCHDEVICENAME];
+} DISPLAYCONFIG_SOURCE_DEVICE_NAME;
+#endif
+
+/* Display configuration target device name flags */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS {
+    union {
+        struct {
+            UINT32  friendlyNameFromEdid    : 1;
+            UINT32  friendlyNameForced      : 1;
+            UINT32  edidIdsValid            : 1;
+            UINT32  reserved                : 29;
+        };
+        UINT32  value;
+    };
+} DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS;
+#endif
+
+/* Display configuration target device name */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_TARGET_DEVICE_NAME {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER        header;
+    DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS  flags;
+    DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY   outputTechnology;
+    UINT16                                  edidManufacturerId;
+    UINT16                                  edidProductCodeId;
+    UINT32                                  connectorInstance;
+    WCHAR                                   monitorFriendlyDeviceName[64];
+    WCHAR                                   monitorDevicePath[128];
+} DISPLAYCONFIG_TARGET_DEVICE_NAME;
+#endif
+
+/* Display configuration target preferred mode */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_TARGET_PREFERRED_MODE {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER    header;
+    UINT32                              width;
+    UINT32                              height;
+    DISPLAYCONFIG_TARGET_MODE           targetMode;
+} DISPLAYCONFIG_TARGET_PREFERRED_MODE;
+#endif
+
+/* Display configuration adapter name */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_ADAPTER_NAME {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER    header;
+    WCHAR                               adapterDevicePath[128];
+} DISPLAYCONFIG_ADAPTER_NAME;
+#endif
+
+/* Display configuration set target persistence */
+#if (WINVER >= 0x0601)
+typedef struct DISPLAYCONFIG_SET_TARGET_PERSISTENCE {
+    DISPLAYCONFIG_DEVICE_INFO_HEADER    header;
+    union {
+        struct {
+            UINT32  bootPersistenceOn   : 1;
+            UINT32  reserved            : 31;
+        };
+        UINT32  value;
+    };
+} DISPLAYCONFIG_SET_TARGET_PERSISTENCE;
 #endif
 
 /* Region data header */
@@ -4012,7 +4361,7 @@ typedef struct tagEMREXTCREATEPEN {
     DWORD       cbBmi;
     DWORD       offBits;
     DWORD       cbBits;
-    EXTLOGPEN   elp;
+    EXTLOGPEN32 elp;
 } EMREXTCREATEPEN;
 typedef EMREXTCREATEPEN *PEMREXTCREATEPEN;
 
