@@ -312,6 +312,7 @@ headers = &
         winver.h             &
         wlantype.h           &
         wmistr.h             &
+        wnnc.h               &
         ws2def.h             &
         ws2ipdef.h           &
         ws2spi.h             &
