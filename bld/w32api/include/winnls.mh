@@ -118,6 +118,9 @@ typedef DWORD   GEOCLASS;
 /* LCMapString() flags */
 #define LCMAP_LOWERCASE             0x00000100L
 #define LCMAP_UPPERCASE             0x00000200L
+#if (WINVER >= 0x0601)
+    #define LCMAP_TITLECASE         0x00000300L
+#endif
 #define LCMAP_SORTKEY               0x00000400L
 #define LCMAP_BYTEREV               0x00000800L
 #define LCMAP_HIRAGANA              0x00100000L
@@ -142,6 +145,10 @@ typedef DWORD   GEOCLASS;
     #define LOCALE_ALTERNATE_SORTS  0x00000004L
     #define LOCALE_REPLACEMENT      0x00000008L
 #endif
+#if (WINVER >= 0x0601)
+    #define LOCALE_NEUTRALDATA      0x00000010L
+    #define LOCALE_SPECIFICDATA     0x00000020L
+#endif
 
 /* EnumSystemLanguageGroups() flags */
 #define LGRPID_INSTALLED    0x00000001L
@@ -157,7 +164,10 @@ typedef DWORD   GEOCLASS;
 #define CP_SUPPORTED    0x00000002L
 
 /* CompareString() flags */
-#define SORT_STRINGSORT 0x00001000L
+#define SORT_STRINGSORT             0x00001000L
+#if (WINVER >= 0x0601)
+    #define SORT_DIGITSASNUMBERS    0x00000008L
+#endif
 
 /* CompareString() return values */
 #define CSTR_LESS_THAN      1
@@ -288,10 +298,14 @@ typedef DWORD   GEOCLASS;
 #define CTRY_ZIMBABWE           263
 
 /* Locale information type flags */
-#define LOCALE_NOUSEROVERRIDE       0x80000000L
-#define LOCALE_USE_CP_ACP           0x40000000L
+#define LOCALE_NOUSEROVERRIDE               0x80000000L
+#define LOCALE_USE_CP_ACP                   0x40000000L
 #if (WINVER >= 0x0400)
-    #define LOCALE_RETURN_NUMBER    0x20000000L
+    #define LOCALE_RETURN_NUMBER            0x20000000L
+#endif
+#if (WINVER >= 0x0601)
+    #define LOCALE_RETURN_GENITIVE_NAMES    0x10000000L
+    #define LOCALE_ALLOW_NEUTRAL_NAMES      0x08000000L
 #endif
 
 /* Locale information types */
@@ -431,6 +445,33 @@ typedef DWORD   GEOCLASS;
     #define LOCALE_SCONSOLEFALLBACKNAME     0x0000006EL
     #define LOCALE_SLANGDISPLAYNAME         0x0000006FL
 #endif
+#if (WINVER >= 0x0700)
+    #define LOCALE_IREADINGLAYOUT           0x00000070L
+    #define LOCALE_INEUTRAL                 0x00000071L
+    #define LOCALE_INEGATIVEPERCENT         0x00000074L
+    #define LOCALE_IPOSITIVEPERCENT         0x00000075L
+    #define LOCALE_SPERCENT                 0x00000076L
+    #define LOCALE_SPERMILLE                0x00000077L
+    #define LOCALE_SMONTHDAY                0x00000078L
+    #define LOCALE_SSHORTTIME               0x00000079L
+    #define LOCALE_SOPENTYPELANGUAGETAG     0x0000007AL
+    #define LOCALE_SSORTLOCALE              0x0000007BL
+#endif
+
+/* New locale information types */
+#define LOCALE_SLOCALIZEDDISPLAYNAME        0x00000002L
+#if (WINVER >= 0x0601)
+    #define LOCALE_SENGLISHDISPLAYNAME      0x00000072L
+    #define LOCALE_SNATIVEDISPLAYNAME       0x00000073L
+#endif
+#if (WINVER >= 0x0600)
+    #define LOCALE_SLOCALIZEDLANGUAGENAME   0x0000006FL
+#endif
+#define LOCALE_SENGLISHLANGUAGENAME         0x00001001L
+#define LOCALE_SNATIVELANGUAGENAME          0x00000004L
+#define LOCALE_SLOCALIZEDCOUNTRYNAME        0x00000006L
+#define LOCALE_SENGLISHCOUNTRYNAME          0x00001002L
+#define LOCALE_SNATIVECOUNTRYNAME           0x00000008L
 
 /* GetTimeFormat() flags */
 #define TIME_NOMINUTESORSECONDS 0x00000001L
@@ -447,12 +488,18 @@ typedef DWORD   GEOCLASS;
     #define DATE_LTRREADING     0x00000010L
     #define DATE_RTLREADING     0x00000020L
 #endif
+#if (WINVER >= 0x0601)
+    #define DATE_AUTOLAYOUT     0x00000040L
+#endif
 
 /* Calendar information type flags */
 #if (WINVER >= 0x0500)
-    #define CAL_NOUSEROVERRIDE  LOCALE_NOUSEROVERRIDE
-    #define CAL_USE_CP_ACP      LOCALE_USE_CP_ACP
-    #define CAL_RETURN_NUMBER   LOCALE_RETURN_NUMBER
+    #define CAL_NOUSEROVERRIDE          LOCALE_NOUSEROVERRIDE
+    #define CAL_USE_CP_ACP              LOCALE_USE_CP_ACP
+    #define CAL_RETURN_NUMBER           LOCALE_RETURN_NUMBER
+#endif
+#if (WINVER >= 0x0601)
+    #define CAL_RETURN_GENITIVE_NAMES   LOCALE_RETURN_GENITIVE_NAMES
 #endif
 
 /* Calendar information types */
@@ -515,6 +562,10 @@ typedef DWORD   GEOCLASS;
     #define CAL_SSHORTESTDAYNAME6   0x00000036L
     #define CAL_SSHORTESTDAYNAME7   0x00000037L
 #endif
+#if (WINVER >= 0x0601)
+    #define CAL_SMONTHDAY           0x00000038L
+    #define CAL_SABBREVERASTRING    0x00000039L
+#endif
 
 /* Special calendar identifier for EnumCalendarInfo() */
 #define ENUM_ALL_CALENDARS  0xFFFFFFFFL
@@ -560,6 +611,8 @@ typedef DWORD   GEOCLASS;
     #define MUI_LANGUAGE_NAME                   0x00000008L
     #define MUI_MERGE_SYSTEM_FALLBACK           0x00000010L
     #define MUI_MERGE_USER_FALLBACK             0x00000020L
+    #define MUI_UI_FALLBACK \
+        (MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK)
     #define MUI_THREAD_LANGUAGES                0x00000040L
     #define MUI_CONSOLE_FILTER                  0x00000100L
     #define MUI_COMPLEX_SCRIPT_FILTER           0x00000200L
@@ -864,8 +917,8 @@ typedef BOOL (CALLBACK *TIMEFMT_ENUMPROCEX)( LPWSTR, LPARAM );
     (ULONG_PTR)(x) + (x)->dwTypeNameMUIOffset : NULL))
 
 /* Functions in KERNEL32.DLL */
-WINBASEAPI int WINAPI       CompareStringA( LCID, DWORD, LPCSTR, int, LPCSTR, int );
-WINBASEAPI int WINAPI       CompareStringW( LCID, DWORD, LPCWSTR, int, LPCWSTR, int );
+WINBASEAPI int WINAPI       CompareStringA( LCID, DWORD, PCNZCH, int, PCNZCH, int );
+WINBASEAPI int WINAPI       CompareStringW( LCID, DWORD, PCNZWCH, int, PCNZWCH, int );
 WINBASEAPI LCID WINAPI      ConvertDefaultLocale( LCID );
 WINBASEAPI BOOL WINAPI      EnumCalendarInfoA( CALINFO_ENUMPROCA, LCID, CALID, CALTYPE );
 WINBASEAPI BOOL WINAPI      EnumCalendarInfoW( CALINFO_ENUMPROCW, LCID, CALID, CALTYPE );
@@ -962,22 +1015,28 @@ WINBASEAPI BOOL WINAPI      GetFileMUIPath( DWORD, PCWSTR, PWSTR, PULONG, PWSTR,
 WINBASEAPI int WINAPI       GetLocaleInfoEx( LPCWSTR, LCTYPE, LPWSTR, int );
 WINBASEAPI BOOL WINAPI      GetNLSVersionEx( NLS_FUNCTION, LPCWSTR, LPNLSVERSIONINFOEX );
 WINBASEAPI int WINAPI       GetNumberFormatEx( LPCWSTR, DWORD, LPCWSTR, CONST NUMBERFMTW *, LPWSTR, int );
+WINBASEAPI BOOL WINAPI      GetProcessPreferredUILanguages( DWORD, PULONG, PZZWSTR, PULONG );
 WINBASEAPI int WINAPI       GetStringScripts( DWORD, LPCWSTR, int, LPWSTR, int );
 WINBASEAPI int WINAPI       GetSystemDefaultLocaleName( LPWSTR, int );
-WINBASEAPI BOOL WINAPI      GetSystemPreferredUILanguages( DWORD, PULONG, PWSTR, PULONG );
-WINBASEAPI BOOL WINAPI      GetThreadPreferredUILanguages( DWORD, PULONG, PWSTR, PULONG );
+WINBASEAPI BOOL WINAPI      GetSystemPreferredUILanguages( DWORD, PULONG, PZZWSTR, PULONG );
+WINBASEAPI BOOL WINAPI      GetThreadPreferredUILanguages( DWORD, PULONG, PZZWSTR, PULONG );
 WINBASEAPI LANGID WINAPI    GetThreadUILanguage( void );
 WINBASEAPI int WINAPI       GetTimeFormatEx( LPCWSTR, DWORD, CONST SYSTEMTIME *, LPCWSTR, LPWSTR, int );
-WINBASEAPI BOOL WINAPI      GetUILanguageInfo( DWORD, PCWSTR, PWSTR, PDWORD, PDWORD );
+WINBASEAPI BOOL WINAPI      GetUILanguageInfo( DWORD, PCZZWSTR, PZZWSTR, PDWORD, PDWORD );
 WINBASEAPI int WINAPI       GetUserDefaultLocaleName( LPWSTR, int );
-WINBASEAPI BOOL WINAPI      GetUserPreferredUILanguages( DWORD, PULONG, PWSTR, PULONG );
+WINBASEAPI BOOL WINAPI      GetUserPreferredUILanguages( DWORD, PULONG, PZZWSTR, PULONG );
 WINBASEAPI BOOL WINAPI      IsValidLocaleName( LPCWSTR );
 WINBASEAPI int WINAPI       LCIDToLocaleName( LCID, LPWSTR, int, DWORD );
 WINBASEAPI int WINAPI       LCMapStringEx( LPCWSTR, DWORD, LPCWSTR, int, LPWSTR, int, LPNLSVERSIONINFO, LPVOID, LPARAM );
 WINBASEAPI LCID WINAPI      LocaleNameToLCID( LPCWSTR, DWORD );
 WINBASEAPI BOOL WINAPI      NotifyUILanguageChange( DWORD, PCWSTR, PCWSTR, DWORD, PDWORD );
-WINBASEAPI BOOL WINAPI      SetThreadPreferredUILanguages( DWORD, PCWSTR, PULONG );
+WINBASEAPI BOOL WINAPI      SetProcessPreferredUILanguages( DWORD, PCZZWSTR, PULONG );
+WINBASEAPI BOOL WINAPI      SetThreadPreferredUILanguages( DWORD, PCZZWSTR, PULONG );
 WINBASEAPI BOOL WINAPI      VerifyScripts( DWORD, LPCWSTR, int, LPCWSTR, int );
+#endif
+#if (WINVER >= 0x0601)
+WINBASEAPI int WINAPI       FindStringOrdinal( DWORD, LPCWSTR, int, LPCWSTR, int, BOOL );
+WINBASEAPI int WINAPI       ResolveLocaleName( LPCWSTR, LPWSTR, int );
 #endif
 
 /* Functions in NORMALIZ.DLL */

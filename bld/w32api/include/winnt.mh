@@ -150,6 +150,10 @@ typedef CONST PSTR  *PCZPSTR;
 typedef CONST CHAR  *LPCSTR;
 typedef CONST CHAR  *PCSTR;
 typedef PCSTR       *PZPCSTR;
+typedef CHAR        *PZZSTR;
+typedef CONST CHAR  *PCZZSTR;
+typedef CHAR        *PNZCH;
+typedef CONST CHAR  *PCNZCH;
 
 /* Unicode string data types */
 typedef wchar_t                 WCHAR;
@@ -170,6 +174,14 @@ typedef CONST WCHAR             *PCWSTR;
 typedef PCWSTR                  *PZPCWSTR;
 typedef CONST WCHAR UNALIGNED   *LPCUWSTR;
 typedef CONST WCHAR UNALIGNED   *PCUWSTR;
+typedef WCHAR                   *PZZWSTR;
+typedef CONST WCHAR             *PCZZWSTR;
+typedef WCHAR UNALIGNED         *PUZZWSTR;
+typedef CONST WCHAR UNALIGNED   *PCUZZWSTR;
+typedef WCHAR                   *PNZWCH;
+typedef CONST WCHAR             *PCNZWCH;
+typedef WCHAR UNALIGNED         *PUNZWCH;
+typedef CONST WCHAR UNALIGNED   *PCUNZWCH;
 
 /* Neutral string data types */
 #ifdef UNICODE
@@ -190,6 +202,14 @@ typedef LPUWSTR         LPUTSTR;
 typedef LPUWSTR         PUTSTR;
 typedef LPCUWSTR        LPCUTSTR;
 typedef LPCUWSTR        PCUTSTR;
+typedef PZZWSTR         PZZTSTR;
+typedef PCZZWSTR        PCZZTSTR;
+typedef PUZZWSTR        PUZZTSTR;
+typedef PCUZZWSTR       PCUZZTSTR;
+typedef PNZWCH          PNZTCH;
+typedef PCNZWCH         PCNZTCH;
+typedef PUNZWCH         PUNZTCH;
+typedef PCUNZWCH        PCUNZTCH;
 #else
 #ifndef _TCHAR_DEFINED
 #define _TCHAR_DEFINED
@@ -208,6 +228,14 @@ typedef LPSTR           LPUTSTR;
 typedef LPSTR           PUTSTR;
 typedef LPCSTR          LPCUTSTR;
 typedef LPCSTR          PCUTSTR;
+typedef PZZSTR          PZZTSTR;
+typedef PCZZSTR         PCZZTSTR;
+typedef PZZSTR          PUZZTSTR;
+typedef PCZZSTR         PCUZZTSTR;
+typedef PNZCH           PNZTCH;
+typedef PCNZCH          PCNZTCH;
+typedef PNZCH           PUNZTCH;
+typedef PCNZCH          PCUNZTCH;
 #endif
 
 /* Universal Character Set (UCS) data types */

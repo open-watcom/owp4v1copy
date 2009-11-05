@@ -279,6 +279,7 @@ FindResourceA@12
 FindResourceExA@16
 FindResourceExW@16
 FindResourceW@12
+FindStringOrdinal@24
 FindVolumeClose@4
 FindVolumeMountPointClose@4
 FlsAlloc@4
@@ -505,6 +506,7 @@ GetProcessHeaps@8
 GetProcessId@4
 GetProcessIdOfThread@4
 GetProcessIoCounters@8
+GetProcessPreferredUILanguages@16
 GetProcessPriorityBoost@8
 GetProcessShutdownParameters@8
 GetProcessTimes@20
@@ -833,6 +835,7 @@ RequestDeviceWakeup@4
 RequestWakeupLatency@4
 ResetEvent@4
 ResetWriteWatch@8
+ResolveLocaleName@12
 RestoreLastError@4
 ResumeThread@4
 RtlCaptureContext@4
@@ -918,6 +921,7 @@ SetPriorityClass@8
 SetProcessAffinityMask@8
 SetProcessAffinityUpdateMode@8
 SetProcessDEPPolicy@4
+SetProcessPreferredUILanguages@12
 SetProcessPriorityBoost@8
 SetProcessShutdownParameters@8
 SetProcessWorkingSetSize@12
