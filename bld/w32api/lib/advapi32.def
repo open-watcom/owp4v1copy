@@ -424,6 +424,7 @@ RegQueryValueA@16
 RegQueryValueExA@24
 RegQueryValueExW@24
 RegQueryValueW@16
+RegRenameKey@12
 RegReplaceKeyA@16
 RegReplaceKeyW@16
 RegRestoreKeyA@12
@@ -503,6 +504,4 @@ UnlockServiceDatabase@4
 UnregisterTraceGuids@8
 UpdateTraceA@16
 UpdateTraceW@16
-Wow64Win32ApiEntry@12
 WriteEncryptedFileRaw@12
-
