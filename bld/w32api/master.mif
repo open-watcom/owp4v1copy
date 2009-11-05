@@ -265,6 +265,7 @@ headers = &
         usp10.h              &
         uuids.h              &
         uxtheme.h            &
+        verrsrc.h            &
         vfw.h                &
         vfwmsgs.h            &
         vidcap.h             &
