@@ -20,6 +20,7 @@ BroadcastSystemMessageA@20
 BroadcastSystemMessageExA@24
 BroadcastSystemMessageExW@24
 BroadcastSystemMessageW@20
+CalculatePopupWindowPosition@20
 CallMsgFilterA@8
 CallMsgFilterW@8
 CallNextHookEx@16
@@ -35,6 +36,7 @@ ChangeDisplaySettingsW@8
 ChangeMenuA@20
 ChangeMenuW@20
 ChangeWindowMessageFilter@8
+ChangeWindowMessageFilterEx@16
 CharLowerA@4
 CharLowerBuffA@8
 CharLowerBuffW@8
@@ -63,6 +65,8 @@ ClientToScreen@8
 ClipCursor@4
 CloseClipboard@0
 CloseDesktop@4
+CloseGestureInfoHandle@4
+CloseTouchInputHandle@4
 CloseWindow@4
 CloseWindowStation@4
 CopyAcceleratorTableA@12
@@ -152,6 +156,8 @@ DialogBoxParamW@20
 DisableProcessWindowsGhosting@0
 DispatchMessageA@4
 DispatchMessageW@4
+DisplayConfigGetDeviceInfo@4
+DisplayConfigSetDeviceInfo@4
 DlgDirListA@20
 DlgDirListComboBoxA@20
 DlgDirListComboBoxW@20
@@ -250,6 +256,7 @@ GetDC@4
 GetDCEx@12
 GetDesktopWindow@0
 GetDialogBaseUnits@0
+GetDisplayConfigBufferSizes@12
 GetDlgCtrlID@4
 GetDlgItem@8
 GetDlgItemInt@16
@@ -259,6 +266,9 @@ GetDoubleClickTime@0
 GetFocus@0
 GetForegroundWindow@0
 GetGUIThreadInfo@8
+GetGestureConfig@24
+GetGestureExtraArgs@12
+GetGestureInfo@8
 GetGuiResources@8
 GetIconInfo@8
 GetIconInfoExA@8
@@ -332,6 +342,7 @@ GetTabbedTextExtentW@20
 GetThreadDesktop@4
 GetTitleBarInfo@8
 GetTopWindow@4
+GetTouchInputInfo@16
 GetUpdateRect@12
 GetUpdateRgn@12
 GetUpdatedClipboardFormats@12
@@ -341,6 +352,7 @@ GetUserObjectSecurity@20
 GetWindow@8
 GetWindowContextHelpId@4
 GetWindowDC@4
+GetWindowDisplayAffinity@8
 GetWindowInfo@8
 GetWindowLongA@8
 GetWindowLongW@8
@@ -392,6 +404,7 @@ IsIconic@4
 IsMenu@4
 IsProcessDPIAware@0
 IsRectEmpty@4
+IsTouchWindow@8
 IsWinEventHookInstalled@4
 IsWindow@4
 IsWindowEnabled@4
@@ -476,6 +489,7 @@ PrintWindow@12
 PrivateExtractIconsA@32
 PrivateExtractIconsW@32
 PtInRect@12
+QueryDisplayConfig@24
 RealChildWindowFromPoint@12
 RealGetWindowClassA@12
 RealGetWindowClassW@12
@@ -492,6 +506,7 @@ RegisterHotKey@16
 RegisterPowerSettingNotification@12
 RegisterRawInputDevices@12
 RegisterShellHookWindow@4
+RegisterTouchWindow@8
 RegisterWindowMessageA@4
 RegisterWindowMessageW@4
 ReleaseCapture@0
@@ -529,12 +544,14 @@ SetClipboardViewer@4
 SetCursor@4
 SetCursorPos@8
 SetDebugErrorLevel@4
+SetDisplayConfig@20
 SetDlgItemInt@16
 SetDlgItemTextA@12
 SetDlgItemTextW@12
 SetDoubleClickTime@4
 SetFocus@4
 SetForegroundWindow@4
+SetGestureConfig@20
 SetKeyboardState@4
 SetLastErrorEx@8
 SetLayeredWindowAttributes@16
@@ -568,6 +585,7 @@ SetUserObjectInformationW@16
 SetUserObjectSecurity@12
 SetWinEventHook@28
 SetWindowContextHelpId@8
+SetWindowDisplayAffinity@8
 SetWindowLongA@12
 SetWindowLongW@12
 SetWindowPlacement@8
@@ -622,6 +640,7 @@ UnregisterClassW@8
 UnregisterDeviceNotification@4
 UnregisterHotKey@8
 UnregisterPowerSettingNotification@4
+UnregisterTouchWindow@4
 UpdateLayeredWindow@36
 UpdateLayeredWindowIndirect@8
 UpdateWindow@4
@@ -645,4 +664,3 @@ wsprintfA
 wsprintfW
 wvsprintfA@12
 wvsprintfW@12
-
