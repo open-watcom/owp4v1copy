@@ -124,13 +124,13 @@ void Color::buildText( Cell* cell )
         cell->addByte( 0xFF );  //esc
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x13 );  //set foreground color
-        cell->addByte( static_cast< std::uint8_t >( foreground ) );
+        cell->addByte( static_cast< STD1::uint8_t >( foreground ) );
     }
     if( setBackground ) {
         cell->addByte( 0xFF );  //esc
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x14 );  //set background color
-        cell->addByte( static_cast< std::uint8_t >( background ) );
+        cell->addByte( static_cast< STD1::uint8_t >( background ) );
     }
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );

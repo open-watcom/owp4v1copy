@@ -31,7 +31,7 @@
 #ifndef NLS_INCLUDED
 #define NLS_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <map>
 #include <string>
@@ -66,43 +66,43 @@ public:
     wchar_t entity( const std::wstring& key );
     bool isEntity( const std::wstring& key ) { return entityMap.find( key ) != entityMap.end(); };
     //number of bytes written
-    std::uint32_t length() { return bytes; };
-    std::uint32_t write( std::FILE* out );
+    STD1::uint32_t length() { return bytes; };
+    STD1::uint32_t write( std::FILE* out );
 private:
     Nls( const Nls& rhs );              //no copy
     Nls& operator=( const Nls& rhs );   //no assignment
 #pragma pack(push, 1)
     struct CountryDef {
-        std::uint16_t size;         //12
-        std::uint8_t  type;         //NLSRecType.CONTROL
-        std::uint8_t  format;       //0
-        std::uint16_t value;        //256
-        std::uint16_t country;
-        std::uint16_t codePage;
-        std::uint16_t reserved;     //0
+        STD1::uint16_t size;        //12
+        STD1::uint8_t  type;        //NLSRecType.CONTROL
+        STD1::uint8_t  format;      //0
+        STD1::uint16_t value;       //256
+        STD1::uint16_t country;
+        STD1::uint16_t codePage;
+        STD1::uint16_t reserved;    //0
         CountryDef() :
             size( sizeof(CountryDef) ), type( Nls::CONTROL ), format( 0 ), value( 256 ),
             country( 1 ), codePage( 850 ), reserved( 0 ) {};
-        std::uint32_t write( std::FILE* out ) const;
+        STD1::uint32_t write( std::FILE* out ) const;
         };
     
     struct SbcsGrammerDef {         //Single-byte character set
-        std::uint16_t size;         //36
-        std::uint8_t  type;         //NLSRecType.WORD, NLSRecType.GRAPHIC
-        std::uint8_t  format;       //0
-        std::uint8_t  bits[ 32 ];   //high-order bit first
+        STD1::uint16_t size;        //36
+        STD1::uint8_t  type;        //NLSRecType.WORD, NLSRecType.GRAPHIC
+        STD1::uint8_t  format;      //0
+        STD1::uint8_t  bits[ 32 ];  //high-order bit first
         SbcsGrammerDef() : size( sizeof( SbcsGrammerDef ) ), type( Nls::TEXT ), format( 0 ) { };
         void setDefaultBits( NlsRecType type );
-        std::uint32_t write( std::FILE* out ) const;
+        STD1::uint32_t write( std::FILE* out ) const;
         };
 #pragma pack(pop)
     struct DbcsGrammerDef {         //Double-byte character set
-        std::uint16_t size;         //4 + (# ranges * 4)
-        std::uint8_t  type;         //NLSRecType.TEXT, NLSRecType.GRAPHIC
-        std::uint8_t  format;       //1
-        std::vector<std::uint16_t> ranges;
+        STD1::uint16_t size;        //4 + (# ranges * 4)
+        STD1::uint8_t  type;        //NLSRecType.TEXT, NLSRecType.GRAPHIC
+        STD1::uint8_t  format;      //1
+        std::vector<STD1::uint16_t> ranges;
         DbcsGrammerDef() : size( 4 ), type( Nls::TEXT ) , format( 1 ) {};
-        std::uint32_t write( std::FILE* out );
+        STD1::uint32_t write( std::FILE* out );
         };
 
     CountryDef country;
@@ -119,7 +119,7 @@ private:
     std::wstring referenceText;
     std::wstring grammerChars;
     std::wstring cgraphicFontFace;
-    std::uint32_t bytes;
+    STD1::uint32_t bytes;
     int cgraphicFontW;
     int cgraphicFontH;
     std::wstring olCh;

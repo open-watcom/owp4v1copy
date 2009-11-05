@@ -37,7 +37,7 @@
 #ifndef I2_INCLUDED
 #define I2_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <memory>
 #include "element.hpp"
@@ -54,7 +54,7 @@ public:
     Lexer::Token parse( Lexer* lexer );
     void buildIndex();
     void buildText( Cell* cell ) { cell = cell; };
-    void setRes( std::uint16_t r ) { parentRes = r; };
+    void setRes( STD1::uint16_t r ) { parentRes = r; };
     void setIdOrName( GlobalDictionaryWord* w ) { parentId = w; };
     bool isGlobal() const { return index->isGlobal(); };
     size_t write( std::FILE* out ) { return index->write( out ); };
@@ -64,7 +64,7 @@ private:
     std::auto_ptr< IndexItem > index;
     std::wstring refid;
     GlobalDictionaryWord* parentId;
-    std::uint16_t parentRes;
+    STD1::uint16_t parentRes;
     Lexer::Token parseAttributes( Lexer* lexer );
 };
 #endif //I2_INCLUDED

@@ -57,7 +57,7 @@ size_t GlobalDictionaryWord::writeWord( std::FILE* out ) const
         throw FatalError( ERR_T_CONV );
     if( length > 254 )
         length = 254;
-    if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out) == EOF ||
+    if( std::fputc( static_cast< STD1::uint8_t >( length + 1 ), out) == EOF ||
         ( written = std::fwrite( buffer, sizeof( char ), length, out ) ) != length )
         throw FatalError( ERR_WRITE );
     return written + 1;

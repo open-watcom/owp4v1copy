@@ -90,14 +90,14 @@ void Hide::buildText( Cell* cell )
         tmp.erase( 253 );
         size = 253;
     }
-    std::vector< std::uint8_t > esc;
+    std::vector< STD1::uint8_t > esc;
     esc.reserve( size + 3 );
     esc.push_back( 0xFF );  //esc
     esc.push_back( 0x02 );  //size
     esc.push_back( 0x17 );  //begin hide
     for( unsigned int count1 = 0; count1 < size; count1++ )
-        esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
-    esc[1] = static_cast< std::uint8_t >( esc.size() - 1 );
+        esc.push_back( static_cast< STD1::uint8_t >( tmp[ count1 ] ) );
+    esc[1] = static_cast< STD1::uint8_t >( esc.size() - 1 );
     cell->addEsc( esc );
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );

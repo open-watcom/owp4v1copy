@@ -37,7 +37,7 @@
 void ExternalFiles::addFile( std::wstring& str )
 {
     if( table.find( str ) == table.end() ) {
-        table.insert( std::map< std::wstring, std::uint16_t >::value_type( str, 0 ) );
+        table.insert( std::map< std::wstring, STD1::uint16_t >::value_type( str, 0 ) );
         if( table.size() >= 256 )
             throw Class1Error( ERR1_EXTFILESLARGE );
     }
@@ -45,16 +45,16 @@ void ExternalFiles::addFile( std::wstring& str )
 /***************************************************************************/
 void ExternalFiles::convert()
 {
-    std::uint16_t count1( 0 );
+    STD1::uint16_t count1( 0 );
     for( TableIter itr = table.begin(); itr != table.end(); ++itr, ++count1 )
         itr->second = count1;
 }
 /***************************************************************************/
-std::uint32_t ExternalFiles::write( std::FILE *out )
+STD1::uint32_t ExternalFiles::write( std::FILE *out )
 {
     if( table.empty() )
         return 0;
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     for( ConstTableIter itr = table.begin(); itr != table.end(); ++itr ) {
         std::string buffer;
         wtombstring( itr->first, buffer );
@@ -64,7 +64,7 @@ std::uint32_t ExternalFiles::write( std::FILE *out )
             length = 255;
         }
         size_t written;
-        if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out) == EOF ||
+        if( std::fputc( static_cast< STD1::uint8_t >( length + 1 ), out) == EOF ||
             ( written = std::fwrite( buffer.data(), sizeof( char ), length, out ) ) != length )
             throw FatalError( ERR_WRITE );
         bytes += written + 1;

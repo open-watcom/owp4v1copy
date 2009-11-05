@@ -56,7 +56,7 @@ Lexer::Token Rm::parse( Lexer* lexer )
                     tmp = 1;
                 if( tmp > 255 )
                     tmp = 255;
-                margin = static_cast< std::uint8_t >( tmp );
+                margin = static_cast< STD1::uint8_t >( tmp );
             }
             else
                 document->printError( ERR1_ATTRNOTDEF );

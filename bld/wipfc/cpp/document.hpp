@@ -31,7 +31,7 @@
 #ifndef DOCUMENT_INCLUDED
 #define DOCUMENT_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <map>
 #include <memory>
@@ -81,7 +81,7 @@ public:
     unsigned char leftMargin() const { return currentLeftMargin; };
     //store a graphics file name
     void addBitmap( std::wstring& bmn );
-    std::uint32_t bitmapByName( std::wstring& bmn );
+    STD1::uint32_t bitmapByName( std::wstring& bmn );
     //toggle automatic insertion of spaces (for parsing)
     void toggleAutoSpacing() { spacing = !spacing; };
     bool autoSpacing() const { return spacing; };
@@ -89,20 +89,20 @@ public:
     Text* lastText() { return lastPrintableItem; };
     Lexer::Token lastToken() const { return lastPrintableToken; };
     //add a resource number to TOC index mapping
-    void addRes( std::uint16_t key, TocRef& value );
+    void addRes( STD1::uint16_t key, TocRef& value );
     //add a name/id to TOC index mapping
     void addNameOrId( GlobalDictionaryWord* key, TocRef& value );
     //add a cross-reference to an identifier
-    void addXRef( std::uint16_t res, XRef& xref );
+    void addXRef( STD1::uint16_t res, XRef& xref );
     void addXRef( GlobalDictionaryWord* id, XRef& xref );
     //add a page to the page collection
     void addPage( Page* page );
     //add a cell to the cell collection
     void addCell( Cell* cell);
     //add a TOC file offset to the collection
-    void addTOCOffset( std::uint32_t o ) { tocOffsets.push_back( o ); };
+    void addTOCOffset( STD1::uint32_t o ) { tocOffsets.push_back( o ); };
     //add a Cell file offset to the collection
-    void addCellOffset( std::uint32_t o ) { cellOffsets.push_back( o ); };
+    void addCellOffset( STD1::uint32_t o ) { cellOffsets.push_back( o ); };
     //add a synonym entry
     void addSynonym( std::wstring& key, Synonym* value );
     //get a synonym entry
@@ -119,9 +119,9 @@ public:
     //parse a command
     Lexer::Token processCommand( Lexer* lexer, Tag* parent );
     //get a TOC index from the resource number to TOC index map
-    std::uint16_t tocIndexByRes( std::uint16_t res );
+    STD1::uint16_t tocIndexByRes( STD1::uint16_t res );
     //get a TOC index from the id or name to TOC index map
-    std::uint16_t tocIndexById( GlobalDictionaryWord* id );
+    STD1::uint16_t tocIndexById( GlobalDictionaryWord* id );
     //get a .nameit expansion
     const std::wstring* nameit( const std::wstring& key );
     std::wstring* prepNameitName( const std::wstring& key );
@@ -129,7 +129,7 @@ public:
     //Forwarding functions
 
     //To Controls
-    std::uint16_t getGroupById( const std::wstring& i ) { return controls->getGroupById( i )->index() + 1; };
+    STD1::uint16_t getGroupById( const std::wstring& i ) { return controls->getGroupById( i )->index() + 1; };
 
     //To Compiler
     std::wstring* addFileName( std::wstring* name ) { return compiler.addFileName( name ); };
@@ -150,17 +150,17 @@ public:
 
     //To ExternalFiles
     void addExtFile( std::wstring& str ) { extfiles->addFile( str ); };
-    std::uint16_t extFileIndex( std::wstring& str ) { return extfiles->index( str ); };
+    STD1::uint16_t extFileIndex( std::wstring& str ) { return extfiles->index( str ); };
 
     //To FontCollection
     size_t addFont( FontEntry& fnt ) { return fonts->add( fnt ); };
 
     //To GlobalDictionary
     GlobalDictionaryWord * addWord( GlobalDictionaryWord* word ) { return dict->insert( word ); };
-    std::uint16_t findIndex( std::wstring& word ) { return dict->findIndex( word ); };
+    STD1::uint16_t findIndex( std::wstring& word ) { return dict->findIndex( word ); };
 
     //To GNames
-    void addGNameOrId( GlobalDictionaryWord* key, std::uint16_t value )
+    void addGNameOrId( GlobalDictionaryWord* key, STD1::uint16_t value )
         { gnames->insert( key, value ); };
 
     //To Nls
@@ -203,13 +203,13 @@ private:
     typedef std::vector< Cell* >::iterator CellIter;
     typedef std::vector< Cell* >::const_iterator ConstCellIter;
 
-    std::map< std::wstring, std::uint32_t > bitmapNames;
-    typedef std::map< std::wstring, std::uint32_t >::iterator BitmapNameIter;
-    typedef std::map< std::wstring, std::uint32_t >::const_iterator ConstBitmapNameIter;
+    std::map< std::wstring, STD1::uint32_t > bitmapNames;
+    typedef std::map< std::wstring, STD1::uint32_t >::iterator BitmapNameIter;
+    typedef std::map< std::wstring, STD1::uint32_t >::const_iterator ConstBitmapNameIter;
 
-    std::map< std::uint16_t, TocRef > resMap;
-    typedef std::map< std::uint16_t, TocRef >::iterator ResMapIter;
-    typedef std::map< std::uint16_t, TocRef >::const_iterator ConstResMapIter;
+    std::map< STD1::uint16_t, TocRef > resMap;
+    typedef std::map< STD1::uint16_t, TocRef >::iterator ResMapIter;
+    typedef std::map< STD1::uint16_t, TocRef >::const_iterator ConstResMapIter;
 
     std::map< GlobalDictionaryWord*, TocRef, ptrLess< GlobalDictionaryWord* > > nameMap;
     typedef std::map< GlobalDictionaryWord*, TocRef, ptrLess< GlobalDictionaryWord* > >::iterator NameMapIter;
@@ -234,13 +234,13 @@ private:
     typedef std::vector< ICmd* >::iterator ICmdIter;
     typedef std::vector< ICmd* >::const_iterator ConstICmdIter;
 
-    std::vector< std::uint32_t > tocOffsets;
-    typedef std::vector< std::uint32_t >::iterator TocOffsetIter;
-    typedef std::vector< std::uint32_t >::const_iterator ConstTocOffsetIter;
+    std::vector< STD1::uint32_t > tocOffsets;
+    typedef std::vector< STD1::uint32_t >::iterator TocOffsetIter;
+    typedef std::vector< STD1::uint32_t >::const_iterator ConstTocOffsetIter;
 
-    std::vector< std::uint32_t > cellOffsets;
-    typedef std::vector< std::uint32_t >::iterator CellOffsetIter;
-    typedef std::vector< std::uint32_t >::const_iterator ConstCellOffsetIter;
+    std::vector< STD1::uint32_t > cellOffsets;
+    typedef std::vector< STD1::uint32_t >::iterator CellOffsetIter;
+    typedef std::vector< STD1::uint32_t >::const_iterator ConstCellOffsetIter;
 
     std::string tmpName;    //temporary storage for bitmaps
     Text* lastPrintableItem;
@@ -252,17 +252,17 @@ private:
     bool spacing;           //true if automatically inserting spaces
     void makeBitmaps();
     void makeIndexes();
-    std::uint32_t writeBitmaps( std::FILE* out );
-    std::uint32_t writeResMap( std::FILE* out );
-    std::uint32_t writeNameMap( std::FILE* out );
-    std::uint32_t writeTOCs( std::FILE* out );
-    std::uint32_t writeTOCOffsets( std::FILE* out );
+    STD1::uint32_t writeBitmaps( std::FILE* out );
+    STD1::uint32_t writeResMap( std::FILE* out );
+    STD1::uint32_t writeNameMap( std::FILE* out );
+    STD1::uint32_t writeTOCs( std::FILE* out );
+    STD1::uint32_t writeTOCOffsets( std::FILE* out );
     void writeCells( std::FILE* out );
-    std::uint32_t writeCellOffsets( std::FILE* out );
-    std::uint32_t writeChildWindows( std::FILE* out );
+    STD1::uint32_t writeCellOffsets( std::FILE* out );
+    STD1::uint32_t writeChildWindows( std::FILE* out );
     void writeSynonyms( std::FILE* out );
-    std::uint32_t writeIndex( std::FILE* out );
-    std::uint32_t writeICmd( std::FILE* out );
+    STD1::uint32_t writeIndex( std::FILE* out );
+    STD1::uint32_t writeICmd( std::FILE* out );
 };
 
 #endif //DOCUMENT_INCLUDED

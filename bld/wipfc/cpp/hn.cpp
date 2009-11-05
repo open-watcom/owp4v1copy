@@ -293,7 +293,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
             if( key == L"res" ) {
-                res = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                res = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
                 if( res < 1 || res > 64000 )
                     document->printError( ERR2_VALUE );
                 if( Hide::hiding() )
@@ -442,7 +442,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             }
             else if( key == L"group" ) {
                 toc.extended = 1;
-                group.id = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                group.id = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"titlebar" ) {
                 toc.extended = 1;
@@ -616,14 +616,14 @@ void Hn::buildText( Cell* cell )
             tmp.erase( 253 );
             size = 253;
         }
-        std::vector< std::uint8_t > esc;
+        std::vector< STD1::uint8_t > esc;
         esc.reserve( size + 3 );
         esc.push_back( 0xFF );  //esc
         esc.push_back( 0x02 );  //size
         esc.push_back( 0x15 );  //begin hide
         for( unsigned int count1 = 0; count1 < size; count1++ )
-            esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
-        esc[1] = static_cast< std::uint8_t >( esc.size() - 1 );
+            esc.push_back( static_cast< STD1::uint8_t >( tmp[ count1 ] ) );
+        esc[1] = static_cast< STD1::uint8_t >( esc.size() - 1 );
         cell->addEsc( esc );
         if( cell->textFull() )
             printError( ERR1_LARGEPAGE );

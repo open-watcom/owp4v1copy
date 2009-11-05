@@ -132,7 +132,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                     document->printError( ERR2_VALUE );
             }
             else if( key == L"res" )
-                res = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                res = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             else if( key == L"refid" ) {
                 refid = new GlobalDictionaryWord( value );
                 refid->toUpper();           //to uppercase
@@ -153,7 +153,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             else if( key == L"data" )
                 data = value;
             else if( key == L"group" ) {
-                group.id = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                group.id = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
                 doGroup = true;
             }
             else if( key == L"vpx" ) {
@@ -176,7 +176,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int x( std::wcstoul( value.c_str(), &end, 10 ) );
-                    origin.xpos = static_cast< std::uint16_t >( x );
+                    origin.xpos = static_cast< STD1::uint16_t >( x );
                     if( *end == L'c' )
                         origin.xPosType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -211,7 +211,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int y( std::wcstoul( value.c_str(), &end, 10 ) );
-                    origin.ypos = static_cast< std::uint16_t >( y );
+                    origin.ypos = static_cast< STD1::uint16_t >( y );
                     if( *end == L'c' )
                         origin.yPosType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -238,7 +238,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int width( std::wcstoul( value.c_str(), &end, 10 ) );
-                    size.width = static_cast< std::uint16_t >( width );
+                    size.width = static_cast< STD1::uint16_t >( width );
                     if( *end == L'c' )
                         size.widthType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -265,7 +265,7 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
                 else {
                     wchar_t *end;
                     unsigned long int height( std::wcstoul( value.c_str(), &end, 10 ) );
-                    size.height = static_cast< std::uint16_t >( height );
+                    size.height = static_cast< STD1::uint16_t >( height );
                     if( *end == L'c' )
                         size.heightType = ExtTocEntry::ABSOLUTE_CHAR;
                     else if( *end == L'%' )
@@ -282,19 +282,19 @@ Lexer::Token Link::parseAttributes( Lexer* lexer )
             }
             else if( key == L"x" ) {
                 hypergraphic = true;
-                x = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                x = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"y" ) {
                 hypergraphic = true;
-                y = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                y = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"cx" ) {
                 hypergraphic = true;
-                cx = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                cx = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"cy" ) {
                 hypergraphic = true;
-                cy = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                cy = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             }
             else if( key == L"titlebar" ) {
                 doStyle = true;
@@ -396,7 +396,7 @@ void Link::doTopic( Cell* cell )
         if( database.empty() ) {            //jump to internal link
             try {
                 XRef xref( fileName, row );
-                std::uint16_t tocIndex;
+                STD1::uint16_t tocIndex;
                 if( refid ) {
                     tocIndex = document->tocIndexById( refid );
                     document->addXRef( refid, xref );
@@ -405,7 +405,7 @@ void Link::doTopic( Cell* cell )
                     tocIndex = document->tocIndexByRes( res );
                     document->addXRef( res, xref );
                 }
-                std::vector< std::uint8_t > esc;
+                std::vector< STD1::uint8_t > esc;
                 esc.reserve( 7 + sizeof( PageOrigin ) + sizeof( PageSize ) + \
                     sizeof( PageStyle ) + sizeof( PageGroup ) );
                 esc.push_back( 0xFF );      //ESC
@@ -418,23 +418,23 @@ void Link::doTopic( Cell* cell )
                     else
                         esc.push_back( 0x04 );  //full bitmap
                 }
-                esc.push_back( static_cast< std::uint8_t >( tocIndex ) );
-                esc.push_back( static_cast< std::uint8_t >( tocIndex >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( tocIndex ) );
+                esc.push_back( static_cast< STD1::uint8_t >( tocIndex >> 8 ) );
                 //this may need to be last
                 if( hypergraphic && ( x || y || cx || cy ) ) {
-                    esc.push_back( static_cast< std::uint8_t >( x ) );
-                    esc.push_back( static_cast< std::uint8_t >( x >> 8 ) );
-                    esc.push_back( static_cast< std::uint8_t >( y ) );
-                    esc.push_back( static_cast< std::uint8_t >( y >> 8 ) );
-                    esc.push_back( static_cast< std::uint8_t >( cx ) );
-                    esc.push_back( static_cast< std::uint8_t >( cx >> 8 ) );
-                    esc.push_back( static_cast< std::uint8_t >( cy ) );
-                    esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( x ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( x >> 8 ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( y ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( y >> 8 ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( cx ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( cx >> 8 ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( cy ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( cy >> 8 ) );
                 }
                 if( viewport || doStyle || automatic || split || doOrigin || doSize ||
                     dependent || doGroup ) {
-                    std::uint8_t flag1( 0 );
-                    std::uint8_t flag2( 0 );
+                    STD1::uint8_t flag1( 0 );
+                    STD1::uint8_t flag2( 0 );
                     esc[ 1 ] += 2;
                     if( doOrigin )
                         flag1 |= 0x01;
@@ -461,27 +461,27 @@ void Link::doTopic( Cell* cell )
                 }
                 if( doOrigin ) {
                     esc[ 1 ] += sizeof( PageOrigin );
-                    std::uint8_t* src = reinterpret_cast< std::uint8_t* >( &origin );
+                    STD1::uint8_t* src = reinterpret_cast< STD1::uint8_t* >( &origin );
                     for( size_t count1 = 0; count1 < sizeof( PageOrigin ); ++count1, ++src)
                         esc.push_back( *src );
                 }
                 if( doSize ) {
                     esc[ 1 ] += sizeof( PageSize );
-                    std::uint8_t* src = reinterpret_cast< std::uint8_t* >( &size );
+                    STD1::uint8_t* src = reinterpret_cast< STD1::uint8_t* >( &size );
                     for( size_t count1 = 0; count1 < sizeof( PageSize ); ++count1, ++src)
                         esc.push_back( *src );
                 }
                 if( doStyle ) {
                     esc[ 1 ] += sizeof( PageStyle );
-                    esc.push_back( static_cast< std::uint8_t >( style.word ) );
-                    esc.push_back( static_cast< std::uint8_t >( style.word >> 8 ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( style.word ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( style.word >> 8 ) );
                 }
                 if( doGroup ) {
                     esc[ 1 ] += sizeof( PageGroup );
-                    esc.push_back( static_cast< std::uint8_t >( group.id ) );
-                    esc.push_back( static_cast< std::uint8_t >( group.id >> 8 ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( group.id ) );
+                    esc.push_back( static_cast< STD1::uint8_t >( group.id >> 8 ) );
                 }
-                esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+                esc[ 1 ] = static_cast< STD1::uint8_t >( esc.size() - 1 );
                 cell->addEsc( esc );
                 if( cell->textFull() )
                     printError( ERR1_LARGEPAGE );
@@ -491,7 +491,7 @@ void Link::doTopic( Cell* cell )
             }
         }
         else {                              //jump to external link
-            std::vector< std::uint8_t > esc;
+            std::vector< STD1::uint8_t > esc;
             esc.reserve( 7 );
             esc.push_back( 0xFF );          //ESC
             esc.push_back( 4 );             //size
@@ -504,30 +504,30 @@ void Link::doTopic( Cell* cell )
                 else
                     esc.push_back( 0x16 );  //full bitmap
             }
-            std::uint16_t index( document->extFileIndex( database ) );
-            esc.push_back( static_cast< std::uint8_t >( index ) );
-            //esc.push_back( static_cast< std::uint8_t >( index >> 8 ) );
+            STD1::uint16_t index( document->extFileIndex( database ) );
+            esc.push_back( static_cast< STD1::uint8_t >( index ) );
+            //esc.push_back( static_cast< STD1::uint8_t >( index >> 8 ) );
             std::string tmp;
             wtombstring( refid->getText(), tmp );
             size_t size( tmp.size() );
-            esc.push_back( static_cast< std::uint8_t >( size ) );
+            esc.push_back( static_cast< STD1::uint8_t >( size ) );
             if( hypergraphic && ( x || y || cx || cy ) ) {
-                esc.push_back( static_cast< std::uint8_t >( x ) );
-                esc.push_back( static_cast< std::uint8_t >( x >> 8 ) );
-                esc.push_back( static_cast< std::uint8_t >( y ) );
-                esc.push_back( static_cast< std::uint8_t >( y >> 8 ) );
-                esc.push_back( static_cast< std::uint8_t >( cx ) );
-                esc.push_back( static_cast< std::uint8_t >( cx >> 8 ) );
-                esc.push_back( static_cast< std::uint8_t >( cy ) );
-                esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( x ) );
+                esc.push_back( static_cast< STD1::uint8_t >( x >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( y ) );
+                esc.push_back( static_cast< STD1::uint8_t >( y >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cx ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cx >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cy ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cy >> 8 ) );
             }
             if( size > 255 - esc.size() + 1 ) {
                 size = 255 - esc.size() + 1;
                 tmp.erase( size );
             }
             for( size_t count1 = 0; count1 < size; count1++ )
-                esc.push_back( static_cast< std::uint8_t >( tmp[ count1 ] ) );
-            esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+                esc.push_back( static_cast< STD1::uint8_t >( tmp[ count1 ] ) );
+            esc[ 1 ] = static_cast< STD1::uint8_t >( esc.size() - 1 );
             cell->addEsc( esc );
             if( cell->textFull() )
                 printError( ERR1_LARGEPAGE );
@@ -551,7 +551,7 @@ void Link::doFootnote( Cell* cell )
                 tocIndex = document->tocIndexByRes( res );
                 document->addXRef( res, xref );
             }
-            std::vector< std::uint8_t > esc;
+            std::vector< STD1::uint8_t > esc;
             esc.reserve( 5 );
             esc.push_back( 0xFF );          //ESC
             esc.push_back( 4 );             //size
@@ -563,19 +563,19 @@ void Link::doFootnote( Cell* cell )
                 else
                     esc.push_back( 0x05 );  //full bitmap
             }
-            esc.push_back( static_cast< std::uint8_t >( tocIndex ) );
-            esc.push_back( static_cast< std::uint8_t >( tocIndex >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( tocIndex ) );
+            esc.push_back( static_cast< STD1::uint8_t >( tocIndex >> 8 ) );
             if( hypergraphic && ( x || y || cx || cy ) ) {
-                esc.push_back( static_cast< std::uint8_t >( x ) );
-                esc.push_back( static_cast< std::uint8_t >( x >> 8 ) );
-                esc.push_back( static_cast< std::uint8_t >( y ) );
-                esc.push_back( static_cast< std::uint8_t >( y >> 8 ) );
-                esc.push_back( static_cast< std::uint8_t >( cx ) );
-                esc.push_back( static_cast< std::uint8_t >( cx >> 8 ) );
-                esc.push_back( static_cast< std::uint8_t >( cy ) );
-                esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( x ) );
+                esc.push_back( static_cast< STD1::uint8_t >( x >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( y ) );
+                esc.push_back( static_cast< STD1::uint8_t >( y >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cx ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cx >> 8 ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cy ) );
+                esc.push_back( static_cast< STD1::uint8_t >( cy >> 8 ) );
             }
-            esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+            esc[ 1 ] = static_cast< STD1::uint8_t >( esc.size() - 1 );
             cell->addEsc( esc );
             if( cell->textFull() )
                 printError( ERR1_LARGEPAGE );
@@ -591,7 +591,7 @@ void Link::doFootnote( Cell* cell )
 void Link::doLaunch( Cell* cell )
 {
     if( object.size() && data.size() ) {//both are required
-        std::vector< std::uint8_t > esc;
+        std::vector< STD1::uint8_t > esc;
         esc.reserve( 6 );
         esc.push_back( 0xFF );          //ESC
         esc.push_back( 3 );             //size
@@ -606,14 +606,14 @@ void Link::doLaunch( Cell* cell )
         }
         esc.push_back( 0x00 );          //blank byte
         if( hypergraphic && ( x || y || cx || cy ) ) {
-            esc.push_back( static_cast< std::uint8_t >( x ) );
-            esc.push_back( static_cast< std::uint8_t >( x >> 8 ) );
-            esc.push_back( static_cast< std::uint8_t >( y ) );
-            esc.push_back( static_cast< std::uint8_t >( y >> 8 ) );
-            esc.push_back( static_cast< std::uint8_t >( cx ) );
-            esc.push_back( static_cast< std::uint8_t >( cx >> 8 ) );
-            esc.push_back( static_cast< std::uint8_t >( cy ) );
-            esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( x ) );
+            esc.push_back( static_cast< STD1::uint8_t >( x >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( y ) );
+            esc.push_back( static_cast< STD1::uint8_t >( y >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cx ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cx >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cy ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cy >> 8 ) );
         }
         std::string buffer;
         wtombstring( object, buffer );
@@ -625,8 +625,8 @@ void Link::doLaunch( Cell* cell )
             buffer.erase( size );
         }
         for( size_t count1 = 0; count1 < size; ++count1 )
-            esc.push_back( static_cast< std::uint8_t >( buffer[ count1 ] ) );
-        esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+            esc.push_back( static_cast< STD1::uint8_t >( buffer[ count1 ] ) );
+        esc[ 1 ] = static_cast< STD1::uint8_t >( esc.size() - 1 );
         cell->addEsc( esc );
         if( cell->textFull() )
             printError( ERR1_LARGEPAGE );
@@ -638,7 +638,7 @@ void Link::doLaunch( Cell* cell )
 void Link::doInform( Cell* cell )
 {
    if( res ) {                          //res is required
-        std::vector< std::uint8_t > esc;
+        std::vector< STD1::uint8_t > esc;
         esc.reserve( 5 );
         esc.push_back( 0xFF );          //ESC
         esc.push_back( 4 );             //size
@@ -651,19 +651,19 @@ void Link::doInform( Cell* cell )
             else
                 esc.push_back( 0x09 );  //full bitmap
         }
-        esc.push_back( static_cast< std::uint8_t >( res ) );
-        esc.push_back( static_cast< std::uint8_t >( res >> 8 ) );
+        esc.push_back( static_cast< STD1::uint8_t >( res ) );
+        esc.push_back( static_cast< STD1::uint8_t >( res >> 8 ) );
         if ( hypergraphic && ( x || y || cx || cy ) ) {
-            esc.push_back( static_cast< std::uint8_t >( x ) );
-            esc.push_back( static_cast< std::uint8_t >( x >> 8 ) );
-            esc.push_back( static_cast< std::uint8_t >( y ) );
-            esc.push_back( static_cast< std::uint8_t >( y >> 8 ) );
-            esc.push_back( static_cast< std::uint8_t >( cx ) );
-            esc.push_back( static_cast< std::uint8_t >( cx >> 8 ) );
-            esc.push_back( static_cast< std::uint8_t >( cy ) );
-            esc.push_back( static_cast< std::uint8_t >( cy >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( x ) );
+            esc.push_back( static_cast< STD1::uint8_t >( x >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( y ) );
+            esc.push_back( static_cast< STD1::uint8_t >( y >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cx ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cx >> 8 ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cy ) );
+            esc.push_back( static_cast< STD1::uint8_t >( cy >> 8 ) );
         }
-        esc[ 1 ] = static_cast< std::uint8_t >( esc.size() - 1 );
+        esc[ 1 ] = static_cast< STD1::uint8_t >( esc.size() - 1 );
         cell->addEsc( esc );
         if( cell->textFull() )
             printError( ERR1_LARGEPAGE );

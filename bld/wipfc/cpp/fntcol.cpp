@@ -57,9 +57,9 @@ size_t FontCollection::add( FontEntry& fnt )
     return fonts.size() - 1;
 }
 /****************************************************************************/
-std::uint32_t FontCollection::write( std::FILE *out )
+STD1::uint32_t FontCollection::write( std::FILE *out )
 {
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     for( FontIter itr = fonts.begin(); itr != fonts.end(); ++itr ) {
         bytes += itr->write( out );
     }

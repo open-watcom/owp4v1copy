@@ -32,7 +32,7 @@
 #ifndef FTSELEMENT_INCLUDED
 #define FTSELEMENT_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -63,14 +63,14 @@ private:
     size_t pageCount;       //number of pages the word is in
     size_t maxPage;         //the highest page number
     size_t dataSize;        //the size of the compressed bitstring
-    std::uint16_t firstPage;   //the first page the word is in
+    STD1::uint16_t firstPage;   //the first page the word is in
     CompressionCode comp;
-    std::vector< std::uint8_t > pages; //bitstring of what pages its found on (for FTS)
-    typedef std::vector< std::uint8_t >::iterator PageIter;
-    typedef std::vector< std::uint8_t >::const_iterator ConstPageIter;
-    typedef std::vector< std::uint8_t >::reverse_iterator RPageIter;
-    typedef std::vector< std::uint8_t >::const_reverse_iterator ConstRPageIter;
-    void encode( std::vector< std::uint8_t >& rle );
+    std::vector< STD1::uint8_t > pages; //bitstring of what pages its found on (for FTS)
+    typedef std::vector< STD1::uint8_t >::iterator PageIter;
+    typedef std::vector< STD1::uint8_t >::const_iterator ConstPageIter;
+    typedef std::vector< STD1::uint8_t >::reverse_iterator RPageIter;
+    typedef std::vector< STD1::uint8_t >::const_reverse_iterator ConstRPageIter;
+    void encode( std::vector< STD1::uint8_t >& rle );
 };
 
 #endif //FTSELEMENT_INCLUDED

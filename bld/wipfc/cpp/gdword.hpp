@@ -31,7 +31,7 @@
 #ifndef GDWORD_INCLUDED
 #define GDWORD_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -44,8 +44,8 @@ public:
     //convert to upper case
     void toUpper();
     //set the index postion in the collection
-    void setIndex( std::uint16_t i ) { idx = i; };
-    std::uint16_t index() const { return idx; };
+    void setIndex( STD1::uint16_t i ) { idx = i; };
+    STD1::uint16_t index() const { return idx; };
     const std::wstring& getText() const { return text; };
     size_t writeWord( std::FILE* out ) const;
     bool operator==( const GlobalDictionaryWord& rhs ) const { return text == rhs.text; };
@@ -60,7 +60,7 @@ public:
 private:
     GlobalDictionaryWord( const GlobalDictionaryWord& rhs );            //no copy
     GlobalDictionaryWord& operator=( const GlobalDictionaryWord& rhs ); //no assignment
-    std::uint16_t idx;              //index in Dictionary
+    STD1::uint16_t idx;             //index in Dictionary
     std::wstring text;              //the actual text
     FTSElement fts;
     int wstricmp( const wchar_t *s, const wchar_t *t ) const;

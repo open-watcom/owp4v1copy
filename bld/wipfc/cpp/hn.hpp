@@ -54,7 +54,7 @@
 #ifndef HN_INCLUDED
 #define HN_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <vector>
 #include "tag.hpp"
 #include "toc.hpp"
@@ -65,13 +65,13 @@ class Hn : public Tag {
 public:
     Hn( Document* d, Element *p, const std::wstring* f, unsigned int r, unsigned int c, unsigned int l ) :
         Tag( d, p, f, r, c ), id( 0 ), name( 0 ), res( 0 ), global( false )
-        { toc.nestLevel = static_cast< std::uint8_t >( l ); };
+        { toc.nestLevel = static_cast< STD1::uint8_t >( l ); };
     ~Hn();
     Lexer::Token parse( Lexer* lexer );
     void buildTOC( Page* page );
     void buildText( Cell* cell );
     //this header is at level l
-    void setLevel( unsigned int l ) { toc.nestLevel = static_cast< std::uint8_t >( l ); };
+    void setLevel( unsigned int l ) { toc.nestLevel = static_cast< STD1::uint8_t >( l ); };
     unsigned int level() const { return toc.nestLevel; };
     //get the resource id
     unsigned int resourceNumber() const { return res; };
@@ -79,7 +79,7 @@ public:
     void setHasChildren() { toc.hasChildren = 1; };
     //has child windows that it controls
     void setIsParent() { toc.extended = 1; etoc.isParent = 1; };
-    void addChild( std::uint16_t toc ) { childTOCs.push_back( toc ); };
+    void addChild( STD1::uint16_t toc ) { childTOCs.push_back( toc ); };
     //this is a header on a split window
     bool isSplit() const { return ( style.word & PageStyle::SPLIT ) == PageStyle::SPLIT; };
     void linearize( Page* page );
@@ -97,10 +97,10 @@ private:
     PageControls controls;
     std::string title;
     std::wstring tutorial;
-    std::vector< std::uint16_t > childTOCs;
+    std::vector< STD1::uint16_t > childTOCs;
     GlobalDictionaryWord* id;
     GlobalDictionaryWord* name;
-    std::uint16_t res;
+    STD1::uint16_t res;
     bool global;
 };
 

@@ -31,7 +31,7 @@
 #ifndef CONTROLS_INCLUDED
 #define CONTROLS_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -44,7 +44,7 @@ public:
     ~Controls() { };
     void addButton( ControlButton& btn )
     {
-        btn.setIndex( static_cast< std::uint16_t >( controls.size() + 7 ) );
+        btn.setIndex( static_cast< STD1::uint16_t >( controls.size() + 7 ) );
         controls.push_back( btn );
     };
     ControlButton* button() { return &controls[ controls.size() - 1 ]; };
@@ -52,13 +52,13 @@ public:
     void addGroup( ControlGroup& grp )
     {
         groups.push_back( grp );
-        grp.setIndex( static_cast< std::uint16_t >( groups.size() ) );
+        grp.setIndex( static_cast< STD1::uint16_t >( groups.size() ) );
     };
     ControlGroup* group() { return &groups[ groups.size() - 1 ]; };
     ControlGroup* getGroupById( const std::wstring& i );
-    void setCover( std::uint16_t c ) { coverGroup = c; };
-    std::uint32_t length() const { return bytes; };
-    std::uint32_t write( std::FILE *out );
+    void setCover( STD1::uint16_t c ) { coverGroup = c; };
+    STD1::uint32_t length() const { return bytes; };
+    STD1::uint32_t write( std::FILE *out );
 private:
     Controls( const Controls& rhs );            //no copy
     Controls& operator=( const Controls& rhs ); //no assignment
@@ -68,8 +68,8 @@ private:
     std::vector< ControlGroup > groups;
     typedef std::vector< ControlGroup >::iterator GroupIter;
     typedef std::vector< ControlGroup >::const_iterator ConstGroupIter;
-    std::uint32_t bytes;        //size of all controls together
-    std::uint16_t coverGroup;
+    STD1::uint32_t bytes;       //size of all controls together
+    STD1::uint16_t coverGroup;
 };
 
 #endif //CONTROLS_INCLUDED

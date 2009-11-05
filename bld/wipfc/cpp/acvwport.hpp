@@ -41,6 +41,7 @@
 #ifndef ACVIEWPORT_INCLUDED
 #define ACVIEWPORT_INCLUDED
 
+#include "config.hpp"
 #include "element.hpp"
 #include "toc.hpp"
 
@@ -57,7 +58,7 @@ private:
     std::wstring dll;
     std::wstring objectName;
     std::wstring objectInfo;
-    std::uint16_t objectId;
+    STD1::uint16_t objectId;
     PageOrigin origin;
     PageSize size;
     bool doOrigin;

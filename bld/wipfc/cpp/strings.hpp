@@ -34,7 +34,7 @@
 #ifndef STRINGS_INCLUDED
 #define STRINGS_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -44,13 +44,13 @@ public:
     StringTable() : bytes( 0 ) { table.reserve( 3 ); };
     void addString( std::wstring& str ) { table.push_back( str ); };
     //the number of bytes written to disk
-    std::uint32_t length() const { return bytes; };
-    std::uint32_t write( std::FILE *out );
+    STD1::uint32_t length() const { return bytes; };
+    STD1::uint32_t write( std::FILE *out );
 private:
     std::vector< std::wstring > table;
     typedef std::vector< std::wstring >::iterator TableIter;
     typedef std::vector< std::wstring >::const_iterator ConstTableIter;
-    std::uint32_t bytes;
+    STD1::uint32_t bytes;
 };
 
 #endif //STRINGS_INCLUDED

@@ -31,7 +31,7 @@
 #ifndef INDEX_INCLUDED
 #define INDEX_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -50,8 +50,8 @@ public:
     bool isGlobal() const { return hdr.global; };
     void setSortKey( std::wstring& key ) { hdr.sortKey = 1; sortKey = key; };
     void setText( std::wstring& t ) { text = t; };
-    void setTOC( std::uint16_t t ) { hdr.tocPanelIndex = t; };
-    void addSynonym( std::uint32_t t ) { synonyms.push_back( t ); };
+    void setTOC( STD1::uint16_t t ) { hdr.tocPanelIndex = t; };
+    void addSynonym( STD1::uint32_t t ) { synonyms.push_back( t ); };
     size_t write( std::FILE* out );
     bool operator==( const IndexItem& rhs ) const;
     bool operator==( const std::wstring& rhs ) const;
@@ -61,23 +61,23 @@ private:
     IndexItem& operator=( const IndexItem& rhs );   //no assignment
 #pragma pack(push, 1)
     struct IndexHeader {
-        std::uint8_t   size;               // size of item text
-        std::uint8_t   primary  :1;        // bit 0 set: i1
-        std::uint8_t   secondary:1;        // bit 1 set: i2 (both clear if icmd)
-        std::uint8_t   unknown  :4;
-        std::uint8_t   global   :1;        // bit 6 set: global entry
-        std::uint8_t   sortKey  :1;        // bit 7 set: sort key
-        std::uint8_t   synonymCount;       // number synonym entries following
-        std::uint16_t  tocPanelIndex;      // toc entry number of panel
+        STD1::uint8_t   size;               // size of item text
+        STD1::uint8_t   primary  :1;        // bit 0 set: i1
+        STD1::uint8_t   secondary:1;        // bit 1 set: i2 (both clear if icmd)
+        STD1::uint8_t   unknown  :4;
+        STD1::uint8_t   global   :1;        // bit 6 set: global entry
+        STD1::uint8_t   sortKey  :1;        // bit 7 set: sort key
+        STD1::uint8_t   synonymCount;       // number synonym entries following
+        STD1::uint16_t  tocPanelIndex;      // toc entry number of panel
         IndexHeader() { std::memset( this, 0, sizeof( IndexItem ) ); };
     };
 #pragma pack(pop)
     IndexHeader hdr;
     std::wstring sortKey;
     std::wstring text;
-    std::vector< std::uint32_t > synonyms;
-    typedef std::vector< std::uint32_t >::iterator SynIter;
-    typedef std::vector< std::uint32_t >::const_iterator ConstSynIter;
+    std::vector< STD1::uint32_t > synonyms;
+    typedef std::vector< STD1::uint32_t >::iterator SynIter;
+    typedef std::vector< STD1::uint32_t >::const_iterator ConstSynIter;
     int wstricmp( const wchar_t *s, const wchar_t *t ) const;
 };
 

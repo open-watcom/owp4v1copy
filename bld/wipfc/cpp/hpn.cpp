@@ -39,11 +39,11 @@
 #include "util.hpp"
 
 
-std::vector< std::uint8_t > Hpn::levelStack;
+std::vector< STD1::uint8_t > Hpn::levelStack;
 
 Hpn::Hpn( Document* d, Element *p, const std::wstring* f, unsigned int r,
           unsigned int c, unsigned int l ) : Element( d, p, f, r, c ),
-          level( static_cast< std::uint8_t >( l ) )
+          level( static_cast< STD1::uint8_t >( l ) )
 {
     if( !levelStack.empty() ) {
         d->printError( ERR2_NEST );
@@ -78,9 +78,9 @@ void Hpn::buildText( Cell* cell )
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x04 );  //change style
         if( level < 4 )
-            cell->addByte( static_cast< std::uint8_t >( level ) );
+            cell->addByte( static_cast< STD1::uint8_t >( level ) );
         else
-            cell->addByte( static_cast< std::uint8_t >( level - 1) );
+            cell->addByte( static_cast< STD1::uint8_t >( level - 1) );
     }
     else {
         cell->addByte( 0xFF );  //esc
@@ -89,7 +89,7 @@ void Hpn::buildText( Cell* cell )
         if( level == 4 )
             cell->addByte( 0x01 );  //default
         else
-            cell->addByte( static_cast< std::uint8_t >( level - 6) );
+            cell->addByte( static_cast< STD1::uint8_t >( level - 6) );
     }
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );
@@ -97,9 +97,9 @@ void Hpn::buildText( Cell* cell )
 /***************************************************************************/
 EHpn::EHpn( Document* d, Element *p, const std::wstring* f, unsigned int r,
             unsigned int c, unsigned int l ) : Element ( d, p, f, r, c ),
-            level( static_cast< std::uint8_t >( l ) ), previousLevel( 0 )
+            level( static_cast< STD1::uint8_t >( l ) ), previousLevel( 0 )
 {
-    std::vector< std::uint8_t >& levelStack( Hpn::levels() );
+    std::vector< STD1::uint8_t >& levelStack( Hpn::levels() );
     if( levelStack[ levelStack.size() - 1 ] != l )
         d->printError( ERR2_NEST );
     levelStack.pop_back();
@@ -136,9 +136,9 @@ void EHpn::buildText( Cell* cell )
         cell->addByte( 0x03 );  //size
         cell->addByte( 0x04 );  //change style
         if( previousLevel < 4 )
-            cell->addByte( static_cast< std::uint8_t >( previousLevel ) );
+            cell->addByte( static_cast< STD1::uint8_t >( previousLevel ) );
         else
-            cell->addByte( static_cast< std::uint8_t >( previousLevel - 1) );
+            cell->addByte( static_cast< STD1::uint8_t >( previousLevel - 1) );
     }
     else {
         cell->addByte( 0xFF );  //esc
@@ -147,7 +147,7 @@ void EHpn::buildText( Cell* cell )
         if( previousLevel == 4 )
             cell->addByte( 0x01 );  //default
         else
-            cell->addByte( static_cast< std::uint8_t >( previousLevel - 6) );
+            cell->addByte( static_cast< STD1::uint8_t >( previousLevel - 6) );
     }
     if( cell->textFull() )
         printError( ERR1_LARGEPAGE );

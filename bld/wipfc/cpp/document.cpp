@@ -402,14 +402,14 @@ void Document::build()
 void Document::write( std::FILE *out )
 {
     hdr->write( out );   //write the header
-    hdr->panelCount = static_cast< std::uint16_t>( resMap.size() );
+    hdr->panelCount = static_cast< STD1::uint16_t>( resMap.size() );
     hdr->panelOffset = writeResMap( out );
-    hdr->nameCount = !isInf() ? static_cast< std::uint16_t >( nameMap.size() ) : 0;
+    hdr->nameCount = !isInf() ? static_cast< STD1::uint16_t >( nameMap.size() ) : 0;
     hdr->nameOffset = writeNameMap( out );
     eHdr->gNameOffset = gnames->write( out );
     eHdr->gNameCount = gnames->size();
     hdr->imageOffset = writeBitmaps( out );
-    hdr->tocCount = static_cast< std::uint16_t >( pages.size() );
+    hdr->tocCount = static_cast< STD1::uint16_t >( pages.size() );
     hdr->tocOffset = writeTOCs( out );
     hdr->tocOffsetOffset = writeTOCOffsets( out );
     writeSynonyms( out );
@@ -418,19 +418,19 @@ void Document::write( std::FILE *out )
     hdr->nlsOffset = nls->write( out );
     hdr->nlsSize = nls->length();
     eHdr->stringsOffset = strings->write( out );
-    eHdr->stringsSize = static_cast< std::uint16_t >( strings->length() );
+    eHdr->stringsSize = static_cast< STD1::uint16_t >( strings->length() );
     eHdr->dbOffset = extfiles->write( out );
-    eHdr->dbCount = static_cast< std::uint16_t >( extfiles->size() );
+    eHdr->dbCount = static_cast< STD1::uint16_t >( extfiles->size() );
     eHdr->dbSize = extfiles->length();
     eHdr->fontOffset = fonts->write( out );
-    eHdr->fontCount = static_cast< std::uint16_t >( fonts->size() );
+    eHdr->fontCount = static_cast< STD1::uint16_t >( fonts->size() );
     eHdr->ctrlOffset = controls->write( out );
     eHdr->ctrlSize = controls->length();
     hdr->dictOffset = dict->write( out );
     hdr->dictSize = dict->length();
     hdr->dictCount = dict->size();
     writeCells( out );
-    hdr->cellCount = static_cast< std::uint16_t >( cells.size() );
+    hdr->cellCount = static_cast< STD1::uint16_t >( cells.size() );
     hdr->cellOffsetOffset = writeCellOffsets( out );
     eHdr->childPagesOffset = writeChildWindows( out );
     if( compiler.searchable() ) {
@@ -468,7 +468,7 @@ void Document::addBitmap( std::wstring& bmn )
     bitmapNames.insert( std::map< std::wstring, unsigned long int >::value_type( bmn, 0 ) );
 }
 /***************************************************************************/
-std::uint32_t Document::bitmapByName( std::wstring& bmn )
+STD1::uint32_t Document::bitmapByName( std::wstring& bmn )
 {
     BitmapNameIter itr( bitmapNames.find( bmn ) );
     if( itr == bitmapNames.end() )
@@ -476,10 +476,10 @@ std::uint32_t Document::bitmapByName( std::wstring& bmn )
     return itr->second;
 }
 /***************************************************************************/
-void Document::addRes( std::uint16_t key, TocRef& value )
+void Document::addRes( STD1::uint16_t key, TocRef& value )
 {
     if( resMap.find( key ) == resMap.end() )    //add it to the list
-        resMap.insert( std::map< std::uint16_t, TocRef >::value_type( key, value ) );
+        resMap.insert( std::map< STD1::uint16_t, TocRef >::value_type( key, value ) );
     else
         throw Class3Error( ERR3_DUPRES );
 }
@@ -492,7 +492,7 @@ void Document::addNameOrId( GlobalDictionaryWord* key, TocRef& value )
         throw Class3Error( ERR3_DUPID );
 }
 /***************************************************************************/
-void Document::addXRef( std::uint16_t res, XRef& xref )
+void Document::addXRef( STD1::uint16_t res, XRef& xref )
 {
     ResMapIter itr( resMap.find( res ) );
     if( itr == resMap.end() )
@@ -510,7 +510,7 @@ void Document::addXRef( GlobalDictionaryWord* id, XRef& xref )
 /***************************************************************************/
 void Document::addPage( Page* page )
 {
-    page->setIndex( static_cast< std::uint16_t >( pages.size() ) );
+    page->setIndex( static_cast< STD1::uint16_t >( pages.size() ) );
     pages.push_back( page );
 }
 /***************************************************************************/
@@ -600,31 +600,31 @@ void Document::makeBitmaps()
     }
 }
 /***************************************************************************/
-std::uint32_t Document::writeBitmaps( std::FILE* out )
+STD1::uint32_t Document::writeBitmaps( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     if( !bitmapNames.empty() ) {
         offset = std::ftell( out );
         std::FILE* tmp( std::fopen( tmpName.c_str(), "rb" ) );
         if( !tmp )
             throw FatalIOError( ERR_OPEN, L"(temporary file for bitmaps)" );
         std::fseek( tmp, 0L, SEEK_END );
-        std::uint32_t length( std::ftell( tmp ) );
+        STD1::uint32_t length( std::ftell( tmp ) );
         std::fseek( tmp, 0L, SEEK_SET );
-        std::vector< std::uint8_t > buffer( BUFSIZ );
+        std::vector< STD1::uint8_t > buffer( BUFSIZ );
         //copy the temporary file into this one
         try {
             while( length > BUFSIZ ) {
-                if( std::fread( &buffer[0], sizeof( std::uint8_t ), BUFSIZ, tmp ) != BUFSIZ )
+                if( std::fread( &buffer[0], sizeof( STD1::uint8_t ), BUFSIZ, tmp ) != BUFSIZ )
                     throw FatalIOError( ERR_READ, L"(temporary file for bitmaps)" );
-                if( std::fwrite( &buffer[0], sizeof( std::uint8_t ), BUFSIZ, out ) != BUFSIZ )
+                if( std::fwrite( &buffer[0], sizeof( STD1::uint8_t ), BUFSIZ, out ) != BUFSIZ )
                     throw FatalError( ERR_WRITE );
                 length -= BUFSIZ;
             }
             if( length ) {
-                if( std::fread( &buffer[0], sizeof( std::uint8_t ), length, tmp ) != length )
+                if( std::fread( &buffer[0], sizeof( STD1::uint8_t ), length, tmp ) != length )
                     throw FatalIOError( ERR_READ, L"(temporary file for bitmaps)" );
-                if( std::fwrite( &buffer[0], sizeof( std::uint8_t ), length, out ) != length )
+                if( std::fwrite( &buffer[0], sizeof( STD1::uint8_t ), length, out ) != length )
                     throw FatalError( ERR_WRITE );
             }
         }
@@ -641,48 +641,48 @@ std::uint32_t Document::writeBitmaps( std::FILE* out )
     return offset;
 }
 /***************************************************************************/
-std::uint32_t Document::writeResMap( std::FILE* out )
+STD1::uint32_t Document::writeResMap( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     if( !resMap.empty() ) {
         offset = std::ftell( out );
         ConstResMapIter itr;
         for( itr = resMap.begin(); itr != resMap.end(); ++itr ) {
-            if( std::fwrite( &itr->first, sizeof( std::uint16_t ), 1, out ) != 1 )
+            if( std::fwrite( &itr->first, sizeof( STD1::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
         for( itr = resMap.begin(); itr != resMap.end(); ++itr ) {
-            std::uint16_t idx( itr->second.index() );
-            if( std::fwrite( &idx, sizeof( std::uint16_t ), 1, out ) != 1 )
+            STD1::uint16_t idx( itr->second.index() );
+            if( std::fwrite( &idx, sizeof( STD1::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
     }
     return offset;
 }
 /***************************************************************************/
-std::uint32_t Document::writeNameMap( std::FILE* out )
+STD1::uint32_t Document::writeNameMap( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     if( !isInf() && !nameMap.empty() ) {
         offset = std::ftell( out );
         ConstNameMapIter itr;
         for( itr = nameMap.begin(); itr != nameMap.end(); ++itr ) {
-            std::uint16_t index( itr->first->index() );
-            if( std::fwrite( &index, sizeof( std::uint16_t ), 1, out ) != 1 )
+            STD1::uint16_t index( itr->first->index() );
+            if( std::fwrite( &index, sizeof( STD1::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
         for( itr = nameMap.begin(); itr != nameMap.end(); ++itr ) {
-            std::uint16_t idx( itr->second.index() );
-            if( std::fwrite( &idx, sizeof( std::uint16_t ), 1, out ) != 1 )
+            STD1::uint16_t idx( itr->second.index() );
+            if( std::fwrite( &idx, sizeof( STD1::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
     }
     return offset;
 }
 /***************************************************************************/
-std::uint32_t Document::writeTOCs( std::FILE* out )
+STD1::uint32_t Document::writeTOCs( std::FILE* out )
 {
-    std::uint32_t offset( std::ftell( out ) );
+    STD1::uint32_t offset( std::ftell( out ) );
     hdr->tocSize = 0;
     for( PageIter itr = pages.begin(); itr != pages.end(); ++itr ) {
         addTOCOffset( ( *itr )->write( out ) );
@@ -691,12 +691,12 @@ std::uint32_t Document::writeTOCs( std::FILE* out )
     return offset;
 }
 /***************************************************************************/
-std::uint32_t Document::writeTOCOffsets( std::FILE* out )
+STD1::uint32_t Document::writeTOCOffsets( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     if( !tocOffsets.empty() ) {
         offset = std::ftell( out );
-        if( std::fwrite( &tocOffsets[0], sizeof( std::uint32_t ),
+        if( std::fwrite( &tocOffsets[0], sizeof( STD1::uint32_t ),
             tocOffsets.size(), out ) != tocOffsets.size() )
             throw FatalError( ERR_WRITE );
     }
@@ -711,21 +711,21 @@ void Document::writeCells( std::FILE* out )
         addCellOffset( (*itr)->write( out ) );
 }
 /***************************************************************************/
-std::uint32_t Document::writeCellOffsets( std::FILE* out )
+STD1::uint32_t Document::writeCellOffsets( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     if( !cellOffsets.empty() ) {
         offset = std::ftell( out );
-        if( std::fwrite( &cellOffsets[0], sizeof( std::uint32_t ),
+        if( std::fwrite( &cellOffsets[0], sizeof( STD1::uint32_t ),
             cellOffsets.size(), out ) != cellOffsets.size() )
             throw FatalError( ERR_WRITE );
     }
     return offset;
 }
 /***************************************************************************/
-std::uint32_t Document::writeChildWindows( std::FILE* out )
+STD1::uint32_t Document::writeChildWindows( std::FILE* out )
 {
-    std::uint32_t offset( std::ftell( out ) );
+    STD1::uint32_t offset( std::ftell( out ) );
     eHdr->childPagesSize = 0;
     for( PageIter itr = pages.begin(); itr != pages.end(); ++itr )
         eHdr->childPagesSize += ( *itr )->writeChildren( out );
@@ -738,17 +738,17 @@ void Document::writeSynonyms( std::FILE* out )
         itr->second->write( out );
 }
 /***************************************************************************/
-std::uint32_t Document::writeIndex( std::FILE* out )
+STD1::uint32_t Document::writeIndex( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     hdr->indexCount = 0;
     hdr->indexSize = 0;
     eHdr->gIndexCount = 0;
     if( !index.empty() ) {
         offset = std::ftell( out );
-        std::uint32_t count( 0 );
-        std::uint32_t gcount( 0 );
-        std::uint32_t size( 0 );
+        STD1::uint32_t count( 0 );
+        STD1::uint32_t gcount( 0 );
+        STD1::uint32_t size( 0 );
         for( IndexIter itr = index.begin(); itr != index.end(); ++itr ) {
             size += ( *itr )->write( out );
             count += ( *itr )->secondaryCount() + 1;
@@ -757,26 +757,26 @@ std::uint32_t Document::writeIndex( std::FILE* out )
         }
         if( count > UINT16_MAX )
             throw FatalError( ERR_LARGEINDEX );
-        hdr->indexCount = static_cast< std::uint16_t >( count );
+        hdr->indexCount = static_cast< STD1::uint16_t >( count );
         hdr->indexSize = size;
         eHdr->gIndexCount = gcount;
     }
     return offset;
 }
 /***************************************************************************/
-std::uint32_t Document::writeICmd( std::FILE* out )
+STD1::uint32_t Document::writeICmd( std::FILE* out )
 {
-    std::uint32_t offset( 0 );
+    STD1::uint32_t offset( 0 );
     hdr->icmdCount = 0;
     hdr->icmdSize = 0;
     if( !icmd.empty() ) {
         if( icmd.size() > UINT16_MAX )
             throw FatalError( ERR_LARGEINDEX );
         offset = std::ftell( out );
-        std::uint32_t size( 0 );
+        STD1::uint32_t size( 0 );
         for( ICmdIter itr = icmd.begin(); itr != icmd.end(); ++itr )
             size += ( *itr )->write( out );
-        hdr->icmdCount = static_cast< std::uint16_t >( icmd.size() );
+        hdr->icmdCount = static_cast< STD1::uint16_t >( icmd.size() );
         hdr->icmdSize = size;
     }
     return offset;
@@ -879,7 +879,7 @@ Lexer::Token Document::processCommand( Lexer* lexer, Tag* parent )
 }
 /***************************************************************************/
 //get a TOC index from the resource number to TOC index map
-std::uint16_t Document::tocIndexByRes( std::uint16_t res )
+STD1::uint16_t Document::tocIndexByRes( STD1::uint16_t res )
 {
     ResMapIter itr( resMap.find( res ) );
     if( itr == resMap.end() )
@@ -888,7 +888,7 @@ std::uint16_t Document::tocIndexByRes( std::uint16_t res )
 }
 /***************************************************************************/
 //get a TOC index from the id or name to TOC index map
-std::uint16_t Document::tocIndexById( GlobalDictionaryWord* id )
+STD1::uint16_t Document::tocIndexById( GlobalDictionaryWord* id )
 {
     NameMapIter itr( nameMap.find( id ) );
     if( itr == nameMap.end() )

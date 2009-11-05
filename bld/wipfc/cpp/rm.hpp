@@ -35,7 +35,7 @@
 #ifndef RM_INCLUDED
 #define RM_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include "tag.hpp"
 
 class Rm : public Element {
@@ -48,7 +48,7 @@ public:
 private:
     Rm( const Rm& rhs );                //no copy
     Rm& operator=( const Rm& rhs );     //no assignment
-    std::uint8_t margin;                //in characters
+    STD1::uint8_t margin;               //in characters
 };
 
 #endif //RM_INCLUDED

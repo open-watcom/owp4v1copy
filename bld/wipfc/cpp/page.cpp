@@ -75,9 +75,9 @@ bool Page::addWord( GlobalDictionaryWord* word )
 }
 /***************************************************************************/
 //Write a TOC entry
-std::uint32_t Page::write( std::FILE* out )
+STD1::uint32_t Page::write( std::FILE* out )
 {
-    size_t tocsize( sizeof( TocEntry ) + toc.cellCount * sizeof( std::uint16_t ) );
+    size_t tocsize( sizeof( TocEntry ) + toc.cellCount * sizeof( STD1::uint16_t ) );
     if( toc.extended ) {
         tocsize += sizeof( ExtTocEntry );
         if( etoc.setPos )
@@ -97,8 +97,8 @@ std::uint32_t Page::write( std::FILE* out )
         title.erase( 255 - tocsize );  //write only part of title
     }
     tocsize += title.size();
-    toc.size = static_cast< std::uint8_t >( tocsize );
-    std::uint32_t pos( toc.write( out ) );
+    toc.size = static_cast< STD1::uint8_t >( tocsize );
+    STD1::uint32_t pos( toc.write( out ) );
     if( toc.extended ) {
         etoc.write( out );
         if( etoc.setPos )
@@ -112,32 +112,32 @@ std::uint32_t Page::write( std::FILE* out )
         if( etoc.setCtrl )
             controls.write( out );
     }
-    if( std::fwrite( &cells[0], sizeof( std::uint16_t ), cells.size(), out ) != cells.size() )
+    if( std::fwrite( &cells[0], sizeof( STD1::uint16_t ), cells.size(), out ) != cells.size() )
         throw FatalError( ERR_WRITE );
     if( !title.empty() ){
-        if( std::fwrite( title.c_str(), sizeof( std::uint8_t ), title.size(), out ) != title.size() )
+        if( std::fwrite( title.c_str(), sizeof( STD1::uint8_t ), title.size(), out ) != title.size() )
             throw FatalError( ERR_WRITE );
     }
     return pos;
 }
 /***************************************************************************/
-// std::uint8_t size
-// std::uint16_t parent_toc_index
-// std::uint16_t child_toc_index
-std::uint32_t Page::writeChildren( std::FILE* out ) const
+// STD1::uint8_t size
+// STD1::uint16_t parent_toc_index
+// STD1::uint16_t child_toc_index
+STD1::uint32_t Page::writeChildren( std::FILE* out ) const
 {
-    std::uint32_t bytes( 0 );
+    STD1::uint32_t bytes( 0 );
     if( !children.empty() ) {
-        std::uint8_t size( 3 + static_cast< std::uint8_t >( children.size() * sizeof( std::uint16_t ) ) );
+        STD1::uint8_t size( 3 + static_cast< STD1::uint8_t >( children.size() * sizeof( STD1::uint16_t ) ) );
         if( std::fputc( size, out ) == EOF )
             throw FatalError( ERR_WRITE );
         ++bytes;
-        if( std::fwrite( &idx, sizeof( std::uint16_t ), 1, out ) != 1 )
+        if( std::fwrite( &idx, sizeof( STD1::uint16_t ), 1, out ) != 1 )
             throw FatalError( ERR_WRITE );
-        bytes += sizeof( std::uint16_t );
-        if( std::fwrite( &children[0], sizeof( std::uint16_t ), children.size(), out ) != children.size() )
+        bytes += sizeof( STD1::uint16_t );
+        if( std::fwrite( &children[0], sizeof( STD1::uint16_t ), children.size(), out ) != children.size() )
             throw FatalError( ERR_WRITE );
-        bytes += sizeof( std::uint16_t ) * children.size();
+        bytes += sizeof( STD1::uint16_t ) * children.size();
     }
     return bytes;
 }

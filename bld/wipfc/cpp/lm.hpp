@@ -35,7 +35,7 @@
 #ifndef LM_INCLUDED
 #define LM_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include "tag.hpp"
 
 class Lm : public Element {
@@ -50,7 +50,7 @@ public:
 private:
     Lm( const Lm& rhs );                //no copy
     Lm& operator=( const Lm& rhs );     //no assignment
-    std::uint8_t margin;
+    STD1::uint8_t margin;
 };
 
 #endif //LM_INCLUDED

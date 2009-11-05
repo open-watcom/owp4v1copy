@@ -57,14 +57,14 @@ GlobalDictionaryWord* GlobalDictionary::insert( std::wstring& word )
 // Call after parsing, but before local dictionary construction
 void GlobalDictionary::convert( size_t count )
 {
-    std::uint16_t index( 0 );
+    STD1::uint16_t index( 0 );
     for( WordIter iter = words.begin(); iter != words.end(); ++iter, ++index) {
         (*iter)->setIndex( index );
         (*iter)->setPages( count );
     }
 }
 /***************************************************************************/
-std::uint16_t GlobalDictionary::findIndex( std::wstring& word )
+STD1::uint16_t GlobalDictionary::findIndex( std::wstring& word )
 {
     GlobalDictionaryWord tmp( word );
     return findIndex( &tmp );
@@ -77,9 +77,9 @@ GlobalDictionaryWord* GlobalDictionary::findWord( std::wstring& word )
     return *wIter;
 }
 /***************************************************************************/
-std::uint32_t GlobalDictionary::write( std::FILE *out )
+STD1::uint32_t GlobalDictionary::write( std::FILE *out )
 {
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     for( ConstWordIter itr = words.begin(); itr != words.end(); ++itr )
         bytes += (*itr)->writeWord( out );
     return start;
@@ -96,9 +96,9 @@ bool GlobalDictionary::buildFTS()
     return big;
 }
 /***************************************************************************/
-std::uint32_t GlobalDictionary::writeFTS( std::FILE *out, bool big )
+STD1::uint32_t GlobalDictionary::writeFTS( std::FILE *out, bool big )
 {
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     for( ConstWordIter itr = words.begin(); itr != words.end(); ++itr )
         ftsBytes += (*itr)->writeFTS( out, big );
     return start;

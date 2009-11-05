@@ -31,7 +31,7 @@
 #ifndef BITMAPBLOCK_INCLUDED
 #define BITMAPBLOCK_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <vector>
 
@@ -39,11 +39,11 @@
 class BitmapBlock {
 public:
     BitmapBlock() { };
-    BitmapBlock( std::uint16_t b, std::uint8_t t );
+    BitmapBlock( STD1::uint16_t b, STD1::uint8_t t );
     void write( std::FILE* out ) const;
-    std::uint32_t compress( std::FILE* in );
+    STD1::uint32_t compress( std::FILE* in );
     unsigned int totalSize() const
-    { return sizeof( std::uint16_t ) + ( data.size() + 1 ) * sizeof( std::uint8_t ); };
+    { return sizeof( STD1::uint16_t ) + ( data.size() + 1 ) * sizeof( STD1::uint8_t ); };
 private:
     enum lzwBits {
         INITBITS = 9,
@@ -58,34 +58,34 @@ private:
         FIRST,
         UNDEFINED = 0xFFFF
     };
-    std::uint32_t   bitBuffer;      //buffer for variable length codes
+    STD1::uint32_t  bitBuffer;      //buffer for variable length codes
     size_t          bitCount;       //bits in the buffer
     size_t          bitsPerCode;    //code size
     size_t          hashingShift;
     size_t          maxCode;
     size_t          checkCount;     //when to check for degradation
-    std::uint16_t   blockSize;      //uncompressed data size
-    std::uint16_t   size;           //starting with next field
-    std::uint8_t    type;           //0 == uncompressed, 2 == LZW compressed
-    std::vector< std::uint8_t > data;
+    STD1::uint16_t  blockSize;      //uncompressed data size
+    STD1::uint16_t  size;           //starting with next field
+    STD1::uint8_t   type;           //0 == uncompressed, 2 == LZW compressed
+    std::vector< STD1::uint8_t > data;
 
     size_t maxVal( unsigned int n ) { return ( 1 << n ) - 1; };
     //check for a matching code
-    std::int16_t findMatch( std::vector< std::uint16_t >& code,
-        std::vector< std::uint16_t >& prefix,
-        std::vector< std::uint8_t >& append,
-        std::int16_t hashPrefix, std::uint16_t character ) const;
-    std::uint16_t outputCode( std::uint16_t code );
-    std::uint16_t flushCode( void );
+    STD1::int16_t findMatch( std::vector< STD1::uint16_t >& code,
+        std::vector< STD1::uint16_t >& prefix,
+        std::vector< STD1::uint8_t >& append,
+        STD1::int16_t hashPrefix, STD1::uint16_t character ) const;
+    STD1::uint16_t outputCode( STD1::uint16_t code );
+    STD1::uint16_t flushCode( void );
 //#define CHECKCOMP
 #ifdef CHECKCOMP
-    typedef std::vector< std::uint8_t >::iterator DecodeIter;
-    typedef std::vector< std::uint8_t >::iterator OutputIter;
-    typedef std::vector< std::uint8_t >::iterator InputIter;
-    void expand( std::vector< std::uint8_t >& output );
-    std::uint16_t getCode( InputIter& index );
-    DecodeIter decodeString( std::vector< std::uint16_t >& prefix,
-        std::vector< std::uint8_t >& append, DecodeIter buffer, std::uint16_t code );
+    typedef std::vector< STD1::uint8_t >::iterator DecodeIter;
+    typedef std::vector< STD1::uint8_t >::iterator OutputIter;
+    typedef std::vector< STD1::uint8_t >::iterator InputIter;
+    void expand( std::vector< STD1::uint8_t >& output );
+    STD1::uint16_t getCode( InputIter& index );
+    DecodeIter decodeString( std::vector< STD1::uint16_t >& prefix,
+        std::vector< STD1::uint8_t >& append, DecodeIter buffer, STD1::uint16_t code );
 #endif //CHECKCOMP
 };
 

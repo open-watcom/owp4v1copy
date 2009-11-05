@@ -31,7 +31,7 @@
 #ifndef FNTCOL_INCLUDED
 #define FNTCOL_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <vector>
 #include "fnt.hpp"
@@ -44,17 +44,17 @@ public:
     //returns the index of the font in the list
     size_t add( FontEntry& fnt );
     //the number of bytes written by the collection
-    std::uint32_t length() { return bytes; };
+    STD1::uint32_t length() { return bytes; };
     //the number of fonts in the collection
     size_t size() { return fonts.size(); };
-    std::uint32_t write( std::FILE * out );
+    STD1::uint32_t write( std::FILE * out );
 private:
     FontCollection( const FontCollection& rhs );            //no copy
     FontCollection& operator=( const FontCollection& rhs ); //no assigment
     std::vector< FontEntry > fonts;
     typedef std::vector< FontEntry >::iterator FontIter;
     typedef std::vector< FontEntry >::const_iterator ConstFontIter;
-    std::uint32_t bytes;
+    STD1::uint32_t bytes;
 };
 
 #endif

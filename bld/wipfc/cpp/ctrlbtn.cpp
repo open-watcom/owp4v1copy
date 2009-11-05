@@ -32,13 +32,13 @@
 #include "errors.hpp"
 #include "util.hpp"
 
-std::uint32_t ControlButton::write( std::FILE *out ) const
+STD1::uint32_t ControlButton::write( std::FILE *out ) const
 {
-    std::uint32_t bytes( sizeof( std::uint16_t ) * 2 );
-    std::uint16_t type( 1 );
-    if( std::fwrite( &type, sizeof( std::uint16_t), 1, out) != 1 )
+    STD1::uint32_t bytes( sizeof( STD1::uint16_t ) * 2 );
+    STD1::uint16_t type( 1 );
+    if( std::fwrite( &type, sizeof( STD1::uint16_t), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
-    if( std::fwrite( &res, sizeof( std::uint16_t), 1, out) != 1 ) 
+    if( std::fwrite( &res, sizeof( STD1::uint16_t), 1, out) != 1 ) 
         throw FatalError( ERR_WRITE );
     std::string buffer;
     wtombstring( txt, buffer );
@@ -47,7 +47,7 @@ std::uint32_t ControlButton::write( std::FILE *out ) const
         buffer.erase( 255 );
         length = 255;
     }
-    if( std::fputc( static_cast< std::uint8_t >( length ), out) == EOF ||
+    if( std::fputc( static_cast< STD1::uint8_t >( length ), out) == EOF ||
         std::fwrite( buffer.data(), sizeof( char ), length, out ) != length )
         throw FatalError( ERR_WRITE );
     bytes += length + 1;

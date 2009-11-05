@@ -31,25 +31,25 @@
 #ifndef CONTROLBUTTON_INCLUDED
 #define CONTROLBUTTON_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <string>
 
 class ControlButton {
 public:
-    ControlButton() : idx( 0 ), res( 0 ) {};
-    ControlButton( const std::wstring& i, std::uint16_t r, const std::wstring& t ) :
-        idnt( i ), res( r ), txt( t ) { };
+    ControlButton() : res( 0 ), idx( 0 ) {};
+    ControlButton( const std::wstring& i, STD1::uint16_t r, const std::wstring& t ) :
+        res( r ), idnt( i ), txt( t ) { };
     void setId( std::wstring& i ) { idnt = i; };
     const std::wstring& id() const { return idnt; };
-    void setRes( std::uint16_t r ) { res = r; };
+    void setRes( STD1::uint16_t r ) { res = r; };
     void setText( std::wstring& t ) { txt = t; };
-    void setIndex( std::uint16_t i ) { idx = i; };
-    std::uint16_t index() { return idx; };
-    std::uint32_t write( std::FILE* out ) const;
+    void setIndex( STD1::uint16_t i ) { idx = i; };
+    STD1::uint16_t index() { return idx; };
+    STD1::uint32_t write( std::FILE* out ) const;
 private:
-    std::uint16_t res;      //message number
-    std::uint16_t idx;      //array index of this item
+    STD1::uint16_t res;     //message number
+    STD1::uint16_t idx;     //array index of this item
     std::wstring idnt;      //identifier
     std::wstring txt;       //button text
 };

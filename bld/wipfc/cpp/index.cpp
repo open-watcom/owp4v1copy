@@ -118,10 +118,10 @@ size_t IndexItem::write( std::FILE* out )
         length2 = length1 > 254 ? 0 : 254 - length1;
     }
     else if( hdr.sortKey )
-        hdr.size = static_cast< std::uint8_t >( length1 + length2 + 1 );
+        hdr.size = static_cast< STD1::uint8_t >( length1 + length2 + 1 );
     else
-        hdr.size = static_cast< std::uint8_t >( length2 );
-    hdr.synonymCount = static_cast< std::uint8_t >( synonyms.size() );
+        hdr.size = static_cast< STD1::uint8_t >( length2 );
+    hdr.synonymCount = static_cast< STD1::uint8_t >( synonyms.size() );
     if( std::fwrite( &hdr, sizeof( IndexHeader ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
     size_t written( sizeof( IndexHeader ) );
@@ -135,8 +135,8 @@ size_t IndexItem::write( std::FILE* out )
         throw FatalError( ERR_WRITE );
     written += length2;
     if( !synonyms.empty() &&
-        std::fwrite( &synonyms[0], sizeof( std::uint32_t ), synonyms.size(), out ) != synonyms.size() )
+        std::fwrite( &synonyms[0], sizeof( STD1::uint32_t ), synonyms.size(), out ) != synonyms.size() )
         throw FatalError( ERR_WRITE );
-    written += synonyms.size() * sizeof( std::uint32_t );
+    written += synonyms.size() * sizeof( STD1::uint32_t );
     return written;
 }

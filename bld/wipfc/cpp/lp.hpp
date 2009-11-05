@@ -34,7 +34,7 @@
 #ifndef LP_INCLUDED
 #define LP_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include "tag.hpp"
 
 class Lp : public Tag {
@@ -47,7 +47,7 @@ public:
 private:
     Lp( const Lp& rhs );            //no copy
     Lp& operator=( const Lp& rhs ); //no assignment
-    std::uint8_t indent;
+    STD1::uint8_t indent;
 };
 
 #endif //LP_INCLUDED

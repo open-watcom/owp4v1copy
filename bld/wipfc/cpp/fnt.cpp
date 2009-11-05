@@ -31,7 +31,7 @@
 #include "errors.hpp"
 #include "fnt.hpp"
 
-std::uint32_t FontEntry::write( std::FILE *out ) const
+STD1::uint32_t FontEntry::write( std::FILE *out ) const
 {
     if( std::fwrite( this, sizeof( FontEntry ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );

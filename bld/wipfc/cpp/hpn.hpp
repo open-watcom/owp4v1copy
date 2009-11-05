@@ -34,8 +34,8 @@
 #ifndef HPN_INCLUDED
 #define HPN_INCLUDED
 
+#include "config.hpp"
 #include <vector>
-#include <cstdint>
 #include "tag.hpp"
 
 class Hpn : public Element {
@@ -44,15 +44,15 @@ public:
         unsigned int c, unsigned int l );
     ~Hpn() { };
     static
-    std::vector< std::uint8_t >& levels() { return levelStack; };
+    std::vector< STD1::uint8_t >& levels() { return levelStack; };
     Lexer::Token parse( Lexer* lexer );
     void buildText( Cell* cell );
 private:
     Hpn( const Hpn& rhs );              //no copy
     Hpn& operator=( const Hpn& rhs );   //no assignment
     static
-    std::vector< std::uint8_t > levelStack;
-    std::uint8_t level;
+    std::vector< STD1::uint8_t > levelStack;
+    STD1::uint8_t level;
 };
 
 class EHpn : public Element {
@@ -65,8 +65,8 @@ public:
 private:
     EHpn( const EHpn& rhs );            //no copy
     EHpn& operator=( const EHpn& rhs ); //no assignment
-    std::uint8_t level;
-    std::uint8_t previousLevel;
+    STD1::uint8_t level;
+    STD1::uint8_t previousLevel;
 };
 
 #endif // HPN_INCLUDED

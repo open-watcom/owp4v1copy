@@ -52,9 +52,9 @@ void IpfHeader::write( std::FILE *out ) const
         throw FatalError( ERR_WRITE );
 }
 /*****************************************************************************/
-std::uint32_t IpfExtHeader::write( std::FILE *out ) const
+STD1::uint32_t IpfExtHeader::write( std::FILE *out ) const
 {
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     if( std::fwrite( this, sizeof( IpfExtHeader ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
     return start;

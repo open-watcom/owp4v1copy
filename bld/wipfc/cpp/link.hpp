@@ -59,7 +59,7 @@
 #ifndef LINK_INCLUDED
 #define LINK_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include "tag.hpp"
 #include "toc.hpp"
 
@@ -98,11 +98,11 @@ private:
     PageStyle style;
     PageGroup group;
     GlobalDictionaryWord* refid;    //of link target
-    std::uint16_t res;              //of link target
-    std::uint16_t x;                //hypergraphic hotspot
-    std::uint16_t y;
-    std::uint16_t cx;
-    std::uint16_t cy;
+    STD1::uint16_t res;              //of link target
+    STD1::uint16_t x;                //hypergraphic hotspot
+    STD1::uint16_t y;
+    STD1::uint16_t cx;
+    STD1::uint16_t cy;
     LinkType type;
     bool automatic;
     bool child;

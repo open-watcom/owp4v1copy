@@ -69,9 +69,9 @@ Lexer::Token Font::parse( Lexer* lexer )
             }
             else if( key == L"size" ) {
                 wchar_t *end;
-                fnt.height = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), &end, 10 ) );
+                fnt.height = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), &end, 10 ) );
                 ++end;
-                fnt.width =  static_cast< std::uint16_t >( std::wcstoul( end, &end, 10 ) );
+                fnt.width =  static_cast< STD1::uint16_t >( std::wcstoul( end, &end, 10 ) );
                 if( fnt.height == 0 || fnt.width == 0 ) {
                     index = 0;
                     fnt.height = 0;
@@ -80,7 +80,7 @@ Lexer::Token Font::parse( Lexer* lexer )
                 }
             }
             else if( key == L"codepage" )
-                fnt.codePage = static_cast< std::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
+                fnt.codePage = static_cast< STD1::uint16_t >( std::wcstoul( value.c_str(), 0, 10 ) );
             else
                 document->printError( ERR1_ATTRNOTDEF );
         }

@@ -32,7 +32,7 @@
 #ifndef EXTFILES_INCLUDED
 #define EXTFILES_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <map>
 #include <string>
@@ -42,23 +42,23 @@ class ExternalFiles {
 public:
     ExternalFiles() : bytes( 0 ) { };
     //need to get index by name
-    std::uint16_t index( std::wstring& key ) { return table[ key ]; };
+    STD1::uint16_t index( std::wstring& key ) { return table[ key ]; };
     //add the name of an external database to the collection
     void addFile( std::wstring& str );
     //assign indexes to each entry
     void convert();
     //get the number of bytes written by the collection
-    std::uint32_t length() const { return bytes; };
+    STD1::uint32_t length() const { return bytes; };
     //get the number of elements in the collection
-    std::uint32_t size() const { return table.size(); };
-    std::uint32_t write( std::FILE* out );
+    STD1::uint32_t size() const { return table.size(); };
+    STD1::uint32_t write( std::FILE* out );
 private:
     ExternalFiles( const ExternalFiles& rhs );              //no copy
     ExternalFiles& operator=( const ExternalFiles& rhs );   //no assignment
-    std::map< std::wstring, std::uint16_t > table;
-    typedef std::map< std::wstring, std::uint16_t >::iterator TableIter;
-    typedef std::map< std::wstring, std::uint16_t >::const_iterator ConstTableIter;
-    std::uint32_t bytes;   //total length when written to disk
+    std::map< std::wstring, STD1::uint16_t > table;
+    typedef std::map< std::wstring, STD1::uint16_t >::iterator TableIter;
+    typedef std::map< std::wstring, STD1::uint16_t >::const_iterator ConstTableIter;
+    STD1::uint32_t bytes;   //total length when written to disk
 };
 
 #endif //EXTFILES_INCLUDED

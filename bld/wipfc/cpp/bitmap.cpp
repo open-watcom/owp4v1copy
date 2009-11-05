@@ -36,47 +36,47 @@
 
 //used for input
 struct BitmapInfoHeaderWin32 {
-    std::uint32_t width;            //pixels
-    std::uint32_t height;           //pixels
-    std::uint16_t planes;
-    std::uint16_t bitsPerPixel;     //1,4,8,16,24,32
-    std::uint32_t compression;      //0,1,2,3
-    std::uint32_t imageSize;        //rounded up to next dword
-    std::uint32_t xResolution;
-    std::uint32_t yResolution;
-    std::uint32_t usedColors;
-    std::uint32_t importantColors;
+    STD1::uint32_t width;           //pixels
+    STD1::uint32_t height;          //pixels
+    STD1::uint16_t planes;
+    STD1::uint16_t bitsPerPixel;    //1,4,8,16,24,32
+    STD1::uint32_t compression;     //0,1,2,3
+    STD1::uint32_t imageSize;       //rounded up to next dword
+    STD1::uint32_t xResolution;
+    STD1::uint32_t yResolution;
+    STD1::uint32_t usedColors;
+    STD1::uint32_t importantColors;
     void read( std::FILE* in );
     //possibly followed by rgb quads
 };
 
 //used for input
 struct BitmapInfoHeaderOS22x {
-    std::uint32_t width;            //pixels
-    std::uint32_t height;           //pixels
-    std::uint16_t planes;
-    std::uint16_t bitsPerPixel;     //1,4,8,16,24,32
-    std::uint32_t compression;      //0,1,2,3
-    std::uint32_t imageSize;        //rounded up to next dword
-    std::uint32_t xResolution;
-    std::uint32_t yResolution;
-    std::uint32_t usedColors;
-    std::uint32_t importantColors;
-    std::uint16_t units;
-    std::uint16_t reserved;
-    std::uint16_t recording;
-    std::uint16_t rendering;
-    std::uint32_t size1;
-    std::uint32_t size2;
-    std::uint32_t colorEncoding;
-    std::uint32_t identifier;
+    STD1::uint32_t width;           //pixels
+    STD1::uint32_t height;          //pixels
+    STD1::uint16_t planes;
+    STD1::uint16_t bitsPerPixel;    //1,4,8,16,24,32
+    STD1::uint32_t compression;     //0,1,2,3
+    STD1::uint32_t imageSize;       //rounded up to next dword
+    STD1::uint32_t xResolution;
+    STD1::uint32_t yResolution;
+    STD1::uint32_t usedColors;
+    STD1::uint32_t importantColors;
+    STD1::uint16_t units;
+    STD1::uint16_t reserved;
+    STD1::uint16_t recording;
+    STD1::uint16_t rendering;
+    STD1::uint32_t size1;
+    STD1::uint32_t size2;
+    STD1::uint32_t colorEncoding;
+    STD1::uint32_t identifier;
     void read( std::FILE* in );
     //possibly followed by rgb triples
 };
 
 #pragma pack(pop)
 
-Bitmap::Bitmap( std::string& fname ) : dataSize( sizeof( std::uint16_t ) ), blockSize( 0 )
+Bitmap::Bitmap( std::string& fname ) : dataSize( sizeof( STD1::uint16_t ) ), blockSize( 0 )
 {
     std::FILE* in( std::fopen( fname.c_str(), "rb" ) );
     if( !in )
@@ -86,11 +86,11 @@ Bitmap::Bitmap( std::string& fname ) : dataSize( sizeof( std::uint16_t ) ), bloc
         if( bmfh.type[0] != 'B' || bmfh.type[1] != 'M' )
             throw Class1Error( ERR1_BADFMT );
         bmfh.type[0] = 'b';
-        if ( bmfh.bmihSize == sizeof( BitmapInfoHeader16 ) + sizeof( std::uint32_t ) )
+        if ( bmfh.bmihSize == sizeof( BitmapInfoHeader16 ) + sizeof( STD1::uint32_t ) )
             readHeader16( in );
-        else if (bmfh.bmihSize == sizeof( BitmapInfoHeaderWin32 ) + sizeof( std::uint32_t ) )
+        else if (bmfh.bmihSize == sizeof( BitmapInfoHeaderWin32 ) + sizeof( STD1::uint32_t ) )
             readHeaderW32( in );
-        else if (bmfh.bmihSize == sizeof( BitmapInfoHeaderOS22x ) + sizeof( std::uint32_t ) )
+        else if (bmfh.bmihSize == sizeof( BitmapInfoHeaderOS22x ) + sizeof( STD1::uint32_t ) )
             readHeaderOS2( in );
         else
             throw Class1Error( ERR1_BADFMT );
@@ -116,21 +116,21 @@ BitmapFileHeader hdr;
 variable length data follows:
 unsigned char rgb[(1 << hdr.info.bitsPerPixel) * 3]
 unsigned long size;         //starting with next field, used to SEEK_CUR to next bitmap
-std::uint16_t blockSize;
+STD1::uint16_t blockSize;
 BitmapBlock[];
 */
-std::uint32_t Bitmap::write( std::FILE* out ) const
+STD1::uint32_t Bitmap::write( std::FILE* out ) const
 {
-    std::uint32_t offset( std::ftell( out ) );
+    STD1::uint32_t offset( std::ftell( out ) );
     bmfh.write( out );
     bmih.write( out );
     if( !rgb.empty() ) {
         if( std::fwrite( &rgb[0], sizeof( RGB ), rgb.size(), out ) != rgb.size() )
             throw FatalError( ERR_WRITE );
     }
-    if( std::fwrite( &dataSize, sizeof( std::uint32_t ), 1, out ) != 1 )
+    if( std::fwrite( &dataSize, sizeof( STD1::uint32_t ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
-    if( std::fwrite( &blockSize, sizeof( std::uint16_t ), 1, out ) != 1 )
+    if( std::fwrite( &blockSize, sizeof( STD1::uint16_t ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
     for( ConstDataIter itr = data.begin(); itr != data.end(); ++itr )
         itr->write( out );
@@ -206,11 +206,11 @@ void Bitmap::readHeaderW32( std::FILE* in )
 {
     BitmapInfoHeaderWin32 bmihW32;
     bmihW32.read( in );
-    bmih.width = static_cast< std::uint16_t >( bmihW32.width );
-    bmih.height = static_cast< std::uint16_t >( bmihW32.height );
+    bmih.width = static_cast< STD1::uint16_t >( bmihW32.width );
+    bmih.height = static_cast< STD1::uint16_t >( bmihW32.height );
     bmih.planes = bmihW32.planes;
     bmih.bitsPerPixel = bmihW32.bitsPerPixel;
-    bmfh.bmihSize = sizeof( BitmapInfoHeader16 ) + sizeof( std::uint32_t );
+    bmfh.bmihSize = sizeof( BitmapInfoHeader16 ) + sizeof( STD1::uint32_t );
     //it is not necessary to adjust the size or offset, but doesn't hurt
     bmfh.size -= sizeof( BitmapInfoHeaderWin32 ) - sizeof( BitmapInfoHeader16 );
     bmfh.bitsOffset -= sizeof( BitmapInfoHeaderWin32 ) - sizeof( BitmapInfoHeader16 );
@@ -241,11 +241,11 @@ void Bitmap::readHeaderOS2( std::FILE* in )
 {
     BitmapInfoHeaderOS22x bmihOS22x;
     bmihOS22x.read( in );
-    bmih.width = static_cast< std::uint16_t >( bmihOS22x.width );
-    bmih.height = static_cast< std::uint16_t >( bmihOS22x.height );
+    bmih.width = static_cast< STD1::uint16_t >( bmihOS22x.width );
+    bmih.height = static_cast< STD1::uint16_t >( bmihOS22x.height );
     bmih.planes = bmihOS22x.planes;
     bmih.bitsPerPixel = bmihOS22x.bitsPerPixel;
-    bmfh.bmihSize = sizeof( BitmapInfoHeader16 ) + sizeof( std::uint32_t );
+    bmfh.bmihSize = sizeof( BitmapInfoHeader16 ) + sizeof( STD1::uint32_t );
     //it is not necessary to adjust the size or offset, but doesn't hurt
     bmfh.size -= sizeof( BitmapInfoHeaderOS22x ) - sizeof( BitmapInfoHeader16 );
     bmfh.bitsOffset -= sizeof( BitmapInfoHeaderOS22x ) - sizeof( BitmapInfoHeader16 );
@@ -312,21 +312,21 @@ void Bitmap::findBlockSize( size_t width, size_t height, size_t bitsPerPixel )
     default:
         throw Class1Error( ERR1_BADFMT );
     }
-    std::uint32_t totalSize( bytesPerRow * height );
-    blockSize = static_cast< std::uint16_t >( ( ( UINT16_MAX - 256 ) / bytesPerRow - 1 ) * bytesPerRow );
+    STD1::uint32_t totalSize( bytesPerRow * height );
+    blockSize = static_cast< STD1::uint16_t >( ( ( UINT16_MAX - 256 ) / bytesPerRow - 1 ) * bytesPerRow );
 #ifdef CHECKCOMP
     std::printf( "  width=%u bitsPerPixel=%u, bytesPerRow=%u\n", width, bitsPerPixel, bytesPerRow );
     std::printf( "  calculated blockSize=%u\n", blockSize );
 #endif
-    if( totalSize < static_cast< std::uint32_t >( blockSize ))
-        blockSize = static_cast< std::uint16_t >( totalSize );
+    if( totalSize < static_cast< STD1::uint32_t >( blockSize ))
+        blockSize = static_cast< STD1::uint16_t >( totalSize );
 }
 /***************************************************************************/
 void Bitmap::compress( std::FILE* in )
 {
     unsigned int    count( 1 );
-    std::uint32_t   bytesToRead( bytesPerRow * bmih.height );
-    std::uint32_t   bytes( 0 );
+    STD1::uint32_t   bytesToRead( bytesPerRow * bmih.height );
+    STD1::uint32_t   bytes( 0 );
     while( bytes < bytesToRead ) {
 #ifdef CHECKCOMP
         std::printf( "  Block %u\n", count++ );

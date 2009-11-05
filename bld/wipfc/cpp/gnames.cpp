@@ -27,8 +27,8 @@
 * Description:  Global Names data
 * Obtained from the "id" or "name" attribute of an :hn tag iff the "global"
 * attribute flag is set
-* std::uint16_t dictIndex[ IpfHeader.panelCount ]; //in ascending order
-* std::uint16_t TOCIndex[ IpfHeader.panelCount ];
+* STD1::uint16_t dictIndex[ IpfHeader.panelCount ]; //in ascending order
+* STD1::uint16_t TOCIndex[ IpfHeader.panelCount ];
 *
 ****************************************************************************/
 
@@ -36,28 +36,28 @@
 #include "gnames.hpp"
 #include "errors.hpp"
 
-void GNames::insert( GlobalDictionaryWord* word, std::uint16_t toc )
+void GNames::insert( GlobalDictionaryWord* word, STD1::uint16_t toc )
 {
     NameIter itr( names.find( word ) );   //look up word in names
     if( itr == names.end() )
-        names.insert( std::map< GlobalDictionaryWord*, std::uint16_t, ptrLess< GlobalDictionaryWord* > >::value_type( word, toc ) );
+        names.insert( std::map< GlobalDictionaryWord*, STD1::uint16_t, ptrLess< GlobalDictionaryWord* > >::value_type( word, toc ) );
     else
         throw Class3Error( ERR3_DUPID );
 }
 /***************************************************************************/
-std::uint32_t GNames::write( std::FILE *out ) const
+STD1::uint32_t GNames::write( std::FILE *out ) const
 {
-    std::uint32_t start( 0 );
+    STD1::uint32_t start( 0 );
     if( names.size() ) {
         start = std::ftell( out );
         for( ConstNameIter itr = names.begin(); itr != names.end(); ++itr ) {
-            std::uint16_t index = (itr->first)->index();
-            if( std::fwrite( &index, sizeof( std::uint16_t ), 1, out ) != 1 )
+            STD1::uint16_t index = (itr->first)->index();
+            if( std::fwrite( &index, sizeof( STD1::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
         for( ConstNameIter itr = names.begin(); itr != names.end(); ++itr ) {
-            std::uint16_t toc = itr->second;
-            if( std::fwrite( &toc, sizeof( std::uint16_t ), 1, out ) != 1 )
+            STD1::uint16_t toc = itr->second;
+            if( std::fwrite( &toc, sizeof( STD1::uint16_t ), 1, out ) != 1 )
                 throw FatalError( ERR_WRITE );
         }
     }

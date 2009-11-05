@@ -44,27 +44,27 @@ void Cell::build()
         text.push_back( 0xFE );
 }
 /***************************************************************************/
-void Cell::addWord( std::uint16_t word )
+void Cell::addWord( STD1::uint16_t word )
 {
     if( !std::binary_search( localDictionary.begin(), localDictionary.end(), word ) ) {
         LDIter itr( 
             //std::lower_bound( localDictionary.begin(), localDictionary.end(), word );
             std::find_if( localDictionary.begin(), localDictionary.end(),
-                std::bind2nd( std::greater< std::uint16_t >(), word ) ) );
+                std::bind2nd( std::greater< STD1::uint16_t >(), word ) ) );
         localDictionary.insert( itr, word );
     }
 }
 /***************************************************************************/
-void Cell::addText( std::uint16_t word )
+void Cell::addText( STD1::uint16_t word )
 {
     LDIter itr( 
         //std::lower_bound( localDictionary.begin(), localDictionary.end(), word );
         std::find( localDictionary.begin(), localDictionary.end(), word ) );
     size_t index = itr - localDictionary.begin();
-    text.push_back( static_cast< std::uint8_t >( index ) );
+    text.push_back( static_cast< STD1::uint8_t >( index ) );
 }
 /***************************************************************************/
-void Cell::addEsc( const std::vector< std::uint8_t >& esc )
+void Cell::addEsc( const std::vector< STD1::uint8_t >& esc )
 {
     for( ConstTextIter itr = esc.begin(); itr != esc.end(); ++itr )
         text.push_back( *itr );
@@ -72,32 +72,32 @@ void Cell::addEsc( const std::vector< std::uint8_t >& esc )
 /***************************************************************************/
 #pragma pack(push, 1)
     struct cellData {
-        std::uint8_t   zero;               //=0
-        std::uint32_t  dictOffset;         //file offset to std::uint16_t array
-        std::uint8_t   dictCount;          // <=254 unique words
-        std::uint16_t  textCount;
+        STD1::uint8_t  zero;               //=0
+        STD1::uint32_t dictOffset;         //file offset to STD1::uint16_t array
+        STD1::uint8_t  dictCount;          // <=254 unique words
+        STD1::uint16_t textCount;
         //variable length data follows:
-        //std::uint8_t   text[textCount];  //encoded text (indexes into dict)
-        //std::uint16_t  dict[dictCount];  //index to global dictionary
+        //STD1::uint8_t  text[textCount];  //encoded text (indexes into dict)
+        //STD1::uint16_t  dict[dictCount];  //index to global dictionary
     };
 #pragma pack(pop)
 
-std::uint32_t Cell::write( std::FILE* out ) const
+STD1::uint32_t Cell::write( std::FILE* out ) const
 {
-    std::uint32_t offset( std::ftell( out ) );
+    STD1::uint32_t offset( std::ftell( out ) );
     cellData data;
     data.zero = 0;
-    data.dictOffset = offset + sizeof( std::uint8_t ) + sizeof( std::uint32_t ) +
-        sizeof( std::uint8_t ) + sizeof( std::uint16_t ) + text.size();
-    data.dictCount = static_cast< std::uint8_t >( localDictionary.size() );
-    data.textCount = static_cast< std::uint16_t >( text.size() );
+    data.dictOffset = offset + sizeof( STD1::uint8_t ) + sizeof( STD1::uint32_t ) +
+        sizeof( STD1::uint8_t ) + sizeof( STD1::uint16_t ) + text.size();
+    data.dictCount = static_cast< STD1::uint8_t >( localDictionary.size() );
+    data.textCount = static_cast< STD1::uint16_t >( text.size() );
     if( std::fwrite( &data, sizeof( cellData ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
-    if( std::fwrite( &text[0], sizeof( std::uint8_t ), text.size(), out ) != text.size() )
+    if( std::fwrite( &text[0], sizeof( STD1::uint8_t ), text.size(), out ) != text.size() )
         throw FatalError( ERR_WRITE );
     if( !localDictionary.empty() && \
         std::fwrite( &localDictionary[0],
-                     sizeof( std::uint16_t ),
+                     sizeof( STD1::uint16_t ),
                      localDictionary.size(),
                      out ) != localDictionary.size() )
         throw FatalError( ERR_WRITE );

@@ -32,17 +32,17 @@
 #ifndef TOCREF_INCLUDED
 #define TOCREF_INCLUDED
 
+#include "config.hpp"
 #include <cstdio>
-#include <cstdint>
 #include <set>
 #include "xref.hpp"
 
 class TocRef {
 public:
-    TocRef( const std::wstring* f, unsigned int r, std::uint16_t i ) :
+    TocRef( const std::wstring* f, unsigned int r, STD1::uint16_t i ) :
         fileName( f ), lineNumber( r ), tocIndex( i ) { };
     ~TocRef() { };
-    std::uint16_t index() const { return tocIndex; };
+    STD1::uint16_t index() const { return tocIndex; };
     void addXRef( XRef& ref ) { xref.insert( ref ); };
     void write( std::FILE* out ) const;
 private:
@@ -51,7 +51,7 @@ private:
     typedef std::set< XRef >::iterator XRefIter;
     typedef std::set< XRef >::const_iterator ConstXRefIter;
     unsigned int lineNumber;
-    std::uint16_t tocIndex;
+    STD1::uint16_t tocIndex;
 };
 
 #endif //TOCREF_INCLUDED

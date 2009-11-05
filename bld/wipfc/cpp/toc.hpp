@@ -31,7 +31,7 @@
 #ifndef TOC_INCLUDED
 #define TOC_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <cstring>
 
@@ -41,36 +41,36 @@
 // There is one entry per page, stored in the order in which
 // they occur in the document.
 struct TocEntry {
-    std::uint8_t size;              // size of the entry
-    std::uint8_t nestLevel  :4;     // nesting level
-    std::uint8_t unknown    :1;   
-    std::uint8_t extended   :1;     // extended entry format
-    std::uint8_t hidden     :1;     // don't show this toc entry
-    std::uint8_t hasChildren:1;     // following nodes are numerically higher
-    std::uint8_t cellCount;         // number of Cells occupied by the text for this toc entry
+    STD1::uint8_t size;             // size of the entry
+    STD1::uint8_t nestLevel  :4;    // nesting level
+    STD1::uint8_t unknown    :1;   
+    STD1::uint8_t extended   :1;    // extended entry format
+    STD1::uint8_t hidden     :1;    // don't show this toc entry
+    STD1::uint8_t hasChildren:1;    // following nodes are numerically higher
+    STD1::uint8_t cellCount;        // number of Cells occupied by the text for this toc entry
     TocEntry() { std::memset( this, 0, sizeof( TocEntry ) ); };
-    std::uint32_t write( std::FILE* out ) const;
+    STD1::uint32_t write( std::FILE* out ) const;
     //variable length data follows:
     //if extended
     // ExtTocEntry + associated stuff
-    //std::uint16_t  cellIndex[cellCount];
+    //STD1::uint16_t  cellIndex[cellCount];
     //char            title[length - 3 - 2 * cellCount {- sizes of extended TOC components, if any}];
 };
 
 struct ExtTocEntry {
-    std::uint16_t setPos  :1;       //PanelOrigin is present
-    std::uint16_t setSize :1;       //PanelSize is present
-    std::uint16_t setView :1;       //force new window
-    std::uint16_t setStyle:1;       //PanelStyle is present
-    std::uint16_t noSearch:1;
-    std::uint16_t noPrint :1;
-    std::uint16_t setCtrl :1;       //PanelControls is present
-    std::uint16_t setTutor:1;
-    std::uint16_t clear   :1;       //erase window
-    std::uint16_t unknown1:1;
-    std::uint16_t setGroup:1;       //PanelGroup is present
-    std::uint16_t isParent:1;       //has child windows
-    std::uint16_t unknown2:4;
+    STD1::uint16_t setPos  :1;      //PanelOrigin is present
+    STD1::uint16_t setSize :1;      //PanelSize is present
+    STD1::uint16_t setView :1;      //force new window
+    STD1::uint16_t setStyle:1;      //PanelStyle is present
+    STD1::uint16_t noSearch:1;
+    STD1::uint16_t noPrint :1;
+    STD1::uint16_t setCtrl :1;      //PanelControls is present
+    STD1::uint16_t setTutor:1;
+    STD1::uint16_t clear   :1;      //erase window
+    STD1::uint16_t unknown1:1;
+    STD1::uint16_t setGroup:1;      //PanelGroup is present
+    STD1::uint16_t isParent:1;      //has child windows
+    STD1::uint16_t unknown2:4;
     ExtTocEntry() { std::memset( this, 0, sizeof( ExtTocEntry ) ); };
     void write( std::FILE* out ) const;
     enum Position {
@@ -91,19 +91,19 @@ struct ExtTocEntry {
 
 //on disk in this order
 struct PageOrigin {
-    std::uint8_t  yPosType:4;
-    std::uint8_t  xPosType:4;
-    std::uint16_t xpos;
-    std::uint16_t ypos;
+    STD1::uint8_t  yPosType:4;
+    STD1::uint8_t  xPosType:4;
+    STD1::uint16_t xpos;
+    STD1::uint16_t ypos;
     PageOrigin() { std::memset( this, 0, sizeof( PageOrigin ) ); };
     void write( std::FILE* out ) const;
 };
 
 struct PageSize {
-    std::uint8_t   widthType :4;
-    std::uint8_t   heightType:4;
-    std::uint16_t  width;
-    std::uint16_t  height;
+    STD1::uint8_t   widthType :4;
+    STD1::uint8_t   heightType:4;
+    STD1::uint16_t  width;
+    STD1::uint16_t  height;
     PageSize() { std::memset( this, 0, sizeof( PageSize ) ); };
     void write( std::FILE* out ) const;
 };
@@ -123,20 +123,20 @@ struct PageStyle {
         //0x4000 ?
         //0x8000 ?
     };
-    std::uint16_t word;
+    STD1::uint16_t word;
     PageStyle() : word( 0 ) { };
     void write( std::FILE* out ) const;
 };
 
 struct PageGroup {
-    std::uint16_t id;               //a panel number
+    STD1::uint16_t id;               //a panel number
     PageGroup() : id( 0 ) { };
     void write( std::FILE* out ) const;
 };
 
 //ctrlarea and ctrlrefid?
 struct PageControls {
-    std::uint16_t word;
+    STD1::uint16_t word;
     PageControls() : word( 0 ) { };
     void write( std::FILE* out ) const;
 };

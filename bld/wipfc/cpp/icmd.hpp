@@ -35,7 +35,7 @@
 #ifndef ICMD_INCLUDED
 #define ICMD_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <memory>
 #include "element.hpp"
@@ -50,7 +50,7 @@ public:
     Lexer::Token parse( Lexer* lexer );
     void buildIndex();
     void buildText( Cell* cell ) { cell = cell; };
-    void setRes( std::uint16_t r ) { parentRes = r; };
+    void setRes( STD1::uint16_t r ) { parentRes = r; };
     void setIdOrName( GlobalDictionaryWord* w ) { parentId = w; };
     size_t write( std::FILE* out ) { return  index->write( out ); };
     bool operator==( const ICmd& rhs ) const{ return *index == *rhs.index; };
@@ -61,6 +61,6 @@ private:
     ICmd& operator=( const ICmd& rhs );     //no assignment
     std::auto_ptr< IndexItem > index;
     GlobalDictionaryWord* parentId;
-    std::uint16_t parentRes;
+    STD1::uint16_t parentRes;
 };
 #endif //ICMD_INCLUDED

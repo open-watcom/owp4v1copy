@@ -34,7 +34,7 @@
 #ifndef DDF_INCLUDED
 #define DDF_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include "element.hpp"
 
 class Ddf : public Element {
@@ -47,7 +47,7 @@ public:
 private:
     Ddf( const Ddf& rhs );              //no copy
     Ddf& operator=( const Ddf& rhs );   //no assignment
-    std::uint16_t res;
+    STD1::uint16_t res;
     Lexer::Token parseAttributes( Lexer* lexer );
 };
 

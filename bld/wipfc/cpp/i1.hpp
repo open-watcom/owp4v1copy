@@ -39,7 +39,7 @@
 #ifndef I1_INCLUDED
 #define I1_INCLUDED
 
-#include <cstdint>
+#include "config.hpp"
 #include <cstdio>
 #include <memory>
 #include "element.hpp"
@@ -54,11 +54,11 @@ public:
     Lexer::Token parse( Lexer* lexer );
     void buildIndex();
     void buildText( Cell* cell ) { cell = cell; };
-    void setRes( std::uint16_t r ) { parentRes = r; };
+    void setRes( STD1::uint16_t r ) { parentRes = r; };
     void setIdOrName( GlobalDictionaryWord* w ) { parentId = w; };
     void addSecondary( IndexItem* i ) { secondary.push_back( i ); };
-    std::uint16_t secondaryCount() const
-        { return static_cast< std::uint16_t >( secondary.size() ); };
+    STD1::uint16_t secondaryCount() const
+        { return static_cast< STD1::uint16_t >( secondary.size() ); };
     bool isGlobal() const { return primary->isGlobal(); };
     size_t write( std::FILE* out );
     bool operator==( const I1& rhs ) const{ return *primary == *rhs.primary; };
@@ -76,7 +76,7 @@ private:
     typedef std::vector< std::wstring >::const_iterator ConstSynIter;
     std::wstring id;
     GlobalDictionaryWord* parentId;
-    std::uint16_t parentRes;
+    STD1::uint16_t parentRes;
     Lexer::Token parseAttributes( Lexer* lexer );
 };
 

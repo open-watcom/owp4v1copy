@@ -32,18 +32,18 @@
 #include "strings.hpp"
 #include "errors.hpp"
 
-std::uint32_t StringTable::write( std::FILE *out )
+STD1::uint32_t StringTable::write( std::FILE *out )
 {
     if( table.empty() )
         return 0L;
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     for( ConstTableIter itr = table.begin(); itr != table.end(); ++itr ) {
         char buffer[ 256 ];
         size_t written;
         size_t length( std::wcstombs( buffer, itr->c_str(), sizeof( buffer ) / sizeof( char ) ) );
         if( length == static_cast< size_t >( -1 ) )
             throw FatalError( ERR_T_CONV );
-        if( std::fputc( static_cast< std::uint8_t >( length + 1 ), out ) == EOF ||
+        if( std::fputc( static_cast< STD1::uint8_t >( length + 1 ), out ) == EOF ||
             ( written = std::fwrite( buffer, sizeof( char ), length, out ) ) != length)
             throw FatalError( ERR_WRITE );
         bytes += written + 1;

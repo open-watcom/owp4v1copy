@@ -31,8 +31,8 @@
 #ifndef FNT_INCLUDED
 #define FNT_INCLUDED
 
+#include "config.hpp"
 #include <cstring>
-#include <cstdint>
 #include <cstdio>
 
 #pragma pack(push, 1)
@@ -40,11 +40,11 @@
 // Font Entry
 struct FontEntry {
     char            faceName[ 33 ]; //null terminated
-    std::uint16_t   height;         //reversed from docs
-    std::uint16_t   width;
-    std::uint16_t   codePage;
+    STD1::uint16_t  height;         //reversed from docs
+    STD1::uint16_t  width;
+    STD1::uint16_t  codePage;
     FontEntry() { std::memset( this, 0, sizeof( FontEntry ) ); };
-    std::uint32_t write( std::FILE *out ) const;
+    STD1::uint32_t write( std::FILE *out ) const;
     bool operator==( const FontEntry &rhs ) const
     {
         return std::strncmp(faceName, rhs.faceName, 33) == 0 &&

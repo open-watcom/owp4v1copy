@@ -80,7 +80,7 @@ void Nls::setCodePage( int cp )
         throw FatalError( ERR_COUNTRY );
     readEntityFile( entty );
     std::fclose( entty );
-    country.codePage = static_cast< std::uint16_t >( cp );
+    country.codePage = static_cast< STD1::uint16_t >( cp );
 }
 /*****************************************************************************/
 void Nls::readEntityFile( std::FILE *entty )
@@ -154,10 +154,10 @@ void Nls::readNLS( std::FILE *nls )
             }
         }
         else if( std::wcscmp( buffer, L"Country" ) == 0 ) {
-            country.country = static_cast< std::uint16_t >( std::wcstoul( value, 0, 10 ) );
+            country.country = static_cast< STD1::uint16_t >( std::wcstoul( value, 0, 10 ) );
         }
         else if( std::wcscmp( buffer, L"CodePage" ) == 0 ) {
-            country.codePage = static_cast< std::uint16_t >( std::wcstoul( value, 0, 10 ) );
+            country.codePage = static_cast< STD1::uint16_t >( std::wcstoul( value, 0, 10 ) );
         }
         else if( std::wcscmp( buffer, L"Note" ) == 0 ) {
             std::wstring text( value );
@@ -235,15 +235,15 @@ void Nls::processGrammer( wchar_t *buffer )
             //change this loop if we use RegExp
             for( wchar_t c = tok[ 0 ]; c <= tok[ 2 ]; ++c )
                 grammerChars += c;
-            dbcsT.ranges.push_back( static_cast< std::uint16_t >( tok[ 0 ] ));
-            dbcsT.ranges.push_back( static_cast< std::uint16_t >( tok[ 2 ] ));
+            dbcsT.ranges.push_back( static_cast< STD1::uint16_t >( tok[ 0 ] ));
+            dbcsT.ranges.push_back( static_cast< STD1::uint16_t >( tok[ 2 ] ));
             if( tok[ 0 ] > 255 || tok[ 2 ] > 255 )
                 useDBCS = true;
         }
         else {
             grammerChars += *tok;
-            dbcsT.ranges.push_back( static_cast< std::uint16_t >( *tok ) );
-            dbcsT.ranges.push_back( static_cast< std::uint16_t >( *tok ) );
+            dbcsT.ranges.push_back( static_cast< STD1::uint16_t >( *tok ) );
+            dbcsT.ranges.push_back( static_cast< STD1::uint16_t >( *tok ) );
             if( *tok > 255 )
                 useDBCS = true;
         }
@@ -259,10 +259,10 @@ wchar_t Nls::entity( const std::wstring& key )
     return pos->second;
 }
 /*****************************************************************************/
-std::uint32_t Nls::write( std::FILE *out )
+STD1::uint32_t Nls::write( std::FILE *out )
 {
     bytes = country.size;
-    std::uint32_t start( country.write( out ) );
+    STD1::uint32_t start( country.write( out ) );
     if( useDBCS ) {
         dbcsT.write( out );
         bytes += dbcsT.size;
@@ -278,9 +278,9 @@ std::uint32_t Nls::write( std::FILE *out )
     return start;
 }
 /*****************************************************************************/
-std::uint32_t Nls::CountryDef::write( std::FILE *out ) const
+STD1::uint32_t Nls::CountryDef::write( std::FILE *out ) const
 {
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     if( std::fwrite( this, sizeof( CountryDef ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
     return start;
@@ -300,26 +300,26 @@ void Nls::SbcsGrammerDef::setDefaultBits( NlsRecType type )
     std::memcpy( this->bits, &defbits[ type - 1 ][ 0 ], 32 * sizeof( char ) );
 }
 /*****************************************************************************/
-std::uint32_t Nls::SbcsGrammerDef::write( std::FILE *out ) const
+STD1::uint32_t Nls::SbcsGrammerDef::write( std::FILE *out ) const
 {
-    std::uint32_t start( std::ftell( out ) );
+    STD1::uint32_t start( std::ftell( out ) );
     if( std::fwrite( this, sizeof( SbcsGrammerDef ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
     return start;
 }
 /*****************************************************************************/
-std::uint32_t Nls::DbcsGrammerDef::write( std::FILE *out )
+STD1::uint32_t Nls::DbcsGrammerDef::write( std::FILE *out )
 {
-    std::uint32_t start( std::ftell( out ) );
-    size = 4 + static_cast< std::uint16_t >( ranges.size() * sizeof( std::uint16_t )) ;
-    if( std::fwrite( &size, sizeof( std::uint16_t ), 1, out) != 1 )
+    STD1::uint32_t start( std::ftell( out ) );
+    size = 4 + static_cast< STD1::uint16_t >( ranges.size() * sizeof( STD1::uint16_t )) ;
+    if( std::fwrite( &size, sizeof( STD1::uint16_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
-    if( std::fwrite( &type, sizeof( std::uint8_t ), 1, out) != 1 )
+    if( std::fwrite( &type, sizeof( STD1::uint8_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
-    if( std::fwrite( &format, sizeof( std::uint8_t ), 1, out) != 1 )
+    if( std::fwrite( &format, sizeof( STD1::uint8_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
-    for( std::vector< std::uint16_t >::const_iterator itr = ranges.begin(); itr != ranges.end(); ++itr )
-        if( std::fwrite( &(*itr), sizeof( std::uint16_t), 1, out) != 1 )
+    for( std::vector< STD1::uint16_t >::const_iterator itr = ranges.begin(); itr != ranges.end(); ++itr )
+        if( std::fwrite( &(*itr), sizeof( STD1::uint16_t), 1, out) != 1 )
             throw FatalError( ERR_WRITE );
     return start;
 }

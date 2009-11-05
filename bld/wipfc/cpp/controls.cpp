@@ -31,19 +31,19 @@
 #include "controls.hpp"
 #include "errors.hpp"
 
-std::uint32_t Controls::write( std::FILE* out )
+STD1::uint32_t Controls::write( std::FILE* out )
 {
-    std::uint32_t start( std::ftell( out ) );
-    std::uint16_t value( static_cast< std::uint16_t >( controls.size() ) );
-    if( std::fwrite( &value, sizeof( std::uint16_t ), 1, out) != 1 )
+    STD1::uint32_t start( std::ftell( out ) );
+    STD1::uint16_t value( static_cast< STD1::uint16_t >( controls.size() ) );
+    if( std::fwrite( &value, sizeof( STD1::uint16_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
-    value = static_cast< std::uint16_t >( groups.size() );
-    if( std::fwrite( &value, sizeof( std::uint16_t ), 1, out ) != 1 )
+    value = static_cast< STD1::uint16_t >( groups.size() );
+    if( std::fwrite( &value, sizeof( STD1::uint16_t ), 1, out ) != 1 )
         throw FatalError( ERR_WRITE );
-    if( std::fwrite( &coverGroup, sizeof( std::uint16_t ), 1, out) != 1 )
+    if( std::fwrite( &coverGroup, sizeof( STD1::uint16_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
     value = 0;                              //reserved word
-    if( std::fwrite( &value, sizeof( std::uint16_t ), 1, out) != 1 )
+    if( std::fwrite( &value, sizeof( STD1::uint16_t ), 1, out) != 1 )
         throw FatalError( ERR_WRITE );
     for( ConstControlIter itr = controls.begin(); itr != controls.end(); ++itr ) {
         bytes += itr->write( out );

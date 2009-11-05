@@ -67,6 +67,6 @@ Lexer::Token PButton::parse( Lexer* lexer )
 /***************************************************************************/
 void PButton::build( Controls* ctrls)
 {
-    ControlButton btn( id, static_cast< std::uint16_t >( res ), text);
+    ControlButton btn( id, static_cast< STD1::uint16_t >( res ), text);
     ctrls->addButton( btn );
 }
