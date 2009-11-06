@@ -24,30 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of tell() for OS/2.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include <stdio.h>
-#include <wos2.h>
-#include "rtcheck.h"
-#include "seterrno.h"
-#include <unistd.h>
-
-
-_WCRTLINK off_t tell( int handle )
-{
-    APIRET  rc;
-    ULONG   fileptr;
-
-    __handle_check( handle, -1 );
-
-    rc = DosChgFilePtr( handle, 0, SEEK_CUR, &fileptr );
-    if( rc != 0 ) {
-        __set_errno_dos( rc );
-        fileptr = -1;
-    }
-    return( fileptr );
-}
+// this file should remain an indirected file
+// it is done this way to support the reuse of the source file
+#define __INT64__
+#include "__lseek.c"

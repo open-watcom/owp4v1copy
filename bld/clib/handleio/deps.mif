@@ -1,6 +1,7 @@
-64lskwnt.obj : ../../../c/64lskwnt.c ../../../c/lseekwnt.c
+64_lseek.obj : ../../../c/64_lseek.c ../../../c/__lseek.c
+64lseek.obj  : ../../../c/64lseek.c  ../../../c/lseek.c
 64fillen.obj : ../../../c/64fillen.c ../../../c/filelen.c
-64telwnt.obj : ../../../c/64telwnt.c ../../../c/tellwnt.c
+64tell.obj   : ../../../c/64tell.c   ../../../c/tell.c
 
 ucreat.obj   : ../../../c/ucreat.c   ../../../c/creat.c
 

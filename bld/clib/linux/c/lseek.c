@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Linux lseek() implementation.
+* Description:  Linux low level __lseek() implementation.
 *
 ****************************************************************************/
 
@@ -32,8 +32,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include "linuxsys.h"
+#include "lseek.h"
 
-_WCRTLINK off_t lseek( int __fildes, off_t __offset, int __whence )
+off_t __lseek( int __fildes, off_t __offset, int __whence )
 {
     u_long res = sys_call3( SYS_lseek, __fildes, __offset, __whence );
     __syscall_return( off_t, res );

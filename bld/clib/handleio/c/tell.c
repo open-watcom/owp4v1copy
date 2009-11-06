@@ -34,7 +34,19 @@
 #include <unistd.h>
 #include "lseek.h"
 
+
+#ifdef __INT64__
+
+_WCRTLINK __int64 _telli64( int handle )
+{
+    return( __lseeki64( handle, 0LL, SEEK_CUR ) );
+}
+
+#else
+
 _WCRTLINK off_t tell( int handle )
 {
     return( __lseek( handle, 0L, SEEK_CUR ) );
 }
+
+#endif

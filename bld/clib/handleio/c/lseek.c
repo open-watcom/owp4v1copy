@@ -32,16 +32,35 @@
 #include "variety.h"
 #include <stdio.h>
 #include <unistd.h>
-#ifdef __NT__
-#include <windows.h>
-#endif
 #include "iomode.h"
 #include "rtcheck.h"
-#include "seterrno.h"
 #include "lseek.h"
+
+
+#ifdef __INT64__
+
+_WCRTLINK __int64 _lseeki64( int handle, __int64 offset, int origin )
+{
+#if !defined( __LINUX__ )
+    unsigned        iomode_flags;
+
+    __handle_check( handle, -1 );
+
+    /*** Set the _FILEEXT iomode_flags bit if positive offset ***/
+    iomode_flags = __GetIOMode( handle );
+
+    if( offset >= 0 && !( iomode_flags & _APPEND ) ) {
+        __SetIOMode( handle, iomode_flags | _FILEEXT );
+    }
+#endif
+    return( __lseeki64( handle, offset, origin ) );
+}
+
+#else
 
 _WCRTLINK off_t lseek( int handle, off_t offset, int origin )
 {
+#if !defined( __LINUX__ )
     unsigned            iomode_flags;
 
     __handle_check( handle, -1 );
@@ -52,5 +71,8 @@ _WCRTLINK off_t lseek( int handle, off_t offset, int origin )
     if( offset > 0 && !(iomode_flags & _APPEND) )
         __SetIOMode( handle, iomode_flags | _FILEEXT );
 
+#endif
     return( __lseek( handle, offset, origin ) );
 }
+
+#endif

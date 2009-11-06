@@ -1,13 +1,12 @@
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==========================================================================================================
-!inject 64lseek.obj  d16 d32                                        o16 o32 q16 q32 w16 w32 osi l32 lpc
-!inject 64lskwnt.obj                     nt nta ntp
+!inject 64lseek.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject 64_lseek.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject 64fillen.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc
 !inject 64fstat.obj  d16 d32                                                        w16 w32 osi
 !inject 64fstos2.obj                                                o16 o32
 !inject 64fstwnt.obj                     nt nta ntp
-!inject 64tell.obj   d16 d32                                        o16 o32 q16 q32 w16 w32 osi l32 lpc
-!inject 64telwnt.obj                     nt nta ntp
+!inject 64tell.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc
 !inject chsiz.obj    d16 d32                                                        w16 w32
 !inject chsizos2.obj                                                o16 o32
 !inject chsizqnx.obj                                                        q16 q32
@@ -44,10 +43,8 @@
 !inject lockqnx.obj                                                         q16 q32
 !inject locklnx.obj                                                                             l32 lpc lmp
 !inject lockwnt.obj                      nt nta ntp
-!inject lseek.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
-!inject lseekdos.obj d16 d32                                                        w16 w32 osi
-!inject lseekos2.obj                                                o16 o32
-!inject lseekwnt.obj                     nt nta ntp
+!inject lseek.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32 osi l32 lpc lmp
+!inject __lseek.obj  d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject mkfilstr.obj                     nt nta ntp
 !inject open.obj     d16 d32                                                        w16 w32 osi
 !inject openlnx.obj                                                                             l32 lpc lmp
@@ -65,10 +62,7 @@
 !inject setmd.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 !inject setmdunx.obj                                                        q16 q32             l32 lpc lmp
 !inject stiomode.obj d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
-!inject tell.obj     d16 d32                                                        w16 w32 osi
-!inject tellos2.obj                                                 o16 o32
-!inject tellunx.obj                                                         q16 q32             l32 lpc lmp
-!inject tellwnt.obj                      nt nta ntp
+!inject tell.obj     d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject u64fstat.obj d16 d32                                                        w16 w32 osi
 !inject u64fsos2.obj                                                o16 o32
 !inject u64fswnt.obj                     nt nta ntp

@@ -31,14 +31,6 @@
 
 
 #include "variety.h"
-#include "int64.h"
-/* gross hack for building 11.0 libraries with 10.6 compiler */
-#ifndef __WATCOM_INT64__
-    #include <limits.h>         /* a gross hack to make a gross hack work */
-    #define __WATCOM_INT64__
-    #define __int64             double
-#endif
-/* most includes should go after this line */
 #include <stdio.h>
 #include <unistd.h>
 #include "fileacc.h"
@@ -46,64 +38,48 @@
 #include "lseek.h"
 
 
-#if defined(__INT64__) && !defined(__NT__)
+#if defined(__INT64__)
 
 _WCRTLINK __int64 _filelengthi64( int handle )
 {
-    INT_TYPE            retval;
-    long                size;
-
-    __handle_check( handle, -1 );
-    size = filelength( handle );
-    if( size != -1 )
-    {
-        _clib_U32ToU64( size, retval ); /* retval = (__int64)size */
-    }
-    else
-    {
-        _clib_I32ToI64( -1L, retval );  /* retval = (__int64)-1 */
-    }
-    RETURN_INT64(retval);
-}
-
-
-#else   /* defined(__INT64__) && !defined(__NT__) */
-
-
-#ifdef __INT64__
-_WCRTLINK __int64 _filelengthi64( int handle )
-#else
-_WCRTLINK long filelength( int handle )
-#endif
-{
-    LONG_TYPE               current_posn, file_len;
-#ifdef __INT64__
-    INT_TYPE            zero, minusone;
-    REAL_INT_TYPE       retval;
-#endif
+#if defined(__NT__) || defined( __WARP__ ) || defined( __LINUX__ )
+    __int64         file_len;
+    __int64         current_posn;
 
     __handle_check( handle, -1 );
     _AccessFileH( handle );
 
-#ifdef __INT64__
-    _clib_I32ToI64( 0L, zero );
-    retval = _lseeki64( handle, GET_REALINT64(zero), SEEK_CUR );
-    current_posn = GET_INT64(retval);
-    _clib_I32ToI64( -1L, minusone );
-    if( !_clib_U64Cmp(current_posn,minusone) )
-    {
+    current_posn = __lseeki64( handle, 0, SEEK_CUR );
+    if( current_posn == -1LL ) {
         _ReleaseFileH( handle );
-        RETURN_INT64(minusone);
+        return( -1LL );
     }
-
-    retval = _lseeki64( handle, GET_REALINT64(zero), SEEK_END );
-    file_len = GET_INT64(retval);
-
-    _lseeki64( handle, GET_REALINT64(current_posn), SEEK_SET );
+    file_len = __lseeki64( handle, 0, SEEK_END );
+    __lseeki64( handle, current_posn, SEEK_SET );
 
     _ReleaseFileH( handle );
-    RETURN_INT64(file_len);
+    return( file_len );
 #else
+    long            file_len;
+
+    file_len = filelength( handle );
+    if( file_len == -1L ) {
+        return( -1LL );
+    }
+    return( (unsigned long)file_len );
+#endif
+}
+
+#else
+
+_WCRTLINK long filelength( int handle )
+{
+    long            current_posn;
+    long            file_len;
+
+    __handle_check( handle, -1 );
+    _AccessFileH( handle );
+
     current_posn = __lseek( handle, 0L, SEEK_CUR );
     if( current_posn == -1L )
     {
@@ -115,7 +91,6 @@ _WCRTLINK long filelength( int handle )
 
     _ReleaseFileH( handle );
     return( file_len );
-#endif
 }
 
-#endif  /* defined(__INT64__) && !defined(__NT__) */
+#endif
