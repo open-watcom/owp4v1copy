@@ -597,8 +597,8 @@ RPCRTAPI void RPC_ENTRY                 NdrServerInitializeMarshall( PRPC_MESSAG
 RPCRTAPI unsigned char * RPC_ENTRY      NdrServerInitializeNew( PRPC_MESSAGE, PMIDL_STUB_MESSAGE, PMIDL_STUB_DESC );
 RPCRTAPI void RPC_ENTRY                 NdrServerInitializePartial( PRPC_MESSAGE, PMIDL_STUB_MESSAGE, PMIDL_STUB_DESC );
 RPCRTAPI unsigned char * RPC_ENTRY      NdrServerInitializeUnmarshall( PMIDL_STUB_MESSAGE, PMIDL_STUB_DESC, PRPC_MESSAGE );
-RPCRTAPI void RPC_ENTRY                 NdrServerMarshall( struct IRpcStubBuffer *, struct IRpcChannelBuffer *, PMIDL_STUB_MESSAGE, PFORMAT_STRING );
-RPCRTAPI int RPC_ENTRY                  NdrServerUnmarshall( struct IRpcChannelBuffer *, PRPC_MESSAGE, PMIDL_STUB_MESSAGE, PMIDL_STUB_DESC, PFORMAT_STRING, void * );
+RPCRTAPI void RPC_ENTRY                 NdrServerMarshall( void *, void *, PMIDL_STUB_MESSAGE, PFORMAT_STRING );
+RPCRTAPI int RPC_ENTRY                  NdrServerUnmarshall( void *, PRPC_MESSAGE, PMIDL_STUB_MESSAGE, PMIDL_STUB_DESC, PFORMAT_STRING, void * );
 RPCRTAPI void RPC_ENTRY                 NdrSimpleStructBufferSize( PMIDL_STUB_MESSAGE, unsigned char *, PFORMAT_STRING );
 RPCRTAPI void RPC_ENTRY                 NdrSimpleStructFree( PMIDL_STUB_MESSAGE, unsigned char *, PFORMAT_STRING );
 RPCRTAPI unsigned char * RPC_ENTRY      NdrSimpleStructMarshall( PMIDL_STUB_MESSAGE, unsigned char *, PFORMAT_STRING );
@@ -606,8 +606,8 @@ RPCRTAPI unsigned long RPC_ENTRY        NdrSimpleStructMemorySize( PMIDL_STUB_ME
 RPCRTAPI unsigned char * RPC_ENTRY      NdrSimpleStructUnmarshall( PMIDL_STUB_MESSAGE, unsigned char **, PFORMAT_STRING, unsigned char );
 RPCRTAPI void RPC_ENTRY                 NdrSimpleTypeMarshall( PMIDL_STUB_MESSAGE, unsigned char *, unsigned char );
 RPCRTAPI void RPC_ENTRY                 NdrSimpleTypeUnmarshall( PMIDL_STUB_MESSAGE, unsigned char *, unsigned char );
-RPCRTAPI long RPC_ENTRY                 NdrStubCall( struct IRpcStubBuffer *, struct IRpcChannelBuffer *, PRPC_MESSAGE, unsigned long * );
-RPCRTAPI long RPC_ENTRY                 NdrStubCall2( struct IRpcStubBuffer *, struct IRpcChannelBuffer *, PRPC_MESSAGE, unsigned long * );
+RPCRTAPI long RPC_ENTRY                 NdrStubCall( void *, void *, PRPC_MESSAGE, unsigned long * );
+RPCRTAPI long RPC_ENTRY                 NdrStubCall2( void *, void *, PRPC_MESSAGE, unsigned long * );
 RPCRTAPI void RPC_ENTRY                 NdrUserMarshalBufferSize( PMIDL_STUB_MESSAGE, unsigned char *, PFORMAT_STRING );
 RPCRTAPI void RPC_ENTRY                 NdrUserMarshalFree( PMIDL_STUB_MESSAGE, unsigned char *, PFORMAT_STRING );
 RPCRTAPI unsigned char * RPC_ENTRY      NdrUserMarshalMarshall( PMIDL_STUB_MESSAGE, unsigned char *, PFORMAT_STRING );
