@@ -163,6 +163,7 @@ SHGetNewLinkInfoW@20
 SHGetPathFromIDListA@8
 SHGetPathFromIDListEx@16
 SHGetPathFromIDListW@8
+SHGetPropertyStoreForWindow@12
 SHGetPropertyStoreFromIDList@16
 SHGetPropertyStoreFromParsingName@20
 SHGetRealIDL@12
@@ -231,8 +232,8 @@ Shell_GetCachedImageIndexW@12
 Shell_GetImageLists@8
 Shell_MergeMenus@24
 Shell_NotifyIconA@8
+Shell_NotifyIconGetRect@8
 Shell_NotifyIconW@8
 SignalFileOpen@4
 Win32DeleteFile@4
 WriteCabinetState@4
-

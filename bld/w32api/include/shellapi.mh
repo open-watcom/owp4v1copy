@@ -130,6 +130,7 @@ DECLARE_HANDLE( HDROP );
 
 /* SHELLEXECUTEINFO mask flags */
 #if (WINVER >= 0x0400)
+    #define SEE_MASK_DEFAULT                0x00000000L
     #define SEE_MASK_CLASSNAME              0x00000001L
     #define SEE_MASK_CLASSKEY               0x00000003L
     #define SEE_MASK_IDLIST                 0x00000004L
@@ -235,20 +236,23 @@ DECLARE_HANDLE( HDROP );
 /* Shell_NotifyIcon() icon flags */
 #if (WINVER >= 0x0400) 
     #if (_WIN32_IE >= 0x0500)
-        #define NIIF_NONE       0x00000000L
-        #define NIIF_INFO       0x00000001L
-        #define NIIF_WARNING    0x00000002L
-        #define NIIF_ERROR      0x00000003L
+        #define NIIF_NONE               0x00000000L
+        #define NIIF_INFO               0x00000001L
+        #define NIIF_WARNING            0x00000002L
+        #define NIIF_ERROR              0x00000003L
         #if (NTDDI_VERSION >= 0x05010200)
-            #define NIIF_USER   0x00000004L
+            #define NIIF_USER           0x00000004L
         #endif
-        #define NIIF_ICON_MASK  0x0000000FL
+        #define NIIF_ICON_MASK          0x0000000FL
     #endif
     #if (_WIN32_IE >= 0x0501)
-        #define NIIF_NOSOUND    0x00000010L
+        #define NIIF_NOSOUND            0x00000010L
     #endif
     #if (NTDDI_VERSION >= 0x06000000)
-        #define NIIF_LARGE_ICON 0x00000020L
+        #define NIIF_LARGE_ICON         0x00000020L
+    #endif
+    #if (NTDDI_VERSION >= 0x06010000)
+        #define NIIF_RESPECT_QUIET_TIME 0x00000080L
     #endif
 #endif
 
@@ -300,6 +304,9 @@ DECLARE_HANDLE( HDROP );
     #endif
     #if (_WIN32_IE >= 0x0600)
         #define SHGNLI_NOLOCNAME    0x00000010
+    #endif
+    #if (NTDDI_VERSION >= 0x06010000)
+        #define SHGNLI_USEURLEXT    0x00000020
     #endif
 #endif
 
@@ -466,7 +473,7 @@ typedef struct _SHELLEXECUTEINFOA {
     LPCSTR      lpDirectory;
     int         nShow;
     HINSTANCE   hInstApp;
-    LPVOID      lpIDList;
+    void        *lpIDList;
     LPCSTR      lpClass;
     HKEY        hkeyClass;
     DWORD       dwHotKey;
@@ -489,7 +496,7 @@ typedef struct _SHELLEXECUTEINFOW {
     LPCWSTR     lpDirectory;
     int         nShow;
     HINSTANCE   hInstApp;
-    LPVOID      lpIDList;
+    void        *lpIDList;
     LPCWSTR     lpClass;
     HKEY        hkeyClass;
     DWORD       dwHotKey;
@@ -573,7 +580,12 @@ typedef enum {
     QUNS_BUSY                       = 2,
     QUNS_RUNNING_D3D_FULL_SCREEN    = 3,
     QUNS_PRESENTATION_MODE          = 4,
+#if (NTDDI_VERSION >= 0x06010000)
+    QUNS_ACCEPTS_NOTIFICATIONS      = 5,
+    QUNS_QUIET_TIME                 = 6,
+#else
     QUNS_ACCEPTS_NOTIFICATIONS      = 5
+#endif
 } QUERY_USER_NOTIFICATION_STATE;
 #endif
 
@@ -661,6 +673,17 @@ typedef PNOTIFYICONDATAA    PNOTIFYICONDATA;
     #define NOTIFYICONDATA_V1_SIZE  NOTIFYICONDATAA_V1_SIZE
     #define NOTIFYICONDATA_V2_SIZE  NOTIFYICONDATAA_V2_SIZE
     #define NOTIFYICONDATA_V3_SIZE  NOTIFYICONDATAA_V3_SIZE
+#endif
+
+/* Shell_NotifyIconGetRect() identifier */
+#if (WINVER >= 0x0400)
+typedef struct _NOTIFYICONIDENTIFIER {
+    DWORD   cbSize;
+    HWND    hWnd;
+    UINT    uID;
+    GUID    guidItem;
+} NOTIFYICONIDENTIFIER;
+typedef NOTIFYICONIDENTIFIER    *PNOTIFYICONIDENTIFIER;
 #endif
 
 /* Shell file information */
@@ -784,7 +807,16 @@ typedef enum SHSTOCKICONID {
     SIID_INTERNET           = 104,
     SIID_ZIPFILE            = 105,
     SIID_SETTINGS           = 106,
-    SIID_MAX_ICONS          = 107
+    SIID_DRIVEHDDVD         = 132,
+    SIID_DRIVEBD            = 133,
+    SIID_MEDIAHDDVDROM      = 134,
+    SIID_MEDIAHDDVDR        = 135,
+    SIID_MEDIAHDDVDRAM      = 136,
+    SIID_MEDIABDROM         = 137,
+    SIID_MEDIABDR           = 138,
+    SIID_MEDIABDRE          = 139,
+    SIID_CLUSTEREDDRIVE     = 140,
+    SIID_MAX_ICONS          = 174
 } SHSTOCKICONID;
 #define SIID_INVALID    ((SHSTOCKICONID)-1)
 #endif
@@ -834,10 +866,10 @@ SHSTDAPI_( UINT )       DragQueryFileA( HDROP, UINT, LPSTR, UINT );
 SHSTDAPI_( UINT )       DragQueryFileW( HDROP, UINT, LPWSTR, UINT );
 SHSTDAPI_( BOOL )       DragQueryPoint( HDROP, LPPOINT );
 SHSTDAPI_( HICON )      DuplicateIcon( HINSTANCE, HICON );
-SHSTDAPI_( HICON )      ExtractAssociatedIconA( HINSTANCE, LPSTR, LPWORD );
-SHSTDAPI_( HICON )      ExtractAssociatedIconExA( HINSTANCE, LPSTR, LPWORD, LPWORD );
-SHSTDAPI_( HICON )      ExtractAssociatedIconExW( HINSTANCE, LPWSTR, LPWORD, LPWORD );
-SHSTDAPI_( HICON )      ExtractAssociatedIconW( HINSTANCE, LPWSTR, LPWORD );
+SHSTDAPI_( HICON )      ExtractAssociatedIconA( HINSTANCE, LPSTR, WORD * );
+SHSTDAPI_( HICON )      ExtractAssociatedIconExA( HINSTANCE, LPSTR, WORD *, WORD * );
+SHSTDAPI_( HICON )      ExtractAssociatedIconExW( HINSTANCE, LPWSTR, WORD *, WORD * );
+SHSTDAPI_( HICON )      ExtractAssociatedIconW( HINSTANCE, LPWSTR, WORD * );
 SHSTDAPI_( HICON )      ExtractIconA( HINSTANCE, LPCSTR, UINT );
 SHSTDAPI_( HICON )      ExtractIconW( HINSTANCE, LPCWSTR, UINT );
 SHSTDAPI_( HINSTANCE )  FindExecutableA( LPCSTR, LPCSTR, LPSTR );
@@ -857,9 +889,10 @@ SHSTDAPI_( int )        SHFileOperationW( LPSHFILEOPSTRUCTW );
 SHSTDAPI_( void )       SHFreeNameMappings( HANDLE );
 SHSTDAPI_( DWORD_PTR )  SHGetFileInfoA( LPCSTR, DWORD, SHFILEINFOA *, UINT, UINT );
 SHSTDAPI_( DWORD_PTR )  SHGetFileInfoW( LPCWSTR, DWORD, SHFILEINFOW *, UINT, UINT );
-SHSTDAPI_( BOOL )       ShellExecuteExA( LPSHELLEXECUTEINFOA );
-SHSTDAPI_( BOOL )       ShellExecuteExW( LPSHELLEXECUTEINFOW );
+SHSTDAPI_( BOOL )       ShellExecuteExA( SHELLEXECUTEINFOA * );
+SHSTDAPI_( BOOL )       ShellExecuteExW( SHELLEXECUTEINFOW * );
 SHSTDAPI_( BOOL )       Shell_NotifyIconA( DWORD, PNOTIFYICONDATA );
+SHSTDAPI                Shell_NotifyIconGetRect( const NOTIFYICONIDENTIFIER *, RECT * );
 SHSTDAPI_( BOOL )       Shell_NotifyIconW( DWORD, PNOTIFYICONDATA );
 #if (NTDDI_VERSION >= 0x05000000)
 SHSTDAPI_( BOOL )       SHCreateProcessAsUserW( PSHCREATEPROCESSINFOW );
@@ -904,10 +937,13 @@ SHSTDAPI_( BOOL )       IsLFNDriveW( LPCWSTR );
 SHSTDAPI                SHSetLocalizedName( LPCWSTR, LPCWSTR, int );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
-SHSTDAPI_( BOOL )       InitNetworkAddressControl();
+SHSTDAPI_( BOOL )       InitNetworkAddressControl( void );
 SHSTDAPI                SHGetDriveMedia( LPCWSTR, DWORD * );
 SHSTDAPI                SHGetLocalizedName( LPCWSTR, LPWSTR, UINT, int * );
 SHSTDAPI                SHRemoveLocalizedName( LPCWSTR );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+SHSTDAPI                SHGetPropertyStoreForWindow( HWND, REFIID, void ** );
 #endif
 
 /* Functions in SHELL32.DLL with variable argument lists */
