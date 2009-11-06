@@ -11,11 +11,13 @@
 :include cpluspro.sp
 
 /* RPC string data types */
-typedef unsigned char   *RPC_CSTR;
+typedef unsigned char           *RPC_CSTR;
 #ifdef RPC_USE_NATIVE_WCHAR
-typedef wchar_t         *RPC_WSTR;
+typedef wchar_t                 *RPC_WSTR;
+typedef const wchar_t           *RPC_CWSTR;
 #else
-typedef unsigned short  *RPC_WSTR;
+typedef unsigned short          *RPC_WSTR;
+typedef const unsigned short    *RPC_CWSTR;
 #endif
 
 /* RPC handle data types */
@@ -104,6 +106,7 @@ typedef GUID    UUID;
     #define RPC_C_OPT_DONT_LINGER               13L
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
+    #define RPC_C_OPT_TRANS_SEND_BUFFER_SIZE    5L
     #define RPC_C_OPT_TRUST_PEER                14L
     #define RPC_C_OPT_ASYNC_BLOCK               15L
     #define RPC_C_OPT_OPTIMIZE_TIME             16L
@@ -179,6 +182,11 @@ typedef GUID    UUID;
 #if (NTDDI_VERSION >= 0x05000000)
     #define RPC_C_AUTHN_DIGEST      21L
 #endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define RPC_C_AUTHN_KERNEL      20L
+#endif
+#define RPC_C_AUTHN_NEGO_EXTENDER   30L
+#define RPC_C_AUTHN_PKU2U           31L
 #define RPC_C_AUTHN_MQ              100L
 #define RPC_C_AUTHN_DEFAULT         0xFFFFFFFFL
 
@@ -214,11 +222,14 @@ typedef GUID    UUID;
 
 /* RPC HTTP flags */
 #if (NTDDI_VERSION >= 0x05010000)
-    #define RPC_C_HTTP_FLAG_USE_SSL                 1L
-    #define RPC_C_HTTP_FLAG_USE_FIRST_AUTH_SCHEME   2L
+    #define RPC_C_HTTP_FLAG_USE_SSL                         1L
+    #define RPC_C_HTTP_FLAG_USE_FIRST_AUTH_SCHEME           2L
 #endif
 #if (NTDDI_VERSION >= 0x05020000)
-    #define RPC_C_HTTP_FLAG_IGNORE_CERT_CN_INVALID  8L
+    #define RPC_C_HTTP_FLAG_IGNORE_CERT_CN_INVALID          8L
+#endif
+#if (NTDDI_VERSION >= 0x06000100)
+    #define RPC_C_HTTP_FLAG_ENABLE_CERT_REVOCATION_CHECK    16L
 #endif
 
 /* RPC protocol sequence protocols */
@@ -408,6 +419,41 @@ typedef PRPC_HTTP_TRANSPORT_CREDENTIALS_V2_W    PRPC_HTTP_TRANSPORT_CREDENTIALS_
 #else
 typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V2_A     RPC_HTTP_TRANSPORT_CREDENTIALS_V2;
 typedef PRPC_HTTP_TRANSPORT_CREDENTIALS_V2_A    PRPC_HTTP_TRANSPORT_CREDENTIALS_V2;
+#endif
+#endif
+
+/* RPC HTTP transport credentials (version 3) */
+#if (NTDDI_VERSION >= 0x06010000)
+typeedef struct _RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A {
+    RPC_AUTH_IDENTITY_HANDLE    TransportCredentials;
+    unsigned long               Flags;
+    unsigned long               AuthenticationTarget;
+    unsigned long               NumberOfAuthnSchemes;
+    unsigned long               *AuthnSchemes;
+    unsigned char               *ServerCertificateSubject;
+    RPC_AUTH_IDENTITY_HANDLE    ProxyCredentials;
+    unsigned long               NumberOfProxyAuthnSchemes;
+    unsigned long               *ProxyAuthnSchemes;
+} RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A;
+typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A     *PRPC_HTTP_TRANSPORT_CREDENTIALS_V3_A;
+typeedef struct _RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W {
+    RPC_AUTH_IDENTITY_HANDLE    TransportCredentials;
+    unsigned long               Flags;
+    unsigned long               AuthenticationTarget;
+    unsigned long               NumberOfAuthnSchemes;
+    unsigned long               *AuthnSchemes;
+    unsigned short              *ServerCertificateSubject;
+    RPC_AUTH_IDENTITY_HANDLE    ProxyCredentials;
+    unsigned long               NumberOfProxyAuthnSchemes;
+    unsigned long               *ProxyAuthnSchemes;
+} RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W;
+typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W     *PRPC_HTTP_TRANSPORT_CREDENTIALS_V3_W;
+#ifdef UNICODE
+typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W     RPC_HTTP_TRANSPORT_CREDENTIALS_V3;
+typedef PRPC_HTTP_TRANSPORT_CREDENTIALS_V3_W    PRPC_HTTP_TRANSPORT_CREDENTIALS_V3;
+#else
+typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A     RPC_HTTP_TRANSPORT_CREDENTIALS_V3;
+typedef PRPC_HTTP_TRANSPORT_CREDENTIALS_V3_A    PRPC_HTTP_TRANSPORT_CREDENTIALS_V3;
 #endif
 #endif
 
@@ -602,7 +648,7 @@ typedef enum _RPC_HTTP_REDIRECTOR_STAGE {
 
 /* RPC HTTP callbacks */
 #if (NTDDI_VERSION >= 0x05020000)
-typedef RPC_STATUS (RPC_ENTRY *RPC_NEW_HTTP_PROXY_CHANNEL)( RPC_HTTP_REDIRECTOR_STAGE, RPC_WSTR, RPC_WSTR, RPC_WSTR, RPC_WSTR, void *, void *, void *, void *, void *, unsigned long, RPC_WSTR *, RPC_WSTR * );
+typedef RPC_STATUS (RPC_ENTRY *RPC_NEW_HTTP_PROXY_CHANNEL)( RPC_HTTP_REDIRECTOR_STAGE, RPC_WSTR, RPC_WSTR, RPC_WSTR, RPC_WSTR, void *, void *, void *, void *, unsigned long, RPC_WSTR *, RPC_WSTR * );
 #else
 typedef RPC_STATUS (RPC_ENTRY *RPC_NEW_HTTP_PROXY_CHANNEL)( unsigned short *, unsigned short *, unsigned char *, unsigned short ** );
 #endif
