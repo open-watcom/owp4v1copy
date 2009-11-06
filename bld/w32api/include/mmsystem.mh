@@ -218,6 +218,7 @@ typedef HWAVEOUT    *LPHWAVEOUT;
     #define SND_APPLICATION 0x00000080
 #endif
 #define SND_SENTRY          0x00080000
+#define SND_RING            0x00100000
 #define SND_SYSTEM          0x00200000
 
 /* Sound alias base */
@@ -264,6 +265,7 @@ typedef HWAVEOUT    *LPHWAVEOUT;
     #define WAVE_MAPPED                 0x0004
     #define WAVE_FORMAT_DIRECT          0x0008
     #define WAVE_FORMAT_DIRECT_QUERY    (WAVE_FORMAT_QUERY | WAVE_FORMAT_DIRECT)
+    #define WAVE_FORMAT_DEFAULT_COMMUNICATION_DEVICE    0x0010
 #endif
 
 /* Wave header flags */
