@@ -44,6 +44,7 @@ I_RpcGetExtendedError@0
 I_RpcGetServerContextList@4
 I_RpcIfInqTransferSyntaxes@16
 I_RpcMapWin32Status@4
+I_RpcMgmtQueryDedicatedThreadPool@0
 I_RpcMonitorAssociation@12
 I_RpcNegotiateTransferSyntax@4
 I_RpcNsBindingSetEntryNameA@12

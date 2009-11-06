@@ -64,6 +64,13 @@ typedef void    *I_RPC_MUTEX;
 #define RPC_PROXY_CONNECTION_TYPE_IN_PROXY  0
 #define RPC_PROXY_CONNECTION_TYPE_OUT_PROXY 1
 
+/* RPC binding options */
+#if (NTDDI_VERSION >= 0x05020000)
+    #define RPC_C_OPT_SESSION_ID            6L
+    #define RPC_C_OPT_COOKIE_AUTH           7L
+    #define RPC_C_OPT_RESOURCE_TYPE_UUID    8L
+#endif
+
 /* RPC address change types */
 enum RPC_ADDRESS_CHANGE_TYPE {
     PROTOCOL_NOT_LOADED     = 1,
@@ -159,12 +166,12 @@ typedef struct _RPC_TRANSFER_SYNTAX {
     unsigned short  VersMinor;
 } RPC_TRANSFER_SYNTAX;
 
-/* RPC metadata descriptor */
+/* RPC cookie authentication descriptor */
 #if (NTDDI_VERSION >= 0x05020000)
-typedef struct _RPC_C_OPT_METADATA_DESCRIPTOR {
+typedef struct _RPC_C_OPT_COOKIE_AUTH_DESCRIPTOR {
     unsigned long   BufferSize;
     char            *Buffer;
-} RPC_C_OPT_METADATA_DESCRIPTOR;
+} RPC_C_OPT_COOKIE_AUTH_DESCRIPTOR;
 #endif
 
 /* RDR callout state */
@@ -178,30 +185,47 @@ typedef struct _RDR_CALLOUT_STATE {
     unsigned short                  *RemoteUser;
     unsigned short                  *AuthType;
     unsigned char                   ResourceTypePresent;
-    unsigned char                   MetadataPresent;
     unsigned char                   SessionIdPresent;
     unsigned char                   InterfacePresent;
     UUID                            ResourceType;
-    RPC_C_OPT_METADATA_DESCRIPTOR   Metadata;
     UUID                            SessionId;
     RPC_SYNTAX_IDENTIFIER           Interface;
     void                            *CertContext;
 } RDR_CALLOUT_STATE;
 #endif
 
+/* RPC proxy performance counters */
+#if (NTDDI_VERSION >= 0x06000000)
+typedef enum RpcProxyPerfCounters {
+    RpcCurrentUniqueUser            = 1,
+    RpcBackEndConnectionAttempts    = 2,
+    RpcBackEndConnectionFailed      = 3,
+    RpcRequestsPerSecond            = 4,
+    RpcIncomingConnections          = 5,
+    RpcIncomingBandwidth            = 6,
+    RpcAttemptedLbsDecisions        = 7,
+    RpcFailedLbsDecisions           = 8,
+    RpcAttemptedLbsMessages         = 9,
+    RpcFailedLbsMessages            = 10,
+    RpcLastCounter                  = 11
+} RpcPerfCounters;
+#endif
+
 /* RPC proxy callback functions */
 #if (NTDDI_VERSION >= 0x05010000)
-typedef RPC_STATUS (RPC_ENTRY *I_RpcProxyIsValidMachineFn)( char *, char *, unsigned long );
-typedef RPC_STATUS (RPC_ENTRY *I_RpcProxyGetClientAddressFn)( void *, char *, unsigned long );
-typedef RPC_STATUS (RPC_ENTRY *I_RpcProxyGetConnectionTimeoutFn)( unsigned long * );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcProxyIsValidMachineFn)( RPC_WSTR, RPC_WSTR, unsigned long );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcProxyGetClientAddressFn)( void *, char *, unsigned long );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcProxyGetConnectionTimeoutFn)( unsigned long * );
 #endif
 #if (NTDDI_VERSION >= 0x05020000)
-typedef RPC_STATUS (RPC_ENTRY *I_RpcPerformCalloutFn)( void *, RDR_CALLOUT_STATE *, RPC_HTTP_REDIRECTOR_STAGE );
-typedef RPC_STATUS (RPC_ENTRY *I_RpcFreeCalloutStateFn)( RDR_CALLOUT_STATE * );
-typedef RPC_STATUS (RPC_ENTRY *I_RpcProxyGetClientSessionAndResourceUUID)( void *, int *, UUID *, int *, UUID * );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcPerformCalloutFn)( void *, RDR_CALLOUT_STATE *, RPC_HTTP_REDIRECTOR_STAGE );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcFreeCalloutStateFn)( RDR_CALLOUT_STATE * );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcProxyGetClientSessionAndResourceUUID)( void *, int *, UUID *, int *, UUID * );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
-typedef RPC_STATUS (RPC_ENTRY *I_RpcProxyFilterIfFn)( void *, UUID *, unsigned short, int * );
+typedef RPC_STATUS  (RPC_ENTRY *I_RpcProxyFilterIfFn)( void *, UUID *, unsigned short, int * );
+typedef void        (RPC_ENTRY *I_RpcProxyUpdatePerfCounterFn)( RpcPerfCounters, int, unsigned long );
+typedef void        (RPC_ENTRY *I_RpcProxyUpdatePerfCounterBackendServerFn)( unsigned short *, int );
 #endif
 
 /* RPC proxy callback interface */
@@ -217,6 +241,8 @@ typedef struct tagI_RpcProxyCallbackInterface {
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
     I_RpcProxyFilterIfFn                        ProxyFilterIfFn;
+    I_RpcProxyUpdatePerfCounterFn               RpcProxyUpdatePerfCounterFn;
+    I_RpcProxyUpdatePerfCounterBackendServerFn  RpcProxyUpdatePerfCounterBackendServerFn;
 #endif
 } I_RpcProxyCallbackInterface;
 #endif
@@ -293,6 +319,9 @@ RPCRTAPI RPC_STATUS RPC_ENTRY   I_RpcReplyToClientWithStatus( void *, RPC_STATUS
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
 RPCRTAPI RPC_STATUS RPC_ENTRY   I_RpcBindingInqSecurityContextKeyInfo( RPC_BINDING_HANDLE, void * );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+RPCRTAPI RPC_STATUS RPC_ENTRY   I_RpcMgmtEnableDedicatedThreadPool();
 #endif
 
 /* Functions in RPCRT4.DLL that are defined differently on different versions
