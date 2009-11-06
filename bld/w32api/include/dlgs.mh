@@ -7,10 +7,7 @@
 #ifndef _DLGSH_INCLUDED_
 #define _DLGSH_INCLUDED_
 
-#ifndef RC_INVOKED
 :include readonly.sp
-:include cpluspro.sp
-#endif /* RC_INVOKED */
 
 /* Control identifier range */
 #define ctlFirst    0x0400
@@ -218,9 +215,14 @@
 #if (NTDDI_VERSION >= 0x06000000)
     #define NEWFILEOPENV3ORD        1553
 #endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define NEWFORMATDLGWITHLINK    1591
+    #define IDC_MANAGE_LINK         1592
+#endif
 
 /* The rest of the file should be ignored when resources are being compiled. */
 #ifndef RC_INVOKED
+:include cpluspro.sp
 
 /* RGB color */
 typedef struct tagCRGB {
