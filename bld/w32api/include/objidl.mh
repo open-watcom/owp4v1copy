@@ -31,7 +31,7 @@ typedef interface IStream               IStream;
 typedef interface ISynchronize          ISynchronize;
 
 /* String name block */
-typedef OLECHAR **SNB;
+typedef LPOLESTR    *SNB;
 
 /* Pointer to clipboard format */
 typedef CLIPFORMAT  *LPCLIPFORMAT;
@@ -384,19 +384,46 @@ typedef SOLE_AUTHENTICATION_LIST    *PSOLE_AUTHENTICATION_LIST;
 
 /* COM binding properties */
 #if (_WIN32_WINNT >= 0x0400)
-enum {
+typedef enum {
     COMBND_RPCTIMEOUT       = 0x00000001,
     COMBND_SERVER_LOCALITY  = 0x00000002
-};
+} RPCOPT_PROPERTIES;
 #endif
 
 /* Server locality values */
 #if (_WIN32_WINNT >= 0x0400)
-enum {
+typedef enum {
     SERVER_LOCALITY_PROCESS_LOCAL   = 0,
     SERVER_LOCALITY_MACHINE_LOCAL   = 1,
     SERVER_LOCALITY_REMOTE          = 2
-};
+} RPCOPT_SERVER_LOCALITY_VALUES;
+#endif
+
+/* COM global properties */
+#if (_WIN32_WINNT >= 0x0400)
+typedef enum {
+    COMGLB_EXCEPTION_HANDLING       = 1,
+    COMGLB_APPID                    = 2,
+    COMGLB_RPC_THREADPOOL_SETTING   = 3
+} GLOBALOPT_PROPERTIES;
+#endif
+
+/* COM global exception handling values */
+#if (_WIN32_WINNT >= 0x0400)
+typedef enum {
+    COMGLB_EXCEPTION_HANDLE             = 0,
+    COMGLB_EXCEPTION_DONOT_HANDLE_FATAL = 1,
+    COMGLB_EXCEPTION_DONOT_HANDLE       = COMGLB_EXCEPTION_DONOT_HANDLE_FATAL,
+    COMGLB_EXCEPTION_DONOT_HANDLE_ANY   = 2
+} GLOBALOPT_EH_VALUES;
+#endif
+
+/* COM global RPC thread pool values */
+#if (_WIN32_WINNT >= 0x0400)
+typedef enum {
+    COMGLB_RPC_THREADPOOL_SETTING_DEFAULT_POOL  = 0,
+    COMGLB_RPC_THREADPOOL_SETTING_PRIVATE_POOL  = 1
+} GLOBALOPT_RPCTP_VALUES;
 #endif
 
 /* Storage layout */
@@ -434,6 +461,16 @@ typedef enum _APTTYPE {
     APTTYPE_NA      = 2,
     APTTYPE_MAINSTA = 3
 } APTTYPE;
+
+/* Apartment type qualifiers */
+typedef enum _APTTYPEQUALIFIER {
+    APTTYPEQUALIFIER_NONE               = 0,
+    APTTYPEQUALIFIER_IMPLICIT_MTA       = 1,
+    APTTYPEQUALIFIER_NA_ON_MTA          = 2,
+    APTTYPEQUALIFIER_NA_ON_STA          = 3,
+    APTTYPEQUALIFIER_NA_ON_IMPLICIT_MTA = 4,
+    APTTYPEQUALIFIER_NA_ON_MAINSTA      = 5
+} APTTYPEQUALIFIER;
 
 /* Thread types */
 typedef enum _THDTYPE {
@@ -489,6 +526,7 @@ EXTERN_C const IID      IID_IClientSecurity;
 EXTERN_C const IID      IID_IServerSecurity;
 EXTERN_C const IID      IID_IClassActivator;
 EXTERN_C const IID      IID_IRpcOptions;
+EXTERN_C const IID      IID_IGlobalOptions;
 #endif
 EXTERN_C const IID      IID_IFillLockBytes;
 EXTERN_C const IID      IID_IProgressNotify;
@@ -1392,8 +1430,24 @@ DECLARE_INTERFACE_( IRpcOptions, IUnknown ) {
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
     
     /* IRpcOptions methods */
-    STDMETHOD( Set )( THIS_ IUnknown *, DWORD, ULONG_PTR ) PURE;
-    STDMETHOD( Query )( THIS_ IUnknown *, DWORD, ULONG_PTR * ) PURE;
+    STDMETHOD( Set )( THIS_ IUnknown *, RPCOPT_PROPERTIES, ULONG_PTR ) PURE;
+    STDMETHOD( Query )( THIS_ IUnknown *, RPCOPT_PROPERTIES, ULONG_PTR * ) PURE;
+};
+#endif
+
+/* IGlobalOptions interface */
+#if (_WIN32_WINNT >= 0x0400)
+#undef INTERFACE
+#define INTERFACE   IGlobalOptions
+DECLARE_INTERFACE_( IGlobalOptions, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IGlobalOptions methods */
+    STDMETHOD( Set )( THIS_ GLOBALOPT_PROPERTIES, ULONG_PTR ) PURE;
+    STDMETHOD( Query )( THIS_ GLOBALOPT_PROPERTIES, ULONG_PTR * ) PURE;
 };
 #endif
 
