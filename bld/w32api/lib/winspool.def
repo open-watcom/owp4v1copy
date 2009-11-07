@@ -98,6 +98,7 @@ GetFormA@24
 GetFormW@24
 GetJobA@24
 GetJobW@24
+GetPrintExecutionData@4
 GetPrintProcessorDirectoryA@24
 GetPrintProcessorDirectoryW@24
 GetPrinterA@20

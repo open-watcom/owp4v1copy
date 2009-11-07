@@ -81,6 +81,7 @@
     #define PRINTER_ATTRIBUTE_PUSHED_MACHINE    0x00040000L
     #define PRINTER_ATTRIBUTE_MACHINE           0x00080000L
     #define PRINTER_ATTRIBUTE_FRIENDLY_NAME     0x00100000L
+    #define PRINTER_ATTRIBUTE_TS_GENERIC_DRIVER 0x00200000L
 #endif
 
 /* Job priority special values */
@@ -128,6 +129,7 @@
 
 /* Printer driver attributes */
 #define PRINTER_DRIVER_PACKAGE_AWARE    0x00000001L
+#define PRINTER_DRIVER_SANDBOX_ENABLED  0x00000004L
 
 /* Driver attribute flags */
 #define DRIVER_KERNELMODE   0x00000001L
@@ -259,6 +261,7 @@
 /* Spooler notification types */
 #define PRINTER_NOTIFY_TYPE 0x0000
 #define JOB_NOTIFY_TYPE     0x0001
+#define SERVER_NOTIFY_TYPE  0x0002
 
 /* Printer notification fields */
 #define PRINTER_NOTIFY_FIELD_SERVER_NAME            0x0000
@@ -319,6 +322,11 @@
 #define JOB_NOTIFY_FIELD_BYTES_PRINTED          0x0017
 #define JOB_NOTIFY_FIELD_REMOTE_JOB_ID          0x0018
 
+/* Server notification fields */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define SERVER_NOTIFY_FIELD_PRINT_DRIVER_ISOLATION_GROUP    0x0000
+#endif
+
 /* Printer notification option flags */
 #define PRINTER_NOTIFY_OPTIONS_REFRESH  0x00000001L
 
@@ -370,6 +378,9 @@
 #define PRINTER_CHANGE_CONFIGURE_PORT               0x00200000L
 #define PRINTER_CHANGE_DELETE_PORT                  0x00400000L
 #define PRINTER_CHANGE_PORT                         0x00700000L
+#if (NTDDI_VERSION >= 0x06010000)
+    #define PRINTER_CHANGE_SERVER                   0x00800000L
+#endif
 #define PRINTER_CHANGE_ADD_PRINT_PROCESSOR          0x01000000L
 #define PRINTER_CHANGE_DELETE_PRINT_PROCESSOR       0x04000000L
 #define PRINTER_CHANGE_PRINT_PROCESSOR              0x07000000L
@@ -389,36 +400,50 @@
 #define PRINTER_ERROR_OUTOFTONER    0x00000004L
 
 /* Spooler registry values */
-#define SPLREG_DEFAULT_SPOOL_DIRECTORY      TEXT( "DefaultSpoolDirectory" )
-#define SPLREG_PORT_THREAD_PRIORITY_DEFAULT TEXT( "PortThreadPriorityDefault" )
-#define SPLREG_PORT_THREAD_PRIORITY         TEXT( "PortThreadPriority" )
+#define SPLREG_DEFAULT_SPOOL_DIRECTORY              TEXT( "DefaultSpoolDirectory" )
+#define SPLREG_PORT_THREAD_PRIORITY_DEFAULT         TEXT( "PortThreadPriorityDefault" )
+#define SPLREG_PORT_THREAD_PRIORITY                 TEXT( "PortThreadPriority" )
 #define SPLREG_SCHEDULER_THREAD_PRIORITY_DEFAULT \
     TEXT( "SchedulerThreadPriorityDefault" )
-#define SPLREG_SCHEDULER_THREAD_PRIORITY    TEXT( "SchedulerThreadPriority" )
-#define SPLREG_BEEP_ENABLED                 TEXT( "BeepEnabled" )
-#define SPLREG_NET_POPUP                    TEXT( "NetPopup" )
-#define SPLREG_RETRY_POPUP                  TEXT( "RetryPopup" )
-#define SPLREG_NET_POPUP_TO_COMPUTER        TEXT( "NetPopupToComputer" )
-#define SPLREG_EVENT_LOG                    TEXT( "EventLog" )
-#define SPLREG_MAJOR_VERSION                TEXT( "MajorVersion" )
-#define SPLREG_MINOR_VERSION                TEXT( "MinorVersion" )
-#define SPLREG_ARCHITECTURE                 TEXT( "Architecture" )
+#define SPLREG_SCHEDULER_THREAD_PRIORITY            TEXT( "SchedulerThreadPriority" )
+#define SPLREG_BEEP_ENABLED                         TEXT( "BeepEnabled" )
+#define SPLREG_NET_POPUP                            TEXT( "NetPopup" )
+#define SPLREG_RETRY_POPUP                          TEXT( "RetryPopup" )
+#define SPLREG_NET_POPUP_TO_COMPUTER                TEXT( "NetPopupToComputer" )
+#define SPLREG_EVENT_LOG                            TEXT( "EventLog" )
+#define SPLREG_MAJOR_VERSION                        TEXT( "MajorVersion" )
+#define SPLREG_MINOR_VERSION                        TEXT( "MinorVersion" )
+#define SPLREG_ARCHITECTURE                         TEXT( "Architecture" )
 #if (NTDDI_VERSION >= 0x05010000)
-    #define SPLREG_OS_VERSION               TEXT( "OSVersion" )
+    #define SPLREG_OS_VERSION                       TEXT( "OSVersion" )
 #endif
-#define SPLREG_OS_VERSIONEX                 TEXT( "OSVersionEx" )
-#define SPLREG_DS_PRESENT                   TEXT( "DsPresent" )
-#define SPLREG_DS_PRESENT_FOR_USER          TEXT( "DsPresentForUser" )
-#define SPLREG_REMOTE_FAX                   TEXT( "RemoteFax" )
-#define SPLREG_RESTART_JOB_ON_POOL_ERROR    TEXT( "RestartJobOnPoolError" )
-#define SPLREG_RESTART_JOB_ON_POOL_ENABLED  TEXT( "RestartJobOnPoolEnabled" )
-#define SPLREG_DNS_MACHINE_NAME             TEXT( "DNSMachineName" )
+#define SPLREG_OS_VERSIONEX                         TEXT( "OSVersionEx" )
+#define SPLREG_DS_PRESENT                           TEXT( "DsPresent" )
+#define SPLREG_DS_PRESENT_FOR_USER                  TEXT( "DsPresentForUser" )
+#define SPLREG_REMOTE_FAX                           TEXT( "RemoteFax" )
+#define SPLREG_RESTART_JOB_ON_POOL_ERROR            TEXT( "RestartJobOnPoolError" )
+#define SPLREG_RESTART_JOB_ON_POOL_ENABLED          TEXT( "RestartJobOnPoolEnabled" )
+#define SPLREG_DNS_MACHINE_NAME                     TEXT( "DNSMachineName" )
 #if (((NTDDI_VERSION & 0xFFFF0000L) == 0x05010000L) && \
     ((NTDDI_VERSION & 0x0000FF00L) >= 0x00000200L)) || (NTDDI_VERSION >= 0x05020000L)
-    #define SPLREG_ALLOW_USER_MANAGEFORMS   TEXT( "AllowUserManageForms" )
+    #define SPLREG_ALLOW_USER_MANAGEFORMS           TEXT( "AllowUserManageForms" )
 #endif
 #if (NTDDI_VERSION >= 0x05020000)
-    #define SPLREG_WEBSHAREMGMT             TEXT( "WebShareMgmt" )
+    #define SPLREG_WEBSHAREMGMT                     TEXT( "WebShareMgmt" )
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define SPLREG_PRINT_DRIVER_ISOLATION_GROUPS_SEPARATOR  L'\\'
+    #define SPLREG_PRINT_DRIVER_ISOLATION_GROUPS    TEXT( "PrintDriverIsolationGroups" )
+    #define SPLREG_PRINT_DRIVER_ISOLATION_TIME_BEFORE_RECYCLE \
+        TEXT( "PrintDriverIsolationTimeBeforeRecycle" )
+    #define SPLREG_PRINT_DRIVER_ISOLATION_MAX_OBJECTS_BEFORE_RECYCLE \
+        TEXT( "PrintDriverIsolationMaxobjsBeforeRecycle" )
+    #define SPLREG_PRINT_DRIVER_ISOLATION_IDLE_TIMEOUT \
+        TEXT( "PrintDriverIsolationIdleTimeout" )
+    #define SPLREG_PRINT_DRIVER_ISOLATION_EXECUTION_POLICY \
+        TEXT( "PrintDriverIsolationExecutionPolicy" )
+    #define SPLREG_PRINT_DRIVER_ISOLATION_OVERRIDE_POLICY \
+        TEXT( "PrintDriverIsolationOverrideCompat" )
 #endif
 
 /* Server access rights */
@@ -1975,6 +2000,25 @@ typedef struct {
 } PrintPropertiesCollection;
 #endif
 
+/* Print execution contexts */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef enum {
+    PRINT_EXECUTION_CONTEXT_APPLICATION             = 0,
+    PRINT_EXECUTION_CONTEXT_SPOOLER_SERVICE         = 1,
+    PRINT_EXECUTION_CONTEXT_SPOOLER_ISOLATION_HOST  = 2,
+    PRINT_EXECUTION_CONTEXT_FILTER_PIPELINE         = 3,
+    PRINT_EXECUTION_CONTEXT_WOW64                   = 4
+} PRINT_EXECUTION_CONTEXT;
+#endif
+
+/* Print execution data */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct {
+    PRINT_EXECUTION_CONTEXT context;
+    DWORD                   clientAppPID;
+} PRINT_EXECUTION_DATA;
+#endif
+
 /* Functions in WINSPOOL.DRV */
 WINSPOOLAPI BOOL WINAPI     AbortPrinter( HANDLE );
 WINSPOOLAPI BOOL WINAPI     AddFormA( HANDLE, DWORD, LPBYTE );
@@ -2000,6 +2044,8 @@ WINSPOOLAPI HANDLE WINAPI   AddPrinterW( LPWSTR, DWORD, LPBYTE );
 WINSPOOLAPI LONG WINAPI     AdvancedDocumentPropertiesA( HWND, HANDLE, LPSTR, PDEVMODEA, PDEVMODEA );
 WINSPOOLAPI LONG WINAPI     AdvancedDocumentPropertiesW( HWND, HANDLE, LPWSTR, PDEVMODEW, PDEVMODEW );
 WINSPOOLAPI BOOL WINAPI     ClosePrinter( HANDLE );
+WINSPOOLAPI BOOL WINAPI     CloseSpoolFileHandle( HANDLE, HANDLE );
+WINSPOOLAPI HANDLE WINAPI   CommitSpoolData( HANDLE, HANDLE, DWORD );
 WINSPOOLAPI BOOL WINAPI     ConfigurePortA( LPSTR, HWND, LPSTR );
 WINSPOOLAPI BOOL WINAPI     ConfigurePortW( LPWSTR, HWND, LPWSTR );
 WINSPOOLAPI HANDLE WINAPI   ConnectToPrinterDlg( HWND, DWORD );
@@ -2075,6 +2121,7 @@ WINSPOOLAPI BOOL WINAPI     GetPrinterDriverDirectoryA( LPSTR, LPSTR, DWORD, LPB
 WINSPOOLAPI BOOL WINAPI     GetPrinterDriverDirectoryW( LPWSTR, LPWSTR, DWORD, LPBYTE, DWORD, LPDWORD );
 WINSPOOLAPI BOOL WINAPI     GetPrinterDriverW( HANDLE, LPWSTR, DWORD, LPBYTE, DWORD, LPDWORD );
 WINSPOOLAPI BOOL WINAPI     GetPrinterW( HANDLE, DWORD, LPBYTE, DWORD, LPDWORD );
+WINSPOOLAPI HANDLE WINAPI   GetSpoolFileHandle( HANDLE );
 WINSPOOLAPI BOOL WINAPI     OpenPrinterA( LPSTR, LPHANDLE, LPPRINTER_DEFAULTSA );
 WINSPOOLAPI BOOL WINAPI     OpenPrinterW( LPWSTR, LPHANDLE, LPPRINTER_DEFAULTSW );
 WINSPOOLAPI DWORD WINAPI    PrinterMessageBoxA( HANDLE, DWORD, HWND, LPSTR, LPSTR, DWORD );
@@ -2131,6 +2178,9 @@ WINSPOOLAPI BOOL WINAPI     OpenPrinter2W( LPCWSTR, LPHANDLE, PPRINTER_DEFAULTSW
 WINSPOOLAPI HRESULT WINAPI  ReportJobProcessingProgress( HANDLE, ULONG, EPrintXPSJobOperation, EPrintXPSJobProgress );
 WINSPOOLAPI HRESULT WINAPI  UploadPrinterDriverPackageA( LPCSTR, LPCSTR, LPCSTR, DWORD, HWND, LPSTR, PULONG );
 WINSPOOLAPI HRESULT WINAPI  UploadPrinterDriverPackageW( LPCWSTR, LPCWSTR, LPCWSTR, DWORD, HWND, LPWSTR, PULONG );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+WINSPOOLAPI BOOL WINAPI     GetPrintExecutionData( PRINT_EXECUTION_DATA * );
 #endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
