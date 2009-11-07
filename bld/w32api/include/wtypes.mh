@@ -58,6 +58,11 @@ typedef double  DOUBLE;
 /* Running object table registry flags */
 #define ROTREGFLAGS_ALLOWANYCLIENT  0x00000001L
 
+/* Application identifier registry flags */
+#define APPIDREGFLAGS_ACTIVATE_IUSERVER_INDESKTOP       0x00000001L
+#define APPIDREGFLAGS_SECURE_SERVER_PROCESS_SD_AND_BIND 0x00000002L
+#define APPIDREGFLAGS_ISSUE_ACTIVATION_RPC_AT_IDENTITY  0x00000004L
+
 /* IROTData::GetComparisonData() maximum buffer size */
 #define ROT_COMPARE_MAX 2048
 
