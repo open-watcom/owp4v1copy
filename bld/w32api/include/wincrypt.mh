@@ -32,7 +32,9 @@ typedef void            *HCRYPTDEFAULTCONTEXT;
 typedef HANDLE          HCRYPTASYNC;
 typedef HANDLE          *PHCRYPTASYNC;
 typedef HANDLE          HCERTCHAINENGINE;
+#if (NTDDI_VERSION >= 0x06000000)
 typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
+#endif
 
 #include <bcrypt.h>
 #include <ncrypt.h>
@@ -339,6 +341,8 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #if (NTDDI_VERSION >= 0x05020000)
     #define KP_GET_USE_COUNT    42L
 #endif
+#define KP_PIN_ID               43L
+#define KP_PIN_INFO             44L
 
 /* Paddings values */
 #define PKCS5_PADDING   1L
@@ -452,15 +456,17 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_FASTSGC   0x00000002L
 
 /* Settable provider parameters */
-#define PP_CLIENT_HWND              1L
-#define PP_CONTEXT_INFO             11L
-#define PP_KEYEXCHANGE_KEYSIZE      12L
-#define PP_SIGNATURE_KEYSIZE        13L
-#define PP_KEYEXCHANGE_ALG          14L
-#define PP_SIGNATURE_ALG            15L
-#define PP_DELETEKEY                24L
+#define PP_CLIENT_HWND                  1L
+#define PP_CONTEXT_INFO                 11L
+#define PP_KEYEXCHANGE_KEYSIZE          12L
+#define PP_SIGNATURE_KEYSIZE            13L
+#define PP_KEYEXCHANGE_ALG              14L
+#define PP_SIGNATURE_ALG                15L
+#define PP_DELETEKEY                    24L
 #if (NTDDI_VERSION >= 0x06000000)
-    #define PP_PIN_PROMPT_STRING    44L
+    #define PP_PIN_PROMPT_STRING        44L
+    #define PP_SECURE_KEYEXCHANGE_PIN   47L
+    #define PP_SECURE_SIGNATURE_PIN     48L
 #endif
 
 /* Provider types */
@@ -517,15 +523,14 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define MS_DEF_DH_SCHANNEL_PROV_W   L"Microsoft DH SChannel Cryptographic Provider"
 #define MS_SCARD_PROV_A             "Microsoft Base Smart Card Crypto Provider"
 #define MS_SCARD_PROV_W             L"Microsoft Base Smart Card Crypto Provider"
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010000)
     #define MS_ENH_RSA_AES_PROV_A \
         "Microsoft Enhanced RSA and AES Cryptographic Provider"
     #define MS_ENH_RSA_AES_PROV_W \
         L"Microsoft Enhanced RSA and AES Cryptographic Provider"
-#elif (NTDDI_VERSION >= 0x05010000)
-    #define MS_ENH_RSA_AES_PROV_A \
+    #define MS_ENH_RSA_AES_PROV_XP_A \
         "Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype)"
-    #define MS_ENH_RSA_AES_PROV_W \
+    #define MS_ENH_RSA_AES_PROV_XP_W \
         L"Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype)"
 #endif
 #ifdef UNICODE
@@ -541,6 +546,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
     #define MS_SCARD_PROV               MS_SCARD_PROV_W
     #if (NTDDI_VERSION >= 0x05010000)
         #define MS_ENH_RSA_AES_PROV     MS_ENH_RSA_AES_PROV_W
+        #define MS_ENH_RSA_AES_PROV_XP  MS_ENH_RSA_AES_PROV_XP_W
     #endif
 #else
     #define MS_DEF_PROV                 MS_DEF_PROV_A
@@ -555,6 +561,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
     #define MS_SCARD_PROV               MS_SCARD_PROV_A
     #if (NTDDI_VERSION >= 0x05010000)
         #define MS_ENH_RSA_AES_PROV     MS_ENH_RSA_AES_PROV_A
+        #define MS_ENH_RSA_AES_PROV_XP  MS_ENH_RSA_AES_PROV_XP_A
     #endif
 #endif
 
@@ -643,6 +650,8 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define szOID_RSA_certExtensions                    "1.2.840.113549.1.9.14"
 #define szOID_RSA_SMIMECapabilities                 "1.2.840.113549.1.9.15"
 #define szOID_RSA_preferSignedData                  "1.2.840.113549.1.9.15.1"
+#define szOID_TIMESTAMP_TOKEN                       "1.2.840.113549.1.9.16.1.4"
+#define szOID_RFC3161_counterSign                   "1.3.6.1.4.1.311.3.3.1"
 #define szOID_RSA_SMIMEalg                          "1.2.840.113549.1.9.16.3"
 #define szOID_RSA_SMIMEalgESDH                      "1.2.840.113549.1.9.16.3.5"
 #define szOID_RSA_SMIMEalgCMS3DESwrap               "1.2.840.113549.1.9.16.3.6"
@@ -675,6 +684,8 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define szOID_NIST_AES192_WRAP                      "2.16.840.1.101.3.4.1.25"
 #define szOID_NIST_AES256_WRAP                      "2.16.840.1.101.3.4.1.45"
 #define szOID_DH_SINGLE_PASS_STDDH_SHA1_KDF         "1.3.133.16.840.63.0.2"
+#define szOID_DH_SINGLE_PASS_STDDH_SHA256_KDF       "1.3.132.1.11.1"
+#define szOID_DH_SINGLE_PASS_STDDH_SHA384_KDF       "1.3.132.1.11.2"
 #define szOID_DS                                    "2.5"
 #define szOID_DSALG                                 "2.5.8"
 #define szOID_DSALG_CRPT                            "2.5.8.1"
@@ -789,6 +800,9 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define szOID_LOCAL_MACHINE_KEYSET                  "1.3.6.1.4.1.311.17.2"
 #define szOID_PKCS_12_EXTENDED_ATTRIBUTES           "1.3.6.1.4.1.311.17.3"
 #define szOID_KEYID_RDN                             "1.3.6.1.4.1.311.10.7.1"
+#define szOID_EV_RDN_LOCALE                         "1.3.6.1.4.1.311.60.2.1.1"
+#define szOID_EV_RDN_STATE_OR_PROVINCE              "1.3.6.1.4.1.311.60.2.1.2"
+#define szOID_EV_RDN_COUNTRY                        "1.3.6.1.4.1.311.60.2.1.3"
 #define szOID_AUTHORITY_KEY_IDENTIFIER              "2.5.29.1"
 #define szOID_KEY_ATTRIBUTES                        "2.5.29.2"
 #define szOID_CERT_POLICIES_95                      "2.5.29.3"
@@ -905,6 +919,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define szOID_LICENSE_SERVER                        "1.3.6.1.4.1.311.10.6.2"
 #define szOID_KP_SMARTCARD_LOGON                    "1.3.6.1.4.1.311.20.2.2"
 #define szOID_KP_KERNEL_MODE_CODE_SIGNING           "1.3.6.1.4.1.311.61.1.1"
+#define szOID_REVOKED_LIST_SIGNER                   "1.3.6.1.4.1.311.10.3.19"
 #define szOID_YESNO_TRUST_ATTR                      "1.3.6.1.4.1.311.10.4.1"
 #define szOID_PKIX_POLICY_QUALIFIER_CPS             "1.3.6.1.5.5.7.2.1"
 #define szOID_PKIX_POLICY_QUALIFIER_USERNOTICE      "1.3.6.1.5.5.7.2.2"
@@ -1005,6 +1020,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_RDN_FORCE_UTF8_UNICODE_FLAG    0x10000000L
 #define CERT_RDN_DISABLE_CHECK_TYPE_FLAG    0x40000000L
 #define CERT_RDN_DISABLE_IE4_UTF8_FLAG      0x01000000L
+#define CERT_RDN_ENABLE_PUNYCODE_FLAG       0x02000000L
 
 /* Macro to check if an RDN is a charcter string */
 #define IS_CERT_RDN_CHAR_STRING( x ) \
@@ -1036,6 +1052,10 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 /* Certificate Revocation List (CRL) information version numbers */
 #define CRL_V1  0L
 #define CRL_V2  1L
+
+/* Certificate bundle item types */
+#define CERT_BUNDLE_CERTIFICATE 0L
+#define CERT_BUNDLE_CRL         1L
 
 /* Certificate request version numbers */
 #define CERT_REQUEST_V1 0L
@@ -1090,6 +1110,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_UNICODE_NAME_ENCODE_DISABLE_CHECK_TYPE_FLAG \
     CERT_RDN_DISABLE_CHECK_TYPE_FLAG
 #define CRYPT_SORTED_CTL_ENCODE_HASHED_SUBJECT_IDENTIFIER_FLAG  0x00010000L
+#define CRYPT_ENCODE_ENABLE_PUNYCODE_FLAG                       0x00020000L
 
 /* CryptDecodeObject() flags */
 #define CRYPT_DECODE_NOCOPY_FLAG                        0x00000001L
@@ -1099,6 +1120,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_DECODE_ALLOC_FLAG                         0x00008000L
 #define CRYPT_UNICODE_NAME_DECODE_DISABLE_IE4_UTF8_FLAG \
     CERT_RDN_DISABLE_IE4_UTF8_FLAG
+#define CRYPT_DECODE_ENABLE_PUNYCODE_FLAG               0x02000000L
 
 /* Data structure identifiers for CryptEncodeObject(), etc. */
 #define CRYPT_ENCODE_DECODE_NONE                ((LPCSTR)0)
@@ -1187,8 +1209,19 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define PKCS_RSA_SSA_PSS_PARAMETERS             ((LPCSTR)75)
 #define PKCS_RSAES_OAEP_PARAMETERS              ((LPCSTR)76)
 #define ECC_CMS_SHARED_INFO                     ((LPCSTR)77)
+#define TIMESTAMP_REQUEST                       ((LPCSTR)78)
+#define TIMESTAMP_RESPONSE                      ((LPCSTR)79)
+#define TIMESTAMP_INFO                          ((LPCSTR)80)
+#define X509_CERT_BUNDLE                        ((LPCSTR)81)
 #define PKCS7_SIGNER_INFO                       ((LPCSTR)500)
 #define CMS_SIGNER_INFO                         ((LPCSTR)501)
+
+/* Certificate root program flags */
+#define CERT_ROOT_PROGRAM_FLAG_ORG          0x80
+#define CERT_ROOT_PROGRAM_FLAG_LSC          0x40
+#define CERT_ROOT_PROGRAM_FLAG_SUBJECT_LOGO 0x20
+#define CERT_ROOT_PROGRAM_FLAG_OU           0x10
+#define CERT_ROOT_PROGRAM_FLAG_ADDRESS      0x08
 
 /* Error location constants and macros */
 #define CERT_UNICODE_RDN_ERR_INDEX_MASK     0x000003FFL
@@ -1459,7 +1492,8 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_ENHKEY_USAGE_OID_GROUP_ID 7L
 #define CRYPT_POLICY_OID_GROUP_ID       8L
 #define CRYPT_TEMPLATE_OID_GROUP_ID     9L
-#define CRYPT_LAST_OID_GROUP_ID         9L
+#define CRYPT_KDF_OID_GROUP_ID          10L
+#define CRYPT_LAST_OID_GROUP_ID         10L
 #define CRYPT_FIRST_ALG_OID_GROUP_ID    CRYPT_HASH_ALG_OID_GROUP_ID
 #define CRYPT_LAST_ALG_OID_GROUP_ID     CRYPT_SIGN_ALG_OID_GROUP_ID
 
@@ -1485,6 +1519,9 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 
 /* CryptFindOIDInfo() group identifier flags */
 #define CRYPT_OID_DISABLE_SEARCH_DS_FLAG    0x80000000L
+#ifdef CRYPT_OID_INFO_HAS_EXTRA_FIELDS
+    #define CRYPT_OID_PREFER_CNG_ALGID_FLAG 0x40000000L
+#endif
 
 /* Constants to handle bit lengths */
 #define CRYPT_OID_INFO_OID_GROUP_BIT_LEN_MASK   0x0FFF0000L
@@ -1747,7 +1784,13 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_CA_DISABLE_CRL_PROP_ID                 82L
 #define CERT_ROOT_PROGRAM_CERT_POLICIES_PROP_ID     83L
 #define CERT_ROOT_PROGRAM_NAME_CONSTRAINTS_PROP_ID  84L
-#define CERT_FIRST_RESERVED_PROP_ID                 85L
+#define CERT_SUBJECT_OCSP_AUTHORITY_INFO_ACCESS_PROP_ID 85L
+#define CERT_SUBJECT_DISABLE_CRL_PROP_ID            86L
+#define CERT_CEP_PROP_ID                            87L
+#define CERT_SIGN_HASH_CNG_ALG_PROP_ID              89L
+#define CERT_SCARD_PIN_ID_PROP_ID                   90L
+#define CERT_SCARD_PIN_INFO_PROP_ID                 91L
+#define CERT_FIRST_RESERVED_PROP_ID                 92L
 #define CERT_LAST_RESERVED_PROP_ID                  0x00007FFFL
 #define CERT_FIRST_USER_PROP_ID                     0x00008000L
 #define CERT_LAST_USER_PROP_ID                      0x0000FFFFL
@@ -2283,10 +2326,16 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_DEFAULT_CONTEXT_MULTI_CERT_SIGN_OID   2L
 
 /* Public key import/export function names */
-#define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FUNC       "CryptDllExportPublicKeyInfoEx"
-#define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC   "CryptDllExportPublicKeyInfoEx2"
-#define CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_FUNC       "CryptDllImportPublicKeyInfoEx"
-#define CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC   "CryptDllImportPublicKeyInfoEx2"
+#define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FUNC           "CryptDllExportPublicKeyInfoEx"
+#define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC       "CryptDllExportPublicKeyInfoEx2"
+#if (NTDDI_VERSION >= 0x06010000)
+    #define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FROM_BCRYPT_HANDLE_FUNC \
+        "CryptDllExportPublicKeyInfoFromBCryptKeyHandle"
+#endif
+#define CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_FUNC           "CryptDllImportPublicKeyInfoEx"
+#if (NTDDI_VERSION >= 0x06000000)
+    #define CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC   "CryptDllImportPublicKeyInfoEx2"
+#endif
 
 /* CryptAcquireCertificatePrivateKey() flags */
 #define CRYPT_ACQUIRE_CACHE_FLAG                0x00000001L
@@ -2309,7 +2358,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_OID_EXPORT_PRIVATE_KEY_INFO_FUNC  "CryptDllExportPrivateKeyInfoEx"
 
 /* Private key export flags */
-#define CRYPT_DELETE_KEYSET 0x00000001L
+#define CRYPT_DELETE_KEYSET CRYPT_DELETEKEYSET
 
 /* Certificate name string types */
 #define CERT_SIMPLE_NAME_STR    1L
@@ -2330,6 +2379,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_NAME_STR_ENABLE_UTF8_UNICODE_FLAG  0x00040000L
 #define CERT_NAME_STR_FORCE_UTF8_DIR_STR_FLAG   0x00080000L
 #define CERT_NAME_STR_DISABLE_UTF8_DIR_STR_FLAG 0x00100000L
+#define CERT_NAME_STR_ENABLE_PUNYCODE_FLAG      0x00200000L
 
 /* Certificate name types */
 #define CERT_NAME_EMAIL_TYPE            1L
@@ -2511,6 +2561,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define URL_OID_CERTIFICATE_OCSP_AND_CRL_DIST_POINT ((LPCSTR)10)
 #define URL_OID_CERTIFICATE_CRL_DIST_POINT_AND_OCSP ((LPCSTR)11)
 #define URL_OID_CROSS_CERT_SUBJECT_INFO_ACCESS      ((LPCSTR)12)
+#define URL_OID_CERTIFICATE_ONLY_OCSP               ((LPCSTR)13)
 
 /* Time valid object function names */
 #define TIME_VALID_OID_GET_OBJECT_FUNC      "TimeValidDllGetObject"
@@ -2572,6 +2623,8 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 /* Certificate chaining registry paths */
 #define CERT_CHAIN_CONFIG_REGPATH \
     L"Software\\Microsoft\\Cryptography\\OID\\EncodingType 0\\CertDllCreateCertificateChainEngine\\Config"
+#define CERT_CHAIN_MAX_URL_RETRIEVAL_BYTE_COUNT_VALUE_NAME  L"MaxUrlRetrievalByteCount"
+#define CERT_CHAIN_MAX_URL_RETRIEVAL_BYTE_COUNT_DEFAULT     (100 * 1024 * 1024)
 #define CERT_CHAIN_CACHE_RESYNC_FILETIME_VALUE_NAME         L"ChainCacheResyncFiletime"
 #define CERT_CHAIN_DISABLE_MANDATORY_BASIC_CONSTRAINTS_VALUE_NAME \
     L"DisableMandatoryBasicConstraints"
@@ -2588,7 +2641,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_BYTE_COUNT_DEFAULT 100000L
 #define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_CERT_COUNT_VALUE_NAME \
     L"MaxAIAUrlRetrievalCertCount"
-#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_CERT_COUNT_DEFAULT 10L
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_CERT_COUNT_DEFAULT 3L
 #define CERT_CHAIN_OCSP_VALIDITY_SECONDS_VALUE_NAME         L"OcspValiditySeconds"
 #define CERT_CHAIN_OCSP_VALIDITY_SECONDS_DEFAULT            (12 * 60 * 60)
 #define CERT_SRV_OCSP_RESP_MIN_VALIDITY_SECONDS_VALUE_NAME \
@@ -2664,13 +2717,18 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
     L"ChainRevAccumulativeUrlRetrievalTimeoutMilliseconds"
 #define CERT_CHAIN_REV_ACCUMULATIVE_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_DEFAULT \
     (20 * 1000)
+#define CERT_RETR_BEHAVIOR_INET_AUTH_VALUE_NAME             L"EnableInetUnknownAuth"
+#define CERT_RETR_BEHAVIOR_INET_STATUS_VALUE_NAME           L"EnableInetLocal"
+#define CERT_RETR_BEHAVIOR_FILE_VALUE_NAME                  L"AllowFileUrlScheme"
+#define CERT_RETR_BEHAVIOR_LDAP_VALUE_NAME                  L"DisableLDAPSignAndEncrypt"
 #define CRYPTNET_CACHED_OCSP_SWITCH_TO_CRL_COUNT_VALUE_NAME \
     L"CryptnetCachedOcspSwitchToCrlCount"
 #define CRYPTNET_CACHED_OCSP_SWITCH_TO_CRL_COUNT_DEFAULT    50L
 #define CRYPTNET_CRL_BEFORE_OCSP_ENABLE                     0xFFFFFFFFL
 #define CERT_CHAIN_DISABLE_AIA_URL_RETRIEVAL_VALUE_NAME     L"DisableAIAUrlRetrieval"
 #define CERT_CHAIN_OPTIONS_VALUE_NAME                       L"Options"
-#define CERT_CHAIN_DISABLE_AIA_URL_RETRIEVAL_               0x00000002L
+#define CERT_CHAIN_OPTION_DISABLE_AIA_URL_RETRIEVAL         0x00000002L
+#define CERT_CHAIN_OPTION_ENABLE_SIA_URL_RETRIEVAL          0x00000004L
 #define CERT_CHAIN_CROSS_CERT_DOWNLOAD_INTERVAL_HOURS_VALUE_NAME \
     L"CrossCertDownloadIntervalHours"
 #define CERT_CHAIN_CROSS_CERT_DOWNLOAD_INTERVAL_HOURS_DEFAULT   (24 * 7)
@@ -2717,16 +2775,17 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_TRUST_CTL_IS_NOT_VALID_FOR_USAGE           0x00080000L
 
 /* Certificate trust information status flags */
-#define CERT_TRUST_HAS_EXACT_MATCH_ISSUER       0x00000001L
-#define CERT_TRUST_HAS_KEY_MATCH_ISSUER         0x00000002L
-#define CERT_TRUST_HAS_NAME_MATCH_ISSUER        0x00000004L
-#define CERT_TRUST_IS_SELF_SIGNED               0x00000008L
-#define CERT_TRUST_HAS_PREFERRED_ISSUER         0x00000100L
-#define CERT_TRUST_HAS_ISSUANCE_CHAIN_POLICY    0x00000200L
-#define CERT_TRUST_HAS_VALID_NAME_CONSTRAINTS   0x00000400L
-#define CERT_TRUST_IS_PEER_TRUSTED              0x00000800L
-#define CERT_TRUST_HAS_CRL_VALIDITY_EXTENDED    0x00001000L
-#define CERT_TRUST_IS_COMPLEX_CHAIN             0x00010000L
+#define CERT_TRUST_HAS_EXACT_MATCH_ISSUER           0x00000001L
+#define CERT_TRUST_HAS_KEY_MATCH_ISSUER             0x00000002L
+#define CERT_TRUST_HAS_NAME_MATCH_ISSUER            0x00000004L
+#define CERT_TRUST_IS_SELF_SIGNED                   0x00000008L
+#define CERT_TRUST_HAS_PREFERRED_ISSUER             0x00000100L
+#define CERT_TRUST_HAS_ISSUANCE_CHAIN_POLICY        0x00000200L
+#define CERT_TRUST_HAS_VALID_NAME_CONSTRAINTS       0x00000400L
+#define CERT_TRUST_IS_PEER_TRUSTED                  0x00000800L
+#define CERT_TRUST_HAS_CRL_VALIDITY_EXTENDED        0x00001000L
+#define CERT_TRUST_IS_FROM_EXCLUSIVE_TRUST_STORE    0x00002000L
+#define CERT_TRUST_IS_COMPLEX_CHAIN                 0x00010000L
 
 /* Usage match types */
 #define USAGE_MATCH_TYPE_AND    0x00000000L
@@ -2738,6 +2797,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_CHAIN_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT  0x40000000L
 #define CERT_CHAIN_REVOCATION_CHECK_CACHE_ONLY          0x80000000L
 #define CERT_CHAIN_REVOCATION_ACCUMULATIVE_TIMEOUT      0x08000000L
+#define CERT_CHAIN_REVOCATION_CHECK_OCSP_CERT           0x04000000L
 #define CERT_CHAIN_DISABLE_PASS1_QUALITY_FILTERING      0x00000040L
 #define CERT_CHAIN_RETURN_LOWER_QUALITY_CONTEXTS        0x00000080L
 #define CERT_CHAIN_DISABLE_AUTH_ROOT_AUTO_UPDATE        0x00000100L
@@ -2798,6 +2858,7 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CERT_CHAIN_POLICY_BASIC_CONSTRAINTS ((LPCSTR)5)
 #define CERT_CHAIN_POLICY_NT_AUTH           ((LPCSTR)6)
 #define CERT_CHAIN_POLICY_MICROSOFT_ROOT    ((LPCSTR)7)
+#define CERT_CHAIN_POLICY_EV                ((LPCSTR)8)
 
 /* Authentication types */
 #define AUTHTYPE_CLIENT 1L
@@ -2824,6 +2885,8 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 #define CRYPT_STRING_HEXADDR                0x0000000AL
 #define CRYPT_STRING_HEXASCIIADDR           0x0000000BL
 #define CRYPT_STRING_HEXRAW                 0x0000000CL
+#define CRYPT_STRING_HASHDATA               0x10000000L
+#define CRYPT_STRING_STRICT                 0x20000000L
 #define CRYPT_STRING_NOCRLF                 0x40000000L
 #define CRYPT_STRING_NOCR                   0x80000000L
 
@@ -2853,6 +2916,74 @@ typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
     (CERT_RETRIEVE_BIOMETRIC_PREDEFINED_BASE_TYPE + CERT_BIOMETRIC_PICTURE_TYPE)
 #define CERT_RETRIEVE_BIOMETRIC_SIGNATURE_TYPE \
     (CERT_RETRIEVE_BIOMETRIC_PREDEFINED_BASE_TYPE + CERT_BIOMETRIC_SIGNATURE_TYPE)
+
+/* Maximum number of certificate selection parameters */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define CERT_SELECT_MAX_PARA    500
+#endif
+
+/* Certificate selection criteria types */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define CERT_SELECT_BY_ENHKEY_USAGE         1L
+    #define CERT_SELECT_BY_KEY_USAGE            2L
+    #define CERT_SELECT_BY_POLICY_OID           3L
+    #define CERT_SELECT_BY_PROV_NAME            4L
+    #define CERT_SELECT_BY_EXTENSION            5L
+    #define CERT_SELECT_BY_SUBJECT_HOST_NAME    6L
+    #define CERT_SELECT_BY_ISSUER_ATTR          7L
+    #define CERT_SELECT_BY_SUBJECT_ATTR         8L
+    #define CERT_SELECT_BY_ISSUER_NAME          9L
+    #define CERT_SELECT_BY_PUBLIC_KEY           10L
+    #define CERT_SELECT_BY_TLS_SIGNATURES       11L
+    #define CERT_SELECT_LAST                    CERT_SELECT_BY_TLS_SIGNATURES
+    #define CERT_SELECT_MAX                     (CERT_SELECT_LAST * 3)
+#endif
+
+/* CertSelectCertificateChains() flags */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define CERT_SELECT_ALLOW_EXPIRED               0x00000001L
+    #define CERT_SELECT_TRUSTED_ROOT                0x00000002L
+    #define CERT_SELECT_DISALLOW_SELFSIGNED         0x00000004L
+    #define CERT_SELECT_HAS_PRIVATE_KEY             0x00000008L
+    #define CERT_SELECT_HAS_KEY_FOR_SIGNATURE       0x00000010L
+    #define CERT_SELECT_HAS_KEY_FOR_KEY_EXCHANGE    0x00000020L
+    #define CERT_SELECT_HARDWARE_ONLY               0x00000040L
+    #define CERT_SELECT_ALLOW_DUPLICATES            0x00000080L
+#endif
+
+/* Timestamp version number */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define TIMESTAMP_VERSION   1L
+#endif
+
+/* Timestamp status values */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define TIMESTAMP_STATUS_GRANTED            0L
+    #define TIMESTAMP_STATUS_GRANTED_WITH_MDOS  1L
+    #define TIMESTAMP_STATUS_REJECTED           2L
+    #define TIMESTAMP_STATUS_WAITING            3L
+    #define TIMESTAMP_STATUS_REVOCATION_WARNING 4L
+    #define TIMESTAMP_STATUS_REVOKED            5L
+#endif
+
+/* Timestamp failure codes */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define TIMESTAMP_FAILURE_BAD_ALG                   0
+    #define TIMESTAMP_FAILURE_BAD_REQUEST               2
+    #define TIMESTAMP_FAILURE_BAD_FORMAT                5
+    #define TIMESTAMP_FAILURE_TIME_NOT_AVAILABLE        14
+    #define TIMESTAMP_FAILURE_POLICY_NOT_SUPPORTED      15
+    #define TIMESTAMP_FAILURE_EXTENSION_NOT_SUPPORTED   16
+    #define TIMESTAMP_FAILURE_INFO_NOT_AVAILABLE        17
+    #define TIMESTAMP_FAILURE_SYSTEM_FEATURE            25
+#endif
+
+/* CryptRetrieveTimeStamp() flags */
+#if (NTDDI_VERSION >= 0x06010000)
+    #define TIMESTAMP_DONT_HASH_DATA            0x00000001L
+    #define TIMESTAMP_VERIFY_CONTEXT_SIGNATURE  0x00000020L
+    #define TIMESTAMP_NO_AUTH_RETRIEVAL         0x00020000L
+#endif
 
 /* Provider vtable */
 #if (NTDDI_VERSION < 0x05010000)
@@ -3130,7 +3261,8 @@ typedef struct _CERT_EXTENSION {
     BOOL                fCritical;
     CRYPT_OBJID_BLOB    Value;
 } CERT_EXTENSION;
-typedef CERT_EXTENSION  *PCERT_EXTENSION;
+typedef CERT_EXTENSION          *PCERT_EXTENSION;
+typedef const CERT_EXTENSION    *PCCERT_EXTENSION;
 
 /* Cryptographic attribute value types */
 typedef struct _CRYPT_ATTRIBUTE_TYPE_VALUE {
@@ -3273,6 +3405,21 @@ typedef struct _CRL_INFO {
 } CRL_INFO;
 typedef CRL_INFO    *PCRL_INFO;
 
+/* Certificate or CRL blob */
+typedef struct _CERT_OR_CRL_BLOB {
+    DWORD   dwChoice;
+    DWORD   cbEncoded;
+    BYTE    *pbEncoded;
+} CERT_OR_CRL_BLOB;
+typedef CERT_OR_CRL_BLOB    *PCERT_OR_CRL_BLOB;
+
+/* Certificate or CRL bundle */
+typedef struct _CERT_OR_CRL_BUNDLE {
+    DWORD               cItem;
+    PCERT_OR_CRL_BLOB   rgItem;
+} CERT_OR_CRL_BUNDLE;
+typedef CERT_OR_CRL_BUNDLE  *PCERT_OR_CRL_BUNDLE;
+
 /* Certificate request information */
 typedef struct _CERT_REQUEST_INFO {
     DWORD                   dwVersion;
@@ -3304,9 +3451,11 @@ typedef struct _CTL_USAGE {
     DWORD   cUsageIdentifier;
     LPSTR   *rgpszUsageIdentifier;
 } CTL_USAGE;
-typedef CTL_USAGE   *PCTL_USAGE;
-typedef CTL_USAGE   CERT_ENHKEY_USAGE;
-typedef CTL_USAGE   *PCERT_ENHKEY_USAGE;
+typedef CTL_USAGE       *PCTL_USAGE;
+typedef const CTL_USAGE *PCCTL_USAGE;
+typedef CTL_USAGE       CERT_ENHKEY_USAGE;
+typedef CTL_USAGE       *PCERT_ENHKEY_USAGE;
+typedef const CTL_USAGE *PCCERT_ENHKEY_USAGE;
 
 /* CTL entry */
 typedef struct _CTL_ENTRY {
@@ -4877,6 +5026,19 @@ typedef struct _CERT_REVOCATION_CRL_INFO {
 } CERT_REVOCATION_CRL_INFO;
 typedef CERT_REVOCATION_CRL_INFO    *PCERT_REVOCATION_CRL_INFO;
 
+/* Certificate revocation chain parameters */
+typedef struct _CERT_REVOCATION_CHAIN_PARA {
+    DWORD               cbSize;
+    HCERTCHAINENGINE    hChainEngine;
+    HCERTSTORE          hAdditionalStore;
+    DWORD               dwChainFlags;
+    DWORD               dwUrlRetrievalTimeout;
+    LPFILETIME          pftCurrentTime;
+    LPFILETIME          pftCacheResync;
+    DWORD               cbMaxUrlRetrievalByteCount;
+} CERT_REVOCATION_CHAIN_PARA;
+typedef CERT_REVOCATION_CHAIN_PARA  *PCERT_REVOCATION_CHAIN_PARA;
+
 /* Certificate revocation parameters */
 typedef struct _CERT_REVOCATION_PARA {
     DWORD                       cbSize;
@@ -4892,6 +5054,7 @@ typedef struct _CERT_REVOCATION_PARA {
     LPFILETIME                  pftCurrentTime;
     PCERT_REVOCATION_CRL_INFO   pCrlInfo;
     LPFILETIME                  pftCacheResync;
+    PCERT_REVOCATION_CHAIN_PARA pChainPara;
 #endif
 } CERT_REVOCATION_PARA;
 typedef CERT_REVOCATION_PARA    *PCERT_REVOCATION_PARA;
@@ -4922,6 +5085,9 @@ typedef CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA    *PCRYPT_DEFAULT_CONTEXT_MULTI_OI
 /* Public key import/export function templates */
 typedef BOOL (WINAPI *PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC)( NCRYPT_KEY_HANDLE, DWORD, LPSTR, DWORD, void *, PCERT_PUBLIC_KEY_INFO, DWORD * );
 typedef BOOL (WINAPI *PFN_CRYPT_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC)( DWORD, PCERT_PUBLIC_KEY_INFO, DWORD, void *, BCRYPT_KEY_HANDLE * );
+#if (NTDDI_VERSION >= 0x06010000)
+typedef BOOL (WINAPI *PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_FROM_BCRYPT_HANDLE_FUNC)( BCRYPT_KEY_HANDLE, DWORD, LPSTR, DWORD, void *, PCERT_PUBLIC_KEY_INFO, DWORD * );
+#endif
 
 /* Private key import/export function templates */
 typedef BOOL (WINAPI *PFN_IMPORT_PRIV_KEY_FUNC)( HCRYPTPROV, CRYPT_PRIVATE_KEY_INFO *, DWORD, void * );
@@ -5158,11 +5324,13 @@ typedef const CERT_CRL_CONTEXT_PAIR *PCCERT_CRL_CONTEXT_PAIR;
 
 /* CryptGetTimeValidObject() extra information */
 typedef struct _CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO {
-    DWORD       cbSize;
-    int         iDeltaCrlIndicator;
-    LPFILETIME  pftCacheResync;
-    LPFILETIME  pLastSyncTime;
-    LPFILETIME  pMaxAgeTime;
+    DWORD                       cbSize;
+    int                         iDeltaCrlIndicator;
+    LPFILETIME                  pftCacheResync;
+    LPFILETIME                  pLastSyncTime;
+    LPFILETIME                  pMaxAgeTime;
+    PCERT_REVOCATION_CHAIN_PARA pChainPara;
+    PCRYPT_INTEGER_BLOB         pDeltaCrlIndicator;
 } CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO;
 typedef CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO  *PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO;
 
@@ -5190,6 +5358,10 @@ typedef struct _CERT_CHAIN_ENGINE_CONFIG {
     DWORD       dwUrlRetrievalTimeout;
     DWORD       MaximumCachedCertificates;
     DWORD       CycleDetectionModulus;
+#if (NTDDI_VERSION >= 0x06010000)
+    HCERTSTORE  hExclusiveRoot;
+    HCERTSTORE  hExclusiveTrustedPeople;
+#endif
 } CERT_CHAIN_ENGINE_CONFIG;
 typedef CERT_CHAIN_ENGINE_CONFIG    *PCERT_CHAIN_ENGINE_CONFIG;
 
@@ -5230,7 +5402,8 @@ typedef struct _CERT_CHAIN_ELEMENT {
     PCERT_ENHKEY_USAGE      pApplicationUsage;
     LPCWSTR                 pwszExtendedErrorInfo;
 } CERT_CHAIN_ELEMENT;
-typedef CERT_CHAIN_ELEMENT  *PCERT_CHAIN_ELEMENT;
+typedef CERT_CHAIN_ELEMENT          *PCERT_CHAIN_ELEMENT;
+typedef const CERT_CHAIN_ELEMENT    *PCCERT_CHAIN_ELEMENT;
 
 /* Certificate simple chain */
 typedef struct _CERT_SIMPLE_CHAIN {
@@ -5242,7 +5415,8 @@ typedef struct _CERT_SIMPLE_CHAIN {
     BOOL                    fHasRevocationFreshnessTime;
     DWORD                   dwRevocationFreshnessTime;
 } CERT_SIMPLE_CHAIN;
-typedef CERT_SIMPLE_CHAIN   *PCERT_SIMPLE_CHAIN;
+typedef CERT_SIMPLE_CHAIN       *PCERT_SIMPLE_CHAIN;
+typedef const CERT_SIMPLE_CHAIN *PCCERT_SIMPLE_CHAIN;
 
 /* Certificate chain context */
 typedef struct _CERT_CHAIN_CONTEXT {
@@ -5373,6 +5547,21 @@ typedef HTTPSPolicyCallbackData *PHTTPSPolicyCallbackData;
 typedef HTTPSPolicyCallbackData SSL_EXTRA_CERT_CHAIN_POLICY_PARA;
 typedef HTTPSPolicyCallbackData *PSSL_EXTRA_CERT_CHAIN_POLICY_PARA;
 
+/* EV extra certificate chain policy parameters */
+typedef struct _EV_EXTRA_CERT_CHAIN_POLICY_PARA  {
+    DWORD   cbSize;
+    DWORD   dwRootProgramQualifierFlags;
+} EV_EXTRA_CERT_CHAIN_POLICY_PARA;
+typedef EV_EXTRA_CERT_CHAIN_POLICY_PARA *PEV_EXTRA_CERT_CHAIN_POLICY_PARA;
+
+/* EV extra certificate chain policy status */
+typedef struct _EV_EXTRA_CERT_CHAIN_POLICY_STATUS {
+    DWORD   cbSize;
+    DWORD   dwQualifiers;
+    DWORD   dwIssuanceUsageIndex;
+} EV_EXTRA_CERT_CHAIN_POLICY_STATUS;
+typedef EV_EXTRA_CERT_CHAIN_POLICY_STATUS   *PEV_EXTRA_CERT_CHAIN_POLICY_STATUS;
+
 /* PKCS-12 PBE parameters */
 typedef struct _CRYPT_PKCS12_PBE_PARAMS {
     int     iIterations;
@@ -5380,6 +5569,7 @@ typedef struct _CRYPT_PKCS12_PBE_PARAMS {
 } CRYPT_PKCS12_PBE_PARAMS;
 
 /* Certificate server OCSP response context */
+#if (NTDDI_VERSION >= 0x06000000)
 typedef struct _CERT_SERVER_OCSP_RESPONSE_CONTEXT {
     DWORD   cbSize;
     BYTE    *pbEncodedOcspResponse;
@@ -5387,6 +5577,109 @@ typedef struct _CERT_SERVER_OCSP_RESPONSE_CONTEXT {
 } CERT_SERVER_OCSP_RESPONSE_CONTEXT;
 typedef CERT_SERVER_OCSP_RESPONSE_CONTEXT       *PCERT_SERVER_OCSP_RESPONSE_CONTEXT;
 typedef const CERT_SERVER_OCSP_RESPONSE_CONTEXT *PCCERT_SERVER_OCSP_RESPONSE_CONTEXT;
+#endif
+
+/* Certificate selection chain parameters */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CERT_SELECT_CHAIN_PARA {
+    HCERTCHAINENGINE    hChainEngine;
+    PFILETIME           pTime;
+    HCERTSTORE          hAdditionalStore;
+    PCERT_CHAIN_PARA    pChainPara;
+    DWORD               dwFlags;
+} CERT_SELECT_CHAIN_PARA;
+typedef CERT_SELECT_CHAIN_PARA          *PCERT_SELECT_CHAIN_PARA;
+typedef const CERT_SELECT_CHAIN_PARA    *PCCERT_SELECT_CHAIN_PARA;
+#endif
+
+/* Certificate selection criteria */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CERT_SELECT_CRITERIA {
+    DWORD   dwType;
+    DWORD   cPara;
+    void    **ppPara;
+} CERT_SELECT_CRITERIA;
+typedef CERT_SELECT_CRITERIA        *PCERT_SELECT_CRITERIA;
+typedef const CERT_SELECT_CRITERIA  *PCCERT_SELECT_CRITERIA;
+#endif
+
+/* Cryptographic timestamp request */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CRYPT_TIMESTAMP_REQUEST {
+    DWORD                       dwVersion;
+    CRYPT_ALGORITHM_IDENTIFIER  HashAlgorithm;
+    CRYPT_DER_BLOB              HashedMessage;
+    LPSTR                       pszTSAPolicyId;
+    CRYPT_INTEGER_BLOB          Nonce;
+    BOOL                        fCertReq;
+    DWORD                       cExtension;
+    PCERT_EXTENSION             rgExtension;
+} CRYPT_TIMESTAMP_REQUEST;
+typedef CRYPT_TIMESTAMP_REQUEST *PCRYPT_TIMESTAMP_REQUEST;
+#endif
+
+/* Cryptographic timestamp response */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CRYPT_TIMESTAMP_RESPONSE {
+    DWORD           dwStatus;
+    DWORD           cFreeText;
+    LPWSTR          *rgFreeText;
+    CRYPT_BIT_BLOB  FailureInfo;
+    CRYPT_DER_BLOB  ContentInfo;
+} CRYPT_TIMESTAMP_RESPONSE;
+typedef CRYPT_TIMESTAMP_RESPONSE    *PCRYPT_TIMESTAMP_RESPONSE;
+#endif
+
+/* Cryptographic timestamp accuracy */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CRYPT_TIMESTAMP_ACCURACY {
+    DWORD   dwSeconds;
+    DWORD   dwMillis;
+    DWORD   dwMicros;
+} CRYPT_TIMESTAMP_ACCURACY;
+typedef CRYPT_TIMESTAMP_ACCURACY    *PCRYPT_TIMESTAMP_ACCURACY;
+#endif
+
+/* Cryptographic timestamp information */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CRYPT_TIMESTAMP_INFO {
+    DWORD                       dwVersion;
+    LPSTR                       pszTSAPolicyId;
+    CRYPT_ALGORITHM_IDENTIFIER  HashAlgorithm;
+    CRYPT_DER_BLOB              HashedMessage;
+    CRYPT_INTEGER_BLOB          SerialNumber;
+    FILETIME                    ftTime;
+    PCRYPT_TIMESTAMP_ACCURACY   pvAccuracy;
+    BOOL                        fOrdering;
+    CRYPT_DER_BLOB              Nonce;
+    CRYPT_DER_BLOB              Tsa;
+    DWORD                       cExtension;
+    PCERT_EXTENSION             rgExtension;
+} CRYPT_TIMESTAMP_INFO;
+typedef CRYPT_TIMESTAMP_INFO    *PCRYPT_TIMESTAMP_INFO;
+#endif
+
+/* Cryptographic timestamp context */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CRYPT_TIMESTAMP_CONTEXT {
+    DWORD                   cbEncoded;
+    BYTE                    *pbEncoded;
+    PCRYPT_TIMESTAMP_INFO   pTimeStamp;
+} CRYPT_TIMESTAMP_CONTEXT;
+typedef CRYPT_TIMESTAMP_CONTEXT *PCRYPT_TIMESTAMP_CONTEXT;
+#endif
+
+/* Cryptographic timestamp parameters */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _CRYPT_TIMESTAMP_PARA {
+    LPCSTR              pszTSAPolicyId;
+    BOOL                fRequestCerts;
+    CRYPT_INTEGER_BLOB  Nonce;
+    DWORD               cExtension;
+    PCERT_EXTENSION     rgExtension;
+} CRYPT_TIMESTAMP_PARA;
+typedef CRYPT_TIMESTAMP_PARA    *PCRYPT_TIMESTAMP_PARA;
+#endif
 
 /* Functions in ADVAPI32.DLL */
 WINADVAPI BOOL WINAPI   CryptAcquireContextA( HCRYPTPROV *, LPCSTR, LPCSTR, DWORD, DWORD );
@@ -5449,12 +5742,9 @@ WINCRYPT32API BOOL WINAPI           CertAddEncodedCertificateToStore( HCERTSTORE
 WINCRYPT32API BOOL WINAPI           CertAddEncodedCertificateToSystemStoreA( LPCSTR, const BYTE *, DWORD );
 WINCRYPT32API BOOL WINAPI           CertAddEncodedCertificateToSystemStoreW( LPCWSTR, const BYTE *, DWORD );
 WINCRYPT32API BOOL WINAPI           CertAddEnhancedKeyUsageIdentifier( PCCERT_CONTEXT, LPCSTR );
-WINCRYPT32API VOID WINAPI           CertAddRefServerOcspResponse( HCERT_SERVER_OCSP_RESPONSE );
-WINCRYPT32API VOID WINAPI           CertAddRefServerOcspResponseContext( PCCERT_SERVER_OCSP_RESPONSE_CONTEXT );
 WINCRYPT32API BOOL WINAPI           CertAddSerializedElementToStore( HCERTSTORE, const BYTE *, DWORD, DWORD, DWORD, DWORD, DWORD *, const void ** );
 WINCRYPT32API BOOL WINAPI           CertAddStoreToCollection( HCERTSTORE, HCERTSTORE, DWORD, DWORD );
 WINCRYPT32API LPCSTR WINAPI         CertAlgIdToOID( DWORD );
-WINCRYPT32API VOID WINAPI           CertCloseServerOcspResponse( HCERT_SERVER_OCSP_RESPONSE, DWORD );
 WINCRYPT32API BOOL WINAPI           CertCloseStore( HCERTSTORE, DWORD );
 WINCRYPT32API BOOL WINAPI           CertCompareCertificate( DWORD, PCERT_INFO, PCERT_INFO );
 WINCRYPT32API BOOL WINAPI           CertCompareCertificateName( DWORD, PCERT_NAME_BLOB, PCERT_NAME_BLOB );
@@ -5501,7 +5791,6 @@ WINCRYPT32API BOOL WINAPI           CertFreeCTLContext( PCCTL_CONTEXT );
 WINCRYPT32API VOID WINAPI           CertFreeCertificateChain( PCCERT_CHAIN_CONTEXT );
 WINCRYPT32API VOID WINAPI           CertFreeCertificateChainEngine( HCERTCHAINENGINE );
 WINCRYPT32API BOOL WINAPI           CertFreeCertificateContext( PCCERT_CONTEXT );
-WINCRYPT32API VOID WINAPI           CertFreeServerOcspResponseContext( PCCERT_SERVER_OCSP_RESPONSE_CONTEXT );
 WINCRYPT32API BOOL WINAPI           CertGetCRLContextProperty( PCCRL_CONTEXT, DWORD, void *, DWORD * );
 WINCRYPT32API PCCRL_CONTEXT WINAPI  CertGetCRLFromStore( HCERTSTORE, PCCERT_CONTEXT, PCCRL_CONTEXT, DWORD * );
 WINCRYPT32API BOOL WINAPI           CertGetCTLContextProperty( PCCTL_CONTEXT, DWORD, void *, DWORD * );
@@ -5513,7 +5802,6 @@ WINCRYPT32API PCCERT_CONTEXT WINAPI CertGetIssuerCertificateFromStore( HCERTSTOR
 WINCRYPT32API DWORD WINAPI          CertGetNameStringA( PCCERT_CONTEXT, DWORD, DWORD, void *, LPSTR, DWORD );
 WINCRYPT32API DWORD WINAPI          CertGetNameStringW( PCCERT_CONTEXT, DWORD, DWORD, void *, LPWSTR, DWORD );
 WINCRYPT32API DWORD WINAPI          CertGetPublicKeyLength( DWORD, PCERT_PUBLIC_KEY_INFO );
-WINCRYPT32API PCCERT_SERVER_OCSP_RESPONSE_CONTEXT WINAPI    CertGetServerOcspResponseContext( HCERT_SERVER_OCSP_RESPONSE, DWORD, LPVOID );
 WINCRYPT32API BOOL WINAPI           CertGetStoreProperty( HCERTSTORE, DWORD, void *, DWORD * );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertGetSubjectCertificateFromStore( HCERTSTORE, DWORD, PCERT_INFO );
 WINCRYPT32API BOOL WINAPI           CertGetValidUsages( DWORD, PCCERT_CONTEXT *, int *, LPSTR *, DWORD * );
@@ -5522,7 +5810,6 @@ WINCRYPT32API BOOL WINAPI           CertIsValidCRLForCertificate( PCCERT_CONTEXT
 WINCRYPT32API DWORD WINAPI          CertNameToStrA( DWORD, PCERT_NAME_BLOB, DWORD, LPSTR, DWORD );
 WINCRYPT32API DWORD WINAPI          CertNameToStrW( DWORD, PCERT_NAME_BLOB, DWORD, LPWSTR, DWORD );
 WINCRYPT32API DWORD WINAPI          CertOIDToAlgId( LPCSTR );
-WINCRYPT32API HCERT_SERVER_OCSP_RESPONSE WINAPI CertOpenServerOcspResponse( PCCERT_CHAIN_CONTEXT, DWORD, LPVOID );
 WINCRYPT32API HCERTSTORE WINAPI     CertOpenStore( LPCSTR, DWORD, HCRYPTPROV_LEGACY, DWORD, const void * );
 WINCRYPT32API HCERTSTORE WINAPI     CertOpenSystemStoreA( HCRYPTPROV_LEGACY, LPCSTR );
 WINCRYPT32API HCERTSTORE WINAPI     CertOpenSystemStoreW( HCRYPTPROV_LEGACY, LPCWSTR );
@@ -5589,14 +5876,12 @@ WINCRYPT32API LONG WINAPI           CryptGetMessageSignerCount( DWORD, const BYT
 WINCRYPT32API BOOL WINAPI           CryptGetOIDFunctionAddress( HCRYPTOIDFUNCSET, DWORD, LPCSTR, DWORD, void **, HCRYPTOIDFUNCADDR );
 WINCRYPT32API BOOL WINAPI           CryptGetOIDFunctionValue( DWORD, LPCSTR, LPCSTR, LPCWSTR, DWORD *, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptHashCertificate( HCRYPTPROV_LEGACY, ALG_ID, DWORD, const BYTE *, DWORD, BYTE *, DWORD * );
-WINCRYPT32API BOOL WINAPI           CryptHashCertificate2( LPCWSTR, DWORD, void *, const BYTE *, DWORD, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptHashMessage( PCRYPT_HASH_MESSAGE_PARA, BOOL, DWORD, const BYTE * [], DWORD [], BYTE *, DWORD *, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptHashPublicKeyInfo( HCRYPTPROV_LEGACY, ALG_ID, DWORD, DWORD, PCERT_PUBLIC_KEY_INFO, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptHashToBeSigned( HCRYPTPROV_LEGACY, DWORD, const BYTE *, DWORD, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptImportPKCS8( CRYPT_PKCS8_IMPORT_PARAMS, DWORD, HCRYPTPROV *, void * );
 WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfo( HCRYPTPROV, DWORD, PCERT_PUBLIC_KEY_INFO, HCRYPTKEY * );
 WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfoEx( HCRYPTPROV, DWORD, PCERT_PUBLIC_KEY_INFO, ALG_ID, DWORD, void *, HCRYPTKEY * );
-WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfoEx2( DWORD, PCERT_PUBLIC_KEY_INFO, DWORD, void *, BCRYPT_KEY_HANDLE * );
 WINCRYPT32API HCRYPTOIDFUNCSET WINAPI   CryptInitOIDFunctionSet( LPCSTR, DWORD );
 WINCRYPT32API BOOL WINAPI           CryptInstallDefaultContext( HCRYPTPROV, DWORD, const void *, DWORD, void *, HCRYPTDEFAULTCONTEXT * );
 WINCRYPT32API BOOL WINAPI           CryptInstallOIDFunctionAddress( HMODULE, DWORD, LPCSTR, DWORD, const CRYPT_OID_FUNC_ENTRY [], DWORD );
@@ -5639,7 +5924,6 @@ WINCRYPT32API BOOL WINAPI           CryptUnprotectMemory( LPVOID, DWORD, DWORD )
 WINCRYPT32API BOOL WINAPI           CryptUnregisterDefaultOIDFunction( DWORD, LPCSTR, LPCWSTR );
 WINCRYPT32API BOOL WINAPI           CryptUnregisterOIDFunction( DWORD, LPCSTR, LPCSTR );
 WINCRYPT32API BOOL WINAPI           CryptUnregisterOIDInfo( PCCRYPT_OID_INFO );
-WINCRYPT32API BOOL WINAPI           CryptUpdateProtectedState( PSID, LPCWSTR, DWORD, DWORD *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptVerifyCertificateSignature( HCRYPTPROV_LEGACY, DWORD, const BYTE *, DWORD, PCERT_PUBLIC_KEY_INFO );
 WINCRYPT32API BOOL WINAPI           CryptVerifyCertificateSignatureEx( HCRYPTPROV_LEGACY, DWORD, DWORD, void *, DWORD, void *, DWORD, void * );
 WINCRYPT32API BOOL WINAPI           CryptVerifyDetachedMessageHash( PCRYPT_HASH_MESSAGE_PARA, BYTE *, DWORD, DWORD, const BYTE * [], DWORD [], BYTE *, DWORD * );
@@ -5652,6 +5936,24 @@ WINCRYPT32API BOOL WINAPI           PFXExportCertStoreEx( HCERTSTORE, CRYPT_DATA
 WINCRYPT32API HCERTSTORE WINAPI     PFXImportCertStore( CRYPT_DATA_BLOB *, LPCWSTR, DWORD );
 WINCRYPT32API BOOL WINAPI           PFXIsPFXBlob( CRYPT_DATA_BLOB * );
 WINCRYPT32API BOOL WINAPI           PFXVerifyPassword( CRYPT_DATA_BLOB *, LPCWSTR, DWORD );
+#if (NTDDI_VERSION >= 0x06000000)
+WINCRYPT32API VOID WINAPI           CertAddRefServerOcspResponse( HCERT_SERVER_OCSP_RESPONSE );
+WINCRYPT32API VOID WINAPI           CertAddRefServerOcspResponseContext( PCCERT_SERVER_OCSP_RESPONSE_CONTEXT );
+WINCRYPT32API VOID WINAPI           CertCloseServerOcspResponse( HCERT_SERVER_OCSP_RESPONSE, DWORD );
+WINCRYPT32API VOID WINAPI           CertFreeServerOcspResponseContext( PCCERT_SERVER_OCSP_RESPONSE_CONTEXT );
+WINCRYPT32API PCCERT_SERVER_OCSP_RESPONSE_CONTEXT WINAPI    CertGetServerOcspResponseContext( HCERT_SERVER_OCSP_RESPONSE, DWORD, LPVOID );
+WINCRYPT32API HCERT_SERVER_OCSP_RESPONSE WINAPI CertOpenServerOcspResponse( PCCERT_CHAIN_CONTEXT, DWORD, LPVOID );
+WINCRYPT32API BOOL WINAPI           CryptHashCertificate2( LPCWSTR, DWORD, void *, const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfoEx2( DWORD, PCERT_PUBLIC_KEY_INFO, DWORD, void *, BCRYPT_KEY_HANDLE * );
+WINCRYPT32API BOOL WINAPI           CryptUpdateProtectedState( PSID, LPCWSTR, DWORD, DWORD *, DWORD * );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+WINCRYPT32API VOID WINAPI           CertFreeCertificateChainList( PCCERT_CHAIN_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertSelectCertificateChains( LPCGUID, DWORD, PCCERT_SELECT_CHAIN_PARA, DWORD, PCCERT_SELECT_CRITERIA, HCERTSTORE, PDWORD, PCCERT_CHAIN_CONTEXT ** );
+WINCRYPT32API BOOL WINAPI           CryptExportPublicKeyInfoFromBCryptKeyHandle( BCRYPT_KEY_HANDLE, DWORD, LPSTR, DWORD, void *, PCERT_PUBLIC_KEY_INFO, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptRetrieveTimeStamp( LPCWSTR, DWORD, DWORD, LPCSTR, const CRYPT_TIMESTAMP_PARA *, const BYTE *, DWORD, PCRYPT_TIMESTAMP_CONTEXT, PCCERT_CONTEXT *, HCERTSTORE * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyTimeStampSignature( const BYTE *, DWORD, const BYTE *, DWORD, HCERTSTORE, PCRYPT_TIMESTAMP_CONTEXT *, PCCERT_CONTEXT *, HCERTSTORE * );
+#endif
 
 /* Functions in CRYPT32.DLL for string/binary conversion */
 WINCRYPT32STRINGAPI BOOL WINAPI CryptBinaryToStringA( CONST BYTE *, DWORD, DWORD, LPSTR, DWORD * );

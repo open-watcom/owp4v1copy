@@ -63,6 +63,7 @@ CertFreeCRLContext@4
 CertFreeCTLContext@4
 CertFreeCertificateChain@4
 CertFreeCertificateChainEngine@4
+CertFreeCertificateChainList@4
 CertFreeCertificateContext@4
 CertFreeServerOcspResponseContext@4
 CertGetCRLContextProperty@16
@@ -98,6 +99,7 @@ CertRemoveStoreFromCollection@8
 CertResyncCertificateChainEngine@4
 CertRetrieveLogoOrBiometricInfo@36
 CertSaveStore@24
+CertSelectCertificateChains@32
 CertSerializeCRLStoreElement@16
 CertSerializeCTLStoreElement@16
 CertSerializeCertificateStoreElement@16
@@ -140,6 +142,7 @@ CryptExportPKCS8@28
 CryptExportPKCS8Ex
 CryptExportPublicKeyInfo@20
 CryptExportPublicKeyInfoEx@32
+CryptExportPublicKeyInfoFromBCryptKeyHandle@28
 CryptFindCertificateKeyProvInfo@12
 CryptFindLocalizedName@4
 CryptFindOIDInfo@12
@@ -189,6 +192,7 @@ CryptQueryObject@44
 CryptRegisterDefaultOIDFunction@16
 CryptRegisterOIDFunction@20
 CryptRegisterOIDInfo@8
+CryptRetrieveTimeStamp@40
 CryptSetAsyncParam@16
 CryptSetKeyIdentifierProperty@24
 CryptSetOIDFunctionValue@28
@@ -213,9 +217,9 @@ CryptVerifyDetachedMessageSignature@32
 CryptVerifyMessageHash@28
 CryptVerifyMessageSignature@28
 CryptVerifyMessageSignatureWithKey@24
+CryptVerifyTimeStampSignature@32
 PFXExportCertStore@16
 PFXExportCertStoreEx@20
 PFXImportCertStore@12
 PFXIsPFXBlob@4
 PFXVerifyPassword@12
-
