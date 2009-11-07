@@ -1,6 +1,7 @@
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==========================================================================================================
-!inject _llseek.obj                                                                             l32
+!inject __lseek.obj                                                                             l32 lpc lmp
+!inject _llseek.obj                                                                             l32 lpc lmp
 !inject access.obj                                                                              l32 lpc lmp
 !inject alarm.obj                                                                               l32 lpc lmp
 !inject chdir.obj                                                                               l32 lpc lmp
@@ -33,7 +34,6 @@
 !inject iopl.obj                                                                                l32
 !inject kill.obj                                                                                l32 lpc lmp
 !inject link.obj                                                                                l32 lpc lmp
-!inject lseek.obj                                                                               l32 lpc lmp
 !inject lstat.obj                                                                               l32 lpc lmp
 !inject lstat64.obj                                                                             l32     lmp
 !inject mkdir.obj                                                                               l32 lpc lmp
