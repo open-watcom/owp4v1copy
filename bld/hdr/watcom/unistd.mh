@@ -214,6 +214,9 @@ _WCRTLINK extern int    execvp( const char *__file, const char *const __argv[] )
 :endsegment
 
 :include ext.sp
+_WCRTLINK extern long long _filelengthi64( int __fildes );
+_WCRTLINK extern long long _lseeki64( int __fildes, long long __offset, int __whence );
+_WCRTLINK extern long long _telli64( int __fildes );
 
 _WCRTLINK extern int    chsize( int __fildes, long __size );
 _WCRTLINK extern int    eof( int __fildes );
