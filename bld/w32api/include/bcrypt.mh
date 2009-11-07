@@ -19,29 +19,47 @@ typedef PVOID   BCRYPT_KEY_HANDLE;
 typedef PVOID   BCRYPT_HASH_HANDLE;
 typedef PVOID   BCRYPT_SECRET_HANDLE;
 
+/* Macro to test for success */
+#define BCRYPT_SUCCESS( x ) (((NTSTATUS)(x)) >= 0L)
+
 /* Packing for structures in this file */
-#define BCRYPT_OBJECT_ALIGNMENT 4
+#define BCRYPT_OBJECT_ALIGNMENT 16
 
 /* KDF types */
-#define BCRYPT_KDF_HASH     L"HASH"
-#define BCRYPT_KDF_HMAC     L"HMAC"
-#define BCRYPT_KDF_TLS_PRF  L"TLS_PRF"
+#define BCRYPT_KDF_HASH             L"HASH"
+#define BCRYPT_KDF_HMAC             L"HMAC"
+#define BCRYPT_KDF_TLS_PRF          L"TLS_PRF"
+#define BCRYPT_KDF_SP80056A_CONCAT  L"SP800_56A_CONCAT"
 
 /* KDF buffer types */
-#define KDF_HASH_ALGORITHM  0x00000000L
-#define KDF_SECRET_PREPEND  0x00000001L
-#define KDF_SECRET_APPEND   0x00000002L
-#define KDF_HMAC_KEY        0x00000003L
-#define KDF_TLS_PRF_LABEL   0x00000004L
-#define KDF_TLS_PRF_SEED    0x00000005L
-#define KDF_SECRET_HANDLE   0x00000006L
+#define KDF_HASH_ALGORITHM      0x00000000L
+#define KDF_SECRET_PREPEND      0x00000001L
+#define KDF_SECRET_APPEND       0x00000002L
+#define KDF_HMAC_KEY            0x00000003L
+#define KDF_TLS_PRF_LABEL       0x00000004L
+#define KDF_TLS_PRF_SEED        0x00000005L
+#define KDF_SECRET_HANDLE       0x00000006L
+#define KDF_TLS_PRF_PROTOCOL    0x00000007L
+#define KDF_ALGORITHMID         0x00000008L
+#define KDF_PARTYUINFO          0x00000009L
+#define KDF_PARTYVINFO          0x0000000AL
+#define KDF_SUPPPUBINFO         0x0000000BL
+#define KDF_SUPPPRIVINFO        0x0000000CL
 
 /* KDF flags */
 #define KDF_USE_SECRET_AS_HMAC_KEY_FLAG 0x00000001L
 
+/* Authenticated cipher mode information version number */
+#define BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO_VERSION   1L
+
+/* Authentication modes */
+#define BCRYPT_AUTH_MODE_CHAIN_CALLS_FLAG   0x00000001L
+#define BCRYPT_AUTH_MODE_IN_PROGRESS_FLAG   0x00000002L
+
 /* String properties */
 #define BCRYPT_OPAQUE_KEY_BLOB          L"OpaqueKeyBlob"
 #define BCRYPT_KEY_DATA_BLOB            L"KeyDataBlob"
+#define BCRYPT_AES_WRAP_KEY_BLOB        L"Rfc3565KeyWrapBlob"
 #define BCRYPT_OBJECT_LENGTH            L"ObjectLength"
 #define BCRYPT_ALGORITHM_NAME           L"AlgorithmName"
 #define BCRYPT_PROVIDER_HANDLE          L"ProviderHandle"
@@ -58,11 +76,16 @@ typedef PVOID   BCRYPT_SECRET_HANDLE;
 #define BCRYPT_PADDING_SCHEMES          L"PaddingSchemes"
 #define BCRYPT_SIGNATURE_LENGTH         L"SignatureLength"
 #define BCRYPT_HASH_BLOCK_LENGTH        L"HashBlockLength"
+#define BCRYPT_AUTH_TAG_LENGTH          L"AuthTagLength"
+#define BCRYPT_PRIMITIVE_TYPE           L"PrimitiveType"
+#define BCRYPT_IS_KEYED_HASH            L"IsKeyedHash"
 #define BCRYPT_INITIALIZATION_VECTOR    L"IV"
 #define BCRYPT_CHAIN_MODE_NA            L"ChainingModeN/A"
 #define BCRYPT_CHAIN_MODE_CBC           L"ChainingModeCBC"
 #define BCRYPT_CHAIN_MODE_ECB           L"ChainingModeECB"
 #define BCRYPT_CHAIN_MODE_CFB           L"ChainingModeCFB"
+#define BCRYPT_CHAIN_MODE_CCM           L"ChainingModeCCM"
+#define BCRYPT_CHAIN_MODE_GCM           L"ChainingModeGCM"
 #define BCRYPT_DH_PARAMETERS            L"DHParameters"
 #define BCRYPT_DSA_PARAMETERS           L"DSAParameters"
 
@@ -102,6 +125,7 @@ typedef PVOID   BCRYPT_SECRET_HANDLE;
 #define BCRYPT_DSA_PRIVATE_BLOB     L"DSAPRIVATEBLOB"
 #define LEGACY_DSA_PUBLIC_BLOB      L"CAPIDSAPUBLICBLOB"
 #define LEGACY_DSA_PRIVATE_BLOB     L"CAPIDSAPRIVATEBLOB"
+#define LEGACY_DSA_V2_PUBLIC_BLOB   L"V2CAPIDSAPUBLICBLOB"
 #define LEGACY_DSA_V2_PRIVATE_BLOB  L"V2CAPIDSAPRIVATEBLOB"
 
 /* Magic numbers for CNG blobs */
@@ -153,6 +177,7 @@ typedef PVOID   BCRYPT_SECRET_HANDLE;
 #define BCRYPT_SHA256_ALGORITHM             L"SHA256"
 #define BCRYPT_SHA384_ALGORITHM             L"SHA384"
 #define BCRYPT_SHA512_ALGORITHM             L"SHA512"
+#define BCRYPT_SHA_GMAC_ALGORITHM           L"AES-GMAC"
 #define BCRYPT_ECDSA_P256_ALGORITHM         L"ECDSA_P256"
 #define BCRYPT_ECDSA_P386_ALGORITHM         L"ECDSA_P384"
 #define BCRYPT_ECDSA_P521_ALGORITHM         L"ECDSA_P521"
@@ -161,6 +186,7 @@ typedef PVOID   BCRYPT_SECRET_HANDLE;
 #define BCRYPT_ECDH_P521_ALGORITHM          L"ECDH_P521"
 #define BCRYPT_RNG_ALGORITHM                L"RNG"
 #define BCRYPT_RNG_FIPS186_DSA_ALGORITHM    L"FIPS128DSARNG"
+#define BCRYPT_RNG_DUAL_EC_ALGORITHM        L"DUALECRNG"
 
 /* Interfaces */
 #define BCRYPT_CIPHER_INTERFACE                 0x00000001L
@@ -190,6 +216,7 @@ typedef PVOID   BCRYPT_SECRET_HANDLE;
 
 /* BCryptGenRandom() flags */
 #define BCRYPT_RNG_USE_ENTROPY_IN_BUFFER    0x00000001L
+#define BCRYPT_USE_SYSTEM_PREFERRED_RNG     0x00000002L
 
 /* CNG image reference flags */
 #define CRYPT_MIN_DEPENDENCIES  0x00000001L
@@ -229,22 +256,19 @@ typedef struct __BCRYPT_KEY_LENGTHS_STRUCT {
     ULONG   dwMaxLength;
     ULONG   dwIncrement;
 } BCRYPT_KEY_LENGTHS_STRUCT;
+typedef BCRYPT_KEY_LENGTHS_STRUCT   BCRYPT_AUTH_TAG_LENGTHS_STRUCT;
 
 /* Object identifier */
-#include <pshpack4.h>
 typedef struct _BCRYPT_OID {
     ULONG   cbOID;
     PUCHAR  pbOID;
 } BCRYPT_OID;
-#include <poppack.h>
 
 /* Object identifier list */
-#include <pshpack4.h>
 typedef struct _BCRYPT_OID_LIST {
     ULONG       dwOIDCount;
     BCRYPT_OID  *pOIDs;
 } BCRYPT_OID_LIST;
-#include <poppack.h>
 
 /* PCKS1 padding information */
 typedef struct _BCRYPT_PKCS1_PADDING_INFO {
@@ -263,6 +287,24 @@ typedef struct _BCRYPT_OAEP_PADDING_INFO {
     PUCHAR  pbLabel;
     ULONG   cbLabel;
 } BCRYPT_OAEP_PADDING_INFO;
+
+/* Authenticated cipher mode information */
+typedef struct _BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO {
+    ULONG       cbSize;
+    ULONG       dwInfoVersion;
+    PUCHAR      pbNonce;
+    ULONG       cbNonce;
+    PUCHAR      pbAuthData;
+    ULONG       cbAuthData;
+    PUCHAR      pbTag;
+    ULONG       cbTag;
+    PUCHAR      pbMacContext;
+    ULONG       cbMacContext;
+    ULONG       cbAAD;
+    ULONGLONG   cbData;
+    ULONG       dwFlags;
+} BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO;
+typedef BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO   *PBCRYPT_AUTHENTICATED_CIPHER_MODE_INFO;
 
 /* CNG buffer */
 typedef struct _BCryptBuffer {
@@ -489,6 +531,8 @@ NTSTATUS WINAPI BCryptCreateHash( BCRYPT_ALG_HANDLE, BCRYPT_HASH_HANDLE *, PUCHA
 NTSTATUS WINAPI BCryptDecrypt( BCRYPT_KEY_HANDLE, PUCHAR, ULONG, VOID *, PUCHAR, ULONG, PUCHAR, ULONG, ULONG *, ULONG );
 NTSTATUS WINAPI BCryptDeleteContext( ULONG, LPCWSTR );
 NTSTATUS WINAPI BCryptDeriveKey( BCRYPT_SECRET_HANDLE, LPCWSTR, BCryptBufferDesc *, PUCHAR, ULONG, ULONG *, ULONG );
+NTSTATUS WINAPI BCryptDeriveKeyCapi( BCRYPT_HASH_HANDLE, BCRYPT_ALG_HANDLE, PUCHAR, ULONG, ULONG );
+NTSTATUS WINAPI BCryptDeriveKeyPBKDF2( BCRYPT_ALG_HANDLE, PUCHAR, ULONG, PUCHAR, ULONG, ULONGLONG, PUCHAR, ULONG, ULONG );
 NTSTATUS WINAPI BCryptDestroyHash( BCRYPT_HASH_HANDLE );
 NTSTATUS WINAPI BCryptDestroyKey( BCRYPT_KEY_HANDLE );
 NTSTATUS WINAPI BCryptDestroySecret( BCRYPT_SECRET_HANDLE );
@@ -527,6 +571,12 @@ NTSTATUS WINAPI BCryptSetProperty( BCRYPT_HANDLE, LPCWSTR, PUCHAR, ULONG, ULONG 
 NTSTATUS WINAPI BCryptSignHash( BCRYPT_KEY_HANDLE, VOID *, PUCHAR, ULONG, PUCHAR, ULONG, ULONG *, ULONG );
 NTSTATUS WINAPI BCryptUnregisterConfigChangeNotify( HANDLE );
 NTSTATUS WINAPI BCryptVerifySignature( BCRYPT_KEY_HANDLE, VOID *, PUCHAR, ULONG, PUCHAR, ULONG, ULONG );
+
+/* Macro to initialize BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO */
+#define BCRYPT_INIT_AUTH_MODE_INFO( x ) \
+    RtlZeroMemory( &(x), sizeof( BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO ) ); \
+    (x).cbSize = sizeof( AUTHENTICATED_CIPHER_MODE_INFO ); \
+    (x).dwInfoVersion = BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO_VERSION;
 
 :include cplusepi.sp
 

@@ -9,6 +9,8 @@ BCryptCreateHash@28
 BCryptDecrypt@40
 BCryptDeleteContext@8
 BCryptDeriveKey@28
+BCryptDeriveKeyCapi@20
+BCryptDeriveKeyPBKDF2@40
 BCryptDestroyHash@4
 BCryptDestroyKey@4
 BCryptDestroySecret@4
@@ -47,4 +49,3 @@ BCryptSetProperty@20
 BCryptSignHash@32
 BCryptUnregisterConfigChangeNotify@4
 BCryptVerifySignature@28
-
