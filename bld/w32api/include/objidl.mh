@@ -621,12 +621,12 @@ DECLARE_INTERFACE_( IMalloc, IUnknown ) {
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
     
     /* IMalloc methods */
-    STDMETHOD_( void *, Alloc)( THIS_ SIZE_T ) PURE;
-    STDMETHOD_( void *, Realloc)( THIS_ void *, SIZE_T ) PURE;
-    STDMETHOD_( void, Free)( THIS_ void * ) PURE;
-    STDMETHOD_( SIZE_T, GetSize)( THIS_ void * ) PURE;
-    STDMETHOD_( int, DidAlloc)( THIS_ void * ) PURE;
-    STDMETHOD_( void, HeapMinimize)( THIS ) PURE;
+    STDMETHOD_( void *, Alloc )( THIS_ SIZE_T ) PURE;
+    STDMETHOD_( void *, Realloc )( THIS_ void *, SIZE_T ) PURE;
+    STDMETHOD_( void, Free )( THIS_ void * ) PURE;
+    STDMETHOD_( SIZE_T, GetSize )( THIS_ void * ) PURE;
+    STDMETHOD_( int, DidAlloc )( THIS_ void * ) PURE;
+    STDMETHOD_( void, HeapMinimize )( THIS ) PURE;
 };
 typedef IMalloc *LPMALLOC;
 
@@ -642,16 +642,16 @@ DECLARE_INTERFACE_( IMallocSpy, IUnknown ) {
     /* IMallocSpy methods */
     STDMETHOD_( SIZE_T, PreAlloc )( THIS_ SIZE_T ) PURE;
     STDMETHOD_( void *, PostAlloc )( THIS_ void * ) PURE;
-    STDMETHOD_( void *, PreFree)( THIS_ void *, BOOL ) PURE;
-    STDMETHOD_( void, PostFree)( THIS_ BOOL ) PURE;
-    STDMETHOD_( SIZE_T, PreRealloc)( THIS_ void *, SIZE_T, void **, BOOL ) PURE;
-    STDMETHOD_( void *, PostRealloc)( THIS_ void *, BOOL ) PURE;
-    STDMETHOD_( void *, PreGetSize)( THIS_ void *, BOOL ) PURE;
-    STDMETHOD_( SIZE_T, PostGetSize)( THIS_ SIZE_T, BOOL ) PURE;
-    STDMETHOD_( void *, PreDidAlloc)( THIS_ void *, BOOL ) PURE;
-    STDMETHOD_( int, PostDidAlloc)( THIS_ void *, BOOL, int ) PURE;
-    STDMETHOD_( void, PreHeapMinimize)( THIS ) PURE;
-    STDMETHOD_( void, PostHeapMinimize)( THIS ) PURE;
+    STDMETHOD_( void *, PreFree )( THIS_ void *, BOOL ) PURE;
+    STDMETHOD_( void, PostFree )( THIS_ BOOL ) PURE;
+    STDMETHOD_( SIZE_T, PreRealloc )( THIS_ void *, SIZE_T, void **, BOOL ) PURE;
+    STDMETHOD_( void *, PostRealloc )( THIS_ void *, BOOL ) PURE;
+    STDMETHOD_( void *, PreGetSize )( THIS_ void *, BOOL ) PURE;
+    STDMETHOD_( SIZE_T, PostGetSize )( THIS_ SIZE_T, BOOL ) PURE;
+    STDMETHOD_( void *, PreDidAlloc )( THIS_ void *, BOOL ) PURE;
+    STDMETHOD_( int, PostDidAlloc )( THIS_ void *, BOOL, int ) PURE;
+    STDMETHOD_( void, PreHeapMinimize )( THIS ) PURE;
+    STDMETHOD_( void, PostHeapMinimize )( THIS ) PURE;
 };
 typedef IMallocSpy  *LPMALLOCSPY;
 
@@ -665,7 +665,7 @@ DECLARE_INTERFACE_( IStdMarshalInfo, IUnknown ) {
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
     
     /* IStdMarshalInfo methods */
-    STDMETHOD( GetClassForHandler)( THIS_ DWORD, void *, CLSID * ) PURE;
+    STDMETHOD( GetClassForHandler )( THIS_ DWORD, void *, CLSID * ) PURE;
 };
 typedef IStdMarshalInfo *LPSTDMARSHALINFO;
 
