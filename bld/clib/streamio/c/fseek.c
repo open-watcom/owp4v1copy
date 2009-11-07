@@ -39,7 +39,11 @@
 #include "flush.h"
 
 
+#ifdef __INT64__
+static int __update_buffer( long long diff, FILE *fp )
+#else
 static int __update_buffer( long diff, FILE *fp )
+#endif
 {
     /*
       diff is relative to fp->_ptr
@@ -68,7 +72,11 @@ static void __reset_buffer( FILE *fp )
 }
 
 
+#ifdef __INT64__
+_WCRTLINK int _fseeki64( FILE *fp, long long offset, int origin )
+#else
 _WCRTLINK int fseek( FILE *fp, long offset, int origin )
+#endif
 {
     _ValidFile( fp, -1 );
     _AccessFile( fp );
@@ -103,7 +111,11 @@ _WCRTLINK int fseek( FILE *fp, long offset, int origin )
             fp->_cnt = 0;
         }
         fp->_flag &= ~(_EOF|_UNGET);
+#ifdef __INT64__
+        if( _lseeki64( fileno( fp ), offset, origin ) == -1 ) {
+#else
         if( lseek( fileno( fp ), offset, origin ) == -1 ) {
+#endif
             _ReleaseFile( fp );
             return( -1 );
         }
@@ -114,11 +126,16 @@ _WCRTLINK int fseek( FILE *fp, long offset, int origin )
         // FILE* buffer
         switch( origin ) {
         case SEEK_CUR:
-        {   long    ptr_delta = fp->_cnt;
+        {
+            long    ptr_delta = fp->_cnt;
 
             if( __update_buffer( offset, fp ) ) {
                 offset -= ptr_delta;
+#ifdef __INT64__
+                if( _lseeki64( fileno( fp ), offset, origin ) == -1 ) {
+#else
                 if( lseek( fileno( fp ), offset, origin ) == -1 ) {
+#endif
                     _ReleaseFile( fp );
                     return( -1 );
                 }
@@ -126,11 +143,20 @@ _WCRTLINK int fseek( FILE *fp, long offset, int origin )
             }
         }   break;
         case SEEK_SET:
-        {   long    file_ptr = tell( fileno( fp ) );
+        {
+#ifdef __INT64__
+            long long   file_ptr = _telli64( fileno( fp ) );
+#else
+            long        file_ptr = tell( fileno( fp ) );
+#endif
 
             file_ptr -= fp->_cnt;
             if( __update_buffer( offset - file_ptr, fp ) ) {
+#ifdef __INT64__
+                if( _lseeki64( fileno( fp ), offset, origin ) == -1 ) {
+#else
                 if( lseek( fileno( fp ), offset, origin ) == -1 ) {
+#endif
                     _ReleaseFile( fp );
                     return( -1 );
                 }
@@ -138,10 +164,12 @@ _WCRTLINK int fseek( FILE *fp, long offset, int origin )
             }
         }   break;
         case SEEK_END:
-            fp->_flag &= ~(_EOF);
-            fp->_ptr = _FP_BASE(fp);
-            fp->_cnt = 0;
+            __reset_buffer(fp);
+#ifdef __INT64__
+            if( _lseeki64( fileno( fp ), offset, origin ) == -1 ) {
+#else
             if( lseek( fileno( fp ), offset, origin ) == -1 ) {
+#endif
                 _ReleaseFile( fp );
                 return( -1 );
             }

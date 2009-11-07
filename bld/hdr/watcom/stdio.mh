@@ -479,6 +479,9 @@ _WCRTLINK extern int      wscanf( const wchar_t *, ... );
 ::
 :: The following is generated into cstdio
 :segment CNAME
+_WCRTLINK extern int           _fseeki64( std::FILE *__fp, long long int __offset, int __whence );
+_WCRTLINK extern long long     _ftelli64( std::FILE *__fp );
+
 _WCRTLINK extern int           flushall( void );
 :segment !SNAPDRV
 :segment !QNX & !LINUX
@@ -544,6 +547,9 @@ _WCRTLINK extern int           putws( const wchar_t * );
 ::
 :: The following is generated into stdio.h
 :elsesegment
+_WCRTLINK extern int           _fseeki64( FILE *__fp, long long int __offset, int __whence );
+_WCRTLINK extern long long     _ftelli64( FILE *__fp );
+
 _WCRTLINK extern int      flushall( void );
 :segment !SNAPDRV
 :segment !QNX & !LINUX
