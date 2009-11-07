@@ -56,8 +56,9 @@ typedef ULONG_PTR   NCRYPT_SECRET_HANDLE;
 #define NCRYPT_SIGNATURE_INTERFACE              BCRYPT_SIGNATURE_INTERFACE
 
 /* Additional interfaces */
-#define NCRYPT_KEY_STORAGE_INTERFACE    0x00010001L
-#define NCRYPT_SCHANNEL_INTERFACE       0x00010002L
+#define NCRYPT_KEY_STORAGE_INTERFACE        0x00010001L
+#define NCRYPT_SCHANNEL_INTERFACE           0x00010002L
+#define NCRYPT_SCHANNEL_SIGNATURE_INTERFACE 0x00010003L
 
 /* Algorithm groups */
 #define NCRYPT_RSA_ALGORITHM_GROUP      NCRYPT_RSA_ALGORITHM
@@ -150,7 +151,11 @@ typedef ULONG_PTR   NCRYPT_SECRET_HANDLE;
 #define NCRYPT_CERTIFICATE_PROPERTY             L"SmartCardKeyCertificate"
 #define NCRYPT_PIN_PROMPT_PROPERTY              L"SmartCardPinPrompt"
 #define NCRYPT_USER_CERTSTORE_PROPERTY          L"SmartCardUserCertStore"
-#define NCRYPT_ROOT_CERTSTORE_PROPERTY          L"SmartCardRootCertStore"
+#define NCRYPT_ROOT_CERTSTORE_PROPERTY          L"SmartcardRootCertStore"
+#define NCRYPT_SECURE_PIN_PROPERTY              L"SmartCardSecurePin"
+#define NCRYPT_ASSOCIATED_ECDH_KEY              L"SmartCardAssociatedECDHKey"
+#define NCRYPT_SCARD_PIN_ID                     L"SmartCardPinId"
+#define NCRYPT_SCARD_PIN_INFO                   L"SmartCardPinInfo"
 
 /* Property name maximum length */
 #define NCRYPT_MAX_PROPERTY_NAME    64
@@ -197,6 +202,7 @@ typedef ULONG_PTR   NCRYPT_SECRET_HANDLE;
 /* Flags for various functions */
 #define NCRYPT_MACHINE_KEY_FLAG     0x00000020L
 #define NCRYPT_DO_NOT_FINALIZE_FLAG 0x00000400L
+#define NCRYPT_EXPORT_LEGACY_FLAG   0x00000800L
 
 /* NCryptNotifyChangeKey() flags */
 #define NCRYPT_REGISTER_NOTIFY_FLAG     0x00000001L
