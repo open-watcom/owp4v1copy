@@ -66,15 +66,23 @@ typedef struct _EFS_PIN_BLOB {
 typedef EFS_PIN_BLOB    *PEFS_PIN_BLOB;
 #endif
 
-/* EFS key blob */
+/* EFS key information */
 #if (NTDDI_VERSION >= 0x05010000)
-typedef struct _EFS_KEY_BLOB {
+typedef struct _EFS_KEY_INFO {
     DWORD   dwVersion;
     ULONG   Entropy;
     ALG_ID  Algorithm;
     ULONG   KeyLength;
 } EFS_KEY_INFO;
 typedef EFS_KEY_INFO    *PEFS_KEY_INFO;
+#endif
+
+/* EFS compatibility information */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct _EFS_COMPATIBILITY_INFO {
+    DWORD   EfsVersion;
+} EFS_COMPATIBILITY_INFO;
+typedef EFS_COMPATIBILITY_INFO  *PEFS_COMPATIBILITY_INFO;
 #endif
 
 /* EFS decryption status information */
