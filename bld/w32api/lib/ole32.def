@@ -24,6 +24,7 @@ CoFreeAllLibraries@0
 CoFreeLibrary@4
 CoFreeUnusedLibraries@0
 CoFreeUnusedLibrariesEx@8
+CoGetApartmentType@8
 CoGetCallContext@8
 CoGetCallerTID@4
 CoGetCancelObject@12
@@ -201,4 +202,3 @@ StringFromIID@8
 WriteClassStg@8
 WriteClassStm@8
 WriteFmtUserTypeStg@12
-

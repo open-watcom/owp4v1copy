@@ -328,6 +328,9 @@ WINOLEAPI               CoRevokeInitializeSpy( ULARGE_INTEGER );
 #if (_WIN32_WINNT >= 0x0600)
 WINOLEAPI               CoDisconnectContext( DWORD );
 #endif
+#if (_WIN32_WINNT >= 0x0601)
+WINOLEAPI               CoGetApartmentType( APTTYPE *, APTTYPEQUALIFIER * );
+#endif
 
 /* Functions in DFLAYOUT.DLL */
 WINOLEAPI   StgOpenLayoutDocfile( OLECHAR const *, DWORD, DWORD, IStorage ** );
