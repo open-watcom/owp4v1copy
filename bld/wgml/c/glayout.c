@@ -97,7 +97,6 @@ void    gml_layout( const gmltag * entry )
             return;
         }
         ProcFlags.layout = true;
-        out_msg(" Dummy :LAYOUT processing\n\n" );  // TBD
         return;
     } else {
         err_count++;
@@ -131,7 +130,6 @@ void    lay_elayout( const gmltag * entry )
             file_mac_info();
             return;
         } else {
-            out_msg(" Dummy :eLAYOUT processing\n\n" );   // TBD
 
             // What to do with layout at pass end next pass start???       TBD
 //          memcpy_s( &layout_save, sizeof( layout_save),

@@ -165,7 +165,6 @@ void    lay_fn( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_fn ) {
         ProcFlags.lay_xxx = el_fn;
-        out_msg( ":FN nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
     while( cc == pos ) {
@@ -246,7 +245,6 @@ void    lay_fnref( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_fnref ) {
         ProcFlags.lay_xxx = el_fnref;
-        out_msg( ":FN nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

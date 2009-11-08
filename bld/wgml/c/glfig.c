@@ -132,7 +132,6 @@ void    lay_fig( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_fig ) {
         ProcFlags.lay_xxx = el_fig;
-        out_msg( ":FIG nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
     while( cc == pos ) {

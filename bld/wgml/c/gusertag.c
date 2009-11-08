@@ -185,7 +185,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     char            longwork[20];
     bool            tag_end_found = false;
 
-    processed = false;
+    processed = true;
     init_dict( &loc_dict );
 
     add_defaults_to_dict( ge, &loc_dict );
@@ -194,7 +194,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     /*  scan input for attributes and / or tagtext                         */
     /***********************************************************************/
 
-    p = tok_start + ge->namelen + 1;        // over tagname
+    p = tok_start + ge->namelen + 1;    // over tagname
 
     while( *p == ' ' ) {            // not yet end of tag, process attributes
 
@@ -258,13 +258,13 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                         }
                     }
                 }
-
                 break;
             }
         }
         if( ga == NULL ) {              // attribute not found
             char        linestr[MAX_L_AS_STR];
 
+            processed = false;
             wng_count++;
             //***WARNING*** SC--040: 'abd' is not a valid attribute name
             g_warn( wng_att_name, token_buf );
@@ -291,10 +291,8 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                 *p = '\0';
             }
         } else {
-            processed = true;
             tag_end_found = true;
         }
-
     }
 
     /***********************************************************************/
@@ -318,11 +316,12 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         char        linestr[MAX_L_AS_STR];
 
         // the errmsg in wgml 4.0 is wrong, it shows the macroname, not tag.
-//****ERROR**** SC--047: For the tag '@willi', the required attribute(s)
+// ****ERROR**** SC--047: For the tag '@willi', the required attribute(s)
 //                       'muss2'
 //                       'muss'
 //                       have not been specified
 
+        processed = false;
         err_count++;
         g_err( err_att_req, ge->name, token_buf );
         if( input_cbs->fmflags & II_macro ) {
@@ -335,23 +334,24 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         show_include_stack();
     }
 
-    if( *p == '.' ) {               // does text follow tag end
+    if( *p == '.' ) {                   // does text follow tag end
         if( strlen( p + 1 ) > 0 ) {
             if( ge->tagflags & tag_texterr ) { // no text allowed
                 tag_text_err( ge->name );
+                processed = false;
             }
         } else {
             if( ge->tagflags & tag_textreq ) {  // reqrd text missing
                 tag_text_req_err( ge->name );
+                processed = false;
             }
         }
         strcpy( token_buf, p + 1 );
         rc = add_symvar( &loc_dict, "_", token_buf, no_subscript, local_var );
         p += strlen( token_buf );
-        processed = true;
     }
 
-    scan_start = p + 1;         // all processed
+    scan_start = p + 1;                 // all processed
     /***********************************************************************/
     /*  add standard symbols to dict                                       */
     /***********************************************************************/
@@ -372,7 +372,4 @@ bool        process_tag( gtentry * ge, mac_entry * me )
 
     return( processed );
 }
-
-
-
 

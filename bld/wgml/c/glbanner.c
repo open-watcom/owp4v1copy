@@ -37,8 +37,8 @@
 #include "gvars.h"
 
 
-        banner_lay_tag  *   curr_ban;   // also needed for glbanreg.c
-        banner_lay_tag  *   del_ban;    // ... banner to be deleted
+    banner_lay_tag  *   curr_ban;       // also needed for glbanreg.c
+    banner_lay_tag  *   del_ban;        // ... banner to be deleted
 
 
 /***************************************************************************/
@@ -55,6 +55,7 @@ static  banner_lay_tag  wk;          // for temp storage of banner attributes
 static  bf_place        refplace;
 static  ban_docsect     refdoc;
 static  bool            banner_end_prepared = false;
+static  bool            banner_delete_req   = false;
 
 static  banner_lay_tag  *   prev_ban;
 static  banner_lay_tag  *   ref_ban;    // referenced banner for copy values
@@ -196,6 +197,7 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     }
     sum_count = 0;
     banner_end_prepared = false;
+    banner_delete_req   = false;
 }
 
 
@@ -224,8 +226,6 @@ void    lay_banner( const gmltag * entry )
         ProcFlags.lay_xxx = el_banner;
         ProcFlags.banner = true;
         init_banner_wk( &wk );
-
-        out_msg( ":BANNER nearly dummy\n" );
     } else {
         if( !strnicmp( ":banner", buff2, sizeof( ":banner" ) ) ) {
             err_count++;
@@ -298,7 +298,7 @@ void    lay_banner( const gmltag * entry )
 }
 
 /***************************************************************************/
-/*  banner end processing (different from eBANNER)                         */
+/*  banner end processing (different from :eBANNER processing)             */
 /*  triggered by next tag following :BANNER tag                            */
 /***************************************************************************/
 void    lay_banner_end_prepare( void )
@@ -371,15 +371,16 @@ void    lay_banner_end_prepare( void )
 
         while( banwk != NULL ) {
             if( (banwk->place == wk.place) && (banwk->docsect == wk.docsect) ) {
-                del_ban = banwk;        // banner to delete found
+                del_ban = banwk;        // found banner to delete
                 break;
             } else {
                 prev_ban = banwk;
                 banwk = banwk->next;
             }
         }
+        banner_delete_req = true;     // remember delete request
     }
-    if( del_ban == NULL  ) {            // no delete request
+    if( !banner_delete_req ) {          // no delete request
         if( (ref_ban == NULL && sum_count != 5) ||  // not all atts specified
             (ref_ban != NULL && (wk.place == no_place || wk.docsect == no_ban)) ) {
             err_count++;
@@ -407,11 +408,9 @@ void    lay_ebanner( const gmltag * entry )
     if( ProcFlags.banner ) {            // are we inside banner
         ProcFlags.banner = false;
 
-        out_msg( ":%s nearly dummy\n", entry->tagname );
-
         lay_banner_end_prepare();       // if not yet done
-        if( del_ban != NULL ) {         // delete request
-            if( del_ban->region == NULL ) { // no banregions, delete banner
+        if( banner_delete_req ) {       // delete request
+            if( (del_ban != NULL) && (del_ban->region == NULL) ) {
                 if( prev_ban != NULL ) {
                     prev_ban->next = del_ban->next;
                 } else {
@@ -430,11 +429,15 @@ void    lay_ebanner( const gmltag * entry )
 /*  If it really matters, more research has to be done                     */
 /***************************************************************************/
 #if 1
-            curr_ban = layout_work.banner;
-            while( curr_ban->next != NULL ) {   // add at end of chain
-                curr_ban = curr_ban->next;
+            if( layout_work.banner == NULL ) {
+                layout_work.banner = banwk;
+            } else {
+                curr_ban = layout_work.banner;
+                while( curr_ban->next != NULL ) {   // add at end of chain
+                    curr_ban = curr_ban->next;
+                }
+                curr_ban->next = banwk;
             }
-            curr_ban->next = banwk;
 #else
             banwk->next = layout_work.banner;   // add as first element
             layout_work.banner = banwk;

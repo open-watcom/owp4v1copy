@@ -73,7 +73,6 @@ void    lay_widow( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_widow ) {
         ProcFlags.lay_xxx = el_widow;
-        out_msg( ":WIDOW nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
     while( cc == pos ) {

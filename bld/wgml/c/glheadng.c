@@ -102,7 +102,6 @@ void    lay_heading( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_heading ) {
         ProcFlags.lay_xxx = el_heading;
-        out_msg( ":HEADING nearly dummy\n" );
     }
 
     cc = get_lay_sub_and_value( &l_args );  // get att with value

@@ -66,7 +66,6 @@ void    lay_titlep( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_titlep ) {
         ProcFlags.lay_xxx = el_titlep;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

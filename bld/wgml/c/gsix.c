@@ -30,7 +30,7 @@
 *                               s1 s2 s3
 *                               . dump   (experimental)
 *
-*               not implemented s1 s2 . ref
+*         not implemented are   s1 s2 . ref
 *                               . purge
 *
 *  comments are from script-tso.txt
@@ -141,7 +141,7 @@
 /**************************************************************************/
 
 /***************************************************************************/
-/*  helper functions for .ix .dump processing (experimental)               */
+/*  helper functions for .ix .dump processing (experimental)         TBD   */
 /***************************************************************************/
 
 static void ix_out_sp( int spaces )
@@ -338,7 +338,7 @@ void    scr_ix( void )
     cc = getarg();
     if( cc != omit ) {
         parm_extra_err( cwcurr, tok_start - (cc == quotes) );
-//      return;                         // no return ignore excess data
+//      return;                         // no return ignore excess data TBD
     }
 
     if( lvl > 0 ) {                     // we have at least one index string
@@ -462,7 +462,5 @@ void    free_index_dict( ix_h_blk * * dict )
         ixh = ixhw;
     }
     *dict = NULL;                       // dict is now empty
-
 }
-
 

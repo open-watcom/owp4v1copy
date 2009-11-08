@@ -90,7 +90,6 @@ void    lay_figdesc( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_figdesc ) {
         ProcFlags.lay_xxx = el_figdesc;
-        out_msg( ":FIGDESC nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

@@ -16,6 +16,7 @@ common_objs =  &
         gmacdict.obj &
         gmemory.obj  &
         goptions.obj &
+        gpagegeo.obj &
         gprocess.obj &
         gproctxt.obj &
         gresrch.obj  &
@@ -24,7 +25,7 @@ common_objs =  &
         gsyssym.obj  &
         gutil.obj    &
         wgmlmsg.obj
- 
+
 #
 # output device related
 #
@@ -38,14 +39,25 @@ dev_objs =  &
         cophdr.obj   &
         devfuncs.obj &
         outbuff.obj
- 
+
 #
 # gml tag related
 #
 gml_objs =  &
+        gbanner.obj  &
         gcmt.obj     &
         gdocsect.obj &
+        ghpx.obj     &
         ginclude.obj &
+        gppc.obj     &
+        gset.obj     &
+        gtagdict.obj &
+        gusertag.obj
+
+#
+# layout tag scanning related
+#
+lay_objs =  &
         glabsprf.obj &
         gladdres.obj &
         glappndx.obj &
@@ -85,11 +97,8 @@ gml_objs =  &
         glwidow.obj  &
         glxl.obj     &
         glxmp.obj    &
-        glxxfont.obj &
-        gset.obj     &
-        gtagdict.obj &
-        gusertag.obj
- 
+        glxxfont.obj
+
 #
 # script control word or function related
 #
@@ -98,6 +107,7 @@ scr_objs =  &
         gscofoju.obj &
         gsdccw.obj   &
         gsetvar.obj  &
+        gsfc2d.obj   &
         gsfd2c.obj   &
         gsfdelst.obj &
         gsfindex.obj &
@@ -127,7 +137,7 @@ scr_objs =  &
         gspu.obj     &
         gstitr.obj   &
         gsty.obj
- 
-objs = $(common_objs) $(scr_objs) $(gml_objs) $(dev_objs)
- 
- 
+
+objs = $(common_objs) $(scr_objs) $(gml_objs) $(lay_objs) $(dev_objs)
+
+

@@ -106,7 +106,9 @@ typedef enum ban_docsect {
 /***************************************************************************/
 /*  definitions for frame   :FIG tag and others                            */
 /***************************************************************************/
-
+#define xx_str      char
+#define str_size    60                  // max string length in layout
+                                        // no value found in documentation
 typedef enum def_frame_type {
     none,
     box_frame,
@@ -116,13 +118,12 @@ typedef enum def_frame_type {
 
 typedef struct def_frame {
     def_frame_type      type;
-    char                string[60];
+    xx_str              string[str_size];
 } def_frame;
 
 /***************************************************************************/
 /*  definition for note_string for :NOTE tag and others                    */
 /***************************************************************************/
-#define xx_str      char
 
 /***************************************************************************/
 /*  definitions for :Hx tag number form and page position                  */
@@ -293,8 +294,6 @@ typedef struct xmp_lay_tag {
 /***************************************************************************/
 /*  :NOTE     Layout tag data                                              */
 /***************************************************************************/
-#define str_size   40                   // no value shown in documentation
-
 typedef struct note_lay_tag {
     su              left_indent;        // horizontal space unit
     su              right_indent;       // horizontal space unit
@@ -773,6 +772,11 @@ typedef struct content {
     xx_str          string[str_size];
 } content;
 
+typedef struct script_ban_reg {         // for script format region
+    size_t          len;                // preprocessed content
+    char        *   string;
+} script_ban_reg;
+
 /***************************************************************************/
 /*  :BANREGION      Layout tag data                                        */
 /***************************************************************************/
@@ -790,6 +794,7 @@ typedef struct region_lay_tag {
     reg_pour        pouring;            // special enum
     bool            script_format;      // yes no -> bool
     content         contents;           // what is in the region
+    script_ban_reg  script_region[3];   // speed up processing if script_format
 } region_lay_tag;
 
 /***************************************************************************/
@@ -804,8 +809,8 @@ typedef struct banner_lay_tag {
     su              depth;              // vertical space unit
     bf_place        place;              // special enum
     ban_docsect     docsect;            // special enum
-//  bf_place        refplace;           // special enum
-//  ban_docsect     refdoc;             // special enum
+//  bf_place        refplace;           // special enum no need to store
+//  ban_docsect     refdoc;             // special enum no need to store
 } banner_lay_tag;
 
 

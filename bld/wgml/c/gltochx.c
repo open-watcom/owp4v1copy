@@ -159,7 +159,6 @@ void    lay_tochx( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != hx_l ) {
         ProcFlags.lay_xxx = hx_l;
-        out_msg( ":TOCH%c nearly dummy\n", entry->tagname[1] );
     }
 
     hx_l = entry->tagname[4] - '0';     // construct TOCHx level

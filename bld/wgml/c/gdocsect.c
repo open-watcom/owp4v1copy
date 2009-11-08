@@ -38,20 +38,23 @@
 /***************************************************************************/
 static  void    g_err_doc_sect( doc_section  ds )
 {
-    static  char const  sect[12][9] = {
-                                        "NONE",
-                                        "GDOC",
-                                        "FRONTM",
-                                        "TITLEP",
-                                        "ABSTRACT",
-                                        "PREFACE",
-                                        "TOC",
-                                        "FIGLIST",
-                                        "BODY",
-                                        "APPENDIX",
-                                        "BACKM",
-                                        "INDEX"
-                                     };
+    static  char const  sect[14][9] =
+        {                               // same sequence as doc_section enum
+            "NONE",
+            "GDOC",
+            "FRONTM",
+            "TITLEP",
+            "eTITLEP",
+            "ABSTRACT",
+            "PREFACE",
+            "TOC",
+            "FIGLIST",
+            "BODY",
+            "APPENDIX",
+            "BACKM",
+            "INDEX",
+            "eGDOC"
+        };
 
     err_count++;
     scan_err = true;
@@ -59,21 +62,185 @@ static  void    g_err_doc_sect( doc_section  ds )
     file_mac_info();
 }
 
+
 /***************************************************************************/
-/*  general routine to process document section tags mostly dummy     TBD  */
+/*  set banner pointers for specified doc section                          */
 /***************************************************************************/
-static  void    gml_doc_xxx( doc_section  ds )
+void set_section_banners( doc_section ds )
 {
-    char        *   p;
+    banner_lay_tag  * ban;
 
-    scan_err = false;
+    /***********************************************************************/
+    /*  transform doc_section enum into ban_doc_sect enum                  */
+    /***********************************************************************/
+    static const ban_docsect sect_2_bansect[doc_sect_egdoc + 1] = {
 
-    p = scan_start;
-    if( ProcFlags.doc_sect >= ds ) {
+        no_ban,                         // doc_sect_none,
+        no_ban,                         // doc_sect_gdoc,
+        no_ban,                         // doc_sect_frontm,
+        no_ban,                         // doc_sect_titlep,
+        no_ban,                         // doc_sect_etitlep,
+        abstract_ban,                   // doc_sect_abstract,
+        preface_ban,                    // doc_sect_preface,
+        toc_ban,                        // doc_sect_toc,
+        figlist_ban,                    // doc_sect_figlist,
+        body_ban,                       // doc_sect_body,
+        appendix_ban,                   // doc_sect_appendix,
+        backm_ban,                      // doc_sect_backm,
+        index_ban,                      // doc_sect_index,
+        no_ban                          // doc_sect_egdoc
+    };
+
+/* not yet coded banner place values               TBD
+               not all are document section related
+    head0_ban,
+    head1_ban,
+    head2_ban,
+    head3_ban,
+    head4_ban,
+    head5_ban,
+    head6_ban,
+    letfirst_ban,
+    letlast_ban,
+    letter_ban,
+    max_ban
+} ban_docsect;
+****************/
+
+    sect_ban_top[0] = sect_ban_top[1] = NULL;
+    sect_ban_bot[0] = sect_ban_bot[1] = NULL;
+
+    ban = layout_work.banner;
+    while( ban != NULL ) {              // for all banners
+        if( ban->docsect == sect_2_bansect[ds] ) {  // if our doc section
+            switch( ban->place ) {
+            case   top_place :
+                sect_ban_top[0] = ban;
+                /* fallthru*/
+            case   topodd_place :
+                sect_ban_top[1] = ban;
+                break;
+
+            case   bottom_place :
+                sect_ban_bot[0] = ban;
+                /* fallthru*/
+            case   botodd_place :
+                sect_ban_bot[1] = ban;
+                break;
+
+            case   topeven_place :
+                sect_ban_top[0] = ban;
+                break;
+            case   boteven_place :
+                sect_ban_bot[0] = ban;
+                break;
+            default:
+                break;
+            }
+        }
+        ban = ban->next;
+    }
+}
+
+
+/***************************************************************************/
+/*    finish page processing                                               */
+/***************************************************************************/
+
+void    finish_page( void )
+{
+    if( ProcFlags.output_started ) {    // any output?
+        if( t_line.first != NULL ) {    // incomplete line
+            process_line_full( &t_line, false );
+        }
+        out_ban_bot( sect_ban_bot[page & 1] );  // possible bottom banner
+        ProcFlags.output_started = false;
+    }
+}
+
+
+/***************************************************************************/
+/*    incomplete:only for :BODY                                       TBD  */
+/***************************************************************************/
+
+void    prepare_doc_sect( doc_section ds )
+{
+    int         ind;
+    uint32_t    v_start;
+    uint32_t    h_start;
+
+    if( ds != doc_sect_body ) {
+        out_msg( "prepare_doc_sect incomplete\n" );
+        return;
+    }
+
+    if( layout_work.body.page_reset  ) {
+        page = 1;
+    }
+#if 0
+    if( page & 1 ) {
+        ind = 0;
+    } else {
+        ind = 1;
+    }
+#else
+    ind = page & 1;
+#endif
+    h_start = g_page_left_org;
+    if( sect_ban_top[ind] != NULL ) {
+        v_start = ban_top_pos( sect_ban_top[ind] );
+
+    } else {
+        v_start = g_page_top;
+    }
+
+    if( GlobalFlags.lastpass ) {
+        if( ProcFlags.fb_position_done ) {
+            fb_new_section( v_start );
+        } else {
+            fb_position( h_start, v_start );
+            ProcFlags.fb_position_done = true;
+        }
+    }
+    g_cur_v_start = v_start;
+    g_cur_h_start = h_start;
+    out_ban_top( sect_ban_top[ind] );
+
+    if( sect_ban_bot[ind] != NULL ) {
+        if( bin_driver->y_positive == 0 ) {
+            g_page_bottom = bin_device->y_start - g_page_depth
+                            + conv_vert_unit( &sect_ban_bot[ind]->depth );
+//                    + wgml_fonts[sect_ban_bot[ind]->region->font].line_height;
+        } else {
+            g_page_bottom = g_page_bottom_org
+                            - conv_vert_unit( &sect_ban_bot[ind]->depth );
+        }
+    } else {
+        g_page_bottom = g_page_bottom_org;
+    }
+
+}
+
+
+
+/***************************************************************************/
+/*          routine to process document section change               TBD   */
+/***************************************************************************/
+static  void    gml_doc_xxx( doc_section ds )
+{
+    bool    eject = true;               // TBD
+
+    if( ProcFlags.doc_sect >= ds ) {    // wrong sequence of sections
         g_err_doc_sect( ds );
     } else {
+        if( eject && ProcFlags.output_started ) {// finish previous section
+            finish_page();
+        }
         ProcFlags.doc_sect = ds;
     }
+
+    set_section_banners( ds );
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -82,7 +249,7 @@ static  void    gml_doc_xxx( doc_section  ds )
 /***************************************************************************/
 /*  Document section tags                                                  */
 /*                                                                         */
-/*  :GDOC                 only one with attributes                         */
+/*  :GDOC                 the only one with attributes                     */
 /*  :FRONTM    optional                                                    */
 /*  :TITLEP    optional                                                    */
 /*  :ETITLEP   optional                                                    */
@@ -96,6 +263,7 @@ static  void    gml_doc_xxx( doc_section  ds )
 /*  :INDEX     optional                                                    */
 /*  :EGDOC     optional                                                    */
 /***************************************************************************/
+
 extern  void    gml_abstract( const gmltag * entry )
 {
     gml_doc_xxx( doc_sect_abstract );
@@ -103,7 +271,36 @@ extern  void    gml_abstract( const gmltag * entry )
 
 extern  void    gml_appendix( const gmltag * entry )
 {
+    int         ind;
+    uint32_t    v_start;
+    uint32_t    h_start;
+
     gml_doc_xxx( doc_sect_appendix );
+
+    if( page & 1 ) {
+        ind = 0;
+    } else {
+        ind = 1;
+    }
+    h_start = g_page_left_org;
+    if( sect_ban_top[ind] != NULL ) {
+        v_start = ban_top_pos( sect_ban_top[ind] );
+
+    } else {
+        v_start = g_page_top;
+    }
+
+    if( GlobalFlags.lastpass ) {
+        if( ProcFlags.fb_position_done ) {
+            fb_new_section( v_start );
+        } else {
+            fb_position( h_start, v_start );
+            ProcFlags.fb_position_done = true;
+        }
+    }
+    g_cur_v_start = v_start;
+    g_cur_h_start = h_start;
+    out_ban_top( sect_ban_top[ind] );
 }
 
 extern  void    gml_backm( const gmltag * entry )
@@ -113,7 +310,14 @@ extern  void    gml_backm( const gmltag * entry )
 
 extern  void    gml_body( const gmltag * entry )
 {
+
     gml_doc_xxx( doc_sect_body );
+
+    prepare_doc_sect( doc_sect_body );
+    ProcFlags.just_override = true;     // justify for first line ?? TBD
+    g_cur_h_start = g_page_left
+                    + conv_hor_unit( &layout_work.p.line_indent );
+//  ProcFlags.para_line1 = true;        // simulate :P start  ?? TBD
 }
 
 extern  void    gml_figlist( const gmltag * entry )
@@ -156,26 +360,55 @@ extern  void    gml_egdoc( const gmltag * entry )
     gml_doc_xxx( doc_sect_egdoc );
 }
 
+/***************************************************************************/
+/*  :gdoc sec='TOP secret, destroy before reading'                         */
+/***************************************************************************/
+
 extern  void    gml_gdoc( const gmltag * entry )
 {
     char        *   p;
 
     scan_err = false;
     p = scan_start;
-    p++;
+    if( *p ) p++;
 
     while( *p == ' ' ) {                // over WS to attribute
         p++;
     }
-    if( !strnicmp( "sec", p, 3 ) ) {
+    if( *p &&
+        ! (strnicmp( "sec ", p, 4 ) &&  // look for "sec " or "sec="
+           strnicmp( "sec=", p, 4 )) ) {
+        char        quote;
+        char    *   valstart;
 
-        out_msg( "sec attribute not implemented\n" );
-        wng_count++;
-        file_mac_info();
+        p += 3;
+        while( *p == ' ' ) {
+            p++;
+        }
+        if( *p == '=' ) {
+            p++;
+            while( *p == ' ' ) {
+                p++;
+            }
+        }
+        if( *p == '"' || *p == '\'' ) {
+            quote = *p;
+            ++p;
+        } else {
+            quote = ' ';
+        }
+        valstart = p;
+        while( *p && *p != quote ) {
+            ++p;
+        }
+        *p = '\0';
+
+        add_symvar( &global_dict, "$sec", valstart, no_subscript, 0 );
+    } else {
+        add_symvar( &global_dict, "$sec", "", no_subscript, 0 );// set nullstring
     }
 
     gml_doc_xxx( doc_sect_gdoc );
-    scan_start = scan_stop + 1;
     return;
 }
 

@@ -87,7 +87,6 @@ void    lay_dd( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_dd ) {
         ProcFlags.lay_xxx = el_dd;
-        out_msg( ":DD nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

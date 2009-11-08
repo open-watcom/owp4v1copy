@@ -191,7 +191,6 @@ typedef struct symvar {
 
 typedef enum {
     FF_clear        = 0x0000,           // clear all flags
-    FF_startofline  = 0x0001,           // at start of physical line
     FF_eof          = 0x0002,           // eof
     FF_err          = 0x0004,           // file error
     FF_crlf         = 0x0008,           // delete trailing CR and / or LF
@@ -235,7 +234,7 @@ typedef struct mac_entry {
 
 
 /***************************************************************************/
-/*  entry for an included file                                             */
+/*  entry for an (included) input file                                     */
 /***************************************************************************/
 
 typedef struct filecb {
@@ -258,7 +257,6 @@ typedef struct mac_parms {
     char        *   star;               // &*  complete parmline
     int             star0;              // &*0 parmcount
     inp_line    *   starx;              // &*1 - &*x parms
-
 } mac_parms;
 
 
@@ -321,7 +319,9 @@ typedef enum {
     II_tag      = 0x06,                 // inputcb is macro via tag
     II_input    = II_file | II_macro | II_tag, // all input types
     II_research = 0x08,                 // research mode (for file only)
-    II_eof      = 0x10                  // end of file (input)
+    II_eof      = 0x10,                 // end of file (input)
+    II_sol      = 0x20,                 // start of line
+    II_eol      = 0x40                  // end of line (last part)
 } i_flags;
 
 /***************************************************************************/
@@ -607,7 +607,7 @@ typedef struct ix_h_blk {               // header with index text
 
 
 /***************************************************************************/
-/* enum for document sections                                              */
+/* enum for document sections  sequence is important, don't change         */
 /***************************************************************************/
 
 typedef enum doc_section {
@@ -624,8 +624,107 @@ typedef enum doc_section {
     doc_sect_appendix,                  // appendix
     doc_sect_backm,                     // back matter
     doc_sect_index,                     // index
-    doc_sect_egdoc                      // egdoc
+    doc_sect_egdoc                      // egdoc  has to be last
 } doc_section;
 
+/***************************************************************************/
+/* enum for justify values                                                 */
+/***************************************************************************/
+typedef enum ju_enum {                  // for .ju(stify)
+    ju_off,                             // ju_off must have lowest value
+    ju_on,                              // ju_on next
+    ju_half,
+    ju_left,
+    ju_right,
+    ju_centre,
+    ju_center = ju_centre,
+    ju_inside,
+    ju_outside
+} ju_enum;
+
+/***************************************************************************/
+/*  enums for layout tags with attributes  (and ebanregion)                */
+/*  the order is as shown by :convert output                               */
+/***************************************************************************/
+
+typedef enum lay_sub {
+    el_zero     = 0,                    // dummy to make 0 invalid
+    el_page     = 1,
+    el_default,
+    el_widow,
+    el_fn,
+    el_fnref,
+    el_p,
+    el_pc,
+    el_fig,
+    el_xmp,
+    el_note,
+    el_h0,
+    el_h1,
+    el_h2,
+    el_h3,
+    el_h4,
+    el_h5,
+    el_h6,
+    el_heading,
+    el_lq,
+    el_dt,
+    el_gt,
+    el_dthd,
+    el_cit,
+    el_figcap,
+    el_figdesc,
+    el_dd,
+    el_gd,
+    el_ddhd,
+    el_abstract,
+    el_preface,
+    el_body,
+    el_backm,
+    el_lp,
+    el_index,
+    el_ixpgnum,
+    el_ixmajor,
+    el_ixhead,
+    el_i1,
+    el_i2,
+    el_i3,
+    el_toc,
+    el_tocpgnum,
+    el_toch0,
+    el_toch1,
+    el_toch2,
+    el_toch3,
+    el_toch4,
+    el_toch5,
+    el_toch6,
+    el_figlist,
+    el_flpgnum,
+    el_titlep,
+    el_title,
+    el_docnum,
+    el_date,
+    el_author,
+    el_address,
+    el_aline,
+    el_from,
+    el_to,
+    el_attn,
+    el_subject,
+    el_letdate,
+    el_open,
+    el_close,
+    el_eclose,
+    el_distrib,
+    el_appendix,
+    el_sl,
+    el_ol,
+    el_ul,
+    el_dl,
+    el_gl,
+    el_banner,
+    el_banregion,
+    el_ebanregion
+} lay_sub;
 
 #endif                                  // GTYPE_H_INCLUDED

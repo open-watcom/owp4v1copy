@@ -108,7 +108,6 @@ void    lay_toc( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_toc ) {
         ProcFlags.lay_xxx = el_toc;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
 
 

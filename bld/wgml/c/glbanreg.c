@@ -288,7 +288,6 @@ void    lay_banregion( const gmltag * entry )
 
         init_banregion_wk( &wk );
 
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     } else {
         if( !strnicmp( ":banregion", buff2, sizeof( ":banregion" ) ) ) {
             err_count++;
@@ -416,8 +415,6 @@ void    lay_ebanregion( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx == el_banregion ) {   // :banregion was last tag
         ProcFlags.lay_xxx = el_ebanregion;
-
-        out_msg( ":%s nearly dummy\n", entry->tagname );
 
         prev_reg = NULL;
         reg_ban = NULL;

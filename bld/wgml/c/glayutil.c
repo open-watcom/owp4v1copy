@@ -51,75 +51,77 @@ static char  const      strno[]  =  { "no" };
 typedef struct  ban_sections {
     ban_docsect     type;
     char            name[12];
+    size_t          len;
 } ban_sections;
 
 static  const   ban_sections    doc_sections[max_ban] = {
-    { no_ban,       "???"      },
-    { abstract_ban, "abstract" },
-    { appendix_ban, "appendix" },
-    { backm_ban,    "backm"    },
-    { body_ban,     "body"     },
-    { figlist_ban,  "figlist"  },
-    { head0_ban,    "head0"    },
-    { head1_ban,    "head1"    },
-    { head2_ban,    "head2"    },
-    { head3_ban,    "head3"    },
-    { head4_ban,    "head4"    },
-    { head5_ban,    "head5"    },
-    { head6_ban,    "head6"    },
-    { letfirst_ban, "letfirst" },
-    { letlast_ban,  "letlast"  },
-    { letter_ban,   "letter"   },
-    { index_ban,    "index"    },
-    { preface_ban,  "preface"  },
-    { toc_ban,      "toc"      }
+    { no_ban,       "???",      3  },
+    { abstract_ban, "abstract", 8  },
+    { appendix_ban, "appendix", 8  },
+    { backm_ban,    "backm",    5  },
+    { body_ban,     "body",     4  },
+    { figlist_ban,  "figlist",  7  },
+    { head0_ban,    "head0",    5  },
+    { head1_ban,    "head1",    5  },
+    { head2_ban,    "head2",    5  },
+    { head3_ban,    "head3",    5  },
+    { head4_ban,    "head4",    5  },
+    { head5_ban,    "head5",    5  },
+    { head6_ban,    "head6",    5  },
+    { letfirst_ban, "letfirst", 8  },
+    { letlast_ban,  "letlast",  7  },
+    { letter_ban,   "letter",   6  },
+    { index_ban,    "index",    5  },
+    { preface_ban,  "preface",  7  },
+    { toc_ban,      "toc",      3  }
 };
 
 typedef struct  content_names {
     content_enum        type;
     char                name[12];
+    size_t              len;
 } content_names;
 
 static  const   content_names   content_text[max_content] =  {
-    { no_content,         "none",      },
-    { author_content,     "author",    },
-    { bothead_content,    "bothead",   },
-    { date_content,       "date",      },
-    { docnum_content,     "docnum",    },
-    { head0_content,      "head0",     },
-    { head1_content,      "head1",     },
-    { head2_content,      "head2",     },
-    { head3_content,      "head3",     },
-    { head4_content,      "head4",     },
-    { head5_content,      "head5",     },
-    { head6_content,      "head6",     },
-    { headnum0_content,   "headnum0",  },
-    { headnum1_content,   "headnum1",  },
-    { headnum2_content,   "headnum2",  },
-    { headnum3_content,   "headnum3",  },
-    { headnum4_content,   "headnum4",  },
-    { headnum5_content,   "headnum5",  },
-    { headnum6_content,   "headnum6",  },
-    { headtext0_content,  "headtext0", },
-    { headtext1_content,  "headtext1", },
-    { headtext2_content,  "headtext2", },
-    { headtext3_content,  "headtext3", },
-    { headtext4_content,  "headtext4", },
-    { headtext5_content,  "headtext5", },
-    { headtext6_content,  "headtext6", },
-    { pgnuma_content,     "pgnuma",    },
-    { pgnumad_content,    "pgnumad",   },
-    { pgnumr_content,     "pgnumr",    },
-    { pgnumrd_content,    "pgnumrd",   },
-    { pgnumc_content,     "pgnumc",    },
-    { pgnumcd_content,    "pgnumcd",   },
-    { rule_content,       "rule",      },
-    { sec_content,        "sec",       },
-    { stitle_content,     "stitle",    },
-    { title_content,      "title",     },
-    { string_content,     "",          },   // special
-    { time_content,       "time",      },
-    { tophead_content,    "tophead"    }
+    { no_content,         "none",      4 },
+    { author_content,     "author",    6 },
+    { bothead_content,    "bothead",   7 },
+    { date_content,       "date",      4 },
+    { docnum_content,     "docnum",    6 },
+    { head0_content,      "head0",     5 },
+    { head1_content,      "head1",     5 },
+    { head2_content,      "head2",     5 },
+    { head3_content,      "head3",     5 },
+    { head4_content,      "head4",     5 },
+    { head5_content,      "head5",     5 },
+    { head6_content,      "head6",     5 },
+    { headnum0_content,   "headnum0",  8 },
+    { headnum1_content,   "headnum1",  8 },
+    { headnum2_content,   "headnum2",  8 },
+    { headnum3_content,   "headnum3",  8 },
+    { headnum4_content,   "headnum4",  8 },
+    { headnum5_content,   "headnum5",  8 },
+    { headnum6_content,   "headnum6",  8 },
+    { headtext0_content,  "headtext0", 9 },
+    { headtext1_content,  "headtext1", 9 },
+    { headtext2_content,  "headtext2", 9 },
+    { headtext3_content,  "headtext3", 9 },
+    { headtext4_content,  "headtext4", 9 },
+    { headtext5_content,  "headtext5", 9 },
+    { headtext6_content,  "headtext6", 9 },
+    { pgnuma_content,     "pgnuma",    6 },
+    { pgnumad_content,    "pgnumad",   7 },
+    { pgnumr_content,     "pgnumr",    6 },
+    { pgnumrd_content,    "pgnumrd",   7 },
+    { pgnumc_content,     "pgnumc",    6 },
+    { pgnumcd_content,    "pgnumcd",   7 },
+    { rule_content,       "rule",      4 },
+    { sec_content,        "sec",       3 },
+    { stitle_content,     "stitle",    6 },
+    { title_content,      "title",     5 },
+    { string_content,     "",          0 }, // special
+    { time_content,       "time",      4 },
+    { tophead_content,    "tophead",   7 }
 };
 
 
@@ -142,8 +144,10 @@ void    eat_lay_sub_tag( void )
 /***************************************************************************/
 /*  parse lines like right_margin = '7i'                                   */
 /*              or   right_margin='7i'                                     */
+/*          and store result in att_args struct                            */
 /*  rc = pos if all ok                                                     */
 /*  rc = no  in case of error                                              */
+/*  rc = omit if nothing found                                             */
 /***************************************************************************/
 
 condcode    get_lay_sub_and_value( att_args * args )
@@ -208,7 +212,7 @@ condcode    get_lay_sub_and_value( att_args * args )
     while( *p && *p != quote ) {
         ++p;
     }
-    if( *p == quote ) {
+    if( args->quoted && is_quote_char( *p ) ) {
         p++;                            // over terminating quote
     }
     args->len[1] = p - args->start[1];
@@ -233,11 +237,11 @@ bool    i_case( char * p, lay_att curr, case_t * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( "mixed", p ) ) {
+    if( !strnicmp( "mixed", p, 5 ) ) {
         *tm = case_mixed;
-    } else if( !stricmp( "lower", p ) ) {
+    } else if( !strnicmp( "lower", p, 5 ) ) {
         *tm = case_lower;
-    } else if( !stricmp( "upper", p ) ) {
+    } else if( !strnicmp( "upper", p, 5 ) ) {
         *tm = case_upper;
     } else {
         err_count++;
@@ -297,7 +301,7 @@ bool    i_content( char * p, lay_att curr, content * tm )
     cvterr = false;
     tm->content_type = no_content;
     for( k = no_content; k < max_content; ++k ) {
-        if( !stricmp( content_text[k].name, p ) ) {
+        if( !strnicmp( content_text[k].name, p, content_text[k].len ) ) {
             tm->content_type = k;
             strcpy( tm->string, content_text[k].name );
             break;
@@ -349,11 +353,11 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
     int         len;
 
     cvterr = false;
-    if( !stricmp( "none", p ) ) {
+    if( !strnicmp( "none", p, 4 ) ) {
         tm->type = none;
-    } else if( !stricmp( "rule", p ) ) {
+    } else if( !strnicmp( "rule", p, 4 ) ) {
         tm->type = rule_frame;
-    } else if( !stricmp( "box", p ) ) {
+    } else if( !strnicmp( "box", p, 3 ) ) {
         tm->type = box_frame;
     } else if( !is_quote_char( *p ) ) {
         cvterr = true;
@@ -417,7 +421,7 @@ bool    i_docsect( char * p, lay_att curr, ban_docsect * tm )
     cvterr = false;
     *tm = no_ban;
     for( k = no_ban; k < max_ban; ++k ) {
-        if( !stricmp( doc_sections[k].name, p ) ) {
+        if( !strnicmp( doc_sections[k].name, p, doc_sections[k].len ) ) {
             *tm = doc_sections[k].type;
             break;
         }
@@ -453,9 +457,9 @@ bool    i_frame( char * p, lay_att curr, bool * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( "none", p ) ) {
+    if( !strnicmp( "none", p, 4 ) ) {
         *tm = false;
-    } else if( !stricmp( "rule", p ) ) {
+    } else if( !strnicmp( "rule", p, 4 ) ) {
         *tm = true;
     } else {
         err_count++;
@@ -527,11 +531,11 @@ bool    i_number_form( char * p, lay_att curr, num_form * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( "none", p ) ) {
+    if( !strnicmp( "none", p, 4 ) ) {
         *tm = num_none;
-    } else if( !stricmp( "prop", p ) ) {
+    } else if( !strnicmp( "prop", p, 4 ) ) {
         *tm = num_prop;
-    } else if( !stricmp( "new", p ) ) {
+    } else if( !strnicmp( "new", p, 3 ) ) {
         *tm = num_new;
     } else {
         err_count++;
@@ -690,11 +694,11 @@ bool    i_page_eject( char * p, lay_att curr, page_ej * tm )
     cvterr = false;
     if( !stricmp( strno, p ) ) {
         *tm = ej_no;
-    } else if( !stricmp( stryes, p ) ) {
+    } else if( !strnicmp( stryes, p, 3 ) ) {
         *tm = ej_yes;
-    } else if( !stricmp( "odd", p ) ) {
+    } else if( !strnicmp( "odd", p, 3 ) ) {
         *tm = ej_odd;
-    } else if( !stricmp( "even", p ) ) {
+    } else if( !strnicmp( "even", p, 4 ) ) {
         *tm = ej_even;
     } else {
         err_count++;
@@ -733,11 +737,11 @@ bool    i_page_position( char * p, lay_att curr, page_pos * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( "left", p ) ) {
+    if( !strnicmp( "left", p, 4 ) ) {
         *tm = pos_left;
-    } else if( !stricmp( "right", p ) ) {
+    } else if( !strnicmp( "right", p, 5 ) ) {
         *tm = pos_right;
-    } else if( !(stricmp( "centre", p ) && stricmp( "center", p )) ) {
+    } else if( !(strnicmp( "centre", p, 6 ) && strnicmp( "center", p, 6 )) ) {
         *tm = pos_center;
     } else {
         err_count++;
@@ -774,19 +778,19 @@ bool    i_place( char * p, lay_att curr, bf_place * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( "top", p ) ) {
-        *tm = top_place;
-    } else if( !stricmp( "bottom", p ) ) {
-        *tm = bottom_place;
-    } else if( !stricmp( "inline", p ) ) {
-        *tm = inline_place;
-    } else if( !stricmp( "topodd", p ) ) {
-        *tm = topodd_place;
-    } else if( !stricmp( "topeven", p ) ) {
+    if( !strnicmp( "topeven", p, 7 ) ) {
         *tm = topeven_place;
-    } else if( !stricmp( "botodd", p ) ) {
+    } else if( !strnicmp( "bottom", p, 6 ) ) {
+        *tm = bottom_place;
+    } else if( !strnicmp( "inline", p, 6 ) ) {
+        *tm = inline_place;
+    } else if( !strnicmp( "topodd", p, 6 ) ) {
+        *tm = topodd_place;
+    } else if( !strnicmp( "top", p, 3 ) ) {// check for top later than topXXX
+        *tm = top_place;
+    } else if( !strnicmp( "botodd", p, 6 ) ) {
         *tm = botodd_place;
-    } else if( !stricmp( "boteven", p ) ) {
+    } else if( !strnicmp( "boteven", p, 7 ) ) {
         *tm = boteven_place;
     } else {
         err_count++;
@@ -831,23 +835,23 @@ bool    i_pouring( char * p, lay_att curr, reg_pour * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( "none", p ) ) {
+    if( !strnicmp( "none", p, 4 ) ) {
         *tm = no_pour;
-    } else if( !stricmp( "last", p ) ) {
+    } else if( !strnicmp( "last", p, 4 ) ) {
         *tm = last_pour;
-    } else if( !stricmp( "head0", p ) ) {
+    } else if( !strnicmp( "head0", p, 5 ) ) {
         *tm = head0_pour;
-    } else if( !stricmp( "head1", p ) ) {
+    } else if( !strnicmp( "head1", p, 5 ) ) {
         *tm = head1_pour;
-    } else if( !stricmp( "head2", p ) ) {
+    } else if( !strnicmp( "head2", p, 5 ) ) {
         *tm = head2_pour;
-    } else if( !stricmp( "head3", p ) ) {
+    } else if( !strnicmp( "head3", p, 5 ) ) {
         *tm = head3_pour;
-    } else if( !stricmp( "head4", p ) ) {
+    } else if( !strnicmp( "head4", p, 5 ) ) {
         *tm = head4_pour;
-    } else if( !stricmp( "head5", p ) ) {
+    } else if( !strnicmp( "head5", p, 5 ) ) {
         *tm = head5_pour;
-    } else if( !stricmp( "head6", p ) ) {
+    } else if( !strnicmp( "head6", p, 5 ) ) {
         *tm = head6_pour;
     } else {
         err_count++;
@@ -920,6 +924,11 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
 
     cvterr = false;
     len = strlen( p );
+    if( is_quote_char( *p ) ) {
+        while( len > 1 && *(p + len - 1) == ' ' ) {
+            len--;                      // ignore trailing spaces if quoted
+        }
+    }
     if( *p != *(p + len - 1) ) {
         cvterr = true;                  // string not terminated
     } else {
@@ -966,9 +975,9 @@ bool    i_yes_no( char * p, lay_att curr, bool * tm )
     bool        cvterr;
 
     cvterr = false;
-    if( !stricmp( strno, p ) ) {
+    if( !strnicmp( strno, p, 2 ) ) {
         *tm = false;
-    } else if( !stricmp( stryes, p ) ) {
+    } else if( !strnicmp( stryes, p, 3 ) ) {
         *tm = true;
     } else {
         err_count++;
@@ -991,6 +1000,4 @@ void    o_yes_no( FILE * f, lay_att curr, bool * tm )
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
 }
-
-
 

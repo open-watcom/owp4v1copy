@@ -51,8 +51,8 @@ global  char        *   scan_stop;
 global  char        *   scan_char_ptr;  // used by character scanning routines
 global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
-global char         *   tok_start;      // start of scanned token
-global size_t           arg_flen;       // arg length
+global  char        *   tok_start;      // start of scanned token
+global  size_t          arg_flen;       // arg length
 
 global  int             switch_char;    // DOS switch character
 global  char        *   alt_ext;        // alternate extension
@@ -97,28 +97,38 @@ global  su              bind_even;      // Bind value for even pages
 global  int             passes;         // Max no of document passes
 global  int             pass;           // current document pass no
 
-global  int             apage;          // current absolute pageno 1 - n
-global  int             page;           // current pageno (in body 1 - n)
-global  int             line;           // current output lineno on page
-global  int             lc;             // remaining lines on page
+global  uint32_t        apage;          // current absolute pageno &$apage
+global  uint32_t        page;           // current document pageno &$page
+global  int32_t         line;           // current output lineno   &$line
+global  int32_t         lcmax;          // remaining lines on page initial
+global  int32_t         lc;             // remaining lines on page &$lc
 
-global  ix_h_blk    *   index_dict;     // the index structure dict
+global  int32_t         hm;             // heading margin          &$hm
+global  int32_t         tm;             // top margin              &$tm
+
+global  int32_t         bm;             // bottom margin           &$bm
+global  int32_t         fm;             // footing margin          &$fm
+
+global  int32_t         lm;             // left margin             &$pagelm
+global  int32_t         rm;             // right margin            &$pagerm
+
+global  ix_h_blk    *   index_dict;     // index structure dictionary
 
 global  symvar      *   global_dict;    // global symbol dictionary
 global  symvar      *   sys_dict;       // global system symbol dictionary
 global  mac_entry   *   macro_dict;     // macro dictionary
-global  gtentry     *   tag_dict;       // User tag dictionary
+global  gtentry     *   tag_dict;       // user tag dictionary
 
-global  char            research_file_name[48]; // filename for research output
+global  char            research_file_name[48]; // filename for research
 global  ulong           research_from;  // line no start for research output
 global  ulong           research_to;    // line no end   for research output
 
 global  struct GlobalFlags {
-    unsigned        quiet         : 1;  // show Productinfo?
-    unsigned        bannerprinted : 1;  // Productinfo shown
+    unsigned        quiet         : 1;  // suppress product info
+    unsigned        bannerprinted : 1;  // product info shown
     unsigned        wscript       : 1;  // enable WATCOM script extension
     unsigned        firstpass     : 1;  // first or only pass
-    unsigned        lastpass      : 1;  // last pass
+    unsigned        lastpass      : 1;  // last or only pass
     unsigned        inclist       : 1;  // show included files
     unsigned        warning       : 1;  // show warnings
     unsigned        statistics    : 1;  // output statistics at end
@@ -134,103 +144,6 @@ global  struct GlobalFlags {
 } GlobalFlags;                          // Global flags
 
 
-typedef enum ju_enum {                  // for .ju(stify)
-    ju_off,                             // ju_off must have lowest value
-    ju_on,                              // ju_on next
-    ju_half,
-    ju_left,
-    ju_right,
-    ju_centre,
-    ju_center = ju_centre,
-    ju_inside,
-    ju_outside
-} ju_enum;
-
-/***************************************************************************/
-/*  enums for layout tags with attributes  (and ebanregion)                */
-/*  the order is as shown by :convert output                               */
-/***************************************************************************/
-
-typedef enum lay_sub {
-    el_zero     = 0,                    // dummy to make 0 invalid
-    el_page     = 1,
-    el_default,
-    el_widow,
-    el_fn,
-    el_fnref,
-    el_p,
-    el_pc,
-    el_fig,
-    el_xmp,
-    el_note,
-    el_h0,
-    el_h1,
-    el_h2,
-    el_h3,
-    el_h4,
-    el_h5,
-    el_h6,
-    el_heading,
-    el_lq,
-    el_dt,
-    el_gt,
-    el_dthd,
-    el_cit,
-    el_figcap,
-    el_figdesc,
-    el_dd,
-    el_gd,
-    el_ddhd,
-    el_abstract,
-    el_preface,
-    el_body,
-    el_backm,
-    el_lp,
-    el_index,
-    el_ixpgnum,
-    el_ixmajor,
-    el_ixhead,
-    el_i1,
-    el_i2,
-    el_i3,
-    el_toc,
-    el_tocpgnum,
-    el_toch0,
-    el_toch1,
-    el_toch2,
-    el_toch3,
-    el_toch4,
-    el_toch5,
-    el_toch6,
-    el_figlist,
-    el_flpgnum,
-    el_titlep,
-    el_title,
-    el_docnum,
-    el_date,
-    el_author,
-    el_address,
-    el_aline,
-    el_from,
-    el_to,
-    el_attn,
-    el_subject,
-    el_letdate,
-    el_open,
-    el_close,
-    el_eclose,
-    el_distrib,
-    el_appendix,
-    el_sl,
-    el_ol,
-    el_ul,
-    el_dl,
-    el_gl,
-    el_banner,
-    el_banregion,
-    el_ebanregion
-} lay_sub;
-
 global struct ProcFlags {
     unsigned        newLevelFile    : 1;// start new include Level (file)
     unsigned        macro_ignore    : 1;// .. in col 1-2
@@ -241,14 +154,16 @@ global struct ProcFlags {
     unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
     unsigned        goto_active     : 1;// processing .go label
 
-    unsigned        substituted     : 1;// variabel substituted in current line
+    unsigned        substituted     : 1;// variable substituted in current line
     unsigned        unresolved      : 1;// variable found, but not yet resolved
     unsigned        late_subst      : 1;// special variable found &gml, &amp,
     unsigned        literal         : 1;// .li is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
     unsigned        concat          : 1;// .co ON if set
-    unsigned        fb_document_done : 1;// true if fb_document() called
+    unsigned        just_override   : 1;// current line is to be justified
+
+    doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
 
     ju_enum         justify         : 8;// .ju on half off ...
 
@@ -259,9 +174,13 @@ global struct ProcFlags {
     unsigned        hx_level        : 3;// 0 - 6  active Hx :layout sub tag
     unsigned        banner          : 1;// within layout banner definition
     unsigned        banregion       : 1;// within layout banregion definition
-    unsigned        researchfile    : 1;// research for one file ( -r option )
+    unsigned        researchfile    : 1;// research for one file ( -r filename )
 
-    doc_section     doc_sect;           // Which part are we in (FRONTM, BODY, ...
+    unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
+    unsigned        fb_document_done : 1;// true if fb_document() called
+    unsigned        fb_position_done : 1;// 1. pos on new page done
+    unsigned        output_started  : 1;// we have something for the curr page
+    unsigned        para_line1      : 1;// special processing for 1. line
 
 } ProcFlags;                            // processing flags
 
@@ -291,9 +210,10 @@ global  uint8_t     in_esc;             // input char for .ti processing
 
 
 global text_line    t_line;             // for constructing output line
+global text_chars * p_char;             // previous text char   "
 global text_chars * text_pool;          // for reuse of text_chars structs
 
-
+global text_line    para_line;          // for buffering first paragraph line
 
 /***************************************************************************/
 /*  some globals which are to be redesigned when the :LAYOUT tag is coded. */
@@ -303,8 +223,11 @@ global text_chars * text_pool;          // for reuse of text_chars structs
 global  uint32_t    g_cur_h_start;
 global  uint32_t    g_cur_v_start;
 global  uint32_t    g_page_bottom;
+global  uint32_t    g_page_bottom_org;
 global  uint32_t    g_page_left;
+global  uint32_t    g_page_left_org;
 global  uint32_t    g_page_right;
+global  uint32_t    g_page_right_org;
 global  uint32_t    g_page_top;
 global  uint32_t    g_page_depth;
 global  uint32_t    g_max_char_width;
@@ -312,12 +235,27 @@ global  uint32_t    g_max_line_height;
 global  uint32_t    g_net_page_height;
 global  uint32_t    g_net_page_width;
 
+global  uint32_t    g_resh;             // horiz base units
+global  uint32_t    g_resv;             // vert base units
+
 global  uint8_t     g_curr_font_num;    // the font to use for current line
 global  uint32_t    g_cl;               // column length
 global  uint32_t    g_ll;               // line length
 global  uint32_t    g_cd;               // no of columns
 global  uint32_t    g_gutter;           // space between columns
 global  uint32_t    g_offset[9];        // column start offset
+
+global  uint32_t    spacing;            // spacing between lines
+global  su      *   post_skip;          // possible post_skip
+
+global  uint32_t    pre_space;          // for
+global  uint32_t    post_space;         // .. line
+global  uint32_t    post_space_save;    // .. formatting
+
+
+global  banner_lay_tag  * sect_ban_top[2];// top even / odd banner for curr sect
+global  banner_lay_tag  * sect_ban_bot[2];// bot even / odd banner for curr sect
+
 
 /***************************************************************************/
 /*  :LAYOUT  data                     incomplete  TBD                      */
@@ -337,7 +275,8 @@ extern  const   char    att_names[e_dummy_max + 1][18];
 
 /***************************************************************************/
 /*   declarations for the sequence of LAYOUT attribute values              */
-/*   definitions are in the source file for the corresponding routine     */
+/*   definitions are in the layout tag processing source file              */
+/*   sequence as seen by :convert output                                   */
 /***************************************************************************/
 
 /***************************************************************************/

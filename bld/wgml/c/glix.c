@@ -149,7 +149,6 @@ void    lay_ix( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != ix_l ) {
         ProcFlags.lay_xxx = ix_l;
-        out_msg( ":I%c nearly dummy\n", entry->tagname[1] );
     }
 
     ix_l = entry->tagname[1] - '1';     // construct Ix level  0 - 2

@@ -84,6 +84,9 @@ void init_global_vars( void )
     LPI                 = 6;            // lines per inch
     LPI_units           = SU_lines;
 
+    g_resh              = 0;
+    g_resv              = 0;
+
     memset( &bind_odd, 0, sizeof( bind_odd ) ); // bind value odd pages
     bind_odd.su_u       = SU_chars_lines;
 
@@ -97,11 +100,15 @@ void init_global_vars( void )
     line                = 0;            // current output lineno on page
     lc                  = 0;            // remaining lines on page
     g_curr_font_num     = 0;
+    tm                  = 0;            // top margin              &$tm
+    bm                  = 0;            // bottom margin           &$bm
+    fm                  = 0;            // footing margin          &$fm
+    fm                  = 0;            // heading margin          &$hm
 
     t_line.first        = NULL;
     t_line.y_address    = 0;
     text_pool           = NULL;
-
+    p_char              = NULL;
 
 
     lay_file            = NULL;         // filename from ( LAYout option
@@ -125,16 +132,28 @@ void init_global_vars( void )
     buf_size            = BUF_SIZE;
     buff2               = mem_alloc( buf_size );
 
+    post_skip           = NULL;         // no post skip for first :P aragraph
+    pre_space           = 0;            // experimental
+    post_space          = 0;            // experimental
+    post_space_save     = 0;            // experimental
+
+    para_line.next      = NULL;         // no buffered paragraph line(s)
+    para_line.first     = NULL;
+    para_line.line_height = 0;
+    para_line.y_address = 0;
 
 }
 
 /***************************************************************************/
-/*  PorcFlags are initialized at each document pass start                  */
+/*  ProcFlags are initialized at each document pass start                  */
 /***************************************************************************/
 
 void init_proc_flags( void )
 {
+    bool    flag_save = ProcFlags.fb_document_done;
+
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
+    ProcFlags.fb_document_done = flag_save; // keep value
     ProcFlags.blanks_allowed = 1;       // blanks during scanning
                                         // i.e. .se var  =    7
                                         // .se var=7  without

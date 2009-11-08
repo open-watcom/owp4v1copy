@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement prototype support for default layout
-*                   and layout processing
+* Description: WGML set default layout values
 *
 ****************************************************************************/
 
@@ -44,9 +43,9 @@
 
 void    init_def_lay( void )
 {
-    static  char    z0[] = "0";
-    static  char    i966[] = "9.66i";
-    static  char    i7[] = "7i";
+    static  char    z0[] = "0";         // the
+    static  char    i966[] = "9.66i";   // default
+    static  char    i7[] = "7i";        // values
     static  char    i1[] = "1i";
     static  char    i05[] = "0.5i";
     static  char    i04[] = "0.4i";
@@ -953,170 +952,5 @@ void    init_def_lay( void )
     /***********************************************************************/
 
     banner_defaults();
-
-}
-
-
-
-
-/***************************************************************************/
-/*                     incomplete and wrong                     TBD        */
-/***************************************************************************/
-void    init_page_geometry( void )
-{
-    int         k;
-    uint32_t    tm;
-    uint32_t    lm;
-    uint32_t    rm;
-    uint32_t    offset;
-
-
-    g_max_char_width = 0;
-    g_max_line_height = 0;
-
-    for( k = 0; k < wgml_font_cnt; k++ ) {
-        if( g_max_char_width < wgml_fonts[k].default_width ) \
-            g_max_char_width = wgml_fonts[k].default_width;
-        if( g_max_line_height < wgml_fonts[k].line_height ) \
-            g_max_line_height = wgml_fonts[k].line_height;
-    }
-
-
-    tm = conv_vert_unit( &layout_work.page.top_margin );
-    lm = conv_hor_unit( &layout_work.page.left_margin )
-         - bin_device->x_offset;
-
-    rm = conv_hor_unit( &layout_work.page.right_margin )
-         - bin_device->x_offset;
-
-    g_page_depth = conv_vert_unit( &layout_work.page.depth )
-                   - bin_device->y_offset;
-
-    if( GlobalFlags.firstpass && GlobalFlags.research ) {
-        out_msg( "\ntm:%d lm:%d rm:%d depth:%d\n", tm, lm, rm,
-                 g_page_depth );
-    }
-
-    g_page_left = max( lm, bin_device->x_start );
-    g_page_right = min( rm, bin_device->page_width );
-
-    if( bin_driver->y_positive == 0 ) {
-        g_page_top = min( bin_device->page_depth - tm,
-                          bin_device->y_start );
-        g_page_bottom = max( g_page_top - g_page_depth, bin_device->y_offset );
-        g_net_page_height = g_page_top - g_page_bottom;
-
-    } else {
-        g_page_top = max( tm, bin_device->y_start );
-        g_page_bottom = min( g_page_top + g_page_depth, bin_device->y_offset );
-        g_net_page_height = g_page_bottom - g_page_top;
-    }
-    g_net_page_width = g_page_right - g_page_left + bin_device->x_offset;
-
-    g_ll = g_net_page_width;            // line length
-    g_cd = layout_work.defaults.columns;// no of columns
-    g_gutter = conv_hor_unit( &layout_work.defaults.gutter );
-
-    if( g_cd > 1 ) {                    // multi column layout
-        if( g_cd > 9 ) {
-                                        // no more than 9 columns
-            g_cd = 9;                   // this limit is found in script_tso.txt
-                                        // for .cd control word
-        }
-        g_cl = (g_net_page_width - (g_cd -1) * g_gutter )
-                / (g_cd - 1);           // column length
-        offset = g_page_left;
-        for( k = 0; k < 9; ++k ) {
-            g_offset[k] = offset;       // start of each column
-            offset += g_cl + g_gutter;
-        }
-    } else {
-        g_cl = g_ll;
-    }
-}
-
-
-
-void    init_def_margins( void )
-{
-    char        buf[BUF_SIZE];
-
-    g_cur_h_start = g_page_left + bin_device->x_offset;
-    if( bin_driver->y_positive == 0x00 ) {
-        g_cur_v_start = g_page_top - (1 * g_max_line_height);
-    } else {
-        g_cur_v_start = g_page_top + (0 * g_max_line_height);
-    }
-
-
-    if( GlobalFlags.firstpass && GlobalFlags.research ) {
-        out_msg( "\ndev:%s page_w:%d page_d:%d hor_u:%d ver_u:%d x_s:%d y_s:%d"
-                 " x_o:%d y_o:%d\n",
-                 bin_device->driver_name,
-                 bin_device->page_width,
-                 bin_device->page_depth,
-                 bin_device->horizontal_base_units,
-                 bin_device->vertical_base_units,
-                 bin_device->x_start,
-                 bin_device->y_start,
-                 bin_device->x_offset,
-                 bin_device->y_offset
-               );
-        out_msg( "\nfont:0 def_width:%d dv:%d em:%d font_h:%d font_s:%d"
-                 " line_h:%d line_s:%d spc_w:%d\n\n",
-                 wgml_fonts[0].default_width,
-                 wgml_fonts[0].dv_base,
-                 wgml_fonts[0].em_base,
-                 wgml_fonts[0].font_height,
-                 wgml_fonts[0].font_space,
-                 wgml_fonts[0].line_height,
-                 wgml_fonts[0].line_space,
-                 wgml_fonts[0].spc_width
-               );
-
-        snprintf( buf, buf_size,
-                  "page top:%d bottom:%d left:%d right:%d\n",
-                  g_page_top, g_page_bottom, g_page_left, g_page_right );
-        out_msg( buf );
-        snprintf( buf, buf_size,
-           "page net heigth:%d width:%d line height:%d char width:%d\n\n",
-                  g_net_page_height, g_net_page_width, g_max_line_height,
-                  g_max_char_width );
-        out_msg( buf );
-    }
-}
-
-
-/***************************************************************************/
-/*  Layout end processing / document start processing                      */
-/*  will be call either before a non LAYOUT tag is processed, or when the  */
-/*  first line without tags is found                                       */
-/***************************************************************************/
-
-void    do_layout_end_processing( void )
-{
-
-    if( !ProcFlags.fb_document_done ) {
-        out_msg( "Formatting document\n" );
-    }
-
-    init_page_geometry();
-
-
-    /* fb_document() needs to be done on the first pass only, but
-     * also needs to be done immediately after the :ELAYOUT. tag.
-     * This means that it may need to be relocated when layout
-     * processing is implemented.
-     */
-
-    if( GlobalFlags.firstpass == 1) {
-        fb_document();                 // DOCUMENT :PAUSE & :INIT processing.
-    }
-
-    ProcFlags.fb_document_done = true;
-
-    init_def_margins();
-
-    fb_position( g_cur_h_start, g_cur_v_start );
 
 }

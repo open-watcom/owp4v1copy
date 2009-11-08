@@ -164,7 +164,6 @@ void    lay_p( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_p ) {
         ProcFlags.lay_xxx = el_p;
-        out_msg( ":P nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     while( cc == pos ) {
@@ -193,7 +192,6 @@ void    lay_pc( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_pc ) {
         ProcFlags.lay_xxx = el_pc;
-        out_msg( ":PC nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get attribute and value
     while( cc == pos ) {

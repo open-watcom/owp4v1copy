@@ -64,6 +64,7 @@ void        split_input( char * buf, char * split_pos )
             input_cbs->hidden_head = wk;
         }
         *split_pos = '\0';              // terminate first part
+        input_cbs->fmflags &= ~II_eol;  // not last part of line
     }
     return;
 }
@@ -92,6 +93,7 @@ void        split_input_LIFO( char * buf, char * split_pos )
         }
 
         *split_pos = '\0';              // terminate first part
+        input_cbs->fmflags &= ~II_eol;  // not last part of line
     }
     return;
 }
@@ -122,28 +124,38 @@ static  void    split_input_var( char * buf, char * split_pos, char * part2 )
         if( input_cbs->hidden_head == NULL ) {
             input_cbs->hidden_head = wk;
         }
+        input_cbs->fmflags &= ~II_eol;  // not last part of line
     }
     return;
 }
 
 
-/*****************************************************    ******************/
+/***************************************************************************/
 /*  look for GML tag start character and split line if valid GML tag       */
 /*  don't split if blank follows gml_char                                  */
+/*  special for  xxx::::TAG construct                                      */
 /***************************************************************************/
 static void split_at_GML_tag( void )
 {
     char    *   p2;
     char    *   pchar;
 
-    pchar = strchr( buff2, GML_char );  // look for GML tag start
+    pchar = strchr( buff2 + 1, GML_char );  // look for GML tag start
     if( (pchar != NULL) && (buff2 < pchar) ) {
+        while( *(pchar + 1) == GML_char ) {
+            pchar++;                    // handle repeated GML_chars
+        }
         for( p2 = pchar + 1; (p2 < (buff2 + buf_size))
              && is_id_char( *p2 ); p2++ )
             ;                           // empty
 
-        if( (p2 > pchar + 1) &&
-            ((*p2 == '.') || (*p2 == ' ')) ) {// 'good' tag end
+        if( (p2 > pchar + 1) && ((*p2 == '.') || (*p2 == ' ')
+
+     /* the following compare is logically ok, but would require to verify */
+     /* that the found tag is really a (user) tag  TBD                     */
+     /*      || (*p2 == GML_char)                                          */
+             ) ) {                      // 'good' tag end
+
             split_input( buff2, pchar );// split line
             buff2_lg = strnlen_s( buff2, buf_size );// new length of first part
             if( ProcFlags.literal ) {   // if literal active
@@ -152,7 +164,6 @@ static void split_at_GML_tag( void )
                 }
             }
         }
-
     }
 }
 
@@ -184,11 +195,11 @@ void        process_line( void )
 
     ProcFlags.late_subst = false;
 
-        /*******************************************************************/
-        /*  look for GML tag start character and split line at GML tag     */
-        /*******************************************************************/
+    /***********************************************************************/
+    /*  look for GML tag start character and split line at GML tag         */
+    /***********************************************************************/
 
-        split_at_GML_tag();
+    split_at_GML_tag();
 
     if( !ProcFlags.literal ) {
 
@@ -206,8 +217,8 @@ void        process_line( void )
 
         if( (*buff2 == SCR_char) ) {
 
-            if( *(buff2 + 1) == '*' ) {
-                return;                 // for .* comment minimal processing
+            if( (*(buff2 + 1) == '*') || !strnicmp( buff2 + 1, "cm ", 3 ) ) {
+                return;           // for .* or .cm comment minimal processing
             }
 
             /***************************************************************/
@@ -240,7 +251,6 @@ void        process_line( void )
             /*  ... this is NOWHERE documented, but wgml 4.0 tested        */
             /***************************************************************/
 
-
             if( !(*(buff2 + 1) == '\'') ) {
                 pchar = strchr( buff2 + 2, CW_sep_char );
                 if( (pchar != NULL) ) {
@@ -257,7 +267,6 @@ void        process_line( void )
                         buff2_lg = strnlen_s( buff2, buf_size );
 #endif
                     }
-
                 }
             }
         }
@@ -374,8 +383,8 @@ void        process_line( void )
                     symsubval->value[0] == CW_sep_char &&
                     symsubval->value[1] != CW_sep_char ) {
 
-                                        // split record at control word separator
-                                        // if variable starts with SINGLE cw separator
+                                // split record at control word separator
+                                // if variable starts with SINGLE cw separator
 
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
@@ -574,7 +583,7 @@ void        process_line( void )
 }
 
 /***************************************************************************/
-/*  process late substitute symbols &gml, &amp                             */
+/*  process late substitute symbols &gml, &amp, ...                        */
 /*  this is done after gml tag and script control word recognition         */
 /***************************************************************************/
 

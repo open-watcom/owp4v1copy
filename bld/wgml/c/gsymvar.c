@@ -439,11 +439,15 @@ void    print_sym_dict( symvar * dict )
     int                 symcnt;
     int                 symsubcnt;
     int                 len;
+    bool                saveflag;
     static const char   fill[11] = "          ";
 
     symcnt      = 0;
     symsubcnt   = 0;
     wk          = dict;
+    saveflag    = ProcFlags.no_var_impl_err;
+    ProcFlags.no_var_impl_err = true;   // suppress err msg
+
     out_msg( "\nList of symbolic variables:\n" );
     while( wk != NULL ) {
         len = strlen( wk->name );
@@ -497,6 +501,7 @@ void    print_sym_dict( symvar * dict )
     }
     out_msg( "\nUnsubscripted symbols defined: %d\n", symcnt );
     out_msg( "Subscripted   symbols defined: %d\n", symsubcnt );
+    ProcFlags.no_var_impl_err = saveflag;
     return;
 }
 

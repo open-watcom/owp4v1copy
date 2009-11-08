@@ -412,7 +412,7 @@ static  void    proc_input( char * filename )
                     }
                     show_include_stack();
                 }
-                break;                  // eof
+                break;                  // EOF
             }
             if( !ProcFlags.keep_ifstate ) {
                 if( !ic->if_flags[ic->if_level].ifdo ) {  // no do group
@@ -456,8 +456,8 @@ static  void    proc_input( char * filename )
             show_include_stack();
         }
 #endif
-        if( inc_level == 1 ) {         //master file end
-            scr_process_break();       // output last line if any
+        if( inc_level == 1 ) {          // EOF for master file end
+            scr_process_break();        // output last line if any
         }
         del_input_cb_entry();           // one level finished
         inc_level--;
@@ -561,7 +561,9 @@ static  void    init_pass( void )
     page                = 0;            // current pageno (in body 1 - n)
     line                = 0;            // current output lineno on page
     lc                  = 0;            // remaining lines on page
-
+    post_space          = 0;
+    post_space_save     = 0;
+    p_char              = NULL;
 
     init_tag_att();                     // reset last defined GML tag
 
@@ -606,8 +608,7 @@ int main( int argc, char * argv[] )
     g_info( INF_CMDLINE, cmdline );
 
     tok_count = proc_options( cmdline );
-    init_sysparm( cmdline, banner1w( "WGML Script/GML", _WGML_VERSION_ )
-                  );            // set sysparm and version
+    init_sysparm( cmdline, banner1w( "WGML Script/GML", _WGML_VERSION_ ) );
     /* don't mem_free cmdline it is used for sysparm variable */
     g_banner();
     if( tok_count < 4 ) {               // file ( device xyz   is minimum

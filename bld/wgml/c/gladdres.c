@@ -128,7 +128,6 @@ void    lay_address( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_address ) {
         ProcFlags.lay_xxx = el_address;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
@@ -205,7 +204,6 @@ void    lay_aline( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_aline ) {
         ProcFlags.lay_xxx = el_aline;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

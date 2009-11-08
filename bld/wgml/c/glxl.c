@@ -548,7 +548,6 @@ void    lay_dl( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_dl ) {
         ProcFlags.lay_xxx = el_dl;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
@@ -643,7 +642,6 @@ void    lay_gl( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_gl ) {
         ProcFlags.lay_xxx = el_gl;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
@@ -734,7 +732,6 @@ void    lay_ol( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_ol ) {
         ProcFlags.lay_xxx = el_ol;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
@@ -832,7 +829,6 @@ void    lay_sl( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_sl ) {
         ProcFlags.lay_xxx = el_sl;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
@@ -920,7 +916,6 @@ void    lay_ul( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_ul ) {
         ProcFlags.lay_xxx = el_ul;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

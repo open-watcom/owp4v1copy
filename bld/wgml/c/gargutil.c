@@ -303,6 +303,17 @@ bool    is_symbol_char( char c )
     return( test );
 }
 
+/*
+ * Test character for a full stop character
+ */
+bool    is_stop_char( char c )
+{
+    bool    test;
+
+    test = ( c == '.' ) || ( c == ':' ) || ( c == '!' ) || ( c == '?' );
+    return( test );
+}
+
 
 /*
  * If first and last character are the same and one of the quote chars

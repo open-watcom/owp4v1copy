@@ -126,7 +126,6 @@ void    lay_note( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_note ) {
         ProcFlags.lay_xxx = el_note;
-        out_msg( ":NOTE nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

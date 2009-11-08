@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: WGML implement several tags for LAYOUT processing
+* Description: WGML implement several sub tags for :LAYOUT processing
 *                   all those with only font attribute
 ****************************************************************************/
 
@@ -91,13 +91,12 @@ void    lay_xx( const gmltag * entry )
         x_tag = el_ixmajor;
         iptr = &layout_work.ixmajor.font;
     } else {
-         out_msg( "WGML logic error glmisc.c.\n");
+         out_msg( "WGML logic error glxxfont.c.\n");
          file_mac_info();
          err_count++;
     }
     if( ProcFlags.lay_xxx != x_tag ) {
         ProcFlags.lay_xxx = x_tag;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

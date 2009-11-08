@@ -43,7 +43,7 @@
 /*    GML tags                                                             */
 /***************************************************************************/
 
-#define pick(name, length, routine, flags) { name, length, routine, flags },
+#define pick( name, length, routine, flags) { name, length, routine, flags },
 
 static  const   gmltag  gml_tags[] = {
 
@@ -61,7 +61,7 @@ static  const   gmltag  gml_tags[] = {
 /*    GML layout tags                                                      */
 /***************************************************************************/
 
-#define pick(name, length, routine, flags) { name, length, routine, flags },
+#define pick( name, length, routine, flags) { name, length, routine, flags },
 
 static  const   gmltag  lay_tags[] = {
 
@@ -79,7 +79,7 @@ static  const   gmltag  lay_tags[] = {
 /*    SCR control words                                                    */
 /***************************************************************************/
 
-#define pick(name, routine, flags) { name, routine, flags },
+#define pick( name, routine, flags) { name, routine, flags },
 
 static  const   scrtag  scr_tags[] = {
 
@@ -112,7 +112,7 @@ static void scan_gml( void )
 
     cb = input_cbs;
 
-    p = scan_start +1;
+    p = scan_start + 1;
     tok_start = scan_start;
     while( is_id_char( *p ) && p <= scan_stop ) { // search end of TAG
         p++;
@@ -158,8 +158,8 @@ static void scan_gml( void )
         add_GML_tag_research( tok_start + 1 );
     }
 
-    if( ProcFlags.layout ) {            // no user tags for LAYOUT tags
-        ge = NULL;
+    if( ProcFlags.layout ) {
+        ge = NULL;                      // no user tags within :LAYOUT
     } else {
         ge = find_tag( &tag_dict, tok_start + 1 );
     }
@@ -198,7 +198,7 @@ static void scan_gml( void )
 
         }
     } else {
-        if( ProcFlags.layout ) {        // different tags for layout
+        if( ProcFlags.layout ) {        // different tags within :LAYOUT
             for( k = 0; k < LAY_TAGMAX; ++k ) {
                 if( toklen == lay_tags[k].taglen ) {
                     if( !stricmp( lay_tags[k].tagname, tok_start + 1 ) ) {
@@ -207,8 +207,8 @@ static void scan_gml( void )
 
                         lay_tags[k].gmlproc( &lay_tags[k] );
 
-                        lay_ind = k;    // now process attributes
                         processed = true;
+                        lay_ind = k;    // now process attributes if any
                         if( *scan_start == '.' ) {
                             scan_start++;
                         }
@@ -216,7 +216,7 @@ static void scan_gml( void )
                     }
                 }
             }
-            if( !processed ) {          // check for gml tag in layout
+            if( !processed ) {          // check for gml only tag in :LAYOUT
                 for( k = 0; k < GML_TAGMAX; ++k ) {
                     if( toklen == gml_tags[k].taglen ) {
                         if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
@@ -224,33 +224,47 @@ static void scan_gml( void )
                             err_count++;
                             file_mac_info();
                             processed = true;
-                            scan_start = scan_stop +1;
+                            scan_start = scan_stop + 1;
                             break;
                         }
                     }
                 }
             }
-        } else {                        // not in layout
+        } else {                        // not within :LAYOUT
             for( k = 0; k < GML_TAGMAX; ++k ) {
                 if( toklen == gml_tags[k].taglen ) {
                     if( !stricmp( gml_tags[k].tagname, tok_start + 1 ) ) {
-                        if( !stricmp(tok_start + 1, "LAYOUT" ) &&
+                        if( GlobalFlags.firstpass &&
+                            !stricmp(tok_start + 1, "LAYOUT" ) &&
                             ProcFlags.fb_document_done  ) {
 
                             g_err( err_lay_too_late );
                             err_count++;
                             file_mac_info();
                             processed = true;
-                            scan_start = scan_stop +1;
+                            scan_start = scan_stop + 1;
                             break;
                         }
+
+                        /***************************************************/
+                        /*  if this is the first tag which produces output */
+                        /* set page geometry and margins from layout       */
+                        /***************************************************/
                         if( !ProcFlags.fb_document_done &&
                             gml_tags[k].tagflags & tag_out_txt ) {
 
-                            do_layout_end_processing(); // tag with text output
+                            do_layout_end_processing();
+#if 0
+                            if( !ProcFlags.fb_position_done ) {
+                                ProcFlags.fb_position_done = true;
+                                set_page_position( ProcFlags.doc_sect );
+                            }
+#endif
                         }
                         *p = csave;
+
                         gml_tags[k].gmlproc( &gml_tags[k] );
+
                         processed = true;
                         if( *scan_start == '.' ) {
                             scan_start++;
@@ -267,7 +281,7 @@ static void scan_gml( void )
                             err_count++;
                             file_mac_info();
                             processed = true;
-                            scan_start = scan_stop +1;
+                            scan_start = scan_stop + 1;
                             break;
                         }
                     }
@@ -278,7 +292,7 @@ static void scan_gml( void )
     if( *p == '\0' ) {
         *p = csave;
     }
-    if( !processed ) {
+    if( !processed ) {                  // treat as text
         scan_start = tok_start;
     }
 }
@@ -322,10 +336,10 @@ static char *   search_separator( char * str, char sep )
 
 /*
  * Scan line with script control word
- *
+ *      uses scan_start ptr, but assumes this is in buff2
  */
 
-static void     scan_script( void)
+static void     scan_script( void )
 {
     inputcb     *   cb;
     mac_entry   *   me;
@@ -339,8 +353,8 @@ static void     scan_script( void)
     p = scan_start + 1;
     scan_restart = scan_start;
 
-    if( *p == '*' ) {
-        scan_start = scan_stop + 1;
+    if( (*p == '*') || !strnicmp( p, "cm ", 3 ) ) {
+        scan_start = scan_stop + 1;     // .cm  +++ ignore comment up to EOL
         return;                         // .*   +++ ignore comment up to EOL
     }
 
@@ -448,13 +462,23 @@ static void     scan_script( void)
             for( k = 0; k < SCR_TAGMAX; ++k ) {
                 if( !stricmp( scr_tags[k].tagname, token_buf ) ) {
                     if( !ProcFlags.fb_document_done &&
-                          scr_tags[k].cwflags & cw_o_t// keyword with text output
-                      ) {
+                          scr_tags[k].cwflags & cw_o_t ) {
+
+                        /***************************************************/
+                        /*  if this is the first cw  which produces output */
+                        /* set page geometry and margins from layout       */
+                        /***************************************************/
                         do_layout_end_processing();
+#if 0
+                        if( !ProcFlags.fb_position_done ) {
+                            ProcFlags.fb_position_done = true;
+                            set_page_position( ProcFlags.doc_sect );
+                        }
+#endif
                     }
                     if( ProcFlags.literal  ) {  // .li active
-                        if( !stricmp( token_buf, "li" ) ) {// process only .li
-                            scan_start = p;// script controlword found, process
+                        if( !stricmp( token_buf, "li" ) ) { // .li
+                            scan_start = p; // found, process
                             scr_tags[k].tagproc();
                         }
                     } else {
@@ -739,12 +763,17 @@ void    scan_line( void )
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 g_info( inf_text_line, scan_start );
             }
-            if( ProcFlags.layout ) {    // LAYOUT active process attributes
+            if( ProcFlags.layout ) {    // LAYOUT active: process attributes
                 lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
             } else {
                 if( !ProcFlags.fb_document_done ) {
-                    // text starts without any tag
+                    /***************************************************/
+                    /*  text starts without any tag or control word    */
+                    /* set page geometry and margins from layout       */
+                    /* do body section start as default section        */
+                    /***************************************************/
                     do_layout_end_processing();
+                    prepare_doc_sect( doc_sect_body );
                 }
                 // processs (remaining) text
                 process_text( scan_start, g_curr_font_num );

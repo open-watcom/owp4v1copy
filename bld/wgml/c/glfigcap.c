@@ -113,7 +113,6 @@ void    lay_figcap( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_figcap ) {
         ProcFlags.lay_xxx = el_figcap;
-        out_msg( ":FIGCAP nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {

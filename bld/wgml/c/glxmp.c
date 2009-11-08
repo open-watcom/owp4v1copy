@@ -120,7 +120,6 @@ void    lay_xmp( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_xmp ) {
         ProcFlags.lay_xxx = el_xmp;
-        out_msg( ":XMP nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
     while( cc == pos ) {

@@ -26,6 +26,12 @@
 *
 * Description:  wgml utility functions
 *
+*               conv_hor_unit
+*               conv_vert_unit
+*               skip_to_quote
+*               su_layout_special
+*               to_internal_SU
+*
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
@@ -50,7 +56,7 @@ char    *skip_to_quote( char * p, char quote )
 /* extension for layout :BANREGION indent, hoffset and width attributes:   */
 /*      symbolic units without a numeric value                             */
 /***************************************************************************/
-bool    su_layout_special( char * * scanp, su * converted )
+static  bool    su_layout_special( char * * scanp, su * converted )
 {
     bool        converterror = false;
     char    *   p;
@@ -71,16 +77,16 @@ bool    su_layout_special( char * * scanp, su * converted )
     if( *p == '\'' || *p == '"' ) {     // ignore but remember quote
         quote = *p++;
     }
-    if( !stricmp( "left", p ) ) {
+    if( !strnicmp( "left", p, 4 ) ) {
         s->su_u = SU_lay_left;
         strcpy( ps, "left" );
-    } else if( !stricmp( "right", p ) ) {
+    } else if( !strnicmp( "right", p, 5 ) ) {
         s->su_u = SU_lay_right;
         strcpy( ps, "right" );
-    } else if( !(stricmp( "center", p )) && (stricmp( "centre", p )) ) {
+    } else if( !(strnicmp( "center", p, 6 )) && (strnicmp( "centre", p, 6 )) ) {
         s->su_u = SU_lay_centre;
         strcpy( ps, "centre" );
-    } else if( !stricmp( "extend", p ) ) {
+    } else if( !strnicmp( "extend", p, 6 ) ) {
         s->su_u = SU_lay_extend;
         strcpy( ps, "extend" );
     } else {
@@ -444,9 +450,9 @@ uint32_t    conv_hor_unit( su * s )
         ds = 0;
         break;
     }
-
     return( ds );
 }
+
 extern  uint32_t    conv_vert_unit( su * s )
 {
     uint32_t    ds;
@@ -468,12 +474,13 @@ extern  uint32_t    conv_vert_unit( su * s )
         ds = 0;
         break;
     }
-
     return( ds );
 }
 
+
+
 #if 0
-int main( int argc, char *cargv[] )
+int main( int argc, char *argv[] )      // standalone test routine
 {
     bool    error;
     su      aus;

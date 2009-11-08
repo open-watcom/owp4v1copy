@@ -26,7 +26,7 @@
 *
 * Description:  WGML GML tags definition header.
 *               only tags with a routinename other than gml_dummy
-*               are processed so far
+*               are processed so far (not always complete)
 *
 *    layout tags are defined in gtagslay.h
 *
@@ -64,10 +64,10 @@
   pick( "EFN",      3,      gml_dummy,      tag_out_txt )
   pick( "EGDOC",    5,      gml_egdoc,      tag_out_txt )
   pick( "EGL",      3,      gml_dummy,      tag_out_txt )
-  pick( "EHP0",     4,      gml_dummy,      tag_out_txt )
-  pick( "EHP1",     4,      gml_dummy,      tag_out_txt )
-  pick( "EHP2",     4,      gml_dummy,      tag_out_txt )
-  pick( "EHP3",     4,      gml_dummy,      tag_out_txt )
+  pick( "EHP0",     4,      gml_ehpx,       tag_out_txt )
+  pick( "EHP1",     4,      gml_ehpx,       tag_out_txt )
+  pick( "EHP2",     4,      gml_ehpx,       tag_out_txt )
+  pick( "EHP3",     4,      gml_ehpx,       tag_out_txt )
   pick( "ELQ",      3,      gml_dummy,      tag_out_txt )
   pick( "EOL",      3,      gml_dummy,      tag_out_txt )
   pick( "EPSC",     4,      gml_dummy,      tag_out_txt )
@@ -80,7 +80,7 @@
   pick( "FIG",      3,      gml_dummy,      tag_out_txt )
   pick( "FIGCAP",   6,      gml_dummy,      tag_out_txt )
   pick( "FIGDESC",  7,      gml_dummy,      tag_out_txt )
-  pick( "FIGLIST",  7,      gml_dummy,      tag_out_txt )
+  pick( "FIGLIST",  7,      gml_figlist,    tag_out_txt )
   pick( "FIGREF",   6,      gml_dummy,      tag_out_txt )
   pick( "FN",       2,      gml_dummy,      tag_out_txt )
   pick( "FNREF",    5,      gml_dummy,      tag_out_txt )
@@ -98,10 +98,10 @@
   pick( "H5",       2,      gml_dummy,      tag_out_txt )
   pick( "H6",       2,      gml_dummy,      tag_out_txt )
   pick( "HDREF",    5,      gml_dummy,      tag_out_txt )
-  pick( "HP0",      3,      gml_dummy,      tag_out_txt )
-  pick( "HP1",      3,      gml_dummy,      tag_out_txt )
-  pick( "HP2",      3,      gml_dummy,      tag_out_txt )
-  pick( "HP3",      3,      gml_dummy,      tag_out_txt )
+  pick( "HP0",      3,      gml_hp0,        tag_out_txt )
+  pick( "HP1",      3,      gml_hp1,        tag_out_txt )
+  pick( "HP2",      3,      gml_hp2,        tag_out_txt )
+  pick( "HP3",      3,      gml_hp3,        tag_out_txt )
   pick( "I1",       2,      gml_dummy,      tag_out_txt )
   pick( "I2",       2,      gml_dummy,      tag_out_txt )
   pick( "I3",       2,      gml_dummy,      tag_out_txt )
@@ -119,9 +119,9 @@
   pick( "LQ",       2,      gml_dummy,      tag_out_txt )
   pick( "NOTE",     4,      gml_dummy,      tag_out_txt )
   pick( "OL",       2,      gml_dummy,      tag_out_txt )
-  pick( "P",        1,      gml_dummy,      tag_out_txt )
-  pick( "PC",       2,      gml_dummy,      tag_out_txt )
-  pick( "PREFACE",  8,      gml_dummy,      tag_out_txt )
+  pick( "P",        1,      gml_p,          tag_out_txt )
+  pick( "PC",       2,      gml_pc,         tag_out_txt )
+  pick( "PREFACE",  8,      gml_preface,    tag_out_txt )
   pick( "PSC",      3,      gml_dummy,      tag_out_txt )
   pick( "Q",        1,      gml_dummy,      tag_out_txt )
   pick( "SET",      3,      gml_set,        tag_is_basic    )

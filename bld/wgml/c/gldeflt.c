@@ -122,7 +122,6 @@ void    lay_default( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_default ) {
         ProcFlags.lay_xxx = el_default;
-        out_msg( ":DEFAULT nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get attr with value
     while( cc == pos ) {

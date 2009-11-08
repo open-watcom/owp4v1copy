@@ -112,7 +112,6 @@ void    lay_lp( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_lp ) {
         ProcFlags.lay_xxx = el_lp;
-        out_msg( ":LP nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );              // get att with value
     while( cc == pos ) {

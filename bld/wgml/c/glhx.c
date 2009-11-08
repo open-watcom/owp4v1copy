@@ -235,7 +235,6 @@ void    lay_hx( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != hx_l ) {
         ProcFlags.lay_xxx = hx_l;
-        out_msg( ":H%c nearly dummy\n", entry->tagname[1] );
     }
 
     hx_l = entry->tagname[1] - '0';     // construct Hx level

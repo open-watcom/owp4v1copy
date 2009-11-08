@@ -39,6 +39,7 @@
 
   pick( "delstr",      6,   2,      1,  scr_delstr     )
 
+  pick( "c2d",         3,   1,      1,  scr_c2d        )// parm 2 is ignored
   pick( "d2c",         3,   1,      0,  scr_d2c        )// optional parm 2
 //pick( "d2c",         3,   1,      1,  scr_d2c        )// not implemented
 

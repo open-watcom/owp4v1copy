@@ -98,7 +98,6 @@ void    lay_page( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_page ) {
         ProcFlags.lay_xxx = el_page;
-        out_msg( ":PAGE nearly dummy\n" );
     }
     cc = get_lay_sub_and_value( &l_args );  // get one with value
     while( cc == pos ) {

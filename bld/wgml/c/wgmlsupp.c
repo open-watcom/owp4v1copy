@@ -271,14 +271,14 @@ static  void    get_macro_line( void )
 
     if( cb->macline == NULL ) {         // no more macrolines
         input_cbs->fmflags |= II_eof;
+        input_cbs->fmflags &= ~(II_sol | II_eol);
         cb->flags          |= FF_eof;
-        cb->flags          &= ~FF_startofline;
         *buff2              = '\0';
     } else {
         cb->lineno++;
-        cb->flags          |= FF_startofline;
         cb->flags          &= ~FF_eof;
         input_cbs->fmflags &= ~II_eof;
+        input_cbs->fmflags |= (II_sol | II_eol);
         strcpy_s( buff2, buf_size, cb->macline->value );
         cb->macline         = cb->macline->next;
     }
@@ -302,12 +302,17 @@ bool    get_line( void )
         return( !(input_cbs->fmflags & II_eof) );
     }
     if( input_cbs->hidden_head != NULL ) {  // line was previously split,
-        strcpy( buff2, input_cbs->hidden_head->value ); // take 2nd part
+        strcpy( buff2, input_cbs->hidden_head->value ); // take next part
         pline = input_cbs->hidden_head;
         input_cbs->hidden_head = input_cbs->hidden_head->next;
         mem_free( pline );
         if( input_cbs->hidden_head == NULL ) {
             input_cbs->hidden_tail = NULL;
+        }
+        input_cbs->fmflags &= ~II_sol;  // not at start of input line
+
+        if( input_cbs->hidden_head == NULL ) {  // last part of split line
+            input_cbs->fmflags |= II_eol;
         }
     } else {
         if( input_cbs->pe_cb.count > 0 ) {  // .pe perform active
@@ -332,13 +337,13 @@ bool    get_line( void )
                     if( p != NULL ) {
                         if( cb->lineno >= cb->linemax ) {
                             input_cbs->fmflags |= II_eof;
+                            input_cbs->fmflags &= ~(II_sol | II_eol);
                             cb->flags |= FF_eof;
-                            cb->flags &= ~FF_startofline;
                             *buff2 = '\0';
                             break;
                         }
                         cb->lineno++;
-                        cb->flags |= FF_startofline;
+                        input_cbs->fmflags |= (II_sol | II_eol);
 
                         if( cb->flags & FF_crlf ) {// try to delete CRLF at end
                             p += strlen( p ) - 1;
@@ -357,8 +362,8 @@ bool    get_line( void )
                     } else {
                         if( feof( cb->fp ) ) {
                             input_cbs->fmflags |= II_eof;
+                            input_cbs->fmflags &= ~(II_sol | II_eol);
                             cb->flags |= FF_eof;
-                            cb->flags &= ~FF_startofline;
                             *buff2 = '\0';
                             break;
                         } else {
@@ -419,7 +424,7 @@ void    show_include_stack( void )
     char        linemac[MAX_L_AS_STR];
 
     if( inc_level > 1 ) {
-        ip = input_cbs;
+        ip = input_cbs->prev;
         while( ip != NULL ) {
             switch( ip->fmflags & II_input ) {
             case    II_file:

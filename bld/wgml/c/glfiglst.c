@@ -105,7 +105,6 @@ void    lay_figlist( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx != el_figlist ) {
         ProcFlags.lay_xxx = el_figlist;
-        out_msg( ":%s nearly dummy\n", entry->tagname );
     }
 
 

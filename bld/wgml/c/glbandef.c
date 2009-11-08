@@ -94,6 +94,12 @@ void    banner_defaults( void )
     reg->contents.content_type = string_content;
     strcpy_s( reg->contents.string, sizeof( "/&$htext0.// &$pgnuma./" ),
               "/&$htext0.// &$pgnuma./" );
+    reg->script_region[0].len = 0;
+    reg->script_region[1].len = 0;
+    reg->script_region[2].len = 0;
+    reg->script_region[0].string = NULL;
+    reg->script_region[1].string = NULL;
+    reg->script_region[2].string = NULL;
 
 
 
@@ -112,6 +118,12 @@ void    banner_defaults( void )
     reg->next = NULL;
     strcpy_s( reg->contents.string, sizeof( "/&$htext1.// &$pgnuma./" ),
               "/&$htext1.// &$pgnuma./" );
+    reg->script_region[0].len = 0;
+    reg->script_region[1].len = 0;
+    reg->script_region[2].len = 0;
+    reg->script_region[0].string = NULL;
+    reg->script_region[1].string = NULL;
+    reg->script_region[2].string = NULL;
 
 
 
@@ -137,6 +149,12 @@ void    banner_defaults( void )
     reg->script_format = false;
     reg->contents.content_type = pgnumr_content;
     strcpy_s( reg->contents.string, sizeof( reg->contents ), nr );
+    reg->script_region[0].len = 0;
+    reg->script_region[1].len = 0;
+    reg->script_region[2].len = 0;
+    reg->script_region[0].string = NULL;
+    reg->script_region[1].string = NULL;
+    reg->script_region[2].string = NULL;
 
 
 
@@ -178,6 +196,12 @@ void    banner_defaults( void )
     reg->contents.content_type = string_content;
     strcpy_s( reg->contents.string, sizeof( "Table of Contents" ),
               "Table of Contents" );
+    reg->script_region[0].len = 0;
+    reg->script_region[1].len = 0;
+    reg->script_region[2].len = 0;
+    reg->script_region[0].string = NULL;
+    reg->script_region[1].string = NULL;
+    reg->script_region[2].string = NULL;
 
 
     wk = ban;

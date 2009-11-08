@@ -81,8 +81,16 @@ extern  bool        is_function_char( char c );
 extern  bool        is_lay_att_char( char c );
 extern  bool        is_id_char( char c );
 extern  bool        is_macro_char( char c );
+extern  bool        is_stop_char( char c );
 extern  bool        is_symbol_char( char c );
 extern  void        unquote_if_quoted( char * * a, char * * z );
+
+
+/* gbanner.c                            */
+extern  uint32_t    ban_top_pos( banner_lay_tag * ban );
+extern  uint32_t    ban_bot_pos( banner_lay_tag * ban );
+extern  void        out_ban_bot( banner_lay_tag * ban );
+extern  void        out_ban_top( banner_lay_tag * ban );
 
 
 /* gdata.c                              */
@@ -91,10 +99,13 @@ extern  void    init_proc_flags( void );
 
 
 /* gdeflay.c                            */
-extern  void    do_layout_end_processing( void );
 extern  void    init_def_lay( void );
-extern  void    init_def_margins( void );
-extern  void    init_page_geometry( void );
+
+
+/* gdocsect.c                           */
+extern  void    set_section_banners( doc_section ds );
+extern  void    finish_page( void );
+extern  void    prepare_doc_sect( doc_section ds );
 
 
 /* gerror.c                             */
@@ -163,6 +174,13 @@ extern  int     proc_options( char * cmdline );
 extern  void    split_attr_file( char * filename, char * attr, size_t attrlen );
 
 
+/* gpagegeo.c                           */
+extern  void    do_layout_end_processing( void );
+extern  void    init_def_margins( void );
+extern  void    init_page_geometry( void );
+extern  void    set_page_position( doc_section ds );
+
+
 /* gprocess.c                         */
 extern  void    process_late_subst( void );
 extern  void    process_line( void );
@@ -172,7 +190,8 @@ extern  void    split_input_LIFO( char * buf, char * split_pos );
 
 /* gproctxt.c              TBD        */
 extern  void    add_text_chars_to_pool( text_line * a_line );
-extern  void    do_justify( uint32_t left_margin, uint32_t right_margin );
+extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
+extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_chars * tc );
 extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
 extern  void    set_h_start( void );
@@ -272,6 +291,7 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 /* gutils.c                           */
 extern  uint32_t    conv_hor_unit( su * spaceunit );
 extern  uint32_t    conv_vert_unit( su * spaceunit );
+extern  char    *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  bool        to_internal_SU( char * * scaninput, su * spaceunit );
 
 
@@ -307,13 +327,13 @@ extern  int     get_msg( msg_ids resourceid, char *buffer, size_t buflen );
  */
 
 #define pick( name, funci, funco, restype ) \
-extern  bool    funci( char * buf, lay_att attr, restype * result );
+    extern  bool    funci( char * buf, lay_att attr, restype * result );
 
 #include "glayutil.h"
 
 
 #define pick( name, funci, funco, restype ) \
-extern  void    funco( FILE * f, lay_att attr, restype * in );
+    extern  void    funco( FILE * f, lay_att attr, restype * in );
 
 #include "glayutil.h"
 
