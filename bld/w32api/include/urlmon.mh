@@ -51,6 +51,10 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
     #define FMFD_ENABLEMIMESNIFFING     0x00000002L
     #define FMFD_IGNOREMIMETEXTPLAIN    0x00000004L
 #endif
+#define FMFD_SERVERMIME                 0x00000008L
+
+/* ObtainUserAgentString() options */
+#define UAS_EXACTLEGACY 0x00001000L
 
 /* UrlMkSetSessionOption() options */
 #define URLMON_OPTION_USERAGENT                     0x10000001L
@@ -132,6 +136,7 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
 #define INET_E_USE_EXTEND_BINDING                   0x800C0017L
 #define INET_E_TERMINATE_BIND                       0x800C0018L
 #define INET_E_INVALID_CERTIFICATE                  0x800C0019L
+#define INET_E_BLOCK_REDIRECT_XSECURITYID           0x800C001BL
 #define INET_E_CODE_DOWNLOAD_DECLINED               0x800C0100L
 #define INET_E_RESULT_DISPATCHED                    0x800C0200L
 #define INET_E_CANNOT_REPLACE_SFP_FILE              0x800C0300L
@@ -139,7 +144,8 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
     #define INET_E_CODE_INSTALL_SUPPRESSED          0x800C0400L
 #endif
 #define INET_E_CODE_INSTALL_BLOCKED_BY_HASH_POLICY  0x800C0500L
-#define INET_E_ERROR_LAST                           INET_E_CODE_INSTALL_BLOCKED_BY_HASH_POLICY
+#define INET_E_DOWNLOAD_BLOCKED_BY_INPRIVATE        0x800C0501L
+#define INET_E_ERROR_LAST                           INET_E_DOWNLOAD_BLOCKED_BY_INPRIVATE
 #define INET_E_DEFAULT_ACTION                       INET_E_USE_DEFAULT_PROTOCOLHANDLER
 
 /* URI creation flags */
@@ -258,7 +264,8 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
 #define URLACTION_ACTIVEX_OVERRIDE_OPTIN                    0x00001208L
 #define URLACTION_ACTIVEX_SCRIPTLET_RUN                     0x00001209L
 #define URLACTION_ACTIVEX_DYNSRC_VIDEO_AND_ANIMATION        0x0000120AL
-#define URLACTION_ACTIVEX_CURR_MAX                          0x0000120AL
+#define URLACTION_ACTIVEX_OVERRIDE_DOMAINLIST               0x0000120BL
+#define URLACTION_ACTIVEX_CURR_MAX                          0x0000120BL
 #define URLACTION_ACTIVEX_MAX                               0x000013FFL
 #define URLACTION_SCRIPT_MIN                                0x00001400L
 #define URLACTION_SCRIPT_RUN                                0x00001400L
@@ -268,7 +275,8 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
 #define URLACTION_CROSS_DOMAIN_DATA                         0x00001406L
 #define URLACTION_SCRIPT_PASTE                              0x00001407L
 #define URLACTION_ALLOW_XDOMAIN_SUBFRAME_RESIZE             0x00001408L
-#define URLACTION_SCRIPT_CURR_MAX                           0x00001408L
+#define URLACTION_SCRIPT_XSSFILTER                          0x00001409L
+#define URLACTION_SCRIPT_CURR_MAX                           0x00001409L
 #define URLACTION_SCRIPT_MAX                                0x000015FFL
 #define URLACTION_HTML_MIN                                  0x00001600L
 #define URLACTION_HTML_SUBMIT_FORMS                         0x00001601L
@@ -300,6 +308,11 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
     #define URLACTION_SHELL_SECURE_DRAGSOURCE               0x0000180DL
     #define URLACTION_SHELL_CURR_MAX                        0x0000180DL
 #endif
+#if (_WIN32_IE >= 0x0800)
+    #define URLACTION_SHELL_REMOTEQUERY                     0x0000180EL
+    #define URLACTION_SHELL_PREVIEW                         0x0000180FL
+#endif
+#define URLACTION_SHELL_CURR_MAX                            0x0000180FL
 #define URLACTION_SHELL_MAX                                 0x000019FFL
 #define URLACTION_NETWORK_MIN                               0x00001A00L
 #define URLACTION_CREDENTIALS_USE                           0x00001A00L
@@ -329,6 +342,9 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
 #define URLACTION_CHANNEL_SOFTDIST_MIN                      0x00001E00L
 #define URLACTION_CHANNEL_SOFTDIST_PERMISSIONS              0x00001E05L
 #define URLACTION_CHANNEL_SOFTDIST_MAX                      0x00001EFFL
+#if (_WIN32_IE >= 0x0800)
+    #define URLACTION_DOTNER_USERCONTROLS                   0x00002005L
+#endif
 #if (_WIN32_IE >= 0x0602)
     #define URLACTION_BEHAVIOR_MIN                          0x00002000L
     #define URLACTION_BEHAVIOR_RUN                          0x00002000L
@@ -339,18 +355,20 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
     #define URLACTION_FEATURE_SCRIPT_STATUS_BAR             0x00002103L
     #define URLACTION_FEATURE_FORCE_ADDR_AND_STATUS         0x00002104L
     #define URLACTION_FEATURE_BLOCK_INPUT_PROMPTS           0x00002105L
+    #define URLACTION_FEATURE_DATA_BINDING                  0x00002106L
     #define URLACTION_AUTOMATIC_DOWNLOAD_UI_MIN             0x00002200L
     #define URLACTION_AUTOMATIC_DOWNLOAD_UI                 0x00002200L
     #define URLACTION_AUTOMATIC_ACTIVEX_UI                  0x00002201L
     #define URLACTION_ALLOW_RESTRICTEDPROTOCOLS             0x00002300L
-    #define URLACTION_ALLOW_APEVALUATION                    0x00002301L
 #endif
 #if (_WIN32_IE >= 0x0700)
+    #define URLACTION_ALLOW_APEVALUATION                    0x00002301L
     #define URLACTION_WINDOWS_BROWSER_APPLICATIONS          0x00002400L
     #define URLACTION_XPS_DOCUMENTS                         0x00002401L
     #define URLACTION_LOOSE_XAML                            0x00002402L
     #define URLACTION_LOWRIGHTS                             0x00002500L
     #define URLACTION_WINFX_SETUP                           0x00002600L
+    #define URLACTION_INPRIVATE_BLOCKING                    0x00002700L
 #endif
 
 /* URL policy ActiveX options */
@@ -512,6 +530,7 @@ typedef enum {
     BINDINFO_OPTIONS_IGNORE_SSLERRORS_ONCE      = 0x02000000,
     BINDINFO_WPC_DOWNLOADBLOCKED                = 0x08000000,
     BINDINFO_WPC_LOGGING_ENABLED                = 0x10000000,
+    BINDINFO_OPTIONS_ALLOWCONNECTDATA           = 0x20000000,
     BINDINFO_OPTIONS_DISABLEAUTOREDIRECTS       = 0x40000000,
     BINDINFO_OPTIONS_SHDOCVW_NAVIGATE           = 0x80000000
 } BINDINFO_OPTIONS;
@@ -522,7 +541,9 @@ typedef enum {
     BSCF_INTERMEDIATEDATANOTIFICATION   = 0x00000002,
     BSCF_LASTDATANOTIFICATION           = 0x00000004,
     BSCF_DATAFULLYAVAILABLE             = 0x00000008,
-    BSCF_AVAILABLEDATASIZEUNKNOWN       = 0x00000010
+    BSCF_AVAILABLEDATASIZEUNKNOWN       = 0x00000010,
+    BSCF_SKIPDRAINDATAFORFILEURLS       = 0x00000020,
+    BSCF_64BITLENGTHDOWNLOAD            = 0x00000040
 } BSCF;
 
 /* Bind status values */
@@ -579,8 +600,32 @@ typedef enum {
     BINDSTATUS_MIMETEXTPLAINMISMATCH        = 50,
     BINDSTATUS_PUBLISHERAVAILABLE           = 51,
     BINDSTATUS_DISPLAYNAMEAVAILABLE         = 52,
-    BINDSTATUS_SSLUX_NAVBLOCKED             = 53
+    BINDSTATUS_SSLUX_NAVBLOCKED             = 53,
+    BINDSTATUS_SERVER_MIMETYPEAVAILABLE     = 54,
+    BINDSTATUS_SNIFFED_CLASSIDAVAILABLE     = 55,
+    BINDSTATUS_64BIT_PROGRESS               = 56
 } BINDSTATUS;
+
+/* Bind flags (level 2) */
+typedef enum {
+    BINDF2_DISABLEBASICOVERHTTP                 = 0x00000001,
+    BINDF2_DISABLEAUTOCOOKIEHANDLING            = 0x00000002,
+    BINDF2_READ_DATA_GREATER_THAN_4GB           = 0x00000004,
+    BINDF2_DISABLE_HTTP_REDIRECT_XSECURITYID    = 0x00000008
+} BINDF2;
+
+/* Authenticate flags */
+typedef enum {
+    AUTHENTICATEF_PROXY = 0x00000001,
+    AUTHENTICATEF_BASIC = 0x00000002,
+    AUTHENTICATEF_HTTP  = 0x00000004
+} AUTHENTICATEF;
+
+/* Authenticate information */
+typedef struct _tagAUTHENTICATEINFO {
+    DWORD   dwFlags;
+    DWORD   dwReserved;
+} AUTHENTICATEINFO;
 
 /* Code install problems */
 typedef enum {
@@ -680,7 +725,8 @@ typedef enum tagBINDSTRING {
     BINDSTRING_URL                  = 14,
     BINDSTRING_IID                  = 15,
     BINDSTRING_FLAG_BIND_TO_OBJECT  = 16,
-    BINDSTRING_PTR_BIND_CONTEXT     = 17
+    BINDSTRING_PTR_BIND_CONTEXT     = 17,
+    BINDSTRING_XDR_ORIGIN           = 18
 } BINDSTRING;
 
 /* Asynchronous protocol handler flags */
@@ -725,26 +771,32 @@ typedef enum _tagOIBDG_FLAGS {
 
 /* Parse actions */
 typedef enum _tagPARSEACTION {
-    PARSE_CANONICALIZE      = 1,
-    PARSE_FRIENDLY          = 2,
-    PARSE_SECURITY_URL      = 3,
-    PARSE_ROOTDOCUMENT      = 4,
-    PARSE_DOCUMENT          = 5,
-    PARSE_ANCHOR            = 6,
-    PARSE_ENCODE            = 7,
-    PARSE_DECODE            = 8,
-    PARSE_PATH_FROM_URL     = 9,
-    PARSE_URL_FROM_PATH     = 10,
-    PARSE_MIME              = 11,
-    PARSE_SERVER            = 12,
-    PARSE_SCHEMA            = 13,
-    PARSE_SITE              = 14,
-    PARSE_DOMAIN            = 15,
-    PARSE_LOCATION          = 16,
-    PARSE_SECURITY_DOMAIN   = 17,
-    PARSE_ESCAPE            = 18,
-    PARSE_UNESCAPE          = 19
+    PARSE_CANONICALIZE          = 1,
+    PARSE_FRIENDLY              = 2,
+    PARSE_SECURITY_URL          = 3,
+    PARSE_ROOTDOCUMENT          = 4,
+    PARSE_DOCUMENT              = 5,
+    PARSE_ANCHOR                = 6,
+    PARSE_ENCODE_IS_UNESCAPE    = 7,
+    PARSE_DECODE_IS_ESCAPE      = 8,
+    PARSE_PATH_FROM_URL         = 9,
+    PARSE_URL_FROM_PATH         = 10,
+    PARSE_MIME                  = 11,
+    PARSE_SERVER                = 12,
+    PARSE_SCHEMA                = 13,
+    PARSE_SITE                  = 14,
+    PARSE_DOMAIN                = 15,
+    PARSE_LOCATION              = 16,
+    PARSE_SECURITY_DOMAIN       = 17,
+    PARSE_ESCAPE                = 18,
+    PARSE_UNESCAPE              = 19
 } PARSEACTION;
+
+/* Old names for compatibility */
+#ifndef URLMON_STRICT
+    #define PARSE_ENCODE    PARSE_ENCODE_IS_UNESCAPE
+    #define PARSE_DECODE    PARSE_DECODE_IS_ESCAPE
+#endif
 
 /* CoInternetGetSecurityURL() actions */
 typedef enum _tagPSUACTION {
@@ -978,9 +1030,12 @@ EXTERN_C const IID  IID_IMonikerProp;
 EXTERN_C const IID  IID_IBindProtocol;
 EXTERN_C const IID  IID_IBinding;
 EXTERN_C const IID  IID_IBindStatusCallback;
+EXTERN_C const IID  IID_IBindStatusCallbackEx;
 EXTERN_C const IID  IID_IAuthenticate;
+EXTERN_C const IID  IID_IAuthenticateEx;
 EXTERN_C const IID  IID_IHttpNegotiate;
 EXTERN_C const IID  IID_IHttpNegotiate2;
+EXTERN_C const IID  IID_IHttpNegotiate3;
 EXTERN_C const IID  IID_IWinInetFileStream;
 EXTERN_C const IID  IID_IWindowForBindingUI;
 EXTERN_C const IID  IID_ICodeInstall;
@@ -1002,6 +1057,7 @@ EXTERN_C const IID  IID_IWinInetCacheHints2;
 EXTERN_C const IID  IID_IBindHost;
 EXTERN_C const IID  IID_IInternet;
 EXTERN_C const IID  IID_IInternetBindInfo;
+EXTERN_C const IID  IID_IInternetBindInfoEx;
 EXTERN_C const IID  IID_IInternetProtocolRoot;
 EXTERN_C const IID  IID_IInternetProtocol;
 #if (_WIN32_IE >= 0x0700)
@@ -1137,6 +1193,30 @@ DECLARE_INTERFACE_( IBindStatusCallback, IUnknown ) {
 };
 typedef IBindStatusCallback *LPBINDSTATUSCALLBACK;
 
+/* IBindStatusCallbackEx interface */
+#undef INTERFACE
+#define INTERFACE   IBindStatusCallbackEx
+DECLARE_INTERFACE_( IBindStatusCallbackEx, IBindStatusCallback ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IBindStatusCallback methods */
+    STDMETHOD( OnStartBinding )( THIS_ DWORD, IBinding * ) PURE;
+    STDMETHOD( GetPriority )( THIS_ LONG * ) PURE;
+    STDMETHOD( OnLowResource )( THIS_ DWORD ) PURE;
+    STDMETHOD( OnProgress )( THIS_ ULONG, ULONG, ULONG, LPCWSTR ) PURE;
+    STDMETHOD( OnStopBinding )( THIS_ HRESULT, LPCWSTR ) PURE;
+    STDMETHOD( GetBindInfo )( THIS_ DWORD *, BINDINFO * ) PURE;
+    STDMETHOD( OnDataAvailable )( THIS_ DWORD, DWORD, FORMATETC *, STGMEDIUM * ) PURE;
+    STDMETHOD( OnObjectAvailable )( THIS_ REFIID, IUnknown * ) PURE;
+
+    /* IBindStatusCallbackEx methods */
+    STDMETHOD( GetBindInfoEx )( THIS_ DWORD *, BINDINFO *, DWORD *, DWORD * ) PURE;
+};
+typedef IBindStatusCallbackEx   *LPBINDSTATUSCALLBACKEX;
+
 /* IAuthenticate interface */
 #undef INTERFACE
 #define INTERFACE   IAuthenticate
@@ -1150,6 +1230,23 @@ DECLARE_INTERFACE_( IAuthenticate, IUnknown ) {
     STDMETHOD( Authenticate )( THIS_ HWND *, LPWSTR *, LPWSTR * ) PURE;
 };
 typedef IAuthenticate   *LPAUTHENTICATION;
+
+/* IAuthenticateEx interface */
+#undef INTERFACE
+#define INTERFACE   IAuthenticateEx
+DECLARE_INTERFACE_( IAuthenticateEx, IAuthenticate ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IAuthenticate methods */
+    STDMETHOD( Authenticate )( THIS_ HWND *, LPWSTR *, LPWSTR * ) PURE;
+
+    /* IAuthenticateEx methods */
+    STDMETHOD( AuthenticateEx )( THIS_ HWND *, LPWSTR *, LPWSTR *, AUTHENTICATEINFO * ) PURE;
+};
+typedef IAuthenticateEx *LPAUTHENTICATIONEX;
 
 /* IHttpNegotiate interface */
 #undef INTERFACE
@@ -1183,6 +1280,27 @@ DECLARE_INTERFACE_( IHttpNegotiate2, IHttpNegotiate ) {
     STDMETHOD( GetRootSecurityId )( THIS_ BYTE *, DWORD *, DWORD_PTR ) PURE;
 };
 typedef IHttpNegotiate2 *LPHTTPNEGOTIATE2;
+
+/* IHttpNegotiate3 interface */
+#undef INTERFACE
+#define INTERFACE   IHttpNegotiate3
+DECLARE_INTERFACE_( IHttpNegotiate3, IHttpNegotiate2 ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IHttpNegotiate methods */
+    STDMETHOD( BeginningTransaction )( THIS_ LPCWSTR, LPCWSTR, DWORD, LPWSTR * ) PURE;
+    STDMETHOD( OnResponse )( THIS_ DWORD, LPCWSTR, LPCWSTR, LPWSTR * ) PURE;
+
+    /* IHttpNegotiate2 methods */
+    STDMETHOD( GetRootSecurityId )( THIS_ BYTE *, DWORD *, DWORD_PTR ) PURE;
+
+    /* IHttpNegotiate3 methods */
+    STDMETHOD( GetSerializedClientCertContext )( THIS_ BYTE **, DWORD * ) PURE;
+};
+typedef IHttpNegotiate3 *LPHTTPNEGOTIATE3;
 
 /* IWinInetFileStream interface */
 #undef INTERFACE
@@ -1461,6 +1579,23 @@ DECLARE_INTERFACE_( IInternetBindInfo, IUnknown ) {
     STDMETHOD( GetBindString )( THIS_ ULONG, LPOLESTR *, ULONG, ULONG * ) PURE;
 };
 typedef IInternetBindInfo   *LPIINTERNETBINDINFO;
+
+/* IInternetBindInfoEx interface */
+#undef INTERFACE
+#define INTERFACE   IInternetBindInfoEx
+DECLARE_INTERFACE_( IInternetBindInfoEx, IInternetBindInfo ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IInternetBindInfo methods */
+    STDMETHOD( GetBindInfo )( THIS_ DWORD *, BINDINFO * ) PURE;
+    STDMETHOD( GetBindString )( THIS_ ULONG, LPOLESTR *, ULONG, ULONG * ) PURE;
+
+    /* IInternetBindInfoEx methods */
+    STDMETHOD( GetBindInfoEx )( THIS_ DWORD *, BINDINFO *, DWORD *, DWORD * ) PURE;
+};
 
 /* IInternetProtocolRoot interface */
 #undef INTERFACE
@@ -1999,6 +2134,30 @@ typedef IWrappedProtocol    *LPWRAPPEDPROTOCOL;
         (x)->lpVtbl->OnDataAvailable( x, p1, p2, p3, p4 )
     #define IBindStatusCallback_OnObjectAvailable( x, p1, p2 ) \
         (x)->lpVtbl->OnObjectAvailable( x, p1, p2 )
+    #define IBindStatusCallbackEx_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IBindStatusCallbackEx_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IBindStatusCallbackEx_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IBindStatusCallbackEx_OnStartBinding( x, p1, p2 ) \
+        (x)->lpVtbl->OnStartBinding( x, p1, p2 )
+    #define IBindStatusCallbackEx_GetPriority( x, p ) \
+        (x)->lpVtbl->GetPriority( x, p )
+    #define IBindStatusCallbackEx_OnLowResource( x, p ) \
+        (x)->lpVtbl->OnLowResource( x, p )
+    #define IBindStatusCallbackEx_OnProgress( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->OnProgress( x, p1, p2, p3, p4 )
+    #define IBindStatusCallbackEx_OnStopBinding( x, p1, p2 ) \
+        (x)->lpVtbl->OnStopBinding( x, p1, p2 )
+    #define IBindStatusCallbackEx_GetBindInfo( x, p1, p2 ) \
+        (x)->lpVtbl->GetBindInfo( x, p1, p2 )
+    #define IBindStatusCallbackEx_OnDataAvailable( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->OnDataAvailable( x, p1, p2, p3, p4 )
+    #define IBindStatusCallbackEx_OnObjectAvailable( x, p1, p2 ) \
+        (x)->lpVtbl->OnObjectAvailable( x, p1, p2 )
+    #define IBindStatusCallbackEx_GetBindInfoEx( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->GetBindInfoEx( x, p1, p2, p3, p4 )
     #define IAuthenticate_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IAuthenticate_AddRef( x ) \
@@ -2007,6 +2166,16 @@ typedef IWrappedProtocol    *LPWRAPPEDPROTOCOL;
         (x)->lpVtbl->Release( x )
     #define IAuthenticate_Authenticate( x, p1, p2, p3 ) \
         (x)->lpVtbl->Authenticate( x, p1, p2, p3 )
+    #define IAuthenticateEx_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IAuthenticateEx_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IAuthenticateEx_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IAuthenticateEx_Authenticate( x, p1, p2, p3 ) \
+        (x)->lpVtbl->Authenticate( x, p1, p2, p3 )
+    #define IAuthenticateEx_AuthenticateEx( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->AuthenticateEx( x, p1, p2, p3, p4 )
     #define IHttpNegotiate_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IHttpNegotiate_AddRef( x ) \
@@ -2029,6 +2198,20 @@ typedef IWrappedProtocol    *LPWRAPPEDPROTOCOL;
         (x)->lpVtbl->OnResponse( x, p1, p2, p3, p4 )
     #define IHttpNegotiate2_GetRootSecurityId( x, p1, p2, p3 ) \
         (x)->lpVtbl->GetRootSecurityId( x, p1, p2, p3 )
+    #define IHttpNegotiate3_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IHttpNegotiate3_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IHttpNegotiate3_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IHttpNegotiate3_BeginningTransaction( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->BeginningTransaction( x, p1, p2, p3, p4 )
+    #define IHttpNegotiate3_OnResponse( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->OnResponse( x, p1, p2, p3, p4 )
+    #define IHttpNegotiate3_GetRootSecurityId( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetRootSecurityId( x, p1, p2, p3 )
+    #define IHttpNegotiate3_GetSerializedClientCertContext( x, p1, p2 ) \
+        (x)->lpVtbl->GetSerializedClientCertContext( x, p1, p2 )
     #define IWinInetFileStream_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IWinInetFileStream_AddRef( x ) \
@@ -2253,6 +2436,18 @@ typedef IWrappedProtocol    *LPWRAPPEDPROTOCOL;
         (x)->lpVtbl->GetBindInfo( x, p1, p2 )
     #define IInternetBindInfo_GetBindString( x, p1, p2, p3, p4 ) \
         (x)->lpVtbl->GetBindString( x, p1, p2, p3, p4 )
+    #define IInternetBindInfoEx_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IInternetBindInfoEx_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IInternetBindInfoEx_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IInternetBindInfoEx_GetBindInfo( x, p1, p2 ) \
+        (x)->lpVtbl->GetBindInfo( x, p1, p2 )
+    #define IInternetBindInfoEx_GetBindString( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->GetBindString( x, p1, p2, p3, p4 )
+    #define IInternetBindInfoEx_GetBindInfoEx( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->GetBindInfoEx( x, p1, p2, p3, p4 )
     #define IInternetProtocolRoot_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IInternetProtocolRoot_AddRef( x ) \
@@ -2686,6 +2881,7 @@ typedef IWrappedProtocol    *LPWRAPPEDPROTOCOL;
 /* Old names of interfaces for compatibility */
 #define IOInet                      IInternet
 #define IOInetBindInfo              IInternetBindInfo
+#define IOInetBindInfoEx            IInternetBindInfoEx
 #define IOInetProtocolRoot          IInternetProtocolRoot
 #define IOInetProtocol              IInternetProtocol
 #if (_WIN32_IE >= 0x0700)
@@ -2716,6 +2912,7 @@ typedef IWrappedProtocol    *LPWRAPPEDPROTOCOL;
 /* Old names of GUIDs for compatibility */
 #define IID_IOInet                      IID_IInternet
 #define IID_IOInetBindInfo              IID_IInternetBindInfo
+#define IID_IOInetBindInfoEx            IID_IInternetBindInfoEx
 #define IID_IOInetProtocolRoot          IID_IInternetProtocolRoot
 #define IID_IOInetProtocol              IID_IInternetProtocol
 #if (_WIN32_IE >= 0x0700)
@@ -2769,6 +2966,7 @@ STDAPI          HlinkNavigateMoniker( IUnknown *, IMoniker * );
 STDAPI          HlinkNavigateString( IUnknown *, LPCWSTR );
 STDAPI          HlinkSimpleNavigateToMoniker( IMoniker *, LPCWSTR, LPCWSTR, IUnknown *, IBindCtx *, IBindStatusCallback *, DWORD, DWORD );
 STDAPI          HlinkSimpleNavigateToString( LPCWSTR, LPCWSTR, LPCWSTR, IUnknown *, IBindCtx *, IBindStatusCallback *, DWORD, DWORD );
+STDAPI          IEInstallScope( LPDWORD );
 STDAPI          IsAsyncMoniker( IMoniker * );
 STDAPI          IsValidURL( LPBC, LPCWSTR, DWORD );
 STDAPI          MkParseDisplayNameEx( IBindCtx *, LPCWSTR, ULONG *, LPMONIKER * );

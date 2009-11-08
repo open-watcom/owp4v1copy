@@ -49,6 +49,7 @@ HlinkNavigateMoniker@8
 HlinkNavigateString@8
 HlinkSimpleNavigateToMoniker@32
 HlinkSimpleNavigateToString@32
+IEInstallScope@4
 IsAsyncMoniker@4
 IsLoggingEnabledA@4
 IsLoggingEnabledW@4
@@ -76,4 +77,3 @@ URLOpenStreamW@16
 UrlMkGetSessionOption@20
 UrlMkSetSessionOption@16
 WriteHitLogging@4
-
