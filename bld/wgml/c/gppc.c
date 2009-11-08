@@ -75,7 +75,7 @@ static  void    proc_p_pc( p_lay_tag * p_pc )
         process_text( p, g_curr_font_num );
     }
 
-    post_skip = &(p_pc->.post_skip);
+    post_skip = &(p_pc->post_skip);
 
     scan_start = scan_stop + 1;
     return;
