@@ -593,6 +593,9 @@ WINOLEAUTAPI_( void )           VariantInit( VARIANTARG * );
 WINOLEAUTAPI_( INT )            VariantTimeToDosDateTime( DOUBLE, USHORT *, USHORT * );
 WINOLEAUTAPI_( INT )            VariantTimeToSystemTime( DOUBLE, LPSYSTEMTIME );
 WINOLEAUTAPI                    VectorFromBstr( BSTR, SAFEARRAY ** );
+#if (NTDDI_VERSION >= 0x06000100)
+WINOLEAUTAPI_( void )           OaEnablePerUserTLibRegistration( void );
+#endif
 
 /* Functions implemented as macros */
 #define LHashValOfName( p1, p2 )    LHashValOfNameSys( SYS_WIN32, p1, p2 )
