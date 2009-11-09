@@ -892,12 +892,18 @@ typedef DWORD   *LPMONTHDAYSTATE;
 #if (_WIN32_IE >= 0x0500)
     #define TB_GETSTRINGW           (WM_USER + 91)
     #define TB_GETSTRINGA           (WM_USER + 92)
+    #define TB_SETHOTITEM2          (WM_USER + 94)
+    #define TB_SETLISTGAP           (WM_USER + 96)
+    #define TB_GETIMAGELISTCOUNT    (WM_USER + 98)
+    #define TB_GETIDEALSIZE         (WM_USER + 99)
+    #define TB_TRANSLATEACCELERATOR CCM_TRANSLATEACCELERATOR
 #endif
 #if (_WIN32_WINNT >= 0x0501)
     #define TB_GETMETRICS           (WM_USER + 101)
     #define TB_SETMETRICS           (WM_USER + 102)
 #endif
 #if (_WIN32_WINNT >= 0x0600)
+    #define TB_GETITEMDROPDOWNRECT  (WM_USER + 103)
     #define TB_SETPRESSEDIMAGELIST  (WM_USER + 104)
     #define TB_GETPRESSEDIMAGELIST  (WM_USER + 105)
 #endif
@@ -1057,6 +1063,11 @@ typedef DWORD   *LPMONTHDAYSTATE;
     #define TBN_RESTORE         (TBN_FIRST - 21)
     #define TBN_SAVE            (TBN_FIRST - 22)
     #define TBN_INITCUSTOMIZE   (TBN_FIRST - 23)
+    #define TBN_WRAPHOTITEM     (TBN_FIRST - 24)
+    #define TBN_DUPACCELERATOR  (TBN_FIRST - 25)
+    #define TBN_WRAPACCELERATOR (TBN_FIRST - 26)
+    #define TBN_DRAGOVER        (TBN_FIRST - 27)
+    #define TBN_MAPACCELERATOR  (TBN_FIRST - 28)
 #endif
 #ifdef UNICODE
     #define TBN_GETBUTTONINFO   TBN_GETBUTTONINFOW
@@ -1608,6 +1619,7 @@ typedef DWORD   *LPMONTHDAYSTATE;
     #define TBM_SETTIPSIDE          (WM_USER + 31)
     #define TBM_SETBUDDY            (WM_USER + 32)
     #define TBM_GETBUDDY            (WM_USER + 33)
+    #define TBM_SETPOSNOTIFY        (WM_USER + 34)
 #endif
 #if (_WIN32_IE >= 0x0400)
     #define TBM_SETUNICODEFORMAT    CCM_SETUNICODEFORMAT
@@ -2418,8 +2430,9 @@ typedef DWORD   *LPMONTHDAYSTATE;
 
 /* List view custom draw item types */
 #if (_WIN32_IE >= 0x0300)
-    #define LVCDI_ITEM  0x00000000L
-    #define LVCDI_GROUP 0x00000001L
+    #define LVCDI_ITEM      0x00000000L
+    #define LVCDI_GROUP     0x00000001L
+    #define LVCDI_ITEMSLIST 0x00000002L
 #endif
 
 /* List view custom draw return flags */
@@ -5210,6 +5223,9 @@ typedef struct tagTVITEMEXA {
     HWND        hwnd;
     int         iExpandedImage;
 #endif
+#if (NTDDI_VERSION >= 0x06010000)
+    int         iReserved;
+#endif
 } TVITEMEXA;
 typedef TVITEMEXA   *LPTVITEMEXA;
 typedef struct tagTVITEMEXW {
@@ -5228,6 +5244,9 @@ typedef struct tagTVITEMEXW {
     UINT        uStateEx;
     HWND        hwnd;
     int         iExpandedImage;
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    int         iReserved;
 #endif
 } TVITEMEXW;
 typedef TVITEMEXW   *LPTVITEMEXW;
@@ -7132,6 +7151,7 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
     #define DSA_AppendItem( x, p )      DSA_InsertItem( x, DA_LAST, p )
     #define DSA_GetItemCount( x )       (*(int *)(x))
     #define DPA_GetPtrCount( x )        (*(int *)(x))
+    #define DPA_SetPtrCount( x, p )     (*(int *)(x) = (p))
     #define DPA_FastDeleteLastPtr( x )  (--*(int *)(x))
     #define DPA_GetPtrPtr( x )          (*((void ***)((BYTE *)(x) + sizeof( void * ))))
     #define DPA_FastGetPtr( x, p )      (DPA_GetPtrPtr( x )[p])
