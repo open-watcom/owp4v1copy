@@ -64,6 +64,8 @@ typedef LPVOID  SC_LOCK;
 #define SERVICE_CONTROL_POWEREVENT              0x0000000DL
 #define SERVICE_CONTROL_SESSIONCHANGE           0x0000000EL
 #define SERVICE_CONTROL_PRESHUTDOWN             0x0000000FL
+#define SERVICE_CONTROL_TIMECHANGE              0x00000010L
+#define SERVICE_CONTROL_TRIGGEREVENT            0x00000020L
 
 /* Service states */
 #define SERVICE_STOPPED             0x00000001L
@@ -84,6 +86,8 @@ typedef LPVOID  SC_LOCK;
 #define SERVICE_ACCEPT_POWEREVENT               0x00000040L
 #define SERVICE_ACCEPT_SESSIONCHANGE            0x00000080L
 #define SERVICE_ACCEPT_PRESHUTDOWN              0x00000100L
+#define SERVICE_ACCEPT_TIMECHANGE               0x00000200L
+#define SERVICE_ACCEPT_TRIGGEREVENT             0x00000400L
 
 /* Service Control Manager access rights */
 #define SC_MANAGER_CONNECT              0x0001L
@@ -124,6 +128,8 @@ typedef LPVOID  SC_LOCK;
 #define SERVICE_CONFIG_SERVICE_SID_INFO         5L
 #define SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO 6L
 #define SERVICE_CONFIG_PRESHUTDOWN_INFO         7L
+#define SERVICE_CONFIG_TRIGGER_INFO             8L
+#define SERVICE_CONFIG_PREFERRED_NODE           9L
 
 /* NotifyServiceStatusChange() information levels */
 #define SERVICE_NOTIFY_STATUS_CHANGE_1  1L
@@ -197,6 +203,25 @@ typedef LPVOID  SC_LOCK;
 #define SERVICE_SID_TYPE_NONE           0x00000000L
 #define SERVICE_SID_TYPE_UNRESTRICTED   0x00000001L
 #define SERVICE_SID_TYPE_RESTRICTED     (0x00000002L | SERVICE_SID_TYPE_UNRESTRICTED)
+
+/* Service trigger types */
+#define SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL   1L
+#define SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY    2L
+#define SERVICE_TRIGGER_TYPE_DOMAIN_JOIN                3L
+#define SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT        4L
+#define SERVICE_TRIGGER_TYPE_GROUP_POLICY               5L
+#define SERVICE_TRIGGER_TYPE_CUSTOM                     20L
+
+/* Service trigger data types */
+#define SERVICE_TRIGGER_DATA_TYPE_BINARY    1L
+#define SERVICE_TRIGGER_DATA_TYPE_STRING    2L
+
+/* Service trigger actions */
+#define SERVICE_TRIGGER_ACTION_SERVICE_START    1L
+#define SERVICE_TRIGGER_ACTION_SERVICE_STOP     2L
+
+/* Trigger-started service argument */
+#define SERVICE_TRIGGER_STARTED_ARGUMENT    L"TriggerStarted"
 
 /* Service description */
 typedef struct _SERVICE_DESCRIPTIONA {
@@ -295,6 +320,46 @@ typedef struct _SERVICE_PRESHUTDOWN_INFO {
     DWORD   dwPreshutdownTimeout;
 } SERVICE_PRESHUTDOWN_INFO;
 typedef SERVICE_PRESHUTDOWN_INFO    *LPSERVICE_PRESHUTDOWN_INFO;
+
+/* Service trigger-specific data item */
+typedef struct _SERVICE_TRIGGER_SPECIFIC_DATA_ITEM {
+    DWORD   dwDataType;
+    DWORD   cbData;
+    PBYTE   pData;
+} SERVICE_TRIGGER_SPECIFIC_DATA_ITEM;
+typedef SERVICE_TRIGGER_SPECIFIC_DATA_ITEM  *PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM;
+
+/* Service trigger */
+typedef struct _SERVICE_TRIGGER {
+    DWORD                               dwTriggerType;
+    DWORD                               dwAction;
+    GUID                                *pTriggerSubtype;
+    DWORD                               cDataItems;
+    PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM pDataItems;
+} SERVICE_TRIGGER;
+typedef SERVICE_TRIGGER *PSERVICE_TRIGGER;
+
+/* Service trigger information */
+typedef struct _SERVICE_TRIGGER_INFO {
+    DWORD               cTriggers;
+    PSERVICE_TRIGGER    pTriggers;
+    PBYTE               pReserved;
+} SERVICE_TRIGGER_INFO;
+typedef SERVICE_TRIGGER_INFO    *PSERVICE_TRIGGER_INFO;
+
+/* Service preferred node information */
+typedef struct _SERVICE_PREFERRED_NODE_INFO {
+    USHORT  usPreferredNode;
+    BOOLEAN fDelete;
+} SERVICE_PREFERRED_NODE_INFO;
+typedef SERVICE_PREFERRED_NODE_INFO *PSERVICE_PREFERRED_NODE_INFO;
+
+/* Service time change information */
+typedef struct _SERVICE_TIMECHANGE_INFO {
+    LARGE_INTEGER   liNewTime;
+    LARGE_INTEGER   liOldTime;
+} SERVICE_TIMECHANGE_INFO;
+typedef SERVICE_TIMECHANGE_INFO *PSERVICE_TIMECHANGE_INFO;
 
 /* Service control status types */
 typedef enum _SC_STATUS_TYPE {
@@ -529,6 +594,16 @@ typedef SERVICE_CONTROL_STATUS_REASON_PARAMSA   SERVICE_CONTROL_STATUS_REASON_PA
 typedef PSERVICE_CONTROL_STATUS_REASON_PARAMSA  PSERVICE_CONTROL_STATUS_REASON_PARAMS;
 #endif
 
+/* GUIDs */
+EXTERN_C const GUID NETWORK_MANAGER_FIRST_IP_ADDRESS_ARRIVAL_GUID;
+EXTERN_C const GUID NETWORK_MANAGER_LAST_IP_ADDRESS_REMOVAL_GUID;
+EXTERN_C const GUID DOMAIN_JOIN_GUID;
+EXTERN_C const GUID DOMAIN_LEAVE_GUID;
+EXTERN_C const GUID FIREWALL_PORT_OPEN_GUID;
+EXTERN_C const GUID FIREWALL_PORT_CLOSE_GUID;
+EXTERN_C const GUID MACHINE_POLICY_PRESENT_GUID;
+EXTERN_C const GUID USER_POLICY_PRESENT_GUID;
+
 /* Functions in ADVAPI32.DLL */
 WINADVAPI BOOL WINAPI       ChangeServiceConfig2A( SC_HANDLE, DWORD, LPVOID );
 WINADVAPI BOOL WINAPI       ChangeServiceConfig2W( SC_HANDLE, DWORD, LPVOID );
@@ -536,8 +611,6 @@ WINADVAPI BOOL WINAPI       ChangeServiceConfigA( SC_HANDLE, DWORD, DWORD, DWORD
 WINADVAPI BOOL WINAPI       ChangeServiceConfigW( SC_HANDLE, DWORD, DWORD, DWORD, LPCWSTR, LPCWSTR, LPDWORD, LPCWSTR, LPCWSTR, LPCWSTR, LPCWSTR );
 WINADVAPI BOOL WINAPI       CloseServiceHandle( SC_HANDLE );
 WINADVAPI BOOL WINAPI       ControlService( SC_HANDLE, DWORD, LPSERVICE_STATUS );
-WINADVAPI BOOL WINAPI       ControlServiceExA( SC_HANDLE, DWORD, DWORD, PVOID );
-WINADVAPI BOOL WINAPI       ControlServiceExW( SC_HANDLE, DWORD, DWORD, PVOID );
 WINADVAPI SC_HANDLE WINAPI  CreateServiceA( SC_HANDLE, LPCSTR, LPCSTR, DWORD, DWORD, DWORD, DWORD, LPCSTR, LPCSTR, LPDWORD, LPCSTR, LPCSTR, LPCSTR );
 WINADVAPI SC_HANDLE WINAPI  CreateServiceW( SC_HANDLE, LPCWSTR, LPCWSTR, DWORD, DWORD, DWORD, DWORD, LPCWSTR, LPCWSTR, LPDWORD, LPCWSTR, LPCWSTR, LPCWSTR );
 WINADVAPI BOOL WINAPI       DeleteService( SC_HANDLE );
@@ -553,8 +626,6 @@ WINADVAPI BOOL WINAPI       GetServiceKeyNameA( SC_HANDLE, LPCSTR, LPSTR, LPDWOR
 WINADVAPI BOOL WINAPI       GetServiceKeyNameW( SC_HANDLE, LPCWSTR, LPWSTR, LPDWORD );
 WINADVAPI SC_LOCK WINAPI    LockServiceDatabase( SC_HANDLE );
 WINADVAPI BOOL WINAPI       NotifyBootConfigStatus( BOOL );
-WINADVAPI DWORD WINAPI      NotifyServiceStatusChangeA( SC_HANDLE, DWORD, PSERVICE_NOTIFYA );
-WINADVAPI DWORD WINAPI      NotifyServiceStatusChangeW( SC_HANDLE, DWORD, PSERVICE_NOTIFYW );
 WINADVAPI SC_HANDLE WINAPI  OpenSCManagerA( LPCSTR, LPCSTR, DWORD );
 WINADVAPI SC_HANDLE WINAPI  OpenSCManagerW( LPCWSTR, LPCWSTR, DWORD );
 WINADVAPI SC_HANDLE WINAPI  OpenServiceA( SC_HANDLE, LPCSTR, DWORD );
@@ -579,19 +650,23 @@ WINADVAPI BOOL WINAPI       StartServiceCtrlDispatcherA( CONST SERVICE_TABLE_ENT
 WINADVAPI BOOL WINAPI       StartServiceCtrlDispatcherW( CONST SERVICE_TABLE_ENTRYW * );
 WINADVAPI BOOL WINAPI       StartServiceW( SC_HANDLE, DWORD, LPCWSTR * );
 WINADVAPI BOOL WINAPI       UnlockServiceDatabase( SC_LOCK );
+#if (NTDDI_VERSION >= 0x06000000)
+WINADVAPI BOOL WINAPI       ControlServiceExA( SC_HANDLE, DWORD, DWORD, PVOID );
+WINADVAPI BOOL WINAPI       ControlServiceExW( SC_HANDLE, DWORD, DWORD, PVOID );
+WINADVAPI DWORD WINAPI      NotifyServiceStatusChangeA( SC_HANDLE, DWORD, PSERVICE_NOTIFYA );
+WINADVAPI DWORD WINAPI      NotifyServiceStatusChangeW( SC_HANDLE, DWORD, PSERVICE_NOTIFYW );
+#endif
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
 #ifdef UNICODE
     #define ChangeServiceConfig             ChangeServiceConfigW
     #define ChangeServiceConfig2            ChangeServiceConfig2W
-    #define ControlServiceEx                ControlServiceExW
     #define CreateService                   CreateServiceW
     #define EnumDependentServices           EnumDependentServicesW
     #define EnumServicesStatus              EnumServicesStatusW
     #define EnumServicesStatusEx            EnumServicesStatusExW
     #define GetServiceDisplayName           GetServiceDisplayNameW
     #define GetServiceKeyName               GetServiceKeyNameW
-    #define NotifyServiceStatusChange       NotifyServiceStatusChangeW
     #define OpenSCManager                   OpenSCManagerW
     #define OpenService                     OpenServiceW
     #define QueryServiceConfig              QueryServiceConfigW
@@ -601,17 +676,19 @@ WINADVAPI BOOL WINAPI       UnlockServiceDatabase( SC_LOCK );
     #define RegisterServiceCtrlHandlerEx    RegisterServiceCtrlHandlerExW
     #define StartService                    StartServiceW
     #define StartServiceCtrlDispatcher      StartServiceCtrlDispatcherW
+    #if (NTDDI_VERSION >= 0x06000000)
+        #define ControlServiceEx            ControlServiceExW
+        #define NotifyServiceStatusChange   NotifyServiceStatusChangeW
+    #endif
 #else
     #define ChangeServiceConfig             ChangeServiceConfigA
     #define ChangeServiceConfig2            ChangeServiceConfig2A
-    #define ControlServiceEx                ControlServiceExA
     #define CreateService                   CreateServiceA
     #define EnumDependentServices           EnumDependentServicesA
     #define EnumServicesStatus              EnumServicesStatusA
     #define EnumServicesStatusEx            EnumServicesStatusExA
     #define GetServiceDisplayName           GetServiceDisplayNameA
     #define GetServiceKeyName               GetServiceKeyNameA
-    #define NotifyServiceStatusChange       NotifyServiceStatusChangeA
     #define OpenSCManager                   OpenSCManagerA
     #define OpenService                     OpenServiceA
     #define QueryServiceConfig              QueryServiceConfigA
@@ -621,6 +698,10 @@ WINADVAPI BOOL WINAPI       UnlockServiceDatabase( SC_LOCK );
     #define RegisterServiceCtrlHandlerEx    RegisterServiceCtrlHandlerExA
     #define StartService                    StartServiceA
     #define StartServiceCtrlDispatcher      StartServiceCtrlDispatcherA
+    #if (NTDDI_VERSION >= 0x06000000)
+        #define ControlServiceEx            ControlServiceExA
+        #define NotifyServiceStatusChange   NotifyServiceStatusChangeA
+    #endif
 #endif
 
 :include cplusepi.sp
