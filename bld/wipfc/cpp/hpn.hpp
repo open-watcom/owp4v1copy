@@ -53,6 +53,7 @@ private:
     static
     std::vector< STD1::uint8_t > levelStack;
     STD1::uint8_t level;
+    STD1::uint8_t previousLevel;
 };
 
 class EHpn : public Element {
