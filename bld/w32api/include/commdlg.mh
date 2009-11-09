@@ -163,6 +163,9 @@
     #define CF_NOSCRIPTSEL      0x00800000L
     #define CF_NOVERTFONTS      0x01000000L
 #endif
+#if (WINVER >= 0x0601)
+    #define CF_INACTIVEFONTS    0x02000000L
+#endif
 
 /* Font type flags */
 #define SIMULATED_FONTTYPE  0x00008000L
@@ -175,6 +178,9 @@
     #define PS_OPENTYPE_FONTTYPE    0x00010000L
     #define TT_OPENTYPE_FONTTYPE    0x00020000L
     #define TYPE1_FONTTYPE          0x00040000L
+#endif
+#if (WINVER >= 0x0601)
+    #define SYMBOL_FONTTYPE         0x00080000L
 #endif
 
 /* Font dialog messages */
