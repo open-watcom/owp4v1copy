@@ -924,12 +924,6 @@ static void sysspcondfun( symvar * e )
     return;
 };
 
-static void sysstitlefun( symvar * e )
-{
-    var_wng( e->name );
-    return;
-};
-
 static void syssufun( symvar * e )
 {
     var_wng( e->name );
@@ -961,12 +955,6 @@ static void systermtfun( symvar * e )
 };
 
 static void systisetfun( symvar * e )
-{
-    var_wng( e->name );
-    return;
-};
-
-static void systitlefun( symvar * e )
 {
     var_wng( e->name );
     return;

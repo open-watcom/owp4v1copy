@@ -27,20 +27,20 @@
 * Description:  Error and warning message output.
 *
 ****************************************************************************/
- 
+
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
 #include "wgml.h"
 #include "gvars.h"
 #include <stdarg.h>
- 
+
 #define MAX_ERR_LEN     1020
- 
+
 static  char    err_buf[MAX_ERR_LEN + 2];   // +2 for \n and \0
 static  char    str_buf[MAX_ERR_LEN + 2];
- 
- 
- 
+
+
+
 void g_suicide( void )
 {
     out_msg( "\n\nWGML suicide\n\n" );
@@ -49,22 +49,22 @@ void g_suicide( void )
     }
     my_exit( 16 );
 }
- 
- 
+
+
 void out_msg( const char *msg, ... )
 {
     va_list args;
- 
+
     va_start( args, msg );
     vprintf_s( msg, args );
     va_end( args );
 }
- 
- 
+
+
 /***************************************************************************/
 /*  construct msg  inserting string variables optionally                   */
 /***************************************************************************/
- 
+
 #define MAX_LINE_LEN            75
 static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
 /*****************************************************************/
@@ -74,7 +74,7 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
     int                 indent;
     char            *   start;
     char            *   end;
- 
+
     switch( sev ) {
 #if 0
     case SEV_INFO:
@@ -94,7 +94,7 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         prefix = "";
         break;
     }
- 
+
     switch( errornum ) {
     case ERR_STR_NOT_FOUND:
         /* this message means the error strings cannot be obtained from
@@ -116,7 +116,7 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         }
         break;
     }
- 
+
     indent = 0;
     start = err_buf;
     while( strlen( start ) > MAX_LINE_LEN - indent ) {
@@ -133,43 +133,43 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
     }
     out_msg( "%*s%s\n", indent, "", start );
 }
- 
+
 /***************************************************************************/
 /*  error msg                                                              */
 /***************************************************************************/
- 
+
 void g_err( const msg_ids num, ... )
 {
     va_list args;
- 
+
     va_start( args, num );
     g_msg_var( num, SEV_ERROR, args );
     va_end( args );
 }
- 
+
 /***************************************************************************/
 /*  warning msg                                                            */
 /***************************************************************************/
- 
+
 void g_warn( const msg_ids num, ... )
 {
     va_list args;
- 
+
     va_start( args, num );
     g_msg_var( num, SEV_WARNING, args );
     va_end( args );
 }
- 
+
 /***************************************************************************/
 /*  informational msg                                                      */
 /***************************************************************************/
- 
+
 void g_info( const msg_ids num, ... )
 {
     va_list args;
- 
+
     va_start( args, num );
     g_msg_var( num, SEV_INFO, args );
     va_end( args );
 }
- 
+

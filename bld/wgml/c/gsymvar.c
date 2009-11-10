@@ -156,6 +156,12 @@ static  int find_symvar_del( symvar * * dict, char * name, sub_index sub,
     symsub  *   ws;
     int         rc = 0;
 
+    if( (*name == '$') && (dict != &sys_dict) ) {// for sysxxx try system dict first
+        rc = find_symvar_del( &sys_dict, name, sub, symsubval, delentry );  // recursion
+        if( rc ) {
+            return( rc );               // found predefined systemvariable
+        }
+    }
     *symsubval = NULL;
     wk = *dict;
     while( wk != NULL) {
@@ -246,7 +252,7 @@ static bool add_symvar_sub( symvar * var, char * val, sub_index sub )
             }
             strcpy_s( var->sub_0->value, strlen( sub_cnt ) + 1, sub_cnt );
 #else
-            sprintf( var->sub_0->value, "%ld", var->subscript_used );
+            sprintf( var->sub_0->value, "%ld", var->subscript_used );  // TBD
 #endif
 
             var->flags |= subscripted;
@@ -375,8 +381,8 @@ int add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, s
             break;
         case 2 :              // symbol + subscript found, or not subscripted
             newsub->base->flags &= ~deleted;// reset deleted switch
-            if( !strcmp( newsub->value, val ) ) {
-                ;                       // nothing to do value is unchanged
+            if( (newsub->base->flags & ro) || !strcmp( newsub->value, val ) ) {
+                ;             // do nothing var is readonly or value is unchanged
             } else {
                 if( strlen( newsub->value ) < strlen( val ) ) { // need more room
                     newsub->value = mem_realloc( newsub->value, strlen( val ) + 1 );

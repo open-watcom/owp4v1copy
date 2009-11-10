@@ -179,7 +179,9 @@ global struct ProcFlags {
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        fb_document_done : 1;// true if fb_document() called
     unsigned        fb_position_done : 1;// 1. pos on new page done
-    unsigned        output_started  : 1;// we have something for the curr page
+    unsigned        prep_section    : 1;// need prep section call
+    unsigned        title_tag_seen  : 1;// remember first :TITLE tag
+    unsigned        page_started    : 1;// we have something for the curr page
     unsigned        para_line1      : 1;// special processing for 1. line
 
 } ProcFlags;                            // processing flags

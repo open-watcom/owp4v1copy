@@ -417,3 +417,6 @@ pick( ERR_VAR_NOT_IMPL,         "'%s' variable referenced but not yet implemente
 pick( ERR_TAG_EXPECTED,         "Expecting %s tag",
                                 "Expecting %s tag" )
 
+pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
+                                "'%s' tag only allowed in %s" )
+

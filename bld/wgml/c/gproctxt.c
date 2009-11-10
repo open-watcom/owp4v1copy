@@ -315,13 +315,13 @@ void    add_text_chars_to_pool( text_line * a_line )
 static void set_v_start( int8_t spacing )
 {
     if( bin_driver->y_positive == 0x00 ) {
-        if( !ProcFlags.output_started ) {   // TBD
+        if( !ProcFlags.page_started ) {   // TBD
             g_cur_v_start = bin_device->y_start - g_max_line_height;
         } else {
             g_cur_v_start -= spacing * g_max_line_height;
         }
     } else {
-        if( !ProcFlags.output_started ) {   // TBD
+        if( !ProcFlags.page_started ) {   // TBD
             g_cur_v_start = bin_device->y_start;
         } else {
             g_cur_v_start += (spacing * g_max_line_height);
@@ -404,11 +404,12 @@ void    process_line_full( text_line * a_line, bool justify )
 
 /***************************************************************************/
 /*  process text  (input line or part thereof)                             */
+/*      if section start processing not yet done do it now                 */
 /*      split into 'words'                                                 */
 /*      translate if input translation active                              */
 /*      calculate width with current font                                  */
 /*      add text to output line                                            */
-/*      handle line overflow condition                                     */
+/*      handle line and page overflow condition                            */
 /***************************************************************************/
 
 void    process_text( char * text, uint8_t font_num )
@@ -417,6 +418,11 @@ void    process_text( char * text, uint8_t font_num )
     size_t                  count;
     char                *   pword;
     char                *   p;
+
+
+    if( !ProcFlags.prep_section ) {
+        prepare_doc_sect( ProcFlags.doc_sect );
+    }
 
     p = text;
     if( ProcFlags.concat ) {            // experimental TBD
@@ -466,14 +472,14 @@ void    process_text( char * text, uint8_t font_num )
                 if( pre_space + g_cur_h_start + n_char->width > g_page_right ) {
                     pre_space = 0;
                     process_line_full( &t_line, ProcFlags.just_override );
-                    if( !ProcFlags.output_started ) {
+                    if( !ProcFlags.page_started ) {
                         document_new_page();
                         document_top_banner();
                     }
                     set_h_start();
                     n_char->x_address = g_cur_h_start;
                 }
-                ProcFlags.output_started = true;
+                ProcFlags.page_started = true;
 
                 if( t_line.first == NULL ) {
                     t_line.first = n_char;
@@ -533,14 +539,14 @@ void    process_text( char * text, uint8_t font_num )
         if( pre_space + g_cur_h_start + n_char->width > g_page_right ) {
             pre_space = 0;
             process_line_full( &t_line, ProcFlags.just_override );
-            if( !ProcFlags.output_started ) {
+            if( !ProcFlags.page_started ) {
                 document_new_page();
                 document_top_banner();
             }
             set_h_start();
             n_char->x_address = g_cur_h_start;
         }
-        ProcFlags.output_started = true;
+        ProcFlags.page_started = true;
 
         if( t_line.first == NULL ) {
             t_line.first = n_char;
@@ -562,13 +568,13 @@ void    process_text( char * text, uint8_t font_num )
     }
 
     if( t_line.first != NULL ) {        // something in the line
-        ProcFlags.output_started = true;
+        ProcFlags.page_started = true;
 
         if( !ProcFlags.concat && GlobalFlags.lastpass) {
             post_space = 0;
             post_space_save = 0;
             process_line_full( &t_line, ProcFlags.just_override );
-            if( !ProcFlags.output_started ) {
+            if( !ProcFlags.page_started ) {
                 document_new_page();
                 document_top_banner();
             }

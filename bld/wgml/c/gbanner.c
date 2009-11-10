@@ -194,6 +194,13 @@ static void content_reg( banner_lay_tag * ban )
                                             // isolate region parts
                 for( k = 0; k < 3; ++k ) {  // left, center, right
                     pl++;
+#if 0
+                    if( k == 2 ) {// special hack for right part without success
+                        while( *pl == ' ' ) {
+                            pl++;       // remove leading spaces
+                        }     // does not give the same result as wgml4   TBD
+                    }
+#endif
                     ban->region->script_region[k].string = pl;
                     while( *pl &&  *pl != sep ) {
                         pl++;
@@ -680,6 +687,9 @@ void    out_ban_common( banner_lay_tag * ban, bool bottom )
 
     }
     if( GlobalFlags.lastpass && b_line.first != NULL) {
+        if( input_cbs->fmflags & II_research ) {
+            test_out_t_line( &b_line );
+        }
         fb_output_textline( &b_line );
     }
 

@@ -122,6 +122,8 @@ WATCOM points to: H:\ow\rel2
 86=================== 11:44:03 H:\ow\bld\nwlib\prebuild =====================
 87======================= 11:44:04 H:\ow\bld\nwlib ==========================
 88** REL2 rule last text record
+.se $apage=100
+.ty sysapage  &SYSAPAGE
 .im ts.gml
 :p
 :appendix

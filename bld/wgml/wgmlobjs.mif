@@ -52,6 +52,8 @@ gml_objs =  &
         gppc.obj     &
         gset.obj     &
         gtagdict.obj &
+        gtitle.obj   &
+        gtitlepo.obj &
         gusertag.obj
 
 #

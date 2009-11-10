@@ -127,7 +127,7 @@
   pick( "SET",      3,      gml_set,        tag_is_basic    )
   pick( "SF",       2,      gml_dummy,      tag_out_txt )
   pick( "SL",       2,      gml_dummy,      tag_out_txt )
-  pick( "TITLE",    5,      gml_dummy,      tag_out_txt )
+  pick( "TITLE",    5,      gml_title,      tag_out_txt )
   pick( "TITLEP",   6,      gml_titlep,     tag_out_txt )
   pick( "TOC",      3,      gml_toc,        tag_out_txt )
   pick( "UL",       2,      gml_dummy,      tag_out_txt )

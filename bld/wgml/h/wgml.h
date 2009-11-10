@@ -192,6 +192,7 @@ extern  void    split_input_LIFO( char * buf, char * split_pos );
 extern  void    add_text_chars_to_pool( text_line * a_line );
 extern  text_chars * alloc_text_chars( char * p, size_t cnt, uint8_t font_num );
 extern  void    do_justify( uint32_t left_m, uint32_t right_m, text_chars * tc );
+extern  void    document_new_page( void );
 extern  void    process_line_full( text_line * a_line, bool justify );
 extern  void    process_text( char * text, uint8_t font_num );
 extern  void    set_h_start( void );
@@ -282,6 +283,10 @@ extern  gtentry *   free_tag( gtentry * * dict, gtentry * ge );
 extern  void        print_tag_dict( gtentry * dict );
 extern  void        print_tag_entry( gtentry * entry );
 extern  gtentry *   find_tag( gtentry * * dict, char const * name );
+
+
+/* gtitlepo.c                         */
+extern  void        titlep_output( void );
 
 
 /* gusertag.c                         */

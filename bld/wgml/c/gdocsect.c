@@ -149,12 +149,12 @@ void set_section_banners( doc_section ds )
 
 void    finish_page( void )
 {
-    if( ProcFlags.output_started ) {    // any output?
+    if( ProcFlags.page_started ) {      // any output for page?
         if( t_line.first != NULL ) {    // incomplete line
             process_line_full( &t_line, false );
         }
         out_ban_bot( sect_ban_bot[page & 1] );  // possible bottom banner
-        ProcFlags.output_started = false;
+        ProcFlags.page_started = false;
     }
 }
 
@@ -170,22 +170,49 @@ void    prepare_doc_sect( doc_section ds )
     uint32_t    h_start;
 
     if( ds != doc_sect_body ) {
-        out_msg( "prepare_doc_sect incomplete\n" );
-        return;
+        out_msg( "prepare_doc_sect possibly incomplete\n" );
+    }
+    if( ds == doc_sect_none ) {
+        ds = doc_sect_body;      // if text without section start assume body
+    }
+    ProcFlags.prep_section = true;
+
+    switch( ds ) {
+    case   doc_sect_body:
+        if( layout_work.body.page_reset  ) {
+            page = 1;
+        }
+        break;
+    case   doc_sect_abstract:
+        if( layout_work.abstract.page_reset  ) {
+            page = 1;
+        }
+        break;
+    case   doc_sect_preface:
+        if( layout_work.preface.page_reset  ) {
+            page = 1;
+        }
+        break;
+    case   doc_sect_appendix:
+        if( layout_work.appendix.page_reset  ) {
+            page = 1;
+        }
+        break;
+    case   doc_sect_backm:
+        if( layout_work.backm.page_reset  ) {
+            page = 1;
+        }
+        break;
+    case   doc_sect_index:
+        if( layout_work.index.page_reset  ) {
+            page = 1;
+        }
+        break;
+    default:
+        break;
     }
 
-    if( layout_work.body.page_reset  ) {
-        page = 1;
-    }
-#if 0
-    if( page & 1 ) {
-        ind = 0;
-    } else {
-        ind = 1;
-    }
-#else
     ind = page & 1;
-#endif
     h_start = g_page_left_org;
     if( sect_ban_top[ind] != NULL ) {
         v_start = ban_top_pos( sect_ban_top[ind] );
@@ -218,7 +245,6 @@ void    prepare_doc_sect( doc_section ds )
     } else {
         g_page_bottom = g_page_bottom_org;
     }
-
 }
 
 
@@ -226,20 +252,21 @@ void    prepare_doc_sect( doc_section ds )
 /***************************************************************************/
 /*          routine to process document section change               TBD   */
 /***************************************************************************/
-static  void    gml_doc_xxx( doc_section ds )
+static  void    gml_doc_xxx( doc_section ds, bool eject )
 {
-    bool    eject = true;               // TBD
 
     if( ProcFlags.doc_sect >= ds ) {    // wrong sequence of sections
         g_err_doc_sect( ds );
     } else {
-        if( eject && ProcFlags.output_started ) {// finish previous section
+        if( eject && ProcFlags.page_started ) {// finish previous section
             finish_page();
         }
         ProcFlags.doc_sect = ds;
     }
 
     set_section_banners( ds );
+
+    ProcFlags.prep_section = false;     // do real section start later
 
     scan_start = scan_stop + 1;
     return;
@@ -266,54 +293,29 @@ static  void    gml_doc_xxx( doc_section ds )
 
 extern  void    gml_abstract( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_abstract );
+    gml_doc_xxx( doc_sect_abstract, layout_work.abstract.page_eject );
+//  prepare_doc_sect( doc_sect_abstract );
 }
 
 extern  void    gml_appendix( const gmltag * entry )
 {
-    int         ind;
-    uint32_t    v_start;
-    uint32_t    h_start;
+    gml_doc_xxx( doc_sect_appendix, layout_work.appendix.page_eject );
 
-    gml_doc_xxx( doc_sect_appendix );
-
-    if( page & 1 ) {
-        ind = 0;
-    } else {
-        ind = 1;
-    }
-    h_start = g_page_left_org;
-    if( sect_ban_top[ind] != NULL ) {
-        v_start = ban_top_pos( sect_ban_top[ind] );
-
-    } else {
-        v_start = g_page_top;
-    }
-
-    if( GlobalFlags.lastpass ) {
-        if( ProcFlags.fb_position_done ) {
-            fb_new_section( v_start );
-        } else {
-            fb_position( h_start, v_start );
-            ProcFlags.fb_position_done = true;
-        }
-    }
-    g_cur_v_start = v_start;
-    g_cur_h_start = h_start;
-    out_ban_top( sect_ban_top[ind] );
+//  prepare_doc_sect( doc_sect_appendix );
 }
 
 extern  void    gml_backm( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_backm );
+    gml_doc_xxx( doc_sect_backm, layout_work.backm.page_eject );
+//  prepare_doc_sect( doc_sect_backm );
 }
 
 extern  void    gml_body( const gmltag * entry )
 {
 
-    gml_doc_xxx( doc_sect_body );
+    gml_doc_xxx( doc_sect_body, layout_work.body.page_eject );
 
-    prepare_doc_sect( doc_sect_body );
+//  prepare_doc_sect( doc_sect_body );
     ProcFlags.just_override = true;     // justify for first line ?? TBD
     g_cur_h_start = g_page_left
                     + conv_hor_unit( &layout_work.p.line_indent );
@@ -322,42 +324,43 @@ extern  void    gml_body( const gmltag * entry )
 
 extern  void    gml_figlist( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_figlist );
+    gml_doc_xxx( doc_sect_figlist, false );
 }
 
 extern  void    gml_frontm( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_frontm );
+    gml_doc_xxx( doc_sect_frontm, true );
 }
 
 extern  void    gml_index( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_index );
+    gml_doc_xxx( doc_sect_index, layout_work.index.page_eject );
 }
 
 extern  void    gml_preface( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_preface );
+    gml_doc_xxx( doc_sect_preface, layout_work.preface.page_eject );
 }
 
 extern  void    gml_titlep( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_titlep );
+    gml_doc_xxx( doc_sect_titlep, true );
 }
 
 extern  void    gml_etitlep( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_etitlep );
+    titlep_output();                    // output of title page
+    gml_doc_xxx( doc_sect_etitlep, false );
 }
 
 extern  void    gml_toc( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_toc );
+    gml_doc_xxx( doc_sect_toc, true );
 }
 
 extern  void    gml_egdoc( const gmltag * entry )
 {
-    gml_doc_xxx( doc_sect_egdoc );
+    gml_doc_xxx( doc_sect_egdoc, true );
 }
 
 /***************************************************************************/
@@ -408,7 +411,7 @@ extern  void    gml_gdoc( const gmltag * entry )
         add_symvar( &global_dict, "$sec", "", no_subscript, 0 );// set nullstring
     }
 
-    gml_doc_xxx( doc_sect_gdoc );
+    gml_doc_xxx( doc_sect_gdoc, true );
     return;
 }
 
