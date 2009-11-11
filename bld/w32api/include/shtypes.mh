@@ -28,6 +28,9 @@ typedef GUID    KNOWNFOLDERID;
 #endif
 #endif
 
+/* Known folder redirection flags data type */
+typedef DWORD   KF_REDIRECT_FLAGS;
+
 /* Folder type identifier data type */
 typedef GUID    FOLDERTYPEID;
 #ifdef __cplusplus
@@ -176,6 +179,7 @@ typedef struct tagDOMAIN_RELATIVE_OBJECTID {
 
 /* Shell column states */
 typedef enum tagSHCOLSTATE {
+    SHCOLSTATE_DEFAULT              = 0x00000000,
     SHCOLSTATE_TYPE_STR             = 0x00000001,
     SHCOLSTATE_TYPE_INT             = 0x00000002,
     SHCOLSTATE_TYPE_DATE            = 0x00000003,
