@@ -45,6 +45,7 @@ Compiler::Compiler():
     lexer( new Lexer() ),
     loc( "en_US" ),
     warningLevel( 3 ),
+    outType( HLP ),
     parseContinuously( true ),
     printBanner( true ),
     search( true ),
