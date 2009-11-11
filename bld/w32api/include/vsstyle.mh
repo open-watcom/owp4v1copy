@@ -1225,13 +1225,13 @@ enum HYPERLINKTEXTSTATES {
     TS_HYPERLINK_NORMAL     = 1,
     TS_HYPERLINK_HOT        = 2,
     TS_HYPERLINK_PRESSED    = 3,
-    TS_HYPERLINK_DISABLED   = 4,
+    TS_HYPERLINK_DISABLED   = 4
 };
 
 /* Control label states */
 enum CONTROLLABELSTATES {
     TS_CONTROLLABEL_NORMAL      = 1,
-    TS_CONTROLLABEL_DISABLED    = 2,
+    TS_CONTROLLABEL_DISABLED    = 2
 };
 
 /* Toolbar parts */
@@ -1241,7 +1241,8 @@ enum TOOLBARPARTS {
     TP_SPLITBUTTON          = 3,
     TP_SPLITBUTTONDROPDOWN  = 4,
     TP_SEPARATOR            = 5,
-    TP_SEPARATORVERT        = 6
+    TP_SEPARATORVERT        = 6,
+    TP_DROPDOWNBUTTONGLYPH  = 7
 };
 
 /* Toolbar style states */
@@ -1263,7 +1264,8 @@ enum TOOLTIPPARTS {
     TTP_BALLOON         = 3,
     TTP_BALLOONTITLE    = 4,
     TTP_CLOSE           = 5,
-    TTP_BALLOONSTEM     = 6
+    TTP_BALLOONSTEM     = 6,
+    TTP_WRENCH          = 7
 };
 
 /* Close states */
@@ -1293,6 +1295,13 @@ enum BALLOONSTEMSTATES {
     TTBSS_POINTINGDOWNRIGHTWALL = 4,
     TTBSS_POINTINGDOWNCENTERED  = 5,
     TTBSS_POINTINGDOWNLEFTWALL  = 6
+};
+
+/* Wrench states */
+enum WRENCHSTATES {
+    TTWS_NORMAL     = 1,
+    TTWS_HOT        = 2,
+    TTWS_PRESSED    = 3
 };
 
 /* Track bar parts */
