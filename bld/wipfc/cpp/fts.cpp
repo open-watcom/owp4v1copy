@@ -234,7 +234,7 @@ size_t FTSElement::write( std::FILE *out, bool big ) const
         else if( comp == RLE ) {
             hdr.size += static_cast< STD1::uint16_t >( pages.size() + 1 );
             if( std::fwrite( &hdr, sizeof( FTS16Header ), 1, out ) != 1 ||
-                std::fputc( 0x01, out ) != EOF ||
+                std::fputc( 0x01, out ) == EOF ||
                 std::fwrite( &pages[0], sizeof( STD1::uint8_t ), pages.size(), out ) != pages.size() )
                 throw FatalError( ERR_WRITE );
             written = hdr.size; 
@@ -300,7 +300,7 @@ size_t FTSElement::write( std::FILE *out, bool big ) const
         else if( comp == RLE ) {
             hdr.size += static_cast< STD1::uint8_t >( ( pages.size() + 1 ) * sizeof( STD1::uint8_t ) );
             if( std::fwrite( &hdr, sizeof( FTS8Header ), 1, out ) != 1 ||
-                std::fputc( 0x01, out ) != EOF ||
+                std::fputc( 0x01, out ) == EOF ||
                 std::fwrite( &pages[0], sizeof( STD1::uint8_t ), pages.size(), out ) != pages.size() )
                 throw FatalError( ERR_WRITE );
             written = hdr.size; 
