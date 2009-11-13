@@ -535,6 +535,7 @@ typedef struct text_chars {
 
 typedef struct text_line {
     struct  text_line   *   next;
+            uint32_t        ju_x_start;
             uint32_t        line_height;
             uint32_t        y_address;
             text_chars  *   first;

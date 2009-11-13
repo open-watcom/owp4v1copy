@@ -66,7 +66,6 @@
 *                   has_htab
 *                   htab_done
 *                   line_pass_number
-*                   page_top
 *                   pages
 *                   set_margin
 *                   space_chars
@@ -78,6 +77,7 @@
 *                   uline
 *                   uscore_char
 *                   uscore_chars
+*                   v_start
 *                   wgml_header
 *                   x_address
 *                   x_size
@@ -236,7 +236,7 @@ static bool             set_margin              = false;
 static page_state       current_state           = { 0, 0, 0 };
 static page_state       desired_state           = { 0, 0, 0 };
 static uint32_t         line_pass_number        = 0;
-static uint32_t         page_top                = 0;
+static uint32_t         v_start                = 0;
 
 /* These are used to hold values returned by device functions. */
 
@@ -2924,7 +2924,7 @@ static void fb_normal_vertical_positioning( void )
 
                 /* y_address is formed by subtraction. */
 
-                current_state.y_address = (page_top + 1) - (desired_pages * \
+                current_state.y_address = (v_start + 1) - (desired_pages * \
                                                     bin_device->page_depth);
             } else {
 
@@ -3085,18 +3085,18 @@ static void fb_subsequent_text_chars( text_chars * in_chars, \
 /*  Global function definitions. */
 
 /* Function df_initialize_pages().
- * Ensures pages is 0, sets page_top to the parameter's value, and then
+ * Ensures pages is 0, sets v_start to the parameter's value, and then
  * uses df_increment_pages() to onitializes pages and set the state
  * variables to the top of a new document page.
  *
  * Parameter:
- *      in_page_top contains the vertical location of the top of a
+ *      in_v_start contains the vertical location of the top of a
  *          document page.
  */
 
-void df_initialize_pages( uint32_t in_page_top )
+void df_initialize_pages( uint32_t in_v_start )
 {
-    page_top = in_page_top;
+    v_start = in_v_start;
     pages = 0;
     df_increment_pages();
     return;
@@ -3112,9 +3112,10 @@ void df_increment_pages( void )
 {
     pages++;
     desired_state.x_address = bin_device->x_start;
-    desired_state.y_address = page_top;
+    desired_state.y_address = v_start;
     current_state.x_address = bin_device->x_start;
-    current_state.y_address = page_top;
+    current_state.y_address = v_start;
+    apage = pages;  // Update wgml system symbol sysapage.
     return;
 }
 
@@ -3702,6 +3703,7 @@ void fb_new_section( uint32_t v_start )
 
 void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
 {
+    bool                tc_skipped;
     fontstyle_block *   cur_fontstyle   = NULL;
     line_proc       *   cur_lineproc    = NULL;
     text_chars      *   current         = NULL;
@@ -3760,6 +3762,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
     current = current->next;
     if( current != NULL ) {
         while( current != NULL ) {
+            tc_skipped = false;
             while( current != NULL ) {
                 cur_fontstyle = wgml_fonts[current->font_number].font_style;
                 if( cur_fontstyle != NULL ) {
@@ -3769,6 +3772,7 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
                             break;
                         }
                     }
+                    tc_skipped = true;
                 }
                 current = current->next;
             }
@@ -3784,6 +3788,38 @@ void fb_subsequent_text_line_pass( text_line * out_line, uint16_t line_pass )
                     desired_state.font_number = current->font_number;
                     fb_new_font_text_chars( current, cur_lineproc );
                 } else {
+                    if( tc_skipped == true ) {
+
+                        /* Close and reopen the font style. This prevents
+                         * font style underline from underlining the
+                         * intervening text between two separated text_chars.
+                         */
+
+                        if( cur_lineproc->endvalue != NULL ) {
+                            df_interpret_driver_functions( \
+                                                cur_lineproc->endvalue->text );
+                        }
+
+                        if( cur_fontstyle->endvalue != NULL ) {
+                            df_interpret_driver_functions( \
+                                                cur_fontstyle->endvalue->text );
+                        }
+
+                        fb_internal_horizontal_positioning();
+
+                        if( cur_fontstyle->startvalue != NULL ) {
+                            df_interpret_driver_functions( \
+                                        cur_fontstyle->startvalue->text );
+                        }
+
+                        if( cur_lineproc->startvalue != NULL ) {
+                            df_interpret_driver_functions( \
+                                            cur_lineproc->startvalue->text );
+                        }
+
+                        fb_firstword( cur_lineproc );
+                    }
+
                     fb_subsequent_text_chars( current, cur_lineproc );
                 }
             }
