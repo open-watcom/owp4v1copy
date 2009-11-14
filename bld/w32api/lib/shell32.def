@@ -157,6 +157,7 @@ SHGetInstanceExplorer@4
 SHGetItemFromDataObject@16
 SHGetItemFromObject@12
 SHGetKnownFolderIDList@16
+SHGetKnownFolderItem@20
 SHGetKnownFolderPath@16
 SHGetLocalizedName@16
 SHGetMalloc@4
@@ -241,5 +242,6 @@ Shell_NotifyIconA@8
 Shell_NotifyIconGetRect@8
 Shell_NotifyIconW@8
 SignalFileOpen@4
+StgMakeUniqueName@20
 Win32DeleteFile@4
 WriteCabinetState@4

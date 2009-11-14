@@ -60,6 +60,7 @@ DECLARE_HANDLE( HPSXA );
 #define SIOM_RESERVED_SHARED    0
 #define SIOM_RESERVED_LINK      1
 #define SIOM_RESERVED_SLOWFILE  2
+#define SIOM_RESERVED_DEFAULT   3
 
 /* IShellIconOverlay indices */
 #define OI_DEFAULT  0x00000000
@@ -69,6 +70,7 @@ DECLARE_HANDLE( HPSXA );
 #define IDO_SHGIOI_SHARE    0x0FFFFFFF
 #define IDO_SHGIOI_LINK     0x0FFFFFFE
 #define IDO_SHGIOI_SLOWFILE 0x0FFFFFFD
+#define IDO_SHGIOI_DEFAULT  0x0FFFFFFC
 
 /* NT console properties signatures */
 #if (_WIN32_IE >= 0x0400)
@@ -226,18 +228,6 @@ DECLARE_HANDLE( HPSXA );
 #endif
 #define CSIDL_FLAG_MASK                 0xFF00
 
-/* Known folder flags */
-#if (NTDDI_VERSION >= 0x06000000)
-    #define KF_FLAG_CREATE              0x00008000L
-    #define KF_FLAG_DONT_VERIFY         0x00004000L
-    #define KF_FLAG_DONT_UNEXPAND       0x00002000L
-    #define KF_FLAG_NO_ALIAS            0x00001000L
-    #define KF_FLAG_INIT                0x00000800L
-    #define KF_FLAG_DEFAULT_PATH        0x00000400L
-    #define KF_FLAG_NOT_PARENT_RELATIVE 0x00000200L
-    #define KF_FLAG_SIMPLE_IDLIST       0x00000100L
-#endif
-
 /* Folder custom settings */
 #if (NTDDI_VERSION >= 0x05000000)
     #define FCS_READ        0x00000001L
@@ -262,22 +252,23 @@ DECLARE_HANDLE( HPSXA );
 #endif
 
 /* SHBrowseForFolder() flags */
-#define BIF_RETURNONLYFSDIRS    0x0001
-#define BIF_DONTGOBELOWDOMAIN   0x0002
-#define BIF_STATUSTEXT          0x0004
-#define BIF_RETURNFSANCESTORS   0x0008
-#define BIF_EDITBOX             0x0010
-#define BIF_VALIDATE            0x0020
-#define BIF_NEWDIALOGSTYLE      0x0040
+#define BIF_RETURNONLYFSDIRS    0x00000001
+#define BIF_DONTGOBELOWDOMAIN   0x00000002
+#define BIF_STATUSTEXT          0x00000004
+#define BIF_RETURNFSANCESTORS   0x00000008
+#define BIF_EDITBOX             0x00000010
+#define BIF_VALIDATE            0x00000020
+#define BIF_NEWDIALOGSTYLE      0x00000040
 #define BIF_USENEWUI            (BIF_NEWDIALOGSTYLE | BIF_EDITBOX)
-#define BIF_BROWSEINCLUDEURLS   0x0080
-#define BIF_UAHINT              0x0100
-#define BIF_NONEWFOLDERBUTTON   0x0200
-#define BIF_NOTRANSLATETARGETS  0x0400
-#define BIF_BROWSEFORCOMPUTER   0x1000
-#define BIF_BROWSEFORPRINTER    0x2000
-#define BIF_BROWSEINCLUDEFILES  0x4000
-#define BIF_SHAREABLE           0x8000
+#define BIF_BROWSEINCLUDEURLS   0x00000080
+#define BIF_UAHINT              0x00000100
+#define BIF_NONEWFOLDERBUTTON   0x00000200
+#define BIF_NOTRANSLATETARGETS  0x00000400
+#define BIF_BROWSEFORCOMPUTER   0x00001000
+#define BIF_BROWSEFORPRINTER    0x00002000
+#define BIF_BROWSEINCLUDEFILES  0x00004000
+#define BIF_SHAREABLE           0x00008000
+#define BIF_BROWSEFILEJUNCTIONS 0x00010000
 
 /* SHBrowseForFolder() callback messages */
 #define BFFM_INITIALIZED        1
@@ -306,6 +297,10 @@ DECLARE_HANDLE( HPSXA );
     #define BFFM_SETSTATUSTEXT  BFFM_SETSTATUSTEXTA
     #define BFFM_SETSELECTION   BFFM_SETSELECTIONA
 #endif
+
+/* IShellFolder bind strings */
+#define STR_PARSE_WITH_PROPERTIES   L"ParseWithProperties"
+#define STR_PARSE_PARTIAL_IDLIST    L"ParseOriginalItem"
 
 /* IProgressDialog::StartProgressDialog() flags */
 #define PROGDLG_NORMAL              0x00000000L
@@ -445,10 +440,16 @@ DECLARE_HANDLE( HPSXA );
 /* Wallpaper styles */
 #if (_WIN32_IE >= 0x0400)
     #ifdef _WININET_
-        #define WPSTYLE_CENTER  0
-        #define WPSTYLE_TILE    1
-        #define WPSTYLE_STRETCH 2
-        #define WPSTYLE_MAX     3
+        #define WPSTYLE_CENTER          0
+        #define WPSTYLE_TILE            1
+        #define WPSTYLE_STRETCH         2
+        #if (NTDDI_VERSION >= 0x06010000)
+            #define WPSTYLE_KEEPASPECT  3
+            #define WPSTYLE_CROPTOFIT   4
+            #define WPSTYLE_MAX         5
+        #else
+            #define WPSTYLE_MAX         3
+        #endif
     #endif
 #endif
 
@@ -632,7 +633,7 @@ DECLARE_HANDLE( HPSXA );
 #define SHCNF_PRINTERW          0x00000006
 #define SHCNF_TYPE              0x000000FF
 #define SHCNF_FLUSH             0x00001000
-#define SHCNF_FLUSHNOWAIT       0x00002000
+#define SHCNF_FLUSHNOWAIT       0x00003000
 #define SHCNF_NOTIFYRECURSIVE   0x00010000
 #ifdef UNICODE
     #define SHCNF_PATH          SHCNF_PATHW
@@ -657,16 +658,6 @@ DECLARE_HANDLE( HPSXA );
 /* IQueryInfo::GetInfoFlags() flags */
 #define QIF_CACHED              0x00000001L
 #define QIF_DONTEXPANDFOLDER    0x00000002L
-
-/* SHAddToRecentDocs() flags */
-#define SHARD_PIDL      0x00000001
-#define SHARD_PATHA     0x00000002
-#define SHARD_PATHW     0x00000003
-#ifdef UNICODE
-    #define SHARD_PATH  SHARD_PATHW
-#else
-    #define SHARD_PATH  SHARD_PATHA
-#endif
 
 /* SHGetDataFromIDList() formats */
 #define SHGDFIL_FINDDATA        1
@@ -851,6 +842,7 @@ DECLARE_HANDLE( HPSXA );
 #define DFM_GETVERBW                15
 #define DFM_GETVERBA                16
 #define DFM_MERGECONTEXTMENU_BOTTOM 17
+#define DFM_MODIFYQCMFLAGS          18
 
 /* DFM_INVOKECOMMAND commands */
 #define DFM_CMD_DELETE          ((UINT)-1)
@@ -972,35 +964,46 @@ DECLARE_HANDLE( HPSXA );
 /* Shell link data flags */
 #if (_WIN32_IE >= 0x0400)
 typedef enum {
-    SLDF_HAS_ID_LIST            = 0x00000001,
-    SLDF_HAS_LINK_INFO          = 0x00000002,
-    SLDF_HAS_NAME               = 0x00000004,
-    SLDF_HAS_RELPATH            = 0x00000008,
-    SLDF_HAS_WORKINGDIR         = 0x00000010,
-    SLDF_HAS_ARGS               = 0x00000020,
-    SLDF_HAS_ICONLOCATION       = 0x00000040,
-    SLDF_UNICODE                = 0x00000080,
-    SLDF_FORCE_NO_LINKINFO      = 0x00000100,
-    SLDF_HAS_EXP_SZ             = 0x00000200,
-    SLDF_RUN_IN_SEPARATE        = 0x00000400,
+    SLDF_DEFAULT                            = 0x00000000,
+    SLDF_HAS_ID_LIST                        = 0x00000001,
+    SLDF_HAS_LINK_INFO                      = 0x00000002,
+    SLDF_HAS_NAME                           = 0x00000004,
+    SLDF_HAS_RELPATH                        = 0x00000008,
+    SLDF_HAS_WORKINGDIR                     = 0x00000010,
+    SLDF_HAS_ARGS                           = 0x00000020,
+    SLDF_HAS_ICONLOCATION                   = 0x00000040,
+    SLDF_UNICODE                            = 0x00000080,
+    SLDF_FORCE_NO_LINKINFO                  = 0x00000100,
+    SLDF_HAS_EXP_SZ                         = 0x00000200,
+    SLDF_RUN_IN_SEPARATE                    = 0x00000400,
 #if (NTDDI_VERSION < 0x06000000)
-    SLDF_HAS_LOGO3ID            = 0x00000800,
+    SLDF_HAS_LOGO3ID                        = 0x00000800,
 #endif
-    SLDF_HAS_DARWINID           = 0x00001000,
-    SLDF_RUNAS_USER             = 0x00002000,
-    SLDF_HAS_EXP_ICON_SZ        = 0x00004000,
+    SLDF_HAS_DARWINID                       = 0x00001000,
+    SLDF_RUNAS_USER                         = 0x00002000,
+    SLDF_HAS_EXP_ICON_SZ                    = 0x00004000,
 #if (NTDDI_VERSION >= 0x05010000)
-    SLDF_NO_PIDL_ALIAS          = 0x00008000,
-    SLDF_FORCE_UNCNAME          = 0x00010000,
-    SLDF_RUN_WITH_SHIMLAYER     = 0x00020000,
+    SLDF_NO_PIDL_ALIAS                      = 0x00008000,
+    SLDF_FORCE_UNCNAME                      = 0x00010000,
+    SLDF_RUN_WITH_SHIMLAYER                 = 0x00020000,
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
-    SLDF_FORCE_NO_LINKTRACK     = 0x00040000,
-    SLDF_ENABLE_TARGET_METADATA = 0x00080000,
+    SLDF_FORCE_NO_LINKTRACK                 = 0x00040000,
+    SLDF_ENABLE_TARGET_METADATA             = 0x00080000,
+    SLDF_DISABLE_LINK_PATH_TRACKING         = 0x00100000,
     SLDF_DISABLE_KNOWNFOLDER_RELATIVE_TRACKING  = 0x00200000,
-    SLDF_VALID                  = 0x003FF7FF,
 #endif
-    SLDF_RESERVED               = 0x80000000
+#if (NTDDI_VERSION >= 0x06010000)
+    SLDF_NO_KF_ALIAS                        = 0x00400000,
+    SLDF_ALLOW_LINK_TO_LINK                 = 0x00800000,
+    SLDF_UNALIAS_ON_SAVE                    = 0x01000000,
+    SLDF_PREFER_ENVIRONMENT_PATH            = 0x02000000,
+    SLDF_KEEP_LOCAL_IDLIST_FOR_UNC_TARGET   = 0x04000000,
+    SLDF_VALID                              = 0x07FFF7FF,
+#elif (NTDDI_VERSION >= 0x06000000)
+    SLDF_VALID                              = 0x003FF7FF,
+#endif
+    SLDF_RESERVED                           = 0x80000000
 } SHELL_LINK_DATA_FLAGS;
 #endif
 
@@ -1121,12 +1124,14 @@ typedef FVSHOWINFO  *LPFVSHOWINFO;
 #endif
 
 /* SHGetPathFromIDListEx() flags */
+#if (NTDDI_VERSION >= 0x06000000)
 enum tagGPFIDL_FLAGS {
     GPFIDL_DEFAULT      = 0x0000,
     GPFIDL_ALTNAME      = 0x0001,
     GPFIDL_UNCPRINTER   = 0x0002
 };
 typedef int GPFIDL_FLAGS;
+#endif
 
 /* SHGetFolderPath() types */
 #if (NTDDI_VERSION >= 0x05000000)
@@ -1136,8 +1141,24 @@ typedef enum {
 } SHGFP_TYPE;
 #endif
 
+/* Known folder flags */
+#if (NTDDI_VERSION >= 0x06000000)
+typedef enum {
+    KF_FLAG_DEFAULT             = 0x00000000,
+    KF_FLAG_CREATE              = 0x00008000,
+    KF_FLAG_DONT_VERIFY         = 0x00004000,
+    KF_FLAG_DONT_UNEXPAND       = 0x00002000,
+    KF_FLAG_NO_ALIAS            = 0x00001000,
+    KF_FLAG_INIT                = 0x00000800,
+    KF_FLAG_DEFAULT_PATH        = 0x00000400,
+    KF_FLAG_NOT_PARENT_RELATIVE = 0x00000200,
+    KF_FLAG_SIMPLE_IDLIST       = 0x00000100,
+    KF_FLAG_ALIAS_ONLY          = 0x80000000
+} KNOWN_FOLDER_FLAG;
+#endif
+
 /* Folder custom settings */
-#if (NTDDI_VERSION >= 0x05000000)
+#if (NTDDI_VERSION >= 0x06000000)
 #include <pshpack8.h>
 typedef struct {
     DWORD       dwSize;
@@ -1562,7 +1583,8 @@ typedef enum {
     DROPIMAGE_MOVE      = DROPEFFECT_MOVE,
     DROPIMAGE_LINK      = DROPEFFECT_LINK,
     DROPIMAGE_LABEL     = 6,
-    DROPIMAGE_WARNING   = 7
+    DROPIMAGE_WARNING   = 7,
+    DROPIMAGE_NOIMAGE   = 8
 } DROPIMAGETYPE;
 #endif
 
@@ -1580,6 +1602,51 @@ typedef struct _SHChangeNotifyEntry {
     PCIDLIST_ABSOLUTE   pidl;
     BOOL                fRecursive;
 } SHChangeNotifyEntry;
+
+/* SHAddToRecentDocs() flags */
+typedef enum {
+    SHARD_PIDL              = 0x00000001,
+    SHARD_PATHA             = 0x00000002,
+#if (NTDDI_VERSION >= 0x06010000)
+    SHARD_PATHW             = 0x00000003,
+    SHARD_APPIDINFO         = 0x00000004,
+    SHARD_APPIDINFOIDLIST   = 0x00000005,
+    SHARD_LINK              = 0x00000006,
+    SHARD_APPIDINFOLINK     = 0x00000007,
+    SHARD_SHELLITEM         = 0x00000008
+#else
+    SHARD_PATHW             = 0x00000003
+#endif
+} SHARD;
+#ifdef UNICODE
+    #define SHARD_PATH  SHARD_PATHW
+#else
+    #define SHARD_PATH  SHARD_PATHA
+#endif
+
+/* SHAddToRecentDocs() application identifier information */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct SHARDAPPIDINFO {
+    IShellItem  *psi;
+    PCWSTR      pszAppID;
+} SHARDAPPIDINFO;
+#endif
+
+/* SHAddToRecentDocs() application identifier information identifier list */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct SHARDAPPIDINFOIDLIST {
+    PCIDLIST_ABSOLUTE   pidl;
+    PCWSTR              pszAppID;
+} SHARDAPPIDINFOIDLIST;
+#endif
+
+/* SHAddToRecentDocs() application identifier information link */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef struct SHARDAPPIDINFOLINK {
+    IShellLink  *psl;
+    PCWSTR      pszAppID;
+} SHARDAPPIDINFOLINK;
+#endif
 
 /* Shell change DWORD as identifier list entry */
 typedef struct _SHChangeDWORDAsIDList {
@@ -1893,8 +1960,8 @@ typedef int OPEN_AS_INFO_FLAGS;
 /* SHOpenWithDialog() parameters */
 #include <pshpack8.h>
 typedef struct _openasinfo {
-    LPCTSTR             pcszFile;
-    LPCTSTR             pcszClass;
+    LPCWSTR             pcszFile;
+    LPCWSTR             pcszClass;
     OPEN_AS_INFO_FLAGS  oaifInFlags;
 } OPENASINFO;
 typedef OPENASINFO  *POPENASINFO;
@@ -2983,7 +3050,6 @@ SHSTDAPI_( UINT )               ILGetSize( PCUIDLIST_RELATIVE );
 SHSTDAPI_( BOOL )               ILIsEqual( PCIDLIST_ABSOLUTE, PCIDLIST_ABSOLUTE );
 SHSTDAPI_( BOOL )               ILIsParent( PCIDLIST_ABSOLUTE, PCIDLIST_ABSOLUTE, BOOL );
 SHSTDAPI                        ILLoadFromStream( IStream *, PIDLIST_RELATIVE * );
-SHSTDAPI                        ILLoadFromStreamEx( IStream *, PIDLIST_RELATIVE * );
 SHSTDAPI_( BOOL )               ILRemoveLastID( PUIDLIST_RELATIVE );
 SHSTDAPI                        ILSaveToStream( IStream *, PCUIDLIST_RELATIVE );
 SHSTDAPI_( int )                IsNetDrive( int );
@@ -2996,7 +3062,7 @@ SHSTDAPI_( BOOL )               PathIsSlowA( LPCSTR, DWORD );
 SHSTDAPI_( BOOL )               PathIsSlowW( LPCWSTR, DWORD );
 SHSTDAPI_( BOOL )               PathMakeUniqueName( LPWSTR, UINT, LPCWSTR, LPCWSTR, LPCWSTR );
 SHSTDAPI_( void )               PathQualify( LPWSTR );
-SHSTDAPI_( int )                PathResolve( LPWSTR, LPCWSTR [], UINT );
+SHSTDAPI_( int )                PathResolve( LPWSTR, PZPCWSTR, UINT );
 SHSTDAPI_( BOOL )               PathYetAnotherMakeUniqueName( LPWSTR, LPCWSTR, LPCWSTR, LPCWSTR );
 SHSTDAPI_( int )                PickIconDlg( HWND, LPWSTR, UINT, int * );
 SHSTDAPI_( HANDLE )             PifMgr_CloseProperties( HANDLE, UINT );
@@ -3019,9 +3085,7 @@ SHSTDAPI_( BOOL )               SHChangeNotification_Unlock( HANDLE );
 SHSTDAPI_( void )               SHChangeNotify( LONG, UINT, LPCVOID, LPCVOID );
 SHSTDAPI_( BOOL )               SHChangeNotifyDeregister( unsigned long );
 SHSTDAPI_( ULONG )              SHChangeNotifyRegister( HWND, int, LONG, UINT, int, const SHChangeNotifyEntry * );
-SHSTDAPI_( void )               SHChangeNotifyRegisterThread( SCNRT_STATUS );
 SHSTDAPI_( PIDLIST_ABSOLUTE )   SHCloneSpecialIDList( HWND, int, BOOL );
-SHSTDAPI                        SHCreateDefaultContextMenu( const DEFCONTEXTMENU *, REFIID, void ** );
 SHSTDAPI_( int )                SHCreateDirectory( HWND, LPCWSTR );
 SHSTDAPI_( int )                SHCreateDirectoryExA( HWND, LPCSTR, const SECURITY_ATTRIBUTES * );
 SHSTDAPI_( int )                SHCreateDirectoryExW( HWND, LPCWSTR, const SECURITY_ATTRIBUTES * );
@@ -3046,7 +3110,6 @@ SHSTDAPI_( int )                SHGetIconOverlayIndexW( LPCWSTR, int );
 SHSTDAPI                        SHGetInstanceExplorer( IUnknown ** );
 SHSTDAPI                        SHGetMalloc( IMalloc ** );
 SHSTDAPI_( BOOL )               SHGetPathFromIDListA( PCIDLIST_ABSOLUTE, LPSTR );
-SHSTDAPI_( BOOL )               SHGetPathFromIDListEx( PCIDLIST_ABSOLUTE, PWSTR, DWORD, GPFIDL_FLAGS );
 SHSTDAPI_( BOOL )               SHGetPathFromIDListW( PCIDLIST_ABSOLUTE, LPWSTR );
 SHSTDAPI_( void )               SHGetSetSettings( LPSHELLSTATE, DWORD, BOOL );
 SHSTDAPI_( void )               SHGetSettings( SHELLFLAGSTATE *, DWORD );
@@ -3058,7 +3121,6 @@ SHSTDAPI                        SHLoadInProc( REFCLSID );
 SHSTDAPI_( int )                SHMapPIDLToSystemImageListIndex( IShellFolder *, PCUITEMID_CHILD, int * );
 SHSTDAPI_( BOOL )               SHObjectProperties( HWND, DWORD, PCWSTR, PCWSTR );
 SHSTDAPI_( BOOL )               SHOpenPropSheetW( LPCWSTR, HKEY [], UINT, const CLSID *, IDataObject *, IShellBrowser *, LPCWSTR );
-SHSTDAPI                        SHOpenWithDialog( HWND, const OPENASINFO * );
 SHSTDAPI                        SHPathPrepareForWriteA( HWND, IUnknown *, LPCSTR, DWORD );
 SHSTDAPI                        SHPathPrepareForWriteW( HWND, IUnknown *, LPCWSTR, DWORD );
 SHSTDAPI                        SHPropStgCreate( IPropertySetStorage *, REFFMTID, const CLSID *, DWORD, DWORD, DWORD, IPropertyStorage **, UINT * );
@@ -3069,11 +3131,8 @@ SHSTDAPI_( DWORD )              SHRestricted( RESTRICTIONS );
 SHSTDAPI_( BOOL )               SHRunControlPanel( LPCWSTR, HWND );
 SHSTDAPI_( void )               SHSetInstanceExplorer( IUnknown * );
 SHSTDAPI_( LRESULT )            SHShellFolderView_Message( HWND, UINT, LPARAM );
-SHSTDAPI_( PIDLIST_ABSOLUTE )   SHSimpleIDListFromPath( LPCWSTR );
 SHSTDAPI                        SHStartNetConnectionDialogW( HWND, LPCWSTR, DWORD );
 SHSTDAPI_( BOOL )               SHValidateUNC( HWND, LPWSTR, UINT );
-SHSTDAPI_( int )                Shell_GetCachedImageIndexA( LPCSTR, int, UINT );
-SHSTDAPI_( int )                Shell_GetCachedImageIndexW( LPCWSTR, int, UINT );
 SHSTDAPI_( BOOL )               Shell_GetImageLists( HIMAGELIST *, HIMAGELIST * );
 SHSTDAPI_( UINT )               Shell_MergeMenus( HMENU, HMENU, UINT, UINT, UINT, ULONG );
 SHSTDAPI_( BOOL )               SignalFileOpen( PCIDLIST_ABSOLUTE );
@@ -3091,7 +3150,6 @@ SHSTDAPI                        SHLoadOLE( LPARAM );
 #if (NTDDI_VERSION >= 0x05000000)
 SHSTDAPI_( void )               SHFlushSFCache( void );
 SHSTDAPI                        SHGetFolderLocation( HWND, int, HANDLE, DWORD, PIDLIST_ABSOLUTE * );
-SHSTDAPI                        SHGetSetFolderCustomSettings( LPSHFOLDERCUSTOMSETTINGS, LPCWSTR, DWORD );
 SHSTDAPI_( int )                SHHandleUpdateImage( PCIDLIST_ABSOLUTE );
 SHSTDAPI                        SHMultiFileProperties( IDataObject *, DWORD );
 SHSTDAPI                        SHSetFolderPathA( int, HANDLE, DWORD, LPCSTR );
@@ -3101,7 +3159,6 @@ SHSTDAPI_( void )               SHUpdateImageW( LPCWSTR, int, UINT, int );
 #endif
 #if (NTDDI_VERSION >= 0x05010000)
 SHSTDAPI_( int )                RestartDialogEx( HWND, LPCWSTR, DWORD, DWORD );
-SHSTDAPI                        SHCreateFileExtractIconA( LPCSTR, DWORD, REFIID, void ** );
 SHSTDAPI                        SHCreateFileExtractIconW( LPCWSTR, DWORD, REFIID, void ** );
 SHSTDAPI                        SHCreateShellItem( PCIDLIST_ABSOLUTE, IShellFolder *, PCUITEMID_CHILD, IShellItem ** );
 SHSTDAPI                        SHGetAttributesFromDataObject( IDataObject *, DWORD, DWORD *, UINT * );
@@ -3113,13 +3170,31 @@ SHSTDAPI                        SHParseDisplayName( PCWSTR, IBindCtx *, PIDLIST_
 #endif
 #if (NTDDI_VERSION >= 0x06000000)
 SHSTDAPI                        AssocGetDetailsOfPropKey( IShellFolder *, PCUITEMID_CHILD, const PROPERTYKEY *, VARIANT *, BOOL * );
+SHSTDAPI                        ILLoadFromStreamEx( IStream *, PIDLIST_RELATIVE * );
 SHSTDAPI                        SHBindToFolderIDListParent( IShellFolder *, PCUIDLIST_RELATIVE, REFIID, void **, PCUITEMID_CHILD * );
 SHSTDAPI                        SHBindToFolderIDListParentEx( IShellFolder *, PCUIDLIST_RELATIVE, IBindCtx *, REFIID, void **, PCUITEMID_CHILD * );
 SHSTDAPI                        SHBindToObject( IShellFolder *, PCUIDLIST_RELATIVE, IBindCtx *, REFIID, void ** );
+SHSTDAPI_( void )               SHChangeNotifyRegisterThread( SCNRT_STATUS );
 SHSTDAPI                        SHCreateDataObject( PCIDLIST_ABSOLUTE, UINT, PCUITEMID_CHILD_ARRAY, IDataObject *, REFIID, void ** );
+SHSTDAPI                        SHCreateDefaultContextMenu( const DEFCONTEXTMENU *, REFIID, void ** );
 SHSTDAPI                        SHGetKnownFolderIDList( REFKNOWNFOLDERID, DWORD, HANDLE, PIDLIST_ABSOLUTE * );
 SHSTDAPI                        SHGetKnownFolderPath( REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR * );
+SHSTDAPI_( BOOL )               SHGetPathFromIDListEx( PCIDLIST_ABSOLUTE, PWSTR, DWORD, GPFIDL_FLAGS );
+SHSTDAPI                        SHGetSetFolderCustomSettings( LPSHFOLDERCUSTOMSETTINGS, LPCWSTR, DWORD );
+SHSTDAPI                        SHOpenWithDialog( HWND, const OPENASINFO * );
 SHSTDAPI                        SHSetKnownFolderPath( REFKNOWNFOLDERID, DWORD, HANDLE, PCWSTR );
+SHSTDAPI_( int )                Shell_GetCachedImageIndexA( LPCSTR, int, UINT );
+SHSTDAPI_( int )                Shell_GetCachedImageIndexW( LPCWSTR, int, UINT );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+SHSTDAPI                        SHGetKnownFolderItem( REFKNOWNFOLDERID, KNOWN_FOLDER_FLAG, HANDLE, REFIID, void ** );
+SHSTDAPI                        StgMakeUniqueName( IStorage *, PCWSTR, DWORD, REFIID, void ** );
+#endif
+
+/* Functions in SHDOCVW.DLL */
+#if (_WIN32_IE >= 0x0600)
+SHDOCAPI            DoPrivacyDlg( HWND, LPCWSTR, IEnumPrivacyRecords *, BOOL );
+SHDOCAPI_( BOOL )   ImportPrivacySettings( LPCWSTR, BOOL *, BOOL * );
 #endif
 
 /* Functions in SHFOLDER.DLL */
@@ -3195,7 +3270,6 @@ SHFOLDERAPI SHGetFolderPathW( HWND, int, HANDLE, DWORD, LPWSTR );
         #define SHUpdateImage               SHUpdateImageA
     #endif
     #if (NTDDI_VERSION >= 0x05010000)
-        #define SHCreateFileExtractIcon     SHCreateFileExtractIconA
         #define SHGetFolderPathAndSubDir    SHGetFolderPathAndSubDirA
     #endif
 #endif

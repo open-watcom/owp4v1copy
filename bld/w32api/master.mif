@@ -496,6 +496,7 @@ libs =                       &
         scarddlg.lib         &
         secur32.lib          &
         setupapi.lib         &
+        shdocvw.lib          &
         shell32.lib          &
         shfolder.lib         &
         shlwapi.lib          &
