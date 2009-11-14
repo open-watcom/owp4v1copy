@@ -15,17 +15,15 @@
 #define __structuredquery_h__
 
 :include readonly.sp
-#include <oaidl.h>
-#include <ocidl.h>
-#include <propidl.h>
+#include <structuredquerycondition.h>
+#include <objectarray.h>
+#include <propkeydef.h>
 
 :include cpluspro.sp
 
 /* Forward declarations */
 typedef interface IQuerySolution            IQuerySolution;
 typedef interface ISchemaProvider           ISchemaProvider;
-typedef interface ICondition                ICondition;
-typedef interface IRichChunk                IRichChunk;
 typedef interface IEntity                   IEntity;
 typedef interface ITokenCollection          ITokenCollection;
 typedef interface INamedEntityCollector     INamedEntityCollector;
@@ -33,32 +31,12 @@ typedef interface IRelationship             IRelationship;
 typedef interface INamedEntity              INamedEntity;
 typedef interface ISchemaLocalizerSupport   ISchemaLocalizerSupport;
 
-/* Condition types */
-typedef enum tagCONDITION_TYPE {
-    CT_AND_CONDITION    = 0,
-    CT_OR_CONDITION     = 1,
-    CT_NOT_CONDITION    = 2,
-    CT_LEAF_CONDITION   = 3
-} CONDITION_TYPE;
-
-/* Condition operations */
-typedef enum tagCONDITION_OPERATION {
-    COP_IMPLICIT                = 0,
-    COP_EQUAL                   = 1,
-    COP_NOTEQUAL                = 2,
-    COP_LESSTHAN                = 3,
-    COP_GREATERTHAN             = 4,
-    COP_LESSTHANOREQUAL         = 5,
-    COP_GREATERTHANOREQUAL      = 6,
-    COP_VALUE_STARTSWITH        = 7,
-    COP_VALUE_ENDSWITH          = 8,
-    COP_VALUE_CONTAINS          = 9,
-    COP_VALUE_NOTCONTAINS       = 10,
-    COP_DOSWILDCARDS            = 11,
-    COP_WORD_EQUAL              = 12,
-    COP_WORD_STARTSWITH         = 13,
-    COP_APPLICATION_SPECIFIC    = 14
-} CONDITION_OPERATION;
+/* Structured query syntax values */
+typedef enum tagSTRUCTURED_QUERY_SYNTAX {
+    SQS_NO_SYNTAX               = 0,
+    SQS_ADVANCED_QUERY_SYNTAX   = 1,
+    SQS_NATURAL_QUERY_SYNTAX    = 2
+} STRUCTURED_QUERY_SYNTAX;
 
 /* Structured query single options */
 typedef enum tagSTRUCTURED_QUERY_SINGLE_OPTION {
@@ -68,14 +46,19 @@ typedef enum tagSTRUCTURED_QUERY_SINGLE_OPTION {
     SQSO_NATURAL_SYNTAX         = 3,
     SQSO_AUTOMATIC_WILDCARD     = 4,
     SQSO_TRACE_LEVEL            = 5,
-    SQSO_LANGUAGE_KEYWORDS      = 6
+    SQSO_LANGUAGE_KEYWORDS      = 6,
+    SQSO_SYNTAX                 = 7,
+    SQSO_TIME_ZONE              = 8,
+    SQSO_IMPLICIT_CONNECTOR     = 9,
+    SQSO_CONNECTOR_CASE         = 10
 } STRUCTURED_QUERY_SINGLE_OPTION;
 
 /* Structured query multioptions */
 typedef enum tagSTRUCTURED_QUERY_MULTIOPTION {
     SQMO_VIRTUAL_PROPERTY   = 0,
     SQMO_DEFAULT_PROPERTY   = 1,
-    SQMO_GENERATOR_FOR_TYPE = 2
+    SQMO_GENERATOR_FOR_TYPE = 2,
+    SQMO_MAP_PROPERTY       = 3
 } STRUCTURED_QUERY_MULTIOPTION;
 
 /* Structured query parse error */
@@ -90,7 +73,8 @@ typedef enum tagSTRUCTURED_QUERY_PARSE_ERROR {
 } STRUCTURED_QUERY_PARSE_ERROR;
 
 /* Structured query resolve options */
-typedef enum tagSTRUCTURED_QUERY_RESOLVE_OPTION {
+typedef enum STRUCTURED_QUERY_RESOLVE_OPTION {
+    SQRO_DEFAULT                            = 0x00000000,
     SQRO_DONT_RESOLVE_DATETIME              = 0x00000001,
     SQRO_ALWAYS_ONE_INTERVAL                = 0x00000002,
     SQRO_DONT_SIMPLIFY_CONDITION_TREES      = 0x00000004,
@@ -98,8 +82,27 @@ typedef enum tagSTRUCTURED_QUERY_RESOLVE_OPTION {
     SQRO_DONT_RESOLVE_RANGES                = 0x00000010,
     SQRO_DONT_REMOVE_UNRESTRICTED_KEYWORDS  = 0x00000020,
     SQRO_DONT_SPLIT_WORDS                   = 0x00000040,
-    SQRO_IGNORE_PHRASE_ORDER                = 0x00000080
+    SQRO_IGNORE_PHRASE_ORDER                = 0x00000080,
+    SQRO_ADD_VALUE_TYPE_FOR_PLAIN_VALUES    = 0x00000100,
+    SQRO_ADD_ROBUST_ITEM_NAME               = 0x00000200
 } STRUCTURED_QUERY_RESOLVE_OPTION;
+
+/* Case requirements */
+typedef enum CASE_REQUIREMENT {
+    CASE_REQUIREMENT_ANY            = 0,
+    CASE_REQUIREMENT_UPPER_IF_AQS   = 1
+} CASE_REQUIREMENT;
+
+/* Condition creation options */
+typedef enum CONDITION_CREATION_OPTIONS {
+    CONDITION_CREATION_DEFAULT              = 0x00000000,
+    CONDITION_CREATION_NONE                 = 0x00000000,
+    CONDITION_CREATION_SIMPLIFY             = 0x00000001,
+    CONDITION_CREATION_VECTOR_AND           = 0x00000002,
+    CONDITION_CREATION_VECTOR_OR            = 0x00000004,
+    CONDITION_CREATION_VECTOR_LEAF          = 0x00000008,
+    CONDITION_CREATION_USE_CONTENT_LOCALE   = 0x00000010
+} CONDITION_CREATION_OPTIONS;
 
 /* Interval limit kinds */
 typedef enum tagINTERVAL_LIMIT_KIND {
@@ -126,13 +129,18 @@ typedef enum {
     NEC_HIGH    = 2
 } NAMED_ENTITY_CERTAINTY;
 
+/* Hit range */
+typedef struct tagHITRANGE {
+    ULONG   iPosition;
+    ULONG   cLength;
+} HITRANGE;
+
 /* GUIDs */
 EXTERN_C const IID      IID_IQueryParser;
 EXTERN_C const IID      IID_IConditionFactory;
+EXTERN_C const IID      IID_IConditionFactory2;
 EXTERN_C const IID      IID_IQuerySolution;
-EXTERN_C const IID      IID_ICondition;
 EXTERN_C const IID      IID_IConditionGenerator;
-EXTERN_C const IID      IID_IRichChunk;
 EXTERN_C const IID      IID_IInterval;
 EXTERN_C const IID      IID_IMetaData;
 EXTERN_C const IID      IID_IEntity;
@@ -188,6 +196,33 @@ DECLARE_INTERFACE_( IConditionFactory, IUnknown ) {
     STDMETHOD( Resolve )( THIS_ ICondition *, STRUCTURED_QUERY_RESOLVE_OPTION, const SYSTEMTIME *, ICondition ** ) PURE;
 };
 
+/* IConditionFactory2 interface */
+#undef INTERFACE
+#define INTERFACE   IConditionFactory2
+DECLARE_INTERFACE_( IConditionFactory2, IConditionFactory ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IConditionFactory methods */
+    STDMETHOD( MakeNot )( THIS_ ICondition *, BOOL, ICondition ** ) PURE;
+    STDMETHOD( MakeAndOr )( THIS_ CONDITION_TYPE, IEnumUnknown *, BOOL, ICondition ** ) PURE;
+    STDMETHOD( MakeLeaf )( THIS_ LPCWSTR, CONDITION_OPERATION, LPCWSTR, const PROPVARIANT *, IRichChunk *, IRichChunk *, IRichChunk *, BOOL, ICondition ** ) PURE;
+    STDMETHOD( Resolve )( THIS_ ICondition *, STRUCTURED_QUERY_RESOLVE_OPTION, const SYSTEMTIME *, ICondition ** ) PURE;
+
+    /* IConditionFactory2 methods */
+    STDMETHOD( CreateTrueFalse )( THIS_ BOOL, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateNegation )( THIS_ ICondition *, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateCompoundFromObjectArray )( THIS_ CONDITION_TYPE, IObjectArray *, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateCompoundFromArray )( THIS_ CONDITION_TYPE, ICondition **, ULONG, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateStringLeaf )( THIS_ REFPROPERTYKEY, CONDITION_OPERATION, LPCWSTR, LPCWSTR, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateIntegerLeaf )( THIS_ REFPROPERTYKEY, CONDITION_OPERATION, INT32, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateBooleanLeaf )( THIS_ REFPROPERTYKEY, CONDITION_OPERATION, BOOL, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( CreateLeaf )( THIS_ REFPROPERTYKEY, CONDITION_OPERATION, REFPROPVARIANT, LPCWSTR, LPCWSTR, IRichChunk *, IRichChunk *, IRichChunk *, CONDITION_CREATION_OPTIONS, REFIID, void ** ) PURE;
+    STDMETHOD( ResolveCondition )( THIS_ ICondition *, STRUCTURED_QUERY_RESOLVE_OPTION, SYSTEMTIME const *, REFIID, void ** ) PURE;
+};
+
 /* IQuerySolution interface */
 #undef INTERFACE
 #define INTERFACE   IQuerySolution
@@ -209,34 +244,6 @@ DECLARE_INTERFACE_( IQuerySolution, IConditionFactory ) {
     STDMETHOD( GetLexicalData )( THIS_ LPWSTR *, ITokenCollection **, LCID *, IUnknown ** ) PURE;
 };
 
-/* ICondition interface */
-#undef INTERFACE
-#define INTERFACE   ICondition
-DECLARE_INTERFACE_( ICondition, IPersistStream ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-    
-    /* IPersist methods */
-    STDMETHOD( GetClassID )( THIS_ CLSID * ) PURE;
-    
-    /* IPersistStream methods */
-    STDMETHOD( IsDirty )( THIS ) PURE;
-    STDMETHOD( Load )( THIS_ IStream * ) PURE;
-    STDMETHOD( Save )( THIS_ IStream *, BOOL ) PURE;
-    STDMETHOD( GetSizeMax )( THIS_ ULARGE_INTEGER * ) PURE;
-    
-    /* ICondition methods */
-    STDMETHOD( GetConditionType )( THIS_ CONDITION_TYPE * ) PURE;
-    STDMETHOD( GetSubConditions )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD( GetComparisonInfo )( THIS_ LPWSTR *, CONDITION_OPERATION *, PROPVARIANT * ) PURE;
-    STDMETHOD( GetValueType )( THIS_ LPWSTR * ) PURE;
-    STDMETHOD( GetValueNormalization )( THIS_ LPWSTR * ) PURE;
-    STDMETHOD( GetInputTerms )( THIS_ IRichChunk **, IRichChunk **, IRichChunk ** ) PURE;
-    STDMETHOD( Clone )( THIS_ ICondition ** ) PURE;
-};
-
 /* IConditionGenerator interface */
 #undef INTERFACE
 #define INTERFACE   IConditionGenerator
@@ -251,19 +258,6 @@ DECLARE_INTERFACE_( IConditionGenerator, IUnknown ) {
     STDMETHOD( RecognizeNamedEntities )( THIS_ LPCWSTR, LCID, ITokenCollection *, INamedEntityCollector * ) PURE;
     STDMETHOD( GenerateForLeaf )( THIS_ IConditionFactory *, LPCWSTR, CONDITION_OPERATION, LPCWSTR, LPCWSTR, LPCWSTR, IRichChunk *, IRichChunk *, IRichChunk *, BOOL, BOOL *, ICondition ** ) PURE;
     STDMETHOD( DefaultPhrase )( THIS_ LPCWSTR, const PROPVARIANT *, BOOL, LPWSTR * ) PURE;
-};
-
-/* IRichChunk interface */
-#undef INTERFACE
-#define INTERFACE   IRichChunk
-DECLARE_INTERFACE_( IRichChunk, IUnknown ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-
-    /* IRichChunk methods */
-    STDMETHOD( GetData )( THIS_ ULONG *, ULONG *, LPWSTR *, PROPVARIANT * ) PURE;
 };
 
 /* IInterval interface */
@@ -455,6 +449,36 @@ DECLARE_INTERFACE_( IQueryParserManager, IUnknown ) {
         (x)->lpVtbl->MakeLeaf( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
     #define IConditionFactory_Resolve( x, p1, p2, p3, p4 ) \
         (x)->lpVtbl->Resolve( x, p1, p2, p3, p4 )
+    #define IConditionFactory2_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IConditionFactory2_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IConditionFactory2_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IConditionFactory2_MakeNot( x, p1, p2, p3 ) \
+        (x)->lpVtbl->MakeNot( x, p1, p2, p3 )
+    #define IConditionFactory2_MakeAndOr( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->MakeAndOr( x, p1, p2, p3, p4 )
+    #define IConditionFactory2_MakeLeaf( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) \
+        (x)->lpVtbl->MakeLeaf( x, p1, p2, p3, p4, p5, p6, p7, p8, p9 )
+    #define IConditionFactory2_Resolve( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->Resolve( x, p1, p2, p3, p4 )
+    #define IConditionFactory2_CreateTrueFalse( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->CreateTrueFalse( x, p1, p2, p3, p4 )
+    #define IConditionFactory2_CreateNegation( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->CreateNegation( x, p1, p2, p3, p4 )
+    #define IConditionFactory2_CreateCompoundFromObjectArray( x, p1, p2, p3, p4, p5 ) \
+        (x)->lpVtbl->CreateCompoundFromObjectArray( x, p1, p2, p3, p4, p5 )
+    #define IConditionFactory2_CreateCompoundFromArray( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->CreateCompoundFromArray( x, p1, p2, p3, p4, p5, p6 )
+    #define IConditionFactory2_CreateStringLeaf( x, p1, p2, p3, p4, p5, p6, p7 ) \
+        (x)->lpVtbl->CreateStringLeaf( x, p1, p2, p3, p4, p5, p6, p7 )
+    #define IConditionFactory2_CreateIntegerLeaf( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->CreateIntegerLeaf( x, p1, p2, p3, p4, p5, p6 )
+    #define IConditionFactory2_CreateBooleanLeaf( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->CreateBooleanLeaf( x, p1, p2, p3, p4, p5, p6 )
+    #define IConditionFactory2_CreateLeaf( x, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 ) \
+        (x)->lpVtbl->CreateLeaf( x, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10 )
     #define IQuerySolution_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IQuerySolution_AddRef( x ) \
@@ -475,36 +499,6 @@ DECLARE_INTERFACE_( IQueryParserManager, IUnknown ) {
         (x)->lpVtbl->GetErrors( x, p1, p2 )
     #define IQuerySolution_GetLexicalData( x, p1, p2, p3, p4 ) \
         (x)->lpVtbl->GetLexicalData( x, p1, p2, p3, p4 )
-    #define ICondition_QueryInterface( x, p1, p2 ) \
-        (x)->lpVtbl->QueryInterface( x, p1, p2 )
-    #define ICondition_AddRef( x ) \
-        (x)->lpVtbl->AddRef( x )
-    #define ICondition_Release( x ) \
-        (x)->lpVtbl->Release( x )
-    #define ICondition_GetClassID( x, p ) \
-        (x)->lpVtbl->GetClassID( x, p )
-    #define ICondition_IsDirty( x ) \
-        (x)->lpVtbl->IsDirty( x )
-    #define ICondition_Load( x, p ) \
-        (x)->lpVtbl->Load( x, p )
-    #define ICondition_Save( x, p1, p2 ) \
-        (x)->lpVtbl->Save( x, p1, p2 )
-    #define ICondition_GetSizeMax( x, p ) \
-        (x)->lpVtbl->GetSizeMax( x, p )
-    #define ICondition_GetConditionType( x, p ) \
-        (x)->lpVtbl->GetConditionType( x, p )
-    #define ICondition_GetSubConditions( x, p1, p2 ) \
-        (x)->lpVtbl->GetSubConditions( x, p1, p2 )
-    #define ICondition_GetComparisonInfo( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetComparisonInfo( x, p1, p2, p3 )
-    #define ICondition_GetValueType( x, p ) \
-        (x)->lpVtbl->GetValueType( x, p )
-    #define ICondition_GetValueNormalization( x, p ) \
-        (x)->lpVtbl->GetValueNormalization( x, p )
-    #define ICondition_GetInputTerms( x, p1, p2, p3 ) \
-        (x)->lpVtbl->GetInputTerms( x, p1, p2, p3 )
-    #define ICondition_Clone( x, p ) \
-        (x)->lpVtbl->Clone( x, p )
     #define IConditionGenerator_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IConditionGenerator_AddRef( x ) \
@@ -519,14 +513,6 @@ DECLARE_INTERFACE_( IQueryParserManager, IUnknown ) {
         (x)->lpVtbl->GenerateForLeaf( x, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 )
     #define IConditionGenerator_DefaultPhrase( x, p1, p2, p3, p4 ) \
         (x)->lpVtbl->DefaultPhrase( x, p1, p2, p3, p4 )
-    #define IRichChunk_QueryInterface( x, p1, p2 ) \
-        (x)->lpVtbl->QueryInterface( x, p1, p2 )
-    #define IRichChunk_AddRef( x ) \
-        (x)->lpVtbl->AddRef( x )
-    #define IRichChunk_Release( x ) \
-        (x)->lpVtbl->Release( x )
-    #define IRichChunk_GetData( x, p1, p2, p3, p4 ) \
-        (x)->lpVtbl->GetData( x, p1, p2, p3, p4 )
     #define IInterval_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IInterval_AddRef( x ) \

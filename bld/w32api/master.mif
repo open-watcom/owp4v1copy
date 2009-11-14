@@ -250,6 +250,7 @@ headers = &
         stm.h                &
         stralign.h           &
         strmif.h             &
+        strqcond.h           &
         strquery.h           &
         strsafe.h            &
         subauth.h            &
