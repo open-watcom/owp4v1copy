@@ -176,9 +176,11 @@ typedef ULONG   *PINHERIT_FLAGS;
 #define ACTRL_ACCESS_SUPPORTS_OBJECT_ENTRIES    0x00000001L
 
 /* Tree security information options */
-#define TREE_SEC_INFO_SET                   0x00000001L
-#define TREE_SEC_INFO_RESET                 0x00000002L
-#define TREE_SEC_INFO_RESET_KEEP_EXPLICIT   0x00000003L
+#if (NTDDI_VERSION >= 0x06000000)
+    #define TREE_SEC_INFO_SET                   0x00000001L
+    #define TREE_SEC_INFO_RESET                 0x00000002L
+    #define TREE_SEC_INFO_RESET_KEEP_EXPLICIT   0x00000003L
+#endif
 
 /* Security object types */
 typedef enum _SE_OBJECT_TYPE {
@@ -506,8 +508,12 @@ typedef enum _PROGRESS_INVOKE_SETTING {
     ProgressInvokeEveryObject   = 2,
     ProgressInvokeOnError       = 3,
     ProgressCancelOperation     = 4,
+#if (NTDDI_VERSION >= 0x06000000)
     ProgressRetryOperation      = 5,
     ProgressInvokePrePostError  = 6
+#else
+    ProgressRetryOperation      = 5
+#endif
 } PROG_INVOKE_SETTING;
 typedef PROG_INVOKE_SETTING *PPROG_INVOKE_SETTING;
 
