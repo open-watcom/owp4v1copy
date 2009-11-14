@@ -38,7 +38,7 @@
 #define PKEYSTR_MAX     (GUIDSTRING_MAX + PKEY_PIDSTR_MAX + 1)
 
 /* Get property store flags */
-typedef enum tagGETPROPERTYSTOREFLAGS {
+typedef enum GETPROPERTYSTOREFLAGS {
     GPS_DEFAULT                 = 0x00000000,
     GPS_HANDLERPROPERTIESONLY   = 0x00000001,
     GPS_READWRITE               = 0x00000002,
@@ -47,18 +47,19 @@ typedef enum tagGETPROPERTYSTOREFLAGS {
     GPS_OPENSLOWITEM            = 0x00000010,
     GPS_DELAYCREATION           = 0x00000020,
     GPS_BESTEFFORT              = 0x00000040,
-    GPS_MASK_VALID              = 0x0000007F
+    GPS_NO_OPLOCK               = 0x00000080,
+    GPS_MASK_VALID              = 0x000000FF
 } GETPROPERTYSTOREFLAGS;
 
 /* Property key flags */
-typedef enum tagPKA_FLAGS {
+typedef enum PKA_FLAGS {
     PKA_SET     = 0,
     PKA_APPEND  = 1,
     PKA_DELETE  = 2
 } PKA_FLAGS;
 
 /* Property store cache states */
-typedef enum _PSC_STATE {
+typedef enum PSC_STATE {
     PSC_NORMAL      = 0,
     PSC_NOTINSOURCE = 1,
     PSC_DIRTY       = 2,
@@ -66,7 +67,7 @@ typedef enum _PSC_STATE {
 } PSC_STATE;
 
 /* Property enumeration types */
-typedef enum tagPROPENUMTYPE {
+typedef enum PROPENUMTYPE {
     PET_DISCRETEVALUE   = 0,
     PET_RANGEDVALUE     = 1,
     PET_DEFAULTVALUE    = 2,
@@ -74,7 +75,7 @@ typedef enum tagPROPENUMTYPE {
 } PROPENUMTYPE;
 
 /* Property description type flags */
-typedef enum tagPROPDESC_TYPE_FLAGS {
+typedef enum PROPDESC_TYPE_FLAGS {
     PDTF_DEFAULT                = 0x00000000,
     PDTF_MULTIPLEVALUES         = 0x00000001,
     PDTF_ISINNATE               = 0x00000002,
@@ -85,12 +86,14 @@ typedef enum tagPROPDESC_TYPE_FLAGS {
     PDTF_INCLUDEINFULLTEXTQUERY = 0x00000040,
     PDTF_ISVIEWABLE             = 0x00000080,
     PDTF_ISQUERYABLE            = 0x00000100,
+    PDTF_CANBEPURGED            = 0x00000200,
+    PDTF_SEARCHRAWVALUE         = 0x00000400,
     PDTF_ISSYSTEMPROPERTY       = 0x80000000,
-    PDTF_MASK_ALL               = 0x800001FF
+    PDTF_MASK_ALL               = 0x800007FF
 } PROPDESC_TYPE_FLAGS;
 
 /* Property description view flags */
-typedef enum tagPROPDESC_VIEW_FLAGS {
+typedef enum PROPDESC_VIEW_FLAGS {
     PDVF_DEFAULT                = 0x00000000,
     PDVF_CENTERALIGN            = 0x00000001,
     PDVF_RIGHTALIGN             = 0x00000002,
@@ -108,7 +111,7 @@ typedef enum tagPROPDESC_VIEW_FLAGS {
 } PROPDESC_VIEW_FLAGS;
 
 /* Property description display types */
-typedef enum tagPROPDESC_DISPLAYTYPE {
+typedef enum PROPDESC_DISPLAYTYPE {
     PDDT_STRING     = 0,
     PDDT_NUMBER     = 1,
     PDDT_BOOLEAN    = 2,
@@ -117,7 +120,7 @@ typedef enum tagPROPDESC_DISPLAYTYPE {
 } PROPDESC_DISPLAYTYPE;
 
 /* Property description grouping ranges */
-typedef enum tagPROPDESC_GROUPING_RANGE {
+typedef enum PROPDESC_GROUPING_RANGE {
     PDGR_DISCRETE       = 0,
     PDGR_ALPHANUMERIC   = 1,
     PDGR_SIZE           = 2,
@@ -128,7 +131,7 @@ typedef enum tagPROPDESC_GROUPING_RANGE {
 } PROPDESC_GROUPING_RANGE;
 
 /* Property description format flags */
-typedef enum tagPROPDESC_FORMAT_FLAGS {
+typedef enum PROPDESC_FORMAT_FLAGS {
     PDFF_DEFAULT            = 0x00000000,
     PDFF_PREFIXNAME         = 0x00000001,
     PDFF_FILENAME           = 0x00000002,
@@ -146,7 +149,7 @@ typedef enum tagPROPDESC_FORMAT_FLAGS {
 } PROPDESC_FORMAT_FLAGS;
 
 /* Property description sort descriptions */
-typedef enum tagPROPDESC_SORTDESCRIPTION {
+typedef enum PROPDESC_SORTDESCRIPTION {
     PDSD_GENERAL            = 0,
     PDSD_A_Z                = 1,
     PDSD_LOWEST_HIGHEST     = 2,
@@ -155,7 +158,7 @@ typedef enum tagPROPDESC_SORTDESCRIPTION {
 } PROPDESC_SORTDESCRIPTION;
 
 /* Property description relative description types */
-typedef enum tagPROPDESC_RELATIVEDESCRIPTION_TYPE {
+typedef enum PROPDESC_RELATIVEDESCRIPTION_TYPE {
     PDRDT_GENERAL   = 0,
     PDRDT_DATE      = 1,
     PDRDT_SIZE      = 2,
@@ -170,7 +173,7 @@ typedef enum tagPROPDESC_RELATIVEDESCRIPTION_TYPE {
 } PROPDESC_RELATIVEDESCRIPTION_TYPE;
 
 /* Property description aggregation types */
-typedef enum tagPROPDESC_AGGREGATION_TYPE {
+typedef enum PROPDESC_AGGREGATION_TYPE {
     PDAT_DEFAULT    = 0,
     PDAT_FIRST      = 1,
     PDAT_SUM        = 2,
@@ -182,7 +185,7 @@ typedef enum tagPROPDESC_AGGREGATION_TYPE {
 } PROPDESC_AGGREGATION_TYPE;
 
 /* Property description condition types */
-typedef enum tagPROPDESC_CONDITION_TYPE {
+typedef enum PROPDESC_CONDITION_TYPE {
     PDCOT_NONE      = 0,
     PDCOT_STRING    = 1,
     PDCOT_SIZE      = 2,
@@ -192,22 +195,26 @@ typedef enum tagPROPDESC_CONDITION_TYPE {
 } PROPDESC_CONDITION_TYPE;
 
 /* Property description search information flags */
-typedef enum tagPROPDESC_SEARCHINFO_FLAGS {
+typedef enum PROPDESC_SEARCHINFO_FLAGS {
     PDSIF_DEFAULT           = 0x00000000,
     PDSIF_ININVERTEDINDEX   = 0x00000001,
     PDSIF_ISCOLUMN          = 0x00000002,
-    PDSIF_ISCOLUMNSPARSE    = 0x00000004
+    PDSIF_ISCOLUMNSPARSE    = 0x00000004,
+    PDSIF_ALWAYSINCLUDE     = 0x00000008
 } PROPDESC_SEARCHINFO_FLAGS;
 
 /* Property description column index types */
-typedef enum tagPROPDESC_COLUMNINDEX_TYPE {
-    PDCIT_NONE      = 0,
-    PDCIT_ONDISK    = 1,
-    PDCIT_INMEMORY  = 2
+typedef enum PROPDESC_COLUMNINDEX_TYPE {
+    PDCIT_NONE          = 0,
+    PDCIT_ONDISK        = 1,
+    PDCIT_INMEMORY      = 2,
+    PDCIT_ONDEMAND      = 3,
+    PDCIT_ONDISKALL     = 4,
+    PDCIT_ONDISKVECTOR  = 5
 } PROPDESC_COLUMNINDEX_TYPE;
 
 /* Property description enumeration filter flags */
-typedef enum tagPROPDESC_ENUMFILTER {
+typedef enum PROPDESC_ENUMFILTER {
     PDEF_ALL                = 0,
     PDEF_SYSTEM             = 1,
     PDEF_NONSYSTEM          = 2,
@@ -218,9 +225,11 @@ typedef enum tagPROPDESC_ENUMFILTER {
 } PROPDESC_ENUMFILTER;
 
 /* Persist serialized property store flags */
-typedef enum tagPERSIST_SPROPSTORE_FLAGS {
+enum _PERSIST_SPROPSTORE_FLAGS {
+    FPSPS_DEFAULT   = 0x00000000,
     FPSPS_READONLY  = 0x00000001
-} PERSIST_SPROPSTORE_FLAGS;
+};
+typedef int PERSIST_SPROPSTORE_FLAGS;
 
 /* Serialized property storage */
 typedef struct tagSERIALIZEDPROPSTORAGE SERIALIZEDPROPSTORAGE;
@@ -238,15 +247,19 @@ EXTERN_C const IID      IID_IPropertyChangeArray;
 EXTERN_C const IID      IID_IPropertyStoreCapabilities;
 EXTERN_C const IID      IID_IPropertyStoreCache;
 EXTERN_C const IID      IID_IPropertyEnumType;
+EXTERN_C const IID      IID_IPropertyEnumType2;
 EXTERN_C const IID      IID_IPropertyEnumTypeList;
 EXTERN_C const IID      IID_IPropertyDescription;
+EXTERN_C const IID      IID_IPropertyDescription2;
 EXTERN_C const IID      IID_IPropertyDescriptionAliasInfo;
 EXTERN_C const IID      IID_IPropertyDescriptionSearchInfo;
+EXTERN_C const IID      IID_IPropertyDescriptionRelatedPropertyInfo;
 EXTERN_C const IID      IID_IPropertySystem;
 EXTERN_C const IID      IID_IPropertyDescriptionList;
 EXTERN_C const IID      IID_IPropertyStoreFactory;
 EXTERN_C const IID      IID_IDelayedPropertyStoreFactory;
 EXTERN_C const IID      IID_IPersistSerializedPropStorage;
+EXTERN_C const IID      IID_IPersistSerializedPropStorage2;
 EXTERN_C const IID      IID_IPropertySystemChangeNotify;
 EXTERN_C const IID      IID_ICreateObject;
 EXTERN_C const IID      LIBID_PropSysObjects;
@@ -416,6 +429,26 @@ DECLARE_INTERFACE_( IPropertyEnumType, IUnknown ) {
     STDMETHOD( GetDisplayText )( THIS_ LPWSTR * ) PURE;
 };
 
+/* IPropertyEnumType2 interface */
+#undef INTERFACE
+#define INTERFACE   IPropertyEnumType2
+DECLARE_INTERFACE_( IPropertyEnumType2, IPropertyEnumType ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IPropertyEnumType methods */
+    STDMETHOD( GetEnumType )( THIS_ PROPENUMTYPE * ) PURE;
+    STDMETHOD( GetValue )( THIS_ PROPVARIANT * ) PURE;
+    STDMETHOD( GetRangeMinValue )( THIS_ PROPVARIANT * ) PURE;
+    STDMETHOD( GetRangeSetValue )( THIS_ PROPVARIANT * ) PURE;
+    STDMETHOD( GetDisplayText )( THIS_ LPWSTR * ) PURE;
+
+    /* IPropertyEnumType2 methods */
+    STDMETHOD( GetImageReference )( THIS_ LPWSTR * ) PURE;
+};
+
 /* IPropertyEnumTypeList interface */
 #undef INTERFACE
 #define INTERFACE   IPropertyEnumTypeList
@@ -463,6 +496,42 @@ DECLARE_INTERFACE_( IPropertyDescription, IUnknown ) {
     STDMETHOD( CoerceToCanonicalValue )( THIS_ PROPVARIANT * ) PURE;
     STDMETHOD( FormatForDisplay )( THIS_ REFPROPVARIANT, PROPDESC_FORMAT_FLAGS, LPWSTR * ) PURE;
     STDMETHOD( IsValueCanonical )( THIS_ REFPROPVARIANT ) PURE;
+};
+
+/* IPropertyDescription2 interface */
+#undef INTERFACE
+#define INTERFACE   IPropertyDescription2
+DECLARE_INTERFACE_( IPropertyDescription2, IPropertyDescription ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IPropertyDescription methods */
+    STDMETHOD( GetPropertyKey )( THIS_ PROPERTYKEY * ) PURE;
+    STDMETHOD( GetCanonicalName )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( GetPropertyType )( THIS_ VARTYPE * ) PURE;
+    STDMETHOD( GetDisplayName )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( GetEditInvitation )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( GetTypeFlags )( THIS_ PROPDESC_TYPE_FLAGS, PROPDESC_TYPE_FLAGS * ) PURE;
+    STDMETHOD( GetViewFlags )( THIS_ PROPDESC_VIEW_FLAGS * ) PURE;
+    STDMETHOD( GetDefaultColumnWidth )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetDisplayType )( THIS_ PROPDESC_DISPLAYTYPE * ) PURE;
+    STDMETHOD( GetColumnState )( THIS_ SHCOLSTATEF * ) PURE;
+    STDMETHOD( GetGroupingRange )( THIS_ PROPDESC_GROUPING_RANGE * ) PURE;
+    STDMETHOD( GetRelativeDescriptionType )( THIS_ PROPDESC_RELATIVEDESCRIPTION_TYPE * ) PURE;
+    STDMETHOD( GetRelativeDescription )( THIS_ REFPROPVARIANT, REFPROPVARIANT, LPWSTR *, LPWSTR * ) PURE;
+    STDMETHOD( GetSortDescription )( THIS_ PROPDESC_SORTDESCRIPTION * ) PURE;
+    STDMETHOD( GetSortDescriptionLabel )( THIS_ BOOL, LPWSTR * ) PURE;
+    STDMETHOD( GetAggregationType )( THIS_ PROPDESC_AGGREGATION_TYPE * ) PURE;
+    STDMETHOD( GetConditionType )( THIS_ PROPDESC_CONDITION_TYPE *, CONDITION_OPERATION * ) PURE;
+    STDMETHOD( GetEnumTypeList )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD( CoerceToCanonicalValue )( THIS_ PROPVARIANT * ) PURE;
+    STDMETHOD( FormatForDisplay )( THIS_ REFPROPVARIANT, PROPDESC_FORMAT_FLAGS, LPWSTR * ) PURE;
+    STDMETHOD( IsValueCanonical )( THIS_ REFPROPVARIANT ) PURE;
+
+    /* IPropertyDescription2 methods */
+    STDMETHOD( GetImageReferenceForValue )( THIS_ REFPROPVARIANT, LPWSTR * ) PURE;
 };
 
 /* IPropertyDescriptionAliasInfo interface */
@@ -539,6 +608,42 @@ DECLARE_INTERFACE_( IPropertyDescriptionSearchInfo, IPropertyDescription ) {
     STDMETHOD( GetColumnIndexType )( THIS_ PROPDESC_COLUMNINDEX_TYPE * ) PURE;
     STDMETHOD( GetProjectionString )( THIS_ LPWSTR * ) PURE;
     STDMETHOD( GetMaxSize )( THIS_ UINT * ) PURE;
+};
+
+/* IPropertyDescriptionRelatedPropertyInfo interface */
+#undef INTERFACE
+#define INTERFACE   IPropertyDescriptionRelatedPropertyInfo
+DECLARE_INTERFACE_( IPropertyDescriptionRelatedPropertyInfo, IPropertyDescription ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IPropertyDescription methods */
+    STDMETHOD( GetPropertyKey )( THIS_ PROPERTYKEY * ) PURE;
+    STDMETHOD( GetCanonicalName )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( GetPropertyType )( THIS_ VARTYPE * ) PURE;
+    STDMETHOD( GetDisplayName )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( GetEditInvitation )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( GetTypeFlags )( THIS_ PROPDESC_TYPE_FLAGS, PROPDESC_TYPE_FLAGS * ) PURE;
+    STDMETHOD( GetViewFlags )( THIS_ PROPDESC_VIEW_FLAGS * ) PURE;
+    STDMETHOD( GetDefaultColumnWidth )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetDisplayType )( THIS_ PROPDESC_DISPLAYTYPE * ) PURE;
+    STDMETHOD( GetColumnState )( THIS_ SHCOLSTATEF * ) PURE;
+    STDMETHOD( GetGroupingRange )( THIS_ PROPDESC_GROUPING_RANGE * ) PURE;
+    STDMETHOD( GetRelativeDescriptionType )( THIS_ PROPDESC_RELATIVEDESCRIPTION_TYPE * ) PURE;
+    STDMETHOD( GetRelativeDescription )( THIS_ REFPROPVARIANT, REFPROPVARIANT, LPWSTR *, LPWSTR * ) PURE;
+    STDMETHOD( GetSortDescription )( THIS_ PROPDESC_SORTDESCRIPTION * ) PURE;
+    STDMETHOD( GetSortDescriptionLabel )( THIS_ BOOL, LPWSTR * ) PURE;
+    STDMETHOD( GetAggregationType )( THIS_ PROPDESC_AGGREGATION_TYPE * ) PURE;
+    STDMETHOD( GetConditionType )( THIS_ PROPDESC_CONDITION_TYPE *, CONDITION_OPERATION * ) PURE;
+    STDMETHOD( GetEnumTypeList )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD( CoerceToCanonicalValue )( THIS_ PROPVARIANT * ) PURE;
+    STDMETHOD( FormatForDisplay )( THIS_ REFPROPVARIANT, PROPDESC_FORMAT_FLAGS, LPWSTR * ) PURE;
+    STDMETHOD( IsValueCanonical )( THIS_ REFPROPVARIANT ) PURE;
+
+    /* IPropertyDescriptionRelatedPropertyInfo methods */
+    STDMETHOD( GetRelatedProperty )( THIS_ LPCWSTR, REFIID, void ** ) PURE;
 };
 
 /* IPropertySystem interface */
@@ -620,6 +725,25 @@ DECLARE_INTERFACE_( IPersistSerializedPropStorage, IUnknown ) {
     STDMETHOD( SetFlags )( THIS_ PERSIST_SPROPSTORE_FLAGS ) PURE;
     STDMETHOD( SetPropertyStorage )( THIS_ PCUSERIALIZEDPROPSTORAGE, DWORD ) PURE;
     STDMETHOD( GetPropertyStorage )( THIS_ SERIALIZEDPROPSTORAGE **, DWORD * ) PURE;
+};
+
+/* IPersistSerializedPropStorage2 interface */
+#undef INTERFACE
+#define INTERFACE   IPersistSerializedPropStorage2
+DECLARE_INTERFACE_( IPersistSerializedPropStorage2, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IPersistSerializedPropStorage methods */
+    STDMETHOD( SetFlags )( THIS_ PERSIST_SPROPSTORE_FLAGS ) PURE;
+    STDMETHOD( SetPropertyStorage )( THIS_ PCUSERIALIZEDPROPSTORAGE, DWORD ) PURE;
+    STDMETHOD( GetPropertyStorage )( THIS_ SERIALIZEDPROPSTORAGE **, DWORD * ) PURE;
+
+    /* IPersistSerializedPropStorage2 methods */
+    STDMETHOD( GetPropertyStorageSize )( THIS_ DWORD * ) PURE;
+    STDMETHOD( GetPropertyStorageBuffer )( THIS_ SERIALIZEDPROPSTORAGE *, DWORD, DWORD * ) PURE;
 };
 
 /* IPropertySystemChangeNotify interface */
@@ -786,6 +910,24 @@ DECLARE_INTERFACE_( ICreateObject, IUnknown ) {
         (x)->lpVtbl->GetRangeSetValue( x, p )
     #define IPropertyEnumType_GetDisplayText( x, p ) \
         (x)->lpVtbl->GetDisplayText( x, p )
+    #define IPropertyEnumType2_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IPropertyEnumType2_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IPropertyEnumType2_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IPropertyEnumType2_GetEnumType( x, p ) \
+        (x)->lpVtbl->GetEnumType( x, p )
+    #define IPropertyEnumType2_GetValue( x, p ) \
+        (x)->lpVtbl->GetValue( x, p )
+    #define IPropertyEnumType2_GetRangeMinValue( x, p ) \
+        (x)->lpVtbl->GetRangeMinValue( x, p )
+    #define IPropertyEnumType2_GetRangeSetValue( x, p ) \
+        (x)->lpVtbl->GetRangeSetValue( x, p )
+    #define IPropertyEnumType2_GetDisplayText( x, p ) \
+        (x)->lpVtbl->GetDisplayText( x, p )
+    #define IPropertyEnumType2_GetImageReference( x, p ) \
+        (x)->lpVtbl->GetImageReference( x, p )
     #define IPropertyEnumTypeList_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPropertyEnumTypeList_AddRef( x ) \
@@ -848,6 +990,56 @@ DECLARE_INTERFACE_( ICreateObject, IUnknown ) {
         (x)->lpVtbl->FormatForDisplay( x, p1, p2, p3 )
     #define IPropertyDescription_IsValueCanonical( x, p ) \
         (x)->lpVtbl->IsValueCanonical( x, p )
+    #define IPropertyDescription2_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IPropertyDescription2_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IPropertyDescription2_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IPropertyDescription2_GetPropertyKey( x, p ) \
+        (x)->lpVtbl->GetPropertyKey( x, p )
+    #define IPropertyDescription2_GetCanonicalName( x, p ) \
+        (x)->lpVtbl->GetCanonicalName( x, p )
+    #define IPropertyDescription2_GetPropertyType( x, p ) \
+        (x)->lpVtbl->GetPropertyType( x, p )
+    #define IPropertyDescription2_GetDisplayName( x, p ) \
+        (x)->lpVtbl->GetDisplayName( x, p )
+    #define IPropertyDescription2_GetEditInvitation( x, p ) \
+        (x)->lpVtbl->GetEditInvitation( x, p )
+    #define IPropertyDescription2_GetTypeFlags( x, p1, p2 ) \
+        (x)->lpVtbl->GetTypeFlags( x, p1, p2 )
+    #define IPropertyDescription2_GetViewFlags( x, p ) \
+        (x)->lpVtbl->GetViewFlags( x, p )
+    #define IPropertyDescription2_GetDefaultColumnWidth( x, p ) \
+        (x)->lpVtbl->GetDefaultColumnWidth( x, p )
+    #define IPropertyDescription2_GetDisplayType( x, p ) \
+        (x)->lpVtbl->GetDisplayType( x, p )
+    #define IPropertyDescription2_GetColumnState( x, p ) \
+        (x)->lpVtbl->GetColumnState( x, p )
+    #define IPropertyDescription2_GetGroupingRange( x, p ) \
+        (x)->lpVtbl->GetGroupingRange( x, p )
+    #define IPropertyDescription2_GetRelativeDescriptionType( x, p ) \
+        (x)->lpVtbl->GetRelativeDescriptionType( x, p )
+    #define IPropertyDescription2_GetRelativeDescription( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->GetRelativeDescription( x, p1, p2, p3, p4 )
+    #define IPropertyDescription2_GetSortDescription( x, p ) \
+        (x)->lpVtbl->GetSortDescription( x, p )
+    #define IPropertyDescription2_GetSortDescriptionLabel( x, p1, p2 ) \
+        (x)->lpVtbl->GetSortDescriptionLabel( x, p1, p2 )
+    #define IPropertyDescription2_GetAggregationType( x, p ) \
+        (x)->lpVtbl->GetAggregationType( x, p )
+    #define IPropertyDescription2_GetConditionType( x, p1, p2 ) \
+        (x)->lpVtbl->GetConditionType( x, p1, p2 )
+    #define IPropertyDescription2_GetEnumTypeList( x, p1, p2 ) \
+        (x)->lpVtbl->GetEnumTypeList( x, p1, p2 )
+    #define IPropertyDescription2_CoerceToCanonicalValue( x, p ) \
+        (x)->lpVtbl->CoerceToCanonicalValue( x, p )
+    #define IPropertyDescription2_FormatForDisplay( x, p1, p2, p3 ) \
+        (x)->lpVtbl->FormatForDisplay( x, p1, p2, p3 )
+    #define IPropertyDescription2_IsValueCanonical( x, p ) \
+        (x)->lpVtbl->IsValueCanonical( x, p )
+    #define IPropertyDescription2_GetImageReferenceForValue( x, p1, p2 ) \
+        (x)->lpVtbl->GetImageReferenceForValue( x, p1, p2 )
     #define IPropertyDescriptionAliasInfo_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPropertyDescriptionAliasInfo_AddRef( x ) \
@@ -956,6 +1148,56 @@ DECLARE_INTERFACE_( ICreateObject, IUnknown ) {
         (x)->lpVtbl->GetProjectionString( x, p )
     #define IPropertyDescriptionSearchInfo_GetMaxSize( x, p ) \
         (x)->lpVtbl->GetMaxSize( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IPropertyDescriptionRelatedPropertyInfo_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IPropertyDescriptionRelatedPropertyInfo_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetPropertyKey( x, p ) \
+        (x)->lpVtbl->GetPropertyKey( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetCanonicalName( x, p ) \
+        (x)->lpVtbl->GetCanonicalName( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetPropertyType( x, p ) \
+        (x)->lpVtbl->GetPropertyType( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetDisplayName( x, p ) \
+        (x)->lpVtbl->GetDisplayName( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetEditInvitation( x, p ) \
+        (x)->lpVtbl->GetEditInvitation( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetTypeFlags( x, p1, p2 ) \
+        (x)->lpVtbl->GetTypeFlags( x, p1, p2 )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetViewFlags( x, p ) \
+        (x)->lpVtbl->GetViewFlags( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetDefaultColumnWidth( x, p ) \
+        (x)->lpVtbl->GetDefaultColumnWidth( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetDisplayType( x, p ) \
+        (x)->lpVtbl->GetDisplayType( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetColumnState( x, p ) \
+        (x)->lpVtbl->GetColumnState( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetGroupingRange( x, p ) \
+        (x)->lpVtbl->GetGroupingRange( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetRelativeDescriptionType( x, p ) \
+        (x)->lpVtbl->GetRelativeDescriptionType( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetRelativeDescription( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->GetRelativeDescription( x, p1, p2, p3, p4 )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetSortDescription( x, p ) \
+        (x)->lpVtbl->GetSortDescription( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetSortDescriptionLabel( x, p1, p2 ) \
+        (x)->lpVtbl->GetSortDescriptionLabel( x, p1, p2 )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetAggregationType( x, p ) \
+        (x)->lpVtbl->GetAggregationType( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetConditionType( x, p1, p2 ) \
+        (x)->lpVtbl->GetConditionType( x, p1, p2 )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetEnumTypeList( x, p1, p2 ) \
+        (x)->lpVtbl->GetEnumTypeList( x, p1, p2 )
+    #define IPropertyDescriptionRelatedPropertyInfo_CoerceToCanonicalValue( x, p ) \
+        (x)->lpVtbl->CoerceToCanonicalValue( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_FormatForDisplay( x, p1, p2, p3 ) \
+        (x)->lpVtbl->FormatForDisplay( x, p1, p2, p3 )
+    #define IPropertyDescriptionRelatedPropertyInfo_IsValueCanonical( x, p ) \
+        (x)->lpVtbl->IsValueCanonical( x, p )
+    #define IPropertyDescriptionRelatedPropertyInfo_GetRelatedProperty( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetRelatedProperty( x, p1, p2, p3 )
     #define IPropertySystem_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPropertySystem_AddRef( x ) \
@@ -1024,6 +1266,22 @@ DECLARE_INTERFACE_( ICreateObject, IUnknown ) {
         (x)->lpVtbl->SetPropertyStorage( x, p1, p2 )
     #define IPersistSerializedPropStorage_GetPropertyStorage( x, p1, p2 ) \
         (x)->lpVtbl->GetPropertyStorage( x, p1, p2 )
+    #define IPersistSerializedPropStorage2_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IPersistSerializedPropStorage2_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IPersistSerializedPropStorage2_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IPersistSerializedPropStorage2_SetFlags( x, p ) \
+        (x)->lpVtbl->SetFlags( x, p )
+    #define IPersistSerializedPropStorage2_SetPropertyStorage( x, p1, p2 ) \
+        (x)->lpVtbl->SetPropertyStorage( x, p1, p2 )
+    #define IPersistSerializedPropStorage2_GetPropertyStorage( x, p1, p2 ) \
+        (x)->lpVtbl->GetPropertyStorage( x, p1, p2 )
+    #define IPersistSerializedPropStorage2_GetPropertyStorageSize( x, p ) \
+        (x)->lpVtbl->GetPropertyStorageSize( x, p )
+    #define IPersistSerializedPropStorage2_GetPropertyStorageBuffer( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetPropertyStorageBuffer( x, p1, p2, p3 )
     #define IPropertySystemChangeNotify_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPropertySystemChangeNotify_AddRef( x ) \
@@ -1056,6 +1314,7 @@ PSSTDAPI    PSEnumeratePropertyDescriptions( PROPDESC_ENUMFILTER, REFIID, void *
 PSSTDAPI    PSFormatForDisplay( REFPROPERTYKEY, REFPROPVARIANT, PROPDESC_FORMAT_FLAGS, LPWSTR, DWORD );
 PSSTDAPI    PSFormatForDisplayAlloc( REFPROPERTYKEY, REFPROPVARIANT, PROPDESC_FORMAT_FLAGS, PWSTR * );
 PSSTDAPI    PSFormatPropertyValue( IPropertyStore *, IPropertyDescription *, PROPDESC_FORMAT_FLAGS, LPWSTR * );
+PSSTDAPI    PSGetImageReferenceForValue( REFPROPERTYKEY, REFPROPVARIANT, PWSTR * );
 PSSTDAPI    PSGetItemPropertyHandler( IUnknown *, BOOL, REFIID, void ** );
 PSSTDAPI    PSGetItemPropertyHandlerWithCreateObject( IUnknown *, BOOL, IUnknown *, REFIID, void ** );
 PSSTDAPI    PSGetNameFromPropertyKey( REFPROPERTYKEY, PWSTR * );
@@ -1068,8 +1327,41 @@ PSSTDAPI    PSGetPropertyKeyFromName( PCWSTR, PROPERTYKEY * );
 PSSTDAPI    PSGetPropertySystem( REFIID, void ** );
 PSSTDAPI    PSGetPropertyValue( IPropertyStore *, IPropertyDescription *, PROPVARIANT * );
 PSSTDAPI    PSLookupPropertyHandlerCLSID( PCWSTR, CLSID * );
+PSSTDAPI    PSPropertyBag_Delete( IPropertyBag *, LPCWSTR );
+PSSTDAPI    PSPropertyBag_ReadBOOL( IPropertyBag *, LPCWSTR, BOOL * );
+PSSTDAPI    PSPropertyBag_ReadBSTR( IPropertyBag *, LPCWSTR, BSTR * );
+PSSTDAPI    PSPropertyBag_ReadDWORD( IPropertyBag *, LPCWSTR, DWORD * );
+PSSTDAPI    PSPropertyBag_ReadGUID( IPropertyBag *, LPCWSTR, GUID * );
+PSSTDAPI    PSPropertyBag_ReadInt( IPropertyBag *, LPCWSTR, INT * );
+PSSTDAPI    PSPropertyBag_ReadLONG( IPropertyBag *, LPCWSTR, LONG * );
+PSSTDAPI    PSPropertyBag_ReadPOINTL( IPropertyBag *, LPCWSTR, POINTL * );
+PSSTDAPI    PSPropertyBag_ReadPOINTS( IPropertyBag *, LPCWSTR, POINTS * );
+PSSTDAPI    PSPropertyBag_ReadPropertyKey( IPropertyBag *, LPCWSTR, PROPERTYKEY * );
+PSSTDAPI    PSPropertyBag_ReadRECTL( IPropertyBag *, LPCWSTR, RECTL * );
+PSSTDAPI    PSPropertyBag_ReadSHORT( IPropertyBag *, LPCWSTR, SHORT * );
+PSSTDAPI    PSPropertyBag_ReadStr( IPropertyBag *, LPCWSTR, LPWSTR, int );
+PSSTDAPI    PSPropertyBag_ReadStrAlloc( IPropertyBag *, LPCWSTR, PWSTR * );
+PSSTDAPI    PSPropertyBag_ReadStream( IPropertyBag *, LPCWSTR, IStream ** );
+PSSTDAPI    PSPropertyBag_ReadType( IPropertyBag *, LPCWSTR, VARIANT *, VARTYPE );
+PSSTDAPI    PSPropertyBag_ReadULONGLONG( IPropertyBag *, LPCWSTR, ULONGLONG * );
+PSSTDAPI    PSPropertyBag_ReadUnknown( IPropertyBag *, LPCWSTR, REFIID, void ** );
+PSSTDAPI    PSPropertyBag_WriteBOOL( IPropertyBag *, LPCWSTR, BOOL );
+PSSTDAPI    PSPropertyBag_WriteBSTR( IPropertyBag *, LPCWSTR, BSTR );
+PSSTDAPI    PSPropertyBag_WriteDWORD( IPropertyBag *, LPCWSTR, DWORD );
+PSSTDAPI    PSPropertyBag_WriteGUID( IPropertyBag *, LPCWSTR, const GUID * );
+PSSTDAPI    PSPropertyBag_WriteInt( IPropertyBag *, LPCWSTR, INT );
+PSSTDAPI    PSPropertyBag_WriteLONG( IPropertyBag *, LPCWSTR, LONG );
+PSSTDAPI    PSPropertyBag_WritePOINTL( IPropertyBag *, LPCWSTR, const POINTL * );
+PSSTDAPI    PSPropertyBag_WritePOINTS( IPropertyBag *, LPCWSTR, const POINTS * );
+PSSTDAPI    PSPropertyBag_WritePropertyKey( IPropertyBag *, LPCWSTR, REFPROPERTYKEY );
+PSSTDAPI    PSPropertyBag_WriteRECTL( IPropertyBag *, LPCWSTR, const RECTL * );
+PSSTDAPI    PSPropertyBag_WriteSHORT( IPropertyBag *, LPCWSTR, SHORT );
+PSSTDAPI    PSPropertyBag_WriteStr( IPropertyBag *, LPCWSTR, LPCWSTR );
+PSSTDAPI    PSPropertyBag_WriteStream( IPropertyBag *, LPCWSTR, IStream * );
+PSSTDAPI    PSPropertyBag_WriteULONGLONG( IPropertyBag *, LPCWSTR, ULONGLONG );
+PSSTDAPI    PSPropertyBag_WriteUnknown( IPropertyBag *, LPCWSTR, IUnknown * );
 PSSTDAPI    PSPropertyKeyFromString( LPCWSTR, PROPERTYKEY * );
-PSSTDAPI    PSRefreshPropertySchema();
+PSSTDAPI    PSRefreshPropertySchema( void );
 PSSTDAPI    PSRegisterPropertySchema( PCWSTR );
 PSSTDAPI    PSSetPropertyValue( IPropertyStore *, IPropertyDescription *, REFPROPVARIANT );
 PSSTDAPI    PSStringFromPropertyKey( REFPROPERTYKEY, LPWSTR, UINT );
