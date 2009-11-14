@@ -50,6 +50,8 @@ PowerRestoreDefaultPowerSchemes@0
 PowerRestoreIndividualDefaultPowerScheme@4
 PowerSetActiveScheme@8
 PowerSettingAccessCheck@8
+PowerSettingRegisterNotification@16
+PowerSettingUnregisterNotification@4
 PowerWriteACDefaultIndex@20
 PowerWriteACValueIndex@20
 PowerWriteDCDefaultIndex@20
@@ -74,4 +76,3 @@ ValidatePowerPolicies@8
 WriteGlobalPwrPolicy@4
 WriteProcessorPwrScheme@8
 WritePwrScheme@16
-

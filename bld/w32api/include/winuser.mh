@@ -32,8 +32,7 @@ typedef HDEVNOTIFY  *PHDEVNOTIFY;
 
 /* Handle to a power notification */
 #if (_WIN32_WINNT >= 0x0502)
-typedef PVOID           HPOWERNOTIFY;
-typedef HPOWERNOTIFY    *PHPOWERNOTIFY;
+:include powernot.sp
 #endif
 
 /* Raw input handle */
