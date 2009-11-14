@@ -45,12 +45,21 @@ typedef interface IEnumOleDocumentViews IEnumOleDocumentViews;
 #define MSOCMDERR_E_UNKNOWNGROUP    OLECMDERR_E_UNKNOWNGROUP
 
 /* OLE command argument indices */
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
     #define OLECMDARGINDEX_SHOWPAGEACTIONMENU_HWND      0
     #define OLECMDARGINDEX_SHOWPAGEACTIONMENU_X         1
     #define OLECMDARGINDEX_SHOWPAGEACTIONMENU_Y         2
     #define OLECMDARGINDEX_ACTIVEXINSTALL_PUBLISHER     0
     #define OLECMDARGINDEX_ACTIVEXINSTALL_DISPLAYNAME   1
+    #define OLECMDARGINDEX_ACTIVEXINSTALL_CLSID         2
+    #define OLECMDARGINDEX_ACTIVEXINSTALL_INSTALLSCOPE  3
+#endif
+
+/* Install scopes */
+#if (NTDDI_VERSION >= 0x05010200)
+    #define INSTALL_SCOPE_INVALID   0
+    #define INSTALL_SCOPE_MACHINE   1
+    #define INSTALL_SCOPE_USER      2
 #endif
 
 /* Active Document miscellaneous flags */
@@ -141,69 +150,71 @@ typedef enum OLECMDEXECOPT {
 
 /* OLE command identifiers */
 typedef enum OLECMDID {
-    OLECMDID_OPEN                   = 1,
-    OLECMDID_NEW                    = 2,
-    OLECMDID_SAVE                   = 3,
-    OLECMDID_SAVEAS                 = 4,
-    OLECMDID_SAVECOPYAS             = 5,
-    OLECMDID_PRINT                  = 6,
-    OLECMDID_PRINTPREVIEW           = 7,
-    OLECMDID_PAGESETUP              = 8,
-    OLECMDID_SPELL                  = 9,
-    OLECMDID_PROPERTIES             = 10,
-    OLECMDID_CUT                    = 11,
-    OLECMDID_COPY                   = 12,
-    OLECMDID_PASTE                  = 13,
-    OLECMDID_PASTESPECIAL           = 14,
-    OLECMDID_UNDO                   = 15,
-    OLECMDID_REDO                   = 16,
-    OLECMDID_SELECTALL              = 17,
-    OLECMDID_CLEARSELECTION         = 18,
-    OLECMDID_ZOOM                   = 19,
-    OLECMDID_GETZOOMRANGE           = 20,
-    OLECMDID_UPDATECOMMANDS         = 21,
-    OLECMDID_REFRESH                = 22,
-    OLECMDID_STOP                   = 23,
-    OLECMDID_HIDETOOLBARS           = 24,
-    OLECMDID_SETPROGRESSMAX         = 25,
-    OLECMDID_SETPROGRESSPOS         = 26,
-    OLECMDID_SETPROGRESSTEXT        = 27,
-    OLECMDID_SETTITLE               = 28,
-    OLECMDID_SETDOWNLOADSTATE       = 29,
-    OLECMDID_STOPDOWNLOAD           = 30,
-    OLECMDID_ONTOOLBARACTIVATED     = 31,
-    OLECMDID_FIND                   = 32,
-    OLECMDID_DELETE                 = 33,
-    OLECMDID_HTTPEQUIV              = 34,
-    OLECMDID_HTTPEQUIV_DONE         = 35,
-    OLECMDID_ENABLE_INTERACTION     = 36,
-    OLECMDID_ONUNLOAD               = 37,
-    OLECMDID_PROPERTYBAG2           = 38,
-    OLECMDID_PREREFRESH             = 39,
-    OLECMDID_SHOWSCRIPTERROR        = 40,
-    OLECMDID_SHOWMESSAGE            = 41,
-    OLECMDID_SHOWFIND               = 42,
-    OLECMDID_SHOWPAGESETUP          = 43,
-    OLECMDID_SHOWPRINT              = 44,
-    OLECMDID_CLOSE                  = 45,
-    OLECMDID_ALLOWUILESSSAVEAS      = 46,
-    OLECMDID_DONTDOWNLOADCSS        = 47,
-    OLECMDID_UPDATEPAGESTATUS       = 48,
-    OLECMDID_PRINT2                 = 49,
-    OLECMDID_PRINTPREVIEW2          = 50,
-    OLECMDID_SETPRINTTEMPLATE       = 51,
-    OLECMDID_GETPRINTTEMPLATE       = 52,
-    OLECMDID_PAGEACTIONBLOCKED      = 55,
-    OLECMDID_PAGEACTIONUIQUERY      = 56,
-    OLECMDID_FOCUSVIEWCONTROLS      = 57,
-    OLECMDID_FOCUSVIEWCONTROLSQUERY = 58,
-    OLECMDID_SHOWPAGEACTIONMENU     = 59,
-    OLECMDID_ADDTRAVELENTRY         = 60,
-    OLECMDID_UPDATETRAVELENTRY      = 61,
-    OLECMDID_UPDATEBACKFORWARDSTATE = 62,
-    OLECMDID_OPTICAL_ZOOM           = 63,
-    OLECMDID_OPTICAL_GETZOOMRANGE   = 64,
-    OLECMDID_WINDOWSTATECHANGED     = 65
+    OLECMDID_OPEN                           = 1,
+    OLECMDID_NEW                            = 2,
+    OLECMDID_SAVE                           = 3,
+    OLECMDID_SAVEAS                         = 4,
+    OLECMDID_SAVECOPYAS                     = 5,
+    OLECMDID_PRINT                          = 6,
+    OLECMDID_PRINTPREVIEW                   = 7,
+    OLECMDID_PAGESETUP                      = 8,
+    OLECMDID_SPELL                          = 9,
+    OLECMDID_PROPERTIES                     = 10,
+    OLECMDID_CUT                            = 11,
+    OLECMDID_COPY                           = 12,
+    OLECMDID_PASTE                          = 13,
+    OLECMDID_PASTESPECIAL                   = 14,
+    OLECMDID_UNDO                           = 15,
+    OLECMDID_REDO                           = 16,
+    OLECMDID_SELECTALL                      = 17,
+    OLECMDID_CLEARSELECTION                 = 18,
+    OLECMDID_ZOOM                           = 19,
+    OLECMDID_GETZOOMRANGE                   = 20,
+    OLECMDID_UPDATECOMMANDS                 = 21,
+    OLECMDID_REFRESH                        = 22,
+    OLECMDID_STOP                           = 23,
+    OLECMDID_HIDETOOLBARS                   = 24,
+    OLECMDID_SETPROGRESSMAX                 = 25,
+    OLECMDID_SETPROGRESSPOS                 = 26,
+    OLECMDID_SETPROGRESSTEXT                = 27,
+    OLECMDID_SETTITLE                       = 28,
+    OLECMDID_SETDOWNLOADSTATE               = 29,
+    OLECMDID_STOPDOWNLOAD                   = 30,
+    OLECMDID_ONTOOLBARACTIVATED             = 31,
+    OLECMDID_FIND                           = 32,
+    OLECMDID_DELETE                         = 33,
+    OLECMDID_HTTPEQUIV                      = 34,
+    OLECMDID_HTTPEQUIV_DONE                 = 35,
+    OLECMDID_ENABLE_INTERACTION             = 36,
+    OLECMDID_ONUNLOAD                       = 37,
+    OLECMDID_PROPERTYBAG2                   = 38,
+    OLECMDID_PREREFRESH                     = 39,
+    OLECMDID_SHOWSCRIPTERROR                = 40,
+    OLECMDID_SHOWMESSAGE                    = 41,
+    OLECMDID_SHOWFIND                       = 42,
+    OLECMDID_SHOWPAGESETUP                  = 43,
+    OLECMDID_SHOWPRINT                      = 44,
+    OLECMDID_CLOSE                          = 45,
+    OLECMDID_ALLOWUILESSSAVEAS              = 46,
+    OLECMDID_DONTDOWNLOADCSS                = 47,
+    OLECMDID_UPDATEPAGESTATUS               = 48,
+    OLECMDID_PRINT2                         = 49,
+    OLECMDID_PRINTPREVIEW2                  = 50,
+    OLECMDID_SETPRINTTEMPLATE               = 51,
+    OLECMDID_GETPRINTTEMPLATE               = 52,
+    OLECMDID_PAGEACTIONBLOCKED              = 55,
+    OLECMDID_PAGEACTIONUIQUERY              = 56,
+    OLECMDID_FOCUSVIEWCONTROLS              = 57,
+    OLECMDID_FOCUSVIEWCONTROLSQUERY         = 58,
+    OLECMDID_SHOWPAGEACTIONMENU             = 59,
+    OLECMDID_ADDTRAVELENTRY                 = 60,
+    OLECMDID_UPDATETRAVELENTRY              = 61,
+    OLECMDID_UPDATEBACKFORWARDSTATE         = 62,
+    OLECMDID_OPTICAL_ZOOM                   = 63,
+    OLECMDID_OPTICAL_GETZOOMRANGE           = 64,
+    OLECMDID_WINDOWSTATECHANGED             = 65,
+    OLECMDID_ACTIVEXINSTALLSCOPE            = 66,
+    OLECMDID_UPDATETRAVELENTRY_DATARECOVERY = 67
 } OLECMDID;
 #define MSOCMDID_OPEN           OLECMDID_OPEN
 #define MSOCMDID_NEW            OLECMDID_NEW
@@ -227,7 +238,7 @@ typedef enum OLECMDID {
 #define MSOCMDID_GETZOOMRANGE   OLECMDID_GETZOOMRANGE
 
 /* Ignore MIME flags */
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
 typedef enum IGNOREMIME {
     IGNOREMIME_PROMPT   = 0x00000001,
     IGNOREMIME_TEXT     = 0x00000002
@@ -235,7 +246,7 @@ typedef enum IGNOREMIME {
 #endif
 
 /* WPC settings */
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
 typedef enum WPCSETTING {
     WPCSETTING_LOGGING_ENABLED      = 0x00000001,
     WPCSETTING_FILEDOWNLOAD_BLOCKED = 0x00000002
@@ -256,7 +267,7 @@ typedef enum {
 #if (NTDDI_VERSION >= 0x05010000)
     OLECMDIDF_REFRESH_THROUGHSCRIPT                         = 0x00004000,
 #endif
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
     OLECMDIDF_REFRESH_PAGEACTION_ACTIVEXINSTALL             = 0x00010000,
     OLECMDIDF_REFRESH_PAGEACTION_FILEDOWNLOAD               = 0x00020000,
     OLECMDIDF_REFRESH_PAGEACTION_LOCALMACHINE               = 0x00040000,
@@ -272,7 +283,7 @@ typedef enum {
 } OLECMDID_REFRESHFLAG;
 
 /* OLE command identifier page action flags */
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
 typedef enum {
     OLECMDIDF_PAGEACTION_FILEDOWNLOAD                       = 0x00000001,
     OLECMDIDF_PAGEACTION_ACTIVEXINSTALL                     = 0x00000002,
@@ -297,6 +308,7 @@ typedef enum {
     OLECMDIDF_PAGEACTION_MIXEDCONTENT                       = 0x00080000,
     OLECMDIDF_PAGEACTION_INVALID_CERT                       = 0x00100000,
     OLECMDIDF_PAGEACTION_INTRANETZONEREQUEST                = 0x00200000,
+    OLECMDIDF_PAGEACTION_XSSFILTERED                        = 0x00400000,
     OLECMDIDF_PAGEACTION_SPOOFABLEIDNHOST                   = 0x00800000,
     OLECMDIDF_PAGEACTION_LOWRIGHTSIE                        = 0x01000000,
     OLECMDIDF_PAGEACTION_SCRIPTNAVIGATE_ACTIVEXUSERAPPROVAL = 0x02000000,
@@ -310,7 +322,7 @@ typedef enum {
 #endif
 
 /* OLE command identifier browser state flags */
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
 typedef enum {
     OLECMDIDF_BROWSERSTATE_EXTENSIONSOFF        = 0x00000001,
     OLECMDIDF_BROWSERSTATE_IESECURITY           = 0x00000002,
@@ -319,8 +331,15 @@ typedef enum {
 } OLECMDID_BROWSERSTATEFLAG;
 #endif
 
+/* OLE command identifier optical zoom flags */
+#if (NTDDI_VERSION >= 0x05010200)
+typedef enum {
+    OLECMDIDF_OPTICAL_ZOOM_NOPERSIST    = 0x00000001
+} OLECMDID_OPTICAL_ZOOMFLAG;
+#endif
+
 /* Page actions */
-#if (NTDDI_VERSION >= 0x05020000)
+#if (NTDDI_VERSION >= 0x05010200)
 typedef enum {
     PAGEACTION_UI_DEFAULT   = 0,
     PAGEACTION_UI_MODAL     = 1,
