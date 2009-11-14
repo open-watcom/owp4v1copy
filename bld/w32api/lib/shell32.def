@@ -31,6 +31,7 @@ ExtractIconExW@20
 ExtractIconW@12
 FindExecutableA@12
 FindExecutableW@12
+GetCurrentProcessExplicitAppUserModelID@4
 GetFileNameFromBrowse@28
 ILAppendID@12
 ILClone@4
@@ -80,6 +81,7 @@ SHAddToRecentDocs@8
 SHAlloc@4
 SHAppBarMessage@8
 SHAssocEnumHandlers@12
+SHAssocEnumHandlersForProtocolByApplication
 SHBindToFolderIDListParent@20
 SHBindToFolderIDListParentEx@24
 SHBindToObject@20
@@ -102,7 +104,6 @@ SHCreateDefaultPropertiesOp@8
 SHCreateDirectory@8
 SHCreateDirectoryExA@12
 SHCreateDirectoryExW@12
-SHCreateFileExtractIconA
 SHcreateFileExtractIconW@16
 SHCreateItemFromIDList@12
 SHCreateItemFromParsingName@16
@@ -153,6 +154,8 @@ SHGetIconOverlayIndexA@8
 SHGetIconOVerlayIndexW@8
 SHGetImageList@12
 SHGetInstanceExplorer@4
+SHGetItemFromDataObject@16
+SHGetItemFromObject@12
 SHGetKnownFolderIDList@16
 SHGetKnownFolderPath@16
 SHGetLocalizedName@16
@@ -202,6 +205,7 @@ SHQueryRecycleBinW@8
 SHQueryUserNotificationState@4
 SHRemoveLocalizedName@4
 SHReplaceFromPropSheetExtArray@16
+SHResolveLibrary@4
 SHRestricted@4
 SHRunControlPanel@8
 SHSetDefaultProperties@16
@@ -213,12 +217,14 @@ SHSetLocalizedName@12
 SHSetTemporaryPropertyForItem@12
 SHSetUnreadMailCountW@12
 SHShellFolderView_Message@12
+SHShowManageLibraryUI@20
 SHSimpleIDListFromPath@4
 SHStartNetConnectionDialogW@12
 SHTestTokenMembership@8
 SHUpdateImageA@16
 SHUpdateImageW@16
 SHValidateUNC@12
+SetCurrentProcessExplicitAppUserModelID@4
 ShellAboutA@16
 ShellAboutW@16
 ShellExecuteA@24

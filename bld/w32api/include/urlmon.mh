@@ -306,7 +306,6 @@ typedef interface IInternetProtocolSink IInternetProtocolSink;
     #define URLACTION_SHELL_ENHANCED_DRAGDROP_SECURITY      0x0000180BL
     #define URLACTION_SHELL_EXTENSIONSECURITY               0x0000180CL
     #define URLACTION_SHELL_SECURE_DRAGSOURCE               0x0000180DL
-    #define URLACTION_SHELL_CURR_MAX                        0x0000180DL
 #endif
 #if (_WIN32_IE >= 0x0800)
     #define URLACTION_SHELL_REMOTEQUERY                     0x0000180EL

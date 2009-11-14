@@ -19,13 +19,11 @@ typedef DWORD   PERCEIVEDFLAG;
 #endif
 
 /* Known folder identifier data type */
-#if (NTDDI_VERSION >= 0x06000000)
 typedef GUID    KNOWNFOLDERID;
 #ifdef __cplusplus
     #define REFKNOWNFOLDERID    const KNOWNFOLDERID &
 #else
     #define REFKNOWNFOLDERID    const KNOWNFOLDERID * const
-#endif
 #endif
 
 /* Known folder redirection flags data type */

@@ -168,6 +168,7 @@ headers = &
         ntsecapi.h           &
         ntsecpkg.h           &
         oaidl.h              &
+        objarray.h           &
         objbase.h            &
         objidl.h             &
         objsafe.h            &

@@ -9,6 +9,7 @@
 #pragma include_alias( <devpropdef.h>,      <devprdef.h> )
 #pragma include_alias( <driverspecs.h>,     <drvspecs.h> )
 #pragma include_alias( <knownfolders.h>,    <knownfld.h> )
+#pragma include_alias( <objectarray.h>,     <objarray.h> )
 #pragma include_alias( <propkeydef.h>,      <propkdef.h> )
 #pragma include_alias( <schemadef.h>,       <schemdef.h> )
 #pragma include_alias( <sdkddkver.h>,       <sdkddver.h> )

@@ -28,6 +28,9 @@
 #include <propsys.h>
 #include <sherrors.h>
 #include <commctrl.h>
+#ifndef RC_INVOKED
+    #include <objectarray.h>
+#endif
 
 :include cpluspro.sp
 
@@ -52,9 +55,9 @@ typedef interface IContextMenuCB        IContextMenuCB;
 /* Shell primitive data types */
 typedef ULONG                   SFGAOF;
 typedef char                    *LPVIEWSETTINGS;
-typedef UINT                    SVSIF;
 typedef LPFNADDPROPSHEETPAGE    LPFNSVADDPROPSHEETPAGE;
 typedef GUID                    SHELLVIEWID;
+typedef HRESULT                 DEPRECATED_HRESULT;
 typedef LPTBBUTTON              LPTBBUTTONSB;
 #if (NTDDI_VERSION >= 0x05010000)
 typedef GUID                    STGTRANSCONFIRMATION;
@@ -92,6 +95,10 @@ typedef HANDLE                  HTHEME;
 #if (NTDDI_VERSION >= 0x06000000)
     #define CMF_DISABLEDVERBS   0x00000200
 #endif
+#define CMF_ASYNCVERBSTATE      0x00000400
+#define CMF_OPTIMIZEFORINVOKE   0x00000800
+#define CMF_SYNCCASCADEMENU     0x00001000
+#define CMF_DONOTPICKDEFAULT    0x00002000
 
 /* IContextMenu::GetCommandString() flags */
 #define GCS_VERBA           0x00000000
@@ -210,6 +217,7 @@ typedef HANDLE                  HTHEME;
 #define SFGAO_HASPROPSHEET      0x00000040L
 #define SFGAO_DROPTARGET        0x00000100L
 #define SFGAO_CAPABILITYMASK    0x00000177L
+#define SFGAO_SYSTEM            0x00001000L
 #define SFGAO_ENCRYPTED         0x00002000L
 #define SFGAO_ISSLOW            0x00004000L
 #define SFGAO_GHOSTED           0x00008000L
@@ -234,7 +242,7 @@ typedef HANDLE                  HTHEME;
 #define SFGAO_STORAGECAPMASK    0x70C50008L
 #define SFGAO_HASSUBFOLDER      0x80000000L
 #define SFGAO_CONTENTSMASK      0x80000000L
-#define SFGAO_PKEYSFGAOMASK     0x81044010L
+#define SFGAO_PKEYSFGAOMASK     0x81044000L
 
 /* IShellFolder bind strings */
 #define STR_BIND_FORCE_FOLDER_SHORTCUT_RESOLVE  L"Force Folder Shortcut Resolve"
@@ -263,24 +271,18 @@ typedef HANDLE                  HTHEME;
     #define STR_PARSE_SHOW_NET_DIAGNOSTICS_UI   L"Show network diagnostics UI"
     #define STR_PARSE_DONT_REQUIRE_VALIDATED_URLS \
         L"Do not require validated URLs"
+    #define STR_INTERNETFOLDER_PARSE_ONLY_URLMON_BINDABLE   L"Validate URL"
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+    #define STR_BIND_FOLDERS_READ_ONLY          L"Folders As Read Only"
+    #define STR_BIND_FOLDER_ENUM_MODE           L"Folder Enum Mode"
+    #define STR_PARSE_WITH_EXPLICIT_PROGID      L"ExplicitProgid"
+    #define STR_PARSE_WITH_EXPLICIT_ASSOCAPP    L"ExplicitAssociationApp"
+    #define STR_PARSE_EXPLICIT_ASSOCIATION_SUCCESSFUL   L"ExplicitAssociationSuccessful"
+    #define STR_PARSE_AND_CREATE_ITEM           L"ParseAndCreateItem"
+    #define STR_ITEM_CACHE_CONTEXT              L"ItemCacheContext"
 #endif
 #define STR_FILE_SYS_BIND_DATA                  L"File System Bind Data"
-
-/* IShellView::SelectItem() flags */
-#define SVSI_DESELECT       0x00000000
-#define SVSI_SELECT         0x00000001
-#define SVSI_EDIT           0x00000003
-#define SVSI_DESELECTOTHERS 0x00000004
-#define SVSI_ENSUREVISIBLE  0x00000008
-#define SVSI_FOCUSED        0x00000010
-#define SVSI_TRANSLATEPT    0x00000020
-#define SVSI_SELECTIONMARK  0x00000040
-#define SVSI_POSITIONITEM   0x00000080
-#define SVSI_CHECK          0x00000100
-#define SVSI_CHECK2         0x00000200
-#define SVSI_KEYBOARDSELECT 0x00000401
-#define SVSI_NOTAKEFOCUS    0x40000000
-#define SVSI_NOSTATECHANGE  0x80000000
 
 /* IShellView2::GetView() special values */
 #define SV2GV_CURRENTVIEW   ((UINT)-1)
@@ -309,6 +311,7 @@ typedef HANDLE                  HTHEME;
     #define CDB2GVF_NOSELECTVERB        0x00000008L
     #define CDB2GVF_NOINCLUDEITEM       0x00000010L
     #define CDB2GVF_ISFOLDERPICKER      0x00000020L
+    #define CDB2GVF_ADDSHIELD           0x00000040L
 #endif
 
 /* Maximum column name length */
@@ -335,6 +338,8 @@ typedef HANDLE                  HTHEME;
     #define SBSP_KEEPSAMETEMPLATE       0x00020000
     #define SBSP_KEEPWORDWHEELTEXT      0x00040000
     #define SBSP_ACTIVATE_NOFOCUS       0x00080000
+    #define SBSP_CREATENOHISTORY        0x00100000
+    #define SBSP_PLAYNOSOUND            0x00200000
 #endif
 #if (_WIN32_IE >= 0x0602)
     #define SBSP_CALLERUNTRUSTED        0x00800000
@@ -366,7 +371,7 @@ typedef HANDLE                  HTHEME;
 
 /* IShellItem strings */
 #define STR_DONT_RESOLVE_LINK   L"Don't Resolve Link"
-#define STR_PLAYLIST_EDITOR_UI  L"Static List In Dialog"
+#define STR_GET_ASYNC_HANDLER   L"GetAsyncHandler"
 
 /* Property store strings */
 #define STR_GPS_HANDLERPROPERTIESONLY   L"GPS_HANDLERPROPERTIESONLY"
@@ -374,24 +379,7 @@ typedef HANDLE                  HTHEME;
 #define STR_GPS_OPENSLOWITEM            L"GPS_OPENSLOWITEM"
 #define STR_GPS_DELAYCREATION           L"GPS_DELAYCREATION"
 #define STR_GPS_BESTEFFORT              L"GPS_BESTEFFORT"
-
-/* Transfer source flags */
-#if (_WIN32_IE >= 0x0700)
-    #define TSF_NORMAL                      0x0000
-    #define TSF_FAIL_EXIST                  0x0000
-    #define TSF_RENAME_EXIST                0x0001
-    #define TSF_OVERWRITE_EXIST             0x0002
-    #define TSF_ALLOW_DECRYPTION            0x0004
-    #define TSF_NO_SECURITY                 0x0008
-    #define TSF_COPY_CREATION_TIME          0x0010
-    #define TSF_COPY_WRITE_TIME             0x0020
-    #define TSF_USE_FULL_ACCESS             0x0040
-    #define TSF_DELETE_RECYCLE_IF_POSSIBLE  0x0080
-    #define TSF_COPY_HARD_LINK              0x0100
-    #define TSF_COPY_LOCALIZED_NAME         0x0200
-    #define TSF_MOVE_AS_COPY_DELETE         0x0400
-    #define TSF_SUSPEND_SHELLEVENTS         0x0800
-#endif
+#define STR_GPS_NO_OPLOCK               L"GPS_NO_OPLOCK"
 
 /* Shell drag image registered message */
 #if (NTDDI_VERSION >= 0x05000000)
@@ -412,7 +400,7 @@ typedef HANDLE                  HTHEME;
     #define ARCONTENT_VCD               0x00000400L
     #define ARCONTENT_SVCD              0x00000800L
     #define ARCONTENT_DVDAUDIO          0x00001000L
-    #define ARCONTENT_HDDVD             0x00002000L
+    #define ARCONTENT_BLANKBD           0x00002000L
     #define ARCONTENT_BLURAY            0x00004000L
     #define ARCONTENT_NONE              0x00008000L
     #define ARCONTENT_MASK              0x00007FFEL
@@ -482,6 +470,9 @@ typedef HANDLE                  HTHEME;
 #define DBPC_SELECTFIRST    0xFFFFFFFFL
 #define DBPC_SELECTLAST     0xFFFFFFFEL
 
+/* Thumb button notifications */
+#define THBN_CLICKED    0x1800
+
 /* Wizard extension dialog identifiers */
 #define IDD_WIZEXTN_FIRST   0x5000
 #define IDD_WIZEXTN_LAST    0x5100
@@ -496,14 +487,6 @@ typedef HANDLE                  HTHEME;
 #endif
 #define SHPWHF_VALIDATEVIAWEBFOLDERS    0x00010000
 
-/* Operations progress dialog flags */
-#if (_WIN32_IE >= 0x0700)
-    #define OPPROGDLG_ENABLEPAUSE           0x00000080L
-    #define OPPROGDLG_ALLOWUNDO             0x00000100L
-    #define OPPROGDLG_DONTDISPLAYSOURCEPATH 0x00000200L
-    #define OPPROGDLG_DONTDISPLAYDESTPATH   0x00000400L
-#endif
-
 /* Extended file operation flags */
 #if (_WIN32_IE >= 0x0700)
     #define FOFX_NOSKIPJUNCTIONS        0x00010000L
@@ -517,6 +500,9 @@ typedef HANDLE                  HTHEME;
     #define FOFX_MOVEACLSACROSSVOLUMES  0x02000000L
     #define FOFX_DONTDISPLAYSOURCEPATH  0x04000000L
     #define FOFX_DONTDISPLAYDESTPATH    0x08000000L
+    #define FOFX_REQUIREELEVATION       0x10000000L
+    #define FOFX_COPYASDOWNLOAD         0x20000000L
+    #define FOFX_DONTDISPLAYLOCATIONS   0x40000000L
 #endif
 
 /* IAutoCompleteDropDown::GetDropDownStatus() flags */
@@ -550,6 +536,7 @@ typedef HANDLE                  HTHEME;
 #endif
 #if (_WIN32_IE >= 0x0700)
     #define BSIS_PRESERVEORDERDURINGLAYOUT  0x00000200L
+    #define BSIS_FIXEDORDER                 0x00000400L
 #endif
 
 /* CD burning extension property string */
@@ -654,6 +641,9 @@ typedef HANDLE                  HTHEME;
 #define E_PREVIEWHANDLER_NOTFOUND   0x86420003L
 #define E_PREVIEWHANDLER_CORRUPT    0x86420004L
 
+/* HomeGroup security group */
+#define HOMEGROUP_SECURITY_GROUP    L"HomeUsers"
+
 /* IContextMenu::InvokeCommand() parameters */
 #include <pshpack8.h>
 typedef struct _CMINVOKECOMMANDINFO {
@@ -667,7 +657,8 @@ typedef struct _CMINVOKECOMMANDINFO {
     DWORD   dwHotKey;
     HANDLE  hIcon;
 } CMINVOKECOMMANDINFO;
-typedef CMINVOKECOMMANDINFO *LPCMINVOKECOMMANDINFO;
+typedef CMINVOKECOMMANDINFO         *LPCMINVOKECOMMANDINFO;
+typedef const CMINVOKECOMMANDINFO   *LPCCMINVOKECOMMANDINFO;
 #include <poppack.h>
 
 /* IContextMenu::InvokeCommand() parameters (extended version) */
@@ -707,32 +698,43 @@ typedef struct _PERSIST_FOLDER_TARGET_INFO {
 #endif
 
 /* IShellFolder::GetDisplayNameOf() flags */
-typedef enum tagSHGDN {
+enum _SHGDNF {
     SHGDN_NORMAL        = 0x0000,
     SHGDN_INFOLDER      = 0x0001,
     SHGDN_FOREDITING    = 0x1000,
     SHGDN_FORADDRESSBAR = 0x4000,
     SHGDN_FORPARSING    = 0x8000
-} SHGNO;
+};
 typedef DWORD   SHGDNF;
 
 /* IShellFolder::EnumObjects() flags */
-typedef enum tagSHCONTF {
-    SHCONTF_FOLDERS             = 0x0020,
-    SHCONTF_NONFOLDERS          = 0x0040,
-    SHCONTF_INCLUDEHIDDEN       = 0x0080,
-    SHCONTF_INIT_ON_FIRST_NEXT  = 0x0100,
-    SHCONTF_NETPRINTERSRCH      = 0x0200,
-    SHCONTF_SHAREABLE           = 0x0400,
-    SHCONTF_STORAGE             = 0x0800,
-    SHCONTF_FASTITEMS           = 0x2000,
-    SHCONTF_FLATLIST            = 0x4000,
-    SHCONTF_ENABLE_ASYNC        = 0x8000
-} SHCONT;
+enum _SHCONTF {
+    SHCONTF_CHECKING_FOR_CHILDREN   = 0x00000010,
+    SHCONTF_FOLDERS                 = 0x00000020,
+    SHCONTF_NONFOLDERS              = 0x00000040,
+    SHCONTF_INCLUDEHIDDEN           = 0x00000080,
+    SHCONTF_INIT_ON_FIRST_NEXT      = 0x00000100,
+    SHCONTF_NETPRINTERSRCH          = 0x00000200,
+    SHCONTF_SHAREABLE               = 0x00000400,
+    SHCONTF_STORAGE                 = 0x00000800,
+    SHCONTF_NAVIGATION_ENUM         = 0x00001000,
+    SHCONTF_FASTITEMS               = 0x00002000,
+    SHCONTF_FLATLIST                = 0x00004000,
+    SHCONTF_ENABLE_ASYNC            = 0x00008000,
+    SHCONTF_INCLUDESUPERHIDDEN      = 0x00010000
+};
 typedef DWORD   SHCONTF;
 
+/* Folder enumeration modes */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef enum FOLDER_ENUM_MODE {
+    FEM_VIEWRESULT  = 0,
+    FEM_NAVIGATION  = 1
+} FOLDER_ENUM_MODE;
+#endif
+
 /* Extra search */
-typedef struct tagEXTRASEARCH {
+typedef struct EXTRASEARCH {
     GUID    guidSearch;
     WCHAR   wszFriendlyName[80];
     WCHAR   wszUrl[2084];
@@ -740,7 +742,8 @@ typedef struct tagEXTRASEARCH {
 typedef EXTRASEARCH *LPEXTRASEARCH;
 
 /* Folder flags */
-typedef enum tagFOLDERFLAGS {
+typedef enum FOLDERFLAGS {
+    FWF_NONE                = 0x00000000,
     FWF_AUTOARRANGE         = 0x00000001,
     FWF_ABBREVIATEDNAMES    = 0x00000002,
     FWF_SNAPTOGRID          = 0x00000004,
@@ -776,7 +779,7 @@ typedef enum tagFOLDERFLAGS {
 } FOLDERFLAGS;
 
 /* Folder view modes */
-typedef enum tagFOLDERVIEWMODE {
+typedef enum FOLDERVIEWMODE {
     FVM_AUTO        = -1,
     FVM_FIRST       = 1,
     FVM_ICON        = 1,
@@ -786,23 +789,26 @@ typedef enum tagFOLDERVIEWMODE {
     FVM_THUMBNAIL   = 5,
     FVM_TILE        = 6,
     FVM_THUMBSTRIP  = 7,
-    FVM_LAST        = 7
+    FVM_CONTENT     = 8,
+    FVM_LAST        = 8
 } FOLDERVIEWMODE;
 
 /* Folder logical view modes */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagFOLDERLOGICALVIEWMODE {
+typedef enum FOLDERLOGICALVIEWMODE {
     FLVM_UNSPECIFIED    = -1,
     FLVM_FIRST          = 1,
     FLVM_DETAILS        = 1,
     FLVM_TILES          = 2,
     FLVM_ICONS          = 3,
-    FLVM_LAST           = 3
+    FLVM_LIST           = 4,
+    FLVM_CONTENT        = 5,
+    FLVM_LAST           = 5
 } FOLDERLOGICALVIEWMODE;
 #endif
 
 /* Folder settings */
-typedef struct tagFOLDERSETTINGS {
+typedef struct FOLDERSETTINGS {
     UINT    ViewMode;
     UINT    fFlags;
 } FOLDERSETTINGS;
@@ -810,19 +816,49 @@ typedef FOLDERSETTINGS          *LPFOLDERSETTINGS;
 typedef const FOLDERSETTINGS    *LPCFOLDERSETTINGS;
 typedef FOLDERSETTINGS          *PFOLDERSETTINGS;
 
+/* Folder view options */
+typedef enum FOLDERVIEWOPTIONS {
+    FVO_DEFAULT             = 0x00000000,
+    FVO_VISTALAYOUT         = 0x00000001,
+    FVO_CUSTOMPOSITION      = 0x00000002,
+    FVO_CUSTOMORDERING      = 0x00000004,
+    FVO_SUPPORTHYPERLINKS   = 0x00000008,
+    FVO_NOANIMATIONS        = 0x00000010,
+    FVO_NOSCROLLTIPS        = 0x00000020
+} FOLDERVIEWOPTIONS;
+
+/* IShellView::SelectItem() flags */
+typedef enum _SVSIF {
+    SVSI_DESELECT       = 0x00000000,
+    SVSI_SELECT         = 0x00000001,
+    SVSI_EDIT           = 0x00000003,
+    SVSI_DESELECTOTHERS = 0x00000004,
+    SVSI_ENSUREVISIBLE  = 0x00000008,
+    SVSI_FOCUSED        = 0x00000010,
+    SVSI_TRANSLATEPT    = 0x00000020,
+    SVSI_SELECTIONMARK  = 0x00000040,
+    SVSI_POSITIONITEM   = 0x00000080,
+    SVSI_CHECK          = 0x00000100,
+    SVSI_CHECK2         = 0x00000200,
+    SVSI_KEYBOARDSELECT = 0x00000401,
+    SVSI_NOTAKEFOCUS    = 0x40000000
+} _SVSIF;
+typedef UINT    SVSIF;
+#define SVSI_NOSTATECHANGE  0x80000000
+
 /* IShellView::GetItemObject() flags */
-enum tagSVGIO {
+typedef enum _SVGIO {
     SVGIO_BACKGROUND        = 0x00000000,
     SVGIO_SELECTION         = 0x00000001,
     SVGIO_ALLVIEW           = 0x00000002,
     SVGIO_CHECKED           = 0x00000003,
     SVGIO_TYPE_MASK         = 0x0000000F,
     SVGIO_FLAG_VIEWORDER    = 0x80000000
-};
+} _SVGIO;
 typedef int SVGIO;
 
 /* IShellView::UIActivate() status values */
-typedef enum tagSVUIA_STATUS {
+typedef enum SVUIA_STATUS {
     SVUIA_DEACTIVATE        = 0,
     SVUIA_ACTIVATE_NOFOCUS  = 1,
     SVUIA_ACTIVATE_FOCUS    = 2,
@@ -845,7 +881,7 @@ typedef SV2CVW2_PARAMS  *LPSV2CVW2_PARAMS;
 
 /* IShellView3::CreateViewWindow3() flags */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagSV3CVW3 {
+enum _SV3CVW3_FLAGS {
     SV3CVW3_DEFAULT             = 0x00000000,
     SV3CVW3_NONINTERACTIVE      = 0x00000001,
     SV3CVW3_FORCEVIEWMODE       = 0x00000002,
@@ -865,7 +901,7 @@ typedef int SORTDIRECTION;
 
 /* Sort column */
 #if (NTDDI_VERSION >= 0x06000000) || (_WIN32_IE >= 0x0700)
-typedef struct tagSORTCOLUMN {
+typedef struct SORTCOLUMN {
     PROPERTYKEY     propkey;
     SORTDIRECTION   direction;
 } SORTCOLUMN;
@@ -873,14 +909,14 @@ typedef struct tagSORTCOLUMN {
 
 /* Folder view text types */
 #if (NTDDI_VERSION >= 0x06000000) || (_WIN32_IE >= 0x0700)
-typedef enum tagFVTEXTTYPE {
+typedef enum FVTEXTTYPE {
     FVST_EMPTYTEXT  = 0
 } FVTEXTTYPE;
 #endif
 
 /* IVisualProperties watermark flags */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagVPWATERMARKFLAGS {
+typedef enum VPWATERMARKFLAGS {
     VPWF_DEFAULT    = 0x00000000,
     VPWF_ALPHABLEND = 0x00000001
 } VPWATERMARKFLAGS;
@@ -888,17 +924,18 @@ typedef enum tagVPWATERMARKFLAGS {
 
 /* IVisualProperties color flags */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagVPCOLORFLAGS {
-    VPCF_TEXT       = 0x00000001,
-    VPCF_BACKGROUND = 0x00000002,
-    VPCF_SORTCOLUMN = 0x00000003,
-    VPCF_SUBTEXT    = 0x00000004
+typedef enum VPCOLORFLAGS {
+    VPCF_TEXT           = 1,
+    VPCF_BACKGROUND     = 2,
+    VPCF_SORTCOLUMN     = 3,
+    VPCF_SUBTEXT        = 4,
+    VPCF_TEXTBACKGROUND = 5
 } VPCOLORFLAGS;
 #endif
 
 /* IColumnManager masks */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagCM_MASK {
+typedef enum CM_MASK {
     CM_MASK_WIDTH           = 0x00000001,
     CM_MASK_DEFAULTWIDTH    = 0x00000002,
     CM_MASK_IDEALWIDTH      = 0x00000004,
@@ -909,7 +946,7 @@ typedef enum tagCM_MASK {
 
 /* IColumnManager states */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagCM_STATE {
+typedef enum CM_STATE {
     CM_STATE_NONE               = 0x00000000,
     CM_STATE_VISIBLE            = 0x00000001,
     CM_STATE_FIXEDWIDTH         = 0x00000002,
@@ -920,7 +957,7 @@ typedef enum tagCM_STATE {
 
 /* IColumnManager enumeration flags */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagCM_ENUM_FLAGS {
+typedef enum CM_ENUM_FLAGS {
     CM_ENUM_ALL     = 0x00000001,
     CM_ENUM_VISIBLE = 0x00000002
 } CM_ENUM_FLAGS;
@@ -928,7 +965,7 @@ typedef enum tagCM_ENUM_FLAGS {
 
 /* IColumnManager set width values */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagCM_SET_WIDTH_VALUE {
+typedef enum CM_SET_WIDTH_VALUE {
     CM_WIDTH_USEDEFAULT = -1,
     CM_WIDTH_AUTOSIZE   = -2
 } CM_SET_WIDTH_VALUE;
@@ -936,7 +973,7 @@ typedef enum tagCM_SET_WIDTH_VALUE {
 
 /* IColumnManager column information */
 #if (_WIN32_IE >= 0x0700)
-typedef struct tagCM_COLUMNINFO {
+typedef struct CM_COLUMNINFO {
     DWORD   cbSize;
     DWORD   dwMask;
     DWORD   dwState;
@@ -948,7 +985,7 @@ typedef struct tagCM_COLUMNINFO {
 #endif
 
 /* IShellItem::GetDisplayName() flags */
-typedef enum tagSIGDN {
+typedef enum _SIGDN {
     SIGDN_NORMALDISPLAY                 = 0x00000000,
     SIGDN_PARENTRELATIVEPARSING         = 0x80018001,
     SIGDN_DESKTOPABSOLUTEPARSING        = 0x80028000,
@@ -961,27 +998,39 @@ typedef enum tagSIGDN {
 } SIGDN;
 
 /* IShellItem::Compare() hint flags */
-enum tagSHELLITEMCOMPAREHINTF {
-    SICHINT_DISPLY      = 0x00000000,
-    SICHINT_ALLFIELDS   = 0x80000000,
-    SICHINT_CANONICAL   = 0x10000000
+enum _SICHINTF {
+    SICHINT_DISPLY                          = 0x00000000,
+    SICHINT_ALLFIELDS                       = 0x80000000,
+    SICHINT_CANONICAL                       = 0x10000000,
+    SICHINT_TEST_FILESYSPATH_IF_NOT_EQUAL   = 0x20000000
 };
 typedef DWORD   SICHINTF;
 
+/* SHGetItemFromDataObject() flags */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef enum DATAOBJ_GET_ITEM_FLAGS {
+    DOGIF_DEFAULT       = 0x00000000,
+    DOGIF_TRAVERSE_LINK = 0x00000001,
+    DOGIF_NO_HDROP      = 0x00000002,
+    DOGIF_NO_URL        = 0x00000004,
+    DOGIF_ONLY_IF_ONE   = 0x00000008
+} DATAOBJ_GET_ITEM_FLAGS;
+#endif
+
 /* IShellItemImageFactory::GetImage() flags */
-typedef enum tagSIIGB {
+enum _SIIGB {
     SIIGBF_RESIZETOFIT      = 0x00000000,
     SIIGBF_BIGGERSIZEOK     = 0x00000001,
     SIIGBF_MEMORYONLY       = 0x00000002,
     SIIGBF_ICONONLY         = 0x00000004,
     SIIGBF_THUMBNAILONLY    = 0x00000008,
     SIIGBF_INCACHEONLY      = 0x00000010
-} SIIGB;
+};
 typedef int SIIGBF;
 
 /* Storage operations */
 #if (NTDDI_VERSION >= 0x05010000)
-typedef enum tagSTGOP {
+typedef enum STGOP {
     STGOP_MOVE              = 1,
     STGOP_COPY              = 2,
     STGOP_SYNC              = 3,
@@ -992,9 +1041,29 @@ typedef enum tagSTGOP {
 } STGOP;
 #endif
 
+/* Transfer source flags */
+enum _TRANSFER_SOURCE_FLAGS {
+    TSF_NORMAL                      = 0x00000000,
+    TSF_FAIL_EXIST                  = 0x00000000,
+    TSF_RENAME_EXIST                = 0x00000001,
+    TSF_OVERWRITE_EXIST             = 0x00000002,
+    TSF_ALLOW_DECRYPTION            = 0x00000004,
+    TSF_NO_SECURITY                 = 0x00000008,
+    TSF_COPY_CREATION_TIME          = 0x00000010,
+    TSF_COPY_WRITE_TIME             = 0x00000020,
+    TSF_USE_FULL_ACCESS             = 0x00000040,
+    TSF_DELETE_RECYCLE_IF_POSSIBLE  = 0x00000080,
+    TSF_COPY_HARD_LINK              = 0x00000100,
+    TSF_COPY_LOCALIZED_NAME         = 0x00000200,
+    TSF_MOVE_AS_COPY_DELETE         = 0x00000400,
+    TSF_SUSPEND_SHELLEVENTS         = 0x00000800
+};
+typedef DWORD   TRANSFER_SOURCE_FLAGS;
+
 /* Transfer advise states */
 #if (_WIN32_IE >= 0x0700)
-enum tagTRANSFER_ADVISE_STATE {
+enum _TRANSFER_ADVISE_STATE {
+    TS_NONE             = 0x00000000,
     TS_PERFORMING       = 0x00000001,
     TS_PREPARING        = 0x00000002,
     TS_INDETERMINATE    = 0x00000004
@@ -1003,28 +1072,29 @@ typedef DWORD   TRANSFER_ADVISE_STATE;
 #endif
 
 /* Shell item resource */
-typedef struct _shell_item_resource_ {
+typedef struct SHELL_ITEM_RESOURCE {
     GUID    guidType;
     WCHAR   szName[260];
 } SHELL_ITEM_RESOURCE;
 
 /* Shell item attribute flags */
-typedef enum tagSIATTRIBFLAGS {
+typedef enum SIATTRIBFLAGS {
     SIATTRIBFLAGS_AND       = 0x00000001,
     SIATTRIBFLAGS_OR        = 0x00000002,
     SIATTRIBFLAGS_APPCOMPAT = 0x00000003,
-    SIATTRIBFLAGS_MASK      = 0x00000003
+    SIATTRIBFLAGS_MASK      = 0x00000003,
+    SIATTRIBFLAGS_ALLITEMS  = 0x00004000
 } SIATTRIBFLAGS;
 
 /* Property UI name flags */
-enum tagPROPERTYUI_NAME_FLAGS {
+enum _PROPERTYUI_NAME_FLAGS {
     PUIFNF_DEFAULT  = 0x00000000,
     PUIFNF_MNEMONIC = 0x00000001
 };
 typedef DWORD   PROPERTYUI_NAME_FLAGS;
 
 /* Property UI flags */
-enum tagPROPERTYUI_FLAGS {
+enum _PROPERTYUI_FLAGS {
     PUIF_DEFAULT            = 0x00000000,
     PUIF_RIGHTALIGN         = 0x00000001,
     PUIF_NOLABELININFOTIP   = 0x00000002
@@ -1032,7 +1102,7 @@ enum tagPROPERTYUI_FLAGS {
 typedef DWORD   PROPERTYUI_FLAGS;
 
 /* Property UI format flags */
-enum tagPROPERTYUI_FORMAT_FLAGS {
+enum _PROPERTYUI_FORMAT_FLAGS {
     PUIFFDF_DEFAULT         = 0x00000000,
     PUIFFDF_RIGHTTOLEFT     = 0x00000001,
     PUIFFDF_SHORTFORMAT     = 0x00000002,
@@ -1043,20 +1113,21 @@ typedef DWORD   PROPERTYUI_FORMAT_FLAGS;
 
 /* Category information flags */
 #if (_WIN32_IE >= 0x0500)
-typedef enum tagCATEGORYINFO_FLAGS {
+typedef enum CATEGORYINFO_FLAGS {
     CATINFO_NORMAL          = 0x00000000,
     CATINFO_COLLAPSED       = 0x00000001,
     CATINFO_HIDDEN          = 0x00000002,
     CATINFO_EXPANDED        = 0x00000004,
     CATINFO_NOHEADER        = 0x00000008,
     CATINFO_NOTCOLLAPSIBLE  = 0x00000010,
-    CATINFO_NOHEADERCOUNT   = 0x00000020
+    CATINFO_NOHEADERCOUNT   = 0x00000020,
+    CATINFO_SUBSETTED       = 0x00000040
 } CATEGORYINFO_FLAGS;
 #endif
 
 /* Category sort flags */
 #if (_WIN32_IE >= 0x0500)
-typedef enum tagCATSORT_FLAGS {
+typedef enum CATSORT_FLAGS {
     CATSORT_DEFAULT = 0x00000000,
     CATSORT_NAME    = 0x00000001
 } CATSORT_FLAGS;
@@ -1064,7 +1135,7 @@ typedef enum tagCATSORT_FLAGS {
 
 /* Category information */
 #if (_WIN32_IE >= 0x0500)
-typedef struct tagCATEGORY_INFO {
+typedef struct CATEGORY_INFO {
     CATEGORYINFO_FLAGS  cif;
     WCHAR               wszName[260];
 } CATEGORY_INFO;
@@ -1073,7 +1144,7 @@ typedef struct tagCATEGORY_INFO {
 /* Shell drag image */
 #if (NTDDI_VERSION >= 0x05000000)
 #include <pshpack8.h>
-typedef struct tagSHDRAGIMAGE {
+typedef struct SHDRAGIMAGE {
     SIZE        sizeDragImage;
     POINT       ptOffset;
     HBITMAP     hbmpDragImage;
@@ -1085,26 +1156,30 @@ typedef SHDRAGIMAGE *LPSHDRAGIMAGE;
 
 /* IDragSourceHelper2::SetFlags() flags */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagDSH_FLAGS {
+typedef enum DSH_FLAGS {
     DSH_ALLOWDROPDESCRIPTIONTEXT    = 0x0001
 } DSH_FLAGS;
 #endif
 
 /* IShellLink::Resolve() flags */
-typedef enum tagSLR_FLAGS {
-    SLR_NO_UI               = 0x0001,
-    SLR_ANY_MATCH           = 0x0002,
-    SLR_UPDATE              = 0x0004,
-    SLR_NOUPDATE            = 0x0008,
-    SLR_NOSEARCH            = 0x0010,
-    SLR_NOTRACK             = 0x0020,
-    SLR_NOLINKINFO          = 0x0040,
-    SLR_INVOKE_MSI          = 0x0080,
-    SLR_NO_UI_WITH_MSG_PUMP = 0x0101
+typedef enum SLR_FLAGS {
+    SLR_NO_UI                       = 0x0001,
+    SLR_ANY_MATCH                   = 0x0002,
+    SLR_UPDATE                      = 0x0004,
+    SLR_NOUPDATE                    = 0x0008,
+    SLR_NOSEARCH                    = 0x0010,
+    SLR_NOTRACK                     = 0x0020,
+    SLR_NOLINKINFO                  = 0x0040,
+    SLR_INVOKE_MSI                  = 0x0080,
+    SLR_NO_UI_WITH_MSG_PUMP         = 0x0101,
+    SLR_OFFER_DELETE_WITHOUT_FILE   = 0x0200,
+    SLR_KNOWNFOLDER                 = 0x0400,
+    SLR_MACHINE_IN_LOCAL_TARGET     = 0x0800,
+    SLR_UPDATE_MACHINE_AND_SID      = 0x1000
 } SLR_FLAGS;
 
 /* IShellLink::GetPath() flags */
-typedef enum tagSLGP_FLAGS {
+typedef enum SLGP_FLAGS {
     SLGP_SHORTPATH          = 0x0001,
     SLGP_UNCPRIORITY        = 0x0002,
     SLGP_RAWPATH            = 0x0004,
@@ -1112,7 +1187,7 @@ typedef enum tagSLGP_FLAGS {
 } SLGP_FLAGS;
 
 /* IActionProgressDialog::Initialize() flags */
-enum tagSPINITF {
+enum _SPINITF {
     SPINITF_NORMAL      = 0x00000000,
     SPINITF_MODAL       = 0x00000001,
     SPINITF_NOMINIMIZE  = 0x00000008
@@ -1120,7 +1195,7 @@ enum tagSPINITF {
 typedef DWORD   SPINITF;
 
 /* IActionProgress::Begin() flags */
-enum tagSPBEGINF {
+enum _SPBEGINF {
     SPBEGINF_NORMAL             = 0x00000000,
     SPBEGINF_AUTOTIME           = 0x00000001,
     SPBEGINF_NOPROGRESSBAR      = 0x00000010,
@@ -1143,7 +1218,8 @@ typedef enum _SPACTION {
     SPACTION_SEARCHING_FILES    = 9,
     SPACTION_DELETING           = 10,
     SPACTION_RENAMING           = 11,
-    SPACTION_FORMATTING         = 12
+    SPACTION_FORMATTING         = 12,
+    SPACTION_COPY_MOVING        = 13
 } SPACTION;
 
 /* IActionProgress text types */
@@ -1153,14 +1229,14 @@ typedef enum _SPTEXT {
 } SPTEXT;
 
 /* IShellPropSheetExt page identifiers */
-enum tagSHELLPROPSHEETEXTPAGEID {
+enum _EXPPS {
     EXPPS_FILETYPES = 0x00000001
 };
 typedef UINT    EXPPS;
 
 /* Desk band information */
 #include <pshpack8.h>
-typedef struct tagDESKBANDINFO {
+typedef struct DESKBANDINFO {
     DWORD       dwMask;
     POINTL      ptMinSize;
     POINTL      ptMaxSize;
@@ -1184,9 +1260,58 @@ enum tagDESKBANDCID {
     DBID_PERMITAUTOHIDE     = 7
 };
 
+/* Thumb button flags */
+typedef enum THUMBBUTTONFLAGS {
+    THBF_ENABLED        = 0x00000000,
+    THBF_DISABLED       = 0x00000001,
+    THBF_DISMISSONCLICK = 0x00000002,
+    THBF_NOBACKGROUND   = 0x00000004,
+    THBF_HIDDEN         = 0x00000008,
+    THBF_NONINTERACTIVE = 0x00000010
+} THUMBBUTTONFLAGS;
+
+/* Thumb button mask flags */
+typedef enum THUMBBUTTONMASK {
+    THB_BITMAP  = 0x00000001,
+    THB_ICON    = 0x00000002,
+    THB_TOOLTIP = 0x00000004,
+    THB_FLAGS   = 0x00000008
+} THUMBBUTTONMASK;
+
+/* Thumb button */
+#include <pshpack8.h>
+typedef struct THUMBBUTTON {
+    THUMBBUTTONMASK     dwMask;
+    UINT                iId;
+    UINT                iBitmap;
+    HICON               hIcon;
+    WCHAR               szTip[260];
+    THUMBBUTTONFLAGS    dwFlags;
+} THUMBBUTTON;
+typedef THUMBBUTTON *LPTHUMBBUTTON;
+#include <poppack.h>
+
+/* Taskbar progress flags */
+typedef enum TBPFLAG {
+    TBPF_NOPROGRESS     = 0x00000000,
+    TBPF_INDETERMINATE  = 0x00000001,
+    TBPF_NORMAL         = 0x00000002,
+    TBPF_ERROR          = 0x00000004,
+    TBPF_PAUSED         = 0x00000008
+} TBPFLAG;
+
+/* ITaskbarList4::SetTabProperties() flags */
+typedef enum STPFLAG {
+    STPF_NONE                       = 0x00000000,
+    STPF_USEAPPTHUMBNAILALWAYS      = 0x00000001,
+    STPF_USEAPPTHUMBNAILWHENACTIVE  = 0x00000002,
+    STPF_USEAPPPEEKALWAYS           = 0x00000004,
+    STPF_USEAPPPEEKWHENACTIVE       = 0x00000008
+} STPFLAG;
+
 /* Explorer browser options */
 #if (_WIN32_IE >= 0x0700)
-enum _EXPLORER_BROWSER_OPTIONS {
+typedef enum EXPLORER_BROWSER_OPTIONS {
     EBO_NONE                = 0x00000000,
     EBO_NAVIGATEONCE        = 0x00000001,
     EBO_SHOWFRAMES          = 0x00000002,
@@ -1194,23 +1319,33 @@ enum _EXPLORER_BROWSER_OPTIONS {
     EBO_NOTRAVELLOG         = 0x00000008,
     EBO_NOWRAPPERWINDOW     = 0x00000010,
     EBO_HTMLSHAREPOINTVIEW  = 0x00000020
-};
-typedef DWORD   EXPLORER_BROWSER_OPTIONS;
+} EXPLORER_BROWSER_OPTIONS;
 #endif
 
 /* Explorer browser fill flags */
 #if (_WIN32_IE >= 0x0700)
-enum _EXPLORER_BROWSER_FILL_FLAGS {
+typedef enum EXPLORER_BROWSER_FILL_FLAGS {
     EBF_NONE                    = 0x00000000,
     EBF_SELECTFROMDATAOBJECT    = 0x00000100,
     EBF_NODROPTARGET            = 0x00000200
+} EXPLORER_BROWSER_FILL_FLAGS;
+#endif
+
+/* Operations progress dialog flags */
+#if (_WIN32_IE >= 0x0700)
+enum _OPPROGDLGF {
+    OPPROGDLG_ENABLEPAUSE           = 0x00000080,
+    OPPROGDLG_ALLOWUNDO             = 0x00000100,
+    OPPROGDLG_DONTDISPLAYSOURCEPATH = 0x00000200,
+    OPPROGDLG_DONTDISPLAYDESTPATH   = 0x00000400
 };
-typedef DWORD   EXPLORER_BROWSER_FILL_FLAGS;
+typedef DWORD   OPPROGDLGF;
 #endif
 
 /* Progress dialog modes */
 #if (_WIN32_IE >= 0x0700)
-enum tagPDMODE {
+enum _PDMODE {
+    PDM_DEFAULT         = 0x00000000,
     PDM_RUN             = 0x00000001,
     PDM_PREFLIGHT       = 0x00000002,
     PDM_UNDOING         = 0x00000004,
@@ -1222,33 +1357,34 @@ typedef DWORD   PDMODE;
 
 /* Progress dialog operation status values */
 #if (_WIN32_IE >= 0x0700)
-typedef enum tagPDOPSTATUS {
-    PDOPS_RUNNING   = 0x00000001,
-    PDOPS_PAUSED    = 0x00000002,
-    PDOPS_CANCELLED = 0x00000003,
-    PDOPS_STOPPED   = 0x00000004,
-    PDOPS_ERRORS    = 0x00000005
+typedef enum PDOPSTATUS {
+    PDOPS_RUNNING   = 1,
+    PDOPS_PAUSED    = 2,
+    PDOPS_CANCELLED = 3,
+    PDOPS_STOPPED   = 4,
+    PDOPS_ERRORS    = 5
 } PDOPSTATUS;
 #endif
 
 /* Namespace walk flags */
 #if (NTDDI_VERSION >= 0x05010000) || (_WIN32_IE >= 0x0700)
-enum tagNAMESPACEWALKFLAG {
-    NSWF_NONE_IMPLIES_ALL           = 0x00000001,
-    NSWF_ONE_IMPLIES_ALL            = 0x00000002,
-    NSWF_DONT_TRAVERSE_LINKS        = 0x00000004,
-    NSWF_DONT_ACCUMULATE_RESULT     = 0x00000008,
-    NSWF_TRAVERSE_STREAM_JUNCTIONS  = 0x00000010,
-    NSWF_FILESYSTEM_ONLY            = 0x00000020,
-    NSWF_SHOW_PROGRESS              = 0x00000040,
-    NSWF_FLAG_VIEWORDER             = 0x00000080,
-    NSWF_IGNORE_AUTOPLAY_HIDA       = 0x00000100,
-    NSWF_ASYNC                      = 0x00000200,
-    NSWF_DONT_RESOLVE_LINKS         = 0x00000400,
-    NSWF_ACCUMULATE_FOLDERS         = 0x00000800,
-    NSWF_DONT_SORT                  = 0x00001000,
-    NSWF_USE_TRANSFER_MEDIUM        = 0x00002000
-};
+typedef enum {
+    NSWF_NONE_IMPLIES_ALL               = 0x00000001,
+    NSWF_ONE_IMPLIES_ALL                = 0x00000002,
+    NSWF_DONT_TRAVERSE_LINKS            = 0x00000004,
+    NSWF_DONT_ACCUMULATE_RESULT         = 0x00000008,
+    NSWF_TRAVERSE_STREAM_JUNCTIONS      = 0x00000010,
+    NSWF_FILESYSTEM_ONLY                = 0x00000020,
+    NSWF_SHOW_PROGRESS                  = 0x00000040,
+    NSWF_FLAG_VIEWORDER                 = 0x00000080,
+    NSWF_IGNORE_AUTOPLAY_HIDA           = 0x00000100,
+    NSWF_ASYNC                          = 0x00000200,
+    NSWF_DONT_RESOLVE_LINKS             = 0x00000400,
+    NSWF_ACCUMULATE_FOLDERS             = 0x00000800,
+    NSWF_DONT_SORT                      = 0x00001000,
+    NSWF_USE_TRANSFER_MEDIUM            = 0x00002000,
+    NSWF_DONT_TRAVERSE_STREAM_JUNCTIONS = 0x00004000
+} NAMESPACEWALKFLAG;
 #endif
 
 /* Band site information */
@@ -1331,7 +1467,7 @@ typedef int MF_POPUPFLAGS;
 
 /* File usage types */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagFILE_USAGE_TYPE {
+typedef enum FILE_USAGE_TYPE {
     FUT_PLAYING = 0,
     FUT_EDITING = 1,
     FUT_GENERIC = 2
@@ -1340,7 +1476,7 @@ typedef enum tagFILE_USAGE_TYPE {
 
 /* IFileDialogEvents overwrite response values */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagFDE_OVERWRITE_RESPONSE {
+typedef enum FDE_OVERWRITE_RESPONSE {
     FDEOR_DEFAULT   = 0x00000000,
     FDEOR_ACCEPT    = 0x00000001,
     FDEOR_REFUSE    = 0x00000002
@@ -1349,7 +1485,7 @@ typedef enum tagFDE_OVERWRITE_RESPONSE {
 
 /* IFileDialogEvents share violation response values */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagFDE_SHAREVIOLATION_RESPONSE {
+typedef enum FDE_SHAREVIOLATION_RESPONSE {
     FDESVR_DEFAULT  = 0x00000000,
     FDESVR_ACCEPT   = 0x00000001,
     FDESVR_REFUSE   = 0x00000002
@@ -1358,7 +1494,7 @@ typedef enum tagFDE_SHAREVIOLATION_RESPONSE {
 
 /* IFileDialog::AddPlace() flags */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagFDAP {
+typedef enum FDAP {
     FDAP_BOTTOM = 0x00000000,
     FDAP_TOP    = 0x00000001
 } FDAP;
@@ -1366,7 +1502,7 @@ typedef enum tagFDAP {
 
 /* File open dialog options */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagFILEOPENDIALOGOPTIONS {
+enum _FILEOPENDIALOGOPTIONS {
     FOS_OVERWRITEPROMPT     = 0x00000002,
     FOS_STRICTFILETYPES     = 0x00000004,
     FOS_NOCHANGEDIR         = 0x00000008,
@@ -1389,21 +1525,22 @@ enum tagFILEOPENDIALOGOPTIONS {
     FOS_DEFAULTNOMINIMODE   = 0x20000000,
     FOS_FORCEPREVIEWPANEON  = 0x40000000
 };
+typedef DWORD   FILEOPENDIALOGOPTIONS;
 #endif
 
 /* CD control state */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagCDCONTROLSTATE {
-    CDCS_INACTIVE   = 0x00000000,
-    CDCS_ENABLED    = 0x00000001,
-    CDCS_VISIBLE    = 0x00000002
-} CDCONTROLSTATE;
-typedef DWORD   CDCONTROLSTATEF;
+typedef enum CDCONTROLSTATEF {
+    CDCS_INACTIVE       = 0x00000000,
+    CDCS_ENABLED        = 0x00000001,
+    CDCS_VISIBLE        = 0x00000002,
+    CDCS_ENABLEDVISIBLE = 0x00000003
+} CDCONTROLSTATEF;
 #endif
 
 /* Association levels */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagASSOCIATIONLEVEL {
+typedef enum ASSOCIATIONLEVEL {
     AL_MACHINE      = 0,
     AL_EFFECTIVE    = 1,
     AL_USER         = 2
@@ -1412,7 +1549,7 @@ typedef enum tagASSOCIATIONLEVEL {
 
 /* Association types */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagASSOCIATIONTYPE {
+typedef enum ASSOCIATIONTYPE {
     AT_FILEEXTENSION    = 0,
     AL_URLPROTOCOL      = 1,
     AL_STARTMENUCLIENT  = 2,
@@ -1422,7 +1559,7 @@ typedef enum tagASSOCIATIONTYPE {
 
 /* Delegate item identifier */
 #include <pshpack1.h>
-typedef struct tagDELEGATEITEMID {
+typedef struct DELEGATEITEMID {
     WORD    cbSize;
     WORD    wOuter;
     WORD    cbInner;
@@ -1434,7 +1571,7 @@ typedef const UNALIGNED DELEGATEITEMID  *PCDELEGATEITEMID;
 
 /* Browser frame options */
 #if (_WIN32_IE >= 0x0600)
-enum tagBROWSERFRAMEOPTIONS {
+enum _BROWSERFRAMEOPTIONS {
     BFO_NONE                                = 0x00000000,
     BFO_BROWSER_PERSIST_SETTINGS            = 0x00000001,
     BFO_RENAME_FOLDER_OPTIONS_TOINTERNET    = 0x00000002,
@@ -1461,7 +1598,7 @@ typedef DWORD   BROWSERFRAMEOPTIONS;
 
 /* INewWindowManager flags */
 #if (_WIN32_IE >= 0x0602)
-typedef enum tagNWMF {
+typedef enum NWMF {
     NWMF_UNLOADING          = 0x00000001,
     NWMF_USERINITED         = 0x00000002,
     NWMF_FIRST              = 0x00000004,
@@ -1481,7 +1618,7 @@ typedef enum tagNWMF {
 
 /* Attachment prompts */
 #if (_WIN32_IE >= 0x0602)
-typedef enum tagATTACHMENT_PROMPT {
+typedef enum ATTACHMENT_PROMPT {
     ATTACHMENT_PROMPT_NONE          = 0x00000000,
     ATTACHMENT_PROMPT_SAVE          = 0x00000001,
     ATTACHMENT_PROMPT_EXEC          = 0x00000002,
@@ -1491,7 +1628,7 @@ typedef enum tagATTACHMENT_PROMPT {
 
 /* Attachment actions */
 #if (_WIN32_IE >= 0x0602)
-typedef enum tagATTACHMENT_ACTION {
+typedef enum ATTACHMENT_ACTION {
     ATTACHMENT_ACTION_CANCEL    = 0x00000000,
     ATTACHMENT_ACTION_SAVE      = 0x00000001,
     ATTACHMENT_ACTION_EXEC      = 0x00000002
@@ -1535,8 +1672,8 @@ typedef SMINFO  *PSMINFO;
 /* IShellMenuCallback change notification structure */
 #if (_WIN32_IE >= 0x0600)
 #include <pshpack8.h>
-typedef struct tagSMCSHCHANGENOTIFYSTRUCT {
-    LONG                lEvent;
+typedef struct SMCSHCHANGENOTIFYSTRUCT {
+    long                lEvent;
     PCIDLIST_ABSOLUTE   pidl1;
     PCIDLIST_ABSOLUTE   pidl2;
 } SMCSHCHANGENOTIFYSTRUCT;
@@ -1582,7 +1719,7 @@ enum tagSMINFOFLAGS {
 
 /* Known folder categories */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagKF_CATEGORY {
+typedef enum KF_CATEGORY {
     KF_CATEGORY_VIRTUAL = 0x00000001,
     KF_CATEGORY_FIXED   = 0x00000002,
     KF_CATEGORY_COMMON  = 0x00000003,
@@ -1592,17 +1729,19 @@ typedef enum tagKF_CATEGORY {
 
 /* Known folder definition flags */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagKF_DEFINITION_FLAGS {
+enum _KF_DEFINITION_FLAGS {
     KFDF_LOCAL_REDIRECT_ONLY    = 0x00000002,
     KFDF_ROAMABLE               = 0x00000004,
-    KFDF_PRECREATE              = 0x00000008
+    KFDF_PRECREATE              = 0x00000008,
+    KFDF_STREAM                 = 0x00000010,
+    KFDF_PUBLISHEXPANDEDPATH    = 0x00000020
 };
 typedef DWORD   KF_DEFINITION_FLAGS;
 #endif
 
 /* Known folder redirect flags */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagKF_REDIRECT_FLAGS {
+enum _KF_REDIRECT_FLAGS {
     KF_REDIRECT_USER_EXCLUSIVE                  = 0x00000001,
     KF_REDIRECT_COPY_SOURCE_DACL                = 0x00000002,
     KF_REDIRECT_OWNER_USER                      = 0x00000004,
@@ -1620,7 +1759,7 @@ typedef DWORD KF_REDIRECT_FLAGS;
 
 /* Known folder redirection capabilities */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagKF_REDIRECTION_CAPABILITIES {
+enum _KF_REDIRECTION_CAPABILITIES {
     KF_REDIRECTION_CAPABILITIES_ALLOW_ALL               = 0x000000FF,
     KF_REDIRECTION_CAPABILITIES_REDIRECTABLE            = 0x00000001,
     KF_REDIRECTION_CAPABILITIES_DENY_ALL                = 0x000FFF00,
@@ -1633,7 +1772,7 @@ typedef DWORD   KF_REDIRECTION_CAPABILITIES;
 
 /* Known folder definition */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef struct tagKNOWNFOLDER_DEFINITION {
+typedef struct KNOWNFOLDER_DEFINITION {
     KF_CATEGORY         category;
     LPWSTR              pszName;
     LPWSTR              pszDescription;
@@ -1652,7 +1791,7 @@ typedef struct tagKNOWNFOLDER_DEFINITION {
 
 /* IKnownFolderManager::FindFolderFromPath() modes */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum tagFFFP_MODE {
+typedef enum FFFP_MODE {
     FFFP_EXACTMATCH         = 0,
     FFFP_NEARESTPARENTMATCH = 1
 } FFFP_MODE;
@@ -1660,7 +1799,7 @@ typedef enum tagFFFP_MODE {
 
 /* Share roles */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum _tagSHARE_ROLE {
+typedef enum SHARE_ROLE {
     SHARE_ROLE_INVALID      = -1,
     SHARE_ROLE_READER       = 0,
     SHARE_ROLE_CONTRIBUTOR  = 1,
@@ -1673,14 +1812,28 @@ typedef enum _tagSHARE_ROLE {
 
 /* Share identifiers */
 #if (NTDDI_VERSION >= 0x06000000)
-typedef enum _tagDEF_SHARE_ID {
+typedef enum DEF_SHARE_ID {
     DEFSHAREID_USERS    = 1,
     DEFSHAREID_PUBLIC   = 2
 } DEF_SHARE_ID;
 #endif
 
+/* INewMenuClient::IncludeItems() flags */
+enum _NMCII_FLAGS {
+    NMCII_ITEMS     = 0x00000001,
+    NMCII_FOLDERS   = 0x00000002
+};
+typedef int NMCII_FLAGS;
+
+/* INewMenuClient::SelectAndEditItem() flags */
+enum _NMCSAEI_FLAGS {
+    NMCSAEI_SELECT  = 0x00000000,
+    NMCSAEI_EDIT    = 0x00000001
+};
+typedef int NMCSAEI_FLAGS;
+
 /* INameSpaceTreeControl styles */
-enum tagNSTCSTYLE {
+enum _NSTCSTYLE {
     NSTCS_HASEXPANDOS           = 0x00000001,
     NSTCS_HASLINES              = 0x00000002,
     NSTCS_SINGLECLICKEXPAND     = 0x00000004,
@@ -1715,7 +1868,7 @@ enum tagNSTCSTYLE {
 typedef DWORD   NSTCSTYLE;
 
 /* INameSpaceTreeControl root styles */
-enum tagNSTCROOTSTYLE {
+enum _NSTCROOTSTYLE {
     NSTCRS_VISIBLE  = 0x00000000,
     NSTCRS_HIDDEN   = 0x00000001,
     NSTCRS_EXPANDED = 0x00000002
@@ -1723,30 +1876,41 @@ enum tagNSTCROOTSTYLE {
 typedef DWORD   NSTCROOTSTYLE;
 
 /* INameSpaceTreeControl item states */
-enum tagNSTCITEMSTATE {
-    NSTCIS_NONE     = 0x00000000,
-    NSTCIS_SELECTED = 0x00000001,
-    NSTCIS_EXPANDED = 0x00000002,
-    NSTCIS_BOLD     = 0x00000004,
-    NSTCIS_DISABLED = 0x00000008
+enum _NSTCITEMSTATE {
+    NSTCIS_NONE             = 0x00000000,
+    NSTCIS_SELECTED         = 0x00000001,
+    NSTCIS_EXPANDED         = 0x00000002,
+    NSTCIS_BOLD             = 0x00000004,
+    NSTCIS_DISABLED         = 0x00000008,
+    NCTCIS_SELECTEDNOEXPAND = 0x00000010
 };
 typedef DWORD   NSTCITEMSTATE;
 
 /* INameSpaceTreeControl::GetNextItem() codes */
-enum tagNSTCGNI {
-    NSTCGNI_NEXT            = 0x00000000,
-    NSTCGNI_NEXTVISIBLE     = 0x00000001,
-    NSTCGNI_PREV            = 0x00000002,
-    NSTCGNI_PREVVISIBLE     = 0x00000003,
-    NSTCGNI_PARENT          = 0x00000004,
-    NSTCGNI_CHILD           = 0x00000005,
-    NSTCGNI_FIRSTVISIBLE    = 0x00000006,
-    NSTCGNI_LASTVISIBLE     = 0x00000007
-};
-typedef DWORD   NSTCGNI;
+typedef enum NSTCGNI {
+    NSTCGNI_NEXT            = 0,
+    NSTCGNI_NEXTVISIBLE     = 1,
+    NSTCGNI_PREV            = 2,
+    NSTCGNI_PREVVISIBLE     = 3,
+    NSTCGNI_PARENT          = 4,
+    NSTCGNI_CHILD           = 5,
+    NSTCGNI_FIRSTVISIBLE    = 6,
+    NSTCGNI_LASTVISIBLE     = 7
+} NSTCGNI;
+
+/* INameSpaceTreeControl2 styles */
+typedef enum NSTCSTYLE2 {
+    NSTCS2_DEFAULT                  = 0x00000000,
+    NSTCS2_INTERRUPTNOTIFICATIONS   = 0x00000001,
+    NSTCS2_SHOWNULLSPACEMENU        = 0x00000002,
+    NSTCS2_DISPLAYPADDING           = 0x00000004,
+    NSTCS2_DISPLAYPINNEDONLY        = 0x00000008,
+    NSTCS2_NOSINGLETONAUTOEXPAND    = 0x00000010,
+    NSTCS2_NEVERINSERTNONENUMERATED = 0x00000020
+} NSTCSTYLE2;
 
 /* INameSpaceTreeControlEvents hit test values */
-enum tagNSTCEHITTEST {
+enum _NSTCEHITTEST {
     NSTCEHT_NOWHERE         = 0x00000001,
     NSTCEHT_ONITEMICON      = 0x00000002,
     NSTCEHT_ONITEMLABEL     = 0x00000004,
@@ -1760,7 +1924,7 @@ enum tagNSTCEHITTEST {
 typedef DWORD   NSTCEHITTEST;
 
 /* INameSpaceTreeControlEvents click types */
-enum tagNSTCECLICKTYPE {
+enum _NSTCECLICKTYPE {
     NSTCECT_LBUTTON     = 0x00000001,
     NSTCECT_MBUTTON     = 0x00000002,
     NSTCECT_RBUTTON     = 0x00000003,
@@ -1776,7 +1940,7 @@ typedef DWORD   NSTCECLICKTYPE;
 #define ISDBLCLICK( x ) (((x) & NSTCECT_DBLCLICK) == NSTCECT_DBLCLICK)
 
 /* INameSpaceTreeControl custom draw parameters */
-typedef struct tagNSTCCUSTOMDRAW {
+typedef struct NSTCCUSTOMDRAW {
     IShellItem      *psi;
     UINT            uItemState;
     NSTCITEMSTATE   nstcis;
@@ -1787,6 +1951,15 @@ typedef struct tagNSTCCUSTOMDRAW {
     int             iIndent;
 } NSTCCUSTOMDRAW;
 
+/* INameSpaceTreeControlFolderCapabilities flags */
+#if (NTDDI_VERSION >= 0x06000000)
+typedef enum NSTCFOLDERCAPABILITIES {
+    NSTCFC_NONE                     = 0x00000000,
+    NSTCFC_PINNEDITEMFILTERING      = 0x00000001,
+    NSTCFC_DELAY_REGISTER_NOTIFY    = 0x00000002
+} NSTCFOLDERCAPABILITIES;
+#endif
+
 /* Preview handler frame information */
 typedef struct {
     HACCEL  haccel;
@@ -1795,7 +1968,7 @@ typedef struct {
 
 /* Explorer pane states */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagEXPLORERPANESTATE {
+enum _EXPLORERPANESTATE {
     EPS_DONTCARE        = 0x00000000,
     EPS_DEFAULT_ON      = 0x00000001,
     EPS_DEFAULT_OFF     = 0x00000002,
@@ -1807,22 +1980,26 @@ typedef DWORD   EXPLORERPANESTATE;
 #endif
 
 /* Explorer command states */
-enum tagEXPCMDSTATE {
+enum _EXPCMDSTATE {
     ECS_ENABLED     = 0x00000000,
     ECS_DISABLED    = 0x00000001,
     ECS_HIDDEN      = 0x00000002,
     ECS_CHECKBOX    = 0x00000004,
-    ECS_CHECKED     = 0x00000008
+    ECS_CHECKED     = 0x00000008,
+    ECS_RADIOCHECK  = 0x00000010
 };
 typedef DWORD   EXPCMDSTATE;
 
 /* Explorer command flags */
-enum tagEXPCMDFLAGS {
+enum _EXPCMDFLAGS {
     ECF_HASSUBCOMMANDS  = 0x00000001,
     ECF_HASSPLITBUTTON  = 0x00000002,
     ECF_HIDELABEL       = 0x00000004,
     ECF_ISSEPARATOR     = 0x00000008,
-    ECF_HASLUASHIELD    = 0x00000010
+    ECF_HASLUASHIELD    = 0x00000010,
+    ECF_SEPARATORBEFORE = 0x00000020,
+    ECF_SEPARATORAFTER  = 0x00000040,
+    ECF_ISDROPDOWN      = 0x00000080
 };
 typedef DWORD   EXPCMDFLAGS;
 
@@ -1858,14 +2035,78 @@ typedef enum tagMARKUPMESSAGE {
 } MARKUPMESSAGE;
 
 /* Control panel views */
-typedef enum tagCPVIEW {
+typedef enum CPVIEW {
     CPVIEW_CLASSIC  = 0,
+    CPVIEW_ALLITEMS = CPVIEW_CLASSIC,
     CPVIEW_CATEGORY = 1,
+    CPVIEW_HOME     = CPVIEW_CATEGORY
 } CPVIEW;
+
+/* Known destination categories */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef enum KNOWNDESTCATEGORY {
+    KDC_FREQUENT    = 1,
+    KDC_RECENT      = 2
+} KNOWNDESTCATEGORY;
+#endif
+
+/* Application document list types */
+#if (NTDDI_VERSION >= 0x06010000)
+typedef enum APPDOCLISTTYPE {
+    ADLT_RECENT     = 0,
+    ADLT_FREQUENT   = 1
+} APPDOCLISTTYPE;
+#endif
+
+/* HomeGroup sharing choices */
+typedef enum HOMEGROUPSHARINGCHOICES {
+    HGSC_NONE               = 0x00000000,
+    HGSC_MUSICLIBRARY       = 0x00000001,
+    HGSC_PICTURESLIBRARY    = 0x00000002,
+    HGSC_VIDEOSLIBRARY      = 0x00000004,
+    HGSC_DOCUMENTSLIBRARY   = 0x00000008,
+    HGSC_PRINTERS           = 0x00000010
+} HOMEGROUPSHARINGCHOICES;
+
+/* Library folder filters */
+typedef enum LIBRARYFOLDERFILTER {
+    LFF_FORCEFILESYSTEM = 1,
+    LFF_STORAGEITEMS    = 2,
+    LFF_ALLITEMS        = 3
+} LIBRARYFOLDERFILTER;
+
+/* Library option flags */
+typedef enum LIBRARYOPTIONFLAGS {
+    LOF_DEFAULT         = 0x00000000,
+    LOF_PINNEDTONAVPANE = 0x00000001,
+    LOF_MASK_ALL        = 0x00000001
+} LIBRARYOPTIONFLAGS;
+
+/* Default save folder types */
+typedef enum DEFAULTSAVEFOLDERTYPE {
+    DSFT_DETECT     = 1,
+    DSFT_PRIVATE    = 2,
+    DSFT_PUBLIC     = 3
+} DEFAULTSAVEFOLDERTYPE;
+
+/* Library save flags */
+typedef enum LIBRARYSAVEFLAGS {
+    LSF_FAILIFTHERE         = 0x00000000,
+    LSF_OVERRIDEEXISTING    = 0x00000001,
+    LSF_MAKEUNIQUENAME      = 0x00000002
+} LIBRARYSAVEFLAGS;
+
+/* Library manage dialog options */
+#if (NTDDI_VERSION >= 0x06010000) && (_WIN32_IE >= 0x0700)
+typedef enum LIBRARYMANAGEDIALOGOPTIONS {
+    LMD_DEFAULT                             = 0x00000000,
+    LMD_ALLOWUNINDEXABLENETWORKLOCATIONS    = 0x00000001
+} LIBRARYMANAGEDIALOGOPTIONS;
+#endif
 
 /* Association filters */
 #if (NTDDI_VERSION >= 0x06000000)
-enum tagASSOC_FILTER {
+enum _ASSOC_FILTER {
     ASSOC_FILTER_NONE           = 0x00000000,
     ASSOC_FILTER_RECOMMENDED    = 0x00000001
 };
@@ -1876,10 +2117,12 @@ typedef int ASSOC_FILTER;
 EXTERN_C const IID      IID_IContextMenu;
 EXTERN_C const IID      IID_IContextMenu2;
 EXTERN_C const IID      IID_IContextMenu3;
+EXTERN_C const IID      IID_IExecuteCommand;
 EXTERN_C const IID      IID_IPersistFolder;
 #if (_WIN32_IE >= 0x0400)
 EXTERN_C const IID      IID_IRunnableTask;
 EXTERN_C const IID      IID_IShellTaskScheduler;
+EXTERN_C const IID      IID_IQueryCodePage;
 EXTERN_C const IID      IID_IPersistFolder2;
 #endif
 #if (_WIN32_IE >= 0x0500)
@@ -1890,15 +2133,23 @@ EXTERN_C const IID      IID_IPersistIDList;
 #endif
 EXTERN_C const IID      IID_IEnumIDList;
 EXTERN_C const IID      IID_IEnumFullIDList;
+#if (NTDDI_VERSION >= 0x06010000)
+EXTERN_C const IID      IID_IObjectWithFolderEnumMode;
+EXTERN_C const IID      IID_IParseAndCreateItem;
+#endif
 EXTERN_C const IID      IID_IShellFolder;
 EXTERN_C const IID      IID_IEnumExtraSearch;
 EXTERN_C const IID      IID_IShellFolder2;
+EXTERN_C const IID      IID_IFolderViewOptions;
 EXTERN_C const IID      IID_IShellView;
 EXTERN_C const IID      IID_IShellView2;
 #if (NTDDI_VERSION >= 0x06000000)
 EXTERN_C const IID      IID_IShellView3;
 #endif
 EXTERN_C const IID      IID_IFolderView;
+#if (NTDDI_VERSION >= 0x06010000)
+EXTERN_C const IID      IID_ISearchBoxInfo;
+#endif
 #if (NTDDI_VERSION >= 0x06000000) || (_WIN32_IE >= 0x0700)
 EXTERN_C const IID      IID_IFolderView2;
 #endif
@@ -1928,6 +2179,7 @@ EXTERN_C const IID      IID_IProfferService;
 EXTERN_C const IID      IID_IShellItem;
 EXTERN_C const IID      IID_IShellItem2;
 EXTERN_C const IID      IID_IShellItemImageFactory;
+EXTERN_C const IID      IID_IUserAccountChangeCallback;
 #if (NTDDI_VERSION >= 0x05010000)
 EXTERN_C const IID      IID_IEnumShellItems;
 #endif
@@ -1947,6 +2199,8 @@ EXTERN_C const IID      IID_IFileOperationProgressSink;
 #endif
 EXTERN_C const IID      IID_IShellItemArray;
 EXTERN_C const IID      IID_IInitializeWithItem;
+EXTERN_C const IID      IID_IObjectWithSelection;
+EXTERN_C const IID      IID_IObjectWithBackReferences;
 EXTERN_C const IID      IID_IPropertyUI;
 #if (_WIN32_IE >= 0x0500)
 EXTERN_C const IID      IID_ICategoryProvider;
@@ -1977,6 +2231,7 @@ EXTERN_C const IID      IID_IShellExtInit;
 EXTERN_C const IID      IID_IShellPropSheetExt;
 EXTERN_C const IID      IID_IRemoteComputer;
 EXTERN_C const IID      IID_IQueryContinue;
+EXTERN_C const IID      IID_IObjectWithCancelEvent;
 EXTERN_C const IID      IID_IUserNotification;
 EXTERN_C const IID      IID_IUserNotificationCallback;
 EXTERN_C const IID      IID_IUserNotification2;
@@ -2000,6 +2255,8 @@ EXTERN_C const IID      IID_IDeskBand2;
 #endif
 EXTERN_C const IID      IID_ITaskbarList;
 EXTERN_C const IID      IID_ITaskbarList2;
+EXTERN_C const IID      IID_ITaskbarList3;
+EXTERN_C const IID      IID_ITaskbarList4;
 EXTERN_C const IID      IID_IStartMenuPinnedList;
 EXTERN_C const IID      IID_ICDBurn;
 EXTERN_C const IID      IID_IWizardSite;
@@ -2020,7 +2277,6 @@ EXTERN_C const IID      IID_IResultsFolder;
 #if (_WIN32_IE >= 0x0700)
 EXTERN_C const IID      IID_IEnumObjects;
 EXTERN_C const IID      IID_IOperationsProgressDialog;
-EXTERN_C const IID      IID_IOperationsUpdateProgress;
 EXTERN_C const IID      IID_IIOCancelInformation;
 EXTERN_C const IID      IID_IFileOperation;
 EXTERN_C const IID      IID_IObjectProvider;
@@ -2065,6 +2321,7 @@ EXTERN_C const IID      IID_IFileSaveDialog;
 EXTERN_C const IID      IID_IFileOpenDialog;
 EXTERN_C const IID      IID_IFileDialogCustomize;
 EXTERN_C const IID      IID_IFileDialogControlEvents;
+EXTERN_C const IID      IID_IFileDialog2;
 EXTERN_C const IID      IID_IApplicationAssociationRegistration;
 EXTERN_C const IID      IID_IApplicationAssociationRegistrationUI;
 #endif
@@ -2086,22 +2343,30 @@ EXTERN_C const IID      IID_IKnownFolderManager;
 EXTERN_C const IID      IID_ISharingConfigurationManager;
 #endif
 EXTERN_C const IID      IID_IPreviousVersionsInfo;
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 EXTERN_C const IID      IID_IRelatedItem;
 EXTERN_C const IID      IID_IIdentityName;
+EXTERN_C const IID      IID_IDelegateItem;
 EXTERN_C const IID      IID_ICurrentItem;
 EXTERN_C const IID      IID_ITransferMediumItem;
 EXTERN_C const IID      IID_IUseToBrowseItem;
 EXTERN_C const IID      IID_IDisplayItem;
+EXTERN_C const IID      IID_IViewStateIdentityItem;
+EXTERN_C const IID      IID_IPreviewItem;
 #endif
 EXTERN_C const IID      IID_IDestinationStreamFactory;
+EXTERN_C const IID      IID_INewMenuClient;
 #if (_WIN32_IE >= 0x0700)
+EXTERN_C const IID      IID_IInitializeWithBindCtx;
 EXTERN_C const IID      IID_IShellItemFilter;
 #endif
 EXTERN_C const IID      IID_INameSpaceTreeControl;
 EXTERN_C const IID      IID_INameSpaceTreeControlEvents;
 EXTERN_C const IID      IID_INameSpaceTreeAccessible;
 EXTERN_C const IID      IID_INameSpaceTreeControlCustomDraw;
+#if (NTDDI_VERSION >= 0x06000000)
+EXTERN_C const IID      IID_INameSpaceTreeControlFolderCapabilities;
+#endif
 EXTERN_C const IID      IID_IPreviewHandler;
 EXTERN_C const IID      IID_IPreviewHandlerFrame;
 #if (NTDDI_VERSION >= 0x06000000)
@@ -2112,6 +2377,8 @@ EXTERN_C const IID      IID_IContextMenuCB;
 #endif
 EXTERN_C const IID      IID_IDefaultExtractIconInit;
 EXTERN_C const IID      IID_IExplorerCommand;
+EXTERN_C const IID      IID_IExplorerCommandState;
+EXTERN_C const IID      IID_IInitializeCommand;
 EXTERN_C const IID      IID_IEnumExplorerCommand;
 EXTERN_C const IID      IID_IExplorerCommandProvider;
 EXTERN_C const IID      IID_IMarkupCallback;
@@ -2123,6 +2390,19 @@ EXTERN_C const IID      IID_IComputerInfoAdvise;
 EXTERN_C const IID      IID_IComputerInfoChangeNotify;
 EXTERN_C const IID      IID_IFileSystemBindData;
 EXTERN_C const IID      IID_IFileSystemBindData2;
+#if (NTDDI_VERSION >= 0x06010000)
+EXTERN_C const IID      IID_ICustomDestinationList;
+EXTERN_C const IID      IID_IApplicationDestinations;
+EXTERN_C const IID      IID_IApplicationDocumentLists;
+EXTERN_C const IID      IID_IObjectWithAppUserModelID;
+EXTERN_C const IID      IID_IObjectWithProgID;
+EXTERN_C const IID      IID_IUpdateIDList;
+#endif
+EXTERN_C const IID      IID_IDesktopGadget;
+EXTERN_C const IID      IID_IHomeGroup;
+EXTERN_C const IID      IID_IInitializeWithPropertyStore;
+EXTERN_C const IID      IID_IOpenSearchSource;
+EXTERN_C const IID      IID_IShellLibrary;
 EXTERN_C const IID      LIBID_ShellObjects;
 EXTERN_C const CLSID    CLSID_ShellDesktop;
 EXTERN_C const CLSID    CLSID_ShellFSFolder;
@@ -2171,7 +2451,16 @@ EXTERN_C const CLSID    CLSID_ApplicationAssociationRegistrationUI;
 EXTERN_C const CLSID    CLSID_SearchFolderItemFactory;
 EXTERN_C const CLSID    CLSID_OpenControlPanel;
 EXTERN_C const CLSID    CLSID_ComputerInfoAdvise;
+EXTERN_C const CLSID    CLSID_MailRecipient;
 EXTERN_C const CLSID    CLSID_NetworkExplorerFolder;
+EXTERN_C const CLSID    CLSID_DestinationList;
+EXTERN_C const CLSID    CLSID_ApplicationDestinations;
+EXTERN_C const CLSID    CLSID_ApplicationDocumentLists;
+EXTERN_C const CLSID    CLSID_HomeGroup;
+EXTERN_C const CLSID    CLSID_ShellLibrary;
+EXTERN_C const CLSID    CLSID_AppStartupLink;
+EXTERN_C const CLSID    CLSID_EnumerableObjectCollection;
+EXTERN_C const CLSID    CLSID_DesktopGadget;
 #if (NTDDI_VERSION >= 0x06000000)
 EXTERN_C const IID      IID_IAssocHandlerInvoker;
 EXTERN_C const IID      IID_IAssocHandler;
@@ -2235,6 +2524,25 @@ DECLARE_INTERFACE_( IContextMenu3, IContextMenu2 ) {
 };
 typedef IContextMenu3   *LPCONTEXTMENU3;
 
+/* IExecuteCommand interface */
+#undef INTERFACE
+#define INTERFACE   IExecuteCommand
+DECLARE_INTERFACE_( IExecuteCommand, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IExecuteCommand methods */
+    STDMETHOD( SetKeyState )( THIS_ DWORD ) PURE;
+    STDMETHOD( SetParameters )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( SetPosition )( THIS_ POINT ) PURE;
+    STDMETHOD( SetShowWindow )( THIS_ int ) PURE;
+    STDMETHOD( SetNoShowUI )( THIS_ BOOL ) PURE;
+    STDMETHOD( SetDirectory )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( Execute )( THIS ) PURE;
+};
+
 /* IPersistFolder interface */
 #undef INTERFACE
 #define INTERFACE   IPersistFolder
@@ -2286,6 +2594,22 @@ DECLARE_INTERFACE_( IShellTaskScheduler, IUnknown ) {
     STDMETHOD( RemoveTasks )( THIS_ REFTASKOWNERID, DWORD_PTR, BOOL ) PURE;
     STDMETHOD_( UINT, CountTasks )( THIS_ REFTASKOWNERID ) PURE;
     STDMETHOD( Status )( THIS_ DWORD, DWORD ) PURE;
+};
+#endif
+
+/* IQueryCodePage interface */
+#if (_WIN32_IE >= 0x0400)
+#undef INTERFACE
+#define INTERFACE   IQueryCodePage
+DECLARE_INTERFACE_( IQueryCodePage, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IQueryCodePage methods */
+    STDMETHOD( GetCodePage )( THIS_ UINT * ) PURE;
+    STDMETHOD( SetCodePage )( THIS_ UINT ) PURE;
 };
 #endif
 
@@ -2387,6 +2711,38 @@ DECLARE_INTERFACE_( IEnumFullIDList, IUnknown ) {
     STDMETHOD( Clone )( THIS_ IEnumFullIDList ** ) PURE;
 };
 
+/* IObjectWithFolderEnumMode interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IObjectWithFolderEnumMode
+DECLARE_INTERFACE_( IObjectWithFolderEnumMode, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IObjectWithFolderEnumMode interface */
+    STDMETHOD( SetMode )( THIS_ FOLDER_ENUM_MODE );
+    STDMETHOD( GetMode )( THIS_ FOLDER_ENUM_MODE * );
+};
+#endif
+
+/* IParseAndCreateItem interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IParseAndCreateItem
+DECLARE_INTERFACE_( IParseAndCreateItem, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IParseAndCreateItem methods */
+    STDMETHOD( SetItem )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( GetItem )( THIS_ REFIID, void ** ) PURE;
+};
+#endif
+
 /* IShellFolder interface */
 #undef INTERFACE
 #define INTERFACE   IShellFolder
@@ -2456,6 +2812,20 @@ DECLARE_INTERFACE_( IShellFolder2, IShellFolder ) {
     STDMETHOD( GetDetailsEx )( THIS_ PCUITEMID_CHILD, const SHCOLUMNID *, VARIANT * ) PURE;
     STDMETHOD( GetDetailsOf )( THIS_ PCUITEMID_CHILD, UINT, SHELLDETAILS * ) PURE;
     STDMETHOD( MapColumnToSCID )( THIS_ UINT, SHCOLUMNID * ) PURE;
+};
+
+/* IFolderViewOptions interface */
+#undef INTERFACE
+#define INTERFACE   IFolderViewOptions
+DECLARE_INTERFACE_( IFolderViewOptions, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IFolderViewOptions methods */
+    STDMETHOD( SetFolderViewOptions )( THIS_ FOLDERVIEWOPTIONS, FOLDERVIEWOPTIONS ) PURE;
+    STDMETHOD( GetFolderViewOptions )( THIS_ FOLDERVIEWOPTIONS * ) PURE;
 };
 
 /* IShellView interface */
@@ -2582,6 +2952,22 @@ DECLARE_INTERFACE_( IFolderView, IUnknown ) {
     STDMETHOD( SelectItem )( THIS_ int, DWORD ) PURE;
     STDMETHOD( SelectAndPositionItems )( THIS_ UINT, PCUITEMID_CHILD_ARRAY, POINT *, DWORD ) PURE;
 };
+
+/* ISearchBoxInfo interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   ISearchBoxInfo
+DECLARE_INTERFACE_( ISearchBoxInfo, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* ISearchBoxInfo methods */
+    STDMETHOD( GetCondition )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD( GetText )( THIS_ LPWSTR * ) PURE;
+};
+#endif
 
 /* IFolderView2 interface */
 #if (NTDDI_VERSION >= 0x06000000) || (_WIN32_IE >= 0x0700)
@@ -2975,6 +3361,19 @@ DECLARE_INTERFACE_( IShellItemImageFactory, IUnknown ) {
     STDMETHOD( GetImage )( THIS_ SIZE, SIIGBF, HBITMAP * ) PURE;
 };
 
+/* IUserAccountChangeCallback interface */
+#undef INTERFACE
+#define INTERFACE   IUserAccountChangeCallback
+DECLARE_INTERFACE_( IUserAccountChangeCallback, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IUserAccountChangeCallback methods */
+    STDMETHOD( OnPictureChange )( THIS_ LPCWSTR ) PURE;
+};
+
 /* IEnumShellItems interface */
 #if (NTDDI_VERSION >= 0x05010000)
 #undef INTERFACE
@@ -3028,12 +3427,12 @@ DECLARE_INTERFACE_( ITransferSource, IUnknown ) {
     STDMETHOD( Advise )( THIS_ ITransferAdviseSink *, DWORD * ) PURE;
     STDMETHOD( Unadvise )( THIS_ DWORD ) PURE;
     STDMETHOD( SetProperties )( THIS_ IPropertyChangeArray * ) PURE;
-    STDMETHOD( OpenItem )( THIS_ IShellItem *, DWORD, REFIID, void ** ) PURE;
-    STDMETHOD( MoveItem )( THIS_ IShellItem *, IShellItem *, LPCWSTR, DWORD, IShellItem ** ) PURE;
-    STDMETHOD( RecycleItem )( THIS_ IShellItem *, IShellItem *, DWORD, IShellItem ** ) PURE;
-    STDMETHOD( RemoveItem )( THIS_ IShellItem *, DWORD ) PURE;
-    STDMETHOD( RenameItem )( THIS_ IShellItem *, LPCWSTR, DWORD, IShellItem ** ) PURE;
-    STDMETHOD( LinkItem )( THIS_ IShellItem *, IShellItem *, LPCWSTR, DWORD, IShellItem ** ) PURE;
+    STDMETHOD( OpenItem )( THIS_ IShellItem *, TRANSFER_SOURCE_FLAGS, REFIID, void ** ) PURE;
+    STDMETHOD( MoveItem )( THIS_ IShellItem *, IShellItem *, LPCWSTR, TRANSFER_SOURCE_FLAGS, IShellItem ** ) PURE;
+    STDMETHOD( RecycleItem )( THIS_ IShellItem *, IShellItem *, TRANSFER_SOURCE_FLAGS, IShellItem ** ) PURE;
+    STDMETHOD( RemoveItem )( THIS_ IShellItem *, TRANSFER_SOURCE_FLAGS ) PURE;
+    STDMETHOD( RenameItem )( THIS_ IShellItem *, LPCWSTR, TRANSFER_SOURCE_FLAGS, IShellItem ** ) PURE;
+    STDMETHOD( LinkItem )( THIS_ IShellItem *, IShellItem *, LPCWSTR, TRANSFER_SOURCE_FLAGS, IShellItem ** ) PURE;
     STDMETHOD( ApplyPropertiesToItem )( THIS_ IShellItem *, IShellItem ** ) PURE;
     STDMETHOD( GetDefaultDestinationName )( THIS_ IShellItem *, IShellItem *, LPWSTR * ) PURE;
     STDMETHOD( EnterFolder )( THIS_ IShellItem * ) PURE;
@@ -3091,7 +3490,7 @@ DECLARE_INTERFACE_( ITransferDestination, IUnknown ) {
     /* ITransferDestination methods */
     STDMETHOD( Advise )( THIS_ ITransferAdviseSink *, DWORD * ) PURE;
     STDMETHOD( Unadvise )( THIS_ DWORD ) PURE;
-    STDMETHOD( CreateItem )( THIS_ LPCWSTR, DWORD, ULONGLONG, DWORD, REFIID, void **, REFIID, void ** ) PURE;
+    STDMETHOD( CreateItem )( THIS_ LPCWSTR, DWORD, ULONGLONG, TRANSFER_SOURCE_FLAGS, REFIID, void **, REFIID, void ** ) PURE;
 };
 
 /* IStreamAsync interface */
@@ -3198,6 +3597,33 @@ DECLARE_INTERFACE_( IInitializeWithItem, IUnknown ) {
 
     /* IInitializeWithItem methods */
     STDMETHOD( Initialize )( THIS_ IShellItem *, DWORD ) PURE;
+};
+
+/* IObjectWithSelection interface */
+#undef INTERFACE
+#define INTERFACE   IObjectWithSelection
+DECLARE_INTERFACE_( IObjectWithSelection, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IObjectWithSelection methods */
+    STDMETHOD( SetSelection )( THIS_ IShellItemArray * ) PURE;
+    STDMETHOD( GetSelection )( THIS_ REFIID, void ** ) PURE;
+};
+
+/* IObjectWithBackReferences interface */
+#undef INTERFACE
+#define INTERFACE   IObjectWithBackReferences
+DECLARE_INTERFACE_( IObjectWithBackReferences, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IObjectWithBackReferences methods */
+    STDMETHOD( RemoveBackReferences )( THIS ) PURE;
 };
 
 /* IPropertyUI interface */
@@ -3555,6 +3981,19 @@ DECLARE_INTERFACE_( IQueryContinue, IUnknown ) {
     STDMETHOD( QueryContinue )( THIS ) PURE;
 };
 
+/* IObjectWithCancelEvent interface */
+#undef INTERFACE
+#define INTERFACE   IObjectWithCancelEvent
+DECLARE_INTERFACE_( IObjectWithCancelEvent, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IObjectWithCancelEvent methods */
+    STDMETHOD( GetCancelEvent )( THIS_ HANDLE * ) PURE;
+};
+
 /* IUserNotification interface */
 #undef INTERFACE
 #define INTERFACE   IUserNotification
@@ -3834,6 +4273,77 @@ DECLARE_INTERFACE_( ITaskbarList2, ITaskbarList ) {
     STDMETHOD( MarkFullscreenWindow )( THIS_ HWND, BOOL ) PURE;
 };
 
+/* ITaskbarList3 interface */
+#undef INTERFACE
+#define INTERFACE   ITaskbarList3
+DECLARE_INTERFACE_( ITaskbarList3, ITaskbarList2 ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* ITaskbarList methods */
+    STDMETHOD( HrInit )( THIS ) PURE;
+    STDMETHOD( AddTab )( THIS_ HWND ) PURE;
+    STDMETHOD( DeleteTab )( THIS_ HWND ) PURE;
+    STDMETHOD( ActivateTab )( THIS_ HWND ) PURE;
+    STDMETHOD( SetActiveAlt )( THIS_ HWND ) PURE;
+
+    /* ITaskbarList2 methods */
+    STDMETHOD( MarkFullscreenWindow )( THIS_ HWND, BOOL ) PURE;
+
+    /* ITaskbarList3 methods */
+    STDMETHOD( SetProgressValue )( THIS_ HWND, ULONGLONG, ULONGLONG ) PURE;
+    STDMETHOD( SetProgressState )( THIS_ HWND, TBPFLAG ) PURE;
+    STDMETHOD( RegisterTab )( THIS_ HWND, HWND ) PURE;
+    STDMETHOD( UnregisterTab )( THIS_ HWND ) PURE;
+    STDMETHOD( SetTabOrder )( THIS_ HWND, HWND ) PURE;
+    STDMETHOD( SetTabActive )( THIS_ HWND, HWND, DWORD ) PURE;
+    STDMETHOD( ThumbBarAddButtons )( THIS_ HWND, UINT, LPTHUMBBUTTON ) PURE;
+    STDMETHOD( ThumbBarUpdateButtons )( THIS_ HWND, UINT, LPTHUMBBUTTON ) PURE;
+    STDMETHOD( ThumbBarSetImageList )( THIS_ HWND, HIMAGELIST ) PURE;
+    STDMETHOD( SetOverlayIcon )( THIS_ HWND, HICON, LPCWSTR ) PURE;
+    STDMETHOD( SetThumbnailTooltip )( THIS_ HWND, LPCWSTR ) PURE;
+    STDMETHOD( SetThumbnailClip )( THIS_ HWND, RECT * ) PURE;
+};
+
+/* ITaskbarList4 interface */
+#undef INTERFACE
+#define INTERFACE   ITaskbarList4
+DECLARE_INTERFACE_( ITaskbarList4, ITaskbarList3 ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* ITaskbarList methods */
+    STDMETHOD( HrInit )( THIS ) PURE;
+    STDMETHOD( AddTab )( THIS_ HWND ) PURE;
+    STDMETHOD( DeleteTab )( THIS_ HWND ) PURE;
+    STDMETHOD( ActivateTab )( THIS_ HWND ) PURE;
+    STDMETHOD( SetActiveAlt )( THIS_ HWND ) PURE;
+
+    /* ITaskbarList2 methods */
+    STDMETHOD( MarkFullscreenWindow )( THIS_ HWND, BOOL ) PURE;
+
+    /* ITaskbarList3 methods */
+    STDMETHOD( SetProgressValue )( THIS_ HWND, ULONGLONG, ULONGLONG ) PURE;
+    STDMETHOD( SetProgressState )( THIS_ HWND, TBPFLAG ) PURE;
+    STDMETHOD( RegisterTab )( THIS_ HWND, HWND ) PURE;
+    STDMETHOD( UnregisterTab )( THIS_ HWND ) PURE;
+    STDMETHOD( SetTabOrder )( THIS_ HWND, HWND ) PURE;
+    STDMETHOD( SetTabActive )( THIS_ HWND, HWND, DWORD ) PURE;
+    STDMETHOD( ThumbBarAddButtons )( THIS_ HWND, UINT, LPTHUMBBUTTON ) PURE;
+    STDMETHOD( ThumbBarUpdateButtons )( THIS_ HWND, UINT, LPTHUMBBUTTON ) PURE;
+    STDMETHOD( ThumbBarSetImageList )( THIS_ HWND, HIMAGELIST ) PURE;
+    STDMETHOD( SetOverlayIcon )( THIS_ HWND, HICON, LPCWSTR ) PURE;
+    STDMETHOD( SetThumbnailTooltip )( THIS_ HWND, LPCWSTR ) PURE;
+    STDMETHOD( SetThumbnailClip )( THIS_ HWND, RECT * ) PURE;
+
+    /* ITaskbarList4 methods */
+    STDMETHOD( SetTabProperties )( THIS_ HWND, STPFLAG ) PURE;
+};
+
 /* IStartMenuPinnedList interface */
 #undef INTERFACE
 #define INTERFACE   IStartMenuPinnedList
@@ -4055,7 +4565,7 @@ DECLARE_INTERFACE_( IOperationsProgressDialog, IUnknown ) {
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
     /* IOperationsProgressDialog methods */
-    STDMETHOD( StartProgressDialog )( THIS_ HWND, DWORD ) PURE;
+    STDMETHOD( StartProgressDialog )( THIS_ HWND, OPPROGDLGF ) PURE;
     STDMETHOD( StopProgressDialog )( THIS ) PURE;
     STDMETHOD( SetOperation )( THIS_ SPACTION ) PURE;
     STDMETHOD( SetMode )( THIS_ PDMODE ) PURE;
@@ -4066,22 +4576,6 @@ DECLARE_INTERFACE_( IOperationsProgressDialog, IUnknown ) {
     STDMETHOD( ResumeTimer )( THIS ) PURE;
     STDMETHOD( GetMilliseconds )( THIS_ ULONGLONG *, ULONGLONG * ) PURE;
     STDMETHOD( GetOperationStatus )( THIS_ PDOPSTATUS * ) PURE;
-};
-#endif
-
-/* IOperationsUpdateProgress interface */
-#if (_WIN32_IE >= 0x0700)
-#undef INTERFACE
-#define INTERFACE   IOperationsUpdateProgress
-DECLARE_INTERFACE_( IOperationsUpdateProgress, IUnknown ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-
-    /* IOperationsUpdateProgress methods */
-    STDMETHOD( AddTreeDone )( THIS_ int, int, LONGLONG, int ) PURE;
-    STDMETHOD( AddTreeTotal )( THIS_ int, int, LONGLONG, int ) PURE;
 };
 #endif
 
@@ -4668,6 +5162,50 @@ DECLARE_INTERFACE_( IFileDialogControlEvents, IUnknown ) {
 };
 #endif
 
+/* IFileDialog2 interface */
+#if (NTDDI_VERSION >= 0x06000000)
+#undef INTERFACE
+#define INTERFACE   IFileDialog2
+DECLARE_INTERFACE_( IFileDialog2, IFileDialog ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IModalWindow methods */
+    STDMETHOD( Show )( THIS_ HWND ) PURE;
+
+    /* IFileDialog methods */
+    STDMETHOD( SetFileTypes )( THIS_ UINT, const COMDLG_FILTERSPEC * ) PURE;
+    STDMETHOD( SetFileTypeIndex )( THIS_ UINT ) PURE;
+    STDMETHOD( GetFileTypeIndex )( THIS_ UINT * ) PURE;
+    STDMETHOD( Advise )( THIS_ IFileDialogEvents *, DWORD * ) PURE;
+    STDMETHOD( Unadvise )( THIS_ DWORD ) PURE;
+    STDMETHOD( SetOptions )( THIS_ DWORD ) PURE;
+    STDMETHOD( GetOptions )( THIS_ DWORD * ) PURE;
+    STDMETHOD( SetDefaultFolder )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( SetFolder )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( GetFolder )( THIS_ IShellItem ** ) PURE;
+    STDMETHOD( GetCurrentSelection )( THIS_ IShellItem ** ) PURE;
+    STDMETHOD( SetFileName )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( GetFileName )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( SetTitle )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( SetOkButtonLabel )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( SetFileNameLabel )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( GetResult )( THIS_ IShellItem ** ) PURE;
+    STDMETHOD( AddPlace )( THIS_ IShellItem *, FDAP ) PURE;
+    STDMETHOD( SetDefaultExtension )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( Close )( THIS_ HRESULT ) PURE;
+    STDMETHOD( SetClientGuid )( THIS_ REFGUID ) PURE;
+    STDMETHOD( ClearClientData )( THIS ) PURE;
+    STDMETHOD( SetFilter )( THIS_ IShellItemFilter * ) PURE;
+
+    /* IFileDialog2 methods */
+    STDMETHOD( SetCancelButtonLabel )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( SetNavigationRoot )( THIS_ IShellItem * ) PURE;
+};
+#endif
+
 /* IApplicationAssociationRegistration interface */
 #if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
@@ -4906,7 +5444,7 @@ DECLARE_INTERFACE_( IPreviousVersionsInfo, IUnknown ) {
 };
 
 /* IRelatedItem interface */
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
 #define INTERFACE   IRelatedItem
 DECLARE_INTERFACE_( IRelatedItem, IUnknown ) {
@@ -4922,7 +5460,7 @@ DECLARE_INTERFACE_( IRelatedItem, IUnknown ) {
 #endif
 
 /* IIdentityName interface */
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
 #define INTERFACE   IIdentityName
 DECLARE_INTERFACE_( IIdentityName, IRelatedItem ) {
@@ -4937,8 +5475,24 @@ DECLARE_INTERFACE_( IIdentityName, IRelatedItem ) {
 };
 #endif
 
+/* IDelegateItem interface */
+#if (NTDDI_VERSION >= 0x06000000)
+#undef INTERFACE
+#define INTERFACE   IDelegateItem
+DECLARE_INTERFACE_( IDelegateItem, IRelatedItem ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IRelatedItem methods */
+    STDMETHOD( GetItemIDList )( THIS_ PIDLIST_ABSOLUTE * ) PURE;
+    STDMETHOD( GetItem )( THIS_ IShellItem ** ) PURE;
+};
+#endif
+
 /* ICurrentItem interface */
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
 #define INTERFACE   ICurrentItem
 DECLARE_INTERFACE_( ICurrentItem, IRelatedItem ) {
@@ -4954,7 +5508,7 @@ DECLARE_INTERFACE_( ICurrentItem, IRelatedItem ) {
 #endif
 
 /* ITransferMediumItem interface */
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
 #define INTERFACE   ITransferMediumItem
 DECLARE_INTERFACE_( ITransferMediumItem, IRelatedItem ) {
@@ -4970,7 +5524,7 @@ DECLARE_INTERFACE_( ITransferMediumItem, IRelatedItem ) {
 #endif
 
 /* IUseToBrowseItem interface */
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
 #define INTERFACE   IUseToBrowseItem
 DECLARE_INTERFACE_( IUseToBrowseItem, IRelatedItem ) {
@@ -4986,10 +5540,42 @@ DECLARE_INTERFACE_( IUseToBrowseItem, IRelatedItem ) {
 #endif
 
 /* IDisplayItem interface */
-#if (_WIN32_IE >= 0x0700)
+#if (NTDDI_VERSION >= 0x06000000)
 #undef INTERFACE
 #define INTERFACE   IDisplayItem
 DECLARE_INTERFACE_( IDisplayItem, IRelatedItem ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IRelatedItem methods */
+    STDMETHOD( GetItemIDList )( THIS_ PIDLIST_ABSOLUTE * ) PURE;
+    STDMETHOD( GetItem )( THIS_ IShellItem ** ) PURE;
+};
+#endif
+
+/* IViewStateIdentityItem interface */
+#if (NTDDI_VERSION >= 0x06000000)
+#undef INTERFACE
+#define INTERFACE   IViewStateIdentityItem
+DECLARE_INTERFACE_( IViewStateIdentityItem, IRelatedItem ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IRelatedItem methods */
+    STDMETHOD( GetItemIDList )( THIS_ PIDLIST_ABSOLUTE * ) PURE;
+    STDMETHOD( GetItem )( THIS_ IShellItem ** ) PURE;
+};
+#endif
+
+/* IPreviewItem interface */
+#if (NTDDI_VERSION >= 0x06000000)
+#undef INTERFACE
+#define INTERFACE   IPreviewItem
+DECLARE_INTERFACE_( IPreviewItem, IRelatedItem ) {
     /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
@@ -5013,6 +5599,35 @@ DECLARE_INTERFACE_( IDestinationStreamFactory, IUnknown ) {
     /* IDestinationStreamFactory methods */
     STDMETHOD( GetDestinationStream )( THIS_ IStream ** ) PURE;
 };
+
+/* INewMenuClient interface */
+#undef INTERFACE
+#define INTERFACE   INewMenuClient
+DECLARE_INTERFACE_( INewMenuClient, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* INewMenuClient methods */
+    STDMETHOD( IncludeItems )( THIS_ NMCII_FLAGS * ) PURE;
+    STDMETHOD( SelectAndEditItem )( THIS_ PCIDLIST_ABSOLUTE, NMCSAEI_FLAGS ) PURE;
+};
+
+/* IInitializeWithBindCtx interface */
+#if (_WIN32_IE >= 0x0700)
+#undef INTERFACE
+#define INTERFACE   IInitializeWithBindCtx
+DECLARE_INTERFACE_( IInitializeWithBindCtx, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IInitializeWithBindCtx methods */
+    STDMETHOD( Initialize )( THIS_ IBindCtx * ) PURE;
+};
+#endif
 
 /* IShellItemFilter interface */
 #if (_WIN32_IE >= 0x0700)
@@ -5059,6 +5674,43 @@ DECLARE_INTERFACE_( INameSpaceTreeControl, IUnknown ) {
     STDMETHOD( HitTest )( THIS_ POINT *, IShellItem ** ) PURE;
     STDMETHOD( GetItemRect )( THIS_ IShellItem *, RECT * ) PURE;
     STDMETHOD( CollapseAll )( THIS ) PURE;
+};
+
+/* INameSpaceTreeControl2 interface */
+#undef INTERFACE
+#define INTERFACE   INameSpaceTreeControl2
+DECLARE_INTERFACE_( INameSpaceTreeControl2, INameSpaceTreeControl ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* INameSpaceTreeControl methods */
+    STDMETHOD( Initialize )( THIS_ HWND, RECT *, NSTCSTYLE ) PURE;
+    STDMETHOD( TreeAdvise )( THIS_ IUnknown *, DWORD * ) PURE;
+    STDMETHOD( TreeUnadvise )( THIS_ DWORD ) PURE;
+    STDMETHOD( AppendRoot )( THIS_ IShellItem *, SHCONTF, NSTCROOTSTYLE, IShellItemFilter * ) PURE;
+    STDMETHOD( InsertRoot )( THIS_ int, IShellItem *, SHCONTF, NSTCROOTSTYLE, IShellItemFilter * ) PURE;
+    STDMETHOD( RemoveRoot )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( RemoveAllRoots )( THIS ) PURE;
+    STDMETHOD( GetRootItems )( THIS_ IShellItemArray ** ) PURE;
+    STDMETHOD( SetItemState )( THIS_ IShellItem *, NSTCITEMSTATE, NSTCITEMSTATE ) PURE;
+    STDMETHOD( GetItemState )( THIS_ IShellItem *, NSTCITEMSTATE, NSTCITEMSTATE * ) PURE;
+    STDMETHOD( GetSelectedItems )( THIS_ IShellItemArray ** ) PURE;
+    STDMETHOD( GetItemCustomState )( THIS_ IShellItem *, int * ) PURE;
+    STDMETHOD( SetItemCustomState )( THIS_ IShellItem *, int ) PURE;
+    STDMETHOD( EnsureItemVisible )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( SetTheme )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( GetNextItem )( THIS_ IShellItem *, NSTCGNI, IShellItem ** ) PURE;
+    STDMETHOD( HitTest )( THIS_ POINT *, IShellItem ** ) PURE;
+    STDMETHOD( GetItemRect )( THIS_ IShellItem *, RECT * ) PURE;
+    STDMETHOD( CollapseAll )( THIS ) PURE;
+
+    /* INameSpaceTreeControl2 methods */
+    STDMETHOD( SetControlStyle )( THIS_ NSTCSTYLE, NSTCSTYLE ) PURE;
+    STDMETHOD( GetControlStyle )( THIS_ NSTCSTYLE, NSTCSTYLE * ) PURE;
+    STDMETHOD( SetControlStyle2 )( THIS_ NSTCSTYLE2, NSTCSTYLE2 ) PURE;
+    STDMETHOD( GetControlStyle2 )( THIS_ NSTCSTYLE2, NSTCSTYLE2 * ) PURE;
 };
 
 /* INameSpaceTreeControlEvents interface */
@@ -5139,6 +5791,21 @@ DECLARE_INTERFACE_( INameSpaceTreeControlCustomDraw, IUnknown ) {
     STDMETHOD( ItemPrePaint )( THIS_ HDC, RECT *, NSTCCUSTOMDRAW *, COLORREF *, COLORREF *, LRESULT * ) PURE;
     STDMETHOD( ItemPostPaint )( THIS_ HDC, RECT *, NSTCCUSTOMDRAW * ) PURE;
 };
+
+/* INameSpaceTreeControlFolderCapabilities interface */
+#if (NTDDI_VERSION >= 0x06000000)
+#undef INTERFACE
+#define INTERFACE   INameSpaceTreeControlFolderCapabilities
+DECLARE_INTERFACE_( INameSpaceTreeControlFolderCapabilities, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* INameSpaceTreeControlFolderCapabilities methods */
+    STDMETHOD( GetFolderCapabilities )( THIS_ NSTCFOLDERCAPABILITIES, NSTCFOLDERCAPABILITIES * ) PURE;
+};
+#endif
 
 /* IPreviewHandler interface */
 #undef INTERFACE
@@ -5276,6 +5943,32 @@ DECLARE_INTERFACE_( IExplorerCommand, IUnknown ) {
     STDMETHOD( EnumSubCommands )( THIS_ IEnumExplorerCommand ** ) PURE;
 };
 
+/* IExplorerCommandState interface */
+#undef INTERFACE
+#define INTERFACE   IExplorerCommandState
+DECLARE_INTERFACE_( IExplorerCommandState, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IExplorerCommandState methods */
+    STDMETHOD( GetState )( THIS_ IShellItemArray *, BOOL, EXPCMDSTATE * ) PURE;
+};
+
+/* IInitializeCommand interface */
+#undef INTERFACE
+#define INTERFACE   IInitializeCommand
+DECLARE_INTERFACE_( IInitializeCommand, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IInitializeCommand methods */
+    STDMETHOD( Initialize )( THIS_ LPCWSTR, IPropertyBag * ) PURE;
+};
+
 /* IEnumExplorerCommand interface */
 #undef INTERFACE
 #define INTERFACE   IEnumExplorerCommand
@@ -5306,7 +5999,7 @@ DECLARE_INTERFACE_( IExplorerCommandProvider, IUnknown ) {
     STDMETHOD( GetCommand )( THIS_ REFGUID, REFIID, void ** ) PURE;
 };
 
-/* IMarkupCallback interface */
+/* IMarkupCallback interface (FOR COMPATIBILITY ONLY - NO LONGER IN MS HEADERS) */
 #undef INTERFACE
 #define INTERFACE   IMarkupCallback
 DECLARE_INTERFACE_( IMarkupCallback, IUnknown ) {
@@ -5323,7 +6016,7 @@ DECLARE_INTERFACE_( IMarkupCallback, IUnknown ) {
     STDMETHOD( CustomDrawText )( THIS_ HDC, LPCWSTR, int, RECT *, UINT, BOOL ) PURE;
 };
 
-/* IControlMarkup interface */
+/* IControlMarkup interface (FOR COMPATIBILITY ONLY - NO LONGER IN MS HEADERS) */
 #undef INTERFACE
 #define INTERFACE   IControlMarkup
 DECLARE_INTERFACE_( IControlMarkup, IUnknown ) {
@@ -5391,7 +6084,7 @@ DECLARE_INTERFACE_( IOpenControlPanel, IUnknown ) {
     STDMETHOD( GetCurrentView )( THIS_ CPVIEW * ) PURE;
 };
 
-/* ISystemCPLUpdate interface */
+/* ISystemCPLUpdate interface (FOR COMPATIBILITY ONLY - NO LONGER IN MS HEADERS) */
 #undef INTERFACE
 #define INTERFACE   ISystemCPLUpdate
 DECLARE_INTERFACE_( ISystemCPLUpdate, IUnknown ) {
@@ -5407,7 +6100,7 @@ DECLARE_INTERFACE_( ISystemCPLUpdate, IUnknown ) {
     STDMETHOD( UpdateComputerInfo )( THIS ) PURE;
 };
 
-/* IComputerInfoAdvise interface */
+/* IComputerInfoAdvise interface (FOR COMPATIBILITY ONLY - NO LONGER IN MS HEADERS) */
 #undef INTERFACE
 #define INTERFACE   IComputerInfoAdvise
 DECLARE_INTERFACE_( IComputerInfoAdvise, IUnknown ) {
@@ -5466,6 +6159,191 @@ DECLARE_INTERFACE_( IFileSystemBindData2, IFileSystemBindData ) {
     STDMETHOD( GetFileID )( THIS_ LARGE_INTEGER * ) PURE;
     STDMETHOD( SetJunctionCLSID )( THIS_ REFCLSID ) PURE;
     STDMETHOD( GetJunctionCLSID )( THIS_ CLSID * ) PURE;
+};
+
+/* ICustomDestinationList interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   ICustomDestinationList
+DECLARE_INTERFACE_( ICustomDestinationList, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* ICustomDestinationList methods */
+    STDMETHOD( SetAppID )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( BeginList )( THIS_ UINT *, REFIID, void ** ) PURE;
+    STDMETHOD( AppendCategory )( THIS_ LPCWSTR, IObjectArray * ) PURE;
+    STDMETHOD( AppendKnownCategory )( THIS_ KNOWNDESTCATEGORY ) PURE;
+    STDMETHOD( AddUserTasks )( THIS_ IObjectArray * ) PURE;
+    STDMETHOD( CommitList )( THIS ) PURE;
+    STDMETHOD( GetRemovedDestinations )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD( DeleteList )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( AbortList )( THIS ) PURE;
+};
+#endif
+
+/* IApplicationDestinations interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IApplicationDestinations
+DECLARE_INTERFACE_( IApplicationDestinations, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IApplicationDestinations methods */
+    STDMETHOD( SetAppID )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( RemoveDestination )( THIS_ IUnknown * ) PURE;
+    STDMETHOD( RemoveAllDestinations )( THIS ) PURE;
+};
+#endif
+
+/* IApplicationDocumentLists interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IApplicationDocumentLists
+DECLARE_INTERFACE_( IApplicationDocumentLists, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IApplicationDocumentLists methods */
+    STDMETHOD( SetAppID )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( GetList )( THIS_ APPDOCLISTTYPE, UINT, REFIID, void ** ) PURE;
+};
+#endif
+
+/* IObjectWithAppUserModelID interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IObjectWithAppUserModelID
+DECLARE_INTERFACE_( IObjectWithAppUserModelID, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IObjectWithAppUserModelID methods */
+    STDMETHOD( SetAppID )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( GetAppID )( THIS_ LPWSTR * ) PURE;
+};
+#endif
+
+/* IObjectWithProgID interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IObjectWithProgID
+DECLARE_INTERFACE_( IObjectWithProgID, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IObjectWithProgID methods */
+    STDMETHOD( SetProgID )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( GetProgID )( THIS_ LPWSTR * ) PURE;
+};
+#endif
+
+/* IUpdateIDList interface */
+#if (NTDDI_VERSION >= 0x06010000)
+#undef INTERFACE
+#define INTERFACE   IUpdateIDList
+DECLARE_INTERFACE_( IUpdateIDList, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IUpdateIDList methods */
+    STDMETHOD( Update )( THIS_ IBindCtx *, PCUITEMID_CHILD, PITEMID_CHILD * ) PURE;
+};
+#endif
+
+/* IDesktopGadget interface */
+#undef INTERFACE
+#define INTERFACE   IDesktopGadget
+DECLARE_INTERFACE_( IDesktopGadget, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IDesktopGadget methods */
+    STDMETHOD( RunGadget )( THIS_ LPCWSTR ) PURE;
+};
+
+/* IHomeGroup interface */
+#undef INTERFACE
+#define INTERFACE   IHomeGroup
+DECLARE_INTERFACE_( IHomeGroup, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IHomeGroup methods */
+    STDMETHOD( IsMember )( THIS_ BOOL * ) PURE;
+    STDMETHOD( ShowSharingWizard )( THIS_ HWND, HOMEGROUPSHARINGCHOICES * ) PURE;
+};
+
+/* IInitializeWithPropertyStore interface */
+#undef INTERFACE
+#define INTERFACE   IInitializeWithPropertyStore
+DECLARE_INTERFACE_( IInitializeWithPropertyStore, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IInitializeWithPropertyStore methods */
+    STDMETHOD( Initialize )( THIS_ IPropertyStore * ) PURE;
+};
+
+/* IOpenSearchSource interface */
+#undef INTERFACE
+#define INTERFACE   IOpenSearchSource
+DECLARE_INTERFACE_( IOpenSearchSource, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IOpenSearchSource methods */
+    STDMETHOD( GetResults )( THIS_ HWND, LPCWSTR, DWORD, DWORD, REFIID, void ** ) PURE;
+};
+
+/* IShellLibrary interface */
+#undef INTERFACE
+#define INTERFACE   IShellLibrary
+DECLARE_INTERFACE_( IShellLibrary, IUnknown ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IShellLibrary methods */
+    STDMETHOD( LoadLibraryFromItem )( THIS_ IShellItem *, DWORD ) PURE;
+    STDMETHOD( LoadLibraryFromKnownFolder )( THIS_ REFKNOWNFOLDERID, DWORD ) PURE;
+    STDMETHOD( AddFolder )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( RemoveFolder )( THIS_ IShellItem * ) PURE;
+    STDMETHOD( GetFolders )( THIS_ LIBRARYFOLDERFILTER, REFIID, void ** ) PURE;
+    STDMETHOD( ResolveFolder )( THIS_ IShellItem *, DWORD, REFIID, void ** ) PURE;
+    STDMETHOD( GetDefaultSaveFolder )( THIS_ DEFAULTSAVEFOLDERTYPE, REFIID, void ** ) PURE;
+    STDMETHOD( SetDefaultSaveFolder )( THIS_ DEFAULTSAVEFOLDERTYPE, IShellItem * ) PURE;
+    STDMETHOD( GetOptions )( THIS_ LIBRARYOPTIONFLAGS * ) PURE;
+    STDMETHOD( SetOptions )( THIS_ LIBRARYOPTIONFLAGS, LIBRARYOPTIONFLAGS ) PURE;
+    STDMETHOD( GetFolderType )( THIS_ FOLDERTYPEID * ) PURE;
+    STDMETHOD( SetFolderType )( THIS_ REFFOLDERTYPEID  ) PURE;
+    STDMETHOD( GetIcon )( THIS_ LPWSTR * ) PURE;
+    STDMETHOD( SetIcon )( THIS_ LPCWSTR ) PURE;
+    STDMETHOD( Commit )( THIS ) PURE;
+    STDMETHOD( Save )( THIS_ IShellItem *, LPCWSTR, LIBRARYSAVEFLAGS, IShellItem ** ) PURE;
+    STDMETHOD( SaveInKnownFolder )( THIS_ REFKNOWNFOLDERID, LPCWSTR, LIBRARYSAVEFLAGS, IShellItem ** ) PURE;
 };
 
 /* IAssocHandlerInvoker interface */
@@ -5564,6 +6442,26 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->HandleMenuMsg( x, p1, p2, p3 )
     #define IContextMenu3_HandleMenuMsg2( x, p1, p2, p3, p4 ) \
         (x)->lpVtbl->HandleMenuMsg2( x, p1, p2, p3, p4 )
+    #define IExecuteCommand_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IExecuteCommand_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IExecuteCommand_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IExecuteCommand_SetKeyState( x, p ) \
+        (x)->lpVtbl->SetKeyState( x, p )
+    #define IExecuteCommand_SetParameters( x, p ) \
+        (x)->lpVtbl->SetParameters( x, p )
+    #define IExecuteCommand_SetPosition( x, p ) \
+        (x)->lpVtbl->SetPosition( x, p )
+    #define IExecuteCommand_SetShowWindow( x, p ) \
+        (x)->lpVtbl->SetShowWindow( x, p )
+    #define IExecuteCommand_SetNoShowUI( x, p ) \
+        (x)->lpVtbl->SetNoShowUI( x, p )
+    #define IExecuteCommand_SetDirectory( x, p ) \
+        (x)->lpVtbl->SetDirectory( x, p )
+    #define IExecuteCommand_Execute( x ) \
+        (x)->lpVtbl->Execute( x )
     #define IPersistFolder_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPersistFolder_AddRef( x ) \
@@ -5605,6 +6503,16 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
             (x)->lpVtbl->CountTasks( x, p )
         #define IShellTaskScheduler_Status( x, p1, p2 ) \
             (x)->lpVtbl->Status( x, p1, p2 )
+        #define IQueryCodePage_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IQueryCodePage_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IQueryCodePage_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IQueryCodePage_GetCodePage( x, p ) \
+            (x)->lpVtbl->GetCodePage( x, p )
+        #define IQueryCodePage_SetCodePage( x, p ) \
+            (x)->lpVtbl->SetCodePage( x, p )
         #define IPersistFolder2_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
         #define IPersistFolder2_AddRef( x ) \
@@ -5678,6 +6586,28 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->Reset( x )
     #define IEnumIDFullList_Clone( x, p ) \
         (x)->lpVtbl->Clone( x, p )
+    #if (NTDDI_VERSION >= 0x06010000)
+        #define IObjectWithFolderEnumMode_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IObjectWithFolderEnumMode_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IObjectWithFolderEnumMode_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IObjectWithFolderEnumMode_SetMode( x, p ) \
+            (x)->lpVtbl->SetMode( x, p )
+        #define IObjectWithFolderEnumMode_GetMode( x, p ) \
+            (x)->lpVtbl->GetMode( x, p )
+        #define IParseAndCreateItem_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IParseAndCreateItem_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IParseAndCreateItem_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IParseAndCreateItem_SetItem( x, p ) \
+            (x)->lpVtbl->SetItem( x, p )
+        #define IParseAndCreateItem_GetItem( x, p1, p2 ) \
+            (x)->lpVtbl->GetItem( x, p1, p2 )
+    #endif
     #define IShellFolder_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IShellFolder_AddRef( x ) \
@@ -5758,6 +6688,16 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->GetDetailsOf( x, p1, p2, p3 )
     #define IShellFolder2_MapColumnToSCID( x, p1, p2 ) \
         (x)->lpVtbl->MapColumnToSCID( x, p1, p2 )
+    #define IFolderViewOptions_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IFolderViewOptions_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IFolderViewOptions_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IFolderViewOptions_SetFolderViewOptions( x, p1, p2 ) \
+        (x)->lpVtbl->SetFolderViewOptions( x, p1, p2 )
+    #define IFolderViewOptions_GetFolderViewOptions( x, p ) \
+        (x)->lpVtbl->GetFolderViewOptions( x, p )
     #define IShellView_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IShellView_AddRef( x ) \
@@ -5908,6 +6848,18 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->SelectItem( x, p1, p2 )
     #define IFolderView_SelectAndPositionItems( x, p1, p2, p3, p4 ) \
         (x)->lpVtbl->SelectAndPositionItems( x, p1, p2, p3, p4 )
+    #if (NTDDI_VERSION >= 0x06010000)
+        #define ISearchBoxInfo_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define ISearchBoxInfo_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define ISearchBoxInfo_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define ISearchBoxInfo_GetCondition( x, p1, p2 ) \
+            (x)->lpVtbl->GetCondition( x, p1, p2 )
+        #define ISearchBoxInfo_GetText( x, p ) \
+            (x)->lpVtbl->GetText( x, p )
+    #endif
     #if (NTDDI_VERSION >= 0x06000000) || (_WIN32_IE >= 0x0700)
         #define IFolderView2_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
@@ -6298,6 +7250,14 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->Release( x )
     #define IShellItemImageFactory_GetImage( x, p1, p2, p3 ) \
         (x)->lpVtbl->GetImage( x, p1, p2, p3 )
+    #define IUserAccountChangeCallback_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IUserAccountChangeCallback_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IUserAccountChangeCallback_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IUserAccountChangeCallback_OnPictureChange( x, p ) \
+        (x)->lpVtbl->OnPictureChange( x, p )
     #if (NTDDI_VERSION >= 0x05010000)
         #define IEnumShellItems_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
@@ -6534,6 +7494,24 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->Release( x )
     #define IInitializeWithItem_Initialize( x, p1, p2 ) \
         (x)->lpVtbl->Initialize( x, p1, p2 )
+    #define IObjectWithSelection_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IObjectWithSelection_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IObjectWithSelection_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IObjectWithSelection_SetSelection( x, p ) \
+        (x)->lpVtbl->SetSelection( x, p )
+    #define IObjectWithSelection_GetSelection( x, p1, p2 ) \
+        (x)->lpVtbl->GetSelection( x, p1, p2 )
+    #define IObjectWithBackReferences_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IObjectWithBackReferences_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IObjectWithBackReferences_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IObjectWithBackReferences_RemoveBackReferences( x ) \
+        (x)->lpVtbl->RemoveBackReferences( x )
     #define IPropertyUI_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPropertyUI_AddRef( x ) \
@@ -6848,6 +7826,14 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->Release( x )
     #define IQueryContinue_QueryContinue( x ) \
         (x)->lpVtbl->QueryContinue( x )
+    #define IObjectWithCancelEvent_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IObjectWithCancelEvent_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IObjectWithCancelEvent_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IObjectWithCancelEvent_GetCancelEvent( x, p ) \
+        (x)->lpVtbl->GetCancelEvent( x, p )
     #define IUserNotification_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IUserNotification_AddRef( x ) \
@@ -7080,6 +8066,92 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->SetActiveAlt( x, p )
     #define ITaskbarList2_MarkFullscreenWindow( x, p1, p2 ) \
         (x)->lpVtbl->MarkFullscreenWindow( x, p1, p2 )
+    #define ITaskbarList3_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define ITaskbarList3_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define ITaskbarList3_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define ITaskbarList3_HrInit( x ) \
+        (x)->lpVtbl->HrInit( x )
+    #define ITaskbarList3_AddTab( x, p ) \
+        (x)->lpVtbl->AddTab( x, p )
+    #define ITaskbarList3_DeleteTab( x, p ) \
+        (x)->lpVtbl->DeleteTab( x, p )
+    #define ITaskbarList3_ActivateTab( x, p ) \
+        (x)->lpVtbl->ActivateTab( x, p )
+    #define ITaskbarList3_SetActiveAlt( x, p ) \
+        (x)->lpVtbl->SetActiveAlt( x, p )
+    #define ITaskbarList3_MarkFullscreenWindow( x, p1, p2 ) \
+        (x)->lpVtbl->MarkFullscreenWindow( x, p1, p2 )
+    #define ITaskbarList3_SetProgressValue( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetProgressValue( x, p1, p2, p3 )
+    #define ITaskbarList3_SetProgressState( x, p1, p2 ) \
+        (x)->lpVtbl->SetProgressState( x, p1, p2 )
+    #define ITaskbarList3_RegisterTab( x, p1, p2 ) \
+        (x)->lpVtbl->RegisterTab( x, p1, p2 )
+    #define ITaskbarList3_UnregisterTab( x, p ) \
+        (x)->lpVtbl->UnregisterTab( x, p )
+    #define ITaskbarList3_SetTabOrder( x, p1, p2 ) \
+        (x)->lpVtbl->SetTabOrder( x, p1, p2 )
+    #define ITaskbarList3_SetTabActive( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetTabActive( x, p1, p2, p3 )
+    #define ITaskbarList3_ThumbBarAddButtons( x, p1, p2, p3 ) \
+        (x)->lpVtbl->ThumbBarAddButtons( x, p1, p2, p3 )
+    #define ITaskbarList3_ThumbBarUpdateButtons( x, p1, p2, p3 ) \
+        (x)->lpVtbl->ThumbBarUpdateButtons( x, p1, p2, p3 )
+    #define ITaskbarList3_ThumbBarSetImageList( x, p1, p2 ) \
+        (x)->lpVtbl->ThumbBarSetImageList( x, p1, p2 )
+    #define ITaskbarList3_SetOverlayIcon( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetOverlayIcon( x, p1, p2, p3 )
+    #define ITaskbarList3_SetThumbnailTooltip( x, p1, p2 ) \
+        (x)->lpVtbl->SetThumbnailTooltip( x, p1, p2 )
+    #define ITaskbarList3_SetThumbnailClip( x, p1, p2 ) \
+        (x)->lpVtbl->SetThumbnailClip( x, p1, p2 )
+    #define ITaskbarList4_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define ITaskbarList4_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define ITaskbarList4_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define ITaskbarList4_HrInit( x ) \
+        (x)->lpVtbl->HrInit( x )
+    #define ITaskbarList4_AddTab( x, p ) \
+        (x)->lpVtbl->AddTab( x, p )
+    #define ITaskbarList4_DeleteTab( x, p ) \
+        (x)->lpVtbl->DeleteTab( x, p )
+    #define ITaskbarList4_ActivateTab( x, p ) \
+        (x)->lpVtbl->ActivateTab( x, p )
+    #define ITaskbarList4_SetActiveAlt( x, p ) \
+        (x)->lpVtbl->SetActiveAlt( x, p )
+    #define ITaskbarList4_MarkFullscreenWindow( x, p1, p2 ) \
+        (x)->lpVtbl->MarkFullscreenWindow( x, p1, p2 )
+    #define ITaskbarList4_SetProgressValue( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetProgressValue( x, p1, p2, p3 )
+    #define ITaskbarList4_SetProgressState( x, p1, p2 ) \
+        (x)->lpVtbl->SetProgressState( x, p1, p2 )
+    #define ITaskbarList4_RegisterTab( x, p1, p2 ) \
+        (x)->lpVtbl->RegisterTab( x, p1, p2 )
+    #define ITaskbarList4_UnregisterTab( x, p ) \
+        (x)->lpVtbl->UnregisterTab( x, p )
+    #define ITaskbarList4_SetTabOrder( x, p1, p2 ) \
+        (x)->lpVtbl->SetTabOrder( x, p1, p2 )
+    #define ITaskbarList4_SetTabActive( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetTabActive( x, p1, p2, p3 )
+    #define ITaskbarList4_ThumbBarAddButtons( x, p1, p2, p3 ) \
+        (x)->lpVtbl->ThumbBarAddButtons( x, p1, p2, p3 )
+    #define ITaskbarList4_ThumbBarUpdateButtons( x, p1, p2, p3 ) \
+        (x)->lpVtbl->ThumbBarUpdateButtons( x, p1, p2, p3 )
+    #define ITaskbarList4_ThumbBarSetImageList( x, p1, p2 ) \
+        (x)->lpVtbl->ThumbBarSetImageList( x, p1, p2 )
+    #define ITaskbarList4_SetOverlayIcon( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetOverlayIcon( x, p1, p2, p3 )
+    #define ITaskbarList4_SetThumbnailTooltip( x, p1, p2 ) \
+        (x)->lpVtbl->SetThumbnailTooltip( x, p1, p2 )
+    #define ITaskbarList4_SetThumbnailClip( x, p1, p2 ) \
+        (x)->lpVtbl->SetThumbnailClip( x, p1, p2 )
+    #define ITaskbarList4_SetTabProperties( x, p1, p2 ) \
+        (x)->lpVtbl->SetTabProperties( x, p1, p2 )
     #define IStartMenuPinnedList_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IStartMenuPinnedList_AddRef( x ) \
@@ -7287,16 +8359,6 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
             (x)->lpVtbl->GetMilliseconds( x, p1, p2 )
         #define IOperationsProgressDialog_GetOperationStatus( x, p ) \
             (x)->lpVtbl->GetOperationStatus( x, p )
-        #define IOperationsUpdateProgress_QueryInterface( x, p1, p2 ) \
-            (x)->lpVtbl->QueryInterface( x, p1, p2 )
-        #define IOperationsUpdateProgress_AddRef( x ) \
-            (x)->lpVtbl->AddRef( x )
-        #define IOperationsUpdateProgress_Release( x ) \
-            (x)->lpVtbl->Release( x )
-        #define IOperationsUpdateProgress_AddTreeDone( x, p1, p2, p3, p4 ) \
-            (x)->lpVtbl->AddTreeDone( x, p1, p2, p3, p4 )
-        #define IOperationsUpdateProgress_AddTreeTotal( x, p1, p2, p3, p4 ) \
-            (x)->lpVtbl->AddTreeTotal( x, p1, p2, p3, p4 )
         #define IIOCancelInformation_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
         #define IIOCancelInformation_AddRef( x ) \
@@ -7867,6 +8929,60 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
             (x)->lpVtbl->OnCheckButtonToggled( x, p1, p2, p3 )
         #define IFileDialogControlEvents_OnControlActivating( x, p1, p2 ) \
             (x)->lpVtbl->OnControlActivating( x, p1, p2 )
+        #define IFileDialog2_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IFileDialog2_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IFileDialog2_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IFileDialog2_Show( x, p ) \
+            (x)->lpVtbl->Show( x, p )
+        #define IFileDialog2_SetFileTypes( x, p1, p2 ) \
+            (x)->lpVtbl->SetFileTypes( x, p1, p2 )
+        #define IFileDialog2_SetFileTypeIndex( x, p ) \
+            (x)->lpVtbl->SetFileTypeIndex( x, p )
+        #define IFileDialog2_GetFileTypeIndex( x, p ) \
+            (x)->lpVtbl->GetFileTypeIndex( x, p )
+        #define IFileDialog2_Advise( x, p1, p2 ) \
+            (x)->lpVtbl->Advise( x, p1, p2 )
+        #define IFileDialog2_Unadvise( x, p ) \
+            (x)->lpVtbl->Unadvise( x, p )
+        #define IFileDialog2_SetOptions( x, p ) \
+            (x)->lpVtbl->SetOptions( x, p )
+        #define IFileDialog2_GetOptions( x, p ) \
+            (x)->lpVtbl->GetOptions( x, p )
+        #define IFileDialog2_SetDefaultFolder( x, p ) \
+            (x)->lpVtbl->SetDefaultFolder( x, p )
+        #define IFileDialog2_SetFolder( x, p ) \
+            (x)->lpVtbl->SetFolder( x, p )
+        #define IFileDialog2_GetFolder( x, p ) \
+            (x)->lpVtbl->GetFolder( x, p )
+        #define IFileDialog2_GetCurrentSelection( x, p ) \
+            (x)->lpVtbl->GetCurrentSelection( x, p )
+        #define IFileDialog2_SetFileName( x, p ) \
+            (x)->lpVtbl->SetFileName( x, p )
+        #define IFileDialog2_GetFileName( x, p ) \
+            (x)->lpVtbl->GetFileName( x, p )
+        #define IFileDialog2_SetTitle( x, p ) \
+            (x)->lpVtbl->SetTitle( x, p )
+        #define IFileDialog2_SetOkButtonLabel( x, p ) \
+            (x)->lpVtbl->SetOkButtonLabel( x, p )
+        #define IFileDialog2_SetFileNameLabel( x, p ) \
+            (x)->lpVtbl->SetFileNameLabel( x, p )
+        #define IFileDialog2_GetResult( x, p ) \
+            (x)->lpVtbl->GetResult( x, p )
+        #define IFileDialog2_AddPlace( x, p1, p2 ) \
+            (x)->lpVtbl->AddPlace( x, p1, p2 )
+        #define IFileDialog2_SetDefaultExtension( x, p ) \
+            (x)->lpVtbl->SetDefaultExtension( x, p )
+        #define IFileDialog2_Close( x, p ) \
+            (x)->lpVtbl->Close( x, p )
+        #define IFileDialog2_SetClientGuid( x, p ) \
+            (x)->lpVtbl->SetClientGuid( x, p )
+        #define IFileDialog2_ClearClientData( x ) \
+            (x)->lpVtbl->ClearClientData( x )
+        #define IFileDialog2_SetFilter( x, p ) \
+            (x)->lpVtbl->SetFilter( x, p )
         #define IApplicationAssociationRegistration_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
         #define IApplicationAssociationRegistration_AddRef( x ) \
@@ -8074,7 +9190,7 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->Release( x )
     #define IPreviousVersionsInfo_AreSnapshotsAvailable( x, p1, p2, p3 ) \
         (x)->lpVtbl->AreSnapshotsAvailable( x, p1, p2, p3 )
-    #if (_WIN32_IE >= 0x0700)
+    #if (NTDDI_VERSION >= 0x06000000)
         #define IRelatedItem_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
         #define IRelatedItem_AddRef( x ) \
@@ -8094,6 +9210,16 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         #define IIdentityName_GetItemIDList( x, p ) \
             (x)->lpVtbl->GetItemIDList( x, p )
         #define IIdentityName_GetItem( x, p ) \
+            (x)->lpVtbl->GetItem( x, p )
+        #define IDelegateItem_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IDelegateItem_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IDelegateItem_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IDelegateItem_GetItemIDList( x, p ) \
+            (x)->lpVtbl->GetItemIDList( x, p )
+        #define IDelegateItem_GetItem( x, p ) \
             (x)->lpVtbl->GetItem( x, p )
         #define ICurrentItem_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
@@ -8135,6 +9261,26 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
             (x)->lpVtbl->GetItemIDList( x, p )
         #define IDisplayItem_GetItem( x, p ) \
             (x)->lpVtbl->GetItem( x, p )
+        #define IViewStateIdentityItem_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IViewStateIdentityItem_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IViewStateIdentityItem_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IViewStateIdentityItem_GetItemIDList( x, p ) \
+            (x)->lpVtbl->GetItemIDList( x, p )
+        #define IViewStateIdentityItem_GetItem( x, p ) \
+            (x)->lpVtbl->GetItem( x, p )
+        #define IPreviewItem_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IPreviewItem_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IPreviewItem_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IPreviewItem_GetItemIDList( x, p ) \
+            (x)->lpVtbl->GetItemIDList( x, p )
+        #define IPreviewItem_GetItem( x, p ) \
+            (x)->lpVtbl->GetItem( x, p )
     #endif
     #define IDestinationStreamFactory_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
@@ -8144,7 +9290,25 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->Release( x )
     #define IDestinationStreamFactory_GetDestinationStream( x, p ) \
         (x)->lpVtbl->GetDestinationStream( x, p )
+    #define INewMenuClient_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define INewMenuClient_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define INewMenuClient_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define INewMenuClient_IncludeItems( x, p ) \
+        (x)->lpVtbl->IncludeItems( x, p )
+    #define INewMenuClient_SelectAndEditItem( x, p1, p2 ) \
+        (x)->lpVtbl->SelectAndEditItem( x, p1, p2 )
     #if (_WIN32_IE >= 0x0700)
+        #define IInitializeWithBindCtx_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IInitializeWithBindCtx_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IInitializeWithBindCtx_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IInitializeWithBindCtx_Initialize( x, p ) \
+            (x)->lpVtbl->Initialize( x, p )
         #define IShellItemFilter_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
         #define IShellItemFilter_AddRef( x ) \
@@ -8200,6 +9364,58 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->GetItemRect( x, p1, p2 )
     #define INameSpaceTreeControl_CollapseAll( x ) \
         (x)->lpVtbl->CollapseAll( x )
+    #define INameSpaceTreeControl2_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define INameSpaceTreeControl2_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define INameSpaceTreeControl2_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define INameSpaceTreeControl2_Initialize( x, p1, p2, p3 ) \
+        (x)->lpVtbl->Initialize( x, p1, p2, p3 )
+    #define INameSpaceTreeControl2_TreeAdvise( x, p1, p2 ) \
+        (x)->lpVtbl->TreeAdvise( x, p1, p2 )
+    #define INameSpaceTreeControl2_TreeUnadvise( x, p ) \
+        (x)->lpVtbl->TreeUnadvise( x, p )
+    #define INameSpaceTreeControl2_AppendRoot( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->AppendRoot( x, p1, p2, p3, p4 )
+    #define INameSpaceTreeControl2_InsertRoot( x, p1, p2, p3, p4, p5 ) \
+        (x)->lpVtbl->InsertRoot( x, p1, p2, p3, p4, p5 )
+    #define INameSpaceTreeControl2_RemoveRoot( x, p ) \
+        (x)->lpVtbl->RemoveRoot( x, p )
+    #define INameSpaceTreeControl2_RemoveAllRoots( x ) \
+        (x)->lpVtbl->RemoveAllRoots( x )
+    #define INameSpaceTreeControl2_GetRootItems( x, p ) \
+        (x)->lpVtbl->GetRootItems( x, p )
+    #define INameSpaceTreeControl2_SetItemState( x, p1, p2, p3 ) \
+        (x)->lpVtbl->SetItemState( x, p1, p2, p3 )
+    #define INameSpaceTreeControl2_GetItemState( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetItemState( x, p1, p2, p3 )
+    #define INameSpaceTreeControl2_GetSelectedItems( x, p ) \
+        (x)->lpVtbl->GetSelectedItems( x, p )
+    #define INameSpaceTreeControl2_GetItemCustomState( x, p1, p2 ) \
+        (x)->lpVtbl->GetItemCustomState( x, p1, p2 )
+    #define INameSpaceTreeControl2_SetItemCustomState( x, p1, p2 ) \
+        (x)->lpVtbl->SetItemCustomState( x, p1, p2 )
+    #define INameSpaceTreeControl2_EnsureItemVisible( x, p ) \
+        (x)->lpVtbl->EnsureItemVisible( x, p )
+    #define INameSpaceTreeControl2_SetTheme( x, p ) \
+        (x)->lpVtbl->SetTheme( x, p )
+    #define INameSpaceTreeControl2_GetNextItem( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetNextItem( x, p1, p2, p3 )
+    #define INameSpaceTreeControl2_HitTest( x, p1, p2 ) \
+        (x)->lpVtbl->HitTest( x, p1, p2 )
+    #define INameSpaceTreeControl2_GetItemRect( x, p1, p2 ) \
+        (x)->lpVtbl->GetItemRect( x, p1, p2 )
+    #define INameSpaceTreeControl2_CollapseAll( x ) \
+        (x)->lpVtbl->CollapseAll( x )
+    #define INameSpaceTreeControl2_SetControlStyle( x, p1, p2 ) \
+        (x)->lpVtbl->SetControlStyle( x, p1, p2 )
+    #define INameSpaceTreeControl2_GetControlStyle( x, p1, p2 ) \
+        (x)->lpVtbl->GetControlStyle( x, p1, p2 )
+    #define INameSpaceTreeControl2_SetControlStyle2( x, p1, p2 ) \
+        (x)->lpVtbl->SetControlStyle2( x, p1, p2 )
+    #define INameSpaceTreeControl2_GetControlStyle2( x, p1, p2 ) \
+        (x)->lpVtbl->GetControlStyle2( x, p1, p2 )
     #define INameSpaceTreeControlEvents_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define INameSpaceTreeControlEvents_AddRef( x ) \
@@ -8286,6 +9502,16 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->ItemPrePaint( x, p1, p2, p3, p4, p5, p6 )
     #define INameSpaceTreeControlCustomDraw_ItemPostPaint( x, p1, p2, p3 ) \
         (x)->lpVtbl->ItemPostPaint( x, p1, p2, p3 )
+    #if (NTDDI_VERSION >= 0x06000000)
+        #define INameSpaceTreeControlFolderCapabilities_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define INameSpaceTreeControlFolderCapabilities_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define INameSpaceTreeControlFolderCapabilities_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define INameSpaceTreeControlFolderCapabilities_GetFolderCapabilities( x, p1, p2 ) \
+            (x)->lpVtbl->GetFolderCapabilities( x, p1, p2 )
+    #endif
     #define IPreviewHandler_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPreviewHandler_AddRef( x ) \
@@ -8400,6 +9626,22 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->GetFlags( x, p )
     #define IExplorerCommand_EnumSubCommands( x, p ) \
         (x)->lpVtbl->EnumSubCommands( x, p )
+    #define IExplorerCommandState_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IExplorerCommandState_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IExplorerCommandState_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IExplorerCommandState_GetState( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetState( x, p1, p2, p3 )
+    #define IInitializeCommand_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IInitializeCommand_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IInitializeCommand_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IInitializeCommand_Initialize( x, p1, p2 ) \
+        (x)->lpVtbl->Initialize( x, p1, p2 )
     #define IEnumExplorerCommand_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IEnumExplorerCommand_AddRef( x ) \
@@ -8582,6 +9824,156 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
         (x)->lpVtbl->SetJunctionCLSID( x, p )
     #define IFileSystemBindData2_GetJunctionCLSID( x, p ) \
         (x)->lpVtbl->GetJunctionCLSID( x, p )
+    #if (NTDDI_VERSION >= 0x06010000)
+        #define ICustomDestinationList_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define ICustomDestinationList_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define ICustomDestinationList_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define ICustomDestinationList_SetAppID( x, p ) \
+            (x)->lpVtbl->SetAppID( x, p )
+        #define ICustomDestinationList_BeginList( x, p1, p2, p3 ) \
+            (x)->lpVtbl->BeginList( x, p1, p2, p3 )
+        #define ICustomDestinationList_AppendCategory( x, p1, p2 ) \
+            (x)->lpVtbl->AppendCategory( x, p1, p2 )
+        #define ICustomDestinationList_AppendKnownCategory( x, p ) \
+            (x)->lpVtbl->AppendKnownCategory( x, p )
+        #define ICustomDestinationList_AddUserTasks( x, p ) \
+            (x)->lpVtbl->AddUserTasks( x, p )
+        #define ICustomDestinationList_CommitList( x ) \
+            (x)->lpVtbl->CommitList( x )
+        #define ICustomDestinationList_GetRemovedDestinations( x, p1, p2 ) \
+            (x)->lpVtbl->GetRemovedDestinations( x, p1, p2 )
+        #define ICustomDestinationList_DeleteList( x, p ) \
+            (x)->lpVtbl->DeleteList( x, p )
+        #define ICustomDestinationList_AbortList( x ) \
+            (x)->lpVtbl->AbortList( x )
+        #define IApplicationDestinations_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IApplicationDestinations_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IApplicationDestinations_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IApplicationDestinations_SetAppID( x, p ) \
+            (x)->lpVtbl->SetAppID( x, p )
+        #define IApplicationDestinations_RemoveDestination( x, p ) \
+            (x)->lpVtbl->RemoveDestination( x, p )
+        #define IApplicationDestinations_RemoveAllDestinations( x ) \
+            (x)->lpVtbl->RemoveAllDestinations( x )
+        #define IApplicationDocumentLists_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IApplicationDocumentLists_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IApplicationDocumentLists_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IApplicationDocumentLists_SetAppID( x, p ) \
+            (x)->lpVtbl->SetAppID( x, p )
+        #define IApplicationDocumentLists_GetList( x, p1, p2, p3, p4 ) \
+            (x)->lpVtbl->GetList( x, p1, p2, p3, p4 )
+        #define IObjectWithAppUserModelID_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IObjectWithAppUserModelID_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IObjectWithAppUserModelID_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IObjectWithAppUserModelID_SetAppID( x, p ) \
+            (x)->lpVtbl->SetAppID( x, p )
+        #define IObjectWithAppUserModelID_GetAppID( x, p ) \
+            (x)->lpVtbl->GetAppID( x, p )
+        #define IObjectWithProgID_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IObjectWithProgID_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IObjectWithProgID_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IObjectWithProgID_SetProgID( x, p ) \
+            (x)->lpVtbl->SetProgID( x, p )
+        #define IObjectWithProgID_GetProgID( x, p ) \
+            (x)->lpVtbl->GetProgID( x, p )
+        #define IUpdateIDList_QueryInterface( x, p1, p2 ) \
+            (x)->lpVtbl->QueryInterface( x, p1, p2 )
+        #define IUpdateIDList_AddRef( x ) \
+            (x)->lpVtbl->AddRef( x )
+        #define IUpdateIDList_Release( x ) \
+            (x)->lpVtbl->Release( x )
+        #define IUpdateIDList_Update( x, p1, p2, p3 ) \
+            (x)->lpVtbl->Update( x, p1, p2, p3 )
+    #endif
+    #define IDesktopGadget_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IDesktopGadget_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IDesktopGadget_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IDesktopGadget_RunGadget( x, p ) \
+        (x)->lpVtbl->RunGadget( x, p )
+    #define IHomeGroup_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IHomeGroup_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IHomeGroup_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IHomeGroup_IsMember( x, p ) \
+        (x)->lpVtbl->IsMember( x, p )
+    #define IHomeGroup_ShowSharingWizard( x, p1, p2 ) \
+        (x)->lpVtbl->ShowSharingWizard( x, p1, p2 )
+    #define IInitializeWithPropertyStore_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IInitializeWithPropertyStore_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IInitializeWithPropertyStore_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IInitializeWithPropertyStore_Initialize( x, p ) \
+        (x)->lpVtbl->Initialize( x, p )
+    #define IOpenSearchSource_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IOpenSearchSource_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IOpenSearchSource_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IOpenSearchSource_GetResults( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->GetResults( x, p1, p2, p3, p4, p5, p6 )
+    #define IShellLibrary_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IShellLibrary_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IShellLibrary_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IShellLibrary_LoadLibraryFromItem( x, p1, p2 ) \
+        (x)->lpVtbl->LoadLibraryFromItem( x, p1, p2 )
+    #define IShellLibrary_LoadLibraryFromKnownFolder( x, p1, p2 ) \
+        (x)->lpVtbl->LoadLibraryFromKnownFolder( x, p1, p2 )
+    #define IShellLibrary_AddFolder( x, p ) \
+        (x)->lpVtbl->AddFolder( x, p )
+    #define IShellLibrary_RemoveFolder( x, p ) \
+        (x)->lpVtbl->RemoveFolder( x, p )
+    #define IShellLibrary_GetFolders( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetFolders( x, p1, p2, p3 )
+    #define IShellLibrary_ResolveFolder( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->ResolveFolder( x, p1, p2, p3, p4 )
+    #define IShellLibrary_GetDefaultSaveFolder( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetDefaultSaveFolder( x, p1, p2, p3 )
+    #define IShellLibrary_SetDefaultSaveFolder( x, p1, p2 ) \
+        (x)->lpVtbl->SetDefaultSaveFolder( x, p1, p2 )
+    #define IShellLibrary_GetOptions( x, p ) \
+        (x)->lpVtbl->GetOptions( x, p )
+    #define IShellLibrary_SetOptions( x, p1, p2 ) \
+        (x)->lpVtbl->SetOptions( x, p1, p2 )
+    #define IShellLibrary_GetFolderType( x, p ) \
+        (x)->lpVtbl->GetFolderType( x, p )
+    #define IShellLibrary_SetFolderType( x, p ) \
+        (x)->lpVtbl->SetFolderType( x, p )
+    #define IShellLibrary_GetIcon( x, p ) \
+        (x)->lpVtbl->GetIcon( x, p )
+    #define IShellLibrary_SetIcon( x, p ) \
+        (x)->lpVtbl->SetIcon( x, p )
+    #define IShellLibrary_Commit( x ) \
+        (x)->lpVtbl->Commit( x )
+    #define IShellLibrary_Save( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->Save( x, p1, p2, p3, p4 )
+    #define IShellLibrary_SaveInKnownFolder( x, p1, p2, p3, p4 ) \
+        (x)->lpVtbl->SaveInKnownFolder( x, p1, p2, p3, p4 )
     #if (NTDDI_VERSION >= 0x06000000)
         #define IAssocHandlerInvoker_QueryInterface( x, p1, p2 ) \
             (x)->lpVtbl->QueryInterface( x, p1, p2 )
@@ -8626,6 +10018,7 @@ DECLARE_INTERFACE_( IEnumAssocHandlers, IUnknown ) {
 
 /* Functions in SHELL32.DLL */
 SHSTDAPI    SHCreateDefaultExtractIcon( REFIID, void ** );
+SHSTDAPI_( PIDLIST_ABSOLUTE )   SHSimpleIDListFromPath( LPCWSTR );
 #if (_WIN32_IE >= 0x0700)
 SHSTDAPI    SHAddDefaultPropertiesByExt( PCWSTR, IPropertyStore * );
 SHSTDAPI    SHCreateDefaultPropertiesOp( IShellItem *, IFileOperation ** );
@@ -8644,11 +10037,22 @@ SHSTDAPI    SHAssocEnumHandlers( LPCWSTR, ASSOC_FILTER, IEnumAssocHandlers ** );
 SHSTDAPI    SHCreateAssociationRegistration( REFIID, void ** );
 SHSTDAPI    SHCreateItemInKnownFolder( REFKNOWNFOLDERID, DWORD, PCWSTR, REFIID, void ** );
 SHSTDAPI    SHGetIDListFromObject( IUnknown *, PIDLIST_ABSOLUTE * );
+SHSTDAPI    SHGetItemFromObject( IUnknown *, REFIID, void ** );
 SHSTDAPI    SHGetNameFromIDList( PCIDLIST_ABSOLUTE, SIGDN, PWSTR * );
 SHSTDAPI    SHGetPropertyStoreFromIDList( PCIDLIST_ABSOLUTE, GETPROPERTYSTOREFLAGS, REFIID, void ** );
 SHSTDAPI    SHGetPropertyStoreFromParsingName( PCWSTR, IBindCtx *, GETPROPERTYSTOREFLAGS, REFIID, void ** );
 SHSTDAPI    SHGetTemporaryPropertyForItem( IShellItem *, REFPROPERTYKEY, PROPVARIANT * );
 SHSTDAPI    SHSetTemporaryPropertyForItem( IShellItem *, REFPROPERTYKEY, REFPROPVARIANT );
+#endif
+#if (NTDDI_VERSION >= 0x06010000)
+SHSTDAPI    GetCurrentProcessExplicitAppUserModelID( PWSTR * );
+SHSTDAPI    SHAssocEnumHandlersForProtocolByApplication( PCWSTR, REFIID, void ** );
+SHSTDAPI    SHGetItemFromDataObject( IDataObject *, DATAOBJ_GET_ITEM_FLAGS, REFIID, void ** );
+SHSTDAPI    SetCurrentProcessExplicitAppUserModelID( PCWSTR );
+#endif
+#if (NTDDI_VERSION >= 0x06010000) && (_WIN32_IE >= 0x0700)
+SHSTDAPI    SHShowManageLibraryUI( IShellItem *, HWND, LPCWSTR, LPCWSTR, LIBRARYMANAGEDIALOGOPTIONS );
+SHSTDAPI    SHResolveLibrary( IShellItem * );
 #endif
 
 #if (NTDDI_VERSION >= 0x06000000)
