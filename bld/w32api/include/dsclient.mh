@@ -11,6 +11,7 @@
 
 /* Directory Service provider flags */
 #define DSPROVIDER_ADVANCED 0x00000010L
+#define DSPROVIDER_AD_LDS   0x00000020L
 
 /* Directory Service clipboard format strings */
 #define CFSTR_DSOBJECTNAMES             TEXT( "DsObjectNames" )
