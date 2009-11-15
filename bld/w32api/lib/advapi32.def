@@ -176,6 +176,7 @@ EventProviderEnabled@20
 EventRegister@16
 EventUnregister@8
 EventWrite@20
+EventWriteEx@40
 EventWriteString@24
 EventWriteTransfer@28
 FileEncryptionStatusA@8
