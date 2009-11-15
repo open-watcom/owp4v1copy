@@ -1,51 +1,36 @@
-[ BLOCK <BUILD_PLATFORM> dos386 ]
-#================================
-    cdsay <PROJDIR>/cwc/dos386
-    wmake -h
-    <CPCMD> bcwc.exe <OWBINDIR>/
+# Causeway Prerequisite Tool Build Control File
+# =============================================
+
+set PROJDIR=<CWD>
+
+[ INCLUDE <OWROOT>/bat/master.ctl ]
+[ LOG <LOGFNAME>.<LOGEXT> ]
+
+cdsay .
+
+[ BLOCK <1> clean ]
+#==================
+    echo rm -f -r <PROJDIR>/cwc/<PREOBJDIR>
+    rm -f -r <PROJDIR>/cwc/<PREOBJDIR>
+    echo rm -f -r <PROJDIR>/cw32/<PREOBJDIR>
+    rm -f -r <PROJDIR>/cw32/<PREOBJDIR>
+    rm -f <OWBINDIR>/bcwc<CMDEXT>
+    rm -f <OWBINDIR>/cwstub.exe
+
+
+[ BLOCK <1> build ]
+#==================
+    mkdir <PROJDIR>/cwc/<PREOBJDIR>
+    cdsay <PROJDIR>/cwc/<PREOBJDIR>
+    wmake -h -f ../<BUILD_PLATFORM>/makefile
+    <CPCMD> bcwc.exe <OWBINDIR>/bcwc<CMDEXT>
+    mkdir <PROJDIR>/cw32/<PREOBJDIR>
+    cdsay <PROJDIR>/cw32/<PREOBJDIR>
+    wmake -h -f ../dosi86/makefile
+    <CPCMD> cwstub.exe <OWBINDIR>/cwstub.exe
     cdsay <PROJDIR>
 
-[ BLOCK <BUILD_PLATFORM> os2386 ]
-#================================
-    cdsay <PROJDIR>/cwc/os2386
-    wmake -h
-    <CPCMD> bcwc.exe <OWBINDIR>/
-    cdsay <PROJDIR>
+[ BLOCK . . ]
+#============
 
-[ BLOCK <BUILD_PLATFORM> nt386 ]
-#===============================
-    cdsay <PROJDIR>/cwc/nt386
-    wmake -h
-    <CPCMD> bcwc.exe <OWBINDIR>/
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> linux386 ]
-#==================================
-    cdsay <PROJDIR>/cwc/linux386
-    wmake -h
-    <CPCMD> bcwc.exe <OWBINDIR>/bcwc
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> dos386clean ]
-#=====================================
-    cdsay <PROJDIR>/cwc/dos386
-    wmake -h clean
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> os2386clean ]
-#=====================================
-    cdsay <PROJDIR>/cwc/os2386
-    wmake -h clean
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> nt386clean ]
-#====================================
-    cdsay <PROJDIR>/cwc/nt386
-    wmake -h clean
-    cdsay <PROJDIR>
-
-[ BLOCK <BUILD_PLATFORM> linux386clean ]
-#=======================================
-    cdsay <PROJDIR>/cwc/linux386
-    wmake -h clean
-    cdsay <PROJDIR>
+cdsay <PROJDIR>

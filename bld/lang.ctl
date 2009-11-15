@@ -21,6 +21,8 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
 [ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/cc/wcl/prereq.ctl ]
+[ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
+[ INCLUDE <DEVDIR>/causeway/prereq.ctl ]
 [ INCLUDE <DEVDIR>/w32loadr/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/re2c/prereq.ctl ]
@@ -41,9 +43,6 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 #        Prebuild parsedlg tool for build process
 [ INCLUDE <DEVDIR>/parsedlg/prereq.ctl ]
-#
-#        Prebuild newest WASM version for build process
-[ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
 #
 #        Before building anything for real, create up-to-date header files
 #
@@ -105,7 +104,7 @@ echo Bootstrapping compiler using GNU tools...
 #
 #        Starting with the code generators
 #
-#        WOMP must be done before WASM and F77, now it is not necessary
+#        WOMP must be done before F77, now it is not necessary
 #[ INCLUDE <DEVDIR>/womp/lang.ctl ]
 #        WASM must be done early so that inline assembler users are uptodate
 #        (no longer necessary, can be anywhere)
