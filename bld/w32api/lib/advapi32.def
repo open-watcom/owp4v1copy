@@ -156,6 +156,7 @@ DuplicateToken@12
 DuplicateTokenEx@24
 EnableTrace@24
 EnableTraceEx@48
+EnableTraceEx2@44
 EncryptFileA@4
 EncryptFileW@4
 EncryptionDisable@8
@@ -497,6 +498,7 @@ TraceEvent@12
 TraceEventInstance@20
 TraceMessage
 TraceMessageVa@24
+TraceSetInformation@20
 TreeResetNamedSecurityInfoA@44
 TreeResetNamedSecurityInfoW@44
 TreeSetNamedSecurityInfoA@44

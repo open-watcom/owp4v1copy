@@ -105,6 +105,12 @@ typedef ULONG64 *PTRACEHANDLE;
 #define EVENT_TRACE_TYPE_REGKCBRUNDOWNEND       0x19
 #define EVENT_TRACE_TYPE_REGVIRTUALIZE          0x1A
 #define EVENT_TRACE_TYPE_REGCLOSE               0x1B
+#define EVENT_TRACE_TYPE_REGSETSECURITY         0x1C
+#define EVENT_TRACE_TYPE_REGQUERYSECURITY       0x1D
+#define EVENT_TRACE_TYPE_REGCOMMIT              0x1E
+#define EVENT_TRACE_TYPE_REGPREPARE             0x1F
+#define EVENT_TRACE_TYPE_REGROLLBACK            0x20
+#define EVENT_TRACE_TYPE_REGMOUNTHIVE           0x21
 #define EVENT_TRACE_TYPE_CONFIG_CPU             0x0A
 #define EVENT_TRACE_TYPE_CONFIG_PHYSICALDISK    0x0B
 #define EVENT_TRACE_TYPE_CONFIG_LOGICALDISK     0x0C
@@ -116,6 +122,7 @@ typedef ULONG64 *PTRACEHANDLE;
 #define EVENT_TRACE_TYPE_CONFIG_IRQ             0x15
 #define EVENT_TRACE_TYPE_CONFIG_PNP             0x16
 #define EVENT_TRACE_TYPE_CONFIG_IDECHANNEL      0x17
+#define EVENT_TRACE_TYPE_CONFIG_PLATFORM        0x19
 
 /* Trace levels */
 #define TRACE_LEVEL_NONE        0
@@ -138,8 +145,10 @@ typedef ULONG64 *PTRACEHANDLE;
 #define EVENT_TRACE_FLAG_DISK_IO            0x00000100L
 #define EVENT_TRACE_FLAG_DISK_FILE_IO       0x00000200L
 #define EVENT_TRACE_FLAG_DISK_IO_INIT       0x00000400L
+#define EVENT_TRACE_FLAG_DISPATCHER         0x00000800L
 #define EVENT_TRACE_FLAG_MEMORY_PAGE_FAULTS 0x00001000L
 #define EVENT_TRACE_FLAG_MEMORY_HARD_FAULTS 0x00002000L
+#define EVENT_TRACE_FLAG_VIRTUAL_ALLOC      0x00004000L
 #define EVENT_TRACE_FLAG_NETWORK_TCPIP      0x00010000L
 #define EVENT_TRACE_FLAG_REGISTRY           0x00020000L
 #define EVENT_TRACE_FLAG_DBGPRINT           0x00040000L
@@ -154,25 +163,26 @@ typedef ULONG64 *PTRACEHANDLE;
 #define EVENT_TRACE_FLAG_EXTENSION          0x80000000L
 
 /* Event trace file modes */
-#define EVENT_TRACE_FILE_MODE_NONE          0x00000000L
-#define EVENT_TRACE_FILE_MODE_SEQUENTIAL    0x00000001L
-#define EVENT_TRACE_FILE_MODE_CIRCULAR      0x00000002L
-#define EVENT_TRACE_FILE_MODE_APPEND        0x00000004L
-#define EVENT_TRACE_FILE_MODE_NEWFILE       0x00000008L
-#define EVENT_TRACE_FILE_MODE_PREALLOCATE   0x00000020L
-#define EVENT_TRACE_NONSTOPPABLE_MODE       0x00000040L
-#define EVENT_TRACE_SECURE_MODE             0x00000080L
-#define EVENT_TRACE_REAL_TIME_MODE          0x00000100L
-#define EVENT_TRACE_DELAY_OPEN_FILE_MODE    0x00000200L
-#define EVENT_TRACE_BUFFERING_MODE          0x00000400L
-#define EVENT_TRACE_PRIVATE_LOGGER_MODE     0x00000800L
-#define EVENT_TRACE_ADD_HEADER_MODE         0x00001000L
-#define EVENT_TRACE_USE_KBYTES_FOR_SIZE     0x00002000L
-#define EVENT_TRACE_USE_GLOBAL_SEQUENCE     0x00004000L
-#define EVENT_TRACE_USE_LOCAL_SEQUENCE      0x00008000L
-#define EVENT_TRACE_RELOG_MODE              0x00010000L
-#define EVENT_TRACE_PRIVATE_IN_PROC         0x00020000L
-#define EVENT_TRACE_USE_PAGED_MEMORY        0x01000000L
+#define EVENT_TRACE_FILE_MODE_NONE              0x00000000L
+#define EVENT_TRACE_FILE_MODE_SEQUENTIAL        0x00000001L
+#define EVENT_TRACE_FILE_MODE_CIRCULAR          0x00000002L
+#define EVENT_TRACE_FILE_MODE_APPEND            0x00000004L
+#define EVENT_TRACE_FILE_MODE_NEWFILE           0x00000008L
+#define EVENT_TRACE_FILE_MODE_PREALLOCATE       0x00000020L
+#define EVENT_TRACE_NONSTOPPABLE_MODE           0x00000040L
+#define EVENT_TRACE_SECURE_MODE                 0x00000080L
+#define EVENT_TRACE_REAL_TIME_MODE              0x00000100L
+#define EVENT_TRACE_DELAY_OPEN_FILE_MODE        0x00000200L
+#define EVENT_TRACE_BUFFERING_MODE              0x00000400L
+#define EVENT_TRACE_PRIVATE_LOGGER_MODE         0x00000800L
+#define EVENT_TRACE_ADD_HEADER_MODE             0x00001000L
+#define EVENT_TRACE_USE_KBYTES_FOR_SIZE         0x00002000L
+#define EVENT_TRACE_USE_GLOBAL_SEQUENCE         0x00004000L
+#define EVENT_TRACE_USE_LOCAL_SEQUENCE          0x00008000L
+#define EVENT_TRACE_RELOG_MODE                  0x00010000L
+#define EVENT_TRACE_PRIVATE_IN_PROC             0x00020000L
+#define EVENT_TRACE_USE_PAGED_MEMORY            0x01000000L
+#define EVENT_TRACE_NO_PER_PROCESSOR_BUFFERING  0x10000000L
 
 /* Event trace control codes */
 #define EVENT_TRACE_CONTROL_QUERY   0
@@ -247,8 +257,23 @@ typedef ULONG64 *PTRACEHANDLE;
 #define TRACE_PROVIDER_FLAG_LEGACY      0x00000001L
 #define TRACE_PROVIDER_FLAG_PRE_ENABLE  0x00000002L
 
+/* Event control codes */
+#define EVENT_CONTROL_CODE_DISABLE_PROVIDER 0
+#define EVENT_CONTROL_CODE_ENABLE_PROVIDER  1
+#define EVENT_CONTROL_CODE_CAPTURE_STATE    2
+
+/* Event trace parameters version number */
+#ifndef _WDMDDK_
+    #define EVENT_TRACE_PARAMETERS_VERSION  1L
+#endif
+
+/* Trace handle special value */
+#ifndef _WDMDDK_
+    #define INVALID_PROCESSTRACE_HANDLE ((TRACEHANDLE)INVALID_HANDLE_VALUE)
+#endif
+
 /* Opaque data types */
-#ifndef _WDM_
+#ifndef _WDMDDK_
 typedef struct _EVENT_FILTER_DESCRIPTOR EVENT_FILTER_DESCRIPTOR;
 typedef struct _EVENT_FILTER_DESCRIPTOR *PEVENT_FILTER_DESCRIPTOR;
 #endif
@@ -341,7 +366,7 @@ typedef MOF_FIELD   *PMOF_FIELD;
 
 /* Macro to define an MOF field */
 #define DEFINE_TRACE_MOF_FIELD( x, p1, p2, p3 ) \
-    (x)->DataPtr = (ULONG64)(p1); \
+    (x)->DataPtr = (ULONG64)(ULONG_PTR)(p1); \
     (x)->Length = (ULONG)(p2); \
     (x)->DataType = (ULONG)(p3);
 
@@ -384,6 +409,88 @@ typedef struct _TRACE_LOGFILE_HEADER {
     ULONG           BuffersLost;
 } TRACE_LOGFILE_HEADER;
 typedef TRACE_LOGFILE_HEADER    *PTRACE_LOGFILE_HEADER;
+#endif
+
+/* Trace log file header (32-bit version) */
+#ifndef _WDMDDK_
+typedef struct _TRACE_LOGFILE_HEADER32 {
+    ULONG           BufferSize;
+    union {
+        ULONG   Version;
+        struct {
+            UCHAR   MajorVersion;
+            UCHAR   MinorVersion;
+            UCHAR   SubVersion;
+            UCHAR   SubMinorVersion;
+        } VersionDetail;
+    };
+    ULONG           ProviderVersion;
+    ULONG           NumberOfProcessors;
+    LARGE_INTEGER   EndTime;
+    ULONG           TimerResolution;
+    ULONG           MaximumFileSize;
+    ULONG           LogFileMode;
+    ULONG           BuffersWritten;
+    union {
+        GUID    LogInstanceGuid;
+        struct {
+            ULONG   StartBuffers;
+            ULONG   PointerSize;
+            ULONG   EventsLost;
+            ULONG   CpuSpeedInMHz;
+        };
+    };
+    ULONG32         LoggerName;
+    ULONG32         LogFileName;
+    TIME_ZONE_INFORMATION   TimeZone;
+    LARGE_INTEGER   BootTime;
+    LARGE_INTEGER   PerfFreq;
+    LARGE_INTEGER   StartTime;
+    ULONG           ReservedFlags;
+    ULONG           BuffersLost;
+} TRACE_LOGFILE_HEADER32;
+typedef TRACE_LOGFILE_HEADER32  *PTRACE_LOGFILE_HEADER32;
+#endif
+
+/* Trace log file header (64-bit version) */
+#ifndef _WDMDDK_
+typedef struct _TRACE_LOGFILE_HEADER64 {
+    ULONG           BufferSize;
+    union {
+        ULONG   Version;
+        struct {
+            UCHAR   MajorVersion;
+            UCHAR   MinorVersion;
+            UCHAR   SubVersion;
+            UCHAR   SubMinorVersion;
+        } VersionDetail;
+    };
+    ULONG           ProviderVersion;
+    ULONG           NumberOfProcessors;
+    LARGE_INTEGER   EndTime;
+    ULONG           TimerResolution;
+    ULONG           MaximumFileSize;
+    ULONG           LogFileMode;
+    ULONG           BuffersWritten;
+    union {
+        GUID    LogInstanceGuid;
+        struct {
+            ULONG   StartBuffers;
+            ULONG   PointerSize;
+            ULONG   EventsLost;
+            ULONG   CpuSpeedInMHz;
+        };
+    };
+    ULONG64         LoggerName;
+    ULONG64         LogFileName;
+    TIME_ZONE_INFORMATION   TimeZone;
+    LARGE_INTEGER   BootTime;
+    LARGE_INTEGER   PerfFreq;
+    LARGE_INTEGER   StartTime;
+    ULONG           ReservedFlags;
+    ULONG           BuffersLost;
+} TRACE_LOGFILE_HEADER64;
+typedef TRACE_LOGFILE_HEADER64  *PTRACE_LOGFILE_HEADER64;
 #endif
 
 /* Event instance information */
@@ -561,13 +668,37 @@ typedef PEVENT_TRACE_LOGFILEA   PEVENT_TRACE_LOGFILE;
 #endif
 #endif
 
+/* EnableTraceEx2() parameters */
+#ifndef _WDMDDK_
+typedef struct _ENABLE_TRACE_PARAMETERS {
+    ULONG                   Version;
+    ULONG                   EnableProperty;
+    ULONG                   ControlFlags;
+    GUID                    SourceId;
+    PEVENT_FILTER_DESCRIPTOR    EnableFilterDesc;
+} ENABLE_TRACE_PARAMETERS;
+typedef ENABLE_TRACE_PARAMETERS *PENABLE_TRACE_PARAMETERS;
+#endif
+
 /* Trace query information classes */
 #ifndef _WDMDDK_
 typedef enum _TRACE_QUERY_INFO_CLASS {
     TraceGuidQueryList      = 0,
     TraceGuidQueryInfo      = 1,
-    TraceGuidQueryProcess   = 2
+    TraceGuidQueryProcess   = 2,
+    TraceStackTracingInfo   = 3,
+    MaxTraceSetInfoClass    = 4
 } TRACE_QUERY_INFO_CLASS;
+#endif
+
+/* Classic event identifier */
+#ifndef _WDMDDK_
+typedef struct _CLASSIC_EVENT_ID {
+    GUID    EventGuid;
+    UCHAR   Type;
+    UCHAR   Reserved[7];
+} CLASSIC_EVENT_ID;
+typedef CLASSIC_EVENT_ID    *PCLASSIC_EVENT_ID;
 #endif
 
 /* GUIDs */
@@ -603,8 +734,8 @@ EXTERN_C ULONG WMIAPI   StopTraceA( TRACEHANDLE, LPCSTR, PEVENT_TRACE_PROPERTIES
 EXTERN_C ULONG WMIAPI   StopTraceW( TRACEHANDLE, LPCWSTR, PEVENT_TRACE_PROPERTIES );
 EXTERN_C ULONG WMIAPI   TraceEvent( TRACEHANDLE, PEVENT_TRACE_HEADER );
 EXTERN_C ULONG WMIAPI   TraceEventInstance( TRACEHANDLE, PEVENT_INSTANCE_HEADER, PEVENT_INSTANCE_INFO, PEVENT_INSTANCE_INFO );
-EXTERN_C ULONG __cdecl  TraceMessage( TRACEHANDLE, ULONG, LPGUID, USHORT, ... );
-EXTERN_C ULONG WMIAPI   TraceMessageVa( TRACEHANDLE, ULONG, LPGUID, USHORT, va_list );
+EXTERN_C ULONG __cdecl  TraceMessage( TRACEHANDLE, ULONG, LPCGUID, USHORT, ... );
+EXTERN_C ULONG WMIAPI   TraceMessageVa( TRACEHANDLE, ULONG, LPCGUID, USHORT, va_list );
 EXTERN_C ULONG WMIAPI   UnregisterTraceGuids( TRACEHANDLE );
 EXTERN_C ULONG WMIAPI   UpdateTraceA( TRACEHANDLE, LPCSTR, PEVENT_TRACE_PROPERTIES );
 EXTERN_C ULONG WMIAPI   UpdateTraceW( TRACEHANDLE, LPCWSTR, PEVENT_TRACE_PROPERTIES );
@@ -616,6 +747,10 @@ EXTERN_C ULONG WMIAPI   FlushTraceW( TRACEHANDLE, LPCWSTR, PEVENT_TRACE_PROPERTI
 #if (WINVER >= 0x0600)
 EXTERN_C ULONG WMIAPI   EnableTraceEx( LPCGUID, LPCGUID, TRACEHANDLE, ULONG, UCHAR, ULONGLONG, ULONGLONG, ULONG, PEVENT_FILTER_DESCRIPTOR );
 EXTERN_C ULONG WMIAPI   EnumerateTraceGuidsEx( TRACE_QUERY_INFO_CLASS, PVOID, ULONG, PVOID, ULONG, PULONG );
+#endif
+#if (WINVER >= 0x0601)
+EXTERN_C ULONG WMIAPI   EnableTraceEx2( TRACEHANDLE, LPCGUID, ULONG, UCHAR, ULONGLONG, ULONGLONG, ULONG, PENABLE_TRACE_PARAMETERS );
+EXTERN_C ULONG WMIAPI   TraceSetInformation( TRACEHANDLE, TRACE_INFO_CLASS, PVOID, ULONG );
 #endif
 #endif
 
