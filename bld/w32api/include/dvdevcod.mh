@@ -39,6 +39,15 @@
 #define EC_DVD_DISC_INSERTED            (EC_DVDBASE + 25)
 #define EC_DVD_CURRENT_HMSF_TIME        (EC_DVDBASE + 26)
 #define EC_DVD_KARAOKE_MODE             (EC_DVDBASE + 27)
+#define EC_DVD_PROGRAM_CELL_CHANGE      (EC_DVDBASE + 28)
+#define EC_DVD_TITLE_SET_CHANGE         (EC_DVDBASE + 29)
+#define EC_DVD_PROGRAM_CHAIN_CHANGE     (EC_DVDBASE + 30)
+#define EC_DVD_VOBU_Offset              (EC_DVDBASE + 31)
+#define EC_DVD_VOBU_Timestamp           (EC_DVDBASE + 32)
+#define EC_DVD_GPRM_Change              (EC_DVDBASE + 33)
+#define EC_DVD_SPRM_Change              (EC_DVDBASE + 34)
+#define EC_DVD_BeginNavigationCommands  (EC_DVDBASE + 35)
+#define EC_DVD_NavigationCommand        (EC_DVDBASE + 36)
 
 /* DVD error codes */
 typedef enum _tagDVD_ERROR {
