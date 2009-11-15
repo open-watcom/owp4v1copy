@@ -200,16 +200,26 @@ typedef BOOL    *PAM_PROPERTY_COMPOSIT_ON;
 
 /* ActiveMovie DVD copy protection properties */
 typedef enum {
-    AM_PROPERTY_DVDCOPY_CHLG_KEY        = 0x01,
-    AM_PROPERTY_DVDCOPY_DVD_KEY1        = 0x02,
-    AM_PROPERTY_DVDCOPY_DEC_KEY2        = 0x03,
-    AM_PROPERTY_DVDCOPY_TITLE_KEY       = 0x04,
-    AM_PROPERTY_COPY_MACROVISION        = 0x05,
-    AM_PROPERTY_DVDCOPY_REGION          = 0x06,
-    AM_PROPERTY_DVDCOPY_SET_COPY_STATE  = 0x07,
-    AM_PROPERTY_COPY_ANALOG_COMPONENT   = 0x08,
-    AM_PROPERTY_DVDCOPY_DISC_KEY        = 0x80
+    AM_PROPERTY_DVDCOPY_CHLG_KEY                = 0x01,
+    AM_PROPERTY_DVDCOPY_DVD_KEY1                = 0x02,
+    AM_PROPERTY_DVDCOPY_DEC_KEY2                = 0x03,
+    AM_PROPERTY_DVDCOPY_TITLE_KEY               = 0x04,
+    AM_PROPERTY_COPY_MACROVISION                = 0x05,
+    AM_PROPERTY_DVDCOPY_REGION                  = 0x06,
+    AM_PROPERTY_DVDCOPY_SET_COPY_STATE          = 0x07,
+    AM_PROPERTY_COPY_ANALOG_COMPONENT           = 0x08,
+    AM_PROPERTY_COPY_DIGITAL_CP                 = 0x09,
+    AM_PROPERTY_COPY_DVD_SRM                    = 0x0A,
+    AM_PROPERTY_DVDCOPY_SUPPORTS_NEW_KEYCOUNT   = 0x0B,
+    AM_PROPERTY_DVDCOPY_DISC_KEY                = 0x80
 } AM_PROPERTY_DVDCOPYPROT;
+
+/* ActiveMovie digital copy protection */
+typedef enum _AM_DIGITAL_CP {
+    AM_DIGITAL_CP_OFF           = 0,
+    AM_DIGITAL_CP_ON            = 1,
+    AM_DIGITAL_CP_DVD_COMPLIANT = 2
+} AM_DIGITAL_CP;
 
 /* ActiveMovie DVD copy protection challenge key */
 typedef struct _AM_DVDCOPY_CHLGKEY {
@@ -275,7 +285,7 @@ typedef struct _DVD_REGION {
     UCHAR   CopySystem;
     UCHAR   RegionData;
     UCHAR   SystemRegion;
-    UCHAR   Reserved;
+    UCHAR   ResetCount;
 } DVD_REGION;
 typedef DVD_REGION  *PDVD_REGION;
 
