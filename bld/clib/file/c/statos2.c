@@ -66,12 +66,9 @@ static  unsigned short      at2mode(FF_UINT,char *);
  _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_stat) *buf )
 #endif
 {
-    FF_BUFFER           dir_buff;
     CHAR_TYPE const     *ptr;
-    HDIR                handle = 1;
     ULONG               drvmap;
     OS_UINT             drive;
-    OS_UINT             searchcount = 1;
     APIRET              rc;
     CHAR_TYPE           fullpath[_MAX_PATH];
     int                 isrootdir = 0;
@@ -121,6 +118,10 @@ static  unsigned short      at2mode(FF_UINT,char *);
 #endif
     } else {
         /* handle non-root directory */
+        FF_BUFFER   dir_buff;
+        HDIR        handle = HDIR_CREATE;
+        OS_UINT     searchcount = 1;
+
 #ifdef __WIDECHAR__
         char        mbPath[MB_CUR_MAX * _MAX_PATH];
         __filename_from_wide( mbPath, path );
@@ -148,7 +149,11 @@ static  unsigned short      at2mode(FF_UINT,char *);
                 return( -1 );
             }
             return( 0 );
-        } else if( rc != 0 || searchcount != 1 ) {
+        }
+        if( rc == 0 ) {
+            DosFindClose( handle );
+        }
+        if( rc != 0 || searchcount != 1 ) {
             __set_errno( ENOENT );
             return( -1 );
         }
