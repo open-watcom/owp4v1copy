@@ -149,6 +149,7 @@ $(docsrc_dir)$(SL)cmn$(SL)environ.gml &
 $(docsrc_dir)$(SL)cmn$(SL)envsetup.gml &
 $(docsrc_dir)$(SL)cmn$(SL)exe2bin.gml &
 $(docsrc_dir)$(SL)cmn$(SL)ftools.gml &
+$(docsrc_dir)$(SL)cmn$(SL)ide2make.gml &
 $(docsrc_dir)$(SL)cmn$(SL)owcc.gml &
 $(docsrc_dir)$(SL)cmn$(SL)owccopts.gml &
 $(docsrc_dir)$(SL)cmn$(SL)pcbugfrm.gml &

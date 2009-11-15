@@ -79,6 +79,18 @@ static char* usage[] = {
     "  -c cfgfile       - loads cfgfile instead of ide.cfg.",
     "  -d               - generate makefiles using development switch set.",
     "  -r               - generate makefiles using release switch set.",
+    "  -h host type     - generate makefiles for selected host.",
+    "                     (default is current host)",
+    "                     0 - Windows 3.x",
+    "                     1 - OS/2 PM",
+    "                     2 - Windows NT",
+    "                     3 - Win-OS/2",
+    "                     4 - Windows 95",
+    "                     5 - Japanese Windows 3.x on an IBM",
+    "                     6 - Japanese Windows 3.x on a Nec98",
+    "                     7 - Dec Alpha (Windows NT)",
+    "                     8 - DOS",
+    "                     9 - Linux",
     NULL
 };
 
@@ -104,6 +116,7 @@ WEXPORT VpeMain::VpeMain( int argc, char** argv )
     WStringList parms;
     char sMode = 0;
     bool debug = FALSE;
+    HostType host = HOST_UNDEFINED;
     int  i;
 
     for( i=1; i<argc; i++ ) {
@@ -123,6 +136,11 @@ WEXPORT VpeMain::VpeMain( int argc, char** argv )
             sMode = 'r';
         } else if( streq( argv[i], "-x" ) ) {
             debug = TRUE;
+        } else if( streq( argv[i], "-h" ) ) {
+            if( i+1 < argc ) {
+                i++;
+                host = (HostType)atoi( argv[i] );
+            }
         } else {
             parms.add( new WString( argv[i] ) );
         }
@@ -131,7 +149,7 @@ WEXPORT VpeMain::VpeMain( int argc, char** argv )
         pfile.setExt( ".wpj" );
     }
 
-    new MConfig( cfg, debug );
+    new MConfig( cfg, debug, host );
     WString err;
     if( !_config->ok() ) {
         printf( "ide2make: %s\n", (const char*)_config->errMsg() );

@@ -44,6 +44,28 @@ loads cfgfile instead of ide.cfg
 generate makefiles using development switch set
 .note r
 generate makefiles using release switch set
+.note h <number>
+generate makefiles for selected host OS (default is current host)
+.br
+0 - Windows 3.x
+.br
+1 - OS/2 PM
+.br
+2 - Windows NT
+.br
+3 - Win-OS/2
+.br
+4 - Windows 95
+.br
+5 - Japanese Windows 3.x on an IBM
+.br
+6 - Japanese Windows 3.x on a Nec98
+.br
+7 - Dec Alpha (Windows NT)
+.br
+8 - DOS
+.br
+9 - Linux
 .endnote
 .*
 .section &id2mkname Operation
