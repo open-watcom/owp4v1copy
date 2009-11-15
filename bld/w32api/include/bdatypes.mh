@@ -10,8 +10,14 @@
 :include readonly.sp
 :include cpluspro.sp
 
+/* PBDA result data type */
+typedef LONG    PBDARESULT;
+
 /* Minimum dimension */
 #define MIN_DIMENSION   1
+
+/* BDA physical layer pipe identifer special value */
+#define BDA_PLP_ID_NOT_SET  (-1)
 
 /* BDA template connection */
 typedef struct _BDA_TEMPLATE_CONNECTION {
@@ -144,6 +150,22 @@ typedef struct _BDA_TABLE_SECTION {
 } BDA_TABLE_SECTION;
 typedef BDA_TABLE_SECTION   *PBDA_TABLE_SECTION;
 
+/* BDA Diseq command send */
+typedef struct _BDA_DISEQC_SEND {
+    ULONG   ulRequestId;
+    ULONG   ulPacketLength;
+    BYTE    argbPacketData[8];
+} BDA_DISEQC_SEND;
+typedef BDA_DISEQC_SEND *PBDA_DISEQC_SEND;
+
+/* BDA Diseq command response */
+typedef struct _BDA_DISEQC_RESPONSE {
+    ULONG   ulRequestId;
+    ULONG   ulPacketLength;
+    BYTE    argbPacketData[8];
+} BDA_DISEQC_RESPONSE;
+typedef BDA_DISEQC_RESPONSE *PBDA_DISEQC_RESPONSE;
+
 /* Media sample content values */
 typedef enum MEDIA_SAMPLE_CONTENT {
     MEDIA_TRANSPORT_PACKET  = 0,
@@ -189,11 +211,292 @@ typedef struct _BDA_PROGRAM_PID_LIST {
 } BDA_PROGRAM_PID_LIST;
 typedef BDA_PROGRAM_PID_LIST    *PBDA_PROGRAM_PID_LIST;
 
+/* BDA DRM status */
+typedef struct _BDA_DRM_DRMSTATUS {
+    PBDARESULT  lResult;
+    GUID        DRMuuid;
+    ULONG       ulDrmUuidListStringSize;
+    GUID        argbDrmUuidListString[MIN_DIMENSION];
+} BDA_DRM_DRMSTATUS;
+typedef BDA_DRM_DRMSTATUS   *PBDA_DRM_DRMSTATUS;
+
+/* BDA WMDRM status */
+typedef struct _BDA_WMDRM_STATUS {
+    PBDARESULT  lResult;
+    ULONG       ulMaxCaptureTokenSize;
+    ULONG       uMaxStreamingPid;
+    ULONG       ulMaxLicense;
+    ULONG       ulMinSecurityLevel;
+    ULONG       ulRevInfoSequenceNumber;
+    ULONGLONG   ulRevInfoIssuedTime;
+    ULONG       ulRevListVersion;
+    ULONG       ulRevInfoTTL;
+    ULONG       ulState;
+} BDA_WMDRM_STATUS;
+typedef BDA_WMDRM_STATUS    *PBDA_WMDRM_STATUS;
+
+/* BDA WMDRM key information list */
+typedef struct _BDA_WMDRM_KEYINFOLIST {
+    PBDARESULT  lResult;
+    ULONG       ulKeyuuidBufferLen;
+    GUID        argKeyuuidBuffer[MIN_DIMENSION];
+} BDA_WMDRM_KEYINFOLIST;
+typedef BDA_WMDRM_KEYINFOLIST   *PBDA_WMDRM_KEYINFOLIST;
+
+/* BDA buffer */
+typedef struct _BDA_BUFFER {
+    PBDARESULT  lResult;
+    ULONG       ulBufferSize;
+    BYTE        argbBuffer[MIN_DIMENSION];
+} BDA_BUFFER;
+typedef BDA_BUFFER  *PBDA_BUFFER;
+
+/* BDA WMDRM renew license */
+typedef struct _BDA_WMDRM_RENEW_LICENSE {
+    PBDARESULT  lResult;
+    ULONG       ulDescrambleStatus;
+    ULONG       ulXmrLicenseOutputLength;
+    BYTE        argbXmrLicenseOutputBuffer[MIN_DIMENSION];
+} BDA_WMDRM_RENEW_LICENSE;
+typedef BDA_WMDRM_RENEW_LICENSE *PBDA_WMDRM_RENEW_LICENSE;
+
+/* BDA WMDRM tuner PID protection */
+typedef struct _BDA_WMDRMTUNER_PIDPROTECTION {
+    PBDARESULT  lResult;
+    GUID        uuidKeyID;
+} BDA_WMDRMTUNER_PIDPROTECTION;
+typedef BDA_WMDRMTUNER_PIDPROTECTION    *PBDA_WMDRMTUNER_PIDPROTECTION;
+
+/* BDA WMDRM tuner purchase entitlement */
+typedef struct _BDA_WMDRMTUNER_PURCHASEENTITLEMENT {
+    PBDARESULT  lResult;
+    ULONG       ulDescrambleStatus;
+    ULONG       ulCaptureTokenLength;
+    BYTE        argbCaptureTokenBuffer[MIN_DIMENSION];
+} BDA_WMDRMTUNER_PURCHASEENTITLEMENT;
+typedef BDA_WMDRMTUNER_PURCHASEENTITLEMENT  *PBDA_WMDRMTUNER_PURCHASEENTITLEMENT;
+
+/* BDA tuner state */
+typedef struct _BDA_TUNER_TUNERSTATE {
+    PBDARESULT  lResult;
+    ULONG       ulTuneLength;
+    BYTE        argbTuneData[MIN_DIMENSION];
+} BDA_TUNER_TUNERSTATE;
+typedef BDA_TUNER_TUNERSTATE    *PBDA_TUNER_TUNERSTATE;
+
+/* BDA tuner diagnostics */
+typedef struct _BDA_TUNER_DIAGNOSTICS {
+    PBDARESULT  lResult;
+    ULONG       ulSignalLevel;
+    ULONG       ulSignalLevelQuality;
+    ULONG       ulSignalNoiseRatio;
+} BDA_TUNER_DIAGNOSTICS;
+typedef BDA_TUNER_DIAGNOSTICS   *PBDA_TUNER_DIAGNOSTICS;
+
+/* BDA string */
+typedef struct _BDA_STRING {
+    PBDARESULT  lResult;
+    ULONG       ulStringSize;
+    BYTE        argbString[MIN_DIMENSION];
+} BDA_STRING;
+typedef BDA_STRING  *PBDA_STRING;
+
+/* BDA scan capabilities */
+typedef struct _BDA_SCAN_CAPABILITIES {
+    PBDARESULT  lResult;
+    UINT64      ul64AnalogStandardsSupported;
+} BDA_SCAN_CAPABILITIES;
+typedef BDA_SCAN_CAPABILITIES   *PBDA_SCAN_CAPABILITIES;
+
+/* BDA scan state */
+typedef struct _BDA_SCAN_STATE {
+    PBDARESULT  lResult;
+    ULONG       ulSignalLock;
+    ULONG       ulSecondsLeft;
+    ULONG       ulCurrentFrequency;
+} BDA_SCAN_STATE;
+typedef BDA_SCAN_STATE  *PBDA_SCAN_STATE;
+
+/* BDA scan start */
+typedef struct _BDA_SCAN_START {
+    PBDARESULT  lResult;
+    ULONG       LowerFrequency;
+    ULONG       HigerFrequency;
+} BDA_SCAN_START;
+typedef BDA_SCAN_START  *PBDA_SCAN_START;
+
+/* BDA GDDS data type */
+typedef struct _BDA_GDDS_DATATYPE {
+    PBDARESULT  lResult;
+    GUID        uuidDataType;
+} BDA_GDDS_DATATYPE;
+typedef BDA_GDDS_DATATYPE   *PBDA_GDDS_DATATYPE;
+
+/* BDA GDDS data */
+typedef struct _BDA_GDDS_DATA {
+    PBDARESULT  lResult;
+    ULONG       ulDataLength;
+    ULONG       ulPercentageProgress;
+    BYTE        argbData[MIN_DIMENSION];
+} BDA_GDDS_DATA;
+typedef BDA_GDDS_DATA   *PBDA_GDDS_DATA;
+
+/* BDA user activity interval */
+typedef struct _BDA_USERACTIVITY_INTERVAL {
+    PBDARESULT  lResult;
+    ULONG       ulActivityInterval;
+} BDA_USERACTIVITY_INTERVAL;
+typedef BDA_USERACTIVITY_INTERVAL   *PBDA_USERACTIVITY_INTERVAL;
+
+/* BDA CAS check entitlement token */
+typedef struct _BDA_CAS_CHECK_ENTITLEMENTTOKEN {
+    PBDARESULT  lResult;
+    ULONG       ulDescrambleStatus;
+} BDA_CAS_CHECK_ENTITLEMENTTOKEN;
+typedef BDA_CAS_CHECK_ENTITLEMENTTOKEN  *PBDA_CAS_CHECK_ENTITLEMENTTOKEN;
+
+/* BDA CAS close MMI dialog */
+typedef struct _BDA_CAS_CLOSE_MMIDIALOG {
+    PBDARESULT  lResult;
+    ULONG       SessionResult;
+} BDA_CAS_CLOSE_MMIDIALOG;
+typedef BDA_CAS_CLOSE_MMIDIALOG *PBDA_CAS_CLOSE_MMIDIALOG;
+
+/* BDA CAS request tuner data */
+typedef struct _BDA_CAS_REQUESTTUNERDATA {
+    UCHAR   ucRequestPriority;
+    UCHAR   ucRequestReason;
+    UCHAR   ucRequestConsequences;
+    ULONG   ulEstimatedTime;
+} BDA_CAS_REQUESTTUNERDATA;
+typedef BDA_CAS_REQUESTTUNERDATA    *PBDA_CAS_REQUESTTUNERDATA;
+
+/* BDA CAS open MMI data */
+typedef struct _BDA_CAS_OPENMMIDATA {
+    ULONG   ulDialogNumber;
+    ULONG   ulDialogRequest;
+    GUID    uuidDialogType;
+    USHORT  usDialogDataLength;
+    BYTE    argbDialogData[MIN_DIMENSION];
+} BDA_CAS_OPENMMIDATA;
+typedef BDA_CAS_OPENMMIDATA *PBDA_CAS_OPENMMIDATA;
+
+/* BDA CAS close MMI data */
+typedef struct _BDA_CAS_CLOSEMMIDATA {
+    ULONG   ulDialogNumber;
+} BDA_CAS_CLOSEMMIDATA;
+typedef BDA_CAS_CLOSEMMIDATA    *PBDA_CAS_CLOSEMMIDATA;
+
+/* ISDB CAS request identifier */
+typedef enum ISDBCAS_REQUEST_ID {
+    ISDBCAS_REQUEST_ID_EMG  = 0x38,
+    ISDBCAS_REQUEST_ID_EMD  = 0x3A
+} ISDBCAS_REQUEST_ID;
+
+/* BDA ISDB CAS request header */
+typedef struct _BDA_ISDBCAS_REQUESTHEADER {
+    BYTE    bInstruction;
+    BYTE    bReserved[3];
+    ULONG   ulDataLength;
+    BYTE    argbIsdbCommand[MIN_DIMENSION];
+} BDA_ISDBCAS_REQUESTHEADER;
+typedef BDA_ISDBCAS_REQUESTHEADER   *PBDA_ISDBCAS_REQUESTHEADER;
+
+/* BDA ISDB CAS response data */
+typedef struct _BDA_ISDBCAS_RESPONSEDATA {
+    PBDARESULT  lResult;
+    ULONG       ulRequestID;
+    ULONG       ulIsdbStatus;
+    ULONG       ulIsdbDataSize;
+    BYTE        argbIsdbCommandData[MIN_DIMENSION];
+} BDA_ISDBCAS_RESPONSEDATA;
+typedef BDA_ISDBCAS_RESPONSEDATA    *PBDA_ISDBCAS_RESPONSEDATA;
+
+/* BDA ISDB CAS EMG request */
+typedef struct _BDA_ISDBCAS_EMG_REQ {
+    BYTE    bCLA;
+    BYTE    bINS;
+    BYTE    bP1;
+    BYTE    bP2;
+    BYTE    bLC;
+    BYTE    bCardId[6];
+    BYTE    bProtocol;
+    BYTE    bCABroadcasterGroupId;
+    BYTE    bMessageControl;
+    BYTE    bMessageCode[MIN_DIMENSION];
+} BDA_ISDBCAS_EMG_REQ;
+typedef BDA_ISDBCAS_EMG_REQ *PBDA_ISDBCAS_EMG_REQ;
+
+/* MUX PID types */
+typedef enum MUX_PID_TYPE {
+    PID_OTHER                   = -1,
+    PID_ELEMENTARY_STREAM       = 0,
+    PID_MPEG2_SECTION_PSI_SI    = 1
+} MUX_PID_TYPE;
+
+/* BDA MUX PID list item */
+#include <pshpack2.h>
+typedef struct _BDA_MUX_PIDLISTITEM {
+    USHORT          usPIDNumber;
+    USHORT          usProgramNumber;
+    MUX_PID_TYPE    ePIDType;
+} BDA_MUX_PIDLISTITEM;
+typedef BDA_MUX_PIDLISTITEM *PBDA_MUX_PIDLISTITEM;
+#include <poppack.h>
+
+/* BDA TS selector information */
+#include <pshpack1.h>
+typedef struct _BDA_TS_SELECTORINFO {
+    BYTE    bTSInfoLength;
+    BYTE    bReserved[2];
+    GUID    guidNetworkType;
+    BYTE    bTSIDCount;
+    USHORT  usTSID[MIN_DIMENSION];
+} BDA_TS_SELECTORINFO;
+typedef BDA_TS_SELECTORINFO *PBDA_TS_SELECTORINFO;
+#include <poppack.h>
+
+/* BDA TS selector information ISDBS extension */
+#include <pshpack1.h>
+typedef struct _BDA_TS_SELECTORINFO_ISDBS_EXT {
+    BYTE    bTMCC[48];
+} BDA_TS_SELECTORINFO_ISDBS_EXT;
+typedef BDA_TS_SELECTORINFO_ISDBS_EXT   *PBDA_TS_SELECTORINFO_ISDBS_EXT;
+#include <poppack.h>
+
+/* BDA DVBT2 L1 signalling data */
+typedef struct _BDA_TS_DVBT2_L1_SIGNALLING_DATA {
+    BYTE    L1Pre_TYPE;
+    BYTE    L1Pre_BWT_S1_S2;
+    BYTE    L1Pre_REPETITION_GUARD_PAPR;
+    BYTE    L1Pre_MOD_COD_FEC;
+    BYTE    L1Pre_POSTSIZE_INFO_PILOT[5];
+    BYTE    L1Pre_TX_ID_AVAIL;
+    BYTE    L1Pre_CELL_ID[2];
+    BYTE    L1Pre_NETWORK_ID[2];
+    BYTE    L1Pre_T2SYSTEM_ID[2];
+    BYTE    L1Pre_NUM_T2_FRAMES;
+    BYTE    L1Pre_NUM_DATA_REGENFLAG_L1POSTEXT[2];
+    BYTE    L1Pre_NUMRF_CURRENTRF_RESERVED[2];
+    BYTE    L1Pre_CRC32[4];
+    BYTE    L1PostData[MIN_DIMENSION];
+} BDA_TS_DVBT2_L1_SIGNALLING_DATA;
+typedef BDA_TS_DVBT2_L1_SIGNALLING_DATA *PBDA_TS_DVBT2_L1_SIGNALLING_DATA;
+
+/* BDA rating pin reset */
+typedef struct _BDA_RATING_PINRESET {
+    BYTE    bPinLength;
+    BYTE    argbNewPin[MIN_DIMENSION];
+} BDA_RATING_PINRESET;
+typedef BDA_RATING_PINRESET *PBDA_RATING_PINRESET;
+
 /* DVB system types */
 typedef enum DVBSystemType {
-    DVB_Cable       = 0,
-    DVB_Terrestrial = 1,
-    DVB_Satellite   = 2
+    DVB_Cable           = 0,
+    DVB_Terrestrial     = 1,
+    DVB_Satellite       = 2,
+    ISDB_Terrestrial    = 3,
+    ISDB_Satellite      = 4
 } DVBSystemType;
 
 /* BDA channels */
@@ -203,12 +506,16 @@ typedef enum BDA_Channel {
 
 /* Component categories */
 typedef enum ComponentCategory {
-    CategoryNotSet  = -1,
-    CategoryOther   = 0,
-    CategoryVideo   = 1,
-    CategoryAudio   = 2,
-    CategoryText    = 3,
-    CategoryData    = 4
+    CategoryNotSet      = -1,
+    CategoryOther       = 0,
+    CategoryVideo       = 1,
+    CategoryAudio       = 2,
+    CategoryText        = 3,
+    CategorySubtitles   = 4,
+    CategoryCaptions    = 5,
+    CategorySuperimpose = 6,
+    CategoryData        = 7,
+    CATEGORY_COUNT      = 8
 } ComponentCategory;
 
 /* Component status values */
@@ -235,9 +542,23 @@ typedef enum MPEG2StreamType {
     ISO_IEC_13818_6_TYPE_C          = 0x0C,
     ISO_IEC_13818_6_TYPE_D          = 0x0D,
     ISO_IEC_13818_1_AUXILIARY       = 0x0E,
+    IOS_IEC_13818_7_AUDIO           = 0x0F,
+    ISO_IEC_14496_2_VISUAL          = 0x10,
+    ISO_IEC_14496_3_AUDIO           = 0x11,
+    ISO_IEC_14496_1_IN_PES          = 0x12,
+    ISO_IEC_14496_1_IN_SECTION      = 0x13,
+    ISO_IEC_13818_6_DOWNLOAD        = 0x14,
+    METADATA_IN_PES                 = 0x15,
+    METADATA_IN_SECTION             = 0x16,
+    METADATA_IN_DATA_CHANNEL        = 0x17,
+    METADATA_IN_OBJECT_CAROUSEL     = 0x18,
+    METADATA_IN_DOWNLOAD_PROTOCOL   = 0x19,
+    IRPM_STREAMM                    = 0x1A,
+    ITU_T_H264                      = 0x1B,
     USER_PRIVATE                    = 0x10,
     ISO_IEC_USER_PRIVATE            = 0x80,
-    DOLBY_AC3_AUDIO                 = 0x81
+    DOLBY_AC3_AUDIO                 = 0x81,
+    DOLBY_DIGITAL_PLUS_AUDIO_ATSC   = 0x87
 } MPEG2StreamType;
 
 /* MPEG-2 transport stride */
@@ -323,7 +644,9 @@ typedef enum ModulationType {
     BDA_MOD_NBC_QPSK            = 31,
     BDA_MOD_NBC_8PSK            = 32,
     BDA_MOD_DIRECTV             = 33,
-    BDA_MOD_MAX                 = 34
+    BDA_MOD_ISDB_T_TMCC         = 34,
+    BDA_MOD_ISDB_S_TMCC         = 35,
+    BDA_MOD_MAX                 = 36
 } ModulationType;
 
 /* Scan modulation types */
@@ -359,7 +682,11 @@ typedef enum tagScanModulationTypes {
     ScanModulationTypesMask_MCE_DigitalCable    = BDA_MOD_64QAM | BDA_MOD_256QAM,
     ScanModulationTypesMask_MCE_TerrestialATSC  = BDA_MOD_8VSB,
     ScanModulationTypesMask_MCE_AnalogTV        = BDA_MOD_RF,
-    ScanModulationTypesMask_MCE_All_TV          = 0xFFFFFFFF
+    ScanModulationTypesMask_MCE_All_TV          = 0xFFFFFFFF,
+    ScanModulationTypesMask_DVBC =
+        BDA_MOD_64QAM | BDA_SCAN_MOD_128QAM | BDA_MOD_256QAM,
+    BDA_SCAN_MOD_16APSK     = 0x10000000,
+    BDA_SCAN_MOD_32APSK     = 0x20000000
 } ScanModulationTypes;
 
 /* Spectral inversion values */
@@ -383,6 +710,17 @@ typedef enum Polarisation {
     BDA_POLARISATION_MAX            = 5
 } Polarisation;
 
+/* LNB sources */
+typedef enum LNB_Source {
+    BDA_LNB_SOURCE_NOT_SET      = -1,
+    BDA_LNB_SOURCE_NOT_DEFINED  = 0,
+    BDA_LNB_SOURCE_A            = 1,
+    BDA_LNB_SOURCE_B            = 2,
+    BDA_LNB_SOURCE_C            = 3,
+    BDA_LNB_SOURCE_D            = 4,
+    BDA_LNB_SOURCE_MAX          = 5
+} LNB_Source;
+
 /* Guard intervals */
 typedef enum GuardInterval {
     BDA_GUARD_NOT_SET       = -1,
@@ -391,7 +729,10 @@ typedef enum GuardInterval {
     BDA_GUARD_1_16          = 2,
     BDA_GUARD_1_8           = 3,
     BDA_GUARD_1_4           = 4,
-    BDA_GUARD_MAX           = 5
+    BDA_GUARD_1_128         = 5,
+    BDA_GUARD_19_128        = 6,
+    BDA_GUARD_19_256        = 7,
+    BDA_GUARD_MAX           = 8
 } GuardInterval;
 
 /* Hierarchy alpha values */
@@ -413,7 +754,10 @@ typedef enum TransmissionMode {
     BDA_XMIT_MODE_4K                = 3,
     BDA_XMIT_MODE_2K_INTERLEAVED    = 4,
     BDA_XMIT_MODE_4K_INTERLEAVED    = 5,
-    BDA_XMIT_MODE_MAX               = 6
+    BDA_XMIT_MODE_1K                = 6,
+    BDA_XMIT_MODE_16K               = 7,
+    BDA_XMIT_MODE_32K               = 8,
+    BDA_XMIT_MODE_MAX               = 9
 } TransmissionMode;
 
 /* Roll-off values */
@@ -434,6 +778,14 @@ typedef enum Pilot {
     BDA_PILOT_ON            = 2,
     BDA_PILOT_MAX           = 3
 } Pilot;
+
+/* BDA signal timeouts */
+typedef struct _BDA_SIGNAL_TIMEOUTS {
+    ULONG   ulCarrierTimeoutMs;
+    ULONG   ulScanningTimeoutMs;
+    ULONG   ulTuningTimeoutMs;
+} BDA_SIGNAL_TIMEOUTS;
+typedef BDA_SIGNAL_TIMEOUTS *PBDA_SIGNAL_TIMEOUTS;
 
 /* BDA frequencies */
 typedef enum BDA_Frequency {
@@ -461,9 +813,10 @@ typedef enum BDA_Frequency_Multiplier {
 
 /* BDA comparison flags */
 typedef enum BDA_Comp_Flags {
-    BDACOMP_NOT_DEFINED             = 0x00000000,
-    BDACOMP_EXCLUDE_TS_FROM_TR      = 0x00000001,
-    BDACOMP_INCLUDE_LOCATOR_IN_TR   = 0x00000002
+    BDACOMP_NOT_DEFINED                 = 0x00000000,
+    BDACOMP_EXCLUDE_TS_FROM_TR          = 0x00000001,
+    BDACOMP_INCLUDE_LOCATOR_IN_TR       = 0x00000002,
+    BDACOMP_INCLUDE_COMPONENTS_IN_TR    = 0x00000004
 } BDA_Comp_Flags;
 
 /* Application type types */
@@ -477,6 +830,39 @@ typedef enum ApplicationTypeType {
     SCTE28_Diagnostic                   = 6,
     SCTE28_Undesignated                 = 7
 } ApplicationTypeType;
+
+/* BDA conditional access request types */
+typedef enum BDA_CONDITIONALACCESS_REQUESTTYPE {
+    CONDITIONALACCESS_ACCESS_UNSPECIFIED                        = 0,
+    CONDITIONALACCESS_ACCESS_NOT_POSSIBLE                       = 1,
+    CONDITIONALACCESS_ACCESS_POSSIBLE                           = 2,
+    CONDITIONALACCESS_ACCESS_POSSIBLE_NO_STREAMING_DISRUPTION   = 3
+} BDA_CONDITIONALACCESS_REQUESTTYPE;
+
+/* BDA conditional access MMI close reasons */
+typedef enum BDA_CONDITIONALACCESS_MMICLOSEREASON {
+    CONDITIONALACCESS_UNSPECIFIED               = 0,
+    CONDITIONALACCESS_CLOSED_ITSELF             = 1,
+    CONDITIONALACCESS_TUNER_REQUESTED_CLOSE     = 2,
+    CONDITIONALACCESS_DIALOG_TIMEOUT            = 3,
+    CONDITIONALACCESS_DIALOG_FOCUS_CHANGE       = 4,
+    CONDITIONALACCESS_DIALOG_USER_DISMISSED     = 5,
+    CONDITIONALACCESS_DIALOG_USER_NOT_AVAILABLE = 6
+} BDA_CONDITIONALACCESS_MMICLOSEREASON;
+
+/* BDA conditional access session results */
+typedef enum BDA_CONDITIONALACCESS_SESSIONRESULT {
+    CONDITIONALACCESS_SUCCESSFULL       = 0,
+    CONDITIONALACCESS_ENDED_NOCHANGE    = 1,
+    CONDITIONALACCESS_ABORTED           = 2
+} BDA_CONDITIONALACCESS_SESSIONRESULT;
+
+/* BDA discovery states */
+typedef enum BDA_DISCOVERY_STATE {
+    BDA_DISCOVERY_UNSPECIFIED   = 0,
+    BDA_DISCOVERY_REQUIRED      = 1,
+    BDA_DISCOVERY_COMPLETE      = 2
+} BDA_DISCOVERY_STATE;
 
 :include cplusepi.sp
 
