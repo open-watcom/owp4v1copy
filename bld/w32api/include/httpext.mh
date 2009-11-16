@@ -20,7 +20,7 @@ typedef LPVOID  HCONN;
 
 /* Version numbers */
 #define HSE_VERSION_MAJOR   7
-#define HSE_VERSION_MINOR   0
+#define HSE_VERSION_MINOR   5
 #define HSE_VERSION         MAKELONG( HSE_VERSION_MINOR, HSE_VERSION_MAJOR )
 
 /* String lengths */
@@ -76,6 +76,7 @@ typedef LPVOID  HCONN;
 #define HSE_REQ_GET_WORKER_PROCESS_SETTINGS     (HSE_REQ_END_RESERVED + 47)
 #define HSE_REQ_GET_PROTOCOL_MANAGER_CUSTOM_INTERFACE_CALLBACK  (HSE_REQ_END_RESERVED + 48)
 #define HSE_REQ_CANCEL_IO                       (HSE_REQ_END_RESERVED + 49)
+#define HSE_REQ_GET_CHANNEL_BINDING_TOKEN       (HSE_REQ_END_RESERVED + 50)
 
 /* TerminateExtension() flags */
 #define HSE_TERM_ADVISORY_UNLOAD    0x00000001L
@@ -88,6 +89,7 @@ typedef LPVOID  HCONN;
 #define HSE_IO_SEND_HEADERS             0x00000008L
 #define HSE_IO_FINAL_SEND               0x00000010L
 #define HSE_IO_CACHE_RESPONSE           0x00000020L
+#define HSE_IO_TRY_SKIP_CUSTOM_ERRORS   0x00000040L
 #define HSE_IO_NODELAY                  0x00001000L
 
 /* URL flags */
