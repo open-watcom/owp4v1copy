@@ -108,7 +108,7 @@ Lexer::Token I1::parseAttributes( Lexer* lexer )
                     document->addIndexId( id, this );
                 }
                 catch( Class3Error& e ) {
-                    printError( e.code );
+                    document->printError( e.code );
                 }
             }
             else if( key == L"roots" ) {
@@ -123,13 +123,13 @@ Lexer::Token I1::parseAttributes( Lexer* lexer )
             else if( key == L"sortkey" )
                 primary->setSortKey( value );
             else
-                printError( ERR1_ATTRNOTDEF );
+                document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::FLAG ) {
             if( lexer->text() == L"global" )
                 primary->setGlobal();
             else
-                printError( ERR1_ATTRNOTDEF );
+                document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::ERROR_TAG )
             throw FatalError( ERR_SYNTAX );

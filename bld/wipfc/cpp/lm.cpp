@@ -60,7 +60,7 @@ Lexer::Token Lm::parse( Lexer* lexer )
                 document->setLeftMargin( margin );
             }
             else
-                printError( ERR1_ATTRNOTDEF );
+                document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::FLAG )
             document->printError( ERR1_ATTRNOTDEF );

@@ -57,7 +57,7 @@ Lexer::Token Hdref::parse( Lexer* lexer )
             else if( key == L"refid" )
                 refid = value;
             else
-                printError( ERR1_ATTRNOTDEF );
+                document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::FLAG )
             document->printError( ERR1_ATTRNOTDEF );

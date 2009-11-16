@@ -97,13 +97,13 @@ Lexer::Token I2::parseAttributes( Lexer* lexer )
             else if( key == L"sortkey" )
                 index->setSortKey( value );
             else
-                printError( ERR1_ATTRNOTDEF );
+                document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::FLAG ) {
             if( lexer->text() == L"global" )
                 index->setGlobal();
             else
-                printError( ERR1_ATTRNOTDEF );
+                document->printError( ERR1_ATTRNOTDEF );
         }
         else if( tok == Lexer::ERROR_TAG )
             throw FatalError( ERR_SYNTAX );
