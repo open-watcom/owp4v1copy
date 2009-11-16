@@ -32,6 +32,7 @@
 *
 ****************************************************************************/
 
+#include <algorithm>
 #include "pbutton.hpp"
 #include "controls.hpp"
 #include "document.hpp"
@@ -45,8 +46,18 @@ Lexer::Token PButton::parse( Lexer* lexer )
             std::wstring key;
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
-            if( key == L"id" )
+            if( key == L"id" ) {
                 id = value;
+                std::transform( id.begin(), id.end(), id.begin(), std::towupper );
+                if( id == L"ESC" ||
+                    id == L"SEARCH" ||
+                    id == L"PRINT" ||
+                    id == L"INDEX" ||
+                    id == L"CONTENTS" ||
+                    id == L"BACK" ||
+                    id == L"FORWARD" )
+                    document->printError( ERR3_DUPID, id );
+            }
             else if( key == L"res" )
                 res = std::wcstoul( value.c_str(), 0, 10 );
             else if( key == L"text" )
@@ -68,5 +79,13 @@ Lexer::Token PButton::parse( Lexer* lexer )
 void PButton::build( Controls* ctrls)
 {
     ControlButton btn( id, static_cast< STD1::uint16_t >( res ), text);
-    ctrls->addButton( btn );
+    //don't allow duplicates of predefined buttons
+    if( id != L"ESC" &&
+        id != L"SEARCH" &&
+        id != L"PRINT" &&
+        id != L"INDEX" &&
+        id != L"CONTENTS" &&
+        id != L"BACK" &&
+        id != L"FORWARD" )
+        ctrls->addButton( btn );
 }

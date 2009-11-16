@@ -51,6 +51,8 @@
 *
 ****************************************************************************/
 
+#include <algorithm>
+#include <cwctype>
 #include "hn.hpp"
 #include "cell.hpp"
 #include "document.hpp"
@@ -506,6 +508,7 @@ Lexer::Token Hn::parseAttributes( Lexer* lexer )
             }
             else if( key == L"ctrlrefid" ) {
                 toc.extended = 1;
+                std::transform( value.begin(), value.end(), value.begin(), std::towupper );
                 controls.word |= document->getGroupById( value );
             }
             else

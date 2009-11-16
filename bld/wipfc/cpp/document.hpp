@@ -129,7 +129,7 @@ public:
     //Forwarding functions
 
     //To Controls
-    STD1::uint16_t getGroupById( const std::wstring& i ) { return controls->getGroupById( i )->index() + 1; };
+    STD1::uint16_t getGroupById( const std::wstring& i );
 
     //To Compiler
     std::wstring* addFileName( std::wstring* name ) { return compiler.addFileName( name ); };
@@ -137,6 +137,8 @@ public:
     void printError( ErrCode c, const std::wstring& txt ) const { compiler.printError( c, txt ); };
     void printError( ErrCode c, const std::wstring* name, unsigned int row, unsigned int col ) const
         { compiler.printError( c, name, row, col ); };
+    void printError( ErrCode c, const std::wstring* name, unsigned int row, unsigned int col, const std::wstring& txt ) const
+        { compiler.printError( c, name, row, col, txt ); };
     Lexer::Token getNextToken() { return compiler.getNextToken(); };
     void setBlockParsing( bool yn ) { compiler.setBlockParsing( yn ); };
     bool blockParsing() { return compiler.blockParsing(); };

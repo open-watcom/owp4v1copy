@@ -81,6 +81,7 @@ public:
     void printError( ErrCode c ) const;
     void printError( ErrCode c, const std::wstring& txt ) const;
     void printError( ErrCode c, const std::wstring* name, unsigned int row, unsigned int col ) const;
+    void printError( ErrCode c, const std::wstring* name, unsigned int row, unsigned int col, const std::wstring& txt ) const;
     //get the name of the data block currently being parsed
     const std::wstring* dataName() const { return inFiles[ inFiles.size() - 1 ]->name(); };
     //get the number of the line currently being parsed

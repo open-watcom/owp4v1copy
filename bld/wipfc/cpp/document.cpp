@@ -943,3 +943,15 @@ std::wstring* Document::prepNameitName( const std::wstring& key )
     name = addFileName( name );
     return name;
 }
+/***************************************************************************/
+std::uint16_t Document::getGroupById( const std::wstring& i )
+{
+    ControlGroup* grp( controls->getGroupById( i ) );
+    if( !grp ) {
+        compiler.printError( ERR1_NOID, i );
+        return 0;
+    }
+    else
+        return grp->index() + 1;
+}
+

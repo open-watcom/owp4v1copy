@@ -37,6 +37,11 @@ void Element::printError( ErrCode c ) const
     document->printError( c, fileName, row, col );
 }
 /***************************************************************************/
+void Element::printError( ErrCode c, const std::wstring& txt ) const
+{
+    document->printError( c, fileName, row, col, txt );
+}
+/***************************************************************************/
 void Element::linearize( Page* page )
 {
     page->addElement( this );

@@ -69,6 +69,7 @@ public:
     Element* rootElement();
     //print an error message (not during parsing)
     void printError( ErrCode c ) const;
+    void printError( ErrCode c, const std::wstring& txt ) const;
 protected:
     Document* document;
     Element* parent;

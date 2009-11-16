@@ -205,6 +205,33 @@ void Compiler::printError( ErrCode c, const std::wstring* name, unsigned int row
     }
 }
 /*****************************************************************************/
+//Error message format is <fullfilename:line:col> errnum: text [optional info]
+void Compiler::printError( ErrCode c, const std::wstring* name, unsigned int row,
+    unsigned int col, const std::wstring& txt ) const
+{
+    if( c <= ERR_LAST || warningLevel > 2 ||
+       ( c <= ERR1_LAST && warningLevel > 0 ) ||
+       ( c <= ERR2_LAST && warningLevel > 1 )) {
+/*
+           std::cout << '<';
+           std::cout << inFiles[inFiles.size() - 1]->name();
+           std::cout << ':';
+           std::cout << row;
+           std::cout << ':';
+           std::cout << col;
+           std::cout << "> " ( c > ERR_LAST ? "Warning" : "Fatal Error" );
+           std::cout << std::setw( 2 ) << std::setfill( '0' );
+           std::cout << static_cast< unsigned int >( c );
+           std::cout << ' ' << ErrText[ c ] << txt << std::endl;
+*/
+        std::fprintf( stdout, "<%ls:%u:%u> %s %02u: %s %ls\n",
+            name->c_str(), row, col,
+            c > ERR_LAST ? "Warning" : "Fatal Error",
+            static_cast< unsigned int >( c ),
+            ErrText[ c ], txt.c_str() );
+    }
+}
+/*****************************************************************************/
 Lexer::Token Compiler::getNextToken()
 {
     Lexer::Token tok( lexer->lex( inFiles[inFiles.size() - 1] ));

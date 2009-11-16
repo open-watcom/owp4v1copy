@@ -35,6 +35,7 @@
 *
 ****************************************************************************/
 
+#include <algorithm>
 #include "ctrl.hpp"
 #include "controls.hpp"
 #include "document.hpp"
@@ -48,10 +49,14 @@ Lexer::Token Ctrl::parse( Lexer* lexer )
             std::wstring key;
             std::wstring value;
             splitAttribute( lexer->text(), key, value );
-            if( key == L"ctrlid" )
+            if( key == L"ctrlid" ) {
                 ctrlid = value;
-            else if( key == L"controls" )
+                std::transform( ctrlid.begin(), ctrlid.end(), ctrlid.begin(), std::towupper );
+            }
+            else if( key == L"controls" ) {
                 controls = value;
+                std::transform( controls.begin(), controls.end(), controls.begin(), std::towupper );
+            }
             else
                 document->printError( ERR1_ATTRNOTDEF );
         }
@@ -76,38 +81,42 @@ Lexer::Token Ctrl::parse( Lexer* lexer )
 /***************************************************************************/
 void Ctrl::build( Controls* ctrls)
 {
-    ControlGroup grp( ctrlid );
-    if( !controls.empty() ) {
-        std::wstring::size_type p1( 0 );
-        while( p1 < std::wstring::npos ) {
-            std::wstring::size_type p2( controls.find( L' ', p1 ) );
-            std::wstring temp( controls.substr( p1, p2 - p1 ) );
-            ControlButton* btn( ctrls->getButtonById( temp ) ); //check if button is present
-            if( btn )
-                grp.addButtonIndex( btn->index() );
-            else {
-                if( temp == L"Esc" )
-                    grp.addButtonIndex( 0 );
-                else if( temp == L"Search" )
-                    grp.addButtonIndex( 1 );
-                else if( temp == L"Print" )
-                    grp.addButtonIndex( 2 );
-                else if( temp == L"Index" )
-                    grp.addButtonIndex( 3 );
-                else if( temp == L"Contents" )
-                    grp.addButtonIndex( 4 );
-                else if( temp == L"Back" )
-                    grp.addButtonIndex( 5 );
-                else if( temp == L"Forward" )
-                    grp.addButtonIndex( 6 );
-                else
-                    document->printError( ERR3_NOBUTTON );
+    if( ctrls->getGroupById( ctrlid ) == 0 ) { //no duplicate group ids
+        ControlGroup grp( ctrlid );
+        if( !controls.empty() ) {
+            std::wstring::size_type p1( 0 );
+            while( p1 < std::wstring::npos ) {
+                std::wstring::size_type p2( controls.find( L' ', p1 ) );
+                std::wstring temp( controls.substr( p1, p2 - p1 ) );
+                ControlButton* btn( ctrls->getButtonById( temp ) ); //check if button is present
+                if( btn )
+                    grp.addButtonIndex( btn->index() );
+                else {
+                    if( temp == L"ESC" )
+                        grp.addButtonIndex( 0 );
+                    else if( temp == L"SEARCH" )
+                        grp.addButtonIndex( 1 );
+                    else if( temp == L"PRINT" )
+                        grp.addButtonIndex( 2 );
+                    else if( temp == L"INDEX" )
+                        grp.addButtonIndex( 3 );
+                    else if( temp == L"CONTENTS" )
+                        grp.addButtonIndex( 4 );
+                    else if( temp == L"BACK" )
+                        grp.addButtonIndex( 5 );
+                    else if( temp == L"FORWARD" )
+                        grp.addButtonIndex( 6 );
+                    else
+                        printError( ERR3_NOBUTTON, temp );
+                }
+                p1 = p2 == std::wstring::npos ? std::wstring::npos : p2 + 1;
             }
-            p1 = p2 == std::wstring::npos ? std::wstring::npos : p2 + 1;
+        ctrls->addGroup( grp );
+        if( coverpage )
+            ctrls->setCover( ctrls->group()->index() + 1);
         }
-    ctrls->addGroup( grp );
-    if( coverpage )
-        ctrls->setCover( ctrls->group()->index() + 1);
     }
+    else
+        printError( ERR3_DUPID, ctrlid );
 }
 
