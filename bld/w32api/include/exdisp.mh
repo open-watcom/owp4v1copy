@@ -22,12 +22,23 @@
 
 /* Browser navigation constants */
 typedef enum BrowserNavConstants {
-    navOpenInNewWindow  = 0x00000001,
-    navNoHistory        = 0x00000002,
-    navNoReadFromCache  = 0x00000004,
-    navNoWriteToCache   = 0x00000008,
-    navAllowAutosearch  = 0x00000010,
-    navBrowserBar       = 0x00000020
+    navOpenInNewWindow          = 0x00000001,
+    navNoHistory                = 0x00000002,
+    navNoReadFromCache          = 0x00000004,
+    navNoWriteToCache           = 0x00000008,
+    navAllowAutosearch          = 0x00000010,
+    navBrowserBar               = 0x00000020,
+    navHyperlink                = 0x00000040,
+    navEnforceRestricted        = 0x00000080,
+    navNewWindowsManaged        = 0x00000100,
+    navUntrustedForDownload     = 0x00000200,
+    navTrustedForActiveX        = 0x00000400,
+    navOpenInNewTab             = 0x00000800,
+    navOpenInBackgroundTab      = 0x00001000,
+    navKeepWordWheelText        = 0x00002000,
+    navVirtualTab               = 0x00004000,
+    navBlockRedirectsXDomain    = 0x00008000,
+    navOpenNewForegroundTab     = 0x00010000
 } BrowserNavConstants;
 
 /* Refresh constants */
@@ -44,19 +55,36 @@ typedef enum CommandStateChangeConstants {
     CSC_NAVIGATEBACK    = 0x00000002
 } CommandStateChangeConstants;
 
+/* Secure lock icon constants */
+typedef enum SecureLockIconConstants {
+    secureLockIconUnsecure          = 0x0000,
+    secureLockIconMixed             = 0x0001,
+    secureLockIconSecureUnknownBits = 0x0002,
+    secureLockIconSecure40Bit       = 0x0003,
+    secureLockIconSecure56Bit       = 0x0004,
+    secureLockIconSecureFortezza    = 0x0005,
+    secureLockIconSecure128Bit      = 0x0006
+} SecureLockIconConstants;
+
+/* New process cause constants */
+typedef enum NewProcessCauseConstants {
+    ProtectedModeRedirect   = 0x0001
+} NewProcessCauseConstants;
+
 /* Shell window type constants */
 typedef enum ShellWindowTypeConstants {
     SWC_EXPLORER    = 0x00000000,
     SWC_BROWSER     = 0x00000001,
     SWC_3RDPARTY    = 0x00000002,
-    SWC_CALLBACK    = 0x00000004
+    SWC_CALLBACK    = 0x00000004,
+    SWC_DESKTOP     = 0x00000008
 } ShellWindowTypeConstants;
 
 /* Shell window find window options */
 typedef enum ShellWindowFindWindowOptions {
     SWFO_NEEDDISPATCH   = 0x00000001,
     SWFO_INCLUDEPENDING = 0x00000002,
-    SWFO_COOKIEPASSED   = 0x00000004
+    SWFO_COOKIEPASSED   = 0x00000004,
 } ShellWindowFindWindowOptions;
 
 /* GUIDs */
@@ -69,22 +97,21 @@ EXTERN_C const IID      DIID_DWebBrowserEvents2;
 EXTERN_C const CLSID    CLSID_WebBrowser_V1;
 EXTERN_C const CLSID    CLSID_WebBrowser;
 EXTERN_C const CLSID    CLSID_InternetExplorer;
+EXTERN_C const CLSID    CLSID_InternetExplorerMedium;
 EXTERN_C const CLSID    CLSID_ShellBrowserWindow;
 EXTERN_C const IID      DIID_DShellWindowEvents;
 EXTERN_C const IID      IID_IShellWindows;
 EXTERN_C const CLSID    CLSID_ShellWindows;
 EXTERN_C const IID      IID_IShellUIHelper;
+EXTERN_C const IID      IID_IShellUIHelper2;
+EXTERN_C const IID      IID_IShellUIHelper3;
 EXTERN_C const CLSID    CLSID_ShellUIHelper;
 EXTERN_C const IID      DIID__ShellFavoritesNameSpaceEvents;
 EXTERN_C const IID      IID_IShellFavoritesNameSpace;
-EXTERN_C const CLSID    CLSID_ShellFavoritesNameSpace;
+EXTERN_C const IID      IID_IShellNameSpace;
+EXTERN_C const CLSID    CLSID_ShellNameSpace;
 EXTERN_C const IID      IID_IScriptErrorList;
 EXTERN_C const CLSID    CLSID_CScriptErrorList;
-EXTERN_C const IID      IID_ISearch;
-EXTERN_C const IID      IID_ISearches;
-EXTERN_C const IID      IID_ISearchAssistantOC;
-EXTERN_C const IID      DIID__SearchAssistantEvents;
-EXTERN_C const CLSID    CLSID_SearchAssistantOC;
 
 /* IWebBrowser interface */
 #undef INTERFACE
@@ -193,7 +220,7 @@ DECLARE_INTERFACE_( IWebBrowserApp, IWebBrowser ) {
     STDMETHOD( PutProperty )( THIS_ BSTR, VARIANT ) PURE;
     STDMETHOD( GetProperty )( THIS_ BSTR, VARIANT * ) PURE;
     STDMETHOD( get_Name )( THIS_ BSTR * ) PURE;
-    STDMETHOD( get_HWND )( THIS_ long * ) PURE;
+    STDMETHOD( get_HWND )( THIS_ SHANDLE_PTR * ) PURE;
     STDMETHOD( get_FullName )( THIS_ BSTR * ) PURE;
     STDMETHOD( get_Path )( THIS_ BSTR * ) PURE;
     STDMETHOD( get_Visible )( THIS_ VARIANT_BOOL * ) PURE;
@@ -352,7 +379,7 @@ DECLARE_INTERFACE_( IShellWindows, IDispatch ) {
     STDMETHOD( Revoke )( THIS_ long ) PURE;
     STDMETHOD( OnNavigate )( THIS_ long, VARIANT * ) PURE;
     STDMETHOD( OnActivated )( THIS_ long, VARIANT_BOOL ) PURE;
-    STDMETHOD( FindWindow )( THIS_ VARIANT *, VARIANT *, int, long *, int, IDispatch ** ) PURE;
+    STDMETHOD( FindWindowSW )( THIS_ VARIANT *, VARIANT *, int, long *, int, IDispatch ** ) PURE;
     STDMETHOD( OnCreated )( THIS_ long, IUnknown * ) PURE;
     STDMETHOD( ProcessAttachDetach )( THIS_ VARIANT_BOOL ) PURE;
 };
@@ -386,6 +413,119 @@ DECLARE_INTERFACE_( IShellUIHelper, IDispatch ) {
     STDMETHOD( AutoScan )( THIS_ BSTR, BSTR, VARIANT * ) PURE;
     STDMETHOD( AutoCompleteAttach )( THIS_ VARIANT * ) PURE;
     STDMETHOD( ShowBrowserUI )( THIS_ BSTR, VARIANT *, VARIANT * ) PURE;
+};
+
+/* IShellUIHelper2 interface */
+#undef INTERFACE
+#define INTERFACE   IShellUIHelper2
+DECLARE_INTERFACE_( IShellUIHelper2, IShellUIHelper ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDispatch methods */
+    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
+    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
+    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
+
+    /* IShellUIHelper methods */
+    STDMETHOD( ResetFirstBootMode )( THIS ) PURE;
+    STDMETHOD( ResetSafeMode )( THIS ) PURE;
+    STDMETHOD( RefreshOfflineDesktop )( THIS ) PURE;
+    STDMETHOD( AddFavorite )( THIS_ BSTR, VARIANT * ) PURE;
+    STDMETHOD( AddChannel )( THIS_ BSTR ) PURE;
+    STDMETHOD( AddDesktopComponent )( THIS_ BSTR, BSTR, VARIANT *, VARIANT *, VARIANT *, VARIANT * );
+    STDMETHOD( IsSubscribed )( THIS_ BSTR, VARIANT_BOOL * ) PURE;
+    STDMETHOD( NavigateAndFind )( THIS_ BSTR, BSTR, VARIANT * ) PURE;
+    STDMETHOD( ImportExportFavorites )( THIS_ VARIANT_BOOL, BSTR ) PURE;
+    STDMETHOD( AutoCompleteSaveForm )( THIS_ VARIANT * ) PURE;
+    STDMETHOD( AutoScan )( THIS_ BSTR, BSTR, VARIANT * ) PURE;
+    STDMETHOD( AutoCompleteAttach )( THIS_ VARIANT * ) PURE;
+    STDMETHOD( ShowBrowserUI )( THIS_ BSTR, VARIANT *, VARIANT * ) PURE;
+
+    /* IShellUIHelper2 methods */
+    STDMETHOD( AddSearchProvider )( THIS_ BSTR ) PURE;
+    STDMETHOD( RunOnceShown )( THIS ) PURE;
+    STDMETHOD( SkipRunOnce )( THIS ) PURE;
+    STDMETHOD( CustomizeSettings )( THIS_ VARIANT_BOOL, VARIANT_BOOL, BSTR ) PURE;
+    STDMETHOD( SqmEnabled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( PhishingEnabled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( BrandImageUri )( THIS_ BSTR * ) PURE;
+    STDMETHOD( SkipTabsWelcome )( THIS ) PURE;
+    STDMETHOD( DiagnoseConnection )( THIS ) PURE;
+    STDMETHOD( CustomizeClearType )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( IsSearchProviderInstalled )( THIS_ BSTR, DWORD * ) PURE;
+    STDMETHOD( IsSearchMigrated )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( DefaultSearchProvider )( THIS_ BSTR * ) PURE;
+    STDMETHOD( RunOnceRequiredSettingsComplete )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( RunOnceHasShown )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( SearchGuideUrl )( THIS_ BSTR * ) PURE;
+};
+
+/* IShellUIHelper3 interface */
+#undef INTERFACE
+#define INTERFACE   IShellUIHelper3
+DECLARE_INTERFACE_( IShellUIHelper3, IShellUIHelper2 ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDispatch methods */
+    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
+    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
+    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
+
+    /* IShellUIHelper methods */
+    STDMETHOD( ResetFirstBootMode )( THIS ) PURE;
+    STDMETHOD( ResetSafeMode )( THIS ) PURE;
+    STDMETHOD( RefreshOfflineDesktop )( THIS ) PURE;
+    STDMETHOD( AddFavorite )( THIS_ BSTR, VARIANT * ) PURE;
+    STDMETHOD( AddChannel )( THIS_ BSTR ) PURE;
+    STDMETHOD( AddDesktopComponent )( THIS_ BSTR, BSTR, VARIANT *, VARIANT *, VARIANT *, VARIANT * );
+    STDMETHOD( IsSubscribed )( THIS_ BSTR, VARIANT_BOOL * ) PURE;
+    STDMETHOD( NavigateAndFind )( THIS_ BSTR, BSTR, VARIANT * ) PURE;
+    STDMETHOD( ImportExportFavorites )( THIS_ VARIANT_BOOL, BSTR ) PURE;
+    STDMETHOD( AutoCompleteSaveForm )( THIS_ VARIANT * ) PURE;
+    STDMETHOD( AutoScan )( THIS_ BSTR, BSTR, VARIANT * ) PURE;
+    STDMETHOD( AutoCompleteAttach )( THIS_ VARIANT * ) PURE;
+    STDMETHOD( ShowBrowserUI )( THIS_ BSTR, VARIANT *, VARIANT * ) PURE;
+
+    /* IShellUIHelper2 methods */
+    STDMETHOD( AddSearchProvider )( THIS_ BSTR ) PURE;
+    STDMETHOD( RunOnceShown )( THIS ) PURE;
+    STDMETHOD( SkipRunOnce )( THIS ) PURE;
+    STDMETHOD( CustomizeSettings )( THIS_ VARIANT_BOOL, VARIANT_BOOL, BSTR ) PURE;
+    STDMETHOD( SqmEnabled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( PhishingEnabled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( BrandImageUri )( THIS_ BSTR * ) PURE;
+    STDMETHOD( SkipTabsWelcome )( THIS ) PURE;
+    STDMETHOD( DiagnoseConnection )( THIS ) PURE;
+    STDMETHOD( CustomizeClearType )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( IsSearchProviderInstalled )( THIS_ BSTR, DWORD * ) PURE;
+    STDMETHOD( IsSearchMigrated )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( DefaultSearchProvider )( THIS_ BSTR * ) PURE;
+    STDMETHOD( RunOnceRequiredSettingsComplete )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( RunOnceHasShown )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( SearchGuideUrl )( THIS_ BSTR * ) PURE;
+
+    /* IShellUIHelper3 methods */
+    STDMETHOD( AddService )( THIS_ BSTR ) PURE;
+    STDMETHOD( IsServiceInstalled )( THIS_ BSTR, BSTR, DWORD * ) PURE;
+    STDMETHOD( InPrivateFilteringEnabled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( AddToFavoritesBar )( THIS_ BSTR, BSTR, VARIANT * ) PURE;
+    STDMETHOD( BuildNewTabPage )( THIS ) PURE;
+    STDMETHOD( SetRecentlyClosedVisible )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( SetActivitiesVisible )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( ContentDiscoveryReset )( THIS ) PURE;
+    STDMETHOD( IsSuggestedSitesEnabled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( EnableSuggestedSites )( THIS_ VARIANT_BOOL ) PURE;
+    STDMETHOD( NavigateToSuggestedSites )( THIS_ BSTR ) PURE;
+    STDMETHOD( ShowTabsHelp )( THIS ) PURE;
+    STDMETHOD( ShowInPrivateHelp )( THIS ) PURE;
 };
 
 /* _ShellFavoritesNameSpaceEvents interface */
@@ -435,6 +575,60 @@ DECLARE_INTERFACE_( IShellFavoritesNameSpace, IDispatch ) {
     STDMETHOD( SetRoot )( THIS_ BSTR ) PURE;
 };
 
+/* IShellNameSpace interface */
+#undef INTERFACE
+#define INTERFACE   IShellNameSpace
+DECLARE_INTERFACE_( IShellNameSpace, IShellFavoritesNameSpace ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDispatch methods */
+    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
+    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
+    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
+    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
+
+    /* IShellFavoritesNameSpace methods */
+    STDMETHOD( MoveSelectionUp )( THIS ) PURE;
+    STDMETHOD( MoveSelectionDown )( THIS ) PURE;
+    STDMETHOD( ResetSort )( THIS ) PURE;
+    STDMETHOD( NewFolder )( THIS ) PURE;
+    STDMETHOD( Synchronize )( THIS ) PURE;
+    STDMETHOD( Import )( THIS ) PURE;
+    STDMETHOD( Export )( THIS ) PURE;
+    STDMETHOD( InvokeContextMenuCommand )( THIS_ BSTR ) PURE;
+    STDMETHOD( MoveSelectionTo )( THIS ) PURE;
+    STDMETHOD( FOfflinePackInstalled )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( CreateSubscriptionForSelection )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( DeleteSubscriptionForSelection )( THIS_ VARIANT_BOOL * ) PURE;
+    STDMETHOD( SetRoot )( THIS_ BSTR ) PURE;
+
+    /* IShellNameSpace methods */
+    STDMETHOD( get_EnumOptions )( THIS_ LONG * ) PURE;
+    STDMETHOD( put_EnumOptions )( THIS_ LONG ) PURE;
+    STDMETHOD( get_SelectedItem )( THIS_ IDispatch ** ) PURE;
+    STDMETHOD( put_SelectedItem )( THIS_ IDispatch * ) PURE;
+    STDMETHOD( get_Root )( THIS_ VARIANT * ) PURE;
+    STDMETHOD( put_Root )( THIS_ VARIANT ) PURE;
+    STDMETHOD( get_Depth )( THIS_ int * ) PURE;
+    STDMETHOD( put_Depth )( THIS_ int ) PURE;
+    STDMETHOD( get_Mode )( THIS_ UINT * ) PURE;
+    STDMETHOD( put_Mode )( THIS_ UINT ) PURE;
+    STDMETHOD( get_Flags )( THIS_ DWORD * ) PURE;
+    STDMETHOD( put_Flags )( THIS_ DWORD ) PURE;
+    STDMETHOD( put_TVFlags )( THIS_ DWORD ) PURE;
+    STDMETHOD( get_TVFlags )( THIS_ DWORD * ) PURE;
+    STDMETHOD( get_Columns )( THIS_ BSTR * ) PURE;
+    STDMETHOD( put_Columns )( THIS_ BSTR ) PURE;
+    STDMETHOD( get_CountViewTypes )( THIS_ int * ) PURE;
+    STDMETHOD( SetViewType )( THIS_ int ) PURE;
+    STDMETHOD( SelectedItems )( THIS_ IDispatch ** ) PURE;
+    STDMETHOD( Expand )( THIS_ VARIANT, int ) PURE;
+    STDMETHOD( UnselectAll )( THIS ) PURE;
+};
+
 /* IScriptErrorList interface */
 #undef INTERFACE
 #define INTERFACE   IScriptErrorList
@@ -465,110 +659,6 @@ DECLARE_INTERFACE_( IScriptErrorList, IDispatch ) {
     STDMETHOD( setDetailsPaneOpen )( THIS_ BOOL ) PURE;
     STDMETHOD( getPerErrorDisplay )( THIS_ BOOL * ) PURE;
     STDMETHOD( setPerErrorDisplay )( THIS_ BOOL ) PURE;
-};
-
-/* ISearch interface */
-#undef INTERFACE
-#define INTERFACE   ISearch
-DECLARE_INTERFACE_( ISearch, IDispatch ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-    
-    /* IDispatch methods */
-    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
-    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
-    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
-    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
-
-    /* ISearch methods */
-    STDMETHOD( get_Title )( THIS_ BSTR * ) PURE;
-    STDMETHOD( get_Id )( THIS_ BSTR * ) PURE;
-    STDMETHOD( get_Url )( THIS_ BSTR * ) PURE;
-};
-
-/* ISearches interface */
-#undef INTERFACE
-#define INTERFACE   ISearches
-DECLARE_INTERFACE_( ISearches, IDispatch ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-    
-    /* IDispatch methods */
-    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
-    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
-    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
-    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
-
-    /* ISearches methods */
-    STDMETHOD( get_Count )( THIS_ long * ) PURE;
-    STDMETHOD( get_Default )( THIS_ BSTR * ) PURE;
-    STDMETHOD( Item )( THIS_ VARIANT, ISearch ** ) PURE;
-    STDMETHOD( _NewEnum )( THIS_ IUnknown ** ) PURE;
-};
-
-/* ISearchAssistantOC interface */
-#undef INTERFACE
-#define INTERFACE   ISearchAssistantOC
-DECLARE_INTERFACE_( ISearchAssistantOC, IDispatch ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-    
-    /* IDispatch methods */
-    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
-    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
-    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
-    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
-
-    /* ISearchAssistantOC methods */
-    STDMETHOD( AddNextMenuItem )( THIS_ BSTR, long ) PURE;
-    STDMETHOD( SetDefaultSearchUrl )( THIS_ BSTR ) PURE;
-    STDMETHOD( NavigateToDefaultSearch )( THIS ) PURE;
-    STDMETHOD( IsRestricted )( THIS_ BSTR, VARIANT_BOOL * ) PURE;
-    STDMETHOD( get_ShellFeaturesEnabled )( THIS_ VARIANT_BOOL * ) PURE;
-    STDMETHOD( get_SearchAssistantDefault )( THIS_ VARIANT_BOOL * ) PURE;
-    STDMETHOD( get_Searches )( THIS_ ISearches ** ) PURE;
-    STDMETHOD( get_InWebFolder )( THIS_ VARIANT_BOOL * ) PURE;
-    STDMETHOD( PutProperty )( THIS_ VARIANT_BOOL, BSTR, BSTR ) PURE;
-    STDMETHOD( GetProperty )( THIS_ VARIANT_BOOL, BSTR, BSTR * ) PURE;
-    STDMETHOD( put_EventHandled )( THIS_ VARIANT_BOOL ) PURE;
-    STDMETHOD( ResetNextMenu )( THIS ) PURE;
-    STDMETHOD( FindOnWeb )( THIS ) PURE;
-    STDMETHOD( FindFilesOrFolders )( THIS ) PURE;
-    STDMETHOD( FindComputer )( THIS ) PURE;
-    STDMETHOD( FindPrinter )( THIS ) PURE;
-    STDMETHOD( FindPeople )( THIS ) PURE;
-    STDMETHOD( GetSearchAssistantURL )( THIS_ VARIANT_BOOL, VARIANT_BOOL, BSTR * ) PURE;
-    STDMETHOD( NotifySearchSettingsChanged )( THIS ) PURE;
-    STDMETHOD( put_ASProvider )( THIS_ BSTR ) PURE;
-    STDMETHOD( get_ASProvider )( THIS_ BSTR * ) PURE;
-    STDMETHOD( put_ASSetting )( THIS_ int ) PURE;
-    STDMETHOD( get_ASSetting )( THIS_ int * ) PURE;
-    STDMETHOD( NETDetectNextNavigate )( THIS ) PURE;
-    STDMETHOD( PutFindText )( THIS_ BSTR ) PURE;
-    STDMETHOD( get_Version )( THIS_ int * ) PURE;
-    STDMETHOD( EncodeString )( THIS_ BSTR, BSTR, VARIANT_BOOL, BSTR * ) PURE;
-};
-
-/* _SearchAssistantEvents interface */
-#undef INTERFACE
-#define INTERFACE   _SearchAssistantEvents
-DECLARE_INTERFACE_( _SearchAssistantEvents, IDispatch ) {
-    /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
-    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
-    STDMETHOD_( ULONG, Release )( THIS ) PURE;
-    
-    /* IDispatch methods */
-    STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
-    STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
-    STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
-    STDMETHOD( Invoke )( THIS_ DISPID, REFIID, LCID, WORD, DISPPARAMS *, VARIANT *, EXCEPINFO *, UINT * ) PURE;
 };
 
 /* C object macros */
@@ -955,8 +1045,8 @@ DECLARE_INTERFACE_( _SearchAssistantEvents, IDispatch ) {
         (x)->lpVtbl->OnNavigate( x, p1, p2 )
     #define IShellWindows_OnActivated( x, p1, p2 ) \
         (x)->lpVtbl->OnActivated( x, p1, p2 )
-    #define IShellWindows_FindWindow( x, p1, p2, p3, p4, p5, p6 ) \
-        (x)->lpVtbl->FindWindow( x, p1, p2, p3, p4, p5, p6 )
+    #define IShellWindows_FindWindowSW( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->FindWindowSW( x, p1, p2, p3, p4, p5, p6 )
     #define IShellWindows_OnCreated( x, p1, p2 ) \
         (x)->lpVtbl->OnCreated( x, p1, p2 )
     #define IShellWindows_ProcessAttachDetach( x, p ) \
@@ -1001,6 +1091,176 @@ DECLARE_INTERFACE_( _SearchAssistantEvents, IDispatch ) {
         (x)->lpVtbl->AutoCompleteAttach( x, p )
     #define IShellUIHelper_ShowBrowserUI( x, p1, p2, p3 ) \
         (x)->lpVtbl->ShowBrowserUI( x, p1, p2, p3 )
+    #define IShellUIHelper2_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IShellUIHelper2_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IShellUIHelper2_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IShellUIHelper2_GetTypeInfoCount( x, p ) \
+        (x)->lpVtbl->GetTypeInfoCount( x, p )
+    #define IShellUIHelper2_GetTypeInfo( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetTypeInfo( x, p1, p2, p3 )
+    #define IShellUIHelper2_GetIDsOfNames( x, p1, p2, p3, p4, p5 ) \
+        (x)->lpVtbl->GetIDsOfNames( x, p1, p2, p3, p4, p5 )
+    #define IShellUIHelper2_Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+    #define IShellUIHelper2_ResetFirstBootMode( x ) \
+        (x)->lpVtbl->ResetFirstBootMode( x )
+    #define IShellUIHelper2_ResetSafeMode( x ) \
+        (x)->lpVtbl->ResetSafeMode( x )
+    #define IShellUIHelper2_RefreshOfflineDesktop( x ) \
+        (x)->lpVtbl->RefreshOfflineDesktop( x )
+    #define IShellUIHelper2_AddFavorite( x, p1, p2 ) \
+        (x)->lpVtbl->AddFavorite( x, p1, p2 )
+    #define IShellUIHelper2_AddChannel( x, p ) \
+        (x)->lpVtbl->AddChannel( x, p )
+    #define IShellUIHelper2_AddDesktopComponent( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->AddDesktopComponent( x, p1, p2, p3, p4, p5, p6 )
+    #define IShellUIHelper2_IsSubscribed( x, p1, p2 ) \
+        (x)->lpVtbl->IsSubscribed( x, p1, p2 )
+    #define IShellUIHelper2_NavigateAndFind( x, p1, p2, p3 ) \
+        (x)->lpVtbl->NavigateAndFind( x, p1, p2, p3 )
+    #define IShellUIHelper2_ImportExportFavorites( x, p1, p2 ) \
+        (x)->lpVtbl->ImportExportFavorites( x, p1, p2 )
+    #define IShellUIHelper2_AutoCompleteSaveForm( x, p ) \
+        (x)->lpVtbl->AutoCompleteSaveForm( x, p )
+    #define IShellUIHelper2_AutoScan( x, p1, p2, p3 ) \
+        (x)->lpVtbl->AutoScan( x, p1, p2, p3 )
+    #define IShellUIHelper2_AutoCompleteAttach( x, p ) \
+        (x)->lpVtbl->AutoCompleteAttach( x, p )
+    #define IShellUIHelper2_ShowBrowserUI( x, p1, p2, p3 ) \
+        (x)->lpVtbl->ShowBrowserUI( x, p1, p2, p3 )
+    #define IShellUIHelper2_AddSearchProvider( x, p ) \
+        (x)->lpVtbl->AddSearchProvider( x, p )
+    #define IShellUIHelper2_RunOnceShown( x ) \
+        (x)->lpVtbl->RunOnceShown( x )
+    #define IShellUIHelper2_SkipRunOnce( x ) \
+        (x)->lpVtbl->SkipRunOnce( x )
+    #define IShellUIHelper2_CustomizeSettings( x, p1, p2, p3 ) \
+        (x)->lpVtbl->CustomizeSettings( x, p1, p2, p3 )
+    #define IShellUIHelper2_SqmEnabled( x, p ) \
+        (x)->lpVtbl->SqmEnabled( x, p )
+    #define IShellUIHelper2_PhishingEnabled( x, p ) \
+        (x)->lpVtbl->PhishingEnabled( x, p )
+    #define IShellUIHelper2_BrandImageUri( x, p ) \
+        (x)->lpVtbl->BrandImageUri( x, p )
+    #define IShellUIHelper2_SkipTabsWelcome( x ) \
+        (x)->lpVtbl->SkipTabsWelcome( x )
+    #define IShellUIHelper2_DiagnoseConnection( x ) \
+        (x)->lpVtbl->DiagnoseConnection( x )
+    #define IShellUIHelper2_CustomizeClearType( x, p ) \
+        (x)->lpVtbl->CustomizeClearType( x, p )
+    #define IShellUIHelper2_IsSearchProviderInstalled( x, p1, p2 ) \
+        (x)->lpVtbl->IsSearchProviderInstalled( x, p1, p2 )
+    #define IShellUIHelper2_IsSearchMigrated( x, p ) \
+        (x)->lpVtbl->IsSearchMigrated( x, p )
+    #define IShellUIHelper2_DefaultSearchProvider( x, p ) \
+        (x)->lpVtbl->DefaultSearchProvider( x, p )
+    #define IShellUIHelper2_RunOnceRequiredSettingsComplete( x, p ) \
+        (x)->lpVtbl->RunOnceRequiredSettingsComplete( x, p )
+    #define IShellUIHelper2_RunOnceHasShown( x, p ) \
+        (x)->lpVtbl->RunOnceHasShown( x, p )
+    #define IShellUIHelper2_SearchGuideUrl( x, p ) \
+        (x)->lpVtbl->SearchGuideUrl( x, p )
+    #define IShellUIHelper3_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IShellUIHelper3_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IShellUIHelper3_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IShellUIHelper3_GetTypeInfoCount( x, p ) \
+        (x)->lpVtbl->GetTypeInfoCount( x, p )
+    #define IShellUIHelper3_GetTypeInfo( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetTypeInfo( x, p1, p2, p3 )
+    #define IShellUIHelper3_GetIDsOfNames( x, p1, p2, p3, p4, p5 ) \
+        (x)->lpVtbl->GetIDsOfNames( x, p1, p2, p3, p4, p5 )
+    #define IShellUIHelper3_Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+    #define IShellUIHelper3_ResetFirstBootMode( x ) \
+        (x)->lpVtbl->ResetFirstBootMode( x )
+    #define IShellUIHelper3_ResetSafeMode( x ) \
+        (x)->lpVtbl->ResetSafeMode( x )
+    #define IShellUIHelper3_RefreshOfflineDesktop( x ) \
+        (x)->lpVtbl->RefreshOfflineDesktop( x )
+    #define IShellUIHelper3_AddFavorite( x, p1, p2 ) \
+        (x)->lpVtbl->AddFavorite( x, p1, p2 )
+    #define IShellUIHelper3_AddChannel( x, p ) \
+        (x)->lpVtbl->AddChannel( x, p )
+    #define IShellUIHelper3_AddDesktopComponent( x, p1, p2, p3, p4, p5, p6 ) \
+        (x)->lpVtbl->AddDesktopComponent( x, p1, p2, p3, p4, p5, p6 )
+    #define IShellUIHelper3_IsSubscribed( x, p1, p2 ) \
+        (x)->lpVtbl->IsSubscribed( x, p1, p2 )
+    #define IShellUIHelper3_NavigateAndFind( x, p1, p2, p3 ) \
+        (x)->lpVtbl->NavigateAndFind( x, p1, p2, p3 )
+    #define IShellUIHelper3_ImportExportFavorites( x, p1, p2 ) \
+        (x)->lpVtbl->ImportExportFavorites( x, p1, p2 )
+    #define IShellUIHelper3_AutoCompleteSaveForm( x, p ) \
+        (x)->lpVtbl->AutoCompleteSaveForm( x, p )
+    #define IShellUIHelper3_AutoScan( x, p1, p2, p3 ) \
+        (x)->lpVtbl->AutoScan( x, p1, p2, p3 )
+    #define IShellUIHelper3_AutoCompleteAttach( x, p ) \
+        (x)->lpVtbl->AutoCompleteAttach( x, p )
+    #define IShellUIHelper3_ShowBrowserUI( x, p1, p2, p3 ) \
+        (x)->lpVtbl->ShowBrowserUI( x, p1, p2, p3 )
+    #define IShellUIHelper3_AddSearchProvider( x, p ) \
+        (x)->lpVtbl->AddSearchProvider( x, p )
+    #define IShellUIHelper3_RunOnceShown( x ) \
+        (x)->lpVtbl->RunOnceShown( x )
+    #define IShellUIHelper3_SkipRunOnce( x ) \
+        (x)->lpVtbl->SkipRunOnce( x )
+    #define IShellUIHelper3_CustomizeSettings( x, p1, p2, p3 ) \
+        (x)->lpVtbl->CustomizeSettings( x, p1, p2, p3 )
+    #define IShellUIHelper3_SqmEnabled( x, p ) \
+        (x)->lpVtbl->SqmEnabled( x, p )
+    #define IShellUIHelper3_PhishingEnabled( x, p ) \
+        (x)->lpVtbl->PhishingEnabled( x, p )
+    #define IShellUIHelper3_BrandImageUri( x, p ) \
+        (x)->lpVtbl->BrandImageUri( x, p )
+    #define IShellUIHelper3_SkipTabsWelcome( x ) \
+        (x)->lpVtbl->SkipTabsWelcome( x )
+    #define IShellUIHelper3_DiagnoseConnection( x ) \
+        (x)->lpVtbl->DiagnoseConnection( x )
+    #define IShellUIHelper3_CustomizeClearType( x, p ) \
+        (x)->lpVtbl->CustomizeClearType( x, p )
+    #define IShellUIHelper3_IsSearchProviderInstalled( x, p1, p2 ) \
+        (x)->lpVtbl->IsSearchProviderInstalled( x, p1, p2 )
+    #define IShellUIHelper3_IsSearchMigrated( x, p ) \
+        (x)->lpVtbl->IsSearchMigrated( x, p )
+    #define IShellUIHelper3_DefaultSearchProvider( x, p ) \
+        (x)->lpVtbl->DefaultSearchProvider( x, p )
+    #define IShellUIHelper3_RunOnceRequiredSettingsComplete( x, p ) \
+        (x)->lpVtbl->RunOnceRequiredSettingsComplete( x, p )
+    #define IShellUIHelper3_RunOnceHasShown( x, p ) \
+        (x)->lpVtbl->RunOnceHasShown( x, p )
+    #define IShellUIHelper3_SearchGuideUrl( x, p ) \
+        (x)->lpVtbl->SearchGuideUrl( x, p )
+    #define IShellUIHelper3_AddService( x, p ) \
+        (x)->lpVtbl->AddService( x, p )
+    #define IShellUIHelper3_IsServiceInstalled( x, p1, p2, p3 ) \
+        (x)->lpVtbl->IsServiceInstalled( x, p1, p2, p3 )
+    #define IShellUIHelper3_InPrivateFilteringEnabled( x, p ) \
+        (x)->lpVtbl->InPrivateFilteringEnabled( x, p )
+    #define IShellUIHelper3_AddToFavoritesBar( x, p1, p2, p3 ) \
+        (x)->lpVtbl->AddToFavoritesBar( x, p1, p2, p3 )
+    #define IShellUIHelper3_BuildNewTabPage( x ) \
+        (x)->lpVtbl->BuildNewTabPage( x )
+    #define IShellUIHelper3_SetRecentlyClosedVisible( x, p ) \
+        (x)->lpVtbl->SetRecentlyClosedVisible( x, p )
+    #define IShellUIHelper3_SetActivitiesVisible( x, p ) \
+        (x)->lpVtbl->SetActivitiesVisible( x, p )
+    #define IShellUIHelper3_ContentDiscoveryReset( x ) \
+        (x)->lpVtbl->ContentDiscoveryReset( x )
+    #define IShellUIHelper3_IsSuggestedSitesEnabled( x, p ) \
+        (x)->lpVtbl->IsSuggestedSitesEnabled( x, p )
+    #define IShellUIHelper3_EnableSuggestedSites( x, p ) \
+        (x)->lpVtbl->EnableSuggestedSites( x, p )
+    #define IShellUIHelper3_NavigateToSuggestedSites( x, p ) \
+        (x)->lpVtbl->NavigateToSuggestedSites( x, p )
+    #define IShellUIHelper3_ShowTabsHelp( x ) \
+        (x)->lpVtbl->ShowTabsHelp( x )
+    #define IShellUIHelper3_ShowInPrivateHelp( x ) \
+        (x)->lpVtbl->ShowInPrivateHelp( x )
     #define _ShellFavoritesNameSpcaeEvents_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define _ShellFavoritesNameSpaceEvents_AddRef( x ) \
@@ -1055,6 +1315,88 @@ DECLARE_INTERFACE_( _SearchAssistantEvents, IDispatch ) {
         (x)->lpVtbl->DeleteSubscriptionForSelection( x, p )
     #define IShellFavoritesNameSpace_SetRoot( x, p ) \
         (x)->lpVtbl->SetRoot( x, p )
+    #define IShellNameSpace_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IShellNameSpace_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IShellNameSpace_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IShellNameSpace_GetTypeInfoCount( x, p ) \
+        (x)->lpVtbl->GetTypeInfoCount( x, p )
+    #define IShellNameSpace_GetTypeInfo( x, p1, p2, p3 ) \
+        (x)->lpVtbl->GetTypeInfo( x, p1, p2, p3 )
+    #define IShellNameSpace_GetIDsOfNames( x, p1, p2, p3, p4, p5 ) \
+        (x)->lpVtbl->GetIDsOfNames( x, p1, p2, p3, p4, p5 )
+    #define IShellNameSpace_Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
+        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )
+    #define IShellNameSpace_MoveSelectionUp( x ) \
+        (x)->lpVtbl->MoveSelectionUp( x )
+    #define IShellNameSpace_MoveSelectionDown( x ) \
+        (x)->lpVtbl->MoveSelectionDown( x )
+    #define IShellNameSpace_ResetSort( x ) \
+        (x)->lpVtbl->ResetSort( x )
+    #define IShellNameSpace_NewFolder( x ) \
+        (x)->lpVtbl->NewFolder( x )
+    #define IShellNameSpace_Synchronize( x ) \
+        (x)->lpVtbl->Synchronize( x )
+    #define IShellNameSpace_Import( x ) \
+        (x)->lpVtbl->Import( x )
+    #define IShellNameSpace_Export( x ) \
+        (x)->lpVtbl->Export( x )
+    #define IShellNameSpace_InvokeContextMenuCommand( x, p ) \
+        (x)->lpVtbl->InvokeContextMenuCommand( x, p )
+    #define IShellNameSpace_MoveSelectionTo( x ) \
+        (x)->lpVtbl->MoveSelectionTo( x, p )
+    #define IShellNameSpace_FOfflinePackInstalled( x, p ) \
+        (x)->lpVtbl->FOfflinePackInstalled( x, p )
+    #define IShellNameSpace_CreateSubscriptionForSelection( x, p ) \
+        (x)->lpVtbl->CreateSubscriptionForSelection( x, p )
+    #define IShellNameSpace_DeleteSubscriptionForSelection( x, p ) \
+        (x)->lpVtbl->DeleteSubscriptionForSelection( x, p )
+    #define IShellNameSpace_SetRoot( x, p ) \
+        (x)->lpVtbl->SetRoot( x, p )
+    #define IShellNameSpace_get_EnumOptions( x, p ) \
+        (x)->lpVtbl->get_EnumOptions( x, p )
+    #define IShellNameSpace_put_EnumOptions( x, p ) \
+        (x)->lpVtbl->put_EnumOptions( x, p )
+    #define IShellNameSpace_get_SelectedItem( x, p ) \
+        (x)->lpVtbl->get_SelectedItem( x, p )
+    #define IShellNameSpace_put_SelectedItem( x, p ) \
+        (x)->lpVtbl->put_SelectedItem( x, p )
+    #define IShellNameSpace_get_Root( x, p ) \
+        (x)->lpVtbl->get_Root( x, p )
+    #define IShellNameSpace_put_Root( x, p ) \
+        (x)->lpVtbl->put_Root( x, p )
+    #define IShellNameSpace_get_Depth( x, p ) \
+        (x)->lpVtbl->get_Depth( x, p )
+    #define IShellNameSpace_put_Depth( x, p ) \
+        (x)->lpVtbl->put_Depth( x, p )
+    #define IShellNameSpace_get_Mode( x, p ) \
+        (x)->lpVtbl->get_Mode( x, p )
+    #define IShellNameSpace_put_Mode( x, p ) \
+        (x)->lpVtbl->put_Mode( x, p )
+    #define IShellNameSpace_get_Flags( x, p ) \
+        (x)->lpVtbl->get_Flags( x, p )
+    #define IShellNameSpace_put_Flags( x, p ) \
+        (x)->lpVtbl->put_Flags( x, p )
+    #define IShellNameSpace_put_TVFlags( x, p ) \
+        (x)->lpVtbl->put_TVFlags( x, p )
+    #define IShellNameSpace_get_TVFlags( x, p ) \
+        (x)->lpVtbl->get_TVFlags( x, p )
+    #define IShellNameSpace_get_Columns( x, p ) \
+        (x)->lpVtbl->get_Columns( x, p )
+    #define IShellNameSpace_put_Columns( x, p ) \
+        (x)->lpVtbl->put_Columns( x, p )
+    #define IShellNameSpace_get_CountViewTypes( x, p ) \
+        (x)->lpVtbl->get_CountViewTypes( x, p )
+    #define IShellNameSpace_SetViewType( x, p ) \
+        (x)->lpVtbl->SetViewType( x, p )
+    #define IShellNameSpace_SelectedItems( x, p ) \
+        (x)->lpVtbl->SelectedItems( x, p )
+    #define IShellNameSpace_Expand( x, p1, p2 ) \
+        (x)->lpVtbl->Expand( x, p1, p2 )
+    #define IShellNameSpace_UnselectAll( x ) \
+        (x)->lpVtbl->UnselectAll( x )
     #define IScriptErrorList_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IScriptErrorList_AddRef( x ) \
